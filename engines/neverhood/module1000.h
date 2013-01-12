@@ -289,7 +289,6 @@ public:
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void drawTextToBackground();
-	FontSurface *createFontSurface();
 	uint32 getTextIndex();
 	uint32 getTextIndex1();
 	uint32 getTextIndex2();

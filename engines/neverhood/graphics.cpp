@@ -150,60 +150,68 @@ void ShadowSurface::draw() {
 
 // FontSurface
 
-FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray &tracking, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
-	: BaseSurface(vm, 0, charWidth * 16, charHeight * numRows), _tracking(tracking), _numRows(numRows), _firstChar(firstChar),
-	_charWidth(charWidth), _charHeight(charHeight) {
+FontSurface::FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
+	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows), _charsPerRow(charsPerRow), _numRows(numRows),
+	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(NULL) {
+	
+	_tracking = new NPointArray();
+	*_tracking = *tracking;
+
+}
+
+FontSurface::FontSurface(NeverhoodEngine *vm, uint32 fileHash, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight)
+	: BaseSurface(vm, 0, charWidth * charsPerRow, charHeight * numRows), _charsPerRow(charsPerRow), _numRows(numRows),
+	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(NULL) {
+	
+	SpriteResource fontSpriteResource(_vm);
+	fontSpriteResource.load2(fileHash);
+	drawSpriteResourceEx(fontSpriteResource, false, false, 0, 0);
+}
+
+FontSurface::~FontSurface() {
+	delete _tracking;
 }
 
 void FontSurface::drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr) {
 	NDrawRect sourceRect;
 	chr -= _firstChar;
-	sourceRect.x = (chr % 16) * _charWidth;
-	sourceRect.y = (chr / 16) * _charHeight;
+	sourceRect.x = (chr % _charsPerRow) * _charWidth;
+	sourceRect.y = (chr / _charsPerRow) * _charHeight;
 	sourceRect.width = _charWidth;
 	sourceRect.height = _charHeight;
 	destSurface->copyFrom(_surface, x, y, sourceRect, true);
 }
 
-void FontSurface::drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string) {
-	for (; *string != 0; string++) {
+void FontSurface::drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen) {
+
+	if (stringLen < 0)
+		stringLen = strlen((const char*)string);
+
+	for (; stringLen > 0; --stringLen, ++string) {
 		drawChar(destSurface, x, y, *string);
-		x += _tracking[*string - _firstChar].x;
+		x += _tracking ? (*_tracking)[*string - _firstChar].x : _charWidth;
 	}	
+
 }
 
-// TextSurface
-
-TextSurface::TextSurface(NeverhoodEngine *vm, uint32 fileHash, uint16 numRows, uint charCount,
-		byte firstChar, uint16 charWidth, uint16 charHeight)
-		: BaseSurface(vm, 0, charWidth * charCount, charHeight * numRows),
-		_numRows(numRows), _firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight),
-		_fileHash(fileHash), _charCount(charCount) {
-
-		SpriteResource spriteResource(_vm);
-		spriteResource.load2(_fileHash);
-		drawSpriteResourceEx(spriteResource, false, false, 0, 0);
-}
-
-void TextSurface::drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr) {
-	NDrawRect sourceRect;
-	chr -= _firstChar;
-	sourceRect.x = (chr % _charCount) * _charWidth;
-	sourceRect.y = (chr / _charCount) * _charHeight;
-	sourceRect.width = _charWidth;
-	sourceRect.height = _charHeight;
-	destSurface->copyFrom(_surface, x, y, sourceRect, true);
-}
-
-void TextSurface::drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen) {
-	for (; stringLen > 0; stringLen--, string++) {
-		drawChar(destSurface, x, y, *string);
-		x += _charWidth;
-	}	
-}
-
-int16 TextSurface::getStringWidth(const byte *string, int stringLen) {
+int16 FontSurface::getStringWidth(const byte *string, int stringLen) {
 	return string ? stringLen * _charWidth : 0;
+}
+
+FontSurface *FontSurface::createFontSurface(NeverhoodEngine *vm, uint32 fileHash) {
+	FontSurface *fontSurface;
+	DataResource fontData(vm);
+	SpriteResource fontSprite(vm);
+	fontData.load(calcHash("asRecFont"));
+	uint16 numRows = fontData.getPoint(calcHash("meNumRows")).x;
+	uint16 firstChar = fontData.getPoint(calcHash("meFirstChar")).x;
+	uint16 charWidth = fontData.getPoint(calcHash("meCharWidth")).x;
+	uint16 charHeight = fontData.getPoint(calcHash("meCharHeight")).x;
+	NPointArray *tracking = fontData.getPointArray(calcHash("meTracking"));
+	fontSprite.load2(fileHash);
+	fontSurface = new FontSurface(vm, tracking, 16, numRows, firstChar, charWidth, charHeight);	
+	fontSurface->drawSpriteResourceEx(fontSprite, false, false, 0, 0);
+	return fontSurface;
 }
 
 // Misc
@@ -338,8 +346,8 @@ void unpackSpriteNormal(const byte *source, int width, int height, byte *dest, i
 }
 
 int calcDistance(int16 x1, int16 y1, int16 x2, int16 y2) {
-	int16 deltaX = ABS(x1 - x2);
-	int16 deltaY = ABS(y1 - y2);
+	const int16 deltaX = ABS(x1 - x2);
+	const int16 deltaY = ABS(y1 - y2);
 	return sqrt((double)(deltaX * deltaX + deltaY * deltaY));
 }
 

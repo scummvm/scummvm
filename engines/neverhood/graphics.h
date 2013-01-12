@@ -81,8 +81,6 @@ class AnimResource;
 class SpriteResource;
 class MouseCursorResource;
 
-// NOTE: "Restore" methods aren't need in the reimplementation as they're DirectDraw-specific
-
 class BaseSurface {
 public:
 	BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height);
@@ -131,33 +129,22 @@ protected:
 
 class FontSurface : public BaseSurface {
 public:
-	FontSurface(NeverhoodEngine *vm, NPointArray &tracking, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight);
+	FontSurface(NeverhoodEngine *vm, NPointArray *tracking, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight);
+	FontSurface(NeverhoodEngine *vm, uint32 fileHash, uint charsPerRow, uint16 numRows, byte firstChar, uint16 charWidth, uint16 charHeight);
+	virtual ~FontSurface();
 	void drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr);
-	void drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string);
-protected:
-	NPointArray _tracking;
-	uint16 _numRows;
-	byte _firstChar;
-	uint16 _charWidth;
-	uint16 _charHeight;
-};
-
-class TextSurface : public BaseSurface {
-public:
-	TextSurface(NeverhoodEngine *vm, uint32 fileHash, uint16 numRows, uint charCount,
-		byte firstChar, uint16 charWidth, uint16 charHeight);
-	void drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr);
-	void drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen);
+	void drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen = -1);
 	int16 getStringWidth(const byte *string, int stringLen);
 	uint16 getCharWidth() const { return _charWidth; }
 	uint16 getCharHeight() const { return _charHeight; }
+	static FontSurface *createFontSurface(NeverhoodEngine *vm, uint32 fileHash);
 protected:
+	uint _charsPerRow;
 	uint16 _numRows;
 	byte _firstChar;
 	uint16 _charWidth;
 	uint16 _charHeight;
-	uint32 _fileHash;
-	uint _charCount;
+	NPointArray *_tracking;
 };
 
 // Misc

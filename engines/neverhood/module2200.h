@@ -336,7 +336,6 @@ protected:
 	Common::Array<const char*> _strings;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void createFontSurface();
 	void drawRow(int16 rowIndex);
 };
 

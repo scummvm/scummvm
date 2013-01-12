@@ -123,7 +123,7 @@ class TextLabelWidget : public Widget {
 public:
 	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
 		int baseObjectPriority, int baseSurfacePriority, 
-		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, TextSurface *textSurface);	
+		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);	
 	virtual void onClick();
 	virtual void addSprite();
 	virtual int16 getWidth();
@@ -131,11 +131,11 @@ public:
 	void drawString(int maxStringLength);
 	void clear();
 	void setString(const byte *string, int stringLen);
-	TextSurface *getTextSurface() const { return _textSurface; }
+	FontSurface *getFontSurface() const { return _fontSurface; }
 protected:
 	BaseSurface *_drawSurface;
 	int16 _tx, _ty;
-	TextSurface *_textSurface;
+	FontSurface *_fontSurface;
 	const byte *_string;
 	int _stringLen;
 };
@@ -143,7 +143,7 @@ protected:
 class TextEditWidget : public Widget {
 public:
 	TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-		int baseObjectPriority, int baseSurfacePriority, int maxStringLength, TextSurface *textSurface,
+		int baseObjectPriority, int baseSurfacePriority, int maxStringLength, FontSurface *fontSurface,
 		uint32 fileHash, const NRect &rect);
 	~TextEditWidget();
 	virtual void onClick();
@@ -167,7 +167,7 @@ protected:
 	int _cursorPos;
 	int _cursorTicks;
 	Common::String _entryString;
-	TextSurface *_textSurface;
+	FontSurface *_fontSurface;
 	TextLabelWidget *_textLabelWidget;
 	BaseSurface *_cursorSurface;
 	uint32 _cursorFileHash;
@@ -181,7 +181,7 @@ class SavegameListBox : public Widget {
 public:
 	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
 		int baseObjectPriority, int baseSurfacePriority,
-		StringArray *savegameList, TextSurface *textSurface, uint32 bgFileHash, const NRect &rect);
+		StringArray *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
 	virtual void onClick();
 	virtual void addSprite();
 	void buildItems();
@@ -200,7 +200,7 @@ protected:
 	int _firstVisibleItem;
 	int _lastVisibleItem;
 	StringArray *_savegameList;
-	TextSurface *_textSurface;
+	FontSurface *_fontSurface;
 	uint _currIndex;
 	int _maxVisibleItemsCount;
 };
@@ -212,7 +212,7 @@ public:
 	virtual void handleEvent(int16 itemID, int eventType);
 protected:
 	StringArray *_savegameList;
-	TextSurface *_textSurface;
+	FontSurface *_fontSurface;
 	SavegameListBox *_listBox;
 	TextEditWidget *_textEditWidget;
 	Common::String _savegameDescription;

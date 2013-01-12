@@ -458,9 +458,9 @@ uint32 Widget::handleMessage(int messageNum, const MessageParam &param, Entity *
 
 TextLabelWidget::TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
 	int baseObjectPriority, int baseSurfacePriority,
-	const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, TextSurface *textSurface)
+	const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface)
 	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
-	_string(string), _stringLen(stringLen), _drawSurface(drawSurface), _tx(tx), _ty(ty), _textSurface(textSurface) {
+	_string(string), _stringLen(stringLen), _drawSurface(drawSurface), _tx(tx), _ty(ty), _fontSurface(fontSurface) {
 	
 }
 
@@ -470,15 +470,15 @@ void TextLabelWidget::addSprite() {
 }
 
 int16 TextLabelWidget::getWidth() {
-	return _textSurface->getStringWidth(_string, _stringLen);
+	return _fontSurface->getStringWidth(_string, _stringLen);
 }
 
 int16 TextLabelWidget::getHeight() {
-	return _textSurface->getCharHeight();
+	return _fontSurface->getCharHeight();
 }
 
 void TextLabelWidget::drawString(int maxStringLength) {
-	_textSurface->drawString(_drawSurface, _x, _y, _string, MIN(_stringLen, maxStringLength));
+	_fontSurface->drawString(_drawSurface, _x, _y, _string, MIN(_stringLen, maxStringLength));
 	_collisionBoundsOffset.set(_tx, _ty, getWidth(), getHeight());
 	updateBounds();
 }
@@ -499,14 +499,14 @@ void TextLabelWidget::setString(const byte *string, int stringLen) {
 }
 
 TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-	int baseObjectPriority, int baseSurfacePriority, int maxStringLength, TextSurface *textSurface,
+	int baseObjectPriority, int baseSurfacePriority, int maxStringLength, FontSurface *fontSurface,
 	uint32 fileHash, const NRect &rect)
 	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
-	_maxStringLength(maxStringLength), _textSurface(textSurface), _fileHash(fileHash), _rect(rect),
+	_maxStringLength(maxStringLength), _fontSurface(fontSurface), _fileHash(fileHash), _rect(rect),
 	_cursorSurface(NULL), _cursorTicks(0), _cursorPos(0), _cursorFileHash(0), _cursorWidth(0), _cursorHeight(0),
 	_modified(false) {
 
-	_maxVisibleChars = (_rect.x2 - _rect.x1) / _textSurface->getCharWidth();
+	_maxVisibleChars = (_rect.x2 - _rect.x1) / _fontSurface->getCharWidth();
 	_cursorPos = 0;
 	
 	SetUpdateHandler(&TextEditWidget::update);
@@ -526,8 +526,8 @@ void TextEditWidget::onClick() {
 		if (_entryString.size() == 1)
 			_cursorPos = 0;
 		else {
-			int newCursorPos = mousePos.x / _textSurface->getCharWidth();
-			if (mousePos.x % _textSurface->getCharWidth() > _textSurface->getCharWidth() / 2 && newCursorPos <= (int)_entryString.size())//###
+			int newCursorPos = mousePos.x / _fontSurface->getCharWidth();
+			if (mousePos.x % _fontSurface->getCharWidth() > _fontSurface->getCharWidth() / 2 && newCursorPos <= (int)_entryString.size())//###
 				++newCursorPos;
 			_cursorPos = MIN((int)_entryString.size(), newCursorPos);
 		}
@@ -546,9 +546,9 @@ void TextEditWidget::addSprite() {
 	_parentScene->addSprite(this);
 	_parentScene->addCollisionSprite(this);
 	_surface->setVisible(true);
-	_textLabelWidget = new TextLabelWidget(_vm, _rect.x1, _rect.y1 + (_rect.y2 - _rect.y1 + 1 - _textSurface->getCharHeight()) / 2,
+	_textLabelWidget = new TextLabelWidget(_vm, _rect.x1, _rect.y1 + (_rect.y2 - _rect.y1 + 1 - _fontSurface->getCharHeight()) / 2,
 		0, _parentScene, _baseObjectPriority + 1, _baseSurfacePriority + 1,
-		(const byte*)_entryString.c_str(), _entryString.size(), _surface, _x, _y, _textSurface);
+		(const byte*)_entryString.c_str(), _entryString.size(), _surface, _x, _y, _fontSurface);
 	_textLabelWidget->addSprite();
 	cursorSpriteResource.load2(_cursorFileHash);
 	_cursorSurface = new BaseSurface(_vm, 0, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
@@ -576,7 +576,7 @@ void TextEditWidget::setCursor(uint32 cursorFileHash, int16 cursorWidth, int16 c
 void TextEditWidget::drawCursor() {
 	if (_cursorSurface->getVisible() && _cursorPos >= 0 && _cursorPos <= _maxVisibleChars) {
 		NDrawRect sourceRect(0, 0, _cursorWidth, _cursorHeight);
-		_surface->copyFrom(_cursorSurface->getSurface(), _rect.x1 + _cursorPos * _textSurface->getCharWidth(),
+		_surface->copyFrom(_cursorSurface->getSurface(), _rect.x1 + _cursorPos * _fontSurface->getCharWidth(),
 			_rect.y1 + (_rect.y2 - _cursorHeight - _rect.y1 + 1) / 2, sourceRect, true);
 	} else
 		_cursorSurface->setVisible(false);
@@ -677,13 +677,13 @@ uint32 TextEditWidget::handleMessage(int messageNum, const MessageParam &param, 
 
 SavegameListBox::SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
 	int baseObjectPriority, int baseSurfacePriority,
-	StringArray *savegameList, TextSurface *textSurface, uint32 bgFileHash, const NRect &rect)
+	StringArray *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect)
 	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
-	_savegameList(savegameList), _textSurface(textSurface), _bgFileHash(bgFileHash), _rect(rect),
+	_savegameList(savegameList), _fontSurface(fontSurface), _bgFileHash(bgFileHash), _rect(rect),
 	_maxStringLength(0), _firstVisibleItem(0), _lastVisibleItem(0), _currIndex(0) {
 
-	_maxVisibleItemsCount = (_rect.y2 - _rect.y1) / _textSurface->getCharHeight();
-	_maxStringLength = (_rect.x2 - _rect.x1) / _textSurface->getCharWidth();
+	_maxVisibleItemsCount = (_rect.y2 - _rect.y1) / _fontSurface->getCharHeight();
+	_maxStringLength = (_rect.x2 - _rect.x1) / _fontSurface->getCharWidth();
 }
 
 void SavegameListBox::onClick() {
@@ -692,7 +692,7 @@ void SavegameListBox::onClick() {
 	mousePos.y -= _y + _rect.y1;
 	if (mousePos.x >= 0 && mousePos.x <= _rect.x2 - _rect.x1 &&
 		mousePos.y >= 0 && mousePos.y <= _rect.y2 - _rect.y1) {
-		int newIndex = _firstVisibleItem + mousePos.y / _textSurface->getCharHeight();
+		int newIndex = _firstVisibleItem + mousePos.y / _fontSurface->getCharHeight();
 		if (newIndex <= _lastVisibleItem) {
 			_currIndex = newIndex;
 			refresh();
@@ -723,7 +723,7 @@ void SavegameListBox::buildItems() {
 		const byte *string = (const byte*)savegameList[i].c_str();
 		int stringLen = (int)savegameList[i].size();
 		TextLabelWidget *label = new TextLabelWidget(_vm, itemX, itemY, i, _parentScene, _baseObjectPriority + 1,
-			_baseSurfacePriority + 1, string, MIN(stringLen, _maxStringLength), _surface, _x, _y, _textSurface);
+			_baseSurfacePriority + 1, string, MIN(stringLen, _maxStringLength), _surface, _x, _y, _fontSurface);
 		label->addSprite();
 		_textLabelItems.push_back(label);
 	}
@@ -733,7 +733,7 @@ void SavegameListBox::drawItems() {
 	for (int i = 0; i < (int)_textLabelItems.size(); ++i) {
 		TextLabelWidget *label = _textLabelItems[i];		
 		if (i >= _firstVisibleItem && i < _lastVisibleItem) {
-			label->setY(_rect.y1 + (i - _firstVisibleItem) * _textSurface->getCharHeight());
+			label->setY(_rect.y1 + (i - _firstVisibleItem) * _fontSurface->getCharHeight());
 			label->updateBounds();
 			label->drawString(_maxStringLength);
 		} else
@@ -805,7 +805,7 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArra
 	static const NRect kTextEditRect(0, 0, 377, 17);
 	static const NRect kMouseRect(50, 47, 427, 64);
 
-	_textSurface = new TextSurface(_vm, 0x2328121A, 7, 32, 32, 11, 17);
+	_fontSurface = new FontSurface(_vm, 0x2328121A, 32, 7, 32, 11, 17);
 	
 	setBackground(0x30084E25);
 	setPalette(0x30084E25);
@@ -814,11 +814,11 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArra
 	insertStaticSprite(0x1301A7EA, 200);
 
 	_listBox = new SavegameListBox(_vm, 60, 142, 69/*ItemID*/, this, 1000, 1000,
-		_savegameList, _textSurface, 0x1115A223, kListBoxRect);
+		_savegameList, _fontSurface, 0x1115A223, kListBoxRect);
 	_listBox->addSprite();
 
 	_textEditWidget = new TextEditWidget(_vm, 50, 47, 70/*ItemID*/, this, 1000, 1000, 29,
-		_textSurface, 0x3510A868, kTextEditRect);
+		_fontSurface, 0x3510A868, kTextEditRect);
 	_textEditWidget->setCursor(0x8290AC20, 2, 13);
 	_textEditWidget->addSprite();
 	setCurrWidget(_textEditWidget);
@@ -835,7 +835,7 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArra
 }
 
 SaveGameMenu::~SaveGameMenu() {
-	delete _textSurface;
+	delete _fontSurface;
 }
 
 void SaveGameMenu::handleEvent(int16 itemID, int eventType) {

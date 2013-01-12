@@ -2135,8 +2135,9 @@ Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
 	setPalette(0x08100289);
 	addEntity(_palette);
 	insertPuzzleMouse(0x0028D089, 40, 600);
-	
-	createFontSurface();
+
+	_fontSurface = FontSurface::createFontSurface(_vm, 0x0800090C);
+
 	_backgroundSurface = new BaseSurface(_vm, 0, 640, 480);
 	spriteResource.load2(0x08100289);
 	_backgroundSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
@@ -2230,20 +2231,6 @@ uint32 Scene2208::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	}
 	return messageResult;
-}
-
-void Scene2208::createFontSurface() {
-	DataResource fontData(_vm);
-	SpriteResource spriteResource(_vm);
-	fontData.load(calcHash("asRecFont"));
-	uint16 numRows = fontData.getPoint(calcHash("meNumRows")).x;
-	uint16 firstChar = fontData.getPoint(calcHash("meFirstChar")).x;
-	uint16 charWidth = fontData.getPoint(calcHash("meCharWidth")).x;
-	uint16 charHeight = fontData.getPoint(calcHash("meCharHeight")).x;
-	NPointArray *tracking = fontData.getPointArray(calcHash("meTracking"));
-	spriteResource.load2(0x0800090C);
-	_fontSurface = new FontSurface(_vm, *tracking, numRows, firstChar, charWidth, charHeight);
-	_fontSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
 }
 
 void Scene2208::drawRow(int16 rowIndex) {

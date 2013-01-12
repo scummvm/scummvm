@@ -1580,7 +1580,7 @@ void Scene1005::drawTextToBackground() {
 	const char *textStart, *textEnd;
 	int16 y = 36;
 	uint32 textIndex = getTextIndex();
-	FontSurface *fontSurface = createFontSurface();
+	FontSurface *fontSurface = FontSurface::createFontSurface(_vm, getGlobalVar(V_ENTRANCE_OPEN) ? 0x283CE401 : 0xC6604282);
 	textResource.load(0x80283101);
 	textStart = textResource.getString(textIndex, textEnd);
 	while (textStart < textEnd) {
@@ -1589,26 +1589,6 @@ void Scene1005::drawTextToBackground() {
 		textStart += strlen(textStart) + 1;
 	}
 	delete fontSurface;
-}
-
-FontSurface *Scene1005::createFontSurface() {
-	FontSurface *fontSurface;
-	DataResource fontData(_vm);
-	SpriteResource fontSprite(_vm);
-	fontData.load(calcHash("asRecFont"));
-	uint16 numRows = fontData.getPoint(calcHash("meNumRows")).x;
-	uint16 firstChar = fontData.getPoint(calcHash("meFirstChar")).x;
-	uint16 charWidth = fontData.getPoint(calcHash("meCharWidth")).x;
-	uint16 charHeight = fontData.getPoint(calcHash("meCharHeight")).x;
-	NPointArray *tracking = fontData.getPointArray(calcHash("meTracking"));
-	fontSurface = new FontSurface(_vm, *tracking, numRows, firstChar, charWidth, charHeight);	
-	if (getGlobalVar(V_ENTRANCE_OPEN)) {
-		fontSprite.load2(0x283CE401);
-	} else {
-		fontSprite.load2(0xC6604282);
-	}
-	fontSurface->drawSpriteResourceEx(fontSprite, false, false, 0, 0);
-	return fontSurface;
 }
 
 uint32 Scene1005::getTextIndex() {
