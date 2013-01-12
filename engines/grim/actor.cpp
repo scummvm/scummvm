@@ -88,6 +88,7 @@ Actor::Actor(const Common::String &actorName) :
 	_sortOrder = 0;
 	_cleanBuffer = 0;
 	_drawnToClean = false;
+	_backgroundTalk = false;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
@@ -118,6 +119,7 @@ Actor::Actor() {
 	_shadowActive = false;
 	_cleanBuffer = 0;
 	_drawnToClean = false;
+	_backgroundTalk = false;
 
 	for (int i = 0; i < MAX_SHADOWS; i++) {
 		_shadowArray[i].active = false;
