@@ -711,14 +711,10 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		else
 			deltaX = -_vm->_graphicsManager.zoomIn(deltaX, v21);
 
-		if (deltaY >= 0) {
+		if (deltaY >= 0)
 			deltaY = _vm->_graphicsManager.zoomIn(deltaY, v21);
-		} else {
-			deltaY = deltaX;
-			if (deltaX < 0)
-				deltaY = -deltaX;
-			deltaY = -_vm->_graphicsManager.zoomIn(deltaY, v21);
-		}
+		else
+			deltaY = -_vm->_graphicsManager.zoomIn(abs(deltaX), v21);
 	}
 
 	if (v20) {
@@ -727,14 +723,10 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		else
 			deltaX = -_vm->_graphicsManager.zoomOut(-deltaX, v20);
 
-		if (deltaY >= 0) {
+		if (deltaY >= 0)
 			deltaY = _vm->_graphicsManager.zoomOut(deltaY, v20);
-		} else {
-			if (deltaX < 0)
-				deltaY = -_vm->_graphicsManager.zoomOut(-deltaX, v20);
-			else 
-				deltaY = -_vm->_graphicsManager.zoomOut(deltaX, v20);
-		}
+		else
+			deltaY = -_vm->_graphicsManager.zoomOut(abs(deltaX), v20);
 	}
 
 	int v13 = _vm->_globals._bob[idx]._xp - deltaX;
@@ -912,12 +904,8 @@ void ObjectsManager::computeSprite(int idx) {
 		if (tmpY >= 0) {
 			deltaY = _vm->_graphicsManager.zoomIn(tmpY, zoomPercent);
 		} else {
-			if (tmpX < 0)
-				tmpY = -tmpX;
-			else
-				tmpY = tmpX;
-
-			deltaY = -_vm->_graphicsManager.zoomIn(tmpY, zoomPercent);
+			tmpY = abs(tmpX);
+			deltaY = -_vm->_graphicsManager.zoomIn(abs(tmpX), zoomPercent);
 		}
 	} else if (reducePercent) {
 		if (tmpX >= 0)
@@ -928,12 +916,8 @@ void ObjectsManager::computeSprite(int idx) {
 		if (tmpY >= 0) {
 			deltaY = _vm->_graphicsManager.zoomOut(tmpY, reducePercent);
 		} else {
-			if (tmpX < 0)
-				tmpY = -tmpX;
-			else
-				tmpY = tmpX;
-
-			deltaY = -_vm->_graphicsManager.zoomOut(tmpY, reducePercent);
+			tmpY = abs(tmpX);
+			deltaY = -_vm->_graphicsManager.zoomOut(abs(tmpX), reducePercent);
 		}
 	}
 
@@ -1486,20 +1470,10 @@ void ObjectsManager::GOHOME() {
 	int16 v1;
 	int16 v3;
 	int16 v4;
-	unsigned int v5;
-	unsigned int v6;
-	unsigned int v7;
-	unsigned int v8;
 	int16 v9;
 	int16 v10;
-	unsigned int v11;
-	unsigned int v12;
-	unsigned int v13;
-	unsigned int v14;
 	int v15;
 	int16 v16;
-	unsigned int v17;
-	unsigned int v18;
 	int v19;
 	int16 v20;
 	unsigned int v21;
@@ -1618,24 +1592,12 @@ void ObjectsManager::GOHOME() {
 			v4 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
 
 			if (_sprite[0].fieldC < 0) {
-				v5 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v5 = -_sprite[0].fieldC;
-				v3 = _vm->_graphicsManager.zoomOut(v3, v5);
-				v6 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v6 = -_sprite[0].fieldC;
-				v4 = _vm->_graphicsManager.zoomOut(v4, v6);
+				v3 = _vm->_graphicsManager.zoomOut(v3, -_sprite[0].fieldC);
+				v4 = _vm->_graphicsManager.zoomOut(v4, -_sprite[0].fieldC);
 			}
 			if (_sprite[0].fieldC > 0) {
-				v7 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v7 = -_sprite[0].fieldC;
-				v3 = _vm->_graphicsManager.zoomIn(v3, v7);
-				v8 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v8 = -_sprite[0].fieldC;
-				v4 = _vm->_graphicsManager.zoomIn(v4, v8);
+				v3 = _vm->_graphicsManager.zoomIn(v3, _sprite[0].fieldC);
+				v4 = _vm->_graphicsManager.zoomIn(v4, _sprite[0].fieldC);
 			}
 			v0 = v3 + g_old_x;
 			v58 = g_old_y + v4;
@@ -1656,24 +1618,12 @@ LABEL_23:
 		v9 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 		v10 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
 		if (_sprite[0].fieldC < 0) {
-			v11 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v11 = -_sprite[0].fieldC;
-			v9 = _vm->_graphicsManager.zoomOut(v9, v11);
-			v12 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v12 = -_sprite[0].fieldC;
-			v10 = _vm->_graphicsManager.zoomOut(v10, v12);
+			v9 = _vm->_graphicsManager.zoomOut(v9, -_sprite[0].fieldC);
+			v10 = _vm->_graphicsManager.zoomOut(v10, -_sprite[0].fieldC);
 		}
 		if (_sprite[0].fieldC > 0) {
-			v13 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v13 = -_sprite[0].fieldC;
-			v9 = _vm->_graphicsManager.zoomIn(v9, v13);
-			v14 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v14 = -_sprite[0].fieldC;
-			v10 = _vm->_graphicsManager.zoomIn(v10, v14);
+			v9 = _vm->_graphicsManager.zoomIn(v9, _sprite[0].fieldC);
+			v10 = _vm->_graphicsManager.zoomIn(v10, _sprite[0].fieldC);
 		}
 		v0 = g_old_x - v9;
 		v58 = g_old_y - v10;
@@ -1691,21 +1641,13 @@ LABEL_43:
 		v0 = g_old_x;
 		v58 = g_old_y;
 	} else {
-		v15 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-		if (v15 < 0)
-			v15 = -v15;
+		v15 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
 		v16 = v15;
 		if (_sprite[0].fieldC < 0) {
-			v17 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v17 = -_sprite[0].fieldC;
-			v16 = _vm->_graphicsManager.zoomOut(v16, v17);
+			v16 = _vm->_graphicsManager.zoomOut(v16, -_sprite[0].fieldC);
 		}
 		if (_sprite[0].fieldC > 0) {
-			v18 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v18 = -_sprite[0].fieldC;
-			v16 = _vm->_graphicsManager.zoomIn(v16, v18);
+			v16 = _vm->_graphicsManager.zoomIn(v16, _sprite[0].fieldC);
 		}
 		v0 = g_old_x;
 		v58 = g_old_y - v16;
