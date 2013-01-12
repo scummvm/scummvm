@@ -1606,7 +1606,6 @@ void ObjectsManager::GOHOME() {
 				}
 			}
 		}
-LABEL_241:
 		_vm->_globals.Compteur = 0;
 		return;
 	}
@@ -1948,7 +1947,8 @@ LABEL_153:
 					}
 				}
 			}
-			goto LABEL_241;
+			_vm->_globals.Compteur = 0;
+			return;
 		}
 		if (_vm->_globals.g_old_sens != nouveau_sens)
 			break;
