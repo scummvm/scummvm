@@ -389,7 +389,6 @@ void Globals::INIT_ANIM() {
 		Bank[idx]._loadedFl = false;
 		Bank[idx]._filename = "";
 		Bank[idx]._fileHeader = 0;
-		Bank[idx].field1C = 0;
 	}
 }
 

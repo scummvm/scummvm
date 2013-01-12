@@ -462,7 +462,7 @@ LABEL_114:
  * Load Animation
  */
 void AnimationManager::loadAnim(const Common::String &animName) {
-	byte v20[15];
+	char dummyBuf[15];
 	char header[10];
 	char filename1[15];
 	char filename2[15];
@@ -481,7 +481,7 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 	int filesize = f.size();
 	int nbytes = filesize - 115;
 	f.read(header, 10);
-	f.read(v20, 15);
+	f.read(dummyBuf, 15);
 	f.read(filename1, 15);
 	f.read(filename2, 15);
 	f.read(filename3, 15);
@@ -490,7 +490,7 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 	f.read(filename6, 15);
 
 	if (header[0] != 'A' || header[1] != 'N' || header[2] != 'I' || header[3] != 'S')
-		error("File incompatible with this soft.");
+		error("Invalid animation File: %s", filename.c_str());
 
 	const char *files[6] = { &filename1[0], &filename2[0], &filename3[0], &filename4[0],
 			&filename5[0], &filename6[0] };
@@ -498,9 +498,9 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 	for (int idx = 0; idx <= 5; ++idx) {
 		if (files[idx][0]) {
 			if (!f.exists(files[idx]))
-				error("File not found");
+				error("Missing file %s in animation File: %s", files[idx], filename.c_str());
 			if (loadSpriteBank(idx + 1, files[idx]))
-				error("File not compatible with this soft.");
+				error("Invalid sprite bank in animation File: %s", filename.c_str());
 		}
 	}
 
@@ -528,7 +528,6 @@ void AnimationManager::clearAnim() {
 		_vm->_globals.Bank[idx]._loadedFl = false;
 		_vm->_globals.Bank[idx]._filename = "";
 		_vm->_globals.Bank[idx]._fileHeader = 0;
-		_vm->_globals.Bank[idx].field1C = 0;
 	}
 }
 
@@ -539,7 +538,6 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	byte *v13;
 	byte *v19;
 	int result = 0;
-	_vm->_globals.Bank[idx].field1C = _vm->_fileManager.fileSize(filename);
 	_vm->_globals.Bank[idx]._loadedFl = true;
 	_vm->_globals.Bank[idx]._filename = filename;
 
@@ -551,63 +549,60 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	else if (fileDataPtr[1] == 'O' && fileDataPtr[2] == 'R')
 		_vm->_globals.Bank[idx]._fileHeader = 2;
 
-	if (_vm->_globals.Bank[idx]._fileHeader) {
-		_vm->_globals.Bank[idx]._data = fileDataPtr;
-
-		bool loopCond = false;
-		int v8 = 0;
-		int width;
-		int height;
-		do {
-			width = _vm->_objectsManager.getWidth(fileDataPtr, v8);
-			height = _vm->_objectsManager.getHeight(fileDataPtr, v8);
-			if (!width && !height)
-				loopCond = true;
-			else
-				++v8;
-			if (v8 > 249)
-				loopCond = true;
-		} while (!loopCond);
-
-		if (v8 <= 249) {
-			_vm->_globals.Bank[idx].field1A = v8;
-
-			Common::String ofsFilename = _vm->_globals.Bank[idx]._filename;
-			char ch;
-			do {
-				ch = ofsFilename.lastChar();
-				ofsFilename.deleteLastChar();
-			} while (ch != '.');
-			ofsFilename += ".OFS";
-
-			Common::File f;
-			if (f.exists(ofsFilename)) {
-				v19 = _vm->_fileManager.loadFile(ofsFilename);
-				v13 = v19;
-				for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx].field1A; ++objIdx, v13 += 8) {
-					int x1 = (int16)READ_LE_UINT16(v13);
-					int y1 = (int16)READ_LE_UINT16(v13 + 2);
-					int x2 = (int16)READ_LE_UINT16(v13 + 4);
-					int y2 = (int16)READ_LE_UINT16(v13 + 6);
-
-					_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x1, y1, 0);
-					if (_vm->_globals.Bank[idx]._fileHeader == 2)
-						_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x2, y2, 1);
-				}
-
-				_vm->_globals.freeMemory(v19);
-			}
-
-			result = 0;
-		} else {
-			_vm->_globals.freeMemory(fileDataPtr);
-			_vm->_globals.Bank[idx]._loadedFl = false;
-			result = -2;
-		}
-	} else {
+	if (!_vm->_globals.Bank[idx]._fileHeader) {
 		_vm->_globals.freeMemory(fileDataPtr);
 		_vm->_globals.Bank[idx]._loadedFl = false;
 		result = -1;
+	}
+	
+	_vm->_globals.Bank[idx]._data = fileDataPtr;
+
+	int v8 = 0;
+	int width;
+	int height;
+	for(;;) {
+		width = _vm->_objectsManager.getWidth(fileDataPtr, v8);
+		height = _vm->_objectsManager.getHeight(fileDataPtr, v8);
+		if (!width && !height)
+			break;
+
+		++v8;
+		if (v8 > 249)
+			break;
+	}
+
+	if (v8 > 249) {
+		_vm->_globals.freeMemory(fileDataPtr);
+		_vm->_globals.Bank[idx]._loadedFl = false;
+		result = -2;
+	}
+	_vm->_globals.Bank[idx].field1A = v8;
+
+	Common::String ofsFilename = _vm->_globals.Bank[idx]._filename;
+	char ch;
+	do {
+		ch = ofsFilename.lastChar();
+		ofsFilename.deleteLastChar();
+	} while (ch != '.');
+	ofsFilename += ".OFS";
+
+	Common::File f;
+	if (f.exists(ofsFilename)) {
+		v19 = _vm->_fileManager.loadFile(ofsFilename);
+		v13 = v19;
+		for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx].field1A; ++objIdx, v13 += 8) {
+			int x1 = (int16)READ_LE_UINT16(v13);
+			int y1 = (int16)READ_LE_UINT16(v13 + 2);
+			int x2 = (int16)READ_LE_UINT16(v13 + 4);
+			int y2 = (int16)READ_LE_UINT16(v13 + 6);
+
+			_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x1, y1, 0);
+			if (_vm->_globals.Bank[idx]._fileHeader == 2)
+				_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x2, y2, 1);
+		}
+
+		_vm->_globals.freeMemory(v19);
+		result = 0;
 	}
 
 	return result;

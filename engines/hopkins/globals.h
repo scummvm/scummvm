@@ -70,7 +70,6 @@ struct BankItem {
 	Common::String _filename;
 	int _fileHeader;
 	int field1A;
-	uint32 field1C;
 };
 
 struct ListeItem {

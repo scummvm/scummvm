@@ -363,7 +363,6 @@ LABEL_7:
 	}
 	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 	_vm->_eventsManager._curMouseButton = 0;
-	bool v20 = false;
 	int newInventoryItem = 0;
 
 	// Main loop to select an inventory item
@@ -390,38 +389,35 @@ LABEL_7:
 				break;
 			_vm->_objectsManager.takeInventoryObject(_vm->_globals._inventory[newInventoryItem]);
 			if (_vm->_eventsManager._mouseCursorId == 8)
-				v20 = true;
-			if (!v20) {
-				_vm->_scriptManager.TRAVAILOBJET = true;
-				_vm->_globals._saveData->data[svField3] = _vm->_globals._curObjectIndex;
-				_vm->_globals._saveData->data[svField8] = _vm->_globals._inventory[newInventoryItem];
-				_vm->_globals._saveData->data[svField9] = _vm->_eventsManager._mouseCursorId;
-				_vm->_objectsManager.OPTI_OBJET();
-				_vm->_scriptManager.TRAVAILOBJET = false;
+				break;
 
-				if (_vm->_soundManager._voiceOffFl) {
-					do
-						_vm->_eventsManager.VBL();
-					while (!_vm->_globals._exitId && _vm->_eventsManager.getMouseButton() != 1);
-					_vm->_fontManager.hideText(9);
-				}
-				if (_vm->_globals._exitId) {
-					if (_vm->_globals._exitId == 2)
-						v20 = true;
-					_vm->_globals._exitId = 0;
-					if (!v20) {
-						_inventBuf2 = _vm->_globals.freeMemory(_inventBuf2);
-						_vm->_dialogsManager._inventWin1 = _vm->_globals.freeMemory(_vm->_dialogsManager._inventWin1);
-						goto LABEL_7;
-					}
-				} else if (!v20) {
-					_inventDisplayedFl = true;
-				}
+			_vm->_scriptManager.TRAVAILOBJET = true;
+			_vm->_globals._saveData->data[svField3] = _vm->_globals._curObjectIndex;
+			_vm->_globals._saveData->data[svField8] = _vm->_globals._inventory[newInventoryItem];
+			_vm->_globals._saveData->data[svField9] = _vm->_eventsManager._mouseCursorId;
+			_vm->_objectsManager.OPTI_OBJET();
+			_vm->_scriptManager.TRAVAILOBJET = false;
+
+			if (_vm->_soundManager._voiceOffFl) {
+				do
+					_vm->_eventsManager.VBL();
+				while (!_vm->_globals._exitId && _vm->_eventsManager.getMouseButton() != 1);
+				_vm->_fontManager.hideText(9);
 			}
+			if (_vm->_globals._exitId) {
+				if (_vm->_globals._exitId == 2) {
+					_vm->_globals._exitId = 0;
+					break;
+				}
+
+				_vm->_globals._exitId = 0;
+				_inventBuf2 = _vm->_globals.freeMemory(_inventBuf2);
+				_vm->_dialogsManager._inventWin1 = _vm->_globals.freeMemory(_vm->_dialogsManager._inventWin1);
+				goto LABEL_7;
+			} else
+				_inventDisplayedFl = true;
 		}
 		if (_removeInventFl)
-			v20 = true;
-		if (v20)
 			break;
 		_vm->_eventsManager.VBL();
 		if (_vm->_globals._screenId >= 35 && _vm->_globals._screenId <= 40)
