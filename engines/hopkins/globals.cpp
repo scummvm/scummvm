@@ -160,7 +160,7 @@ Globals::Globals() {
 	_actionDirection = 0;
 	_actionDirection = 0;
 	SegmentEnCours = 0;
-	STOP_BUG = 0;
+	pathFindingDepth = 0;
 
 	Credit_bx = -1;
 	Credit_bx1 = -1;
@@ -216,7 +216,7 @@ Globals::Globals() {
 	old_x2_67 = 0;
 	old_y2_68 = 0;
 	old_zone_68 = 0;
-	old_z_69 = 0;
+	_oldZoneNum = 0;
 	old_x_69 = 0;
 	old_y_70 = 0;
 	compteur_71 = 0;

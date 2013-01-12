@@ -1076,7 +1076,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	for (int i = 0; i <= 44; i++)
 		_vm->_globals.BOBZONE[i] = 0;
 
-	_vm->_objectsManager.NUMZONE = -1;
+	_vm->_objectsManager._zoneNum = -1;
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
 	_characterBuffer = _vm->_fileManager.searchCat(a2, 5);
@@ -1117,14 +1117,14 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_objectsManager.INILINK(v22);
 	_vm->_objectsManager.PERSO_ON = true;
 	_vm->_globals.GOACTION = false;
-	_vm->_objectsManager.NUMZONE = -1;
+	_vm->_objectsManager._zoneNum = -1;
 	initCharacterAnim();
 	VISU_PARLE();
 	dialogWait();
 	_vm->_graphicsManager.INI_ECRAN2(v22, true);
 	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager._forceZoneFl = true;
-	_vm->_objectsManager.NUMZONE = -1;
+	_vm->_objectsManager._zoneNum = -1;
 	do {
 		int mouseButton = _vm->_eventsManager.getMouseButton();
 		if (mouseButton == 1)

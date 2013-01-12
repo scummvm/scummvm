@@ -82,7 +82,7 @@ public:
 	bool _visibleFl;
 	bool BOBTOUS;
 	int my_anim;
-	int NUMZONE;
+	int _zoneNum;
 	bool _forceZoneFl;
 	bool _changeVerbFl;
 	int _verb;

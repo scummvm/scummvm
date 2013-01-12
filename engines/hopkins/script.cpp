@@ -740,7 +740,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int v13 = _vm->_objectsManager.getSpriteY(0);
 			int v14 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v14, v13, 564, 420);
-			_vm->_objectsManager.NUMZONE = -1;
+			_vm->_objectsManager._zoneNum = -1;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1629,7 +1629,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int v56 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v56, v55, 361, 325);
 			_vm->_globals.NOT_VERIF = true;
-			_vm->_objectsManager.NUMZONE = -1;
+			_vm->_objectsManager._zoneNum = -1;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1659,7 +1659,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int v58 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v58, v57, 361, 325);
 			_vm->_globals.NOT_VERIF = true;
-			_vm->_objectsManager.NUMZONE = -1;
+			_vm->_objectsManager._zoneNum = -1;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1836,7 +1836,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int v38 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v38, v37, 330, 418);
 			_vm->_globals.NOT_VERIF = true;
-			_vm->_objectsManager.NUMZONE = 0;
+			_vm->_objectsManager._zoneNum = 0;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1868,7 +1868,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int v39 = _vm->_objectsManager.getSpriteY(0);
 			int v40 = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v40, v39, 330, 314);
-			_vm->_objectsManager.NUMZONE = 0;
+			_vm->_objectsManager._zoneNum = 0;
 			_vm->_globals.NOT_VERIF = true;
 			do {
 				if (_vm->shouldQuit())

@@ -402,7 +402,7 @@ public:
 	int SegmentEnCours;
 	int couleur_40;
 
-	int STOP_BUG;
+	int pathFindingDepth;
 
 	int force_to_data_0;
 	int oldzone_46;
@@ -414,7 +414,7 @@ public:
 	int compteur_71;
 	int zozo_73;
 	int old_y2_68;
-	int old_z_69;
+	int _oldZoneNum;
 	int j_104;
 
 	int Credit_bx;

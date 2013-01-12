@@ -2610,11 +2610,11 @@ void HopkinsEngine::BTOCEAN() {
 	_fontManager.hideText(9);
 	if (_eventsManager._mouseCursorId == 16) {
 		_eventsManager.getMouseX();
-		if (_objectsManager.NUMZONE > 0) {
+		if (_objectsManager._zoneNum > 0) {
 			int oldPosX = _eventsManager.getMouseX();
 			int oldPosY = _eventsManager.getMouseY();
 			bool displAnim = false;
-			if (_objectsManager.NUMZONE == 1) {
+			if (_objectsManager._zoneNum == 1) {
 				if (_globals._oceanDirection == 3)
 					_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, 0);
 				else if (_globals._oceanDirection == 1)
@@ -2646,7 +2646,7 @@ void HopkinsEngine::BTOCEAN() {
 				displAnim = true;
 			}
 LABEL_22:
-			if (_objectsManager.NUMZONE == 2) {
+			if (_objectsManager._zoneNum == 2) {
 				if (_globals._oceanDirection == 7)
 					_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, 0);
 				else if (_globals._oceanDirection == 1)
@@ -2678,7 +2678,7 @@ LABEL_22:
 				displAnim = true;
 			}
 LABEL_41:
-			if (_objectsManager.NUMZONE == 3) {
+			if (_objectsManager._zoneNum == 3) {
 				if (_globals._oceanDirection == 3) {
 					int oldX = _objectsManager.getSpriteX(0);
 					do {
@@ -2734,7 +2734,7 @@ LABEL_72:
 				_globals._oceanDirection = 1;
 				_globals._exitId = 3;
 			}
-			if (_objectsManager.NUMZONE == 4) {
+			if (_objectsManager._zoneNum == 4) {
 				if (_globals._oceanDirection == 3) {
 					int oldX = _objectsManager.getSpriteX(0);
 					do {

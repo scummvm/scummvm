@@ -57,7 +57,7 @@ ObjectsManager::ObjectsManager() {
 	_visibleFl = false;
 	BOBTOUS = false;
 	my_anim = 0;
-	NUMZONE = 0;
+	_zoneNum = 0;
 	_forceZoneFl = false;
 	_changeVerbFl = false;
 	_verb = 0;
@@ -1464,7 +1464,7 @@ void ObjectsManager::checkZone() {
 				_vm->_eventsManager.changeMouseCursor(4);
 			}
 		}
-		NUMZONE = v4;
+		_zoneNum = v4;
 		_vm->_globals.old_x_69 = v0;
 		_vm->_globals.old_y_70 = v2;
 		_vm->_globals.old_zone_68 = v4;
@@ -1579,7 +1579,7 @@ void ObjectsManager::GOHOME() {
 			if (_vm->_globals.GOACTION)
 				v54 = _vm->_globals._saveData->data[svField2];
 			else
-				v54 = NUMZONE;
+				v54 = _zoneNum;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
@@ -1918,7 +1918,7 @@ LABEL_153:
 			if (_vm->_globals.GOACTION)
 				v49 = _vm->_globals._saveData->data[svField2];
 			else
-				v49 = NUMZONE;
+				v49 = _zoneNum;
 			setSpriteIndex(0, _vm->_globals.g_old_sens + 59);
 			_vm->_globals._actionDirection = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
@@ -2388,7 +2388,7 @@ void ObjectsManager::handleLeftButton() {
 		if (!_vm->_globals.GOACTION)
 			goto LABEL_38;
 		checkZone();
-		if (NUMZONE <= 0)
+		if (_zoneNum <= 0)
 			return;
 		v2 = 0;
 		v3 = _vm->_globals.essai2;
@@ -2411,10 +2411,10 @@ void ObjectsManager::handleLeftButton() {
 		_vm->_globals._saveData->data[svField2] = 0;
 	}
 LABEL_38:
-	if (_vm->_globals.PLAN_FLAG && (_vm->_eventsManager._mouseCursorId != 4 || NUMZONE <= 0))
+	if (_vm->_globals.PLAN_FLAG && (_vm->_eventsManager._mouseCursorId != 4 || _zoneNum <= 0))
 		return;
-	if (NUMZONE != -1 && NUMZONE != 0) {
-		zoneCount = NUMZONE;
+	if (_zoneNum != -1 && _zoneNum != 0) {
+		zoneCount = _zoneNum;
 		zoneX = _vm->_globals.ZONEP[zoneCount]._destX;
 		if (zoneX) {
 			zoneY = _vm->_globals.ZONEP[zoneCount]._destY;
@@ -2429,7 +2429,7 @@ LABEL_38:
 	_vm->_globals.GOACTION = false;
 	v9 = _vm->_globals.chemin;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
-	if (_vm->_globals._forestFl && NUMZONE >= 20 && NUMZONE <= 23) {
+	if (_vm->_globals._forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
 		if (getSpriteY(0) <= 374 || getSpriteY(0) > 410) {
 			v10 = getSpriteX(0);
 			v11 = getSpriteY(0);
@@ -2478,7 +2478,7 @@ LABEL_65:
 		if (!_vm->_globals.NOMARCHE && _vm->_globals.PLAN_FLAG)
 			_vm->_globals.chemin = cityMapCarRoute(getSpriteX(0), getSpriteY(0), destX, destY);
 	}
-	if (NUMZONE != -1 && NUMZONE != 0) {
+	if (_zoneNum != -1 && _zoneNum != 0) {
 		if (_vm->_eventsManager._mouseCursorId == 23)
 			_vm->_globals._saveData->data[svField1] = 5;
 		else 
@@ -2486,14 +2486,14 @@ LABEL_65:
 
 		if (_vm->_globals.PLAN_FLAG)
 			_vm->_globals._saveData->data[svField1] = 6;
-		_vm->_globals._saveData->data[svField2] = NUMZONE;
+		_vm->_globals._saveData->data[svField2] = _zoneNum;
 		_vm->_globals._saveData->data[svField3] = _vm->_globals._curObjectIndex;
 		_vm->_globals.GOACTION = true;
 	}
 	_vm->_fontManager.hideText(5);
 	_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 	if (_vm->_globals._screenId == 20 && _vm->_globals._saveData->data[svField132] == 1
-				&& _vm->_globals._curObjectIndex == 20 && NUMZONE == 12
+				&& _vm->_globals._curObjectIndex == 20 && _zoneNum == 12
 				&& _vm->_eventsManager._mouseCursorId == 23) {
 		// Special case for throwing darts at the switch in Purgatory - the player shouldn't move
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
@@ -2512,7 +2512,7 @@ void ObjectsManager::PARADISE() {
 	result = _vm->_globals._saveData->data[svField1];
 	if (result && _vm->_globals._saveData->data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.hideText(5);
-		if (!_vm->_globals._forestFl || NUMZONE < 20 || NUMZONE > 23) {
+		if (!_vm->_globals._forestFl || _zoneNum < 20 || _zoneNum > 23) {
 			if (_vm->_graphicsManager._largeScreenFl) {
 				_vm->_graphicsManager.no_scroll = 2;
 				if (_vm->_eventsManager._startPos.x >= getSpriteX(0) - 320)
@@ -2574,11 +2574,11 @@ LABEL_64:
 			_vm->_talkManager.REPONSE2(_vm->_globals._saveData->data[svField2], _vm->_globals._saveData->data[svField1]);
 		}
 		_vm->_eventsManager.changeMouseCursor(4);
-		if (NUMZONE != -1 && NUMZONE != 0 && !_vm->_globals.ZONEP[NUMZONE].field16) {
-			NUMZONE = -1;
+		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_globals.ZONEP[_zoneNum].field16) {
+			_zoneNum = -1;
 			_forceZoneFl = true;
 		}
-		if (NUMZONE != _vm->_globals._saveData->data[svField2] || NUMZONE == -1 || NUMZONE == 0) {
+		if (_zoneNum != _vm->_globals._saveData->data[svField2] || _zoneNum == -1 || _zoneNum == 0) {
 			_vm->_eventsManager._mouseCursorId = 4;
 			_changeVerbFl = false;
 		} else {
@@ -2592,7 +2592,7 @@ LABEL_64:
 		}
 		if (_vm->_eventsManager._mouseCursorId != 23)
 			_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
-		NUMZONE = 0;
+		_zoneNum = 0;
 		_vm->_globals._saveData->data[svField1] = 0;
 		_vm->_globals._saveData->data[svField2] = 0;
 	}
@@ -2602,8 +2602,8 @@ LABEL_64:
 	}
 	if (_vm->_globals.NOMARCHE) {
 		if (_vm->_eventsManager._mouseCursorId == 4) {
-			result = NUMZONE + 1;
-			if (NUMZONE != -1 && NUMZONE != 0)
+			result = _zoneNum + 1;
+			if (_zoneNum != -1 && _zoneNum != 0)
 				handleRightButton();
 		}
 	}
@@ -2630,7 +2630,7 @@ void ObjectsManager::clearScreen() {
 	}
 	_vm->_eventsManager._mouseCursorId = 4;
 	_verb = 4;
-	NUMZONE = 0;
+	_zoneNum = 0;
 	Vold_taille = 0;
 	SPEED_PTR = g_PTRNUL;
 	SPEED_X = 0;
@@ -3124,7 +3124,7 @@ void ObjectsManager::nextVerbIcon() {
 
 	do {
 		if (_vm->_eventsManager._mouseCursorId == 4) {
-			if (!_vm->_globals.NOMARCHE || NUMZONE == -1 || NUMZONE == 0)
+			if (!_vm->_globals.NOMARCHE || _zoneNum == -1 || _zoneNum == 0)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
@@ -3132,146 +3132,146 @@ void ObjectsManager::nextVerbIcon() {
 
 		if (_vm->_eventsManager._mouseCursorId == 5 || _vm->_eventsManager._mouseCursorId == 6) {
 			_vm->_eventsManager._mouseCursorId = 6;
-			if (_vm->_globals.ZONEP[NUMZONE].field6 == 1)
+			if (_vm->_globals.ZONEP[_zoneNum].field6 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 7) {
-			if (_vm->_globals.ZONEP[NUMZONE].field7 == 1)
+			if (_vm->_globals.ZONEP[_zoneNum].field7 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 8) {
-			if (_vm->_globals.ZONEP[NUMZONE].field8 == 1)
+			if (_vm->_globals.ZONEP[_zoneNum].field8 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 9) {
-			if (_vm->_globals.ZONEP[NUMZONE].field9 == 1)
+			if (_vm->_globals.ZONEP[_zoneNum].field9 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 10) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldA == 1)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldA == 1)
 				return;
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 11) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldB == 1)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldB == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 12) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldC == 1)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldC == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 13) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldD == 1)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldD == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 14) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldE == 1)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldE == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 15) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldF == 1)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldF == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 16) {
-			if (_vm->_globals.ZONEP[NUMZONE].field6 == 2)
+			if (_vm->_globals.ZONEP[_zoneNum].field6 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 17) {
-			if (_vm->_globals.ZONEP[NUMZONE].field9 == 2)
+			if (_vm->_globals.ZONEP[_zoneNum].field9 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 18) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldA == 2)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldA == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 19) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldB == 2)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldB == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 20) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldC == 2)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldC == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 21) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldF == 2)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldF == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 22) {
-			if (_vm->_globals.ZONEP[NUMZONE].fieldD == 2)
+			if (_vm->_globals.ZONEP[_zoneNum].fieldD == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 23) {
-			if (_vm->_globals.ZONEP[NUMZONE].field8 == 2)
+			if (_vm->_globals.ZONEP[_zoneNum].field8 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 24) {
-			if (_vm->_globals.ZONEP[NUMZONE].field9 == 3)
+			if (_vm->_globals.ZONEP[_zoneNum].field9 == 3)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		_vm->_eventsManager._mouseCursorId = 4;
-	} while (_vm->_globals.ZONEP[NUMZONE].fieldE != 2);
+	} while (_vm->_globals.ZONEP[_zoneNum].fieldE != 2);
 }
 
 /**
  * Handle Right button
  */
 void ObjectsManager::handleRightButton() {
-	if (NUMZONE != -1 && NUMZONE != 0) {
+	if (_zoneNum != -1 && _zoneNum != 0) {
 		nextVerbIcon();
 		if (_vm->_eventsManager._mouseCursorId != 23)
 			_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
