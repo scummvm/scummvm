@@ -486,11 +486,13 @@ void Actor::turnTo(const Math::Vector3d &pos, bool snap) {
 		}
 	}
 
-	Math::Matrix4 m;
+	Math::Matrix3 m;
 	m.buildFromTargetDir(actorForward(), lookVector, actorUp(), up);
 
 	if (_puckOrient) {
-		turnTo(m.getPitch(), m.getYaw(), m.getRoll(), snap);
+		Math::Angle y, p, r;
+		m.getPitchYawRoll(&p, &y, &r);
+		turnTo(p, y, r, snap);
 	} else {
 		turnTo(_pitch, m.getYaw(), _roll, snap);
 	}
