@@ -3426,13 +3426,16 @@ void ObjectsManager::initBorder(int zoneIdx) {
  * Get next icon for an object in the inventory
  */
 void ObjectsManager::nextObjectIcon(int idx) {
-	if (_vm->_eventsManager._mouseCursorId == 0 || _vm->_eventsManager._mouseCursorId == 16 || _vm->_eventsManager._mouseCursorId == 3 ||
-	    _vm->_eventsManager._mouseCursorId == 2 || _vm->_eventsManager._mouseCursorId == 7)
+	if (_vm->_eventsManager._mouseCursorId == 0 || _vm->_eventsManager._mouseCursorId == 2 ||
+	    _vm->_eventsManager._mouseCursorId == 3 || _vm->_eventsManager._mouseCursorId == 16)
 		return;
 		
 	int nextCursorId = _vm->_eventsManager._mouseCursorId + 1;
+	if (nextCursorId > 25)
+		nextCursorId = 6;
+
 	do {
-		if (nextCursorId == 6) {
+		if (nextCursorId == 2 || nextCursorId == 5 || nextCursorId == 6) {
 			_vm->_eventsManager._mouseCursorId = 6;
 			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field2 == 1)
 				return;
@@ -3457,7 +3460,6 @@ void ObjectsManager::nextObjectIcon(int idx) {
 
 		if (nextCursorId == 11) {
 			_vm->_eventsManager._mouseCursorId = 11;
-			++_vm->_eventsManager._mouseCursorId;
 			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field4 == 1)
 				return;
 			nextCursorId++;
@@ -3481,6 +3483,11 @@ void ObjectsManager::nextObjectIcon(int idx) {
 			_vm->_eventsManager._mouseCursorId = 23;
 			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field6 == 2)
 				return;
+			nextCursorId = 24;
+		}
+
+		if (nextCursorId == 24 || nextCursorId == 25) {
+			_vm->_eventsManager._mouseCursorId = 25;
 		}
 		
 		nextCursorId = 6;
