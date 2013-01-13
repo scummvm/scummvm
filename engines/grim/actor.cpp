@@ -676,10 +676,8 @@ void Actor::moveTo(const Math::Vector3d &pos) {
 	}
 
 	Math::Vector3d v = pos - _pos;
-	foreach (Actor *a, Actor::getPool()) {
-		if (a != this && a->isInSet(_setName) && a->isVisible()) {
-			handleCollisionWith(a, mode, &v);
-		}
+	foreach (Actor *a, g_grim->getActiveActors()) {
+		handleCollisionWith(a, mode, &v);
 	}
 	_pos += v;
 }
@@ -1725,7 +1723,7 @@ Math::Vector3d Actor::getTangentPos(const Math::Vector3d &pos, const Math::Vecto
 }
 
 bool Actor::handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d *vec) const {
-	if (actor->_collisionMode == CollisionOff) {
+	if (actor->_collisionMode == CollisionOff || actor == this) {
 		return false;
 	}
 
