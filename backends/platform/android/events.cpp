@@ -583,42 +583,76 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case JKEYCODE_DPAD_DOWN:
 		case JKEYCODE_DPAD_LEFT:
 		case JKEYCODE_DPAD_RIGHT:
-			if (arg1 != JACTION_DOWN)
-				return;
+			if (_show_mouse) {
+				if (arg1 != JACTION_DOWN)
+					return;
 
-			e.type = Common::EVENT_MOUSEMOVE;
+				e.type = Common::EVENT_MOUSEMOVE;
 
-			e.mouse = getEventManager()->getMousePos();
+				e.mouse = getEventManager()->getMousePos();
 
-			{
-				int16 *c;
-				int s;
+				{
+					int16 *c;
+					int s;
 
-				if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_DOWN) {
-					c = &e.mouse.y;
-					s = _eventScaleY;
-				} else {
-					c = &e.mouse.x;
-					s = _eventScaleX;
+					if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_DOWN) {
+						c = &e.mouse.y;
+						s = _eventScaleY;
+					} else {
+						c = &e.mouse.x;
+						s = _eventScaleX;
+					}
+
+					// the longer the button held, the faster the pointer is
+					// TODO put these values in some option dlg?
+					int f = CLIP(arg4, 1, 8) * _dpad_scale * 100 / s;
+
+					if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_LEFT)
+						*c -= f;
+					else
+						*c += f;
 				}
 
-				// the longer the button held, the faster the pointer is
-				// TODO put these values in some option dlg?
-				int f = CLIP(arg4, 1, 8) * _dpad_scale * 100 / s;
+				clipMouse(e.mouse);
 
-				if (arg2 == JKEYCODE_DPAD_UP || arg2 == JKEYCODE_DPAD_LEFT)
-					*c -= f;
-				else
-					*c += f;
+				lockMutex(_event_queue_lock);
+				_event_queue.push(e);
+				unlockMutex(_event_queue_lock);
+
+				return;
+			} else {
+				switch (arg1) {
+				case JACTION_DOWN:
+					e.type = Common::EVENT_KEYDOWN;
+					break;
+				case JACTION_UP:
+					e.type = Common::EVENT_KEYUP;
+					break;
+				default:
+					LOGE("unhandled jaction on dpad key: %d", arg1);
+					return;
+				}
+
+				switch (arg2) {
+				case JKEYCODE_DPAD_UP:
+					e.kbd.keycode = Common::KEYCODE_UP;
+					break;
+				case JKEYCODE_DPAD_DOWN:
+					e.kbd.keycode = Common::KEYCODE_DOWN;
+					break;
+				case JKEYCODE_DPAD_LEFT:
+					e.kbd.keycode = Common::KEYCODE_LEFT;
+					break;
+				case JKEYCODE_DPAD_RIGHT:
+					e.kbd.keycode = Common::KEYCODE_RIGHT;
+					break;
+				}
+
+				lockMutex(_event_queue_lock);
+				_event_queue.push(e);
+				unlockMutex(_event_queue_lock);
+				return;
 			}
-
-			clipMouse(e.mouse);
-
-			lockMutex(_event_queue_lock);
-			_event_queue.push(e);
-			unlockMutex(_event_queue_lock);
-
-			return;
 
 		case JKEYCODE_DPAD_CENTER:
 			switch (arg1) {
