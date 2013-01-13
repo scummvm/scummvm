@@ -421,7 +421,8 @@ void GfxFrameout::kernelUpdateScreenItem(reg_t object) {
 
 	itemEntry->signal = readSelectorValue(_segMan, object, SELECTOR(signal));
 	itemEntry->scaleSignal = readSelectorValue(_segMan, object, SELECTOR(scaleSignal));
-	if (itemEntry->scaleSignal == 1) {
+
+	if (itemEntry->scaleSignal & kScaleSignalDoScaling32) {
 		itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
 		itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
 	} else {
@@ -743,10 +744,10 @@ void GfxFrameout::kernelFrameout() {
 				} else if (view) {
 					// Process global scaling, if needed.
 					// TODO: Seems like SCI32 always processes global scaling for scaled objects
-					if (itemEntry->scaleSignal != 0 && itemEntry->scaleSignal != 1)
-						error("Unknown scale signal: %d", itemEntry->scaleSignal);
 					// TODO: We can only process symmetrical scaling for now (i.e. same value for scaleX/scaleY)
-					if (itemEntry->scaleSignal == 1 && itemEntry->scaleX == itemEntry->scaleY)
+					if ((itemEntry->scaleSignal & kScaleSignalDoScaling32) && 
+					   !(itemEntry->scaleSignal & kScaleSignalDisableGlobalScaling32) &&
+					    (itemEntry->scaleX == itemEntry->scaleY))
 						applyGlobalScaling(itemEntry, it->planeRect, view->getHeight(itemEntry->loopNo, itemEntry->celNo));
 
 					if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
