@@ -33,7 +33,6 @@
 namespace Toltecs {
 
 Screen::Screen(ToltecsEngine *vm) : _vm(vm) {
-
 	_frontScreen = new byte[268800];
 	_backScreen = new byte[870400];
 
@@ -68,16 +67,13 @@ Screen::Screen(ToltecsEngine *vm) : _vm(vm) {
 	_renderQueue = new RenderQueue(_vm);
 	_fullRefresh = false;
 	_guiRefresh = false;
-
 }
 
 Screen::~Screen() {
-
 	delete[] _frontScreen;
 	delete[] _backScreen;
 
 	delete _renderQueue;
-
 }
 
 void Screen::unpackRle(byte *source, byte *dest, uint16 width, uint16 height) {
@@ -120,7 +116,6 @@ void Screen::loadMouseCursor(uint resIndex) {
 }
 
 void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
-
 	byte *imageData = _vm->_res->load(resIndex)->data;
 	int16 headerSize = READ_LE_UINT16(imageData);
 	int16 width = imageData[2];
@@ -153,7 +148,6 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 	}
 
 	_guiRefresh = true;
-
 }
 
 void Screen::startShakeScreen(int16 shakeCounter) {
@@ -185,7 +179,6 @@ bool Screen::updateShakeScreen() {
 }
 
 void Screen::addStaticSprite(byte *spriteItem) {
-
 	DrawRequest drawRequest;
 	memset(&drawRequest, 0, sizeof(drawRequest));
 
@@ -200,11 +193,9 @@ void Screen::addStaticSprite(byte *spriteItem) {
 	debug(0, "Screen::addStaticSprite() x = %d; y = %d; baseColor = %d; resIndex = %d; flags = %04X", drawRequest.x, drawRequest.y, drawRequest.baseColor, drawRequest.resIndex, drawRequest.flags);
 
 	addDrawRequest(drawRequest);
-
 }
 
 void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, int16 *spriteArray, bool loop, int mode) {
-
 	//debug(0, "Screen::addAnimatedSprite(%d, %d, %d)", x, y, fragmentId);
 
 	DrawRequest drawRequest;
@@ -257,9 +248,7 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 
 		WRITE_LE_UINT16(spriteItem + 0, loopNum);
 		WRITE_LE_UINT16(spriteItem + 4, frameNum);
-
 	}
-
 }
 
 void Screen::clearSprites() {
@@ -267,7 +256,6 @@ void Screen::clearSprites() {
 }
 
 void Screen::blastSprite(int16 x, int16 y, int16 fragmentId, int16 resIndex, uint16 flags) {
-
 	DrawRequest drawRequest;
 	SpriteDrawItem sprite;
 
@@ -283,7 +271,6 @@ void Screen::blastSprite(int16 x, int16 y, int16 fragmentId, int16 resIndex, uin
 		sprite.y -= _vm->_cameraY;
 		drawSprite(sprite);
 	}
-
 }
 
 void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
@@ -356,11 +343,9 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y - 1, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
 	_guiRefresh = true;
-
 }
 
 void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
-
 	int16 x, y, maxWidth, width, length;
 	byte durationModifier = 1;
 	byte *textData = _vm->_script->getSlotData(slotIndex) + slotOffset;
@@ -454,11 +439,9 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 		textDurationMultiplier += 100;
 	}
 	item->duration = 4 * textDurationMultiplier * durationModifier;
-
 }
 
 void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 width, TalkTextItem *item) {
-
 	if (width > 0) {
 		TextRect *textRect = &item->lines[item->lineCount];
 		width = width + 1 - font.getSpacing();
@@ -471,7 +454,6 @@ void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 
 	}
 
 	y += font.getHeight() - 1;
-
 }
 
 void Screen::addTalkTextItemsToRenderQueue() {
@@ -523,7 +505,6 @@ void Screen::registerFont(uint fontIndex, uint resIndex) {
 }
 
 void Screen::drawGuiTextMulti(byte *textData) {
-
 	int16 x = 0, y = 0;
 
 	// Really strange stuff.
@@ -558,7 +539,6 @@ void Screen::drawGuiTextMulti(byte *textData) {
 	} while (*wrapState.sourceString != 0xFF);
 
 	_guiRefresh = true;
-
 }
 
 int16 Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wrapState) {
@@ -581,7 +561,6 @@ int16 Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wra
 	}
 
 	return len;
-
 }
 
 void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex, GuiTextWrapState &wrapState) {
@@ -595,7 +574,6 @@ void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uin
 }
 
 int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, const byte *text, int len, int16 *ywobble, bool outline) {
-
 	//debug(0, "Screen::drawString(%d, %d, %d, %d)", x, y, color, fontResIndex);
 
 	Font font(_vm->_res->load(fontResIndex)->data);
@@ -622,11 +600,9 @@ int16 Screen::drawString(int16 x, int16 y, byte color, uint fontResIndex, const 
 		*ywobble = yadd;
 
 	return x;
-
 }
 
 void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, byte color, bool outline) {
-
 	int16 charWidth, charHeight;
 	byte *charData;
 
@@ -655,11 +631,9 @@ void Screen::drawChar(const Font &font, byte *dest, int16 x, int16 y, byte ch, b
 		}
 		dest += 640 - charWidth;
 	}
-
 }
 
 void Screen::drawSurface(int16 x, int16 y, Graphics::Surface *surface) {
-
 	int16 skipX = 0;
 	int16 width = surface->w;
 	int16 height = surface->h;
@@ -704,11 +678,9 @@ void Screen::drawSurface(int16 x, int16 y, Graphics::Surface *surface) {
 		frontScreen += 640 - width;
 		surfacePixels += surface->w - width - skipX;
 	}
-
 }
 
 void Screen::saveState(Common::WriteStream *out) {
-
 	// Save verb line
 	out->writeUint16LE(_verbLineNum);
 	out->writeUint16LE(_verbLineX);
@@ -755,11 +727,9 @@ void Screen::saveState(Common::WriteStream *out) {
 		out->writeUint32LE(_fontResIndexArray[i]);
 	out->writeByte(_fontColor1);
 	out->writeByte(_fontColor2);
-
 }
 
 void Screen::loadState(Common::ReadStream *in) {
-
 	// Load verb line
 	_verbLineNum = in->readUint16LE();
 	_verbLineX = in->readUint16LE();
@@ -807,7 +777,6 @@ void Screen::loadState(Common::ReadStream *in) {
 		_fontResIndexArray[i] = in->readUint32LE();
 	_fontColor1 = in->readByte();
 	_fontColor2 = in->readByte();
-
 }
 
 } // End of namespace Toltecs
