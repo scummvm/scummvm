@@ -182,6 +182,7 @@ public:
 	void addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 width, TalkTextItem *item);
 	void addTalkTextItemsToRenderQueue();
 	int16 getTalkTextDuration();
+	bool isTalkTextActive(int16 slotIndex);
 	void finishTalkTextItems();
 	void keepTalkTextItemsAlive();
 
