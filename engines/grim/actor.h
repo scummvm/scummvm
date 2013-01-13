@@ -141,6 +141,7 @@ public:
 	 * @see setPos
 	 */
 	Math::Vector3d getPos() const { return _pos; }
+	inline Math::Vector3d getDestPos() const { return _destPos; }
 
 	/**
 	 * Tells the actor to go to the wanted position.
