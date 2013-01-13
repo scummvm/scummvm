@@ -37,6 +37,7 @@ public:
 
 	void init();
 	void setKey(int val);
+	int update(uint time);
 	void animate();
 	void reset();
 	void resetColormap();
@@ -58,6 +59,7 @@ protected:
 	Math::Matrix4 _matrix;
 	AnimManager *_animation;
 	Component *_prevComp;
+	bool _animated;
 };
 
 } // end of namespace Grim

@@ -122,7 +122,7 @@ AnimManager *ModelComponent::getAnimManager() const {
 	return _animation;
 }
 
-void ModelComponent::animate() {
+int ModelComponent::update(uint time) {
 	// First reset the current animation.
 	for (int i = 0; i < getNumNodes(); i++) {
 		_hier[i]._animPos.set(0,0,0);
@@ -131,7 +131,17 @@ void ModelComponent::animate() {
 		_hier[i]._animRoll = 0;
 	}
 
+	_animated = false;
+	return 0;
+}
+
+void ModelComponent::animate() {
+	if (_animated) {
+		return;
+	}
+
 	_animation->animate(_hier, getNumNodes());
+	_animated = true;
 }
 
 void ModelComponent::resetColormap() {
