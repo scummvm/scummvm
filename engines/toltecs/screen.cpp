@@ -345,7 +345,7 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	_guiRefresh = true;
 }
 
-void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
+void Screen::updateTalkText(int16 slotIndex, int16 slotOffset, bool alwaysDisplayed) {
 	int16 x, y, maxWidth, width, length;
 	byte durationModifier = 1;
 	byte *textData = _vm->_script->getSlotData(slotIndex) + slotOffset;
@@ -354,6 +354,7 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 
 	item->fontNum = 0;
 	item->color = _talkTextFontColor;
+	item->alwaysDisplayed = alwaysDisplayed;
 
 	x = CLIP<int16>(_talkTextX - _vm->_cameraX, 120, _talkTextMaxWidth);
 	y = CLIP<int16>(_talkTextY - _vm->_cameraY, 4, _vm->_cameraHeight - 16);
@@ -469,7 +470,7 @@ void Screen::addTalkTextItemsToRenderQueue() {
 		if (item->duration < 0)
 			item->duration = 0;
 
-		if (!_vm->_cfgText)
+		if (!_vm->_cfgText && !item->alwaysDisplayed)
 			return;
 
 		for (byte j = 0; j < item->lineCount; j++) {
@@ -754,6 +755,7 @@ void Screen::loadState(Common::ReadStream *in) {
 		_talkTextItems[i].fontNum = in->readUint16LE();
 		_talkTextItems[i].color = in->readByte();
 		_talkTextItems[i].lineCount = in->readByte();
+		_talkTextItems[i].alwaysDisplayed = false;
 		for (int j = 0; j < _talkTextItems[i].lineCount; j++) {
 			_talkTextItems[i].lines[j].x = in->readUint16LE();
 			_talkTextItems[i].lines[j].y = in->readUint16LE();

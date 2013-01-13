@@ -515,12 +515,12 @@ void ToltecsEngine::talk(int16 slotIndex, int16 slotOffset) {
 			_sound->playSpeech(resIndex);
 		}
 		if (_doText) {
-			_screen->updateTalkText(slotIndex, slotOffset);
+			_screen->updateTalkText(slotIndex, slotOffset, false);
 		} else {
 			_screen->keepTalkTextItemsAlive();
 		}
 	} else {
-		_screen->updateTalkText(slotIndex, slotOffset);
+		_screen->updateTalkText(slotIndex, slotOffset, true);
 	}
 }
 
