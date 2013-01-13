@@ -483,6 +483,7 @@ begin_credits("Credits");
 		add_person("Marcus Comstedt", "marcus_c", "Initial Dreamcast port");
 		add_person("Andrea Corna", "Yak Bizzarro", "Patcher module, various engine improvements");
 		add_person("Jonathan Gray", "khalek", "Various code fixes");
+		add_person("Tobias Gunkel", "tobigun", "Initial Android port, few engines fixes");
 		add_person("Azamat H. Hackimov", "winterheart", "Configure fix");
 		add_person("Vincent Hamm", "yazoo", "Various engine code fixes and improvements");
 		add_person("Sven Hesse", "DrMcCoy", "Various compilation fixes");
@@ -505,7 +506,6 @@ begin_credits("Credits");
 		add_person("Lionel Ulmer", "bbrox", "OpenGL optimisations");
 		add_person("Joni V&auml;h&auml;m&auml;ki", "Akz", "A lot of engine improvements and fixes");
 		add_person("", "JenniBee", "Compilation fixes");
-		add_person("", "tobigun", "Initial Android port, few engines fixes");
 	    end_section();
 
 	    begin_section("Myst 3");
