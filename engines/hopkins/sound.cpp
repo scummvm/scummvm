@@ -73,6 +73,7 @@ public:
 		_cueSheet.clear();
 		_cueStream = NULL;
 		_cue = 0;
+		_loadedCue = -1;
 
 		for (;;) {
 			char buf[3];
@@ -134,8 +135,14 @@ public:
 
 protected:
 	bool loadCue(int nr) {
+		if (_loadedCue == _cueSheet[nr]) {
+			_cueStream->rewind();
+			return true;
+		}
+
 		delete _cueStream;
 		_cueStream = NULL;
+		_loadedCue = _cueSheet[nr];
 
 		Common::String filename = Common::String::format("%s_%02d", _name.c_str(), _cueSheet[nr]);
 		Common::File *file = new Common::File();
@@ -151,6 +158,7 @@ protected:
 		}
 
 		warning("TwaAudioStream::loadCue: Missing cue %d (%s)", nr, filename.c_str());
+		_loadedCue = -1;
 		delete file;
 		return false;
 	}
@@ -158,8 +166,9 @@ protected:
 private:
 	Common::String _name;
 	Common::Array<int> _cueSheet;
-	Audio::AudioStream *_cueStream;
+	Audio::RewindableAudioStream *_cueStream;
 	uint _cue;
+	int _loadedCue;
 };
 
 Audio::AudioStream *makeTwaStream(Common::String name, Common::SeekableReadStream *stream) {
