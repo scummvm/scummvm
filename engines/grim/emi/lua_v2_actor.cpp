@@ -620,10 +620,6 @@ void Lua_V2::PlayActorChore() {
 	const char *costumeName = lua_getstring(costumeObj);
 	Costume *costume = actor->findCostume(costumeName);
 
-	if (!costume) {
-		costume = actor->getCurrentCostume();
-	}
-
 	if (costume == NULL) {
 		actor->pushCostume(costumeName);
 		costume = actor->findCostume(costumeName);
