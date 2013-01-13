@@ -341,7 +341,11 @@ void Lua_V1::SetActorRot() {
 	float pitch = lua_getnumber(p);
 	float yaw = lua_getnumber(y);
 	float roll = lua_getnumber(r);
-	actor->turnTo(pitch, yaw, roll, getbool(5));
+	if (getbool(5)) {
+		actor->turnTo(pitch, yaw, roll, true);
+	} else {
+		actor->setRot(pitch, yaw, roll);
+	}
 }
 
 void Lua_V1::GetActorRot() {
