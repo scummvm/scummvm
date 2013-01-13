@@ -1742,6 +1742,7 @@ bool Actor::handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d
 	CollisionMode mode2 = actor->_collisionMode;
 
 	if (mode1 == CollisionSphere && mode2 == CollisionSphere) {
+		p1.z() = p2.z() = 0;
 		Math::Vector3d pos = p1 + *vec;
 		float distance = (pos - p2).getMagnitude();
 		if (distance < size1 + size2) {
