@@ -341,10 +341,7 @@ void Lua_V1::SetActorRot() {
 	float pitch = lua_getnumber(p);
 	float yaw = lua_getnumber(y);
 	float roll = lua_getnumber(r);
-	if (getbool(5))
-		actor->turnTo(pitch, yaw, roll);
-	else
-		actor->setRot(pitch, yaw, roll);
+	actor->turnTo(pitch, yaw, roll, getbool(5));
 }
 
 void Lua_V1::GetActorRot() {
@@ -1174,7 +1171,7 @@ void Lua_V1::TurnActorTo() {
 	}
 
 	Math::Vector3d turnToVector(x, y, z);
-	actor->turnTo(turnToVector);
+	actor->turnTo(turnToVector, false);
 
 	// Return true if the actor is still turning
 	// This allows manny to have the right yaw when he exits the elevator in the garage

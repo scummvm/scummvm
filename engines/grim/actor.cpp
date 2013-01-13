@@ -473,7 +473,7 @@ Math::Vector3d Actor::actorUp() const {
 	return Math::Vector3d(0.f, 1.f, 0.f);
 }
 
-void Actor::turnTo(const Math::Vector3d &pos) {
+void Actor::turnTo(const Math::Vector3d &pos, bool snap) {
 	Math::Vector3d lookVector = pos - _pos;
 	lookVector.normalize();
 
@@ -490,16 +490,17 @@ void Actor::turnTo(const Math::Vector3d &pos) {
 	m.buildFromTargetDir(actorForward(), lookVector, actorUp(), up);
 
 	if (_puckOrient) {
-		turnTo(m.getPitch(), m.getYaw(), m.getRoll());
+		turnTo(m.getPitch(), m.getYaw(), m.getRoll(), snap);
 	} else {
-		turnTo(_pitch, m.getYaw(), _roll);
+		turnTo(_pitch, m.getYaw(), _roll, snap);
 	}
 }
 
-void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
+void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam, bool snap) {
 	_movePitch = pitchParam;
 	_moveRoll = rollParam;
 	_moveYaw = yawParam;
+	_turnRateMultiplier = (snap ? 5.f : 1.f);
 	if (_yaw != yawParam || _pitch != pitchParam || _roll != rollParam) {
 		_turning = true;
 	} else
@@ -802,7 +803,7 @@ void Actor::walkForward() {
 			return;
 
 		ei.angleWithEdge += (float)1.0f;
-		turnTo(0, _moveYaw + ei.angleWithEdge * turnDir, 0);
+		turnTo(0, _moveYaw + ei.angleWithEdge * turnDir, 0, true);
 
 		if (oldDist <= dist + 0.001f) {
 			// If we didn't move at all, keep trying a couple more times
@@ -953,6 +954,7 @@ void Actor::turn(int dir) {
 	float delta = g_grim->getPerSecond(_turnRate) * dir;
 	_moveYaw = _moveYaw + delta;
 	_turning = true;
+	_turnRateMultiplier = 5.f;
 	_currTurnDir = dir;
 }
 
@@ -1253,7 +1255,7 @@ void Actor::updateWalk() {
 		}
 	}
 
-	turnTo(destPos);
+	turnTo(destPos, true);
 
 	dir = destPos - _pos;
 	dir.normalize();
@@ -1289,12 +1291,13 @@ void Actor::update(uint frameTime) {
 	}
 
 	if (_turning) {
-		float turnAmt = g_grim->getPerSecond(_turnRate)*5;
+		float turnAmt = g_grim->getPerSecond(_turnRate) * _turnRateMultiplier;
 		_currTurnDir = animTurn(turnAmt, _moveYaw, &_yaw);
 		int p = animTurn(turnAmt, _movePitch, &_pitch);
 		int r = animTurn(turnAmt, _moveRoll, &_roll);
 		if (_currTurnDir == 0 && p == 0 && r == 0) {
 			_turning = false;
+			_turnRateMultiplier = 1.f;
 		}
 	}
 

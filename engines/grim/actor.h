@@ -175,6 +175,7 @@ public:
 	 * @param pitch The rotation of the x axis
 	 * @param yaw The rotation of the z axis
 	 * @param roll The rotation of the y axis
+	 * @param snap If true tells the actor to increate its turn speed.
 	 * @see getPitch
 	 * @see getYaw
 	 * @see getRoll
@@ -182,17 +183,18 @@ public:
 	 * @see turn
 	 * @see isTurning
 	 */
-	void turnTo(const Math::Angle &pitch, const Math::Angle &yaw, const Math::Angle &roll);
+	void turnTo(const Math::Angle &pitch, const Math::Angle &yaw, const Math::Angle &roll, bool snap = false);
 	/**
 	 * Turn the actor towards a point in space.
 	 * The effect is not immediate, the actor will slowly rotate
 	 * to the destination orientation.
 	 *
 	 * @param pos The position the actor should turn to.
+	 * @param snap If true tells the actor to increate its turn speed.
 	 * @see turnTo
 	 * @see setRot
 	 */
-	void turnTo(const Math::Vector3d &pos);
+	void turnTo(const Math::Vector3d &pos, bool snap = false);
 	/**
 	 * Returns true if the actor is turning.
 	 *
@@ -558,6 +560,8 @@ private:
 	Math::Angle _moveYaw;
 	Math::Angle _movePitch;
 	Math::Angle _moveRoll;
+	// This is used to increase momentarily the turn rate when needed
+	float _turnRateMultiplier;
 
 	// Variables for walking to a point
 	bool _walking;
