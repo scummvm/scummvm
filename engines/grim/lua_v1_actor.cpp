@@ -1173,20 +1173,12 @@ void Lua_V1::TurnActorTo() {
 		z = lua_getnumber(zObj);
 	}
 
-	// TODO turning stuff below is not complete
-
-	// Find the vector pointing from the actor to the desired location
 	Math::Vector3d turnToVector(x, y, z);
-	Math::Vector3d lookVector = turnToVector - actor->getPos();
-	// find the angle the requested position is around the unit circle
-	Math::Angle yaw = lookVector.unitCircleAngle();
-	// yaw is offset from forward by 90 degrees
-	yaw -= 90.0f;
-	actor->turnTo(0, yaw, 0);
+	actor->turnTo(turnToVector);
 
-	// Return true if the actor is still turning and its yaw is not the target one.
+	// Return true if the actor is still turning
 	// This allows manny to have the right yaw when he exits the elevator in the garage
-	pushbool(actor->getYaw() != yaw);
+	pushbool(actor->isTurning());
 }
 
 void Lua_V1::PointActorAt() {

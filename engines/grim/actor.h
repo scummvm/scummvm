@@ -184,6 +184,16 @@ public:
 	 */
 	void turnTo(const Math::Angle &pitch, const Math::Angle &yaw, const Math::Angle &roll);
 	/**
+	 * Turn the actor towards a point in space.
+	 * The effect is not immediate, the actor will slowly rotate
+	 * to the destination orientation.
+	 *
+	 * @param pos The position the actor should turn to.
+	 * @see turnTo
+	 * @see setRot
+	 */
+	void turnTo(const Math::Vector3d &pos);
+	/**
 	 * Returns true if the actor is turning.
 	 *
 	 * @see turnTo
@@ -472,6 +482,15 @@ public:
 	void detach();
 	Math::Quaternion getRotationQuat() const;
 
+	/**
+	 * Returns the forward direction in the local space of the actor.
+	 */
+	Math::Vector3d actorForward() const;
+	/**
+	 * Returns the up direction in the local space of the actor.
+	 */
+	Math::Vector3d actorUp() const;
+
 	void setInOverworld(bool inOverworld) { _inOverworld = inOverworld; }
 	bool isInOverworld() { return _inOverworld; }
 
@@ -537,6 +556,8 @@ private:
 	// turning animation while still allowing the actor to move in a
 	// new direction immediately after reflecting off a wall.
 	Math::Angle _moveYaw;
+	Math::Angle _movePitch;
+	Math::Angle _moveRoll;
 
 	// Variables for walking to a point
 	bool _walking;

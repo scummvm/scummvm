@@ -459,11 +459,48 @@ void Actor::setPos(const Math::Vector3d &position) {
 	}
 }
 
+Math::Vector3d Actor::actorForward() const {
+	if (g_grim->getGameType() == GType_GRIM) {
+		return Math::Vector3d(0.f, 1.f, 0.f);
+	}
+	return Math::Vector3d(0.f, 0.f, 1.f);
+}
+
+Math::Vector3d Actor::actorUp() const {
+	if (g_grim->getGameType() == GType_GRIM) {
+		return Math::Vector3d(0.f, 0.f, 1.f);
+	}
+	return Math::Vector3d(0.f, 1.f, 0.f);
+}
+
+void Actor::turnTo(const Math::Vector3d &pos) {
+	Math::Vector3d lookVector = pos - _pos;
+	lookVector.normalize();
+
+	Math::Vector3d up = actorUp();
+	if (_puckOrient) {
+		Sector *s = NULL;
+		g_grim->getCurrSet()->findClosestSector(_pos, &s, NULL);
+		if (s) {
+			up = s->getNormal();
+		}
+	}
+
+	Math::Matrix4 m;
+	m.buildFromTargetDir(actorForward(), lookVector, actorUp(), up);
+
+	if (_puckOrient) {
+		turnTo(m.getPitch(), m.getYaw(), m.getRoll());
+	} else {
+		turnTo(_pitch, m.getYaw(), _roll);
+	}
+}
+
 void Actor::turnTo(const Math::Angle &pitchParam, const Math::Angle &yawParam, const Math::Angle &rollParam) {
-	_pitch = pitchParam;
-	_roll = rollParam;
+	_movePitch = pitchParam;
+	_moveRoll = rollParam;
 	_moveYaw = yawParam;
-	if (_yaw != yawParam) {
+	if (_yaw != yawParam || _pitch != pitchParam || _roll != rollParam) {
 		_turning = true;
 	} else
 		_turning = false;
@@ -1216,13 +1253,31 @@ void Actor::updateWalk() {
 		}
 	}
 
-	destPos = handleCollisionTo(_pos, destPos);
-	Math::Angle y = getYawTo(destPos);
-	turnTo(_pitch, y, _roll);
+	turnTo(destPos);
 
 	dir = destPos - _pos;
 	dir.normalize();
 	_pos += dir * walkAmt;
+}
+
+static int animTurn(float turnAmt, const Math::Angle &dest, Math::Angle *cur) {
+	Math::Angle d = dest - *cur;
+	d.normalize(-180);
+	// If the actor won't turn because the rate is set to zero then
+	// have the actor turn all the way to the destination yaw.
+	// Without this some actors will lock the interface on changing
+	// scenes, this affects the Bone Wagon in particular.
+	if (turnAmt == 0 || turnAmt >= fabsf(d.getDegrees())) {
+		*cur = dest;
+	} else if (d > 0) {
+		*cur += turnAmt;
+	} else {
+		*cur -= turnAmt;
+	}
+	if (d != 0) {
+		return (d > 0 ? 1 : -1);
+	}
+	return 0;
 }
 
 void Actor::update(uint frameTime) {
@@ -1234,23 +1289,12 @@ void Actor::update(uint frameTime) {
 	}
 
 	if (_turning) {
-		float turnAmt = g_grim->getPerSecond(_turnRate) * 5.f;
-		Math::Angle dyaw = _moveYaw - _yaw;
-		dyaw.normalize(-180);
-		// If the actor won't turn because the rate is set to zero then
-		// have the actor turn all the way to the destination yaw.
-		// Without this some actors will lock the interface on changing
-		// scenes, this affects the Bone Wagon in particular.
-		if (turnAmt == 0 || turnAmt >= fabsf(dyaw.getDegrees())) {
-			setYaw(_moveYaw);
+		float turnAmt = g_grim->getPerSecond(_turnRate)*5;
+		_currTurnDir = animTurn(turnAmt, _moveYaw, &_yaw);
+		int p = animTurn(turnAmt, _movePitch, &_pitch);
+		int r = animTurn(turnAmt, _moveRoll, &_roll);
+		if (_currTurnDir == 0 && p == 0 && r == 0) {
 			_turning = false;
-		} else if (dyaw > 0) {
-			setYaw(_yaw + turnAmt);
-		} else {
-			setYaw(_yaw - turnAmt);
-		}
-		if (dyaw != 0) {
-			_currTurnDir = (dyaw > 0 ? 1 : -1);
 		}
 	}
 
