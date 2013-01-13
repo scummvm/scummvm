@@ -514,6 +514,7 @@ void ToltecsEngine::talk(int16 slotIndex, int16 slotOffset) {
 			debug(0, "ToltecsEngine::talk() playSound(resIndex: %d)", resIndex);
 			_sound->playSpeech(resIndex);
 		}
+
 		if (_doText) {
 			_screen->updateTalkText(slotIndex, slotOffset, false);
 		} else {
