@@ -103,7 +103,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			}
 		}
 	} else {
-		if (type == -3) {
+		if (type == kChannelTypeSpeech) {
 			// Stop speech and play new sound
 			stopSpeech();
 		}
