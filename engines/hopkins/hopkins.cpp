@@ -1630,11 +1630,11 @@ void HopkinsEngine::initializeSystem() {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "SYSTEM");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "LINK");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "BUFFER");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "ANIM");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "ANM");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "BASE");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "LINK");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "MUSIC");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "SEQ");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "SAVE");
