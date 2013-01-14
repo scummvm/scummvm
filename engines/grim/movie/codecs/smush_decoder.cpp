@@ -381,8 +381,8 @@ bool SmushDecoder::rewind() {
 bool SmushDecoder::seek(const Audio::Timestamp &time) { // FIXME: This will be off by a second or two right now.
 	int32 wantedFrame = (uint32)((time.msecs() / 1000.0f) * _videoTrack->getFrameRate().toDouble());
 	if (wantedFrame != 0) {
-		warning("Seek to time: %d, frame: %d", time.msecs(), wantedFrame);
-		warning("Current frame: %d", _videoTrack->getCurFrame());
+		Debug::debug(Debug::Movie, "Seek to time: %d, frame: %d", time.msecs(), wantedFrame);
+		Debug::debug(Debug::Movie, "Current frame: %d", _videoTrack->getCurFrame());
 	}
 
 	if (wantedFrame > _videoTrack->getFrameCount()) {
