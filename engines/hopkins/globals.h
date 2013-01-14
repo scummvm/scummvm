@@ -284,6 +284,8 @@ struct Sauvegarde {
 	CharacterLocation _realHopkins;
 	CharacterLocation _samantha;
 	int16 _inventory[35];	// Originally at offset 1300 of data array
+	int16 PLANX;
+	int16 PLANY;
 };
 
 struct CreditItem {

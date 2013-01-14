@@ -33,7 +33,7 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
-#define HOPKINS_SAVEGAME_VERSION 1
+#define HOPKINS_SAVEGAME_VERSION 2
 
 struct hopkinsSavegameHeader {
 	uint8 _version;
@@ -49,7 +49,7 @@ private:
 	HopkinsEngine *_vm;
 
 	void createThumbnail(Graphics::Surface *s);
-	void syncSavegameData(Common::Serializer &s);
+	void syncSavegameData(Common::Serializer &s, int version);
 	void syncCharacterLocation(Common::Serializer &s, CharacterLocation &item);
 public:
 	void setParent(HopkinsEngine *vm);

@@ -146,6 +146,9 @@ Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName
 	for (int i = 0; i < 35; ++i)
 		_vm->_globals._saveData->_inventory[i] = _vm->_globals._inventory[i];
 
+	_vm->_globals._saveData->PLANX = _vm->_globals.PLANX;
+	_vm->_globals._saveData->PLANY = _vm->_globals.PLANY;
+
 	/* Create the savegame */
 	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(_vm->generateSaveName(slot));
 	if (!savefile)
@@ -161,7 +164,7 @@ Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName
 	writeSavegameHeader(savefile, header);
 
 	// Write out the savegame data
-	syncSavegameData(serializer);
+	syncSavegameData(serializer, header._version);
 
 	// Save file complete
 	savefile->finalize();
@@ -188,7 +191,7 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 	delete header._thumbnail;
 
 	// Read in the savegame data
-	syncSavegameData(serializer);
+	syncSavegameData(serializer, header._version);
 
 	// Loading save file complete
 	delete savefile;
@@ -202,6 +205,8 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 	_vm->_globals._exitId = _vm->_globals._saveData->data[svField5];
 	_vm->_globals._saveData->data[svField6] = 0;
 	_vm->_globals._screenId = 0;
+	_vm->_globals.PLANX = _vm->_globals._saveData->PLANX;
+	_vm->_globals.PLANY = _vm->_globals._saveData->PLANY;
 
 	return Common::kNoError;
 }
@@ -251,7 +256,7 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 	thumb8.free();
 }
 
-void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
+void SaveLoadManager::syncSavegameData(Common::Serializer &s, int version) {
 	s.syncBytes(&_vm->_globals._saveData->data[0], 2050);
 	syncCharacterLocation(s, _vm->_globals._saveData->_cloneHopkins);
 	syncCharacterLocation(s, _vm->_globals._saveData->_realHopkins);
@@ -259,6 +264,14 @@ void SaveLoadManager::syncSavegameData(Common::Serializer &s) {
 
 	for (int i = 0; i < 35; ++i)
 		s.syncAsSint16LE(_vm->_globals._saveData->_inventory[i]);
+
+	if (version > 1) {
+		s.syncAsSint16LE(_vm->_globals._saveData->PLANX);
+		s.syncAsSint16LE(_vm->_globals._saveData->PLANY);
+	} else {
+		_vm->_globals._saveData->PLANX = _vm->_globals._saveData->PLANY = 0;
+	}
+
 }
 
 void SaveLoadManager::syncCharacterLocation(Common::Serializer &s, CharacterLocation &item) {
