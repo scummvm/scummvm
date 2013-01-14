@@ -113,14 +113,14 @@ Globals::Globals() {
 	for (int i = 0; i < 51; ++i)
 		Common::fill((byte *)&_sortedDisplay[i], (byte *)&_sortedDisplay[i] + sizeof(SortItem), 0);
 
-	// Initialise fields
+	// Initialize fields
 	_language = LANG_EN;
 
 	PUBEXIT = false;
 	_speed = 1;
 	g_old_anim = 0;
-	g_old_sens = 0;
-	g_old_sens2 = 0;
+	_oldDirection = 0;
+	_oldDirectionSpriteIdx = 59;
 	_lastDirection = 0;
 	police_l = police_h = 0;
 	TETE = NULL;
@@ -374,7 +374,7 @@ void Globals::loadCharacterData() {
 	}
 
 	g_old_anim = -1;
-	g_old_sens = -1;
+	_oldDirection = -1;
 }
 
 void Globals::INIT_ANIM() {

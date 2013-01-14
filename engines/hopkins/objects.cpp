@@ -1527,7 +1527,7 @@ void ObjectsManager::GOHOME() {
 	}
 
 	_vm->_globals.Compteur = 0;
-	if (_vm->_globals.g_old_sens == -1) {
+	if (_vm->_globals._oldDirection == -1) {
 		computeAndSetSpriteSize();
 		nouveau_x = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
@@ -1542,13 +1542,13 @@ void ObjectsManager::GOHOME() {
 		_vm->_globals.chemin++;
 
 		if (nouveau_x != -1 || nouveau_y != -1) {
-			_vm->_globals.g_old_sens = nouveau_sens;
-			_vm->_globals.g_old_sens2 = nouveau_sens;
+			_vm->_globals._oldDirection = nouveau_sens;
+			_vm->_globals._oldDirectionSpriteIdx = nouveau_sens + 59;
 			_vm->_globals.g_old_anim = 0;
 			g_old_x = nouveau_x;
 			g_old_y = nouveau_y;
 		} else {
-			setSpriteIndex(0, _vm->_globals.g_old_sens + 59);
+			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
 			_vm->_globals._actionDirection = 0;
 			if (_vm->_globals.GOACTION)
 				v54 = _vm->_globals._saveData->data[svField2];
@@ -1559,7 +1559,7 @@ void ObjectsManager::GOHOME() {
 			setFlipSprite(0, false);
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			_vm->_globals.g_old_sens = -1;
+			_vm->_globals._oldDirection = -1;
 			if (v54 > 0) {
 				v55 = v54;
 				if (_vm->_globals.ZONEP[v55]._destX) {
@@ -1583,7 +1583,7 @@ void ObjectsManager::GOHOME() {
 		_vm->_globals.Compteur = 0;
 		return;
 	}
-	if (_vm->_globals.g_old_sens == 3) {
+	if (_vm->_globals._oldDirection == 3) {
 		if (_vm->_globals.g_old_anim < 24 || _vm->_globals.g_old_anim > 35) {
 			v0 = g_old_x;
 			v58 = g_old_y;
@@ -1609,7 +1609,7 @@ void ObjectsManager::GOHOME() {
 LABEL_23:
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	if (_vm->_globals.g_old_sens != 7)
+	if (_vm->_globals._oldDirection != 7)
 		goto LABEL_43;
 	if (_vm->_globals.g_old_anim < 24 || _vm->_globals.g_old_anim > 35) {
 		v0 = g_old_x;
@@ -1635,7 +1635,7 @@ LABEL_23:
 LABEL_42:
 	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 LABEL_43:
-	if (_vm->_globals.g_old_sens != 1)
+	if (_vm->_globals._oldDirection != 1)
 		goto LABEL_60;
 	if (_vm->_globals.g_old_anim > 11) {
 		v0 = g_old_x;
@@ -1659,7 +1659,7 @@ LABEL_43:
 LABEL_59:
 	_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 LABEL_60:
-	if (_vm->_globals.g_old_sens != 5)
+	if (_vm->_globals._oldDirection != 5)
 		goto LABEL_77;
 	if (_vm->_globals.g_old_anim < 48 || _vm->_globals.g_old_anim > 59) {
 		v0 = g_old_x;
@@ -1689,7 +1689,7 @@ LABEL_60:
 LABEL_76:
 	_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 LABEL_77:
-	if (_vm->_globals.g_old_sens != 2)
+	if (_vm->_globals._oldDirection != 2)
 		goto LABEL_96;
 	if (_vm->_globals.g_old_anim < 12 || _vm->_globals.g_old_anim > 23) {
 		v0 = g_old_x;
@@ -1727,7 +1727,7 @@ LABEL_77:
 LABEL_95:
 	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 LABEL_96:
-	if (_vm->_globals.g_old_sens != 8)
+	if (_vm->_globals._oldDirection != 8)
 		goto LABEL_115;
 	if (_vm->_globals.g_old_anim < 12 || _vm->_globals.g_old_anim > 23) {
 		v0 = g_old_x;
@@ -1765,7 +1765,7 @@ LABEL_96:
 LABEL_114:
 	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 LABEL_115:
-	if (_vm->_globals.g_old_sens != 4)
+	if (_vm->_globals._oldDirection != 4)
 		goto LABEL_134;
 	if (_vm->_globals.g_old_anim < 36 || _vm->_globals.g_old_anim > 47) {
 		v0 = g_old_x;
@@ -1803,7 +1803,7 @@ LABEL_115:
 LABEL_133:
 	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 LABEL_134:
-	if (_vm->_globals.g_old_sens != 6)
+	if (_vm->_globals._oldDirection != 6)
 		goto LABEL_153;
 	if (_vm->_globals.g_old_anim < 36 || _vm->_globals.g_old_anim > 47) {
 		v0 = g_old_x;
@@ -1860,13 +1860,13 @@ LABEL_153:
 				v49 = _vm->_globals._saveData->data[svField2];
 			else
 				v49 = _zoneNum;
-			setSpriteIndex(0, _vm->_globals.g_old_sens + 59);
+			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
 			_vm->_globals._actionDirection = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.g_old_sens = -1;
+			_vm->_globals._oldDirection = -1;
 			g_old_x = getSpriteX(0);
 			g_old_y = getSpriteY(0);
 
@@ -1892,37 +1892,37 @@ LABEL_153:
 			_vm->_globals.Compteur = 0;
 			return;
 		}
-		if (_vm->_globals.g_old_sens != nouveau_sens)
+		if (_vm->_globals._oldDirection != nouveau_sens)
 			break;
-		if ((nouveau_sens == 3 && nouveau_x >= v0) || (_vm->_globals.g_old_sens == 7 && nouveau_x <= v0) ||
-		    (_vm->_globals.g_old_sens == 1 && nouveau_y <= v58) || (_vm->_globals.g_old_sens == 5 && nouveau_y >= v58) ||
-		    (_vm->_globals.g_old_sens == 2 && nouveau_x >= v0)  || (_vm->_globals.g_old_sens == 8 && nouveau_x <= v0) ||
-		    (_vm->_globals.g_old_sens == 4 && nouveau_x >= v0) || (_vm->_globals.g_old_sens == 6 && nouveau_x <= v0))
+		if ((nouveau_sens == 3 && nouveau_x >= v0) || (_vm->_globals._oldDirection == 7 && nouveau_x <= v0) ||
+		    (_vm->_globals._oldDirection == 1 && nouveau_y <= v58) || (_vm->_globals._oldDirection == 5 && nouveau_y >= v58) ||
+		    (_vm->_globals._oldDirection == 2 && nouveau_x >= v0)  || (_vm->_globals._oldDirection == 8 && nouveau_x <= v0) ||
+		    (_vm->_globals._oldDirection == 4 && nouveau_x >= v0) || (_vm->_globals._oldDirection == 6 && nouveau_x <= v0))
 			v47 = 1;
 	} while (v47 != 1);
 	if (v47 == 1) {
 		computeAndSetSpriteSize();
-		if ((_vm->_globals.g_old_sens == 6) || (_vm->_globals.g_old_sens == 7) || (_vm->_globals.g_old_sens == 8))
+		if ((_vm->_globals._oldDirection == 6) || (_vm->_globals._oldDirection == 7) || (_vm->_globals._oldDirection == 8))
 			setFlipSprite(0, true);
 
-		if ((_vm->_globals.g_old_sens == 1) || (_vm->_globals.g_old_sens == 2) || (_vm->_globals.g_old_sens == 3) ||
-		    (_vm->_globals.g_old_sens == 4) || (_vm->_globals.g_old_sens == 5))
+		if ((_vm->_globals._oldDirection == 1) || (_vm->_globals._oldDirection == 2) || (_vm->_globals._oldDirection == 3) ||
+		    (_vm->_globals._oldDirection == 4) || (_vm->_globals._oldDirection == 5))
 			setFlipSprite(0, false);
 
 		setSpriteX(0, nouveau_x);
 		setSpriteY(0, nouveau_y);
 		setSpriteIndex(0, v1);
 	} else {
-		if ((_vm->_globals.g_old_sens == 6) || (_vm->_globals.g_old_sens == 7) || (_vm->_globals.g_old_sens == 8))
+		if ((_vm->_globals._oldDirection == 6) || (_vm->_globals._oldDirection == 7) || (_vm->_globals._oldDirection == 8))
 			setFlipSprite(0, true);
 
-		if ((_vm->_globals.g_old_sens == 1) || (_vm->_globals.g_old_sens == 2) || (_vm->_globals.g_old_sens == 3) ||
-		    (_vm->_globals.g_old_sens == 4) || (_vm->_globals.g_old_sens == 5))
+		if ((_vm->_globals._oldDirection == 1) || (_vm->_globals._oldDirection == 2) || (_vm->_globals._oldDirection == 3) ||
+		    (_vm->_globals._oldDirection == 4) || (_vm->_globals._oldDirection == 5))
 			setFlipSprite(0, false);
 		_vm->_globals.Compteur = 0;
 	}
-	_vm->_globals.g_old_sens = nouveau_sens;
-	_vm->_globals.g_old_sens2 = nouveau_sens;
+	_vm->_globals._oldDirection = nouveau_sens;
+	_vm->_globals._oldDirectionSpriteIdx = nouveau_sens + 59;
 	_vm->_globals.g_old_anim = v1;
 	g_old_x = nouveau_x;
 	g_old_y = nouveau_y;
@@ -2382,19 +2382,19 @@ LABEL_38:
 			g_old_y = getSpriteY(0);
 			_vm->_globals.Compteur = 0;
 			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || v9 == _vm->_globals.chemin) {
-				_vm->_globals.g_old_sens = -1;
+				_vm->_globals._oldDirection = -1;
 				goto LABEL_65;
 			}
 			goto LABEL_63;
 		}
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
-		setSpriteIndex(0, _vm->_globals.g_old_sens2 + 59);
+		setSpriteIndex(0, _vm->_globals._oldDirectionSpriteIdx);
 		_vm->_globals._actionDirection = 0;
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		computeAndSetSpriteSize();
 		setFlipSprite(0, false);
 		_vm->_globals.Compteur = 0;
-		_vm->_globals.g_old_sens = -1;
+		_vm->_globals._oldDirection = -1;
 		goto LABEL_65;
 	}
 	if (!_vm->_globals.NOMARCHE) {
@@ -2409,7 +2409,7 @@ LABEL_38:
 			g_old_y = getSpriteY(0);
 			_vm->_globals.Compteur = 0;
 			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || v9 == _vm->_globals.chemin)
-				_vm->_globals.g_old_sens = -1;
+				_vm->_globals._oldDirection = -1;
 			else
 LABEL_63:
 				_vm->_globals.chemin = v9;
@@ -2591,7 +2591,7 @@ void ObjectsManager::clearScreen() {
 	_forceZoneFl = true;
 	_changeVerbFl = false;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
-	_vm->_globals.g_old_sens = -1;
+	_vm->_globals._oldDirection = -1;
 	my_anim = 1;
 	A_ANIM = 0;
 	MA_ANIM = 0;
@@ -4763,7 +4763,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		stopBobAnimation(3);
 		_vm->_globals.NOT_VERIF = true;
 		g_old_x = getSpriteX(0);
-		_vm->_globals.g_old_sens = -1;
+		_vm->_globals._oldDirection = -1;
 		_vm->_globals.Compteur = 0;
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		v7 = getSpriteY(0);
@@ -4885,7 +4885,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_eventsManager._mouseSpriteId = 4;
 	g_old_x = _characterPos.x;
 	g_old_y = _characterPos.y;
-	_vm->_globals.g_old_sens = -1;
+	_vm->_globals._oldDirection = -1;
 	_vm->_globals.Compteur = 0;
 
 	for (int idx = 0; idx < 5; ++idx)

@@ -948,7 +948,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 59: {
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.g_old_sens = -1;
+			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			int v16 = _vm->_objectsManager.getSpriteY(0);
@@ -1050,7 +1050,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 81: {
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.g_old_sens = -1;
+			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			int v22 = _vm->_objectsManager.getSpriteY(0);
@@ -1368,7 +1368,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 105:
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.g_old_sens = -1;
+			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			if (_vm->_globals._saveData->data[svField253] == 1) {
@@ -1621,7 +1621,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.NOPARLE = false;
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.g_old_sens = -1;
+			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = true;
@@ -1651,7 +1651,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.NOPARLE = false;
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.g_old_sens = -1;
+			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = true;
@@ -1961,7 +1961,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.CACHE_ON();
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals.g_old_sens = -1;
+			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = true;
