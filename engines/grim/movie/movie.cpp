@@ -180,6 +180,7 @@ bool MoviePlayer::loadFile(Common::String filename) {
 }
 
 void MoviePlayer::saveState(SaveGame *state) {
+	Common::StackLock lock(_frameMutex);
 	state->beginSection('SMUS');
 
 	state->writeString(_fname);
@@ -192,10 +193,13 @@ void MoviePlayer::saveState(SaveGame *state) {
 	state->writeLESint32(_x);
 	state->writeLESint32(_y);
 
+	save(state);
+
 	state->endSection();
 }
 
 void MoviePlayer::restoreState(SaveGame *state) {
+	Common::StackLock lock(_frameMutex);
 	state->beginSection('SMUS');
 
 	_fname = state->readString();
@@ -213,6 +217,8 @@ void MoviePlayer::restoreState(SaveGame *state) {
 	}
 	_frame = frame;
 	_movieTime = movieTime;
+
+	restore(state);
 
 	state->endSection();
 }

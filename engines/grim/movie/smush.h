@@ -33,7 +33,8 @@ class SmushPlayer : public MoviePlayer {
 public:
 	SmushPlayer(bool demo);
 
-	void restoreState(SaveGame *state);
+	void restore(SaveGame *state);
+
 private:
 	bool loadFile(Common::String filename);
 	void handleFrame();

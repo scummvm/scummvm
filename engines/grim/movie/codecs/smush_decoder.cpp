@@ -54,6 +54,7 @@ SmushDecoder::SmushDecoder() {
 
 	_videoLooping = false;
 	_startPos = 0;
+	_frames = NULL;
 
 	_videoTrack = NULL;
 	_audioTrack = NULL;
@@ -62,11 +63,56 @@ SmushDecoder::SmushDecoder() {
 SmushDecoder::~SmushDecoder() {
 	delete _videoTrack;
 	delete _audioTrack;
+	delete[] _frames;
 }
 
 void SmushDecoder::init() {
 	_videoTrack->init();
 	_audioTrack->init();
+}
+
+void SmushDecoder::initFrames() {
+	delete[] _frames;
+	_frames = new Frame[_videoTrack->getFrameCount()];
+
+	int seekPos = _file->pos();
+	int curFrame = -1;
+	_file->seek(_startPos, SEEK_SET);
+	while (curFrame < _videoTrack->getFrameCount() - 1) {
+		Frame &frame = _frames[++curFrame];
+		frame.frame = curFrame;
+		frame.pos = _file->pos();
+		frame.keyframe = false;
+
+		uint32 tag = _file->readUint32BE();
+		uint32 size;
+		if (tag == MKTAG('A', 'N', 'N', 'O')) {
+			size = _file->readUint32BE();
+			_file->seek(size, SEEK_CUR);
+			tag = _file->readUint32BE();
+		}
+		assert(tag == MKTAG('F', 'R', 'M', 'E'));
+		size = _file->readUint32BE();
+
+		while (size > 0) {
+			uint32 subType = _file->readUint32BE();
+			uint32 subSize = _file->readUint32BE();
+
+			if (subType == MKTAG('B', 'l', '1', '6')) {
+				_file->seek(18, SEEK_CUR);
+				if (_file->readByte() == 0) {
+					frame.keyframe = true;
+				}
+				_file->seek(subSize - 19, SEEK_CUR);
+			} else
+				_file->seek(subSize, SEEK_CUR);
+			size -= subSize + 8 + (subSize & 1);
+		}
+
+		_file->seek(size, SEEK_CUR);
+	}
+
+	_file->seek(seekPos, SEEK_SET);
 }
 
 void SmushDecoder::close() {
@@ -75,6 +121,8 @@ void SmushDecoder::close() {
 	_videoTrack = NULL;
 	_videoLooping = false;
 	_startPos = 0;
+	delete[] _frames;
+	_frames = NULL;
 	if (_file) {
 		delete _file;
 		_file = NULL;
@@ -330,38 +378,60 @@ bool SmushDecoder::rewind() {
 	return seekToFrame(0);
 }
 
-bool SmushDecoder::seek(const Audio::Timestamp &time) { // FIXME: This will be off by a second or two right now.
+bool SmushDecoder::seek(const Audio::Timestamp &time) {
 	int32 wantedFrame = (uint32)((time.msecs() / 1000.0f) * _videoTrack->getFrameRate().toDouble());
 	if (wantedFrame != 0) {
-		warning("Seek to time: %d, frame: %d", time.msecs(), wantedFrame);
-		warning("Current frame: %d", _videoTrack->getCurFrame());
+		Debug::debug(Debug::Movie, "Seek to time: %d, frame: %d", time.msecs(), wantedFrame);
+		Debug::debug(Debug::Movie, "Current frame: %d", _videoTrack->getCurFrame());
 	}
-	uint32 tag;
-	int32 size;
 
 	if (wantedFrame > _videoTrack->getFrameCount()) {
 		return false;
 	}
 
-	if (wantedFrame < _videoTrack->getCurFrame()) {
-		_file->seek(_startPos, SEEK_SET);
+	if (!_frames) {
+		initFrames();
 	}
 
-	int curFrame = -1;
-	while (curFrame < wantedFrame - 1) {
-		tag = _file->readUint32BE();
-		if (tag == MKTAG('A', 'N', 'N', 'O')) {
-			size = _file->readUint32BE();
-			_file->seek(size, SEEK_CUR);
-			tag = _file->readUint32BE();
-
+	// Track down the keyframe
+	int keyframe = 0;
+	for (int i = wantedFrame; i >= 0; --i) {
+		if (_frames[i].keyframe) {
+			keyframe = i;
+			break;
 		}
-		assert(tag == MKTAG('F', 'R', 'M', 'E'));
-		size = _file->readUint32BE();
-		_file->seek(size, SEEK_CUR);
-		curFrame++;
 	}
-	_videoTrack->setCurFrame(curFrame);
+
+	// VIMA frames are 50 frames ahead of time, so we have to make sure we have 50 frames
+	// of audio before the wantedFrame. Here we use 51 to have a bit of safe margin
+	if (wantedFrame - keyframe < 51) {
+		keyframe = wantedFrame - 51;
+	}
+	if (keyframe < 0) {
+		keyframe = 0;
+	}
+
+	_file->seek(_frames[keyframe].pos, SEEK_SET);
+	_videoTrack->setCurFrame(keyframe - 1);
+
+	while (_videoTrack->getCurFrame() < wantedFrame - 1) {
+		decodeNextFrame();
+	}
+
+	// As said, VIMA is 50 frames ahead of time. Every frame it pushes 1470 samples, and 50 * 1470 = 73500.
+	// The first frame, instead of 1470, it pushes 73500 samples to have this 50-frames-time.
+	// So if we have used frame 0 as keyframe we can remove safely time * rate samples, and we will
+	// still have the 50 frames margin. If we have used a later frame as keyframe we don't have the 73500
+	// samples pushed the first frame, so we have to be careful not to remove too much data,
+	// otherwise the audio will start at a later point. (72030 == 73500 - 1470)
+	int offset = (keyframe == 0 ? 0 : 72030);
+
+	// Skip decoded audio between the keyframe and the target frame
+	Audio::Timestamp delay = _videoTrack->getFrameTime(_videoTrack->getCurFrame()) - _videoTrack->getFrameTime(keyframe);
+
+	int32 sampleCount = (delay.msecs() / 1000.f) * _audioTrack->getRate() - offset;
+	_audioTrack->skipSamples(sampleCount);
+
 	VideoDecoder::seek(time);
 	return true;
 }
@@ -600,6 +670,18 @@ void SmushDecoder::SmushAudioTrack::handleIACT(Common::SeekableReadStream *strea
 
 bool SmushDecoder::SmushAudioTrack::seek(const Audio::Timestamp &time) {
 	return true;
+}
+
+void SmushDecoder::SmushAudioTrack::skipSamples(int sampleCount) {
+	if (sampleCount <= 0)
+		return;
+
+	if (_queueStream->isStereo())
+		sampleCount *= 2;
+
+	int16 *tempBuffer = new int16[sampleCount];
+	_queueStream->readBuffer(tempBuffer, sampleCount);
+	delete[] tempBuffer;
 }
 
 

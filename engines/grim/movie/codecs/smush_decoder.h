@@ -51,6 +51,7 @@ public:
 	bool rewind();
 	bool seek(const Audio::Timestamp &time);
 	bool loadStream(Common::SeekableReadStream *stream);
+
 protected:
 	bool readHeader();
 	void handleFrameDemo();
@@ -109,6 +110,8 @@ protected:
 		Audio::AudioStream *getAudioStream() const { return _queueStream; }
 		bool isSeekable() const { return true; }
 		bool seek(const Audio::Timestamp &time);
+		void skipSamples(int samples);
+		inline int getRate() const { return _queueStream->getRate(); }
 
 		void handleVIMA(Common::SeekableReadStream *stream, uint32 size);
 		void handleIACT(Common::SeekableReadStream *stream, int32 size);
@@ -122,6 +125,8 @@ protected:
 		Audio::QueuingAudioStream *_queueStream;
 	};
 private:
+	void initFrames();
+
 	SmushAudioTrack *_audioTrack;
 	SmushVideoTrack *_videoTrack;
 
@@ -131,6 +136,12 @@ private:
 
 	bool _videoPause;
 	bool _videoLooping;
+	struct Frame {
+		int frame;
+		int pos;
+		bool keyframe;
+	};
+	Frame *_frames;
 	static bool _demo;
 };
 
