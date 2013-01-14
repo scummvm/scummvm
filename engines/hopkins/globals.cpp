@@ -135,8 +135,7 @@ Globals::Globals() {
 	_catalogSize = 0;
 	iRegul = 0;
 	_exitId = 0;
-	PLANX = PLANY = 0;
-	PLANI = 0;
+	_mapCarPosX = _mapCarPosY = 0;
 	PERSO = 0;
 	_screenId = 0;
 	_prevScreenId = 0;

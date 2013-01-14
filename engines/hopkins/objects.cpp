@@ -2192,13 +2192,12 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_globals.CACHE_OFF(20);
 	_vm->_globals.CACHE_ON();
 
-	if (!_vm->_globals.PLANX && !_vm->_globals.PLANY) {
-		_vm->_globals.PLANX = 900;
-		_vm->_globals.PLANY = 319;
-		_vm->_globals.PLANI = 1;
+	if (!_vm->_globals._mapCarPosX && !_vm->_globals._mapCarPosY) {
+		_vm->_globals._mapCarPosX = 900;
+		_vm->_globals._mapCarPosY = 319;
 	}
-	addStaticSprite(_spritePtr, Common::Point(_vm->_globals.PLANX, _vm->_globals.PLANY), 0, _vm->_globals.PLANI, 0, 0, 5, 5);
-	_vm->_eventsManager.setMouseXY(_vm->_globals.PLANX, _vm->_globals.PLANY);
+	addStaticSprite(_spritePtr, Common::Point(_vm->_globals._mapCarPosX, _vm->_globals._mapCarPosY), 0, 1, 0, 0, 5, 5);
+	_vm->_eventsManager.setMouseXY(_vm->_globals._mapCarPosX, _vm->_globals._mapCarPosY);
 	my_anim = 0;
 	_vm->_eventsManager.mouseOn();
 	_vm->_graphicsManager.scrollScreen(getSpriteX(0) - 320);
@@ -2256,9 +2255,8 @@ void ObjectsManager::PLAN_BETA() {
 		_vm->_graphicsManager.fadeOutLong();
 	_vm->_globals.iRegul = 0;
 	_vm->_graphicsManager._noFadingFl = false;
-	_vm->_globals.PLANX = getSpriteX(0);
-	_vm->_globals.PLANY = getSpriteY(0);
-	_vm->_globals.PLANI = 1;
+	_vm->_globals._mapCarPosX = getSpriteX(0);
+	_vm->_globals._mapCarPosY = getSpriteY(0);
 	removeSprite(0);
 	_spritePtr = _vm->_globals.freeMemory(_spritePtr);
 	clearScreen();

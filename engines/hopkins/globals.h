@@ -284,8 +284,8 @@ struct Sauvegarde {
 	CharacterLocation _realHopkins;
 	CharacterLocation _samantha;
 	int16 _inventory[35];	// Originally at offset 1300 of data array
-	int16 PLANX;
-	int16 PLANY;
+	int16 _mapCarPosX;
+	int16 _mapCarPosY;
 };
 
 struct CreditItem {
@@ -372,8 +372,7 @@ public:
 	uint32 _catalogSize;
 	int iRegul;
 	int _exitId;
-	int PLANX, PLANY;
-	int PLANI;
+	int _mapCarPosX, _mapCarPosY;
 	int _screenId;
 	int _prevScreenId;
 	int Max_Propre;

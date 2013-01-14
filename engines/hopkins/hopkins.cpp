@@ -179,7 +179,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals.iRegul = 1;
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
-	_globals.PLANX = _globals.PLANY = 0;
+	_globals._mapCarPosX = _globals._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
 
@@ -473,7 +473,7 @@ bool HopkinsEngine::runLinuxDemo() {
 	_globals.iRegul = 0;
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
-	_globals.PLANX = _globals.PLANY = 0;
+	_globals._mapCarPosX = _globals._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
 
@@ -831,7 +831,7 @@ bool HopkinsEngine::runFull() {
 	_globals.iRegul = 0;
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
-	_globals.PLANX = _globals.PLANY = 0;
+	_globals._mapCarPosX = _globals._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
 	for (;;) {
