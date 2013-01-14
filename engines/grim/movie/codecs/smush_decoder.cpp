@@ -386,8 +386,6 @@ bool SmushDecoder::seek(const Audio::Timestamp &time) { // FIXME: This will be o
 		return false;
 	}
 
-	VideoDecoder::seek(time);
-
 	// Track down the keyframe
 	int keyframe = 0;
 	for (int i = wantedFrame; i >= 0; --i) {
@@ -427,6 +425,7 @@ bool SmushDecoder::seek(const Audio::Timestamp &time) { // FIXME: This will be o
 	int32 sampleCount = (delay.msecs() / 1000.f) * _audioTrack->getRate() - offset;
 	_audioTrack->skipSamples(sampleCount);
 
+	VideoDecoder::seek(time);
 	return true;
 }
 
