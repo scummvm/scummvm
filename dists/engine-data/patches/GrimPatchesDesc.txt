@@ -97,6 +97,12 @@ List of fixed bugs in GF scripts:
 	keyframe component that costume has, including 'give_workorder.key'. This patch moves the flip_ears()
 	call before the wait_for_message(), so that 'default_keys' is completed before 'give_workorder.key' starts.
 
+	Fix the sequence of Bowlsley pointing the gun at Manny - fi.lua.patchr
+	That sequence is broken in many ways: Bowlsley points the gun at the wall instead of at Manny; when Manny
+	reaches for the cases he is too far from them and when Bowlsley sneaks out Manny turns too early,
+	giving the impression he is moving one case to the floor, except thare's no case.
+	This patch fixes all these issue, resulting in a much more good looking sequence.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
