@@ -88,7 +88,7 @@ ObjectsManager::ObjectsManager() {
 	S_old_ani = 0;
 	S_old_ret = 0;
 	nouveau_x = nouveau_y = 0;
-	nouveau_sens = 0;
+	_newDirection = 0;
 	nouveau_anim = 0;
 }
 
@@ -1535,15 +1535,15 @@ void ObjectsManager::GOHOME() {
 		nouveau_y = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
-		nouveau_sens = *_vm->_globals.chemin;
+		_newDirection = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
 		nouveau_anim = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
 		if (nouveau_x != -1 || nouveau_y != -1) {
-			_vm->_globals._oldDirection = nouveau_sens;
-			_vm->_globals._oldDirectionSpriteIdx = nouveau_sens + 59;
+			_vm->_globals._oldDirection = _newDirection;
+			_vm->_globals._oldDirectionSpriteIdx = _newDirection + 59;
 			_vm->_globals.g_old_anim = 0;
 			g_old_x = nouveau_x;
 			g_old_y = nouveau_y;
@@ -1825,7 +1825,7 @@ void ObjectsManager::GOHOME() {
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	v47 = 0;
+	bool v47 = false;
 	do {
 		nouveau_x = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
@@ -1834,7 +1834,7 @@ void ObjectsManager::GOHOME() {
 		nouveau_y = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
-		nouveau_sens = *_vm->_globals.chemin;
+		_newDirection = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 		nouveau_anim = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
@@ -1876,15 +1876,15 @@ void ObjectsManager::GOHOME() {
 			_vm->_globals.Compteur = 0;
 			return;
 		}
-		if (_vm->_globals._oldDirection != nouveau_sens)
+		if (_vm->_globals._oldDirection != _newDirection)
 			break;
-		if ((nouveau_sens == 3 && nouveau_x >= v0) || (_vm->_globals._oldDirection == 7 && nouveau_x <= v0) ||
+		if ((_newDirection == 3 && nouveau_x >= v0) || (_vm->_globals._oldDirection == 7 && nouveau_x <= v0) ||
 		    (_vm->_globals._oldDirection == 1 && nouveau_y <= v58) || (_vm->_globals._oldDirection == 5 && nouveau_y >= v58) ||
 		    (_vm->_globals._oldDirection == 2 && nouveau_x >= v0)  || (_vm->_globals._oldDirection == 8 && nouveau_x <= v0) ||
 		    (_vm->_globals._oldDirection == 4 && nouveau_x >= v0) || (_vm->_globals._oldDirection == 6 && nouveau_x <= v0))
-			v47 = 1;
-	} while (v47 != 1);
-	if (v47 == 1) {
+			v47 = true;
+	} while (!v47);
+	if (v47) {
 		computeAndSetSpriteSize();
 		if ((_vm->_globals._oldDirection == 6) || (_vm->_globals._oldDirection == 7) || (_vm->_globals._oldDirection == 8))
 			setFlipSprite(0, true);
@@ -1905,8 +1905,8 @@ void ObjectsManager::GOHOME() {
 			setFlipSprite(0, false);
 		_vm->_globals.Compteur = 0;
 	}
-	_vm->_globals._oldDirection = nouveau_sens;
-	_vm->_globals._oldDirectionSpriteIdx = nouveau_sens + 59;
+	_vm->_globals._oldDirection = _newDirection;
+	_vm->_globals._oldDirectionSpriteIdx = _newDirection + 59;
 	_vm->_globals.g_old_anim = v1;
 	g_old_x = nouveau_x;
 	g_old_y = nouveau_y;
@@ -1931,7 +1931,7 @@ void ObjectsManager::GOHOME2() {
 		nouveau_y = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
-		nouveau_sens = *_vm->_globals.chemin;
+		_newDirection = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
 		nouveau_anim = *_vm->_globals.chemin;
@@ -1942,7 +1942,7 @@ void ObjectsManager::GOHOME2() {
 
 		++_vm->_globals.j_104;
 		if (_vm->_globals.j_104 >= v0) {
-			_vm->_globals._lastDirection = nouveau_sens;
+			_vm->_globals._lastDirection = _newDirection;
 			setSpriteX(0, nouveau_x);
 			setSpriteY(0, nouveau_y);
 			if (_vm->_globals._lastDirection == 1)

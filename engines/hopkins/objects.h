@@ -113,7 +113,7 @@ public:
 	int S_old_ani;
 	int S_old_ret;
 	int nouveau_x, nouveau_y;
-	int nouveau_sens;
+	int _newDirection;
 	int nouveau_anim;
 public:
 	ObjectsManager();
