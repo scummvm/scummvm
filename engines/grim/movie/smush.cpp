@@ -82,7 +82,7 @@ void SmushPlayer::restoreState(SaveGame *state) {
 	MoviePlayer::restoreState(state);
 	Common::StackLock lock(_frameMutex);
 	if (isPlaying()) {
-	//	_smushDecoder->seek((uint32)_movieTime); // Currently not fully working (out of synch)
+		_smushDecoder->seek((uint32)_movieTime); // Currently not fully working (out of synch)
 		_smushDecoder->start();
 		timerCallback(this);
 	}
