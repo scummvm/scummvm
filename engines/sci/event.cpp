@@ -160,10 +160,9 @@ SciEvent EventManager::getScummVMEvent() {
 
 	noEvent.mousePos = input.mousePos = mousePos;
 
-	if (!found || ev.type == Common::EVENT_MOUSEMOVE)
-	{
+	if (!found || ev.type == Common::EVENT_MOUSEMOVE) {
 		int modifiers = em->getModifierState();
-	  	noEvent.modifiers =
+		noEvent.modifiers =
 			((modifiers & Common::KBD_ALT) ? SCI_KEYMOD_ALT : 0) |
 			((modifiers & Common::KBD_CTRL) ? SCI_KEYMOD_CTRL : 0) |
 			((modifiers & Common::KBD_SHIFT) ? SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT : 0);
