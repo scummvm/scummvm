@@ -120,6 +120,7 @@ void Set::loadText(TextSplitter &ts) {
 	_lights = new Light[_numLights];
 	for (int i = 0; i < _numLights; i++) {
 		_lights[i].load(ts);
+		_lights[i]._id = i;
 		_lightsList.push_back(&_lights[i]);
 	}
 
@@ -176,6 +177,7 @@ void Set::loadBinary(Common::SeekableReadStream *data) {
 	_lights = new Light[_numLights];
 	for (int i = 0; i < _numLights; i++) {
 		_lights[i].loadBinary(data);
+		_lights[i]._id = i;
 		_lightsList.push_back(&_lights[i]);
 	}
 
@@ -502,7 +504,13 @@ public:
 	}
 
 	bool operator()(Light *l1, Light *l2) const {
-		return (l1->_pos - _pos).getSquareMagnitude() < (l2->_pos - _pos).getSquareMagnitude();
+		float d1 = (l1->_pos - _pos).getSquareMagnitude();
+		float d2 = (l2->_pos - _pos).getSquareMagnitude();
+		if (d1 == d2) {
+			return l1->_id < l2->_id;
+		}
+
+		return d1 < d2;
 	}
 
 	Math::Vector3d _pos;

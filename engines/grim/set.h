@@ -163,6 +163,8 @@ public:
 	Color _color;
 	float _intensity, _umbraangle, _penumbraangle;
 	bool _enabled;
+	// there may be more lights with the same position, so this is used to make the sort stable
+	int _id;
 };
 
 } // end of namespace Grim
