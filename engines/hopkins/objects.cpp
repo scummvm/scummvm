@@ -1587,6 +1587,7 @@ void ObjectsManager::GOHOME() {
 		if (_vm->_globals.g_old_anim < 24 || _vm->_globals.g_old_anim > 35) {
 			v0 = g_old_x;
 			v58 = g_old_y;
+			v1 = 24;
 		} else {
 			v3 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v4 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
@@ -1594,253 +1595,236 @@ void ObjectsManager::GOHOME() {
 			if (_sprite[0].fieldC < 0) {
 				v3 = _vm->_graphicsManager.zoomOut(v3, -_sprite[0].fieldC);
 				v4 = _vm->_graphicsManager.zoomOut(v4, -_sprite[0].fieldC);
-			}
-			if (_sprite[0].fieldC > 0) {
+			} else if (_sprite[0].fieldC > 0) {
 				v3 = _vm->_graphicsManager.zoomIn(v3, _sprite[0].fieldC);
 				v4 = _vm->_graphicsManager.zoomIn(v4, _sprite[0].fieldC);
 			}
 			v0 = v3 + g_old_x;
 			v58 = g_old_y + v4;
 			v1 = _vm->_globals.g_old_anim + 1;
-			if (_vm->_globals.g_old_anim != 35)
-				goto LABEL_23;
+			if (v1 > 35)
+				v1 = 24;
 		}
-		v1 = 24;
-LABEL_23:
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	if (_vm->_globals._oldDirection != 7)
-		goto LABEL_43;
-	if (_vm->_globals.g_old_anim < 24 || _vm->_globals.g_old_anim > 35) {
-		v0 = g_old_x;
-		v58 = g_old_y;
-	} else {
-		v9 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-		v10 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-		if (_sprite[0].fieldC < 0) {
-			v9 = _vm->_graphicsManager.zoomOut(v9, -_sprite[0].fieldC);
-			v10 = _vm->_graphicsManager.zoomOut(v10, -_sprite[0].fieldC);
+	if (_vm->_globals._oldDirection == 7) {
+		if (_vm->_globals.g_old_anim < 24 || _vm->_globals.g_old_anim > 35) {
+			v0 = g_old_x;
+			v58 = g_old_y;
+			v1 = 24;
+		} else {
+			v9 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			v10 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			if (_sprite[0].fieldC < 0) {
+				v9 = _vm->_graphicsManager.zoomOut(v9, -_sprite[0].fieldC);
+				v10 = _vm->_graphicsManager.zoomOut(v10, -_sprite[0].fieldC);
+			}
+			if (_sprite[0].fieldC > 0) {
+				v9 = _vm->_graphicsManager.zoomIn(v9, _sprite[0].fieldC);
+				v10 = _vm->_graphicsManager.zoomIn(v10, _sprite[0].fieldC);
+			}
+			v0 = g_old_x - v9;
+			v58 = g_old_y - v10;
+			v1 = _vm->_globals.g_old_anim + 1;
+			if (v1 > 35)
+				v1 = 24;
 		}
-		if (_sprite[0].fieldC > 0) {
-			v9 = _vm->_graphicsManager.zoomIn(v9, _sprite[0].fieldC);
-			v10 = _vm->_graphicsManager.zoomIn(v10, _sprite[0].fieldC);
-		}
-		v0 = g_old_x - v9;
-		v58 = g_old_y - v10;
-		v1 = _vm->_globals.g_old_anim + 1;
-		if (_vm->_globals.g_old_anim != 35)
-			goto LABEL_42;
+		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	v1 = 24;
-LABEL_42:
-	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
-LABEL_43:
-	if (_vm->_globals._oldDirection != 1)
-		goto LABEL_60;
-	if (_vm->_globals.g_old_anim > 11) {
-		v0 = g_old_x;
-		v58 = g_old_y;
-	} else {
-		v15 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
-		v16 = v15;
-		if (_sprite[0].fieldC < 0) {
-			v16 = _vm->_graphicsManager.zoomOut(v16, -_sprite[0].fieldC);
+	if (_vm->_globals._oldDirection == 1) {
+		if (_vm->_globals.g_old_anim > 11) {
+			v0 = g_old_x;
+			v58 = g_old_y;
+			v1 = 0;
+		} else {
+			v15 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
+			v16 = v15;
+			if (_sprite[0].fieldC < 0) {
+				v16 = _vm->_graphicsManager.zoomOut(v16, -_sprite[0].fieldC);
+			}
+			if (_sprite[0].fieldC > 0) {
+				v16 = _vm->_graphicsManager.zoomIn(v16, _sprite[0].fieldC);
+			}
+			v0 = g_old_x;
+			v58 = g_old_y - v16;
+			v1 = _vm->_globals.g_old_anim + 1;
+			if (v1 > 11)
+				v1 = 0;
 		}
-		if (_sprite[0].fieldC > 0) {
-			v16 = _vm->_graphicsManager.zoomIn(v16, _sprite[0].fieldC);
-		}
-		v0 = g_old_x;
-		v58 = g_old_y - v16;
-		v1 = _vm->_globals.g_old_anim + 1;
-		if (_vm->_globals.g_old_anim != 11)
-			goto LABEL_59;
+		_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 	}
-	v1 = 0;
-LABEL_59:
-	_vm->_globals.Compteur = 4 / _vm->_globals._speed;
-LABEL_60:
-	if (_vm->_globals._oldDirection != 5)
-		goto LABEL_77;
-	if (_vm->_globals.g_old_anim < 48 || _vm->_globals.g_old_anim > 59) {
-		v0 = g_old_x;
-		v58 = g_old_y;
-	} else {
-		v19 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
-		v20 = v19;
-		if (_sprite[0].fieldC < 0) {
-			v21 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v21 = -_sprite[0].fieldC;
-			v20 = _vm->_graphicsManager.zoomOut(v20, v21);
+
+	if (_vm->_globals._oldDirection == 5) {
+		if (_vm->_globals.g_old_anim < 48 || _vm->_globals.g_old_anim > 59) {
+			v0 = g_old_x;
+			v58 = g_old_y;
+			v1 = 48;
+		} else {
+			v19 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
+			v20 = v19;
+			if (_sprite[0].fieldC < 0) {
+				v21 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v21 = -_sprite[0].fieldC;
+				v20 = _vm->_graphicsManager.zoomOut(v20, v21);
+			}
+			if (_sprite[0].fieldC > 0) {
+				v22 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v22 = -_sprite[0].fieldC;
+				v20 = _vm->_graphicsManager.zoomIn(v20, v22);
+			}
+			v0 = g_old_x;
+			v58 = v20 + g_old_y;
+			v1 = _vm->_globals.g_old_anim + 1;
+			if (v1 > 59)
+				v1 = 48;
 		}
-		if (_sprite[0].fieldC > 0) {
-			v22 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v22 = -_sprite[0].fieldC;
-			v20 = _vm->_graphicsManager.zoomIn(v20, v22);
-		}
-		v0 = g_old_x;
-		v58 = v20 + g_old_y;
-		v1 = _vm->_globals.g_old_anim + 1;
-		if (_vm->_globals.g_old_anim != 59)
-			goto LABEL_76;
+		_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 	}
-	v1 = 48;
-LABEL_76:
-	_vm->_globals.Compteur = 4 / _vm->_globals._speed;
-LABEL_77:
-	if (_vm->_globals._oldDirection != 2)
-		goto LABEL_96;
-	if (_vm->_globals.g_old_anim < 12 || _vm->_globals.g_old_anim > 23) {
-		v0 = g_old_x;
-		v58 = g_old_y;
-	} else {
-		v23 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-		v24 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-		if (_sprite[0].fieldC < 0) {
-			v25 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v25 = -_sprite[0].fieldC;
-			v23 = _vm->_graphicsManager.zoomOut(v23, v25);
-			v26 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v26 = -_sprite[0].fieldC;
-			v24 = _vm->_graphicsManager.zoomOut(v24, v26);
+	if (_vm->_globals._oldDirection == 2) {
+		if (_vm->_globals.g_old_anim < 12 || _vm->_globals.g_old_anim > 23) {
+			v0 = g_old_x;
+			v58 = g_old_y;
+			v1 = 12;
+		} else {
+			v23 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			v24 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			if (_sprite[0].fieldC < 0) {
+				v25 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v25 = -_sprite[0].fieldC;
+				v23 = _vm->_graphicsManager.zoomOut(v23, v25);
+				v26 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v26 = -_sprite[0].fieldC;
+				v24 = _vm->_graphicsManager.zoomOut(v24, v26);
+			}
+			if (_sprite[0].fieldC > 0) {
+				v27 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v27 = -_sprite[0].fieldC;
+				v23 = _vm->_graphicsManager.zoomIn(v23, v27);
+				v28 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v28 = -_sprite[0].fieldC;
+				v24 = _vm->_graphicsManager.zoomIn(v24, v28);
+			}
+			v0 = v23 + g_old_x;
+			v58 = g_old_y + v24;
+			v1 = _vm->_globals.g_old_anim + 1;
+			if (v1 > 23)
+				v1 = 12;
 		}
-		if (_sprite[0].fieldC > 0) {
-			v27 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v27 = -_sprite[0].fieldC;
-			v23 = _vm->_graphicsManager.zoomIn(v23, v27);
-			v28 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v28 = -_sprite[0].fieldC;
-			v24 = _vm->_graphicsManager.zoomIn(v24, v28);
-		}
-		v0 = v23 + g_old_x;
-		v58 = g_old_y + v24;
-		v1 = _vm->_globals.g_old_anim + 1;
-		if (_vm->_globals.g_old_anim != 23)
-			goto LABEL_95;
+		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	v1 = 12;
-LABEL_95:
-	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
-LABEL_96:
-	if (_vm->_globals._oldDirection != 8)
-		goto LABEL_115;
-	if (_vm->_globals.g_old_anim < 12 || _vm->_globals.g_old_anim > 23) {
-		v0 = g_old_x;
-		v58 = g_old_y;
-	} else {
-		v29 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-		v30 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-		if (_sprite[0].fieldC < 0) {
-			v31 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v31 = -_sprite[0].fieldC;
-			v29 = _vm->_graphicsManager.zoomOut(v29, v31);
-			v32 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v32 = -_sprite[0].fieldC;
-			v30 = _vm->_graphicsManager.zoomOut(v30, v32);
+	if (_vm->_globals._oldDirection == 8) {
+		if (_vm->_globals.g_old_anim < 12 || _vm->_globals.g_old_anim > 23) {
+			v0 = g_old_x;
+			v58 = g_old_y;
+			v1 = 12;
+		} else {
+			v29 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			v30 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			if (_sprite[0].fieldC < 0) {
+				v31 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v31 = -_sprite[0].fieldC;
+				v29 = _vm->_graphicsManager.zoomOut(v29, v31);
+				v32 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v32 = -_sprite[0].fieldC;
+				v30 = _vm->_graphicsManager.zoomOut(v30, v32);
+			} else if (_sprite[0].fieldC > 0) {
+				v33 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v33 = -_sprite[0].fieldC;
+				v29 = _vm->_graphicsManager.zoomIn(v29, v33);
+				v34 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v34 = -_sprite[0].fieldC;
+				v30 = _vm->_graphicsManager.zoomIn(v30, v34);
+			}
+			v0 = g_old_x - v29;
+			v58 = g_old_y + v30;
+			v1 = _vm->_globals.g_old_anim + 1;
+			if (v1 > 23)
+				v1 = 12;
 		}
-		if (_sprite[0].fieldC > 0) {
-			v33 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v33 = -_sprite[0].fieldC;
-			v29 = _vm->_graphicsManager.zoomIn(v29, v33);
-			v34 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v34 = -_sprite[0].fieldC;
-			v30 = _vm->_graphicsManager.zoomIn(v30, v34);
-		}
-		v0 = g_old_x - v29;
-		v58 = g_old_y + v30;
-		v1 = _vm->_globals.g_old_anim + 1;
-		if (_vm->_globals.g_old_anim != 23)
-			goto LABEL_114;
+		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	v1 = 12;
-LABEL_114:
-	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
-LABEL_115:
-	if (_vm->_globals._oldDirection != 4)
-		goto LABEL_134;
-	if (_vm->_globals.g_old_anim < 36 || _vm->_globals.g_old_anim > 47) {
-		v0 = g_old_x;
-		v58 = g_old_y;
-	} else {
-		v35 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-		v36 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-		if (_sprite[0].fieldC < 0) {
-			v37 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v37 = -_sprite[0].fieldC;
-			v35 = _vm->_graphicsManager.zoomOut(v35, v37);
-			v38 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v38 = -_sprite[0].fieldC;
-			v36 = _vm->_graphicsManager.zoomOut(v36, v38);
+	if (_vm->_globals._oldDirection == 4) {
+		if (_vm->_globals.g_old_anim < 36 || _vm->_globals.g_old_anim > 47) {
+			v0 = g_old_x;
+			v58 = g_old_y;
+			v1 = 36;
+		} else {
+			v35 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			v36 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			if (_sprite[0].fieldC < 0) {
+				v37 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v37 = -_sprite[0].fieldC;
+				v35 = _vm->_graphicsManager.zoomOut(v35, v37);
+				v38 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v38 = -_sprite[0].fieldC;
+				v36 = _vm->_graphicsManager.zoomOut(v36, v38);
+			}
+			if (_sprite[0].fieldC > 0) {
+				v39 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v39 = -_sprite[0].fieldC;
+				v35 = _vm->_graphicsManager.zoomIn(v35, v39);
+				v40 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v40 = -_sprite[0].fieldC;
+				v36 = _vm->_graphicsManager.zoomIn(v36, v40);
+			}
+			v0 = v35 + g_old_x;
+			v58 = g_old_y + v36;
+			v1 = _vm->_globals.g_old_anim + 1;
+			if (v1 > 47)
+				v1 = 36;
 		}
-		if (_sprite[0].fieldC > 0) {
-			v39 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v39 = -_sprite[0].fieldC;
-			v35 = _vm->_graphicsManager.zoomIn(v35, v39);
-			v40 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v40 = -_sprite[0].fieldC;
-			v36 = _vm->_graphicsManager.zoomIn(v36, v40);
-		}
-		v0 = v35 + g_old_x;
-		v58 = g_old_y + v36;
-		v1 = _vm->_globals.g_old_anim + 1;
-		if (_vm->_globals.g_old_anim != 47)
-			goto LABEL_133;
+		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	v1 = 36;
-LABEL_133:
-	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
-LABEL_134:
-	if (_vm->_globals._oldDirection != 6)
-		goto LABEL_153;
-	if (_vm->_globals.g_old_anim < 36 || _vm->_globals.g_old_anim > 47) {
-		v0 = g_old_x;
-		v58 = g_old_y;
-	} else {
-		v41 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-		v42 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-		if (_sprite[0].fieldC < 0) {
-			v43 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v43 = -_sprite[0].fieldC;
-			v41 = _vm->_graphicsManager.zoomOut(v41, v43);
-			v44 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v44 = -_sprite[0].fieldC;
-			v42 = _vm->_graphicsManager.zoomOut(v42, v44);
+	if (_vm->_globals._oldDirection == 6) {
+		if (_vm->_globals.g_old_anim < 36 || _vm->_globals.g_old_anim > 47) {
+			v0 = g_old_x;
+			v58 = g_old_y;
+			v1 = 36;
+		} else {
+			v41 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			v42 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			if (_sprite[0].fieldC < 0) {
+				v43 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v43 = -_sprite[0].fieldC;
+				v41 = _vm->_graphicsManager.zoomOut(v41, v43);
+				v44 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v44 = -_sprite[0].fieldC;
+				v42 = _vm->_graphicsManager.zoomOut(v42, v44);
+			}
+			if (_sprite[0].fieldC > 0) {
+				v45 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v45 = -_sprite[0].fieldC;
+				v41 = _vm->_graphicsManager.zoomIn(v41, v45);
+				v46 = _sprite[0].fieldC;
+				if (_sprite[0].fieldC < 0)
+					v46 = -_sprite[0].fieldC;
+				v42 = _vm->_graphicsManager.zoomIn(v42, v46);
+			}
+			v0 = g_old_x - v41;
+			v58 = g_old_y + v42;
+			v1 = _vm->_globals.g_old_anim + 1;
+			if (v1 > 47)
+				v1 = 36;
 		}
-		if (_sprite[0].fieldC > 0) {
-			v45 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v45 = -_sprite[0].fieldC;
-			v41 = _vm->_graphicsManager.zoomIn(v41, v45);
-			v46 = _sprite[0].fieldC;
-			if (_sprite[0].fieldC < 0)
-				v46 = -_sprite[0].fieldC;
-			v42 = _vm->_graphicsManager.zoomIn(v42, v46);
-		}
-		v0 = g_old_x - v41;
-		v58 = g_old_y + v42;
-		v1 = _vm->_globals.g_old_anim + 1;
-		if (_vm->_globals.g_old_anim != 47)
-			goto LABEL_152;
+		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	v1 = 36;
-LABEL_152:
-	_vm->_globals.Compteur = 5 / _vm->_globals._speed;
-LABEL_153:
 	v47 = 0;
 	do {
 		nouveau_x = *_vm->_globals.chemin;
