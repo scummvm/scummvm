@@ -378,7 +378,7 @@ bool SmushDecoder::rewind() {
 	return seekToFrame(0);
 }
 
-bool SmushDecoder::seek(const Audio::Timestamp &time) { // FIXME: This will be off by a second or two right now.
+bool SmushDecoder::seek(const Audio::Timestamp &time) {
 	int32 wantedFrame = (uint32)((time.msecs() / 1000.0f) * _videoTrack->getFrameRate().toDouble());
 	if (wantedFrame != 0) {
 		Debug::debug(Debug::Movie, "Seek to time: %d, frame: %d", time.msecs(), wantedFrame);
