@@ -80,14 +80,10 @@ public:
 
 	/**
 	 * Saves the state of the video to a savegame
-	 *
-	 * If you overload this in a subclass, call this first thing in the
-	 * overloaded function
-	 *
-	 * @param state			the state to save to
+	 * @param state			The state to save to
 	 */
-	virtual void saveState(SaveGame *state);
-	virtual void restoreState(SaveGame *state);
+	void saveState(SaveGame *state);
+	void restoreState(SaveGame *state);
 
 protected:
 	static void timerCallback(void *ptr);
@@ -151,6 +147,24 @@ protected:
 	 * @param filename		The filename to be handled.
 	 */
 	virtual bool loadFile(Common::String filename);
+
+	/**
+	 * Saves subclass related state of the video to a savegame
+	 * The base implementation of this does nothing, but it can be overridden
+	 * by subclasses.
+	 *
+	 * @param state The state to save to
+	 */
+	virtual void save(SaveGame *state) {}
+
+	/**
+	 * Restores subclass related state of the video to a savegame
+	 * The base implementation of this does nothing, but it can be overridden
+	 * by subclasses.
+	 *
+	 * @param state The state to restore from
+	 */
+	virtual void restore(SaveGame *state) {}
 };
 
 

@@ -78,9 +78,7 @@ void SmushPlayer::postHandleFrame() {
 	}
 }
 
-void SmushPlayer::restoreState(SaveGame *state) {
-	MoviePlayer::restoreState(state);
-	Common::StackLock lock(_frameMutex);
+void SmushPlayer::restore(SaveGame *state) {
 	if (isPlaying()) {
 		_smushDecoder->seek((uint32)_movieTime); // Currently not fully working (out of synch)
 		_smushDecoder->start();
