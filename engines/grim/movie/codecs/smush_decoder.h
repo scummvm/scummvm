@@ -125,6 +125,8 @@ protected:
 		Audio::QueuingAudioStream *_queueStream;
 	};
 private:
+	void initFrames();
+
 	SmushAudioTrack *_audioTrack;
 	SmushVideoTrack *_videoTrack;
 

@@ -69,7 +69,10 @@ SmushDecoder::~SmushDecoder() {
 void SmushDecoder::init() {
 	_videoTrack->init();
 	_audioTrack->init();
+}
 
+void SmushDecoder::initFrames() {
+	delete[] _frames;
 	_frames = new Frame[_videoTrack->getFrameCount()];
 
 	int seekPos = _file->pos();
@@ -384,6 +387,10 @@ bool SmushDecoder::seek(const Audio::Timestamp &time) { // FIXME: This will be o
 
 	if (wantedFrame > _videoTrack->getFrameCount()) {
 		return false;
+	}
+
+	if (!_frames) {
+		initFrames();
 	}
 
 	// Track down the keyframe
