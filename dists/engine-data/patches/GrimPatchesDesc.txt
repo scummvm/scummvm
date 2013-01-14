@@ -103,6 +103,10 @@ List of fixed bugs in GF scripts:
 	giving the impression he is moving one case to the floor, except thare's no case.
 	This patch fixes all these issue, resulting in a much more good looking sequence.
 
+	Fix bug #707 "Grim: Upper part of forklift not visible in the wc set" - forklift.cos.patchr
+	The costume chores hide the meshes 17 (cage) and 12 (spout). This patch changes the values from 0 to 1
+	in the chore keys.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
