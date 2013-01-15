@@ -2640,25 +2640,17 @@ void ObjectsManager::computeAndSetSpriteSize() {
 }
 
 void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
-	int v1;
-	int v2;
 	int v4;
 	int v5;
-	int v6;
-	int v7;
 	int v9;
 	int v10;
 	int v11;
 	int v12;
-	int v13;
-	int v14;
-	int v15;
 
-	v1 = 0;
-	v13 = 0;
-	v14 = -1;
-	v2 = a1[1];
-	v15 = a1[2];
+	int v1 = 0;
+	int v14 = -1;
+	int v2 = a1[1];
+	int v15 = a1[2];
 	if (a1[0] == -1 && v2 == -1)
 		return;
 
@@ -2670,21 +2662,18 @@ void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
 			v4 = a1[v1];
 			v9 = a1[v1];
 			v5 = a1[v1 + 1];
-			v6 = 0;
 			while (v4 != -1 || v5 != -1) {
 				int idx = v1;
 				v1 += 4;
 				++v12;
 				if (a1[idx + 2] != v15)
-					v6 = 1;
-				if (v6 == 1)
 					break;
 				v4 = a1[v1];
 				v9 = a1[v1];
 				v5 = a1[v1 + 1];
 			}
 			if (v12 < v10) {
-				v7 = v11;
+				int v7 = v11;
 				for (int v8 = 0; v8 < v12; v8++) {
 					a1[v7 + 2] = v14;
 					v7 += 4;
@@ -2693,30 +2682,22 @@ void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
 			}
 			v1 = v11;
 			if (v9 == -1 && v5 == -1)
-				v13 = 1;
+				break;
 		}
 		v1 += 4;
-		if (v13 == 1)
-			break;
 		v14 = v15;
 		v2 = a1[v1 + 1];
 		v15 = a1[v1 + 2];
-		if (a1[v1] == -1) {
-			if (v2 == -1)
-				break;
-		}
+		if (a1[v1] == -1 && v2 == -1)
+			break;
 	}
 }
 
 int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	int16 *result;
-	int v23;
 	int v27;
 	int v28;
 	int v29;
-	int v34;
-	int v35;
-	int16 *v37;
 	int16 *v41;
 	int16 *v45;
 	int v48;
@@ -2781,11 +2762,7 @@ int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			break;
 		arrDataIdx[7] = 0;
 		arrLineIdx[7] = -1;
-		if (arrDelta[1] <= delta && arrLineIdx[1] != -1)
-			break;
-		if (arrDelta[5] <= delta && arrLineIdx[5] != -1)
-			break;
-		if (arrDelta[3] <= delta && arrLineIdx[3] != -1)
+		if ((arrDelta[1] <= delta && arrLineIdx[1] != -1) || arrDelta[3] <= delta && arrLineIdx[3] != -1 || arrDelta[5] <= delta && arrLineIdx[5] != -1)
 			break;
 	}
 	arrDelta[7] = delta;
@@ -2799,21 +2776,21 @@ int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	if (arrLineIdx[7] == -1)
 		arrDelta[7] = 1300;
 	if (arrLineIdx[1] != -1 || arrLineIdx[3] != -1 || arrLineIdx[5] != -1 || arrLineIdx[7] != -1) {
-		v23 = 0;
+		bool v23 = false;
 		if (arrLineIdx[5] != -1 && arrDelta[1] >= arrDelta[5] && arrDelta[3] >= arrDelta[5] && arrDelta[7] >= arrDelta[5]) {
 			v73 = arrLineIdx[5];
 			v72 = arrDataIdx[5];
-			v23 = 1;
+			v23 = true;
 		}
 		if (arrLineIdx[1] != -1 && !v23 && arrDelta[5] >= arrDelta[1] && arrDelta[3] >= arrDelta[1] && arrDelta[7] >= arrDelta[1]) {
 			v73 = arrLineIdx[1];
 			v72 = arrDataIdx[1];
-			v23 = 1;
+			v23 = true;
 		}
 		if (arrLineIdx[3] != -1 && !v23 && arrDelta[1] >= arrDelta[3] && arrDelta[5] >= arrDelta[3] && arrDelta[7] >= arrDelta[3]) {
 			v73 = arrLineIdx[3];
 			v72 = arrDataIdx[3];
-			v23 = 1;
+			v23 = true;
 		}
 		if (arrLineIdx[7] != -1 && !v23 && arrDelta[5] >= arrDelta[7] && arrDelta[3] >= arrDelta[7] && arrDelta[1] >= arrDelta[7]) {
 			v73 = arrLineIdx[7];
@@ -2862,17 +2839,14 @@ int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 		}
 LABEL_90:
 		if (v69 < v73) {
-			v34 = v68;
-			v35 = v68;
-			for (int i = _vm->_linesManager.Ligne[v69]._lineDataEndIdx; v35 < i - 2; i = _vm->_linesManager.Ligne[v69]._lineDataEndIdx) {
-				v37 = _vm->_linesManager.Ligne[v69]._lineData;
-				_vm->_globals.super_parcours[superRouteIdx] = v37[2 * v35];
-				_vm->_globals.super_parcours[superRouteIdx + 1] = v37[2 * v35 + 1];
+			int v34 = v68;
+			for (int i = _vm->_linesManager.Ligne[v69]._lineDataEndIdx; v34 < i - 2; i = _vm->_linesManager.Ligne[v69]._lineDataEndIdx) {
+				_vm->_globals.super_parcours[superRouteIdx] = _vm->_linesManager.Ligne[v69]._lineData[2 * v34];
+				_vm->_globals.super_parcours[superRouteIdx + 1] = _vm->_linesManager.Ligne[v69]._lineData[2 * v34 + 1];
 				_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[v69].field6;
 				_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
 				superRouteIdx += 4;
 				++v34;
-				v35 = v34;
 			}
 			for (j = v69 + 1; j < v73; ++j) {
 				if (_vm->_linesManager.PLAN_TEST(
@@ -3127,129 +3101,96 @@ void ObjectsManager::handleRightButton() {
 }
 
 int ObjectsManager::MZONE() {
-	signed int result;
-	int16 v2;
-	int v3;
-	int16 v4;
-	int16 v5;
-	int v6;
-	int v8;
-	int v9;
-	int16 yCurrent;
-	int16 v11;
-	int16 j;
-	int16 k;
-	int16 xCurrent;
-	int v15;
-	int16 v16;
-	int16 v17;
-	int16 v18;
-	int16 v19;
-	int16 yp;
-	int16 xp;
+	int result;
 
-	v19 = 0;
-	v18 = 0;
-	v17 = 0;
-	v16 = 0;
-	xp = _vm->_eventsManager._mousePos.x + _vm->_eventsManager._mouseOffset.x;
-	yp = _vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y;
+	int xp = _vm->_eventsManager._mousePos.x + _vm->_eventsManager._mouseOffset.x;
+	int yp = _vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y;
 	if ((_vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y) > 19) {
 		for (int v1 = 0; v1 <= 48; v1++) {
-			v2 = _vm->_globals.BOBZONE[v1];
-			if (v2) {
-				if (_vm->_globals.BOBZONE_FLAG[v1]) {
-					v3 = v2;
-					v15 = v3;
-					if (_vm->_globals._bob[v3].field0) {
-						if (_vm->_globals._bob[v3]._frameIndex != 250) {
-							if (!_vm->_globals._bob[v3]._disabledAnimationFl) {
-								v4 = _vm->_globals._bob[v3]._oldX;
-								if (xp > v4) {
-									if (xp < _vm->_globals._bob[v3]._oldWidth + v4) {
-										v5 = _vm->_globals._bob[v3]._oldY;
-										if (yp > v5) {
-											if (yp < _vm->_globals._bob[v3]._oldHeight + v5) {
-												v6 = v1;
-												if (_vm->_globals.ZONEP[v1].field4 == -1) {
-													_vm->_globals.ZONEP[v6]._destX = 0;
-													_vm->_globals.ZONEP[v1]._destY = 0;
-												}
-												if (!_vm->_globals.ZONEP[v6]._destX) {
-													if (!_vm->_globals.ZONEP[v1]._destY) {
-														_vm->_globals.ZONEP[v6]._destX = _vm->_globals._bob[v15]._oldWidth + _vm->_globals._bob[v15]._oldX;
-														_vm->_globals.ZONEP[v1]._destY = _vm->_globals._bob[v15]._oldHeight + _vm->_globals._bob[v15]._oldY + 6;
-														_vm->_globals.ZONEP[v1].field4 = -1;
-													}
-												}
-												return v1;
-											}
-										}
-									}
-								}
-							}
-						}
+			int v2 = _vm->_globals.BOBZONE[v1];
+			if (v2 && _vm->_globals.BOBZONE_FLAG[v1] && _vm->_globals._bob[v2].field0 && _vm->_globals._bob[v2]._frameIndex != 250 &&
+			    !_vm->_globals._bob[v2]._disabledAnimationFl && xp > _vm->_globals._bob[v2]._oldX && 
+			    xp < _vm->_globals._bob[v2]._oldWidth + _vm->_globals._bob[v2]._oldX && yp > _vm->_globals._bob[v2]._oldY) {
+				if (yp < _vm->_globals._bob[v2]._oldHeight + _vm->_globals._bob[v2]._oldY) {
+					if (_vm->_globals.ZONEP[v1].field4 == -1) {
+						_vm->_globals.ZONEP[v1]._destX = 0;
+						_vm->_globals.ZONEP[v1]._destY = 0;
 					}
+					if (!_vm->_globals.ZONEP[v1]._destX && !_vm->_globals.ZONEP[v1]._destY) {
+							_vm->_globals.ZONEP[v1]._destX = _vm->_globals._bob[v2]._oldWidth + _vm->_globals._bob[v2]._oldX;
+							_vm->_globals.ZONEP[v1]._destY = _vm->_globals._bob[v2]._oldHeight + _vm->_globals._bob[v2]._oldY + 6;
+							_vm->_globals.ZONEP[v1].field4 = -1;
+					}
+					return v1;
 				}
 			}
 		}
 		_vm->_globals.SegmentEnCours = 0;
 		for (int v7 = 0; v7 <= 99; v7++) {
-			if (_vm->_globals.ZONEP[v7].field10 == 1) {
-				v8 = v7;
-				if (_vm->_globals.CarreZone[v8].field0 == 1) {
-					if (_vm->_globals.CarreZone[v7].field2 <= xp
-					        && _vm->_globals.CarreZone[v7].field4 >= xp
-					        && _vm->_globals.CarreZone[v7].field6 <= yp
-					        && _vm->_globals.CarreZone[v7].field8 >= yp) {
-								if (_vm->_globals.CarreZone[v7].fieldE == 1) {
-									_vm->_globals.oldzone_46 = _vm->_linesManager._zoneLine[_vm->_globals.CarreZone[v7].fieldA].field2;
-							return _vm->_globals.oldzone_46;
-						}
-						v9 = _vm->_globals.SegmentEnCours;
-						_vm->_globals.Segment[v9].field2 = _vm->_globals.CarreZone[v7].fieldA;
-						_vm->_globals.Segment[v9].field4 = _vm->_globals.CarreZone[v7].fieldC;
-						++_vm->_globals.SegmentEnCours;
-					}
+			if (_vm->_globals.ZONEP[v7].field10 == 1 && _vm->_globals.CarreZone[v7].field0 == 1
+				 && _vm->_globals.CarreZone[v7].field2 <= xp
+				 && _vm->_globals.CarreZone[v7].field4 >= xp
+				 && _vm->_globals.CarreZone[v7].field6 <= yp
+				 && _vm->_globals.CarreZone[v7].field8 >= yp) {
+				if (_vm->_globals.CarreZone[v7].fieldE == 1) {
+					_vm->_globals.oldzone_46 = _vm->_linesManager._zoneLine[_vm->_globals.CarreZone[v7].fieldA].field2;
+					return _vm->_globals.oldzone_46;
 				}
+				_vm->_globals.Segment[_vm->_globals.SegmentEnCours].field2 = _vm->_globals.CarreZone[v7].fieldA;
+				_vm->_globals.Segment[_vm->_globals.SegmentEnCours].field4 = _vm->_globals.CarreZone[v7].fieldC;
+				++_vm->_globals.SegmentEnCours;
 			}
 		}
-		if (!_vm->_globals.SegmentEnCours)
-			goto LABEL_58;
+		if (!_vm->_globals.SegmentEnCours) {
+			_vm->_globals.oldzone_46 = -1;
+			return -1;
+		}
 
-		for (yCurrent = yp; yCurrent >= 0; --yCurrent) {
-			v11 = colision(xp, yCurrent);
-			v19 = v11;
-			if (v11 != -1 && _vm->_globals.ZONEP[v11].field10 == 1)
+		int colRes1 = 0;
+		for (int yCurrent = yp; yCurrent >= 0; --yCurrent) {
+			colRes1 = colision(xp, yCurrent);
+			if (colRes1 != -1 && _vm->_globals.ZONEP[colRes1].field10 == 1)
 				break;
 		}
-		if (v19 == -1)
-			goto LABEL_58;
-		for (j = yp; j < _vm->_graphicsManager.max_y; ++j) {
-			v18 = colision(xp, j);
-			if (v18 != -1 && _vm->_globals.ZONEP[v19].field10 == 1)
-				break;
-		}
-		if (v18 == -1)
-			goto LABEL_58;
-		for (k = xp; k >= 0; --k) {
-			v16 = colision(k, yp);
-			if (v16 != -1 && _vm->_globals.ZONEP[v19].field10 == 1)
-				break;
-		}
-		if (v16 == -1)
-			goto LABEL_58;
 
-		for (xCurrent = xp; _vm->_graphicsManager.max_x > xCurrent; ++xCurrent) {
-			v17 = colision(xCurrent, yp);
-			if (v17 != -1 && _vm->_globals.ZONEP[v19].field10 == 1)
+		if (colRes1 == -1) {
+			_vm->_globals.oldzone_46 = -1;
+			return -1;
+		}
+
+		int colRes2 = 0;
+		for (int j = yp; j < _vm->_graphicsManager.max_y; ++j) {
+			colRes2 = colision(xp, j);
+			if (colRes2 != -1 && _vm->_globals.ZONEP[colRes1].field10 == 1)
 				break;
 		}
-		if (v19 == v18 && v19 == v16 && v19 == v17) {
-			_vm->_globals.oldzone_46 = v19;
-			result = v19;
+
+		if (colRes2 == -1) {
+			_vm->_globals.oldzone_46 = -1;
+			return -1;
+		}
+
+		int colRes3 = 0;
+		for (int k = xp; k >= 0; --k) {
+			colRes3 = colision(k, yp);
+			if (colRes3 != -1 && _vm->_globals.ZONEP[colRes1].field10 == 1)
+				break;
+		}
+		if (colRes3 == -1) {
+			_vm->_globals.oldzone_46 = -1;
+			return -1;
+		}
+
+		int colRes4 = 0;
+		for (int xCurrent = xp; _vm->_graphicsManager.max_x > xCurrent; ++xCurrent) {
+			colRes4 = colision(xCurrent, yp);
+			if (colRes4 != -1 && _vm->_globals.ZONEP[colRes1].field10 == 1)
+				break;
+		}
+		if (colRes1 == colRes2 && colRes1 == colRes3 && colRes1 == colRes4) {
+			_vm->_globals.oldzone_46 = colRes1;
+			result = colRes1;
 		} else {
-LABEL_58:
 			_vm->_globals.oldzone_46 = -1;
 			result = -1;
 		}
@@ -3421,23 +3362,24 @@ void ObjectsManager::OPTI_OBJET() {
 	if (data[0] != 'I' || data[1] != 'N' || data[2] != 'I')
 		error("File %s is not an INI file", file.c_str());
 
-	bool v7 = false;
-	do {
+	for (;;) {
 		v5 = _vm->_scriptManager.handleOpcode(data + 20 * v0);
 		if (_vm->shouldQuit())
 			return;
 
 		if (v5 == 2)
 			v0 = _vm->_scriptManager.handleGoto(data + 20 * v0);
-		if (v5 == 3)
+		else if (v5 == 3)
 			v0 = _vm->_scriptManager.handleIf(data, v0);
+
 		if (v0 == -1)
 			error("defective IFF function");
+
 		if (v5 == 1 || v5 == 4)
 			++v0;
 		if (!v5 || v5 == 5)
-			v7 = true;
-	} while (!v7);
+			break;
+	}
 
 	_vm->_globals.freeMemory(data);
 }
