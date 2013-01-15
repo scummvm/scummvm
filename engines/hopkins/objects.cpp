@@ -3386,8 +3386,6 @@ void ObjectsManager::OPTI_OBJET() {
 
 void ObjectsManager::handleSpecialGames() {
 	byte *oldPalette;
-	byte *v2;
-	byte *v3;
 
 	switch (_vm->_globals._screenId) {
 	case 5:
@@ -3429,14 +3427,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager.unlockScreen();
-		v2 = _vm->_graphicsManager._vesaBuffer;
-		v3 = _vm->_graphicsManager._vesaScreen;
-		memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614396);
-		v3 = v3 + 614396;
-		v2 = v2 + 614396;
-		*v2 = *v3;
-		v2 = v2 + 2;
-		*v2 = v3[2];
+		memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
 
 		_vm->_graphicsManager.no_scroll = 0;
 		_vm->_graphicsManager.DD_VBL();
@@ -3825,11 +3816,6 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	int v8;
 	int v9;
 	int v10;
-	int v11;
-	int v12;
-	byte *v13;
-	int v14;
-	int v15;
 	byte *v16;
 	byte *v17;
 	byte *v22;
@@ -3883,23 +3869,18 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				v8 = (int16)READ_LE_UINT16(v37 + 2 * v36);
 				v9 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 2);
 				v10 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 4);
-				v11 = v40;
 
-				_vm->_globals.Cache[v11].field14 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 8);
-				_vm->_globals.Cache[v11]._spriteIndex = v8;
-				_vm->_globals.Cache[v11]._x = v9;
-				_vm->_globals.Cache[v11]._y = v10;
+				_vm->_globals.Cache[v40].field14 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 8);
+				_vm->_globals.Cache[v40]._spriteIndex = v8;
+				_vm->_globals.Cache[v40]._x = v9;
+				_vm->_globals.Cache[v40]._y = v10;
 
 				if (!_vm->_globals.CACHE_BANQUE[1]) {
 					_vm->_globals.Cache[v40].fieldA = 0;
 				} else {
-					v12 = v8;
-					v13 = _vm->_globals.CACHE_BANQUE[1];
-					v14 = getWidth(v13, v8);
-					v15 = getHeight(v13, v12);
-					_vm->_globals.Cache[v40]._spriteData = v13;
-					_vm->_globals.Cache[v40]._width = v14;
-					_vm->_globals.Cache[v40]._height = v15;
+					_vm->_globals.Cache[v40]._spriteData = _vm->_globals.CACHE_BANQUE[1];
+					_vm->_globals.Cache[v40]._width = getWidth(_vm->_globals.CACHE_BANQUE[1], v8);
+					_vm->_globals.Cache[v40]._height = getHeight(_vm->_globals.CACHE_BANQUE[1], v8);
 					_vm->_globals.Cache[v40].fieldA = 1;
 				}
 				if (!_vm->_globals.Cache[v40]._x && !_vm->_globals.Cache[v40]._y
@@ -4312,7 +4293,7 @@ int ObjectsManager::colision(int xp, int yp) {
 					flag = false;
 
 				if (flag && _vm->_linesManager._zoneLine[field2].count > 0) {
-					for (int v5 = 0; v5 < count; ++v5) {
+					for (int i = 0; i < count; ++i) {
 						int xCheck = *dataP++;
 						int yCheck = *dataP++;
 
@@ -4563,12 +4544,6 @@ void ObjectsManager::lockAnimX(int idx, int a2) {
 
 void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 							   const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen) {
-	int v5;
-	int v7;
-	int v8;
-	int v9;
-
-	v5 = 0;
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_dialogsManager._removeInventFl = false;
@@ -4604,7 +4579,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_vm->_eventsManager.changeMouseCursor(4);
-	for (int v6 = 0; v6 <= 4; v6++)
+	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager.VBL();
 	_vm->_graphicsManager.fadeInLong();
 	if (_vm->_globals._screenId == 61) {
@@ -4615,9 +4590,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_vm->_globals._oldDirection = -1;
 		_vm->_globals.Compteur = 0;
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
-		v7 = getSpriteY(0);
-		v8 = getSpriteX(0);
-		_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v8, v7, 330, 345);
+		_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), 330, 345);
 		_vm->_globals.NOT_VERIF = true;
 		do {
 			GOHOME();
@@ -4626,24 +4599,22 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		setSpriteIndex(0, 64);
 	}
 	do {
-		v9 = _vm->_eventsManager.getMouseButton();
-		if (v9 == 1) {
+		int mouseButton = _vm->_eventsManager.getMouseButton();
+		if (mouseButton == 1) {
 			handleLeftButton();
-			v9 = 1;
-		}
-		if (v9 == 2)
+			mouseButton = 1;
+		} else if (mouseButton == 2)
 			handleRightButton();
 		_vm->_dialogsManager.testDialogOpening();
 		checkZone();
 		if (_vm->_globals.GOACTION)
 			PARADISE();
-		if (!_vm->_globals._exitId) {
+		if (!_vm->_globals._exitId)
 			_vm->_eventsManager.VBL();
-			if (!_vm->_globals._exitId)
-				continue;
-		}
-		v5 = 1;
-	} while (!_vm->shouldQuit() && v5 != 1);
+
+		if (_vm->_globals._exitId)
+			break;
+	} while (!_vm->shouldQuit());
 	if (_vm->shouldQuit())
 		return;
 
