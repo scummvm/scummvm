@@ -112,6 +112,11 @@ List of fixed bugs in GF scripts:
 	It does also remove some sleep_for() to improve the animation when punching the bag when it is still
 	oscillating.
 
+	Fix bug #300 "GRIM: Animation glitch upon breaking the Neon-Lady" - nl.lua.patchr
+	The function nl.gargoyle.use_sproutella, after the call to play_movie("nl_crush.snm", 272, 0), waits for
+	Manny's chore 'md_sproutella_sproutella' to finish, and that delays the start of the fullscreen movie.
+	This patch just removes that wait.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
