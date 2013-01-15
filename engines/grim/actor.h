@@ -445,9 +445,7 @@ public:
 	void setShadowValid(int);
 	void setActivateShadow(int, bool);
 
-	void setConstrain(bool constrain) {
-		_constrain = constrain;
-	}
+	void setFollowBoxes(bool follow) { _followBoxes = follow; }
 	void update(uint frameTime);
 	/**
 	 * Check if the actor is still talking. If it is returns true, otherwise false.
@@ -539,7 +537,7 @@ private:
 	Math::Angle _pitch, _yaw, _roll;
 	float _walkRate, _turnRate;
 
-	bool _constrain;	// Constrain to walkboxes
+	bool _followBoxes;	// Constrain to walkboxes
 	float _reflectionAngle;	// Maximum angle to turn by at walls
 	bool _visible;
 	float _scale;

@@ -1374,21 +1374,12 @@ void Lua_V1::PutActorAtInterest() {
 
 void Lua_V1::SetActorFollowBoxes() {
 	lua_Object actorObj = lua_getparam(1);
-	lua_Object modeObj = lua_getparam(2);
-	bool mode = true;
 
 	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
 		return;
 
 	Actor *actor = getactor(actorObj);
-
-	if (modeObj == LUA_NOOBJECT || lua_isnil(modeObj))
-		mode = false;
-
-	warning("SetActorFollowBoxes() not implemented");
-	// TODO that is not walkbox walking, but temporary hack
-	// actor->enableWalkbox(mode);
-	actor->setConstrain(mode);
+	actor->setFollowBoxes(getbool(2));
 }
 
 void Lua_V1::SetActorConstrain() {

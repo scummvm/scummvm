@@ -72,7 +72,7 @@ Actor::Actor(const Common::String &actorName) :
 		_globalAlpha(1.f), _alphaMode(AlphaOff),
 		_shadowActive(false) {
 	_lookingMode = false;
-	_constrain = false;
+	_followBoxes = false;
 	_talkSoundName = "";
 	_activeShadowSlot = -1;
 	_shadowArray = new Shadow[5];
@@ -160,7 +160,7 @@ void Actor::saveState(SaveGame *savedState) const {
 	savedState->writeFloat(_roll.getDegrees());
 	savedState->writeFloat(_walkRate);
 	savedState->writeFloat(_turnRate);
-	savedState->writeBool(_constrain);
+	savedState->writeBool(_followBoxes);
 	savedState->writeFloat(_reflectionAngle);
 	savedState->writeBool(_visible);
 	savedState->writeBool(_lookingMode),
@@ -290,7 +290,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_roll               = savedState->readFloat();
 	_walkRate           = savedState->readFloat();
 	_turnRate           = savedState->readFloat();
-	_constrain          = savedState->readBool();
+	_followBoxes        = savedState->readBool();
 	_reflectionAngle    = savedState->readFloat();
 	_visible            = savedState->readBool();
 	_lookingMode        = savedState->readBool();
@@ -454,7 +454,7 @@ void Actor::setPos(const Math::Vector3d &position) {
 	// Don't allow positions outside the sectors.
 	// This is necessary after solving the tree pump puzzle, when the bone
 	// wagon returns to the signopost set.
-	if (_constrain && !_walking) {
+	if (_followBoxes && !_walking) {
 		g_grim->getCurrSet()->findClosestSector(_pos, NULL, &_pos);
 	}
 }
@@ -517,7 +517,7 @@ void Actor::walkTo(const Math::Vector3d &p) {
 		_destPos = p;
 		_path.clear();
 
-		if (_constrain) {
+		if (_followBoxes) {
 			g_grim->getCurrSet()->findClosestSector(p, NULL, &_destPos);
 
 			Common::List<PathNode *> openList;
@@ -691,7 +691,7 @@ void Actor::walkForward() {
 
 	_walking = false;
 
-	if (! _constrain) {
+	if (!_followBoxes) {
 		Math::Vector3d forwardVec(-_moveYaw.getSine() * _pitch.getCosine(),
 			_moveYaw.getCosine() * _pitch.getCosine(), _pitch.getSine());
 
@@ -1305,7 +1305,7 @@ void Actor::update(uint frameTime) {
 	// Snap actor to walkboxes if following them.  This might be
 	// necessary for example after activating/deactivating
 	// walkboxes, etc.
-	if (_constrain && !_walking) {
+	if (_followBoxes && !_walking) {
 		g_grim->getCurrSet()->findClosestSector(_pos, NULL, &_pos);
 	}
 
