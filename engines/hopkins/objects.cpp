@@ -1502,16 +1502,9 @@ void ObjectsManager::GOHOME() {
 	unsigned int v44;
 	unsigned int v45;
 	unsigned int v46;
-	int16 v47;
 	int16 v48;
-	int16 v49;
-	int v50;
-	int16 v51;
-	int16 v52;
-	int16 v54;
-	int v55;
-	int16 v56;
-	int16 v57;
+	int v49;
+	int v54;
 	int16 v58;
 
 	v0 = 0;
@@ -1561,21 +1554,14 @@ void ObjectsManager::GOHOME() {
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
 			_vm->_globals._oldDirection = -1;
 			if (v54 > 0) {
-				v55 = v54;
-				if (_vm->_globals.ZONEP[v55]._destX) {
-					v56 = _vm->_globals.ZONEP[v55]._destY;
-					if (v56) {
-						if (v56 != 31) {
-							v57 = _vm->_globals.ZONEP[v55].field4;
-							if (v57 == -1) {
-								_vm->_globals.ZONEP[v55]._destX = 0;
-								_vm->_globals.ZONEP[v55]._destY = 0;
-								_vm->_globals.ZONEP[v55].field4 = 0;
-							} else {
-								setSpriteIndex(0, v57);
-								_vm->_globals._actionDirection = _vm->_globals.ZONEP[v55].field4 - 59;
-							}
-						}
+				if (_vm->_globals.ZONEP[v54]._destX && _vm->_globals.ZONEP[v54]._destY && _vm->_globals.ZONEP[v54]._destY != 31) {
+					if (_vm->_globals.ZONEP[v54].field4 == -1) {
+						_vm->_globals.ZONEP[v54]._destX = 0;
+						_vm->_globals.ZONEP[v54]._destY = 0;
+						_vm->_globals.ZONEP[v54].field4 = 0;
+					} else {
+						setSpriteIndex(0, _vm->_globals.ZONEP[v54].field4);
+						_vm->_globals._actionDirection = _vm->_globals.ZONEP[v54].field4 - 59;
 					}
 				}
 			}
@@ -1855,21 +1841,14 @@ void ObjectsManager::GOHOME() {
 			g_old_y = getSpriteY(0);
 
 			if (v49 > 0) {
-				v50 = v49;
-				if (_vm->_globals.ZONEP[v50]._destX) {
-					v51 = _vm->_globals.ZONEP[v50]._destY;
-					if (v51) {
-						if (v51 != 31) {
-							v52 = _vm->_globals.ZONEP[v50].field4;
-							if (v52 == -1) {
-								_vm->_globals.ZONEP[v50]._destX = 0;
-								_vm->_globals.ZONEP[v50]._destY = 0;
-								_vm->_globals.ZONEP[v50].field4 = 0;
-							} else {
-								setSpriteIndex(0, v52);
-								_vm->_globals._actionDirection = _vm->_globals.ZONEP[v50].field4 - 59;
-							}
-						}
+				if (_vm->_globals.ZONEP[v49]._destX && _vm->_globals.ZONEP[v49]._destY && _vm->_globals.ZONEP[v49]._destY != 31) {
+					if ( _vm->_globals.ZONEP[v49].field4 == -1) {
+						_vm->_globals.ZONEP[v49]._destX = 0;
+						_vm->_globals.ZONEP[v49]._destY = 0;
+						_vm->_globals.ZONEP[v49].field4 = 0;
+					} else {
+						setSpriteIndex(0,  _vm->_globals.ZONEP[v49].field4);
+						_vm->_globals._actionDirection = _vm->_globals.ZONEP[v49].field4 - 59;
 					}
 				}
 			}
@@ -2251,38 +2230,21 @@ void ObjectsManager::PLAN_BETA() {
  * Handle Left button
  */
 void ObjectsManager::handleLeftButton() {
-	int srcX, srcY;
-	int destX, destY;
-	int v1;
-	int v2;
-	int16 *v3;
-	int16 *v4;
-	int16 *v5;
-	int zoneCount;
-	int zoneX;
-	int zoneY;
-	int16 *v9;
-	int v10;
-	int v11;
-	int v12;
-	int16 *v13;
-	int16 *v16;
-
 	_vm->_fontManager.hideText(9);
-	destX = _vm->_eventsManager.getMouseX();
-	destY = _vm->_eventsManager.getMouseY();
+	int destX = _vm->_eventsManager.getMouseX();
+	int destY = _vm->_eventsManager.getMouseY();
 
 	if (!_vm->_dialogsManager._inventFl && !_vm->_globals.PLAN_FLAG && 
 		destX > _vm->_graphicsManager._scrollOffset - 30 && destX < _vm->_graphicsManager._scrollOffset + 50 && 
 		destY > -30 && destY < 50) {
-		v1 = _vm->_eventsManager._mouseCursorId;
+		int oldMouseCursor = _vm->_eventsManager._mouseCursorId;
 		_vm->_dialogsManager._inventFl = true;
 		_vm->_dialogsManager.showInventory();
 		_vm->_dialogsManager._inventFl = false;
 		_vm->_eventsManager._gameKey = KEY_NONE;
 		if (!_vm->_globals._exitId) {
 			_vm->_dialogsManager._inventFl = false;
-			_vm->_eventsManager._mouseCursorId = v1;
+			_vm->_eventsManager._mouseCursorId = oldMouseCursor;
 		}
 		return;
 	}
@@ -2308,64 +2270,49 @@ void ObjectsManager::handleLeftButton() {
 			return;
 		}
 	}
-	if (_vm->_globals.PLAN_FLAG) {
-		if (!_vm->_globals.GOACTION)
-			goto LABEL_38;
+	if (_vm->_globals.PLAN_FLAG && _vm->_globals.GOACTION) {
 		checkZone();
 		if (_zoneNum <= 0)
 			return;
-		v2 = 0;
-		v3 = _vm->_globals.essai2;
-		v4 = _vm->_globals.chemin;
+		int routeIdx = 0;
 		do {
-			v3[v2] = v4[v2];
-			++v2;
-		} while (v4[v2] != -1);
+			_vm->_globals.essai2[routeIdx] = _vm->_globals.chemin[routeIdx];
+			++routeIdx;
+		} while (_vm->_globals.chemin[routeIdx] != -1);
 
-		v5 = _vm->_globals.essai2;
-		v5[v2] = -1;
-		v5[v2 + 1] = -1;
-		v5[v2 + 2] = -1;
-		v5[v2 + 3] = -1;
+		_vm->_globals.essai2[routeIdx] = -1;
+		_vm->_globals.essai2[routeIdx + 1] = -1;
+		_vm->_globals.essai2[routeIdx + 2] = -1;
+		_vm->_globals.essai2[routeIdx + 3] = -1;
 	}
+
 	if (_vm->_globals.GOACTION) {
 		checkZone();
 		_vm->_globals.GOACTION = false;
 		_vm->_globals._saveData->data[svField1] = 0;
 		_vm->_globals._saveData->data[svField2] = 0;
 	}
-LABEL_38:
+
 	if (_vm->_globals.PLAN_FLAG && (_vm->_eventsManager._mouseCursorId != 4 || _zoneNum <= 0))
 		return;
 	if (_zoneNum != -1 && _zoneNum != 0) {
-		zoneCount = _zoneNum;
-		zoneX = _vm->_globals.ZONEP[zoneCount]._destX;
-		if (zoneX) {
-			zoneY = _vm->_globals.ZONEP[zoneCount]._destY;
-			if (zoneY) {
-				if (zoneY != 31) {
-					destX = zoneX;
-					destY = zoneY;
-				}
-			}
+		if (_vm->_globals.ZONEP[_zoneNum]._destX && _vm->_globals.ZONEP[_zoneNum]._destY && _vm->_globals.ZONEP[_zoneNum]._destY != 31) {
+			destX = _vm->_globals.ZONEP[_zoneNum]._destX;
+			destY = _vm->_globals.ZONEP[_zoneNum]._destY;
 		}
 	}
 	_vm->_globals.GOACTION = false;
-	v9 = _vm->_globals.chemin;
+	int16 *oldRoute = _vm->_globals.chemin;
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	if (_vm->_globals._forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
 		if (getSpriteY(0) <= 374 || getSpriteY(0) > 410) {
-			v10 = getSpriteX(0);
-			v11 = getSpriteY(0);
-			v12 = getSpriteX(0);
-			v13 = _vm->_linesManager.PARCOURS2(v12, v11, v10, 390);
-			_vm->_globals.chemin = v13;
-			if (v13 != (int16 *)g_PTRNUL)
-				PACOURS_PROPRE(v13);
+			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
+			if (_vm->_globals.chemin != (int16 *)g_PTRNUL)
+				PACOURS_PROPRE(_vm->_globals.chemin);
 			g_old_x = getSpriteX(0);
 			g_old_y = getSpriteY(0);
 			_vm->_globals.Compteur = 0;
-			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || v9 == _vm->_globals.chemin) {
+			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || oldRoute == _vm->_globals.chemin) {
 				_vm->_globals._oldDirection = -1;
 				goto LABEL_65;
 			}
@@ -2383,20 +2330,17 @@ LABEL_38:
 	}
 	if (!_vm->_globals.NOMARCHE) {
 		if (!_vm->_globals.PLAN_FLAG) {
-			srcY = getSpriteY(0);
-			srcX = getSpriteX(0);
-			v16 = _vm->_linesManager.PARCOURS2(srcX, srcY, destX, destY);
-			_vm->_globals.chemin = v16;
-			if (v16 != (int16 *)g_PTRNUL)
-				PACOURS_PROPRE(v16);
+			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), destX, destY);
+			if (_vm->_globals.chemin != (int16 *)g_PTRNUL)
+				PACOURS_PROPRE(_vm->_globals.chemin);
 			g_old_x = getSpriteX(0);
 			g_old_y = getSpriteY(0);
 			_vm->_globals.Compteur = 0;
-			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || v9 == _vm->_globals.chemin)
+			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || oldRoute == _vm->_globals.chemin)
 				_vm->_globals._oldDirection = -1;
 			else
 LABEL_63:
-				_vm->_globals.chemin = v9;
+				_vm->_globals.chemin = oldRoute;
 		}
 LABEL_65:
 		if (!_vm->_globals.NOMARCHE && _vm->_globals.PLAN_FLAG)
@@ -2427,64 +2371,46 @@ LABEL_65:
 }
 
 void ObjectsManager::PARADISE() {
-	int v1;
-	char result;
-	int v3;
-	int v5;
-
-	v1 = 0;
-	result = _vm->_globals._saveData->data[svField1];
+	char result = _vm->_globals._saveData->data[svField1];
 	if (result && _vm->_globals._saveData->data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.hideText(5);
 		if (!_vm->_globals._forestFl || _zoneNum < 20 || _zoneNum > 23) {
 			if (_vm->_graphicsManager._largeScreenFl) {
 				_vm->_graphicsManager.no_scroll = 2;
-				if (_vm->_eventsManager._startPos.x >= getSpriteX(0) - 320)
-					goto LABEL_64;
-				v3 = _vm->_eventsManager._startPos.x + 320 - getSpriteX(0);
-				if (v3 < 0)
-					v3 = -v3;
-				if (v3 <= 160) {
-LABEL_64:
-					if (_vm->_eventsManager._startPos.x > getSpriteX(0) - 320) {
-						v5 = _vm->_eventsManager._startPos.x + 320 - getSpriteX(0);
-						if (v5 < 0)
-							v5 = -v5;
-						if (v5 > 160) {
-							_vm->_graphicsManager.no_scroll = 2;
-							do {
-								_vm->_graphicsManager.SCROLL -= _vm->_graphicsManager._scrollSpeed;
-								if (_vm->_graphicsManager.SCROLL < 0) {
-									_vm->_graphicsManager.SCROLL = 0;
-									v1 = 1;
-								}
-								if (_vm->_graphicsManager.SCROLL > SCREEN_WIDTH) {
-									_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
-									v1 = 1;
-								}
-								if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager.SCROLL + 620)
-									_vm->_eventsManager.setMouseXY(_vm->_eventsManager._mousePos.x - 4, _vm->_eventsManager.getMouseY());
-
-								_vm->_eventsManager.VBL();
-							} while (v1 != 1 && _vm->_eventsManager._startPos.x > getSpriteX(0) - 320);
+				if (_vm->_eventsManager._startPos.x + 320 - getSpriteX(0) > 160) {
+					bool loopCond = false;
+					do {
+						_vm->_graphicsManager.SCROLL -= _vm->_graphicsManager._scrollSpeed;
+						if (_vm->_graphicsManager.SCROLL < 0) {
+							_vm->_graphicsManager.SCROLL = 0;
+							loopCond = true;
 						}
-					}
-				} else {
+						if (_vm->_graphicsManager.SCROLL > SCREEN_WIDTH) {
+							_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
+							loopCond = true;
+						}
+						if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager.SCROLL + 620)
+							_vm->_eventsManager.setMouseXY(_vm->_eventsManager._mousePos.x - 4, _vm->_eventsManager.getMouseY());
+
+						_vm->_eventsManager.VBL();
+					} while (!loopCond && _vm->_eventsManager._startPos.x > getSpriteX(0) - 320);
+				} else if (_vm->_eventsManager._startPos.x + 320 - getSpriteX(0) < -160) {
+					bool loopCond = false;
 					do {
 						_vm->_graphicsManager.SCROLL += _vm->_graphicsManager._scrollSpeed;
 						if (_vm->_graphicsManager.SCROLL < 0) {
 							_vm->_graphicsManager.SCROLL = 0;
-							v1 = 1;
+							loopCond = true;
 						}
 						if (_vm->_graphicsManager.SCROLL > SCREEN_WIDTH) {
 							_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
-							v1 = 1;
+							loopCond = true;
 						}
 						if (_vm->_eventsManager.getMouseX() < _vm->_graphicsManager.SCROLL + 10)
 							_vm->_eventsManager.setMouseXY(_vm->_eventsManager._mousePos.x + 4, _vm->_eventsManager.getMouseY());
 
 						_vm->_eventsManager.VBL();
-					} while (v1 != 1 && _vm->_eventsManager._startPos.x < getSpriteX(0) - 320);
+					} while (!loopCond && _vm->_eventsManager._startPos.x < getSpriteX(0) - 320);
 				}
 				if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager.SCROLL + 620)
 					_vm->_eventsManager.setMouseXY(_vm->_graphicsManager.SCROLL + 610, 0);
@@ -2524,12 +2450,9 @@ LABEL_64:
 		_vm->_eventsManager._mouseCursorId = 0;
 		_vm->_eventsManager.changeMouseCursor(0);
 	}
-	if (_vm->_globals.NOMARCHE) {
-		if (_vm->_eventsManager._mouseCursorId == 4) {
-			result = _zoneNum + 1;
-			if (_zoneNum != -1 && _zoneNum != 0)
-				handleRightButton();
-		}
+	if (_vm->_globals.NOMARCHE && _vm->_eventsManager._mouseCursorId == 4) {
+		if (_zoneNum != -1 && _zoneNum != 0)
+			handleRightButton();
 	}
 	_vm->_globals.GOACTION = false;
 }
