@@ -107,6 +107,11 @@ List of fixed bugs in GF scripts:
 	The costume chores hide the meshes 17 (cage) and 12 (spout). This patch changes the values from 0 to 1
 	in the chore keys.
 
+	Fix bug #351 "GRIM: Sound of punching bag in Dom's office occurs before animation" - do.lua.patchr
+	This patch modifies the function dom.bag.use, modifying some sleep_for() with better values.
+	It does also remove some sleep_for() to improve the animation when punching the bag when it is still
+	oscillating.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
