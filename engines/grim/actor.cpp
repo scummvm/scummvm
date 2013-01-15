@@ -403,6 +403,7 @@ bool Actor::restoreState(SaveGame *savedState) {
 	_lookAtVector = savedState->readVector3d();
 
 	size = savedState->readLEUint32();
+	_path.clear();
 	for (uint32 i = 0; i < size; ++i) {
 		_path.push_back(savedState->readVector3d());
 	}
