@@ -161,6 +161,7 @@ public:
 	 * Add an actor to the list of actors that are talking
 	 */
 	void addTalkingActor(Actor *actor);
+	inline const Common::List<Actor *> &getTalkingActors() const { return _talkingActors; }
 	bool areActorsTalking() const;
 	void immediatelyRemoveActor(Actor *actor);
 

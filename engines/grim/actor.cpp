@@ -1069,6 +1069,25 @@ void Actor::sayLine(const char *msgId, bool background) {
 		if (!g_grim->_sayLineDefaults.getFont() || m == GrimEngine::VoiceOnly)
 			return;
 
+		if (background) {
+			// if we're talking background draw the text object only if there are no no-background
+			// talking actors. This prevents glottis and nick subtitles overlapping in the high roller lounge,
+			// where glottis is background and nick isn't. (https://github.com/residualvm/residualvm/issues/685)
+			foreach (Actor *a, g_grim->getTalkingActors()) {
+				if (!a->_backgroundTalk && a->_sayLineText) {
+					return;
+				}
+			}
+		} else {
+			// if we're not background then delete the TextObject of any talking background actor.
+			foreach (Actor *a, g_grim->getTalkingActors()) {
+				if (a->_backgroundTalk && a->_sayLineText) {
+					delete TextObject::getPool().getObject(a->_sayLineText);
+					a->_sayLineText = 0;
+				}
+			}
+		}
+
 		TextObject *textObject = new TextObject(false, true);
 		textObject->setDefaults(&g_grim->_sayLineDefaults);
 		textObject->setFGColor(_talkColor);
