@@ -1146,9 +1146,10 @@ void Lua_V1::ActorLookAt() {
 /* Turn the actor to a point specified in the 3D space,
  * this should not have the actor look toward the point
  * but should rotate the entire actor toward it.
- *
- * This function must use a yaw value around the unit
- * circle and not just a difference in angles.
+ * It does not however make the actor slowly turn the next
+ * times update() is called on it. It does make it turn
+ * slightly, by the amount given by its turn rate, and its
+ * effect is immediate.
  */
 void Lua_V1::TurnActorTo() {
 	lua_Object actorObj = lua_getparam(1);
@@ -1175,11 +1176,9 @@ void Lua_V1::TurnActorTo() {
 	}
 
 	Math::Vector3d turnToVector(x, y, z);
-	actor->turnTo(turnToVector, false);
-
 	// Return true if the actor is still turning
 	// This allows manny to have the right yaw when he exits the elevator in the garage
-	pushbool(actor->isTurning());
+	pushbool(!actor->singleTurnTo(turnToVector));
 }
 
 void Lua_V1::PointActorAt() {

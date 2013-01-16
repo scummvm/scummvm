@@ -197,6 +197,17 @@ public:
 	 */
 	void turnTo(const Math::Vector3d &pos, bool snap = false);
 	/**
+	 * Turn the actor towards a point in space, by an amount defined by the turn rate.
+	 * This function does not make an actor point at the given position, but it makes
+	 * it rotate towards that.
+	 *
+	 * @param pos The position the actor should turn to.
+	 * @return true if the actor has reached the desired orientation
+	 * @see turnTo
+	 * @see setRot
+	 */
+	bool singleTurnTo(const Math::Vector3d &pos);
+	/**
 	 * Returns true if the actor is turning.
 	 *
 	 * @see turnTo
@@ -528,6 +539,7 @@ private:
 	Math::Vector3d getTangentPos(const Math::Vector3d &pos, const Math::Vector3d &dest) const;
 
 	Math::Vector3d getSimplePuckVector() const;
+	void calculateOrientation(const Math::Vector3d &pos, Math::Angle *pitch, Math::Angle *yaw, Math::Angle *roll);
 
 	Common::String _name;
 	Common::String _setName;    // The actual current set
