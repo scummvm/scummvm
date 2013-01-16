@@ -841,6 +841,9 @@ void GrimEngine::restoreGRIM() {
 	_sayLineDefaults.setX(_savedState->readLESint32());
 	_sayLineDefaults.setY(_savedState->readLESint32());
 	_sayLineDefaults.setDuration(_savedState->readLESint32());
+	if (_savedState->saveMinorVersion() > 5) {
+		_movieSubtitle = TextObject::getPool().getObject(_savedState->readLESint32());
+	}
 
 	// Set stuff
 	_currSet = Set::getPool().getObject(_savedState->readLESint32());
@@ -982,6 +985,7 @@ void GrimEngine::saveGRIM() {
 	_savedState->writeLESint32(_sayLineDefaults.getX());
 	_savedState->writeLESint32(_sayLineDefaults.getY());
 	_savedState->writeLESint32(_sayLineDefaults.getDuration());
+	_savedState->writeLESint32(_movieSubtitle ? _movieSubtitle->getId() : 0);
 
 	//Set stuff
 	_savedState->writeLESint32(_currSet->getId());
@@ -1152,9 +1156,6 @@ void GrimEngine::setMovieSetup() {
 }
 
 void GrimEngine::setMode(EngineMode mode) {
-	if (_mode == SmushMode)
-		setMovieSubtitle(NULL);
-
 	_mode = mode;
 	invalidateActiveActorsList();
 }

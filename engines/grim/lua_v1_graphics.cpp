@@ -85,6 +85,7 @@ void Lua_V1::StartFullscreenMovie() {
 
 	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::SmushMode);
+	g_grim->setMovieSubtitle(NULL);
 	bool looping = getbool(2);
 	bool result = g_movie->play(lua_getstring(name), looping, 0, 0);
 	if (!result)

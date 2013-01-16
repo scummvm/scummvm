@@ -158,6 +158,7 @@ void Lua_V2::StartMovie() {
 
 	GrimEngine::EngineMode prevEngineMode = g_grim->getMode();
 	g_grim->setMode(GrimEngine::SmushMode);
+	g_grim->setMovieSubtitle(NULL);
 	bool result = g_movie->play(lua_getstring(name), false, 0, 0);
 	if (!result)
 		g_grim->setMode(prevEngineMode);
