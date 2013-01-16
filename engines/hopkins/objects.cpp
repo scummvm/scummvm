@@ -2900,7 +2900,7 @@ LABEL_90:
 void ObjectsManager::nextVerbIcon() {
 	_vm->_eventsManager._mouseCursorId++;
 
-	do {
+	for(;;) {
 		if (_vm->_eventsManager._mouseCursorId == 4) {
 			if (!_vm->_globals.NOMARCHE || _zoneNum == -1 || _zoneNum == 0)
 				return;
@@ -3041,8 +3041,12 @@ void ObjectsManager::nextVerbIcon() {
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
+		if (_vm->_eventsManager._mouseCursorId == 25) {
+			if (_vm->_globals.ZONEP[_zoneNum].fieldE == 2)
+				return;
+		}
 		_vm->_eventsManager._mouseCursorId = 4;
-	} while (_vm->_globals.ZONEP[_zoneNum].fieldE != 2);
+	}
 }
 
 /**
