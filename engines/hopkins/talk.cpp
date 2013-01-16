@@ -724,7 +724,6 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int a3, int
 	bool result;
 	const byte *v5;
 	int v6;
-	int v7;
 	byte *v8;
 	byte *v9;
 	int v10;
@@ -746,11 +745,11 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int a3, int
 			v5 = v22 + bufPerso + 5;
 			v18 = v22 + 5;
 			v6 = 0;
-			v7 = 0;
+			bool v7 = false;
 			do {
 				if ((v5[0] == 'A' && v5[1] == 'N' && v5[2] == 'I' && v5[3] == 'M') ||
 				    (v5[0] == 'F' && v5[1] == 'I' && v5[2] == 'N'))
-					v7 = 1;
+					v7 = true;
 				if (v18 > a4) {
 					_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
 					result = false;
@@ -759,7 +758,7 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int a3, int
 				++v18;
 				++v6;
 				++v5;
-			} while (v7 != 1);
+			} while (!v7);
 			_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.allocMemory(v6 + 50);
 			_vm->_globals.Bqe_Anim[idx]._enabledFl = true;
 			memcpy(_vm->_globals.Bqe_Anim[idx]._data, (const byte *)(v22 + bufPerso + 5), 20);
@@ -814,27 +813,27 @@ void TalkManager::REPONSE(int a1, int a2) {
 	uint16 v11;
 	int v12;
 	int v13;
-	int v15;
-	int v16;
+	bool v15;
+	bool v16;
 	bool loopCond;
 	byte *ptr;
 
 	v2 = a1;
 	v3 = a2;
 LABEL_2:
-	v15 = 0;
+	v15 = false;
 	if (_vm->_globals.COUCOU != g_PTRNUL) {
 		v5 = _vm->_globals.COUCOU;
 		for (;;) {
 			if (v5[0] == 'C' && v5[1] == 'O' && v5[2] == 'D') {
 				if (v5[3] == v2 && v5[4] == v3)
-					v15 = 1;
+					v15 = true;
 			}
 			if (v5[0] == 'F' && v5[1] == 'I' && v5[2] == 'N')
 				break;
 			if (!v15)
-				v5 = v5 + 1;
-			if (v15 == 1) {
+				v5++;
+			else if (v15) {
 				v6 = v5 + 5;
 				ptr = _vm->_globals.allocMemory(620);
 				if (g_PTRNUL == ptr)
@@ -844,7 +843,7 @@ LABEL_2:
 				v12 = 0;
 				loopCond = false;
 				do {
-					v16 = 0;
+					v16 = false;
 					if (v6[v7] == 'F' && v6[v7 + 1] == 'C') {
 						++v12;
 						assert(v12 < (620 / 20));
@@ -855,14 +854,14 @@ LABEL_2:
 							assert(v11 < 20);
 							v8[v11++] = v6[v7++];
 							if (v6[v7] == 'F' && v6[v7 + 1] == 'F') {
-								v16 = 1;
+								v16 = true;
 								v8[v11] = 'F';
 								v8[v11 + 1] = 'F';
 								++v7;
 							}
-						} while (v16 != 1);
+						} while (!v16);
 					}
-					if (v16 != 1) {
+					if (!v16) {
 						if ((v6[v7] == 'C' && v6[v7 + 1] == 'O' && v6[v7 + 2] == 'D') || (v6[v7] == 'F' && v6[v7 + 1] == 'I' && v6[v7 + 2] == 'N'))
 							loopCond = true;
 					}
