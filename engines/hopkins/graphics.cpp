@@ -1324,7 +1324,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 				if ((uint16)clip_y >= v22)
 					return;
 				int v30 = 0;
-				while (zoomIn(v30 + 1, zoom2) < (uint16)clip_y)
+				while (zoomIn(++v30, zoom2) < (uint16)clip_y)
 					;
 				spritePixelsP += _width * v30;
 				v29 += _lineNbr2 * (uint16)clip_y;
@@ -1341,7 +1341,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 				int v32 = v20 - (uint16)clip_x1;
 				v29 -= v32;
 				int v33 = 0;
-				while (zoomIn(v33 + 1, zoom2) < v32)
+				while (zoomIn(++v33, zoom2) < v32)
 					;
 				int v34 = v33;
 				spritePixelsP += v34;
@@ -1400,7 +1400,7 @@ R_Aff_Zoom_Larg_Cont1:
 				int v49 = v20;
 				int v23 = 0;
 				int v24 = (uint16)clip_y;
-				while (zoomIn(v23 + 1, zoom2) < v24)
+				while (zoomIn(++v23, zoom2) < v24)
 					;
 				v20 = v49;
 				spritePixelsP += _width * v23;
@@ -1413,7 +1413,7 @@ R_Aff_Zoom_Larg_Cont1:
 				if ((uint16)clip_x >= v20)
 					return;
 				int v26 = 0;
-				while (zoomIn(v26 + 1, zoom2) < (uint16)clip_x)
+				while (zoomIn(++v26, zoom2) < (uint16)clip_x)
 					;
 				spritePixelsP += v26;
 				dest1P += (uint16)clip_x;
