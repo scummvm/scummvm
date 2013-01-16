@@ -67,16 +67,6 @@ void MainModelComponent::init() {
 	_hier->_hierVisible = _visible;
 }
 
-int MainModelComponent::update(uint time) {
-	if (!_hierShared)
-		// Otherwise, it was already initialized
-		// and reinitializing it will destroy work
-		// from previous costumes
-		ModelComponent::update(time);
-
-	return 0;
-}
-
 void MainModelComponent::setColormap(CMap *cmap) {
 	Component::setColormap(cmap);
 	if (_parentModel) {

@@ -34,7 +34,6 @@ public:
 	MainModelComponent(Component *parent, int parentID, const char *filename, Component *prevComponent, tag32 tag);
 	~MainModelComponent();
 	void init();
-	int update(uint time);
 	void setColormap(CMap *cmap);
 	void reset();
 
