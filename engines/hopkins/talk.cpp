@@ -245,17 +245,20 @@ int TalkManager::DIALOGUE() {
 		dialogWait();
 	}
 
-	int v19 = VERIF_BOITE(PLIGNE1, _questionsFilename, 65);
-	int v2 = VERIF_BOITE(PLIGNE2, _questionsFilename, 65);
-	int v3 = VERIF_BOITE(PLIGNE3, _questionsFilename, 65);
-	int v20 = 420 - 20 * VERIF_BOITE(PLIGNE4, _questionsFilename, 65);
-	int v21 = v20 - 20 * v3;
-	int v18 = v21 - 1;
-	int v4 = v21 - 20 * v2;
-	_vm->_fontManager.initTextBuffers(5, PLIGNE1, _questionsFilename, 5, v4 - 20 * v19, 0, 65, 255);
-	_vm->_fontManager.initTextBuffers(6, PLIGNE2, _questionsFilename, 5, v4, 0, 65, 255);
-	_vm->_fontManager.initTextBuffers(7, PLIGNE3, _questionsFilename, 5, v21, 0, 65, 255);
-	_vm->_fontManager.initTextBuffers(8, PLIGNE4, _questionsFilename, 5, v20, 0, 65, 255);
+	int sentence1LineNumb = VERIF_BOITE(PLIGNE1, _questionsFilename, 65);
+	int sentence2LineNumb = VERIF_BOITE(PLIGNE2, _questionsFilename, 65);
+	int sentence3LineNumb = VERIF_BOITE(PLIGNE3, _questionsFilename, 65);
+	int sentence4LineNumb = VERIF_BOITE(PLIGNE4, _questionsFilename, 65);
+
+	int sentence4PosY = 420 - 20 * sentence4LineNumb;
+	int sentence3PosY = sentence4PosY - 20 * sentence3LineNumb;
+	int sentence2PosY = sentence3PosY - 20 * sentence2LineNumb;
+	int sentence1PosY = sentence2PosY - 20 * sentence1LineNumb;
+
+	_vm->_fontManager.initTextBuffers(5, PLIGNE1, _questionsFilename, 5, sentence1PosY, 0, 65, 255);
+	_vm->_fontManager.initTextBuffers(6, PLIGNE2, _questionsFilename, 5, sentence2PosY, 0, 65, 255);
+	_vm->_fontManager.initTextBuffers(7, PLIGNE3, _questionsFilename, 5, sentence3PosY, 0, 65, 255);
+	_vm->_fontManager.initTextBuffers(8, PLIGNE4, _questionsFilename, 5, sentence4PosY, 0, 65, 255);
 	_vm->_fontManager.showText(5);
 	_vm->_fontManager.showText(6);
 	_vm->_fontManager.showText(7);
@@ -265,19 +268,19 @@ int TalkManager::DIALOGUE() {
 	bool v6 = false;
   	do {
 		int mousePosY = _vm->_eventsManager.getMouseY();
-		if ((v4 - 20 * v19) < mousePosY && (v4 - 1) > mousePosY) {
+		if (sentence1PosY < mousePosY && mousePosY < (sentence2PosY - 1)) {
 			_vm->_fontManager.setOptimalColor(6, 7, 8, 5);
 			retVal = PLIGNE1;
 		}
-		if (mousePosY > v4 && v18 > mousePosY) {
+		if (sentence2PosY < mousePosY && mousePosY < (sentence3PosY - 1)) {
 			_vm->_fontManager.setOptimalColor(5, 7, 8, 6);
 			retVal = PLIGNE2;
 		}
-		if (v21 < mousePosY && (v20 - 1) > mousePosY) {
+		if (sentence3PosY < mousePosY && mousePosY < (sentence4PosY - 1)) {
 			_vm->_fontManager.setOptimalColor(5, 6, 8, 7);
 			retVal = PLIGNE3;
 		}
-		if (v20 < mousePosY && mousePosY < 419) {
+		if (sentence4PosY < mousePosY && mousePosY < 419) {
 			_vm->_fontManager.setOptimalColor(5, 6, 7, 8);
 			retVal = PLIGNE4;
 		}
@@ -510,16 +513,13 @@ void TalkManager::dialogEndTalk() {
 }
 
 int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
-	char v8;
 	int v9;
 	int v10;
 	char v11;
 	char v13;
-	char v14;
 	int v15;
 	byte *ptr;
 	int v17;
-	int v18;
 	byte *v19;
 	uint32 indexData[4047];
 	Common::String filename;
@@ -527,7 +527,6 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	Common::File f;
 	int filesize;
 
-	v18 = 0;
 	_vm->_globals.police_l = 11;
 
 	// Build up the filename
@@ -569,47 +568,42 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 			v13 = *v19 + 111;
 		}
 		*v19 = v13;
-		v19 = v19 + 1;
+		v19++;
 	}
 
 	for (int i = 0; i < 2048; i++) {
-		v8 = ptr[i];
-		if ( v8 == 10 || v8 == 13 )
+		if ( ptr[i] == 10 || ptr[i] == 13 )
 			ptr[i] = 0;
 	}
 
 	v9 = 0;
 	v15 = (11 * a3) - 4;
+	int lineCount = 0;
 	do {
 		v10 = 0;
 		for (;;) {
 			v17 = v10;
 			do {
 				v11 = ptr[v9 + v10];
-				v14 = v11;
 				++v10;
 			} while (v11 != ' ' && v11 != '%');
 
-			if (v10 >= v15 / _vm->_globals.police_l)
+			if (v10 >= v15 / _vm->_globals.police_l) {
+				if (v11 == '%')
+					v11 = ' ';
 				break;
+			}
+
 			if (v11 == '%') {
-				if (v10 < v15 / _vm->_globals.police_l)
-					goto LABEL_31;
+				v17 = v10;
 				break;
 			}
 		}
-		if (v11 != '%')
-			goto LABEL_33;
-		v14 = ' ';
-LABEL_31:
-		if (v14 == '%')
-			v17 = v10;
-LABEL_33:
-		++v18;
+		++lineCount;
 		v9 += v17;
-	} while (v14 != 37);
+	} while (v11 != '%');
 	free(ptr);
-	return v18;
+	return lineCount;
 }
 
 void TalkManager::VISU_PARLE() {
@@ -676,51 +670,47 @@ void TalkManager::startCharacterAnim0(int startIdx, bool readOnlyFl) {
  * Initialize character animation
  */
 void TalkManager::initCharacterAnim() {
-	byte *v0;
-	byte *v1;
-	int v2;
-	int v4;
-	int v5;
-	int v6;
-	int v7;
-	int v8;
-	int v9;
-	int v10;
-	int v11;
-	int v12;
+	uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
+	byte *animPtr = _characterBuffer + 110;
+	int curVal = (int16)READ_LE_UINT16(bufPtr);
+	if (curVal)
+		searchCharacterAnim(21, animPtr, curVal, _characterSize);
 
-	v0 = _characterBuffer;
-	v1 = _characterBuffer + 110;
-	v2 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 43);
-	if (v2)
-		searchCharacterAnim(21, (_characterBuffer + 110), v2, _characterSize);
-	v4 = (int16)READ_LE_UINT16((uint16 *)v0 + 44);
-	if (v4)
-		searchCharacterAnim(22, v1, v4, _characterSize);
-	v5 = (int16)READ_LE_UINT16((uint16 *)v0 + 45);
-	if (v5)
-		searchCharacterAnim(23, v1, v5, _characterSize);
-	v6 = (int16)READ_LE_UINT16((uint16 *)v0 + 46);
-	if (v6)
-		searchCharacterAnim(24, v1, v6, _characterSize);
-	v7 = (int16)READ_LE_UINT16((uint16 *)v0 + 47);
-	if (v7)
-		searchCharacterAnim(25, v1, v7, _characterSize);
-	v8 = (int16)READ_LE_UINT16((uint16 *)v0 + 48);
-	if (v8)
-		searchCharacterAnim(26, v1, v8, _characterSize);
-	v9 = (int16)READ_LE_UINT16((uint16 *)v0 + 49);
-	if (v9)
-		searchCharacterAnim(27, v1, v9, _characterSize);
-	v10 = (int16)READ_LE_UINT16((uint16 *)v0 + 50);
-	if (v10)
-		searchCharacterAnim(28, v1, v10, _characterSize);
-	v11 = (int16)READ_LE_UINT16((uint16 *)v0 + 51);
-	if (v11)
-		searchCharacterAnim(29, v1, v11, _characterSize);
-	v12 = (int16)READ_LE_UINT16((uint16 *)v0 + 52);
-	if (v12)
-		searchCharacterAnim(30, v1, v12, _characterSize);
+	curVal = (int16)READ_LE_UINT16(bufPtr + 1);
+	if (curVal)
+		searchCharacterAnim(22, animPtr, curVal, _characterSize);
+
+	curVal = (int16)READ_LE_UINT16(bufPtr + 2);
+	if (curVal)
+		searchCharacterAnim(23, animPtr, curVal, _characterSize);
+
+	curVal = (int16)READ_LE_UINT16(bufPtr + 3);
+	if (curVal)
+		searchCharacterAnim(24, animPtr, curVal, _characterSize);
+
+	curVal = (int16)READ_LE_UINT16(bufPtr + 4);
+	if (curVal)
+		searchCharacterAnim(25, animPtr, curVal, _characterSize);
+
+	curVal = (int16)READ_LE_UINT16(bufPtr + 5);
+	if (curVal)
+		searchCharacterAnim(26, animPtr, curVal, _characterSize);
+
+	curVal = (int16)READ_LE_UINT16(bufPtr + 6);
+	if (curVal)
+		searchCharacterAnim(27, animPtr, curVal, _characterSize);
+
+	curVal = (int16)READ_LE_UINT16(bufPtr + 7);
+	if (curVal)
+		searchCharacterAnim(28, animPtr, curVal, _characterSize);
+
+	curVal = (int16)READ_LE_UINT16(bufPtr + 8);
+	if (curVal)
+		searchCharacterAnim(29, animPtr, curVal, _characterSize);
+
+	curVal = (int16)READ_LE_UINT16(bufPtr + 9);
+	if (curVal)
+		searchCharacterAnim(30, animPtr, curVal, _characterSize);
 }
 
 void TalkManager::clearCharacterAnim() {
