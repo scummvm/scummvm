@@ -231,7 +231,7 @@ int ObjectsManager::getHeight(const byte *objectData, int idx) {
 	return (int16)READ_LE_UINT16(rectP + 6);
 }
 
-int ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIndex) {
+void ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIndex) {
 	const byte *objP = objectData + 3;
 	for (int i = objIndex; i; --i) {
 		objP += READ_LE_UINT32(objP) + 16;
@@ -241,7 +241,17 @@ int ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIn
 	int result = (int16)READ_LE_UINT16(objP) * (int16)READ_LE_UINT16(objP + 2);
 
 	memcpy(sprite + 3, objP - 4, result + 16);
-	return result;
+}
+
+void ObjectsManager::capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex) {
+	const byte *objP = objectData + 3;
+	for (int i = objIndex; i; --i) {
+		objP += READ_LE_UINT32(objP) + 16;
+	}
+
+	objP += 4;
+	int result = (int16)READ_LE_UINT16(objP) * (int16)READ_LE_UINT16(objP + 2);
+	memcpy(sprite, objP + 12, result);
 }
 
 void ObjectsManager::DEL_FICHIER_OBJ() {
@@ -256,23 +266,10 @@ byte *ObjectsManager::loadSprite(const Common::String &file) {
 	return _vm->_fileManager.loadFile(file);
 }
 
-int ObjectsManager::capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex) {
-	const byte *objP = objectData + 3;
-	for (int i = objIndex; i; --i) {
-		objP += READ_LE_UINT32(objP) + 16;
-	}
-
-	objP += 4;
-	int result = (int16)READ_LE_UINT16(objP) * (int16)READ_LE_UINT16(objP + 2);
-
-	memcpy(sprite, objP + 12, result);
-	return result;
-}
-
 /**
  * Add Object
  */
-int ObjectsManager::addObject(int objIndex) {
+void ObjectsManager::addObject(int objIndex) {
 	int arrIndex = 0;
 	for (;;) {
 		++arrIndex;
@@ -281,7 +278,6 @@ int ObjectsManager::addObject(int objIndex) {
 	}
 
 	_vm->_globals._inventory[arrIndex] = objIndex;
-	return arrIndex;
 }
 
 /**
@@ -342,7 +338,7 @@ void ObjectsManager::displaySprite() {
 			if (_sprite[idx]._animationType == 1) {
 				computeSprite(idx);
 				if (_sprite[idx].field2A)
-					beforeSort(SORT_SPRITE, idx, _sprite[idx]._height + _sprite[idx].field2E);
+					beforeSort(SORT_SPRITE, idx, _sprite[idx]._height + _sprite[idx].destY);
 			}
 		}
 
@@ -356,11 +352,11 @@ void ObjectsManager::displaySprite() {
 
 		do {
 			loopCondFl = false;
-			for (int v34 = 1; v34 < _vm->_globals._sortedDisplayCount; v34++) {
-				if (_vm->_globals._sortedDisplay[arr[v34]]._priority > _vm->_globals._sortedDisplay[arr[v34 + 1]]._priority) {
-					int oldIdx = arr[v34];
-					arr[v34] = arr[v34 + 1];
-					arr[v34 + 1] = oldIdx;
+			for (int sortIdx = 1; sortIdx < _vm->_globals._sortedDisplayCount; sortIdx++) {
+				if (_vm->_globals._sortedDisplay[arr[sortIdx]]._priority > _vm->_globals._sortedDisplay[arr[sortIdx + 1]]._priority) {
+					int oldIdx = arr[sortIdx];
+					arr[sortIdx] = arr[sortIdx + 1];
+					arr[sortIdx + 1] = oldIdx;
 					loopCondFl = true;
 				}
 			}
@@ -402,7 +398,7 @@ void ObjectsManager::displaySprite() {
 		}
 	}
 
-	// Reset the Tri array
+	// Reset the Sort array
 	for (int idx = 0; idx < 50; ++idx) {
 		_vm->_globals._sortedDisplay[idx]._sortMode = SORT_NONE;
 		_vm->_globals._sortedDisplay[idx]._index = 0;
@@ -490,9 +486,8 @@ void ObjectsManager::displaySprite() {
 }
 
 void ObjectsManager::INIT_BOB() {
-	for (int idx = 0; idx < 35; ++idx) {
+	for (int idx = 0; idx < 35; ++idx)
 		BOB_ZERO(idx);
-	}
 }
 
 void ObjectsManager::BOB_ZERO(int idx) {
@@ -642,34 +637,18 @@ void ObjectsManager::SCBOB(int idx) {
 	if (_vm->_globals.Cache[idx].fieldA <= 0)
 		return;
 
-	for (int v8 = 0; v8 <= 20; v8++) {
-		if ((_vm->_globals._bob[v8].field0) && (!_vm->_globals._bob[v8]._disabledAnimationFl) && (!_vm->_globals._bob[v8].field34) && (_vm->_globals._bob[v8]._frameIndex != 250)) {
-			int v9 = _vm->_globals._bob[v8]._oldX + _vm->_globals._bob[v8]._oldWidth;
-			int v6 = _vm->_globals._bob[v8]._oldY + _vm->_globals._bob[v8]._oldHeight;
-			int v7 = _vm->_globals.Cache[idx]._width + _vm->_globals.Cache[idx]._x;
+	for (int i = 0; i <= 20; i++) {
+		if ((_vm->_globals._bob[i].field0) && (!_vm->_globals._bob[i]._disabledAnimationFl) && (!_vm->_globals._bob[i].field34) && (_vm->_globals._bob[i]._frameIndex != 250)) {
+			int oldRight = _vm->_globals._bob[i]._oldX + _vm->_globals._bob[i]._oldWidth;
+			int oldBottom = _vm->_globals._bob[i]._oldY + _vm->_globals._bob[i]._oldHeight;
+			int cachedRight = _vm->_globals.Cache[idx]._width + _vm->_globals.Cache[idx]._x;
 
-			if ((v6 > _vm->_globals.Cache[idx]._y) && (v6 < _vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx]._height + _vm->_globals.Cache[idx]._y)) {
-				bool checkFl = false;
-				if (v9 >= _vm->_globals.Cache[idx]._x && v9 <= v7) {
-					++_vm->_globals.Cache[idx].fieldA;
-					checkFl = true;
-				}
-				if (!checkFl && v7 >= _vm->_globals._bob[v8]._oldWidth && _vm->_globals._bob[v8]._oldWidth >= _vm->_globals.Cache[idx]._x) {
-					++_vm->_globals.Cache[idx].fieldA;
-					checkFl = true;
-				}
-
-				if (!checkFl && v7 >= _vm->_globals._bob[v8]._oldWidth && _vm->_globals._bob[v8]._oldWidth >= _vm->_globals.Cache[idx]._x ) {
-					++_vm->_globals.Cache[idx].fieldA;
-					checkFl = true;
-				}
-
-				if (!checkFl && _vm->_globals._bob[v8]._oldWidth >= _vm->_globals.Cache[idx]._x && v9 <= v7) {
-					++_vm->_globals.Cache[idx].fieldA;
-					checkFl = true;
-				}
-
-				if (!checkFl && _vm->_globals._bob[v8]._oldWidth <= _vm->_globals.Cache[idx]._x && v9 >= v7)
+			if ((oldBottom > _vm->_globals.Cache[idx]._y) && (oldBottom < _vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx]._height + _vm->_globals.Cache[idx]._y)) {
+				if ((oldRight >= _vm->_globals.Cache[idx]._x && oldRight <= cachedRight)
+				 || (cachedRight >= _vm->_globals._bob[i]._oldWidth && _vm->_globals._bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x)
+				 || (cachedRight >= _vm->_globals._bob[i]._oldWidth && _vm->_globals._bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x)
+				 || (_vm->_globals._bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x && oldRight <= cachedRight)
+				 || (_vm->_globals._bob[i]._oldWidth <= _vm->_globals.Cache[idx]._x && oldRight >= cachedRight))
 					++_vm->_globals.Cache[idx].fieldA;
 			}
 		}
@@ -683,17 +662,17 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		_vm->_globals._bob[idx].field36 = 0;
 	}
 
-	int result = _vm->_globals._bob[idx]._frameIndex;
-	if (result == 250)
+	int spriteIdx = _vm->_globals._bob[idx]._frameIndex;
+	if (spriteIdx == 250)
 		return;
 
 	int deltaY, deltaX;
 	if (_vm->_globals._bob[idx]._modeFlag) {
-		deltaX = getOffsetX(_vm->_globals._bob[idx]._spriteData, result, 1);
-		deltaY = getOffsetY(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, 1);
+		deltaX = getOffsetX(_vm->_globals._bob[idx]._spriteData, spriteIdx, true);
+		deltaY = getOffsetY(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, true);
 	} else {
-		deltaX = getOffsetX(_vm->_globals._bob[idx]._spriteData, result, 0);
-		deltaY = getOffsetY(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, 0);
+		deltaX = getOffsetX(_vm->_globals._bob[idx]._spriteData, spriteIdx, false);
+		deltaY = getOffsetY(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, false);
 	}
 
 	int v20 = 0;
@@ -760,59 +739,42 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 }
 
 void ObjectsManager::checkCache() {
-	for (int v8 = 0; v8 <= 19; v8++) {
-		if (_vm->_globals.Cache[v8].fieldA <= 0)
+	for (int cacheIdx = 0; cacheIdx <= 19; cacheIdx++) {
+		if (_vm->_globals.Cache[cacheIdx].fieldA <= 0)
 			continue;
 
-		int oldFieldA = _vm->_globals.Cache[v8].fieldA;
-		for (int v10 = 0; v10 <= 4; v10++) {
-			if (_sprite[v10]._animationType == 1 && _sprite[v10]._spriteIndex != 250) {
-				int v11 = _sprite[v10]._width + _sprite[v10].field2C;
-				int v2 = _sprite[v10]._height + _sprite[v10].field2E;
-				int v9 = _vm->_globals.Cache[v8]._width + _vm->_globals.Cache[v8]._x;
+		int oldFieldA = _vm->_globals.Cache[cacheIdx].fieldA;
+		for (int spriteIdx = 0; spriteIdx <= 4; spriteIdx++) {
+			if (_sprite[spriteIdx]._animationType == 1 && _sprite[spriteIdx]._spriteIndex != 250) {
+				int right = _sprite[spriteIdx]._width + _sprite[spriteIdx].destX;
+				int bottom = _sprite[spriteIdx]._height + _sprite[spriteIdx].destY;
+				int cachedRight = _vm->_globals.Cache[cacheIdx]._width + _vm->_globals.Cache[cacheIdx]._x;
 
-				if (v2 > _vm->_globals.Cache[v8]._y && v2 < (_vm->_globals.Cache[v8].field14 + _vm->_globals.Cache[v8]._height + _vm->_globals.Cache[v8]._y)) {
-					bool v4 = false;
-					if (v11 >= _vm->_globals.Cache[v8]._x && v11 <= v9) {
-						++_vm->_globals.Cache[v8].fieldA;
-						v4 = true;
-					}
-
-					if (!v4 && v9 >= _sprite[v10].field2C && _vm->_globals.Cache[v8]._x <= _sprite[v10].field2C) {
-						++_vm->_globals.Cache[v8].fieldA;
-						v4 = true;
-					}
-
-					if (!v4 && v9 >= _sprite[v10].field2C && _vm->_globals.Cache[v8]._x <= _sprite[v10].field2C) {
-						++_vm->_globals.Cache[v8].fieldA;
-						v4 = true;
-					}
-					
-					if (!v4 && _vm->_globals.Cache[v8]._x <= _sprite[v10].field2C && v11 <= v9) {
-						++_vm->_globals.Cache[v8].fieldA;
-						v4 = true;
-					}
-					
-					if (!v4 && _vm->_globals.Cache[v8]._x >= _sprite[v10].field2C && v11 >= v9)
-						++_vm->_globals.Cache[v8].fieldA;
+				if (bottom > _vm->_globals.Cache[cacheIdx]._y && bottom < (_vm->_globals.Cache[cacheIdx].field14 + _vm->_globals.Cache[cacheIdx]._height + _vm->_globals.Cache[cacheIdx]._y)) {
+					if ((right >= _vm->_globals.Cache[cacheIdx]._x && right <= cachedRight)
+					 || (cachedRight >= _sprite[spriteIdx].destX && _vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx].destX)
+					 || (cachedRight >= _sprite[spriteIdx].destX && _vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx].destX)
+					 || (_vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx].destX && right <= cachedRight)
+					 || (_vm->_globals.Cache[cacheIdx]._x >= _sprite[spriteIdx].destX && right >= cachedRight))
+						++_vm->_globals.Cache[cacheIdx].fieldA;
 				}
 			}
 		}
 
-		SCBOB(v8);
-		if (_vm->_globals.Cache[v8].fieldA == oldFieldA) {
-			if (_vm->_globals.Cache[v8].field10) {
-				_vm->_globals.Cache[v8].field10 = false;
-				_vm->_globals.Cache[v8].fieldA = 1;
+		SCBOB(cacheIdx);
+		if (_vm->_globals.Cache[cacheIdx].fieldA == oldFieldA) {
+			if (_vm->_globals.Cache[cacheIdx].field10) {
+				_vm->_globals.Cache[cacheIdx].field10 = false;
+				_vm->_globals.Cache[cacheIdx].fieldA = 1;
 			}
 		} else {
-			int v5 = _vm->_globals.Cache[v8].field14 + _vm->_globals.Cache[v8]._height + _vm->_globals.Cache[v8]._y;
+			int v5 = _vm->_globals.Cache[cacheIdx].field14 + _vm->_globals.Cache[cacheIdx]._height + _vm->_globals.Cache[cacheIdx]._y;
 			if (v5 > 440)
 				v5 = 500;
 
-			beforeSort(SORT_CACHE, v8, v5);
-			_vm->_globals.Cache[v8].fieldA = 1;
-			_vm->_globals.Cache[v8].field10 = true;
+			beforeSort(SORT_CACHE, cacheIdx, v5);
+			_vm->_globals.Cache[cacheIdx].fieldA = 1;
+			_vm->_globals.Cache[cacheIdx].field10 = true;
 		}
 	}
 }
@@ -823,10 +785,10 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 
 	if (_sprite[idx]._rleFl)
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _sprite[idx]._spriteData,
-		    _sprite[idx].field2C + 300, _sprite[idx].field2E + 300, _sprite[idx]._spriteIndex);
+		    _sprite[idx].destX + 300, _sprite[idx].destY + 300, _sprite[idx]._spriteIndex);
 	else
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _sprite[idx]._spriteData,
-		    _sprite[idx].field2C + 300, _sprite[idx].field2E + 300,  _sprite[idx]._spriteIndex, _sprite[idx]._reducePct, _sprite[idx]._zoomPct, _sprite[idx].fieldE);
+		    _sprite[idx].destX + 300, _sprite[idx].destY + 300,  _sprite[idx]._spriteIndex, _sprite[idx]._reducePct, _sprite[idx]._zoomPct, _sprite[idx].fieldE);
 
 	_vm->_globals.Liste[idx]._width = _sprite[idx]._width;
 	_vm->_globals.Liste[idx]._height = _sprite[idx]._height;
@@ -874,11 +836,11 @@ void ObjectsManager::computeSprite(int idx) {
 	int offX;
 	int offY;
 	if (_sprite[idx].fieldE) {
-		offX = getOffsetX(_sprite[idx]._spriteData, spriteIndex, 1);
-		offY = getOffsetY(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex, 1);
+		offX = getOffsetX(_sprite[idx]._spriteData, spriteIndex, true);
+		offY = getOffsetY(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex, true);
 	} else {
-		offX = getOffsetX(_sprite[idx]._spriteData, spriteIndex, 0);
-		offY = getOffsetY(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex, 0);
+		offX = getOffsetX(_sprite[idx]._spriteData, spriteIndex, false);
+		offY = getOffsetY(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex, false);
 	}
 
 	int tmpX = _sprite[idx].field12 + offX;
@@ -923,8 +885,8 @@ void ObjectsManager::computeSprite(int idx) {
 
 	int v15 = _sprite[idx]._spritePos.x - deltaX;
 	int v16 = _sprite[idx]._spritePos.y - deltaY;
-	_sprite[idx].field2C = v15;
-	_sprite[idx].field2E = v16;
+	_sprite[idx].destX = v15;
+	_sprite[idx].destY = v16;
 	_sprite[idx].field2A = true;
 	_sprite[idx]._zoomPct = zoomPercent;
 	_sprite[idx]._reducePct = reducePercent;
@@ -949,19 +911,14 @@ void ObjectsManager::computeSprite(int idx) {
 }
 
 // Before Sort
-int ObjectsManager::beforeSort(SortMode triMode, int index, int priority) {
-	int result;
-
+void ObjectsManager::beforeSort(SortMode triMode, int index, int priority) {
 	++_vm->_globals._sortedDisplayCount;
 	if (_vm->_globals._sortedDisplayCount > 48)
 		error("NBTRI too high");
 
-	result = _vm->_globals._sortedDisplayCount;
-	_vm->_globals._sortedDisplay[result]._sortMode = triMode;
-	_vm->_globals._sortedDisplay[result]._index = index;
-	_vm->_globals._sortedDisplay[result]._priority = priority;
-
-	return result;
+	_vm->_globals._sortedDisplay[_vm->_globals._sortedDisplayCount]._sortMode = triMode;
+	_vm->_globals._sortedDisplay[_vm->_globals._sortedDisplayCount]._index = index;
+	_vm->_globals._sortedDisplay[_vm->_globals._sortedDisplayCount]._priority = priority;
 }
 
 // Display BOB Anim
@@ -3804,11 +3761,11 @@ int ObjectsManager::getBobPosX(int idx) {
 	return _vm->_globals._bob[idx]._xp;
 }
 
-int ObjectsManager::BOBY(int idx) {
+int ObjectsManager::getBobPosY(int idx) {
 	return _vm->_globals._bob[idx]._yp;
 }
 
-int ObjectsManager::BOBA(int idx) {
+int ObjectsManager::getBobFrameIndex(int idx) {
 	return _vm->_globals._bob[idx]._frameIndex;
 }
 

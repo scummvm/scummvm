@@ -47,8 +47,8 @@ struct SpriteItem {
 	int field26;
 	bool _rleFl;
 	bool field2A;
-	int field2C;
-	int field2E;
+	int destX;
+	int destY;
 	int _width;
 	int _height;
 	int _zoomPct;
@@ -125,7 +125,7 @@ public:
 
 	int getWidth(const byte *objectData, int idx);
 	int getHeight(const byte *objectData, int idx);
-	int sprite_alone(const byte *objectData, byte *sprite, int objIndex);
+	void sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	void DEL_FICHIER_OBJ();
 
 	byte *loadSprite(const Common::String &file);
@@ -134,8 +134,8 @@ public:
 	int getOffsetY(const byte *spriteData, int spriteIndex, bool isSize);
 	void displaySprite();
 
-	int capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
-	int addObject(int objIndex);
+	void capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
+	void addObject(int objIndex);
 
 	void INIT_BOB();
 	void BOB_ZERO(int idx);
@@ -152,7 +152,7 @@ public:
 	void DEF_SPRITE(int idx);
 	void DEF_CACHE(int idx);
 	void computeSprite(int idx);
-	int beforeSort(SortMode triMode, int index, int priority);
+	void beforeSort(SortMode triMode, int index, int priority);
 	void displayBobAnim();
 	void displayVBob();
 
@@ -217,8 +217,8 @@ public:
 	void stopBobAnimation(int idx);
 	void SET_BOBPOSI(int idx, int a2);
 	int getBobPosX(int idx);
-	int BOBY(int idx);
-	int BOBA(int idx);
+	int getBobPosY(int idx);
+	int getBobFrameIndex(int idx);
 
 	void INILINK(const Common::String &file);
 	void SPECIAL_INI();
