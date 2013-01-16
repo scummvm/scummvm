@@ -41,7 +41,7 @@ public:
 	byte *_characterSprite;
 	byte *_characterAnim;
 	size_t _characterSize;
-	int STATI;
+	bool STATI;
 	int PLIGNE1, PLIGNE2;
 	int PLIGNE3, PLIGNE4;
 	int _paletteBufferIdx;

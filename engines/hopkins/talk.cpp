@@ -39,7 +39,7 @@ TalkManager::TalkManager() {
 	_characterSprite = NULL;
 	_characterAnim = NULL;
 	_characterSize = 0;
-	STATI = 0;
+	STATI = false;
 	PLIGNE1 = PLIGNE2 = 0;
 	PLIGNE3 = PLIGNE4 = 0;
 	_paletteBufferIdx = 0;
@@ -154,7 +154,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	// TODO: The original disables the mouse cursor here
-	STATI = 1;
+	STATI = true;
 	bool v7 = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
 	_characterBuffer = _vm->_fileManager.searchCat(filename, 5);
@@ -189,7 +189,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	PLIGNE2 = PLIGNE1 + 1;
 	PLIGNE3 = PLIGNE1 + 2;
 	PLIGNE4 = PLIGNE1 + 3;
-	int v8 = _vm->_eventsManager._mouseCursorId;
+	int oldMouseCursorId = _vm->_eventsManager._mouseCursorId;
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
 
@@ -213,14 +213,14 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	}
 
 	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
-	_vm->_eventsManager._mouseCursorId = v8;
+	_vm->_eventsManager._mouseCursorId = oldMouseCursorId;
 
-	_vm->_eventsManager.changeMouseCursor(v8);
+	_vm->_eventsManager.changeMouseCursor(oldMouseCursorId);
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	// TODO: The original reenables the mouse cursor here
 	_vm->_globals._disableInventFl = v7;
-	STATI = 0;
+	STATI = false;
 }
 
 void TalkManager::getStringFromBuffer(int srcStart, Common::String &dest, const char *srcData) {
@@ -228,52 +228,30 @@ void TalkManager::getStringFromBuffer(int srcStart, Common::String &dest, const 
 }
 
 int TalkManager::DIALOGUE() {
-	byte *v0;
-	int v1;
-	int v2;
-	int v3;
-	int v4;
-	int v5;
-	int v6;
-	int v7;
-	int v8;
-	int v9;
-	int v10;
-	byte *v11;
-	int v12;
-	int v13;
-	int v14;
-	int v15;
-	int v16;
-	int v18;
-	int v19;
-	int v20;
-	int v21;
-
 	if (STATI) {
-		v0 = _characterBuffer;
-		v1 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 48);
-		if (v1)
-			_vm->_objectsManager.setBobAnimation(v1);
-		if ((int16)READ_LE_UINT16((uint16 *)v0 + 48) != 1)
-			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16((uint16 *)v0 + 49));
-		if ((int16)READ_LE_UINT16((uint16 *)v0 + 48) != 2)
-			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16((uint16 *)v0 + 50));
-		if ( (int16)READ_LE_UINT16((uint16 *)v0 + 48) != 3)
-			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16((uint16 *)v0 + 51));
-		if ((int16)READ_LE_UINT16((uint16 *)v0 + 48) != 4)
-			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16((uint16 *)v0 + 52));
+		uint16 *bufPtr = (uint16 *)_characterBuffer + 48;
+		int curVal = (int16)READ_LE_UINT16(bufPtr);
+		if (curVal != 0)
+			_vm->_objectsManager.setBobAnimation(curVal);
+		if (curVal != 1)
+			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16(bufPtr + 1));
+		if (curVal != 2)
+			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16(bufPtr + 2));
+		if (curVal != 3)
+			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16(bufPtr + 3));
+		if (curVal != 4)
+			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16(bufPtr + 4));
 	} else {
 		dialogWait();
 	}
 
-	v19 = VERIF_BOITE(PLIGNE1, _questionsFilename, 65);
-	v2 = VERIF_BOITE(PLIGNE2, _questionsFilename, 65);
-	v3 = VERIF_BOITE(PLIGNE3, _questionsFilename, 65);
-	v20 = 420 - 20 * VERIF_BOITE(PLIGNE4, _questionsFilename, 65);
-	v21 = v20 - 20 * v3;
-	v18 = v20 - 20 * v3 - 1;
-	v4 = v20 - 20 * v3 - 20 * v2;
+	int v19 = VERIF_BOITE(PLIGNE1, _questionsFilename, 65);
+	int v2 = VERIF_BOITE(PLIGNE2, _questionsFilename, 65);
+	int v3 = VERIF_BOITE(PLIGNE3, _questionsFilename, 65);
+	int v20 = 420 - 20 * VERIF_BOITE(PLIGNE4, _questionsFilename, 65);
+	int v21 = v20 - 20 * v3;
+	int v18 = v21 - 1;
+	int v4 = v21 - 20 * v2;
 	_vm->_fontManager.initTextBuffers(5, PLIGNE1, _questionsFilename, 5, v4 - 20 * v19, 0, 65, 255);
 	_vm->_fontManager.initTextBuffers(6, PLIGNE2, _questionsFilename, 5, v4, 0, 65, 255);
 	_vm->_fontManager.initTextBuffers(7, PLIGNE3, _questionsFilename, 5, v21, 0, 65, 255);
@@ -283,90 +261,75 @@ int TalkManager::DIALOGUE() {
 	_vm->_fontManager.showText(7);
 	_vm->_fontManager.showText(8);
 
-	v5 = -1;
-	v6 = 0;
+	int retVal = -1;
+	bool v6 = false;
   	do {
-		v7 = _vm->_eventsManager.getMouseY();
-		if ((v4 - 20 * v19) < v7 && (v4 - 1) > v7) {
-			v8 = v7;
+		int mousePosY = _vm->_eventsManager.getMouseY();
+		if ((v4 - 20 * v19) < mousePosY && (v4 - 1) > mousePosY) {
 			_vm->_fontManager.setOptimalColor(6, 7, 8, 5);
-			v5 = PLIGNE1;
-			v7 = v8;
+			retVal = PLIGNE1;
 		}
-		if (v7 > v4 && v18 > v7) {
-			v9 = v7;
+		if (mousePosY > v4 && v18 > mousePosY) {
 			_vm->_fontManager.setOptimalColor(5, 7, 8, 6);
-			v5 = PLIGNE2;
-			v7 = v9;
+			retVal = PLIGNE2;
 		}
-		if (v21 < v7 && (v20 - 1) > v7) {
-			v10 = v7;
+		if (v21 < mousePosY && (v20 - 1) > mousePosY) {
 			_vm->_fontManager.setOptimalColor(5, 6, 8, 7);
-			v5 = PLIGNE3;
-			v7 = v10;
+			retVal = PLIGNE3;
 		}
-		if (v20 < v7 && v7 < 419) {
+		if (v20 < mousePosY && mousePosY < 419) {
 			_vm->_fontManager.setOptimalColor(5, 6, 7, 8);
-			v5 = PLIGNE4;
+			retVal = PLIGNE4;
 		}
 
 		_vm->_eventsManager.VBL();
 		if (_vm->_eventsManager.getMouseButton())
-			v6 = 1;
-		if (v5 == -1)
-			v6 = 0;
-	} while (!_vm->shouldQuit() && v6 != 1);
+			v6 = true;
+		if (retVal == -1)
+			v6 = false;
+	} while (!_vm->shouldQuit() && !v6);
 
-	_vm->_soundManager.mixVoice(v5, 1);
+	_vm->_soundManager.mixVoice(retVal, 1);
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(6);
 	_vm->_fontManager.hideText(7);
 	_vm->_fontManager.hideText(8);
 
 	if (STATI) {
-		v11 = _characterBuffer;
-		v12 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 48);
-		if (v12)
-			_vm->_objectsManager.stopBobAnimation(v12);
-		v13 = (int16)READ_LE_UINT16((uint16 *)v11 + 49);
-		if (v13 != 1)
-			_vm->_objectsManager.stopBobAnimation(v13);
-		v14 = (int16)READ_LE_UINT16((uint16 *)v11 + 50);
-		if (v14 != 2)
-			_vm->_objectsManager.stopBobAnimation(v14);
-		v15 = (int16)READ_LE_UINT16((uint16 *)v11 + 51);
-		if (v15 != 3)
-			_vm->_objectsManager.stopBobAnimation(v15);
-		v16 = (int16)READ_LE_UINT16((uint16 *)v11 + 52);
-		if (v16 != 4)
-			_vm->_objectsManager.stopBobAnimation(v16);
+		uint16 *bufPtr = (uint16 *)_characterBuffer + 48;
+
+		int curVal = (int16)READ_LE_UINT16(bufPtr);
+		if (curVal != 0)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 1);
+		if (curVal != 1)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 2);
+		if (curVal != 2)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 3);
+		if (curVal != 3)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 4);
+		if (curVal != 4)
+			_vm->_objectsManager.stopBobAnimation(curVal);
 	} else {
 		dialogTalk();
 	}
 
 	_vm->_eventsManager.VBL();
-  return v5;
+  return retVal;
 }
 
 int TalkManager::DIALOGUE_REP(int idx) {
 	int v1;
-	int v2;
 	byte *v3;
 	int v6;
 	int v7;
-	byte *v8;
-	int v9;
-	int v10;
-	int v11;
-	int v12;
-	int v13;
-	int v14;
-	void *v15;
-	int v16;
-	int v17;
-	int v18;
-	int v19;
-	int v20;
 	int v21;
 	int v22;
 	int v23;
@@ -374,17 +337,12 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	int v25;
 
 	v1 = 0;
-	v2 = 0;
 	v3 = _characterBuffer + 110;
 	for (; (int16)READ_LE_UINT16(v3) != idx; v3 = _characterBuffer + 20 * v1 + 110) {
 		++v1;
 		if ((int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) < v1)
-			v2 = 1;
-		if (v2 == 1)
 			return -1;
 	}
-	if (v2 == 1)
-		return -1;
 
 	v22 = (int16)READ_LE_UINT16((uint16 *)v3 + 1);
 	v25 = (int16)READ_LE_UINT16((uint16 *)v3 + 2);
@@ -402,22 +360,26 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	if (!v6)
 		v6 = 10;
 	if (STATI) {
-		v8 = _characterBuffer;
-		v9 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 43);
-		if (v9)
-			_vm->_objectsManager.setBobAnimation(v9);
-		v10 = (int16)READ_LE_UINT16((uint16 *)v8 + 44);
-		if (v10)
-			_vm->_objectsManager.setBobAnimation(v10);
-		v11 = (int16)READ_LE_UINT16((uint16 *)v8 + 45);
-		if (v11)
-			_vm->_objectsManager.setBobAnimation(v11);
-		v12 = (int16)READ_LE_UINT16((uint16 *)v8 + 46);
-		if (v12)
-			_vm->_objectsManager.setBobAnimation(v12);
-		v13 = (int16)READ_LE_UINT16((uint16 *)v8 + 47);
-		if (v13)
-			_vm->_objectsManager.setBobAnimation(v13);
+		uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
+		int curVal = (int16)READ_LE_UINT16(bufPtr);
+		if (curVal)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 1);
+		if (curVal)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 2);
+		if (curVal)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 3);
+		if (curVal)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 4);
+		if (curVal)
+			_vm->_objectsManager.stopBobAnimation(curVal);
 	} else {
 		VISU_PARLE();
 	}
@@ -427,52 +389,47 @@ int TalkManager::DIALOGUE_REP(int idx) {
 		_vm->_fontManager.showText(9);
 	}
 	if (!_vm->_soundManager.mixVoice(v22, 1)) {
-		v14 = 0;
 		_vm->_eventsManager._curMouseButton = 0;
 		_vm->_eventsManager._mouseButton = 0;
 
 		if (_vm->getIsDemo()) {
-			do {
+			for (int i = 0; i < v6; i++) {
 				_vm->_eventsManager.VBL();
-				++v14;
-			} while (v14 != v6);
+			}
 		} else {
-			int tmpVal = 0;
-			do {
+			for (int i = 0; i < v6; i++) {
 				_vm->_eventsManager.VBL();
-				++v14;
 				if (_vm->_eventsManager._mouseButton || _vm->_eventsManager._curMouseButton)
-					v14 = v6;
-				if (_vm->_eventsManager.getMouseButton()) {
-					tmpVal = v6 / 5;
-				if (tmpVal < 0)
-					tmpVal = -tmpVal;
-				if (v14 > tmpVal)
-					v14 = v6;
-				}
-			} while (v14 != v6);
+					break;
+				if (_vm->_eventsManager.getMouseButton() && i + 1 > abs(v6 / 5))
+					break;
+			}
 		}
 	}
 
 	if (!_vm->_soundManager._textOffFl)
 		_vm->_fontManager.hideText(9);
 	if (STATI) {
-		v15 = _characterBuffer;
-		v16 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 43);
-		if (v16)
-			_vm->_objectsManager.stopBobAnimation(v16);
-		v17 = (int16)READ_LE_UINT16((uint16 *)v15 + 44);
-		if (v17)
-			_vm->_objectsManager.stopBobAnimation(v17);
-		v18 = (int16)READ_LE_UINT16((uint16 *)v15 + 45);
-		if (v18)
-			_vm->_objectsManager.stopBobAnimation(v18);
-		v19 = (int16)READ_LE_UINT16((uint16 *)v15 + 46);
-		if (v19)
-			_vm->_objectsManager.stopBobAnimation(v19);
-		v20 = (int16)READ_LE_UINT16((uint16 *)v15 + 47);
-		if (v20)
-			_vm->_objectsManager.stopBobAnimation(v20);
+		uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
+		int curVal = (int16)READ_LE_UINT16(bufPtr);
+		if (curVal)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 1);
+		if (curVal)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 2);
+		if (curVal)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 3);
+		if (curVal)
+			_vm->_objectsManager.stopBobAnimation(curVal);
+
+		curVal = (int16)READ_LE_UINT16(bufPtr + 4);
+		if (curVal)
+			_vm->_objectsManager.stopBobAnimation(curVal);
 	} else {
 		dialogEndTalk();
 	}
