@@ -229,6 +229,15 @@ public:
 	 */
 	void setRot(const Math::Angle &pitch, const Math::Angle &yaw, const Math::Angle &roll);
 	/**
+	 * Turn the actor towards a point in space.
+	 * The effect is immediate.
+	 *
+	 * @param pos The position the actor should turn to.
+	 * @see turnTo
+	 * @see setRot
+	 */
+	void setRot(const Math::Vector3d &pos);
+	/**
 	 * Turns the actor by the given parameter on the z axis.
 	 * The actual movement depends also on the turn rate.
 	 *
