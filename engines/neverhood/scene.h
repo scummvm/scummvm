@@ -217,6 +217,7 @@ protected:
 	void clearHitRects();
 	void clearCollisionSprites();
 
+	void insertMouse(Mouse *mouseCursor);
 };
 
 } // End of namespace Neverhood

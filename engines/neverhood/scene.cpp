@@ -199,18 +199,15 @@ void Scene::insertScreenMouse(uint32 fileHash, const NRect *mouseRect) {
 	NRect rect(-1, -1, -1, -1);
 	if (mouseRect)
 		rect = *mouseRect;
-	_mouseCursor = new Mouse(_vm, fileHash, rect);
-	addEntity(_mouseCursor);
+	insertMouse(new Mouse(_vm, fileHash, rect));
 }
 
 void Scene::insertPuzzleMouse(uint32 fileHash, int16 x1, int16 x2) {
-	_mouseCursor = new Mouse(_vm, fileHash, x1, x2);
-	addEntity(_mouseCursor);
+	insertMouse(new Mouse(_vm, fileHash, x1, x2));
 }
 
 void Scene::insertNavigationMouse(uint32 fileHash, int type) {
-	_mouseCursor = new Mouse(_vm, fileHash, type);
-	addEntity(_mouseCursor);
+	insertMouse(new Mouse(_vm, fileHash, type));
 }
 
 void Scene::showMouse(bool visible) {
@@ -559,6 +556,13 @@ void Scene::checkCollision(Sprite *sprite, uint16 flags, int messageNum, uint32 
 			sprite->sendMessage(collSprite, messageNum, messageParam);
 		}
 	}	
+}
+
+void Scene::insertMouse(Mouse *mouseCursor) {
+	if (_mouseCursor)
+		deleteSprite((Sprite**)&_mouseCursor);
+	_mouseCursor = mouseCursor;
+	addEntity(_mouseCursor);
 }
 
 } // End of namespace Neverhood

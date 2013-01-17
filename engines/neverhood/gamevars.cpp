@@ -28,9 +28,6 @@ GameVars::GameVars() {
 	addVar(0, 0);
 }
 
-GameVars::~GameVars() {
-}
-
 void GameVars::loadState(Common::InSaveFile *in) {
 	uint varCount;
 	_vars.clear();

@@ -34,13 +34,12 @@ Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 	_vm->_soundMan->addMusic(0x03294419, 0x061880C6);
 	_vm->_soundMan->addMusic(0x03294419, _musicFileHash);
 
-	if (which < 0) {
+	if (which < 0)
 		createScene(_vm->gameState().sceneNum, -1);
-	} else if (which == 0) {
+	else if (which == 0)
 		createScene(0, 0);
-	} else if (which == 1) {
+	else if (which == 1)
 		createScene(1, 1);
-	}
 
 }
 

@@ -91,7 +91,7 @@ public:
 	void drawSpriteResourceEx(SpriteResource &spriteResource, bool flipX, bool flipY, int16 width, int16 height);
 	void drawAnimResource(AnimResource &animResource, uint frameIndex, bool flipX, bool flipY, int16 width, int16 height);
 	void drawMouseCursorResource(MouseCursorResource &mouseCursorResource, int frameNum);
-	void copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, NDrawRect &sourceRect, bool transparent);
+	void copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, NDrawRect &sourceRect);
 	int getPriority() const { return _priority; }
 	void setPriority(int priority) { _priority = priority; }
 	NDrawRect& getDrawRect() { return _drawRect; }

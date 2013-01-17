@@ -112,25 +112,17 @@ void BaseSurface::drawMouseCursorResource(MouseCursorResource &mouseCursorResour
 	}
 }
 
-void BaseSurface::copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, NDrawRect &sourceRect, bool transparent) {
-	// TODO: Clipping
+void BaseSurface::copyFrom(Graphics::Surface *sourceSurface, int16 x, int16 y, NDrawRect &sourceRect) {
+	// Copy a rectangle from sourceSurface, no clipping is performed, 0 is the transparent color
 	byte *source = (byte*)sourceSurface->getBasePtr(sourceRect.x, sourceRect.y);
 	byte *dest = (byte*)_surface->getBasePtr(x, y);
 	int height = sourceRect.height;
-	if (!transparent) {
-		while (height--) {
-			memcpy(dest, source, sourceRect.width);
-			source += sourceSurface->pitch;
-			dest += _surface->pitch;
-		}
-	} else {
-		while (height--) {
-			for (int xc = 0; xc < sourceRect.width; xc++)
-				if (source[xc] != 0)
-					dest[xc] = source[xc];
-			source += sourceSurface->pitch;
-			dest += _surface->pitch;
-		}
+	while (height--) {
+		for (int xc = 0; xc < sourceRect.width; xc++)
+			if (source[xc] != 0)
+				dest[xc] = source[xc];
+		source += sourceSurface->pitch;
+		dest += _surface->pitch;
 	}
 	++_version;
 }
@@ -179,7 +171,7 @@ void FontSurface::drawChar(BaseSurface *destSurface, int16 x, int16 y, byte chr)
 	sourceRect.y = (chr / _charsPerRow) * _charHeight;
 	sourceRect.width = _charWidth;
 	sourceRect.height = _charHeight;
-	destSurface->copyFrom(_surface, x, y, sourceRect, true);
+	destSurface->copyFrom(_surface, x, y, sourceRect);
 }
 
 void FontSurface::drawString(BaseSurface *destSurface, int16 x, int16 y, const byte *string, int stringLen) {

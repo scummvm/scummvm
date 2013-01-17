@@ -82,8 +82,8 @@ void Module2900::updateScene() {
 	if (!updateChild()) {
 		switch (_sceneNum) {
 		case 0:
-			if (_moduleResult == 0xFFFFFFFF) {
-				leaveModule(0xFFFFFFFF);
+			if (_moduleResult == (uint32)-1) {
+				leaveModule((uint32)-1);
 			} else {
 				_teleporterModuleResult = _moduleResult;
 				switch (getGlobalVar(V_TELEPORTER_WHICH)) {
@@ -417,14 +417,12 @@ uint32 Scene2901::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
-			leaveScene(0xFFFFFFFF);
-		}
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
+			leaveScene((uint32)-1);
 		break;
 	case 0x2000:
-		if (_currLocationButtonNum != _selectedButtonNum) {
+		if (_currLocationButtonNum != _selectedButtonNum)
 			leaveScene(_selectedButtonNum);
-		}
 		break;
 	case 0x2001:
 		if (_currLocationButtonNum == _selectedButtonNum)

@@ -54,7 +54,7 @@ protected:
 
 class DiskplayerSlot : public Entity {
 public:
-	DiskplayerSlot(NeverhoodEngine *vm, DiskplayerScene *diskplayerScene, int elementIndex, int value);
+	DiskplayerSlot(NeverhoodEngine *vm, DiskplayerScene *diskplayerScene, int slotIndex, bool isAvailable);
 	void activate();
 	void stop();
 	void appear();
@@ -65,11 +65,9 @@ protected:
 	Sprite *_inactiveSlot;
 	Sprite *_appearSlot;
 	Sprite *_activeSlot;
-	int _elementIndex;
-	int _initialCountdown;
-	int _countdown;
+	int _initialBlinkCountdown;
+	int _blinkCountdown;
 	bool _isLocked;
-	int _value;
 	bool _isBlinking;
 	void update();	
 };
@@ -92,7 +90,7 @@ protected:
 	DiskplayerSlot *_diskSlots[20];
 	DiskplayerSlot *_finalDiskSlot;
 	int _updateStatus;
-	byte _diskAvailable[20];
+	bool _diskAvailable[20];
 	int _diskIndex;
 	int _appearCountdown;
 	int _tuneInCountdown;

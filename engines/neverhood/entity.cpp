@@ -55,6 +55,7 @@ Entity::~Entity() {
 }
 
 void Entity::draw() {
+	// Empty
 }
 
 void Entity::handleUpdate() {

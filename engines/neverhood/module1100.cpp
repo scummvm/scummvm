@@ -573,8 +573,6 @@ void Scene1105::createObjects() {
 	
 	_asTeddyBear->show();
 
-	// TODO: Find a nicer way
-	deleteSprite((Sprite**)&_mouseCursor);
 	insertPuzzleMouse(0x18666208, 20, 620);
 	
 }

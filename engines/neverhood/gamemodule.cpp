@@ -195,8 +195,7 @@ void GameModule::initMemoryPuzzle() {
 		}
 		setSubVar(VA_IS_PUZZLE_INIT, 0xC8606803, 1);
 
-		// DEBUG>>>
-		// TODO: Some debug code: Leave two matching tiles open
+		// DEBUG>>> Some debug code: Leave two matching tiles open
 		for (int i = 0; i < 48; i++)
 			setSubVar(VA_IS_TILE_MATCH, i, 1);
 		int debugIndex = 0;
@@ -313,9 +312,8 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 }
 
 void GameModule::startup() {
-	// TODO: Displaying of error text probably not needed in ScummVM
-#if 1
-	createModule(1500, 0); // Logos and intro video //Real
+#if 0
+	createModule(1500, 0); // Logos and intro video // Real game start
 #else
 	// DEBUG>>>
 	/*
@@ -362,13 +360,6 @@ void GameModule::startup() {
 	// <<<DEBUG
 
 #if 0
-	/*
-	//DEBUG>>>
-	createScene(_vm->gameState().sceneNum, _vm->gameState().which);
-	return;
-	//DEBUG<<<
-	*/
-
 	_vm->gameState().which = 0;
 	_vm->gameState().sceneNum = 14;
 	createModule(2700, -1);
@@ -386,9 +377,9 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 5;
 	createModule(2200, -1);
 #endif
-#if 0
-	_vm->gameState().sceneNum = 1;
-	createModule(1000, -1);
+#if 1
+	_vm->gameState().sceneNum = 7;
+	createModule(2200, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 1;
@@ -425,7 +416,7 @@ void GameModule::startup() {
 	_vm->gameState().sceneNum = 0;
 	createModule(2500, -1);
 #endif
-#if 1
+#if 0
 	_vm->gameState().sceneNum = 1;
 	createModule(2300, -1);
 #endif
@@ -626,65 +617,60 @@ void GameModule::updateModule() {
 			createModule(2300, 0);
 			break;
 		case 1200:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createModule(2600, 0);
-			} else {
+			else
 				createModule(2300, 2);
-			}
 			break;
 		case 1100:
-			if (_moduleResult == 0) {
+			if (_moduleResult == 0)
 				createModule(2900, 2);
-			} else {
+			else {
 				setGlobalVar(V_ENTRANCE_OPEN, 1);
 				createModule(1300, 0);
 			}
 			break;
 		case 1300:
 			if (_moduleResult == 1) {
+				// The game was successfully finished
+				// TODO Restart the game/show main menu
 				// TODO _gameState.clear();
 				// TODO GameModule_handleKeyEscape
-			} else {
+			} else
 				createModule(2900, 0);
-			}
 			break;
 		case 1400:
-			if (_moduleResult == 1) {
-				error("WEIRD!");
-			} else {
-				createModule(1600, 1);
-			}
+			createModule(1600, 1);
 			break;
 		case 1500:
 			createModule(1000, 0);
 			break;
 		case 1600:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createModule(1400, 0);
-			} else if (_moduleResult == 2) {
+			else if (_moduleResult == 2)
 				createModule(1700, 0);
-			} else {
+			else
 				createModule(2100, 0);
-			}
 			break;
 		case 1700:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createModule(2900, 3);
-			} else {
+			else
 				createModule(1600, 2);
-			}
 			break;
 		case 1800:
 			if (_moduleResult == 1) {
-				// TODO GameState_clear();
-				// TODO GameModule_handleKeyEscape();
-			} else if (_moduleResult == 2) {
+				// Game over, Klaymen jumped into the hole
+				// TODO Restart the game/show main menu
+				// TODO _gameState.clear();
+				// TODO GameModule_handleKeyEscape
+			} else if (_moduleResult == 2)
 				createModule(2700, 0);
-			} else if (_moduleResult == 3) {
+			else if (_moduleResult == 3)
 				createModule(3000, 3);
-			} else {
+			else
 				createModule(2800, 0);
-			}
 			break;
 		case 1900:
 			createModule(3000, 1);
@@ -693,11 +679,10 @@ void GameModule::updateModule() {
 			createModule(2900, 4);
 			break;
 		case 2100:
-			if (_moduleResult == 1) {
+			if (_moduleResult == 1)
 				createModule(2900, 1);
-			} else {
+			else
 				createModule(1600, 0);
-			}
 			break;
 		case 2200:
 			createModule(2300, 1);
@@ -738,7 +723,7 @@ void GameModule::updateModule() {
 				createModule(1800, 0);
 			break;
 		case 2900:
-			if (_moduleResult != 0xFFFFFFFF) {
+			if (_moduleResult != (uint32)-1) {
 				switch (_moduleResult) {
 				case 0:
 					createModule(1300, 5);
@@ -787,17 +772,16 @@ void GameModule::updateModule() {
 			setGlobalVar(V_TELEPORTER_CURR_LOCATION, 0);
 			break;
 		case 3000:
-			if (_moduleResult == 1) {
+			// NOTE _moduleResult 2 never used
+			// TODO Check if _moduleResult 4 is used
+			if (_moduleResult == 1)
 				createModule(1900, 0);
-			} else if (_moduleResult == 2) {
-				// WEIRD: Sets the errorFlag
-			} else if (_moduleResult == 3) {
+			else if (_moduleResult == 3)
 				createModule(1800, 3);
-			} else if (_moduleResult == 4) {
+			else if (_moduleResult == 4)
 				createModule(3000, 0);
-			} else {
+			else
 				createModule(2300, 4);
-			}
 			break;
 		case 9999:
 			createModuleByHash(getGlobalVar(V_MODULE_NAME));
@@ -814,7 +798,7 @@ void GameModule::openMainMenu() {
 		// If there's no module, create one so there's something to return to
 		createModule(1000, 0);
 	}
-	// TODO Save FPS, Smacker handle, screen offsets, collisition sprites
+	// TODO Save FPS, Smacker handle, screen offsets
 	_mainMenuRequested = false;
 	createMenuModule();
 }
@@ -833,7 +817,7 @@ void GameModule::updateMenuModule() {
 	if (!updateChild()) {
 		// TODO Restore FPS?
 		_childObject = _prevChildObject;
-		// TODO Restore Smacker handle, screen offsets, collision sprites
+		// TODO Restore Smacker handle, screen offsets
 		sendMessage(_childObject, 0x101E, 0); // TODO CHECKME Is this needed?
 		_prevChildObject = NULL;
 		_moduleNum = _prevModuleNum;

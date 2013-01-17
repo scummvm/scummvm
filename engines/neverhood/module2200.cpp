@@ -2241,20 +2241,20 @@ void Scene2208::drawRow(int16 rowIndex) {
 		sourceRect.y = y;
 		sourceRect.width = 640;
 		sourceRect.height = 48;
-		_background->getSurface()->copyFrom(_topBackgroundSurface->getSurface(), 0, y, sourceRect, true);
+		_background->getSurface()->copyFrom(_topBackgroundSurface->getSurface(), 0, y, sourceRect);
 	} else if (rowIndex > _maxRowIndex - 5) {
 		sourceRect.x = 0;
 		sourceRect.y = (rowIndex - _maxRowIndex + 4) * 48;
 		sourceRect.width = 640;
 		sourceRect.height = 48;
-		_background->getSurface()->copyFrom(_bottomBackgroundSurface->getSurface(), 0, y, sourceRect, true);
+		_background->getSurface()->copyFrom(_bottomBackgroundSurface->getSurface(), 0, y, sourceRect);
 	} else {
 		rowIndex -= 4;
 		sourceRect.x = 0;
 		sourceRect.y = (rowIndex * 48) % 480;
 		sourceRect.width = 640;
 		sourceRect.height = 48;
-		_background->getSurface()->copyFrom(_backgroundSurface->getSurface(), 0, y, sourceRect, true);
+		_background->getSurface()->copyFrom(_backgroundSurface->getSurface(), 0, y, sourceRect);
 		if (rowIndex < (int)_strings.size()) {
 			const char *text = _strings[rowIndex];
 			_fontSurface->drawString(_background->getSurface(), 95, y, (const byte*)text);

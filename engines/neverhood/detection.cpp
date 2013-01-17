@@ -72,7 +72,6 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 
 	{
 		// Neverhood English version
-		// TODO: Maybe additional files are needed to properly detect different versions
 		{
 			"neverhood",
 			0,
@@ -147,7 +146,7 @@ bool NeverhoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool Neverhood::NeverhoodEngine::hasFeature(EngineFeature f) const {
 	return
-//		(f == kSupportsRTL) || // TODO: Not yet...
+		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime);
 }

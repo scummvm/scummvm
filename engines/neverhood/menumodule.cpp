@@ -577,7 +577,7 @@ void TextEditWidget::drawCursor() {
 	if (_cursorSurface->getVisible() && _cursorPos >= 0 && _cursorPos <= _maxVisibleChars) {
 		NDrawRect sourceRect(0, 0, _cursorWidth, _cursorHeight);
 		_surface->copyFrom(_cursorSurface->getSurface(), _rect.x1 + _cursorPos * _fontSurface->getCharWidth(),
-			_rect.y1 + (_rect.y2 - _cursorHeight - _rect.y1 + 1) / 2, sourceRect, true);
+			_rect.y1 + (_rect.y2 - _cursorHeight - _rect.y1 + 1) / 2, sourceRect);
 	} else
 		_cursorSurface->setVisible(false);
 }
