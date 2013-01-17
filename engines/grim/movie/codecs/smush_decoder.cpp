@@ -523,7 +523,7 @@ void SmushDecoder::SmushVideoTrack::handleFrameObject(Common::SeekableReadStream
 	byte *ptr = new byte[size];
 	stream->read(ptr, size);
 	_blocky8->decode((byte *)_surface.pixels, ptr);
-	delete ptr;
+	delete[] ptr;
 }
 
 static byte delta_color(byte org_color, int16 delta_color) {
@@ -583,7 +583,8 @@ void SmushDecoder::SmushAudioTrack::handleVIMA(Common::SeekableReadStream *strea
 	byte *src = new byte[size];
 	stream->read(src, size);
 
-	int16 *dst = new int16[decompressedSize * _channels];
+	// this will be deleted using free() by the stream, so allocate it using malloc().
+	int16 *dst = (int16 *)malloc(decompressedSize * _channels * 2);
 	decompressVima(src, dst, decompressedSize * _channels * 2, smushDestTable);
 
 	int flags = Audio::FLAG_16BITS;
@@ -595,7 +596,7 @@ void SmushDecoder::SmushAudioTrack::handleVIMA(Common::SeekableReadStream *strea
 		_queueStream = Audio::makeQueuingAudioStream(_freq, (_channels == 2));
 	}
 	_queueStream->queueBuffer((byte *)dst, decompressedSize * _channels * 2, DisposeAfterUse::YES, flags);
-	delete src;
+	delete[] src;
 }
 
 void SmushDecoder::SmushAudioTrack::handleIACT(Common::SeekableReadStream *stream, int32 size) {
@@ -614,7 +615,8 @@ void SmushDecoder::SmushAudioTrack::handleIACT(Common::SeekableReadStream *strea
 				_IACTpos += bsize;
 				bsize = 0;
 			} else {
-				byte *output_data = new byte[4096];
+				// this will be deleted using free() by the stream, so allocate it using malloc().
+				byte *output_data = (byte *)malloc(4096);
 				memcpy(_IACToutput + _IACTpos, d_src, len);
 				byte *dst = output_data;
 				byte *d_src2 = _IACToutput;
@@ -665,7 +667,7 @@ void SmushDecoder::SmushAudioTrack::handleIACT(Common::SeekableReadStream *strea
 			bsize--;
 		}
 	}
-	delete src;
+	delete[] src;
 }
 
 bool SmushDecoder::SmushAudioTrack::seek(const Audio::Timestamp &time) {
