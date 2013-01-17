@@ -280,6 +280,7 @@ bool Set::restoreState(SaveGame *savedState) {
 	_lights = new Light[_numLights];
 	for (int i = 0; i < _numLights; i++) {
 		_lights[i].restoreState(savedState);
+		_lights[i]._id = i;
 		_lightsList.push_back(&_lights[i]);
 	}
 
