@@ -46,9 +46,8 @@ class SpriteResource {
 public:
 	SpriteResource(NeverhoodEngine *vm);
 	~SpriteResource();
-	void draw(byte *dest, int destPitch, bool flipX, bool flipY);
-	bool load(uint32 fileHash);
-	bool load2(uint32 fileHash);
+	void draw(Graphics::Surface *destSurface, bool flipX, bool flipY);
+	bool load(uint32 fileHash, bool doLoadPosition = false);
 	void unload();
 	const NDimensions& getDimensions() { return _dimensions; }
 	NPoint& getPosition() { return _position; }
@@ -90,7 +89,7 @@ class AnimResource {
 public:
 	AnimResource(NeverhoodEngine *vm);
 	~AnimResource();
-	void draw(uint frameIndex, byte *dest, int destPitch, bool flipX, bool flipY);
+	void draw(uint frameIndex, Graphics::Surface *destSurface, bool flipX, bool flipY);
 	bool load(uint32 fileHash);
 	void unload();
 	void clear();
@@ -120,7 +119,7 @@ public:
 	void load(uint32 fileHash);
 	void unload();
 	NDrawRect& getRect();
-	void draw(int frameNum, byte *dest, int destPitch);
+	void draw(int frameNum, Graphics::Surface *destSurface);
 	int getCursorNum() const { return _cursorNum; }
 	void setCursorNum(int cursorNum) { _cursorNum = cursorNum; }
 protected:

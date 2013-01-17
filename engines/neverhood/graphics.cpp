@@ -71,7 +71,7 @@ void BaseSurface::drawSpriteResource(SpriteResource &spriteResource) {
 	if (spriteResource.getDimensions().width <= _drawRect.width && 
 		spriteResource.getDimensions().height <= _drawRect.height) {
 		clear();
-		spriteResource.draw((byte*)_surface->pixels, _surface->pitch, false, false);
+		spriteResource.draw(_surface, false, false);
 		++_version;
 	}
 }
@@ -85,7 +85,7 @@ void BaseSurface::drawSpriteResourceEx(SpriteResource &spriteResource, bool flip
 			_drawRect.height = height;
 		if (_surface) {
 			clear();
-			spriteResource.draw((byte*)_surface->pixels, _surface->pitch, flipX, flipY);
+			spriteResource.draw(_surface, flipX, flipY);
 			++_version;
 		}
 	}
@@ -99,7 +99,7 @@ void BaseSurface::drawAnimResource(AnimResource &animResource, uint frameIndex, 
 	if (_surface) {
 		clear();
 		if (frameIndex < animResource.getFrameCount()) {
-			animResource.draw(frameIndex, (byte*)_surface->pixels, _surface->pitch, flipX, flipY);
+			animResource.draw(frameIndex, _surface, flipX, flipY);
 			++_version;
 		}
 	}
@@ -107,7 +107,7 @@ void BaseSurface::drawAnimResource(AnimResource &animResource, uint frameIndex, 
 
 void BaseSurface::drawMouseCursorResource(MouseCursorResource &mouseCursorResource, int frameNum) {
 	if (frameNum < 3) {
-		mouseCursorResource.draw(frameNum, (byte*)_surface->pixels, _surface->pitch);
+		mouseCursorResource.draw(frameNum, _surface);
 		++_version;
 	}
 }
@@ -156,7 +156,7 @@ FontSurface::FontSurface(NeverhoodEngine *vm, uint32 fileHash, uint charsPerRow,
 	_firstChar(firstChar), _charWidth(charWidth), _charHeight(charHeight), _tracking(NULL) {
 	
 	SpriteResource fontSpriteResource(_vm);
-	fontSpriteResource.load2(fileHash);
+	fontSpriteResource.load(fileHash, true);
 	drawSpriteResourceEx(fontSpriteResource, false, false, 0, 0);
 }
 
@@ -200,7 +200,7 @@ FontSurface *FontSurface::createFontSurface(NeverhoodEngine *vm, uint32 fileHash
 	uint16 charWidth = fontData.getPoint(calcHash("meCharWidth")).x;
 	uint16 charHeight = fontData.getPoint(calcHash("meCharHeight")).x;
 	NPointArray *tracking = fontData.getPointArray(calcHash("meTracking"));
-	fontSprite.load2(fileHash);
+	fontSprite.load(fileHash, true);
 	fontSurface = new FontSurface(vm, tracking, 16, numRows, firstChar, charWidth, charHeight);	
 	fontSurface->drawSpriteResourceEx(fontSprite, false, false, 0, 0);
 	return fontSurface;

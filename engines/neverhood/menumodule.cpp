@@ -540,7 +540,7 @@ void TextEditWidget::onClick() {
 void TextEditWidget::addSprite() {
 	SpriteResource cursorSpriteResource(_vm);
 
-	_spriteResource.load2(_fileHash);
+	_spriteResource.load(_fileHash, true);
 	createSurface(_baseSurfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	refreshPosition();
 	_parentScene->addSprite(this);
@@ -550,7 +550,7 @@ void TextEditWidget::addSprite() {
 		0, _parentScene, _baseObjectPriority + 1, _baseSurfacePriority + 1,
 		(const byte*)_entryString.c_str(), _entryString.size(), _surface, _x, _y, _fontSurface);
 	_textLabelWidget->addSprite();
-	cursorSpriteResource.load2(_cursorFileHash);
+	cursorSpriteResource.load(_cursorFileHash, true);
 	_cursorSurface = new BaseSurface(_vm, 0, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
 	_cursorSurface->drawSpriteResourceEx(cursorSpriteResource, false, false, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
 	_cursorSurface->setVisible(true);
@@ -704,7 +704,7 @@ void SavegameListBox::onClick() {
 }
 
 void SavegameListBox::addSprite() {
-	_spriteResource.load2(_bgFileHash);
+	_spriteResource.load(_bgFileHash, true);
 	createSurface(_baseSurfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	refreshPosition();
 	_parentScene->addSprite(this);

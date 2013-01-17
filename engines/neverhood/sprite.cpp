@@ -116,7 +116,7 @@ StaticSprite::StaticSprite(NeverhoodEngine *vm, int objectPriority)
 StaticSprite::StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePriority, int16 x, int16 y)
 	: Sprite(vm, 0), _spriteResource(vm) {
 
-	_spriteResource.load2(fileHash);
+	_spriteResource.load(fileHash, true);
 	createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	_x = x == kDefPosition ? _spriteResource.getPosition().x : x;
 	_y = y == kDefPosition ? _spriteResource.getPosition().y : y;
@@ -126,7 +126,7 @@ StaticSprite::StaticSprite(NeverhoodEngine *vm, uint32 fileHash, int surfacePrio
 }
 
 void StaticSprite::loadSprite(uint32 fileHash, uint flags, int surfacePriority, int16 x, int16 y) {
-	_spriteResource.load2(fileHash);
+	_spriteResource.load(fileHash, true);
 	if (!_surface)
 		createSurface(surfacePriority, _spriteResource.getDimensions().width, _spriteResource.getDimensions().height);
 	if (flags & kSLFDefDrawOffset)

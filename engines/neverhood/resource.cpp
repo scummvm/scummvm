@@ -37,8 +37,10 @@ SpriteResource::~SpriteResource() {
 	unload();
 }
 
-void SpriteResource::draw(byte *dest, int destPitch, bool flipX, bool flipY) {
+void SpriteResource::draw(Graphics::Surface *destSurface, bool flipX, bool flipY) {
 	if (_pixels) {
+		byte *dest = (byte*)destSurface->pixels;
+		const int destPitch = destSurface->pitch;
 		if (_rle)
 			unpackSpriteRle(_pixels, _dimensions.width, _dimensions.height, dest, destPitch, flipX, flipY);
 		else
@@ -46,27 +48,15 @@ void SpriteResource::draw(byte *dest, int destPitch, bool flipX, bool flipY) {
 	}
 }
 
-bool SpriteResource::load(uint32 fileHash) {
+bool SpriteResource::load(uint32 fileHash, bool doLoadPosition) {
 	debug(2, "SpriteResource::load(%08X)", fileHash);
-	// TODO: Later merge with load2 and make the mode a parameter
 	unload();
 	_vm->_res->queryResource(fileHash, _resourceHandle);
 	if (_resourceHandle.isValid() && _resourceHandle.type() == kResTypeBitmap) {
 		_vm->_res->loadResource(_resourceHandle);
 		const byte *spriteData = _resourceHandle.data();
-		parseBitmapResource(spriteData, &_rle, &_dimensions, NULL, NULL, &_pixels);
-	} 
-	return _pixels != NULL;
-}
-
-bool SpriteResource::load2(uint32 fileHash) {
-	debug(2, "SpriteResource::load2(%08X)", fileHash);
-	unload();
-	_vm->_res->queryResource(fileHash, _resourceHandle);
-	if (_resourceHandle.isValid() && _resourceHandle.type() == kResTypeBitmap) {
-		_vm->_res->loadResource(_resourceHandle);
-		const byte *spriteData = _resourceHandle.data();
-		parseBitmapResource(spriteData, &_rle, &_dimensions, &_position, NULL, &_pixels);
+		NPoint *position = doLoadPosition ? &_position : NULL;
+		parseBitmapResource(spriteData, &_rle, &_dimensions, position, NULL, &_pixels);
 	} 
 	return _pixels != NULL;
 }
@@ -128,8 +118,10 @@ AnimResource::~AnimResource() {
 	unload();
 }
 
-void AnimResource::draw(uint frameIndex, byte *dest, int destPitch, bool flipX, bool flipY) {
+void AnimResource::draw(uint frameIndex, Graphics::Surface *destSurface, bool flipX, bool flipY) {
 	const AnimFrameInfo frameInfo = _frames[frameIndex];
+	byte *dest = (byte*)destSurface->pixels;
+	const int destPitch = destSurface->pitch;
 	_currSpriteData = _spriteData + frameInfo.spriteDataOffs;
 	_width = frameInfo.drawOffset.width;
 	_height = frameInfo.drawOffset.height;
@@ -305,10 +297,12 @@ NDrawRect& MouseCursorResource::getRect() {
 	return _rect;
 }
 
-void MouseCursorResource::draw(int frameNum, byte *dest, int destPitch) {
+void MouseCursorResource::draw(int frameNum, Graphics::Surface *destSurface) {
 	if (_cursorSprite.getPixels()) {
-		int sourcePitch = (_cursorSprite.getDimensions().width + 3) & 0xFFFC; // 4 byte alignment
+		const int sourcePitch = (_cursorSprite.getDimensions().width + 3) & 0xFFFC; // 4 byte alignment
+		const int destPitch = destSurface->pitch;				
 		const byte *source = _cursorSprite.getPixels() + _cursorNum * (sourcePitch * 32) + frameNum * 32;
+		byte *dest = (byte*)destSurface->pixels;
 		for (int16 yc = 0; yc < 32; yc++) {
 			memcpy(dest, source, 32);
 			source += sourcePitch;
