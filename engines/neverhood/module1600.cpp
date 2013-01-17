@@ -988,6 +988,24 @@ void AsCommonCarConnector::update() {
 	AnimatedSprite::update();
 }
 
+void Tracks::findTrackPoint(NPoint pt, int &minMatchTrackIndex, int &minMatchDistance,
+	DataResource &dataResource) {
+	const uint trackCount = size();
+	minMatchTrackIndex = -1;
+	minMatchDistance = 640;
+	for (uint trackIndex = 0; trackIndex < trackCount; trackIndex++) {
+		NPointArray *pointList = dataResource.getPointArray((*this)[trackIndex]->trackPointsName);
+		for (uint pointIndex = 0; pointIndex < pointList->size(); pointIndex++) {
+			NPoint testPt = (*pointList)[pointIndex];
+			int distance = calcDistance(testPt.x, testPt.y, pt.x, pt.y);
+			if (distance < minMatchDistance) {
+				minMatchTrackIndex = trackIndex;
+				minMatchDistance = distance;
+			}
+		}
+	}
+}
+
 Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _asCar(NULL), _countdown1(0) {
 
@@ -1082,7 +1100,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	// NOTE: Not in the else because 'which' is set to 1 in the true branch	
 	if (which == 1) {
-		// Klaymen entering riding the car
+		// Klaymen riding the car
 		_vm->gameState().which = 1;
 		_dataResource.load(0x003C0492);
 		_roomPathPoints = _dataResource.getPointArray(calcHash("meArchroArchRoomPath"));

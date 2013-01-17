@@ -121,6 +121,12 @@ protected:
 	void update();
 };
 
+class Tracks : public Common::Array<SceneInfo2700*> {
+public:
+	void findTrackPoint(NPoint pt, int &minMatchTrackIndex, int &minMatchDistance,
+		DataResource &dataResource);
+};
+
 class Scene1608 : public Scene {
 public:
 	Scene1608(NeverhoodEngine *vm, Module *parentModule, int which);

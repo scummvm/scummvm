@@ -149,7 +149,7 @@ void StaticData::load(const char *filename) {
 		sceneInfo2700->bgFilename = fd.readUint32LE();
 		sceneInfo2700->bgShadowFilename = fd.readUint32LE();
 		sceneInfo2700->dataResourceFilename = fd.readUint32LE();
-		sceneInfo2700->pointListName = fd.readUint32LE();
+		sceneInfo2700->trackPointsName = fd.readUint32LE();
 		sceneInfo2700->rectListName = fd.readUint32LE();
 		sceneInfo2700->exPaletteFilename2 = fd.readUint32LE();
 		sceneInfo2700->exPaletteFilename1 = fd.readUint32LE();

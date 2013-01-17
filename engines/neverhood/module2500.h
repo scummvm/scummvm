@@ -60,11 +60,10 @@ protected:
 	Sprite *_asIdleCarLower;
 	Sprite *_asIdleCarFull;
 	Klayman *_kmScene2501;
+	Tracks _tracks;
 	NPointArray *_trackPoints;
-	SceneInfo2700 *_sceneInfos[3];
 	int _currTrackIndex;
 	NPoint _clickPoint;
-	int _pointListsCount;
 	int _newTrackIndex;
 	int _carStatus;
 	bool _klaymanInCar;
@@ -75,9 +74,9 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmRidingCar(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender);
-	void findClosestTrack(NPoint &pt);
+	void moveCarToPoint(NPoint &pt);
 	void changeTrack();
-	void updateKlaymanCliprect();
+	void updateKlaymanClipRect();
 };
 
 class SsScene2504Button : public StaticSprite {

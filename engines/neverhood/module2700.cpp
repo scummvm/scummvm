@@ -528,12 +528,12 @@ uint32 Module2700::handleMessage(int messageNum, const MessageParam &param, Enti
 	return messageResult;
 }
 			
-void Module2700::createScene2703(int which, uint32 sceneInfoId) {
-	_childObject = new Scene2703(_vm, this, which, sceneInfoId);
+void Module2700::createScene2703(int which, uint32 trackInfoId) {
+	_childObject = new Scene2703(_vm, this, which, trackInfoId);
 }
 
-void Module2700::createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
-	_childObject = new Scene2704(_vm, this, which, sceneInfoId, value, staticSprites, clipRect);
+void Module2700::createScene2704(int which, uint32 trackInfoId, int16 value, const uint32 *staticSprites, const NRect *clipRect) {
+	_childObject = new Scene2704(_vm, this, which, trackInfoId, value, staticSprites, clipRect);
 }
 
 static const NPoint kCarShadowOffsets[] = {
@@ -619,11 +619,11 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	Sprite *tempSprite;
 	
 	NRect clipRect;
-	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(0x004B2240);
+	SceneInfo2700 *tracks = _vm->_staticData->getSceneInfo2700(0x004B2240);
 	setGlobalVar(V_CAR_DELTA_X, 1);
 	
-	setBackground(sceneInfo->bgFilename);
-	setPalette(sceneInfo->bgFilename);
+	setBackground(tracks->bgFilename);
+	setPalette(tracks->bgFilename);
 	_palette->addPalette(calcHash("paPodFloor"), 65, 31, 65);
 	_palette->addPalette(calcHash("paKlayFloor"), 0, 65, 0);
 	insertScreenMouse(0x08B08180);
@@ -631,8 +631,8 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0x1E086325, 1200);
 	clipRect.set(0, 0, 640, tempSprite->getDrawRect().y2());
 
-	if (sceneInfo->bgShadowFilename) {
-		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->bgShadowFilename);
+	if (tracks->bgShadowFilename) {
+		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(tracks->bgShadowFilename);
 		addEntity(_ssTrackShadowBackground);
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
@@ -644,10 +644,10 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
-	_which1 = sceneInfo->which1;
-	_which2 = sceneInfo->which2;
-	_dataResource.load(sceneInfo->dataResourceFilename);
-	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
+	_which1 = tracks->which1;
+	_which2 = tracks->which2;
+	_dataResource.load(tracks->dataResourceFilename);
+	_trackPoints = _dataResource.getPointArray(tracks->trackPointsName);
 	_asCar->setPathPoints(_trackPoints);
 
 	if (which == _which2) {
@@ -713,18 +713,8 @@ uint32 Scene2701::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 	return 0;
 }
 
-static const uint32 kScene2702Infos[2][3] = {
-	{0x004B5F68, 0x004B5F8C, 0x004B5FB0},
-	{0x004B5FD8, 0x004B5FFC, 0x004B6020}
-};
-
-
 Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isInLight(true), _newTrackIndex(-1), _count(3) {
-	
-	for (int i = 0; i < 2; i++)
-		for (int j = 0; j < 3; j++)
-			_sceneInfos[i][j] = _vm->_staticData->getSceneInfo2700(kScene2702Infos[i][j]);
+	: Scene(vm, parentModule), _isInLight(true), _newTrackIndex(-1) {
 	
 	SetMessageHandler(&Scene2702::handleMessage);
 	SetUpdateHandler(&Scene2702::update);
@@ -746,38 +736,48 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 	_dataResource.load(0x04310014);
 	
 	if (which == 1) {
-		_currSceneInfos = _sceneInfos[1];
+		_isUpperTrack = false;
 		_currTrackIndex = 1;
 	} else if (which == 2) {
-		_currSceneInfos = _sceneInfos[1];
+		_isUpperTrack = false;
 		_currTrackIndex = 2;
 		_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
 		_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
 		_isInLight = false;
 	} else if (which == 3) {
-		_currSceneInfos = _sceneInfos[0];
+		_isUpperTrack = true;
 		_currTrackIndex = 0;
 	} else if (which == 4) {
-		_currSceneInfos = _sceneInfos[0];
+		_isUpperTrack = true;
 		_currTrackIndex = 2;
 		_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
 		_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
 		_isInLight = false;
 	} else if (which == 5) {
-		_currSceneInfos = _sceneInfos[0];
+		_isUpperTrack = true;
 		_currTrackIndex = 1;
 		_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
 		_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
 		_isInLight = false;
 	} else {
-		_currSceneInfos = _sceneInfos[1];
+		_isUpperTrack = false;
 		_currTrackIndex = 0;
 	}
 
-	_trackPoints = _dataResource.getPointArray(_currSceneInfos[_currTrackIndex]->pointListName);
+	if (_isUpperTrack) {
+		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B5F68));	
+		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B5F8C));
+		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B5FB0));
+	} else {
+		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B5FD8));	
+		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B5FFC));
+		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B6020));
+	}
+
+	_trackPoints = _dataResource.getPointArray(_tracks[_currTrackIndex]->trackPointsName);
 	_asCar->setPathPoints(_trackPoints);
 
-	if (which == _currSceneInfos[_currTrackIndex]->which2) {
+	if (which == _tracks[_currTrackIndex]->which2) {
 		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 		sendMessage(_asCar, 0x2007, 150);
 	} else {
@@ -808,21 +808,21 @@ uint32 Scene2702::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		findClosestTrack(param.asPoint());
+		moveCarToPoint(param.asPoint());
 		break;
 	case 0x2005:
 		if (_newTrackIndex >= 0) {
-			if (_currSceneInfos[_currTrackIndex]->which1 < 0)
+			if (_tracks[_currTrackIndex]->which1 < 0)
 				changeTrack();
-		} else if (_currSceneInfos[_currTrackIndex]->which1 >= 0)
-			leaveScene(_currSceneInfos[_currTrackIndex]->which1);
+		} else if (_tracks[_currTrackIndex]->which1 >= 0)
+			leaveScene(_tracks[_currTrackIndex]->which1);
 		break;
 	case 0x2006:
 		if (_newTrackIndex >= 0) {
-			if (_currSceneInfos[_currTrackIndex]->which2 < 0)
+			if (_tracks[_currTrackIndex]->which2 < 0)
 				changeTrack();
-		} else if (_currSceneInfos[_currTrackIndex]->which2 >= 0)
-			leaveScene(_currSceneInfos[_currTrackIndex]->which2);
+		} else if (_tracks[_currTrackIndex]->which2 >= 0)
+			leaveScene(_tracks[_currTrackIndex]->which2);
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
@@ -831,25 +831,13 @@ uint32 Scene2702::handleMessage(int messageNum, const MessageParam &param, Entit
 	return 0;
 }
 
-void Scene2702::findClosestTrack(NPoint pt) {
-	int minMatchTrackIndex = -1;
-	int minMatchDistance = 640;
-	// Find the track which contains a point closest to pt
-	for (int infoIndex = 0; infoIndex < _count; infoIndex++) {
-		NPointArray *pointList = _dataResource.getPointArray(_currSceneInfos[infoIndex]->pointListName);
-		for (uint pointIndex = 0; pointIndex < pointList->size(); pointIndex++) {
-			NPoint testPt = (*pointList)[pointIndex];
-			int distance = calcDistance(testPt.x, testPt.y, pt.x, pt.y);
-			if (distance < minMatchDistance) {
-				minMatchTrackIndex = infoIndex;
-				minMatchDistance = distance;
-			}
-		}
-	}
+void Scene2702::moveCarToPoint(NPoint pt) {
+	int minMatchTrackIndex, minMatchDistance;
+	_tracks.findTrackPoint(pt, minMatchTrackIndex, minMatchDistance, _dataResource);
 	if (minMatchTrackIndex >= 0 && minMatchTrackIndex != _currTrackIndex) {
 		_newTrackIndex = minMatchTrackIndex;
 		_newTrackDestX = pt.x;
-		if (_currSceneInfos == _sceneInfos[0]) {
+		if (_isUpperTrack) {
 			if (_currTrackIndex == 0)
 				sendMessage(_asCar, 0x2003, _trackPoints->size() - 1);
 			else
@@ -866,9 +854,9 @@ void Scene2702::findClosestTrack(NPoint pt) {
 
 void Scene2702::changeTrack() {
 	_currTrackIndex = _newTrackIndex;
-	_trackPoints = _dataResource.getPointArray(_currSceneInfos[_currTrackIndex]->pointListName);
+	_trackPoints = _dataResource.getPointArray(_tracks[_currTrackIndex]->trackPointsName);
 	_asCar->setPathPoints(_trackPoints);
-	if (_currSceneInfos == _sceneInfos[0]) {
+	if (_isUpperTrack) {
 		if (_currTrackIndex == 0)
 			sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 		else
@@ -881,25 +869,25 @@ void Scene2702::changeTrack() {
 	_newTrackIndex = -1;
 }
 
-Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId)
+Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint32 trackInfoId)
 	: Scene(vm, parentModule) {
 
-	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(sceneInfoId);
+	SceneInfo2700 *tracks = _vm->_staticData->getSceneInfo2700(trackInfoId);
 	
 	SetMessageHandler(&Scene2703::handleMessage);
 	SetUpdateHandler(&Scene2703::update);
 	
-	setBackground(sceneInfo->bgFilename);
-	setPalette(sceneInfo->bgFilename);
+	setBackground(tracks->bgFilename);
+	setPalette(tracks->bgFilename);
 	_palette->addPalette(calcHash("paPodShade"), 65, 31, 65);
 	_palette->addPalette(calcHash("paKlayShade"), 0, 65, 0);
 	addEntity(_palette);
-	insertScreenMouse(sceneInfo->mouseCursorFilename);
+	insertScreenMouse(tracks->mouseCursorFilename);
 	
 	_palStatus = 2;
 	
-	if (sceneInfo->bgShadowFilename) {
-		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->bgShadowFilename);
+	if (tracks->bgShadowFilename) {
+		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(tracks->bgShadowFilename);
 		addEntity(_ssTrackShadowBackground);
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
@@ -912,10 +900,10 @@ Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	}
 
 	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
-	_which1 = sceneInfo->which1;
-	_which2 = sceneInfo->which2;
-	_dataResource.load(sceneInfo->dataResourceFilename);
-	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
+	_which1 = tracks->which1;
+	_which2 = tracks->which2;
+	_dataResource.load(tracks->dataResourceFilename);
+	_trackPoints = _dataResource.getPointArray(tracks->trackPointsName);
 	_asCar->setPathPoints(_trackPoints);
 	
 	if (which == _which2) {
@@ -994,31 +982,31 @@ uint32 Scene2703::handleMessage(int messageNum, const MessageParam &param, Entit
 	return 0;
 }
 		
-Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId, int16 value,
+Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 trackInfoId, int16 value,
 	const uint32 *staticSprites, const NRect *clipRect)
 	: Scene(vm, parentModule) {
 
-	SceneInfo2700 *sceneInfo = _vm->_staticData->getSceneInfo2700(sceneInfoId);
+	SceneInfo2700 *tracks = _vm->_staticData->getSceneInfo2700(trackInfoId);
 	
 	SetMessageHandler(&Scene2704::handleMessage);
 	SetUpdateHandler(&Scene2704::update);
 	
-	setBackground(sceneInfo->bgFilename);
-	setPalette(sceneInfo->bgFilename);
+	setBackground(tracks->bgFilename);
+	setPalette(tracks->bgFilename);
 
-	if (sceneInfo->exPaletteFilename1)
-		_palette->addPalette(sceneInfo->exPaletteFilename1, 0, 65, 0);
+	if (tracks->exPaletteFilename1)
+		_palette->addPalette(tracks->exPaletteFilename1, 0, 65, 0);
 
-	if (sceneInfo->exPaletteFilename2)
-		_palette->addPalette(sceneInfo->exPaletteFilename2, 65, 31, 65);
+	if (tracks->exPaletteFilename2)
+		_palette->addPalette(tracks->exPaletteFilename2, 65, 31, 65);
 	
 	while (staticSprites && *staticSprites)
 		insertStaticSprite(*staticSprites++, 1100);
 
-	insertScreenMouse(sceneInfo->mouseCursorFilename);
+	insertScreenMouse(tracks->mouseCursorFilename);
 	
-	if (sceneInfo->bgShadowFilename) {
-		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(sceneInfo->bgShadowFilename);
+	if (tracks->bgShadowFilename) {
+		_ssTrackShadowBackground = createSprite<SsCommonTrackShadowBackground>(tracks->bgShadowFilename);
 		addEntity(_ssTrackShadowBackground);
 		_asCar = insertSprite<AsCommonCar>(this, 320, 240);
 		_asCarShadow = insertSprite<AsCommonCarShadow>(_asCar, _ssTrackShadowBackground->getSurface(), 4);
@@ -1031,10 +1019,10 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	}
 
 	_asCarConnector = insertSprite<AsCommonCarConnector>(_asCar);
-	_which1 = sceneInfo->which1;
-	_which2 = sceneInfo->which2;
-	_dataResource.load(sceneInfo->dataResourceFilename);
-	_trackPoints = _dataResource.getPointArray(sceneInfo->pointListName);
+	_which1 = tracks->which1;
+	_which2 = tracks->which2;
+	_dataResource.load(tracks->dataResourceFilename);
+	_trackPoints = _dataResource.getPointArray(tracks->trackPointsName);
 	_asCar->setPathPoints(_trackPoints);
 	
 	if (which == _which2) {
@@ -1093,17 +1081,14 @@ uint32 Scene2704::handleMessage(int messageNum, const MessageParam &param, Entit
 	return 0;
 }
 
-static const int kSceneInfo2706Count = 3;
-static const struct { const char *pointListName; int which1, which2; } kSceneInfo2706[] = {
-	{"me06slotSlotPath2", 4, -1},
-	{"me06slotSlotPath3", -1, 6},
-	{"me06slotSlotPath4", -1, 5}
-};
-
 Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _newTrackIndex(-1) {
 	
 	SetMessageHandler(&Scene2706::handleMessage);
+
+	_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B22A0));	
+	_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B22C4));
+	_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B22E8));
 	
 	setBackground(0x18808B88);
 	setPalette(0x18808B88);
@@ -1131,10 +1116,10 @@ Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 	else
 		_currTrackIndex = 0;
 
-	_trackPoints = _dataResource.getPointArray(calcHash(kSceneInfo2706[_currTrackIndex].pointListName));
+	_trackPoints = _dataResource.getPointArray(_tracks[_currTrackIndex]->trackPointsName);
 	_asCar->setPathPoints(_trackPoints);
 
-	if (which == kSceneInfo2706[_currTrackIndex].which2) {
+	if (which == _tracks[_currTrackIndex]->which2) {
 		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);
 		if (which == 5)
 			sendMessage(_asCar, 0x2007, 50);
@@ -1154,21 +1139,21 @@ uint32 Scene2706::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		findClosestTrack(param.asPoint());
+		moveCarToPoint(param.asPoint());
 		break;
 	case 0x2005:
 		if (_newTrackIndex >= 0) {
-			if (kSceneInfo2706[_currTrackIndex].which1 < 0)
+			if (_tracks[_currTrackIndex]->which1 < 0)
 				changeTrack();
-		} else if (kSceneInfo2706[_currTrackIndex].which1 >= 0)
-			leaveScene(kSceneInfo2706[_currTrackIndex].which1);
+		} else if (_tracks[_currTrackIndex]->which1 >= 0)
+			leaveScene(_tracks[_currTrackIndex]->which1);
 		break;
 	case 0x2006:
 		if (_newTrackIndex >= 0) {
-			if (kSceneInfo2706[_currTrackIndex].which2 < 0)
+			if (_tracks[_currTrackIndex]->which2 < 0)
 				changeTrack();
-		} else if (kSceneInfo2706[_currTrackIndex].which2 >= 0)
-			leaveScene(kSceneInfo2706[_currTrackIndex].which2);
+		} else if (_tracks[_currTrackIndex]->which2 >= 0)
+			leaveScene(_tracks[_currTrackIndex]->which2);
 		break;
 	case 0x200D:
 		sendMessage(_parentModule, 0x200D, 0);
@@ -1177,21 +1162,9 @@ uint32 Scene2706::handleMessage(int messageNum, const MessageParam &param, Entit
 	return 0;
 }
 
-void Scene2706::findClosestTrack(NPoint pt) {
-	int minMatchTrackIndex = -1;
-	int minMatchDistance = 640;
-	// Find the track which contains a point closest to pt
-	for (int infoIndex = 0; infoIndex < kSceneInfo2706Count; infoIndex++) {
-		NPointArray *pointList = _dataResource.getPointArray(calcHash(kSceneInfo2706[infoIndex].pointListName));
-		for (uint pointIndex = 0; pointIndex < pointList->size(); pointIndex++) {
-			NPoint testPt = (*pointList)[pointIndex];
-			int distance = calcDistance(testPt.x, testPt.y, pt.x, pt.y);
-			if (distance < minMatchDistance) {
-				minMatchTrackIndex = infoIndex;
-				minMatchDistance = distance;
-			}
-		}
-	}
+void Scene2706::moveCarToPoint(NPoint pt) {
+	int minMatchTrackIndex, minMatchDistance;
+	_tracks.findTrackPoint(pt, minMatchTrackIndex, minMatchDistance, _dataResource);
 	if (minMatchTrackIndex >= 0 && minMatchTrackIndex != _currTrackIndex) {
 		_newTrackIndex = minMatchTrackIndex;
 		_newTrackDestX = pt.x;
@@ -1207,7 +1180,7 @@ void Scene2706::findClosestTrack(NPoint pt) {
 
 void Scene2706::changeTrack() {
 	_currTrackIndex = _newTrackIndex;
-	_trackPoints = _dataResource.getPointArray(calcHash(kSceneInfo2706[_currTrackIndex].pointListName));
+	_trackPoints = _dataResource.getPointArray(_tracks[_currTrackIndex]->trackPointsName);
 	_asCar->setPathPoints(_trackPoints);
 	if (_currTrackIndex == 0)
 		sendMessage(_asCar, 0x2002, _trackPoints->size() - 1);

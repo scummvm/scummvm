@@ -82,7 +82,7 @@ struct SceneInfo2700 {
 	uint32 bgFilename;
 	uint32 bgShadowFilename;
 	uint32 dataResourceFilename;
-	uint32 pointListName;
+	uint32 trackPointsName;
 	uint32 rectListName;
 	uint32 exPaletteFilename2;
 	uint32 exPaletteFilename1;

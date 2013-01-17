@@ -45,8 +45,8 @@ protected:
 	void createScene(int sceneNum, int which);
 	void updateScene();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void createScene2703(int which, uint32 sceneInfoId);
-	void createScene2704(int which, uint32 sceneInfoId, int16 value, const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
+	void createScene2703(int which, uint32 trackInfoId);
+	void createScene2704(int which, uint32 trackInfoId, int16 value, const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 };
 
 class SsCommonTrackShadowBackground : public StaticSprite {
@@ -108,21 +108,20 @@ protected:
 	Sprite *_asCarTrackShadow;
 	Sprite *_asCarConnectorShadow;
 	int16 _newTrackDestX;
-	int _currTrackIndex, _newTrackIndex;
-	int _count;
 	bool _isInLight;
-	SceneInfo2700 *_sceneInfos[2][3];
-	SceneInfo2700 **_currSceneInfos;
+	int _currTrackIndex, _newTrackIndex;
+	bool _isUpperTrack;
+	Tracks _tracks;
 	NPointArray *_trackPoints;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void findClosestTrack(NPoint pt);
+	void moveCarToPoint(NPoint pt);
 	void changeTrack();
 };
 
 class Scene2703 : public Scene {
 public:
-	Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId);
+	Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint32 trackInfoId);
 protected:
 	AsCommonCar *_asCar;
 	Sprite *_ssTrackShadowBackground;
@@ -139,7 +138,7 @@ protected:
 
 class Scene2704 : public Scene {
 public:
-	Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 sceneInfoId, int16 value,
+	Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint32 trackInfoId, int16 value,
 		const uint32 *staticSprites = NULL, const NRect *clipRect = NULL);
 protected:
 	AsCommonCar *_asCar;
@@ -166,9 +165,10 @@ protected:
 	Sprite *_asCarConnectorShadow;
 	int16 _newTrackDestX;
 	int _currTrackIndex, _newTrackIndex;
+	Tracks _tracks;
 	NPointArray *_trackPoints;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void findClosestTrack(NPoint pt);
+	void moveCarToPoint(NPoint pt);
 	void changeTrack();
 };
 
