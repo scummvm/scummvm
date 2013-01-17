@@ -401,6 +401,7 @@ bool SmushDecoder::seek(const Audio::Timestamp &time) {
 			break;
 		}
 	}
+	_videoTrack->setFrameStart(keyframe);
 
 	// VIMA frames are 50 frames ahead of time, so we have to make sure we have 50 frames
 	// of audio before the wantedFrame. Here we use 51 to have a bit of safe margin
@@ -466,6 +467,7 @@ SmushDecoder::SmushVideoTrack::~SmushVideoTrack() {
 
 void SmushDecoder::SmushVideoTrack::init() {
 	_curFrame = -1;
+	_frameStart = -1;
 	if (_is16Bit) { // Retail only
 		_surface.create(_width, _height, _format);
 	}
@@ -476,6 +478,10 @@ void SmushDecoder::SmushVideoTrack::finishFrame() {
 		convertDemoFrame();
 	}
 	_curFrame++;
+}
+
+void SmushDecoder::SmushVideoTrack::setFrameStart(int frame) {
+	_frameStart = frame - 1;
 }
 
 void SmushDecoder::SmushVideoTrack::convertDemoFrame() {
@@ -492,6 +498,10 @@ void SmushDecoder::SmushVideoTrack::convertDemoFrame() {
 }
 
 void SmushDecoder::SmushVideoTrack::handleBlocky16(Common::SeekableReadStream *stream, uint32 size) {
+	if (_curFrame < _frameStart) {
+		return;
+	}
+
 	assert(_is16Bit);
 	byte *ptr = new byte[size];
 	stream->read(ptr, size);
@@ -501,6 +511,10 @@ void SmushDecoder::SmushVideoTrack::handleBlocky16(Common::SeekableReadStream *s
 }
 
 void SmushDecoder::SmushVideoTrack::handleFrameObject(Common::SeekableReadStream *stream, uint32 size) {
+	if (_curFrame < _frameStart) {
+		return;
+	}
+
 	assert(!_is16Bit);
 	assert(size >= 14);
 	byte codec = stream->readByte();

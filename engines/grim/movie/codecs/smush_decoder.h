@@ -78,6 +78,7 @@ protected:
 		void finishFrame();
 		bool isSeekable() const { return true; }
 		bool seek(const Audio::Timestamp &time) { return true; }
+		void setFrameStart(int frame);
 
 		void handleBlocky16(Common::SeekableReadStream *stream, uint32 size);
 		void handleFrameObject(Common::SeekableReadStream *stream, uint32 size);
@@ -100,6 +101,7 @@ protected:
 		Blocky8 *_blocky8;
 		Blocky16 *_blocky16;
 		int32 _nbframes;
+		int _frameStart;
 	};
 
 	class SmushAudioTrack : public AudioTrack {
