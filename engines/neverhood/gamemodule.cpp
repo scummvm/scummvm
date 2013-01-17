@@ -284,6 +284,46 @@ void GameModule::initCubeSymbolsPuzzle() {
 	}
 }
 
+void GameModule::initCrystalColorsPuzzle() {
+	// TODO Maybe move this into the GameModule so all puzzle init code is together
+	if (getGlobalVar(V_CRYSTAL_COLORS_INIT) == 0) {
+		TextResource textResource(_vm);
+		const char *textStart, *textEnd;
+		textResource.load(0x46691611);
+		textStart = textResource.getString(0, textEnd);
+		for (uint index = 0; index < 5; index++) {
+			char colorLetter = (byte)textStart[index];
+			byte correctColorNum = 0, misalignedColorNum;
+			switch (colorLetter) {
+			case 'B':
+				correctColorNum = 4;
+				break;
+			case 'G':
+				correctColorNum = 3;
+				break;
+			case 'O':
+				correctColorNum = 1;
+				break;
+			case 'R':
+				correctColorNum = 0;
+				break;
+			case 'V':
+				correctColorNum = 5;
+				break;
+			case 'Y':
+				correctColorNum = 2;
+				break;
+			}
+			do {
+				misalignedColorNum = _vm->_rnd->getRandomNumber(6 - 1);
+			} while (misalignedColorNum == correctColorNum);
+			setSubVar(VA_GOOD_CRYSTAL_COLORS, index, correctColorNum);
+			setSubVar(VA_CURR_CRYSTAL_COLORS, index, misalignedColorNum);
+		}
+		setGlobalVar(V_CRYSTAL_COLORS_INIT, 1);
+	}
+}
+
 uint32 GameModule::getCurrRadioMusicFileHash() {
 	uint musicIndex = getGlobalVar(V_CURR_RADIO_MUSIC_INDEX);
 	return (musicIndex % 5 != 0) ? 0 : kRadioMusicFileHashes[CLIP<uint>(musicIndex / 5, 0, 17)];

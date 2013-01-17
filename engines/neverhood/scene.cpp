@@ -381,6 +381,10 @@ bool Scene::setMessageList2(MessageList *messageList, bool canAcceptInput, bool 
 	return false;
 }
 
+bool Scene::isMessageList2(uint32 id) {
+	return _messageList2 == _vm->_staticData->getMessageList(id);
+}
+
 void Scene::processMessageList() {
 	debug(7, "Scene::processMessageList() _isMessageListBusy = %d; _isKlaymanBusy = %d", _isMessageListBusy, _isKlaymanBusy);
 

@@ -204,6 +204,7 @@ protected:
 	void setMessageList(MessageList *messageList, bool canAcceptInput = true, bool doConvertMessages = false);
 	bool setMessageList2(uint32 id, bool canAcceptInput = true, bool doConvertMessages = false);
 	bool setMessageList2(MessageList *messageList, bool canAcceptInput = true, bool doConvertMessages = false);
+	bool isMessageList2(uint32 id);
 	void processMessageList();
 	void setRectList(uint32 id);
 	void setRectList(RectList *rectList);

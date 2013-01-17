@@ -285,7 +285,7 @@ void Scene2101::update() {
 				}
 			}
 		}
-	} else if (_doorStatus == 1 && _messageValue >= 0 && _klayman->getX() > 470 /* TODO ! && _messageList2 != 0x004B8F48*/)
+	} else if (_doorStatus == 1 && _messageValue >= 0 && _klayman->getX() > 470 && !isMessageList2(0x004B8F48))
 		setMessageList2(0x004B8F50);
 	Scene::update();
 }

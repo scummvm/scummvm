@@ -51,6 +51,7 @@ public:
 	void initCannonSymbolsPuzzle();
 	void initCodeSymbolsPuzzle();
 	void initCubeSymbolsPuzzle();
+	void initCrystalColorsPuzzle();
 	uint32 getCurrRadioMusicFileHash();
 protected:
 	Entity *_prevChildObject;

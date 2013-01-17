@@ -273,7 +273,6 @@ protected:
 	Sprite *_ssCrystalButtons[5];
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void initCrystalColors();
 };
 
 class Scene2805 : public Scene {
