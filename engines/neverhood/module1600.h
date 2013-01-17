@@ -121,7 +121,7 @@ protected:
 	void update();
 };
 
-class Tracks : public Common::Array<SceneInfo2700*> {
+class Tracks : public Common::Array<TrackInfo*> {
 public:
 	void findTrackPoint(NPoint pt, int &minMatchTrackIndex, int &minMatchDistance,
 		DataResource &dataResource);

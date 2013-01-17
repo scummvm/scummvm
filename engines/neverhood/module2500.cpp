@@ -220,9 +220,9 @@ void Module2500::createScene2704(int which, uint32 sceneInfoId, int16 value, con
 Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule) {
 	
-	_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B2628));
-	_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B264C));
-	_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B2670));
+	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B2628));
+	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B264C));
+	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B2670));
 
 	setGlobalVar(V_CAR_DELTA_X, 1);
 	SetUpdateHandler(&Scene2501::update);

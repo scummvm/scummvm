@@ -619,7 +619,7 @@ Scene2701::Scene2701(NeverhoodEngine *vm, Module *parentModule, int which)
 	Sprite *tempSprite;
 	
 	NRect clipRect;
-	SceneInfo2700 *tracks = _vm->_staticData->getSceneInfo2700(0x004B2240);
+	TrackInfo *tracks = _vm->_staticData->getTrackInfo(0x004B2240);
 	setGlobalVar(V_CAR_DELTA_X, 1);
 	
 	setBackground(tracks->bgFilename);
@@ -765,13 +765,13 @@ Scene2702::Scene2702(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (_isUpperTrack) {
-		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B5F68));	
-		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B5F8C));
-		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B5FB0));
+		_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B5F68));	
+		_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B5F8C));
+		_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B5FB0));
 	} else {
-		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B5FD8));	
-		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B5FFC));
-		_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B6020));
+		_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B5FD8));	
+		_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B5FFC));
+		_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B6020));
 	}
 
 	_trackPoints = _dataResource.getPointArray(_tracks[_currTrackIndex]->trackPointsName);
@@ -872,7 +872,7 @@ void Scene2702::changeTrack() {
 Scene2703::Scene2703(NeverhoodEngine *vm, Module *parentModule, int which, uint32 trackInfoId)
 	: Scene(vm, parentModule) {
 
-	SceneInfo2700 *tracks = _vm->_staticData->getSceneInfo2700(trackInfoId);
+	TrackInfo *tracks = _vm->_staticData->getTrackInfo(trackInfoId);
 	
 	SetMessageHandler(&Scene2703::handleMessage);
 	SetUpdateHandler(&Scene2703::update);
@@ -986,7 +986,7 @@ Scene2704::Scene2704(NeverhoodEngine *vm, Module *parentModule, int which, uint3
 	const uint32 *staticSprites, const NRect *clipRect)
 	: Scene(vm, parentModule) {
 
-	SceneInfo2700 *tracks = _vm->_staticData->getSceneInfo2700(trackInfoId);
+	TrackInfo *tracks = _vm->_staticData->getTrackInfo(trackInfoId);
 	
 	SetMessageHandler(&Scene2704::handleMessage);
 	SetUpdateHandler(&Scene2704::update);
@@ -1086,9 +1086,9 @@ Scene2706::Scene2706(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	SetMessageHandler(&Scene2706::handleMessage);
 
-	_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B22A0));	
-	_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B22C4));
-	_tracks.push_back(_vm->_staticData->getSceneInfo2700(0x004B22E8));
+	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B22A0));	
+	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B22C4));
+	_tracks.push_back(_vm->_staticData->getTrackInfo(0x004B22E8));
 	
 	setBackground(0x18808B88);
 	setPalette(0x18808B88);

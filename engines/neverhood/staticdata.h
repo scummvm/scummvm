@@ -77,7 +77,7 @@ struct HallOfRecordsInfo {
 	byte count;
 };
 
-struct SceneInfo2700 {
+struct TrackInfo {
 	uint32 id;
 	uint32 bgFilename;
 	uint32 bgShadowFilename;
@@ -101,14 +101,14 @@ public:
 	MessageList *getMessageList(uint32 id);
 	NavigationList *getNavigationList(uint32 id);
 	HallOfRecordsInfo *getHallOfRecordsInfoItem(uint32 id);
-	SceneInfo2700 *getSceneInfo2700(uint32 id);
+	TrackInfo *getTrackInfo(uint32 id);
 protected:
 	Common::HashMap<uint32, HitRectList*> _hitRectLists;
 	Common::HashMap<uint32, RectList*> _rectLists;
 	Common::HashMap<uint32, MessageList*> _messageLists;
 	Common::HashMap<uint32, NavigationList*> _navigationLists;
 	Common::HashMap<uint32, HallOfRecordsInfo*> _hallOfRecordsInfoItems;
-	Common::HashMap<uint32, SceneInfo2700*> _sceneInfo2700Items;
+	Common::HashMap<uint32, TrackInfo*> _trackInfoItems;
 };
 
 } // End of namespace Neverhood
