@@ -27,10 +27,6 @@
 
 namespace Neverhood {
 
-// TODO: Since the load() methods are similar in most cases some of the code therein
-// can probably be copied into another method (e.g. inside the resource manager)
-// to reduce code. 
-
 // SpriteResource
 
 SpriteResource::SpriteResource(NeverhoodEngine *vm)
@@ -55,7 +51,7 @@ bool SpriteResource::load(uint32 fileHash) {
 	// TODO: Later merge with load2 and make the mode a parameter
 	unload();
 	_vm->_res->queryResource(fileHash, _resourceHandle);
-	if (_resourceHandle.isValid() && _resourceHandle.type() == 2) {
+	if (_resourceHandle.isValid() && _resourceHandle.type() == kResTypeBitmap) {
 		_vm->_res->loadResource(_resourceHandle);
 		const byte *spriteData = _resourceHandle.data();
 		parseBitmapResource(spriteData, &_rle, &_dimensions, NULL, NULL, &_pixels);
@@ -67,7 +63,7 @@ bool SpriteResource::load2(uint32 fileHash) {
 	debug(2, "SpriteResource::load2(%08X)", fileHash);
 	unload();
 	_vm->_res->queryResource(fileHash, _resourceHandle);
-	if (_resourceHandle.isValid() && _resourceHandle.type() == 2) {
+	if (_resourceHandle.isValid() && _resourceHandle.type() == kResTypeBitmap) {
 		_vm->_res->loadResource(_resourceHandle);
 		const byte *spriteData = _resourceHandle.data();
 		parseBitmapResource(spriteData, &_rle, &_dimensions, &_position, NULL, &_pixels);
@@ -97,11 +93,11 @@ bool PaletteResource::load(uint32 fileHash) {
 	unload();
 	_vm->_res->queryResource(fileHash, _resourceHandle);
 	if (_resourceHandle.isValid() &&
-		(_resourceHandle.type() == 2 || _resourceHandle.type() == 3)) {
+		(_resourceHandle.type() == kResTypeBitmap || _resourceHandle.type() == kResTypePalette)) {
 		_vm->_res->loadResource(_resourceHandle);
 		_palette = _resourceHandle.data();
 		// Check if the palette is stored in a bitmap
-		if (_resourceHandle.type() == 2)
+		if (_resourceHandle.type() == kResTypeBitmap)
 			parseBitmapResource(_palette, NULL, NULL, NULL, &_palette, NULL);
 
 	}
@@ -152,7 +148,7 @@ bool AnimResource::load(uint32 fileHash) {
 	unload();
 	
 	_vm->_res->queryResource(fileHash, _resourceHandle);
-	if (!_resourceHandle.isValid() || _resourceHandle.type() != 4)
+	if (!_resourceHandle.isValid() || _resourceHandle.type() != kResTypeAnimation)
 		return false;
 	
 	const byte *resourceData, *animList, *frameList;
@@ -336,7 +332,7 @@ void TextResource::load(uint32 fileHash) {
 	debug(2, "TextResource::load(%08X)", fileHash);
 	unload();
 	_vm->_res->queryResource(fileHash, _resourceHandle);
-	if (_resourceHandle.isValid() && _resourceHandle.type() == 6) {
+	if (_resourceHandle.isValid() && _resourceHandle.type() == kResTypeText) {
 		_vm->_res->loadResource(_resourceHandle);
 		_textData = _resourceHandle.data();
 		_count = READ_LE_UINT32(_textData);
@@ -371,7 +367,7 @@ void DataResource::load(uint32 fileHash) {
 	uint32 dataSize = 0;
 	unload();
 	_vm->_res->queryResource(fileHash, _resourceHandle);
-	if (_resourceHandle.isValid() && _resourceHandle.type() == 5) {
+	if (_resourceHandle.isValid() && _resourceHandle.type() == kResTypeData) {
 		_vm->_res->loadResource(_resourceHandle);
 		data = _resourceHandle.data();
 		dataSize = _resourceHandle.size();

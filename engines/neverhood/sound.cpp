@@ -128,8 +128,8 @@ MusicItem::~MusicItem() {
 }
 
 SoundItem::SoundItem(NeverhoodEngine *vm, uint32 nameHash, uint32 soundFileHash,
-		bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
-		bool playOnceAfterCountdown, int16 initialCountdown, bool playLooping, int16 currCountdown)
+	bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
+	bool playOnceAfterCountdown, int16 initialCountdown, bool playLooping, int16 currCountdown)
 	: _soundResource(NULL),	_nameHash(nameHash), _soundFileHash(soundFileHash),
 	_playOnceAfterRandomCountdown(false), _minCountdown(0), _maxCountdown(0),
 	_playOnceAfterCountdown(_playOnceAfterCountdown), _initialCountdown(initialCountdown),
@@ -546,7 +546,8 @@ void AudioResourceMan::removeSound(int16 soundIndex) {
 
 void AudioResourceMan::loadSound(int16 soundIndex) {
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	if (!soundItem->_data && soundItem->_resourceHandle.isValid()) {
+	if (!soundItem->_data && soundItem->_resourceHandle.isValid() &&
+		(soundItem->_resourceHandle.type() == kResTypeSound || soundItem->_resourceHandle.type() == kResTypeMusic)) {
 		// TODO Check if it's a sound resource
 		_vm->_res->loadResource(soundItem->_resourceHandle);
 		soundItem->_data = soundItem->_resourceHandle.data();

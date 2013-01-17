@@ -31,6 +31,17 @@
 
 namespace Neverhood {
 
+enum {
+	kResTypeBitmap		= 2,
+	kResTypePalette		= 3,
+	kResTypeAnimation	= 4,
+	kResTypeData		= 5,
+	kResTypeText		= 6,
+	kResTypeSound		= 7,
+	kResTypeMusic		= 8,
+	kResTypeVideo		= 10
+};
+
 class SpriteResource {
 public:
 	SpriteResource(NeverhoodEngine *vm);

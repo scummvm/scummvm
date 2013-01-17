@@ -72,7 +72,7 @@ void SmackerScene::nextVideo() {
 		uint32 smackerFileHash = _fileHashList[_fileHashListIndex];
 		ResourceHandle resourceHandle;
 		_vm->_res->queryResource(smackerFileHash, resourceHandle);
-		if (resourceHandle.type() != 10) {
+		if (resourceHandle.type() != kResTypeVideo) {
 			// Not a Smacker file
 			_vm->_screen->setSmackerDecoder(NULL);
 			sendMessage(_parentModule, 0x1009, 0);
