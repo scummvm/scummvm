@@ -332,7 +332,7 @@ void Set::Setup::load(Set *set, int id, TextSplitter &ts) {
 		if (ts.checkString("object_z"))
 			ts.scanString(" object_z %256s %256s", 2, zname, zbitmap);
 
-		if (strcmp(name, zname) == 0 || zbitmap[0] == '\0') {
+		if (zbitmap[0] == '\0' || strcmp(name, zname) == 0) {
 			set->addObjectState(id, ObjectState::OBJSTATE_BACKGROUND, bitmap, zbitmap, true);
 		}
 	}
