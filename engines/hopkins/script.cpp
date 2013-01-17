@@ -278,11 +278,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		int v73 = (int16)READ_LE_UINT16(dataP + 5);
 		if (!_vm->_globals._saveData->data[svField122] && !_vm->_globals._saveData->data[svField356]) {
 			v70 = 0;
-			if ((int16)READ_LE_UINT16(dataP + 5) == 14)
-				v73 = 1;
 
 			switch (v73) {
 			case 1:
+			case 14:
 				if (_vm->_globals._actionDirection == 1)
 					_vm->_objectsManager.ACTION_DOS(4);
 				if (_vm->_globals._actionDirection == 3)
@@ -2205,6 +2204,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_talkManager.PARLER_PERSO("RECEP.PE2");
 			break;
 
+		// Resurrect Samantha's clone
 		case 242: {
 			_vm->_soundManager.playSound("SOUND87.WAV");
 			_vm->_animationManager.NO_SEQ = true;
@@ -2385,7 +2385,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 4;
 	} else if (dataP[2] == 'V' && dataP[3] == 'A' && dataP[4] == 'L') {
 		opcodeType = 1;
-		_vm->_globals._saveData->data[(int16)READ_LE_UINT16(dataP + 5)] = (int16)READ_LE_UINT16(dataP + 7);
+		int idx = (int16)READ_LE_UINT16(dataP + 5);
+		assert(idx >= 0 && idx < 2050);
+		_vm->_globals._saveData->data[idx] = dataP[7];
+		_vm->_globals._saveData->data[idx + 1] = dataP[8];
 	} else if (dataP[2] == 'A' && dataP[3] == 'D' && dataP[4] == 'D') {
 		opcodeType = 1;
 		_vm->_globals._saveData->data[(int16)READ_LE_UINT16(dataP + 5)] += dataP[7];
