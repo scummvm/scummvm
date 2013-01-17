@@ -25,8 +25,6 @@
 
 namespace Neverhood {
 
-// TODO Maybe move these to the DAT
-
 static const uint32 kScene2505StaticSprites[] = {
 	0x4000A226, 0
 };

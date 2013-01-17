@@ -1667,7 +1667,6 @@ uint32 AsScene2804BeamCoil::handleMessage(int messageNum, const MessageParam &pa
 	
 void AsScene2804BeamCoil::show() {
 	_ssBeamCoilBody->setVisible(true);
-	// TODO _ssBeamCoilBody->updatePosition(); -> show()
 	setVisible(true);
 	startAnimation(0x00494891, 0, -1);
 	playSound(0);
@@ -1680,7 +1679,6 @@ void AsScene2804BeamCoil::hide() {
 	SetMessageHandler(&AsScene2804BeamCoil::handleMessage);
 	setVisible(false);
 	_ssBeamCoilBody->setVisible(false);
-	// TODO _ssBeamCoilBody->updatePosition(); -> hide()
 	_vm->_soundMan->stopSound(0xEF56B094);
 }
 

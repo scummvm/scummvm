@@ -100,11 +100,8 @@ void PaletteResource::unload() {
 }
 
 void PaletteResource::copyPalette(byte *destPalette) {
-	if (_palette) {
+	if (_palette)
 		memcpy(destPalette, _palette, 1024);
-	} else {
-		// TODO?: buildDefaultPalette(palette);
-	}
 }
 
 // AnimResource

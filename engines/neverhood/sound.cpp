@@ -276,7 +276,6 @@ void SoundMan::setSoundVolume(uint32 soundFileHash, int volume) {
 }
 
 void SoundMan::update() {
-	// TODO Check if active
 	
 	for (uint i = 0; i < _soundItems.size(); ++i) {
 		SoundItem *soundItem = _soundItems[i];
@@ -548,7 +547,6 @@ void AudioResourceMan::loadSound(int16 soundIndex) {
 	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
 	if (!soundItem->_data && soundItem->_resourceHandle.isValid() &&
 		(soundItem->_resourceHandle.type() == kResTypeSound || soundItem->_resourceHandle.type() == kResTypeMusic)) {
-		// TODO Check if it's a sound resource
 		_vm->_res->loadResource(soundItem->_resourceHandle);
 		soundItem->_data = soundItem->_resourceHandle.data();
 	}

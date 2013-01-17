@@ -2170,9 +2170,6 @@ Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_background->getSurface()->getSysRect().y = _backgroundScrollY;
 
-	// TODO Screen.yOffset = _backgroundScrollY;
-	// TODO Scene2208_sub409080 (creates background Sprites via the text, doesn't seem to be used?)
-
 }
 
 Scene2208::~Scene2208() {
@@ -2219,7 +2216,6 @@ void Scene2208::update() {
 		_background->getSurface()->getSysRect().y = _backgroundScrollY;
 	}
 
-	// TODO Screen.yOffset = _backgroundScrollY;
 	Scene::update();
 
 }
