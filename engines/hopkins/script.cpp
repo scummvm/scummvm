@@ -50,10 +50,6 @@ int ScriptManager::handleOpcode(byte *dataP) {
 	int v70 = 0;
 	if (dataP[2] == 'T' && dataP[3] == 'X' && dataP[4] == 'T') {
 		v70 = dataP[6];
-		byte v2 = dataP[7];
-		byte v69 = dataP[8];
-		int v67 = (int16)READ_LE_UINT16(dataP + 9);
-		int v65 = (int16)READ_LE_UINT16(dataP + 11);
 		int mesgId = (int16)READ_LE_UINT16(dataP + 13);
 		opcodeType = 1;
 		if (!TRAVAILOBJET) {
@@ -133,7 +129,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				} while (_vm->_soundManager._soundFl);
 			}
 			if (!_vm->_soundManager._textOffFl) {
-				_vm->_fontManager.initTextBuffers(9, mesgId, _vm->_globals.FICH_TEXTE, 2 * v67, 2 * v65 + 40, 6, v2, 253);
+				int textPosX = (int16)READ_LE_UINT16(dataP + 9);
+				int textPosY = (int16)READ_LE_UINT16(dataP + 11);
+				_vm->_fontManager.initTextBuffers(9, mesgId, _vm->_globals.FICH_TEXTE, 2 * textPosX, 2 * textPosY + 40, 6, dataP[7], 253);
 				if (!_vm->_soundManager._textOffFl)
 					_vm->_fontManager.showText(9);
 			}
@@ -142,18 +140,19 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		}
 		if (TRAVAILOBJET) {
 			if (_vm->_globals._saveData->data[svField356]) {
-				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals.FICH_TEXTE, 55, 20, v69, 35, 253);
+				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals.FICH_TEXTE, 55, 20, dataP[8], 35, 253);
 				if (!_vm->_soundManager._textOffFl)
 					_vm->_fontManager.showText(9);
 				if (!_vm->_soundManager._voiceOffFl)
 					_vm->_soundManager.mixVoice(635, 4);
 			} else {
+				int textPosX = (int16)READ_LE_UINT16(dataP + 9);
 				if (_vm->_globals._language == LANG_FR && !_vm->_soundManager._textOffFl)
-					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * v67, 60, 6, v2, 253);
+					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 				else if (_vm->_globals._language == LANG_EN && !_vm->_soundManager._textOffFl)
-					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * v67, 60, 6, v2, 253);
+					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 				else if (_vm->_globals._language == LANG_SP && !_vm->_soundManager._textOffFl) {
-					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * v67, 60, 6, v2, 253);
+					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 				}
 
 				if (!_vm->_soundManager._textOffFl)
@@ -174,33 +173,29 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, v68, (int16)READ_LE_UINT16(dataP + 10), v70);
 			} else if (v72 == 51) {
 				_vm->_objectsManager.BOB_VIVANT(v70);
-			} else {
-				if (v72 != 50) {
-					_vm->_objectsManager.VBOB(_vm->_globals.SPRITE_ECRAN, v72, v68, v66, v70);
-					if (v4)
-						v4 /= _vm->_globals._speed;
-					if (v4 > 1) {
-						do {
-							if (_vm->shouldQuit())
-								return -1; // Exiting game
+			} else if (v72 != 50) {
+				_vm->_objectsManager.VBOB(_vm->_globals.SPRITE_ECRAN, v72, v68, v66, v70);
+				if (v4)
+					v4 /= _vm->_globals._speed;
+				if (v4 > 1) {
+					do {
+						if (_vm->shouldQuit())
+							return -1; // Exiting game
 
-							--v4;
-							_vm->_eventsManager.VBL();
-						} while (v4);
-					}
-				} else
-					_vm->_objectsManager.AFFICHE_SPEED1(_vm->_globals.SPRITE_ECRAN, v68, v66, v70);
-			}
+						--v4;
+						_vm->_eventsManager.VBL();
+					} while (v4);
+				}
+			} else
+				_vm->_objectsManager.AFFICHE_SPEED1(_vm->_globals.SPRITE_ECRAN, v68, v66, v70);
 		}
 		opcodeType = 1;
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'P') {
 			if (!_vm->_objectsManager._disableFl) {
 				_vm->_objectsManager._twoCharactersFl = false;
-				int v5 = dataP[5];
-				int v6 = (int16)READ_LE_UINT16(dataP + 8);
 				_vm->_objectsManager._characterPos.x = (int16)READ_LE_UINT16(dataP + 6);
-				_vm->_objectsManager._characterPos.y = v6;
-				_vm->_objectsManager.PERI = v5;
+				_vm->_objectsManager._characterPos.y = (int16)READ_LE_UINT16(dataP + 8);
+				_vm->_objectsManager.PERI = dataP[5];
 				if (_vm->_objectsManager.CH_TETE) {
 					if (_vm->_globals._saveData->data[svField354] == 1
 							&& _vm->_globals._saveData->_cloneHopkins._pos.x && _vm->_globals._saveData->_cloneHopkins._pos.y
@@ -256,18 +251,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.CH_TETE = false;
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'E') {
 		if (!_vm->_objectsManager._disableFl) {
-			int v7 = dataP[5];
-			v70 = dataP[6];
-			int v8 = dataP[7];
-			int v9 = dataP[8];
 			_vm->_objectsManager.RECALL = 0;
 			_vm->_globals._prevScreenId = _vm->_globals._screenId;
 			_vm->_globals._saveData->data[svField6] = _vm->_globals._screenId;
-			_vm->_globals._screenId = v7;
-			_vm->_globals._saveData->data[svField5] = v7;
-			_vm->_objectsManager.PTAILLE = v70;
-			_vm->_objectsManager.PEROFX = v8;
-			_vm->_objectsManager.PEROFY = v9;
+			_vm->_globals._screenId = _vm->_globals._saveData->data[svField5] = dataP[5];
+			_vm->_objectsManager.PTAILLE = v70 = dataP[6];
+			_vm->_objectsManager.PEROFX = dataP[7];
+			_vm->_objectsManager.PEROFY = dataP[8];
 		}
 		opcodeType = 1;
 	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'F') {
@@ -275,11 +265,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.VBOB_OFF((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
 	} else if (dataP[2] == 'P' && dataP[3] == 'E' && dataP[4] == 'R') {
-		int v73 = (int16)READ_LE_UINT16(dataP + 5);
+		int specialOpcode = (int16)READ_LE_UINT16(dataP + 5);
 		if (!_vm->_globals._saveData->data[svField122] && !_vm->_globals._saveData->data[svField356]) {
 			v70 = 0;
 
-			switch (v73) {
+			switch (specialOpcode) {
 			case 1:
 			case 14:
 				if (_vm->_globals._actionDirection == 1)
