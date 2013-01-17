@@ -93,7 +93,6 @@ Common::Error NeverhoodEngine::run() {
 	
 	_gameModule = new GameModule(this);
 	
-	// TODO Check if this can actually be false...
 	_isSaveAllowed = true;
 	
 	if (isDemo()) {

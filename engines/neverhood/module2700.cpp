@@ -505,7 +505,7 @@ void Module2700::updateScene() {
 				_vm->gameModule()->initRadioPuzzle();
 				_musicFileHash = getGlobalVar(V_GOOD_RADIO_MUSIC_NAME);
 				_vm->_soundMan->addMusic(0x42212411, _musicFileHash);
-				_vm->_soundMan->startMusic(_musicFileHash, 0, 2/*TODO ??? */);
+				_vm->_soundMan->startMusic(_musicFileHash, 0, 2);
 				_vm->_soundMan->addSound(0x42212411, 0x44014282);
 				_vm->_soundMan->setSoundParams(0x44014282, true, 120, 360, 72, 0);
 				_raidoMusicInitialized = true;

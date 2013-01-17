@@ -302,8 +302,7 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 	case 0x101E:
 		// Show the mouse cursor
 		if (_mouseCursorWasVisible && _mouseCursor) {
-			_mouseCursor->getSurface()->setVisible(true);//CHECKME?!?
-			// TODO sendMessage(_mouseCursor, 0x4002, g_Screen->_mousePos);
+			_mouseCursor->getSurface()->setVisible(true);
 		}
 		break;
 	case 0x1022:
