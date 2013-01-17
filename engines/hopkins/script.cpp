@@ -2209,7 +2209,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int v54 = _vm->_globals.STAILLE[790 / 2];
 			if (_vm->_globals.STAILLE[790 / 2] < 0)
 				v54 = -_vm->_globals.STAILLE[790 / 2];
-			v53->field4 = 242 - (100 * (67 - (100 - v54)) / 67);
+			v53->field4 = -(100 * (67 - (100 - v54)) / 67);
 			_vm->_globals._saveData->data[svField357] = 1;
 			_vm->_globals._saveData->data[svField354] = 0;
 			_vm->_globals._saveData->data[svField356] = 0;
