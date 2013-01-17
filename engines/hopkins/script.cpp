@@ -187,7 +187,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					} while (v4);
 				}
 			} else
-				_vm->_objectsManager.AFFICHE_SPEED1(_vm->_globals.SPRITE_ECRAN, v68, v66, v70);
+				// TODO: Remove this:
+				warning("Former AFFICHE_SPEED1: %d %d %d", v68, v66, v70);
 		}
 		opcodeType = 1;
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'P') {
@@ -196,7 +197,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager._characterPos.x = (int16)READ_LE_UINT16(dataP + 6);
 				_vm->_objectsManager._characterPos.y = (int16)READ_LE_UINT16(dataP + 8);
 				_vm->_objectsManager.PERI = dataP[5];
-				if (_vm->_objectsManager.CH_TETE) {
+				if (_vm->_objectsManager._changeHeadFl) {
 					if (_vm->_globals._saveData->data[svField354] == 1
 							&& _vm->_globals._saveData->_cloneHopkins._pos.x && _vm->_globals._saveData->_cloneHopkins._pos.y
 							&& _vm->_globals._saveData->_cloneHopkins.field2 && _vm->_globals._saveData->_cloneHopkins._location) {
@@ -248,16 +249,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 			}
 			opcodeType = 1;
-			_vm->_objectsManager.CH_TETE = false;
+			_vm->_objectsManager._changeHeadFl = false;
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'E') {
 		if (!_vm->_objectsManager._disableFl) {
-			_vm->_objectsManager.RECALL = 0;
 			_vm->_globals._prevScreenId = _vm->_globals._screenId;
 			_vm->_globals._saveData->data[svField6] = _vm->_globals._screenId;
 			_vm->_globals._screenId = _vm->_globals._saveData->data[svField5] = dataP[5];
-			_vm->_objectsManager.PTAILLE = v70 = dataP[6];
-			_vm->_objectsManager.PEROFX = dataP[7];
-			_vm->_objectsManager.PEROFY = dataP[8];
+			v70 = dataP[6];
 		}
 		opcodeType = 1;
 	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'F') {
@@ -901,9 +899,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_objectsManager.OPTI_ONE(15, 0, 12, 0);
 			_vm->_objectsManager.stopBobAnimation(15);
-			_vm->_objectsManager.OBSSEUL = 1;
+			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.INILINK("IM19a");
-			_vm->_objectsManager.OBSSEUL = 0;
+			_vm->_objectsManager.OBSSEUL = false;
 			break;
 
 		case 56:
@@ -1030,9 +1028,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.stopBobAnimation(12);
 			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_objectsManager.animateSprite(0);
-			_vm->_objectsManager.OBSSEUL = 1;
+			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.INILINK("IM27a");
-			_vm->_objectsManager.OBSSEUL = 0;
+			_vm->_objectsManager.OBSSEUL = false;
 			break;
 			}
 
@@ -1124,9 +1122,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager.BOBPOSI(5) != 6);
 			_vm->_objectsManager.stopBobAnimation(5);
 			_vm->_objectsManager.setBobAnimation(6);
-			_vm->_objectsManager.OBSSEUL = 1;
+			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.INILINK("IM24a");
-			_vm->_objectsManager.OBSSEUL = 0;
+			_vm->_objectsManager.OBSSEUL = false;
 			break;
 
 		case 86:
@@ -1887,9 +1885,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager.SPECIAL_SOUND = 0;
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 192, 152, 0);
 			_vm->_objectsManager.setBobAnimation(9);
-			_vm->_objectsManager.OBSSEUL = 1;
+			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.INILINK("IM73a");
-			_vm->_objectsManager.OBSSEUL = 0;
+			_vm->_objectsManager.OBSSEUL = false;
 			_vm->_globals.CACHE_ON();
 			_vm->_animationManager.NO_SEQ = false;
 			_vm->_globals.CACHE_ADD(0);
@@ -1944,9 +1942,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 230: {
-			_vm->_objectsManager.OBSSEUL = 1;
+			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.INILINK("IM93a");
-			_vm->_objectsManager.OBSSEUL = 0;
+			_vm->_objectsManager.OBSSEUL = false;
 			_vm->_globals.CACHE_ON();
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
@@ -1983,9 +1981,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.setSpriteY(0, 278);
 			_vm->_objectsManager.animateSprite(0);
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 337, 154, 3);
-			_vm->_objectsManager.OBSSEUL = 1;
+			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.INILINK("IM93c");
-			_vm->_objectsManager.OBSSEUL = 0;
+			_vm->_objectsManager.OBSSEUL = false;
 			_vm->_globals.CACHE_ON();
 			break;
 			}

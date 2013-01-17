@@ -78,7 +78,6 @@ public:
 	const byte *S_old_spr;
 	bool PERSO_ON;
 	bool _saveLoadFl;
-	int SL_MODE;
 	bool _visibleFl;
 	bool BOBTOUS;
 	int my_anim;
@@ -86,28 +85,13 @@ public:
 	bool _forceZoneFl;
 	bool _changeVerbFl;
 	int _verb;
-	int Vold_taille;
-	int SPEED_X, SPEED_Y;
-	int SPEED_IMAGE;
-	byte *SPEED_PTR;
 	int _lastLine;
-	int A_ANIM;
-	int MA_ANIM;
-	int MA_ANIM1;
-	int A_DEPA;
-	int MAX_DEPA;
-	int MAX_DEPA1;
-	bool CH_TETE;
-	int T_RECTIF;
+	bool _changeHeadFl;
 	bool _disableFl;
 	bool _twoCharactersFl;
 	Common::Point _characterPos;
 	int PERI;
-	int RECALL;
-	int PTAILLE;
-	int PEROFX;
-	int PEROFY;
-	int OBSSEUL;
+	bool OBSSEUL;
 	int NVVERBE;
 	int NVZONE;
 	int S_old_ani;
@@ -210,8 +194,7 @@ public:
 
 	void ZONE_ON(int idx);
 	void disableZone(int idx);
-	void OPTI_ONE(int a1, int a2, int a3, int a4);
-	void AFFICHE_SPEED1(byte *speedData, int xp, int yp, int img);
+	void OPTI_ONE(int idx, int fromPosi, int destPosi, int a4);
 	int BOBPOSI(int idx);
 	void setBobAnimation(int idx);
 	void stopBobAnimation(int idx);

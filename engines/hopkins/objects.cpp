@@ -53,7 +53,6 @@ ObjectsManager::ObjectsManager() {
 	S_old_spr = g_PTRNUL;
 	PERSO_ON = false;
 	_saveLoadFl = false;
-	SL_MODE = false;
 	_visibleFl = false;
 	BOBTOUS = false;
 	my_anim = 0;
@@ -61,35 +60,19 @@ ObjectsManager::ObjectsManager() {
 	_forceZoneFl = false;
 	_changeVerbFl = false;
 	_verb = 0;
-	Vold_taille = 0;
-	SPEED_X = SPEED_Y = 0;
-	SPEED_IMAGE = 0;
-	SPEED_PTR = g_PTRNUL;
 	_lastLine = 0;
-	A_ANIM = 0;
-	MA_ANIM = 0;
-	MA_ANIM1 = 0;
-	A_DEPA = 0;
-	MAX_DEPA = 0;
-	MAX_DEPA1 = 0;
-	CH_TETE = false;
-	T_RECTIF = 0;
+	_changeHeadFl = false;
 	_disableFl = false;
 	_twoCharactersFl = false;
 	_characterPos = Common::Point(0, 0);
 	PERI = 0;
-	RECALL = 0;
-	PTAILLE = 0;
-	PEROFX = 0;
-	PEROFY = 0;
-	OBSSEUL = 0;
+	OBSSEUL = false;
 	NVVERBE = 0;
 	NVZONE = 0;
 	S_old_ani = 0;
 	S_old_ret = 0;
 	nouveau_x = nouveau_y = 0;
 	_newDirection = 0;
-	nouveau_anim = 0;
 }
 
 void ObjectsManager::setParent(HopkinsEngine *vm) {
@@ -1487,8 +1470,6 @@ void ObjectsManager::GOHOME() {
 
 		_newDirection = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
-
-		nouveau_anim = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
 		if (nouveau_x != -1 || nouveau_y != -1) {
@@ -1779,7 +1760,6 @@ void ObjectsManager::GOHOME() {
 
 		_newDirection = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
-		nouveau_anim = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
 		if (nouveau_x == -1 && v48 == -1) {
@@ -1869,8 +1849,6 @@ void ObjectsManager::GOHOME2() {
 
 		_newDirection = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
-
-		nouveau_anim = *_vm->_globals.chemin;
 		_vm->_globals.chemin++;
 
 		if ((nouveau_x == -1) && (nouveau_y == -1))
@@ -1907,8 +1885,6 @@ void ObjectsManager::GOHOME2() {
 
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	my_anim = 0;
-	A_ANIM = 0;
-	A_DEPA = 0;
 }
 
 /**
@@ -2435,11 +2411,6 @@ void ObjectsManager::clearScreen() {
 	_vm->_eventsManager._mouseCursorId = 4;
 	_verb = 4;
 	_zoneNum = 0;
-	Vold_taille = 0;
-	SPEED_PTR = g_PTRNUL;
-	SPEED_X = 0;
-	SPEED_Y = 0;
-	SPEED_IMAGE = 0;
 	_forceZoneFl = true;
 	_vm->_linesManager._linesNumb = 0;
 	_lastLine = 0;
@@ -2448,7 +2419,6 @@ void ObjectsManager::clearScreen() {
 	_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
 	_vm->_eventsManager._startPos.x = 0;
 	_vm->_eventsManager._mouseSpriteId = 0;
-	Vold_taille = 200;
 	_vm->_globals._saveData->data[svField1] = 0;
 	_vm->_globals._saveData->data[svField2] = 0;
 	_vm->_globals.GOACTION = false;
@@ -2457,12 +2427,6 @@ void ObjectsManager::clearScreen() {
 	_vm->_globals.chemin = (int16 *)g_PTRNUL;
 	_vm->_globals._oldDirection = -1;
 	my_anim = 1;
-	A_ANIM = 0;
-	MA_ANIM = 0;
-	MA_ANIM1 = 0;
-	A_DEPA = 0;
-	MAX_DEPA = 0;
-	MAX_DEPA1 = 0;
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 }
 
@@ -2472,7 +2436,7 @@ void ObjectsManager::clearScreen() {
 void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter) {
 	CharacterLocation *loc;
 
-	CH_TETE = true;
+	_changeHeadFl = true;
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, 532, 25, 65, 40, _vm->_graphicsManager._vesaBuffer, 532, 25);
 	_vm->_graphicsManager.addVesaSegment(532, 25, 597, 65);
 	_vm->_globals.NOT_VERIF = true;
@@ -2480,7 +2444,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 
 	if (oldCharacter == CHARACTER_SAMANTHA && newCharacter == CHARACTER_HOPKINS
 		&& _vm->_globals._saveData->_realHopkins._location == _vm->_globals._screenId) {
-		CH_TETE = false;
+		_changeHeadFl = false;
 		loc = &_vm->_globals._saveData->_samantha;
 		loc->_pos.x = getSpriteX(0);
 		loc->_pos.y = getSpriteY(0);
@@ -2496,7 +2460,6 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		_vm->_globals._saveData->data[svField354] = 0;
 		_vm->_globals._saveData->data[svField356] = 0;
 		_vm->_globals._saveData->data[svField357] = 1;
-		T_RECTIF = 0;
 
 		loc = &_vm->_globals._saveData->_realHopkins;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
@@ -2506,7 +2469,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		_vm->_globals.loadCharacterData();
 	} else if (oldCharacter == CHARACTER_HOPKINS && newCharacter == CHARACTER_SAMANTHA
 			&& _vm->_globals._saveData->_samantha._location == _vm->_globals._screenId) {
-		CH_TETE = false;
+		_changeHeadFl = false;
 		loc = &_vm->_globals._saveData->_realHopkins;
 		loc->_pos.x = getSpriteX(0);
 		loc->_pos.y = getSpriteY(0);
@@ -3717,14 +3680,6 @@ void ObjectsManager::OPTI_ONE(int idx, int fromPosi, int destPosi, int a4) {
 		stopBobAnimation(idx);
 		_vm->_eventsManager.VBL();
 	}
-}
-
-
-void ObjectsManager::AFFICHE_SPEED1(byte *speedData, int xp, int yp, int img) {
-	SPEED_PTR = speedData;
-	SPEED_X = xp;
-	SPEED_Y = yp;
-	SPEED_IMAGE = img;
 }
 
 int ObjectsManager::BOBPOSI(int idx) {

@@ -671,7 +671,6 @@ void DialogsManager::showSaveLoad(int a1) {
 
 	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 183, 60, 274, 353);
 	_vm->_objectsManager._saveLoadFl = true;
-	_vm->_objectsManager.SL_MODE = a1;
 	_vm->_objectsManager._saveLoadX = 0;
 	_vm->_objectsManager._saveLoadY = 0;
 }
