@@ -167,7 +167,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 	case 9: {
 		Common::String tmpFilename;
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			tmpFilename = "ENG_VOI.RES";
+			tmpFilename = "ENG_VOI.CAT";
 		// Win95 and Linux versions uses another set of names
 		else {
 			switch (_vm->_globals._language) {
