@@ -72,8 +72,8 @@ public:
 	int I_old_x, I_old_y;
 	int g_old_x, g_old_y;
 	int FLAG_VISIBLE_EFFACE;
-	byte *SL_SPR;
-	byte *SL_SPR2;
+	byte *_saveLoadSprite;
+	byte *_saveLoadSprite2;
 	byte *_spritePtr;
 	const byte *S_old_spr;
 	bool PERSO_ON;
@@ -92,13 +92,10 @@ public:
 	Common::Point _characterPos;
 	int PERI;
 	bool OBSSEUL;
-	int NVVERBE;
-	int NVZONE;
-	int S_old_ani;
+	int _jumpVerb;
+	int _jumpZone;
+	int _oldSpriteIndex;
 	int S_old_ret;
-	int nouveau_x, nouveau_y;
-	int _newDirection;
-	int nouveau_anim;
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);

@@ -553,8 +553,8 @@ void DialogsManager::showLoadGame() {
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x + 183, 60);
 	_vm->_graphicsManager.addVesaSegment(_vm->_eventsManager._startPos.x + 183, 60, 457, 413);
 	_vm->_objectsManager.BOBTOUS = true;
-	_vm->_objectsManager.SL_SPR = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR);
-	_vm->_objectsManager.SL_SPR2 = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR2);
+	_vm->_objectsManager._saveLoadSprite = _vm->_globals.freeMemory(_vm->_objectsManager._saveLoadSprite);
+	_vm->_objectsManager._saveLoadSprite2 = _vm->_globals.freeMemory(_vm->_objectsManager._saveLoadSprite2);
 	_vm->_objectsManager._saveLoadX = 0;
 	_vm->_objectsManager._saveLoadY = 0;
 
@@ -584,8 +584,8 @@ void DialogsManager::showSaveGame() {
 	_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x + 183, 60);
 	_vm->_graphicsManager.addVesaSegment(_vm->_eventsManager._startPos.x + 183, 60, _vm->_eventsManager._startPos.x + 457, 413);
 	_vm->_objectsManager.BOBTOUS = true;
-	_vm->_objectsManager.SL_SPR = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR);
-	_vm->_objectsManager.SL_SPR2 = _vm->_globals.freeMemory(_vm->_objectsManager.SL_SPR2);
+	_vm->_objectsManager._saveLoadSprite = _vm->_globals.freeMemory(_vm->_objectsManager._saveLoadSprite);
+	_vm->_objectsManager._saveLoadSprite2 = _vm->_globals.freeMemory(_vm->_objectsManager._saveLoadSprite2);
 	_vm->_objectsManager._saveLoadX = 0;
 	_vm->_objectsManager._saveLoadY = 0;
 
@@ -619,20 +619,20 @@ void DialogsManager::showSaveLoad(int a1) {
 		break;
 	}
 
-	_vm->_objectsManager.SL_SPR = _vm->_objectsManager.loadSprite(filename);
-	_vm->_objectsManager.SL_SPR2 = _vm->_objectsManager.loadSprite("SAVE2.SPR");
-	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 483, 360, 0);
+	_vm->_objectsManager._saveLoadSprite = _vm->_objectsManager.loadSprite(filename);
+	_vm->_objectsManager._saveLoadSprite2 = _vm->_objectsManager.loadSprite("SAVE2.SPR");
+	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 483, 360, 0);
 
 	if (_vm->_globals._language == LANG_FR) {
 		if (a1 == 1)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 525, 375, 1);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 525, 375, 1);
 		if (a1 == 2)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 515, 375, 2);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 515, 375, 2);
 	} else {
 		if (a1 == 1)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 535, 372, 1);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 535, 372, 1);
 		if (a1 == 2)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 539, 372, 2);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 539, 372, 2);
 	}
 
 	for (slotNumber = 1; slotNumber <= 6; ++slotNumber) {
@@ -669,7 +669,7 @@ void DialogsManager::showSaveLoad(int a1) {
 		}
 	}
 
-	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.SL_SPR, _vm->_eventsManager._startPos.x + 183, 60, 274, 353);
+	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 183, 60, 274, 353);
 	_vm->_objectsManager._saveLoadFl = true;
 	_vm->_objectsManager._saveLoadX = 0;
 	_vm->_objectsManager._saveLoadY = 0;
