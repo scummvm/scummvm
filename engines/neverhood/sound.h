@@ -37,6 +37,10 @@ namespace Neverhood {
 // Convert panning from percent (50% equals center) to -127..0..+127
 #define PANNING(panning) (254 / 100 * (panning) - 127)
 
+class AudioResourceManSoundItem;
+class AudioResourceManMusicItem;
+class AudioResourceMan;
+
 class SoundResource {
 public:
 	SoundResource(NeverhoodEngine *vm);
@@ -51,7 +55,8 @@ public:
 	void setPan(int16 pan);
 protected:
 	NeverhoodEngine *_vm;
-	int16 _soundIndex;	
+	int16 _soundIndex;
+	AudioResourceManSoundItem *getSoundItem();
 };
 
 class MusicResource {
@@ -66,23 +71,49 @@ public:
 protected:
 	NeverhoodEngine *_vm;
 	int16 _musicIndex;	
+	AudioResourceManMusicItem *getMusicItem();
 };
 
-struct MusicItem {
-	uint32 _nameHash;
-	uint32 _musicFileHash;
+class MusicItem {
+public:
+	MusicItem(NeverhoodEngine *vm, uint32 groupNameHash, uint32 musicFileHash);
+	~MusicItem();
+	void startMusic(int16 countdown, int16 fadeVolumeStep);
+	void stopMusic(int16 countdown, int16 fadeVolumeStep);
+	void update();
+	uint32 getGroupNameHash() const { return _groupNameHash; }
+	uint32 getFileHash() const { return _fileHash; }
+protected:	
+	NeverhoodEngine *_vm;
+	uint32 _groupNameHash;
+	uint32 _fileHash;
 	bool _play;
 	bool _stop;
 	int16 _fadeVolumeStep;
 	int16 _countdown;
 	MusicResource *_musicResource;
-	MusicItem();
-	~MusicItem();
 };
 
-struct SoundItem {
-	uint32 _nameHash;
-	uint32 _soundFileHash;
+class SoundItem {
+public:
+	SoundItem(NeverhoodEngine *vm, uint32 groupNameHash, uint32 soundFileHash,
+		bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
+		bool playOnceAfterCountdown, int16 initialCountdown, bool playLooping, int16 currCountdown);
+	~SoundItem();
+	void setSoundParams(bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
+		int16 firstMinCountdown, int16 firstMaxCountdown);
+	void playSoundLooping();
+	void stopSound();
+	void setVolume(int volume);
+	void update();
+	void setPlayOnceAfterCountdown(bool playOnceAfterCountdown) { _playOnceAfterCountdown = playOnceAfterCountdown; }
+	uint32 getGroupNameHash() const { return _groupNameHash; }
+	uint32 getFileHash() const { return _fileHash; }
+	int16 getCurrCountdown() const { return _currCountdown; }
+protected:	
+	NeverhoodEngine *_vm;
+	uint32 _groupNameHash;
+	uint32 _fileHash;
 	bool _playOnceAfterRandomCountdown;
 	int16 _minCountdown;
 	int16 _maxCountdown;
@@ -91,14 +122,15 @@ struct SoundItem {
 	bool _playLooping;
 	int16 _currCountdown;
 	SoundResource *_soundResource;
-
-	SoundItem(NeverhoodEngine *vm, uint32 nameHash, uint32 soundFileHash,
-		bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
-		bool playOnceAfterCountdown, int16 initialCountdown, bool playLooping, int16 currCountdown);
-	~SoundItem();
 };
 
 // TODO Give this a better name
+
+/*
+template<class T>
+class SoundManItems : public Common::Array<T> {
+};
+*/
 
 class SoundMan {
 public:
@@ -106,14 +138,14 @@ public:
 	~SoundMan();
 
 	// Music
-	void addMusic(uint32 nameHash, uint32 musicFileHash);
+	void addMusic(uint32 groupNameHash, uint32 musicFileHash);
 	void deleteMusic(uint32 musicFileHash);
 	void startMusic(uint32 musicFileHash, int16 countdown, int16 fadeVolumeStep);
 	void stopMusic(uint32 musicFileHash, int16 countdown, int16 fadeVolumeStep);
 	
 	// Sound
-	void addSound(uint32 nameHash, uint32 soundFileHash);
-	void addSoundList(uint32 nameHash, const uint32 *soundFileHashList);
+	void addSound(uint32 groupNameHash, uint32 soundFileHash);
+	void addSoundList(uint32 groupNameHash, const uint32 *soundFileHashList);
 	void deleteSound(uint32 soundFileHash);
 	void setSoundParams(uint32 soundFileHash, bool playOnceAfterRandomCountdown,
 		int16 minCountdown, int16 maxCountdown, int16 firstMinCountdown, int16 firstMaxCountdown);
@@ -125,11 +157,11 @@ public:
 	
 	// Misc
 	void update();
-	void deleteGroup(uint32 nameHash);
-	void deleteMusicGroup(uint32 nameHash);
-	void deleteSoundGroup(uint32 nameHash);
-	void playTwoSounds(uint32 nameHash, uint32 soundFileHash1, uint32 soundFileHash2, int16 initialCountdown);
-	void playSoundThree(uint32 nameHash, uint32 soundFileHash);
+	void deleteGroup(uint32 groupNameHash);
+	void deleteMusicGroup(uint32 groupNameHash);
+	void deleteSoundGroup(uint32 groupNameHash);
+	void playTwoSounds(uint32 groupNameHash, uint32 soundFileHash1, uint32 soundFileHash2, int16 initialCountdown);
+	void playSoundThree(uint32 groupNameHash, uint32 soundFileHash);
 	void setTwoSoundsPlayFlag(bool playOnceAfterCountdown);
 	void setSoundThreePlayFlag(bool playOnceAfterCountdown);
 
@@ -182,7 +214,18 @@ private:
 
 // TODO Rename these
 
-struct AudioResourceManSoundItem {
+class AudioResourceManSoundItem {
+public:	
+	AudioResourceManSoundItem(NeverhoodEngine *vm, uint32 fileHash);
+	void loadSound();
+	void unloadSound();
+	void setVolume(int16 volume);
+	void setPan(int16 pan);
+	void playSound(bool looping);
+	void stopSound();
+	bool isPlaying();
+protected:	
+	NeverhoodEngine *_vm;
 	uint32 _fileHash;
 	ResourceHandle _resourceHandle;
 	const byte *_data;
@@ -193,10 +236,25 @@ struct AudioResourceManSoundItem {
 	Audio::SoundHandle _soundHandle;
 };
 
-struct AudioResourceManMusicItem {
+class AudioResourceManMusicItem {
+public:
+	AudioResourceManMusicItem(NeverhoodEngine *vm, uint32 fileHash);
+	void playMusic(int16 fadeVolumeStep);
+	void stopMusic(int16 fadeVolumeStep);
+	void unloadMusic();
+	void setVolume(int16 volume);
+	void restart();
+	void update();
+	bool isPlaying() const { return _isPlaying; }
+	bool canRestart() const { return _canRestart; }
+	bool isTerminated() const { return _terminate; }
+	uint32 getFileHash() const { return _fileHash; }
+protected:	
+	NeverhoodEngine *_vm;
 	uint32 _fileHash;
 	bool _isPlaying;
-	bool _remove;
+	bool _canRestart;
+	bool _terminate;
 	int16 _volume;
 	int16 _panning;
 	bool _start;
@@ -214,23 +272,12 @@ public:
 	
 	int16 addSound(uint32 fileHash);
 	void removeSound(int16 soundIndex);
-	void loadSound(int16 soundIndex);
-	void unloadSound(int16 soundIndex);
-	void setSoundVolume(int16 soundIndex, int16 volume);
-	void setSoundPan(int16 soundIndex, int16 pan);
-	void playSound(int16 soundIndex, bool looping);
-	void stopSound(int16 soundIndex);
-	bool isSoundPlaying(int16 soundIndex);
-	
+
 	int16 loadMusic(uint32 fileHash);
-	void unloadMusic(int16 musicIndex);
-	void setMusicVolume(int16 musicIndex, int16 volume);
-	void playMusic(int16 musicIndex, int16 fadeVolumeStep);
-	void stopMusic(int16 musicIndex, int16 fadeVolumeStep);
-	bool isMusicPlaying(int16 musicIndex);
-	void updateMusicItem(int16 musicIndex);
+	void updateMusic();
 	
-	void update();
+	AudioResourceManSoundItem *getSoundItem(int16 index);
+	AudioResourceManMusicItem *getMusicItem(int16 index);
 	
 protected:
 	NeverhoodEngine *_vm;

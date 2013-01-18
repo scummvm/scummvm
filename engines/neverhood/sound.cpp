@@ -27,9 +27,6 @@
 
 namespace Neverhood {
 
-// TODO Put more stuff into the constructors/destructors of the item structs
-// TODO Some parts are quite bad here, but my priority is to get sound working at all
-
 SoundResource::SoundResource(NeverhoodEngine *vm)
 	: _vm(vm), _soundIndex(-1) {
 }
@@ -39,14 +36,16 @@ SoundResource::~SoundResource() {
 }
 
 bool SoundResource::isPlaying() { 
-	return _soundIndex >= 0 &&
-		_vm->_audioResourceMan->isSoundPlaying(_soundIndex); 
+	AudioResourceManSoundItem *soundItem = getSoundItem();
+	return soundItem ? soundItem->isPlaying() : false;
 }
 
 void SoundResource::load(uint32 fileHash) {
 	unload();
 	_soundIndex = _vm->_audioResourceMan->addSound(fileHash);
-	_vm->_audioResourceMan->loadSound(_soundIndex);
+	AudioResourceManSoundItem *soundItem = getSoundItem();
+	if (soundItem)
+		soundItem->loadSound();
 }
 
 void SoundResource::unload() {
@@ -62,32 +61,40 @@ void SoundResource::play(uint32 fileHash) {
 }
 
 void SoundResource::play() {
-	if (_soundIndex >= 0)
-		_vm->_audioResourceMan->playSound(_soundIndex, false);
+	AudioResourceManSoundItem *soundItem = getSoundItem();
+	if (soundItem)
+		soundItem->playSound(false);
 }
 
 void SoundResource::stop() {
-	if (_soundIndex >= 0)
-		_vm->_audioResourceMan->stopSound(_soundIndex);
+	AudioResourceManSoundItem *soundItem = getSoundItem();
+	if (soundItem)
+		soundItem->stopSound();
 }
 
 void SoundResource::setVolume(int16 volume) {
-	if (_soundIndex >= 0)
-		_vm->_audioResourceMan->setSoundVolume(_soundIndex, volume);
+	AudioResourceManSoundItem *soundItem = getSoundItem();
+	if (soundItem)
+		soundItem->setVolume(volume);
 }
 
 void SoundResource::setPan(int16 pan) {
-	if (_soundIndex >= 0)
-		_vm->_audioResourceMan->setSoundPan(_soundIndex, pan);
+	AudioResourceManSoundItem *soundItem = getSoundItem();
+	if (soundItem)
+		soundItem->setPan(pan);
+}
+
+AudioResourceManSoundItem *SoundResource::getSoundItem() {
+	return _vm->_audioResourceMan->getSoundItem(_soundIndex);
 }
 
 MusicResource::MusicResource(NeverhoodEngine *vm)
 	: _vm(vm), _musicIndex(-1) {
 }
 
-bool MusicResource::isPlaying() { 
-	return _musicIndex >= 0 &&
-		_vm->_audioResourceMan->isMusicPlaying(_musicIndex); 
+bool MusicResource::isPlaying() {
+	AudioResourceManMusicItem *musicItem = getMusicItem();
+	return musicItem && musicItem->isPlaying(); 
 }
 
 void MusicResource::load(uint32 fileHash) {
@@ -96,29 +103,46 @@ void MusicResource::load(uint32 fileHash) {
 }
 
 void MusicResource::unload() {
-	if (_musicIndex >= 0) {
-		_vm->_audioResourceMan->unloadMusic(_musicIndex);
+	AudioResourceManMusicItem *musicItem = getMusicItem();
+	if (musicItem) {
+		musicItem->unloadMusic();
 		_musicIndex = -1;
 	}
 }
 
 void MusicResource::play(int16 fadeVolumeStep) {
-	if (_musicIndex >= 0)
-		_vm->_audioResourceMan->playMusic(_musicIndex, fadeVolumeStep);
+	AudioResourceManMusicItem *musicItem = getMusicItem();
+	if (musicItem)
+		musicItem->playMusic(fadeVolumeStep);
 }
 
 void MusicResource::stop(int16 fadeVolumeStep) {
-	if (_musicIndex >= 0)
-		_vm->_audioResourceMan->stopMusic(_musicIndex, fadeVolumeStep);
+	AudioResourceManMusicItem *musicItem = getMusicItem();
+	if (musicItem)
+		musicItem->stopMusic(fadeVolumeStep);
 }
 
 void MusicResource::setVolume(int16 volume) {
-	if (_musicIndex >= 0)
-		_vm->_audioResourceMan->setMusicVolume(_musicIndex, volume);
+	AudioResourceManMusicItem *musicItem = getMusicItem();
+	if (musicItem)
+		musicItem->setVolume(volume);
 }
 
-MusicItem::MusicItem()
-	: _musicResource(NULL) {
+AudioResourceManMusicItem *MusicResource::getMusicItem() {
+	return _vm->_audioResourceMan->getMusicItem(_musicIndex);
+}
+
+MusicItem::MusicItem(NeverhoodEngine *vm, uint32 groupNameHash, uint32 musicFileHash)
+	: _vm(vm), _musicResource(NULL) {
+	
+	_groupNameHash = groupNameHash;
+	_fileHash = musicFileHash;
+	_play = false;
+	_stop = false;
+	_fadeVolumeStep = 0;
+	_countdown = 24;
+	_musicResource = new MusicResource(_vm);
+	_musicResource->load(musicFileHash);
 }
 
 MusicItem::~MusicItem() {
@@ -127,10 +151,39 @@ MusicItem::~MusicItem() {
 	delete _musicResource;
 }
 
-SoundItem::SoundItem(NeverhoodEngine *vm, uint32 nameHash, uint32 soundFileHash,
+void MusicItem::startMusic(int16 countdown, int16 fadeVolumeStep) {
+	_play = true;
+	_stop = false;
+	_countdown = countdown;
+	_fadeVolumeStep = fadeVolumeStep;
+}
+
+void MusicItem::stopMusic(int16 countdown, int16 fadeVolumeStep) {
+	_play = false;
+	_stop = true;
+	_countdown = countdown;
+	_fadeVolumeStep = fadeVolumeStep;
+}
+
+void MusicItem::update() {
+	if (_countdown) {
+		--_countdown;
+	} else if (_play && !_musicResource->isPlaying()) {
+		debug(1, "MusicItem: play music %08X (fade %d)", _fileHash, _fadeVolumeStep);
+		_musicResource->play(_fadeVolumeStep);
+		_fadeVolumeStep = 0;
+	} else if (_stop) {
+		debug(1, "MusicItem: stop music %08X (fade %d)", _fileHash, _fadeVolumeStep);
+		_musicResource->stop(_fadeVolumeStep);
+		_fadeVolumeStep = 0;
+		_stop = false;
+	}
+}
+
+SoundItem::SoundItem(NeverhoodEngine *vm, uint32 groupNameHash, uint32 soundFileHash,
 	bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
 	bool playOnceAfterCountdown, int16 initialCountdown, bool playLooping, int16 currCountdown)
-	: _soundResource(NULL),	_nameHash(nameHash), _soundFileHash(soundFileHash),
+	: _vm(vm), _soundResource(NULL), _groupNameHash(groupNameHash), _fileHash(soundFileHash),
 	_playOnceAfterRandomCountdown(false), _minCountdown(0), _maxCountdown(0),
 	_playOnceAfterCountdown(_playOnceAfterCountdown), _initialCountdown(initialCountdown),
 	_playLooping(false), _currCountdown(currCountdown) {
@@ -145,28 +198,70 @@ SoundItem::~SoundItem() {
 	delete _soundResource;
 }
 
+void SoundItem::setSoundParams(bool playOnceAfterRandomCountdown, int16 minCountdown, int16 maxCountdown,
+	int16 firstMinCountdown, int16 firstMaxCountdown) {
+	
+	_playOnceAfterCountdown = false;
+	_playLooping = false;
+	_playOnceAfterRandomCountdown = playOnceAfterRandomCountdown;
+	if (minCountdown > 0)
+		_minCountdown = minCountdown;
+	if (maxCountdown > 0)
+		_maxCountdown = maxCountdown;
+	if (firstMinCountdown >= firstMaxCountdown)
+		_currCountdown = firstMinCountdown;
+	else if (firstMinCountdown > 0 && firstMaxCountdown > 0 && firstMinCountdown < firstMaxCountdown)
+		_currCountdown = _vm->_rnd->getRandomNumberRng(firstMinCountdown, firstMaxCountdown);
+}
+
+void SoundItem::playSoundLooping() {
+	_playOnceAfterRandomCountdown = false;
+	_playOnceAfterCountdown = false;
+	_playLooping = true;
+}
+
+void SoundItem::stopSound() {
+	_playOnceAfterRandomCountdown = false;
+	_playOnceAfterCountdown = false;
+	_playLooping = false;
+	_soundResource->stop();
+}
+
+void SoundItem::setVolume(int volume) {
+	_soundResource->setVolume(volume);
+}
+
+void SoundItem::update() {
+	if (_playOnceAfterCountdown) {
+		if (_currCountdown == 0) {
+			_currCountdown = _initialCountdown;
+		} else if (--_currCountdown == 0) {
+			_soundResource->play();
+		}
+	} else if (_playOnceAfterRandomCountdown) {
+		if (_currCountdown == 0) {
+			if (_minCountdown > 0 && _maxCountdown > 0 && _minCountdown < _maxCountdown)
+				_currCountdown = _vm->_rnd->getRandomNumberRng(_minCountdown, _maxCountdown);
+		} else if (--_currCountdown == 0) {
+			_soundResource->play();
+		}
+	} else if (_playLooping && !_soundResource->isPlaying()) {
+		_soundResource->play(); // TODO Looping parameter?
+	}
+}
+
 // SoundMan
 
 SoundMan::SoundMan(NeverhoodEngine *vm)
-	: _vm(vm),
-	_soundIndex1(-1), _soundIndex2(-1), _soundIndex3(-1) {
+	: _vm(vm), _soundIndex1(-1), _soundIndex2(-1), _soundIndex3(-1) {
 }
 
 SoundMan::~SoundMan() {
 	// TODO Clean up
 }
 
-void SoundMan::addMusic(uint32 nameHash, uint32 musicFileHash) {
-	MusicItem *musicItem = new MusicItem();
-	musicItem->_nameHash = nameHash;
-	musicItem->_musicFileHash = musicFileHash;
-	musicItem->_play = false;
-	musicItem->_stop = false;
-	musicItem->_fadeVolumeStep = 0;
-	musicItem->_countdown = 24;
-	musicItem->_musicResource = new MusicResource(_vm);
-	musicItem->_musicResource->load(musicFileHash);
-	addMusicItem(musicItem);
+void SoundMan::addMusic(uint32 groupNameHash, uint32 musicFileHash) {
+	addMusicItem(new MusicItem(_vm, groupNameHash, musicFileHash));
 }
 
 void SoundMan::deleteMusic(uint32 musicFileHash) {
@@ -183,32 +278,23 @@ void SoundMan::deleteMusic(uint32 musicFileHash) {
 
 void SoundMan::startMusic(uint32 musicFileHash, int16 countdown, int16 fadeVolumeStep) {
 	MusicItem *musicItem = getMusicItemByHash(musicFileHash);
-	if (musicItem) {
-		musicItem->_play = true;
-		musicItem->_stop = false;
-		musicItem->_countdown = countdown;
-		musicItem->_fadeVolumeStep = fadeVolumeStep;
-	}
+	if (musicItem)
+		musicItem->startMusic(countdown, fadeVolumeStep);
 }
 
 void SoundMan::stopMusic(uint32 musicFileHash, int16 countdown, int16 fadeVolumeStep) {
 	MusicItem *musicItem = getMusicItemByHash(musicFileHash);
-	if (musicItem) {
-		musicItem->_play = false;
-		musicItem->_stop = true;
-		musicItem->_countdown = countdown;
-		musicItem->_fadeVolumeStep = fadeVolumeStep;
-	}
+	if (musicItem)
+		musicItem->stopMusic(countdown, fadeVolumeStep);
 }
 
-void SoundMan::addSound(uint32 nameHash, uint32 soundFileHash) {
-	SoundItem *soundItem = new SoundItem(_vm, nameHash, soundFileHash, false, 50, 600, false, 0, false, 0);
-	addSoundItem(soundItem);
+void SoundMan::addSound(uint32 groupNameHash, uint32 soundFileHash) {
+	addSoundItem(new SoundItem(_vm, groupNameHash, soundFileHash, false, 50, 600, false, 0, false, 0));
 }
 
-void SoundMan::addSoundList(uint32 nameHash, const uint32 *soundFileHashList) {
+void SoundMan::addSoundList(uint32 groupNameHash, const uint32 *soundFileHashList) {
 	while (*soundFileHashList)
-		addSound(nameHash, *soundFileHashList++);
+		addSound(groupNameHash, *soundFileHashList++);
 }
 
 void SoundMan::deleteSound(uint32 soundFileHash) {
@@ -227,19 +313,9 @@ void SoundMan::setSoundParams(uint32 soundFileHash, bool playOnceAfterRandomCoun
 	int16 minCountdown, int16 maxCountdown, int16 firstMinCountdown, int16 firstMaxCountdown) {
 
 	SoundItem *soundItem = getSoundItemByHash(soundFileHash);
-	if (soundItem) {
-		soundItem->_playOnceAfterCountdown = false;
-		soundItem->_playLooping = false;
-		soundItem->_playOnceAfterRandomCountdown = playOnceAfterRandomCountdown;
-		if (minCountdown > 0)
-			soundItem->_minCountdown = minCountdown;
-		if (maxCountdown > 0)
-			soundItem->_maxCountdown = maxCountdown;
-		if (firstMinCountdown >= firstMaxCountdown)
-			soundItem->_currCountdown = firstMinCountdown;
-		else if (firstMinCountdown > 0 && firstMaxCountdown > 0 && firstMinCountdown < firstMaxCountdown)
-			soundItem->_currCountdown = _vm->_rnd->getRandomNumberRng(firstMinCountdown, firstMaxCountdown);
-	}
+	if (soundItem)
+		soundItem->setSoundParams(playOnceAfterRandomCountdown, minCountdown, maxCountdown,
+			firstMinCountdown, firstMaxCountdown);
 }
 
 void SoundMan::setSoundListParams(const uint32 *soundFileHashList, bool playOnceAfterRandomCountdown,
@@ -252,120 +328,84 @@ void SoundMan::setSoundListParams(const uint32 *soundFileHashList, bool playOnce
 
 void SoundMan::playSoundLooping(uint32 soundFileHash) {
 	SoundItem *soundItem = getSoundItemByHash(soundFileHash);
-	if (soundItem) {
-		soundItem->_playOnceAfterRandomCountdown = false;
-		soundItem->_playOnceAfterCountdown = false;
-		soundItem->_playLooping = true;
-	}
+	if (soundItem)
+		soundItem->playSoundLooping();
 }
 
 void SoundMan::stopSound(uint32 soundFileHash) {
 	SoundItem *soundItem = getSoundItemByHash(soundFileHash);
-	if (soundItem) {
-		soundItem->_playOnceAfterRandomCountdown = false;
-		soundItem->_playOnceAfterCountdown = false;
-		soundItem->_playLooping = false;
-		soundItem->_soundResource->stop();
-	}
+	if (soundItem)
+		soundItem->stopSound();
 }
 
 void SoundMan::setSoundVolume(uint32 soundFileHash, int volume) {
 	SoundItem *soundItem = getSoundItemByHash(soundFileHash);
 	if (soundItem)
-		soundItem->_soundResource->setVolume(volume);
+		soundItem->setVolume(volume);
 }
 
 void SoundMan::update() {
 	
 	for (uint i = 0; i < _soundItems.size(); ++i) {
 		SoundItem *soundItem = _soundItems[i];
-		if (soundItem) {
-			if (soundItem->_playOnceAfterCountdown) {
-				if (soundItem->_currCountdown == 0) {
-					soundItem->_currCountdown = soundItem->_initialCountdown;
-				} else if (--soundItem->_currCountdown == 0) {
-					soundItem->_soundResource->play();
-				}
-			} else if (soundItem->_playOnceAfterRandomCountdown) {
-				if (soundItem->_currCountdown == 0) {
-					if (soundItem->_minCountdown > 0 && soundItem->_maxCountdown > 0 && soundItem->_minCountdown < soundItem->_maxCountdown)
-						soundItem->_currCountdown = _vm->_rnd->getRandomNumberRng(soundItem->_minCountdown, soundItem->_maxCountdown);
-				} else if (--soundItem->_currCountdown == 0) {
-					soundItem->_soundResource->play();
-				}
-			} else if (soundItem->_playLooping && !soundItem->_soundResource->isPlaying()) {
-				soundItem->_soundResource->play(); // TODO Looping parameter?
-			}
-		}
+		if (soundItem)
+			soundItem->update();
 	}
 
 	for (uint i = 0; i < _musicItems.size(); ++i) {
 		MusicItem *musicItem = _musicItems[i];
-		if (musicItem) {
-			if (musicItem->_countdown) {
-				--musicItem->_countdown;
-			} else if (musicItem->_play && !musicItem->_musicResource->isPlaying()) {
-				debug(1, "SoundMan: play music %08X (fade %d)", musicItem->_musicFileHash, musicItem->_fadeVolumeStep);
-				musicItem->_musicResource->play(musicItem->_fadeVolumeStep);
-				musicItem->_fadeVolumeStep = 0;
-			} else if (musicItem->_stop) {
-				debug(1, "SoundMan: stop music %08X (fade %d)", musicItem->_musicFileHash, musicItem->_fadeVolumeStep);
-				musicItem->_musicResource->stop(musicItem->_fadeVolumeStep);
-				musicItem->_fadeVolumeStep = 0;
-				musicItem->_stop = false;
-			}
-		}
+		if (musicItem)
+			musicItem->update();
 	}
 
 }
 
-void SoundMan::deleteGroup(uint32 nameHash) {
-	deleteMusicGroup(nameHash);
-	deleteSoundGroup(nameHash);
+void SoundMan::deleteGroup(uint32 groupNameHash) {
+	deleteMusicGroup(groupNameHash);
+	deleteSoundGroup(groupNameHash);
 }
 
-void SoundMan::deleteMusicGroup(uint32 nameHash) {
+void SoundMan::deleteMusicGroup(uint32 groupNameHash) {
 	for (uint index = 0; index < _musicItems.size(); ++index) {
 		MusicItem *musicItem = _musicItems[index];
-		if (musicItem && musicItem->_nameHash == nameHash) {
+		if (musicItem && musicItem->getGroupNameHash() == groupNameHash) {
 			delete musicItem;
 			_musicItems[index] = NULL;
 		}
 	}
 }
 
-void SoundMan::deleteSoundGroup(uint32 nameHash) {
+void SoundMan::deleteSoundGroup(uint32 groupNameHash) {
 
-	if (_soundIndex1 != -1 && _soundItems[_soundIndex1]->_nameHash == nameHash) {
+	if (_soundIndex1 != -1 && _soundItems[_soundIndex1]->getGroupNameHash() == groupNameHash) {
 		deleteSoundByIndex(_soundIndex1);
 		_soundIndex1 = -1;
 	}
 
-	if (_soundIndex2 != -1 && _soundItems[_soundIndex2]->_nameHash == nameHash) {
+	if (_soundIndex2 != -1 && _soundItems[_soundIndex2]->getGroupNameHash() == groupNameHash) {
 		deleteSoundByIndex(_soundIndex2);
 		_soundIndex2 = -1;
 	}
 
 	for (uint index = 0; index < _soundItems.size(); ++index)
-		if (_soundItems[index] && _soundItems[index]->_nameHash == nameHash)
+		if (_soundItems[index] && _soundItems[index]->getGroupNameHash() == groupNameHash)
 			deleteSoundByIndex(index);
 
 }
 
-void SoundMan::playTwoSounds(uint32 nameHash, uint32 soundFileHash1, uint32 soundFileHash2, int16 initialCountdown) {
+void SoundMan::playTwoSounds(uint32 groupNameHash, uint32 soundFileHash1, uint32 soundFileHash2, int16 initialCountdown) {
 
-	SoundItem *soundItem;
 	int16 currCountdown1 = _initialCountdown;
 	int16 currCountdown2 = _initialCountdown / 2;
 
 	if (_soundIndex1 != -1) {
-		currCountdown1 = _soundItems[_soundIndex1]->_currCountdown;
+		currCountdown1 = _soundItems[_soundIndex1]->getCurrCountdown();
 		deleteSoundByIndex(_soundIndex1);
 		_soundIndex1 = -1;
 	}
 
 	if (_soundIndex2 != -1) {
-		currCountdown2 = _soundItems[_soundIndex2]->_currCountdown;
+		currCountdown2 = _soundItems[_soundIndex2]->getCurrCountdown();
 		deleteSoundByIndex(_soundIndex2);
 		_soundIndex2 = -1;
 	}
@@ -374,24 +414,22 @@ void SoundMan::playTwoSounds(uint32 nameHash, uint32 soundFileHash1, uint32 soun
 		_initialCountdown = initialCountdown;
 
 	if (soundFileHash1 != 0) {
-		soundItem = new SoundItem(_vm, nameHash, soundFileHash1, false, 0, 0,
+		SoundItem *soundItem = new SoundItem(_vm, groupNameHash, soundFileHash1, false, 0, 0,
 			_playOnceAfterCountdown, _initialCountdown, false, currCountdown1);
-		soundItem->_soundResource->setVolume(80);
+		soundItem->setVolume(80);
 		_soundIndex1 = addSoundItem(soundItem);
 	}
 
 	if (soundFileHash2 != 0) {
-		soundItem = new SoundItem(_vm, nameHash, soundFileHash2, false, 0, 0,
+		SoundItem *soundItem = new SoundItem(_vm, groupNameHash, soundFileHash2, false, 0, 0,
 			_playOnceAfterCountdown, _initialCountdown, false, currCountdown2);
-		soundItem->_soundResource->setVolume(80);
+		soundItem->setVolume(80);
 		_soundIndex2 = addSoundItem(soundItem);
 	}
 
 }
 
-void SoundMan::playSoundThree(uint32 nameHash, uint32 soundFileHash) {
-
-	SoundItem *soundItem;
+void SoundMan::playSoundThree(uint32 groupNameHash, uint32 soundFileHash) {
 
 	if (_soundIndex3 != -1) {
 		deleteSoundByIndex(_soundIndex3);
@@ -399,8 +437,7 @@ void SoundMan::playSoundThree(uint32 nameHash, uint32 soundFileHash) {
 	}
 
 	if (soundFileHash != 0) {
-		soundItem = new SoundItem(_vm, nameHash, soundFileHash, false, 0, 0,
-			false, _initialCountdown3, false, 0);
+		SoundItem *soundItem = new SoundItem(_vm, groupNameHash, soundFileHash, false, 0, 0, false, _initialCountdown3, false, 0);
 		_soundIndex3 = addSoundItem(soundItem);
 	}
 	
@@ -408,28 +445,28 @@ void SoundMan::playSoundThree(uint32 nameHash, uint32 soundFileHash) {
 
 void SoundMan::setTwoSoundsPlayFlag(bool playOnceAfterCountdown) {
 	if (_soundIndex1 != -1)
-		_soundItems[_soundIndex1]->_playOnceAfterCountdown = playOnceAfterCountdown;
+		_soundItems[_soundIndex1]->setPlayOnceAfterCountdown(playOnceAfterCountdown);
 	if (_soundIndex2 != -1)
-		_soundItems[_soundIndex2]->_playOnceAfterCountdown = playOnceAfterCountdown;
+		_soundItems[_soundIndex2]->setPlayOnceAfterCountdown(playOnceAfterCountdown);
 	_playOnceAfterCountdown = playOnceAfterCountdown;
 }
 
 void SoundMan::setSoundThreePlayFlag(bool playOnceAfterCountdown) {
 	if (_soundIndex3 != -1)
-		_soundItems[_soundIndex3]->_playOnceAfterCountdown = playOnceAfterCountdown;
+		_soundItems[_soundIndex3]->setPlayOnceAfterCountdown(playOnceAfterCountdown);
 	_playOnceAfterCountdown3 = playOnceAfterCountdown;
 }
 
 MusicItem *SoundMan::getMusicItemByHash(uint32 musicFileHash) {
 	for (uint i = 0; i < _musicItems.size(); ++i)
-		if (_musicItems[i] && _musicItems[i]->_musicFileHash == musicFileHash)
+		if (_musicItems[i] && _musicItems[i]->getFileHash() == musicFileHash)
 			return _musicItems[i];
 	return NULL;
 }
 
 SoundItem *SoundMan::getSoundItemByHash(uint32 soundFileHash) {
 	for (uint i = 0; i < _soundItems.size(); ++i)
-		if (_soundItems[i] && _soundItems[i]->_soundFileHash == soundFileHash)
+		if (_soundItems[i] && _soundItems[i]->getFileHash() == soundFileHash)
 			return _soundItems[i];
 	return NULL;
 }
@@ -510,6 +547,163 @@ int NeverhoodAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	return numSamples - samplesLeft;
 }
 
+AudioResourceManSoundItem::AudioResourceManSoundItem(NeverhoodEngine *vm, uint32 fileHash)
+	: _vm(vm), _fileHash(fileHash), _data(NULL), _isLoaded(false), _isPlaying(false),
+	_volume(100), _panning(50) {
+
+	_vm->_res->queryResource(_fileHash, _resourceHandle);
+}
+
+void AudioResourceManSoundItem::loadSound() {
+	if (!_data && _resourceHandle.isValid() &&
+		(_resourceHandle.type() == kResTypeSound || _resourceHandle.type() == kResTypeMusic)) {
+		_vm->_res->loadResource(_resourceHandle);
+		_data = _resourceHandle.data();
+	}
+}
+
+void AudioResourceManSoundItem::unloadSound() {
+	if (_vm->_mixer->isSoundHandleActive(_soundHandle))
+		_vm->_mixer->stopHandle(_soundHandle);
+	_vm->_res->unloadResource(_resourceHandle);
+	_data = NULL;
+}
+
+void AudioResourceManSoundItem::setVolume(int16 volume) {
+	_volume = MIN<int16>(volume, 100);
+	if (_isPlaying && _vm->_mixer->isSoundHandleActive(_soundHandle))
+		_vm->_mixer->setChannelVolume(_soundHandle, VOLUME(_volume));
+}
+
+void AudioResourceManSoundItem::setPan(int16 pan) {
+	_panning = MIN<int16>(pan, 100);
+	if (_isPlaying && _vm->_mixer->isSoundHandleActive(_soundHandle))
+		_vm->_mixer->setChannelVolume(_soundHandle, PANNING(_panning));
+}
+
+void AudioResourceManSoundItem::playSound(bool looping) {
+	if (!_data)
+		loadSound();
+	if (_data) {
+		const byte *shiftValue = _resourceHandle.extData();
+		Common::MemoryReadStream *stream = new Common::MemoryReadStream(_data, _resourceHandle.size(), DisposeAfterUse::NO);
+		NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, false, DisposeAfterUse::YES, stream);
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle,
+			audioStream, -1, VOLUME(_volume), PANNING(_panning));
+		debug(1, "playing sound %08X", _fileHash);
+		_isPlaying = true;
+	}
+}
+
+void AudioResourceManSoundItem::stopSound() {
+	if (_vm->_mixer->isSoundHandleActive(_soundHandle))
+		_vm->_mixer->stopHandle(_soundHandle);
+	_isPlaying = false;
+}
+
+bool AudioResourceManSoundItem::isPlaying() {
+	return _vm->_mixer->isSoundHandleActive(_soundHandle);
+}
+
+AudioResourceManMusicItem::AudioResourceManMusicItem(NeverhoodEngine *vm, uint32 fileHash)
+	: _vm(vm), _fileHash(fileHash), _terminate(false), _canRestart(false),
+	_volume(100), _panning(50),	_start(false), _isFadingIn(false), _isFadingOut(false) {
+
+}
+
+void AudioResourceManMusicItem::playMusic(int16 fadeVolumeStep) {
+	if (!_isPlaying) {
+		_isFadingIn = false;
+		_isFadingOut = false;
+		if (fadeVolumeStep != 0) {
+			_isFadingIn = true;
+			_fadeVolume = 0;
+			_fadeVolumeStep = fadeVolumeStep;
+		}
+		_start = true;
+		_terminate = false;
+	}
+}
+
+void AudioResourceManMusicItem::stopMusic(int16 fadeVolumeStep) {
+	if (_vm->_mixer->isSoundHandleActive(_soundHandle)) {
+		if (fadeVolumeStep != 0) {
+			if (_isFadingIn)
+				_isFadingIn = false;
+			else
+				_fadeVolume = _volume;
+			_isFadingOut = true;
+			_fadeVolumeStep = fadeVolumeStep;
+		} else {
+			_vm->_mixer->stopHandle(_soundHandle);
+		}
+		_isPlaying = false;
+	}
+}
+
+void AudioResourceManMusicItem::unloadMusic() {
+	if (_isFadingOut) {
+		_canRestart = true;
+	} else {
+		if (_vm->_mixer->isSoundHandleActive(_soundHandle))
+			_vm->_mixer->stopHandle(_soundHandle);
+		_isPlaying = false;
+		_terminate = true;
+	}
+}
+
+void AudioResourceManMusicItem::setVolume(int16 volume) {
+	_volume = MIN<int16>(volume, 100);
+	if (_isPlaying && _vm->_mixer->isSoundHandleActive(_soundHandle))
+		_vm->_mixer->setChannelVolume(_soundHandle, VOLUME(_volume));
+}
+
+void AudioResourceManMusicItem::restart() {
+	_canRestart = false;
+	_isFadingOut = false;
+	_isFadingIn = true;
+}
+
+void AudioResourceManMusicItem::update() {
+
+	if (_start && !_vm->_mixer->isSoundHandleActive(_soundHandle)) {
+		ResourceHandle resourceHandle;
+		_vm->_res->queryResource(_fileHash, resourceHandle);
+		Common::SeekableReadStream *stream = _vm->_res->createStream(_fileHash);
+		const byte *shiftValue = resourceHandle.extData();
+		NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, true, DisposeAfterUse::YES, stream);
+		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle,
+			audioStream, -1, VOLUME(_isFadingIn ? _fadeVolume : _volume),
+			PANNING(_panning));
+		_start = false;
+		_isPlaying = true;
+	}
+	
+	if (_vm->_mixer->isSoundHandleActive(_soundHandle)) {
+		if (_isFadingIn) {
+			_fadeVolume += _fadeVolumeStep;
+			if (_fadeVolume >= _volume) {
+				_fadeVolume = _volume;
+				_isFadingIn = false;
+			}
+			_vm->_mixer->setChannelVolume(_soundHandle, VOLUME(_fadeVolume));
+		}
+		if (_isFadingOut) {
+			_fadeVolume -= _fadeVolumeStep;
+			if (_fadeVolume < 0)
+				_fadeVolume = 0;
+			_vm->_mixer->setChannelVolume(_soundHandle, VOLUME(_fadeVolume));
+			if (_fadeVolume == 0) {
+				_isFadingOut = false;
+				stopMusic(0);
+				if (_canRestart)
+					unloadMusic();
+			}
+		}
+	}
+
+}
+
 AudioResourceMan::AudioResourceMan(NeverhoodEngine *vm)
 	: _vm(vm) {
 }
@@ -518,120 +712,40 @@ AudioResourceMan::~AudioResourceMan() {
 }
 
 int16 AudioResourceMan::addSound(uint32 fileHash) {
-	AudioResourceManSoundItem *soundItem = new AudioResourceManSoundItem();
-	_vm->_res->queryResource(fileHash, soundItem->_resourceHandle);
-	soundItem->_fileHash = fileHash;
-	soundItem->_data = NULL;
-	soundItem->_isLoaded = false;
-	soundItem->_isPlaying = false;
-	soundItem->_volume = 100;
-	soundItem->_panning = 50;
+	AudioResourceManSoundItem *soundItem = new AudioResourceManSoundItem(_vm, fileHash);
+
 	for (uint i = 0; i < _soundItems.size(); ++i)
 		if (!_soundItems[i]) {
 			_soundItems[i] = soundItem;
 			return i;
 		}
+
 	int16 soundIndex = (int16)_soundItems.size();
 	_soundItems.push_back(soundItem);
 	return soundIndex;
 }
 
 void AudioResourceMan::removeSound(int16 soundIndex) {
-	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	unloadSound(soundIndex);
-	delete soundItem;
-	_soundItems[soundIndex] = NULL;
-}
-
-void AudioResourceMan::loadSound(int16 soundIndex) {
-	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	if (!soundItem->_data && soundItem->_resourceHandle.isValid() &&
-		(soundItem->_resourceHandle.type() == kResTypeSound || soundItem->_resourceHandle.type() == kResTypeMusic)) {
-		_vm->_res->loadResource(soundItem->_resourceHandle);
-		soundItem->_data = soundItem->_resourceHandle.data();
+	AudioResourceManSoundItem *soundItem = getSoundItem(soundIndex);
+	if (soundItem) {
+		soundItem->unloadSound();
+		delete soundItem;
+		_soundItems[soundIndex] = NULL;
 	}
 }
 
-void AudioResourceMan::unloadSound(int16 soundIndex) {
-	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	if (_vm->_mixer->isSoundHandleActive(soundItem->_soundHandle))
-		_vm->_mixer->stopHandle(soundItem->_soundHandle);
-	_vm->_res->unloadResource(soundItem->_resourceHandle);
-	soundItem->_data = NULL;
-}
-
-void AudioResourceMan::setSoundVolume(int16 soundIndex, int16 volume) {
-	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	soundItem->_volume = MIN<int16>(volume, 100);
-	if (soundItem->_isPlaying && _vm->_mixer->isSoundHandleActive(soundItem->_soundHandle))
-		_vm->_mixer->setChannelVolume(soundItem->_soundHandle, VOLUME(soundItem->_volume));
-}
-
-void AudioResourceMan::setSoundPan(int16 soundIndex, int16 pan) {
-	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	soundItem->_panning = MIN<int16>(pan, 100);
-	if (soundItem->_isPlaying && _vm->_mixer->isSoundHandleActive(soundItem->_soundHandle))
-		_vm->_mixer->setChannelVolume(soundItem->_soundHandle, PANNING(soundItem->_panning));
-}
-
-void AudioResourceMan::playSound(int16 soundIndex, bool looping) {
-
-	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	if (!soundItem->_data)
-		loadSound(soundIndex);
-
-	if (!soundItem->_data)
-		return;
-		
-	const byte *shiftValue = soundItem->_resourceHandle.extData();
-	
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundItem->_data, soundItem->_resourceHandle.size(), DisposeAfterUse::NO);
-	NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, false, DisposeAfterUse::YES, stream);
-
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &soundItem->_soundHandle,
-		audioStream, -1, VOLUME(soundItem->_volume), PANNING(soundItem->_panning));
-		
-	debug(1, "playing sound %08X", soundItem->_fileHash);
-	
-	soundItem->_isPlaying = true;
-	
-}
-
-void AudioResourceMan::stopSound(int16 soundIndex) {
-	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	if (_vm->_mixer->isSoundHandleActive(soundItem->_soundHandle))
-		_vm->_mixer->stopHandle(soundItem->_soundHandle);
-	soundItem->_isPlaying = false;
-}
-
-bool AudioResourceMan::isSoundPlaying(int16 soundIndex) {
-	AudioResourceManSoundItem *soundItem = _soundItems[soundIndex];
-	return _vm->_mixer->isSoundHandleActive(soundItem->_soundHandle);
-}
-
 int16 AudioResourceMan::loadMusic(uint32 fileHash) {
-
 	AudioResourceManMusicItem *musicItem;
 
 	for (uint i = 0; i < _musicItems.size(); ++i) {
 		musicItem = _musicItems[i];
-		if (musicItem && musicItem->_fileHash == fileHash && musicItem->_remove) {
-			musicItem->_remove = false;
-			musicItem->_isFadingOut = false;
-			musicItem->_isFadingIn = true;
+		if (musicItem && musicItem->getFileHash() == fileHash && musicItem->canRestart()) {
+			musicItem->restart();
 			return i;
 		}
 	}
-	
-	musicItem = new AudioResourceManMusicItem();
-	musicItem->_fileHash = fileHash;
-	musicItem->_isPlaying = false;
-	musicItem->_remove = false;
-	musicItem->_volume = 100;
-	musicItem->_panning = 50;
-	musicItem->_start = false;
-	musicItem->_isFadingIn = false;
-	musicItem->_isFadingOut = false;
+
+	musicItem = new AudioResourceManMusicItem(_vm, fileHash);
 
 	for (uint i = 0; i < _musicItems.size(); ++i) {
 		if (!_musicItems[i]) {
@@ -646,106 +760,25 @@ int16 AudioResourceMan::loadMusic(uint32 fileHash) {
 	
 }
 
-void AudioResourceMan::unloadMusic(int16 musicIndex) {
-	AudioResourceManMusicItem *musicItem = _musicItems[musicIndex];
-	if (musicItem->_isFadingOut) {
-		musicItem->_remove = true;
-	} else {
-		if (_vm->_mixer->isSoundHandleActive(musicItem->_soundHandle))
-			_vm->_mixer->stopHandle(musicItem->_soundHandle);
-		musicItem->_isPlaying = false;
-		_musicItems[musicIndex] = NULL;
-	}
-}
-
-void AudioResourceMan::setMusicVolume(int16 musicIndex, int16 volume) {
-	AudioResourceManMusicItem *musicItem = _musicItems[musicIndex];
-	musicItem->_volume = MIN<int16>(volume, 100);
-	if (musicItem->_isPlaying && _vm->_mixer->isSoundHandleActive(musicItem->_soundHandle))
-		_vm->_mixer->setChannelVolume(musicItem->_soundHandle, VOLUME(musicItem->_volume));
-}	
-
-void AudioResourceMan::playMusic(int16 musicIndex, int16 fadeVolumeStep) {
-	AudioResourceManMusicItem *musicItem = _musicItems[musicIndex];
-	if (!musicItem->_isPlaying) {
-		musicItem->_isFadingIn = false;
-		musicItem->_isFadingOut = false;
-		if (fadeVolumeStep != 0) {
-			musicItem->_isFadingIn = true;
-			musicItem->_fadeVolume = 0;
-			musicItem->_fadeVolumeStep = fadeVolumeStep;
-		}
-		musicItem->_start = true;
-	}
-}
-
-void AudioResourceMan::stopMusic(int16 musicIndex, int16 fadeVolumeStep) {
-	AudioResourceManMusicItem *musicItem = _musicItems[musicIndex];
-	if (_vm->_mixer->isSoundHandleActive(musicItem->_soundHandle)) {
-		if (fadeVolumeStep != 0) {
-			if (musicItem->_isFadingIn)
-				musicItem->_isFadingIn = false;
-			else
-				musicItem->_fadeVolume = musicItem->_volume;
-			musicItem->_isFadingOut = true;
-			musicItem->_fadeVolumeStep = fadeVolumeStep;
-		} else {
-			_vm->_mixer->stopHandle(musicItem->_soundHandle);
-		}
-		musicItem->_isPlaying = false;
-	}
-}
-
-bool AudioResourceMan::isMusicPlaying(int16 musicIndex) {
-	AudioResourceManMusicItem *musicItem = _musicItems[musicIndex];
-	return musicItem->_isPlaying;
-}
-
-void AudioResourceMan::updateMusicItem(int16 musicIndex) {
-	AudioResourceManMusicItem *musicItem = _musicItems[musicIndex];
-
-	if (musicItem->_start && !_vm->_mixer->isSoundHandleActive(musicItem->_soundHandle)) {
-		ResourceHandle resourceHandle;
-		_vm->_res->queryResource(musicItem->_fileHash, resourceHandle);
-		Common::SeekableReadStream *stream = _vm->_res->createStream(musicItem->_fileHash);
-		const byte *shiftValue = resourceHandle.extData();
-		NeverhoodAudioStream *audioStream = new NeverhoodAudioStream(22050, *shiftValue, true, DisposeAfterUse::YES, stream);
-		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &musicItem->_soundHandle,
-			audioStream, -1, VOLUME(musicItem->_isFadingIn ? musicItem->_fadeVolume : musicItem->_volume),
-			PANNING(musicItem->_panning));
-		musicItem->_start = false;
-		musicItem->_isPlaying = true;
-	}
-	
-	if (_vm->_mixer->isSoundHandleActive(musicItem->_soundHandle)) {
-		if (musicItem->_isFadingIn) {
-			musicItem->_fadeVolume += musicItem->_fadeVolumeStep;
-			if (musicItem->_fadeVolume >= musicItem->_volume) {
-				musicItem->_fadeVolume = musicItem->_volume;
-				musicItem->_isFadingIn = false;
-			}
-			_vm->_mixer->setChannelVolume(musicItem->_soundHandle, VOLUME(musicItem->_fadeVolume));
-		}
-		if (musicItem->_isFadingOut) {
-			musicItem->_fadeVolume -= musicItem->_fadeVolumeStep;
-			if (musicItem->_fadeVolume < 0)
-				musicItem->_fadeVolume = 0;
-			_vm->_mixer->setChannelVolume(musicItem->_soundHandle, VOLUME(musicItem->_fadeVolume));
-			if (musicItem->_fadeVolume == 0) {
-				musicItem->_isFadingOut = false;
-				stopMusic(musicIndex, 0);
-				if (musicItem->_remove)
-					unloadMusic(musicIndex);
+void AudioResourceMan::updateMusic() {
+	for (uint musicIndex = 0; musicIndex < _musicItems.size(); ++musicIndex) {
+		AudioResourceManMusicItem *musicItem = _musicItems[musicIndex];
+		if (musicItem) {
+			musicItem->update();
+			if (musicItem->isTerminated()) {
+				delete musicItem;
+				_musicItems[musicIndex] = NULL;
 			}
 		}
 	}
-
 }
 
-void AudioResourceMan::update() {
-	for (uint i = 0; i < _musicItems.size(); ++i)
-		if (_musicItems[i])
-			updateMusicItem(i);
+AudioResourceManSoundItem *AudioResourceMan::getSoundItem(int16 index) {
+	return (index >= 0 && index < (int16)_soundItems.size()) ? _soundItems[index] : NULL;
+}
+
+AudioResourceManMusicItem *AudioResourceMan::getMusicItem(int16 index) {
+	return (index >= 0 && index < (int16)_musicItems.size()) ? _musicItems[index] : NULL;
 }
 
 } // End of namespace Neverhood
