@@ -249,7 +249,7 @@ protected:
 	Sprite *_ssLadderArchPart1;
 	Sprite *_ssLadderArchPart2;
 	Sprite *_ssLadderArchPart3;
-	Sprite *_class599;
+	Sprite *_ssCeiling;
 	Sprite *_asKlaymanLadderHands;
 	Sprite *_asKlaymanPeekHand;
 	Sprite *_asOutsideDoorBackground;

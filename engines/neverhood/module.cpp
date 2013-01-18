@@ -67,7 +67,6 @@ uint32 Module::handleMessage(int messageNum, const MessageParam &param, Entity *
 }
 
 NavigationScene *Module::navigationScene() {
-	// Not so nice
 	return (NavigationScene*)_childObject;
 }
 
@@ -76,19 +75,17 @@ void Module::createNavigationScene(uint32 navigationListId, int navigationIndex,
 	_childObject = new NavigationScene(_vm, this, navigationListId, navigationIndex, itemsTypes);
 }
 
-void Module::createSmackerScene(uint32 fileHash, bool doubleSurface, bool flag1, bool canAbort) {
-	SmackerScene *smackerScene;
+void Module::createSmackerScene(uint32 fileHash, bool doubleSurface, bool canSkip, bool canAbort) {
 	_sceneType = kSceneTypeSmacker;
-	smackerScene = new SmackerScene(_vm, this, doubleSurface, flag1, canAbort);
+	SmackerScene *smackerScene = new SmackerScene(_vm, this, doubleSurface, canSkip, canAbort);
 	smackerScene->setFileHash(fileHash);
 	smackerScene->nextVideo();
 	_childObject = smackerScene;
 }
 
-void Module::createSmackerScene(const uint32 *fileHashList, bool doubleSurface, bool flag1, bool canAbort) {
-	SmackerScene *smackerScene;
+void Module::createSmackerScene(const uint32 *fileHashList, bool doubleSurface, bool canSkip, bool canAbort) {
 	_sceneType = kSceneTypeSmacker;
-	smackerScene = new SmackerScene(_vm, this, doubleSurface, flag1, canAbort);
+	SmackerScene *smackerScene = new SmackerScene(_vm, this, doubleSurface, canSkip, canAbort);
 	smackerScene->setFileHashList(fileHashList);
 	smackerScene->nextVideo();
 	_childObject = smackerScene;

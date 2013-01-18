@@ -31,14 +31,14 @@ namespace Neverhood {
 
 class SmackerScene : public Scene {
 public:
-	SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubleSurface, bool flag1, bool canAbort);
+	SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubleSurface, bool canSkip, bool canAbort);
 	virtual ~SmackerScene();
 	void setFileHash(uint32 fileHash);
 	void setFileHashList(const uint32 *fileHashList);
 	void nextVideo();
 protected:
 	bool _doubleSurface;
-	bool _flag1;
+	bool _canSkip;
 	bool _canAbort;
 	bool _videoPlayedBefore;
 	bool _playNextVideoFlag;

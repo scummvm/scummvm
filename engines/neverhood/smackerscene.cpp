@@ -24,16 +24,16 @@
 
 namespace Neverhood {
 
-SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubleSurface, bool flag1, bool canAbort)
-	: Scene(vm, parentModule), _doubleSurface(doubleSurface), _flag1(flag1), _canAbort(canAbort), _videoPlayedBefore(false),
+SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubleSurface, bool canSkip, bool canAbort)
+	: Scene(vm, parentModule), _doubleSurface(doubleSurface), _canSkip(canSkip), _canAbort(canAbort), _videoPlayedBefore(false),
 	_fileHashListIndex(-1), _fileHashList(NULL), _playNextVideoFlag(false) {
 
-	debug("SmackerScene::SmackerScene(%d, %d, %d)", doubleSurface, flag1, canAbort);
+	debug("SmackerScene::SmackerScene(%d, %d, %d)", doubleSurface, canSkip, canAbort);
 
 	// NOTE: Merged from SmackerScene::init, maybe split again if needed (incl. parameter flags)
 	
 	if (getGlobalVar(V_SMACKER_CAN_ABORT)) {
-		_flag1 = true;
+		_canSkip = true;
 		_canAbort = true;
 	}
 	
@@ -105,7 +105,7 @@ uint32 SmackerScene::handleMessage(int messageNum, const MessageParam &param, En
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0009:
-		if ((_videoPlayedBefore && _flag1) || (_canAbort && _flag1))
+		if ((_videoPlayedBefore && _canSkip) || (_canAbort && _canSkip))
 			_playNextVideoFlag = true;
 		break;
 	case 0x000C:

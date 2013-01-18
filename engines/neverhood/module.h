@@ -58,8 +58,8 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	NavigationScene *navigationScene();
 	void createNavigationScene(uint32 navigationListId, int navigationIndex, const byte *itemsTypes = NULL);
-	void createSmackerScene(uint32 fileHash, bool doubleSurface, bool flag1, bool canAbort);
-	void createSmackerScene(const uint32 *fileHashList, bool doubleSurface, bool flag1, bool canAbort);
+	void createSmackerScene(uint32 fileHash, bool doubleSurface, bool canSkip, bool canAbort);
+	void createSmackerScene(const uint32 *fileHashList, bool doubleSurface, bool canSkip, bool canAbort);
 	void createStaticScene(uint32 backgroundFileHash, uint32 cursorFileHash);
 	void createDemoScene();
 	bool updateChild();

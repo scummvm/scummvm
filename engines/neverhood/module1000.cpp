@@ -1175,7 +1175,7 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssLadderArchPart2 = insertStaticSprite(0xB2A423B0, 1100);
 	_ssLadderArchPart3 = insertStaticSprite(0x316E0772, 1100);
 
-	_class599 = insertStaticSprite(0x316C4BB4, 1015);
+	_ssCeiling = insertStaticSprite(0x316C4BB4, 1015);
 
 	if (which < 0) {
 		// Restoring game
@@ -1231,11 +1231,11 @@ Scene1002::Scene1002(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempClipRect.set(tempSprite->getDrawRect().x, tempSprite->getDrawRect().y,
 		_ssLadderArchPart2->getDrawRect().x2(), _ssLadderArchPart2->getDrawRect().y2());
 
-	_asRing1 = insertSprite<AsScene1002Ring>(this, false, 258, 191, _class599->getDrawRect().y, false);
-	_asRing2 = insertSprite<AsScene1002Ring>(this, false, 297, 189, _class599->getDrawRect().y, false);
-	_asRing3 = insertSprite<AsScene1002Ring>(this, true, 370, 201, _class599->getDrawRect().y, getGlobalVar(V_FLYTRAP_RING_DOOR));
-	_asRing4 = insertSprite<AsScene1002Ring>(this, false, 334, 191, _class599->getDrawRect().y, false);
-	_asRing5 = insertSprite<AsScene1002Ring>(this, false, 425, 184, _class599->getDrawRect().y, false);
+	_asRing1 = insertSprite<AsScene1002Ring>(this, false, 258, 191, _ssCeiling->getDrawRect().y, false);
+	_asRing2 = insertSprite<AsScene1002Ring>(this, false, 297, 189, _ssCeiling->getDrawRect().y, false);
+	_asRing3 = insertSprite<AsScene1002Ring>(this, true, 370, 201, _ssCeiling->getDrawRect().y, getGlobalVar(V_FLYTRAP_RING_DOOR));
+	_asRing4 = insertSprite<AsScene1002Ring>(this, false, 334, 191, _ssCeiling->getDrawRect().y, false);
+	_asRing5 = insertSprite<AsScene1002Ring>(this, false, 425, 184, _ssCeiling->getDrawRect().y, false);
 
 	_asDoor = insertSprite<AsScene1002Door>(tempClipRect);
 	tempSprite = insertSprite<AsScene1002BoxingGloveHitEffect>();
@@ -1374,11 +1374,11 @@ uint32 Scene1002::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendMessage(_asOutsideDoorBackground, 0x4808, 0);
 		break;
 	case 0x8000:
-		setSpriteSurfacePriority(_class599, 995);
+		setSpriteSurfacePriority(_ssCeiling, 995);
 		setSpriteSurfacePriority(_ssLadderArch, 995);
 		break;
 	case 0x8001:
-		setSpriteSurfacePriority(_class599, 1015);
+		setSpriteSurfacePriority(_ssCeiling, 1015);
 		setSpriteSurfacePriority(_ssLadderArch, 1015);
 		break;
 	}	
@@ -1566,9 +1566,8 @@ uint32 Scene1005::handleMessage(int messageNum, const MessageParam &param, Entit
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0001:
-		if (param.asPoint().x <= 20 || param.asPoint().x >= 620) {
+		if (param.asPoint().x <= 20 || param.asPoint().x >= 620)
 			leaveScene(0);			
-		}
 		break;
 	}
 	return 0;
