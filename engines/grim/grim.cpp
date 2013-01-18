@@ -745,6 +745,7 @@ void GrimEngine::savegameRestore() {
 	g_movie->stop();
 	g_imuse->pause(true);
 	g_movie->pause(true);
+	g_registry->save();
 
 	_selectedActor = NULL;
 	delete _currSet;

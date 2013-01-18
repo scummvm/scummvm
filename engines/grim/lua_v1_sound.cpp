@@ -42,6 +42,8 @@ enum ImuseParam {
 	IM_SOUND_PAN = 0x700
 };
 
+static float ImToMixer = 2.f;
+
 void Lua_V1::ImStartSound() {
 	lua_Object nameObj = lua_getparam(1);
 	lua_Object priorityObj = lua_getparam(2);
@@ -95,33 +97,33 @@ void Lua_V1::ImSetMusicVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (int)lua_getnumber(volObj));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (int)lua_getnumber(volObj) * ImToMixer);
 }
 
 void Lua_V1::ImGetMusicVol() {
-	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
+	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / ImToMixer);
 }
 
 void Lua_V1::ImSetVoiceVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (int)lua_getnumber(volObj));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (int)lua_getnumber(volObj) * ImToMixer);
 }
 
 void Lua_V1::ImGetVoiceVol() {
-	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
+	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / ImToMixer);
 }
 
 void Lua_V1::ImSetSfxVol() {
 	lua_Object volObj = lua_getparam(1);
 	if (!lua_isnumber(volObj))
 		return;
-	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (int)lua_getnumber(volObj));
+	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (int)lua_getnumber(volObj) * ImToMixer);
 }
 
 void Lua_V1::ImGetSfxVol() {
-	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
+	lua_pushnumber(g_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / ImToMixer);
 }
 
 void Lua_V1::ImSetParam() {
