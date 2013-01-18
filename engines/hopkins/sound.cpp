@@ -30,6 +30,7 @@
 #include "hopkins/hopkins.h"
 #include "audio/audiostream.h"
 #include "audio/mods/protracker.h"
+#include "audio/decoders/raw.h"
 
 namespace Audio {
 
@@ -154,6 +155,11 @@ protected:
 
 		if (file->open(filename + ".WAV")) {
 			_cueStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
+			return true;
+		}
+
+		if (file->open(filename + ".RAW")) {
+			_cueStream = Audio::makeRawStream(file, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 			return true;
 		}
 
@@ -552,6 +558,19 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 
 		catPos = _vm->_globals._catalogPos;
 		catLen = _vm->_globals._catalogSize;
+	} else if (!_vm->_fileManager.searchCat(filename + ".RAW", 9)) {
+		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+			filename = "ENG_VOI.RES";
+		// Win95 and Linux versions uses another set of names
+		else if (_vm->_globals._language == LANG_FR)
+			filename = "RES_VFR.RES";
+		else if (_vm->_globals._language == LANG_EN)
+			filename = "RES_VAN.RES";
+		else if (_vm->_globals._language == LANG_SP)
+			filename = "RES_VES.RES";
+
+		catPos = _vm->_globals._catalogPos;
+		catLen = _vm->_globals._catalogSize;
 	} else {
 		if (!f.exists(filename + ".WAV")) {
 			if (!f.exists(filename + ".APC"))
@@ -845,8 +864,10 @@ void SoundManager::updateScummVMSoundSettings() {
 Audio::RewindableAudioStream *SoundManager::makeSoundStream(Common::SeekableReadStream *stream) {
 	if (_vm->getPlatform() == Common::kPlatformWindows)
 		return Audio::makeAPCStream(stream, DisposeAfterUse::YES);
-	else
+	else if (_vm->getPlatform() == Common::kPlatformLinux)
 		return Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	else
+		return Audio::makeRawStream(stream, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 }
 
 // Blatant rip from gob engine. Hi DrMcCoy!
