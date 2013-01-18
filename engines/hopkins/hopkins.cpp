@@ -214,12 +214,16 @@ bool HopkinsEngine::runWin95Demo() {
 		case 3:
 			if (!_globals._saveData->data[svField170]) {
 				_soundManager.WSOUND(3);
-				if (_globals._language == LANG_FR)
-					_graphicsManager.loadImage("fondfr");
-				else if (_globals._language == LANG_EN)
-					_graphicsManager.loadImage("fondan");
-				else if (_globals._language == LANG_SP)
-					_graphicsManager.loadImage("fondes");
+				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
+					_graphicsManager.loadImage("fond");
+				else {
+					if (_globals._language == LANG_FR)
+						_graphicsManager.loadImage("fondfr");
+					else if (_globals._language == LANG_EN)
+						_graphicsManager.loadImage("fondan");
+					else if (_globals._language == LANG_SP)
+						_graphicsManager.loadImage("fondes");
+				}
 				_graphicsManager.fadeInLong();
 				_eventsManager.delay(500);
 				_graphicsManager.fadeOutLong();
@@ -523,12 +527,16 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 3:
 			if (!_globals._saveData->data[svField170]) {
 				_soundManager.WSOUND(3);
-				if (_globals._language == LANG_FR)
-					_graphicsManager.loadImage("fondfr");
-				else if (_globals._language == LANG_EN)
-					_graphicsManager.loadImage("fondan");
-				else if (_globals._language == LANG_SP)
-					_graphicsManager.loadImage("fondes");
+				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
+					_graphicsManager.loadImage("fond");
+				else {
+					if (_globals._language == LANG_FR)
+						_graphicsManager.loadImage("fondfr");
+					else if (_globals._language == LANG_EN)
+						_graphicsManager.loadImage("fondan");
+					else if (_globals._language == LANG_SP)
+						_graphicsManager.loadImage("fondes");
+				}
 				_graphicsManager.fadeInLong();
 				_eventsManager.delay(500);
 				_graphicsManager.fadeOutLong();
@@ -860,12 +868,16 @@ bool HopkinsEngine::runFull() {
 		case 3:
 			if (!_globals._saveData->data[svField170]) {
 				_soundManager.WSOUND(3);
-				if (_globals._language == LANG_FR)
-					_graphicsManager.loadImage("fondfr");
-				else if (_globals._language == LANG_EN)
-					_graphicsManager.loadImage("fondan");
-				else if (_globals._language == LANG_SP)
-					_graphicsManager.loadImage("fondes");
+				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
+					_graphicsManager.loadImage("fond");
+				else {
+					if (_globals._language == LANG_FR)
+						_graphicsManager.loadImage("fondfr");
+					else if (_globals._language == LANG_EN)
+						_graphicsManager.loadImage("fondan");
+					else if (_globals._language == LANG_SP)
+						_graphicsManager.loadImage("fondes");
+				}
 				_graphicsManager.fadeInLong();
 				_eventsManager.delay(500);
 				_graphicsManager.fadeOutLong();

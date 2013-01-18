@@ -60,12 +60,16 @@ void DialogsManager::showOptionsDialog() {
 	_vm->_eventsManager.changeMouseCursor(0);
 	_vm->_eventsManager.VBL();
 	Common::String filename;
-	if (_vm->_globals._language == LANG_FR)
-		filename = "OPTIFR.SPR";
-	else if (_vm->_globals._language == LANG_EN)
-		filename = "OPTIAN.SPR";
-	else if (_vm->_globals._language == LANG_SP)
-		filename = "OPTIES.SPR";
+	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+		filename = "OPTION.SPR";
+	else {
+		if (_vm->_globals._language == LANG_FR)
+			filename = "OPTIFR.SPR";
+		else if (_vm->_globals._language == LANG_EN)
+			filename = "OPTIAN.SPR";
+		else if (_vm->_globals._language == LANG_SP)
+			filename = "OPTIES.SPR";
+	}
 
 	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(filename);
 	_vm->_globals._optionDialogFl = true;
@@ -313,16 +317,20 @@ LABEL_7:
 	_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 
 	Common::String filename;
-	switch (_vm->_globals._language) {
-		case LANG_EN:
-			filename = "INVENTAN.SPR";
-			break;
-		case LANG_FR:
-			filename = "INVENTFR.SPR";
-			break;
-		case LANG_SP:
-			filename = "INVENTES.SPR";
-			break;
+	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+		filename = "INVENT.SPR";
+	else {
+		switch (_vm->_globals._language) {
+			case LANG_EN:
+				filename = "INVENTAN.SPR";
+				break;
+			case LANG_FR:
+				filename = "INVENTFR.SPR";
+				break;
+			case LANG_SP:
+				filename = "INVENTES.SPR";
+				break;
+		}
 	}
 
 	Common::File f;
@@ -605,18 +613,22 @@ void DialogsManager::showSaveLoad(int a1) {
 	int slotNumber;
 	hopkinsSavegameHeader header;
 	byte *thumb;
-
 	Common::String filename;
-	switch (_vm->_globals._language) {
-	case LANG_EN:
-		filename = "SAVEAN.SPR";
-		break;
-	case LANG_FR:
-		filename = "SAVEFR.SPR";
-		break;
-	case LANG_SP:
-		filename = "SAVEES.SPR";
-		break;
+
+	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+		filename = "SAVE.SPR";
+	else {
+		switch (_vm->_globals._language) {
+		case LANG_EN:
+			filename = "SAVEAN.SPR";
+			break;
+		case LANG_FR:
+			filename = "SAVEFR.SPR";
+			break;
+		case LANG_SP:
+			filename = "SAVEES.SPR";
+			break;
+		}
 	}
 
 	_vm->_objectsManager._saveLoadSprite = _vm->_objectsManager.loadSprite(filename);
