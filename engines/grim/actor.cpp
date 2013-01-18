@@ -1486,14 +1486,13 @@ void Actor::update(uint frameTime) {
 		}
 	}
 
-	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
-		Costume *c = *i;
-		c->moveHead(_lookingMode, _lookAtVector);
-	}
-
 	Costume *c = getCurrentCostume();
 	if (c) {
 		c->animate();
+	}
+
+	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); ++i) {
+		(*i)->moveHead(_lookingMode, _lookAtVector);
 	}
 }
 
