@@ -569,7 +569,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	if (!_musicOffFl && _musicVolume > 2)
 		_musicVolume = (signed int)((long double)_musicVolume - (long double)_musicVolume / 100.0 * 45.0);
 
-	PLAY_VOICE_SDL();
+	playVoice();
 
 	// Loop for playing voice
 	breakFlag = 0;
@@ -698,13 +698,11 @@ void SoundManager::stopVoice(int voiceIndex) {
 		Voice[voiceIndex]._status = 0;
 		int wavIndex = Voice[voiceIndex]._wavIndex;
 		if (Swav[wavIndex]._active) {
-			if (Swav[wavIndex].freeSample)
+			if (Swav[wavIndex]._freeSampleFl)
 				DEL_SAMPLE_SDL(wavIndex);
 		}
 	}
-	Voice[voiceIndex].fieldC = 0;
 	Voice[voiceIndex]._status = 0;
-	Voice[voiceIndex].field14 = 0;
 }
 
 void SoundManager::SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength) {
@@ -714,13 +712,13 @@ void SoundManager::SDL_LVOICE(Common::String filename, size_t filePosition, size
 	Swav[20]._active = true;
 }
 
-void SoundManager::PLAY_VOICE_SDL() {
+void SoundManager::playVoice() {
 	if (!Swav[20]._active)
 		error("Bad handle");
 
 	if (!Voice[2]._status) {
 		int wavIndex = Voice[2]._wavIndex;
-		if (Swav[wavIndex]._active && Swav[wavIndex].freeSample)
+		if (Swav[wavIndex]._active && Swav[wavIndex]._freeSampleFl)
 			DEL_SAMPLE_SDL(wavIndex);
 	}
 
@@ -761,7 +759,7 @@ void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename
 
 	SDL_LoadVoice(filename, 0, 0, Swav[wavIndex]);
 	Swav[wavIndex]._active = true;
-	Swav[wavIndex].freeSample = freeSample;
+	Swav[wavIndex]._freeSampleFl = freeSample;
 }
 
 void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
@@ -790,12 +788,10 @@ void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
 	if (!Swav[wavIndex]._active)
 		warning("Bad handle");
 
-	if (Voice[voiceIndex]._status == 1 && Swav[wavIndex]._active && Swav[wavIndex].freeSample)
+	if (Voice[voiceIndex]._status == 1 && Swav[wavIndex]._active && Swav[wavIndex]._freeSampleFl)
 		DEL_SAMPLE_SDL(wavIndex);
 
-	Voice[voiceIndex].fieldC = 0;
 	Voice[voiceIndex]._status = 1;
-	Voice[voiceIndex].field14 = 4;
 	Voice[voiceIndex]._wavIndex = wavIndex;
 
 	int volume = (voiceIndex == 2) ? _voiceVolume * 255 / 16 : _soundVolume * 255 / 16;

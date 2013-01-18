@@ -35,8 +35,6 @@ class VoiceItem {
 public:
 	int _status;
 	int _wavIndex;
-	int fieldC;
-	int field14;
 };
 
 class SwavItem {
@@ -44,7 +42,7 @@ public:
 	bool _active;
 	Audio::RewindableAudioStream *_audioStream;
 	Audio::SoundHandle _soundHandle;
-	bool freeSample;
+	bool _freeSampleFl;
 };
 
 class MusicItem {
@@ -70,7 +68,7 @@ private:
 	int VOICE_STAT(int voiceIndex);
 	void stopVoice(int voiceIndex);
 	void SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength);
-	void PLAY_VOICE_SDL();
+	void playVoice();
 	bool DEL_SAMPLE_SDL(int wavIndex);
 	bool SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item);
 	void LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, bool freeSample);

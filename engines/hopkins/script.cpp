@@ -2390,14 +2390,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		_vm->_globals.ZONEP[(int16)READ_LE_UINT16(dataP + 5)].field12 = (int16)READ_LE_UINT16(dataP + 7);
 		opcodeType = 1;
 	} else if (dataP[2] == 'J' && dataP[3] == 'U' && dataP[4] == 'M') {
-		int v59 = (int16)READ_LE_UINT16(dataP + 7);
-		_vm->_objectsManager.NVZONE = (int16)READ_LE_UINT16(dataP + 5);
-		_vm->_objectsManager.NVVERBE = v59;
+		_vm->_objectsManager._jumpZone = (int16)READ_LE_UINT16(dataP + 5);
+		_vm->_objectsManager._jumpVerb = (int16)READ_LE_UINT16(dataP + 7);
 		opcodeType = 6;
 	} else if (dataP[2] == 'S' && dataP[3] == 'O' && dataP[4] == 'U') {
-		int v60 = (int16)READ_LE_UINT16(dataP + 5);
+		int soundNum = (int16)READ_LE_UINT16(dataP + 5);
 
-		Common::String file = Common::String::format("SOUND%d.WAV", v60);
+		Common::String file = Common::String::format("SOUND%d.WAV", soundNum);
 		_vm->_soundManager.playSound(file);
 		opcodeType = 1;
 	} else if (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'F') {

@@ -802,9 +802,7 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int a3, int
 	return result;
 }
 
-void TalkManager::REPONSE(int a1, int a2) {
-	byte v2;
-	byte v3;
+void TalkManager::REPONSE(int zone, int verb) {
 	byte *v5;
 	byte *v6;
 	uint16 v7;
@@ -818,15 +816,15 @@ void TalkManager::REPONSE(int a1, int a2) {
 	bool loopCond;
 	byte *ptr;
 
-	v2 = a1;
-	v3 = a2;
+	byte zoneObj = zone;
+	byte verbObj = verb;
 LABEL_2:
 	v15 = false;
 	if (_vm->_globals.COUCOU != g_PTRNUL) {
 		v5 = _vm->_globals.COUCOU;
 		for (;;) {
 			if (v5[0] == 'C' && v5[1] == 'O' && v5[2] == 'D') {
-				if (v5[3] == v2 && v5[4] == v3)
+				if (v5[3] == zoneObj && v5[4] == verbObj)
 					v15 = true;
 			}
 			if (v5[0] == 'F' && v5[1] == 'I' && v5[2] == 'N')
@@ -876,21 +874,26 @@ LABEL_2:
 						return;
 
 					if (v10 == 2)
+						// GOTO
 						v13 =  _vm->_scriptManager.handleGoto(ptr + 20 * v13);
 					else if (v10 == 3)
+						// IF
 						v13 =  _vm->_scriptManager.handleIf(ptr, v13);
 
 					if (v13 == -1)
 						error("Invalid IFF function");
 
 					if (v10 == 1 || v10 == 4)
+						// Already handled opcode or END IF
 						++v13;
 					else if (!v10 || v10 == 5)
+						// EXIT
 						loopCond = true;
 					else if (v10 == 6) {
+						// JUMP
 						_vm->_globals.freeMemory(ptr);
-						v2 = _vm->_objectsManager.NVZONE;
-						v3 = _vm->_objectsManager.NVVERBE;
+						zoneObj = _vm->_objectsManager._jumpZone;
+						verbObj = _vm->_objectsManager._jumpVerb;
 						goto LABEL_2;
 					}
 				} while (!loopCond);
@@ -904,103 +907,104 @@ LABEL_2:
 
 void TalkManager::REPONSE2(int a1, int a2) {
 	int indx = 0;
-	if (a2 == 5 && _vm->_globals._saveData->data[svField3] == 4) {
-		if (a1 == 22 || a1 == 23) {
-			_vm->_objectsManager.setFlipSprite(0, false);
-			_vm->_objectsManager.setSpriteIndex(0, 62);
-			_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 0);
-			if (a1 == 22) {
-				_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(3));
-				_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(3));
-			} else { // a1 == 23
-				_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(4));
-				_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(4));
-			}
-			_vm->_objectsManager.stopBobAnimation(3);
-			_vm->_objectsManager.stopBobAnimation(4);
-			_vm->_objectsManager.setBobAnimation(6);
-			_vm->_soundManager.PLAY_SAMPLE2(1);
-			_vm->_objectsManager.SPACTION1(_vm->_globals._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
-			do
-				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(6) < 12);
-			_vm->_objectsManager.stopBobAnimation(6);
-			_vm->_objectsManager.setBobAnimation(8);
-			
-			switch (_vm->_globals._screenId) {
-			case 35:
-				indx = 201;
-				break;
-			case 36:
-				indx = 203;
-				break;
-			case 37:
-				indx = 205;
-				break;
-			case 38:
-				indx = 207;
-				break;
-			case 39:
-				indx = 209;
-				break;
-			case 40:
-				indx = 211;
-				break;
-			case 41:
-				indx = 213;
-				break;
-			}
-			_vm->_globals._saveData->data[indx] = 2;
-			_vm->_objectsManager.disableZone(22);
-			_vm->_objectsManager.disableZone(23);
-		} else if (a1 == 20 || a1 == 21) {
-			_vm->_objectsManager.setFlipSprite(0, true);
-			_vm->_objectsManager.setSpriteIndex(0, 62);
-			_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 1);
-			if (a1 == 20) {
-				_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(1));
-				_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(1));
-			} else { // a1 == 21
-				_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(2));
-				_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(2));
-			}
-			_vm->_objectsManager.stopBobAnimation(1);
-			_vm->_objectsManager.stopBobAnimation(2);
-			_vm->_objectsManager.setBobAnimation(5);
-			_vm->_soundManager.PLAY_SAMPLE2(1);
-			_vm->_objectsManager.SPACTION1(_vm->_globals._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
-			do
-				_vm->_eventsManager.VBL();
-			while (_vm->_objectsManager.BOBPOSI(5) < 12);
-			_vm->_objectsManager.stopBobAnimation(5);
-			_vm->_objectsManager.setBobAnimation(7);
-			switch (_vm->_globals._screenId) {
-			case 35:
-				indx = 200;
-				break;
-			case 36:
-				indx = 202;
-				break;
-			case 37:
-				indx = 204;
-				break;
-			case 38:
-				indx = 206;
-				break;
-			case 39:
-				indx = 208;
-				break;
-			case 40:
-				indx = 210;
-				break;
-			case 41:
-				indx = 212;
-				break;
-			}
-			_vm->_globals._saveData->data[indx] = 2;
-			_vm->_objectsManager.disableZone(21);
-			_vm->_objectsManager.disableZone(20);
+	if (a2 != 5 || _vm->_globals._saveData->data[svField3] != 4)
+		return;
+
+	if (a1 == 22 || a1 == 23) {
+		_vm->_objectsManager.setFlipSprite(0, false);
+		_vm->_objectsManager.setSpriteIndex(0, 62);
+		_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 0);
+		if (a1 == 22) {
+			_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(3));
+			_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(3));
+		} else { // a1 == 23
+			_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(4));
+			_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(4));
 		}
+		_vm->_objectsManager.stopBobAnimation(3);
+		_vm->_objectsManager.stopBobAnimation(4);
+		_vm->_objectsManager.setBobAnimation(6);
+		_vm->_soundManager.PLAY_SAMPLE2(1);
+		_vm->_objectsManager.SPACTION1(_vm->_globals._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
+		do
+			_vm->_eventsManager.VBL();
+		while (_vm->_objectsManager.BOBPOSI(6) < 12);
+		_vm->_objectsManager.stopBobAnimation(6);
+		_vm->_objectsManager.setBobAnimation(8);
+		
+		switch (_vm->_globals._screenId) {
+		case 35:
+			indx = 201;
+			break;
+		case 36:
+			indx = 203;
+			break;
+		case 37:
+			indx = 205;
+			break;
+		case 38:
+			indx = 207;
+			break;
+		case 39:
+			indx = 209;
+			break;
+		case 40:
+			indx = 211;
+			break;
+		case 41:
+			indx = 213;
+			break;
+		}
+		_vm->_globals._saveData->data[indx] = 2;
+		_vm->_objectsManager.disableZone(22);
+		_vm->_objectsManager.disableZone(23);
+	} else if (a1 == 20 || a1 == 21) {
+		_vm->_objectsManager.setFlipSprite(0, true);
+		_vm->_objectsManager.setSpriteIndex(0, 62);
+		_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 1);
+		if (a1 == 20) {
+			_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(1));
+			_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(1));
+		} else { // a1 == 21
+			_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(2));
+			_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(2));
+		}
+		_vm->_objectsManager.stopBobAnimation(1);
+		_vm->_objectsManager.stopBobAnimation(2);
+		_vm->_objectsManager.setBobAnimation(5);
+		_vm->_soundManager.PLAY_SAMPLE2(1);
+		_vm->_objectsManager.SPACTION1(_vm->_globals._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
+		do
+			_vm->_eventsManager.VBL();
+		while (_vm->_objectsManager.BOBPOSI(5) < 12);
+		_vm->_objectsManager.stopBobAnimation(5);
+		_vm->_objectsManager.setBobAnimation(7);
+		switch (_vm->_globals._screenId) {
+		case 35:
+			indx = 200;
+			break;
+		case 36:
+			indx = 202;
+			break;
+		case 37:
+			indx = 204;
+			break;
+		case 38:
+			indx = 206;
+			break;
+		case 39:
+			indx = 208;
+			break;
+		case 40:
+			indx = 210;
+			break;
+		case 41:
+			indx = 212;
+			break;
+		}
+		_vm->_globals._saveData->data[indx] = 2;
+		_vm->_objectsManager.disableZone(21);
+		_vm->_objectsManager.disableZone(20);
 	}
 }
 
