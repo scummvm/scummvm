@@ -42,7 +42,7 @@ void StaticData::load(const char *filename) {
 	
 	// Load message lists
 	uint32 messageListsCount = fd.readUint32LE();
-	debug("messageListsCount: %d", messageListsCount);
+	debug(3, "messageListsCount: %d", messageListsCount);
 	for (uint32 i = 0; i < messageListsCount; i++) {
 		MessageList *messageList = new MessageList();
 		uint32 id = fd.readUint32LE();
@@ -58,7 +58,7 @@ void StaticData::load(const char *filename) {
 
 	// Load rect lists
 	uint32 rectListsCount = fd.readUint32LE();
-	debug("rectListsCount: %d", rectListsCount);
+	debug(3, "rectListsCount: %d", rectListsCount);
 	for (uint32 i = 0; i < rectListsCount; i++) {
 		RectList *rectList = new RectList();
 		uint32 id = fd.readUint32LE();
@@ -87,7 +87,7 @@ void StaticData::load(const char *filename) {
 	
 	// Load hit rects
 	uint32 hitRectListsCount = fd.readUint32LE();
-	debug("hitRectListsCount: %d", hitRectListsCount);
+	debug(3, "hitRectListsCount: %d", hitRectListsCount);
 	for (uint32 i = 0; i < hitRectListsCount; i++) {
 		HitRectList *hitRectList = new HitRectList();
 		uint32 id = fd.readUint32LE();
@@ -106,7 +106,7 @@ void StaticData::load(const char *filename) {
 
 	// Load navigation lists
 	uint32 navigationListsCount = fd.readUint32LE();
-	debug("navigationListsCount: %d", navigationListsCount);
+	debug(3, "navigationListsCount: %d", navigationListsCount);
 	for (uint32 i = 0; i < navigationListsCount; i++) {
 		NavigationList *navigationList = new NavigationList();
 		uint32 id = fd.readUint32LE();
@@ -127,7 +127,7 @@ void StaticData::load(const char *filename) {
 
 	// Load HallOfRecordsInfo items
 	uint32 hallOfRecordsInfoItemsCount = fd.readUint32LE();
-	debug("hallOfRecordsInfoItemsCount: %d", hallOfRecordsInfoItemsCount);
+	debug(3, "hallOfRecordsInfoItemsCount: %d", hallOfRecordsInfoItemsCount);
 	for (uint32 i = 0; i < hallOfRecordsInfoItemsCount; i++) {
 		HallOfRecordsInfo *hallOfRecordsInfo = new HallOfRecordsInfo();
 		uint32 id = fd.readUint32LE();
@@ -142,7 +142,7 @@ void StaticData::load(const char *filename) {
 
 	// Load TrackInfo items
 	uint32 trackInfoItemsCount = fd.readUint32LE();
-	debug("trackInfoItemsCount: %d", trackInfoItemsCount);
+	debug(3, "trackInfoItemsCount: %d", trackInfoItemsCount);
 	for (uint32 i = 0; i < trackInfoItemsCount; i++) {
 		TrackInfo *trackInfo = new TrackInfo();
 		uint32 id = fd.readUint32LE();

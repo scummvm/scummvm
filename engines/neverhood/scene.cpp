@@ -397,7 +397,16 @@ void Scene::processMessageList() {
 		_messageListStatus = 0;
 	}
 	
-	if (_messageList && _klayman) {
+	if (_messageList && _klayman) {	
+
+#if 0
+		debug("MessageList: %p, %d", (void*)_messageList, _messageList->size());
+		for (uint i = 0; i < _messageList->size(); ++i) {
+			if (i == _messageListIndex) debugN("**"); else debugN("  ");
+			debug("(%08X, %08X)", (*_messageList)[i].messageNum, (*_messageList)[i].messageValue);
+		}
+		debug("--------------------------------");
+#endif
 	
 		while (_messageList && _messageListIndex < _messageListCount && !_isKlaymanBusy) {
 			uint32 messageNum = (*_messageList)[_messageListIndex].messageNum;

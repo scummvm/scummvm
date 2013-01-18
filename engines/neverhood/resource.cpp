@@ -353,7 +353,9 @@ DataResource::~DataResource() {
 }
 
 void DataResource::load(uint32 fileHash) {
-	debug(2, "DataResource::load(%08X)", fileHash);
+	if (_resourceHandle.fileHash() == fileHash)
+		return;
+	debug("DataResource::load(%08X)", fileHash);
 	const byte *data = NULL;
 	uint32 dataSize = 0;
 	unload();
@@ -497,7 +499,6 @@ void DataResource::load(uint32 fileHash) {
 }
 
 void DataResource::unload() {
-	_vm->_res->unloadResource(_resourceHandle);
 	_directory.clear();
 	_points.clear();
 	for (Common::Array<NPointArray*>::iterator it = _pointArrays.begin(); it != _pointArrays.end(); ++it)
@@ -516,6 +517,7 @@ void DataResource::unload() {
 	for (Common::Array<DRSubRectList*>::iterator it = _drSubRectLists.begin(); it != _drSubRectLists.end(); ++it)
 		delete (*it);
 	_drSubRectLists.clear();
+	_vm->_res->unloadResource(_resourceHandle);
 }
 
 NPoint DataResource::getPoint(uint32 nameHash) {
