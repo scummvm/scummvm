@@ -590,6 +590,8 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 
 	playVoice();
 
+	_vm->_eventsManager._escKeyFl = false;
+
 	// Loop for playing voice
 	breakFlag = 0;
 	do {
