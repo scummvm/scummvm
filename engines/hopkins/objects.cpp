@@ -482,6 +482,7 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob._frameIndex = 0;
 	bob.field10 = 0;
 	bob.field12 = 0;
+	bob.field14 = 0;
 	bob._disabledAnimationFl = false;
 	bob._animData = g_PTRNUL;
 	bob.field1C = false;
