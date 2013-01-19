@@ -111,7 +111,7 @@ Module1300::~Module1300() {
 void Module1300::createScene(int sceneNum, int which) {
 	debug("Module1300::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
-	switch (_vm->gameState().sceneNum) {
+	switch (_sceneNum) {
 	case 1:
 		_vm->gameState().sceneNum = 1;
 		_vm->_soundMan->setSoundListParams(kModule1300SoundList, false, 0, 0, 0, 0);

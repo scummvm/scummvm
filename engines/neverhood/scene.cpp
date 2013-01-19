@@ -258,15 +258,15 @@ void Scene::leaveScene(uint32 result) {
 
 uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	switch (messageNum) {
-	case 0: // mouse moved
+	case 0x0000: // mouse moved
 		if (_mouseCursor && _mouseCursor->hasMessageHandler())
 			sendMessage(_mouseCursor, 0x4002, param);
 		break;
-	case 1: // mouse clicked
+	case 0x0001: // mouse clicked
 		_mouseClicked = true;
 		_mouseClickPos = param.asPoint();
 		break;
-	case 6:
+	case 0x0006:
 		sendMessage(_parentModule, 0x1009, param);		
 		break;
 	case 0x1006:
