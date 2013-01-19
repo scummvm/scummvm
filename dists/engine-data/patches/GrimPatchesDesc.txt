@@ -132,6 +132,15 @@ List of fixed bugs in GF scripts:
 	This patch adds a sleep_for(600) before the call to "start_sfx("tkBstSqt.wav")" so that the squeezing
 	sound happens when Manny squeezes the baster.
 
+	Fix bonewagon popping when driving in and out set tr. - tr.lua.patchr
+	The function tr.drive_in() has a while loop that makes the bonewagon go forward until it's near the wanted
+	position. The problem is that 'near' is 1, which is quite a lot. This patch modifies the loop so that it
+	goes forward until, after the WalkActorForward call, he is nearer than before, so until it has not passed
+	the destination.
+	This patch also modifies tr.get_in_BW(), which is called only when the tree is still up, and adds a
+	bonewagon:ignore_boxes(), since the function bonewagon.default(), which get_in_BW calls, enables the boxes for
+	the bonewagon.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
