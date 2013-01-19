@@ -42,9 +42,9 @@ GraphicsManager::GraphicsManager() {
 	_lineNbr = 0;
 	_videoPtr = NULL;
 	_scrollOffset = 0;
-	SCROLL = 0;
+	_scrollPosX = 0;
 	_largeScreenFl = false;
-	OLD_SCROLL = 0;
+	_oldScrollPosX = 0;
 
 	_lineNbr2 = 0;
 	Agr_x = Agr_y = 0;
@@ -52,7 +52,7 @@ GraphicsManager::GraphicsManager() {
 	_fadeDefaultSpeed = 15;
 	FADE_LINUX = 0;
 	_skipVideoLockFl = false;
-	no_scroll = 0;
+	_scrollStatus = 0;
 	min_x = 0;
 	min_y = 20;
 	max_x = SCREEN_WIDTH * 2;
@@ -82,7 +82,7 @@ void GraphicsManager::setParent(HopkinsEngine *vm) {
 
 	if (_vm->getIsDemo()) {
 		if (_vm->getPlatform() == Common::kPlatformLinux)
-		// CHECKME: Should be 0?
+		// CHECKME: Should be false?
 			MANU_SCROLL = true;
 		else
 			MANU_SCROLL = false;
@@ -194,8 +194,8 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	scrollScreen(0);
 	A_PCX640_480(_vesaScreen, file, _palette, flag);
 
-	SCROLL = 0;
-	OLD_SCROLL = 0;
+	_scrollPosX = 0;
+	_oldScrollPosX = 0;
 	clearPalette();
 
 	if (!_largeScreenFl) {
@@ -246,7 +246,7 @@ void GraphicsManager::scrollScreen(int amount) {
 	int result = CLIP(amount, 0, SCREEN_WIDTH);
 	_vm->_eventsManager._startPos.x = result;
 	_scrollOffset = result;
-	SCROLL = result;
+	_scrollPosX = result;
 }
 
 void GraphicsManager::Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold) {

@@ -389,7 +389,7 @@ LABEL_45:
 			}
 		}
 		goto LABEL_54;
-	}
+	} 
 
 	_vm->_eventsManager.updateCursor();
 	_vm->_graphicsManager.addVesaSegment(v15, yp, v12, v11);
@@ -418,25 +418,25 @@ LABEL_63:
 LABEL_65:
 	_vm->_globals._speed = 2;
 	_rateCounter = 0;
-	if (!_vm->_graphicsManager._largeScreenFl || _vm->_graphicsManager.no_scroll == 1) {
+	if (!_vm->_graphicsManager._largeScreenFl || _vm->_graphicsManager._scrollStatus == 1) {
 		_vm->_graphicsManager.displayVesaSegment();
 	} else {
-		if (_vm->_graphicsManager.no_scroll != 2) {
-			if (getMouseX() > _vm->_graphicsManager.SCROLL + 620)
-				_vm->_graphicsManager.SCROLL += _vm->_graphicsManager._scrollSpeed;
-			if (getMouseX() < _vm->_graphicsManager.SCROLL + 10)
-				_vm->_graphicsManager.SCROLL -= _vm->_graphicsManager._scrollSpeed;
+		if (_vm->_graphicsManager._scrollStatus != 2) {
+			if (getMouseX() > _vm->_graphicsManager._scrollPosX + 620)
+				_vm->_graphicsManager._scrollPosX += _vm->_graphicsManager._scrollSpeed;
+			if (getMouseX() < _vm->_graphicsManager._scrollPosX + 10)
+				_vm->_graphicsManager._scrollPosX -= _vm->_graphicsManager._scrollSpeed;
 		}
-		if (_vm->_graphicsManager.SCROLL < 0)
-			_vm->_graphicsManager.SCROLL = 0;
-		if (_vm->_graphicsManager.SCROLL > SCREEN_WIDTH)
-			_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
-		if (_vm->_graphicsManager.OLD_SCROLL == _vm->_graphicsManager.SCROLL) {
+		if (_vm->_graphicsManager._scrollPosX < 0)
+			_vm->_graphicsManager._scrollPosX = 0;
+		if (_vm->_graphicsManager._scrollPosX > SCREEN_WIDTH)
+			_vm->_graphicsManager._scrollPosX = SCREEN_WIDTH;
+		if (_vm->_graphicsManager._oldScrollPosX == _vm->_graphicsManager._scrollPosX) {
 			_vm->_graphicsManager.displayVesaSegment();
 		} else {
 			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.lockScreen();
-			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager.SCROLL, 20, SCREEN_WIDTH, 440, 0, 20);
+			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._scrollPosX, 20, SCREEN_WIDTH, 440, 0, 20);
 			_vm->_graphicsManager.unlockScreen();
 			_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
 
@@ -446,17 +446,17 @@ LABEL_65:
 			}
 
 			_vm->_globals.NBBLOC = 0;
-			_startPos.x = _vm->_graphicsManager.SCROLL;
-			_vm->_graphicsManager._scrollOffset = _vm->_graphicsManager.SCROLL;
-			_vm->_graphicsManager.SCROLL = _vm->_graphicsManager.SCROLL;
+			_startPos.x = _vm->_graphicsManager._scrollPosX;
+			_vm->_graphicsManager._scrollOffset = _vm->_graphicsManager._scrollPosX;
+			_vm->_graphicsManager._scrollPosX = _vm->_graphicsManager._scrollPosX;
 		}
-		_vm->_graphicsManager.OLD_SCROLL = _vm->_graphicsManager.SCROLL;
-		_startPos.x = _vm->_graphicsManager.SCROLL;
-		_vm->_graphicsManager._scrollOffset = _vm->_graphicsManager.SCROLL;
+		_vm->_graphicsManager._oldScrollPosX = _vm->_graphicsManager._scrollPosX;
+		_startPos.x = _vm->_graphicsManager._scrollPosX;
+		_vm->_graphicsManager._scrollOffset = _vm->_graphicsManager._scrollPosX;
 	}
 	_curMouseButton = _mouseButton;
 	_mouseButton = 0;
-	_vm->_soundManager.VERIF_SOUND();
+	_vm->_soundManager.checkSoundEnd();
 	refreshEvents();
 }
 

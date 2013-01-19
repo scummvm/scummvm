@@ -42,8 +42,8 @@ public:
 	byte *_characterAnim;
 	size_t _characterSize;
 	bool STATI;
-	int PLIGNE1, PLIGNE2;
-	int PLIGNE3, PLIGNE4;
+	int _dialogueMesgId1, _dialogueMesgId2;
+	int _dialogueMesgId3, _dialogueMesgId4;
 	int _paletteBufferIdx;
 public:
 	TalkManager();

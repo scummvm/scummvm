@@ -188,7 +188,7 @@ Audio::AudioStream *makeTwaStream(Common::String name, Common::SeekableReadStrea
 namespace Hopkins {
 
 SoundManager::SoundManager() {
-	SPECIAL_SOUND = 0;
+	_specialSoundNum = 0;
 	_soundVolume = 0;
 	_voiceVolume = 0;
 	_musicVolume = 0;
@@ -198,9 +198,9 @@ SoundManager::SoundManager() {
 	_textOffFl = false;
 	_soundFl = false;
 	VBL_MERDE = false;
-	SOUND_NUM = 0;
-	old_music = 0;
-	MOD_FLAG = false;
+	_currentSoundIndex = 0;
+	_oldSoundNumber = 0;
+	_modPlayingFl = false;
 
 	for (int i = 0; i < VOICE_COUNT; ++i)
 		Common::fill((byte *)&Voice[i], (byte *)&Voice[i] + sizeof(VoiceItem), 0);
@@ -215,29 +215,29 @@ SoundManager::~SoundManager() {
 	stopMusic();
 	delMusic();
 	_vm->_mixer->stopHandle(_musicHandle);
-	MOD_FLAG = false;
+	_modPlayingFl = false;
 }
 
 void SoundManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
-	SPECIAL_SOUND = 0;
+	_specialSoundNum = 0;
 }
 
 void SoundManager::WSOUND_INIT() {
 	warning("TODO: WSOUND_INIT");
 }
 
-void SoundManager::VERIF_SOUND() {
+void SoundManager::checkSoundEnd() {
 	if (!_soundOffFl && _soundFl) {
-		if (!VOICE_STAT(1)) {
+		if (!checkVoiceStatus(1)) {
 			stopVoice(1);
-			DEL_NWAV(SOUND_NUM);
+			DEL_NWAV(_currentSoundIndex);
 		}
 	}
 }
 
-void SoundManager::LOAD_ANM_SOUND() {
-	switch (SPECIAL_SOUND) {
+void SoundManager::loadAnimSound() {
+	switch (_specialSoundNum) {
 	case 2:
 		loadSample(5, "mitra1.wav");
 		loadSample(1, "tir2.wav");
@@ -246,41 +246,41 @@ void SoundManager::LOAD_ANM_SOUND() {
 		loadSample(4, "sound4.WAV");
 		break;
 	case 5:
-		LOAD_WAV("CRIE.WAV", 1);
+		loadWav("CRIE.WAV", 1);
 		break;
 	case 14:
-		LOAD_WAV("SOUND14.WAV", 1);
+		loadWav("SOUND14.WAV", 1);
 		break;
 	case 16:
-		LOAD_WAV("SOUND16.WAV", 1);
+		loadWav("SOUND16.WAV", 1);
 		break;
 	case 198:
-		LOAD_WAV("SOUND3.WAV", 1);
+		loadWav("SOUND3.WAV", 1);
 		break;
 	case 199:
-		LOAD_WAV("SOUND22.WAV", 1);
+		loadWav("SOUND22.WAV", 1);
 		break;
 	case 200:
 		mixVoice(682, 1);
 		break;
 	case 208:
-		LOAD_WAV("SOUND77.WAV", 1);
+		loadWav("SOUND77.WAV", 1);
 		break;
 	case 210:
-		LOAD_WAV("SOUND78.WAV", 1);
+		loadWav("SOUND78.WAV", 1);
 		break;
 	case 211:
-		LOAD_WAV("SOUND78.WAV", 1);
+		loadWav("SOUND78.WAV", 1);
 		break;
 	case 229:
-		LOAD_WAV("SOUND80.WAV", 1);
-		LOAD_WAV("SOUND82.WAV", 2);
+		loadWav("SOUND80.WAV", 1);
+		loadWav("SOUND82.WAV", 2);
 		break;
 	}
 }
 
-void SoundManager::playAnim_SOUND(int soundNumber) {
-	if (!_vm->_globals._censorshipFl && SPECIAL_SOUND == 2) {
+void SoundManager::playAnimSound(int soundNumber) {
+	if (!_vm->_globals._censorshipFl && _specialSoundNum == 2) {
 		switch (soundNumber) {
 		case 20:
 			PLAY_SAMPLE2(5);
@@ -300,32 +300,32 @@ void SoundManager::playAnim_SOUND(int soundNumber) {
 			PLAY_SAMPLE2(4);
 			break;
 		}
-	} else if (SPECIAL_SOUND == 1 && soundNumber == 17)
+	} else if (_specialSoundNum == 1 && soundNumber == 17)
 		playSound("SOUND42.WAV");
-	else if (SPECIAL_SOUND == 5 && soundNumber == 19)
+	else if (_specialSoundNum == 5 && soundNumber == 19)
 		playWav(1);
-	else if (SPECIAL_SOUND == 14 && soundNumber == 625)
+	else if (_specialSoundNum == 14 && soundNumber == 625)
 		playWav(1);
-	else if (SPECIAL_SOUND == 16 && soundNumber == 25)
+	else if (_specialSoundNum == 16 && soundNumber == 25)
 		playWav(1);
-	else if (SPECIAL_SOUND == 17) {
+	else if (_specialSoundNum == 17) {
 		if (soundNumber == 6)
 			PLAY_SAMPLE2(1);
 		else if (soundNumber == 14)
 			PLAY_SAMPLE2(2);
 		else if (soundNumber == 67)
 			PLAY_SAMPLE2(3);
-	} else if (SPECIAL_SOUND == 198 && soundNumber == 15)
+	} else if (_specialSoundNum == 198 && soundNumber == 15)
 		playWav(1);
-	else if (SPECIAL_SOUND == 199 && soundNumber == 72)
+	else if (_specialSoundNum == 199 && soundNumber == 72)
 		playWav(1);
-	else if (SPECIAL_SOUND == 208 && soundNumber == 40)
+	else if (_specialSoundNum == 208 && soundNumber == 40)
 		playWav(1);
-	else if (SPECIAL_SOUND == 210 && soundNumber == 2)
+	else if (_specialSoundNum == 210 && soundNumber == 2)
 		playWav(1);
-	else if (SPECIAL_SOUND == 211 && soundNumber == 22)
+	else if (_specialSoundNum == 211 && soundNumber == 22)
 		playWav(1);
-	else if (SPECIAL_SOUND == 229) {
+	else if (_specialSoundNum == 229) {
 		if (soundNumber == 15)
 			playWav(1);
 		else if (soundNumber == 91)
@@ -349,12 +349,12 @@ void SoundManager::WSOUND(int soundNumber) {
 			return;
 	}
 
-	if (old_music != soundNumber || !MOD_FLAG) {
-		if (MOD_FLAG)
+	if (_oldSoundNumber != soundNumber || !_modPlayingFl) {
+		if (_modPlayingFl)
 			WSOUND_OFF();
 
-		PLAY_MOD(modSounds[soundNumber - 1]);
-		old_music = soundNumber;
+		playMod(modSounds[soundNumber - 1]);
+		_oldSoundNumber = soundNumber;
 	}
 }
 
@@ -363,19 +363,19 @@ void SoundManager::WSOUND_OFF() {
 	stopVoice(1);
 	stopVoice(2);
 	if (_vm->_soundManager._soundFl)
-		DEL_NWAV(SOUND_NUM);
+		DEL_NWAV(_currentSoundIndex);
 
 	for (int i = 1; i <= 48; ++i)
 		DEL_SAMPLE_SDL(i);
 
-	if (MOD_FLAG) {
+	if (_modPlayingFl) {
 		stopMusic();
 		delMusic();
-		MOD_FLAG = false;
+		_modPlayingFl = false;
 	}
 }
 
-void SoundManager::PLAY_MOD(const Common::String &file) {
+void SoundManager::playMod(const Common::String &file) {
 	if (_musicOffFl)
 		return;
 	Common::String modFile = file;
@@ -395,15 +395,15 @@ void SoundManager::PLAY_MOD(const Common::String &file) {
 			modFile += "2";
 		}
 	}
-	if (MOD_FLAG) {
+	if (_modPlayingFl) {
 		stopMusic();
 		delMusic();
-		MOD_FLAG = false;
+		_modPlayingFl = false;
 	}
 
 	loadMusic(modFile);
 	playMusic();
-	MOD_FLAG = true;
+	_modPlayingFl = true;
 }
 
 void SoundManager::loadMusic(const Common::String &file) {
@@ -446,20 +446,20 @@ void SoundManager::delMusic() {
 }
 
 void SoundManager::checkSounds() {
-	checkVoices();
+	checkVoiceActivity();
 }
 
-void SoundManager::checkVoices() {
+void SoundManager::checkVoiceActivity() {
 	// Check the status of each voice.
 	bool hasActiveVoice = false;
 	for (int i = 0; i < VOICE_COUNT; ++i) {
-		VOICE_STAT(i);
-		hasActiveVoice |= Voice[i]._status != 0;
+		checkVoiceStatus(i);
+		hasActiveVoice |= Voice[i]._status;
 	}
 
 	if (!hasActiveVoice && _soundFl) {
 		_soundFl = false;
-		SOUND_NUM = 0;
+		_currentSoundIndex = 0;
 	}
 }
 
@@ -476,59 +476,31 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	if (_voiceOffFl)
 		return false;
 
-	if ((unsigned int)(voiceMode - 1) <= 1
-	        && (voiceId == 4
-	            || voiceId == 16
-	            || voiceId == 121
-	            || voiceId == 142
-	            || voiceId == 182
-	            || voiceId == 191
-	            || voiceId == 212
-	            || voiceId == 225
-	            || voiceId == 239
-	            || voiceId == 245
-	            || voiceId == 297
-	            || voiceId == 308
-	            || voiceId == 333
-	            || voiceId == 348
-	            || voiceId == 352
-	            || voiceId == 358
-	            || voiceId == 364
-	            || voiceId == 371
-	            || voiceId == 394
-	            || voiceId == 414
-	            || voiceId == 429
-	            || voiceId == 442
-	            || voiceId == 446
-	            || voiceId == 461
-	            || voiceId == 468
-	            || voiceId == 476
-	            || voiceId == 484
-	            || voiceId == 491
-	            || voiceId == 497
-	            || voiceId == 501
-	            || voiceId == 511
-	            || voiceId == 520
-	            || voiceId == 536
-	            || voiceId == 554
-	            || voiceId == 566
-	            || voiceId == 573
-	            || voiceId == 632
-	            || voiceId == 645))
+	if ((voiceMode == 1 || voiceMode == 2)
+	 && (   voiceId == 4   || voiceId == 16  || voiceId == 121
+	     || voiceId == 142 || voiceId == 182 || voiceId == 191
+		 || voiceId == 212 || voiceId == 225 || voiceId == 239
+		 || voiceId == 245 || voiceId == 297 || voiceId == 308
+		 || voiceId == 333 || voiceId == 348 || voiceId == 352
+		 || voiceId == 358 || voiceId == 364 || voiceId == 371
+		 || voiceId == 394 || voiceId == 414 || voiceId == 429
+		 || voiceId == 442 || voiceId == 446 || voiceId == 461
+		 || voiceId == 468 || voiceId == 476 || voiceId == 484
+		 || voiceId == 491 || voiceId == 497 || voiceId == 501
+		 || voiceId == 511 || voiceId == 520 || voiceId == 536
+		 || voiceId == 554 || voiceId == 566 || voiceId == 573
+		 || voiceId == 632 || voiceId == 645))
 		fileNumber = 684;
 
-	if ((unsigned int)(voiceMode - 1) <= 1) {
+	if (voiceMode == 1 || voiceMode == 2)
 		prefix = "DF";
-	}
-	if (voiceMode == 3) {
+	else if (voiceMode == 3)
 		prefix = "IF";
-	}
-	if (voiceMode == 4) {
+	else if (voiceMode == 4)
 		prefix = "TF";
-	}
-	if (voiceMode == 5) {
+	else if (voiceMode == 5)
 		prefix = "OF";
-	}
+
 
 	filename = Common::String::format("%s%d", prefix.c_str(), fileNumber);
 
@@ -595,14 +567,14 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	// Loop for playing voice
 	breakFlag = 0;
 	do {
-		if (SPECIAL_SOUND != 4 && !VBL_MERDE)
+		if (_specialSoundNum != 4 && !VBL_MERDE)
 			_vm->_eventsManager.VBL();
 		if (_vm->_eventsManager.getMouseButton())
 			break;
 		_vm->_eventsManager.refreshEvents();
 		if (_vm->_eventsManager._escKeyFl)
 			break;
-		if (!VOICE_STAT(2))
+		if (!checkVoiceStatus(2))
 			breakFlag = true;
 	} while (!_vm->shouldQuit() && !breakFlag);
 
@@ -616,11 +588,11 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 }
 
 void SoundManager::DEL_SAMPLE(int soundIndex) {
-	if (VOICE_STAT(1) == 1)
+	if (checkVoiceStatus(1))
 		stopVoice(1);
-	if (VOICE_STAT(2) == 2)
+	if (checkVoiceStatus(2))
 		stopVoice(2);
-	if (VOICE_STAT(3) == 3)
+	if (checkVoiceStatus(3))
 		stopVoice(3);
 	DEL_SAMPLE_SDL(soundIndex);
 	SOUND[soundIndex]._active = false;
@@ -629,7 +601,7 @@ void SoundManager::DEL_SAMPLE(int soundIndex) {
 void SoundManager::playSound(const Common::String &file) {
 	if (!_soundOffFl) {
 		if (_soundFl)
-			DEL_NWAV(SOUND_NUM);
+			DEL_NWAV(_currentSoundIndex);
 		LOAD_NWAV(file, 1);
 		PLAY_NWAV(1);
 	}
@@ -662,24 +634,21 @@ void SoundManager::loadSample(int wavIndex, const Common::String &file) {
 void SoundManager::playSample(int wavIndex, int voiceMode) {
 	if (!_soundOffFl && SOUND[wavIndex]._active) {
 		if (_soundFl)
-			DEL_NWAV(SOUND_NUM);
+			DEL_NWAV(_currentSoundIndex);
 		if (voiceMode == 5) {
-			if (VOICE_STAT(1) == 1)
+			if (checkVoiceStatus(1))
 				stopVoice(1);
 			PLAY_SAMPLE_SDL(1, wavIndex);
-		}
-		if (voiceMode == 6) {
-			if (VOICE_STAT(2) == 1)
+		} else if (voiceMode == 6) {
+			if (checkVoiceStatus(2))
 				stopVoice(1);
 			PLAY_SAMPLE_SDL(2, wavIndex);
-		}
-		if (voiceMode == 7) {
-			if (VOICE_STAT(3) == 1)
+		} else if (voiceMode == 7) {
+			if (checkVoiceStatus(3))
 				stopVoice(1);
 			PLAY_SAMPLE_SDL(3, wavIndex);
-		}
-		if (voiceMode == 8) {
-			if (VOICE_STAT(1) == 1)
+		} else if (voiceMode == 8) {
+			if (checkVoiceStatus(1))
 				stopVoice(1);
 			PLAY_SAMPLE_SDL(1, wavIndex);
 		}
@@ -689,14 +658,14 @@ void SoundManager::playSample(int wavIndex, int voiceMode) {
 void SoundManager::PLAY_SAMPLE2(int idx) {
 	if (!_soundOffFl && SOUND[idx]._active) {
 		if (_soundFl)
-			DEL_NWAV(SOUND_NUM);
-		if (VOICE_STAT(1) == 1)
+			DEL_NWAV(_currentSoundIndex);
+		if (checkVoiceStatus(1))
 			stopVoice(1);
 		PLAY_SAMPLE_SDL(1, idx);
 	}
 }
 
-void SoundManager::LOAD_WAV(const Common::String &file, int wavIndex) {
+void SoundManager::loadWav(const Common::String &file, int wavIndex) {
 	LOAD_NWAV(file, wavIndex);
 }
 
@@ -704,7 +673,7 @@ void SoundManager::playWav(int wavIndex) {
 	PLAY_NWAV(wavIndex);
 }
 
-int SoundManager::VOICE_STAT(int voiceIndex) {
+bool SoundManager::checkVoiceStatus(int voiceIndex) {
 	if (Voice[voiceIndex]._status) {
 		int wavIndex = Voice[voiceIndex]._wavIndex;
 		if (Swav[wavIndex]._audioStream != NULL && Swav[wavIndex]._audioStream->endOfStream())
@@ -716,14 +685,14 @@ int SoundManager::VOICE_STAT(int voiceIndex) {
 
 void SoundManager::stopVoice(int voiceIndex) {
 	if (Voice[voiceIndex]._status) {
-		Voice[voiceIndex]._status = 0;
+		Voice[voiceIndex]._status = false;
 		int wavIndex = Voice[voiceIndex]._wavIndex;
 		if (Swav[wavIndex]._active) {
 			if (Swav[wavIndex]._freeSampleFl)
 				DEL_SAMPLE_SDL(wavIndex);
 		}
 	}
-	Voice[voiceIndex]._status = 0;
+	Voice[voiceIndex]._status = false;
 }
 
 void SoundManager::SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength) {
@@ -790,17 +759,17 @@ void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
 void SoundManager::PLAY_NWAV(int wavIndex) {
 	if (!_soundFl && !_soundOffFl) {
 		_soundFl = true;
-		SOUND_NUM = wavIndex;
+		_currentSoundIndex = wavIndex;
 		PLAY_SAMPLE_SDL(1, wavIndex);
 	}
 }
 
 void SoundManager::DEL_NWAV(int wavIndex) {
 	if (DEL_SAMPLE_SDL(wavIndex)) {
-		if (VOICE_STAT(1) == 1)
+		if (checkVoiceStatus(1))
 			stopVoice(1);
 
-		SOUND_NUM = 0;
+		_currentSoundIndex = 0;
 		_soundFl = false;
 	}
 }
@@ -809,10 +778,10 @@ void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
 	if (!Swav[wavIndex]._active)
 		warning("Bad handle");
 
-	if (Voice[voiceIndex]._status == 1 && Swav[wavIndex]._active && Swav[wavIndex]._freeSampleFl)
+	if (Voice[voiceIndex]._status && Swav[wavIndex]._active && Swav[wavIndex]._freeSampleFl)
 		DEL_SAMPLE_SDL(wavIndex);
 
-	Voice[voiceIndex]._status = 1;
+	Voice[voiceIndex]._status = true;
 	Voice[voiceIndex]._wavIndex = wavIndex;
 
 	int volume = (voiceIndex == 2) ? _voiceVolume * 255 / 16 : _soundVolume * 255 / 16;

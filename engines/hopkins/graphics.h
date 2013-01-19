@@ -68,10 +68,9 @@ public:
 	byte *_vesaScreen;
 	byte *_vesaBuffer;
 	int _scrollOffset;
-	int SCROLL;
-	byte HEADER_PCX[128];
+	int _scrollPosX;
 	bool _largeScreenFl;
-	int OLD_SCROLL;
+	int _oldScrollPosX;
 	bool MANU_SCROLL;
 	int _scrollSpeed;
 	int _lineNbr2;
@@ -80,7 +79,7 @@ public:
 	int _fadeDefaultSpeed;
 	int FADE_LINUX;
 	bool _skipVideoLockFl;
-	int no_scroll;
+	int _scrollStatus;
 	Common::Rect dstrect[50];
 	int min_x, min_y;
 	int max_x, max_y;

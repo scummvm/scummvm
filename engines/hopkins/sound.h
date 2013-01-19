@@ -33,7 +33,7 @@ namespace Hopkins {
 
 class VoiceItem {
 public:
-	int _status;
+	bool _status;
 	int _wavIndex;
 };
 
@@ -65,7 +65,7 @@ class SoundManager {
 private:
 	HopkinsEngine *_vm;
 
-	int VOICE_STAT(int voiceIndex);
+	bool checkVoiceStatus(int voiceIndex);
 	void stopVoice(int voiceIndex);
 	void SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength);
 	void playVoice();
@@ -80,7 +80,7 @@ private:
 	/**
 	 * Checks voices to see if they're finished
 	 */
-	void checkVoices();
+	void checkVoiceActivity();
 
 	/**
 	 * Creates an audio stream based on a passed raw stream
@@ -88,7 +88,7 @@ private:
 	Audio::RewindableAudioStream *makeSoundStream(Common::SeekableReadStream *stream);
 public:
 	Audio::SoundHandle _musicHandle;
-	int SPECIAL_SOUND;
+	int _specialSoundNum;
 	int _soundVolume;
 	int _voiceVolume;
 	int _musicVolume;
@@ -98,9 +98,9 @@ public:
 	bool _textOffFl;
 	bool _soundFl;
 	bool VBL_MERDE;
-	int SOUND_NUM;
-	bool MOD_FLAG;
-	int old_music;
+	int _currentSoundIndex;
+	bool _modPlayingFl;
+	int _oldSoundNumber;
 
 	VoiceItem Voice[VOICE_COUNT];
 	SwavItem Swav[SWAV_COUNT];
@@ -112,13 +112,13 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	void WSOUND_INIT();
-	void VERIF_SOUND();
-	void LOAD_ANM_SOUND();
-	void playAnim_SOUND(int soundNumber);
-	void LOAD_WAV(const Common::String &file, int wavIndex);
+	void checkSoundEnd();
+	void loadAnimSound();
+	void playAnimSound(int soundNumber);
+	void loadWav(const Common::String &file, int wavIndex);
 	void WSOUND(int soundNumber);
 	void WSOUND_OFF();
-	void PLAY_MOD(const Common::String &file);
+	void playMod(const Common::String &file);
 	void loadMusic(const Common::String &file);
 	void playMusic();
 	void stopMusic();

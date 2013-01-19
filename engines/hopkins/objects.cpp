@@ -2294,20 +2294,20 @@ void ObjectsManager::PARADISE() {
 		_vm->_fontManager.hideText(5);
 		if (!_vm->_globals._forestFl || _zoneNum < 20 || _zoneNum > 23) {
 			if (_vm->_graphicsManager._largeScreenFl) {
-				_vm->_graphicsManager.no_scroll = 2;
+				_vm->_graphicsManager._scrollStatus = 2;
 				if (_vm->_eventsManager._startPos.x + 320 - getSpriteX(0) > 160) {
 					bool loopCond = false;
 					do {
-						_vm->_graphicsManager.SCROLL -= _vm->_graphicsManager._scrollSpeed;
-						if (_vm->_graphicsManager.SCROLL < 0) {
-							_vm->_graphicsManager.SCROLL = 0;
+						_vm->_graphicsManager._scrollPosX -= _vm->_graphicsManager._scrollSpeed;
+						if (_vm->_graphicsManager._scrollPosX < 0) {
+							_vm->_graphicsManager._scrollPosX = 0;
 							loopCond = true;
 						}
-						if (_vm->_graphicsManager.SCROLL > SCREEN_WIDTH) {
-							_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
+						if (_vm->_graphicsManager._scrollPosX > SCREEN_WIDTH) {
+							_vm->_graphicsManager._scrollPosX = SCREEN_WIDTH;
 							loopCond = true;
 						}
-						if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager.SCROLL + 620)
+						if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager._scrollPosX + 620)
 							_vm->_eventsManager.setMouseXY(_vm->_eventsManager._mousePos.x - 4, _vm->_eventsManager.getMouseY());
 
 						_vm->_eventsManager.VBL();
@@ -2315,27 +2315,27 @@ void ObjectsManager::PARADISE() {
 				} else if (_vm->_eventsManager._startPos.x + 320 - getSpriteX(0) < -160) {
 					bool loopCond = false;
 					do {
-						_vm->_graphicsManager.SCROLL += _vm->_graphicsManager._scrollSpeed;
-						if (_vm->_graphicsManager.SCROLL < 0) {
-							_vm->_graphicsManager.SCROLL = 0;
+						_vm->_graphicsManager._scrollPosX += _vm->_graphicsManager._scrollSpeed;
+						if (_vm->_graphicsManager._scrollPosX < 0) {
+							_vm->_graphicsManager._scrollPosX = 0;
 							loopCond = true;
 						}
-						if (_vm->_graphicsManager.SCROLL > SCREEN_WIDTH) {
-							_vm->_graphicsManager.SCROLL = SCREEN_WIDTH;
+						if (_vm->_graphicsManager._scrollPosX > SCREEN_WIDTH) {
+							_vm->_graphicsManager._scrollPosX = SCREEN_WIDTH;
 							loopCond = true;
 						}
-						if (_vm->_eventsManager.getMouseX() < _vm->_graphicsManager.SCROLL + 10)
+						if (_vm->_eventsManager.getMouseX() < _vm->_graphicsManager._scrollPosX + 10)
 							_vm->_eventsManager.setMouseXY(_vm->_eventsManager._mousePos.x + 4, _vm->_eventsManager.getMouseY());
 
 						_vm->_eventsManager.VBL();
 					} while (!loopCond && _vm->_eventsManager._startPos.x < getSpriteX(0) - 320);
 				}
-				if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager.SCROLL + 620)
-					_vm->_eventsManager.setMouseXY(_vm->_graphicsManager.SCROLL + 610, 0);
-				if (_vm->_eventsManager.getMouseX() < _vm->_graphicsManager.SCROLL + 10)
-					_vm->_eventsManager.setMouseXY(_vm->_graphicsManager.SCROLL + 10, 0);
+				if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager._scrollPosX + 620)
+					_vm->_eventsManager.setMouseXY(_vm->_graphicsManager._scrollPosX + 610, 0);
+				if (_vm->_eventsManager.getMouseX() < _vm->_graphicsManager._scrollPosX + 10)
+					_vm->_eventsManager.setMouseXY(_vm->_graphicsManager._scrollPosX + 10, 0);
 				_vm->_eventsManager.VBL();
-				_vm->_graphicsManager.no_scroll = 0;
+				_vm->_graphicsManager._scrollStatus = 0;
 			}
 			_vm->_talkManager.REPONSE(_vm->_globals._saveData->data[svField2], _vm->_globals._saveData->data[svField1]);
 		} else {
@@ -3317,13 +3317,13 @@ void ObjectsManager::handleSpecialGames() {
 		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager._scrollOffset = 0;
 		_vm->_graphicsManager.NB_SCREEN(true);
-		_vm->_soundManager.SPECIAL_SOUND = 198;
+		_vm->_soundManager._specialSoundNum = 198;
 		PERSO_ON = true;
 		_vm->_animationManager.NO_SEQ = true;
 		_vm->_animationManager._clearAnimationFl = false;
 		_vm->_animationManager.playAnim("otage.ANM", 1, 24, 500);
 		_vm->_animationManager.NO_SEQ = false;
-		_vm->_soundManager.SPECIAL_SOUND = 0;
+		_vm->_soundManager._specialSoundNum = 0;
 		_vm->_graphicsManager.NB_SCREEN(false);
 
 		_vm->_saveLoadManager.load("TEMP1.SCR", _vm->_graphicsManager._vesaScreen);
@@ -3338,7 +3338,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_graphicsManager.unlockScreen();
 		memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
 
-		_vm->_graphicsManager.no_scroll = 0;
+		_vm->_graphicsManager._scrollStatus = 0;
 		_vm->_graphicsManager.DD_VBL();
 		break;
 	case 20:
@@ -4596,7 +4596,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	}
 	_vm->_eventsManager.setMouseXY(_characterPos);
 	if (_vm->_graphicsManager._largeScreenFl)
-		_vm->_graphicsManager.SCROLL = (int16)getSpriteX(0) - 320;
+		_vm->_graphicsManager._scrollPosX = (int16)getSpriteX(0) - 320;
 	computeAndSetSpriteSize();
 	animateSprite(0);
 	_vm->_globals.CACHE_ON();

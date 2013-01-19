@@ -228,7 +228,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_eventsManager.delay(500);
 				_graphicsManager.fadeOutLong();
 				_globals.iRegul = 1;
-				_soundManager.SPECIAL_SOUND = 2;
+				_soundManager._specialSoundNum = 2;
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
@@ -237,7 +237,7 @@ bool HopkinsEngine::runWin95Demo() {
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				else
 					_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
-				_soundManager.SPECIAL_SOUND = 0;
+				_soundManager._specialSoundNum = 0;
 				_soundManager.DEL_SAMPLE(1);
 				_soundManager.DEL_SAMPLE(2);
 				_soundManager.DEL_SAMPLE(3);
@@ -541,7 +541,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				_eventsManager.delay(500);
 				_graphicsManager.fadeOutLong();
 				_globals.iRegul = 1;
-				_soundManager.SPECIAL_SOUND = 2;
+				_soundManager._specialSoundNum = 2;
 
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
@@ -553,7 +553,7 @@ bool HopkinsEngine::runLinuxDemo() {
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				else
 					_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
-				_soundManager.SPECIAL_SOUND = 0;
+				_soundManager._specialSoundNum = 0;
 				_soundManager.DEL_SAMPLE(1);
 				_soundManager.DEL_SAMPLE(2);
 				_soundManager.DEL_SAMPLE(3);
@@ -882,7 +882,7 @@ bool HopkinsEngine::runFull() {
 				_eventsManager.delay(500);
 				_graphicsManager.fadeOutLong();
 				_globals.iRegul = 1;
-				_soundManager.SPECIAL_SOUND = 2;
+				_soundManager._specialSoundNum = 2;
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
@@ -897,7 +897,7 @@ bool HopkinsEngine::runFull() {
 				} else {
 					_animationManager.playAnim("BANQUE.ANM", 200, 12, 200);
 				}
-				_soundManager.SPECIAL_SOUND = 0;
+				_soundManager._specialSoundNum = 0;
 				_soundManager.DEL_SAMPLE(1);
 				_soundManager.DEL_SAMPLE(2);
 				_soundManager.DEL_SAMPLE(3);
@@ -1763,24 +1763,24 @@ void HopkinsEngine::playIntro() {
 				_globals.iRegul = 1;
 				_graphicsManager.fadeInLong();
 				if (_graphicsManager._largeScreenFl) {
-					_graphicsManager.no_scroll = 2;
+					_graphicsManager._scrollStatus = 2;
 					bool v3 = false;
-					_graphicsManager.SCROLL = 0;
+					_graphicsManager._scrollPosX = 0;
 
 					do {
-						_graphicsManager.SCROLL += 2;
-						if (_graphicsManager.SCROLL > (SCREEN_WIDTH - 2)) {
-							_graphicsManager.SCROLL = SCREEN_WIDTH;
+						_graphicsManager._scrollPosX += 2;
+						if (_graphicsManager._scrollPosX > (SCREEN_WIDTH - 2)) {
+							_graphicsManager._scrollPosX = SCREEN_WIDTH;
 							v3 = true;
 						}
 
-						if (_eventsManager.getMouseX() < _graphicsManager.SCROLL + 10)
+						if (_eventsManager.getMouseX() < _graphicsManager._scrollPosX + 10)
 							_eventsManager.setMouseXY(_eventsManager._mousePos.x + 4, _eventsManager.getMouseY());
 						_eventsManager.VBL();
-					} while (!shouldQuit() && !v3 && _graphicsManager.SCROLL != SCREEN_WIDTH);
+					} while (!shouldQuit() && !v3 && _graphicsManager._scrollPosX != SCREEN_WIDTH);
 
 					_eventsManager.VBL();
-					_graphicsManager.no_scroll = 0;
+					_graphicsManager._scrollStatus = 0;
 
 					if (shouldQuit())
 						return;
@@ -1788,7 +1788,7 @@ void HopkinsEngine::playIntro() {
 
 				_soundManager.mixVoice(4, 3);
 				_graphicsManager.fadeOutLong();
-				_graphicsManager.no_scroll = 0;
+				_graphicsManager._scrollStatus = 0;
 				_graphicsManager.loadImage("intro2");
 				_graphicsManager.scrollScreen(0);
 				_animationManager.loadAnim("INTRO2");
@@ -1822,13 +1822,13 @@ void HopkinsEngine::playIntro() {
 				if (shouldQuit())
 					return;
 
-				_soundManager.SPECIAL_SOUND = 5;
+				_soundManager._specialSoundNum = 5;
 				_graphicsManager.FADE_LINUX = 2;
 				_animationManager.playAnim("ELEC.ANM", 10, 26, 200);
 				if (shouldQuit())
 					return;
 
-				_soundManager.SPECIAL_SOUND = 0;
+				_soundManager._specialSoundNum = 0;
 
 				if (!_eventsManager._escKeyFl) {
 					_graphicsManager.loadImage("intro2");
@@ -1917,12 +1917,12 @@ void HopkinsEngine::playIntro() {
 							_graphicsManager.FIN_VISU();
 							_animationManager._clearAnimationFl = true;
 							_soundManager.WSOUND(3);
-							_soundManager.SPECIAL_SOUND = 1;
+							_soundManager._specialSoundNum = 1;
 							_animationManager.playAnim("INTRO1.anm", 10, 24, 18);
 							if (shouldQuit())
 								return;
 
-							_soundManager.SPECIAL_SOUND = 0;
+							_soundManager._specialSoundNum = 0;
 
 							if (!_eventsManager._escKeyFl) {
 								_animationManager.playAnim("INTRO2.anm", 10, 24, 18);
@@ -2003,10 +2003,10 @@ void HopkinsEngine::bombExplosion() {
 	_graphicsManager.clearPalette();
 
 	_globals.iRegul = 1;
-	_soundManager.SPECIAL_SOUND = 199;
+	_soundManager._specialSoundNum = 199;
 	_graphicsManager.FADE_LINUX = 2;
 	_animationManager.playAnim("BOMBE2A.ANM", 50, 14, 500);
-	_soundManager.SPECIAL_SOUND = 0;
+	_soundManager._specialSoundNum = 0;
 	_graphicsManager.loadImage("IM15");
 	_animationManager.loadAnim("ANIM15");
 	_graphicsManager.VISU_ALL();
@@ -2260,7 +2260,7 @@ void HopkinsEngine::playEnding() {
 
 	_objectsManager.stopBobAnimation(7);
 	if (_globals._saveData->data[svField135] == 1) {
-		_soundManager.SPECIAL_SOUND = 200;
+		_soundManager._specialSoundNum = 200;
 		_soundManager.VBL_MERDE = true;
 		_graphicsManager.FADE_LINUX = 2;
 		_animationManager.playAnim("BERM.ANM", 100, 24, 300);
@@ -2278,7 +2278,7 @@ void HopkinsEngine::playEnding() {
 		_eventsManager._escKeyFl = false;
 		_graphicsManager.fadeOutLong();
 		_globals.iRegul = 1;
-		_soundManager.SPECIAL_SOUND = 0;
+		_soundManager._specialSoundNum = 0;
 		_graphicsManager.FADE_LINUX = 2;
 		_animationManager.playAnim("JOUR2A.anm", 12, 12, 1000);
 		_soundManager.WSOUND(11);
@@ -2297,7 +2297,7 @@ void HopkinsEngine::playEnding() {
 		_dialogsManager._removeInventFl = false;
 		_globals._disableInventFl = false;
 	} else {
-		_soundManager.SPECIAL_SOUND = 200;
+		_soundManager._specialSoundNum = 200;
 		_soundManager.VBL_MERDE = true;
 		_animationManager.playAnim2("BERM.ANM", 100, 24, 300);
 		_objectsManager.stopBobAnimation(7);
@@ -2321,7 +2321,7 @@ void HopkinsEngine::playEnding() {
 		_soundManager.DEL_SAMPLE(1);
 		_soundManager.WSOUND(16);
 		_globals.iRegul = 1;
-		_soundManager.SPECIAL_SOUND = 0;
+		_soundManager._specialSoundNum = 0;
 		_dialogsManager._removeInventFl = false;
 		_globals._disableInventFl = false;
 		_animationManager.playAnim("JOUR4A.anm", 12, 12, 1000);

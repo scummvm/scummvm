@@ -102,7 +102,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	}
 	_vm->_eventsManager._rateCounter = 0;
 	_vm->_eventsManager._escKeyFl = false;
-	_vm->_soundManager.LOAD_ANM_SOUND();
+	_vm->_soundManager.loadAnimSound();
 
 	if (_vm->_globals.iRegul == 1) {
 		// Do pre-animation delay
@@ -118,7 +118,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	frameNumber = 0;
 	while (!_vm->shouldQuit()) {
 		++frameNumber;
-		_vm->_soundManager.playAnim_SOUND(frameNumber);
+		_vm->_soundManager.playAnimSound(frameNumber);
 
 		// Read frame header
 		if (f.read(ptr, 16) != 16)
@@ -135,7 +135,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 					goto EXIT;
 
 				_vm->_eventsManager.refreshEvents();
-				_vm->_soundManager.VERIF_SOUND();
+				_vm->_soundManager.checkSoundEnd();
 			} while (!_vm->shouldQuit() && _vm->_eventsManager._rateCounter < rate2);
 		}
 
@@ -151,7 +151,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		}
 		_vm->_graphicsManager.unlockScreen();
 		_vm->_graphicsManager.DD_VBL();
-		_vm->_soundManager.VERIF_SOUND();
+		_vm->_soundManager.checkSoundEnd();
 	}
 
 	if (_vm->_globals.iRegul == 1) {
@@ -161,12 +161,12 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 				break;
 
 			_vm->_eventsManager.refreshEvents();
-			_vm->_soundManager.VERIF_SOUND();
+			_vm->_soundManager.checkSoundEnd();
 		} while (_vm->_eventsManager._rateCounter < rate3);
 	}
 
 	_vm->_eventsManager._rateCounter = 0;
-	_vm->_soundManager.VERIF_SOUND();
+	_vm->_soundManager.checkSoundEnd();
 EXIT:
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
 		screenCopy = _vm->_globals.allocMemory(307200);
@@ -256,7 +256,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		f.read(screenP, nbytes);
 
 		_vm->_graphicsManager.clearPalette();
-		oldScrollVal = _vm->_graphicsManager.SCROLL;
+		oldScrollVal = _vm->_graphicsManager._scrollPosX;
 		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
 		_vm->_graphicsManager.scrollScreen(0);
 		_vm->_graphicsManager.lockScreen();
@@ -284,7 +284,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		}
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
-		_vm->_soundManager.LOAD_ANM_SOUND();
+		_vm->_soundManager.loadAnimSound();
 		if (_vm->_globals.iRegul != 1)
 			break;
 		for (;;) {
@@ -309,7 +309,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.SCROLL = oldScrollVal;
+		_vm->_graphicsManager._scrollPosX = oldScrollVal;
 		_vm->_graphicsManager.scrollScreen(oldScrollVal);
 		if (_vm->_graphicsManager._largeScreenFl) {
 			_vm->_graphicsManager.SCANLINE(1280);
@@ -333,7 +333,7 @@ LABEL_48:
 	frameNumber = 0;
 	for (;;) {
 		++frameNumber;
-		_vm->_soundManager.playAnim_SOUND(frameNumber);
+		_vm->_soundManager.playAnimSound(frameNumber);
 		memset(&buf, 0, 6);
 		memset(ptr, 0, 19);
 
@@ -361,13 +361,13 @@ LABEL_77:
 		}
 		_vm->_graphicsManager.unlockScreen();
 		_vm->_graphicsManager.DD_VBL();
-		_vm->_soundManager.VERIF_SOUND();
+		_vm->_soundManager.checkSoundEnd();
 LABEL_88:
 		if (v5 == -1) {
 			if (_vm->_globals.iRegul == 1) {
 				while (!_vm->_eventsManager._escKeyFl) {
 					_vm->_eventsManager.refreshEvents();
-					_vm->_soundManager.VERIF_SOUND();
+					_vm->_soundManager.checkSoundEnd();
 					if (_vm->_eventsManager._rateCounter >= a4)
 						goto LABEL_114;
 				}
@@ -377,7 +377,7 @@ LABEL_88:
 	}
 	while (!_vm->_eventsManager._escKeyFl) {
 		_vm->_eventsManager.refreshEvents();
-		_vm->_soundManager.VERIF_SOUND();
+		_vm->_soundManager.checkSoundEnd();
 		if (_vm->_eventsManager._rateCounter >= a3)
 			goto LABEL_77;
 	}
@@ -439,7 +439,7 @@ LABEL_114:
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.clearScreen();
 	_vm->_graphicsManager.unlockScreen();
-	_vm->_graphicsManager.SCROLL = oldScrollVal;
+	_vm->_graphicsManager._scrollPosX = oldScrollVal;
 	_vm->_graphicsManager.scrollScreen(oldScrollVal);
 	if (_vm->_graphicsManager._largeScreenFl) {
 		_vm->_graphicsManager.SCANLINE(1280);
@@ -756,7 +756,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	if (_vm->getIsDemo()) {
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
-		_vm->_soundManager.LOAD_ANM_SOUND();
+		_vm->_soundManager.loadAnimSound();
 		if (_vm->_globals.iRegul == 1) {
 			do {
 				if (_vm->_eventsManager._escKeyFl) {
@@ -765,7 +765,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 					_vm->_eventsManager._escKeyFl = false;
 				}
 				_vm->_eventsManager.refreshEvents();
-				_vm->_soundManager.VERIF_SOUND();
+				_vm->_soundManager.checkSoundEnd();
 			} while (_vm->_eventsManager._rateCounter < rate1);
 		}
 	} else {
@@ -773,7 +773,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 			_vm->_graphicsManager.fadeInDefaultLength(screenP);
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
-		_vm->_soundManager.LOAD_ANM_SOUND();
+		_vm->_soundManager.loadAnimSound();
 		if (_vm->_globals.iRegul == 1) {
 			do {
 				if (_vm->_eventsManager._escKeyFl) {
@@ -782,7 +782,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 					_vm->_eventsManager._escKeyFl = false;
 				}
 				_vm->_eventsManager.refreshEvents();
-				_vm->_soundManager.VERIF_SOUND();
+				_vm->_soundManager.checkSoundEnd();
 			} while (_vm->_eventsManager._rateCounter < rate1);
 		}
 	}
@@ -791,7 +791,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	soundNumber = 0;
 	do {
 		++soundNumber;
-		_vm->_soundManager.playAnim_SOUND(soundNumber);
+		_vm->_soundManager.playAnimSound(soundNumber);
 		memset(v10, 0, 19);
 		if (f.read(v10, 16) != 16)
 			readError = true;
@@ -808,7 +808,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 						_vm->_eventsManager._escKeyFl = false;
 					}
 					_vm->_eventsManager.refreshEvents();
-					_vm->_soundManager.VERIF_SOUND();
+					_vm->_soundManager.checkSoundEnd();
 				} while (_vm->_eventsManager._rateCounter < rate2);
 			}
 			_vm->_eventsManager._rateCounter = 0;
@@ -823,7 +823,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 			}
 			_vm->_graphicsManager.unlockScreen();
 			_vm->_graphicsManager.DD_VBL();
-			_vm->_soundManager.VERIF_SOUND();
+			_vm->_soundManager.checkSoundEnd();
 		}
 	} while (!readError);
 
@@ -835,7 +835,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 				_vm->_eventsManager._escKeyFl = false;
 			}
 			_vm->_eventsManager.refreshEvents();
-			_vm->_soundManager.VERIF_SOUND();
+			_vm->_soundManager.checkSoundEnd();
 		} while (_vm->_eventsManager._rateCounter < rate3);
 	}
 	_vm->_eventsManager._rateCounter = 0;
@@ -913,14 +913,14 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		}
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
-		_vm->_soundManager.LOAD_ANM_SOUND();
+		_vm->_soundManager.loadAnimSound();
 		if (_vm->_globals.iRegul != 1)
 			break;
 		while (!_vm->shouldQuit()) {
 			if (_vm->_eventsManager._escKeyFl)
 				goto LABEL_54;
 			_vm->_eventsManager.refreshEvents();
-			_vm->_soundManager.VERIF_SOUND();
+			_vm->_soundManager.checkSoundEnd();
 			if (_vm->_eventsManager._rateCounter >= rate1)
 				goto LABEL_23;
 		}
@@ -936,7 +936,7 @@ LABEL_23:
 	v4 = false;
 	v13 = 0;
 	while (!_vm->shouldQuit()) {
-		_vm->_soundManager.playAnim_SOUND(v13++);
+		_vm->_soundManager.playAnimSound(v13++);
 
 		memset(v11, 0, 19);
 		if (f.read(v11, 16) != 16)
@@ -962,13 +962,13 @@ LABEL_33:
 		}
 		_vm->_graphicsManager.unlockScreen();
 		_vm->_graphicsManager.DD_VBL();
-		_vm->_soundManager.VERIF_SOUND();
+		_vm->_soundManager.checkSoundEnd();
 LABEL_44:
 		if (v4) {
 			if (_vm->_globals.iRegul == 1) {
 				while (!_vm->_eventsManager._escKeyFl) {
 					_vm->_eventsManager.refreshEvents();
-					_vm->_soundManager.VERIF_SOUND();
+					_vm->_soundManager.checkSoundEnd();
 					if (_vm->_eventsManager._rateCounter >= rate3) {
 						_vm->_eventsManager._rateCounter = 0;
 						break;

@@ -299,7 +299,7 @@ void DialogsManager::showInventory() {
 	if (_removeInventFl || _inventDisplayedFl || _vm->_globals._disableInventFl)
 		return;
 
-	_vm->_graphicsManager.no_scroll = 1;
+	_vm->_graphicsManager._scrollStatus = 1;
 	_vm->_objectsManager.FLAG_VISIBLE_EFFACE = 4;
 	_vm->_objectsManager._visibleFl = false;
 	for (int i = 0; i <= 1; i++) {
@@ -454,7 +454,7 @@ LABEL_7:
 	_vm->_objectsManager._oldBorderPos = Common::Point(0, 0);
 	_vm->_objectsManager._borderPos = Common::Point(0, 0);
 	_vm->_globals._disableInventFl = false;
-	_vm->_graphicsManager.no_scroll = 0;
+	_vm->_graphicsManager._scrollStatus = 0;
 }
 
 /**
@@ -523,19 +523,19 @@ void DialogsManager::testDialogOpening() {
 		_vm->_dialogsManager.showInventory();
 		break;
 	case KEY_OPTIONS:
-		_vm->_graphicsManager.no_scroll = 1;
+		_vm->_graphicsManager._scrollStatus = 1;
 		_vm->_dialogsManager.showOptionsDialog();
-		_vm->_graphicsManager.no_scroll = 0;
+		_vm->_graphicsManager._scrollStatus = 0;
 		break;
 	case KEY_LOAD:
-		_vm->_graphicsManager.no_scroll = 1;
+		_vm->_graphicsManager._scrollStatus = 1;
 		_vm->_dialogsManager.showLoadGame();
-		_vm->_graphicsManager.no_scroll = 0;
+		_vm->_graphicsManager._scrollStatus = 0;
 		break;
 	case KEY_SAVE:
-		_vm->_graphicsManager.no_scroll = 1;
+		_vm->_graphicsManager._scrollStatus = 1;
 		_vm->_dialogsManager.showSaveGame();
-		_vm->_graphicsManager.no_scroll = 0;
+		_vm->_graphicsManager._scrollStatus = 0;
 		break;
 	default:
 		break;
