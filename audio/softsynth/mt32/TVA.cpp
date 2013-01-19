@@ -280,7 +280,7 @@ void TVA::nextPhase() {
 	}
 
 	int newTarget;
-	int newIncrement = 0;
+	int newIncrement = 0; // Initialised to please compilers
 	int envPointIndex = phase;
 
 	if (!allLevelsZeroFromNowOn) {
