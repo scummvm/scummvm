@@ -128,6 +128,10 @@ List of fixed bugs in GF scripts:
 	patch shows baster.3do and hides full_baster.3do after 600 ms instead of at time 0, so that the change actually
 	happens when Manny squeezes his hand.
 
+	Fix wrong sfx timing when emptying the turkey-baster into Naranja's drink - si.lua.patchr
+	This patch adds a sleep_for(600) before the call to "start_sfx("tkBstSqt.wav")" so that the squeezing
+	sound happens when Manny squeezes the baster.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
