@@ -242,6 +242,7 @@ void Model::loadText(TextSplitter *ts) {
 		_rootHierNode[num]._meshVisible = true;
 		_rootHierNode[num]._hierVisible = true;
 		_rootHierNode[num]._sprite = NULL;
+		_rootHierNode[num]._initialized = true;
 	}
 
 	if (!ts->isEof())
