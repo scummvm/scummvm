@@ -344,13 +344,12 @@ LABEL_7:
 
 	_inventBuf2 = _vm->_fileManager.loadFile("INVENT2.SPR");
 
-	int v19 = _inventX = _vm->_graphicsManager._scrollOffset + 152;
+	_inventX = _vm->_graphicsManager._scrollOffset + 152;
 	_inventY = 114;
 	int v18 = _inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
 	int v17 = _inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
 
-	_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1,
-		v19 + 300, 414, 0, 0, 0, 0);
+	_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX + 300, 414, 0, 0, 0, 0);
 	int v15 = 0;
 	int inventCount = 0;
 	for (int inventLine = 1; inventLine <= 5; inventLine++) {
@@ -361,7 +360,7 @@ LABEL_7:
 			// The last two zones are not reserved for the inventory: Options and Save/Load
 			if (inventIdx && inventCount <= 29) {
 				byte *v7 = _vm->_objectsManager.CAPTURE_OBJET(inventIdx, false);
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, v7, v19 + v16 + 6,
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, v7, _inventX + v16 + 6,
 					v15 + 120, _vm->_globals._objectWidth, _vm->_globals._objectHeight);
 				_vm->_globals.freeMemory(v7);
 			}
@@ -434,8 +433,8 @@ LABEL_7:
 	_vm->_fontManager.hideText(9);
 	if (_inventDisplayedFl) {
 		_inventDisplayedFl = false;
-		_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, v19, 114, v18, v17, _vm->_graphicsManager._vesaBuffer, v19, 114);
-		_vm->_graphicsManager.addVesaSegment(v19, 114, v19 + v18, v18 + 114);
+		_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, _inventX, 114, v18, v17, _vm->_graphicsManager._vesaBuffer, _inventX, 114);
+		_vm->_graphicsManager.addVesaSegment(_inventX, 114, _inventX + v18, v18 + 114);
 		_vm->_objectsManager.BOBTOUS = true;
 	}
 
@@ -478,11 +477,10 @@ void DialogsManager::inventAnim() {
 			_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.I_old_x, 27);
 
 		_vm->_graphicsManager.addVesaSegment(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
-		int v0 = _vm->_graphicsManager._scrollOffset + 2;
-		int v1 = _vm->_graphicsManager._scrollOffset + 2;
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.ICONE, v1 + 300, 327, 0);
-		_vm->_graphicsManager.addVesaSegment(v1, 27, v1 + 45, 62);
-		_vm->_objectsManager.I_old_x = v0;
+		int newOffset = _vm->_graphicsManager._scrollOffset + 2;
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.ICONE, newOffset + 300, 327, 0);
+		_vm->_graphicsManager.addVesaSegment(newOffset, 27, newOffset + 45, 62);
+		_vm->_objectsManager.I_old_x = newOffset;
 	}
 
 	if (_vm->_globals._saveData->data[svField357] == 1) {
@@ -638,12 +636,12 @@ void DialogsManager::showSaveLoad(int a1) {
 	if (_vm->_globals._language == LANG_FR) {
 		if (a1 == 1)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 525, 375, 1);
-		if (a1 == 2)
+		else if (a1 == 2)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 515, 375, 2);
 	} else {
 		if (a1 == 1)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 535, 372, 1);
-		if (a1 == 2)
+		else if (a1 == 2)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 539, 372, 2);
 	}
 

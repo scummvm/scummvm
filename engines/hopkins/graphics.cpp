@@ -1359,7 +1359,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 							--v29;
 							++spritePixelsP;
 							if (!Agr_Flag_x)
-								Agr_x = zoom2 + Agr_x;
+								Agr_x += zoom2;
 							if ((uint16)Agr_x < 100)
 								break;
 							Agr_x -= 100;
@@ -1375,7 +1375,7 @@ R_Aff_Zoom_Larg_Cont1:
 					spritePixelsP = _width + v46;
 					v29 = _lineNbr2 + v53;
 					if (!Agr_Flag_y)
-						Agr_y = zoom2 + Agr_y;
+						Agr_y += zoom2;
 					if ((uint16)Agr_y < 100)
 						break;
 					Agr_y -= 100;
