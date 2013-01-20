@@ -1732,218 +1732,206 @@ void HopkinsEngine::playIntro() {
 	_soundManager.WSOUND(16);
 	_animationManager._clearAnimationFl = true;
 	_animationManager.playAnim("J1.anm", 12, 12, 50);
-	if (!_eventsManager._escKeyFl) {
-		_soundManager.mixVoice(1, 3);
-		_animationManager.playAnim("J2.anm", 12, 12, 50);
+	if (shouldQuit() || _eventsManager._escKeyFl)
+		return;
 
-		if (!_eventsManager._escKeyFl) {
-			_soundManager.mixVoice(2, 3);
-			_animationManager.playAnim("J3.anm", 12, 12, 50);
+	_soundManager.mixVoice(1, 3);
+	_animationManager.playAnim("J2.anm", 12, 12, 50);
 
-			if (!_eventsManager._escKeyFl) {
-				_soundManager.mixVoice(3, 3);
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
-				_graphicsManager.DD_VBL();
-				_soundManager.WSOUND(11);
-				_graphicsManager.loadImage("intro1");
-				_graphicsManager.scrollScreen(0);
-				_graphicsManager._scrollOffset = 0;
-				_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-				_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-				_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-				_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-				for (int i = 0; i <= 4; i++)
-					_eventsManager.VBL();
+	if (shouldQuit() || _eventsManager._escKeyFl)
+		return;
 
-				_globals.iRegul = 1;
-				_graphicsManager.fadeInLong();
-				if (_graphicsManager._largeScreenFl) {
-					_graphicsManager._scrollStatus = 2;
-					bool v3 = false;
-					_graphicsManager._scrollPosX = 0;
+	_soundManager.mixVoice(2, 3);
+	_animationManager.playAnim("J3.anm", 12, 12, 50);
 
-					do {
-						_graphicsManager._scrollPosX += 2;
-						if (_graphicsManager._scrollPosX > (SCREEN_WIDTH - 2)) {
-							_graphicsManager._scrollPosX = SCREEN_WIDTH;
-							v3 = true;
-						}
+	if (shouldQuit() || _eventsManager._escKeyFl)
+		return;
 
-						if (_eventsManager.getMouseX() < _graphicsManager._scrollPosX + 10)
-							_eventsManager.setMouseXY(_eventsManager._mousePos.x + 4, _eventsManager.getMouseY());
-						_eventsManager.VBL();
-					} while (!shouldQuit() && !v3 && _graphicsManager._scrollPosX != SCREEN_WIDTH);
+	_soundManager.mixVoice(3, 3);
+	_graphicsManager.lockScreen();
+	_graphicsManager.clearScreen();
+	_graphicsManager.unlockScreen();
+	_graphicsManager.clearPalette();
+	_graphicsManager.DD_VBL();
+	_soundManager.WSOUND(11);
+	_graphicsManager.loadImage("intro1");
+	_graphicsManager.scrollScreen(0);
+	_graphicsManager._scrollOffset = 0;
+	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	for (int i = 0; i <= 4; i++)
+		_eventsManager.VBL();
 
-					_eventsManager.VBL();
-					_graphicsManager._scrollStatus = 0;
+	_globals.iRegul = 1;
+	_graphicsManager.fadeInLong();
+	if (_graphicsManager._largeScreenFl) {
+		_graphicsManager._scrollStatus = 2;
+		_graphicsManager._scrollPosX = 0;
 
-					if (shouldQuit())
-						return;
-				}
-
-				_soundManager.mixVoice(4, 3);
-				_graphicsManager.fadeOutLong();
-				_graphicsManager._scrollStatus = 0;
-				_graphicsManager.loadImage("intro2");
-				_graphicsManager.scrollScreen(0);
-				_animationManager.loadAnim("INTRO2");
-				_graphicsManager.VISU_ALL();
-				_soundManager.WSOUND(23);
-				_objectsManager.stopBobAnimation(3);
-				_objectsManager.stopBobAnimation(5);
-				_graphicsManager._scrollOffset = 0;
-				_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-				_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-				_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-				_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-
-				for (int i = 0; i <= 4; i++)
-					_eventsManager.VBL();
-
-				_globals.iRegul = 1;
-				_graphicsManager.fadeInLong();
-				for (uint i = 0; i < 200 / _globals._speed; ++i)
-					_eventsManager.VBL();
-
-				_objectsManager.setBobAnimation(3);
-				_soundManager.mixVoice(5, 3);
-				_objectsManager.stopBobAnimation(3);
-				_eventsManager.VBL();
-				memcpy(&paletteData2, _graphicsManager._palette, 796);
-
-				_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
-				_graphicsManager.FIN_VISU();
-
-				if (shouldQuit())
-					return;
-
-				_soundManager._specialSoundNum = 5;
-				_graphicsManager.FADE_LINUX = 2;
-				_animationManager.playAnim("ELEC.ANM", 10, 26, 200);
-				if (shouldQuit())
-					return;
-
-				_soundManager._specialSoundNum = 0;
-
-				if (!_eventsManager._escKeyFl) {
-					_graphicsManager.loadImage("intro2");
-					_graphicsManager.scrollScreen(0);
-					_animationManager.loadAnim("INTRO2");
-					_graphicsManager.VISU_ALL();
-					_soundManager.WSOUND(23);
-					_objectsManager.stopBobAnimation(3);
-					_objectsManager.stopBobAnimation(5);
-					_objectsManager.stopBobAnimation(1);
-					_graphicsManager._scrollOffset = 0;
-					_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-					_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-					_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-					_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-
-					for (int i = 0; i <= 3; i++)
-						_eventsManager.VBL();
-
-					_globals.iRegul = 1;
-					_graphicsManager.setPaletteVGA256WithRefresh(paletteData2, _graphicsManager._vesaBuffer);
-
-					int v9 = 0;
-					while (!shouldQuit() && !_eventsManager._escKeyFl) {
-						if (v9 == 12) {
-							_objectsManager.setBobAnimation(3);
-							_eventsManager.VBL();
-							_soundManager.mixVoice(6, 3);
-							_eventsManager.VBL();
-							_objectsManager.stopBobAnimation(3);
-						}
-
-						Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
-
-
-
-						for (int i = 1, v12 = 4 * v9; i <= PALETTE_BLOCK_SIZE; i++) {
-							if (_graphicsManager._palette[i] > v12)
-								_graphicsManager._palette[i] -= v12;
-						}
-
-						_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
-
-
-						if (2 * v9 > 1) {
-							for (int i = 1; i < 2 * v9; i++)
-								_eventsManager.VBL();
-						}
-
-						_graphicsManager.setPaletteVGA256WithRefresh(paletteData2, _graphicsManager._vesaBuffer);
-						if (20 - v9 > 1) {
-							for (int i = 1; i < 20 - v9; i++)
-								_eventsManager.VBL();
-						}
-
-						v9 += 2;
-						if (v9 > 15) {
-							_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
-							for (uint j = 1; j < 100 / _globals._speed; ++j)
-								_eventsManager.VBL();
-
-							_objectsManager.setBobAnimation(3);
-							_soundManager.mixVoice(7, 3);
-							_objectsManager.stopBobAnimation(3);
-
-							for (uint k = 1; k < 60 / _globals._speed; ++k)
-								_eventsManager.VBL();
-							_objectsManager.setBobAnimation(5);
-							for (uint l = 0; l < 20 / _globals._speed; ++l)
-								_eventsManager.VBL();
-
-							Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
-							_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
-
-							for (uint m = 0; m < 50 / _globals._speed; ++m) {
-								if (m == 30 / _globals._speed) {
-									_objectsManager.setBobAnimation(3);
-									_soundManager.mixVoice(8, 3);
-									_objectsManager.stopBobAnimation(3);
-								}
-
-								_eventsManager.VBL();
-							}
-
-							_graphicsManager.fadeOutLong();
-							_graphicsManager.FIN_VISU();
-							_animationManager._clearAnimationFl = true;
-							_soundManager.WSOUND(3);
-							_soundManager._specialSoundNum = 1;
-							_animationManager.playAnim("INTRO1.anm", 10, 24, 18);
-							if (shouldQuit())
-								return;
-
-							_soundManager._specialSoundNum = 0;
-
-							if (!_eventsManager._escKeyFl) {
-								_animationManager.playAnim("INTRO2.anm", 10, 24, 18);
-								if (shouldQuit())
-									return;
-
-								if (!_eventsManager._escKeyFl) {
-									_animationManager.playAnim("INTRO3.anm", 10, 24, 200);
-									if (shouldQuit())
-										return;
-
-									if (!_eventsManager._escKeyFl) {
-										_animationManager._clearAnimationFl = false;
-										_graphicsManager.FADE_LINUX = 2;
-										_animationManager.playAnim("J4.anm", 12, 12, 1000);
-									}
-								}
-							}
-							break;
-						}
-					}
-				}
+		bool loopCond = false;
+		do {
+			_graphicsManager._scrollPosX += 2;
+			if (_graphicsManager._scrollPosX > (SCREEN_WIDTH - 2)) {
+				_graphicsManager._scrollPosX = SCREEN_WIDTH;
+				loopCond = true;
 			}
+
+			if (_eventsManager.getMouseX() < _graphicsManager._scrollPosX + 10)
+				_eventsManager.setMouseXY(_eventsManager._mousePos.x + 4, _eventsManager.getMouseY());
+			_eventsManager.VBL();
+		} while (!shouldQuit() && !loopCond && _graphicsManager._scrollPosX != SCREEN_WIDTH);
+
+		_eventsManager.VBL();
+		_graphicsManager._scrollStatus = 0;
+
+		if (shouldQuit())
+			return;
+	}
+
+	_soundManager.mixVoice(4, 3);
+	_graphicsManager.fadeOutLong();
+	_graphicsManager._scrollStatus = 0;
+	_graphicsManager.loadImage("intro2");
+	_graphicsManager.scrollScreen(0);
+	_animationManager.loadAnim("INTRO2");
+	_graphicsManager.VISU_ALL();
+	_soundManager.WSOUND(23);
+	_objectsManager.stopBobAnimation(3);
+	_objectsManager.stopBobAnimation(5);
+	_graphicsManager._scrollOffset = 0;
+	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+
+	for (int i = 0; i <= 4; i++)
+		_eventsManager.VBL();
+
+	_globals.iRegul = 1;
+	_graphicsManager.fadeInLong();
+	for (uint i = 0; i < 200 / _globals._speed; ++i)
+		_eventsManager.VBL();
+
+	_objectsManager.setBobAnimation(3);
+	_soundManager.mixVoice(5, 3);
+	_objectsManager.stopBobAnimation(3);
+	_eventsManager.VBL();
+	memcpy(&paletteData2, _graphicsManager._palette, 796);
+
+	_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
+	_graphicsManager.FIN_VISU();
+
+	if (shouldQuit() || _eventsManager._escKeyFl)
+		return;
+
+	_soundManager._specialSoundNum = 5;
+	_graphicsManager.FADE_LINUX = 2;
+	_animationManager.playAnim("ELEC.ANM", 10, 26, 200);
+	_soundManager._specialSoundNum = 0;
+
+	if (shouldQuit() || _eventsManager._escKeyFl)
+		return;
+
+	_graphicsManager.loadImage("intro2");
+	_graphicsManager.scrollScreen(0);
+	_animationManager.loadAnim("INTRO2");
+	_graphicsManager.VISU_ALL();
+	_soundManager.WSOUND(23);
+	_objectsManager.stopBobAnimation(3);
+	_objectsManager.stopBobAnimation(5);
+	_objectsManager.stopBobAnimation(1);
+	_graphicsManager._scrollOffset = 0;
+	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+
+	for (int i = 0; i <= 3; i++)
+		_eventsManager.VBL();
+
+	_globals.iRegul = 1;
+	_graphicsManager.setPaletteVGA256WithRefresh(paletteData2, _graphicsManager._vesaBuffer);
+
+	int introIndex = 0;
+	while (!shouldQuit() && !_eventsManager._escKeyFl) {
+		if (introIndex == 12) {
+			_objectsManager.setBobAnimation(3);
+			_eventsManager.VBL();
+			_soundManager.mixVoice(6, 3);
+			_eventsManager.VBL();
+			_objectsManager.stopBobAnimation(3);
+		}
+
+		Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
+
+		for (int i = 1, v12 = 4 * introIndex; i <= PALETTE_BLOCK_SIZE; i++) {
+			if (_graphicsManager._palette[i] > v12)
+				_graphicsManager._palette[i] -= v12;
+		}
+
+		_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
+
+		for (int i = 1; i < 2 * introIndex; i++)
+			_eventsManager.VBL();
+
+		_graphicsManager.setPaletteVGA256WithRefresh(paletteData2, _graphicsManager._vesaBuffer);
+
+		for (int i = 1; i < 20 - introIndex; i++)
+			_eventsManager.VBL();
+
+		introIndex += 2;
+		if (introIndex > 15) {
+			_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
+			for (uint j = 1; j < 100 / _globals._speed; ++j)
+				_eventsManager.VBL();
+
+			_objectsManager.setBobAnimation(3);
+			_soundManager.mixVoice(7, 3);
+			_objectsManager.stopBobAnimation(3);
+
+			for (uint k = 1; k < 60 / _globals._speed; ++k)
+				_eventsManager.VBL();
+			_objectsManager.setBobAnimation(5);
+			for (uint l = 0; l < 20 / _globals._speed; ++l)
+				_eventsManager.VBL();
+
+			Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
+			_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
+
+			for (uint m = 0; m < 50 / _globals._speed; ++m) {
+				if (m == 30 / _globals._speed) {
+					_objectsManager.setBobAnimation(3);
+					_soundManager.mixVoice(8, 3);
+					_objectsManager.stopBobAnimation(3);
+				}
+
+				_eventsManager.VBL();
+			}
+
+			_graphicsManager.fadeOutLong();
+			_graphicsManager.FIN_VISU();
+			_animationManager._clearAnimationFl = true;
+			_soundManager.WSOUND(3);
+			_soundManager._specialSoundNum = 1;
+			_animationManager.playAnim("INTRO1.anm", 10, 24, 18);
+			_soundManager._specialSoundNum = 0;
+			if (shouldQuit() || _eventsManager._escKeyFl)
+				return;
+
+			_animationManager.playAnim("INTRO2.anm", 10, 24, 18);
+			if (shouldQuit() || _eventsManager._escKeyFl)
+				return;
+
+			_animationManager.playAnim("INTRO3.anm", 10, 24, 200);
+			if (shouldQuit() || _eventsManager._escKeyFl)
+				return;
+
+			_animationManager._clearAnimationFl = false;
+			_graphicsManager.FADE_LINUX = 2;
+			_animationManager.playAnim("J4.anm", 12, 12, 1000);
+			break;
 		}
 	}
 
