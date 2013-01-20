@@ -463,7 +463,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 	} else if (dataP[2] == 'G' && dataP[3] == 'O' && dataP[4] == 'T') {
 		opcodeType = 2;
 	} else if (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'N') {
-		_vm->_objectsManager.ZONE_ON((int16)READ_LE_UINT16(dataP + 5));
+		_vm->_objectsManager.enableZone((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
 	} else if (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'F') {
 		_vm->_objectsManager.disableZone((int16)READ_LE_UINT16(dataP + 5));

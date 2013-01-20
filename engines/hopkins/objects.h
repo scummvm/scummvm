@@ -40,15 +40,10 @@ struct SpriteItem {
 	int _spriteIndex;
 	int field12;
 	int field14;
-	byte *field1C;
-	int field20;
-	int field22;
-	int field24;
-	int field26;
 	bool _rleFl;
 	bool field2A;
-	int destX;
-	int destY;
+	int _destX;
+	int _destY;
 	int _width;
 	int _height;
 	int _zoomPct;
@@ -142,7 +137,6 @@ public:
 	void clearSprite();
 	void animateSprite(int idx);
 	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9);
-	void addAnimatedSprite(const byte *spriteData, int idx, byte *a3, int a4, int a5);
 	void removeSprite(int idx);
 	void setSpriteX(int idx, int xp);
 	void setSpriteIndex(int idx, int spriteIndex);
@@ -189,7 +183,7 @@ public:
 	void Q_GAUCHE(int idx);
 	void ACTION_GAUCHE(int idx);
 
-	void ZONE_ON(int idx);
+	void enableZone(int idx);
 	void disableZone(int idx);
 	void OPTI_ONE(int idx, int fromPosi, int destPosi, int a4);
 	int BOBPOSI(int idx);

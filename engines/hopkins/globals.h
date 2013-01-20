@@ -43,7 +43,7 @@ struct ZonePItem {
 	int fieldD;
 	int fieldE;
 	int fieldF;
-	int field10;
+	bool _enabledFl;
 	int field12;
 };
 
@@ -55,7 +55,7 @@ struct CarreZoneItem {
 	int field8;
 	int fieldA;
 	int fieldC;
-	int fieldE;
+	bool fieldE;
 };
 
 struct BqeAnimItem {

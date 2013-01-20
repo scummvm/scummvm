@@ -319,7 +319,7 @@ void ObjectsManager::displaySprite() {
 			if (_sprite[idx]._animationType == 1) {
 				computeSprite(idx);
 				if (_sprite[idx].field2A)
-					beforeSort(SORT_SPRITE, idx, _sprite[idx]._height + _sprite[idx].destY);
+					beforeSort(SORT_SPRITE, idx, _sprite[idx]._height + _sprite[idx]._destY);
 			}
 		}
 
@@ -480,7 +480,7 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob._xp = 0;
 	bob._yp = 0;
 	bob._frameIndex = 0;
-	bob.field10 = 0;
+	bob.field10 = false;
 	bob.field12 = 0;
 	bob.field14 = 0;
 	bob._disabledAnimationFl = false;
@@ -726,16 +726,16 @@ void ObjectsManager::checkCache() {
 		int oldFieldA = _vm->_globals.Cache[cacheIdx].fieldA;
 		for (int spriteIdx = 0; spriteIdx <= 4; spriteIdx++) {
 			if (_sprite[spriteIdx]._animationType == 1 && _sprite[spriteIdx]._spriteIndex != 250) {
-				int right = _sprite[spriteIdx]._width + _sprite[spriteIdx].destX;
-				int bottom = _sprite[spriteIdx]._height + _sprite[spriteIdx].destY;
+				int right = _sprite[spriteIdx]._width + _sprite[spriteIdx]._destX;
+				int bottom = _sprite[spriteIdx]._height + _sprite[spriteIdx]._destY;
 				int cachedRight = _vm->_globals.Cache[cacheIdx]._width + _vm->_globals.Cache[cacheIdx]._x;
 
 				if (bottom > _vm->_globals.Cache[cacheIdx]._y && bottom < (_vm->_globals.Cache[cacheIdx].field14 + _vm->_globals.Cache[cacheIdx]._height + _vm->_globals.Cache[cacheIdx]._y)) {
 					if ((right >= _vm->_globals.Cache[cacheIdx]._x && right <= cachedRight)
-					 || (cachedRight >= _sprite[spriteIdx].destX && _vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx].destX)
-					 || (cachedRight >= _sprite[spriteIdx].destX && _vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx].destX)
-					 || (_vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx].destX && right <= cachedRight)
-					 || (_vm->_globals.Cache[cacheIdx]._x >= _sprite[spriteIdx].destX && right >= cachedRight))
+					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx]._destX)
+					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx]._destX)
+					 || (_vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx]._destX && right <= cachedRight)
+					 || (_vm->_globals.Cache[cacheIdx]._x >= _sprite[spriteIdx]._destX && right >= cachedRight))
 						++_vm->_globals.Cache[cacheIdx].fieldA;
 				}
 			}
@@ -765,10 +765,10 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 
 	if (_sprite[idx]._rleFl)
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _sprite[idx]._spriteData,
-		    _sprite[idx].destX + 300, _sprite[idx].destY + 300, _sprite[idx]._spriteIndex);
+		    _sprite[idx]._destX + 300, _sprite[idx]._destY + 300, _sprite[idx]._spriteIndex);
 	else
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _sprite[idx]._spriteData,
-		    _sprite[idx].destX + 300, _sprite[idx].destY + 300,  _sprite[idx]._spriteIndex, _sprite[idx]._reducePct, _sprite[idx]._zoomPct, _sprite[idx].fieldE);
+		    _sprite[idx]._destX + 300, _sprite[idx]._destY + 300,  _sprite[idx]._spriteIndex, _sprite[idx]._reducePct, _sprite[idx]._zoomPct, _sprite[idx].fieldE);
 
 	_vm->_globals.Liste[idx]._width = _sprite[idx]._width;
 	_vm->_globals.Liste[idx]._height = _sprite[idx]._height;
@@ -865,8 +865,8 @@ void ObjectsManager::computeSprite(int idx) {
 
 	int v15 = _sprite[idx]._spritePos.x - deltaX;
 	int v16 = _sprite[idx]._spritePos.y - deltaY;
-	_sprite[idx].destX = v15;
-	_sprite[idx].destY = v16;
+	_sprite[idx]._destX = v15;
+	_sprite[idx]._destY = v16;
 	_sprite[idx].field2A = true;
 	_sprite[idx]._zoomPct = zoomPercent;
 	_sprite[idx]._reducePct = reducePercent;
@@ -1195,7 +1195,6 @@ int ObjectsManager::getSpriteY(int idx) {
  */
 void ObjectsManager::clearSprite() {
 	for (int idx = 0; idx < MAX_SPRITE; idx++) {
-		_sprite[idx].field1C = g_PTRNUL;
 		_sprite[idx]._spriteData = g_PTRNUL;
 		_sprite[idx]._animationType = 0;
 	}
@@ -1224,11 +1223,6 @@ void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, 
 	_sprite[idx].fieldE = a7;
 	_sprite[idx].field12 = a8;
 	_sprite[idx].field14 = a9;
-	_sprite[idx].field1C = g_PTRNUL;
-	_sprite[idx].field20 = 0;
-	_sprite[idx].field24 = 0;
-	_sprite[idx].field26 = 0;
-	_sprite[idx].field22 = 0;
 	_sprite[idx]._animationType = 0;
 
 	if (spriteData[0] == 'R' && spriteData[1] == 'L' && spriteData[2] == 'E') {
@@ -1240,32 +1234,12 @@ void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, 
 
 }
 
-void ObjectsManager::addAnimatedSprite(const byte *spriteData, int idx, byte *a3, int a4, int a5) {
-	assert (idx  <= MAX_SPRITE);
-	_sprite[idx]._spriteData = spriteData;
-	_sprite[idx].field1C = a3;
-	_sprite[idx].field20 = a4;
-	_sprite[idx].field24 = 0;
-	_sprite[idx].field26 = 0;
-	_sprite[idx].fieldC = 0;
-	_sprite[idx].fieldE = 0;
-	_sprite[idx]._animationType = 1;
-	_sprite[idx].field22 = 0;
-	_sprite[idx].field14 = a5;
-
-	if (spriteData[0] == 'R' && spriteData[1] == 'L' && spriteData[2] == 'E')
-		_sprite[idx]._rleFl = true;
-	else
-		_sprite[idx]._rleFl = false;
-}
-
 /**
  * Freeze sprite animation and free its memory
  */
 void ObjectsManager::removeSprite(int idx) {
 	// Type 3 was also used by freeSprite(), which has been removed as it wasn't used
 	_sprite[idx]._animationType = 3;
-	_sprite[idx].field1C = _vm->_globals.freeMemory(_sprite[idx].field1C);
 }
 
 /**
@@ -1922,7 +1896,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 		_vm->_globals.ZONEP[i].fieldE = 0;
 		_vm->_globals.ZONEP[i].fieldF = 0;
 		_vm->_globals.ZONEP[i].field12 = 0;
-		_vm->_globals.ZONEP[i].field10 = 0;
+		_vm->_globals.ZONEP[i]._enabledFl = false;
 	}
 
 	Common::File f;
@@ -1943,7 +1917,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 			    READ_LE_UINT16((uint16 *)ptr + v4 + 3),
 			    READ_LE_UINT16((uint16 *)ptr + v4 + 4),
 			    bobZoneIdx);
-			_vm->_globals.ZONEP[bobZoneIdx].field10 = 1;
+			_vm->_globals.ZONEP[bobZoneIdx]._enabledFl = true;
 		}
 		v4 += 5;
 		++v18;
@@ -1994,7 +1968,7 @@ void ObjectsManager::CARRE_ZONE() {
 
 	for (int idx = 0; idx < 100; ++idx) {
 		_vm->_globals.CarreZone[idx].field0 = 0;
-		_vm->_globals.CarreZone[idx].fieldE = 0;
+		_vm->_globals.CarreZone[idx].fieldE = false;
 		_vm->_globals.CarreZone[idx].field2 = 1280;
 		_vm->_globals.CarreZone[idx].field4 = 0;
 		_vm->_globals.CarreZone[idx].field6 = 460;
@@ -2040,7 +2014,7 @@ void ObjectsManager::CARRE_ZONE() {
 		if (v14 < 0)
 			v14 = -v14;
 		if (v10 == v14)
-			_vm->_globals.CarreZone[v7].fieldE = 1;
+			_vm->_globals.CarreZone[v7].fieldE = true;
 	}
 }
 
@@ -2341,7 +2315,7 @@ void ObjectsManager::PARADISE() {
 			_vm->_talkManager.REPONSE2(_vm->_globals._saveData->data[svField2], _vm->_globals._saveData->data[svField1]);
 		}
 		_vm->_eventsManager.changeMouseCursor(4);
-		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_globals.ZONEP[_zoneNum].field10) {
+		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_globals.ZONEP[_zoneNum]._enabledFl) {
 			_zoneNum = -1;
 			_forceZoneFl = true;
 		}
@@ -3035,12 +3009,12 @@ int ObjectsManager::MZONE() {
 		}
 		_vm->_globals.SegmentEnCours = 0;
 		for (int v7 = 0; v7 <= 99; v7++) {
-			if (_vm->_globals.ZONEP[v7].field10 == 1 && _vm->_globals.CarreZone[v7].field0 == 1
+			if (_vm->_globals.ZONEP[v7]._enabledFl && _vm->_globals.CarreZone[v7].field0 == 1
 				 && _vm->_globals.CarreZone[v7].field2 <= xp
 				 && _vm->_globals.CarreZone[v7].field4 >= xp
 				 && _vm->_globals.CarreZone[v7].field6 <= yp
 				 && _vm->_globals.CarreZone[v7].field8 >= yp) {
-				if (_vm->_globals.CarreZone[v7].fieldE == 1) {
+				if (_vm->_globals.CarreZone[v7].fieldE) {
 					_vm->_globals.oldzone_46 = _vm->_linesManager._zoneLine[_vm->_globals.CarreZone[v7].fieldA].field2;
 					return _vm->_globals.oldzone_46;
 				}
@@ -3057,7 +3031,7 @@ int ObjectsManager::MZONE() {
 		int colRes1 = 0;
 		for (int yCurrent = yp; yCurrent >= 0; --yCurrent) {
 			colRes1 = colision(xp, yCurrent);
-			if (colRes1 != -1 && _vm->_globals.ZONEP[colRes1].field10 == 1)
+			if (colRes1 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
 				break;
 		}
 
@@ -3069,7 +3043,7 @@ int ObjectsManager::MZONE() {
 		int colRes2 = 0;
 		for (int j = yp; j < _vm->_graphicsManager._maxY; ++j) {
 			colRes2 = colision(xp, j);
-			if (colRes2 != -1 && _vm->_globals.ZONEP[colRes1].field10 == 1)
+			if (colRes2 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
 				break;
 		}
 
@@ -3081,7 +3055,7 @@ int ObjectsManager::MZONE() {
 		int colRes3 = 0;
 		for (int k = xp; k >= 0; --k) {
 			colRes3 = colision(k, yp);
-			if (colRes3 != -1 && _vm->_globals.ZONEP[colRes1].field10 == 1)
+			if (colRes3 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
 				break;
 		}
 		if (colRes3 == -1) {
@@ -3092,7 +3066,7 @@ int ObjectsManager::MZONE() {
 		int colRes4 = 0;
 		for (int xCurrent = xp; _vm->_graphicsManager._maxX > xCurrent; ++xCurrent) {
 			colRes4 = colision(xCurrent, yp);
-			if (colRes4 != -1 && _vm->_globals.ZONEP[colRes1].field10 == 1)
+			if (colRes4 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
 				break;
 		}
 		if (colRes1 == colRes2 && colRes1 == colRes3 && colRes1 == colRes4) {
@@ -3399,7 +3373,7 @@ void ObjectsManager::handleSpecialGames() {
 			stopBobAnimation(6);
 			SET_BOBPOSI(6, 0);
 			setBobAnimation(7);
-			ZONE_ON(14);
+			enableZone(14);
 			_vm->_globals._saveData->data[svField261] = 3;
 		}
 		_vm->_globals._disableInventFl = false;
@@ -3627,11 +3601,11 @@ void ObjectsManager::ACTION_GAUCHE(int idx) {
 		SPACTION1(_vm->_globals.GESTE, "28,27,26,25,24,23,-1,", 0, 0, 8);
 }
 
-void ObjectsManager::ZONE_ON(int idx) {
+void ObjectsManager::enableZone(int idx) {
 	if (_vm->_globals.BOBZONE[idx]) {
 		_vm->_globals.BOBZONE_FLAG[idx] = true;
 	} else {
-		_vm->_globals.ZONEP[idx].field10 = 1;
+		_vm->_globals.ZONEP[idx]._enabledFl = true;
 	}
 }
 
@@ -3639,7 +3613,7 @@ void ObjectsManager::disableZone(int idx) {
 	if (_vm->_globals.BOBZONE[idx]) {
 		_vm->_globals.BOBZONE_FLAG[idx] = false;
 	} else {
-		_vm->_globals.ZONEP[idx].field10 = 0;
+		_vm->_globals.ZONEP[idx]._enabledFl = false;
 	}
 
 }
@@ -3854,7 +3828,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 6),
 						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 8),
 						    v28);
-						_vm->_globals.ZONEP[v28].field10 = 1;
+						_vm->_globals.ZONEP[v28]._enabledFl = true;
 					}
 					v33 += 5;
 					++v35;
