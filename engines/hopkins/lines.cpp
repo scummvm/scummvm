@@ -422,8 +422,8 @@ void LinesManager::initRoute() {
 
 		int curLineX = curLineData[2 * curDataIdx - 2];
 		int curLineY = curLineData[2 * curDataIdx - 1];
-		if (_vm->_graphicsManager.max_x == curLineX || _vm->_graphicsManager.max_y == curLineY || 
-			_vm->_graphicsManager.min_x == curLineX || _vm->_graphicsManager.min_y == curLineY ||
+		if (_vm->_graphicsManager._maxX == curLineX || _vm->_graphicsManager._maxY == curLineY || 
+			_vm->_graphicsManager._minX == curLineX || _vm->_graphicsManager._minY == curLineY ||
 			(lineX == curLineX && lineY == curLineY))
 			break;
 		if (lineIdx == MAX_LINES)
@@ -1143,7 +1143,7 @@ LABEL_17:
 
 			v74 = v100;
 
-			if (_vm->_graphicsManager.max_x <= v36 || v67 <= v36)
+			if (_vm->_graphicsManager._maxX <= v36 || v67 <= v36)
 				break;
 		}
 		int v37 = a5;
@@ -1393,8 +1393,8 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 		clipDestX = 20;
 	if (clipDestY <= 19)
 		clipDestY = 20;
-	if (clipDestX > _vm->_graphicsManager.max_x - 10)
-		clipDestX = _vm->_graphicsManager.max_x - 10;
+	if (clipDestX > _vm->_graphicsManager._maxX - 10)
+		clipDestX = _vm->_graphicsManager._maxX - 10;
 	if (clipDestY > _vm->_globals.Max_Perso_Y)
 		clipDestY = _vm->_globals.Max_Perso_Y;
 
@@ -1412,7 +1412,7 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 	if (PARC_PERS(srcX, srcY, clipDestX, clipDestY, -1, -1, 0) != 1) {
 		v14 = 0;
 		v15 = clipDestY;
-		if (_vm->_graphicsManager.max_y > clipDestY) {
+		if (_vm->_graphicsManager._maxY > clipDestY) {
 			v16 = 5;
 			do {
 				v101 = v16;
@@ -1423,12 +1423,12 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 				v141[v101] = -1;
 				++v14;
 				++v15;
-			} while (_vm->_graphicsManager.max_y > v15);
+			} while (_vm->_graphicsManager._maxY > v15);
 		}
 		v131[5] = v14;
 		v18 = 0;
 		v19 = clipDestY;
-		if (_vm->_graphicsManager.min_y < clipDestY) {
+		if (_vm->_graphicsManager._minY < clipDestY) {
 			v20 = 1;
 			do {
 				v102 = v20;
@@ -1443,12 +1443,12 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 				}
 				++v18;
 				--v19;
-			} while (_vm->_graphicsManager.min_y < v19);
+			} while (_vm->_graphicsManager._minY < v19);
 		}
 		v131[1] = v18;
 		v22 = 0;
 		v23 = clipDestX;
-		if (_vm->_graphicsManager.max_x > clipDestX) {
+		if (_vm->_graphicsManager._maxX > clipDestX) {
 			v24 = 3;
 			do {
 				v103 = v24;
@@ -1465,12 +1465,12 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 				if (v131[5] < v22 && v141[5] != -1)
 					break;
 				++v23;
-			} while (_vm->_graphicsManager.max_x > v23);
+			} while (_vm->_graphicsManager._maxX > v23);
 		}
 		v131[3] = v22;
 		v26 = 0;
 		v27 = clipDestX;
-		if (_vm->_graphicsManager.min_x < clipDestX) {
+		if (_vm->_graphicsManager._minX < clipDestX) {
 			v28 = 7;
 			do {
 				v104 = v28;
@@ -1489,7 +1489,7 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 				if (v131[3] < v26 && v141[3] != -1)
 					break;
 				--v27;
-			} while (_vm->_graphicsManager.min_x < v27);
+			} while (_vm->_graphicsManager._minX < v27);
 		}
 		v131[7] = v26;
 		if (v141[1] < 0 || _vm->_objectsManager._lastLine < v141[1])
@@ -1540,7 +1540,7 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 
 		v34 = 0;
 		v35 = srcY;
-		if (_vm->_graphicsManager.max_y > srcY) {
+		if (_vm->_graphicsManager._maxY > srcY) {
 			v36 = 5;
 			do {
 				v105 = v36;
@@ -1551,12 +1551,12 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 				v141[v105] = -1;
 				++v34;
 				++v35;
-			} while (_vm->_graphicsManager.max_y > v35);
+			} while (_vm->_graphicsManager._maxY > v35);
 		}
 		v131[5] = v34 + 1;
 		v38 = 0;
 		v39 = srcY;
-		if (_vm->_graphicsManager.min_y < srcY) {
+		if (_vm->_graphicsManager._minY < srcY) {
 			v40 = 1;
 			do {
 				v106 = v40;
@@ -1571,12 +1571,12 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 						break;
 				}
 				--v39;
-			} while (_vm->_graphicsManager.min_y < v39);
+			} while (_vm->_graphicsManager._minY < v39);
 		}
 		v131[1] = v38 + 1;
 		v42 = 0;
 		v43 = srcX;
-		if (_vm->_graphicsManager.max_x > srcX) {
+		if (_vm->_graphicsManager._maxX > srcX) {
 			v44 = 3;
 			do {
 				v107 = v44;
@@ -1591,12 +1591,12 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 						break;
 				}
 				++v43;
-			} while (_vm->_graphicsManager.max_x > v43);
+			} while (_vm->_graphicsManager._maxX > v43);
 		}
 		v131[3] = v42 + 1;
 		v46 = 0;
 		v47 = srcX;
-		if (_vm->_graphicsManager.min_x < srcX) {
+		if (_vm->_graphicsManager._minX < srcX) {
 			v48 = 7;
 			do {
 				v108 = v48;
@@ -1611,7 +1611,7 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 						break;
 				}
 				--v47;
-			} while (_vm->_graphicsManager.min_x < v47);
+			} while (_vm->_graphicsManager._minX < v47);
 		}
 		v131[7] = v46 + 1;
 		if (v141[1] != -1) {

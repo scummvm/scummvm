@@ -333,7 +333,7 @@ bool HopkinsEngine::runWin95Demo() {
 		case 13:
 		case 14:
 		case 15:
-			NO_DISPO(11);
+			handleNotAvailable(11);
 			break;
 
 		case 16:
@@ -348,11 +348,11 @@ bool HopkinsEngine::runWin95Demo() {
 		case 33:
 		case 32:
 		case 34:
-			NO_DISPO(4);
+			handleNotAvailable(4);
 			break;
 
 		case 17:
-			NO_DISPO(1);
+			handleNotAvailable(1);
 			break;
 
 		case 111:
@@ -512,7 +512,7 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 32:
 		case 34:
 		case 38:
-			PASS();
+			displayNotAvailable();
 			break;
 
 		case 1:
@@ -1953,7 +1953,7 @@ void HopkinsEngine::playIntro() {
 /**
  * If in demo, displays a 'not available' screen and returns to the city map
  */
-void HopkinsEngine::PASS() {
+void HopkinsEngine::displayNotAvailable() {
 	if (!getIsDemo())
 		return;
 
@@ -1972,10 +1972,10 @@ void HopkinsEngine::PASS() {
 	_globals._exitId = 4;
 }
 
-void HopkinsEngine::NO_DISPO(int sortie) {
+void HopkinsEngine::handleNotAvailable(int sortie) {
 	// Use the code of the linux demo instead of the code of the Windows demo.
 	// The behavior is somewhat better, and common code is easier to maintain.
-	PASS();
+	displayNotAvailable();
 	_globals._exitId = sortie;
 }
 
@@ -2921,10 +2921,10 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	int xp, yp;
 	int buttonIndex;
 
-	_graphicsManager.min_x = 0;
-	_graphicsManager.min_y = 0;
-	_graphicsManager.max_x = SCREEN_WIDTH;
-	_graphicsManager.max_y = SCREEN_HEIGHT - 1;
+	_graphicsManager._minX = 0;
+	_graphicsManager._minY = 0;
+	_graphicsManager._maxX = SCREEN_WIDTH;
+	_graphicsManager._maxY = SCREEN_HEIGHT - 1;
 	_eventsManager._breakoutFl = false;
 	_globals._forestFl = false;
 	_globals._disableInventFl = true;
@@ -2958,10 +2958,10 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 		return false;
 	} else {
 		// Continue
-		_graphicsManager.min_x = 0;
-		_graphicsManager.max_y = 20;
-		_graphicsManager.max_x = SCREEN_WIDTH;
-		_graphicsManager.max_y = SCREEN_HEIGHT - 20;
+		_graphicsManager._minX = 0;
+		_graphicsManager._maxY = 20;
+		_graphicsManager._maxX = SCREEN_WIDTH;
+		_graphicsManager._maxY = SCREEN_HEIGHT - 20;
 		return true;
 	}
 }

@@ -521,9 +521,9 @@ void ComputerManager::displayGamesSubMenu() {
 	_ballRightFl = false;
 	_ballUpFl = false;
 	_breakoutLevelNbr = 0;
-	_vm->_graphicsManager.min_y = 0;
-	_vm->_graphicsManager.max_x = 320;
-	_vm->_graphicsManager.max_y = 200;
+	_vm->_graphicsManager._minY = 0;
+	_vm->_graphicsManager._maxX = 320;
+	_vm->_graphicsManager._maxY = 200;
 	_vm->_soundManager.loadSample(1, "SOUND37.WAV");
 	_vm->_soundManager.loadSample(2, "SOUND38.WAV");
 	_vm->_soundManager.loadSample(3, "SOUND39.WAV");
@@ -546,9 +546,9 @@ void ComputerManager::displayGamesSubMenu() {
 	setVideoMode();
 	setTextColor(15);
 	clearScreen();
-	_vm->_graphicsManager.max_x = 680;
-	_vm->_graphicsManager.min_y = 0;
-	_vm->_graphicsManager.max_y = 460;
+	_vm->_graphicsManager._maxX = 680;
+	_vm->_graphicsManager._minY = 0;
+	_vm->_graphicsManager._maxY = 460;
 }
 
 /**

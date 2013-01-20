@@ -35,8 +35,8 @@ namespace Hopkins {
 
 GraphicsManager::GraphicsManager() {
 	_lockCounter = 0;
-	SDL_MODEYES = false;
-	XSCREEN = YSCREEN = 0;
+	_initGraphicsFl = false;
+	_screenWidth = _screenHeight = 0;
 	WinScan = 0;
 	PAL_PIXELS = NULL;
 	_lineNbr = 0;
@@ -53,17 +53,16 @@ GraphicsManager::GraphicsManager() {
 	FADE_LINUX = 0;
 	_skipVideoLockFl = false;
 	_scrollStatus = 0;
-	min_x = 0;
-	min_y = 20;
-	max_x = SCREEN_WIDTH * 2;
-	max_y = SCREEN_HEIGHT - 20;
-	clip_x = clip_y = 0;
+	_minX = 0;
+	_minY = 20;
+	_maxX = SCREEN_WIDTH * 2;
+	_maxY = SCREEN_HEIGHT - 20;
+	_posXClipped = _posYClipped = 0;
 	clip_x1 = clip_y1 = 0;
-	clip_flag = false;
+	_clipFl = false;
 	Red_x = Red_y = 0;
 	Red = 0;
 	_width = 0;
-	Compteur_y = 0;
 	spec_largeur = 0;
 
 	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
@@ -94,7 +93,7 @@ void GraphicsManager::setParent(HopkinsEngine *vm) {
 }
 
 void GraphicsManager::setGraphicalMode(int width, int height) {
-	if (!SDL_MODEYES) {
+	if (!_initGraphicsFl) {
 		Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
 		initGraphics(width, height, true, &pixelFormat16);
 
@@ -103,17 +102,17 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		_vesaBuffer = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 		_videoPtr = NULL;
-		XSCREEN = width;
-		YSCREEN = height;
+		_screenWidth = width;
+		_screenHeight = height;
 
 		WinScan = width * 2; // Refactor me
 
 		PAL_PIXELS = SD_PIXELS;
 		_lineNbr = width;
 
-		SDL_MODEYES = true;
+		_initGraphicsFl = true;
 	} else {
-		error("Called SET_MODE multiple times");
+		error("setGraphicalMode called multiple times");
 	}
 }
 
@@ -143,7 +142,7 @@ void GraphicsManager::unlockScreen() {
  */
 void GraphicsManager::clearScreen() {
 	assert(_videoPtr);
-	_videoPtr->fillRect(Common::Rect(0, 0, XSCREEN, YSCREEN), 0);
+	_videoPtr->fillRect(Common::Rect(0, 0, _screenWidth, _screenHeight), 0);
 }
 
 /**
@@ -163,10 +162,10 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 	lockScreen();
 	clearScreen();
 	unlockScreen();
-	A_PCX320(_vesaScreen, file, _palette);
+	loadPCX320(_vesaScreen, file, _palette);
 	memcpy(_vesaBuffer, _vesaScreen, 64000);
 	SCANLINE(320);
-	max_x = 320;
+	_maxX = 320;
 
 	lockScreen();
 	copy16bFromSurfaceScaleX2(_vesaBuffer);
@@ -192,7 +191,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	}
 
 	scrollScreen(0);
-	A_PCX640_480(_vesaScreen, file, _palette, flag);
+	loadPCX640(_vesaScreen, file, _palette, flag);
 
 	_scrollPosX = 0;
 	_oldScrollPosX = 0;
@@ -200,14 +199,14 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 
 	if (!_largeScreenFl) {
 		SCANLINE(SCREEN_WIDTH);
-		max_x = SCREEN_WIDTH;
+		_maxX = SCREEN_WIDTH;
 		lockScreen();
 		clearScreen();
 		m_scroll16(_vesaScreen, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		unlockScreen();
 	} else {
 		SCANLINE(SCREEN_WIDTH * 2);
-		max_x = SCREEN_WIDTH * 2;
+		_maxX = SCREEN_WIDTH * 2;
 		lockScreen();
 		clearScreen();
 		unlockScreen();
@@ -290,7 +289,7 @@ void GraphicsManager::Trans_bloc2(byte *surface, byte *col, int size) {
 	}
 }
 
-void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag) {
+void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag) {
 	Common::File f;
 	Graphics::PCXDecoder pcxDecoder;
 
@@ -325,7 +324,7 @@ void GraphicsManager::A_PCX640_480(byte *surface, const Common::String &file, by
 	f.close();
 }
 
-void GraphicsManager::A_PCX320(byte *surface, const Common::String &file, byte *palette) {
+void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte *palette) {
 	size_t filesize;
 	int v4;
 	size_t v5;
@@ -898,7 +897,6 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 	const byte *srcP;
 	byte *destP;
 	int rowCount;
-	int i;
 	int rowCount2;
 
 	// TODO: This code in the original is potentially dangerous, as it doesn't clip the area to within
@@ -913,7 +911,7 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 			srcP += width;
 			destP += width;
 		} else if (width & 2) {
-			for (i = width >> 1; i; --i) {
+			for (int i = width >> 1; i; --i) {
 				destP[0] = srcP[0];
 				destP[1] = srcP[1];
 				srcP += 2;
@@ -935,9 +933,9 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 	for (int i = spriteIndex; i; --i)
 		spriteP += READ_LE_UINT32(spriteP) + 16;
 
-	clip_x = 0;
-	clip_y = 0;
-	clip_flag = false;
+	_posXClipped = 0;
+	_posYClipped = 0;
+	_clipFl = false;
 
 	spriteP += 4;
 	int width = READ_LE_UINT16(spriteP);
@@ -946,44 +944,44 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 	// Clip X
 	clip_x1 = width;
-	if ((xp + width) <= (min_x + 300))
+	if ((xp + width) <= (_minX + 300))
 		return;
-	if (xp < (min_x + 300)) {
-		clip_x = min_x + 300 - xp;
-		clip_flag = true;
+	if (xp < (_minX + 300)) {
+		_posXClipped = _minX + 300 - xp;
+		_clipFl = true;
 	}
 
 	// Clip Y
 	// TODO: This is weird, but it's that way in the original. Original game bug?
 	if ((yp + height) <= height)
 		return;
-	if (yp < (min_y + 300)) {
-		clip_y = min_y + 300 - yp;
-		clip_flag = true;
+	if (yp < (_minY + 300)) {
+		_posYClipped = _minY + 300 - yp;
+		_clipFl = true;
 	}
 
 	// Clip X1
-	if (xp >= (max_x + 300))
+	if (xp >= (_maxX + 300))
 		return;
-	if ((xp + width) > (max_x + 300)) {
-		int xAmount = width + 10 - (xp + width - (max_x + 300));
+	if ((xp + width) > (_maxX + 300)) {
+		int xAmount = width + 10 - (xp + width - (_maxX + 300));
 		if (xAmount <= 10)
 			return;
 
 		clip_x1 = xAmount - 10;
-		clip_flag = true;
+		_clipFl = true;
 	}
 
 	// Clip Y1
-	if (yp >= (max_y + 300))
+	if (yp >= (_maxY + 300))
 		return;
-	if ((yp + height) > (max_y + 300)) {
-		int yAmount = height + 10 - (yp + height - (max_y + 300));
+	if ((yp + height) > (_maxY + 300)) {
+		int yAmount = height + 10 - (yp + height - (_maxY + 300));
 		if (yAmount <= 10)
 			return;
 
 		clip_y1 = yAmount - 10;
-		clip_flag = true;
+		_clipFl = true;
 	}
 
 	// Sprite display
@@ -999,7 +997,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 	byte *destP = surface + (yp - 300) * _lineNbr2 + (xp - 300);
 
 	// Handling for clipped versus non-clipped
-	if (clip_flag) {
+	if (_clipFl) {
 		// Clipped version
 		for (int yc = 0; yc < height; ++yc, destP += _lineNbr2) {
 			byte *tempDestP = destP;
@@ -1014,7 +1012,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 				if (byteVal == 254) {
 					// Copy pixel range
 					for (int xv = 0; xv < width; ++xv, ++xc, ++spriteP, ++tempDestP) {
-						if (clip_y == 0 && xc >= clip_x && xc < clip_x1)
+						if (_posYClipped == 0 && xc >= _posXClipped && xc < clip_x1)
 							*tempDestP = *spriteP;
 					}
 				} else {
@@ -1024,8 +1022,8 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 				}
 			}
 
-			if (clip_y > 0)
-				--clip_y;
+			if (_posYClipped > 0)
+				--_posYClipped;
 			srcP += 3;
 		}
 	} else {
@@ -1100,14 +1098,14 @@ void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
 
 	tempX = x1;
 	addFlag = true;
-	if (x2 > max_x)
-		x2 = max_x;
-	if (y2 > max_y)
-		y2 = max_y;
-	if (x1 < min_x)
-		tempX = min_x;
-	if (y1 < min_y)
-		y1 = min_y;
+	if (x2 > _maxX)
+		x2 = _maxX;
+	if (y2 > _maxY)
+		y2 = _maxY;
+	if (x1 < _minX)
+		tempX = _minX;
+	if (y1 < _minY)
+		y1 = _minY;
 
 	if (_vm->_globals.NBBLOC > 1) {
 		int16 blocIndex = 0;
@@ -1293,24 +1291,23 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 	int spriteHeight2 = (int16)READ_LE_UINT16(spriteSizeP);
 	int spriteHeight1 = spriteHeight2;
 	spritePixelsP = spriteSizeP + 10;
-	clip_x = 0;
-	clip_y = 0;
+	_posXClipped = 0;
+	_posYClipped = 0;
 	clip_x1 = 0;
 	clip_y1 = 0;
-	if ((xp300 <= min_x) || (yp300 <= min_y) || (xp300 >= max_x + 300) || 	(yp300 >= max_y + 300))
+	if ((xp300 <= _minX) || (yp300 <= _minY) || (xp300 >= _maxX + 300) || 	(yp300 >= _maxY + 300))
 		return;
 
-	if ((uint16)xp300 < (uint16)(min_x + 300))
-		clip_x = min_x + 300 - xp300;
+	if ((uint16)xp300 < (uint16)(_minX + 300))
+		_posXClipped = _minX + 300 - xp300;
 
-	if ((uint16)yp300 < (uint16)(min_y + 300))
-		clip_y = min_y + 300 - yp300;
+	if ((uint16)yp300 < (uint16)(_minY + 300))
+		_posYClipped = _minY + 300 - yp300;
 
-	clip_x1 = max_x + 300 - xp300;
-	clip_y1 = max_y + 300 - yp300;
+	clip_x1 = _maxX + 300 - xp300;
+	clip_y1 = _maxY + 300 - yp300;
 	dest1P = xp300 + _lineNbr2 * (yp300 - 300) - 300 + surface;
 	if (zoom2) {
-		Compteur_y = 0;
 		Agr_x = 0;
 		Agr_y = 0;
 		Agr_Flag_y = false;
@@ -1320,22 +1317,22 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 		int v22 = zoomIn(spriteHeight1, zoom2);
 		if (modeFlag) {
 			v29 = v20 + dest1P;
-			if (clip_y) {
-				if ((uint16)clip_y >= v22)
+			if (_posYClipped) {
+				if ((uint16)_posYClipped >= v22)
 					return;
 				int v30 = 0;
-				while (zoomIn(++v30, zoom2) < (uint16)clip_y)
+				while (zoomIn(++v30, zoom2) < (uint16)_posYClipped)
 					;
 				spritePixelsP += _width * v30;
-				v29 += _lineNbr2 * (uint16)clip_y;
-				v22 = v22 - (uint16)clip_y;
+				v29 += _lineNbr2 * (uint16)_posYClipped;
+				v22 = v22 - (uint16)_posYClipped;
 			}
 			if (v22 > (uint16)clip_y1)
 				v22 = (uint16)clip_y1;
-			if (clip_x) {
-				if ((uint16)clip_x >= v20)
+			if (_posXClipped) {
+				if ((uint16)_posXClipped >= v20)
 					return;
-				v20 -= (uint16)clip_x;
+				v20 -= (uint16)_posXClipped;
 			}
 			if (v20 > (uint16)clip_x1) {
 				int v32 = v20 - (uint16)clip_x1;
@@ -1377,7 +1374,6 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 R_Aff_Zoom_Larg_Cont1:
 					spritePixelsP = _width + v46;
 					v29 = _lineNbr2 + v53;
-					++Compteur_y;
 					if (!Agr_Flag_y)
 						Agr_y = zoom2 + Agr_y;
 					if ((uint16)Agr_y < 100)
@@ -1393,31 +1389,31 @@ R_Aff_Zoom_Larg_Cont1:
 				v22 = v63 - 1;
 			} while (v63 != 1);
 		} else {
-			if (clip_y) {
-				if ((uint16)clip_y >= v22)
+			if (_posYClipped) {
+				if ((uint16)_posYClipped >= v22)
 					return;
 				int v58 = v22;
 				int v49 = v20;
 				int v23 = 0;
-				int v24 = (uint16)clip_y;
+				int v24 = (uint16)_posYClipped;
 				while (zoomIn(++v23, zoom2) < v24)
 					;
 				v20 = v49;
 				spritePixelsP += _width * v23;
-				dest1P += _lineNbr2 * (uint16)clip_y;
-				v22 = v58 - (uint16)clip_y;
+				dest1P += _lineNbr2 * (uint16)_posYClipped;
+				v22 = v58 - (uint16)_posYClipped;
 			}
 			if (v22 > (uint16)clip_y1)
 				v22 = (uint16)clip_y1;
-			if (clip_x) {
-				if ((uint16)clip_x >= v20)
+			if (_posXClipped) {
+				if ((uint16)_posXClipped >= v20)
 					return;
 				int v26 = 0;
-				while (zoomIn(++v26, zoom2) < (uint16)clip_x)
+				while (zoomIn(++v26, zoom2) < (uint16)_posXClipped)
 					;
 				spritePixelsP += v26;
-				dest1P += (uint16)clip_x;
-				v20 = v20 - (uint16)clip_x;
+				dest1P += (uint16)_posXClipped;
+				v20 = v20 - (uint16)_posXClipped;
 			}
 			if (v20 > (uint16)clip_x1)
 				v20 = (uint16)clip_x1;
@@ -1470,7 +1466,6 @@ Aff_Zoom_Larg_Cont1:
 			} while (v60 != 1);
 		}
 	} else if (zoom1) {
-		Compteur_y = 0;
 		Red_x = 0;
 		Red_y = 0;
 		_width = spriteWidth;
@@ -1489,7 +1484,7 @@ Aff_Zoom_Larg_Cont1:
 						for (int v41 = _width; v41; v41--) {
 							Red_x = Red + Red_x;
 							if ((uint16)Red_x < 100) {
-								if (v42 >= clip_x && v42 < clip_x1 && *spritePixelsP)
+								if (v42 >= _posXClipped && v42 < clip_x1 && *spritePixelsP)
 									*v40 = *spritePixelsP;
 								--v40;
 								++spritePixelsP;
@@ -1518,7 +1513,7 @@ Aff_Zoom_Larg_Cont1:
 						for (int v38 = _width; v38; v38--) {
 							Red_x = Red + Red_x;
 							if ((uint16)Red_x < 100) {
-								if (v39 >= clip_x && v39 < clip_x1 && *spritePixelsP)
+								if (v39 >= _posXClipped && v39 < clip_x1 && *spritePixelsP)
 									*dest1P = *spritePixelsP;
 								++dest1P;
 								++spritePixelsP;
@@ -1540,22 +1535,21 @@ Aff_Zoom_Larg_Cont1:
 		}
 	} else {
 		_width = spriteWidth;
-		Compteur_y = 0;
 		if (modeFlag) {
 			dest2P = spriteWidth + dest1P;
 			spec_largeur = spriteWidth;
-			if (clip_y) {
-				if ((uint16)clip_y >= (unsigned int)spriteHeight1)
+			if (_posYClipped) {
+				if ((uint16)_posYClipped >= (unsigned int)spriteHeight1)
 					return;
-				spritePixelsP += spriteWidth * (uint16)clip_y;
-				dest2P += _lineNbr2 * (uint16)clip_y;
-				spriteHeight1 -= (uint16)clip_y;
+				spritePixelsP += spriteWidth * (uint16)_posYClipped;
+				dest2P += _lineNbr2 * (uint16)_posYClipped;
+				spriteHeight1 -= (uint16)_posYClipped;
 			}
 			int xLeft = (uint16)clip_y1;
 			if (spriteHeight1 > clip_y1)
 				spriteHeight1 = clip_y1;
-			xLeft = clip_x;
-			if (clip_x) {
+			xLeft = _posXClipped;
+			if (_posXClipped) {
 				if (xLeft >= spriteWidth)
 					return;
 				spriteWidth -= xLeft;
@@ -1583,21 +1577,21 @@ Aff_Zoom_Larg_Cont1:
 			} while (yCtr2 != 1);
 		} else {
 			spec_largeur = spriteWidth;
-			if (clip_y) {
-				if ((uint16)clip_y >= (unsigned int)spriteHeight1)
+			if (_posYClipped) {
+				if ((uint16)_posYClipped >= (unsigned int)spriteHeight1)
 					return;
-				spritePixelsP += spriteWidth * (uint16)clip_y;
-				dest1P += _lineNbr2 * (uint16)clip_y;
-				spriteHeight1 -= (uint16)clip_y;
+				spritePixelsP += spriteWidth * (uint16)_posYClipped;
+				dest1P += _lineNbr2 * (uint16)_posYClipped;
+				spriteHeight1 -= (uint16)_posYClipped;
 			}
 			if (spriteHeight1 > clip_y1)
 				spriteHeight1 = clip_y1;
-			if (clip_x) {
-				if ((uint16)clip_x >= spriteWidth)
+			if (_posXClipped) {
+				if ((uint16)_posXClipped >= spriteWidth)
 					return;
-				spritePixelsP += (uint16)clip_x;
-				dest1P += (uint16)clip_x;
-				spriteWidth -= (uint16)clip_x;
+				spritePixelsP += (uint16)_posXClipped;
+				dest1P += (uint16)_posXClipped;
+				spriteWidth -= (uint16)_posXClipped;
 			}
 			if (spriteWidth > (uint16)clip_x1)
 				spriteWidth = (uint16)clip_x1;
@@ -1651,20 +1645,20 @@ void GraphicsManager::SCOPY(const byte *surface, int x1, int y1, int width, int 
 	croppedWidth = width;
 	croppedHeight = height;
 
-	if (x1 < min_x) {
-		croppedWidth = width - (min_x - x1);
-		left = min_x;
+	if (x1 < _minX) {
+		croppedWidth = width - (_minX - x1);
+		left = _minX;
 	}
-	if (y1 < min_y) {
-		croppedHeight = height - (min_y - y1);
-		top = min_y;
+	if (y1 < _minY) {
+		croppedHeight = height - (_minY - y1);
+		top = _minY;
 	}
 	top2 = top;
-	if (top + croppedHeight > max_y)
-		croppedHeight = max_y - top;
+	if (top + croppedHeight > _maxY)
+		croppedHeight = _maxY - top;
 	xRight = left + croppedWidth;
-	if (xRight > max_x)
-		croppedWidth = max_x - left;
+	if (xRight > _maxX)
+		croppedWidth = _maxX - left;
 
 	if (croppedWidth > 0 && croppedHeight > 0) {
 		int height2 = croppedHeight;

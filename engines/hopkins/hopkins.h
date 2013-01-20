@@ -84,7 +84,7 @@ private:
 
 	void initializeSystem();
 
-	void PASS();
+	void displayNotAvailable();
 	void restoreSystem();
 	void PUBQUIT();
 	void displayEndDemo();
@@ -106,7 +106,7 @@ private:
 	void loadCredits();
 	void displayCredits(int startPosY, byte *buffer, char colour);
 	void displayCredits();
-	void NO_DISPO(int sortie);
+	void handleNotAvailable(int sortie);
 
 	bool runWin95Demo();
 	bool runLinuxDemo();

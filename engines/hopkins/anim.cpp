@@ -262,7 +262,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.max_x = SCREEN_WIDTH;
+		_vm->_graphicsManager._maxX = SCREEN_WIDTH;
 		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 			hasScreenCopy = true;
 			screenCopy = _vm->_globals.allocMemory(307200);
@@ -313,12 +313,12 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 		_vm->_graphicsManager.scrollScreen(oldScrollVal);
 		if (_vm->_graphicsManager._largeScreenFl) {
 			_vm->_graphicsManager.SCANLINE(1280);
-			_vm->_graphicsManager.max_x = 1280;
+			_vm->_graphicsManager._maxX = 1280;
 			_vm->_graphicsManager.lockScreen();
 			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		} else {
 			_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH * 2);
-			_vm->_graphicsManager.max_x = SCREEN_WIDTH;
+			_vm->_graphicsManager._maxX = SCREEN_WIDTH;
 			_vm->_graphicsManager.lockScreen();
 			_vm->_graphicsManager.clearScreen();
 			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -443,12 +443,12 @@ LABEL_114:
 	_vm->_graphicsManager.scrollScreen(oldScrollVal);
 	if (_vm->_graphicsManager._largeScreenFl) {
 		_vm->_graphicsManager.SCANLINE(1280);
-		_vm->_graphicsManager.max_x = 1280;
+		_vm->_graphicsManager._maxX = 1280;
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	} else {
 		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
-		_vm->_graphicsManager.max_x = SCREEN_WIDTH;
+		_vm->_graphicsManager._maxX = SCREEN_WIDTH;
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);

@@ -340,26 +340,26 @@ void EventsManager::VBL() {
 			goto LABEL_35;
 		}
 		if (_breakoutFl) {
-			if (v15 < _vm->_graphicsManager.min_x)
-				v15 = _vm->_graphicsManager.min_x;
-			if (_mousePos.y < _vm->_graphicsManager.min_y)
-				yp = _vm->_graphicsManager.min_y;
-			if (_mouseSizeX + v15 >= _vm->_graphicsManager.max_x)
-				v14 = _mouseSizeX - (_mouseSizeX + v15 - _vm->_graphicsManager.max_x);
-			if (yp + _mouseSizeY < _vm->_graphicsManager.max_y)
+			if (v15 < _vm->_graphicsManager._minX)
+				v15 = _vm->_graphicsManager._minX;
+			if (_mousePos.y < _vm->_graphicsManager._minY)
+				yp = _vm->_graphicsManager._minY;
+			if (_mouseSizeX + v15 >= _vm->_graphicsManager._maxX)
+				v14 = _mouseSizeX - (_mouseSizeX + v15 - _vm->_graphicsManager._maxX);
+			if (yp + _mouseSizeY < _vm->_graphicsManager._maxY)
 				goto LABEL_34;
-			v3 = yp + _mouseSizeY - _vm->_graphicsManager.max_y;
+			v3 = yp + _mouseSizeY - _vm->_graphicsManager._maxY;
 		} else {
-			if (v15 < _vm->_graphicsManager.min_x)
-				v15 = _vm->_graphicsManager.min_x - v1;
+			if (v15 < _vm->_graphicsManager._minX)
+				v15 = _vm->_graphicsManager._minX - v1;
 			v2 = (int16)v2;
-			if (_mousePos.y < _vm->_graphicsManager.min_y - (int16)v2)
-				yp = _vm->_graphicsManager.min_y - (int16)v2;
-			if (_mouseSizeX + v15 >= _vm->_graphicsManager.max_x)
-				v14 = _mouseSizeX - (_mouseSizeX + v15 - _vm->_graphicsManager.max_x - v1);
-			if (yp + _mouseSizeY < v2 + _vm->_graphicsManager.max_y)
+			if (_mousePos.y < _vm->_graphicsManager._minY - (int16)v2)
+				yp = _vm->_graphicsManager._minY - (int16)v2;
+			if (_mouseSizeX + v15 >= _vm->_graphicsManager._maxX)
+				v14 = _mouseSizeX - (_mouseSizeX + v15 - _vm->_graphicsManager._maxX - v1);
+			if (yp + _mouseSizeY < v2 + _vm->_graphicsManager._maxY)
 				goto LABEL_34;
-			v3 = v2 + yp + _mouseSizeY - _vm->_graphicsManager.max_y;
+			v3 = v2 + yp + _mouseSizeY - _vm->_graphicsManager._maxY;
 		}
 		v13 = _mouseSizeY - v3;
 LABEL_34:
@@ -375,15 +375,15 @@ LABEL_35:
 	}
 	if (_mouseCursorId == 23)
 		goto LABEL_45;
-	if (yp >= _vm->_graphicsManager.max_y || v15 >= _vm->_graphicsManager.max_x || v14 <= 1 || v13 <= 1) {
+	if (yp >= _vm->_graphicsManager._maxY || v15 >= _vm->_graphicsManager._maxX || v14 <= 1 || v13 <= 1) {
 		if (_mouseCursorId != 23)
 			goto LABEL_54;
 LABEL_45:
-		if (yp < _vm->_graphicsManager.max_y && v15 < _vm->_graphicsManager.max_x) {
-			if ((signed int)(v14 + v15) > _vm->_graphicsManager.max_x)
-				v14 -= v14 + v15 - _vm->_graphicsManager.max_x;
-			if (yp + v13 > _vm->_graphicsManager.max_y)
-				v13 -= yp + v13 - _vm->_graphicsManager.max_y;
+		if (yp < _vm->_graphicsManager._maxY && v15 < _vm->_graphicsManager._maxX) {
+			if ((signed int)(v14 + v15) > _vm->_graphicsManager._maxX)
+				v14 -= v14 + v15 - _vm->_graphicsManager._maxX;
+			if (yp + v13 > _vm->_graphicsManager._maxY)
+				v13 -= yp + v13 - _vm->_graphicsManager._maxY;
 			if (v14 > 1 && v13 > 1) {
 				_vm->_eventsManager.updateCursor();
 			}
@@ -462,11 +462,11 @@ LABEL_65:
 
 void EventsManager::updateCursor() {
 	// Backup the current sprite clipping bounds and reset them
-	Common::Rect clipBounds(_vm->_graphicsManager.min_x, _vm->_graphicsManager.min_y,
-		_vm->_graphicsManager.max_x, _vm->_graphicsManager.max_y);
-	_vm->_graphicsManager.min_x = _vm->_graphicsManager.min_y = 0;
-	_vm->_graphicsManager.max_x = _vm->_globals._objectWidth;
-	_vm->_graphicsManager.max_y = _vm->_globals._objectHeight;
+	Common::Rect clipBounds(_vm->_graphicsManager._minX, _vm->_graphicsManager._minY,
+		_vm->_graphicsManager._maxX, _vm->_graphicsManager._maxY);
+	_vm->_graphicsManager._minX = _vm->_graphicsManager._minY = 0;
+	_vm->_graphicsManager._maxX = _vm->_globals._objectWidth;
+	_vm->_graphicsManager._maxY = _vm->_globals._objectHeight;
 	int pitch = _vm->_graphicsManager._lineNbr2;
 	_vm->_graphicsManager._lineNbr2 = _vm->_globals._objectWidth;
 
@@ -483,10 +483,10 @@ void EventsManager::updateCursor() {
 	}
 
 	// Reset the clipping bounds
-	_vm->_graphicsManager.min_x = clipBounds.left;
-	_vm->_graphicsManager.min_y = clipBounds.top;
-	_vm->_graphicsManager.max_x = clipBounds.right;
-	_vm->_graphicsManager.max_y = clipBounds.bottom;
+	_vm->_graphicsManager._minX = clipBounds.left;
+	_vm->_graphicsManager._minY = clipBounds.top;
+	_vm->_graphicsManager._maxX = clipBounds.right;
+	_vm->_graphicsManager._maxY = clipBounds.bottom;
 	_vm->_graphicsManager._lineNbr2 = pitch;
 
 	// Convert the cursor to the pixel format. At the moment, it's hardcoded

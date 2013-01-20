@@ -276,12 +276,12 @@ void ObjectsManager::displaySprite() {
 		if (_vm->_fontManager._textList[idx]._enabledFl && _vm->_fontManager._text[idx]._textType != 2) {
 			clipX = _vm->_fontManager._textList[idx]._pos.x - 2;
 
-			if (clipX < _vm->_graphicsManager.min_x)
-				clipX = _vm->_graphicsManager.min_x;
+			if (clipX < _vm->_graphicsManager._minX)
+				clipX = _vm->_graphicsManager._minX;
 	
 			clipY = _vm->_fontManager._textList[idx]._pos.y - 2;
-			if (clipY < _vm->_graphicsManager.min_y)
-				clipY = _vm->_graphicsManager.min_y;
+			if (clipY < _vm->_graphicsManager._minY)
+				clipY = _vm->_graphicsManager._minY;
 
 			_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, clipX, clipY,
 				_vm->_fontManager._textList[idx]._width + 4, _vm->_fontManager._textList[idx]._height + 4,
@@ -294,12 +294,12 @@ void ObjectsManager::displaySprite() {
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
 			if (_vm->_globals.Liste[idx].field0) {
 				clipX = _vm->_globals.Liste[idx].field2 - 2;
-				if (clipX < _vm->_graphicsManager.min_x)
-					clipX = _vm->_graphicsManager.min_x;
+				if (clipX < _vm->_graphicsManager._minX)
+					clipX = _vm->_graphicsManager._minX;
 
 				clipY = _vm->_globals.Liste[idx].field4 - 2;
-				if (clipY < _vm->_graphicsManager.min_y)
-					clipY = _vm->_graphicsManager.min_y;
+				if (clipY < _vm->_graphicsManager._minY)
+					clipY = _vm->_graphicsManager._minY;
 
 				_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, clipX, clipY,
 					_vm->_globals.Liste[idx]._width + 4, _vm->_globals.Liste[idx]._height + 4,
@@ -447,17 +447,17 @@ void ObjectsManager::displaySprite() {
 			_vm->_fontManager._textList[idx]._width = _vm->_fontManager._text[idx]._width;
 			_vm->_fontManager._textList[idx]._height = _vm->_fontManager._text[idx]._height;
 
-			if (_vm->_fontManager._textList[idx]._pos.x < _vm->_graphicsManager.min_x)
-				_vm->_fontManager._textList[idx]._pos.x = _vm->_graphicsManager.min_x - 1;
-			if (_vm->_fontManager._textList[idx]._pos.y < _vm->_graphicsManager.min_y)
-				_vm->_fontManager._textList[idx]._pos.y = _vm->_graphicsManager.min_y - 1;
+			if (_vm->_fontManager._textList[idx]._pos.x < _vm->_graphicsManager._minX)
+				_vm->_fontManager._textList[idx]._pos.x = _vm->_graphicsManager._minX - 1;
+			if (_vm->_fontManager._textList[idx]._pos.y < _vm->_graphicsManager._minY)
+				_vm->_fontManager._textList[idx]._pos.y = _vm->_graphicsManager._minY - 1;
 
 			int posX = _vm->_fontManager._textList[idx]._pos.x;
-			if (_vm->_fontManager._textList[idx]._width + posX > _vm->_graphicsManager.max_x)
-				_vm->_fontManager._textList[idx]._width = _vm->_graphicsManager.max_x - posX;
+			if (_vm->_fontManager._textList[idx]._width + posX > _vm->_graphicsManager._maxX)
+				_vm->_fontManager._textList[idx]._width = _vm->_graphicsManager._maxX - posX;
 			int posY = _vm->_fontManager._textList[idx]._pos.y;
-			if (_vm->_fontManager._textList[idx]._height + posY > _vm->_graphicsManager.max_y)
-				_vm->_fontManager._textList[idx]._height = _vm->_graphicsManager.max_y - posY;
+			if (_vm->_fontManager._textList[idx]._height + posY > _vm->_graphicsManager._maxY)
+				_vm->_fontManager._textList[idx]._height = _vm->_graphicsManager._maxY - posY;
 			if (_vm->_fontManager._textList[idx]._width <= 0 || _vm->_fontManager._textList[idx]._height <= 0)
 				_vm->_fontManager._textList[idx]._enabledFl = false;
 		}
@@ -526,21 +526,21 @@ void ObjectsManager::DEF_BOB(int idx) {
 	_vm->_globals.Liste2[idx]._width = _vm->_globals._bob[idx]._oldWidth;
 	_vm->_globals.Liste2[idx]._height = _vm->_globals._bob[idx]._oldHeight;
 
-	if (_vm->_globals.Liste2[idx]._xp < _vm->_graphicsManager.min_x) {
-		_vm->_globals.Liste2[idx]._width -= _vm->_graphicsManager.min_x - _vm->_globals.Liste2[idx]._xp;
-		_vm->_globals.Liste2[idx]._xp = _vm->_graphicsManager.min_x;
+	if (_vm->_globals.Liste2[idx]._xp < _vm->_graphicsManager._minX) {
+		_vm->_globals.Liste2[idx]._width -= _vm->_graphicsManager._minX - _vm->_globals.Liste2[idx]._xp;
+		_vm->_globals.Liste2[idx]._xp = _vm->_graphicsManager._minX;
 	}
 
-	if (_vm->_globals.Liste2[idx]._yp < _vm->_graphicsManager.min_y) {
-		_vm->_globals.Liste2[idx]._height -= _vm->_graphicsManager.min_y - _vm->_globals.Liste2[idx]._yp;
-		_vm->_globals.Liste2[idx]._yp = _vm->_graphicsManager.min_y;
+	if (_vm->_globals.Liste2[idx]._yp < _vm->_graphicsManager._minY) {
+		_vm->_globals.Liste2[idx]._height -= _vm->_graphicsManager._minY - _vm->_globals.Liste2[idx]._yp;
+		_vm->_globals.Liste2[idx]._yp = _vm->_graphicsManager._minY;
 	}
 
-	if (_vm->_globals.Liste2[idx]._width + _vm->_globals.Liste2[idx]._xp > _vm->_graphicsManager.max_x)
-		_vm->_globals.Liste2[idx]._width = _vm->_graphicsManager.max_x - _vm->_globals.Liste2[idx]._xp;
+	if (_vm->_globals.Liste2[idx]._width + _vm->_globals.Liste2[idx]._xp > _vm->_graphicsManager._maxX)
+		_vm->_globals.Liste2[idx]._width = _vm->_graphicsManager._maxX - _vm->_globals.Liste2[idx]._xp;
 
-	if (_vm->_globals.Liste2[idx]._height + _vm->_globals.Liste2[idx]._yp > _vm->_graphicsManager.max_y)
-		_vm->_globals.Liste2[idx]._height = _vm->_graphicsManager.max_y - _vm->_globals.Liste2[idx]._yp;
+	if (_vm->_globals.Liste2[idx]._height + _vm->_globals.Liste2[idx]._yp > _vm->_graphicsManager._maxY)
+		_vm->_globals.Liste2[idx]._height = _vm->_graphicsManager._maxY - _vm->_globals.Liste2[idx]._yp;
 
 	if (_vm->_globals.Liste2[idx]._width <= 0 || _vm->_globals.Liste2[idx]._height <= 0)
 		_vm->_globals.Liste2[idx]._visibleFl = false;
@@ -774,21 +774,21 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 	_vm->_globals.Liste[idx]._width = _sprite[idx]._width;
 	_vm->_globals.Liste[idx]._height = _sprite[idx]._height;
 
-	if (_vm->_globals.Liste[idx].field2 < _vm->_graphicsManager.min_x) {
-		_vm->_globals.Liste[idx]._width -= _vm->_graphicsManager.min_x - _vm->_globals.Liste[idx].field2;
-		_vm->_globals.Liste[idx].field2 = _vm->_graphicsManager.min_x;
+	if (_vm->_globals.Liste[idx].field2 < _vm->_graphicsManager._minX) {
+		_vm->_globals.Liste[idx]._width -= _vm->_graphicsManager._minX - _vm->_globals.Liste[idx].field2;
+		_vm->_globals.Liste[idx].field2 = _vm->_graphicsManager._minX;
 	}
 
-	if (_vm->_globals.Liste[idx].field4 < _vm->_graphicsManager.min_y) {
-		_vm->_globals.Liste[idx]._height -= _vm->_graphicsManager.min_y - _vm->_globals.Liste[idx].field4;
-		_vm->_globals.Liste[idx].field4 = _vm->_graphicsManager.min_y;
+	if (_vm->_globals.Liste[idx].field4 < _vm->_graphicsManager._minY) {
+		_vm->_globals.Liste[idx]._height -= _vm->_graphicsManager._minY - _vm->_globals.Liste[idx].field4;
+		_vm->_globals.Liste[idx].field4 = _vm->_graphicsManager._minY;
 	}
 
-	if (_vm->_globals.Liste[idx]._width + _vm->_globals.Liste[idx].field2 > _vm->_graphicsManager.max_x)
-		_vm->_globals.Liste[idx]._width = _vm->_graphicsManager.max_x - _vm->_globals.Liste[idx].field2;
+	if (_vm->_globals.Liste[idx]._width + _vm->_globals.Liste[idx].field2 > _vm->_graphicsManager._maxX)
+		_vm->_globals.Liste[idx]._width = _vm->_graphicsManager._maxX - _vm->_globals.Liste[idx].field2;
 
-	if (_vm->_globals.Liste[idx]._height + _vm->_globals.Liste[idx].field4 > _vm->_graphicsManager.max_y)
-		_vm->_globals.Liste[idx]._height = _vm->_graphicsManager.max_y - _vm->_globals.Liste[idx].field4;
+	if (_vm->_globals.Liste[idx]._height + _vm->_globals.Liste[idx].field4 > _vm->_graphicsManager._maxY)
+		_vm->_globals.Liste[idx]._height = _vm->_graphicsManager._maxY - _vm->_globals.Liste[idx].field4;
 
 	if (_vm->_globals.Liste[idx]._width <= 0 || _vm->_globals.Liste[idx]._height <= 0)
 		_vm->_globals.Liste[idx].field0 = false;
@@ -2626,13 +2626,13 @@ int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 		clipX2 = 15;
 	if (y2 <= 14)
 		clipY2 = 15;
-	if (clipX2 > _vm->_graphicsManager.max_x - 10)
-		clipX2 = _vm->_graphicsManager.max_x - 10;
+	if (clipX2 > _vm->_graphicsManager._maxX - 10)
+		clipX2 = _vm->_graphicsManager._maxX - 10;
 	if (clipY2 > 445)
 		clipY2 = 440;
 
 	int delta = 0;
-	for (delta = 0; clipY2 + delta < _vm->_graphicsManager.max_y; delta++) {
+	for (delta = 0; clipY2 + delta < _vm->_graphicsManager._maxY; delta++) {
 		if (_vm->_linesManager.checkCollisionLine(clipX2, clipY2 + delta, &arrDataIdx[5], &arrLineIdx[5], 0, _lastLine) && arrLineIdx[5] <= _lastLine)
 			break;
 		arrDataIdx[5] = 0;
@@ -2640,7 +2640,7 @@ int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	}
 	arrDelta[5] = delta;
 
-	for (delta = 0; clipY2 - delta > _vm->_graphicsManager.min_y; delta++) {
+	for (delta = 0; clipY2 - delta > _vm->_graphicsManager._minY; delta++) {
 		if (_vm->_linesManager.checkCollisionLine(clipX2, clipY2 - delta , &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine) && arrLineIdx[1] <= _lastLine)
 			break;
 		arrDataIdx[1] = 0;
@@ -2650,7 +2650,7 @@ int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	}
 	arrDelta[1] = delta;
 
-	for (delta = 0; clipX2 + delta < _vm->_graphicsManager.max_x; delta++) {
+	for (delta = 0; clipX2 + delta < _vm->_graphicsManager._maxX; delta++) {
 		if (_vm->_linesManager.checkCollisionLine(clipX2 + delta, clipY2, &arrDataIdx[3], &arrLineIdx[3], 0, _lastLine) && arrLineIdx[3] <= _lastLine)
 			break;
 		arrDataIdx[3] = 0;
@@ -2662,7 +2662,7 @@ int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	}
 	arrDelta[3] = delta;
 
-	for (delta = 0; clipX2 - delta > _vm->_graphicsManager.min_x; delta++) {
+	for (delta = 0; clipX2 - delta > _vm->_graphicsManager._minX; delta++) {
 		if (_vm->_linesManager.checkCollisionLine(clipX2 - delta, clipY2, &arrDataIdx[7], &arrLineIdx[7], 0, _lastLine) && arrLineIdx[7] <= _lastLine)
 			break;
 		arrDataIdx[7] = 0;
@@ -3068,7 +3068,7 @@ int ObjectsManager::MZONE() {
 		}
 
 		int colRes2 = 0;
-		for (int j = yp; j < _vm->_graphicsManager.max_y; ++j) {
+		for (int j = yp; j < _vm->_graphicsManager._maxY; ++j) {
 			colRes2 = colision(xp, j);
 			if (colRes2 != -1 && _vm->_globals.ZONEP[colRes1].field10 == 1)
 				break;
@@ -3091,7 +3091,7 @@ int ObjectsManager::MZONE() {
 		}
 
 		int colRes4 = 0;
-		for (int xCurrent = xp; _vm->_graphicsManager.max_x > xCurrent; ++xCurrent) {
+		for (int xCurrent = xp; _vm->_graphicsManager._maxX > xCurrent; ++xCurrent) {
 			colRes4 = colision(xCurrent, yp);
 			if (colRes4 != -1 && _vm->_globals.ZONEP[colRes1].field10 == 1)
 				break;

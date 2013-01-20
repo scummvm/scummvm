@@ -54,9 +54,9 @@ private:
 	void loadScreen(const Common::String &file);
 public:
 	int _lockCounter;
-	bool SDL_MODEYES;
-	int XSCREEN;
-	int YSCREEN;
+	bool _initGraphicsFl;
+	int _screenWidth;
+	int _screenHeight;
 	int WinScan;
 	byte SD_PIXELS[PALETTE_SIZE * 2];
 	byte *PAL_PIXELS;
@@ -81,15 +81,14 @@ public:
 	bool _skipVideoLockFl;
 	int _scrollStatus;
 	Common::Rect dstrect[50];
-	int min_x, min_y;
-	int max_x, max_y;
-	int clip_x, clip_y;
+	int _minX, _minY;
+	int _maxX, _maxY;
+	int _posXClipped, _posYClipped;
 	int clip_x1, clip_y1;
-	bool clip_flag;
+	bool _clipFl;
 	int Red_x, Red_y;
 	int Red;
 	int _width;
-	int Compteur_y;
 	int spec_largeur;
 	bool _noFadingFl;
 public:
@@ -107,8 +106,8 @@ public:
 	void scrollScreen(int amount);
 	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
 	void Trans_bloc2(byte *surface, byte *col, int size);
-	void A_PCX640_480(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
-	void A_PCX320(byte *surface, const Common::String &file, byte *palette);
+	void loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
+	void loadPCX320(byte *surface, const Common::String &file, byte *palette);
 	void clearPalette();
 	void SCANLINE(int pitch);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
