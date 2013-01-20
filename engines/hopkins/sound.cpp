@@ -231,7 +231,7 @@ void SoundManager::checkSoundEnd() {
 	if (!_soundOffFl && _soundFl) {
 		if (!checkVoiceStatus(1)) {
 			stopVoice(1);
-			DEL_NWAV(_currentSoundIndex);
+			delWav(_currentSoundIndex);
 		}
 	}
 }
@@ -363,7 +363,7 @@ void SoundManager::WSOUND_OFF() {
 	stopVoice(1);
 	stopVoice(2);
 	if (_vm->_soundManager._soundFl)
-		DEL_NWAV(_currentSoundIndex);
+		delWav(_currentSoundIndex);
 
 	for (int i = 1; i <= 48; ++i)
 		DEL_SAMPLE_SDL(i);
@@ -601,16 +601,16 @@ void SoundManager::DEL_SAMPLE(int soundIndex) {
 void SoundManager::playSound(const Common::String &file) {
 	if (!_soundOffFl) {
 		if (_soundFl)
-			DEL_NWAV(_currentSoundIndex);
-		LOAD_NWAV(file, 1);
-		PLAY_NWAV(1);
+			delWav(_currentSoundIndex);
+		loadWav(file, 1);
+		playWav(1);
 	}
 }
 
 void SoundManager::PLAY_SOUND2(const Common::String &file) {
 	if (!_soundOffFl) {
-		LOAD_NWAV(file, 1);
-		PLAY_NWAV(1);
+		loadWav(file, 1);
+		playWav(1);
 	}
 }
 
@@ -634,7 +634,7 @@ void SoundManager::loadSample(int wavIndex, const Common::String &file) {
 void SoundManager::playSample(int wavIndex, int voiceMode) {
 	if (!_soundOffFl && SOUND[wavIndex]._active) {
 		if (_soundFl)
-			DEL_NWAV(_currentSoundIndex);
+			delWav(_currentSoundIndex);
 		if (voiceMode == 5) {
 			if (checkVoiceStatus(1))
 				stopVoice(1);
@@ -658,19 +658,11 @@ void SoundManager::playSample(int wavIndex, int voiceMode) {
 void SoundManager::PLAY_SAMPLE2(int idx) {
 	if (!_soundOffFl && SOUND[idx]._active) {
 		if (_soundFl)
-			DEL_NWAV(_currentSoundIndex);
+			delWav(_currentSoundIndex);
 		if (checkVoiceStatus(1))
 			stopVoice(1);
 		PLAY_SAMPLE_SDL(1, idx);
 	}
-}
-
-void SoundManager::loadWav(const Common::String &file, int wavIndex) {
-	LOAD_NWAV(file, wavIndex);
-}
-
-void SoundManager::playWav(int wavIndex) {
-	PLAY_NWAV(wavIndex);
 }
 
 bool SoundManager::checkVoiceStatus(int voiceIndex) {
@@ -752,11 +744,11 @@ void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename
 	Swav[wavIndex]._freeSampleFl = freeSample;
 }
 
-void SoundManager::LOAD_NWAV(const Common::String &file, int wavIndex) {
+void SoundManager::loadWav(const Common::String &file, int wavIndex) {
 	LOAD_SAMPLE2_SDL(wavIndex, file, 1);
 }
 
-void SoundManager::PLAY_NWAV(int wavIndex) {
+void SoundManager::playWav(int wavIndex) {
 	if (!_soundFl && !_soundOffFl) {
 		_soundFl = true;
 		_currentSoundIndex = wavIndex;
@@ -764,7 +756,7 @@ void SoundManager::PLAY_NWAV(int wavIndex) {
 	}
 }
 
-void SoundManager::DEL_NWAV(int wavIndex) {
+void SoundManager::delWav(int wavIndex) {
 	if (DEL_SAMPLE_SDL(wavIndex)) {
 		if (checkVoiceStatus(1))
 			stopVoice(1);

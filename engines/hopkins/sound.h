@@ -72,9 +72,7 @@ private:
 	bool DEL_SAMPLE_SDL(int wavIndex);
 	bool SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item);
 	void LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, bool freeSample);
-	void LOAD_NWAV(const Common::String &file, int wavIndex);
-	void PLAY_NWAV(int wavIndex);
-	void DEL_NWAV(int wavIndex);
+	void delWav(int wavIndex);
 	void PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex);
 
 	/**
@@ -116,6 +114,7 @@ public:
 	void loadAnimSound();
 	void playAnimSound(int soundNumber);
 	void loadWav(const Common::String &file, int wavIndex);
+	void playWav(int wavIndex);
 	void WSOUND(int soundNumber);
 	void WSOUND_OFF();
 	void playMod(const Common::String &file);
@@ -135,7 +134,6 @@ public:
 	void loadSample(int wavIndex, const Common::String &file);
 	void playSample(int wavIndex, int voiceMode);
 	void PLAY_SAMPLE2(int idx);
-	void playWav(int wavIndex);
 
 	void syncSoundSettings();
 	void updateScummVMSoundSettings();
