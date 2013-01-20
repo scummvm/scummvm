@@ -32,7 +32,7 @@ namespace Hopkins {
 struct ZonePItem {
 	int _destX;
 	int _destY;
-	int field4;
+	int _spriteIndex;
 	int field6;
 	int field7;
 	int field8;
@@ -45,7 +45,6 @@ struct ZonePItem {
 	int fieldF;
 	int field10;
 	int field12;
-	int field16;
 };
 
 struct CarreZoneItem {
@@ -105,7 +104,6 @@ struct BobItem {
 	int field20;
 	int field22;
 	int _offsetY; // Unused variable?
-	byte *field30;
 	bool field34; // Set to true in B_CACHE_OFF()
 	int field36;
 	int _modeFlag;

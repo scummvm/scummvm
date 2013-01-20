@@ -490,7 +490,6 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob.field20 = 0;
 	bob.field22 = 0;
 	bob._offsetY = 0;
-	bob.field30 = g_PTRNUL;
 	bob.field34 = false;
 	bob.field36 = 0;
 	bob._modeFlag = 0;
@@ -1489,13 +1488,13 @@ void ObjectsManager::GOHOME() {
 			_vm->_globals._oldDirection = -1;
 			if (v54 > 0) {
 				if (_vm->_globals.ZONEP[v54]._destX && _vm->_globals.ZONEP[v54]._destY && _vm->_globals.ZONEP[v54]._destY != 31) {
-					if (_vm->_globals.ZONEP[v54].field4 == -1) {
+					if (_vm->_globals.ZONEP[v54]._spriteIndex == -1) {
 						_vm->_globals.ZONEP[v54]._destX = 0;
 						_vm->_globals.ZONEP[v54]._destY = 0;
-						_vm->_globals.ZONEP[v54].field4 = 0;
+						_vm->_globals.ZONEP[v54]._spriteIndex = 0;
 					} else {
-						setSpriteIndex(0, _vm->_globals.ZONEP[v54].field4);
-						_vm->_globals._actionDirection = _vm->_globals.ZONEP[v54].field4 - 59;
+						setSpriteIndex(0, _vm->_globals.ZONEP[v54]._spriteIndex);
+						_vm->_globals._actionDirection = _vm->_globals.ZONEP[v54]._spriteIndex - 59;
 					}
 				}
 			}
@@ -1769,13 +1768,13 @@ void ObjectsManager::GOHOME() {
 
 			if (v49 > 0) {
 				if (_vm->_globals.ZONEP[v49]._destX && _vm->_globals.ZONEP[v49]._destY && _vm->_globals.ZONEP[v49]._destY != 31) {
-					if ( _vm->_globals.ZONEP[v49].field4 == -1) {
+					if ( _vm->_globals.ZONEP[v49]._spriteIndex == -1) {
 						_vm->_globals.ZONEP[v49]._destX = 0;
 						_vm->_globals.ZONEP[v49]._destY = 0;
-						_vm->_globals.ZONEP[v49].field4 = 0;
+						_vm->_globals.ZONEP[v49]._spriteIndex = 0;
 					} else {
-						setSpriteIndex(0,  _vm->_globals.ZONEP[v49].field4);
-						_vm->_globals._actionDirection = _vm->_globals.ZONEP[v49].field4 - 59;
+						setSpriteIndex(0,  _vm->_globals.ZONEP[v49]._spriteIndex);
+						_vm->_globals._actionDirection = _vm->_globals.ZONEP[v49]._spriteIndex - 59;
 					}
 				}
 			}
@@ -1911,7 +1910,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	for (int i = 1; i <= 100; i++) {
 		_vm->_globals.ZONEP[i]._destX = 0;
 		_vm->_globals.ZONEP[i]._destY = 0;
-		_vm->_globals.ZONEP[i].field4 = 0;
+		_vm->_globals.ZONEP[i]._spriteIndex = 0;
 		_vm->_globals.ZONEP[i].field6 = 0;
 		_vm->_globals.ZONEP[i].field7 = 0;
 		_vm->_globals.ZONEP[i].field8 = 0;
@@ -1955,7 +1954,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 		 // CHECKME: Shouldn't it be a byte?
 		_vm->_globals.ZONEP[i]._destX = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
 		_vm->_globals.ZONEP[i]._destY = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 1);
-		_vm->_globals.ZONEP[i].field4 = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 2);
+		_vm->_globals.ZONEP[i]._spriteIndex = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 2);
 		v4 += 3;
 	}
 
@@ -2342,7 +2341,7 @@ void ObjectsManager::PARADISE() {
 			_vm->_talkManager.REPONSE2(_vm->_globals._saveData->data[svField2], _vm->_globals._saveData->data[svField1]);
 		}
 		_vm->_eventsManager.changeMouseCursor(4);
-		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_globals.ZONEP[_zoneNum].field16) {
+		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_globals.ZONEP[_zoneNum].field10) {
 			_zoneNum = -1;
 			_forceZoneFl = true;
 		}
@@ -3021,14 +3020,14 @@ int ObjectsManager::MZONE() {
 			    !_vm->_globals._bob[v2]._disabledAnimationFl && xp > _vm->_globals._bob[v2]._oldX && 
 			    xp < _vm->_globals._bob[v2]._oldWidth + _vm->_globals._bob[v2]._oldX && yp > _vm->_globals._bob[v2]._oldY) {
 				if (yp < _vm->_globals._bob[v2]._oldHeight + _vm->_globals._bob[v2]._oldY) {
-					if (_vm->_globals.ZONEP[v1].field4 == -1) {
+					if (_vm->_globals.ZONEP[v1]._spriteIndex == -1) {
 						_vm->_globals.ZONEP[v1]._destX = 0;
 						_vm->_globals.ZONEP[v1]._destY = 0;
 					}
 					if (!_vm->_globals.ZONEP[v1]._destX && !_vm->_globals.ZONEP[v1]._destY) {
 							_vm->_globals.ZONEP[v1]._destX = _vm->_globals._bob[v2]._oldWidth + _vm->_globals._bob[v2]._oldX;
 							_vm->_globals.ZONEP[v1]._destY = _vm->_globals._bob[v2]._oldHeight + _vm->_globals._bob[v2]._oldY + 6;
-							_vm->_globals.ZONEP[v1].field4 = -1;
+							_vm->_globals.ZONEP[v1]._spriteIndex = -1;
 					}
 					return v1;
 				}
@@ -3830,7 +3829,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				for (int i = 1; i <= 100; i++) {
 					_vm->_globals.ZONEP[i]._destX = 0;
 					_vm->_globals.ZONEP[i]._destY = 0;
-					_vm->_globals.ZONEP[i].field4 = 0;
+					_vm->_globals.ZONEP[i]._spriteIndex = 0;
 					_vm->_globals.ZONEP[i].field6 = 0;
 					_vm->_globals.ZONEP[i].field7 = 0;
 					_vm->_globals.ZONEP[i].field8 = 0;
@@ -3864,7 +3863,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				for (int i = 1; i <= 100; i++) {
 					_vm->_globals.ZONEP[i]._destX = (int16)READ_LE_UINT16(v17 + 2 * v33);
 					_vm->_globals.ZONEP[i]._destY = (int16)READ_LE_UINT16(v17 + 2 * v33 + 2);
-					_vm->_globals.ZONEP[i].field4 = (int16)READ_LE_UINT16(v17 + 2 * v33 + 4);
+					_vm->_globals.ZONEP[i]._spriteIndex = (int16)READ_LE_UINT16(v17 + 2 * v33 + 4);
 					v33 += 3;
 				}
 

@@ -314,7 +314,7 @@ void Globals::clearAll() {
 	for (int idx = 0; idx < 105; ++idx) {
 		ZONEP[idx]._destX = 0;
 		ZONEP[idx]._destY = 0;
-		ZONEP[idx].field4 = 0;
+		ZONEP[idx]._spriteIndex = 0;
 	}
 
 	essai0 = (int16 *)g_PTRNUL;
