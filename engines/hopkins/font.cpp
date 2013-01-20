@@ -204,8 +204,6 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			WRITE_LE_UINT16((uint16 *)v9 + 48, (int16)READ_LE_UINT16(v10 + 96));
 		}
 		byte *v59 = _tempText;
-		if (!v69)
-			goto LABEL_43;
 		for (int v63 = 0; v63 < v69; v63++) {
 			byte v13 = *v59;
 			if ((byte)(*v59 + 46) > 27) {
@@ -222,8 +220,8 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			v59++;
 		};
 
+		int textLength = 0;
 		if (v69) {
-			int textLength = 0;
 			for (;;) {
 				byte curChar = _tempText[textLength];
 				if (curChar == '\r' || curChar == '\n') {
@@ -233,8 +231,11 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				}
 				++textLength;
 				if (v69 <= textLength)
-					goto LABEL_43;
+					break;
 			}
+		}
+
+		if (v69 && v69 > textLength) {
 			_text[idx]._length = textLength;
 			_vm->_globals._boxWidth = 0;
 
@@ -257,7 +258,6 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				_text[idx]._lines[0] = Common::String((const char *)_tempText, textLength);
 			}
 		} else {
-LABEL_43:
 			if (!_vm->_globals._boxWidth)
 				_vm->_globals._boxWidth = 240;
 			int v65 = 0;
@@ -271,21 +271,16 @@ LABEL_43:
 					do
 						curChar = _tempText[v65 + v19++];
 					while (curChar != ' ' && curChar != '%');
-					if (v19 >= ptrb / _vm->_globals.police_l)
+					if (v19 >= ptrb / _vm->_globals.police_l) {
+						if (curChar == '%')
+							curChar = ' ';
 						break;
+					}
 					if (curChar == '%') {
-						if (v19 < ptrb / _vm->_globals.police_l)
-							goto LABEL_55;
+						lineSize = v19;
 						break;
 					}
 				}
-				if (curChar != '%')
-					goto LABEL_57;
-				curChar = ' ';
-LABEL_55:
-				if (curChar == '%')
-					lineSize = v19;
-LABEL_57:
 				int v20 = lineCount;
 
 				// WORKAROUND: Perhaps due to the usage of ScummVM strings here, recalculate what the
