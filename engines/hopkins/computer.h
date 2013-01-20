@@ -42,7 +42,7 @@ struct ScoreItem {
 	Common::String _score;
 };
 
-enum ComputerEnum { COMPUTER_HOPKINS = 1, COMPUTER_SAMANTHAS = 2, COMPUTER_PUBLIC = 3 };
+enum ComputerEnum { COMPUTER_HOPKINS = 1, COMPUTER_SAMANTHA = 2, COMPUTER_PUBLIC = 3 };
 
 class ComputerManager {
 private:
@@ -93,7 +93,7 @@ private:
 	void checkBallCollisions();
 	void getScoreName();
 
-	void TXT4(int xp, int yp, int textIdx);
+	void displayMessage(int xp, int yp, int textIdx);
 
 	void displayScoreChar(int charPos, int charDisp);
 

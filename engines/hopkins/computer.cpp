@@ -126,7 +126,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	setTextPosition(2, 4);
 	if (mode == COMPUTER_HOPKINS)
 		outText(Common::String(_menuText[0]._line));
-	else if (mode == COMPUTER_SAMANTHAS)
+	else if (mode == COMPUTER_SAMANTHA)
 		outText(Common::String(_menuText[1]._line));
 	else // COMPUTER_PUBLIC
 		outText(Common::String(_menuText[2]._line));
@@ -140,11 +140,11 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	outText(Common::String(_menuText[4]._line));
 	setTextPosition(14, 35);
 
-	TXT4(280, 224, 8);
+	displayMessage(280, 224, 8);
 	bool passwordMatch = false;
 	if ((mode == COMPUTER_HOPKINS) && !strcmp(_inputBuf, "HOPKINS"))
 		passwordMatch = true;
-	else if ((mode == COMPUTER_SAMANTHAS) && !strcmp(_inputBuf, "328MHZA"))
+	else if ((mode == COMPUTER_SAMANTHA) && !strcmp(_inputBuf, "328MHZA"))
 		passwordMatch = true;
 	else if ((mode == COMPUTER_PUBLIC) && !strcmp(_inputBuf, "ALLFREE"))
 		passwordMatch = true;
@@ -157,7 +157,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 			setTextPosition(2, 4);
 			if (mode == COMPUTER_HOPKINS)
 				outText(Common::String(_menuText[0]._line));
-			else if (mode == COMPUTER_SAMANTHAS)
+			else if (mode == COMPUTER_SAMANTHA)
 				outText(Common::String(_menuText[1]._line));
 			else if (mode == COMPUTER_PUBLIC)
 				outText(Common::String(_menuText[2]._line));
@@ -176,7 +176,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 				outText2(Common::String(_menuText[10]._line));
 				setTextPosition(16, 25);
 				outText2(Common::String(_menuText[11]._line));
-			} else if (mode == COMPUTER_SAMANTHAS) {
+			} else if (mode == COMPUTER_SAMANTHA) {
 				setTextPosition(10, 25);
 //				outText2(Common::String(_menuText[0x95A])); <=== CHECKME: Unexpected value! replaced by the following line, for consistancy
 				outText2(Common::String(_menuText[12]._line));
@@ -227,7 +227,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 					readText(4);
 					break;
 				}
-			} else if (mode == COMPUTER_SAMANTHAS) {
+			} else if (mode == COMPUTER_SAMANTHA) {
 				clearScreen();
 				setTextColor(4);
 				setTextPosition(2, 4);
@@ -322,6 +322,26 @@ static char _frenchText[] =
 "% 6) DISPARITIONS (suite).\n"
 "%% fin\n";
 
+static char _spanishText[] =  
+"% **** ORDENADOR DEL FBI NUMERO 4985 **** ORDENADOR J.HOPKINS *****\n"
+"% **** ORDENADOR DEL FBI NUMERO 4998 **** ORDENADOR S.COLLINS *****\n"
+"% *** ORDENADOR DEL FBI NUMERO 4997 *** ORDENADOR DE ACCESO LIBRE ***\n"
+"% LA CONTRASE¥A ES: ALLFREE\n"
+"% ESCRIBE CONTRASE¥A ACTUAL\n"
+"% **** ACCESO DENEGADO ****\n"
+"% 1) *** JUEGO ***\n"
+"% 0) SALIR DEL ORDENADOR\n"
+"% 2) CADAVER EXTRA¥O\n"
+"% 3) CADAVER EXTRA¥O\n"
+"% 4) SENADOR FERGUSSON\n"
+"% 5) MATAPERROS\n"
+"% 2) CIENTIFICO SECUESTRADO.\n"
+"% 3) CIENTIFICO SECUESTRADO (siguiente).\n"
+"% 4) CIENTIFICO SECUESTRADO (siguiente).\n"
+"% 5) CIENTIFICO SECUESTRADO (siguiente).\n"
+"% 6) CIENTIFICO SECUESTRADO (siguiente).\n"
+"%% fin\n";
+
 /**
  * Load Menu data
  */
@@ -332,6 +352,9 @@ void ComputerManager::loadMenu() {
 	} else if (_vm->_globals._language == LANG_FR) {
 		ptr = (char *)_vm->_globals.allocMemory(sizeof(_frenchText));
 		strcpy(ptr, _frenchText);
+	} else if (_vm->_globals._language == LANG_SP) {
+		ptr = (char *)_vm->_globals.allocMemory(sizeof(_spanishText));
+		strcpy(ptr, _spanishText);
 	} else {
 		ptr = (char *)_vm->_globals.allocMemory(sizeof(_englishText));
 		strcpy(ptr, _englishText);
@@ -367,7 +390,7 @@ void ComputerManager::loadMenu() {
 	_vm->_globals.freeMemory((byte *)ptr);
 }
 
-void ComputerManager::TXT4(int xp, int yp, int textIdx) {
+void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 	char curChar;
 	char newChar;
 	char mappedChar;

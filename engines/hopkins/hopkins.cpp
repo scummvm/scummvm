@@ -386,7 +386,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals._screenId = 114;
 			_globals._saveData->data[svField5] = _globals._screenId;
 			_globals._exitId = 0;
-			_computerManager.showComputer(COMPUTER_SAMANTHAS);
+			_computerManager.showComputer(COMPUTER_SAMANTHA);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
@@ -717,7 +717,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals._saveData->data[svField6] = _globals._screenId;
 			_globals._screenId = 114;
 			_globals._saveData->data[svField5] = 114;
-			_computerManager.showComputer(COMPUTER_SAMANTHAS);
+			_computerManager.showComputer(COMPUTER_SAMANTHA);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
@@ -1531,7 +1531,7 @@ bool HopkinsEngine::runFull() {
 			_globals._screenId = 114;
 			_globals._saveData->data[svField6] = _globals._prevScreenId;
 			_globals._saveData->data[svField5] = _globals._screenId;
-			_computerManager.showComputer(COMPUTER_SAMANTHAS);
+			_computerManager.showComputer(COMPUTER_SAMANTHA);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
