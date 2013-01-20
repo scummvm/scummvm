@@ -497,8 +497,17 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	else if (voiceMode == 5)
 		prefix = "OF";
 
+	// BeOS and OS/2 versions are using a slightly different speech order during intro
+	// This map those values to the oens used by the Win95 and Linux versions
+	int mappedFileNumber = fileNumber;
+	if (voiceMode == 3 && (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)) {
+		if (fileNumber == 4)
+			mappedFileNumber = 0;
+		else if (fileNumber > 4)
+			mappedFileNumber = fileNumber - 1;
+	}
 
-	filename = Common::String::format("%s%d", prefix.c_str(), fileNumber);
+	filename = Common::String::format("%s%d", prefix.c_str(), mappedFileNumber);
 
 	if (!_vm->_fileManager.searchCat(filename + ".WAV", 9)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
