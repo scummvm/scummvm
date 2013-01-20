@@ -1016,9 +1016,9 @@ void ObjectsManager::displayBobAnim() {
 	} while (idx != 35);
 
 	if (!PERSO_ON && BOBTOUS) {
-		for (int v26 = 0; v26 != 35; v26++) {
-			if (_vm->_globals._bob[v26].field0 == 10 && !_vm->_globals._bob[v26]._disabledAnimationFl)
-				_vm->_globals._bob[v26].field1C = true;
+		for (int i = 0; i < 35; i++) {
+			if (_vm->_globals._bob[i].field0 == 10 && !_vm->_globals._bob[i]._disabledAnimationFl)
+				_vm->_globals._bob[i].field1C = true;
 		}
 	}
 
@@ -1056,7 +1056,7 @@ void ObjectsManager::displayBobAnim() {
 		}
 	}
 
-	for (int i = 1; i < 25; i++) {
+	for (int i = 1; i < 35; i++) {
 		_vm->_globals._bob[i]._oldY = 0;
 		if (_vm->_globals._bob[i].field0 == 10 && !_vm->_globals._bob[i]._disabledAnimationFl && _vm->_globals._bob[i].field1C) {
 			CALCUL_BOB(i);
