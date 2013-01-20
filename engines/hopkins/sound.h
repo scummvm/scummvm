@@ -109,7 +109,6 @@ public:
 	~SoundManager();
 	void setParent(HopkinsEngine *vm);
 
-	void WSOUND_INIT();
 	void checkSoundEnd();
 	void loadAnimSound();
 	void playAnimSound(int soundNumber);

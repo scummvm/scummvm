@@ -99,8 +99,6 @@ Common::Error HopkinsEngine::run() {
 	_fileManager.initCensorship();
 	initializeSystem();
 
-	_soundManager.WSOUND_INIT();
-
 	if (getPlatform() == Common::kPlatformLinux) {
 		if (getIsDemo())
 			runLinuxDemo();

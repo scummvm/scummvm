@@ -223,10 +223,6 @@ void SoundManager::setParent(HopkinsEngine *vm) {
 	_specialSoundNum = 0;
 }
 
-void SoundManager::WSOUND_INIT() {
-	warning("TODO: WSOUND_INIT");
-}
-
 void SoundManager::checkSoundEnd() {
 	if (!_soundOffFl && _soundFl) {
 		if (!checkVoiceStatus(1)) {
