@@ -111,8 +111,7 @@ void FontManager::setOptimalColor(int idx1, int idx2, int idx3, int idx4) {
  * Init text structure
  */
 void FontManager::initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int a9, int color) {
-	if ((idx - 5) > MAX_TEXT)
-		error("Attempted to display text > MAX_TEXT.");
+	assert(idx - 5 >= 0 && (idx - 5) <= MAX_TEXT);
 
 	TxtItem &txt = _text[idx - 5];
 	txt._textOnFl = false;
@@ -121,7 +120,7 @@ void FontManager::initTextBuffers(int idx, int messageId, const Common::String &
 	txt._pos.y = yp;
 	txt._messageId = messageId;
 	txt._textType = textType;
-	txt._field3FE = a9;
+	txt._length = a9;
 	txt._color = color;
 }
 
@@ -138,7 +137,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		error("Bad number for text");
 	_vm->_globals.police_l = 11;
 
-	_vm->_globals._boxWidth = 11 * _text[idx]._field3FE;
+	_vm->_globals._boxWidth = 11 * _text[idx]._length;
 	if (_text[idx]._textLoadedFl) {
 		int textType = _text[idx]._textType;
 		if (textType != 6 && textType != 1 && textType != 3 && textType != 5) {
@@ -179,7 +178,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				_index[i] = f.readUint32LE();
 			f.close();
 		}
-		int v11, v69;
+		int v69;
 		if (filename[0] != 'Z' || filename[1] != 'O') {
 			if (!f.open(file))
 				error("Error opening file - %s", _indexName.c_str());
@@ -202,11 +201,9 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_tempText = v9;
 			const byte *v10 = _vm->_globals.BUF_ZONE + _index[messageId];
 			memcpy(v9, v10, 96);
-			v11 = 0;
 			WRITE_LE_UINT16((uint16 *)v9 + 48, (int16)READ_LE_UINT16(v10 + 96));
 		}
 		byte *v59 = _tempText;
-		byte *v60;
 		if (!v69)
 			goto LABEL_43;
 		for (int v63 = 0; v63 < v69; v63++) {
@@ -225,25 +222,24 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			v59++;
 		};
 
-		v60 = _tempText;
 		if (v69) {
-			int v64 = 0;
+			int textLength = 0;
 			for (;;) {
-				byte v14 = v60[v64];
-				if (v14 == '\r' || v14 == '\n') {
-					v60[v64] = 0;
-					if (!_text[idx]._field3FE)
+				byte curChar = _tempText[textLength];
+				if (curChar == '\r' || curChar == '\n') {
+					_tempText[textLength] = 0;
+					if (!_text[idx]._length)
 						break;
 				}
-				++v64;
-				if (v69 <= v64)
+				++textLength;
+				if (v69 <= textLength)
 					goto LABEL_43;
 			}
-			_text[idx]._field3FE = v64;
+			_text[idx]._length = textLength;
 			_vm->_globals._boxWidth = 0;
 
-			for (int v15 = 0; v15 < v64 + 1; v15++) {
-				byte v16 = v60[v15];
+			for (int v15 = 0; v15 < textLength + 1; v15++) {
+				byte v16 = _tempText[v15];
 				if (v16 <= 31)
 					v16 = ' ';
 				_vm->_globals._boxWidth += _vm->_objectsManager.getWidth(_vm->_globals.police, v16 - 32);
@@ -256,37 +252,38 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_text[idx]._pos.x = 320 - v17;
 			v73 = _vm->_eventsManager._startPos.x + 320 - v17;
 			lineCount = 1;
-			if (v64 + 1 > 0) {
-				_text[idx]._lines[0] = Common::String((const char *)v60, v64);
+			// CHECKME: textLength should be always positive...
+			if (textLength + 1 > 0) {
+				_text[idx]._lines[0] = Common::String((const char *)_tempText, textLength);
 			}
 		} else {
 LABEL_43:
 			if (!_vm->_globals._boxWidth)
 				_vm->_globals._boxWidth = 240;
 			int v65 = 0;
-			byte *v61 = _tempText;
 			int lineSize;
+			byte curChar;
 			do {
 				int v19 = 0;
 				int ptrb = _vm->_globals._boxWidth - 4;
 				for (;;) {
 					lineSize = v19;
 					do
-						v11 = v61[v65 + v19++];
-					while (v11 != ' ' && v11 != '%');
+						curChar = _tempText[v65 + v19++];
+					while (curChar != ' ' && curChar != '%');
 					if (v19 >= ptrb / _vm->_globals.police_l)
 						break;
-					if (v11 == '%') {
+					if (curChar == '%') {
 						if (v19 < ptrb / _vm->_globals.police_l)
 							goto LABEL_55;
 						break;
 					}
 				}
-				if (v11 != '%')
+				if (curChar != '%')
 					goto LABEL_57;
-				v11 = ' ';
+				curChar = ' ';
 LABEL_55:
-				if (v11 == '%')
+				if (curChar == '%')
 					lineSize = v19;
 LABEL_57:
 				int v20 = lineCount;
@@ -295,14 +292,14 @@ LABEL_57:
 				// actual length of the line to be copied will be. Otherwise, you can see artifacts,
 				// such as a single character beyond the end of string NULL.
 				int actualSize = 0;
-				while (actualSize < lineSize && v61[v65 + actualSize])
+				while (actualSize < lineSize && _tempText[v65 + actualSize])
 					++actualSize;
 
-				_text[idx]._lines[v20] = Common::String((const char *)v61 + v65, actualSize);
+				_text[idx]._lines[v20] = Common::String((const char *)_tempText + v65, actualSize);
 				_textSortArray[lineCount++] = lineSize;
 
 				v65 += lineSize;
-			} while (v11 != '%');
+			} while (curChar != '%');
 
 			for (int i = 0; i <= 19; i++) {
 				if (_textSortArray[i] <= 0) {

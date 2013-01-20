@@ -81,7 +81,7 @@ public:
 	void mouseOff();
 	void changeMouseCursor(int id);
 	void refreshEvents();
-	void delay(int delay);
+	void delay(int totalMilli);
 	int waitKeyPress();
 
 	void VBL();

@@ -197,7 +197,7 @@ SoundManager::SoundManager() {
 	_voiceOffFl = true;
 	_textOffFl = false;
 	_soundFl = false;
-	VBL_MERDE = false;
+	skipRefreshFl = false;
 	_currentSoundIndex = 0;
 	_oldSoundNumber = 0;
 	_modPlayingFl = false;
@@ -572,7 +572,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	// Loop for playing voice
 	breakFlag = 0;
 	do {
-		if (_specialSoundNum != 4 && !VBL_MERDE)
+		if (_specialSoundNum != 4 && !skipRefreshFl)
 			_vm->_eventsManager.VBL();
 		if (_vm->_eventsManager.getMouseButton())
 			break;
@@ -588,7 +588,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	DEL_SAMPLE_SDL(20);
 	_musicVolume = oldMusicVol;
 	_vm->_eventsManager._escKeyFl = false;
-	VBL_MERDE = 0;
+	skipRefreshFl = false;
 	return true;
 }
 

@@ -35,14 +35,13 @@ class HopkinsEngine;
 
 struct TxtItem {
 	bool _textOnFl;
-//	int _field2; // Unused variable
 	Common::String _filename;
 	Common::Point _pos;
 	int _messageId;
 	int _lineCount;
 	Common::String _lines[10];
 	int _textType;
-	int _field3FE;
+	int _length;
 	byte *_textBlock;
 	int16 _width;
 	int16 _height;

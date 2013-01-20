@@ -95,7 +95,7 @@ public:
 	bool _voiceOffFl;
 	bool _textOffFl;
 	bool _soundFl;
-	bool VBL_MERDE;
+	bool skipRefreshFl;
 	int _currentSoundIndex;
 	bool _modPlayingFl;
 	int _oldSoundNumber;
