@@ -187,7 +187,7 @@ osxsnap: bundle
 	cp $(srcdir)/COPYING.FREEFONT ./ResidualVM-snapshot/License\ \(FREEFONT\)
 	cp $(srcdir)/COPYING.ISC ./ResidualVM-snapshot/License\ \(ISC\)
 	cp $(srcdir)/COPYRIGHT ./ResidualVM-snapshot/Copyright\ Holders
-	cp $(srcdir)/KNOWN_BUGS ./ResidualVM-snapshot/Known Bugs
+	cp $(srcdir)/KNOWN_BUGS ./ResidualVM-snapshot/Known\ Bugs
 	cp $(srcdir)/NEWS ./ResidualVM-snapshot/News
 	cp $(srcdir)/README ./ResidualVM-snapshot/ResidualVM\ ReadMe
 	mkdir ResidualVM-snapshot/doc
