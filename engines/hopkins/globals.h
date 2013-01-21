@@ -187,7 +187,7 @@ struct CharacterLocation {
 	Common::Point _pos;
 	int field2;
 	int _location;
-	int field4;
+	int _zoomFactor;
 };
 
 enum SauvegardeOffset {

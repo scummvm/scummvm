@@ -225,7 +225,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					    _vm->_globals._saveData->_realHopkins._pos,
 					    1,
 					    2,
-					    _vm->_globals._saveData->_realHopkins.field4,
+					    _vm->_globals._saveData->_realHopkins._zoomFactor,
 					    0,
 					    34,
 					    190);
@@ -240,7 +240,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					    _vm->_globals._saveData->_samantha._pos,
 					    1,
 					    3,
-					    _vm->_globals._saveData->_samantha.field4,
+					    _vm->_globals._saveData->_samantha._zoomFactor,
 					    0,
 					    20,
 					    127);
@@ -2207,14 +2207,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int v54 = _vm->_globals.STAILLE[790 / 2];
 			if (_vm->_globals.STAILLE[790 / 2] < 0)
 				v54 = -_vm->_globals.STAILLE[790 / 2];
-			v53->field4 = -(100 * (67 - (100 - v54)) / 67);
+			v53->_zoomFactor = -(100 * (67 - (100 - v54)) / 67);
 			_vm->_globals._saveData->_data[svField357] = 1;
 			_vm->_globals._saveData->_data[svField354] = 0;
 			_vm->_globals._saveData->_data[svField356] = 0;
 			_vm->_globals._saveData->_data[svField355] = 1;
 			_vm->_objectsManager._twoCharactersFl = true;
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
-			_vm->_objectsManager.addStaticSprite(_vm->_globals.TETE, v53->_pos, 1, 3, v53->field4, 0, 20, 127);
+			_vm->_objectsManager.addStaticSprite(_vm->_globals.TETE, v53->_pos, 1, 3, v53->_zoomFactor, 0, 20, 127);
 			_vm->_objectsManager.animateSprite(1);
 			break;
 			}

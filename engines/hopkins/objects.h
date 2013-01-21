@@ -35,7 +35,7 @@ struct SpriteItem {
 	int _animationType;
 	const byte *_spriteData;
 	Common::Point _spritePos;
-	int _zoomfactor;
+	int _zoomFactor;
 	int fieldE;
 	int _spriteIndex;
 	int field12;

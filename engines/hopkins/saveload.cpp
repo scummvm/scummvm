@@ -279,7 +279,7 @@ void SaveLoadManager::syncCharacterLocation(Common::Serializer &s, CharacterLoca
 	s.syncAsSint16LE(item._pos.y);
 	s.syncAsSint16LE(item.field2);
 	s.syncAsSint16LE(item._location);
-	s.syncAsSint16LE(item.field4);
+	s.syncAsSint16LE(item._zoomFactor);
 }
 
 void SaveLoadManager::convertThumb16To8(Graphics::Surface *thumb16, Graphics::Surface *thumb8) {

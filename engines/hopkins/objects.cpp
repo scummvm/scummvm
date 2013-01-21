@@ -830,12 +830,12 @@ void ObjectsManager::computeSprite(int idx) {
 	int zoomPercent = 0;
 	int reducePercent = 0;
 
-	if (_sprite[idx]._zoomfactor < 0) {
-		reducePercent = -_sprite[idx]._zoomfactor;
+	if (_sprite[idx]._zoomFactor < 0) {
+		reducePercent = -_sprite[idx]._zoomFactor;
 		if (reducePercent > 95)
 			reducePercent = 95;
 	} else 
-		zoomPercent = _sprite[idx]._zoomfactor;
+		zoomPercent = _sprite[idx]._zoomFactor;
 
 	if (zoomPercent) {
 		if (tmpX >= 0)
@@ -1218,7 +1218,7 @@ void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, 
 	_sprite[idx]._spriteData = spriteData;
 	_sprite[idx]._spritePos = pos;
 	_sprite[idx]._spriteIndex = spriteIndex;
-	_sprite[idx]._zoomfactor = zoomFactor;
+	_sprite[idx]._zoomFactor = zoomFactor;
 	_sprite[idx].fieldE = a7;
 	_sprite[idx].field12 = a8;
 	_sprite[idx].field14 = a9;
@@ -1226,7 +1226,7 @@ void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, 
 
 	if (spriteData[0] == 'R' && spriteData[1] == 'L' && spriteData[2] == 'E') {
 		_sprite[idx]._rleFl = true;
-		_sprite[idx]._zoomfactor = 0;
+		_sprite[idx]._zoomFactor = 0;
 		_sprite[idx].fieldE = 0;
 	} else
 		_sprite[idx]._rleFl = false;
@@ -1269,7 +1269,7 @@ void ObjectsManager::setSpriteIndex(int idx, int spriteIndex) {
 void ObjectsManager::setSpriteZoom(int idx, int zoomFactor) {
 	assert (idx  <= MAX_SPRITE);
 	if (!_sprite[idx]._rleFl)
-		_sprite[idx]._zoomfactor = zoomFactor;
+		_sprite[idx]._zoomFactor = zoomFactor;
 }
 
 void ObjectsManager::setFlipSprite(int idx, bool flip) {
@@ -1382,36 +1382,16 @@ void ObjectsManager::GOHOME() {
 	int16 v4;
 	int16 v9;
 	int16 v10;
-	int v15;
 	int16 v16;
-	int v19;
 	int16 v20;
-	unsigned int v21;
-	unsigned int v22;
 	int16 v23;
 	int16 v24;
-	unsigned int v25;
-	unsigned int v26;
-	unsigned int v27;
-	unsigned int v28;
 	int16 v29;
 	int16 v30;
-	unsigned int v31;
-	unsigned int v32;
-	unsigned int v33;
-	unsigned int v34;
 	int16 v35;
 	int16 v36;
-	unsigned int v37;
-	unsigned int v38;
-	unsigned int v39;
-	unsigned int v40;
 	int16 v41;
 	int16 v42;
-	unsigned int v43;
-	unsigned int v44;
-	unsigned int v45;
-	unsigned int v46;
 	int v49;
 	int v54;
 	int16 v58;
@@ -1484,12 +1464,12 @@ void ObjectsManager::GOHOME() {
 			v3 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v4 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
 
-			if (_sprite[0]._zoomfactor < 0) {
-				v3 = _vm->_graphicsManager.zoomOut(v3, -_sprite[0]._zoomfactor);
-				v4 = _vm->_graphicsManager.zoomOut(v4, -_sprite[0]._zoomfactor);
-			} else if (_sprite[0]._zoomfactor > 0) {
-				v3 = _vm->_graphicsManager.zoomIn(v3, _sprite[0]._zoomfactor);
-				v4 = _vm->_graphicsManager.zoomIn(v4, _sprite[0]._zoomfactor);
+			if (_sprite[0]._zoomFactor < 0) {
+				v3 = _vm->_graphicsManager.zoomOut(v3, -_sprite[0]._zoomFactor);
+				v4 = _vm->_graphicsManager.zoomOut(v4, -_sprite[0]._zoomFactor);
+			} else if (_sprite[0]._zoomFactor > 0) {
+				v3 = _vm->_graphicsManager.zoomIn(v3, _sprite[0]._zoomFactor);
+				v4 = _vm->_graphicsManager.zoomIn(v4, _sprite[0]._zoomFactor);
 			}
 			v0 = v3 + g_old_x;
 			v58 = g_old_y + v4;
@@ -1507,13 +1487,12 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v9 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v10 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-			if (_sprite[0]._zoomfactor < 0) {
-				v9 = _vm->_graphicsManager.zoomOut(v9, -_sprite[0]._zoomfactor);
-				v10 = _vm->_graphicsManager.zoomOut(v10, -_sprite[0]._zoomfactor);
-			}
-			if (_sprite[0]._zoomfactor > 0) {
-				v9 = _vm->_graphicsManager.zoomIn(v9, _sprite[0]._zoomfactor);
-				v10 = _vm->_graphicsManager.zoomIn(v10, _sprite[0]._zoomfactor);
+			if (_sprite[0]._zoomFactor < 0) {
+				v9 = _vm->_graphicsManager.zoomOut(v9, -_sprite[0]._zoomFactor);
+				v10 = _vm->_graphicsManager.zoomOut(v10, -_sprite[0]._zoomFactor);
+			} else if (_sprite[0]._zoomFactor > 0) {
+				v9 = _vm->_graphicsManager.zoomIn(v9, _sprite[0]._zoomFactor);
+				v10 = _vm->_graphicsManager.zoomIn(v10, _sprite[0]._zoomFactor);
 			}
 			v0 = g_old_x - v9;
 			v58 = g_old_y - v10;
@@ -1529,13 +1508,11 @@ void ObjectsManager::GOHOME() {
 			v58 = g_old_y;
 			v1 = 0;
 		} else {
-			v15 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
-			v16 = v15;
-			if (_sprite[0]._zoomfactor < 0) {
-				v16 = _vm->_graphicsManager.zoomOut(v16, -_sprite[0]._zoomfactor);
-			}
-			if (_sprite[0]._zoomfactor > 0) {
-				v16 = _vm->_graphicsManager.zoomIn(v16, _sprite[0]._zoomfactor);
+			v16 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
+			if (_sprite[0]._zoomFactor < 0) {
+				v16 = _vm->_graphicsManager.zoomOut(v16, -_sprite[0]._zoomFactor);
+			} else if (_sprite[0]._zoomFactor > 0) {
+				v16 = _vm->_graphicsManager.zoomIn(v16, _sprite[0]._zoomFactor);
 			}
 			v0 = g_old_x;
 			v58 = g_old_y - v16;
@@ -1552,19 +1529,11 @@ void ObjectsManager::GOHOME() {
 			v58 = g_old_y;
 			v1 = 48;
 		} else {
-			v19 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
-			v20 = v19;
-			if (_sprite[0]._zoomfactor < 0) {
-				v21 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v21 = -_sprite[0]._zoomfactor;
-				v20 = _vm->_graphicsManager.zoomOut(v20, v21);
-			}
-			if (_sprite[0]._zoomfactor > 0) {
-				v22 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v22 = -_sprite[0]._zoomfactor;
-				v20 = _vm->_graphicsManager.zoomIn(v20, v22);
+			v20 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
+			if (_sprite[0]._zoomFactor < 0) {
+				v20 = _vm->_graphicsManager.zoomOut(v20, -_sprite[0]._zoomFactor);
+			} else if (_sprite[0]._zoomFactor > 0) {
+				v20 = _vm->_graphicsManager.zoomIn(v20, _sprite[0]._zoomFactor);
 			}
 			v0 = g_old_x;
 			v58 = v20 + g_old_y;
@@ -1582,25 +1551,13 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v23 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v24 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-			if (_sprite[0]._zoomfactor < 0) {
-				v25 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v25 = -_sprite[0]._zoomfactor;
-				v23 = _vm->_graphicsManager.zoomOut(v23, v25);
-				v26 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v26 = -_sprite[0]._zoomfactor;
-				v24 = _vm->_graphicsManager.zoomOut(v24, v26);
+			if (_sprite[0]._zoomFactor < 0) {
+				v23 = _vm->_graphicsManager.zoomOut(v23, -_sprite[0]._zoomFactor);
+				v24 = _vm->_graphicsManager.zoomOut(v24, -_sprite[0]._zoomFactor);
 			}
-			if (_sprite[0]._zoomfactor > 0) {
-				v27 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v27 = -_sprite[0]._zoomfactor;
-				v23 = _vm->_graphicsManager.zoomIn(v23, v27);
-				v28 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v28 = -_sprite[0]._zoomfactor;
-				v24 = _vm->_graphicsManager.zoomIn(v24, v28);
+			if (_sprite[0]._zoomFactor > 0) {
+				v23 = _vm->_graphicsManager.zoomIn(v23, _sprite[0]._zoomFactor);
+				v24 = _vm->_graphicsManager.zoomIn(v24, _sprite[0]._zoomFactor);
 			}
 			v0 = v23 + g_old_x;
 			v58 = g_old_y + v24;
@@ -1618,24 +1575,12 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v29 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v30 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-			if (_sprite[0]._zoomfactor < 0) {
-				v31 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v31 = -_sprite[0]._zoomfactor;
-				v29 = _vm->_graphicsManager.zoomOut(v29, v31);
-				v32 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v32 = -_sprite[0]._zoomfactor;
-				v30 = _vm->_graphicsManager.zoomOut(v30, v32);
-			} else if (_sprite[0]._zoomfactor > 0) {
-				v33 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v33 = -_sprite[0]._zoomfactor;
-				v29 = _vm->_graphicsManager.zoomIn(v29, v33);
-				v34 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v34 = -_sprite[0]._zoomfactor;
-				v30 = _vm->_graphicsManager.zoomIn(v30, v34);
+			if (_sprite[0]._zoomFactor < 0) {
+				v29 = _vm->_graphicsManager.zoomOut(v29, -_sprite[0]._zoomFactor);
+				v30 = _vm->_graphicsManager.zoomOut(v30, -_sprite[0]._zoomFactor);
+			} else if (_sprite[0]._zoomFactor > 0) {
+				v29 = _vm->_graphicsManager.zoomIn(v29, _sprite[0]._zoomFactor);
+				v30 = _vm->_graphicsManager.zoomIn(v30, _sprite[0]._zoomFactor);
 			}
 			v0 = g_old_x - v29;
 			v58 = g_old_y + v30;
@@ -1653,25 +1598,13 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v35 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v36 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-			if (_sprite[0]._zoomfactor < 0) {
-				v37 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v37 = -_sprite[0]._zoomfactor;
-				v35 = _vm->_graphicsManager.zoomOut(v35, v37);
-				v38 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v38 = -_sprite[0]._zoomfactor;
-				v36 = _vm->_graphicsManager.zoomOut(v36, v38);
+			if (_sprite[0]._zoomFactor < 0) {
+				v35 = _vm->_graphicsManager.zoomOut(v35, -_sprite[0]._zoomFactor);
+				v36 = _vm->_graphicsManager.zoomOut(v36, -_sprite[0]._zoomFactor);
 			}
-			if (_sprite[0]._zoomfactor > 0) {
-				v39 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v39 = -_sprite[0]._zoomfactor;
-				v35 = _vm->_graphicsManager.zoomIn(v35, v39);
-				v40 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v40 = -_sprite[0]._zoomfactor;
-				v36 = _vm->_graphicsManager.zoomIn(v36, v40);
+			if (_sprite[0]._zoomFactor > 0) {
+				v35 = _vm->_graphicsManager.zoomIn(v35, _sprite[0]._zoomFactor);
+				v36 = _vm->_graphicsManager.zoomIn(v36, _sprite[0]._zoomFactor);
 			}
 			v0 = v35 + g_old_x;
 			v58 = g_old_y + v36;
@@ -1689,25 +1622,13 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v41 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v42 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-			if (_sprite[0]._zoomfactor < 0) {
-				v43 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v43 = -_sprite[0]._zoomfactor;
-				v41 = _vm->_graphicsManager.zoomOut(v41, v43);
-				v44 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v44 = -_sprite[0]._zoomfactor;
-				v42 = _vm->_graphicsManager.zoomOut(v42, v44);
+			if (_sprite[0]._zoomFactor < 0) {
+				v41 = _vm->_graphicsManager.zoomOut(v41, -_sprite[0]._zoomFactor);
+				v42 = _vm->_graphicsManager.zoomOut(v42, -_sprite[0]._zoomFactor);
 			}
-			if (_sprite[0]._zoomfactor > 0) {
-				v45 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v45 = -_sprite[0]._zoomfactor;
-				v41 = _vm->_graphicsManager.zoomIn(v41, v45);
-				v46 = _sprite[0]._zoomfactor;
-				if (_sprite[0]._zoomfactor < 0)
-					v46 = -_sprite[0]._zoomfactor;
-				v42 = _vm->_graphicsManager.zoomIn(v42, v46);
+			if (_sprite[0]._zoomFactor > 0) {
+				v41 = _vm->_graphicsManager.zoomIn(v41, _sprite[0]._zoomFactor);
+				v42 = _vm->_graphicsManager.zoomIn(v42, _sprite[0]._zoomFactor);
 			}
 			v0 = g_old_x - v41;
 			v58 = g_old_y + v42;
@@ -2393,10 +2314,10 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc->_pos.y = getSpriteY(0);
 		loc->field2 = 64;
 		loc->_location = _vm->_globals._screenId;
-		loc->field4 = _sprite[0]._animationType;
+		loc->_zoomFactor = _sprite[0]._animationType;
 
 		removeSprite(1);
-		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 3, loc->field4, 0, 20, 127);
+		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 3, loc->_zoomFactor, 0, 20, 127);
 		animateSprite(1);
 		removeSprite(0);
 
@@ -2407,7 +2328,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc = &_vm->_globals._saveData->_realHopkins;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
 		_vm->_globals.PERSO_TYPE = 0;
-		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 34, 190);
+		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->_zoomFactor, 0, 34, 190);
 		animateSprite(0);
 		_vm->_globals.loadCharacterData();
 	} else if (oldCharacter == CHARACTER_HOPKINS && newCharacter == CHARACTER_SAMANTHA
@@ -2418,10 +2339,10 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc->_pos.y = getSpriteY(0);
 		loc->field2 = 64;
 		loc->_location = _vm->_globals._screenId;
-		loc->field4 = _sprite[0]._zoomfactor;
+		loc->_zoomFactor = _sprite[0]._zoomFactor;
 
 		removeSprite(1);
-		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 2, loc->field4, 0, 34, 190);
+		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 2, loc->_zoomFactor, 0, 34, 190);
 		animateSprite(1);
 		removeSprite(0);
 
@@ -2432,7 +2353,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc = &_vm->_globals._saveData->_samantha;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PSAMAN.SPR");
 		_vm->_globals.PERSO_TYPE = 2;
-		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->field4, 0, 20, 127);
+		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->_zoomFactor, 0, 20, 127);
 		animateSprite(0);
 		_vm->_globals.loadCharacterData();
 	} else {
@@ -2443,7 +2364,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 			loc->_pos.y = getSpriteY(0);
 			loc->field2 = 64;
 			loc->_location = _vm->_globals._screenId;
-			loc->field4 = _sprite[0]._zoomfactor;
+			loc->_zoomFactor = _sprite[0]._zoomFactor;
 			break;
 		case CHARACTER_HOPKINS_CLONE:
 			loc = &_vm->_globals._saveData->_cloneHopkins;
@@ -2451,7 +2372,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 			loc->_pos.y = getSpriteY(0);
 			loc->field2 = 64;
 			loc->_location = _vm->_globals._screenId;
-			loc->field4 = _sprite[0]._zoomfactor;
+			loc->_zoomFactor = _sprite[0]._zoomFactor;
 			break;
 		case CHARACTER_SAMANTHA:
 			loc = &_vm->_globals._saveData->_samantha;
@@ -2459,7 +2380,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 			loc->_pos.y = getSpriteY(0);
 			loc->field2 = 64;
 			loc->_location = _vm->_globals._screenId;
-			loc->field4 = _sprite[0]._zoomfactor;
+			loc->_zoomFactor = _sprite[0]._zoomFactor;
 			break;
 		default:
 			break;
