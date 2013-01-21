@@ -48,14 +48,14 @@ struct ZonePItem {
 };
 
 struct CarreZoneItem {
-	int field0;
-	int field2;
-	int field4;
-	int field6;
-	int field8;
-	int fieldA;
-	int fieldC;
-	bool fieldE;
+	int _enabledFl;
+	int _left;
+	int _right;
+	int _top;
+	int _bottom;
+	int _minZoneLineIdx;
+	int _maxZoneLineIdx;
+	bool _squareZoneFl;
 };
 
 struct BqeAnimItem {
@@ -68,22 +68,13 @@ struct BankItem {
 	bool _loadedFl;
 	Common::String _filename;
 	int _fileHeader;
-	int field1A;
+	int _objDataIdx;
 };
 
 struct ListeItem {
-	bool field0;
-	int field2;
-	int field4;
-	int _width;
-	int _height;
-	int fieldA;
-};
-
-struct Liste2Item {
 	bool _visibleFl;
-	int _xp;
-	int _yp;
+	int _posX;
+	int _posY;
 	int _width;
 	int _height;
 };
@@ -312,7 +303,7 @@ public:
 	BankItem Bank[8];
 	BobItem _bob[36];
 	ListeItem Liste[6];
-	Liste2Item Liste2[35];
+	ListeItem Liste2[35];
 	LockAnimItem _lockedAnims[30];
 	VBobItem VBob[30];
 	ObjetWItem ObjetW[300];

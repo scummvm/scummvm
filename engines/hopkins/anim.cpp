@@ -535,8 +535,6 @@ void AnimationManager::clearAnim() {
  * Load Sprite Bank
  */
 int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
-	byte *v13;
-	byte *v19;
 	int result = 0;
 	_vm->_globals.Bank[idx]._loadedFl = true;
 	_vm->_globals.Bank[idx]._filename = filename;
@@ -557,26 +555,22 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	
 	_vm->_globals.Bank[idx]._data = fileDataPtr;
 
-	int v8 = 0;
+	int objectDataIdx = 0;
 	int width;
 	int height;
-	for(;;) {
-		width = _vm->_objectsManager.getWidth(fileDataPtr, v8);
-		height = _vm->_objectsManager.getHeight(fileDataPtr, v8);
+	for(objectDataIdx = 0; objectDataIdx <= 249; objectDataIdx++) {
+		width = _vm->_objectsManager.getWidth(fileDataPtr, objectDataIdx);
+		height = _vm->_objectsManager.getHeight(fileDataPtr, objectDataIdx);
 		if (!width && !height)
-			break;
-
-		++v8;
-		if (v8 > 249)
 			break;
 	}
 
-	if (v8 > 249) {
+	if (objectDataIdx > 249) {
 		_vm->_globals.freeMemory(fileDataPtr);
 		_vm->_globals.Bank[idx]._loadedFl = false;
 		result = -2;
 	}
-	_vm->_globals.Bank[idx].field1A = v8;
+	_vm->_globals.Bank[idx]._objDataIdx = objectDataIdx;
 
 	Common::String ofsFilename = _vm->_globals.Bank[idx]._filename;
 	char ch;
@@ -588,20 +582,20 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 
 	Common::File f;
 	if (f.exists(ofsFilename)) {
-		v19 = _vm->_fileManager.loadFile(ofsFilename);
-		v13 = v19;
-		for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx].field1A; ++objIdx, v13 += 8) {
-			int x1 = (int16)READ_LE_UINT16(v13);
-			int y1 = (int16)READ_LE_UINT16(v13 + 2);
-			int x2 = (int16)READ_LE_UINT16(v13 + 4);
-			int y2 = (int16)READ_LE_UINT16(v13 + 6);
+		byte *ofsData = _vm->_fileManager.loadFile(ofsFilename);
+		byte *curOfsData = ofsData;
+		for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx]._objDataIdx; ++objIdx, curOfsData += 8) {
+			int x1 = (int16)READ_LE_UINT16(curOfsData);
+			int y1 = (int16)READ_LE_UINT16(curOfsData + 2);
+			int x2 = (int16)READ_LE_UINT16(curOfsData + 4);
+			int y2 = (int16)READ_LE_UINT16(curOfsData + 6);
 
 			_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x1, y1, 0);
 			if (_vm->_globals.Bank[idx]._fileHeader == 2)
 				_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x2, y2, 1);
 		}
 
-		_vm->_globals.freeMemory(v19);
+		_vm->_globals.freeMemory(ofsData);
 		result = 0;
 	}
 

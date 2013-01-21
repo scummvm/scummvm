@@ -292,19 +292,19 @@ void ObjectsManager::displaySprite() {
 
 	if (!PERSO_ON) {
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
-			if (_vm->_globals.Liste[idx].field0) {
-				clipX = _vm->_globals.Liste[idx].field2 - 2;
+			if (_vm->_globals.Liste[idx]._visibleFl) {
+				clipX = _vm->_globals.Liste[idx]._posX - 2;
 				if (clipX < _vm->_graphicsManager._minX)
 					clipX = _vm->_graphicsManager._minX;
 
-				clipY = _vm->_globals.Liste[idx].field4 - 2;
+				clipY = _vm->_globals.Liste[idx]._posY - 2;
 				if (clipY < _vm->_graphicsManager._minY)
 					clipY = _vm->_graphicsManager._minY;
 
 				_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen, clipX, clipY,
 					_vm->_globals.Liste[idx]._width + 4, _vm->_globals.Liste[idx]._height + 4,
 					_vm->_graphicsManager._vesaBuffer, clipX, clipY);
-				_vm->_globals.Liste[idx].field0 = false;
+				_vm->_globals.Liste[idx]._visibleFl = false;
 			}
 		}
 	}
@@ -315,7 +315,7 @@ void ObjectsManager::displaySprite() {
 	if (!PERSO_ON) {
 		// Handle drawing characters on the screen
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
-			_vm->_globals.Liste[idx].field0 = false;
+			_vm->_globals.Liste[idx]._visibleFl = false;
 			if (_sprite[idx]._animationType == 1) {
 				computeSprite(idx);
 				if (_sprite[idx].field2A)
@@ -473,7 +473,7 @@ void ObjectsManager::INIT_BOB() {
 
 void ObjectsManager::BOB_ZERO(int idx) {
 	BobItem &bob = _vm->_globals._bob[idx];
-	Liste2Item &item = _vm->_globals.Liste2[idx];
+	ListeItem &item = _vm->_globals.Liste2[idx];
 
 	bob.field0 = 0;
 	bob._spriteData = g_PTRNUL;
@@ -496,8 +496,8 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob._oldX2 = 0;
 
 	item._visibleFl = false;
-	item._xp = 0;
-	item._yp = 0;
+	item._posX = 0;
+	item._posY = 0;
 	item._width = 0;
 	item._height = 0;
 }
@@ -519,37 +519,37 @@ void ObjectsManager::DEF_BOB(int idx) {
 			_vm->_globals._bob[idx]._modeFlag);
 
 	_vm->_globals.Liste2[idx]._visibleFl = true;
-	_vm->_globals.Liste2[idx]._xp = xp;
-	_vm->_globals.Liste2[idx]._yp = yp;
+	_vm->_globals.Liste2[idx]._posX = xp;
+	_vm->_globals.Liste2[idx]._posY = yp;
 
 	_vm->_globals.Liste2[idx]._width = _vm->_globals._bob[idx]._oldWidth;
 	_vm->_globals.Liste2[idx]._height = _vm->_globals._bob[idx]._oldHeight;
 
-	if (_vm->_globals.Liste2[idx]._xp < _vm->_graphicsManager._minX) {
-		_vm->_globals.Liste2[idx]._width -= _vm->_graphicsManager._minX - _vm->_globals.Liste2[idx]._xp;
-		_vm->_globals.Liste2[idx]._xp = _vm->_graphicsManager._minX;
+	if (_vm->_globals.Liste2[idx]._posX < _vm->_graphicsManager._minX) {
+		_vm->_globals.Liste2[idx]._width -= _vm->_graphicsManager._minX - _vm->_globals.Liste2[idx]._posX;
+		_vm->_globals.Liste2[idx]._posX = _vm->_graphicsManager._minX;
 	}
 
-	if (_vm->_globals.Liste2[idx]._yp < _vm->_graphicsManager._minY) {
-		_vm->_globals.Liste2[idx]._height -= _vm->_graphicsManager._minY - _vm->_globals.Liste2[idx]._yp;
-		_vm->_globals.Liste2[idx]._yp = _vm->_graphicsManager._minY;
+	if (_vm->_globals.Liste2[idx]._posY < _vm->_graphicsManager._minY) {
+		_vm->_globals.Liste2[idx]._height -= _vm->_graphicsManager._minY - _vm->_globals.Liste2[idx]._posY;
+		_vm->_globals.Liste2[idx]._posY = _vm->_graphicsManager._minY;
 	}
 
-	if (_vm->_globals.Liste2[idx]._width + _vm->_globals.Liste2[idx]._xp > _vm->_graphicsManager._maxX)
-		_vm->_globals.Liste2[idx]._width = _vm->_graphicsManager._maxX - _vm->_globals.Liste2[idx]._xp;
+	if (_vm->_globals.Liste2[idx]._width + _vm->_globals.Liste2[idx]._posX > _vm->_graphicsManager._maxX)
+		_vm->_globals.Liste2[idx]._width = _vm->_graphicsManager._maxX - _vm->_globals.Liste2[idx]._posX;
 
-	if (_vm->_globals.Liste2[idx]._height + _vm->_globals.Liste2[idx]._yp > _vm->_graphicsManager._maxY)
-		_vm->_globals.Liste2[idx]._height = _vm->_graphicsManager._maxY - _vm->_globals.Liste2[idx]._yp;
+	if (_vm->_globals.Liste2[idx]._height + _vm->_globals.Liste2[idx]._posY > _vm->_graphicsManager._maxY)
+		_vm->_globals.Liste2[idx]._height = _vm->_graphicsManager._maxY - _vm->_globals.Liste2[idx]._posY;
 
 	if (_vm->_globals.Liste2[idx]._width <= 0 || _vm->_globals.Liste2[idx]._height <= 0)
 		_vm->_globals.Liste2[idx]._visibleFl = false;
 
 	if (_vm->_globals.Liste2[idx]._visibleFl)
 		_vm->_graphicsManager.addVesaSegment(
-             _vm->_globals.Liste2[idx]._xp,
-             _vm->_globals.Liste2[idx]._yp,
-             _vm->_globals.Liste2[idx]._xp + _vm->_globals.Liste2[idx]._width,
-             _vm->_globals.Liste2[idx]._yp + _vm->_globals.Liste2[idx]._height);
+             _vm->_globals.Liste2[idx]._posX,
+             _vm->_globals.Liste2[idx]._posY,
+             _vm->_globals.Liste2[idx]._posX + _vm->_globals.Liste2[idx]._width,
+             _vm->_globals.Liste2[idx]._posY + _vm->_globals.Liste2[idx]._height);
 }
 
 void ObjectsManager::BOB_VISU(int idx) {
@@ -697,8 +697,8 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 	_vm->_globals._bob[idx].field4A = v20;
 
 	_vm->_globals.Liste2[idx]._visibleFl = true;
-	_vm->_globals.Liste2[idx]._xp = v13;
-	_vm->_globals.Liste2[idx]._yp = v14;
+	_vm->_globals.Liste2[idx]._posX = v13;
+	_vm->_globals.Liste2[idx]._posY = v14;
 
 	int width = getWidth(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex);
 	int height = getHeight(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex);
@@ -773,28 +773,28 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 	_vm->_globals.Liste[idx]._width = _sprite[idx]._width;
 	_vm->_globals.Liste[idx]._height = _sprite[idx]._height;
 
-	if (_vm->_globals.Liste[idx].field2 < _vm->_graphicsManager._minX) {
-		_vm->_globals.Liste[idx]._width -= _vm->_graphicsManager._minX - _vm->_globals.Liste[idx].field2;
-		_vm->_globals.Liste[idx].field2 = _vm->_graphicsManager._minX;
+	if (_vm->_globals.Liste[idx]._posX < _vm->_graphicsManager._minX) {
+		_vm->_globals.Liste[idx]._width -= _vm->_graphicsManager._minX - _vm->_globals.Liste[idx]._posX;
+		_vm->_globals.Liste[idx]._posX = _vm->_graphicsManager._minX;
 	}
 
-	if (_vm->_globals.Liste[idx].field4 < _vm->_graphicsManager._minY) {
-		_vm->_globals.Liste[idx]._height -= _vm->_graphicsManager._minY - _vm->_globals.Liste[idx].field4;
-		_vm->_globals.Liste[idx].field4 = _vm->_graphicsManager._minY;
+	if (_vm->_globals.Liste[idx]._posY < _vm->_graphicsManager._minY) {
+		_vm->_globals.Liste[idx]._height -= _vm->_graphicsManager._minY - _vm->_globals.Liste[idx]._posY;
+		_vm->_globals.Liste[idx]._posY = _vm->_graphicsManager._minY;
 	}
 
-	if (_vm->_globals.Liste[idx]._width + _vm->_globals.Liste[idx].field2 > _vm->_graphicsManager._maxX)
-		_vm->_globals.Liste[idx]._width = _vm->_graphicsManager._maxX - _vm->_globals.Liste[idx].field2;
+	if (_vm->_globals.Liste[idx]._width + _vm->_globals.Liste[idx]._posX > _vm->_graphicsManager._maxX)
+		_vm->_globals.Liste[idx]._width = _vm->_graphicsManager._maxX - _vm->_globals.Liste[idx]._posX;
 
-	if (_vm->_globals.Liste[idx]._height + _vm->_globals.Liste[idx].field4 > _vm->_graphicsManager._maxY)
-		_vm->_globals.Liste[idx]._height = _vm->_graphicsManager._maxY - _vm->_globals.Liste[idx].field4;
+	if (_vm->_globals.Liste[idx]._height + _vm->_globals.Liste[idx]._posY > _vm->_graphicsManager._maxY)
+		_vm->_globals.Liste[idx]._height = _vm->_graphicsManager._maxY - _vm->_globals.Liste[idx]._posY;
 
 	if (_vm->_globals.Liste[idx]._width <= 0 || _vm->_globals.Liste[idx]._height <= 0)
-		_vm->_globals.Liste[idx].field0 = false;
+		_vm->_globals.Liste[idx]._visibleFl = false;
 
-	if (_vm->_globals.Liste[idx].field0)
-		_vm->_graphicsManager.addVesaSegment( _vm->_globals.Liste[idx].field2, _vm->_globals.Liste[idx].field4,
-		    _vm->_globals.Liste[idx].field2 + _vm->_globals.Liste[idx]._width, _vm->_globals.Liste[idx].field4 + _vm->_globals.Liste[idx]._height);
+	if (_vm->_globals.Liste[idx]._visibleFl)
+		_vm->_graphicsManager.addVesaSegment( _vm->_globals.Liste[idx]._posX, _vm->_globals.Liste[idx]._posY,
+		    _vm->_globals.Liste[idx]._posX + _vm->_globals.Liste[idx]._width, _vm->_globals.Liste[idx]._posY + _vm->_globals.Liste[idx]._height);
 }
 
 void ObjectsManager::DEF_CACHE(int idx) {
@@ -871,9 +871,9 @@ void ObjectsManager::computeSprite(int idx) {
 	_sprite[idx]._zoomPct = zoomPercent;
 	_sprite[idx]._reducePct = reducePercent;
 
-	_vm->_globals.Liste[idx].field0 = true;
-	_vm->_globals.Liste[idx].field2 = v15;
-	_vm->_globals.Liste[idx].field4 = v16;
+	_vm->_globals.Liste[idx]._visibleFl = true;
+	_vm->_globals.Liste[idx]._posX = v15;
+	_vm->_globals.Liste[idx]._posY = v16;
 
 	int width = getWidth(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex);
 	int height = getHeight(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex);
@@ -1031,10 +1031,10 @@ void ObjectsManager::displayBobAnim() {
 				if ((v14 != 2) && (v14 != 4)) {
 					if (_vm->_globals.Liste2[i]._visibleFl) {
 						_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen,
-							_vm->_globals.Liste2[i]._xp, _vm->_globals.Liste2[i]._yp,
+							_vm->_globals.Liste2[i]._posX, _vm->_globals.Liste2[i]._posY,
 							_vm->_globals.Liste2[i]._width, _vm->_globals.Liste2[i]._height,
-							_vm->_graphicsManager._vesaBuffer, _vm->_globals.Liste2[i]._xp,
-							_vm->_globals.Liste2[i]._yp);
+							_vm->_graphicsManager._vesaBuffer, _vm->_globals.Liste2[i]._posX,
+							_vm->_globals.Liste2[i]._posY);
 						_vm->_globals.Liste2[i]._visibleFl = false;
 					}
 				}
@@ -1043,10 +1043,10 @@ void ObjectsManager::displayBobAnim() {
 			if (_vm->_globals._bob[i].field0 == 11) {
 				if (_vm->_globals.Liste2[i]._visibleFl) {
 					_vm->_graphicsManager.SCOPY(_vm->_graphicsManager._vesaScreen,
-						_vm->_globals.Liste2[i]._xp, _vm->_globals.Liste2[i]._yp,
+						_vm->_globals.Liste2[i]._posX, _vm->_globals.Liste2[i]._posY,
 						_vm->_globals.Liste2[i]._width, _vm->_globals.Liste2[i]._height,
 						_vm->_graphicsManager._vesaBuffer,
-						_vm->_globals.Liste2[i]._xp, _vm->_globals.Liste2[i]._yp);
+						_vm->_globals.Liste2[i]._posX, _vm->_globals.Liste2[i]._posY);
 					_vm->_globals.Liste2[i]._visibleFl = false;
 				}
 
@@ -1200,12 +1200,11 @@ void ObjectsManager::clearSprite() {
 	}
 
 	for (int idx = 0; idx < MAX_SPRITE; idx++) {
-		_vm->_globals.Liste[idx].field0 = false;
-		_vm->_globals.Liste[idx].field2 = 0;
-		_vm->_globals.Liste[idx].field4 = 0;
+		_vm->_globals.Liste[idx]._visibleFl = false;
+		_vm->_globals.Liste[idx]._posX = 0;
+		_vm->_globals.Liste[idx]._posY = 0;
 		_vm->_globals.Liste[idx]._width = 0;
 		_vm->_globals.Liste[idx]._height = 0;
-		_vm->_globals.Liste[idx].fieldA = 0;
 	}
 }
 
@@ -1958,63 +1957,49 @@ void ObjectsManager::loadZone(const Common::String &file) {
 
 // Square Zone
 void ObjectsManager::CARRE_ZONE() {
-	int16 *dataP;
-	int v4;
-	int v5;
-	int v10;
-	int v11;
-	int v12;
-	int v14;
-
 	for (int idx = 0; idx < 100; ++idx) {
-		_vm->_globals.CarreZone[idx].field0 = 0;
-		_vm->_globals.CarreZone[idx].fieldE = false;
-		_vm->_globals.CarreZone[idx].field2 = 1280;
-		_vm->_globals.CarreZone[idx].field4 = 0;
-		_vm->_globals.CarreZone[idx].field6 = 460;
-		_vm->_globals.CarreZone[idx].field8 = 0;
-		_vm->_globals.CarreZone[idx].fieldA = 401;
-		_vm->_globals.CarreZone[idx].fieldC = 0;
+		_vm->_globals.CarreZone[idx]._enabledFl = 0;
+		_vm->_globals.CarreZone[idx]._squareZoneFl = false;
+		_vm->_globals.CarreZone[idx]._left = 1280;
+		_vm->_globals.CarreZone[idx]._right = 0;
+		_vm->_globals.CarreZone[idx]._top = 460;
+		_vm->_globals.CarreZone[idx]._bottom = 0;
+		_vm->_globals.CarreZone[idx]._minZoneLineIdx = 401;
+		_vm->_globals.CarreZone[idx]._maxZoneLineIdx = 0;
 	}
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
-		dataP = _vm->_linesManager._zoneLine[idx].zoneData;
-		if (dataP != (int16 *)g_PTRNUL) {
-			v4 = _vm->_linesManager._zoneLine[idx].field2;
-			_vm->_globals.CarreZone[v4].field0 = 1;
-			if (_vm->_globals.CarreZone[v4].fieldC < idx)
-				_vm->_globals.CarreZone[v4].fieldC = idx;
-			if (_vm->_globals.CarreZone[v4].fieldA > idx)
-				_vm->_globals.CarreZone[v4].fieldA = idx;
+		int16 *dataP = _vm->_linesManager._zoneLine[idx].zoneData;
+		if (dataP == (int16 *)g_PTRNUL)
+			continue;
 
-			v12 = _vm->_linesManager._zoneLine[idx].count;
-			if (v12 > 0) {
-				for (int v13 = 0; v13 < v12; v13++) {
-					v5 = *dataP++;
-					v11 = *dataP++;
+		int v4 = _vm->_linesManager._zoneLine[idx].field2;
+		_vm->_globals.CarreZone[v4]._enabledFl = 1;
+		if (_vm->_globals.CarreZone[v4]._maxZoneLineIdx < idx)
+			_vm->_globals.CarreZone[v4]._maxZoneLineIdx = idx;
+		if (_vm->_globals.CarreZone[v4]._minZoneLineIdx > idx)
+			_vm->_globals.CarreZone[v4]._minZoneLineIdx = idx;
 
-					if (_vm->_globals.CarreZone[v4].field2 >= v5)
-						_vm->_globals.CarreZone[v4].field2 = v5;
-					if (_vm->_globals.CarreZone[v4].field4 <= v5)
-						_vm->_globals.CarreZone[v4].field4 = v5;
-					if (_vm->_globals.CarreZone[v4].field6 >= v11)
-						_vm->_globals.CarreZone[v4].field6 = v11;
-					if (_vm->_globals.CarreZone[v4].field8 <= v11)
-						_vm->_globals.CarreZone[v4].field8 = v11;
-				}
-			}
+		for (int i = 0; i < _vm->_linesManager._zoneLine[idx].count; i++) {
+			int zoneX = *dataP++;
+			int zoneY = *dataP++;
+
+			if (_vm->_globals.CarreZone[v4]._left >= zoneX)
+				_vm->_globals.CarreZone[v4]._left = zoneX;
+			if (_vm->_globals.CarreZone[v4]._right <= zoneX)
+				_vm->_globals.CarreZone[v4]._right = zoneX;
+			if (_vm->_globals.CarreZone[v4]._top >= zoneY)
+				_vm->_globals.CarreZone[v4]._top = zoneY;
+			if (_vm->_globals.CarreZone[v4]._bottom <= zoneY)
+				_vm->_globals.CarreZone[v4]._bottom = zoneY;
 		}
 	}
 
-	for (int v7 = 0; v7 <= 99; v7++) {
-		v10 = _vm->_globals.CarreZone[v7].field2 - _vm->_globals.CarreZone[v7].field4;
-		if (v10 < 0)
-			v10 = -v10;
-		v14 = _vm->_globals.CarreZone[v7].field6 - _vm->_globals.CarreZone[v7].field8;
-		if (v14 < 0)
-			v14 = -v14;
-		if (v10 == v14)
-			_vm->_globals.CarreZone[v7].fieldE = true;
+	for (int idx = 0; idx < 100; idx++) {
+		int zoneWidth = abs(_vm->_globals.CarreZone[idx]._left - _vm->_globals.CarreZone[idx]._right);
+		int zoneHeight = abs(_vm->_globals.CarreZone[idx]._top - _vm->_globals.CarreZone[idx]._bottom);
+		if (zoneWidth == zoneHeight)
+			_vm->_globals.CarreZone[idx]._squareZoneFl = true;
 	}
 }
 
@@ -3009,17 +2994,17 @@ int ObjectsManager::MZONE() {
 		}
 		_vm->_globals.SegmentEnCours = 0;
 		for (int v7 = 0; v7 <= 99; v7++) {
-			if (_vm->_globals.ZONEP[v7]._enabledFl && _vm->_globals.CarreZone[v7].field0 == 1
-				 && _vm->_globals.CarreZone[v7].field2 <= xp
-				 && _vm->_globals.CarreZone[v7].field4 >= xp
-				 && _vm->_globals.CarreZone[v7].field6 <= yp
-				 && _vm->_globals.CarreZone[v7].field8 >= yp) {
-				if (_vm->_globals.CarreZone[v7].fieldE) {
-					_vm->_globals.oldzone_46 = _vm->_linesManager._zoneLine[_vm->_globals.CarreZone[v7].fieldA].field2;
+			if (_vm->_globals.ZONEP[v7]._enabledFl && _vm->_globals.CarreZone[v7]._enabledFl == 1
+				 && _vm->_globals.CarreZone[v7]._left <= xp
+				 && _vm->_globals.CarreZone[v7]._right >= xp
+				 && _vm->_globals.CarreZone[v7]._top <= yp
+				 && _vm->_globals.CarreZone[v7]._bottom >= yp) {
+				if (_vm->_globals.CarreZone[v7]._squareZoneFl) {
+					_vm->_globals.oldzone_46 = _vm->_linesManager._zoneLine[_vm->_globals.CarreZone[v7]._minZoneLineIdx].field2;
 					return _vm->_globals.oldzone_46;
 				}
-				_vm->_globals.Segment[_vm->_globals.SegmentEnCours].field2 = _vm->_globals.CarreZone[v7].fieldA;
-				_vm->_globals.Segment[_vm->_globals.SegmentEnCours].field4 = _vm->_globals.CarreZone[v7].fieldC;
+				_vm->_globals.Segment[_vm->_globals.SegmentEnCours].field2 = _vm->_globals.CarreZone[v7]._minZoneLineIdx;
+				_vm->_globals.Segment[_vm->_globals.SegmentEnCours].field4 = _vm->_globals.CarreZone[v7]._maxZoneLineIdx;
 				++_vm->_globals.SegmentEnCours;
 			}
 		}
