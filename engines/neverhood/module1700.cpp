@@ -204,50 +204,50 @@ Scene1705::Scene1705(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene1705>(231, 434);
+		insertKlaymen<KmScene1705>(231, 434);
 		setMessageList(0x004B69E8);
 		sendMessage(this, 0x2000, 0);
-		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
+		_klaymen->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 1) {
 		// Klaymen teleporting in
-		insertKlayman<KmScene1705>(431, 434);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene1705>(431, 434);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004B6A08, false);
 		sendMessage(this, 0x2000, 1);
-		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
+		_klaymen->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 2) {
 		// Klaymen teleporting out
-		insertKlayman<KmScene1705>(431, 434);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene1705>(431, 434);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004B6AA0, false);
 		sendMessage(this, 0x2000, 1);
-		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
+		_klaymen->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else if (which == 3) {
 		// Klaymen returning from teleporter console
-		insertKlayman<KmScene1705>(431, 434);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene1705>(431, 434);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004B6A18, false);
 		sendMessage(this, 0x2000, 1);
-		_klayman->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
+		_klaymen->setClipRect(0, 0, _sprite->getDrawRect().x2(), 480);
 	} else {
 		// Klaymen falling through the hole
-		insertKlayman<KmScene1705>(231, 74);
-		sendMessage(_klayman, 0x2000, 0);
+		insertKlaymen<KmScene1705>(231, 74);
+		sendMessage(_klaymen, 0x2000, 0);
 		setMessageList(0x004B69F0);
 		sendMessage(this, 0x2000, 0);
 		tempSprite = insertStaticSprite(0x30303822, 1100);
-		_klayman->setClipRect(0, tempSprite->getDrawRect().y, _sprite->getDrawRect().x2(), 480);
+		_klaymen->setClipRect(0, tempSprite->getDrawRect().y, _sprite->getDrawRect().x2(), 480);
 	}
 
 }
 
 void Scene1705::update() {
 	Scene::update();
-	if (_klayman->getX() < 224 && _paletteArea != 0) {
+	if (_klaymen->getX() < 224 && _paletteArea != 0) {
 		_palette->addBasePalette(0xF2210C15, 0, 64, 0);
 		_palette->startFadeToPalette(12);
 		_paletteArea = 0;
-	} else if (_klayman->getX() >= 224 && _paletteArea == 0) {
+	} else if (_klaymen->getX() >= 224 && _paletteArea == 0) {
 		_palette->addBasePalette(0x91D3A391, 0, 64, 0);
 		_palette->startFadeToPalette(12);
 		_paletteArea = 1;
@@ -260,15 +260,15 @@ uint32 Scene1705::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (param.asInteger()) {
 			setRectList(0x004B6B40);
-			_klayman->setKlaymanIdleTable3();
+			_klaymen->setKlaymenIdleTable3();
 		} else {
 			setRectList(0x004B6B30);
-			_klayman->setKlaymanIdleTable1();
+			_klaymen->setKlaymenIdleTable1();
 		}
 		break;
 	case 0x4826:
-		if (sender == _ssTape && _klayman->getX() <= 318) {
-			sendEntityMessage(_klayman, 0x1014, sender);
+		if (sender == _ssTape && _klaymen->getX() <= 318) {
+			sendEntityMessage(_klaymen, 0x1014, sender);
 			setMessageList(0x004B6AC0);
 		}
 		break;		

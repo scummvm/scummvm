@@ -54,9 +54,9 @@ protected:
 
 class AsScene2101HitByDoorEffect : public AnimatedSprite {
 public:
-	AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klayman);
+	AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klaymen);
 protected:
-	Sprite *_klayman;
+	Sprite *_klaymen;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
 

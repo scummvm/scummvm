@@ -77,7 +77,7 @@ void Module2800::createScene(int sceneNum, int which) {
 	case 2:
 		_vm->gameState().sceneNum = 2;
 		_vm->_soundMan->startMusic(0xD2FA4D14, 0, 2);
-		if (getGlobalVar(V_KLAYMAN_SMALL))
+		if (getGlobalVar(V_KLAYMEN_SMALL))
 			_childObject = new Scene2803Small(_vm, this, which);
 		else
 			_childObject = new Scene2803(_vm, this, which);
@@ -441,21 +441,21 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		insertStaticSprite(0x0001264C, 100);
 
 	if (which < 0) {
-		insertKlayman<KmScene2801>(194, 430);
+		insertKlaymen<KmScene2801>(194, 430);
 		setMessageList(0x004B6BB8);
 	} else if (which == 1) {
-		insertKlayman<KmScene2801>(443, 398);
+		insertKlaymen<KmScene2801>(443, 398);
 		setMessageList(0x004B6BC0);
 	} else if (which == 2) {
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
-			insertKlayman<KmScene2801>(312, 432);
-			_klayman->setDoDeltaX(1);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X)) {
+			insertKlaymen<KmScene2801>(312, 432);
+			_klaymen->setDoDeltaX(1);
 		} else {
-			insertKlayman<KmScene2801>(194, 432);
+			insertKlaymen<KmScene2801>(194, 432);
 		}
 		setMessageList(0x004B6C10);
 	} else {
-		insertKlayman<KmScene2801>(0, 432);
+		insertKlaymen<KmScene2801>(0, 432);
 		setMessageList(0x004B6BB0);
 	}
 
@@ -467,7 +467,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_palette->addBasePalette(0x01400666, 0, 256, 0);
 		_sprite1 = insertStaticSprite(0x100CA0A8, 1100);
 		_sprite2 = insertStaticSprite(0x287C21A4, 1100);
-		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite2->getDrawRect().x2(), 480);
+		_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, _sprite2->getDrawRect().x2(), 480);
 		insertScreenMouse(0x0066201C);
 		_asTape = insertSprite<AsScene1201Tape>(this, 8, 1100, 302, 437, 0x9148A011);
 		addCollisionSprite(_asTape); 
@@ -478,7 +478,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_paletteHash = 0x15021024;
 		_palette->addBasePalette(0x11E00684, 0, 256, 0);
 		_sprite2 = insertStaticSprite(0x061601C8, 1100);
-		_klayman->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
+		_klaymen->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
 		insertScreenMouse(0x00680116);
 		_asTape = insertSprite<SsScene1705Tape>(this, 8, 1100, 302, 437, 0x01142428);
 		addCollisionSprite(_asTape); 
@@ -489,7 +489,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 		_paletteHash = 0x15021024;
 		_palette->addBasePalette(0x030006E6, 0, 256, 0);
 		_sprite2 = insertStaticSprite(0x273801CE, 1100);
-		_klayman->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
+		_klaymen->setClipRect(0, 0, _sprite2->getDrawRect().x2(), 480);
 		insertScreenMouse(0x006E2038);
 		_asTape = insertSprite<AsScene1201Tape>(this, 8, 1100, 302, 437, 0x9148A011);
 		addCollisionSprite(_asTape); 
@@ -508,7 +508,7 @@ Scene2801::Scene2801(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene2801::~Scene2801() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
 
 uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -516,7 +516,7 @@ uint32 Scene2801::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x4826:
 		if (sender == _asTape) {
-			sendEntityMessage(_klayman, 0x1014, _asTape);
+			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004B6C40);
 		}
 		break;
@@ -923,46 +923,46 @@ Scene2803::Scene2803(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRectsStairs[2].y2 = 480;
 
 	if (which < 0) {
-		insertKlayman<KmScene2803>(302, 445, _clipRectsFloor, 2);
+		insertKlaymen<KmScene2803>(302, 445, _clipRectsFloor, 2);
 		setMessageList(0x004B79F0);
-		klaymanFloor();
+		klaymenFloor();
 	} else if (which == 1) {
-		insertKlayman<KmScene2803>(200, 445, _clipRectsFloor, 2);
+		insertKlaymen<KmScene2803>(200, 445, _clipRectsFloor, 2);
 		setMessageList(0x004B79C8);
-		klaymanFloor();
+		klaymenFloor();
 	} else if (which == 3) {
 		NPoint pt = _dataResource.getPoint(0xC2A08694);
-		insertKlayman<KmScene2803>(pt.x, pt.y, _clipRectsStairs, 3);
+		insertKlaymen<KmScene2803>(pt.x, pt.y, _clipRectsStairs, 3);
 		setMessageList(0x004B7A00);
-		klaymanStairs();
+		klaymenStairs();
 	} else if (which == 5) {
-		insertKlayman<KmScene2803>(253, 298, _clipRectsStairs, 3);
+		insertKlaymen<KmScene2803>(253, 298, _clipRectsStairs, 3);
 		setMessageList(0x004B7A00);
-		klaymanStairs();
+		klaymenStairs();
 	} else if (which == 6) {
 		_asRope = insertSprite<AsScene2803Rope>(this, 384);
 		_asRope->setClipRect(0, 25, 640, 480);
-		insertKlayman<KmScene2803>(384, 0, _clipRectsFloor, 2);
-		sendEntityMessage(_klayman, 0x1014, _asRope);
-		_klayman->setClipRect(0, 25, 640, 480);
+		insertKlaymen<KmScene2803>(384, 0, _clipRectsFloor, 2);
+		sendEntityMessage(_klaymen, 0x1014, _asRope);
+		_klaymen->setClipRect(0, 25, 640, 480);
 		setMessageList(0x004B7A78);
-		klaymanFloor();
+		klaymenFloor();
 	} else if (which == 2) {
-		insertKlayman<KmScene2803>(400, 445, _clipRectsFloor, 2);
+		insertKlaymen<KmScene2803>(400, 445, _clipRectsFloor, 2);
 		setMessageList(0x004B79F8);
-		klaymanFloor();
+		klaymenFloor();
 	} else {
-		insertKlayman<KmScene2803>(50, 231, _clipRectsStairs, 3);
+		insertKlaymen<KmScene2803>(50, 231, _clipRectsStairs, 3);
 		setMessageList(0x004B79C0);
-		klaymanStairs();
+		klaymenStairs();
 	}
 
 	changeBackground();
 
 }
 
-void Scene2803::upKlaymanStairs() {
-	if (_klayman->getX() < 350) {
+void Scene2803::upKlaymenStairs() {
+	if (_klaymen->getX() < 350) {
 		setPaletteArea0();
 	} else {
 		setPaletteArea1();
@@ -986,27 +986,27 @@ uint32 Scene2803::handleMessage(int messageNum, const MessageParam &param, Entit
 		else if (param.asInteger() == 0x482D1210)
 			setMessageList(0x004B7A30);
 		else if (param.asInteger() == 0x802402B2) {
-			sendEntityMessage(_klayman, 0x1014, _asLightCord);
+			sendEntityMessage(_klaymen, 0x1014, _asLightCord);
 			setMessageList(0x004B7A68);
 		} else if (param.asInteger() == 0x9626F390)
 			setMessageList(0x004B7A88);
 		break;
 	case 0x482A:
-		klaymanStairs();
+		klaymenStairs();
 		setPaletteArea1();
 		break;
 	case 0x482B:
-		klaymanFloor();
+		klaymenFloor();
 		setPaletteArea0();
 		break;
 	}
 	return messageResult;
 }
 
-void Scene2803::klaymanStairs() {
-	SetUpdateHandler(&Scene2803::upKlaymanStairs);
-	_klayman->getSurface()->setClipRects(_clipRectsStairs, 3);
-	sendMessage(_klayman, 0x482C, 0xE5A48297);
+void Scene2803::klaymenStairs() {
+	SetUpdateHandler(&Scene2803::upKlaymenStairs);
+	_klaymen->getSurface()->setClipRects(_clipRectsStairs, 3);
+	sendMessage(_klaymen, 0x482C, 0xE5A48297);
 	_sprite3->setVisible(true);
 	_sprite4->setVisible(true);
 	_sprite5->setVisible(true);
@@ -1016,10 +1016,10 @@ void Scene2803::klaymanStairs() {
 	_sprite9->setVisible(false);
 }
 
-void Scene2803::klaymanFloor() {
+void Scene2803::klaymenFloor() {
 	SetUpdateHandler(&Scene::update);
-	_klayman->getSurface()->setClipRects(_clipRectsFloor, 2);
-	sendMessage(_klayman, 0x482C, 0);
+	_klaymen->getSurface()->setClipRects(_clipRectsFloor, 2);
+	sendMessage(_klaymen, 0x482C, 0);
 	_sprite3->setVisible(false);
 	_sprite4->setVisible(false);
 	_sprite5->setVisible(false);
@@ -1170,35 +1170,35 @@ Scene2803Small::Scene2803Small(NeverhoodEngine *vm, Module *parentModule, int wh
 	_sprite7->setVisible(false);
 
 	if (which < 0) {
-		insertKlayman<KmScene2803Small>(479, 435);
-		klaymanFloor();
+		insertKlaymen<KmScene2803Small>(479, 435);
+		klaymenFloor();
 		setMessageList(0x004B60D8);
 	} else if (which == 3) {
 		NPoint pt = _dataResource.getPoint(0x096520ED);
-		insertKlayman<KmScene2803Small>(pt.x, pt.y);
-		klaymanSlope();
+		insertKlaymen<KmScene2803Small>(pt.x, pt.y);
+		klaymenSlope();
 		setMessageList(0x004B6100);
-		_klayman->setRepl(64, 0);
+		_klaymen->setRepl(64, 0);
 	} else if (which == 4) {
 		NPoint pt = _dataResource.getPoint(0x20C6238D);
-		insertKlayman<KmScene2803Small>(pt.x, pt.y);
-		klaymanSlope();
+		insertKlaymen<KmScene2803Small>(pt.x, pt.y);
+		klaymenSlope();
 		setMessageList(0x004B60F8);
-		_klayman->setRepl(64, 0);
+		_klaymen->setRepl(64, 0);
 	} else if (which == 5) {
 		NPoint pt = _dataResource.getPoint(0x2146690D);
-		insertKlayman<KmScene2803Small>(pt.x, pt.y);
-		klaymanSlope();
+		insertKlaymen<KmScene2803Small>(pt.x, pt.y);
+		klaymenSlope();
 		setMessageList(0x004B6100);
-		_klayman->setRepl(64, 0);
+		_klaymen->setRepl(64, 0);
 	} else if (which == 2) {
 		NPoint pt = _dataResource.getPoint(0x104C03ED);
-		insertKlayman<KmScene2803Small>(pt.x, pt.y);
-		klaymanFloor();
+		insertKlaymen<KmScene2803Small>(pt.x, pt.y);
+		klaymenFloor();
 		setMessageList(0x004B6138);
 	} else {
-		insertKlayman<KmScene2803Small>(135, 444);
-		klaymanFloor();
+		insertKlaymen<KmScene2803Small>(135, 444);
+		klaymenFloor();
 		setMessageList(0x004B60E0, false);
 		_sprite6->setVisible(true);
 		_sprite7->setVisible(true);
@@ -1214,11 +1214,11 @@ uint32 Scene2803Small::handleMessage(int messageNum, const MessageParam &param, 
 			setMessageList(0x004B6180);
 		} else if (param.asInteger() == 0xB1FDAB2E) {
 			NPoint pt = _dataResource.getPoint(0x0D84A1AD);
-			_klayman->setX(pt.x);
-			_klayman->setY(pt.y);
-			_klayman->updateBounds();
-			klaymanFloor();
-			_klayman->setClipRect(517, 401, 536, 480);
+			_klaymen->setX(pt.x);
+			_klaymen->setY(pt.y);
+			_klaymen->updateBounds();
+			klaymenFloor();
+			_klaymen->setClipRect(517, 401, 536, 480);
 			setMessageList(0x004B6198);
 		} else if (param.asInteger() == 0xB00C7C48) {
 			setMessageList(0x004B6108);
@@ -1227,71 +1227,71 @@ uint32 Scene2803Small::handleMessage(int messageNum, const MessageParam &param, 
 		} else if (param.asInteger() == 0xAC69A28D) {
 			setMessageList(0x004B6168);
 		} else if (param.asInteger() == 0x00086212) {
-			_klayman->setClipRect(0, 0, 560, 315);
-			_klayman->setX(560);
-			_klayman->setY(315);
-			_klayman->updateBounds();
-			klaymanSlope();
+			_klaymen->setClipRect(0, 0, 560, 315);
+			_klaymen->setX(560);
+			_klaymen->setY(315);
+			_klaymen->updateBounds();
+			klaymenSlope();
 			setMessageList(0x004B61A0);
 		} else if (param.asInteger() == 0x002CAA68) {
 			setMessageList(0x004B61A8);
 		}
 		break;
 	case 0x482A:
-		if (_klayman->getX() < 200) {
+		if (_klaymen->getX() < 200) {
 			setPaletteArea3();
-		} else if (_klayman->getX() < 500) {
+		} else if (_klaymen->getX() < 500) {
 			setSurfacePriority(_sprite5->getSurface(), 1100);
-			sendMessage(_klayman, 0x482C, 0);
+			sendMessage(_klaymen, 0x482C, 0);
 			setPaletteArea2();
 		} else {
-			_klayman->setClipRect(517, 401, 536, 480);
+			_klaymen->setClipRect(517, 401, 536, 480);
 			setPaletteArea2();
 		}
 		break;
 	case 0x482B:
 		_sprite6->setVisible(false);
 		_sprite7->setVisible(false);
-		_klayman->setClipRect(0, 0, 640, 480);
+		_klaymen->setClipRect(0, 0, 640, 480);
 		setSurfacePriority(_sprite5->getSurface(), 900);
-		sendMessage(_klayman, 0x482C, 0x2086222D);
+		sendMessage(_klaymen, 0x482C, 0x2086222D);
 		break;
 	}
 	return 0;
 }
 
-void Scene2803Small::upKlaymanSlope() {
-	if (_klayman->getX() < 388) {
-		_klayman->setClipRect(_sprite3->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+void Scene2803Small::upKlaymenSlope() {
+	if (_klaymen->getX() < 388) {
+		_klaymen->setClipRect(_sprite3->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
 		setPaletteArea0();
-	} else if (_klayman->getX() < 500) {
-		_klayman->setClipRect(0, 0, _sprite1->getDrawRect().x2(), _sprite1->getDrawRect().y2());
+	} else if (_klaymen->getX() < 500) {
+		_klaymen->setClipRect(0, 0, _sprite1->getDrawRect().x2(), _sprite1->getDrawRect().y2());
 		setPaletteArea1();
 	}
 	Scene::update();
 }
 
-void Scene2803Small::upKlaymanFloor() {
-	if (_klayman->getX() > 194 && _klayman->getX() < 273)
+void Scene2803Small::upKlaymenFloor() {
+	if (_klaymen->getX() > 194 && _klaymen->getX() < 273)
 		setPaletteArea2();
-	else if (_klayman->getX() > 155 && _klayman->getX() < 300)
+	else if (_klaymen->getX() > 155 && _klaymen->getX() < 300)
 		setPaletteArea0();
 	Scene::update();
 }
 
-void Scene2803Small::klaymanSlope() {
-	SetUpdateHandler(&Scene2803Small::upKlaymanSlope);
-	sendMessage(_klayman, 0x482C, 0x23C630D9);
-	_klayman->setClipRect(0, 0, _sprite1->getDrawRect().x2(), _sprite1->getDrawRect().y2());
-	_klayman->setRepl(64, 0);
+void Scene2803Small::klaymenSlope() {
+	SetUpdateHandler(&Scene2803Small::upKlaymenSlope);
+	sendMessage(_klaymen, 0x482C, 0x23C630D9);
+	_klaymen->setClipRect(0, 0, _sprite1->getDrawRect().x2(), _sprite1->getDrawRect().y2());
+	_klaymen->setRepl(64, 0);
 	_sprite1->setVisible(true);
 }
 
-void Scene2803Small::klaymanFloor() {
-	SetUpdateHandler(&Scene2803Small::upKlaymanFloor);
-	sendMessage(_klayman, 0x482C, 0x2086222D);
-	_klayman->setClipRect(0, 0, 640, 480);
-	_klayman->clearRepl();
+void Scene2803Small::klaymenFloor() {
+	SetUpdateHandler(&Scene2803Small::upKlaymenFloor);
+	sendMessage(_klaymen, 0x482C, 0x2086222D);
+	_klaymen->setClipRect(0, 0, 640, 480);
+	_klaymen->clearRepl();
 	_sprite1->setVisible(false);
 }
 
@@ -1821,7 +1821,7 @@ void Scene2804::update() {
 			if (_isSolved) {
 				_palette->fillBaseWhite(0, 256);
 				_palette->startFadeToPalette(18);
-				setGlobalVar(V_KLAYMAN_SMALL, 1);
+				setGlobalVar(V_KLAYMEN_SMALL, 1);
 				_countdown1 = 48;
 			}
 		} else if (_beamStatus == 6) {
@@ -1853,31 +1853,31 @@ Scene2805::Scene2805(NeverhoodEngine *vm, Module *parentModule, int which)
 	_sprite2 = insertStaticSprite(0x020CE421, 1100);
 
 	if (which < 0) {
-		insertKlayman<KmScene2805>(380, 338);
+		insertKlaymen<KmScene2805>(380, 338);
 		setMessageList(0x004AE1C8);
 		sendMessage(this, 0x2000, 0);
 	} else if (which == 1) {
-		insertKlayman<KmScene2805>(493, 338);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene2805>(493, 338);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004AE1D0, false);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 2) {
-		insertKlayman<KmScene2805>(493, 338);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene2805>(493, 338);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004AE288, false);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 3) {
-		insertKlayman<KmScene2805>(493, 338);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene2805>(493, 338);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004AE1E0, false);
 		sendMessage(this, 0x2000, 1);
 	} else {
-		insertKlayman<KmScene2805>(340, 338);
+		insertKlaymen<KmScene2805>(340, 338);
 		setMessageList(0x004AE1C0);
 		sendMessage(this, 0x2000, 0);
 	}
 
-	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite2->getDrawRect().x2(), 480);
+	_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, _sprite2->getDrawRect().x2(), 480);
 
 }
 
@@ -1887,10 +1887,10 @@ uint32 Scene2805::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (param.asInteger()) {
 			setRectList(0x004AE318);
-			_klayman->setKlaymanIdleTable3();
+			_klaymen->setKlaymenIdleTable3();
 		} else {
 			setRectList(0x004AE308);
-			_klayman->setKlaymanIdleTable1();
+			_klaymen->setKlaymenIdleTable1();
 		}
 		break;
 	}
@@ -1979,20 +1979,20 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[3].x2 = 640;
 
 	if (which < 0) {
-		insertKlayman<KmScene2806>(441, 423, false, _clipRects, 4);
+		insertKlaymen<KmScene2806>(441, 423, false, _clipRects, 4);
 		setMessageList(0x004AF098);
 	} else if (which == 1) {
-		insertKlayman<KmScene2806>(378, 423, false, _clipRects, 4);
+		insertKlaymen<KmScene2806>(378, 423, false, _clipRects, 4);
 		setMessageList(0x004AF098);
 	} else if (which == 2) {
-		insertKlayman<KmScene2806>(378, 423, false, _clipRects, 4);
+		insertKlaymen<KmScene2806>(378, 423, false, _clipRects, 4);
 		setMessageList(0x004AF0C8, false);
 	} else if (which == 3) {
-		insertKlayman<KmScene2806>(378, 423, true, _clipRects, 4);
+		insertKlaymen<KmScene2806>(378, 423, true, _clipRects, 4);
 		setMessageList(0x004AF0A0, false);
-		setGlobalVar(V_KLAYMAN_SMALL, 0);
+		setGlobalVar(V_KLAYMEN_SMALL, 0);
 	} else {
-		insertKlayman<KmScene2806>(670, 423, false, _clipRects, 4);
+		insertKlaymen<KmScene2806>(670, 423, false, _clipRects, 4);
 		setMessageList(0x004AF090);
 	}
 
@@ -2032,7 +2032,7 @@ void Scene2806::findClosestPoint() {
 		0x086B8890
 	};
 
-	int16 x = MIN<int16>(_klayman->getX(), 639);
+	int16 x = MIN<int16>(_klaymen->getX(), 639);
 	int index = 1;
 	
 	while (index < (int)_pointList->size() && (*_pointList)[index].x < x)
@@ -2565,20 +2565,20 @@ Scene2809::Scene2809(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[3].x1 = 0;
 
 	if (which < 0) {
-		insertKlayman<KmScene2809>(226, 423, false, _clipRects, 4);
+		insertKlaymen<KmScene2809>(226, 423, false, _clipRects, 4);
 		setMessageList(0x004B5B90);
 	} else if (which == 1) {
-		insertKlayman<KmScene2809>(262, 423, false, _clipRects, 4);
+		insertKlaymen<KmScene2809>(262, 423, false, _clipRects, 4);
 		setMessageList(0x004B5B90);
 	} else if (which == 2) {
-		insertKlayman<KmScene2809>(262, 423, false, _clipRects, 4);
+		insertKlaymen<KmScene2809>(262, 423, false, _clipRects, 4);
 		setMessageList(0x004B5BD0);
 	} else if (which == 3) {
-		insertKlayman<KmScene2809>(262, 423, true, _clipRects, 4);
+		insertKlaymen<KmScene2809>(262, 423, true, _clipRects, 4);
 		setMessageList(0x004B5BA8, false);
-		setGlobalVar(V_KLAYMAN_SMALL, 0);
+		setGlobalVar(V_KLAYMEN_SMALL, 0);
 	} else {
-		insertKlayman<KmScene2809>(-30, 423, false, _clipRects, 4);
+		insertKlaymen<KmScene2809>(-30, 423, false, _clipRects, 4);
 		setMessageList(0x004B5B88);
 	}
 
@@ -2618,7 +2618,7 @@ void Scene2809::findClosestPoint() {
 		0x6A8B9008
 	};
 
-	int16 x = MAX<int16>(_klayman->getX(), 2);
+	int16 x = MAX<int16>(_klaymen->getX(), 2);
 	int index = 1;
 
 	while (index < (int)_pointList->size() && (*_pointList)[index].x >= x)
@@ -2683,7 +2683,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 	_clipRects[1].x2 = _sprite6->getDrawRect().x2();
 	_clipRects[1].y2 = 480;
 
-	if (getGlobalVar(V_KLAYMAN_SMALL)) {
+	if (getGlobalVar(V_KLAYMEN_SMALL)) {
 		_asTape = insertSprite<AsScene1201Tape>(this, 0, 900, 245, 429, 0x9148A011);
 		addCollisionSprite(_asTape);
 	} else {
@@ -2695,7 +2695,7 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (getGlobalVar(V_LADDER_DOWN)) {
 		setGlobalVar(V_BEEN_STATUE_ROOM, 1);
-		if (getGlobalVar(V_KLAYMAN_SMALL)) {
+		if (getGlobalVar(V_KLAYMEN_SMALL)) {
 			_sprite4 = insertStaticSprite(0x82653808, 100);
 		} else {
 			_sprite4 = insertStaticSprite(0x82653808, 1100);
@@ -2704,30 +2704,30 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 	
 	if (which < 0) {
-		if (getGlobalVar(V_KLAYMAN_SMALL)) {
-			insertKlayman<KmScene2810Small>(240, 448);
-			_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
+		if (getGlobalVar(V_KLAYMEN_SMALL)) {
+			insertKlaymen<KmScene2810Small>(240, 448);
+			_klaymen->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
 			setMessageList(0x004AE438);
 			setRectList(0x004AE810);
 			_isRopingDown = false;
 			removeCollisionSprite(_asTape);
 		} else {
-			insertKlayman<KmScene2810>(300, 424, _clipRects, 2);
+			insertKlaymen<KmScene2810>(300, 424, _clipRects, 2);
 			setMessageList(0x004AE438);
 			if (getGlobalVar(V_LADDER_DOWN))
 				loadDataResource(0x84130112);
 			else
 				loadDataResource(0x84500132);
-			tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+			tempSprite = insertSprite<AsScene1002KlaymenLadderHands>(_klaymen);
 			tempSprite->setClipRect(0, _sprite1->getDrawRect().y, 640, 480);
 			_clipRects[0].y1 = _sprite1->getDrawRect().y;
 			_isRopingDown = false;
 		}
 	} else if (which == 1) {
-		insertKlayman<KmScene2810>(186, 64, _clipRects, 2);
+		insertKlaymen<KmScene2810>(186, 64, _clipRects, 2);
 		setMessageList(0x004AE440);
 		loadDataResource(0x84130112);
-		tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+		tempSprite = insertSprite<AsScene1002KlaymenLadderHands>(_klaymen);
 		tempSprite->setClipRect(0, _sprite1->getDrawRect().y, 640, 480);
 		_isRopingDown = true;
 		_clipRects[0].y1 = _sprite1->getDrawRect().y;
@@ -2736,27 +2736,27 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 		_sprite2 = insertStaticSprite(0x02780936, 1100);
 		_sprite3 = insertStaticSprite(0x1CA02160, 1100);
 		_asRope = insertSprite<AsScene2810Rope>(this, 384);
-		insertKlayman<KmScene2810>(384, 0, _clipRects, 0);
-		sendEntityMessage(_klayman, 0x1014, _asRope);
+		insertKlaymen<KmScene2810>(384, 0, _clipRects, 0);
+		sendEntityMessage(_klaymen, 0x1014, _asRope);
 		setMessageList(0x004AE738);
-		_klayman->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
+		_klaymen->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
 		_asRope->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
 		_vm->_soundMan->addSound(0x84400112, 0xC874EE6C);
 		_vm->_soundMan->playSoundLooping(0xC874EE6C);
 		_vm->_soundMan->setSoundVolume(0xC874EE6C, 50);
 		_isRopingDown = false;
 	} else if ((which >= 11 && which <= 14) || (which >= 19 && which <= 22) || which == 3) {
-		if (getGlobalVar(V_KLAYMAN_SMALL)) {
-			insertKlayman<KmScene2810Small>((int16)getGlobalVar(V_KLAYMAN_SAVED_X), 448);
-			if (getGlobalVar(V_KLAYMAN_IS_DELTA_X))
-				_klayman->setDoDeltaX(1);
-			_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
+		if (getGlobalVar(V_KLAYMEN_SMALL)) {
+			insertKlaymen<KmScene2810Small>((int16)getGlobalVar(V_KLAYMEN_SAVED_X), 448);
+			if (getGlobalVar(V_KLAYMEN_IS_DELTA_X))
+				_klaymen->setDoDeltaX(1);
+			_klaymen->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
 			setMessageList(0x004AE6D8);
 			setRectList(0x004AE810);
 			_isRopingDown = false;
 			removeCollisionSprite(_asTape);
 		} else {
-			insertKlaymanLadder();
+			insertKlaymenLadder();
 			if (getGlobalVar(V_LADDER_DOWN_ACTION)) {
 				setMessageList(0x004AE6E8);
 				setGlobalVar(V_LADDER_DOWN_ACTION, 0);
@@ -2767,32 +2767,32 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 			}
 		}
 	} else if (which >= 15 && which <= 18) {
-		insertKlaymanLadder();
+		insertKlaymenLadder();
 		setMessageList(0x004AE6E0);
 		_isRopingDown = false;
 	} else if (which == 4) {
-		if (getGlobalVar(V_KLAYMAN_SMALL)) {
-			insertKlayman<KmScene2810Small>(473, 448);
-			_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
+		if (getGlobalVar(V_KLAYMEN_SMALL)) {
+			insertKlaymen<KmScene2810Small>(473, 448);
+			_klaymen->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
 			setMessageList(0x004AE428);
 			setRectList(0x004AE810);
 			_isRopingDown = false;
 			removeCollisionSprite(_asTape);
 		} else {
-			insertKlayman<KmScene2810>(450, 424, _clipRects, 2);
+			insertKlaymen<KmScene2810>(450, 424, _clipRects, 2);
 			setMessageList(0x004AE418);
 			if (getGlobalVar(V_LADDER_DOWN))
 				loadDataResource(0x84130112);
 			else
 				loadDataResource(0x84500132);
-			tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+			tempSprite = insertSprite<AsScene1002KlaymenLadderHands>(_klaymen);
 			tempSprite->setClipRect(0, _sprite1->getDrawRect().y, 640, 480);
 			_clipRects[0].y1 = _sprite1->getDrawRect().y;
 			_isRopingDown = false;
 		}
 	} else {
-		insertKlayman<KmScene2810Small>(120, 448);
-		_klayman->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
+		insertKlaymen<KmScene2810Small>(120, 448);
+		_klaymen->setClipRect(_sprite5->getDrawRect().x, 0, 640, 480);
 		setMessageList(0x004AE410);
 		setRectList(0x004AE810);
 		_isRopingDown = false;
@@ -2802,27 +2802,27 @@ Scene2810::Scene2810(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene2810::~Scene2810() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
-	setGlobalVar(V_KLAYMAN_SAVED_X, _klayman->getX());
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_SAVED_X, _klaymen->getX());
 	_vm->_soundMan->deleteSoundGroup(0x84400112);
 }
 
-void Scene2810::insertKlaymanLadder() {
+void Scene2810::insertKlaymenLadder() {
 	Sprite *tempSprite;
 
 	if (getGlobalVar(V_LADDER_DOWN_ACTION)) {
-		insertKlayman<KmScene2810>(430, 424, _clipRects, 2);
-		_klayman->setDoDeltaX(1);
+		insertKlaymen<KmScene2810>(430, 424, _clipRects, 2);
+		_klaymen->setDoDeltaX(1);
 	} else {
-		insertKlayman<KmScene2810>((int16)getGlobalVar(V_KLAYMAN_SAVED_X), 424, _clipRects, 2);
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X))
-			_klayman->setDoDeltaX(1);
+		insertKlaymen<KmScene2810>((int16)getGlobalVar(V_KLAYMEN_SAVED_X), 424, _clipRects, 2);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X))
+			_klaymen->setDoDeltaX(1);
 	}
 	if (getGlobalVar(V_LADDER_DOWN))
 		loadDataResource(0x84130112);
 	else
 		loadDataResource(0x84500132);
-	tempSprite = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+	tempSprite = insertSprite<AsScene1002KlaymenLadderHands>(_klaymen);
 	tempSprite->setClipRect(0, _sprite1->getDrawRect().y, 640, 480);
 	_clipRects[0].y1 = _sprite1->getDrawRect().y;
 }
@@ -2872,8 +2872,8 @@ uint32 Scene2810::handleMessage(int messageNum, const MessageParam &param, Entit
 		_isRopingDown = false;
 		break;
 	case 0x4826:
-		if (sender == _asTape && getGlobalVar(V_KLAYMAN_SMALL) == 0 && !_isRopingDown) {
-			sendEntityMessage(_klayman, 0x1014, _asTape);
+		if (sender == _asTape && getGlobalVar(V_KLAYMEN_SMALL) == 0 && !_isRopingDown) {
+			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004AE750);
 		}
 		break;
@@ -3013,34 +3013,34 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		_isRopingDown = false;
-		insertKlayman<KmScene2812>(272, 432);
+		insertKlaymen<KmScene2812>(272, 432);
 		setMessageList(0x004AF560);
 		_sprite1->setVisible(false);
-		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
 	} else if (which == 1) {
 		_isRopingDown = false;
-		insertKlayman<KmScene2812>(338, 398);
+		insertKlaymen<KmScene2812>(338, 398);
 		setMessageList(0x004AF588);
 		setPaletteArea1(true);
-		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite1->getDrawRect().x2(), _sprite3->getDrawRect().y2());
+		_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, _sprite1->getDrawRect().x2(), _sprite3->getDrawRect().y2());
 	} else if (which == 2) {
 		_isRopingDown = false;
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
-			insertKlayman<KmScene2812>(554, 432);
-			_klayman->setDoDeltaX(1);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X)) {
+			insertKlaymen<KmScene2812>(554, 432);
+			_klaymen->setDoDeltaX(1);
 		} else {
-			insertKlayman<KmScene2812>(394, 432);
+			insertKlaymen<KmScene2812>(394, 432);
 		}
 		setMessageList(0x004AF5F0);
 		_sprite1->setVisible(false);
-		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
 	} else {
 		_isRopingDown = true;
-		insertKlayman<KmScene2812>(150, 582);
+		insertKlaymen<KmScene2812>(150, 582);
 		setMessageList(0x004AF568);
 		setPaletteArea2(true);
 		_sprite1->setVisible(false);
-		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
 	}
 	
 	_asRope->setClipRect(0, _sprite2->getDrawRect().y, 640, _sprite3->getDrawRect().y2());
@@ -3048,9 +3048,9 @@ Scene2812::Scene2812(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 void Scene2812::update() {
-	if (_klayman->getX() < 220)
+	if (_klaymen->getX() < 220)
 		setPaletteArea2(false);
-	else if (_klayman->getX() < 240)
+	else if (_klaymen->getX() < 240)
 		setPaletteArea0(false);
 	Scene::update();
 }
@@ -3060,17 +3060,17 @@ uint32 Scene2812::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x0004269B)
-			sendEntityMessage(_klayman, 0x1014, _asRope);
+			sendEntityMessage(_klaymen, 0x1014, _asRope);
 		break;
 	case 0x2001:
 		_isRopingDown = true;
 		setRectList(0x004AF710);
-		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite4->getDrawRect().y2());
+		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite4->getDrawRect().y2());
 		break;
 	case 0x2002:
 		_isRopingDown = false;
 		setRectList(0x004AF700);
-		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
 		break;
 	case 0x4806:
 		sendMessage(_asWinch, 0x2000, 0);
@@ -3078,22 +3078,22 @@ uint32 Scene2812::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _ssTape && !_isRopingDown) {
-			sendEntityMessage(_klayman, 0x1014, _ssTape);
+			sendEntityMessage(_klaymen, 0x1014, _ssTape);
 			setMessageList(0x004AF658);
 		} else if (sender == _asKey && !_isRopingDown) {
-			sendEntityMessage(_klayman, 0x1014, _asKey);
+			sendEntityMessage(_klaymen, 0x1014, _asKey);
 			setMessageList(0x004AF668);
 		}
 		break;
 	case 0x482A:
 		setPaletteArea1(false);
 		_sprite1->setVisible(true);
-		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, _sprite1->getDrawRect().x2(), _sprite3->getDrawRect().y2());
+		_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, _sprite1->getDrawRect().x2(), _sprite3->getDrawRect().y2());
 		break;
 	case 0x482B:
 		setPaletteArea0(false);
 		_sprite1->setVisible(false);
-		_klayman->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
+		_klaymen->setClipRect(_sprite4->getDrawRect().x, 0, 640, _sprite3->getDrawRect().y2());
 		break;
 	}
 	return messageResult;

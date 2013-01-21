@@ -125,14 +125,14 @@ protected:
 
 class AsScene2402TV : public AnimatedSprite {
 public:
-	AsScene2402TV(NeverhoodEngine *vm, Klayman *klayman);
+	AsScene2402TV(NeverhoodEngine *vm, Klaymen *klaymen);
 	virtual ~AsScene2402TV();
 protected:
-	Klayman *_klayman;
+	Klaymen *_klaymen;
 	int _countdown1;
 	int _countdown2;
 	void upWait();
-	void upFocusKlayman();
+	void upFocusKlaymen();
 	void stJokeFinished();
 	uint32 hmJoke(int messageNum, const MessageParam &param, Entity *sender);
 };

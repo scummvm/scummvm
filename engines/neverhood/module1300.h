@@ -272,8 +272,8 @@ public:
 	Scene1317(NeverhoodEngine *vm, Module *parentModule);
 protected:
 	SmackerPlayer *_smackerPlayer;
-	bool _klaymanBlinks;
-	int _klaymanBlinkCountdown;
+	bool _klaymenBlinks;
+	int _klaymenBlinkCountdown;
 	int _decisionCountdown;
 	uint32 _smackerFileHash;
 	bool _keepLastSmackerFrame;
@@ -286,7 +286,7 @@ protected:
 	void stChooseKing();
 	void stNoDecisionYet();
 	void stHoborgAsKing();
-	void stKlaymanAsKing();
+	void stKlaymenAsKing();
 	void stEndMovie();
 };
 

@@ -540,10 +540,10 @@ HitRectList *DataResource::getHitRectList() {
 	return drDirectoryItem ? _hitRectLists[drDirectoryItem->offset] : NULL;
 }
 
-MessageList *DataResource::getMessageListAtPos(int16 klaymanX, int16 klaymanY, int16 mouseX, int16 mouseY) {
+MessageList *DataResource::getMessageListAtPos(int16 klaymenX, int16 klaymenY, int16 mouseX, int16 mouseY) {
 	for (uint i = 0; i < _drRects.size(); i++) {
-		if (klaymanX >= _drRects[i].rect.x1 && klaymanX <= _drRects[i].rect.x2 && 
-			klaymanY >= _drRects[i].rect.y1 && klaymanY <= _drRects[i].rect.y2) {
+		if (klaymenX >= _drRects[i].rect.x1 && klaymenX <= _drRects[i].rect.x2 && 
+			klaymenY >= _drRects[i].rect.y1 && klaymenY <= _drRects[i].rect.y2) {
 			DRSubRectList *drSubRectList = _drSubRectLists[_drRects[i].subRectIndex]; 
 			for (uint j = 0; j < drSubRectList->size(); j++) {
 				DRSubRect &subRect = (*drSubRectList)[j];

@@ -301,8 +301,8 @@ void AsScene1401Cheese::stSuckedIn() {
 	SetSpriteUpdate(&AsScene1401Cheese::suSuckedIn);
 }
 
-AsScene1401BackDoor::AsScene1401BackDoor(NeverhoodEngine *vm, Sprite *klayman, bool isOpen)
-	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown(0), _isOpen(isOpen) {
+AsScene1401BackDoor::AsScene1401BackDoor(NeverhoodEngine *vm, Sprite *klaymen, bool isOpen)
+	: AnimatedSprite(vm, 1100), _klaymen(klaymen), _countdown(0), _isOpen(isOpen) {
 
 	_x = 320;
 	_y = 240;
@@ -376,8 +376,8 @@ static const AsCommonProjectorItem kAsCommonProjectorItems[] = {
 	{{262, 433}, 1,  1,  0, 0, 0}
 };
 
-AsCommonProjector::AsCommonProjector(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, Sprite *asPipe)
-	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klayman(klayman), _asPipe(asPipe) {
+AsCommonProjector::AsCommonProjector(NeverhoodEngine *vm, Scene *parentScene, Sprite *klaymen, Sprite *asPipe)
+	: AnimatedSprite(vm, 1100), _parentScene(parentScene), _klaymen(klaymen), _asPipe(asPipe) {
 
 	_asProjectorItem = &kAsCommonProjectorItems[getGlobalVar(V_PROJECTOR_LOCATION)];
 	createSurface(990, 101, 182);
@@ -493,10 +493,10 @@ uint32 AsCommonProjector::hmAnimation(int messageNum, const MessageParam &param,
 }
 
 void AsCommonProjector::suMoving() {
-	if (_x <= _klayman->getX())
-		_x = _klayman->getX() - 100;
+	if (_x <= _klaymen->getX())
+		_x = _klaymen->getX() - 100;
 	else
-		_x = _klayman->getX() + 100;
+		_x = _klaymen->getX() + 100;
 	moveProjector();
 	if (_beforeMoveX == _x) {
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 0 && _asProjectorItem->leftBorderLeaves != 0) {
@@ -656,49 +656,49 @@ Scene1401::Scene1401(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene1401>(380, 447);
+		insertKlaymen<KmScene1401>(380, 447);
 		setMessageList(0x004B65C8);
 		_sprite1->setVisible(false);
 	} else if (which == 1) {
 		// Klaymen entering from the left
-		insertKlayman<KmScene1401>(0, 447);
+		insertKlaymen<KmScene1401>(0, 447);
 		setMessageList(0x004B65D0);
 		_sprite1->setVisible(false);
 	} else if (which == 2) {
 		// Klaymen entering from the right
-		insertKlayman<KmScene1401>(660, 447);
+		insertKlaymen<KmScene1401>(660, 447);
 		setMessageList(0x004B65D8);
 		_sprite1->setVisible(false);
 	} else {
 		// Klaymen entering from the back
-		insertKlayman<KmScene1401>(290, 413);
+		insertKlaymen<KmScene1401>(290, 413);
 		setMessageList(0x004B65E8);
 		_sprite1->setVisible(false);
 	}
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 2) {
-		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, _asPipe);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klaymen, _asPipe);
 		addCollisionSprite(_asProjector);
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 6) {
-			sendEntityMessage(_klayman, 0x1014, _asProjector);
-			_klayman->setX(_asProjector->getX() + 100);
-			_klayman->updateBounds();
+			sendEntityMessage(_klaymen, 0x1014, _asProjector);
+			_klaymen->setX(_asProjector->getX() + 100);
+			_klaymen->updateBounds();
 			setMessageList(0x004B6670);
 		} else if (getGlobalVar(V_PROJECTOR_SLOT) == 0) {
-			sendEntityMessage(_klayman, 0x1014, _asProjector);
-			_klayman->setX(_asProjector->getX() - 100);
-			_klayman->updateBounds();
+			sendEntityMessage(_klaymen, 0x1014, _asProjector);
+			_klaymen->setX(_asProjector->getX() - 100);
+			_klaymen->updateBounds();
 			setMessageList(0x004B6670);
 		}
 		_asProjector->setClipRect(_sprite3->getDrawRect().x, _sprite2->getDrawRect().y, 640, 480);
 	}
 	
-	_klayman->setClipRect(_sprite3->getDrawRect().x, 0, 640, 480);
+	_klaymen->setClipRect(_sprite3->getDrawRect().x, 0, 640, 480);
 
 	if (which == 0 && _asProjector)
 		sendMessage(_asProjector, 0x482B, 0);
 
-	_asBackDoor = insertSprite<AsScene1401BackDoor>(_klayman, which == 0);
+	_asBackDoor = insertSprite<AsScene1401BackDoor>(_klaymen, which == 0);
 
 }
 
@@ -716,9 +716,9 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x02144CB1)
-			sendEntityMessage(_klayman, 0x1014, _ssFloorButton);
+			sendEntityMessage(_klaymen, 0x1014, _ssFloorButton);
 		else if (param.asInteger() == 0x402064D8)
-			sendEntityMessage(_klayman, 0x1014, _ssButton);
+			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x01C66840) {
 			if (sendMessage(_asBackDoor, 0x2001, 0) != 0)
 				setMessageList(0x004B6690);
@@ -747,8 +747,8 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asProjector) {
-			if (sendMessage(_asProjector, 0x480C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
-				sendEntityMessage(_klayman, 0x1014, _asProjector);
+			if (sendMessage(_asProjector, 0x480C, _klaymen->getX() > _asProjector->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klaymen, 0x1014, _asProjector);
 				setMessageList2(0x004B6658);
 			} else
 				setMessageList2(0x004B65F0);
@@ -863,19 +863,19 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene1402>(377, 391);
+		insertKlaymen<KmScene1402>(377, 391);
 		setMessageList(0x004B0B48);
 		if (!getGlobalVar(V_MOUSE_PUZZLE_SOLVED))
 			_asPuzzleBox = insertSprite<AsScene1402PuzzleBox>(this, 0);
 	} else if (which == 1) {
 		// Klaymen entering from the left
-		insertKlayman<KmScene1402>(42, 391);
+		insertKlaymen<KmScene1402>(42, 391);
 		setMessageList(0x004B0B50);
 	} else if (which == 2) {
 		// Klaymen returning from the puzzle box
-		insertKlayman<KmScene1402>(377, 391);
+		insertKlaymen<KmScene1402>(377, 391);
 		setMessageList(0x004B0B60);
-		_klayman->setDoDeltaX(1);
+		_klaymen->setDoDeltaX(1);
 		if (getGlobalVar(V_MOUSE_PUZZLE_SOLVED)) {
 			_asPuzzleBox = insertSprite<AsScene1402PuzzleBox>(this, 1);
 			clearRectList();
@@ -885,7 +885,7 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 			_asPuzzleBox = insertSprite<AsScene1402PuzzleBox>(this, 0);
 	} else {
 		// Klaymen entering from the right
-		insertKlayman<KmScene1402>(513, 391);
+		insertKlaymen<KmScene1402>(513, 391);
 		setMessageList(0x004B0B58);
 		if (!getGlobalVar(V_MOUSE_PUZZLE_SOLVED)) {
 			_asPuzzleBox = insertSprite<AsScene1402PuzzleBox>(this, 2);
@@ -897,23 +897,23 @@ Scene1402::Scene1402(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asPuzzleBox->setClipRect(0, 0, 640, _ssBridgePart3->getDrawRect().y2());
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 1) {
-		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klaymen, (Sprite*)NULL);
 		addCollisionSprite(_asProjector);
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 4) {
-			sendEntityMessage(_klayman, 0x1014, _asProjector);
-			_klayman->setX(_asProjector->getX() + 100);
-			_klayman->updateBounds();
+			sendEntityMessage(_klaymen, 0x1014, _asProjector);
+			_klaymen->setX(_asProjector->getX() + 100);
+			_klaymen->updateBounds();
 			setMessageList(0x004B0BD0);
 		} else if (getGlobalVar(V_PROJECTOR_SLOT) == 0) {
-			sendEntityMessage(_klayman, 0x1014, _asProjector);
-			_klayman->setX(_asProjector->getX() - 100);
-			_klayman->updateBounds();
+			sendEntityMessage(_klaymen, 0x1014, _asProjector);
+			_klaymen->setX(_asProjector->getX() - 100);
+			_klaymen->updateBounds();
 			setMessageList(0x004B0BD0);
 		}
 		_asProjector->setClipRect(_ssBridgePart1->getDrawRect().x, 0, _ssBridgePart2->getDrawRect().x, _ssBridgePart3->getDrawRect().y2());
 	}
 
-	_klayman->setClipRect(_ssBridgePart1->getDrawRect().x, 0, _ssBridgePart2->getDrawRect().x2(), _ssBridgePart3->getDrawRect().y2());
+	_klaymen->setClipRect(_ssBridgePart1->getDrawRect().x, 0, _ssBridgePart2->getDrawRect().x2(), _ssBridgePart3->getDrawRect().y2());
 	
 }
 
@@ -929,7 +929,7 @@ void Scene1402::upShaking() {
 	Scene::update();
 	if (_asPuzzleBox)
 		_asPuzzleBox->setClipRect(0, 0, 640, _ssBridgePart3->getDrawRect().y2());
-	_klayman->setClipRect(_ssBridgePart1->getDrawRect().x, 0, _ssBridgePart2->getDrawRect().x2(), _ssBridgePart3->getDrawRect().y2());
+	_klaymen->setClipRect(_ssBridgePart1->getDrawRect().x, 0, _ssBridgePart2->getDrawRect().x2(), _ssBridgePart3->getDrawRect().y2());
 }
 
 uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -941,7 +941,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 				leaveScene(0);
 			else {
 				clearRectList();
-				_klayman->setVisible(false);
+				_klaymen->setVisible(false);
 				showMouse(false);
 				sendMessage(_asPuzzleBox, 0x2002, 0);
 				startShaking();
@@ -968,8 +968,8 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asProjector) {
-			if (sendMessage(_asProjector, 0x408C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
-				sendEntityMessage(_klayman, 0x1014, _asProjector);
+			if (sendMessage(_asProjector, 0x408C, _klaymen->getX() > _asProjector->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klaymen, 0x1014, _asProjector);
 				setMessageList2(0x004B0BB8);
 			} else
 				setMessageList2(0x004B0B68);
@@ -1300,22 +1300,22 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene1403>(380, 463);
+		insertKlaymen<KmScene1403>(380, 463);
 		setMessageList(0x004B1F18);
 	} else {
 		// Klaymen entering from the right
-		insertKlayman<KmScene1403>(640, 463);
+		insertKlaymen<KmScene1403>(640, 463);
 		setMessageList(0x004B1F20);
 	}
-	_klayman->setRepl(64, 0);
+	_klaymen->setRepl(64, 0);
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 4) {
-		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klaymen, (Sprite*)NULL);
 		addCollisionSprite(_asProjector);
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 4) {
-			sendEntityMessage(_klayman, 0x1014, _asProjector);
-			_klayman->setX(_asProjector->getX() + 100);
-			_klayman->updateBounds();
+			sendEntityMessage(_klaymen, 0x1014, _asProjector);
+			_klaymen->setX(_asProjector->getX() + 100);
+			_klaymen->updateBounds();
 			setMessageList(0x004B1F70);
 		}
 		_asProjector->setClipRect(0, 0, 640, _sprite2->getDrawRect().y2());
@@ -1332,7 +1332,7 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 			setRectList(0x004B2008);
 			_isProjecting = true;
 		} else if (param.asInteger() == 0x08821382) {
-			sendEntityMessage(_klayman, 0x1014, _asProjector);
+			sendEntityMessage(_klaymen, 0x1014, _asProjector);
 			setRectList(0x004B1FF8);
 			_isProjecting = false;
 		}
@@ -1359,10 +1359,10 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (_isProjecting)
 				setMessageList2(0x004B1FA8);
 			else if (param.asInteger() == 1) {
-				sendEntityMessage(_klayman, 0x1014, _asProjector);
+				sendEntityMessage(_klaymen, 0x1014, _asProjector);
 				setMessageList2(0x004B1F88);
-			} else if (sendMessage(_asProjector, 0x480C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
-				sendEntityMessage(_klayman, 0x1014, _asProjector);
+			} else if (sendMessage(_asProjector, 0x480C, _klaymen->getX() > _asProjector->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klaymen, 0x1014, _asProjector);
 				setMessageList2(0x004B1F58);
 			} else
 				setMessageList2(0x004B1F28);
@@ -1370,7 +1370,7 @@ uint32 Scene1403::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (_isProjecting)
 				setMessageList2(0x004B1FA8);
 			else if (_messageListStatus != 2) {
-				sendEntityMessage(_klayman, 0x1014, sender);
+				sendEntityMessage(_klaymen, 0x1014, sender);
 				setMessageList2(0x004B1FB8);
 			}
 		}
@@ -1406,45 +1406,45 @@ Scene1404::Scene1404(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene1404>(376, 406);
+		insertKlaymen<KmScene1404>(376, 406);
 		setMessageList(0x004B8C28);
 	} else if (which == 1) {
 		// Klaymen returning from the tiles puzzle
-		insertKlayman<KmScene1404>(376, 406);
+		insertKlaymen<KmScene1404>(376, 406);
 		setMessageList(0x004B8C30);
 	} else if (which == 2) {
 		// Klaymen returning from the diskplayer
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
-			insertKlayman<KmScene1404>(347, 406);
-			_klayman->setDoDeltaX(1);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X)) {
+			insertKlaymen<KmScene1404>(347, 406);
+			_klaymen->setDoDeltaX(1);
 		} else {
-			insertKlayman<KmScene1404>(187, 406);
+			insertKlaymen<KmScene1404>(187, 406);
 		}
 		setMessageList(0x004B8D28);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene1404>(30, 406);
+		insertKlaymen<KmScene1404>(30, 406);
 		setMessageList(0x004B8C38);
 	}
 
 	if (getGlobalVar(V_PROJECTOR_LOCATION) == 3) {
-		_asProjector = insertSprite<AsCommonProjector>(this, _klayman, (Sprite*)NULL);
+		_asProjector = insertSprite<AsCommonProjector>(this, _klaymen, (Sprite*)NULL);
 		addCollisionSprite(_asProjector);
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 0) {
-			sendEntityMessage(_klayman, 0x1014, _asProjector);
-			_klayman->setX(_asProjector->getX() - 100);
-			_klayman->updateBounds();
+			sendEntityMessage(_klaymen, 0x1014, _asProjector);
+			_klaymen->setX(_asProjector->getX() - 100);
+			_klaymen->updateBounds();
 			setMessageList(0x004B8CB8);
 		}
 		_asProjector->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 	}
 
-	_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
+	_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 
 }
 
 Scene1404::~Scene1404() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
 
 uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1463,16 +1463,16 @@ uint32 Scene1404::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asProjector) {
-			if (sendMessage(_asProjector, 0x480C, _klayman->getX() > _asProjector->getX() ? 1 : 0) != 0) {
-				sendEntityMessage(_klayman, 0x1014, _asProjector);
+			if (sendMessage(_asProjector, 0x480C, _klaymen->getX() > _asProjector->getX() ? 1 : 0) != 0) {
+				sendEntityMessage(_klaymen, 0x1014, _asProjector);
 				setMessageList2(0x004B8CA0);
 			} else
 				setMessageList2(0x004B8C40);
 		} else if (sender == _asTape && _messageListStatus != 2) {
-			sendEntityMessage(_klayman, 0x1014, _asTape);
+			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004B8CD0);
 		} else if (sender == _asKey && _messageListStatus != 2) {
-			sendEntityMessage(_klayman, 0x1014, _asKey);
+			sendEntityMessage(_klaymen, 0x1014, _asKey);
 			setMessageList(0x004B8D18);
 		}
 		break;

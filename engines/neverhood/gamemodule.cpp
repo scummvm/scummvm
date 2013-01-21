@@ -395,7 +395,7 @@ void GameModule::startup() {
 	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 2, 2);
 	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 3, 0);
 	setSubVar(VA_CURR_WATER_PIPES_LEVEL, 4, 4);
-	setGlobalVar(V_KLAYMAN_SMALL, 1);
+	setGlobalVar(V_KLAYMEN_SMALL, 1);
 	setGlobalVar(V_SHRINK_LIGHTS_ON, 0);
 	// <<<DEBUG
 

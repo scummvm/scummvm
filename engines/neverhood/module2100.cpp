@@ -127,8 +127,8 @@ void AsScene2101Door::stCloseDoorDone() {
 	setVisible(false);
 }
 
-AsScene2101HitByDoorEffect::AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klayman)
-	: AnimatedSprite(vm, 1400), _klayman(klayman) {
+AsScene2101HitByDoorEffect::AsScene2101HitByDoorEffect(NeverhoodEngine *vm, Sprite *klaymen)
+	: AnimatedSprite(vm, 1400), _klaymen(klaymen) {
 	
 	SetUpdateHandler(&AnimatedSprite::update);
 	SetMessageHandler(&AsScene2101HitByDoorEffect::handleMessage);
@@ -140,8 +140,8 @@ uint32 AsScene2101HitByDoorEffect::handleMessage(int messageNum, const MessagePa
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2001:
-		_x = _klayman->getX();
-		_y = _klayman->getY() - 132;
+		_x = _klaymen->getX();
+		_y = _klaymen->getY() - 132;
 		startAnimation(0x0422255A, 0, -1);
 		setVisible(true);
 		break;
@@ -214,7 +214,7 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 	addCollisionSprite(_asTape2);
 	
 	if (which < 0) {
-		insertKlayman<KmScene2101>(380, 438);
+		insertKlaymen<KmScene2101>(380, 438);
 		setMessageList(0x004B8E48);
 		sendMessage(this, 0x2000, 0);
 		_asDoor = insertSprite<AsScene2101Door>(false);
@@ -222,7 +222,7 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 		_countdown1 = 0;
 	} else if (which == 1) {
 		// Klaymen entering from the right
-		insertKlayman<KmScene2101>(640, 438);
+		insertKlaymen<KmScene2101>(640, 438);
 		setMessageList(0x004B8E50);
 		sendMessage(this, 0x2000, 0);
 		_asDoor = insertSprite<AsScene2101Door>(true);
@@ -230,8 +230,8 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 		_countdown1 = 48;
 	} else if (which == 2) {
 		// Klaymen teleporting out
-		insertKlayman<KmScene2101>(115, 438);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene2101>(115, 438);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004B8F58);
 		sendMessage(this, 0x2000, 1);
 		_asDoor = insertSprite<AsScene2101Door>(false);
@@ -239,8 +239,8 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 		_countdown1 = 0;
 	} else if (which == 3) {
 		// Klaymen returning from the teleporter console
-		insertKlayman<KmScene2101>(115, 438);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene2101>(115, 438);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004B8EB0);
 		sendMessage(this, 0x2000, 1);
 		_asDoor = insertSprite<AsScene2101Door>(false);
@@ -248,8 +248,8 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 		_countdown1 = 0;
 	} else {
 		// Klaymen teleporting in
-		insertKlayman<KmScene2101>(115, 438);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene2101>(115, 438);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004B8EA0);
 		sendMessage(this, 0x2000, 1);
 		_asDoor = insertSprite<AsScene2101Door>(false);
@@ -257,8 +257,8 @@ Scene2101::Scene2101(NeverhoodEngine *vm, Module *parentModule, int which)
 		_countdown1 = 0;
 	}
 	
-	_asHitByDoorEffect = insertSprite<AsScene2101HitByDoorEffect>(_klayman);
-	_klayman->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
+	_asHitByDoorEffect = insertSprite<AsScene2101HitByDoorEffect>(_klaymen);
+	_klaymen->setClipRect(0, 0, tempSprite->getDrawRect().x2(), 480);
 	
 }
 
@@ -270,14 +270,14 @@ void Scene2101::update() {
 				_doorStatus = 1;
 			}
 		} else {
-			if (_klayman->getX() > 575)
+			if (_klaymen->getX() > 575)
 				_canAcceptInput  = false;
 			if (--_countdown1 == 0) {
-				if (_klayman->getX() < 480) {
+				if (_klaymen->getX() < 480) {
 					sendMessage(_asDoor, 0x4809, 0);
 					_doorStatus = 1;
-				} else if (_klayman->getX() >= 480 && _klayman->getX() <= 575) {
-					_klayman->setDoDeltaX(0);
+				} else if (_klaymen->getX() >= 480 && _klaymen->getX() <= 575) {
+					_klaymen->setDoDeltaX(0);
 					setMessageList2(0x004B8F48);
 					sendMessage(_asDoor, 0x4809, 0);
 					sendMessage(_asHitByDoorEffect, 0x2001, 0);
@@ -285,7 +285,7 @@ void Scene2101::update() {
 				}
 			}
 		}
-	} else if (_doorStatus == 1 && _messageValue >= 0 && _klayman->getX() > 470 && !isMessageList2(0x004B8F48))
+	} else if (_doorStatus == 1 && _messageValue >= 0 && _klaymen->getX() > 470 && !isMessageList2(0x004B8F48))
 		setMessageList2(0x004B8F50);
 	Scene::update();
 }
@@ -295,7 +295,7 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x02144CB1)
-			sendEntityMessage(_klayman, 0x1014, _ssFloorButton);
+			sendEntityMessage(_klaymen, 0x1014, _ssFloorButton);
 		else if (param.asInteger() == 0x21E64A00) {
 			if (_doorStatus == 0)
 				setMessageList(0x004B8E80);
@@ -307,10 +307,10 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (param.asInteger() != 0) {
 			setRectList(0x004B9008);
-			_klayman->setKlaymanIdleTable3();
+			_klaymen->setKlaymenIdleTable3();
 		} else {
 			setRectList(0x004B8FF8);
-			_klayman->setKlaymanIdleTable1();
+			_klaymen->setKlaymenIdleTable1();
 		}
 		break;
 	case 0x480B:
@@ -322,10 +322,10 @@ uint32 Scene2101::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asTape1 || sender == _asTape2) {
-			if (_klayman->getX() >= 228 && _klayman->getX() <= 500) {
-				sendEntityMessage(_klayman, 0x1014, sender);
+			if (_klaymen->getX() >= 228 && _klaymen->getX() <= 500) {
+				sendEntityMessage(_klaymen, 0x1014, sender);
 				setMessageList(0x004B8F78);
-			} else if (_klayman->getX() < 228)
+			} else if (_klaymen->getX() < 228)
 				setMessageList2(0x004B8F00);
 		}
 		break;

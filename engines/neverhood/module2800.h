@@ -124,9 +124,9 @@ protected:
 	NRect _clipRectsStairs[3];
 	int _paletteArea;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void upKlaymanStairs();
-	void klaymanStairs();
-	void klaymanFloor();
+	void upKlaymenStairs();
+	void klaymenStairs();
+	void klaymenFloor();
 	void toggleBackground();
 	void changeBackground();
 	void setPaletteArea0();
@@ -147,10 +147,10 @@ protected:
 	Sprite *_sprite6;
 	Sprite *_sprite7;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void upKlaymanSlope();
-	void upKlaymanFloor();
-	void klaymanSlope();
-	void klaymanFloor();
+	void upKlaymenSlope();
+	void upKlaymenFloor();
+	void klaymenSlope();
+	void klaymenFloor();
 	void setPaletteArea0();
 	void setPaletteArea1();
 	void setPaletteArea2();
@@ -437,7 +437,7 @@ protected:
 	bool _isRopingDown;
 	NRect _clipRects[2];
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void insertKlaymanLadder();
+	void insertKlaymenLadder();
 };
 
 class AsScene2812Winch : public AnimatedSprite {

@@ -9,7 +9,7 @@ MODULE_OBJS = \
 	gamemodule.o \
 	gamevars.o \
 	graphics.o \
-	klayman.o \
+	klaymen.o \
 	menumodule.o \
 	microtiles.o \
 	module.o \

@@ -48,11 +48,11 @@ enum {
 	V_COLUMN_TEXT_NAME			= 0xC8C28808,
 	V_CLICKED_COLUMN_INDEX		= 0x48A68852,
 	V_CLICKED_COLUMN_ROW		= 0x49C40058,
-	// Klayman
-	V_KLAYMAN_SMALL				= 0x1860C990,			// Is Klayman small?
-	V_KLAYMAN_FRAMEINDEX		= 0x18288913,
-	V_KLAYMAN_IS_DELTA_X		= 0xC0418A02,
-	V_KLAYMAN_SAVED_X			= 0x00D30138,
+	// Klaymen
+	V_KLAYMEN_SMALL				= 0x1860C990,			// Is Klaymen small?
+	V_KLAYMEN_FRAMEINDEX		= 0x18288913,
+	V_KLAYMEN_IS_DELTA_X		= 0xC0418A02,
+	V_KLAYMEN_SAVED_X			= 0x00D30138,
 	V_CAR_DELTA_X				= 0x21E60190,
 	// Flags
 	V_CRYSTAL_COLORS_INIT		= 0xDE2EC914,
@@ -129,8 +129,8 @@ enum {
 	V_TELEPORTER_WHICH			= 0x60826830,
 	V_TELEPORTER_DEST_AVAILABLE	= 0x2C145A98,
 	// Inventory
-	V_HAS_NEEDLE				= 0x31C63C51,			// Has Klayman the needle?
-	V_HAS_FINAL_KEY				= 0xC0780812,			// Has Klayman the key from the diskplayer?
+	V_HAS_NEEDLE				= 0x31C63C51,			// Has Klaymen the needle?
+	V_HAS_FINAL_KEY				= 0xC0780812,			// Has Klaymen the key from the diskplayer?
 	V_HAS_TEST_TUBE				= 0x45080C38,
 	// Arrays
 	// NOTE "GOOD" means the solution, "CURR" is the current setup of the puzzle variables

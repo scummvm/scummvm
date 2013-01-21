@@ -656,35 +656,35 @@ Scene1109::Scene1109(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene1109>(140, 436);
+		insertKlaymen<KmScene1109>(140, 436);
 		setMessageList(0x004B6260);
 		sendMessage(this, 0x2000, 0);
 	} else if (which == 1) {
 		// Klaymen teleporting in
-		insertKlayman<KmScene1109>(450, 436);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene1109>(450, 436);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004B6268, false);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 2) {
 		// Klaymen teleporting out
-		insertKlayman<KmScene1109>(450, 436);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene1109>(450, 436);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004B6318, false);
 		sendMessage(this, 0x2000, 1);
 	} else if (which == 3) {
 		// Klaymen returning from teleporter console
-		insertKlayman<KmScene1109>(450, 436);
-		sendMessage(_klayman, 0x2000, 1);
+		insertKlaymen<KmScene1109>(450, 436);
+		sendMessage(_klaymen, 0x2000, 1);
 		setMessageList(0x004B6278, false);
 		sendMessage(this, 0x2000, 1);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene1109>(0, 436);
+		insertKlaymen<KmScene1109>(0, 436);
 		setMessageList(0x004B6258);
 		sendMessage(this, 0x2000, 0);
 	}
 
-	_klayman->setClipRect(0, 0, _sprite1->getDrawRect().x2(), 480);
+	_klaymen->setClipRect(0, 0, _sprite1->getDrawRect().x2(), 480);
 
 }
 
@@ -694,10 +694,10 @@ uint32 Scene1109::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x2000:
 		if (param.asInteger()) {
 			setRectList(0x004B63A8);
-			_klayman->setKlaymanIdleTable3();
+			_klaymen->setKlaymenIdleTable3();
 		} else {
 			setRectList(0x004B6398);
-			_klayman->setKlaymanIdleTable1();
+			_klaymen->setKlaymenIdleTable1();
 		}
 		break;
 	}

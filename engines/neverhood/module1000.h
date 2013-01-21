@@ -175,10 +175,10 @@ protected:
 
 class AsScene1002VenusFlyTrap : public AnimatedSprite {
 public:
-	AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, bool isSecond);
+	AsScene1002VenusFlyTrap(NeverhoodEngine *vm, Scene *parentScene, Sprite *klaymen, bool isSecond);
 protected:
 	Scene *_parentScene;
-	Sprite *_klayman;
+	Sprite *_klaymen;
 	int _countdown;
 	bool _isSecond;
 	void update();
@@ -191,11 +191,11 @@ protected:
 	void stRelease();
 	void stGrabRing();
 	void stRingGrabbed();
-	void stKlaymanInside();
+	void stKlaymenInside();
 	void stIdle();
-	void stKlaymanInsideMoving();
-	void stSpitOutKlayman();
-	void swallowKlayman();
+	void stKlaymenInsideMoving();
+	void stSpitOutKlaymen();
+	void swallowKlaymen();
 };
 
 class AsScene1002OutsideDoorBackground : public AnimatedSprite {
@@ -212,20 +212,20 @@ protected:
 	void stDoorClosed();
 };
 
-class AsScene1002KlaymanLadderHands : public AnimatedSprite {
+class AsScene1002KlaymenLadderHands : public AnimatedSprite {
 public:
-	AsScene1002KlaymanLadderHands(NeverhoodEngine *vm, Klayman *klayman);
+	AsScene1002KlaymenLadderHands(NeverhoodEngine *vm, Klaymen *klaymen);
 protected:
-	Klayman *_klayman;
+	Klaymen *_klaymen;
 	void update();
 };
 
-class AsScene1002KlaymanPeekHand : public AnimatedSprite {
+class AsScene1002KlaymenPeekHand : public AnimatedSprite {
 public:
-	AsScene1002KlaymanPeekHand(NeverhoodEngine *vm, Scene *parentScene, Klayman *klayman);
+	AsScene1002KlaymenPeekHand(NeverhoodEngine *vm, Scene *parentScene, Klaymen *klaymen);
 protected:
 	Scene *_parentScene;
-	Klayman *_klayman;
+	Klaymen *_klaymen;
 	bool _isClipRectSaved;
 	NRect _savedClipRect;
 	void update();
@@ -250,11 +250,11 @@ protected:
 	Sprite *_ssLadderArchPart2;
 	Sprite *_ssLadderArchPart3;
 	Sprite *_ssCeiling;
-	Sprite *_asKlaymanLadderHands;
-	Sprite *_asKlaymanPeekHand;
+	Sprite *_asKlaymenLadderHands;
+	Sprite *_asKlaymenPeekHand;
 	Sprite *_asOutsideDoorBackground;
 	Sprite *_ssPressButton;
-	bool _isKlaymanFloor;
+	bool _isKlaymenFloor;
 	bool _isClimbingLadder;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -273,7 +273,7 @@ class Scene1004 : public Scene {
 public:
 	Scene1004(NeverhoodEngine *vm, Module *parentModule, int which);
 protected:
-	Sprite *_asKlaymanLadderHands;
+	Sprite *_asKlaymenLadderHands;
 	Sprite *_asTrashCan;
 	int _paletteAreaStatus;
 	void update();

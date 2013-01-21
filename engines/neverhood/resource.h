@@ -163,7 +163,7 @@ public:
 	NPointArray *getPointArray(uint32 nameHash);
 	NRectArray *getRectArray(uint32 nameHash);
 	HitRectList *getHitRectList();
-	MessageList *getMessageListAtPos(int16 klaymanX, int16 klaymanY, int16 mouseX, int16 mouseY);
+	MessageList *getMessageListAtPos(int16 klaymenX, int16 klaymenY, int16 mouseX, int16 mouseY);
 protected:
 
 	struct DRDirectoryItem {

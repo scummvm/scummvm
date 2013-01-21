@@ -109,20 +109,20 @@ Scene1901::Scene1901(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene1901>(120, 380);
+		insertKlaymen<KmScene1901>(120, 380);
 		setMessageList(0x004B3408);
 	} else if (which == 1) {
 		// Klaymen returning from the puzzle
-		insertKlayman<KmScene1901>(372, 380);
+		insertKlaymen<KmScene1901>(372, 380);
 		setMessageList(0x004B3410);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene1901>(0, 380);
+		insertKlaymen<KmScene1901>(0, 380);
 		setMessageList(0x004B3400);
 	}
 
 	tempSprite = insertStaticSprite(0x4830A402, 1100);
-	_klayman->setClipRect(tempSprite->getDrawRect().x, 0, 640, 480);
+	_klaymen->setClipRect(tempSprite->getDrawRect().x, 0, 640, 480);
 
 }
 

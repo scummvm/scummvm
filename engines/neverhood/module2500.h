@@ -59,14 +59,14 @@ protected:
 	Sprite *_asCarTrackShadow;
 	Sprite *_asIdleCarLower;
 	Sprite *_asIdleCarFull;
-	Klayman *_kmScene2501;
+	Klaymen *_kmScene2501;
 	Tracks _tracks;
 	NPointArray *_trackPoints;
 	int _currTrackIndex;
 	NPoint _clickPoint;
 	int _newTrackIndex;
 	int _carStatus;
-	bool _klaymanInCar;
+	bool _klaymenInCar;
 	void update();
 	void upCarAtHome();
 	void upGettingOutOfCar();
@@ -76,7 +76,7 @@ protected:
 	uint32 hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender);
 	void moveCarToPoint(NPoint &pt);
 	void changeTrack();
-	void updateKlaymanClipRect();
+	void updateKlaymenClipRect();
 };
 
 class SsScene2504Button : public StaticSprite {

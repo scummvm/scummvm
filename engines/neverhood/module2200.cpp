@@ -457,8 +457,8 @@ AsScene2201CeilingFan::AsScene2201CeilingFan(NeverhoodEngine *vm)
 	SetUpdateHandler(&AnimatedSprite::update);
 }
 
-AsScene2201Door::AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *ssDoorLight, bool isOpen)
-	: AnimatedSprite(vm, 1100), _klayman(klayman), _ssDoorLight(ssDoorLight), _countdown(0), _isOpen(isOpen) {
+AsScene2201Door::AsScene2201Door(NeverhoodEngine *vm, Klaymen *klaymen, Sprite *ssDoorLight, bool isOpen)
+	: AnimatedSprite(vm, 1100), _klaymen(klaymen), _ssDoorLight(ssDoorLight), _countdown(0), _isOpen(isOpen) {
 
 	_x = 408;
 	_y = 290;	
@@ -578,29 +578,29 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene2201>(300, 427, _clipRects, 2);
+		insertKlaymen<KmScene2201>(300, 427, _clipRects, 2);
 		setMessageList(0x004B8118);
-		_asDoor = insertSprite<AsScene2201Door>(_klayman, _ssDoorLight, false);
+		_asDoor = insertSprite<AsScene2201Door>(_klaymen, _ssDoorLight, false);
 	} else if (which == 1) {
 		// Klaymen entering from the back
-		insertKlayman<KmScene2201>(412, 393, _clipRects, 2);
+		insertKlaymen<KmScene2201>(412, 393, _clipRects, 2);
 		setMessageList(0x004B8130);
-		_asDoor = insertSprite<AsScene2201Door>(_klayman, _ssDoorLight, false);
+		_asDoor = insertSprite<AsScene2201Door>(_klaymen, _ssDoorLight, false);
 	} else if (which == 2) {
 		// Klaymen returning from the puzzle
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
-			insertKlayman<KmScene2201>(379, 427, _clipRects, 2);
-			_klayman->setDoDeltaX(1);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X)) {
+			insertKlaymen<KmScene2201>(379, 427, _clipRects, 2);
+			_klaymen->setDoDeltaX(1);
 		} else
-			insertKlayman<KmScene2201>(261, 427, _clipRects, 2);
+			insertKlaymen<KmScene2201>(261, 427, _clipRects, 2);
 		setMessageList(0x004B8178);
-		_asDoor = insertSprite<AsScene2201Door>(_klayman, _ssDoorLight, false);
+		_asDoor = insertSprite<AsScene2201Door>(_klaymen, _ssDoorLight, false);
 	} else {
 		// Klaymen entering from the left
 		NPoint pt = _dataResource.getPoint(0x0304D8DC);
-		insertKlayman<KmScene2201>(pt.x, pt.y, _clipRects, 2);
+		insertKlaymen<KmScene2201>(pt.x, pt.y, _clipRects, 2);
 		setMessageList(0x004B8120);
-		_asDoor = insertSprite<AsScene2201Door>(_klayman, _ssDoorLight, true);
+		_asDoor = insertSprite<AsScene2201Door>(_klaymen, _ssDoorLight, true);
 	}
 	
 	insertSprite<AsScene2201CeilingFan>();
@@ -610,7 +610,7 @@ Scene2201::Scene2201(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene2201::~Scene2201() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 	_vm->_soundMan->deleteSoundGroup(0x04106220);
 }
 
@@ -627,7 +627,7 @@ uint32 Scene2201::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x402064D8)
-			sendEntityMessage(_klayman, 0x1014, _ssDoorButton);
+			sendEntityMessage(_klaymen, 0x1014, _ssDoorButton);
 		else if (param.asInteger() == 0x35803198) {
 			if (sendMessage(_asDoor, 0x2000, 0))
 				setMessageList(0x004B81A0);
@@ -653,7 +653,7 @@ uint32 Scene2201::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
-			sendEntityMessage(_klayman, 0x1014, _asTape);
+			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004B81C8);
 		}
 		break;
@@ -1000,7 +1000,7 @@ AsCommonKey::AsCommonKey(NeverhoodEngine *vm, Scene *parentScene, int keyIndex, 
 	if (!getSubVar(VA_HAS_KEY, _keyIndex) && !getSubVar(VA_IS_KEY_INSERTED, _keyIndex)) {
 		SetMessageHandler(&AsCommonKey::handleMessage);
 	} else {
-		// If Klayman already has the key or it's already inserted then don't show it
+		// If Klaymen already has the key or it's already inserted then don't show it
 		setVisible(false);
 		SetMessageHandler(NULL);
 	}
@@ -1118,45 +1118,45 @@ Scene2203::Scene2203(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene2203>(200, 427);
+		insertKlaymen<KmScene2203>(200, 427);
 		setMessageList(0x004B8340);
 	} else if (which == 1) {
 		// Klaymen entering from the right
-		insertKlayman<KmScene2203>(640, 427);
+		insertKlaymen<KmScene2203>(640, 427);
 		setMessageList(0x004B8350);
 	} else if (which == 2) {
 		// Klaymen returning from the displayer
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
-			insertKlayman<KmScene2203>(362, 427);
-			_klayman->setDoDeltaX(1);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X)) {
+			insertKlaymen<KmScene2203>(362, 427);
+			_klaymen->setDoDeltaX(1);
 		} else
-			insertKlayman<KmScene2203>(202, 427);
+			insertKlaymen<KmScene2203>(202, 427);
 		setMessageList(0x004B8358);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene2203>(0, 427);
+		insertKlaymen<KmScene2203>(0, 427);
 		setMessageList(0x004B8348);
 	}
 
 	if (getGlobalVar(V_LARGE_DOOR_NUMBER)) {
 		_ssSmallLeftDoor->setVisible(false);
-		_klayman->setClipRect(_rightDoorClipRect);
+		_klaymen->setClipRect(_rightDoorClipRect);
 	} else {
 		_ssSmallRightDoor->setVisible(false);
-		_klayman->setClipRect(_leftDoorClipRect);
+		_klaymen->setClipRect(_leftDoorClipRect);
 	}
 	
 }
 
 Scene2203::~Scene2203() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
 
 uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2001:
-		sendEntityMessage(_klayman, 0x1014, sender);
+		sendEntityMessage(_klaymen, 0x1014, sender);
 		if (sender == _asLeftDoor)
 			setMessageList2(0x004B83B0);
 		else
@@ -1177,18 +1177,18 @@ uint32 Scene2203::handleMessage(int messageNum, const MessageParam &param, Entit
 	case 0x4808:
 		if (sender == _asLeftDoor) {
 			_ssSmallLeftDoor->setVisible(true);
-			_klayman->setClipRect(_leftDoorClipRect);
+			_klaymen->setClipRect(_leftDoorClipRect);
 		} else {
 			_ssSmallRightDoor->setVisible(true);
-			_klayman->setClipRect(_rightDoorClipRect);
+			_klaymen->setClipRect(_rightDoorClipRect);
 		}
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
-			sendEntityMessage(_klayman, 0x1014, _asTape);
+			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004B83E0);
 		} else if (sender == _asKey) {
-			sendEntityMessage(_klayman, 0x1014, _asKey);
+			sendEntityMessage(_klaymen, 0x1014, _asKey);
 			setMessageList(0x004B83F0);
 		}
 		break;
@@ -1242,27 +1242,27 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene2205>(320, 417);
+		insertKlaymen<KmScene2205>(320, 417);
 		setMessageList(0x004B0658);
 		if (!getGlobalVar(V_LIGHTS_ON))
 			_palette->addPalette(0x68033B1C, 0, 65, 0);
-		_isKlaymanInLight = false;
+		_isKlaymenInLight = false;
 	} else if (which == 1) {
 		// Klaymen entering from the right
-		insertKlayman<KmScene2205>(640, 417);
+		insertKlaymen<KmScene2205>(640, 417);
 		setMessageList(0x004B0648);
 		if (!getGlobalVar(V_LIGHTS_ON))
 			_palette->addPalette(0x68033B1C, 0, 65, 0);
-		_isKlaymanInLight = false;
+		_isKlaymenInLight = false;
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene2205>(0, 417);
+		insertKlaymen<KmScene2205>(0, 417);
 		setMessageList(0x004B0640);
-		_isKlaymanInLight = true;
+		_isKlaymenInLight = true;
 	}
 
-	_klayman->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 640, 480);
-	_klayman->setSoundFlag(true);
+	_klaymen->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 640, 480);
+	_klaymen->setSoundFlag(true);
 }
 	
 void Scene2205::update() {
@@ -1280,22 +1280,22 @@ void Scene2205::update() {
 		_ssLightSwitch->setFileHashes(0x2D339030, 0xDAC86E84);
 		sendMessage(_ssDoorFrame, 0x2000, 0);
 		changeMouseCursor(0xA0289D08);
-		_isKlaymanInLight = true;
-		if (_klayman->getX() > 85) {
+		_isKlaymenInLight = true;
+		if (_klaymen->getX() > 85) {
 			_palette->addPalette(0x68033B1C, 0, 65, 0);
-			_isKlaymanInLight = false;
+			_isKlaymenInLight = false;
 		}
 		_isLightOn = false;
 	}
 	if (!getGlobalVar(V_LIGHTS_ON)) {
-		if (_isKlaymanInLight && _klayman->getX() > 85) {
+		if (_isKlaymenInLight && _klaymen->getX() > 85) {
 			_palette->addBasePalette(0x68033B1C, 0, 65, 0);
 			_palette->startFadeToPalette(12);
-			_isKlaymanInLight = false;
-		} else if (!_isKlaymanInLight && _klayman->getX() <= 85) {
+			_isKlaymenInLight = false;
+		} else if (!_isKlaymenInLight && _klaymen->getX() <= 85) {
 			_palette->addBasePalette(0xD00A028D, 0, 65, 0);
 			_palette->startFadeToPalette(12);
-			_isKlaymanInLight = true;
+			_isKlaymenInLight = true;
 		}
 	}
 }
@@ -1309,7 +1309,7 @@ uint32 Scene2205::handleMessage(int messageNum, const MessageParam &param, Entit
 		else if (param.asInteger() == 0x2841369C)
 			setMessageList(0x004B0630);
 		else if (param.asInteger() == 0x402064D8)
-			sendEntityMessage(_klayman, 0x1014, _ssLightSwitch);
+			sendEntityMessage(_klaymen, 0x1014, _ssLightSwitch);
 		break;
 	case 0x480B:
 		setGlobalVar(V_LIGHTS_ON, getGlobalVar(V_LIGHTS_ON) ? 0 : 1);
@@ -1495,38 +1495,38 @@ Scene2206::Scene2206(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene2206>(200, 430);
+		insertKlaymen<KmScene2206>(200, 430);
 		setMessageList(0x004B88A8);
 	} else if (which == 1) {
 		// Klaymen entering from the right
-		insertKlayman<KmScene2206>(640, 430);
+		insertKlaymen<KmScene2206>(640, 430);
 		setMessageList(0x004B88B8);
 	} else if (which == 2) {
 		// Klaymen entering from the back
-		insertKlayman<KmScene2206>(205, 396);
+		insertKlaymen<KmScene2206>(205, 396);
 		setMessageList(0x004B88C8);
 		_palette->addPalette(getGlobalVar(V_LIGHTS_ON) ? 0xB103B604 : 0x0263D144, 0, 65, 0);
-		klaymanBehindSpikes();
+		klaymenBehindSpikes();
 		playSound(0, 0x53B8284A);
 	} else if (which == 3) {
 		// Klaymen entering from reading a text column
-		insertKlayman<KmScene2206>(kScene2206XPositions[getGlobalVar(V_CLICKED_COLUMN_INDEX)], 430);
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X))
-			_klayman->setDoDeltaX(1);
+		insertKlaymen<KmScene2206>(kScene2206XPositions[getGlobalVar(V_CLICKED_COLUMN_INDEX)], 430);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X))
+			_klaymen->setDoDeltaX(1);
 		setMessageList(0x004B8A70);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene2206>(0, 430);
+		insertKlaymen<KmScene2206>(0, 430);
 		setMessageList(0x004B88B0);
 	}
 
-	_klayman->setSoundFlag(true);
-	_klayman->setKlaymanIdleTable2();
+	_klaymen->setSoundFlag(true);
+	_klaymen->setKlaymenIdleTable2();
 
 }
 
 Scene2206::~Scene2206() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
 
 uint32 Scene2206::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -1536,7 +1536,7 @@ uint32 Scene2206::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (param.asInteger() == 0x800C6694)
 			readClickedColumn();
 		else if (param.asInteger() == 0x402064D8)
-			sendEntityMessage(_klayman, 0x1014, _ssButton);
+			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x11C40840) {
 			if (getGlobalVar(V_SPIKES_RETRACTED))
 				setMessageList(0x004B8948);
@@ -1557,20 +1557,20 @@ uint32 Scene2206::handleMessage(int messageNum, const MessageParam &param, Entit
 		}
 		break;
 	case 0x4826:
-		sendEntityMessage(_klayman, 0x1014, _ssTestTube);
+		sendEntityMessage(_klaymen, 0x1014, _ssTestTube);
 		setMessageList(0x004B8988);
 		break;
 	case 0x482A:
-		klaymanBehindSpikes();
+		klaymenBehindSpikes();
 		break;
 	case 0x482B:
-		klaymanInFrontSpikes();
+		klaymenInFrontSpikes();
 		break;
 	}
 	return messageResult;
 }
 
-void Scene2206::klaymanInFrontSpikes() {
+void Scene2206::klaymenInFrontSpikes() {
 	if (getGlobalVar(V_LIGHTS_ON)) {
 		_palette->addBasePalette(0x41983216, 0, 65, 0);
 		_palette->startFadeToPalette(12);
@@ -1579,10 +1579,10 @@ void Scene2206::klaymanInFrontSpikes() {
 	setSurfacePriority(_sprite2->getSurface(), 300);
 	setSurfacePriority(_sprite3->getSurface(), 100);
 	setSurfacePriority(_asDoorSpikes->getSurface(), 200);
-	_klayman->setClipRect(0, 0, 640, 480);
+	_klaymen->setClipRect(0, 0, 640, 480);
 }
 
-void Scene2206::klaymanBehindSpikes() {
+void Scene2206::klaymenBehindSpikes() {
 	if (!getGlobalVar(V_LIGHTS_ON)) {
 		_palette->addBasePalette(0xB103B604, 0, 65, 0);
 		_palette->startFadeToPalette(12);
@@ -1591,7 +1591,7 @@ void Scene2206::klaymanBehindSpikes() {
 	setSurfacePriority(_sprite2->getSurface(), 1300);
 	setSurfacePriority(_sprite3->getSurface(), 1100);
 	setSurfacePriority(_asDoorSpikes->getSurface(), 1200);
-	_klayman->setClipRect(_sprite2->getDrawRect().x, 0, _sprite3->getDrawRect().x2(), _sprite1->getDrawRect().y2());
+	_klaymen->setClipRect(_sprite2->getDrawRect().x, 0, _sprite3->getDrawRect().x2(), _sprite1->getDrawRect().y2());
 }
 
 void Scene2206::readClickedColumn() {
@@ -1601,7 +1601,7 @@ void Scene2206::readClickedColumn() {
 	setGlobalVar(V_CLICKED_COLUMN_ROW, (_mouseClickPos.y - 183) / 7);
 	setGlobalVar(V_COLUMN_TEXT_NAME, calcHash("stLineagex"));
 	setGlobalVar(V_COLUMN_BACK_NAME, 0);
-	if (ABS(kScene2206XPositions[getGlobalVar(V_CLICKED_COLUMN_INDEX)] - _klayman->getX()) >= 144)
+	if (ABS(kScene2206XPositions[getGlobalVar(V_CLICKED_COLUMN_INDEX)] - _klaymen->getX()) >= 144)
 		setMessageList2(kScene2206MessageIds1[getGlobalVar(V_CLICKED_COLUMN_INDEX)]);
 	else
 		setMessageList2(kScene2206MessageIds2[getGlobalVar(V_CLICKED_COLUMN_INDEX)]);
@@ -1926,7 +1926,7 @@ SsScene2207Symbol::SsScene2207Symbol(NeverhoodEngine *vm, uint32 fileHash, int i
 }
 
 Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _klaymanAtElevator(true), _elevatorSurfacePriority(0) {
+	: Scene(vm, parentModule), _klaymenAtElevator(true), _elevatorSurfacePriority(0) {
 
 	_vm->gameModule()->initCannonSymbolsPuzzle();
 
@@ -1936,8 +1936,8 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
 	SetMessageHandler(&Scene2207::handleMessage);
 	SetUpdateHandler(&Scene2207::update);
 
-	insertKlayman<KmScene2207>(0, 0);
-	_klayman->setRepl(64, 0);
+	insertKlaymen<KmScene2207>(0, 0);
+	_klaymen->setRepl(64, 0);
 	setMessageList(0x004B38E8);
 	_asElevator = insertSprite<AsScene2207Elevator>(this);
 	
@@ -1958,7 +1958,7 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
 		_asWallCannonAnimation->setVisible(false);
 		_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x2C4061C4, 100, 0);
 		_asLever->setClipRect(0, 0, _ssMaskPart3->getDrawRect().x2(), 480);
-		_klayman->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, _ssMaskPart2->getDrawRect().y2());
+		_klaymen->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, _ssMaskPart2->getDrawRect().y2());
 		_asElevator->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, _ssMaskPart2->getDrawRect().y2());
 	} else {
 		setGlobalVar(V_SEEN_SYMBOLS_NO_LIGHT, 1);
@@ -1974,15 +1974,15 @@ Scene2207::Scene2207(NeverhoodEngine *vm, Module *parentModule)
 		_asWallRobotAnimation = NULL;
 		_asWallCannonAnimation = NULL;
 		_ssButton = NULL;
-		_klayman->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, 480);
+		_klaymen->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, 480);
 		_asElevator->setClipRect(0, _ssMaskPart1->getDrawRect().y, 640, 480);
 	}
 
 	_dataResource.load(0x00524846);
 	setRectList(0x004B38B8);
 
-	sendEntityMessage(_klayman, 0x1014, _asElevator);
-	sendMessage(_klayman, 0x2001, 0);
+	sendEntityMessage(_klaymen, 0x1014, _asElevator);
+	sendMessage(_klaymen, 0x2001, 0);
 	sendMessage(_asElevator, 0x2000, 480);
 
 	loadSound(1, calcHash("fxFogHornSoft"));
@@ -1995,8 +1995,8 @@ void Scene2207::update() {
 		setSurfacePriority(_asElevator->getSurface(), _elevatorSurfacePriority);
 		_elevatorSurfacePriority = 0;
 	}
-	if (_klayman->getY() == 423)
-		_klaymanAtElevator = _klayman->getX() > 459 && _klayman->getX() < 525;
+	if (_klaymen->getY() == 423)
+		_klaymenAtElevator = _klaymen->getX() > 459 && _klaymen->getX() < 525;
 }
 
 uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -2004,33 +2004,33 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x0014F275) {
-			if (_klaymanAtElevator) {
+			if (_klaymenAtElevator) {
 				sendMessage(_asElevator, 0x2000, _mouseClickPos.y);
-				sendEntityMessage(_klayman, 0x1014, _asElevator);
-				sendMessage(_klayman, 0x2001, 0);
+				sendEntityMessage(_klaymen, 0x1014, _asElevator);
+				sendMessage(_klaymen, 0x2001, 0);
 			} else
 				cancelMessageList();
 		} else if (param.asInteger() == 0x34569073) {
-			if (_klaymanAtElevator) {
-				_isKlaymanBusy = true;
+			if (_klaymenAtElevator) {
+				_isKlaymenBusy = true;
 				sendMessage(_asElevator, 0x2000, 0);
-				sendEntityMessage(_klayman, 0x1014, _asElevator);
-				sendMessage(_klayman, 0x2001, 0);
+				sendEntityMessage(_klaymen, 0x1014, _asElevator);
+				sendMessage(_klaymen, 0x2001, 0);
 			} else
 				cancelMessageList();
 		} else if (param.asInteger() == 0x4054C877) {
-			if (_klaymanAtElevator) {
+			if (_klaymenAtElevator) {
 				sendMessage(_asElevator, 0x2000, 480);
-				sendEntityMessage(_klayman, 0x1014, _asElevator);
-				sendMessage(_klayman, 0x2001, 0);
+				sendEntityMessage(_klaymen, 0x1014, _asElevator);
+				sendMessage(_klaymen, 0x2001, 0);
 			} else
 				cancelMessageList();
 		} else if (param.asInteger() == 0x0CBC6211) {
-			sendEntityMessage(_klayman, 0x1014, _asElevator);
-			sendMessage(_klayman, 0x2001, 0);
+			sendEntityMessage(_klaymen, 0x1014, _asElevator);
+			sendMessage(_klaymen, 0x2001, 0);
 			setRectList(0x004B38B8);
 		} else if (param.asInteger() == 0x402064D8)
-			sendEntityMessage(_klayman, 0x1014, _ssButton);
+			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x231DA241) {
 			if (_ssButton)
 				setMessageList(0x004B38F0);
@@ -2042,7 +2042,7 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 		_elevatorSurfacePriority = param.asInteger();
 		break;
 	case 0x2003:
-		_isKlaymanBusy = false;
+		_isKlaymenBusy = false;
 		break;
 	case 0x4807:
 		sendMessage(_asWallRobotAnimation, 0x2007, 0);
@@ -2067,15 +2067,15 @@ uint32 Scene2207::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
-			if (_klayman->getY() == 423) {
-				sendEntityMessage(_klayman, 0x1014, _asTape);
+			if (_klaymen->getY() == 423) {
+				sendEntityMessage(_klaymen, 0x1014, _asTape);
 				setMessageList(0x004B3958);
 			}
-		} else if (_klaymanAtElevator) {
+		} else if (_klaymenAtElevator) {
 			SetMessageHandler(&Scene2207::handleMessage2);
 			sendMessage(_asElevator, 0x2000, 347);
-			sendEntityMessage(_klayman, 0x1014, _asElevator);
-			sendMessage(_klayman, 0x2001, 0);
+			sendEntityMessage(_klaymen, 0x1014, _asElevator);
+			sendMessage(_klaymen, 0x2001, 0);
 		}
 		break;
 	}
@@ -2090,8 +2090,8 @@ uint32 Scene2207::handleMessage2(int messageNum, const MessageParam &param, Enti
 		break;
 	case 0x2004:
 		SetMessageHandler(&Scene2207::handleMessage);
-		sendMessage(_klayman, 0x2005, 0);
-		sendEntityMessage(_klayman, 0x1014, _asLever);
+		sendMessage(_klaymen, 0x2005, 0);
+		sendEntityMessage(_klaymen, 0x1014, _asLever);
 		setMessageList(0x004B3920);
 		setRectList(0x004B3948);
 		break;
@@ -2273,7 +2273,7 @@ static const uint32 kScene2242MessageListIds1[] = {
 };
 
 Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _isKlaymanInLight(false) {
+	: Scene(vm, parentModule), _isKlaymenInLight(false) {
 
 	SetMessageHandler(&Scene2242::handleMessage);
 	SetUpdateHandler(&Scene2242::update);
@@ -2298,42 +2298,42 @@ Scene2242::Scene2242(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene2242>(200, 430);
+		insertKlaymen<KmScene2242>(200, 430);
 		setMessageList(0x004B3C18);
 	} else if (which == 1) {
 		// Klaymen entering from looking through the window
-		insertKlayman<KmScene2242>(530, 430);
+		insertKlaymen<KmScene2242>(530, 430);
 		setMessageList(0x004B3D60);
 	} else if (which == 2) {
 		// Klaymen returning from reading a text column
-		insertKlayman<KmScene2242>(kScene2242XPositions[!getGlobalVar(V_CLICKED_COLUMN_INDEX) ? 0 : 1], 430);
+		insertKlaymen<KmScene2242>(kScene2242XPositions[!getGlobalVar(V_CLICKED_COLUMN_INDEX) ? 0 : 1], 430);
 		setMessageList(0x004B3D48);
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X))
-			_klayman->setDoDeltaX(1);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X))
+			_klaymen->setDoDeltaX(1);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene2242>(0, 430);
+		insertKlaymen<KmScene2242>(0, 430);
 		setMessageList(0x004B3C20);
 	}
 
-	_klayman->setSoundFlag(true);
+	_klaymen->setSoundFlag(true);
 
 }
 
 Scene2242::~Scene2242() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
 
 void Scene2242::update() {
 	if (!getGlobalVar(V_LIGHTS_ON)) {
-		if (_isKlaymanInLight && _klayman->getX() < 440) {
+		if (_isKlaymenInLight && _klaymen->getX() < 440) {
 			_palette->addBasePalette(0x68033B1C, 0, 65, 0);
 			_palette->startFadeToPalette(12);
-			_isKlaymanInLight = false;
-		} else if (!_isKlaymanInLight && _klayman->getX() >= 440) {
+			_isKlaymenInLight = false;
+		} else if (!_isKlaymenInLight && _klaymen->getX() >= 440) {
 			_palette->addBasePalette(0x25848E24, 0, 65, 0);
 			_palette->startFadeToPalette(12);
-			_isKlaymanInLight = true;
+			_isKlaymenInLight = true;
 		}
 	}
 	Scene::update();
@@ -2348,7 +2348,7 @@ uint32 Scene2242::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
-			sendEntityMessage(_klayman, 0x1014, _asTape);
+			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004B3D50);
 		}
 		break;
@@ -2370,13 +2370,13 @@ void Scene2242::readClickedColumn() {
 		index = 1;
 	}
 	setGlobalVar(V_CLICKED_COLUMN_ROW, (_mouseClickPos.y - 100) / 7);
-	if (ABS(_klayman->getX() - kScene2242XPositions[index]) < 133)
+	if (ABS(_klaymen->getX() - kScene2242XPositions[index]) < 133)
 		setMessageList2(kScene2242MessageListIds1[index]);
 	else
 		setMessageList2(kScene2242MessageListIds2[index]);
 }
 
-static const int16 kHallOfRecordsKlaymanXPos[] = {
+static const int16 kHallOfRecordsKlaymenXPos[] = {
 	 68, 157, 246, 335, 
 	424, 513, 602
 };
@@ -2413,31 +2413,31 @@ HallOfRecordsScene::HallOfRecordsScene(NeverhoodEngine *vm, Module *parentModule
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmHallOfRecords>(200, 430);
+		insertKlaymen<KmHallOfRecords>(200, 430);
 		setMessageList(0x004B2900);
 	} else if (which == 1) {
 		// Klaymen entering from the right
-		insertKlayman<KmHallOfRecords>(640, 430);
+		insertKlaymen<KmHallOfRecords>(640, 430);
 		setMessageList(0x004B2910);
 	} else if (which == 2) {
 		// Klaymen returning from reading a text column
-		insertKlayman<KmHallOfRecords>(kHallOfRecordsKlaymanXPos[getGlobalVar(V_CLICKED_COLUMN_INDEX) - _hallOfRecordsInfo->xPosIndex], 430);
+		insertKlaymen<KmHallOfRecords>(kHallOfRecordsKlaymenXPos[getGlobalVar(V_CLICKED_COLUMN_INDEX) - _hallOfRecordsInfo->xPosIndex], 430);
 		setMessageList(0x004B2B70);
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X))
-			_klayman->setDoDeltaX(1);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X))
+			_klaymen->setDoDeltaX(1);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmHallOfRecords>(0, 430);
+		insertKlaymen<KmHallOfRecords>(0, 430);
 		setMessageList(0x004B2908);
 	}
 
-	_klayman->setSoundFlag(true);
-	_klayman->setKlaymanIdleTable2();
+	_klaymen->setSoundFlag(true);
+	_klaymen->setKlaymenIdleTable2();
 
 }
 
 HallOfRecordsScene::~HallOfRecordsScene() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
 
 uint32 HallOfRecordsScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -2463,7 +2463,7 @@ void HallOfRecordsScene::readClickedColumn() {
 			setGlobalVar(V_COLUMN_BACK_NAME, _hallOfRecordsInfo->bgFilename3);
 		else
 			setGlobalVar(V_COLUMN_BACK_NAME, 0);
-		if (ABS(_klayman->getX() - kHallOfRecordsKlaymanXPos[index]) < 133)
+		if (ABS(_klaymen->getX() - kHallOfRecordsKlaymenXPos[index]) < 133)
 			setMessageList2(kHallOfRecordsSceneMessageListIds1[index]);
 		else
 			setMessageList2(kHallOfRecordsSceneMessageListIds2[index]);
@@ -2502,30 +2502,30 @@ Scene2247::Scene2247(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene2247>(200, 430);
+		insertKlaymen<KmScene2247>(200, 430);
 		setMessageList(0x004B5428);
 	} else if (which == 1) {
 		// Klaymen entering from the right
-		insertKlayman<KmScene2247>(640, 430);
+		insertKlaymen<KmScene2247>(640, 430);
 		setMessageList(0x004B5438);
 	} else if (which == 2) {
 		// Klaymen returning from reading a text column
-		insertKlayman<KmScene2247>(kScene2247XPositions[getGlobalVar(V_COLUMN_TEXT_NAME) == 0x0008E486 ? 0 : 1], 430);
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X))
-			_klayman->setDoDeltaX(1);
+		insertKlaymen<KmScene2247>(kScene2247XPositions[getGlobalVar(V_COLUMN_TEXT_NAME) == 0x0008E486 ? 0 : 1], 430);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X))
+			_klaymen->setDoDeltaX(1);
 		setMessageList(0x004B5530);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene2247>(0, 430);
+		insertKlaymen<KmScene2247>(0, 430);
 		setMessageList(0x004B5430);
 	}
 
-	_klayman->setSoundFlag(true);
+	_klaymen->setSoundFlag(true);
 	
 }
 
 Scene2247::~Scene2247() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
 
 uint32 Scene2247::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
@@ -2552,7 +2552,7 @@ void Scene2247::readClickedColumn() {
 	}
 	setGlobalVar(V_CLICKED_COLUMN_INDEX, 0);
 	setGlobalVar(V_CLICKED_COLUMN_ROW, (_mouseClickPos.y - 100) / 7);
-	if (ABS(_klayman->getX() - kScene2247XPositions[index]) < 133)
+	if (ABS(_klaymen->getX() - kScene2247XPositions[index]) < 133)
 		setMessageList2(kScene2247MessageListIds1[index]);
 	else
 		setMessageList2(kScene2247MessageListIds2[index]);

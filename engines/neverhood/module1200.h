@@ -61,9 +61,9 @@ protected:
 
 class AsScene1201RightDoor : public AnimatedSprite {
 public:
-	AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman, bool isOpen);
+	AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klaymen, bool isOpen);
 protected:
-	Sprite *_klayman;
+	Sprite *_klaymen;
 	int _countdown;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -72,9 +72,9 @@ protected:
 	void stCloseDoorDone();
 };
 
-class AsScene1201KlaymanHead : public AnimatedSprite {
+class AsScene1201KlaymenHead : public AnimatedSprite {
 public:
-	AsScene1201KlaymanHead(NeverhoodEngine *vm);
+	AsScene1201KlaymenHead(NeverhoodEngine *vm);
 protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -126,28 +126,28 @@ protected:
 
 class AsScene1201Creature : public AnimatedSprite {
 public:
-	AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman);
+	AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene, Sprite *klaymen);
 protected:
 	Scene *_parentScene;
-	Sprite *_klayman;
+	Sprite *_klaymen;
 	int _countdown;
-	bool _klaymanTooClose;
+	bool _klaymenTooClose;
 	void update();
 	uint32 hmWaiting(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmPincerSnap(int messageNum, const MessageParam &param, Entity *sender);
-	uint32 hmPincerSnapKlayman(int messageNum, const MessageParam &param, Entity *sender);
+	uint32 hmPincerSnapKlaymen(int messageNum, const MessageParam &param, Entity *sender);
 	void stWaiting();
 	void stPincerSnap();
 	void stStartReachForTntDummy();
 	void stReachForTntDummy();
-	void stPincerSnapKlayman();
+	void stPincerSnapKlaymen();
 };
 
 class AsScene1201LeftDoor : public AnimatedSprite {
 public:
-	AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klayman);
+	AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klaymen);
 protected:
-	Sprite *_klayman;
+	Sprite *_klaymen;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void stCloseDoor();
 };
@@ -171,7 +171,7 @@ protected:
 	Sprite *_asLeftDoor;
 	Sprite *_asRightDoor;
 	Sprite *_asTape;
-	Sprite *_asKlaymanHead;
+	Sprite *_asKlaymenHead;
 	bool _creatureExploded;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);

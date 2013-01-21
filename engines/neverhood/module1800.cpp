@@ -161,7 +161,7 @@ void Module1800::updateScene() {
 			leaveModule(3);
 			break;
 		case 8:
-			// NOTE: After Klayman jumped into the hole and died...
+			// NOTE: After Klaymen jumped into the hole and died...
 			leaveModule(1);
 			break;
 		case 1009:

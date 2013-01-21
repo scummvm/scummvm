@@ -27,7 +27,7 @@ namespace Neverhood {
 Scene::Scene(NeverhoodEngine *vm, Module *parentModule)
 	: Entity(vm, 0), _parentModule(parentModule), _dataResource(vm), _hitRects(NULL) {
 	
-	_isKlaymanBusy = false;
+	_isKlaymenBusy = false;
 	_doConvertMessages = false;
 	_messageList = NULL;
 	_rectType = 0;
@@ -35,7 +35,7 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule)
 	_mouseClickPos.y = 0;
 	_mouseClicked = false;
 	_rectList = NULL;
-	_klayman = NULL;
+	_klaymen = NULL;
 	_mouseCursor = NULL;
 	_palette = NULL;
 	_background = NULL;
@@ -228,15 +228,15 @@ SmackerPlayer *Scene::addSmackerPlayer(SmackerPlayer *smackerPlayer) {
 void Scene::update() {
 
 	if (_mouseClicked) {
-		if (_klayman) {
+		if (_klaymen) {
 			if (_canAcceptInput &&
-				_klayman->hasMessageHandler() && 
-				sendMessage(_klayman, 0x1008, 0) != 0 &&
+				_klaymen->hasMessageHandler() && 
+				sendMessage(_klaymen, 0x1008, 0) != 0 &&
 				queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {
 				_mouseClicked = false;
 			} else if (_canAcceptInput &&
-				_klayman->hasMessageHandler() && 
-				sendMessage(_klayman, 0x1008, 0) != 0) {
+				_klaymen->hasMessageHandler() && 
+				sendMessage(_klaymen, 0x1008, 0) != 0) {
 				_mouseClicked = !queryPositionRectList(_mouseClickPos.x, _mouseClickPos.y);
 			}
 		} else if (queryPositionSprite(_mouseClickPos.x, _mouseClickPos.y)) {
@@ -270,13 +270,13 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		sendMessage(_parentModule, 0x1009, param);		
 		break;
 	case 0x1006:
-		// Sent by Klayman when its animation sequence has finished
-		if (_isKlaymanBusy) {
-			_isKlaymanBusy = false;
+		// Sent by Klaymen when its animation sequence has finished
+		if (_isKlaymenBusy) {
+			_isKlaymenBusy = false;
 			if (_messageListIndex == _messageListCount) {
 				// If the current message list was processed completely,
-				// sent Klayman into the idle state.
-				sendMessage(_klayman, 0x4004, 0);
+				// sent Klaymen into the idle state.
+				sendMessage(_klaymen, 0x4004, 0);
 			} else {
 				// Else continue with the next message in the current message list
 				processMessageList();
@@ -285,11 +285,11 @@ uint32 Scene::handleMessage(int messageNum, const MessageParam &param, Entity *s
 		break;
 	case 0x1007:
 		// This isn't sent by any code, check if it's in a message list
-		// This cancels the current message list and sets Klayman into the idle state.
-		if (_isKlaymanBusy) {
-			_isKlaymanBusy = false;
+		// This cancels the current message list and sets Klaymen into the idle state.
+		if (_isKlaymenBusy) {
+			_isKlaymenBusy = false;
 			_messageList = NULL;
-			sendMessage(_klayman, 0x4004, 0);
+			sendMessage(_klaymen, 0x4004, 0);
 		}
 		break;
 	case 0x101D:
@@ -325,13 +325,13 @@ bool Scene::queryPositionSprite(int16 mouseX, int16 mouseY) {
 }
 
 bool Scene::queryPositionRectList(int16 mouseX, int16 mouseY) {
-	int16 klaymanX = _klayman->getX();
-	int16 klaymanY = _klayman->getY();
+	int16 klaymenX = _klaymen->getX();
+	int16 klaymenY = _klaymen->getY();
 	if (_rectType == 1) {
 		RectList &rectList = *_rectList;
 		for (uint i = 0; i < rectList.size(); i++) {
-			debug(2, "(%d, %d) ? (%d, %d, %d, %d)", klaymanX, klaymanY, rectList[i].rect.x1, rectList[i].rect.y1, rectList[i].rect.x2, rectList[i].rect.y2);
-			if (rectList[i].rect.contains(klaymanX, klaymanY)) {
+			debug(2, "(%d, %d) ? (%d, %d, %d, %d)", klaymenX, klaymenY, rectList[i].rect.x1, rectList[i].rect.y1, rectList[i].rect.x2, rectList[i].rect.y2);
+			if (rectList[i].rect.contains(klaymenX, klaymenY)) {
 				for (uint j = 0; j < rectList[i].subRects.size(); j++) {
 					debug(2, "  (%d, %d) ? (%d, %d, %d, %d)", mouseX, mouseY, rectList[i].subRects[j].rect.x1, rectList[i].subRects[j].rect.y1, rectList[i].subRects[j].rect.x2, rectList[i].subRects[j].rect.y2);
 					if (rectList[i].subRects[j].rect.contains(mouseX, mouseY)) {
@@ -341,7 +341,7 @@ bool Scene::queryPositionRectList(int16 mouseX, int16 mouseY) {
 			}
 		}
 	} else if (_rectType == 2) {
-		MessageList *messageList = _dataResource.getMessageListAtPos(klaymanX, klaymanY, mouseX, mouseY);
+		MessageList *messageList = _dataResource.getMessageListAtPos(klaymenX, klaymenY, mouseX, mouseY);
 		if (messageList && messageList->size())
 			setMessageList2(messageList, true, true);
 	}
@@ -356,11 +356,11 @@ void Scene::setMessageList(MessageList *messageList, bool canAcceptInput, bool d
 	_messageList = messageList;
 	_messageListCount = _messageList ? _messageList->size() : 0;
 	_messageListIndex = 0;
-	_isKlaymanBusy = false;
+	_isKlaymenBusy = false;
 	_canAcceptInput = canAcceptInput;
 	_doConvertMessages = doConvertMessages;
 	_messageListStatus = 1;
-	sendMessage(_klayman, 0x101C, 0);
+	sendMessage(_klaymen, 0x101C, 0);
 }
 
 bool Scene::setMessageList2(uint32 id, bool canAcceptInput, bool doConvertMessages) {
@@ -385,9 +385,9 @@ bool Scene::isMessageList2(uint32 id) {
 }
 
 void Scene::processMessageList() {
-	debug(7, "Scene::processMessageList() _isMessageListBusy = %d; _isKlaymanBusy = %d", _isMessageListBusy, _isKlaymanBusy);
+	debug(7, "Scene::processMessageList() _isMessageListBusy = %d; _isKlaymenBusy = %d", _isMessageListBusy, _isKlaymenBusy);
 
-	if (_isMessageListBusy || _isKlaymanBusy)
+	if (_isMessageListBusy || _isKlaymenBusy)
 		return;
 
 	_isMessageListBusy = true;
@@ -397,7 +397,7 @@ void Scene::processMessageList() {
 		_messageListStatus = 0;
 	}
 	
-	if (_messageList && _klayman) {	
+	if (_messageList && _klaymen) {	
 
 #if 0
 		debug("MessageList: %p, %d", (void*)_messageList, _messageList->size());
@@ -408,13 +408,13 @@ void Scene::processMessageList() {
 		debug("--------------------------------");
 #endif
 	
-		while (_messageList && _messageListIndex < _messageListCount && !_isKlaymanBusy) {
+		while (_messageList && _messageListIndex < _messageListCount && !_isKlaymenBusy) {
 			uint32 messageNum = (*_messageList)[_messageListIndex].messageNum;
 			uint32 messageParam = (*_messageList)[_messageListIndex].messageValue;
 			
 			++_messageListIndex;
 			if (_messageListIndex == _messageListCount)
-				sendMessage(_klayman, 0x1021, 0);
+				sendMessage(_klaymen, 0x1021, 0);
 			if (_doConvertMessages)
 				messageNum = convertMessageNum(messageNum);
 			if (messageNum == 0x1009 || messageNum == 0x1024) {
@@ -423,8 +423,8 @@ void Scene::processMessageList() {
 				_messageValue = messageParam;
 				sendMessage(_parentModule, messageNum, messageParam);
 			} else if (messageNum == 0x4001) {
-				_isKlaymanBusy = true;
-				sendPointMessage(_klayman, 0x4001, _mouseClickPos);
+				_isKlaymenBusy = true;
+				sendPointMessage(_klaymen, 0x4001, _mouseClickPos);
 			} else if (messageNum == 0x100D) {
 				if (this->hasMessageHandler() && sendMessage(this, 0x100D, messageParam) != 0)
 					continue;
@@ -440,9 +440,9 @@ void Scene::processMessageList() {
 					return;
 				}
 			} else if (messageNum != 0x4003) {
-				_isKlaymanBusy = true;
-				if (_klayman->hasMessageHandler() && sendMessage(_klayman, messageNum, messageParam) != 0) {
-					_isKlaymanBusy = false;
+				_isKlaymenBusy = true;
+				if (_klaymen->hasMessageHandler() && sendMessage(_klaymen, messageNum, messageParam) != 0) {
+					_isKlaymenBusy = false;
 				}
 			} 
 			if (_messageListIndex == _messageListCount) {
@@ -457,10 +457,10 @@ void Scene::processMessageList() {
 }
 
 void Scene::cancelMessageList() {
-	_isKlaymanBusy = false;
+	_isKlaymenBusy = false;
 	_messageList = NULL;
 	_canAcceptInput = true;
-	sendMessage(_klayman, 0x4004, 0);
+	sendMessage(_klaymen, 0x4004, 0);
 }
 
 void Scene::setRectList(uint32 id) {
@@ -488,8 +488,8 @@ void Scene::loadHitRectList() {
 void Scene::loadDataResource(uint32 fileHash) {
 	_dataResource.load(fileHash);
 	_rectType = 2;
-	if (_klayman)
-		_klayman->loadDataResource(fileHash);
+	if (_klaymen)
+		_klaymen->loadDataResource(fileHash);
 }
 
 uint16 Scene::convertMessageNum(uint32 messageNum) {

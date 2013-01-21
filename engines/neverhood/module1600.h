@@ -140,13 +140,13 @@ protected:
 	Sprite *_sprite2;
 	Sprite *_sprite3;
 	Sprite *_asTape;
-	Klayman *_kmScene1608;
+	Klaymen *_kmScene1608;
 	NRect _clipRect1;
 	NRect _clipRect2;
 	NRect _clipRect3;
 	int _carStatus;
 	bool _carClipFlag;
-	bool _klaymanInCar;
+	bool _klaymenInCar;
 	int _countdown1;
 	NPointArray *_roomPathPoints;
 	void upLowerFloor();
@@ -158,7 +158,7 @@ protected:
 	uint32 hmUpperFloor(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmRidingCar(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmCarAtHome(int messageNum, const MessageParam &param, Entity *sender);
-	void updateKlaymanCliprect();
+	void updateKlaymenCliprect();
 };
 
 class Scene1609 : public Scene {

@@ -1200,11 +1200,11 @@ Scene2732::Scene2732(NeverhoodEngine *vm, Module *parentModule)
 	insertScreenMouse(0x0C04502A);
 	setRectList(0x004AE360);
 
-	insertKlayman<KmScene2732>(108, 331);
+	insertKlaymen<KmScene2732>(108, 331);
 	setMessageList(0x004AE328);
 
 	tempSprite = insertStaticSprite(0x50C22C48, 1100);
-	_klayman->setClipRect(tempSprite->getDrawRect().x, 0, 640, 480);
+	_klaymen->setClipRect(tempSprite->getDrawRect().x, 0, 640, 480);
 
 }
 

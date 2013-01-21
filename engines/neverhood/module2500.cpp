@@ -241,9 +241,9 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene2501>(162, 393);
-		_kmScene2501 = _klayman;
-		_klaymanInCar = false;
+		insertKlaymen<KmScene2501>(162, 393);
+		_kmScene2501 = _klaymen;
+		_klaymenInCar = false;
 		setMessageList(0x004B2538);
 		setRectList(0x004B2608);
 		SetMessageHandler(&Scene2501::handleMessage);
@@ -255,8 +255,8 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		// 1: Klaymen entering riding the car on the left track
 		// 2: Klaymen entering riding the car on the bottom track
 		addSprite(_asCar);
-		_kmScene2501 = (Klayman*)new KmScene2501(_vm, this, 275, 393);
-		_klaymanInCar = true;
+		_kmScene2501 = (Klaymen*)new KmScene2501(_vm, this, 275, 393);
+		_klaymenInCar = true;
 		sendMessage(_kmScene2501, 0x2000, 1);
 		_kmScene2501->setDoDeltaX(1);
 		SetMessageHandler(&Scene2501::hmRidingCar);
@@ -266,9 +266,9 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 		_currTrackIndex = which;
 	} else {
 		// Klaymen entering the car
-		insertKlayman<KmScene2501>(162, 393);
-		_kmScene2501 = _klayman;
-		_klaymanInCar = false;
+		insertKlaymen<KmScene2501>(162, 393);
+		_kmScene2501 = _klaymen;
+		_klaymenInCar = false;
 		setMessageList(0x004B2538);
 		setRectList(0x004B2608);
 		SetMessageHandler(&Scene2501::handleMessage);
@@ -307,7 +307,7 @@ Scene2501::Scene2501(NeverhoodEngine *vm, Module *parentModule, int which)
 
 Scene2501::~Scene2501() {
 	// Free sprites not currently in the sprite list
-	if (_klaymanInCar)
+	if (_klaymenInCar)
 		delete _kmScene2501;
 	else
 		delete _asCar;
@@ -316,10 +316,10 @@ Scene2501::~Scene2501() {
 void Scene2501::update() {
 	Scene::update();
 	if (_carStatus == 1) {
-		removeSprite(_klayman);
+		removeSprite(_klaymen);
 		addSprite(_asCar);
 		clearRectList();
-		_klaymanInCar = true;
+		_klaymenInCar = true;
 		SetMessageHandler(&Scene2501::hmCarAtHome);
 		SetUpdateHandler(&Scene2501::upCarAtHome);
 		_asIdleCarLower->setVisible(false);
@@ -327,10 +327,10 @@ void Scene2501::update() {
 		_asCar->setVisible(true);
 		sendMessage(_asCar, 0x2009, 0);
 		_asCar->handleUpdate();
-		_klayman = NULL;
+		_klaymen = NULL;
 		_carStatus = 0;
 	}
-	updateKlaymanClipRect();
+	updateKlaymenClipRect();
 }
 
 void Scene2501::upCarAtHome() {
@@ -346,16 +346,16 @@ void Scene2501::upCarAtHome() {
 		}
 		_mouseClicked = false;
 	}
-	updateKlaymanClipRect();
+	updateKlaymenClipRect();
 }
 
 void Scene2501::upGettingOutOfCar() {
 	Scene::update();
 	if (_carStatus == 2) {
-		_klayman = _kmScene2501;
+		_klaymen = _kmScene2501;
 		removeSprite(_asCar);
-		addSprite(_klayman);
-		_klaymanInCar = false;
+		addSprite(_klaymen);
+		_klaymenInCar = false;
 		SetMessageHandler(&Scene2501::handleMessage);
 		SetUpdateHandler(&Scene2501::update);
 		setRectList(0x004B2608);
@@ -364,10 +364,10 @@ void Scene2501::upGettingOutOfCar() {
 		_asCar->setVisible(false);
 		setMessageList(0x004B2570);
 		processMessageList();
-		_klayman->handleUpdate();
+		_klaymen->handleUpdate();
 		_carStatus = 0;
 	}
-	updateKlaymanClipRect();
+	updateKlaymenClipRect();
 }
 
 void Scene2501::upRidingCar() {
@@ -463,7 +463,7 @@ void Scene2501::changeTrack() {
 	_newTrackIndex = -1;
 }
 
-void Scene2501::updateKlaymanClipRect() {
+void Scene2501::updateKlaymenClipRect() {
 	if (_kmScene2501->getX() <= 211)
 		_kmScene2501->setClipRect(0, 0, 640, 480);
 	else

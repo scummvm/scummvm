@@ -196,8 +196,8 @@ uint32 AsScene1201TntManRope::handleMessage(int messageNum, const MessageParam &
 	return messageResult;
 }
 
-AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klayman, bool isOpen)
-	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown(0) {
+AsScene1201RightDoor::AsScene1201RightDoor(NeverhoodEngine *vm, Sprite *klaymen, bool isOpen)
+	: AnimatedSprite(vm, 1100), _klaymen(klaymen), _countdown(0) {
 
 	createSurface1(0xD088AC30, 100);
 	_x = 320;
@@ -254,17 +254,17 @@ void AsScene1201RightDoor::stCloseDoorDone() {
 	setVisible(false);
 }
 		
-AsScene1201KlaymanHead::AsScene1201KlaymanHead(NeverhoodEngine *vm)
+AsScene1201KlaymenHead::AsScene1201KlaymenHead(NeverhoodEngine *vm)
 	: AnimatedSprite(vm, 1200) {
 	
 	createSurface(1200, 69, 98);
 	SetUpdateHandler(&AnimatedSprite::update);
-	SetMessageHandler(&AsScene1201KlaymanHead::handleMessage);
+	SetMessageHandler(&AsScene1201KlaymenHead::handleMessage);
 	SetSpriteUpdate(&AnimatedSprite::updateDeltaXY);
 	setVisible(false);
 }
 
-uint32 AsScene1201KlaymanHead::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1201KlaymenHead::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x2006:
@@ -514,8 +514,8 @@ void AsScene1201Match::stIdleOnFloor() {
 	_newStickFrameIndex = 0;
 }
 
-AsScene1201Creature::AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman)
-	: AnimatedSprite(vm, 900), _parentScene(parentScene), _klayman(klayman), _klaymanTooClose(false) {
+AsScene1201Creature::AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene, Sprite *klaymen)
+	: AnimatedSprite(vm, 900), _parentScene(parentScene), _klaymen(klaymen), _klaymenTooClose(false) {
 
 	// NOTE: _countdown2 and _countdown3 were unused/without effect and thus removed
 	
@@ -528,9 +528,9 @@ AsScene1201Creature::AsScene1201Creature(NeverhoodEngine *vm, Scene *parentScene
 }
 
 void AsScene1201Creature::update() {
-	bool oldKlaymanTooClose = _klaymanTooClose;
-	_klaymanTooClose = _klayman->getX() >= 385;
-	if (_klaymanTooClose != oldKlaymanTooClose)
+	bool oldKlaymenTooClose = _klaymenTooClose;
+	_klaymenTooClose = _klaymen->getX() >= 385;
+	if (_klaymenTooClose != oldKlaymenTooClose)
 		stWaiting();
 	if (_countdown != 0 && (--_countdown == 0))
 		gotoNextState();
@@ -550,7 +550,7 @@ uint32 AsScene1201Creature::hmWaiting(int messageNum, const MessageParam &param,
 		GotoState(&AsScene1201Creature::stStartReachForTntDummy);
 		break;
 	case 0x2006:
-		GotoState(&AsScene1201Creature::stPincerSnapKlayman);
+		GotoState(&AsScene1201Creature::stPincerSnapKlaymen);
 		break;
 	}
 	return messageResult;
@@ -566,14 +566,14 @@ uint32 AsScene1201Creature::hmPincerSnap(int messageNum, const MessageParam &par
 	return messageResult;
 }
 
-uint32 AsScene1201Creature::hmPincerSnapKlayman(int messageNum, const MessageParam &param, Entity *sender) {
+uint32 AsScene1201Creature::hmPincerSnapKlaymen(int messageNum, const MessageParam &param, Entity *sender) {
 	uint32 messageResult = Sprite::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x02060018) {
 			playSound(0, 0xCD298116);
 			sendMessage(_parentScene, 0x4814, 0);
-			sendMessage(_klayman, 0x4814, 0);
+			sendMessage(_klaymen, 0x4814, 0);
 		}
 		break;
 	case 0x3002:
@@ -591,7 +591,7 @@ void AsScene1201Creature::stWaiting() {
 }
 
 void AsScene1201Creature::stPincerSnap() {
-	if (!_klaymanTooClose) {
+	if (!_klaymenTooClose) {
 		startAnimation(0xCA287133, 0, -1);
 		SetMessageHandler(&AsScene1201Creature::hmPincerSnap);
 		NextState(&AsScene1201Creature::stWaiting);
@@ -611,20 +611,20 @@ void AsScene1201Creature::stReachForTntDummy() {
 	_countdown = 0;
 }
 
-void AsScene1201Creature::stPincerSnapKlayman() {
+void AsScene1201Creature::stPincerSnapKlaymen() {
 	startAnimation(0xCA287133, 0, -1);
-	SetMessageHandler(&AsScene1201Creature::hmPincerSnapKlayman);
+	SetMessageHandler(&AsScene1201Creature::hmPincerSnapKlaymen);
 	NextState(&AsScene1201Creature::stWaiting);
 	_countdown = 0;
 }
 
-AsScene1201LeftDoor::AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klayman)
-	: AnimatedSprite(vm, 1100), _klayman(klayman) {
+AsScene1201LeftDoor::AsScene1201LeftDoor(NeverhoodEngine *vm, Sprite *klaymen)
+	: AnimatedSprite(vm, 1100), _klaymen(klaymen) {
 
 	_x = 320;
 	_y = 240;
 	createSurface(800, 55, 199);
-	if (_klayman->getX() < 100) {
+	if (_klaymen->getX() < 100) {
 		startAnimation(0x508A111B, 0, -1);
 		_newStickFrameIndex = STICK_LAST_FRAME;
 		playSound(0, calcHash("fxDoorOpen03"));
@@ -699,42 +699,42 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	tempSprite = insertStaticSprite(0xA29223FA, 1200);
 	x2 = tempSprite->getX() + tempSprite->getDrawRect().width;
 
-	_asKlaymanHead = insertSprite<AsScene1201KlaymanHead>();
+	_asKlaymenHead = insertSprite<AsScene1201KlaymenHead>();
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene1201>(364, 333);
+		insertKlaymen<KmScene1201>(364, 333);
 		setMessageList(0x004AEC08);
 	} else if (which == 3) {
 		// Klaymen standing after the weasel exploded
-		insertKlayman<KmScene1201>(400, 329);
+		insertKlaymen<KmScene1201>(400, 329);
 		setMessageList(0x004AEC08);
 	} else if (which == 2) {
 		// Klaymen entering from the right
 		if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED)) {
-			insertKlayman<KmScene1201>(374, 333);
+			insertKlaymen<KmScene1201>(374, 333);
 			setMessageList(0x004AEC08);
 		} else {
-			insertKlayman<KmScene1201>(640, 329);
+			insertKlaymen<KmScene1201>(640, 329);
 			setMessageList(0x004AEC20);
 		}
 	} else if (which == 1) {
 		// Klaymen returning from the TNT console
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
-			insertKlayman<KmScene1201>(364, 333);
-			_klayman->setDoDeltaX(1);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X)) {
+			insertKlaymen<KmScene1201>(364, 333);
+			_klaymen->setDoDeltaX(1);
 		} else {
-			insertKlayman<KmScene1201>(246, 333);
+			insertKlaymen<KmScene1201>(246, 333);
 		}
 		setMessageList(0x004AEC30);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene1201>(0, 336);
+		insertKlaymen<KmScene1201>(0, 336);
 		setMessageList(0x004AEC10);
 	}
 
-	_klayman->setClipRect(x1, 0, x2, 480);
-	_klayman->setRepl(64, 0);
+	_klaymen->setClipRect(x1, 0, x2, 480);
+	_klaymen->setRepl(64, 0);
 	
 	if (getGlobalVar(V_CREATURE_ANGRY) && !getGlobalVar(V_CREATURE_EXPLODED)) {
 		setBackground(0x4019A2C4);
@@ -743,7 +743,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	} else {
 		setBackground(0x40206EC5);
 		setPalette(0x40206EC5);
-		_asRightDoor = insertSprite<AsScene1201RightDoor>(_klayman, which == 2);
+		_asRightDoor = insertSprite<AsScene1201RightDoor>(_klaymen, which == 2);
 	}
 
 	if (getGlobalVar(V_TNT_DUMMY_BUILT)) {
@@ -816,7 +816,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	tempSprite = insertStaticSprite(0x63D400BC, 900);
 
-	_asLeftDoor = insertSprite<AsScene1201LeftDoor>(_klayman);
+	_asLeftDoor = insertSprite<AsScene1201LeftDoor>(_klaymen);
 	_asLeftDoor->setClipRect(x1, tempSprite->getDrawRect().y, tempSprite->getDrawRect().x2(), 480);
 
 	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(V_MATCH_STATUS) == 0)
@@ -830,7 +830,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 
 	if (getGlobalVar(V_CREATURE_ANGRY) && getGlobalVar(V_CREATURE_EXPLODED) == 0) {
-		_asCreature = insertSprite<AsScene1201Creature>(this, _klayman);
+		_asCreature = insertSprite<AsScene1201Creature>(this, _klaymen);
 		_asCreature->setClipRect(x1, 0, x2, 480);
 	}
 
@@ -839,7 +839,7 @@ Scene1201::Scene1201(NeverhoodEngine *vm, Module *parentModule, int which)
 Scene1201::~Scene1201() {
 	if (_creatureExploded)
 		setGlobalVar(V_CREATURE_EXPLODED, 1);
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
 
 void Scene1201::update() {
@@ -861,7 +861,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 			_canAcceptInput = false;
 			sendMessage(_asCreature, 0x2006, 0);
 		} else if (param.asInteger() == 0x090EB048) {
-			if (_klayman->getX() < 572)
+			if (_klaymen->getX() < 572)
 				setMessageList2(0x004AEC90);
 			else
 				setMessageList2(0x004AEC20);
@@ -871,19 +871,19 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		if (getGlobalVar(V_MATCH_STATUS) == 0)
 			setMessageList2(0x004AECB0);
 		else {
-			sendEntityMessage(_klayman, 0x1014, _asMatch);
+			sendEntityMessage(_klaymen, 0x1014, _asMatch);
 			setMessageList2(0x004AECC0);
 		}
 		break;
 	case 0x2002:		
 		if (getGlobalVar(V_TNT_DUMMY_FUSE_LIT)) {
 			// Move the TNT dummy if the fuse is burning
-			sendEntityMessage(_klayman, 0x1014, _asTntMan);
+			sendEntityMessage(_klaymen, 0x1014, _asTntMan);
 			setMessageList2(0x004AECF0, false);
 		} else if (getGlobalVar(V_MATCH_STATUS) == 3) {
 			// Light the TNT dummy if we have the match
-			sendEntityMessage(_klayman, 0x1014, _asTntMan);
-			if (_klayman->getX() > _asTntMan->getX())
+			sendEntityMessage(_klaymen, 0x1014, _asTntMan);
+			if (_klaymen->getX() > _asTntMan->getX())
 				setMessageList(0x004AECD0);
 			else
 				setMessageList(0x004AECE0);
@@ -894,7 +894,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
-			sendEntityMessage(_klayman, 0x1014, _asTape);
+			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004AED38);
 		}
 		break;
@@ -902,7 +902,7 @@ uint32 Scene1201::handleMessage(int messageNum, const MessageParam &param, Entit
 		sendMessage(_asRightDoor, 0x4829, 0);
 		break;
 	case 0x8000:
-		sendMessage(_asKlaymanHead, 0x2006, 0);
+		sendMessage(_asKlaymenHead, 0x2006, 0);
 		break;		
 	}
 	return messageResult;

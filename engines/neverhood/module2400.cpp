@@ -404,19 +404,19 @@ Scene2401::Scene2401(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene2401>(200, 447);
+		insertKlaymen<KmScene2401>(200, 447);
 		setMessageList(0x004B2F70);
 		_asDoor = insertSprite<AsScene2401Door>(false);
 	} else if (which == 1) {
 		// Klaymen entering from the back
-		insertKlayman<KmScene2401>(280, 413);
+		insertKlaymen<KmScene2401>(280, 413);
 		setMessageList(0x004B2F80);
 		_palette->addBasePalette(0xB103B604, 0, 65, 0);
 		_palette->addPalette(0xB103B604, 0, 65, 0);
 		_asDoor = insertSprite<AsScene2401Door>(true);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene2401>(-20, 447);
+		insertKlaymen<KmScene2401>(-20, 447);
 		setMessageList(0x004B2F78);
 		_asDoor = insertSprite<AsScene2401Door>(false);
 	}
@@ -471,9 +471,9 @@ uint32 Scene2401::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x402064D8)
-			sendEntityMessage(_klayman, 0x1014, _ssButton);
+			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x02144CB1)
-			sendEntityMessage(_klayman, 0x1014, _ssFloorButton);
+			sendEntityMessage(_klaymen, 0x1014, _ssFloorButton);
 		else if (param.asInteger() == 0x11C40840) {
 			if (getGlobalVar(V_NOTES_DOOR_UNLOCKED) && sendMessage(_asDoor, 0x2004, 0))
 				setMessageList(0x004B3090);
@@ -604,8 +604,8 @@ void AsScene2402Door::stDoorClosingFinished() {
 	setVisible(false);
 }
 
-AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klayman *klayman)
-	: AnimatedSprite(vm, 1100), _klayman(klayman), _countdown1(0), _countdown2(0) {
+AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klaymen *klaymen)
+	: AnimatedSprite(vm, 1100), _klaymen(klaymen), _countdown1(0), _countdown2(0) {
 
 	_x = 260;
 	_y = 210;
@@ -620,13 +620,13 @@ AsScene2402TV::AsScene2402TV(NeverhoodEngine *vm, Klayman *klayman)
 		SetUpdateHandler(&AsScene2402TV::upWait);
 	} else {
 		int16 frameIndex;
-		if (_klayman->getX() > 320)
+		if (_klaymen->getX() > 320)
 			_currFrameIndex = 29;
-		frameIndex = CLIP<int16>((_klayman->getX() - _x + 150) / 10, 0, 29);
+		frameIndex = CLIP<int16>((_klaymen->getX() - _x + 150) / 10, 0, 29);
 		startAnimation(0x050A0103, frameIndex, -1);
 		_newStickFrameIndex = frameIndex;
 		_countdown1 = 0;
-		SetUpdateHandler(&AsScene2402TV::upFocusKlayman);
+		SetUpdateHandler(&AsScene2402TV::upFocusKlaymen);
 	}
 }
 
@@ -643,8 +643,8 @@ void AsScene2402TV::upWait() {
 	AnimatedSprite::update();
 }
 
-void AsScene2402TV::upFocusKlayman() {
-	int16 frameIndex = CLIP<int16>((_klayman->getX() - _x + 150) / 10, 0, 29);
+void AsScene2402TV::upFocusKlaymen() {
+	int16 frameIndex = CLIP<int16>((_klaymen->getX() - _x + 150) / 10, 0, 29);
 	if (frameIndex != _currFrameIndex) {
 		if (frameIndex > _currFrameIndex)
 			_currFrameIndex++;
@@ -666,7 +666,7 @@ void AsScene2402TV::stJokeFinished() {
 	setGlobalVar(V_TV_JOKE_TOLD, 1);
 	startAnimation(0x050A0103, 0, -1);
 	_newStickFrameIndex = 0;
-	SetUpdateHandler(&AsScene2402TV::upFocusKlayman);
+	SetUpdateHandler(&AsScene2402TV::upFocusKlaymen);
 }
 
 uint32 AsScene2402TV::hmJoke(int messageNum, const MessageParam &param, Entity *sender) {
@@ -701,34 +701,34 @@ Scene2402::Scene2402(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	if (which < 0) {
 		// Restoring game
-		insertKlayman<KmScene2402>(198, 404);
+		insertKlaymen<KmScene2402>(198, 404);
 		setMessageList(0x004AF7C8);
 	} else if (which == 1) {
 		// Klaymen entering from the right
-		insertKlayman<KmScene2402>(660, 404);
+		insertKlaymen<KmScene2402>(660, 404);
 		setMessageList(0x004AF7D8);
 	} else if (which == 2) {
 		// Klaymen returning from looking through the window
-		insertKlayman<KmScene2402>(409, 404);
-		_klayman->setDoDeltaX(getGlobalVar(V_KLAYMAN_IS_DELTA_X) ? 1 : 0);
+		insertKlaymen<KmScene2402>(409, 404);
+		_klaymen->setDoDeltaX(getGlobalVar(V_KLAYMEN_IS_DELTA_X) ? 1 : 0);
 		setMessageList(0x004AF888);
 	} else {
 		// Klaymen entering from the left
-		insertKlayman<KmScene2402>(0, 404);
+		insertKlaymen<KmScene2402>(0, 404);
 		setMessageList(0x004AF7D0);
 	}
 
 	tempSprite = insertStaticSprite(0x081A60A8, 1100);
 	_ssDoorFrame = (StaticSprite*)insertStaticSprite(0x406C0AE0, 1100);
-	_klayman->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 639, tempSprite->getDrawRect().y2());
+	_klaymen->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 639, tempSprite->getDrawRect().y2());
 	_asDoor = insertSprite<AsScene2402Door>(this, which == 0);
-	insertSprite<AsScene2402TV>(_klayman);
+	insertSprite<AsScene2402TV>(_klaymen);
 	insertStaticSprite(0x3A01A020, 200);
 
 }
 
 Scene2402::~Scene2402() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _klayman->isDoDeltaX() ? 1 : 0);
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _klaymen->isDoDeltaX() ? 1 : 0);
 }
 
 void Scene2402::update() {
@@ -753,7 +753,7 @@ uint32 Scene2402::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x402064D8)
-			sendEntityMessage(_klayman, 0x1014, _ssButton);
+			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x01C66840) {
 			if (sendMessage(_asDoor, 0x2000, 0))
 				setMessageList(0x004AF800);
@@ -772,7 +772,7 @@ uint32 Scene2402::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asTape) {
-			sendEntityMessage(_klayman, 0x1014, _asTape);
+			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004AF890);
 		}
 		break;
@@ -803,26 +803,26 @@ Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (which < 0) {
 		// Restoring game
 		_isClimbingLadder = false;
-		insertKlayman<KmScene2403>(220, 449);
+		insertKlaymen<KmScene2403>(220, 449);
 		setMessageList(0x004B5C98);
 		setRectList(0x004B5E18);
 	} else if (which == 1) {
 		// Klaymen returning from looking through the window
 		_isClimbingLadder = false;
-		insertKlayman<KmScene2403>(433, 449);
+		insertKlaymen<KmScene2403>(433, 449);
 		setMessageList(0x004B5D70);
 		setRectList(0x004B5E18);
 	} else if (which == 2) {
 		// Klaymen standing around after the critter video
 		_isClimbingLadder = false;
-		insertKlayman<KmScene2403>(440, 449);
-		_klayman->setDoDeltaX(1);
+		insertKlaymen<KmScene2403>(440, 449);
+		_klaymen->setDoDeltaX(1);
 		setMessageList(0x004B5C98);
 		setRectList(0x004B5E18);
 	} else {
 		// Klaymen coming up from ladder
 		_isClimbingLadder = true;
-		insertKlayman<KmScene2403>(122, 599);
+		insertKlaymen<KmScene2403>(122, 599);
 		setMessageList(0x004B5CA0);
 		setRectList(0x004B5E28);
 	}
@@ -830,9 +830,9 @@ Scene2403::Scene2403(NeverhoodEngine *vm, Module *parentModule, int which)
 	_ssButton = insertSprite<SsCommonButtonSprite>(this, 0x3130B0EB, 100, 0);
 	tempSprite1 = insertStaticSprite(0x20C24220, 1100);	
 	tempSprite2 = insertStaticSprite(0x03080900, 1300);
-	tempSprite3 = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+	tempSprite3 = insertSprite<AsScene1002KlaymenLadderHands>(_klaymen);
 	tempSprite3->setClipRect(tempSprite1->getDrawRect().x, 0, 640, tempSprite2->getDrawRect().y2());
-	_klayman->setClipRect(tempSprite1->getDrawRect().x, 0, 640, tempSprite2->getDrawRect().y2());	
+	_klaymen->setClipRect(tempSprite1->getDrawRect().x, 0, 640, tempSprite2->getDrawRect().y2());	
 	loadSound(1, calcHash("fxFogHornSoft"));
 }
 
@@ -841,9 +841,9 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 	switch (messageNum) {
 	case 0x100D:
 		if (param.asInteger() == 0x040424D0)
-			sendEntityMessage(_klayman, 0x1014, _ssButton);
+			sendEntityMessage(_klaymen, 0x1014, _ssButton);
 		else if (param.asInteger() == 0x180CE614)
-			sendEntityMessage(_klayman, 0x1014, _asLightCord);
+			sendEntityMessage(_klaymen, 0x1014, _asLightCord);
 		break;
 	case 0x2000:
 		_isClimbingLadder = true;
@@ -870,7 +870,7 @@ uint32 Scene2403::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asTape && !_isClimbingLadder) {
-			sendEntityMessage(_klayman, 0x1014, _asTape);
+			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004B5D98);
 		}
 		break;
@@ -923,36 +923,36 @@ Scene2406::Scene2406(NeverhoodEngine *vm, Module *parentModule, int which)
 	if (which < 0) {
 		// Restoring game
 		_isClimbingLadder = false;
-		insertKlayman<KmScene2406>(307, 404, _clipRects, 2);
+		insertKlaymen<KmScene2406>(307, 404, _clipRects, 2);
 		setMessageList(0x004B76C8);
 		setRectList(0x004B78C8);
 	} else if (which == 1) {
 		// Klaymen coming down the ladder
 		_isClimbingLadder = true;
-		insertKlayman<KmScene2406>(253, -16, _clipRects, 2);
+		insertKlaymen<KmScene2406>(253, -16, _clipRects, 2);
 		setMessageList(0x004B76D8);
 		setRectList(0x004B78D8);
 	} else if (which == 2) {
 		// Klaymen returning from the diskplayer
 		_isClimbingLadder = false;
-		insertKlayman<KmScene2406>(480, 404, _clipRects, 2);
+		insertKlaymen<KmScene2406>(480, 404, _clipRects, 2);
 		setMessageList(0x004B77C0);
 		setRectList(0x004B78C8);
 	} else if (which == 3) {
 		// Klaymen returning from looking through the window
 		_isClimbingLadder = false;
-		insertKlayman<KmScene2406>(387, 404, _clipRects, 2);
+		insertKlaymen<KmScene2406>(387, 404, _clipRects, 2);
 		setMessageList(0x004B7810);
 		setRectList(0x004B78C8);
 	} else {
 		// Klaymen entering from the left
 		_isClimbingLadder = false;
-		insertKlayman<KmScene2406>(0, 404, _clipRects, 2);
+		insertKlaymen<KmScene2406>(0, 404, _clipRects, 2);
 		setMessageList(0x004B76D0);
 		setRectList(0x004B78C8);
 	}
 
-	tempSprite2 = insertSprite<AsScene1002KlaymanLadderHands>(_klayman);
+	tempSprite2 = insertSprite<AsScene1002KlaymenLadderHands>(_klaymen);
 	tempSprite2->setClipRect(_clipRects[1]);
 
 }
@@ -978,10 +978,10 @@ uint32 Scene2406::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asTape && !_isClimbingLadder) {
-			sendEntityMessage(_klayman, 0x1014, _asTape);
+			sendEntityMessage(_klaymen, 0x1014, _asTape);
 			setMessageList(0x004B77C8);
 		} else if (sender == _asKey && !_isClimbingLadder) {
-			sendEntityMessage(_klayman, 0x1014, _asKey);
+			sendEntityMessage(_klaymen, 0x1014, _asKey);
 			setMessageList(0x004B77D8);
 		}
 		break;

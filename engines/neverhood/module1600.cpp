@@ -1024,16 +1024,16 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		else {
 			// Klaymen is standing around
 			setRectList(0x004B47D0);
-			insertKlayman<KmScene1608>(380, 438);
-			_kmScene1608 = _klayman;
-			_klaymanInCar = false;
+			insertKlaymen<KmScene1608>(380, 438);
+			_kmScene1608 = _klaymen;
+			_klaymenInCar = false;
 			_sprite1 = insertStaticSprite(0x7D0404E8, 1100);
 			setMessageList(0x004B46A8);
 			setBackground(0x10080E01);
 			setPalette(0x10080E01);
 			_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
 			addCollisionSprite(_asTape);
-			_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
+			_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 			SetUpdateHandler(&Scene1608::upLowerFloor);
 			insertScreenMouse(0x80E05108);
 			insertStaticSprite(0x4B18F868, 1200);
@@ -1042,9 +1042,9 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		// Klaymen entering from the left
 		_vm->gameState().which = 0;
 		setRectList(0x004B47D0);
-		insertKlayman<KmScene1608>(0, 438);
-		_kmScene1608 = _klayman;
-		_klaymanInCar = false;
+		insertKlaymen<KmScene1608>(0, 438);
+		_kmScene1608 = _klaymen;
+		_klaymenInCar = false;
 		setMessageList(0x004B46B0);
 		setBackground(0x10080E01);
 		setPalette(0x10080E01);
@@ -1052,7 +1052,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		addCollisionSprite(_asTape);
 		insertScreenMouse(0x80E05108);
 		_sprite1 = insertStaticSprite(0x7D0404E8, 1100);
-		_klayman->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
+		_klaymen->setClipRect(_sprite1->getDrawRect().x, 0, 640, 480);
 		SetUpdateHandler(&Scene1608::upLowerFloor);
 		insertStaticSprite(0x4B18F868, 1200);
 	} else if (which == 2) {
@@ -1069,12 +1069,12 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asIdleCarLower = insertSprite<AsCommonIdleCarLower>(375, 227);
 		_asIdleCarFull = insertSprite<AsCommonIdleCarFull>(375, 227);
 		_asCar->setVisible(false);
-		if (getGlobalVar(V_KLAYMAN_IS_DELTA_X)) {
-			insertKlayman<KmScene1608>(373, 220);
-			_klayman->setDoDeltaX(1);
+		if (getGlobalVar(V_KLAYMEN_IS_DELTA_X)) {
+			insertKlaymen<KmScene1608>(373, 220);
+			_klaymen->setDoDeltaX(1);
 		} else
-			insertKlayman<KmScene1608>(283, 220);
-		_kmScene1608 = _klayman;
+			insertKlaymen<KmScene1608>(283, 220);
+		_kmScene1608 = _klaymen;
 		setMessageList(0x004B47A8);
 		SetMessageHandler(&Scene1608::hmUpperFloor);
 		SetUpdateHandler(&Scene1608::upUpperFloor);
@@ -1085,14 +1085,14 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_clipRect3.set(_sprite2->getDrawRect().x, _sprite3->getDrawRect().y, 640, _sprite2->getDrawRect().y2());
 		_clipRect2 = _clipRect1;
 		_clipRect2.y2 = 215;
-		_klayman->setClipRect(_clipRect1);
+		_klaymen->setClipRect(_clipRect1);
 		_asCar->setClipRect(_clipRect1);
 		_asIdleCarLower->setClipRect(_clipRect1);
 		_asIdleCarFull->setClipRect(_clipRect1);
 		_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
 		addCollisionSprite(_asTape);
 		insertSprite<AsCommonCarConnector>(_asCar)->setClipRect(_clipRect1);
-		_klaymanInCar = false;
+		_klaymenInCar = false;
 		_carClipFlag = false;
 		_carStatus = 0;
 		setRectList(0x004B4810);
@@ -1134,7 +1134,7 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 		_asTape = insertSprite<AsScene1201Tape>(this, 13, 1100, 412, 443, 0x9148A011);
 		// ... addCollisionSprite(_asTape);
 		insertSprite<AsCommonCarConnector>(_asCar)->setClipRect(_clipRect1);
-		_klaymanInCar = true;
+		_klaymenInCar = true;
 		_carClipFlag = true;
 		_carStatus = 0;
 	}
@@ -1144,8 +1144,8 @@ Scene1608::Scene1608(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene1608::~Scene1608() {
-	setGlobalVar(V_KLAYMAN_IS_DELTA_X, _kmScene1608->isDoDeltaX() ? 1 : 0);
-	if (_klaymanInCar)
+	setGlobalVar(V_KLAYMEN_IS_DELTA_X, _kmScene1608->isDoDeltaX() ? 1 : 0);
+	if (_klaymenInCar)
 		delete _kmScene1608;
 	else
 		delete _asCar;
@@ -1160,10 +1160,10 @@ void Scene1608::upLowerFloor() {
 void Scene1608::upUpperFloor() {
 	Scene::update();
 	if (_carStatus == 1) {
-		removeSurface(_klayman->getSurface());
-		removeEntity(_klayman);
+		removeSurface(_klaymen->getSurface());
+		removeEntity(_klaymen);
 		addSprite(_asCar);
-		_klaymanInCar = true;
+		_klaymenInCar = true;
 		clearRectList();
 		SetUpdateHandler(&Scene1608::upCarAtHome);
 		SetMessageHandler(&Scene1608::hmCarAtHome);
@@ -1172,10 +1172,10 @@ void Scene1608::upUpperFloor() {
 		_asCar->setVisible(true);
 		sendMessage(_asCar, 0x2009, 0);
 		_asCar->handleUpdate();
-		_klayman = NULL;
+		_klaymen = NULL;
 		_carStatus = 0;
 	}
-	updateKlaymanCliprect();
+	updateKlaymenCliprect();
 }
 
 void Scene1608::upCarAtHome() {
@@ -1191,17 +1191,17 @@ void Scene1608::upCarAtHome() {
 		}
 		_mouseClicked = false;
 	}
-	updateKlaymanCliprect();
+	updateKlaymenCliprect();
 }
 
 void Scene1608::upGettingOutOfCar() {
 	Scene::update();
 	if (_carStatus == 2) {
-		_klayman = _kmScene1608;
+		_klaymen = _kmScene1608;
 		removeSurface(_asCar->getSurface());
 		removeEntity(_asCar);
-		addSprite(_klayman);
-		_klaymanInCar = false;
+		addSprite(_klaymen);
+		_klaymenInCar = false;
 		SetMessageHandler(&Scene1608::hmUpperFloor);
 		SetUpdateHandler(&Scene1608::upUpperFloor);
 		setRectList(0x004B4810);
@@ -1210,10 +1210,10 @@ void Scene1608::upGettingOutOfCar() {
 		_asCar->setVisible(false);
 		setMessageList(0x004B4748);
 		processMessageList();
-		_klayman->handleUpdate();
+		_klaymen->handleUpdate();
 		_carStatus = 0;
 	}
-	updateKlaymanCliprect();
+	updateKlaymenCliprect();
 }
 
 void Scene1608::upRidingCar() {
@@ -1241,7 +1241,7 @@ uint32 Scene1608::hmLowerFloor(int messageNum, const MessageParam &param, Entity
 	case 0x100D:
 		if (param.asInteger() == 0x20250B1A) {
 			clearRectList();
-			_klayman->setVisible(false);
+			_klaymen->setVisible(false);
 			showMouse(false);
 			_sprite1->setVisible(false);
 			//sendMessage(_asDoor, 0x4809, 0); // Play sound?
@@ -1313,7 +1313,7 @@ uint32 Scene1608::hmCarAtHome(int messageNum, const MessageParam &param, Entity 
 	return 0;
 }
 	
-void Scene1608::updateKlaymanCliprect() {
+void Scene1608::updateKlaymenCliprect() {
 	if (_kmScene1608->getX() <= 375)
 		_kmScene1608->setClipRect(_clipRect1);
 	else

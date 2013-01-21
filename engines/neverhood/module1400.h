@@ -78,9 +78,9 @@ protected:
 
 class AsScene1401BackDoor : public AnimatedSprite {
 public:
-	AsScene1401BackDoor(NeverhoodEngine *vm, Sprite *klayman, bool isOpen);
+	AsScene1401BackDoor(NeverhoodEngine *vm, Sprite *klaymen, bool isOpen);
 protected:
-	Sprite *_klayman;
+	Sprite *_klaymen;
 	int _countdown;
 	bool _isOpen;
 	void update();
@@ -101,11 +101,11 @@ struct AsCommonProjectorItem {
 
 class AsCommonProjector : public AnimatedSprite {
 public:
-	AsCommonProjector(NeverhoodEngine *vm, Scene *parentScene, Sprite *klayman, Sprite *asPipe);
+	AsCommonProjector(NeverhoodEngine *vm, Scene *parentScene, Sprite *klaymen, Sprite *asPipe);
 	virtual ~AsCommonProjector();
 protected:
 	Scene *_parentScene;
-	Sprite *_klayman;
+	Sprite *_klaymen;
 	Sprite *_asPipe;
 	const AsCommonProjectorItem *_asProjectorItem;
 	int16 _beforeMoveX;

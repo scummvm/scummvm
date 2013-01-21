@@ -64,9 +64,9 @@ public:
 
 class AsScene2201Door : public AnimatedSprite {
 public:
-	AsScene2201Door(NeverhoodEngine *vm, Klayman *klayman, Sprite *ssDoorLight, bool isOpen);
+	AsScene2201Door(NeverhoodEngine *vm, Klaymen *klaymen, Sprite *ssDoorLight, bool isOpen);
 protected:
-	Klayman *_klayman;
+	Klaymen *_klaymen;
 	Sprite *_ssDoorLight;
 	bool _isOpen;
 	int _countdown;
@@ -188,7 +188,7 @@ public:
 protected:
 	SsCommonPressButton *_ssLightSwitch;
 	Sprite *_ssDoorFrame;
-	bool _isKlaymanInLight;
+	bool _isKlaymenInLight;
 	bool _isLightOn;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
@@ -236,8 +236,8 @@ protected:
 	Sprite *_asPlatform;
 	Sprite *_ssTestTube;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void klaymanInFrontSpikes();
-	void klaymanBehindSpikes();
+	void klaymenInFrontSpikes();
+	void klaymenBehindSpikes();
 	void readClickedColumn();
 };
 
@@ -311,7 +311,7 @@ protected:
 	Sprite *_asWallCannonAnimation;
 	Sprite *_ssButton;
 	int _elevatorSurfacePriority;
-	bool _klaymanAtElevator;
+	bool _klaymenAtElevator;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 handleMessage2(int messageNum, const MessageParam &param, Entity *sender);
@@ -345,7 +345,7 @@ public:
 	~Scene2242();
 protected:
 	Sprite *_asTape;
-	bool _isKlaymanInLight;
+	bool _isKlaymenInLight;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void readClickedColumn();
