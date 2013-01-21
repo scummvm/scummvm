@@ -97,7 +97,7 @@ struct BobItem {
 	int _offsetY; // Unused variable?
 	bool field34; // Set to true in B_CACHE_OFF()
 	int field36;
-	int _modeFlag;
+	bool _flipFl;
 	bool _isSpriteFl;
 	bool _activeFl;
 	int _oldX;
@@ -185,7 +185,7 @@ struct HopkinsItem {
 
 struct CharacterLocation {
 	Common::Point _pos;
-	int field2;
+	int _startSpriteIndex;
 	int _location;
 	int _zoomFactor;
 };

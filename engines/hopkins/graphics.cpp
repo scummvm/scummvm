@@ -1181,8 +1181,8 @@ void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, i
 	width = _vm->_objectsManager.getWidth(objectData, idx);
 	height = _vm->_objectsManager.getHeight(objectData, idx);
 	if (*objectData == 78) {
-		Affiche_Perfect(_vesaScreen, objectData, xp + 300, yp + 300, idx, 0, 0, 0);
-		Affiche_Perfect(_vesaBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, 0);
+		Affiche_Perfect(_vesaScreen, objectData, xp + 300, yp + 300, idx, 0, 0, false);
+		Affiche_Perfect(_vesaBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
 	} else {
 		Sprite_Vesa(_vesaBuffer, objectData, xp + 300, yp + 300, idx);
 		Sprite_Vesa(_vesaScreen, objectData, xp + 300, yp + 300, idx);
@@ -1269,7 +1269,7 @@ int GraphicsManager::zoomOut(int v, int percentage) {
 }
 
 // Display 'Perfect?'
-void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, int modeFlag) {
+void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl) {
 	const byte *spriteStartP;
 	int i;
 	const byte *spriteSizeP;
@@ -1315,7 +1315,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 		_width = spriteWidth;
 		int v20 = zoomIn(spriteWidth, zoom2);
 		int v22 = zoomIn(spriteHeight1, zoom2);
-		if (modeFlag) {
+		if (flipFl) {
 			v29 = v20 + dest1P;
 			if (_posYClipped) {
 				if ((uint16)_posYClipped >= v22)
@@ -1472,7 +1472,7 @@ Aff_Zoom_Larg_Cont1:
 		Red = zoom1;
 		if (zoom1 < 100) {
 			int v37 = zoomOut(spriteWidth, Red);
-			if (modeFlag) {
+			if (flipFl) {
 				v40 = v37 + dest1P;
 				do {
 					int v65 = spriteHeight2;
@@ -1535,7 +1535,7 @@ Aff_Zoom_Larg_Cont1:
 		}
 	} else {
 		_width = spriteWidth;
-		if (modeFlag) {
+		if (flipFl) {
 			dest2P = spriteWidth + dest1P;
 			spec_largeur = spriteWidth;
 			if (_posYClipped) {
@@ -1622,8 +1622,8 @@ void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int sp
 	int height = _vm->_objectsManager.getHeight(spriteData, spriteIndex);
 
 	if (*spriteData == 78) {
-		Affiche_Perfect(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, 0);
-		Affiche_Perfect(_vesaBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, 0);
+		Affiche_Perfect(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
+		Affiche_Perfect(_vesaBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
 	} else {
 		Sprite_Vesa(_vesaBuffer, spriteData, xp + 300, yp + 300, spriteIndex);
 		Sprite_Vesa(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex);

@@ -479,7 +479,7 @@ void EventsManager::updateCursor() {
 		_vm->_graphicsManager.Sprite_Vesa(cursorSurface, _mouseCursor, 300, 300, _mouseSpriteId);
 	} else {
 		// Draw the active inventory object
-		_vm->_graphicsManager.Affiche_Perfect(cursorSurface, _objectBuf, 300, 300, 0, 0, 0, 0);
+		_vm->_graphicsManager.Affiche_Perfect(cursorSurface, _objectBuf, 300, 300, 0, 0, 0, false);
 	}
 
 	// Reset the clipping bounds

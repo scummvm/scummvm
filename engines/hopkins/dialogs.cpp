@@ -349,7 +349,7 @@ LABEL_7:
 	int v18 = _inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
 	int v17 = _inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
 
-	_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX + 300, 414, 0, 0, 0, 0);
+	_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX + 300, 414, 0, 0, 0, false);
 	int v15 = 0;
 	int inventCount = 0;
 	for (int inventLine = 1; inventLine <= 5; inventLine++) {
@@ -485,19 +485,19 @@ void DialogsManager::inventAnim() {
 
 	if (_vm->_globals._saveData->_data[svField357] == 1) {
 		if (_vm->_globals._saveData->_data[svField353] == 1)
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, false);
 		if (_vm->_globals._saveData->_data[svField355] == 1)
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 866, 325, 1, 0, 0, 0);
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 866, 325, 1, 0, 0, false);
 		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 		_vm->_graphicsManager.addVesaSegment(566, 25, 594, 60);
 	}
 	if (_vm->_globals._saveData->_data[svField356] == 1) {
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, false);
 		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 	}
 
 	if (_vm->_globals._saveData->_data[svField354] == 1) {
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, false);
 		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 	}
 }

@@ -196,26 +196,26 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager._twoCharactersFl = false;
 				_vm->_objectsManager._characterPos.x = (int16)READ_LE_UINT16(dataP + 6);
 				_vm->_objectsManager._characterPos.y = (int16)READ_LE_UINT16(dataP + 8);
-				_vm->_objectsManager.PERI = dataP[5];
+				_vm->_objectsManager._startSpriteIndex = dataP[5];
 				if (_vm->_objectsManager._changeHeadFl) {
 					if (_vm->_globals._saveData->_data[svField354] == 1
 							&& _vm->_globals._saveData->_cloneHopkins._pos.x && _vm->_globals._saveData->_cloneHopkins._pos.y
-							&& _vm->_globals._saveData->_cloneHopkins.field2 && _vm->_globals._saveData->_cloneHopkins._location) {
+							&& _vm->_globals._saveData->_cloneHopkins._startSpriteIndex && _vm->_globals._saveData->_cloneHopkins._location) {
 
 						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_cloneHopkins._pos;
-						_vm->_objectsManager.PERI = _vm->_globals._saveData->_cloneHopkins.field2;
+						_vm->_objectsManager._startSpriteIndex = _vm->_globals._saveData->_cloneHopkins._startSpriteIndex;
 					}
 					if (_vm->_globals._saveData->_data[svField356] == 1
 							&& _vm->_globals._saveData->_samantha._pos.x && _vm->_globals._saveData->_samantha._pos.y
-							&& _vm->_globals._saveData->_samantha.field2 && _vm->_globals._saveData->_samantha._location) {
+							&& _vm->_globals._saveData->_samantha._startSpriteIndex && _vm->_globals._saveData->_samantha._location) {
 						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_samantha._pos;
-						_vm->_objectsManager.PERI = _vm->_globals._saveData->_samantha.field2;
+						_vm->_objectsManager._startSpriteIndex = _vm->_globals._saveData->_samantha._startSpriteIndex;
 					}
 					if (_vm->_globals._saveData->_data[svField357] == 1
 							&& _vm->_globals._saveData->_realHopkins._pos.x && _vm->_globals._saveData->_realHopkins._pos.y
-							&& _vm->_globals._saveData->_realHopkins.field2 && _vm->_globals._saveData->_realHopkins._location) {
+							&& _vm->_globals._saveData->_realHopkins._startSpriteIndex && _vm->_globals._saveData->_realHopkins._location) {
 						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_realHopkins._pos;
-						_vm->_objectsManager.PERI = _vm->_globals._saveData->_realHopkins.field2;
+						_vm->_objectsManager._startSpriteIndex = _vm->_globals._saveData->_realHopkins._startSpriteIndex;
 					}
 				}
 				if (_vm->_globals._saveData->_data[svField356] == 1
@@ -226,7 +226,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					    1,
 					    2,
 					    _vm->_globals._saveData->_realHopkins._zoomFactor,
-					    0,
+					    false,
 					    34,
 					    190);
 					_vm->_objectsManager.animateSprite(1);
@@ -241,7 +241,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					    1,
 					    3,
 					    _vm->_globals._saveData->_samantha._zoomFactor,
-					    0,
+					    false,
 					    20,
 					    127);
 					_vm->_objectsManager.animateSprite(1);
@@ -2179,7 +2179,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			CharacterLocation *v51 = &_vm->_globals._saveData->_realHopkins;
 			v51->_pos.x = _vm->_objectsManager.getSpriteX(0);
 			v51->_pos.y = _vm->_objectsManager.getSpriteY(0);
-			v51->field2 = 57;
+			v51->_startSpriteIndex = 57;
 			v51->_location = 97;
 			_vm->_globals._saveData->_data[svField121] = 1;
 			_vm->_globals._saveData->_data[svField352] = 1;
@@ -2201,7 +2201,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			CharacterLocation *v53 = &_vm->_globals._saveData->_samantha;
 			v53->_pos.x = 404;
 			v53->_pos.y = 395;
-			v53->field2 = 64;
+			v53->_startSpriteIndex = 64;
 			v53->_location = _vm->_globals._screenId;
 
 			int v54 = _vm->_globals.STAILLE[790 / 2];
@@ -2214,7 +2214,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._saveData->_data[svField355] = 1;
 			_vm->_objectsManager._twoCharactersFl = true;
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
-			_vm->_objectsManager.addStaticSprite(_vm->_globals.TETE, v53->_pos, 1, 3, v53->_zoomFactor, 0, 20, 127);
+			_vm->_objectsManager.addStaticSprite(_vm->_globals.TETE, v53->_pos, 1, 3, v53->_zoomFactor, false, 20, 127);
 			_vm->_objectsManager.animateSprite(1);
 			break;
 			}

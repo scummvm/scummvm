@@ -277,7 +277,7 @@ void SaveLoadManager::syncSavegameData(Common::Serializer &s, int version) {
 void SaveLoadManager::syncCharacterLocation(Common::Serializer &s, CharacterLocation &item) {
 	s.syncAsSint16LE(item._pos.x);
 	s.syncAsSint16LE(item._pos.y);
-	s.syncAsSint16LE(item.field2);
+	s.syncAsSint16LE(item._startSpriteIndex);
 	s.syncAsSint16LE(item._location);
 	s.syncAsSint16LE(item._zoomFactor);
 }

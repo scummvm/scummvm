@@ -626,7 +626,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 		if ((int16)READ_LE_UINT16(v5 + 24)) {
 			_vm->_globals._bob[idx]._isSpriteFl = true;
 			_vm->_globals._bob[idx].field36 = 0;
-			_vm->_globals._bob[idx]._modeFlag = 0;
+			_vm->_globals._bob[idx]._flipFl = false;
 			_vm->_globals._bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
 			_vm->_globals._bob[idx].field0 = 10;
 			v5 = _characterSprite;
@@ -912,7 +912,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 	if (a1 == 22 || a1 == 23) {
 		_vm->_objectsManager.setFlipSprite(0, false);
 		_vm->_objectsManager.setSpriteIndex(0, 62);
-		_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 0);
+		_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, false);
 		if (a1 == 22) {
 			_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(3));
 			_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(3));
@@ -960,7 +960,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 	} else if (a1 == 20 || a1 == 21) {
 		_vm->_objectsManager.setFlipSprite(0, true);
 		_vm->_objectsManager.setSpriteIndex(0, 62);
-		_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, 1);
+		_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, true);
 		if (a1 == 20) {
 			_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(1));
 			_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(1));

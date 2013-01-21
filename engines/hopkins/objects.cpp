@@ -65,12 +65,12 @@ ObjectsManager::ObjectsManager() {
 	_disableFl = false;
 	_twoCharactersFl = false;
 	_characterPos = Common::Point(0, 0);
-	PERI = 0;
+	_startSpriteIndex = 0;
 	OBSSEUL = false;
 	_jumpVerb = 0;
 	_jumpZone = 0;
 	_oldSpriteIndex = 0;
-	S_old_ret = 0;
+	_oldFlipFl = false;
 }
 
 void ObjectsManager::setParent(HopkinsEngine *vm) {
@@ -492,7 +492,7 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob._offsetY = 0;
 	bob.field34 = false;
 	bob.field36 = 0;
-	bob._modeFlag = 0;
+	bob._flipFl = false;
 	bob._oldX2 = 0;
 
 	item._visibleFl = false;
@@ -516,7 +516,7 @@ void ObjectsManager::DEF_BOB(int idx) {
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer,
 			_vm->_globals._bob[idx]._spriteData, xp + 300, yp + 300, _vm->_globals._bob[idx]._frameIndex,
 			_vm->_globals._bob[idx].field4A, _vm->_globals._bob[idx]._oldY2,
-			_vm->_globals._bob[idx]._modeFlag);
+			_vm->_globals._bob[idx]._flipFl);
 
 	_vm->_globals.Liste2[idx]._visibleFl = true;
 	_vm->_globals.Liste2[idx]._posX = xp;
@@ -583,7 +583,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 	if (_vm->_globals.Bank[bankIdx]._fileHeader == 1) {
 		_vm->_globals._bob[idx]._isSpriteFl = true;
 		_vm->_globals._bob[idx].field36 = 0;
-		_vm->_globals._bob[idx]._modeFlag = 0;
+		_vm->_globals._bob[idx]._flipFl = false;
 	}
 
 	_vm->_globals._bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
@@ -638,7 +638,7 @@ void ObjectsManager::SCBOB(int idx) {
 void ObjectsManager::CALCUL_BOB(int idx) {
 	_vm->_globals._bob[idx]._activeFl = false;
 	if (_vm->_globals._bob[idx]._isSpriteFl) {
-		_vm->_globals._bob[idx]._modeFlag = 0;
+		_vm->_globals._bob[idx]._flipFl = false;
 		_vm->_globals._bob[idx].field36 = 0;
 	}
 
@@ -647,7 +647,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		return;
 
 	int deltaY, deltaX;
-	if (_vm->_globals._bob[idx]._modeFlag) {
+	if (_vm->_globals._bob[idx]._flipFl) {
 		deltaX = getOffsetX(_vm->_globals._bob[idx]._spriteData, spriteIdx, true);
 		deltaY = getOffsetY(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, true);
 	} else {
@@ -768,7 +768,7 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 		    _sprite[idx]._destX + 300, _sprite[idx]._destY + 300, _sprite[idx]._spriteIndex);
 	else
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _sprite[idx]._spriteData,
-		    _sprite[idx]._destX + 300, _sprite[idx]._destY + 300,  _sprite[idx]._spriteIndex, _sprite[idx]._reducePct, _sprite[idx]._zoomPct, _sprite[idx].fieldE);
+		    _sprite[idx]._destX + 300, _sprite[idx]._destY + 300,  _sprite[idx]._spriteIndex, _sprite[idx]._reducePct, _sprite[idx]._zoomPct, _sprite[idx]._flipFl);
 
 	_vm->_globals.Liste[idx]._width = _sprite[idx]._width;
 	_vm->_globals.Liste[idx]._height = _sprite[idx]._height;
@@ -815,7 +815,7 @@ void ObjectsManager::computeSprite(int idx) {
 
 	int offX;
 	int offY;
-	if (_sprite[idx].fieldE) {
+	if (_sprite[idx]._flipFl) {
 		offX = getOffsetX(_sprite[idx]._spriteData, spriteIndex, true);
 		offY = getOffsetY(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex, true);
 	} else {
@@ -959,7 +959,7 @@ void ObjectsManager::displayBobAnim() {
 		_vm->_globals._bob[idx].field12 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 4);
 		_vm->_globals._bob[idx].field36 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 6);
 		_vm->_globals._bob[idx]._frameIndex = v20[2 * v24 + 8];
-		_vm->_globals._bob[idx]._modeFlag = v20[2 * v24 + 9];
+		_vm->_globals._bob[idx]._flipFl = (v20[2 * v24 + 9] != 0);
 		_vm->_globals._bob[idx].field10 += 5;
 		v5 = _vm->_globals._bob[idx].field12;
 
@@ -994,7 +994,7 @@ void ObjectsManager::displayBobAnim() {
 				_vm->_globals._bob[idx].field12 = (int16)READ_LE_UINT16(v21 + 4);
 				_vm->_globals._bob[idx].field36 = (int16)READ_LE_UINT16(v21 + 6);
 				_vm->_globals._bob[idx]._frameIndex = v21[8];
-				_vm->_globals._bob[idx]._modeFlag = v21[9];
+				_vm->_globals._bob[idx]._flipFl = (v21[9] != 0);
 				_vm->_globals._bob[idx].field10 += 5;
 				v10 = _vm->_globals._bob[idx].field12;
 
@@ -1148,14 +1148,12 @@ void ObjectsManager::displayVBob() {
 			if (*v10 == 78) {
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaScreen, v10,
 					_vm->_globals.VBob[idx]._xp + 300, _vm->_globals.VBob[idx]._yp + 300,
-					_vm->_globals.VBob[idx]._frameIndex,
-					0, 0, 0);
+					_vm->_globals.VBob[idx]._frameIndex, 0, 0, false);
 
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer,
 					_vm->_globals.VBob[idx]._spriteData,
 					_vm->_globals.VBob[idx]._xp + 300, _vm->_globals.VBob[idx]._yp + 300,
-					_vm->_globals.VBob[idx]._frameIndex,
-					0, 0, 0);
+					_vm->_globals.VBob[idx]._frameIndex, 0, 0, false);
 			} else {
 				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer,
 					v10, _vm->_globals.VBob[idx]._xp + 300, _vm->_globals.VBob[idx]._yp + 300,
@@ -1213,13 +1211,13 @@ void ObjectsManager::animateSprite(int idx) {
 	_sprite[idx]._animationType = 1;
 }
 
-void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, int a7, int a8, int a9) {
+void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int a8, int a9) {
 	assert (idx  <= MAX_SPRITE);
 	_sprite[idx]._spriteData = spriteData;
 	_sprite[idx]._spritePos = pos;
 	_sprite[idx]._spriteIndex = spriteIndex;
 	_sprite[idx]._zoomFactor = zoomFactor;
-	_sprite[idx].fieldE = a7;
+	_sprite[idx]._flipFl = flipFl;
 	_sprite[idx].field12 = a8;
 	_sprite[idx].field14 = a9;
 	_sprite[idx]._animationType = 0;
@@ -1227,7 +1225,7 @@ void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, 
 	if (spriteData[0] == 'R' && spriteData[1] == 'L' && spriteData[2] == 'E') {
 		_sprite[idx]._rleFl = true;
 		_sprite[idx]._zoomFactor = 0;
-		_sprite[idx].fieldE = 0;
+		_sprite[idx]._flipFl = false;
 	} else
 		_sprite[idx]._rleFl = false;
 
@@ -1272,10 +1270,10 @@ void ObjectsManager::setSpriteZoom(int idx, int zoomFactor) {
 		_sprite[idx]._zoomFactor = zoomFactor;
 }
 
-void ObjectsManager::setFlipSprite(int idx, bool flip) {
+void ObjectsManager::setFlipSprite(int idx, bool flipFl) {
 	assert (idx  <= MAX_SPRITE);
 	if (!_sprite[idx]._rleFl)
-		_sprite[idx].fieldE = flip;
+		_sprite[idx]._flipFl = flipFl;
 }
 
 void ObjectsManager::checkZone() {
@@ -1956,7 +1954,7 @@ void ObjectsManager::PLAN_BETA() {
 		_vm->_globals._mapCarPosX = 900;
 		_vm->_globals._mapCarPosY = 319;
 	}
-	addStaticSprite(_spritePtr, Common::Point(_vm->_globals._mapCarPosX, _vm->_globals._mapCarPosY), 0, 1, 0, 0, 5, 5);
+	addStaticSprite(_spritePtr, Common::Point(_vm->_globals._mapCarPosX, _vm->_globals._mapCarPosY), 0, 1, 0, false, 5, 5);
 	_vm->_eventsManager.setMouseXY(_vm->_globals._mapCarPosX, _vm->_globals._mapCarPosY);
 	my_anim = 0;
 	_vm->_eventsManager.mouseOn();
@@ -2312,12 +2310,12 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc = &_vm->_globals._saveData->_samantha;
 		loc->_pos.x = getSpriteX(0);
 		loc->_pos.y = getSpriteY(0);
-		loc->field2 = 64;
+		loc->_startSpriteIndex = 64;
 		loc->_location = _vm->_globals._screenId;
 		loc->_zoomFactor = _sprite[0]._animationType;
 
 		removeSprite(1);
-		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 3, loc->_zoomFactor, 0, 20, 127);
+		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 3, loc->_zoomFactor, false, 20, 127);
 		animateSprite(1);
 		removeSprite(0);
 
@@ -2328,7 +2326,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc = &_vm->_globals._saveData->_realHopkins;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
 		_vm->_globals.PERSO_TYPE = 0;
-		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->_zoomFactor, 0, 34, 190);
+		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->_zoomFactor, false, 34, 190);
 		animateSprite(0);
 		_vm->_globals.loadCharacterData();
 	} else if (oldCharacter == CHARACTER_HOPKINS && newCharacter == CHARACTER_SAMANTHA
@@ -2337,12 +2335,12 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc = &_vm->_globals._saveData->_realHopkins;
 		loc->_pos.x = getSpriteX(0);
 		loc->_pos.y = getSpriteY(0);
-		loc->field2 = 64;
+		loc->_startSpriteIndex = 64;
 		loc->_location = _vm->_globals._screenId;
 		loc->_zoomFactor = _sprite[0]._zoomFactor;
 
 		removeSprite(1);
-		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 2, loc->_zoomFactor, 0, 34, 190);
+		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 2, loc->_zoomFactor, false, 34, 190);
 		animateSprite(1);
 		removeSprite(0);
 
@@ -2353,7 +2351,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc = &_vm->_globals._saveData->_samantha;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PSAMAN.SPR");
 		_vm->_globals.PERSO_TYPE = 2;
-		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->_zoomFactor, 0, 20, 127);
+		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->_zoomFactor, false, 20, 127);
 		animateSprite(0);
 		_vm->_globals.loadCharacterData();
 	} else {
@@ -2362,7 +2360,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 			loc = &_vm->_globals._saveData->_realHopkins;
 			loc->_pos.x = getSpriteX(0);
 			loc->_pos.y = getSpriteY(0);
-			loc->field2 = 64;
+			loc->_startSpriteIndex = 64;
 			loc->_location = _vm->_globals._screenId;
 			loc->_zoomFactor = _sprite[0]._zoomFactor;
 			break;
@@ -2370,7 +2368,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 			loc = &_vm->_globals._saveData->_cloneHopkins;
 			loc->_pos.x = getSpriteX(0);
 			loc->_pos.y = getSpriteY(0);
-			loc->field2 = 64;
+			loc->_startSpriteIndex = 64;
 			loc->_location = _vm->_globals._screenId;
 			loc->_zoomFactor = _sprite[0]._zoomFactor;
 			break;
@@ -2378,7 +2376,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 			loc = &_vm->_globals._saveData->_samantha;
 			loc->_pos.x = getSpriteX(0);
 			loc->_pos.y = getSpriteY(0);
-			loc->field2 = 64;
+			loc->_startSpriteIndex = 64;
 			loc->_location = _vm->_globals._screenId;
 			loc->_zoomFactor = _sprite[0]._zoomFactor;
 			break;
@@ -3358,23 +3356,23 @@ void ObjectsManager::ACTION_DOS(int idx) {
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("DOS.SPR");
 	}
 	if (idx == 1)
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 	if (idx == 2)
-		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 0, 0, 8, false);
 	if (idx == 3)
 		SPACTION1(_vm->_globals.GESTE, "12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
 	if (idx == 4)
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 	if (idx == 5)
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, false);
 	if (idx == 6)
 		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,16,15,-1,", 0, 0, 8);
 	if (idx == 7)
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, false);
 	if (idx == 8)
 		SPACTION1(_vm->_globals.GESTE, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
 	if (idx == 9)
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, false);
 	if (idx == 10)
 		SPACTION1(_vm->_globals.GESTE, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
 }
@@ -3386,23 +3384,23 @@ void ObjectsManager::ACTION_DROITE(int idx) {
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("PROFIL.SPR");
 	}
 	if (idx == 1)
-		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, 0);
+		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, false);
 	if (idx == 2)
-		SPACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, false);
 	if (idx == 3)
 		SPACTION1(_vm->_globals.GESTE, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
 	if (idx == 4)
-		ACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, 0);
+		ACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, false);
 	if (idx == 5)
-		SPACTION(_vm->_globals.GESTE, "23,24,25,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "23,24,25,-1,", 0, 0, 8, false);
 	if (idx == 6)
 		SPACTION1(_vm->_globals.GESTE, "24,,23,-1,", 0, 0, 8);
 	if (idx == 7)
-		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,-1,", 0, 0, 8, false);
 	if (idx == 8)
 		SPACTION1(_vm->_globals.GESTE, "26,25,24,23,-1,", 0, 0, 8);
 	if (idx == 9)
-		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,28,29,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,28,29,-1,", 0, 0, 8, false);
 	if (idx == 10)
 		SPACTION1(_vm->_globals.GESTE, "28,27,26,25,24,23,-1,", 0, 0, 8);
 }
@@ -3414,23 +3412,23 @@ void ObjectsManager::Q_DROITE(int idx) {
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("3Q.SPR");
 	}
 	if (idx == 1)
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 	if (idx == 2)
-		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, false);
 	if (idx == 3)
 		SPACTION1(_vm->_globals.GESTE, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
 	if (idx == 4)
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 	if (idx == 5)
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,-1,", 0, 0, 8, false);
 	if (idx == 6)
 		SPACTION1(_vm->_globals.GESTE, "17,16,15,-1,", 0, 0, 8);
 	if (idx == 7)
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20-1,", 0, 0, 8, false);
 	if (idx == 8)
 		SPACTION1(_vm->_globals.GESTE, "19,18,17,16,15,-1,", 0, 0, 8);
 	if (idx == 9)
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, false);
 	if (idx == 10)
 		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,15,-1,", 0, 0, 8);
 }
@@ -3442,13 +3440,13 @@ void ObjectsManager::ACTION_FACE(int idx) {
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("FACE.SPR");
 	}
 	if (idx == 1)
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 	if (idx == 2)
-		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 0, 0, 8, 0);
+		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 0, 0, 8, false);
 	if (idx == 3)
 		SPACTION1(_vm->_globals.GESTE, "14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
 	if (idx == 4)
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 0);
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 }
 
 void ObjectsManager::Q_GAUCHE(int idx) {
@@ -3458,23 +3456,23 @@ void ObjectsManager::Q_GAUCHE(int idx) {
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("3Q.SPR");
 	}
 	if (idx == 1)
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 1);
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, true);
 	if (idx == 2)
-		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, 1);
+		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, true);
 	if (idx == 3)
 		SPACTION1(_vm->_globals.GESTE, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
 	if (idx == 4)
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, 1);
+		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, true);
 	if (idx == 5)
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,-1,", 0, 0, 8, 1);
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,-1,", 0, 0, 8, true);
 	if (idx == 6)
 		SPACTION1(_vm->_globals.GESTE, "17,16,15,-1,", 0, 0, 8);
 	if (idx == 7)
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,-1,", 0, 0, 8, 1);
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,-1,", 0, 0, 8, true);
 	if (idx == 8)
 		SPACTION1(_vm->_globals.GESTE, "19,18,17,16,15,-1,", 0, 0, 8);
 	if (idx == 9)
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, 1);
+		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, true);
 	if (idx == 10)
 		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,15,-1,", 0, 0, 8);
 }
@@ -3486,23 +3484,23 @@ void ObjectsManager::ACTION_GAUCHE(int idx) {
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("PROFIL.SPR");
 	}
 	if (idx == 1)
-		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, 1);
+		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, true);
 	if (idx == 2)
-		SPACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, 1);
+		SPACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, true);
 	if (idx == 3)
 		SPACTION1(_vm->_globals.GESTE, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
 	if (idx == 4)
-		ACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, 1);
+		ACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, true);
 	if (idx == 5)
-		SPACTION(_vm->_globals.GESTE, "23,24,25,-1,", 0, 0, 8, 1);
+		SPACTION(_vm->_globals.GESTE, "23,24,25,-1,", 0, 0, 8, true);
 	if (idx == 6)
 		SPACTION1(_vm->_globals.GESTE, "24,,23,-1,", 0, 0, 8);
 	if (idx == 7)
-		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,-1,", 0, 0, 8, 1);
+		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,-1,", 0, 0, 8, true);
 	if (idx == 8)
 		SPACTION1(_vm->_globals.GESTE, "26,25,24,23,-1,", 0, 0, 8);
 	if (idx == 9)
-		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,28,29,-1,", 0, 0, 8, 1);
+		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,28,29,-1,", 0, 0, 8, true);
 	if (idx == 10)
 		SPACTION1(_vm->_globals.GESTE, "28,27,26,25,24,23,-1,", 0, 0, 8);
 }
@@ -4088,7 +4086,7 @@ int ObjectsManager::colision(int xp, int yp) {
 	return -1;
 }
 
-void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int speed, int a6) {
+void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int speed, bool flipFl) {
 	bool tokenCompleteFl;
 	char curChar;
 	int spriteIndex;
@@ -4103,10 +4101,10 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 		realSpeed = speed / 3;
 	const byte *oldSpriteData = _sprite[0]._spriteData;
 	spriteIndex = _sprite[0]._spriteIndex;
-	int oldFieldE = _sprite[0].fieldE;
+	bool oldFlipFl = _sprite[0]._flipFl;
 	_sprite[0].field12 += a3;
 	_sprite[0].field14 += a4;
-	_sprite[0].fieldE = a6;
+	_sprite[0]._flipFl = flipFl;
 
 	for (;;) {
 		tokenCompleteFl = false;
@@ -4126,7 +4124,7 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 				_sprite[0]._spriteIndex = spriteIndex;
 				_sprite[0].field12 -= a3;
 				_sprite[0].field14 -= a4;
-				_sprite[0].fieldE = oldFieldE;
+				_sprite[0]._flipFl = oldFlipFl;
 			} else {
 				_sprite[0]._spriteData = spriteData;
 				_sprite[0]._spriteIndex = idx;
@@ -4139,7 +4137,7 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 	}
 }
 
-void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int speed, int a6) {
+void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl) {
 	int spriteIndex = 0;
 	Common::String tmpStr = "";
 
@@ -4151,10 +4149,10 @@ void ObjectsManager::SPACTION(byte *a1, const Common::String &animationSeq, int 
 
 	S_old_spr = _sprite[0]._spriteData;
 	_oldSpriteIndex = _sprite[0]._spriteIndex;
-	S_old_ret = _sprite[0].fieldE;
+	_oldFlipFl = _sprite[0]._flipFl;
 	_sprite[0].field12 += a3;
 	_sprite[0].field14 += a4;
-	_sprite[0].fieldE = a6;
+	_sprite[0]._flipFl = flipFl;
 
 	uint strPos = 0;
 	char nextChar;
@@ -4217,7 +4215,7 @@ void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animStrin
 				_sprite[0]._spriteIndex = _oldSpriteIndex;
 				_sprite[0].field12 -= a3;
 				_sprite[0].field14 -= a4;
-				_sprite[0].fieldE = S_old_ret;
+				_sprite[0]._flipFl = _oldFlipFl;
 			} else {
 				_sprite[0]._spriteData = spriteData;
 				_sprite[0]._spriteIndex = spriteIndex;
@@ -4349,7 +4347,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	}
 	_vm->_eventsManager.mouseOn();
 	if (_vm->_globals._screenId == 61) {
-		addStaticSprite(_vm->_globals.PERSO, Common::Point(330, 418), 0, 60, 0, 0, 34, 190);
+		addStaticSprite(_vm->_globals.PERSO, Common::Point(330, 418), 0, 60, 0, false, 34, 190);
 		animateSprite(0);
 		_vm->_globals.chemin = (int16 *)g_PTRNUL;
 		computeAndSetSpriteSize();
@@ -4464,13 +4462,13 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_globals.loadCharacterData();
 	switch (_vm->_globals.PERSO_TYPE) {
 	case 0:
-		addStaticSprite(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 34, 190);
+		addStaticSprite(_vm->_globals.PERSO, _characterPos, 0, _startSpriteIndex, 0, false, 34, 190);
 		break;
 	case 1:
-		addStaticSprite(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 28, 155);
+		addStaticSprite(_vm->_globals.PERSO, _characterPos, 0, _startSpriteIndex, 0, false, 28, 155);
 		break;
 	case 2:
-		addStaticSprite(_vm->_globals.PERSO, _characterPos, 0, PERI, 0, 0, 20, 127);
+		addStaticSprite(_vm->_globals.PERSO, _characterPos, 0, _startSpriteIndex, 0, false, 20, 127);
 		break;
 	}
 	_vm->_eventsManager.setMouseXY(_characterPos);

@@ -36,7 +36,7 @@ struct SpriteItem {
 	const byte *_spriteData;
 	Common::Point _spritePos;
 	int _zoomFactor;
-	int fieldE;
+	bool _flipFl;
 	int _spriteIndex;
 	int field12;
 	int field14;
@@ -85,12 +85,12 @@ public:
 	bool _disableFl;
 	bool _twoCharactersFl;
 	Common::Point _characterPos;
-	int PERI;
+	int _startSpriteIndex;
 	bool OBSSEUL;
 	int _jumpVerb;
 	int _jumpZone;
 	int _oldSpriteIndex;
-	int S_old_ret;
+	bool _oldFlipFl;
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
@@ -136,7 +136,7 @@ public:
 	int getSpriteY(int idx);
 	void clearSprite();
 	void animateSprite(int idx);
-	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, int a7, int a8, int a9);
+	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int a8, int a9);
 	void removeSprite(int idx);
 	void setSpriteX(int idx, int xp);
 	void setSpriteIndex(int idx, int spriteIndex);
@@ -203,8 +203,8 @@ public:
 	int CALC_PROPRE(int idx);
 	int colision(int xp, int yp);
 
-	void ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int speed, int a6);
-	void SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int speed, int a6);
+	void ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int speed, bool flipFl);
+	void SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl);
 	void SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int speed);
 	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
 	void lockAnimX(int idx, int a2);

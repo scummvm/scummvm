@@ -2614,11 +2614,11 @@ void HopkinsEngine::BTOCEAN() {
 			bool displAnim = false;
 			if (_objectsManager._zoneNum == 1) {
 				if (_globals._oceanDirection == 3)
-					_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, 0);
+					_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, false);
 				else if (_globals._oceanDirection == 1)
-					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, 0);
+					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, false);
 				else if (_globals._oceanDirection == 5)
-					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, 0);
+					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, false);
 				_globals._oceanDirection = 7;
 				_globals._exitId = 1;
 				int oldX = _objectsManager.getSpriteX(0);
@@ -2646,11 +2646,11 @@ void HopkinsEngine::BTOCEAN() {
 LABEL_22:
 			if (_objectsManager._zoneNum == 2) {
 				if (_globals._oceanDirection == 7)
-					_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, 0);
+					_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
 				else if (_globals._oceanDirection == 1)
-					_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, 0);
+					_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
 				else if (_globals._oceanDirection == 5)
-					_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, 0);
+					_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, false);
 				_globals._oceanDirection = 3;
 				_globals._exitId = 2;
 				int oldX = _objectsManager.getSpriteX(0);
@@ -2699,7 +2699,7 @@ LABEL_41:
 						}
 					} while (oldX <= 235);
 					if (!displAnim)
-						_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 0, 0, 6, 0);
+						_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 0, 0, 6, false);
 				}
 LABEL_57:
 				if (_globals._oceanDirection == 7) {
@@ -2724,11 +2724,11 @@ LABEL_57:
 						}
 					} while (oldX > 236);
 					if (!displAnim)
-						_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, 0);
+						_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
 				}
 LABEL_72:
 				if (_globals._oceanDirection == 5)
-					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, 0);
+					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
 				_globals._oceanDirection = 1;
 				_globals._exitId = 3;
 			}
@@ -2755,7 +2755,7 @@ LABEL_72:
 						}
 					} while (oldX <= 235);
 					if (!displAnim)
-						_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 0, 0, 6, 0);
+						_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 0, 0, 6, false);
 				}
 LABEL_91:
 				if (_globals._oceanDirection == 7) {
@@ -2778,13 +2778,13 @@ LABEL_91:
 						}
 						if (oldX <= 236) {
 							if (!displAnim)
-								_objectsManager.SPACTION(_globals.PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, 0);
+								_objectsManager.SPACTION(_globals.PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
 							break;
 						}
 					}
 				}
 				if (_globals._oceanDirection == 1)
-					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, 0);
+					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
 				_globals._oceanDirection = 5;
 				_globals._exitId = 4;
 			}
@@ -2838,23 +2838,23 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	switch (_globals._oceanDirection) {
 	case 1:
 		_objectsManager._characterPos.x = 236;
-		_objectsManager.PERI = 27;
+		_objectsManager._startSpriteIndex = 27;
 		break;
 	case 3:
 		_objectsManager._characterPos.x = -20;
-		_objectsManager.PERI = 0;
+		_objectsManager._startSpriteIndex = 0;
 		break;
 	case 5:
 		_objectsManager._characterPos.x = 236;
-		_objectsManager.PERI = 9;
+		_objectsManager._startSpriteIndex = 9;
 		break;
 	case 7:
 		_objectsManager._characterPos.x = 415;
-		_objectsManager.PERI = 18;
+		_objectsManager._startSpriteIndex = 18;
 		break;
 	}
 
-	_objectsManager.addStaticSprite(_globals.PERSO, Common::Point(_objectsManager._characterPos.x, 110), 0, _objectsManager.PERI, 0, 0, 0, 0);
+	_objectsManager.addStaticSprite(_globals.PERSO, Common::Point(_objectsManager._characterPos.x, 110), 0, _objectsManager._startSpriteIndex, 0, false, 0, 0);
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
