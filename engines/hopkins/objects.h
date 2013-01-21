@@ -35,7 +35,7 @@ struct SpriteItem {
 	int _animationType;
 	const byte *_spriteData;
 	Common::Point _spritePos;
-	int fieldC;
+	int _zoomfactor;
 	int fieldE;
 	int _spriteIndex;
 	int field12;
@@ -136,12 +136,12 @@ public:
 	int getSpriteY(int idx);
 	void clearSprite();
 	void animateSprite(int idx);
-	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9);
+	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, int a7, int a8, int a9);
 	void removeSprite(int idx);
 	void setSpriteX(int idx, int xp);
 	void setSpriteIndex(int idx, int spriteIndex);
 	void setSpriteY(int idx, int yp);
-	void setSpriteSize(int idx, int size);
+	void setSpriteZoom(int idx, int zoomFactor);
 	void setFlipSprite(int idx, bool flip);
 
 	void checkZone();

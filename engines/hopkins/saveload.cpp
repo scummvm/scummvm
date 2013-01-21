@@ -140,7 +140,7 @@ void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSaveg
 Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName) {
 	/* Pack any necessary data into the savegame data structure */
 	// Set the selected slot number
-	_vm->_globals._saveData->data[svField10] = slot;
+	_vm->_globals._saveData->_data[svField10] = slot;
 
 	// Set up the inventory
 	for (int i = 0; i < 35; ++i)
@@ -201,9 +201,9 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 		_vm->_globals._inventory[i] = _vm->_globals._saveData->_inventory[i];
 
 	// Set variables from loaded data as necessary
-	_vm->_globals._saveData->data[svField10] = slot;
-	_vm->_globals._exitId = _vm->_globals._saveData->data[svField5];
-	_vm->_globals._saveData->data[svField6] = 0;
+	_vm->_globals._saveData->_data[svField10] = slot;
+	_vm->_globals._exitId = _vm->_globals._saveData->_data[svField5];
+	_vm->_globals._saveData->_data[svField6] = 0;
 	_vm->_globals._screenId = 0;
 	_vm->_globals._mapCarPosX = _vm->_globals._saveData->_mapCarPosX;
 	_vm->_globals._mapCarPosY = _vm->_globals._saveData->_mapCarPosY;
@@ -257,7 +257,7 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 }
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s, int version) {
-	s.syncBytes(&_vm->_globals._saveData->data[0], 2050);
+	s.syncBytes(&_vm->_globals._saveData->_data[0], 2050);
 	syncCharacterLocation(s, _vm->_globals._saveData->_cloneHopkins);
 	syncCharacterLocation(s, _vm->_globals._saveData->_realHopkins);
 	syncCharacterLocation(s, _vm->_globals._saveData->_samantha);

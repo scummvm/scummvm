@@ -210,7 +210,7 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 3:
-			if (!_globals._saveData->data[svField170]) {
+			if (!_globals._saveData->_data[svField170]) {
 				_soundManager.WSOUND(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsManager.loadImage("fond");
@@ -241,7 +241,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_soundManager.DEL_SAMPLE(3);
 				_soundManager.DEL_SAMPLE(4);
 				_graphicsManager.fadeOutLong();
-				_globals._saveData->data[svField170] = 1;
+				_globals._saveData->_data[svField170] = 1;
 			}
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
@@ -260,8 +260,8 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 455;
 
-			if (_globals._saveData->data[svField80]) {
-				if (_globals._saveData->data[svField80] == 1)
+			if (_globals._saveData->_data[svField80]) {
+				if (_globals._saveData->_data[svField80] == 1)
 					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			} else {
 				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
@@ -276,7 +276,7 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 7:
-			if (_globals._saveData->data[svField220])
+			if (_globals._saveData->_data[svField220])
 				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
 				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
@@ -293,7 +293,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.Max_Propre = 15;
 			_globals.Max_Perso_Y = 440;
 			_globals._maxLineLength = 20;
-			if (_globals._saveData->data[svField225])
+			if (_globals._saveData->_data[svField225])
 			  _objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 			  bombExplosion();
@@ -314,7 +314,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals.Max_Propre = 15;
 			_globals.Max_Perso_Y = 450;
 			_globals._maxLineLength = 20;
-			if (_globals._saveData->data[svField225]) {
+			if (_globals._saveData->_data[svField225]) {
 				if (_globals._language == LANG_FR)
 					_graphicsManager.loadImage("ENDFR");
 				else
@@ -366,9 +366,9 @@ bool HopkinsEngine::runWin95Demo() {
 		case 113:
 			_globals._exitId = 0;
 			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
+			_globals._saveData->_data[svField6] = _globals._screenId;
 			_globals._screenId = 113;
-			_globals._saveData->data[svField5] = _globals._screenId;
+			_globals._saveData->_data[svField5] = _globals._screenId;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -382,9 +382,9 @@ bool HopkinsEngine::runWin95Demo() {
 
 		case 114:
 			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
+			_globals._saveData->_data[svField6] = _globals._screenId;
 			_globals._screenId = 114;
-			_globals._saveData->data[svField5] = _globals._screenId;
+			_globals._saveData->_data[svField5] = _globals._screenId;
 			_globals._exitId = 0;
 			_computerManager.showComputer(COMPUTER_SAMANTHA);
 			_graphicsManager.lockScreen();
@@ -395,9 +395,9 @@ bool HopkinsEngine::runWin95Demo() {
 		case 115:
 			_globals._exitId = 0;
 			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
+			_globals._saveData->_data[svField6] = _globals._screenId;
 			_globals._screenId = 115;
-			_globals._saveData->data[svField5] = _globals._screenId;
+			_globals._saveData->_data[svField5] = _globals._screenId;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -523,7 +523,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 3:
-			if (!_globals._saveData->data[svField170]) {
+			if (!_globals._saveData->_data[svField170]) {
 				_soundManager.WSOUND(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsManager.loadImage("fond");
@@ -556,7 +556,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				_soundManager.DEL_SAMPLE(2);
 				_soundManager.DEL_SAMPLE(3);
 				_soundManager.DEL_SAMPLE(4);
-				_globals._saveData->data[svField170] = 1;
+				_globals._saveData->_data[svField170] = 1;
 			}
 
 			_globals.Max_Propre = 5;
@@ -575,7 +575,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 455;
-			if (_globals._saveData->data[svField80] == 1)
+			if (_globals._saveData->_data[svField80] == 1)
 					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			else
 				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
@@ -589,7 +589,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 7:
-			if (_globals._saveData->data[svField220])
+			if (_globals._saveData->_data[svField220])
 				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
 				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
@@ -607,7 +607,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 440;
 
-			if (!_globals._saveData->data[svField225])
+			if (!_globals._saveData->_data[svField225])
 				bombExplosion();
 
 			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
@@ -628,7 +628,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals.Max_Propre = 15;
 			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField225])
+			if (_globals._saveData->_data[svField225])
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			else
 				bombExplosion();
@@ -657,9 +657,9 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
 
-			if (_globals._saveData->data[svField113] == 1) {
+			if (_globals._saveData->_data[svField113] == 1) {
 				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
-			} else if (!_globals._saveData->data[svField113]) {
+			} else if (!_globals._saveData->_data[svField113]) {
 				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			}
 			break;
@@ -696,9 +696,9 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 113:
 			_globals._exitId = 0;
 			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
+			_globals._saveData->_data[svField6] = _globals._screenId;
 			_globals._screenId = 113;
-			_globals._saveData->data[svField5] = 113;
+			_globals._saveData->_data[svField5] = 113;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
 
 			_graphicsManager.lockScreen();
@@ -714,9 +714,9 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 114:
 			_globals._exitId = 0;
 			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
+			_globals._saveData->_data[svField6] = _globals._screenId;
 			_globals._screenId = 114;
-			_globals._saveData->data[svField5] = 114;
+			_globals._saveData->_data[svField5] = 114;
 			_computerManager.showComputer(COMPUTER_SAMANTHA);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -726,9 +726,9 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 115:
 			_globals._exitId = 0;
 			_globals._prevScreenId = _globals._screenId;
-			_globals._saveData->data[svField6] = _globals._screenId;
+			_globals._saveData->_data[svField6] = _globals._screenId;
 			_globals._screenId = 115;
-			_globals._saveData->data[svField5] = 115;
+			_globals._saveData->_data[svField5] = 115;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -864,7 +864,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 3:
-			if (!_globals._saveData->data[svField170]) {
+			if (!_globals._saveData->_data[svField170]) {
 				_soundManager.WSOUND(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsManager.loadImage("fond");
@@ -902,7 +902,7 @@ bool HopkinsEngine::runFull() {
 				_soundManager.DEL_SAMPLE(4);
 				if (getPlatform() != Common::kPlatformLinux)
 					_graphicsManager.fadeOutLong();
-				_globals._saveData->data[svField170] = 1;
+				_globals._saveData->_data[svField170] = 1;
 			}
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
@@ -920,7 +920,7 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 455;
-			if (_globals._saveData->data[svField80] == 1)
+			if (_globals._saveData->_data[svField80] == 1)
 				_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			else
 				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
@@ -934,7 +934,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 7:
-			if (_globals._saveData->data[svField220])
+			if (_globals._saveData->_data[svField220])
 				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
 				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
@@ -951,7 +951,7 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 15;
 			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[svField225])
+			if (_globals._saveData->_data[svField225])
 				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 				bombExplosion();
@@ -972,7 +972,7 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 15;
 			_globals._maxLineLength = 20;
 			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField225])
+			if (_globals._saveData->_data[svField225])
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			else
 				bombExplosion();
@@ -1003,7 +1003,7 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField113] == 1)
+			if (_globals._saveData->_data[svField113] == 1)
 				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
 			else
 				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
@@ -1013,9 +1013,9 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 50;
 			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[svField117] == 1)
+			if (_globals._saveData->_data[svField117] == 1)
 				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
-			else if (!_globals._saveData->data[svField117])
+			else if (!_globals._saveData->_data[svField117])
 				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
 			if (_globals._exitId == 18) {
 				_globals.iRegul = 1;
@@ -1055,7 +1055,7 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 50;
 			_globals._maxLineLength = 40;
 			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[svField123])
+			if (_globals._saveData->_data[svField123])
 				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
 			else
 				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
@@ -1101,7 +1101,7 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField181] == 1)
+			if (_globals._saveData->_data[svField181] == 1)
 				_objectsManager.PERSONAGE2("IM24", "IM24A", "ANIM24", "IM24", 1, true);
 			else
 				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
@@ -1131,7 +1131,7 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 10;
 			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 440;
-			if (_globals._saveData->data[svField177] == 1)
+			if (_globals._saveData->_data[svField177] == 1)
 				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
 			else
 				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
@@ -1141,7 +1141,7 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 450;
-			if (_globals._saveData->data[svField166] != 1 || _globals._saveData->data[svField167] != 1)
+			if (_globals._saveData->_data[svField166] != 1 || _globals._saveData->_data[svField167] != 1)
 				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
 			else
 				_objectsManager.PERSONAGE2("IM28A", "IM28", "ANIM28", "IM28", 1, false);
@@ -1276,7 +1276,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 61:
-			if (_globals._saveData->data[svField311] == 1 && !_globals._saveData->data[svField312])
+			if (_globals._saveData->_data[svField311] == 1 && !_globals._saveData->_data[svField312])
 				handleConflagration();
 			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
 			break;
@@ -1355,7 +1355,7 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 15;
 			_globals._maxLineLength = 15;
 			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[svField318] == 1)
+			if (_globals._saveData->_data[svField318] == 1)
 				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
 			else
 				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
@@ -1429,7 +1429,7 @@ bool HopkinsEngine::runFull() {
 			_globals.Max_Propre = 5;
 			_globals._maxLineLength = 5;
 			_globals.Max_Perso_Y = 445;
-			if (_globals._saveData->data[svField330]) {
+			if (_globals._saveData->_data[svField330]) {
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
 					_objectsManager.PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 29, true);
 				else
@@ -1511,8 +1511,8 @@ bool HopkinsEngine::runFull() {
 		case 113:
 			_globals._prevScreenId = _globals._screenId;
 			_globals._screenId = 113;
-			_globals._saveData->data[svField6] = _globals._prevScreenId;
-			_globals._saveData->data[svField5] = _globals._screenId;
+			_globals._saveData->_data[svField6] = _globals._prevScreenId;
+			_globals._saveData->_data[svField5] = _globals._screenId;
 			_globals._exitId = 0;
 			_computerManager.showComputer(COMPUTER_HOPKINS);
 			_graphicsManager.lockScreen();
@@ -1529,8 +1529,8 @@ bool HopkinsEngine::runFull() {
 			_globals._exitId = 0;
 			_globals._prevScreenId = _globals._screenId;
 			_globals._screenId = 114;
-			_globals._saveData->data[svField6] = _globals._prevScreenId;
-			_globals._saveData->data[svField5] = _globals._screenId;
+			_globals._saveData->_data[svField6] = _globals._prevScreenId;
+			_globals._saveData->_data[svField5] = _globals._screenId;
 			_computerManager.showComputer(COMPUTER_SAMANTHA);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -1540,8 +1540,8 @@ bool HopkinsEngine::runFull() {
 		case 115:
 			_globals._prevScreenId = _globals._screenId;
 			_globals._screenId = 115;
-			_globals._saveData->data[svField6] = _globals._prevScreenId;
-			_globals._saveData->data[svField5] = _globals._screenId;
+			_globals._saveData->_data[svField6] = _globals._prevScreenId;
+			_globals._saveData->_data[svField5] = _globals._screenId;
 			_globals._exitId = 0;
 			_computerManager.showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.lockScreen();
@@ -2087,7 +2087,7 @@ void HopkinsEngine::handleConflagration() {
 
 	_graphicsManager.fadeOutLong();
 	_graphicsManager.FIN_VISU();
-	_globals._saveData->data[svField312] = 1;
+	_globals._saveData->_data[svField312] = 1;
 	_globals._disableInventFl = false;
 }
 
@@ -2245,7 +2245,7 @@ void HopkinsEngine::playEnding() {
 	while (_objectsManager.BOBPOSI(7) != 120);
 
 	_objectsManager.stopBobAnimation(7);
-	if (_globals._saveData->data[svField135] == 1) {
+	if (_globals._saveData->_data[svField135] == 1) {
 		_soundManager._specialSoundNum = 200;
 		_soundManager.skipRefreshFl = true;
 		_graphicsManager.FADE_LINUX = 2;

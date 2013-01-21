@@ -53,7 +53,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		int mesgId = (int16)READ_LE_UINT16(dataP + 13);
 		opcodeType = 1;
 		if (!TRAVAILOBJET) {
-			if (_vm->_globals._saveData->data[svField356] == 1) {
+			if (_vm->_globals._saveData->_data[svField356] == 1) {
 				if (mesgId == 53)
 					mesgId = 644;
 				if (mesgId == 624)
@@ -139,7 +139,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_soundManager.mixVoice(mesgId, 4);
 		}
 		if (TRAVAILOBJET) {
-			if (_vm->_globals._saveData->data[svField356]) {
+			if (_vm->_globals._saveData->_data[svField356]) {
 				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals.FICH_TEXTE, 55, 20, dataP[8], 35, 253);
 				if (!_vm->_soundManager._textOffFl)
 					_vm->_fontManager.showText(9);
@@ -198,27 +198,27 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager._characterPos.y = (int16)READ_LE_UINT16(dataP + 8);
 				_vm->_objectsManager.PERI = dataP[5];
 				if (_vm->_objectsManager._changeHeadFl) {
-					if (_vm->_globals._saveData->data[svField354] == 1
+					if (_vm->_globals._saveData->_data[svField354] == 1
 							&& _vm->_globals._saveData->_cloneHopkins._pos.x && _vm->_globals._saveData->_cloneHopkins._pos.y
 							&& _vm->_globals._saveData->_cloneHopkins.field2 && _vm->_globals._saveData->_cloneHopkins._location) {
 
 						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_cloneHopkins._pos;
 						_vm->_objectsManager.PERI = _vm->_globals._saveData->_cloneHopkins.field2;
 					}
-					if (_vm->_globals._saveData->data[svField356] == 1
+					if (_vm->_globals._saveData->_data[svField356] == 1
 							&& _vm->_globals._saveData->_samantha._pos.x && _vm->_globals._saveData->_samantha._pos.y
 							&& _vm->_globals._saveData->_samantha.field2 && _vm->_globals._saveData->_samantha._location) {
 						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_samantha._pos;
 						_vm->_objectsManager.PERI = _vm->_globals._saveData->_samantha.field2;
 					}
-					if (_vm->_globals._saveData->data[svField357] == 1
+					if (_vm->_globals._saveData->_data[svField357] == 1
 							&& _vm->_globals._saveData->_realHopkins._pos.x && _vm->_globals._saveData->_realHopkins._pos.y
 							&& _vm->_globals._saveData->_realHopkins.field2 && _vm->_globals._saveData->_realHopkins._location) {
 						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_realHopkins._pos;
 						_vm->_objectsManager.PERI = _vm->_globals._saveData->_realHopkins.field2;
 					}
 				}
-				if (_vm->_globals._saveData->data[svField356] == 1
+				if (_vm->_globals._saveData->_data[svField356] == 1
 						&& _vm->_globals._saveData->_realHopkins._location == _vm->_globals._screenId) {
 					_vm->_objectsManager.addStaticSprite(
 					    _vm->_globals.TETE,
@@ -232,8 +232,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_objectsManager.animateSprite(1);
 					_vm->_objectsManager._twoCharactersFl = true;
 				}
-				if (_vm->_globals._saveData->data[svField357] == 1
-				        && _vm->_globals._saveData->data[svField355] == 1
+				if (_vm->_globals._saveData->_data[svField357] == 1
+				        && _vm->_globals._saveData->_data[svField355] == 1
 				        && _vm->_globals._saveData->_samantha._location == _vm->_globals._screenId) {
 					_vm->_objectsManager.addStaticSprite(
 					    _vm->_globals.TETE,
@@ -253,8 +253,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'E') {
 		if (!_vm->_objectsManager._disableFl) {
 			_vm->_globals._prevScreenId = _vm->_globals._screenId;
-			_vm->_globals._saveData->data[svField6] = _vm->_globals._screenId;
-			_vm->_globals._screenId = _vm->_globals._saveData->data[svField5] = dataP[5];
+			_vm->_globals._saveData->_data[svField6] = _vm->_globals._screenId;
+			_vm->_globals._screenId = _vm->_globals._saveData->_data[svField5] = dataP[5];
 			v70 = dataP[6];
 		}
 		opcodeType = 1;
@@ -264,7 +264,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 1;
 	} else if (dataP[2] == 'P' && dataP[3] == 'E' && dataP[4] == 'R') {
 		int specialOpcode = (int16)READ_LE_UINT16(dataP + 5);
-		if (!_vm->_globals._saveData->data[svField122] && !_vm->_globals._saveData->data[svField356]) {
+		if (!_vm->_globals._saveData->_data[svField122] && !_vm->_globals._saveData->_data[svField356]) {
 			v70 = 0;
 
 			switch (specialOpcode) {
@@ -631,7 +631,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 27:
-			if (_vm->_globals._saveData->data[svField94] != 1 || _vm->_globals._saveData->data[svField95] != 1)
+			if (_vm->_globals._saveData->_data[svField94] != 1 || _vm->_globals._saveData->_data[svField95] != 1)
 				_vm->_talkManager.PARLER_PERSO("STANDAR.pe2");
 			else
 				_vm->_talkManager.PARLER_PERSO("STANDAR1.pe2");
@@ -660,19 +660,19 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 36:
-			if (_vm->_globals._saveData->data[svField270] == 2 && _vm->_globals._saveData->data[svField94] == 1 && _vm->_globals._saveData->data[svField95] == 1)
-				_vm->_globals._saveData->data[svField270] = 3;
-			if (!_vm->_globals._saveData->data[svField270])
+			if (_vm->_globals._saveData->_data[svField270] == 2 && _vm->_globals._saveData->_data[svField94] == 1 && _vm->_globals._saveData->_data[svField95] == 1)
+				_vm->_globals._saveData->_data[svField270] = 3;
+			if (!_vm->_globals._saveData->_data[svField270])
 				_vm->_talkManager.PARLER_PERSO2("PATRON0.pe2");
-			if (_vm->_globals._saveData->data[svField270] == 1)
+			if (_vm->_globals._saveData->_data[svField270] == 1)
 				_vm->_talkManager.PARLER_PERSO2("PATRON1.pe2");
-			if (_vm->_globals._saveData->data[svField270] == 2)
+			if (_vm->_globals._saveData->_data[svField270] == 2)
 				_vm->_talkManager.PARLER_PERSO2("PATRON2.pe2");
-			if (_vm->_globals._saveData->data[svField270] == 3)
+			if (_vm->_globals._saveData->_data[svField270] == 3)
 				_vm->_talkManager.PARLER_PERSO2("PATRON3.pe2");
-			if (_vm->_globals._saveData->data[svField270] > 3) {
+			if (_vm->_globals._saveData->_data[svField270] > 3) {
 				_vm->_talkManager.PARLER_PERSO2("PATRON4.pe2");
-				_vm->_globals._saveData->data[svField270] = 5;
+				_vm->_globals._saveData->_data[svField270] = 5;
 			}
 			break;
 
@@ -810,7 +810,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
 			int v19 = 12;
-			if (_vm->_globals._saveData->data[svField133] == 1)
+			if (_vm->_globals._saveData->_data[svField133] == 1)
 				v19 = 41;
 			int v20 = 0;
 			do {
@@ -907,7 +907,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 56:
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile("HOPFEM.SPR");
 			_vm->_globals.PERSO_TYPE = 1;
-			_vm->_globals._saveData->data[svField122] = 1;
+			_vm->_globals._saveData->_data[svField122] = 1;
 			_vm->_globals.loadCharacterData();
 			_vm->_objectsManager._sprite[0].field12 = 28;
 			_vm->_objectsManager._sprite[0].field14 = 155;
@@ -917,7 +917,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 57:
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
 			_vm->_globals.PERSO_TYPE = 0;
-			_vm->_globals._saveData->data[svField122] = 0;
+			_vm->_globals._saveData->_data[svField122] = 0;
 			_vm->_globals.loadCharacterData();
 			_vm->_objectsManager._sprite[0].field12 = 34;
 			_vm->_objectsManager._sprite[0].field14 = 190;
@@ -927,8 +927,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 58:
 			_vm->_globals.NOPARLE = true;
 			_vm->_talkManager.PARLER_PERSO("Gm1.PE2");
-			_vm->_globals._saveData->data[svField176] = 1;
-			_vm->_globals._saveData->data[svField270] = 2;
+			_vm->_globals._saveData->_data[svField176] = 1;
+			_vm->_globals._saveData->_data[svField270] = 2;
 			_vm->_globals.NOPARLE = false;
 			break;
 
@@ -1128,7 +1128,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 86:
-			if (_vm->_globals._saveData->data[svField231] == 1) {
+			if (_vm->_globals._saveData->_data[svField231] == 1) {
 				_vm->_talkManager.PARLER_PERSO("chotess1.pe2");
 			} else {
 				_vm->_globals.NOPARLE = true;
@@ -1138,14 +1138,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 87:
-			if (_vm->_globals._saveData->data[svField188])
+			if (_vm->_globals._saveData->_data[svField188])
 				_vm->_talkManager.PARLER_PERSO("stand2.pe2");
 			else
 				_vm->_talkManager.PARLER_PERSO("stand1.pe2");
 			break;
 
 		case 88:
-			if (_vm->_globals._saveData->data[svField183] == 1) {
+			if (_vm->_globals._saveData->_data[svField183] == 1) {
 				_vm->_objectsManager.SET_BOBPOSI(1, 0);
 				_vm->_objectsManager.SET_BOBPOSI(2, 0);
 				_vm->_objectsManager.setBobAnimation(1);
@@ -1187,7 +1187,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
 				_vm->_soundManager.DEL_SAMPLE(1);
 			}
-			if (_vm->_globals._saveData->data[svField183] == 2) {
+			if (_vm->_globals._saveData->_data[svField183] == 2) {
 				_vm->_objectsManager.SET_BOBPOSI(1, 0);
 				_vm->_objectsManager.SET_BOBPOSI(3, 0);
 				_vm->_objectsManager.setBobAnimation(1);
@@ -1233,11 +1233,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 90:
 			_vm->_soundManager.playSound("SOUND52.WAV");
-			if (!_vm->_globals._saveData->data[svField186]) {
+			if (!_vm->_globals._saveData->_data[svField186]) {
 				_vm->_animationManager.playSequence("CIB5A.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 			}
-			if (_vm->_globals._saveData->data[svField186] == 1) {
+			if (_vm->_globals._saveData->_data[svField186] == 1) {
 				_vm->_animationManager.playSequence("CIB5C.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 329, 87, 2);
@@ -1246,11 +1246,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 91:
 			_vm->_soundManager.playSound("SOUND52.WAV");
-			if (!_vm->_globals._saveData->data[svField186]) {
+			if (!_vm->_globals._saveData->_data[svField186]) {
 				_vm->_animationManager.playSequence("CIB5B.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 			}
-			if (_vm->_globals._saveData->data[svField186] == 1) {
+			if (_vm->_globals._saveData->_data[svField186] == 1) {
 				_vm->_animationManager.playSequence("CIB5D.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
@@ -1259,11 +1259,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 92:
 			_vm->_soundManager.playSound("SOUND52.WAV");
-			if (!_vm->_globals._saveData->data[svField184]) {
+			if (!_vm->_globals._saveData->_data[svField184]) {
 				_vm->_animationManager.playSequence("CIB6A.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 			}
-			if (_vm->_globals._saveData->data[svField184] == 1) {
+			if (_vm->_globals._saveData->_data[svField184] == 1) {
 				_vm->_animationManager.playSequence("CIB6C.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 293, 139, 3);
@@ -1272,11 +1272,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 93:
 			_vm->_soundManager.playSound("SOUND52.WAV");
-			if (!_vm->_globals._saveData->data[svField184]) {
+			if (!_vm->_globals._saveData->_data[svField184]) {
 				_vm->_animationManager.playSequence("CIB6B.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 			}
-			if (_vm->_globals._saveData->data[svField184] == 1) {
+			if (_vm->_globals._saveData->_data[svField184] == 1) {
 				_vm->_animationManager.playSequence("CIB6D.SEQ", 1, 12, 1);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
@@ -1284,9 +1284,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 94:
-			if (!_vm->_globals._saveData->data[svField228])
+			if (!_vm->_globals._saveData->_data[svField228])
 				_vm->_talkManager.PARLER_PERSO("flicn.pe2");
-			if (_vm->_globals._saveData->data[svField228] == 1)
+			if (_vm->_globals._saveData->_data[svField228] == 1)
 				_vm->_talkManager.PARLER_PERSO("flicn1.pe2");
 			break;
 
@@ -1358,17 +1358,17 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
-			if (_vm->_globals._saveData->data[svField253] == 1) {
+			if (_vm->_globals._saveData->_data[svField253] == 1) {
 				int v27 = _vm->_objectsManager.getSpriteY(0);
 				int v28 = _vm->_objectsManager.getSpriteX(0);
 				_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v28, v27, 201, 294);
 			}
-			if (_vm->_globals._saveData->data[svField253] == 2) {
+			if (_vm->_globals._saveData->_data[svField253] == 2) {
 				int v29 = _vm->_objectsManager.getSpriteY(0);
 				int v30 = _vm->_objectsManager.getSpriteX(0);
 				_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v30, v29, 158, 338);
 			}
-			if (_vm->_globals._saveData->data[svField253] > 2) {
+			if (_vm->_globals._saveData->_data[svField253] > 2) {
 				int v31 = _vm->_objectsManager.getSpriteY(0);
 				int v32 = _vm->_objectsManager.getSpriteX(0);
 				_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(v32, v31, 211, 393);
@@ -1384,7 +1384,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setSpriteIndex(0, 60);
 			_vm->_soundManager.loadSample(1, "SOUND63.WAV");
-			if (_vm->_globals._saveData->data[svField253] > 2) {
+			if (_vm->_globals._saveData->_data[svField253] > 2) {
 				_vm->_objectsManager.setBobAnimation(4);
 				int v33 = 0;
 				do {
@@ -1413,7 +1413,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				} while (_vm->_objectsManager.BOBPOSI(4) != 72);
 				_vm->_objectsManager.stopBobAnimation(4);
 			}
-			if (_vm->_globals._saveData->data[svField253] == 1) {
+			if (_vm->_globals._saveData->_data[svField253] == 1) {
 				_vm->_objectsManager.setBobAnimation(6);
 				int v34 = 0;
 				do {
@@ -1442,7 +1442,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				} while (_vm->_objectsManager.BOBPOSI(6) != 72);
 				_vm->_objectsManager.stopBobAnimation(6);
 			}
-			if (_vm->_globals._saveData->data[svField253] == 2) {
+			if (_vm->_globals._saveData->_data[svField253] == 2) {
 				_vm->_objectsManager.setBobAnimation(5);
 				int v35 = 0;
 				do {
@@ -1810,7 +1810,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 208: {
 			_vm->_globals._disableInventFl = true;
-			if (_vm->_globals._saveData->data[svField6] != _vm->_globals._saveData->data[svField401]) {
+			if (_vm->_globals._saveData->_data[svField6] != _vm->_globals._saveData->_data[svField401]) {
 				_vm->_soundManager._specialSoundNum = 208;
 				_vm->_eventsManager._disableEscKeyFl = true;
 				_vm->_animationManager.playSequence("SORT.SEQ", 10, 4, 10);
@@ -1832,7 +1832,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.setSpriteIndex(0, 64);
-			_vm->_globals._exitId = _vm->_globals._saveData->data[svField401];
+			_vm->_globals._exitId = _vm->_globals._saveData->_data[svField401];
 			_vm->_globals._disableInventFl = false;
 			break;
 			}
@@ -2045,7 +2045,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 236: {
-			char v47 = _vm->_globals._saveData->data[svField341];
+			char v47 = _vm->_globals._saveData->_data[svField341];
 			if (v47) {
 				if (v47 == 2)
 					v70 = 5;
@@ -2055,18 +2055,18 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					v70 = 6;
 				_vm->_soundManager.playSound("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
-				if (_vm->_globals._saveData->data[svField341] == 1)
+				if (_vm->_globals._saveData->_data[svField341] == 1)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
-				if (_vm->_globals._saveData->data[svField341] == 2)
+				if (_vm->_globals._saveData->_data[svField341] == 2)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
-				if (_vm->_globals._saveData->data[svField341] == 3)
+				if (_vm->_globals._saveData->_data[svField341] == 3)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
-				if (_vm->_globals._saveData->data[svField341] == 1)
-					_vm->_globals._saveData->data[svField338] = 0;
-				if (_vm->_globals._saveData->data[svField341] == 2)
-					_vm->_globals._saveData->data[svField339] = 0;
-				if (_vm->_globals._saveData->data[svField341] == 3)
-					_vm->_globals._saveData->data[svField340] = 0;
+				if (_vm->_globals._saveData->_data[svField341] == 1)
+					_vm->_globals._saveData->_data[svField338] = 0;
+				if (_vm->_globals._saveData->_data[svField341] == 2)
+					_vm->_globals._saveData->_data[svField339] = 0;
+				if (_vm->_globals._saveData->_data[svField341] == 3)
+					_vm->_globals._saveData->_data[svField340] = 0;
 			}
 			_vm->_soundManager.playSound("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(6, 0, 23, 0);
@@ -2075,7 +2075,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 237: {
-			char v48 = _vm->_globals._saveData->data[svField341];
+			char v48 = _vm->_globals._saveData->_data[svField341];
 			if (v48) {
 				if (v48 == 2)
 					v70 = 5;
@@ -2085,18 +2085,18 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					v70 = 6;
 				_vm->_soundManager.playSound("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
-				if (_vm->_globals._saveData->data[svField341] == 1)
+				if (_vm->_globals._saveData->_data[svField341] == 1)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
-				if (_vm->_globals._saveData->data[svField341] == 2)
+				if (_vm->_globals._saveData->_data[svField341] == 2)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
-				if (_vm->_globals._saveData->data[svField341] == 3)
+				if (_vm->_globals._saveData->_data[svField341] == 3)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
-				if (_vm->_globals._saveData->data[svField341] == 1)
-					_vm->_globals._saveData->data[svField338] = 0;
-				if (_vm->_globals._saveData->data[svField341] == 2)
-					_vm->_globals._saveData->data[svField339] = 0;
-				if (_vm->_globals._saveData->data[svField341] == 3)
-					_vm->_globals._saveData->data[svField340] = 0;
+				if (_vm->_globals._saveData->_data[svField341] == 1)
+					_vm->_globals._saveData->_data[svField338] = 0;
+				if (_vm->_globals._saveData->_data[svField341] == 2)
+					_vm->_globals._saveData->_data[svField339] = 0;
+				if (_vm->_globals._saveData->_data[svField341] == 3)
+					_vm->_globals._saveData->_data[svField340] = 0;
 			}
 			_vm->_soundManager.playSound("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(5, 0, 23, 0);
@@ -2105,7 +2105,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 238: {
-			char v49 = _vm->_globals._saveData->data[svField341];
+			char v49 = _vm->_globals._saveData->_data[svField341];
 			if (v49) {
 				if (v49 == 2)
 					v70 = 5;
@@ -2115,18 +2115,18 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					v70 = 6;
 				_vm->_soundManager.playSound("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
-				if (_vm->_globals._saveData->data[svField341] == 1)
+				if (_vm->_globals._saveData->_data[svField341] == 1)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
-				if (_vm->_globals._saveData->data[svField341] == 2)
+				if (_vm->_globals._saveData->_data[svField341] == 2)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
-				if (_vm->_globals._saveData->data[svField341] == 3)
+				if (_vm->_globals._saveData->_data[svField341] == 3)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
-				if (_vm->_globals._saveData->data[svField341] == 1)
-					_vm->_globals._saveData->data[svField338] = 0;
-				if (_vm->_globals._saveData->data[svField341] == 2)
-					_vm->_globals._saveData->data[svField339] = 0;
-				if (_vm->_globals._saveData->data[svField341] == 3)
-					_vm->_globals._saveData->data[svField340] = 0;
+				if (_vm->_globals._saveData->_data[svField341] == 1)
+					_vm->_globals._saveData->_data[svField338] = 0;
+				if (_vm->_globals._saveData->_data[svField341] == 2)
+					_vm->_globals._saveData->_data[svField339] = 0;
+				if (_vm->_globals._saveData->_data[svField341] == 3)
+					_vm->_globals._saveData->_data[svField340] = 0;
 			}
 			_vm->_soundManager.playSound("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(4, 0, 23, 0);
@@ -2181,10 +2181,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			v51->_pos.y = _vm->_objectsManager.getSpriteY(0);
 			v51->field2 = 57;
 			v51->_location = 97;
-			_vm->_globals._saveData->data[svField121] = 1;
-			_vm->_globals._saveData->data[svField352] = 1;
-			_vm->_globals._saveData->data[svField353] = 1;
-			_vm->_globals._saveData->data[svField354] = 1;
+			_vm->_globals._saveData->_data[svField121] = 1;
+			_vm->_globals._saveData->_data[svField352] = 1;
+			_vm->_globals._saveData->_data[svField353] = 1;
+			_vm->_globals._saveData->_data[svField354] = 1;
 			break;
 			}
 
@@ -2208,10 +2208,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if (_vm->_globals.STAILLE[790 / 2] < 0)
 				v54 = -_vm->_globals.STAILLE[790 / 2];
 			v53->field4 = -(100 * (67 - (100 - v54)) / 67);
-			_vm->_globals._saveData->data[svField357] = 1;
-			_vm->_globals._saveData->data[svField354] = 0;
-			_vm->_globals._saveData->data[svField356] = 0;
-			_vm->_globals._saveData->data[svField355] = 1;
+			_vm->_globals._saveData->_data[svField357] = 1;
+			_vm->_globals._saveData->_data[svField354] = 0;
+			_vm->_globals._saveData->_data[svField356] = 0;
+			_vm->_globals._saveData->_data[svField355] = 1;
 			_vm->_objectsManager._twoCharactersFl = true;
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
 			_vm->_objectsManager.addStaticSprite(_vm->_globals.TETE, v53->_pos, 1, 3, v53->field4, 0, 20, 127);
@@ -2221,7 +2221,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 243:
 			_vm->_soundManager.playSound("SOUND88.WAV");
-			if (_vm->_globals._saveData->data[svField341] == 2) {
+			if (_vm->_globals._saveData->_data[svField341] == 2) {
 				_vm->_animationManager.NO_SEQ = true;
 				_vm->_animationManager.playSequence("RESU.SEQ", 2, 24, 2);
 				_vm->_animationManager.NO_SEQ = false;
@@ -2236,7 +2236,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.ZONEP[4]._destX = 276;
 			_vm->_objectsManager.enableVerb(4, 19);
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 285, 379, 0);
-			_vm->_globals._saveData->data[svField399] = 1;
+			_vm->_globals._saveData->_data[svField399] = 1;
 			break;
 
 		case 246:
@@ -2375,11 +2375,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 1;
 		int idx = (int16)READ_LE_UINT16(dataP + 5);
 		assert(idx >= 0 && idx < 2050);
-		_vm->_globals._saveData->data[idx] = dataP[7];
-		_vm->_globals._saveData->data[idx + 1] = dataP[8];
+		_vm->_globals._saveData->_data[idx] = dataP[7];
+		_vm->_globals._saveData->_data[idx + 1] = dataP[8];
 	} else if (dataP[2] == 'A' && dataP[3] == 'D' && dataP[4] == 'D') {
 		opcodeType = 1;
-		_vm->_globals._saveData->data[(int16)READ_LE_UINT16(dataP + 5)] += dataP[7];
+		_vm->_globals._saveData->_data[(int16)READ_LE_UINT16(dataP + 5)] += dataP[7];
 	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'S') {
 		opcodeType = 1;
 		_vm->_objectsManager.BOB_OFFSET((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
@@ -2459,24 +2459,24 @@ LABEL_2:
 	int saveDataIdx1 = (int16)READ_LE_UINT16(buf + 5);
 	int compVal1 = (int16)READ_LE_UINT16(buf + 7);
 	bool check1Fl = false;
-	if ((oper == 1 && _vm->_globals._saveData->data[saveDataIdx1] == compVal1) ||
-	    (oper == 2 && _vm->_globals._saveData->data[saveDataIdx1] != compVal1) ||
-	    (oper == 3 && _vm->_globals._saveData->data[saveDataIdx1] <= compVal1) ||
-	    (oper == 4 && _vm->_globals._saveData->data[saveDataIdx1] >= compVal1) ||
-	    (oper == 5 && _vm->_globals._saveData->data[saveDataIdx1] > compVal1) ||
-	    (oper == 6 && _vm->_globals._saveData->data[saveDataIdx1] < compVal1))
+	if ((oper == 1 && _vm->_globals._saveData->_data[saveDataIdx1] == compVal1) ||
+	    (oper == 2 && _vm->_globals._saveData->_data[saveDataIdx1] != compVal1) ||
+	    (oper == 3 && _vm->_globals._saveData->_data[saveDataIdx1] <= compVal1) ||
+	    (oper == 4 && _vm->_globals._saveData->_data[saveDataIdx1] >= compVal1) ||
+	    (oper == 5 && _vm->_globals._saveData->_data[saveDataIdx1] > compVal1) ||
+	    (oper == 6 && _vm->_globals._saveData->_data[saveDataIdx1] < compVal1))
 		check1Fl = true;
 
 	bool check2Fl = false;
 	if (operType != 3) {
 		int saveDataIdx2 = (int16)READ_LE_UINT16(buf + 9);
 		int compVal2 = (int16)READ_LE_UINT16(buf + 11);
-		if ((oper2 == 1 && compVal2 == _vm->_globals._saveData->data[saveDataIdx2]) ||
-		    (oper2 == 2 && compVal2 != _vm->_globals._saveData->data[saveDataIdx2]) ||
-		    (oper2 == 3 && compVal2 >= _vm->_globals._saveData->data[saveDataIdx2]) ||
-		    (oper2 == 4 && compVal2 <= _vm->_globals._saveData->data[saveDataIdx2]) ||
-		    (oper2 == 5 && compVal2 < _vm->_globals._saveData->data[saveDataIdx2]) ||
-		    (oper2 == 6 && compVal2 > _vm->_globals._saveData->data[saveDataIdx2]))
+		if ((oper2 == 1 && compVal2 == _vm->_globals._saveData->_data[saveDataIdx2]) ||
+		    (oper2 == 2 && compVal2 != _vm->_globals._saveData->_data[saveDataIdx2]) ||
+		    (oper2 == 3 && compVal2 >= _vm->_globals._saveData->_data[saveDataIdx2]) ||
+		    (oper2 == 4 && compVal2 <= _vm->_globals._saveData->_data[saveDataIdx2]) ||
+		    (oper2 == 5 && compVal2 < _vm->_globals._saveData->_data[saveDataIdx2]) ||
+		    (oper2 == 6 && compVal2 > _vm->_globals._saveData->_data[saveDataIdx2]))
 			check2Fl = true;
 	}
 	

@@ -64,7 +64,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		_characterBuffer = _vm->_fileManager.loadFile(filename);
 		_characterSize = _vm->_fileManager.fileSize(filename);
 	}
-	_vm->_globals._saveData->data[svField4] = 0;
+	_vm->_globals._saveData->_data[svField4] = 0;
 	getStringFromBuffer(40, spriteFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
@@ -163,7 +163,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		_characterSize = _vm->_fileManager.fileSize(filename);
 	}
 
-	_vm->_globals._saveData->data[svField4] = 0;
+	_vm->_globals._saveData->_data[svField4] = 0;
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
 
@@ -357,7 +357,7 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	v7 = (int16)READ_LE_UINT16((uint16 *)v3 + 9);
 
 	if (v7)
-		_vm->_globals._saveData->data[svField4] = v7;
+		_vm->_globals._saveData->_data[svField4] = v7;
 
 	if (!v6)
 		v6 = 10;
@@ -897,7 +897,7 @@ LABEL_2:
 					}
 				} while (!loopCond);
 				_vm->_globals.freeMemory(ptr);
-				_vm->_globals._saveData->data[svField2] = 0;
+				_vm->_globals._saveData->_data[svField2] = 0;
 				return;
 			}
 		}
@@ -906,7 +906,7 @@ LABEL_2:
 
 void TalkManager::REPONSE2(int a1, int a2) {
 	int indx = 0;
-	if (a2 != 5 || _vm->_globals._saveData->data[svField3] != 4)
+	if (a2 != 5 || _vm->_globals._saveData->_data[svField3] != 4)
 		return;
 
 	if (a1 == 22 || a1 == 23) {
@@ -954,7 +954,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			indx = 213;
 			break;
 		}
-		_vm->_globals._saveData->data[indx] = 2;
+		_vm->_globals._saveData->_data[indx] = 2;
 		_vm->_objectsManager.disableZone(22);
 		_vm->_objectsManager.disableZone(23);
 	} else if (a1 == 20 || a1 == 21) {
@@ -1001,7 +1001,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 			indx = 212;
 			break;
 		}
-		_vm->_globals._saveData->data[indx] = 2;
+		_vm->_globals._saveData->_data[indx] = 2;
 		_vm->_objectsManager.disableZone(21);
 		_vm->_objectsManager.disableZone(20);
 	}

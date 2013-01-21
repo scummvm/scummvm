@@ -830,12 +830,12 @@ void ObjectsManager::computeSprite(int idx) {
 	int zoomPercent = 0;
 	int reducePercent = 0;
 
-	if (_sprite[idx].fieldC < 0) {
-		reducePercent = -_sprite[idx].fieldC;
+	if (_sprite[idx]._zoomfactor < 0) {
+		reducePercent = -_sprite[idx]._zoomfactor;
 		if (reducePercent > 95)
 			reducePercent = 95;
 	} else 
-		zoomPercent = _sprite[idx].fieldC;
+		zoomPercent = _sprite[idx]._zoomfactor;
 
 	if (zoomPercent) {
 		if (tmpX >= 0)
@@ -1213,12 +1213,12 @@ void ObjectsManager::animateSprite(int idx) {
 	_sprite[idx]._animationType = 1;
 }
 
-void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int a6, int a7, int a8, int a9) {
+void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, int a7, int a8, int a9) {
 	assert (idx  <= MAX_SPRITE);
 	_sprite[idx]._spriteData = spriteData;
 	_sprite[idx]._spritePos = pos;
 	_sprite[idx]._spriteIndex = spriteIndex;
-	_sprite[idx].fieldC = a6;
+	_sprite[idx]._zoomfactor = zoomFactor;
 	_sprite[idx].fieldE = a7;
 	_sprite[idx].field12 = a8;
 	_sprite[idx].field14 = a9;
@@ -1226,7 +1226,7 @@ void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, 
 
 	if (spriteData[0] == 'R' && spriteData[1] == 'L' && spriteData[2] == 'E') {
 		_sprite[idx]._rleFl = true;
-		_sprite[idx].fieldC = 0;
+		_sprite[idx]._zoomfactor = 0;
 		_sprite[idx].fieldE = 0;
 	} else
 		_sprite[idx]._rleFl = false;
@@ -1266,10 +1266,10 @@ void ObjectsManager::setSpriteIndex(int idx, int spriteIndex) {
 }
 
 // Set Sprite Size
-void ObjectsManager::setSpriteSize(int idx, int size) {
+void ObjectsManager::setSpriteZoom(int idx, int zoomFactor) {
 	assert (idx  <= MAX_SPRITE);
 	if (!_sprite[idx]._rleFl)
-		_sprite[idx].fieldC = size;
+		_sprite[idx]._zoomfactor = zoomFactor;
 }
 
 void ObjectsManager::setFlipSprite(int idx, bool flip) {
@@ -1450,7 +1450,7 @@ void ObjectsManager::GOHOME() {
 			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
 			_vm->_globals._actionDirection = 0;
 			if (_vm->_globals.GOACTION)
-				v54 = _vm->_globals._saveData->data[svField2];
+				v54 = _vm->_globals._saveData->_data[svField2];
 			else
 				v54 = _zoneNum;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
@@ -1484,12 +1484,12 @@ void ObjectsManager::GOHOME() {
 			v3 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v4 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
 
-			if (_sprite[0].fieldC < 0) {
-				v3 = _vm->_graphicsManager.zoomOut(v3, -_sprite[0].fieldC);
-				v4 = _vm->_graphicsManager.zoomOut(v4, -_sprite[0].fieldC);
-			} else if (_sprite[0].fieldC > 0) {
-				v3 = _vm->_graphicsManager.zoomIn(v3, _sprite[0].fieldC);
-				v4 = _vm->_graphicsManager.zoomIn(v4, _sprite[0].fieldC);
+			if (_sprite[0]._zoomfactor < 0) {
+				v3 = _vm->_graphicsManager.zoomOut(v3, -_sprite[0]._zoomfactor);
+				v4 = _vm->_graphicsManager.zoomOut(v4, -_sprite[0]._zoomfactor);
+			} else if (_sprite[0]._zoomfactor > 0) {
+				v3 = _vm->_graphicsManager.zoomIn(v3, _sprite[0]._zoomfactor);
+				v4 = _vm->_graphicsManager.zoomIn(v4, _sprite[0]._zoomfactor);
 			}
 			v0 = v3 + g_old_x;
 			v58 = g_old_y + v4;
@@ -1507,13 +1507,13 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v9 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v10 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-			if (_sprite[0].fieldC < 0) {
-				v9 = _vm->_graphicsManager.zoomOut(v9, -_sprite[0].fieldC);
-				v10 = _vm->_graphicsManager.zoomOut(v10, -_sprite[0].fieldC);
+			if (_sprite[0]._zoomfactor < 0) {
+				v9 = _vm->_graphicsManager.zoomOut(v9, -_sprite[0]._zoomfactor);
+				v10 = _vm->_graphicsManager.zoomOut(v10, -_sprite[0]._zoomfactor);
 			}
-			if (_sprite[0].fieldC > 0) {
-				v9 = _vm->_graphicsManager.zoomIn(v9, _sprite[0].fieldC);
-				v10 = _vm->_graphicsManager.zoomIn(v10, _sprite[0].fieldC);
+			if (_sprite[0]._zoomfactor > 0) {
+				v9 = _vm->_graphicsManager.zoomIn(v9, _sprite[0]._zoomfactor);
+				v10 = _vm->_graphicsManager.zoomIn(v10, _sprite[0]._zoomfactor);
 			}
 			v0 = g_old_x - v9;
 			v58 = g_old_y - v10;
@@ -1531,11 +1531,11 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v15 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
 			v16 = v15;
-			if (_sprite[0].fieldC < 0) {
-				v16 = _vm->_graphicsManager.zoomOut(v16, -_sprite[0].fieldC);
+			if (_sprite[0]._zoomfactor < 0) {
+				v16 = _vm->_graphicsManager.zoomOut(v16, -_sprite[0]._zoomfactor);
 			}
-			if (_sprite[0].fieldC > 0) {
-				v16 = _vm->_graphicsManager.zoomIn(v16, _sprite[0].fieldC);
+			if (_sprite[0]._zoomfactor > 0) {
+				v16 = _vm->_graphicsManager.zoomIn(v16, _sprite[0]._zoomfactor);
 			}
 			v0 = g_old_x;
 			v58 = g_old_y - v16;
@@ -1554,16 +1554,16 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v19 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
 			v20 = v19;
-			if (_sprite[0].fieldC < 0) {
-				v21 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v21 = -_sprite[0].fieldC;
+			if (_sprite[0]._zoomfactor < 0) {
+				v21 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v21 = -_sprite[0]._zoomfactor;
 				v20 = _vm->_graphicsManager.zoomOut(v20, v21);
 			}
-			if (_sprite[0].fieldC > 0) {
-				v22 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v22 = -_sprite[0].fieldC;
+			if (_sprite[0]._zoomfactor > 0) {
+				v22 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v22 = -_sprite[0]._zoomfactor;
 				v20 = _vm->_graphicsManager.zoomIn(v20, v22);
 			}
 			v0 = g_old_x;
@@ -1582,24 +1582,24 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v23 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v24 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-			if (_sprite[0].fieldC < 0) {
-				v25 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v25 = -_sprite[0].fieldC;
+			if (_sprite[0]._zoomfactor < 0) {
+				v25 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v25 = -_sprite[0]._zoomfactor;
 				v23 = _vm->_graphicsManager.zoomOut(v23, v25);
-				v26 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v26 = -_sprite[0].fieldC;
+				v26 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v26 = -_sprite[0]._zoomfactor;
 				v24 = _vm->_graphicsManager.zoomOut(v24, v26);
 			}
-			if (_sprite[0].fieldC > 0) {
-				v27 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v27 = -_sprite[0].fieldC;
+			if (_sprite[0]._zoomfactor > 0) {
+				v27 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v27 = -_sprite[0]._zoomfactor;
 				v23 = _vm->_graphicsManager.zoomIn(v23, v27);
-				v28 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v28 = -_sprite[0].fieldC;
+				v28 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v28 = -_sprite[0]._zoomfactor;
 				v24 = _vm->_graphicsManager.zoomIn(v24, v28);
 			}
 			v0 = v23 + g_old_x;
@@ -1618,23 +1618,23 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v29 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v30 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-			if (_sprite[0].fieldC < 0) {
-				v31 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v31 = -_sprite[0].fieldC;
+			if (_sprite[0]._zoomfactor < 0) {
+				v31 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v31 = -_sprite[0]._zoomfactor;
 				v29 = _vm->_graphicsManager.zoomOut(v29, v31);
-				v32 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v32 = -_sprite[0].fieldC;
+				v32 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v32 = -_sprite[0]._zoomfactor;
 				v30 = _vm->_graphicsManager.zoomOut(v30, v32);
-			} else if (_sprite[0].fieldC > 0) {
-				v33 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v33 = -_sprite[0].fieldC;
+			} else if (_sprite[0]._zoomfactor > 0) {
+				v33 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v33 = -_sprite[0]._zoomfactor;
 				v29 = _vm->_graphicsManager.zoomIn(v29, v33);
-				v34 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v34 = -_sprite[0].fieldC;
+				v34 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v34 = -_sprite[0]._zoomfactor;
 				v30 = _vm->_graphicsManager.zoomIn(v30, v34);
 			}
 			v0 = g_old_x - v29;
@@ -1653,24 +1653,24 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v35 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v36 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-			if (_sprite[0].fieldC < 0) {
-				v37 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v37 = -_sprite[0].fieldC;
+			if (_sprite[0]._zoomfactor < 0) {
+				v37 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v37 = -_sprite[0]._zoomfactor;
 				v35 = _vm->_graphicsManager.zoomOut(v35, v37);
-				v38 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v38 = -_sprite[0].fieldC;
+				v38 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v38 = -_sprite[0]._zoomfactor;
 				v36 = _vm->_graphicsManager.zoomOut(v36, v38);
 			}
-			if (_sprite[0].fieldC > 0) {
-				v39 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v39 = -_sprite[0].fieldC;
+			if (_sprite[0]._zoomfactor > 0) {
+				v39 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v39 = -_sprite[0]._zoomfactor;
 				v35 = _vm->_graphicsManager.zoomIn(v35, v39);
-				v40 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v40 = -_sprite[0].fieldC;
+				v40 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v40 = -_sprite[0]._zoomfactor;
 				v36 = _vm->_graphicsManager.zoomIn(v36, v40);
 			}
 			v0 = v35 + g_old_x;
@@ -1689,24 +1689,24 @@ void ObjectsManager::GOHOME() {
 		} else {
 			v41 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
 			v42 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
-			if (_sprite[0].fieldC < 0) {
-				v43 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v43 = -_sprite[0].fieldC;
+			if (_sprite[0]._zoomfactor < 0) {
+				v43 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v43 = -_sprite[0]._zoomfactor;
 				v41 = _vm->_graphicsManager.zoomOut(v41, v43);
-				v44 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v44 = -_sprite[0].fieldC;
+				v44 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v44 = -_sprite[0]._zoomfactor;
 				v42 = _vm->_graphicsManager.zoomOut(v42, v44);
 			}
-			if (_sprite[0].fieldC > 0) {
-				v45 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v45 = -_sprite[0].fieldC;
+			if (_sprite[0]._zoomfactor > 0) {
+				v45 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v45 = -_sprite[0]._zoomfactor;
 				v41 = _vm->_graphicsManager.zoomIn(v41, v45);
-				v46 = _sprite[0].fieldC;
-				if (_sprite[0].fieldC < 0)
-					v46 = -_sprite[0].fieldC;
+				v46 = _sprite[0]._zoomfactor;
+				if (_sprite[0]._zoomfactor < 0)
+					v46 = -_sprite[0]._zoomfactor;
 				v42 = _vm->_graphicsManager.zoomIn(v42, v46);
 			}
 			v0 = g_old_x - v41;
@@ -1726,7 +1726,7 @@ void ObjectsManager::GOHOME() {
 
 		if (newPosX == -1 && newPosY == -1) {
 			if (_vm->_globals.GOACTION)
-				v49 = _vm->_globals._saveData->data[svField2];
+				v49 = _vm->_globals._saveData->_data[svField2];
 			else
 				v49 = _zoneNum;
 			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
@@ -2060,15 +2060,15 @@ void ObjectsManager::PLAN_BETA() {
 	do {
 		int mouseButton = _vm->_eventsManager.getMouseButton();
 		if (mouseButton) {
-			if (_vm->_globals._saveData->data[svField170] == 1 && !_vm->_globals._saveData->data[svField171]) {
-				_vm->_globals._saveData->data[svField171] = 1;
+			if (_vm->_globals._saveData->_data[svField170] == 1 && !_vm->_globals._saveData->_data[svField171]) {
+				_vm->_globals._saveData->_data[svField171] = 1;
 				_vm->_globals.NOPARLE = true;
 				_vm->_talkManager.PARLER_PERSO("APPEL1.pe2");
 				_vm->_globals.NOPARLE = false;
 				mouseButton = 0;
 			}
-			if (_vm->_globals._saveData->data[svField80] == 1 && !_vm->_globals._saveData->data[svField172]) {
-				_vm->_globals._saveData->data[svField172] = 1;
+			if (_vm->_globals._saveData->_data[svField80] == 1 && !_vm->_globals._saveData->_data[svField172]) {
+				_vm->_globals._saveData->_data[svField172] = 1;
 				_vm->_globals.NOPARLE = true;
 				_vm->_talkManager.PARLER_PERSO("APPEL2.pe2");
 				_vm->_globals.NOPARLE = false;
@@ -2124,23 +2124,23 @@ void ObjectsManager::handleLeftButton() {
 		}
 		return;
 	}
-	if (_vm->_globals._saveData->data[svField354] == 1 && !_vm->_globals.PLAN_FLAG
+	if (_vm->_globals._saveData->_data[svField354] == 1 && !_vm->_globals.PLAN_FLAG
 	    && destX >= 533 && destX <= 559 && destY >= 26 && destY <= 59) {
 		changeCharacterHead(CHARACTER_HOPKINS_CLONE, CHARACTER_HOPKINS);
 		return;
 	}
-	if (_vm->_globals._saveData->data[svField356] == 1 && !_vm->_globals.PLAN_FLAG
+	if (_vm->_globals._saveData->_data[svField356] == 1 && !_vm->_globals.PLAN_FLAG
 	    && destX >= 533 && destX <= 559 && destY >= 26 && destY <= 48) {
 		changeCharacterHead(CHARACTER_SAMANTHA, CHARACTER_HOPKINS);
 		return;
 	}
-	if (_vm->_globals._saveData->data[svField357] == 1) {
-		if (_vm->_globals._saveData->data[svField353] == 1 && !_vm->_globals.PLAN_FLAG
+	if (_vm->_globals._saveData->_data[svField357] == 1) {
+		if (_vm->_globals._saveData->_data[svField353] == 1 && !_vm->_globals.PLAN_FLAG
 		    && destX >= 533 && destX <= 559 && destY >= 26 && destY <= 59) {
 			changeCharacterHead(CHARACTER_HOPKINS, CHARACTER_HOPKINS_CLONE);
 			return;
 		}
-		if (_vm->_globals._saveData->data[svField355] == 1 && !_vm->_globals.PLAN_FLAG
+		if (_vm->_globals._saveData->_data[svField355] == 1 && !_vm->_globals.PLAN_FLAG
 		    && destX >= 567 && destX <= 593 && destY >= 26 && destY <= 59) {
 			changeCharacterHead(CHARACTER_HOPKINS, CHARACTER_SAMANTHA);
 			return;
@@ -2165,8 +2165,8 @@ void ObjectsManager::handleLeftButton() {
 	if (_vm->_globals.GOACTION) {
 		checkZone();
 		_vm->_globals.GOACTION = false;
-		_vm->_globals._saveData->data[svField1] = 0;
-		_vm->_globals._saveData->data[svField2] = 0;
+		_vm->_globals._saveData->_data[svField1] = 0;
+		_vm->_globals._saveData->_data[svField2] = 0;
 	}
 
 	if (_vm->_globals.PLAN_FLAG && (_vm->_eventsManager._mouseCursorId != 4 || _zoneNum <= 0))
@@ -2224,19 +2224,19 @@ LABEL_65:
 	}
 	if (_zoneNum != -1 && _zoneNum != 0) {
 		if (_vm->_eventsManager._mouseCursorId == 23)
-			_vm->_globals._saveData->data[svField1] = 5;
+			_vm->_globals._saveData->_data[svField1] = 5;
 		else 
-			_vm->_globals._saveData->data[svField1] = _vm->_eventsManager._mouseCursorId;
+			_vm->_globals._saveData->_data[svField1] = _vm->_eventsManager._mouseCursorId;
 
 		if (_vm->_globals.PLAN_FLAG)
-			_vm->_globals._saveData->data[svField1] = 6;
-		_vm->_globals._saveData->data[svField2] = _zoneNum;
-		_vm->_globals._saveData->data[svField3] = _vm->_globals._curObjectIndex;
+			_vm->_globals._saveData->_data[svField1] = 6;
+		_vm->_globals._saveData->_data[svField2] = _zoneNum;
+		_vm->_globals._saveData->_data[svField3] = _vm->_globals._curObjectIndex;
 		_vm->_globals.GOACTION = true;
 	}
 	_vm->_fontManager.hideText(5);
 	_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
-	if (_vm->_globals._screenId == 20 && _vm->_globals._saveData->data[svField132] == 1
+	if (_vm->_globals._screenId == 20 && _vm->_globals._saveData->_data[svField132] == 1
 				&& _vm->_globals._curObjectIndex == 20 && _zoneNum == 12
 				&& _vm->_eventsManager._mouseCursorId == 23) {
 		// Special case for throwing darts at the switch in Purgatory - the player shouldn't move
@@ -2247,8 +2247,8 @@ LABEL_65:
 }
 
 void ObjectsManager::PARADISE() {
-	char result = _vm->_globals._saveData->data[svField1];
-	if (result && _vm->_globals._saveData->data[svField2] && result != 4 && result > 3) {
+	char result = _vm->_globals._saveData->_data[svField1];
+	if (result && _vm->_globals._saveData->_data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.hideText(5);
 		if (!_vm->_globals._forestFl || _zoneNum < 20 || _zoneNum > 23) {
 			if (_vm->_graphicsManager._largeScreenFl) {
@@ -2295,20 +2295,20 @@ void ObjectsManager::PARADISE() {
 				_vm->_eventsManager.VBL();
 				_vm->_graphicsManager._scrollStatus = 0;
 			}
-			_vm->_talkManager.REPONSE(_vm->_globals._saveData->data[svField2], _vm->_globals._saveData->data[svField1]);
+			_vm->_talkManager.REPONSE(_vm->_globals._saveData->_data[svField2], _vm->_globals._saveData->_data[svField1]);
 		} else {
-			_vm->_talkManager.REPONSE2(_vm->_globals._saveData->data[svField2], _vm->_globals._saveData->data[svField1]);
+			_vm->_talkManager.REPONSE2(_vm->_globals._saveData->_data[svField2], _vm->_globals._saveData->_data[svField1]);
 		}
 		_vm->_eventsManager.changeMouseCursor(4);
 		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_globals.ZONEP[_zoneNum]._enabledFl) {
 			_zoneNum = -1;
 			_forceZoneFl = true;
 		}
-		if (_zoneNum != _vm->_globals._saveData->data[svField2] || _zoneNum == -1 || _zoneNum == 0) {
+		if (_zoneNum != _vm->_globals._saveData->_data[svField2] || _zoneNum == -1 || _zoneNum == 0) {
 			_vm->_eventsManager._mouseCursorId = 4;
 			_changeVerbFl = false;
 		} else {
-			_vm->_eventsManager._mouseCursorId = _vm->_globals._saveData->data[svField1];
+			_vm->_eventsManager._mouseCursorId = _vm->_globals._saveData->_data[svField1];
 			if (_changeVerbFl) {
 				nextVerbIcon();
 				_changeVerbFl = false;
@@ -2319,8 +2319,8 @@ void ObjectsManager::PARADISE() {
 		if (_vm->_eventsManager._mouseCursorId != 23)
 			_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
 		_zoneNum = 0;
-		_vm->_globals._saveData->data[svField1] = 0;
-		_vm->_globals._saveData->data[svField2] = 0;
+		_vm->_globals._saveData->_data[svField1] = 0;
+		_vm->_globals._saveData->_data[svField2] = 0;
 	}
 	if (_vm->_globals.PLAN_FLAG) {
 		_vm->_eventsManager._mouseCursorId = 0;
@@ -2362,8 +2362,8 @@ void ObjectsManager::clearScreen() {
 	_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
 	_vm->_eventsManager._startPos.x = 0;
 	_vm->_eventsManager._mouseSpriteId = 0;
-	_vm->_globals._saveData->data[svField1] = 0;
-	_vm->_globals._saveData->data[svField2] = 0;
+	_vm->_globals._saveData->_data[svField1] = 0;
+	_vm->_globals._saveData->_data[svField2] = 0;
 	_vm->_globals.GOACTION = false;
 	_forceZoneFl = true;
 	_changeVerbFl = false;
@@ -2400,9 +2400,9 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		animateSprite(1);
 		removeSprite(0);
 
-		_vm->_globals._saveData->data[svField354] = 0;
-		_vm->_globals._saveData->data[svField356] = 0;
-		_vm->_globals._saveData->data[svField357] = 1;
+		_vm->_globals._saveData->_data[svField354] = 0;
+		_vm->_globals._saveData->_data[svField356] = 0;
+		_vm->_globals._saveData->_data[svField357] = 1;
 
 		loc = &_vm->_globals._saveData->_realHopkins;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
@@ -2418,16 +2418,16 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc->_pos.y = getSpriteY(0);
 		loc->field2 = 64;
 		loc->_location = _vm->_globals._screenId;
-		loc->field4 = _sprite[0].fieldC;
+		loc->field4 = _sprite[0]._zoomfactor;
 
 		removeSprite(1);
 		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 2, loc->field4, 0, 34, 190);
 		animateSprite(1);
 		removeSprite(0);
 
-		_vm->_globals._saveData->data[svField354] = 0;
-		_vm->_globals._saveData->data[svField356] = 1;
-		_vm->_globals._saveData->data[svField357] = 0;
+		_vm->_globals._saveData->_data[svField354] = 0;
+		_vm->_globals._saveData->_data[svField356] = 1;
+		_vm->_globals._saveData->_data[svField357] = 0;
 
 		loc = &_vm->_globals._saveData->_samantha;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PSAMAN.SPR");
@@ -2443,7 +2443,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 			loc->_pos.y = getSpriteY(0);
 			loc->field2 = 64;
 			loc->_location = _vm->_globals._screenId;
-			loc->field4 = _sprite[0].fieldC;
+			loc->field4 = _sprite[0]._zoomfactor;
 			break;
 		case CHARACTER_HOPKINS_CLONE:
 			loc = &_vm->_globals._saveData->_cloneHopkins;
@@ -2451,7 +2451,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 			loc->_pos.y = getSpriteY(0);
 			loc->field2 = 64;
 			loc->_location = _vm->_globals._screenId;
-			loc->field4 = _sprite[0].fieldC;
+			loc->field4 = _sprite[0]._zoomfactor;
 			break;
 		case CHARACTER_SAMANTHA:
 			loc = &_vm->_globals._saveData->_samantha;
@@ -2459,7 +2459,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 			loc->_pos.y = getSpriteY(0);
 			loc->field2 = 64;
 			loc->_location = _vm->_globals._screenId;
-			loc->field4 = _sprite[0].fieldC;
+			loc->field4 = _sprite[0]._zoomfactor;
 			break;
 		default:
 			break;
@@ -2467,24 +2467,24 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 
 		switch (newCharacter) {
 		case CHARACTER_HOPKINS:
-			_vm->_globals._saveData->data[svField121] = 0;
-			_vm->_globals._saveData->data[svField354] = 0;
-			_vm->_globals._saveData->data[svField356] = 0;
-			_vm->_globals._saveData->data[svField357] = 1;
+			_vm->_globals._saveData->_data[svField121] = 0;
+			_vm->_globals._saveData->_data[svField354] = 0;
+			_vm->_globals._saveData->_data[svField356] = 0;
+			_vm->_globals._saveData->_data[svField357] = 1;
 			_vm->_globals._exitId = _vm->_globals._saveData->_realHopkins._location;
 			break;
 		case CHARACTER_HOPKINS_CLONE:
-			_vm->_globals._saveData->data[svField121] = 1;
-			_vm->_globals._saveData->data[svField354] = 1;
-			_vm->_globals._saveData->data[svField356] = 0;
-			_vm->_globals._saveData->data[svField357] = 0;
+			_vm->_globals._saveData->_data[svField121] = 1;
+			_vm->_globals._saveData->_data[svField354] = 1;
+			_vm->_globals._saveData->_data[svField356] = 0;
+			_vm->_globals._saveData->_data[svField357] = 0;
 			_vm->_globals._exitId = _vm->_globals._saveData->_cloneHopkins._location;
 			break;
 		case CHARACTER_SAMANTHA:
-			_vm->_globals._saveData->data[svField121] = 0;
-			_vm->_globals._saveData->data[svField354] = 0;
-			_vm->_globals._saveData->data[svField356] = 1;
-			_vm->_globals._saveData->data[svField357] = 0;
+			_vm->_globals._saveData->_data[svField121] = 0;
+			_vm->_globals._saveData->_data[svField354] = 0;
+			_vm->_globals._saveData->_data[svField356] = 1;
+			_vm->_globals._saveData->_data[svField357] = 0;
 			_vm->_globals._exitId = _vm->_globals._saveData->_samantha._location;
 			break;
 		}
@@ -2499,7 +2499,7 @@ void ObjectsManager::computeAndSetSpriteSize() {
 	} else if (_vm->_globals.PERSO_TYPE == 2) {
 		size = 20 * (5 * abs(size) - 165) / -67;
 	}
-	setSpriteSize(0, size);
+	setSpriteZoom(0, size);
 }
 
 void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
@@ -3256,10 +3256,10 @@ void ObjectsManager::handleSpecialGames() {
 
 	switch (_vm->_globals._screenId) {
 	case 5:
-		if ((getSpriteY(0) > 399) || _vm->_globals._saveData->data[svField173])
+		if ((getSpriteY(0) > 399) || _vm->_globals._saveData->_data[svField173])
 			break;
 
-		_vm->_globals._saveData->data[svField173] = 1;
+		_vm->_globals._saveData->_data[svField173] = 1;
 		_vm->_globals.NOPARLE = true;
 		_vm->_talkManager.PARLER_PERSO("flicspe1.pe2");
 		_vm->_globals.NOPARLE = false;
@@ -3300,7 +3300,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_graphicsManager.DD_VBL();
 		break;
 	case 20:
-		_vm->_globals._saveData->data[svField132] = (getSpriteX(0) > 65 && getSpriteX(0) <= 124 && getSpriteY(0) > 372 && getSpriteY(0) <= 398) ? 1 : 0;
+		_vm->_globals._saveData->_data[svField132] = (getSpriteX(0) > 65 && getSpriteX(0) <= 124 && getSpriteY(0) > 372 && getSpriteY(0) <= 398) ? 1 : 0;
 		break;
 	case 35:
 		if (_vm->_globals._prevScreenId == 16)
@@ -3346,25 +3346,25 @@ void ObjectsManager::handleSpecialGames() {
 		break;
 	case 57:
 		_vm->_globals._disableInventFl = true;
-		if (_vm->_globals._saveData->data[svField261] == 1 && BOBPOSI(5) == 37) {
+		if (_vm->_globals._saveData->_data[svField261] == 1 && BOBPOSI(5) == 37) {
 			stopBobAnimation(5);
 			SET_BOBPOSI(5, 0);
 			setBobAnimation(6);
-			_vm->_globals._saveData->data[svField261] = 2;
+			_vm->_globals._saveData->_data[svField261] = 2;
 			disableZone(15);
 			_vm->_soundManager.playSound("SOUND75.WAV");
 		}
-		if (_vm->_globals._saveData->data[svField261] == 2 && BOBPOSI(6) == 6) {
+		if (_vm->_globals._saveData->_data[svField261] == 2 && BOBPOSI(6) == 6) {
 			stopBobAnimation(6);
 			SET_BOBPOSI(6, 0);
 			setBobAnimation(7);
 			enableZone(14);
-			_vm->_globals._saveData->data[svField261] = 3;
+			_vm->_globals._saveData->_data[svField261] = 3;
 		}
 		_vm->_globals._disableInventFl = false;
 		break;
 	case 93:
-		if (_vm->_globals._saveData->data[svField333])
+		if (_vm->_globals._saveData->_data[svField333])
 			break;
 
 		_vm->_globals._disableInventFl = true;
@@ -3374,7 +3374,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_globals.NOPARLE = true;
 		_vm->_talkManager.PARLER_PERSO("GM3.PE2");
 		stopBobAnimation(8);
-		_vm->_globals._saveData->data[svField333] = 1;
+		_vm->_globals._saveData->_data[svField333] = 1;
 		_vm->_globals._disableInventFl = false;
 		break;
 	}
@@ -3876,9 +3876,9 @@ void ObjectsManager::SPECIAL_INI() {
 			}
 			if (!_vm->_soundManager._voiceOffFl)
 				_vm->_soundManager.mixVoice(383, 4);
-			_vm->_globals._saveData->data[svField270] = 1;
-			_vm->_globals._saveData->data[svField300] = 1;
-			_vm->_globals._saveData->data[svField320] = 1;
+			_vm->_globals._saveData->_data[svField270] = 1;
+			_vm->_globals._saveData->_data[svField300] = 1;
+			_vm->_globals._saveData->_data[svField320] = 1;
 			if (_vm->_soundManager._voiceOffFl) {
 				for (int i = 0; i <= 199; i++)
 					_vm->_eventsManager.VBL();
@@ -3932,20 +3932,20 @@ void ObjectsManager::SPECIAL_INI() {
 		_vm->_globals.ZONEP[22].field12 = 30;
 		_vm->_globals.ZONEP[23].field12 = 30;
 		for (int i = 200; i <= 214; i++) {
-			if (_vm->_globals._saveData->data[i] != 2)
-				_vm->_globals._saveData->data[i] = 0;
+			if (_vm->_globals._saveData->_data[i] != 2)
+				_vm->_globals._saveData->_data[i] = 0;
 		}
 		break;
 
 	case 73:
-		if (!_vm->_globals._saveData->data[svField318]) {
+		if (!_vm->_globals._saveData->_data[svField318]) {
 			_vm->_globals.CACHE_SUB(0);
 			_vm->_globals.CACHE_SUB(1);
 		}
 		break;
 
 	case 93:
-		if (!_vm->_globals._saveData->data[svField333])
+		if (!_vm->_globals._saveData->_data[svField333])
 			setBobAnimation(8);
 		break;
 	}
@@ -4361,22 +4361,22 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 		break;
 	}
 
-	if (_vm->_globals._saveData->data[savegameIdx] == 2)
+	if (_vm->_globals._saveData->_data[savegameIdx] == 2)
 		return;
 
-	if (_vm->_globals._saveData->data[savegameIdx]) {
-		if (_vm->_globals._saveData->data[savegameIdx] == 1) {
+	if (_vm->_globals._saveData->_data[savegameIdx]) {
+		if (_vm->_globals._saveData->_data[savegameIdx] == 1) {
 			if (((idx == 1 || idx == 2) && BOBPOSI(idx) == 26) || ((idx == 3 || idx == 4) && BOBPOSI(idx) == 27)) {
 				_vm->_dialogsManager._removeInventFl = true;
 				_vm->_soundManager.PLAY_SAMPLE2(1);
-				_vm->_globals._saveData->data[savegameIdx] = 4;
+				_vm->_globals._saveData->_data[savegameIdx] = 4;
 			}
 		}
-		if (_vm->_globals._saveData->data[savegameIdx] == 4) {
+		if (_vm->_globals._saveData->_data[savegameIdx] == 4) {
 			if (idx >= 1 && idx <= 4 && BOBPOSI(idx) > 30)
-				_vm->_globals._saveData->data[savegameIdx] = 3;
+				_vm->_globals._saveData->_data[savegameIdx] = 3;
 		}
-		if (_vm->_globals._saveData->data[savegameIdx] == 3) {
+		if (_vm->_globals._saveData->_data[savegameIdx] == 3) {
 			_vm->_graphicsManager.FADE_LINUX = 2;
 			_vm->_animationManager.playAnim("CREVE2.ANM", 100, 24, 500);
 			_vm->_globals._exitId = 150;
@@ -4392,7 +4392,7 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 	           && maxY > getSpriteY(0)) {
 		if (idx >= 1 && idx <= 4)
 			setBobAnimation(idx);
-		_vm->_globals._saveData->data[savegameIdx] = 1;
+		_vm->_globals._saveData->_data[savegameIdx] = 1;
 	}
 }
 
@@ -4525,18 +4525,18 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	if (_vm->_globals.PERSO_TYPE) {
-		if (!_vm->_globals._saveData->data[svField122] && !_vm->_globals._saveData->data[svField356]) {
+		if (!_vm->_globals._saveData->_data[svField122] && !_vm->_globals._saveData->_data[svField356]) {
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
 			_vm->_globals.PERSO_TYPE = 0;
 		}
 	}
 	if (!_vm->_globals.PERSO_TYPE) {
-		if (_vm->_globals._saveData->data[svField122] == 1) {
+		if (_vm->_globals._saveData->_data[svField122] == 1) {
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile("HOPFEM.SPR");
 			_vm->_globals.PERSO_TYPE = 1;
 		}
 	}
-	if (_vm->_globals.PERSO_TYPE != 2 && _vm->_globals._saveData->data[svField356] == 1) {
+	if (_vm->_globals.PERSO_TYPE != 2 && _vm->_globals._saveData->_data[svField356] == 1) {
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PSAMAN.SPR");
 		_vm->_globals.PERSO_TYPE = 2;
 	}

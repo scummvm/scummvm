@@ -399,9 +399,9 @@ LABEL_7:
 				break;
 
 			_vm->_scriptManager.TRAVAILOBJET = true;
-			_vm->_globals._saveData->data[svField3] = _vm->_globals._curObjectIndex;
-			_vm->_globals._saveData->data[svField8] = _vm->_globals._inventory[newInventoryItem];
-			_vm->_globals._saveData->data[svField9] = _vm->_eventsManager._mouseCursorId;
+			_vm->_globals._saveData->_data[svField3] = _vm->_globals._curObjectIndex;
+			_vm->_globals._saveData->_data[svField8] = _vm->_globals._inventory[newInventoryItem];
+			_vm->_globals._saveData->_data[svField9] = _vm->_eventsManager._mouseCursorId;
 			_vm->_objectsManager.OPTI_OBJET();
 			_vm->_scriptManager.TRAVAILOBJET = false;
 
@@ -483,20 +483,20 @@ void DialogsManager::inventAnim() {
 		_vm->_objectsManager.I_old_x = newOffset;
 	}
 
-	if (_vm->_globals._saveData->data[svField357] == 1) {
-		if (_vm->_globals._saveData->data[svField353] == 1)
+	if (_vm->_globals._saveData->_data[svField357] == 1) {
+		if (_vm->_globals._saveData->_data[svField353] == 1)
 			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
-		if (_vm->_globals._saveData->data[svField355] == 1)
+		if (_vm->_globals._saveData->_data[svField355] == 1)
 			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 866, 325, 1, 0, 0, 0);
 		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 		_vm->_graphicsManager.addVesaSegment(566, 25, 594, 60);
 	}
-	if (_vm->_globals._saveData->data[svField356] == 1) {
+	if (_vm->_globals._saveData->_data[svField356] == 1) {
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
 		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 	}
 
-	if (_vm->_globals._saveData->data[svField354] == 1) {
+	if (_vm->_globals._saveData->_data[svField354] == 1) {
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, 0);
 		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 	}

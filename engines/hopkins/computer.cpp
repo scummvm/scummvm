@@ -248,7 +248,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 					break;
 				case '6':
 					readText(10);
-					_vm->_globals._saveData->data[svField270] = 4;
+					_vm->_globals._saveData->_data[svField270] = 4;
 					break;
 				}
 			}
