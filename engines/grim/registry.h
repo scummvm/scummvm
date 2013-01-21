@@ -97,6 +97,7 @@ private:
 	Value _fullscreen;
 	Value _engineSpeed;
 	Value _transcript;
+	Value _useArbShaders;
 
 	bool _dirty;
 
