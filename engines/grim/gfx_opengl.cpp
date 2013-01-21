@@ -43,6 +43,7 @@
 #include "engines/grim/model.h"
 #include "engines/grim/set.h"
 #include "engines/grim/emi/modelemi.h"
+#include "engines/grim/registry.h"
 
 #ifdef USE_OPENGL
 
@@ -155,6 +156,10 @@ byte *GfxOpenGL::setupScreen(int screenW, int screenH, bool fullscreen) {
 
 void GfxOpenGL::initExtensions()
 {
+	if (!g_registry->getBool("use_arb_shaders")) {
+		return;
+	}
+
 #if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program)
 	union {
 		void* obj_ptr;
