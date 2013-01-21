@@ -3633,6 +3633,8 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 	DebugPrintf(" - ?obj -- Looks up an object with the specified name, uses its address. This will abort if\n");
 	DebugPrintf("   the object name is ambiguous; in that case, a list of addresses and indices is provided.\n");
 	DebugPrintf("   ?obj.idx may be used to disambiguate 'obj' by the index 'idx'.\n");
+	DebugPrintf("   Underscores are used as substitute characters for spaces in object names.\n");
+	DebugPrintf("   For example, an object named \"Glass Jar\" can be accessed as \"Glass_Jar\".\n");
 
 	return true;
 }
@@ -3843,7 +3845,7 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 			}
 
 			// Replace all underscores in the name with spaces
-			for (int i = 0; i < str_objname.size(); i++) {
+			for (uint i = 0; i < str_objname.size(); i++) {
 				if (str_objname[i] == '_')
 					str_objname.setChar(' ', i);
 			}
