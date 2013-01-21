@@ -87,7 +87,7 @@ uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
 	// SCI1 games (QFG2 and newer) use a simple atan implementation. SCI0 games
 	// use a somewhat less accurate calculation (below).
 	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
-		return (int16)(360 - atan2((double)(x1 - x2), (double)(y1 - y2)) * 57.2958) % 360;
+		return (int16)(360 - atan2((double)(x1 - x2), (double)(y1 - y2)) * 180 / M_PI + 0.5) % 360;
 
 	int16 xRel = x2 - x1;
 	int16 yRel = y1 - y2; // y-axis is mirrored.
