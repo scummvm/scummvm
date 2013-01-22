@@ -26,6 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include <math.h>
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/utils/path_util.h"
@@ -50,6 +51,7 @@ namespace Wintermute {
 BaseSoundMgr::BaseSoundMgr(BaseGame *inGame) : BaseClass(inGame) {
 	_soundAvailable = false;
 	_volumeMaster = 255;
+	_volumeMasterPercent = 100;
 }
 
 
@@ -217,6 +219,11 @@ byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::setMasterVolume(byte value) {
+	// This function intentionally doesn't touch _volumeMasterPercent,
+	// as that variable keeps track of what the game actually wanted,
+	// and this gives a close approximation, while letting the game
+	// be none the wiser about round-off-errors. This function should thus
+	// ONLY be called by setMasterVolumePercent.
 	_volumeMaster = value;
 	for (uint32 i = 0; i < _sounds.size(); i++) {
 		_sounds[i]->updateVolume();
@@ -226,14 +233,15 @@ bool BaseSoundMgr::setMasterVolume(byte value) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::setMasterVolumePercent(byte percent) {
-	setMasterVolume(percent * 255 / 100);
+	_volumeMasterPercent = percent;
+	setMasterVolume((int)ceil(percent * 255.0 / 100.0));
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 byte BaseSoundMgr::getMasterVolumePercent() {
-	return getMasterVolume() * 100 / 255;
+	return _volumeMasterPercent;
 }
 
 //////////////////////////////////////////////////////////////////////////

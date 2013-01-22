@@ -45,7 +45,6 @@ public:
 	//DECLARE_PERSISTENT(BaseSoundMgr, BaseClass);
 	byte getMasterVolumePercent();
 	byte getMasterVolume();
-	bool setMasterVolume(byte percent);
 	bool setMasterVolumePercent(byte percent);
 	byte getVolumePercent(Audio::Mixer::SoundType type);
 	bool setVolumePercent(Audio::Mixer::SoundType type, byte percent);
@@ -61,6 +60,9 @@ public:
 	virtual ~BaseSoundMgr();
 	Common::Array<BaseSoundBuffer *> _sounds;
 	void saveSettings();
+private:
+	int _volumeMasterPercent; // Necessary to avoid round-offs.
+	bool setMasterVolume(byte percent);
 };
 
 } // end of namespace Wintermute
