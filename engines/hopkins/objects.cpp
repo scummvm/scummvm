@@ -905,9 +905,7 @@ void ObjectsManager::displayBobAnim() {
 	byte *v21;
 	int v24;
 
-	int idx = 0;
-	do {
-		++idx;
+	for (int idx = 1; idx <= 35; idx++) {
 		if (idx <= 20 && PERSO_ON) {
 			_vm->_globals._bob[idx].field1C = false;
 			continue;
@@ -1003,8 +1001,7 @@ void ObjectsManager::displayBobAnim() {
 		_vm->_globals._bob[idx].field14 = 1;
 		if (_vm->_globals._bob[idx].field1E == 1 || _vm->_globals._bob[idx].field1E == 2)
 			_vm->_globals._bob[idx].field1C = true;
-		continue;
-	} while (idx != 35);
+	}
 
 	if (!PERSO_ON && BOBTOUS) {
 		for (int i = 0; i < 35; i++) {
@@ -1015,7 +1012,7 @@ void ObjectsManager::displayBobAnim() {
 
 	BOBTOUS = false;
 
-	for (int i = 1; i < 35; i++) {
+	for (int i = 1; i <= 35; i++) {
 		if (i > 20 || !PERSO_ON) {
 			if ((_vm->_globals._bob[i].field0 == 10) && (_vm->_globals._bob[i].field1C)) {
 				v14 = _vm->_globals._bob[i].field1E;
@@ -1047,7 +1044,7 @@ void ObjectsManager::displayBobAnim() {
 		}
 	}
 
-	for (int i = 1; i < 35; i++) {
+	for (int i = 1; i <= 35; i++) {
 		_vm->_globals._bob[i]._oldY = 0;
 		if (_vm->_globals._bob[i].field0 == 10 && !_vm->_globals._bob[i]._disabledAnimationFl && _vm->_globals._bob[i].field1C) {
 			CALCUL_BOB(i);
@@ -3695,7 +3692,6 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			if (ptr[idx] == 'Z' && ptr[idx + 1] == 'O' && ptr[idx + 2] == '2') {
 				v17 = &ptr[idx + 4];
 				v33 = 0;
-				v35 = 0;
 				for (int i = 1; i <= 100; i++) {
 					_vm->_globals.ZONEP[i]._destX = 0;
 					_vm->_globals.ZONEP[i]._destY = 0;
@@ -3713,6 +3709,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					_vm->_globals.ZONEP[i].field12 = 0;
 				}
 
+				v35 = 0;
 				v31 = 0;
 				do {
 					v28 = (int16)READ_LE_UINT16(v17 + 2 * v33);
