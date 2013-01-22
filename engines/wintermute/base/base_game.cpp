@@ -1258,7 +1258,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *val = stack->pop()->getString();
-		Common::String privKey = "priv_" + StringUtil::encodeSetting(key);
+		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
 		Common::String privVal = StringUtil::encodeSetting(val);
 		ConfMan.set(privKey, privVal);
 		stack->pushNULL();
@@ -1272,7 +1272,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *initVal = stack->pop()->getString();
-		Common::String privKey = "priv_" + StringUtil::encodeSetting(key);
+		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
 		Common::String result = initVal;
 		if (ConfMan.hasKey(privKey)) {
 			result = StringUtil::decodeSetting(ConfMan.get(key));
