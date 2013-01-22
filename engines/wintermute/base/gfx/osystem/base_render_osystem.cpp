@@ -265,14 +265,15 @@ Graphics::PixelFormat BaseRenderOSystem::getPixelFormat() const {
 }
 
 void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha) {
-	// Skip rects that are completely outside the screen:
-	if ((dstRect->left < 0 && dstRect->right < 0) || (dstRect->top < 0 && dstRect->bottom < 0)) {
-		return;
-	}
 	// Start searching from the beginning for the first and second items (since it's empty the first time around
 	// then keep incrementing the start-position, to avoid comparing against already used tickets.
 	if (_drawNum == 0 || _drawNum == 1) {
 		_lastAddedTicket = _renderQueue.begin();
+	}
+
+	// Skip rects that are completely outside the screen:
+	if ((dstRect->left < 0 && dstRect->right < 0) || (dstRect->top < 0 && dstRect->bottom < 0)) {
+		return;
 	}
 
 	if (owner) { // Fade-tickets are owner-less
@@ -294,7 +295,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 					drawFromSurface(compareTicket);
 				} else {
 					drawFromTicket(compareTicket);
-					++_lastAddedTicket;
 				}
 				return;
 			}
@@ -305,7 +305,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	if (!_disableDirtyRects) {
 		drawFromTicket(ticket);
 		drawFromSurface(ticket);
-		++_lastAddedTicket;
 	} else {
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
@@ -336,23 +335,25 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 			renderTicket->_drawNum = _drawNum++;
 			_renderQueue.push_back(renderTicket);
 			addDirtyRect(renderTicket->_dstRect);
+			++_lastAddedTicket;
 		} else {
 			// Before something
-			Common::List<RenderTicket *>::iterator pos;
+			RenderQueueIterator pos;
 			for (pos = _renderQueue.begin(); pos != _renderQueue.end(); pos++) {
 				if ((*pos)->_drawNum >= _drawNum) {
 					break;
 				}
 			}
 			_renderQueue.insert(pos, renderTicket);
-			Common::List<RenderTicket *>::iterator it;
 			renderTicket->_drawNum = _drawNum++;
 			// Increment the following tickets, so they still are in line
+			RenderQueueIterator it;
 			for (it = pos; it != _renderQueue.end(); ++it) {
 				(*it)->_drawNum++;
 				(*it)->_wantsDraw = false;
 			}
 			addDirtyRect(renderTicket->_dstRect);
+			_lastAddedTicket = pos;
 		}
 	} else {
 		// Was drawn last round, still in the same order
@@ -378,6 +379,7 @@ void BaseRenderOSystem::drawFromTicket(RenderTicket *renderTicket) {
 			// Is not in order, so readd it as if it was a new ticket
 			renderTicket->_drawNum = 0;
 			drawFromTicket(renderTicket);
+			_lastAddedTicket = it;
 		}
 	}
 }
@@ -482,10 +484,10 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *dstR
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
-	// This function isn't used outside of indicator-displaying, and thus quite unused in
-	// BaseRenderOSystem when dirty-rects are enabled.
-	if (!_disableDirtyRects && !_indicatorDisplay) {
-		error("BaseRenderOSystem::DrawLine - doesn't work for dirty rects yet");
+	static bool hasWarned = false; // TODO: Fix this, this only avoids spamming warnings for now.
+	if (!_disableDirtyRects && !hasWarned) {
+		warning("BaseRenderOSystem::DrawLine - doesn't work for dirty rects yet");
+		hasWarned = true;
 	}
 
 	byte r = RGBCOLGetR(color);
