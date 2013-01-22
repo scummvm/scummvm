@@ -1,0 +1,746 @@
+C1ScummVM Team
+
+C1Project Leader
+C0Eugene Sandulenko
+
+C1PR Office
+C0Arnaud Boutonné
+C2Public Relations Officer, Project Administrator
+C0Eugene Sandulenko
+C2Project Leader
+
+C1Core Team
+C0Willem Jan Palenstijn
+C0Eugene Sandulenko
+C0Johannes Schickel
+
+C1Retired Project Leaders
+C0James Brown
+C0Vincent Hamm
+C2ScummVM co-founder, Original Cruise/CinE author
+C0Max Horn
+C0Ludvig Strigeus
+C2Original ScummVM and SimonVM author
+
+C1Engine Teams
+C1SCUMM
+C0Torbjörn Andersson
+C0James Brown
+C2(retired)
+C0Jonathan Gray
+C2(retired)
+C0Vincent Hamm
+C2(retired)
+C0Max Horn
+C2(retired)
+C0Travis Howell
+C0Pawel Kolodziejski
+C2Codecs, iMUSE, Smush, etc.
+C0Gregory Montoir
+C2(retired)
+C0Eugene Sandulenko
+C2FT INSANE, MM NES, MM C64, game detection, Herc/CGA
+C0Ludvig Strigeus
+C2(retired)
+
+C1HE
+C0Jonathan Gray
+C2(retired)
+C0Travis Howell
+C0Gregory Montoir
+C2(retired)
+C0Eugene Sandulenko
+
+C1AGI
+C0Stuart George
+C0Matthew Hoops
+C0Filippos Karapetis
+C0Pawel Kolodziejski
+C0Walter van Niftrik
+C2(retired)
+C0Kari Salminen
+C0Eugene Sandulenko
+C0David Symonds
+C2(retired)
+
+C1AGOS
+C0Torbjörn Andersson
+C0Paul Gilbert
+C0Travis Howell
+C0Oliver Kiehl
+C2(retired)
+C0Ludvig Strigeus
+C2(retired)
+
+C1CGE
+C0Arnaud Boutonné
+C0Paul Gilbert
+
+C1Cine
+C0Vincent Hamm
+C2(retired)
+C0Pawel Kolodziejski
+C0Gregory Montoir
+C2(retired)
+C0Kari Salminen
+C0Eugene Sandulenko
+
+C1Composer
+C0Alyssa Milburn
+
+C1CruisE
+C0Paul Gilbert
+C0Vincent Hamm
+C2(retired)
+
+C1Draci
+C0Denis Kasak
+C0Robert Spalek
+
+C1Drascula
+C0Filippos Karapetis
+C0Pawel Kolodziejski
+
+C1DreamWeb
+C0Torbjörn Andersson
+C0Bertrand Augereau
+C0Filippos Karapetis
+C0Vladimir Menshakov
+C2(retired)
+C0Willem Jan Palenstijn
+
+C1Gob
+C0Torbjörn Andersson
+C0Arnaud Boutonné
+C0Sven Hesse
+C0Eugene Sandulenko
+
+C1Groovie
+C0Henry Bush
+C0Scott Thomas
+C0Jordi Vilalta Prat
+
+C1Hugo
+C0Arnaud Boutonné
+C0Oystein Eftevaag
+C0Eugene Sandulenko
+
+C1Kyra
+C0Torbjörn Andersson
+C2VQA Player
+C0Oystein Eftevaag
+C0Florian Kagerer
+C0Gregory Montoir
+C2(retired)
+C0Johannes Schickel
+
+C1Lastexpress
+C0Matthew Hoops
+C0Jordi Vilalta Prat
+C0Julien Templier
+
+C1Lure
+C0Paul Gilbert
+
+C1MADE
+C0Benjamin Haisch
+C0Filippos Karapetis
+
+C1Mohawk
+C0Bastien Bouclet
+C0Matthew Hoops
+C0Filippos Karapetis
+C0Alyssa Milburn
+C0Eugene Sandulenko
+C0David Turner
+
+C1Parallaction
+C0peres
+
+C1Pegasus
+C0Matthew Hoops
+
+C1Queen
+C0David Eriksson
+C2(retired)
+C0Gregory Montoir
+C2(retired)
+C0Joost Peters
+
+C1SAGA
+C0Torbjörn Andersson
+C0Daniel Balsom
+C2Original engine reimplementation author (retired)
+C0Filippos Karapetis
+C0Andrew Kurushin
+C0Eugene Sandulenko
+
+C1SCI
+C0Greg Frieger
+C0Paul Gilbert
+C0Max Horn
+C2(retired)
+C0Filippos Karapetis
+C0Martin Kiewitz
+C0Walter van Niftrik
+C2(retired)
+C0Willem Jan Palenstijn
+C0Jordi Vilalta Prat
+C0Lars Skovlund
+
+C1Sky
+C0Robert Göffringmann
+C2(retired)
+C0Oliver Kiehl
+C2(retired)
+C0Joost Peters
+
+C1Sword1
+C0Fabio Battaglia
+C2PSX version support
+C0Thierry Crozat
+C2Mac version support
+C0Robert Göffringmann
+C2(retired)
+
+C1Sword2
+C0Torbjörn Andersson
+C0Fabio Battaglia
+C2PSX version support
+C0Jonathan Gray
+C2(retired)
+
+C1Sword25
+C0Torbjörn Andersson
+C0Paul Gilbert
+C0Max Horn
+C2(retired)
+C0Filippos Karapetis
+C0Eugene Sandulenko
+
+C1TeenAgent
+C0Robert Megone
+C2Help with callback rewriting
+C0Vladimir Menshakov
+C2(retired)
+
+C1Tinsel
+C0Torbjörn Andersson
+C0Fabio Battaglia
+C2PSX version support
+C0Paul Gilbert
+C0Sven Hesse
+C0Max Horn
+C2(retired)
+C0Filippos Karapetis
+C0Joost Peters
+
+C1Toltecs
+C0Benjamin Haisch
+C0Filippos Karapetis
+
+C1Tony
+C0Arnaud Boutonné
+C0Paul Gilbert
+C0Alyssa Milburn
+
+C1Toon
+C0Sylvain Dupont
+
+C1Touché
+C0Gregory Montoir
+C2(retired)
+
+C1TsAGE
+C0Arnaud Boutonné
+C0Paul Gilbert
+
+C1Tucker
+C0Gregory Montoir
+C2(retired)
+
+C1Wintermute
+C0Einar Johan T. Sømåen
+
+
+C1Backend Teams
+C1Android
+C0Andre Heider
+C0Angus Lees
+
+C1BADA
+C0Chris Warren-Smith
+
+C1Dreamcast
+C0Marcus Comstedt
+
+C1GPH Devices (GP2X, GP2XWiz & Caanoo)
+C0John Willis
+
+C1iPhone
+C0Oystein Eftevaag
+
+C1LinuxMoto
+C0Lubomyr Lisen
+
+C1Maemo
+C0Frantisek Dufka
+C2(retired)
+C0Tarek Soliman
+
+C1Nintendo 64
+C0Fabio Battaglia
+
+C1Nintendo DS
+C0Bertrand Augereau
+C2HQ software scaler
+C0Neil Millstone
+
+C1OpenPandora
+C0John Willis
+
+C1PocketPC / WinCE
+C0Nicolas Bacca
+C2(retired)
+C0Ismail Khatib
+C0Kostas Nakos
+C2(retired)
+
+C1PlayStation 2
+C0Robert Göffringmann
+C2(retired)
+C0Max Lingua
+
+C1PSP (PlayStation Portable)
+C0Yotam Barnoy
+C0Joost Peters
+
+C1SDL (Win/Linux/OS X/etc.)
+C0Max Horn
+C2(retired)
+C0Eugene Sandulenko
+C2Asm routines, GFX layers
+
+C1SymbianOS
+C0Jurgen Braam
+C0Lars Persson
+
+C1WebOS
+C0Klaus Reimer
+
+C1Wii
+C0Andre Heider
+
+
+C1Other subsystems
+C1Infrastructure
+C0Max Horn
+C2Backend & Engine APIs, file API, sound mixer, audiostreams, data structures, etc. (retired)
+C0Eugene Sandulenko
+C0Johannes Schickel
+
+C1GUI
+C0Vicent Marti
+C0Eugene Sandulenko
+C0Johannes Schickel
+
+C1Miscellaneous
+C0David Corrales-Lopez
+C2Filesystem access improvements (GSoC 2007 task) (retired)
+C0Jerome Fisher
+C2MT-32 emulator
+C0Benjamin Haisch
+C2Heavily improved de-/encoder for DXA videos
+C0Jochen Hoenicke
+C2Speaker & PCjr sound support, AdLib work (retired)
+C0Chris Page
+C2Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)
+C0Robin Watts
+C2ARM assembly routines for nice speedups on several ports; improvements to the sound mixer
+
+
+C1Website (code)
+C0Fredrik Wendel
+C2(retired)
+
+C1Website (maintenance)
+C0James Brown
+C2IRC Logs maintainer
+C0Thierry Crozat
+C2Wiki maintainer
+C0Andre Heider
+C2Buildbot maintainer
+C0Joost Peters
+C2Doxygen Project Documentation maintainer
+C0Jordi Vilalta Prat
+C2Wiki maintainer
+C0Eugene Sandulenko
+C2Forum, IRC channel, Screen Shots and Mailing list maintainer
+C0John Willis
+
+C1Website (content)
+C0All active team members
+C0
+
+C1Documentation
+C0Thierry Crozat
+C2Numerous contributions to documentation
+C0Joachim Eberhard
+C2Numerous contributions to documentation (retired)
+C0Matthew Hoops
+C2Wiki editor
+
+C1Retired Team Members
+C0Chris Apers
+C2Former PalmOS porter
+C0Ralph Brorsen
+C2Help with GUI implementation
+C0Jamieson Christian
+C2iMUSE, MIDI, all things musical
+C0Felix Jakschitsch
+C2Zak256 reverse engineering
+C0Mutwin Kraus
+C2Original MacOS porter
+C0Peter Moraliyski
+C2Port: GP32
+C0Jeremy Newman
+C2Former webmaster
+C0Lionel Ulmer
+C2Port: X11
+C0Won Star
+C2Former GP32 porter
+
+
+C1Other contributions
+
+C1Packages
+C1AmigaOS 4
+C0Hans-Jörg Frieden
+C2(retired)
+C0Hubert Maier
+C0Juha Niemimäki
+C2(retired)
+
+C1Atari/FreeMiNT
+C0Keith Scroggins
+
+C1BeOS
+C0Stefan Parviainen
+C0Luc Schrijvers
+
+C1Debian GNU/Linux
+C0Tore Anderson
+C2(retired)
+C0David Weinehall
+
+C1Fedora / RedHat
+C0Willem Jan Palenstijn
+
+C1Mac OS X
+C0Max Horn
+C2(retired)
+C0Oystein Eftevaag
+
+C1Mandriva
+C0Dominik Scherer
+C2(retired)
+
+C1MorphOS
+C0Fabien Coeurjoly
+C0Rüdiger Hanke
+C2(retired)
+
+C1OS/2
+C0Paul Smedley
+
+C1SlackWare
+C0Robert Kelsen
+
+C1Solaris x86
+C0Laurent Blume
+
+C1Solaris SPARC
+C0Markus Strangl
+
+C1Win32
+C0Travis Howell
+
+C1Win64
+C0Chris Gray
+C2(retired)
+C0Johannes Schickel
+
+
+C1Translations
+C0Thierry Crozat
+C2Translation Lead
+C1Basque
+C0Mikel Iturbe Urretxa
+
+C1Belarusian
+C0Ivan Lukyanov
+
+C1Catalan
+C0Jordi Vilalta Prat
+
+C1Czech
+C0Zbynìk Schwarz
+
+C1Danish
+C0Steffen Nyeland
+
+C1Finnish
+C0Toni Saarela
+
+C1French
+C0Thierry Crozat
+
+C1Galician
+C0Santiago G. Sanz
+
+C1German
+C0Simon Sawatzki
+C0Lothar Serra Mari
+C2(retired)
+
+C1Hungarian
+C0Alex Bevilacqua
+C0George Kormendi
+
+C1Italian
+C0Matteo Angelino
+
+C1Norwegian (Bokmål)
+C0Einar Johan Sømåen
+
+C1Norwegian (Nynorsk)
+C0Einar Johan Sømåen
+
+C1Polish
+C0GrajPoPolsku.pl Team
+
+C1Brazilian Portuguese
+C0ScummBR Team
+
+C1Russian
+C0Eugene Sandulenko
+
+C1Spanish
+C0Tomás Maidagan
+C0Jordi Vilalta Prat
+
+C1Swedish
+C0Hampus Flink
+
+C1Ukrainian
+C0Lubomyr Lisen
+
+
+C1Websites (design)
+C0Dobó Balázs
+C2Website design
+C0William Claydon
+C2Skins for doxygen, buildbot and wiki
+C0Yaroslav Fedevych
+C2HTML/CSS for the website
+C0Jean Marc Gimenez
+C2ScummVM logo
+C0David Jensen
+C2SVG logo conversion
+C0Raina
+C2ScummVM forum buttons
+
+C1Code contributions
+C0Ori Avtalion
+C2Subtitle control options in the GUI; BASS GUI fixes
+C0Stuart Caie
+C2Decoders for Amiga and AtariST data files (AGOS engine)
+C0Paolo Costabel
+C2PSP port contributions
+C0Martin Doucha
+C2CinE engine objectification
+C0Thomas Fach-Pedersen
+C2ProTracker module player, Smacker video decoder
+C0Tobias Gunkel
+C2Sound support for C64 version of MM/Zak, Loom PCE support
+C0Janne Huttunen
+C2V3 actor mask support, Dig/FT SMUSH audio
+C0Kovács Endre János
+C2Several fixes for Simon1
+C0Jeroen Janssen
+C2Numerous readability and bugfix patches
+C0Andreas Karlsson
+C2Initial port for SymbianOS
+C0Claudio Matsuoka
+C2Daily Linux builds
+C0Thomas Mayer
+C2PSP port contributions
+C0Sean Murray
+C2ScummVM tools GUI application (GSoC 2007 task)
+C0n0p
+C2Windows CE port aspect ratio correction scaler and right click input method
+C0Mikesch Nepomuk
+C2MI1 VGA floppy patches
+C0Nicolas Noble
+C2Config file and ALSA support
+C0Tim Phillips
+C2Initial MI1 CD music support
+C0Quietust
+C2Sound support for Amiga SCUMM V2/V3 games, MM NES support
+C0Robert Crossfield
+C2Improved support for Apple II/C64 versions of MM
+C0Andreas Röver
+C2Broken Sword I & II MPEG2 cutscene support
+C0Edward Rudd
+C2Fixes for playing MP3 versions of MI1/Loom audio
+C0Daniel Schepler
+C2Final MI1 CD music support, initial Ogg Vorbis support
+C0André Souza
+C2SDL-based OpenGL renderer
+C0Tom Frost
+C2WebOS port contributions
+
+C1FreeSCI Contributors
+C0Francois-R Boyer
+C2MT-32 information and mapping code
+C0Rainer Canavan
+C2IRIX MIDI driver and bug fixes
+C0Xiaojun Chen
+C0Paul David Doherty
+C2Game version information
+C0Vyacheslav Dikonov
+C2Config script improvements
+C0Ruediger Hanke
+C2Port to the MorphOS platform
+C0Matt Hargett
+C2Clean-ups, bugfixes, Hardcore QA, Win32
+C0Max Horn
+C2SetJump implementation
+C0Ravi I.
+C2SCI0 sound resource specification
+C0Emmanuel Jeandel
+C2Bugfixes and bug reports
+C0Dmitry Jemerov
+C2Port to the Win32 platform, numerous bugfixes
+C0Chris Kehler
+C2Makefile enhancements
+C0Christopher T. Lansdown
+C2Original CVS maintainer, Alpha compatibility fixes
+C0Sergey Lapin
+C2Port of Carl's type 2 decompression code
+C0Rickard Lind
+C2MT-32->GM MIDI mapping magic, sound research
+C0Hubert Maier
+C2AmigaOS 4 port
+C0Johannes Manhave
+C2Document format translation
+C0Claudio Matsuoka
+C2CVS snapshots, daily builds, BeOS and cygwin ports
+C0Dark Minister
+C2SCI research (bytecode and parser)
+C0Carl Muckenhoupt
+C2Sources to the SCI resource viewer tools that started it all
+C0Anders Baden Nielsen
+C2PPC testing
+C0Walter van Niftrik
+C2Ports to the Dreamcast and GP32 platforms
+C0Rune Orsval
+C2Configuration file editor
+C0Solomon Peachy
+C2SDL ports and much of the sound subsystem
+C0Robey Pointer
+C2Bug tracking system hosting
+C0Magnus Reftel
+C2Heap implementation, Python class viewer, bugfixes
+C0Christoph Reichenbach
+C2UN*X code, VM/Graphics/Sound/other infrastructure
+C0George Reid
+C2FreeBSD package management
+C0Lars Skovlund
+C2Project maintenance, most documentation, bugfixes, SCI1 support
+C0Rink Springer
+C2Port to the DOS platform, several bug fixes
+C0Rainer De Temple
+C2SCI research
+C0Sean Terrell
+C0Hugues Valois
+C2Game selection menu
+C0Jordi Vilalta
+C2Numerous code and website clean-up patches
+C0Petr Vyhnak
+C2The DCL-INFLATE algorithm, many Win32 improvements
+C0Bas Zoetekouw
+C2Man pages, debian package management, CVS maintenance
+C0Special thanks to Prof. Dr. Gary Nutt for allowing the FreeSCI VM extension as a course project in his Advanced OS course.
+C0
+C0Special thanks to Bob Heitman and Corey Cole for their support of FreeSCI.
+C0
+
+C0And to all the contributors, users, and beta testers we've missed. Thanks!
+C0
+
+C1Special thanks to
+
+C0Daniel Balsom
+C2For the original Reinherit (SAGA) code
+C0Sander Buskens
+C2For his work on the initial reversing of Monkey2
+C0Canadacow
+C2For the original MT-32 emulator
+C0Kevin Carnes
+C2For Scumm16, the basis of ScummVM's older gfx codecs
+C0Curt Coder
+C2For the original TrollVM (preAGI) code
+C0Patrick Combet
+C2For the original Gobliiins ADL player
+C0Ivan Dubrov
+C2For contributing the initial version of the Gobliiins engine
+C0Henrik Engqvist
+C2For generously providing hosting for our buildbot, SVN repository, planet and doxygen sites as well as tons of HD space
+C0DOSBox Team
+C2For their awesome OPL2 and OPL3 emulator
+C0Yusuke Kamiyamane
+C2For contributing some GUI icons 
+C0Till Kresslein
+C2For design of modern ScummVM GUI
+C0Jezar
+C2For his freeverb filter implementation
+C0Jim Leiterman
+C2Various info on his FM-TOWNS/Marty SCUMM ports
+C0lloyd
+C2For deep tech details about C64 Zak & MM
+C0Sarien Team
+C2Original AGI engine code
+C0Jimmi Thøgersen
+C2For ScummRev, and much obscure code/documentation
+C0Tristan
+C2For additional work on the original MT-32 emulator
+C0James Woodcock
+C2Soundtrack enhancements
+C0Tony Warriner and everyone at Revolution Software Ltd. for sharing with us the source of some of their brilliant games, allowing us to release Beneath a Steel Sky as freeware... and generally being supportive above and beyond the call of duty.
+C0
+C0John Passfield and Steve Stamatiadis for sharing the source of their classic title, Flight of the Amazon Queen and also being incredibly supportive.
+C0
+C0Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source of their famous title Inherit the Earth and always prompt replies to our questions.
+C0
+C0Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at LucasFilm/LucasArts who made SCUMM the insane mess to reimplement that it is today. Feel free to drop us a line and tell us what you think, guys!
+C0
+C0Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for sharing the source code of some of their games with us.
+C0
+C0John Young, Colin Smythe and especially Terry Pratchett himself for sharing the source code of Discworld I & II with us.
+C0
+C0Emilio de Paz Aragon from Alcachofa Soft for sharing the source code of Drascula: The Vampire Strikes Back with us and his generosity with freewaring the game.
+C0
+C0David P. Gray from Gray Design Associates for sharing the source code of the Hugo trilogy.
+C0
+C0Broken Sword 2.5 team for providing sources of their engine and their great support.
+C0
+C0Neil Dodwell and David Dew from Creative Reality for providing the source of Dreamweb and for their tremendous support.
+C0
+C0Janusz Wisniewski and Miroslaw Liminowicz from Laboratorium Komputerowe Avalon for providing full source code for Soltys and letting us redistribute the game.
+C0
+C0Jan Nedoma for providing the sources to the Wintermute-engine, and for his support while porting the engine to ScummVM.
+C0
+C0Bob Bell, Michel Kripalani, Tommy Yune, from Presto Studios for providing the source code of The Journeyman Project: Pegasus Prime.
+C0
+

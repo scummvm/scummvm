@@ -26,6 +26,9 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/util.h"
+#include "common/fs.h"
+#include "common/file.h"
+#include "common/config-manager.h"
 #include "gui/about.h"
 #include "gui/gui-manager.h"
 #include "gui/ThemeEval.h"
@@ -71,11 +74,11 @@ static const char *gpl_text[] = {
 "",
 };
 
-#include "gui/credits.h"
-
 AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 174),
 	_scrollPos(0), _scrollTime(0), _willClose(false) {
+
+	loadCredits();
 
 	reflowLayout();
 
@@ -127,8 +130,8 @@ AboutDialog::AboutDialog()
 
 	_lines.push_back("");
 
-	for (i = 0; i < ARRAYSIZE(credits); i++)
-		addLine(credits[i]);
+	for (unsigned int j = 0; j < _credits.size(); j++)
+		addLine(_credits[j].c_str());
 }
 
 void AboutDialog::addLine(const char *str) {
@@ -268,7 +271,6 @@ void AboutDialog::handleKeyUp(Common::KeyState state) {
 
 void AboutDialog::reflowLayout() {
 	Dialog::reflowLayout();
-	int i;
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
@@ -284,8 +286,8 @@ void AboutDialog::reflowLayout() {
 	// Heuristic to compute 'optimal' dialog width
 	int maxW = _w - 2*_xOff;
 	_w = 0;
-	for (i = 0; i < ARRAYSIZE(credits); i++) {
-		int tmp = g_gui.getStringWidth(credits[i] + 5);
+	for (unsigned int i = 0; i < _credits.size(); i++) {
+		int tmp = g_gui.getStringWidth(_credits[i]) + 5;
 		if (_w < tmp && tmp <= maxW) {
 			_w = tmp;
 		}
@@ -296,5 +298,72 @@ void AboutDialog::reflowLayout() {
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
 }
+	
+void AboutDialog::loadCredits() {
+	_credits.clear();
+	
+	Common::File in;
+	if (!openCreditsFile(in)) {
+		_credits.push_back(Common::String("C0Credits data file not found!"));
+		_credits.push_back(Common::String("C0You can see the credits on http://www.scummvm.org/credits/"));
+		return;
+	}
+
+	do {
+		_credits.push_back(in.readLine());
+	} while (!in.eos());
+
+	in.close();
+}
+	
+bool AboutDialog::openCreditsFile(Common::File &inFile) {
+	// First look in the Themepath if we can find the file.
+	if (ConfMan.hasKey("themepath") && openCreditsFile(Common::FSNode(ConfMan.get("themepath")), inFile))
+		return true;
+		
+	// Then try to open it using the SearchMan.
+	Common::ArchiveMemberList fileList;
+	SearchMan.listMatchingMembers(fileList, "credits.dat");
+	for (Common::ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
+		Common::ArchiveMember       const &m      = **it;
+		Common::SeekableReadStream *const  stream = m.createReadStream();
+		if (stream && inFile.open(stream, m.getName()))
+			return true;
+	}
+		
+	return false;
+}
+	
+bool AboutDialog::openCreditsFile(const Common::FSNode &node, Common::File &inFile, int depth) {
+	if (!node.exists() || !node.isReadable() || !node.isDirectory())
+		return false;
+		
+	// Check if we can find the file in this directory
+	// Since File::open(FSNode) makes all the needed tests, it is not really
+	// necessary to make them here. But it avoid printing warnings.
+	Common::FSNode fileNode = node.getChild("credits.dat");
+	if (fileNode.exists() && fileNode.isReadable() && !fileNode.isDirectory()) {
+		if (inFile.open(fileNode))
+			return true;
+	}
+		
+	// Check if we exceeded the given recursion depth
+	if (depth - 1 == -1)
+		return false;
+		
+	// Otherwise look for it in sub-directories
+	Common::FSList fileList;
+	if (!node.getChildren(fileList, Common::FSNode::kListDirectoriesOnly))
+		return false;
+		
+	for (Common::FSList::iterator i = fileList.begin(); i != fileList.end(); ++i) {
+		if (openCreditsFile(*i, inFile, depth == -1 ? - 1 : depth - 1))
+			return true;
+	}
+		
+	// Not found in this directory or its sub-directories
+	return false;
+}
+
 
 } // End of namespace GUI
