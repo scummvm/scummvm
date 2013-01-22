@@ -220,12 +220,13 @@ void Lua_V1::WriteRegistryValue() {
 	if (strcmp(key, "GrimMannyState") == 0) //This isn't used. it's probably a left over from testing phase.
 		return;
 
-	if (lua_isstring(valObj)) {
-		const char *val = lua_getstring(valObj);
-		g_registry->setString(key, val);
-	} else if (lua_isnumber(valObj)) {
+	// Check isnumber first, because isstring returns true for numbers
+	if (lua_isnumber(valObj)) {
 		int val = (int)lua_getnumber(valObj);
 		g_registry->setInt(key, val);
+	} else if (lua_isstring(valObj)) {
+		const char *val = lua_getstring(valObj);
+		g_registry->setString(key, val);
 	}
 }
 
