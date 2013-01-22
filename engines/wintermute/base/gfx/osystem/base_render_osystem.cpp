@@ -53,6 +53,7 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_needsFlip = true;
 	_spriteBatch = false;
 	_batchNum = 0;
+	_skipThisFrame = false;
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
@@ -155,6 +156,14 @@ bool BaseRenderOSystem::indicatorFlip() {
 }
 
 bool BaseRenderOSystem::flip() {
+	if (_skipThisFrame) {
+		_skipThisFrame = false;
+		delete _dirtyRect;
+		_dirtyRect = NULL;
+		g_system->updateScreen();
+		_needsFlip = false;
+		return true;
+	}
 	if (!_disableDirtyRects) {
 		drawTickets();
 	} else {
@@ -583,6 +592,9 @@ void BaseRenderOSystem::endSaveLoad() {
 		it = _renderQueue.erase(it);
 		delete ticket;
 	}
+	// HACK: After a save the buffer will be drawn before the scripts get to update it,
+	// so just skip this single frame.
+	_skipThisFrame = true;
 	_drawNum = 1;
 }
 
