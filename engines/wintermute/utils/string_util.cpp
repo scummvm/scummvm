@@ -213,7 +213,7 @@ int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t 
 }
 
 Common::String StringUtil::encodeSetting(const Common::String &str) {
-	for (int i = 0; i < str.size(); i++) {
+	for (uint32 i = 0; i < str.size(); i++) {
 		if ((str[i] < 33) || (str[i] == '=') || (str[i] > 126)) {
 			error("Setting contains illegal characters: %s", str.c_str());
 		}
