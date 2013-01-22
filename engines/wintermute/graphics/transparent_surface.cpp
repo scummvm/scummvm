@@ -32,7 +32,7 @@ namespace Wintermute {
 byte *TransparentSurface::_lookup = NULL;
 
 void TransparentSurface::destroyLookup() {
-	delete _lookup;
+	delete[] _lookup;
 	_lookup = NULL;
 }
 
