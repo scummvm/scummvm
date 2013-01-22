@@ -38,6 +38,7 @@
 #include "engines/wintermute/wintermute.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
+#include "common/unzip.h"
 #include <limits.h>
 
 namespace Wintermute {
@@ -546,26 +547,51 @@ bool BaseFontTT::initFont() {
 	if (!_fontFile) {
 		return STATUS_FAILED;
 	}
-
+#ifdef USE_FREETYPE2
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(_fontFile);
 	if (!file) {
-		//TODO: Try to fallback from Arial to FreeSans
-		/*
-		// the requested font file is not in wme file space; try loading a system font
-		AnsiString fontFileName = PathUtil::combine(BasePlatform::getSystemFontPath(), PathUtil::getFileName(_fontFile));
-		file = BaseFileManager::getEngineInstance()->openFile(fontFileName.c_str(), false);
-		if (!file) {
-		    _gameRef->LOG(0, "Error loading TrueType font '%s'", _fontFile);
-		    //return STATUS_FAILED;
-		}*/
+		if (Common::String(_fontFile) != "arial.ttf") {
+			warning("%s has no replacement font yet, using FreeSans for now (if available)", _fontFile);
+		}
+		// Fallback1: Try to find FreeSans.ttf
+		file = SearchMan.createReadStreamForMember("FreeSans.ttf");
 	}
 
 	if (file) {
-#ifdef USE_FREETYPE2
 		_deletableFont = Graphics::loadTTFFont(*file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
 		_font = _deletableFont;
-#endif
+		delete file;
+		file = NULL;
 	}
+
+	// Fallback2: Try to find ScummModern.zip, and get the font from there:
+	if (!_font) {
+		Common::SeekableReadStream *themeFile = SearchMan.createReadStreamForMember("scummmodern.zip");
+		if (themeFile) {
+			Common::Archive *themeArchive = Common::makeZipArchive(themeFile);
+			if (themeArchive->hasFile("FreeSans.ttf")) {
+				file = NULL;
+				file = themeArchive->createReadStreamForMember("FreeSans.ttf");
+				_deletableFont = Graphics::loadTTFFont(*file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
+				_font = _deletableFont;
+			}
+			delete file;
+			file = NULL;
+			delete themeArchive;
+			themeArchive = NULL;
+		}
+	}
+
+	// Fallback3: Try to ask FontMan for the FreeSans.ttf ScummModern.zip uses:
+	if (!_font) {
+		// Really not desireable, as we will get a font with dpi-72 then
+		Common::String fontName = Common::String::format("%s-%s@%d", "FreeSans.ttf", "ASCII", _fontHeight);
+		warning("Looking for %s", fontName.c_str());
+		_font = FontMan.getFontByName(fontName);
+	}
+#endif // USE_FREETYPE2
+
+	// Fallback4: Just use the Big GUI-font. (REALLY undesireable)
 	if (!_font) {
 		_font = _fallbackFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 		warning("BaseFontTT::InitFont - Couldn't load font: %s", _fontFile);
