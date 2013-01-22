@@ -141,6 +141,15 @@ List of fixed bugs in GF scripts:
 	bonewagon:ignore_boxes(), since the function bonewagon.default(), which get_in_BW calls, enables the boxes for
 	the bonewagon.
 
+	Fix the DOD door animation and sound - lo.lua.patchr, os.lua.patchr, lo_os_door.cos.patchr, os_lo_door.cos.patchr
+	When exiting the DOD the door is closed, then it plays the close animation. lo.lua.patchr adds a complete_chore
+	call with the opening chore as argument before waiting for manny, and after which the close	chore is called.
+	By completing the open chore though, the open sound was executed two times: one when opening the door in lo
+	and one when completing the chore in os. The same happens when going from os to lo (and that happens with
+	original too, since os calls the complete_chore). So lo_os_door.cos.patchr and os_lo_door.cos.patchr add a
+	new chore 'open_fast' which just sets the open bitmap image. lo.lua.patchr and os.lua.patchr then call
+	complete_chore with the new chores as argument.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
