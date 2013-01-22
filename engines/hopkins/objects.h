@@ -70,7 +70,7 @@ public:
 	byte *_saveLoadSprite;
 	byte *_saveLoadSprite2;
 	byte *_spritePtr;
-	const byte *S_old_spr;
+	const byte *_oldSpriteData;
 	bool PERSO_ON;
 	bool _saveLoadFl;
 	bool _visibleFl;
@@ -119,8 +119,6 @@ public:
 	void BOB_VISU(int idx);
 	void BOB_OFF(int idx);
 	void BOB_OFFSET(int idx, int v);
-	void BOB_ADJUST(int idx, int v);
-	void BOB_OFFSETY(int idx, int v);
 	void SCBOB(int idx);
 	void CALCUL_BOB(int idx);
 
@@ -204,7 +202,7 @@ public:
 	int colision(int xp, int yp);
 
 	void ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int speed, bool flipFl);
-	void SPACTION(byte *a1, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl);
+	void SPACTION(byte *spriteData, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl);
 	void SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int speed);
 	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
 	void lockAnimX(int idx, int a2);

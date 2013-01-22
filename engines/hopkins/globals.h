@@ -173,7 +173,7 @@ struct CacheItem {
 };
 
 struct SegmentItem {
-	int field0;
+	int field0; // Useless variable
 	int field2;
 	int field4;
 };
@@ -312,9 +312,8 @@ public:
 	SegmentItem Segment[101];
 	int BOBZONE[105];
 	bool BOBZONE_FLAG[105];
-	int STAILLE[500];
+	int _spriteSize[500];
 	int16 super_parcours[32002];
-	int Param[2100];
 	HopkinsItem Hopkins[70];
 	int _inventory[36];
 	SortItem _sortedDisplay[51];

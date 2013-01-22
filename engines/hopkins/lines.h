@@ -31,14 +31,14 @@ namespace Hopkins {
 class HopkinsEngine;
 
 struct LigneZoneItem {
-	int count;
+	int _count;
 	int field2;
-	int16 *zoneData;
+	int16 *_zoneData;
 };
 
 struct LigneItem {
 	int _lineDataEndIdx;
-	int field2;
+	int field2; // Useless variable
 	int field4;
 	int field6;
 	int field8;

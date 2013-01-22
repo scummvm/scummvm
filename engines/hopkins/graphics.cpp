@@ -1632,7 +1632,7 @@ void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int sp
 		addVesaSegment(xp, yp, xp + width, yp + height);
 }
 
-void GraphicsManager::SCOPY(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY) {
+void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY) {
 	int top;
 	int croppedWidth;
 	int croppedHeight;
@@ -1822,10 +1822,6 @@ void GraphicsManager::NB_SCREEN(bool initPalette) {
 
 	memcpy(_vesaScreen, _vesaBuffer, 614399);
 	DD_VBL();
-}
-
-void GraphicsManager::SHOW_PALETTE() {
-	setPaletteVGA256(_palette);
 }
 
 void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {

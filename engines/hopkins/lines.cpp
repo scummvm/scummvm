@@ -129,7 +129,7 @@ void LinesManager::removeZoneLine(int idx) {
 	if (idx > MAX_LINES)
 		error("Attempting to remove a line obstacle > MAX_LIGNE.");
 
-	_vm->_linesManager._zoneLine[idx].zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_vm->_linesManager._zoneLine[idx].zoneData);
+	_vm->_linesManager._zoneLine[idx]._zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_vm->_linesManager._zoneLine[idx]._zoneData);
 }
 
 /**
@@ -145,7 +145,7 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 		if (idx > MAX_LINES)
 			error("Attempting to add a line obstacle > MAX_LIGNE.");
 
-		_zoneLine[idx].zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx].zoneData);
+		_zoneLine[idx]._zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx]._zoneData);
 
 		int v8 = abs(a2 - a4);
 		int v9 = abs(a3 - a5);
@@ -157,7 +157,7 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 
 		zoneData = (int16 *)_vm->_globals.allocMemory(2 * sizeof(int16) * v20 + (4 * sizeof(int16)));
 		int v11 = idx;
-		_zoneLine[v11].zoneData = zoneData;
+		_zoneLine[v11]._zoneData = zoneData;
 		if (zoneData == (int16 *)g_PTRNUL)
 			error("AJOUTE LIGNE ZONE");
 
@@ -180,7 +180,7 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 		*dataP++ = -1;
 		*dataP++ = -1;
 
-		_zoneLine[idx].count = v20;
+		_zoneLine[idx]._count = v20;
 		_zoneLine[idx].field2 = bobZoneIdx;
 	}
 }
@@ -2066,7 +2066,6 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	int v109;
 	int v110;
 	int v111;
-	int v112;
 	int v113;
 	int v114;
 	int v115;
@@ -2348,10 +2347,9 @@ LABEL_72:
 	v14 = 0;
 	int v16;
 	for (;;) {
-		int v15 = SMOOTH[v14].field0;
-		v112 = v15;
+		int v112 = SMOOTH[v14].field0;
 		v110 = SMOOTH[v14].field2;
-		if (v15 == -1 || SMOOTH[v14].field2 == -1) {
+		if (v112 == -1 || SMOOTH[v14].field2 == -1) {
 			v126 = 1;
 			if (v126 == 1) {
 				v18 = v14 - 1;
@@ -2360,7 +2358,7 @@ LABEL_72:
 				goto LABEL_72;
 			}
 		}
-		if (checkCollisionLine(v15, v110, &v143, &v142, 0, _linesNumb))
+		if (checkCollisionLine(v112, v110, &v143, &v142, 0, _linesNumb))
 			break;
 		v16 = v115;
 
@@ -2860,7 +2858,6 @@ int LinesManager::VERIF_SMOOTH(int a1, int a2, int a3, int a4) {
 int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 	int v6;
 	int v7;
-	int v10;
 	int v11;
 	int v14;
 	int v22;
@@ -2872,7 +2869,6 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 	int v40;
 	int v41;
 	int v42;
-	int v47;
 	int v50;
 	int v51;
 	int v52;
@@ -2888,7 +2884,7 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 		while (v62 > a5 && a6 > v63) {
 			v25 = _vm->_globals.Hopkins[hopkinsIdx].field0;
 			v40 = _vm->_globals.Hopkins[hopkinsIdx].field2;
-			int spriteSize = _vm->_globals.STAILLE[v63];
+			int spriteSize = _vm->_globals._spriteSize[v63];
 			if (spriteSize < 0) {
 				v25 = _vm->_graphicsManager.zoomOut(v25, -spriteSize);
 				v40 = _vm->_graphicsManager.zoomOut(v40, -spriteSize);
@@ -2925,12 +2921,10 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 		while (v62 < a5 && a6 > v63) {
 			v14 = _vm->_globals.Hopkins[v52].field0;
 			v39 = _vm->_globals.Hopkins[v52].field2;
-			int spriteSize = _vm->_globals.STAILLE[v63];
+			int spriteSize = _vm->_globals._spriteSize[v63];
 			if (spriteSize < 0) {
-				v47 = _vm->_globals.STAILLE[v63];
 				v14 = _vm->_graphicsManager.zoomOut(v14, -spriteSize);
 				v39 = _vm->_graphicsManager.zoomOut(v39, -spriteSize);
-				spriteSize = v47;
 			}
 			if (spriteSize > 0) {
 				v14 = _vm->_graphicsManager.zoomIn(v14, spriteSize);
@@ -2963,10 +2957,9 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 		smoothIdx = 0;
 		int loopCount = 0;
 		while (v62 > a5 && a6 < v63) {
-			v10 = _vm->_globals.Hopkins[v51].field2;
 			v42 = v63;
 			v11 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v51].field0, 25);
-			v38 = _vm->_graphicsManager.zoomOut(v10, 25);
+			v38 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v51].field2, 25);
 			v63 = v42;
 			for (int v12 = 0; v12 < v11; v12++) {
 				--v62;

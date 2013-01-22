@@ -100,11 +100,9 @@ Globals::Globals() {
 		BOBZONE_FLAG[i] = false;
 	}
 	for (int i = 0; i < 500; ++i)
-		STAILLE[i] = 0;
+		_spriteSize[i] = 0;
 	for (int i = 0; i < 32002; ++i)
 		super_parcours[i] = 0;
-	for (int i = 0; i < 2100; ++i)
-		Param[i] = 0;
 	for (int i = 0; i < 70; ++i)
 		Common::fill((byte *)&Hopkins[i], (byte *)&Hopkins[i] + sizeof(HopkinsItem), 0);
 
@@ -331,9 +329,9 @@ void Globals::clearAll() {
 		_vm->_linesManager.Ligne[idx].field8 = 0;
 		_vm->_linesManager.Ligne[idx]._lineData = (int16 *)g_PTRNUL;
 
-		_vm->_linesManager._zoneLine[idx].count = 0;
+		_vm->_linesManager._zoneLine[idx]._count = 0;
 		_vm->_linesManager._zoneLine[idx].field2 = 0;
-		_vm->_linesManager._zoneLine[idx].zoneData = (int16 *)g_PTRNUL;
+		_vm->_linesManager._zoneLine[idx]._zoneData = (int16 *)g_PTRNUL;
 	}
 
 	for (int idx = 0; idx < 100; ++idx) {

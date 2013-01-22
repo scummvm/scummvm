@@ -2198,23 +2198,21 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_animationManager.NO_SEQ = true;
 			_vm->_animationManager.playSequence("RESUF.SEQ", 1, 24, 1);
 			_vm->_animationManager.NO_SEQ = false;
-			CharacterLocation *v53 = &_vm->_globals._saveData->_samantha;
-			v53->_pos.x = 404;
-			v53->_pos.y = 395;
-			v53->_startSpriteIndex = 64;
-			v53->_location = _vm->_globals._screenId;
 
-			int v54 = _vm->_globals.STAILLE[790 / 2];
-			if (_vm->_globals.STAILLE[790 / 2] < 0)
-				v54 = -_vm->_globals.STAILLE[790 / 2];
-			v53->_zoomFactor = -(100 * (67 - (100 - v54)) / 67);
+			CharacterLocation *samantha = &_vm->_globals._saveData->_samantha;
+			samantha->_pos.x = 404;
+			samantha->_pos.y = 395;
+			samantha->_startSpriteIndex = 64;
+			samantha->_location = _vm->_globals._screenId;
+			samantha->_zoomFactor = -(100 * (67 - (100 - abs(_vm->_globals._spriteSize[790 / 2]))) / 67);
+
 			_vm->_globals._saveData->_data[svField357] = 1;
 			_vm->_globals._saveData->_data[svField354] = 0;
 			_vm->_globals._saveData->_data[svField356] = 0;
 			_vm->_globals._saveData->_data[svField355] = 1;
 			_vm->_objectsManager._twoCharactersFl = true;
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
-			_vm->_objectsManager.addStaticSprite(_vm->_globals.TETE, v53->_pos, 1, 3, v53->_zoomFactor, false, 20, 127);
+			_vm->_objectsManager.addStaticSprite(_vm->_globals.TETE, samantha->_pos, 1, 3, samantha->_zoomFactor, false, 20, 127);
 			_vm->_objectsManager.animateSprite(1);
 			break;
 			}

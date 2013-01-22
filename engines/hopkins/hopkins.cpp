@@ -157,7 +157,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals._speed = 1;
 
 	for (int i = 1; i < 50; i++) {
-		_graphicsManager.SCOPY(_graphicsManager._vesaScreen, 0, 0, 640, 440, _graphicsManager._vesaBuffer, 0, 0);
+		_graphicsManager.copySurface(_graphicsManager._vesaScreen, 0, 0, 640, 440, _graphicsManager._vesaBuffer, 0, 0);
 		_eventsManager.VBL();
 	}
 
@@ -487,7 +487,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals._exitId = _menuManager.menu();
 			if (_globals._exitId == -1) {
 				if (!g_system->getEventManager()->shouldQuit())
-					PUBQUIT();
+					endLinuxDemo();
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				restoreSystem();
 			}
@@ -2029,7 +2029,7 @@ void HopkinsEngine::restoreSystem() {
 	_eventsManager.refreshEvents();
 }
 
-void HopkinsEngine::PUBQUIT() {
+void HopkinsEngine::endLinuxDemo() {
 	_globals.PUBEXIT = true;
 	_graphicsManager.RESET_SEGMENT_VESA();
 	_globals._forestFl = false;
@@ -2583,7 +2583,7 @@ void HopkinsEngine::displayCredits() {
 		--_globals.Credit_y;
 		if (_globals.Credit_bx != -1 || _globals.Credit_bx1 != -1 || _globals.Credit_by != -1 || _globals.Credit_by1 != -1) {
 			_eventsManager.VBL();
-			_graphicsManager.SCOPY(_graphicsManager._vesaScreen, 60, 50, 520, 380, _graphicsManager._vesaBuffer, 60, 50);
+			_graphicsManager.copySurface(_graphicsManager._vesaScreen, 60, 50, 520, 380, _graphicsManager._vesaBuffer, 60, 50);
 		} else {
 			_eventsManager.VBL();
 		}

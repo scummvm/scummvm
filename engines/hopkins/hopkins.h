@@ -86,7 +86,7 @@ private:
 
 	void displayNotAvailable();
 	void restoreSystem();
-	void PUBQUIT();
+	void endLinuxDemo();
 	void displayEndDemo();
 	void bombExplosion();
 	void handleConflagration();
