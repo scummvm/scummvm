@@ -294,7 +294,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 					drawFromSurface(compareTicket);
 				} else {
 					drawFromTicket(compareTicket);
-					_lastAddedTicket++;
+					++_lastAddedTicket;
 				}
 				return;
 			}
@@ -305,7 +305,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	if (!_disableDirtyRects) {
 		drawFromTicket(ticket);
 		drawFromSurface(ticket);
-		_lastAddedTicket++;
+		++_lastAddedTicket;
 	} else {
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
