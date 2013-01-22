@@ -203,12 +203,12 @@ SoundManager::SoundManager() {
 	_modPlayingFl = false;
 
 	for (int i = 0; i < VOICE_COUNT; ++i)
-		Common::fill((byte *)&Voice[i], (byte *)&Voice[i] + sizeof(VoiceItem), 0);
+		Common::fill((byte *)&_voice[i], (byte *)&_voice[i] + sizeof(VoiceItem), 0);
 	for (int i = 0; i < SWAV_COUNT; ++i)
 		Common::fill((byte *)&Swav[i], (byte *)&Swav[i] + sizeof(SwavItem), 0);
 	for (int i = 0; i < SOUND_COUNT; ++i)
-		Common::fill((byte *)&SOUND[i], (byte *)&SOUND[i] + sizeof(SoundItem), 0);
-	Common::fill((byte *)&Music, (byte *)&Music + sizeof(MusicItem), 0);
+		Common::fill((byte *)&_sound[i], (byte *)&_sound[i] + sizeof(SoundItem), 0);
+	Common::fill((byte *)&_music, (byte *)&_music + sizeof(MusicItem), 0);
 }
 
 SoundManager::~SoundManager() {
@@ -403,7 +403,7 @@ void SoundManager::playMod(const Common::String &file) {
 }
 
 void SoundManager::loadMusic(const Common::String &file) {
-	if (Music._active)
+	if (_music._active)
 		delMusic();
 
 	Common::File f;
@@ -427,7 +427,7 @@ void SoundManager::loadMusic(const Common::String &file) {
 		f.close();
 	}
 
-	Music._active = true;
+	_music._active = true;
 }
 
 void SoundManager::playMusic() {
@@ -438,7 +438,7 @@ void SoundManager::stopMusic() {
 }
 
 void SoundManager::delMusic() {
-	Music._active = false;
+	_music._active = false;
 }
 
 void SoundManager::checkSounds() {
@@ -450,7 +450,7 @@ void SoundManager::checkVoiceActivity() {
 	bool hasActiveVoice = false;
 	for (int i = 0; i < VOICE_COUNT; ++i) {
 		checkVoiceStatus(i);
-		hasActiveVoice |= Voice[i]._status;
+		hasActiveVoice |= _voice[i]._status;
 	}
 
 	if (!hasActiveVoice && _soundFl) {
@@ -562,8 +562,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 
 	SDL_LVOICE(filename, catPos, catLen);
 	oldMusicVol = _musicVolume;
-	if (!_musicOffFl && _musicVolume > 2)
+	if (!_musicOffFl && _musicVolume > 2) {
 		_musicVolume = (signed int)((long double)_musicVolume - (long double)_musicVolume / 100.0 * 45.0);
+		_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
+	}
 
 	playVoice();
 
@@ -587,6 +589,9 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	stopVoice(2);
 	DEL_SAMPLE_SDL(20);
 	_musicVolume = oldMusicVol;
+	if (!_musicOffFl && _musicVolume > 2) {
+		_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
+	}
 	_vm->_eventsManager._escKeyFl = false;
 	skipRefreshFl = false;
 	return true;
@@ -600,7 +605,7 @@ void SoundManager::DEL_SAMPLE(int soundIndex) {
 	if (checkVoiceStatus(3))
 		stopVoice(3);
 	DEL_SAMPLE_SDL(soundIndex);
-	SOUND[soundIndex]._active = false;
+	_sound[soundIndex]._active = false;
 }
 
 void SoundManager::playSound(const Common::String &file) {
@@ -620,24 +625,35 @@ void SoundManager::PLAY_SOUND2(const Common::String &file) {
 }
 
 void SoundManager::MODSetSampleVolume() {
-	// No implementation needed
+	for (int idx = 0; idx < SWAV_COUNT; ++idx) {
+		if (Swav[idx]._active) {
+			int volume = (idx == 20) ? (_voiceVolume * 255 / 16) : (_soundVolume * 255 / 16);
+			_vm->_mixer->setChannelVolume(Swav[idx]._soundHandle, volume);
+		}
+	}
 }
 
 void SoundManager::MODSetVoiceVolume() {
-	// No implementation needed
+	for (int idx = 0; idx < SWAV_COUNT; ++idx) {
+		if (Swav[idx]._active) {
+			int volume = (idx == 20) ? (_voiceVolume * 255 / 16) : (_soundVolume * 255 / 16);
+			_vm->_mixer->setChannelVolume(Swav[idx]._soundHandle, volume);
+		}
+	}
 }
 
 void SoundManager::MODSetMusicVolume(int volume) {
-	// No implementation needed
+	if (_vm->_mixer->isSoundHandleActive(_musicHandle))
+		_vm->_mixer->setChannelVolume(_musicHandle, volume * 255 / 16);
 }
 
 void SoundManager::loadSample(int wavIndex, const Common::String &file) {
 	LOAD_SAMPLE2_SDL(wavIndex, file, 0);
-	SOUND[wavIndex]._active = true;
+	_sound[wavIndex]._active = true;
 }
 
 void SoundManager::playSample(int wavIndex, int voiceMode) {
-	if (!_soundOffFl && SOUND[wavIndex]._active) {
+	if (!_soundOffFl && _sound[wavIndex]._active) {
 		if (_soundFl)
 			delWav(_currentSoundIndex);
 		if (voiceMode == 5) {
@@ -661,7 +677,7 @@ void SoundManager::playSample(int wavIndex, int voiceMode) {
 }
 
 void SoundManager::PLAY_SAMPLE2(int idx) {
-	if (!_soundOffFl && SOUND[idx]._active) {
+	if (!_soundOffFl && _sound[idx]._active) {
 		if (_soundFl)
 			delWav(_currentSoundIndex);
 		if (checkVoiceStatus(1))
@@ -671,25 +687,25 @@ void SoundManager::PLAY_SAMPLE2(int idx) {
 }
 
 bool SoundManager::checkVoiceStatus(int voiceIndex) {
-	if (Voice[voiceIndex]._status) {
-		int wavIndex = Voice[voiceIndex]._wavIndex;
+	if (_voice[voiceIndex]._status) {
+		int wavIndex = _voice[voiceIndex]._wavIndex;
 		if (Swav[wavIndex]._audioStream != NULL && Swav[wavIndex]._audioStream->endOfStream())
 			stopVoice(voiceIndex);
 	}
 
-	return Voice[voiceIndex]._status;
+	return _voice[voiceIndex]._status;
 }
 
 void SoundManager::stopVoice(int voiceIndex) {
-	if (Voice[voiceIndex]._status) {
-		Voice[voiceIndex]._status = false;
-		int wavIndex = Voice[voiceIndex]._wavIndex;
+	if (_voice[voiceIndex]._status) {
+		_voice[voiceIndex]._status = false;
+		int wavIndex = _voice[voiceIndex]._wavIndex;
 		if (Swav[wavIndex]._active) {
 			if (Swav[wavIndex]._freeSampleFl)
 				DEL_SAMPLE_SDL(wavIndex);
 		}
 	}
-	Voice[voiceIndex]._status = false;
+	_voice[voiceIndex]._status = false;
 }
 
 void SoundManager::SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength) {
@@ -703,8 +719,8 @@ void SoundManager::playVoice() {
 	if (!Swav[20]._active)
 		error("Bad handle");
 
-	if (!Voice[2]._status) {
-		int wavIndex = Voice[2]._wavIndex;
+	if (!_voice[2]._status) {
+		int wavIndex = _voice[2]._wavIndex;
 		if (Swav[wavIndex]._active && Swav[wavIndex]._freeSampleFl)
 			DEL_SAMPLE_SDL(wavIndex);
 	}
@@ -775,11 +791,11 @@ void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
 	if (!Swav[wavIndex]._active)
 		warning("Bad handle");
 
-	if (Voice[voiceIndex]._status && Swav[wavIndex]._active && Swav[wavIndex]._freeSampleFl)
+	if (_voice[voiceIndex]._status && Swav[wavIndex]._active && Swav[wavIndex]._freeSampleFl)
 		DEL_SAMPLE_SDL(wavIndex);
 
-	Voice[voiceIndex]._status = true;
-	Voice[voiceIndex]._wavIndex = wavIndex;
+	_voice[voiceIndex]._status = true;
+	_voice[voiceIndex]._wavIndex = wavIndex;
 
 	int volume = (voiceIndex == 2) ? _voiceVolume * 255 / 16 : _soundVolume * 255 / 16;
 

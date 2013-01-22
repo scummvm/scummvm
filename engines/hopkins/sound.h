@@ -100,10 +100,10 @@ public:
 	bool _modPlayingFl;
 	int _oldSoundNumber;
 
-	VoiceItem Voice[VOICE_COUNT];
+	VoiceItem _voice[VOICE_COUNT];
 	SwavItem Swav[SWAV_COUNT];
-	SoundItem SOUND[SOUND_COUNT];
-	MusicItem Music;
+	SoundItem _sound[SOUND_COUNT];
+	MusicItem _music;
 public:
 	SoundManager();
 	~SoundManager();

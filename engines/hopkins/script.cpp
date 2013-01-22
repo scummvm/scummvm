@@ -47,9 +47,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		return 0;
 
 	int opcodeType = 0;
-	int v70 = 0;
+	int vbobFrameIndex = 0;
 	if (dataP[2] == 'T' && dataP[3] == 'X' && dataP[4] == 'T') {
-		v70 = dataP[6];
+		vbobFrameIndex = dataP[6];
 		int mesgId = (int16)READ_LE_UINT16(dataP + 13);
 		opcodeType = 1;
 		if (!TRAVAILOBJET) {
@@ -137,8 +137,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 			if (!_vm->_soundManager._voiceOffFl)
 				_vm->_soundManager.mixVoice(mesgId, 4);
-		}
-		if (TRAVAILOBJET) {
+		} else { // if (TRAVAILOBJET)
 			if (_vm->_globals._saveData->_data[svField356]) {
 				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals.FICH_TEXTE, 55, 20, dataP[8], 35, 253);
 				if (!_vm->_soundManager._textOffFl)
@@ -164,17 +163,17 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		}
 	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'B') {
 		if (!_vm->_objectsManager._disableFl) {
-			int v72 = dataP[5];
-			v70 = dataP[6];
+			int vbobIdx = dataP[5];
+			vbobFrameIndex = dataP[6];
 			int v4 = dataP[7];
-			int v68 = (int16)READ_LE_UINT16(dataP + 8);
-			int v66 = (int16)READ_LE_UINT16(dataP + 10);
-			if (v72 == 52) {
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, v68, (int16)READ_LE_UINT16(dataP + 10), v70);
-			} else if (v72 == 51) {
-				_vm->_objectsManager.BOB_VIVANT(v70);
-			} else if (v72 != 50) {
-				_vm->_objectsManager.VBOB(_vm->_globals.SPRITE_ECRAN, v72, v68, v66, v70);
+			int vbobPosX = (int16)READ_LE_UINT16(dataP + 8);
+			int vbobPosY = (int16)READ_LE_UINT16(dataP + 10);
+			if (vbobIdx == 52) {
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, vbobPosX, (int16)READ_LE_UINT16(dataP + 10), vbobFrameIndex);
+			} else if (vbobIdx == 51) {
+				_vm->_objectsManager.BOB_VIVANT(vbobFrameIndex);
+			} else if (vbobIdx != 50) {
+				_vm->_objectsManager.VBOB(_vm->_globals.SPRITE_ECRAN, vbobIdx, vbobPosX, vbobPosY, vbobFrameIndex);
 				if (v4)
 					v4 /= _vm->_globals._speed;
 				if (v4 > 1) {
@@ -188,7 +187,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 			} else
 				// TODO: Remove this:
-				warning("Former AFFICHE_SPEED1: %d %d %d", v68, v66, v70);
+				warning("Former AFFICHE_SPEED1: %d %d %d", vbobPosX, vbobPosY, vbobFrameIndex);
 		}
 		opcodeType = 1;
 	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'P') {
@@ -255,7 +254,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._prevScreenId = _vm->_globals._screenId;
 			_vm->_globals._saveData->_data[svField6] = _vm->_globals._screenId;
 			_vm->_globals._screenId = _vm->_globals._saveData->_data[svField5] = dataP[5];
-			v70 = dataP[6];
+			vbobFrameIndex = dataP[6];
 		}
 		opcodeType = 1;
 	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'F') {
@@ -265,7 +264,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 	} else if (dataP[2] == 'P' && dataP[3] == 'E' && dataP[4] == 'R') {
 		int specialOpcode = (int16)READ_LE_UINT16(dataP + 5);
 		if (!_vm->_globals._saveData->_data[svField122] && !_vm->_globals._saveData->_data[svField356]) {
-			v70 = 0;
+			vbobFrameIndex = 0;
 
 			switch (specialOpcode) {
 			case 1:
@@ -2048,13 +2047,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			char v47 = _vm->_globals._saveData->_data[svField341];
 			if (v47) {
 				if (v47 == 2)
-					v70 = 5;
-				if (v47 == 3)
-					v70 = 4;
-				if (v47 == 1)
-					v70 = 6;
+					vbobFrameIndex = 5;
+				else if (v47 == 3)
+					vbobFrameIndex = 4;
+				else if (v47 == 1)
+					vbobFrameIndex = 6;
 				_vm->_soundManager.playSound("SOUND83.WAV");
-				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
+				_vm->_objectsManager.OPTI_ONE(vbobFrameIndex, 26, 50, 0);
 				if (_vm->_globals._saveData->_data[svField341] == 1)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
 				if (_vm->_globals._saveData->_data[svField341] == 2)
@@ -2078,13 +2077,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			char v48 = _vm->_globals._saveData->_data[svField341];
 			if (v48) {
 				if (v48 == 2)
-					v70 = 5;
+					vbobFrameIndex = 5;
 				if (v48 == 3)
-					v70 = 4;
+					vbobFrameIndex = 4;
 				if (v48 == 1)
-					v70 = 6;
+					vbobFrameIndex = 6;
 				_vm->_soundManager.playSound("SOUND83.WAV");
-				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
+				_vm->_objectsManager.OPTI_ONE(vbobFrameIndex, 26, 50, 0);
 				if (_vm->_globals._saveData->_data[svField341] == 1)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
 				if (_vm->_globals._saveData->_data[svField341] == 2)
@@ -2108,13 +2107,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			char v49 = _vm->_globals._saveData->_data[svField341];
 			if (v49) {
 				if (v49 == 2)
-					v70 = 5;
-				if (v49 == 3)
-					v70 = 4;
-				if (v49 == 1)
-					v70 = 6;
+					vbobFrameIndex = 5;
+				else if (v49 == 3)
+					vbobFrameIndex = 4;
+				else if (v49 == 1)
+					vbobFrameIndex = 6;
 				_vm->_soundManager.playSound("SOUND83.WAV");
-				_vm->_objectsManager.OPTI_ONE(v70, 26, 50, 0);
+				_vm->_objectsManager.OPTI_ONE(vbobFrameIndex, 26, 50, 0);
 				if (_vm->_globals._saveData->_data[svField341] == 1)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
 				if (_vm->_globals._saveData->_data[svField341] == 2)

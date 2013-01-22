@@ -740,11 +740,11 @@ void ObjectsManager::checkCache() {
 				_vm->_globals.Cache[cacheIdx].fieldA = 1;
 			}
 		} else {
-			int v5 = _vm->_globals.Cache[cacheIdx].field14 + _vm->_globals.Cache[cacheIdx]._height + _vm->_globals.Cache[cacheIdx]._y;
-			if (v5 > 440)
-				v5 = 500;
+			int priority = _vm->_globals.Cache[cacheIdx].field14 + _vm->_globals.Cache[cacheIdx]._height + _vm->_globals.Cache[cacheIdx]._y;
+			if (priority > 440)
+				priority = 500;
 
-			beforeSort(SORT_CACHE, cacheIdx, v5);
+			beforeSort(SORT_CACHE, cacheIdx, priority);
 			_vm->_globals.Cache[cacheIdx].fieldA = 1;
 			_vm->_globals.Cache[cacheIdx].field10 = true;
 		}

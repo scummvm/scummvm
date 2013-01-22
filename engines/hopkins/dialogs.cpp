@@ -346,8 +346,8 @@ LABEL_7:
 
 	_inventX = _vm->_graphicsManager._scrollOffset + 152;
 	_inventY = 114;
-	int v18 = _inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
-	int v17 = _inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
+	_inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
+	_inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
 
 	_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX + 300, 414, 0, 0, 0, false);
 	int v15 = 0;
@@ -433,8 +433,8 @@ LABEL_7:
 	_vm->_fontManager.hideText(9);
 	if (_inventDisplayedFl) {
 		_inventDisplayedFl = false;
-		_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _inventX, 114, v18, v17, _vm->_graphicsManager._vesaBuffer, _inventX, 114);
-		_vm->_graphicsManager.addVesaSegment(_inventX, 114, _inventX + v18, v18 + 114);
+		_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _inventX, 114, _inventWidth, _inventHeight, _vm->_graphicsManager._vesaBuffer, _inventX, 114);
+		_vm->_graphicsManager.addVesaSegment(_inventX, 114, _inventX + _inventWidth, _inventWidth + 114);
 		_vm->_objectsManager.BOBTOUS = true;
 	}
 
