@@ -30,18 +30,53 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_game.h"
+#include "graphics/scaler.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSaveThumbHelper::BaseSaveThumbHelper(BaseGame *inGame) : BaseClass(inGame) {
 	_thumbnail = NULL;
+	_scummVMThumb = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
 BaseSaveThumbHelper::~BaseSaveThumbHelper(void) {
 	delete _thumbnail;
 	_thumbnail = NULL;
+	delete _scummVMThumb;
+	_scummVMThumb = NULL;
+}
+
+BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
+	BaseImage *thumbnail = NULL;
+	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
+		if (doFlip) {
+			// when using opengl on windows it seems to be necessary to do this twice
+			// works normally for direct3d
+			_gameRef->displayContent(false);
+			_gameRef->_renderer->flip();
+			
+			_gameRef->displayContent(false);
+			_gameRef->_renderer->flip();
+		}
+		
+		BaseImage *screenshot = _gameRef->_renderer->takeScreenshot();
+		if (!screenshot) {
+			return STATUS_FAILED;
+		}
+		
+		// normal thumbnail
+		if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
+			thumbnail = new BaseImage();
+			thumbnail->copyFrom(screenshot, width, height);
+		}
+		
+		
+		delete screenshot;
+		screenshot = NULL;
+	}
+	return thumbnail;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -50,30 +85,27 @@ bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
 	_thumbnail = NULL;
 
 	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
-		if (doFlip) {
-			// when using opengl on windows it seems to be necessary to do this twice
-			// works normally for direct3d
-			_gameRef->displayContent(false);
-			_gameRef->_renderer->flip();
 
-			_gameRef->displayContent(false);
-			_gameRef->_renderer->flip();
-		}
-
-		BaseImage *screenshot = _gameRef->_renderer->takeScreenshot();
-		if (!screenshot) {
+		_thumbnail = storeThumb(doFlip, _gameRef->_thumbnailWidth, _gameRef->_thumbnailHeight);
+		if (!_thumbnail) {
 			return STATUS_FAILED;
 		}
+	}
+	storeScummVMThumbNail();
+	return STATUS_OK;
+}
 
-		// normal thumbnail
-		if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
-			_thumbnail = new BaseImage();
-			_thumbnail->copyFrom(screenshot, _gameRef->_thumbnailWidth, _gameRef->_thumbnailHeight);
+//////////////////////////////////////////////////////////////////////////
+bool BaseSaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
+	delete _thumbnail;
+	_thumbnail = NULL;
+	
+	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
+		
+		_scummVMThumb = storeThumb(doFlip, kThumbnailWidth, kThumbnailHeight2);
+		if (!_scummVMThumb) {
+			return STATUS_FAILED;
 		}
-
-
-		delete screenshot;
-		screenshot = NULL;
 	}
 	return STATUS_OK;
 }

@@ -71,6 +71,9 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 	_richBuffer = NULL;
 	_richBufferSize = 0;
 
+	_scummVMThumbnailData = NULL;
+	_scummVMThumbSize = 0;
+
 	_savedDescription = NULL;
 //	_savedTimestamp = 0;
 	_savedVerMajor = _savedVerMinor = _savedVerBuild = 0;
@@ -123,6 +126,12 @@ void BasePersistenceManager::cleanup() {
 		_thumbnailData = NULL;
 	}
 
+	_scummVMThumbSize = 0;
+	if (_scummVMThumbnailData) {
+		delete[] _scummVMThumbnailData;
+		_scummVMThumbnailData = NULL;
+	}
+
 	delete _loadStream;
 	delete _saveStream;
 	_loadStream = NULL;
@@ -131,7 +140,7 @@ void BasePersistenceManager::cleanup() {
 
 Common::String BasePersistenceManager::getFilenameForSlot(int slot) const {
 	// 3 Digits, to allow for one save-slot for autosave + slot 1 - 100 (which will be numbered 0-99 filename-wise)
-	return Common::String::format("%s-save%03d.wsv", _savePrefix.c_str(), slot);
+	return Common::String::format("%s.%03d", _savePrefix.c_str(), slot);
 }
 
 void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &desc) {
@@ -146,8 +155,18 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 	desc.setDeletableFlag(true);
 	desc.setWriteProtectedFlag(false);
 
-	if (_thumbnailDataSize > 0) {
-		Common::MemoryReadStream thumbStream(_thumbnailData, _thumbnailDataSize);
+	int thumbSize = 0;
+	byte *thumbData = NULL;
+	if (_scummVMThumbSize > 0) {
+		thumbSize = _scummVMThumbSize;
+		thumbData = _scummVMThumbnailData;
+	} else if (_thumbnailDataSize > 0) {
+		thumbSize = _thumbnailDataSize;
+		thumbData = _thumbnailData;
+	}
+
+	if (thumbSize > 0) {
+		Common::MemoryReadStream thumbStream(thumbData, thumbSize);
 		Graphics::BitmapDecoder bmpDecoder;
 		if (bmpDecoder.loadStream(thumbStream)) {
 			Graphics::Surface *surf = NULL;
@@ -171,13 +190,13 @@ void BasePersistenceManager::deleteSaveSlot(int slot) {
 }
 
 uint32 BasePersistenceManager::getMaxUsedSlot() {
-	Common::String saveMask = Common::String::format("%s-save???.wsv", _savePrefix.c_str());
+	Common::String saveMask = Common::String::format("%s.???", _savePrefix.c_str());
 	Common::StringArray saves = g_system->getSavefileManager()->listSavefiles(saveMask);
 	Common::StringArray::iterator it = saves.begin();
 	int ret = -1;
 	for (; it != saves.end(); ++it) {
 		int num = -1;
-		sscanf(it->c_str(), "save%d", &num);
+		sscanf(it->c_str(), ".%d", &num);
 		ret = MAX(ret, num);
 	}
 	return ret;
@@ -249,6 +268,25 @@ bool BasePersistenceManager::initSave(const char *desc) {
 		if (!thumbnailOK) {
 			putDWORD(0);
 		}
+		thumbnailOK = false;
+		// Again for the ScummVM-thumb:
+		if (_gameRef->_cachedThumbnail) {
+			if (_gameRef->_cachedThumbnail->_scummVMThumb) {
+				Common::MemoryWriteStreamDynamic scummVMthumbStream(DisposeAfterUse::YES);
+				if (_gameRef->_cachedThumbnail->_scummVMThumb->writeBMPToStream(&scummVMthumbStream)) {
+					_saveStream->writeUint32LE(scummVMthumbStream.size());
+					_saveStream->write(scummVMthumbStream.getData(), scummVMthumbStream.size());
+				} else {
+					_saveStream->writeUint32LE(0);
+				}
+				
+				thumbnailOK = true;
+			}
+		}
+		if (!thumbnailOK) {
+			putDWORD(0);
+		}
+
 
 		// in any case, destroy the cached thumbnail once used
 		delete _gameRef->_cachedThumbnail;
@@ -306,6 +344,15 @@ bool BasePersistenceManager::readHeader(const Common::String &filename) {
 						getBytes(_thumbnailData, _thumbnailDataSize);
 					} else {
 						_thumbnailDataSize = 0;
+					}
+				}
+				if (_savedVerMajor >= 1 && _savedVerMinor >= 2) {
+					_scummVMThumbSize = getDWORD();
+					_scummVMThumbnailData = new byte[_scummVMThumbSize];
+					if (_scummVMThumbnailData) {
+						getBytes(_scummVMThumbnailData, _scummVMThumbSize);
+					} else {
+						_scummVMThumbSize = 0;
 					}
 				}
 			} else {

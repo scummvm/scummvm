@@ -93,6 +93,8 @@ public:
 
 	uint32 _thumbnailDataSize;
 	byte *_thumbnailData;
+	uint32 _scummVMThumbSize;
+	byte *_scummVMThumbnailData;
 	Common::String getFilenameForSlot(int slot) const;
 private:
 	bool _deleteSingleton;
