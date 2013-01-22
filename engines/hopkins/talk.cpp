@@ -625,7 +625,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 			v4 = 1;
 		if ((int16)READ_LE_UINT16(v5 + 24)) {
 			_vm->_globals._bob[idx]._isSpriteFl = true;
-			_vm->_globals._bob[idx].field36 = 0;
+			_vm->_globals._bob[idx]._zoomFactor = 0;
 			_vm->_globals._bob[idx]._flipFl = false;
 			_vm->_globals._bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
 			_vm->_globals._bob[idx].field0 = 10;

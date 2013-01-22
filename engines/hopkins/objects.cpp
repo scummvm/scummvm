@@ -491,7 +491,7 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob.field22 = 0;
 	bob._offsetY = 0;
 	bob.field34 = false;
-	bob.field36 = 0;
+	bob._zoomFactor = 0;
 	bob._flipFl = false;
 	bob._oldX2 = 0;
 
@@ -582,7 +582,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 
 	if (_vm->_globals.Bank[bankIdx]._fileHeader == 1) {
 		_vm->_globals._bob[idx]._isSpriteFl = true;
-		_vm->_globals._bob[idx].field36 = 0;
+		_vm->_globals._bob[idx]._zoomFactor = 0;
 		_vm->_globals._bob[idx]._flipFl = false;
 	}
 
@@ -631,7 +631,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 	_vm->_globals._bob[idx]._activeFl = false;
 	if (_vm->_globals._bob[idx]._isSpriteFl) {
 		_vm->_globals._bob[idx]._flipFl = false;
-		_vm->_globals._bob[idx].field36 = 0;
+		_vm->_globals._bob[idx]._zoomFactor = 0;
 	}
 
 	int spriteIdx = _vm->_globals._bob[idx]._frameIndex;
@@ -647,37 +647,37 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		deltaY = getOffsetY(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, false);
 	}
 
-	int v20 = 0;
-	int v21 = 0;
-	if (_vm->_globals._bob[idx].field36 < 0) {
-		v20 = -_vm->_globals._bob[idx].field36;
-		if (v20 > 95)
-			v20 = 95;
+	int negZoom = 0;
+	int posZoom = 0;
+	if (_vm->_globals._bob[idx]._zoomFactor < 0) {
+		negZoom = -_vm->_globals._bob[idx]._zoomFactor;
+		if (negZoom > 95)
+			negZoom = 95;
 	} else
-		v21 = _vm->_globals._bob[idx].field36;
+		posZoom = _vm->_globals._bob[idx]._zoomFactor;
 
-	if (v21) {
+	if (posZoom) {
 		if (deltaX >= 0)
-			deltaX = _vm->_graphicsManager.zoomIn(deltaX, v21);
+			deltaX = _vm->_graphicsManager.zoomIn(deltaX, posZoom);
 		else
-			deltaX = -_vm->_graphicsManager.zoomIn(deltaX, v21);
+			deltaX = -_vm->_graphicsManager.zoomIn(-deltaX, posZoom);
 
 		if (deltaY >= 0)
-			deltaY = _vm->_graphicsManager.zoomIn(deltaY, v21);
+			deltaY = _vm->_graphicsManager.zoomIn(deltaY, posZoom);
 		else
-			deltaY = -_vm->_graphicsManager.zoomIn(abs(deltaX), v21);
+			deltaY = -_vm->_graphicsManager.zoomIn(abs(deltaX), posZoom);
 	}
 
-	if (v20) {
+	if (negZoom) {
 		if (deltaX >= 0)
-			deltaX = _vm->_graphicsManager.zoomOut(deltaX, v20);
+			deltaX = _vm->_graphicsManager.zoomOut(deltaX, negZoom);
 		else
-			deltaX = -_vm->_graphicsManager.zoomOut(-deltaX, v20);
+			deltaX = -_vm->_graphicsManager.zoomOut(-deltaX, negZoom);
 
 		if (deltaY >= 0)
-			deltaY = _vm->_graphicsManager.zoomOut(deltaY, v20);
+			deltaY = _vm->_graphicsManager.zoomOut(deltaY, negZoom);
 		else
-			deltaY = -_vm->_graphicsManager.zoomOut(abs(deltaX), v20);
+			deltaY = -_vm->_graphicsManager.zoomOut(abs(deltaX), negZoom);
 	}
 
 	int v13 = _vm->_globals._bob[idx]._xp - deltaX;
@@ -685,8 +685,8 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 	_vm->_globals._bob[idx]._activeFl = true;
 	_vm->_globals._bob[idx]._oldX = v13;
 	_vm->_globals._bob[idx]._oldY = v14;
-	_vm->_globals._bob[idx]._oldY2 = v21;
-	_vm->_globals._bob[idx].field4A = v20;
+	_vm->_globals._bob[idx]._oldY2 = posZoom;
+	_vm->_globals._bob[idx].field4A = negZoom;
 
 	_vm->_globals.Liste2[idx]._visibleFl = true;
 	_vm->_globals.Liste2[idx]._posX = v13;
@@ -695,13 +695,13 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 	int width = getWidth(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex);
 	int height = getHeight(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex);
 
-	if (v21) {
-		width = _vm->_graphicsManager.zoomIn(width, v21);
-		height = _vm->_graphicsManager.zoomIn(height, v21);
+	if (posZoom) {
+		width = _vm->_graphicsManager.zoomIn(width, posZoom);
+		height = _vm->_graphicsManager.zoomIn(height, posZoom);
 	}
-	if (v20) {
-		height = _vm->_graphicsManager.zoomOut(height, v20);
-		width = _vm->_graphicsManager.zoomOut(width, v20);
+	if (negZoom) {
+		height = _vm->_graphicsManager.zoomOut(height, negZoom);
+		width = _vm->_graphicsManager.zoomOut(width, negZoom);
 	}
 
 	_vm->_globals.Liste2[idx]._width = width;
@@ -947,7 +947,7 @@ void ObjectsManager::displayBobAnim() {
 
 		_vm->_globals._bob[idx]._yp = (int16)READ_LE_UINT16(v20 + 2 * v24 + 2);
 		_vm->_globals._bob[idx].field12 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 4);
-		_vm->_globals._bob[idx].field36 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 6);
+		_vm->_globals._bob[idx]._zoomFactor = (int16)READ_LE_UINT16(v20 + 2 * v24 + 6);
 		_vm->_globals._bob[idx]._frameIndex = v20[2 * v24 + 8];
 		_vm->_globals._bob[idx]._flipFl = (v20[2 * v24 + 9] != 0);
 		_vm->_globals._bob[idx].field10 += 5;
@@ -982,7 +982,7 @@ void ObjectsManager::displayBobAnim() {
 
 				_vm->_globals._bob[idx]._yp = (int16)READ_LE_UINT16(v21 + 2);
 				_vm->_globals._bob[idx].field12 = (int16)READ_LE_UINT16(v21 + 4);
-				_vm->_globals._bob[idx].field36 = (int16)READ_LE_UINT16(v21 + 6);
+				_vm->_globals._bob[idx]._zoomFactor = (int16)READ_LE_UINT16(v21 + 6);
 				_vm->_globals._bob[idx]._frameIndex = v21[8];
 				_vm->_globals._bob[idx]._flipFl = (v21[9] != 0);
 				_vm->_globals._bob[idx].field10 += 5;
@@ -3592,17 +3592,13 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	int v32;
 	int v33;
 	int v34;
-	int v35;
 	int v36;
 	byte *v37;
-	size_t nbytes;
-	byte *ptr;
-	Common::String filename, filename2;
 	Common::File f;
 
-	filename = file + ".LNK";
-	ptr = _vm->_fileManager.searchCat(filename, 3);
-	nbytes = _vm->_globals._catalogSize;
+	Common::String filename = file + ".LNK";
+	byte *ptr = _vm->_fileManager.searchCat(filename, 3);
+	size_t nbytes = _vm->_globals._catalogSize;
 	if (ptr == g_PTRNUL) {
 		if (!f.open(filename))
 			error("Error opening file - %s", filename.c_str());
@@ -3620,7 +3616,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 
 		_vm->_globals.resetCache();
 
-		filename2 = Common::String((const char *)ptr + 1000);
+		Common::String filename2 = Common::String((const char *)ptr + 1000);
 		if (!filename2.empty()) {
 			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.searchCat(filename2, 8);
 
@@ -3632,27 +3628,27 @@ void ObjectsManager::INILINK(const Common::String &file) {
 
 			v36 = 60;
 			v37 = ptr + 1000;
-			for (int v40 = 0; v40 <= 21; v40++) {
+			for (int cacheIdx = 0; cacheIdx <= 21; cacheIdx++) {
 				v8 = (int16)READ_LE_UINT16(v37 + 2 * v36);
 				v9 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 2);
 				v10 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 4);
 
-				_vm->_globals.Cache[v40].field14 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 8);
-				_vm->_globals.Cache[v40]._spriteIndex = v8;
-				_vm->_globals.Cache[v40]._x = v9;
-				_vm->_globals.Cache[v40]._y = v10;
+				_vm->_globals.Cache[cacheIdx].field14 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 8);
+				_vm->_globals.Cache[cacheIdx]._spriteIndex = v8;
+				_vm->_globals.Cache[cacheIdx]._x = v9;
+				_vm->_globals.Cache[cacheIdx]._y = v10;
 
 				if (!_vm->_globals.CACHE_BANQUE[1]) {
-					_vm->_globals.Cache[v40].fieldA = 0;
+					_vm->_globals.Cache[cacheIdx].fieldA = 0;
 				} else {
-					_vm->_globals.Cache[v40]._spriteData = _vm->_globals.CACHE_BANQUE[1];
-					_vm->_globals.Cache[v40]._width = getWidth(_vm->_globals.CACHE_BANQUE[1], v8);
-					_vm->_globals.Cache[v40]._height = getHeight(_vm->_globals.CACHE_BANQUE[1], v8);
-					_vm->_globals.Cache[v40].fieldA = 1;
+					_vm->_globals.Cache[cacheIdx]._spriteData = _vm->_globals.CACHE_BANQUE[1];
+					_vm->_globals.Cache[cacheIdx]._width = getWidth(_vm->_globals.CACHE_BANQUE[1], v8);
+					_vm->_globals.Cache[cacheIdx]._height = getHeight(_vm->_globals.CACHE_BANQUE[1], v8);
+					_vm->_globals.Cache[cacheIdx].fieldA = 1;
 				}
-				if (!_vm->_globals.Cache[v40]._x && !_vm->_globals.Cache[v40]._y
-							&& !_vm->_globals.Cache[v40]._spriteIndex)
-					_vm->_globals.Cache[v40].fieldA = 0;
+				if (!_vm->_globals.Cache[cacheIdx]._x && !_vm->_globals.Cache[cacheIdx]._y
+							&& !_vm->_globals.Cache[cacheIdx]._spriteIndex)
+					_vm->_globals.Cache[cacheIdx].fieldA = 0;
 
 				v36 += 5;
 			}
@@ -3709,13 +3705,12 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					_vm->_globals.ZONEP[i].field12 = 0;
 				}
 
-				v35 = 0;
 				v31 = 0;
 				do {
 					v28 = (int16)READ_LE_UINT16(v17 + 2 * v33);
 					if (v28 != -1) {
 						_vm->_linesManager.addZoneLine(
-						    v35,
+						    v31,
 						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 2),
 						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 4),
 						    (int16)READ_LE_UINT16(v17 + 2 * v33 + 6),
@@ -3724,7 +3719,6 @@ void ObjectsManager::INILINK(const Common::String &file) {
 						_vm->_globals.ZONEP[v28]._enabledFl = true;
 					}
 					v33 += 5;
-					++v35;
 					++v31;
 				} while (v28 != -1);
 				for (int i = 1; i <= 100; i++) {
