@@ -1008,6 +1008,32 @@ void Lua_V1::postRestoreHandle() {
 	pushbool(devMode);
 	lua_setglobal("developerMode");
 	lua_endblock();
+
+	// Starting a movie calls the function 'music_state.pause()', which saves the current sfx volume to a temp
+	// variable and sets it to 0. When the movie finishes 'music_state.unpause()' will be called, which reads
+	// the volume from the temp variable and sets it. But if we have modified the sfx volume in the options
+	// and than load a savegame made during a movie, at the end of the movie the temp variable will have the
+	// old value. So here we call 'music_state.pause()' again, so that it can set the right value to the
+	// temp variable.
+	lua_beginblock();
+	lua_Object o = lua_getglobal("music_state");
+	if (!lua_isnil(o)) {
+		lua_pushobject(o);
+		lua_pushstring("paused");
+		if (!lua_isnil(lua_gettable())) {
+			lua_pushobject(o);
+			lua_pushstring("paused");
+			pushbool(false);
+			lua_settable();
+
+			lua_pushobject(o);
+			lua_pushstring("pause");
+			lua_Object func = lua_gettable();
+			lua_pushobject(o);
+			lua_callfunction(func);
+		}
+	}
+	lua_endblock();
 }
 
 } // end of namespace Grim
