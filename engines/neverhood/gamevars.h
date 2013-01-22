@@ -172,6 +172,7 @@ struct GameVar {
 class GameVars {
 public:
 	GameVars();
+	void clear();
 	void loadState(Common::InSaveFile *in);
 	void saveState(Common::OutSaveFile *out);
 	uint32 getGlobalVar(uint32 nameHash);

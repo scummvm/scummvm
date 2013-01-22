@@ -122,8 +122,6 @@ Common::Error NeverhoodEngine::run() {
 	delete _gameVars;
 	delete _staticData;
 	
-	debug("Ok.");
-
 	return Common::kNoError;
 }
 

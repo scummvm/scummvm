@@ -34,6 +34,7 @@ public:
 	virtual ~GameModule();
 	void startup();
 	void restoreGame();
+	void requestRestartGame(bool requestMainMenu);
 	void checkMainMenu();
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseDown(int16 x, int16 y);
@@ -57,6 +58,7 @@ protected:
 	Entity *_prevChildObject;
 	int _prevModuleNum;
 	bool _gameWasLoaded;
+	bool _restartGameRequested;
 	bool _mainMenuRequested;
 	bool _someFlag1;
 	bool _field2C;

@@ -28,12 +28,8 @@
 namespace Neverhood {
 
 static const uint32 kModule1600SoundList[] = {
-	0x90805C50,
-	0x90804450,
-	0xB4005E60,
-	0x91835066,
-	0x90E14440,
-	0
+	0x90805C50, 0x90804450, 0xB4005E60,
+	0x91835066, 0x90E14440, 0
 };
 
 Module1600::Module1600(NeverhoodEngine *vm, Module *parentModule, int which)

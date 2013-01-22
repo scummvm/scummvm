@@ -199,9 +199,9 @@ AsScene1907Symbol::AsScene1907Symbol(NeverhoodEngine *vm, Scene1907 *parentScene
 }
 
 void AsScene1907Symbol::update() {
-	AnimatedSprite::updateAnim();
+	updateAnim();
 	handleSpriteUpdate();
-	AnimatedSprite::updatePosition();
+	updatePosition();
 	if (_plugInFailed && _plugInTryCount == 0)
 		_plugInFailed = false;
 }
@@ -488,8 +488,8 @@ AsScene1907WaterHint::AsScene1907WaterHint(NeverhoodEngine *vm)
 }
 
 void AsScene1907WaterHint::update() {
-	AnimatedSprite::updateAnim();
-	AnimatedSprite::updatePosition();
+	updateAnim();
+	updatePosition();
 }
 
 uint32 AsScene1907WaterHint::hmShowing(int messageNum, const MessageParam &param, Entity *sender) {
@@ -629,19 +629,19 @@ void Scene1907::plugInFailed() {
 }
 
 int Scene1907::getRandomPositionIndex() {
-	bool flag = false;
+	bool found = false;
 	int index = 0;
 	// Check if any position is free
 	for (int i = 0; i < 9; i++)
 		if (_positionFree[i])
-			flag = true;
-	if (flag) {
+			found = true;
+	if (found) {
 		// Get a random free position
-		flag = false;
-		while (!flag) {
+		found = false;
+		while (!found) {
 			index = _vm->_rnd->getRandomNumber(9 - 1);
 			if (_positionFree[index])
-				flag = true;
+				found = true;
 		}
 	}
 	return index;

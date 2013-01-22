@@ -21,6 +21,7 @@
  */
 
 #include "neverhood/menumodule.h"
+#include "neverhood/gamemodule.h"
 
 namespace Neverhood {
 
@@ -29,6 +30,18 @@ enum {
 	CREDITS_SCENE	= 1,
 	MAKING_OF		= 2,
 	SAVE_GAME_MENU	= 3
+};
+
+enum {
+	kMainMenuRestartGame	= 0,
+	kMainMenuLoadGame		= 1,
+	kMainMenuSaveGame		= 2,
+	kMainMenuResumeGame		= 3,
+	kMainMenuQuitGame		= 4,
+	kMainMenuCredits		= 5,
+	kMainMenuMakingOf		= 6,
+	kMainMenuToggleMusic	= 7,
+	kMainMenuDeleteGame		= 8
 };
 
 static const uint32 kMakingOfSmackerFileHashList[] = {
@@ -97,42 +110,34 @@ void MenuModule::updateScene() {
 		case MAIN_MENU:
 			// TODO
 			switch (_moduleResult) {
-			case 0:
-				// 0048A2A5
-				debug("RESTART GAME");
-				break;
-			case 1:
-				debug("LOAD GAME");
-				// TODO createLoadGameMenu();
-				break;
-			case 2:
-				debug("SAVE GAME");
-				createScene(SAVE_GAME_MENU, -1);
-				break;
-			case 3:
-				debug("RESUME GAME");
+			case kMainMenuRestartGame:
+				_vm->_gameModule->requestRestartGame(false);
 				leaveModule(0);
 				break;
-			case 4:
-				debug("QUIT GAME");
+			case kMainMenuLoadGame:
+				// TODO createLoadGameMenu();
+				break;
+			case kMainMenuSaveGame:
+				createScene(SAVE_GAME_MENU, -1);
+				break;
+			case kMainMenuResumeGame:
+				leaveModule(0);
+				break;
+			case kMainMenuQuitGame:
 				leaveModule(0);
 				_vm->quitGame();
 				break;
-			case 5:
-				debug("CREDITS");
+			case kMainMenuCredits:
 				createScene(CREDITS_SCENE, -1);
 				break;
-			case 6:
-				debug("MAKING OF");
+			case kMainMenuMakingOf:
 				createScene(MAKING_OF, -1);
 				break;
-			case 7:
-				debug("TOGGLE MUSIC");
+			case kMainMenuToggleMusic:
 				// TODO Toggle music 0048A367
 				createScene(MAIN_MENU, -1);
 				break;
-			case 8:
-				debug("DELETE GAME");
+			case kMainMenuDeleteGame:
 				// TODO createDeleteGameMenu();
 				break;
 			default:
@@ -270,30 +275,14 @@ uint32 MainMenu::handleMessage(int messageNum, const MessageParam &param, Entity
 }
 
 static const uint32 kCreditsSceneFileHashes[] = {
-	0x6081128C,
-	0x608112BC,
-	0x608112DC,
-	0x6081121C,
-	0x6081139C,
-	0x6081109C,
-	0x6081169C,
-	0x60811A9C,
-	0x6081029C,
-	0x0081128C,
-	0x008112BC,
-	0x008012BC,
-	0x008112DC,
-	0x0081121C,
-	0x0081139C,
-	0x0081109C,
-	0x0081169C,
-	0x00811A9C,
-	0x0081029C,
-	0x0081329C,
-	0xC08112BC,
-	0xC08112DC,
-	0xC081121C,
-	0xC081139C,
+	0x6081128C, 0x608112BC, 0x608112DC,
+	0x6081121C, 0x6081139C, 0x6081109C,
+	0x6081169C, 0x60811A9C, 0x6081029C,
+	0x0081128C, 0x008112BC, 0x008012BC,
+	0x008112DC, 0x0081121C, 0x0081139C,
+	0x0081109C, 0x0081169C, 0x00811A9C,
+	0x0081029C, 0x0081329C, 0xC08112BC,
+	0xC08112DC, 0xC081121C, 0xC081139C,
 	0
 };
 
@@ -353,7 +342,7 @@ uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, En
 	case 0x0009:
 		leaveScene(0);
 		break;
-	case 0x000B://TODO Implement this message
+	case 0x000B:
 		if (param.asInteger() == Common::KEYCODE_ESCAPE && _canAbort)
 			leaveScene(0);
 		break;
@@ -388,6 +377,7 @@ void WidgetScene::setCurrWidget(Widget *newWidget) {
 }
 
 void WidgetScene::handleEvent(int16 itemID, int eventType) {
+	// Empty
 }
 
 Widget::Widget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
@@ -403,7 +393,7 @@ Widget::Widget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene 
 
 void Widget::onClick() {
 	_parentScene->setCurrWidget(this);
-	// TODO _parentScene->onClick(_itemID, 0);
+	// TODO? _parentScene->onClick(_itemID, 0);
 }
 
 void Widget::setPosition(int16 x, int16 y) {
@@ -490,7 +480,7 @@ void TextLabelWidget::clear() {
 
 void TextLabelWidget::onClick() {
 	Widget::onClick();
-	// TODO Click handler?
+	// TODO? Click handler
 }
 
 void TextLabelWidget::setString(const byte *string, int stringLen) {

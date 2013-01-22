@@ -75,7 +75,7 @@ enum {
 
 GameModule::GameModule(NeverhoodEngine *vm)
 	: Module(vm, NULL), _moduleNum(-1), _prevChildObject(NULL), _prevModuleNum(-1),
-	_mainMenuRequested(false), _gameWasLoaded(false) {
+	_restartGameRequested(false), _mainMenuRequested(false), _gameWasLoaded(false) {
 	
 	// Other initializations moved to actual engine class
 	_vm->_soundMan->playSoundThree(0x002D0031, 0x8861079);
@@ -400,9 +400,9 @@ void GameModule::startup() {
 	// <<<DEBUG
 
 #if 1
-	_vm->gameState().which = 1;
-	_vm->gameState().sceneNum = 1;
-	createModule(1000, -1);
+	_vm->gameState().which = 0;
+	_vm->gameState().sceneNum = 8;
+	createModule(1800, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 5;
@@ -473,7 +473,17 @@ void GameModule::restoreGame() {
 	createModuleByHash(getGlobalVar(V_MODULE_NAME));
 }
 
+void GameModule::requestRestartGame(bool requestMainMenu) {
+	_restartGameRequested = true;
+	_mainMenuRequested = requestMainMenu;
+}
+
 void GameModule::checkMainMenu() {
+	if (_restartGameRequested) {
+		_restartGameRequested = false;
+		_vm->_gameVars->clear();
+		restoreGame();
+	}
 	if (_mainMenuRequested)
 		openMainMenu();
 }
@@ -646,7 +656,8 @@ void GameModule::createModuleByHash(uint32 nameHash) {
 		createModule(3000, -1);
 		break;
 	default:
-		error("GameModule::createModuleByHash() Unknown module name %08X", nameHash);
+		createModule(1000, 0);
+		break;
 	}
 }
 
@@ -673,9 +684,7 @@ void GameModule::updateModule() {
 		case 1300:
 			if (_moduleResult == 1) {
 				// The game was successfully finished
-				// TODO Restart the game/show main menu
-				// TODO _gameState.clear();
-				// TODO GameModule_handleKeyEscape
+				requestRestartGame(true);
 			} else
 				createModule(2900, 0);
 			break;
@@ -702,9 +711,7 @@ void GameModule::updateModule() {
 		case 1800:
 			if (_moduleResult == 1) {
 				// Game over, Klaymen jumped into the hole
-				// TODO Restart the game/show main menu
-				// TODO _gameState.clear();
-				// TODO GameModule_handleKeyEscape
+				requestRestartGame(true);
 			} else if (_moduleResult == 2)
 				createModule(2700, 0);
 			else if (_moduleResult == 3)
