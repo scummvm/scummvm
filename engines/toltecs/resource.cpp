@@ -107,11 +107,13 @@ Resource *ResourceCache::load(uint resIndex) {
 	} else {
 		debug(1, "ResourceCache::load(%d) From disk", resIndex);
 
+		int32 curPos = _vm->_arc->pos();
 		Resource *resItem = new Resource();
 		resItem->size = _vm->_arc->openResource(resIndex);
 		resItem->data = new byte[resItem->size];
 		_vm->_arc->read(resItem->data, resItem->size);
 		_vm->_arc->closeResource();
+		_vm->_arc->seek(curPos);
 
 		_cache[resIndex] = resItem;
 
