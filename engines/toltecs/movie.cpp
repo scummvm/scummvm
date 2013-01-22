@@ -52,7 +52,6 @@ MoviePlayer::~MoviePlayer() {
 }
 
 void MoviePlayer::playMovie(uint resIndex) {
-
 	const uint32 subtitleSlot = kMaxScriptSlots - 1;
 	int16 savedSceneWidth = _vm->_sceneWidth;
 	int16 savedSceneHeight = _vm->_sceneHeight;
@@ -109,7 +108,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 		debug(0, "chunkType = %d; chunkSize = %d", chunkType, chunkSize);
 
 		// Skip audio chunks - we've already queued them in
-		// fetchAudioChunks() above
+		// fetchAudioChunks()
 		if (chunkType == kChunkAudio) {
 			_vm->_arc->skip(chunkSize);
 		} else {
@@ -208,7 +207,6 @@ void MoviePlayer::playMovie(uint resIndex) {
 }
 
 void MoviePlayer::fetchAudioChunks() {
-
 	uint32 startOfs = _vm->_arc->pos();
 	uint32 chunkCount = _chunkCount;
 	uint prefetchChunkCount = 0;
@@ -219,7 +217,7 @@ void MoviePlayer::fetchAudioChunks() {
 	while (chunkCount-- && prefetchChunkCount < _framesPerSoundChunk / 2) {
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
-		if (chunkType == 4) {
+		if (chunkType == kChunkAudio) {
 			byte *chunkBuffer = (byte *)malloc(chunkSize);
 			_vm->_arc->read(chunkBuffer, chunkSize);
 			_audioStream->queueBuffer(chunkBuffer, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
@@ -234,7 +232,6 @@ void MoviePlayer::fetchAudioChunks() {
 	_lastPrefetchOfs = _vm->_arc->pos();
 
 	_vm->_arc->seek(startOfs, SEEK_SET);
-
 }
 
 void MoviePlayer::unpackPalette(byte *source, byte *dest, int elemCount, int elemSize) {
@@ -254,10 +251,12 @@ void MoviePlayer::unpackPalette(byte *source, byte *dest, int elemCount, int ele
 }
 
 void MoviePlayer::unpackRle(byte *source, byte *dest) {
-	int size = 256000;
+	int size = 256000;	// 640x400
+	//int packedSize = 0;
 	while (size > 0) {
 		byte a = *source++;
 		byte b = *source++;
+		//packedSize += 2;
 		if (a == 0) {
 			dest += b;
 			size -= b;
@@ -267,6 +266,7 @@ void MoviePlayer::unpackRle(byte *source, byte *dest) {
 			size -= a;
 		}
 	}
+	//debug("Packed RLE size: %d", packedSize);
 }
 
 bool MoviePlayer::handleInput() {
