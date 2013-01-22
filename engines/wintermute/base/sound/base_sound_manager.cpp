@@ -73,7 +73,7 @@ bool BaseSoundMgr::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 void BaseSoundMgr::saveSettings() {
 	if (_soundAvailable) {
-		ConfMan.setInt("master_volume", _volumeMaster);
+		ConfMan.setInt("master_volume_percent", _volumeMasterPercent);
 	}
 }
 
@@ -84,7 +84,8 @@ bool BaseSoundMgr::initialize() {
 	if (!g_system->getMixer()->isReady()) {
 		return STATUS_FAILED;
 	}
-	_volumeMaster = (ConfMan.hasKey("master_volume") ? ConfMan.getInt("master_volume") : 255);
+	byte volumeMasterPercent = (ConfMan.hasKey("master_volume_percent") ? ConfMan.getInt("master_volume_percent") : 100);
+	setMasterVolumePercent(volumeMasterPercent);
 	_soundAvailable = true;
 
 	return STATUS_OK;
