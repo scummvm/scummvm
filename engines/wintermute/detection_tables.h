@@ -22,6 +22,8 @@
 
 namespace Wintermute {
 
+#define GAMEOPTION_SHOW_FPS GUIO_GAMEOPTIONS1
+
 static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},

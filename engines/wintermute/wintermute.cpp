@@ -55,6 +55,7 @@ WintermuteEngine::WintermuteEngine(OSystem *syst, const ADGameDescription *desc)
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
+	ConfMan.registerDefault("show_fps","false");
 
 	// Do not initialize graphics here
 
