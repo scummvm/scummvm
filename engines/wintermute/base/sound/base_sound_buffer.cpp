@@ -111,7 +111,7 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 		if (Audio::loadWAVFromStream(*_file, waveSize, waveRate, waveFlags, &waveType)) {
 			if (waveType == 1) {
 				// We need to wrap the file in a substream to make sure the size is right.
-				_file = new Common::SeekableSubReadStream(_file, 0, waveSize);
+				_file = new Common::SeekableSubReadStream(_file, _file->pos(), waveSize + _file->pos());
 				_stream = Audio::makeRawStream(_file, waveRate, waveFlags, DisposeAfterUse::YES);
 			} else {
 				error("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s with type %d", filename.c_str(), waveType);
