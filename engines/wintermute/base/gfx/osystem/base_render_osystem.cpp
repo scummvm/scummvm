@@ -482,10 +482,10 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *dstR
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderOSystem::drawLine(int x1, int y1, int x2, int y2, uint32 color) {
-	static bool hasWarned = false; // TODO: Fix this, this only avoids spamming warnings for now.
-	if (!_disableDirtyRects && !hasWarned) {
-		warning("BaseRenderOSystem::DrawLine - doesn't work for dirty rects yet");
-		hasWarned = true;
+	// This function isn't used outside of indicator-displaying, and thus quite unused in
+	// BaseRenderOSystem when dirty-rects are enabled.
+	if (!_disableDirtyRects && !_indicatorDisplay) {
+		error("BaseRenderOSystem::DrawLine - doesn't work for dirty rects yet");
 	}
 
 	byte r = RGBCOLGetR(color);
