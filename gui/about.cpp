@@ -78,8 +78,6 @@ AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 174),
 	_scrollPos(0), _scrollTime(0), _willClose(false) {
 
-	loadCredits();
-
 	reflowLayout();
 
 	int i;
@@ -130,8 +128,7 @@ AboutDialog::AboutDialog()
 
 	_lines.push_back("");
 
-	for (unsigned int j = 0; j < _credits.size(); j++)
-		addLine(_credits[j].c_str());
+	loadCredits();
 }
 
 void AboutDialog::addLine(const char *str) {
@@ -283,34 +280,21 @@ void AboutDialog::reflowLayout() {
 
 	_lineHeight = g_gui.getFontHeight() + 3;
 
-	// Heuristic to compute 'optimal' dialog width
-	int maxW = _w - 2*_xOff;
-	_w = 0;
-	for (unsigned int i = 0; i < _credits.size(); i++) {
-		int tmp = g_gui.getStringWidth(_credits[i]) + 5;
-		if (_w < tmp && tmp <= maxW) {
-			_w = tmp;
-		}
-	}
-	_w += 2*_xOff;
-
 	// Center the dialog
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
 }
 	
 void AboutDialog::loadCredits() {
-	_credits.clear();
-	
 	Common::File in;
 	if (!openCreditsFile(in)) {
-		_credits.push_back(Common::String("C0Credits data file not found!"));
-		_credits.push_back(Common::String("C0You can see the credits on http://www.scummvm.org/credits/"));
+		addLine("C0Credits data file not found!");
+		addLine("C0You can see the credits on http://www.scummvm.org/credits/");
 		return;
 	}
 
 	do {
-		_credits.push_back(in.readLine());
+		addLine(in.readLine().c_str());
 	} while (!in.eos());
 
 	in.close();

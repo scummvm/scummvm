@@ -44,8 +44,6 @@ protected:
 	bool		_willClose;
 
 	int _xOff, _yOff;
-	
-	StringArray _credits;
 
 	void addLine(const char *str);
 	void loadCredits();
