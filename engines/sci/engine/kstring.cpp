@@ -489,6 +489,7 @@ reg_t kGetMessage(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	uint func = argv[0].toUint16();
+	uint16 module = (argc >= 2) ? argv[1].toUint16() : 0;
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
@@ -520,17 +521,17 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 
 	switch (func) {
 	case K_MESSAGE_GET:
-		return make_reg(0, s->_msgState->getMessage(argv[1].toUint16(), tuple, (argc == 7 ? argv[6] : NULL_REG)));
+		return make_reg(0, s->_msgState->getMessage(module, tuple, (argc == 7 ? argv[6] : NULL_REG)));
 	case K_MESSAGE_NEXT:
 		return make_reg(0, s->_msgState->nextMessage((argc == 2 ? argv[1] : NULL_REG)));
 	case K_MESSAGE_SIZE:
-		return make_reg(0, s->_msgState->messageSize(argv[1].toUint16(), tuple));
+		return make_reg(0, s->_msgState->messageSize(module, tuple));
 	case K_MESSAGE_REFCOND:
 	case K_MESSAGE_REFVERB:
 	case K_MESSAGE_REFNOUN: {
 		MessageTuple t;
 
-		if (s->_msgState->messageRef(argv[1].toUint16(), tuple, t)) {
+		if (s->_msgState->messageRef(module, tuple, t)) {
 			switch (func) {
 			case K_MESSAGE_REFCOND:
 				return make_reg(0, t.cond);
