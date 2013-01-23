@@ -174,8 +174,10 @@ static int32 addfile(LuaFile *f) {
 static void io_readfrom() {
 	lua_Object f = lua_getparam(FIRSTARG);
 	if (f == LUA_NOOBJECT) {
-		closefile(FINPUT);
-		setreturn(1, FINPUT);
+		if (getfile(FOUTPUT) != getfile(1)) {
+			closefile(FINPUT);
+			setreturn(1, FINPUT);
+		}
 	} else if (lua_tag(f) == gettag(IOTAG)) {
 		int32 id = lua_getuserdata(f);
 		LuaFile *current = getfile(id);
@@ -213,8 +215,10 @@ static void io_readfrom() {
 static void io_writeto() {
 	lua_Object f = lua_getparam(FIRSTARG);
 	if (f == LUA_NOOBJECT) {
-		closefile(FOUTPUT);
-		setreturn(2, FOUTPUT);
+		if (getfile(FOUTPUT) != getfile(2)) {
+			closefile(FOUTPUT);
+			setreturn(2, FOUTPUT);
+		}
 	} else if (lua_tag(f) == gettag(IOTAG)) {
 		int32 id = lua_getuserdata(f);
 		LuaFile *current = getfile(id);
