@@ -2984,7 +2984,7 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 		}
 	} else if (a3 < a5 && a6 < a4) {
 		v50 = 12;
-		int smoothIdx = 0;
+		smoothIdx = 0;
 		int loopCount = 0;
 		while (v62 < a5 && a6 < v63) {
 			v6 = _vm->_globals.Hopkins[v50].field2;

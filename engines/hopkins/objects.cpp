@@ -1392,7 +1392,7 @@ void ObjectsManager::GOHOME() {
 		computeAndSetSpriteSize();
 		newPosX = *_vm->_globals.chemin++;
 		newPosY = *_vm->_globals.chemin++;
-		int newDirection = *_vm->_globals.chemin++;
+		newDirection = *_vm->_globals.chemin++;
 		_vm->_globals.chemin++;
 
 		if (newPosX != -1 || newPosY != -1) {
@@ -2522,7 +2522,7 @@ int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			break;
 		arrDataIdx[7] = 0;
 		arrLineIdx[7] = -1;
-		if ((arrDelta[1] <= delta && arrLineIdx[1] != -1) || arrDelta[3] <= delta && arrLineIdx[3] != -1 || arrDelta[5] <= delta && arrLineIdx[5] != -1)
+		if ((arrDelta[1] <= delta && arrLineIdx[1] != -1) || (arrDelta[3] <= delta && arrLineIdx[3] != -1) || (arrDelta[5] <= delta && arrLineIdx[5] != -1))
 			break;
 	}
 	arrDelta[7] = delta;
