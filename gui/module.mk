@@ -38,5 +38,11 @@ MODULE_OBJS += \
 	browser.o
 endif
 
+ifdef SDL_BACKEND
+MODULE_OBJS += \
+	editrecorddialog.o \
+	recorderdialog.o
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk

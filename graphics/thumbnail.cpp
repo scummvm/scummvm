@@ -23,6 +23,7 @@
 #include "graphics/scaler.h"
 #include "graphics/colormasks.h"
 #include "common/endian.h"
+#include "common/algorithm.h"
 #include "common/system.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
@@ -100,7 +101,7 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 	if (!loadHeader(in, header, true))
 		return 0;
 
-	if (header.bpp != 2) {
+	if ((header.bpp == 1) || (header.bpp == 3)) {
 		warning("trying to load thumbnail with unsupported bit depth %d", header.bpp);
 		return 0;
 	}
@@ -108,18 +109,31 @@ Graphics::Surface *loadThumbnail(Common::SeekableReadStream &in) {
 	Graphics::PixelFormat format = g_system->getOverlayFormat();
 	Graphics::Surface *const to = new Graphics::Surface();
 	to->create(header.width, header.height, format);
-
-	OverlayColor *pixels = (OverlayColor *)to->pixels;
+	OverlayColor *pixels2Bpp = (OverlayColor *)to->pixels;
+	uint32 *pixels4Bpp = (uint32 *)to->pixels;
 	for (int y = 0; y < to->h; ++y) {
 		for (int x = 0; x < to->w; ++x) {
-			uint8 r, g, b;
-			colorToRGB<ColorMasks<565> >(in.readUint16BE(), r, g, b);
-
+			uint8 a = 0xFF;
+			uint8 r = 0, g = 0, b = 0;
+			switch (header.bpp) {
+			case 2:
+				colorToRGB<ColorMasks<565> >(in.readUint16BE(), r, g, b);
+				break;
+			case 4:
+				colorToARGB<ColorMasks<8888> >(in.readUint32BE(), a, r, g, b);
+				break;
+			}
 			// converting to current OSystem Color
-			*pixels++ = format.RGBToColor(r, g, b);
+			switch (format.bytesPerPixel) {
+			case 2:
+				*pixels2Bpp++ = format.RGBToColor(r, g, b);
+				break;
+			case 4:
+				*pixels4Bpp++ = format.ARGBToColor(a, r, g, b);
+				break;
+			}
 		}
 	}
-
 	return to;
 }
 
@@ -138,11 +152,6 @@ bool saveThumbnail(Common::WriteStream &out) {
 }
 
 bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
-	if (thumb.format.bytesPerPixel != 2) {
-		warning("trying to save thumbnail with bpp different than 2");
-		return false;
-	}
-
 	ThumbnailHeader header;
 	header.type = MKTAG('T','H','M','B');
 	header.size = ThumbnailHeaderSize + thumb.w*thumb.h*thumb.format.bytesPerPixel;
@@ -158,12 +167,75 @@ bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb) {
 	out.writeUint16BE(header.height);
 	out.writeByte(header.bpp);
 
-	// TODO: for later this shouldn't be casted to uint16...
-	uint16 *pixels = (uint16 *)thumb.pixels;
-	for (uint16 p = 0; p < thumb.w*thumb.h; ++p, ++pixels)
-		out.writeUint16BE(*pixels);
+	uint16 *pixels16;
+	uint32 *pixels32;
+	switch (thumb.format.bytesPerPixel) {
+	case 2:
+		pixels16 = (uint16 *)thumb.pixels;
+		for (uint32 p = 0; p < (uint32)thumb.w * thumb.h; ++p, ++pixels16) {
+			out.writeUint16BE(*pixels16);
+		}
+		break;
+	case 4:
+		pixels32 = (uint32 *)thumb.pixels;
+		for (uint32 p = 0; p < (uint32)thumb.w * thumb.h; ++p, ++pixels32) {
+			out.writeUint32BE(*pixels32);
+		}
+		break;
+	}
 
 	return true;
+}
+
+
+/**
+ * Returns an array indicating which pixels of a source image horizontally or vertically get
+ * included in a scaled image
+ */
+int *scaleLine(int size, int srcSize) {
+	int scale = 100 * size / srcSize;
+	assert(scale > 0);
+	int *v = new int[size];
+	Common::fill(v, &v[size], 0);
+
+	int distCtr = 0;
+	int *destP = v;
+	for (int distIndex = 0; distIndex < srcSize; ++distIndex) {
+		distCtr += scale;
+		while (distCtr >= 100) {
+			assert(destP < &v[size]);
+			*destP++ = distIndex;
+			distCtr -= 100;
+		}
+	}
+
+	return v;
+}
+
+Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize) {
+	Graphics::Surface *s = new Graphics::Surface();
+	s->create(xSize, ySize, srcImage.format);
+
+	int *horizUsage = scaleLine(xSize, srcImage.w);
+	int *vertUsage = scaleLine(ySize, srcImage.h);
+
+	// Loop to create scaled version
+	for (int yp = 0; yp < ySize; ++yp) {
+		const byte *srcP = (const byte *)srcImage.getBasePtr(0, vertUsage[yp]);
+		byte *destP = (byte *)s->getBasePtr(0, yp);
+
+		for (int xp = 0; xp < xSize; ++xp) {
+			const byte *tempSrcP = srcP + (horizUsage[xp] * srcImage.format.bytesPerPixel);
+			for (int byteCtr = 0; byteCtr < srcImage.format.bytesPerPixel; ++byteCtr) {
+				*destP++ = *tempSrcP++;
+			}
+		}
+	}
+
+	// Delete arrays and return surface
+	delete[] horizUsage;
+	delete[] vertUsage;
+	return s;
 }
 
 } // End of namespace Graphics

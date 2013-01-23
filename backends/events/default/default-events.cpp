@@ -58,10 +58,10 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 #ifdef ENABLE_KEYMAPPER
 	_keymapper = new Common::Keymapper(this);
 	// EventDispatcher will automatically free the keymapper
-	_dispatcher.registerMapper(_keymapper);
+	_dispatcher.registerMapper(_keymapper, true);
 	_remap = false;
 #else
-	_dispatcher.registerMapper(new Common::DefaultEventMapper());
+	_dispatcher.registerMapper(new Common::DefaultEventMapper(), true);
 #endif
 }
 
@@ -82,7 +82,8 @@ void DefaultEventManager::init() {
 }
 
 bool DefaultEventManager::pollEvent(Common::Event &event) {
-	uint32 time = g_system->getMillis();
+	//skip recording of this events
+	uint32 time = g_system->getMillis(true);
 	bool result = false;
 
 	_dispatcher.dispatch();

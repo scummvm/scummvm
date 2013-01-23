@@ -234,6 +234,10 @@ public:
 	static const char *const kImageDelbtn; ///< Delete characters in the predictive dialog
 	static const char *const kImageList;      ///< List image used in save/load chooser selection
 	static const char *const kImageGrid;      ///< Grid image used in save/load chooser selection
+	static const char *const kImageStopbtn; ///< Delete characters in the predictive dialog
+	static const char *const kImageEditbtn; ///< Delete characters in the predictive dialog
+	static const char *const kImageSwitchModebtn; ///< Switch mode button in recorder onscreen dialog
+	static const char *const kImageFastReplaybtn; ///< Switch mode button in recorder onscreen dialog
 
 	/**
 	 * Graphics mode enumeration.
@@ -275,7 +279,12 @@ public:
 
 	void refresh();
 	void enable();
+
+	void showCursor();
+	void hideCursor();
+
 	void disable();
+
 
 	/**
 	 * Query the set up pixel format.
