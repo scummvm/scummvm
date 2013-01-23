@@ -895,16 +895,6 @@ void ObjectsManager::beforeSort(SortMode triMode, int index, int priority) {
 
 // Display BOB Anim
 void ObjectsManager::displayBobAnim() {
-	int v1;
-	int v5;
-	uint v6;
-	int v10;
-	int v11;
-	int v14;
-	byte *v20;
-	byte *v21;
-	int v24;
-
 	for (int idx = 1; idx <= 35; idx++) {
 		if (idx <= 20 && PERSO_ON) {
 			_vm->_globals._bob[idx].field1C = false;
@@ -915,7 +905,7 @@ void ObjectsManager::displayBobAnim() {
 			continue;
 
 		_vm->_globals._bob[idx].field1C = false;
-		v1 = _vm->_globals._bob[idx].field20;
+		int v1 = _vm->_globals._bob[idx].field20;
 		if (v1 == -1)
 			v1 = 50;
 		if (_vm->_globals._bob[idx]._animData == g_PTRNUL || _vm->_globals._bob[idx]._disabledAnimationFl || v1 <= 0) {
@@ -937,8 +927,8 @@ void ObjectsManager::displayBobAnim() {
 			continue;
 		}
 
-		v20 = _vm->_globals._bob[idx]._animData + 20;
-		v24 = _vm->_globals._bob[idx].field10;
+		byte *v20 = _vm->_globals._bob[idx]._animData + 20;
+		int v24 = _vm->_globals._bob[idx].field10;
 		_vm->_globals._bob[idx]._xp = (int16)READ_LE_UINT16(v20 + 2 * v24);
 		if (_vm->_globals._lockedAnims[idx]._enableFl)
 			_vm->_globals._bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
@@ -951,10 +941,10 @@ void ObjectsManager::displayBobAnim() {
 		_vm->_globals._bob[idx]._frameIndex = v20[2 * v24 + 8];
 		_vm->_globals._bob[idx]._flipFl = (v20[2 * v24 + 9] != 0);
 		_vm->_globals._bob[idx].field10 += 5;
-		v5 = _vm->_globals._bob[idx].field12;
 
+		int v5 = _vm->_globals._bob[idx].field12;
 		if (v5 > 0) {
-			v6 = v5 / _vm->_globals._speed;
+			int v6 = v5 / _vm->_globals._speed;
 			_vm->_globals._bob[idx].field12 = v5 / _vm->_globals._speed;
 			if (v6 > 0) {
 				_vm->_globals._bob[idx].field14 = 1;
@@ -972,7 +962,7 @@ void ObjectsManager::displayBobAnim() {
 				_vm->_globals._bob[idx].field0 = 11;
 			} else {
 				_vm->_globals._bob[idx].field10 = 0;
-				v21 = _vm->_globals._bob[idx]._animData + 20;
+				byte *v21 = _vm->_globals._bob[idx]._animData + 20;
 				_vm->_globals._bob[idx]._xp = (int16)READ_LE_UINT16(v21);
 
 				if (_vm->_globals._lockedAnims[idx]._enableFl)
@@ -986,10 +976,10 @@ void ObjectsManager::displayBobAnim() {
 				_vm->_globals._bob[idx]._frameIndex = v21[8];
 				_vm->_globals._bob[idx]._flipFl = (v21[9] != 0);
 				_vm->_globals._bob[idx].field10 += 5;
-				v10 = _vm->_globals._bob[idx].field12;
+				int v10 = _vm->_globals._bob[idx].field12;
 
 				if (v10 > 0) {
-					v11 = v10 / _vm->_globals._speed;
+					int v11 = v10 / _vm->_globals._speed;
 					_vm->_globals._bob[idx].field12 = v10 / _vm->_globals._speed;
 					// Original code. It can't be negative, so the check is on == 0
 					if (v11 <= 0)
@@ -1015,9 +1005,7 @@ void ObjectsManager::displayBobAnim() {
 	for (int i = 1; i <= 35; i++) {
 		if (i > 20 || !PERSO_ON) {
 			if ((_vm->_globals._bob[i].field0 == 10) && (_vm->_globals._bob[i].field1C)) {
-				v14 = _vm->_globals._bob[i].field1E;
-
-				if ((v14 != 2) && (v14 != 4)) {
+				if ((_vm->_globals._bob[i].field1E != 2) && (_vm->_globals._bob[i].field1E != 4)) {
 					if (_vm->_globals.Liste2[i]._visibleFl) {
 						_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen,
 							_vm->_globals.Liste2[i]._posX, _vm->_globals.Liste2[i]._posY,
@@ -1355,22 +1343,6 @@ void ObjectsManager::checkZone() {
 }
 
 void ObjectsManager::GOHOME() {
-	int16 v3;
-	int16 v4;
-	int16 v9;
-	int16 v10;
-	int16 v16;
-	int16 v20;
-	int16 v23;
-	int16 v24;
-	int16 v29;
-	int16 v30;
-	int16 v35;
-	int16 v36;
-	int16 v41;
-	int16 v42;
-	int v49;
-
 	int v0 = 0;
 	int v58 = 0;
 	int v1 = 0;
@@ -1437,8 +1409,8 @@ void ObjectsManager::GOHOME() {
 			v58 = g_old_y;
 			v1 = 24;
 		} else {
-			v3 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			v4 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v3 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			int v4 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
 
 			if (_sprite[0]._zoomFactor < 0) {
 				v3 = _vm->_graphicsManager.zoomOut(v3, -_sprite[0]._zoomFactor);
@@ -1461,8 +1433,8 @@ void ObjectsManager::GOHOME() {
 			v58 = g_old_y;
 			v1 = 24;
 		} else {
-			v9 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			v10 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v9 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			int v10 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
 			if (_sprite[0]._zoomFactor < 0) {
 				v9 = _vm->_graphicsManager.zoomOut(v9, -_sprite[0]._zoomFactor);
 				v10 = _vm->_graphicsManager.zoomOut(v10, -_sprite[0]._zoomFactor);
@@ -1484,7 +1456,7 @@ void ObjectsManager::GOHOME() {
 			v58 = g_old_y;
 			v1 = 0;
 		} else {
-			v16 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
+			int v16 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
 			if (_sprite[0]._zoomFactor < 0) {
 				v16 = _vm->_graphicsManager.zoomOut(v16, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
@@ -1505,7 +1477,7 @@ void ObjectsManager::GOHOME() {
 			v58 = g_old_y;
 			v1 = 48;
 		} else {
-			v20 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
+			int v20 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
 			if (_sprite[0]._zoomFactor < 0) {
 				v20 = _vm->_graphicsManager.zoomOut(v20, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
@@ -1525,8 +1497,8 @@ void ObjectsManager::GOHOME() {
 			v58 = g_old_y;
 			v1 = 12;
 		} else {
-			v23 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			v24 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v23 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			int v24 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
 			if (_sprite[0]._zoomFactor < 0) {
 				v23 = _vm->_graphicsManager.zoomOut(v23, -_sprite[0]._zoomFactor);
 				v24 = _vm->_graphicsManager.zoomOut(v24, -_sprite[0]._zoomFactor);
@@ -1549,8 +1521,8 @@ void ObjectsManager::GOHOME() {
 			v58 = g_old_y;
 			v1 = 12;
 		} else {
-			v29 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			v30 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v29 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			int v30 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
 			if (_sprite[0]._zoomFactor < 0) {
 				v29 = _vm->_graphicsManager.zoomOut(v29, -_sprite[0]._zoomFactor);
 				v30 = _vm->_graphicsManager.zoomOut(v30, -_sprite[0]._zoomFactor);
@@ -1572,8 +1544,8 @@ void ObjectsManager::GOHOME() {
 			v58 = g_old_y;
 			v1 = 36;
 		} else {
-			v35 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			v36 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v35 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			int v36 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
 			if (_sprite[0]._zoomFactor < 0) {
 				v35 = _vm->_graphicsManager.zoomOut(v35, -_sprite[0]._zoomFactor);
 				v36 = _vm->_graphicsManager.zoomOut(v36, -_sprite[0]._zoomFactor);
@@ -1596,8 +1568,8 @@ void ObjectsManager::GOHOME() {
 			v58 = g_old_y;
 			v1 = 36;
 		} else {
-			v41 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			v42 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v41 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
+			int v42 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
 			if (_sprite[0]._zoomFactor < 0) {
 				v41 = _vm->_graphicsManager.zoomOut(v41, -_sprite[0]._zoomFactor);
 				v42 = _vm->_graphicsManager.zoomOut(v42, -_sprite[0]._zoomFactor);
@@ -1614,7 +1586,7 @@ void ObjectsManager::GOHOME() {
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	bool v47 = false;
+	bool loopCond = false;
 	do {
 		newPosX = *_vm->_globals.chemin++;
 		newPosY = *_vm->_globals.chemin++;
@@ -1622,10 +1594,11 @@ void ObjectsManager::GOHOME() {
 		_vm->_globals.chemin++;
 
 		if (newPosX == -1 && newPosY == -1) {
+			int zoneId;
 			if (_vm->_globals.GOACTION)
-				v49 = _vm->_globals._saveData->_data[svField2];
+				zoneId = _vm->_globals._saveData->_data[svField2];
 			else
-				v49 = _zoneNum;
+				zoneId = _zoneNum;
 			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
 			_vm->_globals._actionDirection = 0;
 			_vm->_globals.chemin = (int16 *)g_PTRNUL;
@@ -1636,15 +1609,15 @@ void ObjectsManager::GOHOME() {
 			g_old_x = getSpriteX(0);
 			g_old_y = getSpriteY(0);
 
-			if (v49 > 0) {
-				if (_vm->_globals.ZONEP[v49]._destX && _vm->_globals.ZONEP[v49]._destY && _vm->_globals.ZONEP[v49]._destY != 31) {
-					if ( _vm->_globals.ZONEP[v49]._spriteIndex == -1) {
-						_vm->_globals.ZONEP[v49]._destX = 0;
-						_vm->_globals.ZONEP[v49]._destY = 0;
-						_vm->_globals.ZONEP[v49]._spriteIndex = 0;
+			if (zoneId > 0) {
+				if (_vm->_globals.ZONEP[zoneId]._destX && _vm->_globals.ZONEP[zoneId]._destY && _vm->_globals.ZONEP[zoneId]._destY != 31) {
+					if ( _vm->_globals.ZONEP[zoneId]._spriteIndex == -1) {
+						_vm->_globals.ZONEP[zoneId]._destX = 0;
+						_vm->_globals.ZONEP[zoneId]._destY = 0;
+						_vm->_globals.ZONEP[zoneId]._spriteIndex = 0;
 					} else {
-						setSpriteIndex(0,  _vm->_globals.ZONEP[v49]._spriteIndex);
-						_vm->_globals._actionDirection = _vm->_globals.ZONEP[v49]._spriteIndex - 59;
+						setSpriteIndex(0,  _vm->_globals.ZONEP[zoneId]._spriteIndex);
+						_vm->_globals._actionDirection = _vm->_globals.ZONEP[zoneId]._spriteIndex - 59;
 					}
 				}
 			}
@@ -1657,9 +1630,9 @@ void ObjectsManager::GOHOME() {
 		    (_vm->_globals._oldDirection == 1 && newPosY <= v58) || (_vm->_globals._oldDirection == 5 && newPosY >= v58) ||
 		    (_vm->_globals._oldDirection == 2 && newPosX >= v0)  || (_vm->_globals._oldDirection == 8 && newPosX <= v0) ||
 		    (_vm->_globals._oldDirection == 4 && newPosX >= v0) || (_vm->_globals._oldDirection == 6 && newPosX <= v0))
-			v47 = true;
-	} while (!v47);
-	if (v47) {
+			loopCond = true;
+	} while (!loopCond);
+	if (loopCond) {
 		computeAndSetSpriteSize();
 		if ((_vm->_globals._oldDirection == 6) || (_vm->_globals._oldDirection == 7) || (_vm->_globals._oldDirection == 8))
 			setFlipSprite(0, true);
@@ -1768,15 +1741,6 @@ void ObjectsManager::loadLines(const Common::String &file) {
  * Load Zone
  */
 void ObjectsManager::loadZone(const Common::String &file) {
-	int bobZoneIdx;
-	int v4;
-	byte *v9;
-	int v10;
-	byte *v13;
-	int16 v17;
-	int16 v18;
-	byte *ptr;
-
 	for (int i = 1; i <= 100; i++) {
 		_vm->_globals.ZONEP[i]._destX = 0;
 		_vm->_globals.ZONEP[i]._destY = 0;
@@ -1799,54 +1763,53 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	if (!f.exists(file))
 		error("File not found : %s", file.c_str());
 
-	ptr = _vm->_fileManager.loadFile(file);
-	v4 = 0;
-	v18 = 0;
-	v17 = 0;
+	byte *ptr = _vm->_fileManager.loadFile(file);
+	int bufId = 0;
+	int zoneLineIdx = 0;
+	int bobZoneIdx;
 	do {
-		bobZoneIdx = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
+		bobZoneIdx = (int16)READ_LE_UINT16((uint16 *)ptr + bufId);
 		if (bobZoneIdx != -1) {
 			_vm->_linesManager.addZoneLine(
-			    v18,
-			    READ_LE_UINT16((uint16 *)ptr + v4 + 1), // CHECKME: Shouldn't it be a byte?
-			    READ_LE_UINT16((uint16 *)ptr + v4 + 2),
-			    READ_LE_UINT16((uint16 *)ptr + v4 + 3),
-			    READ_LE_UINT16((uint16 *)ptr + v4 + 4),
+			    zoneLineIdx,
+			    READ_LE_UINT16((uint16 *)ptr + bufId + 1),
+			    READ_LE_UINT16((uint16 *)ptr + bufId + 2),
+			    READ_LE_UINT16((uint16 *)ptr + bufId + 3),
+			    READ_LE_UINT16((uint16 *)ptr + bufId + 4),
 			    bobZoneIdx);
 			_vm->_globals.ZONEP[bobZoneIdx]._enabledFl = true;
 		}
-		v4 += 5;
-		++v18;
-		++v17;
+		bufId += 5;
+		++zoneLineIdx;
 	} while (bobZoneIdx != -1);
 
 	for (int i = 1; i <= 100; i++) {
 		 // CHECKME: Shouldn't it be a byte?
-		_vm->_globals.ZONEP[i]._destX = (int16)READ_LE_UINT16((uint16 *)ptr + v4);
-		_vm->_globals.ZONEP[i]._destY = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 1);
-		_vm->_globals.ZONEP[i]._spriteIndex = (int16)READ_LE_UINT16((uint16 *)ptr + v4 + 2);
-		v4 += 3;
+		_vm->_globals.ZONEP[i]._destX = (int16)READ_LE_UINT16((uint16 *)ptr + bufId);
+		_vm->_globals.ZONEP[i]._destY = (int16)READ_LE_UINT16((uint16 *)ptr + bufId + 1);
+		_vm->_globals.ZONEP[i]._spriteIndex = (int16)READ_LE_UINT16((uint16 *)ptr + bufId + 2);
+		bufId += 3;
 	}
 
-	v9 = (ptr + 10 * v17 + 606);
-	v10 = 0;
+	byte *v9 = (ptr + 10 * zoneLineIdx + 606);
+	bufId = 0;
 	for (int i = 1; i <= 100; i++) {
-		_vm->_globals.ZONEP[i].field6 = v9[v10];
-		_vm->_globals.ZONEP[i].field7 = v9[v10 + 1];
-		_vm->_globals.ZONEP[i].field8 = v9[v10 + 2];
-		_vm->_globals.ZONEP[i].field9 = v9[v10 + 3];
-		_vm->_globals.ZONEP[i].fieldA = v9[v10 + 4];
-		_vm->_globals.ZONEP[i].fieldB = v9[v10 + 5];
-		_vm->_globals.ZONEP[i].fieldC = v9[v10 + 6];
-		_vm->_globals.ZONEP[i].fieldD = v9[v10 + 7];
-		_vm->_globals.ZONEP[i].fieldE = v9[v10 + 8];
-		_vm->_globals.ZONEP[i].fieldF = v9[v10 + 9];
+		_vm->_globals.ZONEP[i].field6 = v9[bufId];
+		_vm->_globals.ZONEP[i].field7 = v9[bufId + 1];
+		_vm->_globals.ZONEP[i].field8 = v9[bufId + 2];
+		_vm->_globals.ZONEP[i].field9 = v9[bufId + 3];
+		_vm->_globals.ZONEP[i].fieldA = v9[bufId + 4];
+		_vm->_globals.ZONEP[i].fieldB = v9[bufId + 5];
+		_vm->_globals.ZONEP[i].fieldC = v9[bufId + 6];
+		_vm->_globals.ZONEP[i].fieldD = v9[bufId + 7];
+		_vm->_globals.ZONEP[i].fieldE = v9[bufId + 8];
+		_vm->_globals.ZONEP[i].fieldF = v9[bufId + 9];
 
-		v10 += 10;
+		bufId += 10;
 	}
-	v13 = v9 + 1010;
-	for (int v14 = 0; v14 < 100; v14++)
-		_vm->_globals.ZONEP[v14 + 1].field12 = READ_LE_UINT16(v13 + 2 * v14);
+	v9 += 1010;
+	for (int i = 0; i < 100; i++)
+		_vm->_globals.ZONEP[i + 1].field12 = READ_LE_UINT16(v9 + 2 * i);
 
 	_vm->_globals.freeMemory(ptr);
 	CARRE_ZONE();
@@ -2455,21 +2418,6 @@ void ObjectsManager::PACOURS_PROPRE(int16 *a1) {
 
 int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	int16 *result;
-	int v27;
-	int v28;
-	int v29;
-	int16 *v41;
-	int16 *v45;
-	int v48;
-	int16 *v50;
-	int16 *v54;
-	int16 *v58;
-	int v66;
-	int v68 = 0;
-	int v69 = 0;
-	int j;
-	int v72 = 0;
-	int v73 = 0;
 	int arrDelta[10];
 	int arrDataIdx[10];
 	int arrLineIdx[10];
@@ -2527,6 +2475,11 @@ int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	}
 	arrDelta[7] = delta;
 
+	int v68 = 0;
+	int v69 = 0;
+	int v72 = 0;
+	int v73 = 0;
+
 	if (arrLineIdx[1] == -1)
 		arrDelta[1] = 1300;
 	if (arrLineIdx[3] == -1)
@@ -2565,11 +2518,12 @@ int16 *ObjectsManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			v69 = arrLineIdx[1];
 			v68 = arrDataIdx[1];
 		} else if (_vm->_linesManager.checkCollisionLine(x1, y1, &arrDataIdx[1], &arrLineIdx[1], 0, _vm->_linesManager._linesNumb)) {
-			v27 = 0;
+			int v27 = 0;
+			int v28;
 			for (;;) {
 				v28 = _vm->_globals.essai2[v27];
-				v29 = _vm->_globals.essai2[v27 + 1];
-				v66 = _vm->_globals.essai2[v27 + 2];
+				int v29 = _vm->_globals.essai2[v27 + 1];
+				int v66 = _vm->_globals.essai2[v27 + 2];
 				v27 += 4;
 
 				if (_vm->_linesManager.checkCollisionLine(v28, v29, &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine))
@@ -2608,7 +2562,7 @@ LABEL_90:
 				superRouteIdx += 4;
 				++v34;
 			}
-			for (j = v69 + 1; j < v73; ++j) {
+			for (int j = v69 + 1; j < v73; ++j) {
 				if (_vm->_linesManager.PLAN_TEST(
 						_vm->_linesManager.Ligne[j]._lineData[0],
 						_vm->_linesManager.Ligne[j]._lineData[1],
@@ -2620,9 +2574,8 @@ LABEL_90:
 				}
 				if (_vm->_linesManager.Ligne[j]._lineDataEndIdx - 2 > 0) {
 					for (int v40 = 0; v40 < _vm->_linesManager.Ligne[j]._lineDataEndIdx - 2; v40++) {
-						v41 = _vm->_linesManager.Ligne[j]._lineData;
-						_vm->_globals.super_parcours[superRouteIdx] = v41[2 * v40];
-						_vm->_globals.super_parcours[superRouteIdx + 1] = v41[2 * v40 + 1];
+						_vm->_globals.super_parcours[superRouteIdx] = _vm->_linesManager.Ligne[j]._lineData[2 * v40];
+						_vm->_globals.super_parcours[superRouteIdx + 1] = _vm->_linesManager.Ligne[j]._lineData[2 * v40 + 1];
 						_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[j].field6;
 						_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
 						superRouteIdx += 4;
@@ -2634,15 +2587,14 @@ LABEL_90:
 		}
 		if (v69 > v73) {
 			for (int k = v68; k > 0; --k) {
-				v45 = _vm->_linesManager.Ligne[v69]._lineData;
-				_vm->_globals.super_parcours[superRouteIdx] = v45[2 * k];
-				_vm->_globals.super_parcours[superRouteIdx + 1] = v45[2 * k + 1];
+				_vm->_globals.super_parcours[superRouteIdx] = _vm->_linesManager.Ligne[v69]._lineData[2 * k];
+				_vm->_globals.super_parcours[superRouteIdx + 1] = _vm->_linesManager.Ligne[v69]._lineData[2 * k + 1];
 				_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[v69].field8;
 				_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
 				superRouteIdx += 4;
 			}
 			for (int l = v69 - 1; l > v73; --l) {
-				v48 = l;
+				int v48 = l;
 				if (_vm->_linesManager.PLAN_TEST(
 						_vm->_linesManager.Ligne[l]._lineData[2 * _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 2],
 						_vm->_linesManager.Ligne[l]._lineData[2 * _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 1],
@@ -2654,9 +2606,8 @@ LABEL_90:
 				}
 
 				for (int v49 = _vm->_linesManager.Ligne[v48]._lineDataEndIdx - 2; v49 > 0; v49 --) {
-					v50 = _vm->_linesManager.Ligne[l]._lineData;
-					_vm->_globals.super_parcours[superRouteIdx] = v50[2 * v49];
-					_vm->_globals.super_parcours[superRouteIdx + 1] = v50[2 * v49 + 1];
+					_vm->_globals.super_parcours[superRouteIdx] = _vm->_linesManager.Ligne[l]._lineData[2 * v49];
+					_vm->_globals.super_parcours[superRouteIdx + 1] = _vm->_linesManager.Ligne[l]._lineData[2 * v49 + 1];
 					_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[l].field8;
 					_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
 					superRouteIdx += 4;
@@ -2668,18 +2619,16 @@ LABEL_90:
 		if (v69 == v73) {
 			if (v68 <= v72) {
 				for (int v57 = v68; v57 < v72; v57++) {
-					v58 = _vm->_linesManager.Ligne[v73]._lineData;
-					_vm->_globals.super_parcours[superRouteIdx] = v58[2 * v57];
-					_vm->_globals.super_parcours[superRouteIdx + 1] = v58[2 * v57 + 1];
+					_vm->_globals.super_parcours[superRouteIdx] = _vm->_linesManager.Ligne[v73]._lineData[2 * v57];
+					_vm->_globals.super_parcours[superRouteIdx + 1] = _vm->_linesManager.Ligne[v73]._lineData[2 * v57 + 1];
 					_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[v73].field6;
 					_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
 					superRouteIdx += 4;
 				}
 			} else {
 				for (int v53 = v68; v53 > v72; v53--) {
-					v54 = _vm->_linesManager.Ligne[v73]._lineData;
-					_vm->_globals.super_parcours[superRouteIdx] = v54[2 * v53];
-					_vm->_globals.super_parcours[superRouteIdx + 1] = v54[2 * v53 + 1];
+					_vm->_globals.super_parcours[superRouteIdx] = _vm->_linesManager.Ligne[v73]._lineData[2 * v53];
+					_vm->_globals.super_parcours[superRouteIdx + 1] = _vm->_linesManager.Ligne[v73]._lineData[2 * v53 + 1];
 					_vm->_globals.super_parcours[superRouteIdx + 2] = _vm->_linesManager.Ligne[v73].field8;
 					_vm->_globals.super_parcours[superRouteIdx + 3] = 0;
 					superRouteIdx += 4;

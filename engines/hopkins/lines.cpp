@@ -452,27 +452,17 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 	int v50;
 	if (a1 < a4) {
 		for (int i = a2; Ligne[a1]._lineDataEndIdx > i; ++i) {
-			int16 *v10 = Ligne[a1]._lineData;
-			int v11 = v10[2 * i];
-			v50 = v10[2 * i + 1];
-
-			int v12 = v8;
-			a6[v12] = v11;
-			a6[v12 + 1] = v50;
-			a6[v12 + 2] = Ligne[a1].field6;
+			a6[v8] = Ligne[a1]._lineData[2 * i];
+			a6[v8 + 1] = Ligne[a1]._lineData[2 * i + 1];
+			a6[v8 + 2] = Ligne[a1].field6;
 			v8 += a7;
 		}
 
 		for (int v34 = a1 + 1; v34 < a4; v34++) {
 			for (int i = 0; i < Ligne[v34]._lineDataEndIdx; i++) {
-				int16 *v14 = Ligne[v34]._lineData;
-				int v15 = v14[2 * i];
-				v50 = v14[2 * i + 1];
-				int v16 = v8;
-
-				a6[v16] = v15;
-				a6[v16 + 1] = v50;
-				a6[v16 + 2] = Ligne[v34].field6;
+				a6[v8] = Ligne[v34]._lineData[2 * i];
+				a6[v8 + 1] = Ligne[v34]._lineData[2 * i + 1];
+				a6[v8 + 2] = Ligne[v34].field6;
 				v8 += a7;
 			}
 		}
@@ -482,30 +472,17 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 	}
 	if (v36 > a4) {
 		for (int j = v7; j > 0; --j) {
-			int16 *v18 = Ligne[v36]._lineData;
-			int v19 = v18[2 * j];
-			v50 = v18[2 * j + 1];
-
-			int v20 = v8;
-			a6[v20] = v19;
-			a6[v20 + 1] = v50;
-			a6[v20 + 2] = Ligne[v36].field8;
+			a6[v8] = Ligne[v36]._lineData[2 * j];
+			a6[v8 + 1] = Ligne[v36]._lineData[2 * j + 1];
+			a6[v8 + 2] = Ligne[v36].field8;
 			v8 += a7;
 		}
-		if ((int)(v36 - 1) > a4) {
-			for (int v35 = v36 - 1; v35 > a4; v35--) {
-				for (int k = Ligne[v35]._lineDataEndIdx - 1; k > 0; --k) {
-					int16 *v22 = Ligne[v35]._lineData;
-					int v23 = v22[2 * k];
-					v50 = v22[2 * k + 1];
-
-					int v24 = v8;
-					a6[v24] = v23;
-					a6[v24 + 1] = v50;
-					a6[v24 + 2] = Ligne[v35].field8;
-					v8 += a7;
-				}
-
+		for (int v35 = v36 - 1; v35 > a4; v35--) {
+			for (int k = Ligne[v35]._lineDataEndIdx - 1; k > 0; --k) {
+				a6[v8] = Ligne[v35]._lineData[2 * k];
+				a6[v8 + 1] = Ligne[v35]._lineData[2 * k + 1];
+				a6[v8 + 2] = Ligne[v35].field8;
+				v8 += a7;
 			}
 		}
 		v7 = Ligne[a4]._lineDataEndIdx - 1;
@@ -514,26 +491,16 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 	if (v36 == a4) {
 		if (a5 >= v7) {
 			for (int i = v7; i > a5; i++) {
-				int16 *v30 = Ligne[a4]._lineData;
-				int v31 = v30[2 * i];
-				v50 = v30[2 * i + 1];
-
-				int v32 = v8;
-				a6[v32] = v31;
-				a6[v32 + 1] = v50;
-				a6[v32 + 2] = Ligne[a4].field6;
+				a6[v8] = Ligne[a4]._lineData[2 * i];
+				a6[v8 + 1] = Ligne[a4]._lineData[2 * i + 1];
+				a6[v8 + 2] = Ligne[a4].field6;
 				v8 += a7;
 			}
 		} else {
 			for (int i = v7; i > a5; --i) {
-				int16 *v26 = Ligne[a4]._lineData;
-				int v27 = v26[2 * i];
-				v50 = v26[2 * i+ 1];
-
-				int v28 = v8;
-				a6[v28] = v27;
-				a6[v28 + 1] = v50;
-				a6[v28 + 2] = Ligne[a4].field8;
+				a6[v8] = Ligne[a4]._lineData[2 * i];
+				a6[v8 + 1] = Ligne[a4]._lineData[2 * i+ 1];
+				a6[v8 + 2] = Ligne[a4].field8;
 				v8 += a7;
 			}
 		}
