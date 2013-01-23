@@ -24,31 +24,33 @@
 #define NEVERHOOD_MENUMODULE_H
 
 #include "common/str.h"
+#include "common/str-array.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
 
 namespace Neverhood {
 
-typedef Common::Array<Common::String> StringArray;
-
 class MenuModule : public Module {
 public:
 	MenuModule(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~MenuModule();
+	void setLoadgameInfo(uint slot);
 	void setSavegameInfo(const Common::String &description, uint slot, bool newSavegame);
 protected:
 	int _sceneNum;
 	byte *_savedPaletteData;
-	StringArray *_savegameList;
+	Common::StringArray *_savegameList;
 	Common::String _savegameDescription;
-	uint _savegameSlot;
-	bool _newSavegame;
+	int _savegameSlot;
 	void createScene(int sceneNum, int which);
 	void updateScene();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void createLoadGameMenu();
 	void createSaveGameMenu();
-	void handleSaveGameMenuAction(int action);
+	void handleLoadGameMenuAction(bool doLoad);
+	void handleSaveGameMenuAction(bool doSave);
+	void loadSavegameList();
 };
 
 class MenuButton : public StaticSprite {
@@ -158,6 +160,7 @@ public:
 	void handleAsciiKey(char ch);
 	void handleKeyDown(Common::KeyCode keyCode);
 	void refresh();
+	void setReadOnly(bool value) { _readOnly = value; }
 	bool isModified() const { return _modified; }
 protected:
 	NRect _rect;
@@ -173,6 +176,7 @@ protected:
 	uint32 _cursorFileHash;
 	int16 _cursorWidth, _cursorHeight;
 	bool _modified;
+	bool _readOnly;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };
@@ -181,7 +185,7 @@ class SavegameListBox : public Widget {
 public:
 	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
 		int baseObjectPriority, int baseSurfacePriority,
-		StringArray *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
+		Common::StringArray *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
 	virtual void onClick();
 	virtual void addSprite();
 	void buildItems();
@@ -199,7 +203,7 @@ protected:
 	Common::Array<TextLabelWidget*> _textLabelItems;
 	int _firstVisibleItem;
 	int _lastVisibleItem;
-	StringArray *_savegameList;
+	Common::StringArray *_savegameList;
 	FontSurface *_fontSurface;
 	uint _currIndex;
 	int _maxVisibleItemsCount;
@@ -207,11 +211,26 @@ protected:
 
 class SaveGameMenu : public WidgetScene {
 public:
-	SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArray *savegameList);
+	SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::StringArray *savegameList);
 	~SaveGameMenu();
 	virtual void handleEvent(int16 itemID, int eventType);
 protected:
-	StringArray *_savegameList;
+	Common::StringArray *_savegameList;
+	FontSurface *_fontSurface;
+	SavegameListBox *_listBox;
+	TextEditWidget *_textEditWidget;
+	Common::String _savegameDescription;
+	void update();
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class LoadGameMenu : public WidgetScene {
+public:
+	LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::StringArray *savegameList);
+	~LoadGameMenu();
+	virtual void handleEvent(int16 itemID, int eventType);
+protected:
+	Common::StringArray *_savegameList;
 	FontSurface *_fontSurface;
 	SavegameListBox *_listBox;
 	TextEditWidget *_textEditWidget;

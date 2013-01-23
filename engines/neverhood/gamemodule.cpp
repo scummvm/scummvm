@@ -75,7 +75,7 @@ enum {
 
 GameModule::GameModule(NeverhoodEngine *vm)
 	: Module(vm, NULL), _moduleNum(-1), _prevChildObject(NULL), _prevModuleNum(-1),
-	_restartGameRequested(false), _mainMenuRequested(false), _gameWasLoaded(false) {
+	_restoreGameRequested(false), _restartGameRequested(false), _mainMenuRequested(false), _gameWasLoaded(false) {
 	
 	// Other initializations moved to actual engine class
 	_vm->_soundMan->playSoundThree(0x002D0031, 0x8861079);
@@ -464,13 +464,8 @@ void GameModule::startup() {
 #endif
 }
 
-void GameModule::restoreGame() {
-	delete _childObject;
-	delete _prevChildObject;
-	_childObject = NULL;
-	_prevChildObject = NULL;
-	_prevModuleNum = 0;
-	createModuleByHash(getGlobalVar(V_MODULE_NAME));
+void GameModule::requestRestoreGame() {
+	_restoreGameRequested = true;
 }
 
 void GameModule::requestRestartGame(bool requestMainMenu) {
@@ -478,11 +473,27 @@ void GameModule::requestRestartGame(bool requestMainMenu) {
 	_mainMenuRequested = requestMainMenu;
 }
 
-void GameModule::checkMainMenu() {
+void GameModule::redrawPrevChildObject() {
+	if (_prevChildObject) {
+		_prevChildObject->draw();
+		_vm->_screen->update();
+	}
+}
+
+void GameModule::checkRequests() {
 	if (_restartGameRequested) {
 		_restartGameRequested = false;
 		_vm->_gameVars->clear();
-		restoreGame();
+		requestRestoreGame();
+	}
+	if (_restoreGameRequested) {
+		_restoreGameRequested = false;
+		delete _childObject;
+		delete _prevChildObject;
+		_childObject = NULL;
+		_prevChildObject = NULL;
+		_prevModuleNum = 0;
+		createModuleByHash(getGlobalVar(V_MODULE_NAME));
 	}
 	if (_mainMenuRequested)
 		openMainMenu();

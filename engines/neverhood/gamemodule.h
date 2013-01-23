@@ -33,9 +33,10 @@ public:
 	GameModule(NeverhoodEngine *vm);
 	virtual ~GameModule();
 	void startup();
-	void restoreGame();
+	void requestRestoreGame();
 	void requestRestartGame(bool requestMainMenu);
-	void checkMainMenu();
+	void redrawPrevChildObject();
+	void checkRequests();
 	void handleMouseMove(int16 x, int16 y);
 	void handleMouseDown(int16 x, int16 y);
 	void handleMouseUp(int16 x, int16 y);
@@ -58,6 +59,7 @@ protected:
 	Entity *_prevChildObject;
 	int _prevModuleNum;
 	bool _gameWasLoaded;
+	bool _restoreGameRequested;
 	bool _restartGameRequested;
 	bool _mainMenuRequested;
 	bool _someFlag1;

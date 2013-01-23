@@ -159,7 +159,7 @@ void NeverhoodEngine::mainLoop() {
 			}
 		}
 		if (_system->getMillis() >= nextFrameTime) {
-			_gameModule->checkMainMenu();
+			_gameModule->checkRequests();
 			_gameModule->handleUpdate();
 			_gameModule->draw();
 			_screen->update();

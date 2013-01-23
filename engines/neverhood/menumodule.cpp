@@ -23,13 +23,16 @@
 #include "neverhood/menumodule.h"
 #include "neverhood/gamemodule.h"
 
+#include "engines/savestate.h"
+
 namespace Neverhood {
 
 enum {
 	MAIN_MENU		= 0,
 	CREDITS_SCENE	= 1,
 	MAKING_OF		= 2,
-	SAVE_GAME_MENU	= 3
+	LOAD_GAME_MENU	= 3,
+	SAVE_GAME_MENU	= 4
 };
 
 enum {
@@ -77,10 +80,14 @@ MenuModule::~MenuModule() {
 	_vm->_screen->setPaletteData(_savedPaletteData);
 }
 
+void MenuModule::setLoadgameInfo(uint slot) {
+	_savegameSlot = slot;
+	debug("LOADGAME: slot = %d", slot);
+}
+
 void MenuModule::setSavegameInfo(const Common::String &description, uint slot, bool newSavegame) {
 	_savegameDescription = description;
-	_savegameSlot = slot;
-	_newSavegame = newSavegame;
+	_savegameSlot = newSavegame ? _savegameList->size() : slot;
 	debug("SAVEGAME: description = [%s]; slot = %d; new = %d", description.c_str(), slot, newSavegame);
 }
 
@@ -96,6 +103,9 @@ void MenuModule::createScene(int sceneNum, int which) {
 	case MAKING_OF:
 		createSmackerScene(kMakingOfSmackerFileHashList, false, true, true);
 		break;
+	case LOAD_GAME_MENU:
+		createLoadGameMenu();
+		break;
 	case SAVE_GAME_MENU:
 		createSaveGameMenu();
 		break;
@@ -108,14 +118,13 @@ void MenuModule::updateScene() {
 	if (!updateChild()) {
 		switch (_sceneNum) {
 		case MAIN_MENU:
-			// TODO
 			switch (_moduleResult) {
 			case kMainMenuRestartGame:
 				_vm->_gameModule->requestRestartGame(false);
 				leaveModule(0);
 				break;
 			case kMainMenuLoadGame:
-				// TODO createLoadGameMenu();
+				createScene(LOAD_GAME_MENU, -1);
 				break;
 			case kMainMenuSaveGame:
 				createScene(SAVE_GAME_MENU, -1);
@@ -149,8 +158,11 @@ void MenuModule::updateScene() {
 		case MAKING_OF:
 			createScene(MAIN_MENU, -1);
 			break;
+		case LOAD_GAME_MENU:
+			handleLoadGameMenuAction(_moduleResult != 1);
+			break;
 		case SAVE_GAME_MENU:
-			handleSaveGameMenuAction(_moduleResult);
+			handleSaveGameMenuAction(_moduleResult != 1);
 			break;
 		default:
 			break;
@@ -163,25 +175,69 @@ uint32 MenuModule::handleMessage(int messageNum, const MessageParam &param, Enti
 	return Module::handleMessage(messageNum, param, sender);;
 }
 
+void MenuModule::createLoadGameMenu() {
+	_savegameSlot = -1;
+	_savegameList = new Common::StringArray();
+	loadSavegameList();
+	_childObject = new LoadGameMenu(_vm, this, _savegameList);
+}
+
 void MenuModule::createSaveGameMenu() {
-	// TODO Load actual savegames list :)
-	_savegameList = new StringArray();
-	_savegameList->push_back(Common::String("Annoying scene"));
-	_savegameList->push_back(Common::String("Stuff happens"));
-	for (uint i = 0; i < 33; ++i)
-		_savegameList->push_back(Common::String::format("Game %d", i));
+	_savegameSlot = -1;
+	_savegameList = new Common::StringArray();
+	loadSavegameList();
 	_childObject = new SaveGameMenu(_vm, this, _savegameList);
 }
 
-void MenuModule::handleSaveGameMenuAction(int action) {
-	if (action != 0) {
-		createScene(MAIN_MENU, -1);
-	} else {
-		// TODO Actual saving later 0048A62E
-		createScene(MAIN_MENU, -1);
+void MenuModule::handleLoadGameMenuAction(bool doLoad) {
+	createScene(MAIN_MENU, -1);
+	if (doLoad && _savegameSlot >= 0) {
+		_vm->loadGameState(_savegameSlot);
+		leaveModule(0);
 	}
 	delete _savegameList;
 	_savegameList = NULL;
+}
+
+void MenuModule::handleSaveGameMenuAction(bool doSave) {
+	createScene(MAIN_MENU, -1);
+	if (doSave && _savegameSlot >= 0) {
+		// Restore the scene palette and background so that the correct thumbnail is saved
+		byte *menuPaletteData = _vm->_screen->getPaletteData();
+		_vm->_screen->setPaletteData(_savedPaletteData);
+		_vm->_gameModule->redrawPrevChildObject();
+		_vm->saveGameState(_savegameSlot, _savegameDescription);
+		_vm->_screen->setPaletteData(menuPaletteData);
+		leaveModule(0);
+	}
+	delete _savegameList;
+	_savegameList = NULL;
+}
+
+void MenuModule::loadSavegameList() {
+
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Neverhood::NeverhoodEngine::SaveHeader header;
+	Common::String pattern = _vm->getTargetName();
+	pattern += ".???";
+	
+	Common::StringArray filenames;
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::sort(filenames.begin(), filenames.end());
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+		if (slotNum >= 0 && slotNum <= 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				if (Neverhood::NeverhoodEngine::readSaveHeader(in, false, header) == Neverhood::NeverhoodEngine::kRSHENoError)
+					_savegameList->push_back(header.description);
+				delete in;
+			}
+		}
+	}
+
 }
 
 MenuButton::MenuButton(NeverhoodEngine *vm, Scene *parentScene, uint buttonIndex, uint32 fileHash, const NRect &collisionBounds)
@@ -393,7 +449,6 @@ Widget::Widget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene 
 
 void Widget::onClick() {
 	_parentScene->setCurrWidget(this);
-	// TODO? _parentScene->onClick(_itemID, 0);
 }
 
 void Widget::setPosition(int16 x, int16 y) {
@@ -494,7 +549,7 @@ TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 item
 	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
 	_maxStringLength(maxStringLength), _fontSurface(fontSurface), _fileHash(fileHash), _rect(rect),
 	_cursorSurface(NULL), _cursorTicks(0), _cursorPos(0), _cursorFileHash(0), _cursorWidth(0), _cursorHeight(0),
-	_modified(false) {
+	_modified(false), _readOnly(false) {
 
 	_maxVisibleChars = (_rect.x2 - _rect.x1) / _fontSurface->getCharWidth();
 	_cursorPos = 0;
@@ -543,17 +598,19 @@ void TextEditWidget::addSprite() {
 	cursorSpriteResource.load(_cursorFileHash, true);
 	_cursorSurface = new BaseSurface(_vm, 0, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
 	_cursorSurface->drawSpriteResourceEx(cursorSpriteResource, false, false, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
-	_cursorSurface->setVisible(true);
+	_cursorSurface->setVisible(!_readOnly);
 	refresh();
 }
 
 void TextEditWidget::enterWidget() {
-	_cursorSurface->setVisible(true);
+	if (!_readOnly)
+		_cursorSurface->setVisible(true);
 	refresh();
 }
 
 void TextEditWidget::exitWidget() {
-	_cursorSurface->setVisible(false);
+	if (!_readOnly)
+		_cursorSurface->setVisible(false);
 	refresh();
 }
 
@@ -568,7 +625,7 @@ void TextEditWidget::drawCursor() {
 		NDrawRect sourceRect(0, 0, _cursorWidth, _cursorHeight);
 		_surface->copyFrom(_cursorSurface->getSurface(), _rect.x1 + _cursorPos * _fontSurface->getCharWidth(),
 			_rect.y1 + (_rect.y2 - _cursorHeight - _rect.y1 + 1) / 2, sourceRect);
-	} else
+	} else if (!_readOnly)
 		_cursorSurface->setVisible(false);
 }
 
@@ -628,10 +685,11 @@ void TextEditWidget::handleKeyDown(Common::KeyCode keyCode) {
 		}
 		break;
 	default:
+		doRefresh = false;
 		break;
 	}
 	if (doRefresh) {
-		_cursorSurface->setVisible(true);
+		_cursorSurface->setVisible(!_readOnly);
 		_cursorTicks = 0;
 		refresh();
 	}
@@ -645,7 +703,7 @@ void TextEditWidget::refresh() {
 
 void TextEditWidget::update() {
 	Widget::update();
-	if (_parentScene->getCurrWidget() == this && _cursorTicks++ == 10) {
+	if (!_readOnly && _parentScene->getCurrWidget() == this && _cursorTicks++ == 10) {
 		_cursorSurface->setVisible(!_cursorSurface->getVisible());
 		refresh();
 		_cursorTicks = 0;
@@ -667,7 +725,7 @@ uint32 TextEditWidget::handleMessage(int messageNum, const MessageParam &param, 
 
 SavegameListBox::SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
 	int baseObjectPriority, int baseSurfacePriority,
-	StringArray *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect)
+	Common::StringArray *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect)
 	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
 	_savegameList(savegameList), _fontSurface(fontSurface), _bgFileHash(bgFileHash), _rect(rect),
 	_maxStringLength(0), _firstVisibleItem(0), _lastVisibleItem(0), _currIndex(0) {
@@ -687,7 +745,6 @@ void SavegameListBox::onClick() {
 			_currIndex = newIndex;
 			refresh();
 			_parentScene->setCurrWidget(this);
-			debug("_currIndex = %d", _currIndex);
 			_parentScene->handleEvent(_itemID, 5);
 		}
 	}
@@ -707,7 +764,7 @@ void SavegameListBox::addSprite() {
 }
 
 void SavegameListBox::buildItems() {
-	StringArray &savegameList = *_savegameList;
+	Common::StringArray &savegameList = *_savegameList;
 	int16 itemX = _rect.x1, itemY = 0;
 	for (uint i = 0; i < savegameList.size(); ++i) {
 		const byte *string = (const byte*)savegameList[i].c_str();
@@ -770,7 +827,7 @@ void SavegameListBox::pageDown() {
 	}
 }
 
-SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArray *savegameList)
+SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::StringArray *savegameList)
 	: WidgetScene(vm, parentModule), _savegameList(savegameList) {
 
 	static const uint32 kSaveGameMenuButtonFileHashes[] = {
@@ -819,7 +876,6 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, StringArra
 		addCollisionSprite(menuButton);
 	}
 
-
 	SetUpdateHandler(&Scene::update);
 	SetMessageHandler(&SaveGameMenu::handleMessage);
 }
@@ -862,6 +918,121 @@ uint32 SaveGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 			// TODO Same handling as Return, merge
 			((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
 				_listBox->getCurrIndex(), _textEditWidget->isModified());
+			leaveScene(0);
+			break;
+		case 1:
+			leaveScene(1);
+			break;
+		case 2:
+			_listBox->pageUp();
+			break;
+		case 3:
+			_listBox->scrollUp();
+			break;
+		case 4:
+			_listBox->scrollDown();
+			break;
+		case 5:
+			_listBox->pageDown();
+			break;
+		}
+		break;
+	}
+	return 0;
+}
+
+LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::StringArray *savegameList)
+	: WidgetScene(vm, parentModule), _savegameList(savegameList) {
+
+	static const uint32 kLoadGameMenuButtonFileHashes[] = {
+		0x100B2091,
+		0x84822B03,
+		0x20E22087,
+		0x04040107,
+		0x04820122,
+		0x24423047
+	};
+	
+	static const NRect kLoadGameMenuButtonCollisionBounds[] = {
+		NRect( 44, 115, 108, 147),
+		NRect( 52, 396, 112, 426),
+		NRect(188, 116, 245, 196),
+		NRect(189, 209, 239, 269),
+		NRect(187, 301, 233, 349),
+		NRect(182, 358, 241, 433)
+	};
+
+	static const NRect kListBoxRect(0, 0, 320, 271);
+	static const NRect kTextEditRect(0, 0, 320, 17);
+	static const NRect kMouseRect(263, 48, 583, 65);
+
+	_fontSurface = new FontSurface(_vm, calcHash("bgLoadTinyAlphabet"), 32, 7, 32, 11, 17);
+	
+	setBackground(0x98620234);
+	setPalette(0x98620234);
+	insertScreenMouse(0x2023098E, &kMouseRect);
+	insertStaticSprite(0x0BC600A3, 200);
+	insertStaticSprite(0x0F960021, 200);
+
+	_listBox = new SavegameListBox(_vm, 263, 142, 69/*ItemID*/, this, 1000, 1000,
+		_savegameList, _fontSurface, 0x04040409, kListBoxRect);
+	_listBox->addSprite();
+
+	_textEditWidget = new TextEditWidget(_vm, 263, 48, 70/*ItemID*/, this, 1000, 1000, 29,
+		_fontSurface, 0x10924C03, kTextEditRect);
+	_textEditWidget->setCursor(0x18032303, 2, 13);
+	_textEditWidget->setReadOnly(true);
+	_textEditWidget->addSprite();
+	setCurrWidget(_textEditWidget);
+	
+	for (uint buttonIndex = 0; buttonIndex < 6; ++buttonIndex) {
+		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
+			kLoadGameMenuButtonFileHashes[buttonIndex], kLoadGameMenuButtonCollisionBounds[buttonIndex]);
+		addCollisionSprite(menuButton);
+	}
+
+	SetUpdateHandler(&Scene::update);
+	SetMessageHandler(&LoadGameMenu::handleMessage);
+}
+
+LoadGameMenu::~LoadGameMenu() {
+	delete _fontSurface;
+}
+
+void LoadGameMenu::handleEvent(int16 itemID, int eventType) {
+	if (itemID == 69 && eventType == 5) {
+		uint currIndex = _listBox->getCurrIndex();
+		_textEditWidget->setString((*_savegameList)[currIndex]);
+		setCurrWidget(_textEditWidget);
+	}
+}
+
+uint32 LoadGameMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+#if 0	
+	case 0x000A:
+		sendMessage(_textEditWidget, 0x000A, param.asInteger());
+		setCurrWidget(_textEditWidget);
+		break;
+#endif		
+	case 0x000B:
+		if (param.asInteger() == Common::KEYCODE_RETURN) {
+			((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
+			leaveScene(0);
+		} else if (param.asInteger() == Common::KEYCODE_ESCAPE) {
+			leaveScene(1);
+		}/* else {
+			sendMessage(_textEditWidget, 0x000B, param.asInteger());
+			setCurrWidget(_textEditWidget);
+		}*/
+		break;
+	case 0x2000:
+		// Handle menu button click
+		switch (param.asInteger()) {
+		case 0:
+			// TODO Same handling as Return, merge
+			((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
 			leaveScene(0);
 			break;
 		case 1:

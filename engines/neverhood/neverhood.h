@@ -28,6 +28,7 @@
 #include "common/keyboard.h"
 #include "common/random.h"
 #include "common/savefile.h"
+#include "common/str-array.h"
 #include "common/system.h"
 #include "audio/mixer.h"
 #include "engines/engine.h"
@@ -72,6 +73,7 @@ public:
 	Common::Platform getPlatform() const;
 	bool hasFeature(EngineFeature f) const;
 	bool isDemo() const;
+	Common::String getTargetName() { return _targetName; };
 
 	Common::RandomSource *_rnd;
 

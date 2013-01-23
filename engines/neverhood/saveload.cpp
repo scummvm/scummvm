@@ -125,7 +125,7 @@ void NeverhoodEngine::loadgame(const char *filename) {
 	_gameState.sceneNum = _gameVars->getGlobalVar(V_CURRENT_SCENE);
 	_gameState.which = _gameVars->getGlobalVar(V_CURRENT_SCENE_WHICH);
 
-	_gameModule->restoreGame();
+	_gameModule->requestRestoreGame();
 
 	delete in;
 
