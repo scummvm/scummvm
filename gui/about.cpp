@@ -40,14 +40,13 @@ enum {
 	kScrollMillisPerPixel = 60
 };
 
-// The following commands can be put at the start of a line (all subject to change):
-//   \C, \L, \R  -- set center/left/right alignment
-//   \c0 - \c4   -- set a custom color:
-//                  0 normal text (green)
-//                  1 highlighted text (light green)
-//                  2 light border (light gray)
-//                  3 dark border (dark gray)
-//                  4 background (black)
+// Every Line should start with a letter followed by a digit. Currently those can be
+// (all subject to change):
+//   C, L, R     -- set center/left/right alignment
+//   0 - 2       -- set a custom color:
+//                  0 normal text
+//                  1 highlighted text
+//                  2 disabled text
 // TODO: Maybe add a tab/indent feature; that is, make it possible to specify
 // an amount by which that line shall be indented (the indent of course would have
 // to be considered while performing any word wrapping, too).
