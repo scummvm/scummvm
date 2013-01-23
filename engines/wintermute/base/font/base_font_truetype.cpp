@@ -560,7 +560,7 @@ bool BaseFontTT::initFont() {
 	if (file) {
 		_deletableFont = Graphics::loadTTFFont(*file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
 		_font = _deletableFont;
-		delete file;
+		BaseFileManager::getEngineInstance()->closeFile(file);
 		file = NULL;
 	}
 
@@ -575,6 +575,7 @@ bool BaseFontTT::initFont() {
 				_deletableFont = Graphics::loadTTFFont(*file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
 				_font = _deletableFont;
 			}
+			// We're not using BaseFileManager, so clean up after ourselves:
 			delete file;
 			file = NULL;
 			delete themeArchive;
