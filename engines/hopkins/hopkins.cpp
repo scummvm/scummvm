@@ -2009,9 +2009,9 @@ void HopkinsEngine::bombExplosion() {
 		_eventsManager.VBL();
 	}
 
-	_globals.NOPARLE = true;
+	_globals._introSpeechOffFl = true;
 	_talkManager.PARLER_PERSO2("vire.pe2");
-	_globals.NOPARLE = false;
+	_globals._introSpeechOffFl = false;
 	_objectsManager.setBobAnimation(7);
 
 	for (int idx = 0; idx < 100; ++idx) {
@@ -2078,9 +2078,9 @@ void HopkinsEngine::handleConflagration() {
 	for (int cpt = 0; cpt <= 249; cpt++)
 		_eventsManager.VBL();
 
-	_globals.NOPARLE = true;
+	_globals._introSpeechOffFl = true;
 	_talkManager.PARLER_PERSO("SVGARD1.pe2");
-	_globals.NOPARLE = false;
+	_globals._introSpeechOffFl = false;
 
 	for (int cpt = 0; cpt <= 49; cpt++)
 		_eventsManager.VBL();
@@ -2203,7 +2203,7 @@ void HopkinsEngine::playEnding() {
 		_eventsManager.VBL();
 	while (_objectsManager.BOBPOSI(6) != 54);
 
-	_globals.NOPARLE = true;
+	_globals._introSpeechOffFl = true;
 	_talkManager.PARLER_PERSO("GM4.PE2");
 	_globals._disableInventFl = true;
 	_objectsManager.stopBobAnimation(6);
@@ -2221,7 +2221,7 @@ void HopkinsEngine::playEnding() {
 		_eventsManager.VBL();
 	while (_objectsManager.BOBPOSI(7) != 65);
 
-	_globals.NOPARLE = true;
+	_globals._introSpeechOffFl = true;
 	_talkManager.PARLER_PERSO("DUELB4.PE2");
 	_eventsManager.mouseOff();
 	_globals._disableInventFl = true;
@@ -2230,14 +2230,14 @@ void HopkinsEngine::playEnding() {
 		_eventsManager.VBL();
 	while (_objectsManager.BOBPOSI(7) != 72);
 
-	_globals.NOPARLE = true;
+	_globals._introSpeechOffFl = true;
 	_talkManager.PARLER_PERSO("DUELH1.PE2");
 
 	do
 		_eventsManager.VBL();
 	while (_objectsManager.BOBPOSI(7) != 81);
 
-	_globals.NOPARLE = true;
+	_globals._introSpeechOffFl = true;
 	_talkManager.PARLER_PERSO("DUELB5.PE2");
 
 	do
@@ -2288,7 +2288,7 @@ void HopkinsEngine::playEnding() {
 		_animationManager.playAnim2("BERM.ANM", 100, 24, 300);
 		_objectsManager.stopBobAnimation(7);
 		_objectsManager.setBobAnimation(8);
-		_globals.NOPARLE = true;
+		_globals._introSpeechOffFl = true;
 		_talkManager.PARLER_PERSO("GM5.PE2");
 		_globals._disableInventFl = true;
 

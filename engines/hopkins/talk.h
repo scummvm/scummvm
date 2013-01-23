@@ -52,8 +52,8 @@ public:
 	void PARLER_PERSO2(const Common::String &filename);
 	void PARLER_PERSO(const Common::String &filename);
 	void getStringFromBuffer(int srcStart, Common::String &dest, const char *srcData);
-	int DIALOGUE();
-	int DIALOGUE_REP(int idx);
+	int dialogQuestion();
+	int dialogAnswer(int idx);
 	void searchCharacterPalette(int startIdx, bool dark);
 	void dialogWait();
 	void dialogTalk();

@@ -51,7 +51,6 @@ void TalkManager::setParent(HopkinsEngine *vm) {
 void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	Common::String spriteFilename;
 
-	int answer = 0;
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
 	_vm->_eventsManager.VBL();
@@ -99,29 +98,30 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_dialogueMesgId2 = _dialogueMesgId1 + 1;
 	_dialogueMesgId3 = _dialogueMesgId1 + 2;
 	_dialogueMesgId4 = _dialogueMesgId1 + 3;
-	int v14 = _vm->_eventsManager._mouseCursorId;
+	int oldMouseCursorId = _vm->_eventsManager._mouseCursorId;
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
-	if (!_vm->_globals.NOPARLE) {
-		int v5;
+	if (!_vm->_globals._introSpeechOffFl) {
+		int answer = 0;
+		int dlgAnswer;
 		do {
-			v5 = DIALOGUE();
-			if (v5 != _dialogueMesgId4)
-				answer = DIALOGUE_REP(v5);
+			dlgAnswer = dialogQuestion();
+			if (dlgAnswer != _dialogueMesgId4)
+				answer = dialogAnswer(dlgAnswer);
 			if (answer == -1)
-				v5 = _dialogueMesgId4;
+				dlgAnswer = _dialogueMesgId4;
 			_vm->_eventsManager.VBL();
-		} while (v5 != _dialogueMesgId4);
+		} while (dlgAnswer != _dialogueMesgId4);
 	}
-	if (_vm->_globals.NOPARLE) {
-		int v6 = 1;
-		int v7;
+	if (_vm->_globals._introSpeechOffFl) {
+		int idx = 1;
+		int answer;
 		do
-			v7 = DIALOGUE_REP(v6++);
-		while (v7 != -1);
+			answer = dialogAnswer(idx++);
+		while (answer != -1);
 	}
 	clearCharacterAnim();
-	_vm->_globals.NOPARLE = false;
+	_vm->_globals._introSpeechOffFl = false;
 	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
 	_characterSprite = _vm->_globals.freeMemory(_characterSprite);
 	_vm->_graphicsManager.NB_SCREEN(false);
@@ -130,9 +130,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
-	_vm->_eventsManager._mouseCursorId = v14;
+	_vm->_eventsManager._mouseCursorId = oldMouseCursorId;
 
-	_vm->_eventsManager.changeMouseCursor(v14);
+	_vm->_eventsManager.changeMouseCursor(oldMouseCursorId);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 
 	if (_vm->getIsDemo() == false)
@@ -154,7 +154,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	// TODO: The original disables the mouse cursor here
 	STATI = true;
-	bool v7 = _vm->_globals._disableInventFl;
+	bool oldDisableInventFl = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
 	_characterBuffer = _vm->_fileManager.searchCat(filename, 5);
 	_characterSize = _vm->_globals._catalogSize;
@@ -192,23 +192,23 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
 
-	if (!_vm->_globals.NOPARLE) {
-		int v3;
+	if (!_vm->_globals._introSpeechOffFl) {
+		int answer;
 		do {
-			v3 = DIALOGUE();
-			if (v3 != _dialogueMesgId4) {
-				if (DIALOGUE_REP(v3) == -1)
-					v3 = _dialogueMesgId4;
+			answer = dialogQuestion();
+			if (answer != _dialogueMesgId4) {
+				if (dialogAnswer(answer) == -1)
+					answer = _dialogueMesgId4;
 			}
-		} while (v3 != _dialogueMesgId4);
+		} while (answer != _dialogueMesgId4);
 	}
 
-	if (_vm->_globals.NOPARLE) {
-		int v4 = 1;
-		int v5;
+	if (_vm->_globals._introSpeechOffFl) {
+		int idx = 1;
+		int answer;
 	    do
-			v5 = DIALOGUE_REP(v4++);
-		while (v5 != -1);
+			answer = dialogAnswer(idx++);
+		while (answer != -1);
 	}
 
 	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
@@ -218,7 +218,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	// TODO: The original reenables the mouse cursor here
-	_vm->_globals._disableInventFl = v7;
+	_vm->_globals._disableInventFl = oldDisableInventFl;
 	STATI = false;
 }
 
@@ -226,7 +226,7 @@ void TalkManager::getStringFromBuffer(int srcStart, Common::String &dest, const 
 	dest = Common::String(srcData + srcStart);
 }
 
-int TalkManager::DIALOGUE() {
+int TalkManager::dialogQuestion() {
 	if (STATI) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 48;
 		int curVal = (int16)READ_LE_UINT16(bufPtr);
@@ -264,7 +264,7 @@ int TalkManager::DIALOGUE() {
 	_vm->_fontManager.showText(8);
 
 	int retVal = -1;
-	bool v6 = false;
+	bool loopCond = false;
   	do {
 		int mousePosY = _vm->_eventsManager.getMouseY();
 		if (sentence1PosY < mousePosY && mousePosY < (sentence2PosY - 1)) {
@@ -286,10 +286,10 @@ int TalkManager::DIALOGUE() {
 
 		_vm->_eventsManager.VBL();
 		if (_vm->_eventsManager.getMouseButton())
-			v6 = true;
+			loopCond = true;
 		if (retVal == -1)
-			v6 = false;
-	} while (!_vm->shouldQuit() && !v6);
+			loopCond = false;
+	} while (!_vm->shouldQuit() && !loopCond);
 
 	_vm->_soundManager.mixVoice(retVal, 1);
 	_vm->_fontManager.hideText(5);
@@ -327,34 +327,24 @@ int TalkManager::DIALOGUE() {
   return retVal;
 }
 
-int TalkManager::DIALOGUE_REP(int idx) {
-	int v1;
-	byte *v3;
-	int v6;
-	int v7;
-	int v21;
-	int v22;
-	int v23;
-	int v24;
-	int v25;
-
-	v1 = 0;
-	v3 = _characterBuffer + 110;
-	for (; (int16)READ_LE_UINT16(v3) != idx; v3 = _characterBuffer + 20 * v1 + 110) {
-		++v1;
-		if ((int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) < v1)
+int TalkManager::dialogAnswer(int idx) {
+	int charIdx;
+	byte *charBuf;
+	for (charBuf = _characterBuffer + 110, charIdx = 0; (int16)READ_LE_UINT16(charBuf) != idx; charBuf += 20) {
+		++charIdx;
+		if ((int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) < charIdx)
 			return -1;
 	}
 
-	v22 = (int16)READ_LE_UINT16((uint16 *)v3 + 1);
-	v25 = (int16)READ_LE_UINT16((uint16 *)v3 + 2);
-	v24 = (int16)READ_LE_UINT16((uint16 *)v3 + 3);
-	v23 = (int16)READ_LE_UINT16((uint16 *)v3 + 4);
-	_dialogueMesgId1 = (int16)READ_LE_UINT16((uint16 *)v3 + 5);
-	_dialogueMesgId2 = (int16)READ_LE_UINT16((uint16 *)v3 + 6);
-	_dialogueMesgId3 = (int16)READ_LE_UINT16((uint16 *)v3 + 7);
-	v6 = (int16)READ_LE_UINT16((uint16 *)v3 + 8);
-	v7 = (int16)READ_LE_UINT16((uint16 *)v3 + 9);
+	int mesgId = (int16)READ_LE_UINT16((uint16 *)charBuf + 1);
+	int mesgPosX = (int16)READ_LE_UINT16((uint16 *)charBuf + 2);
+	int mesgPosY = (int16)READ_LE_UINT16((uint16 *)charBuf + 3);
+	int mesgLength = (int16)READ_LE_UINT16((uint16 *)charBuf + 4);
+	_dialogueMesgId1 = (int16)READ_LE_UINT16((uint16 *)charBuf + 5);
+	_dialogueMesgId2 = (int16)READ_LE_UINT16((uint16 *)charBuf + 6);
+	_dialogueMesgId3 = (int16)READ_LE_UINT16((uint16 *)charBuf + 7);
+	int v6 = (int16)READ_LE_UINT16((uint16 *)charBuf + 8);
+	int v7 = (int16)READ_LE_UINT16((uint16 *)charBuf + 9);
 
 	if (v7)
 		_vm->_globals._saveData->_data[svField4] = v7;
@@ -387,10 +377,10 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	}
 
 	if (!_vm->_soundManager._textOffFl) {
-		_vm->_fontManager.initTextBuffers(9, v22, _answersFilename, v25, v24, 5, v23, 252);
+		_vm->_fontManager.initTextBuffers(9, mesgId, _answersFilename, mesgPosX, mesgPosY, 5, mesgLength, 252);
 		_vm->_fontManager.showText(9);
 	}
-	if (!_vm->_soundManager.mixVoice(v22, 1)) {
+	if (!_vm->_soundManager.mixVoice(mesgId, 1)) {
 		_vm->_eventsManager._curMouseButton = 0;
 		_vm->_eventsManager._mouseButton = 0;
 
@@ -435,11 +425,11 @@ int TalkManager::DIALOGUE_REP(int idx) {
 	} else {
 		dialogEndTalk();
 	}
-	v21 = 0;
+	int result = 0;
 	if (!_dialogueMesgId1)
-		v21 = -1;
+		result = -1;
 
-	return v21;
+	return result;
 }
 
 void TalkManager::searchCharacterPalette(int startIdx, bool dark) {
@@ -1090,7 +1080,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	dialogTalk();
 	clearCharacterAnim();
 	clearCharacterAnim();
-	_vm->_globals.NOPARLE = false;
+	_vm->_globals._introSpeechOffFl = false;
 	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
 	_characterSprite = _vm->_globals.freeMemory(_characterSprite);
 	_vm->_graphicsManager.NB_SCREEN(false);

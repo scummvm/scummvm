@@ -110,7 +110,7 @@ void FontManager::setOptimalColor(int idx1, int idx2, int idx3, int idx4) {
 /**
  * Init text structure
  */
-void FontManager::initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int a9, int color) {
+void FontManager::initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int length, int color) {
 	assert(idx - 5 >= 0 && (idx - 5) <= MAX_TEXT);
 
 	TxtItem &txt = _text[idx - 5];
@@ -120,7 +120,7 @@ void FontManager::initTextBuffers(int idx, int messageId, const Common::String &
 	txt._pos.y = yp;
 	txt._messageId = messageId;
 	txt._textType = textType;
-	txt._length = a9;
+	txt._length = length;
 	txt._color = color;
 }
 

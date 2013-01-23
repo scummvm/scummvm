@@ -881,9 +881,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 52:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("GARDE.PE2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 53:
@@ -924,11 +924,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 58:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("Gm1.PE2");
 			_vm->_globals._saveData->_data[svField176] = 1;
 			_vm->_globals._saveData->_data[svField270] = 2;
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 59: {
@@ -1104,9 +1104,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 84:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("CVIGIL1.PE2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 85:
@@ -1130,9 +1130,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if (_vm->_globals._saveData->_data[svField231] == 1) {
 				_vm->_talkManager.PARLER_PERSO("chotess1.pe2");
 			} else {
-				_vm->_globals.NOPARLE = true;
+				_vm->_globals._introSpeechOffFl = true;
 				_vm->_talkManager.PARLER_PERSO("chotesse.pe2");
-				_vm->_globals.NOPARLE = false;
+				_vm->_globals._introSpeechOffFl = false;
 			}
 			break;
 
@@ -1319,9 +1319,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 98:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("CVIGIL2.PE2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 100:
@@ -1333,22 +1333,22 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 103:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("tourist1.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			_vm->_animationManager.playAnim2("T421.ANM", 100, 14, 500);
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.VBL();
 			_vm->_eventsManager.VBL();
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("tourist2.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 104:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("tourist3.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 105:
@@ -1552,33 +1552,33 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 108:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("peche1.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 109:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("peche2.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 110:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("peche3.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 111:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("peche4.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 112:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("teint1.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 113:
@@ -1602,9 +1602,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 171: {
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("gred1.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = -1;
@@ -1632,9 +1632,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 173: {
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("gbleu1.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = -1;
@@ -1709,21 +1709,21 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 176:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("gred2.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 177:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("gbleu2.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 200:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("Gm2.PE2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 201:
@@ -1739,9 +1739,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 202:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("SVGARD2.PE2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 203:
@@ -1922,15 +1922,15 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 215:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("aviat.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 216:
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("aviat1.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			break;
 
 		case 229:
@@ -1997,9 +1997,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(12) != 6);
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("PRMORT.pe2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -2033,9 +2033,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(13) != 48);
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("HRADIO.PE2");
-			_vm->_globals.NOPARLE = false;
+			_vm->_globals._introSpeechOffFl = false;
 			_vm->_graphicsManager.fadeOutLong();
 			_vm->_objectsManager.stopBobAnimation(13);
 			_vm->_graphicsManager._noFadingFl = true;

@@ -76,7 +76,7 @@ public:
 	void hideText(int idx);
 	void setTextColor(int idx, byte colByte);
 	void setOptimalColor(int idx1, int idx2, int idx3, int idx4);
-	void initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int a9, int color);
+	void initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int length, int color);
 	void box(int idx, int messageId, const Common::String &filename, int xp, int yp);
 
 	void displayTextVesa(int xp, int yp, const Common::String &message, int col);

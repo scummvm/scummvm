@@ -1970,16 +1970,16 @@ void ObjectsManager::PLAN_BETA() {
 		if (mouseButton) {
 			if (_vm->_globals._saveData->_data[svField170] == 1 && !_vm->_globals._saveData->_data[svField171]) {
 				_vm->_globals._saveData->_data[svField171] = 1;
-				_vm->_globals.NOPARLE = true;
+				_vm->_globals._introSpeechOffFl = true;
 				_vm->_talkManager.PARLER_PERSO("APPEL1.pe2");
-				_vm->_globals.NOPARLE = false;
+				_vm->_globals._introSpeechOffFl = false;
 				mouseButton = 0;
 			}
 			if (_vm->_globals._saveData->_data[svField80] == 1 && !_vm->_globals._saveData->_data[svField172]) {
 				_vm->_globals._saveData->_data[svField172] = 1;
-				_vm->_globals.NOPARLE = true;
+				_vm->_globals._introSpeechOffFl = true;
 				_vm->_talkManager.PARLER_PERSO("APPEL2.pe2");
-				_vm->_globals.NOPARLE = false;
+				_vm->_globals._introSpeechOffFl = false;
 				mouseButton = 0;
 				_vm->_eventsManager._curMouseButton = 0;
 			}
@@ -3168,9 +3168,9 @@ void ObjectsManager::handleSpecialGames() {
 			break;
 
 		_vm->_globals._saveData->_data[svField173] = 1;
-		_vm->_globals.NOPARLE = true;
+		_vm->_globals._introSpeechOffFl = true;
 		_vm->_talkManager.PARLER_PERSO("flicspe1.pe2");
-		_vm->_globals.NOPARLE = false;
+		_vm->_globals._introSpeechOffFl = false;
 
 		if (_vm->_globals._censorshipFl)
 			break;
@@ -3279,7 +3279,7 @@ void ObjectsManager::handleSpecialGames() {
 		do
 			_vm->_eventsManager.VBL();
 		while (BOBPOSI(8) != 3);
-		_vm->_globals.NOPARLE = true;
+		_vm->_globals._introSpeechOffFl = true;
 		_vm->_talkManager.PARLER_PERSO("GM3.PE2");
 		stopBobAnimation(8);
 		_vm->_globals._saveData->_data[svField333] = 1;
@@ -3803,7 +3803,7 @@ void ObjectsManager::SPECIAL_INI() {
 			_vm->_globals.iRegul = 1;
 			_vm->_globals._disableInventFl = false;
 			_vm->_graphicsManager._noFadingFl = true;
-			_vm->_globals.NOPARLE = true;
+			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("MAGE1.pe2");
 			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_globals._disableInventFl = false;

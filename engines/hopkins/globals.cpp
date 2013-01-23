@@ -202,7 +202,7 @@ Globals::Globals() {
 	NOMARCHE = false;
 	_optionDialogFl = false;
 	_cacheFl = false;
-	NOPARLE = false;
+	_introSpeechOffFl = false;
 	couleur_40 = 50;
 
 	// Reset indexed variables

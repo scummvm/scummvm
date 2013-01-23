@@ -561,6 +561,8 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	}
 
 	SDL_LVOICE(filename, catPos, catLen);
+
+	// Reduce music volume during speech
 	oldMusicVol = _musicVolume;
 	if (!_musicOffFl && _musicVolume > 2) {
 		_musicVolume = (signed int)((long double)_musicVolume - (long double)_musicVolume / 100.0 * 45.0);
@@ -588,6 +590,8 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 
 	stopVoice(2);
 	DEL_SAMPLE_SDL(20);
+
+	// Speech is over, set the music volume back to normal
 	_musicVolume = oldMusicVol;
 	if (!_musicOffFl && _musicVolume > 2) {
 		_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);

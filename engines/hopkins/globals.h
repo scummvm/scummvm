@@ -382,7 +382,7 @@ public:
 	int _sortedDisplayCount;
 	bool NOT_VERIF;
 	bool _cacheFl;
-	bool NOPARLE;
+	bool _introSpeechOffFl;
 	bool PLAN_FLAG;
 	bool GOACTION;
 	int Compteur;
