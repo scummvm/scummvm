@@ -265,11 +265,19 @@ sub begin_section {
 		if ($section_level eq 0) {
 		  # TODO: Would be nice to have a 'fat' or 'large' mode for
 		  # headlines...
+		  my $ascii_title = html_entities_to_ascii($title);
 		  $title = html_entities_to_cpp($title);
+		  if ($ascii_title ne $title) {
+		  	print "A1".$ascii_title."\n";
+		  }
 		  print "C1".$title."\n";
 		  print "\n";
 		} else {
+		  my $ascii_title = html_entities_to_ascii($title);
 		  $title = html_entities_to_cpp($title);
+		  if ($ascii_title ne $title) {
+		  	print "A1".$ascii_title."\n";
+		  }
 		  print "C1".$title."\n";
 		}
 	} elsif ($mode eq "XML-DOC") {
@@ -388,13 +396,20 @@ sub add_person {
 		}
 	} elsif ($mode eq "CPP") {
 		$name = $nick if $name eq "";
+		my $ascii_name = html_entities_to_ascii($name);
 		$name = html_entities_to_cpp($name);
-
+		if ($ascii_name ne $name) {
+		  print "A0".$ascii_name."\n";
+		}
 		print "C0".$name."\n";
 
 		# Print desc wrapped
 		if (length $desc > 0) {
+			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
+			if ($ascii_name ne $name) {
+		 		print "A2".$ascii_desc."\n";
+			}
 			print "C2".$desc."\n";
 		}
 	} elsif ($mode eq "XML-DOC") {

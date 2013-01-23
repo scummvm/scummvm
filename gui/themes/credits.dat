@@ -4,7 +4,9 @@ C1Project Leader
 C0Eugene Sandulenko
 
 C1PR Office
+A0Arnaud Boutonne
 C0Arnaud Boutonné
+A2Public Relations Officer, Project Administrator
 C2Public Relations Officer, Project Administrator
 C0Eugene Sandulenko
 C2Project Leader
@@ -24,6 +26,7 @@ C2Original ScummVM and SimonVM author
 
 C1Engine Teams
 C1SCUMM
+A0Torbjorn Andersson
 C0Torbjörn Andersson
 C0James Brown
 C2(retired)
@@ -64,6 +67,7 @@ C0David Symonds
 C2(retired)
 
 C1AGOS
+A0Torbjorn Andersson
 C0Torbjörn Andersson
 C0Paul Gilbert
 C0Travis Howell
@@ -73,6 +77,7 @@ C0Ludvig Strigeus
 C2(retired)
 
 C1CGE
+A0Arnaud Boutonne
 C0Arnaud Boutonné
 C0Paul Gilbert
 
@@ -102,6 +107,7 @@ C0Filippos Karapetis
 C0Pawel Kolodziejski
 
 C1DreamWeb
+A0Torbjorn Andersson
 C0Torbjörn Andersson
 C0Bertrand Augereau
 C0Filippos Karapetis
@@ -110,7 +116,9 @@ C2(retired)
 C0Willem Jan Palenstijn
 
 C1Gob
+A0Torbjorn Andersson
 C0Torbjörn Andersson
+A0Arnaud Boutonne
 C0Arnaud Boutonné
 C0Sven Hesse
 C0Eugene Sandulenko
@@ -121,12 +129,15 @@ C0Scott Thomas
 C0Jordi Vilalta Prat
 
 C1Hugo
+A0Arnaud Boutonne
 C0Arnaud Boutonné
 C0Oystein Eftevaag
 C0Eugene Sandulenko
 
 C1Kyra
+A0Torbjorn Andersson
 C0Torbjörn Andersson
+A2VQA Player
 C2VQA Player
 C0Oystein Eftevaag
 C0Florian Kagerer
@@ -168,6 +179,7 @@ C2(retired)
 C0Joost Peters
 
 C1SAGA
+A0Torbjorn Andersson
 C0Torbjörn Andersson
 C0Daniel Balsom
 C2Original engine reimplementation author (retired)
@@ -189,7 +201,9 @@ C0Jordi Vilalta Prat
 C0Lars Skovlund
 
 C1Sky
+A0Robert Goeffringmann
 C0Robert Göffringmann
+A2(retired)
 C2(retired)
 C0Oliver Kiehl
 C2(retired)
@@ -200,10 +214,13 @@ C0Fabio Battaglia
 C2PSX version support
 C0Thierry Crozat
 C2Mac version support
+A0Robert Goeffringmann
 C0Robert Göffringmann
+A2(retired)
 C2(retired)
 
 C1Sword2
+A0Torbjorn Andersson
 C0Torbjörn Andersson
 C0Fabio Battaglia
 C2PSX version support
@@ -211,6 +228,7 @@ C0Jonathan Gray
 C2(retired)
 
 C1Sword25
+A0Torbjorn Andersson
 C0Torbjörn Andersson
 C0Paul Gilbert
 C0Max Horn
@@ -225,6 +243,7 @@ C0Vladimir Menshakov
 C2(retired)
 
 C1Tinsel
+A0Torbjorn Andersson
 C0Torbjörn Andersson
 C0Fabio Battaglia
 C2PSX version support
@@ -240,6 +259,7 @@ C0Benjamin Haisch
 C0Filippos Karapetis
 
 C1Tony
+A0Arnaud Boutonne
 C0Arnaud Boutonné
 C0Paul Gilbert
 C0Alyssa Milburn
@@ -247,11 +267,13 @@ C0Alyssa Milburn
 C1Toon
 C0Sylvain Dupont
 
+A1Touche
 C1Touché
 C0Gregory Montoir
 C2(retired)
 
 C1TsAGE
+A0Arnaud Boutonne
 C0Arnaud Boutonné
 C0Paul Gilbert
 
@@ -260,6 +282,7 @@ C0Gregory Montoir
 C2(retired)
 
 C1Wintermute
+A0Einar Johan T. Somaaen
 C0Einar Johan T. Sømåen
 
 
@@ -307,7 +330,9 @@ C0Kostas Nakos
 C2(retired)
 
 C1PlayStation 2
+A0Robert Goeffringmann
 C0Robert Göffringmann
+A2(retired)
 C2(retired)
 C0Max Lingua
 
@@ -415,10 +440,14 @@ C1Other contributions
 
 C1Packages
 C1AmigaOS 4
+A0Hans-Joerg Frieden
 C0Hans-Jörg Frieden
+A2(retired)
 C2(retired)
 C0Hubert Maier
+A0Juha Niemimaki
 C0Juha Niemimäki
+A2(retired)
 C2(retired)
 
 C1Atari/FreeMiNT
@@ -447,7 +476,9 @@ C2(retired)
 
 C1MorphOS
 C0Fabien Coeurjoly
+A0Ruediger Hanke
 C0Rüdiger Hanke
+A2(retired)
 C2(retired)
 
 C1OS/2
@@ -484,6 +515,7 @@ C1Catalan
 C0Jordi Vilalta Prat
 
 C1Czech
+A0Zbynik Schwarz
 C0Zbynìk Schwarz
 
 C1Danish
@@ -510,10 +542,13 @@ C0George Kormendi
 C1Italian
 C0Matteo Angelino
 
+A1Norwegian (Bokmaal)
 C1Norwegian (Bokmål)
+A0Einar Johan Somaaen
 C0Einar Johan Sømåen
 
 C1Norwegian (Nynorsk)
+A0Einar Johan Somaaen
 C0Einar Johan Sømåen
 
 C1Polish
@@ -526,6 +561,7 @@ C1Russian
 C0Eugene Sandulenko
 
 C1Spanish
+A0Tomas Maidagan
 C0Tomás Maidagan
 C0Jordi Vilalta Prat
 
@@ -537,7 +573,9 @@ C0Lubomyr Lisen
 
 
 C1Websites (design)
+A0Dobo Balazs
 C0Dobó Balázs
+A2Website design
 C2Website design
 C0William Claydon
 C2Skins for doxygen, buildbot and wiki
@@ -565,7 +603,9 @@ C0Tobias Gunkel
 C2Sound support for C64 version of MM/Zak, Loom PCE support
 C0Janne Huttunen
 C2V3 actor mask support, Dig/FT SMUSH audio
+A0Kovacs Endre Janos
 C0Kovács Endre János
+A2Several fixes for Simon1
 C2Several fixes for Simon1
 C0Jeroen Janssen
 C2Numerous readability and bugfix patches
@@ -589,13 +629,17 @@ C0Quietust
 C2Sound support for Amiga SCUMM V2/V3 games, MM NES support
 C0Robert Crossfield
 C2Improved support for Apple II/C64 versions of MM
+A0Andreas Roever
 C0Andreas Röver
+A2Broken Sword I & II MPEG2 cutscene support
 C2Broken Sword I & II MPEG2 cutscene support
 C0Edward Rudd
 C2Fixes for playing MP3 versions of MI1/Loom audio
 C0Daniel Schepler
 C2Final MI1 CD music support, initial Ogg Vorbis support
+A0Andre Souza
 C0André Souza
+A2SDL-based OpenGL renderer
 C2SDL-based OpenGL renderer
 C0Tom Frost
 C2WebOS port contributions
@@ -711,7 +755,9 @@ C0lloyd
 C2For deep tech details about C64 Zak & MM
 C0Sarien Team
 C2Original AGI engine code
+A0Jimmi Thogersen
 C0Jimmi Thøgersen
+A2For ScummRev, and much obscure code/documentation
 C2For ScummRev, and much obscure code/documentation
 C0Tristan
 C2For additional work on the original MT-32 emulator

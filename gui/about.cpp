@@ -41,8 +41,11 @@ enum {
 };
 
 // Every Line should start with a letter followed by a digit. Currently those can be
-// (all subject to change):
+// (all subject to change)
+// Letter:
 //   C, L, R     -- set center/left/right alignment
+//   A           -- ASCII text to replace the next (latin1) line
+// Digit:
 //   0 - 2       -- set a custom color:
 //                  0 normal text
 //                  1 highlighted text
@@ -291,9 +294,30 @@ void AboutDialog::loadCredits() {
 		addLine("C0You can see the credits on http://www.scummvm.org/credits/");
 		return;
 	}
+	
+	bool use_ascii = false;
+#ifdef USE_TRANSLATION
+	// We could use TransMan.getCurrentCharset() but rather than compare strings
+	// it is easier to use TransMan.getCharsetMapping() (non null in case of non
+	// ISO-8859-1 mapping)
+	use_ascii = (TransMan.getCharsetMapping() != NULL);
+#endif
 
 	do {
-		addLine(in.readLine().c_str());
+		Common::String line = in.readLine();
+		if (!line.empty() && line[0] == 'A') {
+			Common::String latin1_line = in.readLine();
+			if (use_ascii) {
+				// Use the formatting from the latin1 line if we can
+				if (!latin1_line.empty())
+					line.setChar(latin1_line[0], 0);
+				else
+					line.setChar('C', 0);
+				addLine(line.c_str());
+			} else
+				addLine(latin1_line.c_str());
+		} else
+			addLine(line.c_str());
 	} while (!in.eos());
 
 	in.close();
