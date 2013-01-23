@@ -97,15 +97,12 @@ bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
-	delete _thumbnail;
-	_thumbnail = NULL;
+	delete _scummVMThumb;
+	_scummVMThumb = NULL;
 	
-	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
-		
-		_scummVMThumb = storeThumb(doFlip, kThumbnailWidth, kThumbnailHeight2);
-		if (!_scummVMThumb) {
-			return STATUS_FAILED;
-		}
+	_scummVMThumb = storeThumb(doFlip, kThumbnailWidth, kThumbnailHeight2);
+	if (!_scummVMThumb) {
+		return STATUS_FAILED;
 	}
 	return STATUS_OK;
 }
