@@ -1115,7 +1115,7 @@ void GfxTinyGL::createTextObject(TextObject *text) {
 }
 
 void GfxTinyGL::drawTextObject(const TextObject *text) {
-	TextObjectData *userData = (TextObjectData *)text->getUserData();
+	const TextObjectData *userData = (const TextObjectData *)text->getUserData();
 	if (userData) {
 		int numLines = text->getNumLines();
 		for (int i = 0; i < numLines; ++i) {
@@ -1125,7 +1125,7 @@ void GfxTinyGL::drawTextObject(const TextObject *text) {
 }
 
 void GfxTinyGL::destroyTextObject(TextObject *text) {
-	TextObjectData *userData = (TextObjectData *)text->getUserData();
+	const TextObjectData *userData = (const TextObjectData *)text->getUserData();
 	if (userData) {
 		int numLines = text->getNumLines();
 		for (int i = 0; i < numLines; ++i) {
