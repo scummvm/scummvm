@@ -630,19 +630,17 @@ void SoundManager::PLAY_SOUND2(const Common::String &file) {
 
 void SoundManager::MODSetSampleVolume() {
 	for (int idx = 0; idx < SWAV_COUNT; ++idx) {
-		if (Swav[idx]._active) {
-			int volume = (idx == 20) ? (_voiceVolume * 255 / 16) : (_soundVolume * 255 / 16);
+		if (idx != 20 && Swav[idx]._active) {
+			int volume = _soundVolume * 255 / 16;
 			_vm->_mixer->setChannelVolume(Swav[idx]._soundHandle, volume);
 		}
 	}
 }
 
 void SoundManager::MODSetVoiceVolume() {
-	for (int idx = 0; idx < SWAV_COUNT; ++idx) {
-		if (Swav[idx]._active) {
-			int volume = (idx == 20) ? (_voiceVolume * 255 / 16) : (_soundVolume * 255 / 16);
-			_vm->_mixer->setChannelVolume(Swav[idx]._soundHandle, volume);
-		}
+	if (Swav[20]._active) {
+		int volume = _voiceVolume * 255 / 16;
+		_vm->_mixer->setChannelVolume(Swav[20]._soundHandle, volume);
 	}
 }
 
