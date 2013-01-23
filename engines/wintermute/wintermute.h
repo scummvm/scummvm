@@ -68,6 +68,8 @@ private:
 	GUI::Debugger *_debugger;
 	BaseGame *_game;
 	const ADGameDescription *_gameDescription;
+
+	friend class Console;
 };
 
 } // End of namespace Wintermute

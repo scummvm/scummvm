@@ -30,8 +30,10 @@ namespace Wintermute {
 class WintermuteEngine;
 class Console : public GUI::Debugger {
 public:
-	Console(WintermuteEngine *vm) : GUI::Debugger(), _engineRef(vm) {}
-	virtual ~Console(void) {}
+	Console(WintermuteEngine *vm);
+	virtual ~Console();
+	
+	bool Cmd_ShowFps(int argc, const char **argv);
 private:
 	WintermuteEngine *_engineRef;
 };
