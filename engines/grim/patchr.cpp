@@ -311,6 +311,7 @@ bool PatchedFile::seek(int32 offset, int whence) {
 			break;
 		case SEEK_END:
 			relOffset = (size() + offset) - pos();
+			break;
 		default:
 			error("%s: Invalid seek instruction", _patchName.c_str());
 	}
