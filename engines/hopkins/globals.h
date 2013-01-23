@@ -105,8 +105,8 @@ struct BobItem {
 	int _oldWidth;
 	int _oldHeight;
 	int _oldX2;
-	int _oldY2;
-	int field4A;
+	int _zooInmFactor;
+	int _zoomOutFactor;
 };
 
 struct LockAnimItem {
@@ -392,15 +392,15 @@ public:
 
 	int pathFindingDepth;
 
-	int force_to_data_0;
+	int _hotspotTextColor;
 	int oldzone_46;
 	int old_x1_65;
 	int old_y1_66;
 	int old_x2_67;
-	int old_zone_68;
-	int old_x_69, old_y_70;
+	int _oldMouseZoneId;
+	int _oldMouseX, _oldMouseY;
 	int compteur_71;
-	int zozo_73;
+	bool _forceHideText;
 	int old_y2_68;
 	int _oldZoneNum;
 	int j_104;

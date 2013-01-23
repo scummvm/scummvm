@@ -118,7 +118,7 @@ public:
 	void DEF_BOB(int idx);
 	void BOB_VISU(int idx);
 	void BOB_OFF(int idx);
-	void BOB_OFFSET(int idx, int v);
+	void BOB_OFFSET(int idx, int offset);
 	void SCBOB(int idx);
 	void CALCUL_BOB(int idx);
 

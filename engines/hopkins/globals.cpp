@@ -206,18 +206,18 @@ Globals::Globals() {
 	couleur_40 = 50;
 
 	// Reset indexed variables
-	force_to_data_0 = 0;
+	_hotspotTextColor = 0;
 	oldzone_46 = 0;
 	old_x1_65 = 0;
 	old_y1_66 = 0;
 	old_x2_67 = 0;
 	old_y2_68 = 0;
-	old_zone_68 = 0;
+	_oldMouseZoneId = 0;
 	_oldZoneNum = 0;
-	old_x_69 = 0;
-	old_y_70 = 0;
+	_oldMouseX = 0;
+	_oldMouseY = 0;
 	compteur_71 = 0;
-	zozo_73 = 0;
+	_forceHideText = false;
 	j_104 = 0;
 }
 
