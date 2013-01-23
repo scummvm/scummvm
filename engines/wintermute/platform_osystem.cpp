@@ -26,6 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -36,11 +37,18 @@
 namespace Wintermute {
 
 BaseGame *BasePlatform::_gameRef = NULL;
+WintermuteEngine *BasePlatform::_engineRef = NULL;
 
 #define CLASS_NAME "GF_FRAME"
-int BasePlatform::initialize(BaseGame *inGame, int argc, char *argv[]) {
+int BasePlatform::initialize(WintermuteEngine *engineRef, BaseGame *inGame, int argc, char *argv[]) {
 	_gameRef = inGame;
+	_engineRef = engineRef;
 	return true;
+}
+
+void BasePlatform::deinit() {
+	_gameRef = NULL;
+	_engineRef = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,6 +94,11 @@ void BasePlatform::handleEvent(Common::Event *event) {
 		}
 		break;
 	case Common::EVENT_KEYDOWN:
+		if (event->kbd.flags & Common::KBD_CTRL) {
+			if (event->kbd.keycode == Common::KEYCODE_d) {
+				_engineRef->trigDebugger();
+			}
+		}
 		if (_gameRef) {
 			_gameRef->handleKeypress(event);
 		}

@@ -34,6 +34,7 @@
 #include "engines/util.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/debugger.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_engine.h"
 
@@ -48,6 +49,8 @@ namespace Wintermute {
 // This might not be the prettiest solution
 WintermuteEngine::WintermuteEngine() : Engine(g_system) {
 	_game = new AdGame("");
+	_debugger = NULL;
+	_trigDebug = false;
 }
 
 WintermuteEngine::WintermuteEngine(OSystem *syst, const ADGameDescription *desc)
@@ -78,7 +81,7 @@ WintermuteEngine::~WintermuteEngine() {
 	// Dispose your resources here
 	deinit();
 	delete _game;
-	delete _console;
+	delete _debugger;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -107,7 +110,7 @@ Common::Error WintermuteEngine::run() {
 	}
 
 	// Create debugger console. It requires GFX to be initialized
-	_console = new Console(this);
+	_debugger = new Console(this);
 
 //	DebugMan.enableDebugChannel("enginelog");
 	debugC(1, kWintermuteDebugLog, "Engine Debug-LOG enabled");
@@ -134,7 +137,7 @@ int WintermuteEngine::init() {
 		return 1;
 	}
 	BaseEngine::instance().setGameRef(_game);
-	BasePlatform::initialize(_game, 0, NULL);
+	BasePlatform::initialize(this, _game, 0, NULL);
 
 	bool windowedMode = !ConfMan.getBool("fullscreen");
 
@@ -233,9 +236,16 @@ int WintermuteEngine::messageLoop() {
 	const uint32 maxFPS = 60;
 	const uint32 frameTime = 2 * (uint32)((1.0 / maxFPS) * 1000);
 	while (!done) {
+		_debugger->onFrame();
+
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 			BasePlatform::handleEvent(&event);
+		}
+
+		if (_trigDebug) {
+			_debugger->attach();
+			_trigDebug = false;
 		}
 
 		if (_game && _game->_renderer->_active && _game->_renderer->_ready) {
@@ -273,6 +283,7 @@ int WintermuteEngine::messageLoop() {
 
 void WintermuteEngine::deinit() {
 	BaseEngine::destroy();
+	BasePlatform::deinit();
 }
 
 Common::Error WintermuteEngine::loadGameState(int slot) {
