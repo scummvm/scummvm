@@ -206,7 +206,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	if (_vm->_globals._introSpeechOffFl) {
 		int idx = 1;
 		int answer;
-	    do
+		do
 			answer = dialogAnswer(idx++);
 		while (answer != -1);
 	}

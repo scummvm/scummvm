@@ -543,7 +543,7 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 
 	_vm->_globals.Bank[idx]._fileHeader = 0;
 	if (fileDataPtr[1] == 'L' && fileDataPtr[2] == 'E')
-	    _vm->_globals.Bank[idx]._fileHeader = 1;
+		_vm->_globals.Bank[idx]._fileHeader = 1;
 	else if (fileDataPtr[1] == 'O' && fileDataPtr[2] == 'R')
 		_vm->_globals.Bank[idx]._fileHeader = 2;
 

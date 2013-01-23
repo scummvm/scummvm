@@ -152,10 +152,10 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_vm->_graphicsManager.Restore_Mem(
 				_vm->_graphicsManager._vesaBuffer,
 				_text[idx]._textBlock,
-			    xp,
-			    yp,
-			    _text[idx]._width,
-			    _text[idx]._height);
+				xp,
+				yp,
+				_text[idx]._width,
+				_text[idx]._height);
 			_vm->_graphicsManager.addVesaSegment(xp, yp, xp + width, yp + height);
 		}
 	} else {

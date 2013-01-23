@@ -1972,7 +1972,7 @@ void HopkinsEngine::displayEndDemo() {
 	if (_globals._language == LANG_FR)
 		_graphicsManager.loadImage("endfr");
 	else
-	    _graphicsManager.loadImage("enduk");
+		_graphicsManager.loadImage("enduk");
 
 	_graphicsManager.fadeInLong();
 	_eventsManager.delay(1500);

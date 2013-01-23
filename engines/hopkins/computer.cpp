@@ -927,7 +927,7 @@ void ComputerManager::displayScoreChar(int charPos, int charDisp) {
 		xp = 134;
 
 	if (charDisp >= '0' && charDisp <= '9')
-	    idx = charDisp - 45;
+		idx = charDisp - 45;
 
 	_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 11, idx);
 }
