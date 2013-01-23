@@ -224,7 +224,7 @@ void lua_close() {
 	luaM_free(refArray);
 	luaM_free(Mbuffer);
 
-	LState *tmpState, *state = lua_rootState;
+	LState *tmpState, *state;
 	for (state = lua_rootState; state != NULL;) {
 		tmpState = state->next;
 		lua_statedeinit(state);

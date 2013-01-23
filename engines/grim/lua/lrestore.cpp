@@ -391,7 +391,6 @@ void lua_Restore(SaveGame *savedState) {
 		}
 
 		if (tempProtoFunc->locvars) {
-			i = 0;
 			for (i = 0; tempProtoFunc->locvars[i].line != -1; i++) {
 				TObject tempObj2;
 				tempObj2.value.ts = tempProtoFunc->locvars[i].varname;
