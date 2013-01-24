@@ -399,12 +399,12 @@ protected:
 	int16 _blinkCounter, _blinkCounterMax;
 	int16 _countdown1;
 	int16 _tapesToInsert, _keysToInsert;
-	bool _flagF6;
+	bool _doYHitIncr;
 	bool _isLeverDown;
 	bool _isWalkingOpenDoorNotified;
-	int _status2;
-	bool _flagFA;
-	int _status3;
+	int _busyStatus;
+	bool _actionStatusChanged;
+	int _actionStatus;
 	const KlaymenIdleTableItem *_idleTable;
 	int _idleTableCount;
 	int _idleTableMaxValue;
@@ -436,17 +436,17 @@ protected:
 	// TODO Check if this can be turned into a void result
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
 
-	void startWalkToX(int16 x, bool flag);
+	void startWalkToX(int16 x, bool walkExt);
 	void startWalkToXExt(int16 x);
 	void startWalkToXSmall(int16 x);
 	void startSpecialWalkLeft(int16 x);
 	void startSpecialWalkRight(int16 x);
-	void sub41CC40(int16 x1, int16 x2);
-	void sub41CCE0(int16 x);
+	void startWalkToXDistance(int16 destX, int16 distance);
+	void startWalkToAttachedSpriteXDistance(int16 distance);
 
 	void gotoNextStateExt();
-	void sub41C770();
-	void sub41C790();
+	void beginAction();
+	void endAction();
 
 	void stStartWalkingSmall();
 	uint32 hmWalkingSmall(int messageNum, const MessageParam &param, Entity *sender);
@@ -724,7 +724,7 @@ protected:
 class KmScene2806 : public Klaymen {
 public:
 	KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
-		bool flag, NRect *clipRects, uint clipRectsCount);
+		bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
@@ -732,7 +732,7 @@ protected:
 class KmScene2809 : public Klaymen {
 public:
 	KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
-		bool flag, NRect *clipRects, uint clipRectsCount);
+		bool needsLargeSurface, NRect *clipRects, uint clipRectsCount);
 protected:
 	uint32 xHandleMessage(int messageNum, const MessageParam &param);
 };
