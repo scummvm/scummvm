@@ -444,7 +444,7 @@ int QuickTimeParser::readELST(Atom atom) {
 
 	uint32 offset = 0;
 
-	for (uint32 i = 0; i < track->editCount; i++){
+	for (uint32 i = 0; i < track->editCount; i++) {
 		track->editList[i].trackDuration = _fd->readUint32BE();
 		track->editList[i].mediaTime = _fd->readSint32BE();
 		track->editList[i].mediaRate = Rational(_fd->readUint32BE(), 0x10000);

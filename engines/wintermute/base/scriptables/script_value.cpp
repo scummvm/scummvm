@@ -242,7 +242,7 @@ bool ScValue::setProp(const char *name, ScValue *val, bool copyWhole, bool setAs
 
 		/*
 		_valIter = _valObject.find(Name);
-		if (_valIter != _valObject.end()){
+		if (_valIter != _valObject.end()) {
 		    delete _valIter->_value;
 		    _valIter->_value = NULL;
 		}

@@ -56,27 +56,27 @@ namespace Wintermute {
 
 #define IMPLEMENT_PERSISTENT(className, persistentClass)\
 	const char className::_className[] = #className;\
-	void* className::persistBuild(){\
+	void* className::persistBuild() {\
 		return ::new className(DYNAMIC_CONSTRUCTOR, DYNAMIC_CONSTRUCTOR);\
 	}\
 	\
-	bool className::persistLoad(void *instance, BasePersistenceManager *persistMgr){\
+	bool className::persistLoad(void *instance, BasePersistenceManager *persistMgr) {\
 		return ((className*)instance)->persist(persistMgr);\
 	}\
 	\
-	const char *className::getClassName(){\
+	const char *className::getClassName() {\
 		return #className;\
 	}\
 	\
 	/*SystemClass Register##class_name(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);*/\
 	\
-	void* className::operator new (size_t size){\
+	void* className::operator new (size_t size) {\
 		void* ret = ::operator new(size);\
 		SystemClassRegistry::getInstance()->registerInstance(#className, ret);\
 		return ret;\
 	}\
 	\
-	void className::operator delete (void *p){\
+	void className::operator delete (void *p) {\
 		SystemClassRegistry::getInstance()->unregisterInstance(#className, p);\
 		::operator delete(p);\
 	}\

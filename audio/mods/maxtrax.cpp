@@ -211,7 +211,7 @@ void MaxTrax::interrupt() {
 					goto endOfEventLoop;
 
 				case 0xA0: 	// SPECIAL
-					switch (curEvent->stopTime >> 8){
+					switch (curEvent->stopTime >> 8) {
 					case 0x01:	// SPECIAL_SYNC
 						_playerCtx.syncCallBack(curEvent->stopTime & 0xFF);
 						break;
