@@ -883,12 +883,45 @@ const uint16 qfg1vgaPatchDialogHeader[] = {
 	PATCH_END
 };
 
+// When clicking on the crusher in room 331, Ego approaches him to talk to him.
+// There is a block placed in front of the crusher, where Ego stops. Script 331
+// is responsible for moving Ego, in moveToCrusher::changeState. Apparently,
+// the script parameters are an edge case, since the script sets Ego to move
+// much closer to the crusher than is possible, because of the block in front of
+// him, thus the scripts wait forever for MoveTo to move Ego to the requested
+// location, which never happens, and the game freezes. Normally, the scripts
+// ask to move Ego close to 79, 165. We change that to 85, 165, which is
+// possible and prevents the freeze. Fixes bug #3585189.
+//
+// TODO: Our pathfinding algorithm stops Ego one step further away from the
+// crusher than where SSCI is placing him. Since this is an edge case, and since
+// it also happens in SSCI, it is easier to just patch the target coordinates.
+// However, we should investigate our movement related functions. In this case,
+// kInitBresen, kDoBresen, kGetAngle and kGetDistance are called, among others.
+// kAvoidPath is not used in this case.
+const byte qfg1vgaSignatureMoveToCrusher[] = {
+	9,
+	0x51, 0x1f,       // class Motion
+	0x36,             // push
+	0x39, 0x4f,       // pushi 4f (79 - x)
+	0x38, 0xa5, 0x00, // pushi 00a5 (165 - y)
+	0x7c,             // pushSelf
+	0
+};
+
+const uint16 qfg1vgaPatchMoveToCrusher[] = {
+	PATCH_ADDTOOFFSET | +3,
+	0x39, 0x55,       // pushi 55 (85 - x)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
 	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
 	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
 	{    814, "window text temp space",                      1, PATCH_MAGICDWORD(0x3f, 0xba, 0x87, 0x00),     0, qfg1vgaSignatureTempSpace,         qfg1vgaPatchTempSpace },
 	{    814, "dialog header offset",                        3, PATCH_MAGICDWORD(0x5b, 0x04, 0x80, 0x36),     0, qfg1vgaSignatureDialogHeader,      qfg1vgaPatchDialogHeader },
+	{    331, "moving to crusher",                           1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCrusher,     qfg1vgaPatchMoveToCrusher },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
