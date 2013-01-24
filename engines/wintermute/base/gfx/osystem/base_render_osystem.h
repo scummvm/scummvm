@@ -81,6 +81,7 @@ public:
 	virtual bool endSpriteBatch();
 	void endSaveLoad();
 	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false);
+	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
 	BaseSurface *createSurface();
 private:
 	void addDirtyRect(const Common::Rect &rect);
@@ -93,6 +94,7 @@ private:
 	Common::Rect *_dirtyRect;
 	Common::List<RenderTicket *> _renderQueue;
 	RenderQueueIterator _lastAddedTicket;
+	RenderTicket *_previousTicket;
 
 	bool _needsFlip;
 	uint32 _drawNum;

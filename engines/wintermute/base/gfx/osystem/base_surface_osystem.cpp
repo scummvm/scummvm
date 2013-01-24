@@ -414,6 +414,11 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 	return STATUS_OK;
 }
 
+bool BaseSurfaceOSystem::repeatLastDisplayOp(int offsetX, int offsetY, int numTimesX, int numTimesY) {
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+	renderer->repeatLastDraw(offsetX, offsetY, numTimesX, numTimesY);
+}
+
 bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAlpha) {
 	_loaded = true;
 	_surface->free();

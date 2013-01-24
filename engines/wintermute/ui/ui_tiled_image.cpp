@@ -104,14 +104,11 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	}
 
 	// tiles
-	yyy = y + (_upMiddle.bottom - _upMiddle.top);
-	for (row = 0; row < nuRows; row++) {
+	if (nuRows > 0 && nuColumns > 0) {
+		yyy = y + (_upMiddle.bottom - _upMiddle.top);
 		xxx = x + (_upLeft.right - _upLeft.left);
-		for (col = 0; col < nuColumns; col++) {
-			_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
-			xxx += tileWidth;
-		}
-		yyy += tileWidth;
+		_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
+		_image->_surface->repeatLastDisplayOp(tileWidth, tileWidth, nuColumns, nuRows);
 	}
 
 	_gameRef->_renderer->endSpriteBatch();

@@ -56,6 +56,7 @@ public:
 
 	BaseSurfaceOSystem *_owner;
 	bool operator==(RenderTicket &a);
+	const Common::Rect *getSrcRect() { return &_srcRect; }
 private:
 	Graphics::Surface *_surface;
 	Common::Rect _srcRect;
