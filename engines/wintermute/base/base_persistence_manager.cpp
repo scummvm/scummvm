@@ -166,16 +166,17 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 	}
 
 	if (thumbSize > 0) {
-		Common::MemoryReadStream thumbStream(thumbData, thumbSize);
+		Common::MemoryReadStream thumbStream(thumbData, thumbSize, DisposeAfterUse::NO);
 		Graphics::BitmapDecoder bmpDecoder;
 		if (bmpDecoder.loadStream(thumbStream)) {
-			Graphics::Surface *surf = NULL;
-			surf = bmpDecoder.getSurface()->convertTo(g_system->getOverlayFormat());
-			TransparentSurface *scaleableSurface = new TransparentSurface(*surf, false);
+			const Graphics::Surface *bmpSurface = bmpDecoder.getSurface();
+			TransparentSurface *scaleableSurface = new TransparentSurface(*bmpSurface, false);
 			Graphics::Surface *scaled = scaleableSurface->scale(kThumbnailWidth, kThumbnailHeight2);
-			desc.setThumbnail(scaled);
+			Graphics::Surface *thumb = scaled->convertTo(g_system->getOverlayFormat());
+			desc.setThumbnail(thumb);
 			delete scaleableSurface;
-			delete surf;
+			scaled->free();
+			delete scaled;
 		}
 	}
 

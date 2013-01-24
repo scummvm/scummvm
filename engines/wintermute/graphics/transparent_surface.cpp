@@ -394,6 +394,8 @@ TransparentSurface *TransparentSurface::scale(const Common::Rect &srcRect, const
 	// dstRect(x, y) = srcRect(x * srcW / dstW, y * srcH / dstH);
 	TransparentSurface *target = new TransparentSurface();
 
+	assert(format.bytesPerPixel == 4);
+
 	int srcW = srcRect.width();
 	int srcH = srcRect.height();
 	int dstW = dstRect.width();
