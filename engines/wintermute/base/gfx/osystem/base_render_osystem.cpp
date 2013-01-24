@@ -307,7 +307,6 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	ticket->_colorMod = _colorMod;
 	if (!_disableDirtyRects) {
 		drawFromTicket(ticket);
-		drawFromSurface(ticket);
 		_previousTicket = ticket;
 	} else {
 		ticket->_wantsDraw = true;
