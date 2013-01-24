@@ -1176,35 +1176,6 @@ LABEL_17:
 int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 	int v12;
 	int v14;
-	int v15;
-	int v16;
-	int v18;
-	int v19;
-	int v20;
-	int v22;
-	int v23;
-	int v24;
-	int v26;
-	int v27;
-	int v28;
-	int v31;
-	int v34;
-	int v35;
-	int v36;
-	int v38;
-	int v39;
-	int v40;
-	int v42;
-	int v43;
-	int v44;
-	int v46;
-	int v47;
-	int v48;
-	int v50;
-	int v51;
-	int v52;
-	int v53;
-	int v54;
 	int v55;
 	int v56;
 	int v58;
@@ -1250,14 +1221,6 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 	int v98;
 	int v99;
 	int v100;
-	int v101;
-	int v102;
-	int v103;
-	int v104;
-	int v105;
-	int v106;
-	int v107;
-	int v108;
 	int v109;
 	int v110;
 	int v111;
@@ -1330,87 +1293,55 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 
 	if (PARC_PERS(srcX, srcY, clipDestX, clipDestY, -1, -1, 0) != 1) {
 		v14 = 0;
-		v15 = clipDestY;
-		if (_vm->_graphicsManager._maxY > clipDestY) {
-			v16 = 5;
-			do {
-				v101 = v16;
-				v16 = v101;
-				if (checkCollisionLine(clipDestX, v15, &v136[5], &v141[5], 0, _vm->_objectsManager._lastLine) && v141[v101] <= _vm->_objectsManager._lastLine)
-					break;
-				v136[v101] = 0;
-				v141[v101] = -1;
-				++v14;
-				++v15;
-			} while (_vm->_graphicsManager._maxY > v15);
+		for (int v15 = clipDestY; v15 < _vm->_graphicsManager._maxY; v15++, v14++) { 
+			if (checkCollisionLine(clipDestX, v15, &v136[5], &v141[5], 0, _vm->_objectsManager._lastLine) && v141[5] <= _vm->_objectsManager._lastLine)
+				break;
+			v136[5] = 0;
+			v141[5] = -1;
 		}
 		v131[5] = v14;
-		v18 = 0;
-		v19 = clipDestY;
-		if (_vm->_graphicsManager._minY < clipDestY) {
-			v20 = 1;
-			do {
-				v102 = v20;
-				v20 = v102;
-				if (checkCollisionLine(clipDestX, v19, &v136[1], &v141[1], 0, _vm->_objectsManager._lastLine) && v141[v102] <= _vm->_objectsManager._lastLine)
-					break;
-				v136[v102] = 0;
-				v141[v102] = -1;
-				if (v131[5] < v18) {
-					if (v141[5] != -1)
-						break;
-				}
-				++v18;
-				--v19;
-			} while (_vm->_graphicsManager._minY < v19);
+
+		v14 = 0;
+		for (int v19 = clipDestY; v19 > _vm->_graphicsManager._minY; v19--, v14++) {
+			if (checkCollisionLine(clipDestX, v19, &v136[1], &v141[1], 0, _vm->_objectsManager._lastLine) && v141[1] <= _vm->_objectsManager._lastLine)
+				break;
+			v136[1] = 0;
+			v141[1] = -1;
+			if (v131[5] < v14 && v141[5] != -1)
+				break;
 		}
-		v131[1] = v18;
-		v22 = 0;
-		v23 = clipDestX;
-		if (_vm->_graphicsManager._maxX > clipDestX) {
-			v24 = 3;
-			do {
-				v103 = v24;
-				v24 = v103;
-				if (checkCollisionLine(v23, clipDestY, &v136[3], &v141[3], 0, _vm->_objectsManager._lastLine) && v141[v103] <= _vm->_objectsManager._lastLine)
+		v131[1] = v14;
+
+		v14 = 0;
+		for (int v23 = clipDestX; v23 < _vm->_graphicsManager._maxX; v23++) {
+			if (checkCollisionLine(v23, clipDestY, &v136[3], &v141[3], 0, _vm->_objectsManager._lastLine) && v141[3] <= _vm->_objectsManager._lastLine)
+				break;
+			v136[3] = 0;
+			v141[3] = -1;
+			++v14;
+			if (v131[1] < v14 && v141[1] != -1)
 					break;
-				v136[v103] = 0;
-				v141[v103] = -1;
-				++v22;
-				if (v131[1] < v22) {
-					if (v141[1] != -1)
-						break;
-				}
-				if (v131[5] < v22 && v141[5] != -1)
-					break;
-				++v23;
-			} while (_vm->_graphicsManager._maxX > v23);
+			if (v131[5] < v14 && v141[5] != -1)
+				break;
 		}
-		v131[3] = v22;
-		v26 = 0;
-		v27 = clipDestX;
-		if (_vm->_graphicsManager._minX < clipDestX) {
-			v28 = 7;
-			do {
-				v104 = v28;
-				v28 = v104;
-				if (checkCollisionLine(v27, clipDestY, &v136[7], &v141[7], 0, _vm->_objectsManager._lastLine) && v141[v104] <= _vm->_objectsManager._lastLine)
-					break;
-				v136[v104] = 0;
-				v141[v104] = -1;
-				++v26;
-				if (v131[1] < v26) {
-					if (v141[1] != -1)
-						break;
-				}
-				if (v131[5] < v26 && v141[5] != -1)
-					break;
-				if (v131[3] < v26 && v141[3] != -1)
-					break;
-				--v27;
-			} while (_vm->_graphicsManager._minX < v27);
+		v131[3] = v14;
+
+		v14 = 0;
+		for (int v27 = clipDestX; v27 > _vm->_graphicsManager._minX; v27--) {
+			if (checkCollisionLine(v27, clipDestY, &v136[7], &v141[7], 0, _vm->_objectsManager._lastLine) && v141[7] <= _vm->_objectsManager._lastLine)
+				break;
+			v136[7] = 0;
+			v141[7] = -1;
+			++v14;
+			if (v131[1] < v14 && v141[1] != -1)
+				break;
+			if (v131[5] < v14 && v141[5] != -1)
+				break;
+			if (v131[3] < v14 && v141[3] != -1)
+				break;
 		}
-		v131[7] = v26;
+		v131[7] = v14;
+
 		if (v141[1] < 0 || _vm->_objectsManager._lastLine < v141[1])
 			v141[1] = -1;
 		if (v141[3] < 0 || _vm->_objectsManager._lastLine < v141[3])
@@ -1429,23 +1360,17 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 			v131[7] = 1300;
 		if (v141[1] == -1 && v141[3] == -1 && v141[5] == -1 && v141[7] == -1)
 			return (int16 *)g_PTRNUL;
-		v31 = 0;
+
 		if (v141[5] != -1 && v131[1] >= v131[5] && v131[3] >= v131[5] && v131[7] >= v131[5]) {
 			v121 = v141[5];
 			v120 = v136[5];
-			v31 = 1;
-		}
-		if (v141[1] != -1 && !v31 && v131[5] >= v131[1] && v131[3] >= v131[1] && v131[7] >= v131[1]) {
+		} else if (v141[1] != -1 && v131[5] >= v131[1] && v131[3] >= v131[1] && v131[7] >= v131[1]) {
 			v121 = v141[1];
 			v120 = v136[1];
-			v31 = 1;
-		}
-		if (v141[3] != -1 && !v31 && v131[1] >= v131[3] && v131[5] >= v131[3] && v131[7] >= v131[3]) {
+		} else if (v141[3] != -1 && v131[1] >= v131[3] && v131[5] >= v131[3] && v131[7] >= v131[3]) {
 			v121 = v141[3];
 			v120 = v136[3];
-			v31 = 1;
-		}
-		if (v141[7] != -1 && !v31 && v131[5] >= v131[7] && v131[3] >= v131[7] && v131[1] >= v131[7]) {
+		} else if (v141[7] != -1 && v131[5] >= v131[7] && v131[3] >= v131[7] && v131[1] >= v131[7]) {
 			v121 = v141[7];
 			v120 = v136[7];
 		}
@@ -1457,132 +1382,88 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 			v126[v12] = 1300;
 		}
 
-		v34 = 0;
-		v35 = srcY;
-		if (_vm->_graphicsManager._maxY > srcY) {
-			v36 = 5;
-			do {
-				v105 = v36;
-				v36 = v105;
-				if (checkCollisionLine(srcX, v35, &v136[5], &v141[5], 0, _vm->_objectsManager._lastLine) && v141[v105] <= _vm->_objectsManager._lastLine)
-					break;
-				v136[v105] = 0;
-				v141[v105] = -1;
-				++v34;
-				++v35;
-			} while (_vm->_graphicsManager._maxY > v35);
+		v14 = 0;
+		for (int v35 = srcY; v35 < _vm->_graphicsManager._maxY; v35++, v14++) {
+			if (checkCollisionLine(srcX, v35, &v136[5], &v141[5], 0, _vm->_objectsManager._lastLine) && v141[5] <= _vm->_objectsManager._lastLine)
+				break;
+			v136[5] = 0;
+			v141[5] = -1;
 		}
-		v131[5] = v34 + 1;
-		v38 = 0;
-		v39 = srcY;
-		if (_vm->_graphicsManager._minY < srcY) {
-			v40 = 1;
-			do {
-				v106 = v40;
-				v40 = v106;
-				if (checkCollisionLine(srcX, v39, &v136[1], &v141[1], 0, _vm->_objectsManager._lastLine) && v141[v106] <= _vm->_objectsManager._lastLine)
-					break;
-				v136[v106] = 0;
-				v141[v106] = -1;
-				++v38;
-				if (v141[5] != -1) {
-					if (v38 > 80)
-						break;
-				}
-				--v39;
-			} while (_vm->_graphicsManager._minY < v39);
+		v131[5] = v14 + 1;
+
+		v14 = 0;
+		for (int v39 = srcY; v39 > _vm->_graphicsManager._minY; v39--) {
+			if (checkCollisionLine(srcX, v39, &v136[1], &v141[1], 0, _vm->_objectsManager._lastLine) && v141[1] <= _vm->_objectsManager._lastLine)
+				break;
+			v136[1] = 0;
+			v141[1] = -1;
+			++v14;
+			if (v141[5] != -1 && v14 > 80)
+				break;
 		}
-		v131[1] = v38 + 1;
-		v42 = 0;
-		v43 = srcX;
-		if (_vm->_graphicsManager._maxX > srcX) {
-			v44 = 3;
-			do {
-				v107 = v44;
-				v44 = v107;
-				if (checkCollisionLine(v43, srcY, &v136[3], &v141[3], 0, _vm->_objectsManager._lastLine) && v141[v107] <= _vm->_objectsManager._lastLine)
-					break;
-				v136[v107] = 0;
-				v141[v107] = -1;
-				++v42;
-				if (v141[5] != -1 || v141[1] != -1) {
-					if (v42 > 100)
-						break;
-				}
-				++v43;
-			} while (_vm->_graphicsManager._maxX > v43);
+		v131[1] = v14 + 1;
+
+		v14 = 0;
+		for (int v43 = srcX; v43 < _vm->_graphicsManager._maxX; v43++) {
+			if (checkCollisionLine(v43, srcY, &v136[3], &v141[3], 0, _vm->_objectsManager._lastLine) && v141[3] <= _vm->_objectsManager._lastLine)
+				break;
+			v136[3] = 0;
+			v141[3] = -1;
+			++v14;
+			if ((v141[5] != -1 || v141[1] != -1) && (v14 > 100))
+				break;
 		}
-		v131[3] = v42 + 1;
-		v46 = 0;
-		v47 = srcX;
-		if (_vm->_graphicsManager._minX < srcX) {
-			v48 = 7;
-			do {
-				v108 = v48;
-				v48 = v108;
-				if (checkCollisionLine(v47, srcY, &v136[7], &v141[7], 0, _vm->_objectsManager._lastLine) && v141[v108] <= _vm->_objectsManager._lastLine)
-					break;
-				v136[v108] = 0;
-				v141[v108] = -1;
-				++v46;
-				if (v141[5] != -1 || v141[1] != -1 || v141[3] != -1) {
-					if (v46 > 100)
-						break;
-				}
-				--v47;
-			} while (_vm->_graphicsManager._minX < v47);
+		v131[3] = v14 + 1;
+
+		v14 = 0;
+		for (int v47 = srcX; v47 > _vm->_graphicsManager._minX; v47--) {
+			if (checkCollisionLine(v47, srcY, &v136[7], &v141[7], 0, _vm->_objectsManager._lastLine) && v141[7] <= _vm->_objectsManager._lastLine)
+				break;
+			v136[7] = 0;
+			v141[7] = -1;
+			++v14;
+			if ((v141[5] != -1 || v141[1] != -1 || v141[3] != -1) && (v14 > 100))
+				break;
 		}
-		v131[7] = v46 + 1;
-		if (v141[1] != -1) {
-			v50 = abs(v141[1] - v121);
-			v126[1] = v50;
-		}
-		if (v141[3] != -1) {
-			v51 = abs(v141[3] - v121);
-			v126[3] = v51;
-		}
-		if (v141[5] != -1) {
-			v52 = abs(v141[5] - v121);
-			v126[5] = v52;
-		}
-		if (v141[7] != -1) {
-			v53 = abs(v141[7] - v121);
-			v126[7] = v53;
-		}
+		v131[7] = v14 + 1;
+
+		if (v141[1] != -1)
+			v126[1] = abs(v141[1] - v121);
+
+		if (v141[3] != -1)
+			v126[3] = abs(v141[3] - v121);
+
+		if (v141[5] != -1)
+			v126[5] = abs(v141[5] - v121);
+
+		if (v141[7] != -1)
+			v126[7] = abs(v141[7] - v121);
+
 		if (v141[1] == -1 && v141[3] == -1 && v141[5] == -1 && v141[7] == -1)
 			error("Nearest point not found error");
-		v54 = 0;
+
 		if (v141[1] != -1 && v126[3] >= v126[1] && v126[5] >= v126[1] && v126[7] >= v126[1]) {
-			v54 = 1;
 			v115 = v141[1];
 			v111 = v131[1];
 			v113 = 1;
 			v114 = v136[1];
+		} else if (v141[5] != -1 && v126[3] >= v126[5] && v126[1] >= v126[5] && v126[7] >= v126[5]) {
+			v115 = v141[5];
+			v111 = v131[5];
+			v113 = 5;
+			v114 = v136[5];
+		} else if (v141[3] != -1 && v126[1] >= v126[3] && v126[5] >= v126[3] && v126[7] >= v126[3]) {
+			v115 = v141[3];
+			v111 = v131[3];
+			v113 = 3;
+			v114 = v136[3];
+		} else if (v141[7] != -1 && v126[1] >= v126[7] && v126[5] >= v126[7] && v126[3] >= v126[7]) {
+			v115 = v141[7];
+			v111 = v131[7];
+			v113 = 7;
+			v114 = v136[7];
 		}
-		if (!v54) {
-			if (v141[5] != -1 && v126[3] >= v126[5] && v126[1] >= v126[5] && v126[7] >= v126[5]) {
-				v54 = 1;
-				v115 = v141[5];
-				v111 = v131[5];
-				v113 = 5;
-				v114 = v136[5];
-			}
-			if (!v54) {
-				if (v141[3] != -1 && v126[1] >= v126[3] && v126[5] >= v126[3] && v126[7] >= v126[3]) {
-					v54 = 1;
-					v115 = v141[3];
-					v111 = v131[3];
-					v113 = 3;
-					v114 = v136[3];
-				}
-				if (!v54 && v141[7] != -1 && v126[1] >= v126[7] && v126[5] >= v126[7] && v126[3] >= v126[7]) {
-					v115 = v141[7];
-					v111 = v131[7];
-					v113 = 7;
-					v114 = v136[7];
-				}
-			}
-		}
+
 		v55 = PARC_PERS(srcX, srcY, clipDestX, clipDestY, v115, v121, 0);
 		if (v55 != 1) {
 			if (v55 == 2) {
