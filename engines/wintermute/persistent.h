@@ -36,7 +36,7 @@ class BasePersistenceManager;
 // persistence support
 typedef void *(*PERSISTBUILD)(void);
 typedef bool(*PERSISTLOAD)(void *, BasePersistenceManager *);
-typedef void (*SYS_INSTANCE_CALLBACK)(void *Instance, void *Data);
+typedef void(*SYS_INSTANCE_CALLBACK)(void *instance, void *data);
 } // end of namespace Wintermute
 
 #include "engines/wintermute/system/sys_class_registry.h"
