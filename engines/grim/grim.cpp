@@ -1137,7 +1137,7 @@ bool GrimEngine::areActorsTalking() const {
 	//This takes into account that there may be actors which are still talking, but in the background.
 	bool talking = false;
 	foreach (Actor *a, _talkingActors) {
-		if (a->isTalking()) {
+		if (a->isTalkingForeground()) {
 			talking = true;
 			break;
 		}

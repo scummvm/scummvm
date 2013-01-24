@@ -1184,6 +1184,14 @@ void Actor::lineCleanup() {
 }
 
 bool Actor::isTalking() {
+	// This should return if the actor is actually talking, disregarding of the background status,
+	// otherwise when Naranja is asleep Toto's lines will be cut sometimes. Naranja and Toto both
+	// talk in background, and when Naranja lines stop toto:wait_for_message() should not return
+	// until he actually stops talking.
+	return _talking;
+}
+
+bool Actor::isTalkingForeground() const {
 	if (!_talking) {
 		return false;
 	}

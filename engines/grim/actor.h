@@ -527,6 +527,8 @@ public:
 	void drawToCleanBuffer();
 	void clearCleanBuffer();
 
+	bool isTalkingForeground() const;
+
 private:
 	void costumeMarkerCallback(int marker);
 	void collisionHandlerCallback(Actor *other) const;
