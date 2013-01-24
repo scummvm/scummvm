@@ -3370,13 +3370,12 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4816:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPressFloorButton);
-		} else {
+		else
 			GotoState(&Klaymen::stPressButtonSide);
-		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -3390,17 +3389,16 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;
 	case 0x481F:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
@@ -3459,11 +3457,10 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4803:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stJumpAndFall);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stDropFromRing);
-		}
 		break;
 	case 0x4804:
 		GotoState(&Klaymen::stPeekWall);
@@ -3491,9 +3488,8 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stJumpToRingVenusFlyTrap);
 		break;
 	case 0x4816:  
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressDoorButton);
-		}
 		break;
 	case 0x4817:				  
 		setDoDeltaX(param.asInteger());
@@ -3521,18 +3517,16 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stClimbLadderHalf);	 
 		break;
 	case 0x482E:	 
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
-		} else {
+		else
 			GotoState(&Klaymen::stWalkToFront);
-		}
 		break;
 	case 0x482F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnToFront);
-		} else {
+		else
 			GotoState(&Klaymen::stTurnToBack);
-		}
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
@@ -3639,9 +3633,8 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
 			GotoState(&Klaymen::stWalkingFirst);
-		} else {
+		} else
 			GotoState(&Klaymen::stPeekWall);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -3713,9 +3706,8 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stCloseEyes);
 		break;
 	case 0x4816:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -3788,13 +3780,12 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;		
 	case 0x4812:
-		if (param.asInteger() == 2) {
+		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -3808,13 +3799,12 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;						
 	case 0x481F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else if (param.asInteger() == 0) {
+		else if (param.asInteger() == 0)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
@@ -3875,22 +3865,20 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4812:
-		if (param.asInteger() == 2) {
+		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4816:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPressFloorButton);
-		} else {
+		else
 			GotoState(&Klaymen::stPressButtonSide);
-		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -3919,35 +3907,32 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 0) {
+		else if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
 		gotoNextStateExt();
 		break;
 	case 0x482E:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
-		} else {
+		else
 			GotoState(&Klaymen::stWalkToFront);
-		}
 		break;
 	case 0x482F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnToFront);
-		} else {
+		else
 			GotoState(&Klaymen::stTurnToBack);
-		}
 		break;
 	case 0x4834:
 		GotoState(&Klaymen::stStepOver);
@@ -3994,41 +3979,37 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x480A:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
-		} else {
+		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
-		}	
 		break;		
 	case 0x480D:
 		GotoState(&Klaymen::stUseLever);
 		break;
 	case 0x4812:
-		if (param.asInteger() == 2) {
+		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;		
 	case 0x481A:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stInsertKey);		
-		} else {
+		else
 			GotoState(&Klaymen::stInsertDisk);		
-		}
 		break;
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x481D:
 		GotoState(&Klaymen::stTurnToUse);
@@ -4070,20 +4051,18 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;		
 	case 0x480A:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
-		} else {
+		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
-		}	
 		break;		
 	case 0x4816:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPressFloorButton);
-		} else {
+		else
 			GotoState(&Klaymen::stPressButtonSide);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -4097,31 +4076,28 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;						
 	case 0x481F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else if (param.asInteger() == 0) {
+		else if (param.asInteger() == 0)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
 		gotoNextStateExt();
 		break;
 	case 0x482E:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
-		} else {
+		else
 			GotoState(&Klaymen::stWalkToFront);
-		}
 		break;
 	case 0x482F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnToFront);
-		} else {
+		else
 			GotoState(&Klaymen::stTurnToBack);
-		}
 		break;
 	}
 	return 0;
@@ -4145,11 +4121,10 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;		
 	case 0x480A:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
-		} else {
+		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
-		}
 		break;		
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -4190,23 +4165,21 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x480A:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
-		} else {
+		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
-		}
 		break;		
 	case 0x480D:
 		GotoState(&Klaymen::stUseLever);
 		break;
 	case 0x4812:
-		if (param.asInteger() == 2) {
+		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -4250,20 +4223,18 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x480A:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stMoveObjectSkipTurnFaceObject);
-		} else {
+		else
 			GotoState(&Klaymen::stMoveObjectFaceObject);
-		}
 		break;		
 	case 0x4812:
-		if (param.asInteger() == 2) {
+		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -4273,11 +4244,10 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stInsertDisk);		
 		break;
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x481D:
 		GotoState(&Klaymen::stTurnToUse);
@@ -4286,17 +4256,16 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 0) {
+		else if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
@@ -4334,13 +4303,12 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4812:
-		if (param.asInteger() == 2) {
+		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -4362,17 +4330,16 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		break;
 	case 0x481F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 0) {
+		else if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
@@ -4430,24 +4397,22 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stFallSkipJump);
 		break;				
 	case 0x4812:
-		if (param.asInteger() == 2) {
+		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x481D:
 		if (_isSittingInTeleporter) {
@@ -4455,22 +4420,20 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;
 	case 0x481E:
-		if (_isSittingInTeleporter) {
+		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
-		}
 		break;
 	case 0x481F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 0) {
+		else if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x4834:
 		GotoState(&Klaymen::stStepOver);
@@ -4573,9 +4536,8 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		break;
 	case 0x481E:
-		if (_isSittingInTeleporter) {
+		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
-		}
 		break;
 	case 0x4834:
 		GotoState(&Klaymen::stStepOver);
@@ -4627,40 +4589,37 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stHitByDoor);
 		break;
 	case 0x4812:
-		if (param.asInteger() == 2) {
+		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4816:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPressFloorButton);
-		} else {
+		else
 			GotoState(&Klaymen::stPressButtonSide);
-		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;		
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x481D:
 		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stTurnToUseInTeleporter);
 		break;
 	case 0x481E:
-		if (_isSittingInTeleporter)//CHECKME
+		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stReturnFromUseInTeleporter);
 		break;
 	case 0x4834:
@@ -4708,9 +4667,8 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4816:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger() ? 1 : 0);
@@ -4737,18 +4695,16 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 		gotoNextStateExt();
 		break;
 	case 0x482E:	 
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
-		} else {
+		else
 			GotoState(&Klaymen::stWalkToFront);
-		}
 		break;
 	case 0x482F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnToFront);
-		} else {
+		else
 			GotoState(&Klaymen::stTurnToBack);
-		}
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
@@ -4775,22 +4731,20 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4812:
-		if (param.asInteger() == 2) {
+		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4816:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPressFloorButton);
-		} else {
+		else
 			GotoState(&Klaymen::stPressButtonSide);
-		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -4806,11 +4760,10 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stInsertDisk);		
 		break;
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x481D:
 		GotoState(&Klaymen::stTurnToUse);
@@ -4854,14 +4807,12 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
 			GotoState(&Klaymen::stStartWalkingResume);
-		} else {
+		} else
 			GotoState(&Klaymen::stPeekWall);
-		}
 		break;
 	case 0x4816:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide);
-		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -4911,25 +4862,22 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
 			GotoState(&Klaymen::stStartWalkingResume);
-		} else {
+		} else
 			GotoState(&Klaymen::stPeekWall);
-		}
 		break;
 	case 0x4812:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4816:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPressFloorButton);
-		} else {
+		else
 			GotoState(&Klaymen::stPressButtonSide);
-		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -4943,35 +4891,32 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 		}
 		break;
 	case 0x481F:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
 		gotoNextStateExt();
 		break;
 	case 0x482E:	 
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
-		} else {
+		else
 			GotoState(&Klaymen::stWalkToFront);
-		}
 		break;
 	case 0x482F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnToFront);
-		} else {
+		else
 			GotoState(&Klaymen::stTurnToBack);
-		}
 		break;
 	case 0x4837:
 		stopWalking();
@@ -5014,24 +4959,22 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4816:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPressFloorButton);
-		} else {
+		else
 			GotoState(&Klaymen::stPressButtonSide);
-		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;		
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x4827:
 		GotoState(&Klaymen::stReleaseLever);
@@ -5072,42 +5015,38 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
 			GotoState(&Klaymen::stStartWalkingResume);
-		} else {
+		} else
 			GotoState(&Klaymen::stPeekWall);
-		}
 		break;
 	case 0x4812:
-		if (param.asInteger() == 2) {
+		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPickUpTube);
-		} else {
+		else
 			GotoState(&Klaymen::stPickUpGeneric);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;		
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x481F:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
@@ -5142,26 +5081,24 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
 			GotoState(&Klaymen::stStartWalkingResume);
-		} else {
+		} else
 			GotoState(&Klaymen::stPeekWall);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;		
 	case 0x481F:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
@@ -5196,26 +5133,24 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
 			GotoState(&Klaymen::stStartWalkingResume);
-		} else {
+		} else
 			GotoState(&Klaymen::stPeekWall);
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;		
 	case 0x481F:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
@@ -5244,51 +5179,46 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4816:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPressFloorButton);
-		} else {
+		else
 			GotoState(&Klaymen::stPressButtonSide);
-		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;		
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x481F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else if (param.asInteger() == 0) {
+		else if (param.asInteger() == 0)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
 		gotoNextStateExt();
 		break;
 	case 0x482E:	 
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
-		} else {
+		else
 			GotoState(&Klaymen::stWalkToFront);
-		}
 		break;
 	case 0x482F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnToFront);
-		} else {
+		else
 			GotoState(&Klaymen::stTurnToBack);
-		}
 		break;
 	case 0x4832:
 		GotoState(&Klaymen::stUseTube);
@@ -5333,45 +5263,41 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
 			GotoState(&Klaymen::stWalkingFirst);
-		} else {
+		} else
 			GotoState(&Klaymen::stPeekWall);
-		}
 		break;
 	case 0x4812:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4816:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPressFloorButton);
-		} else {
+		else
 			GotoState(&Klaymen::stPressButtonSide);
-		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x481F:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
@@ -5405,37 +5331,34 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4816:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stPressButton);
-		} else if (param.asInteger() == 2) {
+		else if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPressFloorButton);
-		} else {
+		else
 			GotoState(&Klaymen::stPressButtonSide);
-		} 
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x481F:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x4820:  
 		sendMessage(_parentScene, 0x2000, 0);
@@ -5490,9 +5413,8 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 		if (param.asInteger() != 0) {
 			_destX = param.asInteger();
 			GotoState(&Klaymen::stWalkingFirst);
-		} else {
+		} else
 			GotoState(&Klaymen::stPeekWall);
-		}
 		break;
 	case 0x4812:
 		if (param.asInteger() == 2)
@@ -5522,17 +5444,16 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x4820:  
 		sendMessage(_parentScene, 0x2000, 0);
@@ -5652,11 +5573,10 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 		gotoNextStateExt();
 		break;		
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;						
 	case 0x481D:
 		GotoState(&Klaymen::stTurnToUse);
@@ -5665,35 +5585,32 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 0) {
+		else if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x482D:
 		setDoDeltaX(_x > (int16)param.asInteger() ? 1 : 0);
 		gotoNextStateExt();
 		break;
 	case 0x482E:	 
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
-		} else {
+		else
 			GotoState(&Klaymen::stWalkToFront);
-		}
 		break;
 	case 0x482F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnToFront);
-		} else {
+		else
 			GotoState(&Klaymen::stTurnToBack);
-		}
 		break;
 	case 0x4837:
 		stopWalking();
@@ -5744,11 +5661,10 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
 	case 0x481F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAboutHalf);
-		}
 		break;
 	case 0x482E:	 
 		GotoState(&Klaymen::stWalkToFront);
@@ -5912,9 +5828,8 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stPullCord);
 		break;
 	case 0x4816:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide); 
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -5927,11 +5842,10 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stGrow);
 		break;
 	case 0x4832:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stDrinkPotion);
-		} else {
+		else
 			GotoState(&Klaymen::stUseTube);
-		}
 		break;
 	}
 	return 0;
@@ -5973,9 +5887,8 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stPullCord);
 		break;
 	case 0x4816:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stPressButtonSide); 
-		}
 		break;
 	case 0x4817:
 		setDoDeltaX(param.asInteger());
@@ -5988,11 +5901,10 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 		GotoState(&Klaymen::stGrow);
 		break;
 	case 0x4832:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stDrinkPotion);
-		} else {
+		else
 			GotoState(&Klaymen::stUseTube);
-		}
 		break;
 	}
 	return 0;
@@ -6028,18 +5940,16 @@ uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &para
 			GotoState(&Klaymen::stWonderAboutSmall);
 		break;
 	case 0x482E:	 
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStepSmall);
-		} else {
+		else
 			GotoState(&Klaymen::stWalkToFrontSmall);
-		}
 		break;
 	case 0x482F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnToBackHalfSmall);
-		} else {
+		else
 			GotoState(&Klaymen::stTurnToBackSmall);
-		}
 		break;
 	case 0x4837:
 		stopWalking();
@@ -6083,26 +5993,24 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 		startWalkToX(_dataResource.getPoint(param.asInteger()).x, false);
 		break;
 	case 0x481B:
-		if (param.asPoint().y != 0) {
+		if (param.asPoint().y != 0)
 			sub41CC40(param.asPoint().y, param.asPoint().x);
-		} else {
+		else
 			sub41CCE0(param.asPoint().x);
-		}
 		break;
 	case 0x481F:
-		if (param.asInteger() == 0) {
+		if (param.asInteger() == 0)
 			GotoState(&Klaymen::stWonderAboutHalf);
-		} else if (param.asInteger() == 1) {
+		else if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWonderAboutAfter);
-		} else if (param.asInteger() == 3) {
+		else if (param.asInteger() == 3)
 			GotoState(&Klaymen::stTurnToUseHalf);
-		} else if (param.asInteger() == 4) {
+		else if (param.asInteger() == 4)
 			GotoState(&Klaymen::stTurnAwayFromUse);
-		} else if (param.asInteger() == 5) {
+		else if (param.asInteger() == 5)
 			GotoState(&Klaymen::stTurnToUseExt);
-		} else {
+		else
 			GotoState(&Klaymen::stWonderAbout);
-		}
 		break;
 	case 0x4820:  
 		sendMessage(_parentScene, 0x2000, 0);
@@ -6211,18 +6119,16 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 		gotoNextStateExt();
 		break;
 	case 0x482E:	 
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stWalkToFrontNoStep);
-		} else {
+		else
 			GotoState(&Klaymen::stWalkToFront);
-		}
 		break;
 	case 0x482F:
-		if (param.asInteger() == 1) {
+		if (param.asInteger() == 1)
 			GotoState(&Klaymen::stTurnToFront);
-		} else {
+		else
 			GotoState(&Klaymen::stTurnToBack);
-		}
 		break;
 	case 0x483F:
 		startSpecialWalkRight(param.asInteger());
