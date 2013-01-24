@@ -129,7 +129,7 @@ void LinesManager::removeZoneLine(int idx) {
 	if (idx > MAX_LINES)
 		error("Attempting to remove a line obstacle > MAX_LIGNE.");
 
-	_vm->_linesManager._zoneLine[idx]._zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_vm->_linesManager._zoneLine[idx]._zoneData);
+	_zoneLine[idx]._zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx]._zoneData);
 }
 
 /**
@@ -445,24 +445,23 @@ void LinesManager::initRoute() {
 }
 
 // Avoid
-int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7) {
+int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *route, int a7) {
 	int v36 = a1;
 	int v7 = a2;
 	int v8 = a3;
-	int v50;
 	if (a1 < a4) {
 		for (int i = a2; Ligne[a1]._lineDataEndIdx > i; ++i) {
-			a6[v8] = Ligne[a1]._lineData[2 * i];
-			a6[v8 + 1] = Ligne[a1]._lineData[2 * i + 1];
-			a6[v8 + 2] = Ligne[a1].field6;
+			route[v8] = Ligne[a1]._lineData[2 * i];
+			route[v8 + 1] = Ligne[a1]._lineData[2 * i + 1];
+			route[v8 + 2] = Ligne[a1].field6;
 			v8 += a7;
 		}
 
 		for (int i = a1 + 1; i < a4; i++) {
 			for (int j = 0; j < Ligne[i]._lineDataEndIdx; j++) {
-				a6[v8] = Ligne[i]._lineData[2 * j];
-				a6[v8 + 1] = Ligne[i]._lineData[2 * j + 1];
-				a6[v8 + 2] = Ligne[i].field6;
+				route[v8] = Ligne[i]._lineData[2 * j];
+				route[v8 + 1] = Ligne[i]._lineData[2 * j + 1];
+				route[v8 + 2] = Ligne[i].field6;
 				v8 += a7;
 			}
 		}
@@ -472,16 +471,16 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 	}
 	if (v36 > a4) {
 		for (int i = v7; i > 0; --i) {
-			a6[v8] = Ligne[v36]._lineData[2 * i];
-			a6[v8 + 1] = Ligne[v36]._lineData[2 * i + 1];
-			a6[v8 + 2] = Ligne[v36].field8;
+			route[v8] = Ligne[v36]._lineData[2 * i];
+			route[v8 + 1] = Ligne[v36]._lineData[2 * i + 1];
+			route[v8 + 2] = Ligne[v36].field8;
 			v8 += a7;
 		}
 		for (int i = v36 - 1; i > a4; i--) {
 			for (int j = Ligne[i]._lineDataEndIdx - 1; j > 0; --j) {
-				a6[v8] = Ligne[i]._lineData[2 * j];
-				a6[v8 + 1] = Ligne[i]._lineData[2 * j + 1];
-				a6[v8 + 2] = Ligne[i].field8;
+				route[v8] = Ligne[i]._lineData[2 * j];
+				route[v8 + 1] = Ligne[i]._lineData[2 * j + 1];
+				route[v8 + 2] = Ligne[i].field8;
 				v8 += a7;
 			}
 		}
@@ -491,16 +490,16 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 	if (v36 == a4) {
 		if (a5 >= v7) {
 			for (int i = v7; i < a5; i++) {
-				a6[v8] = Ligne[a4]._lineData[2 * i];
-				a6[v8 + 1] = Ligne[a4]._lineData[2 * i + 1];
-				a6[v8 + 2] = Ligne[a4].field6;
+				route[v8] = Ligne[a4]._lineData[2 * i];
+				route[v8 + 1] = Ligne[a4]._lineData[2 * i + 1];
+				route[v8 + 2] = Ligne[a4].field6;
 				v8 += a7;
 			}
 		} else {
 			for (int i = v7; i > a5; --i) {
-				a6[v8] = Ligne[a4]._lineData[2 * i];
-				a6[v8 + 1] = Ligne[a4]._lineData[2 * i+ 1];
-				a6[v8 + 2] = Ligne[a4].field8;
+				route[v8] = Ligne[a4]._lineData[2 * i];
+				route[v8 + 1] = Ligne[a4]._lineData[2 * i+ 1];
+				route[v8 + 2] = Ligne[a4].field8;
 				v8 += a7;
 			}
 		}
@@ -509,36 +508,25 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, i
 }
 
 // Avoid 1
-int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7, int a8, int a9) {
+int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *route, int a7, int a8, int a9) {
 	int v9 = a1;
 	int v10 = a2;
 	int v40 = a3;
-	int v50;
 	if (a4 < a1) {
-		for (int i = a2; Ligne[a1]._lineDataEndIdx > i; ++i) {
-			int16 *v12 = Ligne[a1]._lineData;
-			int v13 = v12[2 * i];
-			v50 = v12[2 * i + 1];
-
-			int v14 = v40;
-			a6[v14] = v13;
-			a6[v14 + 1] = v50;
-			a6[v14 + 2] = Ligne[a1].field6;
+		for (int i = a2; i < Ligne[a1]._lineDataEndIdx; ++i) {
+			route[v40] = Ligne[a1]._lineData[2 * i];
+			route[v40 + 1] = Ligne[a1]._lineData[2 * i + 1];
+			route[v40 + 2] = Ligne[a1].field6;
 			v40 += a7;
 		}
 		int v15 = a1 + 1;
-		if (a1 + 1 == a9 + 1)
+		if (v15 == a9 + 1)
 			v15 = a8;
 		while (a4 != v15) {
-			for (int v16 = 0; v16 < Ligne[v15]._lineDataEndIdx; v16++) {
-				int16 *v17 = Ligne[v15]._lineData;
-				int v18 = v17[2 * v16];
-				v50 = v17[2 * v16 + 1];
-
-				int v19 = v40;
-				a6[v19] = v18;
-				a6[v19 + 1] = v50;
-				a6[v19 + 2] = Ligne[v15].field6;
+			for (int i = 0; i < Ligne[v15]._lineDataEndIdx; i++) {
+				route[v40] = Ligne[v15]._lineData[2 * i];
+				route[v40 + 1] = Ligne[v15]._lineData[2 * i + 1];
+				route[v40 + 2] = Ligne[v15].field6;
 				v40 += a7;
 
 			}
@@ -550,30 +538,20 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 		v9 = a4;
 	}
 	if (a4 > v9) {
-		for (int j = v10; j > 0; --j) {
-			int16 *v21 = Ligne[v9]._lineData;
-			int v22 = v21[2 * j];
-			v50 = v21[2 * j + 1];
-
-			int v23 = v40;
-			a6[v23] = v22;
-			a6[v23 + 1] = v50;
-			a6[v23 + 2] = Ligne[v9].field8;
+		for (int i = v10; i > 0; --i) {
+			route[v40] = Ligne[v9]._lineData[2 * i];
+			route[v40 + 1] = Ligne[v9]._lineData[2 * i + 1];
+			route[v40 + 2] = Ligne[v9].field8;
 			v40 += a7;
 		}
 		int v24 = v9 - 1;
 		if (v24 == a8 - 1)
 			v24 = a9;
 		while (a4 != v24) {
-			for (int k = Ligne[v24]._lineDataEndIdx - 1; k > 0; --k) {
-				int16 *v26 = Ligne[v24]._lineData;
-				int v27 = v26[2 * k];
-				v50 = v26[2 * k + 1];
-
-				int v28 = v40;
-				a6[v28] = v27;
-				a6[v28 + 1] = v50;
-				a6[v28 + 2] = Ligne[v24].field8;
+			for (int i = Ligne[v24]._lineDataEndIdx - 1; i > 0; --i) {
+				route[v40] = Ligne[v24]._lineData[2 * i];
+				route[v40 + 1] = Ligne[v24]._lineData[2 * i + 1];
+				route[v40 + 2] = Ligne[v24].field8;
 				v40 += a7;
 			}
 			--v24;
@@ -585,31 +563,17 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, 
 	}
 	if (a4 == v9) {
 		if (a5 >= v10) {
-			if (a5 > v10) {
-				int v39 = a4;
-				for (int v33 = v10; v33 < a5; v33++) {
-					int16 *v34 = Ligne[v39]._lineData;
-					int v35 = v34[2 * v33];
-					v50 = v34[2 * v33 + 1];
-
-					int v36 = v40;
-					a6[v36] = v35;
-					a6[v36 + 1] = v50;
-					a6[v36 + 2] = Ligne[v39].field6;
-					v40 += a7;
-				}
+			for (int i = v10; i < a5; i++) {
+				route[v40] = Ligne[a4]._lineData[2 * i];
+				route[v40 + 1] = Ligne[a4]._lineData[2 * i + 1];
+				route[v40 + 2] = Ligne[a4].field6;
+				v40 += a7;
 			}
 		} else {
-			int v38 = a4;
-			for (int v29 = v10; v29 > a5; v29--) {
-				int16 *v30 = Ligne[v38]._lineData;
-				int v31 = v30[2 * v29];
-				v50 = v30[2 * v29 + 1];
-
-				int v32 = v40;
-				a6[v32] = v31;
-				a6[v32 + 1] = v50;
-				a6[v32 + 2] = Ligne[v38].field8;
+			for (int i = v10; i > a5; i--) {
+				route[v40] = Ligne[a4]._lineData[2 * i];
+				route[v40 + 1] = Ligne[a4]._lineData[2 * i + 1];
+				route[v40 + 2] = Ligne[a4].field8;
 				v40 += a7;
 			}
 		}
@@ -636,13 +600,9 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 	int l;
 	int v21;
 	int v23;
-	int v24;
 	int v26;
-	int v27;
 	int v29;
-	int v30;
 	int v32;
-	int v33;
 	int v35 = 0;
 	int v36 = 0;
 	int v37;
@@ -831,11 +791,10 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 						if (NVPY != -1)
 							v22 = NVPY - v40;
 					}
-					v24 = v7;
-					_vm->_globals.super_parcours[v24] = v41;
-					_vm->_globals.super_parcours[v24 + 1] = v40 - v22;
-					_vm->_globals.super_parcours[v24 + 2] = 1;
-					_vm->_globals.super_parcours[v24 + 3] = 0;
+					_vm->_globals.super_parcours[v7] = v41;
+					_vm->_globals.super_parcours[v7 + 1] = v40 - v22;
+					_vm->_globals.super_parcours[v7 + 2] = 1;
+					_vm->_globals.super_parcours[v7 + 3] = 0;
 					v7 += 4;
 				}
 				NV_LIGNEDEP = v36;
@@ -854,11 +813,10 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 						if (NVPY != -1)
 							v25 = v40 - NVPY;
 					}
-					v27 = v7;
-					_vm->_globals.super_parcours[v27] = v41;
-					_vm->_globals.super_parcours[v27 + 1] = v25 + v40;
-					_vm->_globals.super_parcours[v27 + 2] = 5;
-					_vm->_globals.super_parcours[v27 + 3] = 0;
+					_vm->_globals.super_parcours[v7] = v41;
+					_vm->_globals.super_parcours[v7 + 1] = v25 + v40;
+					_vm->_globals.super_parcours[v7 + 2] = 5;
+					_vm->_globals.super_parcours[v7 + 3] = 0;
 					v7 += 4;
 				}
 				NV_LIGNEDEP = v36;
@@ -877,11 +835,10 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 						if (NVPX != -1)
 							v28 = v41 - NVPX;
 					}
-					v30 = v7;
-					_vm->_globals.super_parcours[v30] = v41 - v28;
-					_vm->_globals.super_parcours[v30 + 1] = v40;
-					_vm->_globals.super_parcours[v30 + 2] = 7;
-					_vm->_globals.super_parcours[v30 + 3] = 0;
+					_vm->_globals.super_parcours[v7] = v41 - v28;
+					_vm->_globals.super_parcours[v7 + 1] = v40;
+					_vm->_globals.super_parcours[v7 + 2] = 7;
+					_vm->_globals.super_parcours[v7 + 3] = 0;
 					v7 += 4;
 				}
 				NV_LIGNEDEP = v36;
@@ -900,11 +857,10 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 						if (NVPX != -1)
 							v31 = NVPX - v41;
 					}
-					v33 = v7;
-					_vm->_globals.super_parcours[v33] = v31 + v41;
-					_vm->_globals.super_parcours[v33 + 1] = v40;
-					_vm->_globals.super_parcours[v33 + 2] = 3;
-					_vm->_globals.super_parcours[v33 + 3] = 0;
+					_vm->_globals.super_parcours[v7] = v31 + v41;
+					_vm->_globals.super_parcours[v7 + 1] = v40;
+					_vm->_globals.super_parcours[v7 + 2] = 3;
+					_vm->_globals.super_parcours[v7 + 3] = 0;
 					v7 += 4;
 				}
 				NV_LIGNEDEP = v36;
@@ -917,16 +873,15 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 	return false;
 }
 
-int LinesManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9) {
-	int v99 = a7;
+int LinesManager::GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *route, int a9) {
+	int result = a7;
 	int v80 = -1;
 	++_vm->_globals.pathFindingDepth;
 	if (_vm->_globals.pathFindingDepth > 10) {
 		warning("PathFinding - Max depth reached");
-		a7 = a7;
-		a8[a7] = -1;
-		a8[a7 + 1] = -1;
-		a8[a7 + 2] = -1;
+		route[a7] = -1;
+		route[a7 + 1] = -1;
+		route[a7 + 2] = -1;
 		return -1;
 	}
 	int16 *v10 = Ligne[a1]._lineData;
@@ -973,10 +928,9 @@ LABEL_11:
 		for (;;) {
 			v65 = v15;
 			v17 = v16[v15 - 2];
-			if (v16[0] == v95) {
-				if (v93 == v16[1])
-					break;
-			}
+			if (v16[0] == v95 && v93 == v16[1])
+				break;
+
 			++v87;
 			if (v87 != _linesNumb + 1) {
 				v15 = 2 * Ligne[v87]._lineDataEndIdx;
@@ -1124,10 +1078,9 @@ LABEL_17:
 				break;;
 		}
 		if (v74 != -1 && v38 != -1 && v76 != -1 && v75 != -1) {
-			a7 = a7;
-			a8[a7] = -1;
-			a8[a7 + 1] = -1;
-			a8[a7 + 2] = -1;
+			route[a7] = -1;
+			route[a7 + 1] = -1;
+			route[a7 + 2] = -1;
 			return -1;
 		}
 	}
@@ -1147,15 +1100,15 @@ LABEL_17:
 			} while (v80 != v42);
 			if (abs(v80 - a1) == v43) {
 				if (a2 >  abs(Ligne[a1]._lineDataEndIdx / 2)) {
-					v99 = CONTOURNE(a1, a2, a7, v80, v77, a8, a9);
+					result = CONTOURNE(a1, a2, a7, v80, v77, route, a9);
 				} else {
-					v99 = CONTOURNE1(a1, a2, a7, v80, v77, a8, a9, v92, v91);
+					result = CONTOURNE1(a1, a2, a7, v80, v77, route, a9, v92, v91);
 				}
 			}
 			if (abs(v80 - a1) < v43)
-				v99 = CONTOURNE(a1, a2, v99, v80, v77, a8, a9);
+				result = CONTOURNE(a1, a2, result, v80, v77, route, a9);
 			if (v43 < abs(v80 - a1))
-				v99 = CONTOURNE1(a1, a2, v99, v80, v77, a8, a9, v92, v91);
+				result = CONTOURNE1(a1, a2, result, v80, v77, route, a9, v92, v91);
 		}
 		if (a1 > v80) {
 			int v45 = abs(a1 - v80);
@@ -1171,18 +1124,18 @@ LABEL_17:
 			} while (v80 != v47);
 			if (v45 == v48) {
 				if (a2 > abs(Ligne[a1]._lineDataEndIdx / 2)) {
-					v99 = CONTOURNE1(a1, a2, v99, v80, v77, a8, a9, v92, v91);
+					result = CONTOURNE1(a1, a2, result, v80, v77, route, a9, v92, v91);
 				} else {
-					v99 = CONTOURNE(a1, a2, v99, v80, v77, a8, a9);
+					result = CONTOURNE(a1, a2, result, v80, v77, route, a9);
 				}
 			}
 			if (v45 < v48)
-				v99 = CONTOURNE(a1, a2, v99, v80, v77, a8, a9);
+				result = CONTOURNE(a1, a2, result, v80, v77, route, a9);
 			if (v48 < v45)
-				v99 = CONTOURNE1(a1, a2, v99, v80, v77, a8, a9, v92, v91);
+				result = CONTOURNE1(a1, a2, result, v80, v77, route, a9, v92, v91);
 		}
 		if (a1 == v80)
-			v99 = CONTOURNE(a1, a2, v99, a1, v77, a8, a9);
+			result = CONTOURNE(a1, a2, result, a1, v77, route, a9);
 		for(;;) {
 			if (!checkCollisionLine(NVPX, NVPY, &v101, &v100, _vm->_objectsManager._lastLine + 1, _linesNumb))
 				break;
@@ -1216,7 +1169,7 @@ LABEL_17:
 		NVPX = -1;
 		NVPY = -1;
 	}
-	return v99;
+	return result;
 }
 
 // Avoid 2
@@ -1373,7 +1326,6 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 		v136[v12] = 0;
 		v131[v12] = 1300;
 		v126[v12] = 1300;
-		++v12;
 	}
 
 	if (PARC_PERS(srcX, srcY, clipDestX, clipDestY, -1, -1, 0) != 1) {

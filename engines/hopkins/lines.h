@@ -79,10 +79,10 @@ public:
 	void addLine(int idx, int a2, int a3, int a4, int a5, int a6, int a7);
 	bool checkCollisionLine(int xp, int yp, int *foundDataIdx, int *foundLineIdx, int startLineIdx, int endLineIdx);
 	void initRoute();
-	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7, int a8, int a9);
-	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *a6, int a7);
+	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *route, int a7, int a8, int a9);
+	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *route, int a7);
 	bool MIRACLE(int a1, int a2, int a3, int a4, int a5);
-	int GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *a8, int a9);
+	int GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *route, int a9);
 	int16 *PARCOURS2(int srcX, int srcY, int destX, int destY);
 	int PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
 	int VERIF_SMOOTH(int a1, int a2, int a3, int a4);
