@@ -166,8 +166,15 @@ List of fixed bugs in GF scripts:
 
 	Fix bug #622 "GRIM: pick-up telephone in Toto's building" - si.lua.patchr
 	This patch hides the actor 'si.phone_actor' when Manny or Toto pick up the phone, since the costumes they use
-	have a phone model which gets animated. This patch adds some 'si.phone_actor:set_visibility(TRUE/FALSE) in a
-	few places.
+	have a phone model which gets animated. This patch adds some 'si.phone_actor:set_visibility(TRUE/FALSE)' calls
+	in a few places.
+
+	Fix Manny's animations becoming stuck when he speaks to the woman at the phone while skipping dialogue lines
+		- si.lua.patchr
+	The function 'si.phone.use' handles the dialogue with the woman. It calls some gesture functions
+	(e.g. manny:hand_gesture) which push a costume. If the dialogue lines are skipped that costume may not get
+	popped out because meanwhile another one is pushed and popped. This patch adds a while loop which blocks
+	the script until the gesture is finished.
 
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
