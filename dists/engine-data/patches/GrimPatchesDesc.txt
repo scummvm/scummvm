@@ -150,6 +150,25 @@ List of fixed bugs in GF scripts:
 	new chore 'open_fast' which just sets the open bitmap image. lo.lua.patchr and os.lua.patchr then call
 	complete_chore with the new chores as argument.
 
+	Fix bug #285 "GRIM: Showing the Lengua-card to the tattoo-guy, he faces wrong." - si.lua.patchr
+	When using some objects on Toto and he is at the phone, the function 'si.interrupt_toto' is called, but it
+	does not set Toto's head. This patch adds the needed call.
+
+	Fix Toto talking before he picks up the phone - si.lua.patchr
+	After interrupting Toto, the function 'si.toto_on_phone' is called, which restores the dialogue with Velasco.
+	The problem is that it does not wait for Toto to finish turning towards the phone, so he starts speaking with
+	Velasco before he has the phone. This patch adds some sleep_for calls before calling 'si.toto_on_phone'.
+
+	Fix Toto not talking to Velasco anymore after Manny screams to Velasco - si.lua.patchr
+	When Toto phones Velasco, Manny can 'use' Toto and he will scream to Velasco. After the sequence Toto does not
+	resume his dialogue with Velasco: the script 'si.toto_on_phone' is stopped and is not started anymore.
+	This patch adds the missing start_script call.
+
+	Fix bug #622 "GRIM: pick-up telephone in Toto's building" - si.lua.patchr
+	This patch hides the actor 'si.phone_actor' when Manny or Toto pick up the phone, since the costumes they use
+	have a phone model which gets animated. This patch adds some 'si.phone_actor:set_visibility(TRUE/FALSE) in a
+	few places.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
@@ -159,7 +178,9 @@ List of fixed bugs in GF scripts:
 +Others modifications:
 	-The function si.set_up_actors (si.lua), calls "start_script(si.naranja_drinking)",
 	which doesn't exist. The problem with that is that lua_error ends the function that
-	was going on, breaking si.set really badly. The bad call is replaced with the correct one.
+	was going on, breaking si.set really badly. The bad call is removed, instead of being replaced
+	with "start_script(si.naranja_drink)", which does exists, but which can cause Naranja to stutter
+	when entering the set.
 
 Contents of residualvm-grim-patches.lab and its rebuild:
 
