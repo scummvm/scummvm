@@ -75,6 +75,8 @@ WintermuteEngine::WintermuteEngine(OSystem *syst, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kWintermuteDebugGeneral, "general", "various issues not covered by any of the above");
 
 	_game = NULL;
+	_debugger = NULL;
+	_trigDebug = false;
 }
 
 WintermuteEngine::~WintermuteEngine() {
