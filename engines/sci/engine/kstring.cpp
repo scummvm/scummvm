@@ -155,29 +155,46 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 		source++; /* Skip whitespace */
 
 	int16 result = 0;
+	int16 sign = 1;
 
+	if (*source == '-') {
+		sign = -1;
+		source++;
+	}
 	if (*source == '$') {
 		// Hexadecimal input
-		result = (int16)strtol(source + 1, NULL, 16);
+		source++;
+		char c;
+		while ((c = *source++) != 0) {
+			int16 x = 0;
+			if ((c >= '0') && (c <= '9'))
+				x = c - '0';
+			else if ((c >= 'a') && (c <= 'f'))
+				x = c - 'a' + 10;
+			else if ((c >= 'A') && (c <= 'F'))
+				x = c - 'A' + 10;
+			else
+				// Stop if we encounter anything other than a digit (like atoi)
+				break;
+			result *= 16;
+			result += x;
+		}
 	} else {
 		// Decimal input. We can not use strtol/atoi in here, because while
 		// Sierra used atoi, it was a non standard compliant atoi, that didn't
 		// do clipping. In SQ4 we get the door code in here and that's even
 		// larger than uint32!
-		if (*source == '-') {
-			// FIXME: Setting result to -1 does _not_ negate the output.
-			result = -1;
-			source++;
-		}
-		while (*source) {
-			if ((*source < '0') || (*source > '9'))
+		char c;
+		while ((c = *source++) != 0) {
+			if ((c < '0') || (c > '9'))
 				// Stop if we encounter anything other than a digit (like atoi)
 				break;
 			result *= 10;
-			result += *source - 0x30;
-			source++;
+			result += c - '0';
 		}
 	}
+
+	result *= sign;
 
 	return make_reg(0, result);
 }
