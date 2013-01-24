@@ -932,24 +932,26 @@ bool AdScene::traverseNodes(bool doUpdate) {
 		if (_autoScroll) {
 			// adjust horizontal scroll
 			if (_gameRef->_timer - _lastTimeH >= _scrollTimeH) {
+				int timesMissed = (_gameRef->_timer - _lastTimeH) / _scrollTimeH;
 				_lastTimeH = _gameRef->_timer;
 				if (_offsetLeft < _targetOffsetLeft) {
-					_offsetLeft += _scrollPixelsH;
+					_offsetLeft += _scrollPixelsH * timesMissed;
 					_offsetLeft = MIN(_offsetLeft, _targetOffsetLeft);
 				} else if (_offsetLeft > _targetOffsetLeft) {
-					_offsetLeft -= _scrollPixelsH;
+					_offsetLeft -= _scrollPixelsH * timesMissed;
 					_offsetLeft = MAX(_offsetLeft, _targetOffsetLeft);
 				}
 			}
 
 			// adjust vertical scroll
 			if (_gameRef->_timer - _lastTimeV >= _scrollTimeV) {
+				int timesMissed = (_gameRef->_timer - _lastTimeV) / _scrollTimeV;
 				_lastTimeV = _gameRef->_timer;
 				if (_offsetTop < _targetOffsetTop) {
-					_offsetTop += _scrollPixelsV;
+					_offsetTop += _scrollPixelsV * timesMissed;
 					_offsetTop = MIN(_offsetTop, _targetOffsetTop);
 				} else if (_offsetTop > _targetOffsetTop) {
-					_offsetTop -= _scrollPixelsV;
+					_offsetTop -= _scrollPixelsV * timesMissed;
 					_offsetTop = MAX(_offsetTop, _targetOffsetTop);
 				}
 			}
