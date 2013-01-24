@@ -227,7 +227,7 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	png_read_end(pngPtr, NULL);
 
 	// Destroy libpng structures
-	png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
+	png_destroy_read_struct(&pngPtr, &infoPtr, &endInfo);
 
 	// We no longer need the file stream, thus close it here
 	_stream = 0;
