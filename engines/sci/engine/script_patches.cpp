@@ -883,22 +883,15 @@ const uint16 qfg1vgaPatchDialogHeader[] = {
 	PATCH_END
 };
 
-// When clicking on the crusher in room 331, Ego approaches him to talk to him.
-// There is a block placed in front of the crusher, where Ego stops. Script 331
-// is responsible for moving Ego, in moveToCrusher::changeState. Apparently,
-// the script parameters are an edge case, since the script sets Ego to move
-// much closer to the crusher than is possible, because of the block in front of
-// him, thus the scripts wait forever for MoveTo to move Ego to the requested
-// location, which never happens, and the game freezes. Normally, the scripts
-// ask to move Ego close to 79, 165. We change that to 85, 165, which is
-// possible and prevents the freeze. Fixes bug #3585189.
-//
-// TODO: Our pathfinding algorithm stops Ego one step further away from the
-// crusher than where SSCI is placing him. Since this is an edge case, and since
-// it also happens in SSCI, it is easier to just patch the target coordinates.
-// However, we should investigate our movement related functions. In this case,
-// kInitBresen, kDoBresen, kGetAngle and kGetDistance are called, among others.
-// kAvoidPath is not used in this case.
+// When clicking on the crusher in room 331, Ego approaches him to talk to him,
+// an action that is handled by moveToCrusher::changeState in script 331. The
+// scripts set Ego to move close to the crusher, but when Ego is running instead
+// of walking, the target coordinates specified by script 331 are never reached,
+// as Ego is making larger steps, and never reaches the required spot. This is an
+// edge case that can occur when Ego is set to run. Normally, when clicking on
+// the crusher, ego is supposed to move close to position 79, 165. We change it
+// to 85, 165, which is not an edge case thus the freeze is avoided.
+// Fixes bug #3585189.
 const byte qfg1vgaSignatureMoveToCrusher[] = {
 	9,
 	0x51, 0x1f,       // class Motion
