@@ -76,6 +76,8 @@ BaseRenderOSystem::~BaseRenderOSystem() {
 		delete ticket;
 	}
 
+	delete _dirtyRect;
+
 	_renderSurface->free();
 	delete _renderSurface;
 	_blankSurface->free();
