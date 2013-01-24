@@ -69,6 +69,13 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseRenderOSystem::~BaseRenderOSystem() {
+	RenderQueueIterator it = _renderQueue.begin();
+	while (it != _renderQueue.end()) {
+		RenderTicket *ticket = *it;
+		it = _renderQueue.erase(it);
+		delete ticket;
+	}
+
 	_renderSurface->free();
 	delete _renderSurface;
 	_blankSurface->free();
