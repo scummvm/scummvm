@@ -571,9 +571,9 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	}
 	case K_MESSAGE_LASTMESSAGE: {
 		MessageTuple msg;
-		int module;
+		int lastModule;
 
-		s->_msgState->lastQuery(module, msg);
+		s->_msgState->lastQuery(lastModule, msg);
 
 		bool ok = false;
 
@@ -582,7 +582,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 
 			if (buffer) {
 				ok = true;
-				WRITE_LE_UINT16(buffer, module);
+				WRITE_LE_UINT16(buffer, lastModule);
 				WRITE_LE_UINT16(buffer + 2, msg.noun);
 				WRITE_LE_UINT16(buffer + 4, msg.verb);
 				WRITE_LE_UINT16(buffer + 6, msg.cond);
@@ -593,7 +593,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 
 			if (buffer) {
 				ok = true;
-				buffer[0] = make_reg(0, module);
+				buffer[0] = make_reg(0, lastModule);
 				buffer[1] = make_reg(0, msg.noun);
 				buffer[2] = make_reg(0, msg.verb);
 				buffer[3] = make_reg(0, msg.cond);
