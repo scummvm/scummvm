@@ -49,7 +49,7 @@ struct KlaymenIdleTableItem {
 
 class Klaymen : public AnimatedSprite {
 public:
-	Klaymen(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int surfacePriority = 1000, int objectPriority = 1000, NRectArray *clipRects = NULL);
+	Klaymen(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRectArray *clipRects = NULL);
 
 	void update();
 

@@ -60,14 +60,14 @@ static const KlaymenIdleTableItem klaymenIdleTable1002[] = {
 
 // Klaymen
 
-Klaymen::Klaymen(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, int surfacePriority, int objectPriority, NRectArray *clipRects)
-	: AnimatedSprite(vm, objectPriority), _idleCounterMax(0), _idleCounter(0), _isMoveObjectRequested(false), _blinkCounterMax(0),
-	_isWalkingOpenDoorNotified(false), _countdown1(0), _tapesToInsert(0), _keysToInsert(0), /*_field118(0), */_status2(0), _acceptInput(true),
+Klaymen::Klaymen(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRectArray *clipRects)
+	: AnimatedSprite(vm, 1000), _idleCounterMax(0), _idleCounter(0), _isMoveObjectRequested(false), _blinkCounterMax(0),
+	_isWalkingOpenDoorNotified(false), _countdown1(0), _tapesToInsert(0), _keysToInsert(0), _status2(0), _acceptInput(true),
 	_attachedSprite(NULL), _isWalking(false), _status3(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false),
 	_flagF6(false), _isLeverDown(false), _isSittingInTeleporter(false), _flagFA(false), _ladderStatus(0), _pathPoints(NULL), _soundFlag(false),
 	_idleTableNum(0), _otherSprite(NULL), _moveObjectCountdown(0), _readyToSpit(false), _walkResumeFrameIncr(0) {
 	
-	createSurface(surfacePriority, 320, 200);
+	createSurface(1000, 320, 200);
 	_x = x;
 	_y = y;
 	_destX = x;
@@ -3344,12 +3344,10 @@ void Klaymen::stPeekInsideBlink() {
 	_blinkCounterMax = _vm->_rnd->getRandomNumber(64 - 1) + 24;
 }
 
-//##############################################################################
-
 // KmScene1001
 
 KmScene1001::KmScene1001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 }
 
 uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -3368,10 +3366,10 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stPullHammerLever);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPressButton);
 		} else if (param.asInteger() == 2) {
@@ -3427,7 +3425,7 @@ uint32 KmScene1001::xHandleMessage(int messageNum, const MessageParam &param) {
 // KmScene1002
 
 KmScene1002::KmScene1002(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	setKlaymenIdleTable1();
 	
@@ -3492,7 +3490,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:			   
 		GotoState(&Klaymen::stJumpToRingVenusFlyTrap);
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:  
+	case 0x4816:  
 		if (param.asInteger() == 0) {
 			GotoState(&Klaymen::stPressDoorButton);
 		}
@@ -3549,7 +3547,7 @@ uint32 KmScene1002::xHandleMessage(int messageNum, const MessageParam &param) {
 // KmScene1004
 
 KmScene1004::KmScene1004(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	_dataResource.load(0x01900A04);	
 }
@@ -3615,7 +3613,7 @@ uint32 KmScene1004::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1109::KmScene1109(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	// Empty
 }
@@ -3683,7 +3681,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 // KmScene1201
 
 KmScene1201::KmScene1201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	setKlaymenIdleTable(klaymenTable4, ARRAYSIZE(klaymenTable4));
 	_flagF6 = true;
@@ -3702,7 +3700,7 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480A:
 		GotoState(&Klaymen::stMoveObject);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4813:
@@ -3714,7 +3712,7 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4815:
 		GotoState(&Klaymen::stCloseEyes);
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 0) {
 			GotoState(&Klaymen::stPressButtonSide);
 		}
@@ -3754,7 +3752,7 @@ uint32 KmScene1201::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1303::KmScene1303(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	// Empty
 }
@@ -3775,7 +3773,7 @@ uint32 KmScene1303::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1304::KmScene1304(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	// Empty	
 }
@@ -3789,7 +3787,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;		
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2) {
 			GotoState(&Klaymen::stPickUpNeedle);
 		} else if (param.asInteger() == 1) {
@@ -3829,7 +3827,7 @@ uint32 KmScene1304::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1305::KmScene1305(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	// Empty	
 }
@@ -3855,7 +3853,7 @@ uint32 KmScene1305::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1306::KmScene1306(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 }
 
@@ -3876,7 +3874,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2) {
 			GotoState(&Klaymen::stPickUpNeedle);
 		} else if (param.asInteger() == 1) {
@@ -3885,7 +3883,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stPickUpGeneric);
 		}
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPressButton);
 		} else if (param.asInteger() == 2) {
@@ -3898,7 +3896,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;		
-	case NM_KLAYMEN_INSERT_DISK:
+	case 0x481A:
 		GotoState(&Klaymen::stInsertDisk);		
 		break;
 	case 0x481B:
@@ -3981,7 +3979,7 @@ uint32 KmScene1306::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1308::KmScene1308(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	// Empty	
 }
@@ -4005,7 +4003,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stUseLever);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2) {
 			GotoState(&Klaymen::stPickUpNeedle);
 		} else if (param.asInteger() == 1) {
@@ -4018,7 +4016,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;		
-	case NM_KLAYMEN_INSERT_DISK:
+	case 0x481A:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stInsertKey);		
 		} else {
@@ -4038,7 +4036,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x481E:
 		GotoState(&Klaymen::stReturnFromUse);
 		break;
-	case NM_KLAYMEN_RELEASE_LEVER:
+	case 0x4827:
 		GotoState(&Klaymen::stReleaseLever);
 		break;
 	case 0x4834:
@@ -4057,7 +4055,7 @@ uint32 KmScene1308::xHandleMessage(int messageNum, const MessageParam &param) {
 // KmScene1401
 
 KmScene1401::KmScene1401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	// Empty	
 }
@@ -4078,7 +4076,7 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stMoveObjectFaceObject);
 		}	
 		break;		
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPressButton);
 		} else if (param.asInteger() == 2) {
@@ -4132,7 +4130,7 @@ uint32 KmScene1401::xHandleMessage(int messageNum, const MessageParam &param) {
 // KmScene1402
 
 KmScene1402::KmScene1402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	SetFilterY(&Sprite::defFilterY);	
 }
@@ -4177,7 +4175,7 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 // KmScene1403
 
 KmScene1403::KmScene1403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	setKlaymenIdleTable(klaymenTable4, ARRAYSIZE(klaymenTable4));
 }
@@ -4201,7 +4199,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stUseLever);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2) {
 			GotoState(&Klaymen::stPickUpNeedle);
 		} else if (param.asInteger() == 1) {
@@ -4221,7 +4219,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 			sub41CCE0(param.asPoint().x);
 		}
 		break;
-	case NM_KLAYMEN_RELEASE_LEVER:
+	case 0x4827:
 		GotoState(&Klaymen::stReleaseLever);
 		break;
 	case 0x483F:
@@ -4237,7 +4235,7 @@ uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {
 // KmScene1404
 
 KmScene1404::KmScene1404(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	// Empty	
 }
@@ -4258,7 +4256,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stMoveObjectFaceObject);
 		}
 		break;		
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2) {
 			GotoState(&Klaymen::stPickUpNeedle);
 		} else if (param.asInteger() == 1) {
@@ -4271,7 +4269,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 		setDoDeltaX(param.asInteger());
 		gotoNextStateExt();
 		break;
-	case NM_KLAYMEN_INSERT_DISK:
+	case 0x481A:
 		GotoState(&Klaymen::stInsertDisk);		
 		break;
 	case 0x481B:
@@ -4315,7 +4313,7 @@ uint32 KmScene1404::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1608::KmScene1608(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 }
 
 uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
@@ -4335,7 +4333,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 		else
 			GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2) {
 			GotoState(&Klaymen::stPickUpNeedle);
 		} else if (param.asInteger() == 1) {
@@ -4406,7 +4404,7 @@ uint32 KmScene1608::xHandleMessage(int messageNum, const MessageParam &param) {
 // KmScene1705
 
 KmScene1705::KmScene1705(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	// Empty	
 }
@@ -4423,16 +4421,15 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
-		if (_isSittingInTeleporter) {
+		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
-		} else {
+		else
 			GotoState(&Klaymen::stTryStandIdle);
-		}
 		break;
 	case 0x4803:
 		GotoState(&Klaymen::stFallSkipJump);
 		break;				
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2) {
 			GotoState(&Klaymen::stPickUpNeedle);
 		} else if (param.asInteger() == 1) {
@@ -4499,7 +4496,7 @@ uint32 KmScene1705::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene1901::KmScene1901(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	// Empty	
 }
@@ -4538,7 +4535,7 @@ uint32 KmScene1901::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2001::KmScene2001(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	// Empty	
 }
@@ -4555,9 +4552,9 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 		startWalkToX(param.asPoint().x, false);
 		break;
 	case 0x4004:
-		if (_isSittingInTeleporter) {
+		if (_isSittingInTeleporter)
 			GotoState(&Klaymen::stSitIdleTeleporter);
-		} else
+		else
 			GotoState(&Klaymen::stTryStandIdle);
 		break;
 	case 0x4804:
@@ -4604,7 +4601,7 @@ uint32 KmScene2001::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2101::KmScene2101(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	// Empty
 }
@@ -4629,7 +4626,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4811:
 		GotoState(&Klaymen::stHitByDoor);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2) {
 			GotoState(&Klaymen::stPickUpNeedle);
 		} else if (param.asInteger() == 1) {
@@ -4638,7 +4635,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stPickUpGeneric);
 		}
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPressButton);
 		} else if (param.asInteger() == 2) {
@@ -4690,7 +4687,7 @@ uint32 KmScene2101::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2201::KmScene2201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	_surface->setClipRects(clipRects, clipRectsCount);
 
@@ -4707,10 +4704,10 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 0) {
 			GotoState(&Klaymen::stPressButtonSide);
 		}
@@ -4764,7 +4761,7 @@ uint32 KmScene2201::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2203::KmScene2203(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 	
@@ -4777,7 +4774,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2) {
 			GotoState(&Klaymen::stPickUpNeedle);
 		} else if (param.asInteger() == 1) {
@@ -4786,7 +4783,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stPickUpGeneric);
 		}
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPressButton);
 		} else if (param.asInteger() == 2) {
@@ -4805,7 +4802,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4819:
 		GotoState(&Klaymen::stClayDoorOpen);
 		break;
-	case NM_KLAYMEN_INSERT_DISK:
+	case 0x481A:
 		GotoState(&Klaymen::stInsertDisk);		
 		break;
 	case 0x481B:
@@ -4836,7 +4833,7 @@ uint32 KmScene2203::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2205::KmScene2205(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -4861,7 +4858,7 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stPeekWall);
 		}
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 0) {
 			GotoState(&Klaymen::stPressButtonSide);
 		} 
@@ -4884,7 +4881,7 @@ uint32 KmScene2205::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2206::KmScene2206(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	_walkResumeFrameIncr = 1;
 	_vm->_soundMan->addSound(0x80101800, 0xD3B02847);
@@ -4918,14 +4915,14 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stPeekWall);
 		}
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPickUpTube);
 		} else {
 			GotoState(&Klaymen::stPickUpGeneric);
 		}
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPressButton);
 		} else if (param.asInteger() == 2) {
@@ -4990,7 +4987,7 @@ uint32 KmScene2206::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2207::KmScene2207(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 	
@@ -5013,10 +5010,10 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stInteractLever);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPressButton);
 		} else if (param.asInteger() == 2) {
@@ -5036,7 +5033,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 			sub41CCE0(param.asPoint().x);
 		}
 		break;
-	case NM_KLAYMEN_RELEASE_LEVER:
+	case 0x4827:
 		GotoState(&Klaymen::stReleaseLever);
 		break;
 	case 0x482D:
@@ -5054,7 +5051,7 @@ uint32 KmScene2207::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2242::KmScene2242(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -5079,7 +5076,7 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stPeekWall);
 		}
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2) {
 			GotoState(&Klaymen::stPickUpNeedle);
 		} else if (param.asInteger() == 1) {
@@ -5124,7 +5121,7 @@ uint32 KmScene2242::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmHallOfRecords::KmHallOfRecords(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -5178,7 +5175,7 @@ uint32 KmHallOfRecords::xHandleMessage(int messageNum, const MessageParam &param
 }
 
 KmScene2247::KmScene2247(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -5232,7 +5229,7 @@ uint32 KmScene2247::xHandleMessage(int messageNum, const MessageParam &param) {
 }
   
 KmScene2401::KmScene2401(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 	
@@ -5246,7 +5243,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPressButton);
 		} else if (param.asInteger() == 2) {
@@ -5315,7 +5312,7 @@ uint32 KmScene2401::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2402::KmScene2402(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -5340,10 +5337,10 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stPeekWall);
 		}
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPressButton);
 		} else if (param.asInteger() == 2) {
@@ -5387,7 +5384,7 @@ uint32 KmScene2402::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2403::KmScene2403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -5404,10 +5401,10 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x480D:
 		GotoState(&Klaymen::stPullCord);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
-	case NM_KLAYMEN_PRESS_BUTTON:
+	case 0x4816:
 		if (param.asInteger() == 1) {
 			GotoState(&Klaymen::stPressButton);
 		} else if (param.asInteger() == 2) {
@@ -5473,7 +5470,7 @@ uint32 KmScene2403::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 	
 KmScene2406::KmScene2406(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	_surface->setClipRects(clipRects, clipRectsCount);
 	
@@ -5497,7 +5494,7 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 			GotoState(&Klaymen::stPeekWall);
 		}
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
@@ -5566,7 +5563,7 @@ uint32 KmScene2406::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 	
 KmScene2501::KmScene2501(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 	
@@ -5617,7 +5614,7 @@ uint32 KmScene2501::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2732::KmScene2732(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 	
@@ -5634,7 +5631,7 @@ uint32 KmScene2732::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2801::KmScene2801(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -5647,7 +5644,7 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 	case 0x4004:
 		GotoState(&Klaymen::stTryStandIdle);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4817:
@@ -5706,7 +5703,7 @@ uint32 KmScene2801::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2803::KmScene2803(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, int clipRectsCount)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	_surface->setClipRects(clipRects, clipRectsCount);
 	
@@ -5770,7 +5767,7 @@ uint32 KmScene2803::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2803Small::KmScene2803Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	
 	_dataResource.load(0x81120132);
 }
@@ -5823,7 +5820,7 @@ uint32 KmScene2803Small::xHandleMessage(int messageNum, const MessageParam &para
 }
 
 KmScene2805::KmScene2805(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -5881,7 +5878,7 @@ uint32 KmScene2805::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene2806::KmScene2806(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
 	bool flag, NRect *clipRects, uint clipRectsCount)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	if (flag) {
 		NDimensions dimensions = _animResource.loadSpriteDimensions(0x2838C010);
@@ -5942,7 +5939,7 @@ uint32 KmScene2806::xHandleMessage(int messageNum, const MessageParam &param) {
 
 KmScene2809::KmScene2809(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y,
 	bool flag, NRect *clipRects, uint clipRectsCount)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	if (flag) {
 		NDimensions dimensions = _animResource.loadSpriteDimensions(0x2838C010);
@@ -6002,7 +5999,7 @@ uint32 KmScene2809::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2810Small::KmScene2810Small(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y) 
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -6052,7 +6049,7 @@ uint32 KmScene2810Small::xHandleMessage(int messageNum, const MessageParam &para
 }
 
 KmScene2810::KmScene2810(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRect *clipRects, uint clipRectsCount)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 
 	_surface->setClipRects(clipRects, clipRectsCount);
 	
@@ -6075,7 +6072,7 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 		if (param.asInteger() == 3)
 			GotoState(&Klaymen::stFinishGrow);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		GotoState(&Klaymen::stPickUpGeneric);
 		break;
 	case 0x4817:
@@ -6147,7 +6144,7 @@ uint32 KmScene2810::xHandleMessage(int messageNum, const MessageParam &param) {
 }
 
 KmScene2812::KmScene2812(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
-	: Klaymen(vm, parentScene, x, y, 1000, 1000) {
+	: Klaymen(vm, parentScene, x, y) {
 	// Empty
 }
 
@@ -6164,7 +6161,7 @@ uint32 KmScene2812::xHandleMessage(int messageNum, const MessageParam &param) {
 		_destY = param.asInteger();
 		GotoState(&Klaymen::stJumpToGrabFall);
 		break;
-	case NM_KLAYMEN_PICKUP:
+	case 0x4812:
 		if (param.asInteger() == 2)
 			GotoState(&Klaymen::stPickUpNeedle);
 		else if (param.asInteger() == 1)
