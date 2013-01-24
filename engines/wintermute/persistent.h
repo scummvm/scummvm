@@ -70,13 +70,13 @@ namespace Wintermute {
 	\
 	/*SystemClass Register##class_name(class_name::_className, class_name::PersistBuild, class_name::PersistLoad, persistent_class);*/\
 	\
-	void* className::operator new (size_t size) {\
+	void* className::operator new(size_t size) {\
 		void* ret = ::operator new(size);\
 		SystemClassRegistry::getInstance()->registerInstance(#className, ret);\
 		return ret;\
 	}\
 	\
-	void className::operator delete (void *p) {\
+	void className::operator delete(void *p) {\
 		SystemClassRegistry::getInstance()->unregisterInstance(#className, p);\
 		::operator delete(p);\
 	}\

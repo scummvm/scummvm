@@ -481,10 +481,10 @@ bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
 	    _length = max(value->getInt(0), 0);
 
 	    char propName[20];
-	    if (_length < OrigLength) {
-	        for(int i=_length; i<OrigLength; i++) {
-	            sprintf(PropName, "%d", i);
-	            _values->DeleteProp(PropName);
+	    if (_length < origLength) {
+	        for(int i=_length; i < origLength; i++) {
+	            sprintf(propName, "%d", i);
+	            _values->DeleteProp(propName);
 	        }
 	    }
 	    return STATUS_OK;
