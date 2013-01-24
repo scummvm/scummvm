@@ -407,7 +407,7 @@ sub add_person {
 		if (length $desc > 0) {
 			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
-			if ($ascii_name ne $name) {
+			if ($ascii_desc ne $desc) {
 		 		print "A2".$ascii_desc."\n";
 			}
 			print "C2".$desc."\n";

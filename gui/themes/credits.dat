@@ -6,7 +6,6 @@ C0Eugene Sandulenko
 C1PR Office
 A0Arnaud Boutonne
 C0Arnaud Boutonné
-A2Public Relations Officer, Project Administrator
 C2Public Relations Officer, Project Administrator
 C0Eugene Sandulenko
 C2Project Leader
@@ -137,7 +136,6 @@ C0Eugene Sandulenko
 C1Kyra
 A0Torbjorn Andersson
 C0Torbjörn Andersson
-A2VQA Player
 C2VQA Player
 C0Oystein Eftevaag
 C0Florian Kagerer
@@ -203,7 +201,6 @@ C0Lars Skovlund
 C1Sky
 A0Robert Goeffringmann
 C0Robert Göffringmann
-A2(retired)
 C2(retired)
 C0Oliver Kiehl
 C2(retired)
@@ -216,7 +213,6 @@ C0Thierry Crozat
 C2Mac version support
 A0Robert Goeffringmann
 C0Robert Göffringmann
-A2(retired)
 C2(retired)
 
 C1Sword2
@@ -332,7 +328,6 @@ C2(retired)
 C1PlayStation 2
 A0Robert Goeffringmann
 C0Robert Göffringmann
-A2(retired)
 C2(retired)
 C0Max Lingua
 
@@ -442,12 +437,10 @@ C1Packages
 C1AmigaOS 4
 A0Hans-Joerg Frieden
 C0Hans-Jörg Frieden
-A2(retired)
 C2(retired)
 C0Hubert Maier
 A0Juha Niemimaki
 C0Juha Niemimäki
-A2(retired)
 C2(retired)
 
 C1Atari/FreeMiNT
@@ -478,7 +471,6 @@ C1MorphOS
 C0Fabien Coeurjoly
 A0Ruediger Hanke
 C0Rüdiger Hanke
-A2(retired)
 C2(retired)
 
 C1OS/2
@@ -575,7 +567,6 @@ C0Lubomyr Lisen
 C1Websites (design)
 A0Dobo Balazs
 C0Dobó Balázs
-A2Website design
 C2Website design
 C0William Claydon
 C2Skins for doxygen, buildbot and wiki
@@ -605,7 +596,6 @@ C0Janne Huttunen
 C2V3 actor mask support, Dig/FT SMUSH audio
 A0Kovacs Endre Janos
 C0Kovács Endre János
-A2Several fixes for Simon1
 C2Several fixes for Simon1
 C0Jeroen Janssen
 C2Numerous readability and bugfix patches
@@ -631,7 +621,6 @@ C0Robert Crossfield
 C2Improved support for Apple II/C64 versions of MM
 A0Andreas Roever
 C0Andreas Röver
-A2Broken Sword I & II MPEG2 cutscene support
 C2Broken Sword I & II MPEG2 cutscene support
 C0Edward Rudd
 C2Fixes for playing MP3 versions of MI1/Loom audio
@@ -639,7 +628,6 @@ C0Daniel Schepler
 C2Final MI1 CD music support, initial Ogg Vorbis support
 A0Andre Souza
 C0André Souza
-A2SDL-based OpenGL renderer
 C2SDL-based OpenGL renderer
 C0Tom Frost
 C2WebOS port contributions
@@ -757,7 +745,6 @@ C0Sarien Team
 C2Original AGI engine code
 A0Jimmi Thogersen
 C0Jimmi Thøgersen
-A2For ScummRev, and much obscure code/documentation
 C2For ScummRev, and much obscure code/documentation
 C0Tristan
 C2For additional work on the original MT-32 emulator
