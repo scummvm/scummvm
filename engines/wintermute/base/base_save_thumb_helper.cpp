@@ -63,7 +63,7 @@ BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 		
 		BaseImage *screenshot = _gameRef->_renderer->takeScreenshot();
 		if (!screenshot) {
-			return STATUS_FAILED;
+			return NULL;
 		}
 		
 		// normal thumbnail
