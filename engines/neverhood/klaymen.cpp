@@ -27,35 +27,35 @@
 
 namespace Neverhood {
 
-static const KlaymenIdleTableItem klaymenTable1[] = {
-	{1, &Klaymen::stDoIdlePickEar},
-	{1, &Klaymen::stDoIdleSpinHead},
-	{1, &Klaymen::stDoIdleArms},
-	{1, &Klaymen::stDoIdleChest},
-	{1, &Klaymen::stDoIdleHeadOff}
+static const KlaymenIdleTableItem klaymenIdleTable1[] = {
+	{1, kIdlePickEar},
+	{1, kIdleSpinHead},
+	{1, kIdleArms},
+	{1, kIdleChest},
+	{1, kIdleHeadOff}
 }; 
 
-static const KlaymenIdleTableItem klaymenTable2[] = {
-	{1, &Klaymen::stDoIdlePickEar},
-	{1, &Klaymen::stDoIdleSpinHead},
-	{1, &Klaymen::stDoIdleChest},
-	{1, &Klaymen::stDoIdleHeadOff}
+static const KlaymenIdleTableItem klaymenIdleTable2[] = {
+	{1, kIdlePickEar},
+	{1, kIdleSpinHead},
+	{1, kIdleChest},
+	{1, kIdleHeadOff}
 }; 
 
-static const KlaymenIdleTableItem klaymenTable3[] = {
-	{1, &Klaymen::stDoIdleTeleporterHands},
-	{1, &Klaymen::stDoIdleTeleporterHands2}
+static const KlaymenIdleTableItem klaymenIdleTable3[] = {
+	{1, kIdleTeleporterHands},
+	{1, kIdleTeleporterHands2}
 }; 
 
-static const KlaymenIdleTableItem klaymenTable4[] = {
-	{1, &Klaymen::stDoIdleSpinHead},
-	{1, &Klaymen::stDoIdleChest},
-	{1, &Klaymen::stDoIdleHeadOff},
+static const KlaymenIdleTableItem klaymenIdleTable4[] = {
+	{1, kIdleSpinHead},
+	{1, kIdleChest},
+	{1, kIdleHeadOff},
 };
 
 static const KlaymenIdleTableItem klaymenIdleTable1002[] = {
-	{1, &Klaymen::stDoIdlePickEar},
-	{2, &Klaymen::stIdleWonderAbout}
+	{1, kIdlePickEar},
+	{2, kIdleWonderAbout}
 }; 
 
 // Klaymen
@@ -103,28 +103,24 @@ void Klaymen::update() {
 	xUpdate();
 }
 
-void Klaymen::setKlaymenIdleTable(const KlaymenIdleTableItem *table, int tableCount) {
+void Klaymen::setKlaymenIdleTable(const KlaymenIdleTableItem *table, uint tableCount) {
 	_idleTable = table;
 	_idleTableCount = tableCount;
-	_idleTableMaxValue = 0;
-	for (int i = 0; i < tableCount; i++)
-		_idleTableMaxValue += table[i].value;
+	_idleTableTotalWeight = 0;
+	for (uint i = 0; i < tableCount; i++)
+		_idleTableTotalWeight += table[i].weight;
 }
 
 void Klaymen::setKlaymenIdleTable1() {
-	setKlaymenIdleTable(klaymenTable1, ARRAYSIZE(klaymenTable1));
+	setKlaymenIdleTable(klaymenIdleTable1, ARRAYSIZE(klaymenIdleTable1));
 }
 
 void Klaymen::setKlaymenIdleTable2() {
-	setKlaymenIdleTable(klaymenTable2, ARRAYSIZE(klaymenTable2));
+	setKlaymenIdleTable(klaymenIdleTable2, ARRAYSIZE(klaymenIdleTable2));
 }
 
 void Klaymen::setKlaymenIdleTable3() {
-	setKlaymenIdleTable(klaymenTable3, ARRAYSIZE(klaymenTable3));
-}
-
-void Klaymen::stDoIdlePickEar() {
-	startIdleAnimation(0x5B20C814, AnimationCallback(&Klaymen::stIdlePickEar));
+	setKlaymenIdleTable(klaymenIdleTable3, ARRAYSIZE(klaymenIdleTable3));
 }
 
 void Klaymen::stIdlePickEar() {
@@ -154,10 +150,6 @@ void Klaymen::evIdlePickEarDone() {
 	stopSound(0);
 }
 
-void Klaymen::stDoIdleSpinHead() {
-	startIdleAnimation(0xD122C137, AnimationCallback(&Klaymen::stIdleSpinHead));
-}
-
 void Klaymen::stIdleSpinHead() {
 	_busyStatus = 1;
 	_acceptInput = true;
@@ -178,10 +170,6 @@ uint32 Klaymen::hmIdleSpinHead(int messageNum, const MessageParam &param, Entity
 		break;
 	}
 	return messageResult;
-}
-
-void Klaymen::stDoIdleArms() {
-	startIdleAnimation(0x543CD054, AnimationCallback(&Klaymen::stIdleArms));
 }
 
 void Klaymen::stIdleArms() {
@@ -215,10 +203,6 @@ uint32 Klaymen::hmIdleArms(int messageNum, const MessageParam &param, Entity *se
 	return messageResult;
 }
 
-void Klaymen::stDoIdleChest() {
-	startIdleAnimation(0x40A0C034, AnimationCallback(&Klaymen::stIdleChest));
-}
-
 void Klaymen::stIdleChest() {
 	_busyStatus = 1;
 	_acceptInput = true;
@@ -239,10 +223,6 @@ uint32 Klaymen::hmIdleChest(int messageNum, const MessageParam &param, Entity *s
 		break;
 	}
 	return messageResult;
-}
-
-void Klaymen::stDoIdleHeadOff() {
-	startIdleAnimation(0x5120E137, AnimationCallback(&Klaymen::stIdleHeadOff));
 }
 
 void Klaymen::stIdleHeadOff() {
@@ -298,18 +278,17 @@ void Klaymen::stSitIdleTeleporter() {
 
 void Klaymen::upSitIdleTeleporter() {
 	update();
-	_idleCounter++;
-	if (_idleCounter >= _idleCounterMax) {
+	if (++_idleCounter >= _idleCounterMax) {
 		_idleCounter = 0;
 		if (_idleTable) {
-			int randomValue = _vm->_rnd->getRandomNumber(_idleTableMaxValue);
-			for (int i = 0; i < _idleTableCount; i++) {
-				if (randomValue < _idleTable[i].value) {
-					(this->*(_idleTable[i].callback))();
+			int idleWeight = _vm->_rnd->getRandomNumber(_idleTableTotalWeight - 1);
+			for (uint i = 0; i < _idleTableCount; i++) {
+				if (idleWeight < _idleTable[i].weight) {
+					enterIdleAnimation(_idleTable[i].idleAnimation);
 					_idleCounterMax = _vm->_rnd->getRandomNumber(128 - 1) + 24;
 					break;
 				}
-				randomValue -= _idleTable[i].value;
+				idleWeight -= _idleTable[i].weight;
 			}
 		}
 	} else if (++_blinkCounter >= _blinkCounterMax) {
@@ -524,13 +503,13 @@ void Klaymen::upStandIdle() {
 	if (++_idleCounter >= 720) {
 		_idleCounter = 0;
 		if (_idleTable) {
-			int randomValue = _vm->_rnd->getRandomNumber(_idleTableMaxValue - 1);
-			for (int i = 0; i < _idleTableCount; i++) {
-				if (randomValue < _idleTable[i].value) {
-					(this->*(_idleTable[i].callback))();
+			int idleWeight = _vm->_rnd->getRandomNumber(_idleTableTotalWeight - 1);
+			for (uint i = 0; i < _idleTableCount; i++) {
+				if (idleWeight < _idleTable[i].weight) {
+					enterIdleAnimation(_idleTable[i].idleAnimation);
 					break;
 				}
-				randomValue -= _idleTable[i].value;
+				idleWeight -= _idleTable[i].weight;
 			}
 		}
 	} else if (++_blinkCounter >= _blinkCounterMax) {
@@ -2177,6 +2156,35 @@ void Klaymen::walkAlongPathPoints() {
 	}
 }
 
+void Klaymen::enterIdleAnimation(uint idleAnimation) {
+	switch (idleAnimation) {
+	case kIdlePickEar:
+		startIdleAnimation(0x5B20C814, AnimationCallback(&Klaymen::stIdlePickEar));
+		break;
+	case kIdleSpinHead:
+		startIdleAnimation(0xD122C137, AnimationCallback(&Klaymen::stIdleSpinHead));
+		break;
+	case kIdleArms:
+		startIdleAnimation(0x543CD054, AnimationCallback(&Klaymen::stIdleArms));
+		break;
+	case kIdleChest:
+		startIdleAnimation(0x40A0C034, AnimationCallback(&Klaymen::stIdleChest));
+		break;
+	case kIdleHeadOff:
+		startIdleAnimation(0x5120E137, AnimationCallback(&Klaymen::stIdleHeadOff));
+		break;
+	case kIdleTeleporterHands:
+		startIdleAnimation(0x90EF8D38, AnimationCallback(&Klaymen::stIdleTeleporterHands));
+		break;
+	case kIdleTeleporterHands2:
+		startIdleAnimation(0x900F0930, AnimationCallback(&Klaymen::stIdleTeleporterHands2));
+		break;
+	case kIdleWonderAbout:
+		stIdleWonderAbout();
+		break;
+	}
+}
+
 void Klaymen::stJumpToGrab() {
 	_busyStatus = 0;
 	_acceptInput = false;
@@ -2276,10 +2284,6 @@ uint32 Klaymen::hmJumpToGrabRelease(int messageNum, const MessageParam &param, E
 	return messageResult;
 }
 
-void Klaymen::stDoIdleTeleporterHands() {
-	startIdleAnimation(0x90EF8D38, AnimationCallback(&Klaymen::stIdleTeleporterHands));
-}
-
 void Klaymen::stIdleTeleporterHands() {
 	_busyStatus = 0;
 	_acceptInput = true;
@@ -2288,10 +2292,6 @@ void Klaymen::stIdleTeleporterHands() {
 	SetMessageHandler(&Klaymen::hmLowLevelAnimation);
 	SetSpriteUpdate(NULL);
 	NextState(&Klaymen::stSitIdleTeleporterBlinkSecond);
-}
-
-void Klaymen::stDoIdleTeleporterHands2() {
-	startIdleAnimation(0x900F0930, AnimationCallback(&Klaymen::stIdleTeleporterHands2));
 }
 
 void Klaymen::stIdleTeleporterHands2() {
@@ -3674,7 +3674,7 @@ uint32 KmScene1109::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene1201::KmScene1201(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 	
-	setKlaymenIdleTable(klaymenTable4, ARRAYSIZE(klaymenTable4));
+	setKlaymenIdleTable(klaymenIdleTable4, ARRAYSIZE(klaymenIdleTable4));
 	_doYHitIncr = true;
 }
 
@@ -4145,7 +4145,7 @@ uint32 KmScene1402::xHandleMessage(int messageNum, const MessageParam &param) {
 KmScene1403::KmScene1403(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y)
 	: Klaymen(vm, parentScene, x, y) {
 
-	setKlaymenIdleTable(klaymenTable4, ARRAYSIZE(klaymenTable4));
+	setKlaymenIdleTable(klaymenIdleTable4, ARRAYSIZE(klaymenIdleTable4));
 }
 
 uint32 KmScene1403::xHandleMessage(int messageNum, const MessageParam &param) {

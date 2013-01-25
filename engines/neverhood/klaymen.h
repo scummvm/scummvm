@@ -41,11 +41,22 @@ const uint32 kKlaymenSpeedUpHash = 0x004A2148;
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 struct KlaymenIdleTableItem {
-	int value;
-	void (Klaymen::*callback)();
+	int weight;
+	uint idleAnimation;
 };
 
 #include "common/pack-end.h"	// END STRUCT PACKING
+
+enum {
+	kIdlePickEar,
+	kIdleSpinHead,
+	kIdleArms,
+	kIdleChest,
+	kIdleHeadOff,
+	kIdleTeleporterHands,
+	kIdleTeleporterHands2,
+	kIdleWonderAbout
+};
 
 class Klaymen : public AnimatedSprite {
 public:
@@ -56,34 +67,27 @@ public:
 	void startIdleAnimation(uint32 fileHash, AnimationCb callback);
 	void upIdleAnimation();
 
-	void stDoIdlePickEar();
 	void stIdlePickEar();
 	void evIdlePickEarDone();
 	uint32 hmIdlePickEar(int messageNum, const MessageParam &param, Entity *sender);
 
-	void stDoIdleSpinHead();
 	void stIdleSpinHead();
 	uint32 hmIdleSpinHead(int messageNum, const MessageParam &param, Entity *sender);
 
-	void stDoIdleArms();
 	void stIdleArms();
 	void evIdleArmsDone();
 	uint32 hmIdleArms(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void stDoIdleChest();
 	void stIdleChest();
 	uint32 hmIdleChest(int messageNum, const MessageParam &param, Entity *sender);
 	
-	void stDoIdleHeadOff();
 	void stIdleHeadOff();
 	uint32 hmIdleHeadOff(int messageNum, const MessageParam &param, Entity *sender);
 
 	void stIdleWonderAbout();
 
-	void stDoIdleTeleporterHands();
 	void stIdleTeleporterHands();
 	
-	void stDoIdleTeleporterHands2();
 	void stIdleTeleporterHands2();
 
 	void stTryStandIdle();
@@ -367,7 +371,7 @@ public:
 	uint32 hmLowLevel(int messageNum, const MessageParam &param, Entity *sender);
 	uint32 hmLowLevelAnimation(int messageNum, const MessageParam &param, Entity *sender);
 
-	void setKlaymenIdleTable(const KlaymenIdleTableItem *table, int tableCount);
+	void setKlaymenIdleTable(const KlaymenIdleTableItem *table, uint tableCount);
 	void setKlaymenIdleTable1();
 	void setKlaymenIdleTable2();
 	void setKlaymenIdleTable3();
@@ -406,8 +410,8 @@ protected:
 	bool _actionStatusChanged;
 	int _actionStatus;
 	const KlaymenIdleTableItem *_idleTable;
-	int _idleTableCount;
-	int _idleTableMaxValue;
+	uint _idleTableCount;
+	int _idleTableTotalWeight;
 	NPointArray *_pathPoints;
 	bool _soundFlag;
 	
@@ -451,6 +455,7 @@ protected:
 	void stStartWalkingSmall();
 	uint32 hmWalkingSmall(int messageNum, const MessageParam &param, Entity *sender);
 	
+	void enterIdleAnimation(uint idleAnimation);
 	void walkAlongPathPoints();
 	
 };
