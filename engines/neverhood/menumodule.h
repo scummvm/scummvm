@@ -49,7 +49,7 @@ protected:
 	void createLoadGameMenu();
 	void createSaveGameMenu();
 	void handleLoadGameMenuAction(bool doLoad);
-	void handleSaveGameMenuAction(bool doSave);
+	void handleSaveGameMenuAction(bool doSave, bool doQuery);
 	void loadSavegameList();
 };
 
@@ -235,6 +235,13 @@ protected:
 	SavegameListBox *_listBox;
 	TextEditWidget *_textEditWidget;
 	Common::String _savegameDescription;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+};
+
+class QueryOverwriteMenu : public Scene {
+public:
+	QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule, const Common::String &description);
+protected:
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 };

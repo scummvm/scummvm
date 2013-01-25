@@ -401,7 +401,6 @@ protected:
 	int16 _destX, _destY;
 	int16 _idleCounter, _idleCounterMax;
 	int16 _blinkCounter, _blinkCounterMax;
-	int16 _countdown1;
 	int16 _tapesToInsert, _keysToInsert;
 	bool _doYHitIncr;
 	bool _isLeverDown;
@@ -409,12 +408,17 @@ protected:
 	int _busyStatus;
 	bool _actionStatusChanged;
 	int _actionStatus;
+
 	const KlaymenIdleTableItem *_idleTable;
 	uint _idleTableCount;
 	int _idleTableTotalWeight;
+	int _idleTableNum;
+
 	NPointArray *_pathPoints;
 	bool _soundFlag;
 	
+	int16 _spitOutCountdown;
+
 	bool _isSittingInTeleporter;
 
 	bool _potionFlag1;
@@ -423,7 +427,6 @@ protected:
 	int16 _platformDeltaY;
 
 	Sprite *_otherSprite;
-	int _idleTableNum;
 
 	int16 _walkResumeFrameIncr;
 
@@ -437,7 +440,6 @@ protected:
 	uint32 _spitContDestPipeIndex;
 
 	virtual void xUpdate();
-	// TODO Check if this can be turned into a void result
 	virtual uint32 xHandleMessage(int messageNum, const MessageParam &param);
 
 	void startWalkToX(int16 x, bool walkExt);

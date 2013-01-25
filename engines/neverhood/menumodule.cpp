@@ -32,7 +32,8 @@ enum {
 	CREDITS_SCENE	= 1,
 	MAKING_OF		= 2,
 	LOAD_GAME_MENU	= 3,
-	SAVE_GAME_MENU	= 4
+	SAVE_GAME_MENU	= 4,
+	QUERY_OVR_MENU	= 5
 };
 
 enum {
@@ -109,6 +110,9 @@ void MenuModule::createScene(int sceneNum, int which) {
 	case SAVE_GAME_MENU:
 		createSaveGameMenu();
 		break;
+	case QUERY_OVR_MENU:
+		_childObject = new QueryOverwriteMenu(_vm, this, _savegameDescription);
+		break;
 	}
 	SetUpdateHandler(&MenuModule::updateScene);
 	_childObject->handleUpdate();
@@ -162,7 +166,10 @@ void MenuModule::updateScene() {
 			handleLoadGameMenuAction(_moduleResult != 1);
 			break;
 		case SAVE_GAME_MENU:
-			handleSaveGameMenuAction(_moduleResult != 1);
+			handleSaveGameMenuAction(_moduleResult != 1, true);
+			break;
+		case QUERY_OVR_MENU:
+			handleSaveGameMenuAction(_moduleResult != 1, false);
 			break;
 		default:
 			break;
@@ -199,16 +206,19 @@ void MenuModule::handleLoadGameMenuAction(bool doLoad) {
 	_savegameList = NULL;
 }
 
-void MenuModule::handleSaveGameMenuAction(bool doSave) {
-	createScene(MAIN_MENU, -1);
-	if (doSave && _savegameSlot >= 0) {
+void MenuModule::handleSaveGameMenuAction(bool doSave, bool doQuery) {
+	if (doSave && doQuery && _savegameSlot >= 0 && _savegameSlot < (int)_savegameList->size()) {
+		createScene(QUERY_OVR_MENU, -1);
+	} else if (doSave && _savegameSlot >= 0) {
 		// Restore the scene palette and background so that the correct thumbnail is saved
 		byte *menuPaletteData = _vm->_screen->getPaletteData();
 		_vm->_screen->setPaletteData(_savedPaletteData);
 		_vm->_gameModule->redrawPrevChildObject();
 		_vm->saveGameState(_savegameSlot, _savegameDescription);
 		_vm->_screen->setPaletteData(menuPaletteData);
-		leaveModule(0);
+		createScene(MAIN_MENU, -1);
+	} else {
+		createScene(MAIN_MENU, -1);
 	}
 	delete _savegameList;
 	_savegameList = NULL;
@@ -1010,22 +1020,13 @@ void LoadGameMenu::handleEvent(int16 itemID, int eventType) {
 uint32 LoadGameMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
-#if 0	
-	case 0x000A:
-		sendMessage(_textEditWidget, 0x000A, param.asInteger());
-		setCurrWidget(_textEditWidget);
-		break;
-#endif		
 	case 0x000B:
 		if (param.asInteger() == Common::KEYCODE_RETURN) {
 			((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
 			leaveScene(0);
 		} else if (param.asInteger() == Common::KEYCODE_ESCAPE) {
 			leaveScene(1);
-		}/* else {
-			sendMessage(_textEditWidget, 0x000B, param.asInteger());
-			setCurrWidget(_textEditWidget);
-		}*/
+		}
 		break;
 	case 0x2000:
 		// Handle menu button click
@@ -1051,6 +1052,57 @@ uint32 LoadGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 			_listBox->pageDown();
 			break;
 		}
+		break;
+	}
+	return 0;
+}
+
+QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule, const Common::String &description)
+	: Scene(vm, parentModule) {
+
+	static const uint32 kQueryOverwriteMenuButtonFileHashes[] = {
+		0x90312400,
+		0x94C22A22
+	};
+
+	static const NRect kQueryOverwriteMenuCollisionBounds[] = {
+		NRect(145, 334, 260, 385),
+		NRect(365, 340, 477, 388)
+	};
+	
+	setBackground(0x043692C4);
+	setPalette(0x043692C4);
+	insertScreenMouse(0x692C004B);
+	insertStaticSprite(0x08C0AC24, 200);
+
+	for (uint buttonIndex = 0; buttonIndex < 2; ++buttonIndex) {
+		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
+			kQueryOverwriteMenuButtonFileHashes[buttonIndex], kQueryOverwriteMenuCollisionBounds[buttonIndex]);
+		addCollisionSprite(menuButton);
+	}
+
+	// Draw the query text to the background, each text line is centered
+	// NOTE The original had this in its own class
+	FontSurface *fontSurface = new FontSurface(_vm, calcHash("bgQueryTinyAlphabet"), 32, 7, 32, 11, 17);
+	Common::StringArray textLines;
+	textLines.push_back(description);
+	textLines.push_back("Game exists.");
+	textLines.push_back("Overwrite it?");
+	for (uint i = 0; i < textLines.size(); ++i)
+		fontSurface->drawString(_background->getSurface(), 106 + (423 - textLines[i].size() * 11) / 2,
+			127 + 31 + i * 17, (const byte*)textLines[i].c_str());
+	delete fontSurface;
+	
+	SetUpdateHandler(&Scene::update);
+	SetMessageHandler(&QueryOverwriteMenu::handleMessage);
+}
+
+uint32 QueryOverwriteMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+	Scene::handleMessage(messageNum, param, sender);
+	switch (messageNum) {
+	case 0x2000:
+		// Handle menu button click
+		leaveScene(param.asInteger());
 		break;
 	}
 	return 0;

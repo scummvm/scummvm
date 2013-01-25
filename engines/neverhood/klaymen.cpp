@@ -62,7 +62,7 @@ static const KlaymenIdleTableItem klaymenIdleTable1002[] = {
 
 Klaymen::Klaymen(NeverhoodEngine *vm, Scene *parentScene, int16 x, int16 y, NRectArray *clipRects)
 	: AnimatedSprite(vm, 1000), _idleCounterMax(0), _idleCounter(0), _isMoveObjectRequested(false), _blinkCounterMax(0),
-	_isWalkingOpenDoorNotified(false), _countdown1(0), _tapesToInsert(0), _keysToInsert(0), _busyStatus(0), _acceptInput(true),
+	_isWalkingOpenDoorNotified(false), _spitOutCountdown(0), _tapesToInsert(0), _keysToInsert(0), _busyStatus(0), _acceptInput(true),
 	_attachedSprite(NULL), _isWalking(false), _actionStatus(1), _parentScene(parentScene), _isSneaking(false), _isLargeStep(false),
 	_doYHitIncr(false), _isLeverDown(false), _isSittingInTeleporter(false), _actionStatusChanged(false), _ladderStatus(0), _pathPoints(NULL), _soundFlag(false),
 	_idleTableNum(0), _otherSprite(NULL), _moveObjectCountdown(0), _readyToSpit(false), _walkResumeFrameIncr(0) {
@@ -2718,7 +2718,7 @@ void Klaymen::stCrashDownFinished() {
 
 void Klaymen::upSpitOutFall() {
 	Klaymen::update();
-	if (_countdown1 != 0 && (--_countdown1 == 0)) {
+	if (_spitOutCountdown != 0 && (--_spitOutCountdown == 0)) {
 		_surface->setVisible(true);
 		SetUpdateHandler(&Klaymen::update);
 	}
@@ -2902,7 +2902,7 @@ void Klaymen::stStandIdleSpecial() {
 }
 
 void Klaymen::stSpitOutFall0() {
-	_countdown1 = 1;
+	_spitOutCountdown = 1;
 	_busyStatus = 0;
 	_acceptInput = false;
 	startAnimation(0x000BAB02, 0, -1);
@@ -2914,7 +2914,7 @@ void Klaymen::stSpitOutFall0() {
 }
 
 void Klaymen::stSpitOutFall2() {
-	_countdown1 = 1;
+	_spitOutCountdown = 1;
 	_busyStatus = 0;
 	_acceptInput = false;
 	startAnimation(0x9308C132, 0, -1);
