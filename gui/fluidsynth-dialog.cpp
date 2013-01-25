@@ -144,9 +144,9 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 	_miscInterpolationPopUp->appendEntry(_("Fourth-order"), kInterpolation4thOrder);
 	_miscInterpolationPopUp->appendEntry(_("Seventh-order"), kInterpolation7thOrder);
 
-	new ButtonWidget(_tabWidget, "FluidSynthSettings_Misc.ResetSettings", _("Reset"), _("Reset all FluidSynth settings to their default values."), kResetSettingsCmd);
-
 	_tabWidget->setActiveTab(0);
+
+	new ButtonWidget(this, "FluidSynthSettings.ResetSettings", _("Reset"), _("Reset all FluidSynth settings to their default values."), kResetSettingsCmd);
 
 	new ButtonWidget(this, "FluidSynthSettings.Cancel", _("Cancel"), 0, kCloseCmd);
 	new ButtonWidget(this, "FluidSynthSettings.Ok", _("OK"), 0, kOKCmd);

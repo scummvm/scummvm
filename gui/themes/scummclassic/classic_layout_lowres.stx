@@ -814,6 +814,9 @@
 			<widget name = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '8, 8, 8, 8'>
 				<space/>
+				<widget name = 'ResetSettings'
+					type = 'Button'
+				/>
 				<widget name = 'Cancel'
 						type = 'Button'
 				/>
@@ -954,9 +957,6 @@
 					type = 'PopUp'
 				/>
 			</layout>
-			<widget name = 'ResetSettings'
-				type = 'Button'
-			/>
 		</layout>
 	</dialog>
 
