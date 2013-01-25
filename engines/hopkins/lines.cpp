@@ -1174,23 +1174,8 @@ LABEL_17:
 
 // Avoid 2
 int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
-	int v14;
-	int v55;
-	int v58;
-	int v61;
-	int v64;
-	int v67;
-	int v72;
-	int v78;
-	int v79;
-	int v88;
-	int v89;
-	int v110;
-	int v112;
 	int v118 = 0;
 	int v119 = 0;
-	int v124;
-	int v125;
 	int v126[9];
 	int v131[9];
 	int v136[9];
@@ -1224,7 +1209,7 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 	_vm->_globals.old_y1_66 = srcY;
 	_vm->_globals.old_y2_68 = clipDestY;
 	_vm->_globals.pathFindingDepth = 0;
-	v112 = 0;
+	int v112 = 0;
 	if (destX <= 19)
 		clipDestX = 20;
 	if (clipDestY <= 19)
@@ -1247,7 +1232,7 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 	if (PARC_PERS(srcX, srcY, clipDestX, clipDestY, -1, -1, 0) == 1)
 		return &_vm->_globals.super_parcours[0];
 
-	v14 = 0;
+	int v14 = 0;
 	for (int tmpY = clipDestY; tmpY < _vm->_graphicsManager._maxY; tmpY++, v14++) { 
 		if (checkCollisionLine(clipDestX, tmpY, &v136[5], &v141[5], 0, _vm->_objectsManager._lastLine) && v141[5] <= _vm->_objectsManager._lastLine)
 			break;
@@ -1419,7 +1404,7 @@ int16 *LinesManager::PARCOURS2(int srcX, int srcY, int destX, int destY) {
 		v114 = v136[7];
 	}
 
-	v55 = PARC_PERS(srcX, srcY, clipDestX, clipDestY, v115, v121, 0);
+	int v55 = PARC_PERS(srcX, srcY, clipDestX, clipDestY, v115, v121, 0);
 	if (v55 != 1) {
 		if (v55 == 2) {
 LABEL_201:
@@ -1427,11 +1412,13 @@ LABEL_201:
 			v114 = NV_LIGNEOFS;
 			v112 = NV_POSI;
 		} else {
+			int v125;
+			int v124;
 			if (v113 == 1) {
 				for (int deltaY = 0; deltaY < v111; deltaY++) {
 					if (checkCollisionLine(srcX, srcY - deltaY, &v125, &v124, _vm->_objectsManager._lastLine + 1, _linesNumb)
 					        && _vm->_objectsManager._lastLine < v124) {
-						v58 = GENIAL(v124, v125, srcX, srcY - deltaY, srcX, srcY - v111, v112, &_vm->_globals.super_parcours[0], 4);
+						int v58 = GENIAL(v124, v125, srcX, srcY - deltaY, srcX, srcY - v111, v112, &_vm->_globals.super_parcours[0], 4);
 						if (v58 == -1) {
 							_vm->_globals.super_parcours[v112] = -1;
 							_vm->_globals.super_parcours[v112 + 1] = -1;
@@ -1453,7 +1440,7 @@ LABEL_201:
 				for (int deltaY = 0; deltaY < v111; deltaY++) {
 					if (checkCollisionLine(srcX, deltaY + srcY, &v125, &v124, _vm->_objectsManager._lastLine + 1, _linesNumb)
 							&& _vm->_objectsManager._lastLine < v124) {
-						v61 = GENIAL(v124, v125, srcX, deltaY + srcY, srcX, v111 + srcY, v112, &_vm->_globals.super_parcours[0], 4);
+						int v61 = GENIAL(v124, v125, srcX, deltaY + srcY, srcX, v111 + srcY, v112, &_vm->_globals.super_parcours[0], 4);
 						if (v61 == -1) {
 							_vm->_globals.super_parcours[v112] = -1;
 							_vm->_globals.super_parcours[v112 + 1] = -1;
@@ -1475,7 +1462,7 @@ LABEL_201:
 				for (int deltaX = 0; deltaX < v111; deltaX++) {
 					if (checkCollisionLine(srcX - deltaX, srcY, &v125, &v124, _vm->_objectsManager._lastLine + 1, _linesNumb)
 					        && _vm->_objectsManager._lastLine < v124) {
-						v64 = GENIAL(v124, v125, srcX - deltaX, srcY, srcX - v111, srcY, v112, &_vm->_globals.super_parcours[0], 4);
+						int v64 = GENIAL(v124, v125, srcX - deltaX, srcY, srcX - v111, srcY, v112, &_vm->_globals.super_parcours[0], 4);
 						if (v64 == -1) {
 							_vm->_globals.super_parcours[v112] = -1;
 							_vm->_globals.super_parcours[v112 + 1] = -1;
@@ -1497,7 +1484,7 @@ LABEL_201:
 				for (int deltaX = 0; deltaX < v111; deltaX++) {
 					if (checkCollisionLine(deltaX + srcX, srcY, &v125, &v124, _vm->_objectsManager._lastLine + 1, _linesNumb)
 					        && _vm->_objectsManager._lastLine < v124) {
-						v67 = GENIAL(v124, v125, deltaX + srcX, srcY, v111 + srcX, srcY, v112, &_vm->_globals.super_parcours[0], 4);
+						int v67 = GENIAL(v124, v125, deltaX + srcX, srcY, v111 + srcX, srcY, v112, &_vm->_globals.super_parcours[0], 4);
 						if (v67 == -1) {
 							_vm->_globals.super_parcours[v112] = -1;
 							_vm->_globals.super_parcours[v112 + 1] = -1;
@@ -1527,8 +1514,8 @@ LABEL_234:
 				v112 += 4;
 			}
 			for (int v116 = v115 + 1; v116 < v121; v116++) {
-				v72 = 0;
-				v110 = v116;
+				int v72 = 0;
+				int v110 = v116;
 				for (int j = v116; Ligne[j]._lineDataEndIdx > v72; j = v116) {
 					v119 = Ligne[v110]._lineData[2 * v72];
 					v118 = Ligne[v110]._lineData[2 * v72 + 1];
@@ -1539,7 +1526,7 @@ LABEL_234:
 					v112 += 4;
 					if (Ligne[v110]._lineDataEndIdx > 30) {
 						if (v72 == Ligne[v110]._lineDataEndIdx / 2) {
-							v78 = PARC_PERS(v119, v118, clipDestX, clipDestY, v110, v121, v112);
+							int v78 = PARC_PERS(v119, v118, clipDestX, clipDestY, v110, v121, v112);
 							if (v78 == 1)
 								return &_vm->_globals.super_parcours[0];
 							if (v78 == 2) {
@@ -1555,7 +1542,7 @@ LABEL_234:
 					++v72;
 					v110 = v116;
 				}
-				v79 = PARC_PERS(v119, v118, clipDestX, clipDestY, v116, v121, v112);
+				int v79 = PARC_PERS(v119, v118, clipDestX, clipDestY, v116, v121, v112);
 				if (v79 == 1)
 					return &_vm->_globals.super_parcours[0];
 				if (v79 == 2) {
@@ -1587,7 +1574,7 @@ LABEL_234:
 					_vm->_globals.super_parcours[v112 + 3] = 0;
 					v112 += 4;
 					if (Ligne[v117]._lineDataEndIdx > 30 && dataIdx == Ligne[v117]._lineDataEndIdx / 2) {
-						v88 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
+						int v88 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
 						if (v88 == 1)
 							return &_vm->_globals.super_parcours[0];
 						if (v88 == 2) {
@@ -1600,7 +1587,7 @@ LABEL_234:
 							goto LABEL_201;
 					}
 				}
-				v89 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
+				int v89 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
 				if (v89 == 1)
 					return &_vm->_globals.super_parcours[0];
 				if (v89 == 2) {
@@ -1652,73 +1639,26 @@ LABEL_234:
 }
 
 int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
-	int16 *v17;
-	int v18;
 	int v19;
 	int v20;
 	int v21;
 	int v22;
 	int v23;
 	int v24;
-	int v25;
-	int16 *v26;
-	int v27;
-	int16 *v28;
-	int16 *v29;
-	int v30;
-	int v31;
-	int16 *v32;
 	int v33;
-	int v34;
-	int16 *v35;
 	int v36;
-	int v37;
-	int16 *v38;
 	int v39;
 	int v40;
-	int v41;
-	int16 *v42;
 	int v43;
 	int v44;
 	bool v45;
-	int v46;
-	int16 *v47;
-	int v48;
-	int16 *v49;
-	int16 *v50;
-	int v51;
-	int v52;
-	int16 *v53;
 	int v54;
 	int v55;
-	int v56;
-	int16 *v57;
 	int v58;
-	int v59;
-	int16 *v60;
 	int v61;
 	int v62;
-	int v63;
-	int16 *v64;
 	int v65;
 	int v66;
-	int16 *v72;
-	int v73;
-	int v74;
-	int v76;
-	int16 *v77;
-	int16 *v78;
-	int v79;
-	int16 *v80;
-	int v81;
-	int16 *v82;
-	int v83;
-	int16 *v84;
-	int v85;
-	int16 *v86;
-	int v87;
-	int16 *v88;
-	int v89;
 	int v91;
 	int v92;
 	int v93;
@@ -1738,7 +1678,6 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	int v107;
 	int v108;
 	int v109;
-	int v110;
 	int v111;
 	int v113;
 	int v114;
@@ -1753,16 +1692,7 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	int v123;
 	int v124;
 	int v125;
-	int v126 = 0;
-	int v127;
-	int v128;
-	int v129;
-	int v130;
-	int v131;
-	int v132;
-	int v133;
-	int v134;
-	int v135;
+	bool v126 = false;
 	int v138;
 	int v139;
 	int v140;
@@ -1775,9 +1705,10 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	int v7 = a1;
 	int v90 = a2;
 	int v137 = a7;
-	int v136 = 0;
+	bool v136 = false;
 	if (a5 == -1 && a6 == -1)
-		v136 = 1;
+		v136 = true;
+
 	int v144 = a5;
 	if (checkCollisionLine(a1, a2, &v145, &v144, 0, _linesNumb)) {
 		switch (Ligne[v144].field4) {
@@ -1823,44 +1754,36 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 		v109 = v90;
 		if (a3 >= v7 - 2 && a3 <= v7 + 2 && a4 >= v90 - 2 && a4 <= v90 + 2) {
 LABEL_149:
-			v27 = v115;
-			v28 = _vm->_globals.essai0;
-			v28[v27] = -1;
-			v28[v27 + 1] = -1;
-			v28[v27 + 2] = -1;
+			_vm->_globals.essai0[v115] = -1;
+			_vm->_globals.essai0[v115 + 1] = -1;
+			_vm->_globals.essai0[v115 + 2] = -1;
 
 LABEL_150:
 			if (v115) {
-				v127 = 0;
 				v116 = 0;
-				v29 = _vm->_globals.essai0;
-				do {
-					v30 = v137;
-					_vm->_globals.super_parcours[v30] = v29[v116];
-					_vm->_globals.super_parcours[v30 + 1] = v29[v116 + 1];
-					_vm->_globals.super_parcours[v30 + 2] = v29[v116 + 2];
-					_vm->_globals.super_parcours[v30 + 3] = 0;
+				for (;;) {
+					_vm->_globals.super_parcours[v137] = _vm->_globals.essai0[v116];
+					_vm->_globals.super_parcours[v137 + 1] = _vm->_globals.essai0[v116 + 1];
+					_vm->_globals.super_parcours[v137 + 2] = _vm->_globals.essai0[v116 + 2];
+					_vm->_globals.super_parcours[v137 + 3] = 0;
 					v116 += 3;
 					v137 += 4;
 
-					if (v29[v116] == -1) {
-						if (v29[v116 + 1] == -1)
-							v127 = 1;
-					}
-				} while (v127 != 1);
+					if (_vm->_globals.essai0[v116] == -1 && _vm->_globals.essai0[v116 + 1] == -1)
+						break;
+				};
 			}
-			v74 = v137;
-			_vm->_globals.super_parcours[v74] = -1;
-			_vm->_globals.super_parcours[v74 + 1] = -1;
-			_vm->_globals.super_parcours[v74 + 2] = -1;
-			_vm->_globals.super_parcours[v74 + 3] = -1;
+			_vm->_globals.super_parcours[v137] = -1;
+			_vm->_globals.super_parcours[v137 + 1] = -1;
+			_vm->_globals.super_parcours[v137 + 2] = -1;
+			_vm->_globals.super_parcours[v137 + 3] = -1;
 			return 1;
 		}
 		v9 = abs(v7 - a3);
 		v10 = v9 + 1;
 		v11 = abs(v90 - a4);
 		v107 = v11 + 1;
-		if (v10 > (int16)(v11 + 1))
+		if (v10 > v107)
 			v107 = v10;
 		v12 = v107 - 1;
 		v101 = 1000 * v10 / v12;
@@ -1872,7 +1795,7 @@ LABEL_150:
 		v13 = (int16)v101 / 1000;
 		v94 = (int16)v99 / 1000;
 		v91 = -1;
-		if ((int16)v99 / 1000 == -1 && (unsigned int)v101 <= 150)
+		if (v94 == -1 && (unsigned int)v101 <= 150)
 			v91 = 1;
 		if (v13 == 1) {
 			if ((unsigned int)(v99 + 1) <= 151)
@@ -1990,11 +1913,9 @@ LABEL_72:
 		if (v108 + 1 <= 0)
 			goto LABEL_149;
 		while (!checkCollisionLine(v104, v103, &v143, &v142, 0, _linesNumb)) {
-			v25 = v115;
-			v26 = _vm->_globals.essai0;
-			v26[v25] = v104;
-			v26[v25 + 1] = v103;
-			v26[v25 + 2] = v91;
+			_vm->_globals.essai0[v115] = v104;
+			_vm->_globals.essai0[v115 + 1] = v103;
+			_vm->_globals.essai0[v115 + 2] = v91;
 			v106 += v102;
 			v105 += v100;
 			v104 = v106 / 1000;
@@ -2019,33 +1940,24 @@ LABEL_72:
 	}
 	v91 = SMOOTH_SENS;
 	v14 = 0;
-	int v16;
 	for (;;) {
-		int v112 = SMOOTH[v14].field0;
-		v110 = SMOOTH[v14].field2;
-		if (v112 == -1 || SMOOTH[v14].field2 == -1) {
-			v126 = 1;
-			if (v126 == 1) {
-				v18 = v14 - 1;
-				v111 = SMOOTH[v18].field0;
-				v109 = SMOOTH[v18].field2;
-				goto LABEL_72;
-			}
+		if (SMOOTH[v14].field0 == -1 || SMOOTH[v14].field2 == -1) {
+			v126 = true;
+			v111 = SMOOTH[v14 - 1].field0;
+			v109 = SMOOTH[v14 - 1].field2;
+			goto LABEL_72;
 		}
-		if (checkCollisionLine(v112, v110, &v143, &v142, 0, _linesNumb))
+		if (checkCollisionLine(SMOOTH[v14].field0, SMOOTH[v14].field2, &v143, &v142, 0, _linesNumb))
 			break;
-		v16 = v115;
 
-		v17 = _vm->_globals.essai0;
-		v17[v16] = v112;
-		v17[v16 + 1] = v110;
-		v17[v16 + 2] = v91;
+		_vm->_globals.essai0[v115] = SMOOTH[v14].field0;
+		_vm->_globals.essai0[v115 + 1] = SMOOTH[v14].field2;
+		_vm->_globals.essai0[v115 + 2] = v91;
 		v115 += 3;
 		++v14;
-		if (v126 == 1) {
-			v18 = v14 - 1;
-			v111 = SMOOTH[v18].field0;
-			v109 = SMOOTH[v18].field2;
+		if (v126) {
+			v111 = SMOOTH[v14 - 1].field0;
+			v109 = SMOOTH[v14 - 1].field2;
 			goto LABEL_72;
 		}
 	}
@@ -2053,11 +1965,9 @@ LABEL_72:
 		v142 = -1;
 
 LABEL_157:
-	v31 = v115;
-	v32 = _vm->_globals.essai0;
-	v32[v31] = -1;
-	v32[v31 + 1] = -1;
-	v32[v31 + 2] = -1;
+	_vm->_globals.essai0[v115] = -1;
+	_vm->_globals.essai0[v115 + 1] = -1;
+	_vm->_globals.essai0[v115 + 2] = -1;
 
 	v117 = 0;
 	v33 = v98;
@@ -2071,11 +1981,9 @@ LABEL_165:
 		if (v113 > a3) {
 			v36 = v113;
 			while (!checkCollisionLine(v36, v92, &v141, &v140, 0, _linesNumb)) {
-				v37 = v117;
-				v38 = _vm->_globals.essai1;
-				v38[v37] = v36;
-				v38[v37 + 1] = v92;
-				v38[v37 + 2] = 7;
+				_vm->_globals.essai1[v117] = v36;
+				_vm->_globals.essai1[v117 + 1] = v92;
+				_vm->_globals.essai1[v117 + 2] = 7;
 				v117 += 3;
 				--v36;
 				if (a3 >= v36)
@@ -2109,43 +2017,36 @@ LABEL_181:
 						if (v140 <= _vm->_objectsManager._lastLine)
 							goto LABEL_202;
 					}
-					v46 = v117;
-					v47 = _vm->_globals.essai1;
-					v47[v46] = a3;
-					v47[v46 + 1] = v43;
-					v47[v46 + 2] = 1;
+					_vm->_globals.essai1[v117] = a3;
+					_vm->_globals.essai1[v117 + 1] = v43;
+					_vm->_globals.essai1[v117 + 2] = 1;
 					v117 += 3;
 					--v43;
 				} while (a4 < v43);
 			}
 LABEL_194:
-			v48 = v117;
-			v49 = _vm->_globals.essai1;
-			v49[v48] = -1;
-			v49[v48 + 1] = -1;
-			v49[v48 + 2] = -1;
+			_vm->_globals.essai1[v117] = -1;
+			_vm->_globals.essai1[v117 + 1] = -1;
+			_vm->_globals.essai1[v117 + 2] = -1;
 LABEL_195:
 			if (v117) {
-				v128 = 0;
 				v118 = 0;
-				v50 = _vm->_globals.essai1;
-				do {
-					v51 = v137;
-					_vm->_globals.super_parcours[v51] = v50[v118];
-					_vm->_globals.super_parcours[v51 + 1] = v50[v118 + 1];
-					_vm->_globals.super_parcours[v51 + 2] = v50[v118 + 2];
-					_vm->_globals.super_parcours[v51 + 3] = 0;
+				_vm->_globals.essai1 = _vm->_globals.essai1;
+				for (;;) {
+					_vm->_globals.super_parcours[v137] = _vm->_globals.essai1[v118];
+					_vm->_globals.super_parcours[v137 + 1] = _vm->_globals.essai1[v118 + 1];
+					_vm->_globals.super_parcours[v137 + 2] = _vm->_globals.essai1[v118 + 2];
+					_vm->_globals.super_parcours[v137 + 3] = 0;
 					v118 += 3;
 					v137 += 4;
-					if (v50[v118] == -1 && v50[v118 + 1] == -1)
-						v128 = 1;
-				} while (v128 != 1);
+					if (_vm->_globals.essai1[v118] == -1 && _vm->_globals.essai1[v118 + 1] == -1)
+						break;;
+				}
 			}
-			v74 = v137;
-			_vm->_globals.super_parcours[v74] = -1;
-			_vm->_globals.super_parcours[v74 + 1] = -1;
-			_vm->_globals.super_parcours[v74 + 2] = -1;
-			_vm->_globals.super_parcours[v74 + 3] = -1;
+			_vm->_globals.super_parcours[v137] = -1;
+			_vm->_globals.super_parcours[v137 + 1] = -1;
+			_vm->_globals.super_parcours[v137 + 2] = -1;
+			_vm->_globals.super_parcours[v137 + 3] = -1;
 			return 1;
 		}
 		v39 = v92;
@@ -2156,26 +2057,22 @@ LABEL_195:
 					if (v40 == -1)
 						goto LABEL_195;
 					v117 = v40;
-					if (NVPX != -1) {
-						if (NVPY != -1) {
-							v33 = NVPX;
-							v92 = NVPY;
-							v45 = checkCollisionLine(NVPX, NVPY, &v141, &v140, 0, _vm->_objectsManager._lastLine);
-							if (v45 && v140 <= _vm->_objectsManager._lastLine)
-								goto LABEL_202;
-							goto LABEL_158;
-						}
+					if (NVPX != -1 && NVPY != -1) {
+						v33 = NVPX;
+						v92 = NVPY;
+						v45 = checkCollisionLine(NVPX, NVPY, &v141, &v140, 0, _vm->_objectsManager._lastLine);
+						if (v45 && v140 <= _vm->_objectsManager._lastLine)
+							goto LABEL_202;
+						goto LABEL_158;
 					}
 				}
 				if (v140 <= _vm->_objectsManager._lastLine)
 					goto LABEL_202;
 			}
-			v41 = v117;
 
-			v42 = _vm->_globals.essai1;
-			v42[v41] = a3;
-			v42[v41 + 1] = v39;
-			v42[v41 + 2] = 5;
+			_vm->_globals.essai1[v117] = a3;
+			_vm->_globals.essai1[v117 + 1] = v39;
+			_vm->_globals.essai1[v117 + 2] = 5;
 			v117 += 3;
 			++v39;
 			if (a4 <= v39)
@@ -2183,11 +2080,9 @@ LABEL_195:
 		}
 	}
 	while (!checkCollisionLine(v33, v92, &v141, &v140, 0, _linesNumb)) {
-		v34 = v117;
-		v35 = _vm->_globals.essai1;
-		v35[v34] = v33;
-		v35[v34 + 1] = v92;
-		v35[v34 + 2] = 3;
+		_vm->_globals.essai1[v117] = v33;
+		_vm->_globals.essai1[v117 + 1] = v92;
+		_vm->_globals.essai1[v117 + 2] = 3;
 		v117 += 3;
 		++v33;
 		if (a3 <= v33)
@@ -2197,11 +2092,9 @@ LABEL_168:
 	if (v140 > _vm->_objectsManager._lastLine)
 		v140 = -1;
 LABEL_202:
-	v52 = v117;
-	v53 = _vm->_globals.essai1;
-	v53[v52] = -1;
-	v53[v52 + 1] = -1;
-	v53[v52 + 2] = -1;
+	_vm->_globals.essai1[v117] = -1;
+	_vm->_globals.essai1[v117 + 1] = -1;
+	_vm->_globals.essai1[v117 + 2] = -1;
 	v117 = 0;
 	v54 = v98;
 	v93 = v97;
@@ -2212,11 +2105,9 @@ LABEL_203:
 	if (v93 < a4) {
 		v55 = v93;
 		while (!checkCollisionLine(v114, v55, &v139, &v138, 0, _linesNumb)) {
-			v56 = v117;
-			v57 = _vm->_globals.essai2;
-			v57[v56] = v114;
-			v57[v56 + 1] = v55;
-			v57[v56 + 2] = 5;
+			_vm->_globals.essai2[v117] = v114;
+			_vm->_globals.essai2[v117 + 1] = v55;
+			_vm->_globals.essai2[v117 + 2] = 5;
 			v117 += 3;
 			++v55;
 			if (a4 <= v55)
@@ -2228,11 +2119,9 @@ LABEL_211:
 	if (v93 > a4) {
 		v58 = v93;
 		while (!checkCollisionLine(v114, v58, &v139, &v138, 0, _linesNumb)) {
-			v59 = v117;
-			v60 = _vm->_globals.essai2;
-			v60[v59] = v114;
-			v60[v59 + 1] = v58;
-			v60[v59 + 2] = 1;
+			_vm->_globals.essai2[v117] = v114;
+			_vm->_globals.essai2[v117 + 1] = v58;
+			_vm->_globals.essai2[v117 + 2] = 1;
 			v117 += 3;
 			--v58;
 			if (a4 >= v58)
@@ -2242,74 +2131,64 @@ LABEL_214:
 		if (v138 > _vm->_objectsManager._lastLine)
 			v138 = -1;
 LABEL_249:
-		v76 = v117;
-		v77 = _vm->_globals.essai2;
-		v77[v76] = -1;
-		v77[v76 + 1] = -1;
-		v77[v76 + 2] = -1;
+		_vm->_globals.essai2[v117] = -1;
+		_vm->_globals.essai2[v117 + 1] = -1;
+		_vm->_globals.essai2[v117 + 2] = -1;
 
-		if (v136 != 1) {
+		if (!v136) {
 			if (a6 > v144) {
 				if (_vm->_globals.essai0[0] != -1 && v142 > v144 && v140 <= v142 && v138 <= v142 && a6 >= v142) {
 					NV_LIGNEDEP = v142;
 					NV_LIGNEOFS = v143;
-					v130 = 0;
 					v120 = 0;
-					v78 = _vm->_globals.essai0;
-					do {
-						v79 = v137;
-						_vm->_globals.super_parcours[v79] = v78[v120];
-						_vm->_globals.super_parcours[v79 + 1] = v78[v120 + 1];
-						_vm->_globals.super_parcours[v79 + 2] = v78[v120 + 2];
-						_vm->_globals.super_parcours[v79 + 3] = 0;
+					for (;;) {
+						_vm->_globals.super_parcours[v137] = _vm->_globals.essai0[v120];
+						_vm->_globals.super_parcours[v137 + 1] = _vm->_globals.essai0[v120 + 1];
+						_vm->_globals.super_parcours[v137 + 2] = _vm->_globals.essai0[v120 + 2];
+						_vm->_globals.super_parcours[v137 + 3] = 0;
 						v120 += 3;
 						v137 += 4;
-						if (v78[v120] == -1 && v78[v120 + 1] == -1)
-							v130 = 1;
-					} while (v130 != 1);
+						if (_vm->_globals.essai0[v120] == -1 && _vm->_globals.essai0[v120 + 1] == -1)
+							break;
+					}
 					NV_POSI = v137;
 					return 2;
 				}
-				v80 = _vm->_globals.essai1;
 				if (_vm->_globals.essai1[0] != -1 && v144 < v140 && v138 <= v140 && v142 <= v140 && a6 >= v140) {
 					NV_LIGNEDEP = v140;
 					NV_LIGNEOFS = v141;
-					v131 = 0;
 					v121 = 0;
-					do {
+					for (;;) {
 						assert(137 <= 32000);
-						v81 = v137;
-						_vm->_globals.super_parcours[v81] = v80[v121];
-						_vm->_globals.super_parcours[v81 + 1] = v80[v121 + 1];
-						_vm->_globals.super_parcours[v81 + 2] = v80[v121 + 2];
-						_vm->_globals.super_parcours[v81 + 3] = 0;
+						_vm->_globals.super_parcours[v137] = _vm->_globals.essai1[v121];
+						_vm->_globals.super_parcours[v137 + 1] = _vm->_globals.essai1[v121 + 1];
+						_vm->_globals.super_parcours[v137 + 2] = _vm->_globals.essai1[v121 + 2];
+						_vm->_globals.super_parcours[v137 + 3] = 0;
 						v121 += 3;
 						v137 += 4;
-						if (v80[v121] == -1 && v80[v121 + 1] == -1)
-							v131 = 1;
-					} while (v131 != 1);
+						if (_vm->_globals.essai1[v121] == -1 && _vm->_globals.essai1[v121 + 1] == -1)
+							break;
+					}
 					NV_POSI = v137;
 					return 2;
 				}
-				v82 = _vm->_globals.essai2;
+				_vm->_globals.essai2 = _vm->_globals.essai2;
 				if (_vm->_globals.essai2[0] != -1) {
 					if (v144 < v138 && v140 < v138 && v142 < v138 && a6 >= v138) {
 						NV_LIGNEDEP = v138;
 						NV_LIGNEOFS = v139;
-						v132 = 0;
 						v122 = 0;
-						do {
+						for (;;) {
 							assert(v137 <= 32000);
-							v83 = v137;
-							_vm->_globals.super_parcours[v83] = v82[v122];
-							_vm->_globals.super_parcours[v83 + 1] = v82[v122 + 1];
-							_vm->_globals.super_parcours[v83 + 2] = v82[v122 + 2];
-							_vm->_globals.super_parcours[v83 + 3] = 0;
+							_vm->_globals.super_parcours[v137] = _vm->_globals.essai2[v122];
+							_vm->_globals.super_parcours[v137 + 1] = _vm->_globals.essai2[v122 + 1];
+							_vm->_globals.super_parcours[v137 + 2] = _vm->_globals.essai2[v122 + 2];
+							_vm->_globals.super_parcours[v137 + 3] = 0;
 							v122 += 3;
 							v137 += 4;
-							if (v82[v122] == -1 && v82[v122 + 1] == -1)
-								v132 = 1;
-						} while (v132 != 1);
+							if (_vm->_globals.essai2[v122] == -1 && _vm->_globals.essai2[v122 + 1] == -1)
+								break;
+						}
 						NV_POSI = v137;
 						return 2;
 					}
@@ -2325,63 +2204,54 @@ LABEL_249:
 				if (_vm->_globals.essai1[0] != -1 && v140 < v144 && v138 >= v140 && v142 >= v140 && a6 <= v140) {
 					NV_LIGNEDEP = v140;
 					NV_LIGNEOFS = v141;
-					v133 = 0;
 					v123 = 0;
-					v84 = _vm->_globals.essai1;
-					do {
+					for (;;) {
 						assert(137 <= 32000);
-						v85 = v137;
-						_vm->_globals.super_parcours[v85] = v84[v123];
-						_vm->_globals.super_parcours[v85 + 1] = v84[v123 + 1];
-						_vm->_globals.super_parcours[v85 + 2] = v84[v123 + 2];
-						_vm->_globals.super_parcours[v85 + 3] = 0;
+						_vm->_globals.super_parcours[v137] = _vm->_globals.essai1[v123];
+						_vm->_globals.super_parcours[v137 + 1] = _vm->_globals.essai1[v123 + 1];
+						_vm->_globals.super_parcours[v137 + 2] = _vm->_globals.essai1[v123 + 2];
+						_vm->_globals.super_parcours[v137 + 3] = 0;
 						v123 += 3;
 						v137 += 4;
-						if (v84[v123] == -1 && v84[v123 + 1] == -1)
-							v133 = 1;
-					} while (v133 != 1);
+						if (_vm->_globals.essai1[v123] == -1 && _vm->_globals.essai1[v123 + 1] == -1)
+							break;
+					}
 					NV_POSI = v137;
 					return 2;
 				}
-				v86 = _vm->_globals.essai2;
 				if (_vm->_globals.essai2[0] != -1 && v144 > v138 && v140 >= v138 && v142 >= v138 && a6 <= v138) {
 					NV_LIGNEDEP = v138;
 					NV_LIGNEOFS = v139;
-					v134 = 0;
 					v124 = 0;
-					do {
+					for (;;) {
 						assert(137 <= 32000);
-						v87 = v137;
-						_vm->_globals.super_parcours[v87] = v86[v124];
-						_vm->_globals.super_parcours[v87 + 1] = v86[v124 + 1];
-						_vm->_globals.super_parcours[v87 + 2] = v86[v124 + 2];
-						_vm->_globals.super_parcours[v87 + 3] = 0;
+						_vm->_globals.super_parcours[v137] = _vm->_globals.essai2[v124];
+						_vm->_globals.super_parcours[v137 + 1] = _vm->_globals.essai2[v124 + 1];
+						_vm->_globals.super_parcours[v137 + 2] = _vm->_globals.essai2[v124 + 2];
+						_vm->_globals.super_parcours[v137 + 3] = 0;
 						v124 += 3;
 						v137 += 4;
-						if (v86[v124] == -1 && v86[v124 + 1] == -1)
-							v134 = 1;
-					} while (v134 != 1);
+						if (_vm->_globals.essai2[v124] == -1 && _vm->_globals.essai2[v124 + 1] == -1)
+							break;
+					}
 					NV_POSI = v137;
 					return 2;
 				}
 				if (_vm->_globals.essai1[0] != -1 && v144 > v142 && v140 >= v142 && v138 >= v142 && a6 <= v142) {
 					NV_LIGNEDEP = v142;
 					NV_LIGNEOFS = v143;
-					v135 = 0;
 					v125 = 0;
-					v88 = _vm->_globals.essai0;
-					do {
+					for (;;) {
 						assert(137 <= 32000);
-						v89 = v137;
-						_vm->_globals.super_parcours[v89] = v88[v125];
-						_vm->_globals.super_parcours[v89 + 1] = v88[v125 + 1];
-						_vm->_globals.super_parcours[v89 + 2] = v88[v125 + 2];
-						_vm->_globals.super_parcours[v89 + 3] = 0;
+						_vm->_globals.super_parcours[v137] = _vm->_globals.essai0[v125];
+						_vm->_globals.super_parcours[v137 + 1] = _vm->_globals.essai0[v125 + 1];
+						_vm->_globals.super_parcours[v137 + 2] = _vm->_globals.essai0[v125 + 2];
+						_vm->_globals.super_parcours[v137 + 3] = 0;
 						v125 += 3;
 						v137 += 4;
-						if (v88[v125] == -1 && v88[v125 + 1] == -1)
-							v135 = 1;
-					} while (v135 != 1);
+						if (_vm->_globals.essai0[v125] == -1 && _vm->_globals.essai0[v125 + 1] == -1)
+							break;
+					}
 
 					NV_POSI = v137;
 					return 2;
@@ -2414,12 +2284,9 @@ LABEL_217:
 				if (v138 <= _vm->_objectsManager._lastLine)
 					goto LABEL_249;
 			}
-			v63 = v117;
-
-			v64 = _vm->_globals.essai2;
-			v64[v63] = v61;
-			v64[v63 + 1] = a4;
-			v64[v63 + 2] = 3;
+			_vm->_globals.essai2[v117] = v61;
+			_vm->_globals.essai2[v117 + 1] = a4;
+			_vm->_globals.essai2[v117 + 2] = 3;
 			v117 += 3;
 			++v61;
 		} while (a3 > v61);
@@ -2461,26 +2328,22 @@ LABEL_241:
 	_vm->_globals.essai2[v117 + 2] = -1;
 LABEL_242:
 	if (v117) {
-		v129 = 0;
 		v119 = 0;
-		v72 = _vm->_globals.essai2;
-		do {
-			v73 = v137;
-			_vm->_globals.super_parcours[v73] = v72[v119];
-			_vm->_globals.super_parcours[v73 + 1] = v72[v119 + 1];
-			_vm->_globals.super_parcours[v73 + 2] = v72[v119 + 2];
-			_vm->_globals.super_parcours[v73 + 3] = 0;
+		for (;;) {
+			_vm->_globals.super_parcours[v137] = _vm->_globals.essai2[v119];
+			_vm->_globals.super_parcours[v137 + 1] = _vm->_globals.essai2[v119 + 1];
+			_vm->_globals.super_parcours[v137 + 2] = _vm->_globals.essai2[v119 + 2];
+			_vm->_globals.super_parcours[v137 + 3] = 0;
 			v119 += 3;
 			v137 += 4;
-			if (v72[v119] == -1 && v72[v119 + 1] == -1)
-				v129 = 1;
-		} while (v129 != 1);
+			if (_vm->_globals.essai2[v119] == -1 && _vm->_globals.essai2[v119 + 1] == -1)
+				break;
+		}
 	}
-	v74 = v137;
-	_vm->_globals.super_parcours[v74] = -1;
-	_vm->_globals.super_parcours[v74 + 1] = -1;
-	_vm->_globals.super_parcours[v74 + 2] = -1;
-	_vm->_globals.super_parcours[v74 + 3] = -1;
+	_vm->_globals.super_parcours[v137] = -1;
+	_vm->_globals.super_parcours[v137 + 1] = -1;
+	_vm->_globals.super_parcours[v137 + 2] = -1;
+	_vm->_globals.super_parcours[v137 + 3] = -1;
 	return 1;
 }
 
