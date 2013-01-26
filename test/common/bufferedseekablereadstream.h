@@ -72,6 +72,13 @@ class BufferedSeekableReadStreamTestSuite : public CxxTest::TestSuite {
 		b = ssrs.readByte();
 		TS_ASSERT_EQUALS(b, 2);
 
+		ssrs.seek(5, SEEK_CUR);
+		TS_ASSERT_EQUALS(ssrs.pos(), 8);
+		ssrs.seek(-1, SEEK_CUR);
+		TS_ASSERT_EQUALS(ssrs.pos(), 7);
+		b = ssrs.readByte();
+		TS_ASSERT_EQUALS(b, 7);
+
 		delete &ssrs;
 	}
 };
