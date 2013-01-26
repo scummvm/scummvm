@@ -99,28 +99,15 @@ Common::Error HopkinsEngine::run() {
 	_fileManager.initCensorship();
 	initializeSystem();
 
-	if (getPlatform() == Common::kPlatformLinux) {
-		if (getIsDemo())
-			runLinuxDemo();
-		else
-			runFull();
-	} else if (getPlatform() == Common::kPlatformWindows) {
-		if (getIsDemo())
-			runWin95Demo();
-		else
-			runFull();
-	} else if (getPlatform() == Common::kPlatformBeOS) {
-		if (getIsDemo()) {
-			warning("Unhandled version, switching to linux demo");
-			runLinuxDemo();
-		} else
-			runFull();
-	} else {
-		if (getIsDemo()) {
-			warning("Unhandled version, switching to linux demo");
-			runLinuxDemo();
-		} else
-			runFull();
+	if (!getIsDemo())
+		runFull();
+	else if (getPlatform() == Common::kPlatformLinux)
+		runLinuxDemo();
+	else if (getPlatform() == Common::kPlatformWindows)
+		runWin95Demo();
+	else {
+		warning("Unhandled version, switching to linux demo. Please report this version to ScummVM developers");
+		runLinuxDemo();
 	}
 
 	return Common::kNoError;
