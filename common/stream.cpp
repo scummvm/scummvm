@@ -342,7 +342,7 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 	return alreadyRead + dataSize;
 }
 
-} // End of nameless namespace
+} // End of anonymous namespace
 
 
 ReadStream *wrapBufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
@@ -400,7 +400,7 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	return true;
 }
 
-} // End of nameless namespace
+} // End of anonymous namespace
 
 SeekableReadStream *wrapBufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
 	if (parentStream)
@@ -482,7 +482,7 @@ public:
 
 };
 
-} // End of nameless namespace
+} // End of anonymous namespace
 
 WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize) {
 	if (parentStream)

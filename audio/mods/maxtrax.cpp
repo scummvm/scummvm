@@ -105,7 +105,7 @@ inline uint32 pow2Fixed(int32 val) {
 }
 #endif
 
-} // End of namespace
+} // End of anonymous namespace
 
 namespace Audio {
 
