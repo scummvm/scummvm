@@ -48,7 +48,7 @@ public:
 	bool start();
 
 	bool update();
-	bool display() { return display(NULL); } // To avoid shadowing the inherited display-function.
+	bool display() { return display(nullptr); } // To avoid shadowing the inherited display-function.
 	bool display(BaseRegion *region);
 
 	bool sortParticlesByZ();

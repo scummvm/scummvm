@@ -579,7 +579,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		_back->display(offsetX + _posX, offsetY + _posY, _width, _height);
 	}
 	if (_image) {
-		_image->draw(offsetX + _posX, offsetY + _posY, NULL);
+		_image->draw(offsetX + _posX, offsetY + _posY, nullptr);
 	}
 
 	// prepare fonts
@@ -726,7 +726,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 
 	_gameRef->_textEncoding = OrigEncoding;

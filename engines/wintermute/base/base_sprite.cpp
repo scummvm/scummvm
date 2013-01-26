@@ -64,7 +64,7 @@ void BaseSprite::setDefaults() {
 	_currentFrame = -1;
 	_looping = false;
 	_lastFrameTime = 0;
-	setFilename(NULL);
+	setFilename(nullptr);
 	_finished = false;
 	_changed = false;
 	_paused = false;

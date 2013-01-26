@@ -199,7 +199,7 @@ bool PartParticle::display(PartEmitter *emitter) {
 
 	_sprite->getCurrentFrame();
 	return _sprite->display((int)_pos.x, (int)_pos.y,
-	                        NULL,
+	                        nullptr,
 	                        _scale, _scale,
 	                        BYTETORGBA(255, 255, 255, _currentAlpha),
 	                        _rotation,

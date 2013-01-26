@@ -348,7 +348,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 
 		if (val->isNULL()) {
-			setFont(NULL);
+			setFont(nullptr);
 		} else {
 			setFont(val->getString());
 		}

@@ -1078,7 +1078,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 			if (doUpdate) {
 				updateFreeObjects();
 			} else {
-				displayRegionContent(NULL);
+				displayRegionContent(nullptr);
 			}
 		}
 	} // each layer
@@ -1878,7 +1878,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "MouseY") {
 		int viewportY;
-		getViewportOffset(NULL, &viewportY);
+		getViewportOffset(nullptr, &viewportY);
 
 		_scValue->setInt(_gameRef->_mousePos.y + _offsetTop - viewportY);
 		return _scValue;
@@ -2591,7 +2591,7 @@ int AdScene::getOffsetLeft() {
 //////////////////////////////////////////////////////////////////////////
 int AdScene::getOffsetTop() {
 	int viewportY;
-	getViewportOffset(NULL, &viewportY);
+	getViewportOffset(nullptr, &viewportY);
 
 	return _offsetTop - viewportY;
 }

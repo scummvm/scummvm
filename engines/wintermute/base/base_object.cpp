@@ -1179,7 +1179,7 @@ bool BaseObject::updateSounds() {
 	if (_soundEvent) {
 		if (_sFX && !_sFX->isPlaying()) {
 			applyEvent(_soundEvent);
-			setSoundEvent(NULL);
+			setSoundEvent(nullptr);
 		}
 	}
 

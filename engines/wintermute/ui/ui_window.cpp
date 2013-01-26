@@ -218,7 +218,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (!_transparent && !image) {
-		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
+		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, nullptr, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
 	}
 
 	for (uint32 i = 0; i < _widgets.size(); i++) {

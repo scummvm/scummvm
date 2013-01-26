@@ -52,7 +52,7 @@ protected:
 	bool resumeSFX();
 	bool pauseSFX();
 	bool stopSFX(bool deleteSound = true);
-	bool playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = NULL, uint32 loopStart = 0);
+	bool playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = nullptr, uint32 loopStart = 0);
 	BaseSound *_sFX;
 	TSFXType _sFXType;
 	float _sFXParam1;

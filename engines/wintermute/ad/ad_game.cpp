@@ -1499,7 +1499,7 @@ bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
-	BaseGame::getVersion(verMajor, verMinor, NULL, NULL);
+	BaseGame::getVersion(verMajor, verMinor, nullptr, nullptr);
 
 	if (extMajor) {
 		*extMajor = 0;

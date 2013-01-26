@@ -139,7 +139,7 @@ int WintermuteEngine::init() {
 		return 1;
 	}
 	BaseEngine::instance().setGameRef(_game);
-	BasePlatform::initialize(this, _game, 0, NULL);
+	BasePlatform::initialize(this, _game, 0, nullptr);
 
 	bool windowedMode = !ConfMan.getBool("fullscreen");
 

@@ -262,7 +262,7 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a, Common::Rect
 	Common::Rect sizeRect(fillRect);
 	sizeRect.translate(-fillRect.top, -fillRect.left);
 	surf.fillRect(fillRect, col);
-	drawSurface(NULL, &surf, &sizeRect, &fillRect, false, false);
+	drawSurface(nullptr, &surf, &sizeRect, &fillRect, false, false);
 	surf.free();
 
 	//SDL_SetRenderDrawColor(_renderer, r, g, b, a);
@@ -287,7 +287,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	}
 
 	if (owner) { // Fade-tickets are owner-less
-		RenderTicket compare(owner, NULL, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
+		RenderTicket compare(owner, nullptr, srcRect, dstRect, mirrorX, mirrorY, disableAlpha);
 		compare._batchNum = _batchNum;
 		if (_spriteBatch) {
 			_batchNum++;
