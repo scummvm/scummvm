@@ -27,4 +27,4 @@ extern bool findWordCompletions(const char *input);
 extern void addAutoCompleteLine(const char *line);
 extern void sortAutoCompleteWordList();
 
-}	// End of namespace DS
+} // End of namespace DS

@@ -536,4 +536,4 @@ bool isPlaying() {
 }
 
 }
-}	// End of namespace DS
+} // End of namespace DS

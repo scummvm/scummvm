@@ -850,7 +850,7 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 	return dstLength + (src - srcStart);
 }
 
-}	// End of namespace Common
+} // End of namespace Common
 
 // Portable implementation of stricmp / strcasecmp / strcmpi.
 // TODO: Rename this to Common::strcasecmp

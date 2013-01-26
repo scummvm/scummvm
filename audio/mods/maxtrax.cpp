@@ -105,7 +105,7 @@ inline uint32 pow2Fixed(int32 val) {
 }
 #endif
 
-}	// End of namespace
+} // End of namespace
 
 namespace Audio {
 
@@ -1032,6 +1032,6 @@ void MaxTrax::outPutEvent(const Event &ev, int num) {}
 void MaxTrax::outPutScore(const Score &sc, int num) {}
 #endif	// #ifndef NDEBUG
 
-}	// End of namespace Audio
+} // End of namespace Audio
 
 #endif // #if defined(AUDIO_MODS_MAXTRAX_H)

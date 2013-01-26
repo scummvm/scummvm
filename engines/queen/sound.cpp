@@ -771,4 +771,4 @@ bool AmigaSound::playSpecialSfx(int16 sfx) {
 	return true;
 }
 
-} //End of namespace Queen
+} // End of namespace Queen

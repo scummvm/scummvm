@@ -273,6 +273,6 @@ private:
 	void noteCommand(uint8 note, uint8 param1, uint8 param2, uint8 param3);
 };
 
-}	// End of namespace Audio
+} // End of namespace Audio
 
 #endif // !defined(AUDIO_MODS_TFMX_H)

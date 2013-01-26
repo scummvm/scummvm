@@ -122,4 +122,4 @@ uint32 PackBitsReadStream::read(void *dataPtr, uint32 dataSize) {
 	return dataSize - left;
 }
 
-}	// End of namespace Common
+} // End of namespace Common

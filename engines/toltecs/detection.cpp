@@ -324,7 +324,7 @@ SaveStateDescriptor ToltecsMetaEngine::querySaveMetaInfos(const char *target, in
 	}
 
 	return SaveStateDescriptor();
-}	// End of namespace Toltecs
+} // End of namespace Toltecs
 
 #if PLUGIN_ENABLED_DYNAMIC(TOLTECS)
 	REGISTER_PLUGIN_DYNAMIC(TOLTECS, PLUGIN_TYPE_ENGINE, ToltecsMetaEngine);

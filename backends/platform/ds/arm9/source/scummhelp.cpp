@@ -91,7 +91,7 @@ void updateStrings(byte gameId, byte version, Common::Platform platform,
 
 }
 
-}	// End of namespace DS
+} // End of namespace DS
 
 
 

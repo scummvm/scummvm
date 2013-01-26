@@ -78,6 +78,6 @@ protected:
 extern void showOptionsDialog();
 extern void setOptions();
 
-}	// End of namespace DS
+} // End of namespace DS
 
 #endif

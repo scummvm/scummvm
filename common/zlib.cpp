@@ -419,4 +419,4 @@ WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped) {
 }
 
 
-}	// End of namespace Common
+} // End of namespace Common

@@ -1534,4 +1534,4 @@ Archive *makeZipArchive(SeekableReadStream *stream) {
 	return new ZipArchive(zipFile);
 }
 
-}	// End of namespace Common
+} // End of namespace Common

@@ -38,6 +38,6 @@ bool isPlaying();
 void update();
 
 }
-}	// End of namespace DS
+} // End of namespace DS
 
 #endif

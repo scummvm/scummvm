@@ -464,4 +464,4 @@ bool DOSArchive_v2::openStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-}	// End of namespace Mohawk
+} // End of namespace Mohawk
