@@ -44,17 +44,17 @@ public:
 
 	Common::String getName() const;
 
-	bool initRenderer(int width, int height, bool windowed);
-	bool flip();
+	bool initRenderer(int width, int height, bool windowed) override;
+	bool flip() override;
 	virtual bool indicatorFlip();
-	bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL);
-	Graphics::PixelFormat getPixelFormat() const;
-	void fade(uint16 alpha);
-	void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = NULL);
+	bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL) override;
+	Graphics::PixelFormat getPixelFormat() const override;
+	void fade(uint16 alpha) override;
+	void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = NULL) override;
 
-	bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
+	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
 
-	BaseImage *takeScreenshot();
+	BaseImage *takeScreenshot() override;
 
 	void setAlphaMod(byte alpha);
 	void setColorMod(byte r, byte g, byte b);
@@ -62,29 +62,29 @@ public:
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
 	void drawFromTicket(RenderTicket *renderTicket);
 
-	bool setViewport(int left, int top, int right, int bottom);
-	bool setViewport(Rect32 *rect) { return BaseRenderer::setViewport(rect); }
-	Rect32 getViewPort();
+	bool setViewport(int left, int top, int right, int bottom) override;
+	bool setViewport(Rect32 *rect) override { return BaseRenderer::setViewport(rect); }
+	Rect32 getViewPort() override;
 	void modTargetRect(Common::Rect *rect);
-	void pointFromScreen(Point32 *point);
+	void pointFromScreen(Point32 *point) ;
 	void pointToScreen(Point32 *point);
 
-	void dumpData(const char *filename);
+	void dumpData(const char *filename) override;
 
-	float getScaleRatioX() const {
+	float getScaleRatioX() const override {
 		return _ratioX;
 	}
-	float getScaleRatioY() const {
+	float getScaleRatioY() const override {
 		return _ratioY;
 	}
-	virtual bool startSpriteBatch();
-	virtual bool endSpriteBatch();
+	virtual bool startSpriteBatch() override;
+	virtual bool endSpriteBatch() override;
 	void endSaveLoad();
-	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false);
+	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false) ;
 	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
-	BaseSurface *createSurface();
+	BaseSurface *createSurface() override;
 private:
-	void addDirtyRect(const Common::Rect &rect);
+	void addDirtyRect(const Common::Rect &rect) ;
 	void drawTickets();
 	// Non-dirty-rects:
 	void drawFromSurface(RenderTicket *ticket);
