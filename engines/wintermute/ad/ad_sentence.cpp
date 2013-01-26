@@ -45,27 +45,27 @@ IMPLEMENT_PERSISTENT(AdSentence, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
-	_text = NULL;
-	_stances = NULL;
-	_tempStance = NULL;
+	_text = nullptr;
+	_stances = nullptr;
+	_tempStance = nullptr;
 
 	_duration = 0;
 	_startTime = 0;
 	_currentStance = 0;
 
-	_font = NULL;
+	_font = nullptr;
 
 	_pos.x = _pos.y = 0;
 	_width = _gameRef->_renderer->_width;
 
 	_align = (TTextAlign)TAL_CENTER;
 
-	_sound = NULL;
+	_sound = nullptr;
 	_soundStarted = false;
 
-	_talkDef = NULL;
-	_currentSprite = NULL;
-	_currentSkelAnim = NULL;
+	_talkDef = nullptr;
+	_currentSprite = nullptr;
+	_currentSkelAnim = nullptr;
 	_fixedPos = false;
 	_freezable = true;
 }
@@ -78,15 +78,15 @@ AdSentence::~AdSentence() {
 	delete[] _stances;
 	delete[] _tempStance;
 	delete _talkDef;
-	_sound = NULL;
-	_text = NULL;
-	_stances = NULL;
-	_tempStance = NULL;
-	_talkDef = NULL;
+	_sound = nullptr;
+	_text = nullptr;
+	_stances = nullptr;
+	_tempStance = nullptr;
+	_talkDef = nullptr;
 
-	_currentSprite = NULL; // ref only
-	_currentSkelAnim = NULL;
-	_font = NULL; // ref only
+	_currentSprite = nullptr; // ref only
+	_currentSkelAnim = nullptr;
+	_font = nullptr; // ref only
 }
 
 
@@ -113,7 +113,7 @@ void AdSentence::setStances(const char *stances) {
 			strcpy(_stances, stances);
 		}
 	} else {
-		_stances = NULL;
+		_stances = nullptr;
 	}
 }
 
@@ -133,14 +133,14 @@ char *AdSentence::getNextStance() {
 
 //////////////////////////////////////////////////////////////////////////
 char *AdSentence::getStance(int stance) {
-	if (_stances == NULL) {
-		return NULL;
+	if (_stances == nullptr) {
+		return nullptr;
 	}
 
 	if (_tempStance) {
 		delete[] _tempStance;
 	}
-	_tempStance = NULL;
+	_tempStance = nullptr;
 
 	char *start;
 	char *curr;
@@ -150,7 +150,7 @@ char *AdSentence::getStance(int stance) {
 		start = _stances;
 	} else {
 		pos = 0;
-		start = NULL;
+		start = nullptr;
 		curr = _stances;
 		while (pos < stance) {
 			if (*curr == '\0') {
@@ -166,8 +166,8 @@ char *AdSentence::getStance(int stance) {
 		}
 	}
 
-	if (start == NULL) {
-		return NULL;
+	if (start == nullptr) {
+		return nullptr;
 	}
 
 	while (*start == ' ' && *start != ',' && *start != '\0') {
@@ -274,8 +274,8 @@ bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::setupTalkFile(const char *soundFilename) {
 	delete _talkDef;
-	_talkDef = NULL;
-	_currentSprite = NULL;
+	_talkDef = nullptr;
+	_currentSprite = nullptr;
 
 	if (!soundFilename) {
 		return STATUS_OK;
@@ -294,7 +294,7 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 	_talkDef = new AdTalkDef(_gameRef);
 	if (!_talkDef || DID_FAIL(_talkDef->loadFile(talkDefFileName.c_str()))) {
 		delete _talkDef;
-		_talkDef = NULL;
+		_talkDef = nullptr;
 		return STATUS_FAILED;
 	}
 	//_gameRef->LOG(0, "Using .talk file: %s", TalkDefFile);
@@ -345,7 +345,7 @@ bool AdSentence::update(TDirection dir) {
 			}
 			_currentSprite = newSprite;
 		} else {
-			_currentSprite = NULL;
+			_currentSprite = nullptr;
 		}
 	}
 

@@ -38,10 +38,10 @@ IMPLEMENT_PERSISTENT(AdResponse, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
-	_text = NULL;
-	_textOrig = NULL;
-	_icon = _iconHover = _iconPressed = NULL;
-	_font = NULL;
+	_text = nullptr;
+	_textOrig = nullptr;
+	_icon = _iconHover = _iconPressed = nullptr;
+	_font = nullptr;
 	_iD = 0;
 	_responseType = RESPONSE_ALWAYS;
 }
@@ -54,11 +54,11 @@ AdResponse::~AdResponse() {
 	delete _icon;
 	delete _iconHover;
 	delete _iconPressed;
-	_text = NULL;
-	_textOrig = NULL;
-	_icon = NULL;
-	_iconHover = NULL;
-	_iconPressed = NULL;
+	_text = nullptr;
+	_textOrig = nullptr;
+	_icon = nullptr;
+	_iconHover = nullptr;
+	_iconPressed = nullptr;
 	if (_font) {
 		_gameRef->_fontStorage->removeFont(_font);
 	}
@@ -79,7 +79,7 @@ bool AdResponse::setIcon(const char *filename) {
 	if (!_icon || DID_FAIL(_icon->loadFile(filename))) {
 		_gameRef->LOG(0, "AdResponse::setIcon failed for file '%s'", filename);
 		delete _icon;
-		_icon = NULL;
+		_icon = nullptr;
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;
@@ -105,7 +105,7 @@ bool AdResponse::setIconHover(const char *filename) {
 	if (!_iconHover || DID_FAIL(_iconHover->loadFile(filename))) {
 		_gameRef->LOG(0, "AdResponse::setIconHover failed for file '%s'", filename);
 		delete _iconHover;
-		_iconHover = NULL;
+		_iconHover = nullptr;
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;
@@ -119,7 +119,7 @@ bool AdResponse::setIconPressed(const char *filename) {
 	if (!_iconPressed || DID_FAIL(_iconPressed->loadFile(filename))) {
 		_gameRef->LOG(0, "AdResponse::setIconPressed failed for file '%s'", filename);
 		delete _iconPressed;
-		_iconPressed = NULL;
+		_iconPressed = nullptr;
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;

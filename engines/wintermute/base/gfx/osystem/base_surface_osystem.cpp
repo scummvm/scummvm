@@ -47,9 +47,9 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////////
 BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
-	_alphaMask = NULL;
+	_alphaMask = nullptr;
 	_hasAlpha = true;
-	_lockPixels = NULL;
+	_lockPixels = nullptr;
 	_lockPitch = 0;
 	_loaded = false;
 }
@@ -59,11 +59,11 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-		_surface = NULL;
+		_surface = nullptr;
 	}
 
 	delete[] _alphaMask;
-	_alphaMask = NULL;
+	_alphaMask = nullptr;
 
 	_gameRef->addMem(-_width * _height * 4);
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
@@ -177,7 +177,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 	return;
 	// TODO: Reimplement this
 	delete[] _alphaMask;
-	_alphaMask = NULL;
+	_alphaMask = nullptr;
 	if (!surface) {
 		return;
 	}
@@ -214,7 +214,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 
 	if (!hasTransparency) {
 		delete[] _alphaMask;
-		_alphaMask = NULL;
+		_alphaMask = nullptr;
 	}
 }
 
@@ -293,7 +293,7 @@ bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::startPixelOp() {
-	//SDL_LockTexture(_texture, NULL, &_lockPixels, &_lockPitch);
+	//SDL_LockTexture(_texture, nullptr, &_lockPixels, &_lockPitch);
 	// Any pixel-op makes the caching useless:
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);

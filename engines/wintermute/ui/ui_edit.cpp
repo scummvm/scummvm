@@ -56,12 +56,12 @@ IMPLEMENT_PERSISTENT(UIEdit, false)
 UIEdit::UIEdit(BaseGame *inGame) : UIObject(inGame) {
 	_type = UI_EDIT;
 
-	_fontSelected = NULL;
+	_fontSelected = nullptr;
 
 	_selStart = _selEnd = 10000;
 	_scrollOffset = 0;
 
-	_cursorChar = NULL;
+	_cursorChar = nullptr;
 	setCursorChar("|");
 
 	_cursorBlinkRate = 600;
@@ -88,14 +88,14 @@ UIEdit::~UIEdit() {
 	}
 
 	delete[] _cursorChar;
-	_cursorChar = NULL;
+	_cursorChar = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEdit::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UIEdit::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -194,7 +194,7 @@ bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
-				_back = NULL;
+				_back = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -204,7 +204,7 @@ bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
-				_image = NULL;
+				_image = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -263,7 +263,7 @@ bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
-				_cursor = NULL;
+				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -388,7 +388,7 @@ bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			_gameRef->_fontStorage->removeFont(_fontSelected);
 		}
 		_fontSelected = _gameRef->_fontStorage->addFont(stack->pop()->getString());
-		stack->pushBool(_fontSelected != NULL);
+		stack->pushBool(_fontSelected != nullptr);
 
 		return STATUS_OK;
 	} else {

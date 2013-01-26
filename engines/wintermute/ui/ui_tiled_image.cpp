@@ -42,7 +42,7 @@ IMPLEMENT_PERSISTENT(UITiledImage, false)
 
 //////////////////////////////////////////////////////////////////////////
 UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
-	_image = NULL;
+	_image = nullptr;
 
 	BasePlatform::setRectEmpty(&_upLeft);
 	BasePlatform::setRectEmpty(&_upMiddle);
@@ -59,7 +59,7 @@ UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 UITiledImage::~UITiledImage() {
 	delete _image;
-	_image = NULL;
+	_image = nullptr;
 }
 
 
@@ -120,7 +120,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 //////////////////////////////////////////////////////////////////////////
 bool UITiledImage::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UITiledImage::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -205,7 +205,7 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 			_image = new BaseSubFrame(_gameRef);
 			if (!_image || DID_FAIL(_image->setSurface((char *)params))) {
 				delete _image;
-				_image = NULL;
+				_image = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;

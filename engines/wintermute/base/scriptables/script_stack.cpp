@@ -58,7 +58,7 @@ ScStack::~ScStack() {
 ScValue *ScStack::pop() {
 	if (_sP < 0) {
 		_gameRef->LOG(0, "Fatal: Stack underflow");
-		return NULL;
+		return nullptr;
 	}
 
 	return _values[_sP--];
@@ -97,7 +97,7 @@ ScValue *ScStack::getPushValue() {
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScStack::getTop() {
 	if (_sP < 0 || _sP >= (int32)_values.size()) {
-		return NULL;
+		return nullptr;
 	} else {
 		return _values[_sP];
 	}
@@ -108,7 +108,7 @@ ScValue *ScStack::getTop() {
 ScValue *ScStack::getAt(int index) {
 	index = _sP - index;
 	if (index < 0 || index >= (int32)_values.size()) {
-		return NULL;
+		return nullptr;
 	} else {
 		return _values[index];
 	}

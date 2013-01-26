@@ -60,7 +60,7 @@ public:
 	virtual bool updateSounds();
 	bool reset();
 	DECLARE_PERSISTENT(AdObject, BaseObject)
-	virtual void talk(const char *text, const char *sound = NULL, uint32 duration = 0, const char *stances = NULL, TTextAlign align = TAL_CENTER);
+	virtual void talk(const char *text, const char *sound = nullptr, uint32 duration = 0, const char *stances = nullptr, TTextAlign align = TAL_CENTER);
 	virtual int getHeight();
 
 	bool setFont(const char *filename);

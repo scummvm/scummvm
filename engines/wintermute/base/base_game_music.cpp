@@ -39,7 +39,7 @@ namespace Wintermute {
 
 BaseGameMusic::BaseGameMusic(BaseGame *gameRef) : _gameRef(gameRef) {
 	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
-		_music[i] = NULL;
+		_music[i] = nullptr;
 		_musicStartTime[i] = 0;
 	}
 
@@ -54,7 +54,7 @@ BaseGameMusic::BaseGameMusic(BaseGame *gameRef) : _gameRef(gameRef) {
 void BaseGameMusic::cleanup() {
 	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
 		delete _music[i];
-		_music[i] = NULL;
+		_music[i] = nullptr;
 		_musicStartTime[i] = 0;
 	}
 }
@@ -67,7 +67,7 @@ bool BaseGameMusic::playMusic(int channel, const char *filename, bool looping, u
 	}
 	
 	delete _music[channel];
-	_music[channel] = NULL;
+	_music[channel] = nullptr;
 	
 	_music[channel] = new BaseSound(_gameRef);
 	if (_music[channel] && DID_SUCCEED(_music[channel]->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
@@ -81,7 +81,7 @@ bool BaseGameMusic::playMusic(int channel, const char *filename, bool looping, u
 		return _music[channel]->play(looping);
 	} else {
 		delete _music[channel];
-		_music[channel] = NULL;
+		_music[channel] = nullptr;
 		return STATUS_FAILED;
 	}
 }
@@ -97,7 +97,7 @@ bool BaseGameMusic::stopMusic(int channel) {
 	if (_music[channel]) {
 		_music[channel]->stop();
 		delete _music[channel];
-		_music[channel] = NULL;
+		_music[channel] = nullptr;
 		return STATUS_OK;
 	} else {
 		return STATUS_FAILED;
@@ -494,7 +494,7 @@ bool BaseGameMusic::scCallMethod(ScScript *script, ScStack *stack, ScStack *this
 		if (sound && DID_SUCCEED(sound->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
 			length = sound->getLength();
 			delete sound;
-			sound = NULL;
+			sound = nullptr;
 		}
 		stack->pushInt(length);
 		return STATUS_OK;

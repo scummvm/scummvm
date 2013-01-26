@@ -50,13 +50,13 @@ BaseFontTT::BaseFontTT(BaseGame *inGame) : BaseFont(inGame) {
 	_fontHeight = 12;
 	_isBold = _isItalic = _isUnderline = _isStriked = false;
 
-	_fontFile = NULL;
-	_font = NULL;
-	_fallbackFont = NULL;
-	_deletableFont = NULL;
+	_fontFile = nullptr;
+	_font = nullptr;
+	_fallbackFont = nullptr;
+	_deletableFont = nullptr;
 
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
-		_cachedTexts[i] = NULL;
+		_cachedTexts[i] = nullptr;
 	}
 
 	_lineHeight = 0;
@@ -73,10 +73,10 @@ BaseFontTT::~BaseFontTT(void) {
 	_layers.clear();
 
 	delete[] _fontFile;
-	_fontFile = NULL;
+	_fontFile = nullptr;
 
 	delete _deletableFont;
-	_font = NULL;
+	_font = nullptr;
 }
 
 
@@ -86,7 +86,7 @@ void BaseFontTT::clearCache() {
 		if (_cachedTexts[i]) {
 			delete _cachedTexts[i];
 		}
-		_cachedTexts[i] = NULL;
+		_cachedTexts[i] = nullptr;
 	}
 }
 
@@ -96,13 +96,13 @@ void BaseFontTT::initLoop() {
 	if (_gameRef->_constrainedMemory) {
 		// purge all cached images not used in the last frame
 		for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
-			if (_cachedTexts[i] == NULL) {
+			if (_cachedTexts[i] == nullptr) {
 				continue;
 			}
 
 			if (!_cachedTexts[i]->_marked) {
 				delete _cachedTexts[i];
-				_cachedTexts[i] = NULL;
+				_cachedTexts[i] = nullptr;
 			} else {
 				_cachedTexts[i]->_marked = false;
 			}
@@ -151,7 +151,7 @@ int BaseFontTT::getTextHeight(byte *text, int width) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign align, int maxHeight, int maxLength) {
-	if (text == NULL || strcmp((const char *)text, "") == 0) {
+	if (text == nullptr || strcmp((const char *)text, "") == 0) {
 		return;
 	}
 
@@ -176,11 +176,11 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	// find cached surface, if exists
 	uint32 minUseTime = UINT_MAX;
 	int minIndex = -1;
-	BaseSurface *surface = NULL;
+	BaseSurface *surface = nullptr;
 	int textOffset = 0;
 
 	for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
-		if (_cachedTexts[i] == NULL) {
+		if (_cachedTexts[i] == nullptr) {
 			minUseTime = 0;
 			minIndex = i;
 		} else {
@@ -205,7 +205,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 		surface = renderTextToTexture(textStr, width, align, maxHeight, textOffset);
 		if (surface) {
 			// write surface to cache
-			if (_cachedTexts[minIndex] != NULL) {
+			if (_cachedTexts[minIndex] != nullptr) {
 				delete _cachedTexts[minIndex];
 			}
 			_cachedTexts[minIndex] = new BaseCachedTTFontText;
@@ -255,7 +255,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		lines.pop_back();
 	}
 	if (lines.size() == 0) {
-		return NULL;
+		return nullptr;
 	}
 
 	Graphics::TextAlign alignment = Graphics::kTextAlignInvalid;
@@ -304,7 +304,7 @@ int BaseFontTT::getLetterHeight() {
 //////////////////////////////////////////////////////////////////////
 bool BaseFontTT::loadFile(const Common::String &filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "BaseFontTT::LoadFile failed for file '%s'", filename.c_str());
 		return STATUS_FAILED;
 	}
@@ -422,7 +422,7 @@ bool BaseFontTT::loadBuffer(byte *buffer) {
 				_layers.add(layer);
 			} else {
 				delete layer;
-				layer = NULL;
+				layer = nullptr;
 				cmd = PARSERR_TOKENNOTFOUND;
 			}
 		}
@@ -528,9 +528,9 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 
 	if (!persistMgr->getIsSaving()) {
 		for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
-			_cachedTexts[i] = NULL;
+			_cachedTexts[i] = nullptr;
 		}
-		_fallbackFont = _font = _deletableFont = NULL;
+		_fallbackFont = _font = _deletableFont = nullptr;
 	}
 
 	return STATUS_OK;
@@ -561,7 +561,7 @@ bool BaseFontTT::initFont() {
 		_deletableFont = Graphics::loadTTFFont(*file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
 		_font = _deletableFont;
 		BaseFileManager::getEngineInstance()->closeFile(file);
-		file = NULL;
+		file = nullptr;
 	}
 
 	// Fallback2: Try to find ScummModern.zip, and get the font from there:
@@ -570,16 +570,16 @@ bool BaseFontTT::initFont() {
 		if (themeFile) {
 			Common::Archive *themeArchive = Common::makeZipArchive(themeFile);
 			if (themeArchive->hasFile("FreeSans.ttf")) {
-				file = NULL;
+				file = nullptr;
 				file = themeArchive->createReadStreamForMember("FreeSans.ttf");
 				_deletableFont = Graphics::loadTTFFont(*file, 96, _fontHeight); // Use the same dpi as WME (96 vs 72).
 				_font = _deletableFont;
 			}
 			// We're not using BaseFileManager, so clean up after ourselves:
 			delete file;
-			file = NULL;
+			file = nullptr;
 			delete themeArchive;
-			themeArchive = NULL;
+			themeArchive = nullptr;
 		}
 	}
 
@@ -627,7 +627,7 @@ void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight
 	        TextLine *line = (*it);
 	        textWidth = MAX(textWidth, line->GetWidth());
 	        delete line;
-	        line = NULL;
+	        line = nullptr;
 	    }*/
 }
 

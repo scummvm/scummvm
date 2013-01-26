@@ -43,7 +43,7 @@ IMPLEMENT_PERSISTENT(UIEntity, false)
 //////////////////////////////////////////////////////////////////////////
 UIEntity::UIEntity(BaseGame *inGame) : UIObject(inGame) {
 	_type = UI_CUSTOM;
-	_entity = NULL;
+	_entity = nullptr;
 }
 
 
@@ -52,14 +52,14 @@ UIEntity::~UIEntity() {
 	if (_entity) {
 		_gameRef->unregisterObject(_entity);
 	}
-	_entity = NULL;
+	_entity = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UIEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -223,7 +223,7 @@ bool UIEntity::setEntity(const char *filename) {
 	_entity = new AdEntity(_gameRef);
 	if (!_entity || DID_FAIL(_entity->loadFile(filename))) {
 		delete _entity;
-		_entity = NULL;
+		_entity = nullptr;
 		return STATUS_FAILED;
 	} else {
 		_entity->_nonIntMouseEvents = true;

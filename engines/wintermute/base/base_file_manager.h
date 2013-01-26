@@ -43,7 +43,7 @@ public:
 	bool closeFile(Common::SeekableReadStream *File);
 	bool hasFile(const Common::String &filename);
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
-	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
+	byte *readWholeFile(const Common::String &filename, uint32 *size = nullptr, bool mustExist = true);
 
 	BaseFileManager(Common::Language lang);
 	virtual ~BaseFileManager();

@@ -58,7 +58,7 @@ public:
 	bool _playing;
 	bool display();
 	bool update();
-	bool initialize(const char *inFilename, const char *subtitleFile = NULL);
+	bool initialize(const char *inFilename, const char *subtitleFile = nullptr);
 	bool cleanup();
 	VideoPlayer(BaseGame *inGame);
 	virtual ~VideoPlayer();

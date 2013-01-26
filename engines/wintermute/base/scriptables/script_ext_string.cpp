@@ -45,7 +45,7 @@ BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack) {
 
 //////////////////////////////////////////////////////////////////////////
 SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
-	_string = NULL;
+	_string = nullptr;
 	_capacity = 0;
 
 	stack->correctParams(1);
@@ -81,7 +81,7 @@ void SXString::setStringVal(const char *val) {
 	if (len >= _capacity) {
 		_capacity = len + 1;
 		delete[] _string;
-		_string = NULL;
+		_string = nullptr;
 		_string = new char[_capacity];
 		memset(_string, 0, _capacity);
 	}
@@ -331,7 +331,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 			array->push(val);
 			delete val;
-			val = NULL;
+			val = nullptr;
 		}
 
 		stack->pushNative(array, false);
@@ -420,7 +420,7 @@ bool SXString::persist(BasePersistenceManager *persistMgr) {
 			_string = new char[_capacity];
 			persistMgr->getBytes((byte *)_string, _capacity);
 		} else {
-			_string = NULL;
+			_string = nullptr;
 		}
 	}
 

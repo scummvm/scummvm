@@ -144,7 +144,7 @@ public:
 	virtual ~BaseGame();
 
 	void DEBUG_DebugDisable();
-	void DEBUG_DebugEnable(const char *filename = NULL);
+	void DEBUG_DebugEnable(const char *filename = nullptr);
 	bool _debugDebugMode;
 
 	void *_debugLogFile;
@@ -236,8 +236,8 @@ public:
 	void setInteractive(bool state);
 	virtual bool windowLoadHook(UIWindow *win, char **buf, char **params);
 	virtual bool windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name);
-	bool getCurrentViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
-	bool getCurrentViewportRect(Rect32 *rect, bool *custom = NULL);
+	bool getCurrentViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr);
+	bool getCurrentViewportRect(Rect32 *rect, bool *custom = nullptr);
 	bool popViewport();
 	bool pushViewport(BaseViewport *Viewport);
 	bool setActiveObject(BaseObject *Obj);
@@ -287,7 +287,7 @@ private:
 	uint32 _framesRendered;
 	Common::String _gameId;
 
-	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = NULL, void *data = NULL);
+	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = nullptr, void *data = nullptr);
 	ENGINE_LOG_CALLBACK _engineLogCallback;
 	void *_engineLogCallbackData;
 

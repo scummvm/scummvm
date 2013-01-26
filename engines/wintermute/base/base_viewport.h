@@ -44,7 +44,7 @@ public:
 	int _offsetY;
 	int _offsetX;
 	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = NULL);
+	BaseViewport(BaseGame *inGame = nullptr);
 	virtual ~BaseViewport();
 private:
 	Rect32 _rect;

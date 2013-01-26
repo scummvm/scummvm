@@ -67,7 +67,7 @@ void AdWaypointGroup::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 bool AdWaypointGroup::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdWaypointGroup::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}

@@ -72,7 +72,7 @@ bool BaseFontStorage::initLoop() {
 //////////////////////////////////////////////////////////////////////////
 BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
 	if (!filename.size()) {
-		return NULL;
+		return nullptr;
 	}
 
 	for (uint32 i = 0; i < _fonts.size(); i++) {
@@ -84,11 +84,11 @@ BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
 
 	/*
 	BaseFont* font = new BaseFont(_gameRef);
-	if (!font) return NULL;
+	if (!font) return nullptr;
 
 	if (DID_FAIL(font->loadFile(filename))) {
 	    delete font;
-	    return NULL;
+	    return nullptr;
 	}
 	else {
 	    font->_refCount = 1;

@@ -2813,7 +2813,7 @@ Common::SeekableReadStream *BaseResources::getFile(const Common::String &filenam
 	} else if (scumm_stricmp(filename.c_str(), "syste_font.bmp") == 0) {
 		return new Common::MemoryReadStream(systemfont, sizeof(invalid), DisposeAfterUse::NO);
 	}
-	return NULL;
+	return nullptr;
 }
 
 bool BaseResources::hasFile(const Common::String &filename) {

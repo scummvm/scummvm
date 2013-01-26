@@ -64,7 +64,7 @@ BasePoint *AdPath::getFirst() {
 		_currIndex = 0;
 		return _points[_currIndex];
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -75,7 +75,7 @@ BasePoint *AdPath::getNext() {
 	if (_currIndex < (int32)_points.size()) {
 		return _points[_currIndex];
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -85,7 +85,7 @@ BasePoint *AdPath::getCurrent() {
 	if (_currIndex >= 0 && _currIndex < (int32)_points.size()) {
 		return _points[_currIndex];
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

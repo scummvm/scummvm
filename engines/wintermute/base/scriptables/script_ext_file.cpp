@@ -52,13 +52,13 @@ SXFile::SXFile(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(1);
 	ScValue *val = stack->pop();
 
-	_filename = NULL;
+	_filename = nullptr;
 	if (!val->isNULL()) {
 		BaseUtils::setString(&_filename, val->getString());
 	}
 
-	_readFile = NULL;
-	_writeFile = NULL;
+	_readFile = nullptr;
+	_writeFile = nullptr;
 
 	_mode = 0;
 	_textMode = false;
@@ -73,7 +73,7 @@ SXFile::~SXFile() {
 //////////////////////////////////////////////////////////////////////////
 void SXFile::cleanup() {
 	delete[] _filename;
-	_filename = NULL;
+	_filename = nullptr;
 	close();
 }
 
@@ -82,12 +82,12 @@ void SXFile::cleanup() {
 void SXFile::close() {
 	if (_readFile) {
 		BaseFileManager::getEngineInstance()->closeFile(_readFile);
-		_readFile = NULL;
+		_readFile = nullptr;
 	}
 	if (_writeFile) {
 		_writeFile->finalize();
 		delete _writeFile;
-		_writeFile = NULL;
+		_writeFile = nullptr;
 	}
 	_mode = 0;
 	_textMode = false;
@@ -778,8 +778,8 @@ bool SXFile::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transfer(TMEMBER(pos));
 
 		// try to re-open file if needed
-		_writeFile = NULL;
-		_readFile = NULL;
+		_writeFile = nullptr;
+		_readFile = nullptr;
 
 		if (_mode != 0) {
 			// open for reading

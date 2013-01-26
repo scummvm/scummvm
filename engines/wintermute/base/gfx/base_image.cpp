@@ -43,10 +43,10 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////
 BaseImage::BaseImage() {
 	_fileManager = BaseFileManager::getEngineInstance();
-	_palette = NULL;
-	_surface = NULL;
-	_decoder = NULL;
-	_deletableSurface = NULL;
+	_palette = nullptr;
+	_surface = nullptr;
+	_decoder = nullptr;
+	_deletableSurface = nullptr;
 }
 
 
@@ -118,7 +118,7 @@ bool BaseImage::resize(int newWidth, int newHeight) {
 	if (_deletableSurface) {
 		_deletableSurface->free();
 		delete _deletableSurface;
-		_deletableSurface = NULL;
+		_deletableSurface = nullptr;
 	}
 	_surface = _deletableSurface = temp.scale((uint16)newWidth, (uint16)newHeight);
 	temp.free();
@@ -222,7 +222,7 @@ bool BaseImage::copyFrom(BaseImage *origImage, int newWidth, int newHeight) {
 	if (_deletableSurface) {
 		_deletableSurface->free();
 		delete _deletableSurface;
-		_deletableSurface = NULL;
+		_deletableSurface = nullptr;
 	}
 	_surface = _deletableSurface = temp.scale((uint16)newWidth, (uint16)newHeight);
 	return true;

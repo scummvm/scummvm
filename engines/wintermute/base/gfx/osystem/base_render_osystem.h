@@ -47,10 +47,10 @@ public:
 	bool initRenderer(int width, int height, bool windowed) override;
 	bool flip() override;
 	virtual bool indicatorFlip();
-	bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL) override;
+	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
 	Graphics::PixelFormat getPixelFormat() const override;
 	void fade(uint16 alpha) override;
-	void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = NULL) override;
+	void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = nullptr) override;
 
 	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
 

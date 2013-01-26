@@ -60,7 +60,7 @@ public:
 	bool _visible;
 	UITiledImage *_back;
 	bool _disable;
-	UIObject(BaseGame *inGame = NULL);
+	UIObject(BaseGame *inGame = nullptr);
 	virtual ~UIObject();
 	int _width;
 	int _height;

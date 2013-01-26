@@ -59,7 +59,7 @@ _srcRect(*srcRect), _dstRect(*dstRect), _drawNum(0), _isValid(true), _wantsDraw(
 			_surface = temp;
 		}
 	} else {
-		_surface = NULL;
+		_surface = nullptr;
 	}
 }
 

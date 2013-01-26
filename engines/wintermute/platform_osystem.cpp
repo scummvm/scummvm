@@ -36,8 +36,8 @@
 
 namespace Wintermute {
 
-BaseGame *BasePlatform::_gameRef = NULL;
-WintermuteEngine *BasePlatform::_engineRef = NULL;
+BaseGame *BasePlatform::_gameRef = nullptr;
+WintermuteEngine *BasePlatform::_engineRef = nullptr;
 
 #define CLASS_NAME "GF_FRAME"
 int BasePlatform::initialize(WintermuteEngine *engineRef, BaseGame *inGame, int argc, char *argv[]) {
@@ -47,8 +47,8 @@ int BasePlatform::initialize(WintermuteEngine *engineRef, BaseGame *inGame, int 
 }
 
 void BasePlatform::deinit() {
-	_gameRef = NULL;
-	_engineRef = NULL;
+	_gameRef = nullptr;
+	_engineRef = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ bool BasePlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
-	if (lprcDst == NULL || lprcSrc == NULL) {
+	if (lprcDst == nullptr || lprcSrc == nullptr) {
 		return false;
 	}
 

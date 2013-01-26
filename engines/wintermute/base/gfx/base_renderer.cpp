@@ -56,7 +56,7 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 
 	_loadImageName = "";
 	_saveImageName = "";
-	_saveLoadImage = NULL;
+	_saveLoadImage = nullptr;
 	_loadInProgress = false;
 	_hasDrawnSaveLoadImage = false;
 
@@ -132,24 +132,24 @@ void BaseRenderer::initSaveLoad(bool isSaving, bool quickSave) {
 
 	if (isSaving && !quickSave) {
 		delete _saveLoadImage;
-		_saveLoadImage = NULL;
+		_saveLoadImage = nullptr;
 		if (_saveImageName.size()) {
 			_saveLoadImage = createSurface();
 
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
 				delete _saveLoadImage;
-				_saveLoadImage = NULL;
+				_saveLoadImage = nullptr;
 			}
 		}
 	} else {
 		delete _saveLoadImage;
-		_saveLoadImage = NULL;
+		_saveLoadImage = nullptr;
 		if (_loadImageName.size()) {
 			_saveLoadImage = createSurface();
 
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
 				delete _saveLoadImage;
-				_saveLoadImage = NULL;
+				_saveLoadImage = nullptr;
 			}
 		}
 		_loadInProgress = true;
@@ -162,7 +162,7 @@ void BaseRenderer::endSaveLoad() {
 	_indicatorWidthDrawn = 0;
 
 	delete _saveLoadImage;
-	_saveLoadImage = NULL;
+	_saveLoadImage = nullptr;
 }
 
 void BaseRenderer::persistSaveLoadImages(BasePersistenceManager *persistMgr) {
@@ -214,7 +214,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 		}
 	}
 
-	return (BaseObject *)NULL;
+	return (BaseObject *)nullptr;
 }
 
 
@@ -317,7 +317,7 @@ bool BaseRenderer::clipCursor() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::unclipCursor() {
 	/*
-	if (!_windowed) ::ClipCursor(NULL);
+	if (!_windowed) ::ClipCursor(nullptr);
 	*/
 	return STATUS_OK;
 }

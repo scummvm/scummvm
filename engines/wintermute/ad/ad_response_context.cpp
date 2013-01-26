@@ -36,14 +36,14 @@ IMPLEMENT_PERSISTENT(AdResponseContext, false)
 //////////////////////////////////////////////////////////////////////////
 AdResponseContext::AdResponseContext(BaseGame *inGame) : BaseClass(inGame) {
 	_id = 0;
-	_context = NULL;
+	_context = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 AdResponseContext::~AdResponseContext() {
 	delete[] _context;
-	_context = NULL;
+	_context = nullptr;
 }
 
 
@@ -59,7 +59,7 @@ bool AdResponseContext::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 void AdResponseContext::setContext(const char *context) {
 	delete[] _context;
-	_context = NULL;
+	_context = nullptr;
 	if (context) {
 		_context = new char [strlen(context) + 1];
 		if (_context) {

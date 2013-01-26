@@ -36,20 +36,20 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSaveThumbHelper::BaseSaveThumbHelper(BaseGame *inGame) : BaseClass(inGame) {
-	_thumbnail = NULL;
-	_scummVMThumb = NULL;
+	_thumbnail = nullptr;
+	_scummVMThumb = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 BaseSaveThumbHelper::~BaseSaveThumbHelper(void) {
 	delete _thumbnail;
-	_thumbnail = NULL;
+	_thumbnail = nullptr;
 	delete _scummVMThumb;
-	_scummVMThumb = NULL;
+	_scummVMThumb = nullptr;
 }
 
 BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
-	BaseImage *thumbnail = NULL;
+	BaseImage *thumbnail = nullptr;
 	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
 		if (doFlip) {
 			// when using opengl on windows it seems to be necessary to do this twice
@@ -63,7 +63,7 @@ BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 		
 		BaseImage *screenshot = _gameRef->_renderer->takeScreenshot();
 		if (!screenshot) {
-			return NULL;
+			return nullptr;
 		}
 		
 		// normal thumbnail
@@ -74,7 +74,7 @@ BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 		
 		
 		delete screenshot;
-		screenshot = NULL;
+		screenshot = nullptr;
 	}
 	return thumbnail;
 }
@@ -82,7 +82,7 @@ BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
-	_thumbnail = NULL;
+	_thumbnail = nullptr;
 
 	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
 
@@ -98,7 +98,7 @@ bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
 	delete _scummVMThumb;
-	_scummVMThumb = NULL;
+	_scummVMThumb = nullptr;
 	
 	_scummVMThumb = storeThumb(doFlip, kThumbnailWidth, kThumbnailHeight2);
 	if (!_scummVMThumb) {

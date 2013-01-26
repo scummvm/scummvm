@@ -62,7 +62,7 @@ public:
 	//CVidSubtitler *_subtitler;
 
 	// control methods
-	bool initialize(const Common::String &filename, const Common::String &subtitleFile = NULL);
+	bool initialize(const Common::String &filename, const Common::String &subtitleFile = nullptr);
 	bool initializeSimple();
 	bool update();
 	bool play(TVideoPlayback type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeGame = false, bool freezeMusic = true, bool looping = false, uint32 startTime = 0, float forceZoom = -1.0f, int volume = -1);

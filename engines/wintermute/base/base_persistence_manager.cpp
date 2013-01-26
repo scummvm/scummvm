@@ -56,31 +56,31 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////////
 BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool deleteSingleton) {
 	_saving = false;
-//	_buffer = NULL;
+//	_buffer = nullptr;
 //	_bufferSize = 0;
 	_offset = 0;
-	_saveStream = NULL;
-	_loadStream = NULL;
+	_saveStream = nullptr;
+	_loadStream = nullptr;
 	_deleteSingleton = deleteSingleton;
 	if (BaseEngine::instance().getGameRef()) {
 		_gameRef = BaseEngine::instance().getGameRef();
 	} else {
-		_gameRef = NULL;
+		_gameRef = nullptr;
 	}
 
-	_richBuffer = NULL;
+	_richBuffer = nullptr;
 	_richBufferSize = 0;
 
-	_scummVMThumbnailData = NULL;
+	_scummVMThumbnailData = nullptr;
 	_scummVMThumbSize = 0;
 
-	_savedDescription = NULL;
+	_savedDescription = nullptr;
 //	_savedTimestamp = 0;
 	_savedVerMajor = _savedVerMinor = _savedVerBuild = 0;
 	_savedExtMajor = _savedExtMinor = 0;
 
 	_thumbnailDataSize = 0;
-	_thumbnailData = NULL;
+	_thumbnailData = nullptr;
 	if (savePrefix) {
 		_savePrefix = savePrefix;
 	} else if (_gameRef) {
@@ -94,7 +94,7 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 //////////////////////////////////////////////////////////////////////////
 BasePersistenceManager::~BasePersistenceManager() {
 	cleanup();
-	if (_deleteSingleton && BaseEngine::instance().getGameRef() == NULL)
+	if (_deleteSingleton && BaseEngine::instance().getGameRef() == nullptr)
 		BaseEngine::destroy();
 }
 
@@ -105,17 +105,17 @@ void BasePersistenceManager::cleanup() {
 	        if (_saving) free(_buffer);
 	        else delete[] _buffer; // allocated by file manager
 	    }
-	    _buffer = NULL;
+	    _buffer = nullptr;
 
 	    _bufferSize = 0;*/
 	_offset = 0;
 
 	delete[] _richBuffer;
-	_richBuffer = NULL;
+	_richBuffer = nullptr;
 	_richBufferSize = 0;
 
 	delete[] _savedDescription;
-	_savedDescription = NULL; // ref to buffer
+	_savedDescription = nullptr; // ref to buffer
 //	_savedTimestamp = 0;
 	_savedVerMajor = _savedVerMinor = _savedVerBuild = 0;
 	_savedExtMajor = _savedExtMinor = 0;
@@ -123,19 +123,19 @@ void BasePersistenceManager::cleanup() {
 	_thumbnailDataSize = 0;
 	if (_thumbnailData) {
 		delete[] _thumbnailData;
-		_thumbnailData = NULL;
+		_thumbnailData = nullptr;
 	}
 
 	_scummVMThumbSize = 0;
 	if (_scummVMThumbnailData) {
 		delete[] _scummVMThumbnailData;
-		_scummVMThumbnailData = NULL;
+		_scummVMThumbnailData = nullptr;
 	}
 
 	delete _loadStream;
 	delete _saveStream;
-	_loadStream = NULL;
-	_saveStream = NULL;
+	_loadStream = nullptr;
+	_saveStream = nullptr;
 }
 
 Common::String BasePersistenceManager::getFilenameForSlot(int slot) const {
@@ -156,7 +156,7 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 	desc.setWriteProtectedFlag(false);
 
 	int thumbSize = 0;
-	byte *thumbData = NULL;
+	byte *thumbData = nullptr;
 	if (_scummVMThumbSize > 0) {
 		thumbSize = _scummVMThumbSize;
 		thumbData = _scummVMThumbnailData;
@@ -228,7 +228,7 @@ bool BasePersistenceManager::initSave(const char *desc) {
 			_gameRef->_cachedThumbnail = new BaseSaveThumbHelper(_gameRef);
 			if (DID_FAIL(_gameRef->_cachedThumbnail->storeThumbnail(true))) {
 				delete _gameRef->_cachedThumbnail;
-				_gameRef->_cachedThumbnail = NULL;
+				_gameRef->_cachedThumbnail = nullptr;
 			}
 		}
 
@@ -291,7 +291,7 @@ bool BasePersistenceManager::initSave(const char *desc) {
 
 		// in any case, destroy the cached thumbnail once used
 		delete _gameRef->_cachedThumbnail;
-		_gameRef->_cachedThumbnail = NULL;
+		_gameRef->_cachedThumbnail = nullptr;
 
 		uint32 dataOffset = _offset +
 		                    sizeof(uint32) + // data offset
@@ -502,7 +502,7 @@ char *BasePersistenceManager::getString() {
 
 	if (!strcmp(ret, "(null)")) {
 		delete[] ret;
-		return NULL;
+		return nullptr;
 	} else {
 		return ret;
 	}
@@ -845,7 +845,7 @@ bool BasePersistenceManager::transfer(const char *name, void *val) {
 
 	if (_saving) {
 		SystemClassRegistry::getInstance()->getPointerID(*(void **)val, &classID, &instanceID);
-		if (*(void **)val != NULL && (classID == -1 || instanceID == -1)) {
+		if (*(void **)val != nullptr && (classID == -1 || instanceID == -1)) {
 			debugC(kWintermuteDebugSaveGame, "Warning: invalid instance '%s'", name);
 		}
 

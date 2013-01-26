@@ -61,7 +61,7 @@ private:
 			_text = "";
 			_width = _maxHeight = _maxLength = -1;
 			_align = TAL_LEFT;
-			_surface = NULL;
+			_surface = nullptr;
 			_textOffset = 0;
 			_lastUsed = 0;
 			_marked = false;

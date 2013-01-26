@@ -39,58 +39,58 @@ IMPLEMENT_PERSISTENT(ScScript, false)
 
 //////////////////////////////////////////////////////////////////////////
 ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
-	_buffer = NULL;
+	_buffer = nullptr;
 	_bufferSize = _iP = 0;
-	_scriptStream = NULL;
-	_filename = NULL;
+	_scriptStream = nullptr;
+	_filename = nullptr;
 	_currentLine = 0;
 
-	_symbols = NULL;
+	_symbols = nullptr;
 	_numSymbols = 0;
 
 	_engine = engine;
 
-	_globals = NULL;
+	_globals = nullptr;
 
-	_scopeStack = NULL;
-	_callStack  = NULL;
-	_thisStack  = NULL;
-	_stack      = NULL;
+	_scopeStack = nullptr;
+	_callStack  = nullptr;
+	_thisStack  = nullptr;
+	_stack      = nullptr;
 
-	_operand    = NULL;
-	_reg1       = NULL;
+	_operand    = nullptr;
+	_reg1       = nullptr;
 
-	_functions = NULL;
+	_functions = nullptr;
 	_numFunctions = 0;
 
-	_methods = NULL;
+	_methods = nullptr;
 	_numMethods = 0;
 
-	_events = NULL;
+	_events = nullptr;
 	_numEvents = 0;
 
-	_externals = NULL;
+	_externals = nullptr;
 	_numExternals = 0;
 
 	_state = SCRIPT_FINISHED;
 	_origState = SCRIPT_FINISHED;
 
-	_waitObject = NULL;
+	_waitObject = nullptr;
 	_waitTime = 0;
 	_waitFrozen = false;
-	_waitScript = NULL;
+	_waitScript = nullptr;
 
 	_timeSlice = 0;
 
 	_thread = false;
 	_methodThread = false;
-	_threadEvent = NULL;
+	_threadEvent = nullptr;
 
 	_freezable = true;
-	_owner = NULL;
+	_owner = nullptr;
 
 	_unbreakable = false;
-	_parentScript = NULL;
+	_parentScript = nullptr;
 
 	_tracingMode = false;
 }
@@ -242,7 +242,7 @@ bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScrip
 	_methodThread = false;
 
 	delete[] _threadEvent;
-	_threadEvent = NULL;
+	_threadEvent = nullptr;
 
 	_filename = new char[strlen(filename) + 1];
 	if (_filename) {
@@ -383,52 +383,52 @@ void ScScript::cleanup() {
 	if (_buffer) {
 		delete[] _buffer;
 	}
-	_buffer = NULL;
+	_buffer = nullptr;
 
 	if (_filename) {
 		delete[] _filename;
 	}
-	_filename = NULL;
+	_filename = nullptr;
 
 	if (_symbols) {
 		delete[] _symbols;
 	}
-	_symbols = NULL;
+	_symbols = nullptr;
 	_numSymbols = 0;
 
 	if (_globals && !_thread) {
 		delete _globals;
 	}
-	_globals = NULL;
+	_globals = nullptr;
 
 	delete _scopeStack;
-	_scopeStack = NULL;
+	_scopeStack = nullptr;
 
 	delete _callStack;
-	_callStack = NULL;
+	_callStack = nullptr;
 
 	delete _thisStack;
-	_thisStack = NULL;
+	_thisStack = nullptr;
 
 	delete _stack;
-	_stack = NULL;
+	_stack = nullptr;
 
 	if (_functions) {
 		delete[] _functions;
 	}
-	_functions = NULL;
+	_functions = nullptr;
 	_numFunctions = 0;
 
 	if (_methods) {
 		delete[] _methods;
 	}
-	_methods = NULL;
+	_methods = nullptr;
 	_numMethods = 0;
 
 	if (_events) {
 		delete[] _events;
 	}
-	_events = NULL;
+	_events = nullptr;
 	_numEvents = 0;
 
 
@@ -440,25 +440,25 @@ void ScScript::cleanup() {
 		}
 		delete[] _externals;
 	}
-	_externals = NULL;
+	_externals = nullptr;
 	_numExternals = 0;
 
 	delete _operand;
 	delete _reg1;
-	_operand = NULL;
-	_reg1 = NULL;
+	_operand = nullptr;
+	_reg1 = nullptr;
 
 	delete[] _threadEvent;
-	_threadEvent = NULL;
+	_threadEvent = nullptr;
 
 	_state = SCRIPT_FINISHED;
 
-	_waitObject = NULL;
+	_waitObject = nullptr;
 	_waitTime = 0;
 	_waitFrozen = false;
-	_waitScript = NULL;
+	_waitScript = nullptr;
 
-	_parentScript = NULL; // ref only
+	_parentScript = nullptr; // ref only
 
 	delete _scriptStream;
 }
@@ -511,7 +511,7 @@ bool ScScript::executeInstruction() {
 	bool ret = STATUS_OK;
 
 	uint32 dw;
-	const char *str = NULL;
+	const char *str = nullptr;
 
 	//ScValue* op = new ScValue(_gameRef);
 	_operand->cleanup();
@@ -787,7 +787,7 @@ bool ScScript::executeInstruction() {
 		ScValue *var = _stack->pop();
 		ScValue *val = _stack->pop();
 
-		if (val == NULL) {
+		if (val == nullptr) {
 			runtimeError("Script stack corruption detected. Please report this script at WME bug reports forum.");
 			var->setNULL();
 		} else {
@@ -928,7 +928,7 @@ bool ScScript::executeInstruction() {
 	case II_AND:
 		op2 = _stack->pop();
 		op1 = _stack->pop();
-		if (op1 == NULL || op2 == NULL) {
+		if (op1 == nullptr || op2 == nullptr) {
 			runtimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
 			_operand->setBool(false);
 		} else {
@@ -940,7 +940,7 @@ bool ScScript::executeInstruction() {
 	case II_OR:
 		op2 = _stack->pop();
 		op1 = _stack->pop();
-		if (op1 == NULL || op2 == NULL) {
+		if (op1 == nullptr || op2 == nullptr) {
 			runtimeError("Script corruption detected. Did you use '=' instead of '==' for comparison?");
 			_operand->setBool(false);
 		} else {
@@ -1120,7 +1120,7 @@ uint32 ScScript::getMethodPos(const Common::String &name) const {
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScScript::getVar(char *name) {
-	ScValue *ret = NULL;
+	ScValue *ret = nullptr;
 
 	// scope locals
 	if (_scopeStack->_sP >= 0) {
@@ -1130,20 +1130,20 @@ ScValue *ScScript::getVar(char *name) {
 	}
 
 	// script globals
-	if (ret == NULL) {
+	if (ret == nullptr) {
 		if (_globals->propExists(name)) {
 			ret = _globals->getProp(name);
 		}
 	}
 
 	// engine globals
-	if (ret == NULL) {
+	if (ret == nullptr) {
 		if (_engine->_globals->propExists(name)) {
 			ret = _engine->_globals->getProp(name);
 		}
 	}
 
-	if (ret == NULL) {
+	if (ret == nullptr) {
 		//RuntimeError("Variable '%s' is inaccessible in the current block. Consider changing the script.", name);
 		_gameRef->LOG(0, "Warning: variable '%s' is inaccessible in the current block. Consider changing the script (script:%s, line:%d)", name, _filename, _currentLine);
 		ScValue *val = new ScValue(_gameRef);
@@ -1263,8 +1263,8 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 			_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
 			initTables();
 		} else {
-			_buffer = NULL;
-			_scriptStream = NULL;
+			_buffer = nullptr;
+			_scriptStream = nullptr;
 		}
 	}
 
@@ -1306,11 +1306,11 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unbreakable) {
-	//if (_state!=SCRIPT_PERSISTENT) return NULL;
+	//if (_state!=SCRIPT_PERSISTENT) return nullptr;
 
 	uint32 pos = getEventPos(eventName);
 	if (!pos) {
-		return NULL;
+		return nullptr;
 	}
 
 	ScScript *thread = new ScScript(_gameRef,  _engine);
@@ -1322,10 +1322,10 @@ ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unb
 			return thread;
 		} else {
 			delete thread;
-			return NULL;
+			return nullptr;
 		}
 	} else {
-		return NULL;
+		return nullptr;
 	}
 
 }
@@ -1390,7 +1390,7 @@ ScScript::TExternalFunction *ScScript::getExternal(char *name) {
 			return &_externals[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -1446,7 +1446,7 @@ const char *ScScript::dbgGetFilename() {
 
 //////////////////////////////////////////////////////////////////////////
 void ScScript::afterLoad() {
-	if (_buffer == NULL) {
+	if (_buffer == nullptr) {
 		byte *buffer = _engine->getCompiledScript(_filename, &_bufferSize);
 		if (!buffer) {
 			_gameRef->LOG(0, "Error reinitializing script '%s' after load. Script will be terminated.", _filename);

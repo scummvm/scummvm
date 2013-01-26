@@ -115,7 +115,7 @@ bool SystemClassRegistry::registerInstance(const char *className, void *instance
 	}
 
 	SystemInstance *inst = (*mapIt)._value->addInstance(instance, _count++);
-	return (inst != NULL);
+	return (inst != nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ bool SystemClassRegistry::unregisterInstance(const char *className, void *instan
 
 //////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanceID) {
-	if (pointer == NULL) {
+	if (pointer == nullptr) {
 		return true;
 	}
 
@@ -173,7 +173,7 @@ bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanc
 void *SystemClassRegistry::idToPointer(int classID, int instanceID) {
 	SavedInstanceMap::iterator it = _savedInstanceMap.find(instanceID);
 	if (it == _savedInstanceMap.end()) {
-		return NULL;
+		return nullptr;
 	} else {
 		return (*it)._value->getInstance();
 	}

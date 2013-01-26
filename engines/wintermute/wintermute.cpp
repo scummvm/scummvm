@@ -49,7 +49,7 @@ namespace Wintermute {
 // This might not be the prettiest solution
 WintermuteEngine::WintermuteEngine() : Engine(g_system) {
 	_game = new AdGame("");
-	_debugger = NULL;
+	_debugger = nullptr;
 	_trigDebug = false;
 }
 
@@ -74,8 +74,8 @@ WintermuteEngine::WintermuteEngine(OSystem *syst, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kWintermuteDebugAudio, "audio", "audio-playback-related issues");
 	DebugMan.addDebugChannel(kWintermuteDebugGeneral, "general", "various issues not covered by any of the above");
 
-	_game = NULL;
-	_debugger = NULL;
+	_game = nullptr;
+	_debugger = nullptr;
 	_trigDebug = false;
 }
 
@@ -174,7 +174,7 @@ int WintermuteEngine::init() {
 	if (DID_FAIL(_game->loadSettings("startup.settings"))) {
 		_game->LOG(0, "Error loading game settings.");
 		delete _game;
-		_game = NULL;
+		_game = nullptr;
 
 		warning("Some of the essential files are missing. Please reinstall.");
 		return 2;
@@ -190,7 +190,7 @@ int WintermuteEngine::init() {
 		_game->LOG(ret, "Error initializing renderer. Exiting.");
 
 		delete _game;
-		_game = NULL;
+		_game = nullptr;
 		return 3;
 	}
 
@@ -209,7 +209,7 @@ int WintermuteEngine::init() {
 	if (DID_FAIL(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
 		delete _game;
-		_game = NULL;
+		_game = nullptr;
 		return false;
 	}
 
@@ -278,7 +278,7 @@ int WintermuteEngine::messageLoop() {
 
 	if (_game) {
 		delete _game;
-		_game = NULL;
+		_game = nullptr;
 	}
 	return 0;
 }
@@ -309,7 +309,7 @@ bool WintermuteEngine::canLoadGameStateCurrently() {
 bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption) {
 	bool retVal = false;
 	caption = name = "(invalid)";
-	Common::SeekableReadStream *stream = NULL;
+	Common::SeekableReadStream *stream = nullptr;
 	// Quick-fix, instead of possibly breaking the persistence-system, let's just roll with it
 	BaseFileManager *fileMan = new BaseFileManager(Common::UNK_LANG);
 	fileMan->registerPackages(fslist);

@@ -88,7 +88,7 @@ PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject
 
 	_useRegion = false;
 
-	_emitEvent = NULL;
+	_emitEvent = nullptr;
 	_owner = owner;
 }
 
@@ -112,7 +112,7 @@ PartEmitter::~PartEmitter(void) {
 	_sprites.clear();
 
 	delete[] _emitEvent;
-	_emitEvent = NULL;
+	_emitEvent = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -325,7 +325,7 @@ bool PartEmitter::display(BaseRegion *region) {
 	}
 
 	for (uint32 i = 0; i < _particles.size(); i++) {
-		if (region != NULL && _useRegion) {
+		if (region != nullptr && _useRegion) {
 			if (!region->pointInRegion((int)_particles[i]->_pos.x, (int)_particles[i]->_pos.y)) {
 				continue;
 			}
@@ -402,7 +402,7 @@ bool PartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int 
 
 //////////////////////////////////////////////////////////////////////////
 PartForce *PartEmitter::addForceByName(const Common::String &name) {
-	PartForce *force = NULL;
+	PartForce *force = nullptr;
 
 	for (uint32 i = 0; i < _forces.size(); i++) {
 		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
@@ -1133,7 +1133,7 @@ bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EmitEvent") == 0) {
 		delete[] _emitEvent;
-		_emitEvent = NULL;
+		_emitEvent = nullptr;
 		if (!value->isNULL()) {
 			BaseUtils::setString(&_emitEvent, value->getString());
 		}

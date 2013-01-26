@@ -39,10 +39,10 @@ DECLARE_SINGLETON(Wintermute::BaseEngine);
 namespace Wintermute {
 
 BaseEngine::BaseEngine() {
-	_fileManager = NULL;
-	_gameRef = NULL;
-	_classReg = NULL;
-	_rnd = NULL;
+	_fileManager = nullptr;
+	_gameRef = nullptr;
+	_classReg = nullptr;
+	_rnd = nullptr;
 	_gameId = "";
 }
 

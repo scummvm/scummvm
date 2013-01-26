@@ -63,7 +63,7 @@ public:
 		return STATUS_FAILED;
 	}
 	virtual bool putPixel(int x, int y, byte r, byte g, byte b, int a = -1);
-	virtual bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = NULL);
+	virtual bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr);
 	virtual bool comparePixel(int x, int y, byte r, byte g, byte b, int a = -1);
 	virtual bool startPixelOp();
 	virtual bool endPixelOp();

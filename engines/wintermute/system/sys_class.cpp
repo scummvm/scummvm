@@ -41,7 +41,7 @@ SystemClass::SystemClass(const AnsiString &name, PERSISTBUILD build, PERSISTLOAD
 
 	_build = build;
 	_load = load;
-	_next = NULL;
+	_next = nullptr;
 	_savedID = -1;
 	_persistent = persistentClass;
 	_numInst = 0;
@@ -119,7 +119,7 @@ void *SystemClass::idToPointer(int savedID) {
 			return (it->_value)->getInstance();
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

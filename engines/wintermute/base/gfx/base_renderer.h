@@ -81,13 +81,13 @@ public:
 	 * @param g the green component to fade too.
 	 * @param b the blue component to fade too.
 	 * @param a the alpha component to fade too.
-	 * @param rect the portion of the screen to fade (if NULL, the entire screen will be faded).
+	 * @param rect the portion of the screen to fade (if nullptr, the entire screen will be faded).
 	 */
-	virtual void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = NULL) = 0;
+	virtual void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = nullptr) = 0;
 
 	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); 	// Unused outside indicator-display
 	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); 	// Unused outside indicator-display
-	BaseRenderer(BaseGame *inGame = NULL);
+	BaseRenderer(BaseGame *inGame = nullptr);
 	virtual ~BaseRenderer();
 	virtual bool setProjection() {
 		return STATUS_OK;
@@ -101,7 +101,7 @@ public:
 	 * @param g the green component to fill with.
 	 * @param b the blue component to fill with.
 	 */
-	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL) = 0;
+	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) = 0;
 	virtual void onWindowChange();
 	virtual bool initRenderer(int width, int height, bool windowed);
 	/**

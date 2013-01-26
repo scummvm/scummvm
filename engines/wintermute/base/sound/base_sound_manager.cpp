@@ -94,7 +94,7 @@ bool BaseSoundMgr::initialize() {
 //////////////////////////////////////////////////////////////////////////
 BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (!_soundAvailable) {
-		return NULL;
+		return nullptr;
 	}
 
 	BaseSoundBuffer *sound;
@@ -114,7 +114,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 
 	sound = new BaseSoundBuffer(_gameRef);
 	if (!sound) {
-		return NULL;
+		return nullptr;
 	}
 
 	sound->setStreaming(streamed);
@@ -125,7 +125,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 	if (DID_FAIL(res)) {
 		_gameRef->LOG(res, "Error loading sound '%s'", useFilename.c_str());
 		delete sound;
-		return NULL;
+		return nullptr;
 	}
 
 	// Make sure the master-volume is applied to the sound.
@@ -136,7 +136,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 
 	return sound;
 
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

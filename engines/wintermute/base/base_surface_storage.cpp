@@ -124,12 +124,12 @@ BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool
 	surface = _gameRef->_renderer->createSurface();
 
 	if (!surface) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (DID_FAIL(surface->create(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded))) {
 		delete surface;
-		return NULL;
+		return nullptr;
 	} else {
 		surface->_referenceCount = 1;
 		_surfaces.push_back(surface);

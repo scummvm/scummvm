@@ -42,14 +42,14 @@ IMPLEMENT_PERSISTENT(AdNodeState, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdNodeState::AdNodeState(BaseGame *inGame) : BaseClass(inGame) {
-	_name = NULL;
+	_name = nullptr;
 	_active = false;
 	for (int i = 0; i < 7; i++) {
-		_caption[i] = NULL;
+		_caption[i] = nullptr;
 	}
 	_alphaColor = 0;
-	_filename = NULL;
-	_cursor = NULL;
+	_filename = nullptr;
+	_cursor = nullptr;
 }
 
 
@@ -58,12 +58,12 @@ AdNodeState::~AdNodeState() {
 	delete[] _name;
 	delete[] _filename;
 	delete[] _cursor;
-	_name = NULL;
-	_filename = NULL;
-	_cursor = NULL;
+	_name = nullptr;
+	_filename = nullptr;
+	_cursor = nullptr;
 	for (int i = 0; i < 7; i++) {
 		delete[] _caption[i];
-		_caption[i] = NULL;
+		_caption[i] = nullptr;
 	}
 }
 
@@ -71,7 +71,7 @@ AdNodeState::~AdNodeState() {
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setName(const char *name) {
 	delete[] _name;
-	_name = NULL;
+	_name = nullptr;
 	BaseUtils::setString(&_name, name);
 }
 
@@ -79,7 +79,7 @@ void AdNodeState::setName(const char *name) {
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setFilename(const char *filename) {
 	delete[] _filename;
-	_filename = NULL;
+	_filename = nullptr;
 	BaseUtils::setString(&_filename, filename);
 }
 
@@ -87,7 +87,7 @@ void AdNodeState::setFilename(const char *filename) {
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCursor(const char *filename) {
 	delete[] _cursor;
-	_cursor = NULL;
+	_cursor = nullptr;
 	BaseUtils::setString(&_cursor, filename);
 }
 
@@ -132,7 +132,7 @@ const char *AdNodeState::getCaption(int caseVal) {
 	if (caseVal == 0) {
 		caseVal = 1;
 	}
-	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL) {
+	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == nullptr) {
 		return "";
 	} else {
 		return _caption[caseVal - 1];

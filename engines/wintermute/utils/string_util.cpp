@@ -205,7 +205,7 @@ bool StringUtil::isUtf8BOM(const byte *buffer, uint32 bufferSize) {
 //////////////////////////////////////////////////////////////////////////
 int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
 	const char *index = strstr(str.c_str(), toFind.c_str());
-	if (index == NULL) {
+	if (index == nullptr) {
 		return -1;
 	} else {
 		return index - str.c_str();

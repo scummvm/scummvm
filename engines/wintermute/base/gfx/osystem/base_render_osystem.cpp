@@ -54,13 +54,13 @@ BaseRenderOSystem::BaseRenderOSystem(BaseGame *inGame) : BaseRenderer(inGame) {
 	_spriteBatch = false;
 	_batchNum = 0;
 	_skipThisFrame = false;
-	_previousTicket = NULL;
+	_previousTicket = nullptr;
 
 	_borderLeft = _borderRight = _borderTop = _borderBottom = 0;
 	_ratioX = _ratioY = 1.0f;
 	setAlphaMod(255);
 	setColorMod(255, 255, 255);
-	_dirtyRect = NULL;
+	_dirtyRect = nullptr;
 	_disableDirtyRects = false;
 	if (ConfMan.hasKey("dirty_rects")) {
 		_disableDirtyRects = !ConfMan.getBool("dirty_rects");
@@ -169,7 +169,7 @@ bool BaseRenderOSystem::flip() {
 	if (_skipThisFrame) {
 		_skipThisFrame = false;
 		delete _dirtyRect;
-		_dirtyRect = NULL;
+		_dirtyRect = nullptr;
 		g_system->updateScreen();
 		_needsFlip = false;
 		return true;
@@ -196,7 +196,7 @@ bool BaseRenderOSystem::flip() {
 		}
 		//  g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, _dirtyRect->left, _dirtyRect->top, _dirtyRect->width(), _dirtyRect->height());
 		delete _dirtyRect;
-		_dirtyRect = NULL;
+		_dirtyRect = nullptr;
 		g_system->updateScreen();
 		_needsFlip = false;
 	}
@@ -297,7 +297,7 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 		// Avoid calling end() and operator* every time, when potentially going through
 		// LOTS of tickets.
 		RenderQueueIterator endIterator = _renderQueue.end();
-		RenderTicket *compareTicket = NULL;
+		RenderTicket *compareTicket = nullptr;
 		for (it = _lastAddedTicket; it != endIterator; ++it) {
 			compareTicket = *it;
 			if (*(compareTicket) == compare && compareTicket->_isValid) {

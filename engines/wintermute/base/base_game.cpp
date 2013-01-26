@@ -92,30 +92,30 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_interactive = true;
 	_origInteractive = false;
 
-	_surfaceStorage = NULL;
-	_fontStorage = NULL;
-	_renderer = NULL;
-	_soundMgr = NULL;
-	_transMgr = NULL;
-	_scEngine = NULL;
-	_keyboardState = NULL;
+	_surfaceStorage = nullptr;
+	_fontStorage = nullptr;
+	_renderer = nullptr;
+	_soundMgr = nullptr;
+	_transMgr = nullptr;
+	_scEngine = nullptr;
+	_keyboardState = nullptr;
 
-	_mathClass = NULL;
+	_mathClass = nullptr;
 
-	_debugLogFile = NULL;
+	_debugLogFile = nullptr;
 	_debugDebugMode = false;
 	_debugShowFPS = false;
 
-	_systemFont = NULL;
-	_videoFont = NULL;
+	_systemFont = nullptr;
+	_videoFont = nullptr;
 
-	_videoPlayer = NULL;
-	_theoraPlayer = NULL;
+	_videoPlayer = nullptr;
+	_theoraPlayer = nullptr;
 
-	_mainObject = NULL;
-	_activeObject = NULL;
+	_mainObject = nullptr;
+	_activeObject = nullptr;
 
-	_fader = NULL;
+	_fader = nullptr;
 
 	_offsetX = _offsetY = 0;
 	_offsetPercentX = _offsetPercentY = 0.0f;
@@ -135,12 +135,12 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 
 	_mousePos.x = _mousePos.y = 0;
 	_mouseLeftDown = _mouseRightDown = _mouseMidlleDown = false;
-	_capturedObject = NULL;
+	_capturedObject = nullptr;
 
 	// FPS counters
 	_lastTime = _fpsTime = _deltaTime = _framesRendered = _fps = 0;
 
-	_cursorNoninteractive = NULL;
+	_cursorNoninteractive = nullptr;
 
 	_useD3D = false;
 
@@ -154,7 +154,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_settingsRequireSound = false;
 	_settingsTLMode = 0;
 	_settingsAllowWindowed = true;
-	_settingsGameFile = NULL;
+	_settingsGameFile = nullptr;
 	_settingsAllowAdvanced = false;
 	_settingsAllowAccessTab = true;
 	_settingsAllowAboutTab = true;
@@ -163,7 +163,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_editorForceScripts = false;
 	_editorAlwaysRegister = false;
 
-	_focusedWindow = NULL;
+	_focusedWindow = nullptr;
 
 	_loadInProgress = false;
 
@@ -177,8 +177,8 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_editorMode = false;
 	//_doNotExpandStrings = false;
 
-	_engineLogCallback = NULL;
-	_engineLogCallbackData = NULL;
+	_engineLogCallback = nullptr;
+	_engineLogCallbackData = nullptr;
 
 	_smartCache = false;
 	_surfaceGCCycleTime = 10000;
@@ -199,7 +199,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 
 	_saveDirChecked = false;
 
-	_loadingIcon = NULL;
+	_loadingIcon = nullptr;
 	_loadingIconX = _loadingIconY = 0;
 	_loadingIconPersistent = false;
 
@@ -209,7 +209,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_soundBufferSizeSec = 3;
 	_suspendedRendering = false;
 
-	_lastCursor = NULL;
+	_lastCursor = nullptr;
 
 	BasePlatform::setRectEmpty(&_mouseLockRect);
 
@@ -217,7 +217,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_lastMiniUpdate = 0;
 	_miniUpdateEnabled = false;
 
-	_cachedThumbnail = NULL;
+	_cachedThumbnail = nullptr;
 
 	_autorunDisabled = false;
 
@@ -273,23 +273,23 @@ BaseGame::~BaseGame() {
 	delete _stringTable;
 	delete _musicSystem;
 
-	_settingsGameFile = NULL;
+	_settingsGameFile = nullptr;
 
-	_cachedThumbnail = NULL;
+	_cachedThumbnail = nullptr;
 
-	_mathClass = NULL;
+	_mathClass = nullptr;
 
-	_transMgr = NULL;
-	_scEngine = NULL;
-	_fontStorage = NULL;
-	_surfaceStorage = NULL;
-	_videoPlayer = NULL;
-	_theoraPlayer = NULL;
-	_soundMgr = NULL;
+	_transMgr = nullptr;
+	_scEngine = nullptr;
+	_fontStorage = nullptr;
+	_surfaceStorage = nullptr;
+	_videoPlayer = nullptr;
+	_theoraPlayer = nullptr;
+	_soundMgr = nullptr;
 
-	_renderer = NULL;
-	_stringTable = NULL;
-	_musicSystem = NULL;
+	_renderer = nullptr;
+	_stringTable = nullptr;
+	_musicSystem = nullptr;
 
 	DEBUG_DebugDisable();
 	debugC(kWintermuteDebugLog, "--- shutting down normally ---\n");
@@ -299,48 +299,48 @@ BaseGame::~BaseGame() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::cleanup() {
 	delete _loadingIcon;
-	_loadingIcon = NULL;
+	_loadingIcon = nullptr;
 
-	_engineLogCallback = NULL;
-	_engineLogCallbackData = NULL;
+	_engineLogCallback = nullptr;
+	_engineLogCallbackData = nullptr;
 
 	_musicSystem->cleanup();
 
 	unregisterObject(_fader);
-	_fader = NULL;
+	_fader = nullptr;
 
 	for (uint32 i = 0; i < _regObjects.size(); i++) {
 		delete _regObjects[i];
-		_regObjects[i] = NULL;
+		_regObjects[i] = nullptr;
 	}
 	_regObjects.clear();
 
 	_windows.clear(); // refs only
-	_focusedWindow = NULL; // ref only
+	_focusedWindow = nullptr; // ref only
 
 	delete _cursorNoninteractive;
 	delete _cursor;
 	delete _activeCursor;
-	_cursorNoninteractive = NULL;
-	_cursor = NULL;
-	_activeCursor = NULL;
+	_cursorNoninteractive = nullptr;
+	_cursor = nullptr;
+	_activeCursor = nullptr;
 
 	delete _scValue;
 	delete _sFX;
-	_scValue = NULL;
-	_sFX = NULL;
+	_scValue = nullptr;
+	_sFX = nullptr;
 
 	for (uint32 i = 0; i < _scripts.size(); i++) {
-		_scripts[i]->_owner = NULL;
+		_scripts[i]->_owner = nullptr;
 		_scripts[i]->finish();
 	}
 	_scripts.clear();
 
 	_fontStorage->removeFont(_systemFont);
-	_systemFont = NULL;
+	_systemFont = nullptr;
 
 	_fontStorage->removeFont(_videoFont);
-	_videoFont = NULL;
+	_videoFont = nullptr;
 
 	for (uint32 i = 0; i < _quickMessages.size(); i++) {
 		delete _quickMessages[i];
@@ -350,17 +350,17 @@ bool BaseGame::cleanup() {
 	_viewportStack.clear();
 	_viewportSP = -1;
 
-	setName(NULL);
-	setFilename(NULL);
+	setName(nullptr);
+	setFilename(nullptr);
 	for (int i = 0; i < 7; i++) {
 		delete[] _caption[i];
-		_caption[i] = NULL;
+		_caption[i] = nullptr;
 	}
 
-	_lastCursor = NULL;
+	_lastCursor = nullptr;
 
 	delete _keyboardState;
-	_keyboardState = NULL;
+	_keyboardState = nullptr;
 
 	return STATUS_OK;
 }
@@ -371,47 +371,47 @@ bool BaseGame::initialize1() {
 	bool loaded = false; // Not really a loop, but a goto-replacement.
 	while (!loaded) {
 		_surfaceStorage = new BaseSurfaceStorage(this);
-		if (_surfaceStorage == NULL) {
+		if (_surfaceStorage == nullptr) {
 			break;
 		}
 
 		_fontStorage = new BaseFontStorage(this);
-		if (_fontStorage == NULL) {
+		if (_fontStorage == nullptr) {
 			break;
 		}
 
 		_soundMgr = new BaseSoundMgr(this);
-		if (_soundMgr == NULL) {
+		if (_soundMgr == nullptr) {
 			break;
 		}
 
 		_mathClass = makeSXMath(this);
-		if (_mathClass == NULL) {
+		if (_mathClass == nullptr) {
 			break;
 		}
 
 		_scEngine = new ScEngine(this);
-		if (_scEngine == NULL) {
+		if (_scEngine == nullptr) {
 			break;
 		}
 
 		_videoPlayer = new VideoPlayer(this);
-		if (_videoPlayer == NULL) {
+		if (_videoPlayer == nullptr) {
 			break;
 		}
 
 		_transMgr = new BaseTransitionMgr(this);
-		if (_transMgr == NULL) {
+		if (_transMgr == nullptr) {
 			break;
 		}
 
 		_keyboardState = new BaseKeyboardState(this);
-		if (_keyboardState == NULL) {
+		if (_keyboardState == nullptr) {
 			break;
 		}
 
 		_fader = new BaseFader(this);
-		if (_fader == NULL) {
+		if (_fader == nullptr) {
 			break;
 		}
 		registerObject(_fader);
@@ -437,7 +437,7 @@ bool BaseGame::initialize1() {
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 	_renderer = makeOSystemRenderer(this);
-	if (_renderer == NULL) {
+	if (_renderer == nullptr) {
 		return STATUS_FAILED;
 	}
 
@@ -480,10 +480,10 @@ void BaseGame::DEBUG_DebugEnable(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////
 void BaseGame::DEBUG_DebugDisable() {
-	if (_debugLogFile != NULL) {
+	if (_debugLogFile != nullptr) {
 		LOG(0, "********** DEBUG LOG CLOSED ********************************************");
 		//fclose((FILE *)_debugLogFile);
-		_debugLogFile = NULL;
+		_debugLogFile = nullptr;
 	}
 	_debugDebugMode = false;
 }
@@ -538,7 +538,7 @@ bool BaseGame::initLoop() {
 	_fontStorage->initLoop();
 
 
-	//_activeObject = NULL;
+	//_activeObject = nullptr;
 
 	// count FPS
 	_deltaTime = _currentTime - _lastTime;
@@ -567,7 +567,7 @@ bool BaseGame::initLoop() {
 
 	getMousePos(&_mousePos);
 
-	_focusedWindow = NULL;
+	_focusedWindow = nullptr;
 	for (int i = _windows.size() - 1; i >= 0; i--) {
 		if (_windows[i]->_visible) {
 			_focusedWindow = _windows[i];
@@ -605,10 +605,10 @@ void BaseGame::setOffset(int offsetX, int offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::getOffset(int *offsetX, int *offsetY) {
-	if (offsetX != NULL) {
+	if (offsetX != nullptr) {
 		*offsetX = _offsetX;
 	}
-	if (offsetY != NULL) {
+	if (offsetY != nullptr) {
 		*offsetY = _offsetY;
 	}
 }
@@ -617,7 +617,7 @@ void BaseGame::getOffset(int *offsetX, int *offsetY) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "BaseGame::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -768,7 +768,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			if (_systemFont) {
 				_fontStorage->removeFont(_systemFont);
 			}
-			_systemFont = NULL;
+			_systemFont = nullptr;
 
 			_systemFont = _gameRef->_fontStorage->addFont((char *)params);
 			break;
@@ -777,7 +777,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			if (_videoFont) {
 				_fontStorage->removeFont(_videoFont);
 			}
-			_videoFont = NULL;
+			_videoFont = nullptr;
 
 			_videoFont = _gameRef->_fontStorage->addFont((char *)params);
 			break;
@@ -788,18 +788,18 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
-				_cursor = NULL;
+				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_ACTIVE_CURSOR:
 			delete _activeCursor;
-			_activeCursor = NULL;
+			_activeCursor = nullptr;
 			_activeCursor = new BaseSprite(_gameRef);
 			if (!_activeCursor || DID_FAIL(_activeCursor->loadFile((char *)params))) {
 				delete _activeCursor;
-				_activeCursor = NULL;
+				_activeCursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -809,7 +809,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			_cursorNoninteractive = new BaseSprite(_gameRef);
 			if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile((char *)params))) {
 				delete _cursorNoninteractive;
-				_cursorNoninteractive = NULL;
+				_cursorNoninteractive = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -1057,7 +1057,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			stack->pushNative(win, true);
 		} else {
 			delete win;
-			win = NULL;
+			win = nullptr;
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -1147,7 +1147,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		bool freezeMusic = stack->pop()->getBool(true);
 
 		ScValue *valSub = stack->pop();
-		const char *subtitleFile = valSub->isNULL() ? NULL : valSub->getString();
+		const char *subtitleFile = valSub->isNULL() ? nullptr : valSub->getString();
 
 		if (type < (int)VID_PLAY_POS || type > (int)VID_PLAY_CENTER) {
 			type = (int)VID_PLAY_STRETCH;
@@ -1187,7 +1187,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		bool dropFrames = stack->pop()->getBool(true);
 
 		ScValue *valSub = stack->pop();
-		const char *subtitleFile = valSub->isNULL() ? NULL : valSub->getString();
+		const char *subtitleFile = valSub->isNULL() ? nullptr : valSub->getString();
 
 		if (type < (int)VID_PLAY_POS || type > (int)VID_PLAY_CENTER) {
 			type = (int)VID_PLAY_STRETCH;
@@ -1206,7 +1206,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		} else {
 			stack->pushBool(false);
 			delete _theoraPlayer;
-			_theoraPlayer = NULL;
+			_theoraPlayer = nullptr;
 		}
 
 		return STATUS_OK;
@@ -1471,7 +1471,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "RemoveActiveCursor") == 0) {
 		stack->correctParams(0);
 		delete _activeCursor;
-		_activeCursor = NULL;
+		_activeCursor = nullptr;
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -1724,7 +1724,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "RemoveWaitCursor") == 0) {
 		stack->correctParams(0);
 		delete _cursorNoninteractive;
-		_cursorNoninteractive = NULL;
+		_cursorNoninteractive = nullptr;
 
 		stack->pushNULL();
 
@@ -1783,7 +1783,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_loadingIcon = new BaseSprite(this);
 		if (!_loadingIcon || DID_FAIL(_loadingIcon->loadFile(filename))) {
 			delete _loadingIcon;
-			_loadingIcon = NULL;
+			_loadingIcon = nullptr;
 		} else {
 			displayContent(false, true);
 			_gameRef->_renderer->flip();
@@ -1800,7 +1800,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "HideLoadingIcon") == 0) {
 		stack->correctParams(0);
 		delete _loadingIcon;
-		_loadingIcon = NULL;
+		_loadingIcon = nullptr;
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -1840,7 +1840,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_cachedThumbnail = new BaseSaveThumbHelper(this);
 		if (DID_FAIL(_cachedThumbnail->storeThumbnail())) {
 			delete _cachedThumbnail;
-			_cachedThumbnail = NULL;
+			_cachedThumbnail = nullptr;
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -1855,7 +1855,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "DeleteSaveThumbnail") == 0) {
 		stack->correctParams(0);
 		delete _cachedThumbnail;
-		_cachedThumbnail = NULL;
+		_cachedThumbnail = nullptr;
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -1894,7 +1894,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			}
 
 			BaseFileManager::getEngineInstance()->closeFile(file);
-			file = NULL;
+			file = nullptr;
 		} else {
 			stack->pushNULL();
 		}
@@ -2397,7 +2397,7 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MainObject") == 0) {
 		BaseScriptable *obj = value->getNative();
-		if (obj == NULL || validObject((BaseObject *)obj)) {
+		if (obj == nullptr || validObject((BaseObject *)obj)) {
 			_mainObject = (BaseObject *)obj;
 		}
 		return STATUS_OK;
@@ -2633,7 +2633,7 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 
 			// get new focused window
 			if (_focusedWindow == object) {
-				_focusedWindow = NULL;
+				_focusedWindow = nullptr;
 			}
 
 			break;
@@ -2642,12 +2642,12 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 
 	// is it active object?
 	if (_activeObject == object) {
-		_activeObject = NULL;
+		_activeObject = nullptr;
 	}
 
 	// is it main object?
 	if (_mainObject == object) {
-		_mainObject = NULL;
+		_mainObject = nullptr;
 	}
 
 	// destroy object
@@ -2673,7 +2673,7 @@ void BaseGame::invalidateValues(void *value, void *data) {
 		if (!val->_persistent && ((BaseScriptable *)data)->_refCount == 1) {
 			((BaseScriptable *)data)->_refCount++;
 		}
-		val->setNative(NULL);
+		val->setNative(nullptr);
 		val->setNULL();
 	}
 }
@@ -3036,8 +3036,8 @@ bool BaseGame::displayWindows(bool inGame) {
 	bool res;
 
 	// did we lose focus? focus topmost window
-	if (_focusedWindow == NULL || !_focusedWindow->_visible || _focusedWindow->_disable) {
-		_focusedWindow = NULL;
+	if (_focusedWindow == nullptr || !_focusedWindow->_visible || _focusedWindow->_disable) {
+		_focusedWindow = nullptr;
 		for (int i = _windows.size() - 1; i >= 0; i--) {
 			if (_windows[i]->_visible && !_windows[i]->_disable) {
 				_focusedWindow = _windows[i];
@@ -3083,7 +3083,7 @@ bool BaseGame::loadSettings(const char *filename) {
 
 
 	byte *origBuffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (origBuffer == NULL) {
+	if (origBuffer == nullptr) {
 		_gameRef->LOG(0, "BaseGame::LoadSettings failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -3446,7 +3446,7 @@ void BaseGame::setWindowTitle() {
 bool BaseGame::setActiveObject(BaseObject *obj) {
 	// not-active when game is frozen
 	if (obj && !_gameRef->_interactive && !obj->_nonIntMouseEvents) {
-		obj = NULL;
+		obj = nullptr;
 	}
 
 	if (obj == _activeObject) {
@@ -3501,7 +3501,7 @@ bool BaseGame::popViewport() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
-	if (rect == NULL) {
+	if (rect == nullptr) {
 		return STATUS_FAILED;
 	} else {
 		if (_viewportSP >= 0) {
@@ -3635,12 +3635,12 @@ bool BaseGame::restoreDeviceObjects() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::setWaitCursor(const char *filename) {
 	delete _cursorNoninteractive;
-	_cursorNoninteractive = NULL;
+	_cursorNoninteractive = nullptr;
 
 	_cursorNoninteractive = new BaseSprite(_gameRef);
 	if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile(filename))) {
 		delete _cursorNoninteractive;
-		_cursorNoninteractive = NULL;
+		_cursorNoninteractive = nullptr;
 		return STATUS_FAILED;
 	} else {
 		return STATUS_OK;
@@ -3666,7 +3666,7 @@ bool BaseGame::stopVideo() {
 	if (_theoraPlayer && _theoraPlayer->isPlaying()) {
 		_theoraPlayer->stop();
 		delete _theoraPlayer;
-		_theoraPlayer = NULL;
+		_theoraPlayer = nullptr;
 	}
 	return STATUS_OK;
 }
@@ -3717,12 +3717,12 @@ bool BaseGame::onMouseLeftDown() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("LeftClick"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("LeftClick");
 		}
 	}
 
-	if (_activeObject != NULL) {
+	if (_activeObject != nullptr) {
 		_capturedObject = _activeObject;
 	}
 	_mouseLeftDown = true;
@@ -3738,12 +3738,12 @@ bool BaseGame::onMouseLeftUp() {
 	}
 
 	BasePlatform::releaseCapture();
-	_capturedObject = NULL;
+	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("LeftRelease"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("LeftRelease");
 		}
 	}
@@ -3762,7 +3762,7 @@ bool BaseGame::onMouseLeftDblClick() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("LeftDoubleClick"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("LeftDoubleClick");
 		}
 	}
@@ -3781,7 +3781,7 @@ bool BaseGame::onMouseRightDblClick() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("RightDoubleClick"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("RightDoubleClick");
 		}
 	}
@@ -3796,7 +3796,7 @@ bool BaseGame::onMouseRightDown() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("RightClick"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("RightClick");
 		}
 	}
@@ -3811,7 +3811,7 @@ bool BaseGame::onMouseRightUp() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("RightRelease"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("RightRelease");
 		}
 	}
@@ -3830,7 +3830,7 @@ bool BaseGame::onMouseMiddleDown() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("MiddleClick"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("MiddleClick");
 		}
 	}
@@ -3845,7 +3845,7 @@ bool BaseGame::onMouseMiddleUp() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("MiddleRelease"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("MiddleRelease");
 		}
 	}
@@ -3907,7 +3907,7 @@ bool BaseGame::displayDebugInfo() {
 		sprintf(str, "Timer: %d", _timer);
 		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
 
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_systemFont->drawText((const byte *)_activeObject->getName(), 0, 150, _renderer->_width, TAL_RIGHT);
 		}
 
