@@ -176,6 +176,11 @@ List of fixed bugs in GF scripts:
 	popped out because meanwhile another one is pushed and popped. This patch adds a while loop which blocks
 	the script until the gesture is finished.
 
+	Fix walk sectors in set cf - cf.set.patchr
+	It can be difficult to walk from behind Manny's desk to the center of the room, passing on the right,
+	because of a narrow corridor, and a 'hole' in the walkable sectors. This patch resizes the sector "sect_66"
+	to make more room and to fill the hole.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
