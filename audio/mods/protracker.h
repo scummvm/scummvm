@@ -26,6 +26,7 @@
  *  - agos
  *  - parallaction
  *  - gob
+ *  - hopkins
  */
 
 #ifndef AUDIO_MODS_PROTRACKER_H
