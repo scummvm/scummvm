@@ -134,8 +134,6 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals._helicopterFl = false;
 	_globals.iRegul = 1;
 
-	warning("TODO Affiche_Version(1)");
-
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
@@ -793,13 +791,23 @@ bool HopkinsEngine::runFull() {
 	if (getPlatform() == Common::kPlatformLinux) {
 		_globals._helicopterFl = false;
 		_eventsManager.mouseOff();
+		// No code has been added to display the version as it's wrong 
+		// in my copy: it mentions a Win95 version v4 using DirectDraw
 	} else if (getPlatform() == Common::kPlatformWindows) {
 		_globals._helicopterFl = false;
 		_globals.iRegul = 1;
-		// warning("TODO: Affiche_Version();");
+		// This code displays the game version.
+		// It wasn't present in the original and could be put in the debugger
+		// It has been added there for debug purposes
+		_graphicsManager.loadImage("VERSW");
+		_graphicsManager.fadeInLong();
+		_eventsManager.delay(500);
+		_graphicsManager.fadeOutLong();
 	} else {
-		//warning("_graphicsManager.loadImage(\"VERSW\");");	// OS/2
-		//warning("_graphicsManager.FADE_INW();");				// OS/2
+		// This piece of code, though named "display_version" in the original, 
+		// displays a "loading please wait" screen.
+		_graphicsManager.loadImage("VERSW");
+		_graphicsManager.fadeInLong();
 		_eventsManager.delay(500);
 		_graphicsManager.fadeOutLong();
 		_globals.iRegul = 1;
@@ -888,12 +896,13 @@ bool HopkinsEngine::runFull() {
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows) {
 					if (getPlatform() == Common::kPlatformLinux)
 						_graphicsManager.FADE_LINUX = 2;
+
 					if (!_globals._censorshipFl)
 						_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 					else
 						_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
 				} else {
-					_animationManager.playAnim("BANQUE.ANM", 200, 12, 200);
+					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				}
 				_soundManager._specialSoundNum = 0;
 				_soundManager.DEL_SAMPLE(1);
