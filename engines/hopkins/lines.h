@@ -46,8 +46,8 @@ struct LigneItem {
 };
 
 struct SmoothItem {
-	int field0;
-	int field2;
+	int _posX;
+	int _posY;
 };
 
 class LinesManager {
@@ -56,15 +56,14 @@ private:
 public:
 	LigneZoneItem _zoneLine[401];
 	LigneItem Ligne[400];
-	SmoothItem SMOOTH[4000];
+	SmoothItem _smoothRoute[4000];
 	int _linesNumb;
 	int NV_LIGNEDEP;
 	int NV_LIGNEOFS;
 	int NV_POSI;
 	int NVPX;
 	int NVPY;
-	int SMOOTH_SENS;
-	int SMOOTH_X, SMOOTH_Y;
+	int _smoothMoveDirection;
 public:
 	LinesManager();
 	void setParent(HopkinsEngine *vm);
@@ -84,9 +83,9 @@ public:
 	bool MIRACLE(int a1, int a2, int a3, int a4, int a5);
 	int GENIAL(int a1, int a2, int a3, int a4, int a5, int a6, int a7, int16 *route, int a9);
 	int16 *PARCOURS2(int srcX, int srcY, int destX, int destY);
-	int PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7);
-	int VERIF_SMOOTH(int a1, int a2, int a3, int a4);
-	int SMOOTH_MOVE(int a3, int a4, int a5, int a6);
+	int PARC_PERS(int a1, int a2, int destX, int destY, int a5, int a6, int a7);
+	bool checkSmoothMove(int fromX, int fromY, int destX, int destY);
+	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
 	bool PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5);
 	int TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
 };

@@ -34,7 +34,7 @@ LinesManager::LinesManager() {
 		Common::fill((byte *)&Ligne[i], (byte *)&Ligne[i] + sizeof(LigneItem), 0);
 	}
 	for (int i = 0; i < 4000; ++i) {
-		Common::fill((byte *)&SMOOTH[i], (byte *)&SMOOTH[i] + sizeof(SmoothItem), 0);
+		Common::fill((byte *)&_smoothRoute[i], (byte *)&_smoothRoute[i] + sizeof(SmoothItem), 0);
 	}
 
 	_linesNumb = 0;
@@ -43,8 +43,7 @@ LinesManager::LinesManager() {
 	NV_POSI = 0;
 	NVPX = 0;
 	NVPY = 0;
-	SMOOTH_SENS = 0;
-	SMOOTH_X = SMOOTH_Y = 0;
+	_smoothMoveDirection = 0;
 }
 
 void LinesManager::setParent(HopkinsEngine *vm) {
@@ -1647,7 +1646,7 @@ LABEL_234:
 	return &_vm->_globals.super_parcours[0];
 }
 
-int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int a7) {
+int LinesManager::PARC_PERS(int a1, int a2, int destX, int destY, int a5, int a6, int a7) {
 	int v18;
 	int v19;
 	int v20;
@@ -1664,7 +1663,7 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	int v55;
 	int v58;
 	int v66;
-	int v91;
+	int newDirection;
 	int v92;
 	int v93;
 	int v94;
@@ -1756,7 +1755,7 @@ int LinesManager::PARC_PERS(int a1, int a2, int a3, int a4, int a5, int a6, int 
 	for (;;) {
 		v111 = v7;
 		v109 = v90;
-		if (a3 >= v7 - 2 && a3 <= v7 + 2 && a4 >= v90 - 2 && a4 <= v90 + 2) {
+		if (destX >= v7 - 2 && destX <= v7 + 2 && destY >= v90 - 2 && destY <= v90 + 2) {
 LABEL_149:
 			_vm->_globals.essai0[v115] = -1;
 			_vm->_globals.essai0[v115 + 1] = -1;
@@ -1783,50 +1782,50 @@ LABEL_150:
 			_vm->_globals.super_parcours[v137 + 3] = -1;
 			return 1;
 		}
-		v9 = abs(v7 - a3);
+		v9 = abs(v7 - destX);
 		v10 = v9 + 1;
-		v11 = abs(v90 - a4);
+		v11 = abs(v90 - destY);
 		v107 = v11 + 1;
 		if (v10 > (int16)(v11 + 1))
 			v107 = v10;
 		v12 = v107 - 1;
 		v101 = 1000 * v10 / v12;
 		v99 = 1000 * (int16)(v11 + 1) / v12;
-		if (a3 < v7)
+		if (destX < v7)
 			v101 = -v101;
-		if (a4 < v90)
+		if (destY < v90)
 			v99 = -v99;
 		v13 = (int16)v101 / 1000;
 		v94 = (int16)v99 / 1000;
-		v91 = -1;
+		newDirection = -1;
 		if ((int16)v99 / 1000 == -1 && (unsigned int)v101 <= 150)
-			v91 = 1;
+			newDirection = 1;
 		if (v13 == 1) {
 			if ((unsigned int)(v99 + 1) <= 151)
-				v91 = 3;
+				newDirection = 3;
 			if ((unsigned int)v99 <= 150)
-				v91 = 3;
+				newDirection = 3;
 		}
 		if (v94 == 1) {
 			if ((unsigned int)v101 <= 150)
-				v91 = 5;
+				newDirection = 5;
 			if ((unsigned int)(v101 + 150) <= 150)
-				v91 = 5;
+				newDirection = 5;
 		}
 		if (v13 == -1) {
 			if ((unsigned int)v99 <= 150)
-				v91 = 7;
+				newDirection = 7;
 			if ((unsigned int)(v99 + 150) <= 150)
-				v91 = 7;
+				newDirection = 7;
 		}
 		if (v94 == -1 && (unsigned int)(v101 + 150) <= 150)
-			v91 = 1;
-		if (v91 == -1 && !VERIF_SMOOTH(v7, v109, a3, a4) && SMOOTH_MOVE(v7, v109, a3, a4) != -1)
+			newDirection = 1;
+		if (newDirection == -1 && !checkSmoothMove(v7, v109, destX, destY) && !makeSmoothMove(v7, v109, destX, destY))
 			break;
 LABEL_72:
-		v19 = abs(v111 - a3);
+		v19 = abs(v111 - destX);
 		v20 = v19 + 1;
-		v95 = abs(v109 - a4);
+		v95 = abs(v109 - destY);
 		v108 = v95 + 1;
 		if (v20 > (v95 + 1))
 			v108 = v20;
@@ -1835,9 +1834,9 @@ LABEL_72:
 		v21 = v108 - 1;
 		v102 = 1000 * v20 / v21;
 		v100 = 1000 * (v95 + 1) / v21;
-		if (a3 < v111)
+		if (destX < v111)
 			v102 = -v102;
-		if (a4 < v109)
+		if (destY < v109)
 			v100 = -v100;
 		v22 = v102 / 1000;
 		v96 = v100 / 1000;
@@ -1846,72 +1845,72 @@ LABEL_72:
 		v104 = 1000 * v111 / 1000;
 		v103 = v105 / 1000;
 		if (!(v102 / 1000) && v96 == -1)
-			v91 = 1;
+			newDirection = 1;
 		if (v22 == 1) {
 			if (v96 == -1)
-				v91 = 2;
+				newDirection = 2;
 			if (!v96)
-				v91 = 3;
+				newDirection = 3;
 			if (v96 == 1)
-				v91 = 4;
+				newDirection = 4;
 		}
 		if (!v22 && v96 == 1)
-			v91 = 5;
+			newDirection = 5;
 		if ((v22 != -1) && (v96 == -1)) {
 			if (v102 >= 0 && v102 < 510)
-				v91 = 1;
+				newDirection = 1;
 			else if (v102 >= 510 && v102 <= 1000)
-				v91 = 2;
+				newDirection = 2;
 		} else {
 			if (v96 == 1)
-				v91 = 6;
+				newDirection = 6;
 			else if (!v96)
-				v91 = 7;
+				newDirection = 7;
 			else if (v96 == -1) {
 				if (v102 >= 0 && v102 < 510)
-					v91 = 1;
+					newDirection = 1;
 				else if (v102 >= 510 && v102 <= 1000)
-					v91 = 2;
+					newDirection = 2;
 				else 
-					v91 = 8;
+					newDirection = 8;
 			}
 		}
 		if (v22 == 1) {
 			if ((unsigned int)(v100 + 1) <= 511)
-				v91 = 2;
+				newDirection = 2;
 			if ((unsigned int)(v100 + 510) <= 510)
-				v91 = 3;
+				newDirection = 3;
 			if ((unsigned int)v100 <= 510)
-				v91 = 3;
+				newDirection = 3;
 			if ((unsigned int)(v100 - 510) <= 490)
-				v91 = 4;
+				newDirection = 4;
 		}
 		if (v96 == 1) {
 			if ((unsigned int)(v102 - 510) <= 490)
-				v91 = 4;
+				newDirection = 4;
 			if ((unsigned int)v102 <= 510)
-				v91 = 5;
+				newDirection = 5;
 			// CHECKME: The two conditions on v102 are not compatible!
 			if (v102 >= -1 && v102 <= -510)
-				v91 = 6;
+				newDirection = 6;
 			if ((unsigned int)(v102 + 510) <= 510)
-				v91 = 5;
+				newDirection = 5;
 		}
 		if (v22 == -1) {
 			if ((unsigned int)(v100 - 510) <= 490)
-				v91 = 6;
+				newDirection = 6;
 			if ((unsigned int)v100 <= 510)
-				v91 = 7;
+				newDirection = 7;
 			if ((unsigned int)(v100 + 1000) <= 490)
-				v91 = 8;
+				newDirection = 8;
 			if ((unsigned int)(v100 + 510) <= 510)
-				v91 = 7;
+				newDirection = 7;
 		}
 		if (v96 == -1) {
 			if ((unsigned int)(v102 + 1000) <= 490)
-				v91 = 8;
+				newDirection = 8;
 			if ((unsigned int)(v102 + 510) <= 510)
-				v91 = 1;
+				newDirection = 1;
 		}
 		v23 = 0;
 		if (v108 + 1 <= 0)
@@ -1919,7 +1918,7 @@ LABEL_72:
 		while (!checkCollisionLine(v104, v103, &v143, &v142, 0, _linesNumb)) {
 			_vm->_globals.essai0[v115] = v104;
 			_vm->_globals.essai0[v115 + 1] = v103;
-			_vm->_globals.essai0[v115 + 2] = v91;
+			_vm->_globals.essai0[v115 + 2] = newDirection;
 			v106 += v102;
 			v105 += v100;
 			v104 = v106 / 1000;
@@ -1931,7 +1930,7 @@ LABEL_72:
 		}
 		if (_vm->_objectsManager._lastLine >= v142)
 			goto LABEL_157;
-		v24 = GENIAL(v142, v143, v104, v103, a3, a4, v115, _vm->_globals.essai0, 3);
+		v24 = GENIAL(v142, v143, v104, v103, destX, destY, v115, _vm->_globals.essai0, 3);
 		if (v24 == -1)
 			goto LABEL_150;
 		v115 = v24;
@@ -1942,28 +1941,28 @@ LABEL_72:
 		v7 = -1;
 		v90 = -1;
 	}
-	v91 = SMOOTH_SENS;
+	newDirection = _smoothMoveDirection;
 	v14 = 0;
 	for (;;) {
-		if (SMOOTH[v14].field0 == -1 || SMOOTH[v14].field2 == -1) {
+		if (_smoothRoute[v14]._posX == -1 || _smoothRoute[v14]._posY == -1) {
 			v126 = true;
 			v18 = v14 - 1;
-			v111 = SMOOTH[v18].field0;
-			v109 = SMOOTH[v18].field2;
+			v111 = _smoothRoute[v18]._posX;
+			v109 = _smoothRoute[v18]._posY;
 			goto LABEL_72;
 		}
-		if (checkCollisionLine(SMOOTH[v14].field0, SMOOTH[v14].field2, &v143, &v142, 0, _linesNumb))
+		if (checkCollisionLine(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, &v143, &v142, 0, _linesNumb))
 			break;
 
-		_vm->_globals.essai0[v115] = SMOOTH[v14].field0;
-		_vm->_globals.essai0[v115 + 1] = SMOOTH[v14].field2;
-		_vm->_globals.essai0[v115 + 2] = v91;
+		_vm->_globals.essai0[v115] = _smoothRoute[v14]._posX;
+		_vm->_globals.essai0[v115 + 1] = _smoothRoute[v14]._posY;
+		_vm->_globals.essai0[v115 + 2] = newDirection;
 		v115 += 3;
 		++v14;
 		if (v126) {
 			v18 = v14 - 1;
-			v111 = SMOOTH[v18].field0;
-			v109 = SMOOTH[v18].field2;
+			v111 = _smoothRoute[v18]._posX;
+			v109 = _smoothRoute[v18]._posY;
 			goto LABEL_72;
 		}
 	}
@@ -1980,11 +1979,11 @@ LABEL_157:
 	v92 = v97;
 LABEL_158:
 	v113 = v33;
-	if (a3 >= v33 - 2 && a3 <= v33 + 2 && a4 >= v92 - 2 && a4 <= v92 + 2)
+	if (destX >= v33 - 2 && destX <= v33 + 2 && destY >= v92 - 2 && destY <= v92 + 2)
 		goto LABEL_194;
-	if (v33 >= a3) {
+	if (v33 >= destX) {
 LABEL_165:
-		if (v113 > a3) {
+		if (v113 > destX) {
 			v36 = v113;
 			while (!checkCollisionLine(v36, v92, &v141, &v140, 0, _linesNumb)) {
 				_vm->_globals.essai1[v117] = v36;
@@ -1992,18 +1991,18 @@ LABEL_165:
 				_vm->_globals.essai1[v117 + 2] = 7;
 				v117 += 3;
 				--v36;
-				if (a3 >= v36)
+				if (destX >= v36)
 					goto LABEL_171;
 			}
 			goto LABEL_168;
 		}
 LABEL_171:
-		if (v92 >= a4) {
+		if (v92 >= destY) {
 LABEL_181:
-			for (int v43 = v92; v43 > a4; v43--) {
-				if (checkCollisionLine(a3, v43, &v141, &v140, 0, _linesNumb)) {
+			for (int v43 = v92; v43 > destY; v43--) {
+				if (checkCollisionLine(destX, v43, &v141, &v140, 0, _linesNumb)) {
 					if (_vm->_objectsManager._lastLine < v140) {
-						int v44 = GENIAL(v140, v141, a3, v43, a3, a4, v117, _vm->_globals.essai1, 3);
+						int v44 = GENIAL(v140, v141, destX, v43, destX, destY, v117, _vm->_globals.essai1, 3);
 						if (v44 == -1)
 							goto LABEL_195;
 						v117 = v44;
@@ -2019,7 +2018,7 @@ LABEL_181:
 					if (v140 <= _vm->_objectsManager._lastLine)
 						goto LABEL_202;
 				}
-				_vm->_globals.essai1[v117] = a3;
+				_vm->_globals.essai1[v117] = destX;
 				_vm->_globals.essai1[v117 + 1] = v43;
 				_vm->_globals.essai1[v117 + 2] = 1;
 				v117 += 3;
@@ -2050,9 +2049,9 @@ LABEL_195:
 		}
 		v39 = v92;
 		for (;;) {
-			if (checkCollisionLine(a3, v39, &v141, &v140, 0, _linesNumb)) {
+			if (checkCollisionLine(destX, v39, &v141, &v140, 0, _linesNumb)) {
 				if (_vm->_objectsManager._lastLine < v140) {
-					v40 = GENIAL(v140, v141, a3, v39, a3, a4, v117, _vm->_globals.essai1, 3);
+					v40 = GENIAL(v140, v141, destX, v39, destX, destY, v117, _vm->_globals.essai1, 3);
 					if (v40 == -1)
 						goto LABEL_195;
 					v117 = v40;
@@ -2069,12 +2068,12 @@ LABEL_195:
 					goto LABEL_202;
 			}
 
-			_vm->_globals.essai1[v117] = a3;
+			_vm->_globals.essai1[v117] = destX;
 			_vm->_globals.essai1[v117 + 1] = v39;
 			_vm->_globals.essai1[v117 + 2] = 5;
 			v117 += 3;
 			++v39;
-			if (a4 <= v39)
+			if (destY <= v39)
 				goto LABEL_181;
 		}
 	}
@@ -2084,7 +2083,7 @@ LABEL_195:
 		_vm->_globals.essai1[v117 + 2] = 3;
 		v117 += 3;
 		++v33;
-		if (a3 <= v33)
+		if (destX <= v33)
 			goto LABEL_165;
 	}
 LABEL_168:
@@ -2099,9 +2098,9 @@ LABEL_202:
 	v93 = v97;
 LABEL_203:
 	v114 = v54;
-	if (a3 >= v54 - 2 && a3 <= v54 + 2 && a4 >= v93 - 2 && a4 <= v93 + 2)
+	if (destX >= v54 - 2 && destX <= v54 + 2 && destY >= v93 - 2 && destY <= v93 + 2)
 		goto LABEL_241;
-	if (v93 < a4) {
+	if (v93 < destY) {
 		v55 = v93;
 		while (!checkCollisionLine(v114, v55, &v139, &v138, 0, _linesNumb)) {
 			_vm->_globals.essai2[v117] = v114;
@@ -2109,13 +2108,13 @@ LABEL_203:
 			_vm->_globals.essai2[v117 + 2] = 5;
 			v117 += 3;
 			++v55;
-			if (a4 <= v55)
+			if (destY <= v55)
 				goto LABEL_211;
 		}
 		goto LABEL_214;
 	}
 LABEL_211:
-	if (v93 > a4) {
+	if (v93 > destY) {
 		v58 = v93;
 		while (!checkCollisionLine(v114, v58, &v139, &v138, 0, _linesNumb)) {
 			_vm->_globals.essai2[v117] = v114;
@@ -2123,7 +2122,7 @@ LABEL_211:
 			_vm->_globals.essai2[v117 + 2] = 1;
 			v117 += 3;
 			--v58;
-			if (a4 >= v58)
+			if (destY >= v58)
 				goto LABEL_217;
 		}
 LABEL_214:
@@ -2259,11 +2258,11 @@ LABEL_249:
 		return 0;
 	}
 LABEL_217:
-	if (v114 < a3) {
-		for (int v61 = v114; v61 < a3; v61++) {
-			if (checkCollisionLine(v61, a4, &v139, &v138, 0, _linesNumb)) {
+	if (v114 < destX) {
+		for (int v61 = v114; v61 < destX; v61++) {
+			if (checkCollisionLine(v61, destY, &v139, &v138, 0, _linesNumb)) {
 				if (_vm->_objectsManager._lastLine < v138) {
-					int v62 = GENIAL(v138, v139, v61, a4, a3, a4, v117, _vm->_globals.essai2, 3);
+					int v62 = GENIAL(v138, v139, v61, destY, destX, destY, v117, _vm->_globals.essai2, 3);
 					if (v62 == -1)
 						goto LABEL_195;
 					v117 = v62;
@@ -2283,16 +2282,16 @@ LABEL_217:
 			}
 
 			_vm->_globals.essai2[v117] = v61;
-			_vm->_globals.essai2[v117 + 1] = a4;
+			_vm->_globals.essai2[v117 + 1] = destY;
 			_vm->_globals.essai2[v117 + 2] = 3;
 			v117 += 3;
 		}
 	}
-	if (v114 > a3) {
-		for (int v65 = v114; v65 > a3; v65--) {
-			if (checkCollisionLine(v65, a4, &v139, &v138, 0, _linesNumb)) {
+	if (v114 > destX) {
+		for (int v65 = v114; v65 > destX; v65--) {
+			if (checkCollisionLine(v65, destY, &v139, &v138, 0, _linesNumb)) {
 				if (_vm->_objectsManager._lastLine < v138) {
-					v66 = GENIAL(v138, v139, v65, a4, a3, a4, v117, _vm->_globals.essai2, 3);
+					v66 = GENIAL(v138, v139, v65, destY, destX, destY, v117, _vm->_globals.essai2, 3);
 					if (v66 == -1)
 						goto LABEL_242;
 					v117 = v66;
@@ -2309,7 +2308,7 @@ LABEL_217:
 					goto LABEL_249;
 			}
 			_vm->_globals.essai2[v117] = v65;
-			_vm->_globals.essai2[v117 + 1] = a4;
+			_vm->_globals.essai2[v117 + 1] = destY;
 			_vm->_globals.essai2[v117 + 2] = 7;
 			v117 += 3;
 		}
@@ -2340,81 +2339,56 @@ LABEL_242:
 	return 1;
 }
 
-int LinesManager::VERIF_SMOOTH(int a1, int a2, int a3, int a4) {
-	int v6;
-	int v7;
-	int v8;
-	int v9;
-	int v12;
-	int v14;
-	int v15;
-	int v16;
-	int v17;
-	int v18;
+bool LinesManager::checkSmoothMove(int fromX, int fromY, int destX, int destY) {
+	int foundLineIdx;
+	int foundDataIdx;
 
-	int v5 = abs(a1 - a3) + 1;
-	int v13 = abs(a2 - a4) + 1;
-	if (v5 > v13)
-		v13 = v5;
-	if (v13 <= 10)
-		return -1;
-	v6 = v13 - 1;
-	v16 = 1000 * v5 / v6;
-	v15 = 1000 * (abs(a2 - a4) + 1) / v6;
-	if (a3 < a1)
-		v16 = -v16;
-	if (a4 < a2)
-		v15 = -v15;
-	v7 = 1000 * a1;
-	v8 = 1000 * a2;
-	v9 = 1000 * a1 / 1000;
-	v12 = 1000 * a2 / 1000;
-	v14 = 0;
-	if (v13 + 1 > 0) {
-		while (!checkCollisionLine(v9, v12, &v18, &v17, 0, _linesNumb) || v17 > _vm->_objectsManager._lastLine) {
-			v7 += v16;
-			v8 += v15;
-			v9 = v7 / 1000;
-			v12 = v8 / 1000;
-			++v14;
-			if (v14 >= v13 + 1)
-				return 0;
+	int distX = abs(fromX - destX) + 1;
+	int distY = abs(fromY - destY) + 1;
+	if (distX > distY)
+		distY = distX;
+	if (distY <= 10)
+		return true;
+
+	int stepX = 1000 * distX / (distY - 1);
+	int stepY = 1000 * distY / (distY - 1);
+	if (destX < fromX)
+		stepX = -stepX;
+	if (destY < fromY)
+		stepY = -stepY;
+
+	int smoothPosX = 1000 * fromX;
+	int smoothPosY = 1000 * fromY;
+	int newPosX = fromX;
+	int newPosY = fromY;
+
+	if (distY + 1 > 0) {
+		int stepCount = 0;
+		while (!checkCollisionLine(newPosX, newPosY, &foundDataIdx, &foundLineIdx, 0, _linesNumb) || foundLineIdx > _vm->_objectsManager._lastLine) {
+			smoothPosX += stepX;
+			smoothPosY += stepY;
+			newPosX = smoothPosX / 1000;
+			newPosY = smoothPosY / 1000;
+			++stepCount;
+			if (stepCount >= distY + 1)
+				return false;
 		}
-		return -1;
+		return true;
 	}
-	return 0;
+	return false;
 }
 
-int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
-	int v6;
-	int v7;
-	int v11;
-	int v14;
-	int v22;
-	int v25;
-	int v33;
-	int v37;
-	int v38;
-	int v39;
-	int v40;
-	int v41;
-	int v42;
-	int v50;
-	int v51;
-	int v52;
-	int hopkinsIdx;
-	int smoothIdx;
-
-	int v62 = a3;
-	int v63 = a4;
-	if (a3 > a5 && a6 > a4) {
-		hopkinsIdx = 36;
-		smoothIdx = 0;
-		int loopCount = 0;
-		while (v62 > a5 && a6 > v63) {
-			v25 = _vm->_globals.Hopkins[hopkinsIdx].field0;
-			v40 = _vm->_globals.Hopkins[hopkinsIdx].field2;
-			int spriteSize = _vm->_globals._spriteSize[v63];
+bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
+	int curX = fromX;
+	int curY = fromY;
+	if (fromX > destX && destY > fromY) {
+		int hopkinsIdx = 36;
+		int smoothIdx = 0;
+		int stepCount = 0;
+		while (curX > destX && destY > curY) {
+			int v25 = _vm->_globals.Hopkins[hopkinsIdx].field0;
+			int v40 = _vm->_globals.Hopkins[hopkinsIdx].field2;
+			int spriteSize = _vm->_globals._spriteSize[curY];
 			if (spriteSize < 0) {
 				v25 = _vm->_graphicsManager.zoomOut(v25, -spriteSize);
 				v40 = _vm->_graphicsManager.zoomOut(v40, -spriteSize);
@@ -2422,130 +2396,116 @@ int LinesManager::SMOOTH_MOVE(int a3, int a4, int a5, int a6) {
 				v25 = _vm->_graphicsManager.zoomIn(v25, spriteSize);
 				v40 = _vm->_graphicsManager.zoomIn(v40, spriteSize);
 			}
-			v33 = v63 + v40;
-			for (int v34 = 0; v34 < v25; v34++) {
-				--v62;
-				SMOOTH[smoothIdx].field0 = v62;
-				if (v63 != v33)
-					v63++;
-				SMOOTH[smoothIdx].field2 = v63;
+			for (int i = 0; i < v25; i++) {
+				--curX;
+				_smoothRoute[smoothIdx]._posX = curX;
+				if (curY != curY + v40)
+					curY++;
+				_smoothRoute[smoothIdx]._posY = curY;
 				smoothIdx++;
 			}
 			++hopkinsIdx;
 			if (hopkinsIdx == 48)
 				hopkinsIdx = 36;
-			++loopCount;
+			++stepCount;
 		}
-		if (loopCount > 5) {
-			SMOOTH[smoothIdx].field0 = -1;
-			SMOOTH[smoothIdx].field2 = -1;
-			_vm->_linesManager.SMOOTH_SENS = 6;
-			SMOOTH_X = v62;
-			SMOOTH_Y = v63;
-			return 0;
+		if (stepCount > 5) {
+			_smoothRoute[smoothIdx]._posX = -1;
+			_smoothRoute[smoothIdx]._posY = -1;
+			_vm->_linesManager._smoothMoveDirection = 6;
+			return false;
 		}
-	} else if (a3 < a5 && a6 > a4) {
-		v52 = 36;
-		smoothIdx = 0;
-		int loopCount = 0;
-		while (v62 < a5 && a6 > v63) {
-			v14 = _vm->_globals.Hopkins[v52].field0;
-			v39 = _vm->_globals.Hopkins[v52].field2;
-			int spriteSize = _vm->_globals._spriteSize[v63];
+	} else if (fromX < destX && destY > fromY) {
+		int hopkinsIdx = 36;
+		int smoothIdx = 0;
+		int stepCount = 0;
+		while (curX < destX && destY > curY) {
+			int v14 = _vm->_globals.Hopkins[hopkinsIdx].field0;
+			int v39 = _vm->_globals.Hopkins[hopkinsIdx].field2;
+			int spriteSize = _vm->_globals._spriteSize[curY];
 			if (spriteSize < 0) {
 				v14 = _vm->_graphicsManager.zoomOut(v14, -spriteSize);
 				v39 = _vm->_graphicsManager.zoomOut(v39, -spriteSize);
-			}
-			if (spriteSize > 0) {
+			} else if (spriteSize > 0) {
 				v14 = _vm->_graphicsManager.zoomIn(v14, spriteSize);
 				v39 = _vm->_graphicsManager.zoomIn(v39, spriteSize);
 			}
-			v22 = v63 + v39;
 			for (int i = 0; i < v14; i++) {
-				++v62;
-				SMOOTH[smoothIdx].field0 = v62;
-				if (v63 != v22)
-					v63++;
-				SMOOTH[smoothIdx].field2 = v63;
+				++curX;
+				_smoothRoute[smoothIdx]._posX = curX;
+				if (curY != curY + v39)
+					curY++;
+				_smoothRoute[smoothIdx]._posY = curY;
 				smoothIdx++;
 			}
-			++v52;
-			if (v52 == 48)
-				v52 = 36;
-			++loopCount;
+			++hopkinsIdx;
+			if (hopkinsIdx == 48)
+				hopkinsIdx = 36;
+			++stepCount;
 		}
-		if (loopCount > 5) {
-			SMOOTH[smoothIdx].field0 = -1;
-			SMOOTH[smoothIdx].field2 = -1;
-			_vm->_linesManager.SMOOTH_SENS = 4;
-			SMOOTH_X = v62;
-			SMOOTH_Y = v63;
-			return 0;
+		if (stepCount > 5) {
+			_smoothRoute[smoothIdx]._posX = -1;
+			_smoothRoute[smoothIdx]._posY = -1;
+			_vm->_linesManager._smoothMoveDirection = 4;
+			return false;
 		}
-	} else if (a3 > a5 && a6 < a4) {
-		v51 = 12;
-		smoothIdx = 0;
-		int loopCount = 0;
-		while (v62 > a5 && a6 < v63) {
-			v42 = v63;
-			v11 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v51].field0, 25);
-			v38 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v51].field2, 25);
-			v63 = v42;
+	} else if (fromX > destX && destY < fromY) {
+		int hopkinsIdx = 12;
+		int smoothIdx = 0;
+		int stepCount = 0;
+		while (curX > destX && destY < curY) {
+			int v11 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[hopkinsIdx].field0, 25);
+			int v38 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[hopkinsIdx].field2, 25);
+			int oldY = curY;
 			for (int v12 = 0; v12 < v11; v12++) {
-				--v62;
-				SMOOTH[smoothIdx].field0 = v62;
-				if ((uint16)v63 != (uint16)v42 + v38)
-					v63--;
-				SMOOTH[smoothIdx].field2 = v63;
+				--curX;
+				_smoothRoute[smoothIdx]._posX = curX;
+				if ((uint16)curY != (uint16)oldY + v38)
+					curY--;
+				_smoothRoute[smoothIdx]._posY = curY;
 				smoothIdx++;
 			}
-			++v51;
-			if (v51 == 24)
-				v51 = 12;
-			++loopCount;
+			++hopkinsIdx;
+			if (hopkinsIdx == 24)
+				hopkinsIdx = 12;
+			++stepCount;
 		}
-		if (loopCount > 5) {
-			SMOOTH[smoothIdx].field0 = -1;
-			SMOOTH[smoothIdx].field2 = -1;
-			_vm->_linesManager.SMOOTH_SENS = 8;
-			SMOOTH_X = v62;
-			SMOOTH_Y = v63;
-			return 0;
+		if (stepCount > 5) {
+			_smoothRoute[smoothIdx]._posX = -1;
+			_smoothRoute[smoothIdx]._posY = -1;
+			_vm->_linesManager._smoothMoveDirection = 8;
+			return false;
 		}
-	} else if (a3 < a5 && a6 < a4) {
-		v50 = 12;
-		smoothIdx = 0;
-		int loopCount = 0;
-		while (v62 < a5 && a6 < v63) {
-			v6 = _vm->_globals.Hopkins[v50].field2;
-			v41 = v63;
-			v7 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[v50].field0, 25);
-			v37 = _vm->_graphicsManager.zoomOut(v6, 25);
-			v63 = v41;
-			for (int v8 = 0; v8 < v7; v8++) {
-				++v62;
-				SMOOTH[smoothIdx].field0 = v62;
-				if ((uint16)v63 != (uint16)v41 + v37)
-					v63--;
-				SMOOTH[smoothIdx].field2 = v63;
+	} else if (fromX < destX && destY < fromY) {
+		int hopkinsIdx = 12;
+		int smoothIdx = 0;
+		int stepCount = 0;
+		while (curX < destX && destY < curY) {
+			int oldY = curY;
+			int v7 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[hopkinsIdx].field0, 25);
+			int v37 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[hopkinsIdx].field2, 25);
+			for (int i = 0; i < v7; i++) {
+				++curX;
+				_smoothRoute[smoothIdx]._posX = curX;
+				if ((uint16)curY != (uint16)oldY + v37)
+					curY--;
+				_smoothRoute[smoothIdx]._posY = curY;
 				smoothIdx++;
 			}
-			++v50;
-			if (v50 == 24)
-				v50 = 12;
-			++loopCount;
+			++hopkinsIdx;
+			if (hopkinsIdx == 24)
+				hopkinsIdx = 12;
+			++stepCount;
 		}
 
-		if (loopCount > 5) {
-			SMOOTH[smoothIdx].field0 = -1;
-			SMOOTH[smoothIdx].field2 = -1;
-			_vm->_linesManager.SMOOTH_SENS = 2;
-			SMOOTH_X = v62;
-			SMOOTH_Y = v63;
-			return 0;
+		if (stepCount > 5) {
+			_smoothRoute[smoothIdx]._posX = -1;
+			_smoothRoute[smoothIdx]._posY = -1;
+			_vm->_linesManager._smoothMoveDirection = 2;
+			return false;
 		}
 	}
-	return -1;
+	return true;
 }
 
 bool LinesManager::PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5) {
