@@ -183,7 +183,7 @@ public:
 	virtual void haltTrack();
 	virtual void beginFadeOut();
 
-	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) { return -1; }
+	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) override { return -1; }
 	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
 
 	virtual void updateVolumeSettings();
@@ -219,7 +219,7 @@ public:
 	virtual void haltTrack();
 	virtual void beginFadeOut();
 
-	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume = 255, uint8 priority = 255, bool isSfx = true);
+	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume = 255, uint8 priority = 255, bool isSfx = true) override;
 	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
 
 	virtual void updateVolumeSettings();
@@ -334,7 +334,7 @@ public:
 	virtual void haltTrack();
 	virtual void beginFadeOut();
 
-	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) { return -1; }
+	virtual int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) override { return -1; }
 	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
 
 protected:

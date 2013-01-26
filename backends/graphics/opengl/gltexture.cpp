@@ -211,10 +211,10 @@ void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 
 	// Calculate the screen rect where the texture will be drawn
 	const GLshort vertices[] = {
-		x,      y,
-		x + w,  y,
-		x,      y + h,
-		x + w,  y + h,
+		x,                y,
+		(GLshort)(x + w), y,
+		x,                (GLshort)(y + h),
+		(GLshort)(x + w), (GLshort)(y + h),
 	};
 	glVertexPointer(2, GL_SHORT, 0, vertices); CHECK_GL_ERROR();
 

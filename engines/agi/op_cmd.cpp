@@ -1399,7 +1399,7 @@ void cmdDistance(AgiGame *state, uint8 *p) {
 		// a zombie or the zombie getting turned away by the scarab) we make it appear the
 		// zombie is far away from Rosella if the zombie is not already up and chasing her.
 		enum zombieStates {ZOMBIE_SET_TO_RISE_UP, ZOMBIE_RISING_UP, ZOMBIE_CHASING_EGO};
-		uint8 zombieStateVarNumList[] = {155, 156, (_v[vCurRoom] == 16) ? 162 : 158};
+		uint8 zombieStateVarNumList[] = {155, 156, (uint8)((_v[vCurRoom] == 16) ? 162 : 158)};
 		uint8 zombieNum         = p2 - 221;                         // Zombie's number (In range 0-2)
 		uint8 zombieStateVarNum = zombieStateVarNumList[zombieNum]; // Number of the variable containing zombie's state
 		uint8 zombieState       = _v[zombieStateVarNum];            // Zombie's state
