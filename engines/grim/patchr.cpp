@@ -318,8 +318,18 @@ bool PatchedFile::seek(int32 offset, int whence) {
 
 	if (relOffset == 0)
 		return true;
-	if (relOffset < 0)
-		error("%s: Backward seeking isn't supported in PatchedFile", _patchName.c_str());
+
+	if (relOffset < 0) {
+		Debug::debug(Debug::Patchr, "Seeking back to start %s", _patchName.c_str());
+		_file->seek(0, SEEK_SET);
+		_ctrl->seek(0, SEEK_SET);
+		_extra->seek(0, SEEK_SET);
+		instrLeft = _ctrl->size() / (3 * sizeof(uint32));
+		readNextInst();
+		int p = pos() + relOffset;
+		_pos = 0;
+		return seek(p, SEEK_SET);
+	}
 
 	while (relOffset > 0) {
 		if (diffCopy > 0) {
