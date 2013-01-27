@@ -1989,14 +1989,14 @@ void ObjectsManager::handleLeftButton() {
 			return;
 		int routeIdx = 0;
 		do {
-			_vm->_globals.essai2[routeIdx] = _vm->_globals._route[routeIdx];
+			_vm->_linesManager.essai2[routeIdx] = _vm->_globals._route[routeIdx];
 			++routeIdx;
 		} while (_vm->_globals._route[routeIdx] != -1);
 
-		_vm->_globals.essai2[routeIdx] = -1;
-		_vm->_globals.essai2[routeIdx + 1] = -1;
-		_vm->_globals.essai2[routeIdx + 2] = -1;
-		_vm->_globals.essai2[routeIdx + 3] = -1;
+		_vm->_linesManager.essai2[routeIdx] = -1;
+		_vm->_linesManager.essai2[routeIdx + 1] = -1;
+		_vm->_linesManager.essai2[routeIdx + 2] = -1;
+		_vm->_linesManager.essai2[routeIdx + 3] = -1;
 	}
 
 	if (_vm->_globals.GOACTION) {

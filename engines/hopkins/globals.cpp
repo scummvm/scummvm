@@ -99,8 +99,6 @@ Globals::Globals() {
 	}
 	for (int i = 0; i < 500; ++i)
 		_spriteSize[i] = 0;
-	for (int i = 0; i < 32002; ++i)
-		super_parcours[i] = 0;
 	for (int i = 0; i < 70; ++i)
 		Common::fill((byte *)&Hopkins[i], (byte *)&Hopkins[i] + sizeof(HopkinsItem), 0);
 
@@ -176,9 +174,6 @@ Globals::Globals() {
 	SPRITE_ECRAN = NULL;
 	_saveData = NULL;
 	BUFFERTAPE = NULL;
-	essai0 = NULL;
-	essai1 = NULL;
-	essai2 = NULL;
 	inventaire2 = NULL;
 	GESTE = NULL;
 	_inventoryObject = NULL;
@@ -311,9 +306,9 @@ void Globals::clearAll() {
 		ZONEP[idx]._spriteIndex = 0;
 	}
 
-	essai0 = (int16 *)g_PTRNUL;
-	essai1 = (int16 *)g_PTRNUL;
-	essai2 = (int16 *)g_PTRNUL;
+	_vm->_linesManager.essai0 = (int16 *)g_PTRNUL;
+	_vm->_linesManager.essai1 = (int16 *)g_PTRNUL;
+	_vm->_linesManager.essai2 = (int16 *)g_PTRNUL;
 	BufLig = (int16 *)g_PTRNUL;
 	_route = (int16 *)g_PTRNUL;
 
@@ -339,9 +334,9 @@ void Globals::clearAll() {
 	_saveData = (Sauvegarde *)malloc(sizeof(Sauvegarde));
 	memset(_saveData, 0, sizeof(Sauvegarde));
 
-	essai0 = (int16 *)BUFFERTAPE;
-	essai1 = (int16 *)(BUFFERTAPE + 25000);
-	essai2 = (int16 *)(BUFFERTAPE + 50000);
+	_vm->_linesManager.essai0 = (int16 *)BUFFERTAPE;
+	_vm->_linesManager.essai1 = (int16 *)(BUFFERTAPE + 25000);
+	_vm->_linesManager.essai2 = (int16 *)(BUFFERTAPE + 50000);
 	BufLig = (int16 *)(BUFFERTAPE + 75000);
 	_boxWidth = 240;
 

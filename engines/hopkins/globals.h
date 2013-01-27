@@ -301,7 +301,6 @@ public:
 	int BOBZONE[105];
 	bool BOBZONE_FLAG[105];
 	int _spriteSize[500];
-	int16 super_parcours[32002];
 	HopkinsItem Hopkins[70];
 	int _inventory[36];
 	SortItem _sortedDisplay[51];
@@ -324,9 +323,6 @@ public:
 	byte *SPRITE_ECRAN;
 	Sauvegarde *_saveData;
 	byte *BUFFERTAPE;
-	int16 *essai0;
-	int16 *essai1;
-	int16 *essai2;
 	byte *inventaire2;
 	byte *GESTE;
 	int _curObjectIndex;

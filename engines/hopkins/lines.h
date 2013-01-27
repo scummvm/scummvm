@@ -66,6 +66,10 @@ public:
 	int _smoothMoveDirection;
 	int _lastLine;
 	int _maxLineIdx;
+	int16 super_parcours[32002];
+	int16 *essai0;
+	int16 *essai1;
+	int16 *essai2;
 public:
 	LinesManager();
 	void setParent(HopkinsEngine *vm);
