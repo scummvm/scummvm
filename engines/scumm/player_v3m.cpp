@@ -147,7 +147,15 @@ bool Player_V3M::loadMusic(const byte *ptr) {
 		return false;
 	}
 
-	assert(ptr[4] == 's' && ptr[5] == 'o');
+	if (ptr[4] != 's' || ptr[5] != 'o') {
+		// See bug #3602239 ("Mac Loom crashes using opening spell on
+		// gravestone"). Apparently there is more than one type of
+		// sound/music, and we only handle one of them at the moment.
+		// Fortunately it is the most common and important one.
+		warning("Player_V3M::loadMusic: Skipping unknown music type");
+		resource.close();
+		return false;
+	}
 
 	uint i;
 	for (i = 0; i < 5; i++) {
