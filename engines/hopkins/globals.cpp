@@ -324,7 +324,7 @@ void Globals::clearAll() {
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
 		_vm->_linesManager.Ligne[idx]._lineDataEndIdx = 0;
 		_vm->_linesManager.Ligne[idx].field2 = 0;
-		_vm->_linesManager.Ligne[idx].field4 = 0;
+		_vm->_linesManager.Ligne[idx]._direction = 0;
 		_vm->_linesManager.Ligne[idx].field6 = 0;
 		_vm->_linesManager.Ligne[idx].field8 = 0;
 		_vm->_linesManager.Ligne[idx]._lineData = (int16 *)g_PTRNUL;
