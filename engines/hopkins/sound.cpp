@@ -29,6 +29,7 @@
 #include "hopkins/globals.h"
 #include "hopkins/hopkins.h"
 #include "audio/audiostream.h"
+#include "audio/mods/module.h"
 #include "audio/mods/protracker.h"
 #include "audio/decoders/raw.h"
 
@@ -413,7 +414,18 @@ void SoundManager::loadMusic(const Common::String &file) {
 		if (!f.open(filename))
 			error("Error opening file %s", filename.c_str());
 
-		Audio::AudioStream *modStream = Audio::makeProtrackerStream(&f);
+		Modules::Module *module;
+		Audio::AudioStream *modStream = Audio::makeProtrackerStream(&f, 0, 44100, true, &module);
+
+		// WORKAROUND: This song is played at the empty lot where the
+		// bank robbers have left the helicopter. The MOD file appears
+		// to be slightly broken. Almost half of it is just the same
+		// noise repeating. We fix this by only playing the working
+		// part of it. The result is pretty close to the Windows music.
+		if (file.equalsIgnoreCase("cadavre")) {
+			module->songlen = 3;
+		}
+
 		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, modStream);
 
 	} else {
