@@ -34,21 +34,23 @@ class HopkinsEngine;
 
 class AnimationManager {
 private:
-	int loadSpriteBank(int idx, const Common::String &filename);
-public:
 	HopkinsEngine *_vm;
+
+	int loadSpriteBank(int idx, const Common::String &filename);
+	void searchAnim(const byte *data, int animIndex, int count);
+
+public:
 	bool _clearAnimationFl;
 	bool NO_SEQ;
 	bool NO_COUL;
-public:
+
 	AnimationManager();
 	void setParent(HopkinsEngine *vm) { _vm = vm; }
 
-	void playAnim(const Common::String &filename, uint32 rate, uint32 rate2, uint32 rate3);
-	void playAnim2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4);
 	void loadAnim(const Common::String &animName);
 	void clearAnim();
-	void searchAnim(const byte *data, int animIndex, int count);
+	void playAnim(const Common::String &filename, uint32 rate, uint32 rate2, uint32 rate3);
+	void playAnim2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4);
 	void playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3);
 	void playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3);
 };
