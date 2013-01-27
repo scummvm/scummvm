@@ -47,17 +47,6 @@ struct ZonePItem {
 	int field12;
 };
 
-struct CarreZoneItem {
-	int _enabledFl;
-	int _left;
-	int _right;
-	int _top;
-	int _bottom;
-	int _minZoneLineIdx;
-	int _maxZoneLineIdx;
-	bool _squareZoneFl;
-};
-
 struct BqeAnimItem {
 	byte *_data;
 	bool _enabledFl;
@@ -298,7 +287,6 @@ private:
 public:
 	byte *CACHE_BANQUE[6];
 	ZonePItem ZONEP[106];
-	CarreZoneItem CarreZone[101];
 	BqeAnimItem Bqe_Anim[35];
 	BankItem Bank[8];
 	BobItem _bob[36];

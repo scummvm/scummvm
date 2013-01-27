@@ -70,8 +70,6 @@ Globals::Globals() {
 		CACHE_BANQUE[i] = g_PTRNUL;
 	for (int i = 0; i < 106; ++i)
 		Common::fill((byte *)&ZONEP[i], (byte *)&ZONEP[i] + sizeof(ZonePItem), 0);
-	for (int i = 0; i < 100; ++i)
-		Common::fill((byte *)&CarreZone[i], (byte *)&CarreZone[i] + sizeof(CarreZoneItem), 0);
 	for (int i = 0; i < 35; ++i)
 		Common::fill((byte *)&Bqe_Anim[i], (byte *)&Bqe_Anim[i] + sizeof(BqeAnimItem), 0);
 	for (int i = 0; i < 8; ++i)
@@ -335,7 +333,7 @@ void Globals::clearAll() {
 	}
 
 	for (int idx = 0; idx < 100; ++idx) {
-		CarreZone[idx]._enabledFl = 0;
+		_vm->_objectsManager.CarreZone[idx]._enabledFl = 0;
 	}
 
 	BUFFERTAPE = allocMemory(85000);

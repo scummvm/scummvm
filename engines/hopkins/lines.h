@@ -64,10 +64,12 @@ public:
 	int NVPX;
 	int NVPY;
 	int _smoothMoveDirection;
+	int _lastLine;
 public:
 	LinesManager();
 	void setParent(HopkinsEngine *vm);
 
+	void loadLines(const Common::String &file);
 	void clearAllZones();
 	int checkInventoryHotspots(int posX, int posY);
 	int checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow);
@@ -84,6 +86,7 @@ public:
 	int GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int a7, int16 *route, int a9);
 	int16 *PARCOURS2(int fromX, int fromY, int destX, int destY);
 	int PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, int a6, int a7);
+	int16 *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	bool checkSmoothMove(int fromX, int fromY, int destX, int destY);
 	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
 	bool PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5);

@@ -50,6 +50,17 @@ struct SpriteItem {
 	int _reducePct;
 };
 
+struct CarreZoneItem {
+	int _enabledFl;
+	int _left;
+	int _right;
+	int _top;
+	int _bottom;
+	int _minZoneLineIdx;
+	int _maxZoneLineIdx;
+	bool _squareZoneFl;
+};
+
 class HopkinsEngine;
 
 class ObjectsManager {
@@ -80,7 +91,6 @@ public:
 	bool _forceZoneFl;
 	bool _changeVerbFl;
 	int _verb;
-	int _lastLine;
 	bool _changeHeadFl;
 	bool _disableFl;
 	bool _twoCharactersFl;
@@ -91,6 +101,7 @@ public:
 	int _jumpZone;
 	int _oldSpriteIndex;
 	bool _oldFlipFl;
+	CarreZoneItem CarreZone[101];
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
@@ -145,7 +156,6 @@ public:
 	void checkZone();
 	void GOHOME();
 	void GOHOME2();
-	void loadLines(const Common::String &file);
 	void loadZone(const Common::String &file);
 	void CARRE_ZONE();
 	void PLAN_BETA();
@@ -162,7 +172,6 @@ public:
 
 	void computeAndSetSpriteSize();
 	void PACOURS_PROPRE(int16 *a1);
-	int16 *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	void nextVerbIcon();
 	void handleRightButton();
 	int MZONE();
