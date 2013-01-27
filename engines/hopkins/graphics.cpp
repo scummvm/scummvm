@@ -1793,15 +1793,14 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode, bool initia
 	}
 	_vm->_globals.freeMemory(ptr);
 	if (mode != 1) {
-		_vm->_globals.COUCOU = _vm->_globals.freeMemory(_vm->_globals.COUCOU);
+		_vm->_globals._answerBuffer = _vm->_globals.freeMemory(_vm->_globals._answerBuffer);
 
 		filename = file + ".rep";
 		byte *dataP = _vm->_fileManager.searchCat(filename, 2);
-		_vm->_globals.COUCOU = dataP;
-		if (g_PTRNUL == dataP) {
+		if (dataP == g_PTRNUL)
 			dataP = _vm->_fileManager.loadFile(filename);
-			_vm->_globals.COUCOU = dataP;
-		}
+
+		_vm->_globals._answerBuffer = dataP;
 	}
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager._changeVerbFl = false;

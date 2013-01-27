@@ -187,9 +187,9 @@ Globals::Globals() {
 	GESTE = NULL;
 	_inventoryObject = NULL;
 	_forestSprite = NULL;
-	COUCOU = NULL;
-	chemin = NULL;
-	BufLig = NULL;
+	_answerBuffer = g_PTRNUL;
+	_route = (int16 *)g_PTRNUL;
+	BufLig = (int16 *)g_PTRNUL;
 	ADR_FICHIER_OBJ = NULL;
 	police = NULL;
 	PERSO = NULL;
@@ -235,7 +235,7 @@ Globals::~Globals() {
 	freeMemory(GESTE);
 	freeMemory(_inventoryObject);
 	freeMemory(_forestSprite);
-	freeMemory(COUCOU);
+	freeMemory(_answerBuffer);
 	freeMemory(ADR_FICHIER_OBJ);
 	freeMemory(PERSO);
 
@@ -304,7 +304,7 @@ void Globals::clearAll() {
 	_vm->_eventsManager._objectBuf = g_PTRNUL;
 	_vm->_dialogsManager._inventWin1 = g_PTRNUL;
 	_vm->_dialogsManager._inventBuf2 = g_PTRNUL;
-	COUCOU = g_PTRNUL;
+	_answerBuffer = g_PTRNUL;
 	SPRITE_ECRAN = g_PTRNUL;
 	_saveData = (Sauvegarde *)g_PTRNUL;
 	_curObjectIndex = 0;
@@ -319,7 +319,7 @@ void Globals::clearAll() {
 	essai1 = (int16 *)g_PTRNUL;
 	essai2 = (int16 *)g_PTRNUL;
 	BufLig = (int16 *)g_PTRNUL;
-	chemin = (int16 *)g_PTRNUL;
+	_route = (int16 *)g_PTRNUL;
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
 		_vm->_linesManager.Ligne[idx]._lineDataEndIdx = 0;

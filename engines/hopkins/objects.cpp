@@ -1279,7 +1279,7 @@ void ObjectsManager::checkZone() {
 	if (_vm->_globals.compteur_71 <= 1)
 		return;
 
-	if (_vm->_globals.NOMARCHE || (_vm->_globals.chemin == (int16 *)g_PTRNUL) || _vm->_globals.compteur_71 > 4) {
+	if (_vm->_globals.NOMARCHE || (_vm->_globals._route == (int16 *)g_PTRNUL) || _vm->_globals.compteur_71 > 4) {
 		_vm->_globals.compteur_71 = 0;
 		int zoneId;
 		if (_vm->_globals._oldMouseX != mouseX || _vm->_globals._oldMouseY != oldMouseY) {
@@ -1347,7 +1347,7 @@ void ObjectsManager::GOHOME() {
 	int v58 = 0;
 	int v1 = 0;
 
-	if (_vm->_globals.chemin == (int16 *)g_PTRNUL)
+	if (_vm->_globals._route == (int16 *)g_PTRNUL)
 		return;
 
 	if (_vm->_globals.Compteur > 1) {
@@ -1362,10 +1362,10 @@ void ObjectsManager::GOHOME() {
 	_vm->_globals.Compteur = 0;
 	if (_vm->_globals._oldDirection == -1) {
 		computeAndSetSpriteSize();
-		newPosX = *_vm->_globals.chemin++;
-		newPosY = *_vm->_globals.chemin++;
-		newDirection = *_vm->_globals.chemin++;
-		_vm->_globals.chemin++;
+		newPosX = *_vm->_globals._route++;
+		newPosY = *_vm->_globals._route++;
+		newDirection = *_vm->_globals._route++;
+		_vm->_globals._route++;
 
 		if (newPosX != -1 || newPosY != -1) {
 			_vm->_globals._oldDirection = newDirection;
@@ -1381,11 +1381,11 @@ void ObjectsManager::GOHOME() {
 				zoneId = _vm->_globals._saveData->_data[svField2];
 			else
 				zoneId = _zoneNum;
-			_vm->_globals.chemin = (int16 *)g_PTRNUL;
+			_vm->_globals._route = (int16 *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.chemin = (int16 *)g_PTRNUL;
+			_vm->_globals._route = (int16 *)g_PTRNUL;
 			_vm->_globals._oldDirection = -1;
 			if (zoneId > 0) {
 				if (_vm->_globals.ZONEP[zoneId]._destX && _vm->_globals.ZONEP[zoneId]._destY && _vm->_globals.ZONEP[zoneId]._destY != 31) {
@@ -1588,10 +1588,10 @@ void ObjectsManager::GOHOME() {
 	}
 	bool loopCond = false;
 	do {
-		newPosX = *_vm->_globals.chemin++;
-		newPosY = *_vm->_globals.chemin++;
-		newDirection = *_vm->_globals.chemin++;
-		_vm->_globals.chemin++;
+		newPosX = *_vm->_globals._route++;
+		newPosY = *_vm->_globals._route++;
+		newDirection = *_vm->_globals._route++;
+		_vm->_globals._route++;
 
 		if (newPosX == -1 && newPosY == -1) {
 			int zoneId;
@@ -1601,7 +1601,7 @@ void ObjectsManager::GOHOME() {
 				zoneId = _zoneNum;
 			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
 			_vm->_globals._actionDirection = 0;
-			_vm->_globals.chemin = (int16 *)g_PTRNUL;
+			_vm->_globals._route = (int16 *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_vm->_globals.Compteur = 0;
@@ -1661,7 +1661,7 @@ void ObjectsManager::GOHOME() {
 }
 
 void ObjectsManager::GOHOME2() {
-	if (_vm->_globals.chemin == (int16 *)g_PTRNUL)
+	if (_vm->_globals._route == (int16 *)g_PTRNUL)
 		return;
 
 	int v0 = 2;
@@ -1673,10 +1673,10 @@ void ObjectsManager::GOHOME2() {
 	_vm->_globals.j_104 = 0;
 
 	for (;;) {
-		int nexPosX = *_vm->_globals.chemin++;
-		int newPosY = *_vm->_globals.chemin++;
-		int newDirection = *_vm->_globals.chemin++;
-		_vm->_globals.chemin++;
+		int nexPosX = *_vm->_globals._route++;
+		int newPosY = *_vm->_globals._route++;
+		int newDirection = *_vm->_globals._route++;
+		_vm->_globals._route++;
 
 		if ((nexPosX == -1) && (newPosY == -1))
 			break;
@@ -1710,7 +1710,7 @@ void ObjectsManager::GOHOME2() {
 	else if (_vm->_globals._lastDirection == 7)
 		setSpriteIndex(0, 3);
 
-	_vm->_globals.chemin = (int16 *)g_PTRNUL;
+	_vm->_globals._route = (int16 *)g_PTRNUL;
 	my_anim = 0;
 }
 
@@ -1902,7 +1902,7 @@ void ObjectsManager::PLAN_BETA() {
 	_vm->_graphicsManager.scrollScreen(getSpriteX(0) - 320);
 	_vm->_graphicsManager._scrollOffset = getSpriteX(0) - 320;
 	animateSprite(0);
-	_vm->_globals.chemin = (int16 *)g_PTRNUL;
+	_vm->_globals._route = (int16 *)g_PTRNUL;
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -1942,7 +1942,7 @@ void ObjectsManager::PLAN_BETA() {
 		checkZone();
 		GOHOME2();
 
-		if (_vm->_globals.chemin == (int16 *)g_PTRNUL && _vm->_globals.GOACTION)
+		if (_vm->_globals._route == (int16 *)g_PTRNUL && _vm->_globals.GOACTION)
 			PARADISE();
 		_vm->_eventsManager.VBL();
 
@@ -2012,9 +2012,9 @@ void ObjectsManager::handleLeftButton() {
 			return;
 		int routeIdx = 0;
 		do {
-			_vm->_globals.essai2[routeIdx] = _vm->_globals.chemin[routeIdx];
+			_vm->_globals.essai2[routeIdx] = _vm->_globals._route[routeIdx];
 			++routeIdx;
-		} while (_vm->_globals.chemin[routeIdx] != -1);
+		} while (_vm->_globals._route[routeIdx] != -1);
 
 		_vm->_globals.essai2[routeIdx] = -1;
 		_vm->_globals.essai2[routeIdx + 1] = -1;
@@ -2038,26 +2038,26 @@ void ObjectsManager::handleLeftButton() {
 		}
 	}
 	_vm->_globals.GOACTION = false;
-	int16 *oldRoute = _vm->_globals.chemin;
-	_vm->_globals.chemin = (int16 *)g_PTRNUL;
+	int16 *oldRoute = _vm->_globals._route;
+	_vm->_globals._route = (int16 *)g_PTRNUL;
 	if (_vm->_globals._forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
 		if (getSpriteY(0) <= 374 || getSpriteY(0) > 410) {
-			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
-			if (_vm->_globals.chemin != (int16 *)g_PTRNUL)
-				PACOURS_PROPRE(_vm->_globals.chemin);
+			_vm->_globals._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
+			if (_vm->_globals._route != (int16 *)g_PTRNUL)
+				PACOURS_PROPRE(_vm->_globals._route);
 			g_old_x = getSpriteX(0);
 			g_old_y = getSpriteY(0);
 			_vm->_globals.Compteur = 0;
-			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || oldRoute == _vm->_globals.chemin) {
+			if (_vm->_globals._route != (int16 *)g_PTRNUL || oldRoute == _vm->_globals._route) {
 				_vm->_globals._oldDirection = -1;
 				goto LABEL_65;
 			}
 			goto LABEL_63;
 		}
-		_vm->_globals.chemin = (int16 *)g_PTRNUL;
+		_vm->_globals._route = (int16 *)g_PTRNUL;
 		setSpriteIndex(0, _vm->_globals._oldDirectionSpriteIdx);
 		_vm->_globals._actionDirection = 0;
-		_vm->_globals.chemin = (int16 *)g_PTRNUL;
+		_vm->_globals._route = (int16 *)g_PTRNUL;
 		computeAndSetSpriteSize();
 		setFlipSprite(0, false);
 		_vm->_globals.Compteur = 0;
@@ -2066,21 +2066,21 @@ void ObjectsManager::handleLeftButton() {
 	}
 	if (!_vm->_globals.NOMARCHE) {
 		if (!_vm->_globals.PLAN_FLAG) {
-			_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), destX, destY);
-			if (_vm->_globals.chemin != (int16 *)g_PTRNUL)
-				PACOURS_PROPRE(_vm->_globals.chemin);
+			_vm->_globals._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), destX, destY);
+			if (_vm->_globals._route != (int16 *)g_PTRNUL)
+				PACOURS_PROPRE(_vm->_globals._route);
 			g_old_x = getSpriteX(0);
 			g_old_y = getSpriteY(0);
 			_vm->_globals.Compteur = 0;
-			if (_vm->_globals.chemin != (int16 *)g_PTRNUL || oldRoute == _vm->_globals.chemin)
+			if (_vm->_globals._route != (int16 *)g_PTRNUL || oldRoute == _vm->_globals._route)
 				_vm->_globals._oldDirection = -1;
 			else
 LABEL_63:
-				_vm->_globals.chemin = oldRoute;
+				_vm->_globals._route = oldRoute;
 		}
 LABEL_65:
 		if (!_vm->_globals.NOMARCHE && _vm->_globals.PLAN_FLAG)
-			_vm->_globals.chemin = cityMapCarRoute(getSpriteX(0), getSpriteY(0), destX, destY);
+			_vm->_globals._route = cityMapCarRoute(getSpriteX(0), getSpriteY(0), destX, destY);
 	}
 	if (_zoneNum != -1 && _zoneNum != 0) {
 		if (_vm->_eventsManager._mouseCursorId == 23)
@@ -2100,7 +2100,7 @@ LABEL_65:
 				&& _vm->_globals._curObjectIndex == 20 && _zoneNum == 12
 				&& _vm->_eventsManager._mouseCursorId == 23) {
 		// Special case for throwing darts at the switch in Purgatory - the player shouldn't move
-		_vm->_globals.chemin = (int16 *)g_PTRNUL;
+		_vm->_globals._route = (int16 *)g_PTRNUL;
 		getSpriteX(0);
 		getSpriteY(0);
 	}
@@ -2217,8 +2217,8 @@ void ObjectsManager::clearScreen() {
 	_forceZoneFl = true;
 	_vm->_linesManager._linesNumb = 0;
 	_lastLine = 0;
-	_vm->_globals.chemin = (int16 *)g_PTRNUL;
-	_vm->_globals.COUCOU = _vm->_globals.freeMemory(_vm->_globals.COUCOU);
+	_vm->_globals._route = (int16 *)g_PTRNUL;
+	_vm->_globals._answerBuffer = _vm->_globals.freeMemory(_vm->_globals._answerBuffer);
 	_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
 	_vm->_eventsManager._startPos.x = 0;
 	_vm->_eventsManager._mouseSpriteId = 0;
@@ -2227,7 +2227,7 @@ void ObjectsManager::clearScreen() {
 	_vm->_globals.GOACTION = false;
 	_forceZoneFl = true;
 	_changeVerbFl = false;
-	_vm->_globals.chemin = (int16 *)g_PTRNUL;
+	_vm->_globals._route = (int16 *)g_PTRNUL;
 	_vm->_globals._oldDirection = -1;
 	my_anim = 1;
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
@@ -2243,7 +2243,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 	_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, 532, 25, 65, 40, _vm->_graphicsManager._vesaBuffer, 532, 25);
 	_vm->_graphicsManager.addVesaSegment(532, 25, 597, 65);
 	_vm->_globals.NOT_VERIF = true;
-	_vm->_globals.chemin = (int16 *)g_PTRNUL;
+	_vm->_globals._route = (int16 *)g_PTRNUL;
 
 	if (oldCharacter == CHARACTER_SAMANTHA && newCharacter == CHARACTER_HOPKINS
 		&& _vm->_globals._saveData->_realHopkins._location == _vm->_globals._screenId) {
@@ -4250,7 +4250,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_globals.PLAN_FLAG = false;
 	_vm->_globals.iRegul = 1;
 	_vm->_soundManager.WSOUND(v);
-	_vm->_globals.chemin = (int16 *)g_PTRNUL;
+	_vm->_globals._route = (int16 *)g_PTRNUL;
 	_vm->_globals.NOMARCHE = true;
 	_vm->_globals._exitId = 0;
 	if (!backgroundFile.empty())
@@ -4270,7 +4270,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	if (_vm->_globals._screenId == 61) {
 		addStaticSprite(_vm->_globals.PERSO, Common::Point(330, 418), 0, 60, 0, false, 34, 190);
 		animateSprite(0);
-		_vm->_globals.chemin = (int16 *)g_PTRNUL;
+		_vm->_globals._route = (int16 *)g_PTRNUL;
 		computeAndSetSpriteSize();
 	}
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
@@ -4288,13 +4288,13 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		g_old_x = getSpriteX(0);
 		_vm->_globals._oldDirection = -1;
 		_vm->_globals.Compteur = 0;
-		_vm->_globals.chemin = (int16 *)g_PTRNUL;
-		_vm->_globals.chemin = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), 330, 345);
+		_vm->_globals._route = (int16 *)g_PTRNUL;
+		_vm->_globals._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), 330, 345);
 		_vm->_globals.NOT_VERIF = true;
 		do {
 			GOHOME();
 			_vm->_eventsManager.VBL();
-		} while (_vm->_globals.chemin != (int16 *)g_PTRNUL);
+		} while (_vm->_globals._route != (int16 *)g_PTRNUL);
 		setSpriteIndex(0, 64);
 	}
 	do {
@@ -4398,7 +4398,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	computeAndSetSpriteSize();
 	animateSprite(0);
 	_vm->_globals.CACHE_ON();
-	_vm->_globals.chemin = (int16 *)g_PTRNUL;
+	_vm->_globals._route = (int16 *)g_PTRNUL;
 	computeAndSetSpriteSize();
 	SPECIAL_INI();
 	_vm->_eventsManager._mouseSpriteId = 4;
@@ -4429,7 +4429,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 					yp = _vm->_eventsManager.getMouseY();
 
 					if ((xCheck == xp) && (yCheck == yp)) {
-						_vm->_globals.chemin = (int16 *)g_PTRNUL;
+						_vm->_globals._route = (int16 *)g_PTRNUL;
 						PARADISE();
 						if (_vm->_globals._exitId)
 							breakFlag = true;
@@ -4445,8 +4445,8 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		if (!_vm->_globals._exitId) {
 			_vm->_dialogsManager.testDialogOpening();
 			checkZone();
-			if (_vm->_globals.chemin == (int16 *)g_PTRNUL
-					|| (GOHOME(), _vm->_globals.chemin == (int16 *)g_PTRNUL)) {
+			if (_vm->_globals._route == (int16 *)g_PTRNUL
+					|| (GOHOME(), _vm->_globals._route == (int16 *)g_PTRNUL)) {
 				if (_vm->_globals.GOACTION)
 					PARADISE();
 			}

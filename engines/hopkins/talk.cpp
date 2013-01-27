@@ -792,15 +792,13 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int a3, int
 }
 
 void TalkManager::REPONSE(int zone, int verb) {
-	byte *v5;
-	byte *v6;
 	uint16 v7;
 	byte *v8;
 	int v10;
 	uint16 v11;
 	int v12;
 	int v13;
-	bool v15;
+	bool tagFound;
 	bool v16;
 	bool loopCond;
 	byte *ptr;
@@ -808,90 +806,92 @@ void TalkManager::REPONSE(int zone, int verb) {
 	byte zoneObj = zone;
 	byte verbObj = verb;
 LABEL_2:
-	v15 = false;
-	if (_vm->_globals.COUCOU != g_PTRNUL) {
-		v5 = _vm->_globals.COUCOU;
-		for (;;) {
-			if (v5[0] == 'C' && v5[1] == 'O' && v5[2] == 'D') {
-				if (v5[3] == zoneObj && v5[4] == verbObj)
-					v15 = true;
-			}
-			if (v5[0] == 'F' && v5[1] == 'I' && v5[2] == 'N')
-				break;
-			if (!v15)
-				v5++;
-			else if (v15) {
-				v6 = v5 + 5;
-				ptr = _vm->_globals.allocMemory(620);
-				if (g_PTRNUL == ptr)
-					error("TRADUC");
-				memset(ptr, 0, 620);
-				v7 = 0;
-				v12 = 0;
-				loopCond = false;
-				do {
-					v16 = false;
-					if (v6[v7] == 'F' && v6[v7 + 1] == 'C') {
-						++v12;
-						assert(v12 < (620 / 20));
+	tagFound = false;
+	if (_vm->_globals._answerBuffer == g_PTRNUL)
+		return;
 
-						v8 = (ptr + 20 * v12);
-						v11 = 0;
-						do {
-							assert(v11 < 20);
-							v8[v11++] = v6[v7++];
-							if (v6[v7] == 'F' && v6[v7 + 1] == 'F') {
-								v16 = true;
-								v8[v11] = 'F';
-								v8[v11 + 1] = 'F';
-								++v7;
-							}
-						} while (!v16);
-					}
-					if (!v16) {
-						if ((v6[v7] == 'C' && v6[v7 + 1] == 'O' && v6[v7 + 2] == 'D') || (v6[v7] == 'F' && v6[v7 + 1] == 'I' && v6[v7 + 2] == 'N'))
-							loopCond = true;
-					}
-					v6 += v7 + 1;
-					v7 = 0;
-				} while (!loopCond);
-				loopCond = false;
-				v13 = 1;
-				do {
-					v10 = _vm->_scriptManager.handleOpcode(ptr + 20 * v13);
-					if (_vm->shouldQuit())
-						return;
-
-					if (v10 == 2)
-						// GOTO
-						v13 =  _vm->_scriptManager.handleGoto(ptr + 20 * v13);
-					else if (v10 == 3)
-						// IF
-						v13 =  _vm->_scriptManager.handleIf(ptr, v13);
-
-					if (v13 == -1)
-						error("Invalid IFF function");
-
-					if (v10 == 1 || v10 == 4)
-						// Already handled opcode or END IF
-						++v13;
-					else if (!v10 || v10 == 5)
-						// EXIT
-						loopCond = true;
-					else if (v10 == 6) {
-						// JUMP
-						_vm->_globals.freeMemory(ptr);
-						zoneObj = _vm->_objectsManager._jumpZone;
-						verbObj = _vm->_objectsManager._jumpVerb;
-						goto LABEL_2;
-					}
-				} while (!loopCond);
-				_vm->_globals.freeMemory(ptr);
-				_vm->_globals._saveData->_data[svField2] = 0;
-				return;
-			}
+	byte *curAnswerBuf = _vm->_globals._answerBuffer;
+	for (;;) {
+		if (curAnswerBuf[0] == 'F' && curAnswerBuf[1] == 'I' && curAnswerBuf[2] == 'N')
+			return;
+		if (curAnswerBuf[0] == 'C' && curAnswerBuf[1] == 'O' && curAnswerBuf[2] == 'D') {
+			if (curAnswerBuf[3] == zoneObj && curAnswerBuf[4] == verbObj)
+				tagFound = true;
 		}
+		if (!tagFound)
+			curAnswerBuf++;
+		else
+			break;
 	}
+
+	// 'COD' tag found
+	curAnswerBuf += 5;
+	ptr = _vm->_globals.allocMemory(620);
+	assert(ptr != g_PTRNUL);
+	memset(ptr, 0, 620);
+	v7 = 0;
+	v12 = 0;
+	loopCond = false;
+	do {
+		v16 = false;
+		if (curAnswerBuf[v7] == 'F' && curAnswerBuf[v7 + 1] == 'C') {
+			++v12;
+			assert(v12 < (620 / 20));
+
+			v8 = (ptr + 20 * v12);
+			v11 = 0;
+			do {
+				assert(v11 < 20);
+				v8[v11++] = curAnswerBuf[v7++];
+				if (curAnswerBuf[v7] == 'F' && curAnswerBuf[v7 + 1] == 'F') {
+					v16 = true;
+					v8[v11] = 'F';
+					v8[v11 + 1] = 'F';
+					++v7;
+				}
+			} while (!v16);
+		}
+		if (!v16) {
+			if ((curAnswerBuf[v7] == 'C' && curAnswerBuf[v7 + 1] == 'O' && curAnswerBuf[v7 + 2] == 'D') || (curAnswerBuf[v7] == 'F' && curAnswerBuf[v7 + 1] == 'I' && curAnswerBuf[v7 + 2] == 'N'))
+				loopCond = true;
+		}
+		curAnswerBuf += v7 + 1;
+		v7 = 0;
+	} while (!loopCond);
+	loopCond = false;
+	v13 = 1;
+	do {
+		v10 = _vm->_scriptManager.handleOpcode(ptr + 20 * v13);
+		if (_vm->shouldQuit())
+			return;
+
+		if (v10 == 2)
+			// GOTO
+			v13 =  _vm->_scriptManager.handleGoto(ptr + 20 * v13);
+		else if (v10 == 3)
+			// IF
+			v13 =  _vm->_scriptManager.handleIf(ptr, v13);
+
+		if (v13 == -1)
+			error("Invalid IFF function");
+
+		if (v10 == 1 || v10 == 4)
+			// Already handled opcode or END IF
+			++v13;
+		else if (!v10 || v10 == 5)
+			// EXIT
+			loopCond = true;
+		else if (v10 == 6) {
+			// JUMP
+			_vm->_globals.freeMemory(ptr);
+			zoneObj = _vm->_objectsManager._jumpZone;
+			verbObj = _vm->_objectsManager._jumpVerb;
+			goto LABEL_2;
+		}
+	} while (!loopCond);
+	_vm->_globals.freeMemory(ptr);
+	_vm->_globals._saveData->_data[svField2] = 0;
+	return;
 }
 
 void TalkManager::REPONSE2(int a1, int a2) {
@@ -1050,8 +1050,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_objectsManager.PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, true);
 	startCharacterAnim0(_paletteBufferIdx, false);
-	v11 = _vm->_globals.COUCOU;
-	_vm->_globals.COUCOU = g_PTRNUL;
+	v11 = _vm->_globals._answerBuffer;
+	_vm->_globals._answerBuffer = g_PTRNUL;
 	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager.INILINK(v22);
 	_vm->_objectsManager.PERSO_ON = true;
@@ -1090,8 +1090,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	for (int i = 0; i <= 44; i++)
 		_vm->_globals.BOBZONE[i] = 0;
 
-	_vm->_globals.freeMemory(_vm->_globals.COUCOU);
-	_vm->_globals.COUCOU = v11;
+	_vm->_globals.freeMemory(_vm->_globals._answerBuffer);
+	_vm->_globals._answerBuffer = v11;
 	_vm->_objectsManager._disableFl = true;
 	_vm->_objectsManager.INILINK(v20);
 	_vm->_graphicsManager.INI_ECRAN2(v20, true);

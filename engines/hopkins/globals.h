@@ -349,8 +349,8 @@ public:
 	int GESTE_FLAG;
 	byte *_forestSprite;
 	bool _forestFl;
-	byte *COUCOU;
-	int16 *chemin;
+	byte *_answerBuffer;
+	int16 *_route;
 	int16 *BufLig;
 	byte *ADR_FICHIER_OBJ;
 	byte *PERSO;
