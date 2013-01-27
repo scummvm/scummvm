@@ -89,6 +89,9 @@ private:
 	SegmentItem Segment[101];
 	CarreZoneItem CarreZone[101];
 	int _currentSegmentId;
+	int _maxLineIdx;
+	int _lastLine;
+	int _linesNumb;
 
 	int CALC_PROPRE(int idx);
 	int checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow);
@@ -106,9 +109,6 @@ private:
 	int TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
 
 public:
-	int _lastLine;
-	int _linesNumb;
-	int _maxLineIdx;
 	int16 *essai2;
 
 public:
@@ -132,6 +132,9 @@ public:
 	int MZONE();
 	void CARRE_ZONE();
 	void clearAll();
+	void setMaxLineIdx(int idx);
+	void resetLastLine();
+	void resetLinesNumb();
 };
 
 } // End of namespace Hopkins

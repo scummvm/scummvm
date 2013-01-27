@@ -1794,7 +1794,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 void ObjectsManager::PLAN_BETA() {
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
-	_vm->_linesManager._maxLineIdx = 1;
+	_vm->_linesManager.setMaxLineIdx(1);
 	_vm->_globals._characterMaxPosY = 440;
 	_vm->_globals.PLAN_FLAG = true;
 	_vm->_graphicsManager._noFadingFl = false;
@@ -2142,8 +2142,8 @@ void ObjectsManager::clearScreen() {
 	_verb = 4;
 	_zoneNum = 0;
 	_forceZoneFl = true;
-	_vm->_linesManager._linesNumb = 0;
-	_vm->_linesManager._lastLine = 0;
+	_vm->_linesManager.resetLinesNumb();
+	_vm->_linesManager.resetLastLine();
 	_vm->_linesManager._route = (int16 *)g_PTRNUL;
 	_vm->_globals._answerBuffer = _vm->_globals.freeMemory(_vm->_globals._answerBuffer);
 	_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
@@ -3144,7 +3144,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			v16 = ptr + idx + 4;
 			v32 = 0;
 			v34 = 0;
-			_vm->_linesManager._linesNumb = 0;
+			_vm->_linesManager.resetLinesNumb();
 			do {
 				v27 = (int16)READ_LE_UINT16(v16 + 2 * v32);
 				if (v27 != -1) {
@@ -3156,7 +3156,6 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					    (int16)READ_LE_UINT16(v16 + 2 * v32 + 6),
 					    (int16)READ_LE_UINT16(v16 + 2 * v32 + 8),
 					    1);
-					++_vm->_linesManager._linesNumb;
 				}
 				v32 += 5;
 				++v34;

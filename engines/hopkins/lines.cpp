@@ -86,7 +86,6 @@ void LinesManager::loadLines(const Common::String &file) {
 		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 3),
 		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 4),
 		    1);
-		++_linesNumb;
 	}
 	initRoute();
 	_vm->_globals.freeMemory(ptr);
@@ -232,8 +231,7 @@ void LinesManager::addLine(int idx, int a2, int a3, int a4, int a5, int a6, int 
 	int v39;
 	int v40;
 
-	if (idx > MAX_LINES)
-		error("Attempting to add a line obstacle > MAX_LIGNE.");
+	assert (idx <= MAX_LINES);
 
 	if (_linesNumb < idx)
 		_linesNumb = idx;
@@ -352,6 +350,8 @@ void LinesManager::addLine(int idx, int a2, int a3, int a4, int a5, int a6, int 
 	Ligne[idx]._lineDataEndIdx = v35 + 1;
 	Ligne[idx].field2 = a7;
 	Ligne[idx]._direction = a2;
+
+	++_linesNumb;
 }
 
 /**
@@ -3234,4 +3234,15 @@ void LinesManager::removeLine(int idx) {
 	Ligne[idx]._lineData = (int16 *)_vm->_globals.freeMemory((byte *)Ligne[idx]._lineData);
 }
 
+void LinesManager::setMaxLineIdx(int idx) {
+	_maxLineIdx = idx;
+}
+
+void LinesManager::resetLastLine() {
+	_lastLine = 0;
+}
+
+void LinesManager::resetLinesNumb() {
+	_linesNumb = 0;
+}
 } // End of namespace Hopkins
