@@ -351,9 +351,7 @@ public:
 	int _mapCarPosX, _mapCarPosY;
 	int _screenId;
 	int _prevScreenId;
-	int Max_Propre;
-	int _maxLineLength;
-	int Max_Perso_Y;
+	int _characterMaxPosY;
 	bool _disableInventFl;
 	bool NOMARCHE;
 	int NBBLOC;

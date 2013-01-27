@@ -45,6 +45,7 @@ LinesManager::LinesManager() {
 	NVPY = 0;
 	_smoothMoveDirection = 0;
 	_lastLine = 0;
+	_maxLineIdx = 0;
 }
 
 void LinesManager::setParent(HopkinsEngine *vm) {
@@ -459,7 +460,7 @@ void LinesManager::initRoute() {
 
 	_lastLine = lineIdx;
 	for (int idx = 1; idx < MAX_LINES; idx++) {
-		if ((Ligne[idx]._lineDataEndIdx < _vm->_globals._maxLineLength) && (idx != _lastLine + 1)) {
+		if ((Ligne[idx]._lineDataEndIdx < _maxLineIdx) && (idx != _lastLine + 1)) {
 			Ligne[idx].field6 = Ligne[idx - 1].field6;
 			Ligne[idx].field8 = Ligne[idx - 1].field8;
 		}
@@ -1074,7 +1075,7 @@ LABEL_17:
 				break;
 
 			v75 = foundLineIdx;
-			if (_vm->_globals.Max_Perso_Y <= v35 || v71 <= v35)
+			if (_vm->_globals._characterMaxPosY <= v35 || v71 <= v35)
 				break;
 		}
 		int v36 = a5;
@@ -1246,8 +1247,8 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 		clipDestY = 20;
 	if (clipDestX > _vm->_graphicsManager._maxX - 10)
 		clipDestX = _vm->_graphicsManager._maxX - 10;
-	if (clipDestY > _vm->_globals.Max_Perso_Y)
-		clipDestY = _vm->_globals.Max_Perso_Y;
+	if (clipDestY > _vm->_globals._characterMaxPosY)
+		clipDestY = _vm->_globals._characterMaxPosY;
 
 	if (abs(fromX - clipDestX) <= 3 && abs(fromY - clipDestY) <= 3)
 		return (int16 *)g_PTRNUL;

@@ -65,6 +65,7 @@ public:
 	int NVPY;
 	int _smoothMoveDirection;
 	int _lastLine;
+	int _maxLineIdx;
 public:
 	LinesManager();
 	void setParent(HopkinsEngine *vm);

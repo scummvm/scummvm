@@ -1844,9 +1844,8 @@ void ObjectsManager::CARRE_ZONE() {
 void ObjectsManager::PLAN_BETA() {
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
-	_vm->_globals.Max_Propre = 1;
-	_vm->_globals._maxLineLength = 1;
-	_vm->_globals.Max_Perso_Y = 440;
+	_vm->_linesManager._maxLineIdx = 1;
+	_vm->_globals._characterMaxPosY = 440;
 	_vm->_globals.PLAN_FLAG = true;
 	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals.NOMARCHE = false;

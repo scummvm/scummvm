@@ -135,9 +135,7 @@ Globals::Globals() {
 	PERSO = 0;
 	_screenId = 0;
 	_prevScreenId = 0;
-	_maxLineLength = 0;
-	Max_Perso_Y = 0;
-	Max_Propre = 0;
+	_characterMaxPosY = 0;
 	NBBLOC = 0;
 	_menuScrollType = 0;
 	_menuScrollSpeed = 0;
