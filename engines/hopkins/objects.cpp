@@ -3335,21 +3335,19 @@ void ObjectsManager::SPECIAL_INI() {
 	}
 }
 
-void ObjectsManager::OPTI_BOBON(int idx1, int idx2, int idx3, int a4, int a5, int a6, int a7) {
+void ObjectsManager::OPTI_BOBON(int idx1, int idx2, int idx3, int a4, int a5, int a6) {
 	if (idx1 != -1)
 		setBobAnimation(idx1);
 	if (idx2 != -1)
 		setBobAnimation(idx2);
 	if (idx3 != -1)
 		setBobAnimation(idx3);
-	if (!a7) {
-		if (idx1 != -1)
-			SET_BOBPOSI(idx1, a4);
-		if (idx2 != -1)
-			SET_BOBPOSI(idx2, a5);
-		if (idx3 != -1)
-			SET_BOBPOSI(idx3, a6);
-	}
+	if (idx1 != -1)
+		SET_BOBPOSI(idx1, a4);
+	if (idx2 != -1)
+		SET_BOBPOSI(idx2, a5);
+	if (idx3 != -1)
+		SET_BOBPOSI(idx3, a6);
 }
 
 void ObjectsManager::SCI_OPTI_ONE(int idx, int a2, int a3, int a4) {

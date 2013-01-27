@@ -315,7 +315,6 @@ public:
 	byte *BUF_ZONE;
 	byte *SPRITE_ECRAN;
 	Sauvegarde *_saveData;
-	byte *BUFFERTAPE;
 	byte *inventaire2;
 	byte *GESTE;
 	int NUM_FICHIER_OBJ;

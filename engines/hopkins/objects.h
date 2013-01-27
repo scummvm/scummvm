@@ -189,7 +189,7 @@ public:
 
 	void INILINK(const Common::String &file);
 	void SPECIAL_INI();
-	void OPTI_BOBON(int idx1, int idx2, int idx3, int a4, int a5, int a6, int a7);
+	void OPTI_BOBON(int idx1, int idx2, int idx3, int a4, int a5, int a6);
 	void SCI_OPTI_ONE(int idx, int a2, int a3, int a4);
 	void disableVerb(int idx, int a2);
 	void enableVerb(int idx, int a2);

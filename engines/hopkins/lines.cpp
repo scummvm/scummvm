@@ -58,7 +58,12 @@ LinesManager::LinesManager() {
 	essai2 = NULL;
 	BufLig = (int16 *)g_PTRNUL;
 	_route = (int16 *)g_PTRNUL;
-	SegmentEnCours = 0;
+	_currentSegmentId = 0;
+	BUFFERTAPE = NULL;
+}
+
+LinesManager::~LinesManager() {
+	_vm->_globals.freeMemory(BUFFERTAPE);
 }
 
 void LinesManager::setParent(HopkinsEngine *vm) {
@@ -85,14 +90,6 @@ void LinesManager::loadLines(const Common::String &file) {
 	}
 	initRoute();
 	_vm->_globals.freeMemory(ptr);
-}
-
-/**
- * Clear all zones and reset nextLine
- */
-void LinesManager::clearAllZones() {
-	for (int idx = 0; idx < MAX_LINES; ++idx)
-		removeZoneLine(idx);
 }
 
 /** 
@@ -159,14 +156,6 @@ int LinesManager::checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastR
 }
 
 /**
- * Remove Zone Line
- */
-void LinesManager::removeZoneLine(int idx) {
-	assert (idx <= MAX_LINES);
-	_zoneLine[idx]._zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx]._zoneData);
-}
-
-/**
  * Add Zone Line
  */
 void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx) {
@@ -217,21 +206,6 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 	}
 }
 
-void LinesManager::resetLines() {
-	for (int idx = 0; idx < MAX_LINES; ++idx) {
-		removeLine(idx);
-		Ligne[idx]._lineDataEndIdx = 0;
-		Ligne[idx]._lineData = (int16 *)g_PTRNUL;
-	}
-}
-
-// Remove Line
-void LinesManager::removeLine(int idx) {
-	if (idx > MAX_LINES)
-		error("Attempting to add a line obstacle > MAX_LIGNE.");
-	Ligne[idx]._lineData = (int16 *)_vm->_globals.freeMemory((byte *)Ligne[idx]._lineData);
-}
-
 /**
  * Add Line
  */
@@ -274,8 +248,7 @@ void LinesManager::addLine(int idx, int a2, int a3, int a4, int a5, int a6, int 
 		v34 = v8;
 
 	v10 = _vm->_globals.allocMemory(4 * v34 + 8);
-	if (v10 == g_PTRNUL)
-		error("AJOUTE LIGNE OBSTACLE");
+	assert (v10 != g_PTRNUL);
 
 	Common::fill(v10, v10 + 4 * v34 + 8, 0);
 	Ligne[idx]._lineData = (int16 *)v10;
@@ -2865,7 +2838,6 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5) {
 
 	int superRouteIdx = a3;
 	if (v33 == 1) {
-		essai0 = essai0;
 		for (int i = 0; i < Ligne[idxTest]._lineDataEndIdx; i++) {
 			super_parcours[superRouteIdx] = Ligne[idxTest]._lineData[2 * i];
 			super_parcours[superRouteIdx + 1] = Ligne[idxTest]._lineData[2 * i + 1];
@@ -3028,7 +3000,7 @@ int LinesManager::MZONE() {
 					}
 			}
 		}
-		SegmentEnCours = 0;
+		_currentSegmentId = 0;
 		for (int squareZoneId = 0; squareZoneId <= 99; squareZoneId++) {
 			if (_vm->_globals.ZONEP[squareZoneId]._enabledFl && CarreZone[squareZoneId]._enabledFl == 1
 				&& CarreZone[squareZoneId]._left <= xp && CarreZone[squareZoneId]._right >= xp
@@ -3037,12 +3009,12 @@ int LinesManager::MZONE() {
 						_vm->_globals.oldzone_46 = _zoneLine[CarreZone[squareZoneId]._minZoneLineIdx].field2;
 						return _vm->_globals.oldzone_46;
 					}
-					Segment[SegmentEnCours].field2 = CarreZone[squareZoneId]._minZoneLineIdx;
-					Segment[SegmentEnCours].field4 = CarreZone[squareZoneId]._maxZoneLineIdx;
-					++SegmentEnCours;
+					Segment[_currentSegmentId].field2 = CarreZone[squareZoneId]._minZoneLineIdx;
+					Segment[_currentSegmentId].field4 = CarreZone[squareZoneId]._maxZoneLineIdx;
+					++_currentSegmentId;
 			}
 		}
-		if (!SegmentEnCours) {
+		if (!_currentSegmentId) {
 			_vm->_globals.oldzone_46 = -1;
 			return -1;
 		}
@@ -3102,13 +3074,13 @@ int LinesManager::MZONE() {
 }
 
 int LinesManager::colision(int xp, int yp) {
-	if (SegmentEnCours <= 0)
+	if (_currentSegmentId <= 0)
 		return -1;
 
 	int xMax = xp + 4;
 	int xMin = xp - 4;
 
-	for (int idx = 0; idx <= SegmentEnCours; ++idx) {
+	for (int idx = 0; idx <= _currentSegmentId; ++idx) {
 		int field2 = Segment[idx].field2;
 		if (Segment[idx].field4 < field2)
 			continue;
@@ -3197,6 +3169,69 @@ void LinesManager::CARRE_ZONE() {
 		if (zoneWidth == zoneHeight)
 			CarreZone[idx]._squareZoneFl = true;
 	}
+}
+
+void LinesManager::clearAll() {
+	_vm->_linesManager.essai0 = (int16 *)g_PTRNUL;
+	_vm->_linesManager.essai1 = (int16 *)g_PTRNUL;
+	_vm->_linesManager.essai2 = (int16 *)g_PTRNUL;
+	_vm->_linesManager.BufLig = (int16 *)g_PTRNUL;
+	_vm->_linesManager._route = (int16 *)g_PTRNUL;
+
+	for (int idx = 0; idx < MAX_LINES; ++idx) {
+		_vm->_linesManager.Ligne[idx]._lineDataEndIdx = 0;
+		_vm->_linesManager.Ligne[idx].field2 = 0;
+		_vm->_linesManager.Ligne[idx]._direction = 0;
+		_vm->_linesManager.Ligne[idx].field6 = 0;
+		_vm->_linesManager.Ligne[idx].field8 = 0;
+		_vm->_linesManager.Ligne[idx]._lineData = (int16 *)g_PTRNUL;
+
+		_vm->_linesManager._zoneLine[idx]._count = 0;
+		_vm->_linesManager._zoneLine[idx].field2 = 0;
+		_vm->_linesManager._zoneLine[idx]._zoneData = (int16 *)g_PTRNUL;
+	}
+
+	for (int idx = 0; idx < 100; ++idx) {
+		_vm->_linesManager.CarreZone[idx]._enabledFl = 0;
+	}
+
+	BUFFERTAPE = _vm->_globals.allocMemory(85000);
+
+	_vm->_linesManager.essai0 = (int16 *)BUFFERTAPE;
+	_vm->_linesManager.essai1 = (int16 *)(BUFFERTAPE + 25000);
+	_vm->_linesManager.essai2 = (int16 *)(BUFFERTAPE + 50000);
+	_vm->_linesManager.BufLig = (int16 *)(BUFFERTAPE + 75000);
+}
+
+/**
+ * Clear all zones and reset nextLine
+ */
+void LinesManager::clearAllZones() {
+	for (int idx = 0; idx < MAX_LINES; ++idx)
+		removeZoneLine(idx);
+}
+
+/**
+ * Remove Zone Line
+ */
+void LinesManager::removeZoneLine(int idx) {
+	assert (idx <= MAX_LINES);
+	_zoneLine[idx]._zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx]._zoneData);
+}
+
+void LinesManager::resetLines() {
+	for (int idx = 0; idx < MAX_LINES; ++idx) {
+		removeLine(idx);
+		Ligne[idx]._lineDataEndIdx = 0;
+		Ligne[idx]._lineData = (int16 *)g_PTRNUL;
+	}
+}
+
+// Remove Line
+void LinesManager::removeLine(int idx) {
+	if (idx > MAX_LINES)
+		error("Attempting to add a line obstacle > MAX_LIGNE.");
+	Ligne[idx]._lineData = (int16 *)_vm->_globals.freeMemory((byte *)Ligne[idx]._lineData);
 }
 
 } // End of namespace Hopkins

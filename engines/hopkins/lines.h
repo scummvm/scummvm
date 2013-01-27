@@ -80,6 +80,15 @@ private:
 	int NVPY;
 	int _smoothMoveDirection;
 	int16 super_parcours[32002];
+	byte *BUFFERTAPE;
+	int16 *essai0;
+	int16 *essai1;
+	int16 *BufLig;
+	LigneZoneItem _zoneLine[401];
+	LigneItem Ligne[400];
+	SegmentItem Segment[101];
+	CarreZoneItem CarreZone[101];
+	int _currentSegmentId;
 
 	int CALC_PROPRE(int idx);
 	int checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow);
@@ -99,21 +108,14 @@ private:
 public:
 	int _lastLine;
 	int _linesNumb;
-	LigneZoneItem _zoneLine[401];
-	LigneItem Ligne[400];
 	int _maxLineIdx;
-	SegmentItem Segment[101];
-	CarreZoneItem CarreZone[101];
-	int SegmentEnCours;
+	int16 *essai2;
 
 public:
-	int16 *essai0;
-	int16 *essai1;
-	int16 *essai2;
-	int16 *BufLig;
 	int16 *_route;
 
 	LinesManager();
+	~LinesManager();
 	void setParent(HopkinsEngine *vm);
 
 	int checkInventoryHotspots(int posX, int posY);
@@ -129,6 +131,7 @@ public:
 	int colision(int xp, int yp);
 	int MZONE();
 	void CARRE_ZONE();
+	void clearAll();
 };
 
 } // End of namespace Hopkins

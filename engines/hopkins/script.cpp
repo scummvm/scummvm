@@ -736,7 +736,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
 			_vm->_soundManager.loadSample(2, "SOUND45.WAV");
-			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
+			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0);
 			bool v15 = false;
 			do {
 				if (_vm->shouldQuit())
@@ -805,7 +805,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 49: {
 			_vm->_globals.CACHE_OFF();
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0, 0);
+			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0);
 			int v19 = 12;
 			if (_vm->_globals._saveData->_data[svField133] == 1)
 				v19 = 41;

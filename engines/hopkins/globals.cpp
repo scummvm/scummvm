@@ -161,14 +161,13 @@ Globals::Globals() {
 
 	_oceanDirection = 0;
 
-	// Initialise pointers
+	// Initialize pointers
 	ICONE = NULL;
 	BUF_ZONE = NULL;
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = NULL;
 	SPRITE_ECRAN = NULL;
 	_saveData = NULL;
-	BUFFERTAPE = NULL;
 	inventaire2 = NULL;
 	GESTE = NULL;
 	_inventoryObject = NULL;
@@ -214,7 +213,6 @@ Globals::~Globals() {
 		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
 	freeMemory(SPRITE_ECRAN);
 	freeMemory((byte *)_saveData);
-	freeMemory(BUFFERTAPE);
 	freeMemory(inventaire2);
 	freeMemory(GESTE);
 	freeMemory(_inventoryObject);
@@ -299,38 +297,11 @@ void Globals::clearAll() {
 		ZONEP[idx]._spriteIndex = 0;
 	}
 
-	_vm->_linesManager.essai0 = (int16 *)g_PTRNUL;
-	_vm->_linesManager.essai1 = (int16 *)g_PTRNUL;
-	_vm->_linesManager.essai2 = (int16 *)g_PTRNUL;
-	_vm->_linesManager.BufLig = (int16 *)g_PTRNUL;
-	_vm->_linesManager._route = (int16 *)g_PTRNUL;
-
-	for (int idx = 0; idx < MAX_LINES; ++idx) {
-		_vm->_linesManager.Ligne[idx]._lineDataEndIdx = 0;
-		_vm->_linesManager.Ligne[idx].field2 = 0;
-		_vm->_linesManager.Ligne[idx]._direction = 0;
-		_vm->_linesManager.Ligne[idx].field6 = 0;
-		_vm->_linesManager.Ligne[idx].field8 = 0;
-		_vm->_linesManager.Ligne[idx]._lineData = (int16 *)g_PTRNUL;
-
-		_vm->_linesManager._zoneLine[idx]._count = 0;
-		_vm->_linesManager._zoneLine[idx].field2 = 0;
-		_vm->_linesManager._zoneLine[idx]._zoneData = (int16 *)g_PTRNUL;
-	}
-
-	for (int idx = 0; idx < 100; ++idx) {
-		_vm->_linesManager.CarreZone[idx]._enabledFl = 0;
-	}
-
-	BUFFERTAPE = allocMemory(85000);
+	_vm->_linesManager.clearAll();
 
 	_saveData = (Sauvegarde *)malloc(sizeof(Sauvegarde));
 	memset(_saveData, 0, sizeof(Sauvegarde));
 
-	_vm->_linesManager.essai0 = (int16 *)BUFFERTAPE;
-	_vm->_linesManager.essai1 = (int16 *)(BUFFERTAPE + 25000);
-	_vm->_linesManager.essai2 = (int16 *)(BUFFERTAPE + 50000);
-	_vm->_linesManager.BufLig = (int16 *)(BUFFERTAPE + 75000);
 	_boxWidth = 240;
 
 	_vm->_eventsManager._objectBuf = allocMemory(2500);
