@@ -53,24 +53,28 @@ struct SmoothItem {
 class LinesManager {
 private:
 	HopkinsEngine *_vm;
-public:
-	LigneZoneItem _zoneLine[401];
-	LigneItem Ligne[400];
+
+	int _pathFindingMaxDepth;
 	SmoothItem _smoothRoute[4000];
-	int _linesNumb;
 	int NV_LIGNEDEP;
 	int NV_LIGNEOFS;
 	int NV_POSI;
 	int NVPX;
 	int NVPY;
 	int _smoothMoveDirection;
-	int _lastLine;
-	int _maxLineIdx;
 	int16 super_parcours[32002];
+
+public:
+	LigneZoneItem _zoneLine[401];
+	LigneItem Ligne[400];
 	int16 *essai0;
 	int16 *essai1;
 	int16 *essai2;
-public:
+	int _maxLineIdx;
+	int _linesNumb;
+	int _lastLine;
+	int16 *BufLig;
+
 	LinesManager();
 	void setParent(HopkinsEngine *vm);
 

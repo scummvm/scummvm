@@ -1762,7 +1762,6 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	} while (bobZoneIdx != -1);
 
 	for (int i = 1; i <= 100; i++) {
-		 // CHECKME: Shouldn't it be a byte?
 		_vm->_globals.ZONEP[i]._destX = (int16)READ_LE_UINT16((uint16 *)ptr + bufId);
 		_vm->_globals.ZONEP[i]._destY = (int16)READ_LE_UINT16((uint16 *)ptr + bufId + 1);
 		_vm->_globals.ZONEP[i]._spriteIndex = (int16)READ_LE_UINT16((uint16 *)ptr + bufId + 2);

@@ -151,7 +151,6 @@ Globals::Globals() {
 	_actionDirection = 0;
 	_actionDirection = 0;
 	SegmentEnCours = 0;
-	pathFindingDepth = 0;
 
 	Credit_bx = -1;
 	Credit_bx1 = -1;
@@ -180,7 +179,6 @@ Globals::Globals() {
 	_forestSprite = NULL;
 	_answerBuffer = g_PTRNUL;
 	_route = (int16 *)g_PTRNUL;
-	BufLig = (int16 *)g_PTRNUL;
 	ADR_FICHIER_OBJ = NULL;
 	police = NULL;
 	PERSO = NULL;
@@ -309,7 +307,7 @@ void Globals::clearAll() {
 	_vm->_linesManager.essai0 = (int16 *)g_PTRNUL;
 	_vm->_linesManager.essai1 = (int16 *)g_PTRNUL;
 	_vm->_linesManager.essai2 = (int16 *)g_PTRNUL;
-	BufLig = (int16 *)g_PTRNUL;
+	_vm->_linesManager.BufLig = (int16 *)g_PTRNUL;
 	_route = (int16 *)g_PTRNUL;
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
@@ -337,7 +335,7 @@ void Globals::clearAll() {
 	_vm->_linesManager.essai0 = (int16 *)BUFFERTAPE;
 	_vm->_linesManager.essai1 = (int16 *)(BUFFERTAPE + 25000);
 	_vm->_linesManager.essai2 = (int16 *)(BUFFERTAPE + 50000);
-	BufLig = (int16 *)(BUFFERTAPE + 75000);
+	_vm->_linesManager.BufLig = (int16 *)(BUFFERTAPE + 75000);
 	_boxWidth = 240;
 
 	_vm->_eventsManager._objectBuf = allocMemory(2500);

@@ -335,7 +335,6 @@ public:
 	bool _forestFl;
 	byte *_answerBuffer;
 	int16 *_route;
-	int16 *BufLig;
 	byte *ADR_FICHIER_OBJ;
 	byte *PERSO;
 	int _objectWidth, _objectHeight;
@@ -371,8 +370,6 @@ public:
 	int _actionDirection;
 	int SegmentEnCours;
 	int couleur_40;
-
-	int pathFindingDepth;
 
 	int _hotspotTextColor;
 	int oldzone_46;

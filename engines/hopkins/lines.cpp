@@ -48,9 +48,11 @@ LinesManager::LinesManager() {
 	_smoothMoveDirection = 0;
 	_lastLine = 0;
 	_maxLineIdx = 0;
+	_pathFindingMaxDepth = 0;
 	essai0 = NULL;
 	essai1 = NULL;
 	essai2 = NULL;
+	BufLig = (int16 *)g_PTRNUL;
 }
 
 void LinesManager::setParent(HopkinsEngine *vm) {
@@ -900,8 +902,8 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 int LinesManager::GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int a7, int16 *route, int a9) {
 	int result = a7;
 	int v80 = -1;
-	++_vm->_globals.pathFindingDepth;
-	if (_vm->_globals.pathFindingDepth > 10) {
+	++_pathFindingMaxDepth;
+	if (_pathFindingMaxDepth > 10) {
 		warning("PathFinding - Max depth reached");
 		route[a7] = -1;
 		route[a7 + 1] = -1;
@@ -987,11 +989,11 @@ LABEL_17:
 	if (v85 > 800)
 		v85 = 800;
 
-	Common::fill(&_vm->_globals.BufLig[0], &_vm->_globals.BufLig[1000], 0);
+	Common::fill(&BufLig[0], &BufLig[1000], 0);
 	int bugLigIdx = 0;
 	for (int v88 = 0; v88 < v85 + 1; v88++) {
-		_vm->_globals.BufLig[bugLigIdx] = v82;
-		_vm->_globals.BufLig[bugLigIdx + 1] = v81;
+		BufLig[bugLigIdx] = v82;
+		BufLig[bugLigIdx + 1] = v81;
 		v21 += v84;
 		v22 += v83;
 		v82 = v21 / 1000;
@@ -1003,11 +1005,11 @@ LABEL_17:
 	int v78 = 0;
 	int v79 = 0;
 	for (int v89 = v85 + 1; v89 > 0; v89--) {
-		if (checkCollisionLine(_vm->_globals.BufLig[bugLigIdx], _vm->_globals.BufLig[bugLigIdx + 1], &foundDataIdx, &foundLineIdx, v92, v91) && _lastLine < foundLineIdx) {
+		if (checkCollisionLine(BufLig[bugLigIdx], BufLig[bugLigIdx + 1], &foundDataIdx, &foundLineIdx, v92, v91) && _lastLine < foundLineIdx) {
 			v80 = foundLineIdx;
 			v77 = foundDataIdx;
-			v78 = _vm->_globals.BufLig[bugLigIdx];
-			v79 = _vm->_globals.BufLig[bugLigIdx + 1];
+			v78 = BufLig[bugLigIdx];
+			v79 = BufLig[bugLigIdx + 1];
 			break;
 		}
 		bugLigIdx -= 2;
@@ -1240,7 +1242,7 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	_vm->_globals.old_x2_67 = destX;
 	_vm->_globals.old_y1_66 = fromY;
 	_vm->_globals.old_y2_68 = clipDestY;
-	_vm->_globals.pathFindingDepth = 0;
+	_pathFindingMaxDepth = 0;
 	int v112 = 0;
 	if (destX <= 19)
 		clipDestX = 20;
