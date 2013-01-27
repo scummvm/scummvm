@@ -722,8 +722,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 46: {
 			_vm->_globals.NOT_VERIF = true;
-			_vm->_globals._route = (int16 *)g_PTRNUL;
-			_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 564, 420);
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
+			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 564, 420);
 			_vm->_objectsManager._zoneNum = -1;
 			do {
 				if (_vm->shouldQuit())
@@ -731,7 +731,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals._route != (int16 *)g_PTRNUL);
+			} while (_vm->_linesManager._route != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
@@ -934,8 +934,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals._route = (int16 *)g_PTRNUL;
-			_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 445, 332);
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
+			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 445, 332);
 			_vm->_globals.NOT_VERIF = true;
 			do {
 				if (_vm->shouldQuit())
@@ -943,7 +943,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals._route != (int16 *)g_PTRNUL);
+			} while (_vm->_linesManager._route != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(7);
 			_vm->_objectsManager.SET_BOBPOSI(7, 0);
@@ -1034,8 +1034,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals._route = (int16 *)g_PTRNUL;
-			_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 119, 268);
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
+			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 119, 268);
 			_vm->_globals.NOT_VERIF = true;
 			do {
 				if (_vm->shouldQuit())
@@ -1043,7 +1043,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals._route != (int16 *)g_PTRNUL);
+			} while (_vm->_linesManager._route != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(11);
 			_vm->_objectsManager.setBobAnimation(8);
@@ -1350,15 +1350,15 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.g_old_x = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals._route = (int16 *)g_PTRNUL;
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
 			if (_vm->_globals._saveData->_data[svField253] == 1) {
-				_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 201, 294);
+				_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 201, 294);
 			}
 			if (_vm->_globals._saveData->_data[svField253] == 2) {
-				_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 158, 338);
+				_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 158, 338);
 			}
 			if (_vm->_globals._saveData->_data[svField253] > 2) {
-				_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 211, 393);
+				_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 211, 393);
 			}
 			_vm->_globals.NOT_VERIF = true;
 			do {
@@ -1367,7 +1367,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals._route != (int16 *)g_PTRNUL);
+			} while (_vm->_linesManager._route != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setSpriteIndex(0, 60);
 			_vm->_soundManager.loadSample(1, "SOUND63.WAV");
@@ -1598,8 +1598,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.NOT_VERIF = true;
-			_vm->_globals._route = (int16 *)g_PTRNUL;
-			_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 361, 325);
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
+			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 361, 325);
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager._zoneNum = -1;
 			do {
@@ -1608,7 +1608,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals._route != (int16 *)g_PTRNUL);
+			} while (_vm->_linesManager._route != (int16 *)g_PTRNUL);
 			_vm->_globals._exitId = 59;
 			break;
 			}
@@ -1626,8 +1626,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.NOT_VERIF = true;
-			_vm->_globals._route = (int16 *)g_PTRNUL;
-			_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 361, 325);
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
+			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 361, 325);
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager._zoneNum = -1;
 			do {
@@ -1636,7 +1636,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals._route != (int16 *)g_PTRNUL);
+			} while (_vm->_linesManager._route != (int16 *)g_PTRNUL);
 			_vm->_globals._exitId = 59;
 			break;
 			}
@@ -1801,8 +1801,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_soundManager._specialSoundNum = 0;
 			}
 			_vm->_globals.NOT_VERIF = true;
-			_vm->_globals._route = (int16 *)g_PTRNUL;
-			_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 330, 418);
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
+			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 330, 418);
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager._zoneNum = 0;
 			do {
@@ -1811,7 +1811,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals._route != (int16 *)g_PTRNUL);
+			} while (_vm->_linesManager._route != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.setSpriteIndex(0, 64);
 			_vm->_globals._exitId = _vm->_globals._saveData->_data[svField401];
 			_vm->_globals._disableInventFl = false;
@@ -1831,9 +1831,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.BOBPOSI(1) != 9);
 			_vm->_objectsManager.stopBobAnimation(1);
-			_vm->_globals._route = (int16 *)g_PTRNUL;
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
 			_vm->_globals.NOT_VERIF = true;
-			_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 330, 314);
+			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 330, 314);
 			_vm->_objectsManager._zoneNum = 0;
 			_vm->_globals.NOT_VERIF = true;
 			do {
@@ -1842,7 +1842,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals._route != (int16 *)g_PTRNUL);
+			} while (_vm->_linesManager._route != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.setSpriteIndex(0, 64);
 			_vm->_objectsManager.setBobAnimation(2);
 			_vm->_soundManager.playSound("SOUND66.WAV");
@@ -1930,8 +1930,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._oldDirection = -1;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.NOT_VERIF = true;
-			_vm->_globals._route = (int16 *)g_PTRNUL;
-			_vm->_globals._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 488, 280);
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
+			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 488, 280);
 			_vm->_globals.NOT_VERIF = true;
 			do {
 				if (_vm->shouldQuit())
@@ -1939,7 +1939,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager.VBL();
-			} while (_vm->_globals._route != (int16 *)g_PTRNUL);
+			} while (_vm->_linesManager._route != (int16 *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			int v45 = 0;
 			_vm->_objectsManager.setBobAnimation(7);

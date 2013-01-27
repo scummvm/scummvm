@@ -161,12 +161,6 @@ struct CacheItem {
 	int field14;
 };
 
-struct SegmentItem {
-	int field0; // Useless variable
-	int field2;
-	int field4;
-};
-
 struct HopkinsItem {
 	int field0;
 	int field2;
@@ -297,7 +291,6 @@ public:
 	ObjetWItem ObjetW[300];
 	BlocItem BLOC[250];
 	CacheItem Cache[25];
-	SegmentItem Segment[101];
 	int BOBZONE[105];
 	bool BOBZONE_FLAG[105];
 	int _spriteSize[500];
@@ -325,7 +318,6 @@ public:
 	byte *BUFFERTAPE;
 	byte *inventaire2;
 	byte *GESTE;
-	int _curObjectIndex;
 	int NUM_FICHIER_OBJ;
 	int nbrligne; // Useless variable?
 	int _boxWidth;
@@ -334,7 +326,6 @@ public:
 	byte *_forestSprite;
 	bool _forestFl;
 	byte *_answerBuffer;
-	int16 *_route;
 	byte *ADR_FICHIER_OBJ;
 	byte *PERSO;
 	int _objectWidth, _objectHeight;
@@ -368,7 +359,6 @@ public:
 	bool GOACTION;
 	int Compteur;
 	int _actionDirection;
-	int SegmentEnCours;
 	int couleur_40;
 
 	int _hotspotTextColor;

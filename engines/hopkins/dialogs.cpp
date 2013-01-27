@@ -399,7 +399,7 @@ LABEL_7:
 				break;
 
 			_vm->_scriptManager.TRAVAILOBJET = true;
-			_vm->_globals._saveData->_data[svField3] = _vm->_globals._curObjectIndex;
+			_vm->_globals._saveData->_data[svField3] = _vm->_objectsManager._curObjectIndex;
 			_vm->_globals._saveData->_data[svField8] = _vm->_globals._inventory[newInventoryItem];
 			_vm->_globals._saveData->_data[svField9] = _vm->_eventsManager._mouseCursorId;
 			_vm->_objectsManager.OPTI_OBJET();

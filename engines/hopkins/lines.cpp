@@ -38,6 +38,10 @@ LinesManager::LinesManager() {
 	}
 	for (int i = 0; i < 32002; ++i)
 		super_parcours[i] = 0;
+	for (int i = 0; i < 101; ++i) {
+		Common::fill((byte *)&Segment[i], (byte *)&Segment[i] + sizeof(SegmentItem), 0);
+		Common::fill((byte *)&CarreZone[i], (byte *)&CarreZone[i] + sizeof(CarreZoneItem), 0);
+	}
 
 	_linesNumb = 0;
 	NV_LIGNEDEP = 0;
@@ -53,6 +57,8 @@ LinesManager::LinesManager() {
 	essai1 = NULL;
 	essai2 = NULL;
 	BufLig = (int16 *)g_PTRNUL;
+	_route = (int16 *)g_PTRNUL;
+	SegmentEnCours = 0;
 }
 
 void LinesManager::setParent(HopkinsEngine *vm) {
@@ -2920,6 +2926,277 @@ int LinesManager::TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx,
 		}
 	}
 	return -1;
+}
+
+int LinesManager::CALC_PROPRE(int idx) {
+	int retVal = 25;
+	int size = _vm->_globals._spriteSize[idx];
+	if (_vm->_globals.PERSO_TYPE == 1) {
+		if (size < 0)
+			size = -size;
+		size = 20 * (5 * size - 100) / -80;
+	} else if (_vm->_globals.PERSO_TYPE == 2) {
+		if (size < 0)
+			size = -size;
+		size = 20 * (5 * size - 165) / -67;
+	}
+
+	if (size < 0)
+		retVal = _vm->_graphicsManager.zoomOut(25, -size);
+	else if (size > 0)
+		retVal = _vm->_graphicsManager.zoomIn(25, size);
+
+	return retVal;
+}
+
+void LinesManager::PACOURS_PROPRE(int16 *route) {
+	int v4;
+	int v5;
+	int v9;
+	int v10;
+	int v11;
+	int v12;
+
+	int v1 = 0;
+	int v14 = -1;
+	int v2 = route[1];
+	int v15 = route[2];
+	if (route[0] == -1 && v2 == -1)
+		return;
+
+	for (;;) {
+		if (v14 != -1 && v15 != v14) {
+			v11 = v1;
+			v12 = 0;
+			v10 = CALC_PROPRE(v2);
+			v4 = route[v1];
+			v9 = route[v1];
+			v5 = route[v1 + 1];
+			while (v4 != -1 || v5 != -1) {
+				int idx = v1;
+				v1 += 4;
+				++v12;
+				if (route[idx + 2] != v15)
+					break;
+				v4 = route[v1];
+				v9 = route[v1];
+				v5 = route[v1 + 1];
+			}
+			if (v12 < v10) {
+				int v7 = v11;
+				for (int v8 = 0; v8 < v12; v8++) {
+					route[v7 + 2] = v14;
+					v7 += 4;
+				}
+				v15 = v14;
+			}
+			v1 = v11;
+			if (v9 == -1 && v5 == -1)
+				break;
+		}
+		v1 += 4;
+		v14 = v15;
+		v2 = route[v1 + 1];
+		v15 = route[v1 + 2];
+		if (route[v1] == -1 && v2 == -1)
+			break;
+	}
+}
+
+int LinesManager::MZONE() {
+	int result;
+
+	int xp = _vm->_eventsManager._mousePos.x + _vm->_eventsManager._mouseOffset.x;
+	int yp = _vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y;
+	if ((_vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y) > 19) {
+		for (int bobZoneId = 0; bobZoneId <= 48; bobZoneId++) {
+			int bobId = _vm->_globals.BOBZONE[bobZoneId];
+			if (bobId && _vm->_globals.BOBZONE_FLAG[bobZoneId] && _vm->_globals._bob[bobId].field0 && _vm->_globals._bob[bobId]._frameIndex != 250 &&
+				!_vm->_globals._bob[bobId]._disabledAnimationFl && xp > _vm->_globals._bob[bobId]._oldX && 
+				xp < _vm->_globals._bob[bobId]._oldWidth + _vm->_globals._bob[bobId]._oldX && yp > _vm->_globals._bob[bobId]._oldY) {
+					if (yp < _vm->_globals._bob[bobId]._oldHeight + _vm->_globals._bob[bobId]._oldY) {
+						if (_vm->_globals.ZONEP[bobZoneId]._spriteIndex == -1) {
+							_vm->_globals.ZONEP[bobZoneId]._destX = 0;
+							_vm->_globals.ZONEP[bobZoneId]._destY = 0;
+						}
+						if (!_vm->_globals.ZONEP[bobZoneId]._destX && !_vm->_globals.ZONEP[bobZoneId]._destY) {
+							_vm->_globals.ZONEP[bobZoneId]._destX = _vm->_globals._bob[bobId]._oldWidth + _vm->_globals._bob[bobId]._oldX;
+							_vm->_globals.ZONEP[bobZoneId]._destY = _vm->_globals._bob[bobId]._oldHeight + _vm->_globals._bob[bobId]._oldY + 6;
+							_vm->_globals.ZONEP[bobZoneId]._spriteIndex = -1;
+						}
+						return bobZoneId;
+					}
+			}
+		}
+		SegmentEnCours = 0;
+		for (int squareZoneId = 0; squareZoneId <= 99; squareZoneId++) {
+			if (_vm->_globals.ZONEP[squareZoneId]._enabledFl && CarreZone[squareZoneId]._enabledFl == 1
+				&& CarreZone[squareZoneId]._left <= xp && CarreZone[squareZoneId]._right >= xp
+				&& CarreZone[squareZoneId]._top <= yp && CarreZone[squareZoneId]._bottom >= yp) {
+					if (CarreZone[squareZoneId]._squareZoneFl) {
+						_vm->_globals.oldzone_46 = _zoneLine[CarreZone[squareZoneId]._minZoneLineIdx].field2;
+						return _vm->_globals.oldzone_46;
+					}
+					Segment[SegmentEnCours].field2 = CarreZone[squareZoneId]._minZoneLineIdx;
+					Segment[SegmentEnCours].field4 = CarreZone[squareZoneId]._maxZoneLineIdx;
+					++SegmentEnCours;
+			}
+		}
+		if (!SegmentEnCours) {
+			_vm->_globals.oldzone_46 = -1;
+			return -1;
+		}
+
+		int colRes1 = 0;
+		for (int yCurrent = yp; yCurrent >= 0; --yCurrent) {
+			colRes1 = colision(xp, yCurrent);
+			if (colRes1 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
+				break;
+		}
+
+		if (colRes1 == -1) {
+			_vm->_globals.oldzone_46 = -1;
+			return -1;
+		}
+
+		int colRes2 = 0;
+		for (int j = yp; j < _vm->_graphicsManager._maxY; ++j) {
+			colRes2 = colision(xp, j);
+			if (colRes2 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
+				break;
+		}
+
+		if (colRes2 == -1) {
+			_vm->_globals.oldzone_46 = -1;
+			return -1;
+		}
+
+		int colRes3 = 0;
+		for (int k = xp; k >= 0; --k) {
+			colRes3 = colision(k, yp);
+			if (colRes3 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
+				break;
+		}
+		if (colRes3 == -1) {
+			_vm->_globals.oldzone_46 = -1;
+			return -1;
+		}
+
+		int colRes4 = 0;
+		for (int xCurrent = xp; _vm->_graphicsManager._maxX > xCurrent; ++xCurrent) {
+			colRes4 = colision(xCurrent, yp);
+			if (colRes4 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
+				break;
+		}
+		if (colRes1 == colRes2 && colRes1 == colRes3 && colRes1 == colRes4) {
+			_vm->_globals.oldzone_46 = colRes1;
+			result = colRes1;
+		} else {
+			_vm->_globals.oldzone_46 = -1;
+			result = -1;
+		}
+	} else {
+		result = 0;
+	}
+	return result;
+}
+
+int LinesManager::colision(int xp, int yp) {
+	if (SegmentEnCours <= 0)
+		return -1;
+
+	int xMax = xp + 4;
+	int xMin = xp - 4;
+
+	for (int idx = 0; idx <= SegmentEnCours; ++idx) {
+		int field2 = Segment[idx].field2;
+		if (Segment[idx].field4 < field2)
+			continue;
+
+		int yMax = yp + 4;
+		int yMin = yp - 4;
+
+		do {
+			int16 *dataP = _vm->_linesManager._zoneLine[field2]._zoneData;
+			if (dataP != (int16 *)g_PTRNUL) {
+				int count = _vm->_linesManager._zoneLine[field2]._count;
+				int v1 = dataP[0];
+				int v2 = dataP[1];
+				int v3 = dataP[count * 2 - 2];
+				int v4 = dataP[count * 2 - 1];
+
+				bool flag = true;
+				if (v1 < v3 && (xMax < v1 || xMin > v3))
+					flag = false;
+				if (v1 >= v3 && (xMin > v1 || xMax < v3))
+					flag = false;
+				if (v2 < v4 && (yMax < v2 || yMin > v4))
+					flag = false;
+				if (v2 >= v4 && (yMin > v2 || yMax < v4))
+					flag = false;
+
+				if (flag && _vm->_linesManager._zoneLine[field2]._count > 0) {
+					for (int i = 0; i < count; ++i) {
+						int xCheck = *dataP++;
+						int yCheck = *dataP++;
+
+						if ((xp == xCheck || (xp + 1) == xCheck) && (yp == yCheck))
+							return _vm->_linesManager._zoneLine[field2].field2;
+					}
+				}
+			}
+		} while (++field2 <= Segment[idx].field4);
+	}
+
+	return -1;
+}
+
+// Square Zone
+void LinesManager::CARRE_ZONE() {
+	for (int idx = 0; idx < 100; ++idx) {
+		CarreZone[idx]._enabledFl = 0;
+		CarreZone[idx]._squareZoneFl = false;
+		CarreZone[idx]._left = 1280;
+		CarreZone[idx]._right = 0;
+		CarreZone[idx]._top = 460;
+		CarreZone[idx]._bottom = 0;
+		CarreZone[idx]._minZoneLineIdx = 401;
+		CarreZone[idx]._maxZoneLineIdx = 0;
+	}
+
+	for (int idx = 0; idx < MAX_LINES; ++idx) {
+		int16 *dataP = _vm->_linesManager._zoneLine[idx]._zoneData;
+		if (dataP == (int16 *)g_PTRNUL)
+			continue;
+
+		int carreZoneId = _vm->_linesManager._zoneLine[idx].field2;
+		CarreZone[carreZoneId]._enabledFl = 1;
+		if (CarreZone[carreZoneId]._maxZoneLineIdx < idx)
+			CarreZone[carreZoneId]._maxZoneLineIdx = idx;
+		if (CarreZone[carreZoneId]._minZoneLineIdx > idx)
+			CarreZone[carreZoneId]._minZoneLineIdx = idx;
+
+		for (int i = 0; i < _vm->_linesManager._zoneLine[idx]._count; i++) {
+			int zoneX = *dataP++;
+			int zoneY = *dataP++;
+
+			if (CarreZone[carreZoneId]._left >= zoneX)
+				CarreZone[carreZoneId]._left = zoneX;
+			if (CarreZone[carreZoneId]._right <= zoneX)
+				CarreZone[carreZoneId]._right = zoneX;
+			if (CarreZone[carreZoneId]._top >= zoneY)
+				CarreZone[carreZoneId]._top = zoneY;
+			if (CarreZone[carreZoneId]._bottom <= zoneY)
+				CarreZone[carreZoneId]._bottom = zoneY;
+		}
+	}
+
+	for (int idx = 0; idx < 100; idx++) {
+		int zoneWidth = abs(CarreZone[idx]._left - CarreZone[idx]._right);
+		int zoneHeight = abs(CarreZone[idx]._top - CarreZone[idx]._bottom);
+		if (zoneWidth == zoneHeight)
+			CarreZone[idx]._squareZoneFl = true;
+	}
 }
 
 } // End of namespace Hopkins

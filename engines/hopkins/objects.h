@@ -50,17 +50,6 @@ struct SpriteItem {
 	int _reducePct;
 };
 
-struct CarreZoneItem {
-	int _enabledFl;
-	int _left;
-	int _right;
-	int _top;
-	int _bottom;
-	int _minZoneLineIdx;
-	int _maxZoneLineIdx;
-	bool _squareZoneFl;
-};
-
 class HopkinsEngine;
 
 class ObjectsManager {
@@ -101,7 +90,7 @@ public:
 	int _jumpZone;
 	int _oldSpriteIndex;
 	bool _oldFlipFl;
-	CarreZoneItem CarreZone[101];
+	int _curObjectIndex;
 public:
 	ObjectsManager();
 	void setParent(HopkinsEngine *vm);
@@ -157,7 +146,6 @@ public:
 	void GOHOME();
 	void GOHOME2();
 	void loadZone(const Common::String &file);
-	void CARRE_ZONE();
 	void PLAN_BETA();
 	void handleLeftButton();
 	void PARADISE();
@@ -171,10 +159,8 @@ public:
 	void changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
 
 	void computeAndSetSpriteSize();
-	void PACOURS_PROPRE(int16 *a1);
 	void nextVerbIcon();
 	void handleRightButton();
-	int MZONE();
 	void initBorder(int a1);
 	void nextObjectIcon(int idx);
 	void takeInventoryObject(int idx);
@@ -207,8 +193,6 @@ public:
 	void SCI_OPTI_ONE(int idx, int a2, int a3, int a4);
 	void disableVerb(int idx, int a2);
 	void enableVerb(int idx, int a2);
-	int CALC_PROPRE(int idx);
-	int colision(int xp, int yp);
 
 	void ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int speed, bool flipFl);
 	void SPACTION(byte *spriteData, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl);

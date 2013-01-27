@@ -2098,7 +2098,7 @@ void HopkinsEngine::playEnding() {
 	_globals.PLAN_FLAG = false;
 	_globals.iRegul = 1;
 	_soundManager.WSOUND(26);
-	_globals._route = (int16 *)g_PTRNUL;
+	_linesManager._route = (int16 *)g_PTRNUL;
 	_globals.NOMARCHE = true;
 	_globals._exitId = 0;
 	_soundManager.loadSample(1, "SOUND90.WAV");
@@ -2782,7 +2782,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_objectsManager.animateSprite(0);
-	_globals._route = (int16 *)g_PTRNUL;
+	_linesManager._route = (int16 *)g_PTRNUL;
 	_eventsManager.mouseOn();
 	_eventsManager.changeMouseCursor(4);
 

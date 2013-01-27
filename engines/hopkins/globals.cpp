@@ -91,8 +91,6 @@ Globals::Globals() {
 	for (int i = 0; i < 25; ++i)
 		Common::fill((byte *)&Cache[i], (byte *)&Cache[i] + sizeof(CacheItem), 0);
 
-	for (int i = 0; i < 101; ++i)
-		Common::fill((byte *)&Segment[i], (byte *)&Segment[i] + sizeof(SegmentItem), 0);
 	for (int i = 0; i < 105; ++i) {
 		BOBZONE[i] = 0;
 		BOBZONE_FLAG[i] = false;
@@ -118,7 +116,6 @@ Globals::Globals() {
 	_lastDirection = 0;
 	police_l = police_h = 0;
 	TETE = NULL;
-	_curObjectIndex = 0;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
 	_boxWidth = 0;
@@ -150,7 +147,6 @@ Globals::Globals() {
 	Compteur = 0;
 	_actionDirection = 0;
 	_actionDirection = 0;
-	SegmentEnCours = 0;
 
 	Credit_bx = -1;
 	Credit_bx1 = -1;
@@ -178,7 +174,6 @@ Globals::Globals() {
 	_inventoryObject = NULL;
 	_forestSprite = NULL;
 	_answerBuffer = g_PTRNUL;
-	_route = (int16 *)g_PTRNUL;
 	ADR_FICHIER_OBJ = NULL;
 	police = NULL;
 	PERSO = NULL;
@@ -296,7 +291,7 @@ void Globals::clearAll() {
 	_answerBuffer = g_PTRNUL;
 	SPRITE_ECRAN = g_PTRNUL;
 	_saveData = (Sauvegarde *)g_PTRNUL;
-	_curObjectIndex = 0;
+	_vm->_objectsManager._curObjectIndex = 0;
 
 	for (int idx = 0; idx < 105; ++idx) {
 		ZONEP[idx]._destX = 0;
@@ -308,7 +303,7 @@ void Globals::clearAll() {
 	_vm->_linesManager.essai1 = (int16 *)g_PTRNUL;
 	_vm->_linesManager.essai2 = (int16 *)g_PTRNUL;
 	_vm->_linesManager.BufLig = (int16 *)g_PTRNUL;
-	_route = (int16 *)g_PTRNUL;
+	_vm->_linesManager._route = (int16 *)g_PTRNUL;
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
 		_vm->_linesManager.Ligne[idx]._lineDataEndIdx = 0;
@@ -324,7 +319,7 @@ void Globals::clearAll() {
 	}
 
 	for (int idx = 0; idx < 100; ++idx) {
-		_vm->_objectsManager.CarreZone[idx]._enabledFl = 0;
+		_vm->_linesManager.CarreZone[idx]._enabledFl = 0;
 	}
 
 	BUFFERTAPE = allocMemory(85000);
