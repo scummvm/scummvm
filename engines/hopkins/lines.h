@@ -51,12 +51,11 @@ struct SmoothItem {
 };
 
 struct SegmentItem {
-	int field0; // Useless variable
-	int field2;
-	int field4;
+	int _minZoneLineIdx;
+	int _maxZoneLineIdx;
 };
 
-struct CarreZoneItem {
+struct SquareZoneItem {
 	int _enabledFl;
 	int _left;
 	int _right;
@@ -86,8 +85,8 @@ private:
 	int16 *BufLig;
 	LigneZoneItem _zoneLine[401];
 	LigneItem Ligne[400];
-	SegmentItem Segment[101];
-	CarreZoneItem CarreZone[101];
+	SegmentItem _segment[101];
+	SquareZoneItem _squareZone[101];
 	int _currentSegmentId;
 	int _maxLineIdx;
 	int _lastLine;
@@ -107,12 +106,11 @@ private:
 	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
 	bool PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5);
 	int TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
-
-public:
-	int16 *essai2;
+	int colision(int xp, int yp);
 
 public:
 	int16 *_route;
+	int16 *essai2;
 
 	LinesManager();
 	~LinesManager();
@@ -128,7 +126,6 @@ public:
 	void resetLines();
 	void addLine(int idx, int a2, int a3, int a4, int a5, int a6, int a7);
 	void initRoute();
-	int colision(int xp, int yp);
 	int MZONE();
 	void CARRE_ZONE();
 	void clearAll();

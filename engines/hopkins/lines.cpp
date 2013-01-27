@@ -39,8 +39,8 @@ LinesManager::LinesManager() {
 	for (int i = 0; i < 32002; ++i)
 		super_parcours[i] = 0;
 	for (int i = 0; i < 101; ++i) {
-		Common::fill((byte *)&Segment[i], (byte *)&Segment[i] + sizeof(SegmentItem), 0);
-		Common::fill((byte *)&CarreZone[i], (byte *)&CarreZone[i] + sizeof(CarreZoneItem), 0);
+		Common::fill((byte *)&_segment[i], (byte *)&_segment[i] + sizeof(SegmentItem), 0);
+		Common::fill((byte *)&_squareZone[i], (byte *)&_squareZone[i] + sizeof(SquareZoneItem), 0);
 	}
 
 	_linesNumb = 0;
@@ -176,10 +176,9 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 			v20 += v8;
 
 		zoneData = (int16 *)_vm->_globals.allocMemory(2 * sizeof(int16) * v20 + (4 * sizeof(int16)));
-		int v11 = idx;
-		_zoneLine[v11]._zoneData = zoneData;
-		if (zoneData == (int16 *)g_PTRNUL)
-			error("AJOUTE LIGNE ZONE");
+		assert(zoneData != (int16 *)g_PTRNUL);
+
+		_zoneLine[idx]._zoneData = zoneData;
 
 		int16 *dataP = zoneData;
 		int v23 = 1000 * v8 / v20;
@@ -3002,15 +3001,15 @@ int LinesManager::MZONE() {
 		}
 		_currentSegmentId = 0;
 		for (int squareZoneId = 0; squareZoneId <= 99; squareZoneId++) {
-			if (_vm->_globals.ZONEP[squareZoneId]._enabledFl && CarreZone[squareZoneId]._enabledFl == 1
-				&& CarreZone[squareZoneId]._left <= xp && CarreZone[squareZoneId]._right >= xp
-				&& CarreZone[squareZoneId]._top <= yp && CarreZone[squareZoneId]._bottom >= yp) {
-					if (CarreZone[squareZoneId]._squareZoneFl) {
-						_vm->_globals.oldzone_46 = _zoneLine[CarreZone[squareZoneId]._minZoneLineIdx].field2;
+			if (_vm->_globals.ZONEP[squareZoneId]._enabledFl && _squareZone[squareZoneId]._enabledFl == 1
+				&& _squareZone[squareZoneId]._left <= xp && _squareZone[squareZoneId]._right >= xp
+				&& _squareZone[squareZoneId]._top <= yp && _squareZone[squareZoneId]._bottom >= yp) {
+					if (_squareZone[squareZoneId]._squareZoneFl) {
+						_vm->_globals.oldzone_46 = _zoneLine[_squareZone[squareZoneId]._minZoneLineIdx].field2;
 						return _vm->_globals.oldzone_46;
 					}
-					Segment[_currentSegmentId].field2 = CarreZone[squareZoneId]._minZoneLineIdx;
-					Segment[_currentSegmentId].field4 = CarreZone[squareZoneId]._maxZoneLineIdx;
+					_segment[_currentSegmentId]._minZoneLineIdx = _squareZone[squareZoneId]._minZoneLineIdx;
+					_segment[_currentSegmentId]._maxZoneLineIdx = _squareZone[squareZoneId]._maxZoneLineIdx;
 					++_currentSegmentId;
 			}
 		}
@@ -3081,17 +3080,17 @@ int LinesManager::colision(int xp, int yp) {
 	int xMin = xp - 4;
 
 	for (int idx = 0; idx <= _currentSegmentId; ++idx) {
-		int field2 = Segment[idx].field2;
-		if (Segment[idx].field4 < field2)
+		int curZoneLineIdx = _segment[idx]._minZoneLineIdx;
+		if (_segment[idx]._maxZoneLineIdx < curZoneLineIdx)
 			continue;
 
 		int yMax = yp + 4;
 		int yMin = yp - 4;
 
 		do {
-			int16 *dataP = _vm->_linesManager._zoneLine[field2]._zoneData;
+			int16 *dataP = _vm->_linesManager._zoneLine[curZoneLineIdx]._zoneData;
 			if (dataP != (int16 *)g_PTRNUL) {
-				int count = _vm->_linesManager._zoneLine[field2]._count;
+				int count = _vm->_linesManager._zoneLine[curZoneLineIdx]._count;
 				int v1 = dataP[0];
 				int v2 = dataP[1];
 				int v3 = dataP[count * 2 - 2];
@@ -3107,17 +3106,17 @@ int LinesManager::colision(int xp, int yp) {
 				if (v2 >= v4 && (yMin > v2 || yMax < v4))
 					flag = false;
 
-				if (flag && _vm->_linesManager._zoneLine[field2]._count > 0) {
+				if (flag && _vm->_linesManager._zoneLine[curZoneLineIdx]._count > 0) {
 					for (int i = 0; i < count; ++i) {
 						int xCheck = *dataP++;
 						int yCheck = *dataP++;
 
 						if ((xp == xCheck || (xp + 1) == xCheck) && (yp == yCheck))
-							return _vm->_linesManager._zoneLine[field2].field2;
+							return _vm->_linesManager._zoneLine[curZoneLineIdx].field2;
 					}
 				}
 			}
-		} while (++field2 <= Segment[idx].field4);
+		} while (++curZoneLineIdx <= _segment[idx]._maxZoneLineIdx);
 	}
 
 	return -1;
@@ -3126,14 +3125,14 @@ int LinesManager::colision(int xp, int yp) {
 // Square Zone
 void LinesManager::CARRE_ZONE() {
 	for (int idx = 0; idx < 100; ++idx) {
-		CarreZone[idx]._enabledFl = 0;
-		CarreZone[idx]._squareZoneFl = false;
-		CarreZone[idx]._left = 1280;
-		CarreZone[idx]._right = 0;
-		CarreZone[idx]._top = 460;
-		CarreZone[idx]._bottom = 0;
-		CarreZone[idx]._minZoneLineIdx = 401;
-		CarreZone[idx]._maxZoneLineIdx = 0;
+		_squareZone[idx]._enabledFl = 0;
+		_squareZone[idx]._squareZoneFl = false;
+		_squareZone[idx]._left = 1280;
+		_squareZone[idx]._right = 0;
+		_squareZone[idx]._top = 460;
+		_squareZone[idx]._bottom = 0;
+		_squareZone[idx]._minZoneLineIdx = 401;
+		_squareZone[idx]._maxZoneLineIdx = 0;
 	}
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
@@ -3142,32 +3141,32 @@ void LinesManager::CARRE_ZONE() {
 			continue;
 
 		int carreZoneId = _vm->_linesManager._zoneLine[idx].field2;
-		CarreZone[carreZoneId]._enabledFl = 1;
-		if (CarreZone[carreZoneId]._maxZoneLineIdx < idx)
-			CarreZone[carreZoneId]._maxZoneLineIdx = idx;
-		if (CarreZone[carreZoneId]._minZoneLineIdx > idx)
-			CarreZone[carreZoneId]._minZoneLineIdx = idx;
+		_squareZone[carreZoneId]._enabledFl = 1;
+		if (_squareZone[carreZoneId]._maxZoneLineIdx < idx)
+			_squareZone[carreZoneId]._maxZoneLineIdx = idx;
+		if (_squareZone[carreZoneId]._minZoneLineIdx > idx)
+			_squareZone[carreZoneId]._minZoneLineIdx = idx;
 
 		for (int i = 0; i < _vm->_linesManager._zoneLine[idx]._count; i++) {
 			int zoneX = *dataP++;
 			int zoneY = *dataP++;
 
-			if (CarreZone[carreZoneId]._left >= zoneX)
-				CarreZone[carreZoneId]._left = zoneX;
-			if (CarreZone[carreZoneId]._right <= zoneX)
-				CarreZone[carreZoneId]._right = zoneX;
-			if (CarreZone[carreZoneId]._top >= zoneY)
-				CarreZone[carreZoneId]._top = zoneY;
-			if (CarreZone[carreZoneId]._bottom <= zoneY)
-				CarreZone[carreZoneId]._bottom = zoneY;
+			if (_squareZone[carreZoneId]._left >= zoneX)
+				_squareZone[carreZoneId]._left = zoneX;
+			if (_squareZone[carreZoneId]._right <= zoneX)
+				_squareZone[carreZoneId]._right = zoneX;
+			if (_squareZone[carreZoneId]._top >= zoneY)
+				_squareZone[carreZoneId]._top = zoneY;
+			if (_squareZone[carreZoneId]._bottom <= zoneY)
+				_squareZone[carreZoneId]._bottom = zoneY;
 		}
 	}
 
 	for (int idx = 0; idx < 100; idx++) {
-		int zoneWidth = abs(CarreZone[idx]._left - CarreZone[idx]._right);
-		int zoneHeight = abs(CarreZone[idx]._top - CarreZone[idx]._bottom);
+		int zoneWidth = abs(_squareZone[idx]._left - _squareZone[idx]._right);
+		int zoneHeight = abs(_squareZone[idx]._top - _squareZone[idx]._bottom);
 		if (zoneWidth == zoneHeight)
-			CarreZone[idx]._squareZoneFl = true;
+			_squareZone[idx]._squareZoneFl = true;
 	}
 }
 
@@ -3192,7 +3191,7 @@ void LinesManager::clearAll() {
 	}
 
 	for (int idx = 0; idx < 100; ++idx) {
-		_vm->_linesManager.CarreZone[idx]._enabledFl = 0;
+		_vm->_linesManager._squareZone[idx]._enabledFl = 0;
 	}
 
 	BUFFERTAPE = _vm->_globals.allocMemory(85000);
