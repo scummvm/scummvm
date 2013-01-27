@@ -32,7 +32,7 @@ class HopkinsEngine;
 
 struct LigneZoneItem {
 	int _count;
-	int field2;
+	int _bobZoneIdx;
 	int16 *_zoneData;
 };
 

@@ -200,7 +200,7 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 		*dataP++ = -1;
 
 		_zoneLine[idx]._count = v20;
-		_zoneLine[idx].field2 = bobZoneIdx;
+		_zoneLine[idx]._bobZoneIdx = bobZoneIdx;
 	}
 }
 
@@ -3005,7 +3005,7 @@ int LinesManager::MZONE() {
 				&& _squareZone[squareZoneId]._left <= xp && _squareZone[squareZoneId]._right >= xp
 				&& _squareZone[squareZoneId]._top <= yp && _squareZone[squareZoneId]._bottom >= yp) {
 					if (_squareZone[squareZoneId]._squareZoneFl) {
-						_vm->_globals.oldzone_46 = _zoneLine[_squareZone[squareZoneId]._minZoneLineIdx].field2;
+						_vm->_globals.oldzone_46 = _zoneLine[_squareZone[squareZoneId]._minZoneLineIdx]._bobZoneIdx;
 						return _vm->_globals.oldzone_46;
 					}
 					_segment[_currentSegmentId]._minZoneLineIdx = _squareZone[squareZoneId]._minZoneLineIdx;
@@ -3112,7 +3112,7 @@ int LinesManager::colision(int xp, int yp) {
 						int yCheck = *dataP++;
 
 						if ((xp == xCheck || (xp + 1) == xCheck) && (yp == yCheck))
-							return _vm->_linesManager._zoneLine[curZoneLineIdx].field2;
+							return _vm->_linesManager._zoneLine[curZoneLineIdx]._bobZoneIdx;
 					}
 				}
 			}
@@ -3140,7 +3140,7 @@ void LinesManager::CARRE_ZONE() {
 		if (dataP == (int16 *)g_PTRNUL)
 			continue;
 
-		int carreZoneId = _vm->_linesManager._zoneLine[idx].field2;
+		int carreZoneId = _vm->_linesManager._zoneLine[idx]._bobZoneIdx;
 		_squareZone[carreZoneId]._enabledFl = 1;
 		if (_squareZone[carreZoneId]._maxZoneLineIdx < idx)
 			_squareZone[carreZoneId]._maxZoneLineIdx = idx;
@@ -3186,7 +3186,7 @@ void LinesManager::clearAll() {
 		_vm->_linesManager.Ligne[idx]._lineData = (int16 *)g_PTRNUL;
 
 		_vm->_linesManager._zoneLine[idx]._count = 0;
-		_vm->_linesManager._zoneLine[idx].field2 = 0;
+		_vm->_linesManager._zoneLine[idx]._bobZoneIdx = 0;
 		_vm->_linesManager._zoneLine[idx]._zoneData = (int16 *)g_PTRNUL;
 	}
 
