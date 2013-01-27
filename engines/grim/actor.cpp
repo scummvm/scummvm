@@ -1813,7 +1813,12 @@ bool Actor::handleCollisionWith(Actor *actor, CollisionMode mode, Math::Vector3d
 	CollisionMode mode2 = actor->_collisionMode;
 
 	if (mode1 == CollisionSphere && mode2 == CollisionSphere) {
-		p1.z() = p2.z() = 0;
+		// center the sphere on the model center.
+		p1.z() += model1->_bboxSize.z() / 2.f;
+		// you may ask: why center the sphere of the first actor only? because it seems the original does so.
+		// if you change this code test this places: the rocks in lb and bv (both when booting directly in the
+		// set and when coming in from another one) and the poles in xb.
+
 		Math::Vector3d pos = p1 + *vec;
 		float distance = (pos - p2).getMagnitude();
 		if (distance < size1 + size2) {
