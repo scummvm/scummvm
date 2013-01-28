@@ -161,18 +161,22 @@
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'List'/>
-			<layout type = 'horizontal' padding = '0, 0, 8, 0'>
-				<widget name = 'Up'
-						type = 'Button'
+			<layout type = 'vertical' padding = '0, 0, 8, 0'>
+				<widget name = 'Hidden'
+						type = 'Checkbox'
 				/>
-				<space/>
-				<widget name = 'Cancel'
-						type = 'Button'
-				/>
-
-				<widget name = 'Choose'
-						type = 'Button'
-				/>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+					<widget name = 'Up'
+							type = 'Button'
+					/>
+					<space/>
+					<widget name = 'Cancel'
+							type = 'Button'
+					/>
+					<widget name = 'Choose'
+							type = 'Button'
+					/>
+				</layout>
 			</layout>
 		</layout>
 	</dialog>
