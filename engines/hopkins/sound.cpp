@@ -625,12 +625,23 @@ void SoundManager::DEL_SAMPLE(int soundIndex) {
 }
 
 void SoundManager::playSound(const Common::String &file) {
-	if (!_soundOffFl) {
-		if (_soundFl)
-			delWav(_currentSoundIndex);
-		loadWav(file, 1);
-		playWav(1);
-	}
+	if (_soundOffFl)
+		return;
+
+	// Fallback for the menu option.
+	// The BeOS and OS/2 versions don't play sound at this point.
+	// sound20 sounds very close to bruit2 from the linux and Win95 versions.
+	Common::File f;
+	Common::String filename;
+	if (file == "bruit2.wav" && !f.exists(file))
+		filename = "sound20.wav";
+	else
+		filename = file;
+
+	if (_soundFl)
+		delWav(_currentSoundIndex);
+	loadWav(filename, 1);
+	playWav(1);
 }
 
 void SoundManager::PLAY_SOUND2(const Common::String &file) {
