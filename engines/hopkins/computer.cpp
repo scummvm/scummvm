@@ -75,11 +75,16 @@ void ComputerManager::setTextMode() {
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.clearScreen();
 	_vm->_graphicsManager.unlockScreen();
-	//SET_MODE(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	_vm->_graphicsManager._lineNbr = SCREEN_WIDTH;
 	_vm->_globals.police = _vm->_globals.freeMemory(_vm->_globals.police);
-	_vm->_globals.police = _vm->_fileManager.loadFile("STFONT.SPR");
+
+	Common::String filename = "STFONT.SPR";
+	Common::File f;
+	if (!f.exists(filename))
+		filename = "FONTE.SPR"; // Used by the BeOS and OS/2 versions as an alternative
+
+	_vm->_globals.police = _vm->_fileManager.loadFile(filename);
 	_vm->_globals.police_l = 8;
 	_vm->_globals.police_h = 8;
 	_vm->_graphicsManager.loadImage("WINTEXT");
