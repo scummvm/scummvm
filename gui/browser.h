@@ -29,6 +29,7 @@ namespace GUI {
 
 class ListWidget;
 class StaticTextWidget;
+class CheckboxWidget;
 class CommandSender;
 
 class BrowserDialog : public Dialog {
@@ -40,6 +41,7 @@ public:
 	virtual int runModal();
 #else
 	virtual void open();
+
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 #endif
 
@@ -54,6 +56,8 @@ protected:
 	StaticTextWidget	*_currentPath;
 	Common::FSNode	_node;
 	Common::FSList			_nodeContent;
+	bool _showHidden;
+	CheckboxWidget *_showHiddenWidget;
 #endif
 	Common::FSNode	_choice;
 	bool			_isDirBrowser;

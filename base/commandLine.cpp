@@ -240,6 +240,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("gui_saveload_chooser", "grid");
 	ConfMan.registerDefault("gui_saveload_last_pos", "0");
 
+	ConfMan.registerDefault("gui_browser_show_hidden", false);
+
 #ifdef USE_FLUIDSYNTH
 	// The settings are deliberately stored the same way as in Qsynth. The
 	// FluidSynth music driver is responsible for transforming them into
