@@ -406,7 +406,14 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 		// just seek normally in the parent stream.
 		if (whence == SEEK_CUR)
 			offset -= (_bufSize - _pos);
-		_pos = _bufSize;
+		// We invalidate the buffer here. This assures that successive seeks
+		// do not have the chance to incorrectly think they seeked back into
+		// the buffer.
+		// Note: This does not take full advantage of the buffer. But it is
+		// a simple way to prevent nasty errors. It would be possible to take
+		// full advantage of the buffer by saving its actual start position.
+		// This seems not worth the effort for this seemingly uncommon use.
+		_pos = _bufSize = 0;
 		_parentStream->seek(offset, whence);
 	}
 
