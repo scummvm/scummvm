@@ -31,7 +31,6 @@
 #include "engines/wintermute/base/file/base_disk_file.h"
 #include "engines/wintermute/base/file/base_save_thumb_file.h"
 #include "engines/wintermute/base/file/base_package.h"
-#include "engines/wintermute/base/file/base_resources.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/wintermute.h"
 #include "common/debug.h"
@@ -45,6 +44,7 @@
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/fs.h"
+#include "common/unzip.h"
 
 namespace Wintermute {
 
@@ -55,6 +55,8 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////
 BaseFileManager::BaseFileManager(Common::Language lang) {
 	_language = lang;
+	_resources = nullptr;
+	initResources();
 	initPaths();
 	registerPackages();
 }
@@ -78,6 +80,10 @@ bool BaseFileManager::cleanup() {
 
 	// delete packages
 	_packages.clear();
+
+	// get rid of the resources:
+	delete _resources;
+	_resources = NULL;
 
 	return STATUS_OK;
 }
@@ -224,6 +230,16 @@ bool BaseFileManager::registerPackage(Common::FSNode file, const Common::String 
 	return STATUS_OK;
 }
 
+void BaseFileManager::initResources() {
+	_resources = Common::makeZipArchive("wintermute.zip");
+	if (!_resources) {
+		error("Couldn't load wintermute.zip");
+	}
+	assert(_resources->hasFile("syste_font.bmp"));
+	assert(_resources->hasFile("invalid.bmp"));
+	assert(_resources->hasFile("invalid_debug.bmp"));
+}
+
 //////////////////////////////////////////////////////////////////////////
 Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &filename) {
 	Common::String upcName = filename;
@@ -261,7 +277,7 @@ bool BaseFileManager::hasFile(const Common::String &filename) {
 	if (_packages.hasFile(filename)) {
 		return true;    // We don't bother checking if the file can actually be opened, something bigger is wrong if that is the case.
 	}
-	if (BaseResources::hasFile(filename)) {
+	if (_resources->hasFile(filename)) {
 		return true;
 	}
 	return false;
@@ -321,7 +337,7 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 		return ret;
 	}
 
-	ret = BaseResources::getFile(filename);
+	ret = _resources->createReadStreamForMember(filename);
 	if (ret) {
 		return ret;
 	}
