@@ -182,6 +182,10 @@ List of fixed bugs in GF scripts:
 	because of a narrow corridor, and a 'hole' in the walkable sectors. This patch resizes the sector "sect_66"
 	to make more room and to fill the hole.
 
+	Fix wrong Manny positioning when going from set ts to set tx - ts.lua.patchr
+	The function ts.tx_door.walkOut calls 'tx:come_out_door' with the wrong door argument. This patch replaces
+	it with the right door.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
