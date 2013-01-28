@@ -186,6 +186,11 @@ List of fixed bugs in GF scripts:
 	The function ts.tx_door.walkOut calls 'tx:come_out_door' with the wrong door argument. This patch replaces
 	it with the right door.
 
+	Fix broken Manny's walk animation after opening Domino's safe - vd.lua.patchr
+	The function 'vd.open_safe' plays the chore 50 (bend_get_scythe) of mn2.cos which starts some keyframes with
+	the key '2' which means "play and endpause". This patch adds a 'manny:stop_chore' call after the chore has
+	done.
+
 +Untriggered contents:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
