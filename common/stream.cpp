@@ -379,12 +379,25 @@ BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *paren
 bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	// If it is a "local" seek, we may get away with "seeking" around
 	// in the buffer only.
-	// Note: We could try to handle SEEK_END and SEEK_SET, too, but
-	// since they are rarely used, it seems not worth the effort.
 	_eos = false;	// seeking always cancels EOS
 
-	if (whence == SEEK_CUR && (int)_pos + offset >= 0 && _pos + offset <= _bufSize) {
-		_pos += offset;
+	int relOffset = 0;
+	switch (whence) {
+	case SEEK_SET:
+		relOffset = offset - pos();
+		break;
+	case SEEK_CUR:
+		relOffset = offset;
+		break;
+	case SEEK_END:
+		relOffset = (size() + offset) - pos();
+		break;
+	default:
+		break;
+	}
+
+	if ((int)_pos + relOffset >= 0 && _pos + relOffset <= _bufSize) {
+		_pos += relOffset;
 
 		// Note: we do not need to reset parent's eos flag here. It is
 		// sufficient that it is reset when actually seeking in the parent.
