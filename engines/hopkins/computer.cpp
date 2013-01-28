@@ -83,10 +83,10 @@ void ComputerManager::setTextMode() {
 	Common::File f;
 	if (!f.exists(filename))
 		filename = "FONTE.SPR"; // Used by the BeOS and OS/2 versions as an alternative
-
 	_vm->_globals.police = _vm->_fileManager.loadFile(filename);
 	_vm->_globals.police_l = 8;
 	_vm->_globals.police_h = 8;
+
 	_vm->_graphicsManager.loadImage("WINTEXT");
 	_vm->_graphicsManager.fadeInLong();
 	loadMenu();

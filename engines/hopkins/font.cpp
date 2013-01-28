@@ -464,9 +464,25 @@ void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, i
 		if (curChar >= 32) {
 			byte printChar = curChar - 32;
 			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals.police, charEndPosX, yp, printChar, fontCol);
-			charEndPosX += _vm->_objectsManager.getWidth(_vm->_globals.police, printChar);
-			int charWidth = _vm->_objectsManager.getWidth(_vm->_globals.police, printChar);
-			_vm->_graphicsManager.addVesaSegment(charEndPosX - charWidth, yp, charEndPosX, yp + 12);
+
+			// UGLY HACK: For some obscure reason, the BeOS and OS/2 versions use another font file, which doesn't have variable width.
+			// All the fonts have a length of 9, which results in completely broken text in the computer.
+			// This horrible workaround fixes the English versions of the game. So far, no other languages are known for those platforms.
+			// Just in case, all the accentuated characters are handled properly, which *should* be OK for the other languages too.
+			int charWidth;
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
+				if ((curChar >= 'A' && curChar <= 'Z') || (curChar >= 'a' && curChar <= 'z' && curChar != 'm' && curChar != 'w') || (curChar >= '0' && curChar <= '9') || curChar == '*' || (curChar >= 128 && curChar <= 168))
+					charWidth = _vm->_objectsManager.getWidth(_vm->_globals.police, printChar) - 1;
+				else if (curChar == 'm' || curChar == 'w')
+					charWidth = _vm->_objectsManager.getWidth(_vm->_globals.police, printChar);
+				else 
+					charWidth = 6;
+			} else 
+				charWidth = _vm->_objectsManager.getWidth(_vm->_globals.police, printChar);
+
+			int charStartPosX = charEndPosX;
+			charEndPosX += charWidth;
+			_vm->_graphicsManager.addVesaSegment(charStartPosX, yp, charEndPosX, yp + 12);
 			if (_vm->_eventsManager._escKeyFl) {
 				_vm->_globals.iRegul = 1;
 				_vm->_eventsManager.VBL();
