@@ -119,6 +119,7 @@ public:
 	
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const Common::String &description);
+	Common::Error removeGameState(int slot);
 	void savegame(const char *filename, const char *description);
 	void loadgame(const char *filename);
 	const char *getSavegameFilename(int num);

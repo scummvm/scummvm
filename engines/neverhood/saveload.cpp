@@ -143,6 +143,13 @@ Common::Error NeverhoodEngine::saveGameState(int slot, const Common::String &des
 	return Common::kNoError;
 }
 
+Common::Error NeverhoodEngine::removeGameState(int slot) {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::String filename = Neverhood::NeverhoodEngine::getSavegameFilename(_targetName, slot);
+	saveFileMan->removeSavefile(filename.c_str());
+	return Common::kNoError;
+}
+
 const char *NeverhoodEngine::getSavegameFilename(int num) {
 	static Common::String filename;
 	filename = getSavegameFilename(_targetName, num);

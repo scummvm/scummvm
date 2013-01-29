@@ -44,6 +44,7 @@ public:
 	virtual ~MenuModule();
 	void setLoadgameInfo(uint index);
 	void setSavegameInfo(const Common::String &description, uint index, bool newSavegame);
+	void setDeletegameInfo(uint index);
 protected:
 	int _sceneNum;
 	byte *_savedPaletteData;
@@ -55,8 +56,10 @@ protected:
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createLoadGameMenu();
 	void createSaveGameMenu();
+	void createDeleteGameMenu();
 	void handleLoadGameMenuAction(bool doLoad);
 	void handleSaveGameMenuAction(bool doSave, bool doQuery);
+	void handleDeleteGameMenuAction(bool doDelete);
 	void loadSavegameList();
 };
 
@@ -114,7 +117,7 @@ public:
 	virtual void onClick();
 	virtual void setPosition(int16 x, int16 y);
 	virtual void refreshPosition();
-	virtual void addSprite();
+	virtual void initialize();
 	virtual int16 getWidth();
 	virtual int16 getHeight();
 	virtual void enterWidget();
@@ -133,7 +136,7 @@ public:
 	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
 		int baseObjectPriority, int baseSurfacePriority, 
 		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);	
-	virtual void addSprite();
+	virtual void initialize();
 	virtual int16 getWidth();
 	virtual int16 getHeight();
 	void drawString(int maxStringLength);
@@ -154,7 +157,7 @@ public:
 		int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect);
 	~TextEditWidget();
 	virtual void onClick();
-	virtual void addSprite();
+	virtual void initialize();
 	virtual void enterWidget();
 	virtual void exitWidget();
 	void setCursor(uint32 cursorFileHash, int16 cursorWidth, int16 cursorHeight);
@@ -191,7 +194,7 @@ public:
 	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
 		SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
 	virtual void onClick();
-	virtual void addSprite();
+	virtual void initialize();
 	void buildItems();
 	void drawItems();
 	void refresh();
@@ -242,6 +245,21 @@ protected:
 	Common::String _savegameDescription;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void performLoadGame();
+};
+
+class DeleteGameMenu : public WidgetScene {
+public:
+	DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
+	~DeleteGameMenu();
+	virtual void handleEvent(int16 itemID, int eventType);
+protected:
+	SavegameList *_savegameList;
+	FontSurface *_fontSurface;
+	SavegameListBox *_listBox;
+	TextEditWidget *_textEditWidget;
+	Common::String _savegameDescription;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void performDeleteGame();
 };
 
 class QueryOverwriteMenu : public Scene {
