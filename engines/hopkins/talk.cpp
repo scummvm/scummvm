@@ -709,84 +709,61 @@ void TalkManager::clearCharacterAnim() {
 	}
 }
 
-bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int a3, int a4) {
-	bool result;
-	const byte *v5;
-	int v6;
-	byte *v8;
-	byte *v9;
-	int v10;
-	int v11;
-	int v12;
-	int v14;
-	int v15;
-	int v16;
-	int v18;
-	int v22;
-	int v23;
-	const byte *v24;
+bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId, int bufferSize) {
+	bool result = false;
 
-	v22 = 0;
-	result = false;
-
-	do {
-		if (bufPerso[v22] == 'A' && bufPerso[v22 + 1] == 'N' && bufPerso[v22 + 2] == 'I' && bufPerso[v22 + 3] == 'M' && bufPerso[v22 + 4] == a3) {
-			v5 = v22 + bufPerso + 5;
-			v18 = v22 + 5;
-			v6 = 0;
-			bool v7 = false;
+	for (int bufPos = 0; bufPos <= bufferSize; bufPos++) {
+		if (READ_BE_UINT32(bufPerso + bufPos) == MKTAG('A', 'N', 'I', 'M') && bufPerso[bufPos + 4] == animId) {
+			int bufIndx = bufPos + 5;
+			const byte *curPtr = bufPerso + bufIndx;
+			int animLength = 0;
+			bool loopCond = false;
 			do {
-				if ((v5[0] == 'A' && v5[1] == 'N' && v5[2] == 'I' && v5[3] == 'M') ||
-				    (v5[0] == 'F' && v5[1] == 'I' && v5[2] == 'N'))
-					v7 = true;
-				if (v18 > a4) {
+				if (READ_BE_UINT32(curPtr) == MKTAG('A', 'N', 'I', 'M') ||
+				    (curPtr[0] == 'F' && curPtr[1] == 'I' && curPtr[2] == 'N'))
+					loopCond = true;
+				if (bufIndx > bufferSize) {
 					_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
-					result = false;
 					_vm->_globals.Bqe_Anim[idx]._data = g_PTRNUL;
+					return false;
 				}
-				++v18;
-				++v6;
-				++v5;
-			} while (!v7);
-			_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.allocMemory(v6 + 50);
+				++bufIndx;
+				++animLength;
+				++curPtr;
+			} while (!loopCond);
+			_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.allocMemory(animLength + 50);
 			_vm->_globals.Bqe_Anim[idx]._enabledFl = true;
-			memcpy(_vm->_globals.Bqe_Anim[idx]._data, (const byte *)(v22 + bufPerso + 5), 20);
-			v8 = _vm->_globals.Bqe_Anim[idx]._data;
-
-			v9 = v8 + 20;
-			v24 = v22 + bufPerso + 25;
-			v10 = (int16)READ_LE_UINT16(v22 + bufPerso + 25);
-			v11 = (int16)READ_LE_UINT16(v22 + bufPerso + 27);
-			v23 = (int16)READ_LE_UINT16(v22 + bufPerso + 29);
-			v12 = (int16)READ_LE_UINT16(v22 + bufPerso + 31);
-			v8[28] = bufPerso[v22 + 33];
-			v8[29] = bufPerso[v22 + 34];
-			WRITE_LE_UINT16(v8 + 20, v10);
-			WRITE_LE_UINT16(v8 + 22, v11);
-			WRITE_LE_UINT16(v8 + 24, v23);
-			WRITE_LE_UINT16(v8 + 26, v12);
+			memcpy(_vm->_globals.Bqe_Anim[idx]._data, (const byte *)(bufPerso + bufPos + 5), 20);
+			int v23 = (int16)READ_LE_UINT16(bufPos + bufPerso + 29);
+			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 20, (int16)READ_LE_UINT16(bufPos + bufPerso + 25));
+			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 22, (int16)READ_LE_UINT16(bufPos + bufPerso + 27));
+			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 24, v23);
+			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 26, (int16)READ_LE_UINT16(bufPos + bufPerso + 31));
+			_vm->_globals.Bqe_Anim[idx]._data[28] = bufPerso[bufPos + 33];
+			_vm->_globals.Bqe_Anim[idx]._data[29] = bufPerso[bufPos + 34];
+			byte *bqeCurData = _vm->_globals.Bqe_Anim[idx]._data + 20;
+			const byte *curBufPerso = bufPos + bufPerso + 25;
 			for (int i = 1; i < 5000; i++) {
-				v9 += 10;
-				v24 += 10;
+				bqeCurData += 10;
+				curBufPerso += 10;
 				if (!v23)
 					break;
-				v14 = (int16)READ_LE_UINT16(v24);
-				v15 = (int16)READ_LE_UINT16(v24 + 2);
-				v23 = (int16)READ_LE_UINT16(v24 + 4);
-				v16 = (int16)READ_LE_UINT16(v24 + 6);
-				v9[8] = v24[8];
-				v9[9] = v24[9];
-				WRITE_LE_UINT16(v9, v14);
-				WRITE_LE_UINT16(v9 + 2, v15);
-				WRITE_LE_UINT16(v9 + 4, v23);
-				WRITE_LE_UINT16(v9 + 6, v16);
+				v23 = (int16)READ_LE_UINT16(curBufPerso + 4);
+				WRITE_LE_UINT16(bqeCurData, (int16)READ_LE_UINT16(curBufPerso));
+				WRITE_LE_UINT16(bqeCurData + 2, (int16)READ_LE_UINT16(curBufPerso + 2));
+				WRITE_LE_UINT16(bqeCurData + 4, v23);
+				WRITE_LE_UINT16(bqeCurData + 6, (int16)READ_LE_UINT16(curBufPerso + 6));
+				bqeCurData[8] = curBufPerso[8];
+				bqeCurData[9] = curBufPerso[9];
 			}
 			result = true;
 		}
-		if (bufPerso[v22] == 'F' && bufPerso[v22 + 1] == 'I' && bufPerso[v22 + 2] == 'N')
+		if (bufPerso[bufPos] == 'F' && bufPerso[bufPos + 1] == 'I' && bufPerso[bufPos + 2] == 'N')
 			result = true;
-		++v22;
-	} while (v22 <= a4 && !result);
+
+		if (result)
+			break;
+	}
 
 	return result;
 }
@@ -852,7 +829,8 @@ LABEL_2:
 			} while (!v16);
 		}
 		if (!v16) {
-			if ((curAnswerBuf[v7] == 'C' && curAnswerBuf[v7 + 1] == 'O' && curAnswerBuf[v7 + 2] == 'D') || (curAnswerBuf[v7] == 'F' && curAnswerBuf[v7 + 1] == 'I' && curAnswerBuf[v7 + 2] == 'N'))
+			if ((curAnswerBuf[v7] == 'C' && curAnswerBuf[v7 + 1] == 'O' && curAnswerBuf[v7 + 2] == 'D') || 
+				(curAnswerBuf[v7] == 'F' && curAnswerBuf[v7 + 1] == 'I' && curAnswerBuf[v7 + 2] == 'N'))
 				loopCond = true;
 		}
 		curAnswerBuf += v7 + 1;

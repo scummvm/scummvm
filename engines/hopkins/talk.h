@@ -64,7 +64,7 @@ public:
 	void startCharacterAnim0(int startIndedx, bool readOnlyFl);
 	void initCharacterAnim();
 	void clearCharacterAnim();
-	bool searchCharacterAnim(int idx, const byte *bufPerso, int a3, int a4);
+	bool searchCharacterAnim(int idx, const byte *bufPerso, int animId, int bufferSize);
 	void REPONSE(int zone, int verb);
 	void REPONSE2(int a1, int a2);
 	void OBJET_VIVANT(const Common::String &a2);
