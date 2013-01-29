@@ -1557,7 +1557,7 @@ void HopkinsEngine::initializeSystem() {
 	// Set graphics mode
 	_graphicsManager.setGraphicalMode(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	// Synchronise the sound settings from ScummVM
+	// Synchronize the sound settings from ScummVM
 	_soundManager.syncSoundSettings();
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -1608,9 +1608,9 @@ void HopkinsEngine::initializeSystem() {
 
 	_globals.clearAll();
 
-	_globals.police = _fileManager.loadFile("FONTE3.SPR");
-	_globals.police_l = 12;
-	_globals.police_h = 21;
+	_globals._font = _fileManager.loadFile("FONTE3.SPR");
+	_globals._fontFixedWidth = 12;
+	_globals._fontFixedHeight = 21;
 	_globals.ICONE = _fileManager.loadFile("ICONE.SPR");
 	_globals.TETE = _fileManager.loadFile("TETE.SPR");
 
@@ -2326,10 +2326,10 @@ int HopkinsEngine::handleBaseMap() {
 			zone = 6;
 		if (zone) {
 			_eventsManager.changeMouseCursor(4);
-			_globals.couleur_40 += 25;
-			if (_globals.couleur_40 > 100)
-				_globals.couleur_40 = 0;
-			_graphicsManager.SETCOLOR4(251, _globals.couleur_40, _globals.couleur_40, _globals.couleur_40);
+			_globals._baseMapColor += 25;
+			if (_globals._baseMapColor > 100)
+				_globals._baseMapColor = 0;
+			_graphicsManager.SETCOLOR4(251, _globals._baseMapColor, _globals._baseMapColor, _globals._baseMapColor);
 		} else {
 			_eventsManager.changeMouseCursor(0);
 			_graphicsManager.SETCOLOR4(251, 100, 100, 100);
@@ -2370,10 +2370,8 @@ int HopkinsEngine::handleBaseMap() {
 }
 
 void HopkinsEngine::loadCredits() {
-	_globals.Credit_y = 440;
-	_globals.Credit_l = 10;
-	_globals.Credit_h = 40;
-	_globals.Credit_step = 45;
+	_globals._creditsPosY = 440;
+	_globals._creditsStep = 45;
 	byte *bufPtr;
 	switch (_globals._language) {
 	case LANG_EN:
@@ -2399,25 +2397,25 @@ void HopkinsEngine::loadCredits() {
 				loopCond = true;
 				break;
 			}
-			_globals.Credit[idxLines]._colour = curPtr[1];
-			_globals.Credit[idxLines]._actvFl = true;
-			_globals.Credit[idxLines]._linePosY = _globals.Credit_y + idxLines * _globals.Credit_step;
+			_globals._creditsItem[idxLines]._colour = curPtr[1];
+			_globals._creditsItem[idxLines]._actvFl = true;
+			_globals._creditsItem[idxLines]._linePosY = _globals._creditsPosY + idxLines * _globals._creditsStep;
 
 			int idxBuf = 0;
 			for(; idxBuf < 49; idxBuf++) {
 				byte curChar = curPtr[idxBuf + 3];
 				if (curChar == '%' || curChar == 10)
 					break;
-				_globals.Credit[idxLines]._line[idxBuf] = curChar;
+				_globals._creditsItem[idxLines]._line[idxBuf] = curChar;
 			}
-			_globals.Credit[idxLines]._line[idxBuf] = 0;
-			_globals.Credit[idxLines]._lineSize = idxBuf - 1;
+			_globals._creditsItem[idxLines]._line[idxBuf] = 0;
+			_globals._creditsItem[idxLines]._lineSize = idxBuf - 1;
 			curPtr = curPtr + idxBuf + 2;
 			++idxLines;
 		} else {
 			curPtr++;
 		}
-		_globals.Credit_lignes = idxLines;
+		_globals._creditsLineNumb = idxLines;
 	} while (!loopCond);
 
 	_globals.freeMemory(bufPtr);
@@ -2432,7 +2430,7 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char colour) {
 		if (!curChar)
 			break;
 		if (curChar > 31)
-			strWidth += _objectsManager.getWidth(_globals.police, curChar - 32);
+			strWidth += _objectsManager.getWidth(_globals._font, curChar - 32);
 	}
 	int startPosX = 320 - strWidth / 2;
 	int endPosX = strWidth + startPosX;
@@ -2458,15 +2456,15 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char colour) {
 		if (!curChar)
 			break;
 		if (curChar > 31) {
-			_graphicsManager.displayFont(_graphicsManager._vesaBuffer, _globals.police, startPosX, startPosY, curChar - 32, colour);
-			startPosX += _objectsManager.getWidth(_globals.police, curChar - 32);
+			_graphicsManager.displayFont(_graphicsManager._vesaBuffer, _globals._font, startPosX, startPosY, curChar - 32, colour);
+			startPosX += _objectsManager.getWidth(_globals._font, curChar - 32);
 		}
 	}
 }
 
 void HopkinsEngine::displayCredits() {
 	loadCredits();
-	_globals.Credit_y = 436;
+	_globals._creditsPosY = 436;
 	_graphicsManager.loadImage("GENERIC");
 	_graphicsManager.fadeInLong();
 	_soundManager.WSOUND(28);
@@ -2475,14 +2473,14 @@ void HopkinsEngine::displayCredits() {
 	_globals.Credit_bx = _globals.Credit_bx1 = _globals.Credit_by = _globals.Credit_by1 = -1;
 	int soundId = 28;
 	do {
-		for (int i = 0; i < _globals.Credit_lignes; ++i) {
-			if (_globals.Credit[i]._actvFl) {
-				int nextY = _globals.Credit_y + i * _globals.Credit_step;
-				_globals.Credit[i]._linePosY = nextY;
+		for (int i = 0; i < _globals._creditsLineNumb; ++i) {
+			if (_globals._creditsItem[i]._actvFl) {
+				int nextY = _globals._creditsPosY + i * _globals._creditsStep;
+				_globals._creditsItem[i]._linePosY = nextY;
 
 				if ((nextY - 21  >= 0) && (nextY - 21 <= 418)) {
 					int col = 0;
-					switch (_globals.Credit[i]._colour) {
+					switch (_globals._creditsItem[i]._colour) {
 					case '1':
 						col = 163;
 						break;
@@ -2497,20 +2495,20 @@ void HopkinsEngine::displayCredits() {
 						col = 163;
 						break;
 					}
-					if (_globals.Credit[i]._lineSize != -1)
-						displayCredits(nextY, _globals.Credit[i]._line, col);
+					if (_globals._creditsItem[i]._lineSize != -1)
+						displayCredits(nextY, _globals._creditsItem[i]._line, col);
 				}
 			}
 		}
-		--_globals.Credit_y;
+		--_globals._creditsPosY;
 		if (_globals.Credit_bx != -1 || _globals.Credit_bx1 != -1 || _globals.Credit_by != -1 || _globals.Credit_by1 != -1) {
 			_eventsManager.VBL();
 			_graphicsManager.copySurface(_graphicsManager._vesaScreen, 60, 50, 520, 380, _graphicsManager._vesaBuffer, 60, 50);
 		} else {
 			_eventsManager.VBL();
 		}
-		if (_globals.Credit[_globals.Credit_lignes - 1]._linePosY <= 39) {
-			_globals.Credit_y = 440;
+		if (_globals._creditsItem[_globals._creditsLineNumb - 1]._linePosY <= 39) {
+			_globals._creditsPosY = 440;
 			++soundId;
 			if (soundId > 31)
 				soundId = 28;

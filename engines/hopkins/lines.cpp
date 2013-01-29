@@ -1204,8 +1204,8 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	if (destY <= 24)
 		clipDestY = 25;
 	if (!_vm->_globals.NOT_VERIF) {
-		if (abs(fromX - _vm->_globals.old_x1_65) <= 4 && abs(fromY - _vm->_globals.old_y1_66) <= 4 &&
-		    abs(_vm->_globals.old_x2_67 - destX) <= 4 && abs(_vm->_globals.old_y2_68 - clipDestY) <= 4)
+		if (abs(fromX - _vm->_globals._oldRouteFromX) <= 4 && abs(fromY - _vm->_globals._oldRouteFromY) <= 4 &&
+		    abs(_vm->_globals._oldRouteDestX - destX) <= 4 && abs(_vm->_globals._oldRouteDestY - clipDestY) <= 4)
 			return (int16 *)g_PTRNUL;
 
 		if (abs(fromX - destX) <= 4 && abs(fromY - clipDestY) <= 4)
@@ -1216,10 +1216,10 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	}
 	_vm->_globals.NOT_VERIF = false;
 	_vm->_globals._oldZoneNum = _vm->_objectsManager._zoneNum;
-	_vm->_globals.old_x1_65 = fromX;
-	_vm->_globals.old_x2_67 = destX;
-	_vm->_globals.old_y1_66 = fromY;
-	_vm->_globals.old_y2_68 = clipDestY;
+	_vm->_globals._oldRouteFromX = fromX;
+	_vm->_globals._oldRouteDestX = destX;
+	_vm->_globals._oldRouteFromY = fromY;
+	_vm->_globals._oldRouteDestY = clipDestY;
 	_pathFindingMaxDepth = 0;
 	int v112 = 0;
 	if (destX <= 19)
@@ -3004,19 +3004,17 @@ int LinesManager::MZONE() {
 			if (_vm->_globals.ZONEP[squareZoneId]._enabledFl && _squareZone[squareZoneId]._enabledFl == 1
 				&& _squareZone[squareZoneId]._left <= xp && _squareZone[squareZoneId]._right >= xp
 				&& _squareZone[squareZoneId]._top <= yp && _squareZone[squareZoneId]._bottom >= yp) {
-					if (_squareZone[squareZoneId]._squareZoneFl) {
-						_vm->_globals.oldzone_46 = _zoneLine[_squareZone[squareZoneId]._minZoneLineIdx]._bobZoneIdx;
-						return _vm->_globals.oldzone_46;
-					}
+					if (_squareZone[squareZoneId]._squareZoneFl)
+						return _zoneLine[_squareZone[squareZoneId]._minZoneLineIdx]._bobZoneIdx;
+
 					_segment[_currentSegmentId]._minZoneLineIdx = _squareZone[squareZoneId]._minZoneLineIdx;
 					_segment[_currentSegmentId]._maxZoneLineIdx = _squareZone[squareZoneId]._maxZoneLineIdx;
 					++_currentSegmentId;
 			}
 		}
-		if (!_currentSegmentId) {
-			_vm->_globals.oldzone_46 = -1;
+		if (!_currentSegmentId)
 			return -1;
-		}
+
 
 		int colRes1 = 0;
 		for (int yCurrent = yp; yCurrent >= 0; --yCurrent) {
@@ -3025,10 +3023,8 @@ int LinesManager::MZONE() {
 				break;
 		}
 
-		if (colRes1 == -1) {
-			_vm->_globals.oldzone_46 = -1;
+		if (colRes1 == -1)
 			return -1;
-		}
 
 		int colRes2 = 0;
 		for (int j = yp; j < _vm->_graphicsManager._maxY; ++j) {
@@ -3037,10 +3033,8 @@ int LinesManager::MZONE() {
 				break;
 		}
 
-		if (colRes2 == -1) {
-			_vm->_globals.oldzone_46 = -1;
+		if (colRes2 == -1)
 			return -1;
-		}
 
 		int colRes3 = 0;
 		for (int k = xp; k >= 0; --k) {
@@ -3048,10 +3042,8 @@ int LinesManager::MZONE() {
 			if (colRes3 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
 				break;
 		}
-		if (colRes3 == -1) {
-			_vm->_globals.oldzone_46 = -1;
+		if (colRes3 == -1)
 			return -1;
-		}
 
 		int colRes4 = 0;
 		for (int xCurrent = xp; _vm->_graphicsManager._maxX > xCurrent; ++xCurrent) {
@@ -3059,13 +3051,11 @@ int LinesManager::MZONE() {
 			if (colRes4 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
 				break;
 		}
-		if (colRes1 == colRes2 && colRes1 == colRes3 && colRes1 == colRes4) {
-			_vm->_globals.oldzone_46 = colRes1;
+		if (colRes1 == colRes2 && colRes1 == colRes3 && colRes1 == colRes4)
 			result = colRes1;
-		} else {
-			_vm->_globals.oldzone_46 = -1;
+		else
 			result = -1;
-		}
+
 	} else {
 		result = 0;
 	}

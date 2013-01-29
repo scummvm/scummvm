@@ -1369,7 +1369,7 @@ void ObjectsManager::GOHOME() {
 		if (newPosX != -1 || newPosY != -1) {
 			_vm->_globals._oldDirection = newDirection;
 			_vm->_globals._oldDirectionSpriteIdx = newDirection + 59;
-			_vm->_globals.g_old_anim = 0;
+			_vm->_globals._oldFrameIndex = 0;
 			g_old_x = newPosX;
 			g_old_y = newPosY;
 		} else {
@@ -1403,13 +1403,13 @@ void ObjectsManager::GOHOME() {
 		return;
 	}
 	if (_vm->_globals._oldDirection == 3) {
-		if (_vm->_globals.g_old_anim < 24 || _vm->_globals.g_old_anim > 35) {
+		if (_vm->_globals._oldFrameIndex < 24 || _vm->_globals._oldFrameIndex > 35) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 			v1 = 24;
 		} else {
-			int v3 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			int v4 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v3 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int v4 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 
 			if (_sprite[0]._zoomFactor < 0) {
 				v3 = _vm->_graphicsManager.zoomOut(v3, -_sprite[0]._zoomFactor);
@@ -1420,20 +1420,20 @@ void ObjectsManager::GOHOME() {
 			}
 			v0 = v3 + g_old_x;
 			v58 = g_old_y + v4;
-			v1 = _vm->_globals.g_old_anim + 1;
+			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 35)
 				v1 = 24;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 7) {
-		if (_vm->_globals.g_old_anim < 24 || _vm->_globals.g_old_anim > 35) {
+		if (_vm->_globals._oldFrameIndex < 24 || _vm->_globals._oldFrameIndex > 35) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 			v1 = 24;
 		} else {
-			int v9 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			int v10 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v9 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int v10 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 			if (_sprite[0]._zoomFactor < 0) {
 				v9 = _vm->_graphicsManager.zoomOut(v9, -_sprite[0]._zoomFactor);
 				v10 = _vm->_graphicsManager.zoomOut(v10, -_sprite[0]._zoomFactor);
@@ -1443,19 +1443,19 @@ void ObjectsManager::GOHOME() {
 			}
 			v0 = g_old_x - v9;
 			v58 = g_old_y - v10;
-			v1 = _vm->_globals.g_old_anim + 1;
+			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 35)
 				v1 = 24;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 1) {
-		if (_vm->_globals.g_old_anim > 11) {
+		if (_vm->_globals._oldFrameIndex > 11) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 			v1 = 0;
 		} else {
-			int v16 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
+			int v16 = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
 			if (_sprite[0]._zoomFactor < 0) {
 				v16 = _vm->_graphicsManager.zoomOut(v16, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
@@ -1463,7 +1463,7 @@ void ObjectsManager::GOHOME() {
 			}
 			v0 = g_old_x;
 			v58 = g_old_y - v16;
-			v1 = _vm->_globals.g_old_anim + 1;
+			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 11)
 				v1 = 0;
 		}
@@ -1471,12 +1471,12 @@ void ObjectsManager::GOHOME() {
 	}
 
 	if (_vm->_globals._oldDirection == 5) {
-		if (_vm->_globals.g_old_anim < 48 || _vm->_globals.g_old_anim > 59) {
+		if (_vm->_globals._oldFrameIndex < 48 || _vm->_globals._oldFrameIndex > 59) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 			v1 = 48;
 		} else {
-			int v20 = abs(_vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2);
+			int v20 = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
 			if (_sprite[0]._zoomFactor < 0) {
 				v20 = _vm->_graphicsManager.zoomOut(v20, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
@@ -1484,20 +1484,20 @@ void ObjectsManager::GOHOME() {
 			}
 			v0 = g_old_x;
 			v58 = v20 + g_old_y;
-			v1 = _vm->_globals.g_old_anim + 1;
+			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 59)
 				v1 = 48;
 		}
 		_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 2) {
-		if (_vm->_globals.g_old_anim < 12 || _vm->_globals.g_old_anim > 23) {
+		if (_vm->_globals._oldFrameIndex < 12 || _vm->_globals._oldFrameIndex > 23) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 			v1 = 12;
 		} else {
-			int v23 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			int v24 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v23 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int v24 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 			if (_sprite[0]._zoomFactor < 0) {
 				v23 = _vm->_graphicsManager.zoomOut(v23, -_sprite[0]._zoomFactor);
 				v24 = _vm->_graphicsManager.zoomOut(v24, -_sprite[0]._zoomFactor);
@@ -1508,20 +1508,20 @@ void ObjectsManager::GOHOME() {
 			}
 			v0 = v23 + g_old_x;
 			v58 = g_old_y + v24;
-			v1 = _vm->_globals.g_old_anim + 1;
+			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 23)
 				v1 = 12;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 8) {
-		if (_vm->_globals.g_old_anim < 12 || _vm->_globals.g_old_anim > 23) {
+		if (_vm->_globals._oldFrameIndex < 12 || _vm->_globals._oldFrameIndex > 23) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 			v1 = 12;
 		} else {
-			int v29 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			int v30 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v29 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int v30 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 			if (_sprite[0]._zoomFactor < 0) {
 				v29 = _vm->_graphicsManager.zoomOut(v29, -_sprite[0]._zoomFactor);
 				v30 = _vm->_graphicsManager.zoomOut(v30, -_sprite[0]._zoomFactor);
@@ -1531,20 +1531,20 @@ void ObjectsManager::GOHOME() {
 			}
 			v0 = g_old_x - v29;
 			v58 = g_old_y + v30;
-			v1 = _vm->_globals.g_old_anim + 1;
+			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 23)
 				v1 = 12;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 4) {
-		if (_vm->_globals.g_old_anim < 36 || _vm->_globals.g_old_anim > 47) {
+		if (_vm->_globals._oldFrameIndex < 36 || _vm->_globals._oldFrameIndex > 47) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 			v1 = 36;
 		} else {
-			int v35 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			int v36 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v35 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int v36 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 			if (_sprite[0]._zoomFactor < 0) {
 				v35 = _vm->_graphicsManager.zoomOut(v35, -_sprite[0]._zoomFactor);
 				v36 = _vm->_graphicsManager.zoomOut(v36, -_sprite[0]._zoomFactor);
@@ -1555,20 +1555,20 @@ void ObjectsManager::GOHOME() {
 			}
 			v0 = v35 + g_old_x;
 			v58 = g_old_y + v36;
-			v1 = _vm->_globals.g_old_anim + 1;
+			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 47)
 				v1 = 36;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 6) {
-		if (_vm->_globals.g_old_anim < 36 || _vm->_globals.g_old_anim > 47) {
+		if (_vm->_globals._oldFrameIndex < 36 || _vm->_globals._oldFrameIndex > 47) {
 			v0 = g_old_x;
 			v58 = g_old_y;
 			v1 = 36;
 		} else {
-			int v41 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field0;
-			int v42 = _vm->_globals.Hopkins[_vm->_globals.g_old_anim].field2;
+			int v41 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int v42 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 			if (_sprite[0]._zoomFactor < 0) {
 				v41 = _vm->_graphicsManager.zoomOut(v41, -_sprite[0]._zoomFactor);
 				v42 = _vm->_graphicsManager.zoomOut(v42, -_sprite[0]._zoomFactor);
@@ -1579,7 +1579,7 @@ void ObjectsManager::GOHOME() {
 			}
 			v0 = g_old_x - v41;
 			v58 = g_old_y + v42;
-			v1 = _vm->_globals.g_old_anim + 1;
+			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 47)
 				v1 = 36;
 		}
@@ -1654,7 +1654,7 @@ void ObjectsManager::GOHOME() {
 	}
 	_vm->_globals._oldDirection = newDirection;
 	_vm->_globals._oldDirectionSpriteIdx = newDirection + 59;
-	_vm->_globals.g_old_anim = v1;
+	_vm->_globals._oldFrameIndex = v1;
 	g_old_x = newPosX;
 	g_old_y = newPosY;
 }

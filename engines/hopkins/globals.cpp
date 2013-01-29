@@ -110,11 +110,11 @@ Globals::Globals() {
 
 	PUBEXIT = false;
 	_speed = 1;
-	g_old_anim = 0;
+	_oldFrameIndex = 0;
 	_oldDirection = 0;
 	_oldDirectionSpriteIdx = 59;
 	_lastDirection = 0;
-	police_l = police_h = 0;
+	_fontFixedWidth = _fontFixedHeight = 0;
 	TETE = NULL;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
@@ -152,12 +152,10 @@ Globals::Globals() {
 	Credit_bx1 = -1;
 	Credit_by = -1;
 	Credit_by1 = -1;
-	Credit_y = 0;
-	Credit_lignes = 0;
-	memset(Credit, 0, 12000);
-	Credit_step = 0;
-	Credit_l = 0;
-	Credit_h = 0;
+	_creditsPosY = 0;
+	_creditsLineNumb = 0;
+	memset(_creditsItem, 0, 12000);
+	_creditsStep = 0;
 
 	_oceanDirection = 0;
 
@@ -168,13 +166,12 @@ Globals::Globals() {
 		CACHE_BANQUE[idx] = NULL;
 	SPRITE_ECRAN = NULL;
 	_saveData = NULL;
-	inventaire2 = NULL;
 	GESTE = NULL;
 	_inventoryObject = NULL;
 	_forestSprite = NULL;
 	_answerBuffer = g_PTRNUL;
 	ADR_FICHIER_OBJ = NULL;
-	police = NULL;
+	_font = NULL;
 	PERSO = NULL;
 	OPTION_SPR = NULL;
 
@@ -186,15 +183,14 @@ Globals::Globals() {
 	_optionDialogFl = false;
 	_cacheFl = false;
 	_introSpeechOffFl = false;
-	couleur_40 = 50;
+	_baseMapColor = 50;
 
 	// Reset indexed variables
 	_hotspotTextColor = 0;
-	oldzone_46 = 0;
-	old_x1_65 = 0;
-	old_y1_66 = 0;
-	old_x2_67 = 0;
-	old_y2_68 = 0;
+	_oldRouteFromX = 0;
+	_oldRouteFromY = 0;
+	_oldRouteDestX = 0;
+	_oldRouteDestY = 0;
 	_oldMouseZoneId = 0;
 	_oldZoneNum = 0;
 	_oldMouseX = 0;
@@ -207,13 +203,12 @@ Globals::Globals() {
 Globals::~Globals() {
 	free(ICONE);
 	freeMemory(TETE);
-	freeMemory(police);
+	freeMemory(_font);
 	freeMemory(BUF_ZONE);
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
 	freeMemory(SPRITE_ECRAN);
 	freeMemory((byte *)_saveData);
-	freeMemory(inventaire2);
 	freeMemory(GESTE);
 	freeMemory(_inventoryObject);
 	freeMemory(_forestSprite);
@@ -273,9 +268,9 @@ void Globals::clearAll() {
 	nbrligne = 80;
 	INIT_ANIM();
 
-	police = g_PTRNUL;
-	police_h = 0;
-	police_l = 0;
+	_font = g_PTRNUL;
+	_fontFixedHeight = 0;
+	_fontFixedWidth = 0;
 	_boxWidth = 0;
 
 	_vm->_fontManager.clearAll();
@@ -326,7 +321,7 @@ void Globals::loadCharacterData() {
 		Hopkins[idx].field2 = *srcP++;
 	}
 
-	g_old_anim = -1;
+	_oldFrameIndex = -1;
 	_oldDirection = -1;
 }
 

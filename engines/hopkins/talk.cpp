@@ -516,7 +516,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 	Common::File f;
 	int filesize;
 
-	_vm->_globals.police_l = 11;
+	_vm->_globals._fontFixedWidth = 11;
 
 	// Build up the filename
 	filename = dest = file;
@@ -577,7 +577,7 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 				++v10;
 			} while (v11 != ' ' && v11 != '%');
 
-			if (v10 >= v15 / _vm->_globals.police_l) {
+			if (v10 >= v15 / _vm->_globals._fontFixedWidth) {
 				if (v11 == '%')
 					v11 = ' ';
 				break;

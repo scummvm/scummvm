@@ -304,18 +304,17 @@ public:
 	Common::String FICH_ZONE;
 	Common::String FICH_TEXTE;
 	bool _censorshipFl;
-	int g_old_anim;
+	int _oldFrameIndex;
 	int _oldDirection, _oldDirectionSpriteIdx;
 	int _lastDirection;
-	byte *police;
-	int police_l;
-	int police_h;
+	byte *_font;
+	int _fontFixedWidth;
+	int _fontFixedHeight;
 	byte *TETE;
 	byte *ICONE;
 	byte *BUF_ZONE;
 	byte *SPRITE_ECRAN;
 	Sauvegarde *_saveData;
-	byte *inventaire2;
 	byte *GESTE;
 	int NUM_FICHIER_OBJ;
 	int nbrligne; // Useless variable?
@@ -358,18 +357,17 @@ public:
 	bool GOACTION;
 	int Compteur;
 	int _actionDirection;
-	int couleur_40;
+	int _baseMapColor;
 
 	int _hotspotTextColor;
-	int oldzone_46;
-	int old_x1_65;
-	int old_y1_66;
-	int old_x2_67;
+	int _oldRouteFromX;
+	int _oldRouteFromY;
+	int _oldRouteDestX;
 	int _oldMouseZoneId;
 	int _oldMouseX, _oldMouseY;
 	int compteur_71;
 	bool _forceHideText;
-	int old_y2_68;
+	int _oldRouteDestY;
 	int _oldZoneNum;
 	int j_104;
 
@@ -377,12 +375,10 @@ public:
 	int Credit_bx1;
 	int Credit_by;
 	int Credit_by1;
-	int Credit_y;
-	int Credit_lignes;
-	CreditItem Credit[200];
-	int Credit_step;
-	int Credit_l;
-	int Credit_h;
+	int _creditsPosY;
+	int _creditsLineNumb;
+	CreditItem _creditsItem[200];
+	int _creditsStep;
 
 	int _oceanDirection;
 
