@@ -345,7 +345,7 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 }
 
 void GameModule::startup() {
-#if 1
+#if 0
 	createModule(1500, 0); // Logos and intro video // Real game start
 #else
 	// DEBUG>>>
@@ -394,8 +394,8 @@ void GameModule::startup() {
 
 #if 1
 	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 8;
-	createModule(1800, -1);
+	_vm->gameState().sceneNum = 0;
+	createModule(1000, -1);
 #endif
 #if 0
 	_vm->gameState().sceneNum = 5;

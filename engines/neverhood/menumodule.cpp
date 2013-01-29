@@ -81,15 +81,13 @@ MenuModule::~MenuModule() {
 	_vm->_screen->setPaletteData(_savedPaletteData);
 }
 
-void MenuModule::setLoadgameInfo(uint slot) {
-	_savegameSlot = slot;
-	debug("LOADGAME: slot = %d", slot);
+void MenuModule::setLoadgameInfo(uint index) {
+	_savegameSlot = (*_savegameList)[index].slotNum;
 }
 
-void MenuModule::setSavegameInfo(const Common::String &description, uint slot, bool newSavegame) {
+void MenuModule::setSavegameInfo(const Common::String &description, uint index, bool newSavegame) {
 	_savegameDescription = description;
-	_savegameSlot = newSavegame ? _savegameList->size() : slot;
-	debug("SAVEGAME: description = [%s]; slot = %d; new = %d", description.c_str(), slot, newSavegame);
+	_savegameSlot = newSavegame ? -1 : (*_savegameList)[index].slotNum;
 }
 
 void MenuModule::createScene(int sceneNum, int which) {
@@ -183,14 +181,14 @@ uint32 MenuModule::handleMessage(int messageNum, const MessageParam &param, Enti
 
 void MenuModule::createLoadGameMenu() {
 	_savegameSlot = -1;
-	_savegameList = new Common::StringArray();
+	_savegameList = new SavegameList();
 	loadSavegameList();
 	_childObject = new LoadGameMenu(_vm, this, _savegameList);
 }
 
 void MenuModule::createSaveGameMenu() {
 	_savegameSlot = -1;
-	_savegameList = new Common::StringArray();
+	_savegameList = new SavegameList();
 	loadSavegameList();
 	_childObject = new SaveGameMenu(_vm, this, _savegameList);
 }
@@ -206,9 +204,12 @@ void MenuModule::handleLoadGameMenuAction(bool doLoad) {
 }
 
 void MenuModule::handleSaveGameMenuAction(bool doSave, bool doQuery) {
-	if (doSave && doQuery && _savegameSlot >= 0 && _savegameSlot < (int)_savegameList->size()) {
+	if (doSave && doQuery && _savegameSlot >= 0) {
 		createScene(QUERY_OVR_MENU, -1);
-	} else if (doSave && _savegameSlot >= 0) {
+	} else if (doSave) {
+		// Get a new slot number if it's a new savegame
+		if (_savegameSlot < 0)
+			_savegameSlot = _savegameList->size() > 0 ? _savegameList->back().slotNum + 1 : 0;
 		// Restore the scene palette and background so that the correct thumbnail is saved
 		byte *menuPaletteData = _vm->_screen->getPaletteData();
 		_vm->_screen->setPaletteData(_savedPaletteData);
@@ -240,8 +241,12 @@ void MenuModule::loadSavegameList() {
 		if (slotNum >= 0 && slotNum <= 999) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
-				if (Neverhood::NeverhoodEngine::readSaveHeader(in, false, header) == Neverhood::NeverhoodEngine::kRSHENoError)
-					_savegameList->push_back(header.description);
+				if (Neverhood::NeverhoodEngine::readSaveHeader(in, false, header) == Neverhood::NeverhoodEngine::kRSHENoError) {
+					SavegameItem savegameItem;
+					savegameItem.slotNum = slotNum;
+					savegameItem.description = header.description;
+					_savegameList->push_back(savegameItem);
+				}
 				delete in;
 			}
 		}
@@ -548,9 +553,8 @@ void TextLabelWidget::setString(const byte *string, int stringLen) {
 }
 
 TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-	int baseObjectPriority, int baseSurfacePriority, int maxStringLength, FontSurface *fontSurface,
-	uint32 fileHash, const NRect &rect)
-	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
+	int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect)
+	: Widget(vm, x, y, itemID, parentScene,	1000, 1000),
 	_maxStringLength(maxStringLength), _fontSurface(fontSurface), _fileHash(fileHash), _rect(rect),
 	_cursorSurface(NULL), _cursorTicks(0), _cursorPos(0), _cursorFileHash(0), _cursorWidth(0), _cursorHeight(0),
 	_modified(false), _readOnly(false) {
@@ -728,9 +732,8 @@ uint32 TextEditWidget::handleMessage(int messageNum, const MessageParam &param, 
 }
 
 SavegameListBox::SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-	int baseObjectPriority, int baseSurfacePriority,
-	Common::StringArray *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect)
-	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
+	SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect)
+	: Widget(vm, x, y, itemID, parentScene,	1000, 1000),
 	_savegameList(savegameList), _fontSurface(fontSurface), _bgFileHash(bgFileHash), _rect(rect),
 	_maxStringLength(0), _firstVisibleItem(0), _lastVisibleItem(0), _currIndex(0) {
 
@@ -768,11 +771,11 @@ void SavegameListBox::addSprite() {
 }
 
 void SavegameListBox::buildItems() {
-	Common::StringArray &savegameList = *_savegameList;
+	SavegameList &savegameList = *_savegameList;
 	int16 itemX = _rect.x1, itemY = 0;
 	for (uint i = 0; i < savegameList.size(); ++i) {
-		const byte *string = (const byte*)savegameList[i].c_str();
-		int stringLen = (int)savegameList[i].size();
+		const byte *string = (const byte*)savegameList[i].description.c_str();
+		int stringLen = (int)savegameList[i].description.size();
 		TextLabelWidget *label = new TextLabelWidget(_vm, itemX, itemY, i, _parentScene, _baseObjectPriority + 1,
 			_baseSurfacePriority + 1, string, MIN(stringLen, _maxStringLength), _surface, _x, _y, _fontSurface);
 		label->addSprite();
@@ -831,7 +834,7 @@ void SavegameListBox::pageDown() {
 	}
 }
 
-SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::StringArray *savegameList)
+SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
 	: WidgetScene(vm, parentModule), _savegameList(savegameList) {
 
 	static const uint32 kSaveGameMenuButtonFileHashes[] = {
@@ -864,11 +867,11 @@ SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::St
 	insertStaticSprite(0x1340A5C2, 200);
 	insertStaticSprite(0x1301A7EA, 200);
 
-	_listBox = new SavegameListBox(_vm, 60, 142, 69/*ItemID*/, this, 1000, 1000,
+	_listBox = new SavegameListBox(_vm, 60, 142, 69/*ItemID*/, this,
 		_savegameList, _fontSurface, 0x1115A223, kListBoxRect);
 	_listBox->addSprite();
 
-	_textEditWidget = new TextEditWidget(_vm, 50, 47, 70/*ItemID*/, this, 1000, 1000, 29,
+	_textEditWidget = new TextEditWidget(_vm, 50, 47, 70/*ItemID*/, this, 29,
 		_fontSurface, 0x3510A868, kTextEditRect);
 	_textEditWidget->setCursor(0x8290AC20, 2, 13);
 	_textEditWidget->addSprite();
@@ -891,7 +894,7 @@ SaveGameMenu::~SaveGameMenu() {
 void SaveGameMenu::handleEvent(int16 itemID, int eventType) {
 	if (itemID == 69 && eventType == 5) {
 		uint currIndex = _listBox->getCurrIndex();
-		_textEditWidget->setString((*_savegameList)[currIndex]);
+		_textEditWidget->setString((*_savegameList)[currIndex].description);
 		setCurrWidget(_textEditWidget);
 	}
 }
@@ -946,7 +949,7 @@ void SaveGameMenu::performSaveGame() {
 	leaveScene(0);
 }
 
-LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::StringArray *savegameList)
+LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
 	: WidgetScene(vm, parentModule), _savegameList(savegameList) {
 
 	static const uint32 kLoadGameMenuButtonFileHashes[] = {
@@ -979,11 +982,11 @@ LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::St
 	insertStaticSprite(0x0BC600A3, 200);
 	insertStaticSprite(0x0F960021, 200);
 
-	_listBox = new SavegameListBox(_vm, 263, 142, 69/*ItemID*/, this, 1000, 1000,
+	_listBox = new SavegameListBox(_vm, 263, 142, 69/*ItemID*/, this,
 		_savegameList, _fontSurface, 0x04040409, kListBoxRect);
 	_listBox->addSprite();
 
-	_textEditWidget = new TextEditWidget(_vm, 263, 48, 70/*ItemID*/, this, 1000, 1000, 29,
+	_textEditWidget = new TextEditWidget(_vm, 263, 48, 70/*ItemID*/, this, 29,
 		_fontSurface, 0x10924C03, kTextEditRect);
 	_textEditWidget->setCursor(0x18032303, 2, 13);
 	_textEditWidget->setReadOnly(true);
@@ -1007,7 +1010,7 @@ LoadGameMenu::~LoadGameMenu() {
 void LoadGameMenu::handleEvent(int16 itemID, int eventType) {
 	if (itemID == 69 && eventType == 5) {
 		uint currIndex = _listBox->getCurrIndex();
-		_textEditWidget->setString((*_savegameList)[currIndex]);
+		_textEditWidget->setString((*_savegameList)[currIndex].description);
 		setCurrWidget(_textEditWidget);
 	}
 }

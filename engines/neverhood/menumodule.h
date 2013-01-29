@@ -31,16 +31,23 @@
 
 namespace Neverhood {
 
+struct SavegameItem {
+	int slotNum;
+	Common::String description;
+};
+
+typedef Common::Array<SavegameItem> SavegameList;
+
 class MenuModule : public Module {
 public:
 	MenuModule(NeverhoodEngine *vm, Module *parentModule, int which);
 	virtual ~MenuModule();
-	void setLoadgameInfo(uint slot);
-	void setSavegameInfo(const Common::String &description, uint slot, bool newSavegame);
+	void setLoadgameInfo(uint index);
+	void setSavegameInfo(const Common::String &description, uint index, bool newSavegame);
 protected:
 	int _sceneNum;
 	byte *_savedPaletteData;
-	Common::StringArray *_savegameList;
+	SavegameList *_savegameList;
 	Common::String _savegameDescription;
 	int _savegameSlot;
 	void createScene(int sceneNum, int which);
@@ -144,8 +151,7 @@ protected:
 class TextEditWidget : public Widget {
 public:
 	TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-		int baseObjectPriority, int baseSurfacePriority, int maxStringLength, FontSurface *fontSurface,
-		uint32 fileHash, const NRect &rect);
+		int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect);
 	~TextEditWidget();
 	virtual void onClick();
 	virtual void addSprite();
@@ -183,8 +189,7 @@ protected:
 class SavegameListBox : public Widget {
 public:
 	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
-		int baseObjectPriority, int baseSurfacePriority,
-		Common::StringArray *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
+		SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
 	virtual void onClick();
 	virtual void addSprite();
 	void buildItems();
@@ -202,7 +207,7 @@ protected:
 	Common::Array<TextLabelWidget*> _textLabelItems;
 	int _firstVisibleItem;
 	int _lastVisibleItem;
-	Common::StringArray *_savegameList;
+	SavegameList *_savegameList;
 	FontSurface *_fontSurface;
 	uint _currIndex;
 	int _maxVisibleItemsCount;
@@ -210,11 +215,11 @@ protected:
 
 class SaveGameMenu : public WidgetScene {
 public:
-	SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::StringArray *savegameList);
+	SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
 	~SaveGameMenu();
 	virtual void handleEvent(int16 itemID, int eventType);
 protected:
-	Common::StringArray *_savegameList;
+	SavegameList *_savegameList;
 	FontSurface *_fontSurface;
 	SavegameListBox *_listBox;
 	TextEditWidget *_textEditWidget;
@@ -226,11 +231,11 @@ protected:
 
 class LoadGameMenu : public WidgetScene {
 public:
-	LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::StringArray *savegameList);
+	LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
 	~LoadGameMenu();
 	virtual void handleEvent(int16 itemID, int eventType);
 protected:
-	Common::StringArray *_savegameList;
+	SavegameList *_savegameList;
 	FontSurface *_fontSurface;
 	SavegameListBox *_listBox;
 	TextEditWidget *_textEditWidget;
