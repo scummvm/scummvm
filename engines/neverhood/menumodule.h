@@ -126,7 +126,6 @@ public:
 	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
 		int baseObjectPriority, int baseSurfacePriority, 
 		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);	
-	virtual void onClick();
 	virtual void addSprite();
 	virtual int16 getWidth();
 	virtual int16 getHeight();
@@ -222,6 +221,7 @@ protected:
 	Common::String _savegameDescription;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void performSaveGame();
 };
 
 class LoadGameMenu : public WidgetScene {
@@ -236,6 +236,7 @@ protected:
 	TextEditWidget *_textEditWidget;
 	Common::String _savegameDescription;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void performLoadGame();
 };
 
 class QueryOverwriteMenu : public Scene {

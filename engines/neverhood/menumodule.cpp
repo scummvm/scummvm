@@ -542,11 +542,6 @@ void TextLabelWidget::clear() {
 	updateBounds();
 }
 
-void TextLabelWidget::onClick() {
-	Widget::onClick();
-	// TODO? Click handler
-}
-
 void TextLabelWidget::setString(const byte *string, int stringLen) {
 	_string = string;
 	_stringLen = stringLen;
@@ -909,13 +904,11 @@ uint32 SaveGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 		setCurrWidget(_textEditWidget);
 		break;
 	case 0x000B:
-		if (param.asInteger() == Common::KEYCODE_RETURN) {
-			((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
-				_listBox->getCurrIndex(), _textEditWidget->isModified());
-			leaveScene(0);
-		} else if (param.asInteger() == Common::KEYCODE_ESCAPE) {
+		if (param.asInteger() == Common::KEYCODE_RETURN)
+			performSaveGame();
+		else if (param.asInteger() == Common::KEYCODE_ESCAPE)
 			leaveScene(1);
-		} else {
+		else {
 			sendMessage(_textEditWidget, 0x000B, param.asInteger());
 			setCurrWidget(_textEditWidget);
 		}
@@ -924,10 +917,7 @@ uint32 SaveGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 		// Handle menu button click
 		switch (param.asInteger()) {
 		case 0:
-			// TODO Same handling as Return, merge
-			((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
-				_listBox->getCurrIndex(), _textEditWidget->isModified());
-			leaveScene(0);
+			performSaveGame();
 			break;
 		case 1:
 			leaveScene(1);
@@ -948,6 +938,12 @@ uint32 SaveGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 		break;
 	}
 	return 0;
+}
+
+void SaveGameMenu::performSaveGame() {
+	((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
+		_listBox->getCurrIndex(), _textEditWidget->isModified());
+	leaveScene(0);
 }
 
 LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, Common::StringArray *savegameList)
@@ -1020,20 +1016,16 @@ uint32 LoadGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x000B:
-		if (param.asInteger() == Common::KEYCODE_RETURN) {
-			((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
-			leaveScene(0);
-		} else if (param.asInteger() == Common::KEYCODE_ESCAPE) {
+		if (param.asInteger() == Common::KEYCODE_RETURN)
+			performLoadGame();
+		else if (param.asInteger() == Common::KEYCODE_ESCAPE)
 			leaveScene(1);
-		}
 		break;
 	case 0x2000:
 		// Handle menu button click
 		switch (param.asInteger()) {
 		case 0:
-			// TODO Same handling as Return, merge
-			((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
-			leaveScene(0);
+			performLoadGame();
 			break;
 		case 1:
 			leaveScene(1);
@@ -1054,6 +1046,11 @@ uint32 LoadGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 		break;
 	}
 	return 0;
+}
+
+void LoadGameMenu::performLoadGame() {
+	((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
+	leaveScene(0);
 }
 
 QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule, const Common::String &description)
@@ -1081,7 +1078,7 @@ QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule
 	}
 
 	// Draw the query text to the background, each text line is centered
-	// NOTE The original had this in its own class
+	// NOTE The original had this text in its own class
 	FontSurface *fontSurface = new FontSurface(_vm, calcHash("bgQueryTinyAlphabet"), 32, 7, 32, 11, 17);
 	Common::StringArray textLines;
 	textLines.push_back(description);
