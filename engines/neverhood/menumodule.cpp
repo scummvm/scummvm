@@ -178,7 +178,6 @@ void MenuModule::updateScene() {
 }
 
 uint32 MenuModule::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	// TODO CHECKME Handles 0x101F, possibly just a debug/cache message which can be ignored?
 	return Module::handleMessage(messageNum, param, sender);;
 }
 
