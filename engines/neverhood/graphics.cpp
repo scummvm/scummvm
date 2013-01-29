@@ -315,9 +315,12 @@ void unpackSpriteRle(const byte *source, int width, int height, byte *dest, int 
 
 void unpackSpriteNormal(const byte *source, int width, int height, byte *dest, int destPitch, bool flipX, bool flipY) {
 
-	// TODO: Flip Y
-
-	int sourcePitch = (width + 3) & 0xFFFC;
+	const int sourcePitch = (width + 3) & 0xFFFC;
+	
+	if (flipY) {
+		dest += destPitch * (height - 1);
+		destPitch = -destPitch;
+	}
 
 	if (!flipX) {
 		while (height-- > 0) {
