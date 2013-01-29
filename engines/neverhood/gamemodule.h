@@ -58,13 +58,10 @@ public:
 protected:
 	Entity *_prevChildObject;
 	int _prevModuleNum;
-	bool _gameWasLoaded;
 	bool _restoreGameRequested;
 	bool _restartGameRequested;
+	bool _canRequestMainMenu;
 	bool _mainMenuRequested;
-	bool _someFlag1;
-	bool _field2C;
-	uint32 _counter;
 	int _moduleNum;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createModule(int moduleNum, int which);

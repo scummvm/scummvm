@@ -75,7 +75,8 @@ enum {
 
 GameModule::GameModule(NeverhoodEngine *vm)
 	: Module(vm, NULL), _moduleNum(-1), _prevChildObject(NULL), _prevModuleNum(-1),
-	_restoreGameRequested(false), _restartGameRequested(false), _mainMenuRequested(false), _gameWasLoaded(false) {
+	_restoreGameRequested(false), _restartGameRequested(false), _canRequestMainMenu(true),
+	_mainMenuRequested(false) {
 	
 	// Other initializations moved to actual engine class
 	_vm->_soundMan->playSoundThree(0x002D0031, 0x8861079);
@@ -147,7 +148,7 @@ void GameModule::handleKeyDown(Common::KeyCode keyCode) {
 void GameModule::handleEscapeKey() {
 	if (_vm->isDemo())
 		_vm->quitGame();
-	else if (!_prevChildObject /* && _canRequestMainMenu TODO?*/)
+	else if (!_prevChildObject && _canRequestMainMenu)
 		_mainMenuRequested = true;
 	else if (_childObject)
 		sendMessage(_childObject, 0x000C, 0);
@@ -334,7 +335,7 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 	uint32 messageResult = Module::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x0800:
-		_someFlag1 = true;
+		_canRequestMainMenu = true;
 		break;		
 	case 0x1009:
 		_moduleResult = param.asInteger();
@@ -344,15 +345,12 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 	case 0x1023:
 		// Unused resource preloading messages
 		break;		
-	case 0x101F:
-		_field2C = true;		
-		break;		
 	}
 	return messageResult;
 }
 
 void GameModule::startup() {
-#if 0
+#if 1
 	createModule(1500, 0); // Logos and intro video // Real game start
 #else
 	// DEBUG>>>
@@ -524,7 +522,7 @@ void GameModule::createModule(int moduleNum, int which) {
 		_childObject = new Module1400(_vm, this, which);
 		break;
 	case 1500:
-		_someFlag1 = false;
+		_canRequestMainMenu = false;
 		setGlobalVar(V_MODULE_NAME, 0x00F10114);
 		_childObject = new Module1500(_vm, this, which);
 		break;
@@ -876,21 +874,10 @@ void GameModule::updateMenuModule() {
 		// TODO Restore FPS?
 		_childObject = _prevChildObject;
 		// TODO Restore Smacker handle, screen offsets
-		sendMessage(_childObject, 0x101E, 0); // TODO CHECKME Is this needed?
+		sendMessage(_childObject, 0x101E, 0);
 		_prevChildObject = NULL;
 		_moduleNum = _prevModuleNum;
 		SetUpdateHandler(&GameModule::updateModule);
-	} else if (_gameWasLoaded) {
-#if 0 // TODO Handle this in some other way...
-		_gameWasLoaded = false;
-		delete _childObject;
-		delete _prevChildObject;
-		_childObject = NULL;
-		_prevChildObject = NULL;
-		_prevModuleNum = 0;
-		// TODO Create module from savegame values...
-		 // TODO createModuleByHash(...);
-#endif
 	}
 }
 
