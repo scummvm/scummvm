@@ -412,7 +412,7 @@ void Globals::resetCache() {
 		Cache[idx]._x = 0;
 		Cache[idx]._y = 0;
 		Cache[idx]._spriteIndex = 0;
-		Cache[idx].fieldA = 0;
+		Cache[idx]._useCount = 0;
 		Cache[idx]._width = 0;
 		Cache[idx]._height = 0;
 		Cache[idx].field10 = false;
@@ -432,11 +432,11 @@ void Globals::CACHE_OFF(int v1) {
 }
 
 void Globals::CACHE_SUB(int idx) {
-	Cache[idx].fieldA = 0;
+	Cache[idx]._useCount = 0;
 }
 
 void Globals::CACHE_ADD(int idx) {
-	Cache[idx].fieldA = 1;
+	Cache[idx]._useCount = 1;
 }
 
 // Load Cache
@@ -467,18 +467,18 @@ void Globals::loadCache(const Common::String &file) {
 		Cache[v6]._x = v4;
 		Cache[v6]._y = v5;
 		if (spriteData == g_PTRNUL) {
-			Cache[i].fieldA = 0;
+			Cache[i]._useCount = 0;
 		} else {
 			int v8 = _vm->_objectsManager.getWidth(spriteData, v11);
 			int v9 = _vm->_objectsManager.getHeight(spriteData, v11);
 			Cache[i]._spriteData = spriteData;
 			Cache[i]._width = v8;
 			Cache[i]._height = v9;
-			Cache[i].fieldA = 1;
+			Cache[i]._useCount = 1;
 		}
 
 		if ( !Cache[i]._x && !Cache[i]._y && !Cache[i]._spriteIndex)
-			Cache[i].fieldA = 0;
+			Cache[i]._useCount = 0;
 		v15 += 5;
 	}
 	CACHE_ON();

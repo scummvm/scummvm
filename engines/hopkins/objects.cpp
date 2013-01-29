@@ -353,7 +353,7 @@ void ObjectsManager::displaySprite() {
 				DEF_SPRITE(_vm->_globals._sortedDisplay[idx]._index);
 				break;
 			case SORT_CACHE:
-				DEF_CACHE(_vm->_globals._sortedDisplay[idx]._index);
+				displayCache(_vm->_globals._sortedDisplay[idx]._index);
 				break;
 			default:
 				break;
@@ -370,7 +370,7 @@ void ObjectsManager::displaySprite() {
 				DEF_SPRITE(_vm->_globals._sortedDisplay[idx]._index);
 				break;
 			case SORT_CACHE:
-				DEF_CACHE(_vm->_globals._sortedDisplay[idx]._index);
+				displayCache(_vm->_globals._sortedDisplay[idx]._index);
 				break;
 			default:
 				break;
@@ -606,7 +606,7 @@ void ObjectsManager::BOB_OFFSET(int idx, int offset) {
 }
 
 void ObjectsManager::SCBOB(int idx) {
-	if (_vm->_globals.Cache[idx].fieldA <= 0)
+	if (_vm->_globals.Cache[idx]._useCount == 0)
 		return;
 
 	for (int i = 0; i <= 20; i++) {
@@ -621,7 +621,7 @@ void ObjectsManager::SCBOB(int idx) {
 				 || (cachedRight >= _vm->_globals._bob[i]._oldWidth && _vm->_globals._bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x)
 				 || (_vm->_globals._bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x && oldRight <= cachedRight)
 				 || (_vm->_globals._bob[i]._oldWidth <= _vm->_globals.Cache[idx]._x && oldRight >= cachedRight))
-					++_vm->_globals.Cache[idx].fieldA;
+					++_vm->_globals.Cache[idx]._useCount;
 			}
 		}
 	}
@@ -712,10 +712,10 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 
 void ObjectsManager::checkCache() {
 	for (int cacheIdx = 0; cacheIdx <= 19; cacheIdx++) {
-		if (_vm->_globals.Cache[cacheIdx].fieldA <= 0)
+		if (_vm->_globals.Cache[cacheIdx]._useCount == 0)
 			continue;
 
-		int oldFieldA = _vm->_globals.Cache[cacheIdx].fieldA;
+		int _oldEnableCount = _vm->_globals.Cache[cacheIdx]._useCount;
 		for (int spriteIdx = 0; spriteIdx <= 4; spriteIdx++) {
 			if (_sprite[spriteIdx]._animationType == 1 && _sprite[spriteIdx]._spriteIndex != 250) {
 				int right = _sprite[spriteIdx]._width + _sprite[spriteIdx]._destX;
@@ -728,16 +728,16 @@ void ObjectsManager::checkCache() {
 					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx]._destX)
 					 || (_vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx]._destX && right <= cachedRight)
 					 || (_vm->_globals.Cache[cacheIdx]._x >= _sprite[spriteIdx]._destX && right >= cachedRight))
-						++_vm->_globals.Cache[cacheIdx].fieldA;
+						++_vm->_globals.Cache[cacheIdx]._useCount;
 				}
 			}
 		}
 
 		SCBOB(cacheIdx);
-		if (_vm->_globals.Cache[cacheIdx].fieldA == oldFieldA) {
+		if (_vm->_globals.Cache[cacheIdx]._useCount == _oldEnableCount) {
 			if (_vm->_globals.Cache[cacheIdx].field10) {
 				_vm->_globals.Cache[cacheIdx].field10 = false;
-				_vm->_globals.Cache[cacheIdx].fieldA = 1;
+				_vm->_globals.Cache[cacheIdx]._useCount = 1;
 			}
 		} else {
 			int priority = _vm->_globals.Cache[cacheIdx].field14 + _vm->_globals.Cache[cacheIdx]._height + _vm->_globals.Cache[cacheIdx]._y;
@@ -745,7 +745,7 @@ void ObjectsManager::checkCache() {
 				priority = 500;
 
 			beforeSort(SORT_CACHE, cacheIdx, priority);
-			_vm->_globals.Cache[cacheIdx].fieldA = 1;
+			_vm->_globals.Cache[cacheIdx]._useCount = 1;
 			_vm->_globals.Cache[cacheIdx].field10 = true;
 		}
 	}
@@ -789,7 +789,7 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 		    _vm->_globals.Liste[idx]._posX + _vm->_globals.Liste[idx]._width, _vm->_globals.Liste[idx]._posY + _vm->_globals.Liste[idx]._height);
 }
 
-void ObjectsManager::DEF_CACHE(int idx) {
+void ObjectsManager::displayCache(int idx) {
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.CACHE_BANQUE[1],
 	    _vm->_globals.Cache[idx]._x + 300, _vm->_globals.Cache[idx]._y + 300,
 	    _vm->_globals.Cache[idx]._spriteIndex);
@@ -839,7 +839,7 @@ void ObjectsManager::computeSprite(int idx) {
 			deltaY = _vm->_graphicsManager.zoomIn(tmpY, zoomPercent);
 		} else {
 			tmpY = abs(tmpX);
-			deltaY = -_vm->_graphicsManager.zoomIn(abs(tmpX), zoomPercent);
+			deltaY = -_vm->_graphicsManager.zoomIn(tmpY, zoomPercent);
 		}
 	} else if (reducePercent) {
 		if (tmpX >= 0)
@@ -851,7 +851,7 @@ void ObjectsManager::computeSprite(int idx) {
 			deltaY = _vm->_graphicsManager.zoomOut(tmpY, reducePercent);
 		} else {
 			tmpY = abs(tmpX);
-			deltaY = -_vm->_graphicsManager.zoomOut(abs(tmpX), reducePercent);
+			deltaY = -_vm->_graphicsManager.zoomOut(tmpY, reducePercent);
 		}
 	}
 
@@ -883,12 +883,11 @@ void ObjectsManager::computeSprite(int idx) {
 }
 
 // Before Sort
-void ObjectsManager::beforeSort(SortMode triMode, int index, int priority) {
+void ObjectsManager::beforeSort(SortMode sortMode, int index, int priority) {
 	++_vm->_globals._sortedDisplayCount;
-	if (_vm->_globals._sortedDisplayCount > 48)
-		error("NBTRI too high");
+	assert (_vm->_globals._sortedDisplayCount <= 48);
 
-	_vm->_globals._sortedDisplay[_vm->_globals._sortedDisplayCount]._sortMode = triMode;
+	_vm->_globals._sortedDisplay[_vm->_globals._sortedDisplayCount]._sortMode = sortMode;
 	_vm->_globals._sortedDisplay[_vm->_globals._sortedDisplayCount]._index = index;
 	_vm->_globals._sortedDisplay[_vm->_globals._sortedDisplayCount]._priority = priority;
 }
@@ -980,7 +979,7 @@ void ObjectsManager::displayBobAnim() {
 
 				if (v10 > 0) {
 					int v11 = v10 / _vm->_globals._speed;
-					_vm->_globals._bob[idx].field12 = v10 / _vm->_globals._speed;
+					_vm->_globals._bob[idx].field12 = v11;
 					// Original code. It can't be negative, so the check is on == 0
 					if (v11 <= 0)
 						_vm->_globals._bob[idx].field12 = 1;
@@ -2993,9 +2992,9 @@ void ObjectsManager::disableZone(int idx) {
 
 }
 
-void ObjectsManager::OPTI_ONE(int idx, int fromPosi, int destPosi, int a4) {
+void ObjectsManager::OPTI_ONE(int idx, int fromPosi, int destPosi, int animAction) {
 	// Set Hopkins animation and position
-	if (a4 != 3) {
+	if (animAction != 3) {
 		setBobAnimation(idx);
 		SET_BOBPOSI(idx, fromPosi);
 	}
@@ -3005,9 +3004,9 @@ void ObjectsManager::OPTI_ONE(int idx, int fromPosi, int destPosi, int a4) {
 		_vm->_eventsManager.VBL();
 	} while (destPosi != BOBPOSI(idx));
 
-	if (!a4)
+	if (!animAction)
 		stopBobAnimation(idx);
-	else if (a4 == 4) {
+	else if (animAction == 4) {
 		_vm->_graphicsManager.fastDisplay(_vm->_globals._bob[idx]._spriteData,
 			_vm->_globals._bob[idx]._oldX, _vm->_globals._bob[idx]._oldY, _vm->_globals._bob[idx]._frameIndex);
 		stopBobAnimation(idx);
@@ -3121,16 +3120,16 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				_vm->_globals.Cache[cacheIdx]._y = v10;
 
 				if (!_vm->_globals.CACHE_BANQUE[1]) {
-					_vm->_globals.Cache[cacheIdx].fieldA = 0;
+					_vm->_globals.Cache[cacheIdx]._useCount = 0;
 				} else {
 					_vm->_globals.Cache[cacheIdx]._spriteData = _vm->_globals.CACHE_BANQUE[1];
 					_vm->_globals.Cache[cacheIdx]._width = getWidth(_vm->_globals.CACHE_BANQUE[1], v8);
 					_vm->_globals.Cache[cacheIdx]._height = getHeight(_vm->_globals.CACHE_BANQUE[1], v8);
-					_vm->_globals.Cache[cacheIdx].fieldA = 1;
+					_vm->_globals.Cache[cacheIdx]._useCount = 1;
 				}
 				if (!_vm->_globals.Cache[cacheIdx]._x && !_vm->_globals.Cache[cacheIdx]._y
 							&& !_vm->_globals.Cache[cacheIdx]._spriteIndex)
-					_vm->_globals.Cache[cacheIdx].fieldA = 0;
+					_vm->_globals.Cache[cacheIdx]._useCount = 0;
 
 				v36 += 5;
 			}
@@ -3477,7 +3476,7 @@ void ObjectsManager::enableVerb(int idx, int a2) {
 	}
 }
 
-void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int speed, bool flipFl) {
+void ObjectsManager::ACTION(const byte *spriteData, const Common::String &actionStr, int a3, int a4, int speed, bool flipFl) {
 	bool tokenCompleteFl;
 	char curChar;
 	int spriteIndex;
@@ -3499,7 +3498,7 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 
 	for (;;) {
 		tokenCompleteFl = false;
-		curChar = a2[strPos];
+		curChar = actionStr[strPos];
 		if (curChar == ',') {
 			idx = atoi(tmpStr.c_str());
 			tmpStr = "";
@@ -3520,7 +3519,7 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &a2, in
 				_sprite[0]._spriteData = spriteData;
 				_sprite[0]._spriteIndex = idx;
 			}
-			for (int v10 = 0; v10 < realSpeed; v10++)
+			for (int i = 0; i < realSpeed; i++)
 				_vm->_eventsManager.VBL();
 			if (idx == -1)
 				break;
@@ -3706,9 +3705,9 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 	}
 }
 
-void ObjectsManager::lockAnimX(int idx, int a2) {
+void ObjectsManager::lockAnimX(int idx, int x) {
 	_vm->_globals._lockedAnims[idx]._enableFl = true;
-	_vm->_globals._lockedAnims[idx]._posX = a2;
+	_vm->_globals._lockedAnims[idx]._posX = x;
 }
 
 void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
@@ -3733,7 +3732,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	if (!s4.empty()) {
 		if (initializeScreen)
 			_vm->_graphicsManager.INI_ECRAN(s4, initializeScreen);
-		if (!s4.empty() && !initializeScreen)
+		else
 			_vm->_graphicsManager.INI_ECRAN2(s4, initializeScreen);
 	}
 	_vm->_eventsManager.mouseOn();

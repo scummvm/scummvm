@@ -124,9 +124,9 @@ public:
 
 	void checkCache();
 	void DEF_SPRITE(int idx);
-	void DEF_CACHE(int idx);
+	void displayCache(int idx);
 	void computeSprite(int idx);
-	void beforeSort(SortMode triMode, int index, int priority);
+	void beforeSort(SortMode sortMode, int index, int priority);
 	void displayBobAnim();
 	void displayVBob();
 
@@ -161,12 +161,12 @@ public:
 	void computeAndSetSpriteSize();
 	void nextVerbIcon();
 	void handleRightButton();
-	void initBorder(int a1);
+	void initBorder(int zoneIdx);
 	void nextObjectIcon(int idx);
 	void takeInventoryObject(int idx);
 	void OPTI_OBJET();
 	void handleSpecialGames();
-	void BOB_VIVANT(int a1);
+	void BOB_VIVANT(int idx);
 	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);
 	void VBOB_OFF(int idx);
 	void ACTION_DOS(int idx);
@@ -178,7 +178,7 @@ public:
 
 	void enableZone(int idx);
 	void disableZone(int idx);
-	void OPTI_ONE(int idx, int fromPosi, int destPosi, int a4);
+	void OPTI_ONE(int idx, int fromPosi, int destPosi, int animAction);
 	int BOBPOSI(int idx);
 	void setBobAnimation(int idx);
 	void stopBobAnimation(int idx);
@@ -194,11 +194,11 @@ public:
 	void disableVerb(int idx, int a2);
 	void enableVerb(int idx, int a2);
 
-	void ACTION(const byte *spriteData, const Common::String &a2, int a3, int a4, int speed, bool flipFl);
+	void ACTION(const byte *spriteData, const Common::String &actionStr, int a3, int a4, int speed, bool flipFl);
 	void SPACTION(byte *spriteData, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl);
 	void SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int speed);
 	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
-	void lockAnimX(int idx, int a2);
+	void lockAnimX(int idx, int x);
 
 	/**
 	 * Game scene control method

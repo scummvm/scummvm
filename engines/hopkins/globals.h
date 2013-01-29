@@ -155,7 +155,7 @@ struct CacheItem {
 	int _y;
 	int _width;
 	int _height;
-	int fieldA;
+	int _useCount;
 	byte *_spriteData;
 	bool field10;
 	int field14;

@@ -211,7 +211,7 @@ EXIT:
 /**
  * Play Animation, type 2
  */
-void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint32 a3, uint32 a4) {
+void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
 	int v5;
 	byte *screenCopy = NULL;
 	int oldScrollVal = 0;
@@ -291,7 +291,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 a2, uint
 			if (_vm->_eventsManager._escKeyFl)
 				goto LABEL_114;
 			_vm->_eventsManager.refreshEvents();
-			if (_vm->_eventsManager._rateCounter >= a2)
+			if (_vm->_eventsManager._rateCounter >= rate1)
 				goto LABEL_48;
 		}
 		if (_vm->_graphicsManager._skipVideoLockFl)
@@ -368,7 +368,7 @@ LABEL_88:
 				while (!_vm->_eventsManager._escKeyFl) {
 					_vm->_eventsManager.refreshEvents();
 					_vm->_soundManager.checkSoundEnd();
-					if (_vm->_eventsManager._rateCounter >= a4)
+					if (_vm->_eventsManager._rateCounter >= rate3)
 						goto LABEL_114;
 				}
 			}
@@ -378,7 +378,7 @@ LABEL_88:
 	while (!_vm->_eventsManager._escKeyFl) {
 		_vm->_eventsManager.refreshEvents();
 		_vm->_soundManager.checkSoundEnd();
-		if (_vm->_eventsManager._rateCounter >= a3)
+		if (_vm->_eventsManager._rateCounter >= rate2)
 			goto LABEL_77;
 	}
 LABEL_114:
