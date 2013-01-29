@@ -286,8 +286,7 @@ void GameModule::initCubeSymbolsPuzzle() {
 }
 
 void GameModule::initCrystalColorsPuzzle() {
-	// TODO Maybe move this into the GameModule so all puzzle init code is together
-	if (getGlobalVar(V_CRYSTAL_COLORS_INIT) == 0) {
+	if (!getGlobalVar(V_CRYSTAL_COLORS_INIT)) {
 		TextResource textResource(_vm);
 		const char *textStart, *textEnd;
 		textResource.load(0x46691611);
@@ -340,10 +339,6 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 	case 0x1009:
 		_moduleResult = param.asInteger();
 		_done = true;
-		break;		
-	case 0x100A:
-	case 0x1023:
-		// Unused resource preloading messages
 		break;		
 	}
 	return messageResult;
@@ -829,7 +824,7 @@ void GameModule::updateModule() {
 			break;
 		case 3000:
 			// NOTE _moduleResult 2 never used
-			// TODO Check if _moduleResult 4 is used
+			// NOTE Check if _moduleResult 4 is used
 			if (_moduleResult == 1)
 				createModule(1900, 0);
 			else if (_moduleResult == 3)
@@ -854,7 +849,7 @@ void GameModule::openMainMenu() {
 		// If there's no module, create one so there's something to return to
 		createModule(1000, 0);
 	}
-	// TODO Save FPS, Smacker handle, screen offsets
+	_vm->_screen->saveParams();
 	_mainMenuRequested = false;
 	createMenuModule();
 }
@@ -871,9 +866,8 @@ void GameModule::createMenuModule() {
 
 void GameModule::updateMenuModule() {
 	if (!updateChild()) {
-		// TODO Restore FPS?
+		_vm->_screen->restoreParams();
 		_childObject = _prevChildObject;
-		// TODO Restore Smacker handle, screen offsets
 		sendMessage(_childObject, 0x101E, 0);
 		_prevChildObject = NULL;
 		_moduleNum = _prevModuleNum;

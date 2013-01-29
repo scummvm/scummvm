@@ -56,13 +56,13 @@ public:
 	void initCrystalColorsPuzzle();
 	uint32 getCurrRadioMusicFileHash();
 protected:
+	int _moduleNum;
 	Entity *_prevChildObject;
 	int _prevModuleNum;
 	bool _restoreGameRequested;
 	bool _restartGameRequested;
 	bool _canRequestMainMenu;
 	bool _mainMenuRequested;
-	int _moduleNum;
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createModule(int moduleNum, int which);
 	void createModuleByHash(uint32 nameHash);

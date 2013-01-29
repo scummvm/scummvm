@@ -114,6 +114,18 @@ uint32 Screen::getNextFrameTime() {
 	return _vm->_system->getMillis() + waitTicks;
 }
 
+void Screen::saveParams() {
+	_savedSmackerDecoder = _smackerDecoder;
+	_savedFrameDelay = _frameDelay;
+	_savedYOffset = _yOffset;
+}
+
+void Screen::restoreParams() {
+	_smackerDecoder = _savedSmackerDecoder;
+	_frameDelay = _savedFrameDelay;
+	_yOffset = _savedYOffset;
+}
+
 void Screen::setFps(int fps) {
 	_frameDelay = 1000 / fps;
 }
@@ -270,16 +282,14 @@ void Screen::drawUnk(const Graphics::Surface *surface, NDrawRect &drawRect, NDra
 	NDrawRect newDrawRect;
 
 	x = sysRect.x;
-	if (sysRect.width <= x || -sysRect.width >= x) {
+	if (sysRect.width <= x || -sysRect.width >= x)
 		x = x % sysRect.width;
-	}
 	if (x < 0)
 		x += sysRect.width;
 
 	y = sysRect.y;
-	if (y >= sysRect.height || -sysRect.height >= y) {
+	if (y >= sysRect.height || -sysRect.height >= y)
 		y = y % sysRect.height;
-	}
 	if (y < 0)
 		y += sysRect.height;
 	

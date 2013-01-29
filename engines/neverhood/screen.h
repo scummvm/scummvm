@@ -63,6 +63,8 @@ public:
 	~Screen();
 	void update();
 	uint32 getNextFrameTime();
+	void saveParams();
+	void restoreParams();
 	void setFps(int fps);
 	int getFps();
 	void setYOffset(int16 yOffset);
@@ -89,12 +91,12 @@ protected:
 	NeverhoodEngine *_vm;
 	MicroTileArray *_microTiles;
 	Graphics::Surface *_backScreen;
-	Video::SmackerDecoder *_smackerDecoder;
+	Video::SmackerDecoder *_smackerDecoder, *_savedSmackerDecoder;
 	int32 _ticks;
-	int32 _frameDelay;
+	int32 _frameDelay, _savedFrameDelay;
 	byte *_paletteData;
 	bool _paletteChanged;
-	int16 _yOffset;
+	int16 _yOffset, _savedYOffset;
 	bool _fullRefresh;
 	RenderQueue *_renderQueue, *_prevRenderQueue;
 };
