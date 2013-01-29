@@ -113,6 +113,7 @@ class NeverhoodMetaEngine : public AdvancedMetaEngine {
 public:
 	NeverhoodMetaEngine() : AdvancedMetaEngine(Neverhood::gameDescriptions, sizeof(Neverhood::NeverhoodGameDescription), neverhoodGames) {
 		_singleid = "neverhood";
+		_guioptions = GUIO2(GUIO_NOSUBTITLES, GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {
@@ -120,7 +121,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
-		return "Neverhood Engine (C) Infogrames";
+		return "Neverhood (C) The Neverhood, Inc.";
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
@@ -257,3 +258,4 @@ SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, 
 #else
 	REGISTER_PLUGIN_STATIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngine);
 #endif
+
