@@ -137,7 +137,7 @@ bool NeverhoodMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
-//		(f == kSupportsDeleteSave) ||
+		(f == kSupportsDeleteSave) ||
 	   	(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
 		(f == kSavesSupportCreationDate) ||
