@@ -489,7 +489,7 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 	f.read(filename5, 15);
 	f.read(filename6, 15);
 
-	if (header[0] != 'A' || header[1] != 'N' || header[2] != 'I' || header[3] != 'S')
+	if (READ_BE_UINT32(header) != MKTAG('A', 'N', 'I', 'S'))
 		error("Invalid animation File: %s", filename.c_str());
 
 	const char *files[6] = { &filename1[0], &filename2[0], &filename3[0], &filename4[0],
@@ -622,14 +622,14 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 	v21 = 0;
 	bool loopCond = false;
 	do {
-		if (data[v21] == 'A' && data[v21 + 1] == 'N' && data[v21 + 2] == 'I' && data[v21 + 3] == 'M') {
+		if (READ_BE_UINT32(&data[v21]) == MKTAG('A', 'N', 'I', 'M')) {
 			int entryIndex = data[v21 + 4];
 			if (animIndex == entryIndex) {
 				v6 = v21 + 5;
 				v7 = 0;
 				bool innerLoopCond = false;
 				do {
-					if ((data[v6] == 'A' && data[v6 + 1] == 'N' && data[v6 + 2] == 'I' && data[v6 + 3] == 'M') ||
+					if (READ_BE_UINT32(&data[v6]) == MKTAG('A', 'N', 'I', 'M') ||
 					    (data[v6] == 'F' && data[v6 + 1] == 'I' && data[v6 + 2] == 'N'))
 						innerLoopCond = true;
 					if (count < v6) {

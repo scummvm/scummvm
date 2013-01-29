@@ -633,7 +633,7 @@ void TalkManager::startCharacterAnim0(int startIdx, bool readOnlyFl) {
 	int animIdx = 0;
 	size_t curIdx = startIdx;
 	for (;;) {
-		if (_characterBuffer[curIdx] == 'A' && _characterBuffer[curIdx + 1] == 'N' && _characterBuffer[curIdx + 2] == 'I' && _characterBuffer[curIdx + 3] == 'M' && _characterBuffer[curIdx + 4] == 1) {
+		if (READ_BE_UINT32(&_characterBuffer[curIdx]) == MKTAG('A', 'N', 'I', 'M') && _characterBuffer[curIdx + 4] == 1) {
 			animIdx = curIdx;
 			break;
 		}
