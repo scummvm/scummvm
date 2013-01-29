@@ -2351,7 +2351,6 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		int idx = (int16)READ_LE_UINT16(dataP + 5);
 		assert(idx >= 0 && idx < 2050);
 		_vm->_globals._saveData->_data[idx] = dataP[7];
-		_vm->_globals._saveData->_data[idx + 1] = dataP[8];
 	} else if (dataP[2] == 'A' && dataP[3] == 'D' && dataP[4] == 'D') {
 		opcodeType = 1;
 		_vm->_globals._saveData->_data[(int16)READ_LE_UINT16(dataP + 5)] += dataP[7];
