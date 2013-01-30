@@ -93,6 +93,7 @@ TimeValue TimeBase::getTime(const TimeScale scale) {
 
 void TimeBase::setRate(const Common::Rational rate) {
 	_rate = rate;
+	_lastMillis = 0;
 
 	if (_rate == 0)
 		_paused = false;
