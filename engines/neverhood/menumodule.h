@@ -98,21 +98,11 @@ protected:
 };
 
 class Widget;
-
-class WidgetScene : public Scene {
-public:
-	WidgetScene(NeverhoodEngine *vm, Module *parentModule);
-	NPoint getMousePos();
-	virtual void setCurrWidget(Widget *newWidget);
-	virtual Widget *getCurrWidget() { return _currWidget; }
-	virtual void handleEvent(int16 itemID, int eventType);
-protected:
-	Widget *_currWidget;
-};
+class GameStateMenu;
 
 class Widget : public StaticSprite {
 public:
-	Widget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+	Widget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 		int baseObjectPriority, int baseSurfacePriority);
 	virtual void onClick();
 	virtual void setPosition(int16 x, int16 y);
@@ -123,8 +113,7 @@ public:
 	virtual void enterWidget();
 	virtual void exitWidget();
 protected:
-	int16 _itemID;
-	WidgetScene *_parentScene;
+	GameStateMenu *_parentScene;
 	int _baseObjectPriority;
 	int _baseSurfacePriority;
 	void update();
@@ -133,7 +122,7 @@ protected:
 
 class TextLabelWidget : public Widget {
 public:
-	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+	TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 		int baseObjectPriority, int baseSurfacePriority, 
 		const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface);	
 	virtual void initialize();
@@ -153,7 +142,7 @@ protected:
 
 class TextEditWidget : public Widget {
 public:
-	TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+	TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 		int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect);
 	~TextEditWidget();
 	virtual void onClick();
@@ -169,6 +158,7 @@ public:
 	void handleKeyDown(Common::KeyCode keyCode);
 	void refresh();
 	void setReadOnly(bool value) { _readOnly = value; }
+	bool isReadOnly() const { return _readOnly; }
 	bool isModified() const { return _modified; }
 protected:
 	NRect _rect;
@@ -191,7 +181,7 @@ protected:
 
 class SavegameListBox : public Widget {
 public:
-	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+	SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 		SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect);
 	virtual void onClick();
 	virtual void initialize();
@@ -215,51 +205,51 @@ protected:
 	uint _currIndex;
 	int _maxVisibleItemsCount;
 };
+      
+class GameStateMenu : public Scene {
+public:
+	GameStateMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList,
+		const uint32 *buttonFileHashes, const NRect *buttonCollisionBounds,
+		uint32 backgroundFileHash, uint32 fontFileHash,
+		uint32 mouseFileHash, const NRect *mouseRect,  
+		uint32 listBoxBackgroundFileHash, int16 listBoxX, int16 listBoxY, const NRect &listBoxRect,
+		uint32 textEditBackgroundFileHash, uint32 textEditCursorFileHash, int16 textEditX, int16 textEditY, const NRect &textEditRect,
+		uint32 textFileHash1, uint32 textFileHash2);
+	virtual ~GameStateMenu();
+	NPoint getMousePos();
+	virtual void setCurrWidget(Widget *newWidget);
+	virtual Widget *getCurrWidget() { return _currWidget; }
+	virtual void refreshDescriptionEdit();
+protected:
+	Widget *_currWidget;
+	SavegameList *_savegameList;
+	FontSurface *_fontSurface;
+	SavegameListBox *_listBox;
+	TextEditWidget *_textEditWidget;
+	Common::String _savegameDescription;
+	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	virtual void performAction();
+};
 
-class SaveGameMenu : public WidgetScene {
+class SaveGameMenu : public GameStateMenu {
 public:
 	SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
-	~SaveGameMenu();
-	virtual void handleEvent(int16 itemID, int eventType);
 protected:
-	SavegameList *_savegameList;
-	FontSurface *_fontSurface;
-	SavegameListBox *_listBox;
-	TextEditWidget *_textEditWidget;
-	Common::String _savegameDescription;
-	void update();
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void performSaveGame();
+	virtual void performAction();
 };
 
-class LoadGameMenu : public WidgetScene {
+class LoadGameMenu : public GameStateMenu {
 public:
 	LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
-	~LoadGameMenu();
-	virtual void handleEvent(int16 itemID, int eventType);
 protected:
-	SavegameList *_savegameList;
-	FontSurface *_fontSurface;
-	SavegameListBox *_listBox;
-	TextEditWidget *_textEditWidget;
-	Common::String _savegameDescription;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void performLoadGame();
+	virtual void performAction();
 };
 
-class DeleteGameMenu : public WidgetScene {
+class DeleteGameMenu : public GameStateMenu {
 public:
 	DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList);
-	~DeleteGameMenu();
-	virtual void handleEvent(int16 itemID, int eventType);
 protected:
-	SavegameList *_savegameList;
-	FontSurface *_fontSurface;
-	SavegameListBox *_listBox;
-	TextEditWidget *_textEditWidget;
-	Common::String _savegameDescription;
-	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
-	void performDeleteGame();
+	virtual void performAction();
 };
 
 class QueryOverwriteMenu : public Scene {

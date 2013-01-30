@@ -243,9 +243,9 @@ void MenuModule::handleSaveGameMenuAction(bool doSave, bool doQuery) {
 }
 
 void MenuModule::handleDeleteGameMenuAction(bool doDelete) {
+	createScene(MAIN_MENU, -1);
 	if (doDelete && _savegameSlot >= 0) {
 		_vm->removeGameState(_savegameSlot);
-		createScene(MAIN_MENU, -1);
 	}
 	delete _savegameList;
 	_savegameList = NULL;
@@ -453,33 +453,9 @@ uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, En
 	return 0;
 }
 
-WidgetScene::WidgetScene(NeverhoodEngine *vm, Module *parentModule)
-	: Scene(vm, parentModule), _currWidget(NULL) {
-}
-
-NPoint WidgetScene::getMousePos() {
-	NPoint pt;
-	pt.x = _mouseCursor->getX();
-	pt.y = _mouseCursor->getY();
-	return pt;
-}
-
-void WidgetScene::setCurrWidget(Widget *newWidget) {
-	if (newWidget && newWidget != _currWidget) {
-		if (_currWidget)
-			_currWidget->exitWidget();
-		newWidget->enterWidget();
-		_currWidget = newWidget;
-	}
-}
-
-void WidgetScene::handleEvent(int16 itemID, int eventType) {
-	// Empty
-}
-
-Widget::Widget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+Widget::Widget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 	int baseObjectPriority, int baseSurfacePriority)
-	: StaticSprite(vm, baseObjectPriority), _itemID(itemID), _parentScene(parentScene),
+	: StaticSprite(vm, baseObjectPriority), _parentScene(parentScene),
 	_baseObjectPriority(baseObjectPriority), _baseSurfacePriority(baseSurfacePriority) {
 
 	SetUpdateHandler(&Widget::update);
@@ -542,10 +518,10 @@ uint32 Widget::handleMessage(int messageNum, const MessageParam &param, Entity *
 	return messageResult;
 }
 
-TextLabelWidget::TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+TextLabelWidget::TextLabelWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 	int baseObjectPriority, int baseSurfacePriority,
 	const byte *string, int stringLen, BaseSurface *drawSurface, int16 tx, int16 ty, FontSurface *fontSurface)
-	: Widget(vm, x, y, itemID, parentScene,	baseObjectPriority, baseSurfacePriority),
+	: Widget(vm, x, y, parentScene,	baseObjectPriority, baseSurfacePriority),
 	_string(string), _stringLen(stringLen), _drawSurface(drawSurface), _tx(tx), _ty(ty), _fontSurface(fontSurface) {
 	
 }
@@ -579,9 +555,9 @@ void TextLabelWidget::setString(const byte *string, int stringLen) {
 	_stringLen = stringLen;
 }
 
-TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+TextEditWidget::TextEditWidget(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 	int maxStringLength, FontSurface *fontSurface, uint32 fileHash, const NRect &rect)
-	: Widget(vm, x, y, itemID, parentScene,	1000, 1000),
+	: Widget(vm, x, y, parentScene,	1000, 1000),
 	_maxStringLength(maxStringLength), _fontSurface(fontSurface), _fileHash(fileHash), _rect(rect),
 	_cursorSurface(NULL), _cursorTicks(0), _cursorPos(0), _cursorFileHash(0), _cursorWidth(0), _cursorHeight(0),
 	_modified(false), _readOnly(false) {
@@ -627,7 +603,7 @@ void TextEditWidget::initialize() {
 	_parentScene->addCollisionSprite(this);
 	_surface->setVisible(true);
 	_textLabelWidget = new TextLabelWidget(_vm, _rect.x1, _rect.y1 + (_rect.y2 - _rect.y1 + 1 - _fontSurface->getCharHeight()) / 2,
-		0, _parentScene, _baseObjectPriority + 1, _baseSurfacePriority + 1,
+		_parentScene, _baseObjectPriority + 1, _baseSurfacePriority + 1,
 		(const byte*)_entryString.c_str(), _entryString.size(), _surface, _x, _y, _fontSurface);
 	_textLabelWidget->initialize();
 	cursorSpriteResource.load(_cursorFileHash, true);
@@ -758,9 +734,9 @@ uint32 TextEditWidget::handleMessage(int messageNum, const MessageParam &param, 
 	return messageResult;
 }
 
-SavegameListBox::SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, int16 itemID, WidgetScene *parentScene,
+SavegameListBox::SavegameListBox(NeverhoodEngine *vm, int16 x, int16 y, GameStateMenu *parentScene,
 	SavegameList *savegameList, FontSurface *fontSurface, uint32 bgFileHash, const NRect &rect)
-	: Widget(vm, x, y, itemID, parentScene,	1000, 1000),
+	: Widget(vm, x, y, parentScene,	1000, 1000),
 	_savegameList(savegameList), _fontSurface(fontSurface), _bgFileHash(bgFileHash), _rect(rect),
 	_maxStringLength(0), _firstVisibleItem(0), _lastVisibleItem(0), _currIndex(0) {
 
@@ -779,7 +755,7 @@ void SavegameListBox::onClick() {
 			_currIndex = newIndex;
 			refresh();
 			_parentScene->setCurrWidget(this);
-			_parentScene->handleEvent(_itemID, 5);
+			_parentScene->refreshDescriptionEdit();
 		}
 	}
 }
@@ -803,7 +779,7 @@ void SavegameListBox::buildItems() {
 	for (uint i = 0; i < savegameList.size(); ++i) {
 		const byte *string = (const byte*)savegameList[i].description.c_str();
 		int stringLen = (int)savegameList[i].description.size();
-		TextLabelWidget *label = new TextLabelWidget(_vm, itemX, itemY, i, _parentScene, _baseObjectPriority + 1,
+		TextLabelWidget *label = new TextLabelWidget(_vm, itemX, itemY, _parentScene, _baseObjectPriority + 1,
 			_baseSurfacePriority + 1, string, MIN(stringLen, _maxStringLength), _surface, _x, _y, _fontSurface);
 		label->initialize();
 		_textLabelItems.push_back(label);
@@ -861,84 +837,92 @@ void SavegameListBox::pageDown() {
 	}
 }
 
-SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
-	: WidgetScene(vm, parentModule), _savegameList(savegameList) {
-
-	static const uint32 kSaveGameMenuButtonFileHashes[] = {
-		0x8359A824,
-		0x0690E260,
-		0x0352B050,
-		0x1392A223,
-		0x13802260,
-		0x0B32B200
-	};
+GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList,
+	const uint32 *buttonFileHashes, const NRect *buttonCollisionBounds,
+	uint32 backgroundFileHash, uint32 fontFileHash,
+	uint32 mouseFileHash, const NRect *mouseRect,  
+	uint32 listBoxBackgroundFileHash, int16 listBoxX, int16 listBoxY, const NRect &listBoxRect,
+	uint32 textEditBackgroundFileHash, uint32 textEditCursorFileHash, int16 textEditX, int16 textEditY, const NRect &textEditRect,
+	uint32 textFileHash1, uint32 textFileHash2) 
+	: Scene(vm, parentModule), _currWidget(NULL), _savegameList(savegameList) {
 	
-	static const NRect kSaveGameMenuButtonCollisionBounds[] = {
-		NRect(518, 106, 602, 160),
-		NRect(516, 378, 596, 434),
-		NRect(394, 108, 458, 206),
-		NRect(400, 204, 458, 276),
-		NRect(398, 292, 456, 352),
-		NRect(396, 352, 460, 444)
-	};
-
-	static const NRect kListBoxRect(0, 0, 320, 272);
-	static const NRect kTextEditRect(0, 0, 377, 17);
-	static const NRect kMouseRect(50, 47, 427, 64);
-
-	_fontSurface = new FontSurface(_vm, 0x2328121A, 32, 7, 32, 11, 17);
+	_fontSurface = new FontSurface(_vm, fontFileHash, 32, 7, 32, 11, 17);
 	
-	setBackground(0x30084E25);
-	setPalette(0x30084E25);
-	insertScreenMouse(0x84E21308, &kMouseRect);
-	insertStaticSprite(0x1340A5C2, 200);
-	insertStaticSprite(0x1301A7EA, 200);
+	setBackground(backgroundFileHash);
+	setPalette(backgroundFileHash);
+	insertScreenMouse(mouseFileHash, mouseRect);
+	insertStaticSprite(textFileHash1, 200);
+	insertStaticSprite(textFileHash2, 200);
 
-	_listBox = new SavegameListBox(_vm, 60, 142, 69/*ItemID*/, this,
-		_savegameList, _fontSurface, 0x1115A223, kListBoxRect);
+	_listBox = new SavegameListBox(_vm, listBoxX, listBoxY, this,
+		_savegameList, _fontSurface, listBoxBackgroundFileHash, listBoxRect);
 	_listBox->initialize();
 
-	_textEditWidget = new TextEditWidget(_vm, 50, 47, 70/*ItemID*/, this, 29,
-		_fontSurface, 0x3510A868, kTextEditRect);
-	_textEditWidget->setCursor(0x8290AC20, 2, 13);
+	_textEditWidget = new TextEditWidget(_vm, textEditX, textEditY, this, 29,
+		_fontSurface, textEditBackgroundFileHash, textEditRect);
+	if (textEditCursorFileHash != 0)
+		_textEditWidget->setCursor(textEditCursorFileHash, 2, 13);
+	else
+		_textEditWidget->setReadOnly(true);
 	_textEditWidget->initialize();
 	setCurrWidget(_textEditWidget);
 	
 	for (uint buttonIndex = 0; buttonIndex < 6; ++buttonIndex) {
 		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
-			kSaveGameMenuButtonFileHashes[buttonIndex], kSaveGameMenuButtonCollisionBounds[buttonIndex]);
+			buttonFileHashes[buttonIndex], buttonCollisionBounds[buttonIndex]);
 		addCollisionSprite(menuButton);
 	}
 
 	SetUpdateHandler(&Scene::update);
-	SetMessageHandler(&SaveGameMenu::handleMessage);
+	SetMessageHandler(&GameStateMenu::handleMessage);
+	
 }
 
-SaveGameMenu::~SaveGameMenu() {
+GameStateMenu::~GameStateMenu() {
 	delete _fontSurface;
 }
 
-void SaveGameMenu::handleEvent(int16 itemID, int eventType) {
-	if (itemID == 69 && eventType == 5) {
-		uint currIndex = _listBox->getCurrIndex();
-		_textEditWidget->setString((*_savegameList)[currIndex].description);
-		setCurrWidget(_textEditWidget);
+NPoint GameStateMenu::getMousePos() {
+	NPoint pt;
+	pt.x = _mouseCursor->getX();
+	pt.y = _mouseCursor->getY();
+	return pt;
+}
+
+void GameStateMenu::setCurrWidget(Widget *newWidget) {
+	if (newWidget && newWidget != _currWidget) {
+		if (_currWidget)
+			_currWidget->exitWidget();
+		newWidget->enterWidget();
+		_currWidget = newWidget;
 	}
 }
 
-uint32 SaveGameMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
+void GameStateMenu::refreshDescriptionEdit() {
+	uint currIndex = _listBox->getCurrIndex();
+	_textEditWidget->setString((*_savegameList)[currIndex].description);
+	setCurrWidget(_textEditWidget);
+}
+
+void GameStateMenu::performAction() {
+	// Empty
+}
+
+uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
 	switch (messageNum) {
 	case 0x000A:
-		sendMessage(_textEditWidget, 0x000A, param.asInteger());
-		setCurrWidget(_textEditWidget);
+		if (!_textEditWidget->isReadOnly()) {
+			sendMessage(_textEditWidget, 0x000A, param.asInteger());
+			setCurrWidget(_textEditWidget);
+		}
 		break;
 	case 0x000B:
 		if (param.asInteger() == Common::KEYCODE_RETURN)
-			performSaveGame();
+			performAction();
 		else if (param.asInteger() == Common::KEYCODE_ESCAPE)
 			leaveScene(1);
-		else {
+		else if (!_textEditWidget->isReadOnly()) {
 			sendMessage(_textEditWidget, 0x000B, param.asInteger());
 			setCurrWidget(_textEditWidget);
 		}
@@ -947,7 +931,7 @@ uint32 SaveGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 		// Handle menu button click
 		switch (param.asInteger()) {
 		case 0:
-			performSaveGame();
+			performAction();
 			break;
 		case 1:
 			leaveScene(1);
@@ -970,219 +954,101 @@ uint32 SaveGameMenu::handleMessage(int messageNum, const MessageParam &param, En
 	return 0;
 }
 
-void SaveGameMenu::performSaveGame() {
+static const uint32 kSaveGameMenuButtonFileHashes[] = {
+	0x8359A824, 0x0690E260, 0x0352B050,
+	0x1392A223, 0x13802260, 0x0B32B200
+};
+
+static const NRect kSaveGameMenuButtonCollisionBounds[] = {
+	NRect(518, 106, 602, 160),
+	NRect(516, 378, 596, 434),
+	NRect(394, 108, 458, 206),
+	NRect(400, 204, 458, 276),
+	NRect(398, 292, 456, 352),
+	NRect(396, 352, 460, 444)
+};
+
+static const NRect kSaveGameMenuListBoxRect(0, 0, 320, 272);
+static const NRect kSaveGameMenuTextEditRect(0, 0, 377, 17);
+static const NRect kSaveGameMenuMouseRect(50, 47, 427, 64);
+
+SaveGameMenu::SaveGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
+	:  GameStateMenu(vm, parentModule, savegameList, kSaveGameMenuButtonFileHashes, kSaveGameMenuButtonCollisionBounds,
+		0x30084E25, 0x2328121A,
+		0x84E21308, &kSaveGameMenuMouseRect,
+		0x1115A223, 60, 142, kSaveGameMenuListBoxRect,
+		0x3510A868, 0x8290AC20, 50, 47, kSaveGameMenuTextEditRect,
+		0x1340A5C2, 0x1301A7EA) {
+
+}
+
+void SaveGameMenu::performAction() {
 	((MenuModule*)_parentModule)->setSavegameInfo(_textEditWidget->getString(),
 		_listBox->getCurrIndex(), _textEditWidget->isModified());
 	leaveScene(0);
 }
 
+static const uint32 kLoadGameMenuButtonFileHashes[] = {
+	0x100B2091, 0x84822B03, 0x20E22087,
+	0x04040107, 0x04820122, 0x24423047
+};
+
+static const NRect kLoadGameMenuButtonCollisionBounds[] = {
+	NRect( 44, 115, 108, 147),
+	NRect( 52, 396, 112, 426),
+	NRect(188, 116, 245, 196),
+	NRect(189, 209, 239, 269),
+	NRect(187, 301, 233, 349),
+	NRect(182, 358, 241, 433)
+};
+
+static const NRect kLoadGameMenuListBoxRect(0, 0, 320, 271);
+static const NRect kLoadGameMenuTextEditRect(0, 0, 320, 17);
+static const NRect kLoadGameMenuMouseRect(263, 48, 583, 65);
+
 LoadGameMenu::LoadGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
-	: WidgetScene(vm, parentModule), _savegameList(savegameList) {
+	: GameStateMenu(vm, parentModule, savegameList, kLoadGameMenuButtonFileHashes, kLoadGameMenuButtonCollisionBounds,
+		0x98620234, 0x201C2474,
+		0x2023098E, &kLoadGameMenuMouseRect,
+		0x04040409, 263, 142, kLoadGameMenuListBoxRect,
+		0x10924C03, 0, 263, 48, kLoadGameMenuTextEditRect,
+		0x0BC600A3, 0x0F960021) {
 
-	static const uint32 kLoadGameMenuButtonFileHashes[] = {
-		0x100B2091,
-		0x84822B03,
-		0x20E22087,
-		0x04040107,
-		0x04820122,
-		0x24423047
-	};
-	
-	static const NRect kLoadGameMenuButtonCollisionBounds[] = {
-		NRect( 44, 115, 108, 147),
-		NRect( 52, 396, 112, 426),
-		NRect(188, 116, 245, 196),
-		NRect(189, 209, 239, 269),
-		NRect(187, 301, 233, 349),
-		NRect(182, 358, 241, 433)
-	};
-
-	static const NRect kListBoxRect(0, 0, 320, 271);
-	static const NRect kTextEditRect(0, 0, 320, 17);
-	static const NRect kMouseRect(263, 48, 583, 65);
-
-	_fontSurface = new FontSurface(_vm, calcHash("bgLoadTinyAlphabet"), 32, 7, 32, 11, 17);
-	
-	setBackground(0x98620234);
-	setPalette(0x98620234);
-	insertScreenMouse(0x2023098E, &kMouseRect);
-	insertStaticSprite(0x0BC600A3, 200);
-	insertStaticSprite(0x0F960021, 200);
-
-	_listBox = new SavegameListBox(_vm, 263, 142, 69/*ItemID*/, this,
-		_savegameList, _fontSurface, 0x04040409, kListBoxRect);
-	_listBox->initialize();
-
-	_textEditWidget = new TextEditWidget(_vm, 263, 48, 70/*ItemID*/, this, 29,
-		_fontSurface, 0x10924C03, kTextEditRect);
-	_textEditWidget->setReadOnly(true);
-	_textEditWidget->initialize();
-	setCurrWidget(_textEditWidget);
-	
-	for (uint buttonIndex = 0; buttonIndex < 6; ++buttonIndex) {
-		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
-			kLoadGameMenuButtonFileHashes[buttonIndex], kLoadGameMenuButtonCollisionBounds[buttonIndex]);
-		addCollisionSprite(menuButton);
-	}
-
-	SetUpdateHandler(&Scene::update);
-	SetMessageHandler(&LoadGameMenu::handleMessage);
 }
 
-LoadGameMenu::~LoadGameMenu() {
-	delete _fontSurface;
-}
-
-void LoadGameMenu::handleEvent(int16 itemID, int eventType) {
-	if (itemID == 69 && eventType == 5) {
-		uint currIndex = _listBox->getCurrIndex();
-		_textEditWidget->setString((*_savegameList)[currIndex].description);
-		setCurrWidget(_textEditWidget);
-	}
-}
-
-uint32 LoadGameMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	Scene::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x000B:
-		if (param.asInteger() == Common::KEYCODE_RETURN)
-			performLoadGame();
-		else if (param.asInteger() == Common::KEYCODE_ESCAPE)
-			leaveScene(1);
-		break;
-	case 0x2000:
-		// Handle menu button click
-		switch (param.asInteger()) {
-		case 0:
-			performLoadGame();
-			break;
-		case 1:
-			leaveScene(1);
-			break;
-		case 2:
-			_listBox->pageUp();
-			break;
-		case 3:
-			_listBox->scrollUp();
-			break;
-		case 4:
-			_listBox->scrollDown();
-			break;
-		case 5:
-			_listBox->pageDown();
-			break;
-		}
-		break;
-	}
-	return 0;
-}
-
-void LoadGameMenu::performLoadGame() {
+void LoadGameMenu::performAction() {
 	((MenuModule*)_parentModule)->setLoadgameInfo(_listBox->getCurrIndex());
 	leaveScene(0);
 }
 
+static const uint32 kDeleteGameMenuButtonFileHashes[] = {
+	0x8198E268, 0xDD0C4620, 0x81296520,
+	0x8D284211, 0x8C004621, 0x07294020
+};
+
+static const NRect kDeleteGameMenuButtonCollisionBounds[] = {
+	NRect(518,  46, 595,  91),
+	NRect(524, 322, 599, 369),
+	NRect(395,  40, 462, 127),
+	NRect(405, 126, 460, 185),
+	NRect(397, 205, 456, 273),
+	NRect(395, 278, 452, 372)
+};
+
+static const NRect kDeleteGameMenuListBoxRect(0, 0, 320, 271);
+static const NRect kDeleteGameMenuTextEditRect(0, 0, 320, 17);
+
 DeleteGameMenu::DeleteGameMenu(NeverhoodEngine *vm, Module *parentModule, SavegameList *savegameList)
-	: WidgetScene(vm, parentModule), _savegameList(savegameList) {
+	: GameStateMenu(vm, parentModule, savegameList, kDeleteGameMenuButtonFileHashes, kDeleteGameMenuButtonCollisionBounds,
+		0x4080E01C, 0x728523ED,
+		0x0E018400, NULL,  
+		0xA5584211, 61, 64, kDeleteGameMenuListBoxRect,
+		0x250A3060, 0, 49, 414, kDeleteGameMenuTextEditRect,
+		0x80083C01, 0x84181E81) {
 
-	static const uint32 kDeleteGameMenuButtonFileHashes[] = {
-		0x8198E268,
-		0xDD0C4620,
-		0x81296520,
-		0x8D284211,
-		0x8C004621,
-		0x07294020
-	};
-	
-	static const NRect kDeleteGameMenuButtonCollisionBounds[] = {
-		NRect(518,  46, 595,  91),
-		NRect(524, 322, 599, 369),
-		NRect(395,  40, 462, 127),
-		NRect(405, 126, 460, 185),
-		NRect(397, 205, 456, 273),
-		NRect(395, 278, 452, 372)
-	};
-
-	static const NRect kListBoxRect(0, 0, 320, 271);
-	static const NRect kTextEditRect(0, 0, 320, 17);
-
-	_fontSurface = new FontSurface(_vm, calcHash("bgDeleteTinyAlphabet"), 32, 7, 32, 11, 17);
-	
-	setBackground(0x4080E01C);
-	setPalette(0x4080E01C);
-	insertScreenMouse(0x0E018400);
-	insertStaticSprite(0x80083C01, 200);
-	insertStaticSprite(0x84181E81, 200);
-
-	_listBox = new SavegameListBox(_vm, 61, 64, 69/*ItemID*/, this,
-		_savegameList, _fontSurface, calcHash("mxDeleteListBox"), kListBoxRect);
-	_listBox->initialize();
-
-	_textEditWidget = new TextEditWidget(_vm, 49, 414, 70/*ItemID*/, this, 29,
-		_fontSurface, 0x250A3060, kTextEditRect);
-	_textEditWidget->setReadOnly(true);
-	_textEditWidget->initialize();
-	setCurrWidget(_textEditWidget);
-	
-	for (uint buttonIndex = 0; buttonIndex < 6; ++buttonIndex) {
-		Sprite *menuButton = insertSprite<MenuButton>(this, buttonIndex,
-			kDeleteGameMenuButtonFileHashes[buttonIndex], kDeleteGameMenuButtonCollisionBounds[buttonIndex]);
-		addCollisionSprite(menuButton);
-	}
-
-	SetUpdateHandler(&Scene::update);
-	SetMessageHandler(&DeleteGameMenu::handleMessage);
 }
 
-DeleteGameMenu::~DeleteGameMenu() {
-	delete _fontSurface;
-}
-
-void DeleteGameMenu::handleEvent(int16 itemID, int eventType) {
-	if (itemID == 69 && eventType == 5) {
-		uint currIndex = _listBox->getCurrIndex();
-		_textEditWidget->setString((*_savegameList)[currIndex].description);
-		setCurrWidget(_textEditWidget);
-	}
-}
-
-uint32 DeleteGameMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
-	Scene::handleMessage(messageNum, param, sender);
-	switch (messageNum) {
-	case 0x000B:
-		if (param.asInteger() == Common::KEYCODE_RETURN)
-			performDeleteGame();
-		else if (param.asInteger() == Common::KEYCODE_ESCAPE)
-			leaveScene(1);
-		break;
-	case 0x2000:
-		// Handle menu button click
-		switch (param.asInteger()) {
-		case 0:
-			performDeleteGame();
-			break;
-		case 1:
-			leaveScene(1);
-			break;
-		case 2:
-			_listBox->pageUp();
-			break;
-		case 3:
-			_listBox->scrollUp();
-			break;
-		case 4:
-			_listBox->scrollDown();
-			break;
-		case 5:
-			_listBox->pageDown();
-			break;
-		}
-		break;
-	}
-	return 0;
-}
-
-void DeleteGameMenu::performDeleteGame() {
+void DeleteGameMenu::performAction() {
 	((MenuModule*)_parentModule)->setDeletegameInfo(_listBox->getCurrIndex());
 	leaveScene(0);
 }
@@ -1213,7 +1079,7 @@ QueryOverwriteMenu::QueryOverwriteMenu(NeverhoodEngine *vm, Module *parentModule
 
 	// Draw the query text to the background, each text line is centered
 	// NOTE The original had this text in its own class
-	FontSurface *fontSurface = new FontSurface(_vm, calcHash("bgQueryTinyAlphabet"), 32, 7, 32, 11, 17);
+	FontSurface *fontSurface = new FontSurface(_vm, 0x94188D4D, 32, 7, 32, 11, 17);
 	Common::StringArray textLines;
 	textLines.push_back(description);
 	textLines.push_back("Game exists.");
