@@ -75,6 +75,12 @@ enum {
 
 #define MAX_LINES 400
 
+/**
+ * A wrapper macro used around three character constants, like 'END', to
+ * ensure portability. Typical usage: MKTAG24('E','N','D').
+ */
+#define MKTAG24(a0,a1,a2) ((uint32)((a2) | (a1) << 8 | ((a0) << 16)))
+
 struct HopkinsGameDescription;
 
 class HopkinsEngine : public Engine {

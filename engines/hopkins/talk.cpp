@@ -436,7 +436,7 @@ void TalkManager::searchCharacterPalette(int startIdx, bool dark) {
 	int palettePos = 0;
 	size_t curIdx = startIdx;
 	for (;;) {
-		if (_characterBuffer[curIdx] == 'P' && _characterBuffer[curIdx + 1] == 'A' && _characterBuffer[curIdx + 2] == 'L') {
+		if (READ_BE_UINT24(&_characterBuffer[curIdx]) == MKTAG24('P', 'A', 'L')) {
 			palettePos = curIdx;
 			break;
 		}
@@ -719,8 +719,7 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 			int animLength = 0;
 			bool loopCond = false;
 			do {
-				if (READ_BE_UINT32(curPtr) == MKTAG('A', 'N', 'I', 'M') ||
-				    (curPtr[0] == 'F' && curPtr[1] == 'I' && curPtr[2] == 'N'))
+				if (READ_BE_UINT32(curPtr) == MKTAG('A', 'N', 'I', 'M') || READ_BE_UINT24(curPtr) == MKTAG24('F', 'I', 'N'))
 					loopCond = true;
 				if (bufIndx > bufferSize) {
 					_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
@@ -758,7 +757,7 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 			}
 			result = true;
 		}
-		if (bufPerso[bufPos] == 'F' && bufPerso[bufPos + 1] == 'I' && bufPerso[bufPos + 2] == 'N')
+		if (READ_BE_UINT24(&bufPerso[bufPos]) == MKTAG24('F', 'I', 'N'))
 			result = true;
 
 		if (result)
@@ -789,9 +788,9 @@ LABEL_2:
 
 	byte *curAnswerBuf = _vm->_globals._answerBuffer;
 	for (;;) {
-		if (curAnswerBuf[0] == 'F' && curAnswerBuf[1] == 'I' && curAnswerBuf[2] == 'N')
+		if (READ_BE_UINT24(curAnswerBuf) == MKTAG24('F', 'I', 'N'))
 			return;
-		if (curAnswerBuf[0] == 'C' && curAnswerBuf[1] == 'O' && curAnswerBuf[2] == 'D') {
+		if (READ_BE_UINT24(curAnswerBuf) == MKTAG24('C', 'O', 'D')) {
 			if (curAnswerBuf[3] == zoneObj && curAnswerBuf[4] == verbObj)
 				tagFound = true;
 		}
@@ -811,7 +810,7 @@ LABEL_2:
 	loopCond = false;
 	do {
 		v16 = false;
-		if (curAnswerBuf[v7] == 'F' && curAnswerBuf[v7 + 1] == 'C') {
+		if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'C')) {
 			++v12;
 			assert(v12 < (620 / 20));
 
@@ -820,7 +819,7 @@ LABEL_2:
 			do {
 				assert(v11 < 20);
 				v8[v11++] = curAnswerBuf[v7++];
-				if (curAnswerBuf[v7] == 'F' && curAnswerBuf[v7 + 1] == 'F') {
+				if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'F')) {
 					v16 = true;
 					v8[v11] = 'F';
 					v8[v11 + 1] = 'F';
@@ -829,8 +828,8 @@ LABEL_2:
 			} while (!v16);
 		}
 		if (!v16) {
-			if ((curAnswerBuf[v7] == 'C' && curAnswerBuf[v7 + 1] == 'O' && curAnswerBuf[v7 + 2] == 'D') || 
-				(curAnswerBuf[v7] == 'F' && curAnswerBuf[v7 + 1] == 'I' && curAnswerBuf[v7 + 2] == 'N'))
+			uint32 signature24 = READ_BE_UINT24(&curAnswerBuf[v7]);
+			if (signature24 == MKTAG24('C', 'O', 'D') || signature24 == MKTAG24('F', 'I', 'N'))
 				loopCond = true;
 		}
 		curAnswerBuf += v7 + 1;

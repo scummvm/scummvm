@@ -43,12 +43,15 @@ void ScriptManager::setParent(HopkinsEngine *vm) {
 }
 
 int ScriptManager::handleOpcode(byte *dataP) {
-	if (dataP[0] != 'F' || dataP[1] != 'C')
+	if (READ_BE_UINT16(dataP) != MKTAG16('F', 'C'))
 		return 0;
 
 	int opcodeType = 0;
 	int vbobFrameIndex = 0;
-	if (dataP[2] == 'T' && dataP[3] == 'X' && dataP[4] == 'T') {
+
+	uint32 signature24 = READ_BE_UINT24(&dataP[2]);
+	switch (signature24) {
+	case MKTAG24('T', 'X', 'T'): {
 		vbobFrameIndex = dataP[6];
 		int mesgId = (int16)READ_LE_UINT16(dataP + 13);
 		opcodeType = 1;
@@ -161,7 +164,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_soundManager.mixVoice(mesgId, 5);
 			}
 		}
-	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'B') {
+		break;
+		}
+	case MKTAG24('B', 'O', 'B'):
 		if (!_vm->_objectsManager._disableFl) {
 			int vbobIdx = dataP[5];
 			vbobFrameIndex = dataP[6];
@@ -190,7 +195,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				warning("Former AFFICHE_SPEED1: %d %d %d", vbobPosX, vbobPosY, vbobFrameIndex);
 		}
 		opcodeType = 1;
-	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'P') {
+		break;
+	case MKTAG24('S', 'T', 'P'):
 			if (!_vm->_objectsManager._disableFl) {
 				_vm->_objectsManager._twoCharactersFl = false;
 				_vm->_objectsManager._characterPos.x = (int16)READ_LE_UINT16(dataP + 6);
@@ -249,7 +255,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 			opcodeType = 1;
 			_vm->_objectsManager._changeHeadFl = false;
-	} else if (dataP[2] == 'S' && dataP[3] == 'T' && dataP[4] == 'E') {
+		break;
+	case MKTAG24('S', 'T', 'E'):
 		if (!_vm->_objectsManager._disableFl) {
 			_vm->_globals._prevScreenId = _vm->_globals._screenId;
 			_vm->_globals._saveData->_data[svField6] = _vm->_globals._screenId;
@@ -257,11 +264,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			vbobFrameIndex = dataP[6];
 		}
 		opcodeType = 1;
-	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'F') {
+		break;
+	case MKTAG24('B', 'O', 'F'):
 		if (!_vm->_objectsManager._disableFl)
 			_vm->_objectsManager.VBOB_OFF((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
-	} else if (dataP[2] == 'P' && dataP[3] == 'E' && dataP[4] == 'R') {
+		break;
+	case MKTAG24('P', 'E', 'R'): {
 		int specialOpcode = (int16)READ_LE_UINT16(dataP + 5);
 		if (!_vm->_globals._saveData->_data[svField122] && !_vm->_globals._saveData->_data[svField356]) {
 			vbobFrameIndex = 0;
@@ -440,49 +449,64 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 		}
 		opcodeType = 1;
-	} else if (dataP[2] == 'M' && dataP[3] == 'U' && dataP[4] == 'S') {
+		break;
+		}
+	case MKTAG24('M', 'U', 'S'):
 		opcodeType = 1;
-	} else if (dataP[2] == 'W' && dataP[3] == 'A' && dataP[4] == 'I') {
-		uint v74 = READ_LE_UINT16(dataP + 5) / _vm->_globals._speed;
-		if (!v74)
-			v74 = 1;
-		for (uint v10 = 0; v10 < v74 + 1; v10++) {
+		break;
+	case MKTAG24('W', 'A', 'I'): {
+		uint frameNumb = READ_LE_UINT16(dataP + 5) / _vm->_globals._speed;
+		if (!frameNumb)
+			frameNumb = 1;
+		for (uint i = 0; i < frameNumb + 1; i++) {
 			if (_vm->shouldQuit())
 				return -1; // Exiting game
 
 			_vm->_eventsManager.VBL();
 		}
 		opcodeType = 1;
-	} else if (dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'P') {
+		break;
+		}
+	case MKTAG24('O', 'B', 'P'):
 		opcodeType = 1;
 		_vm->_objectsManager.addObject((int16)READ_LE_UINT16(dataP + 5));
-	} else if (dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'M') {
+		break;
+	case MKTAG24('O', 'B', 'M'):
 		opcodeType = 1;
 		_vm->_objectsManager.removeObject((int16)READ_LE_UINT16(dataP + 5));
-	} else if (dataP[2] == 'G' && dataP[3] == 'O' && dataP[4] == 'T') {
+		break;
+	case MKTAG24('G', 'O', 'T'):
 		opcodeType = 2;
-	} else if (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'N') {
+		break;
+	case MKTAG24('Z', 'O', 'N'):
 		_vm->_objectsManager.enableZone((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
-	} else if (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'F') {
+		break;
+	case MKTAG24('Z', 'O', 'F'):
 		_vm->_objectsManager.disableZone((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
-	} else if (dataP[2] == 'E' && dataP[3] == 'X' && dataP[4] == 'I') {
+		break;
+	case MKTAG24('E', 'X', 'I'):
 		opcodeType = 5;
-	} else if (dataP[2] == 'S' && dataP[3] == 'O' && dataP[4] == 'R') {
+		break;
+	case MKTAG24('S', 'O', 'R'):
 		_vm->_globals._exitId = (int16)READ_LE_UINT16(dataP + 5);
 		opcodeType = 5;
-	} else if (dataP[2] == 'B' && dataP[3] == 'C' && dataP[4] == 'A') {
+		break;
+	case MKTAG24('B', 'C', 'A'):
 		_vm->_globals.CACHE_OFF((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
-	} else if (dataP[2] == 'A' && dataP[3] == 'N' && dataP[4] == 'I') {
-		int v75 = (int16)READ_LE_UINT16(dataP + 5);
-		if (v75 <= 100)
-			_vm->_objectsManager.setBobAnimation(v75);
+		break;
+	case MKTAG24('A', 'N', 'I'): {
+		int animId = (int16)READ_LE_UINT16(dataP + 5);
+		if (animId <= 100)
+			_vm->_objectsManager.setBobAnimation(animId);
 		else
-			_vm->_objectsManager.stopBobAnimation(v75 - 100);
+			_vm->_objectsManager.stopBobAnimation(animId - 100);
 		opcodeType = 1;
-	} else if (dataP[2] == 'S' && dataP[3] == 'P' && dataP[4] == 'E') {
+		break;
+		}
+	case MKTAG24('S', 'P', 'E'):
 		switch ((int16)READ_LE_UINT16(dataP + 5)) {
 		case 6:
 			_vm->_objectsManager.removeSprite(0);
@@ -2344,40 +2368,56 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 		}
 		opcodeType = 1;
-	} else if (dataP[2] == 'E' && dataP[3] == 'I' && dataP[4] == 'F') {
+		break;
+	case MKTAG24('E', 'I', 'F'):
 		opcodeType = 4;
-	} else if (dataP[2] == 'V' && dataP[3] == 'A' && dataP[4] == 'L') {
+		break;
+	case MKTAG24('V', 'A', 'L'): {
 		opcodeType = 1;
 		int idx = (int16)READ_LE_UINT16(dataP + 5);
 		assert(idx >= 0 && idx < 2050);
 		_vm->_globals._saveData->_data[idx] = dataP[7];
-	} else if (dataP[2] == 'A' && dataP[3] == 'D' && dataP[4] == 'D') {
+		break;
+		}
+	case MKTAG24('A', 'D', 'D'):
 		opcodeType = 1;
 		_vm->_globals._saveData->_data[(int16)READ_LE_UINT16(dataP + 5)] += dataP[7];
-	} else if (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'S') {
+		break;
+	case MKTAG24('B', 'O', 'S'):
 		opcodeType = 1;
 		_vm->_objectsManager.BOB_OFFSET((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
-	} else if (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'N') {
+		break;
+	case MKTAG24('V', 'O', 'N'):
 		_vm->_objectsManager.enableVerb((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
 		opcodeType = 1;
-	} else if (dataP[2] == 'Z' && dataP[3] == 'C' && dataP[4] == 'H') {
+		break;
+	case MKTAG24('Z', 'C', 'H'):
 		_vm->_globals.ZONEP[(int16)READ_LE_UINT16(dataP + 5)].field12 = (int16)READ_LE_UINT16(dataP + 7);
 		opcodeType = 1;
-	} else if (dataP[2] == 'J' && dataP[3] == 'U' && dataP[4] == 'M') {
+		break;
+	case MKTAG24('J', 'U', 'M'):
 		_vm->_objectsManager._jumpZone = (int16)READ_LE_UINT16(dataP + 5);
 		_vm->_objectsManager._jumpVerb = (int16)READ_LE_UINT16(dataP + 7);
 		opcodeType = 6;
-	} else if (dataP[2] == 'S' && dataP[3] == 'O' && dataP[4] == 'U') {
+		break;
+	case MKTAG24('S', 'O', 'U'): {
 		int soundNum = (int16)READ_LE_UINT16(dataP + 5);
 
 		Common::String file = Common::String::format("SOUND%d.WAV", soundNum);
 		_vm->_soundManager.playSound(file);
 		opcodeType = 1;
-	} else if (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'F') {
+		break;
+		}
+	case MKTAG24('V', 'O', 'F'):
 		_vm->_objectsManager.disableVerb((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
 		opcodeType = 1;
-	} else if (dataP[2] == 'I' && dataP[3] == 'I' && dataP[4] == 'F') {
+		break;
+	case MKTAG24('I', 'I', 'F'):
 		opcodeType = 3;
+		break;
+	default:
+		warning("Unhandled opcode %c%c%c", dataP[2], dataP[3], dataP[4]);
+		break;
 	}
 
 	return opcodeType;
@@ -2466,48 +2506,51 @@ LABEL_2:
 }
 
 int ScriptManager::checkOpcode(const byte *dataP) {
-	if (dataP[0] != 'F' || dataP[1] != 'C') {
-		return 0;
-	} 
-
 	int result = 0;
+	if (READ_BE_UINT16(dataP) != MKTAG16('F', 'C'))
+		return result;
 
-	if ((dataP[2] == 'A' && dataP[3] == 'N' && dataP[4] == 'I') ||
-	    (dataP[2] == 'B' && dataP[3] == 'C' && dataP[4] == 'A') ||
-	    (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'B') ||
-	    (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'F') ||
-	    (dataP[2] == 'B' && dataP[3] == 'O' && dataP[4] == 'S') ||
-	    (dataP[2] == 'M' && dataP[3] == 'U' && dataP[4] == 'S') ||
-	    (dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'M') ||
-	    (dataP[2] == 'O' && dataP[3] == 'B' && dataP[4] == 'P') ||
-	    (dataP[2] == 'P' && dataP[3] == 'E' && dataP[4] == 'R') ||
-	    (dataP[2] == 'S' && dataP[3] == 'O' && dataP[4] == 'U') ||
-	    (dataP[2] == 'S' && dataP[3] == 'P' && dataP[4] == 'E') ||
-	    (dataP[2] == 'T' && dataP[3] == 'X' && dataP[4] == 'T') ||
-	    (dataP[2] == 'V' && dataP[3] == 'A' && dataP[4] == 'L') ||
-	    (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'F') ||
-	    (dataP[2] == 'V' && dataP[3] == 'O' && dataP[4] == 'N') ||
-	    (dataP[2] == 'Z' && dataP[3] == 'C' && dataP[4] == 'H') ||
-	    (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'F') ||
-	    (dataP[2] == 'Z' && dataP[3] == 'O' && dataP[4] == 'N'))
+	uint32 signature24 = READ_BE_UINT24(&dataP[2]);
+	switch (signature24) {
+	case MKTAG24('A', 'N', 'I'):
+	case MKTAG24('B', 'C', 'A'):
+	case MKTAG24('B', 'O', 'B'):
+	case MKTAG24('B', 'O', 'F'):
+	case MKTAG24('B', 'O', 'S'):
+	case MKTAG24('M', 'U', 'S'):
+	case MKTAG24('O', 'B', 'M'):
+	case MKTAG24('O', 'B', 'P'):
+	case MKTAG24('P', 'E', 'R'):
+	case MKTAG24('S', 'O', 'U'):
+	case MKTAG24('S', 'P', 'E'):
+	case MKTAG24('T', 'X', 'T'):
+	case MKTAG24('V', 'A', 'L'):
+	case MKTAG24('V', 'O', 'F'):
+	case MKTAG24('V', 'O', 'N'):
+	case MKTAG24('Z', 'C', 'H'):
+	case MKTAG24('Z', 'O', 'F'):
+	case MKTAG24('Z', 'O', 'N'):
 		result = 1;
-
-	if (dataP[2] == 'G' && dataP[3] == 'O' && dataP[4] == 'T')
+		break;
+	case MKTAG24('G', 'O', 'T'):
 		result = 2;
-
-	if (dataP[2] == 'I' && dataP[3] == 'I' && dataP[4] == 'F')
+		break;
+	case MKTAG24('I', 'I', 'F'):
 		result = 3;
-
-	if (dataP[2] == 'E' && dataP[3] == 'I' && dataP[4] == 'F')
+		break;
+	case MKTAG24('E', 'I', 'F'):
 		result = 4;
-
-	if ((dataP[2] == 'E' && dataP[3] == 'X' && dataP[4] == 'I') ||
-	    (dataP[2] == 'S' && dataP[3] == 'O' && dataP[4] == 'R'))
+		break;
+	case MKTAG24('E', 'X', 'I'):
+	case MKTAG24('S', 'O', 'R'):
 		result = 5;
-
-	if (dataP[2] == 'J' && dataP[3] == 'U' && dataP[4] == 'M')
+		break;
+	case MKTAG24('J', 'U', 'M'):
 		result = 6;
-
+		break;
+//	default:
+//		warning("Unhandled opcode %c%c%c", dataP[2], dataP[3], dataP[4]);
+	}
 	return result;
 }
 

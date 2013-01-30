@@ -1198,7 +1198,7 @@ void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, 
 	_sprite[idx].field14 = a9;
 	_sprite[idx]._animationType = 0;
 
-	if (spriteData[0] == 'R' && spriteData[1] == 'L' && spriteData[2] == 'E') {
+	if (READ_BE_UINT24(spriteData) == MKTAG24('R', 'L', 'E')) {
 		_sprite[idx]._rleFl = true;
 		_sprite[idx]._zoomFactor = 0;
 		_sprite[idx]._flipFl = false;
@@ -2615,7 +2615,7 @@ void ObjectsManager::OPTI_OBJET() {
 			error("INI file %s not found", file.c_str());
 	}
 
-	if (data[0] != 'I' || data[1] != 'N' || data[2] != 'I')
+	if (READ_BE_UINT24(data) != MKTAG24('I', 'N', 'I'))
 		error("File %s is not an INI file", file.c_str());
 
 	for (;;) {
@@ -3139,7 +3139,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 
 	_vm->_linesManager.resetLines();
 	for (size_t idx = 0; idx < nbytes; idx++) {
-		if (ptr[idx] == 'O' && ptr[idx + 1] == 'B' && ptr[idx + 2] == '2') {
+		if (READ_BE_UINT24(&ptr[idx]) == MKTAG24('O', 'B', '2')) {
 			v16 = ptr + idx + 4;
 			v32 = 0;
 			v34 = 0;
@@ -3165,7 +3165,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 
 	if (!OBSSEUL) {
 		for (size_t idx = 0; idx < nbytes; idx++) {
-			if (ptr[idx] == 'Z' && ptr[idx + 1] == 'O' && ptr[idx + 2] == '2') {
+			if (READ_BE_UINT24(&ptr[idx]) == MKTAG24('Z', 'O', '2')) {
 				v17 = &ptr[idx + 4];
 				v33 = 0;
 				for (int i = 1; i <= 100; i++) {

@@ -1768,7 +1768,7 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode, bool initia
 			}
 		}
 	}
-	if (ptr[0] != 'I' || ptr[1] != 'N' || ptr[2] != 'I') {
+	if (READ_BE_UINT24(ptr) != MKTAG24('I', 'N', 'I')) {
 		error("Error, file not ini");
 	} else {
 		bool doneFlag = false;

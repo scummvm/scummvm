@@ -629,8 +629,7 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 				v7 = 0;
 				bool innerLoopCond = false;
 				do {
-					if (READ_BE_UINT32(&data[v6]) == MKTAG('A', 'N', 'I', 'M') ||
-					    (data[v6] == 'F' && data[v6 + 1] == 'I' && data[v6 + 2] == 'N'))
+					if (READ_BE_UINT32(&data[v6]) == MKTAG('A', 'N', 'I', 'M') || READ_BE_UINT24(&data[v6]) == MKTAG24('F', 'I', 'N'))
 						innerLoopCond = true;
 					if (count < v6) {
 						_vm->_globals.Bqe_Anim[animIndex]._enabledFl = false;
@@ -678,7 +677,7 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 				loopCond = true;
 			}
 		}
-		if (data[v21] == 'F' && data[v21 + 1] == 'I' && data[v21 + 2] == 'N')
+		if (READ_BE_UINT24(&data[v21]) == MKTAG24('F', 'I', 'N'))
 			loopCond = true;
 		++v21;
 	} while (v21 <= count && !loopCond);
