@@ -13,13 +13,13 @@ TODOs which can be done any time:
 
 TODOs which should be done only after the game logic is finished:
 -------------------------------------------------------------------
-- Implement game menus
 - Maybe rework organization of files (e.g. put ALL Sprites into one separate file, same with Modules and Scenes)
 	- This would solve the problem of how to organize stuff which is used several times, and less headers would have to be included
 	- The move special scenes (SmackerScene) into the scenes file
 
 DONE:
 -------
+- Implement game menus
 - Rework sound system (I don't like that SoundResources need to be explicitly initialized in Scene constructors)
 	- Should be just a handle object which initializes itself
 	- Play routine should fill the handle so it can be stopped/queried later
