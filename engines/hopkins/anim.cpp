@@ -634,18 +634,11 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) 
 				int curSrcDataIndx = dataIdx + 25;
 
 				for (int i = 0; i <= 4999; i++) {
-					int v22 = READ_LE_UINT16(data + curSrcDataIndx + 4);
-					WRITE_LE_UINT16(dataP + curDestDataIndx, READ_LE_UINT16(data + curSrcDataIndx));
-					WRITE_LE_UINT16(dataP + curDestDataIndx + 2, READ_LE_UINT16(data + curSrcDataIndx + 2));
-					WRITE_LE_UINT16(dataP + curDestDataIndx + 4, v22);
-					WRITE_LE_UINT16(dataP + curDestDataIndx + 6, READ_LE_UINT16(data + curSrcDataIndx + 6));
-					dataP[curDestDataIndx + 8] = data[curSrcDataIndx + 8];
-					dataP[curDestDataIndx + 9] = data[curSrcDataIndx + 9];
-
+					memcpy(dataP + curDestDataIndx, data + curSrcDataIndx, 10);
+					if (!READ_LE_UINT16(data + curSrcDataIndx + 4))
+						break;
 					curDestDataIndx += 10;
 					curSrcDataIndx += 10;
-					if (!v22)
-						break;
 				}
 				break;
 			}

@@ -591,14 +591,14 @@ void ComputerManager::loadHiscore() {
 
 	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
 		for (int i = 0; i < 5; ++i) {
-			nextChar = ptr[i + (16 * scoreIndex)];
+			nextChar = ptr[(16 * scoreIndex) + i];
 			if (!nextChar)
 				nextChar = ' ';
 			_score[scoreIndex]._name += nextChar;
 		}
 
 		for (int i = 0; i < 9; ++i) {
-			nextChar = ptr[i + scoreIndex * 16 + 6];
+			nextChar = ptr[(scoreIndex * 16) + 6 + i];
 			if (!nextChar)
 				nextChar = '0';
 			_score[scoreIndex]._score += nextChar;
@@ -941,61 +941,49 @@ void ComputerManager::displayScoreChar(int charPos, int charDisp) {
  * Save Hiscore in file
  */
 void ComputerManager::saveScore() {
-	int v1;
-	int v2;
-	int v4;
-	int v6;
-	int v9;
-	int v14;
-	int v16[6];
-	int v17[6];
+	int scorePlace[6];
+	int scores[6];
 
-	for (int v0 = 0; v0 <= 5; v0++) {
-		v1 = atol(_score[v0]._score.c_str());
-		v17[v0] = v1;
-		if (!v1)
-			v17[v0] = 5;
+	// Load high scores in an array
+	for (int i = 0; i <= 5; i++) {
+		scores[i] = atol(_score[i]._score.c_str());
+		if (!scores[i])
+			scores[i] = 5;
 	}
 
-	for (int v13 = 0; v13 <= 5; v13++) {
-		v2 = 0;
-		bool v3 = false;
-		do {
-			v4 = v17[v2];
-			if (v4 && v17[0] <= v4 && v17[1] <= v4 && v17[2] <= v4 && v17[3] <= v4
-					&& v17[4] <= v4 && v17[5] <= v4)
-				v3 = true;
-			if (v3) {
-				v16[v13] = v2;
-				v17[v2] = 0;
-			} else {
-				++v2;
+	// order high scores
+	for (int scorePlaceIdx = 0; scorePlaceIdx <= 5; scorePlaceIdx++) {
+		for(int i = 0;;i++) {
+			int curScore = scores[i];
+			if (curScore && scores[0] <= curScore && scores[1] <= curScore && scores[2] <= curScore && scores[3] <= curScore
+				&& scores[4] <= curScore && scores[5] <= curScore) {
+				scorePlace[scorePlaceIdx] = i;
+				scores[i] = 0;
+				break;
 			}
-		} while (!v3);
+		}
 	}
 
 	byte *ptr = _vm->_globals.allocMemory(100);
 	memset(ptr, 0, 99);
-	for (int v5 = 0; v5 <= 5; v5++) {
-		v6 = 16 * v5;
-		v14 = v16[v5];
+	for (int scorePlaceIdx = 0; scorePlaceIdx <= 5; scorePlaceIdx++) {
+		int curBufPtr = 16 * scorePlaceIdx;
 		for (int namePos = 0; namePos <= 4; namePos++) {
-			char curChar = _score[v14]._name[namePos];
+			char curChar = _score[scorePlace[scorePlaceIdx]]._name[namePos];
 			if (!curChar)
 				curChar = ' ';
-			ptr[v6 + namePos] = curChar;
+			ptr[curBufPtr + namePos] = curChar;
 		};
 
-		ptr[v6 + 5] = 0;
-		v9 = v6 + 6;
+		ptr[curBufPtr + 5] = 0;
 
 		for (int scorePos = 0; scorePos <= 8; scorePos++) {
-			char curChar = _score[v14]._score[scorePos];
+			char curChar = _score[scorePlace[scorePlaceIdx]]._score[scorePos];
 			if (!curChar)
 				curChar = '0';
-			ptr[v9 + scorePos] = curChar;
+			ptr[curBufPtr + 6 + scorePos] = curChar;
 		};
-		ptr[v9 + 9] = 0;
+		ptr[curBufPtr + 15] = 0;
 	}
 
 	_vm->_saveLoadManager.saveFile("HISCORE.DAT", ptr, 100);
@@ -1078,24 +1066,22 @@ int ComputerManager::moveBall() {
 	}
 	if (_ballPosition.y >= 186 && _ballPosition.y <= 194) {
 		_vm->_soundManager.playSample(2, 6);
-		if (_ballPosition.x > _padPositionX - 2) {
-			int v2 = _ballPosition.x + 6;
-			if (v2 < _padPositionX + 36) {
-				_ballUpFl = false;
-				if (v2 <= _padPositionX + 15) {
-					_ballRightFl = false;
-					if (_ballPosition.x >= _padPositionX && v2 <= _padPositionX + 5)
-						_ballPosition.x -= 4;
-					if (_ballPosition.x >= _padPositionX + 5 && _ballPosition.x + 6 <= _padPositionX + 10)
-						_ballPosition.x -= 2;
-				}
-				if (_ballPosition.x >= _padPositionX + 19 && _ballPosition.x + 6 <= _padPositionX + 36) {
-					_ballRightFl = true;
-					if (_ballPosition.x >= _padPositionX + 29)
-						_ballPosition.x += 4;
-					if (_ballPosition.x >= _padPositionX + 24 && _ballPosition.x + 6 <= _padPositionX + 29)
-						_ballPosition.x += 2;
-				}
+		int ballPosXRight = _ballPosition.x + 6;
+		if ((_ballPosition.x > _padPositionX - 2) && (ballPosXRight < _padPositionX + 36)) {
+			_ballUpFl = false;
+			if (ballPosXRight <= _padPositionX + 15) {
+				_ballRightFl = false;
+				if (_ballPosition.x >= _padPositionX && ballPosXRight <= _padPositionX + 5)
+					_ballPosition.x -= 4;
+				if (_ballPosition.x >= _padPositionX + 5 && _ballPosition.x + 6 <= _padPositionX + 10)
+					_ballPosition.x -= 2;
+			}
+			if (_ballPosition.x >= _padPositionX + 19 && _ballPosition.x + 6 <= _padPositionX + 36) {
+				_ballRightFl = true;
+				if (_ballPosition.x >= _padPositionX + 29)
+					_ballPosition.x += 4;
+				if (_ballPosition.x >= _padPositionX + 24 && _ballPosition.x + 6 <= _padPositionX + 29)
+					_ballPosition.x += 2;
 			}
 		}
 	}
@@ -1114,11 +1100,6 @@ int ComputerManager::moveBall() {
  */
 void ComputerManager::checkBallCollisions() {
 	int cellLeft;
-	int cellRight;
-	int cellType;
-	bool collisionFl;
-	int cellBottom;
-	int cellUp;
 
 	bool brickDestroyedFl = false;
 	// TODO: Check if correct
@@ -1131,12 +1112,12 @@ void ComputerManager::checkBallCollisions() {
 	uint16 levelIdx = 0;
 	do {
 		cellLeft = level[levelIdx];
-		cellUp = level[levelIdx + 1];
-		cellRight = level[levelIdx + 2];
-		cellBottom = level[levelIdx + 3];
-		cellType = level[levelIdx + 4];
+		int cellUp = level[levelIdx + 1];
+		int cellRight = level[levelIdx + 2];
+		int cellBottom = level[levelIdx + 3];
+		int cellType = level[levelIdx + 4];
 		if (level[levelIdx + 5] == 1 && cellLeft != -1) {
-			collisionFl = false;
+			bool collisionFl = false;
 			if (ballTop <= cellBottom && ballBottom >= cellBottom) {
 				if (ballLeft >= cellLeft && ballRight <= cellRight) {
 					collisionFl = true;
