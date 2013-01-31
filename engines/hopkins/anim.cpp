@@ -606,59 +606,46 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 /**
  * Search Animation
  */
-void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
-	int v6;
-	int v7;
-	int curDestDataIndx;
-	int curSrcDataIndx;
-	int v22;
-
-	for (int dataIdx = 0; dataIdx <= count; dataIdx++) {
+void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) {
+	for (int dataIdx = 0; dataIdx <= bufSize; dataIdx++) {
 		if (READ_BE_UINT32(&data[dataIdx]) == MKTAG('A', 'N', 'I', 'M')) {
 			int entryIndex = data[dataIdx + 4];
 			if (animIndex == entryIndex) {
-				v6 = dataIdx + 5;
-				v7 = 0;
+				int curBufferPos = dataIdx + 5;
+				int count = 0;
 				bool innerLoopCond = false;
 				do {
-					if (READ_BE_UINT32(&data[v6]) == MKTAG('A', 'N', 'I', 'M') || READ_BE_UINT24(&data[v6]) == MKTAG24('F', 'I', 'N'))
+					if (READ_BE_UINT32(&data[curBufferPos]) == MKTAG('A', 'N', 'I', 'M') || READ_BE_UINT24(&data[curBufferPos]) == MKTAG24('F', 'I', 'N'))
 						innerLoopCond = true;
-					if (count < v6) {
+					if (bufSize < curBufferPos) {
 						_vm->_globals.Bqe_Anim[animIndex]._enabledFl = false;
 						_vm->_globals.Bqe_Anim[animIndex]._data = g_PTRNUL;
 						return;
 					}
-					++v6;
-					++v7;
+					++curBufferPos;
+					++count;
 				} while (!innerLoopCond);
-				_vm->_globals.Bqe_Anim[animIndex]._data = _vm->_globals.allocMemory(v7 + 50);
+				_vm->_globals.Bqe_Anim[animIndex]._data = _vm->_globals.allocMemory(count + 50);
 				_vm->_globals.Bqe_Anim[animIndex]._enabledFl = true;
-				memcpy(_vm->_globals.Bqe_Anim[animIndex]._data, dataIdx + data + 5, 20);
+				memcpy(_vm->_globals.Bqe_Anim[animIndex]._data, data + dataIdx + 5, 20);
 
 				byte *dataP = _vm->_globals.Bqe_Anim[animIndex]._data;
-				curDestDataIndx = 20;
-				curSrcDataIndx = dataIdx + 25;
-				v22 = READ_LE_UINT16(data + dataIdx + 29);
-				WRITE_LE_UINT16(dataP + curDestDataIndx, READ_LE_UINT16(data + dataIdx + 25));
-				WRITE_LE_UINT16(dataP + curDestDataIndx + 2, READ_LE_UINT16(data + dataIdx + 27));
-				WRITE_LE_UINT16(dataP + curDestDataIndx + 4, v22);
-				WRITE_LE_UINT16(dataP + curDestDataIndx + 6, READ_LE_UINT16(data + dataIdx + 31));
-				dataP[curDestDataIndx + 8] = data[dataIdx + 33];
-				dataP[curDestDataIndx + 9] = data[dataIdx + 34];
+				int curDestDataIndx = 20;
+				int curSrcDataIndx = dataIdx + 25;
 
-				for (int i = 1; i <= 4999; i++) {
-					curDestDataIndx += 10;
-					curSrcDataIndx += 10;
-					if (!v22)
-						break;
-
-					v22 = READ_LE_UINT16(data + curSrcDataIndx + 4);
+				for (int i = 0; i <= 4999; i++) {
+					int v22 = READ_LE_UINT16(data + curSrcDataIndx + 4);
 					WRITE_LE_UINT16(dataP + curDestDataIndx, READ_LE_UINT16(data + curSrcDataIndx));
 					WRITE_LE_UINT16(dataP + curDestDataIndx + 2, READ_LE_UINT16(data + curSrcDataIndx + 2));
 					WRITE_LE_UINT16(dataP + curDestDataIndx + 4, v22);
 					WRITE_LE_UINT16(dataP + curDestDataIndx + 6, READ_LE_UINT16(data + curSrcDataIndx + 6));
 					dataP[curDestDataIndx + 8] = data[curSrcDataIndx + 8];
 					dataP[curDestDataIndx + 9] = data[curSrcDataIndx + 9];
+
+					curDestDataIndx += 10;
+					curSrcDataIndx += 10;
+					if (!v22)
+						break;
 				}
 				break;
 			}
