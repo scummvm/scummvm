@@ -54,9 +54,6 @@ void DialogsManager::setParent(HopkinsEngine *vm) {
 }
 
 void DialogsManager::showOptionsDialog() {
-	bool doneFlag;
-
-	doneFlag = false;
 	_vm->_eventsManager.changeMouseCursor(0);
 	_vm->_eventsManager.VBL();
 	Common::String filename;
@@ -74,6 +71,7 @@ void DialogsManager::showOptionsDialog() {
 	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(filename);
 	_vm->_globals._optionDialogFl = true;
 
+	bool doneFlag = false;
 	do {
 		if (_vm->_eventsManager.getMouseButton()) {
 			Common::Point mousePos(_vm->_eventsManager.getMouseX(), _vm->_eventsManager.getMouseY());
@@ -350,23 +348,23 @@ LABEL_7:
 	_inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
 
 	_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX + 300, 414, 0, 0, 0, false);
-	int v15 = 0;
+	int curPosY = 0;
 	int inventCount = 0;
 	for (int inventLine = 1; inventLine <= 5; inventLine++) {
-		int v16 = 0;
+		int curPosX = 0;
 		for (int inventCol = 1; inventCol <= 6; inventCol++) {
 			++inventCount;
 			int inventIdx = _vm->_globals._inventory[inventCount];
 			// The last two zones are not reserved for the inventory: Options and Save/Load
 			if (inventIdx && inventCount <= 29) {
-				byte *v7 = _vm->_objectsManager.CAPTURE_OBJET(inventIdx, false);
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, v7, _inventX + v16 + 6,
-					v15 + 120, _vm->_globals._objectWidth, _vm->_globals._objectHeight);
-				_vm->_globals.freeMemory(v7);
+				byte *obj = _vm->_objectsManager.CAPTURE_OBJET(inventIdx, false);
+				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, obj, _inventX + curPosX + 6,
+					curPosY + 120, _vm->_globals._objectWidth, _vm->_globals._objectHeight);
+				_vm->_globals.freeMemory(obj);
 			}
-			v16 += 54;
+			curPosX += 54;
 		};
-		v15 += 38;
+		curPosY += 38;
 	}
 	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 	_vm->_eventsManager._curMouseButton = 0;
@@ -547,10 +545,10 @@ void DialogsManager::testDialogOpening() {
  * Load Game dialog
  */
 void DialogsManager::showLoadGame() {
-	int slotNumber;
-
 	_vm->_eventsManager.VBL();
 	showSaveLoad(2);
+
+	int slotNumber;
 	do {
 		slotNumber = searchSavegames();
 		_vm->_eventsManager.VBL();
@@ -575,12 +573,10 @@ void DialogsManager::showLoadGame() {
  * Save Game dialog
  */
 void DialogsManager::showSaveGame() {
-	int slotNumber;
-	Common::String saveName;
-
 	_vm->_eventsManager.VBL();
 
 	showSaveLoad(1);
+	int slotNumber;
 	do {
 		slotNumber = searchSavegames();
 		_vm->_eventsManager.VBL();
@@ -597,7 +593,7 @@ void DialogsManager::showSaveGame() {
 
 	if (slotNumber != 7) {
 		// Since the original GUI doesn't support save names, use a default name
-		saveName = Common::String::format("Save #%d", slotNumber);
+		Common::String saveName = Common::String::format("Save #%d", slotNumber);
 
 		// Save the game
 		_vm->_saveLoadManager.saveGame(slotNumber, saveName);
@@ -608,9 +604,6 @@ void DialogsManager::showSaveGame() {
  * Load/Save dialog
  */
 void DialogsManager::showSaveLoad(int a1) {
-	int slotNumber;
-	hopkinsSavegameHeader header;
-	byte *thumb;
 	Common::String filename;
 
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
@@ -645,12 +638,13 @@ void DialogsManager::showSaveLoad(int a1) {
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 539, 372, 2);
 	}
 
-	for (slotNumber = 1; slotNumber <= 6; ++slotNumber) {
+	for (int slotNumber = 1; slotNumber <= 6; ++slotNumber) {
+		hopkinsSavegameHeader header;
 		if (_vm->_saveLoadManager.readSavegameHeader(slotNumber, header)) {
 			Graphics::Surface thumb8;
 			_vm->_saveLoadManager.convertThumb16To8(header._thumbnail, &thumb8);
 
-			thumb = (byte *)thumb8.pixels;
+			byte *thumb = (byte *)thumb8.pixels;
 
 			switch (slotNumber) {
 			case 1:
@@ -689,11 +683,12 @@ void DialogsManager::showSaveLoad(int a1) {
  * Search savegames
  */
 int DialogsManager::searchSavegames() {
-	int slotNumber = 0;
 	int xp = _vm->_eventsManager.getMouseX();
 	int yp = _vm->_eventsManager.getMouseY();
 
 	_vm->_graphicsManager._scrollOffset = _vm->_eventsManager._startPos.x;
+
+	int slotNumber = 0;
 	if (yp >= 112 && yp <= 198) {
 		if (xp > _vm->_eventsManager._startPos.x + 189 && xp < _vm->_eventsManager._startPos.x + 318) {
 			slotNumber = 1;
