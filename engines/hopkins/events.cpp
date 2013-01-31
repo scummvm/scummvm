@@ -319,7 +319,7 @@ void EventsManager::VBL() {
 	signed int v11 = 0;
 	signed int v12 = 0;
 	int v13 = 0;
-	unsigned int v14 = 0;
+	uint v14 = 0;
 	int v15 = 0;
 	int yp = 0;
 

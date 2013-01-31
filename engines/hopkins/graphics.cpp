@@ -485,7 +485,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 			if (Agr_Flag_y)
 				break;
 
-			if ((unsigned int)Agr_y < 100)
+			if (Agr_y >= 0 && Agr_y < 100)
 				break;
 
 			Agr_y -= 100;

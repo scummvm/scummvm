@@ -1807,28 +1807,17 @@ LABEL_150:
 		v13 = (int16)v101 / 1000;
 		v94 = (int16)v99 / 1000;
 		newDirection = -1;
-		if ((int16)v99 / 1000 == -1 && (unsigned int)v101 <= 150)
+		if (v94 == -1 && (v101 >= 0 && v101 <= 150))
 			newDirection = 1;
-		if (v13 == 1) {
-			if ((unsigned int)(v99 + 1) <= 151)
-				newDirection = 3;
-			if ((unsigned int)v99 <= 150)
-				newDirection = 3;
-		}
-		if (v94 == 1) {
-			if ((unsigned int)v101 <= 150)
-				newDirection = 5;
-			if ((unsigned int)(v101 + 150) <= 150)
-				newDirection = 5;
-		}
-		if (v13 == -1) {
-			if ((unsigned int)v99 <= 150)
-				newDirection = 7;
-			if ((unsigned int)(v99 + 150) <= 150)
-				newDirection = 7;
-		}
-		if (v94 == -1 && (unsigned int)(v101 + 150) <= 150)
+		if (v13 == 1 && (v99 >= -1 && v99 <= 150))
+			newDirection = 3;
+		if (v94 == 1 && (v101 >= -150 && v101 <= 150))
+			newDirection = 5;
+		if (v13 == -1 && (v99 >= -150 && v99 <= 150))
+			newDirection = 7;
+		if (v94 == -1 && (v101 >= -150 && v101 <= 0))
 			newDirection = 1;
+
 		if (newDirection == -1 && !checkSmoothMove(curX, v109, destX, destY) && !makeSmoothMove(curX, v109, destX, destY))
 			break;
 LABEL_72:
@@ -1885,40 +1874,40 @@ LABEL_72:
 			}
 		}
 		if (v22 == 1) {
-			if ((unsigned int)(v100 + 1) <= 511)
+			if (v100 >= -1 && v100 <= 510)
 				newDirection = 2;
-			if ((unsigned int)(v100 + 510) <= 510)
+			if (v100 >= -510 && v100 <= 0)
 				newDirection = 3;
-			if ((unsigned int)v100 <= 510)
+			if (v100 >= 0 && v100 <= 510)
 				newDirection = 3;
-			if ((unsigned int)(v100 - 510) <= 490)
+			if (v100 >= 510 && v100 <= 1000)
 				newDirection = 4;
 		}
 		if (v96 == 1) {
-			if ((unsigned int)(v102 - 510) <= 490)
+			if (v102 >= 510 && v102 <= 1000)
 				newDirection = 4;
-			if ((unsigned int)v102 <= 510)
+			if (v102 >= 0 && v102 <= 510)
 				newDirection = 5;
 			// CHECKME: The two conditions on v102 are not compatible!
 			if (v102 >= -1 && v102 <= -510)
 				newDirection = 6;
-			if ((unsigned int)(v102 + 510) <= 510)
+			if (v102 >= -510 && v102 <= 0)
 				newDirection = 5;
 		}
 		if (v22 == -1) {
-			if ((unsigned int)(v100 - 510) <= 490)
+			if (v100 >= 510 && v100 <= 1000)
 				newDirection = 6;
-			if ((unsigned int)v100 <= 510)
+			if (v100 >= 0 && v100 <= 510)
 				newDirection = 7;
-			if ((unsigned int)(v100 + 1000) <= 490)
+			if (v100 >= -1000 && v100 <= -510)
 				newDirection = 8;
-			if ((unsigned int)(v100 + 510) <= 510)
+			if (v100 >= -510 && v100 <= 0)
 				newDirection = 7;
 		}
 		if (v96 == -1) {
-			if ((unsigned int)(v102 + 1000) <= 490)
+			if (v102 >= -1000 && v102 <= -510)
 				newDirection = 8;
-			if ((unsigned int)(v102 + 510) <= 510)
+			if (v102 >= -510 && v102 <= 0)
 				newDirection = 1;
 		}
 		v23 = 0;
