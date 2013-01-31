@@ -462,15 +462,6 @@ LABEL_114:
  * Load Animation
  */
 void AnimationManager::loadAnim(const Common::String &animName) {
-	char dummyBuf[15];
-	char header[10];
-	char filename1[15];
-	char filename2[15];
-	char filename3[15];
-	char filename4[15];
-	char filename5[15];
-	char filename6[15];
-
 	clearAnim();
 
 	Common::String filename = animName + ".ANI";
@@ -480,6 +471,16 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 
 	int filesize = f.size();
 	int nbytes = filesize - 115;
+
+	char header[10];
+	char dummyBuf[15];
+	char filename1[15];
+	char filename2[15];
+	char filename3[15];
+	char filename4[15];
+	char filename5[15];
+	char filename6[15];
+
 	f.read(header, 10);
 	f.read(dummyBuf, 15);
 	f.read(filename1, 15);
@@ -608,24 +609,15 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 	int v6;
 	int v7;
-	byte *v9;
-	int v10;
-	int v11;
-	int v12;
-	int v15;
-	int v16;
-	int v21;
+	int curDestDataIndx;
+	int curSrcDataIndx;
 	int v22;
-	const byte *v23;
-	int v;
 
-	v21 = 0;
-	bool loopCond = false;
-	do {
-		if (READ_BE_UINT32(&data[v21]) == MKTAG('A', 'N', 'I', 'M')) {
-			int entryIndex = data[v21 + 4];
+	for (int dataIdx = 0; dataIdx <= count; dataIdx++) {
+		if (READ_BE_UINT32(&data[dataIdx]) == MKTAG('A', 'N', 'I', 'M')) {
+			int entryIndex = data[dataIdx + 4];
 			if (animIndex == entryIndex) {
-				v6 = v21 + 5;
+				v6 = dataIdx + 5;
 				v7 = 0;
 				bool innerLoopCond = false;
 				do {
@@ -641,46 +633,39 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int count) {
 				} while (!innerLoopCond);
 				_vm->_globals.Bqe_Anim[animIndex]._data = _vm->_globals.allocMemory(v7 + 50);
 				_vm->_globals.Bqe_Anim[animIndex]._enabledFl = true;
-				memcpy(_vm->_globals.Bqe_Anim[animIndex]._data, v21 + data + 5, 20);
+				memcpy(_vm->_globals.Bqe_Anim[animIndex]._data, dataIdx + data + 5, 20);
 
 				byte *dataP = _vm->_globals.Bqe_Anim[animIndex]._data;
-				v9 = dataP + 20;
-				v23 = v21 + data + 25;
-				v10 = READ_LE_UINT16(v21 + data + 25);
-				v11 = READ_LE_UINT16(v21 + data + 27);
-				v22 = READ_LE_UINT16(v21 + data + 29);
-				v12 = READ_LE_UINT16(v21 + data + 31);
-				WRITE_LE_UINT16(dataP + 20, v10);
-				WRITE_LE_UINT16(dataP + 22, v11);
-				WRITE_LE_UINT16(dataP + 24, v22);
-				WRITE_LE_UINT16(dataP + 26, v12);
-				dataP[28] = data[v21 + 33];
-				dataP[29] = data[v21 + 34];
+				curDestDataIndx = 20;
+				curSrcDataIndx = dataIdx + 25;
+				v22 = READ_LE_UINT16(data + dataIdx + 29);
+				WRITE_LE_UINT16(dataP + curDestDataIndx, READ_LE_UINT16(data + dataIdx + 25));
+				WRITE_LE_UINT16(dataP + curDestDataIndx + 2, READ_LE_UINT16(data + dataIdx + 27));
+				WRITE_LE_UINT16(dataP + curDestDataIndx + 4, v22);
+				WRITE_LE_UINT16(dataP + curDestDataIndx + 6, READ_LE_UINT16(data + dataIdx + 31));
+				dataP[curDestDataIndx + 8] = data[dataIdx + 33];
+				dataP[curDestDataIndx + 9] = data[dataIdx + 34];
 
-				for (int v14 = 1; v14 <= 4999; v14++) {
-					v9 += 10;
-					v23 += 10;
+				for (int i = 1; i <= 4999; i++) {
+					curDestDataIndx += 10;
+					curSrcDataIndx += 10;
 					if (!v22)
 						break;
 
-					v = READ_LE_UINT16(v23);
-					v15 = READ_LE_UINT16(v23 + 2);
-					v22 = READ_LE_UINT16(v23 + 4);
-					v16 = READ_LE_UINT16(v23 + 6);
-					WRITE_LE_UINT16(v9, v);
-					WRITE_LE_UINT16(v9 + 2, v15);
-					WRITE_LE_UINT16(v9 + 4, v22);
-					WRITE_LE_UINT16(v9 + 6, v16);
-					v9[8] = v23[8];
-					v9[9] = v23[9];
+					v22 = READ_LE_UINT16(data + curSrcDataIndx + 4);
+					WRITE_LE_UINT16(dataP + curDestDataIndx, READ_LE_UINT16(data + curSrcDataIndx));
+					WRITE_LE_UINT16(dataP + curDestDataIndx + 2, READ_LE_UINT16(data + curSrcDataIndx + 2));
+					WRITE_LE_UINT16(dataP + curDestDataIndx + 4, v22);
+					WRITE_LE_UINT16(dataP + curDestDataIndx + 6, READ_LE_UINT16(data + curSrcDataIndx + 6));
+					dataP[curDestDataIndx + 8] = data[curSrcDataIndx + 8];
+					dataP[curDestDataIndx + 9] = data[curSrcDataIndx + 9];
 				}
-				loopCond = true;
+				break;
 			}
 		}
-		if (READ_BE_UINT24(&data[v21]) == MKTAG24('F', 'I', 'N'))
-			loopCond = true;
-		++v21;
-	} while (v21 <= count && !loopCond);
+		if (READ_BE_UINT24(&data[dataIdx]) == MKTAG24('F', 'I', 'N'))
+			break;
+	}
 }
 
 /**
