@@ -3207,6 +3207,7 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_lastTime));
 	persistMgr->transfer(TMEMBER(_mainObject));
 	_musicSystem->persistChannels(persistMgr);
+	_musicSystem->persistCrossfadeSettings(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_offsetX));
 	persistMgr->transfer(TMEMBER(_offsetY));
@@ -3237,8 +3238,6 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_liveTimer));
 	persistMgr->transfer(TMEMBER(_liveTimerDelta));
 	persistMgr->transfer(TMEMBER(_liveTimerLast));
-
-	_musicSystem->persistCrossfadeSettings(persistMgr);
 
 	_renderer->persistSaveLoadImages(persistMgr);
 

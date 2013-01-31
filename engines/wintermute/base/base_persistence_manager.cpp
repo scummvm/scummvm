@@ -47,17 +47,17 @@
 
 namespace Wintermute {
 
-#define SAVE_BUFFER_INIT_SIZE 100000
-#define SAVE_BUFFER_GROW_BY   50000
-
-#define SAVE_MAGIC      0x45564153
-#define SAVE_MAGIC_2    0x32564153
+// The original WME-Lite savegames had the following:
+//#define SAVE_MAGIC      0x45564153
+//#define SAVE_MAGIC_2    0x32564153
+// In case anyone tries to load original savegames, or for that matter
+// in case we ever want to attempt to support original savegames, we
+// avoid those numbers, and use this instead:
+#define SAVE_MAGIC_3    0x12564154
 
 //////////////////////////////////////////////////////////////////////////
 BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool deleteSingleton) {
 	_saving = false;
-//	_buffer = nullptr;
-//	_bufferSize = 0;
 	_offset = 0;
 	_saveStream = nullptr;
 	_loadStream = nullptr;
@@ -101,13 +101,6 @@ BasePersistenceManager::~BasePersistenceManager() {
 
 //////////////////////////////////////////////////////////////////////////
 void BasePersistenceManager::cleanup() {
-	/*  if (_buffer) {
-	        if (_saving) free(_buffer);
-	        else delete[] _buffer; // allocated by file manager
-	    }
-	    _buffer = nullptr;
-
-	    _bufferSize = 0;*/
 	_offset = 0;
 
 	delete[] _richBuffer;
@@ -147,7 +140,7 @@ void BasePersistenceManager::getSaveStateDesc(int slot, SaveStateDescriptor &des
 	Common::String filename = getFilenameForSlot(slot);
 	debugC(kWintermuteDebugSaveGame, "Trying to list savegame %s in slot %d", filename.c_str(), slot);
 	if (DID_FAIL(readHeader(filename))) {
-		warning("getSavedDesc(%d) - Failed for %s", slot, filename.c_str());
+		debugC(kWintermuteDebugSaveGame, "getSavedDesc(%d) - Failed for %s", slot, filename.c_str());
 		return;
 	}
 	desc.setSaveSlot(slot);
@@ -235,12 +228,11 @@ bool BasePersistenceManager::initSave(const char *desc) {
 		uint32 magic = DCGF_MAGIC;
 		putDWORD(magic);
 
-		magic = SAVE_MAGIC_2;
+		magic = SAVE_MAGIC_3;
 		putDWORD(magic);
 
 		byte verMajor, verMinor, extMajor, extMinor;
 		_gameRef->getVersion(&verMajor, &verMinor, &extMajor, &extMinor);
-		//uint32 version = MAKELONG(MAKEWORD(VerMajor, VerMinor), MAKEWORD(ExtMajor, ExtMinor));
 		_saveStream->writeByte(verMajor);
 		_saveStream->writeByte(verMinor);
 		_saveStream->writeByte(extMajor);
@@ -315,7 +307,7 @@ bool BasePersistenceManager::readHeader(const Common::String &filename) {
 	_saving = false;
 
 	_loadStream = g_system->getSavefileManager()->openForLoading(filename);
-	//_buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &_bufferSize);
+
 	if (_loadStream) {
 		uint32 magic;
 		magic = getDWORD();
@@ -327,37 +319,32 @@ bool BasePersistenceManager::readHeader(const Common::String &filename) {
 
 		magic = getDWORD();
 
-		if (magic == SAVE_MAGIC || magic == SAVE_MAGIC_2) {
+		if (magic == SAVE_MAGIC_3) {
 			_savedVerMajor = _loadStream->readByte();
 			_savedVerMinor = _loadStream->readByte();
 			_savedExtMajor = _loadStream->readByte();
 			_savedExtMinor = _loadStream->readByte();
 
-			if (magic == SAVE_MAGIC_2) {
-				_savedVerBuild = (byte)getDWORD();
-				_savedName = getStringObj();
+			_savedVerBuild = (byte)getDWORD();
+			_savedName = getStringObj();
 
-				// load thumbnail
-				_thumbnailDataSize = getDWORD();
-				if (_thumbnailDataSize > 0) {
-					_thumbnailData = new byte[_thumbnailDataSize];
-					if (_thumbnailData) {
-						getBytes(_thumbnailData, _thumbnailDataSize);
-					} else {
-						_thumbnailDataSize = 0;
-					}
+			// load thumbnail
+			_thumbnailDataSize = getDWORD();
+			if (_thumbnailDataSize > 0) {
+				_thumbnailData = new byte[_thumbnailDataSize];
+				if (_thumbnailData) {
+					getBytes(_thumbnailData, _thumbnailDataSize);
+				} else {
+					_thumbnailDataSize = 0;
 				}
-				if (_savedVerMajor >= 1 && _savedVerMinor >= 2) {
-					_scummVMThumbSize = getDWORD();
-					_scummVMThumbnailData = new byte[_scummVMThumbSize];
-					if (_scummVMThumbnailData) {
-						getBytes(_scummVMThumbnailData, _scummVMThumbSize);
-					} else {
-						_scummVMThumbSize = 0;
-					}
-				}
+			}
+
+			_scummVMThumbSize = getDWORD();
+			_scummVMThumbnailData = new byte[_scummVMThumbSize];
+			if (_scummVMThumbnailData) {
+				getBytes(_scummVMThumbnailData, _scummVMThumbSize);
 			} else {
-				_savedVerBuild = 35;    // last build with ver1 savegames
+				_scummVMThumbSize = 0;
 			}
 
 			uint32 dataOffset = getDWORD();
@@ -515,7 +502,7 @@ bool BasePersistenceManager::putTimeDate(const TimeDate &t) {
 	_saveStream->writeSint32LE(t.tm_mday);
 	_saveStream->writeSint32LE(t.tm_mon);
 	_saveStream->writeSint32LE(t.tm_year);
-	// _saveStream->writeSint32LE(t.tm_wday); //TODO: Add this in when merging next
+	_saveStream->writeSint32LE(t.tm_wday); //TODO: Add this in when merging next
 
 	if (_saveStream->err()) {
 		return STATUS_FAILED;
@@ -531,20 +518,26 @@ TimeDate BasePersistenceManager::getTimeDate() {
 	t.tm_mday = _loadStream->readSint32LE();
 	t.tm_mon = _loadStream->readSint32LE();
 	t.tm_year = _loadStream->readSint32LE();
-	// t.tm_wday = _loadStream->readSint32LE(); //TODO: Add this in when merging next
+	t.tm_wday = _loadStream->readSint32LE(); //TODO: Add this in when merging next
 	return t;
 }
 
 void BasePersistenceManager::putFloat(float val) {
-	Common::String str = Common::String::format("F%f", val);
+	int32 exponent = 0;
+	float significand = frexpf(val, &exponent);
+	Common::String str = Common::String::format("FS%f", significand);
 	_saveStream->writeUint32LE(str.size());
 	_saveStream->writeString(str);
+	_saveStream->writeSint32LE(exponent);
 }
 
 float BasePersistenceManager::getFloat() {
 	char *str = getString();
 	float value = 0.0f;
-	int ret = sscanf(str, "F%f", &value);
+	float significand = 0.0f;
+	int32 exponent = _loadStream->readSint32LE();
+	int ret = sscanf(str, "FS%f", &significand);
+	value = ldexpf(significand, exponent);
 	if (ret != 1) {
 		warning("%s not parsed as float", str);
 	}
@@ -553,16 +546,21 @@ float BasePersistenceManager::getFloat() {
 }
 
 void BasePersistenceManager::putDouble(double val) {
-	Common::String str = Common::String::format("D%f", val);
-	str.format("D%f", val);
+	int32 exponent = 0;
+	double significand = frexp(val, &exponent);
+	Common::String str = Common::String::format("DS%f", significand);
 	_saveStream->writeUint32LE(str.size());
 	_saveStream->writeString(str);
+	_saveStream->writeSint32LE(exponent);
 }
 
 double BasePersistenceManager::getDouble() {
 	char *str = getString();
-	float value = 0.0f; // TODO: Do we ever really need to carry a full double-precision number?
-	int ret = sscanf(str, "D%f", &value);
+	double value = 0.0f;
+	float significand = 0.0f;
+	int32 exponent = _loadStream->readSint32LE();
+	int ret = sscanf(str, "DS%f", &significand);
+	value = ldexp(significand, exponent);
 	if (ret != 1) {
 		warning("%s not parsed as double", str);
 	}

@@ -827,7 +827,7 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_valRef));
 	persistMgr->transfer(TMEMBER(_valString));
 
-	/*
+	/* // TODO: Convert to Debug-statements.
 	FILE* f = fopen("c:\\val.log", "a+");
 	switch(_type)
 	{
