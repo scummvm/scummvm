@@ -502,7 +502,7 @@ bool BasePersistenceManager::putTimeDate(const TimeDate &t) {
 	_saveStream->writeSint32LE(t.tm_mday);
 	_saveStream->writeSint32LE(t.tm_mon);
 	_saveStream->writeSint32LE(t.tm_year);
-	_saveStream->writeSint32LE(t.tm_wday); //TODO: Add this in when merging next
+	_saveStream->writeSint32LE(t.tm_wday);
 
 	if (_saveStream->err()) {
 		return STATUS_FAILED;
@@ -518,13 +518,13 @@ TimeDate BasePersistenceManager::getTimeDate() {
 	t.tm_mday = _loadStream->readSint32LE();
 	t.tm_mon = _loadStream->readSint32LE();
 	t.tm_year = _loadStream->readSint32LE();
-	t.tm_wday = _loadStream->readSint32LE(); //TODO: Add this in when merging next
+	t.tm_wday = _loadStream->readSint32LE();
 	return t;
 }
 
 void BasePersistenceManager::putFloat(float val) {
 	int32 exponent = 0;
-	float significand = frexpf(val, &exponent);
+	float significand = frexp(val, &exponent);
 	Common::String str = Common::String::format("FS%f", significand);
 	_saveStream->writeUint32LE(str.size());
 	_saveStream->writeString(str);
@@ -537,7 +537,7 @@ float BasePersistenceManager::getFloat() {
 	float significand = 0.0f;
 	int32 exponent = _loadStream->readSint32LE();
 	int ret = sscanf(str, "FS%f", &significand);
-	value = ldexpf(significand, exponent);
+	value = ldexp(significand, exponent);
 	if (ret != 1) {
 		warning("%s not parsed as float", str);
 	}
