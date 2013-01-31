@@ -650,6 +650,10 @@ void BaseRenderOSystem::endSaveLoad() {
 	// so just skip this single frame.
 	_skipThisFrame = true;
 	_drawNum = 1;
+
+	_renderSurface->fillRect(Common::Rect(0, 0, _renderSurface->h, _renderSurface->w), _renderSurface->format.ARGBToColor(255, 0, 0, 0));
+	g_system->copyRectToScreen((byte *)_renderSurface->pixels, _renderSurface->pitch, 0, 0, _renderSurface->w, _renderSurface->h);
+	g_system->updateScreen();
 }
 
 bool BaseRenderOSystem::startSpriteBatch() {
