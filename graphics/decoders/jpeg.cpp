@@ -74,7 +74,7 @@ const Surface *JPEGDecoder::getSurface() const {
 
 	// Create an RGBA8888 surface
 	_rgbSurface = new Graphics::Surface();
-	_rgbSurface->create(_w, _h, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	_rgbSurface->create(_w, _h, Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
 
 	// Get our component surfaces
 	const Graphics::Surface *yComponent = getComponent(1);
