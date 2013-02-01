@@ -316,7 +316,7 @@ void EventsManager::VBL() {
 	signed int v11 = 0;
 	signed int v12 = 0;
 	int height = 0;
-	uint width = 0;
+	int width = 0;
 	int xp = 0;
 	int yp = 0;
 
@@ -334,47 +334,42 @@ void EventsManager::VBL() {
 		if (_mouseCursorId == 23) {
 			width = _vm->_globals._objectWidth;
 			height = _vm->_globals._objectHeight;
-			goto LABEL_35;
-		}
-		int v3;
-		if (_breakoutFl) {
-			if (xp < _vm->_graphicsManager._minX)
-				xp = _vm->_graphicsManager._minX;
-			if (_mousePos.y < _vm->_graphicsManager._minY)
-				yp = _vm->_graphicsManager._minY;
-			if (_mouseSizeX + xp >= _vm->_graphicsManager._maxX)
-				width = _mouseSizeX - (_mouseSizeX + xp - _vm->_graphicsManager._maxX);
-			if (yp + _mouseSizeY < _vm->_graphicsManager._maxY)
-				goto LABEL_34;
-			v3 = yp + _mouseSizeY - _vm->_graphicsManager._maxY;
 		} else {
-			if (xp < _vm->_graphicsManager._minX)
-				xp = _vm->_graphicsManager._minX - mouseWidth;
-			mouseHeight = (int16)mouseHeight;
-			if (_mousePos.y < _vm->_graphicsManager._minY - mouseHeight)
-				yp = _vm->_graphicsManager._minY - mouseHeight;
-			if (_mouseSizeX + xp >= _vm->_graphicsManager._maxX)
-				width = _mouseSizeX - (_mouseSizeX + xp - _vm->_graphicsManager._maxX - mouseWidth);
-			if (yp + _mouseSizeY < mouseHeight + _vm->_graphicsManager._maxY)
-				goto LABEL_34;
-			v3 = mouseHeight + yp + _mouseSizeY - _vm->_graphicsManager._maxY;
+			if (_breakoutFl) {
+				if (xp < _vm->_graphicsManager._minX)
+					xp = _vm->_graphicsManager._minX;
+				if (_mousePos.y < _vm->_graphicsManager._minY)
+					yp = _vm->_graphicsManager._minY;
+				if (_mouseSizeX + xp >= _vm->_graphicsManager._maxX)
+					width = _mouseSizeX - (_mouseSizeX + xp - _vm->_graphicsManager._maxX);
+				if (yp + _mouseSizeY >= _vm->_graphicsManager._maxY)
+					height = _vm->_graphicsManager._maxY - yp;
+			} else {
+				if (xp < _vm->_graphicsManager._minX)
+					xp = _vm->_graphicsManager._minX - mouseWidth;
+				mouseHeight = (int16)mouseHeight;
+				if (_mousePos.y < _vm->_graphicsManager._minY - mouseHeight)
+					yp = _vm->_graphicsManager._minY - mouseHeight;
+				if (_mouseSizeX + xp >= _vm->_graphicsManager._maxX)
+					width = _mouseSizeX - (_mouseSizeX + xp - _vm->_graphicsManager._maxX - mouseWidth);
+				if (yp + _mouseSizeY >= mouseHeight + _vm->_graphicsManager._maxY)
+					height = _vm->_graphicsManager._maxY - mouseHeight - yp;
+			}
+			v12 = width + xp;
+			v11 = yp + height;
 		}
-		height = _mouseSizeY - v3;
-LABEL_34:
-		v12 = width + xp;
-		v11 = yp + height;
 	}
-LABEL_35:
+
 	if (!_vm->_globals.PUBEXIT)
 		_vm->_objectsManager.displaySprite();
 	if (!_mouseFl) {
 		updateCursor();
 	} else if (_mouseCursorId == 23) {
 		if (yp < _vm->_graphicsManager._maxY && xp < _vm->_graphicsManager._maxX) {
-			if ((signed int)(width + xp) > _vm->_graphicsManager._maxX)
-				width -= width + xp - _vm->_graphicsManager._maxX;
+			if (width + xp > _vm->_graphicsManager._maxX)
+				width = _vm->_graphicsManager._maxX - xp;
 			if (yp + height > _vm->_graphicsManager._maxY)
-				height -= yp + height - _vm->_graphicsManager._maxY;
+				height = _vm->_graphicsManager._maxY - yp;
 			if (width > 1 && height > 1) {
 				_vm->_eventsManager.updateCursor();
 			}
