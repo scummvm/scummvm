@@ -209,35 +209,41 @@ void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
 	FSRef fsref;
 	err = FSPathMakeRef((const byte *)soundfont, &fsref, NULL);
 
-#ifdef MAC_OS_X_VERSION_10_5
-	// Use kMusicDeviceProperty_SoundBankFSRef if we know it's available
-	// (This became available in 10.3, but the 10.2 SDK has 10.3/10.4 defines)
+	SInt32 version;
+	err = Gestalt(gestaltSystemVersion, &version);
 
 	if (err == noErr) {
-		err = AudioUnitSetProperty(
-			_synth,
-			kMusicDeviceProperty_SoundBankFSRef, kAudioUnitScope_Global,
-			0,
-			&fsref, sizeof(fsref)
-		);
+		if (version >= 0x1030) {
+			// Use kMusicDeviceProperty_SoundBankFSRef in >= 10.3
+
+			// HACK HACK HACK HACK SUPER HACK: Using the value of 1012 instead of
+			// kMusicDeviceProperty_SoundBankFSRef so this compiles with the 10.2
+			// SDK (which does not have that symbol).
+			if (err == noErr) {
+				err = AudioUnitSetProperty(
+					_synth,
+					/*kMusicDeviceProperty_SoundBankFSRef*/ 1012, kAudioUnitScope_Global,
+					0,
+					&fsref, sizeof(fsref)
+				);
+			}
+		} else {
+			// In 10.2, only kMusicDeviceProperty_SoundBankFSSpec is available
+			FSSpec fsSpec;
+
+			if (err == noErr)
+				err = FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
+
+			if (err == noErr) {
+				err = AudioUnitSetProperty(
+					_synth,
+					kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
+					0,
+					&fsSpec, sizeof(fsSpec)
+				);
+			}
+		}
 	}
-#else
-	// Otherwise, we know kMusicDeviceProperty_SoundBankFSSpec is available
-	FSSpec fsSpec;
-
-	if (err == noErr)
-		err = FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
-
-	if (err == noErr) {
-		err = AudioUnitSetProperty(
-			_synth,
-			kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
-			0,
-			&fsSpec, sizeof(fsSpec)
-		);
-	}
-#endif // MAC_OS_X_VERSION_10_5
-
 #else
 	// kMusicDeviceProperty_SoundBankURL was added in 10.5 as a replacement
 	// In addition, the File Manager API became deprecated starting in 10.8
