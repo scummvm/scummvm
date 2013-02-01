@@ -142,15 +142,19 @@ bool BaseSurfaceOSystem::finishLoad() {
 	delete _surface;
 
 	bool needsColorKey = false;
+	bool replaceAlpha = true;
 	if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
 		needsColorKey = true;
+		replaceAlpha = false;
 	} else if (image->getSurface()->format.bytesPerPixel == 1 && image->getPalette()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
 		needsColorKey = true;
 	} else if (image->getSurface()->format.bytesPerPixel >= 3 && image->getSurface()->format != g_system->getScreenFormat()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
-		needsColorKey = true;
+		if (image->getSurface()->format.bytesPerPixel == 3) {
+			needsColorKey = true;
+		}
 	} else {
 		_surface = new Graphics::Surface();
 		_surface->copyFrom(*image->getSurface());
@@ -161,7 +165,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 	
 	if (needsColorKey) {
 		TransparentSurface trans(*_surface);
-		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, true);
+		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
 	}
 
 	_hasAlpha = hasTransparency(_surface);
