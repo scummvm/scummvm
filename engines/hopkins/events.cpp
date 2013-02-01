@@ -313,87 +313,77 @@ int EventsManager::waitKeyPress() {
 }
 
 void EventsManager::VBL() {
-	int v1;
-	int v2;
-	int v3;
 	signed int v11 = 0;
 	signed int v12 = 0;
-	int v13 = 0;
-	uint v14 = 0;
-	int v15 = 0;
+	int height = 0;
+	uint width = 0;
+	int xp = 0;
 	int yp = 0;
 
 	if (_mouseFl) {
-		v1 = 20;
+		int mouseWidth = 20;
 		if (!_mouseLinuxFl)
-			v1 = 10;
-		v2 = 20;
+			mouseWidth = 10;
+		int mouseHeight = 20;
 		if (!_mouseLinuxFl)
-			v2 = 15;
-		v15 = _mousePos.x - v1;
+			mouseHeight = 15;
+		xp = _mousePos.x - mouseWidth;
 		yp = _mousePos.y;
-		v14 = _mouseSizeX;
-		v13 = _mouseSizeY;
+		width = _mouseSizeX;
+		height = _mouseSizeY;
 		if (_mouseCursorId == 23) {
-			v14 = _vm->_globals._objectWidth;
-			v13 = _vm->_globals._objectHeight;
+			width = _vm->_globals._objectWidth;
+			height = _vm->_globals._objectHeight;
 			goto LABEL_35;
 		}
+		int v3;
 		if (_breakoutFl) {
-			if (v15 < _vm->_graphicsManager._minX)
-				v15 = _vm->_graphicsManager._minX;
+			if (xp < _vm->_graphicsManager._minX)
+				xp = _vm->_graphicsManager._minX;
 			if (_mousePos.y < _vm->_graphicsManager._minY)
 				yp = _vm->_graphicsManager._minY;
-			if (_mouseSizeX + v15 >= _vm->_graphicsManager._maxX)
-				v14 = _mouseSizeX - (_mouseSizeX + v15 - _vm->_graphicsManager._maxX);
+			if (_mouseSizeX + xp >= _vm->_graphicsManager._maxX)
+				width = _mouseSizeX - (_mouseSizeX + xp - _vm->_graphicsManager._maxX);
 			if (yp + _mouseSizeY < _vm->_graphicsManager._maxY)
 				goto LABEL_34;
 			v3 = yp + _mouseSizeY - _vm->_graphicsManager._maxY;
 		} else {
-			if (v15 < _vm->_graphicsManager._minX)
-				v15 = _vm->_graphicsManager._minX - v1;
-			v2 = (int16)v2;
-			if (_mousePos.y < _vm->_graphicsManager._minY - (int16)v2)
-				yp = _vm->_graphicsManager._minY - (int16)v2;
-			if (_mouseSizeX + v15 >= _vm->_graphicsManager._maxX)
-				v14 = _mouseSizeX - (_mouseSizeX + v15 - _vm->_graphicsManager._maxX - v1);
-			if (yp + _mouseSizeY < v2 + _vm->_graphicsManager._maxY)
+			if (xp < _vm->_graphicsManager._minX)
+				xp = _vm->_graphicsManager._minX - mouseWidth;
+			mouseHeight = (int16)mouseHeight;
+			if (_mousePos.y < _vm->_graphicsManager._minY - mouseHeight)
+				yp = _vm->_graphicsManager._minY - mouseHeight;
+			if (_mouseSizeX + xp >= _vm->_graphicsManager._maxX)
+				width = _mouseSizeX - (_mouseSizeX + xp - _vm->_graphicsManager._maxX - mouseWidth);
+			if (yp + _mouseSizeY < mouseHeight + _vm->_graphicsManager._maxY)
 				goto LABEL_34;
-			v3 = v2 + yp + _mouseSizeY - _vm->_graphicsManager._maxY;
+			v3 = mouseHeight + yp + _mouseSizeY - _vm->_graphicsManager._maxY;
 		}
-		v13 = _mouseSizeY - v3;
+		height = _mouseSizeY - v3;
 LABEL_34:
-		v12 = v14 + v15;
-		v11 = yp + v13;
+		v12 = width + xp;
+		v11 = yp + height;
 	}
 LABEL_35:
 	if (!_vm->_globals.PUBEXIT)
 		_vm->_objectsManager.displaySprite();
 	if (!_mouseFl) {
 		updateCursor();
-		goto LABEL_54;
-	}
-	if (_mouseCursorId == 23)
-		goto LABEL_45;
-	if (yp >= _vm->_graphicsManager._maxY || v15 >= _vm->_graphicsManager._maxX || v14 <= 1 || v13 <= 1) {
-		if (_mouseCursorId != 23)
-			goto LABEL_54;
-LABEL_45:
-		if (yp < _vm->_graphicsManager._maxY && v15 < _vm->_graphicsManager._maxX) {
-			if ((signed int)(v14 + v15) > _vm->_graphicsManager._maxX)
-				v14 -= v14 + v15 - _vm->_graphicsManager._maxX;
-			if (yp + v13 > _vm->_graphicsManager._maxY)
-				v13 -= yp + v13 - _vm->_graphicsManager._maxY;
-			if (v14 > 1 && v13 > 1) {
+	} else if (_mouseCursorId == 23) {
+		if (yp < _vm->_graphicsManager._maxY && xp < _vm->_graphicsManager._maxX) {
+			if ((signed int)(width + xp) > _vm->_graphicsManager._maxX)
+				width -= width + xp - _vm->_graphicsManager._maxX;
+			if (yp + height > _vm->_graphicsManager._maxY)
+				height -= yp + height - _vm->_graphicsManager._maxY;
+			if (width > 1 && height > 1) {
 				_vm->_eventsManager.updateCursor();
 			}
 		}
-		goto LABEL_54;
-	} 
+	} else if (yp < _vm->_graphicsManager._maxY && xp < _vm->_graphicsManager._maxX && width > 1 && height > 1) {
+		_vm->_eventsManager.updateCursor();
+		_vm->_graphicsManager.addVesaSegment(xp, yp, v12, v11);
+	}
 
-	_vm->_eventsManager.updateCursor();
-	_vm->_graphicsManager.addVesaSegment(v15, yp, v12, v11);
-LABEL_54:
 	_vm->_globals._speed = 2;
 	do {
 		while (!_vm->shouldQuit()) {
