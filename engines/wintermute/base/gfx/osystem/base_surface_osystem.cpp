@@ -140,23 +140,28 @@ bool BaseSurfaceOSystem::finishLoad() {
 	// Well, actually, we don't convert via 24-bit as the color-key application overwrites the Alpha-channel anyhow.
 	_surface->free();
 	delete _surface;
+
+	bool needsColorKey = false;
 	if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		TransparentSurface trans(*_surface);
-		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue);
+		needsColorKey = true;
 	} else if (image->getSurface()->format.bytesPerPixel == 1 && image->getPalette()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		TransparentSurface trans(*_surface);
-		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, true);
+		needsColorKey = true;
 	} else if (image->getSurface()->format.bytesPerPixel >= 3 && image->getSurface()->format != g_system->getScreenFormat()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
-		if (image->getSurface()->format.bytesPerPixel == 3) {
-			TransparentSurface trans(*_surface);
-			trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, true);
-		}
+		needsColorKey = true;
 	} else {
 		_surface = new Graphics::Surface();
 		_surface->copyFrom(*image->getSurface());
+		if (_surface->format.aBits() == 0) {
+			needsColorKey = true;
+		}
+	}
+	
+	if (needsColorKey) {
+		TransparentSurface trans(*_surface);
+		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, true);
 	}
 
 	_hasAlpha = hasTransparency(_surface);
