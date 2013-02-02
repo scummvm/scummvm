@@ -3138,7 +3138,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	}
 
 	_vm->_linesManager.resetLines();
-	for (size_t idx = 0; idx < nbytes; idx++) {
+	for (size_t idx = 0; idx < nbytes - 3; idx++) {
 		if (READ_BE_UINT24(&ptr[idx]) == MKTAG24('O', 'B', '2')) {
 			v16 = ptr + idx + 4;
 			v32 = 0;
@@ -3164,7 +3164,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	}
 
 	if (!OBSSEUL) {
-		for (size_t idx = 0; idx < nbytes; idx++) {
+		for (size_t idx = 0; idx < nbytes - 3; idx++) {
 			if (READ_BE_UINT24(&ptr[idx]) == MKTAG24('Z', 'O', '2')) {
 				v17 = &ptr[idx + 4];
 				v33 = 0;
