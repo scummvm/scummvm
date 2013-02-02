@@ -952,6 +952,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 	}
 
 	// Clip Y
+	clip_y1 = height;
 	if (yp <= 0)
 		return;
 	if (yp < _minY + 300) {
@@ -999,7 +1000,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 	// Handling for clipped versus non-clipped
 	if (_clipFl) {
 		// Clipped version
-		for (int yc = 0; yc < height; ++yc, destP += _lineNbr2) {
+		for (int yc = 0; yc < clip_y1; ++yc, destP += _lineNbr2) {
 			byte *tempDestP = destP;
 			byte byteVal;
 			int xc = 0;
