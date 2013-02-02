@@ -1358,8 +1358,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 					v46 = spritePixelsP;
 					Agr_Flag_x = false;
 					Agr_x = 0;
-					for (int v35 = zoomedWidth; v35; v35--) {
-						Agr_Flag_x = false;
+					for (int v35 = zoomedWidth; v35; Agr_Flag_x = false, v35--) {
 						for (;;) {
 							if (*spritePixelsP)
 								*v29 = *spritePixelsP;
@@ -1429,17 +1428,16 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 					v60 = zoomedHeight;
 					byte *v51 = dest1P;
 					v45 = spritePixelsP;
-					int v28 = zoomedWidth;
 					Agr_Flag_x = false;
 					Agr_x = 0;
-					do {
+					for (int v28 = zoomedWidth; v28; Agr_Flag_x = false, v28--) {
 						for (;;) {
 							if (*spritePixelsP)
 								*dest1P = *spritePixelsP;
 							++dest1P;
 							++spritePixelsP;
 							if (!Agr_Flag_x)
-								Agr_x = zoom2 + Agr_x;
+								Agr_x += zoom2;
 							if ((uint16)Agr_x < 100)
 								break;
 							Agr_x = Agr_x - 100;
@@ -1447,12 +1445,9 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 							Agr_Flag_x = true;
 							--v28;
 							if (!v28)
-								goto Aff_Zoom_Larg_Cont1;
+								break;
 						}
-						Agr_Flag_x = false;
-						--v28;
-					} while (v28);
-Aff_Zoom_Larg_Cont1:
+					}
 					spritePixelsP = _width + v45;
 					dest1P = _lineNbr2 + v51;
 					if (!Agr_Flag_y)
@@ -1544,7 +1539,7 @@ Aff_Zoom_Larg_Cont1:
 			dest2P = spriteWidth + dest1P;
 			spec_largeur = spriteWidth;
 			if (_posYClipped) {
-				if (_posYClipped >= (unsigned int)spriteHeight1)
+				if (_posYClipped >= spriteHeight1 || spriteHeight1 < 0)
 					return;
 				spritePixelsP += spriteWidth * _posYClipped;
 				dest2P += _lineNbr2 * _posYClipped;
@@ -1581,7 +1576,7 @@ Aff_Zoom_Larg_Cont1:
 		} else {
 			spec_largeur = spriteWidth;
 			if (_posYClipped) {
-				if (_posYClipped >= (unsigned int)spriteHeight1)
+				if (_posYClipped >= spriteHeight1 || spriteHeight1 < 0)
 					return;
 				spritePixelsP += spriteWidth * _posYClipped;
 				dest1P += _lineNbr2 * _posYClipped;
