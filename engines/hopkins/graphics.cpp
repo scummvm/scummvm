@@ -469,7 +469,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 				destP[0] = palette[2 * srcP[0]];
 				destP[1] = palette[(2 * srcP[0]) + 1];
 				destP += 2;
-				if ((unsigned int)Agr_x >= 100) {
+				if (Agr_x >= 100) {
 					Agr_x -= 100;
 					destP[0] = palette[2 * srcP[0]];
 					destP[1] = palette[(2 * srcP[0]) + 1];
@@ -1252,7 +1252,7 @@ void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, in
 /**
  * Compute the value of a parameter plus a given percentage
  */
-int GraphicsManager::zoomIn( int v, int percentage ) {
+int GraphicsManager::zoomIn(int v, int percentage ) {
 	if (v)
 		v += percentage * (long int)v / 100;
 
@@ -1279,8 +1279,6 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 	byte *dest2P;
 	byte *v29;
 	byte *v40;
-	const byte *v45;
-	const byte *v46;
 
 	spriteStartP = srcData + 3;
 	for (i = frameIndex; i; --i)
@@ -1356,7 +1354,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 				for (;;) {
 					v63 = zoomedHeight;
 					byte *v53 = v29;
-					v46 = spritePixelsP;
+					const byte *oldSpritePixelsP = spritePixelsP;
 					Agr_Flag_x = false;
 					Agr_x = 0;
 					for (int v35 = zoomedWidth; v35; Agr_Flag_x = false, v35--) {
@@ -1377,14 +1375,14 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								break;
 						}
 					}
-					spritePixelsP = _width + v46;
+					spritePixelsP = _width + oldSpritePixelsP;
 					v29 = _lineNbr2 + v53;
 					if (!Agr_Flag_y)
 						Agr_y += zoom2;
 					if ((uint16)Agr_y < 100)
 						break;
 					Agr_y -= 100;
-					spritePixelsP = v46;
+					spritePixelsP = oldSpritePixelsP;
 					Agr_Flag_y = true;
 					zoomedHeight = v63 - 1;
 					if (v63 == 1)
@@ -1397,16 +1395,12 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 			if (_posYClipped) {
 				if (_posYClipped >= zoomedHeight)
 					return;
-				int v58 = zoomedHeight;
-				int v49 = zoomedWidth;
 				int v23 = 0;
-				int v24 = _posYClipped;
-				while (zoomIn(++v23, zoom2) < v24)
+				while (zoomIn(++v23, zoom2) < _posYClipped)
 					;
-				zoomedWidth = v49;
 				spritePixelsP += _width * v23;
 				dest1P += _lineNbr2 * _posYClipped;
-				zoomedHeight = v58 - _posYClipped;
+				zoomedHeight -= _posYClipped;
 			}
 			if (zoomedHeight > clip_y1)
 				zoomedHeight = clip_y1;
@@ -1427,8 +1421,8 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 			do {
 				for (;;) {
 					v60 = zoomedHeight;
-					byte *v51 = dest1P;
-					v45 = spritePixelsP;
+					byte *oldDest1P = dest1P;
+					const byte *oldSpritePixelsP = spritePixelsP;
 					Agr_Flag_x = false;
 					Agr_x = 0;
 					for (int v28 = zoomedWidth; v28; Agr_Flag_x = false, v28--) {
@@ -1441,7 +1435,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								Agr_x += zoom2;
 							if ((uint16)Agr_x < 100)
 								break;
-							Agr_x = Agr_x - 100;
+							Agr_x -= 100;
 							--spritePixelsP;
 							Agr_Flag_x = true;
 							--v28;
@@ -1449,14 +1443,14 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								break;
 						}
 					}
-					spritePixelsP = _width + v45;
-					dest1P = _lineNbr2 + v51;
+					spritePixelsP = _width + oldSpritePixelsP;
+					dest1P = _lineNbr2 + oldDest1P;
 					if (!Agr_Flag_y)
 						Agr_y = zoom2 + Agr_y;
 					if ((uint16)Agr_y < 100)
 						break;
-					Agr_y = Agr_y - 100;
-					spritePixelsP = v45;
+					Agr_y -= 100;
+					spritePixelsP = oldSpritePixelsP;
 					Agr_Flag_y = true;
 					zoomedHeight = v60 - 1;
 					if (v60 == 1)
@@ -1505,8 +1499,8 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 				} while (spriteHeight2);
 			} else {
 				do {
-					int v64 = spriteHeight2;
-					byte *v54 = dest1P;
+					int oldSpriteHeight = spriteHeight2;
+					byte *oldDest1P = dest1P;
 					Red_y = Red + Red_y;
 					if ((uint16)Red_y < 100) {
 						Red_x = 0;
@@ -1524,8 +1518,8 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 								++spritePixelsP;
 							}
 						}
-						spriteHeight2 = v64;
-						dest1P = _lineNbr2 + v54;
+						spriteHeight2 = oldSpriteHeight;
+						dest1P = _lineNbr2 + oldDest1P;
 					} else {
 						Red_y = Red_y - 100;
 						spritePixelsP += _width;
@@ -1632,17 +1626,12 @@ void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int sp
 }
 
 void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY) {
-	int top;
-	int croppedWidth;
-	int croppedHeight;
 	int xRight;
-	int top2;
-	int left;
 
-	left = x1;
-	top = y1;
-	croppedWidth = width;
-	croppedHeight = height;
+	int left = x1;
+	int top = y1;
+	int croppedWidth = width;
+	int croppedHeight = height;
 
 	if (x1 < _minX) {
 		croppedWidth = width - (_minX - x1);
@@ -1652,7 +1641,7 @@ void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width
 		croppedHeight = height - (_minY - y1);
 		top = _minY;
 	}
-	top2 = top;
+	int top2 = top;
 	if (top + croppedHeight > _maxY)
 		croppedHeight = _maxY - top;
 	xRight = left + croppedWidth;
@@ -1666,18 +1655,15 @@ void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width
 	}
 }
 
-void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY) {
-	const byte *srcP;
-	byte *destP;
-	int yp;
+void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY) {
 	int yCurrent;
 	byte *dest2P;
 	const byte *src2P;
-	unsigned int pitch;
+	uint16 pitch;
 
-	srcP = x1 + _lineNbr2 * y1 + srcSurface;
-	destP = destX + _lineNbr2 * destY + destSurface;
-	yp = height;
+	const byte *srcP = x1 + _lineNbr2 * y1 + srcSurface;
+	byte *destP = destX + _lineNbr2 * destY + destSurface;
+	int yp = height;
 	do {
 		yCurrent = yp;
 		memcpy(destP, srcP, 4 * (width >> 2));
@@ -1692,38 +1678,27 @@ void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned 
 }
 
 // Display Font
-void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp, int yp,
-									int characterIndex, int colour) {
-	const byte *spriteDataP;
-	int i;
-	const byte *spriteSizeP;
-	int spriteWidth;
-	int spriteHeight;
-	const byte *spritePixelsP;
-	byte *destP;
-	byte destByte;
-	byte *destLineP;
-	int yCtr;
-
-	spriteDataP = spriteData + 3;
-	for (i = characterIndex; i; --i)
+void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int colour) {
+	const byte *spriteDataP = spriteData + 3;
+	for (int i = characterIndex; i; --i)
 		spriteDataP += READ_LE_UINT32(spriteDataP) + 16;
 
-	spriteWidth = 0;
-	spriteHeight = 0;
-	spriteSizeP = spriteDataP + 4;
+	int spriteWidth = 0;
+	int spriteHeight = 0;
+	const byte *spriteSizeP = spriteDataP + 4;
 	spriteWidth = (int16)READ_LE_UINT16(spriteSizeP);
 	spriteSizeP += 2;
 	spriteHeight = (int16)READ_LE_UINT16(spriteSizeP);
-	spritePixelsP = spriteSizeP + 10;
-	destP = surface + xp + _lineNbr2 * yp;
+	const byte *spritePixelsP = spriteSizeP + 10;
+	byte *destP = surface + xp + _lineNbr2 * yp;
 	_width = spriteWidth;
 
+	int yCtr = 0;
 	do {
-		yCtr = spriteHeight;
-		destLineP = destP;
+		int yCtr = spriteHeight;
+		byte *destLineP = destP;
 		for (int xCtr = spriteWidth; xCtr; xCtr--) {
-			destByte = *spritePixelsP;
+			byte destByte = *spritePixelsP;
 			if (*spritePixelsP) {
 				if (destByte == 252)
 					destByte = colour;
@@ -1823,14 +1798,10 @@ void GraphicsManager::NB_SCREEN(bool initPalette) {
 }
 
 void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
-	int destOffset;
-	const byte *srcPtr;
-	byte byteVal;
-
-	destOffset = 0;
-	srcPtr = src;
+	int destOffset = 0;
+	const byte *srcPtr = src;
 	for (;;) {
-		byteVal = *srcPtr;
+		byte byteVal = *srcPtr;
 		if (byteVal == kByteStop)
 			return;
 		if (*srcPtr > kByteStop) {
@@ -1855,15 +1826,11 @@ void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
 }
 
 void GraphicsManager::Copy_Video_Vbe(const byte *src) {
-	int destOffset;
-	const byte *srcP;
-	byte byteVal;
-
 	assert(_videoPtr);
-	destOffset = 0;
-	srcP = src;
+	int destOffset = 0;
+	const byte *srcP = src;
 	for (;;) {
-		byteVal = *srcP;
+		byte byteVal = *srcP;
 		if (*srcP < kByteStop)
 			break;
 		else {
@@ -1892,11 +1859,8 @@ void GraphicsManager::Copy_Video_Vbe(const byte *src) {
 
 // Reduce Screen
 void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int xp, int yp, int width, int height, int zoom) {
-	const byte *srcP;
-	byte *destP;
-
-	srcP = xp + _lineNbr2 * yp + srcSurface;
-	destP = destSurface;
+	const byte *srcP = xp + _lineNbr2 * yp + srcSurface;
+	byte *destP = destSurface;
 	Red = zoom;
 	_width = width;
 	Red_x = 0;
@@ -1927,7 +1891,7 @@ void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int
 /**
  * Draw horizontal line
  */
-void GraphicsManager::drawHorizontalLine(byte *surface, int xp, int yp, unsigned int width, byte col) {
+void GraphicsManager::drawHorizontalLine(byte *surface, int xp, int yp, uint16 width, byte col) {
 	memset(surface + xp + _lineNbr2 * yp, col, width);
 }
 

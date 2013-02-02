@@ -159,7 +159,7 @@ public:
 	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl);
 	void fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment = true);
 	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
-	void Copy_Mem(const byte *srcSurface, int x1, int y1, unsigned int width, int height, byte *destSurface, int destX, int destY);
+	void Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY);
 	void displayFont(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int colour);
 	void INI_ECRAN(const Common::String &file, bool initializeScreen);
 	void INI_ECRAN2(const Common::String &file, bool initializeScreen);
@@ -168,7 +168,7 @@ public:
 	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);
 	void Copy_Video_Vbe(const byte *src);
 	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
-	void drawHorizontalLine(byte *surface, int xp, int yp, unsigned int width, byte col);
+	void drawHorizontalLine(byte *surface, int xp, int yp, uint16 width, byte col);
 	void drawVerticalLine(byte *surface, int xp, int yp, int height, byte col);
 };
 
