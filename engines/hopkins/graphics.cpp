@@ -1505,7 +1505,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 					if ((uint16)Red_y < 100) {
 						Red_x = 0;
 						int v39 = 0;
-						for (int i = _width; i; i--) {
+						for (i = _width; i; i--) {
 							Red_x = Red + Red_x;
 							if ((uint16)Red_x < 100) {
 								if (v39 >= _posXClipped && v39 < clip_x1 && *spritePixelsP)
@@ -1693,9 +1693,9 @@ void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp,
 	byte *destP = surface + xp + _lineNbr2 * yp;
 	_width = spriteWidth;
 
-	int yCtr = 0;
+	int yCtr;
 	do {
-		int yCtr = spriteHeight;
+		yCtr = spriteHeight;
 		byte *destLineP = destP;
 		for (int xCtr = spriteWidth; xCtr; xCtr--) {
 			byte destByte = *spritePixelsP;
