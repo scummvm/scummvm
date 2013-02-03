@@ -824,6 +824,12 @@ void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
 
 	int volume = (voiceIndex == 2) ? _voiceVolume * 255 / 16 : _soundVolume * 255 / 16;
 
+	// If the handle is still in use, stop it. Otherwise we'll lose the
+	// handle to that sound. This can currently happen (but probably
+	// shouldn't) when skipping a movie.
+	if (_vm->_mixer->isSoundHandleActive(Swav[wavIndex]._soundHandle))
+		  _vm->_mixer->stopHandle(Swav[wavIndex]._soundHandle);
+
 	// Start the voice playing
 	Swav[wavIndex]._audioStream->rewind();
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Swav[wavIndex]._soundHandle,
