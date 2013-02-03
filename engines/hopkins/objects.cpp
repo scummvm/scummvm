@@ -335,9 +335,7 @@ void ObjectsManager::displaySprite() {
 			loopCondFl = false;
 			for (int sortIdx = 1; sortIdx < _vm->_globals._sortedDisplayCount; sortIdx++) {
 				if (_vm->_globals._sortedDisplay[arr[sortIdx]]._priority > _vm->_globals._sortedDisplay[arr[sortIdx + 1]]._priority) {
-					int oldIdx = arr[sortIdx];
-					arr[sortIdx] = arr[sortIdx + 1];
-					arr[sortIdx + 1] = oldIdx;
+					SWAP(arr[sortIdx], arr[sortIdx + 1]);
 					loopCondFl = true;
 				}
 			}
