@@ -2825,26 +2825,39 @@ void ObjectsManager::ACTION_DOS(int idx) {
 		_vm->_globals.GESTE_FLAG = 1;
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("DOS.SPR");
 	}
-	if (idx == 1)
+	
+	switch (idx) {
+	case 1:
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
-	if (idx == 2)
+		break;
+	case 2:
 		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 0, 0, 8, false);
-	if (idx == 3)
+		break;
+	case 3:
 		SPACTION1(_vm->_globals.GESTE, "12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
-	if (idx == 4)
+		break;
+	case 4:
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
-	if (idx == 5)
+		break;
+	case 5:
 		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, false);
-	if (idx == 6)
+		break;
+	case 6:
 		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,16,15,-1,", 0, 0, 8);
-	if (idx == 7)
+		break;
+	case 7:
 		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, false);
-	if (idx == 8)
+		break;
+	case 8:
 		SPACTION1(_vm->_globals.GESTE, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
-	if (idx == 9)
+		break;
+	case 9:
 		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, false);
-	if (idx == 10)
+		break;
+	case 10:
 		SPACTION1(_vm->_globals.GESTE, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
+		break;
+	}
 }
 
 void ObjectsManager::ACTION_DROITE(int idx) {
@@ -2853,26 +2866,39 @@ void ObjectsManager::ACTION_DROITE(int idx) {
 		_vm->_globals.GESTE_FLAG = 3;
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("PROFIL.SPR");
 	}
-	if (idx == 1)
+	
+	switch (idx) {
+	case 1:
 		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, false);
-	if (idx == 2)
+		break;
+	case 2:
 		SPACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, false);
-	if (idx == 3)
+		break;
+	case 3:
 		SPACTION1(_vm->_globals.GESTE, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
-	if (idx == 4)
+		break;
+	case 4:
 		ACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, false);
-	if (idx == 5)
+		break;
+	case 5:
 		SPACTION(_vm->_globals.GESTE, "23,24,25,-1,", 0, 0, 8, false);
-	if (idx == 6)
+		break;
+	case 6:
 		SPACTION1(_vm->_globals.GESTE, "24,,23,-1,", 0, 0, 8);
-	if (idx == 7)
+		break;
+	case 7:
 		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,-1,", 0, 0, 8, false);
-	if (idx == 8)
+		break;
+	case 8:
 		SPACTION1(_vm->_globals.GESTE, "26,25,24,23,-1,", 0, 0, 8);
-	if (idx == 9)
+		break;
+	case 9:
 		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,28,29,-1,", 0, 0, 8, false);
-	if (idx == 10)
+		break;
+	case 10:
 		SPACTION1(_vm->_globals.GESTE, "28,27,26,25,24,23,-1,", 0, 0, 8);
+		break;
+	}
 }
 
 void ObjectsManager::Q_DROITE(int idx) {
@@ -2881,26 +2907,39 @@ void ObjectsManager::Q_DROITE(int idx) {
 		_vm->_globals.GESTE_FLAG = 4;
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("3Q.SPR");
 	}
-	if (idx == 1)
+
+	switch (idx) {
+	case 1:
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
-	if (idx == 2)
+		break;
+	case 2:
 		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, false);
-	if (idx == 3)
+		break;
+	case 3:
 		SPACTION1(_vm->_globals.GESTE, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
-	if (idx == 4)
+		break;
+	case 4:
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
-	if (idx == 5)
+		break;
+	case 5:
 		SPACTION(_vm->_globals.GESTE, "15,16,17,18,-1,", 0, 0, 8, false);
-	if (idx == 6)
+		break;
+	case 6:
 		SPACTION1(_vm->_globals.GESTE, "17,16,15,-1,", 0, 0, 8);
-	if (idx == 7)
+		break;
+	case 7:
 		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20-1,", 0, 0, 8, false);
-	if (idx == 8)
+		break;
+	case 8:
 		SPACTION1(_vm->_globals.GESTE, "19,18,17,16,15,-1,", 0, 0, 8);
-	if (idx == 9)
+		break;
+	case 9:
 		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, false);
-	if (idx == 10)
+		break;
+	case 10:
 		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,15,-1,", 0, 0, 8);
+		break;
+	}
 }
 
 void ObjectsManager::ACTION_FACE(int idx) {
@@ -2909,14 +2948,21 @@ void ObjectsManager::ACTION_FACE(int idx) {
 		_vm->_globals.GESTE_FLAG = 2;
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("FACE.SPR");
 	}
-	if (idx == 1)
+	
+	switch (idx) {
+	case 1:
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
-	if (idx == 2)
+		break;
+	case 2:
 		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 0, 0, 8, false);
-	if (idx == 3)
+		break;
+	case 3:
 		SPACTION1(_vm->_globals.GESTE, "14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
-	if (idx == 4)
+		break;
+	case 4:
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		break;
+	}
 }
 
 void ObjectsManager::Q_GAUCHE(int idx) {
@@ -2925,26 +2971,39 @@ void ObjectsManager::Q_GAUCHE(int idx) {
 		_vm->_globals.GESTE_FLAG = 4;
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("3Q.SPR");
 	}
-	if (idx == 1)
+	
+	switch (idx) {
+	case 1:
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, true);
-	if (idx == 2)
+		break;
+	case 2:
 		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, true);
-	if (idx == 3)
+		break;
+	case 3:
 		SPACTION1(_vm->_globals.GESTE, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
-	if (idx == 4)
+		break;
+	case 4:
 		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, true);
-	if (idx == 5)
+		break;
+	case 5:
 		SPACTION(_vm->_globals.GESTE, "15,16,17,18,-1,", 0, 0, 8, true);
-	if (idx == 6)
+		break;
+	case 6:
 		SPACTION1(_vm->_globals.GESTE, "17,16,15,-1,", 0, 0, 8);
-	if (idx == 7)
+		break;
+	case 7:
 		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,-1,", 0, 0, 8, true);
-	if (idx == 8)
+		break;
+	case 8:
 		SPACTION1(_vm->_globals.GESTE, "19,18,17,16,15,-1,", 0, 0, 8);
-	if (idx == 9)
+		break;
+	case 9:
 		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, true);
-	if (idx == 10)
+		break;
+	case 10:
 		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,15,-1,", 0, 0, 8);
+		break;
+	}
 }
 
 void ObjectsManager::ACTION_GAUCHE(int idx) {
@@ -2953,26 +3012,39 @@ void ObjectsManager::ACTION_GAUCHE(int idx) {
 		_vm->_globals.GESTE_FLAG = 3;
 		_vm->_globals.GESTE = _vm->_fileManager.loadFile("PROFIL.SPR");
 	}
-	if (idx == 1)
+	
+	switch (idx) {
+	case 1:
 		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, true);
-	if (idx == 2)
+		break;
+	case 2:
 		SPACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, true);
-	if (idx == 3)
+		break;
+	case 3:
 		SPACTION1(_vm->_globals.GESTE, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
-	if (idx == 4)
+		break;
+	case 4:
 		ACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, true);
-	if (idx == 5)
+		break;
+	case 5:
 		SPACTION(_vm->_globals.GESTE, "23,24,25,-1,", 0, 0, 8, true);
-	if (idx == 6)
+		break;
+	case 6:
 		SPACTION1(_vm->_globals.GESTE, "24,,23,-1,", 0, 0, 8);
-	if (idx == 7)
+		break;
+	case 7:
 		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,-1,", 0, 0, 8, true);
-	if (idx == 8)
+		break;
+	case 8:
 		SPACTION1(_vm->_globals.GESTE, "26,25,24,23,-1,", 0, 0, 8);
-	if (idx == 9)
+		break;
+	case 9:
 		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,28,29,-1,", 0, 0, 8, true);
-	if (idx == 10)
+		break;
+	case 10:
 		SPACTION1(_vm->_globals.GESTE, "28,27,26,25,24,23,-1,", 0, 0, 8);
+		break;
+	}
 }
 
 void ObjectsManager::enableZone(int idx) {
