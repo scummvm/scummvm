@@ -606,6 +606,8 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	size_t nbytes;
 	Common::File f;
 
+	bool skipFl = false;
+
 	if (_vm->shouldQuit())
 		return;
 
@@ -665,9 +667,13 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 			do {
 				if (_vm->_eventsManager._escKeyFl) {
 					if (!_vm->_eventsManager._disableEscKeyFl)
-						goto LABEL_59;
-					_vm->_eventsManager._escKeyFl = false;
+						skipFl = true;
+					else 
+						_vm->_eventsManager._escKeyFl = false;
 				}
+				if (skipFl)
+					break;
+
 				_vm->_eventsManager.refreshEvents();
 				_vm->_soundManager.checkSoundEnd();
 			} while (_vm->_eventsManager._rateCounter < rate1);
@@ -682,9 +688,14 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 			do {
 				if (_vm->_eventsManager._escKeyFl) {
 					if (!_vm->_eventsManager._disableEscKeyFl)
-						goto LABEL_59;
-					_vm->_eventsManager._escKeyFl = false;
+						skipFl = true;
+					else
+						_vm->_eventsManager._escKeyFl = false;
 				}
+
+				if (skipFl)
+					break;
+
 				_vm->_eventsManager.refreshEvents();
 				_vm->_soundManager.checkSoundEnd();
 			} while (_vm->_eventsManager._rateCounter < rate1);
@@ -693,57 +704,73 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	_vm->_eventsManager._rateCounter = 0;
 	readError = false;
 	soundNumber = 0;
-	do {
-		++soundNumber;
-		_vm->_soundManager.playAnimSound(soundNumber);
-		memset(v10, 0, 19);
-		if (f.read(v10, 16) != 16)
-			readError = true;
+	if (!skipFl) {
+		do {
+			++soundNumber;
+			_vm->_soundManager.playAnimSound(soundNumber);
+			memset(v10, 0, 19);
+			if (f.read(v10, 16) != 16)
+				readError = true;
 
-		if (strncmp((const char *)v10, "IMAGE=", 6))
-			readError = true;
-		if (!readError) {
-			f.read(screenP, READ_LE_UINT32(v10 + 8));
-			if (_vm->_globals.iRegul == 1) {
-				do {
-					if (_vm->_eventsManager._escKeyFl) {
-						if (!_vm->_eventsManager._disableEscKeyFl)
-							goto LABEL_59;
-						_vm->_eventsManager._escKeyFl = false;
-					}
-					_vm->_eventsManager.refreshEvents();
-					_vm->_soundManager.checkSoundEnd();
-				} while (_vm->_eventsManager._rateCounter < rate2);
-			}
-			_vm->_eventsManager._rateCounter = 0;
-			_vm->_graphicsManager.lockScreen();
-			if (hasScreenCopy) {
-				if (*screenP != kByteStop) {
-					_vm->_graphicsManager.Copy_WinScan_Vbe(screenP, screenCopy);
-					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			if (strncmp((const char *)v10, "IMAGE=", 6))
+				readError = true;
+			if (!readError) {
+				f.read(screenP, READ_LE_UINT32(v10 + 8));
+				if (_vm->_globals.iRegul == 1) {
+					do {
+						if (_vm->_eventsManager._escKeyFl) {
+							if (!_vm->_eventsManager._disableEscKeyFl)
+								skipFl = true;
+							else
+								_vm->_eventsManager._escKeyFl = false;
+						}
+
+						if (skipFl)
+							break;
+
+						_vm->_eventsManager.refreshEvents();
+						_vm->_soundManager.checkSoundEnd();
+					} while (_vm->_eventsManager._rateCounter < rate2);
 				}
-			} else if (*screenP != kByteStop) {
-				_vm->_graphicsManager.Copy_Video_Vbe16a(screenP);
-			}
-			_vm->_graphicsManager.unlockScreen();
-			_vm->_graphicsManager.DD_VBL();
-			_vm->_soundManager.checkSoundEnd();
-		}
-	} while (!readError);
 
-	if (_vm->_globals.iRegul == 1) {
+				if (skipFl)
+					break;
+
+				_vm->_eventsManager._rateCounter = 0;
+				_vm->_graphicsManager.lockScreen();
+				if (hasScreenCopy) {
+					if (*screenP != kByteStop) {
+						_vm->_graphicsManager.Copy_WinScan_Vbe(screenP, screenCopy);
+						_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					}
+				} else if (*screenP != kByteStop) {
+					_vm->_graphicsManager.Copy_Video_Vbe16a(screenP);
+				}
+				_vm->_graphicsManager.unlockScreen();
+				_vm->_graphicsManager.DD_VBL();
+				_vm->_soundManager.checkSoundEnd();
+			}
+		} while (!readError);
+	}
+
+	if (_vm->_globals.iRegul == 1 && !skipFl) {
 		do {
 			if (_vm->_eventsManager._escKeyFl) {
 				if (!_vm->_eventsManager._disableEscKeyFl)
-					goto LABEL_59;
-				_vm->_eventsManager._escKeyFl = false;
+					skipFl = true;
+				else 
+					_vm->_eventsManager._escKeyFl = false;
 			}
+			if (skipFl)
+				break;
 			_vm->_eventsManager.refreshEvents();
 			_vm->_soundManager.checkSoundEnd();
 		} while (_vm->_eventsManager._rateCounter < rate3);
 	}
-	_vm->_eventsManager._rateCounter = 0;
-LABEL_59:
+
+	if (!skipFl)
+		_vm->_eventsManager._rateCounter = 0;
+
 	_vm->_graphicsManager._skipVideoLockFl = false;
 	f.close();
 
