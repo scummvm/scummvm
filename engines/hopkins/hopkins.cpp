@@ -106,7 +106,7 @@ Common::Error HopkinsEngine::run() {
 	else if (getPlatform() == Common::kPlatformWindows)
 		runWin95Demo();
 	else {
-		warning("Unhandled version, switching to linux demo. Please report this version to ScummVM developers");
+		warning("Unhandled version, switching to Linux demo. Please report this version to ScummVM developers");
 		runLinuxDemo();
 	}
 
@@ -783,7 +783,7 @@ bool HopkinsEngine::runFull() {
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
 	_graphicsManager.clearPalette();
-
+	
 	if (getPlatform() == Common::kPlatformLinux) {
 		_graphicsManager.loadImage("H2");
 		_graphicsManager.fadeInLong();
@@ -813,7 +813,9 @@ bool HopkinsEngine::runFull() {
 	_globals.PERSO_TYPE = 0;
 	_globals._mapCarPosX = _globals._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
+	
 	_globals._exitId = 0;
+
 	for (;;) {
 		if (_globals._exitId == 300)
 			_globals._exitId = 0;
@@ -2526,189 +2528,174 @@ void HopkinsEngine::displayCredits() {
 
 void HopkinsEngine::BTOCEAN() {
 	_fontManager.hideText(9);
-	if (_eventsManager._mouseCursorId == 16) {
-		_eventsManager.getMouseX();
-		if (_objectsManager._zoneNum > 0) {
-			int oldPosX = _eventsManager.getMouseX();
-			int oldPosY = _eventsManager.getMouseY();
-			bool displAnim = false;
-			if (_objectsManager._zoneNum == 1) {
-				if (_globals._oceanDirection == 3)
-					_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, false);
-				else if (_globals._oceanDirection == 1)
-					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, false);
-				else if (_globals._oceanDirection == 5)
-					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, false);
-				_globals._oceanDirection = 7;
-				_globals._exitId = 1;
-				int oldX = _objectsManager.getSpriteX(0);
-				for (;;) {
-					if (_globals._speed == 1)
-						oldX -= 2;
-					else if (_globals._speed == 2)
-						oldX -= 4;
-					else if (_globals._speed == 3)
-						oldX -= 6;
-					_objectsManager.setSpriteX(0, oldX);
-					OCEAN_HOME();
-					_eventsManager.VBL();
-					if (_eventsManager.getMouseButton() == 1) {
-						if (oldPosX == _eventsManager.getMouseX()) {
-							if (_eventsManager.getMouseY() == oldPosY)
-								break;
-						}
-					}
-					if (oldX <= -100)
-						goto LABEL_22;
-				}
+	if (_eventsManager._mouseCursorId != 16)
+		return;
+
+	_eventsManager.getMouseX();
+	if (_objectsManager._zoneNum <= 0)
+		return;
+
+	int oldPosX = _eventsManager.getMouseX();
+	int oldPosY = _eventsManager.getMouseY();
+	bool displAnim = false;
+
+	if (_objectsManager._zoneNum == 1) {
+		if (_globals._oceanDirection == 3)
+			_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, false);
+		else if (_globals._oceanDirection == 1)
+			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, false);
+		else if (_globals._oceanDirection == 5)
+			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, false);
+		_globals._oceanDirection = 7;
+		_globals._exitId = 1;
+		int oldX = _objectsManager.getSpriteX(0);
+		for (;;) {
+			if (_globals._speed == 1)
+				oldX -= 2;
+			else if (_globals._speed == 2)
+				oldX -= 4;
+			else if (_globals._speed == 3)
+				oldX -= 6;
+			_objectsManager.setSpriteX(0, oldX);
+			OCEAN_HOME();
+			_eventsManager.VBL();
+			if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 				displAnim = true;
+				break;
 			}
-LABEL_22:
-			if (_objectsManager._zoneNum == 2) {
-				if (_globals._oceanDirection == 7)
-					_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
-				else if (_globals._oceanDirection == 1)
-					_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
-				else if (_globals._oceanDirection == 5)
-					_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, false);
-				_globals._oceanDirection = 3;
-				_globals._exitId = 2;
-				int oldX = _objectsManager.getSpriteX(0);
-				for (;;) {
-					if (_globals._speed == 1)
-						oldX += 2;
-					else if (_globals._speed == 2)
-						oldX += 4;
-					else if (_globals._speed == 3)
-						oldX += 6;
-					_objectsManager.setSpriteX(0, oldX);
-					OCEAN_HOME();
-					_eventsManager.VBL();
-					if (_eventsManager.getMouseButton() == 1) {
-						if (oldPosX == _eventsManager.getMouseX()) {
-							if (_eventsManager.getMouseY() == oldPosY)
-								break;
-						}
-					}
-					if (oldX > 499)
-						goto LABEL_41;
-				}
+
+			if (oldX <= -100)
+				break;
+		}
+	}
+
+	if (_objectsManager._zoneNum == 2) {
+		if (_globals._oceanDirection == 7)
+			_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
+		else if (_globals._oceanDirection == 1)
+			_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
+		else if (_globals._oceanDirection == 5)
+			_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, false);
+		_globals._oceanDirection = 3;
+		_globals._exitId = 2;
+		int oldX = _objectsManager.getSpriteX(0);
+		for (;;) {
+			if (_globals._speed == 1)
+				oldX += 2;
+			else if (_globals._speed == 2)
+				oldX += 4;
+			else if (_globals._speed == 3)
+				oldX += 6;
+			_objectsManager.setSpriteX(0, oldX);
+			OCEAN_HOME();
+			_eventsManager.VBL();
+			if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 				displAnim = true;
+				break;
 			}
-LABEL_41:
-			if (_objectsManager._zoneNum == 3) {
-				if (_globals._oceanDirection == 3) {
-					int oldX = _objectsManager.getSpriteX(0);
-					do {
-						if (_globals._speed == 1)
-							oldX += 2;
-						else if (_globals._speed == 2)
-							oldX += 4;
-						else if (_globals._speed == 3)
-							oldX += 6;
-						_objectsManager.setSpriteX(0, oldX);
-						OCEAN_HOME();
-						_eventsManager.VBL();
-						if (_eventsManager.getMouseButton() == 1) {
-							if (oldPosX == _eventsManager.getMouseX()) {
-								if (_eventsManager.getMouseY() == oldPosY) {
-									displAnim = true;
-									goto LABEL_57;
-								}
-							}
-						}
-					} while (oldX <= 235);
-					if (!displAnim)
-						_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 0, 0, 6, false);
+			if (oldX > 499)
+				break;
+		}
+	}
+	if (_objectsManager._zoneNum == 3) {
+		if (_globals._oceanDirection == 3) {
+			int oldX = _objectsManager.getSpriteX(0);
+			do {
+				if (_globals._speed == 1)
+					oldX += 2;
+				else if (_globals._speed == 2)
+					oldX += 4;
+				else if (_globals._speed == 3)
+					oldX += 6;
+				_objectsManager.setSpriteX(0, oldX);
+				OCEAN_HOME();
+				_eventsManager.VBL();
+				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
+					displAnim = true;
+					goto LABEL_57;
 				}
+			} while (oldX <= 235);
+			if (!displAnim)
+				_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 0, 0, 6, false);
+		}
 LABEL_57:
-				if (_globals._oceanDirection == 7) {
-					int oldX = _objectsManager.getSpriteX(0);
-					do {
-						if (_globals._speed == 1)
-							oldX -= 2;
-						else if (_globals._speed == 2)
-							oldX -= 4;
-						else if (_globals._speed == 3)
-							oldX -= 6;
-						_objectsManager.setSpriteX(0, oldX);
-						OCEAN_HOME();
-						_eventsManager.VBL();
-						if (_eventsManager.getMouseButton() == 1) {
-							if (oldPosX == _eventsManager.getMouseX()) {
-								if (_eventsManager.getMouseY() == oldPosY) {
-									displAnim = true;
-									goto LABEL_72;
-								}
-							}
-						}
-					} while (oldX > 236);
-					if (!displAnim)
-						_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
+		if (_globals._oceanDirection == 7) {
+			int oldX = _objectsManager.getSpriteX(0);
+			do {
+				if (_globals._speed == 1)
+					oldX -= 2;
+				else if (_globals._speed == 2)
+					oldX -= 4;
+				else if (_globals._speed == 3)
+					oldX -= 6;
+				_objectsManager.setSpriteX(0, oldX);
+				OCEAN_HOME();
+				_eventsManager.VBL();
+				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
+					displAnim = true;
+					goto LABEL_72;
 				}
+			} while (oldX > 236);
+			if (!displAnim)
+				_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
+		}
 LABEL_72:
-				if (_globals._oceanDirection == 5)
-					_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
-				_globals._oceanDirection = 1;
-				_globals._exitId = 3;
-			}
-			if (_objectsManager._zoneNum == 4) {
-				if (_globals._oceanDirection == 3) {
-					int oldX = _objectsManager.getSpriteX(0);
-					do {
-						if (_globals._speed == 1)
-							oldX += 2;
-						else if (_globals._speed == 2)
-							oldX += 4;
-						else if (_globals._speed == 3)
-							oldX += 6;
-						_objectsManager.setSpriteX(0, oldX);
-						OCEAN_HOME();
-						_eventsManager.VBL();
-						if (_eventsManager.getMouseButton() == 1) {
-							if (oldPosX == _eventsManager.getMouseX()) {
-								if (_eventsManager.getMouseY() == oldPosY) {
-									displAnim = true;
-									goto LABEL_91;
-								}
-							}
-						}
-					} while (oldX <= 235);
-					if (!displAnim)
-						_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 0, 0, 6, false);
+		if (_globals._oceanDirection == 5)
+			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
+		_globals._oceanDirection = 1;
+		_globals._exitId = 3;
+	}
+	if (_objectsManager._zoneNum == 4) {
+		if (_globals._oceanDirection == 3) {
+			int oldX = _objectsManager.getSpriteX(0);
+			do {
+				if (_globals._speed == 1)
+					oldX += 2;
+				else if (_globals._speed == 2)
+					oldX += 4;
+				else if (_globals._speed == 3)
+					oldX += 6;
+				_objectsManager.setSpriteX(0, oldX);
+				OCEAN_HOME();
+				_eventsManager.VBL();
+				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
+					displAnim = true;
+					goto LABEL_91;
 				}
+			} while (oldX <= 235);
+			if (!displAnim)
+				_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 0, 0, 6, false);
+		}
 LABEL_91:
-				if (_globals._oceanDirection == 7) {
-					int oldX = _objectsManager.getSpriteX(0);
-					for (;;) {
-						if (_globals._speed == 1)
-							oldX -= 2;
-						else if (_globals._speed == 2)
-							oldX -= 4;
-						else if (_globals._speed == 3)
-							oldX -= 6;
-						_objectsManager.setSpriteX(0, oldX);
-						OCEAN_HOME();
-						_eventsManager.VBL();
-						if (_eventsManager.getMouseButton() == 1) {
-							if (oldPosX == _eventsManager.getMouseX()) {
-								if (_eventsManager.getMouseY() == oldPosY)
-									break;
-							}
-						}
-						if (oldX <= 236) {
-							if (!displAnim)
-								_objectsManager.SPACTION(_globals.PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
+		if (_globals._oceanDirection == 7) {
+			int oldX = _objectsManager.getSpriteX(0);
+			for (;;) {
+				if (_globals._speed == 1)
+					oldX -= 2;
+				else if (_globals._speed == 2)
+					oldX -= 4;
+				else if (_globals._speed == 3)
+					oldX -= 6;
+				_objectsManager.setSpriteX(0, oldX);
+				OCEAN_HOME();
+				_eventsManager.VBL();
+				if (_eventsManager.getMouseButton() == 1) {
+					if (oldPosX == _eventsManager.getMouseX()) {
+						if (_eventsManager.getMouseY() == oldPosY)
 							break;
-						}
 					}
 				}
-				if (_globals._oceanDirection == 1)
-					_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
-				_globals._oceanDirection = 5;
-				_globals._exitId = 4;
+				if (oldX <= 236) {
+					if (!displAnim)
+						_objectsManager.SPACTION(_globals.PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
+					break;
+				}
 			}
 		}
+		if (_globals._oceanDirection == 1)
+			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
+		_globals._oceanDirection = 5;
+		_globals._exitId = 4;
 	}
 }
 
@@ -2734,14 +2721,14 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	if (backgroundFilename.size())
 		_graphicsManager.loadImage(backgroundFilename);
 
-	if ((curExitId != 77) && (curExitId != 84) && (curExitId != 91))
-		_objectsManager.INILINK("ocean");
-	else if (curExitId == 77)
+	if (curExitId == 77)
 		_objectsManager.INILINK("IM77");
 	else if (curExitId == 84)
 		_objectsManager.INILINK("IM84");
 	else if (curExitId == 91)
 		_objectsManager.INILINK("IM91");
+	else
+		_objectsManager.INILINK("ocean");
 
 	if (!exit1)
 		_objectsManager.disableZone(1);
@@ -2800,7 +2787,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 		_objectsManager.checkZone();
 		OCEAN_HOME();
 		_eventsManager.VBL();
-		if (_globals._exitId)
+		if (_globals._exitId || g_system->getEventManager()->shouldQuit())
 			loopCond = true;
 	} while (!loopCond);
 
