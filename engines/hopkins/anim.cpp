@@ -352,9 +352,15 @@ LABEL_48:
 		if (v5)
 			goto LABEL_88;
 		f.read(screenP, READ_LE_UINT32(ptr + 8));
-		if (_vm->_globals.iRegul == 1)
-			break;
-LABEL_77:
+		if (_vm->_globals.iRegul == 1) {
+			while (!_vm->_eventsManager._escKeyFl) {
+				_vm->_eventsManager.refreshEvents();
+				_vm->_soundManager.checkSoundEnd();
+				if (_vm->_eventsManager._rateCounter >= rate2)
+					break;
+			}
+		}
+
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_graphicsManager.lockScreen();
 		if (hasScreenCopy) {
@@ -375,17 +381,11 @@ LABEL_88:
 					_vm->_eventsManager.refreshEvents();
 					_vm->_soundManager.checkSoundEnd();
 					if (_vm->_eventsManager._rateCounter >= rate3)
-						goto LABEL_114;
+						break;
 				}
 			}
 			goto LABEL_114;
 		}
-	}
-	while (!_vm->_eventsManager._escKeyFl) {
-		_vm->_eventsManager.refreshEvents();
-		_vm->_soundManager.checkSoundEnd();
-		if (_vm->_eventsManager._rateCounter >= rate2)
-			goto LABEL_77;
 	}
 LABEL_114:
 	_vm->_graphicsManager._skipVideoLockFl = false;
