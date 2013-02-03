@@ -2612,13 +2612,12 @@ void HopkinsEngine::BTOCEAN() {
 				_eventsManager.VBL();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 					displAnim = true;
-					goto LABEL_57;
+					break;
 				}
 			} while (oldX <= 235);
 			if (!displAnim)
 				_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 0, 0, 6, false);
 		}
-LABEL_57:
 		if (_globals._oceanDirection == 7) {
 			int oldX = _objectsManager.getSpriteX(0);
 			do {
@@ -2633,13 +2632,12 @@ LABEL_57:
 				_eventsManager.VBL();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 					displAnim = true;
-					goto LABEL_72;
+					break;
 				}
 			} while (oldX > 236);
 			if (!displAnim)
 				_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
 		}
-LABEL_72:
 		if (_globals._oceanDirection == 5)
 			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
 		_globals._oceanDirection = 1;
@@ -2660,13 +2658,13 @@ LABEL_72:
 				_eventsManager.VBL();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 					displAnim = true;
-					goto LABEL_91;
+					break;
 				}
 			} while (oldX <= 235);
 			if (!displAnim)
 				_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 0, 0, 6, false);
 		}
-LABEL_91:
+
 		if (_globals._oceanDirection == 7) {
 			int oldX = _objectsManager.getSpriteX(0);
 			for (;;) {
