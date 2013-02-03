@@ -816,6 +816,8 @@ bool HopkinsEngine::runFull() {
 	
 	_globals._exitId = 0;
 
+	_globals._exitId = 77;
+
 	for (;;) {
 		if (_globals._exitId == 300)
 			_globals._exitId = 0;
@@ -2694,12 +2696,9 @@ void HopkinsEngine::BTOCEAN() {
 				_objectsManager.setSpriteX(0, oldX);
 				OCEAN_HOME();
 				_eventsManager.VBL();
-				if (_eventsManager.getMouseButton() == 1) {
-					if (oldPosX == _eventsManager.getMouseX()) {
-						if (_eventsManager.getMouseY() == oldPosY)
-							break;
-					}
-				}
+				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY)
+					break;
+
 				if (oldX <= 236) {
 					if (!displAnim)
 						_objectsManager.SPACTION(_globals.PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
