@@ -51,7 +51,7 @@ public:
 	void clearAnim();
 	void playAnim(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3);
 	void playAnim2(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3);
-	void playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3);
+	void playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl = false);
 	void playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3);
 };
 

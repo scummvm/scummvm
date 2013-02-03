@@ -1820,9 +1820,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._disableInventFl = true;
 			if (_vm->_globals._saveData->_data[svField6] != _vm->_globals._saveData->_data[svField401]) {
 				_vm->_soundManager._specialSoundNum = 208;
-				_vm->_eventsManager._disableEscKeyFl = true;
-				_vm->_animationManager.playSequence("SORT.SEQ", 10, 4, 10);
-				_vm->_eventsManager._disableEscKeyFl = false;
+				_vm->_animationManager.playSequence("SORT.SEQ", 10, 4, 10, true);
 				_vm->_soundManager._specialSoundNum = 0;
 			}
 			_vm->_globals.NOT_VERIF = true;

@@ -53,8 +53,6 @@ EventsManager::EventsManager() {
 	Common::fill(&_keyState[0], &_keyState[256], false);
 	_priorCounterTime = 0;
 	_priorFrameTime = 0;
-
-	_disableEscKeyFl = false;
 }
 
 EventsManager::~EventsManager() {

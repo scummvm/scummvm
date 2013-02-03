@@ -62,7 +62,6 @@ public:
 	uint32 _priorCounterTime;
 	uint32 _priorFrameTime;
 	bool _escKeyFl;
-	bool _disableEscKeyFl;
 	DIALOG_KEY _gameKey;
 	int _mouseCursorId;
 	byte *_objectBuf;

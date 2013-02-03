@@ -597,7 +597,7 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) 
 /**
  * Play sequence
  */
-void AnimationManager::playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
+void AnimationManager::playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl) {
 	bool readError;
 	byte *screenCopy = NULL;
 	byte *screenP;
@@ -666,7 +666,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		if (_vm->_globals.iRegul == 1) {
 			do {
 				if (_vm->_eventsManager._escKeyFl) {
-					if (!_vm->_eventsManager._disableEscKeyFl)
+					if (!skipEscFl)
 						skipFl = true;
 					else 
 						_vm->_eventsManager._escKeyFl = false;
@@ -687,7 +687,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		if (_vm->_globals.iRegul == 1) {
 			do {
 				if (_vm->_eventsManager._escKeyFl) {
-					if (!_vm->_eventsManager._disableEscKeyFl)
+					if (!skipEscFl)
 						skipFl = true;
 					else
 						_vm->_eventsManager._escKeyFl = false;
@@ -719,7 +719,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 				if (_vm->_globals.iRegul == 1) {
 					do {
 						if (_vm->_eventsManager._escKeyFl) {
-							if (!_vm->_eventsManager._disableEscKeyFl)
+							if (!skipEscFl)
 								skipFl = true;
 							else
 								_vm->_eventsManager._escKeyFl = false;
@@ -756,7 +756,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	if (_vm->_globals.iRegul == 1 && !skipFl) {
 		do {
 			if (_vm->_eventsManager._escKeyFl) {
-				if (!_vm->_eventsManager._disableEscKeyFl)
+				if (!skipEscFl)
 					skipFl = true;
 				else 
 					_vm->_eventsManager._escKeyFl = false;
