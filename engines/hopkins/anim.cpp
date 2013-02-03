@@ -318,33 +318,31 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		if (strncmp((const char *)ptr, "IMAGE=", 6))
 			v5 = true;
 
-		if (v5)
-			goto LABEL_88;
-		f.read(screenP, READ_LE_UINT32(ptr + 8));
-		if (_vm->_globals.iRegul == 1) {
-			while (!_vm->_eventsManager._escKeyFl) {
-				_vm->_eventsManager.refreshEvents();
-				_vm->_soundManager.checkSoundEnd();
-				if (_vm->_eventsManager._rateCounter >= rate2)
-					break;
+		if (!v5) {
+			f.read(screenP, READ_LE_UINT32(ptr + 8));
+			if (_vm->_globals.iRegul == 1) {
+				while (!_vm->_eventsManager._escKeyFl) {
+					_vm->_eventsManager.refreshEvents();
+					_vm->_soundManager.checkSoundEnd();
+					if (_vm->_eventsManager._rateCounter >= rate2)
+						break;
+				}
 			}
-		}
 
-		_vm->_eventsManager._rateCounter = 0;
-		_vm->_graphicsManager.lockScreen();
-		if (hasScreenCopy) {
-			if (*screenP != kByteStop) {
-				_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
-				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_eventsManager._rateCounter = 0;
+			_vm->_graphicsManager.lockScreen();
+			if (hasScreenCopy) {
+				if (*screenP != kByteStop) {
+					_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
+					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				}
+			} else if (*screenP != kByteStop) {
+				_vm->_graphicsManager.Copy_Video_Vbe16(screenP);
 			}
-		} else if (*screenP != kByteStop) {
-			_vm->_graphicsManager.Copy_Video_Vbe16(screenP);
-		}
-		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.DD_VBL();
-		_vm->_soundManager.checkSoundEnd();
-LABEL_88:
-		if (v5) {
+			_vm->_graphicsManager.unlockScreen();
+			_vm->_graphicsManager.DD_VBL();
+			_vm->_soundManager.checkSoundEnd();
+		} else {
 			if (_vm->_globals.iRegul == 1) {
 				while (!_vm->_eventsManager._escKeyFl) {
 					_vm->_eventsManager.refreshEvents();
@@ -353,7 +351,7 @@ LABEL_88:
 						break;
 				}
 			}
-			goto LABEL_114;
+			break;
 		}
 	}
 LABEL_114:
@@ -380,21 +378,21 @@ LABEL_114:
 		f.read(screenP, nbytes);
 		memcpy(ptra, screenP, 307200);
 
-		int v6 = 0;
+		bool v6 = false;
 		do {
 			memset(&buf, 0, 6);
 			memset(ptr, 0, 19);
 			if (f.read(ptr, 16) != 16)
-				v6 = -1;
+				v6 = true;
 			if (strncmp((const char *)ptr, "IMAGE=", 6))
-				v6 = -1;
+				v6 = true;
 
 			if (!v6) {
 				f.read(screenP, READ_LE_UINT32(ptr + 8));
 				if (*screenP != kByteStop)
 					_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, ptra);
 			}
-		} while (v6 != -1);
+		} while (!v6);
 		_vm->_graphicsManager.fadeOutDefaultLength(ptra);
 		ptra = _vm->_globals.freeMemory(ptra);
 	}
