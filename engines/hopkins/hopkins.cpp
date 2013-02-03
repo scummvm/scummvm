@@ -2538,17 +2538,24 @@ void HopkinsEngine::BTOCEAN() {
 	int oldPosX = _eventsManager.getMouseX();
 	int oldPosY = _eventsManager.getMouseY();
 	bool displAnim = false;
-
-	if (_objectsManager._zoneNum == 1) {
-		if (_globals._oceanDirection == 3)
+	int oldX;
+	switch (_objectsManager._zoneNum) {
+	case 1:
+		switch (_globals._oceanDirection) {
+		case 1:
+		_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, false);
+		break;
+		case 3:
 			_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, false);
-		else if (_globals._oceanDirection == 1)
-			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, false);
-		else if (_globals._oceanDirection == 5)
+			break;
+		case 5:
 			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, false);
+			break;
+		}
+
 		_globals._oceanDirection = 7;
 		_globals._exitId = 1;
-		int oldX = _objectsManager.getSpriteX(0);
+		oldX = _objectsManager.getSpriteX(0);
 		for (;;) {
 			if (_globals._speed == 1)
 				oldX -= 2;
@@ -2567,18 +2574,22 @@ void HopkinsEngine::BTOCEAN() {
 			if (oldX <= -100)
 				break;
 		}
-	}
-
-	if (_objectsManager._zoneNum == 2) {
-		if (_globals._oceanDirection == 7)
-			_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
-		else if (_globals._oceanDirection == 1)
+		break;
+	case 2:
+		switch (_globals._oceanDirection) {
+		case 1:
 			_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
-		else if (_globals._oceanDirection == 5)
+			break;
+		case 5:
 			_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, false);
+			break;
+		case 7:
+			_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
+			break;
+		}
 		_globals._oceanDirection = 3;
 		_globals._exitId = 2;
-		int oldX = _objectsManager.getSpriteX(0);
+		oldX = _objectsManager.getSpriteX(0);
 		for (;;) {
 			if (_globals._speed == 1)
 				oldX += 2;
@@ -2596,10 +2607,11 @@ void HopkinsEngine::BTOCEAN() {
 			if (oldX > 499)
 				break;
 		}
-	}
-	if (_objectsManager._zoneNum == 3) {
-		if (_globals._oceanDirection == 3) {
-			int oldX = _objectsManager.getSpriteX(0);
+		break;
+	case 3:
+		switch (_globals._oceanDirection) {
+		case 3:
+			oldX = _objectsManager.getSpriteX(0);
 			do {
 				if (_globals._speed == 1)
 					oldX += 2;
@@ -2617,9 +2629,12 @@ void HopkinsEngine::BTOCEAN() {
 			} while (oldX <= 235);
 			if (!displAnim)
 				_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 0, 0, 6, false);
-		}
-		if (_globals._oceanDirection == 7) {
-			int oldX = _objectsManager.getSpriteX(0);
+			break;
+		case 5:
+			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
+			break;
+		case 7:
+			oldX = _objectsManager.getSpriteX(0);
 			do {
 				if (_globals._speed == 1)
 					oldX -= 2;
@@ -2637,15 +2652,18 @@ void HopkinsEngine::BTOCEAN() {
 			} while (oldX > 236);
 			if (!displAnim)
 				_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
+			break;
 		}
-		if (_globals._oceanDirection == 5)
-			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
 		_globals._oceanDirection = 1;
 		_globals._exitId = 3;
-	}
-	if (_objectsManager._zoneNum == 4) {
-		if (_globals._oceanDirection == 3) {
-			int oldX = _objectsManager.getSpriteX(0);
+		break;
+	case 4:
+		switch (_globals._oceanDirection) {
+		case 1:
+			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
+			break;
+		case 3:
+			oldX = _objectsManager.getSpriteX(0);
 			do {
 				if (_globals._speed == 1)
 					oldX += 2;
@@ -2663,10 +2681,9 @@ void HopkinsEngine::BTOCEAN() {
 			} while (oldX <= 235);
 			if (!displAnim)
 				_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 0, 0, 6, false);
-		}
-
-		if (_globals._oceanDirection == 7) {
-			int oldX = _objectsManager.getSpriteX(0);
+			break;
+		case 7:
+			oldX = _objectsManager.getSpriteX(0);
 			for (;;) {
 				if (_globals._speed == 1)
 					oldX -= 2;
@@ -2689,11 +2706,11 @@ void HopkinsEngine::BTOCEAN() {
 					break;
 				}
 			}
+			break;
 		}
-		if (_globals._oceanDirection == 1)
-			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
 		_globals._oceanDirection = 5;
 		_globals._exitId = 4;
+		break;
 	}
 }
 
