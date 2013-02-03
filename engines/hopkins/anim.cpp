@@ -598,16 +598,6 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) 
  * Play sequence
  */
 void AnimationManager::playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl) {
-	bool readError;
-	byte *screenCopy = NULL;
-	byte *screenP;
-	byte *v10;
-	int soundNumber;
-	size_t nbytes;
-	Common::File f;
-
-	bool skipFl = false;
-
 	if (_vm->shouldQuit())
 		return;
 
@@ -623,18 +613,20 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		if (!_vm->_graphicsManager._lineNbr)
 			_vm->_graphicsManager._scrollOffset = 0;
 	}
-	screenP = _vm->_graphicsManager._vesaScreen;
-	v10 = _vm->_globals.allocMemory(22);
+	byte *screenP = _vm->_graphicsManager._vesaScreen;
+	byte *v10 = _vm->_globals.allocMemory(22);
+	Common::File f;
 	if (!f.open(file))
 		error("Error opening file - %s", file.c_str());
 
 	f.skip(6);
 	f.read(_vm->_graphicsManager._palette, 800);
 	f.skip(4);
-	nbytes = f.readUint32LE();
+	size_t nbytes = f.readUint32LE();
 	f.skip(14);
 	f.read(screenP, nbytes);
 
+	byte *screenCopy = NULL;
 	if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 		hasScreenCopy = true;
 		screenCopy = _vm->_globals.allocMemory(307200);
@@ -659,21 +651,19 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_graphicsManager.unlockScreen();
 		_vm->_graphicsManager.DD_VBL();
 	}
+	bool skipFl = false;
 	if (_vm->getIsDemo()) {
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
 		_vm->_soundManager.loadAnimSound();
 		if (_vm->_globals.iRegul == 1) {
 			do {
-				if (_vm->_eventsManager._escKeyFl) {
-					if (!skipEscFl)
-						skipFl = true;
-					else 
-						_vm->_eventsManager._escKeyFl = false;
-				}
-				if (skipFl)
+				if (_vm->shouldQuit() || (_vm->_eventsManager._escKeyFl && !skipEscFl)) {
+					skipFl = true;
 					break;
+				}
 
+				_vm->_eventsManager._escKeyFl = false;
 				_vm->_eventsManager.refreshEvents();
 				_vm->_soundManager.checkSoundEnd();
 			} while (_vm->_eventsManager._rateCounter < rate1);
@@ -686,24 +676,20 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_soundManager.loadAnimSound();
 		if (_vm->_globals.iRegul == 1) {
 			do {
-				if (_vm->_eventsManager._escKeyFl) {
-					if (!skipEscFl)
-						skipFl = true;
-					else
-						_vm->_eventsManager._escKeyFl = false;
+				if (_vm->shouldQuit() || (_vm->_eventsManager._escKeyFl && !skipEscFl)) {
+					skipFl = true;
+					break;
 				}
 
-				if (skipFl)
-					break;
-
+				_vm->_eventsManager._escKeyFl = false;
 				_vm->_eventsManager.refreshEvents();
 				_vm->_soundManager.checkSoundEnd();
 			} while (_vm->_eventsManager._rateCounter < rate1);
 		}
 	}
 	_vm->_eventsManager._rateCounter = 0;
-	readError = false;
-	soundNumber = 0;
+	bool readError = false;
+	int soundNumber = 0;
 	if (!skipFl) {
 		do {
 			++soundNumber;
@@ -718,16 +704,12 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 				f.read(screenP, READ_LE_UINT32(v10 + 8));
 				if (_vm->_globals.iRegul == 1) {
 					do {
-						if (_vm->_eventsManager._escKeyFl) {
-							if (!skipEscFl)
-								skipFl = true;
-							else
-								_vm->_eventsManager._escKeyFl = false;
+						if (_vm->shouldQuit() || (_vm->_eventsManager._escKeyFl && !skipEscFl)) {
+							skipFl = true;
+							break;
 						}
 
-						if (skipFl)
-							break;
-
+						_vm->_eventsManager._escKeyFl = false;
 						_vm->_eventsManager.refreshEvents();
 						_vm->_soundManager.checkSoundEnd();
 					} while (_vm->_eventsManager._rateCounter < rate2);
@@ -755,14 +737,12 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 	if (_vm->_globals.iRegul == 1 && !skipFl) {
 		do {
-			if (_vm->_eventsManager._escKeyFl) {
-				if (!skipEscFl)
-					skipFl = true;
-				else 
-					_vm->_eventsManager._escKeyFl = false;
-			}
-			if (skipFl)
+			if (_vm->shouldQuit() || (_vm->_eventsManager._escKeyFl && !skipEscFl)) {
+				skipFl = true;
 				break;
+			}
+
+			_vm->_eventsManager._escKeyFl = false;
 			_vm->_eventsManager.refreshEvents();
 			_vm->_soundManager.checkSoundEnd();
 		} while (_vm->_eventsManager._rateCounter < rate3);
