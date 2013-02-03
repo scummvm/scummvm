@@ -1351,6 +1351,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 103:
+			// Dice game
 			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.PARLER_PERSO("tourist1.pe2");
 			_vm->_globals._introSpeechOffFl = false;
@@ -2324,6 +2325,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 607:
+			// Display bomb plan
 			if (!_vm->getIsDemo()) {
 				memcpy(_vm->_graphicsManager._oldPalette, _vm->_graphicsManager._palette, 769);
 				_vm->_animationManager.playAnim2("PLAN.ANM", 50, 10, 800);
