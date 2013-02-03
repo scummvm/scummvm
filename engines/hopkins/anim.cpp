@@ -108,53 +108,57 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		// Do pre-animation delay
 		do {
 			if (_vm->_eventsManager._escKeyFl)
-				goto EXIT;
+				break;
 
 			_vm->_eventsManager.refreshEvents();
 		} while (!_vm->shouldQuit() && _vm->_eventsManager._rateCounter < rate1);
 	}
 
-	_vm->_eventsManager._rateCounter = 0;
-	frameNumber = 0;
-	while (!_vm->shouldQuit()) {
-		++frameNumber;
-		_vm->_soundManager.playAnimSound(frameNumber);
-
-		// Read frame header
-		if (f.read(ptr, 16) != 16)
-			break;
-
-		if (strncmp((char *)ptr, "IMAGE=", 6))
-			break;
-
-		f.read(screenP, READ_LE_UINT32(ptr + 8));
-
-		if (_vm->_globals.iRegul == 1) {
-			do {
-				if (_vm->_eventsManager._escKeyFl)
-					goto EXIT;
-
-				_vm->_eventsManager.refreshEvents();
-				_vm->_soundManager.checkSoundEnd();
-			} while (!_vm->shouldQuit() && _vm->_eventsManager._rateCounter < rate2);
-		}
-
+	if (!_vm->_eventsManager._escKeyFl) {
 		_vm->_eventsManager._rateCounter = 0;
-		_vm->_graphicsManager.lockScreen();
-		if (hasScreenCopy) {
-			if (*screenP != kByteStop) {
-				_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
-				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		frameNumber = 0;
+		while (!_vm->shouldQuit()) {
+			++frameNumber;
+			_vm->_soundManager.playAnimSound(frameNumber);
+
+			// Read frame header
+			if (f.read(ptr, 16) != 16)
+				break;
+
+			if (strncmp((char *)ptr, "IMAGE=", 6))
+				break;
+
+			f.read(screenP, READ_LE_UINT32(ptr + 8));
+
+			if (_vm->_globals.iRegul == 1) {
+				do {
+					if (_vm->_eventsManager._escKeyFl)
+						break;
+
+					_vm->_eventsManager.refreshEvents();
+					_vm->_soundManager.checkSoundEnd();
+				} while (!_vm->shouldQuit() && _vm->_eventsManager._rateCounter < rate2);
 			}
-		} else if (*screenP != kByteStop) {
-			_vm->_graphicsManager.Copy_Video_Vbe16(screenP);
+
+			if (!_vm->_eventsManager._escKeyFl) {
+				_vm->_eventsManager._rateCounter = 0;
+				_vm->_graphicsManager.lockScreen();
+				if (hasScreenCopy) {
+					if (*screenP != kByteStop) {
+						_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
+						_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					}
+				} else if (*screenP != kByteStop) {
+					_vm->_graphicsManager.Copy_Video_Vbe16(screenP);
+				}
+				_vm->_graphicsManager.unlockScreen();
+				_vm->_graphicsManager.DD_VBL();
+				_vm->_soundManager.checkSoundEnd();
+			}
 		}
-		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.DD_VBL();
-		_vm->_soundManager.checkSoundEnd();
 	}
 
-	if (_vm->_globals.iRegul == 1) {
+	if (_vm->_globals.iRegul == 1 && !_vm->_eventsManager._escKeyFl) {
 		// Do post-animation delay
 		do {
 			if (_vm->_eventsManager._escKeyFl)
@@ -165,9 +169,11 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		} while (_vm->_eventsManager._rateCounter < rate3);
 	}
 
-	_vm->_eventsManager._rateCounter = 0;
-	_vm->_soundManager.checkSoundEnd();
-EXIT:
+	if (!_vm->_eventsManager._escKeyFl) {
+		_vm->_eventsManager._rateCounter = 0;
+		_vm->_soundManager.checkSoundEnd();
+	}
+
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
 		screenCopy = _vm->_globals.allocMemory(307200);
 
