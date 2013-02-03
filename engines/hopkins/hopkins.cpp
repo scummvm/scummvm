@@ -816,8 +816,6 @@ bool HopkinsEngine::runFull() {
 	
 	_globals._exitId = 0;
 
-	_globals._exitId = 77;
-
 	for (;;) {
 		if (_globals._exitId == 300)
 			_globals._exitId = 0;
@@ -2793,8 +2791,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 	_graphicsManager._noFadingFl = false;
 	_globals.iRegul = 1;
 
-	bool loopCond = false;
-	do {
+	for (;;) {
 		int mouseButton = _eventsManager.getMouseButton();
 		if (mouseButton && mouseButton == 1)
 			BTOCEAN();
@@ -2802,16 +2799,16 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 		OCEAN_HOME();
 		_eventsManager.VBL();
 		if (_globals._exitId || g_system->getEventManager()->shouldQuit())
-			loopCond = true;
-	} while (!loopCond);
+			break;
+	}
 
 	if (_globals._exitId == 1)
 		_globals._exitId = exit1;
-	if (_globals._exitId == 2)
+	else if (_globals._exitId == 2)
 		_globals._exitId = exit2;
-	if (_globals._exitId == 3)
+	else if (_globals._exitId == 3)
 		_globals._exitId = exit3;
-	if (_globals._exitId == 4)
+	else if (_globals._exitId == 4)
 		_globals._exitId = exit4;
 	_graphicsManager.fadeOutLong();
 	_objectsManager.removeSprite(0);
