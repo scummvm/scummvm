@@ -49,7 +49,8 @@ MaterialData::MaterialData(const Common::String &filename, Common::SeekableReadS
 void MaterialData::initGrim(Common::SeekableReadStream *data) {
 	uint32 tag = data->readUint32BE();
 	if (tag != MKTAG('M','A','T',' '))
-		error("invalid magic loading texture");
+		error("Invalid header for texture %s. Expected 'MAT ', got '%c%c%c%c'", _fname.c_str(),
+		                 (tag >> 24) & 0xFF, (tag >> 16) & 0xFF, (tag >> 8) & 0xFF, tag & 0xFF);
 
 	data->seek(12, SEEK_SET);
 	_numImages = data->readUint32LE();
