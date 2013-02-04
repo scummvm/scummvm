@@ -28,7 +28,7 @@
 namespace Hopkins {
 
 Debugger::Debugger() : GUI::Debugger() {
-	DCmd_Register("continue",		WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
 }
 
 void Debugger::setParent(HopkinsEngine *vm) {
