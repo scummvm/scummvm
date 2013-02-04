@@ -61,6 +61,7 @@ engines/tinsel/saveload.cpp
 engines/toltecs/detection.cpp
 engines/toltecs/menu.cpp
 engines/parallaction/saveload.cpp
+engines/pegasus/pegasus.cpp
 
 audio/fmopl.cpp
 audio/mididrv.cpp
