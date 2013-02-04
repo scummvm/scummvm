@@ -59,6 +59,7 @@
 #include "engines/grim/set.h"
 #include "engines/grim/sound.h"
 #include "engines/grim/stuffit.h"
+#include "engines/grim/debugger.h"
 
 #include "engines/grim/imuse/imuse.h"
 
@@ -74,6 +75,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 		Engine(syst), _currSet(NULL), _selectedActor(NULL) {
 	g_grim = this;
 
+	_debugger = new Debugger();
 	_gameType = gameType;
 	_gameFlags = gameFlags;
 	_gamePlatform = platform;
@@ -655,6 +657,8 @@ void GrimEngine::mainLoop() {
 
 		g_imuse->flushTracks();
 		g_imuse->refreshScripts();
+
+		_debugger->onFrame();
 
 		// Process events
 		Common::Event event;

@@ -45,6 +45,7 @@ class ObjectState;
 class Set;
 class TextObject;
 class PrimitiveObject;
+class Debugger;
 
 enum GrimGameType {
 	GType_GRIM,
@@ -248,6 +249,7 @@ private:
 	GrimGameType _gameType;
 	Common::Platform _gamePlatform;
 	Common::Language _gameLanguage;
+	Debugger *_debugger;
 };
 
 extern GrimEngine *g_grim;

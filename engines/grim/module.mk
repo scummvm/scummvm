@@ -121,7 +121,8 @@ MODULE_OBJS := \
 	stuffit.o \
 	textobject.o \
 	textsplit.o \
-	object.o
+	object.o \
+	debugger.o
 
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \
