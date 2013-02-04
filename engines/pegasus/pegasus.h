@@ -30,6 +30,7 @@
 #include "common/macresman.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
+#include "common/str-array.h"
 #include "common/system.h"
 #include "common/util.h"
 
@@ -195,6 +196,7 @@ public:
 	bool saveRequested() const { return _saveRequested; }
 	void requestLoad() { _loadRequested = true; }
 	bool loadRequested() const { return _loadRequested; }
+	static Common::StringArray listSaveFiles();
 
 protected:
 	Common::Error run();

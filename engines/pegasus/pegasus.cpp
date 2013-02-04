@@ -639,9 +639,15 @@ void PegasusEngine::writeContinueStream(Common::WriteStream *stream) {
 	delete[] data;
 }
 
+Common::StringArray PegasusEngine::listSaveFiles() {
+	Common::StringArray fileNames = g_system->getSavefileManager()->listSavefiles("pegasus-*.sav");
+	Common::sort(fileNames.begin(), fileNames.end());
+	return fileNames;
+}
+
 Common::Error PegasusEngine::loadGameState(int slot) {
-	Common::StringArray filenames = _saveFileMan->listSavefiles("pegasus-*.sav");
-	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(filenames[slot]);
+	Common::StringArray fileNames = listSaveFiles();
+	Common::InSaveFile *loadFile = _saveFileMan->openForLoading(fileNames[slot]);
 	if (!loadFile)
 		return Common::kUnknownError;
 
