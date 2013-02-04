@@ -48,7 +48,6 @@ AnimationManager::AnimationManager() {
  */
 void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
 	byte *screenCopy = NULL;
-	int frameNumber;
 	Common::File f;
 
 	if (_vm->shouldQuit())
@@ -115,17 +114,16 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 	if (!_vm->_eventsManager._escKeyFl) {
 		_vm->_eventsManager._rateCounter = 0;
-		frameNumber = 0;
+		int frameNumber = 0;
 		while (!_vm->shouldQuit()) {
 			++frameNumber;
 			_vm->_soundManager.playAnimSound(frameNumber);
 
-			byte imageStr[20];
-			memset(imageStr, 0, 20);
+			byte imageStr[17];
 			// Read frame header
 			if (f.read(imageStr, 16) != 16)
 				break;
-
+			imageStr[16] = 0;
 			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
 
@@ -178,8 +176,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
 		screenCopy = _vm->_globals.allocMemory(307200);
 
-		f.seek(0);
-		f.skip(6);
+		f.seek(6);
 		f.read(_vm->_graphicsManager._palette, 800);
 		f.skip(4);
 		nbytes = f.readUint32LE();
@@ -189,11 +186,11 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		memcpy(screenCopy, screenP, 307200);
 
 		for (;;) {
-			byte imageStr[20];
-			memset(imageStr, 0, 20);
-
+			byte imageStr[17];
 			if (f.read(imageStr, 16) != 16)
 				break;
+			imageStr[16] = 0;
+
 			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
 
@@ -243,11 +240,11 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		if (!f.open(filename))
 			error("Error opening file - %s", filename.c_str());
 
-		f.seek(f.pos() + 6);
+		f.skip(6);
 		f.read(_vm->_graphicsManager._palette, 800);
-		f.seek(f.pos() + 4);
+		f.skip(4);
 		size_t nbytes = f.readUint32LE();
-		f.seek(f.pos() + 14);
+		f.skip(14);
 
 		f.read(screenP, nbytes);
 
@@ -297,11 +294,10 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 				break;
 			++frameNumber;
 			_vm->_soundManager.playAnimSound(frameNumber);
-			byte imageStr[20];
-			memset(imageStr, 0, 19);
-
+			byte imageStr[17];
 			if (f.read(imageStr, 16) != 16)
 				break;
+			imageStr[16] = 0;
 
 			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
@@ -341,22 +337,21 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	f.close();
 
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
-		byte *ptra;
-		ptra = _vm->_globals.allocMemory(307200);
-
 		f.seek(6);
 		f.read(_vm->_graphicsManager._palette, 800);
-		f.seek(f.pos() + 4);
+		f.skip(4);
 		size_t nbytes = f.readUint32LE();
-		f.seek(f.pos() + 14);
+		f.skip(14);
 		f.read(screenP, nbytes);
+		byte *ptra = _vm->_globals.allocMemory(307200);
 		memcpy(ptra, screenP, 307200);
 
 		for (;;) {
-			byte imageStr[20];
-			memset(imageStr, 0, 19);
+			byte imageStr[17];
 			if (f.read(imageStr, 16) != 16)
 				break;
+			imageStr[16] = 0;
+
 			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
 
@@ -500,11 +495,9 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	_vm->_globals.Bank[idx]._data = fileDataPtr;
 
 	int objectDataIdx = 0;
-	int width;
-	int height;
 	for(objectDataIdx = 0; objectDataIdx <= 249; objectDataIdx++) {
-		width = _vm->_objectsManager.getWidth(fileDataPtr, objectDataIdx);
-		height = _vm->_objectsManager.getHeight(fileDataPtr, objectDataIdx);
+		int width = _vm->_objectsManager.getWidth(fileDataPtr, objectDataIdx);
+		int height = _vm->_objectsManager.getHeight(fileDataPtr, objectDataIdx);
 		if (!width && !height)
 			break;
 	}
@@ -689,10 +682,10 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		for (;;) {
 			++soundNumber;
 			_vm->_soundManager.playAnimSound(soundNumber);
-			byte imageStr[20];
-			memset(imageStr, 0, 19);
+			byte imageStr[17];
 			if (f.read(imageStr, 16) != 16)
 				break;
+			imageStr[16] = 0;
 
 			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
@@ -766,7 +759,6 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 	byte *screenCopy = NULL;
 	byte *screenP;
 	int frameNumber;
-	size_t nbytes;
 	Common::File f;
 
 	bool multiScreenFl = false;
@@ -783,13 +775,8 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		f.skip(6);
 		f.read(_vm->_graphicsManager._palette, 800);
 		f.skip(4);
-		nbytes = f.readUint32LE();
-		f.readUint32LE();
-		f.readUint16LE();
-		f.readUint16LE();
-		f.readUint16LE();
-		f.readUint16LE();
-		f.readUint16LE();
+		size_t nbytes = f.readUint32LE();
+		f.skip(14);
 		f.read(screenP, nbytes);
 
 		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
@@ -831,10 +818,10 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		while (!_vm->shouldQuit()) {
 			_vm->_soundManager.playAnimSound(frameNumber++);
 
-			byte imageStr[20];
-			memset(imageStr, 0, 19);
+			byte imageStr[17];
 			if (f.read(imageStr, 16) != 16)
 				break;
+			imageStr[16] = 0;
 
 			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
@@ -877,27 +864,19 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !multiScreenFl) {
 		byte *ptra = _vm->_globals.allocMemory(307200);
 
-		f.seek(0);
-		f.skip(6);
+		f.seek(6);
 		f.read(_vm->_graphicsManager._palette, 800);
 		f.skip(4);
-		nbytes = f.readUint32LE();
-
-		f.readUint32LE();
-		f.readUint16LE();
-		f.readUint16LE();
-		f.readUint16LE();
-		f.readUint16LE();
-		f.readUint16LE();
-
+		size_t nbytes = f.readUint32LE();
+		f.skip(14);
 		f.read(screenP, nbytes);
 
 		memcpy(ptra, screenP, 307200);
 		for (;;) {
-			byte imageStr[20];
-			memset(imageStr, 0, 19);
+			byte imageStr[17];
 			if (f.read(imageStr, 16) != 16)
 				break;
+			imageStr[16] = 0;
 
 			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
