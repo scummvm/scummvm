@@ -288,7 +288,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 }
 
-static char _englishText[] = 
+static const char _englishText[] = 
 "% ****** FBI COMPUTER NUMBER 4985 ****** J.HOPKINS COMPUTER ******\n"
 "% ****** FBI COMPUTER NUMBER 4998 ****** S.COLLINS COMPUTER ******\n"
 "% ****** FBI COMPUTER NUMBER 4997 ****** ACCES FREE COMPUTER ******\n"
@@ -307,7 +307,7 @@ static char _englishText[] =
 "% 6) SCIENTIST KIDNAPPED (next).\n"
 "%% fin\n";
 
-static char _frenchText[] =  
+static const char _frenchText[] =  
 "% ****** FBI COMPUTER NUMBER 4985 ****** J.HOPKINS COMPUTER ******\n"
 "% ****** FBI COMPUTER NUMBER 4998 ****** S.COLLINS COMPUTER ******\n"
 "% ****** FBI COMPUTER NUMBER 4997 ****** ACCES FREE COMPUTER ******\n"
@@ -327,7 +327,7 @@ static char _frenchText[] =
 "% 6) DISPARITIONS (suite).\n"
 "%% fin\n";
 
-static char _spanishText[] =  
+static const char _spanishText[] =  
 "% **** ORDENADOR DEL FBI NUMERO 4985 **** ORDENADOR J.HOPKINS *****\n"
 "% **** ORDENADOR DEL FBI NUMERO 4998 **** ORDENADOR S.COLLINS *****\n"
 "% *** ORDENADOR DEL FBI NUMERO 4997 *** ORDENADOR DE ACCESO LIBRE ***\n"
@@ -390,16 +390,13 @@ void ComputerManager::loadMenu() {
 			}
 			++lineNum;
 		}
-		tmpPtr = tmpPtr + 1;
+		++tmpPtr;
 	} while (!loopCond);
 	_vm->_globals.freeMemory((byte *)ptr);
 }
 
 void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 	char curChar;
-	char newChar;
-	char mappedChar;
-	Common::String charString;
 
 	int x1 = xp;
 	int x2 = 0;
@@ -414,7 +411,7 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 		if (_vm->shouldQuit())
 			return;
 
-		mappedChar = '*';
+		char mappedChar = '*';
 
 		if ((curChar == '-') || ((curChar >= '0') && (curChar <= '9')) || ((curChar >= 'A') && (curChar <= 'Z')))
 			mappedChar = curChar;
@@ -431,12 +428,12 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 			_vm->_fontManager.displayTextVesa(x1, yp, "_", 252);
 		}
 		if (mappedChar != '*') {
-			newChar = mappedChar;
+			char newChar = mappedChar;
 			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_globals._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
 			_vm->_graphicsManager.addVesaSegment(x1, yp, _vm->_globals._fontFixedWidth + x1, yp + 12);
 			_inputBuf[textIndex] = newChar;
 
-			charString = Common::String::format("%c_", newChar);
+			Common::String charString = Common::String::format("%c_", newChar);
 			_vm->_fontManager.displayTextVesa(x1, yp, charString, 252);
 			++textIndex;
 			x1 += _vm->_globals._fontFixedWidth;
@@ -483,7 +480,6 @@ void ComputerManager::restoreFBIRoom() {
  */
 void ComputerManager::readText(int idx) {
 	_vm->_eventsManager._escKeyFl = false;
-	byte *ptr;
 
 	Common::String filename;
 	if (_vm->_globals._language == LANG_EN)
@@ -493,7 +489,7 @@ void ComputerManager::readText(int idx) {
 	else if (_vm->_globals._language == LANG_SP)
 		filename = "THOPKES.TXT";
 
-	ptr = _vm->_fileManager.loadFile(filename);
+	byte *ptr = _vm->_fileManager.loadFile(filename);
 	uint16 fileSize = _vm->_fileManager.fileSize(filename);
 	int pos;
 	for (pos = 0; pos < fileSize; pos++) {
@@ -583,22 +579,19 @@ void ComputerManager::displayGamesSubMenu() {
  * Load Highscore from file
  */
 void ComputerManager::loadHiscore() {
-	char nextChar;
-	byte *ptr;
-
-	ptr = _vm->_globals.allocMemory(100);
+	byte *ptr = _vm->_globals.allocMemory(100);
 	_vm->_saveLoadManager.load("HISCORE.DAT", ptr);
 
 	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
 		for (int i = 0; i < 5; ++i) {
-			nextChar = ptr[(16 * scoreIndex) + i];
+			char nextChar = ptr[(16 * scoreIndex) + i];
 			if (!nextChar)
 				nextChar = ' ';
 			_score[scoreIndex]._name += nextChar;
 		}
 
 		for (int i = 0; i < 9; ++i) {
-			nextChar = ptr[(scoreIndex * 16) + 6 + i];
+			char nextChar = ptr[(scoreIndex * 16) + 6 + i];
 			if (!nextChar)
 				nextChar = '0';
 			_score[scoreIndex]._score += nextChar;
@@ -624,9 +617,6 @@ void ComputerManager::setModeVGA256() {
  * Load new level
  */
 void ComputerManager::newLevel() {
-	Common::String file;
-	Common::File f;
-
 	_vm->_objectsManager.removeSprite(0);
 	_vm->_objectsManager.removeSprite(1);
 	++_breakoutLives;
@@ -637,6 +627,8 @@ void ComputerManager::newLevel() {
 	_breakoutLevel = (int16 *)_vm->_globals.freeMemory((byte *)_breakoutLevel);
 
 	++_breakoutLevelNbr;
+	Common::String file;
+	Common::File f;
 	while (!_vm->shouldQuit()) {
 		file = Common::String::format("TAB%d.TAB", _breakoutLevelNbr);
 		if (f.open(file))
@@ -703,17 +695,11 @@ void ComputerManager::displayBricks() {
  * Display Lives in breakout game
  */
 void ComputerManager::displayLives() {
-	int xp = 10;
-	for (int i = 0; i <= 11; i++) {
+	for (int i = 0, xp = 10; i <= 11; i++, xp += 7)
 		_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 15);
-		xp += 7;
-	}
 
-	xp = 10;
-	for (int i = 0; i < _breakoutLives - 1; i++) {
+	for (int i = 0, xp = 10; i < _breakoutLives - 1; i++, xp += 7)
 		_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 14);
-		xp += 7;
-	}
 }
 
 /**
@@ -721,7 +707,6 @@ void ComputerManager::displayLives() {
  */
 void ComputerManager::playBreakout() {
 	int v1 = 0;
-	int v;
 
 	while (!_vm->shouldQuit()) {
 		while (!_vm->shouldQuit()) {
@@ -780,8 +765,7 @@ void ComputerManager::playBreakout() {
 			_vm->_objectsManager.removeSprite(1);
 			if (_breakoutScore > _breakoutHiscore)
 				getScoreName();
-			v = displayHiscores();
-			if (v != 1)
+			if (displayHiscores() != 1)
 				break;
 
 			_breakoutBrickNbr = 0;
@@ -806,9 +790,6 @@ void ComputerManager::playBreakout() {
  * @return		The selected button index: 1 = Game, 2 = Quit
  */
 int ComputerManager::displayHiscores() {
-	int yp;
-	int xp;
-
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 	loadHiscore();
 	_vm->_graphicsManager.loadVgaImage("HISCORE.PCX");
@@ -818,6 +799,8 @@ int ComputerManager::displayHiscores() {
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
+	int yp;
+	int xp;
 	// Loop for displaying the scores
 	for (int scoreIndex = 0; scoreIndex <= 5; scoreIndex++) {
 		yp = 19 * scoreIndex;
@@ -888,11 +871,9 @@ void ComputerManager::getScoreName() {
 	do
 		++scoreLen;
 	while (score[scoreLen]);
-	int scorePos = 8;
-	for (int i = scoreLen; ; _score[5]._score.setChar(score[i], scorePos--)) {
-		--i;
-		if (i <= -1)
-			break;
+
+	for (int i = scoreLen, scorePos = 8; i >= 0; i--) {
+		_score[5]._score.setChar(score[i], scorePos--);
 	}
 	_vm->_graphicsManager.fateOutBreakout();
 	_vm->_globals.freeMemory(ptr);
@@ -905,8 +886,7 @@ void ComputerManager::getScoreName() {
 void ComputerManager::displayScore() {
 	Common::String scoreStr = Common::String::format("%d", _breakoutScore);
 	int strSize = scoreStr.size();
-	int idx = 0;
-	for (int i = strSize - 1; i > -1; i--) {
+	for (int i = strSize - 1, idx = 0; i >= 0; i--) {
 		displayScoreChar(idx++, scoreStr[i]);
 	}
 }
@@ -915,22 +895,32 @@ void ComputerManager::displayScore() {
  * Display a character of the score
  */
 void ComputerManager::displayScoreChar(int charPos, int charDisp) {
-	int16 xp = 200;
-	int16 idx = 3;
-
-	if (charPos == 1)
+	int xp;
+	switch (charPos) {
+	case 1:
 		xp = 190;
-	else if (charPos == 2)
+		break;
+	case 2:
 		xp = 180;
-	else if (charPos == 3)
+		break;
+	case 3:
 		xp = 167;
-	else if (charPos == 4)
+		break;
+	case 4:
 		xp = 157;
-	else if (charPos == 5)
+		break;
+	case 5:
 		xp = 147;
-	else if (charPos == 9)
+		break;
+	case 9:
 		xp = 134;
+		break;
+	default:
+		xp = 200;
+		break;
+	}
 
+	int idx = 3;
 	if (charDisp >= '0' && charDisp <= '9')
 		idx = charDisp - 45;
 
@@ -941,9 +931,7 @@ void ComputerManager::displayScoreChar(int charPos, int charDisp) {
  * Save Hiscore in file
  */
 void ComputerManager::saveScore() {
-	int scorePlace[6];
 	int scores[6];
-
 	// Load high scores in an array
 	for (int i = 0; i <= 5; i++) {
 		scores[i] = atol(_score[i]._score.c_str());
@@ -951,6 +939,7 @@ void ComputerManager::saveScore() {
 			scores[i] = 5;
 	}
 
+	int scorePlace[6];
 	// order high scores
 	for (int scorePlaceIdx = 0; scorePlaceIdx <= 5; scorePlaceIdx++) {
 		for(int i = 0;;i++) {
@@ -1011,7 +1000,6 @@ void ComputerManager::displayHiscoreLine(byte *objectData, int x, int y, int cur
  * Handle ball moves
  */
 int ComputerManager::moveBall() {
-	int16 retVal = 0;
 	//(signed int)(6.0 * (long double)_vm->getRandomNumber( rand() / 2147483648.0) + 1;
 	// TODO: Figure out random number
 	int randVal = _vm->getRandomNumber(6);
@@ -1085,6 +1073,8 @@ int ComputerManager::moveBall() {
 			}
 		}
 	}
+
+	int retVal = 0;
 	if (_ballPosition.y > 194)
 		retVal = 1;
 	checkBallCollisions();
