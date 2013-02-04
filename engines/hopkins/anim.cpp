@@ -56,7 +56,6 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 	bool hasScreenCopy = false;
 	byte *screenP = _vm->_graphicsManager._vesaScreen;
-	byte *ptr = _vm->_globals.allocMemory(20);
 
 	Common::String tmpStr;
 	// The Windows 95 demo only contains the interlaced version of the BOMBE1 and BOMBE2 videos
@@ -121,14 +120,16 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 			++frameNumber;
 			_vm->_soundManager.playAnimSound(frameNumber);
 
+			byte imageStr[20];
+			memset(imageStr, 0, 20);
 			// Read frame header
-			if (f.read(ptr, 16) != 16)
+			if (f.read(imageStr, 16) != 16)
 				break;
 
-			if (strncmp((char *)ptr, "IMAGE=", 6))
+			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
 
-			f.read(screenP, READ_LE_UINT32(ptr + 8));
+			f.read(screenP, READ_LE_UINT32(imageStr + 8));
 
 			if (_vm->_globals.iRegul == 1) {
 				do {
@@ -188,14 +189,15 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		memcpy(screenCopy, screenP, 307200);
 
 		for (;;) {
-			memset(ptr, 0, 20);
+			byte imageStr[20];
+			memset(imageStr, 0, 20);
 
-			if (f.read(ptr, 16) != 16)
+			if (f.read(imageStr, 16) != 16)
 				break;
-			if (strncmp((char *)ptr, "IMAGE=", 6))
+			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
 
-			f.read(screenP, READ_LE_UINT32(ptr + 8));
+			f.read(screenP, READ_LE_UINT32(imageStr + 8));
 			if (*screenP != kByteStop)
 				_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
 		}
@@ -210,7 +212,6 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 	_vm->_graphicsManager.FADE_LINUX = 0;
 	f.close();
-	ptr = _vm->_globals.freeMemory(ptr);
 	_vm->_graphicsManager._skipVideoLockFl = false;
 }
 
@@ -290,7 +291,6 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 
 	if (!_vm->_eventsManager._escKeyFl) {
 		_vm->_eventsManager._rateCounter = 0;
-		bool v5 = false;
 		int frameNumber = 0;
 		for (;;) {
 			if (_vm->_eventsManager._escKeyFl)
@@ -301,40 +301,37 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			memset(imageStr, 0, 19);
 
 			if (f.read(imageStr, 16) != 16)
-				v5 = true;
+				break;
 
 			if (strncmp((const char *)imageStr, "IMAGE=", 6))
-				v5 = true;
-
-			if (v5) {
-				if (_vm->_globals.iRegul == 1) {
-					while (!_vm->_eventsManager._escKeyFl && _vm->_eventsManager._rateCounter < rate3) {
-						_vm->_eventsManager.refreshEvents();
-						_vm->_soundManager.checkSoundEnd();
-					}
-				}
 				break;
-			} else {
-				f.read(screenP, READ_LE_UINT32(imageStr + 8));
-				if (_vm->_globals.iRegul == 1) {
-					while (!_vm->_eventsManager._escKeyFl && _vm->_eventsManager._rateCounter < rate2) {
-						_vm->_eventsManager.refreshEvents();
-						_vm->_soundManager.checkSoundEnd();
-					}
-				}
 
-				_vm->_eventsManager._rateCounter = 0;
-				_vm->_graphicsManager.lockScreen();
-				if (*screenP != kByteStop) {
-					if (hasScreenCopy) {
-						_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
-						_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-					} else {
-						_vm->_graphicsManager.Copy_Video_Vbe16(screenP);
-					}
+			f.read(screenP, READ_LE_UINT32(imageStr + 8));
+			if (_vm->_globals.iRegul == 1) {
+				while (!_vm->_eventsManager._escKeyFl && _vm->_eventsManager._rateCounter < rate2) {
+					_vm->_eventsManager.refreshEvents();
+					_vm->_soundManager.checkSoundEnd();
 				}
-				_vm->_graphicsManager.unlockScreen();
-				_vm->_graphicsManager.DD_VBL();
+			}
+
+			_vm->_eventsManager._rateCounter = 0;
+			_vm->_graphicsManager.lockScreen();
+			if (*screenP != kByteStop) {
+				if (hasScreenCopy) {
+					_vm->_graphicsManager.Copy_WinScan_Vbe3(screenP, screenCopy);
+					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				} else {
+					_vm->_graphicsManager.Copy_Video_Vbe16(screenP);
+				}
+			}
+			_vm->_graphicsManager.unlockScreen();
+			_vm->_graphicsManager.DD_VBL();
+			_vm->_soundManager.checkSoundEnd();
+		}
+
+		if (_vm->_globals.iRegul == 1) {
+			while (!_vm->_eventsManager._escKeyFl && _vm->_eventsManager._rateCounter < rate3) {
+				_vm->_eventsManager.refreshEvents();
 				_vm->_soundManager.checkSoundEnd();
 			}
 		}
@@ -614,7 +611,6 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 			_vm->_graphicsManager._scrollOffset = 0;
 	}
 	byte *screenP = _vm->_graphicsManager._vesaScreen;
-	byte *v10 = _vm->_globals.allocMemory(22);
 	Common::File f;
 	if (!f.open(file))
 		error("Error opening file - %s", file.c_str());
@@ -688,51 +684,50 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		}
 	}
 	_vm->_eventsManager._rateCounter = 0;
-	bool readError = false;
 	int soundNumber = 0;
 	if (!skipFl) {
-		do {
+		for (;;) {
 			++soundNumber;
 			_vm->_soundManager.playAnimSound(soundNumber);
-			memset(v10, 0, 19);
-			if (f.read(v10, 16) != 16)
-				readError = true;
+			byte imageStr[20];
+			memset(imageStr, 0, 19);
+			if (f.read(imageStr, 16) != 16)
+				break;
 
-			if (strncmp((const char *)v10, "IMAGE=", 6))
-				readError = true;
-			if (!readError) {
-				f.read(screenP, READ_LE_UINT32(v10 + 8));
-				if (_vm->_globals.iRegul == 1) {
-					do {
-						if (_vm->shouldQuit() || (_vm->_eventsManager._escKeyFl && !skipEscFl)) {
-							skipFl = true;
-							break;
-						}
+			if (strncmp((const char *)imageStr, "IMAGE=", 6))
+				break;
 
-						_vm->_eventsManager._escKeyFl = false;
-						_vm->_eventsManager.refreshEvents();
-						_vm->_soundManager.checkSoundEnd();
-					} while (_vm->_eventsManager._rateCounter < rate2);
-				}
-
-				if (skipFl)
-					break;
-
-				_vm->_eventsManager._rateCounter = 0;
-				_vm->_graphicsManager.lockScreen();
-				if (hasScreenCopy) {
-					if (*screenP != kByteStop) {
-						_vm->_graphicsManager.Copy_WinScan_Vbe(screenP, screenCopy);
-						_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			f.read(screenP, READ_LE_UINT32(imageStr + 8));
+			if (_vm->_globals.iRegul == 1) {
+				do {
+					if (_vm->shouldQuit() || (_vm->_eventsManager._escKeyFl && !skipEscFl)) {
+						skipFl = true;
+						break;
 					}
-				} else if (*screenP != kByteStop) {
-					_vm->_graphicsManager.Copy_Video_Vbe16a(screenP);
-				}
-				_vm->_graphicsManager.unlockScreen();
-				_vm->_graphicsManager.DD_VBL();
-				_vm->_soundManager.checkSoundEnd();
+
+					_vm->_eventsManager._escKeyFl = false;
+					_vm->_eventsManager.refreshEvents();
+					_vm->_soundManager.checkSoundEnd();
+				} while (_vm->_eventsManager._rateCounter < rate2);
 			}
-		} while (!readError);
+
+			if (skipFl)
+				break;
+
+			_vm->_eventsManager._rateCounter = 0;
+			_vm->_graphicsManager.lockScreen();
+			if (hasScreenCopy) {
+				if (*screenP != kByteStop) {
+					_vm->_graphicsManager.Copy_WinScan_Vbe(screenP, screenCopy);
+					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				}
+			} else if (*screenP != kByteStop) {
+				_vm->_graphicsManager.Copy_Video_Vbe16a(screenP);
+			}
+			_vm->_graphicsManager.unlockScreen();
+			_vm->_graphicsManager.DD_VBL();
+			_vm->_soundManager.checkSoundEnd();
+		}
 	}
 
 	if (_vm->_globals.iRegul == 1 && !skipFl) {
@@ -762,7 +757,6 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	}
 	if (hasScreenCopy)
 		_vm->_globals.freeMemory(screenCopy);
-	_vm->_globals.freeMemory(v10);
 }
 
 /**
@@ -771,7 +765,6 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
 	byte *screenCopy = NULL;
 	byte *screenP;
-	byte *v11 = NULL;
 	int frameNumber;
 	size_t nbytes;
 	Common::File f;
@@ -783,7 +776,6 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 		_vm->_eventsManager._mouseFl = false;
 		screenP = _vm->_graphicsManager._vesaScreen;
-		v11 = _vm->_globals.allocMemory(22);
 
 		if (!f.open(file))
 			error("File not found - %s", file.c_str());
@@ -839,14 +831,15 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		while (!_vm->shouldQuit()) {
 			_vm->_soundManager.playAnimSound(frameNumber++);
 
-			memset(v11, 0, 19);
-			if (f.read(v11, 16) != 16)
+			byte imageStr[20];
+			memset(imageStr, 0, 19);
+			if (f.read(imageStr, 16) != 16)
 				break;
 
-			if (strncmp((const char *)v11, "IMAGE=", 6))
+			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
 
-			f.read(screenP, READ_LE_UINT32(v11 + 8));
+			f.read(screenP, READ_LE_UINT32(imageStr + 8));
 			if (_vm->_globals.iRegul == 1) {
 				do {
 					_vm->_eventsManager.refreshEvents();
@@ -901,14 +894,15 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 		memcpy(ptra, screenP, 307200);
 		for (;;) {
-			memset(v11, 0, 19);
-			if (f.read(v11, 16) != 16)
+			byte imageStr[20];
+			memset(imageStr, 0, 19);
+			if (f.read(imageStr, 16) != 16)
 				break;
 
-			if (strncmp((const char *)v11, "IMAGE=", 6))
+			if (strncmp((const char *)imageStr, "IMAGE=", 6))
 				break;
 
-			f.read(screenP, READ_LE_UINT32(v11 + 8));
+			f.read(screenP, READ_LE_UINT32(imageStr + 8));
 			if (*screenP != kByteStop)
 				_vm->_graphicsManager.Copy_WinScan_Vbe(screenP, ptra);
 		}
@@ -923,7 +917,6 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 	_vm->_graphicsManager.FADE_LINUX = 0;
 
 	f.close();
-	_vm->_globals.freeMemory(v11);
 	_vm->_eventsManager._mouseFl = true;
 }
 
