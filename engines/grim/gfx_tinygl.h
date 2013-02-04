@@ -136,6 +136,7 @@ private:
 	Graphics::PixelBuffer _storedDisplay;
 	float _alpha;
 	Common::HashMap<int, TinyGL::Buffer *> _buffers;
+	uint _bufferId;
 
 	void readPixels(int x, int y, int width, int height, uint8 *buffer);
 	void blit(const Graphics::PixelFormat &format, BlitImage *blit, byte *dst, byte *src, int x, int y, int width, int height, bool trans);

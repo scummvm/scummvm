@@ -235,6 +235,7 @@ GfxTinyGL::GfxTinyGL() {
 	_zb = NULL;
 	_storedDisplay = NULL;
 	_alpha = 1.f;
+	_bufferId = 0;
 }
 
 GfxTinyGL::~GfxTinyGL() {
@@ -325,12 +326,10 @@ void GfxTinyGL::flipBuffer() {
 }
 
 int GfxTinyGL::genBuffer() {
-	static int id = 0;
-
 	TinyGL::Buffer *buf = ZB_genOffscreenBuffer(_zb);
-	_buffers[++id] = buf;
+	_buffers[++_bufferId] = buf;
 
-	return id;
+	return _bufferId;
 }
 
 void GfxTinyGL::delBuffer(int id) {
