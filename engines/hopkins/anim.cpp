@@ -769,11 +769,10 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
  * Play Sequence type 2
  */
 void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
-	bool v4;
 	byte *screenCopy = NULL;
 	byte *screenP;
 	byte *v11 = NULL;
-	int v13;
+	int frameNumber;
 	size_t nbytes;
 	Common::File f;
 
@@ -825,78 +824,63 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
 		_vm->_soundManager.loadAnimSound();
-		if (_vm->_globals.iRegul != 1)
-			break;
+		if (_vm->_globals.iRegul == 1) {
+			do {
+				_vm->_eventsManager.refreshEvents();
+				_vm->_soundManager.checkSoundEnd();
+			} while (!_vm->shouldQuit() && !_vm->_eventsManager._escKeyFl && _vm->_eventsManager._rateCounter < rate1);
+		}
+		break;
+	}
+
+	if (!_vm->_eventsManager._escKeyFl) {
+		_vm->_eventsManager._rateCounter = 0;
+		frameNumber = 0;
 		while (!_vm->shouldQuit()) {
-			if (_vm->_eventsManager._escKeyFl)
-				goto LABEL_54;
+			_vm->_soundManager.playAnimSound(frameNumber++);
+
+			memset(v11, 0, 19);
+			if (f.read(v11, 16) != 16)
+				break;
+
+			if (strncmp((const char *)v11, "IMAGE=", 6))
+				break;
+
+			f.read(screenP, READ_LE_UINT32(v11 + 8));
+			if (_vm->_globals.iRegul == 1) {
+				do {
+					_vm->_eventsManager.refreshEvents();
+				} while (!_vm->shouldQuit() && !_vm->_eventsManager._escKeyFl && _vm->_eventsManager._rateCounter < rate2);
+			}
+
+			_vm->_eventsManager._rateCounter = 0;
+			_vm->_graphicsManager.lockScreen();
+			if (multiScreenFl) {
+				if (*screenP != kByteStop) {
+					_vm->_graphicsManager.Copy_WinScan_Vbe(screenP, screenCopy);
+					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				}
+			} else if (*screenP != kByteStop) {
+				_vm->_graphicsManager.Copy_Video_Vbe16a(screenP);
+			}
+			_vm->_graphicsManager.unlockScreen();
+			_vm->_graphicsManager.DD_VBL();
+			_vm->_soundManager.checkSoundEnd();
+		}
+	}
+
+	if (_vm->_globals.iRegul == 1) {
+		while (!_vm->_eventsManager._escKeyFl) {
 			_vm->_eventsManager.refreshEvents();
 			_vm->_soundManager.checkSoundEnd();
-			if (_vm->_eventsManager._rateCounter >= rate1)
-				goto LABEL_23;
+			if (_vm->_eventsManager._rateCounter < rate3) {
+				break;
+			}
 		}
-		if (_vm->_graphicsManager._skipVideoLockFl)
-			goto LABEL_54;
-		if (multiScreenFl)
-			screenCopy = _vm->_globals.freeMemory(screenCopy);
-		_vm->_globals.freeMemory(v11);
-		f.close();
 	}
-LABEL_23:
+
 	_vm->_eventsManager._rateCounter = 0;
-	v4 = false;
-	v13 = 0;
-	while (!_vm->shouldQuit()) {
-		_vm->_soundManager.playAnimSound(v13++);
 
-		memset(v11, 0, 19);
-		if (f.read(v11, 16) != 16)
-			v4 = true;
-
-		if (strncmp((const char *)v11, "IMAGE=", 6))
-			v4 = true;
-		if (v4)
-			goto LABEL_44;
-		f.read(screenP, READ_LE_UINT32(v11 + 8));
-		if (_vm->_globals.iRegul == 1)
-			break;
-LABEL_33:
-		_vm->_eventsManager._rateCounter = 0;
-		_vm->_graphicsManager.lockScreen();
-		if (multiScreenFl) {
-			if (*screenP != kByteStop) {
-				_vm->_graphicsManager.Copy_WinScan_Vbe(screenP, screenCopy);
-				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			}
-		} else if (*screenP != kByteStop) {
-			_vm->_graphicsManager.Copy_Video_Vbe16a(screenP);
-		}
-		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.DD_VBL();
-		_vm->_soundManager.checkSoundEnd();
-LABEL_44:
-		if (v4) {
-			if (_vm->_globals.iRegul == 1) {
-				while (!_vm->_eventsManager._escKeyFl) {
-					_vm->_eventsManager.refreshEvents();
-					_vm->_soundManager.checkSoundEnd();
-					if (_vm->_eventsManager._rateCounter >= rate3) {
-						_vm->_eventsManager._rateCounter = 0;
-						break;
-					}
-				}
-			} else {
-				_vm->_eventsManager._rateCounter = 0;
-			}
-			goto LABEL_54;
-		}
-	}
-	while (!_vm->_eventsManager._escKeyFl) {
-		_vm->_eventsManager.refreshEvents();
-		if (_vm->_eventsManager._rateCounter >= rate2)
-			goto LABEL_33;
-	}
-LABEL_54:
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !multiScreenFl) {
 		byte *ptra = _vm->_globals.allocMemory(307200);
 

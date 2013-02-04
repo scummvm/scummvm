@@ -758,7 +758,7 @@ bool HopkinsEngine::runFull() {
 		_globals._helicopterFl = false;
 		_eventsManager.mouseOff();
 		// No code has been added to display the version as it's wrong 
-		// in my copy: it mentions a Win95 version v4 using DirectDraw
+		// in my copy: it mentions a Win95 version v4 using DirectDraw (Strangerke)
 	} else if (getPlatform() == Common::kPlatformWindows) {
 		_globals._helicopterFl = false;
 		_globals.iRegul = 1;
