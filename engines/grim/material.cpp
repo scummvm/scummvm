@@ -122,7 +122,7 @@ void MaterialData::initEMI(Common::SeekableReadStream *data) {
 	char readFileName[64];
 
 	if (_fname.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
-		TextSplitter *ts = new TextSplitter(data);
+		TextSplitter *ts = new TextSplitter(_fname, data);
 		ts->setLineNumber(2); // Skip copyright-line
 		ts->expectString("version\t1.0");
 		if (ts->checkString("name:"))

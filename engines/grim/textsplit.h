@@ -35,7 +35,7 @@ namespace Grim {
 
 class TextSplitter {
 public:
-	TextSplitter(Common::SeekableReadStream *data);
+	TextSplitter(const Common::String &fname, Common::SeekableReadStream *data);
 	~TextSplitter();
 
 	char *nextLine() {
@@ -73,6 +73,7 @@ public:
 	void scanStringAtOffsetNoNewLine(int offset, const char *fmt, int field_count, ...);
 
 private:
+	Common::String _fname;
 	char *_stringData;
 	char *_currLine;
 	int _numLines, _lineIndex;

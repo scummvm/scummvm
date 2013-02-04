@@ -242,7 +242,8 @@ static void parse(const char *line, const char *fmt, int field_count, va_list va
 }
 
 
-TextSplitter::TextSplitter(Common::SeekableReadStream *data) {
+TextSplitter::TextSplitter(const Common::String &fname, Common::SeekableReadStream *data) {
+	_fname = fname;
 	char *line;
 	int i;
 	uint32 len = data->size();
@@ -292,15 +293,15 @@ bool TextSplitter::checkString(const char *needle) {
 
 void TextSplitter::expectString(const char *expected) {
 	if (!_currLine)
-		error("Expected `%s', got EOF", expected);
+		error("Expected `%s', got EOF on file %s", expected, _fname.c_str());
 	if (scumm_stricmp(getCurrentLine(), expected) != 0)
-		error("Expected `%s', got '%s'", expected, getCurrentLine());
+		error("Expected `%s', got '%s' on file %s", expected, getCurrentLine(), _fname.c_str());
 	nextLine();
 }
 
 void TextSplitter::scanString(const char *fmt, int field_count, ...) {
 	if (!_currLine)
-		error("Expected line of format '%s', got EOF", fmt);
+		error("Expected line of format '%s', got EOF on file %s", fmt, _fname.c_str());
 
 	va_list va;
 	va_start(va, field_count);
@@ -314,7 +315,7 @@ void TextSplitter::scanString(const char *fmt, int field_count, ...) {
 
 void TextSplitter::scanStringAtOffset(int offset, const char *fmt, int field_count, ...) {
 	if (!_currLine)
-		error("Expected line of format '%s', got EOF", fmt);
+		error("Expected line of format '%s', got EOF on file %s", fmt, _fname.c_str());
 
 	va_list va;
 	va_start(va, field_count);
@@ -328,7 +329,7 @@ void TextSplitter::scanStringAtOffset(int offset, const char *fmt, int field_cou
 
 void TextSplitter::scanStringNoNewLine(const char *fmt, int field_count, ...) {
 	if (!_currLine)
-		error("Expected line of format '%s', got EOF", fmt);
+		error("Expected line of format '%s', got EOF on file %s", fmt, _fname.c_str());
 
 	va_list va;
 	va_start(va, field_count);
@@ -340,7 +341,7 @@ void TextSplitter::scanStringNoNewLine(const char *fmt, int field_count, ...) {
 
 void TextSplitter::scanStringAtOffsetNoNewLine(int offset, const char *fmt, int field_count, ...) {
 	if (!_currLine)
-		error("Expected line of format '%s', got EOF", fmt);
+		error("Expected line of format '%s', got EOF on file %s", fmt, _fname.c_str());
 
 	va_list va;
 	va_start(va, field_count);

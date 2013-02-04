@@ -115,7 +115,7 @@ Costume::Costume(const Common::String &fname, Costume *prevCost) :
 }
 
 void Costume::load(Common::SeekableReadStream *data) {
-	TextSplitter ts(data);
+	TextSplitter ts(_fname, data);
 	ts.expectString("costume v0.1");
 	ts.expectString("section tags");
 	int numTags;

@@ -38,7 +38,7 @@ KeyframeAnim::KeyframeAnim(const Common::String &fname, Common::SeekableReadStre
 		loadBinary(data);
 	else {
 		data->seek(0, SEEK_SET);
-		TextSplitter ts(data);
+		TextSplitter ts(fname, data);
 		loadText(ts);
 	}
 }

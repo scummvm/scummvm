@@ -43,7 +43,7 @@ Set::Set(const Common::String &sceneName, Common::SeekableReadStream *data) :
 	data->read(header, 7);
 	data->seek(0, SEEK_SET);
 	if (memcmp(header, "section", 7) == 0) {
-		TextSplitter ts(data);
+		TextSplitter ts(_name, data);
 		loadText(ts);
 	} else {
 		loadBinary(data);

@@ -175,7 +175,7 @@ MusicEntry *initMusicTableDemo(Common::String filename) {
 	for (unsigned int i = 0; i < 15; i++)
 		musicTable[i]._id = -1;
 	
-	TextSplitter *ts = new TextSplitter(data);
+	TextSplitter *ts = new TextSplitter(filename, data);
 	int id, x, y, sync;
 	char musicfilename[64];
 	char name[64];
@@ -210,7 +210,7 @@ MusicEntry *initMusicTableRetail(Common::String filename) {
 	for (unsigned int i = 0; i < 126; i++)
 		musicTable[i]._id = -1;
 	
-	TextSplitter *ts = new TextSplitter(data);
+	TextSplitter *ts = new TextSplitter(filename, data);
 	int id, x, y, sync, trim;
 	char musicfilename[64];
 	char type[16];

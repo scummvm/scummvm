@@ -85,7 +85,7 @@ Model::Model(const Common::String &filename, Common::SeekableReadStream *data, C
 		loadBinary(data);
 	else {
 		data->seek(0, SEEK_SET);
-		TextSplitter ts(data);
+		TextSplitter ts(_fname, data);
 		loadText(&ts);
 	}
 
