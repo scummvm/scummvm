@@ -193,6 +193,7 @@ private:
 	void cameraPostChangeHandle(int num);
 	void buildActiveActorsList();
 	void savegameCallback();
+	void createRenderer();
 
 	void savegameSave();
 	void saveGRIM();
