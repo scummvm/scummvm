@@ -1060,7 +1060,7 @@ void GraphicsManager::FIN_VISU() {
 
 	for (int idx = 1; idx <= 20; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
-			_vm->_objectsManager.BOB_ZERO(idx);
+			_vm->_objectsManager.resetBob(idx);
 	}
 
 	for (int idx = 1; idx <= 29; ++idx) {

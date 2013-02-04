@@ -44,9 +44,9 @@ ObjectsManager::ObjectsManager() {
 	_borderPos = Common::Point(0, 0);
 	_borderSpriteIndex = 0;
 	_saveLoadX = _saveLoadY = 0;
-	I_old_x = I_old_y = 0;
+	_oldInventoryPosX = _oldInventoryPosY = 0;
 	g_old_x = g_old_y = 0;
-	FLAG_VISIBLE_EFFACE = 0;
+	_eraseVisibleCounter = 0;
 	_saveLoadSprite = g_PTRNUL;
 	_saveLoadSprite2 = g_PTRNUL;
 	_spritePtr = g_PTRNUL;
@@ -55,7 +55,6 @@ ObjectsManager::ObjectsManager() {
 	_saveLoadFl = false;
 	_visibleFl = false;
 	BOBTOUS = false;
-	my_anim = 0;
 	_zoneNum = 0;
 	_forceZoneFl = false;
 	_changeVerbFl = false;
@@ -345,7 +344,7 @@ void ObjectsManager::displaySprite() {
 			int idx = arr[sortIdx];
 			switch (_vm->_globals._sortedDisplay[idx]._sortMode) {
 			case SORT_BOB:
-				DEF_BOB(_vm->_globals._sortedDisplay[idx]._index);
+				setBobInfo(_vm->_globals._sortedDisplay[idx]._index);
 				break;
 			case SORT_SPRITE:
 				DEF_SPRITE(_vm->_globals._sortedDisplay[idx]._index);
@@ -362,7 +361,7 @@ void ObjectsManager::displaySprite() {
 		for (int idx = 1; idx < (_vm->_globals._sortedDisplayCount + 1); ++idx) {
 			switch (_vm->_globals._sortedDisplay[idx]._sortMode) {
 			case SORT_BOB:
-				DEF_BOB(_vm->_globals._sortedDisplay[idx]._index);
+				setBobInfo(_vm->_globals._sortedDisplay[idx]._index);
 				break;
 			case SORT_SPRITE:
 				DEF_SPRITE(_vm->_globals._sortedDisplay[idx]._index);
@@ -404,21 +403,21 @@ void ObjectsManager::displaySprite() {
 
 	// If the Options dialog is activated, draw the elements
 	if (_vm->_globals._optionDialogFl) {
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._optionDialogSpr,
 			_vm->_eventsManager._startPos.x + 464, 407, 0);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._optionDialogSpr,
 			_vm->_eventsManager._startPos.x + 657, 556, _vm->_globals._menuSpeed);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._optionDialogSpr,
 			_vm->_eventsManager._startPos.x + 731, 495, _vm->_globals._menuTextOff);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._optionDialogSpr,
 			_vm->_eventsManager._startPos.x + 731, 468, _vm->_globals._menuVoiceOff);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._optionDialogSpr,
 			_vm->_eventsManager._startPos.x + 731, 441, _vm->_globals._menuSoundOff);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._optionDialogSpr,
 			_vm->_eventsManager._startPos.x + 731, 414, _vm->_globals._menuMusicOff);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._optionDialogSpr,
 			_vm->_eventsManager._startPos.x + 600, 522, _vm->_globals._menuDisplayType);
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.OPTION_SPR,
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._optionDialogSpr,
 			_vm->_eventsManager._startPos.x + 611, 502, _vm->_globals._menuScrollSpeed);
 		_vm->_graphicsManager.addVesaSegment(_vm->_eventsManager._startPos.x + 164, 107, _vm->_eventsManager._startPos.x + 498, 320);
 	}
@@ -464,12 +463,12 @@ void ObjectsManager::displaySprite() {
 	_vm->_dialogsManager.inventAnim();
 }
 
-void ObjectsManager::INIT_BOB() {
+void ObjectsManager::initBob() {
 	for (int idx = 0; idx < 35; ++idx)
-		BOB_ZERO(idx);
+		resetBob(idx);
 }
 
-void ObjectsManager::BOB_ZERO(int idx) {
+void ObjectsManager::resetBob(int idx) {
 	BobItem &bob = _vm->_globals._bob[idx];
 	ListeItem &item = _vm->_globals.Liste2[idx];
 
@@ -478,7 +477,7 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	bob._xp = 0;
 	bob._yp = 0;
 	bob._frameIndex = 0;
-	bob.field10 = false;
+	bob._animDataIdx = 0;
 	bob.field12 = 0;
 	bob.field14 = 0;
 	bob._disabledAnimationFl = false;
@@ -500,7 +499,7 @@ void ObjectsManager::BOB_ZERO(int idx) {
 	item._height = 0;
 }
 
-void ObjectsManager::DEF_BOB(int idx) {
+void ObjectsManager::setBobInfo(int idx) {
 	if (!_vm->_globals._bob[idx]._activeFl)
 		return;
 
@@ -556,7 +555,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 	if (_vm->_globals._bob[idx].field0)
 		return;
 
-	BOB_ZERO(idx);
+	resetBob(idx);
 
 	const byte *data = _vm->_globals.Bqe_Anim[idx]._data;
 	int bankIdx = (int16)READ_LE_UINT16(data);
@@ -853,17 +852,17 @@ void ObjectsManager::computeSprite(int idx) {
 		}
 	}
 
-	int v15 = _sprite[idx]._spritePos.x - deltaX;
-	int v16 = _sprite[idx]._spritePos.y - deltaY;
-	_sprite[idx]._destX = v15;
-	_sprite[idx]._destY = v16;
+	int newPosX = _sprite[idx]._spritePos.x - deltaX;
+	int newPosY = _sprite[idx]._spritePos.y - deltaY;
+	_sprite[idx]._destX = newPosX;
+	_sprite[idx]._destY = newPosY;
 	_sprite[idx].field2A = true;
 	_sprite[idx]._zoomPct = zoomPercent;
 	_sprite[idx]._reducePct = reducePercent;
 
 	_vm->_globals.Liste[idx]._visibleFl = true;
-	_vm->_globals.Liste[idx]._posX = v15;
-	_vm->_globals.Liste[idx]._posY = v16;
+	_vm->_globals.Liste[idx]._posX = newPosX;
+	_vm->_globals.Liste[idx]._posY = newPosY;
 
 	int width = getWidth(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex);
 	int height = getHeight(_sprite[idx]._spriteData, _sprite[idx]._spriteIndex);
@@ -924,20 +923,20 @@ void ObjectsManager::displayBobAnim() {
 			continue;
 		}
 
-		byte *v20 = _vm->_globals._bob[idx]._animData + 20;
-		int v24 = _vm->_globals._bob[idx].field10;
-		_vm->_globals._bob[idx]._xp = (int16)READ_LE_UINT16(v20 + 2 * v24);
+		byte *dataPtr = _vm->_globals._bob[idx]._animData + 20;
+		int dataIdx = _vm->_globals._bob[idx]._animDataIdx;
+		_vm->_globals._bob[idx]._xp = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx);
 		if (_vm->_globals._lockedAnims[idx]._enableFl)
 			_vm->_globals._bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
 		if ( PERSO_ON && idx > 20 )
 			_vm->_globals._bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
-		_vm->_globals._bob[idx]._yp = (int16)READ_LE_UINT16(v20 + 2 * v24 + 2);
-		_vm->_globals._bob[idx].field12 = (int16)READ_LE_UINT16(v20 + 2 * v24 + 4);
-		_vm->_globals._bob[idx]._zoomFactor = (int16)READ_LE_UINT16(v20 + 2 * v24 + 6);
-		_vm->_globals._bob[idx]._frameIndex = v20[2 * v24 + 8];
-		_vm->_globals._bob[idx]._flipFl = (v20[2 * v24 + 9] != 0);
-		_vm->_globals._bob[idx].field10 += 5;
+		_vm->_globals._bob[idx]._yp = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 2);
+		_vm->_globals._bob[idx].field12 = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 4);
+		_vm->_globals._bob[idx]._zoomFactor = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 6);
+		_vm->_globals._bob[idx]._frameIndex = dataPtr[2 * dataIdx + 8];
+		_vm->_globals._bob[idx]._flipFl = (dataPtr[2 * dataIdx + 9] != 0);
+		_vm->_globals._bob[idx]._animDataIdx += 5;
 
 		int v5 = _vm->_globals._bob[idx].field12;
 		if (v5 > 0) {
@@ -958,7 +957,7 @@ void ObjectsManager::displayBobAnim() {
 			if (_vm->_globals._bob[idx].field20 != -1 && _vm->_globals._bob[idx].field20 <= 0) {
 				_vm->_globals._bob[idx].field0 = 11;
 			} else {
-				_vm->_globals._bob[idx].field10 = 0;
+				_vm->_globals._bob[idx]._animDataIdx = 0;
 				byte *v21 = _vm->_globals._bob[idx]._animData + 20;
 				_vm->_globals._bob[idx]._xp = (int16)READ_LE_UINT16(v21);
 
@@ -972,7 +971,7 @@ void ObjectsManager::displayBobAnim() {
 				_vm->_globals._bob[idx]._zoomFactor = (int16)READ_LE_UINT16(v21 + 6);
 				_vm->_globals._bob[idx]._frameIndex = v21[8];
 				_vm->_globals._bob[idx]._flipFl = (v21[9] != 0);
-				_vm->_globals._bob[idx].field10 += 5;
+				_vm->_globals._bob[idx]._animDataIdx += 5;
 				int v10 = _vm->_globals._bob[idx].field12;
 
 				if (v10 > 0) {
@@ -1254,12 +1253,12 @@ void ObjectsManager::checkZone() {
 	int mouseX = _vm->_eventsManager.getMouseX();
 	int mouseY = _vm->_eventsManager.getMouseY();
 	int oldMouseY = mouseY;
-	if (_vm->_globals.PLAN_FLAG
+	if (_vm->_globals._cityMapEnabledFl
 	        || _vm->_eventsManager._startPos.x >= mouseX
 	        || (mouseY = _vm->_graphicsManager._scrollOffset + 54, mouseX >= mouseY)
 	        || (mouseY = oldMouseY - 1, mouseY < 0 || mouseY > 59)) {
 		if (_visibleFl)
-			FLAG_VISIBLE_EFFACE = 4;
+			_eraseVisibleCounter = 4;
 		_visibleFl = false;
 	} else {
 		_visibleFl = true;
@@ -1331,7 +1330,7 @@ void ObjectsManager::checkZone() {
 			if (zoneId != -1 && zoneId != 0)
 				handleRightButton();
 		}
-		if ((_vm->_globals.PLAN_FLAG && zoneId == -1) || !zoneId) {
+		if ((_vm->_globals._cityMapEnabledFl && zoneId == -1) || !zoneId) {
 			_verb = 0;
 			_vm->_eventsManager._mouseCursorId = 0;
 			_vm->_eventsManager.changeMouseCursor(0);
@@ -1692,9 +1691,6 @@ void ObjectsManager::GOHOME2() {
 			else if (_vm->_globals._lastDirection == 7)
 				setSpriteIndex(0, 7);
 
-			if (my_anim++ > 1)
-				my_anim = 0;
-
 			return;
 		}
 	}
@@ -1708,7 +1704,6 @@ void ObjectsManager::GOHOME2() {
 		setSpriteIndex(0, 3);
 
 	_vm->_linesManager._route = (int16 *)g_PTRNUL;
-	my_anim = 0;
 }
 
 /**
@@ -1788,12 +1783,12 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	_vm->_linesManager.CARRE_ZONE();
 }
 
-void ObjectsManager::PLAN_BETA() {
+void ObjectsManager::handleCityMap() {
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_linesManager.setMaxLineIdx(1);
 	_vm->_globals._characterMaxPosY = 440;
-	_vm->_globals.PLAN_FLAG = true;
+	_vm->_globals._cityMapEnabledFl = true;
 	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals.NOMARCHE = false;
 	_spritePtr = g_PTRNUL;
@@ -1821,7 +1816,6 @@ void ObjectsManager::PLAN_BETA() {
 	}
 	addStaticSprite(_spritePtr, Common::Point(_vm->_globals._mapCarPosX, _vm->_globals._mapCarPosY), 0, 1, 0, false, 5, 5);
 	_vm->_eventsManager.setMouseXY(_vm->_globals._mapCarPosX, _vm->_globals._mapCarPosY);
-	my_anim = 0;
 	_vm->_eventsManager.mouseOn();
 	_vm->_graphicsManager.scrollScreen(getSpriteX(0) - 320);
 	_vm->_graphicsManager._scrollOffset = getSpriteX(0) - 320;
@@ -1883,7 +1877,7 @@ void ObjectsManager::PLAN_BETA() {
 	removeSprite(0);
 	_spritePtr = _vm->_globals.freeMemory(_spritePtr);
 	clearScreen();
-	_vm->_globals.PLAN_FLAG = false;
+	_vm->_globals._cityMapEnabledFl = false;
 }
 
 /**
@@ -1894,7 +1888,7 @@ void ObjectsManager::handleLeftButton() {
 	int destX = _vm->_eventsManager.getMouseX();
 	int destY = _vm->_eventsManager.getMouseY();
 
-	if (!_vm->_dialogsManager._inventFl && !_vm->_globals.PLAN_FLAG && 
+	if (!_vm->_dialogsManager._inventFl && !_vm->_globals._cityMapEnabledFl && 
 		destX > _vm->_graphicsManager._scrollOffset - 30 && destX < _vm->_graphicsManager._scrollOffset + 50 && 
 		destY > -30 && destY < 50) {
 		int oldMouseCursor = _vm->_eventsManager._mouseCursorId;
@@ -1908,29 +1902,29 @@ void ObjectsManager::handleLeftButton() {
 		}
 		return;
 	}
-	if (_vm->_globals._saveData->_data[svField354] == 1 && !_vm->_globals.PLAN_FLAG
+	if (_vm->_globals._saveData->_data[svField354] == 1 && !_vm->_globals._cityMapEnabledFl
 	    && destX >= 533 && destX <= 559 && destY >= 26 && destY <= 59) {
 		changeCharacterHead(CHARACTER_HOPKINS_CLONE, CHARACTER_HOPKINS);
 		return;
 	}
-	if (_vm->_globals._saveData->_data[svField356] == 1 && !_vm->_globals.PLAN_FLAG
+	if (_vm->_globals._saveData->_data[svField356] == 1 && !_vm->_globals._cityMapEnabledFl
 	    && destX >= 533 && destX <= 559 && destY >= 26 && destY <= 48) {
 		changeCharacterHead(CHARACTER_SAMANTHA, CHARACTER_HOPKINS);
 		return;
 	}
 	if (_vm->_globals._saveData->_data[svField357] == 1) {
-		if (_vm->_globals._saveData->_data[svField353] == 1 && !_vm->_globals.PLAN_FLAG
+		if (_vm->_globals._saveData->_data[svField353] == 1 && !_vm->_globals._cityMapEnabledFl
 		    && destX >= 533 && destX <= 559 && destY >= 26 && destY <= 59) {
 			changeCharacterHead(CHARACTER_HOPKINS, CHARACTER_HOPKINS_CLONE);
 			return;
 		}
-		if (_vm->_globals._saveData->_data[svField355] == 1 && !_vm->_globals.PLAN_FLAG
+		if (_vm->_globals._saveData->_data[svField355] == 1 && !_vm->_globals._cityMapEnabledFl
 		    && destX >= 567 && destX <= 593 && destY >= 26 && destY <= 59) {
 			changeCharacterHead(CHARACTER_HOPKINS, CHARACTER_SAMANTHA);
 			return;
 		}
 	}
-	if (_vm->_globals.PLAN_FLAG && _vm->_globals.GOACTION) {
+	if (_vm->_globals._cityMapEnabledFl && _vm->_globals.GOACTION) {
 		checkZone();
 		if (_zoneNum <= 0)
 			return;
@@ -1953,7 +1947,7 @@ void ObjectsManager::handleLeftButton() {
 		_vm->_globals._saveData->_data[svField2] = 0;
 	}
 
-	if (_vm->_globals.PLAN_FLAG && (_vm->_eventsManager._mouseCursorId != 4 || _zoneNum <= 0))
+	if (_vm->_globals._cityMapEnabledFl && (_vm->_eventsManager._mouseCursorId != 4 || _zoneNum <= 0))
 		return;
 	if (_zoneNum != -1 && _zoneNum != 0) {
 		if (_vm->_globals.ZONEP[_zoneNum]._destX && _vm->_globals.ZONEP[_zoneNum]._destY && _vm->_globals.ZONEP[_zoneNum]._destY != 31) {
@@ -1989,7 +1983,7 @@ void ObjectsManager::handleLeftButton() {
 		goto LABEL_65;
 	}
 	if (!_vm->_globals.NOMARCHE) {
-		if (!_vm->_globals.PLAN_FLAG) {
+		if (!_vm->_globals._cityMapEnabledFl) {
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), destX, destY);
 			if (_vm->_linesManager._route != (int16 *)g_PTRNUL)
 				_vm->_linesManager.PACOURS_PROPRE(_vm->_linesManager._route);
@@ -2003,7 +1997,7 @@ LABEL_63:
 				_vm->_linesManager._route = oldRoute;
 		}
 LABEL_65:
-		if (!_vm->_globals.NOMARCHE && _vm->_globals.PLAN_FLAG)
+		if (!_vm->_globals.NOMARCHE && _vm->_globals._cityMapEnabledFl)
 			_vm->_linesManager._route = _vm->_linesManager.cityMapCarRoute(getSpriteX(0), getSpriteY(0), destX, destY);
 	}
 	if (_zoneNum != -1 && _zoneNum != 0) {
@@ -2012,7 +2006,7 @@ LABEL_65:
 		else 
 			_vm->_globals._saveData->_data[svField1] = _vm->_eventsManager._mouseCursorId;
 
-		if (_vm->_globals.PLAN_FLAG)
+		if (_vm->_globals._cityMapEnabledFl)
 			_vm->_globals._saveData->_data[svField1] = 6;
 		_vm->_globals._saveData->_data[svField2] = _zoneNum;
 		_vm->_globals._saveData->_data[svField3] = _curObjectIndex;
@@ -2106,7 +2100,7 @@ void ObjectsManager::PARADISE() {
 		_vm->_globals._saveData->_data[svField1] = 0;
 		_vm->_globals._saveData->_data[svField2] = 0;
 	}
-	if (_vm->_globals.PLAN_FLAG) {
+	if (_vm->_globals._cityMapEnabledFl) {
 		_vm->_eventsManager._mouseCursorId = 0;
 		_vm->_eventsManager.changeMouseCursor(0);
 	}
@@ -2153,7 +2147,6 @@ void ObjectsManager::clearScreen() {
 	_changeVerbFl = false;
 	_vm->_linesManager._route = (int16 *)g_PTRNUL;
 	_vm->_globals._oldDirection = -1;
-	my_anim = 1;
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 }
 
@@ -3059,14 +3052,13 @@ void ObjectsManager::disableZone(int idx) {
 	} else {
 		_vm->_globals.ZONEP[idx]._enabledFl = false;
 	}
-
 }
 
-void ObjectsManager::OPTI_ONE(int idx, int fromPosi, int destPosi, int animAction) {
+void ObjectsManager::OPTI_ONE(int idx, int animIdx, int destPosi, int animAction) {
 	// Set Hopkins animation and position
 	if (animAction != 3) {
 		setBobAnimation(idx);
-		SET_BOBPOSI(idx, fromPosi);
+		SET_BOBPOSI(idx, animIdx);
 	}
 
 	// Make Hopkins walk to the expected place
@@ -3085,7 +3077,7 @@ void ObjectsManager::OPTI_ONE(int idx, int fromPosi, int destPosi, int animActio
 }
 
 int ObjectsManager::BOBPOSI(int idx) {
-	return _vm->_globals._bob[idx].field10 / 5;
+	return _vm->_globals._bob[idx]._animDataIdx / 5;
 }
 
 /**
@@ -3096,7 +3088,7 @@ void ObjectsManager::setBobAnimation(int idx) {
 		return;
 
 	_vm->_globals._bob[idx]._disabledAnimationFl = false;
-	_vm->_globals._bob[idx].field10 = 5;
+	_vm->_globals._bob[idx]._animDataIdx = 5;
 	_vm->_globals._bob[idx]._frameIndex = 250;
 	_vm->_globals._bob[idx].field12 = 0;
 	_vm->_globals._bob[idx].field14 = 0;
@@ -3109,8 +3101,8 @@ void ObjectsManager::stopBobAnimation(int idx) {
 	_vm->_globals._bob[idx]._disabledAnimationFl = true;
 }
 
-void ObjectsManager::SET_BOBPOSI(int idx, int a2) {
-	_vm->_globals._bob[idx].field10 = 5 * a2;
+void ObjectsManager::SET_BOBPOSI(int idx, int animIdx) {
+	_vm->_globals._bob[idx]._animDataIdx = 5 * animIdx;
 	_vm->_globals._bob[idx].field12 = 0;
 	_vm->_globals._bob[idx].field14 = 0;
 }
@@ -3403,7 +3395,7 @@ void ObjectsManager::SPECIAL_INI() {
 	}
 }
 
-void ObjectsManager::OPTI_BOBON(int idx1, int idx2, int idx3, int a4, int a5, int a6) {
+void ObjectsManager::OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx) {
 	if (idx1 != -1)
 		setBobAnimation(idx1);
 	if (idx2 != -1)
@@ -3411,20 +3403,20 @@ void ObjectsManager::OPTI_BOBON(int idx1, int idx2, int idx3, int a4, int a5, in
 	if (idx3 != -1)
 		setBobAnimation(idx3);
 	if (idx1 != -1)
-		SET_BOBPOSI(idx1, a4);
+		SET_BOBPOSI(idx1, anim1Idx);
 	if (idx2 != -1)
-		SET_BOBPOSI(idx2, a5);
+		SET_BOBPOSI(idx2, anim2Idx);
 	if (idx3 != -1)
-		SET_BOBPOSI(idx3, a6);
+		SET_BOBPOSI(idx3, anim3Idx);
 }
 
-void ObjectsManager::SCI_OPTI_ONE(int idx, int a2, int a3, int a4) {
+void ObjectsManager::SCI_OPTI_ONE(int idx, int animIdx, int a3, int a4) {
 	_vm->_eventsManager._curMouseButton = 0;
 	_vm->_eventsManager._mouseButton = 0;
 
 	if (a4 != 3) {
 		setBobAnimation(idx);
-		SET_BOBPOSI(idx, a2);
+		SET_BOBPOSI(idx, animIdx);
 	}
 
 	do {
@@ -3786,7 +3778,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_dialogsManager._removeInventFl = false;
 	_vm->_graphicsManager._scrollOffset = 0;
-	_vm->_globals.PLAN_FLAG = false;
+	_vm->_globals._cityMapEnabledFl = false;
 	_vm->_globals.iRegul = 1;
 	_vm->_soundManager.WSOUND(v);
 	_vm->_linesManager._route = (int16 *)g_PTRNUL;
@@ -3876,7 +3868,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_verb = 4;
 	_vm->_graphicsManager._scrollOffset = 0;
 	_vm->_dialogsManager._removeInventFl = false;
-	_vm->_globals.PLAN_FLAG = false;
+	_vm->_globals._cityMapEnabledFl = false;
 	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals.NOMARCHE = false;
 	_vm->_globals._exitId = 0;

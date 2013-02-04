@@ -68,7 +68,7 @@ void DialogsManager::showOptionsDialog() {
 			filename = "OPTIES.SPR";
 	}
 
-	_vm->_globals.OPTION_SPR = _vm->_fileManager.loadFile(filename);
+	_vm->_globals._optionDialogSpr = _vm->_fileManager.loadFile(filename);
 	_vm->_globals._optionDialogFl = true;
 
 	bool doneFlag = false;
@@ -233,7 +233,8 @@ void DialogsManager::showOptionsDialog() {
 			//if (mousePos.x >= _vm->_graphicsManager.ofscroll + 348 && mousePos.y > 248 && mousePos.x <= _vm->_graphicsManager.ofscroll + 394 && mousePos.y <= 273)
 			//	_vm->_globals._speed = 2;
 
-			if (mousePos.x < _vm->_graphicsManager._scrollOffset + 165 || mousePos.x > _vm->_graphicsManager._scrollOffset + 496 || (uint)(mousePos.y - 107) > 211)
+			if (   mousePos.x < _vm->_graphicsManager._scrollOffset + 165 || mousePos.x > _vm->_graphicsManager._scrollOffset + 496 
+				|| mousePos.y < 107 || mousePos.y > 318)
 				doneFlag = true;
 		}
 
@@ -256,30 +257,44 @@ void DialogsManager::showOptionsDialog() {
 
 		_vm->_globals._menuDisplayType = 9;
 
-		if (_vm->_graphicsManager._scrollSpeed == 1)
+		switch (_vm->_graphicsManager._scrollSpeed) {
+		case 1:
 			_vm->_globals._menuScrollSpeed = 12;
-		else if (_vm->_graphicsManager._scrollSpeed == 2)
+			break;
+		case 2:
 			_vm->_globals._menuScrollSpeed = 13;
-		else if (_vm->_graphicsManager._scrollSpeed == 4)
+			break;
+		case 4:
 			_vm->_globals._menuScrollSpeed = 14;
-		else if (_vm->_graphicsManager._scrollSpeed == 8)
+			break;
+		case 8:
 			_vm->_globals._menuScrollSpeed = 15;
-		else if (_vm->_graphicsManager._scrollSpeed == 16)
+			break;
+		case 16:
 			_vm->_globals._menuScrollSpeed = 16;
-		else if (_vm->_graphicsManager._scrollSpeed == 32)
+			break;
+		case 32:
 			_vm->_globals._menuScrollSpeed = 17;
-		else if (_vm->_graphicsManager._scrollSpeed == 48)
+			break;
+		case 48:
 			_vm->_globals._menuScrollSpeed = 18;
-		else if (_vm->_graphicsManager._scrollSpeed == 64)
+			break;
+		case 64:
 			_vm->_globals._menuScrollSpeed = 19;
-		else if (_vm->_graphicsManager._scrollSpeed == 128)
+			break;
+		case 128:
 			_vm->_globals._menuScrollSpeed = 20;
-		else if (_vm->_graphicsManager._scrollSpeed == 160)
+			break;
+		case 160:
 			_vm->_globals._menuScrollSpeed = 21;
-		else if (_vm->_graphicsManager._scrollSpeed == 320)
+			break;
+		case 320:
 			_vm->_globals._menuScrollSpeed = 22;
-		else if (_vm->_graphicsManager._scrollSpeed == 640)
+			break;
+		case 640:
 			_vm->_globals._menuScrollSpeed = 23;
+			break;
+		}
 
 		_vm->_eventsManager.VBL();
 	} while (!doneFlag);
@@ -289,7 +304,7 @@ void DialogsManager::showOptionsDialog() {
 	_vm->_graphicsManager.addVesaSegment(_vm->_graphicsManager._scrollOffset + 164, 107,
 		_vm->_graphicsManager._scrollOffset + 498, 320);
 
-	_vm->_globals.OPTION_SPR = _vm->_globals.freeMemory(_vm->_globals.OPTION_SPR);
+	_vm->_globals._optionDialogSpr = _vm->_globals.freeMemory(_vm->_globals._optionDialogSpr);
 	_vm->_globals._optionDialogFl = false;
 }
 
@@ -298,7 +313,7 @@ void DialogsManager::showInventory() {
 		return;
 
 	_vm->_graphicsManager._scrollStatus = 1;
-	_vm->_objectsManager.FLAG_VISIBLE_EFFACE = 4;
+	_vm->_objectsManager._eraseVisibleCounter = 4;
 	_vm->_objectsManager._visibleFl = false;
 	for (int i = 0; i <= 1; i++) {
 		inventAnim();
@@ -319,15 +334,15 @@ LABEL_7:
 		filename = "INVENT.SPR";
 	else {
 		switch (_vm->_globals._language) {
-			case LANG_EN:
-				filename = "INVENTAN.SPR";
-				break;
-			case LANG_FR:
-				filename = "INVENTFR.SPR";
-				break;
-			case LANG_SP:
-				filename = "INVENTES.SPR";
-				break;
+		case LANG_EN:
+			filename = "INVENTAN.SPR";
+			break;
+		case LANG_FR:
+			filename = "INVENTFR.SPR";
+			break;
+		case LANG_SP:
+			filename = "INVENTES.SPR";
+			break;
 		}
 	}
 
@@ -461,24 +476,24 @@ void DialogsManager::inventAnim() {
 	if (_vm->_globals._disableInventFl)
 		return;
 
-	if (_vm->_objectsManager.FLAG_VISIBLE_EFFACE && !_vm->_objectsManager._visibleFl) {
-		_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _vm->_objectsManager.I_old_x, 27, 48, 38,
-			_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.I_old_x, 27);
-		_vm->_graphicsManager.addVesaSegment(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
-		--_vm->_objectsManager.FLAG_VISIBLE_EFFACE;
+	if (_vm->_objectsManager._eraseVisibleCounter && !_vm->_objectsManager._visibleFl) {
+		_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _vm->_objectsManager._oldInventoryPosX, 27, 48, 38,
+			_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._oldInventoryPosX, 27);
+		_vm->_graphicsManager.addVesaSegment(_vm->_objectsManager._oldInventoryPosX, 27, _vm->_objectsManager._oldInventoryPosX + 48, 65);
+		--_vm->_objectsManager._eraseVisibleCounter;
 	}
 
 	if (_vm->_objectsManager._visibleFl) {
-		if (_vm->_objectsManager.I_old_x <= 1)
-			_vm->_objectsManager.I_old_x = 2;
-		_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _vm->_objectsManager.I_old_x, 27, 48, 38,
-			_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager.I_old_x, 27);
+		if (_vm->_objectsManager._oldInventoryPosX <= 1)
+			_vm->_objectsManager._oldInventoryPosX = 2;
+		_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _vm->_objectsManager._oldInventoryPosX, 27, 48, 38,
+			_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._oldInventoryPosX, 27);
 
-		_vm->_graphicsManager.addVesaSegment(_vm->_objectsManager.I_old_x, 27, _vm->_objectsManager.I_old_x + 48, 65);
+		_vm->_graphicsManager.addVesaSegment(_vm->_objectsManager._oldInventoryPosX, 27, _vm->_objectsManager._oldInventoryPosX + 48, 65);
 		int newOffset = _vm->_graphicsManager._scrollOffset + 2;
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.ICONE, newOffset + 300, 327, 0);
 		_vm->_graphicsManager.addVesaSegment(newOffset, 27, newOffset + 45, 62);
-		_vm->_objectsManager.I_old_x = newOffset;
+		_vm->_objectsManager._oldInventoryPosX = newOffset;
 	}
 
 	if (_vm->_globals._saveData->_data[svField357] == 1) {
@@ -504,7 +519,7 @@ void DialogsManager::inventAnim() {
  * Test dialog opening
  */
 void DialogsManager::testDialogOpening() {
-	if (_vm->_globals.PLAN_FLAG)
+	if (_vm->_globals._cityMapEnabledFl)
 		_vm->_eventsManager._gameKey = KEY_NONE;
 
 	if ((_vm->_eventsManager._gameKey == KEY_NONE) || _inventFl)

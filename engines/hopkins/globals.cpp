@@ -173,7 +173,7 @@ Globals::Globals() {
 	ADR_FICHIER_OBJ = NULL;
 	_font = NULL;
 	PERSO = NULL;
-	OPTION_SPR = NULL;
+	_optionDialogSpr = NULL;
 
 	// Reset flags
 	_censorshipFl = false;

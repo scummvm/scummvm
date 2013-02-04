@@ -74,7 +74,7 @@ struct BobItem {
 	int _xp;
 	int _yp;
 	int _frameIndex;
-	int field10; // BOBPOSI ?
+	int _animDataIdx;
 	int field12;
 	int field14;
 	bool _disabledAnimationFl;
@@ -339,7 +339,7 @@ public:
 	bool _disableInventFl;
 	bool NOMARCHE;
 	int NBBLOC;
-	byte *OPTION_SPR;
+	byte *_optionDialogSpr;
 	bool _optionDialogFl;
 	int _menuDisplayType;
 	int _menuSpeed;
@@ -353,7 +353,7 @@ public:
 	bool NOT_VERIF;
 	bool _cacheFl;
 	bool _introSpeechOffFl;
-	bool PLAN_FLAG;
+	bool _cityMapEnabledFl;
 	bool GOACTION;
 	int Compteur;
 	int _actionDirection;

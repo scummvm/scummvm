@@ -482,7 +482,7 @@ void TalkManager::dialogTalk() {
 
 	for (int idx = 26; idx <= 30; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
-			_vm->_objectsManager.BOB_ZERO(idx);
+			_vm->_objectsManager.resetBob(idx);
 	}
 }
 
@@ -497,7 +497,7 @@ void TalkManager::dialogEndTalk() {
 
 	for (int idx = 21; idx <= 25; ++idx) {
 		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
-			_vm->_objectsManager.BOB_ZERO(idx);
+			_vm->_objectsManager.resetBob(idx);
 	}
 }
 
@@ -608,7 +608,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 
 	_vm->_objectsManager._priorityFl = true;
 	if (!_vm->_globals._bob[idx].field0) {
-		_vm->_objectsManager.BOB_ZERO(idx);
+		_vm->_objectsManager.resetBob(idx);
 		v5 = _vm->_globals.Bqe_Anim[idx]._data;
 		v4 = (int16)READ_LE_UINT16(v5 + 2);
 		if (!v4)

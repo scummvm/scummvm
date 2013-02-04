@@ -64,9 +64,9 @@ public:
 	Common::Point _borderPos;
 	int _borderSpriteIndex;
 	int _saveLoadX, _saveLoadY;
-	int I_old_x, I_old_y;
+	int _oldInventoryPosX, _oldInventoryPosY;
 	int g_old_x, g_old_y;
-	int FLAG_VISIBLE_EFFACE;
+	int _eraseVisibleCounter;
 	byte *_saveLoadSprite;
 	byte *_saveLoadSprite2;
 	byte *_spritePtr;
@@ -75,7 +75,6 @@ public:
 	bool _saveLoadFl;
 	bool _visibleFl;
 	bool BOBTOUS;
-	int my_anim;
 	int _zoneNum;
 	bool _forceZoneFl;
 	bool _changeVerbFl;
@@ -113,9 +112,9 @@ public:
 	void capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
 	void addObject(int objIndex);
 
-	void INIT_BOB();
-	void BOB_ZERO(int idx);
-	void DEF_BOB(int idx);
+	void initBob();
+	void resetBob(int idx);
+	void setBobInfo(int idx);
 	void BOB_VISU(int idx);
 	void BOB_OFF(int idx);
 	void BOB_OFFSET(int idx, int offset);
@@ -146,7 +145,7 @@ public:
 	void GOHOME();
 	void GOHOME2();
 	void loadZone(const Common::String &file);
-	void PLAN_BETA();
+	void handleCityMap();
 	void handleLeftButton();
 	void PARADISE();
 	void clearScreen();
@@ -178,19 +177,19 @@ public:
 
 	void enableZone(int idx);
 	void disableZone(int idx);
-	void OPTI_ONE(int idx, int fromPosi, int destPosi, int animAction);
+	void OPTI_ONE(int idx, int animIdx, int destPosi, int animAction);
 	int BOBPOSI(int idx);
 	void setBobAnimation(int idx);
 	void stopBobAnimation(int idx);
-	void SET_BOBPOSI(int idx, int a2);
+	void SET_BOBPOSI(int idx, int animIdx);
 	int getBobPosX(int idx);
 	int getBobPosY(int idx);
 	int getBobFrameIndex(int idx);
 
 	void INILINK(const Common::String &file);
 	void SPECIAL_INI();
-	void OPTI_BOBON(int idx1, int idx2, int idx3, int a4, int a5, int a6);
-	void SCI_OPTI_ONE(int idx, int a2, int a3, int a4);
+	void OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx);
+	void SCI_OPTI_ONE(int idx, int animIdx, int a3, int a4);
 	void disableVerb(int idx, int a2);
 	void enableVerb(int idx, int a2);
 

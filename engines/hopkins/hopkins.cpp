@@ -68,14 +68,14 @@ Common::String HopkinsEngine::generateSaveName(int slot) {
  * Returns true if it is currently okay to restore a game
  */
 bool HopkinsEngine::canLoadGameStateCurrently() {
-	return !_globals._exitId && !_globals.PLAN_FLAG && _eventsManager._mouseFl;
+	return !_globals._exitId && !_globals._cityMapEnabledFl && _eventsManager._mouseFl;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool HopkinsEngine::canSaveGameStateCurrently() {
-	return !_globals._exitId && !_globals.PLAN_FLAG && _eventsManager._mouseFl;
+	return !_globals._exitId && !_globals._cityMapEnabledFl && _eventsManager._mouseFl;
 }
 
 /**
@@ -234,7 +234,7 @@ bool HopkinsEngine::runWin95Demo() {
 
 		case 4:
 			_globals._disableInventFl = true;
-			_objectsManager.PLAN_BETA();
+			_objectsManager.handleCityMap();
 			_globals._disableInventFl = false;
 			break;
 
@@ -542,7 +542,7 @@ bool HopkinsEngine::runLinuxDemo() {
 
 		case 4:
 			_globals._disableInventFl = true;
-			_objectsManager.PLAN_BETA();
+			_objectsManager.handleCityMap();
 			_globals._disableInventFl = false;
 			break;
 
@@ -887,7 +887,7 @@ bool HopkinsEngine::runFull() {
 
 		case 4:
 			_globals._disableInventFl = true;
-			_objectsManager.PLAN_BETA();
+			_objectsManager.handleCityMap();
 			_globals._disableInventFl = false;
 			break;
 
@@ -2097,7 +2097,7 @@ void HopkinsEngine::playEnding() {
 	_dialogsManager._removeInventFl = true;
 	_globals._disableInventFl = true;
 	_graphicsManager._scrollOffset = 0;
-	_globals.PLAN_FLAG = false;
+	_globals._cityMapEnabledFl = false;
 	_globals.iRegul = 1;
 	_soundManager.WSOUND(26);
 	_linesManager._route = (int16 *)g_PTRNUL;
@@ -2723,7 +2723,7 @@ void HopkinsEngine::OCEAN_HOME() {
 }
 
 void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, int16 defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
-	_globals.PLAN_FLAG = false;
+	_globals._cityMapEnabledFl = false;
 	_graphicsManager._noFadingFl = false;
 	_globals.NOMARCHE = false;
 	_globals._exitId = 0;
