@@ -18,13 +18,26 @@
 #ifndef MT32EMU_PART_H
 #define MT32EMU_PART_H
 
-#include <common/list.h>
-
 namespace MT32Emu {
 
 class PartialManager;
 class Synth;
-typedef Common::List<Poly *> PolyList;
+
+class PolyList {
+private:
+	Poly *firstPoly;
+	Poly *lastPoly;
+
+public:
+	PolyList();
+	bool isEmpty() const;
+	Poly *getFirst() const;
+	Poly *getLast() const;
+	void prepend(Poly *poly);
+	void append(Poly *poly);
+	Poly *takeFirst();
+	void remove(Poly * const poly);
+};
 
 class Part {
 private:

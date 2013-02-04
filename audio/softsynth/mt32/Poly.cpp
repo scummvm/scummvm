@@ -29,6 +29,7 @@ Poly::Poly(Part *usePart) {
 		partials[i] = NULL;
 	}
 	state = POLY_Inactive;
+	next = NULL;
 }
 
 void Poly::reset(unsigned int newKey, unsigned int newVelocity, bool newSustain, Partial **newPartials) {
@@ -172,6 +173,14 @@ void Poly::partialDeactivated(Partial *partial) {
 		state = POLY_Inactive;
 	}
 	part->partialDeactivated(this);
+}
+
+Poly *Poly::getNext() {
+	return next;
+}
+
+void Poly::setNext(Poly *poly) {
+	next = poly;
 }
 
 }
