@@ -27,6 +27,11 @@
 #include "common/array.h"
 #include "common/keyboard.h"
 
+namespace Common {
+	class FSNode;
+	class File;
+}
+
 namespace GUI {
 
 class AboutDialog : public Dialog {
@@ -41,6 +46,9 @@ protected:
 	int _xOff, _yOff;
 
 	void addLine(const char *str);
+	void loadCredits();
+	bool openCreditsFile(Common::File &inFile);
+	bool openCreditsFile(const Common::FSNode &node, Common::File &inFile, int depth = -1);
 
 public:
 	AboutDialog();
