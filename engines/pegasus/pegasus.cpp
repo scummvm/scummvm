@@ -657,7 +657,23 @@ Common::Error PegasusEngine::loadGameState(int slot) {
 	return valid ? Common::kNoError : Common::kUnknownError;
 }
 
+static bool isValidSaveFileChar(char c) {
+	// Limit it to letters, digits, and a few other characters that should be safe
+	return Common::isAlnum(c) || c == ' ' || c == '_' || c == '+' || c == '-' || c == '.';
+}
+
+static bool isValidSaveFileName(const Common::String &desc) {
+	for (uint32 i = 0; i < desc.size(); i++)
+		if (!isValidSaveFileChar(desc[i]))
+			return false;
+
+	return true;
+}
+
 Common::Error PegasusEngine::saveGameState(int slot, const Common::String &desc) {
+	if (!isValidSaveFileName(desc))
+		return Common::Error(Common::kCreatingFileFailed, _("Invalid save file name"));
+
 	Common::String output = Common::String::format("pegasus-%s.sav", desc.c_str());
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(output, false);
 	if (!saveFile)
