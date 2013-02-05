@@ -21,16 +21,28 @@
  */
 
 #include "engines/grim/debugger.h"
+#include "engines/grim/md5check.h"
 
 namespace Grim {
 
 Debugger::Debugger()
 	: GUI::Debugger() {
 
+	DCmd_Register("check_gamedata", WRAP_METHOD(Debugger, cmd_checkFiles));
 }
 
 Debugger::~Debugger() {
 
+}
+
+bool Debugger::cmd_checkFiles(int argc, const char **argv) {
+	if (MD5Check::checkFiles()) {
+		DebugPrintf("All files are ok.\n");
+	} else {
+		DebugPrintf("Some files are corrupted or missing.\n");
+	}
+
+	return true;
 }
 
 }

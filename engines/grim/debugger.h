@@ -31,6 +31,8 @@ class Debugger : public GUI::Debugger {
 public:
 	Debugger();
 	virtual ~Debugger();
+
+	bool cmd_checkFiles(int argc, const char **argv);
 };
 
 }
