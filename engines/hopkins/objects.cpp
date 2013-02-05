@@ -1834,7 +1834,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_eventsManager.changeMouseCursor(4);
 	_vm->_graphicsManager._noFadingFl = false;
 
-	bool v1 = false;
+	bool loopCond = false;
 	do {
 		int mouseButton = _vm->_eventsManager.getMouseButton();
 		if (mouseButton) {
@@ -1865,8 +1865,8 @@ void ObjectsManager::handleCityMap() {
 		_vm->_eventsManager.VBL();
 
 		if (_vm->_globals._exitId)
-			v1 = true;
-	} while (!_vm->shouldQuit() && !v1);
+			loopCond = true;
+	} while (!_vm->shouldQuit() && !loopCond);
 
 	if (!_vm->_graphicsManager._noFadingFl)
 		_vm->_graphicsManager.fadeOutLong();
@@ -1959,7 +1959,16 @@ void ObjectsManager::handleLeftButton() {
 	int16 *oldRoute = _vm->_linesManager._route;
 	_vm->_linesManager._route = (int16 *)g_PTRNUL;
 	if (_vm->_globals._forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
-		if (getSpriteY(0) <= 374 || getSpriteY(0) > 410) {
+		if (getSpriteY(0) > 374 && getSpriteY(0) <= 410) {
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
+			setSpriteIndex(0, _vm->_globals._oldDirectionSpriteIdx);
+			_vm->_globals._actionDirection = 0;
+			_vm->_linesManager._route = (int16 *)g_PTRNUL;
+			computeAndSetSpriteSize();
+			setFlipSprite(0, false);
+			_vm->_globals.Compteur = 0;
+			_vm->_globals._oldDirection = -1;
+		} else {
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
 			if (_vm->_linesManager._route != (int16 *)g_PTRNUL)
 				_vm->_linesManager.PACOURS_PROPRE(_vm->_linesManager._route);
@@ -1968,22 +1977,12 @@ void ObjectsManager::handleLeftButton() {
 			_vm->_globals.Compteur = 0;
 			if (_vm->_linesManager._route != (int16 *)g_PTRNUL || oldRoute == _vm->_linesManager._route) {
 				_vm->_globals._oldDirection = -1;
-				goto LABEL_65;
+			} else {
+				_vm->_linesManager._route = oldRoute;
 			}
-			goto LABEL_63;
 		}
-		_vm->_linesManager._route = (int16 *)g_PTRNUL;
-		setSpriteIndex(0, _vm->_globals._oldDirectionSpriteIdx);
-		_vm->_globals._actionDirection = 0;
-		_vm->_linesManager._route = (int16 *)g_PTRNUL;
-		computeAndSetSpriteSize();
-		setFlipSprite(0, false);
-		_vm->_globals.Compteur = 0;
-		_vm->_globals._oldDirection = -1;
-		goto LABEL_65;
-	}
-	if (!_vm->_globals.NOMARCHE) {
-		if (!_vm->_globals._cityMapEnabledFl) {
+	} else {
+		if (!_vm->_globals.NOMARCHE && !_vm->_globals._cityMapEnabledFl) {
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), destX, destY);
 			if (_vm->_linesManager._route != (int16 *)g_PTRNUL)
 				_vm->_linesManager.PACOURS_PROPRE(_vm->_linesManager._route);
@@ -1993,13 +1992,13 @@ void ObjectsManager::handleLeftButton() {
 			if (_vm->_linesManager._route != (int16 *)g_PTRNUL || oldRoute == _vm->_linesManager._route)
 				_vm->_globals._oldDirection = -1;
 			else
-LABEL_63:
 				_vm->_linesManager._route = oldRoute;
 		}
-LABEL_65:
-		if (!_vm->_globals.NOMARCHE && _vm->_globals._cityMapEnabledFl)
-			_vm->_linesManager._route = _vm->_linesManager.cityMapCarRoute(getSpriteX(0), getSpriteY(0), destX, destY);
 	}
+
+	if (!_vm->_globals.NOMARCHE && _vm->_globals._cityMapEnabledFl)
+		_vm->_linesManager._route = _vm->_linesManager.cityMapCarRoute(getSpriteX(0), getSpriteY(0), destX, destY);
+
 	if (_zoneNum != -1 && _zoneNum != 0) {
 		if (_vm->_eventsManager._mouseCursorId == 23)
 			_vm->_globals._saveData->_data[svField1] = 5;
@@ -2595,8 +2594,7 @@ void ObjectsManager::takeInventoryObject(int idx) {
 void ObjectsManager::OPTI_OBJET() {
 	byte *data;
 	Common::String file;
-	int v0 = 1;
-	int v5;
+	int lastOpcodeResult = 1;
 
 	file = "OBJET1.ini";
 	data = _vm->_fileManager.searchCat(file, 1);
@@ -2610,21 +2608,21 @@ void ObjectsManager::OPTI_OBJET() {
 		error("File %s is not an INI file", file.c_str());
 
 	for (;;) {
-		v5 = _vm->_scriptManager.handleOpcode(data + 20 * v0);
+		int opcodeType = _vm->_scriptManager.handleOpcode(data + 20 * lastOpcodeResult);
 		if (_vm->shouldQuit())
 			return;
 
-		if (v5 == 2)
-			v0 = _vm->_scriptManager.handleGoto(data + 20 * v0);
-		else if (v5 == 3)
-			v0 = _vm->_scriptManager.handleIf(data, v0);
+		if (opcodeType == 2)
+			lastOpcodeResult = _vm->_scriptManager.handleGoto(data + 20 * lastOpcodeResult);
+		else if (opcodeType == 3)
+			lastOpcodeResult = _vm->_scriptManager.handleIf(data, lastOpcodeResult);
 
-		if (v0 == -1)
+		if (lastOpcodeResult == -1)
 			error("defective IFF function");
 
-		if (v5 == 1 || v5 == 4)
-			++v0;
-		if (!v5 || v5 == 5)
+		if (opcodeType == 1 || opcodeType == 4)
+			++lastOpcodeResult;
+		if (!opcodeType || opcodeType == 5)
 			break;
 	}
 
