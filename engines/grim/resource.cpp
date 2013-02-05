@@ -41,7 +41,9 @@
 #include "engines/grim/emi/modelemi.h"
 #include "engines/grim/emi/skeleton.h"
 #include "engines/grim/patchr.h"
+#include "engines/grim/md5check.h"
 #include "engines/grim/update/update.h"
+
 #include "common/algorithm.h"
 #include "common/zlib.h"
 #include "common/memstream.h"
@@ -218,6 +220,7 @@ ResourceLoader::~ResourceLoader() {
 	clearList(_colormaps);
 	clearList(_keyframeAnims);
 	clearList(_lipsyncs);
+	MD5Check::clear();
 }
 
 static int sortCallback(const void *entry1, const void *entry2) {
