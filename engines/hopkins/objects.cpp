@@ -1405,18 +1405,18 @@ void ObjectsManager::GOHOME() {
 			v58 = _oldCharacterPosY;
 			v1 = 24;
 		} else {
-			int v3 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int v4 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 
 			if (_sprite[0]._zoomFactor < 0) {
-				v3 = _vm->_graphicsManager.zoomOut(v3, -_sprite[0]._zoomFactor);
-				v4 = _vm->_graphicsManager.zoomOut(v4, -_sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
-				v3 = _vm->_graphicsManager.zoomIn(v3, _sprite[0]._zoomFactor);
-				v4 = _vm->_graphicsManager.zoomIn(v4, _sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = v3 + _oldCharacterPosX;
-			v58 = _oldCharacterPosY + v4;
+			v0 = _oldCharacterPosX + deltaX;
+			v58 = _oldCharacterPosY + deltaY;
 			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 35)
 				v1 = 24;
@@ -1429,17 +1429,17 @@ void ObjectsManager::GOHOME() {
 			v58 = _oldCharacterPosY;
 			v1 = 24;
 		} else {
-			int v9 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int v10 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 			if (_sprite[0]._zoomFactor < 0) {
-				v9 = _vm->_graphicsManager.zoomOut(v9, -_sprite[0]._zoomFactor);
-				v10 = _vm->_graphicsManager.zoomOut(v10, -_sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
-				v9 = _vm->_graphicsManager.zoomIn(v9, _sprite[0]._zoomFactor);
-				v10 = _vm->_graphicsManager.zoomIn(v10, _sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX - v9;
-			v58 = _oldCharacterPosY - v10;
+			v0 = _oldCharacterPosX - deltaX;
+			v58 = _oldCharacterPosY - deltaY;
 			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 35)
 				v1 = 24;
@@ -1452,14 +1452,14 @@ void ObjectsManager::GOHOME() {
 			v58 = _oldCharacterPosY;
 			v1 = 0;
 		} else {
-			int v16 = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
+			int deltaY = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
 			if (_sprite[0]._zoomFactor < 0) {
-				v16 = _vm->_graphicsManager.zoomOut(v16, -_sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
-				v16 = _vm->_graphicsManager.zoomIn(v16, _sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
 			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY - v16;
+			v58 = _oldCharacterPosY - deltaY;
 			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 11)
 				v1 = 0;
@@ -1473,14 +1473,14 @@ void ObjectsManager::GOHOME() {
 			v58 = _oldCharacterPosY;
 			v1 = 48;
 		} else {
-			int v20 = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
+			int deltaY = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
 			if (_sprite[0]._zoomFactor < 0) {
-				v20 = _vm->_graphicsManager.zoomOut(v20, -_sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
-				v20 = _vm->_graphicsManager.zoomIn(v20, _sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
 			v0 = _oldCharacterPosX;
-			v58 = v20 + _oldCharacterPosY;
+			v58 = deltaY + _oldCharacterPosY;
 			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 59)
 				v1 = 48;
@@ -1493,18 +1493,18 @@ void ObjectsManager::GOHOME() {
 			v58 = _oldCharacterPosY;
 			v1 = 12;
 		} else {
-			int v23 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int v24 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 			if (_sprite[0]._zoomFactor < 0) {
-				v23 = _vm->_graphicsManager.zoomOut(v23, -_sprite[0]._zoomFactor);
-				v24 = _vm->_graphicsManager.zoomOut(v24, -_sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
 			}
 			if (_sprite[0]._zoomFactor > 0) {
-				v23 = _vm->_graphicsManager.zoomIn(v23, _sprite[0]._zoomFactor);
-				v24 = _vm->_graphicsManager.zoomIn(v24, _sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = v23 + _oldCharacterPosX;
-			v58 = _oldCharacterPosY + v24;
+			v0 = deltaX + _oldCharacterPosX;
+			v58 = _oldCharacterPosY + deltaY;
 			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 23)
 				v1 = 12;
@@ -1517,17 +1517,17 @@ void ObjectsManager::GOHOME() {
 			v58 = _oldCharacterPosY;
 			v1 = 12;
 		} else {
-			int v29 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int v30 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 			if (_sprite[0]._zoomFactor < 0) {
-				v29 = _vm->_graphicsManager.zoomOut(v29, -_sprite[0]._zoomFactor);
-				v30 = _vm->_graphicsManager.zoomOut(v30, -_sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
-				v29 = _vm->_graphicsManager.zoomIn(v29, _sprite[0]._zoomFactor);
-				v30 = _vm->_graphicsManager.zoomIn(v30, _sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX - v29;
-			v58 = _oldCharacterPosY + v30;
+			v0 = _oldCharacterPosX - deltaX;
+			v58 = _oldCharacterPosY + deltaY;
 			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 23)
 				v1 = 12;
@@ -1540,18 +1540,18 @@ void ObjectsManager::GOHOME() {
 			v58 = _oldCharacterPosY;
 			v1 = 36;
 		} else {
-			int v35 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int v36 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 			if (_sprite[0]._zoomFactor < 0) {
-				v35 = _vm->_graphicsManager.zoomOut(v35, -_sprite[0]._zoomFactor);
-				v36 = _vm->_graphicsManager.zoomOut(v36, -_sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
 			}
 			if (_sprite[0]._zoomFactor > 0) {
-				v35 = _vm->_graphicsManager.zoomIn(v35, _sprite[0]._zoomFactor);
-				v36 = _vm->_graphicsManager.zoomIn(v36, _sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = v35 + _oldCharacterPosX;
-			v58 = _oldCharacterPosY + v36;
+			v0 = deltaX + _oldCharacterPosX;
+			v58 = _oldCharacterPosY + deltaY;
 			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 47)
 				v1 = 36;
@@ -1564,18 +1564,18 @@ void ObjectsManager::GOHOME() {
 			v58 = _oldCharacterPosY;
 			v1 = 36;
 		} else {
-			int v41 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int v42 = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
+			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
 			if (_sprite[0]._zoomFactor < 0) {
-				v41 = _vm->_graphicsManager.zoomOut(v41, -_sprite[0]._zoomFactor);
-				v42 = _vm->_graphicsManager.zoomOut(v42, -_sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
 			}
 			if (_sprite[0]._zoomFactor > 0) {
-				v41 = _vm->_graphicsManager.zoomIn(v41, _sprite[0]._zoomFactor);
-				v42 = _vm->_graphicsManager.zoomIn(v42, _sprite[0]._zoomFactor);
+				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
+				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX - v41;
-			v58 = _oldCharacterPosY + v42;
+			v0 = _oldCharacterPosX - deltaX;
+			v58 = _oldCharacterPosY + deltaY;
 			v1 = _vm->_globals._oldFrameIndex + 1;
 			if (v1 > 47)
 				v1 = 36;
