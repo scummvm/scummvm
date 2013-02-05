@@ -65,7 +65,7 @@ public:
 	int _borderSpriteIndex;
 	int _saveLoadX, _saveLoadY;
 	int _oldInventoryPosX, _oldInventoryPosY;
-	int g_old_x, g_old_y;
+	int _oldCharacterPosX, _oldCharacterPosY;
 	int _eraseVisibleCounter;
 	byte *_saveLoadSprite;
 	byte *_saveLoadSprite2;
@@ -178,10 +178,10 @@ public:
 	void enableZone(int idx);
 	void disableZone(int idx);
 	void OPTI_ONE(int idx, int animIdx, int destPosi, int animAction);
-	int BOBPOSI(int idx);
+	int getBobAnimDataIdx(int idx);
 	void setBobAnimation(int idx);
 	void stopBobAnimation(int idx);
-	void SET_BOBPOSI(int idx, int animIdx);
+	void setBobAnimDataIdx(int idx, int animIdx);
 	int getBobPosX(int idx);
 	int getBobPosY(int idx);
 	int getBobFrameIndex(int idx);

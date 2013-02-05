@@ -2082,7 +2082,7 @@ void HopkinsEngine::BASED() {
 
 	do
 		_eventsManager.VBL();
-	while (_objectsManager.BOBPOSI(8) != 22);
+	while (_objectsManager.getBobAnimDataIdx(8) != 22);
 
 	_graphicsManager.fadeOutLong();
 	_graphicsManager.FIN_VISU();
@@ -2125,7 +2125,7 @@ void HopkinsEngine::playEnding() {
 
 	do
 		_eventsManager.VBL();
-	while (_objectsManager.BOBPOSI(6) != 54);
+	while (_objectsManager.getBobAnimDataIdx(6) != 54);
 
 	_globals._introSpeechOffFl = true;
 	_talkManager.PARLER_PERSO("GM4.PE2");
@@ -2137,13 +2137,13 @@ void HopkinsEngine::playEnding() {
 
 	do
 		_eventsManager.VBL();
-	while (_objectsManager.BOBPOSI(7) != 54);
+	while (_objectsManager.getBobAnimDataIdx(7) != 54);
 
 	_soundManager.PLAY_SAMPLE2(1);
 
 	do
 		_eventsManager.VBL();
-	while (_objectsManager.BOBPOSI(7) != 65);
+	while (_objectsManager.getBobAnimDataIdx(7) != 65);
 
 	_globals._introSpeechOffFl = true;
 	_talkManager.PARLER_PERSO("DUELB4.PE2");
@@ -2152,21 +2152,21 @@ void HopkinsEngine::playEnding() {
 
 	do
 		_eventsManager.VBL();
-	while (_objectsManager.BOBPOSI(7) != 72);
+	while (_objectsManager.getBobAnimDataIdx(7) != 72);
 
 	_globals._introSpeechOffFl = true;
 	_talkManager.PARLER_PERSO("DUELH1.PE2");
 
 	do
 		_eventsManager.VBL();
-	while (_objectsManager.BOBPOSI(7) != 81);
+	while (_objectsManager.getBobAnimDataIdx(7) != 81);
 
 	_globals._introSpeechOffFl = true;
 	_talkManager.PARLER_PERSO("DUELB5.PE2");
 
 	do
 		_eventsManager.VBL();
-	while (_objectsManager.BOBPOSI(7) != 120);
+	while (_objectsManager.getBobAnimDataIdx(7) != 120);
 
 	_objectsManager.stopBobAnimation(7);
 	if (_globals._saveData->_data[svField135] == 1) {
@@ -2218,13 +2218,13 @@ void HopkinsEngine::playEnding() {
 
 		do
 			_eventsManager.VBL();
-		while (_objectsManager.BOBPOSI(8) != 5);
+		while (_objectsManager.getBobAnimDataIdx(8) != 5);
 
 		_soundManager.PLAY_SOUND2("SOUND41.WAV");
 
 		do
 			_eventsManager.VBL();
-		while (_objectsManager.BOBPOSI(8) != 21);
+		while (_objectsManager.getBobAnimDataIdx(8) != 21);
 
 		_graphicsManager.fadeOutLong();
 		_graphicsManager.FIN_VISU();

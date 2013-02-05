@@ -894,7 +894,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 		_vm->_objectsManager.SPACTION1(_vm->_globals._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
 		do
 			_vm->_eventsManager.VBL();
-		while (_vm->_objectsManager.BOBPOSI(6) < 12);
+		while (_vm->_objectsManager.getBobAnimDataIdx(6) < 12);
 		_vm->_objectsManager.stopBobAnimation(6);
 		_vm->_objectsManager.setBobAnimation(8);
 		
@@ -942,7 +942,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 		_vm->_objectsManager.SPACTION1(_vm->_globals._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
 		do
 			_vm->_eventsManager.VBL();
-		while (_vm->_objectsManager.BOBPOSI(5) < 12);
+		while (_vm->_objectsManager.getBobAnimDataIdx(5) < 12);
 		_vm->_objectsManager.stopBobAnimation(5);
 		_vm->_objectsManager.setBobAnimation(7);
 		switch (_vm->_globals._screenId) {
