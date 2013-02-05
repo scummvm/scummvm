@@ -691,19 +691,35 @@ void PegasusEngine::receiveNotification(Notification *notification, const Notifi
 		case kGameStartingFlag: {
 			useMenu(new MainMenu());
 
-			if (!isDemo()) {
+			if (isDemo()) {
+				// Start playing the music earlier here
+				((MainMenu *)_gameMenu)->startMainMenuLoop();
+
+				// Show the intro splash screen
+				showTempScreen("Images/Demo/NGsplashScrn.pict");
+
+				if (shouldQuit()) {
+					useMenu(0);
+					return;
+				}
+
+				// Fade out and then back in with the main menu
+				_gfx->doFadeOutSync();
+				_gfx->updateDisplay();
+				_gfx->doFadeInSync();
+			} else {
+				// Display the intro
 				runIntro();
 				resetIntroTimer();
-			} else {
-				showTempScreen("Images/Demo/NGsplashScrn.pict");
+
+				if (shouldQuit())
+					return;
+
+				// Now display the main menu
+				_gfx->invalRect(Common::Rect(0, 0, 640, 480));
+				_gfx->updateDisplay();
+				((MainMenu *)_gameMenu)->startMainMenuLoop();
 			}
-
-			if (shouldQuit())
-				return;
-
-			_gfx->invalRect(Common::Rect(0, 0, 640, 480));
-			_gfx->updateDisplay();
-			((MainMenu *)_gameMenu)->startMainMenuLoop();
 			break;
 		}
 		case kPlayerDiedFlag:
