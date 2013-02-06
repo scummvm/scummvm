@@ -869,6 +869,7 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a
 	int v92 = lineIdx;
 
 	int v65;
+	bool loopCond = false;
 	for (;;) {
 		int v86 = v92 - 1;
 		int v11 = 2 * Ligne[v92 - 1]._lineDataEndIdx;
@@ -884,19 +885,23 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a
 				if (v12 != (int16 *)g_PTRNUL)
 					continue;
 			}
-			goto LABEL_11;
+			loopCond = true;
+			break;
 		}
+		if (loopCond)
+			break;
 
 		v92 = v86;
 		v98 = v12[0];
 		v97 = v12[1];
 	}
-LABEL_11:
+
 	int16 *v13 = Ligne[lineIdx]._lineData;
 	int v95 = v13[2 * Ligne[lineIdx]._lineDataEndIdx - 2];
 	int v93 = v13[2 * Ligne[lineIdx]._lineDataEndIdx - 1];
 	int v91 = lineIdx;
 	int foundLineIdx, foundDataIdx;
+	loopCond = false;
 	for (;;) {
 		int v87 = v91 + 1;
 		int v15 = 2 * Ligne[v91 + 1]._lineDataEndIdx;
@@ -917,13 +922,17 @@ LABEL_11:
 				if (v16 != (int16 *)g_PTRNUL)
 					continue;
 			}
-			goto LABEL_17;
+			loopCond = true;
+			break;
 		}
+		if (loopCond)
+			break;
+
 		v91 = v87;
 		v95 = v17;
 		v93 = v16[v65 - 1];
 	}
-LABEL_17:
+
 	int v58 = abs(a3 - a5) + 1;
 	int v85 = abs(a4 - a6) + 1;
 	int v20 = v85;
@@ -1392,238 +1401,223 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	}
 
 	int v55 = PARC_PERS(fromX, fromY, clipDestX, clipDestY, v115, v121, 0);
-	if (v55 != 1) {
-		if (v55 == 2) {
-LABEL_201:
-			v115 = NV_LIGNEDEP;
-			v114 = NV_LIGNEOFS;
-			v112 = NV_POSI;
-		} else {
-			if (v113 == 1) {
-				for (int deltaY = 0; deltaY < v111; deltaY++) {
-					if (checkCollisionLine(fromX, fromY - deltaY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
-						int v58 = GENIAL(foundLineIdx, foundDataIdx, fromX, fromY - deltaY, fromX, fromY - v111, v112, &super_parcours[0], 4);
-						if (v58 == -1) {
-							super_parcours[v112] = -1;
-							super_parcours[v112 + 1] = -1;
-							super_parcours[v112 + 2] = -1;
-							super_parcours[v112 + 3] = -1;
-							return &super_parcours[0];
-						}
-						v112 = v58;
-						if (NVPY != -1)
-							deltaY = fromY - NVPY;
-					}
-					super_parcours[v112] = fromX;
-					super_parcours[v112 + 1] = fromY - deltaY;
-					super_parcours[v112 + 2] = 1;
-					super_parcours[v112 + 3] = 0;
-					v112 += 4;
-				}
-			}
-			if (v113 == 5) {
-				for (int deltaY = 0; deltaY < v111; deltaY++) {
-					if (checkCollisionLine(fromX, deltaY + fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb)
-					        && _lastLine < foundLineIdx) {
-						int v61 = GENIAL(foundLineIdx, foundDataIdx, fromX, deltaY + fromY, fromX, v111 + fromY, v112, &super_parcours[0], 4);
-						if (v61 == -1) {
-							super_parcours[v112] = -1;
-							super_parcours[v112 + 1] = -1;
-							super_parcours[v112 + 2] = -1;
-							super_parcours[v112 + 3] = -1;
-							return &super_parcours[0];
-						}
-						v112 = v61;
-						if (NVPY != -1)
-							deltaY = NVPY - fromY;
-					}
-					super_parcours[v112] = fromX;
-					super_parcours[v112 + 1] = deltaY + fromY;
-					super_parcours[v112 + 2] = 5;
-					super_parcours[v112 + 3] = 0;
-					v112 += 4;
-				}
-			}
-			if (v113 == 7) {
-				for (int deltaX = 0; deltaX < v111; deltaX++) {
-					if (checkCollisionLine(fromX - deltaX, fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
-						int v64 = GENIAL(foundLineIdx, foundDataIdx, fromX - deltaX, fromY, fromX - v111, fromY, v112, &super_parcours[0], 4);
-						if (v64 == -1) {
-							super_parcours[v112] = -1;
-							super_parcours[v112 + 1] = -1;
-							super_parcours[v112 + 2] = -1;
-							super_parcours[v112 + 3] = -1;
-							return &super_parcours[0];
-						}
-						v112 = v64;
-						if (NVPX != -1)
-							deltaX = fromX - NVPX;
-					}
-					super_parcours[v112] = fromX - deltaX;
-					super_parcours[v112 + 1] = fromY;
-					super_parcours[v112 + 2] = 7;
-					super_parcours[v112 + 3] = 0;
-					v112 += 4;
-				}
-			}
-			if (v113 == 3) {
-				for (int deltaX = 0; deltaX < v111; deltaX++) {
-					if (checkCollisionLine(deltaX + fromX, fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
-						int v67 = GENIAL(foundLineIdx, foundDataIdx, deltaX + fromX, fromY, v111 + fromX, fromY, v112, &super_parcours[0], 4);
-						if (v67 == -1) {
-							super_parcours[v112] = -1;
-							super_parcours[v112 + 1] = -1;
-							super_parcours[v112 + 2] = -1;
-							super_parcours[v112 + 3] = -1;
-							return &super_parcours[0];
-						}
-						v112 = v67;
-						if (NVPX != -1)
-							deltaX = NVPX - fromX;
-					}
-					super_parcours[v112] = deltaX + fromX;
-					super_parcours[v112 + 1] = fromY;
-					super_parcours[v112 + 2] = 3;
-					super_parcours[v112 + 3] = 0;
-					v112 += 4;
-				}
-			}
-		}
-LABEL_234:
-		if (v115 < v121) {
-			for (int i = v114; Ligne[v115]._lineDataEndIdx > i; ++i) {
-				v119 = Ligne[v115]._lineData[2 * i];
-				v118 = Ligne[v115]._lineData[2 * i + 1];
-				super_parcours[v112] = Ligne[v115]._lineData[2 * i];
-				super_parcours[v112 + 1] = Ligne[v115]._lineData[2 * i + 1];
-				super_parcours[v112 + 2] = Ligne[v115].field6;
-				super_parcours[v112 + 3] = 0;
-				v112 += 4;
-			}
-			for (int v116 = v115 + 1; v116 < v121; v116++) {
-				int v72 = 0;
-				int v110 = v116;
-				for (int j = v116; Ligne[j]._lineDataEndIdx > v72; j = v116) {
-					v119 = Ligne[v110]._lineData[2 * v72];
-					v118 = Ligne[v110]._lineData[2 * v72 + 1];
-					super_parcours[v112] = Ligne[v110]._lineData[2 * v72];
-					super_parcours[v112 + 1] = Ligne[v110]._lineData[2 * v72 + 1];
-					super_parcours[v112 + 2] = Ligne[v110].field6;
-					super_parcours[v112 + 3] = 0;
-					v112 += 4;
-					if (Ligne[v110]._lineDataEndIdx > 30 && v72 == Ligne[v110]._lineDataEndIdx / 2) {
-						int v78 = PARC_PERS(Ligne[v110]._lineData[2 * v72], Ligne[v110]._lineData[2 * v72 + 1], clipDestX, clipDestY, v110, v121, v112);
-						if (v78 == 1)
-							return &super_parcours[0];
-						if (v78 == 2) {
-							v115 = NV_LIGNEDEP;
-							v114 = NV_LIGNEOFS;
-							v112 = NV_POSI;
-							goto LABEL_234;
-						}
-						if (MIRACLE(v119, v118, v110, v121, v112))
-							goto LABEL_201;
-					}
-					++v72;
-					v110 = v116;
-				}
-				int v79 = PARC_PERS(v119, v118, clipDestX, clipDestY, v116, v121, v112);
-				if (v79 == 1)
-					return &super_parcours[0];
-				if (v79 == 2) {
-					v115 = NV_LIGNEDEP;
-					v114 = NV_LIGNEOFS;
-					v112 = NV_POSI;
-					goto LABEL_234;
-				}
-				if (MIRACLE(v119, v118, v116, v121, v112))
-					goto LABEL_201;
-			}
-			v114 = 0;
-			v115 = v121;
-		}
-		if (v115 > v121) {
-			for (int dataIdx = v114; dataIdx > 0; dataIdx--) {
-				v119 = Ligne[v115]._lineData[2 * dataIdx];
-				v118 = Ligne[v115]._lineData[2 * dataIdx + 1];
-
-				super_parcours[v112] = Ligne[v115]._lineData[2 * dataIdx];
-				super_parcours[v112 + 1] = Ligne[v115]._lineData[2 * dataIdx + 1];
-				super_parcours[v112 + 2] = Ligne[v115].field8;
-				super_parcours[v112 + 3] = 0;
-				v112 += 4;
-			}
-			for (int v117 = v115 - 1; v117 > v121; v117--) {
-				for (int dataIdx = Ligne[v117]._lineDataEndIdx - 1; dataIdx > -1; dataIdx--) {
-					v119 = Ligne[v117]._lineData[2 * dataIdx];
-					v118 = Ligne[v117]._lineData[2 * dataIdx + 1];
-					super_parcours[v112] = Ligne[v117]._lineData[2 * dataIdx];
-					super_parcours[v112 + 1] = Ligne[v117]._lineData[2 * dataIdx + 1];
-					super_parcours[v112 + 2] = Ligne[v117].field8;
-					super_parcours[v112 + 3] = 0;
-					v112 += 4;
-					if (Ligne[v117]._lineDataEndIdx > 30 && dataIdx == Ligne[v117]._lineDataEndIdx / 2) {
-						int v88 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
-						if (v88 == 1)
-							return &super_parcours[0];
-						if (v88 == 2) {
-							v115 = NV_LIGNEDEP;
-							v114 = NV_LIGNEOFS;
-							v112 = NV_POSI;
-							goto LABEL_234; 
-						}
-						if (MIRACLE(v119, v118, v117, v121, v112))
-							goto LABEL_201;
-					}
-				}
-				int v89 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
-				if (v89 == 1)
-					return &super_parcours[0];
-				if (v89 == 2) {
-					v115 = NV_LIGNEDEP;
-					v114 = NV_LIGNEOFS;
-					v112 = NV_POSI;
-					goto LABEL_234;
-				}
-				if (MIRACLE(v119, v118, v117, v121, v112))
-					goto LABEL_201;
-			}
-			v114 = Ligne[v121]._lineDataEndIdx - 1;
-			v115 = v121;
-		}
-		if (v115 == v121) {
-			if (v114 <= v120) {
-				for (int dataIdx = v114; dataIdx < v120; dataIdx++) {
-					super_parcours[v112] = Ligne[v121]._lineData[2 * dataIdx];
-					super_parcours[v112 + 1] = Ligne[v121]._lineData[2 * dataIdx + 1];
-					super_parcours[v112 + 2] = Ligne[v121].field6;
-					super_parcours[v112 + 3] = 0;
-					v112 += 4;
-				}
-			} else {
-				for (int dataIdx = v114; dataIdx > v120; dataIdx--) {
-					super_parcours[v112] = Ligne[v121]._lineData[2 * dataIdx];
-					super_parcours[v112 + 1] = Ligne[v121]._lineData[2 * dataIdx + 1];
-					super_parcours[v112 + 2] = Ligne[v121].field8;
-					super_parcours[v112 + 3] = 0;
-					v112 += 4;
-				}
-			}
-		}
-		if (PARC_PERS(
-		            super_parcours[v112 - 4],
-		            super_parcours[v112 - 3],
-		            clipDestX,
-		            clipDestY,
-		            -1,
-		            -1,
-		            v112) != 1) {
-			super_parcours[v112] = -1;
-			super_parcours[v112 + 1] = -1;
-			super_parcours[v112 + 2] = -1;
-			super_parcours[v112 + 3] = -1;
-		}
+	
+	if (v55 == 1)
 		return &super_parcours[0];
+
+	if (v55 == 2) {
+		v115 = NV_LIGNEDEP;
+		v114 = NV_LIGNEOFS;
+		v112 = NV_POSI;
+	} else {
+		if (v113 == 1) {
+			for (int deltaY = 0; deltaY < v111; deltaY++) {
+				if (checkCollisionLine(fromX, fromY - deltaY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
+					int v58 = GENIAL(foundLineIdx, foundDataIdx, fromX, fromY - deltaY, fromX, fromY - v111, v112, &super_parcours[0], 4);
+					if (v58 == -1) {
+						super_parcours[v112] = -1;
+						super_parcours[v112 + 1] = -1;
+						super_parcours[v112 + 2] = -1;
+						super_parcours[v112 + 3] = -1;
+						return &super_parcours[0];
+					}
+					v112 = v58;
+					if (NVPY != -1)
+						deltaY = fromY - NVPY;
+				}
+				super_parcours[v112] = fromX;
+				super_parcours[v112 + 1] = fromY - deltaY;
+				super_parcours[v112 + 2] = 1;
+				super_parcours[v112 + 3] = 0;
+				v112 += 4;
+			}
+		}
+		if (v113 == 5) {
+			for (int deltaY = 0; deltaY < v111; deltaY++) {
+				if (checkCollisionLine(fromX, deltaY + fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb)
+				        && _lastLine < foundLineIdx) {
+					int v61 = GENIAL(foundLineIdx, foundDataIdx, fromX, deltaY + fromY, fromX, v111 + fromY, v112, &super_parcours[0], 4);
+					if (v61 == -1) {
+						super_parcours[v112] = -1;
+						super_parcours[v112 + 1] = -1;
+						super_parcours[v112 + 2] = -1;
+						super_parcours[v112 + 3] = -1;
+						return &super_parcours[0];
+					}
+					v112 = v61;
+					if (NVPY != -1)
+						deltaY = NVPY - fromY;
+				}
+				super_parcours[v112] = fromX;
+				super_parcours[v112 + 1] = deltaY + fromY;
+				super_parcours[v112 + 2] = 5;
+				super_parcours[v112 + 3] = 0;
+				v112 += 4;
+			}
+		}
+		if (v113 == 7) {
+			for (int deltaX = 0; deltaX < v111; deltaX++) {
+				if (checkCollisionLine(fromX - deltaX, fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
+					int v64 = GENIAL(foundLineIdx, foundDataIdx, fromX - deltaX, fromY, fromX - v111, fromY, v112, &super_parcours[0], 4);
+					if (v64 == -1) {
+						super_parcours[v112] = -1;
+						super_parcours[v112 + 1] = -1;
+						super_parcours[v112 + 2] = -1;
+						super_parcours[v112 + 3] = -1;
+						return &super_parcours[0];
+					}
+					v112 = v64;
+					if (NVPX != -1)
+						deltaX = fromX - NVPX;
+				}
+				super_parcours[v112] = fromX - deltaX;
+				super_parcours[v112 + 1] = fromY;
+				super_parcours[v112 + 2] = 7;
+				super_parcours[v112 + 3] = 0;
+				v112 += 4;
+			}
+		}
+		if (v113 == 3) {
+			for (int deltaX = 0; deltaX < v111; deltaX++) {
+				if (checkCollisionLine(deltaX + fromX, fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
+					int v67 = GENIAL(foundLineIdx, foundDataIdx, deltaX + fromX, fromY, v111 + fromX, fromY, v112, &super_parcours[0], 4);
+					if (v67 == -1) {
+						super_parcours[v112] = -1;
+						super_parcours[v112 + 1] = -1;
+						super_parcours[v112 + 2] = -1;
+						super_parcours[v112 + 3] = -1;
+						return &super_parcours[0];
+					}
+					v112 = v67;
+					if (NVPX != -1)
+						deltaX = NVPX - fromX;
+				}
+				super_parcours[v112] = deltaX + fromX;
+				super_parcours[v112 + 1] = fromY;
+				super_parcours[v112 + 2] = 3;
+				super_parcours[v112 + 3] = 0;
+				v112 += 4;
+			}
+		}
+	}
+LABEL_234:
+	if (v115 < v121) {
+		for (int i = v114; Ligne[v115]._lineDataEndIdx > i; ++i) {
+			v119 = Ligne[v115]._lineData[2 * i];
+			v118 = Ligne[v115]._lineData[2 * i + 1];
+			super_parcours[v112] = Ligne[v115]._lineData[2 * i];
+			super_parcours[v112 + 1] = Ligne[v115]._lineData[2 * i + 1];
+			super_parcours[v112 + 2] = Ligne[v115].field6;
+			super_parcours[v112 + 3] = 0;
+			v112 += 4;
+		}
+		for (int v116 = v115 + 1; v116 < v121; v116++) {
+			int v72 = 0;
+			int v110 = v116;
+			for (int j = v116; Ligne[j]._lineDataEndIdx > v72; j = v116) {
+				v119 = Ligne[v110]._lineData[2 * v72];
+				v118 = Ligne[v110]._lineData[2 * v72 + 1];
+				super_parcours[v112] = Ligne[v110]._lineData[2 * v72];
+				super_parcours[v112 + 1] = Ligne[v110]._lineData[2 * v72 + 1];
+				super_parcours[v112 + 2] = Ligne[v110].field6;
+				super_parcours[v112 + 3] = 0;
+				v112 += 4;
+				if (Ligne[v110]._lineDataEndIdx > 30 && v72 == Ligne[v110]._lineDataEndIdx / 2) {
+					int v78 = PARC_PERS(Ligne[v110]._lineData[2 * v72], Ligne[v110]._lineData[2 * v72 + 1], clipDestX, clipDestY, v110, v121, v112);
+					if (v78 == 1)
+						return &super_parcours[0];
+					if (v78 == 2 || MIRACLE(v119, v118, v110, v121, v112)) {
+						v115 = NV_LIGNEDEP;
+						v114 = NV_LIGNEOFS;
+						v112 = NV_POSI;
+						goto LABEL_234;
+					}
+				}
+				++v72;
+				v110 = v116;
+			}
+			int v79 = PARC_PERS(v119, v118, clipDestX, clipDestY, v116, v121, v112);
+			if (v79 == 1)
+				return &super_parcours[0];
+			if (v79 == 2 || MIRACLE(v119, v118, v116, v121, v112)) {
+				v115 = NV_LIGNEDEP;
+				v114 = NV_LIGNEOFS;
+				v112 = NV_POSI;
+				goto LABEL_234;
+			}
+		}
+		v114 = 0;
+		v115 = v121;
+	}
+	if (v115 > v121) {
+		for (int dataIdx = v114; dataIdx > 0; dataIdx--) {
+			v119 = Ligne[v115]._lineData[2 * dataIdx];
+			v118 = Ligne[v115]._lineData[2 * dataIdx + 1];
+
+			super_parcours[v112] = Ligne[v115]._lineData[2 * dataIdx];
+			super_parcours[v112 + 1] = Ligne[v115]._lineData[2 * dataIdx + 1];
+			super_parcours[v112 + 2] = Ligne[v115].field8;
+			super_parcours[v112 + 3] = 0;
+			v112 += 4;
+		}
+		for (int v117 = v115 - 1; v117 > v121; v117--) {
+			for (int dataIdx = Ligne[v117]._lineDataEndIdx - 1; dataIdx > -1; dataIdx--) {
+				v119 = Ligne[v117]._lineData[2 * dataIdx];
+				v118 = Ligne[v117]._lineData[2 * dataIdx + 1];
+				super_parcours[v112] = Ligne[v117]._lineData[2 * dataIdx];
+				super_parcours[v112 + 1] = Ligne[v117]._lineData[2 * dataIdx + 1];
+				super_parcours[v112 + 2] = Ligne[v117].field8;
+				super_parcours[v112 + 3] = 0;
+				v112 += 4;
+				if (Ligne[v117]._lineDataEndIdx > 30 && dataIdx == Ligne[v117]._lineDataEndIdx / 2) {
+					int v88 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
+					if (v88 == 1)
+						return &super_parcours[0];
+					if (v88 == 2 || MIRACLE(v119, v118, v117, v121, v112)) {
+						v115 = NV_LIGNEDEP;
+						v114 = NV_LIGNEOFS;
+						v112 = NV_POSI;
+						goto LABEL_234;
+					}
+				}
+			}
+			int v89 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
+			if (v89 == 1)
+				return &super_parcours[0];
+			if (v89 == 2 || MIRACLE(v119, v118, v117, v121, v112)) {
+				v115 = NV_LIGNEDEP;
+				v114 = NV_LIGNEOFS;
+				v112 = NV_POSI;
+				goto LABEL_234;
+			}
+		}
+		v114 = Ligne[v121]._lineDataEndIdx - 1;
+		v115 = v121;
+	}
+	if (v115 == v121) {
+		if (v114 <= v120) {
+			for (int dataIdx = v114; dataIdx < v120; dataIdx++) {
+				super_parcours[v112] = Ligne[v121]._lineData[2 * dataIdx];
+				super_parcours[v112 + 1] = Ligne[v121]._lineData[2 * dataIdx + 1];
+				super_parcours[v112 + 2] = Ligne[v121].field6;
+				super_parcours[v112 + 3] = 0;
+				v112 += 4;
+			}
+		} else {
+			for (int dataIdx = v114; dataIdx > v120; dataIdx--) {
+				super_parcours[v112] = Ligne[v121]._lineData[2 * dataIdx];
+				super_parcours[v112 + 1] = Ligne[v121]._lineData[2 * dataIdx + 1];
+				super_parcours[v112 + 2] = Ligne[v121].field8;
+				super_parcours[v112 + 3] = 0;
+				v112 += 4;
+			}
+		}
+	}
+	if (PARC_PERS(super_parcours[v112 - 4], super_parcours[v112 - 3], clipDestX, clipDestY, -1, -1, v112) != 1) {
+		super_parcours[v112] = -1;
+		super_parcours[v112 + 1] = -1;
+		super_parcours[v112 + 2] = -1;
+		super_parcours[v112 + 3] = -1;
 	}
 
 	return &super_parcours[0];
