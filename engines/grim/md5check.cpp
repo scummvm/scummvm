@@ -209,13 +209,16 @@ bool MD5Check::checkFiles() {
 			Common::String md5 = Common::computeStreamMD5AsString(file);
 			if (!checkMD5(sum, md5.c_str())) {
 				warning("'%s' may be corrupted. MD5: '%s'", sum.filename, md5.c_str());
-				GUI::displayErrorDialog(Common::String::format("The game data file %s may be corrupted.\n If you are sure it is "
+				GUI::displayErrorDialog(Common::String::format("The game data file %s may be corrupted.\nIf you are sure it is "
 				"not please provide the ResidualVM team the following code, along with the file name, the language and a "
-				"description of your game version (i.e. dvd-box or jewelcase):\n %s", sum.filename, md5.c_str()).c_str());
+				"description of your game version (i.e. dvd-box or jewelcase):\n%s", sum.filename, md5.c_str()).c_str());
 				ok = false;
 			}
 		} else {
 			warning("Could not open %s for checking", sum.filename);
+			GUI::displayErrorDialog(Common::String::format("Coul not open the file %s for checking.\nIt may be missing or "
+			"you may not have the rights to open it.\nGo to http://wiki.residualvm.org/index.php/Datafiles to see a list "
+			"of the needed files.", sum.filename).c_str());
 			ok = false;
 		}
 	}
