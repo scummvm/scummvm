@@ -34,7 +34,6 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/base_parser.h"
@@ -1577,14 +1576,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			fileNum++;
 		}
 
-		bool ret = false;
-		BaseImage *image = _gameRef->_renderer->takeScreenshot();
-		if (image) {
-			ret = DID_SUCCEED(image->saveBMPFile(filename));
-			delete image;
-		} else {
-			ret = false;
-		}
+		bool ret = _gameRef->_renderer->saveScreenShot(filename);
 
 		stack->pushBool(ret);
 		return STATUS_OK;
@@ -1599,17 +1591,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int sizeX = stack->pop()->getInt(_renderer->_width);
 		int sizeY = stack->pop()->getInt(_renderer->_height);
 
-		bool ret = false;
-		BaseImage *image = _gameRef->_renderer->takeScreenshot();
-		if (image) {
-			ret = DID_SUCCEED(image->resize(sizeX, sizeY));
-			if (ret) {
-				ret = DID_SUCCEED(image->saveBMPFile(filename));
-			}
-			delete image;
-		} else {
-			ret = false;
-		}
+		bool ret = _gameRef->_renderer->saveScreenShot(filename, sizeX, sizeY);
 
 		stack->pushBool(ret);
 		return STATUS_OK;

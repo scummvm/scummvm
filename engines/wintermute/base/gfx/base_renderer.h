@@ -61,6 +61,7 @@ public:
 	 * @return a BaseImage containing the current screen-buffer.
 	 */
 	virtual BaseImage *takeScreenshot() = 0;
+	virtual bool saveScreenShot(const Common::String &filename, int sizeX = 0, int sizeY = 0);
 	virtual bool setViewport(int left, int top, int right, int bottom);
 	virtual bool setViewport(Rect32 *rect);
 	virtual Rect32 getViewPort() = 0;

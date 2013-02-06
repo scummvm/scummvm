@@ -105,7 +105,7 @@ void BaseImage::copyFrom(const Graphics::Surface *surface) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseImage::saveBMPFile(const char *filename) const {
+bool BaseImage::saveBMPFile(const Common::String &filename) const {
 	warning("BaseImage::saveBMPFile - stubbed"); // TODO
 	return false;
 }

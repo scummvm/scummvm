@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -342,6 +343,22 @@ bool BaseRenderer::pointInViewport(Point32 *p) {
 
 void BaseRenderer::addRectToList(BaseActiveRect *rect) {
 	_rectList.push_back(rect);
+}
+
+bool BaseRenderer::saveScreenShot(const Common::String &filename, int sizeX, int sizeY) {
+	BaseImage *image = takeScreenshot();
+	if (image) {
+		if (sizeX != 0 && sizeY != 0) {
+			if (!DID_SUCCEED(image->resize(sizeX, sizeY))) {
+				delete image;
+				return false;
+			}
+		}
+		image->saveBMPFile(filename);
+		delete image;
+		return true;
+	}
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
