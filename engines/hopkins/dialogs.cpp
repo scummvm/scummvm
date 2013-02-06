@@ -323,126 +323,131 @@ void DialogsManager::showInventory() {
 	}
 	_vm->_dialogsManager._inventWin1 = g_PTRNUL;
 
-LABEL_7:
-	_vm->_eventsManager._curMouseButton = 0;
-	_vm->_eventsManager._mouseButton = 0;
-	_vm->_globals._disableInventFl = true;
-	_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
+	bool loopFl;
+	do {
+		loopFl = false;
+		_vm->_eventsManager._curMouseButton = 0;
+		_vm->_eventsManager._mouseButton = 0;
+		_vm->_globals._disableInventFl = true;
+		_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 
-	Common::String filename;
-	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-		filename = "INVENT.SPR";
-	else {
-		switch (_vm->_globals._language) {
-		case LANG_EN:
-			filename = "INVENTAN.SPR";
-			break;
-		case LANG_FR:
-			filename = "INVENTFR.SPR";
-			break;
-		case LANG_SP:
-			filename = "INVENTES.SPR";
-			break;
-		}
-	}
-
-	Common::File f;
-	if (!f.open(filename))
-		error("Error opening file - %s", filename.c_str());
-
-	size_t filesize = f.size();
-	_vm->_dialogsManager._inventWin1 = _vm->_globals.allocMemory(filesize);
-	_vm->_fileManager.readStream(f, _vm->_dialogsManager._inventWin1, filesize);
-	f.close();
-
-	_inventBuf2 = _vm->_fileManager.loadFile("INVENT2.SPR");
-
-	_inventX = _vm->_graphicsManager._scrollOffset + 152;
-	_inventY = 114;
-	_inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
-	_inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
-
-	_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX + 300, 414, 0, 0, 0, false);
-	int curPosY = 0;
-	int inventCount = 0;
-	for (int inventLine = 1; inventLine <= 5; inventLine++) {
-		int curPosX = 0;
-		for (int inventCol = 1; inventCol <= 6; inventCol++) {
-			++inventCount;
-			int inventIdx = _vm->_globals._inventory[inventCount];
-			// The last two zones are not reserved for the inventory: Options and Save/Load
-			if (inventIdx && inventCount <= 29) {
-				byte *obj = _vm->_objectsManager.CAPTURE_OBJET(inventIdx, false);
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, obj, _inventX + curPosX + 6,
-					curPosY + 120, _vm->_globals._objectWidth, _vm->_globals._objectHeight);
-				_vm->_globals.freeMemory(obj);
-			}
-			curPosX += 54;
-		};
-		curPosY += 38;
-	}
-	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
-	_vm->_eventsManager._curMouseButton = 0;
-	int newInventoryItem = 0;
-
-	// Main loop to select an inventory item
-	while (!_vm->shouldQuit()) {
-		// Turn on drawing the inventory dialog in the event manager
-		_inventDisplayedFl = true;
-
-		int mousePosX = _vm->_eventsManager.getMouseX();
-		int mousePosY = _vm->_eventsManager.getMouseY();
-		int mouseButton = _vm->_eventsManager.getMouseButton();
-		int oldInventoryItem = newInventoryItem;
-		newInventoryItem = _vm->_linesManager.checkInventoryHotspots(mousePosX, mousePosY);
-		if (newInventoryItem != oldInventoryItem)
-			_vm->_objectsManager.initBorder(newInventoryItem);
-		if (_vm->_eventsManager._mouseCursorId != 1 && _vm->_eventsManager._mouseCursorId != 2 && _vm->_eventsManager._mouseCursorId != 3 && _vm->_eventsManager._mouseCursorId != 16) {
-			if (mouseButton == 2) {
-				_vm->_objectsManager.nextObjectIcon(newInventoryItem);
-				if (_vm->_eventsManager._mouseCursorId != 23)
-					_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
+		Common::String filename;
+		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+			filename = "INVENT.SPR";
+		else {
+			switch (_vm->_globals._language) {
+			case LANG_EN:
+				filename = "INVENTAN.SPR";
+				break;
+			case LANG_FR:
+				filename = "INVENTFR.SPR";
+				break;
+			case LANG_SP:
+				filename = "INVENTES.SPR";
+				break;
 			}
 		}
-		if (mouseButton == 1) {
-			if (_vm->_eventsManager._mouseCursorId == 1 || _vm->_eventsManager._mouseCursorId == 2 || _vm->_eventsManager._mouseCursorId == 3 || _vm->_eventsManager._mouseCursorId == 16 || !_vm->_eventsManager._mouseCursorId)
-				break;
-			_vm->_objectsManager.takeInventoryObject(_vm->_globals._inventory[newInventoryItem]);
-			if (_vm->_eventsManager._mouseCursorId == 8)
-				break;
 
-			_vm->_scriptManager.TRAVAILOBJET = true;
-			_vm->_globals._saveData->_data[svField3] = _vm->_objectsManager._curObjectIndex;
-			_vm->_globals._saveData->_data[svField8] = _vm->_globals._inventory[newInventoryItem];
-			_vm->_globals._saveData->_data[svField9] = _vm->_eventsManager._mouseCursorId;
-			_vm->_objectsManager.OPTI_OBJET();
-			_vm->_scriptManager.TRAVAILOBJET = false;
+		Common::File f;
+		if (!f.open(filename))
+			error("Error opening file - %s", filename.c_str());
 
-			if (_vm->_soundManager._voiceOffFl) {
-				do
-					_vm->_eventsManager.VBL();
-				while (!_vm->_globals._exitId && _vm->_eventsManager.getMouseButton() != 1);
-				_vm->_fontManager.hideText(9);
-			}
-			if (_vm->_globals._exitId) {
-				if (_vm->_globals._exitId == 2) {
-					_vm->_globals._exitId = 0;
-					break;
+		size_t filesize = f.size();
+		_vm->_dialogsManager._inventWin1 = _vm->_globals.allocMemory(filesize);
+		_vm->_fileManager.readStream(f, _vm->_dialogsManager._inventWin1, filesize);
+		f.close();
+
+		_inventBuf2 = _vm->_fileManager.loadFile("INVENT2.SPR");
+
+		_inventX = _vm->_graphicsManager._scrollOffset + 152;
+		_inventY = 114;
+		_inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
+		_inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
+
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX + 300, 414, 0, 0, 0, false);
+		int curPosY = 0;
+		int inventCount = 0;
+		for (int inventLine = 1; inventLine <= 5; inventLine++) {
+			int curPosX = 0;
+			for (int inventCol = 1; inventCol <= 6; inventCol++) {
+				++inventCount;
+				int inventIdx = _vm->_globals._inventory[inventCount];
+				// The last two zones are not reserved for the inventory: Options and Save/Load
+				if (inventIdx && inventCount <= 29) {
+					byte *obj = _vm->_objectsManager.CAPTURE_OBJET(inventIdx, false);
+					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, obj, _inventX + curPosX + 6,
+						curPosY + 120, _vm->_globals._objectWidth, _vm->_globals._objectHeight);
+					_vm->_globals.freeMemory(obj);
 				}
-
-				_vm->_globals._exitId = 0;
-				_inventBuf2 = _vm->_globals.freeMemory(_inventBuf2);
-				_vm->_dialogsManager._inventWin1 = _vm->_globals.freeMemory(_vm->_dialogsManager._inventWin1);
-				goto LABEL_7;
-			} else
-				_inventDisplayedFl = true;
+				curPosX += 54;
+			};
+			curPosY += 38;
 		}
-		if (_removeInventFl)
-			break;
-		_vm->_eventsManager.VBL();
-		if (_vm->_globals._screenId >= 35 && _vm->_globals._screenId <= 40)
-			_vm->_objectsManager.handleSpecialGames();
-	}
+		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
+		_vm->_eventsManager._curMouseButton = 0;
+		int newInventoryItem = 0;
+
+		// Main loop to select an inventory item
+		while (!_vm->shouldQuit()) {
+			// Turn on drawing the inventory dialog in the event manager
+			_inventDisplayedFl = true;
+
+			int mousePosX = _vm->_eventsManager.getMouseX();
+			int mousePosY = _vm->_eventsManager.getMouseY();
+			int mouseButton = _vm->_eventsManager.getMouseButton();
+			int oldInventoryItem = newInventoryItem;
+			newInventoryItem = _vm->_linesManager.checkInventoryHotspots(mousePosX, mousePosY);
+			if (newInventoryItem != oldInventoryItem)
+				_vm->_objectsManager.initBorder(newInventoryItem);
+			if (_vm->_eventsManager._mouseCursorId != 1 && _vm->_eventsManager._mouseCursorId != 2 && _vm->_eventsManager._mouseCursorId != 3 && _vm->_eventsManager._mouseCursorId != 16) {
+				if (mouseButton == 2) {
+					_vm->_objectsManager.nextObjectIcon(newInventoryItem);
+					if (_vm->_eventsManager._mouseCursorId != 23)
+						_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
+				}
+			}
+			if (mouseButton == 1) {
+				if (_vm->_eventsManager._mouseCursorId == 1 || _vm->_eventsManager._mouseCursorId == 2 || _vm->_eventsManager._mouseCursorId == 3 || _vm->_eventsManager._mouseCursorId == 16 || !_vm->_eventsManager._mouseCursorId)
+					break;
+				_vm->_objectsManager.takeInventoryObject(_vm->_globals._inventory[newInventoryItem]);
+				if (_vm->_eventsManager._mouseCursorId == 8)
+					break;
+
+				_vm->_scriptManager.TRAVAILOBJET = true;
+				_vm->_globals._saveData->_data[svField3] = _vm->_objectsManager._curObjectIndex;
+				_vm->_globals._saveData->_data[svField8] = _vm->_globals._inventory[newInventoryItem];
+				_vm->_globals._saveData->_data[svField9] = _vm->_eventsManager._mouseCursorId;
+				_vm->_objectsManager.OPTI_OBJET();
+				_vm->_scriptManager.TRAVAILOBJET = false;
+
+				if (_vm->_soundManager._voiceOffFl) {
+					do
+						_vm->_eventsManager.VBL();
+					while (!_vm->_globals._exitId && _vm->_eventsManager.getMouseButton() != 1);
+					_vm->_fontManager.hideText(9);
+				}
+				if (_vm->_globals._exitId) {
+					if (_vm->_globals._exitId == 2) {
+						_vm->_globals._exitId = 0;
+						break;
+					}
+
+					_vm->_globals._exitId = 0;
+					_inventBuf2 = _vm->_globals.freeMemory(_inventBuf2);
+					_vm->_dialogsManager._inventWin1 = _vm->_globals.freeMemory(_vm->_dialogsManager._inventWin1);
+					loopFl = true;
+					break;
+				} else
+					_inventDisplayedFl = true;
+			}
+			if (_removeInventFl)
+				break;
+			_vm->_eventsManager.VBL();
+			if (_vm->_globals._screenId >= 35 && _vm->_globals._screenId <= 40)
+				_vm->_objectsManager.handleSpecialGames();
+		}
+	} while (loopFl);
+
 	_vm->_fontManager.hideText(9);
 	if (_inventDisplayedFl) {
 		_inventDisplayedFl = false;
