@@ -1,7 +1,7 @@
 /* ResidualVM - A 3D game interpreter
  *
  * ResidualVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
+ * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -20,29 +20,33 @@
  *
  */
 
-#include "engines/grim/debugger.h"
-#include "engines/grim/md5check.h"
+#ifndef GRIM_MD5CHECK_H
+#define GRIM_MD5CHECK_H
+
+#include "common/list.h"
 
 namespace Grim {
 
-Debugger::Debugger()
-	: GUI::Debugger() {
+class MD5Check {
+public:
+	static bool checkFiles();
+	static void clear();
 
-	DCmd_Register("check_gamedata", WRAP_METHOD(Debugger, cmd_checkFiles));
+private:
+	static void init();
+
+	struct MD5Sum {
+		MD5Sum(const char *fn, const char **s, int n) : filename(fn), sums(s), numSums(n) {}
+		const char *filename;
+		const char **sums;
+		int numSums;
+	};
+	static bool checkMD5(const MD5Sum &sums, const char *md5);
+
+	static bool _initted;
+	static Common::List<MD5Sum> *_files;
+};
+
 }
 
-Debugger::~Debugger() {
-
-}
-
-bool Debugger::cmd_checkFiles(int argc, const char **argv) {
-	if (MD5Check::checkFiles()) {
-		DebugPrintf("All files are ok.\n");
-	} else {
-		DebugPrintf("Some files are corrupted or missing.\n");
-	}
-
-	return true;
-}
-
-}
+#endif
