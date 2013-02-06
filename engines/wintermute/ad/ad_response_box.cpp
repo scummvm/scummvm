@@ -163,8 +163,8 @@ bool AdResponseBox::createButtons() {
 			// textual
 			else {
 				btn->setText(_responses[i]->_text);
-				btn->_font = (_font == nullptr) ? _gameRef->_systemFont : _font;
-				btn->_fontHover = (_fontHover == nullptr) ? _gameRef->_systemFont : _fontHover;
+				btn->_font = (_font == nullptr) ? _gameRef->getSystemFont() : _font;
+				btn->_fontHover = (_fontHover == nullptr) ? _gameRef->getSystemFont() : _fontHover;
 				btn->_fontPress = btn->_fontHover;
 				btn->_align = _align;
 

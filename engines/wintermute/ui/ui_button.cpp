@@ -622,15 +622,15 @@ void UIButton::correctSize() {
 	}
 
 	if (_text) {
-		int text_height;
+		int textHeight;
 		if (_font) {
-			text_height = _font->getTextHeight((byte *)_text, _width);
+			textHeight = _font->getTextHeight((byte *)_text, _width);
 		} else {
-			text_height = _gameRef->_systemFont->getTextHeight((byte *)_text, _width);
+			textHeight = _gameRef->getSystemFont()->getTextHeight((byte *)_text, _width);
 		}
 
-		if (text_height > _height) {
-			_height = text_height;
+		if (textHeight > _height) {
+			_height = textHeight;
 		}
 	}
 
@@ -717,7 +717,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 		if (_font) {
 			font = _font;
 		} else {
-			font = _gameRef->_systemFont;
+			font = _gameRef->getSystemFont();
 		}
 	}
 

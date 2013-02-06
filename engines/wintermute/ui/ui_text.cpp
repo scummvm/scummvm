@@ -69,7 +69,7 @@ bool UIText::display(int offsetX, int offsetY) {
 
 	BaseFont *font = _font;
 	if (!font) {
-		font = _gameRef->_systemFont;
+		font = _gameRef->getSystemFont();
 	}
 
 	if (_back) {

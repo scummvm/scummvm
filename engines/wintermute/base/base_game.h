@@ -119,14 +119,15 @@ public:
 	int _offsetX;
 	float _offsetPercentX;
 	float _offsetPercentY;
-	BaseObject *_mainObject;
+
+	inline BaseObject *getMainObject() { return _mainObject; }
+	inline BaseFont *getSystemFont() { return _systemFont; }
 
 	bool initInput();
 	bool initLoop();
 	uint32 _currentTime;
 	uint32 _deltaTime;
-	BaseFont *_systemFont;
-	BaseFont *_videoFont;
+
 	bool initialize1();
 	bool initialize2();
 	bool initialize3();
@@ -249,6 +250,9 @@ public:
 	bool _touchInterface;
 	bool _constrainedMemory;
 protected:
+	BaseFont *_systemFont;
+	BaseFont *_videoFont;
+
 	BaseSprite *_loadingIcon;
 	int _loadingIconX;
 	int _loadingIconY;
@@ -260,6 +264,8 @@ protected:
 	VideoPlayer *_videoPlayer;
 	VideoTheoraPlayer *_theoraPlayer;
 private:
+	BaseObject *_mainObject;
+
 	bool _mouseRightDown;
 	bool _mouseMidlleDown;
 	bool _settingsRequireAcceleration;

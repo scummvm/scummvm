@@ -589,7 +589,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	if (_font) {
 		font = _font;
 	} else {
-		font = _gameRef->_systemFont;
+		font = _gameRef->getSystemFont();
 	}
 
 	if (_fontSelected) {

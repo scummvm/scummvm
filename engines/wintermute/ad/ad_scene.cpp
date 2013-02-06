@@ -1138,8 +1138,8 @@ bool AdScene::updateFreeObjects() {
 	}
 
 
-	if (_autoScroll && _gameRef->_mainObject != nullptr) {
-		scrollToObject(_gameRef->_mainObject);
+	if (_autoScroll && _gameRef->getMainObject() != nullptr) {
+		scrollToObject(_gameRef->getMainObject());
 	}
 
 
@@ -1285,7 +1285,7 @@ void AdScene::scrollTo(int offsetX, int offsetY) {
 	_targetOffsetTop = MIN(_targetOffsetTop, _height - viewportHeight);
 
 
-	if (_gameRef->_mainObject && _gameRef->_mainObject->_is3D) {
+	if (_gameRef->getMainObject() && _gameRef->getMainObject()->_is3D) {
 		if (abs(origOffsetLeft - _targetOffsetLeft) < 5) {
 			_targetOffsetLeft = origOffsetLeft;
 		}

@@ -435,7 +435,7 @@ bool AdItem::display(int x, int y) {
 		}
 		amountX += _amountOffsetX;
 
-		BaseFont *font = _font ? _font : _gameRef->_systemFont;
+		BaseFont *font = _font ? _font : _gameRef->getSystemFont();
 		if (font) {
 			if (_amountString) {
 				font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
