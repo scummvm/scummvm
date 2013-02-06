@@ -118,8 +118,11 @@ int MenuManager::menu() {
 			if (menuIndex > MENU_NONE)
 				frameIndex[menuIndex - 1] = 1;
 
-			for (int i = 0; i < 5; i++)
-				_vm->_graphicsManager.fastDisplay(spriteData, 230, 259 + 32 * i, frameIndex[i] + 2 * i);
+			_vm->_graphicsManager.fastDisplay(spriteData, 230, 259, frameIndex[0]);
+			_vm->_graphicsManager.fastDisplay(spriteData, 230, 291, frameIndex[1] + 2);
+			_vm->_graphicsManager.fastDisplay(spriteData, 230, 322, frameIndex[2] + 4);
+			_vm->_graphicsManager.fastDisplay(spriteData, 230, 354, frameIndex[3] + 6);
+			_vm->_graphicsManager.fastDisplay(spriteData, 230, 386, frameIndex[4] + 8);
 			_vm->_eventsManager.VBL();
 
 			if (_vm->_eventsManager.getMouseButton() == 1 && menuIndex != MENU_NONE)
