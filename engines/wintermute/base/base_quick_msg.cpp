@@ -32,26 +32,20 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseQuickMsg::BaseQuickMsg(BaseGame *inGame, const char *text) : BaseClass(inGame) {
-	_text = new char [strlen(text) + 1];
-	if (_text) {
-		strcpy(_text, text);
-	}
+BaseQuickMsg::BaseQuickMsg(BaseGame *inGame, const char *text) {
+	_text = text;
 	_startTime = _gameRef->_currentTime;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 BaseQuickMsg::~BaseQuickMsg() {
-	if (_text) {
-		delete[] _text;
-	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-char *BaseQuickMsg::getText() {
-	return _text;
+const char *BaseQuickMsg::getText() const {
+	return _text.c_str();
 }
 
 } // end of namespace Wintermute
