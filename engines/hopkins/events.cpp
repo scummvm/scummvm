@@ -380,27 +380,34 @@ void EventsManager::VBL() {
 	}
 
 	_vm->_globals._speed = 2;
+	bool externalLoopFl = false;
 	do {
 		while (!_vm->shouldQuit()) {
 			checkForNextFrameCounter();
+			bool innerLoopFl = false;
 
 			while (_breakoutFl || _vm->_globals.iRegul != 1) {
 				checkForNextFrameCounter();
 
-				if (!_breakoutFl)
-					goto LABEL_63;
-				if (_rateCounter > 1)
-					goto LABEL_65;
+				if (!_breakoutFl) {
+					innerLoopFl = true;
+					break;
+				}
+				if (_rateCounter > 1) {
+					externalLoopFl = true;
+					break;
+				}
 			}
-			if (_vm->_globals._speed != 2)
+			if (innerLoopFl || _vm->_globals._speed != 2)
 				break;
-			if (_rateCounter > 9)
-				goto LABEL_65;
+			if (externalLoopFl ||_rateCounter > 9) {
+				externalLoopFl = true;
+				break;
+			}
 		}
-LABEL_63:
-		;
+		if (externalLoopFl)
+			break;
 	} while (!_vm->shouldQuit() && _vm->_globals.iRegul == 3 && _rateCounter <= 15);
-LABEL_65:
 	_vm->_globals._speed = 2;
 	_rateCounter = 0;
 	if (!_vm->_graphicsManager._largeScreenFl || _vm->_graphicsManager._scrollStatus == 1) {
