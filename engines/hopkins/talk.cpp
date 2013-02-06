@@ -776,96 +776,101 @@ void TalkManager::REPONSE(int zone, int verb) {
 	int lastOpcodeResult;
 	bool tagFound;
 	bool v16;
-	bool loopCond;
+	bool innerLoopCond;
 	byte *ptr;
 
 	byte zoneObj = zone;
 	byte verbObj = verb;
-LABEL_2:
-	tagFound = false;
-	if (_vm->_globals._answerBuffer == g_PTRNUL)
-		return;
-
-	byte *curAnswerBuf = _vm->_globals._answerBuffer;
-	for (;;) {
-		if (READ_BE_UINT24(curAnswerBuf) == MKTAG24('F', 'I', 'N'))
-			return;
-		if (READ_BE_UINT24(curAnswerBuf) == MKTAG24('C', 'O', 'D')) {
-			if (curAnswerBuf[3] == zoneObj && curAnswerBuf[4] == verbObj)
-				tagFound = true;
-		}
-		if (!tagFound)
-			curAnswerBuf++;
-		else
-			break;
-	}
-
-	// 'COD' tag found
-	curAnswerBuf += 5;
-	ptr = _vm->_globals.allocMemory(620);
-	assert(ptr != g_PTRNUL);
-	memset(ptr, 0, 620);
-	v7 = 0;
-	v12 = 0;
-	loopCond = false;
+	
+	bool outerLoopFl;
 	do {
-		v16 = false;
-		if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'C')) {
-			++v12;
-			assert(v12 < (620 / 20));
+		outerLoopFl = false;
+		tagFound = false;
+		if (_vm->_globals._answerBuffer == g_PTRNUL)
+			return;
 
-			v8 = (ptr + 20 * v12);
-			v11 = 0;
-			do {
-				assert(v11 < 20);
-				v8[v11++] = curAnswerBuf[v7++];
-				if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'F')) {
-					v16 = true;
-					v8[v11] = 'F';
-					v8[v11 + 1] = 'F';
-					++v7;
-				}
-			} while (!v16);
+		byte *curAnswerBuf = _vm->_globals._answerBuffer;
+		for (;;) {
+			if (READ_BE_UINT24(curAnswerBuf) == MKTAG24('F', 'I', 'N'))
+				return;
+			if (READ_BE_UINT24(curAnswerBuf) == MKTAG24('C', 'O', 'D')) {
+				if (curAnswerBuf[3] == zoneObj && curAnswerBuf[4] == verbObj)
+					tagFound = true;
+			}
+			if (!tagFound)
+				curAnswerBuf++;
+			else
+				break;
 		}
-		if (!v16) {
-			uint32 signature24 = READ_BE_UINT24(&curAnswerBuf[v7]);
-			if (signature24 == MKTAG24('C', 'O', 'D') || signature24 == MKTAG24('F', 'I', 'N'))
-				loopCond = true;
-		}
-		curAnswerBuf += v7 + 1;
+
+		// 'COD' tag found
+		curAnswerBuf += 5;
+		ptr = _vm->_globals.allocMemory(620);
+		assert(ptr != g_PTRNUL);
+		memset(ptr, 0, 620);
 		v7 = 0;
-	} while (!loopCond);
-	loopCond = false;
-	lastOpcodeResult = 1;
-	do {
-		opcodeType = _vm->_scriptManager.handleOpcode(ptr + 20 * lastOpcodeResult);
-		if (_vm->shouldQuit())
-			return;
+		v12 = 0;
+		innerLoopCond = false;
+		do {
+			v16 = false;
+			if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'C')) {
+				++v12;
+				assert(v12 < (620 / 20));
 
-		if (opcodeType == 2)
-			// GOTO
-			lastOpcodeResult =  _vm->_scriptManager.handleGoto(ptr + 20 * lastOpcodeResult);
-		else if (opcodeType == 3)
-			// IF
-			lastOpcodeResult =  _vm->_scriptManager.handleIf(ptr, lastOpcodeResult);
+				v8 = (ptr + 20 * v12);
+				v11 = 0;
+				do {
+					assert(v11 < 20);
+					v8[v11++] = curAnswerBuf[v7++];
+					if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'F')) {
+						v16 = true;
+						v8[v11] = 'F';
+						v8[v11 + 1] = 'F';
+						++v7;
+					}
+				} while (!v16);
+			}
+			if (!v16) {
+				uint32 signature24 = READ_BE_UINT24(&curAnswerBuf[v7]);
+				if (signature24 == MKTAG24('C', 'O', 'D') || signature24 == MKTAG24('F', 'I', 'N'))
+					innerLoopCond = true;
+			}
+			curAnswerBuf += v7 + 1;
+			v7 = 0;
+		} while (!innerLoopCond);
+		innerLoopCond = false;
+		lastOpcodeResult = 1;
+		do {
+			opcodeType = _vm->_scriptManager.handleOpcode(ptr + 20 * lastOpcodeResult);
+			if (_vm->shouldQuit())
+				return;
 
-		if (lastOpcodeResult == -1)
-			error("Invalid IFF function");
+			if (opcodeType == 2)
+				// GOTO
+				lastOpcodeResult =  _vm->_scriptManager.handleGoto(ptr + 20 * lastOpcodeResult);
+			else if (opcodeType == 3)
+				// IF
+				lastOpcodeResult =  _vm->_scriptManager.handleIf(ptr, lastOpcodeResult);
 
-		if (opcodeType == 1 || opcodeType == 4)
-			// Already handled opcode or END IF
-			++lastOpcodeResult;
-		else if (!opcodeType || opcodeType == 5)
-			// EXIT
-			loopCond = true;
-		else if (opcodeType == 6) {
-			// JUMP
-			_vm->_globals.freeMemory(ptr);
-			zoneObj = _vm->_objectsManager._jumpZone;
-			verbObj = _vm->_objectsManager._jumpVerb;
-			goto LABEL_2;
-		}
-	} while (!loopCond);
+			if (lastOpcodeResult == -1)
+				error("Invalid IFF function");
+
+			if (opcodeType == 1 || opcodeType == 4)
+				// Already handled opcode or END IF
+				++lastOpcodeResult;
+			else if (!opcodeType || opcodeType == 5)
+				// EXIT
+				innerLoopCond = true;
+			else if (opcodeType == 6) {
+				// JUMP
+				_vm->_globals.freeMemory(ptr);
+				zoneObj = _vm->_objectsManager._jumpZone;
+				verbObj = _vm->_objectsManager._jumpVerb;
+				outerLoopFl = true;
+				break;
+			}
+		} while (!innerLoopCond);
+	} while (outerLoopFl);
 	_vm->_globals.freeMemory(ptr);
 	_vm->_globals._saveData->_data[svField2] = 0;
 	return;
