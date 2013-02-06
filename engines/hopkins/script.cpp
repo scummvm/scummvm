@@ -2429,42 +2429,41 @@ int ScriptManager::handleGoto(const byte *dataP) {
 }
 
 int ScriptManager::handleIf(const byte *dataP, int a2) {
-	int v2;
-	int v3;
-	int v4;
-	int v6;
-	bool v7;
 	int v20;
-
-	v2 = a2;
-LABEL_2:
-	v3 = v2;
+	int v2 = a2;
+	bool loopFl;
 	do {
-		if (_vm->shouldQuit())
-			return 0; // Exiting game
+		loopFl = false;
+		int v3 = v2;
+		int opcodeType;
+		do {
+			if (_vm->shouldQuit())
+				return 0; // Exiting game
 
-		++v3;
-		v4 = checkOpcode(dataP + 20 * v3);
-		if (v3 > 400)
-			error("Control if failed");
-	} while (v4 != 4); // EIF
-	v20 = v3;
-	v6 = v2;
-	v7 = false;
-	do {
-		if (_vm->shouldQuit())
-			return 0; // Exiting game
+			++v3;
+			opcodeType = checkOpcode(dataP + 20 * v3);
+			if (v3 > 400)
+				error("Control if failed");
+		} while (opcodeType != 4); // EIF
+		v20 = v3;
+		int v6 = v2;
+		bool v7 = false;
+		do {
+			if (_vm->shouldQuit())
+				return 0; // Exiting game
 
-		++v6;
-		if (checkOpcode(dataP + 20 * v6) == 3) // IIF
-			v7 = true;
-		if (v6 > 400)
-			error("Control if failed ");
-		if (v7) {
-			v2 = v20;
-			goto LABEL_2;
-		}
-	} while (v20 != v6);
+			++v6;
+			if (checkOpcode(dataP + 20 * v6) == 3) // IIF
+				v7 = true;
+			if (v6 > 400)
+				error("Control if failed ");
+			if (v7) {
+				v2 = v20;
+				loopFl = true;
+				break;
+			}
+		} while (v20 != v6);
+	} while (loopFl);
 
 	const byte *buf = dataP + 20 * a2;
 	byte oper = buf[13];

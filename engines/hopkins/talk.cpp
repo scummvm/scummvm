@@ -770,10 +770,10 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 void TalkManager::REPONSE(int zone, int verb) {
 	uint16 v7;
 	byte *v8;
-	int v10;
+	int opcodeType;
 	uint16 v11;
 	int v12;
-	int v13;
+	int lastOpcodeResult;
 	bool tagFound;
 	bool v16;
 	bool loopCond;
@@ -836,29 +836,29 @@ LABEL_2:
 		v7 = 0;
 	} while (!loopCond);
 	loopCond = false;
-	v13 = 1;
+	lastOpcodeResult = 1;
 	do {
-		v10 = _vm->_scriptManager.handleOpcode(ptr + 20 * v13);
+		opcodeType = _vm->_scriptManager.handleOpcode(ptr + 20 * lastOpcodeResult);
 		if (_vm->shouldQuit())
 			return;
 
-		if (v10 == 2)
+		if (opcodeType == 2)
 			// GOTO
-			v13 =  _vm->_scriptManager.handleGoto(ptr + 20 * v13);
-		else if (v10 == 3)
+			lastOpcodeResult =  _vm->_scriptManager.handleGoto(ptr + 20 * lastOpcodeResult);
+		else if (opcodeType == 3)
 			// IF
-			v13 =  _vm->_scriptManager.handleIf(ptr, v13);
+			lastOpcodeResult =  _vm->_scriptManager.handleIf(ptr, lastOpcodeResult);
 
-		if (v13 == -1)
+		if (lastOpcodeResult == -1)
 			error("Invalid IFF function");
 
-		if (v10 == 1 || v10 == 4)
+		if (opcodeType == 1 || opcodeType == 4)
 			// Already handled opcode or END IF
-			++v13;
-		else if (!v10 || v10 == 5)
+			++lastOpcodeResult;
+		else if (!opcodeType || opcodeType == 5)
 			// EXIT
 			loopCond = true;
-		else if (v10 == 6) {
+		else if (opcodeType == 6) {
 			// JUMP
 			_vm->_globals.freeMemory(ptr);
 			zoneObj = _vm->_objectsManager._jumpZone;
