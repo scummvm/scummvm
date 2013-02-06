@@ -3121,16 +3121,7 @@ int ObjectsManager::getBobFrameIndex(int idx) {
 }
 
 void ObjectsManager::INILINK(const Common::String &file) {
-	int v8;
-	int v9;
-	int v10;
-	byte *v22;
-	int16 v27;
-	int16 v28;
-	int v36;
-	byte *v37;
 	Common::File f;
-
 	Common::String filename = file + ".LNK";
 	byte *ptr = _vm->_fileManager.searchCat(filename, 3);
 	size_t nbytes = _vm->_globals._catalogSize;
@@ -3161,31 +3152,28 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.loadFile("RES_SLI.RES");
 			}
 
-			v36 = 60;
-			v37 = ptr + 1000;
+			int curDataCacheId = 60;
+			byte *curDataPtr = ptr + 1000;
 			for (int cacheIdx = 0; cacheIdx <= 21; cacheIdx++) {
-				v8 = (int16)READ_LE_UINT16(v37 + 2 * v36);
-				v9 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 2);
-				v10 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 4);
-
-				_vm->_globals.Cache[cacheIdx].field14 = (int16)READ_LE_UINT16(v37 + 2 * v36 + 8);
-				_vm->_globals.Cache[cacheIdx]._spriteIndex = v8;
-				_vm->_globals.Cache[cacheIdx]._x = v9;
-				_vm->_globals.Cache[cacheIdx]._y = v10;
+				int curSpriteId = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataCacheId);
+				_vm->_globals.Cache[cacheIdx]._spriteIndex = curSpriteId;
+				_vm->_globals.Cache[cacheIdx]._x = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataCacheId + 2);
+				_vm->_globals.Cache[cacheIdx]._y = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataCacheId + 4);
+				_vm->_globals.Cache[cacheIdx].field14 = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataCacheId + 8);
 
 				if (!_vm->_globals.CACHE_BANQUE[1]) {
 					_vm->_globals.Cache[cacheIdx]._useCount = 0;
 				} else {
 					_vm->_globals.Cache[cacheIdx]._spriteData = _vm->_globals.CACHE_BANQUE[1];
-					_vm->_globals.Cache[cacheIdx]._width = getWidth(_vm->_globals.CACHE_BANQUE[1], v8);
-					_vm->_globals.Cache[cacheIdx]._height = getHeight(_vm->_globals.CACHE_BANQUE[1], v8);
+					_vm->_globals.Cache[cacheIdx]._width = getWidth(_vm->_globals.CACHE_BANQUE[1], curSpriteId);
+					_vm->_globals.Cache[cacheIdx]._height = getHeight(_vm->_globals.CACHE_BANQUE[1], curSpriteId);
 					_vm->_globals.Cache[cacheIdx]._useCount = 1;
 				}
 				if (!_vm->_globals.Cache[cacheIdx]._x && !_vm->_globals.Cache[cacheIdx]._y
 							&& !_vm->_globals.Cache[cacheIdx]._spriteIndex)
 					_vm->_globals.Cache[cacheIdx]._useCount = 0;
 
-				v36 += 5;
+				curDataCacheId += 5;
 			}
 			_vm->_globals.CACHE_ON();
 		}
@@ -3198,21 +3186,21 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			int lineDataIdx = 0;
 			int curLineIdx = 0;
 			_vm->_linesManager.resetLinesNumb();
+			int curDirection;
 			do {
-				v27 = (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx);
-				if (v27 != -1) {
+				curDirection = (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx);
+				if (curDirection != -1) {
 					_vm->_linesManager.addLine(
 					    curLineIdx,
-					    v27,
+					    curDirection,
 					    (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx + 2),
 					    (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx + 4),
 					    (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx + 6),
-					    (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx + 8),
-					    1);
+					    (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx + 8));
 				}
 				lineDataIdx += 5;
 				++curLineIdx;
-			} while (v27 != -1);
+			} while (curDirection != -1);
 			_vm->_linesManager.initRoute();
 		}
 	}
@@ -3240,6 +3228,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				}
 
 				int curLineIdx = 0;
+				int v28;
 				do {
 					v28 = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataIdx);
 					if (v28 != -1) {
@@ -3262,7 +3251,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					curDataIdx += 3;
 				}
 
-				v22 = ptr + idx + (10 * curLineIdx + 606) + 4;
+				byte *v22 = ptr + idx + (10 * curLineIdx + 606) + 4;
 				for (int i = 1; i <= 100; i++) {
 					int j = (i - 1) * 10;
 					_vm->_globals.ZONEP[i].field6 = v22[j];
@@ -3531,7 +3520,6 @@ void ObjectsManager::enableVerb(int idx, int a2) {
 }
 
 void ObjectsManager::ACTION(const byte *spriteData, const Common::String &actionStr, int a3, int a4, int speed, bool flipFl) {
-	int idx = 0;
 	Common::String tmpStr = "";
 	int realSpeed = speed;
 	if (_vm->_globals._speed == 2)
@@ -3545,6 +3533,7 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &action
 	_sprite[0].field14 += a4;
 	_sprite[0]._flipFl = flipFl;
 
+	int idx = 0;
 	for (int strPos = 0; ; strPos++) {
 		bool tokenCompleteFl = false;
 		char curChar = actionStr[strPos];

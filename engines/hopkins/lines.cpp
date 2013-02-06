@@ -84,8 +84,7 @@ void LinesManager::loadLines(const Common::String &file) {
 		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 1),
 		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 2),
 		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 3),
-		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 4),
-		    1);
+		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 4));
 	}
 	initRoute();
 	_vm->_globals.freeMemory(ptr);
@@ -207,61 +206,38 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 /**
  * Add Line
  */
-void LinesManager::addLine(int idx, int a2, int a3, int a4, int a5, int a6, int a7) {
-	int v7;
-	int v8;
-	int v9;
-	byte *v10;
-	int v11;
-	int v12;
-	int v13;
-	int v24;
-	int v25;
-	int16 *v27;
-	int v30;
-	int v31;
-	int16 *v32;
-	int v33;
-	int v34;
-	int v35;
-	int v36;
-	int v37;
-	int v38;
-	int v39;
-	int v40;
-
+void LinesManager::addLine(int idx, int direction, int a3, int a4, int a5, int a6) {
 	assert (idx <= MAX_LINES);
 
 	if (_linesNumb < idx)
 		_linesNumb = idx;
 
 	Ligne[idx]._lineData = (int16 *)_vm->_globals.freeMemory((byte *)Ligne[idx]._lineData);
-	v7 = abs(a3 - a5);
-	v8 = v7 + 1;
-	v9 = abs(a4 - a6);
-	v34 = v9 + 1;
-	v33 = v9 + 1;
+	int v7 = abs(a3 - a5);
+	int v8 = v7 + 1;
+	int v9 = abs(a4 - a6);
+	int v34 = v9 + 1;
+	int v33 = v9 + 1;
 	if (v8 > v34)
 		v34 = v8;
 
-	v10 = _vm->_globals.allocMemory(4 * v34 + 8);
+	byte *v10 = _vm->_globals.allocMemory(4 * v34 + 8);
 	assert (v10 != g_PTRNUL);
 
 	Common::fill(v10, v10 + 4 * v34 + 8, 0);
 	Ligne[idx]._lineData = (int16 *)v10;
 
-	v32 = Ligne[idx]._lineData;
-	v36 = 1000 * v8;
-	v39 = 1000 * v8 / (v34 - 1);
-	v37 = 1000 * v33 / (v34 - 1);
+	int16 *v32 = Ligne[idx]._lineData;
+	int v36 = 1000 * v8;
+	int v39 = 1000 * v8 / (v34 - 1);
+	int v37 = 1000 * v33 / (v34 - 1);
 	if (a5 < a3)
 		v39 = -v39;
 	if (a6 < a4)
 		v37 = -v37;
-	v11 = (int)v39 / 1000;
-	v12 = (int)v37 / 1000;
-	v13 = (int)v37 / 1000;
-	if (!((int)v39 / 1000)) {
+	int v11 = (int)v39 / 1000;
+	int v12 = (int)v37 / 1000;
+	if (!v11) {
 		if (v12 == -1) {
 			Ligne[idx].field6 = 1;
 			Ligne[idx].field8 = 5;
@@ -276,25 +252,25 @@ void LinesManager::addLine(int idx, int a2, int a3, int a4, int a5, int a6, int 
 			Ligne[idx].field6 = 2;
 			Ligne[idx].field8 = 6;
 		}
-		if (!v13) {
+		if (!v12) {
 			Ligne[idx].field6 = 3;
 			Ligne[idx].field8 = 7;
 		}
-		if (v13 == 1) {
+		if (v12 == 1) {
 			Ligne[idx].field6 = 4;
 			Ligne[idx].field8 = 8;
 		}
 	}
 	if (v11 == -1) {
-		if (v13 == 1) {
+		if (v12 == 1) {
 			Ligne[idx].field6 = 6;
 			Ligne[idx].field8 = 2;
 		}
-		if (!v13) {
+		if (!v12) {
 			Ligne[idx].field6 = 7;
 			Ligne[idx].field8 = 3;
 		}
-		if (v13 == -1) {
+		if (v12 == -1) {
 			Ligne[idx].field6 = 8;
 			Ligne[idx].field8 = 4;
 		}
@@ -318,17 +294,17 @@ void LinesManager::addLine(int idx, int a2, int a3, int a4, int a5, int a6, int 
 		Ligne[idx].field6 = 8;
 		Ligne[idx].field8 = 4;
 	}
-	v40 = v36 / v34;
-	v38 = 1000 * v33 / v34;
+	int v40 = v36 / v34;
+	int v38 = 1000 * v33 / v34;
 	if (a5 < a3)
 		v40 = -v40;
 	if (a6 < a4)
 		v38 = -v38;
-	v24 = 1000 * a3;
-	v25 = 1000 * a4;
-	v31 = 1000 * a3 / 1000;
-	v30 = 1000 * a4 / 1000;
-	v35 = v34 - 1;
+	int v24 = 1000 * a3;
+	int v25 = 1000 * a4;
+	int v31 = 1000 * a3 / 1000;
+	int v30 = 1000 * a4 / 1000;
+	int v35 = v34 - 1;
 	for (int v26 = 0; v26 < v35; v26++) {
 		v32[0] = v31;
 		v32[1] = v30;
@@ -342,13 +318,12 @@ void LinesManager::addLine(int idx, int a2, int a3, int a4, int a5, int a6, int 
 	v32[0] = a5;
 	v32[1] = a6;
 
-	v27 = v32 + 2;
-	v27[0] = -1;
-	v27[1] = -1;
+	v32 += 2;
+	v32[0] = -1;
+	v32[1] = -1;
 
 	Ligne[idx]._lineDataEndIdx = v35 + 1;
-	Ligne[idx].field2 = a7;
-	Ligne[idx]._direction = a2;
+	Ligne[idx]._direction = direction;
 
 	++_linesNumb;
 }
@@ -3158,7 +3133,6 @@ void LinesManager::clearAll() {
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
 		_vm->_linesManager.Ligne[idx]._lineDataEndIdx = 0;
-		_vm->_linesManager.Ligne[idx].field2 = 0;
 		_vm->_linesManager.Ligne[idx]._direction = 0;
 		_vm->_linesManager.Ligne[idx].field6 = 0;
 		_vm->_linesManager.Ligne[idx].field8 = 0;

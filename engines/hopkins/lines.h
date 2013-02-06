@@ -38,7 +38,6 @@ struct LigneZoneItem {
 
 struct LigneItem {
 	int _lineDataEndIdx;
-	int field2; // Useless variable
 	int _direction;
 	int field6;
 	int field8;
@@ -124,7 +123,7 @@ public:
 	int16 *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	void clearAllZones();
 	void resetLines();
-	void addLine(int idx, int a2, int a3, int a4, int a5, int a6, int a7);
+	void addLine(int idx, int direction, int a3, int a4, int a5, int a6);
 	void initRoute();
 	int MZONE();
 	void CARRE_ZONE();
