@@ -140,20 +140,16 @@ $(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR) $(DIST_FILE
 $(PATH_BUILD)/%/$(FILE_RESOURCES): $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml $(PATH_STAGE_PREFIX).%/res/drawable/residualvm.png plugins/lib%.so $(ANDROID_JAR)
 	$(AAPT) package -f -M $< -S $(PATH_STAGE_PREFIX).$*/res -I $(ANDROID_JAR) -F $@
 
-# Package installer won't delete old libresidualvm.so on upgrade so
-# replace it with a zero size file
 $(APK_MAIN): $(EXECUTABLE) $(FILE_RESOURCES_MAIN) $(FILE_DEX)
 	$(INSTALL) -d $(PATH_STAGE_MAIN)/common/lib/armeabi
-	touch $(PATH_STAGE_MAIN)/common/lib/armeabi/libresidualvm.so
-	$(INSTALL) -d $(PATH_STAGE_MAIN)/common/mylib/armeabi
-	$(INSTALL) -c -m 644 libresidualvm.so $(PATH_STAGE_MAIN)/common/mylib/armeabi/
-	$(STRIP) $(PATH_STAGE_MAIN)/common/mylib/armeabi/libresidualvm.so
+	$(INSTALL) -c -m 644 libresidualvm.so $(PATH_STAGE_MAIN)/common/lib/armeabi/
+	$(STRIP) $(PATH_STAGE_MAIN)/common/lib/armeabi/libresidualvm.so
 	$(APKBUILDER) $@ -z $(FILE_RESOURCES_MAIN) -f $(FILE_DEX) -rf $(PATH_STAGE_MAIN)/common || { $(RM) $@; exit 1; }
 
 residualvm-engine-%.apk: plugins/lib%.so $(PATH_BUILD)/%/$(FILE_RESOURCES) $(FILE_DEX_PLUGIN)
-	$(INSTALL) -d $(PATH_STAGE_PREFIX).$*/apk/mylib/armeabi/
-	$(INSTALL) -c -m 644 plugins/lib$*.so $(PATH_STAGE_PREFIX).$*/apk/mylib/armeabi/
-	$(STRIP) $(PATH_STAGE_PREFIX).$*/apk/mylib/armeabi/lib$*.so
+	$(INSTALL) -d $(PATH_STAGE_PREFIX).$*/apk/lib/armeabi/
+	$(INSTALL) -c -m 644 plugins/lib$*.so $(PATH_STAGE_PREFIX).$*/apk/lib/armeabi/
+	$(STRIP) $(PATH_STAGE_PREFIX).$*/apk/lib/armeabi/lib$*.so
 	$(APKBUILDER) $@ -z $(PATH_BUILD)/$*/$(FILE_RESOURCES) -f $(FILE_DEX_PLUGIN) -rf $(PATH_STAGE_PREFIX).$*/apk || { $(RM) $@; exit 1; }
 
 all: $(APK_MAIN) $(APK_PLUGINS)
