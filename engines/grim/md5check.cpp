@@ -99,8 +99,7 @@ const char *data002[] = {
 	"d236403c0d860961963db0134380001f" //english unpatched
 };
 const char *data001[] = {
-	"84cf3072586fe2840ae16774adb6f5cb", //english unpatched
-	"e0b2649e5f2cf5bd6fc61c27bd8d370a" //italian unpatched
+	"84cf3072586fe2840ae16774adb6f5cb" //english unpatched
 };
 const char *data000[] = {
 	"08e2505a6a7fd90d3920131b1297c60f" //english unpatched
