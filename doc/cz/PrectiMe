@@ -1,7 +1,8 @@
 PŘEČTIMĚ ScummVM
 ------------------------------------------------------------------------
 
-Pro více informací, seznamy kompatibility, podrobnosti o dotacích, nejnovější verze, novinky o vývoji a další, prosím navštivte domovskou stránku ScummVM na: http://www.scummvm.org/
+Pro více informací, seznamy kompatibility, podrobnosti o dotacích, nejnovější verze,
+novinky o vývoji a další, prosím navštivte domovskou stránku ScummVM na: http://www.scummvm.org/
 
 
 Obsah:
@@ -210,10 +211,14 @@ Další hry:
      Discworld 2: Missing Presumed ...!?         [dw2]
      Dragon History                              [draci]
      Drascula: The Vampire Strikes Back          [drascula]
+     Eye of the Beholder                         [eob]
+     Eye of the Beholder II: The Legend of 
+         Darkmoon                                [eob2]
      Flight of the Amazon Queen                  [queen]
      Future Wars                                 [fw]
      Inherit the Earth: Quest for the Orb        [ite]
      Nippon Safes Inc.                           [nippon]
+     Lands of Lore: The Throne of Chaos          [lol]
      The Legend of Kyrandia                      [kyra1]
      The Legend of Kyrandia: The Hand of Fate    [kyra2]
      The Legend of Kyrandia: Malcolm's Revenge   [kyra3]
@@ -315,21 +320,24 @@ V některých případech ScummVM přesto zobrazí obrazovku ochrany proti kop�
 
 ScummVM přeskakuje ochranu v následujících hrách:
 
-  * Maniac Mansion
-  * Zak McKracken and the Alien Mindbenders
-  * Loom (EGA)
-  * The Secret of Monkey Island (VGA)
-  * Monkey Island 2: LeChuck's Revenge
   * Beneath a Steel Sky
       -- potlačeno s laskavým svolením Revolution Software.
+  * Dreamweb
+      -- seznam dostupných příkazů v terminálech ve hře je nyní zobrazen
+         když hráč použije příkaz 'help'
   * Inherit the Earth: Quest for the Orb (Floppy version)
       -- potlačeno s laskavým svolením Wyrmkeep Entertainment,
          protože byla potlačena ve všech vydáních hry na CD.
+  * Loom (EGA DOS)
+  * Maniac Mansion
+  * Monkey Island 2: LeChuck's Revenge
   * Simon the Sorcerer 1 (Floppy version)
   * Simon the Sorcerer 2 (Floppy version)
       -- potlačeno s laskavým svolením from Adventure Soft,
          protože byla potlačena ve všech vydáních hry na CD.
+  * The Secret of Monkey Island (VGA)
   * Waxworks
+  * Zak McKracken and the Alien Mindbenders
 
 
 3.2) Poznámky ke hrám Commodore64:
@@ -1513,7 +1521,7 @@ Jsou rozpoznávána následující klíčová slova:
     output_rate        číslo    Který výstupní vzorkovací kmitočet použít v Hz. Rozumné hodnoty jsou 11025, 22050 a 44100.
     alsa_port          řetězec  Který port použít pro výstup při použití hudebního ovladače ALSA.
     music_volume       číslo    Nastavení hlasitosti hudby (0-255)
-    multi_midi         boolean  Pokud true, je povoleno smíšený AdLib a přirozený MIDI.
+    multi_midi         boolean  Pokud true, jsou povoleny smíšený AdLib a původní MIDI.
     soundfont          řetězec  Který SoundFont použít pro přehrávání MIDI. (Podporováno pouze některými ovladači MIDI.)
     native_mt32        boolean  Pokud true, zakáže emulaci GM a předpokládá, že je dostupný pravý Roland MT-32.
     enable_gs          boolean  Pokud true, povolí funkce určené pro Roland GS ke zlepšení emulace GM. Pokud je native_mt32 také nastaven na true, zařízení GS zvolí mapu MT-32 pro přehrávání správných instrumentů.
@@ -1574,16 +1582,27 @@ Simon the Sorcerer 1 a 2 přidává následující nestandardní klíčová slov
 The Legend of Kyrandia přidává následující nestandardní klíčové slovo:
 
     walkspeed          celé číslo      Rychlost chůze (0-4)
+
+The Legend of Kyrandia: The Hand of Fate přidává následující nestandardní klíčové slovo:
+
+    walkspeed          číslo    Rychlost chůze (3 nebo 5, což znamená
+                                rychle nebo pomalu)
     
 The Legend of Kyrandia: Malcolm's Revenge přidává následující nestandardní klíčová slova:
 
+    walkspeed          číslo    Rychlost chůze (3 nebo 5, což znamená
+                                rychle nebo pomalu)
     studio_audience    boolean  Pokud true, je slyšet potlesk a smích kdykoliv Malcolm provede něco vtipného
     skip_support       boolean  Pokud true, hráč může přeskakovat text a scény hry
     helium_mode        boolean  Pokud true, lidé znějí tak, jakoby se nadýchali hélia
 
 The 7th Guest přidává následující nestandardní klíčové slovo:
 
-    t7g_speed          řetězec   Rychlost přehrávání videa (normal - normální, tweaked - upravená, im_an_ios - jsem na ios)
+    fast_movie_speed   boolean  Pokud true, jsou videa přehrávána při zvýšené
+                                rychlosti, stejné jako ve verzi pro iOS.
+                                Videa bez zvuku jsou stále přehrávána při
+                                normální rychlosti, aby nedošlo k desynchronizaci
+                                hudby
 
 8.2) Vlastní herní volby, které mohou být přepínány pomoci grafického 
 ---- ----------------------------------------------------------------
@@ -1662,6 +1681,7 @@ Hodně Štěstí a Šťastné Adventurování!
 Tým ScummVM.
 http://www.scummvm.org/
 ------------------------------------------------------------------------
+
 
 
 

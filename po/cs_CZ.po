@@ -1,24 +1,23 @@
 # Czech translation for ScummVM.
-# Copyright (C) 2011-2013 ScummVM Team
+# Copyright (C) 2001-2013 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Zbynìk Schwarz <zbynek.schwarz@gmail.com>, 2011.
+# Zbynìk Schwarz <zbynek.schwarz@gmail.com>, 2011-2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2013-02-03 00:06+0000\n"
-"PO-Revision-Date: 2012-07-08 18:03+0100\n"
+"PO-Revision-Date: 2013-02-07 10:36+0100\n"
 "Last-Translator: Zbynìk Schwarz <zbynek.schwarz@gmail.com>\n"
 "Language-Team: \n"
 "Language: Cesky\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
-"X-Poedit-Language: Czech\n"
-"X-Poedit-Country: CZECH REPUBLIC\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Poedit-SourceCharset: iso-8859-2\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: gui/about.cpp:91
 #, c-format
@@ -34,13 +33,12 @@ msgid "Available engines:"
 msgstr "Dostupná jádra:"
 
 #: gui/browser.cpp:67
-#, fuzzy
 msgid "Show hidden files"
-msgstr "Ukázat / Skrýt konzoli"
+msgstr "Zobrazit skryté soubory"
 
 #: gui/browser.cpp:67
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Zobrazit soubory s vlastností skryté"
 
 #: gui/browser.cpp:71
 msgid "Go up"
@@ -721,7 +719,7 @@ msgstr "Zesílení MIDI:"
 
 #: gui/options.cpp:873
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "Nastavení FluidSynth"
 
 #: gui/options.cpp:880
 msgid "MT-32 Device:"
@@ -750,9 +748,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Opravdový Roland MT-32 (¾ádná GM emulace)"
 
 #: gui/options.cpp:890
-#, fuzzy
 msgid "Roland GS Mode (disable GM mapping)"
-msgstr "Opravdový Roland MT-32 (vypne GM emulaci)"
+msgstr "Re¾im Roland GS (vypne mapování GM)"
 
 #: gui/options.cpp:890
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
@@ -938,11 +935,11 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:166
 msgid "List view"
-msgstr ""
+msgstr "Seznam"
 
 #: gui/saveload-dialog.cpp:167
 msgid "Grid view"
-msgstr ""
+msgstr "Møí¾ka"
 
 #: gui/saveload-dialog.cpp:210 gui/saveload-dialog.cpp:358
 msgid "No date saved"
@@ -982,31 +979,28 @@ msgstr "Bezejmenný ulo¾ený stav"
 
 #: gui/saveload-dialog.cpp:546
 msgid "Next"
-msgstr ""
+msgstr "Dal¹í"
 
 #: gui/saveload-dialog.cpp:549
 msgid "Prev"
-msgstr ""
+msgstr "Pøedchozí"
 
 #: gui/saveload-dialog.cpp:736
-#, fuzzy
 msgid "New Save"
-msgstr "Ulo¾it"
+msgstr "Nová ulo¾ená pozice"
 
 #: gui/saveload-dialog.cpp:736
-#, fuzzy
 msgid "Create a new save game"
-msgstr "Nelze ulo¾it hru."
+msgstr "Vytvoøit novou ulo¾enou hru."
 
 #: gui/saveload-dialog.cpp:865
-#, fuzzy
 msgid "Name: "
-msgstr "Jméno"
+msgstr "Název:"
 
 #: gui/saveload-dialog.cpp:937
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "Zadejte popis pro pozici %d:"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -1324,7 +1318,6 @@ msgid "Restore"
 msgstr "Obnovit"
 
 #: engines/drascula/saveload.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
@@ -1334,8 +1327,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM zjistil, ¾e máte staré ulo¾ené pozice pro Broken Sword 1, které by "
-"mìly být pøevedeny.\n"
+"ScummVM zjistil, ¾e máte staré ulo¾ené pozice pro Drascula, které by mìly "
+"být pøevedeny.\n"
 "Starý formát ulo¾ených her ji¾ není podporován, tak¾e pokud je nepøevedete, "
 "nebudete moci va¹e hry naèíst.\n"
 "\n"
@@ -2148,13 +2141,12 @@ msgid "Failed to delete file."
 msgstr "Nelze smazat soubor."
 
 #: engines/groovie/detection.cpp:312
-#, fuzzy
 msgid "Fast movie speed"
-msgstr "Rychlý re¾im"
+msgstr "Zvý¹ená rychlost videa"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Pøehrát videa se zvý¹enou rychlostí"
 
 #: engines/groovie/script.cpp:420
 msgid "Failed to save game"
@@ -2282,12 +2274,11 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59
 msgid "Alternative intro"
-msgstr ""
+msgstr "Alternativní úvod"
 
 #: engines/queen/queen.cpp:60
-#, fuzzy
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Pou¾ít verzi úvodu z diskety (Pouze verze CD)"
+msgstr "Pou¾ít jinou verzi úvodu (Pouze verze CD)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2386,13 +2377,15 @@ msgstr "Zobrazit jmenovky objektù pøi najetí my¹i"
 #: engines/teenagent/resources.cpp:94
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr ""
+msgstr "Chybí vám soubor 'teenagent.dat'. Mù¾ete ho získat ze stránky ScummVM."
 
 #: engines/teenagent/resources.cpp:115
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"Soubor teenagent.dat  je komprimován a zlib není souèástí spustitelného "
+"souboru. Prosím dekomprimujte ho"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -3101,9 +3094,8 @@ msgid "Decreasing Volume"
 msgstr "Sni¾uji Hlasitost"
 
 #: backends/events/openpandora/op-events.cpp:174
-#, fuzzy
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "'Re¾im «uknutí' Dotykové Obrazovky - Najetí (Bez Kliknutí)"
+msgstr "'Re¾im «uknutí' Dotykové Obrazovky - Najetí (Dpad kliká)"
 
 #: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
