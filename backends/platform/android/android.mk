@@ -47,13 +47,7 @@ APKBUILDER = $(ANDROID_SDK)/tools/apkbuilder
 JAVAC ?= javac
 JAVACFLAGS = -source 1.5 -target 1.5
 
-# This is a bit silly.  I want to compile against the 2.1 android.jar,
-# to make the compiler check that I don't use something that requires
-# a newer Android.  However, in order to use android:installLocation,
-# we need to give aapt a version >=8 android.jar - even though the
-# result will work ok on 2.0+.
-ANDROID_JAR = $(ANDROID_SDK)/platforms/android-7/android.jar
-ANDROID_JAR8 = $(ANDROID_SDK)/platforms/android-8/android.jar
+ANDROID_JAR = $(ANDROID_SDK)/platforms/android-8/android.jar
 
 PATH_BUILD = build.tmp
 PATH_BUILD_ASSETS = $(PATH_BUILD)/assets
@@ -92,9 +86,9 @@ $(FILE_MANIFEST): $(FILE_MANIFEST_SRC)
 	@$(MKDIR) -p $(@D)
 	sed "s/@ANDROID_VERSIONCODE@/$(ANDROID_VERSIONCODE)/" < $< > $@
 
-$(SRC_GEN): $(FILE_MANIFEST) $(filter %.xml,$(RESOURCES)) $(ANDROID_JAR8)
+$(SRC_GEN): $(FILE_MANIFEST) $(filter %.xml,$(RESOURCES)) $(ANDROID_JAR)
 	@$(MKDIR) -p $(PATH_GEN_TOP)
-	$(AAPT) package -m -J $(PATH_GEN_TOP) -M $< -S $(PATH_RESOURCES) -I $(ANDROID_JAR8)
+	$(AAPT) package -m -J $(PATH_GEN_TOP) -M $< -S $(PATH_RESOURCES) -I $(ANDROID_JAR)
 
 $(PATH_CLASSES_MAIN)/%.class: $(PATH_GEN)/%.java $(SRC_GEN)
 	@$(MKDIR) -p $(@D)
@@ -127,7 +121,7 @@ $(PATH_STAGE_PREFIX).%/res/drawable/residualvm.png: $(PATH_RESOURCES)/drawable/r
 	@$(MKDIR) -p $(@D)
 	$(CP) $< $@
 
-$(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR8) $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA)
+$(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR) $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(PATH_BUILD_ASSETS)/
 	work_dir=`pwd`; \
@@ -141,10 +135,10 @@ $(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR8) $(DIST_FIL
 		zip -r ../`basename $$i` *; \
 	done
 	@$(RM) -rf $(PATH_BUILD_ASSETS)/tmp
-	$(AAPT) package -f -0 zip -M $< -S $(PATH_RESOURCES) -A $(PATH_BUILD_ASSETS) -I $(ANDROID_JAR8) -F $@
+	$(AAPT) package -f -0 zip -M $< -S $(PATH_RESOURCES) -A $(PATH_BUILD_ASSETS) -I $(ANDROID_JAR) -F $@
 
-$(PATH_BUILD)/%/$(FILE_RESOURCES): $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml $(PATH_STAGE_PREFIX).%/res/drawable/residualvm.png plugins/lib%.so $(ANDROID_JAR8)
-	$(AAPT) package -f -M $< -S $(PATH_STAGE_PREFIX).$*/res -I $(ANDROID_JAR8) -F $@
+$(PATH_BUILD)/%/$(FILE_RESOURCES): $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml $(PATH_STAGE_PREFIX).%/res/drawable/residualvm.png plugins/lib%.so $(ANDROID_JAR)
+	$(AAPT) package -f -M $< -S $(PATH_STAGE_PREFIX).$*/res -I $(ANDROID_JAR) -F $@
 
 # Package installer won't delete old libresidualvm.so on upgrade so
 # replace it with a zero size file
