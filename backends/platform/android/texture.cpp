@@ -41,6 +41,7 @@
 
 #include "base/main.h"
 #include "graphics/surface.h"
+#include "graphics/opengles2/shader.h"
 
 #include "common/rect.h"
 #include "common/array.h"
@@ -49,12 +50,13 @@
 
 #include "backends/platform/android/texture.h"
 #include "backends/platform/android/android.h"
+#include "backends/platform/android/jni.h"
 
 // Supported GL extensions
 static bool npot_supported = false;
-#ifdef GL_OES_draw_texture
-static bool draw_tex_supported = false;
-#endif
+
+Graphics::Shader * g_box_shader;
+GLuint g_verticesVBO;
 
 static inline GLfixed xdiv(int numerator, int denominator) {
 	assert(numerator < (1 << 16));
@@ -73,7 +75,14 @@ static T nextHigher2(T k) {
 	return k + 1;
 }
 
-void GLESBaseTexture::initGLExtensions() {
+const GLfloat vertices[] = {
+	0.0, 0.0,
+	1.0, 0.0,
+	0.0, 1.0,
+	1.0, 1.0,
+};
+
+void GLESBaseTexture::initGL() {
 	const char *ext_string =
 		reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS));
 
@@ -85,12 +94,13 @@ void GLESBaseTexture::initGLExtensions() {
 
 		if (token == "GL_ARB_texture_non_power_of_two")
 			npot_supported = true;
-
-#ifdef GL_OES_draw_texture
-		if (token == "GL_OES_draw_texture")
-			draw_tex_supported = true;
-#endif
 	}
+
+	const char* attributes[] = { "position", "texcoord", NULL };
+	g_box_shader = Graphics::Shader::fromStrings("box", Graphics::BuiltinShaders::boxVertex, Graphics::BuiltinShaders::boxFragment, attributes);
+	g_verticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+	g_box_shader->enableVertexAttribute("position", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
+	g_box_shader->enableVertexAttribute("texcoord", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }
 
 GLESBaseTexture::GLESBaseTexture(GLenum glFormat, GLenum glType,
@@ -106,7 +116,8 @@ GLESBaseTexture::GLESBaseTexture(GLenum glFormat, GLenum glType,
 	_all_dirty(false),
 	_dirty_rect(),
 	_pixelFormat(pixelFormat),
-	_palettePixelFormat()
+	_palettePixelFormat(),
+	_is_game_texture(false)
 {
 	GLCALL(glGenTextures(1, &_texture_name));
 }
@@ -117,8 +128,6 @@ GLESBaseTexture::~GLESBaseTexture() {
 
 void GLESBaseTexture::release() {
 	if (_texture_name) {
-		LOGD("Destroying texture %u", _texture_name);
-
 		GLCALL(glDeleteTextures(1, &_texture_name));
 		_texture_name = 0;
 	}
@@ -178,47 +187,26 @@ void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
 }
 
 void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
+//	LOGD("*** Texture %p: Drawing %dx%d rect to (%d,%d)", this, w, h, x, y);
+
+	assert(g_box_shader);
+	g_box_shader->use();
+
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
+	const GLfloat offsetX    = float(x) / float(JNI::egl_surface_width);
+	const GLfloat offsetY    = float(y) / float(JNI::egl_surface_height);
+	const GLfloat sizeW      = float(w) / float(JNI::egl_surface_width);
+	const GLfloat sizeH      = float(h) / float(JNI::egl_surface_height);
+	const GLfloat tex_width  = float(_surface.w) / float(_texture_width);
+	const GLfloat tex_height = float(_surface.h) / float(_texture_height);
+//	LOGD("*** Drawing at (%f,%f) , size %f x %f", float(x) / float(_surface.w), float(y) / float(_surface.h),  tex_width, tex_height);
 
-#ifdef GL_OES_draw_texture
-	// Great extension, but only works under specific conditions.
-	// Still a work-in-progress - disabled for now.
-	if (false && draw_tex_supported && !hasPalette()) {
-		//GLCALL(glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE));
-		const GLint crop[4] = { 0, _surface.h, _surface.w, -_surface.h };
+	g_box_shader->setUniform("offsetXY", Math::Vector2d(offsetX, offsetY));
+	g_box_shader->setUniform("sizeWH", Math::Vector2d(sizeW, sizeH));
+	g_box_shader->setUniform("texcrop", Math::Vector2d(tex_width, tex_height));
+	g_box_shader->setUniform("flipY", !_is_game_texture);
 
-		GLCALL(glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_CROP_RECT_OES, crop));
-
-		// Android GLES bug?
-		GLCALL(glColor4ub(0xff, 0xff, 0xff, 0xff));
-
-		GLCALL(glDrawTexiOES(x, y, 0, w, h));
-	} else
-#endif
-	{
-		const GLfixed tex_width = xdiv(_surface.w, _texture_width);
-		const GLfixed tex_height = xdiv(_surface.h, _texture_height);
-		const GLfixed texcoords[] = {
-			0, 0,
-			tex_width, 0,
-			0, tex_height,
-			tex_width, tex_height,
-		};
-
-		GLCALL(glTexCoordPointer(2, GL_FIXED, 0, texcoords));
-
-		const GLshort vertices[] = {
-			x, y,
-			x + w, y,
-			x, y + h,
-			x + w, y + h,
-		};
-
-		GLCALL(glVertexPointer(2, GL_SHORT, 0, vertices));
-
-		assert(ARRAYSIZE(vertices) == ARRAYSIZE(texcoords));
-		GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, ARRAYSIZE(vertices) / 2));
-	}
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	clearDirty();
 }

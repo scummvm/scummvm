@@ -36,7 +36,7 @@
 
 class GLESBaseTexture {
 public:
-	static void initGLExtensions();
+	static void initGL();
 
 protected:
 	GLESBaseTexture(GLenum glFormat, GLenum glType,
@@ -92,6 +92,14 @@ public:
 		return _surface.h;
 	}
 
+	inline GLuint texWidth() const {
+		return _texture_width;
+	}
+
+	inline GLuint texHeight() const {
+		return _texture_height;
+	}
+
 	inline uint16 pitch() const {
 		return _surface.pitch;
 	}
@@ -129,6 +137,14 @@ public:
 
 	inline const Graphics::PixelFormat &getPalettePixelFormat() const {
 		return _palettePixelFormat;
+	}
+
+	GLuint getTextureName() const {
+		return _texture_name;
+	}
+
+	void setGameTexture() {
+		_is_game_texture = true;
 	}
 
 protected:
@@ -169,6 +185,8 @@ protected:
 
 	Graphics::PixelFormat _pixelFormat;
 	Graphics::PixelFormat _palettePixelFormat;
+
+	bool _is_game_texture;
 };
 
 class GLESTexture : public GLESBaseTexture {
