@@ -38,52 +38,55 @@ enum DIALOG_KEY { KEY_NONE = 0, KEY_INVENTORY = 1, KEY_OPTIONS = 2, KEY_SAVE = 3
 
 class EventsManager {
 private:
+	int _oldIconId;
+	uint32 _priorCounterTime;
+	uint32 _priorFrameTime;
+	bool _keyState[256];
+
 	HopkinsEngine *_vm;
 
 	void pollEvents();
 	void handleKey(Common::Event &event);
 	void checkForNextFrameCounter();
 	void updateCursor();
+
 public:
+	DIALOG_KEY _gameKey;
+	uint32 _rateCounter;
+	uint32 _gameCounter;
+	bool _escKeyFl;
 	bool _mouseFl;
 	bool _mouseLinuxFl;
-	int _mouseSizeX, _mouseSizeY;
-	Common::Point _mouseOffset;
+	bool _breakoutFl;
 	Common::Point _startPos;
 	Common::Point _mousePos;
-	bool _breakoutFl;
-	int _oldIconId;
+	Common::Point _mouseOffset;
 	int _mouseSpriteId;
 	int _curMouseButton;
 	int _mouseButton;
-	byte *_mouseCursor;
-	uint32 _gameCounter;
-	uint32 _rateCounter;
-	uint32 _priorCounterTime;
-	uint32 _priorFrameTime;
-	bool _escKeyFl;
-	DIALOG_KEY _gameKey;
 	int _mouseCursorId;
+	int _mouseSizeX, _mouseSizeY;
 	byte *_objectBuf;
-	bool _keyState[256];
-public:
+	byte *_mouseCursor;
+
 	EventsManager();
 	~EventsManager();
 	void setParent(HopkinsEngine *vm);
-	void setMouseOn();
-	void setMouseXY(Common::Point pos);
-	void setMouseXY(int xp, int yp);
+	void delay(int totalMilli);
+	void changeMouseCursor(int id);
+	void refreshEvents();
+	int waitKeyPress();
 	int getMouseX();
 	int getMouseY();
 	int getMouseButton();
+	void setMouseXY(Common::Point pos);
+	void setMouseXY(int xp, int yp);
 	void mouseOn();
 	void mouseOff();
-	void changeMouseCursor(int id);
-	void refreshEvents();
-	void delay(int totalMilli);
-	int waitKeyPress();
+	void setMouseOn();
 
 	void VBL();
+
 };
 
 } // End of namespace Hopkins
