@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2013-02-03 00:06+0000\n"
+"POT-Creation-Date: 2013-02-07 23:11+0000\n"
 "PO-Revision-Date: 2012-12-01 19:37+0200\n"
 "Last-Translator: Toni Saarela <saarela@gmail.com>\n"
 "Language-Team: Finnish\n"
@@ -17,16 +17,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
 
-#: gui/about.cpp:91
+#: gui/about.cpp:93
 #, c-format
 msgid "(built on %s)"
 msgstr "(käännöksen päiväys: %s)"
 
-#: gui/about.cpp:98
+#: gui/about.cpp:100
 msgid "Features compiled in:"
 msgstr "Tähän versioon käännetyt ominaisuudet:"
 
-#: gui/about.cpp:107
+#: gui/about.cpp:109
 msgid "Available engines:"
 msgstr "Tuetut pelimoottorit:"
 
@@ -452,12 +452,14 @@ msgstr "Etsi:"
 
 #: gui/launcher.cpp:680 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:245
 #: engines/mohawk/riven.cpp:716 engines/cruise/menu.cpp:214
+#: engines/pegasus/pegasus.cpp:345
 msgid "Load game:"
 msgstr "Lataa peli:"
 
 #: gui/launcher.cpp:680 engines/dialogs.cpp:114 engines/scumm/dialogs.cpp:188
 #: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:716
-#: engines/cruise/menu.cpp:214 backends/platform/wince/CEActionsPocket.cpp:267
+#: engines/cruise/menu.cpp:214 engines/pegasus/pegasus.cpp:345
+#: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Load"
 msgstr "Lataa"
@@ -1191,13 +1193,14 @@ msgstr "Palaa p~e~livalitsimeen"
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
 #: engines/drascula/saveload.cpp:338 engines/cruise/menu.cpp:212
 #: engines/sci/engine/kfile.cpp:742 engines/toltecs/menu.cpp:284
+#: engines/pegasus/pegasus.cpp:369
 msgid "Save game:"
 msgstr "Tallenna peli:"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
 #: engines/drascula/saveload.cpp:338 engines/scumm/dialogs.cpp:187
 #: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:742
-#: engines/toltecs/menu.cpp:284
+#: engines/toltecs/menu.cpp:284 engines/pegasus/pegasus.cpp:369
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -2247,11 +2250,11 @@ msgstr "Liiku vasemmalle"
 msgid "Slide Right"
 msgstr "Liiku oikealle"
 
-#: engines/kyra/lol.cpp:485
+#: engines/kyra/lol.cpp:485 engines/pegasus/pegasus.cpp:2412
 msgid "Turn Left"
 msgstr "Käänny vasemmalle"
 
-#: engines/kyra/lol.cpp:486
+#: engines/kyra/lol.cpp:486 engines/pegasus/pegasus.cpp:2413
 msgid "Turn Right"
 msgstr "Käänny oikealle"
 
@@ -2442,6 +2445,47 @@ msgstr ""
 "Osa tiedostoista ei ehkä muuntunut oikein. Varoitukset tulostettiin konsoli-"
 "ikkunaan. Pyydämme että ilmoittaisit\n"
 "niistä ScummVM:n kehittäjille."
+
+#: engines/pegasus/pegasus.cpp:675
+msgid "Invalid save file name"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2410
+msgid "Up/Zoom In/Move Forward/Open Doors"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2411
+#, fuzzy
+msgid "Down/Zoom Out"
+msgstr "Zoomaa ylös"
+
+#: engines/pegasus/pegasus.cpp:2414
+msgid "Display/Hide Inventory Tray"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2415
+msgid "Display/Hide Biochip Tray"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2416
+msgid "Action/Select"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2417
+msgid "Toggle Center Data Display"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2418
+msgid "Display/Hide Info Screen"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2419
+msgid "Display/Hide Pause Menu"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2420
+msgid "???"
+msgstr ""
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"

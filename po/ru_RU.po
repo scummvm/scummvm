@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2013-02-03 00:06+0000\n"
+"POT-Creation-Date: 2013-02-07 23:11+0000\n"
 "PO-Revision-Date: 2012-07-08 22:00+0200+0200\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -18,16 +18,16 @@ msgstr ""
 "Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: gui/about.cpp:91
+#: gui/about.cpp:93
 #, c-format
 msgid "(built on %s)"
 msgstr "(собран %s)"
 
-#: gui/about.cpp:98
+#: gui/about.cpp:100
 msgid "Features compiled in:"
 msgstr "Включенные в билд опции:"
 
-#: gui/about.cpp:107
+#: gui/about.cpp:109
 msgid "Available engines:"
 msgstr "Доступные движки:"
 
@@ -452,12 +452,14 @@ msgstr "Поиск:"
 
 #: gui/launcher.cpp:680 engines/dialogs.cpp:114 engines/mohawk/myst.cpp:245
 #: engines/mohawk/riven.cpp:716 engines/cruise/menu.cpp:214
+#: engines/pegasus/pegasus.cpp:345
 msgid "Load game:"
 msgstr "Загрузить игру:"
 
 #: gui/launcher.cpp:680 engines/dialogs.cpp:114 engines/scumm/dialogs.cpp:188
 #: engines/mohawk/myst.cpp:245 engines/mohawk/riven.cpp:716
-#: engines/cruise/menu.cpp:214 backends/platform/wince/CEActionsPocket.cpp:267
+#: engines/cruise/menu.cpp:214 engines/pegasus/pegasus.cpp:345
+#: backends/platform/wince/CEActionsPocket.cpp:267
 #: backends/platform/wince/CEActionsSmartphone.cpp:231
 msgid "Load"
 msgstr "Загрузить"
@@ -1189,13 +1191,14 @@ msgstr "~В~ главное меню"
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
 #: engines/drascula/saveload.cpp:338 engines/cruise/menu.cpp:212
 #: engines/sci/engine/kfile.cpp:742 engines/toltecs/menu.cpp:284
+#: engines/pegasus/pegasus.cpp:369
 msgid "Save game:"
 msgstr "Сохранить игру:"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
 #: engines/drascula/saveload.cpp:338 engines/scumm/dialogs.cpp:187
 #: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:742
-#: engines/toltecs/menu.cpp:284
+#: engines/toltecs/menu.cpp:284 engines/pegasus/pegasus.cpp:369
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsPocket.cpp:43
 #: backends/platform/wince/CEActionsPocket.cpp:267
@@ -2259,11 +2262,11 @@ msgstr "Скользить влево"
 msgid "Slide Right"
 msgstr "Скользить вправо"
 
-#: engines/kyra/lol.cpp:485
+#: engines/kyra/lol.cpp:485 engines/pegasus/pegasus.cpp:2412
 msgid "Turn Left"
 msgstr "Поворот налево"
 
-#: engines/kyra/lol.cpp:486
+#: engines/kyra/lol.cpp:486 engines/pegasus/pegasus.cpp:2413
 msgid "Turn Right"
 msgstr "Поворот направо"
 
@@ -2460,6 +2463,47 @@ msgstr ""
 "преобразовать все файлы.\n"
 "\n"
 "Пожалуйста, сообщите об этом команде ScummVM."
+
+#: engines/pegasus/pegasus.cpp:675
+msgid "Invalid save file name"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2410
+msgid "Up/Zoom In/Move Forward/Open Doors"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2411
+#, fuzzy
+msgid "Down/Zoom Out"
+msgstr "Увел. масштаб"
+
+#: engines/pegasus/pegasus.cpp:2414
+msgid "Display/Hide Inventory Tray"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2415
+msgid "Display/Hide Biochip Tray"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2416
+msgid "Action/Select"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2417
+msgid "Toggle Center Data Display"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2418
+msgid "Display/Hide Info Screen"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2419
+msgid "Display/Hide Pause Menu"
+msgstr ""
+
+#: engines/pegasus/pegasus.cpp:2420
+msgid "???"
+msgstr ""
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
