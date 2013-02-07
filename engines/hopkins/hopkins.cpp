@@ -1954,7 +1954,7 @@ void HopkinsEngine::restoreSystem() {
 }
 
 void HopkinsEngine::endLinuxDemo() {
-	_globals.PUBEXIT = true;
+	_globals._linuxEndDemoFl = true;
 	_graphicsManager.RESET_SEGMENT_VESA();
 	_globals._forestFl = false;
 	_eventsManager._breakoutFl = false;

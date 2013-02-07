@@ -127,14 +127,6 @@ struct ObjetWItem {
 	byte field7;
 };
 
-struct BlocItem {
-	uint16 _activeFl;
-	int _x1;
-	int _y1;
-	int _x2;
-	int _y2;
-};
-
 /**
  * Mode for SortItem records
  */
@@ -289,7 +281,6 @@ public:
 	LockAnimItem _lockedAnims[30];
 	VBobItem VBob[30];
 	ObjetWItem ObjetW[300];
-	BlocItem BLOC[250];
 	CacheItem Cache[25];
 	int BOBZONE[105];
 	bool BOBZONE_FLAG[105];
@@ -298,7 +289,7 @@ public:
 	int _inventory[36];
 	SortItem _sortedDisplay[51];
 	Language _language;
-	bool PUBEXIT;
+	bool _linuxEndDemoFl;
 	int PERSO_TYPE;
 	uint _speed;
 	Common::String FICH_ZONE;
@@ -338,7 +329,6 @@ public:
 	int _characterMaxPosY;
 	bool _disableInventFl;
 	bool NOMARCHE;
-	int NBBLOC;
 	byte *_optionDialogSpr;
 	bool _optionDialogFl;
 	int _menuDisplayType;

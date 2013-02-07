@@ -45,6 +45,7 @@ GraphicsManager::GraphicsManager() {
 	_scrollPosX = 0;
 	_largeScreenFl = false;
 	_oldScrollPosX = 0;
+	NBBLOC = 0;
 
 	_lineNbr2 = 0;
 	Agr_x = Agr_y = 0;
@@ -63,12 +64,16 @@ GraphicsManager::GraphicsManager() {
 	Red_x = Red_y = 0;
 	Red = 0;
 	_width = 0;
-	spec_largeur = 0;
+	_specialWidth = 0;
 
 	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
 	Common::fill(&_colorTable[0], &_colorTable[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_palette[0], &_palette[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_oldPalette[0], &_oldPalette[PALETTE_EXT_BLOCK_SIZE], 0);
+
+	for (int i = 0; i < 250; ++i)
+		Common::fill((byte *)&BLOC[i], (byte *)&BLOC[i] + sizeof(BlocItem), 0);
+
 }
 
 GraphicsManager::~GraphicsManager() {
@@ -923,6 +928,14 @@ void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int
 	} while (rowCount2 != 1);
 }
 
+/**
+ * Draws a sprite onto the screen
+ * @param surface		Destination surface
+ * @param spriteData	The raw data for a sprite set
+ * @param xp			X co-ordinate. For some reason, starts from 300 = first column
+ * @param yp			Y co-ordinate. FOr some reason, starts from 300 = top row
+ * @param spriteIndex	Index of the sprite to draw
+ */
 void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex) {
 	// Get a pointer to the start of the desired sprite
 	const byte *spriteP = spriteData + 3;
@@ -1080,12 +1093,10 @@ void GraphicsManager::VISU_ALL() {
 }
 
 void GraphicsManager::RESET_SEGMENT_VESA() {
-	if (_vm->_globals.NBBLOC > 0) {
-		for (int idx = 0; idx != _vm->_globals.NBBLOC; idx++)
-			_vm->_globals.BLOC[idx]._activeFl = false;
+	for (int idx = 0; idx <= NBBLOC; idx++)
+		BLOC[idx]._activeFl = false;
 
-		_vm->_globals.NBBLOC = 0;
-	}
+	NBBLOC = 0;
 }
 
 // Add VESA Segment
@@ -1104,19 +1115,15 @@ void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
 	if (y1 < _minY)
 		y1 = _minY;
 
-	if (_vm->_globals.NBBLOC > 1) {
-		int16 blocIndex = 0;
-		do {
-			BlocItem &bloc = _vm->_globals.BLOC[blocIndex];
-			if (bloc._activeFl && tempX >= bloc._x1 && x2 <= bloc._x2 && y1 >= bloc._y1 && y2 <= bloc._y2)
-				addFlag = false;
-			++blocIndex;
-		} while (_vm->_globals.NBBLOC + 1 != blocIndex);
-	}
+	for (int blocIndex = 0; blocIndex <= NBBLOC; blocIndex++) {
+		BlocItem &bloc = BLOC[blocIndex];
+		if (bloc._activeFl && tempX >= bloc._x1 && x2 <= bloc._x2 && y1 >= bloc._y1 && y2 <= bloc._y2)
+			addFlag = false;
+	};
 
 	if (addFlag) {
-		assert(_vm->_globals.NBBLOC < 250);
-		BlocItem &bloc = _vm->_globals.BLOC[++_vm->_globals.NBBLOC];
+		assert(NBBLOC < 250);
+		BlocItem &bloc = BLOC[++NBBLOC];
 
 		bloc._activeFl = true;
 		bloc._x1 = tempX;
@@ -1128,13 +1135,13 @@ void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
 
 // Display VESA Segment
 void GraphicsManager::displayVesaSegment() {
-	if (_vm->_globals.NBBLOC == 0)
+	if (NBBLOC == 0)
 		return;
 
 	lockScreen();
 
-	for (int idx = 1; idx <= _vm->_globals.NBBLOC; ++idx) {
-		BlocItem &bloc = _vm->_globals.BLOC[idx];
+	for (int idx = 1; idx <= NBBLOC; ++idx) {
+		BlocItem &bloc = BLOC[idx];
 		Common::Rect &dstRect = dstrect[idx - 1];
 		if (!bloc._activeFl)
 			continue;
@@ -1163,10 +1170,10 @@ void GraphicsManager::displayVesaSegment() {
 			unlockScreen();
 		}
 
-		_vm->_globals.BLOC[idx]._activeFl = false;
+		BLOC[idx]._activeFl = false;
 	}
 
-	_vm->_globals.NBBLOC = 0;
+	NBBLOC = 0;
 	unlockScreen();
 }
 
@@ -1516,7 +1523,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 		_width = spriteWidth;
 		if (flipFl) {
 			byte *dest2P = spriteWidth + dest1P;
-			spec_largeur = spriteWidth;
+			_specialWidth = spriteWidth;
 			if (_posYClipped) {
 				if (_posYClipped >= spriteHeight1 || spriteHeight1 < 0)
 					return;
@@ -1548,12 +1555,12 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 					++spritePixelsP;
 					--dest2P;
 				}
-				spritePixelsP = spec_largeur + spritePixelsCopy2P;
+				spritePixelsP = _specialWidth + spritePixelsCopy2P;
 				dest2P = _lineNbr2 + destCopy2P;
 				spriteHeight1 = yCtr2 - 1;
 			} while (yCtr2 != 1);
 		} else {
-			spec_largeur = spriteWidth;
+			_specialWidth = spriteWidth;
 			if (_posYClipped) {
 				if (_posYClipped >= spriteHeight1 || spriteHeight1 < 0)
 					return;
@@ -1583,7 +1590,7 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 					++dest1P;
 					++spritePixelsP;
 				}
-				spritePixelsP = spec_largeur + spritePixelsCopyP;
+				spritePixelsP = _specialWidth + spritePixelsCopyP;
 				dest1P = _lineNbr2 + dest1CopyP;
 				spriteHeight1 = yCtr1 - 1;
 			} while (yCtr1 != 1);
@@ -1801,38 +1808,6 @@ void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
 		}
 		dest[destOffset] = byteVal;
 		++srcPtr;
-		++destOffset;
-	}
-}
-
-void GraphicsManager::Copy_Video_Vbe(const byte *src) {
-	assert(_videoPtr);
-	int destOffset = 0;
-	const byte *srcP = src;
-	for (;;) {
-		byte byteVal = *srcP;
-		if (*srcP < kByteStop)
-			break;
-		else {
-			if (byteVal == kByteStop)
-				return;
-			if (byteVal == k8bVal) {
-				destOffset += srcP[1];
-				byteVal = srcP[2];
-				srcP += 2;
-			} else if (byteVal == k16bVal) {
-				destOffset += READ_LE_UINT16(srcP + 1);
-				byteVal = srcP[3];
-				srcP += 3;
-			} else {
-				destOffset += READ_LE_UINT32(srcP + 1);
-				byteVal = srcP[5];
-				srcP += 5;
-			}
-		}
-
-		*((byte *)_videoPtr->pixels + destOffset) = byteVal;
-		++srcP;
 		++destOffset;
 	}
 }

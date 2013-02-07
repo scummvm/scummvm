@@ -86,8 +86,6 @@ Globals::Globals() {
 	}
 	for (int i = 0; i < 300; ++i)
 		Common::fill((byte *)&ObjetW[i], (byte *)&ObjetW[i] + sizeof(ObjetWItem), 0);
-	for (int i = 0; i < 250; ++i)
-		Common::fill((byte *)&BLOC[i], (byte *)&BLOC[i] + sizeof(BlocItem), 0);
 	for (int i = 0; i < 25; ++i)
 		Common::fill((byte *)&Cache[i], (byte *)&Cache[i] + sizeof(CacheItem), 0);
 
@@ -108,7 +106,7 @@ Globals::Globals() {
 	// Initialize fields
 	_language = LANG_EN;
 
-	PUBEXIT = false;
+	_linuxEndDemoFl = false;
 	_speed = 1;
 	_oldFrameIndex = 0;
 	_oldDirection = 0;
@@ -131,7 +129,6 @@ Globals::Globals() {
 	_screenId = 0;
 	_prevScreenId = 0;
 	_characterMaxPosY = 0;
-	NBBLOC = 0;
 	_menuScrollType = 0;
 	_menuScrollSpeed = 0;
 	_menuSpeed = 0;

@@ -313,8 +313,8 @@ int EventsManager::waitKeyPress() {
 }
 
 void EventsManager::VBL() {
-	signed int v11 = 0;
-	signed int v12 = 0;
+	int bottom = 0;
+	int right = 0;
 	int height = 0;
 	int width = 0;
 	int xp = 0;
@@ -355,12 +355,12 @@ void EventsManager::VBL() {
 				if (yp + _mouseSizeY >= mouseHeight + _vm->_graphicsManager._maxY)
 					height = _vm->_graphicsManager._maxY - mouseHeight - yp;
 			}
-			v12 = width + xp;
-			v11 = yp + height;
+			right = xp + width;
+			bottom = yp + height;
 		}
 	}
 
-	if (!_vm->_globals.PUBEXIT)
+	if (!_vm->_globals._linuxEndDemoFl)
 		_vm->_objectsManager.displaySprite();
 	if (!_mouseFl) {
 		updateCursor();
@@ -376,7 +376,7 @@ void EventsManager::VBL() {
 		}
 	} else if (yp < _vm->_graphicsManager._maxY && xp < _vm->_graphicsManager._maxX && width > 1 && height > 1) {
 		_vm->_eventsManager.updateCursor();
-		_vm->_graphicsManager.addVesaSegment(xp, yp, v12, v11);
+		_vm->_graphicsManager.addVesaSegment(xp, yp, right, bottom);
 	}
 
 	_vm->_globals._speed = 2;
@@ -432,12 +432,8 @@ void EventsManager::VBL() {
 			_vm->_graphicsManager.unlockScreen();
 			_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
 
-			for (int i = 1; i < _vm->_globals.NBBLOC + 1; i++) {
-				if (_vm->_globals.BLOC[i]._activeFl)
-					_vm->_globals.BLOC[i]._activeFl = false;
-			}
+			_vm->_graphicsManager.RESET_SEGMENT_VESA();
 
-			_vm->_globals.NBBLOC = 0;
 			_startPos.x = _vm->_graphicsManager._scrollPosX;
 			_vm->_graphicsManager._scrollOffset = _vm->_graphicsManager._scrollPosX;
 			_vm->_graphicsManager._scrollPosX = _vm->_graphicsManager._scrollPosX;

@@ -45,131 +45,134 @@ struct RGB8 {
 	byte b;
 };
 
+struct BlocItem {
+	uint16 _activeFl;
+	int _x1;
+	int _y1;
+	int _x2;
+	int _y2;
+};
+
 class HopkinsEngine;
 
 class GraphicsManager {
 private:
 	HopkinsEngine *_vm;
 
-	void loadScreen(const Common::String &file);
-public:
 	int _lockCounter;
 	bool _initGraphicsFl;
 	int _screenWidth;
 	int _screenHeight;
-	int WinScan;
+	Graphics::Surface *_videoPtr;
+	int _width;
+	int _posXClipped, _posYClipped;
+	bool _clipFl;
+	int _specialWidth;
+
 	byte SD_PIXELS[PALETTE_SIZE * 2];
-	byte *PAL_PIXELS;
+	int Agr_x, Agr_y;
+	bool Agr_Flag_x, Agr_Flag_y;
+	int clip_x1, clip_y1;
+	int Red_x, Red_y;
+	int Red;
+
+	void loadScreen(const Common::String &file);
+	void loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
+	void loadPCX320(byte *surface, const Common::String &file, byte *palette);
+	void fadeIn(const byte *palette, int step, const byte *surface);
+	void fadeOut(const byte *palette, int step, const byte *surface);
+	void changePalette(const byte *palette);
+	uint16 mapRGB(byte r, byte g, byte b);
+
+	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
+	void Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
+	void copy16bFromSurfaceScaleX2(const byte *surface);
+public:
 	int _lineNbr;
 	byte _colorTable[PALETTE_EXT_BLOCK_SIZE];
 	byte _palette[PALETTE_EXT_BLOCK_SIZE];
 	byte _oldPalette[PALETTE_EXT_BLOCK_SIZE];
-	Graphics::Surface *_videoPtr;
 	byte *_vesaScreen;
 	byte *_vesaBuffer;
 	int _scrollOffset;
 	int _scrollPosX;
 	bool _largeScreenFl;
 	int _oldScrollPosX;
-	bool MANU_SCROLL;
 	int _scrollSpeed;
 	int _lineNbr2;
-	int Agr_x, Agr_y;
-	bool Agr_Flag_x, Agr_Flag_y;
-	int _fadeDefaultSpeed;
-	int FADE_LINUX;
-	bool _skipVideoLockFl;
-	int _scrollStatus;
-	Common::Rect dstrect[50];
 	int _minX, _minY;
 	int _maxX, _maxY;
-	int _posXClipped, _posYClipped;
-	int clip_x1, clip_y1;
-	bool _clipFl;
-	int Red_x, Red_y;
-	int Red;
-	int _width;
-	int spec_largeur;
 	bool _noFadingFl;
+	Common::Rect dstrect[50];
+	int _scrollStatus;
+	bool _skipVideoLockFl;
+	int _fadeDefaultSpeed;
+
+	int NBBLOC;
+	BlocItem BLOC[250];
+	int WinScan;
+	byte *PAL_PIXELS;
+	bool MANU_SCROLL;
+	int FADE_LINUX;
 public:
 	GraphicsManager();
 	~GraphicsManager();
-	void setParent(HopkinsEngine *vm);
 
-	void setGraphicalMode(int width, int height);
+	void setParent(HopkinsEngine *vm);
 	void lockScreen();
 	void unlockScreen();
+	void clearPalette();
 	void clearScreen();
 	void loadImage(const Common::String &file);
 	void loadVgaImage(const Common::String &file);
-	void initColorTable(int minIndex, int maxIndex, byte *palette);
-	void scrollScreen(int amount);
-	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
-	void Trans_bloc2(byte *surface, byte *col, int size);
-	void loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
-	void loadPCX320(byte *surface, const Common::String &file, byte *palette);
-	void clearPalette();
-	void SCANLINE(int pitch);
-	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
-	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
-	void Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
-	void fadeIn(const byte *palette, int step, const byte *surface);
-	void fadeOut(const byte *palette, int step, const byte *surface);
-	void fadeInShort();
-	void fadeOutShort();
 	void fadeInLong();
-	void fadeOutLong();
-	void fadeOutDefaultLength(const byte *surface);
-	void fadeInDefaultLength(const byte *surface);
 	void fadeInBreakout();
+	void fadeInDefaultLength(const byte *surface);
+	void fadeInShort();
+	void fadeOutDefaultLength(const byte *surface);
 	void fateOutBreakout();
-	void setPaletteVGA256(const byte *palette);
-	void setPaletteVGA256WithRefresh(const byte *palette, const byte *surface);
-	void SETCOLOR3(int palIndex, int r, int g, int b);
-	void SETCOLOR4(int palIndex, int r, int g, int b);
-	void changePalette(const byte *palette);
-	uint16 mapRGB(byte r, byte g, byte b);
-	void DD_VBL();
-	void Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface);
-	void Copy_Video_Vbe16(const byte *srcData);
-	void Copy_Video_Vbe16a(const byte *srcData);
-	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height);
-
-	/**
-	 * Draws a sprite onto the screen
-	 * @param surface		Destination surface
-	 * @param spriteData	The raw data for a sprite set
-	 * @param xp			X co-ordinate. For some reason, starts from 300 = first column
-	 * @param yp			Y co-ordinate. FOr some reason, starts from 300 = top row
-	 * @param spriteIndex	Index of the sprite to draw
-	 */
-	void Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex);
-
-	void FIN_VISU();
-	void VISU_ALL();
-	void RESET_SEGMENT_VESA();
-	void addVesaSegment(int x1, int y1, int x2, int y2);
-	void displayVesaSegment();
-	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment = true);
-	void CopyAsm(const byte *surface);
-	void copy16bFromSurfaceScaleX2(const byte *surface);
-	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
-	int zoomIn(int v, int percentage);
-	int zoomOut(int v, int percentage);
-	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl);
+	void fadeOutLong();
+	void fadeOutShort();
 	void fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment = true);
-	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
-	void Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY);
+	void displayVesaSegment();
 	void displayFont(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int colour);
-	void INI_ECRAN(const Common::String &file, bool initializeScreen);
-	void INI_ECRAN2(const Common::String &file, bool initializeScreen);
-	void OPTI_INI(const Common::String &file, int mode, bool initializeScreen);
-	void NB_SCREEN(bool initPalette);
-	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);
-	void Copy_Video_Vbe(const byte *src);
-	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
 	void drawHorizontalLine(byte *surface, int xp, int yp, uint16 width, byte col);
 	void drawVerticalLine(byte *surface, int xp, int yp, int height, byte col);
+	void initColorTable(int minIndex, int maxIndex, byte *palette);
+	void setGraphicalMode(int width, int height);
+	void setPaletteVGA256(const byte *palette);
+	void setPaletteVGA256WithRefresh(const byte *palette, const byte *surface);
+	void scrollScreen(int amount);
+	int zoomIn(int v, int percentage);
+	int zoomOut(int v, int percentage);
+
+	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
+	void addVesaSegment(int x1, int y1, int x2, int y2);
+	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
+	void SETCOLOR3(int palIndex, int r, int g, int b);
+	void SETCOLOR4(int palIndex, int r, int g, int b);
+	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment = true);
+	void RESET_SEGMENT_VESA();
+	void DD_VBL();
+	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height);
+	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl);
+	void Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY);
+	void SCANLINE(int pitch);
+	void Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex);
+	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
+	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
+	void Trans_bloc2(byte *surface, byte *col, int size);
+	void VISU_ALL();
+	void FIN_VISU();
+	void INI_ECRAN(const Common::String &file, bool initializeScreen);
+	void INI_ECRAN2(const Common::String &file, bool initializeScreen);
+	void NB_SCREEN(bool initPalette);
+	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
+	void OPTI_INI(const Common::String &file, int mode, bool initializeScreen);
+	void Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface);
+	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);
+	void Copy_Video_Vbe16(const byte *srcData);
+	void Copy_Video_Vbe16a(const byte *srcData);
 };
 
 } // End of namespace Hopkins
