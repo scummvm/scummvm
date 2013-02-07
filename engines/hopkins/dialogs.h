@@ -37,27 +37,27 @@ class HopkinsEngine;
 class DialogsManager {
 private:
 	HopkinsEngine *_vm;
+
+	void showSaveLoad(int a1);
+	int  searchSavegames();
 public:
+	byte *_inventWin1;
+	byte *_inventBuf2;
+	bool _removeInventFl;
+	bool _inventDisplayedFl;
+	bool _inventFl;
 	int _inventX, _inventY;
 	int _inventWidth, _inventHeight;
 
-	bool _inventFl;
-	bool _inventDisplayedFl;
-	bool _removeInventFl;
-	byte *_inventWin1;
-	byte *_inventBuf2;
-public:
 	DialogsManager();
 	~DialogsManager();
 	void setParent(HopkinsEngine *vm);
+	void inventAnim();
+	void showInventory();
 	void showLoadGame();
 	void showSaveGame();
-	void showSaveLoad(int a1);
 	void showOptionsDialog();
-	void showInventory();
-	int  searchSavegames();
 	void testDialogOpening();
-	void inventAnim();
 };
 
 } // End of namespace Hopkins
