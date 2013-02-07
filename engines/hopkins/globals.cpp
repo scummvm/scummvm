@@ -116,14 +116,11 @@ Globals::Globals() {
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
 	_boxWidth = 0;
-	_forestFl = false;
 	_objectWidth = _objectHeight = 0;
-	_helicopterFl = false;
 	_catalogPos = 0;
 	_catalogSize = 0;
 	iRegul = 0;
 	_exitId = 0;
-	_mapCarPosX = _mapCarPosY = 0;
 	PERSO = 0;
 	_screenId = 0;
 	_prevScreenId = 0;
@@ -163,7 +160,6 @@ Globals::Globals() {
 	_saveData = NULL;
 	GESTE = NULL;
 	_inventoryObject = NULL;
-	_forestSprite = NULL;
 	_answerBuffer = g_PTRNUL;
 	ADR_FICHIER_OBJ = NULL;
 	PERSO = NULL;
@@ -204,7 +200,6 @@ Globals::~Globals() {
 	freeMemory((byte *)_saveData);
 	freeMemory(GESTE);
 	freeMemory(_inventoryObject);
-	freeMemory(_forestSprite);
 	freeMemory(_answerBuffer);
 	freeMemory(ADR_FICHIER_OBJ);
 	freeMemory(PERSO);
@@ -283,6 +278,7 @@ void Globals::clearAll() {
 	}
 
 	_vm->_linesManager.clearAll();
+	_vm->_objectsManager.clearAll();
 
 	_saveData = (Sauvegarde *)malloc(sizeof(Sauvegarde));
 	memset(_saveData, 0, sizeof(Sauvegarde));
@@ -293,8 +289,6 @@ void Globals::clearAll() {
 	_inventoryObject = allocMemory(2500);
 
 	ADR_FICHIER_OBJ = g_PTRNUL;
-	_forestSprite = g_PTRNUL;
-	_forestFl = false;
 
 	GESTE = g_PTRNUL;
 	GESTE_FLAG = 0;

@@ -117,8 +117,8 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
+	_objectsManager._helicopterFl = false;
 
-	_globals._helicopterFl = false;
 	_globals.iRegul = 1;
 
 	_graphicsManager.lockScreen();
@@ -162,7 +162,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals.iRegul = 1;
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
-	_globals._mapCarPosX = _globals._mapCarPosY = 0;
+	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
 
@@ -428,8 +428,8 @@ bool HopkinsEngine::runLinuxDemo() {
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
 	_objectsManager.addObject(14);
+	_objectsManager._helicopterFl = false;
 
-	_globals._helicopterFl = false;
 	_eventsManager.mouseOff();
 
 	_graphicsManager.lockScreen();
@@ -452,7 +452,7 @@ bool HopkinsEngine::runLinuxDemo() {
 	_globals.iRegul = 0;
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
-	_globals._mapCarPosX = _globals._mapCarPosY = 0;
+	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
 
@@ -755,12 +755,12 @@ bool HopkinsEngine::runFull() {
 	_objectsManager.addObject(14);
 
 	if (getPlatform() == Common::kPlatformLinux) {
-		_globals._helicopterFl = false;
+		_objectsManager._helicopterFl = false;
 		_eventsManager.mouseOff();
 		// No code has been added to display the version as it's wrong 
 		// in my copy: it mentions a Win95 version v4 using DirectDraw (Strangerke)
 	} else if (getPlatform() == Common::kPlatformWindows) {
-		_globals._helicopterFl = false;
+		_objectsManager._helicopterFl = false;
 		_globals.iRegul = 1;
 		// This code displays the game version.
 		// It wasn't present in the original and could be put in the debugger
@@ -811,7 +811,7 @@ bool HopkinsEngine::runFull() {
 	_globals.iRegul = 0;
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 	_globals.PERSO_TYPE = 0;
-	_globals._mapCarPosX = _globals._mapCarPosY = 0;
+	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
 	
 	_globals._exitId = 0;
@@ -1142,17 +1142,17 @@ bool HopkinsEngine::runFull() {
 			_linesManager.setMaxLineIdx(40);
 			_globals._characterMaxPosY = 435;
 			_globals._disableInventFl = false;
-			_globals._forestFl = true;
+			_objectsManager._forestFl = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
 			_soundManager.WSOUND(13);
-			if (_globals._forestSprite == g_PTRNUL) {
-				_globals._forestSprite = _objectsManager.loadSprite("HOPDEG.SPR");
+			if (_objectsManager._forestSprite == g_PTRNUL) {
+				_objectsManager._forestSprite = _objectsManager.loadSprite("HOPDEG.SPR");
 				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
 			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13, false);
 			if (_globals._exitId < 35 || _globals._exitId > 49) {
-				_globals._forestSprite = _globals.freeMemory(_globals._forestSprite);
-				_globals._forestFl = false;
+				_objectsManager._forestSprite = _globals.freeMemory(_objectsManager._forestSprite);
+				_objectsManager._forestFl = false;
 				_soundManager.DEL_SAMPLE(1);
 			}
 			break;
@@ -1956,7 +1956,7 @@ void HopkinsEngine::restoreSystem() {
 void HopkinsEngine::endLinuxDemo() {
 	_globals._linuxEndDemoFl = true;
 	_graphicsManager.RESET_SEGMENT_VESA();
-	_globals._forestFl = false;
+	_objectsManager._forestFl = false;
 	_eventsManager._breakoutFl = false;
 	_globals._disableInventFl = true;
 	_graphicsManager.loadImage("BOX");
@@ -2832,7 +2832,7 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	_graphicsManager._maxX = SCREEN_WIDTH;
 	_graphicsManager._maxY = SCREEN_HEIGHT - 1;
 	_eventsManager._breakoutFl = false;
-	_globals._forestFl = false;
+	_objectsManager._forestFl = false;
 	_globals._disableInventFl = true;
 	_globals._exitId = 0;
 

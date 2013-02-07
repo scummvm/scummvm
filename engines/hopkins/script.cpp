@@ -614,7 +614,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_graphicsManager.fadeOutLong();
 
 			_vm->_globals._disableInventFl = false;
-			_vm->_globals._helicopterFl = true;
+			_vm->_objectsManager._helicopterFl = true;
 			break;
 
 		case 16:

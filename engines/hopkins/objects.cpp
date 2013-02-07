@@ -38,6 +38,7 @@ ObjectsManager::ObjectsManager() {
 		Common::fill((byte *)&_sprite[i], (byte *)&_sprite[i] + sizeof(SpriteItem), 0);
 	}
 
+	_helicopterFl = false;
 	_priorityFl = false;
 	_oldBorderPos = Common::Point(0, 0);
 	_oldBorderSpriteIndex = 0;
@@ -70,10 +71,22 @@ ObjectsManager::ObjectsManager() {
 	_oldSpriteIndex = 0;
 	_oldFlipFl = false;
 	_curObjectIndex = 0;
+	_forestFl = false;
+	_mapCarPosX = _mapCarPosY = 0;
+	_forestSprite = NULL;
+}
+
+ObjectsManager::~ObjectsManager() {
+	_vm->_globals.freeMemory(_forestSprite);
 }
 
 void ObjectsManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
+}
+
+void ObjectsManager::clearAll() {
+	_forestFl = false;
+	_forestSprite = g_PTRNUL;
 }
 
 /**
@@ -1810,12 +1823,12 @@ void ObjectsManager::handleCityMap() {
 	_vm->_globals.CACHE_OFF(20);
 	_vm->_globals.CACHE_ON();
 
-	if (!_vm->_globals._mapCarPosX && !_vm->_globals._mapCarPosY) {
-		_vm->_globals._mapCarPosX = 900;
-		_vm->_globals._mapCarPosY = 319;
+	if (!_mapCarPosX && !_mapCarPosY) {
+		_mapCarPosX = 900;
+		_mapCarPosY = 319;
 	}
-	addStaticSprite(_spritePtr, Common::Point(_vm->_globals._mapCarPosX, _vm->_globals._mapCarPosY), 0, 1, 0, false, 5, 5);
-	_vm->_eventsManager.setMouseXY(_vm->_globals._mapCarPosX, _vm->_globals._mapCarPosY);
+	addStaticSprite(_spritePtr, Common::Point(_mapCarPosX, _mapCarPosY), 0, 1, 0, false, 5, 5);
+	_vm->_eventsManager.setMouseXY(_mapCarPosX, _mapCarPosY);
 	_vm->_eventsManager.mouseOn();
 	_vm->_graphicsManager.scrollScreen(getSpriteX(0) - 320);
 	_vm->_graphicsManager._scrollOffset = getSpriteX(0) - 320;
@@ -1872,8 +1885,8 @@ void ObjectsManager::handleCityMap() {
 		_vm->_graphicsManager.fadeOutLong();
 	_vm->_globals.iRegul = 0;
 	_vm->_graphicsManager._noFadingFl = false;
-	_vm->_globals._mapCarPosX = getSpriteX(0);
-	_vm->_globals._mapCarPosY = getSpriteY(0);
+	_mapCarPosX = getSpriteX(0);
+	_mapCarPosY = getSpriteY(0);
 	removeSprite(0);
 	_spritePtr = _vm->_globals.freeMemory(_spritePtr);
 	clearScreen();
@@ -1958,7 +1971,7 @@ void ObjectsManager::handleLeftButton() {
 	_vm->_globals.GOACTION = false;
 	int16 *oldRoute = _vm->_linesManager._route;
 	_vm->_linesManager._route = (int16 *)g_PTRNUL;
-	if (_vm->_globals._forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
+	if (_forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
 		if (getSpriteY(0) > 374 && getSpriteY(0) <= 410) {
 			_vm->_linesManager._route = (int16 *)g_PTRNUL;
 			setSpriteIndex(0, _vm->_globals._oldDirectionSpriteIdx);
@@ -2027,7 +2040,7 @@ void ObjectsManager::PARADISE() {
 	char result = _vm->_globals._saveData->_data[svField1];
 	if (result && _vm->_globals._saveData->_data[svField2] && result != 4 && result > 3) {
 		_vm->_fontManager.hideText(5);
-		if (!_vm->_globals._forestFl || _zoneNum < 20 || _zoneNum > 23) {
+		if (!_forestFl || _zoneNum < 20 || _zoneNum > 23) {
 			if (_vm->_graphicsManager._largeScreenFl) {
 				_vm->_graphicsManager._scrollStatus = 2;
 				if (_vm->_eventsManager._startPos.x + 320 - getSpriteX(0) > 160) {
@@ -3955,7 +3968,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		breakFlag = true;
 	}
 
-	if (_vm->_globals._exitId != 8 || _vm->_globals._screenId != 5 || !_vm->_globals._helicopterFl) {
+	if (_vm->_globals._exitId != 8 || _vm->_globals._screenId != 5 || !_helicopterFl) {
 		if (!_vm->_graphicsManager._noFadingFl)
 			_vm->_graphicsManager.fadeOutLong();
 		_vm->_graphicsManager._noFadingFl = false;
@@ -3968,7 +3981,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 			_vm->_graphicsManager.FIN_VISU();
 		clearScreen();
 	} else {
-		_vm->_globals._helicopterFl = false;
+		_helicopterFl = false;
 	}
 	_vm->_globals.iRegul = 0;
 }

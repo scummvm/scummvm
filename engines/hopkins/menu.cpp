@@ -53,7 +53,7 @@ int MenuManager::menu() {
 
 	result = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
-		_vm->_globals._forestFl = false;
+		_vm->_objectsManager._forestFl = false;
 		_vm->_eventsManager._breakoutFl = false;
 		_vm->_globals._disableInventFl = true;
 		_vm->_globals._exitId = 0;

@@ -146,8 +146,8 @@ Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName
 	for (int i = 0; i < 35; ++i)
 		_vm->_globals._saveData->_inventory[i] = _vm->_globals._inventory[i];
 
-	_vm->_globals._saveData->_mapCarPosX = _vm->_globals._mapCarPosX;
-	_vm->_globals._saveData->_mapCarPosY = _vm->_globals._mapCarPosY;
+	_vm->_globals._saveData->_mapCarPosX = _vm->_objectsManager._mapCarPosX;
+	_vm->_globals._saveData->_mapCarPosY = _vm->_objectsManager._mapCarPosY;
 
 	/* Create the savegame */
 	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(_vm->generateSaveName(slot));
@@ -205,8 +205,8 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 	_vm->_globals._exitId = _vm->_globals._saveData->_data[svField5];
 	_vm->_globals._saveData->_data[svField6] = 0;
 	_vm->_globals._screenId = 0;
-	_vm->_globals._mapCarPosX = _vm->_globals._saveData->_mapCarPosX;
-	_vm->_globals._mapCarPosY = _vm->_globals._saveData->_mapCarPosY;
+	_vm->_objectsManager._mapCarPosX = _vm->_globals._saveData->_mapCarPosX;
+	_vm->_objectsManager._mapCarPosY = _vm->_globals._saveData->_mapCarPosY;
 
 	return Common::kNoError;
 }

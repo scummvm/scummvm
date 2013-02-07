@@ -66,10 +66,12 @@ public:
 	int _saveLoadX, _saveLoadY;
 	int _oldInventoryPosX, _oldInventoryPosY;
 	int _oldCharacterPosX, _oldCharacterPosY;
+	int _mapCarPosX, _mapCarPosY;
 	int _eraseVisibleCounter;
 	byte *_saveLoadSprite;
 	byte *_saveLoadSprite2;
 	byte *_spritePtr;
+	byte *_forestSprite;
 	const byte *_oldSpriteData;
 	bool PERSO_ON;
 	bool _saveLoadFl;
@@ -90,9 +92,14 @@ public:
 	int _oldSpriteIndex;
 	bool _oldFlipFl;
 	int _curObjectIndex;
+	bool _helicopterFl;
+	bool _forestFl;
 public:
 	ObjectsManager();
+	~ObjectsManager();
+
 	void setParent(HopkinsEngine *vm);
+	void clearAll();
 
 	void changeObject(int objIndex);
 	byte *CAPTURE_OBJET(int objIndex, bool mode);

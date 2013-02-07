@@ -884,7 +884,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 	if (a1 == 22 || a1 == 23) {
 		_vm->_objectsManager.setFlipSprite(0, false);
 		_vm->_objectsManager.setSpriteIndex(0, 62);
-		_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, false);
+		_vm->_objectsManager.SPACTION(_vm->_objectsManager._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, false);
 		if (a1 == 22) {
 			_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(3));
 			_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(3));
@@ -896,7 +896,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 		_vm->_objectsManager.stopBobAnimation(4);
 		_vm->_objectsManager.setBobAnimation(6);
 		_vm->_soundManager.PLAY_SAMPLE2(1);
-		_vm->_objectsManager.SPACTION1(_vm->_globals._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
+		_vm->_objectsManager.SPACTION1(_vm->_objectsManager._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
 		do
 			_vm->_eventsManager.VBL();
 		while (_vm->_objectsManager.getBobAnimDataIdx(6) < 12);
@@ -932,7 +932,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 	} else if (a1 == 20 || a1 == 21) {
 		_vm->_objectsManager.setFlipSprite(0, true);
 		_vm->_objectsManager.setSpriteIndex(0, 62);
-		_vm->_objectsManager.SPACTION(_vm->_globals._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, true);
+		_vm->_objectsManager.SPACTION(_vm->_objectsManager._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, true);
 		if (a1 == 20) {
 			_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(1));
 			_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(1));
@@ -944,7 +944,7 @@ void TalkManager::REPONSE2(int a1, int a2) {
 		_vm->_objectsManager.stopBobAnimation(2);
 		_vm->_objectsManager.setBobAnimation(5);
 		_vm->_soundManager.PLAY_SAMPLE2(1);
-		_vm->_objectsManager.SPACTION1(_vm->_globals._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
+		_vm->_objectsManager.SPACTION1(_vm->_objectsManager._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
 		do
 			_vm->_eventsManager.VBL();
 		while (_vm->_objectsManager.getBobAnimDataIdx(5) < 12);

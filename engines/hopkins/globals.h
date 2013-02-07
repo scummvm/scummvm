@@ -282,8 +282,6 @@ public:
 	bool _cityMapEnabledFl;
 	bool _linuxEndDemoFl;
 	bool _censorshipFl;
-	bool _helicopterFl;
-	bool _forestFl;
 	bool _introSpeechOffFl;
 	bool _cacheFl;
 	bool _forceHideText;
@@ -299,7 +297,6 @@ public:
 	int _screenId;
 	int _prevScreenId;
 	int _boxWidth;
-	int _mapCarPosX, _mapCarPosY;
 	int _characterMaxPosY;
 	int _baseMapColor;
 	int _spriteSize[500];
@@ -307,7 +304,6 @@ public:
 	int _oldMouseZoneId;
 	int _oldMouseX, _oldMouseY;
 	uint _speed;
-	byte *_forestSprite;
 	byte *_answerBuffer;
 	Sauvegarde *_saveData;
 	Language _language;
