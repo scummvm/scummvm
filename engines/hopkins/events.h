@@ -86,7 +86,6 @@ public:
 	void setMouseOn();
 
 	void VBL();
-
 };
 
 } // End of namespace Hopkins

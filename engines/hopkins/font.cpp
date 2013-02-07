@@ -36,11 +36,19 @@ FontManager::FontManager() {
 	clearAll();
 }
 
+FontManager::~FontManager() {
+	_vm->_globals.freeMemory(_font);
+}
+
 void FontManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
 void FontManager::clearAll() {
+	_font = g_PTRNUL;
+	_fontFixedHeight = 0;
+	_fontFixedWidth = 0;
+
 	for (int idx = 0; idx < 12; ++idx) {
 		Common::fill((byte *)&_text[idx], (byte *)&_text[idx] + sizeof(TxtItem), 0);
 
@@ -135,7 +143,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 	int v73 = xp;
 	if (idx < 0)
 		error("Bad number for text");
-	_vm->_globals._fontFixedWidth = 11;
+	_fontFixedWidth = 11;
 
 	_vm->_globals._boxWidth = 11 * _text[idx]._length;
 	if (_text[idx]._textLoadedFl) {
@@ -144,7 +152,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			int yCurrent = yp + 5;
 			for (int lineNum = 0; lineNum < _text[idx]._lineCount; ++lineNum) {
 				displayText(xp + 5, yCurrent, _text[idx]._lines[lineNum], _text[idx]._color);
-				yCurrent += _vm->_globals._fontFixedHeight + 1;
+				yCurrent += _fontFixedHeight + 1;
 			}
 		} else {
 			int height = _text[idx]._height;
@@ -243,7 +251,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				byte v16 = _tempText[v15];
 				if (v16 <= 31)
 					v16 = ' ';
-				_vm->_globals._boxWidth += _vm->_objectsManager.getWidth(_vm->_globals._font, v16 - 32);
+				_vm->_globals._boxWidth += _vm->_objectsManager.getWidth(_font, v16 - 32);
 			}
 
 			_vm->_globals._boxWidth += 2;
@@ -271,7 +279,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 					do
 						curChar = _tempText[v65 + v19++];
 					while (curChar != ' ' && curChar != '%');
-					if (v19 >= ptrb / _vm->_globals._fontFixedWidth) {
+					if (v19 >= ptrb / _fontFixedWidth) {
 						if (curChar == '%')
 							curChar = ' ';
 						break;
@@ -306,7 +314,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 						byte v24 = (v23 >= (int)line.size()) ? '\0' : line.c_str()[v23];
 						if (v24 <= 32)
 							v24 = ' ';
-						ptrc += _vm->_objectsManager.getWidth(_vm->_globals._font, (byte)v24 - 32);
+						ptrc += _vm->_objectsManager.getWidth(_font, (byte)v24 - 32);
 					}
 					_textSortArray[i] = ptrc;
 				}
@@ -344,7 +352,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		int posX = v73;
 		int posY = yp;
 		int saveWidth = _vm->_globals._boxWidth + 10;
-		int saveHeight = (_vm->_globals._fontFixedHeight + 1) * lineCount + 12;
+		int saveHeight = (_fontFixedHeight + 1) * lineCount + 12;
 		if (_text[idx]._textType == 6) {
 			int v27 = saveWidth / 2;
 			if (v27 < 0)
@@ -378,7 +386,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 
 		for (int lineNum = 0; lineNum < lineCount; ++lineNum) {
 			displayText(v73 + 5, v71, _text[idx]._lines[lineNum], _text[idx]._color);
-			v71 += _vm->_globals._fontFixedHeight + 1;
+			v71 += _fontFixedHeight + 1;
 		}
 
 		int blockWidth = saveWidth + 1;
@@ -418,9 +426,8 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 			break;
 		if (currChar >= 32) {
 			charIndex = currChar - 32;
-			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals._font,
-				currentX, yp, currChar - 32, col);
-			currentX += _vm->_objectsManager.getWidth(_vm->_globals._font, charIndex);
+			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _font, currentX, yp, currChar - 32, col);
+			currentX += _vm->_objectsManager.getWidth(_font, charIndex);
 		}
 	}
 
@@ -436,8 +443,8 @@ void FontManager::displayText(int xp, int yp, const Common::String &message, int
 
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
-			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals._font, xp, yp, characterIndex, col);
-			xp += _vm->_objectsManager.getWidth(_vm->_globals._font, characterIndex);
+			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _font, xp, yp, characterIndex, col);
+			xp += _vm->_objectsManager.getWidth(_font, characterIndex);
 		}
 	}
 }
@@ -463,7 +470,7 @@ void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, i
 			break;
 		if (curChar >= 32) {
 			byte printChar = curChar - 32;
-			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _vm->_globals._font, charEndPosX, yp, printChar, fontCol);
+			_vm->_graphicsManager.displayFont(_vm->_graphicsManager._vesaBuffer, _font, charEndPosX, yp, printChar, fontCol);
 
 			// UGLY HACK: For some obscure reason, the BeOS and OS/2 versions use another font file, which doesn't have variable width.
 			// All the fonts have a length of 9, which results in completely broken text in the computer.
@@ -472,13 +479,13 @@ void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, i
 			int charWidth;
 			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 				if ((curChar >= 'A' && curChar <= 'Z') || (curChar >= 'a' && curChar <= 'z' && curChar != 'm' && curChar != 'w') || (curChar >= '0' && curChar <= '9') || curChar == '*' || (curChar >= 128 && curChar <= 168))
-					charWidth = _vm->_objectsManager.getWidth(_vm->_globals._font, printChar) - 1;
+					charWidth = _vm->_objectsManager.getWidth(_font, printChar) - 1;
 				else if (curChar == 'm' || curChar == 'w')
-					charWidth = _vm->_objectsManager.getWidth(_vm->_globals._font, printChar);
+					charWidth = _vm->_objectsManager.getWidth(_font, printChar);
 				else 
 					charWidth = 6;
 			} else 
-				charWidth = _vm->_objectsManager.getWidth(_vm->_globals._font, printChar);
+				charWidth = _vm->_objectsManager.getWidth(_font, printChar);
 
 			int charStartPosX = charEndPosX;
 			charEndPosX += charWidth;

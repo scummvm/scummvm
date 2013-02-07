@@ -70,10 +70,14 @@ private:
 	byte *_tempText;
 
 public:
+	byte *_font;
+	int _fontFixedWidth;
+	int _fontFixedHeight;
 	TxtItem _text[12];
 	TxtItemList _textList[12];
 
 	FontManager();
+	~FontManager();
 	void setParent(HopkinsEngine *vm);
 
 	void clearAll();

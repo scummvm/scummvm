@@ -1610,9 +1610,9 @@ void HopkinsEngine::initializeSystem() {
 
 	_globals.clearAll();
 
-	_globals._font = _fileManager.loadFile("FONTE3.SPR");
-	_globals._fontFixedWidth = 12;
-	_globals._fontFixedHeight = 21;
+	_fontManager._font = _fileManager.loadFile("FONTE3.SPR");
+	_fontManager._fontFixedWidth = 12;
+	_fontManager._fontFixedHeight = 21;
 	_globals.ICONE = _fileManager.loadFile("ICONE.SPR");
 	_globals.TETE = _fileManager.loadFile("TETE.SPR");
 
@@ -2432,7 +2432,7 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char colour) {
 		if (!curChar)
 			break;
 		if (curChar > 31)
-			strWidth += _objectsManager.getWidth(_globals._font, curChar - 32);
+			strWidth += _objectsManager.getWidth(_fontManager._font, curChar - 32);
 	}
 	int startPosX = 320 - strWidth / 2;
 	int endPosX = strWidth + startPosX;
@@ -2458,8 +2458,8 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char colour) {
 		if (!curChar)
 			break;
 		if (curChar > 31) {
-			_graphicsManager.displayFont(_graphicsManager._vesaBuffer, _globals._font, startPosX, startPosY, curChar - 32, colour);
-			startPosX += _objectsManager.getWidth(_globals._font, curChar - 32);
+			_graphicsManager.displayFont(_graphicsManager._vesaBuffer, _fontManager._font, startPosX, startPosY, curChar - 32, colour);
+			startPosX += _objectsManager.getWidth(_fontManager._font, curChar - 32);
 		}
 	}
 }

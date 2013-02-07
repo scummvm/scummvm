@@ -112,7 +112,6 @@ Globals::Globals() {
 	_oldDirection = 0;
 	_oldDirectionSpriteIdx = 59;
 	_lastDirection = 0;
-	_fontFixedWidth = _fontFixedHeight = 0;
 	TETE = NULL;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
@@ -129,7 +128,6 @@ Globals::Globals() {
 	_screenId = 0;
 	_prevScreenId = 0;
 	_characterMaxPosY = 0;
-	_menuScrollType = 0;
 	_menuScrollSpeed = 0;
 	_menuSpeed = 0;
 	_menuSoundOff = 0;
@@ -168,7 +166,6 @@ Globals::Globals() {
 	_forestSprite = NULL;
 	_answerBuffer = g_PTRNUL;
 	ADR_FICHIER_OBJ = NULL;
-	_font = NULL;
 	PERSO = NULL;
 	_optionDialogSpr = NULL;
 
@@ -200,7 +197,6 @@ Globals::Globals() {
 Globals::~Globals() {
 	free(ICONE);
 	freeMemory(TETE);
-	freeMemory(_font);
 	freeMemory(BUF_ZONE);
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
@@ -265,9 +261,6 @@ void Globals::clearAll() {
 	nbrligne = 80;
 	INIT_ANIM();
 
-	_font = g_PTRNUL;
-	_fontFixedHeight = 0;
-	_fontFixedWidth = 0;
 	_boxWidth = 0;
 
 	_vm->_fontManager.clearAll();

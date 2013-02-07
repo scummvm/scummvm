@@ -238,11 +238,6 @@ void DialogsManager::showOptionsDialog() {
 				doneFlag = true;
 		}
 
-		if (_vm->_graphicsManager.MANU_SCROLL)
-			_vm->_globals._menuScrollType = 1;
-		else
-			_vm->_globals._menuScrollType = 2;
-
 		if (_vm->_globals._speed == 1)
 			_vm->_globals._menuSpeed = 6;
 		else if (_vm->_globals._speed == 2)
