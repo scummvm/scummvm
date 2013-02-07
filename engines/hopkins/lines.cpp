@@ -2463,87 +2463,91 @@ int16 *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			v68 = 1;
 			superRouteIdx = 0;
 		}
-LABEL_90:
-		if (v69 < v73) {
-			int v34 = v68;
-			for (int i = Ligne[v69]._lineDataEndIdx; v34 < i - 2; i = Ligne[v69]._lineDataEndIdx) {
-				super_parcours[superRouteIdx] = Ligne[v69]._lineData[2 * v34];
-				super_parcours[superRouteIdx + 1] = Ligne[v69]._lineData[2 * v34 + 1];
-				super_parcours[superRouteIdx + 2] = Ligne[v69].field6;
-				super_parcours[superRouteIdx + 3] = 0;
-				superRouteIdx += 4;
-				++v34;
-			}
-			for (int j = v69 + 1; j < v73; ++j) {
-				if (PLAN_TEST(
-					Ligne[j]._lineData[0],
-					Ligne[j]._lineData[1],
-					superRouteIdx, j, v73)) {
+		bool loopFl = true;
+		while (loopFl) {
+			loopFl = false;
+			if (v69 < v73) {
+				int v34 = v68;
+				for (int i = Ligne[v69]._lineDataEndIdx; v34 < i - 2; i = Ligne[v69]._lineDataEndIdx) {
+					super_parcours[superRouteIdx] = Ligne[v69]._lineData[2 * v34];
+					super_parcours[superRouteIdx + 1] = Ligne[v69]._lineData[2 * v34 + 1];
+					super_parcours[superRouteIdx + 2] = Ligne[v69].field6;
+					super_parcours[superRouteIdx + 3] = 0;
+					superRouteIdx += 4;
+					++v34;
+				}
+				for (int j = v69 + 1; j < v73; ++j) {
+					if (PLAN_TEST(Ligne[j]._lineData[0], Ligne[j]._lineData[1], superRouteIdx, j, v73)) {
 						v69 = NV_LIGNEDEP;
 						v68 = NV_LIGNEOFS;
 						superRouteIdx = NV_POSI;
-						goto LABEL_90;
+						loopFl = true;
+						break;
+					}
+					if (Ligne[j]._lineDataEndIdx - 2 > 0) {
+						for (int v40 = 0; v40 < Ligne[j]._lineDataEndIdx - 2; v40++) {
+							super_parcours[superRouteIdx] = Ligne[j]._lineData[2 * v40];
+							super_parcours[superRouteIdx + 1] = Ligne[j]._lineData[2 * v40 + 1];
+							super_parcours[superRouteIdx + 2] = Ligne[j].field6;
+							super_parcours[superRouteIdx + 3] = 0;
+							superRouteIdx += 4;
+						}
+					}
 				}
-				if (Ligne[j]._lineDataEndIdx - 2 > 0) {
-					for (int v40 = 0; v40 < Ligne[j]._lineDataEndIdx - 2; v40++) {
-						super_parcours[superRouteIdx] = Ligne[j]._lineData[2 * v40];
-						super_parcours[superRouteIdx + 1] = Ligne[j]._lineData[2 * v40 + 1];
-						super_parcours[superRouteIdx + 2] = Ligne[j].field6;
+				if (loopFl)
+					continue;
+				v68 = 0;
+				v69 = v73;
+			}
+			if (v69 > v73) {
+				for (int k = v68; k > 0; --k) {
+					super_parcours[superRouteIdx] = Ligne[v69]._lineData[2 * k];
+					super_parcours[superRouteIdx + 1] = Ligne[v69]._lineData[2 * k + 1];
+					super_parcours[superRouteIdx + 2] = Ligne[v69].field8;
+					super_parcours[superRouteIdx + 3] = 0;
+					superRouteIdx += 4;
+				}
+				for (int l = v69 - 1; l > v73; --l) {
+					int v48 = l;
+					if (PLAN_TEST(Ligne[l]._lineData[2 * Ligne[v48]._lineDataEndIdx - 2], Ligne[l]._lineData[2 * Ligne[v48]._lineDataEndIdx - 1], superRouteIdx, l, v73)) {
+						v69 = NV_LIGNEDEP;
+						v68 = NV_LIGNEOFS;
+						superRouteIdx = NV_POSI;
+						loopFl = true;
+						break;
+					}
+
+					for (int v49 = Ligne[v48]._lineDataEndIdx - 2; v49 > 0; v49 --) {
+						super_parcours[superRouteIdx] = Ligne[l]._lineData[2 * v49];
+						super_parcours[superRouteIdx + 1] = Ligne[l]._lineData[2 * v49 + 1];
+						super_parcours[superRouteIdx + 2] = Ligne[l].field8;
 						super_parcours[superRouteIdx + 3] = 0;
 						superRouteIdx += 4;
 					}
 				}
-			}
-			v68 = 0;
-			v69 = v73;
-		}
-		if (v69 > v73) {
-			for (int k = v68; k > 0; --k) {
-				super_parcours[superRouteIdx] = Ligne[v69]._lineData[2 * k];
-				super_parcours[superRouteIdx + 1] = Ligne[v69]._lineData[2 * k + 1];
-				super_parcours[superRouteIdx + 2] = Ligne[v69].field8;
-				super_parcours[superRouteIdx + 3] = 0;
-				superRouteIdx += 4;
-			}
-			for (int l = v69 - 1; l > v73; --l) {
-				int v48 = l;
-				if (PLAN_TEST(
-					Ligne[l]._lineData[2 * Ligne[v48]._lineDataEndIdx - 2],
-					Ligne[l]._lineData[2 * Ligne[v48]._lineDataEndIdx - 1],
-					superRouteIdx, l, v73)) {
-						v69 = NV_LIGNEDEP;
-						v68 = NV_LIGNEOFS;
-						superRouteIdx = NV_POSI;
-						goto LABEL_90;
-				}
+				if (loopFl)
+					continue;
 
-				for (int v49 = Ligne[v48]._lineDataEndIdx - 2; v49 > 0; v49 --) {
-					super_parcours[superRouteIdx] = Ligne[l]._lineData[2 * v49];
-					super_parcours[superRouteIdx + 1] = Ligne[l]._lineData[2 * v49 + 1];
-					super_parcours[superRouteIdx + 2] = Ligne[l].field8;
-					super_parcours[superRouteIdx + 3] = 0;
-					superRouteIdx += 4;
-				}
+				v68 = Ligne[v73]._lineDataEndIdx - 1;
+				v69 = v73;
 			}
-			v68 = Ligne[v73]._lineDataEndIdx - 1;
-			v69 = v73;
-		}
-		if (v69 == v73) {
-			if (v68 <= v72) {
-				for (int v57 = v68; v57 < v72; v57++) {
-					super_parcours[superRouteIdx] = Ligne[v73]._lineData[2 * v57];
-					super_parcours[superRouteIdx + 1] = Ligne[v73]._lineData[2 * v57 + 1];
-					super_parcours[superRouteIdx + 2] = Ligne[v73].field6;
-					super_parcours[superRouteIdx + 3] = 0;
-					superRouteIdx += 4;
-				}
-			} else {
-				for (int v53 = v68; v53 > v72; v53--) {
-					super_parcours[superRouteIdx] = Ligne[v73]._lineData[2 * v53];
-					super_parcours[superRouteIdx + 1] = Ligne[v73]._lineData[2 * v53 + 1];
-					super_parcours[superRouteIdx + 2] = Ligne[v73].field8;
-					super_parcours[superRouteIdx + 3] = 0;
-					superRouteIdx += 4;
+			if (v69 == v73) {
+				if (v68 <= v72) {
+					for (int v57 = v68; v57 < v72; v57++) {
+						super_parcours[superRouteIdx] = Ligne[v73]._lineData[2 * v57];
+						super_parcours[superRouteIdx + 1] = Ligne[v73]._lineData[2 * v57 + 1];
+						super_parcours[superRouteIdx + 2] = Ligne[v73].field6;
+						super_parcours[superRouteIdx + 3] = 0;
+						superRouteIdx += 4;
+					}
+				} else {
+					for (int v53 = v68; v53 > v72; v53--) {
+						super_parcours[superRouteIdx] = Ligne[v73]._lineData[2 * v53];
+						super_parcours[superRouteIdx + 1] = Ligne[v73]._lineData[2 * v53 + 1];
+						super_parcours[superRouteIdx + 2] = Ligne[v73].field8;
+						super_parcours[superRouteIdx + 3] = 0;
+						superRouteIdx += 4;
+					}
 				}
 			}
 		}
