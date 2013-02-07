@@ -1431,13 +1431,8 @@ fi
 case $_host in
 caanoo | gp2x | gp2xwiz | openpandora | ps2)
 	if test "$_debug_build" = auto; then
-		# If you want to debug one of these platforms, use '--disable-release --enable-debug'
+		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no
-	fi
-
-	if test "$_release_build" = auto; then
-		# Enable release build by default.
-		_release_build=yes
 	fi
 
 	if test "$_optimizations" = auto; then
@@ -2559,10 +2554,13 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			if test "$_release_build" = no; then
 				DEFINES="$DEFINES -DOP_DEBUG"
-			else
-				# Use -O3 on the OpenPandora for non-debug builds.
+			fi
+
+			# Use -O3 on the OpenPandora for optimized builds.
+			if test "$_optimizations" = yes; then
 				_optimization_level=-O3
 			fi
+
 			define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 			CXXFLAGS="$CXXFLAGS -march=armv7-a"
 			CXXFLAGS="$CXXFLAGS -mtune=cortex-a8"
