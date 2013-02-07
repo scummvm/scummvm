@@ -1185,4 +1185,9 @@ void GrimEngine::openMainMenuDialog() {
 	handleControls(Common::EVENT_KEYUP, key);
 }
 
+void GrimEngine::pauseEngineIntern(bool pause) {
+	g_imuse->pause(pause);
+	g_movie->pause(pause);
+}
+
 } // end of namespace Grim
