@@ -100,6 +100,7 @@ private:
 public:
 	ComputerManager();
 	void setParent(HopkinsEngine *vm);
+
 	void showComputer(ComputerEnum mode);
 };
 

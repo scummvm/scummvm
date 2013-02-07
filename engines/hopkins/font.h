@@ -59,29 +59,31 @@ struct TxtItemList {
 class FontManager {
 private:
 	HopkinsEngine *_vm;
-public:
-	TxtItem _text[12];
-	TxtItemList _textList[12];
+
+	void setTextColor(int idx, byte colByte);
+	void displayText(int xp, int yp, const Common::String &message, int col);
+
 	int _textSortArray[21];
 	Common::String _oldName;
 	Common::String _indexName;
 	int _index[4048];
 	byte *_tempText;
+
 public:
+	TxtItem _text[12];
+	TxtItemList _textList[12];
+
 	FontManager();
 	void setParent(HopkinsEngine *vm);
-	void clearAll();
 
+	void clearAll();
 	void showText(int idx);
 	void hideText(int idx);
-	void setTextColor(int idx, byte colByte);
-	void setOptimalColor(int idx1, int idx2, int idx3, int idx4);
 	void initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int length, int color);
-	void box(int idx, int messageId, const Common::String &filename, int xp, int yp);
-
 	void displayTextVesa(int xp, int yp, const Common::String &message, int col);
-	void displayText(int xp, int yp, const Common::String &message, int col);
 	void renderTextDisplay(int xp, int yp, const Common::String &msg, int col);
+	void setOptimalColor(int idx1, int idx2, int idx3, int idx4);
+	void box(int idx, int messageId, const Common::String &filename, int xp, int yp);
 };
 
 } // End of namespace Hopkins
