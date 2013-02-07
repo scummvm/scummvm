@@ -39,8 +39,7 @@ const char *year4mus[] = {
 	"939e041887c1b14f99ad951ac8e3cb25" //english unpatched
 };
 const char *year3mus[] = {
-	"df556a8fc151f6f48bb68a8cef855e7d", //english unpatched
-	"5115ac22556958552a53b5d54b90a68b" //italian unpatched
+	"df556a8fc151f6f48bb68a8cef855e7d" //english unpatched
 };
 const char *year2mus[] = {
 	"775376fccf0415258be6b33e7e6e4985" //english unpatched
@@ -104,8 +103,7 @@ const char *data001[] = {
 	"e0b2649e5f2cf5bd6fc61c27bd8d370a" //italian unpatched
 };
 const char *data000[] = {
-	"08e2505a6a7fd90d3920131b1297c60f", //english unpatched
-	"e9ddd5106b155c508a20bf85c8802d51" //italian unpatched
+	"08e2505a6a7fd90d3920131b1297c60f" //english unpatched
 };
 const char *credits[] = {
 	"6dcecad8f01657184f8576aab8fb3f00", //english unpatched
