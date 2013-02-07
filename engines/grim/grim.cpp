@@ -180,6 +180,7 @@ GrimEngine::~GrimEngine() {
 	delete g_driver;
 	g_driver = NULL;
 	delete _iris;
+	delete _debugger;
 
 	DebugMan.clearAllDebugChannels();
 }
