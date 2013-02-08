@@ -123,7 +123,8 @@ MODULE_OBJS := \
 	textsplit.o \
 	object.o \
 	debugger.o \
-	md5check.o
+	md5check.o \
+	md5checkdialog.o
 
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \

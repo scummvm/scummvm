@@ -39,6 +39,8 @@
 
 #include "engines/engine.h"
 
+#include "engines/grim/md5check.h"
+#include "engines/grim/md5checkdialog.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/lua.h"
@@ -225,6 +227,14 @@ Common::Error GrimEngine::run() {
 			SearchMan.add("Monkey Island 4 Installer", archive, 0, true);
 		else
 			delete archive;
+	}
+
+	ConfMan.registerDefault("check_gamedata", true);
+	if (ConfMan.getBool("check_gamedata")) {
+		MD5CheckDialog d;
+		d.runModal();
+
+		ConfMan.setBool("check_gamedata", false);
 	}
 
 	g_resourceloader = new ResourceLoader();
