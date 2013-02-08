@@ -2171,7 +2171,7 @@ void HopkinsEngine::playEnding() {
 	_objectsManager.stopBobAnimation(7);
 	if (_globals._saveData->_data[svField135] == 1) {
 		_soundManager._specialSoundNum = 200;
-		_soundManager.skipRefreshFl = true;
+		_soundManager._skipRefreshFl = true;
 		_graphicsManager.FADE_LINUX = 2;
 		_animationManager.playAnim("BERM.ANM", 100, 24, 300);
 		_graphicsManager.FIN_VISU();
@@ -2208,7 +2208,7 @@ void HopkinsEngine::playEnding() {
 		_globals._disableInventFl = false;
 	} else {
 		_soundManager._specialSoundNum = 200;
-		_soundManager.skipRefreshFl = true;
+		_soundManager._skipRefreshFl = true;
 		_animationManager.playAnim2("BERM.ANM", 100, 24, 300);
 		_objectsManager.stopBobAnimation(7);
 		_objectsManager.setBobAnimation(8);

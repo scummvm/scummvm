@@ -198,7 +198,7 @@ SoundManager::SoundManager() {
 	_voiceOffFl = true;
 	_textOffFl = false;
 	_soundFl = false;
-	skipRefreshFl = false;
+	_skipRefreshFl = false;
 	_currentSoundIndex = 0;
 	_oldSoundNumber = 0;
 	_modPlayingFl = false;
@@ -457,6 +457,9 @@ void SoundManager::checkSounds() {
 	checkVoiceActivity();
 }
 
+/**
+ * Checks voices to see if they're finished
+ */
 void SoundManager::checkVoiceActivity() {
 	// Check the status of each voice.
 	bool hasActiveVoice = false;
@@ -588,7 +591,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	// Loop for playing voice
 	breakFlag = 0;
 	do {
-		if (_specialSoundNum != 4 && !skipRefreshFl)
+		if (_specialSoundNum != 4 && !_skipRefreshFl)
 			_vm->_eventsManager.VBL();
 		if (_vm->_eventsManager.getMouseButton())
 			break;
@@ -609,7 +612,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 		_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
 	}
 	_vm->_eventsManager._escKeyFl = false;
-	skipRefreshFl = false;
+	_skipRefreshFl = false;
 	return true;
 }
 
@@ -876,6 +879,9 @@ void SoundManager::updateScummVMSoundSettings() {
 	ConfMan.flushToDisk();
 }
 
+/**
+ * Creates an audio stream based on a passed raw stream
+ */
 Audio::RewindableAudioStream *SoundManager::makeSoundStream(Common::SeekableReadStream *stream) {
 	if (_vm->getPlatform() == Common::kPlatformWindows)
 		return Audio::makeAPCStream(stream, DisposeAfterUse::YES);

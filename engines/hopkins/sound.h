@@ -65,37 +65,7 @@ class SoundManager {
 private:
 	HopkinsEngine *_vm;
 
-	bool checkVoiceStatus(int voiceIndex);
-	void stopVoice(int voiceIndex);
-	void SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength);
-	void playVoice();
-	bool DEL_SAMPLE_SDL(int wavIndex);
-	bool SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item);
-	void LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, bool freeSample);
-	void delWav(int wavIndex);
-	void PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex);
-
-	/**
-	 * Checks voices to see if they're finished
-	 */
-	void checkVoiceActivity();
-
-	/**
-	 * Creates an audio stream based on a passed raw stream
-	 */
-	Audio::RewindableAudioStream *makeSoundStream(Common::SeekableReadStream *stream);
-public:
 	Audio::SoundHandle _musicHandle;
-	int _specialSoundNum;
-	int _soundVolume;
-	int _voiceVolume;
-	int _musicVolume;
-	bool _soundOffFl;
-	bool _musicOffFl;
-	bool _voiceOffFl;
-	bool _textOffFl;
-	bool _soundFl;
-	bool skipRefreshFl;
 	int _currentSoundIndex;
 	bool _modPlayingFl;
 	int _oldSoundNumber;
@@ -104,40 +74,67 @@ public:
 	SwavItem Swav[SWAV_COUNT];
 	SoundItem _sound[SOUND_COUNT];
 	MusicItem _music;
-public:
-	SoundManager();
-	~SoundManager();
-	void setParent(HopkinsEngine *vm);
 
-	void checkSoundEnd();
-	void loadAnimSound();
-	void playAnimSound(int soundNumber);
-	void loadWav(const Common::String &file, int wavIndex);
-	void playWav(int wavIndex);
-	void WSOUND(int soundNumber);
-	void WSOUND_OFF();
 	void playMod(const Common::String &file);
 	void loadMusic(const Common::String &file);
 	void playMusic();
 	void stopMusic();
 	void delMusic();
+	bool checkVoiceStatus(int voiceIndex);
+	void stopVoice(int voiceIndex);
+	void playVoice();
+	void delWav(int wavIndex);
+	void checkVoiceActivity();
+	Common::String setExtension(const Common::String &str, const Common::String &ext);
+	Audio::RewindableAudioStream *makeSoundStream(Common::SeekableReadStream *stream);
 
+	void SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength);
+	bool DEL_SAMPLE_SDL(int wavIndex);
+	bool SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item);
+	void LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, bool freeSample);
+	void PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex);
 
-	bool mixVoice(int voiceId, int voiceMode);
-	void DEL_SAMPLE(int soundIndex);
-	void playSound(const Common::String &file);
-	void PLAY_SOUND2(const Common::String &file2);
-	void MODSetSampleVolume();
-	void MODSetVoiceVolume();
-	void MODSetMusicVolume(int volume);
+public:
+	bool _musicOffFl;
+	bool _soundOffFl;
+	bool _voiceOffFl;
+	bool _textOffFl;
+	bool _soundFl;
+	bool _skipRefreshFl;
+	int _musicVolume;
+	int _soundVolume;
+	int _voiceVolume;
+	int _specialSoundNum;
+public:
+	SoundManager();
+	~SoundManager();
+	void setParent(HopkinsEngine *vm);
+
+	void loadAnimSound();
+	void playAnimSound(int soundNumber);
+
 	void loadSample(int wavIndex, const Common::String &file);
 	void playSample(int wavIndex, int voiceMode);
-	void PLAY_SAMPLE2(int idx);
 
-	void syncSoundSettings();
-	void updateScummVMSoundSettings();
+	void checkSoundEnd();
 	void checkSounds();
-	Common::String setExtension(const Common::String &str, const Common::String &ext);
+	void playSound(const Common::String &file);
+	void updateScummVMSoundSettings();
+	void syncSoundSettings();
+	bool mixVoice(int voiceId, int voiceMode);
+
+	void MODSetMusicVolume(int volume);
+	void MODSetSampleVolume();
+	void MODSetVoiceVolume();
+
+	void loadWav(const Common::String &file, int wavIndex);
+	void playWav(int wavIndex);
+
+	void DEL_SAMPLE(int soundIndex);
+	void WSOUND(int soundNumber);
+	void WSOUND_OFF();
+	void PLAY_SOUND2(const Common::String &file2);
+	void PLAY_SAMPLE2(int idx);
 };
 
 } // End of namespace Hopkins

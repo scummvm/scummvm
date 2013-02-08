@@ -33,16 +33,16 @@ namespace Hopkins {
 class ScriptManager {
 private:
 	HopkinsEngine *_vm;
+	int checkOpcode(const byte *dataP);
 public:
 	bool TRAVAILOBJET;
-public:
+
 	ScriptManager();
 	void setParent(HopkinsEngine *vm);
 
 	int handleOpcode(byte *dataP);
-	int checkOpcode(const byte *dataP);
-	int handleGoto(const byte *dataP);
 	int handleIf(const byte *dataP, int a2);
+	int handleGoto(const byte *dataP);
 };
 
 } // End of namespace Hopkins
