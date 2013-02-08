@@ -91,18 +91,19 @@ private:
 	int _lastLine;
 	int _linesNumb;
 
-	int CALC_PROPRE(int idx);
 	int checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow);
 	void removeZoneLine(int idx);
 	void removeLine(int idx);
 	bool checkCollisionLine(int xp, int yp, int *foundDataIdx, int *foundLineIdx, int startLineIdx, int endLineIdx);
+	bool checkSmoothMove(int fromX, int fromY, int destX, int destY);
+	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
+
+	int CALC_PROPRE(int idx);
 	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *route, int a7, int a8, int a9);
 	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *route, int a7);
 	bool MIRACLE(int a1, int a2, int a3, int a4, int a5);
 	int GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int a7, int16 *route, int a9);
 	int PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, int a6, int a7);
-	bool checkSmoothMove(int fromX, int fromY, int destX, int destY);
-	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
 	bool PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5);
 	int TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
 	int colision(int xp, int yp);
@@ -114,23 +115,24 @@ public:
 	LinesManager();
 	~LinesManager();
 	void setParent(HopkinsEngine *vm);
+	void clearAll();
 
+	void setMaxLineIdx(int idx);
 	int checkInventoryHotspots(int posX, int posY);
-	void loadLines(const Common::String &file);
 	void addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx);
-	int16 *PARCOURS2(int fromX, int fromY, int destX, int destY);
-	void PACOURS_PROPRE(int16 *route);
+	void loadLines(const Common::String &file);
+	void addLine(int idx, int direction, int a3, int a4, int a5, int a6);
+	void initRoute();
 	int16 *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	void clearAllZones();
 	void resetLines();
-	void addLine(int idx, int direction, int a3, int a4, int a5, int a6);
-	void initRoute();
+	void resetLinesNumb();
+	void resetLastLine();
+
 	int MZONE();
 	void CARRE_ZONE();
-	void clearAll();
-	void setMaxLineIdx(int idx);
-	void resetLastLine();
-	void resetLinesNumb();
+	int16 *PARCOURS2(int fromX, int fromY, int destX, int destY);
+	void PACOURS_PROPRE(int16 *route);
 };
 
 } // End of namespace Hopkins

@@ -56,75 +56,23 @@ class ObjectsManager {
 private:
 	HopkinsEngine *_vm;
 
-public:
-	SpriteItem _sprite[6];
-	bool _priorityFl;
-	Common::Point _oldBorderPos; 
 	int _oldBorderSpriteIndex;
-	Common::Point _borderPos;
 	int _borderSpriteIndex;
-	int _saveLoadX, _saveLoadY;
-	int _oldInventoryPosX, _oldInventoryPosY;
-	int _oldCharacterPosX, _oldCharacterPosY;
-	int _mapCarPosX, _mapCarPosY;
-	int _eraseVisibleCounter;
-	byte *_saveLoadSprite;
-	byte *_saveLoadSprite2;
 	byte *_spritePtr;
-	byte *_forestSprite;
 	const byte *_oldSpriteData;
-	bool PERSO_ON;
-	bool _saveLoadFl;
-	bool _visibleFl;
-	bool BOBTOUS;
-	int _zoneNum;
-	bool _forceZoneFl;
-	bool _changeVerbFl;
 	int _verb;
-	bool _changeHeadFl;
-	bool _disableFl;
-	bool _twoCharactersFl;
-	Common::Point _characterPos;
-	int _startSpriteIndex;
-	bool OBSSEUL;
-	int _jumpVerb;
-	int _jumpZone;
 	int _oldSpriteIndex;
 	bool _oldFlipFl;
-	int _curObjectIndex;
-	bool _helicopterFl;
-	bool _forestFl;
-public:
-	ObjectsManager();
-	~ObjectsManager();
-
-	void setParent(HopkinsEngine *vm);
-	void clearAll();
-
-	void changeObject(int objIndex);
-	byte *CAPTURE_OBJET(int objIndex, bool mode);
-	void removeObject(int objIndex);
-
-	int getWidth(const byte *objectData, int idx);
-	int getHeight(const byte *objectData, int idx);
+private:
 	void sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	void DEL_FICHIER_OBJ();
 
-	byte *loadSprite(const Common::String &file);
-	void setOffsetXY(byte *data, int idx, int xp, int yp, bool isSize);
 	int getOffsetX(const byte *spriteData, int spriteIndex, bool isSize);
 	int getOffsetY(const byte *spriteData, int spriteIndex, bool isSize);
-	void displaySprite();
 
 	void capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
-	void addObject(int objIndex);
-
 	void initBob();
-	void resetBob(int idx);
 	void setBobInfo(int idx);
-	void BOB_VISU(int idx);
-	void BOB_OFF(int idx);
-	void BOB_OFFSET(int idx, int offset);
 	void SCBOB(int idx);
 	void CALCUL_BOB(int idx);
 
@@ -136,26 +84,11 @@ public:
 	void displayBobAnim();
 	void displayVBob();
 
-	int getSpriteX(int idx);
-	int getSpriteY(int idx);
 	void clearSprite();
-	void animateSprite(int idx);
-	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int a8, int a9);
-	void removeSprite(int idx);
-	void setSpriteX(int idx, int xp);
-	void setSpriteIndex(int idx, int spriteIndex);
-	void setSpriteY(int idx, int yp);
 	void setSpriteZoom(int idx, int zoomFactor);
-	void setFlipSprite(int idx, bool flip);
-
-	void checkZone();
-	void GOHOME();
+	
 	void GOHOME2();
 	void loadZone(const Common::String &file);
-	void handleCityMap();
-	void handleLeftButton();
-	void PARADISE();
-	void clearScreen();
 
 	/**
 	 * Change the currently active player
@@ -164,14 +97,108 @@ public:
 	 */
 	void changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
 
-	void computeAndSetSpriteSize();
 	void nextVerbIcon();
-	void handleRightButton();
+
+	int getBobFrameIndex(int idx);
+
+	void SPECIAL_INI();
+
+	void ACTION(const byte *spriteData, const Common::String &actionStr, int a3, int a4, int speed, bool flipFl);
+	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
+public:
+	bool _disableFl;
+	bool _forestFl;
+	bool _visibleFl;
+	bool _saveLoadFl;
+	bool _forceZoneFl;
+	bool _changeVerbFl;
+	bool _helicopterFl;
+	bool _twoCharactersFl;
+	bool _changeHeadFl;
+	bool _priorityFl;
+	int _jumpVerb;
+	int _jumpZone;
+	int _zoneNum;
+	int _eraseVisibleCounter;
+	int _curObjectIndex;
+	int _startSpriteIndex;
+	int _oldInventoryPosX, _oldInventoryPosY;
+	int _saveLoadX, _saveLoadY;
+	int _mapCarPosX, _mapCarPosY;
+	int _oldCharacterPosX, _oldCharacterPosY;
+	Common::Point _borderPos;
+	Common::Point _oldBorderPos; 
+	Common::Point _characterPos;
+	byte *_forestSprite;
+	byte *_saveLoadSprite;
+	byte *_saveLoadSprite2;
+	SpriteItem _sprite[6];
+
+	bool PERSO_ON;
+	bool BOBTOUS;
+	bool OBSSEUL;
+
+	ObjectsManager();
+	~ObjectsManager();
+
+	void setParent(HopkinsEngine *vm);
+	void clearAll();
+
+	int getWidth(const byte *objectData, int idx);
+	int getHeight(const byte *objectData, int idx);
+	byte *loadSprite(const Common::String &file);
+	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int a8, int a9);
+	void animateSprite(int idx);
+	void removeSprite(int idx);
+	void setSpriteX(int idx, int xp);
+	void setSpriteY(int idx, int yp);
+	int getSpriteX(int idx);
+	int getSpriteY(int idx);
+	void setSpriteIndex(int idx, int spriteIndex);
+	void displaySprite();
+	void computeAndSetSpriteSize();
+	void setFlipSprite(int idx, bool flip);
+
+	int getBobAnimDataIdx(int idx);
 	void initBorder(int zoneIdx);
 	void nextObjectIcon(int idx);
 	void takeInventoryObject(int idx);
-	void OPTI_OBJET();
 	void handleSpecialGames();
+
+	void addObject(int objIndex);
+	void changeObject(int objIndex);
+	void removeObject(int objIndex);
+
+	void checkZone();
+	void enableZone(int idx);
+	void disableZone(int idx);
+
+	void resetBob(int idx);
+	void setBobAnimDataIdx(int idx, int animIdx);
+	void setBobAnimation(int idx);
+	void stopBobAnimation(int idx);
+	int getBobPosX(int idx);
+	int getBobPosY(int idx);
+
+	void handleCityMap();
+	void clearScreen();
+	void disableVerb(int idx, int a2);
+	void enableVerb(int idx, int a2);
+	void lockAnimX(int idx, int x);
+	void handleLeftButton();
+	void handleRightButton();
+	void setOffsetXY(byte *data, int idx, int xp, int yp, bool isSize);
+
+	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
+		const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen);
+	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
+		const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen);
+	byte *CAPTURE_OBJET(int objIndex, bool mode);
+	void OPTI_OBJET();
+	void BOB_OFF(int idx);
+	void BOB_VISU(int idx);
+	void INILINK(const Common::String &file);
+	void SPACTION(byte *spriteData, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl);
 	void BOB_VIVANT(int idx);
 	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);
 	void VBOB_OFF(int idx);
@@ -181,42 +208,13 @@ public:
 	void ACTION_FACE(int idx);
 	void Q_GAUCHE(int idx);
 	void ACTION_GAUCHE(int idx);
-
-	void enableZone(int idx);
-	void disableZone(int idx);
 	void OPTI_ONE(int idx, int animIdx, int destPosi, int animAction);
-	int getBobAnimDataIdx(int idx);
-	void setBobAnimation(int idx);
-	void stopBobAnimation(int idx);
-	void setBobAnimDataIdx(int idx, int animIdx);
-	int getBobPosX(int idx);
-	int getBobPosY(int idx);
-	int getBobFrameIndex(int idx);
-
-	void INILINK(const Common::String &file);
-	void SPECIAL_INI();
-	void OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx);
 	void SCI_OPTI_ONE(int idx, int animIdx, int a3, int a4);
-	void disableVerb(int idx, int a2);
-	void enableVerb(int idx, int a2);
-
-	void ACTION(const byte *spriteData, const Common::String &actionStr, int a3, int a4, int speed, bool flipFl);
-	void SPACTION(byte *spriteData, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl);
+	void GOHOME();
+	void OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx);
+	void BOB_OFFSET(int idx, int offset);
 	void SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int speed);
-	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
-	void lockAnimX(int idx, int x);
-
-	/**
-	 * Game scene control method
-	 */
-	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
-			const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen);
-
-	/**
-	 * Game scene control method
-	 */
-	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
-			const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen);
+	void PARADISE();
 };
 
 } // End of namespace Hopkins

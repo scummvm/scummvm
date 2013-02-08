@@ -3755,6 +3755,9 @@ void ObjectsManager::lockAnimX(int idx, int x) {
 	_vm->_globals._lockedAnims[idx]._posX = x;
 }
 
+/**
+ * Game scene control method
+ */
 void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 							   const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen) {
 	_vm->_dialogsManager._inventFl = false;
@@ -3840,6 +3843,9 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_globals.iRegul = 0;
 }
 
+/**
+ * Game scene control method
+ */
 void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
 								const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen) {
 	_vm->_dialogsManager._inventFl = false;
