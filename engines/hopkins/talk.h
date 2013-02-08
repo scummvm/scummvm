@@ -33,24 +33,17 @@ class HopkinsEngine;
 class TalkManager {
 private:
 	HopkinsEngine *_vm;
-public:
+
 	Common::String _questionsFilename;
 	Common::String _answersFilename;
 	byte *_characterBuffer;
 	byte *_characterPalette;
-	byte *_characterSprite;
-	byte *_characterAnim;
 	size_t _characterSize;
 	bool STATI;
 	int _dialogueMesgId1, _dialogueMesgId2;
 	int _dialogueMesgId3, _dialogueMesgId4;
 	int _paletteBufferIdx;
-public:
-	TalkManager();
-	void setParent(HopkinsEngine *vm);
 
-	void PARLER_PERSO2(const Common::String &filename);
-	void PARLER_PERSO(const Common::String &filename);
 	void getStringFromBuffer(int srcStart, Common::String &dest, const char *srcData);
 	int dialogQuestion();
 	int dialogAnswer(int idx);
@@ -58,13 +51,24 @@ public:
 	void dialogWait();
 	void dialogTalk();
 	void dialogEndTalk();
-	int VERIF_BOITE(int a1, const Common::String &a2, int a3);
-	void VISU_PARLE();
-	void BOB_VISU_PARLE(int idx);
 	void startCharacterAnim0(int startIndedx, bool readOnlyFl);
 	void initCharacterAnim();
 	void clearCharacterAnim();
 	bool searchCharacterAnim(int idx, const byte *bufPerso, int animId, int bufferSize);
+
+	int VERIF_BOITE(int a1, const Common::String &a2, int a3);
+	void VISU_PARLE();
+	void BOB_VISU_PARLE(int idx);
+
+public:
+	byte *_characterAnim;
+	byte *_characterSprite;
+
+	TalkManager();
+	void setParent(HopkinsEngine *vm);
+
+	void PARLER_PERSO2(const Common::String &filename);
+	void PARLER_PERSO(const Common::String &filename);
 	void REPONSE(int zone, int verb);
 	void REPONSE2(int a1, int a2);
 	void OBJET_VIVANT(const Common::String &a2);
