@@ -39,7 +39,6 @@ TalkManager::TalkManager() {
 	_characterSprite = NULL;
 	_characterAnim = NULL;
 	_characterSize = 0;
-	STATI = false;
 	_dialogueMesgId1 = _dialogueMesgId2 = _dialogueMesgId3 = _dialogueMesgId4 = 0;
 	_paletteBufferIdx = 0;
 }
@@ -105,9 +104,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		int answer = 0;
 		int dlgAnswer;
 		do {
-			dlgAnswer = dialogQuestion();
+			dlgAnswer = dialogQuestion(false);
 			if (dlgAnswer != _dialogueMesgId4)
-				answer = dialogAnswer(dlgAnswer);
+				answer = dialogAnswer(dlgAnswer, false);
 			if (answer == -1)
 				dlgAnswer = _dialogueMesgId4;
 			_vm->_eventsManager.VBL();
@@ -117,7 +116,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		int idx = 1;
 		int answer;
 		do
-			answer = dialogAnswer(idx++);
+			answer = dialogAnswer(idx++, false);
 		while (answer != -1);
 	}
 	clearCharacterAnim();
@@ -153,7 +152,6 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 
 void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	// TODO: The original disables the mouse cursor here
-	STATI = true;
 	bool oldDisableInventFl = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
 	_characterBuffer = _vm->_fileManager.searchCat(filename, 5);
@@ -195,9 +193,9 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	if (!_vm->_globals._introSpeechOffFl) {
 		int answer;
 		do {
-			answer = dialogQuestion();
+			answer = dialogQuestion(true);
 			if (answer != _dialogueMesgId4) {
-				if (dialogAnswer(answer) == -1)
+				if (dialogAnswer(answer, true) == -1)
 					answer = _dialogueMesgId4;
 			}
 		} while (answer != _dialogueMesgId4);
@@ -207,7 +205,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		int idx = 1;
 		int answer;
 		do
-			answer = dialogAnswer(idx++);
+			answer = dialogAnswer(idx++, true);
 		while (answer != -1);
 	}
 
@@ -219,15 +217,14 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	// TODO: The original reenables the mouse cursor here
 	_vm->_globals._disableInventFl = oldDisableInventFl;
-	STATI = false;
 }
 
 void TalkManager::getStringFromBuffer(int srcStart, Common::String &dest, const char *srcData) {
 	dest = Common::String(srcData + srcStart);
 }
 
-int TalkManager::dialogQuestion() {
-	if (STATI) {
+int TalkManager::dialogQuestion(bool animatedFl) {
+	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 48;
 		int curVal = (int16)READ_LE_UINT16(bufPtr);
 		if (curVal != 0)
@@ -297,7 +294,7 @@ int TalkManager::dialogQuestion() {
 	_vm->_fontManager.hideText(7);
 	_vm->_fontManager.hideText(8);
 
-	if (STATI) {
+	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 48;
 
 		int curVal = (int16)READ_LE_UINT16(bufPtr);
@@ -327,7 +324,7 @@ int TalkManager::dialogQuestion() {
   return retVal;
 }
 
-int TalkManager::dialogAnswer(int idx) {
+int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 	int charIdx;
 	byte *charBuf;
 	for (charBuf = _characterBuffer + 110, charIdx = 0; (int16)READ_LE_UINT16(charBuf) != idx; charBuf += 20) {
@@ -351,7 +348,7 @@ int TalkManager::dialogAnswer(int idx) {
 
 	if (!v6)
 		v6 = 10;
-	if (STATI) {
+	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
 		int curVal = (int16)READ_LE_UINT16(bufPtr);
 		if (curVal)
@@ -401,7 +398,7 @@ int TalkManager::dialogAnswer(int idx) {
 
 	if (!_vm->_soundManager._textOffFl)
 		_vm->_fontManager.hideText(9);
-	if (STATI) {
+	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
 		int curVal = (int16)READ_LE_UINT16(bufPtr);
 		if (curVal)
@@ -876,16 +873,16 @@ void TalkManager::REPONSE(int zone, int verb) {
 	return;
 }
 
-void TalkManager::REPONSE2(int a1, int a2) {
+void TalkManager::REPONSE2(int zone, int a2) {
 	int indx = 0;
 	if (a2 != 5 || _vm->_globals._saveData->_data[svField3] != 4)
 		return;
 
-	if (a1 == 22 || a1 == 23) {
+	if (zone == 22 || zone == 23) {
 		_vm->_objectsManager.setFlipSprite(0, false);
 		_vm->_objectsManager.setSpriteIndex(0, 62);
 		_vm->_objectsManager.SPACTION(_vm->_objectsManager._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, false);
-		if (a1 == 22) {
+		if (zone == 22) {
 			_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(3));
 			_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(3));
 		} else { // a1 == 23
@@ -929,11 +926,11 @@ void TalkManager::REPONSE2(int a1, int a2) {
 		_vm->_globals._saveData->_data[indx] = 2;
 		_vm->_objectsManager.disableZone(22);
 		_vm->_objectsManager.disableZone(23);
-	} else if (a1 == 20 || a1 == 21) {
+	} else if (zone == 20 || zone == 21) {
 		_vm->_objectsManager.setFlipSprite(0, true);
 		_vm->_objectsManager.setSpriteIndex(0, 62);
 		_vm->_objectsManager.SPACTION(_vm->_objectsManager._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 4, true);
-		if (a1 == 20) {
+		if (zone == 20) {
 			_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(1));
 			_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(1));
 		} else { // a1 == 21

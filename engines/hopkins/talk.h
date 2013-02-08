@@ -39,14 +39,13 @@ private:
 	byte *_characterBuffer;
 	byte *_characterPalette;
 	size_t _characterSize;
-	bool STATI;
 	int _dialogueMesgId1, _dialogueMesgId2;
 	int _dialogueMesgId3, _dialogueMesgId4;
 	int _paletteBufferIdx;
 
 	void getStringFromBuffer(int srcStart, Common::String &dest, const char *srcData);
-	int dialogQuestion();
-	int dialogAnswer(int idx);
+	int dialogQuestion(bool animatedFl);
+	int dialogAnswer(int idx, bool animatedFl);
 	void searchCharacterPalette(int startIdx, bool dark);
 	void dialogWait();
 	void dialogTalk();
@@ -70,7 +69,7 @@ public:
 	void PARLER_PERSO2(const Common::String &filename);
 	void PARLER_PERSO(const Common::String &filename);
 	void REPONSE(int zone, int verb);
-	void REPONSE2(int a1, int a2);
+	void REPONSE2(int zone, int a2);
 	void OBJET_VIVANT(const Common::String &a2);
 };
 

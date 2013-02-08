@@ -437,22 +437,16 @@ void Globals::loadCache(const Common::String &file) {
 	CACHE_BANQUE[1] = spriteData;
 	int v15 = 60;
 	for (int i = 0; i <= 21; i++) {
-		int v11 = (int16)READ_LE_UINT16((uint16 *)ptr + v15);
-		int v4 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 1);
-		int v5 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 2);
-		int v6 = i;
-		Cache[v6].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 4);
-		Cache[v6]._spriteIndex = v11;
-		Cache[v6]._x = v4;
-		Cache[v6]._y = v5;
+		Cache[i]._spriteIndex = (int16)READ_LE_UINT16((uint16 *)ptr + v15);
+		Cache[i]._x = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 1);
+		Cache[i]._y = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 2);
+		Cache[i].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 4);
 		if (spriteData == g_PTRNUL) {
 			Cache[i]._useCount = 0;
 		} else {
-			int v8 = _vm->_objectsManager.getWidth(spriteData, v11);
-			int v9 = _vm->_objectsManager.getHeight(spriteData, v11);
 			Cache[i]._spriteData = spriteData;
-			Cache[i]._width = v8;
-			Cache[i]._height = v9;
+			Cache[i]._width = _vm->_objectsManager.getWidth(spriteData, Cache[i]._spriteIndex);
+			Cache[i]._height = _vm->_objectsManager.getHeight(spriteData, Cache[i]._spriteIndex);
 			Cache[i]._useCount = 1;
 		}
 
