@@ -87,7 +87,7 @@ void MD5CheckDialog::drawDialog() {
 }
 
 void MD5CheckDialog::check() {
-	setResult(1);
+	_checkOk = true;
 	MD5Check::startCheckFiles();
 	_progress = 0.f;
 	draw();
@@ -97,8 +97,9 @@ void MD5CheckDialog::handleTickle() {
 	int p, t;
 	Common::String filename;
 	if (!MD5Check::advanceCheck(&p, &t)) {
-		setResult(0);
+		_checkOk = false;
 	}
+	setResult(_checkOk);
 	_progress = (float)p / (float)t;
 
 	if (p == t) {

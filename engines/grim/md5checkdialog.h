@@ -42,6 +42,7 @@ private:
 
 	Common::Rect _progressRect;
 	float _progress;
+	bool _checkOk;
 };
 
 }
