@@ -63,10 +63,12 @@ const char *vox0002[] = {
 	"616e4147c39268b650ce112bf79ea3a1" //italian unpatched
 };
 const char *vox0001[] = {
+	"40beb2e0a6572dc89fddb21f282bc237", //english pre-patched
 	"6a32f8079d2d98d1c10ec8364765fd4b", //english unpatched
 	"a0455d5d883ed46f0bda5030e4b5654c" //italian unpatched
 };
 const char *vox0000[] = {
+	"c7900f32d48d7e265629bd355a21c795", //english pre-patched
 	"67627f2d9314f9c0ae55dd2099fc052f", //english unpatched
 	"c9e1a755f280b3ebff58578c4e5f1e52" //italian unpatched
 };
@@ -102,6 +104,7 @@ const char *data001[] = {
 	"84cf3072586fe2840ae16774adb6f5cb" //english unpatched
 };
 const char *data000[] = {
+	"2069b8bf113119910df8219e787e7e94", //english pre-patched
 	"08e2505a6a7fd90d3920131b1297c60f" //english unpatched
 };
 const char *credits[] = {
