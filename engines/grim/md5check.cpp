@@ -52,41 +52,50 @@ const char *year0mus[] = {
 };
 const char *vox0004[] = {
 	"ae53a36f77eb0d42a28653b28c345439", //english unpatched
-	"57915d4dd3aa5aa44817477b7bd41ce6" //italian unpatched
+	"57915d4dd3aa5aa44817477b7bd41ce6", //italian unpatched
+	"bae246c5335c1d139b97a48277ee8841" //german unpatched
 };
 const char *vox0003[] = {
 	"7c88ad7c949a516793b584299f33ed23", //english unpatched
-	"f900cb063fbd0ef2a0516e9a00291d13" //italian unpatched
+	"f900cb063fbd0ef2a0516e9a00291d13", //italian unpatched
+	"e13eb421b9490cbaeef66f0cf6156764" //german unpatched
 };
 const char *vox0002[] = {
 	"70419878e32377d9d2906fbcb2cb59b5", //english unpatched
-	"616e4147c39268b650ce112bf79ea3a1" //italian unpatched
+	"616e4147c39268b650ce112bf79ea3a1", //italian unpatched
+	"5ea9fde04f3315a51fe1fe9c5bdb9d0d" //german unpatched
 };
 const char *vox0001[] = {
 	"40beb2e0a6572dc89fddb21f282bc237", //english pre-patched
 	"6a32f8079d2d98d1c10ec8364765fd4b", //english unpatched
-	"a0455d5d883ed46f0bda5030e4b5654c" //italian unpatched
+	"a0455d5d883ed46f0bda5030e4b5654c", //italian unpatched
+	"e13eb421b9490cbaeef66f0cf6156764" //german unpatched
 };
 const char *vox0000[] = {
 	"c7900f32d48d7e265629bd355a21c795", //english pre-patched
 	"67627f2d9314f9c0ae55dd2099fc052f", //english unpatched
-	"c9e1a755f280b3ebff58578c4e5f1e52" //italian unpatched
+	"c9e1a755f280b3ebff58578c4e5f1e52", //italian unpatched
+	"f1b8c1de4f82099ab080f9cbe2b02da6" //german unpatched
 };
 const char *movie04[] = {
 	"605d6f2cc4d21fbe702d8e637b5bcfa1", //english unpatched
-	"7c8d7e0f4beaca3910658290e8b14cf8" //italian unpatched
+	"7c8d7e0f4beaca3910658290e8b14cf8", //italian unpatched
+	"f1b8c1de4f82099ab080f9cbe2b02da6" //german unpatched
 };
 const char *movie03[] = {
 	"113a768e7206016df72f9d2f5c1851b7", //english unpatched
-	"0fdb7dda9ebc049eac386d29bface366" //italian unpatched
+	"0fdb7dda9ebc049eac386d29bface366", //italian unpatched
+	"500bc51ce211d528f6c7170f479c9525" //german unpatched
 };
 const char *movie02[] = {
 	"24a8704a331a03097d195f3597fe21e1", //english unpatched
-	"129dad4e40987e91c5549c819d0dad1d" //italian unpatched
+	"129dad4e40987e91c5549c819d0dad1d", //italian unpatched
+	"a4d5c108a167afb0674e26790edf65e6" //german unpatched
 };
 const char *movie01[] = {
 	"548a19a0a4d4ccb8660966d646210820", //english unpatched
-	"9fd30d0289f9b4d5c09e821a0a478db5" //italian unpatched
+	"9fd30d0289f9b4d5c09e821a0a478db5", //italian unpatched
+	"500bc51ce211d528f6c7170f479c9525" //german unpatched
 };
 const char *movie00[] = {
 	"0c6b8e4fa74024c4afdf7758f8d8b1a0" //english unpatched
@@ -95,7 +104,8 @@ const char *data004[] = {
 	"2cdb79d3606965a9a0a3378507488dd7" //english unpatched
 };
 const char *data003[] = {
-	"76dcfc2c21f3412415674c65611fb76d" //english unpatched
+	"76dcfc2c21f3412415674c65611fb76d", //english unpatched
+	"7f76c20f1d77db287473ffef10b8b309" //german unpatched
 };
 const char *data002[] = {
 	"d236403c0d860961963db0134380001f" //english unpatched
@@ -109,10 +119,12 @@ const char *data000[] = {
 };
 const char *credits[] = {
 	"6dcecad8f01657184f8576aab8fb3f00", //english unpatched
-	"1827307248d55c07642342c9213a4723" //italian unpatched
+	"1827307248d55c07642342c9213a4723", //italian unpatched
+	"2e6319c2ec5772ced5dc9f8b41eb5de7" //german unpatched
 };
 const char *local[] = {
-	"6142624ce13ea3c9079aa80918010c4a" //italian unpatched
+	"6142624ce13ea3c9079aa80918010c4a", //italian unpatched
+	"7f76c20f1d77db287473ffef10b8b309" //german unpatched
 };
 
 
