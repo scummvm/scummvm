@@ -64,7 +64,7 @@ const char *vox0002[] = {
 };
 const char *vox0001[] = {
 	"6a32f8079d2d98d1c10ec8364765fd4b", //english unpatched
-	"ec015ac1123315274c3cc51a5626619c" //italian unpatched
+	"a0455d5d883ed46f0bda5030e4b5654c" //italian unpatched
 };
 const char *vox0000[] = {
 	"67627f2d9314f9c0ae55dd2099fc052f", //english unpatched
