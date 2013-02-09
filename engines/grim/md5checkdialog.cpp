@@ -99,10 +99,10 @@ void MD5CheckDialog::handleTickle() {
 	if (!MD5Check::advanceCheck(&p, &t)) {
 		_checkOk = false;
 	}
-	setResult(_checkOk);
 	_progress = (float)p / (float)t;
 
 	if (p == t) {
+		setResult(_checkOk);
 		close();
 	}
 	draw();
