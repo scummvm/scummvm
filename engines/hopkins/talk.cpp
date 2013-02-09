@@ -241,10 +241,10 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 		dialogWait();
 	}
 
-	int sentence1LineNumb = VERIF_BOITE(_dialogueMesgId1, _questionsFilename, 65);
-	int sentence2LineNumb = VERIF_BOITE(_dialogueMesgId2, _questionsFilename, 65);
-	int sentence3LineNumb = VERIF_BOITE(_dialogueMesgId3, _questionsFilename, 65);
-	int sentence4LineNumb = VERIF_BOITE(_dialogueMesgId4, _questionsFilename, 65);
+	int sentence1LineNumb = countBoxLines(_dialogueMesgId1, _questionsFilename);
+	int sentence2LineNumb = countBoxLines(_dialogueMesgId2, _questionsFilename);
+	int sentence3LineNumb = countBoxLines(_dialogueMesgId3, _questionsFilename);
+	int sentence4LineNumb = countBoxLines(_dialogueMesgId4, _questionsFilename);
 
 	int sentence4PosY = 420 - 20 * sentence4LineNumb;
 	int sentence3PosY = sentence4PosY - 20 * sentence3LineNumb;
@@ -498,34 +498,24 @@ void TalkManager::dialogEndTalk() {
 	}
 }
 
-int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
-	int v9;
-	int v10;
-	char v11;
-	char v13;
-	int v15;
-	byte *ptr;
-	int v17;
-	byte *v19;
-	uint32 indexData[4047];
-	Common::String filename;
-	Common::String dest;
-	Common::File f;
-	int filesize;
-
+int TalkManager::countBoxLines(int idx, const Common::String &file) {
 	_vm->_fontManager._fontFixedWidth = 11;
 
 	// Build up the filename
+	Common::String filename;
+	Common::String dest;
 	filename = dest = file;
 	while (filename.lastChar() != '.')
 		filename.deleteLastChar();
 	filename += "IND";
 
+	Common::File f;
 	if (!f.open(filename))
 		error("Could not open file - %s", filename.c_str());
-	filesize = f.size();
+	int filesize = f.size();
 	assert(filesize < 16188);
 
+	uint32 indexData[4047];
 	for (int i = 0; i < (filesize / 4); ++i)
 		indexData[i] = f.readUint32LE();
 	f.close();
@@ -534,61 +524,65 @@ int TalkManager::VERIF_BOITE(int idx, const Common::String &file, int a3) {
 		error("Error opening file - %s", dest.c_str());
 
 	f.seek(indexData[idx]);
-	ptr = _vm->_globals.allocMemory(2058);
-	if (ptr == g_PTRNUL)
-		error("temporary TEXT");
-	f.read(ptr, 2048);
+	byte *decryptBuf = _vm->_globals.allocMemory(2058);
+	assert(decryptBuf != g_PTRNUL);
+
+	f.read(decryptBuf, 2048);
 	f.close();
 
-	v19 = ptr;
+	// Decrypt buffer
+	byte *curDecryptPtr = decryptBuf;
 	for (int i = 0; i < 2048; i++) {
-		v13 = *v19;
-		if ((byte)(*v19 + 46) > 27) {
-			if ((byte)(v13 + 80) > 27) {
-				if ((byte)(v13 - 65) <= 25 || (byte)(v13 - 97) <= 25)
-					v13 = 32;
+		char curByte = *curDecryptPtr;
+		if ((byte)(curByte + 46) > 27) {
+			if ((byte)(curByte + 80) > 27) {
+				if ((curByte >= 'A' && curByte <= 'Z') || (curByte >= 'a' && curByte <= 'z'))
+					curByte = ' ';
 			} else {
-				v13 -= 79;
+				curByte -= 79;
 			}
 		} else {
-			v13 = *v19 + 111;
+			curByte += 111;
 		}
-		*v19 = v13;
-		v19++;
+		*curDecryptPtr = curByte;
+		curDecryptPtr++;
 	}
 
+	// Separate strings
 	for (int i = 0; i < 2048; i++) {
-		if ( ptr[i] == 10 || ptr[i] == 13 )
-			ptr[i] = 0;
+		if ( decryptBuf[i] == 10 || decryptBuf[i] == 13 )
+			decryptBuf[i] = 0;
 	}
 
-	v9 = 0;
-	v15 = (11 * a3) - 4;
+	// Check size of each strings in order to compute box width
+	int curBufIndx = 0;
 	int lineCount = 0;
+	int lineSize = 0;
+	char curChar;
 	do {
-		v10 = 0;
+		int curLineSize = 0;
 		for (;;) {
-			v17 = v10;
+			lineSize = curLineSize;
 			do {
-				v11 = ptr[v9 + v10];
-				++v10;
-			} while (v11 != ' ' && v11 != '%');
+				curChar = decryptBuf[curBufIndx + curLineSize];
+				++curLineSize;
+			} while (curChar != ' ' && curChar != '%');
 
-			if (v10 >= v15 / _vm->_fontManager._fontFixedWidth) {
-				if (v11 == '%')
-					v11 = ' ';
+			if (curLineSize >= MIN_LETTERS_PER_LINE - 1) {
+				if (curChar == '%')
+					curChar = ' ';
 				break;
 			}
 
-			if (v11 == '%') {
-				v17 = v10;
+			if (curChar == '%') {
+				lineSize = curLineSize;
 				break;
 			}
 		}
 		++lineCount;
-		v9 += v17;
-	} while (v11 != '%');
-	free(ptr);
+		curBufIndx += lineSize;
+	} while (curChar != '%');
+	free(decryptBuf);
 	return lineCount;
 }
 
@@ -600,14 +594,11 @@ void TalkManager::VISU_PARLE() {
 }
 
 void TalkManager::BOB_VISU_PARLE(int idx) {
-	int v4;
-	byte *v5;
-
 	_vm->_objectsManager._priorityFl = true;
 	if (!_vm->_globals._bob[idx].field0) {
 		_vm->_objectsManager.resetBob(idx);
-		v5 = _vm->_globals.Bqe_Anim[idx]._data;
-		v4 = (int16)READ_LE_UINT16(v5 + 2);
+		byte *v5 = _vm->_globals.Bqe_Anim[idx]._data;
+		int v4 = (int16)READ_LE_UINT16(v5 + 2);
 		if (!v4)
 			v4 = 1;
 		if ((int16)READ_LE_UINT16(v5 + 24)) {
@@ -765,24 +756,14 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 }
 
 void TalkManager::REPONSE(int zone, int verb) {
-	uint16 v7;
-	byte *v8;
-	int opcodeType;
-	uint16 v11;
-	int v12;
-	int lastOpcodeResult;
-	bool tagFound;
-	bool v16;
-	bool innerLoopCond;
-	byte *ptr;
-
 	byte zoneObj = zone;
 	byte verbObj = verb;
 	
 	bool outerLoopFl;
+	byte *ptr = g_PTRNUL;
 	do {
 		outerLoopFl = false;
-		tagFound = false;
+		bool tagFound = false;
 		if (_vm->_globals._answerBuffer == g_PTRNUL)
 			return;
 
@@ -805,29 +786,29 @@ void TalkManager::REPONSE(int zone, int verb) {
 		ptr = _vm->_globals.allocMemory(620);
 		assert(ptr != g_PTRNUL);
 		memset(ptr, 0, 620);
-		v7 = 0;
-		v12 = 0;
-		innerLoopCond = false;
+		uint16 v7 = 0;
+		int v12 = 0;
+		bool innerLoopCond = false;
 		do {
-			v16 = false;
+			bool tagFound = false;
 			if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'C')) {
 				++v12;
 				assert(v12 < (620 / 20));
 
-				v8 = (ptr + 20 * v12);
-				v11 = 0;
+				byte *v8 = (ptr + 20 * v12);
+				uint16 anwerIdx = 0;
 				do {
-					assert(v11 < 20);
-					v8[v11++] = curAnswerBuf[v7++];
+					assert(anwerIdx < 20);
+					v8[anwerIdx++] = curAnswerBuf[v7++];
 					if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'F')) {
-						v16 = true;
-						v8[v11] = 'F';
-						v8[v11 + 1] = 'F';
+						tagFound = true;
+						v8[anwerIdx] = 'F';
+						v8[anwerIdx + 1] = 'F';
 						++v7;
 					}
-				} while (!v16);
+				} while (!tagFound);
 			}
-			if (!v16) {
+			if (!tagFound) {
 				uint32 signature24 = READ_BE_UINT24(&curAnswerBuf[v7]);
 				if (signature24 == MKTAG24('C', 'O', 'D') || signature24 == MKTAG24('F', 'I', 'N'))
 					innerLoopCond = true;
@@ -836,9 +817,9 @@ void TalkManager::REPONSE(int zone, int verb) {
 			v7 = 0;
 		} while (!innerLoopCond);
 		innerLoopCond = false;
-		lastOpcodeResult = 1;
+		int lastOpcodeResult = 1;
 		do {
-			opcodeType = _vm->_scriptManager.handleOpcode(ptr + 20 * lastOpcodeResult);
+			int opcodeType = _vm->_scriptManager.handleOpcode(ptr + 20 * lastOpcodeResult);
 			if (_vm->shouldQuit())
 				return;
 
@@ -873,9 +854,9 @@ void TalkManager::REPONSE(int zone, int verb) {
 	return;
 }
 
-void TalkManager::REPONSE2(int zone, int a2) {
+void TalkManager::REPONSE2(int zone, int verb) {
 	int indx = 0;
-	if (a2 != 5 || _vm->_globals._saveData->_data[svField3] != 4)
+	if (verb != 5 || _vm->_globals._saveData->_data[svField3] != 4)
 		return;
 
 	if (zone == 22 || zone == 23) {
@@ -885,7 +866,7 @@ void TalkManager::REPONSE2(int zone, int a2) {
 		if (zone == 22) {
 			_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(3));
 			_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(3));
-		} else { // a1 == 23
+		} else { // zone == 23
 			_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(4));
 			_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(4));
 		}
@@ -933,7 +914,7 @@ void TalkManager::REPONSE2(int zone, int a2) {
 		if (zone == 20) {
 			_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(1));
 			_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(1));
-		} else { // a1 == 21
+		} else { // zone == 21
 			_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(2));
 			_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(2));
 		}
@@ -977,12 +958,6 @@ void TalkManager::REPONSE2(int zone, int a2) {
 }
 
 void TalkManager::OBJET_VIVANT(const Common::String &a2) {
-	byte *v11;
-	Common::String s;
-	Common::String v20;
-	Common::String v22;
-	Common::String v23;
-
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
 	_vm->_eventsManager.VBL();
@@ -1003,6 +978,9 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		_characterBuffer = _vm->_fileManager.loadFile(a2);
 		_characterSize = _vm->_fileManager.fileSize(a2);
 	}
+	Common::String v22;
+	Common::String v23;
+	Common::String v20;
 	getStringFromBuffer(40, v23, (const char *)_characterBuffer);
 	getStringFromBuffer(0, v22, (const char *)_characterBuffer);
 	getStringFromBuffer(20, v20, (const char *)_characterBuffer);
@@ -1029,7 +1007,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_objectsManager.PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, true);
 	startCharacterAnim0(_paletteBufferIdx, false);
-	v11 = _vm->_globals._answerBuffer;
+	byte *oldAnswerBufferPtr = _vm->_globals._answerBuffer;
 	_vm->_globals._answerBuffer = g_PTRNUL;
 	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager.INILINK(v22);
@@ -1070,7 +1048,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		_vm->_globals.BOBZONE[i] = 0;
 
 	_vm->_globals.freeMemory(_vm->_globals._answerBuffer);
-	_vm->_globals._answerBuffer = v11;
+	_vm->_globals._answerBuffer = oldAnswerBufferPtr;
 	_vm->_objectsManager._disableFl = true;
 	_vm->_objectsManager.INILINK(v20);
 	_vm->_graphicsManager.INI_ECRAN2(v20, true);

@@ -30,6 +30,8 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
+#define MIN_LETTERS_PER_LINE 65
+
 class TalkManager {
 private:
 	HopkinsEngine *_vm;
@@ -54,8 +56,8 @@ private:
 	void initCharacterAnim();
 	void clearCharacterAnim();
 	bool searchCharacterAnim(int idx, const byte *bufPerso, int animId, int bufferSize);
+	int countBoxLines(int idx, const Common::String &file);
 
-	int VERIF_BOITE(int a1, const Common::String &a2, int a3);
 	void VISU_PARLE();
 	void BOB_VISU_PARLE(int idx);
 
@@ -69,7 +71,7 @@ public:
 	void PARLER_PERSO2(const Common::String &filename);
 	void PARLER_PERSO(const Common::String &filename);
 	void REPONSE(int zone, int verb);
-	void REPONSE2(int zone, int a2);
+	void REPONSE2(int zone, int verb);
 	void OBJET_VIVANT(const Common::String &a2);
 };
 
