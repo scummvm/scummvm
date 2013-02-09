@@ -80,10 +80,10 @@ MD5CheckDialog::MD5CheckDialog() :
 void MD5CheckDialog::drawDialog() {
 	GUI::Dialog::drawDialog();
 
-	g_gui.theme()->drawDialogBackground(Common::Rect(_progressRect), GUI::ThemeEngine::kDialogBackgroundSpecial);
+	g_gui.theme()->drawDialogBackground(_progressRect, GUI::ThemeEngine::kDialogBackgroundSpecial);
 	Common::Rect r = _progressRect;
 	r.setWidth(_progressRect.width() * _progress);
-	g_gui.theme()->drawDialogBackground(Common::Rect(r), GUI::ThemeEngine::kDialogBackgroundPlain);
+	g_gui.theme()->drawButton(r, "");
 }
 
 void MD5CheckDialog::check() {
