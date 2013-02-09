@@ -36,6 +36,7 @@
 
 #include "gui/error.h"
 #include "gui/gui-manager.h"
+#include "gui/message.h"
 
 #include "engines/engine.h"
 
@@ -232,7 +233,13 @@ Common::Error GrimEngine::run() {
 	ConfMan.registerDefault("check_gamedata", true);
 	if (ConfMan.getBool("check_gamedata")) {
 		MD5CheckDialog d;
-		d.runModal();
+		if (!d.runModal()) {
+			GUI::MessageDialog msg("ResidualVM found some problems with your game data files.\nRunning ResidualVM nevertheless "
+			"may cause game bugs or even crashes.\nDo you still want to run Grim Fandango?", "Yes", "No");
+			if (!msg.runModal()) {
+				return Common::kUserCanceled;
+			}
+		}
 
 		ConfMan.setBool("check_gamedata", false);
 	}
