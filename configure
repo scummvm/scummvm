@@ -21,6 +21,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+# NLS nuisances.
+LC_ALL=C
+export LC_ALL
+LANGUAGE=C
+export LANGUAGE
+
 # Save the current environment variables for next runs
 SAVED_CONFIGFLAGS=$@
 SAVED_LDFLAGS=$LDFLAGS
