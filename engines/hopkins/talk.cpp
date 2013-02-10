@@ -978,19 +978,19 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		_characterBuffer = _vm->_fileManager.loadFile(a2);
 		_characterSize = _vm->_fileManager.fileSize(a2);
 	}
-	Common::String v22;
-	Common::String v23;
-	Common::String v20;
-	getStringFromBuffer(40, v23, (const char *)_characterBuffer);
-	getStringFromBuffer(0, v22, (const char *)_characterBuffer);
-	getStringFromBuffer(20, v20, (const char *)_characterBuffer);
+	Common::String screenFilename;
+	Common::String spriteFilename;
+	Common::String curScreenFilename;
+	getStringFromBuffer(40, spriteFilename, (const char *)_characterBuffer);
+	getStringFromBuffer(0, screenFilename, (const char *)_characterBuffer);
+	getStringFromBuffer(20, curScreenFilename, (const char *)_characterBuffer);
 
-	if (v20 == "NULL")
-		v20 = Common::String::format("IM%d", _vm->_globals._screenId);
+	if (curScreenFilename == "NULL")
+		curScreenFilename = Common::String::format("IM%d", _vm->_globals._screenId);
 
-	_characterSprite = _vm->_fileManager.searchCat(v23, 7);
+	_characterSprite = _vm->_fileManager.searchCat(spriteFilename, 7);
 	if (_characterSprite)
-		_characterSprite = _vm->_objectsManager.loadSprite(v23);
+		_characterSprite = _vm->_objectsManager.loadSprite(spriteFilename);
 	else
 		_characterSprite = _vm->_objectsManager.loadSprite("RES_SAN.RES");
 
@@ -1010,14 +1010,14 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	byte *oldAnswerBufferPtr = _vm->_globals._answerBuffer;
 	_vm->_globals._answerBuffer = g_PTRNUL;
 	_vm->_globals.NOMARCHE = true;
-	_vm->_objectsManager.INILINK(v22);
+	_vm->_objectsManager.INILINK(screenFilename);
 	_vm->_objectsManager.PERSO_ON = true;
 	_vm->_globals.GOACTION = false;
 	_vm->_objectsManager._zoneNum = -1;
 	initCharacterAnim();
 	VISU_PARLE();
 	dialogWait();
-	_vm->_graphicsManager.INI_ECRAN2(v22, true);
+	_vm->_graphicsManager.INI_ECRAN2(screenFilename, true);
 	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager._zoneNum = -1;
@@ -1050,8 +1050,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_globals.freeMemory(_vm->_globals._answerBuffer);
 	_vm->_globals._answerBuffer = oldAnswerBufferPtr;
 	_vm->_objectsManager._disableFl = true;
-	_vm->_objectsManager.INILINK(v20);
-	_vm->_graphicsManager.INI_ECRAN2(v20, true);
+	_vm->_objectsManager.INILINK(curScreenFilename);
+	_vm->_graphicsManager.INI_ECRAN2(curScreenFilename, true);
 	_vm->_objectsManager._disableFl = false;
 	_vm->_globals.NOMARCHE = false;
 	if (_vm->_globals._exitId == 101)
