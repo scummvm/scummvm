@@ -485,7 +485,7 @@ void EventsManager::updateCursor() {
 
 	for (int i = 0; i < PALETTE_SIZE; i++) {
 		uint8 r, g, b;
-		pixelFormat.colorToRGB(paletteColors[i], r, g, b);
+		pixelFormat.colorToRGB(READ_LE_UINT16(&paletteColors[i]), r, g, b);
 		cursorPalette[3 * i] = r;
 		cursorPalette[3 * i + 1] = g;
 		cursorPalette[3 * i + 2] = b;
