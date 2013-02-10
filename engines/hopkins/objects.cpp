@@ -1818,9 +1818,9 @@ void ObjectsManager::handleCityMap() {
 	_vm->_graphicsManager.VISU_ALL();
 	_vm->_graphicsManager.INI_ECRAN2("PLAN", false);
 	for (int i = 0; i <= 15; i++)
-		_vm->_globals.CACHE_OFF(i);
-	_vm->_globals.CACHE_OFF(19);
-	_vm->_globals.CACHE_OFF(20);
+		_vm->_globals.B_CACHE_OFF(i);
+	_vm->_globals.B_CACHE_OFF(19);
+	_vm->_globals.B_CACHE_OFF(20);
 	_vm->_globals.CACHE_ON();
 
 	if (!_mapCarPosX && !_mapCarPosY) {

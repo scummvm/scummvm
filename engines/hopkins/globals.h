@@ -275,7 +275,6 @@ private:
 
 	void INIT_ANIM();
 	void INIT_VBOB();
-	void B_CACHE_OFF(int idx);
 
 public:
 	bool _disableInventFl;
@@ -385,7 +384,8 @@ public:
 
 	void CLEAR_VBOB();
 	void CACHE_ON();
-	void CACHE_OFF(int v1 = 0);
+	void CACHE_OFF();
+	void B_CACHE_OFF(int idx);
 	void CACHE_SUB(int idx);
 	void CACHE_ADD(int idx);
 };

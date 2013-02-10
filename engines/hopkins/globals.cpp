@@ -405,9 +405,13 @@ void Globals::CACHE_ON() {
 	_cacheFl = true;
 }
 
-// TODO: Find why some calls have a parameter value
-void Globals::CACHE_OFF(int v1) {
+void Globals::CACHE_OFF() {
 	_cacheFl = false;
+}
+
+void Globals::B_CACHE_OFF(int idx) {
+	assert(idx < 36);
+	_bob[idx].field34 = true;
 }
 
 void Globals::CACHE_SUB(int idx) {
@@ -458,10 +462,5 @@ void Globals::loadCache(const Common::String &file) {
 	v2 = ptr;
 	freeMemory(v2);
 }
-
-void Globals::B_CACHE_OFF(int idx) {
-	_bob[idx].field34 = true;
-}
-
 
 } // End of namespace Hopkins

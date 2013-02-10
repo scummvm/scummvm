@@ -494,7 +494,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 5;
 		break;
 	case MKTAG24('B', 'C', 'A'):
-		_vm->_globals.CACHE_OFF((int16)READ_LE_UINT16(dataP + 5));
+		_vm->_globals.B_CACHE_OFF((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
 		break;
 	case MKTAG24('A', 'N', 'I'): {
