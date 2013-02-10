@@ -53,6 +53,8 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	if (_vm->shouldQuit())
 		return;
 
+	_vm->_eventsManager.mouseOff();
+
 	bool hasScreenCopy = false;
 	byte *screenP = _vm->_graphicsManager._vesaScreen;
 
@@ -210,6 +212,8 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	_vm->_graphicsManager.FADE_LINUX = 0;
 	f.close();
 	_vm->_graphicsManager._skipVideoLockFl = false;
+
+	_vm->_eventsManager.mouseOn();
 }
 
 /**
@@ -223,6 +227,8 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 
 	if (_vm->shouldQuit())
 		return;
+
+	_vm->_eventsManager.mouseOff();
 
 	bool hasScreenCopy = false;
 	while (!_vm->shouldQuit()) {
@@ -394,6 +400,8 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.fadeInShort();
 	_vm->_graphicsManager.DD_VBL();
+
+	_vm->_eventsManager.mouseOn();
 }
 
 /**
