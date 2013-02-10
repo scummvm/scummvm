@@ -140,7 +140,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 	Common::String file;
 	Common::File f;
 
-	int v73 = xp;
+	int textPosX = xp;
 	if (idx < 0)
 		error("Bad number for text");
 	_fontFixedWidth = 11;
@@ -259,7 +259,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			if (v17 < 0)
 				v17 = -v17;
 			_text[idx]._pos.x = 320 - v17;
-			v73 = _vm->_eventsManager._startPos.x + 320 - v17;
+			textPosX = _vm->_eventsManager._startPos.x + 320 - v17;
 			lineCount = 1;
 			// CHECKME: textLength should be always positive...
 			if (textLength + 1 > 0) {
@@ -289,7 +289,6 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 						break;
 					}
 				}
-				int v20 = lineCount;
 
 				// WORKAROUND: Perhaps due to the usage of ScummVM strings here, recalculate what the
 				// actual length of the line to be copied will be. Otherwise, you can see artifacts,
@@ -298,7 +297,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				while (actualSize < lineSize && _tempText[v65 + actualSize])
 					++actualSize;
 
-				_text[idx]._lines[v20] = Common::String((const char *)_tempText + v65, actualSize);
+				_text[idx]._lines[lineCount] = Common::String((const char *)_tempText + v65, actualSize);
 				_textSortArray[lineCount++] = lineSize;
 
 				v65 += lineSize;
@@ -320,8 +319,8 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				}
 			}
 			for (int i = 0; i <= 19; i++) {
-				for (int v25 = i + 1; v25 != i; v25 = (v25 + 1) % 20) {
-					if (_textSortArray[i] < _textSortArray[v25])
+				for (int j = i + 1; j != i; j = (j + 1) % 20) {
+					if (_textSortArray[i] < _textSortArray[j])
 						_textSortArray[i] = 0;
 				}
 			};
@@ -336,33 +335,27 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				for (i = xp - _vm->_eventsManager._startPos.x; _vm->_globals._boxWidth + i > 638 && i > -2 && _text[idx]._textType; i -= 2)
 					;
 				_text[idx]._pos.x = i;
-				v73 = _vm->_eventsManager._startPos.x + i;
+				textPosX = _vm->_eventsManager._startPos.x + i;
 			} else {
 				if (_vm->_globals.nbrligne == (SCREEN_WIDTH - 1)) {
-					while (_vm->_globals._boxWidth + v73 > 638 && v73 > -2)
-						v73 -= 2;
+					while (_vm->_globals._boxWidth + textPosX > 638 && textPosX > -2)
+						textPosX -= 2;
 				}
 				if (_vm->_globals.nbrligne == (SCREEN_WIDTH * 2)) {
-					while (_vm->_globals._boxWidth + v73 > 1278 && v73 > -2)
-						v73 -= 2;
+					while (_vm->_globals._boxWidth + textPosX > 1278 && textPosX > -2)
+						textPosX -= 2;
 				}
-				_text[idx]._pos.x = v73;
+				_text[idx]._pos.x = textPosX;
 			}
 		}
-		int posX = v73;
+		int posX = textPosX;
 		int posY = yp;
 		int saveWidth = _vm->_globals._boxWidth + 10;
 		int saveHeight = (_fontFixedHeight + 1) * lineCount + 12;
 		if (_text[idx]._textType == 6) {
-			int v27 = saveWidth / 2;
-			if (v27 < 0)
-				v27 = -v27;
-			_text[idx]._pos.x = 315 - v27;
-			int v28 = _vm->_eventsManager._startPos.x + 315 - v27;
-			v73 = _vm->_eventsManager._startPos.x + 315 - v27;
-			_text[idx]._pos.y = 50;
-			posY = 50;
-			posX = v28;
+			_text[idx]._pos.x = 315 - abs(saveWidth / 2);
+			textPosX = posX = _vm->_eventsManager._startPos.x + _text[idx]._pos.x;
+			_text[idx]._pos.y = posY = 50;
 		}
 		int textType = _text[idx]._textType;
 		if (textType == 1 || textType == 3 || textType == 5 || textType == 6) {
@@ -382,11 +375,11 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_vm->_graphicsManager.drawVerticalLine(_vm->_graphicsManager._vesaBuffer, saveWidth + posX, posY, saveHeight, (byte)-2);
 		}
 		_text[idx]._lineCount = lineCount;
-		int v71 = posY + 5;
+		int textPosY = posY + 5;
 
 		for (int lineNum = 0; lineNum < lineCount; ++lineNum) {
-			displayText(v73 + 5, v71, _text[idx]._lines[lineNum], _text[idx]._color);
-			v71 += _fontFixedHeight + 1;
+			displayText(textPosX + 5, textPosY, _text[idx]._lines[lineNum], _text[idx]._color);
+			textPosY += _fontFixedHeight + 1;
 		}
 
 		int blockWidth = saveWidth + 1;

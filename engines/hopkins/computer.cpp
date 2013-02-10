@@ -706,8 +706,7 @@ void ComputerManager::displayLives() {
  * Main function for breakout game
  */
 void ComputerManager::playBreakout() {
-	int v1 = 0;
-
+	int lastBreakoutEvent = 0;
 	while (!_vm->shouldQuit()) {
 		while (!_vm->shouldQuit()) {
 			// Set up the racket and ball
@@ -747,10 +746,10 @@ void ComputerManager::playBreakout() {
 				if (_padPositionX > 282)
 					_padPositionX = 282;
 				_vm->_objectsManager.setSpriteX(0, _padPositionX);
-				v1 = moveBall();
+				lastBreakoutEvent = moveBall();
 				_vm->_eventsManager.VBL();
-			} while (!_vm->shouldQuit() && !v1);
-			if (v1 != 1)
+			} while (!_vm->shouldQuit() && !lastBreakoutEvent);
+			if (lastBreakoutEvent != 1)
 				break;
 			_vm->_graphicsManager.fateOutBreakout();
 			--_breakoutLives;
@@ -778,7 +777,7 @@ void ComputerManager::playBreakout() {
 			loadHiscore();
 			newLevel();
 		}
-		if (v1 != 2)
+		if (lastBreakoutEvent != 2)
 			return;
 		_vm->_graphicsManager.fateOutBreakout();
 		newLevel();
