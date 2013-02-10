@@ -477,33 +477,30 @@ void EventsManager::updateCursor() {
 	_vm->_graphicsManager._maxY = clipBounds.bottom;
 	_vm->_graphicsManager._lineNbr2 = pitch;
 
-	// Convert the cursor to the pixel format. At the moment, it's hardcoded
-	// to expect the game to be in 16-bit mode
-	uint16 *cursorPixels = new uint16[_vm->_globals._objectHeight * _vm->_globals._objectWidth];
-	const byte *srcP = cursorSurface;
-	uint16 *destP = cursorPixels;
+	// Create a cursor palette
+	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 
-	for (int yp = 0; yp < _vm->_globals._objectHeight; ++yp) {
-		const byte *lineSrcP = srcP;
-		uint16 *lineDestP = destP;
+	byte *cursorPalette = new byte[3 * PALETTE_SIZE];
+	uint16 *paletteColors = (uint16 *)_vm->_graphicsManager.PAL_PIXELS;
 
-		for (int xp = 0; xp < _vm->_globals._objectWidth; ++xp)
-			*lineDestP++ = *(uint16 *)&_vm->_graphicsManager.PAL_PIXELS[*lineSrcP++ * 2];
-
-		srcP += _vm->_globals._objectWidth;
-		destP += _vm->_globals._objectWidth;
+	for (int i = 0; i < PALETTE_SIZE; i++) {
+		uint8 r, g, b;
+		pixelFormat.colorToRGB(paletteColors[i], r, g, b);
+		cursorPalette[3 * i] = r;
+		cursorPalette[3 * i + 1] = g;
+		cursorPalette[3 * i + 2] = b;
 	}
 
 	// Calculate the X offset within the pointer image to the actual cursor data
 	int xOffset = !_mouseLinuxFl ? 10 : 20;
 
 	// Set the ScummVM cursor from the surface
-	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-	CursorMan.replaceCursor(cursorPixels, _vm->_globals._objectWidth, _vm->_globals._objectHeight,
-		xOffset, 0, *((uint16 *)cursorPixels), true, &pixelFormat);
+	CursorMan.replaceCursorPalette(cursorPalette, 0, PALETTE_SIZE - 1);
+	CursorMan.replaceCursor(cursorSurface, _vm->_globals._objectWidth, _vm->_globals._objectHeight,
+		xOffset, 0, 0, true);
 
-	// Delete the cursor surface
-	delete[] cursorPixels;
+	// Delete the cursor surface and palette
+	delete[] cursorPalette;
 	delete[] cursorSurface;
 }
 
