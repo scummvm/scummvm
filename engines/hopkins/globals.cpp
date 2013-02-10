@@ -74,8 +74,6 @@ Globals::Globals() {
 		Common::fill((byte *)&Bqe_Anim[i], (byte *)&Bqe_Anim[i] + sizeof(BqeAnimItem), 0);
 	for (int i = 0; i < 8; ++i)
 		Common::fill((byte *)&Bank[i], (byte *)&Bank[i] + sizeof(BankItem), 0);
-	for (int i = 0; i < 36; ++i)
-		Common::fill((byte *)&_bob[i], (byte *)&_bob[i] + sizeof(BobItem), 0);
 	for (int i = 0; i < 6; ++i)
 		Common::fill((byte *)&Liste[i], (byte *)&Liste[i] + sizeof(ListeItem), 0);
 	for (int i = 0; i < 35; ++i)
@@ -411,7 +409,7 @@ void Globals::CACHE_OFF() {
 
 void Globals::B_CACHE_OFF(int idx) {
 	assert(idx < 36);
-	_bob[idx].field34 = true;
+	_vm->_objectsManager._bob[idx].field34 = true;
 }
 
 void Globals::CACHE_SUB(int idx) {

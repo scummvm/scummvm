@@ -595,24 +595,24 @@ void TalkManager::VISU_PARLE() {
 
 void TalkManager::BOB_VISU_PARLE(int idx) {
 	_vm->_objectsManager._priorityFl = true;
-	if (!_vm->_globals._bob[idx].field0) {
+	if (!_vm->_objectsManager._bob[idx].field0) {
 		_vm->_objectsManager.resetBob(idx);
 		byte *v5 = _vm->_globals.Bqe_Anim[idx]._data;
 		int v4 = (int16)READ_LE_UINT16(v5 + 2);
 		if (!v4)
 			v4 = 1;
 		if ((int16)READ_LE_UINT16(v5 + 24)) {
-			_vm->_globals._bob[idx]._isSpriteFl = true;
-			_vm->_globals._bob[idx]._zoomFactor = 0;
-			_vm->_globals._bob[idx]._flipFl = false;
-			_vm->_globals._bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
-			_vm->_globals._bob[idx].field0 = 10;
+			_vm->_objectsManager._bob[idx]._isSpriteFl = true;
+			_vm->_objectsManager._bob[idx]._zoomFactor = 0;
+			_vm->_objectsManager._bob[idx]._flipFl = false;
+			_vm->_objectsManager._bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
+			_vm->_objectsManager._bob[idx].field0 = 10;
 			v5 = _characterSprite;
-			_vm->_globals._bob[idx]._spriteData = _characterSprite;
-			_vm->_globals._bob[idx].field1E = v4;
-			_vm->_globals._bob[idx].field20 = -1;
-			_vm->_globals._bob[idx].field22 = 0;
-			_vm->_globals._bob[idx]._offsetY = 0;
+			_vm->_objectsManager._bob[idx]._spriteData = _characterSprite;
+			_vm->_objectsManager._bob[idx].field1E = v4;
+			_vm->_objectsManager._bob[idx].field20 = -1;
+			_vm->_objectsManager._bob[idx].field22 = 0;
+			_vm->_objectsManager._bob[idx]._offsetY = 0;
 		}
 	}
 }

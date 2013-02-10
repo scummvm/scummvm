@@ -2966,17 +2966,17 @@ int LinesManager::MZONE() {
 	if ((_vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y) > 19) {
 		for (int bobZoneId = 0; bobZoneId <= 48; bobZoneId++) {
 			int bobId = _vm->_globals.BOBZONE[bobZoneId];
-			if (bobId && _vm->_globals.BOBZONE_FLAG[bobZoneId] && _vm->_globals._bob[bobId].field0 && _vm->_globals._bob[bobId]._frameIndex != 250 &&
-				!_vm->_globals._bob[bobId]._disabledAnimationFl && xp > _vm->_globals._bob[bobId]._oldX && 
-				xp < _vm->_globals._bob[bobId]._oldWidth + _vm->_globals._bob[bobId]._oldX && yp > _vm->_globals._bob[bobId]._oldY) {
-					if (yp < _vm->_globals._bob[bobId]._oldHeight + _vm->_globals._bob[bobId]._oldY) {
+			if (bobId && _vm->_globals.BOBZONE_FLAG[bobZoneId] && _vm->_objectsManager._bob[bobId].field0 && _vm->_objectsManager._bob[bobId]._frameIndex != 250 &&
+				!_vm->_objectsManager._bob[bobId]._disabledAnimationFl && xp > _vm->_objectsManager._bob[bobId]._oldX && 
+				xp < _vm->_objectsManager._bob[bobId]._oldWidth + _vm->_objectsManager._bob[bobId]._oldX && yp > _vm->_objectsManager._bob[bobId]._oldY) {
+					if (yp < _vm->_objectsManager._bob[bobId]._oldHeight + _vm->_objectsManager._bob[bobId]._oldY) {
 						if (_vm->_globals.ZONEP[bobZoneId]._spriteIndex == -1) {
 							_vm->_globals.ZONEP[bobZoneId]._destX = 0;
 							_vm->_globals.ZONEP[bobZoneId]._destY = 0;
 						}
 						if (!_vm->_globals.ZONEP[bobZoneId]._destX && !_vm->_globals.ZONEP[bobZoneId]._destY) {
-							_vm->_globals.ZONEP[bobZoneId]._destX = _vm->_globals._bob[bobId]._oldWidth + _vm->_globals._bob[bobId]._oldX;
-							_vm->_globals.ZONEP[bobZoneId]._destY = _vm->_globals._bob[bobId]._oldHeight + _vm->_globals._bob[bobId]._oldY + 6;
+							_vm->_globals.ZONEP[bobZoneId]._destX = _vm->_objectsManager._bob[bobId]._oldWidth + _vm->_objectsManager._bob[bobId]._oldX;
+							_vm->_globals.ZONEP[bobZoneId]._destY = _vm->_objectsManager._bob[bobId]._oldHeight + _vm->_objectsManager._bob[bobId]._oldY + 6;
 							_vm->_globals.ZONEP[bobZoneId]._spriteIndex = -1;
 						}
 						return bobZoneId;

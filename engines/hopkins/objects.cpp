@@ -37,6 +37,8 @@ ObjectsManager::ObjectsManager() {
 	for (int i = 0; i < 6; ++i) {
 		Common::fill((byte *)&_sprite[i], (byte *)&_sprite[i] + sizeof(SpriteItem), 0);
 	}
+	for (int i = 0; i < 36; ++i)
+		Common::fill((byte *)&_bob[i], (byte *)&_bob[i] + sizeof(BobItem), 0);
 
 	_helicopterFl = false;
 	_priorityFl = false;
@@ -482,7 +484,7 @@ void ObjectsManager::initBob() {
 }
 
 void ObjectsManager::resetBob(int idx) {
-	BobItem &bob = _vm->_globals._bob[idx];
+	BobItem &bob = _bob[idx];
 	ListeItem &item = _vm->_globals.Liste2[idx];
 
 	bob.field0 = 0;
@@ -513,27 +515,27 @@ void ObjectsManager::resetBob(int idx) {
 }
 
 void ObjectsManager::setBobInfo(int idx) {
-	if (!_vm->_globals._bob[idx]._activeFl)
+	if (!_bob[idx]._activeFl)
 		return;
 
-	int xp = _vm->_globals._bob[idx]._oldX;
-	int yp = _vm->_globals._bob[idx]._oldY;
+	int xp = _bob[idx]._oldX;
+	int yp = _bob[idx]._oldY;
 
-	if (_vm->_globals._bob[idx]._isSpriteFl)
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._bob[idx]._spriteData,
-			xp + 300, yp + 300, _vm->_globals._bob[idx]._frameIndex);
+	if (_bob[idx]._isSpriteFl)
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _bob[idx]._spriteData,
+			xp + 300, yp + 300, _bob[idx]._frameIndex);
 	else
 		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer,
-			_vm->_globals._bob[idx]._spriteData, xp + 300, yp + 300, _vm->_globals._bob[idx]._frameIndex,
-			_vm->_globals._bob[idx]._zoomOutFactor, _vm->_globals._bob[idx]._zooInmFactor,
-			_vm->_globals._bob[idx]._flipFl);
+			_bob[idx]._spriteData, xp + 300, yp + 300, _bob[idx]._frameIndex,
+			_bob[idx]._zoomOutFactor, _bob[idx]._zooInmFactor,
+			_bob[idx]._flipFl);
 
 	_vm->_globals.Liste2[idx]._visibleFl = true;
 	_vm->_globals.Liste2[idx]._posX = xp;
 	_vm->_globals.Liste2[idx]._posY = yp;
 
-	_vm->_globals.Liste2[idx]._width = _vm->_globals._bob[idx]._oldWidth;
-	_vm->_globals.Liste2[idx]._height = _vm->_globals._bob[idx]._oldHeight;
+	_vm->_globals.Liste2[idx]._width = _bob[idx]._oldWidth;
+	_vm->_globals.Liste2[idx]._height = _bob[idx]._oldHeight;
 
 	if (_vm->_globals.Liste2[idx]._posX < _vm->_graphicsManager._minX) {
 		_vm->_globals.Liste2[idx]._width -= _vm->_graphicsManager._minX - _vm->_globals.Liste2[idx]._posX;
@@ -565,7 +567,7 @@ void ObjectsManager::setBobInfo(int idx) {
 void ObjectsManager::BOB_VISU(int idx) {
 	_priorityFl = true;
 
-	if (_vm->_globals._bob[idx].field0)
+	if (_bob[idx].field0)
 		return;
 
 	resetBob(idx);
@@ -588,31 +590,31 @@ void ObjectsManager::BOB_VISU(int idx) {
 	if (!v6)
 		v6 = -1;
 
-	_vm->_globals._bob[idx]._isSpriteFl = false;
+	_bob[idx]._isSpriteFl = false;
 
 	if (_vm->_globals.Bank[bankIdx]._fileHeader == 1) {
-		_vm->_globals._bob[idx]._isSpriteFl = true;
-		_vm->_globals._bob[idx]._zoomFactor = 0;
-		_vm->_globals._bob[idx]._flipFl = false;
+		_bob[idx]._isSpriteFl = true;
+		_bob[idx]._zoomFactor = 0;
+		_bob[idx]._flipFl = false;
 	}
 
-	_vm->_globals._bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
-	_vm->_globals._bob[idx].field0 = 10;
-	_vm->_globals._bob[idx]._spriteData = _vm->_globals.Bank[bankIdx]._data;
+	_bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
+	_bob[idx].field0 = 10;
+	_bob[idx]._spriteData = _vm->_globals.Bank[bankIdx]._data;
 
-	_vm->_globals._bob[idx].field1E = v9;
-	_vm->_globals._bob[idx].field20 = v6;
-	_vm->_globals._bob[idx].field22 = v8;
-	_vm->_globals._bob[idx]._offsetY = offsetY;
+	_bob[idx].field1E = v9;
+	_bob[idx].field20 = v6;
+	_bob[idx].field22 = v8;
+	_bob[idx]._offsetY = offsetY;
 }
 
 void ObjectsManager::BOB_OFF(int idx) {
-	if ((_vm->_globals._bob[idx].field0 == 3) || (_vm->_globals._bob[idx].field0 == 10))
-		_vm->_globals._bob[idx].field0++;
+	if ((_bob[idx].field0 == 3) || (_bob[idx].field0 == 10))
+		_bob[idx].field0++;
 }
 
 void ObjectsManager::BOB_OFFSET(int idx, int offset) {
-	_vm->_globals._bob[idx]._oldX2 = offset;
+	_bob[idx]._oldX2 = offset;
 }
 
 void ObjectsManager::SCBOB(int idx) {
@@ -620,17 +622,17 @@ void ObjectsManager::SCBOB(int idx) {
 		return;
 
 	for (int i = 0; i <= 20; i++) {
-		if ((_vm->_globals._bob[i].field0) && (!_vm->_globals._bob[i]._disabledAnimationFl) && (!_vm->_globals._bob[i].field34) && (_vm->_globals._bob[i]._frameIndex != 250)) {
-			int oldRight = _vm->_globals._bob[i]._oldX + _vm->_globals._bob[i]._oldWidth;
-			int oldBottom = _vm->_globals._bob[i]._oldY + _vm->_globals._bob[i]._oldHeight;
+		if ((_bob[i].field0) && (!_bob[i]._disabledAnimationFl) && (!_bob[i].field34) && (_bob[i]._frameIndex != 250)) {
+			int oldRight = _bob[i]._oldX + _bob[i]._oldWidth;
+			int oldBottom = _bob[i]._oldY + _bob[i]._oldHeight;
 			int cachedRight = _vm->_globals.Cache[idx]._width + _vm->_globals.Cache[idx]._x;
 
 			if ((oldBottom > _vm->_globals.Cache[idx]._y) && (oldBottom < _vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx]._height + _vm->_globals.Cache[idx]._y)) {
 				if ((oldRight >= _vm->_globals.Cache[idx]._x && oldRight <= cachedRight)
-				 || (cachedRight >= _vm->_globals._bob[i]._oldWidth && _vm->_globals._bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x)
-				 || (cachedRight >= _vm->_globals._bob[i]._oldWidth && _vm->_globals._bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x)
-				 || (_vm->_globals._bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x && oldRight <= cachedRight)
-				 || (_vm->_globals._bob[i]._oldWidth <= _vm->_globals.Cache[idx]._x && oldRight >= cachedRight))
+				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x)
+				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x)
+				 || (_bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x && oldRight <= cachedRight)
+				 || (_bob[i]._oldWidth <= _vm->_globals.Cache[idx]._x && oldRight >= cachedRight))
 					++_vm->_globals.Cache[idx]._useCount;
 			}
 		}
@@ -638,33 +640,33 @@ void ObjectsManager::SCBOB(int idx) {
 }
 
 void ObjectsManager::CALCUL_BOB(int idx) {
-	_vm->_globals._bob[idx]._activeFl = false;
-	if (_vm->_globals._bob[idx]._isSpriteFl) {
-		_vm->_globals._bob[idx]._flipFl = false;
-		_vm->_globals._bob[idx]._zoomFactor = 0;
+	_bob[idx]._activeFl = false;
+	if (_bob[idx]._isSpriteFl) {
+		_bob[idx]._flipFl = false;
+		_bob[idx]._zoomFactor = 0;
 	}
 
-	int spriteIdx = _vm->_globals._bob[idx]._frameIndex;
+	int spriteIdx = _bob[idx]._frameIndex;
 	if (spriteIdx == 250)
 		return;
 
 	int deltaY, deltaX;
-	if (_vm->_globals._bob[idx]._flipFl) {
-		deltaX = getOffsetX(_vm->_globals._bob[idx]._spriteData, spriteIdx, true);
-		deltaY = getOffsetY(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, true);
+	if (_bob[idx]._flipFl) {
+		deltaX = getOffsetX(_bob[idx]._spriteData, spriteIdx, true);
+		deltaY = getOffsetY(_bob[idx]._spriteData, _bob[idx]._frameIndex, true);
 	} else {
-		deltaX = getOffsetX(_vm->_globals._bob[idx]._spriteData, spriteIdx, false);
-		deltaY = getOffsetY(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex, false);
+		deltaX = getOffsetX(_bob[idx]._spriteData, spriteIdx, false);
+		deltaY = getOffsetY(_bob[idx]._spriteData, _bob[idx]._frameIndex, false);
 	}
 
 	int negZoom = 0;
 	int posZoom = 0;
-	if (_vm->_globals._bob[idx]._zoomFactor < 0) {
-		negZoom = -_vm->_globals._bob[idx]._zoomFactor;
+	if (_bob[idx]._zoomFactor < 0) {
+		negZoom = -_bob[idx]._zoomFactor;
 		if (negZoom > 95)
 			negZoom = 95;
 	} else
-		posZoom = _vm->_globals._bob[idx]._zoomFactor;
+		posZoom = _bob[idx]._zoomFactor;
 
 	if (posZoom) {
 		if (deltaX >= 0)
@@ -690,20 +692,20 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 			deltaY = -_vm->_graphicsManager.zoomOut(abs(deltaX), negZoom);
 	}
 
-	int newX = _vm->_globals._bob[idx]._xp - deltaX;
-	int newY = _vm->_globals._bob[idx]._yp - deltaY;
-	_vm->_globals._bob[idx]._activeFl = true;
-	_vm->_globals._bob[idx]._oldX = newX;
-	_vm->_globals._bob[idx]._oldY = newY;
-	_vm->_globals._bob[idx]._zooInmFactor = posZoom;
-	_vm->_globals._bob[idx]._zoomOutFactor = negZoom;
+	int newX = _bob[idx]._xp - deltaX;
+	int newY = _bob[idx]._yp - deltaY;
+	_bob[idx]._activeFl = true;
+	_bob[idx]._oldX = newX;
+	_bob[idx]._oldY = newY;
+	_bob[idx]._zooInmFactor = posZoom;
+	_bob[idx]._zoomOutFactor = negZoom;
 
 	_vm->_globals.Liste2[idx]._visibleFl = true;
 	_vm->_globals.Liste2[idx]._posX = newX;
 	_vm->_globals.Liste2[idx]._posY = newY;
 
-	int width = getWidth(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex);
-	int height = getHeight(_vm->_globals._bob[idx]._spriteData, _vm->_globals._bob[idx]._frameIndex);
+	int width = getWidth(_bob[idx]._spriteData, _bob[idx]._frameIndex);
+	int height = getHeight(_bob[idx]._spriteData, _bob[idx]._frameIndex);
 
 	if (posZoom) {
 		width = _vm->_graphicsManager.zoomIn(width, posZoom);
@@ -716,8 +718,8 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 
 	_vm->_globals.Liste2[idx]._width = width;
 	_vm->_globals.Liste2[idx]._height = height;
-	_vm->_globals._bob[idx]._oldWidth = width;
-	_vm->_globals._bob[idx]._oldHeight = height;
+	_bob[idx]._oldWidth = width;
+	_bob[idx]._oldHeight = height;
 }
 
 void ObjectsManager::checkCache() {
@@ -725,7 +727,7 @@ void ObjectsManager::checkCache() {
 		if (_vm->_globals.Cache[cacheIdx]._useCount == 0)
 			continue;
 
-		int _oldEnableCount = _vm->_globals.Cache[cacheIdx]._useCount;
+		int _oldUseCount = _vm->_globals.Cache[cacheIdx]._useCount;
 		for (int spriteIdx = 0; spriteIdx <= 4; spriteIdx++) {
 			if (_sprite[spriteIdx]._animationType == 1 && _sprite[spriteIdx]._spriteIndex != 250) {
 				int right = _sprite[spriteIdx]._width + _sprite[spriteIdx]._destX;
@@ -744,7 +746,7 @@ void ObjectsManager::checkCache() {
 		}
 
 		SCBOB(cacheIdx);
-		if (_vm->_globals.Cache[cacheIdx]._useCount == _oldEnableCount) {
+		if (_vm->_globals.Cache[cacheIdx]._useCount == _oldUseCount) {
 			if (_vm->_globals.Cache[cacheIdx].field10) {
 				_vm->_globals.Cache[cacheIdx].field10 = false;
 				_vm->_globals.Cache[cacheIdx]._useCount = 1;
@@ -906,106 +908,106 @@ void ObjectsManager::beforeSort(SortMode sortMode, int index, int priority) {
 void ObjectsManager::displayBobAnim() {
 	for (int idx = 1; idx <= 35; idx++) {
 		if (idx <= 20 && PERSO_ON) {
-			_vm->_globals._bob[idx].field1C = false;
+			_bob[idx].field1C = false;
 			continue;
 		}
 
-		if (_vm->_globals._bob[idx].field0 != 10) 
+		if (_bob[idx].field0 != 10) 
 			continue;
 
-		_vm->_globals._bob[idx].field1C = false;
-		int v1 = _vm->_globals._bob[idx].field20;
+		_bob[idx].field1C = false;
+		int v1 = _bob[idx].field20;
 		if (v1 == -1)
 			v1 = 50;
-		if (_vm->_globals._bob[idx]._animData == g_PTRNUL || _vm->_globals._bob[idx]._disabledAnimationFl || v1 <= 0) {
-			if (_vm->_globals._bob[idx].field1E == 1 || _vm->_globals._bob[idx].field1E == 2)
-				_vm->_globals._bob[idx].field1C = true;
+		if (_bob[idx]._animData == g_PTRNUL || _bob[idx]._disabledAnimationFl || v1 <= 0) {
+			if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
+				_bob[idx].field1C = true;
 			continue;
 		}
 
-		if (_vm->_globals._bob[idx].field12 == _vm->_globals._bob[idx].field14) {
-			_vm->_globals._bob[idx].field1C = true;
+		if (_bob[idx].field12 == _bob[idx].field14) {
+			_bob[idx].field1C = true;
 		} else {
-			_vm->_globals._bob[idx].field14++;
-			_vm->_globals._bob[idx].field1C = false;
+			_bob[idx].field14++;
+			_bob[idx].field1C = false;
 		}
 
-		if (!_vm->_globals._bob[idx].field1C) {
-			if (_vm->_globals._bob[idx].field1E == 1 || _vm->_globals._bob[idx].field1E == 2)
-				_vm->_globals._bob[idx].field1C = true;
+		if (!_bob[idx].field1C) {
+			if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
+				_bob[idx].field1C = true;
 			continue;
 		}
 
-		byte *dataPtr = _vm->_globals._bob[idx]._animData + 20;
-		int dataIdx = _vm->_globals._bob[idx]._animDataIdx;
-		_vm->_globals._bob[idx]._xp = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx);
+		byte *dataPtr = _bob[idx]._animData + 20;
+		int dataIdx = _bob[idx]._animDataIdx;
+		_bob[idx]._xp = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx);
 		if (_vm->_globals._lockedAnims[idx]._enableFl)
-			_vm->_globals._bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
+			_bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
 		if ( PERSO_ON && idx > 20 )
-			_vm->_globals._bob[idx]._xp += _vm->_eventsManager._startPos.x;
+			_bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
-		_vm->_globals._bob[idx]._yp = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 2);
-		_vm->_globals._bob[idx].field12 = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 4);
-		_vm->_globals._bob[idx]._zoomFactor = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 6);
-		_vm->_globals._bob[idx]._frameIndex = dataPtr[2 * dataIdx + 8];
-		_vm->_globals._bob[idx]._flipFl = (dataPtr[2 * dataIdx + 9] != 0);
-		_vm->_globals._bob[idx]._animDataIdx += 5;
+		_bob[idx]._yp = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 2);
+		_bob[idx].field12 = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 4);
+		_bob[idx]._zoomFactor = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 6);
+		_bob[idx]._frameIndex = dataPtr[2 * dataIdx + 8];
+		_bob[idx]._flipFl = (dataPtr[2 * dataIdx + 9] != 0);
+		_bob[idx]._animDataIdx += 5;
 
-		int v5 = _vm->_globals._bob[idx].field12;
+		int v5 = _bob[idx].field12;
 		if (v5 > 0) {
 			int v6 = v5 / _vm->_globals._speed;
-			_vm->_globals._bob[idx].field12 = v5 / _vm->_globals._speed;
+			_bob[idx].field12 = v5 / _vm->_globals._speed;
 			if (v6 > 0) {
-				_vm->_globals._bob[idx].field14 = 1;
-				if (_vm->_globals._bob[idx].field1E == 1 || _vm->_globals._bob[idx].field1E == 2)
-					_vm->_globals._bob[idx].field1C = true;
+				_bob[idx].field14 = 1;
+				if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
+					_bob[idx].field1C = true;
 				continue;
 			}
 
-			_vm->_globals._bob[idx].field12 = 1;
+			_bob[idx].field12 = 1;
 		}
-		if (!_vm->_globals._bob[idx].field12) {
-			if (_vm->_globals._bob[idx].field20 > 0)
-				_vm->_globals._bob[idx].field20--;
-			if (_vm->_globals._bob[idx].field20 != -1 && _vm->_globals._bob[idx].field20 <= 0) {
-				_vm->_globals._bob[idx].field0 = 11;
+		if (!_bob[idx].field12) {
+			if (_bob[idx].field20 > 0)
+				_bob[idx].field20--;
+			if (_bob[idx].field20 != -1 && _bob[idx].field20 <= 0) {
+				_bob[idx].field0 = 11;
 			} else {
-				_vm->_globals._bob[idx]._animDataIdx = 0;
-				byte *v21 = _vm->_globals._bob[idx]._animData + 20;
-				_vm->_globals._bob[idx]._xp = (int16)READ_LE_UINT16(v21);
+				_bob[idx]._animDataIdx = 0;
+				byte *v21 = _bob[idx]._animData + 20;
+				_bob[idx]._xp = (int16)READ_LE_UINT16(v21);
 
 				if (_vm->_globals._lockedAnims[idx]._enableFl)
-					_vm->_globals._bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
+					_bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
 				if (PERSO_ON && idx > 20)
-					_vm->_globals._bob[idx]._xp += _vm->_eventsManager._startPos.x;
+					_bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
-				_vm->_globals._bob[idx]._yp = (int16)READ_LE_UINT16(v21 + 2);
-				_vm->_globals._bob[idx].field12 = (int16)READ_LE_UINT16(v21 + 4);
-				_vm->_globals._bob[idx]._zoomFactor = (int16)READ_LE_UINT16(v21 + 6);
-				_vm->_globals._bob[idx]._frameIndex = v21[8];
-				_vm->_globals._bob[idx]._flipFl = (v21[9] != 0);
-				_vm->_globals._bob[idx]._animDataIdx += 5;
-				int v10 = _vm->_globals._bob[idx].field12;
+				_bob[idx]._yp = (int16)READ_LE_UINT16(v21 + 2);
+				_bob[idx].field12 = (int16)READ_LE_UINT16(v21 + 4);
+				_bob[idx]._zoomFactor = (int16)READ_LE_UINT16(v21 + 6);
+				_bob[idx]._frameIndex = v21[8];
+				_bob[idx]._flipFl = (v21[9] != 0);
+				_bob[idx]._animDataIdx += 5;
+				int v10 = _bob[idx].field12;
 
 				if (v10 > 0) {
 					int v11 = v10 / _vm->_globals._speed;
-					_vm->_globals._bob[idx].field12 = v11;
+					_bob[idx].field12 = v11;
 					// Original code. It can't be negative, so the check is on == 0
 					if (v11 <= 0)
-						_vm->_globals._bob[idx].field12 = 1;
+						_bob[idx].field12 = 1;
 				}
 			}
 		}
 
-		_vm->_globals._bob[idx].field14 = 1;
-		if (_vm->_globals._bob[idx].field1E == 1 || _vm->_globals._bob[idx].field1E == 2)
-			_vm->_globals._bob[idx].field1C = true;
+		_bob[idx].field14 = 1;
+		if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
+			_bob[idx].field1C = true;
 	}
 
 	if (!PERSO_ON && BOBTOUS) {
 		for (int i = 0; i < 35; i++) {
-			if (_vm->_globals._bob[i].field0 == 10 && !_vm->_globals._bob[i]._disabledAnimationFl)
-				_vm->_globals._bob[i].field1C = true;
+			if (_bob[i].field0 == 10 && !_bob[i]._disabledAnimationFl)
+				_bob[i].field1C = true;
 		}
 	}
 
@@ -1013,8 +1015,8 @@ void ObjectsManager::displayBobAnim() {
 
 	for (int i = 1; i <= 35; i++) {
 		if (i > 20 || !PERSO_ON) {
-			if ((_vm->_globals._bob[i].field0 == 10) && (_vm->_globals._bob[i].field1C)) {
-				if ((_vm->_globals._bob[i].field1E != 2) && (_vm->_globals._bob[i].field1E != 4)) {
+			if ((_bob[i].field0 == 10) && (_bob[i].field1C)) {
+				if ((_bob[i].field1E != 2) && (_bob[i].field1E != 4)) {
 					if (_vm->_globals.Liste2[i]._visibleFl) {
 						_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen,
 							_vm->_globals.Liste2[i]._posX, _vm->_globals.Liste2[i]._posY,
@@ -1026,7 +1028,7 @@ void ObjectsManager::displayBobAnim() {
 				}
 			}
 
-			if (_vm->_globals._bob[i].field0 == 11) {
+			if (_bob[i].field0 == 11) {
 				if (_vm->_globals.Liste2[i]._visibleFl) {
 					_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen,
 						_vm->_globals.Liste2[i]._posX, _vm->_globals.Liste2[i]._posY,
@@ -1036,21 +1038,21 @@ void ObjectsManager::displayBobAnim() {
 					_vm->_globals.Liste2[i]._visibleFl = false;
 				}
 
-				_vm->_globals._bob[i].field0 = 0;
+				_bob[i].field0 = 0;
 			}
 		}
 	}
 
 	for (int i = 1; i <= 35; i++) {
-		_vm->_globals._bob[i]._oldY = 0;
-		if (_vm->_globals._bob[i].field0 == 10 && !_vm->_globals._bob[i]._disabledAnimationFl && _vm->_globals._bob[i].field1C) {
+		_bob[i]._oldY = 0;
+		if (_bob[i].field0 == 10 && !_bob[i]._disabledAnimationFl && _bob[i].field1C) {
 			CALCUL_BOB(i);
-			int v19 = _vm->_globals._bob[i]._oldX2 + _vm->_globals._bob[i]._oldHeight + _vm->_globals._bob[i]._oldY;
+			int v19 = _bob[i]._oldX2 + _bob[i]._oldHeight + _bob[i]._oldY;
 
 			if (v19 > 450)
 				v19 = 600;
 
-			if (_vm->_globals._bob[i]._activeFl)
+			if (_bob[i]._activeFl)
 				beforeSort(SORT_BOB, i, v19);
 		}
 	}
@@ -3080,57 +3082,57 @@ void ObjectsManager::OPTI_ONE(int idx, int animIdx, int destPosi, int animAction
 	if (!animAction)
 		stopBobAnimation(idx);
 	else if (animAction == 4) {
-		_vm->_graphicsManager.fastDisplay(_vm->_globals._bob[idx]._spriteData,
-			_vm->_globals._bob[idx]._oldX, _vm->_globals._bob[idx]._oldY, _vm->_globals._bob[idx]._frameIndex);
+		_vm->_graphicsManager.fastDisplay(_bob[idx]._spriteData,
+			_bob[idx]._oldX, _bob[idx]._oldY, _bob[idx]._frameIndex);
 		stopBobAnimation(idx);
 		_vm->_eventsManager.VBL();
 	}
 }
 
 int ObjectsManager::getBobAnimDataIdx(int idx) {
-	return _vm->_globals._bob[idx]._animDataIdx / 5;
+	return _bob[idx]._animDataIdx / 5;
 }
 
 void ObjectsManager::setBobAnimDataIdx(int idx, int animIdx) {
-	_vm->_globals._bob[idx]._animDataIdx = 5 * animIdx;
-	_vm->_globals._bob[idx].field12 = 0;
-	_vm->_globals._bob[idx].field14 = 0;
+	_bob[idx]._animDataIdx = 5 * animIdx;
+	_bob[idx].field12 = 0;
+	_bob[idx].field14 = 0;
 }
 
 /**
  * Set Hopkins animation
  */
 void ObjectsManager::setBobAnimation(int idx) {
-	if (!_vm->_globals._bob[idx]._disabledAnimationFl)
+	if (!_bob[idx]._disabledAnimationFl)
 		return;
 
-	_vm->_globals._bob[idx]._disabledAnimationFl = false;
-	_vm->_globals._bob[idx]._animDataIdx = 5;
-	_vm->_globals._bob[idx]._frameIndex = 250;
-	_vm->_globals._bob[idx].field12 = 0;
-	_vm->_globals._bob[idx].field14 = 0;
+	_bob[idx]._disabledAnimationFl = false;
+	_bob[idx]._animDataIdx = 5;
+	_bob[idx]._frameIndex = 250;
+	_bob[idx].field12 = 0;
+	_bob[idx].field14 = 0;
 }
 
 /**
  * Stop Hopkins animation
  */
 void ObjectsManager::stopBobAnimation(int idx) {
-	_vm->_globals._bob[idx]._disabledAnimationFl = true;
+	_bob[idx]._disabledAnimationFl = true;
 }
 
 /**
  * Get X position
  */
 int ObjectsManager::getBobPosX(int idx) {
-	return _vm->_globals._bob[idx]._xp;
+	return _bob[idx]._xp;
 }
 
 int ObjectsManager::getBobPosY(int idx) {
-	return _vm->_globals._bob[idx]._yp;
+	return _bob[idx]._yp;
 }
 
 int ObjectsManager::getBobFrameIndex(int idx) {
-	return _vm->_globals._bob[idx]._frameIndex;
+	return _bob[idx]._frameIndex;
 }
 
 void ObjectsManager::INILINK(const Common::String &file) {

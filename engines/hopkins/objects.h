@@ -50,6 +50,36 @@ struct SpriteItem {
 	int _reducePct;
 };
 
+struct BobItem {
+	int field0;
+	byte *_spriteData;
+	int _xp;
+	int _yp;
+	int _frameIndex;
+	int _animDataIdx;
+	int field12;
+	int field14;
+	bool _disabledAnimationFl;
+	byte *_animData;
+	bool field1C;
+	int field1E;
+	int field20;
+	int field22;
+	int _offsetY; // Unused variable?
+	bool field34; // Set to true in B_CACHE_OFF()
+	int _zoomFactor;
+	bool _flipFl;
+	bool _isSpriteFl;
+	bool _activeFl;
+	int _oldX;
+	int _oldY;
+	int _oldWidth;
+	int _oldHeight;
+	int _oldX2;
+	int _zooInmFactor;
+	int _zoomOutFactor;
+};
+
 class HopkinsEngine;
 
 class ObjectsManager {
@@ -133,6 +163,7 @@ public:
 	byte *_saveLoadSprite;
 	byte *_saveLoadSprite2;
 	SpriteItem _sprite[6];
+	BobItem _bob[36];
 
 	bool PERSO_ON;
 	bool BOBTOUS;

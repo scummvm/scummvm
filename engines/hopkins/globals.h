@@ -68,36 +68,6 @@ struct ListeItem {
 	int _height;
 };
 
-struct BobItem {
-	int field0;
-	byte *_spriteData;
-	int _xp;
-	int _yp;
-	int _frameIndex;
-	int _animDataIdx;
-	int field12;
-	int field14;
-	bool _disabledAnimationFl;
-	byte *_animData;
-	bool field1C;
-	int field1E;
-	int field20;
-	int field22;
-	int _offsetY; // Unused variable?
-	bool field34; // Set to true in B_CACHE_OFF()
-	int _zoomFactor;
-	bool _flipFl;
-	bool _isSpriteFl;
-	bool _activeFl;
-	int _oldX;
-	int _oldY;
-	int _oldWidth;
-	int _oldHeight;
-	int _oldX2;
-	int _zooInmFactor;
-	int _zoomOutFactor;
-};
-
 struct LockAnimItem {
 	bool _enableFl;
 	int _posX;
@@ -307,7 +277,6 @@ public:
 	Sauvegarde *_saveData;
 	Language _language;
 	HopkinsItem Hopkins[70];
-	BobItem _bob[36];
 	SortItem _sortedDisplay[51];
 
 	CreditItem _creditsItem[200];
