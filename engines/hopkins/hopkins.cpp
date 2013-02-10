@@ -132,12 +132,7 @@ bool HopkinsEngine::runWin95Demo() {
 	if (!_eventsManager._escKeyFl)
 		playIntro();
 
-	warning("TODO Fin_Interrupt()");
-	warning("TODO TEST = 1;");
-	warning("TODO no_vsync = 1;");
 	_eventsManager._rateCounter = 0;
-	warning("TODO Init_Interrupt_();");
-
 	_globals.iRegul = 1;
 	_globals._speed = 1;
 
@@ -147,17 +142,10 @@ bool HopkinsEngine::runWin95Demo() {
 	}
 
 	_globals.iRegul = 0;
-	warning("TODO SPEEDJ = _globals._rateCounter;");
-	warning("TODO no_vsync = 0;");
-	warning("TODO TEST = 0;");
-//	if (SPEEDJ > 475)
 	if (_eventsManager._rateCounter > 475)
 		_globals._speed = 2;
-//	if (SPEEDJ > 700)
 	if (_eventsManager._rateCounter > 700)
 		_globals._speed = 3;
-	warning("TODO Fin_Interrupt_();");
-	warning("TODO Init_Interrupt_();");
 	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
@@ -746,7 +734,6 @@ bool HopkinsEngine::runLinuxDemo() {
 }
 
 bool HopkinsEngine::runFull() {
-	//warning("TODO: Init_Interrupt()");					// BeOS / Windows
 	if (getPlatform() == Common::kPlatformLinux)
 		_soundManager.WSOUND(16);
 
@@ -1524,25 +1511,18 @@ bool HopkinsEngine::runFull() {
 			_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 			_globals.iRegul = 1;
 			_soundManager.WSOUND_OFF();
-			//warning("TODO: heapshrink();");	// Windows
 			_soundManager.WSOUND(23);
 			_globals._exitId = handleBaseMap();	// Handles the base map (non-Windows)
 			//_globals._exitId = WBASE();	// Handles the 3D Doom level (Windows)
 			_soundManager.WSOUND_OFF();
-			//warning("TODO: heapshrink();");	// Windows
 			_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
 			_graphicsManager._lineNbr = SCREEN_WIDTH;
-			//if (_globals._exitId == -1)
-			//	error("FIN BASE SOUS MARINE");
 			break;
 		}
 	}
 	_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-	//warning("sub_33C70(v18);");	// OS/2
-	//warning("sub_39460(v19);");	// OS/2
-	//warning("sub_44134();");		// OS/2
 	restoreSystem();
 	return true;
 }
@@ -2031,7 +2011,7 @@ void HopkinsEngine::BASE() {
 		_animationManager.playAnim("base10a.anm", 10, 18, 18);
 	if (!_eventsManager._escKeyFl)
 		_animationManager.playAnim("base20a.anm", 10, 18, 18);
-	// CHECKME: The original code was doing the opposite test, which looks like a bug.
+	// CHECKME: The original code was doing the opposite test, which was a bug.
 	if (!_eventsManager._escKeyFl)
 		_animationManager.playAnim("base30a.anm", 10, 18, 18);
 	if (!_eventsManager._escKeyFl)

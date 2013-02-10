@@ -190,9 +190,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 						_vm->_eventsManager.VBL();
 					} while (v4);
 				}
-			} else
-				// TODO: Remove this:
-				warning("Former AFFICHE_SPEED1: %d %d %d", vbobPosX, vbobPosY, vbobFrameIndex);
+			}
 		}
 		opcodeType = 1;
 		break;
