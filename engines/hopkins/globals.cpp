@@ -422,27 +422,22 @@ void Globals::CACHE_ADD(int idx) {
 
 // Load Cache
 void Globals::loadCache(const Common::String &file) {
-	byte *v2 = g_PTRNUL;
-	byte *spriteData;
-	byte *ptr;
-	Common::String v16;
-	Common::File f;
-
 	resetCache();
-	ptr = _vm->_fileManager.loadFile(file);
-	v16 = Common::String((const char *)ptr);
+	byte *ptr = _vm->_fileManager.loadFile(file);
+	Common::String filename = Common::String((const char *)ptr);
 
-	if (!f.exists(v16))
+	Common::File f;
+	if (!f.exists(filename))
 		return;
 
-	spriteData = _vm->_fileManager.loadFile(v16);
+	byte *spriteData = _vm->_fileManager.loadFile(filename);
 	CACHE_BANQUE[1] = spriteData;
-	int v15 = 60;
+	int curBufIdx = 60;
 	for (int i = 0; i <= 21; i++) {
-		Cache[i]._spriteIndex = (int16)READ_LE_UINT16((uint16 *)ptr + v15);
-		Cache[i]._x = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 1);
-		Cache[i]._y = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 2);
-		Cache[i].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + v15 + 4);
+		Cache[i]._spriteIndex = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx);
+		Cache[i]._x = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx + 1);
+		Cache[i]._y = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx + 2);
+		Cache[i].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx + 4);
 		if (spriteData == g_PTRNUL) {
 			Cache[i]._useCount = 0;
 		} else {
@@ -454,11 +449,10 @@ void Globals::loadCache(const Common::String &file) {
 
 		if ( !Cache[i]._x && !Cache[i]._y && !Cache[i]._spriteIndex)
 			Cache[i]._useCount = 0;
-		v15 += 5;
+		curBufIdx += 5;
 	}
 	CACHE_ON();
-	v2 = ptr;
-	freeMemory(v2);
+	freeMemory(ptr);
 }
 
 } // End of namespace Hopkins
