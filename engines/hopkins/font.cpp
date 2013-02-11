@@ -134,12 +134,6 @@ void FontManager::initTextBuffers(int idx, int messageId, const Common::String &
 
 // Box
 void FontManager::box(int idx, int messageId, const Common::String &filename, int xp, int yp) {
-	byte *v9;
-	byte *ptre;
-	Common::String s;
-	Common::String file;
-	Common::File f;
-
 	int textPosX = xp;
 	if (idx < 0)
 		error("Bad number for text");
@@ -168,17 +162,18 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		}
 	} else {
 		int lineCount = 0;
-		for (int v62 = 0; v62 <= 19; v62++)
-			_textSortArray[v62] = 0;
+		for (int i = 0; i <= 19; i++)
+			_textSortArray[i] = 0;
 
 		_text[idx]._textLoadedFl = true;
-		file = filename;
+		Common::String file = filename;
 		if (strncmp(file.c_str(), _oldName.c_str(), strlen(file.c_str())) != 0) {
 			// Starting to access a new file, so read in the index file for the file
 			_oldName = file;
 			_indexName = Common::String(file.c_str(), file.size() - 3);
 			_indexName += "IND";
 
+			Common::File f;
 			if (!f.open(_indexName))
 				error("Error opening file - %s", _indexName.c_str());
 			int filesize = f.size();
@@ -186,12 +181,13 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				_index[i] = f.readUint32LE();
 			f.close();
 		}
-		int v69;
+		int bufSize;
 		if (filename[0] != 'Z' || filename[1] != 'O') {
+			Common::File f;
 			if (!f.open(file))
 				error("Error opening file - %s", _indexName.c_str());
 
-			v69 = 2048;
+			bufSize = 2048;
 			f.seek(_index[messageId]);
 
 			_tempText = _vm->_globals.allocMemory(2058);
@@ -202,90 +198,76 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			f.read(_tempText, 2048);
 			f.close();
 		} else {
-			v69 = 100;
-			v9 = _vm->_globals.allocMemory(110);
-			Common::fill(&v9[0], &v9[110], 0);
-
-			_tempText = v9;
-			const byte *v10 = _vm->_globals.BUF_ZONE + _index[messageId];
-			memcpy(v9, v10, 96);
-			WRITE_LE_UINT16((uint16 *)v9 + 48, (int16)READ_LE_UINT16(v10 + 96));
+			bufSize = 100;
+			_tempText = _vm->_globals.allocMemory(110);
+			Common::fill(&_tempText[0], &_tempText[110], 0);
+			memcpy(_tempText, _vm->_globals.BUF_ZONE + _index[messageId], 96);
+			WRITE_LE_UINT16((uint16 *)_tempText + 48, (int16)READ_LE_UINT16(_vm->_globals.BUF_ZONE + _index[messageId] + 96));
 		}
-		byte *v59 = _tempText;
-		for (int v63 = 0; v63 < v69; v63++) {
-			byte v13 = *v59;
-			if ((byte)(*v59 + 46) > 27) {
-				if ((byte)(v13 + 80) > 27) {
-					if ((byte)(v13 - 65) <= 25 || (byte)(v13 - 97) <= 25)
-						v13 = 32;
+		byte *curTempTextPtr = _tempText;
+		for (int i = 0; i < bufSize; i++) {
+			byte curChar = *curTempTextPtr;
+			if ((byte)(*curTempTextPtr + 46) > 27) {
+				if ((byte)(curChar + 80) > 27) {
+					if ((byte)(curChar - 65) <= 25 || (byte)(curChar - 97) <= 25)
+						curChar = 32;
 				} else {
-					v13 -= 79;
+					curChar -= 79;
 				}
 			} else {
-				v13 += 111;
+				curChar += 111;
 			}
-			*v59 = v13;
-			v59++;
+			*curTempTextPtr = curChar;
+			curTempTextPtr++;
 		};
 
-		int textLength = 0;
-		if (v69) {
-			for (;;) {
-				byte curChar = _tempText[textLength];
-				if (curChar == '\r' || curChar == '\n') {
-					_tempText[textLength] = 0;
-					if (!_text[idx]._length)
-						break;
-				}
-				++textLength;
-				if (v69 <= textLength)
+		int textLength;
+		for (textLength = 0; textLength < bufSize; textLength++) {
+			byte curChar = _tempText[textLength];
+			if (curChar == '\r' || curChar == '\n') {
+				_tempText[textLength] = 0;
+				if (!_text[idx]._length)
 					break;
 			}
 		}
 
-		if (v69 && v69 > textLength) {
+		if (bufSize && bufSize > textLength) {
 			_text[idx]._length = textLength;
 			_vm->_globals._boxWidth = 0;
 
-			for (int v15 = 0; v15 < textLength + 1; v15++) {
-				byte v16 = _tempText[v15];
-				if (v16 <= 31)
-					v16 = ' ';
-				_vm->_globals._boxWidth += _vm->_objectsManager.getWidth(_font, v16 - 32);
+			for (int curStrIdx = 0; curStrIdx < textLength + 1; curStrIdx++) {
+				byte curChar = _tempText[curStrIdx];
+				if (curChar <= 31)
+					curChar = ' ';
+				_vm->_globals._boxWidth += _vm->_objectsManager.getWidth(_font, curChar - 32);
 			}
 
 			_vm->_globals._boxWidth += 2;
-			int v17 = _vm->_globals._boxWidth / 2;
-			if (v17 < 0)
-				v17 = -v17;
-			_text[idx]._pos.x = 320 - v17;
-			textPosX = _vm->_eventsManager._startPos.x + 320 - v17;
+			_text[idx]._pos.x = 320 - abs(_vm->_globals._boxWidth / 2);
+			textPosX = _vm->_eventsManager._startPos.x + _text[idx]._pos.x;
 			lineCount = 1;
-			// CHECKME: textLength should be always positive...
-			if (textLength + 1 > 0) {
-				_text[idx]._lines[0] = Common::String((const char *)_tempText, textLength);
-			}
+			_text[idx]._lines[0] = Common::String((const char *)_tempText, textLength);
 		} else {
 			if (!_vm->_globals._boxWidth)
 				_vm->_globals._boxWidth = 240;
-			int v65 = 0;
+			int tempTextIdx = 0;
 			int lineSize;
 			byte curChar;
 			do {
-				int v19 = 0;
+				int curLineSize = 0;
 				int ptrb = _vm->_globals._boxWidth - 4;
 				for (;;) {
-					lineSize = v19;
+					lineSize = curLineSize;
 					do
-						curChar = _tempText[v65 + v19++];
+						curChar = _tempText[tempTextIdx + curLineSize++];
 					while (curChar != ' ' && curChar != '%');
-					if (v19 >= ptrb / _fontFixedWidth) {
+					if (curLineSize >= ptrb / _fontFixedWidth) {
 						if (curChar == '%')
 							curChar = ' ';
 						break;
 					}
 					if (curChar == '%') {
-						lineSize = v19;
+						lineSize = curLineSize;
 						break;
 					}
 				}
@@ -294,13 +276,13 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				// actual length of the line to be copied will be. Otherwise, you can see artifacts,
 				// such as a single character beyond the end of string NULL.
 				int actualSize = 0;
-				while (actualSize < lineSize && _tempText[v65 + actualSize])
+				while (actualSize < lineSize && _tempText[tempTextIdx + actualSize])
 					++actualSize;
 
-				_text[idx]._lines[lineCount] = Common::String((const char *)_tempText + v65, actualSize);
+				_text[idx]._lines[lineCount] = Common::String((const char *)_tempText + tempTextIdx, actualSize);
 				_textSortArray[lineCount++] = lineSize;
 
-				v65 += lineSize;
+				tempTextIdx += lineSize;
 			} while (curChar != '%');
 
 			for (int i = 0; i <= 19; i++) {
@@ -308,12 +290,12 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 					_textSortArray[i] = 0;
 				} else {
 					int ptrc = 0;
-					for (int v23 = 0; v23 < _textSortArray[i] - 1; v23++) {
+					for (int curIdx = 0; curIdx < _textSortArray[i] - 1; curIdx++) {
 						Common::String &line = _text[idx]._lines[i];
-						byte v24 = (v23 >= (int)line.size()) ? '\0' : line.c_str()[v23];
-						if (v24 <= 32)
-							v24 = ' ';
-						ptrc += _vm->_objectsManager.getWidth(_font, (byte)v24 - 32);
+						byte curChar = (curIdx >= (int)line.size()) ? '\0' : line.c_str()[curIdx];
+						if (curChar <= 31)
+							curChar = ' ';
+						ptrc += _vm->_objectsManager.getWidth(_font, (byte)curChar - 32);
 					}
 					_textSortArray[i] = ptrc;
 				}
@@ -391,7 +373,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		if (textType == 6 || textType == 1 || textType == 3 || textType == 5) {
 			_text[idx]._textBlock = _vm->_globals.freeMemory(_text[idx]._textBlock);
 			int blockSize = blockHeight * blockWidth;
-			ptre = _vm->_globals.allocMemory(blockSize + 20);
+			byte *ptre = _vm->_globals.allocMemory(blockSize + 20);
 			if (ptre == g_PTRNUL)
 				error("Cutting a block for text box (%d)", blockSize);
 
@@ -408,13 +390,12 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
  * Directly display text (using a VESA segment)
  */
 void FontManager::displayTextVesa(int xp, int yp, const Common::String &message, int col) {
-	char currChar;
 	int charIndex;
 	int currentX = xp;
 
 	const char *srcP = message.c_str();
 	for (;;) {
-		currChar = *srcP++;
+		char currChar = *srcP++;
 		if (!currChar)
 			break;
 		if (currChar >= 32) {
