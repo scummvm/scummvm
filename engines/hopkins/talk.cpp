@@ -790,7 +790,7 @@ void TalkManager::REPONSE(int zone, int verb) {
 		int v12 = 0;
 		bool innerLoopCond = false;
 		do {
-			bool tagFound = false;
+			tagFound = false;
 			if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'C')) {
 				++v12;
 				assert(v12 < (620 / 20));
