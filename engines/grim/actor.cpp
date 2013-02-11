@@ -1334,6 +1334,7 @@ void Actor::updateWalk() {
 	_walkedCur = true;
 	float walkAmt = g_grim->getPerSecond(_walkRate);
 	if (walkAmt >= dist) {
+		walkAmt = dist;
 		_path.pop_back();
 		if (_path.empty()) {
 			_walking = false;
