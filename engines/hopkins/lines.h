@@ -65,6 +65,24 @@ struct SquareZoneItem {
 	bool _squareZoneFl;
 };
 
+struct ZonePItem {
+	int _destX;
+	int _destY;
+	int _spriteIndex;
+	int field6;
+	int field7;
+	int field8;
+	int field9;
+	int fieldA;
+	int fieldB;
+	int fieldC;
+	int fieldD;
+	int fieldE;
+	int fieldF;
+	bool _enabledFl;
+	int field12;
+};
+
 class LinesManager {
 private:
 	HopkinsEngine *_vm;
@@ -112,6 +130,10 @@ public:
 	int16 *_route;
 	int16 *essai2;
 
+	int BOBZONE[105];
+	bool BOBZONE_FLAG[105];
+	ZonePItem ZONEP[106];
+
 	LinesManager();
 	~LinesManager();
 	void setParent(HopkinsEngine *vm);
@@ -128,6 +150,9 @@ public:
 	void resetLines();
 	void resetLinesNumb();
 	void resetLastLine();
+	void enableZone(int idx);
+	void disableZone(int idx);
+	void checkZone();
 
 	int MZONE();
 	void CARRE_ZONE();

@@ -33,15 +33,25 @@ LinesManager::LinesManager() {
 		Common::fill((byte *)&_zoneLine[i], (byte *)&_zoneLine[i] + sizeof(LigneZoneItem), 0);
 		Common::fill((byte *)&Ligne[i], (byte *)&Ligne[i] + sizeof(LigneItem), 0);
 	}
-	for (int i = 0; i < 4000; ++i) {
+
+	for (int i = 0; i < 4000; ++i)
 		Common::fill((byte *)&_smoothRoute[i], (byte *)&_smoothRoute[i] + sizeof(SmoothItem), 0);
-	}
+
 	for (int i = 0; i < 32002; ++i)
 		super_parcours[i] = 0;
+
 	for (int i = 0; i < 101; ++i) {
 		Common::fill((byte *)&_segment[i], (byte *)&_segment[i] + sizeof(SegmentItem), 0);
 		Common::fill((byte *)&_squareZone[i], (byte *)&_squareZone[i] + sizeof(SquareZoneItem), 0);
 	}
+
+	for (int i = 0; i < 105; ++i) {
+		BOBZONE[i] = 0;
+		BOBZONE_FLAG[i] = false;
+	}
+
+	for (int i = 0; i < 106; ++i)
+		Common::fill((byte *)&ZONEP[i], (byte *)&ZONEP[i] + sizeof(ZonePItem), 0);
 
 	_linesNumb = 0;
 	NV_LIGNEDEP = 0;
@@ -160,8 +170,8 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 	int16 *zoneData;
 
 	if (a2 == a3 && a3 == a4 && a3 == a5) {
-		_vm->_globals.BOBZONE_FLAG[bobZoneIdx] = true;
-		_vm->_globals.BOBZONE[bobZoneIdx] = a3;
+		BOBZONE_FLAG[bobZoneIdx] = true;
+		BOBZONE[bobZoneIdx] = a3;
 	} else {
 		assert (idx <= MAX_LINES);
 		_zoneLine[idx]._zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx]._zoneData);
@@ -2965,19 +2975,19 @@ int LinesManager::MZONE() {
 	int yp = _vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y;
 	if ((_vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y) > 19) {
 		for (int bobZoneId = 0; bobZoneId <= 48; bobZoneId++) {
-			int bobId = _vm->_globals.BOBZONE[bobZoneId];
-			if (bobId && _vm->_globals.BOBZONE_FLAG[bobZoneId] && _vm->_objectsManager._bob[bobId].field0 && _vm->_objectsManager._bob[bobId]._frameIndex != 250 &&
+			int bobId = BOBZONE[bobZoneId];
+			if (bobId && BOBZONE_FLAG[bobZoneId] && _vm->_objectsManager._bob[bobId].field0 && _vm->_objectsManager._bob[bobId]._frameIndex != 250 &&
 				!_vm->_objectsManager._bob[bobId]._disabledAnimationFl && xp > _vm->_objectsManager._bob[bobId]._oldX && 
 				xp < _vm->_objectsManager._bob[bobId]._oldWidth + _vm->_objectsManager._bob[bobId]._oldX && yp > _vm->_objectsManager._bob[bobId]._oldY) {
 					if (yp < _vm->_objectsManager._bob[bobId]._oldHeight + _vm->_objectsManager._bob[bobId]._oldY) {
-						if (_vm->_globals.ZONEP[bobZoneId]._spriteIndex == -1) {
-							_vm->_globals.ZONEP[bobZoneId]._destX = 0;
-							_vm->_globals.ZONEP[bobZoneId]._destY = 0;
+						if (ZONEP[bobZoneId]._spriteIndex == -1) {
+							ZONEP[bobZoneId]._destX = 0;
+							ZONEP[bobZoneId]._destY = 0;
 						}
-						if (!_vm->_globals.ZONEP[bobZoneId]._destX && !_vm->_globals.ZONEP[bobZoneId]._destY) {
-							_vm->_globals.ZONEP[bobZoneId]._destX = _vm->_objectsManager._bob[bobId]._oldWidth + _vm->_objectsManager._bob[bobId]._oldX;
-							_vm->_globals.ZONEP[bobZoneId]._destY = _vm->_objectsManager._bob[bobId]._oldHeight + _vm->_objectsManager._bob[bobId]._oldY + 6;
-							_vm->_globals.ZONEP[bobZoneId]._spriteIndex = -1;
+						if (!ZONEP[bobZoneId]._destX && !ZONEP[bobZoneId]._destY) {
+							ZONEP[bobZoneId]._destX = _vm->_objectsManager._bob[bobId]._oldWidth + _vm->_objectsManager._bob[bobId]._oldX;
+							ZONEP[bobZoneId]._destY = _vm->_objectsManager._bob[bobId]._oldHeight + _vm->_objectsManager._bob[bobId]._oldY + 6;
+							ZONEP[bobZoneId]._spriteIndex = -1;
 						}
 						return bobZoneId;
 					}
@@ -2985,7 +2995,7 @@ int LinesManager::MZONE() {
 		}
 		_currentSegmentId = 0;
 		for (int squareZoneId = 0; squareZoneId <= 99; squareZoneId++) {
-			if (_vm->_globals.ZONEP[squareZoneId]._enabledFl && _squareZone[squareZoneId]._enabledFl == 1
+			if (ZONEP[squareZoneId]._enabledFl && _squareZone[squareZoneId]._enabledFl == 1
 				&& _squareZone[squareZoneId]._left <= xp && _squareZone[squareZoneId]._right >= xp
 				&& _squareZone[squareZoneId]._top <= yp && _squareZone[squareZoneId]._bottom >= yp) {
 					if (_squareZone[squareZoneId]._squareZoneFl)
@@ -3003,7 +3013,7 @@ int LinesManager::MZONE() {
 		int colRes1 = 0;
 		for (int yCurrent = yp; yCurrent >= 0; --yCurrent) {
 			colRes1 = colision(xp, yCurrent);
-			if (colRes1 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
+			if (colRes1 != -1 && ZONEP[colRes1]._enabledFl)
 				break;
 		}
 
@@ -3013,7 +3023,7 @@ int LinesManager::MZONE() {
 		int colRes2 = 0;
 		for (int j = yp; j < _vm->_graphicsManager._maxY; ++j) {
 			colRes2 = colision(xp, j);
-			if (colRes2 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
+			if (colRes2 != -1 && ZONEP[colRes1]._enabledFl)
 				break;
 		}
 
@@ -3023,7 +3033,7 @@ int LinesManager::MZONE() {
 		int colRes3 = 0;
 		for (int k = xp; k >= 0; --k) {
 			colRes3 = colision(k, yp);
-			if (colRes3 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
+			if (colRes3 != -1 && ZONEP[colRes1]._enabledFl)
 				break;
 		}
 		if (colRes3 == -1)
@@ -3032,7 +3042,7 @@ int LinesManager::MZONE() {
 		int colRes4 = 0;
 		for (int xCurrent = xp; _vm->_graphicsManager._maxX > xCurrent; ++xCurrent) {
 			colRes4 = colision(xCurrent, yp);
-			if (colRes4 != -1 && _vm->_globals.ZONEP[colRes1]._enabledFl)
+			if (colRes4 != -1 && ZONEP[colRes1]._enabledFl)
 				break;
 		}
 		if (colRes1 == colRes2 && colRes1 == colRes3 && colRes1 == colRes4)
@@ -3145,6 +3155,12 @@ void LinesManager::CARRE_ZONE() {
 }
 
 void LinesManager::clearAll() {
+	for (int idx = 0; idx < 105; ++idx) {
+		_vm->_linesManager.ZONEP[idx]._destX = 0;
+		_vm->_linesManager.ZONEP[idx]._destY = 0;
+		_vm->_linesManager.ZONEP[idx]._spriteIndex = 0;
+	}
+
 	_vm->_linesManager.essai0 = (int16 *)g_PTRNUL;
 	_vm->_linesManager.essai1 = (int16 *)g_PTRNUL;
 	_vm->_linesManager.essai2 = (int16 *)g_PTRNUL;
@@ -3217,4 +3233,110 @@ void LinesManager::resetLastLine() {
 void LinesManager::resetLinesNumb() {
 	_linesNumb = 0;
 }
+
+void LinesManager::enableZone(int idx) {
+	if (BOBZONE[idx]) {
+		BOBZONE_FLAG[idx] = true;
+	} else {
+		ZONEP[idx]._enabledFl = true;
+	}
+}
+
+void LinesManager::disableZone(int idx) {
+	if (BOBZONE[idx]) {
+		BOBZONE_FLAG[idx] = false;
+	} else {
+		ZONEP[idx]._enabledFl = false;
+	}
+}
+
+void LinesManager::checkZone() {
+	int mouseX = _vm->_eventsManager.getMouseX();
+	int mouseY = _vm->_eventsManager.getMouseY();
+	int oldMouseY = mouseY;
+	if (_vm->_globals._cityMapEnabledFl
+		|| _vm->_eventsManager._startPos.x >= mouseX
+		|| (mouseY = _vm->_graphicsManager._scrollOffset + 54, mouseX >= mouseY)
+		|| (mouseY = oldMouseY - 1, mouseY < 0 || mouseY > 59)) {
+			if (_vm->_objectsManager._visibleFl)
+				_vm->_objectsManager._eraseVisibleCounter = 4;
+			_vm->_objectsManager._visibleFl = false;
+	} else {
+		_vm->_objectsManager._visibleFl = true;
+	}
+	if (_vm->_objectsManager._forceZoneFl) {
+		_vm->_globals.compteur_71 = 100;
+		_vm->_globals._oldMouseZoneId = -1;
+		_vm->_globals._oldMouseX = -200;
+		_vm->_globals._oldMouseY = -220;
+		_vm->_objectsManager._forceZoneFl = false;
+	}
+
+	_vm->_globals.compteur_71++;
+	if (_vm->_globals.compteur_71 <= 1)
+		return;
+
+	if (_vm->_globals.NOMARCHE || (_vm->_linesManager._route == (int16 *)g_PTRNUL) || _vm->_globals.compteur_71 > 4) {
+		_vm->_globals.compteur_71 = 0;
+		int zoneId;
+		if (_vm->_globals._oldMouseX != mouseX || _vm->_globals._oldMouseY != oldMouseY) {
+			zoneId = _vm->_linesManager.MZONE();
+		} else {
+			zoneId = _vm->_globals._oldMouseZoneId;
+		}
+		if (_vm->_globals._oldMouseZoneId != zoneId) {
+			_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
+			_vm->_eventsManager._mouseCursorId = 4;
+			_vm->_eventsManager.changeMouseCursor(4);
+			if (_vm->_globals._forceHideText) {
+				_vm->_fontManager.hideText(5);
+				_vm->_globals._forceHideText = false;
+				return;
+			}
+		}
+		if (zoneId != -1) {
+			if (ZONEP[zoneId].field6 || ZONEP[zoneId].field7 ||
+				ZONEP[zoneId].field8 || ZONEP[zoneId].field9 ||
+				ZONEP[zoneId].fieldA || ZONEP[zoneId].fieldB ||
+				ZONEP[zoneId].fieldC || ZONEP[zoneId].fieldD ||
+				ZONEP[zoneId].fieldE || ZONEP[zoneId].fieldF) {
+					if (_vm->_globals._oldMouseZoneId != zoneId) {
+						_vm->_fontManager.initTextBuffers(5, ZONEP[zoneId].field12, _vm->_globals.FICH_ZONE, 0, 430, 0, 0, 252);
+						_vm->_fontManager.showText(5);
+						_vm->_globals._forceHideText = true;
+					}
+					_vm->_globals._hotspotTextColor += 25;
+					if (_vm->_globals._hotspotTextColor > 100)
+						_vm->_globals._hotspotTextColor = 0;
+					_vm->_graphicsManager.SETCOLOR4(251, _vm->_globals._hotspotTextColor, _vm->_globals._hotspotTextColor,
+						_vm->_globals._hotspotTextColor);
+					if (_vm->_eventsManager._mouseCursorId == 4) {
+						if (ZONEP[zoneId].field6 == 2) {
+							_vm->_eventsManager.changeMouseCursor(16);
+							_vm->_eventsManager._mouseCursorId = 16;
+							_vm->_objectsManager.setVerb(16);
+						}
+					}
+			} else {
+				_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
+				_vm->_eventsManager._mouseCursorId = 4;
+				_vm->_eventsManager.changeMouseCursor(4);
+			}
+		}
+		_vm->_objectsManager._zoneNum = zoneId;
+		_vm->_globals._oldMouseX = mouseX;
+		_vm->_globals._oldMouseY = oldMouseY;
+		_vm->_globals._oldMouseZoneId = zoneId;
+		if (_vm->_globals.NOMARCHE && (_vm->_eventsManager._mouseCursorId == 4)) {
+			if (zoneId != -1 && zoneId != 0)
+				_vm->_objectsManager.handleRightButton();
+		}
+		if ((_vm->_globals._cityMapEnabledFl && zoneId == -1) || !zoneId) {
+			_vm->_objectsManager.setVerb(0);
+			_vm->_eventsManager._mouseCursorId = 0;
+			_vm->_eventsManager.changeMouseCursor(0);
+		}
+	}
+}
+
 } // End of namespace Hopkins

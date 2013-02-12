@@ -200,10 +200,6 @@ public:
 	void changeObject(int objIndex);
 	void removeObject(int objIndex);
 
-	void checkZone();
-	void enableZone(int idx);
-	void disableZone(int idx);
-
 	void resetBob(int idx);
 	void setBobAnimDataIdx(int idx, int animIdx);
 	void setBobAnimation(int idx);
@@ -219,6 +215,7 @@ public:
 	void handleLeftButton();
 	void handleRightButton();
 	void setOffsetXY(byte *data, int idx, int xp, int yp, bool isSize);
+	void setVerb(int id);
 
 	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen);

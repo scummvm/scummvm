@@ -905,8 +905,8 @@ void TalkManager::REPONSE2(int zone, int verb) {
 			break;
 		}
 		_vm->_globals._saveData->_data[indx] = 2;
-		_vm->_objectsManager.disableZone(22);
-		_vm->_objectsManager.disableZone(23);
+		_vm->_linesManager.disableZone(22);
+		_vm->_linesManager.disableZone(23);
 	} else if (zone == 20 || zone == 21) {
 		_vm->_objectsManager.setFlipSprite(0, true);
 		_vm->_objectsManager.setSpriteIndex(0, 62);
@@ -952,8 +952,8 @@ void TalkManager::REPONSE2(int zone, int verb) {
 			break;
 		}
 		_vm->_globals._saveData->_data[indx] = 2;
-		_vm->_objectsManager.disableZone(21);
-		_vm->_objectsManager.disableZone(20);
+		_vm->_linesManager.disableZone(21);
+		_vm->_linesManager.disableZone(20);
 	}
 }
 
@@ -967,7 +967,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_globals.resetCache();
 	
 	for (int i = 0; i <= 44; i++)
-		_vm->_globals.BOBZONE[i] = 0;
+		_vm->_linesManager.BOBZONE[i] = 0;
 
 	_vm->_objectsManager._zoneNum = -1;
 	_vm->_eventsManager._mouseCursorId = 4;
@@ -1028,7 +1028,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 		else if (mouseButton == 2)
 			_vm->_objectsManager.handleRightButton();
 
-		_vm->_objectsManager.checkZone();
+		_vm->_linesManager.checkZone();
 		if (_vm->_globals.GOACTION)
 			_vm->_objectsManager.PARADISE();
 		_vm->_eventsManager.VBL();
@@ -1045,7 +1045,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_linesManager.resetLines();
 	_vm->_globals.resetCache();
 	for (int i = 0; i <= 44; i++)
-		_vm->_globals.BOBZONE[i] = 0;
+		_vm->_linesManager.BOBZONE[i] = 0;
 
 	_vm->_globals.freeMemory(_vm->_globals._answerBuffer);
 	_vm->_globals._answerBuffer = oldAnswerBufferPtr;

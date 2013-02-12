@@ -477,11 +477,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 2;
 		break;
 	case MKTAG24('Z', 'O', 'N'):
-		_vm->_objectsManager.enableZone((int16)READ_LE_UINT16(dataP + 5));
+		_vm->_linesManager.enableZone((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
 		break;
 	case MKTAG24('Z', 'O', 'F'):
-		_vm->_objectsManager.disableZone((int16)READ_LE_UINT16(dataP + 5));
+		_vm->_linesManager.disableZone((int16)READ_LE_UINT16(dataP + 5));
 		opcodeType = 1;
 		break;
 	case MKTAG24('E', 'X', 'I'):
@@ -2229,7 +2229,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 245:
 			_vm->_soundManager.playSound("SOUND89.WAV");
 			_vm->_objectsManager.OPTI_ONE(5, 0, 6, 0);
-			_vm->_globals.ZONEP[4]._destX = 276;
+			_vm->_linesManager.ZONEP[4]._destX = 276;
 			_vm->_objectsManager.enableVerb(4, 19);
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 285, 379, 0);
 			_vm->_globals._saveData->_data[svField399] = 1;
@@ -2390,7 +2390,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 1;
 		break;
 	case MKTAG24('Z', 'C', 'H'):
-		_vm->_globals.ZONEP[(int16)READ_LE_UINT16(dataP + 5)].field12 = (int16)READ_LE_UINT16(dataP + 7);
+		_vm->_linesManager.ZONEP[(int16)READ_LE_UINT16(dataP + 5)].field12 = (int16)READ_LE_UINT16(dataP + 7);
 		opcodeType = 1;
 		break;
 	case MKTAG24('J', 'U', 'M'):

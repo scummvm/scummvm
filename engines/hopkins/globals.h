@@ -29,23 +29,6 @@
 
 namespace Hopkins {
 
-struct ZonePItem {
-	int _destX;
-	int _destY;
-	int _spriteIndex;
-	int field6;
-	int field7;
-	int field8;
-	int field9;
-	int fieldA;
-	int fieldB;
-	int fieldC;
-	int fieldD;
-	int fieldE;
-	int fieldF;
-	bool _enabledFl;
-	int field12;
-};
 
 struct BqeAnimItem {
 	byte *_data;
@@ -317,10 +300,7 @@ public:
 	byte *SPRITE_ECRAN;
 	byte *PERSO;
 	int PERSO_TYPE;
-	int BOBZONE[105];
-	bool BOBZONE_FLAG[105];
 	bool NOT_VERIF;
-	ZonePItem ZONEP[106];
 	ObjetWItem ObjetW[300];
 	int NUM_FICHIER_OBJ;
 	byte *ADR_FICHIER_OBJ;

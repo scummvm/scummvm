@@ -2723,13 +2723,13 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 		_objectsManager.INILINK("ocean");
 
 	if (!exit1)
-		_objectsManager.disableZone(1);
+		_linesManager.disableZone(1);
 	if (!exit2)
-		_objectsManager.disableZone(2);
+		_linesManager.disableZone(2);
 	if (!exit3)
-		_objectsManager.disableZone(3);
+		_linesManager.disableZone(3);
 	if (!exit4)
-		_objectsManager.disableZone(4);
+		_linesManager.disableZone(4);
 
 	if (!_globals._oceanDirection)
 		_globals._oceanDirection = defaultDirection;
@@ -2775,7 +2775,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 		int mouseButton = _eventsManager.getMouseButton();
 		if (mouseButton && mouseButton == 1)
 			BTOCEAN();
-		_objectsManager.checkZone();
+		_linesManager.checkZone();
 		OCEAN_HOME();
 		_eventsManager.VBL();
 		if (_globals._exitId || g_system->getEventManager()->shouldQuit())

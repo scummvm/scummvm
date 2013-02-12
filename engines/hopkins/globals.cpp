@@ -68,8 +68,6 @@ Globals::Globals() {
 	// Initialise array properties
 	for (int i = 0; i < 6; ++i)
 		CACHE_BANQUE[i] = g_PTRNUL;
-	for (int i = 0; i < 106; ++i)
-		Common::fill((byte *)&ZONEP[i], (byte *)&ZONEP[i] + sizeof(ZonePItem), 0);
 	for (int i = 0; i < 35; ++i)
 		Common::fill((byte *)&Bqe_Anim[i], (byte *)&Bqe_Anim[i] + sizeof(BqeAnimItem), 0);
 	for (int i = 0; i < 8; ++i)
@@ -87,10 +85,6 @@ Globals::Globals() {
 	for (int i = 0; i < 25; ++i)
 		Common::fill((byte *)&Cache[i], (byte *)&Cache[i] + sizeof(CacheItem), 0);
 
-	for (int i = 0; i < 105; ++i) {
-		BOBZONE[i] = 0;
-		BOBZONE_FLAG[i] = false;
-	}
 	for (int i = 0; i < 500; ++i)
 		_spriteSize[i] = 0;
 	for (int i = 0; i < 70; ++i)
@@ -268,12 +262,6 @@ void Globals::clearAll() {
 	SPRITE_ECRAN = g_PTRNUL;
 	_saveData = (Sauvegarde *)g_PTRNUL;
 	_vm->_objectsManager._curObjectIndex = 0;
-
-	for (int idx = 0; idx < 105; ++idx) {
-		ZONEP[idx]._destX = 0;
-		ZONEP[idx]._destY = 0;
-		ZONEP[idx]._spriteIndex = 0;
-	}
 
 	_vm->_linesManager.clearAll();
 	_vm->_objectsManager.clearAll();
