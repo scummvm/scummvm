@@ -333,54 +333,51 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 	size_t filesize = f.size();
 
 	f.read(surface, 128);
-	int v4 = filesize - 896;
+	int imageSize = filesize - 896;
 	byte *ptr = _vm->_globals.allocMemory(65024);
-	size_t v5;
-	int v15;
-	int v17;
-	if (v4 >= 64000) {
-		v15 = v4 / 64000 + 1;
-		v17 = 64000 * (v4 / 64000) - v4;
-		if (v17 < 0)
-			v17 = -v17;
+	size_t curBufSize;
+	int imageNumb;
+	int imageDataSize;
+	if (imageSize >= 64000) {
+		imageNumb = imageSize / 64000 + 1;
+		imageDataSize = abs(64000 * (imageSize / 64000) - imageSize);
 		f.read(ptr, 64000);
-		v5 = 64000;
+		curBufSize = 64000;
 	} else {
-		v15 = 1;
-		v17 = v4;
-		f.read(ptr, v4);
-		v5 = v4;
+		imageNumb = 1;
+		imageDataSize = imageSize;
+		f.read(ptr, imageSize);
+		curBufSize = imageSize;
 	}
-	int v16 = v15 - 1;
-	size_t v7 = 0;
+	imageNumb--;
+	size_t curByteIdx = 0;
 	for (int i = 0; i < 64000; i++) {
-		if (v7 == v5) {
-			v7 = 0;
-			--v16;
-			v5 = 64000;
-			if (!v16)
-				v5 = v17;
-			f.read(ptr, v5);
+		if (curByteIdx == curBufSize) {
+			curByteIdx = 0;
+			--imageNumb;
+			curBufSize = 64000;
+			if (!imageNumb)
+				curBufSize = imageDataSize;
+			f.read(ptr, curBufSize);
 		}
-		byte v9 = ptr[v7++];
-		if (v9 > 192) {
-			int v10 = v9 - 192;
-			if (v7 == v5) {
-				v7 = 0;
-				--v16;
-				v5 = 64000;
-				if (v16 == 1)
-					v5 = v17;
-				f.read(ptr, v5);
+		byte curByte = ptr[curByteIdx++];
+		if (curByte > 192) {
+			int repeatCount = curByte - 192;
+			if (curByteIdx == curBufSize) {
+				curByteIdx = 0;
+				--imageNumb;
+				curBufSize = 64000;
+				if (imageNumb == 1)
+					curBufSize = imageDataSize;
+				f.read(ptr, curBufSize);
 			}
-			char v12 = ptr[v7++];
-			do {
-				surface[i++] = v12;
-				--v10;
-			} while (v10);
+			curByte = ptr[curByteIdx++];
+			for (; repeatCount; repeatCount--)
+				surface[i++] = curByte;
+
 			--i;
 		} else {
-			surface[i] = v9;
+			surface[i] = curByte;
 		}
 	}
 
@@ -1223,21 +1220,21 @@ void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, in
 /**
  * Compute the value of a parameter plus a given percentage
  */
-int GraphicsManager::zoomIn(int v, int percentage ) {
-	if (v)
-		v += percentage * (long int)v / 100;
+int GraphicsManager::zoomIn(int val, int percentage ) {
+	if (val)
+		val += percentage * (long int)val / 100;
 
-	return v;
+	return val;
 }
 
 /**
  * Compute the value of a parameter minus a given percentage
  */
-int GraphicsManager::zoomOut(int v, int percentage) {
-	if (v)
-		v -= percentage * (long int)v / 100;
+int GraphicsManager::zoomOut(int val, int percentage) {
+	if (val)
+		val -= percentage * (long int)val / 100;
 
-	return v;
+	return val;
 }
 
 // Display 'Perfect?'
