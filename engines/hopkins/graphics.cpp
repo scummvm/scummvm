@@ -570,13 +570,8 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
  */
 void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface) {
 	byte palData[PALETTE_BLOCK_SIZE];
-	int fadeStep;
-	if (step > 1)
-		fadeStep = step;
-	else
-		fadeStep = 2;
-
-	if (palette) {
+	if ((step > 1) && (palette) && (!_vm->_eventsManager._escKeyFl)) {
+		int fadeStep = step;
 		for (int fadeIndex = 0; fadeIndex < fadeStep; fadeIndex++) {
 			for (int palOffset = 0; palOffset < PALETTE_BLOCK_SIZE; palOffset += 3) {
 				palData[palOffset + 0] = (fadeStep - fadeIndex - 1) * palette[palOffset + 0] / (fadeStep - 1);
