@@ -326,27 +326,18 @@ void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte
 }
 
 void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte *palette) {
-	size_t filesize;
-	int v4;
-	size_t v5;
-	size_t v7;
-	byte v9;
-	int v10;
-	char v12;
-	int v15;
-	int v16;
-	int32 v17;
-	byte *ptr;
 	Common::File f;
-
 	if (!f.open(file))
 		error("File not found - %s", file.c_str());
 
-	filesize = f.size();
+	size_t filesize = f.size();
 
 	f.read(surface, 128);
-	v4 = filesize - 896;
-	ptr = _vm->_globals.allocMemory(65024);
+	int v4 = filesize - 896;
+	byte *ptr = _vm->_globals.allocMemory(65024);
+	size_t v5;
+	int v15;
+	int v17;
 	if (v4 >= 64000) {
 		v15 = v4 / 64000 + 1;
 		v17 = 64000 * (v4 / 64000) - v4;
@@ -360,8 +351,8 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 		f.read(ptr, v4);
 		v5 = v4;
 	}
-	v16 = v15 - 1;
-	v7 = 0;
+	int v16 = v15 - 1;
+	size_t v7 = 0;
 	for (int i = 0; i < 64000; i++) {
 		if (v7 == v5) {
 			v7 = 0;
@@ -371,9 +362,9 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 				v5 = v17;
 			f.read(ptr, v5);
 		}
-		v9 = ptr[v7++];
+		byte v9 = ptr[v7++];
 		if (v9 > 192) {
-			v10 = v9 - 192;
+			int v10 = v9 - 192;
 			if (v7 == v5) {
 				v7 = 0;
 				--v16;
@@ -382,7 +373,7 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 					v5 = v17;
 				f.read(ptr, v5);
 			}
-			v12 = ptr[v7++];
+			char v12 = ptr[v7++];
 			do {
 				surface[i++] = v12;
 				--v10;
@@ -440,9 +431,6 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 
 // TODO: See if PAL_PIXELS can be converted to a uint16 array
 void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
-	const byte *srcP;
-	byte *destP;
-	int yNext;
 	int xCtr;
 	const byte *palette;
 	int yCtr;
@@ -450,9 +438,9 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 	byte *destCopyP;
 
 	assert(_videoPtr);
-	srcP = xs + _lineNbr2 * ys + surface;
-	destP = (byte *)_videoPtr->pixels + destX + destX + WinScan * destY;
-	yNext = height;
+	const byte *srcP = xs + _lineNbr2 * ys + surface;
+	byte *destP = (byte *)_videoPtr->pixels + destX + destX + WinScan * destY;
+	int yNext = height;
 	Agr_x = 0;
 	Agr_y = 0;
 	Agr_Flag_y = false;
@@ -500,8 +488,6 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 }
 
 void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
-	int yCount;
-	int xCount;
 	int xCtr;
 	const byte *palette;
 	int savedXCount;
@@ -512,8 +498,8 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 	assert(_videoPtr);
 	const byte *srcP = surface + xp + 320 * yp;
 	byte *destP = (byte *)_videoPtr->pixels + 30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY;
-	yCount = height;
-	xCount = width;
+	int yCount = height;
+	int xCount = width;
 
 	do {
 		yCtr = yCount;
@@ -740,18 +726,15 @@ void GraphicsManager::DD_VBL() {
 }
 
 void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) {
-	int rleValue;
-	int destOffset;
-	const byte *srcP;
 	byte srcByte;
 	byte destLen1;
 	byte *destSlice1P;
 	byte destLen2;
 	byte *destSlice2P;
 
-	rleValue = 0;
-	destOffset = 0;
-	srcP = srcData;
+	int rleValue = 0;
+	int destOffset = 0;
+	const byte *srcP = srcData;
 	for (;;) {
 		srcByte = srcP[0];
 		if (srcByte == kByteStop)
@@ -1101,11 +1084,8 @@ void GraphicsManager::RESET_SEGMENT_VESA() {
 
 // Add VESA Segment
 void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
-	int tempX;
-	bool addFlag;
-
-	tempX = x1;
-	addFlag = true;
+	int tempX = x1;
+	bool addFlag = true;
 	if (x2 > _maxX)
 		x2 = _maxX;
 	if (y2 > _maxY)
@@ -1178,10 +1158,8 @@ void GraphicsManager::displayVesaSegment() {
 }
 
 void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment) {
-	int height, width;
-
-	width = _vm->_objectsManager.getWidth(objectData, idx);
-	height = _vm->_objectsManager.getHeight(objectData, idx);
+	int width = _vm->_objectsManager.getWidth(objectData, idx);
+	int height = _vm->_objectsManager.getHeight(objectData, idx);
 	if (*objectData == 78) {
 		Affiche_Perfect(_vesaScreen, objectData, xp + 300, yp + 300, idx, 0, 0, false);
 		Affiche_Perfect(_vesaBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
@@ -1218,15 +1196,12 @@ void GraphicsManager::copy16bFromSurfaceScaleX2(const byte *surface) {
 }
 
 void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height) {
-	byte *destP;
-	int yNext;
-	const byte *srcP;
 	int i;
 	int yCtr;
 
-	destP = xp + _lineNbr2 * yp + destSurface;
-	yNext = height;
-	srcP = src;
+	byte *destP = xp + _lineNbr2 * yp + destSurface;
+	int yNext = height;
+	const byte *srcP = src;
 	do {
 		yCtr = yNext;
 		if (width & 1) {
@@ -1617,8 +1592,6 @@ void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int sp
 }
 
 void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY) {
-	int xRight;
-
 	int left = x1;
 	int top = y1;
 	int croppedWidth = width;
@@ -1635,8 +1608,7 @@ void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width
 
 	if (top + croppedHeight > _maxY)
 		croppedHeight = _maxY - top;
-	xRight = left + croppedWidth;
-	if (xRight > _maxX)
+	if (left + croppedWidth > _maxX)
 		croppedWidth = _maxX - left;
 
 	if (croppedWidth > 0 && croppedHeight > 0) {
