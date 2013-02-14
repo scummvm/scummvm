@@ -106,6 +106,17 @@ private:
 	 */
 	int  handleBaseMap();
 
+	/**
+	 * Loads the base map from the PBASE file
+	 */
+	void loadBaseMap();
+
+	/**
+	 * Draws a simple base map for the Windows version, which implemented a 'Wolfenstein 3D'
+	 * style shooter for the base, rather than having a map
+	 */
+	void drawBaseMap();
+
 	void BTOCEAN();
 	void OCEAN_HOME();
 	void OCEAN(int16 curExitId, Common::String backgroundFilename, int16 defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId);

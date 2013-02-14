@@ -61,7 +61,6 @@ private:
 	HopkinsEngine *_vm;
 
 	void setTextColor(int idx, byte colByte);
-	void displayText(int xp, int yp, const Common::String &message, int col);
 
 	int _textSortArray[21];
 	Common::String _oldName;
@@ -84,6 +83,7 @@ public:
 	void showText(int idx);
 	void hideText(int idx);
 	void initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int length, int color);
+	void displayText(int xp, int yp, const Common::String &message, int col);
 	void displayTextVesa(int xp, int yp, const Common::String &message, int col);
 	void renderTextDisplay(int xp, int yp, const Common::String &msg, int col);
 	void setOptimalColor(int idx1, int idx2, int idx3, int idx4);

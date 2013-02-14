@@ -2269,9 +2269,57 @@ void HopkinsEngine::displayPlane() {
 	_animationManager._clearAnimationFl = false;
 }
 
+void HopkinsEngine::loadBaseMap() {
+	Common::String filename	= Common::String::format("%s.PCX", "PBASE");
+	Common::File f;
+
+	if (f.exists(filename)) {
+		// PBASE file exists, so go ahead and load it
+		_graphicsManager.loadImage("PBASE");
+	} else {
+		// PBASE file doesn't exist, so draw a substitute screen
+		drawBaseMap();
+	}
+}
+
+void HopkinsEngine::drawBaseMap() {
+	memset(_graphicsManager._vesaScreen, 0, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+
+	// List of rectangle areas to draw for exit points
+	const int rects[] = {
+		181, 66, 181 + 16, 66 + 22,
+		353, 116, 353 + 22, 116 + 16,
+		483, 250, 483 + 20, 250 + 25,
+		471, 326, 471 + 27, 326 + 20,
+		162, 365, 162 + 21, 365 + 23,
+		106, 267, 106 + 20, 267 + 26
+	};
+	
+	// Loop through displaying 
+	const int *rectP = &rects[0];
+	for (int rectIndex = 0; rectIndex < 6; ++rectIndex, rectP += 4) {
+		Common::Rect r(rectP[0], rectP[1], rectP[2], rectP[3]);
+
+		for (int yp = r.top; yp <= r.bottom; ++yp) {
+			byte *pDest = _graphicsManager._vesaScreen + yp * SCREEN_WIDTH + r.left;
+			Common::fill(pDest, pDest + r.width(), 0xff);
+		}
+	}
+
+	// Copy the calculated screen
+	memcpy(_graphicsManager._vesaBuffer, _graphicsManager._vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+
+	// Write some explanatory text
+	_fontManager.displayText(40, 200, "ScummVM base map - select a square for different rooms", 255);
+}
+
 int HopkinsEngine::handleBaseMap() {
 	_globals._disableInventFl = true;
-	_graphicsManager.loadImage("PBASE");
+
+	// Load the map image
+	loadBaseMap();
+
+	// Set needed colours
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
