@@ -71,6 +71,12 @@ void FontManager::clearAll() {
 	_tempText = g_PTRNUL;
 }
 
+void FontManager::initData() {
+	_font = _vm->_fileManager.loadFile("FONTE3.SPR");
+	_fontFixedWidth = 12;
+	_fontFixedHeight = 21;
+
+}
 /**
  * Display Text
  */

@@ -78,8 +78,9 @@ public:
 	FontManager();
 	~FontManager();
 	void setParent(HopkinsEngine *vm);
-
 	void clearAll();
+	void initData();
+
 	void showText(int idx);
 	void hideText(int idx);
 	void initTextBuffers(int idx, int messageId, const Common::String &filename, int xp, int yp, int textType, int length, int color);

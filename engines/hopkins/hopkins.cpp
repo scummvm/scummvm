@@ -1557,13 +1557,11 @@ void HopkinsEngine::initializeSystem() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "VOICE");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "TSVGA");
 
-	_eventsManager.initMouseData();
-
 	_globals.clearAll();
 
-	_fontManager._font = _fileManager.loadFile("FONTE3.SPR");
-	_fontManager._fontFixedWidth = 12;
-	_fontManager._fontFixedHeight = 21;
+	_eventsManager.initMouseData();
+	_fontManager.initData();
+
 	_dialogsManager._inventoryIcons = _fileManager.loadFile("ICONE.SPR");
 	_objectsManager._headSprites = _fileManager.loadFile("TETE.SPR");
 
