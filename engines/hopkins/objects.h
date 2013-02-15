@@ -93,7 +93,9 @@ private:
 	int _verb;
 	int _oldSpriteIndex;
 	bool _oldFlipFl;
-private:
+	int _curGestureFile;
+	byte *_gestureBuf;
+
 	void sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	void DEL_FICHIER_OBJ();
 

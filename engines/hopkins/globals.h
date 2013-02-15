@@ -315,8 +315,6 @@ public:
 	Common::String FICH_ZONE;
 	bool GOACTION;
 	int j_104;
-	int _curGestureFile;
-	byte *_gestureBuf;
 	Common::String FICH_TEXTE;
 
 	Globals();
