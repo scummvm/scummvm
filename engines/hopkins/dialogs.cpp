@@ -43,12 +43,12 @@ DialogsManager::DialogsManager() {
 	_inventWidth = _inventHeight = 0;
 	_inventWin1 = g_PTRNUL;
 	_inventBuf2 = g_PTRNUL;
-	_inventoryIcons = NULL;
+	_inventoryIcons = g_PTRNUL;
 }
 
 DialogsManager::~DialogsManager() {
 	_vm->_globals.freeMemory(_inventWin1);
-	free(_inventoryIcons);
+	_vm->_globals.freeMemory(_inventoryIcons);
 }
 
 void DialogsManager::setParent(HopkinsEngine *vm) {

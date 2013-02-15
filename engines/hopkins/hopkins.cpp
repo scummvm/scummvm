@@ -1557,36 +1557,7 @@ void HopkinsEngine::initializeSystem() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "VOICE");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "TSVGA");
 
-	if (getPlatform() == Common::kPlatformLinux)
-		_eventsManager._mouseLinuxFl = true;
-	else
-		_eventsManager._mouseLinuxFl = false;
-
-	if (_eventsManager._mouseLinuxFl) {
-		_eventsManager._mouseSizeX = 52;
-		_eventsManager._mouseSizeY = 32;
-	} else {
-		_eventsManager._mouseSizeX = 34;
-		_eventsManager._mouseSizeY = 20;
-	}
-
-	switch (_globals._language) {
-	case LANG_EN:
-		if (!_eventsManager._mouseLinuxFl)
-			_eventsManager._mouseCursor = _fileManager.loadFile("SOUAN.SPR");
-		else
-			_eventsManager._mouseCursor = _fileManager.loadFile("LSOUAN.SPR");
-		break;
-	case LANG_FR:
-		if (!_eventsManager._mouseLinuxFl)
-			_eventsManager._mouseCursor = _fileManager.loadFile("SOUFR.SPR");
-		else
-			_eventsManager._mouseCursor = _fileManager.loadFile("LSOUFR.SPR");
-		break;
-	case LANG_SP:
-		_eventsManager._mouseCursor = _fileManager.loadFile("SOUES.SPR");
-		break;
-	}
+	_eventsManager.initMouseData();
 
 	_globals.clearAll();
 

@@ -42,6 +42,8 @@ private:
 	uint32 _priorCounterTime;
 	uint32 _priorFrameTime;
 	bool _keyState[256];
+	bool _mouseLinuxFl;
+	int _mouseSizeX, _mouseSizeY;
 
 	HopkinsEngine *_vm;
 
@@ -56,7 +58,6 @@ public:
 	uint32 _gameCounter;
 	bool _escKeyFl;
 	bool _mouseFl;
-	bool _mouseLinuxFl;
 	bool _breakoutFl;
 	Common::Point _startPos;
 	Common::Point _mousePos;
@@ -65,13 +66,14 @@ public:
 	int _curMouseButton;
 	int _mouseButton;
 	int _mouseCursorId;
-	int _mouseSizeX, _mouseSizeY;
 	byte *_objectBuf;
 	byte *_mouseCursor;
 
 	EventsManager();
 	~EventsManager();
 	void setParent(HopkinsEngine *vm);
+	void initMouseData();
+
 	void delay(int totalMilli);
 	void changeMouseCursor(int id);
 	void refreshEvents();

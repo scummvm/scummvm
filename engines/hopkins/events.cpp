@@ -64,6 +64,39 @@ void EventsManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
+void EventsManager::initMouseData() {
+	if (_vm->getPlatform() == Common::kPlatformLinux)
+		_mouseLinuxFl = true;
+	else
+		_mouseLinuxFl = false;
+
+	if (_mouseLinuxFl) {
+		_mouseSizeX = 52;
+		_mouseSizeY = 32;
+	} else {
+		_mouseSizeX = 34;
+		_mouseSizeY = 20;
+	}
+
+	switch (_vm->_globals._language) {
+	case LANG_EN:
+		if (!_mouseLinuxFl)
+			_mouseCursor = _vm->_fileManager.loadFile("SOUAN.SPR");
+		else
+			_mouseCursor = _vm->_fileManager.loadFile("LSOUAN.SPR");
+		break;
+	case LANG_FR:
+		if (!_mouseLinuxFl)
+			_mouseCursor = _vm->_fileManager.loadFile("SOUFR.SPR");
+		else
+			_mouseCursor = _vm->_fileManager.loadFile("LSOUFR.SPR");
+		break;
+	case LANG_SP:
+		_mouseCursor = _vm->_fileManager.loadFile("SOUES.SPR");
+		break;
+	}
+}
+
 // Mouse On
 void EventsManager::setMouseOn() {
 	_mouseFl = true;
