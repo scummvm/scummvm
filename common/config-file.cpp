@@ -380,4 +380,4 @@ void ConfigFile::Section::removeKey(const String &key) {
 	}
 }
 
-}	// End of namespace Common
+} // End of namespace Common

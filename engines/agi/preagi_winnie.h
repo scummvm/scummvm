@@ -355,6 +355,6 @@ private:
 	void printStrWinnie(char *szMsg);
 };
 
-}  // End of namespace Agi
+} // End of namespace Agi
 
 #endif

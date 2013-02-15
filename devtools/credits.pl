@@ -267,14 +267,22 @@ sub begin_section {
 		print '\f1\b0\fs24 \cf0 \\' . "\n";
 	} elsif ($mode eq "CPP") {
 		if ($section_level eq 0) {
-		  # TODO: Would be nice to have a 'fat' or 'large' mode for
-		  # headlines...
-		  $title = html_entities_to_cpp($title);
-		  print '"C1""'.$title.'",' . "\n";
-		  print '"",' . "\n";
+			# TODO: Would be nice to have a 'fat' or 'large' mode for
+			# headlines...
+			my $ascii_title = html_entities_to_ascii($title);
+			$title = html_entities_to_cpp($title);
+			if ($ascii_title ne $title) {	
+				print '"A1""'.$ascii_title.'",' . "\n";
+			}
+			print '"C1""'.$title.'",' . "\n";
+			print '"",' . "\n";
 		} else {
-		  $title = html_entities_to_cpp($title);
-		  print '"C1""'.$title.'",' . "\n";
+			my $ascii_title = html_entities_to_ascii($title);
+			$title = html_entities_to_cpp($title);
+			if ($ascii_title ne $title) {	
+				print '"A1""'.$ascii_title.'",' . "\n";
+			}
+			print '"C1""'.$title.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {
 		print "  <row><entry namest='start' nameend='job'>";
@@ -392,13 +400,21 @@ sub add_person {
 		}
 	} elsif ($mode eq "CPP") {
 		$name = $nick if $name eq "";
+		my $ascii_name = html_entities_to_ascii($name);
 		$name = html_entities_to_cpp($name);
 
+		if ($ascii_name ne $name) {
+			print '"A0""'.$ascii_name.'",' . "\n";
+		}
 		print '"C0""'.$name.'",' . "\n";
 
 		# Print desc wrapped
 		if (length $desc > 0) {
+			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
+			if ($ascii_desc ne $desc) {	
+				print '"A2""'.$ascii_desc.'",' . "\n";
+			}
 			print '"C2""'.$desc.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {
@@ -687,6 +703,11 @@ begin_credits("Credits");
 				add_person("Joost Peters", "joostp", "");
 			end_section();
 
+			begin_section("Toltecs");
+				add_person("Benjamin Haisch", "john_doe", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+			end_section();
+
 			begin_section("Tony");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Paul Gilbert", "dreammaster", "");
@@ -940,6 +961,9 @@ begin_credits("Credits");
 				begin_section("Basque");
 					add_person("Mikel Iturbe Urretxa", "", "");
 				end_section();
+				begin_section("Belarusian");
+					add_person("Ivan Lukyanov", "", "");
+				end_section();
 				begin_section("Catalan");
 					add_person("Jordi Vilalta Prat", "jvprat", "");
 				end_section();
@@ -948,6 +972,9 @@ begin_credits("Credits");
 				end_section();
 				begin_section("Danish");
 					add_person("Steffen Nyeland", "", "");
+				end_section();
+				begin_section("Finnish");
+					add_person("Toni Saarela", "catnose", "");
 				end_section();
 				begin_section("French");
 					add_person("Thierry Crozat", "criezy", "");

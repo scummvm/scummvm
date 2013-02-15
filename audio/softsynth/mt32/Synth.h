@@ -26,6 +26,7 @@ class TableInitialiser;
 class Partial;
 class PartialManager;
 class Part;
+class ROMImage;
 
 /**
  * Methods for emulating the connection between the LA32 and the DAC, which involves
@@ -56,71 +57,6 @@ enum DACInputMode {
 	// 15 13 12 11 10 09 08 07 06 05 04 03 02 01 00 14
 	DACInputMode_GENERATION2
 };
-
-enum ReportType {
-	// Errors
-	ReportType_errorControlROM = 1,
-	ReportType_errorPCMROM,
-	ReportType_errorSampleRate,
-
-	// Progress
-	ReportType_progressInit,
-
-	// HW spec
-	ReportType_availableSSE,
-	ReportType_available3DNow,
-	ReportType_usingSSE,
-	ReportType_using3DNow,
-
-	// General info
-	ReportType_lcdMessage,
-	ReportType_devReset,
-	ReportType_devReconfig,
-	ReportType_newReverbMode,
-	ReportType_newReverbTime,
-	ReportType_newReverbLevel
-};
-
-enum LoadResult {
-	LoadResult_OK,
-	LoadResult_NotFound,
-	LoadResult_Unreadable,
-	LoadResult_Invalid
-};
-
-struct SynthProperties {
-	// Sample rate to use in mixing
-	unsigned int sampleRate;
-
-	// Deprecated - ignored. Use Synth::setReverbEnabled() instead.
-	bool useReverb;
-	// Deprecated - ignored. Use Synth::setReverbOverridden() instead.
-	bool useDefaultReverb;
-	// Deprecated - ignored. Use Synth::playSysex*() to configure reverb instead.
-	unsigned char reverbType;
-	// Deprecated - ignored. Use Synth::playSysex*() to configure reverb instead.
-	unsigned char reverbTime;
-	// Deprecated - ignored. Use Synth::playSysex*() to configure reverb instead.
-	unsigned char reverbLevel;
-	// The name of the directory in which the ROM and data files are stored (with trailing slash/backslash)
-	// Not used if "openFile" is set. May be NULL in any case.
-	const char *baseDir;
-	// This is used as the first argument to all callbacks
-	void *userData;
-	// Callback for reporting various errors and information. May be NULL
-	int (*report)(void *userData, ReportType type, const void *reportData);
-	// Callback for debug messages, in vprintf() format
-	void (*printDebug)(void *userData, const char *fmt, va_list list);
-	// Callback for providing an implementation of File, opened and ready for use
-	// May be NULL, in which case a default implementation will be used.
-	Common::File *(*openFile)(void *userData, const char *filename);
-	// Callback for closing a File. May be NULL, in which case the File will automatically be close()d/deleted.
-	void (*closeFile)(void *userData, Common::File *file);
-};
-
-// This is the specification of the Callback routine used when calling the RecalcWaveforms
-// function
-typedef void (*recalcStatusCallback)(int percDone);
 
 typedef void (*FloatToBit16sFunc)(Bit16s *target, const float *source, Bit32u len, float outputGain);
 
@@ -177,6 +113,13 @@ struct ControlROMMap {
 
 enum MemoryRegionType {
 	MR_PatchTemp, MR_RhythmTemp, MR_TimbreTemp, MR_Patches, MR_Timbres, MR_System, MR_Display, MR_Reset
+};
+
+enum ReverbMode {
+	REVERB_MODE_ROOM,
+	REVERB_MODE_HALL,
+	REVERB_MODE_PLATE,
+	REVERB_MODE_TAP_DELAY
 };
 
 class MemoryRegion {
@@ -278,12 +221,38 @@ class ReverbModel {
 public:
 	virtual ~ReverbModel() {}
 	// After construction or a close(), open() will be called at least once before any other call (with the exception of close()).
-	virtual void open(unsigned int sampleRate) = 0;
+	virtual void open() = 0;
 	// May be called multiple times without an open() in between.
 	virtual void close() = 0;
 	virtual void setParameters(Bit8u time, Bit8u level) = 0;
 	virtual void process(const float *inLeft, const float *inRight, float *outLeft, float *outRight, unsigned long numSamples) = 0;
 	virtual bool isActive() const = 0;
+};
+
+class ReportHandler {
+friend class Synth;
+
+public:
+	virtual ~ReportHandler() {}
+
+protected:
+
+	// Callback for debug messages, in vprintf() format
+	virtual void printDebug(const char *fmt, va_list list);
+
+	// Callbacks for reporting various errors and information
+	virtual void onErrorControlROM() {}
+	virtual void onErrorPCMROM() {}
+	virtual void showLCDMessage(const char *message);
+	virtual void onDeviceReset() {}
+	virtual void onDeviceReconfig() {}
+	virtual void onNewReverbMode(Bit8u /* mode */) {}
+	virtual void onNewReverbTime(Bit8u /* time */) {}
+	virtual void onNewReverbLevel(Bit8u /* level */) {}
+	virtual void onPartStateChanged(int /* partNum */, bool /* isActive */) {}
+	virtual void onPolyStateChanged(int /* partNum */) {}
+	virtual void onPartialStateChanged(int /* partialNum */, int /* oldPartialPhase */, int /* newPartialPhase */) {}
+	virtual void onProgramChanged(int /* partNum */, char * /* patchName */) {}
 };
 
 class Synth {
@@ -315,13 +284,12 @@ private:
 	const ControlROMMap *controlROMMap;
 	Bit8u controlROMData[CONTROL_ROM_SIZE];
 	float *pcmROMData;
-	int pcmROMSize; // This is in 16-bit samples, therefore half the number of bytes in the ROM
+	size_t pcmROMSize; // This is in 16-bit samples, therefore half the number of bytes in the ROM
 
 	Bit8s chantable[32];
 
 	Bit32u renderedSampleCount;
 
-	Tables tables;
 
 	MemParams mt32ram, mt32default;
 
@@ -336,6 +304,9 @@ private:
 	float reverbOutputGain;
 
 	bool isOpen;
+
+	bool isDefaultReportHandler;
+	ReportHandler *reportHandler;
 
 	PartialManager *partialManager;
 	Part *parts[9];
@@ -369,8 +340,6 @@ private:
 	int prerenderReadIx;
 	int prerenderWriteIx;
 
-	SynthProperties myProp;
-
 	bool prerender();
 	void copyPrerender(Bit16s *nonReverbLeft, Bit16s *nonReverbRight, Bit16s *reverbDryLeft, Bit16s *reverbDryRight, Bit16s *reverbWetLeft, Bit16s *reverbWetRight, Bit32u pos, Bit32u len);
 	void checkPrerender(Bit16s *nonReverbLeft, Bit16s *nonReverbRight, Bit16s *reverbDryLeft, Bit16s *reverbDryRight, Bit16s *reverbWetLeft, Bit16s *reverbWetRight, Bit32u &pos, Bit32u &len);
@@ -384,8 +353,8 @@ private:
 	void writeMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u len, const Bit8u *data);
 	void readMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u len, Bit8u *data);
 
-	LoadResult loadControlROM(const char *filename);
-	LoadResult loadPCMROM(const char *filename);
+	bool loadControlROM(const ROMImage &controlROMImage);
+	bool loadPCMROM(const ROMImage &pcmROMImage);
 
 	bool initPCMList(Bit16u mapAddress, Bit16u count);
 	bool initTimbres(Bit16u mapAddress, Bit16u offset, int timbreCount, int startTimbre, bool compressed);
@@ -399,24 +368,25 @@ private:
 	void refreshSystem();
 	void reset();
 
-	unsigned int getSampleRate() const;
-
 	void printPartialUsage(unsigned long sampleOffset = 0);
-protected:
-	int report(ReportType type, const void *reportData);
-	Common::File *openFile(const char *filename);
-	void closeFile(Common::File *file);
+
+	void partStateChanged(int partNum, bool isPartActive);
+	void polyStateChanged(int partNum);
+	void partialStateChanged(const Partial * const partial, int oldPartialPhase, int newPartialPhase);
+	void newTimbreSet(int partNum, char patchName[]);
 	void printDebug(const char *fmt, ...);
 
 public:
 	static Bit8u calcSysexChecksum(const Bit8u *data, Bit32u len, Bit8u checksum);
 
-	Synth();
+	// Optionally sets callbacks for reporting various errors, information and debug messages
+	Synth(ReportHandler *useReportHandler = NULL);
 	~Synth();
 
 	// Used to initialise the MT-32. Must be called before any other function.
 	// Returns true if initialization was sucessful, otherwise returns false.
-	bool open(SynthProperties &useProp);
+	// controlROMImage and pcmROMImage represent Control and PCM ROM images for use by synth.
+	bool open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage);
 
 	// Closes the MT-32 and deallocates any memory used by the synthesizer
 	void close(void);

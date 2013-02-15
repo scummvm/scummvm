@@ -78,7 +78,7 @@ bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 	//_gameRef->LOG(0, "Load end %d", BaseUtils::GetUsedMemMB());
 	// AdGame:
 	if (DID_SUCCEED(ret)) {
-		SystemClassRegistry::getInstance()->enumInstances(SaveLoad::afterLoadRegion, "AdRegion", NULL);
+		SystemClassRegistry::getInstance()->enumInstances(SaveLoad::afterLoadRegion, "AdRegion", nullptr);
 	}
 	return ret;
 }
@@ -114,13 +114,13 @@ bool SaveLoad::saveGame(int slot, const char *desc, bool quickSave, BaseGame *ga
 
 //////////////////////////////////////////////////////////////////////////
 bool SaveLoad::initAfterLoad() {
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadRegion,   "BaseRegion",   NULL);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadSubFrame, "BaseSubFrame", NULL);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadSound,    "BaseSound",    NULL);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadFont,     "BaseFontTT",   NULL);
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadScript,   "ScScript",  NULL);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadRegion,   "BaseRegion",   nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadSubFrame, "BaseSubFrame", nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadSound,    "BaseSound",    nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadFont,     "BaseFontTT",   nullptr);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadScript,   "ScScript",  nullptr);
 	// AdGame:
-	SystemClassRegistry::getInstance()->enumInstances(afterLoadScene,   "AdScene",   NULL);
+	SystemClassRegistry::getInstance()->enumInstances(afterLoadScene,   "AdScene",   nullptr);
 	return STATUS_OK;
 }
 

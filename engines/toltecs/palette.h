@@ -50,8 +50,8 @@ public:
 	uint16 findFragment(int16 id);
 	void clearFragments();
 
+	byte getMatchingColor(byte r, byte g, byte b);
 	void buildColorTransTable(byte limit, int8 deltaValue, byte mask);
-	void buildColorTransTable2(byte limit, int8 deltaValue, byte mask);
 	byte getColorTransPixel(byte pixel) const { return _colorTransTable[pixel]; }
 
 	byte *getMainPalette() { return _mainPalette; }

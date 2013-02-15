@@ -36,6 +36,9 @@ public:
 
 private:
 	ToucheEngine *_vm;
+
+	bool Cmd_StartMusic(int argc, const char **argv);
+	bool Cmd_StopMusic(int argc, const char **argv);
 };
 
 } // End of namespace Touche

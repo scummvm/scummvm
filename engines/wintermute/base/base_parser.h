@@ -70,7 +70,7 @@ public:
 	virtual ~BaseParser();
 private:
 	char *getLastOffender();
-	void skipToken(char **buf, char *tok, char *msg = NULL);
+	void skipToken(char **buf, char *tok, char *msg = nullptr);
 	int getTokenInt(char **buf);
 	float getTokenFloat(char **buf);
 	Common::String getToken(char **buf);

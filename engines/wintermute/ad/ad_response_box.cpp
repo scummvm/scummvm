@@ -52,9 +52,9 @@ IMPLEMENT_PERSISTENT(AdResponseBox, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
-	_font = _fontHover = NULL;
+	_font = _fontHover = nullptr;
 
-	_window = NULL;
+	_window = nullptr;
 	_shieldWindow = new UIWindow(_gameRef);
 
 	_horizontal = false;
@@ -62,9 +62,9 @@ AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 	_scrollOffset = 0;
 	_spacing = 0;
 
-	_waitingScript = NULL;
-	_lastResponseText = NULL;
-	_lastResponseTextOrig = NULL;
+	_waitingScript = nullptr;
+	_lastResponseText = nullptr;
+	_lastResponseTextOrig = nullptr;
 
 	_verticalAlign = VAL_BOTTOM;
 	_align = TAL_LEFT;
@@ -75,13 +75,13 @@ AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 AdResponseBox::~AdResponseBox() {
 
 	delete _window;
-	_window = NULL;
+	_window = nullptr;
 	delete _shieldWindow;
-	_shieldWindow = NULL;
+	_shieldWindow = nullptr;
 	delete[] _lastResponseText;
-	_lastResponseText = NULL;
+	_lastResponseText = nullptr;
 	delete[] _lastResponseTextOrig;
-	_lastResponseTextOrig = NULL;
+	_lastResponseTextOrig = nullptr;
 
 	if (_font) {
 		_gameRef->_fontStorage->removeFont(_font);
@@ -93,9 +93,12 @@ AdResponseBox::~AdResponseBox() {
 	clearResponses();
 	clearButtons();
 
-	_waitingScript = NULL;
+	_waitingScript = nullptr;
 }
 
+uint32 AdResponseBox::getNumResponses() const {
+	return _responses.size();
+}
 
 //////////////////////////////////////////////////////////////////////////
 void AdResponseBox::clearResponses() {
@@ -118,11 +121,11 @@ void AdResponseBox::clearButtons() {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::invalidateButtons() {
 	for (uint32 i = 0; i < _respButtons.size(); i++) {
-		_respButtons[i]->_image = NULL;
-		_respButtons[i]->_cursor = NULL;
-		_respButtons[i]->_font = NULL;
-		_respButtons[i]->_fontHover = NULL;
-		_respButtons[i]->_fontPress = NULL;
+		_respButtons[i]->_image = nullptr;
+		_respButtons[i]->_cursor = nullptr;
+		_respButtons[i]->_font = nullptr;
+		_respButtons[i]->_fontHover = nullptr;
+		_respButtons[i]->_fontPress = nullptr;
 		_respButtons[i]->setText("");
 	}
 	return STATUS_OK;
@@ -160,8 +163,8 @@ bool AdResponseBox::createButtons() {
 			// textual
 			else {
 				btn->setText(_responses[i]->_text);
-				btn->_font = (_font == NULL) ? _gameRef->_systemFont : _font;
-				btn->_fontHover = (_fontHover == NULL) ? _gameRef->_systemFont : _fontHover;
+				btn->_font = (_font == nullptr) ? _gameRef->getSystemFont() : _font;
+				btn->_fontHover = (_fontHover == nullptr) ? _gameRef->getSystemFont() : _fontHover;
 				btn->_fontPress = btn->_fontHover;
 				btn->_align = _align;
 
@@ -207,7 +210,7 @@ bool AdResponseBox::createButtons() {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdResponseBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -284,7 +287,7 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			_window = new UIWindow(_gameRef);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				delete _window;
-				_window = NULL;
+				_window = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else if (_shieldWindow) {
 				_shieldWindow->_parent = _window;
@@ -352,7 +355,7 @@ bool AdResponseBox::loadBuffer(byte *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
-				_cursor = NULL;
+				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -548,7 +551,7 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 				_waitingScript->_stack->pushInt(_responses[param2]->_iD);
 			}
 			handleResponse(_responses[param2]);
-			_waitingScript = NULL;
+			_waitingScript = nullptr;
 			_gameRef->_state = GAME_RUNNING;
 			((AdGame *)_gameRef)->_stateEx = GAME_NORMAL;
 			_ready = true;
@@ -627,6 +630,30 @@ void AdResponseBox::setLastResponseText(const char *text, const char *textOrig) 
 	BaseUtils::setString(&_lastResponseTextOrig, textOrig);
 }
 
+const char *AdResponseBox::getLastResponseText() const {
+	return _lastResponseText;
+}
+
+const char *AdResponseBox::getLastResponseTextOrig() const {
+	return _lastResponseTextOrig;
+}
+
+UIWindow *AdResponseBox::getResponseWindow() {
+	return _window;
+}
+
+void AdResponseBox::addResponse(AdResponse *response) {
+	_responses.add(response);
+}
+
+int32 AdResponseBox::getIdForResponseNum(uint32 num) const {
+	assert(num < _responses.size());
+	return _responses[num]->_iD;
+}
+
+bool AdResponseBox::handleResponseNum(uint32 num) {
+	return handleResponse(_responses[num]);
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::handleResponse(AdResponse *response) {
@@ -656,9 +683,9 @@ BaseObject *AdResponseBox::getNextAccessObject(BaseObject *currObject) {
 	getObjects(objects, true);
 
 	if (objects.size() == 0) {
-		return NULL;
+		return nullptr;
 	} else {
-		if (currObject != NULL) {
+		if (currObject != nullptr) {
 			for (uint32 i = 0; i < objects.size(); i++) {
 				if (objects[i] == currObject) {
 					if (i < objects.size() - 1) {
@@ -671,7 +698,7 @@ BaseObject *AdResponseBox::getNextAccessObject(BaseObject *currObject) {
 		}
 		return objects[0];
 	}
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -680,9 +707,9 @@ BaseObject *AdResponseBox::getPrevAccessObject(BaseObject *currObject) {
 	getObjects(objects, true);
 
 	if (objects.size() == 0) {
-		return NULL;
+		return nullptr;
 	} else {
-		if (currObject != NULL) {
+		if (currObject != nullptr) {
 			for (int i = objects.size() - 1; i >= 0; i--) {
 				if (objects[i] == currObject) {
 					if (i > 0) {
@@ -695,7 +722,7 @@ BaseObject *AdResponseBox::getPrevAccessObject(BaseObject *currObject) {
 		}
 		return objects[objects.size() - 1];
 	}
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -24,6 +24,7 @@
 #define SCUMM_MUSIC_H
 
 #include "common/scummsys.h"
+#include "engines/scumm/saveload.h"
 
 namespace Scumm {
 
@@ -78,6 +79,11 @@ public:
 	 * @return the music timer
 	 */
 	virtual int  getMusicTimer() { return 0; }
+
+	/**
+	 * Save or load the music state.
+	 */
+	virtual void saveLoadWithSerializer(Serializer *ser) {}
 };
 
 } // End of namespace Scumm

@@ -392,17 +392,21 @@ public:
 #endif	// USE_ZLIB
 
 SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint32 knownSize) {
-#if defined(USE_ZLIB)
 	if (toBeWrapped) {
 		uint16 header = toBeWrapped->readUint16BE();
 		bool isCompressed = (header == 0x1F8B ||
 				     ((header & 0x0F00) == 0x0800 &&
 				      header % 31 == 0));
 		toBeWrapped->seek(-2, SEEK_CUR);
-		if (isCompressed)
+		if (isCompressed) {
+#if defined(USE_ZLIB)
 			return new GZipReadStream(toBeWrapped, knownSize);
-	}
+#else
+			delete toBeWrapped;
+			return NULL;
 #endif
+		}
+	}
 	return toBeWrapped;
 }
 
@@ -415,4 +419,4 @@ WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped) {
 }
 
 
-}	// End of namespace Common
+} // End of namespace Common

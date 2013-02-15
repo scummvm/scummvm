@@ -36,8 +36,9 @@ class SeekableReadStream;
 namespace Video {
 
 struct CinepakCodebook {
-	byte y[4];
-	byte u, v;
+	// These are not in the normal YUV colorspace, but in the Cinepak YUV colorspace instead.
+	byte y[4]; // [0, 255]
+	int8 u, v; // [-128, 127]
 };
 
 struct CinepakStrip {
@@ -58,6 +59,13 @@ struct CinepakFrame {
 	Graphics::Surface *surface;
 };
 
+/**
+ * Cinepak decoder.
+ *
+ * Used in video:
+ *  - AVIDecoder
+ *  - QuickTimeDecoder
+ */
 class CinepakDecoder : public Codec {
 public:
 	CinepakDecoder(int bitsPerPixel = 24);
@@ -70,6 +78,7 @@ private:
 	CinepakFrame _curFrame;
 	int32 _y;
 	Graphics::PixelFormat _pixelFormat;
+	byte *_clipTable, *_clipTableBuf;
 
 	void loadCodebook(Common::SeekableReadStream *stream, uint16 strip, byte codebookType, byte chunkID, uint32 chunkSize);
 	void decodeVectors(Common::SeekableReadStream *stream, uint16 strip, byte chunkID, uint32 chunkSize);

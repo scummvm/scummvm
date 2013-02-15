@@ -97,6 +97,7 @@ private:
 
 		Common::List<Common::Rect> _dirtyRects;
 
+		void copyFrame(uint8 *data);
 		void decodeByteRun(uint8 *data);
 		void decodeDeltaFLC(uint8 *data);
 		void unpackPalette(uint8 *mem);

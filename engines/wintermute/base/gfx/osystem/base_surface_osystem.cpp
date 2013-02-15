@@ -47,9 +47,9 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////////
 BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_surface = new Graphics::Surface();
-	_alphaMask = NULL;
+	_alphaMask = nullptr;
 	_hasAlpha = true;
-	_lockPixels = NULL;
+	_lockPixels = nullptr;
 	_lockPitch = 0;
 	_loaded = false;
 }
@@ -59,11 +59,11 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-		_surface = NULL;
+		_surface = nullptr;
 	}
 
 	delete[] _alphaMask;
-	_alphaMask = NULL;
+	_alphaMask = nullptr;
 
 	_gameRef->addMem(-_width * _height * 4);
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
@@ -140,23 +140,32 @@ bool BaseSurfaceOSystem::finishLoad() {
 	// Well, actually, we don't convert via 24-bit as the color-key application overwrites the Alpha-channel anyhow.
 	_surface->free();
 	delete _surface;
+
+	bool needsColorKey = false;
+	bool replaceAlpha = true;
 	if (_filename.hasSuffix(".bmp") && image->getSurface()->format.bytesPerPixel == 4) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		TransparentSurface trans(*_surface);
-		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue);
+		needsColorKey = true;
+		replaceAlpha = false;
 	} else if (image->getSurface()->format.bytesPerPixel == 1 && image->getPalette()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat(), image->getPalette());
-		TransparentSurface trans(*_surface);
-		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, true);
+		needsColorKey = true;
 	} else if (image->getSurface()->format.bytesPerPixel >= 3 && image->getSurface()->format != g_system->getScreenFormat()) {
 		_surface = image->getSurface()->convertTo(g_system->getScreenFormat());
 		if (image->getSurface()->format.bytesPerPixel == 3) {
-			TransparentSurface trans(*_surface);
-			trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, true);
+			needsColorKey = true;
 		}
 	} else {
 		_surface = new Graphics::Surface();
 		_surface->copyFrom(*image->getSurface());
+		if (_surface->format.aBits() == 0) {
+			needsColorKey = true;
+		}
+	}
+	
+	if (needsColorKey) {
+		TransparentSurface trans(*_surface);
+		trans.applyColorKey(_ckRed, _ckGreen, _ckBlue, replaceAlpha);
 	}
 
 	_hasAlpha = hasTransparency(_surface);
@@ -177,7 +186,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 	return;
 	// TODO: Reimplement this
 	delete[] _alphaMask;
-	_alphaMask = NULL;
+	_alphaMask = nullptr;
 	if (!surface) {
 		return;
 	}
@@ -214,7 +223,7 @@ void BaseSurfaceOSystem::genAlphaMask(Graphics::Surface *surface) {
 
 	if (!hasTransparency) {
 		delete[] _alphaMask;
-		_alphaMask = NULL;
+		_alphaMask = nullptr;
 	}
 }
 
@@ -293,7 +302,7 @@ bool BaseSurfaceOSystem::isTransparentAtLite(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::startPixelOp() {
-	//SDL_LockTexture(_texture, NULL, &_lockPixels, &_lockPitch);
+	//SDL_LockTexture(_texture, nullptr, &_lockPixels, &_lockPitch);
 	// Any pixel-op makes the caching useless:
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
@@ -411,6 +420,12 @@ bool BaseSurfaceOSystem::drawSprite(int x, int y, Rect32 *rect, float zoomX, flo
 
 	renderer->drawSurface(this, _surface, &srcRect, &position, mirrorX, mirrorY, !hasAlpha);
 
+	return STATUS_OK;
+}
+
+bool BaseSurfaceOSystem::repeatLastDisplayOp(int offsetX, int offsetY, int numTimesX, int numTimesY) {
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+	renderer->repeatLastDraw(offsetX, offsetY, numTimesX, numTimesY);
 	return STATUS_OK;
 }
 

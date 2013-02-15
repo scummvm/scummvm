@@ -38,14 +38,14 @@ IMPLEMENT_PERSISTENT(AdSceneState, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdSceneState::AdSceneState(BaseGame *inGame) : BaseClass(inGame) {
-	_filename = NULL;
+	_filename = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 AdSceneState::~AdSceneState() {
 	delete[] _filename;
-	_filename = NULL;
+	_filename = nullptr;
 
 	for (uint32 i = 0; i < _nodeStates.size(); i++) {
 		delete _nodeStates[i];
@@ -72,6 +72,9 @@ void AdSceneState::setFilename(const char *filename) {
 	}
 }
 
+const char *AdSceneState::getFilename() const {
+	return _filename;
+}
 
 //////////////////////////////////////////////////////////////////////////
 AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
@@ -88,7 +91,7 @@ AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
 
 		return ret;
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

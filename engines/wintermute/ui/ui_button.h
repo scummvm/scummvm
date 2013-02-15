@@ -62,7 +62,7 @@ public:
 	UITiledImage *_backHover;
 	UITiledImage *_backDisable;
 	UITiledImage *_backFocus;
-	UIButton(BaseGame *inGame = NULL);
+	UIButton(BaseGame *inGame = nullptr);
 	virtual ~UIButton();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);

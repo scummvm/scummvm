@@ -74,6 +74,6 @@ public:
 	uint getRandomNumberRng(uint min, uint max);
 };
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

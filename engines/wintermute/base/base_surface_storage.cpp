@@ -124,12 +124,12 @@ BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool
 	surface = _gameRef->_renderer->createSurface();
 
 	if (!surface) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (DID_FAIL(surface->create(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded))) {
 		delete surface;
-		return NULL;
+		return nullptr;
 	} else {
 		surface->_referenceCount = 1;
 		_surfaces.push_back(surface);
@@ -176,32 +176,29 @@ bool BaseSurfaceStorage::sortSurfaces() {
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseSurfaceStorage::surfaceSortCB(const void *arg1, const void *arg2) {
-	const BaseSurface *s1 = *((const BaseSurface *const *)arg1);
-	const BaseSurface *s2 = *((const BaseSurface *const *)arg2);
-
+bool BaseSurfaceStorage::surfaceSortCB(const BaseSurface *s1, const BaseSurface *s2) {
 	// sort by life time
 	if (s1->_lifeTime <= 0 && s2->_lifeTime > 0) {
-		return 1;
+		return false;
 	} else if (s1->_lifeTime > 0 && s2->_lifeTime <= 0) {
-		return -1;
+		return true;
 	}
 
 
 	// sort by validity
 	if (s1->_valid && !s2->_valid) {
-		return -1;
+		return true;
 	} else if (!s1->_valid && s2->_valid) {
-		return 1;
+		return false;
 	}
 
 	// sort by time
 	else if (s1->_lastUsedTime > s2->_lastUsedTime) {
-		return 1;
+		return false;
 	} else if (s1->_lastUsedTime < s2->_lastUsedTime) {
-		return -1;
+		return true;
 	} else {
-		return 0;
+		return false;
 	}
 }
 

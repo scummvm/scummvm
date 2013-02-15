@@ -590,6 +590,8 @@ void DecompressorLZW::reorderView(byte *src, byte *dest) {
 
 	if (celindex < cel_total) {
 		warning("View decompression generated too few (%d / %d) headers", celindex, cel_total);
+		free(cc_pos);
+		free(cc_lengths);
 		return;
 	}
 

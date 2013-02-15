@@ -74,7 +74,7 @@ const Surface *JPEGDecoder::getSurface() const {
 
 	// Create an RGBA8888 surface
 	_rgbSurface = new Graphics::Surface();
-	_rgbSurface->create(_w, _h, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+	_rgbSurface->create(_w, _h, Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16, 8, 0));
 
 	// Get our component surfaces
 	const Graphics::Surface *yComponent = getComponent(1);
@@ -215,28 +215,34 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 bool JPEGDecoder::readJFIF() {
 	uint16 length = _stream->readUint16BE();
 	uint32 tag = _stream->readUint32BE();
+
 	if (tag != MKTAG('J', 'F', 'I', 'F')) {
 		warning("JPEGDecoder::readJFIF() tag mismatch");
 		return false;
 	}
+
 	if (_stream->readByte() != 0)  { // NULL
 		warning("JPEGDecoder::readJFIF() NULL mismatch");
 		return false;
 	}
+
 	byte majorVersion = _stream->readByte();
 	byte minorVersion = _stream->readByte();
-	if (majorVersion != 1 || minorVersion != 1)
-		warning("JPEGDecoder::readJFIF() Non-v1.1 JPEGs may not be handled correctly");
+	if (majorVersion != 1 || minorVersion > 2)
+		warning("JPEGDecoder::readJFIF(): v%d.%02d JPEGs may not be handled correctly", majorVersion, minorVersion);
+
 	/* byte densityUnits = */_stream->readByte();
 	/* uint16 xDensity = */_stream->readUint16BE();
 	/* uint16 yDensity = */_stream->readUint16BE();
 	byte thumbW = _stream->readByte();
 	byte thumbH = _stream->readByte();
+
 	_stream->seek(thumbW * thumbH * 3, SEEK_CUR); // Ignore thumbnail
 	if (length != (thumbW * thumbH * 3) + 16) {
 		warning("JPEGDecoder::readJFIF() length mismatch");
 		return false;
 	}
+
 	return true;
 }
 

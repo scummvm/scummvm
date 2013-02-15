@@ -175,7 +175,7 @@ void EoBInfProcessor::run(int func, int flags) {
 
 	uint16 f = _vm->_levelBlockProperties[func].flags;
 
-	uint16 subFlags = ((f & 0xfff8) >> 3) | 0xe0;
+	uint16 subFlags = ((f & 0xFFF8) >> 3) | 0xE0;
 	if (!(flags & subFlags))
 		return;
 
@@ -233,7 +233,7 @@ void EoBInfProcessor::reset() {
 }
 
 const char *EoBInfProcessor::getString(uint16 index) {
-	if (index == 0xffff)
+	if (index == 0xFFFF)
 		return 0;
 
 	int8 *res = _scriptData + READ_LE_UINT16(_scriptData);
@@ -348,7 +348,7 @@ int EoBInfProcessor::oeob_movePartyOrObject(int8 *data) {
 	int8 *pos = data;
 
 	int8 a = *pos++;
-	uint16 b = 0xffff;
+	uint16 b = 0xFFFF;
 	uint16 c = 0;
 	uint16 d = 0;
 
@@ -972,7 +972,7 @@ int EoBInfProcessor::oeob_eval_v2(int8 *data) {
 		case 9:
 			switch (*pos++) {
 			case -36:
-				_stack[_stackIndex++] = _vm->_itemTypes[_vm->_items[_vm->_lastUsedItem].type].extraProperties & 0x7f;
+				_stack[_stackIndex++] = _vm->_itemTypes[_vm->_items[_vm->_lastUsedItem].type].extraProperties & 0x7F;
 				break;
 			case -31:
 				_stack[_stackIndex++] = _vm->_items[_vm->_lastUsedItem].type;
@@ -1097,7 +1097,7 @@ int EoBInfProcessor::oeob_eval_v2(int8 *data) {
 		case 26:
 			a = 0;
 			for (i = 0; i < 6; i++) {
-				if (_vm->testCharacter(i, 0x0f))
+				if (_vm->testCharacter(i, 0x0F))
 					a++;
 			}
 			_stack[_stackIndex++] = a;
@@ -1260,7 +1260,7 @@ int EoBInfProcessor::oeob_loadNewLevelOrMonsters(int8 *data) {
 		pos += 2;
 		uint8 dir = (uint8)*pos++;
 
-		if (dir != 0xff)
+		if (dir != 0xFF)
 			_vm->_currentDirection = dir;
 
 		for (int i = 0; i < 30; i++)
@@ -1328,11 +1328,11 @@ int EoBInfProcessor::oeob_createItem_v1(int8 *data) {
 	uint8 itmPos = *pos++;
 
 	if (itm) {
-		if (block == 0xffff && !_vm->_itemInHand) {
+		if (block == 0xFFFF && !_vm->_itemInHand) {
 			_vm->setHandItem(itm);
 			debugC(5, kDebugLevelScript, "         - create hand item '%d'", itm);
-		} else if (block != 0xffff) {
-			_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[block & 0x3ff].drawObjects, block, itm, itmPos);
+		} else if (block != 0xFFFF) {
+			_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[block & 0x3FF].drawObjects, block, itm, itmPos);
 			debugC(5, kDebugLevelScript, "         - create item '%d' on block '0x%.04X', position '%d'", itm, block, itmPos);
 		}
 	}
@@ -1363,19 +1363,19 @@ int EoBInfProcessor::oeob_createItem_v2(int8 *data) {
 	if (!itm)
 		return pos - data;
 
-	if (block == 0xffff) {
+	if (block == 0xFFFF) {
 		if (!_vm->_itemInHand) {
 			_vm->setHandItem(itm);
 			debugC(5, kDebugLevelScript, "         - create hand item '%d' (value '%d', flags '0x%X', icon number '%d')", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon);
 		} else {
-			_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[_vm->_currentBlock & 0x3ff].drawObjects, _vm->_currentBlock, itm, _itemPos[_vm->rollDice(1, 2, -1)]);
+			_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[_vm->_currentBlock & 0x3FF].drawObjects, _vm->_currentBlock, itm, _itemPos[_vm->rollDice(1, 2, -1)]);
 			debugC(5, kDebugLevelScript, "         - create item '%d' (value '%d', flags '0x%X', icon number '%d') on current block", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon);
 		}
-	} else if (block == 0xfffe) {
-		_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[_vm->_currentBlock & 0x3ff].drawObjects, _vm->_currentBlock, itm, _itemPos[(_vm->_currentDirection << 2) + _vm->rollDice(1, 2, -1)]);
+	} else if (block == 0xFFFE) {
+		_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[_vm->_currentBlock & 0x3FF].drawObjects, _vm->_currentBlock, itm, _itemPos[(_vm->_currentDirection << 2) + _vm->rollDice(1, 2, -1)]);
 		debugC(5, kDebugLevelScript, "         - create item '%d' (value '%d', flags '0x%X', icon number '%d') on current block", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon);
 	} else {
-		_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[block & 0x3ff].drawObjects, block, itm, itmPos);
+		_vm->setItemPosition((Item *)&_vm->_levelBlockProperties[block & 0x3FF].drawObjects, block, itm, itmPos);
 		debugC(5, kDebugLevelScript, "         - create item '%d' (value '%d', flags '0x%X', icon number '%d') on block '0x%.04X', position '%d'", itm, _vm->_items[itm].value, _vm->_items[itm].flags, _vm->_items[itm].icon, block, itmPos);
 	}
 
@@ -1530,7 +1530,7 @@ int EoBInfProcessor::oeob_dialogue(int8 *data) {
 		break;
 
 	case -40:
-		_dlgResult = _vm->runDialogue(READ_LE_UINT16(pos), READ_LE_UINT16(pos + 6) == 0xffff ? 2 : 3, getString(READ_LE_UINT16(pos + 2)), getString(READ_LE_UINT16(pos + 4)), getString(READ_LE_UINT16(pos + 6)));
+		_dlgResult = _vm->runDialogue(READ_LE_UINT16(pos), READ_LE_UINT16(pos + 6) == 0xFFFF ? 2 : 3, getString(READ_LE_UINT16(pos + 2)), getString(READ_LE_UINT16(pos + 4)), getString(READ_LE_UINT16(pos + 6)));
 		pos += 8;
 		break;
 

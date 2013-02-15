@@ -22,6 +22,8 @@
 
 namespace Wintermute {
 
+#define GAMEOPTION_SHOW_FPS GUIO_GAMEOPTIONS1
+
 static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},
@@ -79,6 +81,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"chivalry",
 		"",
 		AD_ENTRY1s("data.dcp", "ebd0915d9a12df5224be22f53bb23eb6", 7278306),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Chivalry is Not Dead (Version from deirdrakai.com)
+	{
+		"chivalry",
+		"",
+		AD_ENTRY1s("data.dcp", "ae6d91b9517f4d2851a8ad94c96951c8", 7278302),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,

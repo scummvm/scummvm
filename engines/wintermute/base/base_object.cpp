@@ -60,18 +60,18 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 
 	_ready = true;
 
-	_soundEvent = NULL;
+	_soundEvent = nullptr;
 
 	_iD = _gameRef->getSequence();
 
 	BasePlatform::setRectEmpty(&_rect);
 	_rectSet = false;
 
-	_cursor = NULL;
-	_activeCursor = NULL;
+	_cursor = nullptr;
+	_activeCursor = nullptr;
 	_sharedCursors = false;
 
-	_sFX = NULL;
+	_sFX = nullptr;
 	_sFXStart = 0;
 	_sFXVolume = 100;
 	_autoSoundPanning = true;
@@ -86,7 +86,7 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_relativeRotate = 0.0f;
 
 	for (int i = 0; i < 7; i++) {
-		_caption[i] = NULL;
+		_caption[i] = nullptr;
 	}
 	_saveState = true;
 
@@ -109,25 +109,25 @@ BaseObject::~BaseObject() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::cleanup() {
 	if (_gameRef && _gameRef->_activeObject == this) {
-		_gameRef->_activeObject = NULL;
+		_gameRef->_activeObject = nullptr;
 	}
 
 	BaseScriptHolder::cleanup();
 	delete[] _soundEvent;
-	_soundEvent = NULL;
+	_soundEvent = nullptr;
 
 	if (!_sharedCursors) {
 		delete _cursor;
 		delete _activeCursor;
-		_cursor = NULL;
-		_activeCursor = NULL;
+		_cursor = nullptr;
+		_activeCursor = nullptr;
 	}
 	delete _sFX;
-	_sFX = NULL;
+	_sFX = nullptr;
 
 	for (int i = 0; i < 7; i++) {
 		delete[] _caption[i];
-		_caption[i] = NULL;
+		_caption[i] = nullptr;
 	}
 
 	_sFXType = SFX_NONE;
@@ -160,7 +160,7 @@ const char *BaseObject::getCaption(int caseVal) {
 	if (caseVal == 0) {
 		caseVal = 1;
 	}
-	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == NULL) {
+	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == nullptr) {
 		return "";
 	} else {
 		return _caption[caseVal - 1];
@@ -223,9 +223,9 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(0);
 		if (!_sharedCursors) {
 			delete _cursor;
-			_cursor = NULL;
+			_cursor = nullptr;
 		} else {
-			_cursor = NULL;
+			_cursor = nullptr;
 
 		}
 		stack->pushNULL();
@@ -317,12 +317,12 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		ScValue *val3 = stack->pop();
 
 		if (val1->_type == VAL_BOOL) {
-			filename = NULL;
+			filename = nullptr;
 			looping = val1->getBool();
 			loopStart = val2->getInt();
 		} else {
 			if (val1->isNULL()) {
-				filename = NULL;
+				filename = nullptr;
 			} else {
 				filename = val1->getString();
 			}
@@ -351,7 +351,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		ScValue *val2 = stack->pop();
 
 		if (val2->isNULL()) {
-			filename = NULL;
+			filename = nullptr;
 			eventName = val1->getString();
 		} else {
 			filename = val1->getString();
@@ -1010,14 +1010,14 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 bool BaseObject::setCursor(const char *filename) {
 	if (!_sharedCursors) {
 		delete _cursor;
-		_cursor = NULL;
+		_cursor = nullptr;
 	}
 
 	_sharedCursors = false;
 	_cursor = new BaseSprite(_gameRef);
 	if (!_cursor || DID_FAIL(_cursor->loadFile(filename))) {
 		delete _cursor;
-		_cursor = NULL;
+		_cursor = nullptr;
 		return STATUS_FAILED;
 	} else {
 		return STATUS_OK;
@@ -1031,7 +1031,7 @@ bool BaseObject::setActiveCursor(const char *filename) {
 	_activeCursor = new BaseSprite(_gameRef);
 	if (!_activeCursor || DID_FAIL(_activeCursor->loadFile(filename))) {
 		delete _activeCursor;
-		_activeCursor = NULL;
+		_activeCursor = nullptr;
 		return STATUS_FAILED;
 	} else {
 		return STATUS_OK;
@@ -1066,7 +1066,7 @@ bool BaseObject::handleMouseWheel(int delta) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const char *eventName, uint32 loopStart) {
 	// just play loaded sound
-	if (filename == NULL && _sFX) {
+	if (filename == nullptr && _sFX) {
 		if (_gameRef->_editorMode || _sFXStart) {
 			_sFX->setVolumePercent(_sFXVolume);
 			_sFX->setPositionTime(_sFXStart);
@@ -1085,7 +1085,7 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 		}
 	}
 
-	if (filename == NULL) {
+	if (filename == nullptr) {
 		return STATUS_FAILED;
 	}
 
@@ -1111,7 +1111,7 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 		}
 	} else {
 		delete _sFX;
-		_sFX = NULL;
+		_sFX = nullptr;
 		return STATUS_FAILED;
 	}
 }
@@ -1123,7 +1123,7 @@ bool BaseObject::stopSFX(bool deleteSound) {
 		_sFX->stop();
 		if (deleteSound) {
 			delete _sFX;
-			_sFX = NULL;
+			_sFX = nullptr;
 		}
 		return STATUS_OK;
 	} else {
@@ -1179,7 +1179,7 @@ bool BaseObject::updateSounds() {
 	if (_soundEvent) {
 		if (_sFX && !_sFX->isPlaying()) {
 			applyEvent(_soundEvent);
-			setSoundEvent(NULL);
+			setSoundEvent(nullptr);
 		}
 	}
 
@@ -1229,7 +1229,7 @@ bool BaseObject::isReady() {
 //////////////////////////////////////////////////////////////////////////
 void BaseObject::setSoundEvent(const char *eventName) {
 	delete[] _soundEvent;
-	_soundEvent = NULL;
+	_soundEvent = nullptr;
 	if (eventName) {
 		_soundEvent = new char[strlen(eventName) + 1];
 		if (_soundEvent) {

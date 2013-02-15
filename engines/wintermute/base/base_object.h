@@ -52,7 +52,7 @@ protected:
 	bool resumeSFX();
 	bool pauseSFX();
 	bool stopSFX(bool deleteSound = true);
-	bool playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = NULL, uint32 loopStart = 0);
+	bool playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = nullptr, uint32 loopStart = 0);
 	BaseSound *_sFX;
 	TSFXType _sFXType;
 	float _sFXParam1;
@@ -110,8 +110,8 @@ public:
 	bool _movable;
 	bool _zoomable;
 	bool _shadowable;
-	int _posY;
-	int _posX;
+	int32 _posY;
+	int32 _posX;
 	bool _registrable;
 	char *_caption[7];
 	bool _saveState;

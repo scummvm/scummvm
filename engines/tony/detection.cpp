@@ -90,7 +90,7 @@ public:
 
 bool TonyMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-	    (f == kSupportsListSaves) ||
+		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
@@ -185,7 +185,6 @@ SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int s
 
 	return SaveStateDescriptor();
 }
-
 
 #if PLUGIN_ENABLED_DYNAMIC(TONY)
 REGISTER_PLUGIN_DYNAMIC(TONY, PLUGIN_TYPE_ENGINE, TonyMetaEngine);

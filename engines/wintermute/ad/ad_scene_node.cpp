@@ -36,18 +36,18 @@ IMPLEMENT_PERSISTENT(AdSceneNode, false)
 //////////////////////////////////////////////////////////////////////////
 AdSceneNode::AdSceneNode(BaseGame *inGame) : BaseObject(inGame) {
 	_type = OBJECT_NONE;
-	_region = NULL;
-	_entity = NULL;
+	_region = nullptr;
+	_entity = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 AdSceneNode::~AdSceneNode() {
 	_gameRef->unregisterObject(_region);
-	_region = NULL;
+	_region = nullptr;
 
 	_gameRef->unregisterObject(_entity);
-	_entity = NULL;
+	_entity = nullptr;
 }
 
 

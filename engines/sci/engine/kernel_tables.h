@@ -156,7 +156,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	//        signature for SCI21 should be "o"
 	{ SIG_SOUNDSCI21,      9, MAP_CALL(DoSoundStop),               NULL,                   NULL },
 	{ SIG_SOUNDSCI21,     10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
-	{ SIG_SOUNDSCI21,     11, MAP_CALL(DoSoundFade),               NULL,                   NULL },
+	{ SIG_SOUNDSCI21,     11, MAP_CALL(DoSoundFade),               NULL,                   kDoSoundFade_workarounds },
 	{ SIG_SOUNDSCI21,     12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
 	{ SIG_SOUNDSCI21,     13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
 	{ SIG_SOUNDSCI21,     14, MAP_CALL(DoSoundSetVolume),          NULL,                   NULL },
@@ -202,7 +202,10 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
 	{ SIG_SCIALL,          4, MAP_CALL(PalVaryChangeTarget),       "i",                    NULL },
 	{ SIG_SCIALL,          5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
 	{ SIG_SCIALL,          6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
+#ifdef ENABLE_SCI32
 	{ SIG_SCI32,           8, MAP_CALL(PalVaryUnknown),            "i",                    NULL },
+	{ SIG_SCI32,           9, MAP_CALL(PalVaryUnknown2),           "i",                    NULL },
+#endif
 	SCI_SUBOPENTRY_TERMINATOR
 };
 

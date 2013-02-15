@@ -69,7 +69,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		0,
 		TINSEL_V1,
 	},
-#if 0
+
 	{	// Macintosh CD Demo V1 version, with *.scn files, see tracker #3110936
 		{
 			"dw",
@@ -89,7 +89,7 @@ static const TinselGameDescription gameDescriptions[] = {
 		GF_SCNFILES,
 		TINSEL_V1,
 	},
-#endif
+
 	{	// Multilingual Floppy V1 with *.gra files.
 		// Note: It contains no english subtitles.
 		{
@@ -474,7 +474,6 @@ static const TinselGameDescription gameDescriptions[] = {
 	},
 #endif
 
-#if 0
 	{	// Mac multilanguage CD
 		{
 			"dw",
@@ -491,11 +490,9 @@ static const TinselGameDescription gameDescriptions[] = {
 		},
 		GID_DW1,
 		0,
-		GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		GF_SCNFILES,
 		TINSEL_V1,
 	},
-
-#endif
 
 	{	// German CD re-release "Neon Edition"
 		// Note: This release has ENGLISH.TXT (with german content) instead of GERMAN.TXT

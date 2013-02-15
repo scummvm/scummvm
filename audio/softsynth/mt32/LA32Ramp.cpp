@@ -79,11 +79,12 @@ LA32Ramp::LA32Ramp() :
 
 void LA32Ramp::startRamp(Bit8u target, Bit8u increment) {
 	// CONFIRMED: From sample analysis, this appears to be very accurate.
-	// FIXME: We could use a table for this in future
 	if (increment == 0) {
 		largeIncrement = 0;
 	} else {
-		largeIncrement = (unsigned int)(EXP2F(((increment & 0x7F) + 24) / 8.0f) + 0.125f);
+		// Using integer argument here, no precision loss:
+		// (unsigned int)(EXP2F(((increment & 0x7F) + 24) / 8.0f) + 0.125f)
+		largeIncrement = (unsigned int)(EXP2I(((increment & 0x7F) + 24) << 9) + 0.125f);
 	}
 	descending = (increment & 0x80) != 0;
 	if (descending) {

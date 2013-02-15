@@ -53,6 +53,7 @@ bool extractMrShapeAnimData(PAKFile &out, const ExtractInformation *info, const 
 bool extractRaw16(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractRaw32(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractLoLButtonDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
+bool extractLoLFlyingShpDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 
 bool extractEoB2SeqData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
 bool extractEoB2ShapeData(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id);
@@ -81,7 +82,7 @@ const ExtractType extractTypeTable[] = {
 	{ kLoLTypeCharData, extractRaw },
 	{ kLoLTypeSpellData, extractRaw },
 	{ kLoLTypeCompassData, extractRaw16to8 },
-	{ kLoLTypeFlightShpData, extractRaw16to8 },
+	{ kLoLTypeFlightShpData, extractLoLFlyingShpDefs },
 	{ kLoLTypeRaw16, extractRaw16 },
 	{ kLoLTypeRaw32, extractRaw32 },
 	{ kLoLTypeButtonDef, extractLoLButtonDefs },
@@ -965,18 +966,23 @@ bool extractPaddedStrings(PAKFile &out, const ExtractInformation *info, const by
 			src++;
 		while (*src && src < fin)
 			*dst++ = *src++;
-
-		*dst++ = '\0';
+		if (src < fin)
+			*dst++ = *src++;
 		entries++;
 	}
 
 	WRITE_BE_UINT32(buffer, entries);
+
 	outsize = dst - buffer;
 
 	return out.addFile(filename, buffer, outsize);
 }
 
 bool extractRaw16to8(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+	// Hack for some LOL FM-Towns entries
+	if (info->platform == Common::kPlatformFMTowns && ((id >= kLoLButtonList1 && id <= kLoLButtonList8) || id == kLoLCharInvIndex))
+		return extractRaw(out, info, data, size, filename, id);
+
 	int outsize = size >> 1;
 	uint8 *buffer = new uint8[outsize];
 	const uint8 *src = data;
@@ -1044,6 +1050,30 @@ bool extractLoLButtonDefs(PAKFile &out, const ExtractInformation *info, const by
 		src += 2; dst += 2;
 		WRITE_BE_UINT16(dst, READ_LE_UINT16(src));
 		src += 2; dst += 2;
+	}
+
+	return out.addFile(filename, buffer, outsize);
+}
+
+bool extractLoLFlyingShpDefs(PAKFile &out, const ExtractInformation *info, const byte *data, const uint32 size, const char *filename, int id) {
+	if (info->platform != Common::kPlatformFMTowns)
+		return extractRaw16to8(out, info, data, size, filename, id);
+
+	int outsize = size / 9 * 5;
+	uint8 *buffer = new uint8[outsize];
+	const uint8 *src = data;
+	uint8 *dst = buffer;
+
+	for (int i = outsize / 5; i; --i) {
+		*dst++ = *src++;
+		src++;
+		*dst++ = *src++;
+		src++;
+		*dst++ = *src++;
+		src++;
+		*dst++ = *src++;
+		*dst++ = *src++;
+		src++;
 	}
 
 	return out.addFile(filename, buffer, outsize);

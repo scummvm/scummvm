@@ -124,28 +124,28 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 			pReel = (const FREEL *)param;
 
 			// Get the MULTI_INIT structure
-			pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pReel->mobj));
+			pmi = (const MULTI_INIT *)LockMem(FROM_32(pReel->mobj));
 
 			// Initialize and insert the object, and initialize its script.
 			g_pBG[0] = MultiInitObject(pmi);
 			MultiInsertObject(GetPlayfieldList(FIELD_WORLD), g_pBG[0]);
-			InitStepAnimScript(&g_thisAnim[0], g_pBG[0], FROM_LE_32(pReel->script), g_BGspeed);
+			InitStepAnimScript(&g_thisAnim[0], g_pBG[0], FROM_32(pReel->script), g_BGspeed);
 			g_bgReels = 1;
 		} else {
 			/*** At start of scene ***/
 			pFilm = (const FILM *)LockMem(g_hBackground);
-			g_bgReels = FROM_LE_32(pFilm->numreels);
+			g_bgReels = FROM_32(pFilm->numreels);
 
 			int i;
 			for (i = 0; i < g_bgReels; i++) {
 				// Get the MULTI_INIT structure
-				pmi = (PMULTI_INIT) LockMem(FROM_LE_32(pFilm->reels[i].mobj));
+				pmi = (PMULTI_INIT) LockMem(FROM_32(pFilm->reels[i].mobj));
 
 				// Initialize and insert the object, and initialize its script.
 				g_pBG[i] = MultiInitObject(pmi);
 				MultiInsertObject(GetPlayfieldList(FIELD_WORLD), g_pBG[i]);
 				MultiSetZPosition(g_pBG[i], 0);
-				InitStepAnimScript(&g_thisAnim[i], g_pBG[i], FROM_LE_32(pFilm->reels[i].script), g_BGspeed);
+				InitStepAnimScript(&g_thisAnim[i], g_pBG[i], FROM_32(pFilm->reels[i].script), g_BGspeed);
 
 				if (i > 0)
 					g_pBG[i-1]->pSlave = g_pBG[i];
@@ -170,11 +170,11 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 		// New background during scene
 		if (!TinselV2) {
 			pReel = (const FREEL *)param;
-			InitStepAnimScript(&g_thisAnim[0], g_pBG[0], FROM_LE_32(pReel->script), g_BGspeed);
+			InitStepAnimScript(&g_thisAnim[0], g_pBG[0], FROM_32(pReel->script), g_BGspeed);
 			StepAnimScript(&g_thisAnim[0]);
 		} else {
 			pFilm = (const FILM *)LockMem(g_hBackground);
-			assert(g_bgReels == (int32)FROM_LE_32(pFilm->numreels));
+			assert(g_bgReels == (int32)FROM_32(pFilm->numreels));
 
 			// Just re-initialize the scripts.
 			for (int i = 0; i < g_bgReels; i++) {
@@ -198,7 +198,7 @@ static void BGotherProcess(CORO_PARAM, const void *param) {
 	CORO_END_CONTEXT(_ctx);
 
 	const FREEL *pReel = (const FREEL *)param;
-	const MULTI_INIT *pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pReel->mobj));
+	const MULTI_INIT *pmi = (const MULTI_INIT *)LockMem(FROM_32(pReel->mobj));
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -206,7 +206,7 @@ static void BGotherProcess(CORO_PARAM, const void *param) {
 	_ctx->pObj = MultiInitObject(pmi);
 	MultiInsertObject(GetPlayfieldList(FIELD_WORLD), _ctx->pObj);
 
-	InitStepAnimScript(&_ctx->anim, g_pBG[0], FROM_LE_32(pReel->script), g_BGspeed);
+	InitStepAnimScript(&_ctx->anim, g_pBG[0], FROM_32(pReel->script), g_BGspeed);
 
 	while (StepAnimScript(&_ctx->anim) != ScriptFinished)
 		CORO_SLEEP(1);
@@ -249,16 +249,16 @@ void StartupBackground(CORO_PARAM, SCNHANDLE hFilm) {
 
 	pim = GetImageFromFilm(hFilm, 0, NULL, NULL, &pfilm);
 
-	SetBackPal(FROM_LE_32(pim->hImgPal));
+	SetBackPal(FROM_32(pim->hImgPal));
 
 	// Extract the film speed
-	g_BGspeed = ONE_SECOND / FROM_LE_32(pfilm->frate);
+	g_BGspeed = ONE_SECOND / FROM_32(pfilm->frate);
 
 	// Start display process for each reel in the film
 	CoroScheduler.createProcess(PID_REEL, BGmainProcess, &pfilm->reels[0], sizeof(FREEL));
 
 	if (TinselV0) {
-		for (uint i = 1; i < FROM_LE_32(pfilm->numreels); ++i)
+		for (uint i = 1; i < FROM_32(pfilm->numreels); ++i)
 			CoroScheduler.createProcess(PID_REEL, BGotherProcess, &pfilm->reels[i], sizeof(FREEL));
 	}
 

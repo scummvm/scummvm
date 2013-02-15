@@ -61,13 +61,13 @@ IMPLEMENT_PERSISTENT(AdEntity, false)
 AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_type = OBJECT_ENTITY;
 	_subtype = ENTITY_NORMAL;
-	_region = NULL;
-	_item = NULL;
+	_region = nullptr;
+	_item = nullptr;
 
 	_walkToX = _walkToY = 0;
 	_walkToDir = DI_NONE;
 
-	_theora = NULL;
+	_theora = nullptr;
 }
 
 
@@ -76,17 +76,32 @@ AdEntity::~AdEntity() {
 	_gameRef->unregisterObject(_region);
 
 	delete _theora;
-	_theora = NULL;
+	_theora = nullptr;
 
 	delete[] _item;
-	_item = NULL;
+	_item = nullptr;
 }
 
+int32 AdEntity::getWalkToX() const {
+	return _walkToX;
+}
+
+int32 AdEntity::getWalkToY() const {
+	return _walkToY;
+}
+
+TDirection AdEntity::getWalkToDir() const {
+	return _walkToDir;
+}
+
+const char *AdEntity::getItemName() const {
+	return _item;
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -210,7 +225,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 	}
 
 	AdGame *adGame = (AdGame *)_gameRef;
-	BaseSprite *spr = NULL;
+	BaseSprite *spr = nullptr;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -230,7 +245,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_SPRITE: {
 			delete _sprite;
-			_sprite = NULL;
+			_sprite = nullptr;
 			spr = new BaseSprite(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadFile((char *)params))) {
 				cmd = PARSERR_GENERIC;
@@ -320,7 +335,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
-				_cursor = NULL;
+				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -333,7 +348,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 			if (_region) {
 				_gameRef->unregisterObject(_region);
 			}
-			_region = NULL;
+			_region = nullptr;
 			BaseRegion *rgn = new BaseRegion(_gameRef);
 			if (!rgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
@@ -346,16 +361,16 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_BLOCKED_REGION: {
 			delete _blockRegion;
-			_blockRegion = NULL;
+			_blockRegion = nullptr;
 			delete _currentBlockRegion;
-			_currentBlockRegion = NULL;
+			_currentBlockRegion = nullptr;
 			BaseRegion *rgn = new BaseRegion(_gameRef);
 			BaseRegion *crgn = new BaseRegion(_gameRef);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				delete _blockRegion;
-				_blockRegion = NULL;
+				_blockRegion = nullptr;
 				delete _currentBlockRegion;
-				_currentBlockRegion = NULL;
+				_currentBlockRegion = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				_blockRegion = rgn;
@@ -367,16 +382,16 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_WAYPOINTS: {
 			delete _wptGroup;
-			_wptGroup = NULL;
+			_wptGroup = nullptr;
 			delete _currentWptGroup;
-			_currentWptGroup = NULL;
+			_currentWptGroup = nullptr;
 			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				delete _wptGroup;
-				_wptGroup = NULL;
+				_wptGroup = nullptr;
 				delete _currentWptGroup;
-				_currentWptGroup = NULL;
+				_currentWptGroup = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				_wptGroup = wpt;
@@ -393,7 +408,7 @@ bool AdEntity::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_SUBTYPE: {
 			if (scumm_stricmp((char *)params, "sound") == 0) {
 				delete _sprite;
-				_sprite = NULL;
+				_sprite = nullptr;
 				if (_gameRef->_editorMode) {
 					spr = new BaseSprite(_gameRef, this);
 					if (!spr || DID_FAIL(spr->loadFile("entity_sound.sprite"))) {
@@ -550,7 +565,7 @@ bool AdEntity::display() {
 		} else if (_currentSprite) {
 			_currentSprite->display(_posX,
 			                        _posY,
-			                        (reg || _editorAlwaysRegister) ? _registerAlias : NULL,
+			                        (reg || _editorAlwaysRegister) ? _registerAlias : nullptr,
 			                        scaleX,
 			                        scaleY,
 			                        alpha,
@@ -570,15 +585,15 @@ bool AdEntity::display() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::update() {
-	_currentSprite = NULL;
+	_currentSprite = nullptr;
 
 	if (_state == STATE_READY && _animSprite) {
 		delete _animSprite;
-		_animSprite = NULL;
+		_animSprite = nullptr;
 	}
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->isFinished()) {
+	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->isFinished()) {
 		_state = STATE_READY;
 		_currentSprite = _animSprite;
 	}
@@ -613,10 +628,10 @@ bool AdEntity::update() {
 		}
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
-		if (_tempSprite2 == NULL || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+		if (_tempSprite2 == nullptr || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
-				_tempSprite2 = NULL;
+				_tempSprite2 = nullptr;
 				_state = STATE_READY;
 			} else {
 				_tempSprite2 = getTalkStance(_sentence->getNextStance());
@@ -658,7 +673,7 @@ bool AdEntity::update() {
 		if (_theora->isFinished()) {
 			_theora->stop();
 			delete _theora;
-			_theora = NULL;
+			_theora = nullptr;
 		}
 	}
 
@@ -722,7 +737,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (_theora) {
 			_theora->stop();
 			delete _theora;
-			_theora = NULL;
+			_theora = nullptr;
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -815,7 +830,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(0);
 		if (_region) {
 			_gameRef->unregisterObject(_region);
-			_region = NULL;
+			_region = nullptr;
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1056,7 +1071,7 @@ int AdEntity::getHeight() {
 	if (_region && !_sprite) {
 		return _region->_rect.bottom - _region->_rect.top;
 	} else {
-		if (_currentSprite == NULL) {
+		if (_currentSprite == nullptr) {
 			_currentSprite = _sprite;
 		}
 		return AdObject::getHeight();
@@ -1102,15 +1117,15 @@ void AdEntity::setItem(const char *itemName) {
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::setSprite(const char *filename) {
 	if (_currentSprite == _sprite) {
-		_currentSprite = NULL;
+		_currentSprite = nullptr;
 	}
 
 	delete _sprite;
-	_sprite = NULL;
+	_sprite = nullptr;
 	BaseSprite *spr = new BaseSprite(_gameRef, this);
 	if (!spr || DID_FAIL(spr->loadFile(filename))) {
 		delete _sprite;
-		_sprite = NULL;
+		_sprite = nullptr;
 		return STATUS_FAILED;
 	} else {
 		_sprite = spr;

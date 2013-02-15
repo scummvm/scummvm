@@ -464,9 +464,9 @@ void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 		nextTimSequence = READ_LE_UINT16(&_ingameTalkObjIndex[cmd]);
 
 		if (nextTimSequence == 10) {
-			if (queryGameFlag(0x3e))
+			if (queryGameFlag(0x3E))
 				nextTimSequence = 14;
-			if (queryGameFlag(0x3f))
+			if (queryGameFlag(0x3F))
 				nextTimSequence = 15;
 			if (queryGameFlag(0x40))
 				nextTimSequence = 16;

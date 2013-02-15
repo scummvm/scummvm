@@ -30,10 +30,13 @@ namespace MT32Emu {
 static Bit8u biasLevelToAmpSubtractionCoeff[13] = {255, 187, 137, 100, 74, 54, 40, 29, 21, 15, 10, 5, 0};
 
 TVA::TVA(const Partial *usePartial, LA32Ramp *useAmpRamp) :
-	partial(usePartial), ampRamp(useAmpRamp), system_(&usePartial->getSynth()->mt32ram.system) {
+	partial(usePartial), ampRamp(useAmpRamp), system_(&usePartial->getSynth()->mt32ram.system), phase(TVA_PHASE_DEAD) {
 }
 
 void TVA::startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase) {
+	if (newPhase != phase) {
+		partial->getSynth()->partialStateChanged(partial, phase, newPhase);
+	}
 	target = newTarget;
 	phase = newPhase;
 	ampRamp->startRamp(newTarget, newIncrement);
@@ -43,6 +46,9 @@ void TVA::startRamp(Bit8u newTarget, Bit8u newIncrement, int newPhase) {
 }
 
 void TVA::end(int newPhase) {
+	if (newPhase != phase) {
+		partial->getSynth()->partialStateChanged(partial, phase, newPhase);
+	}
 	phase = newPhase;
 	playing = false;
 #if MT32EMU_MONITOR_TVA >= 1
@@ -154,7 +160,7 @@ void TVA::reset(const Part *newPart, const TimbreParam::PartialParam *newPartial
 
 	playing = true;
 
-	Tables *tables = &partial->getSynth()->tables;
+	const Tables *tables = &Tables::getInstance();
 
 	int key = partial->getPoly()->getKey();
 	int velocity = partial->getPoly()->getVelocity();
@@ -215,7 +221,7 @@ void TVA::recalcSustain() {
 		return;
 	}
 	// We're sustaining. Recalculate all the values
-	Tables *tables = &partial->getSynth()->tables;
+	const Tables *tables = &Tables::getInstance();
 	int newTarget = calcBasicAmp(tables, partial, system_, partialParam, patchTemp, rhythmTemp, biasAmpSubtraction, veloAmpSubtraction, part->getExpression());
 	newTarget += partialParam->tva.envLevel[3];
 	// Since we're in TVA_PHASE_SUSTAIN at this point, we know that target has been reached and an interrupt fired, so we can rely on it being the current amp.
@@ -241,7 +247,7 @@ int TVA::getPhase() const {
 }
 
 void TVA::nextPhase() {
-	Tables *tables = &partial->getSynth()->tables;
+	const Tables *tables = &Tables::getInstance();
 
 	if (phase >= TVA_PHASE_DEAD || !playing) {
 		partial->getSynth()->printDebug("TVA::nextPhase(): Shouldn't have got here with phase %d, playing=%s", phase, playing ? "true" : "false");
@@ -274,7 +280,7 @@ void TVA::nextPhase() {
 	}
 
 	int newTarget;
-	int newIncrement = 0;
+	int newIncrement = 0; // Initialised to please compilers
 	int envPointIndex = phase;
 
 	if (!allLevelsZeroFromNowOn) {

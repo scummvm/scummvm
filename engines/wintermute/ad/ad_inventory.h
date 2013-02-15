@@ -40,7 +40,7 @@ public:
 	DECLARE_PERSISTENT(AdInventory, BaseObject)
 	bool removeItem(const char *name);
 	bool removeItem(AdItem *Item);
-	bool insertItem(const char *name, const char *insertAfter = NULL);
+	bool insertItem(const char *name, const char *insertAfter = nullptr);
 	AdInventory(BaseGame *inGame);
 	virtual ~AdInventory();
 	BaseArray<AdItem *> _takenItems;

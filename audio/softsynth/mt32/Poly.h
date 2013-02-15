@@ -41,6 +41,8 @@ private:
 
 	Partial *partials[4];
 
+	Poly *next;
+
 public:
 	Poly(Part *part);
 	void reset(unsigned int key, unsigned int velocity, bool sustain, Partial **partials);
@@ -60,6 +62,9 @@ public:
 	bool isActive() const;
 
 	void partialDeactivated(Partial *partial);
+
+	Poly *getNext();
+	void setNext(Poly *poly);
 };
 
 }

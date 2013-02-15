@@ -34,10 +34,10 @@
 #define DCGF_VER_MAJOR 1
 #define DCGF_VER_MINOR 1
 #define DCGF_VER_BUILD 1
-#define DCGF_VER_SUFFIX "beta"
+#define DCGF_VER_SUFFIX "ScummVM"
 #define DCGF_VER_BETA true
 
-#define DCGF_NAME "WME Lite"
+#define DCGF_NAME "WME-ScummVM"
 #define DCGF_MAGIC 0xDEC0ADDE
 
 // minimal saved game version we support

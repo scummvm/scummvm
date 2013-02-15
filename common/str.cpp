@@ -764,7 +764,7 @@ String tag2string(uint32 tag) {
 	str[4] = '\0';
 	// Replace non-printable chars by dot
 	for (int i = 0; i < 4; ++i) {
-		if (!isprint((unsigned char)str[i]))
+		if (!Common::isPrint(str[i]))
 			str[i] = '.';
 	}
 	return String(str);
@@ -850,7 +850,7 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 	return dstLength + (src - srcStart);
 }
 
-}	// End of namespace Common
+} // End of namespace Common
 
 // Portable implementation of stricmp / strcasecmp / strcmpi.
 // TODO: Rename this to Common::strcasecmp

@@ -51,7 +51,7 @@ public:
 	bool loadBuffer(byte *buffer, bool complete = true);
 	Rect32 _rect;
 	BaseArray<BasePoint *> _points;
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) { return saveAsText(buffer, indent, NULL); }
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) { return saveAsText(buffer, indent, nullptr); }
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride);
 
 	// scripting interface

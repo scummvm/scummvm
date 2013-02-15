@@ -696,8 +696,9 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 			s.syncAsSint32LE(_palVaryPaused);
 		}
 
+		_palVarySignal = 0;
+
 		if (s.isLoading() && _palVaryResourceId != -1) {
-			_palVarySignal = 0;
 			palVaryInstallTimer();
 		}
 	}

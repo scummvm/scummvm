@@ -150,7 +150,7 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 		// it wasn't made sure that _curSfxFile was initialized
 		// so if it's out of bounds we just set it to 0.
 		if (_flags.platform == Common::kPlatformFMTowns) {
-			if (_curSfxFile >= _soundData->fileListLen || _curSfxFile < 0)
+			if (!_sound->hasSoundFile(_curSfxFile))
 				_curSfxFile = 0;
 			_sound->loadSoundFile(_curSfxFile);
 		}

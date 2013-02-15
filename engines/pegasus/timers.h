@@ -26,7 +26,6 @@
 #ifndef PEGASUS_TIMERS_H
 #define PEGASUS_TIMERS_H
 
-#include "common/list.h"
 #include "common/rational.h"
 #include "common/func.h"
 
@@ -122,11 +121,6 @@ protected:
 
 	Common::Rational _time;
 	uint32 _lastMillis, _pauseStart;
-
-private:
-	Common::Rational getEffectiveRate() const;
-
-	Common::List<TimeBase *> _slaves;
 };
 
 // Type passed to initCallBack()

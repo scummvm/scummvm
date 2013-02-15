@@ -31,7 +31,7 @@ void DreamWebEngine::showRyanPage() {
 
 void DreamWebEngine::findAllRyan() {
 	memset(_ryanInvList, 0xff, sizeof(_ryanInvList));
-	for (size_t i = 0; i < kNumexobjects; ++i) {
+	for (uint i = 0; i < kNumexobjects; ++i) {
 		const DynObject *extra = getExAd(i);
 		if (extra->mapad[0] != kExObjectType)
 			continue;
@@ -47,8 +47,8 @@ void DreamWebEngine::findAllRyan() {
 void DreamWebEngine::fillRyan() {
 	ObjectRef *inv = &_ryanInvList[_vars._ryanPage * 10];
 	findAllRyan();
-	for (size_t i = 0; i < 2; ++i) {
-		for (size_t j = 0; j < 5; ++j) {
+	for (uint i = 0; i < 2; ++i) {
+		for (uint j = 0; j < 5; ++j) {
 			obToInv(inv->_index, inv->_type, kInventx + j * kItempicsize, kInventy + i * kItempicsize);
 			++inv;
 		}
@@ -435,10 +435,23 @@ void DreamWebEngine::deleteExFrame(uint8 frameNum) {
 	_vars._exFramePos -= frameSize;
 
 	// Adjust all frame pointers pointing into the shifted data
-	for (unsigned int i = 0; i < 3*kNumexobjects; ++i) {
-		frame = &_exFrames._frames[i];
-		if (frame->ptr() >= startOff)
-			frame->setPtr(frame->ptr() - frameSize);
+	for (unsigned int i = 0; i < kNumexobjects; ++i) {
+		if (_exData[i].mapad[0] != 0xff) {
+			frame = &_exFrames._frames[3*i+0];
+			if (frame->ptr() >= startOff) {
+				frame->setPtr(frame->ptr() - frameSize);
+				assert(frame->ptr() + frame->width*frame->height <= _vars._exFramePos);
+			} else {
+				assert(frame->ptr() + frame->width*frame->height <= startOff);
+			}
+			frame = &_exFrames._frames[3*i+1];
+			if (frame->ptr() >= startOff) {
+				frame->setPtr(frame->ptr() - frameSize);
+				assert(frame->ptr() + frame->width*frame->height <= _vars._exFramePos);
+			} else {
+				assert(frame->ptr() + frame->width*frame->height <= startOff);
+			}
+		}
 	}
 }
 
@@ -875,7 +888,7 @@ void DreamWebEngine::useOpened() {
 
 void DreamWebEngine::outOfOpen() {
 	if (_openedOb == 255)
-		return;	// cannot use opened object
+		return; // cannot use opened object
 
 	ObjectRef objectId = findOpenPos();
 
@@ -892,13 +905,10 @@ void DreamWebEngine::outOfOpen() {
 	}
 
 	if (_mouseButton == _oldButton)
-		return;	// notletgo4
+		return; // notletgo4
 
-	if (_mouseButton != 1) {
-		if (_mouseButton == 2)
-			reExFromOpen();
+	if (_mouseButton != 1)
 		return;
-	}
 
 	delPointer();
 	_pickUp = 1;
@@ -1100,6 +1110,138 @@ void DreamWebEngine::pickupConts(uint8 from, uint8 containerEx) {
 
 		freeObj->mapad[0] = 0xFF;
 	}
+}
+
+void DreamWebEngine::incRyanPage() {
+	commandOnlyCond(31, 222);
+
+	if (_mouseButton == _oldButton || !(_mouseButton & 1))
+		return;
+
+	_vars._ryanPage = (_mouseX - (kInventx + 167)) / 18;
+
+	delPointer();
+	fillRyan();
+	readMouse();
+	showPointer();
+	workToScreen();
+	delPointer();
+}
+
+void DreamWebEngine::emergencyPurge() {
+	debug(2, "Ex memory: frames %d/%d, text %d/%d", _vars._exFramePos, kExframeslen, _vars._exTextPos, kExtextlen);
+
+	while (_vars._exFramePos + 4000 >= kExframeslen ||
+		   _vars._exTextPos + 400 >= kExtextlen)
+	{
+		purgeAnItem();
+		debug(2, "Ex memory after purging: frames %d/%d, text %d/%d", _vars._exFramePos, kExframeslen, _vars._exTextPos, kExtextlen);
+	}
+}
+
+void DreamWebEngine::purgeAnItem() {
+	const DynObject *extraObjects = _exData;
+
+
+	for (uint i = 0; i < kNumexobjects; ++i) {
+		if (extraObjects[i].mapad[0] == 0 &&
+		    (extraObjects[i].objId[0] == 255 || extraObjects[i].objId[0] == 2) &&
+			extraObjects[i].initialLocation != _realLocation) {
+			debug(1, "Purging ex object %d", i);
+			deleteExObject(i);
+			return;
+		}
+	}
+
+	for (uint i = 0; i < kNumexobjects; ++i) {
+		if (extraObjects[i].mapad[0] == 0 && extraObjects[i].objId[0] == 255) {
+			debug(1, "Purging ex object %d", i);
+			deleteExObject(i);
+			return;
+		}
+	}
+
+	error("Out of Ex object memory");
+}
+
+void DreamWebEngine::dropError() {
+	_commandType = 255;
+	delPointer();
+	printMessage(76, 21, 56, 240, 240 & 1);
+	workToScreenM();
+	hangOnP(50);
+	showPanel();
+	showMan();
+	examIcon();
+	_commandType = 255;
+	workToScreenM();
+}
+
+void DreamWebEngine::cantDrop() {
+	_commandType = 255;
+	delPointer();
+	printMessage(76, 21, 24, 240, 240 & 1);
+	workToScreenM();
+	hangOnP(50);
+	showPanel();
+	showMan();
+	examIcon();
+	_commandType = 255;
+	workToScreenM();
+}
+
+void DreamWebEngine::examineInventory() {
+	commandOnlyCond(32, 249);
+
+	if (!(_mouseButton & 1))
+		return;
+
+	createPanel();
+	showPanel();
+	showMan();
+	showExit();
+	examIcon();
+	_pickUp = 0;
+	_invOpen = 2;
+	openInv();
+	workToScreenM();
+}
+
+void DreamWebEngine::openInv() {
+	_invOpen = 1;
+	printMessage(80, 58 - 10, 61, 240, (240 & 1));
+	fillRyan();
+	_commandType = 255;
+}
+
+void DreamWebEngine::pickupOb(uint8 command, uint8 pos) {
+	_lastInvPos = pos;
+	_objectType = kFreeObjectType;
+	_itemFrame = command;
+	_command = command;
+	//uint8 dummy;
+	//getAnyAd(&dummy, &dummy);	// was in the original source, seems useless here
+	transferToEx(command);
+}
+
+void DreamWebEngine::initialInv() {
+	if (_realLocation != 24)
+		return;
+
+	pickupOb(11, 5);
+	pickupOb(12, 6);
+	pickupOb(13, 7);
+	pickupOb(14, 8);
+	pickupOb(18, 0);
+	pickupOb(19, 1);
+	pickupOb(20, 9);
+	pickupOb(16, 2);
+	_vars._watchMode = 1;
+	_vars._reelToHold = 0;
+	_vars._endOfHoldReel = 6;
+	_vars._watchSpeed = 1;
+	_vars._speedCount = 1;
+	switchRyanOff();
 }
 
 } // End of namespace DreamWeb

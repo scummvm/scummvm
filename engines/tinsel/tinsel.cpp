@@ -430,6 +430,14 @@ static void MouseProcess(CORO_PARAM, const void *) {
 				ProcessButEvent(PLR_DRAG2_END);
 			break;
 
+		case Common::EVENT_WHEELUP:
+			PlayerEvent(PLR_WHEEL_UP, mousePos);
+			break;
+
+		case Common::EVENT_WHEELDOWN:
+			PlayerEvent(PLR_WHEEL_DOWN, mousePos);
+			break;
+
 		default:
 			break;
 		}
@@ -722,21 +730,20 @@ void LoadBasicChunks() {
 
 	cptr = FindChunk(INV_OBJ_SCNHANDLE, CHUNK_OBJECTS);
 
-#ifdef SCUMM_BIG_ENDIAN
-	//convert to native endianness
+	// Convert to native endianness
 	INV_OBJECT *io = (INV_OBJECT *)cptr;
 	for (int i = 0; i < numObjects; i++, io++) {
-		io->id        = FROM_LE_32(io->id);
-		io->hIconFilm = FROM_LE_32(io->hIconFilm);
-		io->hScript   = FROM_LE_32(io->hScript);
-		io->attribute = FROM_LE_32(io->attribute);
+		io->id        = FROM_32(io->id);
+		io->hIconFilm = FROM_32(io->hIconFilm);
+		io->hScript   = FROM_32(io->hScript);
+		io->attribute = FROM_32(io->attribute);
 	}
-#endif
 
 	RegisterIcons(cptr, numObjects);
 
 	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_POLY);
-	if (cptr != NULL)
+	// Max polygons are 0 in DW1 Mac (both in the demo and the full version)
+	if (cptr != NULL && *cptr != 0)
 		MaxPolygons(*cptr);
 
 	if (TinselV2) {
@@ -1046,6 +1053,8 @@ bool TinselEngine::pollEvent() {
 	case Common::EVENT_LBUTTONUP:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
+	case Common::EVENT_WHEELUP:
+	case Common::EVENT_WHEELDOWN:
 		// Add button to queue for the mouse process
 		_mouseButtons.push_back(event.type);
 		break;
@@ -1053,7 +1062,7 @@ bool TinselEngine::pollEvent() {
 	case Common::EVENT_MOUSEMOVE:
 		{
 			// This fragment takes care of Tinsel 2 when it's been compiled with
-			// blank areas at the top and bottom of thes creen
+			// blank areas at the top and bottom of the screen
 			int ySkip = TinselV2 ? (g_system->getHeight() - _vm->screen().h) / 2 : 0;
 			if ((event.mouse.y >= ySkip) && (event.mouse.y < (g_system->getHeight() - ySkip)))
 				_mousePos = Common::Point(event.mouse.x, event.mouse.y - ySkip);

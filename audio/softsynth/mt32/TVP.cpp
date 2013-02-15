@@ -47,12 +47,11 @@ static Bit16u keyToPitchTable[] = {
 
 TVP::TVP(const Partial *usePartial) :
 	partial(usePartial), system_(&usePartial->getSynth()->mt32ram.system) {
-	unsigned int sampleRate = usePartial->getSynth()->myProp.sampleRate;
 	// We want to do processing 4000 times per second. FIXME: This is pretty arbitrary.
-	maxCounter = sampleRate / 4000;
+	maxCounter = SAMPLE_RATE / 4000;
 	// The timer runs at 500kHz. We only need to bother updating it every maxCounter samples, before we do processing.
 	// This is how much to increment it by every maxCounter samples.
-	processTimerIncrement = 500000 * maxCounter / sampleRate;
+	processTimerIncrement = 500000 * maxCounter / SAMPLE_RATE;
 }
 
 static Bit16s keyToPitch(unsigned int key) {
@@ -171,9 +170,14 @@ void TVP::updatePitch() {
 	if (newPitch < 0) {
 		newPitch = 0;
 	}
+
+// Note: Temporary #ifdef until we have proper "quirk" configuration
+// This is about right emulation of MT-32 GEN0 quirk exploited in Colonel's Bequest timbre "Lightning"
+#ifndef MT32EMU_QUIRK_PITCH_ENVELOPE_OVERFLOW_MT32
 	if (newPitch > 59392) {
 		newPitch = 59392;
 	}
+#endif
 	pitch = (Bit16u)newPitch;
 
 	// FIXME: We're doing this here because that's what the CM-32L does - we should probably move this somewhere more appropriate in future.

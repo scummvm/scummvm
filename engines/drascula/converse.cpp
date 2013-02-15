@@ -167,7 +167,6 @@ void DrasculaEngine::converse(int index) {
 	// no need to delete the stream, since TextResourceParser takes ownership
 	// delete stream;
 
-
 	if (currentChapter == 2 && !strcmp(fileName, "op_5.cal") && flags[38] == 1 && flags[33] == 1) {
 		strcpy(phrase3, _text[405]);
 		strcpy(sound3, "405.als");

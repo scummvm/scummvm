@@ -203,7 +203,9 @@ private:
 		enum {
 			kWaveFormatNone = 0,
 			kWaveFormatPCM = 1,
-			kWaveFormatDK3 = 98
+			kWaveFormatMSADPCM = 2,
+			kWaveFormatMSIMAADPCM = 17,
+			kWaveFormatDK3 = 98		// rogue format number
 		};
 
 		AVIStreamHeader _audsHeader;

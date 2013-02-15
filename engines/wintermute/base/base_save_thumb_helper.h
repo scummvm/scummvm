@@ -40,9 +40,12 @@ public:
 	BaseSaveThumbHelper(BaseGame *inGame);
 	virtual ~BaseSaveThumbHelper(void);
 	bool storeThumbnail(bool doFlip = false);
+	bool storeScummVMThumbNail(bool doFlip = false);
 
 	BaseImage *_thumbnail;
+	BaseImage *_scummVMThumb;
 private:
+	BaseImage *storeThumb(bool doFlip, int width, int height);
 	BaseImage *_richThumbnail;
 };
 

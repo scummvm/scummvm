@@ -49,8 +49,8 @@ IMPLEMENT_PERSISTENT(AdItem, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdItem::AdItem(BaseGame *inGame) : AdTalkHolder(inGame) {
-	_spriteHover = NULL;
-	_cursorNormal = _cursorHover = NULL;
+	_spriteHover = nullptr;
+	_cursorNormal = _cursorHover = nullptr;
 
 	_cursorCombined = true;
 	_inInventory = false;
@@ -60,7 +60,7 @@ AdItem::AdItem(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_amountOffsetX = 0;
 	_amountOffsetY = 0;
 	_amountAlign = TAL_RIGHT;
-	_amountString = NULL;
+	_amountString = nullptr;
 
 	_state = STATE_READY;
 
@@ -73,19 +73,19 @@ AdItem::~AdItem() {
 	delete _spriteHover;
 	delete _cursorNormal;
 	delete _cursorHover;
-	_spriteHover = NULL;
-	_cursorNormal = NULL;
-	_cursorHover = NULL;
+	_spriteHover = nullptr;
+	_cursorNormal = nullptr;
+	_cursorHover = nullptr;
 
 	delete[] _amountString;
-	_amountString = NULL;
+	_amountString = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdItem::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdItem::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -272,7 +272,7 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 			_cursorNormal = new BaseSprite(_gameRef);
 			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile((char *)params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _cursorNormal;
-				_cursorNormal = NULL;
+				_cursorNormal = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -282,7 +282,7 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 			_cursorHover = new BaseSprite(_gameRef);
 			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile((char *)params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _cursorHover;
-				_cursorHover = NULL;
+				_cursorHover = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -332,15 +332,15 @@ bool AdItem::loadBuffer(byte *buffer, bool complete) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdItem::update() {
-	_currentSprite = NULL;
+	_currentSprite = nullptr;
 
 	if (_state == STATE_READY && _animSprite) {
 		delete _animSprite;
-		_animSprite = NULL;
+		_animSprite = nullptr;
 	}
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->isFinished()) {
+	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->isFinished()) {
 		_state = STATE_READY;
 		_currentSprite = _animSprite;
 	}
@@ -379,10 +379,10 @@ bool AdItem::update() {
 		}
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
-		if (_tempSprite2 == NULL || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+		if (_tempSprite2 == nullptr || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
-				_tempSprite2 = NULL;
+				_tempSprite2 = nullptr;
 				_state = STATE_READY;
 			} else {
 				_tempSprite2 = getTalkStance(_sentence->getNextStance());
@@ -435,7 +435,7 @@ bool AdItem::display(int x, int y) {
 		}
 		amountX += _amountOffsetX;
 
-		BaseFont *font = _font ? _font : _gameRef->_systemFont;
+		BaseFont *font = _font ? _font : _gameRef->getSystemFont();
 		if (font) {
 			if (_amountString) {
 				font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
@@ -469,7 +469,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		const char *filename = stack->pop()->getString();
 
 		delete _spriteHover;
-		_spriteHover = NULL;
+		_spriteHover = nullptr;
 		BaseSprite *spr = new BaseSprite(_gameRef, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
@@ -520,7 +520,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		const char *filename = stack->pop()->getString();
 
 		delete _cursorNormal;
-		_cursorNormal = NULL;
+		_cursorNormal = nullptr;
 		BaseSprite *spr = new BaseSprite(_gameRef);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
@@ -569,7 +569,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		const char *filename = stack->pop()->getString();
 
 		delete _cursorHover;
-		_cursorHover = NULL;
+		_cursorHover = nullptr;
 		BaseSprite *spr = new BaseSprite(_gameRef);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
@@ -753,7 +753,7 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "AmountString") == 0) {
 		if (value->isNULL()) {
 			delete[] _amountString;
-			_amountString = NULL;
+			_amountString = nullptr;
 		} else {
 			BaseUtils::setString(&_amountString, value->getString());
 		}

@@ -205,7 +205,7 @@ bool StringUtil::isUtf8BOM(const byte *buffer, uint32 bufferSize) {
 //////////////////////////////////////////////////////////////////////////
 int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t startFrom) {
 	const char *index = strstr(str.c_str(), toFind.c_str());
-	if (index == NULL) {
+	if (index == nullptr) {
 		return -1;
 	} else {
 		return index - str.c_str();
@@ -213,8 +213,10 @@ int StringUtil::indexOf(const WideString &str, const WideString &toFind, size_t 
 }
 
 Common::String StringUtil::encodeSetting(const Common::String &str) {
-	if (str.contains('=')) {
-		error("Setting contains '='");
+	for (uint32 i = 0; i < str.size(); i++) {
+		if ((str[i] < 33) || (str[i] == '=') || (str[i] > 126)) {
+			error("Setting contains illegal characters: %s", str.c_str());
+		}
 	}
 	return str;
 }

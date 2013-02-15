@@ -29,11 +29,11 @@
 
 namespace Wintermute {
 
-byte *TransparentSurface::_lookup = NULL;
+byte *TransparentSurface::_lookup = nullptr;
 
 void TransparentSurface::destroyLookup() {
-	delete _lookup;
-	_lookup = NULL;
+	delete[] _lookup;
+	_lookup = nullptr;
 }
 
 TransparentSurface::TransparentSurface() : Surface(), _enableAlphaBlit(true) {}
@@ -219,8 +219,8 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 #endif
 
 	Graphics::Surface *img;
-	Graphics::Surface *imgScaled = NULL;
-	byte *savedPixels = NULL;
+	Graphics::Surface *imgScaled = nullptr;
+	byte *savedPixels = nullptr;
 	if ((width != srcImage.w) || (height != srcImage.h)) {
 		// Scale the image
 		img = imgScaled = srcImage.scale(width, height);
@@ -393,6 +393,8 @@ TransparentSurface *TransparentSurface::scale(const Common::Rect &srcRect, const
 	// I'm doing simple linear scaling here
 	// dstRect(x, y) = srcRect(x * srcW / dstW, y * srcH / dstH);
 	TransparentSurface *target = new TransparentSurface();
+
+	assert(format.bytesPerPixel == 4);
 
 	int srcW = srcRect.width();
 	int srcH = srcRect.height();

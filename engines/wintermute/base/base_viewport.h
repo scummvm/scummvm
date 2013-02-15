@@ -36,15 +36,15 @@ namespace Wintermute {
 class BaseObject;
 class BaseViewport : public BaseClass {
 public:
-	int getHeight();
-	int getWidth();
+	int getHeight() const;
+	int getWidth() const;
 	Rect32 *getRect();
 	bool setRect(int left, int top, int right, int bottom, bool noCheck = false);
 	DECLARE_PERSISTENT(BaseViewport, BaseClass)
 	int _offsetY;
 	int _offsetX;
 	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = NULL);
+	BaseViewport(BaseGame *inGame = nullptr);
 	virtual ~BaseViewport();
 private:
 	Rect32 _rect;

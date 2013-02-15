@@ -57,7 +57,7 @@ public:
 	Common::RandomSource *getRandomSource() { return _rnd; }
 	uint32 randInt(int from, int to);
 
-	SystemClassRegistry *getClassRegistry(){ return _classReg; }
+	SystemClassRegistry *getClassRegistry() { return _classReg; }
 	BaseGame *getGameRef() { return _gameRef; }
 	BaseFileManager *getFileManager() { return _fileManager; }
 	static void LOG(bool res, const char *fmt, ...);

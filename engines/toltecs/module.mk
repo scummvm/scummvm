@@ -2,6 +2,7 @@ MODULE := engines/toltecs
 
 MODULE_OBJS = \
 	animation.o \
+	console.o \
 	detection.o \
 	menu.o \
 	microtiles.o \

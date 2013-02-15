@@ -29,17 +29,15 @@
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_game_music.h"
 #include "engines/wintermute/base/base_fader.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/font/base_font_storage.h"
-#include "engines/wintermute/base/gfx/base_image.h"
-#include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_keyboard_state.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_quick_msg.h"
-#include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_sub_frame.h"
@@ -54,7 +52,7 @@
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script.h"
-#include "engines/wintermute/base/scriptables/script_ext_math.h"
+#include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/video/video_player.h"
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/utils/utils.h"
@@ -93,30 +91,30 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_interactive = true;
 	_origInteractive = false;
 
-	_surfaceStorage = NULL;
-	_fontStorage = NULL;
-	_renderer = NULL;
-	_soundMgr = NULL;
-	_transMgr = NULL;
-	_scEngine = NULL;
-	_keyboardState = NULL;
+	_surfaceStorage = nullptr;
+	_fontStorage = nullptr;
+	_renderer = nullptr;
+	_soundMgr = nullptr;
+	_transMgr = nullptr;
+	_scEngine = nullptr;
+	_keyboardState = nullptr;
 
-	_mathClass = NULL;
+	_mathClass = nullptr;
 
-	_debugLogFile = NULL;
+	_debugLogFile = nullptr;
 	_debugDebugMode = false;
 	_debugShowFPS = false;
 
-	_systemFont = NULL;
-	_videoFont = NULL;
+	_systemFont = nullptr;
+	_videoFont = nullptr;
 
-	_videoPlayer = NULL;
-	_theoraPlayer = NULL;
+	_videoPlayer = nullptr;
+	_theoraPlayer = nullptr;
 
-	_mainObject = NULL;
-	_activeObject = NULL;
+	_mainObject = nullptr;
+	_activeObject = nullptr;
 
-	_fader = NULL;
+	_fader = nullptr;
 
 	_offsetX = _offsetY = 0;
 	_offsetPercentX = _offsetPercentY = 0.0f;
@@ -136,21 +134,18 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 
 	_mousePos.x = _mousePos.y = 0;
 	_mouseLeftDown = _mouseRightDown = _mouseMidlleDown = false;
-	_capturedObject = NULL;
+	_capturedObject = nullptr;
 
 	// FPS counters
 	_lastTime = _fpsTime = _deltaTime = _framesRendered = _fps = 0;
 
-	_cursorNoninteractive = NULL;
+	_cursorNoninteractive = nullptr;
 
 	_useD3D = false;
 
 	_stringTable = new BaseStringTable(this);
 
-	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
-		_music[i] = NULL;
-		_musicStartTime[i] = 0;
-	}
+	_musicSystem = new BaseGameMusic(this);
 
 	_settingsResWidth = 800;
 	_settingsResHeight = 600;
@@ -158,7 +153,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_settingsRequireSound = false;
 	_settingsTLMode = 0;
 	_settingsAllowWindowed = true;
-	_settingsGameFile = NULL;
+	_settingsGameFile = nullptr;
 	_settingsAllowAdvanced = false;
 	_settingsAllowAccessTab = true;
 	_settingsAllowAboutTab = true;
@@ -167,7 +162,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_editorForceScripts = false;
 	_editorAlwaysRegister = false;
 
-	_focusedWindow = NULL;
+	_focusedWindow = nullptr;
 
 	_loadInProgress = false;
 
@@ -181,8 +176,8 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_editorMode = false;
 	//_doNotExpandStrings = false;
 
-	_engineLogCallback = NULL;
-	_engineLogCallbackData = NULL;
+	_engineLogCallback = nullptr;
+	_engineLogCallbackData = nullptr;
 
 	_smartCache = false;
 	_surfaceGCCycleTime = 10000;
@@ -198,21 +193,12 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_thumbnailWidth = _thumbnailHeight = 0;
 
 	_richSavedGames = false;
-	_savedGameExt = NULL;
-	BaseUtils::setString(&_savedGameExt, "dsv");
+	_savedGameExt = "dsv";
+	_localSaveDir = "saves";
 
-	_musicCrossfadeRunning = false;
-	_musicCrossfadeStartTime = 0;
-	_musicCrossfadeLength = 0;
-	_musicCrossfadeChannel1 = -1;
-	_musicCrossfadeChannel2 = -1;
-	_musicCrossfadeSwap = false;
-
-	_localSaveDir = NULL;
-	BaseUtils::setString(&_localSaveDir, "saves");
 	_saveDirChecked = false;
 
-	_loadingIcon = NULL;
+	_loadingIcon = nullptr;
 	_loadingIconX = _loadingIconY = 0;
 	_loadingIconPersistent = false;
 
@@ -222,8 +208,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_soundBufferSizeSec = 3;
 	_suspendedRendering = false;
 
-	_lastCursor = NULL;
-
+	_lastCursor = nullptr;
 
 	BasePlatform::setRectEmpty(&_mouseLockRect);
 
@@ -231,7 +216,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_lastMiniUpdate = 0;
 	_miniUpdateEnabled = false;
 
-	_cachedThumbnail = NULL;
+	_cachedThumbnail = nullptr;
 
 	_autorunDisabled = false;
 
@@ -268,9 +253,7 @@ BaseGame::~BaseGame() {
 
 	cleanup();
 
-	delete[] _localSaveDir;
 	delete[] _settingsGameFile;
-	delete[] _savedGameExt;
 
 	delete _cachedThumbnail;
 
@@ -287,25 +270,25 @@ BaseGame::~BaseGame() {
 
 	delete _renderer;
 	delete _stringTable;
+	delete _musicSystem;
 
-	_localSaveDir = NULL;
-	_settingsGameFile = NULL;
-	_savedGameExt = NULL;
+	_settingsGameFile = nullptr;
 
-	_cachedThumbnail = NULL;
+	_cachedThumbnail = nullptr;
 
-	_mathClass = NULL;
+	_mathClass = nullptr;
 
-	_transMgr = NULL;
-	_scEngine = NULL;
-	_fontStorage = NULL;
-	_surfaceStorage = NULL;
-	_videoPlayer = NULL;
-	_theoraPlayer = NULL;
-	_soundMgr = NULL;
+	_transMgr = nullptr;
+	_scEngine = nullptr;
+	_fontStorage = nullptr;
+	_surfaceStorage = nullptr;
+	_videoPlayer = nullptr;
+	_theoraPlayer = nullptr;
+	_soundMgr = nullptr;
 
-	_renderer = NULL;
-	_stringTable = NULL;
+	_renderer = nullptr;
+	_stringTable = nullptr;
+	_musicSystem = nullptr;
 
 	DEBUG_DebugDisable();
 	debugC(kWintermuteDebugLog, "--- shutting down normally ---\n");
@@ -315,52 +298,48 @@ BaseGame::~BaseGame() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::cleanup() {
 	delete _loadingIcon;
-	_loadingIcon = NULL;
+	_loadingIcon = nullptr;
 
-	_engineLogCallback = NULL;
-	_engineLogCallbackData = NULL;
+	_engineLogCallback = nullptr;
+	_engineLogCallbackData = nullptr;
 
-	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
-		delete _music[i];
-		_music[i] = NULL;
-		_musicStartTime[i] = 0;
-	}
+	_musicSystem->cleanup();
 
 	unregisterObject(_fader);
-	_fader = NULL;
+	_fader = nullptr;
 
 	for (uint32 i = 0; i < _regObjects.size(); i++) {
 		delete _regObjects[i];
-		_regObjects[i] = NULL;
+		_regObjects[i] = nullptr;
 	}
 	_regObjects.clear();
 
 	_windows.clear(); // refs only
-	_focusedWindow = NULL; // ref only
+	_focusedWindow = nullptr; // ref only
 
 	delete _cursorNoninteractive;
 	delete _cursor;
 	delete _activeCursor;
-	_cursorNoninteractive = NULL;
-	_cursor = NULL;
-	_activeCursor = NULL;
+	_cursorNoninteractive = nullptr;
+	_cursor = nullptr;
+	_activeCursor = nullptr;
 
 	delete _scValue;
 	delete _sFX;
-	_scValue = NULL;
-	_sFX = NULL;
+	_scValue = nullptr;
+	_sFX = nullptr;
 
 	for (uint32 i = 0; i < _scripts.size(); i++) {
-		_scripts[i]->_owner = NULL;
+		_scripts[i]->_owner = nullptr;
 		_scripts[i]->finish();
 	}
 	_scripts.clear();
 
 	_fontStorage->removeFont(_systemFont);
-	_systemFont = NULL;
+	_systemFont = nullptr;
 
 	_fontStorage->removeFont(_videoFont);
-	_videoFont = NULL;
+	_videoFont = nullptr;
 
 	for (uint32 i = 0; i < _quickMessages.size(); i++) {
 		delete _quickMessages[i];
@@ -370,17 +349,17 @@ bool BaseGame::cleanup() {
 	_viewportStack.clear();
 	_viewportSP = -1;
 
-	setName(NULL);
-	setFilename(NULL);
+	setName(nullptr);
+	setFilename(nullptr);
 	for (int i = 0; i < 7; i++) {
 		delete[] _caption[i];
-		_caption[i] = NULL;
+		_caption[i] = nullptr;
 	}
 
-	_lastCursor = NULL;
+	_lastCursor = nullptr;
 
 	delete _keyboardState;
-	_keyboardState = NULL;
+	_keyboardState = nullptr;
 
 	return STATUS_OK;
 }
@@ -391,47 +370,47 @@ bool BaseGame::initialize1() {
 	bool loaded = false; // Not really a loop, but a goto-replacement.
 	while (!loaded) {
 		_surfaceStorage = new BaseSurfaceStorage(this);
-		if (_surfaceStorage == NULL) {
+		if (_surfaceStorage == nullptr) {
 			break;
 		}
 
 		_fontStorage = new BaseFontStorage(this);
-		if (_fontStorage == NULL) {
+		if (_fontStorage == nullptr) {
 			break;
 		}
 
 		_soundMgr = new BaseSoundMgr(this);
-		if (_soundMgr == NULL) {
+		if (_soundMgr == nullptr) {
 			break;
 		}
 
-		_mathClass = new SXMath(this);
-		if (_mathClass == NULL) {
+		_mathClass = makeSXMath(this);
+		if (_mathClass == nullptr) {
 			break;
 		}
 
 		_scEngine = new ScEngine(this);
-		if (_scEngine == NULL) {
+		if (_scEngine == nullptr) {
 			break;
 		}
 
 		_videoPlayer = new VideoPlayer(this);
-		if (_videoPlayer == NULL) {
+		if (_videoPlayer == nullptr) {
 			break;
 		}
 
 		_transMgr = new BaseTransitionMgr(this);
-		if (_transMgr == NULL) {
+		if (_transMgr == nullptr) {
 			break;
 		}
 
 		_keyboardState = new BaseKeyboardState(this);
-		if (_keyboardState == NULL) {
+		if (_keyboardState == nullptr) {
 			break;
 		}
 
 		_fader = new BaseFader(this);
-		if (_fader == NULL) {
+		if (_fader == nullptr) {
 			break;
 		}
 		registerObject(_fader);
@@ -457,7 +436,7 @@ bool BaseGame::initialize1() {
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 	_renderer = makeOSystemRenderer(this);
-	if (_renderer == NULL) {
+	if (_renderer == nullptr) {
 		return STATUS_FAILED;
 	}
 
@@ -500,10 +479,10 @@ void BaseGame::DEBUG_DebugEnable(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////
 void BaseGame::DEBUG_DebugDisable() {
-	if (_debugLogFile != NULL) {
+	if (_debugLogFile != nullptr) {
 		LOG(0, "********** DEBUG LOG CLOSED ********************************************");
 		//fclose((FILE *)_debugLogFile);
-		_debugLogFile = NULL;
+		_debugLogFile = nullptr;
 	}
 	_debugDebugMode = false;
 }
@@ -552,13 +531,13 @@ bool BaseGame::initLoop() {
 	_currentTime = g_system->getMillis();
 
 	_renderer->initLoop();
-	updateMusicCrossfade();
+	_musicSystem->updateMusicCrossfade();
 
 	_surfaceStorage->initLoop();
 	_fontStorage->initLoop();
 
 
-	//_activeObject = NULL;
+	//_activeObject = nullptr;
 
 	// count FPS
 	_deltaTime = _currentTime - _lastTime;
@@ -587,7 +566,7 @@ bool BaseGame::initLoop() {
 
 	getMousePos(&_mousePos);
 
-	_focusedWindow = NULL;
+	_focusedWindow = nullptr;
 	for (int i = _windows.size() - 1; i >= 0; i--) {
 		if (_windows[i]->_visible) {
 			_focusedWindow = _windows[i];
@@ -625,10 +604,10 @@ void BaseGame::setOffset(int offsetX, int offsetY) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::getOffset(int *offsetX, int *offsetY) {
-	if (offsetX != NULL) {
+	if (offsetX != nullptr) {
 		*offsetX = _offsetX;
 	}
-	if (offsetY != NULL) {
+	if (offsetY != nullptr) {
 		*offsetY = _offsetY;
 	}
 }
@@ -637,7 +616,7 @@ void BaseGame::getOffset(int *offsetX, int *offsetY) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "BaseGame::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -788,7 +767,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			if (_systemFont) {
 				_fontStorage->removeFont(_systemFont);
 			}
-			_systemFont = NULL;
+			_systemFont = nullptr;
 
 			_systemFont = _gameRef->_fontStorage->addFont((char *)params);
 			break;
@@ -797,7 +776,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			if (_videoFont) {
 				_fontStorage->removeFont(_videoFont);
 			}
-			_videoFont = NULL;
+			_videoFont = nullptr;
 
 			_videoFont = _gameRef->_fontStorage->addFont((char *)params);
 			break;
@@ -808,18 +787,18 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
-				_cursor = NULL;
+				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_ACTIVE_CURSOR:
 			delete _activeCursor;
-			_activeCursor = NULL;
+			_activeCursor = nullptr;
 			_activeCursor = new BaseSprite(_gameRef);
 			if (!_activeCursor || DID_FAIL(_activeCursor->loadFile((char *)params))) {
 				delete _activeCursor;
-				_activeCursor = NULL;
+				_activeCursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -829,7 +808,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			_cursorNoninteractive = new BaseSprite(_gameRef);
 			if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile((char *)params))) {
 				delete _cursorNoninteractive;
-				_cursorNoninteractive = NULL;
+				_cursorNoninteractive = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -918,7 +897,7 @@ bool BaseGame::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_LOCAL_SAVE_DIR:
-			BaseUtils::setString(&_localSaveDir, (char *)params);
+			_localSaveDir = (char *)params;
 			break;
 
 		case TOKEN_COMPAT_KILL_METHOD_THREADS:
@@ -1077,7 +1056,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			stack->pushNative(win, true);
 		} else {
 			delete win;
-			win = NULL;
+			win = nullptr;
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -1097,272 +1076,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-	//////////////////////////////////////////////////////////////////////////
-	// PlayMusic / PlayMusicChannel
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PlayMusic") == 0 || strcmp(name, "PlayMusicChannel") == 0) {
-		int channel = 0;
-		if (strcmp(name, "PlayMusic") == 0) {
-			stack->correctParams(3);
-		} else {
-			stack->correctParams(4);
-			channel = stack->pop()->getInt();
-		}
-
-		const char *filename = stack->pop()->getString();
-		ScValue *valLooping = stack->pop();
-		bool looping = valLooping->isNULL() ? true : valLooping->getBool();
-
-		ScValue *valLoopStart = stack->pop();
-		uint32 loopStart = (uint32)(valLoopStart->isNULL() ? 0 : valLoopStart->getInt());
-
-
-		if (DID_FAIL(playMusic(channel, filename, looping, loopStart))) {
-			stack->pushBool(false);
-		} else {
-			stack->pushBool(true);
-		}
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// StopMusic / StopMusicChannel
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "StopMusic") == 0 || strcmp(name, "StopMusicChannel") == 0) {
-		int channel = 0;
-
-		if (strcmp(name, "StopMusic") == 0) {
-			stack->correctParams(0);
-		} else {
-			stack->correctParams(1);
-			channel = stack->pop()->getInt();
-		}
-
-		if (DID_FAIL(stopMusic(channel))) {
-			stack->pushBool(false);
-		} else {
-			stack->pushBool(true);
-		}
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// PauseMusic / PauseMusicChannel
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "PauseMusic") == 0 || strcmp(name, "PauseMusicChannel") == 0) {
-		int channel = 0;
-
-		if (strcmp(name, "PauseMusic") == 0) {
-			stack->correctParams(0);
-		} else {
-			stack->correctParams(1);
-			channel = stack->pop()->getInt();
-		}
-
-		if (DID_FAIL(pauseMusic(channel))) {
-			stack->pushBool(false);
-		} else {
-			stack->pushBool(true);
-		}
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// ResumeMusic / ResumeMusicChannel
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ResumeMusic") == 0 || strcmp(name, "ResumeMusicChannel") == 0) {
-		int channel = 0;
-		if (strcmp(name, "ResumeMusic") == 0) {
-			stack->correctParams(0);
-		} else {
-			stack->correctParams(1);
-			channel = stack->pop()->getInt();
-		}
-
-		if (DID_FAIL(resumeMusic(channel))) {
-			stack->pushBool(false);
-		} else {
-			stack->pushBool(true);
-		}
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// GetMusic / GetMusicChannel
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetMusic") == 0 || strcmp(name, "GetMusicChannel") == 0) {
-		int channel = 0;
-		if (strcmp(name, "GetMusic") == 0) {
-			stack->correctParams(0);
-		} else {
-			stack->correctParams(1);
-			channel = stack->pop()->getInt();
-		}
-		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS) {
-			stack->pushNULL();
-		} else {
-			if (!_music[channel] || !_music[channel]->getFilename()) {
-				stack->pushNULL();
-			} else {
-				stack->pushString(_music[channel]->getFilename());
-			}
-		}
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// SetMusicPosition / SetMusicChannelPosition
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetMusicPosition") == 0 || strcmp(name, "SetMusicChannelPosition") == 0 || strcmp(name, "SetMusicPositionChannel") == 0) {
-		int channel = 0;
-		if (strcmp(name, "SetMusicPosition") == 0) {
-			stack->correctParams(1);
-		} else {
-			stack->correctParams(2);
-			channel = stack->pop()->getInt();
-		}
-
-		uint32 time = stack->pop()->getInt();
-
-		if (DID_FAIL(setMusicStartTime(channel, time))) {
-			stack->pushBool(false);
-		} else {
-			stack->pushBool(true);
-		}
-
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// GetMusicPosition / GetMusicChannelPosition
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetMusicPosition") == 0 || strcmp(name, "GetMusicChannelPosition") == 0) {
-		int channel = 0;
-		if (strcmp(name, "GetMusicPosition") == 0) {
-			stack->correctParams(0);
-		} else {
-			stack->correctParams(1);
-			channel = stack->pop()->getInt();
-		}
-
-		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) {
-			stack->pushInt(0);
-		} else {
-			stack->pushInt(_music[channel]->getPositionTime());
-		}
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// IsMusicPlaying / IsMusicChannelPlaying
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "IsMusicPlaying") == 0 || strcmp(name, "IsMusicChannelPlaying") == 0) {
-		int channel = 0;
-		if (strcmp(name, "IsMusicPlaying") == 0) {
-			stack->correctParams(0);
-		} else {
-			stack->correctParams(1);
-			channel = stack->pop()->getInt();
-		}
-
-		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) {
-			stack->pushBool(false);
-		} else {
-			stack->pushBool(_music[channel]->isPlaying());
-		}
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// SetMusicVolume / SetMusicChannelVolume
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetMusicVolume") == 0 || strcmp(name, "SetMusicChannelVolume") == 0) {
-		int channel = 0;
-		if (strcmp(name, "SetMusicVolume") == 0) {
-			stack->correctParams(1);
-		} else {
-			stack->correctParams(2);
-			channel = stack->pop()->getInt();
-		}
-
-		int volume = stack->pop()->getInt();
-		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) {
-			stack->pushBool(false);
-		} else {
-			if (DID_FAIL(_music[channel]->setVolumePercent(volume))) {
-				stack->pushBool(false);
-			} else {
-				stack->pushBool(true);
-			}
-		}
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// GetMusicVolume / GetMusicChannelVolume
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetMusicVolume") == 0 || strcmp(name, "GetMusicChannelVolume") == 0) {
-		int channel = 0;
-		if (strcmp(name, "GetMusicVolume") == 0) {
-			stack->correctParams(0);
-		} else {
-			stack->correctParams(1);
-			channel = stack->pop()->getInt();
-		}
-
-		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS || !_music[channel]) {
-			stack->pushInt(0);
-		} else {
-			stack->pushInt(_music[channel]->getVolumePercent());
-		}
-
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// MusicCrossfade
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "MusicCrossfade") == 0) {
-		stack->correctParams(4);
-		int channel1 = stack->pop()->getInt(0);
-		int channel2 = stack->pop()->getInt(0);
-		uint32 fadeLength = (uint32)stack->pop()->getInt(0);
-		bool swap = stack->pop()->getBool(true);
-
-		if (_musicCrossfadeRunning) {
-			script->runtimeError("Game.MusicCrossfade: Music crossfade is already in progress.");
-			stack->pushBool(false);
-			return STATUS_OK;
-		}
-
-		_musicCrossfadeStartTime = _liveTimer;
-		_musicCrossfadeChannel1 = channel1;
-		_musicCrossfadeChannel2 = channel2;
-		_musicCrossfadeLength = fadeLength;
-		_musicCrossfadeSwap = swap;
-
-		_musicCrossfadeRunning = true;
-
-		stack->pushBool(true);
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// GetSoundLength
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetSoundLength") == 0) {
-		stack->correctParams(1);
-
-		int length = 0;
-		const char *filename = stack->pop()->getString();
-
-		BaseSound *sound = new BaseSound(_gameRef);
-		if (sound && DID_SUCCEED(sound->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
-			length = sound->getLength();
-			delete sound;
-			sound = NULL;
-		}
-		stack->pushInt(length);
+	else if (_musicSystem->scCallMethod(script, stack, thisStack, name) == STATUS_OK) {
 		return STATUS_OK;
 	}
 
@@ -1432,7 +1146,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		bool freezeMusic = stack->pop()->getBool(true);
 
 		ScValue *valSub = stack->pop();
-		const char *subtitleFile = valSub->isNULL() ? NULL : valSub->getString();
+		const char *subtitleFile = valSub->isNULL() ? nullptr : valSub->getString();
 
 		if (type < (int)VID_PLAY_POS || type > (int)VID_PLAY_CENTER) {
 			type = (int)VID_PLAY_STRETCH;
@@ -1472,7 +1186,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		bool dropFrames = stack->pop()->getBool(true);
 
 		ScValue *valSub = stack->pop();
-		const char *subtitleFile = valSub->isNULL() ? NULL : valSub->getString();
+		const char *subtitleFile = valSub->isNULL() ? nullptr : valSub->getString();
 
 		if (type < (int)VID_PLAY_POS || type > (int)VID_PLAY_CENTER) {
 			type = (int)VID_PLAY_STRETCH;
@@ -1491,7 +1205,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		} else {
 			stack->pushBool(false);
 			delete _theoraPlayer;
-			_theoraPlayer = NULL;
+			_theoraPlayer = nullptr;
 		}
 
 		return STATUS_OK;
@@ -1543,7 +1257,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *val = stack->pop()->getString();
-		Common::String privKey = "priv_" + StringUtil::encodeSetting(key);
+		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
 		Common::String privVal = StringUtil::encodeSetting(val);
 		ConfMan.set(privKey, privVal);
 		stack->pushNULL();
@@ -1557,7 +1271,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 		const char *key = stack->pop()->getString();
 		const char *initVal = stack->pop()->getString();
-		Common::String privKey = "priv_" + StringUtil::encodeSetting(key);
+		Common::String privKey = "wme_" + StringUtil::encodeSetting(key);
 		Common::String result = initVal;
 		if (ConfMan.hasKey(privKey)) {
 			result = StringUtil::decodeSetting(ConfMan.get(key));
@@ -1756,7 +1470,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "RemoveActiveCursor") == 0) {
 		stack->correctParams(0);
 		delete _activeCursor;
-		_activeCursor = NULL;
+		_activeCursor = nullptr;
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -1862,14 +1576,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			fileNum++;
 		}
 
-		bool ret = false;
-		BaseImage *image = _gameRef->_renderer->takeScreenshot();
-		if (image) {
-			ret = DID_SUCCEED(image->saveBMPFile(filename));
-			delete image;
-		} else {
-			ret = false;
-		}
+		bool ret = _gameRef->_renderer->saveScreenShot(filename);
 
 		stack->pushBool(ret);
 		return STATUS_OK;
@@ -1884,17 +1591,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int sizeX = stack->pop()->getInt(_renderer->_width);
 		int sizeY = stack->pop()->getInt(_renderer->_height);
 
-		bool ret = false;
-		BaseImage *image = _gameRef->_renderer->takeScreenshot();
-		if (image) {
-			ret = DID_SUCCEED(image->resize(sizeX, sizeY));
-			if (ret) {
-				ret = DID_SUCCEED(image->saveBMPFile(filename));
-			}
-			delete image;
-		} else {
-			ret = false;
-		}
+		bool ret = _gameRef->_renderer->saveScreenShot(filename, sizeX, sizeY);
 
 		stack->pushBool(ret);
 		return STATUS_OK;
@@ -2009,7 +1706,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "RemoveWaitCursor") == 0) {
 		stack->correctParams(0);
 		delete _cursorNoninteractive;
-		_cursorNoninteractive = NULL;
+		_cursorNoninteractive = nullptr;
 
 		stack->pushNULL();
 
@@ -2068,7 +1765,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_loadingIcon = new BaseSprite(this);
 		if (!_loadingIcon || DID_FAIL(_loadingIcon->loadFile(filename))) {
 			delete _loadingIcon;
-			_loadingIcon = NULL;
+			_loadingIcon = nullptr;
 		} else {
 			displayContent(false, true);
 			_gameRef->_renderer->flip();
@@ -2085,7 +1782,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "HideLoadingIcon") == 0) {
 		stack->correctParams(0);
 		delete _loadingIcon;
-		_loadingIcon = NULL;
+		_loadingIcon = nullptr;
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -2125,7 +1822,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_cachedThumbnail = new BaseSaveThumbHelper(this);
 		if (DID_FAIL(_cachedThumbnail->storeThumbnail())) {
 			delete _cachedThumbnail;
-			_cachedThumbnail = NULL;
+			_cachedThumbnail = nullptr;
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -2140,7 +1837,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "DeleteSaveThumbnail") == 0) {
 		stack->correctParams(0);
 		delete _cachedThumbnail;
-		_cachedThumbnail = NULL;
+		_cachedThumbnail = nullptr;
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -2179,7 +1876,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			}
 
 			BaseFileManager::getEngineInstance()->closeFile(file);
-			file = NULL;
+			file = nullptr;
 		} else {
 			stack->pushNULL();
 		}
@@ -2682,7 +2379,7 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "MainObject") == 0) {
 		BaseScriptable *obj = value->getNative();
-		if (obj == NULL || validObject((BaseObject *)obj)) {
+		if (obj == nullptr || validObject((BaseObject *)obj)) {
 			_mainObject = (BaseObject *)obj;
 		}
 		return STATUS_OK;
@@ -2918,7 +2615,7 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 
 			// get new focused window
 			if (_focusedWindow == object) {
-				_focusedWindow = NULL;
+				_focusedWindow = nullptr;
 			}
 
 			break;
@@ -2927,12 +2624,12 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 
 	// is it active object?
 	if (_activeObject == object) {
-		_activeObject = NULL;
+		_activeObject = nullptr;
 	}
 
 	// is it main object?
 	if (_mainObject == object) {
-		_mainObject = NULL;
+		_mainObject = nullptr;
 	}
 
 	// destroy object
@@ -2958,7 +2655,7 @@ void BaseGame::invalidateValues(void *value, void *data) {
 		if (!val->_persistent && ((BaseScriptable *)data)->_refCount == 1) {
 			((BaseScriptable *)data)->_refCount++;
 		}
-		val->setNative(NULL);
+		val->setNative(nullptr);
 		val->setNULL();
 	}
 }
@@ -3321,8 +3018,8 @@ bool BaseGame::displayWindows(bool inGame) {
 	bool res;
 
 	// did we lose focus? focus topmost window
-	if (_focusedWindow == NULL || !_focusedWindow->_visible || _focusedWindow->_disable) {
-		_focusedWindow = NULL;
+	if (_focusedWindow == nullptr || !_focusedWindow->_visible || _focusedWindow->_disable) {
+		_focusedWindow = nullptr;
 		for (int i = _windows.size() - 1; i >= 0; i--) {
 			if (_windows[i]->_visible && !_windows[i]->_disable) {
 				_focusedWindow = _windows[i];
@@ -3344,99 +3041,6 @@ bool BaseGame::displayWindows(bool inGame) {
 
 	return STATUS_OK;
 }
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::playMusic(int channel, const char *filename, bool looping, uint32 loopStart) {
-	if (channel >= NUM_MUSIC_CHANNELS) {
-		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
-		return STATUS_FAILED;
-	}
-
-	delete _music[channel];
-	_music[channel] = NULL;
-
-	_music[channel] = new BaseSound(_gameRef);
-	if (_music[channel] && DID_SUCCEED(_music[channel]->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
-		if (_musicStartTime[channel]) {
-			_music[channel]->setPositionTime(_musicStartTime[channel]);
-			_musicStartTime[channel] = 0;
-		}
-		if (loopStart) {
-			_music[channel]->setLoopStart(loopStart);
-		}
-		return _music[channel]->play(looping);
-	} else {
-		delete _music[channel];
-		_music[channel] = NULL;
-		return STATUS_FAILED;
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::stopMusic(int channel) {
-	if (channel >= NUM_MUSIC_CHANNELS) {
-		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
-		return STATUS_FAILED;
-	}
-
-	if (_music[channel]) {
-		_music[channel]->stop();
-		delete _music[channel];
-		_music[channel] = NULL;
-		return STATUS_OK;
-	} else {
-		return STATUS_FAILED;
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::pauseMusic(int channel) {
-	if (channel >= NUM_MUSIC_CHANNELS) {
-		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
-		return STATUS_FAILED;
-	}
-
-	if (_music[channel]) {
-		return _music[channel]->pause();
-	} else {
-		return STATUS_FAILED;
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::resumeMusic(int channel) {
-	if (channel >= NUM_MUSIC_CHANNELS) {
-		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
-		return STATUS_FAILED;
-	}
-
-	if (_music[channel]) {
-		return _music[channel]->resume();
-	} else {
-		return STATUS_FAILED;
-	}
-}
-
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::setMusicStartTime(int channel, uint32 time) {
-	if (channel >= NUM_MUSIC_CHANNELS) {
-		_gameRef->LOG(0, "**Error** Attempting to use music channel %d (max num channels: %d)", channel, NUM_MUSIC_CHANNELS);
-		return STATUS_FAILED;
-	}
-
-	_musicStartTime[channel] = time;
-	if (_music[channel] && _music[channel]->isPlaying()) {
-		return _music[channel]->setPositionTime(time);
-	} else {
-		return STATUS_OK;
-	}
-}
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadSettings(const char *filename) {
@@ -3461,7 +3065,7 @@ bool BaseGame::loadSettings(const char *filename) {
 
 
 	byte *origBuffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (origBuffer == NULL) {
+	if (origBuffer == nullptr) {
 		_gameRef->LOG(0, "BaseGame::LoadSettings failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -3539,7 +3143,7 @@ bool BaseGame::loadSettings(const char *filename) {
 			break;
 
 		case TOKEN_SAVED_GAME_EXT:
-			BaseUtils::setString(&_savedGameExt, (char *)params);
+			_savedGameExt = (char *)params;
 			break;
 
 		case TOKEN_GUID:
@@ -3584,10 +3188,8 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_keyboardState));
 	persistMgr->transfer(TMEMBER(_lastTime));
 	persistMgr->transfer(TMEMBER(_mainObject));
-	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
-		persistMgr->transfer(TMEMBER(_music[i]));
-		persistMgr->transfer(TMEMBER(_musicStartTime[i]));
-	}
+	_musicSystem->persistChannels(persistMgr);
+	_musicSystem->persistCrossfadeSettings(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_offsetX));
 	persistMgr->transfer(TMEMBER(_offsetY));
@@ -3618,13 +3220,6 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_liveTimer));
 	persistMgr->transfer(TMEMBER(_liveTimerDelta));
 	persistMgr->transfer(TMEMBER(_liveTimerLast));
-
-	persistMgr->transfer(TMEMBER(_musicCrossfadeRunning));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeStartTime));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeLength));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel1));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeChannel2));
-	persistMgr->transfer(TMEMBER(_musicCrossfadeSwap));
 
 	_renderer->persistSaveLoadImages(persistMgr);
 
@@ -3730,7 +3325,7 @@ bool BaseGame::handleKeypress(Common::Event *event, bool printable) {
 // TODO
 
 	if (_focusedWindow) {
-		if (!_gameRef->_focusedWindow->handleKeypress(event, _keyboardState->_currentPrintable)) {
+		if (!_gameRef->_focusedWindow->handleKeypress(event, _keyboardState->isCurrentPrintable())) {
 			/*if (event->type != SDL_TEXTINPUT) {*/
 			if (_gameRef->_focusedWindow->canHandleEvent("Keypress")) {
 				_gameRef->_focusedWindow->applyEvent("Keypress");
@@ -3832,7 +3427,7 @@ void BaseGame::setWindowTitle() {
 bool BaseGame::setActiveObject(BaseObject *obj) {
 	// not-active when game is frozen
 	if (obj && !_gameRef->_interactive && !obj->_nonIntMouseEvents) {
-		obj = NULL;
+		obj = nullptr;
 	}
 
 	if (obj == _activeObject) {
@@ -3887,7 +3482,7 @@ bool BaseGame::popViewport() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
-	if (rect == NULL) {
+	if (rect == nullptr) {
 		return STATUS_FAILED;
 	} else {
 		if (_viewportSP >= 0) {
@@ -3979,69 +3574,6 @@ bool BaseGame::displayContentSimple() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::updateMusicCrossfade() {
-	/* byte globMusicVol = _soundMgr->getVolumePercent(SOUND_MUSIC); */
-
-	if (!_musicCrossfadeRunning) {
-		return STATUS_OK;
-	}
-	if (_state == GAME_FROZEN) {
-		return STATUS_OK;
-	}
-
-	if (_musicCrossfadeChannel1 < 0 || _musicCrossfadeChannel1 >= NUM_MUSIC_CHANNELS || !_music[_musicCrossfadeChannel1]) {
-		_musicCrossfadeRunning = false;
-		return STATUS_OK;
-	}
-	if (_musicCrossfadeChannel2 < 0 || _musicCrossfadeChannel2 >= NUM_MUSIC_CHANNELS || !_music[_musicCrossfadeChannel2]) {
-		_musicCrossfadeRunning = false;
-		return STATUS_OK;
-	}
-
-	if (!_music[_musicCrossfadeChannel1]->isPlaying()) {
-		_music[_musicCrossfadeChannel1]->play();
-	}
-	if (!_music[_musicCrossfadeChannel2]->isPlaying()) {
-		_music[_musicCrossfadeChannel2]->play();
-	}
-
-	uint32 currentTime = _gameRef->_liveTimer - _musicCrossfadeStartTime;
-
-	if (currentTime >= _musicCrossfadeLength) {
-		_musicCrossfadeRunning = false;
-		//_music[_musicCrossfadeChannel2]->setVolume(GlobMusicVol);
-		_music[_musicCrossfadeChannel2]->setVolumePercent(100);
-
-		_music[_musicCrossfadeChannel1]->stop();
-		//_music[_musicCrossfadeChannel1]->setVolume(GlobMusicVol);
-		_music[_musicCrossfadeChannel1]->setVolumePercent(100);
-
-
-		if (_musicCrossfadeSwap) {
-			// swap channels
-			BaseSound *dummy = _music[_musicCrossfadeChannel1];
-			int dummyInt = _musicStartTime[_musicCrossfadeChannel1];
-
-			_music[_musicCrossfadeChannel1] = _music[_musicCrossfadeChannel2];
-			_musicStartTime[_musicCrossfadeChannel1] = _musicStartTime[_musicCrossfadeChannel2];
-
-			_music[_musicCrossfadeChannel2] = dummy;
-			_musicStartTime[_musicCrossfadeChannel2] = dummyInt;
-		}
-	} else {
-		//_music[_musicCrossfadeChannel1]->setVolume(GlobMusicVol - (float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
-		//_music[_musicCrossfadeChannel2]->setVolume((float)CurrentTime / (float)_musicCrossfadeLength * GlobMusicVol);
-		_music[_musicCrossfadeChannel1]->setVolumePercent((int)(100.0f - (float)currentTime / (float)_musicCrossfadeLength * 100.0f));
-		_music[_musicCrossfadeChannel2]->setVolumePercent((int)((float)currentTime / (float)_musicCrossfadeLength * 100.0f));
-
-		//_gameRef->QuickMessageForm("%d %d", _music[_musicCrossfadeChannel1]->GetVolume(), _music[_musicCrossfadeChannel2]->GetVolume());
-	}
-
-	return STATUS_OK;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseGame::resetContent() {
 	_scEngine->clearGlobals();
 	//_timer = 0;
@@ -4084,12 +3616,12 @@ bool BaseGame::restoreDeviceObjects() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::setWaitCursor(const char *filename) {
 	delete _cursorNoninteractive;
-	_cursorNoninteractive = NULL;
+	_cursorNoninteractive = nullptr;
 
 	_cursorNoninteractive = new BaseSprite(_gameRef);
 	if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile(filename))) {
 		delete _cursorNoninteractive;
-		_cursorNoninteractive = NULL;
+		_cursorNoninteractive = nullptr;
 		return STATUS_FAILED;
 	} else {
 		return STATUS_OK;
@@ -4115,7 +3647,7 @@ bool BaseGame::stopVideo() {
 	if (_theoraPlayer && _theoraPlayer->isPlaying()) {
 		_theoraPlayer->stop();
 		delete _theoraPlayer;
-		_theoraPlayer = NULL;
+		_theoraPlayer = nullptr;
 	}
 	return STATUS_OK;
 }
@@ -4166,12 +3698,12 @@ bool BaseGame::onMouseLeftDown() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("LeftClick"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("LeftClick");
 		}
 	}
 
-	if (_activeObject != NULL) {
+	if (_activeObject != nullptr) {
 		_capturedObject = _activeObject;
 	}
 	_mouseLeftDown = true;
@@ -4187,12 +3719,12 @@ bool BaseGame::onMouseLeftUp() {
 	}
 
 	BasePlatform::releaseCapture();
-	_capturedObject = NULL;
+	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("LeftRelease"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("LeftRelease");
 		}
 	}
@@ -4211,7 +3743,7 @@ bool BaseGame::onMouseLeftDblClick() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("LeftDoubleClick"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("LeftDoubleClick");
 		}
 	}
@@ -4230,7 +3762,7 @@ bool BaseGame::onMouseRightDblClick() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("RightDoubleClick"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("RightDoubleClick");
 		}
 	}
@@ -4245,7 +3777,7 @@ bool BaseGame::onMouseRightDown() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("RightClick"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("RightClick");
 		}
 	}
@@ -4260,7 +3792,7 @@ bool BaseGame::onMouseRightUp() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("RightRelease"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("RightRelease");
 		}
 	}
@@ -4279,7 +3811,7 @@ bool BaseGame::onMouseMiddleDown() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("MiddleClick"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("MiddleClick");
 		}
 	}
@@ -4294,7 +3826,7 @@ bool BaseGame::onMouseMiddleUp() {
 
 	bool handled = _state == GAME_RUNNING && DID_SUCCEED(applyEvent("MiddleRelease"));
 	if (!handled) {
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("MiddleRelease");
 		}
 	}
@@ -4356,7 +3888,7 @@ bool BaseGame::displayDebugInfo() {
 		sprintf(str, "Timer: %d", _timer);
 		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
 
-		if (_activeObject != NULL) {
+		if (_activeObject != nullptr) {
 			_systemFont->drawText((const byte *)_activeObject->getName(), 0, 150, _renderer->_width, TAL_RIGHT);
 		}
 

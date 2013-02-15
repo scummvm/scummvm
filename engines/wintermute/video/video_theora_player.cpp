@@ -51,7 +51,7 @@ VideoTheoraPlayer::VideoTheoraPlayer(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 void VideoTheoraPlayer::SetDefaults() {
 
-	_file = NULL;
+	_file = nullptr;
 	_filename = "";
 	_startTime = 0;
 	_looping = false;
@@ -68,8 +68,8 @@ void VideoTheoraPlayer::SetDefaults() {
 	_playbackStarted = false;
 	_dontDropFrames = false;
 
-	_texture = NULL;
-	_alphaImage = NULL;
+	_texture = nullptr;
+	_alphaImage = nullptr;
 	_alphaFilename = "";
 
 	_frameRendered = false;
@@ -84,10 +84,10 @@ void VideoTheoraPlayer::SetDefaults() {
 	_savedState = THEORA_STATE_NONE;
 	_savedPos = 0;
 	_volume = 100;
-	_theoraDecoder = NULL;
+	_theoraDecoder = nullptr;
 
 	// TODO: Add subtitles-support
-	//_subtitler = NULL;
+	//_subtitler = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ VideoTheoraPlayer::~VideoTheoraPlayer(void) {
 void VideoTheoraPlayer::cleanup() {
 	if (_file) {
 		BaseFileManager::getEngineInstance()->closeFile(_file);
-		_file = NULL;
+		_file = nullptr;
 	}
 
 	_surface.free();
@@ -108,11 +108,11 @@ void VideoTheoraPlayer::cleanup() {
 		_theoraDecoder->close();
 	}
 	delete _theoraDecoder;
-	_theoraDecoder = NULL;
+	_theoraDecoder = nullptr;
 	delete _alphaImage;
-	_alphaImage = NULL;
+	_alphaImage = nullptr;
 	delete _texture;
-	_texture = NULL;
+	_texture = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -157,7 +157,7 @@ bool VideoTheoraPlayer::resetStream() {
 		_theoraDecoder->close();
 	}
 	delete _theoraDecoder;
-	_theoraDecoder = NULL;
+	_theoraDecoder = nullptr;
 
 	_file = BaseFileManager::getEngineInstance()->openFile(_filename, true, false);
 	if (!_file) {
@@ -419,7 +419,7 @@ bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	_alphaImage = new BaseImage();
 	if (!_alphaImage || DID_FAIL(_alphaImage->loadFile(filename))) {
 		delete _alphaImage;
-		_alphaImage = NULL;
+		_alphaImage = nullptr;
 		_alphaFilename = "";
 		return STATUS_FAILED;
 	}

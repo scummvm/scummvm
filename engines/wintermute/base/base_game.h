@@ -46,6 +46,7 @@ class BaseFileManager;
 class BaseTransitionMgr;
 class ScEngine;
 class BaseFontStorage;
+class BaseGameMusic;
 class BaseStringTable;
 class BaseQuickMsg;
 class UIWindow;
@@ -58,8 +59,6 @@ class SXMath;
 class BaseKeyboardState;
 class VideoPlayer;
 class VideoTheoraPlayer;
-
-#define NUM_MUSIC_CHANNELS 5
 
 class BaseGame: public BaseObject {
 public:
@@ -120,14 +119,15 @@ public:
 	int _offsetX;
 	float _offsetPercentX;
 	float _offsetPercentY;
-	BaseObject *_mainObject;
+
+	inline BaseObject *getMainObject() { return _mainObject; }
+	inline BaseFont *getSystemFont() { return _systemFont; }
 
 	bool initInput();
 	bool initLoop();
 	uint32 _currentTime;
 	uint32 _deltaTime;
-	BaseFont *_systemFont;
-	BaseFont *_videoFont;
+
 	bool initialize1();
 	bool initialize2();
 	bool initialize3();
@@ -138,14 +138,14 @@ public:
 	BaseRenderer *_renderer;
 	BaseSoundMgr *_soundMgr;
 	ScEngine *_scEngine;
-	SXMath *_mathClass;
+	BaseScriptable *_mathClass;
 	BaseSurfaceStorage *_surfaceStorage;
 	BaseFontStorage *_fontStorage;
 	BaseGame(const Common::String &gameId);
 	virtual ~BaseGame();
 
 	void DEBUG_DebugDisable();
-	void DEBUG_DebugEnable(const char *filename = NULL);
+	void DEBUG_DebugEnable(const char *filename = nullptr);
 	bool _debugDebugMode;
 
 	void *_debugLogFile;
@@ -237,8 +237,8 @@ public:
 	void setInteractive(bool state);
 	virtual bool windowLoadHook(UIWindow *win, char **buf, char **params);
 	virtual bool windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name);
-	bool getCurrentViewportOffset(int *offsetX = NULL, int *offsetY = NULL);
-	bool getCurrentViewportRect(Rect32 *rect, bool *custom = NULL);
+	bool getCurrentViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr);
+	bool getCurrentViewportRect(Rect32 *rect, bool *custom = nullptr);
 	bool popViewport();
 	bool pushViewport(BaseViewport *Viewport);
 	bool setActiveObject(BaseObject *Obj);
@@ -250,6 +250,9 @@ public:
 	bool _touchInterface;
 	bool _constrainedMemory;
 protected:
+	BaseFont *_systemFont;
+	BaseFont *_videoFont;
+
 	BaseSprite *_loadingIcon;
 	int _loadingIconX;
 	int _loadingIconY;
@@ -261,6 +264,8 @@ protected:
 	VideoPlayer *_videoPlayer;
 	VideoTheoraPlayer *_theoraPlayer;
 private:
+	BaseObject *_mainObject;
+
 	bool _mouseRightDown;
 	bool _mouseMidlleDown;
 	bool _settingsRequireAcceleration;
@@ -274,10 +279,11 @@ private:
 	virtual bool invalidateDeviceObjects();
 	virtual bool restoreDeviceObjects();
 
-	char *_localSaveDir;
+	// TODO: This can probably be removed completely:
 	bool _saveDirChecked;
 	bool _richSavedGames;
-	char *_savedGameExt;
+	Common::String _localSaveDir;
+	Common::String _savedGameExt;
 
 	bool _reportTextureFormat;
 
@@ -287,36 +293,22 @@ private:
 	uint32 _framesRendered;
 	Common::String _gameId;
 
-	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = NULL, void *data = NULL);
+	void setEngineLogCallback(ENGINE_LOG_CALLBACK callback = nullptr, void *data = nullptr);
 	ENGINE_LOG_CALLBACK _engineLogCallback;
 	void *_engineLogCallbackData;
 
 	bool _videoSubtitles;
-	uint32 _musicStartTime[NUM_MUSIC_CHANNELS];
 	bool _compressedSavegames;
 
 	bool _personalizedSave;
 
 	void setWindowTitle();
 
-	bool resumeMusic(int channel);
-	bool setMusicStartTime(int channel, uint32 time);
-	bool pauseMusic(int channel);
-	bool stopMusic(int channel);
-	bool playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
-	BaseSound *_music[NUM_MUSIC_CHANNELS];
-	bool _musicCrossfadeRunning;
-	bool _musicCrossfadeSwap;
-	uint32 _musicCrossfadeStartTime;
-	uint32 _musicCrossfadeLength;
-	int _musicCrossfadeChannel1;
-	int _musicCrossfadeChannel2;
-
 	BaseSprite *_cursorNoninteractive;
 	BaseKeyboardState *_keyboardState;
 
 	uint32 _fps;
-	bool updateMusicCrossfade();
+	BaseGameMusic *_musicSystem;
 
 	bool isVideoPlaying();
 	bool stopVideo();

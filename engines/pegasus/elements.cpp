@@ -259,8 +259,8 @@ void FrameSequence::openFrameSequence() {
 	_frameTimes.clear();
 	for (uint32 i = 0; i < _numFrames; i++) {
 		TimeValue time = res->readUint32BE();
-		_duration += time;
 		_frameTimes.push_back(_duration);
+		_duration += time;
 	}
 
 	setScale(scale);

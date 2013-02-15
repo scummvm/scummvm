@@ -346,29 +346,6 @@ void Sound::playSound(int soundID) {
 			warning("Scumm::Sound::playSound: encountered audio resoure with chunk type 'SOUN' and sound type %d", type);
 		}
 	}
-	else if ((_vm->_game.id == GID_LOOM) && (_vm->_game.platform == Common::kPlatformMacintosh))  {
-		// Mac version of Loom uses yet another sound format
-		/*
-		playSound #9 (room 70)
-		000000: 55 00 00 45  73 6f 00 64  01 00 00 00  00 00 00 00   |U..Eso.d........|
-		000010: 00 05 00 8e  2a 8f 2d 1c  2a 8f 2a 8f  2d 1c 00 28   |....*.-.*.*.-..(|
-		000020: 00 31 00 3a  00 43 00 4c  00 01 00 00  00 01 00 64   |.1.:.C.L.......d|
-		000030: 5a 00 01 00  00 00 01 00  64 00 00 01  00 00 00 01   |Z.......d.......|
-		000040: 00 64 5a 00  01 00 00 00  01 00 64 5a  00 01 00 00   |.dZ.......dZ....|
-		000050: 00 01 00 64  00 00 00 00  00 00 00 07  00 00 00 64   |...d...........d|
-		000060: 64 00 00 4e  73 6f 00 64  01 00 00 00  00 00 00 00   |d..Nso.d........|
-		000070: 00 05 00 89  3d 57 2d 1c  3d 57 3d 57  2d 1c 00 28   |....=W-.=W=W-..(|
-		playSound #16 (room 69)
-		000000: dc 00 00 a5  73 6f 00 64  01 00 00 00  00 00 00 00   |....so.d........|
-		000010: 00 05 00 00  2a 8f 03 e8  03 e8 03 e8  03 e8 00 28   |....*..........(|
-		000020: 00 79 00 7f  00 85 00 d6  00 01 00 00  00 19 01 18   |.y..............|
-		000030: 2f 00 18 00  01 18 32 00  18 00 01 18  36 00 18 00   |/.....2.....6...|
-		000040: 01 18 3b 00  18 00 01 18  3e 00 18 00  01 18 42 00   |..;.....>.....B.|
-		000050: 18 00 01 18  47 00 18 00  01 18 4a 00  18 00 01 18   |....G.....J.....|
-		000060: 4e 00 10 00  01 18 53 00  10 00 01 18  56 00 10 00   |N.....S.....V...|
-		000070: 01 18 5a 00  10 00 02 28  5f 00 01 00  00 00 00 00   |..Z....(_.......|
-		*/
-	}
 	else if ((_vm->_game.platform == Common::kPlatformMacintosh) && (_vm->_game.id == GID_INDY3) && READ_BE_UINT16(ptr + 8) == 0x1C) {
 		// Sound format as used in Indy3 EGA Mac.
 		// It seems to be closely related to the Amiga format, see player_v3a.cpp
@@ -414,8 +391,7 @@ void Sound::playSound(int soundID) {
 	}
 	else {
 
-		if (_vm->_game.id == GID_MONKEY_VGA || _vm->_game.id == GID_MONKEY_EGA
-			|| (_vm->_game.id == GID_MONKEY && _vm->_game.platform == Common::kPlatformMacintosh)) {
+		if (_vm->_game.id == GID_MONKEY_VGA || _vm->_game.id == GID_MONKEY_EGA) {
 			// Works around the fact that in some places in MonkeyEGA/VGA,
 			// the music is never explicitly stopped.
 			// Rather it seems that starting a new music is supposed to
@@ -1086,9 +1062,6 @@ void Sound::saveLoadWithSerializer(Serializer *ser) {
 #pragma mark --- Sound resource handling ---
 #pragma mark -
 
-static void convertMac0Resource(ResourceManager *res, ResId idx, byte *src_ptr, int size);
-
-
 /*
  * TODO: The way we handle sound/music resources really is one huge hack.
  * We probably should reconsider how we do this, and maybe come up with a
@@ -1208,11 +1181,9 @@ int ScummEngine::readSoundResource(ResId idx) {
 	case MKTAG('M','a','c','0'):
 		_fileHandle->seek(-12, SEEK_CUR);
 		total_size = _fileHandle->readUint32BE() - 8;
-		ptr = (byte *)calloc(total_size, 1);
+		ptr = _res->createResource(rtSound, idx, total_size);
 		_fileHandle->read(ptr, total_size);
 		//dumpResource("sound-", idx, ptr);
-		convertMac0Resource(_res, idx, ptr, total_size);
-		free(ptr);
 		return 1;
 
 	case MKTAG('M','a','c','1'):
@@ -1443,219 +1414,6 @@ static byte *writeVLQ(byte *ptr, int value) {
 	}
 	*ptr++ = value;
 	return ptr;
-}
-
-static byte Mac0ToGMInstrument(uint32 type, int &transpose) {
-	transpose = 0;
-	switch (type) {
-	case MKTAG('M','A','R','I'): return 12;
-	case MKTAG('P','L','U','C'): return 45;
-	case MKTAG('H','A','R','M'): return 22;
-	case MKTAG('P','I','P','E'): return 19;
-	case MKTAG('T','R','O','M'): transpose = -12; return 57;
-	case MKTAG('S','T','R','I'): return 48;
-	case MKTAG('H','O','R','N'): return 60;
-	case MKTAG('V','I','B','E'): return 11;
-	case MKTAG('S','H','A','K'): return 77;
-	case MKTAG('P','A','N','P'): return 75;
-	case MKTAG('W','H','I','S'): return 76;
-	case MKTAG('O','R','G','A'): return 17;
-	case MKTAG('B','O','N','G'): return 115;
-	case MKTAG('B','A','S','S'): transpose = -24; return 35;
-	default:
-		error("Unknown Mac0 instrument %s found", tag2str(type));
-	}
-}
-
-static void convertMac0Resource(ResourceManager *res, ResId idx, byte *src_ptr, int size) {
-	/*
-	From Markus Magnuson (superqult) we got this information:
-	Mac0
-	---
-	   4 bytes - 'SOUN'
-	BE 4 bytes - block length
-
-		   4 bytes  - 'Mac0'
-		BE 4 bytes  - (blockLength - 27)
-		   28 bytes - ???
-
-		   do this three times (once for each channel):
-			  4 bytes  - 'Chan'
-		   BE 4 bytes  - channel length
-			  4 bytes  - instrument name (e.g. 'MARI')
-
-			  do this for ((chanLength-24)/4) times:
-				 2 bytes  - note duration
-				 1 byte   - note value
-				 1 byte   - note velocity
-
-			  4 bytes - ???
-			  4 bytes - 'Loop'/'Done'
-			  4 bytes - ???
-
-	   1 byte - 0x09
-	---
-
-	Instruments (General Midi):
-	"MARI" - Marimba (12)
-	"PLUC" - Pizzicato Strings (45)
-	"HARM" - Harmonica (22)
-	"PIPE" - Church Organ? (19) or Flute? (73) or Bag Pipe (109)
-	"TROM" - Trombone (57)
-	"STRI" - String Ensemble (48 or 49)
-	"HORN" - French Horn? (60) or English Horn? (69)
-	"VIBE" - Vibraphone (11)
-	"SHAK" - Shakuhachi? (77)
-	"PANP" - Pan Flute (75)
-	"WHIS" - Whistle (78) / Bottle (76)
-	"ORGA" - Drawbar Organ (16; but could also be 17-20)
-	"BONG" - Woodblock? (115)
-	"BASS" - Bass (32-39)
-
-
-	Now the task could be to convert this into MIDI, to be fed into iMuse.
-	Or we do something similiar to what is done in Player_V3, assuming
-	we can identify SFX in the MI datafiles for each of the instruments
-	listed above.
-	*/
-
-#if 0
-	byte *ptr = _res->createResource(rtSound, idx, size);
-	memcpy(ptr, src_ptr, size);
-#else
-	const int ppqn = 480;
-	byte *ptr, *start_ptr;
-
-	int total_size = 0;
-	total_size += kMIDIHeaderSize; // Header
-	total_size += 7;               // Tempo META
-	total_size += 3 * 3;           // Three program change mesages
-	total_size += 22;              // Possible jump SysEx
-	total_size += 5;               // EOT META
-
-	int i, len;
-	byte track_instr[3];
-	byte *track_data[3];
-	int track_len[3];
-	int track_transpose[3];
-	bool looped = false;
-
-	src_ptr += 8;
-	// TODO: Decipher the unknown bytes in the header. For now, skip 'em
-	src_ptr += 28;
-
-	// Parse the three channels
-	for (i = 0; i < 3; i++) {
-		assert(READ_BE_UINT32(src_ptr) == MKTAG('C','h','a','n'));
-		len = READ_BE_UINT32(src_ptr + 4);
-		track_len[i] = len - 24;
-		track_instr[i] = Mac0ToGMInstrument(READ_BE_UINT32(src_ptr + 8), track_transpose[i]);
-		track_data[i] = src_ptr + 12;
-		src_ptr += len;
-		looped = (READ_BE_UINT32(src_ptr - 8) == MKTAG('L','o','o','p'));
-
-		// For each note event, we need up to 6 bytes for the
-		// Note On (3 VLQ, 3 event), and 6 bytes for the Note
-		// Off (3 VLQ, 3 event). So 12 bytes total.
-		total_size += 12 * track_len[i];
-	}
-	assert(*src_ptr == 0x09);
-
-	// Create sound resource
-	start_ptr = res->createResource(rtSound, idx, total_size);
-
-	// Insert MIDI header
-	ptr = writeMIDIHeader(start_ptr, "GMD ", ppqn, total_size);
-
-	// Write a tempo change Meta event
-	// 473 / 4 Hz, convert to micro seconds.
-	uint32 dw = 1000000 * 437 / 4 / ppqn; // 1000000 * ppqn * 4 / 473;
-	memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;
-	*ptr++ = (byte)((dw >> 16) & 0xFF);
-	*ptr++ = (byte)((dw >> 8) & 0xFF);
-	*ptr++ = (byte)(dw & 0xFF);
-
-	// Insert program change messages
-	*ptr++ = 0; // VLQ
-	*ptr++ = 0xC0;
-	*ptr++ = track_instr[0];
-	*ptr++ = 0; // VLQ
-	*ptr++ = 0xC1;
-	*ptr++ = track_instr[1];
-	*ptr++ = 0; // VLQ
-	*ptr++ = 0xC2;
-	*ptr++ = track_instr[2];
-
-	// And now, the actual composition. Please turn all cell phones
-	// and pagers off during the performance. Thank you.
-	uint16 nextTime[3] = { 1, 1, 1 };
-	int stage[3] = { 0, 0, 0 };
-
-	while (track_len[0] | track_len[1] | track_len[2]) {
-		int best = -1;
-		uint16 bestTime = 0xFFFF;
-		for (i = 0; i < 3; ++i) {
-			if (track_len[i] && nextTime[i] < bestTime) {
-				bestTime = nextTime[i];
-				best = i;
-			}
-		}
-		assert (best != -1);
-
-		if (!stage[best]) {
-			// We are STARTING this event.
-			if (track_data[best][2] > 1) {
-				// Note On
-				ptr = writeVLQ(ptr, nextTime[best]);
-				*ptr++ = 0x90 | best;
-				*ptr++ = track_data[best][2] + track_transpose[best];
-				*ptr++ = track_data[best][3] * 127 / 100; // Scale velocity
-				for (i = 0; i < 3; ++i)
-					nextTime[i] -= bestTime;
-			}
-			nextTime[best] += READ_BE_UINT16 (track_data[best]);
-			stage[best] = 1;
-		} else {
-			// We are ENDING this event.
-			if (track_data[best][2] > 1) {
-				// There was a Note On, so do a Note Off
-				ptr = writeVLQ(ptr, nextTime[best]);
-				*ptr++ = 0x80 | best;
-				*ptr++ = track_data[best][2] + track_transpose[best];
-				*ptr++ = track_data[best][3] * 127 / 100; // Scale velocity
-				for (i = 0; i < 3; ++i)
-					nextTime[i] -= bestTime;
-			}
-			track_data[best] += 4;
-			track_len[best] -= 4;
-			stage[best] = 0;
-		}
-	}
-
-	// Is this a looped song? If so, effect a loop by
-	// using the S&M maybe_jump SysEx command.
-	// FIXME: Jamieson630: The jump seems to be happening
-	// too quickly! There should maybe be a pause after
-	// the last Note Off? But I couldn't find one in the
-	// MI1 Lookout music, where I was hearing problems.
-	if (looped) {
-		memcpy(ptr, "\x00\xf0\x13\x7d\x30\00", 6); ptr += 6; // maybe_jump
-		memcpy(ptr, "\x00\x00", 2); ptr += 2;            // cmd -> 0 means always jump
-		memcpy(ptr, "\x00\x00\x00\x00", 4); ptr += 4;    // track -> 0 (only track)
-		memcpy(ptr, "\x00\x00\x00\x01", 4); ptr += 4;    // beat -> 1 (first beat)
-		memcpy(ptr, "\x00\x00\x00\x01", 4); ptr += 4;    // tick -> 1
-		memcpy(ptr, "\x00\xf7", 2); ptr += 2;            // SysEx end marker
-	}
-
-	// Insert end of song META
-	memcpy(ptr, "\x00\xff\x2f\x00\x00", 5); ptr += 5;
-
-	assert(ptr <= start_ptr + total_size);
-
-	// Rewrite MIDI header, this time with true size
-	total_size = ptr - start_ptr;
-	ptr = writeMIDIHeader(start_ptr, "GMD ", ppqn, total_size);
-#endif
 }
 
 static void convertADResource(ResourceManager *res, const GameSettings& game, ResId idx, byte *src_ptr, int size) {

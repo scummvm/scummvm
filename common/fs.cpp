@@ -335,4 +335,4 @@ int FSDirectory::listMembers(ArchiveMemberList &list) const {
 }
 
 
-}	// End of namespace Common
+} // End of namespace Common

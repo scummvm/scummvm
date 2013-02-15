@@ -136,6 +136,7 @@ struct TalkTextItem {
 	byte color;
 	byte lineCount;
 	TextRect lines[15];
+	bool alwaysDisplayed;
 };
 
 struct GuiTextWrapState {
@@ -177,10 +178,11 @@ public:
 	void updateVerbLine(int16 slotIndex, int16 slotOffset);
 
 	// Talk text
-	void updateTalkText(int16 slotIndex, int16 slotOffset);
+	void updateTalkText(int16 slotIndex, int16 slotOffset, bool alwaysDisplayed);
 	void addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 width, TalkTextItem *item);
 	void addTalkTextItemsToRenderQueue();
 	int16 getTalkTextDuration();
+	bool isTalkTextActive(int16 slotIndex);
 	void finishTalkTextItems();
 	void keepTalkTextItemsAlive();
 

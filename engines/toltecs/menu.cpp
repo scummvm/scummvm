@@ -22,9 +22,12 @@
  */
 
 #include "audio/mixer.h"
-#include "common/savefile.h"
 
+#include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
+
+#include "gui/saveload.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/menu.h"
@@ -41,9 +44,6 @@ MenuSystem::~MenuSystem() {
 }
 
 int MenuSystem::run(MenuID menuId) {
-
-	//debug("MenuSystem::run()");
-
 	_background = new Graphics::Surface();
 	_background->create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
 
@@ -62,13 +62,12 @@ int MenuSystem::run(MenuID menuId) {
 
 	_needRedraw = false;
 
-	// TODO: buildColorTransTable2
 	_vm->_palette->buildColorTransTable(0, 16, 7);
 
 	_vm->_screen->_renderQueue->clear();
 	// Draw the menu background and frame
 	_vm->_screen->blastSprite(0x140 + _vm->_cameraX, 0x175 + _vm->_cameraY, 0, 1, 0x4000);
-	shadeRect(60, 39, 520, 246, 30, 94);
+	shadeRect(60, 39, 520, 247, 225, 229);
 
 	memcpy(_background->pixels, _vm->_screen->_frontScreen, 640 * 400);
 
@@ -91,7 +90,6 @@ int MenuSystem::run(MenuID menuId) {
 }
 
 void MenuSystem::update() {
-
 	if (_currMenuID != _newMenuID) {
 		_currMenuID = _newMenuID;
 		//debug("_currMenuID = %d", _currMenuID);
@@ -103,16 +101,13 @@ void MenuSystem::update() {
 	if (_needRedraw) {
 		//_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
 		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, _top, 640, 400 - _top);
-		//debug("redraw");
 		_needRedraw = false;
 	}
 
 	_vm->_system->delayMillis(5);
-
 }
 
 void MenuSystem::handleEvents() {
-
 	Common::Event event;
 	Common::EventManager *eventMan = _vm->_system->getEventManager();
 	while (eventMan->pollEvent(event)) {
@@ -126,18 +121,18 @@ void MenuSystem::handleEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			handleMouseMove(event.mouse.x, event.mouse.y);
 			break;
-		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
 			handleMouseClick(event.mouse.x, event.mouse.y);
 			break;
 		default:
 			break;
 		}
 	}
-
 }
 
 void MenuSystem::addClickTextItem(ItemID id, int x, int y, int w, uint fontNum, const char *caption, byte defaultColor, byte activeColor) {
 	Item item;
+	item.enabled = true;
 	item.id = id;
 	item.defaultColor = defaultColor;
 	item.activeColor = activeColor;
@@ -202,7 +197,7 @@ void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 
 ItemID MenuSystem::findItemAt(int x, int y) {
 	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
-		if ((*iter).rect.contains(x, y - _top))
+		if ((*iter).enabled && (*iter).rect.contains(x, y - _top))
 			return (*iter).id;
 	}
 	return kItemIdNone;
@@ -220,6 +215,8 @@ void MenuSystem::setItemCaption(Item *item, const char *caption) {
 	Font font(_vm->_res->load(_vm->_screen->getFontResIndex(item->fontNum))->data);
 	int width = font.getTextWidth((const byte*)caption);
 	int height = font.getHeight();
+	if (width & 1)
+		width++;
 	item->rect = Common::Rect(item->x, item->y - height, item->x + width, item->y);
 	if (item->w) {
 		item->rect.translate(item->w - width / 2, 0);
@@ -236,59 +233,87 @@ void MenuSystem::initMenu(MenuID menuID) {
 
 	switch (menuID) {
 	case kMenuIdMain:
-		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrWhatCanIDoForYou));
-		addClickTextItem(kItemIdLoad, 0, 115, 320, 0, _vm->getSysString(kStrLoad), 229, 255);
-		addClickTextItem(kItemIdSave, 0, 135, 320, 0, _vm->getSysString(kStrSave), 229, 255);
-		addClickTextItem(kItemIdToggleText, 0, 165, 320, 0, _vm->getSysString(_vm->_cfgText ? kStrTextOn : kStrTextOff), 229, 255);
-		addClickTextItem(kItemIdToggleVoices, 0, 185, 320, 0, _vm->getSysString(_vm->_cfgVoices ? kStrVoicesOn : kStrVoicesOff), 229, 255);
-		addClickTextItem(kItemIdVolumesMenu, 0, 215, 320, 0, _vm->getSysString(kStrVolume), 229, 255);
-		addClickTextItem(kItemIdPlay, 0, 245, 320, 0, _vm->getSysString(kStrPlay), 229, 255);
-		addClickTextItem(kItemIdQuit, 0, 275, 320, 0, _vm->getSysString(kStrQuit), 229, 255);
+		drawString(0, 75, 320, 1, 229, _vm->getSysString(kStrWhatCanIDoForYou));
+		addClickTextItem(kItemIdLoad, 0, 116, 320, 0, _vm->getSysString(kStrLoad), 253, 255);
+		addClickTextItem(kItemIdSave, 0, 136, 320, 0, _vm->getSysString(kStrSave), 253, 255);
+		addClickTextItem(kItemIdToggleText, 0, 166, 320, 0, _vm->getSysString(_vm->_cfgText ? kStrTextOn : kStrTextOff), 253, 255);
+		addClickTextItem(kItemIdToggleVoices, 0, 186, 320, 0, _vm->getSysString(_vm->_cfgVoices ? kStrVoicesOn : kStrVoicesOff), 253, 255);
+		addClickTextItem(kItemIdVolumesMenu, 0, 216, 320, 0, _vm->getSysString(kStrVolume), 253, 255);
+		addClickTextItem(kItemIdPlay, 0, 246, 320, 0, _vm->getSysString(kStrPlay), 253, 255);
+		addClickTextItem(kItemIdQuit, 0, 276, 320, 0, _vm->getSysString(kStrQuit), 253, 255);
 		break;
 	case kMenuIdLoad:
-		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrLoadGame));
-		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 255, 253);
-		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 255, 253);
-		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 255, 253);
-		for (int i = 1; i <= 7; i++) {
-			Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
-			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
+		if (ConfMan.getBool("originalsaveload")) {
+			shadeRect(80, 92, 440, 141, 226, 225);
+			drawString(0, 75, 320, 1, 229, _vm->getSysString(kStrLoadGame));
+			addClickTextItem(kItemIdSavegameUp, 0, 156, 545, 1, "^", 253, 255);
+			addClickTextItem(kItemIdSavegameDown, 0, 196, 545, 1, "\\", 253, 255);
+			addClickTextItem(kItemIdCancel, 0, 276, 320, 0, _vm->getSysString(kStrCancel), 253, 255);
+			for (int i = 1; i <= 7; i++) {
+				Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
+				addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 116 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
+			}
+			loadSavegamesList();
+			setSavegameCaptions(true);
+		} else {
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+			int slot = dialog->runModalWithCurrentTarget();
+			delete dialog;
+
+			if (slot >= 0)
+				_vm->requestLoadgame(slot);
+
+			_running = false;
 		}
-		loadSavegamesList();
-		setSavegameCaptions();
 		break;
 	case kMenuIdSave:
-		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrSaveGame));
-		addClickTextItem(kItemIdSavegameUp, 0, 155, 545, 1, "^", 255, 253);
-		addClickTextItem(kItemIdSavegameDown, 0, 195, 545, 1, "\\", 255, 253);
-		addClickTextItem(kItemIdCancel, 0, 275, 320, 0, _vm->getSysString(kStrCancel), 255, 253);
-		for (int i = 1; i <= 7; i++) {
-			Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
-			addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 115 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
+		if (ConfMan.getBool("originalsaveload")) {
+			shadeRect(80, 92, 440, 141, 226, 225);
+			drawString(0, 75, 320, 1, 229, _vm->getSysString(kStrSaveGame));
+			addClickTextItem(kItemIdSavegameUp, 0, 156, 545, 1, "^", 253, 255);
+			addClickTextItem(kItemIdSavegameDown, 0, 196, 545, 1, "\\", 253, 255);
+			addClickTextItem(kItemIdCancel, 0, 276, 320, 0, _vm->getSysString(kStrCancel), 253, 255);
+			for (int i = 1; i <= 7; i++) {
+				Common::String saveDesc = Common::String::format("SAVEGAME %d", i);
+				addClickTextItem((ItemID)(kItemIdSavegame1 + i - 1), 0, 116 + 20 * (i - 1), 300, 0, saveDesc.c_str(), 231, 234);
+			}
+			newSlotNum = loadSavegamesList() + 1;
+			_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %04d", _savegames.size())));
+			setSavegameCaptions(true);
+		} else {
+			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+			int slot = dialog->runModalWithCurrentTarget();
+			Common::String desc = dialog->getResultString();
+			if (desc.empty()) {
+				// Create our own description for the saved game, the user didn't enter one
+				desc = dialog->createDefaultSaveDescription(slot);
+			}
+
+			if (slot >= 0)
+				_vm->requestSavegame(slot, desc);
+
+			_running = false;
 		}
-		newSlotNum = loadSavegamesList() + 1;
-		_savegames.push_back(SavegameItem(newSlotNum, Common::String::format("GAME %03d", _savegames.size() + 1)));
-		setSavegameCaptions();
 		break;
 	case kMenuIdVolumes:
-		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrAdjustVolume));
-		drawString(0, 130, 200, 0, 246, _vm->getSysString(kStrMaster));
-		drawString(0, 155, 200, 0, 244, _vm->getSysString(kStrVoices));
-		drawString(0, 180, 200, 0, 244, _vm->getSysString(kStrMusic));
-		drawString(0, 205, 200, 0, 244, _vm->getSysString(kStrSoundFx));
-		drawString(0, 230, 200, 0, 244, _vm->getSysString(kStrBackground));
-		addClickTextItem(kItemIdDone, 0, 275, 200, 0, _vm->getSysString(kStrDone), 229, 253);
-		addClickTextItem(kItemIdCancel, 0, 275, 440, 0, _vm->getSysString(kStrCancel), 229, 253);
-		addClickTextItem(kItemIdMasterDown, 0, 130 + 25 * 0, 348, 1, "[", 229, 253);
-		addClickTextItem(kItemIdVoicesDown, 0, 130 + 25 * 1, 348, 1, "[", 229, 253);
-		addClickTextItem(kItemIdMusicDown, 0, 130 + 25 * 2, 348, 1, "[", 229, 253);
-		addClickTextItem(kItemIdSoundFXDown, 0, 130 + 25 * 3, 348, 1, "[", 229, 253);
-		addClickTextItem(kItemIdBackgroundDown, 0, 130 + 25 * 4, 348, 1, "[", 229, 253);
-		addClickTextItem(kItemIdMasterUp, 0, 130 + 25 * 0, 372, 1, "]", 229, 253);
-		addClickTextItem(kItemIdVoicesUp, 0, 130 + 25 * 1, 372, 1, "]", 229, 253);
-		addClickTextItem(kItemIdMusicUp, 0, 130 + 25 * 2, 372, 1, "]", 229, 253);
-		addClickTextItem(kItemIdSoundFXUp, 0, 130 + 25 * 3, 372, 1, "]", 229, 253);
-		addClickTextItem(kItemIdBackgroundUp, 0, 130 + 25 * 4, 372, 1, "]", 229, 253);
+		drawString(0, 75, 320, 1, 229, _vm->getSysString(kStrAdjustVolume));
+		drawString(0, 131, 200, 0, 246, _vm->getSysString(kStrMaster));
+		drawString(0, 156, 200, 0, 244, _vm->getSysString(kStrVoices));
+		drawString(0, 181, 200, 0, 244, _vm->getSysString(kStrMusic));
+		drawString(0, 206, 200, 0, 244, _vm->getSysString(kStrSoundFx));
+		drawString(0, 231, 200, 0, 244, _vm->getSysString(kStrBackground));
+		addClickTextItem(kItemIdDone, 0, 276, 200, 0, _vm->getSysString(kStrDone), 253, 255);
+		addClickTextItem(kItemIdCancel, 0, 276, 440, 0, _vm->getSysString(kStrCancel), 253, 255);
+		addClickTextItem(kItemIdMasterDown, 0, 131 + 25 * 0, 348, 1, "[", 243, 246);
+		addClickTextItem(kItemIdVoicesDown, 0, 131 + 25 * 1, 348, 1, "[", 243, 246);
+		addClickTextItem(kItemIdMusicDown, 0, 131 + 25 * 2, 348, 1, "[", 243, 246);
+		addClickTextItem(kItemIdSoundFXDown, 0, 131 + 25 * 3, 348, 1, "[", 243, 246);
+		addClickTextItem(kItemIdBackgroundDown, 0, 131 + 25 * 4, 348, 1, "[", 243, 246);
+		addClickTextItem(kItemIdMasterUp, 0, 131 + 25 * 0, 372, 1, "]", 243, 246);
+		addClickTextItem(kItemIdVoicesUp, 0, 131 + 25 * 1, 372, 1, "]", 243, 246);
+		addClickTextItem(kItemIdMusicUp, 0, 131 + 25 * 2, 372, 1, "]", 243, 246);
+		addClickTextItem(kItemIdSoundFXUp, 0, 131 + 25 * 3, 372, 1, "]", 243, 246);
+		addClickTextItem(kItemIdBackgroundUp, 0, 131 + 25 * 4, 372, 1, "]", 243, 246);
 		drawVolumeBar(kItemIdMaster);
 		drawVolumeBar(kItemIdVoices);
 		drawVolumeBar(kItemIdMusic);
@@ -300,9 +325,36 @@ void MenuSystem::initMenu(MenuID menuID) {
 	}
 
 	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
-		drawItem((*iter).id, false);
+		if ((*iter).enabled)
+			drawItem((*iter).id, false);
 	}
 
+	// Check if the mouse is already over an item
+	_currItemID = kItemIdNone;
+	Common::Point mousePos = _vm->_system->getEventManager()->getMousePos();
+	handleMouseMove(mousePos.x, mousePos.y);
+}
+
+void MenuSystem::enableItem(ItemID id) {
+	Item *item = getItem(id);
+	if (item) {
+		item->enabled = true;
+		drawItem(id, false);
+		_currItemID = kItemIdNone;
+		Common::Point mousePos = _vm->_system->getEventManager()->getMousePos();
+		handleMouseMove(mousePos.x, mousePos.y);
+	}
+}
+
+void MenuSystem::disableItem(ItemID id) {
+	Item *item = getItem(id);
+	if (item) {
+		item->enabled = false;
+		restoreRect(item->rect.left, item->rect.top, item->rect.width(), item->rect.height());
+		if (_currItemID == id) {
+			_currItemID = kItemIdNone;
+		}
+	}
 }
 
 void MenuSystem::enterItem(ItemID id) {
@@ -433,14 +485,16 @@ void MenuSystem::drawString(int16 x, int16 y, int w, uint fontNum, byte color, c
 	fontNum = _vm->_screen->getFontResIndex(fontNum);
 	Font font(_vm->_res->load(fontNum)->data);
 	if (w) {
-		x = x + w - font.getTextWidth((const byte*)text) / 2;
+		int width = font.getTextWidth((const byte*)text);
+		if (width & 1)
+			width++;
+		x = x + w - width / 2;
 	}
 	_vm->_screen->drawString(x, y - font.getHeight(), color, fontNum, (const byte*)text, -1, NULL, true);
 	_needRedraw = true;
 }
 
 int MenuSystem::loadSavegamesList() {
-
 	int maxSlotNum = -1;
 
 	_savegameListTopIndex = 0;
@@ -483,17 +537,32 @@ MenuSystem::SavegameItem *MenuSystem::getSavegameItemByID(ItemID id) {
 		return NULL;
 }
 
-void MenuSystem::setSavegameCaptions() {
-	uint index = _savegameListTopIndex;
+void MenuSystem::setSavegameCaptions(bool scrollToBottom) {
+	int size = _savegames.size();
+	if (scrollToBottom && size > 0) {
+		while (_savegameListTopIndex + 7 <= size)
+			_savegameListTopIndex += 6;
+	}
+	int index = _savegameListTopIndex;
 	for (int i = 1; i <= 7; i++)
-		setItemCaption(getItem((ItemID)(kItemIdSavegame1 + i - 1)), index < _savegames.size() ? _savegames[index++]._description.c_str() : "");
+		setItemCaption(getItem((ItemID)(kItemIdSavegame1 + i - 1)), index < size ? _savegames[index++]._description.c_str() : "");
+	if (_savegameListTopIndex == 0) {
+		disableItem(kItemIdSavegameUp);
+	} else {
+		enableItem(kItemIdSavegameUp);
+	}
+	if (_savegameListTopIndex + 7 > size) {
+		disableItem(kItemIdSavegameDown);
+	} else {
+		enableItem(kItemIdSavegameDown);
+	}
 }
 
 void MenuSystem::scrollSavegames(int delta) {
 	int newPos = CLIP<int>(_savegameListTopIndex + delta, 0, _savegames.size() - 1);
 	_savegameListTopIndex = newPos;
 	restoreRect(80, 92, 440, 140);
-	setSavegameCaptions();
+	setSavegameCaptions(false);
 	for (int i = 1; i <= 7; i++)
 		drawItem((ItemID)(kItemIdSavegame1 + i - 1), false);
 }
@@ -574,7 +643,6 @@ void MenuSystem::drawVolumeBar(ItemID itemID) {
 	text[volume] = 0;
 
 	drawString(0, y, w, 0, 246, text);
-
 }
 
 void MenuSystem::changeVolumeBar(ItemID itemID, int delta) {

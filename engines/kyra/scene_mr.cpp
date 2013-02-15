@@ -22,7 +22,7 @@
 
 #include "kyra/kyra_mr.h"
 #include "kyra/screen_mr.h"
-#include "kyra/sound.h"
+#include "kyra/sound_digital.h"
 #include "kyra/resource.h"
 
 #include "common/system.h"

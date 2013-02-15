@@ -42,11 +42,11 @@ IMPLEMENT_PERSISTENT(AdTalkDef, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkDef::AdTalkDef(BaseGame *inGame) : BaseObject(inGame) {
-	_defaultSpriteFilename = NULL;
-	_defaultSprite = NULL;
+	_defaultSpriteFilename = nullptr;
+	_defaultSprite = nullptr;
 
-	_defaultSpriteSetFilename = NULL;
-	_defaultSpriteSet = NULL;
+	_defaultSpriteSetFilename = nullptr;
+	_defaultSpriteSet = nullptr;
 }
 
 
@@ -59,20 +59,20 @@ AdTalkDef::~AdTalkDef() {
 
 	delete[] _defaultSpriteFilename;
 	delete _defaultSprite;
-	_defaultSpriteFilename = NULL;
-	_defaultSprite = NULL;
+	_defaultSpriteFilename = nullptr;
+	_defaultSprite = nullptr;
 
 	delete[] _defaultSpriteSetFilename;
 	delete _defaultSpriteSet;
-	_defaultSpriteSetFilename = NULL;
-	_defaultSpriteSet = NULL;
+	_defaultSpriteSetFilename = nullptr;
+	_defaultSpriteSet = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkDef::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdTalkDef::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -138,7 +138,7 @@ bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
 				_nodes.add(node);
 			} else {
 				delete node;
-				node = NULL;
+				node = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -157,7 +157,7 @@ bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
 			_defaultSpriteSet = new AdSpriteSet(_gameRef);
 			if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadBuffer(params, false))) {
 				delete _defaultSpriteSet;
-				_defaultSpriteSet = NULL;
+				_defaultSpriteSet = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -181,8 +181,8 @@ bool AdTalkDef::loadBuffer(byte *buffer, bool complete) {
 
 	delete _defaultSprite;
 	delete _defaultSpriteSet;
-	_defaultSprite = NULL;
-	_defaultSpriteSet = NULL;
+	_defaultSprite = nullptr;
+	_defaultSpriteSet = nullptr;
 
 	if (_defaultSpriteFilename) {
 		_defaultSprite = new BaseSprite(_gameRef);
@@ -250,7 +250,7 @@ bool AdTalkDef::loadDefaultSprite() {
 		_defaultSprite = new BaseSprite(_gameRef);
 		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) {
 			delete _defaultSprite;
-			_defaultSprite = NULL;
+			_defaultSprite = nullptr;
 			return STATUS_FAILED;
 		} else {
 			return STATUS_OK;
@@ -259,7 +259,7 @@ bool AdTalkDef::loadDefaultSprite() {
 		_defaultSpriteSet = new AdSpriteSet(_gameRef);
 		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
 			delete _defaultSpriteSet;
-			_defaultSpriteSet = NULL;
+			_defaultSpriteSet = nullptr;
 			return STATUS_FAILED;
 		} else {
 			return STATUS_OK;
@@ -278,7 +278,7 @@ BaseSprite *AdTalkDef::getDefaultSprite(TDirection dir) {
 	} else if (_defaultSpriteSet) {
 		return _defaultSpriteSet->getSprite(dir);
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

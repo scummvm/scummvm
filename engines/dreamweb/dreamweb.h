@@ -25,6 +25,7 @@
 
 #include "common/error.h"
 #include "common/file.h"
+#include "common/keyboard.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "common/savefile.h"
@@ -63,6 +64,7 @@ const unsigned int kMapHeight = 60;
 const unsigned int kLengthOfMap = kMapWidth * kMapHeight;
 const unsigned int kNumExObjects = 114;
 const unsigned int kScreenwidth = 320;
+const unsigned int kScreenheight = 200;
 const unsigned int kDiaryx = (68+24);
 const unsigned int kDiaryy = (48+12);
 const unsigned int kInventx = 80;
@@ -87,10 +89,6 @@ const unsigned int kNumBlockTexts = 98;
 const unsigned int kNumRoomTexts = 38;
 const unsigned int kNumFreeTexts = 82;
 const unsigned int kNumPersonTexts = 1026;
-
-// Keyboard buffer. data.word(kBufferin) and data.word(kBufferout) are indexes
-// into this, making it a ring buffer
-extern uint8 g_keyBuffer[16];
 
 // Engine Debug Flags
 enum {
@@ -156,6 +154,12 @@ public:
 	const Common::String& getSpeechDirName() { return _speechDirName; }
 
 private:
+	// Keyboard buffer. _bufferIn and _bufferOut are indexes
+	// into this, making it a ring buffer
+	uint8 _keyBuffer[16];
+	uint16 _bufferIn;
+	uint16 _bufferOut;
+
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
 
@@ -316,6 +320,7 @@ public:
 	uint16 _charShift;
 	uint8 _kerning;
 	bool _brightPalette;
+	bool _copyProtection;
 	uint8 _roomLoaded;
 	uint8 _didZoom;
 	uint16 _lineSpacing;
@@ -419,9 +424,7 @@ public:
 	uint8 _addToRed;
 	uint8 _addToBlue;
 	uint16 _lastSoundReel;
-	uint8 _lastHardKey;
-	uint16 _bufferIn;
-	uint16 _bufferOut;
+	Common::KeyCode _lastHardKey;
 	uint8 _blinkFrame;
 	uint8 _blinkCount;
 	uint8 _reAssesChanges;
@@ -750,7 +753,6 @@ public:
 	void showRyanPage();
 	void switchRyanOn();
 	void switchRyanOff();
-	void middlePanel();
 	void showDiary();
 	void readMouse();
 	uint16 readMouseState();
@@ -882,7 +884,6 @@ public:
 	void obsThatDoThings();
 	void describeOb();
 	void putBackObStuff();
-	void reExFromOpen();
 	void showDiaryPage();
 	void showDiaryKeys();
 	void dumpDiaryKeys();

@@ -135,6 +135,10 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
+	// The Macintosh version of DW1 uses raw PCM for music
+	if (TinselV1Mac)
+		return _vm->_sound->playDW1MacMusic(dwFileOffset);
+
 	SetMidiVolume(mute ? 0 : _vm->_config->_musicVolume);
 
 	// the index and length of the last tune loaded
@@ -279,6 +283,11 @@ void OpenMidiFiles() {
 
 	// Demo version has no midi file
 	if (TinselV0 || TinselV2)
+		return;
+
+	// The Macintosh version of DW1 does not use MIDI for music.
+	// It uses PCM music instead, which is quite big to be preloaded here.
+	if (TinselV1Mac)
 		return;
 
 	if (g_midiBuffer.pDat)
@@ -784,8 +793,8 @@ bool PCMMusicPlayer::getNextChunk() {
 		// Set parameters for this chunk of music
 		id = _scriptNum;
 		while (id--)
-			script = scriptBuffer + READ_LE_UINT32(script);
-		snum = FROM_LE_32(script[_scriptIndex++]);
+			script = scriptBuffer + READ_32(script);
+		snum = FROM_32(script[_scriptIndex++]);
 
 		if (snum == MUSIC_JUMP || snum == MUSIC_END) {
 			// Let usual code sort it out!
@@ -797,11 +806,11 @@ bool PCMMusicPlayer::getNextChunk() {
 
 		musicSegments = (MusicSegment *) LockMem(_hSegment);
 
-		assert(FROM_LE_32(musicSegments[snum].numChannels) == 1);
-		assert(FROM_LE_32(musicSegments[snum].bitsPerSample) == 16);
+		assert(FROM_32(musicSegments[snum].numChannels) == 1);
+		assert(FROM_32(musicSegments[snum].bitsPerSample) == 16);
 
-		sampleOffset = FROM_LE_32(musicSegments[snum].sampleOffset);
-		sampleLength = FROM_LE_32(musicSegments[snum].sampleLength);
+		sampleOffset = FROM_32(musicSegments[snum].sampleOffset);
+		sampleLength = FROM_32(musicSegments[snum].sampleLength);
 		sampleCLength = (((sampleLength + 63) & ~63)*33)/64;
 
 		if (!file.open(_filename))
@@ -839,14 +848,14 @@ bool PCMMusicPlayer::getNextChunk() {
 
 		id = _scriptNum;
 		while (id--)
-			script = scriptBuffer + READ_LE_UINT32(script);
-		snum = FROM_LE_32(script[_scriptIndex]);
+			script = scriptBuffer + READ_32(script);
+		snum = FROM_32(script[_scriptIndex]);
 
 		if (snum == MUSIC_END) {
 			_state = S_END2;
 		} else {
 			if (snum == MUSIC_JUMP)
-				_scriptIndex = FROM_LE_32(script[_scriptIndex+1]);
+				_scriptIndex = FROM_32(script[_scriptIndex+1]);
 
 			_state = _forcePlay ? S_NEW : S_NEXT;
 			_forcePlay = false;

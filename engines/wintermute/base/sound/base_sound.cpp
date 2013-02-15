@@ -36,7 +36,7 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(BaseSound, false)
 
 BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
-	_sound = NULL;
+	_sound = nullptr;
 	_soundFilename = "";
 
 	_soundType = Audio::Mixer::kSFXSoundType;
@@ -57,13 +57,13 @@ BaseSound::~BaseSound() {
 	if (_sound) {
 		_gameRef->_soundMgr->removeSound(_sound);
 	}
-	_sound = NULL;
+	_sound = nullptr;
 }
 
 bool BaseSound::setSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (_sound) {
 		_gameRef->_soundMgr->removeSound(_sound);
-		_sound = NULL;
+		_sound = nullptr;
 	}
 	_soundFilename = Common::String(); // Set empty
 

@@ -43,7 +43,7 @@ public:
 	virtual void disablePersistentScripts();
 	virtual void runPersistentScripts();
 
-private:
+protected:
 	void setupOpcodes();
 	uint16 getVar(uint16 var);
 	void toggleVar(uint16 var);
@@ -52,7 +52,7 @@ private:
 	virtual uint16 getMap() { return 9934; }
 
 	void towerRotationMap_run();
-	void libraryBookcaseTransform_run();
+	virtual void libraryBookcaseTransform_run();
 	void generatorControlRoom_run();
 	void opcode_212_run();
 	void libraryCombinationBook_run();
@@ -174,7 +174,7 @@ private:
 	DECLARE_OPCODE(o_gulls2_init);
 	DECLARE_OPCODE(o_treeCard_init);
 	DECLARE_OPCODE(o_treeEntry_init);
-	DECLARE_OPCODE(opcode_218);
+	DECLARE_OPCODE(o_boilerMovies_init);
 	DECLARE_OPCODE(o_rocketSliders_init);
 	DECLARE_OPCODE(o_rocketLinkVideo_init);
 	DECLARE_OPCODE(o_greenBook_init);
@@ -183,6 +183,7 @@ private:
 	DECLARE_OPCODE(o_bookAddSpecialPage_exit);
 	DECLARE_OPCODE(o_treeCard_exit);
 	DECLARE_OPCODE(o_treeEntry_exit);
+	DECLARE_OPCODE(o_boiler_exit);
 	DECLARE_OPCODE(o_generatorControlRoom_exit);
 
 
@@ -259,6 +260,9 @@ private:
 	uint16 _cabinMatchState; // 60
 	uint32 _matchGoOutTime; // 144
 
+	VideoHandle _cabinFireMovie; // 240
+	VideoHandle _cabinGaugeMovie; // 244
+
 	bool _boilerPressureIncreasing;
 	bool _boilerPressureDecreasing;
 	bool _basementPressureIncreasing;
@@ -316,6 +320,12 @@ private:
 	uint16 towerRotationMapComputeAngle();
 	Common::Point towerRotationMapComputeCoords(const Common::Point &center, uint16 angle);
 	void towerRotationMapDrawLine(const Common::Point &center, const Common::Point &end);
+
+	void boilerFireInit();
+	void boilerFireUpdate(bool init);
+	void boilerGaugeInit();
+	Common::Rational boilerComputeGaugeRate(uint16 pressure, uint32 delay);
+	void boilerResetGauge(const Common::Rational &rate);
 
 	void treeSetAlcoveAccessible();
 	uint32 treeNextMoveDelay(uint16 pressure);

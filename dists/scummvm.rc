@@ -20,34 +20,37 @@ scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
 translations.dat       FILE    "gui/themes/translations.dat"
 #endif
 
-#if ENABLE_DRASCULA  == STATIC_PLUGIN
+#if ENABLE_DRASCULA   == STATIC_PLUGIN
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
 #endif
-#if ENABLE_HUGO      == STATIC_PLUGIN
+#if ENABLE_HUGO       == STATIC_PLUGIN
 hugo.dat               FILE    "dists/engine-data/hugo.dat"
 #endif
-#if ENABLE_KYRA      == STATIC_PLUGIN
+#if ENABLE_KYRA       == STATIC_PLUGIN
 kyra.dat               FILE    "dists/engine-data/kyra.dat"
 #endif
-#if ENABLE_LURE      == STATIC_PLUGIN
+#if ENABLE_LURE       == STATIC_PLUGIN
 lure.dat               FILE    "dists/engine-data/lure.dat"
 #endif
-#if ENABLE_QUEEN     == STATIC_PLUGIN
+#if ENABLE_QUEEN      == STATIC_PLUGIN
 queen.tbl              FILE    "dists/engine-data/queen.tbl"
 #endif
-#if ENABLE_SKY       == STATIC_PLUGIN
+#if ENABLE_SKY        == STATIC_PLUGIN
 sky.cpt                FILE    "dists/engine-data/sky.cpt"
 #endif
-#if ENABLE_TEENAGENT == STATIC_PLUGIN
+#if ENABLE_TEENAGENT  == STATIC_PLUGIN
 teenagent.dat          FILE    "dists/engine-data/teenagent.dat"
 #endif
-#if ENABLE_TOON      == STATIC_PLUGIN
+#if ENABLE_TOON       == STATIC_PLUGIN
 toon.dat               FILE    "dists/engine-data/toon.dat"
 #endif
-#if ENABLE_TONY      == STATIC_PLUGIN
+#if ENABLE_TONY       == STATIC_PLUGIN
 tony.dat               FILE    "dists/engine-data/tony.dat"
 #endif
-#if ENABLE_AGI       == STATIC_PLUGIN
+#if ENABLE_WINTERMUTE == STATIC_PLUGIN
+wintermute.zip         FILE    "dists/engine-data/wintermute.zip"
+#endif
+#if ENABLE_AGI        == STATIC_PLUGIN
 pred.dic               FILE    "dists/pred.dic"
 #endif
 
@@ -72,7 +75,7 @@ BEGIN
             VALUE "FileDescription", "http://www.scummvm.org/\0"
             VALUE "FileVersion", "1.6.0git\0"
             VALUE "InternalName", "scummvm\0"
-            VALUE "LegalCopyright", "Copyright © 2001-2012 The ScummVM Team\0"
+            VALUE "LegalCopyright", "Copyright © 2001-2013 The ScummVM Team\0"
             VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft. Beneath a Steel Sky and Broken Sword are a TM of Revolution. Flight of the Amazon Queen is a TM of John Passfield and Steve Stamatiadis. \0"
             VALUE "OriginalFilename", "scummvm.exe\0"
             VALUE "ProductName", "ScummVM\0"

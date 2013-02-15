@@ -88,7 +88,7 @@ uint16 VDXPlayer::loadInternal() {
 
 	// Enable highspeed if we're not obeying fps, and not marked as special
 	// This will be disabled in chunk audio if we're actually an audio vdx
-	if ( _vm->_modeSpeed == kGroovieSpeediOS || (_vm->_modeSpeed == kGroovieSpeedTweaked && ((_flags & (1 << 15)) == 0)))
+	if (_vm->_modeSpeed == kGroovieSpeedFast && ((_flags & (1 << 15)) == 0))
 		setOverrideSpeed(true);
 
 	if (_flagOnePrev && !_flagOne && !_flagEight) {

@@ -75,7 +75,7 @@ bool MystConsole::Cmd_ChangeCard(int argc, const char **argv) {
 	}
 
 	_vm->_sound->stopSound();
-	_vm->changeToCard((uint16)atoi(argv[1]), true);
+	_vm->changeToCard((uint16)atoi(argv[1]), kTransitionCopy);
 
 	return false;
 }

@@ -54,8 +54,8 @@ AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
 	_itemWidth = _itemHeight = 50;
 	_scrollBy = 1;
 
-	_window = NULL;
-	_closeButton = NULL;
+	_window = nullptr;
+	_closeButton = nullptr;
 
 	_hideSelected = false;
 
@@ -67,10 +67,10 @@ AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdInventoryBox::~AdInventoryBox() {
 	_gameRef->unregisterObject(_window);
-	_window = NULL;
+	_window = nullptr;
 
 	delete _closeButton;
-	_closeButton = NULL;
+	_closeButton = nullptr;
 }
 
 
@@ -166,7 +166,7 @@ bool AdInventoryBox::display() {
 //////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdInventoryBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -256,7 +256,7 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 			_window = new UIWindow(_gameRef);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				delete _window;
-				_window = NULL;
+				_window = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				_gameRef->registerObject(_window);

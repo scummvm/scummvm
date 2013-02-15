@@ -77,7 +77,7 @@ AdScene::~AdScene() {
 	cleanup();
 	_gameRef->unregisterObject(_fader);
 	delete _pfTarget;
-	_pfTarget = NULL;
+	_pfTarget = nullptr;
 }
 
 
@@ -85,9 +85,9 @@ AdScene::~AdScene() {
 void AdScene::setDefaults() {
 	_initialized = false;
 	_pfReady = true;
-	_pfTargetPath = NULL;
-	_pfRequester = NULL;
-	_mainLayer = NULL;
+	_pfTargetPath = nullptr;
+	_pfRequester = nullptr;
+	_mainLayer = nullptr;
 
 	_pfPointsNum = 0;
 	_persistentState = false;
@@ -127,12 +127,12 @@ void AdScene::setDefaults() {
 	_editorShowEntities = true;
 	_editorShowScale    = true;
 
-	_shieldWindow = NULL;
+	_shieldWindow = nullptr;
 
 	_fader = new BaseFader(_gameRef);
 	_gameRef->registerObject(_fader);
 
-	_viewport = NULL;
+	_viewport = nullptr;
 }
 
 
@@ -140,13 +140,13 @@ void AdScene::setDefaults() {
 void AdScene::cleanup() {
 	BaseObject::cleanup();
 
-	_mainLayer = NULL; // reference only
+	_mainLayer = nullptr; // reference only
 
 	delete _shieldWindow;
-	_shieldWindow = NULL;
+	_shieldWindow = nullptr;
 
 	_gameRef->unregisterObject(_fader);
-	_fader = NULL;
+	_fader = nullptr;
 
 	for (uint32 i = 0; i < _layers.size(); i++) {
 		_gameRef->unregisterObject(_layers[i]);
@@ -182,7 +182,7 @@ void AdScene::cleanup() {
 	_objects.clear();
 
 	delete _viewport;
-	_viewport = NULL;
+	_viewport = nullptr;
 
 	setDefaults();
 }
@@ -287,9 +287,9 @@ float AdScene::getZoomAt(int x, int y) {
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.size() - 1; i >= 0; i--) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_blocked && node->_region->pointInRegion(x, y)) {
-				if (node->_region->_zoom != 0) {
-					ret = node->_region->_zoom;
+			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->isBlocked() && node->_region->pointInRegion(x, y)) {
+				if (node->_region->getZoom() != 0) {
+					ret = node->_region->getZoom();
 					found = true;
 					break;
 				}
@@ -320,9 +320,9 @@ uint32 AdScene::getAlphaAt(int x, int y, bool colorCheck) {
 	if (_mainLayer) {
 		for (int i = _mainLayer->_nodes.size() - 1; i >= 0; i--) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->_blocked) && node->_region->pointInRegion(x, y)) {
-				if (!node->_region->_blocked) {
-					ret = node->_region->_alpha;
+			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->isBlocked()) && node->_region->pointInRegion(x, y)) {
+				if (!node->_region->isBlocked()) {
+					ret = node->_region->getAlpha();
 				}
 				break;
 			}
@@ -365,8 +365,8 @@ bool AdScene::isBlockedAt(int x, int y, bool checkFreeObjects, BaseObject *reque
 			    break;
 			}
 			*/
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_decoration && node->_region->pointInRegion(x, y)) {
-				if (node->_region->_blocked) {
+			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->hasDecoration() && node->_region->pointInRegion(x, y)) {
+				if (node->_region->isBlocked()) {
 					ret = true;
 					break;
 				} else {
@@ -405,8 +405,8 @@ bool AdScene::isWalkableAt(int x, int y, bool checkFreeObjects, BaseObject *requ
 	if (_mainLayer) {
 		for (uint32 i = 0; i < _mainLayer->_nodes.size(); i++) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_decoration && node->_region->pointInRegion(x, y)) {
-				if (node->_region->_blocked) {
+			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->hasDecoration() && node->_region->pointInRegion(x, y)) {
+				if (node->_region->isBlocked()) {
 					ret = false;
 					break;
 				} else {
@@ -473,7 +473,7 @@ void AdScene::pathFinderStep() {
 	int i;
 	// get lowest unmarked
 	int lowestDist = INT_MAX;
-	AdPathPoint *lowestPt = NULL;
+	AdPathPoint *lowestPt = nullptr;
 
 	for (i = 0; i < _pfPointsNum; i++)
 		if (!_pfPath[i]->_marked && _pfPath[i]->_distance < lowestDist) {
@@ -481,7 +481,7 @@ void AdScene::pathFinderStep() {
 			lowestPt = _pfPath[i];
 		}
 
-	if (lowestPt == NULL) { // no path -> terminate PathFinder
+	if (lowestPt == nullptr) { // no path -> terminate PathFinder
 		_pfReady = true;
 		_pfTargetPath->setReady(true);
 		return;
@@ -491,7 +491,7 @@ void AdScene::pathFinderStep() {
 
 	// target point marked, generate path and terminate
 	if (lowestPt->x == _pfTarget->x && lowestPt->y == _pfTarget->y) {
-		while (lowestPt != NULL) {
+		while (lowestPt != nullptr) {
 			_pfTargetPath->_points.insert_at(0, new BasePoint(lowestPt->x, lowestPt->y));
 			lowestPt = lowestPt->_origin;
 		}
@@ -539,7 +539,7 @@ bool AdScene::initLoop() {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdScene::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -680,7 +680,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 			if (!layer || DID_FAIL(layer->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete layer;
-				layer = NULL;
+				layer = nullptr;
 			} else {
 				_gameRef->registerObject(layer);
 				_layers.add(layer);
@@ -698,7 +698,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 			if (!wpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete wpt;
-				wpt = NULL;
+				wpt = nullptr;
 			} else {
 				_gameRef->registerObject(wpt);
 				_waypointGroups.add(wpt);
@@ -711,7 +711,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 			if (!sl || DID_FAIL(sl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete sl;
-				sl = NULL;
+				sl = nullptr;
 			} else {
 				_gameRef->registerObject(sl);
 				_scaleLevels.add(sl);
@@ -724,7 +724,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 			if (!rl || DID_FAIL(rl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete rl;
-				rl = NULL;
+				rl = nullptr;
 			} else {
 				_gameRef->registerObject(rl);
 				_rotLevels.add(rl);
@@ -737,7 +737,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 			if (!entity || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
-				entity = NULL;
+				entity = nullptr;
 			} else {
 				addObject(entity);
 			}
@@ -749,7 +749,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
-				_cursor = NULL;
+				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -884,7 +884,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 		return STATUS_FAILED;
 	}
 
-	if (_mainLayer == NULL) {
+	if (_mainLayer == nullptr) {
 		_gameRef->LOG(0, "Warning: scene '%s' has no main layer.", getFilename());
 	}
 
@@ -923,7 +923,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 	// *** adjust scroll offset
 	if (doUpdate) {
 		/*
-		if (_autoScroll && _gameRef->_mainObject != NULL)
+		if (_autoScroll && _gameRef->_mainObject != nullptr)
 		{
 		    ScrollToObject(_gameRef->_mainObject);
 		}
@@ -932,24 +932,34 @@ bool AdScene::traverseNodes(bool doUpdate) {
 		if (_autoScroll) {
 			// adjust horizontal scroll
 			if (_gameRef->_timer - _lastTimeH >= _scrollTimeH) {
+				int timesMissed = (_gameRef->_timer - _lastTimeH) / _scrollTimeH;
+				// Cap the amount of catch-up to avoid jittery characters.
+				if (timesMissed > 2) {
+					timesMissed = 2;
+				}
 				_lastTimeH = _gameRef->_timer;
 				if (_offsetLeft < _targetOffsetLeft) {
-					_offsetLeft += _scrollPixelsH;
+					_offsetLeft += _scrollPixelsH * timesMissed;
 					_offsetLeft = MIN(_offsetLeft, _targetOffsetLeft);
 				} else if (_offsetLeft > _targetOffsetLeft) {
-					_offsetLeft -= _scrollPixelsH;
+					_offsetLeft -= _scrollPixelsH * timesMissed;
 					_offsetLeft = MAX(_offsetLeft, _targetOffsetLeft);
 				}
 			}
 
 			// adjust vertical scroll
 			if (_gameRef->_timer - _lastTimeV >= _scrollTimeV) {
+				int timesMissed = (_gameRef->_timer - _lastTimeV) / _scrollTimeV;
+				// Cap the amount of catch-up to avoid jittery characters.
+				if (timesMissed > 2) {
+					timesMissed = 2;
+				}
 				_lastTimeV = _gameRef->_timer;
 				if (_offsetTop < _targetOffsetTop) {
-					_offsetTop += _scrollPixelsV;
+					_offsetTop += _scrollPixelsV * timesMissed;
 					_offsetTop = MIN(_offsetTop, _targetOffsetTop);
 				} else if (_offsetTop > _targetOffsetTop) {
-					_offsetTop -= _scrollPixelsV;
+					_offsetTop -= _scrollPixelsV * timesMissed;
 					_offsetTop = MAX(_offsetTop, _targetOffsetTop);
 				}
 			}
@@ -1045,10 +1055,10 @@ bool AdScene::traverseNodes(bool doUpdate) {
 				break;
 
 			case OBJECT_REGION: {
-				if (node->_region->_blocked) {
+				if (node->_region->isBlocked()) {
 					break;
 				}
-				if (node->_region->_decoration) {
+				if (node->_region->hasDecoration()) {
 					break;
 				}
 
@@ -1068,7 +1078,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 			if (doUpdate) {
 				updateFreeObjects();
 			} else {
-				displayRegionContent(NULL);
+				displayRegionContent(nullptr);
 			}
 		}
 	} // each layer
@@ -1128,8 +1138,8 @@ bool AdScene::updateFreeObjects() {
 	}
 
 
-	if (_autoScroll && _gameRef->_mainObject != NULL) {
-		scrollToObject(_gameRef->_mainObject);
+	if (_autoScroll && _gameRef->getMainObject() != nullptr) {
+		scrollToObject(_gameRef->getMainObject());
 	}
 
 
@@ -1140,22 +1150,22 @@ bool AdScene::updateFreeObjects() {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 	AdGame *adGame = (AdGame *)_gameRef;
-	BaseArray<AdObject *> objects;
+	Common::Array<AdObject *> objects;
 	AdObject *obj;
 
 	// global objects
 	for (uint32 i = 0; i < adGame->_objects.size(); i++) {
 		obj = adGame->_objects[i];
-		if (obj->_active && !obj->_drawn && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
-			objects.add(obj);
+		if (obj->_active && !obj->_drawn && (obj->_stickRegion == region || region == nullptr || (obj->_stickRegion == nullptr && region->pointInRegion(obj->_posX, obj->_posY)))) {
+			objects.push_back(obj);
 		}
 	}
 
 	// scene objects
 	for (uint32 i = 0; i < _objects.size(); i++) {
 		obj = _objects[i];
-		if (obj->_active && !obj->_editorOnly && !obj->_drawn && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
-			objects.add(obj);
+		if (obj->_active && !obj->_editorOnly && !obj->_drawn && (obj->_stickRegion == region || region == nullptr || (obj->_stickRegion == nullptr && region->pointInRegion(obj->_posX, obj->_posY)))) {
+			objects.push_back(obj);
 		}
 	}
 
@@ -1181,7 +1191,7 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 
 	// display design only objects
 	if (!display3DOnly) {
-		if (_gameRef->_editorMode && region == NULL) {
+		if (_gameRef->_editorMode && region == nullptr) {
 			for (uint32 i = 0; i < _objects.size(); i++) {
 				if (_objects[i]->_active && _objects[i]->_editorOnly) {
 					_objects[i]->display();
@@ -1195,16 +1205,11 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int AdScene::compareObjs(const void *obj1, const void *obj2) {
-	const AdObject *object1 = *(const AdObject *const *)obj1;
-	const AdObject *object2 = *(const AdObject *const *)obj2;
-
-	if (object1->_posY < object2->_posY) {
-		return -1;
-	} else if (object1->_posY > object2->_posY) {
-		return 1;
+bool AdScene::compareObjs(const AdObject *obj1, const AdObject *obj2) {
+	if (obj1->_posY < obj2->_posY) {
+		return true;
 	} else {
-		return 0;
+		return false;
 	}
 }
 
@@ -1215,12 +1220,12 @@ bool AdScene::displayRegionContentOld(AdRegion *region) {
 
 	// display all objects in region sorted by _posY
 	do {
-		obj = NULL;
+		obj = nullptr;
 		int minY = INT_MAX;
 
 		// global objects
 		for (uint32 i = 0; i < adGame->_objects.size(); i++) {
-			if (adGame->_objects[i]->_active && !adGame->_objects[i]->_drawn && adGame->_objects[i]->_posY < minY && (adGame->_objects[i]->_stickRegion == region || region == NULL || (adGame->_objects[i]->_stickRegion == NULL && region->pointInRegion(adGame->_objects[i]->_posX, adGame->_objects[i]->_posY)))) {
+			if (adGame->_objects[i]->_active && !adGame->_objects[i]->_drawn && adGame->_objects[i]->_posY < minY && (adGame->_objects[i]->_stickRegion == region || region == nullptr || (adGame->_objects[i]->_stickRegion == nullptr && region->pointInRegion(adGame->_objects[i]->_posX, adGame->_objects[i]->_posY)))) {
 				obj = adGame->_objects[i];
 				minY = adGame->_objects[i]->_posY;
 			}
@@ -1228,14 +1233,14 @@ bool AdScene::displayRegionContentOld(AdRegion *region) {
 
 		// scene objects
 		for (uint32 i = 0; i < _objects.size(); i++) {
-			if (_objects[i]->_active && !_objects[i]->_editorOnly && !_objects[i]->_drawn && _objects[i]->_posY < minY && (_objects[i]->_stickRegion == region || region == NULL || (_objects[i]->_stickRegion == NULL && region->pointInRegion(_objects[i]->_posX, _objects[i]->_posY)))) {
+			if (_objects[i]->_active && !_objects[i]->_editorOnly && !_objects[i]->_drawn && _objects[i]->_posY < minY && (_objects[i]->_stickRegion == region || region == nullptr || (_objects[i]->_stickRegion == nullptr && region->pointInRegion(_objects[i]->_posX, _objects[i]->_posY)))) {
 				obj = _objects[i];
 				minY = _objects[i]->_posY;
 			}
 		}
 
 
-		if (obj != NULL) {
+		if (obj != nullptr) {
 			_gameRef->_renderer->setup2D();
 
 			if (_gameRef->_editorMode || !obj->_editorOnly) {
@@ -1243,11 +1248,11 @@ bool AdScene::displayRegionContentOld(AdRegion *region) {
 			}
 			obj->_drawn = true;
 		}
-	} while (obj != NULL);
+	} while (obj != nullptr);
 
 
 	// design only objects
-	if (_gameRef->_editorMode && region == NULL) {
+	if (_gameRef->_editorMode && region == nullptr) {
 		for (uint32 i = 0; i < _objects.size(); i++) {
 			if (_objects[i]->_active && _objects[i]->_editorOnly) {
 				_objects[i]->display();
@@ -1280,7 +1285,7 @@ void AdScene::scrollTo(int offsetX, int offsetY) {
 	_targetOffsetTop = MIN(_targetOffsetTop, _height - viewportHeight);
 
 
-	if (_gameRef->_mainObject && _gameRef->_mainObject->_is3D) {
+	if (_gameRef->getMainObject() && _gameRef->getMainObject()->_is3D) {
 		if (abs(origOffsetLeft - _targetOffsetLeft) < 5) {
 			_targetOffsetLeft = origOffsetLeft;
 		}
@@ -1341,7 +1346,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			stack->pushNative(act, true);
 		} else {
 			delete act;
-			act = NULL;
+			act = nullptr;
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -1358,7 +1363,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			stack->pushNative(ent, true);
 		} else {
 			delete ent;
-			ent = NULL;
+			ent = nullptr;
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -1499,7 +1504,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		AdObject *ret = NULL;
+		AdObject *ret = nullptr;
 		if (val->isInt()) {
 			int index = val->getInt();
 			if (index >= 0 && index < (int32)_objects.size()) {
@@ -1541,7 +1546,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			for (int i = _mainLayer->_nodes.size() - 1; i >= 0; i--) {
 				AdSceneNode *node = _mainLayer->_nodes[i];
 				if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->pointInRegion(x, y)) {
-					if (node->_region->_decoration && !includeDecors) {
+					if (node->_region->hasDecoration() && !includeDecors) {
 						continue;
 					}
 
@@ -1767,7 +1772,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		AdLayer *toDelete = NULL;
+		AdLayer *toDelete = nullptr;
 		if (val->isNative()) {
 			BaseScriptable *temp = val->getNative();
 			for (uint32 i = 0; i < _layers.size(); i++) {
@@ -1782,7 +1787,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 				toDelete = _layers[index];
 			}
 		}
-		if (toDelete == NULL) {
+		if (toDelete == nullptr) {
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
@@ -1873,7 +1878,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "MouseY") {
 		int viewportY;
-		getViewportOffset(NULL, &viewportY);
+		getViewportOffset(nullptr, &viewportY);
 
 		_scValue->setInt(_gameRef->_mousePos.y + _offsetTop - viewportY);
 		return _scValue;
@@ -2202,7 +2207,7 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	// free entities
 	buffer->putTextIndent(indent + 2, "; ----- free entities\n");
 	for (uint32 i = 0; i < _objects.size(); i++) {
-		if (_objects[i]->_type == OBJECT_ENTITY) {
+		if (_objects[i]->getType() == OBJECT_ENTITY) {
 			_objects[i]->saveAsText(buffer, indent + 2);
 
 		}
@@ -2263,8 +2268,8 @@ bool AdScene::sortRotLevels() {
 
 //////////////////////////////////////////////////////////////////////////
 float AdScene::getScaleAt(int Y) {
-	AdScaleLevel *prev = NULL;
-	AdScaleLevel *next = NULL;
+	AdScaleLevel *prev = nullptr;
+	AdScaleLevel *next = nullptr;
 
 	for (uint32 i = 0; i < _scaleLevels.size(); i++) {
 		/* AdScaleLevel *xxx = _scaleLevels[i];*/
@@ -2277,16 +2282,16 @@ float AdScene::getScaleAt(int Y) {
 		}
 	}
 
-	if (prev == NULL || next == NULL) {
+	if (prev == nullptr || next == nullptr) {
 		return 100;
 	}
 
 	int delta_y = next->_posY - prev->_posY;
-	float delta_scale = next->_scale - prev->_scale;
+	float delta_scale = next->getScale() - prev->getScale();
 	Y -= prev->_posY;
 
 	float percent = (float)Y / ((float)delta_y / 100.0f);
-	return prev->_scale + delta_scale / 100 * percent;
+	return prev->getScale() + delta_scale / 100 * percent;
 }
 
 
@@ -2509,7 +2514,7 @@ void AdScene::pfPointsAdd(int x, int y, int distance) {
 		_pfPath[_pfPointsNum]->y = y;
 		_pfPath[_pfPointsNum]->_distance = distance;
 		_pfPath[_pfPointsNum]->_marked = false;
-		_pfPath[_pfPointsNum]->_origin = NULL;
+		_pfPath[_pfPointsNum]->_origin = nullptr;
 	}
 
 	_pfPointsNum++;
@@ -2586,7 +2591,7 @@ int AdScene::getOffsetLeft() {
 //////////////////////////////////////////////////////////////////////////
 int AdScene::getOffsetTop() {
 	int viewportY;
-	getViewportOffset(NULL, &viewportY);
+	getViewportOffset(nullptr, &viewportY);
 
 	return _offsetTop - viewportY;
 }
@@ -2612,7 +2617,7 @@ void AdScene::setOffset(int offsetLeft, int offsetTop) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseObject *AdScene::getNodeByName(const char *name) {
-	BaseObject *ret = NULL;
+	BaseObject *ret = nullptr;
 
 	// dependent objects
 	for (uint32 i = 0; i < _layers.size(); i++) {
@@ -2629,7 +2634,7 @@ BaseObject *AdScene::getNodeByName(const char *name) {
 					ret = node->_region;
 					break;
 				default:
-					ret = NULL;
+					ret = nullptr;
 				}
 				return ret;
 			}
@@ -2638,7 +2643,7 @@ BaseObject *AdScene::getNodeByName(const char *name) {
 
 	// free entities
 	for (uint32 i = 0; i < _objects.size(); i++) {
-		if (_objects[i]->_type == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->getName())) {
+		if (_objects[i]->getType() == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->getName())) {
 			return _objects[i];
 		}
 	}
@@ -2650,7 +2655,7 @@ BaseObject *AdScene::getNodeByName(const char *name) {
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 
@@ -2722,7 +2727,7 @@ bool AdScene::persistState(bool saving) {
 		if (!_objects[i]->_saveState) {
 			continue;
 		}
-		if (_objects[i]->_type == OBJECT_ENTITY) {
+		if (_objects[i]->getType() == OBJECT_ENTITY) {
 			nodeState = state->getNodeState(_objects[i]->getName(), saving);
 			if (nodeState) {
 				nodeState->transferEntity((AdEntity *)_objects[i], _persistentStateSprites, saving);
@@ -2750,8 +2755,8 @@ bool AdScene::persistState(bool saving) {
 
 //////////////////////////////////////////////////////////////////////////
 float AdScene::getRotationAt(int x, int y) {
-	AdRotLevel *prev = NULL;
-	AdRotLevel *next = NULL;
+	AdRotLevel *prev = nullptr;
+	AdRotLevel *next = nullptr;
 
 	for (uint32 i = 0; i < _rotLevels.size(); i++) {
 		/*  AdRotLevel *xxx = _rotLevels[i];
@@ -2764,7 +2769,7 @@ float AdScene::getRotationAt(int x, int y) {
 		}
 	}
 
-	if (prev == NULL || next == NULL) {
+	if (prev == nullptr || next == nullptr) {
 		return 0;
 	}
 
@@ -2785,7 +2790,7 @@ bool AdScene::handleItemAssociations(const char *itemName, bool show) {
 			if (layer->_nodes[j]->_type == OBJECT_ENTITY) {
 				AdEntity *ent = layer->_nodes[j]->_entity;
 
-				if (ent->_item && strcmp(ent->_item, itemName) == 0) {
+				if (ent->getItemName() && strcmp(ent->getItemName(), itemName) == 0) {
 					ent->_active = show;
 				}
 			}
@@ -2793,9 +2798,9 @@ bool AdScene::handleItemAssociations(const char *itemName, bool show) {
 	}
 
 	for (uint32 i = 0; i < _objects.size(); i++) {
-		if (_objects[i]->_type == OBJECT_ENTITY) {
+		if (_objects[i]->getType() == OBJECT_ENTITY) {
 			AdEntity *ent = (AdEntity *)_objects[i];
-			if (ent->_item && strcmp(ent->_item, itemName) == 0) {
+			if (ent->getItemName() && strcmp(ent->getItemName(), itemName) == 0) {
 				ent->_active = show;
 			}
 		}
@@ -2822,7 +2827,7 @@ bool AdScene::getRegionsAt(int x, int y, AdRegion **regionList, int numRegions) 
 		}
 	}
 	for (int i = numUsed; i < numRegions; i++) {
-		regionList[i] = NULL;
+		regionList[i] = nullptr;
 	}
 
 	return STATUS_OK;
@@ -2840,9 +2845,9 @@ BaseObject *AdScene::getNextAccessObject(BaseObject *currObject) {
 	getSceneObjects(objects, true);
 
 	if (objects.size() == 0) {
-		return NULL;
+		return nullptr;
 	} else {
-		if (currObject != NULL) {
+		if (currObject != nullptr) {
 			for (uint32 i = 0; i < objects.size(); i++) {
 				if (objects[i] == currObject) {
 					if (i < objects.size() - 1) {
@@ -2855,7 +2860,7 @@ BaseObject *AdScene::getNextAccessObject(BaseObject *currObject) {
 		}
 		return objects[0];
 	}
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2864,9 +2869,9 @@ BaseObject *AdScene::getPrevAccessObject(BaseObject *currObject) {
 	getSceneObjects(objects, true);
 
 	if (objects.size() == 0) {
-		return NULL;
+		return nullptr;
 	} else {
-		if (currObject != NULL) {
+		if (currObject != nullptr) {
 			for (int i = objects.size() - 1; i >= 0; i--) {
 				if (objects[i] == currObject) {
 					if (i > 0) {
@@ -2879,7 +2884,7 @@ BaseObject *AdScene::getPrevAccessObject(BaseObject *currObject) {
 		}
 		return objects[objects.size() - 1];
 	}
-	return NULL;
+	return nullptr;
 }
 
 
@@ -2957,7 +2962,7 @@ bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects,
 	// global objects
 	for (uint32 i = 0; i < adGame->_objects.size(); i++) {
 		obj = adGame->_objects[i];
-		if (obj->_active && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
+		if (obj->_active && (obj->_stickRegion == region || region == nullptr || (obj->_stickRegion == nullptr && region->pointInRegion(obj->_posX, obj->_posY)))) {
 			if (interactiveOnly && !obj->_registrable) {
 				continue;
 			}
@@ -2969,7 +2974,7 @@ bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects,
 	// scene objects
 	for (uint32 i = 0; i < _objects.size(); i++) {
 		obj = _objects[i];
-		if (obj->_active && !obj->_editorOnly && (obj->_stickRegion == region || region == NULL || (obj->_stickRegion == NULL && region->pointInRegion(obj->_posX, obj->_posY)))) {
+		if (obj->_active && !obj->_editorOnly && (obj->_stickRegion == region || region == nullptr || (obj->_stickRegion == nullptr && region->pointInRegion(obj->_posX, obj->_posY)))) {
 			if (interactiveOnly && !obj->_registrable) {
 				continue;
 			}

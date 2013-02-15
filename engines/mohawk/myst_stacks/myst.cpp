@@ -51,6 +51,8 @@ Myst::Myst(MohawkEngine_Myst *vm) :
 	_dockVaultState = 0;
 	_cabinDoorOpened = 0;
 	_cabinMatchState = 2;
+	_cabinGaugeMovie = NULL_VID_HANDLE;
+	_cabinFireMovie = NULL_VID_HANDLE;
 	_matchBurning = false;
 	_tree = 0;
 	_treeAlcove = 0;
@@ -189,7 +191,7 @@ void Myst::setupOpcodes() {
 	OPCODE(215, o_gulls2_init);
 	OPCODE(216, o_treeCard_init);
 	OPCODE(217, o_treeEntry_init);
-	OPCODE(218, opcode_218);
+	OPCODE(218, o_boilerMovies_init);
 	OPCODE(219, o_rocketSliders_init);
 	OPCODE(220, o_rocketLinkVideo_init);
 	OPCODE(221, o_greenBook_init);
@@ -202,7 +204,7 @@ void Myst::setupOpcodes() {
 	OPCODE(303, NOP);
 	OPCODE(304, o_treeCard_exit);
 	OPCODE(305, o_treeEntry_exit);
-	OPCODE(306, NOP);
+	OPCODE(306, o_boiler_exit);
 	OPCODE(307, o_generatorControlRoom_exit);
 	OPCODE(308, NOP);
 	OPCODE(309, NOP);
@@ -608,6 +610,8 @@ uint16 Myst::getVar(uint16 var) {
 		return 1;
 	case 302: // Green Book Opened Before Flag
 		return _state.greenBookOpenedBefore;
+	case 303: // Library Bookcase status changed
+		return _libraryBookcaseChanged;
 	case 304: // Tower Rotation Map Initialized
 		return _towerRotationMapInitialized;
 	case 305: // Cabin Boiler Lit
@@ -1041,7 +1045,7 @@ void Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 	// No page or white page
 	if (!_globals.heldPage || _globals.heldPage == 13) {
-		_vm->changeToCard(cardIdBookCover, true);
+		_vm->changeToCard(cardIdBookCover, kTransitionDissolve);
 		return;
 	}
 
@@ -1083,7 +1087,7 @@ void Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 
 	// Wrong book
 	if (bookVar != var) {
-		_vm->changeToCard(cardIdBookCover, true);
+		_vm->changeToCard(cardIdBookCover, kTransitionDissolve);
 		return;
 	}
 
@@ -1109,9 +1113,9 @@ void Myst::o_bookGivePage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 		else
 			_globals.currentAge = 10;
 
-		_vm->changeToCard(cardIdLose, true);
+		_vm->changeToCard(cardIdLose, kTransitionDissolve);
 	} else {
-		_vm->changeToCard(cardIdBookCover, true);
+		_vm->changeToCard(cardIdBookCover, kTransitionDissolve);
 	}
 }
 
@@ -1298,7 +1302,7 @@ void Myst::imagerValidation_run() {
 
 		if (_imagerValidationStep == 11) {
 			_imagerValidationStep = 0;
-			_vm->changeToCard(_imagerValidationCard, true);
+			_vm->changeToCard(_imagerValidationCard, kTransitionBottomToTop);
 		} else {
 			_startTime = time + 100;
 		}
@@ -1473,10 +1477,10 @@ void Myst::o_cabinSafeHandleMove(uint16 op, uint16 var, uint16 argc, uint16 *arg
 			if (soundId)
 				_vm->_sound->replaceSoundMyst(soundId);
 
-			_vm->changeToCard(4103, false);
+			_vm->changeToCard(4103, kNoTransition);
 
 			Common::Rect screenRect = Common::Rect(544, 333);
-			_vm->_gfx->runTransition(0, screenRect, 2, 5);
+			_vm->_gfx->runTransition(kTransitionLeftToRight, screenRect, 2, 5);
 		}
 		_tempVar = 1;
 	} else {
@@ -1869,17 +1873,50 @@ void Myst::o_boilerLightPilot(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 		_state.cabinPilotLightLit = 1;
 		_vm->redrawArea(98);
 
+		boilerFireUpdate(false);
+
 		// Put out match
 		_matchGoOutTime = _vm->_system->getMillis();
 
 		if (_state.cabinValvePosition > 0)
 			_vm->_sound->replaceBackgroundMyst(8098, 49152);
 
-		if (_state.cabinValvePosition > 12)
-			_state.treeLastMoveTime = _vm->_system->getMillis();
+		if (_state.cabinValvePosition > 12) {
+			// Compute the speed of the gauge to synchronize it with the next tree move
+			uint32 delay = treeNextMoveDelay(_state.cabinValvePosition);
+			Common::Rational rate = boilerComputeGaugeRate(_state.cabinValvePosition, delay);
+			boilerResetGauge(rate);
 
-		// TODO: Complete. Play movies
+			_state.treeLastMoveTime = _vm->_system->getMillis();
+		}
 	}
+}
+
+Common::Rational Myst::boilerComputeGaugeRate(uint16 pressure, uint32 delay) {
+	Common::Rational rate = Common::Rational(2088, delay);
+	if (pressure < 12)
+		return -rate;
+	else
+		return rate;
+}
+
+void Myst::boilerResetGauge(const Common::Rational &rate) {
+	if (_vm->_video->endOfVideo(_cabinGaugeMovie)) {
+		if (_vm->getCurCard() == 4098) {
+			_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabingau", kMystStack), 243, 96);
+		} else {
+			_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabcgfar", kMystStack), 254, 136);
+		}
+	}
+
+	Audio::Timestamp goTo;
+	if (rate > 0)
+		goTo = Audio::Timestamp(0, 0, 600);
+	else
+		goTo = _vm->_video->getDuration(_cabinGaugeMovie);
+
+	_vm->_video->seekToTime(_cabinGaugeMovie, goTo);
+	_vm->_video->setVideoRate(_cabinGaugeMovie, rate);
 }
 
 void Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -1893,7 +1930,12 @@ void Myst::o_boilerIncreasePressureStop(uint16 op, uint16 var, uint16 argc, uint
 		if (_state.cabinValvePosition > 0)
 			_vm->_sound->replaceBackgroundMyst(8098, 49152);
 
-		// TODO: Play movies
+		if (!_vm->_video->endOfVideo(_cabinGaugeMovie)) {
+			uint16 delay = treeNextMoveDelay(_state.cabinValvePosition);
+			Common::Rational rate = boilerComputeGaugeRate(_state.cabinValvePosition, delay);
+			_vm->_video->setVideoRate(_cabinGaugeMovie, rate);
+		}
+
 	} else if (_state.cabinValvePosition > 0)
 		_vm->_sound->replaceBackgroundMyst(4098, _state.cabinValvePosition << 10);
 }
@@ -1903,7 +1945,8 @@ void Myst::boilerPressureIncrease_run() {
 	if (!_vm->_sound->isPlaying(5098) && _state.cabinValvePosition < 25) {
 		_state.cabinValvePosition++;
 		if (_state.cabinValvePosition == 1) {
-			// TODO: Play fire movie
+			// Set fire to high
+			boilerFireUpdate(false);
 
 			// Draw fire
 			_vm->redrawArea(305);
@@ -1927,7 +1970,8 @@ void Myst::boilerPressureDecrease_run() {
 	if (!_vm->_sound->isPlaying(5098) && _state.cabinValvePosition > 0) {
 		_state.cabinValvePosition--;
 		if (_state.cabinValvePosition == 0) {
-			// TODO: Play fire movie
+			// Set fire to low
+			boilerFireUpdate(false);
 
 			// Draw fire
 			_vm->redrawArea(305);
@@ -1961,7 +2005,12 @@ void Myst::o_boilerDecreasePressureStop(uint16 op, uint16 var, uint16 argc, uint
 		if (_state.cabinValvePosition > 0)
 			_vm->_sound->replaceBackgroundMyst(8098, 49152);
 
-		// TODO: Play movies
+		if (!_vm->_video->endOfVideo(_cabinGaugeMovie)) {
+			uint16 delay = treeNextMoveDelay(_state.cabinValvePosition);
+			Common::Rational rate = boilerComputeGaugeRate(_state.cabinValvePosition, delay);
+			_vm->_video->setVideoRate(_cabinGaugeMovie, rate);
+		}
+
 	} else {
 		if (_state.cabinValvePosition > 0)
 			_vm->_sound->replaceBackgroundMyst(4098, _state.cabinValvePosition << 10);
@@ -2066,6 +2115,11 @@ void Myst::tree_run() {
 
 				// Check if alcove is accessible
 				treeSetAlcoveAccessible();
+
+				if (_cabinGaugeMovie != NULL_VID_HANDLE) {
+					Common::Rational rate = boilerComputeGaugeRate(pressure, delay);
+					boilerResetGauge(rate);
+				}
 
 				_state.treeLastMoveTime = time;
 			}
@@ -2968,7 +3022,12 @@ void Myst::clockReset() {
 		_vm->_system->delayMillis(1000);
 		_vm->_sound->replaceSoundMyst(7113);
 
-		// TODO: Play cl1wggat backwards
+		// Gear closing movie
+		VideoHandle handle = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wggat", kMystStack) , 195, 225);
+		_vm->_video->seekToTime(handle, _vm->_video->getDuration(handle));
+		_vm->_video->setVideoRate(handle, -1);
+		_vm->_video->waitUntilMovieEnds(handle);
+
 		// Redraw gear
 		_state.gearsOpen = 0;
 		_vm->redrawArea(40);
@@ -2980,16 +3039,9 @@ void Myst::clockReset() {
 void Myst::clockResetWeight() {
 	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
 
-	if (!(_vm->getFeatures() & GF_ME)) {
-		// Set video bounds, weight going up
-		_vm->_video->setVideoBounds(_clockWeightVideo,
-				Audio::Timestamp(0, 2214 * 2 - _clockWeightPosition, 600),
-				Audio::Timestamp(0, 2214 * 2, 600));
-	} else {
-		//FIXME: Needs QT backwards playing, for now just display the weight up
-		warning("Weight going back up not implemented");
-		_vm->_video->drawVideoFrame(_clockWeightVideo, Audio::Timestamp(0, 0, 600));
-	}
+	// Play the movie backwards, weight going up
+	_vm->_video->seekToTime(_clockWeightVideo, Audio::Timestamp(0, _clockWeightPosition, 600));
+	_vm->_video->setVideoRate(_clockWeightVideo, -1);
 
 	// Reset position
 	_clockWeightPosition = 0;
@@ -3246,7 +3298,7 @@ void Myst::libraryBookcaseTransform_run(void) {
 
 		if (_state.libraryBookcaseDoor) {
 			_vm->_gfx->copyImageSectionToBackBuffer(11179, Common::Rect(0, 0, 106, 81), Common::Rect(0, 72, 106, 153));
-			_vm->_gfx->runTransition(6, Common::Rect(0, 72, 106, 153), 5, 10);
+			_vm->_gfx->runTransition(kTransitionBottomToTop, Common::Rect(0, 72, 106, 153), 5, 10);
 			_vm->_sound->playSoundBlocking(7348);
 			_vm->_sound->replaceBackgroundMyst(4348, 16384);
 		} else {
@@ -3510,22 +3562,60 @@ void Myst::o_treeEntry_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	treeSetAlcoveAccessible();
 }
 
-void Myst::opcode_218(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Myst::o_boilerMovies_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Boiler movies init", op);
 
-	// Used for Card 4097 (Cabin Boiler)
-	// TODO: Fill in logic
-	if (false) {
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cabfirfr", kMystStack), 254, 244);
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cabcgfar", kMystStack), 254, 138);
+	boilerFireInit();
+	boilerGaugeInit();
+}
+
+void Myst::boilerFireInit() {
+	if (_vm->getCurCard() == 4098) {
+		_cabinFireMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabfire", kMystStack), 240, 279, true);
+		_vm->_video->pauseMovie(_cabinFireMovie, true);
+
+		_vm->redrawArea(305);
+		boilerFireUpdate(true);
+	} else {
+		if (_state.cabinPilotLightLit == 1 && _state.cabinValvePosition >= 1) {
+			_cabinFireMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabfirfr", kMystStack), 254, 244, true);
+		}
+	}
+}
+
+void Myst::boilerFireUpdate(bool init) {
+	uint position = _vm->_video->getTime(_cabinFireMovie);
+
+	if (_state.cabinPilotLightLit == 1) {
+		if (_state.cabinValvePosition == 0) {
+			if (position > (uint)Audio::Timestamp(0, 200, 600).msecs() || init) {
+				_vm->_video->setVideoBounds(_cabinFireMovie, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 100, 600));
+				_vm->_video->pauseMovie(_cabinFireMovie, false);
+			}
+		} else {
+			if (position < (uint)Audio::Timestamp(0, 200, 600).msecs() || init) {
+				_vm->_video->setVideoBounds(_cabinFireMovie, Audio::Timestamp(0, 201, 600), Audio::Timestamp(0, 1900, 600));
+				_vm->_video->pauseMovie(_cabinFireMovie, false);
+			}
+		}
+	}
+}
+
+void Myst::boilerGaugeInit() {
+	if (_vm->getCurCard() == 4098) {
+		_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabingau", kMystStack), 243, 96);
+	} else {
+		_cabinGaugeMovie = _vm->_video->playMovie(_vm->wrapMovieFilename("cabcgfar", kMystStack), 254, 136);
 	}
 
-	// Used for Card 4098 (Cabin Boiler)
-	// TODO: Fill in logic
-	if (false) {
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cabfire", kMystStack), 240, 279);
-		_vm->_video->playMovieBlocking(_vm->wrapMovieFilename("cabingau", kMystStack), 243, 97);
-	}
+	Audio::Timestamp frame;
+
+	if (_state.cabinPilotLightLit == 1 && _state.cabinValvePosition > 12)
+		frame = _vm->_video->getDuration(_cabinGaugeMovie);
+	else
+		frame = Audio::Timestamp(0, 0, 600);
+
+	_vm->_video->drawVideoFrame(_cabinGaugeMovie, frame);
 }
 
 void Myst::o_rocketSliders_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -3646,6 +3736,13 @@ void Myst::o_treeEntry_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Exit tree card with entry", op);
 
 	_treeAlcove = 0;
+}
+
+void Myst::o_boiler_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Exit boiler card", op);
+
+	_cabinGaugeMovie = NULL_VID_HANDLE;
+	_cabinFireMovie = NULL_VID_HANDLE;
 }
 
 void Myst::o_generatorControlRoom_exit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

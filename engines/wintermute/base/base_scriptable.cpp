@@ -39,14 +39,14 @@ BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable)
 	_refCount = 0;
 
 	if (noValue) {
-		_scValue = NULL;
+		_scValue = nullptr;
 	} else {
 		_scValue = new ScValue(_gameRef);
 	}
 
 	_persistable = persistable;
 
-	_scProp = NULL;
+	_scProp = nullptr;
 }
 
 
@@ -55,8 +55,8 @@ BaseScriptable::~BaseScriptable() {
 	//if (_refCount>0) _gameRef->LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
 	delete _scValue;
 	delete _scProp;
-	_scValue = NULL;
-	_scProp = NULL;
+	_scValue = nullptr;
+	_scProp = nullptr;
 }
 
 
@@ -83,7 +83,7 @@ ScValue *BaseScriptable::scGetProperty(const Common::String &name) {
 	if (_scProp) {
 		return _scProp->getProp(name.c_str()); // TODO: Change to Common::String
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -178,14 +178,14 @@ void BaseScriptable::scDebuggerDesc(char *buf, int bufSize) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptable::canHandleMethod(const char *eventMethod) {
+bool BaseScriptable::canHandleMethod(const char *eventMethod) const {
 	return false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
-	return NULL;
+	return nullptr;
 }
 
 } // end of namespace Wintermute

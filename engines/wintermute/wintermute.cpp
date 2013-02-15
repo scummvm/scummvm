@@ -34,6 +34,7 @@
 #include "engines/util.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/debugger.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_engine.h"
 
@@ -48,6 +49,8 @@ namespace Wintermute {
 // This might not be the prettiest solution
 WintermuteEngine::WintermuteEngine() : Engine(g_system) {
 	_game = new AdGame("");
+	_debugger = nullptr;
+	_trigDebug = false;
 }
 
 WintermuteEngine::WintermuteEngine(OSystem *syst, const ADGameDescription *desc)
@@ -55,6 +58,7 @@ WintermuteEngine::WintermuteEngine(OSystem *syst, const ADGameDescription *desc)
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
+	ConfMan.registerDefault("show_fps","false");
 
 	// Do not initialize graphics here
 
@@ -70,14 +74,16 @@ WintermuteEngine::WintermuteEngine(OSystem *syst, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kWintermuteDebugAudio, "audio", "audio-playback-related issues");
 	DebugMan.addDebugChannel(kWintermuteDebugGeneral, "general", "various issues not covered by any of the above");
 
-	_game = NULL;
+	_game = nullptr;
+	_debugger = nullptr;
+	_trigDebug = false;
 }
 
 WintermuteEngine::~WintermuteEngine() {
 	// Dispose your resources here
 	deinit();
 	delete _game;
-	delete _console;
+	delete _debugger;
 
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
@@ -106,7 +112,7 @@ Common::Error WintermuteEngine::run() {
 	}
 
 	// Create debugger console. It requires GFX to be initialized
-	_console = new Console(this);
+	_debugger = new Console(this);
 
 //	DebugMan.enableDebugChannel("enginelog");
 	debugC(1, kWintermuteDebugLog, "Engine Debug-LOG enabled");
@@ -133,7 +139,7 @@ int WintermuteEngine::init() {
 		return 1;
 	}
 	BaseEngine::instance().setGameRef(_game);
-	BasePlatform::initialize(_game, 0, NULL);
+	BasePlatform::initialize(this, _game, 0, nullptr);
 
 	bool windowedMode = !ConfMan.getBool("fullscreen");
 
@@ -168,7 +174,7 @@ int WintermuteEngine::init() {
 	if (DID_FAIL(_game->loadSettings("startup.settings"))) {
 		_game->LOG(0, "Error loading game settings.");
 		delete _game;
-		_game = NULL;
+		_game = nullptr;
 
 		warning("Some of the essential files are missing. Please reinstall.");
 		return 2;
@@ -184,7 +190,7 @@ int WintermuteEngine::init() {
 		_game->LOG(ret, "Error initializing renderer. Exiting.");
 
 		delete _game;
-		_game = NULL;
+		_game = nullptr;
 		return 3;
 	}
 
@@ -203,7 +209,7 @@ int WintermuteEngine::init() {
 	if (DID_FAIL(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
 		delete _game;
-		_game = NULL;
+		_game = nullptr;
 		return false;
 	}
 
@@ -230,11 +236,18 @@ int WintermuteEngine::messageLoop() {
 	uint32 diff = 0;
 
 	const uint32 maxFPS = 60;
-	const uint32 frameTime = (uint32)((1.0 / maxFPS) * 1000);
+	const uint32 frameTime = 2 * (uint32)((1.0 / maxFPS) * 1000);
 	while (!done) {
+		_debugger->onFrame();
+
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 			BasePlatform::handleEvent(&event);
+		}
+
+		if (_trigDebug) {
+			_debugger->attach();
+			_trigDebug = false;
 		}
 
 		if (_game && _game->_renderer->_active && _game->_renderer->_ready) {
@@ -265,13 +278,14 @@ int WintermuteEngine::messageLoop() {
 
 	if (_game) {
 		delete _game;
-		_game = NULL;
+		_game = nullptr;
 	}
 	return 0;
 }
 
 void WintermuteEngine::deinit() {
 	BaseEngine::destroy();
+	BasePlatform::deinit();
 }
 
 Common::Error WintermuteEngine::loadGameState(int slot) {
@@ -295,7 +309,7 @@ bool WintermuteEngine::canLoadGameStateCurrently() {
 bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String &name, Common::String &caption) {
 	bool retVal = false;
 	caption = name = "(invalid)";
-	Common::SeekableReadStream *stream = NULL;
+	Common::SeekableReadStream *stream = nullptr;
 	// Quick-fix, instead of possibly breaking the persistence-system, let's just roll with it
 	BaseFileManager *fileMan = new BaseFileManager(Common::UNK_LANG);
 	fileMan->registerPackages(fslist);

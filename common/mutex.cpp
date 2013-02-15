@@ -75,4 +75,4 @@ void StackLock::unlock() {
 	g_system->unlockMutex(_mutex);
 }
 
-}	// End of namespace Common
+} // End of namespace Common

@@ -73,7 +73,7 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 
 	while (remainingBlocks) { // Repeat until all blocks are decompressed
 		if (!controlBits) {
-			controlData = READ_LE_UINT16(srcIdx);
+			controlData = READ_16(srcIdx);
 			srcIdx += 2;
 
 			// If bit 15 of controlData is enabled, compression data is type 1.
@@ -92,7 +92,7 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 			// If there is compression, we need to fetch an index
 			// to be treated as "base" for compression.
 			if (compressionType != 0) {
-				controlData = READ_LE_UINT16(srcIdx);
+				controlData = READ_16(srcIdx);
 				srcIdx += 2;
 				baseIndex = controlData;
 			}
@@ -114,7 +114,7 @@ uint8* psxPJCRLEUnwinder(uint16 imageWidth, uint16 imageHeight, uint8 *srcIdx) {
 		switch (compressionType) {
 			case 0: // No compression, plain copy of indexes
 				while (decremTiles) {
-					WRITE_LE_UINT16(dstIdx, READ_LE_UINT16(srcIdx));
+					WRITE_LE_UINT16(dstIdx, READ_16(srcIdx));
 					srcIdx += 2;
 					dstIdx += 2;
 					decremTiles--;
@@ -210,6 +210,82 @@ static void t0WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 			destP += SCREEN_WIDTH;
 	}
 }
+
+/**
+ * Straight rendering with transparency support, Mac variant
+ */
+static void MacDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool applyClipping) {
+	int yClip = 0;
+
+	if (applyClipping) {
+		// Adjust the height down to skip any bottom clipping
+		pObj->height -= pObj->botClip;
+		yClip = pObj->topClip;
+	}
+
+	// Simple RLE-like scheme: the two first bytes of each data chunk determine
+	// if bytes should be repeated or copied.
+	// Example: 10 00 00 20 will repeat byte 0x0 0x10 times, and will copy 0x20
+	// bytes from the input stream afterwards
+
+	// Vertical loop
+	for (int y = 0; y < pObj->height; ++y) {
+		// Get the start of the next line output
+		uint8 *tempDest = destP;
+
+		int leftClip = applyClipping ? pObj->leftClip : 0;
+		int rightClip = applyClipping ? pObj->rightClip : 0;
+
+		// Horizontal loop
+		for (int x = 0; x < pObj->width; ) {
+			byte repeatBytes = *srcP++;
+
+			if (repeatBytes) {
+				uint clipAmount = MIN<int>(repeatBytes, leftClip);
+				leftClip -= clipAmount;
+				x += clipAmount;
+
+				// Repeat of a given color
+				byte color = *srcP++;
+				int runLength = repeatBytes - clipAmount;
+				int rptLength = MAX(MIN(runLength, pObj->width - rightClip - x), 0);
+				if (yClip == 0) {
+					if (color != 0)
+						memset(tempDest, color, rptLength);
+					tempDest += rptLength;
+				}
+
+				x += runLength;
+			} else {
+				// Copy a specified sequence length of pixels
+				byte copyBytes = *srcP++;
+
+				uint clipAmount = MIN<int>(copyBytes, leftClip);
+				leftClip -= clipAmount;
+				x += clipAmount;
+				srcP += clipAmount;
+
+				int runLength = copyBytes - clipAmount;
+				int rptLength = MAX(MIN(runLength, pObj->width - rightClip - x), 0);
+				if (yClip == 0) {
+					memmove(tempDest, srcP, rptLength);
+					tempDest += rptLength;
+				}
+
+				int overflow = (copyBytes % 2) == 0 ? 0 : 2 - (copyBytes % 2);
+				x += runLength;
+				srcP += runLength + overflow;
+			}
+		}	// horizontal loop
+
+		// Move to next line
+		if (yClip > 0)
+			--yClip;
+		else
+			destP += SCREEN_WIDTH;
+	}	// vertical loop
+}
+
 
 /**
  * Straight rendering with transparency support, PSX variant supporting also 4-BIT clut data
@@ -822,119 +898,58 @@ void DrawObject(DRAWOBJECT *pObj) {
 
 	// Handle various draw types
 	uint8 typeId = pObj->flags & 0xff;
+	int packType = pObj->flags >> 14;	// TinselV2
 
-	if (TinselV2) {
-		// Tinsel v2 decoders
-		// Initial switch statement for the different bit packing types
-		int packType = pObj->flags >> 14;
+	if (TinselV2 && packType != 0) {
+		// Color packing for TinselV2
 
-		if (packType == 0) {
-			// No color packing
-			switch (typeId) {
-			case 0x01:
-			case 0x11:
-			case 0x41:
-			case 0x51:
-			case 0x81:
-			case 0xC1:
-				t2WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, (typeId & 0x10) != 0);
-				break;
-			case 0x02:
-			case 0x42:
-				// This renderer called 'RlWrtAll', but is the same as t2WrtNonZero
-				t2WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, false);
-				break;
-			case 0x04:
-			case 0x44:
-				// WrtConst with/without clipping
-				WrtConst(pObj, destPtr, typeId == 0x44);
-				break;
-			case 0x08:
-			case 0x48:
-				WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
-				break;
-			case 0x84:
-			case 0xC4:
-				// WrtTrans with/without clipping
-				WrtTrans(pObj, destPtr, typeId == 0xC4);
-				break;
-			default:
-				error("Unknown drawing type %d", typeId);
-			}
-		} else {
-			// 1 = 16 from 240
-			// 2 = 16 from 224
-			// 3 = variable color
-			if (packType == 1) pObj->baseCol = 0xF0;
-			else if (packType == 2) pObj->baseCol = 0xE0;
+		if (packType == 1)
+			pObj->baseCol = 0xF0;	// 16 from 240
+		else if (packType == 2)
+			pObj->baseCol = 0xE0;	// 16 from 224
+		// 3 = variable color
 
-			PackedWrtNonZero(pObj, srcPtr, destPtr, (pObj->flags & DMA_CLIP) != 0,
-				(pObj->flags & DMA_FLIPH), packType);
-		}
-
-	} else if (TinselV1PSX) {
-		// Tinsel v1 decoders, PSX specific variants
-		switch (typeId) {
-		case 0x01:
-		case 0x41:
-			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
-			break;
-		case 0x08:
-		case 0x48:
-			PsxDrawTiles(pObj, srcPtr, destPtr, typeId >= 0x40, psxFourBitClut, psxSkipBytes, psxMapperTable, false);
-			break;
-		case 0x84:
-		case 0xC4:
-			// WrtTrans with/without clipping
-			WrtTrans(pObj, destPtr, typeId == 0xC4);
-			break;
-		case 0x04:
-		case 0x44:
-			// WrtConst with/without clipping
-			WrtConst(pObj, destPtr, typeId == 0x44);
-			break;
-		default:
-			error("Unknown drawing type %d", typeId);
-		}
-	} else if (TinselV1) {
-		// Tinsel v1 decoders
-		switch (typeId) {
-		case 0x01:
-		case 0x08:
-		case 0x41:
-		case 0x48:
-			WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
-			break;
-
-		case 0x04:
-		case 0x44:
-			// WrtConst with/without clipping
-			WrtConst(pObj, destPtr, typeId == 0x44);
-			break;
-
-		case 0x84:
-		case 0xC4:
-			// WrtTrans with/without clipping
-			WrtTrans(pObj, destPtr, typeId == 0xC4);
-			break;
-
-		default:
-			error("Unknown drawing type %d", typeId);
-		}
+		PackedWrtNonZero(pObj, srcPtr, destPtr, (pObj->flags & DMA_CLIP) != 0,
+			(pObj->flags & DMA_FLIPH), packType);
 	} else {
-		// Tinsel v0 decoders
 		switch (typeId) {
-		case 0x01:
-		case 0x41:
-			t0WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40);
+		case 0x01:	// all versions, draw sprite without clipping
+		case 0x41:	// all versions, draw sprite with clipping
+		case 0x02:	// TinselV2, draw sprite without clipping
+		case 0x11:	// TinselV2, draw sprite without clipping, flipped horizontally
+		case 0x42:	// TinselV2, draw sprite with clipping
+		case 0x51:	// TinselV2, draw sprite with clipping, flipped horizontally
+		case 0x81:	// TinselV2, draw sprite with clipping
+		case 0xC1:	// TinselV2, draw sprite with clipping
+			assert(TinselV2 || (typeId == 0x01 || typeId == 0x41));
+
+			if (TinselV2)
+				t2WrtNonZero(pObj, srcPtr, destPtr, typeId >= 0x40, (typeId & 0x10) != 0);
+			else if (TinselV1PSX)
+				PsxDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41, psxFourBitClut, psxSkipBytes, psxMapperTable, true);
+			else if (TinselV1Mac)
+				MacDrawTiles(pObj, srcPtr, destPtr, typeId == 0x41);
+			else if (TinselV1)
+				WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x41);
+			else if (TinselV0)
+				t0WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x41);
 			break;
-		case 0x08:
-		case 0x48:
-			WrtAll(pObj, srcPtr, destPtr, typeId >= 0x40);
+		case 0x08:	// draw background without clipping
+		case 0x48:	// draw background with clipping
+			if (TinselV2 || TinselV1Mac || TinselV0)
+				WrtAll(pObj, srcPtr, destPtr, typeId == 0x48);
+			else if (TinselV1PSX)
+				PsxDrawTiles(pObj, srcPtr, destPtr, typeId == 0x48, psxFourBitClut, psxSkipBytes, psxMapperTable, false);
+			else if (TinselV1)
+				WrtNonZero(pObj, srcPtr, destPtr, typeId == 0x48);
 			break;
-		case 0x84:
-		case 0xC4:
-			WrtTrans(pObj, destPtr, (typeId & 0x40) != 0);
+		case 0x04:	// fill with constant color without clipping
+		case 0x44:	// fill with constant color with clipping
+			WrtConst(pObj, destPtr, typeId == 0x44);
+			break;
+		case 0x84:	// draw transparent surface without clipping
+		case 0xC4:	// draw transparent surface with clipping
+			WrtTrans(pObj, destPtr, typeId == 0xC4);
 			break;
 		default:
 			error("Unknown drawing type %d", typeId);

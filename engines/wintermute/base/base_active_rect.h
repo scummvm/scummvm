@@ -48,7 +48,7 @@ public:
 	int _offsetX;
 	int _offsetY;
 	Rect32 _rect;
-	BaseActiveRect(BaseGame *inGameOwner = NULL);
+	BaseActiveRect(BaseGame *inGameOwner = nullptr);
 	BaseActiveRect(BaseGame *inGameOwner, BaseObject *owner, BaseSubFrame *frame, int x, int y, int width, int height, float zoomX = 100, float zoomY = 100, bool precise = true);
 	BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *region, int offsetX, int offsetY);
 	virtual ~BaseActiveRect();

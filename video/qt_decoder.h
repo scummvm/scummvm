@@ -70,7 +70,7 @@ public:
 	Audio::Timestamp getDuration() const { return Audio::Timestamp(0, _duration, _timeScale); }
 
 protected:
-	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format);
+	Common::QuickTimeParser::SampleDesc *readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize);
 
 private:
 	void init();
@@ -136,6 +136,8 @@ private:
 		const Graphics::Surface *decodeNextFrame();
 		const byte *getPalette() const { _dirtyPalette = false; return _curPalette; }
 		bool hasDirtyPalette() const { return _curPalette; }
+		bool setReverse(bool reverse);
+		bool isReversed() const { return _reversed; }
 
 		Common::Rational getScaledWidth() const;
 		Common::Rational getScaledHeight() const;
@@ -151,6 +153,7 @@ private:
 		int32 _durationOverride;
 		const byte *_curPalette;
 		mutable bool _dirtyPalette;
+		bool _reversed;
 
 		Common::SeekableReadStream *getNextFramePacket(uint32 &descId);
 		uint32 getFrameDuration();
@@ -160,6 +163,7 @@ private:
 		uint32 getRateAdjustedFrameTime() const;
 		uint32 getCurEditTimeOffset() const;
 		uint32 getCurEditTrackDuration() const;
+		bool atLastEdit() const;
 	};
 };
 

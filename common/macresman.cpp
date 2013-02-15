@@ -360,8 +360,8 @@ bool MacResManager::load(SeekableReadStream &stream) {
 	_mapLength = stream.readUint32BE();
 
 	// do sanity check
-	if (_dataOffset >= (uint32)stream.size() || _mapOffset >= (uint32)stream.size() ||
-		_dataLength + _mapLength  > (uint32)stream.size()) {
+	if (stream.eos() || _dataOffset >= (uint32)stream.size() || _mapOffset >= (uint32)stream.size() ||
+			_dataLength + _mapLength  > (uint32)stream.size()) {
 		_resForkOffset = -1;
 		_mode = kResForkNone;
 		return false;

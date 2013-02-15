@@ -100,18 +100,18 @@ void MystScriptParser::setupCommonOpcodes() {
 	// "Standard" Opcodes
 	OPCODE(0, o_toggleVar);
 	OPCODE(1, o_setVar);
-	OPCODE(2, o_changeCardSwitch);
+	OPCODE(2, o_changeCardSwitch4);
 	OPCODE(3, o_takePage);
 	OPCODE(4, o_redrawCard);
 	// Opcode 5 Not Present
-	OPCODE(6, o_goToDest);
-	OPCODE(7, o_goToDest);
-	OPCODE(8, o_goToDest);
+	OPCODE(6, o_goToDestForward);
+	OPCODE(7, o_goToDestLeft);
+	OPCODE(8, o_goToDestRight);
 	OPCODE(9, o_triggerMovie);
 	OPCODE(10, o_toggleVarNoRedraw);
 	// Opcode 11 Not Present
-	OPCODE(12, o_changeCardSwitch);
-	OPCODE(13, o_changeCardSwitch);
+	OPCODE(12, o_changeCardSwitchLtR);
+	OPCODE(13, o_changeCardSwitchRtL);
 	OPCODE(14, o_drawAreaState);
 	OPCODE(15, o_redrawAreaForVar);
 	OPCODE(16, o_changeCardDirectional);
@@ -120,7 +120,7 @@ void MystScriptParser::setupCommonOpcodes() {
 	OPCODE(19, o_enableAreas);
 	OPCODE(20, o_disableAreas);
 	OPCODE(21, o_directionalUpdate);
-	OPCODE(22, o_goToDest);
+	OPCODE(22, o_goToDestUp);
 	OPCODE(23, o_toggleAreasActivation);
 	OPCODE(24, o_playSound);
 	// Opcode 25 is unused; original calls replaceSoundMyst
@@ -145,6 +145,7 @@ void MystScriptParser::setupCommonOpcodes() {
 	OPCODE(44, o_restoreMainCursor);
 	// Opcode 45 Not Present
 	OPCODE(46, o_soundWaitStop);
+	OPCODE(48, o_goToDest);
 	OPCODE(51, o_exitMap);
 	// Opcodes 47 to 99 Not Present
 
@@ -273,7 +274,7 @@ void MystScriptParser::animatedUpdate(uint16 argc, uint16 *argv, uint16 delay) {
 
 	while (argsRead < argc) {
 		Common::Rect rect = Common::Rect(argv[argsRead], argv[argsRead + 1], argv[argsRead + 2], argv[argsRead + 3]);
-		uint16 kind = argv[argsRead + 4];
+		TransitionType kind = static_cast<TransitionType>(argv[argsRead + 4]);
 		uint16 steps = argv[argsRead + 5];
 
 		debugC(kDebugScript, "\trect.left: %d", rect.left);
@@ -323,16 +324,41 @@ void MystScriptParser::o_setVar(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		_vm->redrawArea(var);
 }
 
-void MystScriptParser::o_changeCardSwitch(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Opcodes 2, 12, and 13 are the same
+void MystScriptParser::o_changeCardSwitch4(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	uint16 value = getVar(var);
 
 	debugC(kDebugScript, "Opcode %d: changeCardSwitch var %d: %d", op, var, value);
 
 	if (value)
-		_vm->changeToCard(argv[value -1 ], true);
+		_vm->changeToCard(argv[value -1 ], kTransitionDissolve);
 	else if (_invokingResource != NULL)
-		_vm->changeToCard(_invokingResource->getDest(), true);
+		_vm->changeToCard(_invokingResource->getDest(), kTransitionDissolve);
+	else
+		warning("Missing invokingResource in altDest call");
+}
+
+void MystScriptParser::o_changeCardSwitchLtR(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	uint16 value = getVar(var);
+
+	debugC(kDebugScript, "Opcode %d: changeCardSwitch var %d: %d", op, var, value);
+
+	if (value)
+		_vm->changeToCard(argv[value -1 ], kTransitionLeftToRight);
+	else if (_invokingResource != NULL)
+		_vm->changeToCard(_invokingResource->getDest(), kTransitionLeftToRight);
+	else
+		warning("Missing invokingResource in altDest call");
+}
+
+void MystScriptParser::o_changeCardSwitchRtL(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	uint16 value = getVar(var);
+
+	debugC(kDebugScript, "Opcode %d: changeCardSwitch var %d: %d", op, var, value);
+
+	if (value)
+		_vm->changeToCard(argv[value -1 ], kTransitionRightToLeft);
+	else if (_invokingResource != NULL)
+		_vm->changeToCard(_invokingResource->getDest(), kTransitionRightToLeft);
 	else
 		warning("Missing invokingResource in altDest call");
 }
@@ -373,10 +399,47 @@ void MystScriptParser::o_goToDest(uint16 op, uint16 var, uint16 argc, uint16 *ar
 	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
 
 	if (_invokingResource != NULL)
-		_vm->changeToCard(_invokingResource->getDest(), true);
+		_vm->changeToCard(_invokingResource->getDest(), kTransitionCopy);
 	else
 		warning("Opcode %d: Missing invokingResource", op);
 }
+
+void MystScriptParser::o_goToDestForward(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
+
+	if (_invokingResource != NULL)
+		_vm->changeToCard(_invokingResource->getDest(), kTransitionDissolve);
+	else
+		warning("Opcode %d: Missing invokingResource", op);
+}
+
+void MystScriptParser::o_goToDestLeft(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
+
+	if (_invokingResource != NULL)
+		_vm->changeToCard(_invokingResource->getDest(), kTransitionPartToRight);
+	else
+		warning("Opcode %d: Missing invokingResource", op);
+}
+
+void MystScriptParser::o_goToDestRight(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
+
+	if (_invokingResource != NULL)
+		_vm->changeToCard(_invokingResource->getDest(), kTransitionPartToLeft);
+	else
+		warning("Opcode %d: Missing invokingResource", op);
+}
+
+void MystScriptParser::o_goToDestUp(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Change To Dest of Invoking Resource", op);
+
+	if (_invokingResource != NULL)
+		_vm->changeToCard(_invokingResource->getDest(), kTransitionTopToBottom);
+	else
+		warning("Opcode %d: Missing invokingResource", op);
+}
+
 void MystScriptParser::o_triggerMovie(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Trigger Type 6 Resource Movie..", op);
 	// TODO: If movie has sound, pause background music
@@ -427,7 +490,7 @@ void MystScriptParser::o_changeCardDirectional(uint16 op, uint16 var, uint16 arg
 	debugC(kDebugScript, "\tcardId: %d", cardId);
 	debugC(kDebugScript, "\tdirectonal update data size: %d", directionalUpdateDataSize);
 
-	_vm->changeToCard(cardId, false);
+	_vm->changeToCard(cardId, kNoTransition);
 
 	animatedUpdate(directionalUpdateDataSize, &argv[2], 0);
 }
@@ -440,23 +503,23 @@ void MystScriptParser::o_changeCardPush(uint16 op, uint16 var, uint16 argc, uint
 	debugC(kDebugScript, "Opcode %d: Jump to Card Id, Storing Current Card Id", op);
 
 	_savedCardId = _vm->getCurCard();
-	uint16 cardId = argv[0];
 
-	// argv[1] is not used in the original engine
+	uint16 cardId = argv[0];
+	TransitionType transition = static_cast<TransitionType>(argv[1]);
 
 	debugC(kDebugScript, "\tCurrent CardId: %d", _savedCardId);
 	debugC(kDebugScript, "\tJump to CardId: %d", cardId);
 
-	_vm->changeToCard(cardId, true);
+	_vm->changeToCard(cardId, transition);
 }
 
 void MystScriptParser::o_changeCardPop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	debugC(kDebugScript, "Opcode %d: Return To Stored Card Id", op);
 	debugC(kDebugScript, "\tCardId: %d", _savedCardId);
 
-	// argv[0] is not used in the original engine
+	TransitionType transition = static_cast<TransitionType>(argv[0]);
 
-	_vm->changeToCard(_savedCardId, true);
+	_vm->changeToCard(_savedCardId, transition);
 }
 
 void MystScriptParser::o_enableAreas(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -752,14 +815,11 @@ void MystScriptParser::o_changeCard(uint16 op, uint16 var, uint16 argc, uint16 *
 	debugC(kDebugScript, "Opcode %d: Change Card", op);
 
 	uint16 cardId = argv[0];
-
-	// Argument 1 if present is not used
-	// uint16 u0 = argv[1];
+	TransitionType transition = static_cast<TransitionType>(argv[1]);
 
 	debugC(kDebugScript, "\tTarget Card: %d", cardId);
-	//debugC(kDebugScript, "\tu0: %d", u0); // Unused data
 
-	_vm->changeToCard(cardId, true);
+	_vm->changeToCard(cardId, transition);
 }
 
 void MystScriptParser::o_drawImageChangeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -767,7 +827,7 @@ void MystScriptParser::o_drawImageChangeCard(uint16 op, uint16 var, uint16 argc,
 
 		uint16 imageId = argv[0];
 		uint16 cardId = argv[1];
-		// argv[2] is not used in the original engine
+		TransitionType transition = static_cast<TransitionType>(argv[2]);
 
 		debugC(kDebugScript, "\timageId: %d", imageId);
 		debugC(kDebugScript, "\tcardId: %d", cardId);
@@ -775,7 +835,7 @@ void MystScriptParser::o_drawImageChangeCard(uint16 op, uint16 var, uint16 argc,
 		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
 		_vm->_system->updateScreen();
 
-		_vm->changeToCard(cardId, true);
+		_vm->changeToCard(cardId, transition);
 }
 
 void MystScriptParser::o_changeMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -850,7 +910,7 @@ void MystScriptParser::o_changeCardPlaySoundDirectional(uint16 op, uint16 var, u
 	if (soundId)
 		_vm->_sound->replaceSoundMyst(soundId);
 
-	_vm->changeToCard(cardId, false);
+	_vm->changeToCard(cardId, kNoTransition);
 
 	animatedUpdate(dataSize, &argv[4], delayBetweenSteps);
 }
@@ -901,12 +961,12 @@ void MystScriptParser::o_quit(uint16 op, uint16 var, uint16 argc, uint16 *argv) 
 void MystScriptParser::showMap() {
 	if (_vm->getCurCard() != getMap()) {
 		_savedMapCardId = _vm->getCurCard();
-		_vm->changeToCard(getMap(), true);
+		_vm->changeToCard(getMap(), kTransitionCopy);
 	}
 }
 
 void MystScriptParser::o_exitMap(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_vm->changeToCard(_savedMapCardId, true);
+	_vm->changeToCard(_savedMapCardId, kTransitionCopy);
 }
 
 } // End of namespace Mohawk

@@ -153,7 +153,7 @@ void*	fastRamAlloc(int size);
 void 	exitGame();
 
 
-}	// End of namespace DS
+} // End of namespace DS
 
 
 

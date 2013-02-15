@@ -46,6 +46,6 @@ void clearAutoComplete();
 void setCharactersEntered(int count);
 void releaseAllKeys();
 
-}	// End of namespace DS
+} // End of namespace DS
 
 #endif

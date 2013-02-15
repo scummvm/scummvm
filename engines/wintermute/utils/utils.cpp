@@ -96,7 +96,7 @@ char *BaseUtils::setString(char **string, const char *value) {
 char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 	int numEntries = 0;
 
-	const char *start = NULL;
+	const char *start = nullptr;
 	int len = 0;
 
 	for (uint32 i = 0; i <= strlen(str); i++) {
@@ -117,7 +117,7 @@ char *BaseUtils::strEntry(int entry, const char *str, const char delim) {
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

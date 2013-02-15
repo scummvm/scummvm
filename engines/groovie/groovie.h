@@ -72,10 +72,16 @@ enum DebugLevels {
 		// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
+/**
+ * This enum reflects the available movie speed settings:
+ * - Normal:  play videos at a normal speed
+ * - Fast:    play videos with audio at a fast speed. Videos without audio,
+ *            like teeth animations, are played at their regular speed to avoid
+ *            audio sync issues
+ */
 enum GameSpeed {
 	kGroovieSpeedNormal,
-	kGroovieSpeediOS,
-	kGroovieSpeedTweaked
+	kGroovieSpeedFast
 };
 
 struct GroovieGameDescription;

@@ -55,6 +55,7 @@ public:
 	virtual bool display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
 	virtual bool displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
 	virtual bool displayTransform(int x, int y, int hotX, int hotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) = 0;
+	virtual bool repeatLastDisplayOp(int offsetX, int offsetY, int numTimesX, int numTimesY) = 0;
 	virtual bool restore();
 	virtual bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) = 0;
 	virtual bool create(int width, int height);
@@ -62,7 +63,7 @@ public:
 		return STATUS_FAILED;
 	}
 	virtual bool putPixel(int x, int y, byte r, byte g, byte b, int a = -1);
-	virtual bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = NULL);
+	virtual bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a = nullptr);
 	virtual bool comparePixel(int x, int y, byte r, byte g, byte b, int a = -1);
 	virtual bool startPixelOp();
 	virtual bool endPixelOp();
@@ -79,7 +80,7 @@ public:
 	}
 	Common::String getFileNameStr() { return _filename; }
 	const char* getFileName() { return _filename.c_str(); }
-	//void SetWidth(int Width){ _width = Width;    }
+	//void SetWidth(int Width) { _width = Width;    }
 	//void SetHeight(int Height){ _height = Height; }
 protected:
 	bool _ckDefault;

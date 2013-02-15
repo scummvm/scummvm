@@ -76,7 +76,7 @@ Name ScummVM
 !define COMPANY     "ScummVM Team"
 !define URL         "http://scummvm.org/"
 !define DESCRIPTION "ScummVM Installer. Look! A three headed monkey (TM)!"
-!define COPYRIGHT   "Copyright © 2001-2012 The ScummVM Team"
+!define COPYRIGHT   "Copyright © 2001-2013 The ScummVM Team"
 
 #########################################################################################
 # Installer configuration

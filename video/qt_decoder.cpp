@@ -110,7 +110,7 @@ const Graphics::Surface *QuickTimeDecoder::decodeNextFrame() {
 	return frame;
 }
 
-Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format) {
+Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::QuickTimeParser::Track *track, uint32 format, uint32 descSize) {
 	if (track->codecType == CODEC_TYPE_VIDEO) {
 		debug(0, "Video Codec FourCC: \'%s\'", tag2str(format));
 
@@ -205,7 +205,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 	}
 
 	// Pass it on up
-	return Audio::QuickTimeAudioDecoder::readSampleDesc(track, format);
+	return Audio::QuickTimeAudioDecoder::readSampleDesc(track, format, descSize);
 }
 
 void QuickTimeDecoder::init() {
@@ -333,6 +333,7 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 	_scaledSurface = 0;
 	_curPalette = 0;
 	_dirtyPalette = false;
+	_reversed = false;
 }
 
 QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
@@ -344,26 +345,26 @@ QuickTimeDecoder::VideoTrackHandler::~VideoTrackHandler() {
 
 bool QuickTimeDecoder::VideoTrackHandler::endOfTrack() const {
 	// A track is over when we've finished going through all edits
-	return _curEdit == _parent->editCount;
+	return _reversed ? (_curEdit == 0 && _curFrame < 0) : atLastEdit();
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requestedTime) {
 	uint32 convertedFrames = requestedTime.convertToFramerate(_decoder->_timeScale).totalNumberOfFrames();
-	for (_curEdit = 0; !endOfTrack(); _curEdit++)
+	for (_curEdit = 0; !atLastEdit(); _curEdit++)
 		if (convertedFrames >= _parent->editList[_curEdit].timeOffset && convertedFrames < _parent->editList[_curEdit].timeOffset + _parent->editList[_curEdit].trackDuration)
 			break;
 
 	// If we did reach the end of the track, break out
-	if (endOfTrack())
+	if (atLastEdit())
 		return true;
 
 	// If this track is in an empty edit, position us at the next non-empty
 	// edit. There's nothing else to do after this.
 	if (_parent->editList[_curEdit].mediaTime == -1) {
-		while (!endOfTrack() && _parent->editList[_curEdit].mediaTime == -1)
+		while (!atLastEdit() && _parent->editList[_curEdit].mediaTime == -1)
 			_curEdit++;
 
-		if (!endOfTrack())
+		if (!atLastEdit())
 			enterNewEditList(true);
 
 		return true;
@@ -372,7 +373,7 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 	enterNewEditList(false);
 
 	// One extra check for the end of a track
-	if (endOfTrack())
+	if (atLastEdit())
 		return true;
 
 	// Now we're in the edit and need to figure out what frame we need
@@ -391,17 +392,24 @@ bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requested
 	// Compare the starting point for the frame to where we need to be
 	_holdNextFrameStartTime = getRateAdjustedFrameTime() != (uint32)time.totalNumberOfFrames();
 
-	// If we went past the time, go back a frame
+	// If we went past the time, go back a frame. _curFrame before this point is at the frame
+	// that should be displayed. This adjustment ensures it is on the frame before the one that
+	// should be displayed.
 	if (_holdNextFrameStartTime)
 		_curFrame--;
 
-	// Handle the keyframe here
-	int32 destinationFrame = _curFrame + 1;
+	if (_reversed) {
+		// Call setReverse again to update
+		setReverse(true);
+	} else {
+		// Handle the keyframe here
+		int32 destinationFrame = _curFrame + 1;
 
-	assert(destinationFrame < (int32)_parent->frameCount);
-	_curFrame = findKeyFrame(destinationFrame) - 1;
-	while (_curFrame < destinationFrame - 1)
-		bufferNextFrame();
+		assert(destinationFrame < (int32)_parent->frameCount);
+		_curFrame = findKeyFrame(destinationFrame) - 1;
+		while (_curFrame < destinationFrame - 1)
+			bufferNextFrame();
+	}
 
 	return true;
 }
@@ -438,27 +446,54 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	if (endOfTrack())
 		return 0;
 
-	const Graphics::Surface *frame = bufferNextFrame();
+	if (_reversed) {
+		// Subtract one to place us on the frame before the current displayed frame.
+		_curFrame--;
 
-	if (_holdNextFrameStartTime) {
-		// Don't set the next frame start time here; we just did a seek
-		_holdNextFrameStartTime = false;
-	} else if (_durationOverride >= 0) {
-		// Use our own duration from the edit list calculation
-		_nextFrameStartTime += _durationOverride;
-		_durationOverride = -1;
-	} else {
-		_nextFrameStartTime += getFrameDuration();
+		// We have one "dummy" frame at the end to so the last frame is displayed
+		// for the right amount of time.
+		if (_curFrame < 0)
+			return 0;
+
+		// Decode from the last key frame to the frame before the one we need.
+		// TODO: Probably would be wise to do some caching
+		int targetFrame = _curFrame;
+		_curFrame = findKeyFrame(targetFrame) - 1;
+		while (_curFrame != targetFrame - 1)
+			bufferNextFrame();
 	}
 
-	// Update the edit list, if applicable
-	// HACK: We're also accepting the time minus one because edit lists
-	// aren't as accurate as one would hope.
-	if (!endOfTrack() && getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration() - 1) {
-		_curEdit++;
+	const Graphics::Surface *frame = bufferNextFrame();
 
-		if (!endOfTrack())
-			enterNewEditList(true);
+	if (_reversed) {
+		if (_holdNextFrameStartTime) {
+			// Don't set the next frame start time here; we just did a seek
+			_holdNextFrameStartTime = false;
+		} else {
+			// Just need to subtract the time
+			_nextFrameStartTime -= getFrameDuration();
+		}
+	} else {
+		if (_holdNextFrameStartTime) {
+			// Don't set the next frame start time here; we just did a seek
+			_holdNextFrameStartTime = false;
+		} else if (_durationOverride >= 0) {
+			// Use our own duration from the edit list calculation
+			_nextFrameStartTime += _durationOverride;
+			_durationOverride = -1;
+		} else {
+			_nextFrameStartTime += getFrameDuration();
+		}
+
+		// Update the edit list, if applicable
+		// HACK: We're also accepting the time minus one because edit lists
+		// aren't as accurate as one would hope.
+		if (!atLastEdit() && getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration() - 1) {
+			_curEdit++;
+
+			if (!atLastEdit())
+				enterNewEditList(true);
+		}
 	}
 
 	if (frame && (_parent->scaleFactorX != 1 || _parent->scaleFactorY != 1)) {
@@ -472,6 +507,68 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	}
 
 	return frame;
+}
+
+bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
+	_reversed = reverse;
+
+	if (_reversed) {
+		if (_parent->editCount != 1) {
+			// TODO: Myst's holo.mov needs this :(
+			warning("Can only set reverse without edits");
+			return false;
+		}
+
+		if (atLastEdit()) {
+			// If we're at the end of the video, go to the penultimate edit.
+			// The current frame is set to one beyond the last frame here;
+			// one "past" the currently displayed frame.
+			_curEdit = _parent->editCount - 1;
+			_curFrame = _parent->frameCount;
+			_nextFrameStartTime = _parent->editList[_curEdit].trackDuration + _parent->editList[_curEdit].timeOffset;
+		} else if (_holdNextFrameStartTime) {
+			// We just seeked, so "pivot" around the frame that should be displayed
+			_curFrame++;
+			_nextFrameStartTime -= getFrameDuration();
+			_curFrame++;
+		} else {
+			// We need to put _curFrame to be the one after the one that should be displayed.
+			// Since we're on the frame that should be displaying right now, add one.
+			_curFrame++;
+		}
+	} else {
+		// Update the edit list, if applicable
+		// HACK: We're also accepting the time minus one because edit lists
+		// aren't as accurate as one would hope.
+		if (!atLastEdit() && getRateAdjustedFrameTime() >= getCurEditTimeOffset() + getCurEditTrackDuration() - 1) {
+			_curEdit++;
+
+			if (atLastEdit())
+				return true;
+		}
+
+		if (_holdNextFrameStartTime) {
+			// We just seeked, so "pivot" around the frame that should be displayed
+			_curFrame--;
+			_nextFrameStartTime += getFrameDuration();
+		}
+
+		// We need to put _curFrame to be the one before the one that should be displayed.
+		// Since we're on the frame that should be displaying right now, subtract one.
+		// (As long as the current frame isn't -1, of course)
+		if (_curFrame > 0) {
+			// We then need to handle the keyframe situation
+			int targetFrame = _curFrame - 1;
+			_curFrame = findKeyFrame(targetFrame) - 1;
+			while (_curFrame < targetFrame)
+				bufferNextFrame();
+		} else if (_curFrame == 0) {
+			// Make us start at the first frame (no keyframe needed)
+			_curFrame--;
+		}
+	}
+
+	return true;
 }
 
 Common::Rational QuickTimeDecoder::VideoTrackHandler::getScaledWidth() const {
@@ -555,10 +652,10 @@ uint32 QuickTimeDecoder::VideoTrackHandler::findKeyFrame(uint32 frame) const {
 
 void QuickTimeDecoder::VideoTrackHandler::enterNewEditList(bool bufferFrames) {
 	// Bypass all empty edit lists first
-	while (!endOfTrack() && _parent->editList[_curEdit].mediaTime == -1)
+	while (!atLastEdit() && _parent->editList[_curEdit].mediaTime == -1)
 		_curEdit++;
 
-	if (endOfTrack())
+	if (atLastEdit())
 		return;
 
 	uint32 frameNum = 0;
@@ -673,6 +770,10 @@ uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTimeOffset() const {
 uint32 QuickTimeDecoder::VideoTrackHandler::getCurEditTrackDuration() const {
 	// Need to convert to the track scale
 	return _parent->editList[_curEdit].trackDuration * _parent->timeScale / _decoder->_timeScale;
+}
+
+bool QuickTimeDecoder::VideoTrackHandler::atLastEdit() const {
+	return _curEdit == _parent->editCount;
 }
 
 } // End of namespace Video

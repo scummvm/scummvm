@@ -44,9 +44,9 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 	while (1) {	// repeat until a real image
 		debugC(DEBUG_DETAILED, kTinselDebugAnimations,
 		"DoNextFrame %ph index=%d, op=%xh", (byte *)pAnim, pAnim->scriptIndex,
-		FROM_LE_32(pAni[pAnim->scriptIndex].op));
+		FROM_32(pAni[pAnim->scriptIndex].op));
 
-		switch ((int32)FROM_LE_32(pAni[pAnim->scriptIndex].op)) {
+		switch ((int32)FROM_32(pAni[pAnim->scriptIndex].op)) {
 		case ANI_END:	// end of animation script
 
 			// move to next opcode
@@ -61,7 +61,7 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 			pAnim->scriptIndex++;
 
 			// jump to new frame position
-			pAnim->scriptIndex += (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op);
+			pAnim->scriptIndex += (int32)FROM_32(pAni[pAnim->scriptIndex].op);
 
 			// go fetch a real image
 			break;
@@ -101,7 +101,7 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 			// move to x adjustment operand
 			pAnim->scriptIndex++;
 
-			MultiAdjustXY(pAnim->pObject, (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op), 0);
+			MultiAdjustXY(pAnim->pObject, (int32)FROM_32(pAni[pAnim->scriptIndex].op), 0);
 
 			// next opcode
 			pAnim->scriptIndex++;
@@ -114,7 +114,7 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 			// move to y adjustment operand
 			pAnim->scriptIndex++;
 
-			MultiAdjustXY(pAnim->pObject, 0, (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op));
+			MultiAdjustXY(pAnim->pObject, 0, (int32)FROM_32(pAni[pAnim->scriptIndex].op));
 
 			// next opcode
 			pAnim->scriptIndex++;
@@ -128,11 +128,11 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 
 			// move to x adjustment operand
 			pAnim->scriptIndex++;
-			x = (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op);
+			x = (int32)FROM_32(pAni[pAnim->scriptIndex].op);
 
 			// move to y adjustment operand
 			pAnim->scriptIndex++;
-			y = (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op);
+			y = (int32)FROM_32(pAni[pAnim->scriptIndex].op);
 
 			MultiAdjustXY(pAnim->pObject, x, y);
 
@@ -189,7 +189,7 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 		default:	// must be an actual animation frame handle
 
 			// set objects new animation frame
-			pAnim->pObject->hShape = FROM_LE_32(pAni[pAnim->scriptIndex].hFrame);
+			pAnim->pObject->hShape = FROM_32(pAni[pAnim->scriptIndex].hFrame);
 
 			// re-shape the object
 			MultiReshape(pAnim->pObject);
@@ -273,7 +273,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 
 	while (1) {	// repeat until a real image
 
-		switch ((int32)FROM_LE_32(pAni[pAnim->scriptIndex].op)) {
+		switch ((int32)FROM_32(pAni[pAnim->scriptIndex].op)) {
 		case ANI_END:	// end of animation script
 			// going off the end is probably a error, but only in Tinsel 1
 			if (!TinselV2)
@@ -286,7 +286,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 			pAnim->scriptIndex++;
 
 			// jump to new frame position
-			pAnim->scriptIndex += (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op);
+			pAnim->scriptIndex += (int32)FROM_32(pAni[pAnim->scriptIndex].op);
 
 			if (TinselV2)
 				// Done if skip to jump
@@ -323,7 +323,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 			// move to x adjustment operand
 			pAnim->scriptIndex++;
 
-			MultiAdjustXY(pAnim->pObject, (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op), 0);
+			MultiAdjustXY(pAnim->pObject, (int32)FROM_32(pAni[pAnim->scriptIndex].op), 0);
 
 			// next opcode
 			pAnim->scriptIndex++;
@@ -334,7 +334,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 			// move to y adjustment operand
 			pAnim->scriptIndex++;
 
-			MultiAdjustXY(pAnim->pObject, 0, (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op));
+			MultiAdjustXY(pAnim->pObject, 0, (int32)FROM_32(pAni[pAnim->scriptIndex].op));
 
 			// next opcode
 			pAnim->scriptIndex++;
@@ -346,11 +346,11 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 
 			// move to x adjustment operand
 			pAnim->scriptIndex++;
-			x = (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op);
+			x = (int32)FROM_32(pAni[pAnim->scriptIndex].op);
 
 			// move to y adjustment operand
 			pAnim->scriptIndex++;
-			y = (int32)FROM_LE_32(pAni[pAnim->scriptIndex].op);
+			y = (int32)FROM_32(pAni[pAnim->scriptIndex].op);
 
 			MultiAdjustXY(pAnim->pObject, x, y);
 
@@ -389,7 +389,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 				pAnim->scriptIndex++;
 			} else {
 				// set objects new animation frame
-				pAnim->pObject->hShape = FROM_LE_32(pAni[pAnim->scriptIndex].hFrame);
+				pAnim->pObject->hShape = FROM_32(pAni[pAnim->scriptIndex].hFrame);
 
 				// re-shape the object
 				MultiReshape(pAnim->pObject);
@@ -414,7 +414,7 @@ bool AboutToJumpOrEnd(PANIM pAnim) {
 
 		for (;;) {
 			// repeat until a real image
-			switch (FROM_LE_32(pAni[zzz].op)) {
+			switch (FROM_32(pAni[zzz].op)) {
 			case ANI_END:		// end of animation script
 			case ANI_JUMP:		// do animation jump
 				return true;

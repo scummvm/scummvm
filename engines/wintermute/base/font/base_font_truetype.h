@@ -54,15 +54,16 @@ private:
 		int _priority;
 		int _textOffset;
 		bool _marked;
+		uint32 _lastUsed;
 
 		BaseCachedTTFontText() {
 			//_text = L"";
 			_text = "";
 			_width = _maxHeight = _maxLength = -1;
 			_align = TAL_LEFT;
-			_surface = NULL;
-			_priority = -1;
+			_surface = nullptr;
 			_textOffset = 0;
+			_lastUsed = 0;
 			_marked = false;
 		}
 

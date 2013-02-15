@@ -157,7 +157,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 		pkg->_cd = stream->readByte();
 		pkg->_priority = hdr._priority;
 		delete[] pkgName;
-		pkgName = NULL;
+		pkgName = nullptr;
 
 		if (!hdr._masterIndex) {
 			pkg->_cd = 0;    // override CD to fixed disk
@@ -186,7 +186,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			Common::String upcName = name;
 			upcName.toUppercase();
 			delete[] name;
-			name = NULL;
+			name = nullptr;
 
 			offset = stream->readUint32LE();
 			offset += absoluteOffset;
@@ -270,7 +270,7 @@ Common::SeekableReadStream *PackageSet::createReadStreamForMember(const Common::
 	if (it != _files.end()) {
 		return it->_value->createReadStream();
 	}
-	return NULL;
+	return nullptr;
 }
 
 } // end of namespace Wintermute

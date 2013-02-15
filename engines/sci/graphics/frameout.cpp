@@ -349,6 +349,36 @@ void GfxFrameout::deletePlaneLine(reg_t object, reg_t hunkId) {
 	}
 }
 
+// Adapted from GfxAnimate::applyGlobalScaling()
+void GfxFrameout::applyGlobalScaling(FrameoutEntry *itemEntry, Common::Rect planeRect, int16 celHeight) {
+	// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
+	int16 maxScale = readSelectorValue(_segMan, itemEntry->object, SELECTOR(maxScale));
+	int16 maxCelHeight = (maxScale * celHeight) >> 7;
+	reg_t globalVar2 = g_sci->getEngineState()->variables[VAR_GLOBAL][2]; // current room object
+	int16 vanishingY = readSelectorValue(_segMan, globalVar2, SELECTOR(vanishingY));
+
+	int16 fixedPortY = planeRect.bottom - vanishingY;
+	int16 fixedEntryY = itemEntry->y - vanishingY;
+	if (!fixedEntryY)
+		fixedEntryY = 1;
+
+	if ((celHeight == 0) || (fixedPortY == 0))
+		error("global scaling panic");
+
+	itemEntry->scaleY = (maxCelHeight * fixedEntryY) / fixedPortY;
+	itemEntry->scaleY = (itemEntry->scaleY * maxScale) / celHeight;
+
+	// Make sure that the calculated value is sane
+	if (itemEntry->scaleY < 1 /*|| itemEntry->scaleY > 128*/)
+		itemEntry->scaleY = 128;
+
+	itemEntry->scaleX = itemEntry->scaleY;
+
+	// and set objects scale selectors
+	//writeSelectorValue(_segMan, itemEntry->object, SELECTOR(scaleX), itemEntry->scaleX);
+	//writeSelectorValue(_segMan, itemEntry->object, SELECTOR(scaleY), itemEntry->scaleY);
+}
+
 void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	// Ignore invalid items
 	if (!_segMan->isObject(object)) {
@@ -390,8 +420,15 @@ void GfxFrameout::kernelUpdateScreenItem(reg_t object) {
 		itemEntry->priority = itemEntry->y;
 
 	itemEntry->signal = readSelectorValue(_segMan, object, SELECTOR(signal));
-	itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
-	itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
+	itemEntry->scaleSignal = readSelectorValue(_segMan, object, SELECTOR(scaleSignal));
+
+	if (itemEntry->scaleSignal & kScaleSignalDoScaling32) {
+		itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
+		itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
+	} else {
+		itemEntry->scaleX = 128;
+		itemEntry->scaleY = 128;
+	}
 	itemEntry->visible = true;
 
 	// Check if the entry can be hidden
@@ -650,7 +687,13 @@ void GfxFrameout::kernelFrameout() {
 			_paint32->fillRect(it->planeRect, it->planeBack);
 
 		_coordAdjuster->pictureSetDisplayArea(it->planeRect);
-		_palette->drewPicture(it->pictureId);
+		// Invoking drewPicture() with an invalid picture ID in SCI32 results in
+		// invalidating the palVary palette when a palVary effect is active. This
+		// is quite obvious in QFG4, where the day time palette is incorrectly
+		// shown when exiting the caves, and the correct night time palette
+		// flashes briefly each time that kPalVaryInit is called.
+		if (it->pictureId != 0xFFFF)
+			_palette->drewPicture(it->pictureId);
 
 		FrameoutList itemList;
 
@@ -699,6 +742,14 @@ void GfxFrameout::kernelFrameout() {
 					// TODO: maybe we should clip the cels rect with this, i'm not sure
 					//  the only currently known usage is game menu of gk1
 				} else if (view) {
+					// Process global scaling, if needed.
+					// TODO: Seems like SCI32 always processes global scaling for scaled objects
+					// TODO: We can only process symmetrical scaling for now (i.e. same value for scaleX/scaleY)
+					if ((itemEntry->scaleSignal & kScaleSignalDoScaling32) && 
+					   !(itemEntry->scaleSignal & kScaleSignalDisableGlobalScaling32) &&
+					    (itemEntry->scaleX == itemEntry->scaleY))
+						applyGlobalScaling(itemEntry, it->planeRect, view->getHeight(itemEntry->loopNo, itemEntry->celNo));
+
 					if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
 						view->getCelRect(itemEntry->loopNo, itemEntry->celNo,
 							itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
@@ -726,7 +777,12 @@ void GfxFrameout::kernelFrameout() {
 							continue;
 					}
 
-					g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					// FIXME: We should not update the object's NS rect here.
+					// This breaks the sliders in the control panel screen in
+					// QFG4, but disabling it does not change any functionality,
+					// as the object(s) will be drawn on screen with the
+					// calculated coordinates.
+					//g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 				}
 
 				// Don't attempt to draw sprites that are outside the visible

@@ -64,7 +64,7 @@ void BaseSprite::setDefaults() {
 	_currentFrame = -1;
 	_looping = false;
 	_lastFrameTime = 0;
-	setFilename(NULL);
+	setFilename(nullptr);
 	_finished = false;
 	_changed = false;
 	_paused = false;
@@ -72,7 +72,7 @@ void BaseSprite::setDefaults() {
 	_moveX = _moveY = 0;
 
 	_editorMuted = false;
-	_editorBgFile = NULL;
+	_editorBgFile = nullptr;
 	_editorBgOffsetX = _editorBgOffsetY = 0;
 	_editorBgAlpha = 0xFF;
 	_streamed = false;
@@ -94,7 +94,7 @@ void BaseSprite::cleanup() {
 	_frames.clear();
 
 	delete[] _editorBgFile;
-	_editorBgFile = NULL;
+	_editorBgFile = nullptr;
 
 	setDefaults();
 }
@@ -141,7 +141,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		}
 	} else {
 		BaseFileManager::getEngineInstance()->closeFile(file);
-		file = NULL;
+		file = nullptr;
 	}
 
 	bool ret = STATUS_FAILED;
@@ -154,7 +154,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		BaseFrame *frame = new BaseFrame(_gameRef);
 		BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);
-		if (subframe->_surface == NULL) {
+		if (subframe->_surface == nullptr) {
 			_gameRef->LOG(0, "Error loading simple sprite '%s'", filename.c_str());
 			ret = STATUS_FAILED;
 			delete frame;
@@ -440,7 +440,7 @@ bool BaseSprite::display(int x, int y, BaseObject *registerVal, float zoomX, flo
 BaseSurface *BaseSprite::getSurface() {
 	// only used for animated textures for 3D models
 	if (_currentFrame < 0 || _currentFrame >= (int32)_frames.size()) {
-		return NULL;
+		return nullptr;
 	}
 	BaseFrame *frame = _frames[_currentFrame];
 	if (frame && frame->_subframes.size() > 0) {
@@ -448,10 +448,10 @@ BaseSurface *BaseSprite::getSurface() {
 		if (subframe) {
 			return subframe->_surface;
 		} else {
-			return NULL;
+			return nullptr;
 		}
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -611,13 +611,13 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "AddFrame") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
-		const char *filename = NULL;
+		const char *filename = nullptr;
 		if (!val->isNULL()) {
 			filename = val->getString();
 		}
 
 		BaseFrame *frame = new BaseFrame(_gameRef);
-		if (filename != NULL) {
+		if (filename != nullptr) {
 			BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 			if (DID_SUCCEED(sub->setSurface(filename))) {
 				sub->setDefaultRect();
@@ -643,13 +643,13 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		}
 
 		ScValue *val = stack->pop();
-		const char *filename = NULL;
+		const char *filename = nullptr;
 		if (!val->isNULL()) {
 			filename = val->getString();
 		}
 
 		BaseFrame *frame = new BaseFrame(_gameRef);
-		if (filename != NULL) {
+		if (filename != nullptr) {
 			BaseSubFrame *sub = new BaseSubFrame(_gameRef);
 			if (DID_SUCCEED(sub->setSurface(filename))) {
 				frame->_subframes.add(sub);
@@ -740,7 +740,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	// Owner (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "Owner") {
-		if (_owner == NULL) {
+		if (_owner == nullptr) {
 			_scValue->setNULL();
 		} else {
 			_scValue->setNative(_owner, true);

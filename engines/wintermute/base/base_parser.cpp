@@ -51,7 +51,7 @@ BaseParser::BaseParser() {
 
 //////////////////////////////////////////////////////////////////////
 BaseParser::~BaseParser() {
-	if (_whiteSpace != NULL) {
+	if (_whiteSpace != nullptr) {
 		delete[] _whiteSpace;
 	}
 }
@@ -136,7 +136,7 @@ void BaseParser::skipCharacters(char **buf, const char *toSkip) {
 		if (ch == '\n') {
 			_parserLine++;
 		}
-		if (strchr(toSkip, ch) == NULL) {
+		if (strchr(toSkip, ch) == nullptr) {
 			return;
 		}
 		++*buf;                     // skip this character
@@ -250,10 +250,10 @@ Common::String BaseParser::getToken(char **buf) {
 		*t++ = 0;
 	} else if (*b == 0) {
 		*buf = b;
-		return NULL;
+		return nullptr;
 	} else {
 		// Error.
-		return NULL;
+		return nullptr;
 	}
 
 	*buf = b;

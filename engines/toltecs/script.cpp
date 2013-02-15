@@ -40,6 +40,22 @@
 
 namespace Toltecs {
 
+static const VarType varTypes[] = {
+	vtByte, vtWord, vtWord, vtByte, vtWord,  //  0 - 4
+	vtWord, vtWord, vtWord, vtWord, vtWord,  //  5 - 9
+	vtWord, vtWord, vtByte, vtWord, vtWord,  // 10 - 14
+	vtWord, vtWord, vtWord, vtWord, vtWord,  // 15 - 19
+	vtWord, vtWord                           // 20 - 21
+};
+
+static const char *varNames[] = {
+	"mouseDisabled", "mouseY",        "mouseX",            "mouseButton",   "verbLineY",        //  0 - 4
+	"verbLineX",     "verbLineWidth", "verbLineCount",     "verbLineNum",   "talkTextItemNum",  //  5 - 9
+	"talkTextY",     "talkTextX",     "talkTextFontColor", "cameraY",       "cameraX",          // 10 - 14
+	"walkSpeedY",    "walkSpeedX",    "flag01",            "sceneResIndex", "guiHeight",        // 15 - 19
+	"sceneHeight",   "sceneWidth"                                                               // 20 - 21
+};
+
 ScriptInterpreter::ScriptInterpreter(ToltecsEngine *vm) : _vm(vm) {
 
 	_stack = new byte[kScriptStackSize];
@@ -154,7 +170,6 @@ void ScriptInterpreter::setupScriptFunctions() {
 }
 
 void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
-
 	delete[] _slots[slotIndex].data;
 
  	_slots[slotIndex].resIndex = resIndex;
@@ -162,7 +177,6 @@ void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
 	_slots[slotIndex].size = scriptResource->size;
  	_slots[slotIndex].data = new byte[_slots[slotIndex].size];
  	memcpy(_slots[slotIndex].data, scriptResource->data, _slots[slotIndex].size);
-
 }
 
 void ScriptInterpreter::setMainScript(uint slotIndex) {
@@ -228,10 +242,9 @@ int16 ScriptInterpreter::readInt16() {
 }
 
 void ScriptInterpreter::execOpcode(byte opcode) {
-
 	int16 ofs;
 
-	debug(1, "opcode = %d", opcode);
+	debug(2, "opcode = %d", opcode);
 
 	switch (opcode) {
 	case 0:
@@ -239,35 +252,32 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		// ok
 		_subCode = _code;
 		byte length = readByte();
-		debug(1, "length = %d", length);
+		if (length == 0) {
+			warning("Possible script bug detected - opcode length is 0 when calling script function");
+			return;
+		}
+		debug(2, "length = %d", length);
 		uint16 index = readInt16();
-		debug(1, "callScriptFunction %d", index);
 		execScriptFunction(index);
 		_code += length - 2;
 		break;
 	}
 	case 1:
-		// ok
 		_regs.reg0 = readInt16();
 		break;
 	case 2:
-		// ok
 		_regs.reg1 = readInt16();
 		break;
 	case 3:
-		// ok
 		_regs.reg3 = readInt16();
 		break;
 	case 4:
-		// ok
 		_regs.reg5 = _regs.reg0;
 		break;
 	case 5:
-		// ok
 		_regs.reg3 = _regs.reg0;
 		break;
 	case 6:
-		// ok
 		_regs.reg1 = _regs.reg0;
 		break;
 	case 7:
@@ -468,72 +478,14 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 }
 
 void ScriptInterpreter::execScriptFunction(uint16 index) {
-	debug(4, "execScriptFunction(%d)", index);
 	if (index >= _scriptFuncs.size())
 		error("ScriptInterpreter::execScriptFunction() Invalid script function index %d", index);
-	debug(4, "%s", _scriptFuncNames[index]);
+	debug(1, "execScriptFunction %s (%d)", _scriptFuncNames[index], index);
 	(*_scriptFuncs[index])();
 }
 
-VarType ScriptInterpreter::getGameVarType(uint variable) {
-	switch (variable) {
-	case 0:	 return vtByte;
-	case 1:	 return vtWord;
-	case 2:	 return vtWord;
-	case 3:	 return vtByte;
-	case 4:	 return vtWord;
-	case 5:	 return vtWord;
-	case 6:	 return vtWord;
-	case 7:	 return vtWord;
-	case 8:	 return vtWord;
-	case 9:	 return vtWord;
-	case 10:	 return vtWord;
-	case 11:	 return vtWord;
-	case 12:	 return vtByte;
-	case 13:	 return vtWord;
-	case 14:	 return vtWord;
-	case 15:	 return vtWord;
-	case 16:	 return vtWord;
-	case 17:	 return vtWord;
-	case 18:	 return vtWord;
-	case 19:	 return vtWord;
-	case 20:	 return vtWord;
-	case 21:	 return vtWord;
-	default:
-		error("Invalid game variable");
-	}
-}
-
-const char *getVarName(uint variable) {
-	switch (variable) {
-	case 0: return "mouseDisabled";
-	case 1: return "mouseY";
-	case 2: return "mouseX";
-	case 3: return "mouseButton";
-	case 4: return "verbLineY";
-	case 5: return "verbLineX";
-	case 6: return "verbLineWidth";
-	case 7: return "verbLineCount";
-	case 8: return "verbLineNum";
-	case 9: return "talkTextItemNum";
-	case 10: return "talkTextY";
-	case 11: return "talkTextX";
-	case 12: return "talkTextFontColor";
-	case 13: return "cameraY";
-	case 14: return "cameraX";
-	case 15: return "walkSpeedY";
-	case 16: return "walkSpeedX";
-	case 17: return "flag01";
-	case 18: return "sceneResIndex";
-	case 19: return "guiHeight";
-	case 20: return "sceneHeight";
-	case 21: return "sceneWidth";
-	}
-	return "(invalid)";
-}
-
 int16 ScriptInterpreter::getGameVar(uint variable) {
-	debug(0, "ScriptInterpreter::getGameVar(%d{%s})", variable, getVarName(variable));
+	debug(2, "ScriptInterpreter::getGameVar(%d{%s})", variable, varNames[variable]);
 
 	switch (variable) {
 	case  0: return _vm->_mouseDisabled;
@@ -559,13 +511,13 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 	case 20: return _vm->_sceneHeight;
 	case 21: return _vm->_sceneWidth;
 	default:
-		warning("Getting unimplemented game variable %s (%d)", getVarName(variable), variable);
+		warning("Getting unimplemented game variable %s (%d)", varNames[variable], variable);
 		return 0;
 	}
 }
 
 void ScriptInterpreter::setGameVar(uint variable, int16 value) {
-	debug(0, "ScriptInterpreter::setGameVar(%d{%s}, %d)", variable, getVarName(variable), value);
+	debug(2, "ScriptInterpreter::setGameVar(%d{%s}, %d)", variable, varNames[variable], value);
 
 	switch (variable) {
 	case 0:
@@ -632,10 +584,9 @@ void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 	case 1:
 	case 2:
 	default:
-		warning("Setting unimplemented game variable %s (%d) to %d", getVarName(variable), variable, value);
+		warning("Setting unimplemented game variable %s (%d) to %d", varNames[variable], variable, value);
 		break;
 	}
-
 }
 
 byte ScriptInterpreter::arg8(int16 offset) {
@@ -657,32 +608,31 @@ int16 ScriptInterpreter::popInt16() {
 }
 
 void ScriptInterpreter::localWrite8(int16 offset, byte value) {
-	//debug(1, "localWrite8(%d, %d)", offset, value);
+	//debug(2, "localWrite8(%d, %d)", offset, value);
 	_localData[offset] = value;
 }
 
 byte ScriptInterpreter::localRead8(int16 offset) {
-	//debug(1, "localRead8(%d) -> %d", offset, _localData[offset]);
+	//debug(2, "localRead8(%d) -> %d", offset, _localData[offset]);
 	return _localData[offset];
 }
 
 void ScriptInterpreter::localWrite16(int16 offset, int16 value) {
-	//debug(1, "localWrite16(%d, %d)", offset, value);
+	//debug(2, "localWrite16(%d, %d)", offset, value);
 	WRITE_LE_UINT16(&_localData[offset], value);
 }
 
 int16 ScriptInterpreter::localRead16(int16 offset) {
-	//debug(1, "localRead16(%d) -> %d", offset, (int16)READ_LE_UINT16(&_localData[offset]));
+	//debug(2, "localRead16(%d) -> %d", offset, (int16)READ_LE_UINT16(&_localData[offset]));
 	return (int16)READ_LE_UINT16(&_localData[offset]);
 }
 
 byte *ScriptInterpreter::localPtr(int16 offset) {
-	//debug(1, "localPtr(%d)", offset);
+	//debug(2, "localPtr(%d)", offset);
 	return &_localData[offset];
 }
 
 void ScriptInterpreter::saveState(Common::WriteStream *out) {
-
 	// Save registers
 	out->writeUint16LE(_regs.reg0);
 	out->writeUint16LE(_regs.reg1);
@@ -708,11 +658,9 @@ void ScriptInterpreter::saveState(Common::WriteStream *out) {
 
 	// Save IP
 	out->writeUint16LE((int16)(_code - getSlotData(_regs.reg4)));
-
 }
 
 void ScriptInterpreter::loadState(Common::ReadStream *in) {
-
 	// Load registers
 	_regs.reg0 = in->readUint16LE();
 	_regs.reg1 = in->readUint16LE();
@@ -741,7 +689,6 @@ void ScriptInterpreter::loadState(Common::ReadStream *in) {
 
 	// Load IP
 	_code = getSlotData(_regs.reg4) + in->readUint16LE();
-
 }
 
 void ScriptInterpreter::sfNop() {
@@ -755,7 +702,9 @@ void ScriptInterpreter::sfGetGameVar() {
 
 void ScriptInterpreter::sfSetGameVar() {
 	int16 varIndex = arg16(3);
-	VarType varType = getGameVarType(varIndex);
+	assert(varIndex <= 21);
+
+	VarType varType = varTypes[varIndex];
 	int16 value = 0;
 	if (varType == vtByte)
 		value = arg8(5);
@@ -810,8 +759,7 @@ void ScriptInterpreter::sfSetDeltaAnimPalette() {
 }
 
 void ScriptInterpreter::sfSetUnkPaletteEffect() {
-	// TODO
-	debug("ScriptInterpreter::sfSetUnkPaletteEffect");
+	error("ScriptInterpreter::sfSetUnkPaletteEffect called");	// unused
 }
 
 void ScriptInterpreter::sfBuildColorTransTable() {
@@ -992,7 +940,8 @@ void ScriptInterpreter::sfStopShakeScreen() {
 
 void ScriptInterpreter::sfStartSequence() {
 	int16 sequenceResIndex = arg16(3);
-	//debug("ScriptInterpreter::sfStartSequence(%d)", sequenceResIndex);
+	debug(1, "ScriptInterpreter::sfStartSequence(%d)", sequenceResIndex);
+
 	if (sequenceResIndex >= 0) {
 		//_vm->_arc->dump(sequenceResIndex, "music");	// DEBUG: Dump music so we know what's in there
 
@@ -1001,7 +950,6 @@ void ScriptInterpreter::sfStartSequence() {
 }
 
 void ScriptInterpreter::sfEndSequence() {
-	//debug("ScriptInterpreter::sfEndSequence");
 	_vm->_music->stopSequence();
 }
 
@@ -1029,9 +977,8 @@ void ScriptInterpreter::sfHandleInput() {
 	if (_vm->_rightButtonDown) {
 		keyCode = 1;
 	} else {
-		/* Convert keyboard scancode to IBM PC scancode
-			Only scancodes known to be used (so far) are converted
-		*/
+		// Convert keyboard scancode to IBM PC scancode.
+		// Only scancodes known to be used (so far) are converted.
 		switch (_vm->_keyState.keycode) {
 		case Common::KEYCODE_ESCAPE:
 			keyCode = 1;
@@ -1050,11 +997,13 @@ void ScriptInterpreter::sfRunOptionsScreen() {
 	_vm->showMenu(kMenuIdMain);
 }
 
-/* NOTE: The opcodes sfPrecacheSprites, sfPrecacheSounds1, sfPrecacheSounds2 and
-	sfDeletePrecachedFiles were used by the original engine to handle precaching
-	of data so the game doesn't stall while playing (due to the slow speed of
-	CD-Drives back then). This is not needed in ScummVM since all supported
-	systems are fast enough to load data in-game. */
+/**
+ * NOTE: The opcodes sfPrecacheSprites, sfPrecacheSounds1, sfPrecacheSounds2 and
+ * sfDeletePrecachedFiles were used by the original engine to handle precaching
+ * of data so the game doesn't stall while playing (due to the slow speed of
+ * CD-Drives back then). This is not needed in ScummVM since all supported
+ * systems are fast enough to load data in-game.
+ */
 
 void ScriptInterpreter::sfPrecacheSprites() {
 	// See note above

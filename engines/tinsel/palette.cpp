@@ -102,7 +102,7 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 	memset(mapperTable, 0, 16);
 
 	for (int j = 1; j < 16; j++) {
-		clutEntry = READ_LE_UINT16(psxClut + (sizeof(uint16) * j));
+		clutEntry = READ_16(psxClut + (sizeof(uint16) * j));
 		if (clutEntry) {
 			if (clutEntry == 0x7EC0) { // This is an already known value, used by the in-game text
 				mapperTable[j] = 232;
@@ -110,7 +110,7 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 			}
 
 			// Check for correspondent color
-			for (uint i = 0; (i < FROM_LE_32(pal->numColors)) && !colorFound; i++) {
+			for (uint i = 0; (i < FROM_32(pal->numColors)) && !colorFound; i++) {
 				// get R G B values in the same way as psx format converters
 				uint16 psxEquivalent = TINSEL_PSX_RGB(TINSEL_GetRValue(pal->palRGB[i]) >> 3, TINSEL_GetGValue(pal->palRGB[i]) >> 3, TINSEL_GetBValue(pal->palRGB[i]) >> 3);
 
@@ -152,7 +152,7 @@ void PalettesToVideoDAC() {
 			// we are using a palette handle
 
 			// get hardware palette pointer
-			pPalette = (const PALETTE *)LockMem(pDACtail->pal.hRGBarray);
+			pPalette = (const PALETTE *)LockMem(FROM_32(pDACtail->pal.hRGBarray));
 
 			// get RGB pointer
 			pColors = pPalette->palRGB;
@@ -168,6 +168,12 @@ void PalettesToVideoDAC() {
 			pal[i * 3 + 0] = TINSEL_GetRValue(pColors[i]);
 			pal[i * 3 + 1] = TINSEL_GetGValue(pColors[i]);
 			pal[i * 3 + 2] = TINSEL_GetBValue(pColors[i]);
+		}
+
+		// In DW1 Mac, color 254 should be black, like in the PC version.
+		// We fix it here.
+		if (TinselV1Mac) {
+			pal[254 * 3 + 0] = pal[254 * 3 + 1] = pal[254 * 3 + 2] = 0;
 		}
 
 		// update the system palette
@@ -298,7 +304,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 	PALETTE *pNewPal;
 
 	// get pointer to new palette
-	pNewPal = (PALETTE *)LockMem(hNewPal);
+	pNewPal = (PALETTE *)LockMem(FROM_32(hNewPal));
 
 	// search all structs in palette allocator - see if palette already allocated
 	for (p = g_palAllocData; p < g_palAllocData + NUM_PALETTES; p++) {
@@ -318,7 +324,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 			p->objCount = 1;	// init number of objects using palette
 			p->posInDAC = iDAC;	// set palettes start pos in video DAC
 			p->hPal = hNewPal;	// set hardware palette data
-			p->numColors = FROM_LE_32(pNewPal->numColors);	// set number of colors in palette
+			p->numColors = FROM_32(pNewPal->numColors);	// set number of colors in palette
 
 			if (TinselV2)
 				// Copy all the colors
@@ -430,24 +436,24 @@ void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 	// validate palette Q pointer
 	assert(pPalQ >= g_palAllocData && pPalQ <= g_palAllocData + NUM_PALETTES - 1);
 
-	if (pPalQ->numColors >= (int)FROM_LE_32(pNewPal->numColors)) {
+	if (pPalQ->numColors >= (int)FROM_32(pNewPal->numColors)) {
 		// new palette will fit the slot
 
 		// install new palette
 		pPalQ->hPal = hNewPal;
 
 		if (TinselV2) {
-			pPalQ->numColors = FROM_LE_32(pNewPal->numColors);
+			pPalQ->numColors = FROM_32(pNewPal->numColors);
 
 			// Copy all the colors
-			memcpy(pPalQ->palRGB, pNewPal->palRGB, FROM_LE_32(pNewPal->numColors) * sizeof(COLORREF));
+			memcpy(pPalQ->palRGB, pNewPal->palRGB, FROM_32(pNewPal->numColors) * sizeof(COLORREF));
 
 			if (!pPalQ->bFading)
 				// Q the change to the video DAC
-				UpdateDACqueue(pPalQ->posInDAC, FROM_LE_32(pNewPal->numColors), pPalQ->palRGB);
+				UpdateDACqueue(pPalQ->posInDAC, FROM_32(pNewPal->numColors), pPalQ->palRGB);
 		} else {
 			// Q the change to the video DAC
-			UpdateDACqueueHandle(pPalQ->posInDAC, FROM_LE_32(pNewPal->numColors), hNewPal);
+			UpdateDACqueueHandle(pPalQ->posInDAC, FROM_32(pNewPal->numColors), hNewPal);
 		}
 	} else {
 		// # colors are different - will have to update all following palette entries
@@ -546,7 +552,7 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 	// leave background color alone
 	g_transPalette[0] = 0;
 
-	for (uint i = 0; i < FROM_LE_32(pPal->numColors); i++) {
+	for (uint i = 0; i < FROM_32(pPal->numColors); i++) {
 		// get the RGB color model values
 		uint8 red   = TINSEL_GetRValue(pPal->palRGB[i]);
 		uint8 green = TINSEL_GetGValue(pPal->palRGB[i]);
@@ -574,7 +580,7 @@ void CreateGhostPalette(SCNHANDLE hPalette) {
 	// leave background color alone
 	g_ghostPalette[0] = 0;
 
-	for (i = 0; i < (int)FROM_LE_32(pPal->numColors); i++) {
+	for (i = 0; i < (int)FROM_32(pPal->numColors); i++) {
 		// get the RGB color model values
 		uint8 red   = TINSEL_GetRValue(pPal->palRGB[i]);
 		uint8 green = TINSEL_GetGValue(pPal->palRGB[i]);

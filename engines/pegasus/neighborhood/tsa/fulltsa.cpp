@@ -622,6 +622,13 @@ void RipTimer::draw(const Common::Rect &updateRect) {
 }
 
 void RipTimer::timeChanged(const TimeValue newTime) {
+	// WORKAROUND: If the timer isn't running, don't run the following code.
+	// Fixes use of the code when it shouldn't be running (since this is an
+	// IdlerAnimation, this is called on useIdleTime() but this specific
+	// timer only makes sense when used as an actual timer).
+	if (!isRunning())
+		return;
+
 	Common::Rect bounds;
 	getBounds(bounds);
 

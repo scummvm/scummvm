@@ -57,7 +57,7 @@ void EoBCoreEngine::setupTimers() {
 
 void EoBCoreEngine::setCharEventTimer(int charIndex, uint32 countdown, int evnt, int updateExistingTimer) {
 	uint32 ntime = _system->getMillis() + countdown * _tickLength;
-	uint8 timerId = 0x30 | (charIndex & 0x0f);
+	uint8 timerId = 0x30 | (charIndex & 0x0F);
 	EoBCharacter *c = &_characters[charIndex];
 
 	if (!_timer->isEnabled(timerId)) {
@@ -118,7 +118,7 @@ void EoBCoreEngine::setupCharacterTimers() {
 		if (!testCharacter(i, 1))
 			continue;
 
-		uint32 nextTimer = 0xffffffff;
+		uint32 nextTimer = 0xFFFFFFFF;
 
 		for (int ii = 0; ii < 10; ii++) {
 			if (c->timers[ii] && c->timers[ii] < nextTimer)
@@ -126,7 +126,7 @@ void EoBCoreEngine::setupCharacterTimers() {
 		}
 		uint32 ctime = _system->getMillis();
 
-		if (nextTimer == 0xffffffff)
+		if (nextTimer == 0xFFFFFFFF)
 			_timer->disable(0x30 | i);
 		else {
 			enableTimer(0x30 | i);
@@ -219,11 +219,11 @@ void EoBCoreEngine::timerProcessFlyingObjects(int timerNum) {
 }
 
 void EoBCoreEngine::timerProcessMonsters(int timerNum) {
-	updateMonsters(timerNum & 0x0f);
+	updateMonsters(timerNum & 0x0F);
 }
 
 void EoBCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
-	int charIndex = timerNum & 0x0f;
+	int charIndex = timerNum & 0x0F;
 	EoBCharacter *c = &_characters[charIndex];
 	uint32 ctime =  _system->getMillis();
 
@@ -309,13 +309,13 @@ void EoBCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 		_screen->setFont(of);
 	}
 
-	uint32 nextTimer = 0xffffffff;
+	uint32 nextTimer = 0xFFFFFFFF;
 	for (int i = 0; i < 10; i++) {
 		if (c->timers[i] && c->timers[i] < nextTimer)
 			nextTimer = c->timers[i];
 	}
 
-	if (nextTimer == 0xffffffff)
+	if (nextTimer == 0xFFFFFFFF)
 		_timer->disable(timerNum);
 	else
 		_timer->setCountdown(timerNum, (nextTimer - ctime) / _tickLength);

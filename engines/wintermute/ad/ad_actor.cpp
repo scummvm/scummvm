@@ -57,15 +57,15 @@ AdActor::AdActor(BaseGame *inGame) : AdTalkHolder(inGame) {
 	_type = OBJECT_ACTOR;
 	_dir = DI_LEFT;
 
-	_walkSprite = NULL;
-	_standSprite = NULL;
-	_turnLeftSprite = NULL;
-	_turnRightSprite = NULL;
+	_walkSprite = nullptr;
+	_standSprite = nullptr;
+	_turnLeftSprite = nullptr;
+	_turnRightSprite = nullptr;
 
 	_targetPoint = new BasePoint;
 	_afterWalkDir = DI_NONE;
 
-	_animSprite2 = NULL;
+	_animSprite2 = nullptr;
 
 	setDefaultAnimNames();
 }
@@ -84,19 +84,19 @@ bool AdActor::setDefaultAnimNames() {
 AdActor::~AdActor() {
 	delete _path;
 	delete _targetPoint;
-	_path = NULL;
-	_targetPoint = NULL;
+	_path = nullptr;
+	_targetPoint = nullptr;
 
 	delete _walkSprite;
 	delete _standSprite;
 	delete _turnLeftSprite;
 	delete _turnRightSprite;
-	_walkSprite = NULL;
-	_standSprite = NULL;
-	_turnLeftSprite = NULL;
-	_turnRightSprite = NULL;
+	_walkSprite = nullptr;
+	_standSprite = nullptr;
+	_turnLeftSprite = nullptr;
+	_turnRightSprite = nullptr;
 
-	_animSprite2 = NULL; // ref only
+	_animSprite2 = nullptr; // ref only
 
 	for (uint32 i = 0; i < _talkSprites.size(); i++) {
 		delete _talkSprites[i];
@@ -110,7 +110,7 @@ AdActor::~AdActor() {
 
 	for (uint32 i = 0; i < _anims.size(); i++) {
 		delete _anims[i];
-		_anims[i] = NULL;
+		_anims[i] = nullptr;
 	}
 	_anims.clear();
 
@@ -120,7 +120,7 @@ AdActor::~AdActor() {
 //////////////////////////////////////////////////////////////////////////
 bool AdActor::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdActor::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -232,7 +232,7 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 	}
 
 	AdGame *adGame = (AdGame *)_gameRef;
-	AdSpriteSet *spr = NULL;
+	AdSpriteSet *spr = nullptr;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -287,7 +287,7 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_WALK:
 			delete _walkSprite;
-			_walkSprite = NULL;
+			_walkSprite = nullptr;
 			spr = new AdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texWalkLifeTime, CACHE_HALF))) {
 				cmd = PARSERR_GENERIC;
@@ -316,7 +316,7 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_STAND:
 			delete _standSprite;
-			_standSprite = NULL;
+			_standSprite = nullptr;
 			spr = new AdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texStandLifeTime))) {
 				cmd = PARSERR_GENERIC;
@@ -327,7 +327,7 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TURN_LEFT:
 			delete _turnLeftSprite;
-			_turnLeftSprite = NULL;
+			_turnLeftSprite = nullptr;
 			spr = new AdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true))) {
 				cmd = PARSERR_GENERIC;
@@ -338,7 +338,7 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TURN_RIGHT:
 			delete _turnRightSprite;
-			_turnRightSprite = NULL;
+			_turnRightSprite = nullptr;
 			spr = new AdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true))) {
 				cmd = PARSERR_GENERIC;
@@ -356,7 +356,7 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
-				_cursor = NULL;
+				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -392,15 +392,15 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_BLOCKED_REGION: {
 			delete _blockRegion;
 			delete _currentBlockRegion;
-			_blockRegion = NULL;
-			_currentBlockRegion = NULL;
+			_blockRegion = nullptr;
+			_currentBlockRegion = nullptr;
 			BaseRegion *rgn = new BaseRegion(_gameRef);
 			BaseRegion *crgn = new BaseRegion(_gameRef);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				delete _blockRegion;
 				delete _currentBlockRegion;
-				_blockRegion = NULL;
-				_currentBlockRegion = NULL;
+				_blockRegion = nullptr;
+				_currentBlockRegion = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				_blockRegion = rgn;
@@ -413,15 +413,15 @@ bool AdActor::loadBuffer(byte *buffer, bool complete) {
 		case TOKEN_WAYPOINTS: {
 			delete _wptGroup;
 			delete _currentWptGroup;
-			_wptGroup = NULL;
-			_currentWptGroup = NULL;
+			_wptGroup = nullptr;
+			_currentWptGroup = nullptr;
 			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				delete _wptGroup;
 				delete _currentWptGroup;
-				_wptGroup = NULL;
-				_currentWptGroup = NULL;
+				_wptGroup = nullptr;
+				_currentWptGroup = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				_wptGroup = wpt;
@@ -502,7 +502,7 @@ void AdActor::turnTo(TDirection dir) {
 	_targetDir = dir;
 	_state = delta < 0 ? STATE_TURNING_LEFT : STATE_TURNING_RIGHT;
 
-	_tempSprite2 = NULL;
+	_tempSprite2 = nullptr;
 }
 
 
@@ -566,7 +566,7 @@ bool AdActor::display() {
 
 		_currentSprite->display(_posX,
 		                        _posY,
-		                        reg ? _registerAlias : NULL,
+		                        reg ? _registerAlias : nullptr,
 		                        scaleX,
 		                        scaleY,
 		                        alpha,
@@ -589,26 +589,26 @@ bool AdActor::display() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor::update() {
-	_currentSprite = NULL;
+	_currentSprite = nullptr;
 
 	if (_state == STATE_READY) {
 		if (_animSprite) {
 			delete _animSprite;
-			_animSprite = NULL;
+			_animSprite = nullptr;
 		}
 		if (_animSprite2) {
-			_animSprite2 = NULL;
+			_animSprite2 = nullptr;
 		}
 	}
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && _animSprite != NULL && _animSprite->isFinished()) {
+	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->isFinished()) {
 		_state = _nextState;
 		_nextState = STATE_READY;
 		_currentSprite = _animSprite;
 	}
 
-	if (_state == STATE_PLAYING_ANIM_SET && _animSprite2 != NULL && _animSprite2->isFinished()) {
+	if (_state == STATE_PLAYING_ANIM_SET && _animSprite2 != nullptr && _animSprite2->isFinished()) {
 		_state = _nextState;
 		_nextState = STATE_READY;
 		_currentSprite = _animSprite2;
@@ -649,7 +649,7 @@ bool AdActor::update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING_LEFT:
-		if (_tempSprite2 == NULL || _tempSprite2->isFinished()) {
+		if (_tempSprite2 == nullptr || _tempSprite2->isFinished()) {
 			if (_dir > 0) {
 				_dir = (TDirection)(_dir - 1);
 			} else {
@@ -657,7 +657,7 @@ bool AdActor::update() {
 			}
 
 			if (_dir == _targetDir) {
-				_tempSprite2 = NULL;
+				_tempSprite2 = nullptr;
 				_state = _nextState;
 				_nextState = STATE_READY;
 			} else {
@@ -686,7 +686,7 @@ bool AdActor::update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING_RIGHT:
-		if (_tempSprite2 == NULL || _tempSprite2->isFinished()) {
+		if (_tempSprite2 == nullptr || _tempSprite2->isFinished()) {
 			_dir = (TDirection)(_dir + 1);
 
 			if ((int)_dir >= (int)NUM_DIRECTIONS) {
@@ -694,7 +694,7 @@ bool AdActor::update() {
 			}
 
 			if (_dir == _targetDir) {
-				_tempSprite2 = NULL;
+				_tempSprite2 = nullptr;
 				_state = _nextState;
 				_nextState = STATE_READY;
 			} else {
@@ -753,10 +753,10 @@ bool AdActor::update() {
 		}
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->_timer - _sentence->_startTime);
-		if (_tempSprite2 == NULL || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+		if (_tempSprite2 == nullptr || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
-				_tempSprite2 = NULL;
+				_tempSprite2 = nullptr;
 				_state = _nextState;
 				_nextState = STATE_READY;
 			} else {
@@ -821,7 +821,7 @@ bool AdActor::update() {
 void AdActor::followPath() {
 	// skip current position
 	_path->getFirst();
-	while (_path->getCurrent() != NULL) {
+	while (_path->getCurrent() != nullptr) {
 		if (_path->getCurrent()->x != _posX || _path->getCurrent()->y != _posY) {
 			break;
 		}
@@ -829,7 +829,7 @@ void AdActor::followPath() {
 	}
 
 	// are there points to follow?
-	if (_path->getCurrent() != NULL) {
+	if (_path->getCurrent() != nullptr) {
 		_state = STATE_FOLLOWING_PATH;
 		initLine(BasePoint(_posX, _posY), *_path->getCurrent());
 	} else {
@@ -896,7 +896,7 @@ void AdActor::getNextStep() {
 
 
 	if (_pFCount == 0) {
-		if (_path->getNext() == NULL) {
+		if (_path->getNext() == nullptr) {
 			_posX = _targetPoint->x;
 			_posY = _targetPoint->y;
 
@@ -963,16 +963,16 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			return STATUS_OK;
 		}
 		AdObject *obj = (AdObject *)val->getNative();
-		if (!obj || obj->_type != OBJECT_ENTITY) {
+		if (!obj || obj->getType() != OBJECT_ENTITY) {
 			script->runtimeError("actor.%s method accepts an entity refrence only", name);
 			stack->pushNULL();
 			return STATUS_OK;
 		}
 		AdEntity *ent = (AdEntity *)obj;
-		if (ent->_walkToX == 0 && ent->_walkToY == 0) {
+		if (ent->getWalkToX() == 0 && ent->getWalkToY() == 0) {
 			goTo(ent->_posX, ent->_posY);
 		} else {
-			goTo(ent->_walkToX, ent->_walkToY, ent->_walkToDir);
+			goTo(ent->getWalkToX(), ent->getWalkToY(), ent->getWalkToDir());
 		}
 		if (strcmp(name, "GoToObjectAsync") != 0) {
 			script->waitForExclusive(this);
@@ -1040,17 +1040,17 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			if (scumm_stricmp(_anims[i]->getName(), animName) == 0) {
 				// invalidate sprites in use
 				if (_anims[i]->containsSprite(_tempSprite2)) {
-					_tempSprite2 = NULL;
+					_tempSprite2 = nullptr;
 				}
 				if (_anims[i]->containsSprite(_currentSprite)) {
-					_currentSprite = NULL;
+					_currentSprite = nullptr;
 				}
 				if (_anims[i]->containsSprite(_animSprite2)) {
-					_animSprite2 = NULL;
+					_animSprite2 = nullptr;
 				}
 
 				delete _anims[i];
-				_anims[i] = NULL;
+				_anims[i] = nullptr;
 				_anims.remove_at(i);
 				i--;
 				found = true;
@@ -1066,7 +1066,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	else if (strcmp(name, "HasAnim") == 0) {
 		stack->correctParams(1);
 		const char *animName = stack->pop()->getString();
-		stack->pushBool(getAnimByName(animName) != NULL);
+		stack->pushBool(getAnimByName(animName) != nullptr);
 		return STATUS_OK;
 	} else {
 		return AdTalkHolder::scCallMethod(script, stack, thisStack, name);
@@ -1231,7 +1231,7 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 			if (DID_FAIL(res)) {
 				_gameRef->LOG(res, "AdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", getName(), _forcedTalkAnimName);
 				delete _animSprite;
-				_animSprite = NULL;
+				_animSprite = nullptr;
 			} else {
 				return _animSprite;
 			}
@@ -1244,7 +1244,7 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 	}
 
 	// new way
-	BaseSprite *ret = NULL;
+	BaseSprite *ret = nullptr;
 
 	// do we have an animation with this name?
 	AdSpriteSet *anim = getAnimByName(stance);
@@ -1280,9 +1280,9 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
-	BaseSprite *ret = NULL;
+	BaseSprite *ret = nullptr;
 
-	if (stance != NULL) {
+	if (stance != nullptr) {
 		// search special stances
 		for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
 			if (scumm_stricmp(_talkSpritesEx[i]->getName(), stance) == 0) {
@@ -1290,7 +1290,7 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 				break;
 			}
 		}
-		if (ret == NULL) {
+		if (ret == nullptr) {
 			// search generic stances
 			for (uint32 i = 0; i < _talkSprites.size(); i++) {
 				if (scumm_stricmp(_talkSprites[i]->getName(), stance) == 0) {
@@ -1302,7 +1302,7 @@ BaseSprite *AdActor::getTalkStanceOld(const char *stance) {
 	}
 
 	// not a valid stance? get a random one
-	if (ret == NULL) {
+	if (ret == nullptr) {
 		if (_talkSprites.size() < 1) {
 			ret = _standSprite->getSprite(_dir);
 		} else {
@@ -1378,7 +1378,7 @@ TDirection AdActor::angleToDirection(int angle) {
 //////////////////////////////////////////////////////////////////////////
 int AdActor::getHeight() {
 	// if no current sprite is set, set some
-	if (_currentSprite == NULL) {
+	if (_currentSprite == nullptr) {
 		if (_standSprite) {
 			_currentSprite = _standSprite->getSprite(_dir);
 		} else {
@@ -1400,7 +1400,7 @@ AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
 			return _anims[i];
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1411,7 +1411,7 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 
 
 	byte *fileBuffer = BaseFileManager::getEngineInstance()->readWholeFile(animsFilename);
-	if (fileBuffer == NULL) {
+	if (fileBuffer == nullptr) {
 		_gameRef->LOG(0, "AdActor::MergeAnims failed for file '%s'", animsFilename);
 		return STATUS_FAILED;
 	}

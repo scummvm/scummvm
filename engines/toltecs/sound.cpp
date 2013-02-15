@@ -103,8 +103,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			}
 		}
 	} else {
-
-		if (type == -3) {
+		if (type == kChannelTypeSpeech) {
 			// Stop speech and play new sound
 			stopSpeech();
 		}
@@ -137,10 +136,8 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 
 			_vm->_mixer->playStream(soundType, &channels[freeChannel].handle,
 			                        stream, -1, volume, panning);
-		}
-
-	}
-
+		}	// if (freeChannel >= 0)
+	}	// resIndex
 }
 
 void Sound::updateSpeech() {

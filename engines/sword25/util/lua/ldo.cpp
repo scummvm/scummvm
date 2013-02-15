@@ -6,12 +6,10 @@
 
 
 // FIXME: LUAI_THROW and LUAI_TRY use either throw/catch or setjmp/longjmp.
-// Neither of these is supported in ScummVM. So we need to come up
-// with a replacement. The most simple, direct and crude approach:
-// Replace "throw" with an "error()" call. Of course we only
-// would want to do that if this actually never happens...
-#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
-#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
+// Neither of these is supported in ScummVM. Calls to LUAI_THROW have been
+// replaced with error() in ScummVM, but the calls to LUAI_TRY remain
+#define FORBIDDEN_SYMBOL_EXCEPTION_setjmp	// for LUAI_TRY, i.e. try()
+#define FORBIDDEN_SYMBOL_EXCEPTION_longjmp	// for LUAI_TRY and LUAI_THROW, i.e. throw()
 
 #include "common/textconsole.h"
 
@@ -103,12 +101,10 @@ static void resetstack (lua_State *L, int status) {
 void luaD_throw (lua_State *L, int errcode) {
   if (L->errorJmp) {
     L->errorJmp->status = errcode;
-    // FIXME: LUAI_THROW and LUAI_TRY use either throw/catch or setjmp/longjmp.
-    // Neither of these is supported in ScummVM. So we need to come up
-    // with a replacement. The most simple, direct and crude approach:
-    // Replace "throw" with an "error()" call. Of course we only
-    // would want to do that if this actually never happens...
-    LUAI_THROW(L, L->errorJmp);
+    // LUAI_THROW has been replaced with an error message in ScummVM, together
+    // with the LUA error code and description
+    //LUAI_THROW(L, L->errorJmp);
+    error("LUA error occured, error code is %d (%s)", errcode, luaErrorDescription[errcode]);
   }
   else {
     L->status = cast_byte(errcode);
@@ -129,9 +125,8 @@ int luaD_rawrunprotected (lua_State *L, Pfunc f, void *ud) {
   L->errorJmp = &lj;
   // FIXME: LUAI_THROW and LUAI_TRY use either throw/catch or setjmp/longjmp.
   // Neither of these is supported in ScummVM. So we need to come up
-  // with a replacement. The most simple, direct and crude approach:
-  // Replace "throw" with an "error()" call. Of course we only
-  // would want to do that if this actually never happens...
+  // with a replacement. Calls to LUAI_THROW have been replaced with error()
+  // in ScummVM, but the calls to LUAI_TRY remain
   LUAI_TRY(L, &lj,
     (*f)(L, ud);
   );

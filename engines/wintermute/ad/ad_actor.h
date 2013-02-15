@@ -54,7 +54,7 @@ public:
 	virtual bool update();
 	virtual bool display();
 	virtual void turnTo(TDirection dir);
-	AdActor(BaseGame *inGame/*=NULL*/);
+	AdActor(BaseGame *inGame/*=nullptr*/);
 	virtual ~AdActor();
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);

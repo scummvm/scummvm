@@ -43,7 +43,7 @@ public:
 	bool closeFile(Common::SeekableReadStream *File);
 	bool hasFile(const Common::String &filename);
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
-	byte *readWholeFile(const Common::String &filename, uint32 *size = NULL, bool mustExist = true);
+	byte *readWholeFile(const Common::String &filename, uint32 *size = nullptr, bool mustExist = true);
 
 	BaseFileManager(Common::Language lang);
 	virtual ~BaseFileManager();
@@ -59,6 +59,7 @@ private:
 	bool initPaths();
 	bool addPath(TPathType type, const Common::FSNode &path);
 	bool registerPackages();
+	void initResources();
 	Common::SeekableReadStream *openFileRaw(const Common::String &filename);
 	Common::SeekableReadStream *openPkgFile(const Common::String &filename);
 	Common::FSList _packagePaths;
@@ -67,6 +68,7 @@ private:
 	Common::SearchSet _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
 	Common::Language _language;
+	Common::Archive *_resources;
 	// This class is intentionally not a subclass of Base, as it needs to be used by
 	// the detector too, without launching the entire engine:
 };

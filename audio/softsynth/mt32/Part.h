@@ -18,12 +18,26 @@
 #ifndef MT32EMU_PART_H
 #define MT32EMU_PART_H
 
-#include <common/list.h>
-
 namespace MT32Emu {
 
 class PartialManager;
 class Synth;
+
+class PolyList {
+private:
+	Poly *firstPoly;
+	Poly *lastPoly;
+
+public:
+	PolyList();
+	bool isEmpty() const;
+	Poly *getFirst() const;
+	Poly *getLast() const;
+	void prepend(Poly *poly);
+	void append(Poly *poly);
+	Poly *takeFirst();
+	void remove(Poly * const poly);
+};
 
 class Part {
 private:
@@ -37,8 +51,8 @@ private:
 
 	unsigned int activePartialCount;
 	PatchCache patchCache[4];
-	Common::List<Poly *> freePolys;
-	Common::List<Poly *> activePolys;
+	PolyList freePolys;
+	PolyList activePolys;
 
 	void setPatch(const PatchParam *patch);
 	unsigned int midiKeyToKey(unsigned int midiKey);

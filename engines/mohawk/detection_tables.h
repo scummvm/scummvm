@@ -2096,6 +2096,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	// Rugrats Adventure Game
+	// English Windows Demo
+	// From GeorgeQGreg (Rugrats Movie Soundtrack)
+	{
+		{
+			"rugrats",
+			"Demo",
+			AD_ENTRY1("outline", "adbd7ff6c5e1bdb7062c89879a4e39e6"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV4,
+		0,
+		0
+	},
+
 	{
 		{
 			"lbsampler",
@@ -2503,6 +2521,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_LIVINGBOOKSV2,
+		0,
+		0
+	},
+
+	// Rugrats Print Shop
+	// English Windows Demo
+	// From GeorgeQGreg (Rugrats Movie Soundtrack)
+	{
+		{
+			"rugratsps",
+			"Demo",
+			AD_ENTRY1("outline", "808d5ee8427180ddebdd5dd4199b47cb"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV4,
 		0,
 		0
 	},

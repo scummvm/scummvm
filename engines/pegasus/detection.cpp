@@ -119,12 +119,12 @@ SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
 	// The original had no pattern, so the user must rename theirs
 	// Note that we ignore the target because saves are compatible between
 	// all versions
-	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("pegasus-*.sav");
+	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
 
 	SaveStateList saveList;
-	for (uint32 i = 0; i < filenames.size(); i++) {
+	for (uint32 i = 0; i < fileNames.size(); i++) {
 		// Isolate the description from the file name
-		Common::String desc = filenames[i].c_str() + 8;
+		Common::String desc = fileNames[i].c_str() + 8;
 		for (int j = 0; j < 4; j++)
 			desc.deleteLastChar();
 
@@ -136,8 +136,8 @@ SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
 
 void PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
 	// See listSaves() for info on the pattern
-	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("pegasus-*.sav");
-	g_system->getSavefileManager()->removeSavefile(filenames[slot].c_str());
+	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
+	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
 }
 
 bool PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

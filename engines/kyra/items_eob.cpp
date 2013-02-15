@@ -118,7 +118,7 @@ void EoBCoreEngine::setItemPosition(Item *itemQueue, int block, Item item, int p
 	EoBItem *itm = &_items[item];
 	itm->pos = pos;
 	itm->block = block;
-	itm->level = block < 0 ? 0xff : _currentLevel;
+	itm->level = block < 0 ? 0xFF : _currentLevel;
 
 	if (!*itemQueue) {
 		*itemQueue = itm->next = itm->prev = item;
@@ -141,7 +141,7 @@ void EoBCoreEngine::createInventoryItem(EoBCharacter *c, Item itemIndex, int16 i
 	if (itemValue != -1)
 		_items[itemIndex].value = itemValue;
 
-	if (itemValue && ((_itemTypes[_items[itemIndex].type].extraProperties & 0x7f) < 4))
+	if (itemValue && ((_itemTypes[_items[itemIndex].type].extraProperties & 0x7F) < 4))
 		_items[itemIndex].flags |= 0x80;
 
 	if (c->inventory[preferedInventorySlot]) {
@@ -208,7 +208,7 @@ int EoBCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 	}
 
 	int itm = _characters[charIndex].inventory[slot];
-	int ex = _itemTypes[_items[itm].type].extraProperties & 0x7f;
+	int ex = _itemTypes[_items[itm].type].extraProperties & 0x7F;
 
 	if (_items[itm].flags & 0x20 && (_flags.gameID == GI_EOB1 || slot < 2)) {
 		if (_flags.gameID == GI_EOB2 && ex > 0 && ex < 4)
@@ -216,7 +216,7 @@ int EoBCoreEngine::validateInventorySlotForItem(Item item, int charIndex, int sl
 		return 0;
 	}
 
-	uint16 v = item ? _itemTypes[_items[item].type].invFlags : 0xffff;
+	uint16 v = item ? _itemTypes[_items[item].type].invFlags : 0xFFFF;
 	if (v & _slotValidationFlags[slot])
 		return 1;
 
@@ -359,7 +359,7 @@ void EoBCoreEngine::printFullItemName(Item item) {
 	EoBItem *itm = &_items[item];
 	const char *nameUnid = _itemNames[itm->nameUnid];
 	const char *nameId = _itemNames[itm->nameId];
-	uint8 f = _itemTypes[itm->type].extraProperties & 0x7f;
+	uint8 f = _itemTypes[itm->type].extraProperties & 0x7F;
 	int8 v = itm->value;
 
 	const char *tstr2 = 0;

@@ -43,7 +43,7 @@ BaseScriptHolder::BaseScriptHolder(BaseGame *inGame) : BaseScriptable(inGame) {
 	setName("<unnamed>");
 
 	_freezable = true;
-	_filename = NULL;
+	_filename = nullptr;
 }
 
 
@@ -56,11 +56,11 @@ BaseScriptHolder::~BaseScriptHolder() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::cleanup() {
 	delete[] _filename;
-	_filename = NULL;
+	_filename = nullptr;
 
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		_scripts[i]->finish(true);
-		_scripts[i]->_owner = NULL;
+		_scripts[i]->_owner = nullptr;
 	}
 	_scripts.clear();
 
@@ -69,15 +69,15 @@ bool BaseScriptHolder::cleanup() {
 
 //////////////////////////////////////////////////////////////////////
 void BaseScriptHolder::setFilename(const char *filename) {
-	if (_filename != NULL) {
+	if (_filename != nullptr) {
 		delete[] _filename;
-		_filename = NULL;
+		_filename = nullptr;
 	}
-	if (filename == NULL) {
+	if (filename == nullptr) {
 		return;
 	}
 	_filename = new char [strlen(filename) + 1];
-	if (_filename != NULL) {
+	if (_filename != nullptr) {
 		strcpy(_filename, filename);
 	}
 }
@@ -342,7 +342,7 @@ bool BaseScriptHolder::removeScript(ScScript *script) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptHolder::canHandleEvent(const char *EventName) {
+bool BaseScriptHolder::canHandleEvent(const char *EventName) const {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleEvent(EventName)) {
 			return true;
@@ -353,7 +353,7 @@ bool BaseScriptHolder::canHandleEvent(const char *EventName) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseScriptHolder::canHandleMethod(const char *MethodName) {
+bool BaseScriptHolder::canHandleMethod(const char *MethodName) const {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->canHandleMethod(MethodName)) {
 			return true;
@@ -388,8 +388,8 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 		buffer = params;
 	}
 
-	char *propName = NULL;
-	char *propValue = NULL;
+	char *propName = nullptr;
+	char *propValue = nullptr;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -418,16 +418,16 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		delete[] propName;
 		delete[] propValue;
-		propName = NULL;
-		propValue = NULL;
+		propName = nullptr;
+		propValue = nullptr;
 		_gameRef->LOG(0, "Syntax error in PROPERTY definition");
 		return STATUS_FAILED;
 	}
-	if (cmd == PARSERR_GENERIC || propName == NULL || propValue == NULL) {
+	if (cmd == PARSERR_GENERIC || propName == nullptr || propValue == nullptr) {
 		delete[] propName;
 		delete[] propValue;
-		propName = NULL;
-		propValue = NULL;
+		propName = nullptr;
+		propValue = nullptr;
 		_gameRef->LOG(0, "Error loading PROPERTY definition");
 		return STATUS_FAILED;
 	}
@@ -440,8 +440,8 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 	delete val;
 	delete[] propName;
 	delete[] propValue;
-	propName = NULL;
-	propValue = NULL;
+	propName = nullptr;
+	propValue = nullptr;
 
 	return STATUS_OK;
 }
@@ -474,7 +474,7 @@ ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 

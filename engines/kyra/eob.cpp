@@ -316,7 +316,7 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 void EoBEngine::updateUsedCharacterHandItem(int charIndex, int slot) {
 	EoBItem *itm = &_items[_characters[charIndex].inventory[slot]];
 	if (itm->type == 48) {
-		int charges = itm->flags & 0x3f;
+		int charges = itm->flags & 0x3F;
 		if (--charges)
 			--itm->flags;
 		else
@@ -359,7 +359,7 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 	_screen->loadShapeSetBitmap("DOOR", 5, 3);
 	_screen->_curPage = 2;
 
-	if (doorType1 != 0xff) {
+	if (doorType1 != 0xFF) {
 		for (int i = 0; i < 3; i++) {
 			const uint8 *enc = &_doorShapeEncodeDefs[(doorType1 * 3 + i) << 2];
 			_doorShapes[shapeId1 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
@@ -370,7 +370,7 @@ void EoBEngine::loadDoorShapes(int doorType1, int shapeId1, int doorType2, int s
 		}
 	}
 
-	if (doorType2 != 0xff) {
+	if (doorType2 != 0xFF) {
 		for (int i = 0; i < 3; i++) {
 			const uint8 *enc = &_doorShapeEncodeDefs[(doorType2 * 3 + i) << 2];
 			_doorShapes[shapeId2 + i] = _screen->encodeShape(enc[0], enc[1], enc[2], enc[3], false, (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[_currentLevel - 1]] : 0);
@@ -460,7 +460,7 @@ void EoBEngine::turnUndeadAuto() {
 	int oc = _openBookChar;
 
 	for (int i = 0; i < 6; i++) {
-		if (!testCharacter(i, 0x0d))
+		if (!testCharacter(i, 0x0D))
 			continue;
 
 		EoBCharacter *c = &_characters[i];
@@ -505,7 +505,7 @@ bool EoBEngine::checkPartyStatusExtra() {
 	_txt->printMessage(_menuStringsDefeat[0]);
 	while (!shouldQuit()) {
 		removeInputTop();
-		if (checkInput(0, false, 0) & 0xff)
+		if (checkInput(0, false, 0) & 0xFF)
 			break;
 	}
 	_screen->copyPage(10, 0);

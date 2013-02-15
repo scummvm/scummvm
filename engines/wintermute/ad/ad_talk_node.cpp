@@ -39,11 +39,11 @@ IMPLEMENT_PERSISTENT(AdTalkNode, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkNode::AdTalkNode(BaseGame *inGame) : BaseClass(inGame) {
-	_sprite = NULL;
-	_spriteFilename = NULL;
-	_spriteSet = NULL;
-	_spriteSetFilename = NULL;
-	_comment = NULL;
+	_sprite = nullptr;
+	_spriteFilename = nullptr;
+	_spriteSet = nullptr;
+	_spriteSetFilename = nullptr;
+	_comment = nullptr;
 
 	_startTime = _endTime = 0;
 	_playToEnd = false;
@@ -58,11 +58,11 @@ AdTalkNode::~AdTalkNode() {
 	delete[] _spriteSetFilename;
 	delete _spriteSet;
 	delete _comment;
-	_spriteFilename = NULL;
-	_sprite = NULL;
-	_spriteSetFilename = NULL;
-	_spriteSet = NULL;
-	_comment = NULL;
+	_spriteFilename = nullptr;
+	_sprite = nullptr;
+	_spriteSetFilename = nullptr;
+	_spriteSet = nullptr;
+	_comment = nullptr;
 }
 
 
@@ -123,7 +123,7 @@ bool AdTalkNode::loadBuffer(byte *buffer, bool complete) {
 			_spriteSet = new AdSpriteSet(_gameRef);
 			if (!_spriteSet || DID_FAIL(_spriteSet->loadBuffer(params, false))) {
 				delete _spriteSet;
-				_spriteSet = NULL;
+				_spriteSet = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -240,7 +240,7 @@ bool AdTalkNode::loadSprite() {
 		_sprite = new BaseSprite(_gameRef);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
 			delete _sprite;
-			_sprite = NULL;
+			_sprite = nullptr;
 			return STATUS_FAILED;
 		} else {
 			return STATUS_OK;
@@ -249,7 +249,7 @@ bool AdTalkNode::loadSprite() {
 		_spriteSet = new AdSpriteSet(_gameRef);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
 			delete _spriteSet;
-			_spriteSet = NULL;
+			_spriteSet = nullptr;
 			return STATUS_FAILED;
 		} else {
 			return STATUS_OK;
@@ -264,9 +264,9 @@ bool AdTalkNode::loadSprite() {
 bool AdTalkNode::isInTimeInterval(uint32 time, TDirection dir) {
 	if (time >= _startTime) {
 		if (_playToEnd) {
-			if ((_spriteFilename && _sprite == NULL) || (_sprite && _sprite->isFinished() == false)) {
+			if ((_spriteFilename && _sprite == nullptr) || (_sprite && _sprite->isFinished() == false)) {
 				return true;
-			} else if ((_spriteSetFilename && _spriteSet == NULL) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->isFinished() == false)) {
+			} else if ((_spriteSetFilename && _spriteSet == nullptr) || (_spriteSet && _spriteSet->getSprite(dir) && _spriteSet->getSprite(dir)->isFinished() == false)) {
 				return true;
 			} else {
 				return false;
@@ -288,7 +288,7 @@ BaseSprite *AdTalkNode::getSprite(TDirection dir) {
 	} else if (_spriteSet) {
 		return _spriteSet->getSprite(dir);
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 

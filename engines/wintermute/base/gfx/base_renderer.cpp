@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -56,7 +57,7 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 
 	_loadImageName = "";
 	_saveImageName = "";
-	_saveLoadImage = NULL;
+	_saveLoadImage = nullptr;
 	_loadInProgress = false;
 	_hasDrawnSaveLoadImage = false;
 
@@ -132,24 +133,24 @@ void BaseRenderer::initSaveLoad(bool isSaving, bool quickSave) {
 
 	if (isSaving && !quickSave) {
 		delete _saveLoadImage;
-		_saveLoadImage = NULL;
+		_saveLoadImage = nullptr;
 		if (_saveImageName.size()) {
 			_saveLoadImage = createSurface();
 
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
 				delete _saveLoadImage;
-				_saveLoadImage = NULL;
+				_saveLoadImage = nullptr;
 			}
 		}
 	} else {
 		delete _saveLoadImage;
-		_saveLoadImage = NULL;
+		_saveLoadImage = nullptr;
 		if (_loadImageName.size()) {
 			_saveLoadImage = createSurface();
 
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
 				delete _saveLoadImage;
-				_saveLoadImage = NULL;
+				_saveLoadImage = nullptr;
 			}
 		}
 		_loadInProgress = true;
@@ -162,7 +163,7 @@ void BaseRenderer::endSaveLoad() {
 	_indicatorWidthDrawn = 0;
 
 	delete _saveLoadImage;
-	_saveLoadImage = NULL;
+	_saveLoadImage = nullptr;
 }
 
 void BaseRenderer::persistSaveLoadImages(BasePersistenceManager *persistMgr) {
@@ -214,7 +215,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 		}
 	}
 
-	return (BaseObject *)NULL;
+	return (BaseObject *)nullptr;
 }
 
 
@@ -317,7 +318,7 @@ bool BaseRenderer::clipCursor() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::unclipCursor() {
 	/*
-	if (!_windowed) ::ClipCursor(NULL);
+	if (!_windowed) ::ClipCursor(nullptr);
 	*/
 	return STATUS_OK;
 }
@@ -342,6 +343,22 @@ bool BaseRenderer::pointInViewport(Point32 *p) {
 
 void BaseRenderer::addRectToList(BaseActiveRect *rect) {
 	_rectList.push_back(rect);
+}
+
+bool BaseRenderer::saveScreenShot(const Common::String &filename, int sizeX, int sizeY) {
+	BaseImage *image = takeScreenshot();
+	if (image) {
+		if (sizeX != 0 && sizeY != 0) {
+			if (!DID_SUCCEED(image->resize(sizeX, sizeY))) {
+				delete image;
+				return false;
+			}
+		}
+		image->saveBMPFile(filename);
+		delete image;
+		return true;
+	}
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

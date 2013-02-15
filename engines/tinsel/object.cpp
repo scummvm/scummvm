@@ -302,23 +302,23 @@ void GetAniOffset(SCNHANDLE hImg, int flags, int *pAniX, int *pAniY) {
 		const IMAGE *pImg = (const IMAGE *)LockMem(hImg);
 
 		// set ani X
-		*pAniX = (int16) FROM_LE_16(pImg->anioffX);
+		*pAniX = (int16) FROM_16(pImg->anioffX);
 
 		// set ani Y
-		*pAniY = (int16) FROM_LE_16(pImg->anioffY);
+		*pAniY = (int16) FROM_16(pImg->anioffY);
 
 		if (flags & DMA_FLIPH) {
 			// we are flipped horizontally
 
 			// set ani X = -ani X + width - 1
-			*pAniX = -*pAniX + FROM_LE_16(pImg->imgWidth) - 1;
+			*pAniX = -*pAniX + FROM_16(pImg->imgWidth) - 1;
 		}
 
 		if (flags & DMA_FLIPV) {
 			// we are flipped vertically
 
 			// set ani Y = -ani Y + height - 1
-			*pAniY = -*pAniY + (FROM_LE_16(pImg->imgHeight) & ~C16_FLAG_MASK) - 1;
+			*pAniY = -*pAniY + (FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK) - 1;
 		}
 	} else
 		// null image
@@ -385,13 +385,13 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 		pObj->pPal = pPalQ;
 
 		// set objects size
-		pObj->width  = FROM_LE_16(pImg->imgWidth);
-		pObj->height = FROM_LE_16(pImg->imgHeight) & ~C16_FLAG_MASK;
+		pObj->width  = FROM_16(pImg->imgWidth);
+		pObj->height = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK;
 		pObj->flags &= ~C16_FLAG_MASK;
-		pObj->flags |= FROM_LE_16(pImg->imgHeight) & C16_FLAG_MASK;
+		pObj->flags |= FROM_16(pImg->imgHeight) & C16_FLAG_MASK;
 
 		// set objects bitmap definition
-		pObj->hBits = FROM_LE_32(pImg->hImgBits);
+		pObj->hBits = FROM_32(pImg->hImgBits);
 
 		// get animation offset of object
 		GetAniOffset(pObj->hImg, pInitTbl->objFlags, &aniX, &aniY);
@@ -442,13 +442,13 @@ void AnimateObjectFlags(OBJECT *pAniObj, int newflags, SCNHANDLE hNewImg) {
 			const IMAGE *pNewImg = (IMAGE *)LockMem(hNewImg);
 
 			// setup new shape
-			pAniObj->width  = FROM_LE_16(pNewImg->imgWidth);
-			pAniObj->height = FROM_LE_16(pNewImg->imgHeight) & ~C16_FLAG_MASK;
+			pAniObj->width  = FROM_16(pNewImg->imgWidth);
+			pAniObj->height = FROM_16(pNewImg->imgHeight) & ~C16_FLAG_MASK;
 			newflags &= ~C16_FLAG_MASK;
-			newflags |= FROM_LE_16(pNewImg->imgHeight) & C16_FLAG_MASK;
+			newflags |= FROM_16(pNewImg->imgHeight) & C16_FLAG_MASK;
 
 			// set objects bitmap definition
-			pAniObj->hBits  = FROM_LE_32(pNewImg->hImgBits);
+			pAniObj->hBits  = FROM_32(pNewImg->hImgBits);
 		} else {	// null image
 			pAniObj->width  = 0;
 			pAniObj->height = 0;
@@ -494,7 +494,7 @@ OBJECT *RectangleObject(SCNHANDLE hPal, int color, int width, int height) {
 	OBJECT *pRect = InitObject(&rectObj);
 
 	// allocate a palette for this object
-	pPalQ = AllocPalette(hPal);
+	pPalQ = AllocPalette(FROM_32(hPal));
 
 	// make sure palette allocated
 	assert(pPalQ != NULL);

@@ -25,17 +25,14 @@ private:
 	Bit8u time;
 	Bit8u level;
 
-	unsigned int sampleRate;
-	Bit32u bufSize;
 	Bit32u bufIx;
-
 	float *buf;
 
 	Bit32u delayLeft;
 	Bit32u delayRight;
 	Bit32u delayFeedback;
 
-	float fade;
+	float amp;
 	float feedback;
 
 	void recalcParameters();
@@ -43,7 +40,7 @@ private:
 public:
 	DelayReverb();
 	~DelayReverb();
-	void open(unsigned int sampleRate);
+	void open();
 	void close();
 	void setParameters(Bit8u time, Bit8u level);
 	void process(const float *inLeft, const float *inRight, float *outLeft, float *outRight, unsigned long numSamples);

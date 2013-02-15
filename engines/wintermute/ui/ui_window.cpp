@@ -59,9 +59,9 @@ UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
 	_titleAlign = TAL_LEFT;
 	_transparent = false;
 
-	_backInactive = NULL;
-	_fontInactive = NULL;
-	_imageInactive = NULL;
+	_backInactive = nullptr;
+	_fontInactive = nullptr;
+	_imageInactive = nullptr;
 
 	_type = UI_WINDOW;
 	_canFocus = true;
@@ -70,8 +70,8 @@ UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
 	_dragFrom.x = _dragFrom.y = 0;
 
 	_mode = WINDOW_NORMAL;
-	_shieldWindow = NULL;
-	_shieldButton = NULL;
+	_shieldWindow = nullptr;
+	_shieldButton = nullptr;
 
 	_fadeColor = 0x00000000;
 	_fadeBackground = false;
@@ -81,7 +81,7 @@ UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
 	_inGame = false;
 
 	_clipContents = false;
-	_viewport = NULL;
+	_viewport = nullptr;
 
 	_pauseMusic = true;
 }
@@ -99,9 +99,9 @@ void UIWindow::cleanup() {
 	delete _shieldWindow;
 	delete _shieldButton;
 	delete _viewport;
-	_shieldWindow = NULL;
-	_shieldButton = NULL;
-	_viewport = NULL;
+	_shieldWindow = nullptr;
+	_shieldButton = nullptr;
+	_viewport = nullptr;
 
 	delete _backInactive;
 	if (!_sharedFonts && _fontInactive) {
@@ -210,7 +210,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		back->display(_posX + offsetX, _posY + offsetY, _width, _height);
 	}
 	if (image) {
-		image->draw(_posX + offsetX, _posY + offsetY, _transparent ? NULL : this);
+		image->draw(_posX + offsetX, _posY + offsetY, _transparent ? nullptr : this);
 	}
 
 	if (!BasePlatform::isRectEmpty(&_titleRect) && font && _text) {
@@ -218,7 +218,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (!_transparent && !image) {
-		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, NULL, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
+		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, nullptr, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
 	}
 
 	for (uint32 i = 0; i < _widgets.size(); i++) {
@@ -240,7 +240,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UIWindow::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -374,7 +374,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
-				_back = NULL;
+				_back = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -384,7 +384,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			_backInactive = new UITiledImage(_gameRef);
 			if (!_backInactive || DID_FAIL(_backInactive->loadFile((char *)params))) {
 				delete _backInactive;
-				_backInactive = NULL;
+				_backInactive = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -394,7 +394,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
-				_image = NULL;
+				_image = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -404,7 +404,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			       _imageInactive = new BaseSprite(_gameRef);
 			if (!_imageInactive || DID_FAIL(_imageInactive->loadFile((char *)params))) {
 				delete _imageInactive;
-				_imageInactive = NULL;
+				_imageInactive = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -473,7 +473,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
-				_cursor = NULL;
+				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -482,7 +482,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			UIButton *btn = new UIButton(_gameRef);
 			if (!btn || DID_FAIL(btn->loadBuffer(params, false))) {
 				delete btn;
-				btn = NULL;
+				btn = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				btn->_parent = this;
@@ -495,7 +495,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			UIText *text = new UIText(_gameRef);
 			if (!text || DID_FAIL(text->loadBuffer(params, false))) {
 				delete text;
-				text = NULL;
+				text = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				text->_parent = this;
@@ -508,7 +508,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			UIEdit *edit = new UIEdit(_gameRef);
 			if (!edit || DID_FAIL(edit->loadBuffer(params, false))) {
 				delete edit;
-				edit = NULL;
+				edit = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				edit->_parent = this;
@@ -521,7 +521,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 			UIWindow *win = new UIWindow(_gameRef);
 			if (!win || DID_FAIL(win->loadBuffer(params, false))) {
 				delete win;
-				win = NULL;
+				win = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				win->_parent = this;
@@ -616,7 +616,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 		_fadeColor = BYTETORGBA(fadeR, fadeG, fadeB, fadeA);
 	}
 
-	_focusedWidget = NULL;
+	_focusedWidget = nullptr;
 
 	return STATUS_OK;
 }
@@ -795,7 +795,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			_gameRef->_fontStorage->removeFont(_fontInactive);
 		}
 		_fontInactive = _gameRef->_fontStorage->addFont(stack->pop()->getString());
-		stack->pushBool(_fontInactive != NULL);
+		stack->pushBool(_fontInactive != nullptr);
 
 		return STATUS_OK;
 	}
@@ -811,7 +811,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		const char *filename = stack->pop()->getString();
 		if (!_imageInactive || DID_FAIL(_imageInactive->loadFile(filename))) {
 			delete _imageInactive;
-			_imageInactive = NULL;
+			_imageInactive = nullptr;
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -1294,7 +1294,7 @@ bool UIWindow::moveFocus(bool forward) {
 		}
 	}
 	if (!found) {
-		_focusedWidget = NULL;
+		_focusedWidget = nullptr;
 	}
 
 	if (!_focusedWidget) {

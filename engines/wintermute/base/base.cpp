@@ -42,7 +42,7 @@ BaseClass::BaseClass(BaseGame *gameOwner) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseClass::BaseClass() {
-	_gameRef = NULL;
+	_gameRef = nullptr;
 	_persistable = true;
 }
 
@@ -111,8 +111,8 @@ bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 		buffer = params;
 	}
 
-	char *propName = NULL;
-	char *propValue = NULL;
+	char *propName = nullptr;
+	char *propValue = nullptr;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -141,16 +141,16 @@ bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		delete[] propName;
 		delete[] propValue;
-		propName = NULL;
-		propValue = NULL;
+		propName = nullptr;
+		propValue = nullptr;
 		_gameRef->LOG(0, "Syntax error in EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
-	if (cmd == PARSERR_GENERIC || propName == NULL || propValue == NULL) {
+	if (cmd == PARSERR_GENERIC || propName == nullptr || propValue == nullptr) {
 		delete[] propName;
 		delete[] propValue;
-		propName = NULL;
-		propValue = NULL;
+		propName = nullptr;
+		propValue = nullptr;
 		_gameRef->LOG(0, "Error loading EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
@@ -160,8 +160,8 @@ bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 
 	delete[] propName;
 	delete[] propValue;
-	propName = NULL;
-	propValue = NULL;
+	propName = nullptr;
+	propValue = nullptr;
 
 	return STATUS_OK;
 }

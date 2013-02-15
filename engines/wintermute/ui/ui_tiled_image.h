@@ -44,8 +44,9 @@ public:
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	bool display(int x, int y, int width, int height);
-	UITiledImage(BaseGame *inGame = NULL);
+	UITiledImage(BaseGame *inGame = nullptr);
 	virtual ~UITiledImage();
+private:
 	BaseSubFrame *_image;
 	Rect32 _upLeft;
 	Rect32 _upMiddle;

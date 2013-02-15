@@ -262,9 +262,9 @@ void EnergyMonitor::calibrateEnergyBar() {
 	_energyLight.setCurrentFrameIndex(0);
 	_energyLight.hide();
 
-	show();
 	setEnergyValue(0);
 	setEnergyDrainRate(-(int32)kMaxJMPEnergy / 2);
+	show();
 
 	// Make sure warning light is hidden...
 	_energyLight.hide();

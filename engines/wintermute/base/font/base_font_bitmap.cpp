@@ -49,8 +49,8 @@ IMPLEMENT_PERSISTENT(BaseFontBitmap, false)
 
 //////////////////////////////////////////////////////////////////////
 BaseFontBitmap::BaseFontBitmap(BaseGame *inGame) : BaseFont(inGame) {
-	_subframe = NULL;
-	_sprite = NULL;
+	_subframe = nullptr;
+	_sprite = nullptr;
 	_widthsFrame = 0;
 	memset(_widths, 0, NUM_CHARACTERS);
 	_tileWidth = _tileHeight = _numColumns = 0;
@@ -64,8 +64,8 @@ BaseFontBitmap::BaseFontBitmap(BaseGame *inGame) : BaseFont(inGame) {
 BaseFontBitmap::~BaseFontBitmap() {
 	delete _subframe;
 	delete _sprite;
-	_subframe = NULL;
-	_sprite = NULL;
+	_subframe = nullptr;
+	_sprite = nullptr;
 }
 
 
@@ -112,7 +112,7 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 		return 0;
 	}
 
-	if (text == NULL || text[0] == '\0') {
+	if (text == nullptr || text[0] == '\0') {
 		return _tileHeight;
 	}
 
@@ -273,7 +273,7 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 //////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::loadFile(const Common::String &filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "BaseFontBitmap::LoadFile failed for file '%s'", filename.c_str());
 		return STATUS_FAILED;
 	}
@@ -347,8 +347,8 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 	int i;
 	int r = 255, g = 255, b = 255;
 	bool custoTrans = false;
-	char *surfaceFile = NULL;
-	char *spriteFile = NULL;
+	char *surfaceFile = nullptr;
+	char *spriteFile = nullptr;
 
 	bool autoWidth = false;
 	int spaceWidth = 0;
@@ -428,16 +428,16 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 		return STATUS_FAILED;
 	}
 
-	if (spriteFile != NULL) {
+	if (spriteFile != nullptr) {
 		delete _sprite;
 		_sprite = new BaseSprite(_gameRef, this);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(spriteFile))) {
 			delete _sprite;
-			_sprite = NULL;
+			_sprite = nullptr;
 		}
 	}
 
-	if (surfaceFile != NULL && !_sprite) {
+	if (surfaceFile != nullptr && !_sprite) {
 		_subframe = new BaseSubFrame(_gameRef);
 		if (custoTrans) {
 			_subframe->setSurface(surfaceFile, false, r, g, b);
@@ -447,7 +447,7 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 	}
 
 
-	if (((_subframe == NULL || _subframe->_surface == NULL) && _sprite == NULL) || _numColumns == 0 || _tileWidth == 0 || _tileHeight == 0) {
+	if (((_subframe == nullptr || _subframe->_surface == nullptr) && _sprite == nullptr) || _numColumns == 0 || _tileWidth == 0 || _tileHeight == 0) {
 		_gameRef->LOG(0, "Incomplete font definition");
 		return STATUS_FAILED;
 	}
@@ -530,7 +530,7 @@ int BaseFontBitmap::getCharWidth(byte index) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontBitmap::getWidths() {
-	BaseSurface *surf = NULL;
+	BaseSurface *surf = nullptr;
 
 	if (_sprite) {
 		if (_widthsFrame >= 0 && _widthsFrame < (int32)_sprite->_frames.size()) {
@@ -539,7 +539,7 @@ bool BaseFontBitmap::getWidths() {
 			}
 		}
 	}
-	if (surf == NULL && _subframe) {
+	if (surf == nullptr && _subframe) {
 		surf = _subframe->_surface;
 	}
 	if (!surf || DID_FAIL(surf->startPixelOp())) {

@@ -41,7 +41,7 @@ public:
 	BaseSprite *getSprite(TDirection direction);
 	DECLARE_PERSISTENT(AdSpriteSet, BaseObject)
 	BaseObject *_owner;
-	AdSpriteSet(BaseGame *inGame, BaseObject *owner = NULL);
+	AdSpriteSet(BaseGame *inGame, BaseObject *owner = nullptr);
 	virtual ~AdSpriteSet();
 	bool loadFile(const char *filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool loadBuffer(byte *buffer, bool complete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);

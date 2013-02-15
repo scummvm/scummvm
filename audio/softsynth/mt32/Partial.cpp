@@ -22,7 +22,7 @@
 #include "mt32emu.h"
 #include "mmath.h"
 
-using namespace MT32Emu;
+namespace MT32Emu {
 
 #ifdef INACCURATE_SMOOTH_PAN
 // Mok wanted an option for smoother panning, and we love Mok.
@@ -85,6 +85,7 @@ void Partial::deactivate() {
 			pair->pair = NULL;
 		}
 	}
+	synth->partialStateChanged(this, tva->getPhase(), TVA_PHASE_DEAD);
 #if MT32EMU_MONITOR_PARTIALS > 2
 	synth->printDebug("[+%lu] [Partial %d] Deactivated", sampleNum, debugPartialNum);
 	synth->printPartialUsage(sampleNum);
@@ -133,6 +134,25 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 	stereoVolume.leftVol = panVal / 7.0f;
 	stereoVolume.rightVol = 1.0f - stereoVolume.leftVol;
 
+	// SEMI-CONFIRMED: From sample analysis:
+	// Found that timbres with 3 or 4 partials (i.e. one using two partial pairs) are mixed in two different ways.
+	// Either partial pairs are added or subtracted, it depends on how the partial pairs are allocated.
+	// It seems that partials are grouped into quarters and if the partial pairs are allocated in different quarters the subtraction happens.
+	// Though, this matters little for the majority of timbres, it becomes crucial for timbres which contain several partials that sound very close.
+	// In this case that timbre can sound totally different depending of the way it is mixed up.
+	// Most easily this effect can be displayed with the help of a special timbre consisting of several identical square wave partials (3 or 4).
+	// Say, it is 3-partial timbre. Just play any two notes simultaneously and the polys very probably are mixed differently.
+	// Moreover, the partial allocator retains the last partial assignment it did and all the subsequent notes will sound the same as the last released one.
+	// The situation is better with 4-partial timbres since then a whole quarter is assigned for each poly. However, if a 3-partial timbre broke the normal
+	// whole-quarter assignment or after some partials got aborted, even 4-partial timbres can be found sounding differently.
+	// This behaviour is also confirmed with two more special timbres: one with identical sawtooth partials, and one with PCM wave 02.
+	// For my personal taste, this behaviour rather enriches the sounding and should be emulated.
+	// Also, the current partial allocator model probably needs to be refined.
+	if (debugPartialNum & 8) {
+		stereoVolume.leftVol = -stereoVolume.leftVol;
+		stereoVolume.rightVol = -stereoVolume.rightVol;
+	}
+
 	if (patchCache->PCMPartial) {
 		pcmNum = patchCache->pcm;
 		if (synth->controlROMMap->pcmCount > 128) {
@@ -149,7 +169,7 @@ void Partial::startPartial(const Part *part, Poly *usePoly, const PatchCache *us
 	}
 
 	// CONFIRMED: pulseWidthVal calculation is based on information from Mok
-	pulseWidthVal = (poly->getVelocity() - 64) * (patchCache->srcPartial.wg.pulseWidthVeloSensitivity - 7) + synth->tables.pulseWidth100To255[patchCache->srcPartial.wg.pulseWidth];
+	pulseWidthVal = (poly->getVelocity() - 64) * (patchCache->srcPartial.wg.pulseWidthVeloSensitivity - 7) + Tables::getInstance().pulseWidth100To255[patchCache->srcPartial.wg.pulseWidth];
 	if (pulseWidthVal < 0) {
 		pulseWidthVal = 0;
 	} else if (pulseWidthVal > 255) {
@@ -175,6 +195,7 @@ float Partial::getPCMSample(unsigned int position) {
 }
 
 unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) {
+	const Tables &tables = Tables::getInstance();
 	if (!isActive() || alreadyOutputed) {
 		return 0;
 	}
@@ -197,6 +218,9 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 			deactivate();
 			break;
 		}
+
+		Bit16u pitch = tvp->nextPitch();
+
 		// SEMI-CONFIRMED: From sample analysis:
 		// (1) Tested with a single partial playing PCM wave 77 with pitchCoarse 36 and no keyfollow, velocity follow, etc.
 		// This gives results within +/- 2 at the output (before any DAC bitshifting)
@@ -206,10 +230,17 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 		// positive amps, so negative still needs to be explored, as well as lower levels.
 		//
 		// Also still partially unconfirmed is the behaviour when ramping between levels, as well as the timing.
-		float amp = EXP2F((32772 - ampRampVal / 2048) / -2048.0f);
 
-		Bit16u pitch = tvp->nextPitch();
-		float freq = synth->tables.pitchToFreq[pitch];
+#if MT32EMU_ACCURATE_WG == 1
+		float amp = EXP2F((32772 - ampRampVal / 2048) / -2048.0f);
+		float freq = EXP2F(pitch / 4096.0f - 16.0f) * SAMPLE_RATE;
+#else
+		static const float ampFactor = EXP2F(32772 / -2048.0f);
+		float amp = EXP2I(ampRampVal >> 10) * ampFactor;
+
+		static const float freqFactor = EXP2F(-16.0f) * SAMPLE_RATE;
+		float freq = EXP2I(pitch) * freqFactor;
+#endif
 
 		if (patchCache->PCMPartial) {
 			// Render PCM waveform
@@ -221,12 +252,18 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 				break;
 			}
 			Bit32u pcmAddr = pcmWave->addr;
-			float positionDelta = freq * 2048.0f / synth->myProp.sampleRate;
+			float positionDelta = freq * 2048.0f / SAMPLE_RATE;
 
 			// Linear interpolation
 			float firstSample = synth->pcmROMData[pcmAddr + intPCMPosition];
-			float nextSample = getPCMSample(intPCMPosition + 1);
-			sample = firstSample + (nextSample - firstSample) * (pcmPosition - intPCMPosition);
+			// We observe that for partial structures with ring modulation the interpolation is not applied to the slave PCM partial.
+			// It's assumed that the multiplication circuitry intended to perform the interpolation on the slave PCM partial
+			// is borrowed by the ring modulation circuit (or the LA32 chip has a similar lack of resources assigned to each partial pair).
+			if (pair == NULL || mixType == 0 || structurePosition == 0) {
+				sample = firstSample + (getPCMSample(intPCMPosition + 1) - firstSample) * (pcmPosition - intPCMPosition);
+			} else {
+				sample = firstSample;
+			}
 
 			float newPCMPosition = pcmPosition + positionDelta;
 			if (pcmWave->loop) {
@@ -247,8 +284,12 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 			// res corresponds to a value set in an LA32 register
 			Bit8u res = patchCache->srcPartial.tvf.resonance + 1;
 
-			// EXP2F(1.0f - (32 - res) / 4.0f);
-			float resAmp = synth->tables.resAmpMax[res];
+			float resAmp;
+			{
+				// resAmp = EXP2F(1.0f - (32 - res) / 4.0f);
+				static const float resAmpFactor = EXP2F(-7);
+				resAmp = EXP2I(res << 10) * resAmpFactor;
+			}
 
 			// The cutoffModifier may not be supposed to be directly added to the cutoff -
 			// it may for example need to be multiplied in some way.
@@ -260,7 +301,7 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 			}
 
 			// Wave length in samples
-			float waveLen = synth->myProp.sampleRate / freq;
+			float waveLen = SAMPLE_RATE / freq;
 
 			// Init cosineLen
 			float cosineLen = 0.5f * waveLen;
@@ -268,7 +309,8 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 #if MT32EMU_ACCURATE_WG == 1
 				cosineLen *= EXP2F((cutoffVal - 128.0f) / -16.0f); // found from sample analysis
 #else
-				cosineLen *= synth->tables.cutoffToCosineLen[Bit32u((cutoffVal - 128.0f) * 8.0f)];
+				static const float cosineLenFactor = EXP2F(128.0f / -16.0f);
+				cosineLen *= EXP2I(Bit32u((256.0f - cutoffVal) * 256.0f)) * cosineLenFactor;
 #endif
 			}
 
@@ -279,23 +321,26 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 				relWavePos -= waveLen;
 			}
 
+			// Ratio of positive segment to wave length
 			float pulseLen = 0.5f;
 			if (pulseWidthVal > 128) {
-				pulseLen += synth->tables.pulseLenFactor[pulseWidthVal - 128];
+				// pulseLen = EXP2F((64 - pulseWidthVal) / 64);
+				static const float pulseLenFactor = EXP2F(-192 / 64);
+				pulseLen = EXP2I((256 - pulseWidthVal) << 6) * pulseLenFactor;
 			}
 			pulseLen *= waveLen;
 
-			float lLen = pulseLen - cosineLen;
+			float hLen = pulseLen - cosineLen;
 
 			// Ignore pulsewidths too high for given freq
-			if (lLen < 0.0f) {
-				lLen = 0.0f;
+			if (hLen < 0.0f) {
+				hLen = 0.0f;
 			}
 
 			// Ignore pulsewidths too high for given freq and cutoff
-			float hLen = waveLen - lLen - 2 * cosineLen;
-			if (hLen < 0.0f) {
-				hLen = 0.0f;
+			float lLen = waveLen - hLen - 2 * cosineLen;
+			if (lLen < 0.0f) {
+				lLen = 0.0f;
 			}
 
 			// Correct resAmp for cutoff in range 50..66
@@ -303,7 +348,7 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 #if MT32EMU_ACCURATE_WG == 1
 				resAmp *= sinf(FLOAT_PI * (cutoffVal - 128.0f) / 32.0f);
 #else
-				resAmp *= synth->tables.sinf10[Bit32u(64 * (cutoffVal - 128.0f))];
+				resAmp *= tables.sinf10[Bit32u(64 * (cutoffVal - 128.0f))];
 #endif
 			}
 
@@ -314,7 +359,7 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 #if MT32EMU_ACCURATE_WG == 1
 				sample = -cosf(FLOAT_PI * relWavePos / cosineLen);
 #else
-				sample = -synth->tables.sinf10[Bit32u(2048.0f * relWavePos / cosineLen) + 1024];
+				sample = -tables.sinf10[Bit32u(2048.0f * relWavePos / cosineLen) + 1024];
 #endif
 			} else
 
@@ -328,7 +373,7 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 #if MT32EMU_ACCURATE_WG == 1
 				sample = cosf(FLOAT_PI * (relWavePos - (cosineLen + hLen)) / cosineLen);
 #else
-				sample = synth->tables.sinf10[Bit32u(2048.0f * (relWavePos - (cosineLen + hLen)) / cosineLen) + 1024];
+				sample = tables.sinf10[Bit32u(2048.0f * (relWavePos - (cosineLen + hLen)) / cosineLen) + 1024];
 #endif
 			} else {
 
@@ -343,7 +388,8 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 #if MT32EMU_ACCURATE_WG == 1
 				sample *= EXP2F(-0.125f * (128.0f - cutoffVal));
 #else
-				sample *= synth->tables.cutoffToFilterAmp[Bit32u(cutoffVal * 8.0f)];
+				static const float cutoffAttenuationFactor = EXP2F(-0.125f * 128.0f);
+				sample *= EXP2I(Bit32u(512.0f * cutoffVal)) * cutoffAttenuationFactor;
 #endif
 			} else {
 
@@ -363,11 +409,17 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 #if MT32EMU_ACCURATE_WG == 1
 				resSample *= sinf(FLOAT_PI * relWavePos / cosineLen);
 #else
-				resSample *= synth->tables.sinf10[Bit32u(2048.0f * relWavePos / cosineLen) & 4095];
+				resSample *= tables.sinf10[Bit32u(2048.0f * relWavePos / cosineLen) & 4095];
 #endif
 
 				// Resonance sine amp
-				float resAmpFade = EXP2F(-synth->tables.resAmpFadeFactor[res >> 2] * (relWavePos / cosineLen));	// seems to be exact
+				float resAmpFadeLog2 = -tables.resAmpFadeFactor[res >> 2] * (relWavePos / cosineLen); // seems to be exact
+#if MT32EMU_ACCURATE_WG == 1
+				float resAmpFade = EXP2F(resAmpFadeLog2);
+#else
+				static const float resAmpFadeFactor = EXP2F(-30.0f);
+				float resAmpFade = (resAmpFadeLog2 < -30.0f) ? 0.0f : EXP2I(Bit32u((30.0f + resAmpFadeLog2) * 4096.0f)) * resAmpFadeFactor;
+#endif
 
 				// Now relWavePos set negative to the left from center of any cosine
 				relWavePos = wavePos;
@@ -388,7 +440,7 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 #if MT32EMU_ACCURATE_WG == 1
 					resAmpFade *= 0.5f * (1.0f - cosf(FLOAT_PI * relWavePos / (0.5f * cosineLen)));
 #else
-					resAmpFade *= 0.5f * (1.0f + synth->tables.sinf10[Bit32s(2048.0f * relWavePos / (0.5f * cosineLen)) + 3072]);
+					resAmpFade *= 0.5f * (1.0f + tables.sinf10[Bit32s(2048.0f * relWavePos / (0.5f * cosineLen)) + 3072]);
 #endif
 				}
 
@@ -400,7 +452,7 @@ unsigned long Partial::generateSamples(float *partialBuf, unsigned long length) 
 #if MT32EMU_ACCURATE_WG == 1
 				sample *= cosf(FLOAT_2PI * wavePos / waveLen);
 #else
-				sample *= synth->tables.sinf10[(Bit32u(4096.0f * wavePos / waveLen) & 4095) + 1024];
+				sample *= tables.sinf10[(Bit32u(4096.0f * wavePos / waveLen) & 4095) + 1024];
 #endif
 			}
 
@@ -516,10 +568,9 @@ bool Partial::produceOutput(float *leftBuf, float *rightBuf, unsigned long lengt
 			}
 		}
 		if (numGenerated > pairNumGenerated) {
-			if (mixType == 1) {
-				mixBuffersRingMix(partialBuf + pairNumGenerated, NULL, numGenerated - pairNumGenerated);
-			} else {
-				mixBuffersRing(partialBuf + pairNumGenerated, NULL, numGenerated - pairNumGenerated);
+			if (mixType == 2) {
+				numGenerated = pairNumGenerated;
+				deactivate();
 			}
 		}
 	}
@@ -554,4 +605,6 @@ void Partial::startDecayAll() {
 	tva->startDecay();
 	tvp->startDecay();
 	tvf->startDecay();
+}
+
 }

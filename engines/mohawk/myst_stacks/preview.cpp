@@ -60,6 +60,7 @@ void Preview::setupOpcodes() {
 	OVERRIDE_OPCODE(199, o_speechStop);
 
 	// "Init" Opcodes
+	OVERRIDE_OPCODE(209, o_libraryBookcaseTransformDemo_init);
 	OPCODE(298, o_speech_init);
 	OPCODE(299, o_library_init);
 }
@@ -139,7 +140,7 @@ void Preview::speech_run() {
 		break;
 	case 1: // Open book
 		if (_currentCue >= 1) {
-			_vm->changeToCard(3001, true);
+			_vm->changeToCard(3001, kTransitionDissolve);
 
 			_speechStep++;
 		}
@@ -147,7 +148,7 @@ void Preview::speech_run() {
 	case 2: // Go to Myst
 		if (_currentCue >= 2) {
 			_vm->_gfx->fadeToBlack();
-			_vm->changeToCard(3002, false);
+			_vm->changeToCard(3002, kNoTransition);
 			_vm->_gfx->fadeFromBlack();
 
 			_speechStep++;
@@ -164,7 +165,7 @@ void Preview::speech_run() {
 		if (_currentCue >= 4) {
 			_library->drawConditionalDataToScreen(0);
 
-			_vm->changeToCard(3003, true);
+			_vm->changeToCard(3003, kTransitionDissolve);
 
 			_speechNextTime = time + 2000;
 			_speechStep++;
@@ -181,7 +182,7 @@ void Preview::speech_run() {
 		if (time < _speechNextTime)
 			break;
 
-		_vm->changeToCard(3004, true);
+		_vm->changeToCard(3004, kTransitionDissolve);
 		_speechNextTime = time + 2000;
 		_speechStep++;
 		break;
@@ -190,7 +191,7 @@ void Preview::speech_run() {
 			break;
 
 		_vm->_gfx->fadeToBlack();
-		_vm->changeToCard(3005, false);
+		_vm->changeToCard(3005, kNoTransition);
 		_vm->_gfx->fadeFromBlack();
 		_speechNextTime = time + 1000;
 		_speechStep++;
@@ -205,7 +206,7 @@ void Preview::speech_run() {
 		if (time < _speechNextTime)
 			break;
 
-		_vm->changeToCard(3006 + _speechStep - 7, true);
+		_vm->changeToCard(3006 + _speechStep - 7, kTransitionDissolve);
 		_speechNextTime = time + 2000;
 		_speechStep++;
 		break;
@@ -213,7 +214,7 @@ void Preview::speech_run() {
 		if (time < _speechNextTime)
 			break;
 
-		_vm->changeToCard(4329, true);
+		_vm->changeToCard(4329, kTransitionDissolve);
 
 		_speechRunning = false;
 		_globals.currentAge = 2;
@@ -240,6 +241,23 @@ void Preview::o_library_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	// Used for Card 3002 (Myst Island Overview)
 	_library = static_cast<MystResourceType8 *>(_invokingResource);
 }
+
+void Preview::o_libraryBookcaseTransformDemo_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	if (_libraryBookcaseChanged) {
+		MystResourceType7 *resource = static_cast<MystResourceType7 *>(_invokingResource);
+		_libraryBookcaseMovie = static_cast<MystResourceType6 *>(resource->getSubResource(getVar(303)));
+		_libraryBookcaseSoundId = argv[0];
+		_libraryBookcaseMoving = true;
+	}
+}
+
+void Preview::libraryBookcaseTransform_run() {
+	if (_libraryBookcaseChanged)
+		_state.libraryBookcaseDoor = !_state.libraryBookcaseDoor;
+
+	Myst::libraryBookcaseTransform_run();
+}
+
 
 } // End of namespace MystStacks
 } // End of namespace Mohawk

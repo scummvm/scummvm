@@ -25,8 +25,11 @@
 #include "groovie/saveload.h"
 
 #include "common/system.h"
+#include "common/translation.h"
 
 namespace Groovie {
+
+#define GAMEOPTION_T7G_FAST_MOVIE_SPEED  GUIO_GAMEOPTIONS1
 
 static const PlainGameDescriptor groovieGames[] = {
 	// Games
@@ -52,7 +55,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659),
 			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -63,7 +66,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("T7GMac", "acdc4a58dd3f007f65e99b99d78e0bce", 1814029),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -79,7 +82,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("T7GMac", "6bdee8d0f9eef6d58d02fcd7deec3fb2", 1830783),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -90,7 +93,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"t7g", "",
 			AD_ENTRY1s("T7GMac", "0d595d4b44ae1814082938d051e5174e", 1830783),
 			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -106,7 +109,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::RU_RUS, Common::kPlatformPC, ADGF_NO_FLAGS,
-			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -120,7 +123,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY, Common::kPlatformIOS, ADGF_NO_FLAGS,
-			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
+			GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
 	},
@@ -132,6 +135,36 @@ static const GroovieGameDescription gameDescriptions[] = {
 			"11h", "",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
 			Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieV2, 1
+	},
+
+	// The 11th Hour Macintosh English
+	{
+		{
+			"11h", "",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "The 11th Hour Installer", 0, "bcdb4040b27f15b18f39fb9e496d384a", 1002987 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieV2, 1
+	},
+
+	// The 11th Hour Macintosh English (Installed)
+	{
+		{
+			"11h", "Installed",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "el01.mov", 0, "70f42dfc25b1488a08011dc45bb5145d", 6039 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieV2, 1
@@ -159,6 +192,36 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieV2, 2
 	},
 
+	// The Making of The 11th Hour Macintosh English
+	{
+		{
+			"11h", "Making Of",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "The 11th Hour Installer", 0, "bcdb4040b27f15b18f39fb9e496d384a", 1002987 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieV2, 2
+	},
+
+	// The Making of The 11th Hour Macintosh English (Installed)
+	{
+		{
+			"11h", "Making Of (Installed)",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "el01.mov", 0, "70f42dfc25b1488a08011dc45bb5145d", 6039 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieV2, 2
+	},
+
 	// Clandestiny Trailer DOS English
 	{
 		{
@@ -166,6 +229,36 @@ static const GroovieGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
 			Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
+		},
+		kGroovieV2, 3
+	},
+
+	// Clandestiny Trailer Macintosh English
+	{
+		{
+			"clandestiny", "Trailer",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "The 11th Hour Installer", 0, "bcdb4040b27f15b18f39fb9e496d384a", 1002987 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
+		},
+		kGroovieV2, 3
+	},
+
+	// Clandestiny Trailer Macintosh English (Installed)
+	{
+		{
+			"clandestiny", "Trailer (Installed)",
+			{
+				{ "disk.1", 0, "5c0428cd3659fc7bbcd0aa16485ed5da", 227 },
+				{ "el01.mov", 0, "70f42dfc25b1488a08011dc45bb5145d", 6039 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieV2, 3
 	},
@@ -207,9 +300,28 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{AD_TABLE_END_MARKER, kGroovieT7G, 0}
 };
 
+static const char *directoryGlobs[] = {
+	"MIDI",
+	0
+};
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_T7G_FAST_MOVIE_SPEED,
+		{
+			_s("Fast movie speed"),
+			_s("Play movies at an increased speed"),
+			"fast_movie_speed",
+			false
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class GroovieMetaEngine : public AdvancedMetaEngine {
 public:
-	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames) {
+	GroovieMetaEngine() : AdvancedMetaEngine(gameDescriptions, sizeof(GroovieGameDescription), groovieGames, optionsList) {
 		_singleid = "groovie";
 
 		// Use kADFlagUseExtraAsHint in order to distinguish the 11th hour from
@@ -222,6 +334,10 @@ public:
 		// replaced with an according explanation.
 		_flags = kADFlagUseExtraAsHint;
 		_guioptions = GUIO3(GUIO_NOSUBTITLES, GUIO_NOSFX, GUIO_NOASPECT);
+
+		// Need MIDI directory to detect 11H Mac Installed
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}
 
 	const char *getName() const {

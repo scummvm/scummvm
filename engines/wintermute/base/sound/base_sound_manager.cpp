@@ -50,6 +50,7 @@ namespace Wintermute {
 BaseSoundMgr::BaseSoundMgr(BaseGame *inGame) : BaseClass(inGame) {
 	_soundAvailable = false;
 	_volumeMaster = 255;
+	_volumeMasterPercent = 100;
 }
 
 
@@ -72,7 +73,7 @@ bool BaseSoundMgr::cleanup() {
 //////////////////////////////////////////////////////////////////////////
 void BaseSoundMgr::saveSettings() {
 	if (_soundAvailable) {
-		ConfMan.setInt("master_volume", _volumeMaster);
+		ConfMan.setInt("master_volume_percent", _volumeMasterPercent);
 	}
 }
 
@@ -83,7 +84,8 @@ bool BaseSoundMgr::initialize() {
 	if (!g_system->getMixer()->isReady()) {
 		return STATUS_FAILED;
 	}
-	_volumeMaster = (ConfMan.hasKey("master_volume") ? ConfMan.getInt("master_volume") : 255);
+	byte volumeMasterPercent = (ConfMan.hasKey("master_volume_percent") ? ConfMan.getInt("master_volume_percent") : 100);
+	setMasterVolumePercent(volumeMasterPercent);
 	_soundAvailable = true;
 
 	return STATUS_OK;
@@ -92,7 +94,7 @@ bool BaseSoundMgr::initialize() {
 //////////////////////////////////////////////////////////////////////////
 BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (!_soundAvailable) {
-		return NULL;
+		return nullptr;
 	}
 
 	BaseSoundBuffer *sound;
@@ -112,7 +114,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 
 	sound = new BaseSoundBuffer(_gameRef);
 	if (!sound) {
-		return NULL;
+		return nullptr;
 	}
 
 	sound->setStreaming(streamed);
@@ -123,7 +125,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 	if (DID_FAIL(res)) {
 		_gameRef->LOG(res, "Error loading sound '%s'", useFilename.c_str());
 		delete sound;
-		return NULL;
+		return nullptr;
 	}
 
 	// Make sure the master-volume is applied to the sound.
@@ -134,7 +136,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 
 	return sound;
 
-	return NULL;
+	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -217,6 +219,11 @@ byte BaseSoundMgr::getVolumePercent(Audio::Mixer::SoundType type) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::setMasterVolume(byte value) {
+	// This function intentionally doesn't touch _volumeMasterPercent,
+	// as that variable keeps track of what the game actually wanted,
+	// and this gives a close approximation, while letting the game
+	// be none the wiser about round-off-errors. This function should thus
+	// ONLY be called by setMasterVolumePercent.
 	_volumeMaster = value;
 	for (uint32 i = 0; i < _sounds.size(); i++) {
 		_sounds[i]->updateVolume();
@@ -226,14 +233,15 @@ bool BaseSoundMgr::setMasterVolume(byte value) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::setMasterVolumePercent(byte percent) {
-	setMasterVolume(percent * 255 / 100);
+	_volumeMasterPercent = percent;
+	setMasterVolume((int)ceil(percent * 255.0 / 100.0));
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 byte BaseSoundMgr::getMasterVolumePercent() {
-	return getMasterVolume() * 100 / 255;
+	return _volumeMasterPercent;
 }
 
 //////////////////////////////////////////////////////////////////////////

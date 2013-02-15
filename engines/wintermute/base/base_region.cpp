@@ -103,7 +103,7 @@ bool BaseRegion::pointInRegion(int x, int y) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "BaseRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -289,7 +289,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 		if (index >= 0 && index < (int32)_points.size()) {
 			delete _points[index];
-			_points[index] = NULL;
+			_points[index] = nullptr;
 
 			_points.remove_at(index);
 			createRegion();

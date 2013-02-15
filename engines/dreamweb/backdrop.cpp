@@ -25,35 +25,35 @@
 namespace DreamWeb {
 
 void DreamWebEngine::doBlocks() {
-	uint16 dstOffset = _mapAdY * 320 + _mapAdX;
+	uint16 dstOffset = _mapAdY * kScreenwidth + _mapAdX;
 	uint16 mapOffset = _mapY * kMapWidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
 	uint8 *dstBuffer = workspace() + dstOffset;
 
-	for (size_t i = 0; i < 10; ++i) {
-		for (size_t j = 0; j < 11; ++j) {
+	for (uint i = 0; i < 10; ++i) {
+		for (uint j = 0; j < 11; ++j) {
 			uint16 blockType = mapData[j];
 			if (blockType != 0) {
-				uint8 *dst = dstBuffer + i * 320 * 16 + j * 16;
+				uint8 *dst = dstBuffer + i * kScreenwidth * 16 + j * 16;
 				const uint8 *block = _backdropBlocks + blockType * 256;
-				for (size_t k = 0; k < 4; ++k) {
+				for (uint k = 0; k < 4; ++k) {
 					memcpy(dst, block, 16);
 					block += 16;
-					dst += 320;
+					dst += kScreenwidth;
 				}
-				for (size_t k = 0; k < 12; ++k) {
+				for (uint k = 0; k < 12; ++k) {
 					memcpy(dst, block, 16);
 					memset(dst + 16, 0xdf, 4);
 					block += 16;
-					dst += 320;
+					dst += kScreenwidth;
 				}
 				dst += 4;
 				memset(dst, 0xdf, 16);
-				dst += 320;
+				dst += kScreenwidth;
 				memset(dst, 0xdf, 16);
-				dst += 320;
+				dst += kScreenwidth;
 				memset(dst, 0xdf, 16);
-				dst += 320;
+				dst += kScreenwidth;
 				memset(dst, 0xdf, 16);
 			}
 		}
@@ -129,7 +129,7 @@ void DreamWebEngine::showAllObs() {
 	_setList.clear();
 
 	const GraphicsFile &frameBase = _setFrames;
-	for (size_t i = 0; i < 128; ++i) {
+	for (uint i = 0; i < 128; ++i) {
 		SetObject *setEntry = &_setDat[i];
 		uint16 x, y;
 		if (getMapAd(setEntry->mapad, &x, &y) == 0)
@@ -154,7 +154,7 @@ void DreamWebEngine::showAllObs() {
 }
 
 static bool addAlong(const MapFlag *mapFlags) {
-	for (size_t i = 0; i < 11; ++i) {
+	for (uint i = 0; i < 11; ++i) {
 		if (mapFlags[i]._flag != 0)
 			return true;
 	}
@@ -162,7 +162,7 @@ static bool addAlong(const MapFlag *mapFlags) {
 }
 
 static bool addLength(const MapFlag *mapFlags) {
-	for (size_t i = 0; i < 10; ++i) {
+	for (uint i = 0; i < 10; ++i) {
 		if (mapFlags[11 * i]._flag != 0)
 			return true;
 	}
@@ -205,13 +205,13 @@ void DreamWebEngine::calcMapAd() {
 }
 
 void DreamWebEngine::showAllFree() {
-	const unsigned int count = 80;
+	const uint count = 80;
 
 	_freeList.clear();
 
 	const DynObject *freeObjects = _freeDat;
 	const GraphicsFile &frameBase = _freeFrames;
-	for (size_t i = 0; i < count; ++i) {
+	for (uint i = 0; i < count; ++i) {
 		uint16 x, y;
 		uint8 mapAd = getMapAd(freeObjects[i].mapad, &x, &y);
 		if (mapAd != 0) {
@@ -236,8 +236,8 @@ void DreamWebEngine::drawFlags() {
 	uint16 mapOffset = _mapY * kMapWidth + _mapX;
 	const uint8 *mapData = _mapData + mapOffset;
 
-	for (size_t i = 0; i < 10; ++i) {
-		for (size_t j = 0; j < 11; ++j) {
+	for (uint i = 0; i < 10; ++i) {
+		for (uint j = 0; j < 11; ++j) {
 			uint8 tile = mapData[i * kMapWidth + j];
 			mapFlag->_flag = _backdropFlags[tile]._flag;
 			mapFlag->_flagEx = _backdropFlags[tile]._flagEx;
@@ -248,13 +248,13 @@ void DreamWebEngine::drawFlags() {
 }
 
 void DreamWebEngine::showAllEx() {
-	const unsigned int count = 100;
+	const uint count = 100;
 
 	_exList.clear();
 
 	DynObject *objects = _exData;
 	const GraphicsFile &frameBase = _exFrames;
-	for (size_t i = 0; i < count; ++i) {
+	for (uint i = 0; i < count; ++i) {
 		DynObject *object = objects + i;
 		if (object->mapad[0] == 0xff)
 			continue;

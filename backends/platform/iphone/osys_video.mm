@@ -148,6 +148,11 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 	}
 
 	dirtyFullScreen();
+
+	// Automatically update the mouse texture when the palette changes while the
+	// cursor palette is disabled.
+	if (!_mouseCursorPaletteEnabled && _mouseBuffer.format.bytesPerPixel == 1)
+		_mouseDirty = _mouseNeedTextureUpdate = true;
 }
 
 void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {

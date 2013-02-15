@@ -30,7 +30,6 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/scriptables/script_ext_math.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -70,10 +69,10 @@ ScEngine::ScEngine(BaseGame *inGame) : BaseClass(inGame) {
 
 	// prepare script cache
 	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
-		_cachedScripts[i] = NULL;
+		_cachedScripts[i] = nullptr;
 	}
 
-	_currentScript = NULL;
+	_currentScript = nullptr;
 
 	_isProfiling = false;
 	_profilingStartTime = 0;
@@ -106,11 +105,11 @@ bool ScEngine::cleanup() {
 	_scripts.clear();
 
 	delete _globals;
-	_globals = NULL;
+	_globals = nullptr;
 
 	emptyScriptCache();
 
-	_currentScript = NULL; // ref only
+	_currentScript = nullptr; // ref only
 
 	return STATUS_OK;
 }
@@ -141,7 +140,7 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 	// get script from cache
 	compBuffer = getCompiledScript(filename, &compSize);
 	if (!compBuffer) {
-		return NULL;
+		return nullptr;
 	}
 
 	// add new script
@@ -150,7 +149,7 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 	if (DID_FAIL(ret)) {
 		_gameRef->LOG(ret, "Error running script '%s'...", filename);
 		delete script;
-		return NULL;
+		return nullptr;
 	} else {
 		// publish the "self" pseudo-variable
 		ScValue val(_gameRef);
@@ -192,7 +191,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 	byte *buffer = BaseEngine::instance().getFileManager()->readWholeFile(filename, &size);
 	if (!buffer) {
 		_gameRef->LOG(0, "ScEngine::GetCompiledScript - error opening script '%s'", filename);
-		return NULL;
+		return nullptr;
 	}
 
 	// needs to be compiled?
@@ -203,14 +202,14 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 		if (!_compilerAvailable) {
 			_gameRef->LOG(0, "ScEngine::GetCompiledScript - script '%s' needs to be compiled but compiler is not available", filename);
 			delete[] buffer;
-			return NULL;
+			return nullptr;
 		}
 		// This code will never be called, since _compilerAvailable is const false.
 		// It's only here in the event someone would want to reinclude the compiler.
 		error("Script needs compilation, ScummVM does not contain a WME compiler");
 	}
 
-	byte *ret = NULL;
+	byte *ret = nullptr;
 
 	// add script to cache
 	CScCachedScript *cachedScript = new CScCachedScript(filename, compBuffer, compSize);
@@ -218,7 +217,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 		int index = 0;
 		uint32 minTime = g_system->getMillis();
 		for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
-			if (_cachedScripts[i] == NULL) {
+			if (_cachedScripts[i] == nullptr) {
 				index = i;
 				break;
 			} else if (_cachedScripts[i]->_timestamp <= minTime) {
@@ -227,7 +226,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 			}
 		}
 
-		if (_cachedScripts[index] != NULL) {
+		if (_cachedScripts[index] != nullptr) {
 			delete _cachedScripts[index];
 		}
 		_cachedScripts[index] = cachedScript;
@@ -297,7 +296,7 @@ bool ScEngine::tick() {
 			if (!isValidScript(_scripts[i]->_waitScript) || _scripts[i]->_waitScript->_state == SCRIPT_ERROR) {
 				// fake return value
 				_scripts[i]->_stack->pushNULL();
-				_scripts[i]->_waitScript = NULL;
+				_scripts[i]->_waitScript = nullptr;
 				_scripts[i]->run();
 			} else {
 				if (_scripts[i]->_waitScript->_state == SCRIPT_THREAD_FINISHED) {
@@ -305,7 +304,7 @@ bool ScEngine::tick() {
 					_scripts[i]->_stack->push(_scripts[i]->_waitScript->_stack->pop());
 					_scripts[i]->run();
 					_scripts[i]->_waitScript->finish();
-					_scripts[i]->_waitScript = NULL;
+					_scripts[i]->_waitScript = nullptr;
 				}
 			}
 			break;
@@ -352,7 +351,7 @@ bool ScEngine::tick() {
 				addScriptTime(_scripts[i]->_filename, g_system->getMillis() - startTime);
 			}
 		}
-		_currentScript = NULL;
+		_currentScript = nullptr;
 	}
 
 	removeFinishedScripts();
@@ -374,7 +373,7 @@ bool ScEngine::tickUnbreakable() {
 			_scripts[i]->executeInstruction();
 		}
 		_scripts[i]->finish();
-		_currentScript = NULL;
+		_currentScript = nullptr;
 	}
 	removeFinishedScripts();
 
@@ -445,7 +444,7 @@ bool ScEngine::emptyScriptCache() {
 	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 		if (_cachedScripts[i]) {
 			delete _cachedScripts[i];
-			_cachedScripts[i] = NULL;
+			_cachedScripts[i] = nullptr;
 		}
 	}
 	return STATUS_OK;
@@ -497,7 +496,7 @@ bool ScEngine::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::editorCleanup() {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
-		if (_scripts[i]->_owner == NULL && (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR)) {
+		if (_scripts[i]->_owner == nullptr && (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR)) {
 			delete _scripts[i];
 			_scripts.remove_at(i);
 			i--;

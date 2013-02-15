@@ -297,20 +297,20 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 			memcpy(filename, text+1, end-1-text);
 	}
 
-	const bool isPC98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
+	const bool sjisMode = (_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode);
 	if (filename[0] && (_vm->speechEnabled() || !_vm->gameFlags().isTalkie))
-		_vm->sound()->voicePlay(filename);
+		_vm->sound()->voicePlay(filename, 0, 255, 255, !_vm->gameFlags().isTalkie);
 
 	if (text[0] == '$')
 		text = strchr(text + 1, '$') + 1;
 
-	if (!isPC98)
+	if (!_vm->gameFlags().use16ColorMode)
 		setupTextPalette((flags < 0) ? 1 : flags, 0);
 
 	if (flags < 0) {
 		static const uint8 colorMap[] = { 0x00, 0xF0, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-		_screen->setFont(isPC98 ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+		_screen->setFont(sjisMode ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 		_screen->setTextColorMap(colorMap);
 		_screen->_charWidth = -2;
 	}
@@ -335,7 +335,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 		int width = _screen->getTextWidth(str);
 
 		if (flags >= 0) {
-			if (isPC98) {
+			if (_vm->gameFlags().use16ColorMode) {
 				static const uint8 colorMap[] = { 0xE1, 0xE1, 0xC1, 0xA1, 0x81, 0x61 };
 				_screen->printText(str, (320 - width) >> 1, 160 + heightAdd, colorMap[flags], 0x00);
 			} else {
@@ -359,7 +359,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags) {
 	if (flags < 0) {
 		static const uint8 colorMap[] = { 0x00, 0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0x00, 0x00, 0x00, 0x00 };
 
-		_screen->setFont(isPC98 ? Screen::FID_SJIS_FNT : Screen::FID_INTRO_FNT);
+		_screen->setFont(sjisMode ? Screen::FID_SJIS_FNT : Screen::FID_INTRO_FNT);
 		_screen->setTextColorMap(colorMap);
 		_screen->_charWidth = 0;
 	}
@@ -377,7 +377,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 	if (flags == 255)
 		return;
 
-	_screen->setFont(_vm->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_INTRO_FNT);
+	_screen->setFont((_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_INTRO_FNT);
 
 	static const uint8 colorMap[] = { 0x00, 0xA0, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	_screen->setTextColorMap(colorMap);
@@ -393,14 +393,14 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 	int y = 0;
 
 	if (_vm->gameFlags().use16ColorMode) {
-		if (color == 0xda)
-			color = 0xa1;
-		else if (color == 0xf2)
-			color = 0xe1;
+		if (color == 0xDA)
+			color = 0xA1;
+		else if (color == 0xF2)
+			color = 0xE1;
 		else if (flags < 0)
-			color = 0xe1;
+			color = 0xE1;
 		else
-			color = 0xc1;
+			color = 0xC1;
 	}
 
 	while (str[0]) {
@@ -736,7 +736,7 @@ int TIMInterpreter::cmd_playVocFile(const uint16 *param) {
 	const int volume = (param[1] * 255) / 100;
 
 	if (index < ARRAYSIZE(_vocFiles) && !_vocFiles[index].empty())
-		_vm->sound()->voicePlay(_vocFiles[index].c_str(), 0, volume, true);
+		_vm->sound()->voicePlay(_vocFiles[index].c_str(), 0, volume, 255, true);
 	else if (index == 7 && !_vm->gameFlags().isTalkie)
 		_vm->sound()->playTrack(index);
 	else
@@ -1083,7 +1083,7 @@ int TIMInterpreter_LoL::cmd_dialogueBox(const uint16 *param) {
 	int cnt = 0;
 
 	for (int i = 1; i < 4; i++) {
-		if (param[i] != 0xffff) {
+		if (param[i] != 0xFFFF) {
 			tmpStr[i-1] = getTableString(param[i]);
 			cnt++;
 		} else {

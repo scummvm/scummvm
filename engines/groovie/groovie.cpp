@@ -30,6 +30,7 @@
 #include "groovie/music.h"
 #include "groovie/resource.h"
 #include "groovie/roq.h"
+#include "groovie/stuffit.h"
 #include "groovie/vdx.h"
 
 #include "common/config-manager.h"
@@ -56,15 +57,11 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "groovie");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "media");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "system");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "MIDI");
 
 	_modeSpeed = kGroovieSpeedNormal;
-	if (ConfMan.hasKey("t7g_speed")) {
-		Common::String speed = ConfMan.get("t7g_speed");
-		if (speed.equals("im_an_ios"))
-			_modeSpeed = kGroovieSpeediOS;
-		else if (speed.equals("tweaked"))
-			_modeSpeed = kGroovieSpeedTweaked;
-	}
+	if (ConfMan.hasKey("fast_movie_speed") && ConfMan.getBool("fast_movie_speed"))
+		_modeSpeed = kGroovieSpeedFast;
 
 	// Initialize the custom debug levels
 	DebugMan.addDebugChannel(kGroovieDebugAll, "All", "Debug everything");
@@ -93,6 +90,15 @@ GroovieEngine::~GroovieEngine() {
 }
 
 Common::Error GroovieEngine::run() {
+	if (_gameDescription->version == kGroovieV2 && getPlatform() == Common::kPlatformMacintosh) {
+		// Load the Mac installer with the lowest priority (in case the user has installed
+		// the game and has the MIDI folder present; faster to just load them)
+		Common::Archive *archive = createStuffItArchive("The 11th Hour Installer");
+
+		if (archive)
+			SearchMan.add("The 11th Hour Installer", archive);
+	}
+
 	_script = new Script(this, _gameDescription->version);
 
 	// Initialize the graphics
@@ -160,10 +166,10 @@ Common::Error GroovieEngine::run() {
 		// Create the music player
 		switch (getPlatform()) {
 		case Common::kPlatformMacintosh:
-			// TODO: The 11th Hour Mac uses QuickTime MIDI files
-			// Right now, since the XMIDI are present and it is still detected as
-			// the DOS version, we don't have to do anything here.
-			_musicPlayer = new MusicPlayerMac(this);
+			if (_gameDescription->version == kGroovieT7G)
+				_musicPlayer = new MusicPlayerMac_t7g(this);
+			else
+				_musicPlayer = new MusicPlayerMac_v2(this);
 			break;
 		case Common::kPlatformIOS:
 			_musicPlayer = new MusicPlayerIOS(this);

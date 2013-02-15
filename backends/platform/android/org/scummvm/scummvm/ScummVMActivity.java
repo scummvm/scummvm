@@ -160,7 +160,6 @@ public class ScummVMActivity extends Activity {
 			"ScummVM",
 			"--config=" + getFileStreamPath("scummvmrc").getPath(),
 			"--path=" + Environment.getExternalStorageDirectory().getPath(),
-			"--gui-theme=scummmodern",
 			"--savepath=" + savePath
 		});
 
