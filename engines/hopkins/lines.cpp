@@ -3244,7 +3244,7 @@ void LinesManager::checkZone() {
 		_vm->_globals.compteur_71 = 0;
 		int zoneId;
 		if (_vm->_globals._oldMouseX != mouseX || _vm->_globals._oldMouseY != oldMouseY) {
-			zoneId = MZONE();-
+			zoneId = MZONE();
 		} else {
 			zoneId = _vm->_globals._oldMouseZoneId;
 		}

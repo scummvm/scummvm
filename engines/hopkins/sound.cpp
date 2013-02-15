@@ -361,7 +361,7 @@ void SoundManager::WSOUND_OFF() {
 	stopVoice(0);
 	stopVoice(1);
 	stopVoice(2);
-	if (_vm->_soundManager._soundFl)
+	if (_soundFl)
 		delWav(_currentSoundIndex);
 
 	for (int i = 1; i <= 48; ++i)
@@ -583,7 +583,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	oldMusicVol = _musicVolume;
 	if (!_musicOffFl && _musicVolume > 2) {
 		_musicVolume = (signed int)((long double)_musicVolume - (long double)_musicVolume / 100.0 * 45.0);
-		_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
+		MODSetMusicVolume(_musicVolume);
 	}
 
 	playVoice();
@@ -611,7 +611,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	// Speech is over, set the music volume back to normal
 	_musicVolume = oldMusicVol;
 	if (!_musicOffFl && _musicVolume > 2) {
-		_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
+		MODSetMusicVolume(_musicVolume);
 	}
 	_vm->_eventsManager._escKeyFl = false;
 	_skipRefreshFl = false;
