@@ -858,13 +858,11 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 	}
 
 	if (_vm->_globals.iRegul == 1) {
-		while (!_vm->_eventsManager._escKeyFl) {
+		// Wait for third rate delay
+		do {
 			_vm->_eventsManager.refreshEvents();
 			_vm->_soundManager.checkSoundEnd();
-			if (_vm->_eventsManager._rateCounter < rate3) {
-				break;
-			}
-		}
+		} while (!_vm->shouldQuit() && !_vm->_eventsManager._escKeyFl && _vm->_eventsManager._rateCounter < rate3);
 	}
 
 	_vm->_eventsManager._rateCounter = 0;
