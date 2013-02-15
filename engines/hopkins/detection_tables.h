@@ -204,6 +204,23 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		},
 	},
 
+	{
+		// Hopkins FBI BeOS, uninstalled, provided by eriktorbjorn
+		{
+			"hopkins",
+			0,
+			{
+				{"ENG_VOI.RES", 0, "fa5789d1d8c19d160bce44a33e742fdf", 66860711},
+				{"Hopkins.pkg", 0, "72f97806dd3d5fc0c0eb24196f180618", 285017},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformBeOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
