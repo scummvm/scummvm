@@ -225,11 +225,9 @@ void LinesManager::addLine(int idx, int direction, int a3, int a4, int a5, int a
 		_linesNumb = idx;
 
 	Ligne[idx]._lineData = (int16 *)_vm->_globals.freeMemory((byte *)Ligne[idx]._lineData);
-	int v7 = abs(a3 - a5);
-	int v8 = v7 + 1;
-	int v9 = abs(a4 - a6);
-	int v34 = v9 + 1;
-	int v33 = v9 + 1;
+	int v8 = abs(a3 - a5) + 1;
+	int v34 = abs(a4 - a6) + 1;
+	int v33 = v34;
 	if (v8 > v34)
 		v34 = v8;
 
@@ -573,33 +571,8 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *rout
 }
 
 bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
-	int v5;
-	int v6;
-	int v7;
-	int v9;
-	int v10;
-	int i;
-	int v12;
-	int v13;
-	int j;
-	int v15;
-	int v16;
-	int k;
-	int v18;
-	int v19;
-	int l;
-	int v21;
-	int v23;
-	int v26;
-	int v29;
-	int v32;
 	int v35 = 0;
 	int v36 = 0;
-	int v37;
-	int v38;
-	int v39;
-	int v40;
-	int v41;
 	int v42 = 0;
 	int v43 = 0;
 	int v44 = 0;
@@ -608,13 +581,12 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 	int v47 = 0;
 	int v48 = 0;
 	int v49 = 0;
-	int v50;
-	int v51;
 
-	v5 = a1;
-	v6 = a2;
-	v50 = a3;
-	v7 = a5;
+	int v5 = a1;
+	int v6 = a2;
+	int v50 = a3;
+	int v7 = a5;
+	int v51;
 	if (checkCollisionLine(a1, a2, &v51, &v50, 0, _linesNumb)) {
 		switch (Ligne[v50]._direction) {
 		case 1:
@@ -622,7 +594,7 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 			break;
 		case 2:
 			v6 -= 2;
-			v5 = a1 + 2;
+			v5 += 2;
 			break;
 		case 3:
 			v5 += 2;
@@ -647,11 +619,11 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 			break;
 		}
 	}
-	v41 = v5;
-	v40 = v6;
-	v9 = 0;
-	v10 = v40;
-	for (i = v40; v40 + 200 > v10; i = v10) {
+	int v41 = v5;
+	int v40 = v6;
+	int v9 = 0;
+	int v10 = v40;
+	for (int i = v40; v40 + 200 > v10; i = v10) {
 		if (checkCollisionLine(v41, i, &v49, &v48, 0, _lastLine) == 1 && v48 <= _lastLine)
 			break;
 		v49 = 0;
@@ -659,10 +631,10 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 		++v9;
 		++v10;
 	}
-	v37 = v9;
-	v12 = 0;
-	v13 = v40;
-	for (j = v40; v40 - 200 < v13; j = v13) {
+	int v37 = v9;
+	int v12 = 0;
+	int v13 = v40;
+	for (int j = v40; v40 - 200 < v13; j = v13) {
 		if (checkCollisionLine(v41, j, &v47, &v46, 0, _lastLine) == 1 && v46 <= _lastLine)
 			break;
 		v47 = 0;
@@ -670,10 +642,10 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 		++v12;
 		--v13;
 	}
-	v39 = v12;
-	v15 = 0;
-	v16 = v41;
-	for (k = v41; v41 + 200 > v16; k = v16) {
+	int v39 = v12;
+	int v15 = 0;
+	int v16 = v41;
+	for (int k = v41; v41 + 200 > v16; k = v16) {
 		if (checkCollisionLine(k, v40, &v45, &v44, 0, _lastLine) == 1 && v44 <= _lastLine)
 			break;
 		v45 = 0;
@@ -681,10 +653,10 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 		++v15;
 		++v16;
 	}
-	v38 = v15;
-	v18 = 0;
-	v19 = v41;
-	for (l = v41; v41 - 200 < v19; l = v19) {
+	int v38 = v15;
+	int v18 = 0;
+	int v19 = v41;
+	for (int l = v41; v41 - 200 < v19; l = v19) {
 		if (checkCollisionLine(l, v40, &v43, &v42, 0, _lastLine) == 1 && v42 <= _lastLine)
 			break;
 		v43 = 0;
@@ -709,8 +681,7 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 			v48 = -1;
 		if (v42 != -1 && a4 < v42)
 			v42 = -1;
-	}
-	if (a4 < v50) {
+	} else if (a4 < v50) {
 		if (v46 != -1 && v46 >= v50)
 			v46 = -1;
 		if (v44 != -1 && v50 <= v44)
@@ -729,7 +700,7 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 			v42 = -1;
 	}
 	if (v46 != -1 || v44 != -1 || v48 != -1 || v42 != -1) {
-		v21 = 0;
+		int v21 = 0;
 		if (a4 > v50) {
 			if (v48 <= v46 && v44 <= v46 && v42 <= v46 && v46 > v50)
 				v21 = 1;
@@ -739,8 +710,7 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 				v21 = 5;
 			if (v48 <= v42 && v44 <= v42 && v46 <= v42 && v50 < v42)
 				v21 = 7;
-		}
-		if (a4 < v50) {
+		} else if (a4 < v50) {
 			if (v46 == -1)
 				v46 = 1300;
 			if (v44 == -1)
@@ -758,107 +728,100 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 			if (v42 != 1300 && v48 >= v42 && v44 >= v42 && v46 >= v42 && v50 > v42)
 				v21 = 7;
 		}
-		if (v21) {
-			if (v21 == 1) {
-				v36 = v46;
-				v35 = v47;
-			}
-			if (v21 == 3) {
-				v36 = v44;
-				v35 = v45;
-			}
-			if (v21 == 5) {
-				v36 = v48;
-				v35 = v49;
-			}
-			if (v21 == 7) {
-				v36 = v42;
-				v35 = v43;
-			}
-			if (v21 == 1) {
-				for (int v22 = 0; v22 < v39; v22++) {
-					if (checkCollisionLine(v41, v40 - v22, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
-								v23 = GENIAL(v46, v47, v41, v40 - v22, v41, v40 - v39, v7, &super_parcours[0], 4);
-						if (v23 == -1)
-							return false;
-						v7 = v23;
-						if (NVPY != -1)
-							v22 = NVPY - v40;
-					}
-					super_parcours[v7] = v41;
-					super_parcours[v7 + 1] = v40 - v22;
-					super_parcours[v7 + 2] = 1;
-					super_parcours[v7 + 3] = 0;
-					v7 += 4;
+
+		switch(v21) {
+		case 1:
+			v36 = v46;
+			v35 = v47;
+			for (int v22 = 0; v22 < v39; v22++) {
+				if (checkCollisionLine(v41, v40 - v22, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
+					int v23 = GENIAL(v46, v47, v41, v40 - v22, v41, v40 - v39, v7, &super_parcours[0], 4);
+					if (v23 == -1)
+						return false;
+					v7 = v23;
+					if (NVPY != -1)
+						v22 = NVPY - v40;
 				}
-				NV_LIGNEDEP = v36;
-				NV_LIGNEOFS = v35;
-				NV_POSI = v7;
-				return true;
+				super_parcours[v7] = v41;
+				super_parcours[v7 + 1] = v40 - v22;
+				super_parcours[v7 + 2] = 1;
+				super_parcours[v7 + 3] = 0;
+				v7 += 4;
 			}
-			if (v21 == 5) {
-				for (int v25 = 0; v25 < v37; v25++) {
-					if (checkCollisionLine(v41, v25 + v40, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
-						v26 = GENIAL(v46, v47, v41, v25 + v40, v41, v37 + v40, v7, &super_parcours[0], 4);
-						if (v26 == -1)
-							return false;
-						v7 = v26;
-						if (NVPY != -1)
-							v25 = v40 - NVPY;
-					}
-					super_parcours[v7] = v41;
-					super_parcours[v7 + 1] = v25 + v40;
-					super_parcours[v7 + 2] = 5;
-					super_parcours[v7 + 3] = 0;
-					v7 += 4;
+			NV_LIGNEDEP = v36;
+			NV_LIGNEOFS = v35;
+			NV_POSI = v7;
+			return true;
+			break;
+		case 3:
+			v36 = v44;
+			v35 = v45;
+			for (int v31 = 0; v31 < v38; v31++) {
+				if (checkCollisionLine(v31 + v41, v40, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
+					int v32 = GENIAL(v46, v47, v31 + v41, v40, v38 + v41, v40, v7, &super_parcours[0], 4);
+					if (v32 == -1)
+						return false;
+					v7 = v32;
+					if (NVPX != -1)
+						v31 = NVPX - v41;
 				}
-				NV_LIGNEDEP = v36;
-				NV_LIGNEOFS = v35;
-				NV_POSI = v7;
-				return true;
+				super_parcours[v7] = v31 + v41;
+				super_parcours[v7 + 1] = v40;
+				super_parcours[v7 + 2] = 3;
+				super_parcours[v7 + 3] = 0;
+				v7 += 4;
 			}
-			if (v21 == 7) {
-				for (int v28 = 0; v28 < v18; v28++) {
-					if (checkCollisionLine(v41 - v28, v40, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
-						v29 = GENIAL(v46, v47, v41 - v28, v40, v41 - v18, v40, v7, &super_parcours[0], 4);
-						if (v29 == -1)
-							return false;
-						v7 = v29;
-						if (NVPX != -1)
-							v28 = v41 - NVPX;
-					}
-					super_parcours[v7] = v41 - v28;
-					super_parcours[v7 + 1] = v40;
-					super_parcours[v7 + 2] = 7;
-					super_parcours[v7 + 3] = 0;
-					v7 += 4;
+			NV_LIGNEDEP = v36;
+			NV_LIGNEOFS = v35;
+			NV_POSI = v7;
+			return true;
+			break;
+		case 5:
+			v36 = v48;
+			v35 = v49;
+			for (int v25 = 0; v25 < v37; v25++) {
+				if (checkCollisionLine(v41, v25 + v40, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
+					int v26 = GENIAL(v46, v47, v41, v25 + v40, v41, v37 + v40, v7, &super_parcours[0], 4);
+					if (v26 == -1)
+						return false;
+					v7 = v26;
+					if (NVPY != -1)
+						v25 = v40 - NVPY;
 				}
-				NV_LIGNEDEP = v36;
-				NV_LIGNEOFS = v35;
-				NV_POSI = v7;
-				return true;
+				super_parcours[v7] = v41;
+				super_parcours[v7 + 1] = v25 + v40;
+				super_parcours[v7 + 2] = 5;
+				super_parcours[v7 + 3] = 0;
+				v7 += 4;
 			}
-			if (v21 == 3) {
-				for (int v31 = 0; v31 < v38; v31++) {
-					if (checkCollisionLine(v31 + v41, v40, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
-						v32 = GENIAL(v46, v47, v31 + v41, v40, v38 + v41, v40, v7, &super_parcours[0], 4);
-						if (v32 == -1)
-							return false;
-						v7 = v32;
-						if (NVPX != -1)
-							v31 = NVPX - v41;
-					}
-					super_parcours[v7] = v31 + v41;
-					super_parcours[v7 + 1] = v40;
-					super_parcours[v7 + 2] = 3;
-					super_parcours[v7 + 3] = 0;
-					v7 += 4;
+			NV_LIGNEDEP = v36;
+			NV_LIGNEOFS = v35;
+			NV_POSI = v7;
+			return true;
+			break;
+		case 7:
+			v36 = v42;
+			v35 = v43;
+			for (int v28 = 0; v28 < v18; v28++) {
+				if (checkCollisionLine(v41 - v28, v40, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
+					int v29 = GENIAL(v46, v47, v41 - v28, v40, v41 - v18, v40, v7, &super_parcours[0], 4);
+					if (v29 == -1)
+						return false;
+					v7 = v29;
+					if (NVPX != -1)
+						v28 = v41 - NVPX;
 				}
-				NV_LIGNEDEP = v36;
-				NV_LIGNEOFS = v35;
-				NV_POSI = v7;
-				return true;
+				super_parcours[v7] = v41 - v28;
+				super_parcours[v7 + 1] = v40;
+				super_parcours[v7 + 2] = 7;
+				super_parcours[v7 + 3] = 0;
+				v7 += 4;
 			}
+			NV_LIGNEDEP = v36;
+			NV_LIGNEOFS = v35;
+			NV_POSI = v7;
+			return true;
+			break;
 		}
 	}
 	return false;
