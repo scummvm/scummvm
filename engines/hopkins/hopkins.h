@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef HOPKINS_H
-#define HOPKINS_H
+#ifndef HOPKINS_HOPKINS_H
+#define HOPKINS_HOPKINS_H
 
 #include "common/scummsys.h"
 #include "common/system.h"
@@ -193,4 +193,4 @@ extern HopkinsEngine *g_vm;
 
 } // End of namespace Hopkins
 
-#endif /* HOPKINS_H */
+#endif /* HOPKINS_HOPKINS_H */
