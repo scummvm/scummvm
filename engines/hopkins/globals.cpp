@@ -339,7 +339,7 @@ void Globals::loadObjects() {
 		ObjetW[idx].field7 = *srcP++;
 	}
 
-	free(data);
+	freeMemory(data);
 }
 
 byte *Globals::allocMemory(int count) {

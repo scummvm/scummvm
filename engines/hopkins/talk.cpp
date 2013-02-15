@@ -582,7 +582,7 @@ int TalkManager::countBoxLines(int idx, const Common::String &file) {
 		++lineCount;
 		curBufIndx += lineSize;
 	} while (curChar != '%');
-	free(decryptBuf);
+	_vm->_globals.freeMemory(decryptBuf);
 	return lineCount;
 }
 

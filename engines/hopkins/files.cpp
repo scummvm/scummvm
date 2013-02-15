@@ -78,7 +78,7 @@ void FileManager::initCensorship() {
 		if ((data[6] == 'u' && data[7] == 'k') || (data[6] == 'U' && data[7] == 'K'))
 			_vm->_globals._censorshipFl = true;
 
-		free(data);
+		_vm->_globals.freeMemory((byte *)data);
 	}
 }
 
