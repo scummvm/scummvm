@@ -23,14 +23,6 @@
 #ifndef HOPKINS_HOPKINS_H
 #define HOPKINS_HOPKINS_H
 
-#include "common/scummsys.h"
-#include "common/system.h"
-#include "common/error.h"
-#include "common/random.h"
-#include "common/hash-str.h"
-#include "common/util.h"
-#include "engines/engine.h"
-#include "graphics/surface.h"
 #include "hopkins/anim.h"
 #include "hopkins/computer.h"
 #include "hopkins/debugger.h"
@@ -47,6 +39,15 @@
 #include "hopkins/script.h"
 #include "hopkins/sound.h"
 #include "hopkins/talk.h"
+
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "common/error.h"
+#include "common/random.h"
+#include "common/hash-str.h"
+#include "common/util.h"
+#include "engines/engine.h"
+#include "graphics/surface.h"
 
 /**
  * This is the namespace of the Hopkins engine.

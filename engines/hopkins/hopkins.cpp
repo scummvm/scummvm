@@ -20,17 +20,18 @@
  *
  */
 
+#include "hopkins/hopkins.h"
+#include "hopkins/graphics.h"
+#include "hopkins/files.h"
+#include "hopkins/saveload.h"
+#include "hopkins/sound.h"
+#include "hopkins/talk.h"
+
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/file.h"
-#include "hopkins/graphics.h"
-#include "hopkins/hopkins.h"
-#include "hopkins/files.h"
-#include "hopkins/saveload.h"
-#include "hopkins/sound.h"
-#include "hopkins/talk.h"
 
 namespace Hopkins {
 

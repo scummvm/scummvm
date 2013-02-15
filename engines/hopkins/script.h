@@ -23,10 +23,11 @@
 #ifndef HOPKINS_SCRIPT_H
 #define HOPKINS_SCRIPT_H
 
+#include "hopkins/globals.h"
+
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/str.h"
-#include "hopkins/globals.h"
 
 namespace Hopkins {
 

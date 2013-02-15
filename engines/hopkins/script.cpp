@@ -20,17 +20,18 @@
  *
  */
 
-#include "common/system.h"
-#include "graphics/palette.h"
-#include "common/file.h"
-#include "common/rect.h"
-#include "engines/util.h"
 #include "hopkins/objects.h"
 #include "hopkins/dialogs.h"
 #include "hopkins/files.h"
 #include "hopkins/globals.h"
 #include "hopkins/sound.h"
 #include "hopkins/hopkins.h"
+
+#include "common/system.h"
+#include "graphics/palette.h"
+#include "common/file.h"
+#include "common/rect.h"
+#include "engines/util.h"
 
 namespace Hopkins {
 

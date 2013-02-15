@@ -20,14 +20,16 @@
  *
  */
 
+#include "hopkins/sound.h"
+
+#include "hopkins/globals.h"
+#include "hopkins/hopkins.h"
+
 #include "audio/decoders/adpcm_intern.h"
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/textconsole.h"
-#include "hopkins/sound.h"
-#include "hopkins/globals.h"
-#include "hopkins/hopkins.h"
 #include "audio/audiostream.h"
 #include "audio/mods/module.h"
 #include "audio/mods/protracker.h"

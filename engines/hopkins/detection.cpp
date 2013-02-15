@@ -21,8 +21,9 @@
  *
  */
 
-#include "base/plugins.h"
+#include "hopkins/hopkins.h"
 
+#include "base/plugins.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/memstream.h"
@@ -30,8 +31,6 @@
 #include "common/system.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
-
-#include "hopkins/hopkins.h"
 
 #define MAX_SAVES 99
 

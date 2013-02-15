@@ -20,11 +20,13 @@
  *
  */
 
-#include "common/system.h"
-#include "common/textconsole.h"
 #include "hopkins/lines.h"
+
 #include "hopkins/graphics.h"
 #include "hopkins/hopkins.h"
+
+#include "common/system.h"
+#include "common/textconsole.h"
 
 namespace Hopkins {
 

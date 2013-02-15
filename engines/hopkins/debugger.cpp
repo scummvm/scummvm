@@ -21,6 +21,7 @@
  */
 
 #include "hopkins/debugger.h"
+
 #include "hopkins/globals.h"
 #include "hopkins/graphics.h"
 #include "hopkins/hopkins.h"

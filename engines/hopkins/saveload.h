@@ -23,11 +23,13 @@
 #ifndef HOPKINS_SAVELOAD_H
 #define HOPKINS_SAVELOAD_H
 
+#include "hopkins/globals.h"
+#include "hopkins/graphics.h"
+
 #include "common/scummsys.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/str.h"
-#include "hopkins/globals.h"
 
 namespace Hopkins {
 

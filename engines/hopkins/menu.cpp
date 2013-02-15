@@ -20,11 +20,8 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/events.h"
-#include "common/file.h"
-#include "common/util.h"
 #include "hopkins/menu.h"
+
 #include "hopkins/dialogs.h"
 #include "hopkins/files.h"
 #include "hopkins/hopkins.h"
@@ -32,6 +29,11 @@
 #include "hopkins/events.h"
 #include "hopkins/graphics.h"
 #include "hopkins/sound.h"
+
+#include "common/scummsys.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/util.h"
 
 namespace Hopkins {
 

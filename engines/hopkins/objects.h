@@ -23,10 +23,11 @@
 #ifndef HOPKINS_OBJECTS_H
 #define HOPKINS_OBJECTS_H
 
+#include "hopkins/globals.h"
+
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/str.h"
-#include "hopkins/globals.h"
 
 #define MAX_SPRITE 5
 namespace Hopkins {

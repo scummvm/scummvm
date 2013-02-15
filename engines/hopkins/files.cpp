@@ -21,8 +21,10 @@
  */
 
 #include "hopkins/files.h"
+
 #include "hopkins/hopkins.h"
 #include "hopkins/globals.h"
+
 #include "common/system.h"
 #include "common/debug.h"
 #include "common/file.h"

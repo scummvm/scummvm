@@ -20,16 +20,18 @@
  *
  */
 
+#include "hopkins/saveload.h"
+
+#include "hopkins/files.h"
+#include "hopkins/globals.h"
+#include "hopkins/hopkins.h"
+
+
 #include "common/system.h"
 #include "common/savefile.h"
 #include "graphics/surface.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
-#include "hopkins/saveload.h"
-#include "hopkins/files.h"
-#include "hopkins/globals.h"
-#include "hopkins/graphics.h"
-#include "hopkins/hopkins.h"
 
 namespace Hopkins {
 

@@ -20,18 +20,20 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/events.h"
-#include "common/file.h"
-#include "common/util.h"
 #include "hopkins/dialogs.h"
+
 #include "hopkins/events.h"
 #include "hopkins/files.h"
 #include "hopkins/globals.h"
 #include "hopkins/graphics.h"
 #include "hopkins/hopkins.h"
 #include "hopkins/sound.h"
+
+#include "common/scummsys.h"
+#include "common/config-manager.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/util.h"
 
 namespace Hopkins {
 
