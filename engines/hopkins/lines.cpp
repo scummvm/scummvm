@@ -570,7 +570,7 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *rout
 	return v40;
 }
 
-bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
+bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 	int v35 = 0;
 	int v36 = 0;
 	int v42 = 0;
@@ -582,45 +582,45 @@ bool LinesManager::MIRACLE(int a1, int a2, int a3, int a4, int a5) {
 	int v48 = 0;
 	int v49 = 0;
 
-	int v5 = a1;
-	int v6 = a2;
+	int curX = fromX;
+	int curY = fromY;
 	int v50 = a3;
 	int v7 = a5;
 	int v51;
-	if (checkCollisionLine(a1, a2, &v51, &v50, 0, _linesNumb)) {
+	if (checkCollisionLine(fromX, fromY, &v51, &v50, 0, _linesNumb)) {
 		switch (Ligne[v50]._direction) {
 		case 1:
-			v6 = a2 - 2;
+			curY -= 2;
 			break;
 		case 2:
-			v6 -= 2;
-			v5 += 2;
+			curY -= 2;
+			curX += 2;
 			break;
 		case 3:
-			v5 += 2;
+			curX += 2;
 			break;
 		case 4:
-			v6 += 2;
-			v5 += 2;
+			curY += 2;
+			curX += 2;
 			break;
 		case 5:
-			v6 += 2;
+			curY += 2;
 			break;
 		case 6:
-			v6 += 2;
-			v5 -= 2;
+			curY += 2;
+			curX -= 2;
 			break;
 		case 7:
-			v5 -= 2;
+			curX -= 2;
 			break;
 		case 8:
-			v6 -= 2;
-			v5 -= 2;
+			curY -= 2;
+			curX -= 2;
 			break;
 		}
 	}
-	int v41 = v5;
-	int v40 = v6;
+	int v41 = curX;
+	int v40 = curY;
 	int v9 = 0;
 	int v10 = v40;
 	for (int i = v40; v40 + 200 > v10; i = v10) {
@@ -3037,9 +3037,9 @@ int LinesManager::colision(int xp, int yp) {
 		int yMin = yp - 4;
 
 		do {
-			int16 *dataP = _vm->_linesManager._zoneLine[curZoneLineIdx]._zoneData;
+			int16 *dataP = _zoneLine[curZoneLineIdx]._zoneData;
 			if (dataP != (int16 *)g_PTRNUL) {
-				int count = _vm->_linesManager._zoneLine[curZoneLineIdx]._count;
+				int count = _zoneLine[curZoneLineIdx]._count;
 				int v1 = dataP[0];
 				int v2 = dataP[1];
 				int v3 = dataP[count * 2 - 2];
@@ -3055,13 +3055,13 @@ int LinesManager::colision(int xp, int yp) {
 				if (v2 >= v4 && (yMin > v2 || yMax < v4))
 					flag = false;
 
-				if (flag && _vm->_linesManager._zoneLine[curZoneLineIdx]._count > 0) {
+				if (flag && _zoneLine[curZoneLineIdx]._count > 0) {
 					for (int i = 0; i < count; ++i) {
 						int xCheck = *dataP++;
 						int yCheck = *dataP++;
 
 						if ((xp == xCheck || (xp + 1) == xCheck) && (yp == yCheck))
-							return _vm->_linesManager._zoneLine[curZoneLineIdx]._bobZoneIdx;
+							return _zoneLine[curZoneLineIdx]._bobZoneIdx;
 					}
 				}
 			}
@@ -3085,18 +3085,18 @@ void LinesManager::CARRE_ZONE() {
 	}
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
-		int16 *dataP = _vm->_linesManager._zoneLine[idx]._zoneData;
+		int16 *dataP = _zoneLine[idx]._zoneData;
 		if (dataP == (int16 *)g_PTRNUL)
 			continue;
 
-		int carreZoneId = _vm->_linesManager._zoneLine[idx]._bobZoneIdx;
+		int carreZoneId = _zoneLine[idx]._bobZoneIdx;
 		_squareZone[carreZoneId]._enabledFl = 1;
 		if (_squareZone[carreZoneId]._maxZoneLineIdx < idx)
 			_squareZone[carreZoneId]._maxZoneLineIdx = idx;
 		if (_squareZone[carreZoneId]._minZoneLineIdx > idx)
 			_squareZone[carreZoneId]._minZoneLineIdx = idx;
 
-		for (int i = 0; i < _vm->_linesManager._zoneLine[idx]._count; i++) {
+		for (int i = 0; i < _zoneLine[idx]._count; i++) {
 			int zoneX = *dataP++;
 			int zoneY = *dataP++;
 
@@ -3121,39 +3121,38 @@ void LinesManager::CARRE_ZONE() {
 
 void LinesManager::clearAll() {
 	for (int idx = 0; idx < 105; ++idx) {
-		_vm->_linesManager.ZONEP[idx]._destX = 0;
-		_vm->_linesManager.ZONEP[idx]._destY = 0;
-		_vm->_linesManager.ZONEP[idx]._spriteIndex = 0;
+		ZONEP[idx]._destX = 0;
+		ZONEP[idx]._destY = 0;
+		ZONEP[idx]._spriteIndex = 0;
 	}
 
-	_vm->_linesManager.essai0 = (int16 *)g_PTRNUL;
-	_vm->_linesManager.essai1 = (int16 *)g_PTRNUL;
-	_vm->_linesManager.essai2 = (int16 *)g_PTRNUL;
-	_vm->_linesManager.BufLig = (int16 *)g_PTRNUL;
-	_vm->_linesManager._route = (int16 *)g_PTRNUL;
+	essai0 = (int16 *)g_PTRNUL;
+	essai1 = (int16 *)g_PTRNUL;
+	essai2 = (int16 *)g_PTRNUL;
+	BufLig = (int16 *)g_PTRNUL;
+	_route = (int16 *)g_PTRNUL;
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
-		_vm->_linesManager.Ligne[idx]._lineDataEndIdx = 0;
-		_vm->_linesManager.Ligne[idx]._direction = 0;
-		_vm->_linesManager.Ligne[idx].field6 = 0;
-		_vm->_linesManager.Ligne[idx].field8 = 0;
-		_vm->_linesManager.Ligne[idx]._lineData = (int16 *)g_PTRNUL;
+		Ligne[idx]._lineDataEndIdx = 0;
+		Ligne[idx]._direction = 0;
+		Ligne[idx].field6 = 0;
+		Ligne[idx].field8 = 0;
+		Ligne[idx]._lineData = (int16 *)g_PTRNUL;
 
-		_vm->_linesManager._zoneLine[idx]._count = 0;
-		_vm->_linesManager._zoneLine[idx]._bobZoneIdx = 0;
-		_vm->_linesManager._zoneLine[idx]._zoneData = (int16 *)g_PTRNUL;
+		_zoneLine[idx]._count = 0;
+		_zoneLine[idx]._bobZoneIdx = 0;
+		_zoneLine[idx]._zoneData = (int16 *)g_PTRNUL;
 	}
 
-	for (int idx = 0; idx < 100; ++idx) {
-		_vm->_linesManager._squareZone[idx]._enabledFl = 0;
-	}
+	for (int idx = 0; idx < 100; ++idx)
+		_squareZone[idx]._enabledFl = 0;
 
 	BUFFERTAPE = _vm->_globals.allocMemory(85000);
 
-	_vm->_linesManager.essai0 = (int16 *)BUFFERTAPE;
-	_vm->_linesManager.essai1 = (int16 *)(BUFFERTAPE + 25000);
-	_vm->_linesManager.essai2 = (int16 *)(BUFFERTAPE + 50000);
-	_vm->_linesManager.BufLig = (int16 *)(BUFFERTAPE + 75000);
+	essai0 = (int16 *)BUFFERTAPE;
+	essai1 = (int16 *)(BUFFERTAPE + 25000);
+	essai2 = (int16 *)(BUFFERTAPE + 50000);
+	BufLig = (int16 *)(BUFFERTAPE + 75000);
 }
 
 /**
@@ -3241,11 +3240,11 @@ void LinesManager::checkZone() {
 	if (_vm->_globals.compteur_71 <= 1)
 		return;
 
-	if (_vm->_globals.NOMARCHE || (_vm->_linesManager._route == (int16 *)g_PTRNUL) || _vm->_globals.compteur_71 > 4) {
+	if (_vm->_globals.NOMARCHE || (_route == (int16 *)g_PTRNUL) || _vm->_globals.compteur_71 > 4) {
 		_vm->_globals.compteur_71 = 0;
 		int zoneId;
 		if (_vm->_globals._oldMouseX != mouseX || _vm->_globals._oldMouseY != oldMouseY) {
-			zoneId = _vm->_linesManager.MZONE();
+			zoneId = MZONE();-
 		} else {
 			zoneId = _vm->_globals._oldMouseZoneId;
 		}

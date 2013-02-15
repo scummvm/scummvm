@@ -119,7 +119,7 @@ private:
 	int CALC_PROPRE(int idx);
 	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *route, int a7, int a8, int a9);
 	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *route, int a7);
-	bool MIRACLE(int a1, int a2, int a3, int a4, int a5);
+	bool MIRACLE(int fromX, int fromY, int a3, int a4, int a5);
 	int GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int a7, int16 *route, int a9);
 	int PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, int a6, int a7);
 	bool PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5);
