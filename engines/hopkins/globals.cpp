@@ -150,7 +150,7 @@ Globals::Globals() {
 		CACHE_BANQUE[idx] = NULL;
 	SPRITE_ECRAN = NULL;
 	_saveData = NULL;
-	GESTE = NULL;
+	_gestureBuf = NULL;
 	_inventoryObject = NULL;
 	_answerBuffer = g_PTRNUL;
 	ADR_FICHIER_OBJ = NULL;
@@ -159,7 +159,7 @@ Globals::Globals() {
 
 	// Reset flags
 	_censorshipFl = false;
-	GESTE_FLAG = 0;
+	_curGestureFile = 0;
 	_disableInventFl = false;
 	NOMARCHE = false;
 	_optionDialogFl = false;
@@ -190,7 +190,7 @@ Globals::~Globals() {
 		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
 	freeMemory(SPRITE_ECRAN);
 	freeMemory((byte *)_saveData);
-	freeMemory(GESTE);
+	freeMemory(_gestureBuf);
 	freeMemory(_inventoryObject);
 	freeMemory(_answerBuffer);
 	freeMemory(ADR_FICHIER_OBJ);
@@ -276,8 +276,8 @@ void Globals::clearAll() {
 
 	ADR_FICHIER_OBJ = g_PTRNUL;
 
-	GESTE = g_PTRNUL;
-	GESTE_FLAG = 0;
+	_gestureBuf = g_PTRNUL;
+	_curGestureFile = 0;
 }
 
 void Globals::loadCharacterData() {

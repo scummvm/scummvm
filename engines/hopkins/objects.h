@@ -217,6 +217,11 @@ public:
 	void setOffsetXY(byte *data, int idx, int xp, int yp, bool isSize);
 	void setVerb(int id);
 
+	void doActionBack(int idx);
+	void doActionRight(int idx);
+	void doActionFront(int idx);
+	void doActionLeft(int idx);
+
 	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen);
 	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
@@ -230,12 +235,8 @@ public:
 	void BOB_VIVANT(int idx);
 	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);
 	void VBOB_OFF(int idx);
-	void ACTION_DOS(int idx);
-	void ACTION_DROITE(int idx);
-	void Q_DROITE(int idx);
-	void ACTION_FACE(int idx);
-	void Q_GAUCHE(int idx);
-	void ACTION_GAUCHE(int idx);
+	void doActionDiagRight(int idx);
+	void doActionDiagLeft(int idx);
 	void OPTI_ONE(int idx, int animIdx, int destPosi, int animAction);
 	void SCI_OPTI_ONE(int idx, int animIdx, int a3, int a4);
 	void GOHOME();

@@ -2734,230 +2734,230 @@ void ObjectsManager::VBOB_OFF(int idx) {
 		_vm->_globals.VBob[idx].field4 = 4;
 }
 
-void ObjectsManager::ACTION_DOS(int idx) {
-	if (_vm->_globals.GESTE_FLAG != 1) {
-		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
-		_vm->_globals.GESTE_FLAG = 1;
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile("DOS.SPR");
+void ObjectsManager::doActionBack(int idx) {
+	if (_vm->_globals._curGestureFile != 1) {
+		_vm->_globals._gestureBuf = _vm->_globals.freeMemory(_vm->_globals._gestureBuf);
+		_vm->_globals._curGestureFile = 1;
+		_vm->_globals._gestureBuf = _vm->_fileManager.loadFile("DOS.SPR");
 	}
 	
 	switch (idx) {
 	case 1:
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 		break;
 	case 2:
-		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 0, 0, 8, false);
 		break;
 	case 3:
-		SPACTION1(_vm->_globals.GESTE, "12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
 		break;
 	case 4:
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 		break;
 	case 5:
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "15,16,17,18,19,20,21,-1,", 0, 0, 8, false);
 		break;
 	case 6:
-		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "20,19,18,17,16,15,-1,", 0, 0, 8);
 		break;
 	case 7:
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, false);
 		break;
 	case 8:
-		SPACTION1(_vm->_globals.GESTE, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
 		break;
 	case 9:
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, false);
 		break;
 	case 10:
-		SPACTION1(_vm->_globals.GESTE, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
 		break;
 	}
 }
 
-void ObjectsManager::ACTION_DROITE(int idx) {
-	if (_vm->_globals.GESTE_FLAG != 3) {
-		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
-		_vm->_globals.GESTE_FLAG = 3;
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile("PROFIL.SPR");
+void ObjectsManager::doActionRight(int idx) {
+	if (_vm->_globals._curGestureFile != 3) {
+		_vm->_globals._gestureBuf = _vm->_globals.freeMemory(_vm->_globals._gestureBuf);
+		_vm->_globals._curGestureFile = 3;
+		_vm->_globals._gestureBuf = _vm->_fileManager.loadFile("PROFIL.SPR");
 	}
 	
 	switch (idx) {
 	case 1:
-		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, false);
+		ACTION(_vm->_globals._gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, false);
 		break;
 	case 2:
-		SPACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, false);
 		break;
 	case 3:
-		SPACTION1(_vm->_globals.GESTE, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
 		break;
 	case 4:
-		ACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, false);
+		ACTION(_vm->_globals._gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, false);
 		break;
 	case 5:
-		SPACTION(_vm->_globals.GESTE, "23,24,25,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "23,24,25,-1,", 0, 0, 8, false);
 		break;
 	case 6:
-		SPACTION1(_vm->_globals.GESTE, "24,,23,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "24,,23,-1,", 0, 0, 8);
 		break;
 	case 7:
-		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "23,24,25,26,27,-1,", 0, 0, 8, false);
 		break;
 	case 8:
-		SPACTION1(_vm->_globals.GESTE, "26,25,24,23,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "26,25,24,23,-1,", 0, 0, 8);
 		break;
 	case 9:
-		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,28,29,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "23,24,25,26,27,28,29,-1,", 0, 0, 8, false);
 		break;
 	case 10:
-		SPACTION1(_vm->_globals.GESTE, "28,27,26,25,24,23,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "28,27,26,25,24,23,-1,", 0, 0, 8);
 		break;
 	}
 }
 
-void ObjectsManager::Q_DROITE(int idx) {
-	if (_vm->_globals.GESTE_FLAG != 4) {
-		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
-		_vm->_globals.GESTE_FLAG = 4;
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile("3Q.SPR");
+void ObjectsManager::doActionDiagRight(int idx) {
+	if (_vm->_globals._curGestureFile != 4) {
+		_vm->_globals._gestureBuf = _vm->_globals.freeMemory(_vm->_globals._gestureBuf);
+		_vm->_globals._curGestureFile = 4;
+		_vm->_globals._gestureBuf = _vm->_fileManager.loadFile("3Q.SPR");
 	}
 
 	switch (idx) {
 	case 1:
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 		break;
 	case 2:
-		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, false);
 		break;
 	case 3:
-		SPACTION1(_vm->_globals.GESTE, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
 		break;
 	case 4:
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 		break;
 	case 5:
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "15,16,17,18,-1,", 0, 0, 8, false);
 		break;
 	case 6:
-		SPACTION1(_vm->_globals.GESTE, "17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "17,16,15,-1,", 0, 0, 8);
 		break;
 	case 7:
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "15,16,17,18,19,20-1,", 0, 0, 8, false);
 		break;
 	case 8:
-		SPACTION1(_vm->_globals.GESTE, "19,18,17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "19,18,17,16,15,-1,", 0, 0, 8);
 		break;
 	case 9:
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "15,16,17,18,19,20,21,-1,", 0, 0, 8, false);
 		break;
 	case 10:
-		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,15,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "20,19,18,17,15,-1,", 0, 0, 8);
 		break;
 	}
 }
 
-void ObjectsManager::ACTION_FACE(int idx) {
-	if (_vm->_globals.GESTE_FLAG != 2) {
-		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
-		_vm->_globals.GESTE_FLAG = 2;
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile("FACE.SPR");
+void ObjectsManager::doActionFront(int idx) {
+	if (_vm->_globals._curGestureFile != 2) {
+		_vm->_globals._gestureBuf = _vm->_globals.freeMemory(_vm->_globals._gestureBuf);
+		_vm->_globals._curGestureFile = 2;
+		_vm->_globals._gestureBuf = _vm->_fileManager.loadFile("FACE.SPR");
 	}
 	
 	switch (idx) {
 	case 1:
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 		break;
 	case 2:
-		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 0, 0, 8, false);
+		SPACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 0, 0, 8, false);
 		break;
 	case 3:
-		SPACTION1(_vm->_globals.GESTE, "14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
 		break;
 	case 4:
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
 		break;
 	}
 }
 
-void ObjectsManager::Q_GAUCHE(int idx) {
-	if (_vm->_globals.GESTE_FLAG != 4) {
-		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
-		_vm->_globals.GESTE_FLAG = 4;
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile("3Q.SPR");
+void ObjectsManager::doActionDiagLeft(int idx) {
+	if (_vm->_globals._curGestureFile != 4) {
+		_vm->_globals._gestureBuf = _vm->_globals.freeMemory(_vm->_globals._gestureBuf);
+		_vm->_globals._curGestureFile = 4;
+		_vm->_globals._gestureBuf = _vm->_fileManager.loadFile("3Q.SPR");
 	}
 	
 	switch (idx) {
 	case 1:
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, true);
+		ACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, true);
 		break;
 	case 2:
-		SPACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, true);
+		SPACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, true);
 		break;
 	case 3:
-		SPACTION1(_vm->_globals.GESTE, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
 		break;
 	case 4:
-		ACTION(_vm->_globals.GESTE, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, true);
+		ACTION(_vm->_globals._gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, true);
 		break;
 	case 5:
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,-1,", 0, 0, 8, true);
+		SPACTION(_vm->_globals._gestureBuf, "15,16,17,18,-1,", 0, 0, 8, true);
 		break;
 	case 6:
-		SPACTION1(_vm->_globals.GESTE, "17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "17,16,15,-1,", 0, 0, 8);
 		break;
 	case 7:
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,-1,", 0, 0, 8, true);
+		SPACTION(_vm->_globals._gestureBuf, "15,16,17,18,19,20,-1,", 0, 0, 8, true);
 		break;
 	case 8:
-		SPACTION1(_vm->_globals.GESTE, "19,18,17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "19,18,17,16,15,-1,", 0, 0, 8);
 		break;
 	case 9:
-		SPACTION(_vm->_globals.GESTE, "15,16,17,18,19,20,21,-1,", 0, 0, 8, true);
+		SPACTION(_vm->_globals._gestureBuf, "15,16,17,18,19,20,21,-1,", 0, 0, 8, true);
 		break;
 	case 10:
-		SPACTION1(_vm->_globals.GESTE, "20,19,18,17,15,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "20,19,18,17,15,-1,", 0, 0, 8);
 		break;
 	}
 }
 
-void ObjectsManager::ACTION_GAUCHE(int idx) {
-	if (_vm->_globals.GESTE_FLAG != 3) {
-		_vm->_globals.GESTE = _vm->_globals.freeMemory(_vm->_globals.GESTE);
-		_vm->_globals.GESTE_FLAG = 3;
-		_vm->_globals.GESTE = _vm->_fileManager.loadFile("PROFIL.SPR");
+void ObjectsManager::doActionLeft(int idx) {
+	if (_vm->_globals._curGestureFile != 3) {
+		_vm->_globals._gestureBuf = _vm->_globals.freeMemory(_vm->_globals._gestureBuf);
+		_vm->_globals._curGestureFile = 3;
+		_vm->_globals._gestureBuf = _vm->_fileManager.loadFile("PROFIL.SPR");
 	}
 	
 	switch (idx) {
 	case 1:
-		ACTION(_vm->_globals.GESTE, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, true);
+		ACTION(_vm->_globals._gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, true);
 		break;
 	case 2:
-		SPACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, true);
+		SPACTION(_vm->_globals._gestureBuf, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, true);
 		break;
 	case 3:
-		SPACTION1(_vm->_globals.GESTE, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
 		break;
 	case 4:
-		ACTION(_vm->_globals.GESTE, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, true);
+		ACTION(_vm->_globals._gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, true);
 		break;
 	case 5:
-		SPACTION(_vm->_globals.GESTE, "23,24,25,-1,", 0, 0, 8, true);
+		SPACTION(_vm->_globals._gestureBuf, "23,24,25,-1,", 0, 0, 8, true);
 		break;
 	case 6:
-		SPACTION1(_vm->_globals.GESTE, "24,,23,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "24,,23,-1,", 0, 0, 8);
 		break;
 	case 7:
-		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,-1,", 0, 0, 8, true);
+		SPACTION(_vm->_globals._gestureBuf, "23,24,25,26,27,-1,", 0, 0, 8, true);
 		break;
 	case 8:
-		SPACTION1(_vm->_globals.GESTE, "26,25,24,23,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "26,25,24,23,-1,", 0, 0, 8);
 		break;
 	case 9:
-		SPACTION(_vm->_globals.GESTE, "23,24,25,26,27,28,29,-1,", 0, 0, 8, true);
+		SPACTION(_vm->_globals._gestureBuf, "23,24,25,26,27,28,29,-1,", 0, 0, 8, true);
 		break;
 	case 10:
-		SPACTION1(_vm->_globals.GESTE, "28,27,26,25,24,23,-1,", 0, 0, 8);
+		SPACTION1(_vm->_globals._gestureBuf, "28,27,26,25,24,23,-1,", 0, 0, 8);
 		break;
 	}
 }
