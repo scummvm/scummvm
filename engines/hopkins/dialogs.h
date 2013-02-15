@@ -48,6 +48,7 @@ public:
 	bool _inventFl;
 	int _inventX, _inventY;
 	int _inventWidth, _inventHeight;
+	byte *_inventoryIcons;
 
 	DialogsManager();
 	~DialogsManager();

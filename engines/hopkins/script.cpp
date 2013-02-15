@@ -224,7 +224,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->_globals._saveData->_data[svField356] == 1
 						&& _vm->_globals._saveData->_realHopkins._location == _vm->_globals._screenId) {
 					_vm->_objectsManager.addStaticSprite(
-					    _vm->_globals.TETE,
+					    _vm->_objectsManager._headSprites,
 					    _vm->_globals._saveData->_realHopkins._pos,
 					    1,
 					    2,
@@ -239,7 +239,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				        && _vm->_globals._saveData->_data[svField355] == 1
 				        && _vm->_globals._saveData->_samantha._location == _vm->_globals._screenId) {
 					_vm->_objectsManager.addStaticSprite(
-					    _vm->_globals.TETE,
+					    _vm->_objectsManager._headSprites,
 					    _vm->_globals._saveData->_samantha._pos,
 					    1,
 					    3,
@@ -2210,7 +2210,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._saveData->_data[svField355] = 1;
 			_vm->_objectsManager._twoCharactersFl = true;
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
-			_vm->_objectsManager.addStaticSprite(_vm->_globals.TETE, samantha->_pos, 1, 3, samantha->_zoomFactor, false, 20, 127);
+			_vm->_objectsManager.addStaticSprite(_vm->_objectsManager._headSprites, samantha->_pos, 1, 3, samantha->_zoomFactor, false, 20, 127);
 			_vm->_objectsManager.animateSprite(1);
 			break;
 			}

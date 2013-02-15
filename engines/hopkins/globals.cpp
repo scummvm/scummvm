@@ -65,7 +65,7 @@ Globals::Globals() {
 	g_PTRNUL = (byte *)malloc(16);
 	strcpy((char *)g_PTRNUL, "POINTERNULL");
 
-	// Initialise array properties
+	// Initialize array properties
 	for (int i = 0; i < 6; ++i)
 		CACHE_BANQUE[i] = g_PTRNUL;
 	for (int i = 0; i < 35; ++i)
@@ -104,7 +104,6 @@ Globals::Globals() {
 	_oldDirection = 0;
 	_oldDirectionSpriteIdx = 59;
 	_lastDirection = 0;
-	TETE = NULL;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
 	_boxWidth = 0;
@@ -144,7 +143,6 @@ Globals::Globals() {
 	_oceanDirection = 0;
 
 	// Initialize pointers
-	ICONE = NULL;
 	BUF_ZONE = NULL;
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = NULL;
@@ -181,8 +179,6 @@ Globals::Globals() {
 }
 
 Globals::~Globals() {
-	free(ICONE);
-	freeMemory(TETE);
 	freeMemory(BUF_ZONE);
 	for (int idx = 0; idx < 6; ++idx)
 		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);

@@ -78,11 +78,13 @@ ObjectsManager::ObjectsManager() {
 	_forestSprite = NULL;
 	_gestureBuf = NULL;
 	_curGestureFile = 0;
+	_headSprites = NULL;
 }
 
 ObjectsManager::~ObjectsManager() {
 	_vm->_globals.freeMemory(_forestSprite);
 	_vm->_globals.freeMemory(_gestureBuf);
+	_vm->_globals.freeMemory(_headSprites);
 }
 
 void ObjectsManager::setParent(HopkinsEngine *vm) {
@@ -91,7 +93,7 @@ void ObjectsManager::setParent(HopkinsEngine *vm) {
 
 void ObjectsManager::clearAll() {
 	_forestFl = false;
-	_forestSprite = g_PTRNUL;
+	_forestSprite = _vm->_globals.freeMemory(_forestSprite);
 	_curGestureFile = 0;
 	_gestureBuf = _vm->_globals.freeMemory(_gestureBuf);
 }
@@ -2103,7 +2105,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc->_zoomFactor = _sprite[0]._animationType;
 
 		removeSprite(1);
-		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 3, loc->_zoomFactor, false, 20, 127);
+		addStaticSprite(_headSprites, loc->_pos, 1, 3, loc->_zoomFactor, false, 20, 127);
 		animateSprite(1);
 		removeSprite(0);
 
@@ -2128,7 +2130,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc->_zoomFactor = _sprite[0]._zoomFactor;
 
 		removeSprite(1);
-		addStaticSprite(_vm->_globals.TETE, loc->_pos, 1, 2, loc->_zoomFactor, false, 34, 190);
+		addStaticSprite(_headSprites, loc->_pos, 1, 2, loc->_zoomFactor, false, 34, 190);
 		animateSprite(1);
 		removeSprite(0);
 

@@ -43,10 +43,12 @@ DialogsManager::DialogsManager() {
 	_inventWidth = _inventHeight = 0;
 	_inventWin1 = g_PTRNUL;
 	_inventBuf2 = g_PTRNUL;
+	_inventoryIcons = NULL;
 }
 
 DialogsManager::~DialogsManager() {
 	_vm->_globals.freeMemory(_inventWin1);
+	free(_inventoryIcons);
 }
 
 void DialogsManager::setParent(HopkinsEngine *vm) {
@@ -491,26 +493,26 @@ void DialogsManager::inventAnim() {
 
 		_vm->_graphicsManager.addVesaSegment(_vm->_objectsManager._oldInventoryPosX, 27, _vm->_objectsManager._oldInventoryPosX + 48, 65);
 		int newOffset = _vm->_graphicsManager._scrollOffset + 2;
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.ICONE, newOffset + 300, 327, 0);
+		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _inventoryIcons, newOffset + 300, 327, 0);
 		_vm->_graphicsManager.addVesaSegment(newOffset, 27, newOffset + 45, 62);
 		_vm->_objectsManager._oldInventoryPosX = newOffset;
 	}
 
 	if (_vm->_globals._saveData->_data[svField357] == 1) {
 		if (_vm->_globals._saveData->_data[svField353] == 1)
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, false);
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._headSprites, 832, 325, 0, 0, 0, false);
 		if (_vm->_globals._saveData->_data[svField355] == 1)
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 866, 325, 1, 0, 0, false);
+			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._headSprites, 866, 325, 1, 0, 0, false);
 		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 		_vm->_graphicsManager.addVesaSegment(566, 25, 594, 60);
 	}
 	if (_vm->_globals._saveData->_data[svField356] == 1) {
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, false);
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._headSprites, 832, 325, 0, 0, 0, false);
 		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 	}
 
 	if (_vm->_globals._saveData->_data[svField354] == 1) {
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_globals.TETE, 832, 325, 0, 0, 0, false);
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._headSprites, 832, 325, 0, 0, 0, false);
 		_vm->_graphicsManager.addVesaSegment(532, 25, 560, 60);
 	}
 }

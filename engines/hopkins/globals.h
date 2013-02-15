@@ -290,8 +290,6 @@ public:
 	int _oldRouteDestY;
 	int _oldZoneNum;
 
-	byte *TETE;
-	byte *ICONE;
 	bool NOMARCHE;
 	int iRegul;
 	byte *BUF_ZONE;

@@ -164,6 +164,7 @@ public:
 	byte *_forestSprite;
 	byte *_saveLoadSprite;
 	byte *_saveLoadSprite2;
+	byte *_headSprites;
 	SpriteItem _sprite[6];
 	BobItem _bob[36];
 

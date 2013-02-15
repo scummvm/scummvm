@@ -1593,8 +1593,8 @@ void HopkinsEngine::initializeSystem() {
 	_fontManager._font = _fileManager.loadFile("FONTE3.SPR");
 	_fontManager._fontFixedWidth = 12;
 	_fontManager._fontFixedHeight = 21;
-	_globals.ICONE = _fileManager.loadFile("ICONE.SPR");
-	_globals.TETE = _fileManager.loadFile("TETE.SPR");
+	_dialogsManager._inventoryIcons = _fileManager.loadFile("ICONE.SPR");
+	_objectsManager._headSprites = _fileManager.loadFile("TETE.SPR");
 
 	switch (_globals._language) {
 	case LANG_EN:
