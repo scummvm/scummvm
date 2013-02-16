@@ -955,7 +955,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 59: {
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = -1;
+			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
 			_vm->_linesManager._route = (int16 *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 445, 332);
@@ -1055,7 +1055,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 81: {
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = -1;
+			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
 			_vm->_linesManager._route = (int16 *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 119, 268);
@@ -1372,7 +1372,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 105:
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = -1;
+			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
 			_vm->_linesManager._route = (int16 *)g_PTRNUL;
 			if (_vm->_globals._saveData->_data[svField253] == 1) {
@@ -1619,7 +1619,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._introSpeechOffFl = false;
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = -1;
+			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_linesManager._route = (int16 *)g_PTRNUL;
@@ -1647,7 +1647,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._introSpeechOffFl = false;
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = -1;
+			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_linesManager._route = (int16 *)g_PTRNUL;
@@ -1949,7 +1949,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.CACHE_ON();
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = -1;
+			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
 			_vm->_globals.NOT_VERIF = true;
 			_vm->_linesManager._route = (int16 *)g_PTRNUL;

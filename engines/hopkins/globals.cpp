@@ -103,9 +103,9 @@ Globals::Globals() {
 	_linuxEndDemoFl = false;
 	_speed = 1;
 	_oldFrameIndex = 0;
-	_oldDirection = 0;
+	_oldDirection = DIR_NONE;
 	_oldDirectionSpriteIdx = 59;
-	_lastDirection = 0;
+	_lastDirection = DIR_NONE;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
 	_boxWidth = 0;
@@ -177,7 +177,6 @@ Globals::Globals() {
 	_oldMouseY = 0;
 	compteur_71 = 0;
 	_forceHideText = false;
-	j_104 = 0;
 }
 
 Globals::~Globals() {
@@ -284,7 +283,7 @@ void Globals::loadCharacterData() {
 	}
 
 	_oldFrameIndex = -1;
-	_oldDirection = -1;
+	_oldDirection = DIR_NONE;
 }
 
 void Globals::INIT_ANIM() {

@@ -192,8 +192,6 @@ enum SauvegardeOffset {
 	, svField401 = 401
 };
 
-enum PlayerCharacter { CHARACTER_HOPKINS = 0, CHARACTER_HOPKINS_CLONE = 1, CHARACTER_SAMANTHA = 2 };
-
 // TODO: Sauvegrade1 fields should really be mapped into data array
 struct Sauvegarde {
 	byte _data[2050];
@@ -214,6 +212,21 @@ struct CreditItem {
 };
 
 enum Language { LANG_EN = 0, LANG_FR = 1, LANG_SP = 2};
+
+enum PlayerCharacter { CHARACTER_HOPKINS = 0, CHARACTER_HOPKINS_CLONE = 1, CHARACTER_SAMANTHA = 2 };
+
+enum Directions {
+	DIR_NONE = -1, 
+	DIR_UP = 1,
+	DIR_UP_RIGHT = 2,
+	DIR_RIGHT = 3,
+	DIR_DOWN_RIGHT = 4,
+	DIR_DOWN = 5,
+	DIR_DOWN_LEFT = 6,
+	DIR_LEFT = 7,
+	DIR_UP_LEFT = 8
+};
+
 
 class HopkinsEngine;
 
@@ -239,9 +252,10 @@ public:
 	bool _forceHideText;
 	int _exitId;
 	int _oceanDirection;
-	int _oldDirection, _oldDirectionSpriteIdx;
+	Directions _oldDirection;
+	int _oldDirectionSpriteIdx;
 	int _actionDirection;
-	int _lastDirection;
+	Directions _lastDirection;
 	int _oldFrameIndex;
 	int _hotspotTextColor;
 	int _inventory[36];
@@ -312,7 +326,6 @@ public:
 	int compteur_71;
 	Common::String FICH_ZONE;
 	bool GOACTION;
-	int j_104;
 	Common::String FICH_TEXTE;
 
 	Globals();
