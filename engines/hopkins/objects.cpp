@@ -1274,10 +1274,6 @@ void ObjectsManager::setFlipSprite(int idx, bool flipFl) {
 }
 
 void ObjectsManager::GOHOME() {
-	int v0 = 0;
-	int v58 = 0;
-	int v1 = 0;
-
 	if (_vm->_linesManager._route == (int16 *)g_PTRNUL)
 		return;
 
@@ -1290,6 +1286,9 @@ void ObjectsManager::GOHOME() {
 	int newPosY;
 	int newDirection;
 
+	int oldPosX = 0;
+	int oldPosY = 0;
+	int oldFrameIdx = 0;
 	_vm->_globals.Compteur = 0;
 	if (_vm->_globals._oldDirection == -1) {
 		computeAndSetSpriteSize();
@@ -1336,9 +1335,9 @@ void ObjectsManager::GOHOME() {
 	}
 	if (_vm->_globals._oldDirection == 3) {
 		if (_vm->_globals._oldFrameIndex < 24 || _vm->_globals._oldFrameIndex > 35) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 24;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 24;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1350,19 +1349,19 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX + deltaX;
-			v58 = _oldCharacterPosY + deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 35)
-				v1 = 24;
+			oldPosX = _oldCharacterPosX + deltaX;
+			oldPosY = _oldCharacterPosY + deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 35)
+				oldFrameIdx = 24;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 7) {
 		if (_vm->_globals._oldFrameIndex < 24 || _vm->_globals._oldFrameIndex > 35) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 24;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 24;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1373,19 +1372,19 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX - deltaX;
-			v58 = _oldCharacterPosY - deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 35)
-				v1 = 24;
+			oldPosX = _oldCharacterPosX - deltaX;
+			oldPosY = _oldCharacterPosY - deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 35)
+				oldFrameIdx = 24;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 1) {
 		if (_vm->_globals._oldFrameIndex > 11) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 0;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 0;
 		} else {
 			int deltaY = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
 			if (_sprite[0]._zoomFactor < 0) {
@@ -1393,20 +1392,20 @@ void ObjectsManager::GOHOME() {
 			} else if (_sprite[0]._zoomFactor > 0) {
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY - deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 11)
-				v1 = 0;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY - deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 11)
+				oldFrameIdx = 0;
 		}
 		_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 	}
 
 	if (_vm->_globals._oldDirection == 5) {
 		if (_vm->_globals._oldFrameIndex < 48 || _vm->_globals._oldFrameIndex > 59) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 48;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 48;
 		} else {
 			int deltaY = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
 			if (_sprite[0]._zoomFactor < 0) {
@@ -1414,19 +1413,19 @@ void ObjectsManager::GOHOME() {
 			} else if (_sprite[0]._zoomFactor > 0) {
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX;
-			v58 = deltaY + _oldCharacterPosY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 59)
-				v1 = 48;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = deltaY + _oldCharacterPosY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 59)
+				oldFrameIdx = 48;
 		}
 		_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 2) {
 		if (_vm->_globals._oldFrameIndex < 12 || _vm->_globals._oldFrameIndex > 23) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 12;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 12;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1438,19 +1437,19 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = deltaX + _oldCharacterPosX;
-			v58 = _oldCharacterPosY + deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 23)
-				v1 = 12;
+			oldPosX = deltaX + _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY + deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 23)
+				oldFrameIdx = 12;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 8) {
 		if (_vm->_globals._oldFrameIndex < 12 || _vm->_globals._oldFrameIndex > 23) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 12;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 12;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1461,19 +1460,19 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX - deltaX;
-			v58 = _oldCharacterPosY + deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 23)
-				v1 = 12;
+			oldPosX = _oldCharacterPosX - deltaX;
+			oldPosY = _oldCharacterPosY + deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 23)
+				oldFrameIdx = 12;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 4) {
 		if (_vm->_globals._oldFrameIndex < 36 || _vm->_globals._oldFrameIndex > 47) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 36;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 36;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1485,19 +1484,19 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = deltaX + _oldCharacterPosX;
-			v58 = _oldCharacterPosY + deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 47)
-				v1 = 36;
+			oldPosX = deltaX + _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY + deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 47)
+				oldFrameIdx = 36;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
 	if (_vm->_globals._oldDirection == 6) {
 		if (_vm->_globals._oldFrameIndex < 36 || _vm->_globals._oldFrameIndex > 47) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 36;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 36;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1509,11 +1508,11 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX - deltaX;
-			v58 = _oldCharacterPosY + deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 47)
-				v1 = 36;
+			oldPosX = _oldCharacterPosX - deltaX;
+			oldPosY = _oldCharacterPosY + deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 47)
+				oldFrameIdx = 36;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
@@ -1557,10 +1556,10 @@ void ObjectsManager::GOHOME() {
 		}
 		if (_vm->_globals._oldDirection != newDirection)
 			break;
-		if ((newDirection == 3 && newPosX >= v0) || (_vm->_globals._oldDirection == 7 && newPosX <= v0) ||
-		    (_vm->_globals._oldDirection == 1 && newPosY <= v58) || (_vm->_globals._oldDirection == 5 && newPosY >= v58) ||
-		    (_vm->_globals._oldDirection == 2 && newPosX >= v0)  || (_vm->_globals._oldDirection == 8 && newPosX <= v0) ||
-		    (_vm->_globals._oldDirection == 4 && newPosX >= v0) || (_vm->_globals._oldDirection == 6 && newPosX <= v0))
+		if ((newDirection == 3 && newPosX >= oldPosX) || (_vm->_globals._oldDirection == 7 && newPosX <= oldPosX) ||
+		    (_vm->_globals._oldDirection == 1 && newPosY <= oldPosY) || (_vm->_globals._oldDirection == 5 && newPosY >= oldPosY) ||
+		    (_vm->_globals._oldDirection == 2 && newPosX >= oldPosX)  || (_vm->_globals._oldDirection == 8 && newPosX <= oldPosX) ||
+		    (_vm->_globals._oldDirection == 4 && newPosX >= oldPosX) || (_vm->_globals._oldDirection == 6 && newPosX <= oldPosX))
 			loopCond = true;
 	} while (!loopCond);
 	if (loopCond) {
@@ -1574,7 +1573,7 @@ void ObjectsManager::GOHOME() {
 
 		setSpriteX(0, newPosX);
 		setSpriteY(0, newPosY);
-		setSpriteIndex(0, v1);
+		setSpriteIndex(0, oldFrameIdx);
 	} else {
 		if ((_vm->_globals._oldDirection == 6) || (_vm->_globals._oldDirection == 7) || (_vm->_globals._oldDirection == 8))
 			setFlipSprite(0, true);
@@ -1586,7 +1585,7 @@ void ObjectsManager::GOHOME() {
 	}
 	_vm->_globals._oldDirection = newDirection;
 	_vm->_globals._oldDirectionSpriteIdx = newDirection + 59;
-	_vm->_globals._oldFrameIndex = v1;
+	_vm->_globals._oldFrameIndex = oldFrameIdx;
 	_oldCharacterPosX = newPosX;
 	_oldCharacterPosY = newPosY;
 }
@@ -1617,26 +1616,39 @@ void ObjectsManager::GOHOME2() {
 			_vm->_globals._lastDirection = newDirection;
 			setSpriteX(0, nexPosX);
 			setSpriteY(0, newPosY);
-			if (_vm->_globals._lastDirection == 1)
+			switch (_vm->_globals._lastDirection) {
+			case 1:
 				setSpriteIndex(0, 4);
-			else if (_vm->_globals._lastDirection == 3)
+				break;
+			case 3:
 				setSpriteIndex(0, 5);
-			else if (_vm->_globals._lastDirection == 5)
+				break;
+			case 5:
 				setSpriteIndex(0, 6);
-			else if (_vm->_globals._lastDirection == 7)
+				break;
+			case 7:
 				setSpriteIndex(0, 7);
+				break;
+			}
 
 			return;
 		}
 	}
-	if (_vm->_globals._lastDirection == 1)
+
+	switch (_vm->_globals._lastDirection) {
+	case 1:
 		setSpriteIndex(0, 0);
-	else if (_vm->_globals._lastDirection == 3)
+		break;
+	case 3:
 		setSpriteIndex(0, 1);
-	else if (_vm->_globals._lastDirection == 5)
+		break;
+	case 5:
 		setSpriteIndex(0, 2);
-	else if (_vm->_globals._lastDirection == 7)
+		break;
+	case 7:
 		setSpriteIndex(0, 3);
+		break;
+	}
 
 	_vm->_linesManager._route = (int16 *)g_PTRNUL;
 }
@@ -2426,16 +2438,16 @@ void ObjectsManager::initBorder(int zoneIdx) {
 
 	if (!zoneIdx)
 		_vm->_eventsManager._mouseCursorId = 0;
-	else if (zoneIdx == 32)
-		_vm->_eventsManager._mouseCursorId = 16;
-	else if (zoneIdx == 30)
-		_vm->_eventsManager._mouseCursorId = 2;
-	else if (zoneIdx == 31)
-		_vm->_eventsManager._mouseCursorId = 3;
 	else if (zoneIdx >= 1 && zoneIdx <= 28)
 		_vm->_eventsManager._mouseCursorId = 8;
 	else if (zoneIdx == 29)
 		_vm->_eventsManager._mouseCursorId = 1;
+	else if (zoneIdx == 30)
+		_vm->_eventsManager._mouseCursorId = 2;
+	else if (zoneIdx == 31)
+		_vm->_eventsManager._mouseCursorId = 3;
+	else if (zoneIdx == 32)
+		_vm->_eventsManager._mouseCursorId = 16;
 
 	if (zoneIdx >= 1 && zoneIdx <= 28 && !_vm->_globals._inventory[zoneIdx]) {
 		_vm->_eventsManager._mouseCursorId = 0;
@@ -2557,7 +2569,7 @@ void ObjectsManager::OPTI_OBJET() {
 
 		if (opcodeType == 1 || opcodeType == 4)
 			++lastOpcodeResult;
-		if (!opcodeType || opcodeType == 5)
+		else if (!opcodeType || opcodeType == 5)
 			break;
 	}
 

@@ -659,36 +659,46 @@ void ComputerManager::displayBricks() {
 	_breakoutBrickNbr = 0;
 	_breakoutSpeed = 1;
 	int16 *level = _breakoutLevel;
-	int levelIdx = 0;
 
 	int cellLeft;
 	int cellTop;
 	int cellType;
-	do {
+	for (int levelIdx = 0; ; levelIdx += 6) {
 		cellLeft = level[levelIdx];
+		if (cellLeft == -1)
+			break;
 		cellTop = level[levelIdx + 1];
 		cellType = level[levelIdx + 4];
-		if (cellLeft != -1) {
-			if (cellType <= 6)
-				++_breakoutBrickNbr;
 
-			if (cellType == 3)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 17);
-			else if (cellType == 6)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 18);
-			else if (cellType == 5)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 19);
-			else if (cellType == 4)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 20);
-			else if (cellType == 1)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 21);
-			else if (cellType == 2)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 22);
-			else if (cellType == 31)
-				_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 23);
+		if (cellType <= 6)
+			++_breakoutBrickNbr;
+
+		switch (cellType) {
+		case 1:
+			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 21);
+			break;
+		case 2:
+			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 22);
+			break;
+		case 3:
+			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 17);
+			break;
+		case 4:
+			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 20);
+			break;
+		case 5:
+			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 19);
+			break;
+		case 6:
+			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 18);
+			break;
+		case 31:
+			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 23);
+			break;
 		}
+
 		levelIdx += 6;
-	} while (cellLeft != -1);
+	}
 
 	displayScore();
 }
@@ -1042,18 +1052,17 @@ int ComputerManager::moveBall() {
 		_vm->_soundManager.playSample(2, 6);
 		_ballPosition.x = randVal + 6;
 		_ballRightFl = !_ballRightFl;
-	}
-	if (_ballPosition.x > 307) {
+	} else if (_ballPosition.x > 307) {
 		_vm->_soundManager.playSample(2, 6);
 		_ballPosition.x = 307 - randVal;
 		_ballRightFl = !_ballRightFl;
 	}
+
 	if (_ballPosition.y <= 6) {
 		_vm->_soundManager.playSample(2, 6);
 		_ballPosition.y = randVal + 7;
 		_ballUpFl = !_ballUpFl;
-	}
-	if (_ballPosition.y >= 186 && _ballPosition.y <= 194) {
+	} else if (_ballPosition.y >= 186 && _ballPosition.y <= 194) {
 		_vm->_soundManager.playSample(2, 6);
 		int ballPosXRight = _ballPosition.x + 6;
 		if ((_ballPosition.x > _padPositionX - 2) && (ballPosXRight < _padPositionX + 36)) {
