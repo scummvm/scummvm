@@ -36,12 +36,17 @@ struct LigneZoneItem {
 	int16 *_zoneData;
 };
 
+struct RouteItem;
+
 struct LigneItem {
 	int _lineDataEndIdx;
 	int _direction;
 	int field6;
 	int field8;
 	int16 *_lineData;
+
+	int appendToRouteInc(int from, int to, RouteItem *route, int index);
+	int appendToRouteDec(int from, int to, RouteItem *route, int index);
 };
 
 struct SmoothItem {

@@ -30,6 +30,25 @@
 
 namespace Hopkins {
 
+
+int LigneItem::appendToRouteInc(int from, int to, RouteItem *route, int index) {
+	if (to == -1)
+		to = _lineDataEndIdx;
+	assert(from <= to);
+	for (int i = from; i < to; ++i)
+		route[index++].set(_lineData[2*i], _lineData[2*i+1], field6);
+	return index;
+}
+int LigneItem::appendToRouteDec(int from, int to, RouteItem *route, int index) {
+	if (from == -1)
+		from = _lineDataEndIdx - 1;
+	assert(from >= to);
+	for (int i = from; i > to; --i)
+		route[index++].set(_lineData[2*i], _lineData[2*i+1], field8);
+	return index;
+}
+
+
 LinesManager::LinesManager() {
 	for (int i = 0; i < MAX_LINES; ++i) {
 		Common::fill((byte *)&_zoneLine[i], (byte *)&_zoneLine[i] + sizeof(LigneZoneItem), 0);
@@ -441,46 +460,26 @@ int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, RouteItem *r
 	int v7 = a2;
 	int v8 = a3;
 	if (a1 < a4) {
-		for (int i = a2; Ligne[a1]._lineDataEndIdx > i; ++i) {
-			route[v8].set(Ligne[a1]._lineData[2 * i], Ligne[a1]._lineData[2 * i + 1], Ligne[a1].field6);
-			v8++;
-		}
+		v8 = Ligne[a1].appendToRouteInc(a2, -1, route, v8);
 
-		for (int i = a1 + 1; i < a4; i++) {
-			for (int j = 0; j < Ligne[i]._lineDataEndIdx; j++) {
-				route[v8].set(Ligne[i]._lineData[2 * j], Ligne[i]._lineData[2 * j + 1], Ligne[i].field6);
-				v8++;
-			}
-		}
+		for (int i = a1 + 1; i < a4; i++)
+			v8 = Ligne[i].appendToRouteInc(0, -1, route, v8);
 
 		v7 = 0;
 		v36 = a4;
 	}
 	if (v36 > a4) {
-		for (int i = v7; i > 0; --i) {
-			route[v8].set(Ligne[v36]._lineData[2 * i], Ligne[v36]._lineData[2 * i + 1], Ligne[v36].field8);
-			v8++;
-		}
-		for (int i = v36 - 1; i > a4; i--) {
-			for (int j = Ligne[i]._lineDataEndIdx - 1; j > 0; --j) {
-				route[v8].set(Ligne[i]._lineData[2 * j], Ligne[i]._lineData[2 * j + 1], Ligne[i].field8);
-				v8++;
-			}
-		}
+		v8 = Ligne[v36].appendToRouteDec(v7, 0, route, v8);
+		for (int i = v36 - 1; i > a4; i--)
+			v8 = Ligne[i].appendToRouteDec(-1, 0, route, v8);
 		v7 = Ligne[a4]._lineDataEndIdx - 1;
 		v36 = a4;
 	}
 	if (v36 == a4) {
 		if (a5 >= v7) {
-			for (int i = v7; i < a5; i++) {
-				route[v8].set(Ligne[a4]._lineData[2 * i], Ligne[a4]._lineData[2 * i + 1], Ligne[a4].field6);
-				v8++;
-			}
+			v8 = Ligne[a4].appendToRouteInc(v7, a5, route, v8);
 		} else {
-			for (int i = v7; i > a5; --i) {
-				route[v8].set(Ligne[a4]._lineData[2 * i], Ligne[a4]._lineData[2 * i+ 1], Ligne[a4].field8);
-				v8++;
-			}
+			v8 = Ligne[a4].appendToRouteDec(v7, a5, route, v8);
 		}
 	}
 	return v8;
@@ -492,19 +491,12 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, RouteItem *
 	int v10 = a2;
 	int v40 = a3;
 	if (a4 < a1) {
-		for (int i = a2; i < Ligne[a1]._lineDataEndIdx; ++i) {
-			route[v40].set(Ligne[a1]._lineData[2 * i], Ligne[a1]._lineData[2 * i + 1], Ligne[a1].field6);
-			v40++;
-		}
+		v40 = Ligne[a1].appendToRouteInc(a2, -1, route, v40);
 		int v15 = a1 + 1;
 		if (v15 == a9 + 1)
 			v15 = a8;
 		while (a4 != v15) {
-			for (int i = 0; i < Ligne[v15]._lineDataEndIdx; i++) {
-				route[v40].set(Ligne[v15]._lineData[2 * i], Ligne[v15]._lineData[2 * i + 1], Ligne[v15].field6);
-				v40++;
-
-			}
+			v40 = Ligne[v15].appendToRouteInc(0, -1, route, v40);
 			++v15;
 			if (a9 + 1 == v15)
 				v15 = a8;
@@ -513,18 +505,12 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, RouteItem *
 		v9 = a4;
 	}
 	if (a4 > v9) {
-		for (int i = v10; i > 0; --i) {
-			route[v40].set(Ligne[v9]._lineData[2 * i], Ligne[v9]._lineData[2 * i + 1], Ligne[v9].field8);
-			v40++;
-		}
+		v40 = Ligne[v9].appendToRouteDec(v10, 0, route, v40);
 		int v24 = v9 - 1;
 		if (v24 == a8 - 1)
 			v24 = a9;
 		while (a4 != v24) {
-			for (int i = Ligne[v24]._lineDataEndIdx - 1; i > 0; --i) {
-				route[v40].set(Ligne[v24]._lineData[2 * i], Ligne[v24]._lineData[2 * i + 1], Ligne[v24].field8);
-				v40++;
-			}
+			v40 = Ligne[v24].appendToRouteDec(-1, 0, route, v40);
 			--v24;
 			if (a8 - 1 == v24)
 				v24 = a9;
@@ -534,15 +520,9 @@ int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, RouteItem *
 	}
 	if (a4 == v9) {
 		if (a5 >= v10) {
-			for (int i = v10; i < a5; i++) {
-				route[v40].set(Ligne[a4]._lineData[2 * i], Ligne[a4]._lineData[2 * i + 1], Ligne[a4].field6);
-				v40++;
-			}
+			v40 = Ligne[a4].appendToRouteInc(v10, a5, route, v40);
 		} else {
-			for (int i = v10; i > a5; i--) {
-				route[v40].set(Ligne[a4]._lineData[2 * i], Ligne[a4]._lineData[2 * i + 1], Ligne[a4].field8);
-				v40++;
-			}
+			v40 = Ligne[a4].appendToRouteDec(v10, a5, route, v40);
 		}
 	}
 	return v40;
@@ -1554,15 +1534,9 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 
 	if (v115 == v121) {
 		if (v114 <= v120) {
-			for (int dataIdx = v114; dataIdx < v120; dataIdx++) {
-				super_parcours[v112].set(Ligne[v121]._lineData[2 * dataIdx], Ligne[v121]._lineData[2 * dataIdx + 1], Ligne[v121].field6);
-				v112++;
-			}
+			v112 = Ligne[v121].appendToRouteInc(v114, v120, super_parcours, v112);
 		} else {
-			for (int dataIdx = v114; dataIdx > v120; dataIdx--) {
-				super_parcours[v112].set(Ligne[v121]._lineData[2 * dataIdx], Ligne[v121]._lineData[2 * dataIdx + 1], Ligne[v121].field8);
-				v112++;
-			}
+			v112 = Ligne[v121].appendToRouteDec(v114, v120, super_parcours, v112);
 		}
 	}
 	if (PARC_PERS(super_parcours[v112 - 1]._X, super_parcours[v112 - 1]._Y, clipDestX, clipDestY, -1, -1, v112) != 1) {
@@ -2320,13 +2294,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 		while (loopFl) {
 			loopFl = false;
 			if (v69 < v73) {
-				int v34 = v68;
-				// FIXME: This loop is encoded as a for-loop in a crazy way
-				for (int i = Ligne[v69]._lineDataEndIdx; v34 < i - 2; i = Ligne[v69]._lineDataEndIdx) {
-					super_parcours[superRouteIdx].set(Ligne[v69]._lineData[2 * v34], Ligne[v69]._lineData[2 * v34 + 1], Ligne[v69].field6);
-					superRouteIdx++;
-					++v34;
-				}
+				superRouteIdx = Ligne[v69].appendToRouteInc(v68, Ligne[v69]._lineDataEndIdx - 2, super_parcours, superRouteIdx);
 				for (int j = v69 + 1; j < v73; ++j) {
 					if (PLAN_TEST(Ligne[j]._lineData[0], Ligne[j]._lineData[1], superRouteIdx, j, v73)) {
 						v69 = NV_LIGNEDEP;
@@ -2336,10 +2304,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 						break;
 					}
 					if (Ligne[j]._lineDataEndIdx - 2 > 0) {
-						for (int v40 = 0; v40 < Ligne[j]._lineDataEndIdx - 2; v40++) {
-							super_parcours[superRouteIdx].set(Ligne[j]._lineData[2 * v40], Ligne[j]._lineData[2 * v40 + 1], Ligne[j].field6);
-							superRouteIdx++;
-						}
+						superRouteIdx = Ligne[j].appendToRouteInc(0, Ligne[j]._lineDataEndIdx - 2, super_parcours, superRouteIdx);
 					}
 				}
 				if (loopFl)
@@ -2353,8 +2318,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 					superRouteIdx++;
 				}
 				for (int l = v69 - 1; l > v73; --l) {
-					int v48 = l;
-					if (PLAN_TEST(Ligne[l]._lineData[2 * Ligne[v48]._lineDataEndIdx - 2], Ligne[l]._lineData[2 * Ligne[v48]._lineDataEndIdx - 1], superRouteIdx, l, v73)) {
+					if (PLAN_TEST(Ligne[l]._lineData[2 * Ligne[l]._lineDataEndIdx - 2], Ligne[l]._lineData[2 * Ligne[l]._lineDataEndIdx - 1], superRouteIdx, l, v73)) {
 						v69 = NV_LIGNEDEP;
 						v68 = NV_LIGNEOFS;
 						superRouteIdx = NV_POSI; 
@@ -2362,10 +2326,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 						break;
 					}
 
-					for (int v49 = Ligne[v48]._lineDataEndIdx - 2; v49 > 0; v49 --) {
-						super_parcours[superRouteIdx].set(Ligne[l]._lineData[2 * v49], Ligne[l]._lineData[2 * v49 + 1], Ligne[l].field8);
-						superRouteIdx++;
-					}
+					superRouteIdx = Ligne[l].appendToRouteDec(Ligne[l]._lineDataEndIdx - 2, 0, super_parcours, superRouteIdx);
 				}
 				if (loopFl)
 					continue;
@@ -2375,15 +2336,9 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			}
 			if (v69 == v73) {
 				if (v68 <= v72) {
-					for (int v57 = v68; v57 < v72; v57++) {
-						super_parcours[superRouteIdx].set(Ligne[v73]._lineData[2 * v57], Ligne[v73]._lineData[2 * v57 + 1], Ligne[v73].field6);
-						superRouteIdx++;
-					}
+					superRouteIdx = Ligne[v73].appendToRouteInc(v68, v72, super_parcours, superRouteIdx);
 				} else {
-					for (int v53 = v68; v53 > v72; v53--) {
-						super_parcours[superRouteIdx].set(Ligne[v73]._lineData[2 * v53], Ligne[v73]._lineData[2 * v53 + 1], Ligne[v73].field8);
-						superRouteIdx++;
-					}
+					superRouteIdx = Ligne[v73].appendToRouteDec(v68, v72, super_parcours, superRouteIdx);
 				}
 			}
 		}
@@ -2654,15 +2609,9 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5) {
 
 	int superRouteIdx = a3;
 	if (v33 == 1) {
-		for (int i = 0; i < Ligne[idxTest]._lineDataEndIdx; i++) {
-			super_parcours[superRouteIdx].set(Ligne[idxTest]._lineData[2 * i], Ligne[idxTest]._lineData[2 * i + 1], Ligne[idxTest].field6);
-			superRouteIdx++;
-		}
+		superRouteIdx = Ligne[idxTest].appendToRouteInc(0, -1, super_parcours, superRouteIdx);
 	} else if (v33 == 2) {
-		for (int v19 = Ligne[idxTest]._lineDataEndIdx - 1; v19 > -1; v19--) {
-			super_parcours[superRouteIdx].set(Ligne[idxTest]._lineData[2 * v19], Ligne[idxTest]._lineData[2 * v19 + 1], Ligne[idxTest].field8);
-			superRouteIdx++;
-		}
+		superRouteIdx = Ligne[idxTest].appendToRouteDec(-1, -1, super_parcours, superRouteIdx);
 	}
 	NV_POSI = superRouteIdx;
 	return true;
