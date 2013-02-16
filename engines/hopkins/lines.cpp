@@ -1555,14 +1555,9 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 	int v23;
 	int v24;
 	int v33;
-	int v36;
-	int v39;
-	int v40;
 	bool v45;
 	int v54;
 	int v55;
-	int v58;
-	int v66;
 	int newDirection;
 	int v92;
 	int v93;
@@ -1583,20 +1578,9 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 	int v108;
 	int v109;
 	int v111;
-	int v113;
 	int v114;
 	int v115;
-	int v116;
 	int v117;
-	int v118;
-	int v119;
-	int v120;
-	int v121;
-	int v122;
-	int v123;
-	int v124;
-	int v125;
-	bool v126 = false;
 	int collLineIdx;
 	int collDataIdx;
 	int v140;
@@ -1652,27 +1636,13 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 	collLineIdx = -1;
 
 	int distX, v10, distY, v12, v13, v14;
+	int repeatFlag = 0;
 	for (;;) {
 		v111 = curX;
 		v109 = curY;
 		if (destX >= curX - 2 && destX <= curX + 2 && destY >= curY - 2 && destY <= curY + 2) {
-LABEL_149:
 			essai0[v115].invalidate();
-
-LABEL_150:
-			if (v115) {
-				v116 = 0;
-				for (;;) {
-					super_parcours[v137] = essai0[v116];
-					v116++;
-					v137++;
-
-					if (!essai0[v116].isValid())
-						break;
-				}
-			}
-			super_parcours[v137].invalidate();
-			return 1;
+			goto retLABEL_essai0;
 		}
 		distX = abs(curX - destX);
 		v10 = distX + 1;
@@ -1702,17 +1672,43 @@ LABEL_150:
 		if (v94 == -1 && (v101 >= -150 && v101 <= 0))
 			newDirection = 1;
 
-		if (newDirection == -1 && !checkSmoothMove(curX, v109, destX, destY) && !makeSmoothMove(curX, v109, destX, destY))
-			break;
-LABEL_72:
+		if (newDirection == -1 && !checkSmoothMove(curX, v109, destX, destY) && !makeSmoothMove(curX, v109, destX, destY)) {
+			newDirection = _smoothMoveDirection;
+			v14 = 0;
+			for (v14 = 0; _smoothRoute[v14]._posX != -1 && _smoothRoute[v14]._posY != -1; ++v14) {
+				if (checkCollisionLine(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, &v143, &v142, 0, _linesNumb)) {
+					if (v142 > _lastLine)
+						v142 = -1;
+					break;
+				}
+
+				essai0[v115].set(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, newDirection);
+				v115++;
+
+				if (repeatFlag == 1) {
+					repeatFlag = 2;
+					break;
+				}
+			}
+
+			if (repeatFlag != 2 && _smoothRoute[v14]._posX != -1 && _smoothRoute[v14]._posY != -1)
+				break;
+
+			repeatFlag = 1;
+			v18 = v14 - 1;
+			v111 = _smoothRoute[v18]._posX;
+			v109 = _smoothRoute[v18]._posY;
+		}
 		v19 = abs(v111 - destX);
 		v20 = v19 + 1;
 		v95 = abs(v109 - destY);
 		v108 = v95 + 1;
 		if (v20 > (v95 + 1))
 			v108 = v20;
-		if (v108 <= 10)
-			goto LABEL_149;
+		if (v108 <= 10) {
+			essai0[v115].invalidate();
+			goto retLABEL_essai0;
+		}
 		v21 = v108 - 1;
 		v102 = 1000 * v20 / v21;
 		v100 = 1000 * (v95 + 1) / v21;
@@ -1758,6 +1754,7 @@ LABEL_72:
 			}
 		}
 		if (v22 == 1) {
+			// CHECKME: Overlapping intervals
 			if (v100 >= -1 && v100 <= 510)
 				newDirection = 2;
 			if (v100 >= -510 && v100 <= 0)
@@ -1795,8 +1792,10 @@ LABEL_72:
 				newDirection = 1;
 		}
 		v23 = 0;
-		if (v108 + 1 <= 0)
-			goto LABEL_149;
+		if (v108 + 1 <= 0) {
+			essai0[v115].invalidate();
+			goto retLABEL_essai0;
+		}
 		while (!checkCollisionLine(v104, v103, &v143, &v142, 0, _linesNumb)) {
 			essai0[v115].set(v104, v103, newDirection);
 			v106 += v102;
@@ -1805,357 +1804,260 @@ LABEL_72:
 			v103 = v105 / 1000;
 			v115++;
 			++v23;
-			if (v23 >= v108 + 1)
-				goto LABEL_149;
+			if (v23 >= v108 + 1) {
+				essai0[v115].invalidate();
+				goto retLABEL_essai0;
+			}
 		}
 		if (_lastLine >= v142)
-			goto LABEL_157;
+			break;
 		v24 = GENIAL(v142, v143, v104, v103, destX, destY, v115, essai0);
 		if (v24 == -1)
-			goto LABEL_150;
+			goto retLABEL_essai0;
 		v115 = v24;
 		if (NVPX != -1 || NVPY != -1) {
 			v142 = -1;
-			goto LABEL_157;
+			break;
 		}
 		curX = -1;
 		curY = -1;
 	}
-	newDirection = _smoothMoveDirection;
-	v14 = 0;
-	for (;;) {
-		if (_smoothRoute[v14]._posX == -1 || _smoothRoute[v14]._posY == -1) {
-			v126 = true;
-			v18 = v14 - 1;
-			v111 = _smoothRoute[v18]._posX;
-			v109 = _smoothRoute[v18]._posY;
-			goto LABEL_72;
-		}
-		if (checkCollisionLine(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, &v143, &v142, 0, _linesNumb))
-			break;
 
-		essai0[v115].set(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, newDirection);
-		v115++;
-		++v14;
-		if (v126) {
-			v18 = v14 - 1;
-			v111 = _smoothRoute[v18]._posX;
-			v109 = _smoothRoute[v18]._posY;
-			goto LABEL_72;
-		}
-	}
-	if (v142 > _lastLine)
-		v142 = -1;
-
-LABEL_157:
 	essai0[v115].invalidate();
 
 	v117 = 0;
 	v33 = v98;
 	v92 = v97;
-LABEL_158:
-	v113 = v33;
-	if (destX >= v33 - 2 && destX <= v33 + 2 && destY >= v92 - 2 && destY <= v92 + 2)
-		goto LABEL_194;
-	if (v33 >= destX) {
-LABEL_165:
-		if (v113 > destX) {
-			v36 = v113;
-			while (!checkCollisionLine(v36, v92, &v141, &v140, 0, _linesNumb)) {
-				essai1[v117].set(v36, v92, 7);
-				v117++;
-				--v36;
-				if (destX >= v36)
-					goto LABEL_171;
-			}
-			goto LABEL_168;
-		}
-LABEL_171:
-		if (v92 >= destY) {
-LABEL_181:
-			for (int v43 = v92; v43 > destY; v43--) {
-				if (checkCollisionLine(destX, v43, &v141, &v140, 0, _linesNumb)) {
-					if (_lastLine < v140) {
-						int v44 = GENIAL(v140, v141, destX, v43, destX, destY, v117, essai1);
-						if (v44 == -1)
-							goto LABEL_195;
-						v117 = v44;
-						if (NVPX != -1 && NVPY != -1) {
-							v33 = NVPX;
-							v92 = NVPY;
-							v45 = checkCollisionLine(NVPX, NVPY, &v141, &v140, 0, _lastLine);
-							if (v45 && v140 <= _lastLine)
-								goto LABEL_202;
-							goto LABEL_158;
-						}
-					}
-					if (v140 <= _lastLine)
-						goto LABEL_202;
-				}
-				essai1[v117].set(destX, v43, 1);
-				v117++;
-			}
-LABEL_194:
+
+	while (true) {
+
+		if (destX >= v33 - 2 && destX <= v33 + 2 && destY >= v92 - 2 && destY <= v92 + 2) {
 			essai1[v117].invalidate();
-LABEL_195:
-			if (v117) {
-				v118 = 0;
-				for (;;) {
-					super_parcours[v137] = essai1[v118];
-					v118++;
-					v137++;
-					if (!essai1[v118].isValid())
-						break;
-				}
-			}
-			super_parcours[v137].invalidate();
-			return 1;
+			goto retLABEL_essai0;
 		}
-		v39 = v92;
-		for (;;) {
-			if (checkCollisionLine(destX, v39, &v141, &v140, 0, _linesNumb)) {
-				if (_lastLine < v140) {
-					v40 = GENIAL(v140, v141, destX, v39, destX, destY, v117, essai1);
-					if (v40 == -1)
-						goto LABEL_195;
-					v117 = v40;
-					if (NVPX != -1 && NVPY != -1) {
-						v33 = NVPX;
-						v92 = NVPY;
-						v45 = checkCollisionLine(NVPX, NVPY, &v141, &v140, 0, _lastLine);
-						if (v45 && v140 <= _lastLine)
-							goto LABEL_202;
-						goto LABEL_158;
-					}
-				}
-				if (v140 <= _lastLine)
-					goto LABEL_202;
+		while (v33 != destX) {
+			if (checkCollisionLine(v33, v92, &v141, &v140, 0, _linesNumb)) {
+				if (v140 > _lastLine)
+					v140 = -1;
+				break;
 			}
 
-			essai1[v117].set(destX, v39, 5);
-			v117++;
-			++v39;
-			if (destY <= v39)
-				goto LABEL_181;
+			if (v33 < destX)
+				essai1[v117++].set(v33++, v92, 3);
+			else
+				essai1[v117++].set(v33--, v92, 7);
 		}
+		if (v33 != destX)
+			break;
+
+		int v43 = v92;
+		while (v43 != destY) {
+			if (checkCollisionLine(destX, v43, &v141, &v140, 0, _linesNumb)) {
+				if (v140 <= _lastLine)
+					break;
+
+				int v44 = GENIAL(v140, v141, destX, v43, destX, destY, v117, essai1);
+				if (v44 == -1)
+					goto retLABEL_essai1;
+				v117 = v44;
+				if (NVPX != -1 && NVPY != -1)
+					break;
+			}
+
+			if (v43 < destY)
+				essai1[v117++].set(destX, v43++, 5);
+			else
+				essai1[v117++].set(destX, v43--, 1);
+		}
+		if (v43 == destY) {
+			essai1[v117].invalidate();
+			goto retLABEL_essai1;
+		}
+		if (v140 <= _lastLine)
+			break;
+		v33 = NVPX;
+		v92 = NVPY;
+		v45 = checkCollisionLine(NVPX, NVPY, &v141, &v140, 0, _lastLine);
+		if (v45 && v140 <= _lastLine)
+			break;
 	}
-	while (!checkCollisionLine(v33, v92, &v141, &v140, 0, _linesNumb)) {
-		essai1[v117].set(v33, v92, 3);
-		v117++;
-		++v33;
-		if (destX <= v33)
-			goto LABEL_165;
-	}
-LABEL_168:
-	if (v140 > _lastLine)
-		v140 = -1;
-LABEL_202:
+
 	essai1[v117].invalidate();
 	v117 = 0;
 	v54 = v98;
 	v93 = v97;
-LABEL_203:
-	v114 = v54;
-	if (destX >= v54 - 2 && destX <= v54 + 2 && destY >= v93 - 2 && destY <= v93 + 2)
-		goto LABEL_241;
-	if (v93 < destY) {
+	while (true) {
+		int v61;
+		v114 = v54;
+		if (destX >= v54 - 2 && destX <= v54 + 2 && destY >= v93 - 2 && destY <= v93 + 2) {
+			essai2[v117].invalidate();
+			goto retLABEL_essai2;
+		}
+
 		v55 = v93;
-		while (!checkCollisionLine(v114, v55, &collDataIdx, &collLineIdx, 0, _linesNumb)) {
-			essai2[v117].set(v114, v55, 5);
-			v117++;
-			++v55;
-			if (destY <= v55)
-				goto LABEL_211;
-		}
-		goto LABEL_214;
-	}
-LABEL_211:
-	if (v93 > destY) {
-		v58 = v93;
-		while (!checkCollisionLine(v114, v58, &collDataIdx, &collLineIdx, 0, _linesNumb)) {
-			essai2[v117].set(v114, v58, 1);
-			v117++;
-			--v58;
-			if (destY >= v58)
-				goto LABEL_217;
-		}
-LABEL_214:
-		if (collLineIdx > _lastLine)
-			collLineIdx = -1;
-LABEL_249:
-		essai2[v117].invalidate();
-
-		if (!v136) {
-			if (a6 > foundLineIdx) {
-				if (essai0[0]._X != -1 && v142 > foundLineIdx && v140 <= v142 && collLineIdx <= v142 && a6 >= v142) {
-					NV_LIGNEDEP = v142;
-					NV_LIGNEOFS = v143;
-					v120 = 0;
-					for (;;) {
-						super_parcours[v137] = essai0[v120];
-						v120++;
-						v137++;
-						if (!essai0[v120].isValid())
-							break;
-					}
-					NV_POSI = v137;
-					return 2;
-				}
-				if (essai1[0]._X != -1 && foundLineIdx < v140 && collLineIdx <= v140 && v142 <= v140 && a6 >= v140) {
-					NV_LIGNEDEP = v140;
-					NV_LIGNEOFS = v141;
-					v121 = 0;
-					for (;;) {
-						assert(v137 <= 8000);
-						super_parcours[v137] = essai1[v121];
-						v121++;
-						v137++;
-						if (!essai1[v121].isValid())
-							break;
-					}
-					NV_POSI = v137;
-					return 2;
-				}
-				if (essai2[0]._X != -1) {
-					if (foundLineIdx < collLineIdx && v140 < collLineIdx && v142 < collLineIdx && a6 >= collLineIdx) {
-						NV_LIGNEDEP = collLineIdx;
-						NV_LIGNEOFS = collDataIdx;
-						v122 = 0;
-						for (;;) {
-							assert(v137 <= 8000);
-							super_parcours[v137] = essai2[v122];
-							v122++;
-							v137++;
-							if (!essai2[v122].isValid())
-								break;
-						};
-						NV_POSI = v137;
-						return 2;
-					}
-				}
-			}
-			if (a6 < foundLineIdx) {
-				if (v142 == -1)
-					v142 = 1300;
-				if (v140 == -1)
-					v142 = 1300;
-				if (collLineIdx == -1)
-					v142 = 1300;
-				if (essai1[0]._X != -1 && v140 < foundLineIdx && collLineIdx >= v140 && v142 >= v140 && a6 <= v140) {
-					NV_LIGNEDEP = v140;
-					NV_LIGNEOFS = v141;
-					v123 = 0;
-					for (;;) {
-						assert(137 <= 8000);
-						super_parcours[v137] = essai1[v123];
-						v123++;
-						v137++;
-						if (!essai1[v123].isValid())
-							break;
-					}
-					NV_POSI = v137;
-					return 2;
-				}
-				if (essai2[0]._X != -1 && foundLineIdx > collLineIdx && v140 >= collLineIdx && v142 >= collLineIdx && a6 <= collLineIdx) {
-					NV_LIGNEDEP = collLineIdx;
-					NV_LIGNEOFS = collDataIdx;
-					v124 = 0;
-					for (;;) {
-						assert(v137 <= 8000);
-						super_parcours[v137] = essai2[v124];
-						v124++;
-						v137++;
-						if (!essai2[v124].isValid())
-							break;
-					}
-					NV_POSI = v137;
-					return 2;
-				}
-				if (essai1[0]._X != -1 && foundLineIdx > v142 && v140 >= v142 && collLineIdx >= v142 && a6 <= v142) {
-					NV_LIGNEDEP = v142;
-					NV_LIGNEOFS = v143;
-					v125 = 0;
-					for (;;) {
-						assert(137 <= 8000);
-						super_parcours[v137] = essai0[v125];
-						v125++;
-						v137++;
-						if (!essai0[v125].isValid())
-							break;
-					}
-
-					NV_POSI = v137;
-					return 2;
-				}
-			}
-		}
-		return 0;
-	}
-LABEL_217:
-	if (v114 < destX) {
-		for (int v61 = v114; v61 < destX; v61++) {
-			if (checkCollisionLine(v61, destY, &collDataIdx, &collLineIdx, 0, _linesNumb)) {
-				if (_lastLine < collLineIdx) {
-					int v62 = GENIAL(collLineIdx, collDataIdx, v61, destY, destX, destY, v117, essai2);
-					if (v62 == -1)
-						goto LABEL_195;
-					v117 = v62;
-					if (NVPX != -1) {
-						if (NVPY != -1) {
-							v54 = NVPX;
-							v93 = NVPY;
-							colResult = checkCollisionLine(NVPX, NVPY, &collDataIdx, &collLineIdx, 0, _lastLine);
-							if (colResult && collLineIdx <= _lastLine)
-								goto LABEL_249;
-							goto LABEL_203;
-						}
-					}
-				}
-				if (collLineIdx <= _lastLine)
-					goto LABEL_249;
-			}
-
-			essai2[v117].set(v61, destY, 3);
-			v117++;
-		}
-	}
-	if (v114 > destX) {
-		for (int v65 = v114; v65 > destX; v65--) {
-			if (checkCollisionLine(v65, destY, &collDataIdx, &collLineIdx, 0, _linesNumb)) {
-				if (_lastLine < collLineIdx) {
-					v66 = GENIAL(collLineIdx, collDataIdx, v65, destY, destX, destY, v117, essai2);
-					if (v66 == -1)
-						goto LABEL_242;
-					v117 = v66;
-					if (NVPX != -1 && NVPY != -1) {
-						v54 = NVPX;
-						v93 = NVPY;
-						colResult = checkCollisionLine(NVPX, NVPY, &collDataIdx, &collLineIdx, 0, _lastLine);
-						if (colResult && collLineIdx <= _lastLine)
-							goto LABEL_249;
-						goto LABEL_203;
-					}
-				}
-				if (collLineIdx <= _lastLine)
-					goto LABEL_249;
-			}
-			essai2[v117].set(v65, destY, 7);
-			v117++;
-		}
-	}
-	collLineIdx = -1;
-LABEL_241:
-	essai2[v117].invalidate();
-LABEL_242:
-	if (v117) {
-		v119 = 0;
-		for (;;) {
-			super_parcours[v137] = essai2[v119];
-			v119++;
-			v137++;
-			if (!essai2[v119].isValid())
+		while (v55 != destY) {
+			if (checkCollisionLine(v114, v55, &collDataIdx, &collLineIdx, 0, _linesNumb)) {
+				if (collLineIdx > _lastLine)
+					collLineIdx = -1;
 				break;
+			}
+
+			if (v55 < destY)
+				essai2[v117++].set(v114, v55++, 5);
+			else
+				essai2[v117++].set(v114, v55--, 1);
 		}
+		if (v55 != destY)
+			break;
+
+		v61 = v114;
+		while (v61 != destX) {
+			if (checkCollisionLine(v61, destY, &collDataIdx, &collLineIdx, 0, _linesNumb)) {
+				if (collLineIdx <= _lastLine)
+					break;
+
+				int v62 = GENIAL(collLineIdx, collDataIdx, v61, destY, destX, destY, v117, essai2);
+				if (v62 == -1) {
+					// CHECKME: This goto was to retLABEL_essai1... 
+					goto retLABEL_essai2;
+				}
+				v117 = v62;
+				if (NVPX != -1 && NVPY != -1)
+					break;
+			}
+
+			if (v61 < destX)
+				essai2[v117++].set(v61++, destY, 3);
+			else
+				essai2[v117++].set(v61--, destY, 7);
+		}
+		if (v61 == destX) {
+			collLineIdx = -1;
+			essai2[v117].invalidate();
+			goto retLABEL_essai2;
+		}
+		if (collLineIdx <= _lastLine)
+			break;
+
+		v54 = NVPX;
+		v93 = NVPY;
+		colResult = checkCollisionLine(NVPX, NVPY, &collDataIdx, &collLineIdx, 0, _lastLine);
+		if (colResult && collLineIdx <= _lastLine)
+			break;
+	}
+
+	essai2[v117].invalidate();
+
+	if (!v136) {
+		if (a6 > foundLineIdx) {
+			if (essai0[0]._X != -1 && v142 > foundLineIdx && v140 <= v142 && collLineIdx <= v142 && a6 >= v142) {
+				NV_LIGNEDEP = v142;
+				NV_LIGNEOFS = v143;
+				int i = 0;
+				do {
+					assert(v137 <= 8000);
+					super_parcours[v137++] = essai0[i++];
+				} while (essai0[i].isValid());
+				NV_POSI = v137;
+				return 2;
+			}
+			if (essai1[0]._X != -1 && foundLineIdx < v140 && collLineIdx <= v140 && v142 <= v140 && a6 >= v140) {
+				NV_LIGNEDEP = v140;
+				NV_LIGNEOFS = v141;
+				int i = 0;
+				do {
+					assert(v137 <= 8000);
+					super_parcours[v137++] = essai1[i++];
+				} while (essai1[i].isValid());
+				NV_POSI = v137;
+				return 2;
+			}
+			if (essai2[0]._X != -1 && foundLineIdx < collLineIdx && v140 < collLineIdx && v142 < collLineIdx && a6 >= collLineIdx) {
+				NV_LIGNEDEP = collLineIdx;
+				NV_LIGNEOFS = collDataIdx;
+				int i = 0;
+				do {
+					assert(v137 <= 8000);
+					super_parcours[v137++] = essai2[i++];
+				} while (essai2[i].isValid());
+				NV_POSI = v137;
+				return 2;
+			}
+		}
+		if (a6 < foundLineIdx) {
+			if (v142 == -1)
+				v142 = 1300;
+			if (v140 == -1)
+				v142 = 1300;
+			if (collLineIdx == -1)
+				v142 = 1300;
+			if (essai1[0]._X != -1 && v140 < foundLineIdx && collLineIdx >= v140 && v142 >= v140 && a6 <= v140) {
+				NV_LIGNEDEP = v140;
+				NV_LIGNEOFS = v141;
+				int i = 0;
+				do {
+					assert(v137 <= 8000);
+					super_parcours[v137++] = essai1[i++];
+				} while (essai1[i].isValid());
+				NV_POSI = v137;
+				return 2;
+			}
+			if (essai2[0]._X != -1 && foundLineIdx > collLineIdx && v140 >= collLineIdx && v142 >= collLineIdx && a6 <= collLineIdx) {
+				NV_LIGNEDEP = collLineIdx;
+				NV_LIGNEOFS = collDataIdx;
+				int i = 0;
+				do {
+					assert(v137 <= 8000);
+					super_parcours[v137++] = essai2[i++];
+				} while (essai2[i].isValid());
+				NV_POSI = v137;
+				return 2;
+			}
+			// CHECKME: Checking essai0[0]._X might make more sense here?
+			if (essai1[0]._X != -1 && foundLineIdx > v142 && v140 >= v142 && collLineIdx >= v142 && a6 <= v142) {
+				NV_LIGNEDEP = v142;
+				NV_LIGNEOFS = v143;
+				int i = 0;
+				do {
+					assert(v137 <= 8000);
+					super_parcours[v137++] = essai0[i++];
+				} while (essai0[i].isValid());
+				NV_POSI = v137;
+				return 2;
+			}
+		}
+	}
+	return 0;
+
+retLABEL_essai0:
+	if (v115) {
+		int i = 0;
+		do {
+			assert(v137 <= 8000);
+			super_parcours[v137++] = essai0[i++];
+		} while (essai0[i].isValid());
+	}
+	super_parcours[v137].invalidate();
+	return 1;
+
+retLABEL_essai1:
+	if (v117) {
+		int i = 0;
+		do {
+			assert(v137 <= 8000);
+			super_parcours[v137++] = essai1[i++];
+		} while (essai1[i].isValid());
+	}
+	super_parcours[v137].invalidate();
+	return 1;
+
+retLABEL_essai2:
+	if (v117) {
+		int i = 0;
+		do {
+			assert(v137 <= 8000);
+			super_parcours[v137++] = essai2[i++];
+		} while (essai2[i].isValid());
 	}
 	super_parcours[v137].invalidate();
 	return 1;
