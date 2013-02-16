@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2013-02-07 23:11+0000\n"
+"POT-Creation-Date: 2013-02-16 23:18+0000\n"
 "PO-Revision-Date: 2012-07-08 12:24+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
@@ -1367,6 +1367,34 @@ msgstr "Utiliser le mode palette lumineuse"
 #: engines/dreamweb/detection.cpp:58
 msgid "Display graphics using the game's bright palette"
 msgstr "Utiliser la palette lumineuse du jeu pour l'affichage"
+
+#: engines/dreamweb/monitor.cpp:111
+msgid "EXIT"
+msgstr "SORTIR"
+
+#: engines/dreamweb/monitor.cpp:112
+msgid "HELP"
+msgstr "AIDE"
+
+#: engines/dreamweb/monitor.cpp:113
+msgid "LIST"
+msgstr "LISTE"
+
+#: engines/dreamweb/monitor.cpp:114
+msgid "READ"
+msgstr "LIRE"
+
+#: engines/dreamweb/monitor.cpp:115
+msgid "LOGON"
+msgstr "CONNEXION"
+
+#: engines/dreamweb/monitor.cpp:116
+msgid "KEYS"
+msgstr "TOUCHES"
+
+#: engines/dreamweb/monitor.cpp:182
+msgid "VALID COMMANDS ARE EXIT, HELP, LIST, READ, LOGON, KEYS"
+msgstr "LES COMMANDES VALIDES SONT SORTIR, AIDE, LISTE, LIRE, CONNEXION, TOUCHES"
 
 #: engines/sci/detection.cpp:373
 msgid "EGA undithering"

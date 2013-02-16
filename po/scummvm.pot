@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2013-02-07 23:11+0000\n"
+"POT-Creation-Date: 2013-02-16 23:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1303,6 +1303,34 @@ msgstr ""
 
 #: engines/dreamweb/detection.cpp:58
 msgid "Display graphics using the game's bright palette"
+msgstr ""
+
+#: engines/dreamweb/monitor.cpp:111
+msgid "EXIT"
+msgstr ""
+
+#: engines/dreamweb/monitor.cpp:112
+msgid "HELP"
+msgstr ""
+
+#: engines/dreamweb/monitor.cpp:113
+msgid "LIST"
+msgstr ""
+
+#: engines/dreamweb/monitor.cpp:114
+msgid "READ"
+msgstr ""
+
+#: engines/dreamweb/monitor.cpp:115
+msgid "LOGON"
+msgstr ""
+
+#: engines/dreamweb/monitor.cpp:116
+msgid "KEYS"
+msgstr ""
+
+#: engines/dreamweb/monitor.cpp:182
+msgid "VALID COMMANDS ARE EXIT, HELP, LIST, READ, LOGON, KEYS"
 msgstr ""
 
 #: engines/sci/detection.cpp:373
