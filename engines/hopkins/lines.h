@@ -83,6 +83,17 @@ struct ZonePItem {
 	int field12;
 };
 
+struct RouteItem {
+	int16 _X;
+	int16 _Y;
+	int16 _dir;
+	int16 _unk;
+	bool isValid() const { return _X != -1 || _Y != -1; }
+	void invalidate() { _X = _Y = _dir = _unk = -1; }
+	void set(int16 X, int16 Y, int16 dir) { _X = X; _Y = Y; _dir = dir; _unk = 0; }
+};
+
+
 class LinesManager {
 private:
 	HopkinsEngine *_vm;
@@ -95,10 +106,10 @@ private:
 	int NVPX;
 	int NVPY;
 	int _smoothMoveDirection;
-	int16 super_parcours[32002];
+	RouteItem super_parcours[8001];
 	byte *BUFFERTAPE;
-	int16 *essai0;
-	int16 *essai1;
+	RouteItem *essai0;
+	RouteItem *essai1;
 	int16 *BufLig;
 	LigneZoneItem _zoneLine[401];
 	LigneItem Ligne[400];
@@ -117,18 +128,18 @@ private:
 	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
 
 	int CALC_PROPRE(int idx);
-	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, int16 *route, int a7, int a8, int a9);
-	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, int16 *route, int a7);
+	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, RouteItem *route, int a8, int a9);
+	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, RouteItem *route);
 	bool MIRACLE(int a1, int a2, int a3, int a4, int a5);
-	int GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int a7, int16 *route, int a9);
+	int GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int a7, RouteItem *route);
 	int PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, int a6, int a7);
 	bool PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5);
 	int TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
 	int colision(int xp, int yp);
 
 public:
-	int16 *_route;
-	int16 *essai2;
+	RouteItem *_route;
+	RouteItem *essai2;
 
 	int BOBZONE[105];
 	bool BOBZONE_FLAG[105];
@@ -145,7 +156,7 @@ public:
 	void loadLines(const Common::String &file);
 	void addLine(int idx, int direction, int a3, int a4, int a5, int a6);
 	void initRoute();
-	int16 *cityMapCarRoute(int x1, int y1, int x2, int y2);
+	RouteItem *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	void clearAllZones();
 	void resetLines();
 	void resetLinesNumb();
@@ -156,8 +167,8 @@ public:
 
 	int MZONE();
 	void CARRE_ZONE();
-	int16 *PARCOURS2(int fromX, int fromY, int destX, int destY);
-	void PACOURS_PROPRE(int16 *route);
+	RouteItem *PARCOURS2(int fromX, int fromY, int destX, int destY);
+	void PACOURS_PROPRE(RouteItem *route);
 };
 
 } // End of namespace Hopkins
