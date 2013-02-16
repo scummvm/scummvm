@@ -1754,8 +1754,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 			}
 		}
 		if (v22 == 1) {
-			// CHECKME: Overlapping intervals
-			if (v100 >= -1 && v100 <= 510)
+			if (v100 >= -1000 && v100 <= -510)
 				newDirection = 2;
 			if (v100 >= -510 && v100 <= 0)
 				newDirection = 3;
@@ -1769,21 +1768,20 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 				newDirection = 4;
 			if (v102 >= 0 && v102 <= 510)
 				newDirection = 5;
-			// CHECKME: The two conditions on v102 are not compatible!
-			if (v102 >= -1 && v102 <= -510)
-				newDirection = 6;
 			if (v102 >= -510 && v102 <= 0)
 				newDirection = 5;
+			if (v102 >= -1000 && v102 <= -510)
+				newDirection = 6;
 		}
 		if (v22 == -1) {
 			if (v100 >= 510 && v100 <= 1000)
 				newDirection = 6;
 			if (v100 >= 0 && v100 <= 510)
 				newDirection = 7;
-			if (v100 >= -1000 && v100 <= -510)
-				newDirection = 8;
 			if (v100 >= -510 && v100 <= 0)
 				newDirection = 7;
+			if (v100 >= -1000 && v100 <= -510)
+				newDirection = 8;
 		}
 		if (v96 == -1) {
 			if (v102 >= -1000 && v102 <= -510)
