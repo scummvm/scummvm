@@ -22,6 +22,7 @@
 
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
+#include "common/translation.h"
 
 namespace DreamWeb {
 
@@ -107,12 +108,12 @@ void DreamWebEngine::useMon() {
 
 bool DreamWebEngine::execCommand() {
 	static const char *comlist[] = {
-		"EXIT",
-		"HELP",
-		"LIST",
-		"READ",
-		"LOGON",
-		"KEYS"
+		_s("EXIT"),
+		_s("HELP"),
+		_s("LIST"),
+		_s("READ"),
+		_s("LOGON"),
+		_s("KEYS")
 	};
 
 	if (_inputLine[0] == 0) {
@@ -142,6 +143,30 @@ bool DreamWebEngine::execCommand() {
 		if (done)
 			break;
 	}
+	// Also see if we get a match when using translated commands
+	// The precompiler check is not required but this avoids doing twice the same search
+#ifdef USE_TRANSLATION
+	if (!done) {
+		for (cmd = 0; cmd < ARRAYSIZE(comlist); ++cmd) {
+			const char *cmdStr = _(comlist[cmd]);
+			const char *inputStr = _inputLine;
+			// Compare the command, char by char, to see if we get a match.
+			// We only care about the prefix matching, though.
+			char inputChar, cmdChar;
+			do {
+				inputChar = *inputStr; inputStr += 2;
+				cmdChar = *cmdStr++;
+				if (cmdChar == 0) {
+					done = true;
+					break;
+				}
+			} while (inputChar == cmdChar);
+			
+			if (done)
+				break;
+		}
+	}
+#endif
 
 	// Execute the selected command
 	switch (cmd) {
@@ -154,7 +179,7 @@ bool DreamWebEngine::execCommand() {
 		// this extra text is wrapped around the common copy protection check,
 		// to keep it faithful to the original, if requested.
 		if (!_copyProtection) {
-			monPrint("VALID COMMANDS ARE EXIT, HELP, LIST, READ, LOGON, KEYS");
+			monPrint(_("VALID COMMANDS ARE EXIT, HELP, LIST, READ, LOGON, KEYS"));
 		}
 		break;
 	case 2:

@@ -28,6 +28,7 @@ engines/agi/saveload.cpp
 engines/drascula/detection.cpp
 engines/drascula/saveload.cpp
 engines/dreamweb/detection.cpp
+engines/dreamweb/monitor.cpp
 engines/sci/detection.cpp
 engines/scumm/dialogs.cpp
 engines/scumm/help.cpp
