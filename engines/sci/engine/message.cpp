@@ -210,6 +210,25 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			t.verb = 2;
 		}
 
+		// Fill in known missing message tuples
+		if (g_sci->getGameId() == GID_SQ4 && stack.getModule() == 16 &&
+			t.noun == 7 && t.verb == 0 && t.cond == 3 && t.seq == 1) {
+			// This fixes the error message shown when speech and subtitles are
+			// enabled simultaneously in SQ4 - the (very) long dialog when Roger
+			// is talking with the aliens is missing - bug #3538416.
+			record.tuple = t;
+			record.refTuple = MessageTuple();
+			record.talker = 7;	// Roger
+			// The missing text is just too big to fit in one speech bubble, and
+			// if it's added here manually and drawn on screen, it's painted over
+			// the entrance in the back where the Sequel Police enters, so it
+			// looks very ugly. Perhaps this is why this particular text is missing,
+			// as the text shown in this screen is very short (one-liners).
+			// Just output an empty string here instead of showing an error.
+			record.string = "";
+			return true;
+		}
+
 		if (!reader->findRecord(t, record)) {
 			// Tuple not found
 			if (recurse && (stack.size() > 1)) {
