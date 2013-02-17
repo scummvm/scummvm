@@ -203,6 +203,13 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	while (1) {
 		MessageTuple &t = stack.top();
 
+		// Fix known incorrect message tuples
+		if (g_sci->getGameId() == GID_QFG1VGA && stack.getModule() == 322 &&
+			t.noun == 14 && t.verb == 1 && t.cond == 19 && t.seq == 1) {
+			// Talking to Kaspar the shopkeeper - bug #3604944
+			t.verb = 2;
+		}
+
 		if (!reader->findRecord(t, record)) {
 			// Tuple not found
 			if (recurse && (stack.size() > 1)) {
