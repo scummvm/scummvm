@@ -22,6 +22,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      change it at all.
    - Updated MT-32 emulation code to latest munt project snapshot.
    - Added FluidSynth settings dialog, mainly for reverb and chorus settings.
+   - Fixed crash on certain Smacker movies.
 
   Cine:
    - Improved audio support for Amiga and AtariST versions of Future Wars.
