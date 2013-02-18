@@ -1474,17 +1474,19 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 						}
 					}
 				}
-				if (!loopCond) {
-					int v89 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
-					if (v89 == 1)
-						return &super_parcours[0];
-					if (v89 == 2 || MIRACLE(v119, v118, v117, v121, v112)) {
-						v115 = NV_LIGNEDEP;
-						v114 = NV_LIGNEOFS;
-						v112 = NV_POSI;
-						loopCond = true;
-						break;
-					}
+
+				if (loopCond)
+					break;
+
+				int v89 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
+				if (v89 == 1)
+					return &super_parcours[0];
+				if (v89 == 2 || MIRACLE(v119, v118, v117, v121, v112)) {
+					v115 = NV_LIGNEDEP;
+					v114 = NV_LIGNEOFS;
+					v112 = NV_POSI;
+					loopCond = true;
+					break;
 				}
 			}
 
