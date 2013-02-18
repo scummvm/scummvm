@@ -1794,7 +1794,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 
 		if (destX >= v33 - 2 && destX <= v33 + 2 && destY >= v92 - 2 && destY <= v92 + 2) {
 			essai1[v117].invalidate();
-			goto retLABEL_essai0;
+			goto retLABEL_essai1;
 		}
 		while (v33 != destX) {
 			if (checkCollisionLine(v33, v92, &v141, &v140, 0, _linesNumb)) {
