@@ -251,7 +251,7 @@ public:
 	bool _cacheFl;
 	bool _forceHideText;
 	int _exitId;
-	int _oceanDirection;
+	Directions _oceanDirection;
 	Directions _oldDirection;
 	int _oldDirectionSpriteIdx;
 	int _actionDirection;

@@ -277,172 +277,172 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			switch (specialOpcode) {
 			case 1:
 			case 14:
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(4);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(4);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(4);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(4);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(4);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(4);
 				break;
 			case 2:
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(7);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(7);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(7);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(7);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(7);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(7);
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(8);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(8);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(8);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(8);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(8);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(8);
 				break;
 			case 19:
 			case 4:
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(1);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(1);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(1);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(1);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(1);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(1);
 				break;
 			case 5:
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(5);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(5);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(5);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(5);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(5);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(5);
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(6);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(6);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(6);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(6);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(6);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(6);
 				break;
 			case 17:
 			case 7:
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(2);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(2);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(2);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(2);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(2);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(2);
 				break;
 			case 18:
 			case 8:
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(3);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(3);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(3);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(3);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(3);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(3);
 				break;
 			case 9:
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(5);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(5);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(5);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(5);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(5);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(5);
 				break;
 			case 10:
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(6);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(6);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(6);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(6);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(6);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(6);
 				break;
 			case 15:
 			case 11:
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(7);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(7);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(7);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(7);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(7);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(7);
 				break;
 			case 16:
 			case 12:
-				if (_vm->_globals._actionDirection == 1)
+				if (_vm->_globals._actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(8);
-				if (_vm->_globals._actionDirection == 3)
+				if (_vm->_globals._actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(8);
-				if (_vm->_globals._actionDirection == 2)
+				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(8);
-				if (_vm->_globals._actionDirection == 5)
+				if (_vm->_globals._actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(8);
-				if (_vm->_globals._actionDirection == 8)
+				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(8);
-				if (_vm->_globals._actionDirection == 7)
+				if (_vm->_globals._actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(8);
 				break;
 			}

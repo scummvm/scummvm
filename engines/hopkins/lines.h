@@ -23,6 +23,8 @@
 #ifndef HOPKINS_LINES_H
 #define HOPKINS_LINES_H
 
+#include "hopkins/globals.h"
+
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -38,8 +40,8 @@ struct LigneZoneItem {
 
 struct LigneItem {
 	int _lineDataEndIdx;
-	int _direction;
-	int field6;
+	Directions _direction;
+	Directions field6;
 	int field8;
 	int16 *_lineData;
 };
@@ -94,7 +96,7 @@ private:
 	int NV_POSI;
 	int NVPX;
 	int NVPY;
-	int _smoothMoveDirection;
+	Directions _smoothMoveDirection;
 	int16 super_parcours[32002];
 	byte *BUFFERTAPE;
 	int16 *essai0;
@@ -143,7 +145,7 @@ public:
 	int checkInventoryHotspots(int posX, int posY);
 	void addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx);
 	void loadLines(const Common::String &file);
-	void addLine(int idx, int direction, int a3, int a4, int a5, int a6);
+	void addLine(int idx, Directions direction, int a3, int a4, int a5, int a6);
 	void initRoute();
 	int16 *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	void clearAllZones();

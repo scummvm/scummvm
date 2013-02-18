@@ -61,7 +61,7 @@ LinesManager::LinesManager() {
 	NV_POSI = 0;
 	NVPX = 0;
 	NVPY = 0;
-	_smoothMoveDirection = 0;
+	_smoothMoveDirection = DIR_NONE;
 	_lastLine = 0;
 	_maxLineIdx = 0;
 	_pathFindingMaxDepth = 0;
@@ -92,7 +92,7 @@ void LinesManager::loadLines(const Common::String &file) {
 	byte *ptr = _vm->_fileManager.loadFile(file);
 	for (int idx = 0; (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5)) != -1; idx++) {
 		addLine(idx,
-		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5)),
+		    (Directions)(int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5)),
 		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 1),
 		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 2),
 		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 3),
@@ -218,7 +218,7 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 /**
  * Add Line
  */
-void LinesManager::addLine(int idx, int direction, int a3, int a4, int a5, int a6) {
+void LinesManager::addLine(int idx, Directions direction, int a3, int a4, int a5, int a6) {
 	assert (idx <= MAX_LINES);
 
 	if (_linesNumb < idx)
@@ -249,59 +249,59 @@ void LinesManager::addLine(int idx, int direction, int a3, int a4, int a5, int a
 	int v12 = (int)v37 / 1000;
 	if (!v11) {
 		if (v12 == -1) {
-			Ligne[idx].field6 = 1;
+			Ligne[idx].field6 = DIR_UP;
 			Ligne[idx].field8 = 5;
 		}
 		if (v12 == 1) {
-			Ligne[idx].field6 = 5;
+			Ligne[idx].field6 = DIR_DOWN;
 			Ligne[idx].field8 = 1;
 		}
 	}
 	if (v11 == 1) {
 		if (v12 == -1) {
-			Ligne[idx].field6 = 2;
+			Ligne[idx].field6 = DIR_UP_RIGHT;
 			Ligne[idx].field8 = 6;
 		}
 		if (!v12) {
-			Ligne[idx].field6 = 3;
+			Ligne[idx].field6 = DIR_RIGHT;
 			Ligne[idx].field8 = 7;
 		}
 		if (v12 == 1) {
-			Ligne[idx].field6 = 4;
+			Ligne[idx].field6 = DIR_DOWN_RIGHT;
 			Ligne[idx].field8 = 8;
 		}
 	}
 	if (v11 == -1) {
 		if (v12 == 1) {
-			Ligne[idx].field6 = 6;
+			Ligne[idx].field6 = DIR_DOWN_LEFT;
 			Ligne[idx].field8 = 2;
 		}
 		if (!v12) {
-			Ligne[idx].field6 = 7;
+			Ligne[idx].field6 = DIR_LEFT;
 			Ligne[idx].field8 = 3;
 		}
 		if (v12 == -1) {
-			Ligne[idx].field6 = 8;
+			Ligne[idx].field6 = DIR_UP_LEFT;
 			Ligne[idx].field8 = 4;
 		}
 	}
 	if (v11 == 1 && v37 > 250 && v37 <= 999) {
-		Ligne[idx].field6 = 4;
+		Ligne[idx].field6 = DIR_DOWN_RIGHT;
 		Ligne[idx].field8 = 8;
 	}
 	if (v11 == -1 && v37 > 250 && v37 <= 999) {
-		Ligne[idx].field6 = 6;
+		Ligne[idx].field6 = DIR_DOWN_LEFT;
 		Ligne[idx].field8 = 2;
 	}
 	if (v11 == 1 && v37 < -250 && v37 > -1000) {
-		Ligne[idx].field6 = 2;
+		Ligne[idx].field6 = DIR_UP_RIGHT;
 		Ligne[idx].field8 = 6;
 	}
 	// This condition is impossible to meet!
 	// Code present in the Linux and BeOS executables
 	// CHECKME: maybe it should be checking negative values?
 	if (v11 == -1 && v37 <= 249 && v37 > 1000) {
-		Ligne[idx].field6 = 8;
+		Ligne[idx].field6 = DIR_UP_LEFT;
 		Ligne[idx].field8 = 4;
 	}
 	int v40 = v36 / v34;
@@ -589,31 +589,31 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 	int v51;
 	if (checkCollisionLine(fromX, fromY, &v51, &v50, 0, _linesNumb)) {
 		switch (Ligne[v50]._direction) {
-		case 1:
+		case DIR_UP:
 			curY -= 2;
 			break;
-		case 2:
+		case DIR_UP_RIGHT:
 			curY -= 2;
 			curX += 2;
 			break;
-		case 3:
+		case DIR_RIGHT:
 			curX += 2;
 			break;
-		case 4:
+		case DIR_DOWN_RIGHT:
 			curY += 2;
 			curX += 2;
 			break;
-		case 5:
+		case DIR_DOWN:
 			curY += 2;
 			break;
-		case 6:
+		case DIR_DOWN_LEFT:
 			curY += 2;
 			curX -= 2;
 			break;
-		case 7:
+		case DIR_LEFT:
 			curX -= 2;
 			break;
-		case 8:
+		case DIR_UP_LEFT:
 			curY -= 2;
 			curX -= 2;
 			break;
@@ -700,16 +700,16 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 			v42 = -1;
 	}
 	if (v46 != -1 || v44 != -1 || v48 != -1 || v42 != -1) {
-		int v21 = 0;
+		Directions newDir = DIR_NONE;
 		if (a4 > v50) {
 			if (v48 <= v46 && v44 <= v46 && v42 <= v46 && v46 > v50)
-				v21 = 1;
+				newDir = DIR_UP;
 			if (v48 <= v44 && v46 <= v44 && v42 <= v44 && v50 < v44)
-				v21 = 3;
+				newDir = DIR_RIGHT;
 			if (v46 <= v48 && v44 <= v48 && v42 <= v48 && v50 < v48)
-				v21 = 5;
+				newDir = DIR_DOWN;
 			if (v48 <= v42 && v44 <= v42 && v46 <= v42 && v50 < v42)
-				v21 = 7;
+				newDir = DIR_LEFT;
 		} else if (a4 < v50) {
 			if (v46 == -1)
 				v46 = 1300;
@@ -720,17 +720,17 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 			if (v42 == -1)
 				v42 = 1300;
 			if (v46 != 1300 && v48 >= v46 && v44 >= v46 && v42 >= v46 && v46 < v50)
-				v21 = 1;
+				newDir = DIR_UP;
 			if (v44 != 1300 && v48 >= v44 && v46 >= v44 && v42 >= v44 && v50 > v44)
-				v21 = 3;
+				newDir = DIR_RIGHT;
 			if (v48 != 1300 && v46 >= v48 && v44 >= v48 && v42 >= v48 && v50 > v48)
-				v21 = 5;
+				newDir = DIR_DOWN;
 			if (v42 != 1300 && v48 >= v42 && v44 >= v42 && v46 >= v42 && v50 > v42)
-				v21 = 7;
+				newDir = DIR_LEFT;
 		}
 
-		switch(v21) {
-		case 1:
+		switch(newDir) {
+		case DIR_UP:
 			v36 = v46;
 			v35 = v47;
 			for (int v22 = 0; v22 < v39; v22++) {
@@ -744,7 +744,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 				}
 				super_parcours[v7] = v41;
 				super_parcours[v7 + 1] = v40 - v22;
-				super_parcours[v7 + 2] = 1;
+				super_parcours[v7 + 2] = DIR_UP;
 				super_parcours[v7 + 3] = 0;
 				v7 += 4;
 			}
@@ -753,7 +753,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 			NV_POSI = v7;
 			return true;
 			break;
-		case 3:
+		case DIR_RIGHT:
 			v36 = v44;
 			v35 = v45;
 			for (int v31 = 0; v31 < v38; v31++) {
@@ -767,7 +767,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 				}
 				super_parcours[v7] = v31 + v41;
 				super_parcours[v7 + 1] = v40;
-				super_parcours[v7 + 2] = 3;
+				super_parcours[v7 + 2] = DIR_RIGHT;
 				super_parcours[v7 + 3] = 0;
 				v7 += 4;
 			}
@@ -776,7 +776,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 			NV_POSI = v7;
 			return true;
 			break;
-		case 5:
+		case DIR_DOWN:
 			v36 = v48;
 			v35 = v49;
 			for (int v25 = 0; v25 < v37; v25++) {
@@ -790,7 +790,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 				}
 				super_parcours[v7] = v41;
 				super_parcours[v7 + 1] = v25 + v40;
-				super_parcours[v7 + 2] = 5;
+				super_parcours[v7 + 2] = DIR_DOWN;
 				super_parcours[v7 + 3] = 0;
 				v7 += 4;
 			}
@@ -799,7 +799,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 			NV_POSI = v7;
 			return true;
 			break;
-		case 7:
+		case DIR_LEFT:
 			v36 = v42;
 			v35 = v43;
 			for (int v28 = 0; v28 < v18; v28++) {
@@ -813,7 +813,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 				}
 				super_parcours[v7] = v41 - v28;
 				super_parcours[v7 + 1] = v40;
-				super_parcours[v7 + 2] = 7;
+				super_parcours[v7 + 2] = DIR_LEFT;
 				super_parcours[v7 + 3] = 0;
 				v7 += 4;
 			}
@@ -1104,31 +1104,31 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a
 				break;
 
 			switch (Ligne[foundLineIdx]._direction) {
-			case 1:
+			case DIR_UP:
 				--NVPY;
 				break;
-			case 2:
+			case DIR_UP_RIGHT:
 				--NVPY;
 				++NVPX;
 				break;
-			case 3:
+			case DIR_RIGHT:
 				++NVPX;
 				break;
-			case 4:
+			case DIR_DOWN_RIGHT:
 				++NVPY;
 				++NVPX;
 				break;
-			case 5:
+			case DIR_DOWN:
 				++NVPY;
 				break;
-			case 6:
+			case DIR_DOWN_LEFT:
 				++NVPY;
 				--NVPX;
 				break;
-			case 7:
+			case DIR_LEFT:
 				--NVPX;
 				break;
-			case 8:
+			case DIR_UP_LEFT:
 				--NVPY;
 				--NVPX;
 				break;
@@ -1158,7 +1158,7 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	int v120 = 0;
 	int v115 = 0;
 	int v114 = 0;
-	int v113 = 0;
+	Directions newDir = DIR_NONE;
 	int v111 = 0;
 	if (destY <= 24)
 		clipDestY = 25;
@@ -1356,22 +1356,22 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	if (v141[1] != -1 && v126[3] >= v126[1] && v126[5] >= v126[1] && v126[7] >= v126[1]) {
 		v115 = v141[1];
 		v111 = v131[1];
-		v113 = 1;
+		newDir = DIR_UP;
 		v114 = v136[1];
 	} else if (v141[5] != -1 && v126[3] >= v126[5] && v126[1] >= v126[5] && v126[7] >= v126[5]) {
 		v115 = v141[5];
 		v111 = v131[5];
-		v113 = 5;
+		newDir = DIR_DOWN;
 		v114 = v136[5];
 	} else if (v141[3] != -1 && v126[1] >= v126[3] && v126[5] >= v126[3] && v126[7] >= v126[3]) {
 		v115 = v141[3];
 		v111 = v131[3];
-		v113 = 3;
+		newDir = DIR_RIGHT;
 		v114 = v136[3];
 	} else if (v141[7] != -1 && v126[1] >= v126[7] && v126[5] >= v126[7] && v126[3] >= v126[7]) {
 		v115 = v141[7];
 		v111 = v131[7];
-		v113 = 7;
+		newDir = DIR_LEFT;
 		v114 = v136[7];
 	}
 
@@ -1385,14 +1385,14 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 		v114 = NV_LIGNEOFS;
 		v112 = NV_POSI;
 	} else {
-		if (v113 == 1) {
+		if (newDir == DIR_UP) {
 			for (int deltaY = 0; deltaY < v111; deltaY++) {
 				if (checkCollisionLine(fromX, fromY - deltaY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
 					int v58 = GENIAL(foundLineIdx, foundDataIdx, fromX, fromY - deltaY, fromX, fromY - v111, v112, &super_parcours[0], 4);
 					if (v58 == -1) {
 						super_parcours[v112] = -1;
 						super_parcours[v112 + 1] = -1;
-						super_parcours[v112 + 2] = -1;
+						super_parcours[v112 + 2] = DIR_NONE;
 						super_parcours[v112 + 3] = -1;
 						return &super_parcours[0];
 					}
@@ -1402,12 +1402,12 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				}
 				super_parcours[v112] = fromX;
 				super_parcours[v112 + 1] = fromY - deltaY;
-				super_parcours[v112 + 2] = 1;
+				super_parcours[v112 + 2] = DIR_UP;
 				super_parcours[v112 + 3] = 0;
 				v112 += 4;
 			}
 		}
-		if (v113 == 5) {
+		if (newDir == DIR_DOWN) {
 			for (int deltaY = 0; deltaY < v111; deltaY++) {
 				if (checkCollisionLine(fromX, deltaY + fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb)
 				        && _lastLine < foundLineIdx) {
@@ -1415,7 +1415,7 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 					if (v61 == -1) {
 						super_parcours[v112] = -1;
 						super_parcours[v112 + 1] = -1;
-						super_parcours[v112 + 2] = -1;
+						super_parcours[v112 + 2] = DIR_NONE;
 						super_parcours[v112 + 3] = -1;
 						return &super_parcours[0];
 					}
@@ -1425,19 +1425,19 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				}
 				super_parcours[v112] = fromX;
 				super_parcours[v112 + 1] = deltaY + fromY;
-				super_parcours[v112 + 2] = 5;
+				super_parcours[v112 + 2] = DIR_DOWN;
 				super_parcours[v112 + 3] = 0;
 				v112 += 4;
 			}
 		}
-		if (v113 == 7) {
+		if (newDir == DIR_LEFT) {
 			for (int deltaX = 0; deltaX < v111; deltaX++) {
 				if (checkCollisionLine(fromX - deltaX, fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
 					int v64 = GENIAL(foundLineIdx, foundDataIdx, fromX - deltaX, fromY, fromX - v111, fromY, v112, &super_parcours[0], 4);
 					if (v64 == -1) {
 						super_parcours[v112] = -1;
 						super_parcours[v112 + 1] = -1;
-						super_parcours[v112 + 2] = -1;
+						super_parcours[v112 + 2] = DIR_NONE;
 						super_parcours[v112 + 3] = -1;
 						return &super_parcours[0];
 					}
@@ -1447,19 +1447,19 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				}
 				super_parcours[v112] = fromX - deltaX;
 				super_parcours[v112 + 1] = fromY;
-				super_parcours[v112 + 2] = 7;
+				super_parcours[v112 + 2] = DIR_LEFT;
 				super_parcours[v112 + 3] = 0;
 				v112 += 4;
 			}
 		}
-		if (v113 == 3) {
+		if (newDir == DIR_RIGHT) {
 			for (int deltaX = 0; deltaX < v111; deltaX++) {
 				if (checkCollisionLine(deltaX + fromX, fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
 					int v67 = GENIAL(foundLineIdx, foundDataIdx, deltaX + fromX, fromY, v111 + fromX, fromY, v112, &super_parcours[0], 4);
 					if (v67 == -1) {
 						super_parcours[v112] = -1;
 						super_parcours[v112 + 1] = -1;
-						super_parcours[v112 + 2] = -1;
+						super_parcours[v112 + 2] = DIR_NONE;
 						super_parcours[v112 + 3] = -1;
 						return &super_parcours[0];
 					}
@@ -1469,7 +1469,7 @@ int16 *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				}
 				super_parcours[v112] = deltaX + fromX;
 				super_parcours[v112 + 1] = fromY;
-				super_parcours[v112 + 2] = 3;
+				super_parcours[v112 + 2] = DIR_RIGHT;
 				super_parcours[v112 + 3] = 0;
 				v112 += 4;
 			}
@@ -1637,7 +1637,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 	int v55;
 	int v58;
 	int v66;
-	int newDirection;
+	Directions newDirection;
 	int v92;
 	int v93;
 	int v94;
@@ -1689,30 +1689,30 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 	int foundLineIdx = a5;
 	if (checkCollisionLine(fromX, fromY, &foundDataIdx, &foundLineIdx, 0, _linesNumb)) {
 		switch (Ligne[foundLineIdx]._direction) {
-		case 1:
+		case DIR_UP:
 			curY -= 2;
 			break;
-		case 2:
+		case DIR_UP_RIGHT:
 			curY -= 2;
 			curX += 2;
 			break;
-		case 3:
+		case DIR_RIGHT:
 			curX += 2;
 			break;
-		case 4:
+		case DIR_DOWN_RIGHT:
 			curY += 2;
 			curX += 2;
-		case 5:
+		case DIR_DOWN:
 			curY += 2;
 			break;
-		case 6:
+		case DIR_DOWN_LEFT:
 			curY += 2;
 			curX -= 2;
 			break;
-		case 7:
+		case DIR_LEFT:
 			curX -= 2;
 			break;
-		case 8:
+		case DIR_UP_LEFT:
 			curY -= 2;
 			curX -= 2;
 			break;
@@ -1772,19 +1772,19 @@ LABEL_150:
 			v99 = -v99;
 		v13 = (int16)v101 / 1000;
 		v94 = (int16)v99 / 1000;
-		newDirection = -1;
+		newDirection = DIR_NONE;
 		if (v94 == -1 && (v101 >= 0 && v101 <= 150))
-			newDirection = 1;
+			newDirection = DIR_UP;
 		if (v13 == 1 && (v99 >= -1 && v99 <= 150))
-			newDirection = 3;
+			newDirection = DIR_RIGHT;
 		if (v94 == 1 && (v101 >= -150 && v101 <= 150))
-			newDirection = 5;
+			newDirection = DIR_DOWN;
 		if (v13 == -1 && (v99 >= -150 && v99 <= 150))
-			newDirection = 7;
+			newDirection = DIR_LEFT;
 		if (v94 == -1 && (v101 >= -150 && v101 <= 0))
-			newDirection = 1;
+			newDirection = DIR_UP;
 
-		if (newDirection == -1 && !checkSmoothMove(curX, v109, destX, destY) && !makeSmoothMove(curX, v109, destX, destY))
+		if (newDirection == DIR_NONE && !checkSmoothMove(curX, v109, destX, destY) && !makeSmoothMove(curX, v109, destX, destY))
 			break;
 LABEL_72:
 		v19 = abs(v111 - destX);
@@ -1809,72 +1809,72 @@ LABEL_72:
 		v104 = 1000 * v111 / 1000;
 		v103 = v105 / 1000;
 		if (!(v102 / 1000) && v96 == -1)
-			newDirection = 1;
+			newDirection = DIR_UP;
 		if (v22 == 1) {
 			if (v96 == -1)
-				newDirection = 2;
+				newDirection = DIR_UP_RIGHT;
 			if (!v96)
-				newDirection = 3;
+				newDirection = DIR_RIGHT;
 			if (v96 == 1)
-				newDirection = 4;
+				newDirection = DIR_DOWN_RIGHT;
 		}
 		if (!v22 && v96 == 1)
-			newDirection = 5;
+			newDirection = DIR_DOWN;
 		if ((v22 != -1) && (v96 == -1)) {
 			if (v102 >= 0 && v102 < 510)
-				newDirection = 1;
+				newDirection = DIR_UP;
 			else if (v102 >= 510 && v102 <= 1000)
-				newDirection = 2;
+				newDirection = DIR_UP_RIGHT;
 		} else {
 			if (v96 == 1)
-				newDirection = 6;
+				newDirection = DIR_DOWN_LEFT;
 			else if (!v96)
-				newDirection = 7;
+				newDirection = DIR_LEFT;
 			else if (v96 == -1) {
 				if (v102 >= 0 && v102 < 510)
-					newDirection = 1;
+					newDirection = DIR_UP;
 				else if (v102 >= 510 && v102 <= 1000)
-					newDirection = 2;
+					newDirection = DIR_UP_RIGHT;
 				else 
-					newDirection = 8;
+					newDirection = DIR_UP_LEFT;
 			}
 		}
 		if (v22 == 1) {
 			if (v100 >= -1 && v100 <= 510)
-				newDirection = 2;
+				newDirection = DIR_UP_RIGHT;
 			if (v100 >= -510 && v100 <= 0)
-				newDirection = 3;
+				newDirection = DIR_RIGHT;
 			if (v100 >= 0 && v100 <= 510)
-				newDirection = 3;
+				newDirection = DIR_RIGHT;
 			if (v100 >= 510 && v100 <= 1000)
-				newDirection = 4;
+				newDirection = DIR_DOWN_RIGHT;
 		}
 		if (v96 == 1) {
 			if (v102 >= 510 && v102 <= 1000)
-				newDirection = 4;
+				newDirection = DIR_DOWN_RIGHT;
 			if (v102 >= 0 && v102 <= 510)
-				newDirection = 5;
+				newDirection = DIR_DOWN;
 			// CHECKME: The two conditions on v102 are not compatible!
 			if (v102 >= -1 && v102 <= -510)
-				newDirection = 6;
+				newDirection = DIR_DOWN_LEFT;
 			if (v102 >= -510 && v102 <= 0)
-				newDirection = 5;
+				newDirection = DIR_DOWN;
 		}
 		if (v22 == -1) {
 			if (v100 >= 510 && v100 <= 1000)
-				newDirection = 6;
+				newDirection = DIR_DOWN_LEFT;
 			if (v100 >= 0 && v100 <= 510)
-				newDirection = 7;
+				newDirection = DIR_LEFT;
 			if (v100 >= -1000 && v100 <= -510)
-				newDirection = 8;
+				newDirection = DIR_UP_LEFT;
 			if (v100 >= -510 && v100 <= 0)
-				newDirection = 7;
+				newDirection = DIR_LEFT;
 		}
 		if (v96 == -1) {
 			if (v102 >= -1000 && v102 <= -510)
-				newDirection = 8;
+				newDirection = DIR_UP_LEFT;
 			if (v102 >= -510 && v102 <= 0)
-				newDirection = 1;
+				newDirection = DIR_UP;
 		}
 		v23 = 0;
 		if (v108 + 1 <= 0)
@@ -2610,7 +2610,7 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		if (stepCount > 5) {
 			_smoothRoute[smoothIdx]._posX = -1;
 			_smoothRoute[smoothIdx]._posY = -1;
-			_smoothMoveDirection = 6;
+			_smoothMoveDirection = DIR_DOWN_LEFT;
 			return false;
 		}
 	} else if (fromX < destX && destY > fromY) {
@@ -2644,7 +2644,7 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		if (stepCount > 5) {
 			_smoothRoute[smoothIdx]._posX = -1;
 			_smoothRoute[smoothIdx]._posY = -1;
-			_smoothMoveDirection = 4;
+			_smoothMoveDirection = DIR_DOWN_RIGHT;
 			return false;
 		}
 	} else if (fromX > destX && destY < fromY) {
@@ -2671,7 +2671,7 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		if (stepCount > 5) {
 			_smoothRoute[smoothIdx]._posX = -1;
 			_smoothRoute[smoothIdx]._posY = -1;
-			_smoothMoveDirection = 8;
+			_smoothMoveDirection = DIR_UP_LEFT;
 			return false;
 		}
 	} else if (fromX < destX && destY < fromY) {
@@ -2699,7 +2699,7 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		if (stepCount > 5) {
 			_smoothRoute[smoothIdx]._posX = -1;
 			_smoothRoute[smoothIdx]._posY = -1;
-			_smoothMoveDirection = 2;
+			_smoothMoveDirection = DIR_UP_RIGHT;
 			return false;
 		}
 	}
@@ -2830,9 +2830,9 @@ int LinesManager::TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx,
 			*a3 = 1;
 			int posX = lineData[2 * (lineDataEndIdx - 1)];
 			int posY = lineData[2 * (lineDataEndIdx - 1) + 1];
-			if (Ligne[idx].field6 == 5 || Ligne[idx].field6 == 1)
+			if (Ligne[idx].field6 == DIR_DOWN || Ligne[idx].field6 == DIR_UP)
 				posY += 2;
-			if (Ligne[idx].field6 == 3 || Ligne[idx].field8 == 7)
+			if (Ligne[idx].field6 == DIR_RIGHT || Ligne[idx].field8 == 7)
 				posX += 2;
 			if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _lastLine))
 				error("Error in test line");
@@ -2844,9 +2844,9 @@ int LinesManager::TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx,
 			*a3 = 2;
 			int posX = lineData[0];
 			int posY = lineData[1];
-			if (Ligne[idx].field6 == 5 || Ligne[idx].field6 == 1)
+			if (Ligne[idx].field6 == DIR_DOWN || Ligne[idx].field6 == DIR_UP)
 				posY -= 2;
-			if (Ligne[idx].field6 == 3 || Ligne[idx].field8 == 7)
+			if (Ligne[idx].field6 == DIR_RIGHT || Ligne[idx].field8 == 7)
 				posX -= 2;
 			if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _lastLine))
 				error("Error in test line");
@@ -3134,8 +3134,8 @@ void LinesManager::clearAll() {
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
 		Ligne[idx]._lineDataEndIdx = 0;
-		Ligne[idx]._direction = 0;
-		Ligne[idx].field6 = 0;
+		Ligne[idx]._direction = DIR_NONE;
+		Ligne[idx].field6 = DIR_NONE;
 		Ligne[idx].field8 = 0;
 		Ligne[idx]._lineData = (int16 *)g_PTRNUL;
 

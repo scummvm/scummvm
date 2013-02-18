@@ -130,8 +130,7 @@ Globals::Globals() {
 	PERSO_TYPE = 0;
 	GOACTION = false;
 	Compteur = 0;
-	_actionDirection = 0;
-	_actionDirection = 0;
+	_actionDirection = DIR_NONE;
 
 	Credit_bx = -1;
 	Credit_bx1 = -1;
@@ -142,7 +141,7 @@ Globals::Globals() {
 	memset(_creditsItem, 0, 12000);
 	_creditsStep = 0;
 
-	_oceanDirection = 0;
+	_oceanDirection = DIR_NONE;
 
 	// Initialize pointers
 	BUF_ZONE = NULL;

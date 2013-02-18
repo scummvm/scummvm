@@ -1285,55 +1285,55 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 77:
-			OCEAN(77, "OCEAN01", 3, 0, 84, 0, 0, 25);
+			OCEAN(77, "OCEAN01", DIR_RIGHT, 0, 84, 0, 0, 25);
 			break;
 
 		case 78:
-			OCEAN(78, "OCEAN02", 1, 0, 91, 84, 0, 25);
+			OCEAN(78, "OCEAN02", DIR_UP, 0, 91, 84, 0, 25);
 			break;
 
 		case 79:
-			OCEAN(79, "OCEAN03", 7, 87, 0, 0, 83, 25);
+			OCEAN(79, "OCEAN03", DIR_LEFT, 87, 0, 0, 83, 25);
 			break;
 
 		case 80:
-			OCEAN(80, "OCEAN04", 1, 86, 88, 0, 81, 25);
+			OCEAN(80, "OCEAN04", DIR_UP, 86, 88, 0, 81, 25);
 			break;
 
 		case 81:
-			OCEAN(81, "OCEAN05", 1, 91, 82, 80, 85, 25);
+			OCEAN(81, "OCEAN05", DIR_UP, 91, 82, 80, 85, 25);
 			break;
 
 		case 82:
-			OCEAN(82, "OCEAN06", 7, 81, 0, 88, 0, 25);
+			OCEAN(82, "OCEAN06", DIR_LEFT, 81, 0, 88, 0, 25);
 			break;
 
 		case 83:
-			OCEAN(83, "OCEAN07", 1, 89, 0, 79, 88, 25);
+			OCEAN(83, "OCEAN07", DIR_UP, 89, 0, 79, 88, 25);
 			break;
 
 		case 84:
-			OCEAN(84, "OCEAN08", 1, 77, 0, 0, 78, 25);
+			OCEAN(84, "OCEAN08", DIR_UP, 77, 0, 0, 78, 25);
 			break;
 
 		case 85:
-			OCEAN(85, "OCEAN09", 1, 0, 0, 81, 0, 25);
+			OCEAN(85, "OCEAN09", DIR_UP, 0, 0, 81, 0, 25);
 			break;
 
 		case 86:
-			OCEAN(86, "OCEAN10", 1, 0, 80, 0, 91, 25);
+			OCEAN(86, "OCEAN10", DIR_UP, 0, 80, 0, 91, 25);
 			break;
 
 		case 87:
-			OCEAN(87, "OCEAN11", 3, 0, 79, 90, 0, 25);
+			OCEAN(87, "OCEAN11", DIR_RIGHT, 0, 79, 90, 0, 25);
 			break;
 
 		case 88:
-			OCEAN(88, "OCEAN12", 1, 80, 0, 83, 82, 25);
+			OCEAN(88, "OCEAN12", DIR_UP, 80, 0, 83, 82, 25);
 			break;
 
 		case 89:
-			OCEAN(89, "OCEAN13", 3, 0, 83, 0, 0, 25);
+			OCEAN(89, "OCEAN13", DIR_RIGHT, 0, 83, 0, 0, 25);
 			break;
 
 		case 90:
@@ -1341,7 +1341,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 91:
-			OCEAN(91, "OCEAN15", 3, 78, 81, 86, 0, 25);
+			OCEAN(91, "OCEAN15", DIR_RIGHT, 78, 81, 86, 0, 25);
 			break;
 
 		case 93:
@@ -2540,18 +2540,18 @@ void HopkinsEngine::BTOCEAN() {
 	switch (_objectsManager._zoneNum) {
 	case 1:
 		switch (_globals._oceanDirection) {
-		case 1:
-		_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, false);
-		break;
-		case 3:
+		case DIR_UP:
+			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, false);
+			break;
+		case DIR_RIGHT:
 			_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, false);
 			break;
-		case 5:
+		case DIR_DOWN:
 			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, false);
 			break;
 		}
 
-		_globals._oceanDirection = 7;
+		_globals._oceanDirection = DIR_LEFT;
 		_globals._exitId = 1;
 		oldX = _objectsManager.getSpriteX(0);
 		for (;;) {
@@ -2575,17 +2575,17 @@ void HopkinsEngine::BTOCEAN() {
 		break;
 	case 2:
 		switch (_globals._oceanDirection) {
-		case 1:
+		case DIR_UP:
 			_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
 			break;
-		case 5:
+		case DIR_DOWN:
 			_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, false);
 			break;
-		case 7:
+		case DIR_LEFT:
 			_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
 			break;
 		}
-		_globals._oceanDirection = 3;
+		_globals._oceanDirection = DIR_RIGHT;
 		_globals._exitId = 2;
 		oldX = _objectsManager.getSpriteX(0);
 		for (;;) {
@@ -2608,7 +2608,7 @@ void HopkinsEngine::BTOCEAN() {
 		break;
 	case 3:
 		switch (_globals._oceanDirection) {
-		case 3:
+		case DIR_RIGHT:
 			oldX = _objectsManager.getSpriteX(0);
 			do {
 				if (_globals._speed == 1)
@@ -2628,10 +2628,10 @@ void HopkinsEngine::BTOCEAN() {
 			if (!displAnim)
 				_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 0, 0, 6, false);
 			break;
-		case 5:
+		case DIR_DOWN:
 			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
 			break;
-		case 7:
+		case DIR_LEFT:
 			oldX = _objectsManager.getSpriteX(0);
 			do {
 				if (_globals._speed == 1)
@@ -2652,15 +2652,15 @@ void HopkinsEngine::BTOCEAN() {
 				_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
 			break;
 		}
-		_globals._oceanDirection = 1;
+		_globals._oceanDirection = DIR_UP;
 		_globals._exitId = 3;
 		break;
 	case 4:
 		switch (_globals._oceanDirection) {
-		case 1:
+		case DIR_UP:
 			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
 			break;
-		case 3:
+		case DIR_RIGHT:
 			oldX = _objectsManager.getSpriteX(0);
 			do {
 				if (_globals._speed == 1)
@@ -2680,7 +2680,7 @@ void HopkinsEngine::BTOCEAN() {
 			if (!displAnim)
 				_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 0, 0, 6, false);
 			break;
-		case 7:
+		case DIR_LEFT:
 			oldX = _objectsManager.getSpriteX(0);
 			for (;;) {
 				if (_globals._speed == 1)
@@ -2703,24 +2703,30 @@ void HopkinsEngine::BTOCEAN() {
 			}
 			break;
 		}
-		_globals._oceanDirection = 5;
+		_globals._oceanDirection = DIR_DOWN;
 		_globals._exitId = 4;
 		break;
 	}
 }
 
 void HopkinsEngine::OCEAN_HOME() {
-	if (_globals._oceanDirection == 3)
-		_objectsManager.setSpriteIndex(0, 0);
-	else if (_globals._oceanDirection == 7)
-		_objectsManager.setSpriteIndex(0, 18);
-	else if (_globals._oceanDirection == 1)
+	switch (_globals._oceanDirection) {
+	case DIR_UP:
 		_objectsManager.setSpriteIndex(0, 27);
-	else if (_globals._oceanDirection == 5)
+		break;
+	case DIR_RIGHT:
+		_objectsManager.setSpriteIndex(0, 0);
+		break;
+	case DIR_DOWN:
 		_objectsManager.setSpriteIndex(0, 9);
+		break;
+	case DIR_LEFT:
+		_objectsManager.setSpriteIndex(0, 18);
+		break;
+	}
 }
 
-void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, int16 defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
+void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, Directions defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
 	_globals._cityMapEnabledFl = false;
 	_graphicsManager._noFadingFl = false;
 	_globals.NOMARCHE = false;
@@ -2753,19 +2759,19 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, in
 		_globals._oceanDirection = defaultDirection;
 
 	switch (_globals._oceanDirection) {
-	case 1:
+	case DIR_UP:
 		_objectsManager._characterPos.x = 236;
 		_objectsManager._startSpriteIndex = 27;
 		break;
-	case 3:
+	case DIR_RIGHT:
 		_objectsManager._characterPos.x = -20;
 		_objectsManager._startSpriteIndex = 0;
 		break;
-	case 5:
+	case DIR_DOWN:
 		_objectsManager._characterPos.x = 236;
 		_objectsManager._startSpriteIndex = 9;
 		break;
-	case 7:
+	case DIR_LEFT:
 		_objectsManager._characterPos.x = 415;
 		_objectsManager._startSpriteIndex = 18;
 		break;

@@ -1305,7 +1305,7 @@ void ObjectsManager::GOHOME() {
 			_oldCharacterPosY = newPosY;
 		} else {
 			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
-			_vm->_globals._actionDirection = 0;
+			_vm->_globals._actionDirection = DIR_NONE;
 			int zoneId;
 			if (_vm->_globals.GOACTION)
 				zoneId = _vm->_globals._saveData->_data[svField2];
@@ -1530,7 +1530,7 @@ void ObjectsManager::GOHOME() {
 			else
 				zoneId = _zoneNum;
 			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
-			_vm->_globals._actionDirection = 0;
+			_vm->_globals._actionDirection = DIR_NONE;
 			_vm->_linesManager._route = (int16 *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
@@ -1909,7 +1909,7 @@ void ObjectsManager::handleLeftButton() {
 		if (getSpriteY(0) > 374 && getSpriteY(0) <= 410) {
 			_vm->_linesManager._route = (int16 *)g_PTRNUL;
 			setSpriteIndex(0, _vm->_globals._oldDirectionSpriteIdx);
-			_vm->_globals._actionDirection = 0;
+			_vm->_globals._actionDirection = DIR_NONE;
 			_vm->_linesManager._route = (int16 *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
@@ -3117,10 +3117,10 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			int lineDataIdx = 0;
 			int curLineIdx = 0;
 			_vm->_linesManager.resetLinesNumb();
-			int curDirection;
+			Directions curDirection;
 			do {
-				curDirection = (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx);
-				if (curDirection != -1) {
+				curDirection = (Directions)(int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx);
+				if (curDirection != DIR_NONE) {
 					_vm->_linesManager.addLine(
 					    curLineIdx,
 					    curDirection,
@@ -3131,7 +3131,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				}
 				lineDataIdx += 5;
 				++curLineIdx;
-			} while (curDirection != -1);
+			} while (curDirection != DIR_NONE);
 			_vm->_linesManager.initRoute();
 		}
 	}
