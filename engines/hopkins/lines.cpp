@@ -90,13 +90,13 @@ void LinesManager::loadLines(const Common::String &file) {
 	_linesNumb = 0;
 	_lastLine = 0;
 	byte *ptr = _vm->_fileManager.loadFile(file);
-	for (int idx = 0; (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5)) != -1; idx++) {
+	for (int idx = 0; READ_LE_INT16((uint16 *)ptr + (idx * 5)) != -1; idx++) {
 		addLine(idx,
-		    (Directions)(int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5)),
-		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 1),
-		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 2),
-		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 3),
-		    (int16)READ_LE_UINT16((uint16 *)ptr + (idx * 5) + 4));
+		    (Directions)READ_LE_INT16((uint16 *)ptr + (idx * 5)),
+		    READ_LE_INT16((uint16 *)ptr + (idx * 5) + 1),
+		    READ_LE_INT16((uint16 *)ptr + (idx * 5) + 2),
+		    READ_LE_INT16((uint16 *)ptr + (idx * 5) + 3),
+		    READ_LE_INT16((uint16 *)ptr + (idx * 5) + 4));
 	}
 	initRoute();
 	_vm->_globals.freeMemory(ptr);

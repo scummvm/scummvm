@@ -54,7 +54,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 	switch (signature24) {
 	case MKTAG24('T', 'X', 'T'): {
 		vbobFrameIndex = dataP[6];
-		int mesgId = (int16)READ_LE_UINT16(dataP + 13);
+		int mesgId = READ_LE_INT16(dataP + 13);
 		opcodeType = 1;
 		if (!TRAVAILOBJET) {
 			if (_vm->_globals._saveData->_data[svField356] == 1) {
@@ -133,8 +133,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				} while (_vm->_soundManager._soundFl);
 			}
 			if (!_vm->_soundManager._textOffFl) {
-				int textPosX = (int16)READ_LE_UINT16(dataP + 9);
-				int textPosY = (int16)READ_LE_UINT16(dataP + 11);
+				int textPosX = READ_LE_INT16(dataP + 9);
+				int textPosY = READ_LE_INT16(dataP + 11);
 				_vm->_fontManager.initTextBuffers(9, mesgId, _vm->_globals.FICH_TEXTE, 2 * textPosX, 2 * textPosY + 40, 6, dataP[7], 253);
 				if (!_vm->_soundManager._textOffFl)
 					_vm->_fontManager.showText(9);
@@ -149,7 +149,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (!_vm->_soundManager._voiceOffFl)
 					_vm->_soundManager.mixVoice(635, 4);
 			} else {
-				int textPosX = (int16)READ_LE_UINT16(dataP + 9);
+				int textPosX = READ_LE_INT16(dataP + 9);
 				if (_vm->_globals._language == LANG_FR && !_vm->_soundManager._textOffFl)
 					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 				else if (_vm->_globals._language == LANG_EN && !_vm->_soundManager._textOffFl)
@@ -172,10 +172,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int vbobIdx = dataP[5];
 			vbobFrameIndex = dataP[6];
 			int v4 = dataP[7];
-			int vbobPosX = (int16)READ_LE_UINT16(dataP + 8);
-			int vbobPosY = (int16)READ_LE_UINT16(dataP + 10);
+			int vbobPosX = READ_LE_INT16(dataP + 8);
+			int vbobPosY = READ_LE_INT16(dataP + 10);
 			if (vbobIdx == 52) {
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, vbobPosX, (int16)READ_LE_UINT16(dataP + 10), vbobFrameIndex);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, vbobPosX, READ_LE_INT16(dataP + 10), vbobFrameIndex);
 			} else if (vbobIdx == 51) {
 				_vm->_objectsManager.BOB_VIVANT(vbobFrameIndex);
 			} else if (vbobIdx != 50) {
@@ -198,8 +198,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 	case MKTAG24('S', 'T', 'P'):
 			if (!_vm->_objectsManager._disableFl) {
 				_vm->_objectsManager._twoCharactersFl = false;
-				_vm->_objectsManager._characterPos.x = (int16)READ_LE_UINT16(dataP + 6);
-				_vm->_objectsManager._characterPos.y = (int16)READ_LE_UINT16(dataP + 8);
+				_vm->_objectsManager._characterPos.x = READ_LE_INT16(dataP + 6);
+				_vm->_objectsManager._characterPos.y = READ_LE_INT16(dataP + 8);
 				_vm->_objectsManager._startSpriteIndex = dataP[5];
 				if (_vm->_objectsManager._changeHeadFl) {
 					if (_vm->_globals._saveData->_data[svField354] == 1
@@ -266,11 +266,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		break;
 	case MKTAG24('B', 'O', 'F'):
 		if (!_vm->_objectsManager._disableFl)
-			_vm->_objectsManager.VBOB_OFF((int16)READ_LE_UINT16(dataP + 5));
+			_vm->_objectsManager.VBOB_OFF(READ_LE_INT16(dataP + 5));
 		opcodeType = 1;
 		break;
 	case MKTAG24('P', 'E', 'R'): {
-		int specialOpcode = (int16)READ_LE_UINT16(dataP + 5);
+		int specialOpcode = READ_LE_INT16(dataP + 5);
 		if (!_vm->_globals._saveData->_data[svField122] && !_vm->_globals._saveData->_data[svField356]) {
 			vbobFrameIndex = 0;
 
@@ -468,36 +468,36 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		}
 	case MKTAG24('O', 'B', 'P'):
 		opcodeType = 1;
-		_vm->_objectsManager.addObject((int16)READ_LE_UINT16(dataP + 5));
+		_vm->_objectsManager.addObject(READ_LE_INT16(dataP + 5));
 		break;
 	case MKTAG24('O', 'B', 'M'):
 		opcodeType = 1;
-		_vm->_objectsManager.removeObject((int16)READ_LE_UINT16(dataP + 5));
+		_vm->_objectsManager.removeObject(READ_LE_INT16(dataP + 5));
 		break;
 	case MKTAG24('G', 'O', 'T'):
 		opcodeType = 2;
 		break;
 	case MKTAG24('Z', 'O', 'N'):
-		_vm->_linesManager.enableZone((int16)READ_LE_UINT16(dataP + 5));
+		_vm->_linesManager.enableZone(READ_LE_INT16(dataP + 5));
 		opcodeType = 1;
 		break;
 	case MKTAG24('Z', 'O', 'F'):
-		_vm->_linesManager.disableZone((int16)READ_LE_UINT16(dataP + 5));
+		_vm->_linesManager.disableZone(READ_LE_INT16(dataP + 5));
 		opcodeType = 1;
 		break;
 	case MKTAG24('E', 'X', 'I'):
 		opcodeType = 5;
 		break;
 	case MKTAG24('S', 'O', 'R'):
-		_vm->_globals._exitId = (int16)READ_LE_UINT16(dataP + 5);
+		_vm->_globals._exitId = READ_LE_INT16(dataP + 5);
 		opcodeType = 5;
 		break;
 	case MKTAG24('B', 'C', 'A'):
-		_vm->_globals.B_CACHE_OFF((int16)READ_LE_UINT16(dataP + 5));
+		_vm->_globals.B_CACHE_OFF(READ_LE_INT16(dataP + 5));
 		opcodeType = 1;
 		break;
 	case MKTAG24('A', 'N', 'I'): {
-		int animId = (int16)READ_LE_UINT16(dataP + 5);
+		int animId = READ_LE_INT16(dataP + 5);
 		if (animId <= 100)
 			_vm->_objectsManager.setBobAnimation(animId);
 		else
@@ -506,7 +506,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		break;
 		}
 	case MKTAG24('S', 'P', 'E'):
-		switch ((int16)READ_LE_UINT16(dataP + 5)) {
+		switch (READ_LE_INT16(dataP + 5)) {
 		case 6:
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.OPTI_ONE(20, 0, 14, 4);
@@ -2373,34 +2373,34 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		break;
 	case MKTAG24('V', 'A', 'L'): {
 		opcodeType = 1;
-		int idx = (int16)READ_LE_UINT16(dataP + 5);
+		int idx = READ_LE_INT16(dataP + 5);
 		assert(idx >= 0 && idx < 2050);
 		_vm->_globals._saveData->_data[idx] = dataP[7];
 		break;
 		}
 	case MKTAG24('A', 'D', 'D'):
 		opcodeType = 1;
-		_vm->_globals._saveData->_data[(int16)READ_LE_UINT16(dataP + 5)] += dataP[7];
+		_vm->_globals._saveData->_data[READ_LE_INT16(dataP + 5)] += dataP[7];
 		break;
 	case MKTAG24('B', 'O', 'S'):
 		opcodeType = 1;
-		_vm->_objectsManager.BOB_OFFSET((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
+		_vm->_objectsManager.BOB_OFFSET(READ_LE_INT16(dataP + 5), READ_LE_INT16(dataP + 7));
 		break;
 	case MKTAG24('V', 'O', 'N'):
-		_vm->_objectsManager.enableVerb((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
+		_vm->_objectsManager.enableVerb(READ_LE_INT16(dataP + 5), READ_LE_INT16(dataP + 7));
 		opcodeType = 1;
 		break;
 	case MKTAG24('Z', 'C', 'H'):
-		_vm->_linesManager.ZONEP[(int16)READ_LE_UINT16(dataP + 5)].field12 = (int16)READ_LE_UINT16(dataP + 7);
+		_vm->_linesManager.ZONEP[READ_LE_INT16(dataP + 5)].field12 = READ_LE_INT16(dataP + 7);
 		opcodeType = 1;
 		break;
 	case MKTAG24('J', 'U', 'M'):
-		_vm->_objectsManager._jumpZone = (int16)READ_LE_UINT16(dataP + 5);
-		_vm->_objectsManager._jumpVerb = (int16)READ_LE_UINT16(dataP + 7);
+		_vm->_objectsManager._jumpZone = READ_LE_INT16(dataP + 5);
+		_vm->_objectsManager._jumpVerb = READ_LE_INT16(dataP + 7);
 		opcodeType = 6;
 		break;
 	case MKTAG24('S', 'O', 'U'): {
-		int soundNum = (int16)READ_LE_UINT16(dataP + 5);
+		int soundNum = READ_LE_INT16(dataP + 5);
 
 		Common::String file = Common::String::format("SOUND%d.WAV", soundNum);
 		_vm->_soundManager.playSound(file);
@@ -2408,7 +2408,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		break;
 		}
 	case MKTAG24('V', 'O', 'F'):
-		_vm->_objectsManager.disableVerb((int16)READ_LE_UINT16(dataP + 5), (int16)READ_LE_UINT16(dataP + 7));
+		_vm->_objectsManager.disableVerb(READ_LE_INT16(dataP + 5), READ_LE_INT16(dataP + 7));
 		opcodeType = 1;
 		break;
 	case MKTAG24('I', 'I', 'F'):
@@ -2424,7 +2424,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 
 int ScriptManager::handleGoto(const byte *dataP) {
-	return (int16)READ_LE_UINT16(dataP + 5);
+	return READ_LE_INT16(dataP + 5);
 }
 
 int ScriptManager::handleIf(const byte *dataP, int a2) {
@@ -2468,8 +2468,8 @@ int ScriptManager::handleIf(const byte *dataP, int a2) {
 	byte oper = buf[13];
 	byte oper2 = buf[14];
 	byte operType = buf[15];
-	int saveDataIdx1 = (int16)READ_LE_UINT16(buf + 5);
-	int compVal1 = (int16)READ_LE_UINT16(buf + 7);
+	int saveDataIdx1 = READ_LE_INT16(buf + 5);
+	int compVal1 = READ_LE_INT16(buf + 7);
 	bool check1Fl = false;
 	if ((oper == 1 && _vm->_globals._saveData->_data[saveDataIdx1] == compVal1) ||
 	    (oper == 2 && _vm->_globals._saveData->_data[saveDataIdx1] != compVal1) ||
@@ -2481,8 +2481,8 @@ int ScriptManager::handleIf(const byte *dataP, int a2) {
 
 	bool check2Fl = false;
 	if (operType != 3) {
-		int saveDataIdx2 = (int16)READ_LE_UINT16(buf + 9);
-		int compVal2 = (int16)READ_LE_UINT16(buf + 11);
+		int saveDataIdx2 = READ_LE_INT16(buf + 9);
+		int compVal2 = READ_LE_INT16(buf + 11);
 		if ((oper2 == 1 && compVal2 == _vm->_globals._saveData->_data[saveDataIdx2]) ||
 		    (oper2 == 2 && compVal2 != _vm->_globals._saveData->_data[saveDataIdx2]) ||
 		    (oper2 == 3 && compVal2 >= _vm->_globals._saveData->_data[saveDataIdx2]) ||

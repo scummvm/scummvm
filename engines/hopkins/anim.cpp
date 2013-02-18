@@ -532,10 +532,10 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 		byte *ofsData = _vm->_fileManager.loadFile(ofsFilename);
 		byte *curOfsData = ofsData;
 		for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx]._objDataIdx; ++objIdx, curOfsData += 8) {
-			int x1 = (int16)READ_LE_UINT16(curOfsData);
-			int y1 = (int16)READ_LE_UINT16(curOfsData + 2);
-			int x2 = (int16)READ_LE_UINT16(curOfsData + 4);
-			int y2 = (int16)READ_LE_UINT16(curOfsData + 6);
+			int x1 = READ_LE_INT16(curOfsData);
+			int y1 = READ_LE_INT16(curOfsData + 2);
+			int x2 = READ_LE_INT16(curOfsData + 4);
+			int y2 = READ_LE_INT16(curOfsData + 6);
 
 			_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x1, y1, 0);
 			if (_vm->_globals.Bank[idx]._fileHeader == 2)

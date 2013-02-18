@@ -1246,9 +1246,9 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 		spriteStartP += READ_LE_UINT32(spriteStartP) + 16;
 
 	const byte *spriteSizeP = spriteStartP + 4;
-	int spriteWidth = (int16)READ_LE_UINT16(spriteSizeP);
+	int spriteWidth = READ_LE_INT16(spriteSizeP);
 	spriteSizeP += 2;
-	int spriteHeight2 = (int16)READ_LE_UINT16(spriteSizeP);
+	int spriteHeight2 = READ_LE_INT16(spriteSizeP);
 	int spriteHeight1 = spriteHeight2;
 	const byte *spritePixelsP = spriteSizeP + 10;
 	_posXClipped = 0;
@@ -1639,9 +1639,9 @@ void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp,
 	int spriteWidth = 0;
 	int spriteHeight = 0;
 	const byte *spriteSizeP = spriteDataP + 4;
-	spriteWidth = (int16)READ_LE_UINT16(spriteSizeP);
+	spriteWidth = READ_LE_INT16(spriteSizeP);
 	spriteSizeP += 2;
-	spriteHeight = (int16)READ_LE_UINT16(spriteSizeP);
+	spriteHeight = READ_LE_INT16(spriteSizeP);
 	const byte *spritePixelsP = spriteSizeP + 10;
 	byte *destP = surface + xp + _lineNbr2 * yp;
 	_width = spriteWidth;

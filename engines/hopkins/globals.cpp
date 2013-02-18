@@ -412,10 +412,10 @@ void Globals::loadCache(const Common::String &file) {
 	CACHE_BANQUE[1] = spriteData;
 	int curBufIdx = 60;
 	for (int i = 0; i <= 21; i++) {
-		Cache[i]._spriteIndex = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx);
-		Cache[i]._x = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx + 1);
-		Cache[i]._y = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx + 2);
-		Cache[i].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx + 4);
+		Cache[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + curBufIdx);
+		Cache[i]._x = READ_LE_INT16((uint16 *)ptr + curBufIdx + 1);
+		Cache[i]._y = READ_LE_INT16((uint16 *)ptr + curBufIdx + 2);
+		Cache[i].field14 = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
 		if (spriteData == g_PTRNUL) {
 			Cache[i]._useCount = 0;
 		} else {

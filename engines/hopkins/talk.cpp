@@ -75,8 +75,8 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	} else if (_vm->_globals._language == LANG_SP) {
 		_answersFilename = _questionsFilename = "RUEES.TXT";
 	}
-	_dialogueMesgId1 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 40);
-	_paletteBufferIdx = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
+	_dialogueMesgId1 = READ_LE_INT16((uint16 *)_characterBuffer + 40);
+	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
 	_characterSprite = _vm->_fileManager.searchCat(spriteFilename, 7);
 	if (_characterSprite) {
 		_characterSprite = _vm->_objectsManager.loadSprite(spriteFilename);
@@ -182,8 +182,8 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		break;
 	}
 
-	_dialogueMesgId1 = (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 40);
-	_paletteBufferIdx = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
+	_dialogueMesgId1 = READ_LE_INT16((uint16 *)_characterBuffer + 40);
+	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
 	searchCharacterPalette(_paletteBufferIdx, false);
 	_dialogueMesgId2 = _dialogueMesgId1 + 1;
 	_dialogueMesgId3 = _dialogueMesgId1 + 2;
@@ -228,17 +228,17 @@ void TalkManager::getStringFromBuffer(int srcStart, Common::String &dest, const 
 int TalkManager::dialogQuestion(bool animatedFl) {
 	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 48;
-		int curVal = (int16)READ_LE_UINT16(bufPtr);
+		int curVal = READ_LE_INT16(bufPtr);
 		if (curVal != 0)
 			_vm->_objectsManager.setBobAnimation(curVal);
 		if (curVal != 1)
-			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16(bufPtr + 1));
+			_vm->_objectsManager.setBobAnimation(READ_LE_INT16(bufPtr + 1));
 		if (curVal != 2)
-			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16(bufPtr + 2));
+			_vm->_objectsManager.setBobAnimation(READ_LE_INT16(bufPtr + 2));
 		if (curVal != 3)
-			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16(bufPtr + 3));
+			_vm->_objectsManager.setBobAnimation(READ_LE_INT16(bufPtr + 3));
 		if (curVal != 4)
-			_vm->_objectsManager.setBobAnimation((int16)READ_LE_UINT16(bufPtr + 4));
+			_vm->_objectsManager.setBobAnimation(READ_LE_INT16(bufPtr + 4));
 	} else {
 		dialogWait();
 	}
@@ -299,23 +299,23 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 48;
 
-		int curVal = (int16)READ_LE_UINT16(bufPtr);
+		int curVal = READ_LE_INT16(bufPtr);
 		if (curVal != 0)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 1);
+		curVal = READ_LE_INT16(bufPtr + 1);
 		if (curVal != 1)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 2);
+		curVal = READ_LE_INT16(bufPtr + 2);
 		if (curVal != 2)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 3);
+		curVal = READ_LE_INT16(bufPtr + 3);
 		if (curVal != 3)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 4);
+		curVal = READ_LE_INT16(bufPtr + 4);
 		if (curVal != 4)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 	} else {
@@ -329,21 +329,21 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 	int charIdx;
 	byte *charBuf;
-	for (charBuf = _characterBuffer + 110, charIdx = 0; (int16)READ_LE_UINT16(charBuf) != idx; charBuf += 20) {
+	for (charBuf = _characterBuffer + 110, charIdx = 0; READ_LE_INT16(charBuf) != idx; charBuf += 20) {
 		++charIdx;
-		if ((int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) < charIdx)
+		if (READ_LE_INT16((uint16 *)_characterBuffer + 42) < charIdx)
 			return -1;
 	}
 
-	int mesgId = (int16)READ_LE_UINT16((uint16 *)charBuf + 1);
-	int mesgPosX = (int16)READ_LE_UINT16((uint16 *)charBuf + 2);
-	int mesgPosY = (int16)READ_LE_UINT16((uint16 *)charBuf + 3);
-	int mesgLength = (int16)READ_LE_UINT16((uint16 *)charBuf + 4);
-	_dialogueMesgId1 = (int16)READ_LE_UINT16((uint16 *)charBuf + 5);
-	_dialogueMesgId2 = (int16)READ_LE_UINT16((uint16 *)charBuf + 6);
-	_dialogueMesgId3 = (int16)READ_LE_UINT16((uint16 *)charBuf + 7);
-	int v6 = (int16)READ_LE_UINT16((uint16 *)charBuf + 8);
-	int v7 = (int16)READ_LE_UINT16((uint16 *)charBuf + 9);
+	int mesgId = READ_LE_INT16((uint16 *)charBuf + 1);
+	int mesgPosX = READ_LE_INT16((uint16 *)charBuf + 2);
+	int mesgPosY = READ_LE_INT16((uint16 *)charBuf + 3);
+	int mesgLength = READ_LE_INT16((uint16 *)charBuf + 4);
+	_dialogueMesgId1 = READ_LE_INT16((uint16 *)charBuf + 5);
+	_dialogueMesgId2 = READ_LE_INT16((uint16 *)charBuf + 6);
+	_dialogueMesgId3 = READ_LE_INT16((uint16 *)charBuf + 7);
+	int v6 = READ_LE_INT16((uint16 *)charBuf + 8);
+	int v7 = READ_LE_INT16((uint16 *)charBuf + 9);
 
 	if (v7)
 		_vm->_globals._saveData->_data[svField4] = v7;
@@ -352,23 +352,23 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 		v6 = 10;
 	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
-		int curVal = (int16)READ_LE_UINT16(bufPtr);
+		int curVal = READ_LE_INT16(bufPtr);
 		if (curVal)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 1);
+		curVal = READ_LE_INT16(bufPtr + 1);
 		if (curVal)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 2);
+		curVal = READ_LE_INT16(bufPtr + 2);
 		if (curVal)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 3);
+		curVal = READ_LE_INT16(bufPtr + 3);
 		if (curVal)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 4);
+		curVal = READ_LE_INT16(bufPtr + 4);
 		if (curVal)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 	} else {
@@ -402,23 +402,23 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 		_vm->_fontManager.hideText(9);
 	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
-		int curVal = (int16)READ_LE_UINT16(bufPtr);
+		int curVal = READ_LE_INT16(bufPtr);
 		if (curVal)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 1);
+		curVal = READ_LE_INT16(bufPtr + 1);
 		if (curVal)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 2);
+		curVal = READ_LE_INT16(bufPtr + 2);
 		if (curVal)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 3);
+		curVal = READ_LE_INT16(bufPtr + 3);
 		if (curVal)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 
-		curVal = (int16)READ_LE_UINT16(bufPtr + 4);
+		curVal = READ_LE_INT16(bufPtr + 4);
 		if (curVal)
 			_vm->_objectsManager.stopBobAnimation(curVal);
 	} else {
@@ -600,10 +600,10 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 	if (!_vm->_objectsManager._bob[idx].field0) {
 		_vm->_objectsManager.resetBob(idx);
 		byte *v5 = _vm->_globals.Bqe_Anim[idx]._data;
-		int v4 = (int16)READ_LE_UINT16(v5 + 2);
+		int v4 = READ_LE_INT16(v5 + 2);
 		if (!v4)
 			v4 = 1;
-		if ((int16)READ_LE_UINT16(v5 + 24)) {
+		if (READ_LE_INT16(v5 + 24)) {
 			_vm->_objectsManager._bob[idx]._isSpriteFl = true;
 			_vm->_objectsManager._bob[idx]._zoomFactor = 0;
 			_vm->_objectsManager._bob[idx]._flipFl = false;
@@ -636,10 +636,10 @@ void TalkManager::startCharacterAnim0(int startIdx, bool readOnlyFl) {
 		int idx = 0;
 		int v7;
 		do {
-			v7 = (int16)READ_LE_UINT16(&_characterAnim[2 * idx + 4]);
+			v7 = READ_LE_INT16(&_characterAnim[2 * idx + 4]);
 			if (v7 && _vm->_globals._speed != 501)
-				_vm->_graphicsManager.fastDisplay(_characterSprite, _vm->_eventsManager._startPos.x + (int16)READ_LE_UINT16(&_characterAnim[2 * idx]),
-				    (int16)READ_LE_UINT16(&_characterAnim[2 * idx + 2]), _characterAnim[2 * idx + 8]);
+				_vm->_graphicsManager.fastDisplay(_characterSprite, _vm->_eventsManager._startPos.x + READ_LE_INT16(&_characterAnim[2 * idx]),
+				    READ_LE_INT16(&_characterAnim[2 * idx + 2]), _characterAnim[2 * idx + 8]);
 			idx += 5;
 		} while (_vm->_globals._speed != 501 && v7);
 	}
@@ -651,43 +651,43 @@ void TalkManager::startCharacterAnim0(int startIdx, bool readOnlyFl) {
 void TalkManager::initCharacterAnim() {
 	uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
 	byte *animPtr = _characterBuffer + 110;
-	int curVal = (int16)READ_LE_UINT16(bufPtr);
+	int curVal = READ_LE_INT16(bufPtr);
 	if (curVal)
 		searchCharacterAnim(21, animPtr, curVal, _characterSize);
 
-	curVal = (int16)READ_LE_UINT16(bufPtr + 1);
+	curVal = READ_LE_INT16(bufPtr + 1);
 	if (curVal)
 		searchCharacterAnim(22, animPtr, curVal, _characterSize);
 
-	curVal = (int16)READ_LE_UINT16(bufPtr + 2);
+	curVal = READ_LE_INT16(bufPtr + 2);
 	if (curVal)
 		searchCharacterAnim(23, animPtr, curVal, _characterSize);
 
-	curVal = (int16)READ_LE_UINT16(bufPtr + 3);
+	curVal = READ_LE_INT16(bufPtr + 3);
 	if (curVal)
 		searchCharacterAnim(24, animPtr, curVal, _characterSize);
 
-	curVal = (int16)READ_LE_UINT16(bufPtr + 4);
+	curVal = READ_LE_INT16(bufPtr + 4);
 	if (curVal)
 		searchCharacterAnim(25, animPtr, curVal, _characterSize);
 
-	curVal = (int16)READ_LE_UINT16(bufPtr + 5);
+	curVal = READ_LE_INT16(bufPtr + 5);
 	if (curVal)
 		searchCharacterAnim(26, animPtr, curVal, _characterSize);
 
-	curVal = (int16)READ_LE_UINT16(bufPtr + 6);
+	curVal = READ_LE_INT16(bufPtr + 6);
 	if (curVal)
 		searchCharacterAnim(27, animPtr, curVal, _characterSize);
 
-	curVal = (int16)READ_LE_UINT16(bufPtr + 7);
+	curVal = READ_LE_INT16(bufPtr + 7);
 	if (curVal)
 		searchCharacterAnim(28, animPtr, curVal, _characterSize);
 
-	curVal = (int16)READ_LE_UINT16(bufPtr + 8);
+	curVal = READ_LE_INT16(bufPtr + 8);
 	if (curVal)
 		searchCharacterAnim(29, animPtr, curVal, _characterSize);
 
-	curVal = (int16)READ_LE_UINT16(bufPtr + 9);
+	curVal = READ_LE_INT16(bufPtr + 9);
 	if (curVal)
 		searchCharacterAnim(30, animPtr, curVal, _characterSize);
 }
@@ -723,11 +723,11 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 			_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.allocMemory(animLength + 50);
 			_vm->_globals.Bqe_Anim[idx]._enabledFl = true;
 			memcpy(_vm->_globals.Bqe_Anim[idx]._data, (const byte *)(bufPerso + bufPos + 5), 20);
-			int v23 = (int16)READ_LE_UINT16(bufPos + bufPerso + 29);
-			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 20, (int16)READ_LE_UINT16(bufPos + bufPerso + 25));
-			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 22, (int16)READ_LE_UINT16(bufPos + bufPerso + 27));
+			int v23 = READ_LE_INT16(bufPos + bufPerso + 29);
+			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 20, READ_LE_INT16(bufPos + bufPerso + 25));
+			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 22, READ_LE_INT16(bufPos + bufPerso + 27));
 			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 24, v23);
-			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 26, (int16)READ_LE_UINT16(bufPos + bufPerso + 31));
+			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 26, READ_LE_INT16(bufPos + bufPerso + 31));
 			_vm->_globals.Bqe_Anim[idx]._data[28] = bufPerso[bufPos + 33];
 			_vm->_globals.Bqe_Anim[idx]._data[29] = bufPerso[bufPos + 34];
 			byte *bqeCurData = _vm->_globals.Bqe_Anim[idx]._data + 20;
@@ -737,11 +737,11 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 				curBufPerso += 10;
 				if (!v23)
 					break;
-				v23 = (int16)READ_LE_UINT16(curBufPerso + 4);
-				WRITE_LE_UINT16(bqeCurData, (int16)READ_LE_UINT16(curBufPerso));
-				WRITE_LE_UINT16(bqeCurData + 2, (int16)READ_LE_UINT16(curBufPerso + 2));
+				v23 = READ_LE_INT16(curBufPerso + 4);
+				WRITE_LE_UINT16(bqeCurData, READ_LE_INT16(curBufPerso));
+				WRITE_LE_UINT16(bqeCurData + 2, READ_LE_INT16(curBufPerso + 2));
 				WRITE_LE_UINT16(bqeCurData + 4, v23);
-				WRITE_LE_UINT16(bqeCurData + 6, (int16)READ_LE_UINT16(curBufPerso + 6));
+				WRITE_LE_UINT16(bqeCurData + 6, READ_LE_INT16(curBufPerso + 6));
 				bqeCurData[8] = curBufPerso[8];
 				bqeCurData[9] = curBufPerso[9];
 			}
@@ -1004,7 +1004,7 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	if (!_vm->_graphicsManager._lineNbr)
 		_vm->_graphicsManager._scrollOffset = 0;
 	_vm->_graphicsManager.NB_SCREEN(true);
-	_paletteBufferIdx = 20 * (int16)READ_LE_UINT16((uint16 *)_characterBuffer + 42) + 110;
+	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
 	_vm->_graphicsManager.NB_SCREEN(true);
 	_vm->_objectsManager.PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, true);
