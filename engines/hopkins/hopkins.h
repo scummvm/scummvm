@@ -82,6 +82,8 @@ enum {
  */
 #define MKTAG24(a0,a1,a2) ((uint32)((a2) | (a1) << 8 | ((a0) << 16)))
 
+#define READ_LE_INT16(x) (int16) READ_LE_UINT16(x)
+
 struct HopkinsGameDescription;
 
 class HopkinsEngine : public Engine {
@@ -120,7 +122,7 @@ private:
 
 	void BTOCEAN();
 	void OCEAN_HOME();
-	void OCEAN(int16 curExitId, Common::String backgroundFilename, int16 defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId);
+	void OCEAN(int16 curExitId, Common::String backgroundFilename, Directions defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId);
 	void loadCredits();
 	void displayCredits(int startPosY, byte *buffer, char colour);
 	void displayCredits();

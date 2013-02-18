@@ -210,7 +210,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_tempText = _vm->_globals.allocMemory(110);
 			Common::fill(&_tempText[0], &_tempText[110], 0);
 			memcpy(_tempText, _vm->_globals.BUF_ZONE + _index[messageId], 96);
-			WRITE_LE_UINT16((uint16 *)_tempText + 48, (int16)READ_LE_UINT16(_vm->_globals.BUF_ZONE + _index[messageId] + 96));
+			WRITE_LE_UINT16((uint16 *)_tempText + 48, READ_LE_INT16(_vm->_globals.BUF_ZONE + _index[messageId] + 96));
 		}
 		byte *curTempTextPtr = _tempText;
 		for (int i = 0; i < bufSize; i++) {

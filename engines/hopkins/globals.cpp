@@ -103,9 +103,9 @@ Globals::Globals() {
 	_linuxEndDemoFl = false;
 	_speed = 1;
 	_oldFrameIndex = 0;
-	_oldDirection = 0;
+	_oldDirection = DIR_NONE;
 	_oldDirectionSpriteIdx = 59;
-	_lastDirection = 0;
+	_lastDirection = DIR_NONE;
 	NUM_FICHIER_OBJ = 0;
 	nbrligne = 0;
 	_boxWidth = 0;
@@ -130,8 +130,7 @@ Globals::Globals() {
 	PERSO_TYPE = 0;
 	GOACTION = false;
 	Compteur = 0;
-	_actionDirection = 0;
-	_actionDirection = 0;
+	_actionDirection = DIR_NONE;
 
 	Credit_bx = -1;
 	Credit_bx1 = -1;
@@ -142,7 +141,7 @@ Globals::Globals() {
 	memset(_creditsItem, 0, 12000);
 	_creditsStep = 0;
 
-	_oceanDirection = 0;
+	_oceanDirection = DIR_NONE;
 
 	// Initialize pointers
 	BUF_ZONE = NULL;
@@ -177,7 +176,6 @@ Globals::Globals() {
 	_oldMouseY = 0;
 	compteur_71 = 0;
 	_forceHideText = false;
-	j_104 = 0;
 }
 
 Globals::~Globals() {
@@ -284,7 +282,7 @@ void Globals::loadCharacterData() {
 	}
 
 	_oldFrameIndex = -1;
-	_oldDirection = -1;
+	_oldDirection = DIR_NONE;
 }
 
 void Globals::INIT_ANIM() {
@@ -414,10 +412,10 @@ void Globals::loadCache(const Common::String &file) {
 	CACHE_BANQUE[1] = spriteData;
 	int curBufIdx = 60;
 	for (int i = 0; i <= 21; i++) {
-		Cache[i]._spriteIndex = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx);
-		Cache[i]._x = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx + 1);
-		Cache[i]._y = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx + 2);
-		Cache[i].field14 = (int16)READ_LE_UINT16((uint16 *)ptr + curBufIdx + 4);
+		Cache[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + curBufIdx);
+		Cache[i]._x = READ_LE_INT16((uint16 *)ptr + curBufIdx + 1);
+		Cache[i]._y = READ_LE_INT16((uint16 *)ptr + curBufIdx + 2);
+		Cache[i].field14 = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
 		if (spriteData == g_PTRNUL) {
 			Cache[i]._useCount = 0;
 		} else {

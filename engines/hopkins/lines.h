@@ -23,6 +23,8 @@
 #ifndef HOPKINS_LINES_H
 #define HOPKINS_LINES_H
 
+#include "hopkins/globals.h"
+
 #include "common/scummsys.h"
 #include "common/str.h"
 
@@ -40,9 +42,9 @@ struct RouteItem;
 
 struct LigneItem {
 	int _lineDataEndIdx;
-	int _direction;
-	int field6;
-	int field8;
+	Directions _direction;
+	Directions field6;
+	Directions field8;
 	int16 *_lineData;
 
 	int appendToRouteInc(int from, int to, RouteItem *route, int index);
@@ -91,11 +93,11 @@ struct ZonePItem {
 struct RouteItem {
 	int16 _X;
 	int16 _Y;
-	int16 _dir;
+	Directions _dir;
 	int16 _unk;
 	bool isValid() const { return _X != -1 || _Y != -1; }
-	void invalidate() { _X = _Y = _dir = _unk = -1; }
-	void set(int16 X, int16 Y, int16 dir) { _X = X; _Y = Y; _dir = dir; _unk = 0; }
+	void invalidate() { _X = _Y = _unk = -1; _dir = DIR_NONE; }
+	void set(int16 X, int16 Y, Directions dir) { _X = X; _Y = Y; _dir = dir; _unk = 0; }
 };
 
 
@@ -110,7 +112,7 @@ private:
 	int NV_POSI;
 	int NVPX;
 	int NVPY;
-	int _smoothMoveDirection;
+	Directions _smoothMoveDirection;
 	RouteItem super_parcours[8001];
 	byte *BUFFERTAPE;
 	RouteItem *essai0;
@@ -135,7 +137,7 @@ private:
 	int CALC_PROPRE(int idx);
 	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, RouteItem *route, int a8, int a9);
 	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, RouteItem *route);
-	bool MIRACLE(int a1, int a2, int a3, int a4, int a5);
+	bool MIRACLE(int fromX, int fromY, int a3, int a4, int a5);
 	int GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int a7, RouteItem *route);
 	int PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, int a6, int a7);
 	bool PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5);
@@ -159,7 +161,7 @@ public:
 	int checkInventoryHotspots(int posX, int posY);
 	void addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx);
 	void loadLines(const Common::String &file);
-	void addLine(int idx, int direction, int a3, int a4, int a5, int a6);
+	void addLine(int idx, Directions direction, int a3, int a4, int a5, int a6);
 	void initRoute();
 	RouteItem *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	void clearAllZones();

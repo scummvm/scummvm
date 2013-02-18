@@ -193,9 +193,9 @@ int ObjectsManager::getOffsetX(const byte *spriteData, int spriteIndex, bool isS
 		v3 += READ_LE_UINT32(v3) + 16;
 
 	const byte *v5 = v3 + 8;
-	int result = (int16)READ_LE_UINT16(v5);
+	int result = READ_LE_INT16(v5);
 	if (isSize)
-		result = (int16)READ_LE_UINT16(v5 + 4);
+		result = READ_LE_INT16(v5 + 4);
 
 	return result;
 }
@@ -206,9 +206,9 @@ int ObjectsManager::getOffsetY(const byte *spriteData, int spriteIndex, bool isS
 		v3 += READ_LE_UINT32(v3) + 16;
 
 	const byte *v5 = v3 + 10;
-	int result = (int16)READ_LE_UINT16(v5);
+	int result = READ_LE_INT16(v5);
 	if (isSize)
-		result = (int16)READ_LE_UINT16(v5 + 4);
+		result = READ_LE_INT16(v5 + 4);
 
 	return result;
 }
@@ -221,7 +221,7 @@ int ObjectsManager::getWidth(const byte *objectData, int idx) {
 	for (int i = idx; i; --i)
 		rectP += READ_LE_UINT32(rectP) + 16;
 
-	return (int16)READ_LE_UINT16(rectP + 4);
+	return READ_LE_INT16(rectP + 4);
 }
 
 /**
@@ -232,7 +232,7 @@ int ObjectsManager::getHeight(const byte *objectData, int idx) {
 	for (int i = idx; i; --i)
 		rectP += READ_LE_UINT32(rectP) + 16;
 
-	return (int16)READ_LE_UINT16(rectP + 6);
+	return READ_LE_INT16(rectP + 6);
 }
 
 void ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objIndex) {
@@ -242,7 +242,7 @@ void ObjectsManager::sprite_alone(const byte *objectData, byte *sprite, int objI
 	}
 
 	objP += 4;
-	int result = (int16)READ_LE_UINT16(objP) * (int16)READ_LE_UINT16(objP + 2);
+	int result = READ_LE_INT16(objP) * READ_LE_INT16(objP + 2);
 
 	memcpy(sprite + 3, objP - 4, result + 16);
 }
@@ -254,7 +254,7 @@ void ObjectsManager::capture_mem_sprite(const byte *objectData, byte *sprite, in
 	}
 
 	objP += 4;
-	int result = (int16)READ_LE_UINT16(objP) * (int16)READ_LE_UINT16(objP + 2);
+	int result = READ_LE_INT16(objP) * READ_LE_INT16(objP + 2);
 	memcpy(sprite, objP + 12, result);
 }
 
@@ -582,17 +582,17 @@ void ObjectsManager::BOB_VISU(int idx) {
 	resetBob(idx);
 
 	const byte *data = _vm->_globals.Bqe_Anim[idx]._data;
-	int bankIdx = (int16)READ_LE_UINT16(data);
+	int bankIdx = READ_LE_INT16(data);
 	if (!bankIdx)
 		return;
 	if ((!_vm->_globals.Bank[bankIdx]._loadedFl) || (!READ_LE_UINT16(data + 24)))
 		return;
 
 
-	int16 v9 = (int16)READ_LE_UINT16(data + 2);
-	int16 v8 = (int16)READ_LE_UINT16(data + 4);
-	int16 offsetY = (int16)READ_LE_UINT16(data + 6);
-	int16 v6 = (int16)READ_LE_UINT16(data + 8);
+	int16 v9 = READ_LE_INT16(data + 2);
+	int16 v8 = READ_LE_INT16(data + 4);
+	int16 offsetY = READ_LE_INT16(data + 6);
+	int16 v6 = READ_LE_INT16(data + 8);
 
 	if (!v9)
 		v9 = 1;
@@ -949,15 +949,15 @@ void ObjectsManager::displayBobAnim() {
 
 		byte *dataPtr = _bob[idx]._animData + 20;
 		int dataIdx = _bob[idx]._animDataIdx;
-		_bob[idx]._xp = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx);
+		_bob[idx]._xp = READ_LE_INT16(dataPtr + 2 * dataIdx);
 		if (_vm->_globals._lockedAnims[idx]._enableFl)
 			_bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
 		if ( PERSO_ON && idx > 20 )
 			_bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
-		_bob[idx]._yp = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 2);
-		_bob[idx].field12 = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 4);
-		_bob[idx]._zoomFactor = (int16)READ_LE_UINT16(dataPtr + 2 * dataIdx + 6);
+		_bob[idx]._yp = READ_LE_INT16(dataPtr + 2 * dataIdx + 2);
+		_bob[idx].field12 = READ_LE_INT16(dataPtr + 2 * dataIdx + 4);
+		_bob[idx]._zoomFactor = READ_LE_INT16(dataPtr + 2 * dataIdx + 6);
 		_bob[idx]._frameIndex = dataPtr[2 * dataIdx + 8];
 		_bob[idx]._flipFl = (dataPtr[2 * dataIdx + 9] != 0);
 		_bob[idx]._animDataIdx += 5;
@@ -983,16 +983,16 @@ void ObjectsManager::displayBobAnim() {
 			} else {
 				_bob[idx]._animDataIdx = 0;
 				byte *v21 = _bob[idx]._animData + 20;
-				_bob[idx]._xp = (int16)READ_LE_UINT16(v21);
+				_bob[idx]._xp = READ_LE_INT16(v21);
 
 				if (_vm->_globals._lockedAnims[idx]._enableFl)
 					_bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
 				if (PERSO_ON && idx > 20)
 					_bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
-				_bob[idx]._yp = (int16)READ_LE_UINT16(v21 + 2);
-				_bob[idx].field12 = (int16)READ_LE_UINT16(v21 + 4);
-				_bob[idx]._zoomFactor = (int16)READ_LE_UINT16(v21 + 6);
+				_bob[idx]._yp = READ_LE_INT16(v21 + 2);
+				_bob[idx].field12 = READ_LE_INT16(v21 + 4);
+				_bob[idx]._zoomFactor = READ_LE_INT16(v21 + 6);
 				_bob[idx]._frameIndex = v21[8];
 				_bob[idx]._flipFl = (v21[9] != 0);
 				_bob[idx]._animDataIdx += 5;
@@ -1274,10 +1274,6 @@ void ObjectsManager::setFlipSprite(int idx, bool flipFl) {
 }
 
 void ObjectsManager::GOHOME() {
-	int v0 = 0;
-	int v58 = 0;
-	int v1 = 0;
-
 	if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL)
 		return;
 
@@ -1288,10 +1284,13 @@ void ObjectsManager::GOHOME() {
 
 	int newPosX;
 	int newPosY;
-	int newDirection;
+	Directions newDirection;
 
+	int oldPosX = 0;
+	int oldPosY = 0;
+	int oldFrameIdx = 0;
 	_vm->_globals.Compteur = 0;
-	if (_vm->_globals._oldDirection == -1) {
+	if (_vm->_globals._oldDirection == DIR_NONE) {
 		computeAndSetSpriteSize();
 		newPosX = _vm->_linesManager._route->_X;
 		newPosY = _vm->_linesManager._route->_Y;
@@ -1306,7 +1305,7 @@ void ObjectsManager::GOHOME() {
 			_oldCharacterPosY = newPosY;
 		} else {
 			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
-			_vm->_globals._actionDirection = 0;
+			_vm->_globals._actionDirection = DIR_NONE;
 			int zoneId;
 			if (_vm->_globals.GOACTION)
 				zoneId = _vm->_globals._saveData->_data[svField2];
@@ -1317,7 +1316,7 @@ void ObjectsManager::GOHOME() {
 			setFlipSprite(0, false);
 			_vm->_globals.Compteur = 0;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
-			_vm->_globals._oldDirection = -1;
+			_vm->_globals._oldDirection = DIR_NONE;
 			if (zoneId > 0) {
 				if (_vm->_linesManager.ZONEP[zoneId]._destX && _vm->_linesManager.ZONEP[zoneId]._destY && _vm->_linesManager.ZONEP[zoneId]._destY != 31) {
 					if (_vm->_linesManager.ZONEP[zoneId]._spriteIndex == -1) {
@@ -1334,11 +1333,11 @@ void ObjectsManager::GOHOME() {
 		_vm->_globals.Compteur = 0;
 		return;
 	}
-	if (_vm->_globals._oldDirection == 3) {
+	if (_vm->_globals._oldDirection == DIR_RIGHT) {
 		if (_vm->_globals._oldFrameIndex < 24 || _vm->_globals._oldFrameIndex > 35) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 24;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 24;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1350,19 +1349,19 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX + deltaX;
-			v58 = _oldCharacterPosY + deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 35)
-				v1 = 24;
+			oldPosX = _oldCharacterPosX + deltaX;
+			oldPosY = _oldCharacterPosY + deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 35)
+				oldFrameIdx = 24;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	if (_vm->_globals._oldDirection == 7) {
+	if (_vm->_globals._oldDirection == DIR_LEFT) {
 		if (_vm->_globals._oldFrameIndex < 24 || _vm->_globals._oldFrameIndex > 35) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 24;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 24;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1373,19 +1372,19 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX - deltaX;
-			v58 = _oldCharacterPosY - deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 35)
-				v1 = 24;
+			oldPosX = _oldCharacterPosX - deltaX;
+			oldPosY = _oldCharacterPosY - deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 35)
+				oldFrameIdx = 24;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	if (_vm->_globals._oldDirection == 1) {
+	if (_vm->_globals._oldDirection == DIR_UP) {
 		if (_vm->_globals._oldFrameIndex > 11) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 0;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 0;
 		} else {
 			int deltaY = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
 			if (_sprite[0]._zoomFactor < 0) {
@@ -1393,20 +1392,20 @@ void ObjectsManager::GOHOME() {
 			} else if (_sprite[0]._zoomFactor > 0) {
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY - deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 11)
-				v1 = 0;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY - deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 11)
+				oldFrameIdx = 0;
 		}
 		_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 	}
 
-	if (_vm->_globals._oldDirection == 5) {
+	if (_vm->_globals._oldDirection == DIR_DOWN) {
 		if (_vm->_globals._oldFrameIndex < 48 || _vm->_globals._oldFrameIndex > 59) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 48;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 48;
 		} else {
 			int deltaY = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
 			if (_sprite[0]._zoomFactor < 0) {
@@ -1414,19 +1413,19 @@ void ObjectsManager::GOHOME() {
 			} else if (_sprite[0]._zoomFactor > 0) {
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX;
-			v58 = deltaY + _oldCharacterPosY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 59)
-				v1 = 48;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = deltaY + _oldCharacterPosY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 59)
+				oldFrameIdx = 48;
 		}
 		_vm->_globals.Compteur = 4 / _vm->_globals._speed;
 	}
-	if (_vm->_globals._oldDirection == 2) {
+	if (_vm->_globals._oldDirection == DIR_UP_RIGHT) {
 		if (_vm->_globals._oldFrameIndex < 12 || _vm->_globals._oldFrameIndex > 23) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 12;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 12;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1438,19 +1437,19 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = deltaX + _oldCharacterPosX;
-			v58 = _oldCharacterPosY + deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 23)
-				v1 = 12;
+			oldPosX = deltaX + _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY + deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 23)
+				oldFrameIdx = 12;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	if (_vm->_globals._oldDirection == 8) {
+	if (_vm->_globals._oldDirection == DIR_UP_LEFT) {
 		if (_vm->_globals._oldFrameIndex < 12 || _vm->_globals._oldFrameIndex > 23) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 12;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 12;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1461,19 +1460,19 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX - deltaX;
-			v58 = _oldCharacterPosY + deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 23)
-				v1 = 12;
+			oldPosX = _oldCharacterPosX - deltaX;
+			oldPosY = _oldCharacterPosY + deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 23)
+				oldFrameIdx = 12;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	if (_vm->_globals._oldDirection == 4) {
+	if (_vm->_globals._oldDirection == DIR_DOWN_RIGHT) {
 		if (_vm->_globals._oldFrameIndex < 36 || _vm->_globals._oldFrameIndex > 47) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 36;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 36;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1485,19 +1484,19 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = deltaX + _oldCharacterPosX;
-			v58 = _oldCharacterPosY + deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 47)
-				v1 = 36;
+			oldPosX = deltaX + _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY + deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 47)
+				oldFrameIdx = 36;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
-	if (_vm->_globals._oldDirection == 6) {
+	if (_vm->_globals._oldDirection == DIR_DOWN_LEFT) {
 		if (_vm->_globals._oldFrameIndex < 36 || _vm->_globals._oldFrameIndex > 47) {
-			v0 = _oldCharacterPosX;
-			v58 = _oldCharacterPosY;
-			v1 = 36;
+			oldPosX = _oldCharacterPosX;
+			oldPosY = _oldCharacterPosY;
+			oldFrameIdx = 36;
 		} else {
 			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
 			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
@@ -1509,11 +1508,11 @@ void ObjectsManager::GOHOME() {
 				deltaX = _vm->_graphicsManager.zoomIn(deltaX, _sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomIn(deltaY, _sprite[0]._zoomFactor);
 			}
-			v0 = _oldCharacterPosX - deltaX;
-			v58 = _oldCharacterPosY + deltaY;
-			v1 = _vm->_globals._oldFrameIndex + 1;
-			if (v1 > 47)
-				v1 = 36;
+			oldPosX = _oldCharacterPosX - deltaX;
+			oldPosY = _oldCharacterPosY + deltaY;
+			oldFrameIdx = _vm->_globals._oldFrameIndex + 1;
+			if (oldFrameIdx > 47)
+				oldFrameIdx = 36;
 		}
 		_vm->_globals.Compteur = 5 / _vm->_globals._speed;
 	}
@@ -1521,7 +1520,7 @@ void ObjectsManager::GOHOME() {
 	do {
 		newPosX = _vm->_linesManager._route->_X;
 		newPosY = _vm->_linesManager._route->_Y;
-		newDirection = _vm->_linesManager._route->_dir;
+		newDirection = (Directions)_vm->_linesManager._route->_dir;
 		_vm->_linesManager._route++;
 
 		if (newPosX == -1 && newPosY == -1) {
@@ -1531,12 +1530,12 @@ void ObjectsManager::GOHOME() {
 			else
 				zoneId = _zoneNum;
 			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
-			_vm->_globals._actionDirection = 0;
+			_vm->_globals._actionDirection = DIR_NONE;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_vm->_globals.Compteur = 0;
-			_vm->_globals._oldDirection = -1;
+			_vm->_globals._oldDirection = DIR_NONE;
 			_oldCharacterPosX = getSpriteX(0);
 			_oldCharacterPosY = getSpriteY(0);
 
@@ -1557,36 +1556,36 @@ void ObjectsManager::GOHOME() {
 		}
 		if (_vm->_globals._oldDirection != newDirection)
 			break;
-		if ((newDirection == 3 && newPosX >= v0) || (_vm->_globals._oldDirection == 7 && newPosX <= v0) ||
-		    (_vm->_globals._oldDirection == 1 && newPosY <= v58) || (_vm->_globals._oldDirection == 5 && newPosY >= v58) ||
-		    (_vm->_globals._oldDirection == 2 && newPosX >= v0)  || (_vm->_globals._oldDirection == 8 && newPosX <= v0) ||
-		    (_vm->_globals._oldDirection == 4 && newPosX >= v0) || (_vm->_globals._oldDirection == 6 && newPosX <= v0))
+		if ((newDirection == DIR_RIGHT && newPosX >= oldPosX) || (_vm->_globals._oldDirection == DIR_LEFT && newPosX <= oldPosX) ||
+		    (_vm->_globals._oldDirection == DIR_UP && newPosY <= oldPosY) || (_vm->_globals._oldDirection == DIR_DOWN && newPosY >= oldPosY) ||
+		    (_vm->_globals._oldDirection == DIR_UP_RIGHT && newPosX >= oldPosX)  || (_vm->_globals._oldDirection == DIR_UP_LEFT && newPosX <= oldPosX) ||
+		    (_vm->_globals._oldDirection == DIR_DOWN_RIGHT && newPosX >= oldPosX) || (_vm->_globals._oldDirection == DIR_DOWN_LEFT && newPosX <= oldPosX))
 			loopCond = true;
 	} while (!loopCond);
 	if (loopCond) {
 		computeAndSetSpriteSize();
-		if ((_vm->_globals._oldDirection == 6) || (_vm->_globals._oldDirection == 7) || (_vm->_globals._oldDirection == 8))
+		if ((_vm->_globals._oldDirection == DIR_DOWN_LEFT) || (_vm->_globals._oldDirection == DIR_LEFT) || (_vm->_globals._oldDirection == DIR_UP_LEFT))
 			setFlipSprite(0, true);
 
-		if ((_vm->_globals._oldDirection == 1) || (_vm->_globals._oldDirection == 2) || (_vm->_globals._oldDirection == 3) ||
-		    (_vm->_globals._oldDirection == 4) || (_vm->_globals._oldDirection == 5))
+		if ((_vm->_globals._oldDirection == DIR_UP) || (_vm->_globals._oldDirection == DIR_UP_RIGHT) || (_vm->_globals._oldDirection == DIR_RIGHT) ||
+		    (_vm->_globals._oldDirection == DIR_DOWN_RIGHT) || (_vm->_globals._oldDirection == DIR_DOWN))
 			setFlipSprite(0, false);
 
 		setSpriteX(0, newPosX);
 		setSpriteY(0, newPosY);
-		setSpriteIndex(0, v1);
+		setSpriteIndex(0, oldFrameIdx);
 	} else {
-		if ((_vm->_globals._oldDirection == 6) || (_vm->_globals._oldDirection == 7) || (_vm->_globals._oldDirection == 8))
+		if ((_vm->_globals._oldDirection == DIR_DOWN_LEFT) || (_vm->_globals._oldDirection == DIR_LEFT) || (_vm->_globals._oldDirection == DIR_UP_LEFT))
 			setFlipSprite(0, true);
 
-		if ((_vm->_globals._oldDirection == 1) || (_vm->_globals._oldDirection == 2) || (_vm->_globals._oldDirection == 3) ||
-		    (_vm->_globals._oldDirection == 4) || (_vm->_globals._oldDirection == 5))
+		if ((_vm->_globals._oldDirection == DIR_UP) || (_vm->_globals._oldDirection == DIR_UP_RIGHT) || (_vm->_globals._oldDirection == DIR_RIGHT) ||
+		    (_vm->_globals._oldDirection == DIR_DOWN_RIGHT) || (_vm->_globals._oldDirection == DIR_DOWN))
 			setFlipSprite(0, false);
 		_vm->_globals.Compteur = 0;
 	}
 	_vm->_globals._oldDirection = newDirection;
 	_vm->_globals._oldDirectionSpriteIdx = newDirection + 59;
-	_vm->_globals._oldFrameIndex = v1;
+	_vm->_globals._oldFrameIndex = oldFrameIdx;
 	_oldCharacterPosX = newPosX;
 	_oldCharacterPosY = newPosY;
 }
@@ -1595,48 +1594,61 @@ void ObjectsManager::GOHOME2() {
 	if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL)
 		return;
 
-	int v0 = 2;
+	int realSpeed = 2;
 	if (_vm->_globals._speed == 2)
-		v0 = 4;
+		realSpeed = 4;
 	else if (_vm->_globals._speed == 3)
-		v0 = 6;
+		realSpeed = 6;
 
-	_vm->_globals.j_104 = 0;
+	int countColisionPixel = 0;
 
 	for (;;) {
 		int nexPosX = _vm->_linesManager._route->_X;
 		int newPosY = _vm->_linesManager._route->_Y;
-		int newDirection = _vm->_linesManager._route->_dir;
+		Directions newDirection = (Directions)_vm->_linesManager._route->_dir;
 		_vm->_linesManager._route++;
 
 		if ((nexPosX == -1) && (newPosY == -1))
 			break;
 
-		++_vm->_globals.j_104;
-		if (_vm->_globals.j_104 >= v0) {
+		++countColisionPixel;
+		if (countColisionPixel >= realSpeed) {
 			_vm->_globals._lastDirection = newDirection;
 			setSpriteX(0, nexPosX);
 			setSpriteY(0, newPosY);
-			if (_vm->_globals._lastDirection == 1)
+			switch (_vm->_globals._lastDirection) {
+			case DIR_UP:
 				setSpriteIndex(0, 4);
-			else if (_vm->_globals._lastDirection == 3)
+				break;
+			case DIR_RIGHT:
 				setSpriteIndex(0, 5);
-			else if (_vm->_globals._lastDirection == 5)
+				break;
+			case DIR_DOWN:
 				setSpriteIndex(0, 6);
-			else if (_vm->_globals._lastDirection == 7)
+				break;
+			case DIR_LEFT:
 				setSpriteIndex(0, 7);
+				break;
+			}
 
 			return;
 		}
 	}
-	if (_vm->_globals._lastDirection == 1)
+
+	switch (_vm->_globals._lastDirection) {
+	case DIR_UP:
 		setSpriteIndex(0, 0);
-	else if (_vm->_globals._lastDirection == 3)
+		break;
+	case DIR_RIGHT:
 		setSpriteIndex(0, 1);
-	else if (_vm->_globals._lastDirection == 5)
+		break;
+	case DIR_DOWN:
 		setSpriteIndex(0, 2);
-	else if (_vm->_globals._lastDirection == 7)
+		break;
+	case DIR_LEFT:
 		setSpriteIndex(0, 3);
+		break;
+	}
 
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 }
@@ -1672,7 +1684,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	int zoneLineIdx = 0;
 	int bobZoneIdx;
 	do {
-		bobZoneIdx = (int16)READ_LE_UINT16((uint16 *)ptr + bufId);
+		bobZoneIdx = READ_LE_INT16((uint16 *)ptr + bufId);
 		if (bobZoneIdx != -1) {
 			_vm->_linesManager.addZoneLine(
 			    zoneLineIdx,
@@ -1688,9 +1700,9 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	} while (bobZoneIdx != -1);
 
 	for (int i = 1; i <= 100; i++) {
-		_vm->_linesManager.ZONEP[i]._destX = (int16)READ_LE_UINT16((uint16 *)ptr + bufId);
-		_vm->_linesManager.ZONEP[i]._destY = (int16)READ_LE_UINT16((uint16 *)ptr + bufId + 1);
-		_vm->_linesManager.ZONEP[i]._spriteIndex = (int16)READ_LE_UINT16((uint16 *)ptr + bufId + 2);
+		_vm->_linesManager.ZONEP[i]._destX = READ_LE_INT16((uint16 *)ptr + bufId);
+		_vm->_linesManager.ZONEP[i]._destY = READ_LE_INT16((uint16 *)ptr + bufId + 1);
+		_vm->_linesManager.ZONEP[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + bufId + 2);
 		bufId += 3;
 	}
 
@@ -1894,12 +1906,12 @@ void ObjectsManager::handleLeftButton() {
 		if (getSpriteY(0) > 374 && getSpriteY(0) <= 410) {
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			setSpriteIndex(0, _vm->_globals._oldDirectionSpriteIdx);
-			_vm->_globals._actionDirection = 0;
+			_vm->_globals._actionDirection = DIR_NONE;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_vm->_globals.Compteur = 0;
-			_vm->_globals._oldDirection = -1;
+			_vm->_globals._oldDirection = DIR_NONE;
 		} else {
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
 			if (_vm->_linesManager._route != (RouteItem *)g_PTRNUL)
@@ -1908,7 +1920,7 @@ void ObjectsManager::handleLeftButton() {
 			_oldCharacterPosY = getSpriteY(0);
 			_vm->_globals.Compteur = 0;
 			if (_vm->_linesManager._route != (RouteItem *)g_PTRNUL || oldRoute == _vm->_linesManager._route) {
-				_vm->_globals._oldDirection = -1;
+				_vm->_globals._oldDirection = DIR_NONE;
 			} else {
 				_vm->_linesManager._route = oldRoute;
 			}
@@ -1922,7 +1934,7 @@ void ObjectsManager::handleLeftButton() {
 			_oldCharacterPosY = getSpriteY(0);
 			_vm->_globals.Compteur = 0;
 			if (_vm->_linesManager._route != (RouteItem *)g_PTRNUL || oldRoute == _vm->_linesManager._route)
-				_vm->_globals._oldDirection = -1;
+				_vm->_globals._oldDirection = DIR_NONE;
 			else
 				_vm->_linesManager._route = oldRoute;
 		}
@@ -2077,7 +2089,7 @@ void ObjectsManager::clearScreen() {
 	_forceZoneFl = true;
 	_changeVerbFl = false;
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
-	_vm->_globals._oldDirection = -1;
+	_vm->_globals._oldDirection = DIR_NONE;
 	_vm->_graphicsManager.RESET_SEGMENT_VESA();
 }
 
@@ -2423,16 +2435,16 @@ void ObjectsManager::initBorder(int zoneIdx) {
 
 	if (!zoneIdx)
 		_vm->_eventsManager._mouseCursorId = 0;
-	else if (zoneIdx == 32)
-		_vm->_eventsManager._mouseCursorId = 16;
-	else if (zoneIdx == 30)
-		_vm->_eventsManager._mouseCursorId = 2;
-	else if (zoneIdx == 31)
-		_vm->_eventsManager._mouseCursorId = 3;
 	else if (zoneIdx >= 1 && zoneIdx <= 28)
 		_vm->_eventsManager._mouseCursorId = 8;
 	else if (zoneIdx == 29)
 		_vm->_eventsManager._mouseCursorId = 1;
+	else if (zoneIdx == 30)
+		_vm->_eventsManager._mouseCursorId = 2;
+	else if (zoneIdx == 31)
+		_vm->_eventsManager._mouseCursorId = 3;
+	else if (zoneIdx == 32)
+		_vm->_eventsManager._mouseCursorId = 16;
 
 	if (zoneIdx >= 1 && zoneIdx <= 28 && !_vm->_globals._inventory[zoneIdx]) {
 		_vm->_eventsManager._mouseCursorId = 0;
@@ -2554,7 +2566,7 @@ void ObjectsManager::OPTI_OBJET() {
 
 		if (opcodeType == 1 || opcodeType == 4)
 			++lastOpcodeResult;
-		if (!opcodeType || opcodeType == 5)
+		else if (!opcodeType || opcodeType == 5)
 			break;
 	}
 
@@ -2695,8 +2707,8 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 	if (!READ_LE_UINT16(_vm->_talkManager._characterAnim + startPos + 4))
 		return;
 
-	int xp = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + startPos);
-	int yp = (int16)READ_LE_UINT16(_vm->_talkManager._characterAnim + startPos + 2);
+	int xp = READ_LE_INT16(_vm->_talkManager._characterAnim + startPos);
+	int yp = READ_LE_INT16(_vm->_talkManager._characterAnim + startPos + 2);
 	int spriteIndex = _vm->_talkManager._characterAnim[startPos + 8];
 
 	_vm->_graphicsManager.fastDisplay(_vm->_talkManager._characterSprite, xp, yp, spriteIndex);
@@ -3054,7 +3066,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 	}
 	if (!OBSSEUL) {
 		for (int idx = 0; idx < 500; ++idx)
-			_vm->_globals._spriteSize[idx] = (int16)READ_LE_UINT16((uint16 *)ptr + idx);
+			_vm->_globals._spriteSize[idx] = READ_LE_INT16((uint16 *)ptr + idx);
 
 		_vm->_globals.resetCache();
 
@@ -3071,11 +3083,11 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			int curDataCacheId = 60;
 			byte *curDataPtr = ptr + 1000;
 			for (int cacheIdx = 0; cacheIdx <= 21; cacheIdx++) {
-				int curSpriteId = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataCacheId);
+				int curSpriteId = READ_LE_INT16(curDataPtr + 2 * curDataCacheId);
 				_vm->_globals.Cache[cacheIdx]._spriteIndex = curSpriteId;
-				_vm->_globals.Cache[cacheIdx]._x = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataCacheId + 2);
-				_vm->_globals.Cache[cacheIdx]._y = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataCacheId + 4);
-				_vm->_globals.Cache[cacheIdx].field14 = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataCacheId + 8);
+				_vm->_globals.Cache[cacheIdx]._x = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 2);
+				_vm->_globals.Cache[cacheIdx]._y = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 4);
+				_vm->_globals.Cache[cacheIdx].field14 = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 8);
 
 				if (!_vm->_globals.CACHE_BANQUE[1]) {
 					_vm->_globals.Cache[cacheIdx]._useCount = 0;
@@ -3102,21 +3114,21 @@ void ObjectsManager::INILINK(const Common::String &file) {
 			int lineDataIdx = 0;
 			int curLineIdx = 0;
 			_vm->_linesManager.resetLinesNumb();
-			int curDirection;
+			Directions curDirection;
 			do {
-				curDirection = (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx);
-				if (curDirection != -1) {
+				curDirection = (Directions)READ_LE_INT16(curDataPtr + 2 * lineDataIdx);
+				if (curDirection != DIR_NONE) {
 					_vm->_linesManager.addLine(
 					    curLineIdx,
 					    curDirection,
-					    (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx + 2),
-					    (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx + 4),
-					    (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx + 6),
-					    (int16)READ_LE_UINT16(curDataPtr + 2 * lineDataIdx + 8));
+					    READ_LE_INT16(curDataPtr + 2 * lineDataIdx + 2),
+					    READ_LE_INT16(curDataPtr + 2 * lineDataIdx + 4),
+					    READ_LE_INT16(curDataPtr + 2 * lineDataIdx + 6),
+					    READ_LE_INT16(curDataPtr + 2 * lineDataIdx + 8));
 				}
 				lineDataIdx += 5;
 				++curLineIdx;
-			} while (curDirection != -1);
+			} while (curDirection != DIR_NONE);
 			_vm->_linesManager.initRoute();
 		}
 	}
@@ -3146,14 +3158,14 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				int curLineIdx = 0;
 				int v28;
 				do {
-					v28 = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataIdx);
+					v28 = READ_LE_INT16(curDataPtr + 2 * curDataIdx);
 					if (v28 != -1) {
 						_vm->_linesManager.addZoneLine(
 						    curLineIdx,
-						    (int16)READ_LE_UINT16(curDataPtr + 2 * curDataIdx + 2),
-						    (int16)READ_LE_UINT16(curDataPtr + 2 * curDataIdx + 4),
-						    (int16)READ_LE_UINT16(curDataPtr + 2 * curDataIdx + 6),
-						    (int16)READ_LE_UINT16(curDataPtr + 2 * curDataIdx + 8),
+						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 2),
+						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 4),
+						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 6),
+						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 8),
 						    v28);
 						_vm->_linesManager.ZONEP[v28]._enabledFl = true;
 					}
@@ -3161,9 +3173,9 @@ void ObjectsManager::INILINK(const Common::String &file) {
 					++curLineIdx;
 				} while (v28 != -1);
 				for (int i = 1; i <= 100; i++) {
-					_vm->_linesManager.ZONEP[i]._destX = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataIdx);
-					_vm->_linesManager.ZONEP[i]._destY = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataIdx + 2);
-					_vm->_linesManager.ZONEP[i]._spriteIndex = (int16)READ_LE_UINT16(curDataPtr + 2 * curDataIdx + 4);
+					_vm->_linesManager.ZONEP[i]._destX = READ_LE_INT16(curDataPtr + 2 * curDataIdx);
+					_vm->_linesManager.ZONEP[i]._destY = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 2);
+					_vm->_linesManager.ZONEP[i]._spriteIndex = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 4);
 					curDataIdx += 3;
 				}
 
@@ -3183,7 +3195,7 @@ void ObjectsManager::INILINK(const Common::String &file) {
 				}
 				int dep = 1010;
 				for (int i = 1; i <= 100; i++) {
-					_vm->_linesManager.ZONEP[i].field12 = (int16)READ_LE_UINT16(v22 + dep);
+					_vm->_linesManager.ZONEP[i].field12 = READ_LE_INT16(v22 + dep);
 					dep += 2;
 				}
 				_vm->_linesManager.CARRE_ZONE();
@@ -3706,7 +3718,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		stopBobAnimation(3);
 		_vm->_globals.NOT_VERIF = true;
 		_oldCharacterPosX = getSpriteX(0);
-		_vm->_globals._oldDirection = -1;
+		_vm->_globals._oldDirection = DIR_NONE;
 		_vm->_globals.Compteur = 0;
 		_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 		_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), 330, 345);
@@ -3823,7 +3835,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_eventsManager._mouseSpriteId = 4;
 	_oldCharacterPosX = _characterPos.x;
 	_oldCharacterPosY = _characterPos.y;
-	_vm->_globals._oldDirection = -1;
+	_vm->_globals._oldDirection = DIR_NONE;
 	_vm->_globals.Compteur = 0;
 
 	for (int idx = 0; idx < 5; ++idx)

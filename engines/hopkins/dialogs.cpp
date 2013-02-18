@@ -320,7 +320,7 @@ void DialogsManager::showInventory() {
 		_vm->_eventsManager.getMouseY();
 		_vm->_eventsManager.VBL();
 	}
-	_vm->_dialogsManager._inventWin1 = g_PTRNUL;
+	_inventWin1 = g_PTRNUL;
 
 	bool loopFl;
 	do {
@@ -352,18 +352,18 @@ void DialogsManager::showInventory() {
 			error("Error opening file - %s", filename.c_str());
 
 		size_t filesize = f.size();
-		_vm->_dialogsManager._inventWin1 = _vm->_globals.allocMemory(filesize);
-		_vm->_fileManager.readStream(f, _vm->_dialogsManager._inventWin1, filesize);
+		_inventWin1 = _vm->_globals.allocMemory(filesize);
+		_vm->_fileManager.readStream(f, _inventWin1, filesize);
 		f.close();
 
 		_inventBuf2 = _vm->_fileManager.loadFile("INVENT2.SPR");
 
 		_inventX = _vm->_graphicsManager._scrollOffset + 152;
 		_inventY = 114;
-		_inventWidth = _vm->_objectsManager.getWidth(_vm->_dialogsManager._inventWin1, 0);
-		_inventHeight = _vm->_objectsManager.getHeight(_vm->_dialogsManager._inventWin1, 0);
+		_inventWidth = _vm->_objectsManager.getWidth(_inventWin1, 0);
+		_inventHeight = _vm->_objectsManager.getHeight(_inventWin1, 0);
 
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX + 300, 414, 0, 0, 0, false);
+		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _inventWin1, _inventX + 300, 414, 0, 0, 0, false);
 		int curPosY = 0;
 		int inventCount = 0;
 		for (int inventLine = 1; inventLine <= 5; inventLine++) {
@@ -382,7 +382,7 @@ void DialogsManager::showInventory() {
 			};
 			curPosY += 38;
 		}
-		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
+		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 		_vm->_eventsManager._curMouseButton = 0;
 		int newInventoryItem = 0;
 
@@ -433,7 +433,7 @@ void DialogsManager::showInventory() {
 
 					_vm->_globals._exitId = 0;
 					_inventBuf2 = _vm->_globals.freeMemory(_inventBuf2);
-					_vm->_dialogsManager._inventWin1 = _vm->_globals.freeMemory(_vm->_dialogsManager._inventWin1);
+					_inventWin1 = _vm->_globals.freeMemory(_inventWin1);
 					loopFl = true;
 					break;
 				} else
@@ -455,15 +455,15 @@ void DialogsManager::showInventory() {
 		_vm->_objectsManager.BOBTOUS = true;
 	}
 
-	_vm->_dialogsManager._inventWin1 = _vm->_globals.freeMemory(_vm->_dialogsManager._inventWin1);
+	_inventWin1 = _vm->_globals.freeMemory(_inventWin1);
 	_inventBuf2 = _vm->_globals.freeMemory(_inventBuf2);
 
 	if (_vm->_eventsManager._mouseCursorId == 1)
 		showOptionsDialog();
 	else if (_vm->_eventsManager._mouseCursorId == 3)
-		_vm->_dialogsManager.showLoadGame();
+		showLoadGame();
 	else if (_vm->_eventsManager._mouseCursorId == 2)
-		_vm->_dialogsManager.showSaveGame();
+		showSaveGame();
 
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(4);
@@ -535,21 +535,21 @@ void DialogsManager::testDialogOpening() {
 
 	switch (key) {
 	case KEY_INVENTORY:
-		_vm->_dialogsManager.showInventory();
+		showInventory();
 		break;
 	case KEY_OPTIONS:
 		_vm->_graphicsManager._scrollStatus = 1;
-		_vm->_dialogsManager.showOptionsDialog();
+		showOptionsDialog();
 		_vm->_graphicsManager._scrollStatus = 0;
 		break;
 	case KEY_LOAD:
 		_vm->_graphicsManager._scrollStatus = 1;
-		_vm->_dialogsManager.showLoadGame();
+		showLoadGame();
 		_vm->_graphicsManager._scrollStatus = 0;
 		break;
 	case KEY_SAVE:
 		_vm->_graphicsManager._scrollStatus = 1;
-		_vm->_dialogsManager.showSaveGame();
+		showSaveGame();
 		_vm->_graphicsManager._scrollStatus = 0;
 		break;
 	default:
