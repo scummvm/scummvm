@@ -71,7 +71,7 @@ private:
 	int _oldSoundNumber;
 
 	VoiceItem _voice[VOICE_COUNT];
-	SwavItem Swav[SWAV_COUNT];
+	SwavItem _sWav[SWAV_COUNT];
 	SoundItem _sound[SOUND_COUNT];
 	MusicItem _music;
 
@@ -81,18 +81,16 @@ private:
 	void stopMusic();
 	void delMusic();
 	bool checkVoiceStatus(int voiceIndex);
+	bool loadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item);
 	void stopVoice(int voiceIndex);
 	void playVoice();
 	void delWav(int wavIndex);
 	void checkVoiceActivity();
 	Common::String setExtension(const Common::String &str, const Common::String &ext);
 	Audio::RewindableAudioStream *makeSoundStream(Common::SeekableReadStream *stream);
-
-	void SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength);
-	bool DEL_SAMPLE_SDL(int wavIndex);
-	bool SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item);
-	void LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, bool freeSample);
-	void PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex);
+	bool removeWavSample(int wavIndex);
+	void loadWavSample(int wavIndex, const Common::String &filename, bool freeSample);
+	void playWavSample(int voiceIndex, int wavIndex);
 
 public:
 	bool _musicOffFl;
@@ -127,9 +125,9 @@ public:
 	void syncSoundSettings();
 	bool mixVoice(int voiceId, int voiceMode);
 
-	void MODSetMusicVolume(int volume);
-	void MODSetSampleVolume();
-	void MODSetVoiceVolume();
+	void setMODMusicVolume(int volume);
+	void setMODSampleVolume();
+	void setMODVoiceVolume();
 
 	void loadWav(const Common::String &file, int wavIndex);
 	void playWav(int wavIndex);

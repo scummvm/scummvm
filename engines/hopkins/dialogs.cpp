@@ -91,7 +91,7 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._musicVolume = 12;
-					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
+					_vm->_soundManager.setMODMusicVolume(_vm->_soundManager._musicVolume);
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
@@ -103,7 +103,7 @@ void DialogsManager::showOptionsDialog() {
 					else
 						_vm->_soundManager._musicVolume = 0;
 
-					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
+					_vm->_soundManager.setMODMusicVolume(_vm->_soundManager._musicVolume);
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
@@ -115,7 +115,7 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._soundVolume = 16;
-					_vm->_soundManager.MODSetSampleVolume();
+					_vm->_soundManager.setMODSampleVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
@@ -126,7 +126,7 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._soundVolume = 0;
-					_vm->_soundManager.MODSetSampleVolume();
+					_vm->_soundManager.setMODSampleVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
@@ -140,7 +140,7 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._voiceVolume = 16;
-					_vm->_soundManager.MODSetVoiceVolume();
+					_vm->_soundManager.setMODVoiceVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
@@ -151,7 +151,7 @@ void DialogsManager::showOptionsDialog() {
 						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._voiceVolume = 0;
-					_vm->_soundManager.MODSetVoiceVolume();
+					_vm->_soundManager.setMODVoiceVolume();
 
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
@@ -171,10 +171,10 @@ void DialogsManager::showOptionsDialog() {
 						if (mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 489 && mousePos.y <= 138) {
 							if (_vm->_soundManager._musicOffFl) {
 								_vm->_soundManager._musicOffFl = false;
-								_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
+								_vm->_soundManager.setMODMusicVolume(_vm->_soundManager._musicVolume);
 							} else {
 								_vm->_soundManager._musicOffFl = true;
-								_vm->_soundManager.MODSetMusicVolume(0);
+								_vm->_soundManager.setMODMusicVolume(0);
 							}
 
 							_vm->_soundManager.updateScummVMSoundSettings();

@@ -208,7 +208,7 @@ SoundManager::SoundManager() {
 	for (int i = 0; i < VOICE_COUNT; ++i)
 		Common::fill((byte *)&_voice[i], (byte *)&_voice[i] + sizeof(VoiceItem), 0);
 	for (int i = 0; i < SWAV_COUNT; ++i)
-		Common::fill((byte *)&Swav[i], (byte *)&Swav[i] + sizeof(SwavItem), 0);
+		Common::fill((byte *)&_sWav[i], (byte *)&_sWav[i] + sizeof(SwavItem), 0);
 	for (int i = 0; i < SOUND_COUNT; ++i)
 		Common::fill((byte *)&_sound[i], (byte *)&_sound[i] + sizeof(SoundItem), 0);
 	Common::fill((byte *)&_music, (byte *)&_music + sizeof(MusicItem), 0);
@@ -365,7 +365,7 @@ void SoundManager::stopSound() {
 		delWav(_currentSoundIndex);
 
 	for (int i = 1; i <= 48; ++i)
-		DEL_SAMPLE_SDL(i);
+		removeWavSample(i);
 
 	if (_modPlayingFl) {
 		stopMusic();
@@ -577,13 +577,16 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 		catLen = 0;
 	}
 
-	SDL_LVOICE(filename, catPos, catLen);
+	if (!loadVoice(filename, catPos, catLen, _sWav[20]))
+		error("Couldn't load sample: %s", filename.c_str());
+
+	_sWav[20]._active = true;
 
 	// Reduce music volume during speech
 	oldMusicVol = _musicVolume;
 	if (!_musicOffFl && _musicVolume > 2) {
 		_musicVolume = (signed int)((long double)_musicVolume - (long double)_musicVolume / 100.0 * 45.0);
-		MODSetMusicVolume(_musicVolume);
+		setMODMusicVolume(_musicVolume);
 	}
 
 	playVoice();
@@ -606,12 +609,12 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 
 
 	stopVoice(2);
-	DEL_SAMPLE_SDL(20);
+	removeWavSample(20);
 
 	// Speech is over, set the music volume back to normal
 	_musicVolume = oldMusicVol;
 	if (!_musicOffFl && _musicVolume > 2) {
-		MODSetMusicVolume(_musicVolume);
+		setMODMusicVolume(_musicVolume);
 	}
 	_vm->_eventsManager._escKeyFl = false;
 	_skipRefreshFl = false;
@@ -625,7 +628,7 @@ void SoundManager::removeSample(int soundIndex) {
 		stopVoice(2);
 	if (checkVoiceStatus(3))
 		stopVoice(3);
-	DEL_SAMPLE_SDL(soundIndex);
+	removeWavSample(soundIndex);
 	_sound[soundIndex]._active = false;
 }
 
@@ -657,29 +660,29 @@ void SoundManager::directPlayWav(const Common::String &file) {
 	playWav(1);
 }
 
-void SoundManager::MODSetSampleVolume() {
+void SoundManager::setMODSampleVolume() {
 	for (int idx = 0; idx < SWAV_COUNT; ++idx) {
-		if (idx != 20 && Swav[idx]._active) {
+		if (idx != 20 && _sWav[idx]._active) {
 			int volume = _soundVolume * 255 / 16;
-			_vm->_mixer->setChannelVolume(Swav[idx]._soundHandle, volume);
+			_vm->_mixer->setChannelVolume(_sWav[idx]._soundHandle, volume);
 		}
 	}
 }
 
-void SoundManager::MODSetVoiceVolume() {
-	if (Swav[20]._active) {
+void SoundManager::setMODVoiceVolume() {
+	if (_sWav[20]._active) {
 		int volume = _voiceVolume * 255 / 16;
-		_vm->_mixer->setChannelVolume(Swav[20]._soundHandle, volume);
+		_vm->_mixer->setChannelVolume(_sWav[20]._soundHandle, volume);
 	}
 }
 
-void SoundManager::MODSetMusicVolume(int volume) {
+void SoundManager::setMODMusicVolume(int volume) {
 	if (_vm->_mixer->isSoundHandleActive(_musicHandle))
 		_vm->_mixer->setChannelVolume(_musicHandle, volume * 255 / 16);
 }
 
 void SoundManager::loadSample(int wavIndex, const Common::String &file) {
-	LOAD_SAMPLE2_SDL(wavIndex, file, 0);
+	loadWavSample(wavIndex, file, false);
 	_sound[wavIndex]._active = true;
 }
 
@@ -697,17 +700,17 @@ void SoundManager::playSample(int wavIndex, int voiceMode) {
 	case 9: 
 		if (checkVoiceStatus(1))
 			stopVoice(1);
-		PLAY_SAMPLE_SDL(1, wavIndex);
+		playWavSample(1, wavIndex);
 		break;
 	case 6:
 		if (checkVoiceStatus(2))
 			stopVoice(1);
-		PLAY_SAMPLE_SDL(2, wavIndex);
+		playWavSample(2, wavIndex);
 		break;
 	case 7:
 		if (checkVoiceStatus(3))
 			stopVoice(1);
-		PLAY_SAMPLE_SDL(3, wavIndex);
+		playWavSample(3, wavIndex);
 		break;
 	default:
 		break;
@@ -717,7 +720,7 @@ void SoundManager::playSample(int wavIndex, int voiceMode) {
 bool SoundManager::checkVoiceStatus(int voiceIndex) {
 	if (_voice[voiceIndex]._status) {
 		int wavIndex = _voice[voiceIndex]._wavIndex;
-		if (Swav[wavIndex]._audioStream != NULL && Swav[wavIndex]._audioStream->endOfStream())
+		if (_sWav[wavIndex]._audioStream != NULL && _sWav[wavIndex]._audioStream->endOfStream())
 			stopVoice(voiceIndex);
 	}
 
@@ -728,48 +731,40 @@ void SoundManager::stopVoice(int voiceIndex) {
 	if (_voice[voiceIndex]._status) {
 		_voice[voiceIndex]._status = false;
 		int wavIndex = _voice[voiceIndex]._wavIndex;
-		if (Swav[wavIndex]._active) {
-			if (Swav[wavIndex]._freeSampleFl)
-				DEL_SAMPLE_SDL(wavIndex);
+		if (_sWav[wavIndex]._active) {
+			if (_sWav[wavIndex]._freeSampleFl)
+				removeWavSample(wavIndex);
 		}
 	}
 	_voice[voiceIndex]._status = false;
 }
 
-void SoundManager::SDL_LVOICE(Common::String filename, size_t filePosition, size_t entryLength) {
-	if (!SDL_LoadVoice(filename, filePosition, entryLength, Swav[20]))
-		error("Couldn't load the sample %s", filename.c_str());
-
-	Swav[20]._active = true;
-}
-
 void SoundManager::playVoice() {
-	if (!Swav[20]._active)
+	if (!_sWav[20]._active)
 		error("Bad handle");
 
 	if (!_voice[2]._status) {
 		int wavIndex = _voice[2]._wavIndex;
-		if (Swav[wavIndex]._active && Swav[wavIndex]._freeSampleFl)
-			DEL_SAMPLE_SDL(wavIndex);
+		if (_sWav[wavIndex]._active && _sWav[wavIndex]._freeSampleFl)
+			removeWavSample(wavIndex);
 	}
 
-	PLAY_SAMPLE_SDL(2, 20);
+	playWavSample(2, 20);
 }
 
-bool SoundManager::DEL_SAMPLE_SDL(int wavIndex) {
-	if (Swav[wavIndex]._active) {
-		_vm->_mixer->stopHandle(Swav[wavIndex]._soundHandle);
-		delete Swav[wavIndex]._audioStream;
-		Swav[wavIndex]._audioStream = NULL;
-		Swav[wavIndex]._active = false;
-
-		return true;
-	} else {
+bool SoundManager::removeWavSample(int wavIndex) {
+	if (!_sWav[wavIndex]._active)
 		return false;
-	}
+
+	_vm->_mixer->stopHandle(_sWav[wavIndex]._soundHandle);
+	delete _sWav[wavIndex]._audioStream;
+	_sWav[wavIndex]._audioStream = NULL;
+	_sWav[wavIndex]._active = false;
+
+	return true;
 }
 
-bool SoundManager::SDL_LoadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item) {
+bool SoundManager::loadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item) {
 	Common::File f;
 	if (!f.open(filename)) {
 		// Fallback from WAV to APC...
@@ -784,29 +779,29 @@ bool SoundManager::SDL_LoadVoice(const Common::String &filename, size_t fileOffs
 	return true;
 }
 
-void SoundManager::LOAD_SAMPLE2_SDL(int wavIndex, const Common::String &filename, bool freeSample) {
-	if (Swav[wavIndex]._active)
-		DEL_SAMPLE_SDL(wavIndex);
+void SoundManager::loadWavSample(int wavIndex, const Common::String &filename, bool freeSample) {
+	if (_sWav[wavIndex]._active)
+		removeWavSample(wavIndex);
 
-	SDL_LoadVoice(filename, 0, 0, Swav[wavIndex]);
-	Swav[wavIndex]._active = true;
-	Swav[wavIndex]._freeSampleFl = freeSample;
+	loadVoice(filename, 0, 0, _sWav[wavIndex]);
+	_sWav[wavIndex]._active = true;
+	_sWav[wavIndex]._freeSampleFl = freeSample;
 }
 
 void SoundManager::loadWav(const Common::String &file, int wavIndex) {
-	LOAD_SAMPLE2_SDL(wavIndex, file, 1);
+	loadWavSample(wavIndex, file, true);
 }
 
 void SoundManager::playWav(int wavIndex) {
 	if (!_soundFl && !_soundOffFl) {
 		_soundFl = true;
 		_currentSoundIndex = wavIndex;
-		PLAY_SAMPLE_SDL(1, wavIndex);
+		playWavSample(1, wavIndex);
 	}
 }
 
 void SoundManager::delWav(int wavIndex) {
-	if (DEL_SAMPLE_SDL(wavIndex)) {
+	if (removeWavSample(wavIndex)) {
 		if (checkVoiceStatus(1))
 			stopVoice(1);
 
@@ -815,12 +810,12 @@ void SoundManager::delWav(int wavIndex) {
 	}
 }
 
-void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
-	if (!Swav[wavIndex]._active)
+void SoundManager::playWavSample(int voiceIndex, int wavIndex) {
+	if (!_sWav[wavIndex]._active)
 		warning("Bad handle");
 
-	if (_voice[voiceIndex]._status && Swav[wavIndex]._active && Swav[wavIndex]._freeSampleFl)
-		DEL_SAMPLE_SDL(wavIndex);
+	if (_voice[voiceIndex]._status && _sWav[wavIndex]._active && _sWav[wavIndex]._freeSampleFl)
+		removeWavSample(wavIndex);
 
 	_voice[voiceIndex]._status = true;
 	_voice[voiceIndex]._wavIndex = wavIndex;
@@ -830,13 +825,13 @@ void SoundManager::PLAY_SAMPLE_SDL(int voiceIndex, int wavIndex) {
 	// If the handle is still in use, stop it. Otherwise we'll lose the
 	// handle to that sound. This can currently happen (but probably
 	// shouldn't) when skipping a movie.
-	if (_vm->_mixer->isSoundHandleActive(Swav[wavIndex]._soundHandle))
-		  _vm->_mixer->stopHandle(Swav[wavIndex]._soundHandle);
+	if (_vm->_mixer->isSoundHandleActive(_sWav[wavIndex]._soundHandle))
+		  _vm->_mixer->stopHandle(_sWav[wavIndex]._soundHandle);
 
 	// Start the voice playing
-	Swav[wavIndex]._audioStream->rewind();
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &Swav[wavIndex]._soundHandle,
-		Swav[wavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
+	_sWav[wavIndex]._audioStream->rewind();
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sWav[wavIndex]._soundHandle,
+		_sWav[wavIndex]._audioStream, -1, volume, 0, DisposeAfterUse::NO);
 }
 
 void SoundManager::syncSoundSettings() {
@@ -856,9 +851,9 @@ void SoundManager::syncSoundSettings() {
 
 	// Update any active sounds
 	for (int idx = 0; idx < SWAV_COUNT; ++idx) {
-		if (Swav[idx]._active) {
+		if (_sWav[idx]._active) {
 			int volume = (idx == 20) ? (_voiceVolume * 255 / 16) : (_soundVolume * 255 / 16);
-			_vm->_mixer->setChannelVolume(Swav[idx]._soundHandle, volume);
+			_vm->_mixer->setChannelVolume(_sWav[idx]._soundHandle, volume);
 		}
 	}
 	if (_vm->_mixer->isSoundHandleActive(_musicHandle)) {
