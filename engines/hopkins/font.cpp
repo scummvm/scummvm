@@ -300,10 +300,10 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 					int ptrc = 0;
 					for (int curIdx = 0; curIdx < _textSortArray[i] - 1; curIdx++) {
 						Common::String &line = _text[idx]._lines[i];
-						byte curChar = (curIdx >= (int)line.size()) ? '\0' : line.c_str()[curIdx];
-						if (curChar <= 31)
-							curChar = ' ';
-						ptrc += _vm->_objectsManager.getWidth(_font, (byte)curChar - 32);
+						byte curChar2 = (curIdx >= (int)line.size()) ? '\0' : line.c_str()[curIdx];
+						if (curChar2 <= 31)
+							curChar2 = ' ';
+						ptrc += _vm->_objectsManager.getWidth(_font, (byte)curChar2 - 32);
 					}
 					_textSortArray[i] = ptrc;
 				}
