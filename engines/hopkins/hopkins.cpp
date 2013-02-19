@@ -2549,6 +2549,8 @@ void HopkinsEngine::BTOCEAN() {
 		case DIR_DOWN:
 			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, false);
 			break;
+		default:
+			break;
 		}
 
 		_globals._oceanDirection = DIR_LEFT;
@@ -2583,6 +2585,8 @@ void HopkinsEngine::BTOCEAN() {
 			break;
 		case DIR_LEFT:
 			_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
+			break;
+		default:
 			break;
 		}
 		_globals._oceanDirection = DIR_RIGHT;
@@ -2651,6 +2655,8 @@ void HopkinsEngine::BTOCEAN() {
 			if (!displAnim)
 				_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
 			break;
+		default:
+			break;
 		}
 		_globals._oceanDirection = DIR_UP;
 		_globals._exitId = 3;
@@ -2702,6 +2708,8 @@ void HopkinsEngine::BTOCEAN() {
 				}
 			}
 			break;
+		default:
+			break;
 		}
 		_globals._oceanDirection = DIR_DOWN;
 		_globals._exitId = 4;
@@ -2722,6 +2730,8 @@ void HopkinsEngine::OCEAN_HOME() {
 		break;
 	case DIR_LEFT:
 		_objectsManager.setSpriteIndex(0, 18);
+		break;
+	default:
 		break;
 	}
 }
@@ -2774,6 +2784,8 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, Di
 	case DIR_LEFT:
 		_objectsManager._characterPos.x = 415;
 		_objectsManager._startSpriteIndex = 18;
+		break;
+	default:
 		break;
 	}
 

@@ -573,6 +573,8 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 			curY -= 2;
 			curX -= 2;
 			break;
+		default:
+			break;
 		}
 	}
 	int v41 = curX;
@@ -765,6 +767,8 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 			NV_LIGNEOFS = v35;
 			NV_POSI = v7;
 			return true;
+			break;
+		default:
 			break;
 		}
 	}
@@ -1071,6 +1075,8 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a
 			case DIR_UP_LEFT:
 				--NVPY;
 				--NVPX;
+				break;
+			default:
 				break;
 			}
 		}
@@ -1590,6 +1596,8 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 		case DIR_UP_LEFT:
 			curY -= 2;
 			curX -= 2;
+			break;
+		default:
 			break;
 		}
 	}

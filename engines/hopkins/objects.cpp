@@ -1629,6 +1629,8 @@ void ObjectsManager::GOHOME2() {
 			case DIR_LEFT:
 				setSpriteIndex(0, 7);
 				break;
+			default:
+				break;
 			}
 
 			return;
@@ -1647,6 +1649,8 @@ void ObjectsManager::GOHOME2() {
 		break;
 	case DIR_LEFT:
 		setSpriteIndex(0, 3);
+		break;
+	default:
 		break;
 	}
 
