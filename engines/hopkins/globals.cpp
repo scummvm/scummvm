@@ -126,15 +126,15 @@ Globals::Globals() {
 	_menuDisplayType = 0;
 	_sortedDisplayCount = 0;
 	NOT_VERIF = false;
-	PERSO_TYPE = 0;
+	_characterType = 0;
 	GOACTION = false;
 	Compteur = 0;
 	_actionDirection = DIR_NONE;
 
-	Credit_bx = -1;
-	Credit_bx1 = -1;
-	Credit_by = -1;
-	Credit_by1 = -1;
+	_creditsStartX = -1;
+	_creditsEndX = -1;
+	_creditsStartY = -1;
+	_creditsEndY = -1;
 	_creditsPosY = 0;
 	_creditsLineNumb = 0;
 	memset(_creditsItem, 0, 12000);
@@ -269,10 +269,10 @@ void Globals::clearAll() {
 }
 
 void Globals::loadCharacterData() {
-	assert(PERSO_TYPE >= 0 && PERSO_TYPE <= 2);
+	assert(_characterType >= 0 && _characterType <= 2);
 
 	const int *srcList[] = { HOPKINS_PERSO_0, HOPKINS_PERSO_1, HOPKINS_PERSO_2 };
-	const int *srcP = srcList[PERSO_TYPE];
+	const int *srcP = srcList[_characterType];
 
 	for (int idx = 0; idx < 240 / 4; ++idx) {
 		Hopkins[idx].field0 = *srcP++;

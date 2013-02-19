@@ -269,6 +269,7 @@ public:
 	int _sortedDisplayCount;
 	int _oldMouseZoneId;
 	int _oldMouseX, _oldMouseY;
+	int _characterType;
 	uint _speed;
 	byte *_answerBuffer;
 	Sauvegarde *_saveData;
@@ -280,10 +281,10 @@ public:
 	int _creditsLineNumb;
 	int _creditsStep;
 	int _creditsPosY;
-	int Credit_bx;
-	int Credit_bx1;
-	int Credit_by;
-	int Credit_by1;
+	int _creditsStartX;
+	int _creditsEndX;
+	int _creditsStartY;
+	int _creditsEndY;
 
 	int _menuSpeed;
 	int _menuSoundOff;
@@ -310,7 +311,6 @@ public:
 	BqeAnimItem Bqe_Anim[35];
 	byte *SPRITE_ECRAN;
 	byte *PERSO;
-	int PERSO_TYPE;
 	bool NOT_VERIF;
 	ObjetWItem ObjetW[300];
 	int NUM_FICHIER_OBJ;

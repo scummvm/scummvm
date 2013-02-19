@@ -2497,7 +2497,7 @@ int LinesManager::TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx,
 			int posY = lineData[2 * (lineDataEndIdx - 1) + 1];
 			if (Ligne[idx]._directionRouteInc == DIR_DOWN || Ligne[idx]._directionRouteInc == DIR_UP)
 				posY += 2;
-			if (Ligne[idx]._directionRouteInc == DIR_RIGHT || Ligne[idx]._directionRouteDec == 7)
+			if (Ligne[idx]._directionRouteInc == DIR_RIGHT || Ligne[idx]._directionRouteDec == DIR_LEFT)
 				posX += 2;
 			if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _lastLine))
 				error("Error in test line");
@@ -2511,7 +2511,7 @@ int LinesManager::TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx,
 			int posY = lineData[1];
 			if (Ligne[idx]._directionRouteInc == DIR_DOWN || Ligne[idx]._directionRouteInc == DIR_UP)
 				posY -= 2;
-			if (Ligne[idx]._directionRouteInc == DIR_RIGHT || Ligne[idx]._directionRouteDec == 7)
+			if (Ligne[idx]._directionRouteInc == DIR_RIGHT || Ligne[idx]._directionRouteDec == DIR_LEFT)
 				posX -= 2;
 			if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _lastLine))
 				error("Error in test line");
@@ -2524,18 +2524,18 @@ int LinesManager::TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx,
 }
 
 int LinesManager::CALC_PROPRE(int idx) {
-	int retVal = 25;
 	int size = _vm->_globals._spriteSize[idx];
-	if (_vm->_globals.PERSO_TYPE == 1) {
+	if (_vm->_globals._characterType == 1) {
 		if (size < 0)
 			size = -size;
 		size = 20 * (5 * size - 100) / -80;
-	} else if (_vm->_globals.PERSO_TYPE == 2) {
+	} else if (_vm->_globals._characterType == 2) {
 		if (size < 0)
 			size = -size;
 		size = 20 * (5 * size - 165) / -67;
 	}
 
+	int retVal = 25;
 	if (size < 0)
 		retVal = _vm->_graphicsManager.zoomOut(25, -size);
 	else if (size > 0)

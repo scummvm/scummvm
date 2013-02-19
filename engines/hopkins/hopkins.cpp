@@ -150,7 +150,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
-	_globals.PERSO_TYPE = 0;
+	_globals._characterType = 0;
 	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
@@ -440,7 +440,7 @@ bool HopkinsEngine::runLinuxDemo() {
 
 	_globals.iRegul = 0;
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
-	_globals.PERSO_TYPE = 0;
+	_globals._characterType = 0;
 	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
 	_globals._exitId = 0;
@@ -798,7 +798,7 @@ bool HopkinsEngine::runFull() {
 	}
 	_globals.iRegul = 0;
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
-	_globals.PERSO_TYPE = 0;
+	_globals._characterType = 0;
 	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
 	
@@ -1517,7 +1517,7 @@ bool HopkinsEngine::runFull() {
 			//_globals._exitId = WBASE();	// Handles the 3D Doom level (Windows)
 			_soundManager.stopSound();
 			_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
-			_globals.PERSO_TYPE = 0;
+			_globals._characterType = 0;
 			_globals.iRegul = 0;
 			_graphicsManager._lineNbr = SCREEN_WIDTH;
 			break;
@@ -2189,7 +2189,7 @@ void HopkinsEngine::playEnding() {
 		_globals._exitId = 300;
 	}
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
-	_globals.PERSO_TYPE = 0;
+	_globals._characterType = 0;
 	_globals.iRegul = 0;
 }
 
@@ -2434,20 +2434,20 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char colour) {
 	int startPosX = 320 - strWidth / 2;
 	int endPosX = strWidth + startPosX;
 	int endPosY = startPosY + 12;
-	if ((_globals.Credit_bx == -1) && (_globals.Credit_bx1 == -1) && (_globals.Credit_by == -1) && (_globals.Credit_by1 == -1)) {
-		_globals.Credit_bx = startPosX;
-		_globals.Credit_bx1 = endPosX;
-		_globals.Credit_by = startPosY;
-		_globals.Credit_by1 = endPosY;
+	if ((_globals._creditsStartX == -1) && (_globals._creditsEndX == -1) && (_globals._creditsStartY == -1) && (_globals._creditsEndY == -1)) {
+		_globals._creditsStartX = startPosX;
+		_globals._creditsEndX = endPosX;
+		_globals._creditsStartY = startPosY;
+		_globals._creditsEndY = endPosY;
 	}
-	if (startPosX < _globals.Credit_bx)
-		_globals.Credit_bx = startPosX;
-	if (endPosX > _globals.Credit_bx1)
-		_globals.Credit_bx1 = endPosX;
-	if (_globals.Credit_by > startPosY)
-		_globals.Credit_by = startPosY;
-	if (endPosY > _globals.Credit_by1)
-		_globals.Credit_by1 = endPosY;
+	if (startPosX < _globals._creditsStartX)
+		_globals._creditsStartX = startPosX;
+	if (endPosX > _globals._creditsEndX)
+		_globals._creditsEndX = endPosX;
+	if (_globals._creditsStartY > startPosY)
+		_globals._creditsStartY = startPosY;
+	if (endPosY > _globals._creditsEndY)
+		_globals._creditsEndY = endPosY;
 
 	bufPtr = buffer;
 	for (;;) {
@@ -2469,7 +2469,7 @@ void HopkinsEngine::displayCredits() {
 	_soundManager.playSound(28);
 	_eventsManager._mouseFl = false;
 	_globals.iRegul = 3;
-	_globals.Credit_bx = _globals.Credit_bx1 = _globals.Credit_by = _globals.Credit_by1 = -1;
+	_globals._creditsStartX = _globals._creditsEndX = _globals._creditsStartY = _globals._creditsEndY = -1;
 	int soundId = 28;
 	do {
 		for (int i = 0; i < _globals._creditsLineNumb; ++i) {
@@ -2500,7 +2500,7 @@ void HopkinsEngine::displayCredits() {
 			}
 		}
 		--_globals._creditsPosY;
-		if (_globals.Credit_bx != -1 || _globals.Credit_bx1 != -1 || _globals.Credit_by != -1 || _globals.Credit_by1 != -1) {
+		if (_globals._creditsStartX != -1 || _globals._creditsEndX != -1 || _globals._creditsStartY != -1 || _globals._creditsEndY != -1) {
 			_eventsManager.VBL();
 			_graphicsManager.copySurface(_graphicsManager._vesaScreen, 60, 50, 520, 380, _graphicsManager._vesaBuffer, 60, 50);
 		} else {
@@ -2513,10 +2513,10 @@ void HopkinsEngine::displayCredits() {
 				soundId = 28;
 			_soundManager.playSound(soundId);
 		}
-		_globals.Credit_bx = -1;
-		_globals.Credit_bx1 = -1;
-		_globals.Credit_by = -1;
-		_globals.Credit_by1 = -1;
+		_globals._creditsStartX = -1;
+		_globals._creditsEndX = -1;
+		_globals._creditsStartY = -1;
+		_globals._creditsEndY = -1;
 	} while ((_eventsManager.getMouseButton() != 1) && (!g_system->getEventManager()->shouldQuit()));
 	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
@@ -2829,7 +2829,7 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, Di
 	_objectsManager.removeSprite(0);
 	_objectsManager.clearScreen();
 	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
-	_globals.PERSO_TYPE = 0;
+	_globals._characterType = 0;
 }
 
 void HopkinsEngine::syncSoundSettings() {

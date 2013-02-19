@@ -2130,7 +2130,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 
 		loc = &_vm->_globals._saveData->_realHopkins;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
-		_vm->_globals.PERSO_TYPE = 0;
+		_vm->_globals._characterType = 0;
 		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->_zoomFactor, false, 34, 190);
 		animateSprite(0);
 		_vm->_globals.loadCharacterData();
@@ -2155,7 +2155,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 
 		loc = &_vm->_globals._saveData->_samantha;
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PSAMAN.SPR");
-		_vm->_globals.PERSO_TYPE = 2;
+		_vm->_globals._characterType = 2;
 		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->_zoomFactor, false, 20, 127);
 		animateSprite(0);
 		_vm->_globals.loadCharacterData();
@@ -2218,9 +2218,9 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 // Check Size
 void ObjectsManager::computeAndSetSpriteSize() {
 	int size = _vm->_globals._spriteSize[getSpriteY(0)];
-	if (_vm->_globals.PERSO_TYPE == 1) {
+	if (_vm->_globals._characterType == 1) {
 		size = 20 * (5 * abs(size) - 100) / -80;
-	} else if (_vm->_globals.PERSO_TYPE == 2) {
+	} else if (_vm->_globals._characterType == 2) {
 		size = 20 * (5 * abs(size) - 165) / -67;
 	}
 	setSpriteZoom(0, size);
@@ -3799,24 +3799,24 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	if (_vm->_globals.PERSO_TYPE) {
+	if (_vm->_globals._characterType) {
 		if (!_vm->_globals._saveData->_data[svField122] && !_vm->_globals._saveData->_data[svField356]) {
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
-			_vm->_globals.PERSO_TYPE = 0;
+			_vm->_globals._characterType = 0;
 		}
 	}
-	if (!_vm->_globals.PERSO_TYPE) {
+	if (!_vm->_globals._characterType) {
 		if (_vm->_globals._saveData->_data[svField122] == 1) {
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile("HOPFEM.SPR");
-			_vm->_globals.PERSO_TYPE = 1;
+			_vm->_globals._characterType = 1;
 		}
 	}
-	if (_vm->_globals.PERSO_TYPE != 2 && _vm->_globals._saveData->_data[svField356] == 1) {
+	if (_vm->_globals._characterType != 2 && _vm->_globals._saveData->_data[svField356] == 1) {
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PSAMAN.SPR");
-		_vm->_globals.PERSO_TYPE = 2;
+		_vm->_globals._characterType = 2;
 	}
 	_vm->_globals.loadCharacterData();
-	switch (_vm->_globals.PERSO_TYPE) {
+	switch (_vm->_globals._characterType) {
 	case 0:
 		addStaticSprite(_vm->_globals.PERSO, _characterPos, 0, _startSpriteIndex, 0, false, 34, 190);
 		break;
