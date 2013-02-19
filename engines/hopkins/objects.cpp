@@ -1745,7 +1745,7 @@ void ObjectsManager::handleCityMap() {
 	_spritePtr = g_PTRNUL;
 	_vm->_globals._exitId = 0;
 	_vm->_globals.NOT_VERIF = true;
-	_vm->_soundManager.WSOUND(31);
+	_vm->_soundManager.playSound(31);
 	_vm->_globals.iRegul = 1;
 	_vm->_graphicsManager.loadImage("PLAN");
 	_vm->_linesManager.loadLines("PLAN.OB2");
@@ -1754,7 +1754,7 @@ void ObjectsManager::handleCityMap() {
 	_spritePtr = _vm->_fileManager.loadFile("VOITURE.SPR");
 	_vm->_animationManager.loadAnim("PLAN");
 	_vm->_graphicsManager.VISU_ALL();
-	_vm->_graphicsManager.INI_ECRAN2("PLAN", false);
+	_vm->_graphicsManager.initScreen("PLAN", 2, false);
 	for (int i = 0; i <= 15; i++)
 		_vm->_globals.B_CACHE_OFF(i);
 	_vm->_globals.B_CACHE_OFF(19);
@@ -2678,7 +2678,7 @@ void ObjectsManager::handleSpecialGames() {
 			setBobAnimation(6);
 			_vm->_globals._saveData->_data[svField261] = 2;
 			_vm->_linesManager.disableZone(15);
-			_vm->_soundManager.playSound("SOUND75.WAV");
+			_vm->_soundManager.playSoundFile("SOUND75.WAV");
 		}
 		if (_vm->_globals._saveData->_data[svField261] == 2 && getBobAnimDataIdx(6) == 6) {
 			stopBobAnimation(6);
@@ -3052,7 +3052,7 @@ int ObjectsManager::getBobFrameIndex(int idx) {
 	return _bob[idx]._frameIndex;
 }
 
-void ObjectsManager::INILINK(const Common::String &file) {
+void ObjectsManager::loadLinkFile(const Common::String &file) {
 	Common::File f;
 	Common::String filename = file + ".LNK";
 	byte *ptr = _vm->_fileManager.searchCat(filename, 3);
@@ -3641,7 +3641,7 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 		if (_vm->_globals._saveData->_data[savegameIdx] == 1) {
 			if (((idx == 1 || idx == 2) && getBobAnimDataIdx(idx) == 26) || ((idx == 3 || idx == 4) && getBobAnimDataIdx(idx) == 27)) {
 				_vm->_dialogsManager._removeInventFl = true;
-				_vm->_soundManager.PLAY_SAMPLE2(1);
+				_vm->_soundManager.playSample(1);
 				_vm->_globals._saveData->_data[savegameIdx] = 4;
 			}
 		}
@@ -3678,29 +3678,29 @@ void ObjectsManager::lockAnimX(int idx, int x) {
  * Game scene control method
  */
 void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
-							   const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen) {
+							   const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen) {
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_dialogsManager._removeInventFl = false;
 	_vm->_graphicsManager._scrollOffset = 0;
 	_vm->_globals._cityMapEnabledFl = false;
 	_vm->_globals.iRegul = 1;
-	_vm->_soundManager.WSOUND(v);
+	_vm->_soundManager.playSound(soundNum);
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 	_vm->_globals.NOMARCHE = true;
 	_vm->_globals._exitId = 0;
 	if (!backgroundFile.empty())
 		_vm->_graphicsManager.loadImage(backgroundFile);
 	if (!linkFile.empty())
-		INILINK(linkFile);
+		loadLinkFile(linkFile);
 	if (!animFile.empty())
 		_vm->_animationManager.loadAnim(animFile);
 	_vm->_graphicsManager.VISU_ALL();
 	if (!s4.empty()) {
 		if (initializeScreen)
-			_vm->_graphicsManager.INI_ECRAN(s4, initializeScreen);
+			_vm->_graphicsManager.initScreen(s4, 0, initializeScreen);
 		else
-			_vm->_graphicsManager.INI_ECRAN2(s4, initializeScreen);
+			_vm->_graphicsManager.initScreen(s4, 2, initializeScreen);
 	}
 	_vm->_eventsManager.mouseOn();
 	if (_vm->_globals._screenId == 61) {
@@ -3766,7 +3766,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
  * Game scene control method
  */
 void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
-								const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen) {
+								const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen) {
 	_vm->_dialogsManager._inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_verb = 4;
@@ -3777,21 +3777,21 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_globals.NOMARCHE = false;
 	_vm->_globals._exitId = 0;
 	_vm->_globals.NOT_VERIF = true;
-	_vm->_soundManager.WSOUND(v);
+	_vm->_soundManager.playSound(soundNum);
 	_vm->_globals.iRegul = 1;
 	if (!backgroundFile.empty())
 		_vm->_graphicsManager.loadImage(backgroundFile);
 	if (!linkFile.empty())
-		INILINK(linkFile);
+		loadLinkFile(linkFile);
 	if (!animFile.empty()) {
 		_vm->_animationManager.loadAnim(animFile);
 		_vm->_graphicsManager.VISU_ALL();
 	}
 	if (!s4.empty()) {
 		if (initializeScreen)
-			_vm->_graphicsManager.INI_ECRAN(s4, initializeScreen);
+			_vm->_graphicsManager.initScreen(s4, 0, initializeScreen);
 		else
-			_vm->_graphicsManager.INI_ECRAN2(s4, initializeScreen);
+			_vm->_graphicsManager.initScreen(s4, 2, initializeScreen);
 	}
 	_vm->_eventsManager.mouseOn();
 	_vm->_eventsManager._mouseCursorId = 4;

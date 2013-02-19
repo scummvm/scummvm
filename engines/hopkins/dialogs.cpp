@@ -88,7 +88,7 @@ void DialogsManager::showOptionsDialog() {
 					++_vm->_soundManager._musicVolume;
 
 					if (_vm->_soundManager._musicVolume <= 12)
-						_vm->_soundManager.playSound("bruit2.wav");
+						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._musicVolume = 12;
 					_vm->_soundManager.MODSetMusicVolume(_vm->_soundManager._musicVolume);
@@ -99,7 +99,7 @@ void DialogsManager::showOptionsDialog() {
 				if (!_vm->_soundManager._musicOffFl && mousePos.x >= _vm->_graphicsManager._scrollOffset + 331 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 138) {
 					--_vm->_soundManager._musicVolume;
 					if (_vm->_soundManager._musicVolume >= 0)
-						_vm->_soundManager.playSound("bruit2.wav");
+						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._musicVolume = 0;
 
@@ -112,7 +112,7 @@ void DialogsManager::showOptionsDialog() {
 				if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 300 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 327 && mousePos.y <= 165) {
 					++_vm->_soundManager._soundVolume;
 					if (_vm->_soundManager._soundVolume <= 16)
-						_vm->_soundManager.playSound("bruit2.wav");
+						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._soundVolume = 16;
 					_vm->_soundManager.MODSetSampleVolume();
@@ -123,7 +123,7 @@ void DialogsManager::showOptionsDialog() {
 				if (!_vm->_soundManager._soundOffFl && mousePos.x >= _vm->_graphicsManager._scrollOffset + 331 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 165) {
 					--_vm->_soundManager._soundVolume;
 					if (_vm->_soundManager._soundVolume >= 0)
-						_vm->_soundManager.playSound("bruit2.wav");
+						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._soundVolume = 0;
 					_vm->_soundManager.MODSetSampleVolume();
@@ -137,7 +137,7 @@ void DialogsManager::showOptionsDialog() {
 					++_vm->_soundManager._voiceVolume;
 
 					if (_vm->_soundManager._voiceVolume <= 16)
-						_vm->_soundManager.playSound("bruit2.wav");
+						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._voiceVolume = 16;
 					_vm->_soundManager.MODSetVoiceVolume();
@@ -148,7 +148,7 @@ void DialogsManager::showOptionsDialog() {
 				if (!_vm->_soundManager._voiceOffFl && mousePos.x >= _vm->_graphicsManager._scrollOffset + 331 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 192) {
 					--_vm->_soundManager._voiceVolume;
 					if (_vm->_soundManager._voiceVolume >= 0)
-						_vm->_soundManager.playSound("bruit2.wav");
+						_vm->_soundManager.playSoundFile("bruit2.wav");
 					else
 						_vm->_soundManager._voiceVolume = 0;
 					_vm->_soundManager.MODSetVoiceVolume();

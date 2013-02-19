@@ -114,11 +114,15 @@ public:
 	void playAnimSound(int soundNumber);
 
 	void loadSample(int wavIndex, const Common::String &file);
-	void playSample(int wavIndex, int voiceMode);
+	void playSample(int wavIndex, int voiceMode = 9);
+	void removeSample(int soundIndex);
 
 	void checkSoundEnd();
 	void checkSounds();
-	void playSound(const Common::String &file);
+	void playSoundFile(const Common::String &file);
+	void playSound(int soundNumber);
+	void stopSound();
+
 	void updateScummVMSoundSettings();
 	void syncSoundSettings();
 	bool mixVoice(int voiceId, int voiceMode);
@@ -129,12 +133,7 @@ public:
 
 	void loadWav(const Common::String &file, int wavIndex);
 	void playWav(int wavIndex);
-
-	void DEL_SAMPLE(int soundIndex);
-	void WSOUND(int soundNumber);
-	void WSOUND_OFF();
-	void PLAY_SOUND2(const Common::String &file2);
-	void PLAY_SAMPLE2(int idx);
+	void directPlayWav(const Common::String &file2);
 };
 
 } // End of namespace Hopkins

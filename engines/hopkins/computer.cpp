@@ -564,9 +564,9 @@ void ComputerManager::displayGamesSubMenu() {
 	_breakoutLevel = (int16 *)_vm->_globals.freeMemory((byte *)_breakoutLevel);
 	_vm->_objectsManager._sprite[0]._spriteData = oldSpriteData;
 
-	_vm->_soundManager.DEL_SAMPLE(1);
-	_vm->_soundManager.DEL_SAMPLE(2);
-	_vm->_soundManager.DEL_SAMPLE(3);
+	_vm->_soundManager.removeSample(1);
+	_vm->_soundManager.removeSample(2);
+	_vm->_soundManager.removeSample(3);
 	_vm->_globals._speed = oldSpeed;
 	_vm->_eventsManager._breakoutFl = false;
 	setVideoMode();

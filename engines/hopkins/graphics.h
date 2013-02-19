@@ -145,6 +145,7 @@ public:
 	void scrollScreen(int amount);
 	int zoomIn(int v, int percentage);
 	int zoomOut(int v, int percentage);
+	void initScreen(const Common::String &file, int mode, bool initializeScreen);
 
 	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
 	void addVesaSegment(int x1, int y1, int x2, int y2);
@@ -164,11 +165,8 @@ public:
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void VISU_ALL();
 	void FIN_VISU();
-	void INI_ECRAN(const Common::String &file, bool initializeScreen);
-	void INI_ECRAN2(const Common::String &file, bool initializeScreen);
 	void NB_SCREEN(bool initPalette);
 	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
-	void OPTI_INI(const Common::String &file, int mode, bool initializeScreen);
 	void Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface);
 	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);
 	void Copy_Video_Vbe16(const byte *srcData);

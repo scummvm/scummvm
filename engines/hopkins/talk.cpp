@@ -875,7 +875,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		_vm->_objectsManager.stopBobAnimation(3);
 		_vm->_objectsManager.stopBobAnimation(4);
 		_vm->_objectsManager.setBobAnimation(6);
-		_vm->_soundManager.PLAY_SAMPLE2(1);
+		_vm->_soundManager.playSample(1);
 		_vm->_objectsManager.SPACTION1(_vm->_objectsManager._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
 		do
 			_vm->_eventsManager.VBL();
@@ -923,7 +923,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		_vm->_objectsManager.stopBobAnimation(1);
 		_vm->_objectsManager.stopBobAnimation(2);
 		_vm->_objectsManager.setBobAnimation(5);
-		_vm->_soundManager.PLAY_SAMPLE2(1);
+		_vm->_soundManager.playSample(1);
 		_vm->_objectsManager.SPACTION1(_vm->_objectsManager._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 0, 0, 4);
 		do
 			_vm->_eventsManager.VBL();
@@ -1012,14 +1012,14 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	byte *oldAnswerBufferPtr = _vm->_globals._answerBuffer;
 	_vm->_globals._answerBuffer = g_PTRNUL;
 	_vm->_globals.NOMARCHE = true;
-	_vm->_objectsManager.INILINK(screenFilename);
+	_vm->_objectsManager.loadLinkFile(screenFilename);
 	_vm->_objectsManager.PERSO_ON = true;
 	_vm->_globals.GOACTION = false;
 	_vm->_objectsManager._zoneNum = -1;
 	initCharacterAnim();
 	VISU_PARLE();
 	dialogWait();
-	_vm->_graphicsManager.INI_ECRAN2(screenFilename, true);
+	_vm->_graphicsManager.initScreen(screenFilename, 2, true);
 	_vm->_globals.NOMARCHE = true;
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager._zoneNum = -1;
@@ -1052,8 +1052,8 @@ void TalkManager::OBJET_VIVANT(const Common::String &a2) {
 	_vm->_globals.freeMemory(_vm->_globals._answerBuffer);
 	_vm->_globals._answerBuffer = oldAnswerBufferPtr;
 	_vm->_objectsManager._disableFl = true;
-	_vm->_objectsManager.INILINK(curScreenFilename);
-	_vm->_graphicsManager.INI_ECRAN2(curScreenFilename, true);
+	_vm->_objectsManager.loadLinkFile(curScreenFilename);
+	_vm->_graphicsManager.initScreen(curScreenFilename, 2, true);
 	_vm->_objectsManager._disableFl = false;
 	_vm->_globals.NOMARCHE = false;
 	if (_vm->_globals._exitId == 101)

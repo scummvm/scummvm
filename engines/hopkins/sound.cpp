@@ -282,25 +282,25 @@ void SoundManager::playAnimSound(int soundNumber) {
 	if (!_vm->_globals._censorshipFl && _specialSoundNum == 2) {
 		switch (soundNumber) {
 		case 20:
-			PLAY_SAMPLE2(5);
+			playSample(5);
 			break;
 		case 57:
 		case 63:
 		case 69:
-			PLAY_SAMPLE2(1);
+			playSample(1);
 			break;
 		case 75:
-			PLAY_SAMPLE2(2);
+			playSample(2);
 			break;
 		case 109:
-			PLAY_SAMPLE2(3);
+			playSample(3);
 			break;
 		case 122:
-			PLAY_SAMPLE2(4);
+			playSample(4);
 			break;
 		}
 	} else if (_specialSoundNum == 1 && soundNumber == 17)
-		playSound("SOUND42.WAV");
+		playSoundFile("SOUND42.WAV");
 	else if (_specialSoundNum == 5 && soundNumber == 19)
 		playWav(1);
 	else if (_specialSoundNum == 14 && soundNumber == 625)
@@ -309,11 +309,11 @@ void SoundManager::playAnimSound(int soundNumber) {
 		playWav(1);
 	else if (_specialSoundNum == 17) {
 		if (soundNumber == 6)
-			PLAY_SAMPLE2(1);
+			playSample(1);
 		else if (soundNumber == 14)
-			PLAY_SAMPLE2(2);
+			playSample(2);
 		else if (soundNumber == 67)
-			PLAY_SAMPLE2(3);
+			playSample(3);
 	} else if (_specialSoundNum == 198 && soundNumber == 15)
 		playWav(1);
 	else if (_specialSoundNum == 199 && soundNumber == 72)
@@ -342,7 +342,7 @@ static const char *const modSounds[] = {
 	"tobac"
 };
 
-void SoundManager::WSOUND(int soundNumber) {
+void SoundManager::playSound(int soundNumber) {
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 		if (soundNumber > 27)
 			return;
@@ -350,14 +350,14 @@ void SoundManager::WSOUND(int soundNumber) {
 
 	if (_oldSoundNumber != soundNumber || !_modPlayingFl) {
 		if (_modPlayingFl)
-			WSOUND_OFF();
+			stopSound();
 
 		playMod(modSounds[soundNumber - 1]);
 		_oldSoundNumber = soundNumber;
 	}
 }
 
-void SoundManager::WSOUND_OFF() {
+void SoundManager::stopSound() {
 	stopVoice(0);
 	stopVoice(1);
 	stopVoice(2);
@@ -618,7 +618,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 	return true;
 }
 
-void SoundManager::DEL_SAMPLE(int soundIndex) {
+void SoundManager::removeSample(int soundIndex) {
 	if (checkVoiceStatus(1))
 		stopVoice(1);
 	if (checkVoiceStatus(2))
@@ -629,7 +629,7 @@ void SoundManager::DEL_SAMPLE(int soundIndex) {
 	_sound[soundIndex]._active = false;
 }
 
-void SoundManager::playSound(const Common::String &file) {
+void SoundManager::playSoundFile(const Common::String &file) {
 	if (_soundOffFl)
 		return;
 
@@ -649,11 +649,12 @@ void SoundManager::playSound(const Common::String &file) {
 	playWav(1);
 }
 
-void SoundManager::PLAY_SOUND2(const Common::String &file) {
-	if (!_soundOffFl) {
-		loadWav(file, 1);
-		playWav(1);
-	}
+void SoundManager::directPlayWav(const Common::String &file) {
+	if (_soundOffFl)
+		return;
+
+	loadWav(file, 1);
+	playWav(1);
 }
 
 void SoundManager::MODSetSampleVolume() {
@@ -683,36 +684,33 @@ void SoundManager::loadSample(int wavIndex, const Common::String &file) {
 }
 
 void SoundManager::playSample(int wavIndex, int voiceMode) {
-	if (!_soundOffFl && _sound[wavIndex]._active) {
-		if (_soundFl)
-			delWav(_currentSoundIndex);
-		if (voiceMode == 5) {
-			if (checkVoiceStatus(1))
-				stopVoice(1);
-			PLAY_SAMPLE_SDL(1, wavIndex);
-		} else if (voiceMode == 6) {
-			if (checkVoiceStatus(2))
-				stopVoice(1);
-			PLAY_SAMPLE_SDL(2, wavIndex);
-		} else if (voiceMode == 7) {
-			if (checkVoiceStatus(3))
-				stopVoice(1);
-			PLAY_SAMPLE_SDL(3, wavIndex);
-		} else if (voiceMode == 8) {
-			if (checkVoiceStatus(1))
-				stopVoice(1);
-			PLAY_SAMPLE_SDL(1, wavIndex);
-		}
-	}
-}
+	if (_soundOffFl || !_sound[wavIndex]._active)
+		return;
 
-void SoundManager::PLAY_SAMPLE2(int idx) {
-	if (!_soundOffFl && _sound[idx]._active) {
-		if (_soundFl)
-			delWav(_currentSoundIndex);
+	if (_soundFl)
+		delWav(_currentSoundIndex);
+	
+	switch (voiceMode) {
+	case 5:
+	case 8:
+	// Case added to identify the former PLAY_SAMPLE2 calls
+	case 9: 
 		if (checkVoiceStatus(1))
 			stopVoice(1);
-		PLAY_SAMPLE_SDL(1, idx);
+		PLAY_SAMPLE_SDL(1, wavIndex);
+		break;
+	case 6:
+		if (checkVoiceStatus(2))
+			stopVoice(1);
+		PLAY_SAMPLE_SDL(2, wavIndex);
+		break;
+	case 7:
+		if (checkVoiceStatus(3))
+			stopVoice(1);
+		PLAY_SAMPLE_SDL(3, wavIndex);
+		break;
+	default:
+		break;
 	}
 }
 

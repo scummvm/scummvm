@@ -1670,17 +1670,7 @@ void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp,
 	} while (yCtr != 1);
 }
 
-// Init Screen
-void GraphicsManager::INI_ECRAN(const Common::String &file, bool initializeScreen) {
-	OPTI_INI(file, 0, initializeScreen);
-}
-
-// Init Screen 2
-void GraphicsManager::INI_ECRAN2(const Common::String &file, bool initializeScreen) {
-	OPTI_INI(file, 2, initializeScreen);
-}
-
-void GraphicsManager::OPTI_INI(const Common::String &file, int mode, bool initializeScreen) {
+void GraphicsManager::initScreen(const Common::String &file, int mode, bool initializeScreen) {
 	Common::String filename = file + ".ini";
 	byte *ptr = _vm->_fileManager.searchCat(filename, 1);
 
@@ -1723,16 +1713,14 @@ void GraphicsManager::OPTI_INI(const Common::String &file, int mode, bool initia
 		} while (!doneFlag);
 	}
 	_vm->_globals.freeMemory(ptr);
-	if (mode != 1) {
-		_vm->_globals._answerBuffer = _vm->_globals.freeMemory(_vm->_globals._answerBuffer);
+	_vm->_globals._answerBuffer = _vm->_globals.freeMemory(_vm->_globals._answerBuffer);
 
-		filename = file + ".rep";
-		byte *dataP = _vm->_fileManager.searchCat(filename, 2);
-		if (dataP == g_PTRNUL)
-			dataP = _vm->_fileManager.loadFile(filename);
+	filename = file + ".rep";
+	byte *dataP = _vm->_fileManager.searchCat(filename, 2);
+	if (dataP == g_PTRNUL)
+		dataP = _vm->_fileManager.loadFile(filename);
 
-		_vm->_globals._answerBuffer = dataP;
-	}
+	_vm->_globals._answerBuffer = dataP;
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager._changeVerbFl = false;
 }

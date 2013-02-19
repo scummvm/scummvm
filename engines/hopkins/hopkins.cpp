@@ -184,7 +184,7 @@ bool HopkinsEngine::runWin95Demo() {
 
 		case 3:
 			if (!_globals._saveData->_data[svField170]) {
-				_soundManager.WSOUND(3);
+				_soundManager.playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsManager.loadImage("fond");
 				else {
@@ -209,10 +209,10 @@ bool HopkinsEngine::runWin95Demo() {
 				else
 					_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
 				_soundManager._specialSoundNum = 0;
-				_soundManager.DEL_SAMPLE(1);
-				_soundManager.DEL_SAMPLE(2);
-				_soundManager.DEL_SAMPLE(3);
-				_soundManager.DEL_SAMPLE(4);
+				_soundManager.removeSample(1);
+				_soundManager.removeSample(2);
+				_soundManager.removeSample(3);
+				_soundManager.removeSample(4);
 				_graphicsManager.fadeOutLong();
 				_globals._saveData->_data[svField170] = 1;
 			}
@@ -371,7 +371,7 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 150:
-			_soundManager.WSOUND(28);
+			_soundManager.playSound(28);
 			_globals.iRegul = 4; // CHECKME!
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -383,7 +383,7 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 151:
-			_soundManager.WSOUND(28);
+			_soundManager.playSound(28);
 			_globals.iRegul = 4; // CHECKME!
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -398,7 +398,7 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 152:
-			_soundManager.WSOUND(28);
+			_soundManager.playSound(28);
 			_globals.iRegul = 4; // CHECKME!
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -489,7 +489,7 @@ bool HopkinsEngine::runLinuxDemo() {
 
 		case 3:
 			if (!_globals._saveData->_data[svField170]) {
-				_soundManager.WSOUND(3);
+				_soundManager.playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsManager.loadImage("fond");
 				else {
@@ -517,10 +517,10 @@ bool HopkinsEngine::runLinuxDemo() {
 				else
 					_animationManager.playAnim("BANKUK.ANM", 200, 28, 200);
 				_soundManager._specialSoundNum = 0;
-				_soundManager.DEL_SAMPLE(1);
-				_soundManager.DEL_SAMPLE(2);
-				_soundManager.DEL_SAMPLE(3);
-				_soundManager.DEL_SAMPLE(4);
+				_soundManager.removeSample(1);
+				_soundManager.removeSample(2);
+				_soundManager.removeSample(3);
+				_soundManager.removeSample(4);
 				_globals._saveData->_data[svField170] = 1;
 			}
 
@@ -689,7 +689,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 150:
-			_soundManager.WSOUND(16);
+			_soundManager.playSound(16);
 			_globals.iRegul = 1;
 
 			_graphicsManager.lockScreen();
@@ -703,7 +703,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 151:
-			_soundManager.WSOUND(16);
+			_soundManager.playSound(16);
 			_globals.iRegul = 1;
 
 			_graphicsManager.lockScreen();
@@ -717,7 +717,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 152:
-			_soundManager.WSOUND(16);
+			_soundManager.playSound(16);
 			_globals.iRegul = 1;
 
 			_graphicsManager.lockScreen();
@@ -736,7 +736,7 @@ bool HopkinsEngine::runLinuxDemo() {
 
 bool HopkinsEngine::runFull() {
 	if (getPlatform() == Common::kPlatformLinux)
-		_soundManager.WSOUND(16);
+		_soundManager.playSound(16);
 
 	_globals.loadObjects();
 	_objectsManager.changeObject(14);
@@ -828,7 +828,7 @@ bool HopkinsEngine::runFull() {
 
 		case 3:
 			if (!_globals._saveData->_data[svField170]) {
-				_soundManager.WSOUND(3);
+				_soundManager.playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsManager.loadImage("fond");
 				else {
@@ -860,10 +860,10 @@ bool HopkinsEngine::runFull() {
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				}
 				_soundManager._specialSoundNum = 0;
-				_soundManager.DEL_SAMPLE(1);
-				_soundManager.DEL_SAMPLE(2);
-				_soundManager.DEL_SAMPLE(3);
-				_soundManager.DEL_SAMPLE(4);
+				_soundManager.removeSample(1);
+				_soundManager.removeSample(2);
+				_soundManager.removeSample(3);
+				_soundManager.removeSample(4);
 				if (getPlatform() != Common::kPlatformLinux)
 					_graphicsManager.fadeOutLong();
 				_globals._saveData->_data[svField170] = 1;
@@ -976,17 +976,17 @@ bool HopkinsEngine::runFull() {
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
-				_soundManager.WSOUND_OFF();
+				_soundManager.stopSound();
 				if (getPlatform() == Common::kPlatformLinux) {
-					_soundManager.WSOUND(29);
+					_soundManager.playSound(29);
 					_graphicsManager.FADE_LINUX = 2;
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				} else if (getPlatform() == Common::kPlatformWindows) {
-					_soundManager.WSOUND(29);
+					_soundManager.playSound(29);
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 					_graphicsManager.fadeOutShort();
 				} else {
-					_soundManager.WSOUND(6);
+					_soundManager.playSound(6);
 					_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 					_graphicsManager.fadeOutShort();
 				}
@@ -1018,12 +1018,12 @@ bool HopkinsEngine::runFull() {
 			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
 			if (_globals._exitId == 17) {
 				_globals.iRegul = 1;
-				_soundManager.WSOUND_OFF();
+				_soundManager.stopSound();
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
-				_soundManager.WSOUND(6);
+				_soundManager.playSound(6);
 				if (getPlatform() == Common::kPlatformLinux)
 					_graphicsManager.FADE_LINUX = 2;
 				_animationManager.playAnim("PURG2A.ANM", 12, 18, 50);
@@ -1132,7 +1132,7 @@ bool HopkinsEngine::runFull() {
 			_globals._disableInventFl = false;
 			_objectsManager._forestFl = true;
 			Common::String im = Common::String::format("IM%d", _globals._exitId);
-			_soundManager.WSOUND(13);
+			_soundManager.playSound(13);
 			if (_objectsManager._forestSprite == g_PTRNUL) {
 				_objectsManager._forestSprite = _objectsManager.loadSprite("HOPDEG.SPR");
 				_soundManager.loadSample(1, "SOUND41.WAV");
@@ -1141,7 +1141,7 @@ bool HopkinsEngine::runFull() {
 			if (_globals._exitId < 35 || _globals._exitId > 49) {
 				_objectsManager._forestSprite = _globals.freeMemory(_objectsManager._forestSprite);
 				_objectsManager._forestFl = false;
-				_soundManager.DEL_SAMPLE(1);
+				_soundManager.removeSample(1);
 			}
 			break;
 			}
@@ -1384,12 +1384,12 @@ bool HopkinsEngine::runFull() {
 			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
 			if (_globals._exitId == 18) {
 				_globals.iRegul = 1;
-				_soundManager.WSOUND_OFF();
+				_soundManager.stopSound();
 				_graphicsManager.lockScreen();
 				_graphicsManager.clearScreen();
 				_graphicsManager.unlockScreen();
 				_graphicsManager.clearPalette();
-				_soundManager.WSOUND(6);
+				_soundManager.playSound(6);
 				_animationManager.playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager.fadeOutShort();
 				_globals.iRegul = 0;
@@ -1462,7 +1462,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 150:
-			_soundManager.WSOUND(16);
+			_soundManager.playSound(16);
 			_globals.iRegul = 1;
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -1476,7 +1476,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 151:
-			_soundManager.WSOUND(16);
+			_soundManager.playSound(16);
 			_globals.iRegul = 1;
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -1490,7 +1490,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 152:
-			_soundManager.WSOUND(16);
+			_soundManager.playSound(16);
 			_globals.iRegul = 1;
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -1511,11 +1511,11 @@ bool HopkinsEngine::runFull() {
 		case 199:
 			_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 			_globals.iRegul = 1;
-			_soundManager.WSOUND_OFF();
-			_soundManager.WSOUND(23);
+			_soundManager.stopSound();
+			_soundManager.playSound(23);
 			_globals._exitId = handleBaseMap();	// Handles the base map (non-Windows)
 			//_globals._exitId = WBASE();	// Handles the 3D Doom level (Windows)
-			_soundManager.WSOUND_OFF();
+			_soundManager.stopSound();
 			_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
 			_globals.PERSO_TYPE = 0;
 			_globals.iRegul = 0;
@@ -1603,7 +1603,7 @@ void HopkinsEngine::playIntro() {
 	_eventsManager._mouseFl = false;
 	_globals.iRegul = 1;
 	_eventsManager.VBL();
-	_soundManager.WSOUND(16);
+	_soundManager.playSound(16);
 	_animationManager._clearAnimationFl = true;
 	_animationManager.playAnim("J1.anm", 12, 12, 50);
 	if (shouldQuit() || _eventsManager._escKeyFl)
@@ -1627,7 +1627,7 @@ void HopkinsEngine::playIntro() {
 	_graphicsManager.unlockScreen();
 	_graphicsManager.clearPalette();
 	_graphicsManager.DD_VBL();
-	_soundManager.WSOUND(11);
+	_soundManager.playSound(11);
 	_graphicsManager.loadImage("intro1");
 	_graphicsManager.scrollScreen(0);
 	_graphicsManager._scrollOffset = 0;
@@ -1671,7 +1671,7 @@ void HopkinsEngine::playIntro() {
 	_graphicsManager.scrollScreen(0);
 	_animationManager.loadAnim("INTRO2");
 	_graphicsManager.VISU_ALL();
-	_soundManager.WSOUND(23);
+	_soundManager.playSound(23);
 	_objectsManager.stopBobAnimation(3);
 	_objectsManager.stopBobAnimation(5);
 	_graphicsManager._scrollOffset = 0;
@@ -1712,7 +1712,7 @@ void HopkinsEngine::playIntro() {
 	_graphicsManager.scrollScreen(0);
 	_animationManager.loadAnim("INTRO2");
 	_graphicsManager.VISU_ALL();
-	_soundManager.WSOUND(23);
+	_soundManager.playSound(23);
 	_objectsManager.stopBobAnimation(3);
 	_objectsManager.stopBobAnimation(5);
 	_objectsManager.stopBobAnimation(1);
@@ -1787,7 +1787,7 @@ void HopkinsEngine::playIntro() {
 			_graphicsManager.fadeOutLong();
 			_graphicsManager.FIN_VISU();
 			_animationManager._clearAnimationFl = true;
-			_soundManager.WSOUND(3);
+			_soundManager.playSound(3);
 			_soundManager._specialSoundNum = 1;
 			_animationManager.playAnim("INTRO1.anm", 10, 24, 18);
 			_soundManager._specialSoundNum = 0;
@@ -1842,7 +1842,7 @@ void HopkinsEngine::handleNotAvailable(int sortie) {
 }
 
 void HopkinsEngine::displayEndDemo() {
-	_soundManager.WSOUND(28);
+	_soundManager.playSound(28);
 	if (_globals._language == LANG_FR)
 		_graphicsManager.loadImage("endfr");
 	else
@@ -1910,7 +1910,7 @@ void HopkinsEngine::endLinuxDemo() {
 	_eventsManager._breakoutFl = false;
 	_globals._disableInventFl = true;
 	_graphicsManager.loadImage("BOX");
-	_soundManager.WSOUND(28);
+	_soundManager.playSound(28);
 	_graphicsManager.fadeInLong();
 	_eventsManager.mouseOn();
 	_eventsManager.changeMouseCursor(0);
@@ -1973,7 +1973,7 @@ void HopkinsEngine::BASE() {
 	_graphicsManager.unlockScreen();
 	_graphicsManager.clearPalette();
 	_animationManager._clearAnimationFl = true;
-	_soundManager.WSOUND(25);
+	_soundManager.playSound(25);
 	_animationManager.playAnim("base00a.anm", 10, 18, 18);
 	if (!_eventsManager._escKeyFl)
 		_animationManager.playAnim("base05a.anm", 10, 18, 18);
@@ -2012,7 +2012,7 @@ void HopkinsEngine::BASED() {
 	_graphicsManager.unlockScreen();
 	_graphicsManager.clearPalette();
 	_animationManager.NO_SEQ = false;
-	_soundManager.WSOUND(26);
+	_soundManager.playSound(26);
 	_globals.iRegul = 1;
 	_globals._disableInventFl = true;
 	_animationManager.NO_COUL = true;
@@ -2022,7 +2022,7 @@ void HopkinsEngine::BASED() {
 	_graphicsManager.loadImage("IM92");
 	_animationManager.loadAnim("ANIM92");
 	_graphicsManager.VISU_ALL();
-	_objectsManager.INILINK("IM92");
+	_objectsManager.loadLinkFile("IM92");
 
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
@@ -2049,7 +2049,7 @@ void HopkinsEngine::playEnding() {
 	_graphicsManager._scrollOffset = 0;
 	_globals._cityMapEnabledFl = false;
 	_globals.iRegul = 1;
-	_soundManager.WSOUND(26);
+	_soundManager.playSound(26);
 	_linesManager._route = (RouteItem *)g_PTRNUL;
 	_globals.NOMARCHE = true;
 	_globals._exitId = 0;
@@ -2089,7 +2089,7 @@ void HopkinsEngine::playEnding() {
 		_eventsManager.VBL();
 	while (_objectsManager.getBobAnimDataIdx(7) != 54);
 
-	_soundManager.PLAY_SAMPLE2(1);
+	_soundManager.playSample(1);
 
 	do
 		_eventsManager.VBL();
@@ -2125,7 +2125,7 @@ void HopkinsEngine::playEnding() {
 		_graphicsManager.FADE_LINUX = 2;
 		_animationManager.playAnim("BERM.ANM", 100, 24, 300);
 		_graphicsManager.FIN_VISU();
-		_soundManager.DEL_SAMPLE(1);
+		_soundManager.removeSample(1);
 		_graphicsManager.loadImage("PLAN3");
 		_graphicsManager.fadeInLong();
 
@@ -2141,7 +2141,7 @@ void HopkinsEngine::playEnding() {
 		_soundManager._specialSoundNum = 0;
 		_graphicsManager.FADE_LINUX = 2;
 		_animationManager.playAnim("JOUR2A.anm", 12, 12, 1000);
-		_soundManager.WSOUND(11);
+		_soundManager.playSound(11);
 		_graphicsManager.lockScreen();
 		_graphicsManager.clearScreen();
 		_graphicsManager.unlockScreen();
@@ -2170,7 +2170,7 @@ void HopkinsEngine::playEnding() {
 			_eventsManager.VBL();
 		while (_objectsManager.getBobAnimDataIdx(8) != 5);
 
-		_soundManager.PLAY_SOUND2("SOUND41.WAV");
+		_soundManager.directPlayWav("SOUND41.WAV");
 
 		do
 			_eventsManager.VBL();
@@ -2178,8 +2178,8 @@ void HopkinsEngine::playEnding() {
 
 		_graphicsManager.fadeOutLong();
 		_graphicsManager.FIN_VISU();
-		_soundManager.DEL_SAMPLE(1);
-		_soundManager.WSOUND(16);
+		_soundManager.removeSample(1);
+		_soundManager.playSound(16);
 		_globals.iRegul = 1;
 		_soundManager._specialSoundNum = 0;
 		_dialogsManager._removeInventFl = false;
@@ -2194,7 +2194,7 @@ void HopkinsEngine::playEnding() {
 }
 
 void HopkinsEngine::displayPlane() {
-	_soundManager.WSOUND(28);
+	_soundManager.playSound(28);
 	_globals.iRegul = 1;
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
@@ -2466,7 +2466,7 @@ void HopkinsEngine::displayCredits() {
 	_globals._creditsPosY = 436;
 	_graphicsManager.loadImage("GENERIC");
 	_graphicsManager.fadeInLong();
-	_soundManager.WSOUND(28);
+	_soundManager.playSound(28);
 	_eventsManager._mouseFl = false;
 	_globals.iRegul = 3;
 	_globals.Credit_bx = _globals.Credit_bx1 = _globals.Credit_by = _globals.Credit_by1 = -1;
@@ -2511,7 +2511,7 @@ void HopkinsEngine::displayCredits() {
 			++soundId;
 			if (soundId > 31)
 				soundId = 28;
-			_soundManager.WSOUND(soundId);
+			_soundManager.playSound(soundId);
 		}
 		_globals.Credit_bx = -1;
 		_globals.Credit_bx1 = -1;
@@ -2741,19 +2741,19 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, Di
 	_globals.NOMARCHE = false;
 	_globals._exitId = 0;
 	_globals._disableInventFl = true;
-	_soundManager.WSOUND(soundId);
+	_soundManager.playSound(soundId);
 	_globals.PERSO = _fileManager.loadFile("VAISSEAU.SPR");
 	if (backgroundFilename.size())
 		_graphicsManager.loadImage(backgroundFilename);
 
 	if (curExitId == 77)
-		_objectsManager.INILINK("IM77");
+		_objectsManager.loadLinkFile("IM77");
 	else if (curExitId == 84)
-		_objectsManager.INILINK("IM84");
+		_objectsManager.loadLinkFile("IM84");
 	else if (curExitId == 91)
-		_objectsManager.INILINK("IM91");
+		_objectsManager.loadLinkFile("IM91");
 	else
-		_objectsManager.INILINK("ocean");
+		_objectsManager.loadLinkFile("ocean");
 
 	if (!exit1)
 		_linesManager.disableZone(1);

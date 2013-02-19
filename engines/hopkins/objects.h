@@ -131,13 +131,11 @@ private:
 	void changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
 
 	void nextVerbIcon();
-
 	int getBobFrameIndex(int idx);
+	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
 
 	void SPECIAL_INI();
-
 	void ACTION(const byte *spriteData, const Common::String &actionStr, int a3, int a4, int speed, bool flipFl);
-	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
 public:
 	bool _disableFl;
 	bool _forestFl;
@@ -182,6 +180,7 @@ public:
 	int getWidth(const byte *objectData, int idx);
 	int getHeight(const byte *objectData, int idx);
 	byte *loadSprite(const Common::String &file);
+	void loadLinkFile(const Common::String &file);
 	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int a8, int a9);
 	void animateSprite(int idx);
 	void removeSprite(int idx);
@@ -225,22 +224,21 @@ public:
 	void doActionRight(int idx);
 	void doActionFront(int idx);
 	void doActionLeft(int idx);
+	void doActionDiagRight(int idx);
+	void doActionDiagLeft(int idx);
 
 	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
-		const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen);
+		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
-		const Common::String &animFile, const Common::String &s4, int v, bool initializeScreen);
+		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	byte *CAPTURE_OBJET(int objIndex, bool mode);
 	void OPTI_OBJET();
 	void BOB_OFF(int idx);
 	void BOB_VISU(int idx);
-	void INILINK(const Common::String &file);
 	void SPACTION(byte *spriteData, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl);
 	void BOB_VIVANT(int idx);
 	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);
 	void VBOB_OFF(int idx);
-	void doActionDiagRight(int idx);
-	void doActionDiagLeft(int idx);
 	void OPTI_ONE(int idx, int animIdx, int destPosi, int animAction);
 	void SCI_OPTI_ONE(int idx, int animIdx, int a3, int a4);
 	void GOHOME();
