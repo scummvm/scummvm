@@ -1510,7 +1510,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 			v112 = Ligne[v121].appendToRouteDec(v114, v120, super_parcours, v112);
 		}
 	}
-	if (PARC_PERS(super_parcours[v112 - 1]._X, super_parcours[v112 - 1]._Y, clipDestX, clipDestY, -1, -1, v112) != 1) {
+	if (PARC_PERS(super_parcours[v112 - 1]._x, super_parcours[v112 - 1]._y, clipDestX, clipDestY, -1, -1, v112) != 1) {
 		super_parcours[v112].invalidate();
 	}
 
@@ -1915,7 +1915,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 
 	if (!v136) {
 		if (a6 > foundLineIdx) {
-			if (essai0[0]._X != -1 && v142 > foundLineIdx && v140 <= v142 && collLineIdx <= v142 && a6 >= v142) {
+			if (essai0[0]._x != -1 && v142 > foundLineIdx && v140 <= v142 && collLineIdx <= v142 && a6 >= v142) {
 				NV_LIGNEDEP = v142;
 				NV_LIGNEOFS = v143;
 				int i = 0;
@@ -1926,7 +1926,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 				NV_POSI = v137;
 				return 2;
 			}
-			if (essai1[0]._X != -1 && foundLineIdx < v140 && collLineIdx <= v140 && v142 <= v140 && a6 >= v140) {
+			if (essai1[0]._x != -1 && foundLineIdx < v140 && collLineIdx <= v140 && v142 <= v140 && a6 >= v140) {
 				NV_LIGNEDEP = v140;
 				NV_LIGNEOFS = v141;
 				int i = 0;
@@ -1937,7 +1937,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 				NV_POSI = v137;
 				return 2;
 			}
-			if (essai2[0]._X != -1 && foundLineIdx < collLineIdx && v140 < collLineIdx && v142 < collLineIdx && a6 >= collLineIdx) {
+			if (essai2[0]._x != -1 && foundLineIdx < collLineIdx && v140 < collLineIdx && v142 < collLineIdx && a6 >= collLineIdx) {
 				NV_LIGNEDEP = collLineIdx;
 				NV_LIGNEOFS = collDataIdx;
 				int i = 0;
@@ -1956,7 +1956,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 				v142 = 1300;
 			if (collLineIdx == -1)
 				v142 = 1300;
-			if (essai1[0]._X != -1 && v140 < foundLineIdx && collLineIdx >= v140 && v142 >= v140 && a6 <= v140) {
+			if (essai1[0]._x != -1 && v140 < foundLineIdx && collLineIdx >= v140 && v142 >= v140 && a6 <= v140) {
 				NV_LIGNEDEP = v140;
 				NV_LIGNEOFS = v141;
 				int i = 0;
@@ -1967,7 +1967,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 				NV_POSI = v137;
 				return 2;
 			}
-			if (essai2[0]._X != -1 && foundLineIdx > collLineIdx && v140 >= collLineIdx && v142 >= collLineIdx && a6 <= collLineIdx) {
+			if (essai2[0]._x != -1 && foundLineIdx > collLineIdx && v140 >= collLineIdx && v142 >= collLineIdx && a6 <= collLineIdx) {
 				NV_LIGNEDEP = collLineIdx;
 				NV_LIGNEOFS = collDataIdx;
 				int i = 0;
@@ -1979,7 +1979,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 				return 2;
 			}
 			// CHECKME: Checking essai0[0]._X might make more sense here?
-			if (essai1[0]._X != -1 && foundLineIdx > v142 && v140 >= v142 && collLineIdx >= v142 && a6 <= v142) {
+			if (essai1[0]._x != -1 && foundLineIdx > v142 && v140 >= v142 && collLineIdx >= v142 && a6 <= v142) {
 				NV_LIGNEDEP = v142;
 				NV_LIGNEOFS = v143;
 				int i = 0;
@@ -2133,8 +2133,8 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			int v27 = 0;
 			int v28;
 			for (;;) {
-				v28 = essai2[v27]._X;
-				int v29 = essai2[v27]._Y;
+				v28 = essai2[v27]._x;
+				int v29 = essai2[v27]._y;
 				Directions v66 = essai2[v27]._dir;
 				v27++;
 
@@ -2545,55 +2545,46 @@ int LinesManager::CALC_PROPRE(int idx) {
 }
 
 void LinesManager::PACOURS_PROPRE(RouteItem *route) {
-	int v4;
-	int v5;
-	int v9;
-	int v10;
-	int v11;
-	int v12;
-
-	int v1 = 0;
-	Directions v14 = DIR_NONE;
-	int v2 = route[0]._Y;
-	Directions v15 = route[0]._dir;
-	if (route[0]._X == -1 && v2 == -1)
+	int routeIdx = 0;
+	Directions oldDir = DIR_NONE;
+	int route0Y = route[0]._y;
+	Directions curDir = route[0]._dir;
+	if (route[0]._x == -1 && route0Y == -1)
 		return;
 
 	for (;;) {
-		if (v14 != -1 && v15 != v14) {
-			v11 = v1;
-			v12 = 0;
-			v10 = CALC_PROPRE(v2);
-			v4 = route[v1]._X;
-			v9 = route[v1]._X;
-			v5 = route[v1]._Y;
-			while (v4 != -1 || v5 != -1) {
-				int idx = v1;
-				v1++;
-				++v12;
-				if (route[idx]._dir != v15)
+		if (oldDir != DIR_NONE && curDir != oldDir) {
+			int oldRouteIdx = routeIdx;
+			int routeCount = 0;
+			int v10 = CALC_PROPRE(route0Y);
+			int curRouteX = route[routeIdx]._x;
+			int curRouteY = route[routeIdx]._y;
+			while (curRouteX != -1 || curRouteY != -1) {
+				int idx = routeIdx;
+				++routeIdx;
+				++routeCount;
+				if (route[idx]._dir != curDir)
 					break;
-				v4 = route[v1]._X;
-				v9 = route[v1]._X;
-				v5 = route[v1]._Y;
+				curRouteX = route[routeIdx]._x;
+				curRouteY = route[routeIdx]._y;
 			}
-			if (v12 < v10) {
-				int v7 = v11;
-				for (int v8 = 0; v8 < v12; v8++) {
-					route[v7]._dir = v14;
-					v7++;
+			if (routeCount < v10) {
+				int idx = oldRouteIdx;
+				for (int i = 0; i < routeCount; i++) {
+					route[idx]._dir = oldDir;
+					idx++;
 				}
-				v15 = v14;
+				curDir = oldDir;
 			}
-			v1 = v11;
-			if (v9 == -1 && v5 == -1)
+			routeIdx = oldRouteIdx;
+			if (curRouteX == -1 && curRouteY == -1)
 				break;
 		}
-		v1++;
-		v14 = v15;
-		v2 = route[v1]._Y;
-		v15 = route[v1]._dir;
-		if (route[v1]._X == -1 && v2 == -1)
+		routeIdx++;
+		oldDir = curDir;
+		route0Y = route[routeIdx]._y;
+		curDir = route[routeIdx]._dir;
+		if (route[routeIdx]._x == -1 && route0Y == -1)
 			break;
 	}
 }

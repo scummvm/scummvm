@@ -91,12 +91,12 @@ struct ZonePItem {
 };
 
 struct RouteItem {
-	int16 _X;
-	int16 _Y;
+	int16 _x;
+	int16 _y;
 	Directions _dir;
-	bool isValid() const { return _X != -1 || _Y != -1; }
-	void invalidate() { _X = _Y = -1; _dir = DIR_NONE; }
-	void set(int16 X, int16 Y, Directions dir) { _X = X; _Y = Y; _dir = dir; }
+	bool isValid() const { return _x != -1 || _y != -1; }
+	void invalidate() { _x = _y = -1; _dir = DIR_NONE; }
+	void set(int16 X, int16 Y, Directions dir) { _x = X; _y = Y; _dir = dir; }
 };
 
 

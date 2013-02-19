@@ -1292,8 +1292,8 @@ void ObjectsManager::GOHOME() {
 	_vm->_globals.Compteur = 0;
 	if (_vm->_globals._oldDirection == DIR_NONE) {
 		computeAndSetSpriteSize();
-		newPosX = _vm->_linesManager._route->_X;
-		newPosY = _vm->_linesManager._route->_Y;
+		newPosX = _vm->_linesManager._route->_x;
+		newPosY = _vm->_linesManager._route->_y;
 		newDirection = _vm->_linesManager._route->_dir;
 		_vm->_linesManager._route++;
 
@@ -1518,8 +1518,8 @@ void ObjectsManager::GOHOME() {
 	}
 	bool loopCond = false;
 	do {
-		newPosX = _vm->_linesManager._route->_X;
-		newPosY = _vm->_linesManager._route->_Y;
+		newPosX = _vm->_linesManager._route->_x;
+		newPosY = _vm->_linesManager._route->_y;
 		newDirection = (Directions)_vm->_linesManager._route->_dir;
 		_vm->_linesManager._route++;
 
@@ -1603,8 +1603,8 @@ void ObjectsManager::GOHOME2() {
 	int countColisionPixel = 0;
 
 	for (;;) {
-		int nexPosX = _vm->_linesManager._route->_X;
-		int newPosY = _vm->_linesManager._route->_Y;
+		int nexPosX = _vm->_linesManager._route->_x;
+		int newPosY = _vm->_linesManager._route->_y;
 		Directions newDirection = (Directions)_vm->_linesManager._route->_dir;
 		_vm->_linesManager._route++;
 
@@ -1883,7 +1883,7 @@ void ObjectsManager::handleLeftButton() {
 		do {
 			_vm->_linesManager.essai2[routeIdx] = _vm->_linesManager._route[routeIdx];
 			++routeIdx;
-		} while (_vm->_linesManager._route[routeIdx]._X != -1);
+		} while (_vm->_linesManager._route[routeIdx]._x != -1);
 
 		_vm->_linesManager.essai2[routeIdx].invalidate();;
 	}
