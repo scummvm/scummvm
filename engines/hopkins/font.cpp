@@ -327,14 +327,6 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				_text[idx]._pos.x = i;
 				textPosX = _vm->_eventsManager._startPos.x + i;
 			} else {
-				if (_vm->_globals.nbrligne == (SCREEN_WIDTH - 1)) {
-					while (_vm->_globals._boxWidth + textPosX > 638 && textPosX > -2)
-						textPosX -= 2;
-				}
-				if (_vm->_globals.nbrligne == (SCREEN_WIDTH * 2)) {
-					while (_vm->_globals._boxWidth + textPosX > 1278 && textPosX > -2)
-						textPosX -= 2;
-				}
 				_text[idx]._pos.x = textPosX;
 			}
 		}

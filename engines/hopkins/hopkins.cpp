@@ -2196,7 +2196,6 @@ void HopkinsEngine::playEnding() {
 void HopkinsEngine::displayPlane() {
 	_soundManager.WSOUND(28);
 	_globals.iRegul = 1;
-	_globals.nbrligne = SCREEN_WIDTH;
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();

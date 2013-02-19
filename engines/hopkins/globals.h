@@ -307,7 +307,6 @@ public:
 	bool NOMARCHE;
 	int iRegul;
 	byte *BUF_ZONE;
-	int nbrligne; // Useless variable?
 	BqeAnimItem Bqe_Anim[35];
 	byte *SPRITE_ECRAN;
 	byte *PERSO;

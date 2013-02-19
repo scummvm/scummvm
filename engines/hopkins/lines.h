@@ -94,10 +94,9 @@ struct RouteItem {
 	int16 _X;
 	int16 _Y;
 	Directions _dir;
-	int16 _unk;
 	bool isValid() const { return _X != -1 || _Y != -1; }
-	void invalidate() { _X = _Y = _unk = -1; _dir = DIR_NONE; }
-	void set(int16 X, int16 Y, Directions dir) { _X = X; _Y = Y; _dir = dir; _unk = 0; }
+	void invalidate() { _X = _Y = -1; _dir = DIR_NONE; }
+	void set(int16 X, int16 Y, Directions dir) { _X = X; _Y = Y; _dir = dir; }
 };
 
 
