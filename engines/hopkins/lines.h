@@ -43,8 +43,8 @@ struct RouteItem;
 struct LigneItem {
 	int _lineDataEndIdx;
 	Directions _direction;
-	Directions field6;
-	Directions field8;
+	Directions _directionRouteInc;
+	Directions _directionRouteDec;
 	int16 *_lineData;
 
 	int appendToRouteInc(int from, int to, RouteItem *route, int index);

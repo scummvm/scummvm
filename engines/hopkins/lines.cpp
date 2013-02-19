@@ -34,17 +34,17 @@ namespace Hopkins {
 int LigneItem::appendToRouteInc(int from, int to, RouteItem *route, int index) {
 	if (to == -1)
 		to = _lineDataEndIdx;
-	assert(from <= to);
+
 	for (int i = from; i < to; ++i)
-		route[index++].set(_lineData[2*i], _lineData[2*i+1], field6);
+		route[index++].set(_lineData[2*i], _lineData[2*i+1], _directionRouteInc);
 	return index;
 }
 int LigneItem::appendToRouteDec(int from, int to, RouteItem *route, int index) {
 	if (from == -1)
 		from = _lineDataEndIdx - 1;
-	assert(from >= to);
+
 	for (int i = from; i > to; --i)
-		route[index++].set(_lineData[2*i], _lineData[2*i+1], field8);
+		route[index++].set(_lineData[2*i], _lineData[2*i+1], _directionRouteDec);
 	return index;
 }
 
@@ -268,60 +268,60 @@ void LinesManager::addLine(int idx, Directions direction, int a3, int a4, int a5
 	int v12 = (int)v37 / 1000;
 	if (!v11) {
 		if (v12 == -1) {
-			Ligne[idx].field6 = DIR_UP;
-			Ligne[idx].field8 = DIR_DOWN;
+			Ligne[idx]._directionRouteInc = DIR_UP;
+			Ligne[idx]._directionRouteDec = DIR_DOWN;
 		}
 		if (v12 == 1) {
-			Ligne[idx].field6 = DIR_DOWN;
-			Ligne[idx].field8 = DIR_UP;
+			Ligne[idx]._directionRouteInc = DIR_DOWN;
+			Ligne[idx]._directionRouteDec = DIR_UP;
 		}
 	}
 	if (v11 == 1) {
 		if (v12 == -1) {
-			Ligne[idx].field6 = DIR_UP_RIGHT;
-			Ligne[idx].field8 = DIR_DOWN_LEFT;
+			Ligne[idx]._directionRouteInc = DIR_UP_RIGHT;
+			Ligne[idx]._directionRouteDec = DIR_DOWN_LEFT;
 		}
 		if (!v12) {
-			Ligne[idx].field6 = DIR_RIGHT;
-			Ligne[idx].field8 = DIR_LEFT;
+			Ligne[idx]._directionRouteInc = DIR_RIGHT;
+			Ligne[idx]._directionRouteDec = DIR_LEFT;
 		}
 		if (v12 == 1) {
-			Ligne[idx].field6 = DIR_DOWN_RIGHT;
-			Ligne[idx].field8 = DIR_UP_LEFT;
+			Ligne[idx]._directionRouteInc = DIR_DOWN_RIGHT;
+			Ligne[idx]._directionRouteDec = DIR_UP_LEFT;
 		}
 	}
 	if (v11 == -1) {
 		if (v12 == 1) {
-			Ligne[idx].field6 = DIR_DOWN_LEFT;
-			Ligne[idx].field8 = DIR_UP_RIGHT;
+			Ligne[idx]._directionRouteInc = DIR_DOWN_LEFT;
+			Ligne[idx]._directionRouteDec = DIR_UP_RIGHT;
 		}
 		if (!v12) {
-			Ligne[idx].field6 = DIR_LEFT;
-			Ligne[idx].field8 = DIR_RIGHT;
+			Ligne[idx]._directionRouteInc = DIR_LEFT;
+			Ligne[idx]._directionRouteDec = DIR_RIGHT;
 		}
 		if (v12 == -1) {
-			Ligne[idx].field6 = DIR_UP_LEFT;
-			Ligne[idx].field8 = DIR_DOWN_RIGHT;
+			Ligne[idx]._directionRouteInc = DIR_UP_LEFT;
+			Ligne[idx]._directionRouteDec = DIR_DOWN_RIGHT;
 		}
 	}
 	if (v11 == 1 && v37 > 250 && v37 <= 999) {
-		Ligne[idx].field6 = DIR_DOWN_RIGHT;
-		Ligne[idx].field8 = DIR_UP_LEFT;
+		Ligne[idx]._directionRouteInc = DIR_DOWN_RIGHT;
+		Ligne[idx]._directionRouteDec = DIR_UP_LEFT;
 	}
 	if (v11 == -1 && v37 > 250 && v37 <= 999) {
-		Ligne[idx].field6 = DIR_DOWN_LEFT;
-		Ligne[idx].field8 = DIR_UP_RIGHT;
+		Ligne[idx]._directionRouteInc = DIR_DOWN_LEFT;
+		Ligne[idx]._directionRouteDec = DIR_UP_RIGHT;
 	}
 	if (v11 == 1 && v37 < -250 && v37 > -1000) {
-		Ligne[idx].field6 = DIR_UP_RIGHT;
-		Ligne[idx].field8 = DIR_DOWN_LEFT;
+		Ligne[idx]._directionRouteInc = DIR_UP_RIGHT;
+		Ligne[idx]._directionRouteDec = DIR_DOWN_LEFT;
 	}
 	// This condition is impossible to meet!
 	// Code present in the Linux and BeOS executables
 	// CHECKME: maybe it should be checking negative values?
 	if (v11 == -1 && v37 <= 249 && v37 > 1000) {
-		Ligne[idx].field6 = DIR_UP_LEFT;
-		Ligne[idx].field8 = DIR_DOWN_RIGHT;
+		Ligne[idx]._directionRouteInc = DIR_UP_LEFT;
+		Ligne[idx]._directionRouteDec = DIR_DOWN_RIGHT;
 	}
 	int v40 = v36 / v34;
 	int v38 = 1000 * v33 / v34;
@@ -446,8 +446,8 @@ void LinesManager::initRoute() {
 	_lastLine = lineIdx;
 	for (int idx = 1; idx < MAX_LINES; idx++) {
 		if ((Ligne[idx]._lineDataEndIdx < _maxLineIdx) && (idx != _lastLine + 1)) {
-			Ligne[idx].field6 = Ligne[idx - 1].field6;
-			Ligne[idx].field8 = Ligne[idx - 1].field8;
+			Ligne[idx]._directionRouteInc = Ligne[idx - 1]._directionRouteInc;
+			Ligne[idx]._directionRouteDec = Ligne[idx - 1]._directionRouteDec;
 		}
 	}
 }
@@ -1406,7 +1406,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 			for (int i = v114; Ligne[v115]._lineDataEndIdx > i; ++i) {
 				v119 = Ligne[v115]._lineData[2 * i];
 				v118 = Ligne[v115]._lineData[2 * i + 1];
-				super_parcours[v112].set(Ligne[v115]._lineData[2 * i], Ligne[v115]._lineData[2 * i + 1], Ligne[v115].field6);
+				super_parcours[v112].set(Ligne[v115]._lineData[2 * i], Ligne[v115]._lineData[2 * i + 1], Ligne[v115]._directionRouteInc);
 				v112++;
 			}
 			for (int v116 = v115 + 1; v116 < v121; v116++) {
@@ -1415,7 +1415,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				for (int j = v116; Ligne[j]._lineDataEndIdx > v72; j = v116) {
 					v119 = Ligne[v110]._lineData[2 * v72];
 					v118 = Ligne[v110]._lineData[2 * v72 + 1];
-					super_parcours[v112].set(Ligne[v110]._lineData[2 * v72], Ligne[v110]._lineData[2 * v72 + 1], Ligne[v110].field6);
+					super_parcours[v112].set(Ligne[v110]._lineData[2 * v72], Ligne[v110]._lineData[2 * v72 + 1], Ligne[v110]._directionRouteInc);
 					v112++;
 					if (Ligne[v110]._lineDataEndIdx > 30 && v72 == Ligne[v110]._lineDataEndIdx / 2) {
 						int v78 = PARC_PERS(Ligne[v110]._lineData[2 * v72], Ligne[v110]._lineData[2 * v72 + 1], clipDestX, clipDestY, v110, v121, v112);
@@ -1458,14 +1458,14 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				v119 = Ligne[v115]._lineData[2 * dataIdx];
 				v118 = Ligne[v115]._lineData[2 * dataIdx + 1];
 
-				super_parcours[v112].set(Ligne[v115]._lineData[2 * dataIdx], Ligne[v115]._lineData[2 * dataIdx + 1], Ligne[v115].field8);
+				super_parcours[v112].set(Ligne[v115]._lineData[2 * dataIdx], Ligne[v115]._lineData[2 * dataIdx + 1], Ligne[v115]._directionRouteDec);
 				v112++;
 			}
 			for (int v117 = v115 - 1; v117 > v121; v117--) {
 				for (int dataIdx = Ligne[v117]._lineDataEndIdx - 1; dataIdx > -1; dataIdx--) {
 					v119 = Ligne[v117]._lineData[2 * dataIdx];
 					v118 = Ligne[v117]._lineData[2 * dataIdx + 1];
-					super_parcours[v112].set(Ligne[v117]._lineData[2 * dataIdx], Ligne[v117]._lineData[2 * dataIdx + 1], Ligne[v117].field8);
+					super_parcours[v112].set(Ligne[v117]._lineData[2 * dataIdx], Ligne[v117]._lineData[2 * dataIdx + 1], Ligne[v117]._directionRouteDec);
 					v112++;
 					if (Ligne[v117]._lineDataEndIdx > 30 && dataIdx == Ligne[v117]._lineDataEndIdx / 2) {
 						int v88 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
@@ -2186,10 +2186,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 				v69 = v73;
 			}
 			if (v69 > v73) {
-				for (int k = v68; k > 0; --k) {
-					super_parcours[superRouteIdx].set(Ligne[v69]._lineData[2 * k], Ligne[v69]._lineData[2 * k + 1], Ligne[v69].field8);
-					superRouteIdx++;
-				}
+				superRouteIdx = Ligne[v69].appendToRouteDec(v68, 0, super_parcours, superRouteIdx);
 				for (int l = v69 - 1; l > v73; --l) {
 					if (PLAN_TEST(Ligne[l]._lineData[2 * Ligne[l]._lineDataEndIdx - 2], Ligne[l]._lineData[2 * Ligne[l]._lineDataEndIdx - 1], superRouteIdx, l, v73)) {
 						v69 = NV_LIGNEDEP;
@@ -2504,9 +2501,9 @@ int LinesManager::TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx,
 			*a3 = 1;
 			int posX = lineData[2 * (lineDataEndIdx - 1)];
 			int posY = lineData[2 * (lineDataEndIdx - 1) + 1];
-			if (Ligne[idx].field6 == DIR_DOWN || Ligne[idx].field6 == DIR_UP)
+			if (Ligne[idx]._directionRouteInc == DIR_DOWN || Ligne[idx]._directionRouteInc == DIR_UP)
 				posY += 2;
-			if (Ligne[idx].field6 == DIR_RIGHT || Ligne[idx].field8 == 7)
+			if (Ligne[idx]._directionRouteInc == DIR_RIGHT || Ligne[idx]._directionRouteDec == 7)
 				posX += 2;
 			if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _lastLine))
 				error("Error in test line");
@@ -2518,9 +2515,9 @@ int LinesManager::TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx,
 			*a3 = 2;
 			int posX = lineData[0];
 			int posY = lineData[1];
-			if (Ligne[idx].field6 == DIR_DOWN || Ligne[idx].field6 == DIR_UP)
+			if (Ligne[idx]._directionRouteInc == DIR_DOWN || Ligne[idx]._directionRouteInc == DIR_UP)
 				posY -= 2;
-			if (Ligne[idx].field6 == DIR_RIGHT || Ligne[idx].field8 == 7)
+			if (Ligne[idx]._directionRouteInc == DIR_RIGHT || Ligne[idx]._directionRouteDec == 7)
 				posX -= 2;
 			if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _lastLine))
 				error("Error in test line");
@@ -2809,8 +2806,8 @@ void LinesManager::clearAll() {
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
 		Ligne[idx]._lineDataEndIdx = 0;
 		Ligne[idx]._direction = DIR_NONE;
-		Ligne[idx].field6 = DIR_NONE;
-		Ligne[idx].field8 = DIR_NONE;
+		Ligne[idx]._directionRouteInc = DIR_NONE;
+		Ligne[idx]._directionRouteDec = DIR_NONE;
 		Ligne[idx]._lineData = (int16 *)g_PTRNUL;
 
 		_zoneLine[idx]._count = 0;
