@@ -112,7 +112,8 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		_screenWidth = width;
 		_screenHeight = height;
 
-		WinScan = width * 2; // Refactor me
+		// Clear the screen pitch. This will be set on the first lockScreen call
+		WinScan = 0;
 
 		PAL_PIXELS = SD_PIXELS;
 		_lineNbr = width;
@@ -128,9 +129,12 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
  */
 void GraphicsManager::lockScreen() {
 	if (!_skipVideoLockFl) {
-		if (_lockCounter++ == 0)
+		if (_lockCounter++ == 0) {
 			_videoPtr = g_system->lockScreen();
-	}
+			if (WinScan == 0)
+				WinScan = _videoPtr->pitch;
+		}
+	}		
 }
 
 /**
