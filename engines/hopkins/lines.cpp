@@ -1729,9 +1729,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 		if (v22 == 1) {
 			if (v100 >= -1000 && v100 <= -510)
 				newDirection = DIR_UP_RIGHT;
-			if (v100 >= -510 && v100 <= 0)
-				newDirection = DIR_RIGHT;
-			if (v100 >= 0 && v100 <= 510)
+			if (v100 >= -510 && v100 <= 510)
 				newDirection = DIR_RIGHT;
 			if (v100 >= 510 && v100 <= 1000)
 				newDirection = DIR_DOWN_RIGHT;
@@ -1739,9 +1737,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 		if (v96 == 1) {
 			if (v102 >= 510 && v102 <= 1000)
 				newDirection = DIR_DOWN_RIGHT;
-			if (v102 >= 0 && v102 <= 510)
-				newDirection = DIR_DOWN;
-			if (v102 >= -510 && v102 <= 0)
+			if (v102 >= -510 && v102 <= 510)
 				newDirection = DIR_DOWN;
 			if (v102 >= -1000 && v102 <= -510)
 				newDirection = DIR_DOWN_LEFT;
@@ -1749,9 +1745,7 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 		if (v22 == -1) {
 			if (v100 >= 510 && v100 <= 1000)
 				newDirection = DIR_DOWN_LEFT;
-			if (v100 >= 0 && v100 <= 510)
-				newDirection = DIR_LEFT;
-			if (v100 >= -510 && v100 <= 0)
+			if (v100 >= -510 && v100 <= 510)
 				newDirection = DIR_LEFT;
 			if (v100 >= -1000 && v100 <= -510)
 				newDirection = DIR_UP_LEFT;
