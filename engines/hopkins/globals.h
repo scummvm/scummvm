@@ -107,8 +107,8 @@ struct CacheItem {
 };
 
 struct HopkinsItem {
-	int field0;
-	int field2;
+	int _speedX;
+	int _speedY;
 };
 
 struct CharacterLocation {
@@ -274,7 +274,7 @@ public:
 	byte *_answerBuffer;
 	Sauvegarde *_saveData;
 	Language _language;
-	HopkinsItem Hopkins[70];
+	HopkinsItem _hopkinsItem[70];
 	SortItem _sortedDisplay[51];
 
 	CreditItem _creditsItem[200];

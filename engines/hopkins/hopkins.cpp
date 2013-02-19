@@ -1884,7 +1884,7 @@ void HopkinsEngine::bombExplosion() {
 	}
 
 	_globals._introSpeechOffFl = true;
-	_talkManager.PARLER_PERSO2("vire.pe2");
+	_talkManager.startStaticCharacterDialogue("vire.pe2");
 	_globals._introSpeechOffFl = false;
 	_objectsManager.setBobAnimation(7);
 
@@ -1953,7 +1953,7 @@ void HopkinsEngine::handleConflagration() {
 		_eventsManager.VBL();
 
 	_globals._introSpeechOffFl = true;
-	_talkManager.PARLER_PERSO("SVGARD1.pe2");
+	_talkManager.startAnimatedCharacterDialogue("SVGARD1.pe2");
 	_globals._introSpeechOffFl = false;
 
 	for (int cpt = 0; cpt <= 49; cpt++)
@@ -2078,7 +2078,7 @@ void HopkinsEngine::playEnding() {
 	while (_objectsManager.getBobAnimDataIdx(6) != 54);
 
 	_globals._introSpeechOffFl = true;
-	_talkManager.PARLER_PERSO("GM4.PE2");
+	_talkManager.startAnimatedCharacterDialogue("GM4.PE2");
 	_globals._disableInventFl = true;
 	_objectsManager.stopBobAnimation(6);
 	_objectsManager.stopBobAnimation(10);
@@ -2096,7 +2096,7 @@ void HopkinsEngine::playEnding() {
 	while (_objectsManager.getBobAnimDataIdx(7) != 65);
 
 	_globals._introSpeechOffFl = true;
-	_talkManager.PARLER_PERSO("DUELB4.PE2");
+	_talkManager.startAnimatedCharacterDialogue("DUELB4.PE2");
 	_eventsManager.mouseOff();
 	_globals._disableInventFl = true;
 
@@ -2105,14 +2105,14 @@ void HopkinsEngine::playEnding() {
 	while (_objectsManager.getBobAnimDataIdx(7) != 72);
 
 	_globals._introSpeechOffFl = true;
-	_talkManager.PARLER_PERSO("DUELH1.PE2");
+	_talkManager.startAnimatedCharacterDialogue("DUELH1.PE2");
 
 	do
 		_eventsManager.VBL();
 	while (_objectsManager.getBobAnimDataIdx(7) != 81);
 
 	_globals._introSpeechOffFl = true;
-	_talkManager.PARLER_PERSO("DUELB5.PE2");
+	_talkManager.startAnimatedCharacterDialogue("DUELB5.PE2");
 
 	do
 		_eventsManager.VBL();
@@ -2163,7 +2163,7 @@ void HopkinsEngine::playEnding() {
 		_objectsManager.stopBobAnimation(7);
 		_objectsManager.setBobAnimation(8);
 		_globals._introSpeechOffFl = true;
-		_talkManager.PARLER_PERSO("GM5.PE2");
+		_talkManager.startAnimatedCharacterDialogue("GM5.PE2");
 		_globals._disableInventFl = true;
 
 		do

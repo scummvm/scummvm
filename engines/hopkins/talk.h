@@ -68,11 +68,11 @@ public:
 	TalkManager();
 	void setParent(HopkinsEngine *vm);
 
-	void PARLER_PERSO2(const Common::String &filename);
-	void PARLER_PERSO(const Common::String &filename);
+	void startStaticCharacterDialogue(const Common::String &filename);
+	void startAnimatedCharacterDialogue(const Common::String &filename);
 	void REPONSE(int zone, int verb);
 	void REPONSE2(int zone, int verb);
-	void OBJET_VIVANT(const Common::String &a2);
+	void animateObject(const Common::String &a2);
 };
 
 } // End of namespace Hopkins

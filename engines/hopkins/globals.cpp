@@ -90,7 +90,7 @@ Globals::Globals() {
 	for (int i = 0; i < 500; ++i)
 		_spriteSize[i] = 0;
 	for (int i = 0; i < 70; ++i)
-		Common::fill((byte *)&Hopkins[i], (byte *)&Hopkins[i] + sizeof(HopkinsItem), 0);
+		Common::fill((byte *)&_hopkinsItem[i], (byte *)&_hopkinsItem[i] + sizeof(HopkinsItem), 0);
 
 	for (int i = 0; i < 36; ++i)
 		_inventory[i] = 0;
@@ -275,8 +275,8 @@ void Globals::loadCharacterData() {
 	const int *srcP = srcList[_characterType];
 
 	for (int idx = 0; idx < 240 / 4; ++idx) {
-		Hopkins[idx].field0 = *srcP++;
-		Hopkins[idx].field2 = *srcP++;
+		_hopkinsItem[idx]._speedX = *srcP++;
+		_hopkinsItem[idx]._speedY = *srcP++;
 	}
 
 	_oldFrameIndex = -1;

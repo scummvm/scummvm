@@ -2261,8 +2261,8 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int smoothIdx = 0;
 		int stepCount = 0;
 		while (curX > destX && destY > curY) {
-			int v25 = _vm->_globals.Hopkins[hopkinsIdx].field0;
-			int v40 = _vm->_globals.Hopkins[hopkinsIdx].field2;
+			int v25 = _vm->_globals._hopkinsItem[hopkinsIdx]._speedX;
+			int v40 = _vm->_globals._hopkinsItem[hopkinsIdx]._speedY;
 			int spriteSize = _vm->_globals._spriteSize[curY];
 			if (spriteSize < 0) {
 				v25 = _vm->_graphicsManager.zoomOut(v25, -spriteSize);
@@ -2295,8 +2295,8 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int smoothIdx = 0;
 		int stepCount = 0;
 		while (curX < destX && destY > curY) {
-			int v14 = _vm->_globals.Hopkins[hopkinsIdx].field0;
-			int v39 = _vm->_globals.Hopkins[hopkinsIdx].field2;
+			int v14 = _vm->_globals._hopkinsItem[hopkinsIdx]._speedX;
+			int v39 = _vm->_globals._hopkinsItem[hopkinsIdx]._speedY;
 			int spriteSize = _vm->_globals._spriteSize[curY];
 			if (spriteSize < 0) {
 				v14 = _vm->_graphicsManager.zoomOut(v14, -spriteSize);
@@ -2329,8 +2329,8 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int smoothIdx = 0;
 		int stepCount = 0;
 		while (curX > destX && destY < curY) {
-			int v11 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[hopkinsIdx].field0, 25);
-			int v38 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[hopkinsIdx].field2, 25);
+			int v11 = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedX, 25);
+			int v38 = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedY, 25);
 			int oldY = curY;
 			for (int v12 = 0; v12 < v11; v12++) {
 				--curX;
@@ -2357,8 +2357,8 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int stepCount = 0;
 		while (curX < destX && destY < curY) {
 			int oldY = curY;
-			int v7 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[hopkinsIdx].field0, 25);
-			int v37 = _vm->_graphicsManager.zoomOut(_vm->_globals.Hopkins[hopkinsIdx].field2, 25);
+			int v7 = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedX, 25);
+			int v37 = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedY, 25);
 			for (int i = 0; i < v7; i++) {
 				++curX;
 				_smoothRoute[smoothIdx]._posX = curX;

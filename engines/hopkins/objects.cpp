@@ -1339,8 +1339,8 @@ void ObjectsManager::GOHOME() {
 			oldPosY = _oldCharacterPosY;
 			oldFrameIdx = 24;
 		} else {
-			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedX;
+			int deltaY = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedY;
 
 			if (_sprite[0]._zoomFactor < 0) {
 				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
@@ -1363,8 +1363,8 @@ void ObjectsManager::GOHOME() {
 			oldPosY = _oldCharacterPosY;
 			oldFrameIdx = 24;
 		} else {
-			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedX;
+			int deltaY = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedY;
 			if (_sprite[0]._zoomFactor < 0) {
 				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
@@ -1386,7 +1386,7 @@ void ObjectsManager::GOHOME() {
 			oldPosY = _oldCharacterPosY;
 			oldFrameIdx = 0;
 		} else {
-			int deltaY = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
+			int deltaY = abs(_vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedY);
 			if (_sprite[0]._zoomFactor < 0) {
 				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
@@ -1407,7 +1407,7 @@ void ObjectsManager::GOHOME() {
 			oldPosY = _oldCharacterPosY;
 			oldFrameIdx = 48;
 		} else {
-			int deltaY = abs(_vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2);
+			int deltaY = abs(_vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedY);
 			if (_sprite[0]._zoomFactor < 0) {
 				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
 			} else if (_sprite[0]._zoomFactor > 0) {
@@ -1427,8 +1427,8 @@ void ObjectsManager::GOHOME() {
 			oldPosY = _oldCharacterPosY;
 			oldFrameIdx = 12;
 		} else {
-			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedX;
+			int deltaY = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedY;
 			if (_sprite[0]._zoomFactor < 0) {
 				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
@@ -1451,8 +1451,8 @@ void ObjectsManager::GOHOME() {
 			oldPosY = _oldCharacterPosY;
 			oldFrameIdx = 12;
 		} else {
-			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedX;
+			int deltaY = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedY;
 			if (_sprite[0]._zoomFactor < 0) {
 				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
@@ -1474,8 +1474,8 @@ void ObjectsManager::GOHOME() {
 			oldPosY = _oldCharacterPosY;
 			oldFrameIdx = 36;
 		} else {
-			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedX;
+			int deltaY = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedY;
 			if (_sprite[0]._zoomFactor < 0) {
 				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
@@ -1498,8 +1498,8 @@ void ObjectsManager::GOHOME() {
 			oldPosY = _oldCharacterPosY;
 			oldFrameIdx = 36;
 		} else {
-			int deltaX = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field0;
-			int deltaY = _vm->_globals.Hopkins[_vm->_globals._oldFrameIndex].field2;
+			int deltaX = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedX;
+			int deltaY = _vm->_globals._hopkinsItem[_vm->_globals._oldFrameIndex]._speedY;
 			if (_sprite[0]._zoomFactor < 0) {
 				deltaX = _vm->_graphicsManager.zoomOut(deltaX, -_sprite[0]._zoomFactor);
 				deltaY = _vm->_graphicsManager.zoomOut(deltaY, -_sprite[0]._zoomFactor);
@@ -1792,14 +1792,14 @@ void ObjectsManager::handleCityMap() {
 			if (_vm->_globals._saveData->_data[svField170] == 1 && !_vm->_globals._saveData->_data[svField171]) {
 				_vm->_globals._saveData->_data[svField171] = 1;
 				_vm->_globals._introSpeechOffFl = true;
-				_vm->_talkManager.PARLER_PERSO("APPEL1.pe2");
+				_vm->_talkManager.startAnimatedCharacterDialogue("APPEL1.pe2");
 				_vm->_globals._introSpeechOffFl = false;
 				mouseButton = 0;
 			}
 			if (_vm->_globals._saveData->_data[svField80] == 1 && !_vm->_globals._saveData->_data[svField172]) {
 				_vm->_globals._saveData->_data[svField172] = 1;
 				_vm->_globals._introSpeechOffFl = true;
-				_vm->_talkManager.PARLER_PERSO("APPEL2.pe2");
+				_vm->_talkManager.startAnimatedCharacterDialogue("APPEL2.pe2");
 				_vm->_globals._introSpeechOffFl = false;
 				mouseButton = 0;
 				_vm->_eventsManager._curMouseButton = 0;
@@ -2587,7 +2587,7 @@ void ObjectsManager::handleSpecialGames() {
 
 		_vm->_globals._saveData->_data[svField173] = 1;
 		_vm->_globals._introSpeechOffFl = true;
-		_vm->_talkManager.PARLER_PERSO("flicspe1.pe2");
+		_vm->_talkManager.startAnimatedCharacterDialogue("flicspe1.pe2");
 		_vm->_globals._introSpeechOffFl = false;
 
 		if (_vm->_globals._censorshipFl)
@@ -2698,7 +2698,7 @@ void ObjectsManager::handleSpecialGames() {
 			_vm->_eventsManager.VBL();
 		while (getBobAnimDataIdx(8) != 3);
 		_vm->_globals._introSpeechOffFl = true;
-		_vm->_talkManager.PARLER_PERSO("GM3.PE2");
+		_vm->_talkManager.startAnimatedCharacterDialogue("GM3.PE2");
 		stopBobAnimation(8);
 		_vm->_globals._saveData->_data[svField333] = 1;
 		_vm->_globals._disableInventFl = false;
@@ -3259,7 +3259,7 @@ void ObjectsManager::SPECIAL_INI() {
 			_vm->_globals._disableInventFl = false;
 			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_globals._introSpeechOffFl = true;
-			_vm->_talkManager.PARLER_PERSO("MAGE1.pe2");
+			_vm->_talkManager.startAnimatedCharacterDialogue("MAGE1.pe2");
 			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_globals._disableInventFl = false;
 		}

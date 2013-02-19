@@ -49,7 +49,7 @@ void TalkManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
 
-void TalkManager::PARLER_PERSO(const Common::String &filename) {
+void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename) {
 	Common::String spriteFilename;
 
 	_vm->_fontManager.hideText(5);
@@ -64,7 +64,9 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 		_characterBuffer = _vm->_fileManager.loadFile(filename);
 		_characterSize = _vm->_fileManager.fileSize(filename);
 	}
+	// CHECKME:_data[svField4] is useless?
 	_vm->_globals._saveData->_data[svField4] = 0;
+
 	getStringFromBuffer(40, spriteFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
@@ -152,7 +154,7 @@ void TalkManager::PARLER_PERSO(const Common::String &filename) {
 	_vm->_graphicsManager._scrollStatus = 0;
 }
 
-void TalkManager::PARLER_PERSO2(const Common::String &filename) {
+void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	// TODO: The original disables the mouse cursor here
 	bool oldDisableInventFl = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
@@ -163,7 +165,9 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 		_characterSize = _vm->_fileManager.fileSize(filename);
 	}
 
+	// CHECKME:_data[svField4] is useless?
 	_vm->_globals._saveData->_data[svField4] = 0;
+
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
 
@@ -217,7 +221,7 @@ void TalkManager::PARLER_PERSO2(const Common::String &filename) {
 	_vm->_eventsManager.changeMouseCursor(oldMouseCursorId);
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
-	// TODO: The original reenables the mouse cursor here
+	// TODO: The original re-enables the mouse cursor here
 	_vm->_globals._disableInventFl = oldDisableInventFl;
 }
 
@@ -342,14 +346,15 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 	_dialogueMesgId1 = READ_LE_INT16((uint16 *)charBuf + 5);
 	_dialogueMesgId2 = READ_LE_INT16((uint16 *)charBuf + 6);
 	_dialogueMesgId3 = READ_LE_INT16((uint16 *)charBuf + 7);
-	int v6 = READ_LE_INT16((uint16 *)charBuf + 8);
-	int v7 = READ_LE_INT16((uint16 *)charBuf + 9);
+	int frameNumb = READ_LE_INT16((uint16 *)charBuf + 8);
 
+	// CHECKME:_data[svField4] is useless?
+	int v7 = READ_LE_INT16((uint16 *)charBuf + 9);
 	if (v7)
 		_vm->_globals._saveData->_data[svField4] = v7;
 
-	if (!v6)
-		v6 = 10;
+	if (!frameNumb)
+		frameNumb = 10;
 	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
 		int curVal = READ_LE_INT16(bufPtr);
@@ -384,15 +389,15 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 		_vm->_eventsManager._mouseButton = 0;
 
 		if (_vm->getIsDemo()) {
-			for (int i = 0; i < v6; i++) {
+			for (int i = 0; i < frameNumb; i++) {
 				_vm->_eventsManager.VBL();
 			}
 		} else {
-			for (int i = 0; i < v6; i++) {
+			for (int i = 0; i < frameNumb; i++) {
 				_vm->_eventsManager.VBL();
 				if (_vm->_eventsManager._mouseButton || _vm->_eventsManager._curMouseButton)
 					break;
-				if (_vm->_eventsManager.getMouseButton() && i + 1 > abs(v6 / 5))
+				if (_vm->_eventsManager.getMouseButton() && i + 1 > abs(frameNumb / 5))
 					break;
 			}
 		}
@@ -959,7 +964,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 	}
 }
 
-void TalkManager::OBJET_VIVANT(const Common::String &a2) {
+void TalkManager::animateObject(const Common::String &a2) {
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
 	_vm->_eventsManager.VBL();
