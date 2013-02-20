@@ -68,9 +68,9 @@ public:
 	void enableMenuItem(int menuId);
 	void displayMenu();
 	void drawMenu();
-	void menuUp(int xx);
+	void menuUp(int msgId);
 	void eraseMenu();
-	void mdn();
+	void updateMenu();
 	void initMenu();
 
 	void setSearchMenu();

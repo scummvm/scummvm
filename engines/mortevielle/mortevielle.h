@@ -37,6 +37,7 @@
 #include "engines/engine.h"
 #include "common/error.h"
 #include "graphics/surface.h"
+#include "mortevielle/debugger.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mouse.h"
@@ -475,6 +476,7 @@ public:
 	// TODO: Replace the following with proper implementations, or refactor out the code using them
 	byte _mem[65536 * 16];
 
+	Debugger _debugger;
 	ScreenSurface _screenSurface;
 	PaletteManager _paletteManager;
 	GfxSurface _backgroundSurface;

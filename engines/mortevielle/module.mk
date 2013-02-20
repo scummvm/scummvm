@@ -2,6 +2,7 @@ MODULE := engines/mortevielle
 
 MODULE_OBJS := \
 	actions.o \
+	debugger.o \
 	detection.o \
 	dialogs.o \
 	graphics.o \
