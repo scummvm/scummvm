@@ -390,9 +390,9 @@ void Menu::menuDown(int ii) {
 /**
  * Menu is being removed, so restore the previous background area.
  */
-void Menu::menuUp(int xx) {
+void Menu::menuUp(int msgId) {
 	if (_multiTitle) {
-		g_vm->charecr(10, (_menuConstants[xx - 1][1] + 1) << 1);
+		g_vm->charecr(10, (_menuConstants[msgId - 1][1] + 1) << 1);
 
 		/* Restore the background area */
 		assert(g_vm->_screenSurface.pitch == g_vm->_backgroundSurface.pitch);
@@ -420,8 +420,9 @@ void Menu::eraseMenu() {
 
 /**
  * Handle updates to the menu
+ * @remarks	Originally called 'mdn'
  */
-void Menu::mdn() {
+void Menu::updateMenu() {
 	if (!_menuActive)
 		return;
 

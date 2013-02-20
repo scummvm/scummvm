@@ -48,8 +48,8 @@ public:
 class GfxSurface: public Graphics::Surface {
 private:
 	int _xp, _yp;
-	int _xSize, _ySize, _var12;
-	int _var14, _lookupIndex, _lookupValue;
+	int _xSize, _ySize;
+	int _lookupIndex, _lookupValue;
 	bool _nibbleFlag;
 	int _thickness;
 	int _yInc, _yEnd, _xInc, _xEnd;
