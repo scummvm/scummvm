@@ -1043,17 +1043,17 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 	}
 }
 
-void GraphicsManager::FIN_VISU() {
+void GraphicsManager::endDisplayBob() {
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
-			_vm->_objectsManager.BOB_OFF(idx);
+		if (_vm->_globals._animBqe[idx]._enabledFl)
+			_vm->_objectsManager.hideBob(idx);
 	}
 
 	_vm->_eventsManager.VBL();
 	_vm->_eventsManager.VBL();
 
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
+		if (_vm->_globals._animBqe[idx]._enabledFl)
 			_vm->_objectsManager.resetBob(idx);
 	}
 
@@ -1062,14 +1062,14 @@ void GraphicsManager::FIN_VISU() {
 	}
 
 	for (int idx = 1; idx <= 20; ++idx) {
-		_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
+		_vm->_globals._animBqe[idx]._enabledFl = false;
 	}
 }
 
-void GraphicsManager::VISU_ALL() {
+void GraphicsManager::displayAllBob() {
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
-			_vm->_objectsManager.BOB_VISU(idx);
+		if (_vm->_globals._animBqe[idx]._enabledFl)
+			_vm->_objectsManager.displayBob(idx);
 	}
 }
 

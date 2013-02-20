@@ -123,6 +123,8 @@ public:
 	void unlockScreen();
 	void clearPalette();
 	void clearScreen();
+	void addVesaSegment(int x1, int y1, int x2, int y2);
+	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void loadImage(const Common::String &file);
 	void loadVgaImage(const Common::String &file);
 	void fadeInLong();
@@ -146,10 +148,10 @@ public:
 	int zoomIn(int v, int percentage);
 	int zoomOut(int v, int percentage);
 	void initScreen(const Common::String &file, int mode, bool initializeScreen);
+	void displayAllBob();
+	void endDisplayBob();
 
 	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
-	void addVesaSegment(int x1, int y1, int x2, int y2);
-	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void SETCOLOR4(int palIndex, int r, int g, int b);
 	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment = true);
@@ -163,8 +165,6 @@ public:
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void Trans_bloc2(byte *surface, byte *col, int size);
-	void VISU_ALL();
-	void FIN_VISU();
 	void NB_SCREEN(bool initPalette);
 	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
 	void Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface);

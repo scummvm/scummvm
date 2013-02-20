@@ -308,7 +308,7 @@ public:
 	bool NOMARCHE;
 	int iRegul;
 	byte *BUF_ZONE;
-	BqeAnimItem Bqe_Anim[35];
+	BqeAnimItem _animBqe[35];
 	byte *SPRITE_ECRAN;
 	byte *PERSO;
 	bool NOT_VERIF;

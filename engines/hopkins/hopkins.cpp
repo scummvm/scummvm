@@ -1670,7 +1670,7 @@ void HopkinsEngine::playIntro() {
 	_graphicsManager.loadImage("intro2");
 	_graphicsManager.scrollScreen(0);
 	_animationManager.loadAnim("INTRO2");
-	_graphicsManager.VISU_ALL();
+	_graphicsManager.displayAllBob();
 	_soundManager.playSound(23);
 	_objectsManager.stopBobAnimation(3);
 	_objectsManager.stopBobAnimation(5);
@@ -1695,7 +1695,7 @@ void HopkinsEngine::playIntro() {
 	memcpy(&paletteData2, _graphicsManager._palette, 796);
 
 	_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
-	_graphicsManager.FIN_VISU();
+	_graphicsManager.endDisplayBob();
 
 	if (shouldQuit() || _eventsManager._escKeyFl)
 		return;
@@ -1711,7 +1711,7 @@ void HopkinsEngine::playIntro() {
 	_graphicsManager.loadImage("intro2");
 	_graphicsManager.scrollScreen(0);
 	_animationManager.loadAnim("INTRO2");
-	_graphicsManager.VISU_ALL();
+	_graphicsManager.displayAllBob();
 	_soundManager.playSound(23);
 	_objectsManager.stopBobAnimation(3);
 	_objectsManager.stopBobAnimation(5);
@@ -1785,7 +1785,7 @@ void HopkinsEngine::playIntro() {
 			}
 
 			_graphicsManager.fadeOutLong();
-			_graphicsManager.FIN_VISU();
+			_graphicsManager.endDisplayBob();
 			_animationManager._clearAnimationFl = true;
 			_soundManager.playSound(3);
 			_soundManager._specialSoundNum = 1;
@@ -1869,7 +1869,7 @@ void HopkinsEngine::bombExplosion() {
 	_soundManager._specialSoundNum = 0;
 	_graphicsManager.loadImage("IM15");
 	_animationManager.loadAnim("ANIM15");
-	_graphicsManager.VISU_ALL();
+	_graphicsManager.displayAllBob();
 	_objectsManager.stopBobAnimation(7);
 
 	for (int idx = 0; idx < 5; ++idx) {
@@ -1893,7 +1893,7 @@ void HopkinsEngine::bombExplosion() {
 	}
 
 	_graphicsManager.fadeOutLong();
-	_graphicsManager.FIN_VISU();
+	_graphicsManager.endDisplayBob();
 	_globals.iRegul = 0;
 	_globals._exitId = 151;
 }
@@ -1941,7 +1941,7 @@ void HopkinsEngine::handleConflagration() {
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	_graphicsManager.VISU_ALL();
+	_graphicsManager.displayAllBob();
 
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager.VBL();
@@ -1960,7 +1960,7 @@ void HopkinsEngine::handleConflagration() {
 		_eventsManager.VBL();
 
 	_graphicsManager.fadeOutLong();
-	_graphicsManager.FIN_VISU();
+	_graphicsManager.endDisplayBob();
 	_globals._saveData->_data[svField312] = 1;
 	_globals._disableInventFl = false;
 }
@@ -2021,7 +2021,7 @@ void HopkinsEngine::BASED() {
 	_animationManager.NO_COUL = false;
 	_graphicsManager.loadImage("IM92");
 	_animationManager.loadAnim("ANIM92");
-	_graphicsManager.VISU_ALL();
+	_graphicsManager.displayAllBob();
 	_objectsManager.loadLinkFile("IM92");
 
 	for (int cpt = 0; cpt <= 4; cpt++)
@@ -2035,7 +2035,7 @@ void HopkinsEngine::BASED() {
 	while (_objectsManager.getBobAnimDataIdx(8) != 22);
 
 	_graphicsManager.fadeOutLong();
-	_graphicsManager.FIN_VISU();
+	_graphicsManager.endDisplayBob();
 	_globals.resetCache();
 	_globals._disableInventFl = false;
 	_globals._exitId = 93;
@@ -2056,7 +2056,7 @@ void HopkinsEngine::playEnding() {
 	_soundManager.loadSample(1, "SOUND90.WAV");
 	_graphicsManager.loadImage("IM100");
 	_animationManager.loadAnim("ANIM100");
-	_graphicsManager.VISU_ALL();
+	_graphicsManager.displayAllBob();
 	_eventsManager.mouseOn();
 	_objectsManager.stopBobAnimation(7);
 	_objectsManager.stopBobAnimation(8);
@@ -2124,7 +2124,7 @@ void HopkinsEngine::playEnding() {
 		_soundManager._skipRefreshFl = true;
 		_graphicsManager.FADE_LINUX = 2;
 		_animationManager.playAnim("BERM.ANM", 100, 24, 300);
-		_graphicsManager.FIN_VISU();
+		_graphicsManager.endDisplayBob();
 		_soundManager.removeSample(1);
 		_graphicsManager.loadImage("PLAN3");
 		_graphicsManager.fadeInLong();
@@ -2177,7 +2177,7 @@ void HopkinsEngine::playEnding() {
 		while (_objectsManager.getBobAnimDataIdx(8) != 21);
 
 		_graphicsManager.fadeOutLong();
-		_graphicsManager.FIN_VISU();
+		_graphicsManager.endDisplayBob();
 		_soundManager.removeSample(1);
 		_soundManager.playSound(16);
 		_globals.iRegul = 1;

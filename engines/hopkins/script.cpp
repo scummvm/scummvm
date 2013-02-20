@@ -36,7 +36,7 @@
 namespace Hopkins {
 
 ScriptManager::ScriptManager() {
-	TRAVAILOBJET = false;
+	_tempObjectFl = false;
 }
 
 void ScriptManager::setParent(HopkinsEngine *vm) {
@@ -56,7 +56,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		vbobFrameIndex = dataP[6];
 		int mesgId = READ_LE_INT16(dataP + 13);
 		opcodeType = 1;
-		if (!TRAVAILOBJET) {
+		if (!_tempObjectFl) {
 			if (_vm->_globals._saveData->_data[svField356] == 1) {
 				if (mesgId == 53)
 					mesgId = 644;
@@ -543,7 +543,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_fontManager.hideText(5);
 			_vm->_fontManager.hideText(9);
-			_vm->_graphicsManager.FIN_VISU();
+			_vm->_graphicsManager.endDisplayBob();
 			_vm->_objectsManager.clearScreen();
 
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo()) {
@@ -556,7 +556,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 			_vm->_animationManager.loadAnim("otage");
 			_vm->_graphicsManager.loadImage("IM05");
-			_vm->_graphicsManager.VISU_ALL();
+			_vm->_graphicsManager.displayAllBob();
 
 			for (int i = 0; i <= 4; i++) {
 				if (_vm->shouldQuit())
@@ -574,7 +574,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(3) != 100);
 			_vm->_graphicsManager.fadeOutDefaultLength(_vm->_graphicsManager._vesaBuffer);
-			_vm->_graphicsManager.FIN_VISU();
+			_vm->_graphicsManager.endDisplayBob();
 
 			// If uncensored, rip the throat of the hostage
 			if (!_vm->_globals._censorshipFl) {
@@ -586,7 +586,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_animationManager.loadAnim("ASCEN");
 			_vm->_eventsManager.mouseOff();
 			_vm->_graphicsManager.loadImage("ASCEN");
-			_vm->_graphicsManager.VISU_ALL();
+			_vm->_graphicsManager.displayAllBob();
 
 			for (int i = 0; i <= 4; i++) {
 				if (_vm->shouldQuit())
@@ -599,7 +599,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager.fadeInDefaultLength(_vm->_graphicsManager._vesaBuffer);
 			_vm->_objectsManager.SCI_OPTI_ONE(1, 0, 17, 3);
 			_vm->_graphicsManager.fadeOutDefaultLength(_vm->_graphicsManager._vesaBuffer);
-			_vm->_graphicsManager.FIN_VISU();
+			_vm->_graphicsManager.endDisplayBob();
 
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
 				_vm->_soundManager.playSoundFile("SOUND17.WAV");
@@ -876,10 +876,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_fontManager.hideText(5);
 			_vm->_fontManager.hideText(9);
-			_vm->_graphicsManager.FIN_VISU();
+			_vm->_graphicsManager.endDisplayBob();
 			_vm->_graphicsManager.loadImage("IM20f");
 			_vm->_animationManager.loadAnim("ANIM20f");
-			_vm->_graphicsManager.VISU_ALL();
+			_vm->_graphicsManager.displayAllBob();
 			_vm->_eventsManager.mouseOff();
 			_vm->_graphicsManager.fadeInLong();
 			bool v52 = false;

@@ -70,9 +70,10 @@ public:
 
 	void startStaticCharacterDialogue(const Common::String &filename);
 	void startAnimatedCharacterDialogue(const Common::String &filename);
+	void animateObject(const Common::String &a2);
+
 	void REPONSE(int zone, int verb);
 	void REPONSE2(int zone, int verb);
-	void animateObject(const Common::String &a2);
 };
 
 } // End of namespace Hopkins

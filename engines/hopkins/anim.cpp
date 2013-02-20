@@ -468,8 +468,8 @@ void AnimationManager::loadAnim(const Common::String &animName) {
  */
 void AnimationManager::clearAnim() {
 	for (int idx = 0; idx < 35; ++idx) {
-		_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.freeMemory(_vm->_globals.Bqe_Anim[idx]._data);
-		_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
+		_vm->_globals._animBqe[idx]._data = _vm->_globals.freeMemory(_vm->_globals._animBqe[idx]._data);
+		_vm->_globals._animBqe[idx]._enabledFl = false;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
@@ -564,18 +564,18 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) 
 					if (READ_BE_UINT32(&data[curBufferPos]) == MKTAG('A', 'N', 'I', 'M') || READ_BE_UINT24(&data[curBufferPos]) == MKTAG24('F', 'I', 'N'))
 						innerLoopCond = true;
 					if (bufSize < curBufferPos) {
-						_vm->_globals.Bqe_Anim[animIndex]._enabledFl = false;
-						_vm->_globals.Bqe_Anim[animIndex]._data = g_PTRNUL;
+						_vm->_globals._animBqe[animIndex]._enabledFl = false;
+						_vm->_globals._animBqe[animIndex]._data = g_PTRNUL;
 						return;
 					}
 					++curBufferPos;
 					++count;
 				} while (!innerLoopCond);
-				_vm->_globals.Bqe_Anim[animIndex]._data = _vm->_globals.allocMemory(count + 50);
-				_vm->_globals.Bqe_Anim[animIndex]._enabledFl = true;
-				memcpy(_vm->_globals.Bqe_Anim[animIndex]._data, data + dataIdx + 5, 20);
+				_vm->_globals._animBqe[animIndex]._data = _vm->_globals.allocMemory(count + 50);
+				_vm->_globals._animBqe[animIndex]._enabledFl = true;
+				memcpy(_vm->_globals._animBqe[animIndex]._data, data + dataIdx + 5, 20);
 
-				byte *dataP = _vm->_globals.Bqe_Anim[animIndex]._data;
+				byte *dataP = _vm->_globals._animBqe[animIndex]._data;
 				int curDestDataIndx = 20;
 				int curSrcDataIndx = dataIdx + 25;
 

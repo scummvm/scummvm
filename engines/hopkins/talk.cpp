@@ -473,34 +473,34 @@ void TalkManager::searchCharacterPalette(int startIdx, bool dark) {
 
 void TalkManager::dialogWait() {
 	for (int idx = 26; idx <= 30; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
+		if (_vm->_globals._animBqe[idx]._enabledFl)
 			BOB_VISU_PARLE(idx);
 	}
 }
 
 void TalkManager::dialogTalk() {
 	for (int idx = 26; idx <= 30; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
-			_vm->_objectsManager.BOB_OFF(idx);
+		if (_vm->_globals._animBqe[idx]._enabledFl)
+			_vm->_objectsManager.hideBob(idx);
 	}
 
 	for (int idx = 26; idx <= 30; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
+		if (_vm->_globals._animBqe[idx]._enabledFl)
 			_vm->_objectsManager.resetBob(idx);
 	}
 }
 
 void TalkManager::dialogEndTalk() {
 	for (int idx = 21; idx <= 25; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
-			_vm->_objectsManager.BOB_OFF(idx);
+		if (_vm->_globals._animBqe[idx]._enabledFl)
+			_vm->_objectsManager.hideBob(idx);
 	}
 
 	_vm->_eventsManager.VBL();
 	_vm->_eventsManager.VBL();
 
 	for (int idx = 21; idx <= 25; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
+		if (_vm->_globals._animBqe[idx]._enabledFl)
 			_vm->_objectsManager.resetBob(idx);
 	}
 }
@@ -595,7 +595,7 @@ int TalkManager::countBoxLines(int idx, const Common::String &file) {
 
 void TalkManager::VISU_PARLE() {
 	for (int idx = 21; idx <= 25; ++idx) {
-		if (_vm->_globals.Bqe_Anim[idx]._enabledFl)
+		if (_vm->_globals._animBqe[idx]._enabledFl)
 			BOB_VISU_PARLE(idx);
 	}
 }
@@ -604,7 +604,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 	_vm->_objectsManager._priorityFl = true;
 	if (!_vm->_objectsManager._bob[idx].field0) {
 		_vm->_objectsManager.resetBob(idx);
-		byte *v5 = _vm->_globals.Bqe_Anim[idx]._data;
+		byte *v5 = _vm->_globals._animBqe[idx]._data;
 		int v4 = READ_LE_INT16(v5 + 2);
 		if (!v4)
 			v4 = 1;
@@ -612,7 +612,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 			_vm->_objectsManager._bob[idx]._isSpriteFl = true;
 			_vm->_objectsManager._bob[idx]._zoomFactor = 0;
 			_vm->_objectsManager._bob[idx]._flipFl = false;
-			_vm->_objectsManager._bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
+			_vm->_objectsManager._bob[idx]._animData = _vm->_globals._animBqe[idx]._data;
 			_vm->_objectsManager._bob[idx].field0 = 10;
 			v5 = _characterSprite;
 			_vm->_objectsManager._bob[idx]._spriteData = _characterSprite;
@@ -699,8 +699,8 @@ void TalkManager::initCharacterAnim() {
 
 void TalkManager::clearCharacterAnim() {
 	for (int idx = 21; idx <= 34; ++idx) {
-		_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.freeMemory(_vm->_globals.Bqe_Anim[idx]._data);
-		_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
+		_vm->_globals._animBqe[idx]._data = _vm->_globals.freeMemory(_vm->_globals._animBqe[idx]._data);
+		_vm->_globals._animBqe[idx]._enabledFl = false;
 	}
 }
 
@@ -717,25 +717,25 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 				if (READ_BE_UINT32(curPtr) == MKTAG('A', 'N', 'I', 'M') || READ_BE_UINT24(curPtr) == MKTAG24('F', 'I', 'N'))
 					loopCond = true;
 				if (bufIndx > bufferSize) {
-					_vm->_globals.Bqe_Anim[idx]._enabledFl = false;
-					_vm->_globals.Bqe_Anim[idx]._data = g_PTRNUL;
+					_vm->_globals._animBqe[idx]._enabledFl = false;
+					_vm->_globals._animBqe[idx]._data = g_PTRNUL;
 					return false;
 				}
 				++bufIndx;
 				++animLength;
 				++curPtr;
 			} while (!loopCond);
-			_vm->_globals.Bqe_Anim[idx]._data = _vm->_globals.allocMemory(animLength + 50);
-			_vm->_globals.Bqe_Anim[idx]._enabledFl = true;
-			memcpy(_vm->_globals.Bqe_Anim[idx]._data, (const byte *)(bufPerso + bufPos + 5), 20);
+			_vm->_globals._animBqe[idx]._data = _vm->_globals.allocMemory(animLength + 50);
+			_vm->_globals._animBqe[idx]._enabledFl = true;
+			memcpy(_vm->_globals._animBqe[idx]._data, (const byte *)(bufPerso + bufPos + 5), 20);
 			int v23 = READ_LE_INT16(bufPos + bufPerso + 29);
-			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 20, READ_LE_INT16(bufPos + bufPerso + 25));
-			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 22, READ_LE_INT16(bufPos + bufPerso + 27));
-			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 24, v23);
-			WRITE_LE_UINT16(_vm->_globals.Bqe_Anim[idx]._data + 26, READ_LE_INT16(bufPos + bufPerso + 31));
-			_vm->_globals.Bqe_Anim[idx]._data[28] = bufPerso[bufPos + 33];
-			_vm->_globals.Bqe_Anim[idx]._data[29] = bufPerso[bufPos + 34];
-			byte *bqeCurData = _vm->_globals.Bqe_Anim[idx]._data + 20;
+			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 20, READ_LE_INT16(bufPos + bufPerso + 25));
+			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 22, READ_LE_INT16(bufPos + bufPerso + 27));
+			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 24, v23);
+			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 26, READ_LE_INT16(bufPos + bufPerso + 31));
+			_vm->_globals._animBqe[idx]._data[28] = bufPerso[bufPos + 33];
+			_vm->_globals._animBqe[idx]._data[29] = bufPerso[bufPos + 34];
+			byte *bqeCurData = _vm->_globals._animBqe[idx]._data + 20;
 			const byte *curBufPerso = bufPos + bufPerso + 25;
 			for (int i = 1; i < 5000; i++) {
 				bqeCurData += 10;

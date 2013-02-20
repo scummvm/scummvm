@@ -573,7 +573,7 @@ void ObjectsManager::setBobInfo(int idx) {
              _vm->_globals.Liste2[idx]._posY + _vm->_globals.Liste2[idx]._height);
 }
 
-void ObjectsManager::BOB_VISU(int idx) {
+void ObjectsManager::displayBob(int idx) {
 	_priorityFl = true;
 
 	if (_bob[idx].field0)
@@ -581,7 +581,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 
 	resetBob(idx);
 
-	const byte *data = _vm->_globals.Bqe_Anim[idx]._data;
+	const byte *data = _vm->_globals._animBqe[idx]._data;
 	int bankIdx = READ_LE_INT16(data);
 	if (!bankIdx)
 		return;
@@ -607,7 +607,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 		_bob[idx]._flipFl = false;
 	}
 
-	_bob[idx]._animData = _vm->_globals.Bqe_Anim[idx]._data;
+	_bob[idx]._animData = _vm->_globals._animBqe[idx]._data;
 	_bob[idx].field0 = 10;
 	_bob[idx]._spriteData = _vm->_globals.Bank[bankIdx]._data;
 
@@ -617,7 +617,7 @@ void ObjectsManager::BOB_VISU(int idx) {
 	_bob[idx]._offsetY = offsetY;
 }
 
-void ObjectsManager::BOB_OFF(int idx) {
+void ObjectsManager::hideBob(int idx) {
 	if ((_bob[idx].field0 == 3) || (_bob[idx].field0 == 10))
 		_bob[idx].field0++;
 }
@@ -1753,7 +1753,7 @@ void ObjectsManager::handleCityMap() {
 	loadZone("PLAN.ZO2");
 	_spritePtr = _vm->_fileManager.loadFile("VOITURE.SPR");
 	_vm->_animationManager.loadAnim("PLAN");
-	_vm->_graphicsManager.VISU_ALL();
+	_vm->_graphicsManager.displayAllBob();
 	_vm->_graphicsManager.initScreen("PLAN", 2, false);
 	for (int i = 0; i <= 15; i++)
 		_vm->_globals.B_CACHE_OFF(i);
@@ -2063,7 +2063,7 @@ void ObjectsManager::PARADISE() {
  */
 void ObjectsManager::clearScreen() {
 	clearSprite();
-	_vm->_graphicsManager.FIN_VISU();
+	_vm->_graphicsManager.endDisplayBob();
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
 	_vm->_globals.CLEAR_VBOB();
@@ -2098,7 +2098,9 @@ void ObjectsManager::clearScreen() {
 }
 
 /**
- * Change character Face / Head
+ * Change the currently active player face / Head
+ * @param oldCharacter		Previously played character
+ * @param newCharacter		New character to play
  */
 void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter) {
 	CharacterLocation *loc;
@@ -3654,10 +3656,10 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 			_vm->_animationManager.playAnim("CREVE2.ANM", 100, 24, 500);
 			_vm->_globals._exitId = 150;
 			_vm->_graphicsManager._noFadingFl = true;
-			BOB_OFF(1);
-			BOB_OFF(2);
-			BOB_OFF(3);
-			BOB_OFF(4);
+			hideBob(1);
+			hideBob(2);
+			hideBob(3);
+			hideBob(4);
 		}
 	} else if (minX < getSpriteX(0)
 	           && maxX > getSpriteX(0)
@@ -3695,7 +3697,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		loadLinkFile(linkFile);
 	if (!animFile.empty())
 		_vm->_animationManager.loadAnim(animFile);
-	_vm->_graphicsManager.VISU_ALL();
+	_vm->_graphicsManager.displayAllBob();
 	if (!s4.empty()) {
 		if (initializeScreen)
 			_vm->_graphicsManager.initScreen(s4, 0, initializeScreen);
@@ -3755,7 +3757,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 
 	_vm->_graphicsManager.fadeOutLong();
 	if (!animFile.empty())
-		_vm->_graphicsManager.FIN_VISU();
+		_vm->_graphicsManager.endDisplayBob();
 	if (_vm->_globals._screenId == 61)
 		removeSprite(0);
 	clearScreen();
@@ -3785,7 +3787,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		loadLinkFile(linkFile);
 	if (!animFile.empty()) {
 		_vm->_animationManager.loadAnim(animFile);
-		_vm->_graphicsManager.VISU_ALL();
+		_vm->_graphicsManager.displayAllBob();
 	}
 	if (!s4.empty()) {
 		if (initializeScreen)
@@ -3903,7 +3905,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 			_twoCharactersFl = false;
 		}
 		if (!animFile.empty())
-			_vm->_graphicsManager.FIN_VISU();
+			_vm->_graphicsManager.endDisplayBob();
 		clearScreen();
 	} else {
 		_helicopterFl = false;

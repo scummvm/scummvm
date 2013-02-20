@@ -71,7 +71,7 @@ Globals::Globals() {
 	for (int i = 0; i < 6; ++i)
 		CACHE_BANQUE[i] = g_PTRNUL;
 	for (int i = 0; i < 35; ++i)
-		Common::fill((byte *)&Bqe_Anim[i], (byte *)&Bqe_Anim[i] + sizeof(BqeAnimItem), 0);
+		Common::fill((byte *)&_animBqe[i], (byte *)&_animBqe[i] + sizeof(BqeAnimItem), 0);
 	for (int i = 0; i < 8; ++i)
 		Common::fill((byte *)&Bank[i], (byte *)&Bank[i] + sizeof(BankItem), 0);
 	for (int i = 0; i < 6; ++i)
@@ -285,8 +285,8 @@ void Globals::loadCharacterData() {
 
 void Globals::INIT_ANIM() {
 	for (int idx = 0; idx < 35; ++idx) {
-		Bqe_Anim[idx]._data = g_PTRNUL;
-		Bqe_Anim[idx]._enabledFl = false;
+		_animBqe[idx]._data = g_PTRNUL;
+		_animBqe[idx]._enabledFl = false;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {

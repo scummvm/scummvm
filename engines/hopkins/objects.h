@@ -122,12 +122,6 @@ private:
 	
 	void GOHOME2();
 	void loadZone(const Common::String &file);
-
-	/**
-	 * Change the currently active player
-	 * @param oldCharacter		Previously played character
-	 * @param newCharacter		New character to play
-	 */
 	void changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
 
 	void nextVerbIcon();
@@ -233,8 +227,8 @@ public:
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	byte *CAPTURE_OBJET(int objIndex, bool mode);
 	void OPTI_OBJET();
-	void BOB_OFF(int idx);
-	void BOB_VISU(int idx);
+	void hideBob(int idx);
+	void displayBob(int idx);
 	void SPACTION(byte *spriteData, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl);
 	void BOB_VIVANT(int idx);
 	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);

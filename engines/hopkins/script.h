@@ -36,7 +36,7 @@ private:
 	HopkinsEngine *_vm;
 	int checkOpcode(const byte *dataP);
 public:
-	bool TRAVAILOBJET;
+	bool _tempObjectFl;
 
 	ScriptManager();
 	void setParent(HopkinsEngine *vm);
