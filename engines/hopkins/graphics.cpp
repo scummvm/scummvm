@@ -723,7 +723,7 @@ void GraphicsManager::DD_VBL() {
 	g_system->updateScreen();
 }
 
-void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) {
+void GraphicsManager::copyWinscanVbe3(const byte *srcData, byte *destSurface) {
 	byte srcByte;
 	byte destLen1;
 	byte *destSlice1P;
@@ -773,7 +773,7 @@ void GraphicsManager::Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface) 
 	}
 }
 
-void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
+void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 	const byte *srcP = srcData;
 	int destOffset = 0;
 	assert(_videoPtr);
@@ -844,7 +844,7 @@ void GraphicsManager::Copy_Video_Vbe16(const byte *srcData) {
 	}
 }
 
-void GraphicsManager::Copy_Video_Vbe16a(const byte *srcData) {
+void GraphicsManager::copyVideoVbe16a(const byte *srcData) {
 	byte srcByte;
 	int destOffset = 0;
 	const byte *srcP = srcData;
@@ -875,7 +875,7 @@ void GraphicsManager::Copy_Video_Vbe16a(const byte *srcData) {
 	}
 }
 
-void GraphicsManager::Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height) {
+void GraphicsManager::copySurfaceRect(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height) {
 	const byte *srcP;
 	byte *destP;
 	int rowCount;
@@ -1073,7 +1073,7 @@ void GraphicsManager::displayAllBob() {
 	}
 }
 
-void GraphicsManager::RESET_SEGMENT_VESA() {
+void GraphicsManager::resetVesaSegment() {
 	for (int idx = 0; idx <= NBBLOC; idx++)
 		BLOC[idx]._activeFl = false;
 
@@ -1193,8 +1193,7 @@ void GraphicsManager::copy16bFromSurfaceScaleX2(const byte *surface) {
 	}
 }
 
-void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height) {
-	int i;
+void GraphicsManager::restoreSurfaceRect(byte *destSurface, const byte *src, int xp, int yp, int width, int height) {
 	int yCtr;
 
 	byte *destP = xp + _lineNbr2 * yp + destSurface;
@@ -1207,7 +1206,7 @@ void GraphicsManager::Restore_Mem(byte *destSurface, const byte *src, int xp, in
 			srcP += width;
 			destP += width;
 		} else if (width & 2) {
-			for (i = width >> 1; i; --i) {
+			for (int i = width >> 1; i; --i) {
 				destP[0] = srcP[0];
 				destP[1] = srcP[1];
 				srcP += 2;
@@ -1742,7 +1741,7 @@ void GraphicsManager::NB_SCREEN(bool initPalette) {
 	DD_VBL();
 }
 
-void GraphicsManager::Copy_WinScan_Vbe(const byte *src, byte *dest) {
+void GraphicsManager::copyWinscanVbe(const byte *src, byte *dest) {
 	int destOffset = 0;
 	const byte *srcPtr = src;
 	for (;;) {

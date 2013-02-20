@@ -159,7 +159,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		} else {
 			int height = _text[idx]._height;
 			int width = _text[idx]._width;
-			_vm->_graphicsManager.Restore_Mem(
+			_vm->_graphicsManager.restoreSurfaceRect(
 				_vm->_graphicsManager._vesaBuffer,
 				_text[idx]._textBlock,
 				xp,
@@ -346,9 +346,9 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			if (ptrd == g_PTRNUL)
 				error("Cutting a block for text box (%d)", size);
 
-			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, ptrd, posX, posY, saveWidth, saveHeight);
+			_vm->_graphicsManager.copySurfaceRect(_vm->_graphicsManager._vesaBuffer, ptrd, posX, posY, saveWidth, saveHeight);
 			_vm->_graphicsManager.Trans_bloc2(ptrd, _vm->_graphicsManager._colorTable, size);
-			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, ptrd, posX, posY, saveWidth, saveHeight);
+			_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, ptrd, posX, posY, saveWidth, saveHeight);
 			_vm->_globals.freeMemory(ptrd);
 
 			_vm->_graphicsManager.drawHorizontalLine(_vm->_graphicsManager._vesaBuffer, posX, posY, saveWidth, (byte)-2);
@@ -380,7 +380,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_text[idx]._textBlock = ptre;
 			_text[idx]._width = blockWidth;
 			_text[idx]._height = blockHeight;
-			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _text[idx]._textBlock, posX, posY, _text[idx]._width, blockHeight);
+			_vm->_graphicsManager.copySurfaceRect(_vm->_graphicsManager._vesaBuffer, _text[idx]._textBlock, posX, posY, _text[idx]._width, blockHeight);
 		}
 		_tempText = _vm->_globals.freeMemory(_tempText);
 	}

@@ -137,6 +137,13 @@ public:
 	void fadeOutShort();
 	void fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment = true);
 	void displayVesaSegment();
+	void resetVesaSegment();
+	void copyWinscanVbe3(const byte *srcData, byte *destSurface);
+	void copyWinscanVbe(const byte *srcP, byte *destP);
+	void copyVideoVbe16(const byte *srcData);
+	void copyVideoVbe16a(const byte *srcData);
+	void copySurfaceRect(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height);
+	void restoreSurfaceRect(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
 	void displayFont(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int colour);
 	void drawHorizontalLine(byte *surface, int xp, int yp, uint16 width, byte col);
 	void drawVerticalLine(byte *surface, int xp, int yp, int height, byte col);
@@ -151,13 +158,10 @@ public:
 	void displayAllBob();
 	void endDisplayBob();
 
-	void Restore_Mem(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
 	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void SETCOLOR4(int palIndex, int r, int g, int b);
 	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment = true);
-	void RESET_SEGMENT_VESA();
 	void DD_VBL();
-	void Capture_Mem(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height);
 	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY);
 	void SCANLINE(int pitch);
@@ -167,10 +171,6 @@ public:
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void NB_SCREEN(bool initPalette);
 	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
-	void Copy_WinScan_Vbe3(const byte *srcData, byte *destSurface);
-	void Copy_WinScan_Vbe(const byte *srcP, byte *destP);
-	void Copy_Video_Vbe16(const byte *srcData);
-	void Copy_Video_Vbe16a(const byte *srcData);
 };
 
 } // End of namespace Hopkins

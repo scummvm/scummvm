@@ -467,7 +467,7 @@ void EventsManager::VBL() {
 			_vm->_graphicsManager.unlockScreen();
 			_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
 
-			_vm->_graphicsManager.RESET_SEGMENT_VESA();
+			_vm->_graphicsManager.resetVesaSegment();
 
 			_startPos.x = _vm->_graphicsManager._scrollPosX;
 			_vm->_graphicsManager._scrollOffset = _vm->_graphicsManager._scrollPosX;

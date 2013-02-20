@@ -374,7 +374,7 @@ void DialogsManager::showInventory() {
 				// The last two zones are not reserved for the inventory: Options and Save/Load
 				if (inventIdx && inventCount <= 29) {
 					byte *obj = _vm->_objectsManager.CAPTURE_OBJET(inventIdx, false);
-					_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, obj, _inventX + curPosX + 6,
+					_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, obj, _inventX + curPosX + 6,
 						curPosY + 120, _vm->_globals._objectWidth, _vm->_globals._objectHeight);
 					_vm->_globals.freeMemory(obj);
 				}
@@ -382,7 +382,7 @@ void DialogsManager::showInventory() {
 			};
 			curPosY += 38;
 		}
-		_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
+		_vm->_graphicsManager.copySurfaceRect(_vm->_graphicsManager._vesaBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 		_vm->_eventsManager._curMouseButton = 0;
 		int newInventoryItem = 0;
 
@@ -667,22 +667,22 @@ void DialogsManager::showSaveLoad(int a1) {
 
 			switch (slotNumber) {
 			case 1:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 112, 128, 87);
+				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 112, 128, 87);
 				break;
 			case 2:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 112, 128, 87);
+				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 112, 128, 87);
 				break;
 			case 3:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 203, 128, 87);
+				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 203, 128, 87);
 				break;
 			case 4:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 203, 128, 87);
+				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 203, 128, 87);
 				break;
 			case 5:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 294, 128, 87);
+				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 190, 294, 128, 87);
 				break;
 			case 6:
-				_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 294, 128, 87);
+				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager._startPos.x + 323, 294, 128, 87);
 				break;
 			}
 
@@ -692,7 +692,7 @@ void DialogsManager::showSaveLoad(int a1) {
 		}
 	}
 
-	_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 183, 60, 274, 353);
+	_vm->_graphicsManager.copySurfaceRect(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 183, 60, 274, 353);
 	_vm->_objectsManager._saveLoadFl = true;
 	_vm->_objectsManager._saveLoadX = 0;
 	_vm->_objectsManager._saveLoadY = 0;

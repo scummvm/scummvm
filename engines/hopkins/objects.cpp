@@ -409,7 +409,7 @@ void ObjectsManager::displaySprite() {
 
 	_vm->_globals._sortedDisplayCount = 0;
 	if (_vm->_dialogsManager._inventDisplayedFl) {
-		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventHeight);
+		_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventHeight);
 		if (_oldBorderPos.x && _oldBorderPos.y)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventBuf2, _oldBorderPos.x + 300, _oldBorderPos.y + 300, _oldBorderSpriteIndex + 1);
 		if (_borderPos.x && _borderPos.y)
@@ -418,7 +418,7 @@ void ObjectsManager::displaySprite() {
 	}
 
 	if (_saveLoadFl) {
-		_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer, _saveLoadSprite, _vm->_eventsManager._startPos.x + 183, 60, 274, 353);
+		_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, _saveLoadSprite, _vm->_eventsManager._startPos.x + 183, 60, 274, 353);
 		if (_saveLoadX && _saveLoadY)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _saveLoadSprite2, _saveLoadX + _vm->_eventsManager._startPos.x + 300, _saveLoadY + 300, 0);
 
@@ -1076,11 +1076,11 @@ void ObjectsManager::displayVBob() {
 			width = getWidth(_vm->_globals.VBob[idx]._spriteData, _vm->_globals.VBob[idx]._frameIndex);
 			height = getHeight(_vm->_globals.VBob[idx]._spriteData, _vm->_globals.VBob[idx]._frameIndex);
 
-			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaScreen,
+			_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaScreen,
 				_vm->_globals.VBob[idx]._surface, _vm->_globals.VBob[idx]._xp,
 				_vm->_globals.VBob[idx]._yp, width, height);
 
-			_vm->_graphicsManager.Restore_Mem(
+			_vm->_graphicsManager.restoreSurfaceRect(
 				_vm->_graphicsManager._vesaBuffer, _vm->_globals.VBob[idx]._surface,
 				_vm->_globals.VBob[idx]._xp, _vm->_globals.VBob[idx]._yp,
 				width, height);
@@ -1106,12 +1106,12 @@ void ObjectsManager::displayVBob() {
 			width = getWidth(_vm->_globals.VBob[idx]._oldSpriteData, _vm->_globals.VBob[idx]._oldFrameIndex);
 			height = getHeight(_vm->_globals.VBob[idx]._oldSpriteData, _vm->_globals.VBob[idx]._oldFrameIndex);
 
-			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaScreen,
+			_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaScreen,
 				_vm->_globals.VBob[idx]._surface, _vm->_globals.VBob[idx]._oldX,
 				_vm->_globals.VBob[idx]._oldY,
 				width, height);
 
-			_vm->_graphicsManager.Restore_Mem(_vm->_graphicsManager._vesaBuffer,
+			_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer,
 				_vm->_globals.VBob[idx]._surface, _vm->_globals.VBob[idx]._oldX,
 				_vm->_globals.VBob[idx]._oldY, width, height);
 
@@ -1138,7 +1138,7 @@ void ObjectsManager::displayVBob() {
 			byte *surface = _vm->_globals.allocMemory(height * width);
 			_vm->_globals.VBob[idx]._surface = surface;
 
-			_vm->_graphicsManager.Capture_Mem(_vm->_graphicsManager._vesaScreen, surface,
+			_vm->_graphicsManager.copySurfaceRect(_vm->_graphicsManager._vesaScreen, surface,
 				_vm->_globals.VBob[idx]._xp, _vm->_globals.VBob[idx]._yp, width, height);
 
 			byte *v10 = _vm->_globals.VBob[idx]._spriteData;
@@ -1665,17 +1665,17 @@ void ObjectsManager::loadZone(const Common::String &file) {
 		_vm->_linesManager.ZONEP[i]._destX = 0;
 		_vm->_linesManager.ZONEP[i]._destY = 0;
 		_vm->_linesManager.ZONEP[i]._spriteIndex = 0;
-		_vm->_linesManager.ZONEP[i].field6 = 0;
-		_vm->_linesManager.ZONEP[i].field7 = 0;
-		_vm->_linesManager.ZONEP[i].field8 = 0;
-		_vm->_linesManager.ZONEP[i].field9 = 0;
-		_vm->_linesManager.ZONEP[i].fieldA = 0;
-		_vm->_linesManager.ZONEP[i].fieldB = 0;
-		_vm->_linesManager.ZONEP[i].fieldC = 0;
-		_vm->_linesManager.ZONEP[i].fieldD = 0;
-		_vm->_linesManager.ZONEP[i].fieldE = 0;
-		_vm->_linesManager.ZONEP[i].fieldF = 0;
-		_vm->_linesManager.ZONEP[i].field12 = 0;
+		_vm->_linesManager.ZONEP[i]._verbFl1 = 0;
+		_vm->_linesManager.ZONEP[i]._verbFl2 = 0;
+		_vm->_linesManager.ZONEP[i]._verbFl3 = 0;
+		_vm->_linesManager.ZONEP[i]._verbFl4 = 0;
+		_vm->_linesManager.ZONEP[i]._verbFl5 = 0;
+		_vm->_linesManager.ZONEP[i]._verbFl6 = 0;
+		_vm->_linesManager.ZONEP[i]._verbFl7 = 0;
+		_vm->_linesManager.ZONEP[i]._verbFl8 = 0;
+		_vm->_linesManager.ZONEP[i]._verbFl9 = 0;
+		_vm->_linesManager.ZONEP[i]._verbFl10 = 0;
+		_vm->_linesManager.ZONEP[i]._messageId = 0;
 		_vm->_linesManager.ZONEP[i]._enabledFl = false;
 	}
 
@@ -1713,22 +1713,22 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	byte *v9 = (ptr + 10 * zoneLineIdx + 606);
 	bufId = 0;
 	for (int i = 1; i <= 100; i++) {
-		_vm->_linesManager.ZONEP[i].field6 = v9[bufId];
-		_vm->_linesManager.ZONEP[i].field7 = v9[bufId + 1];
-		_vm->_linesManager.ZONEP[i].field8 = v9[bufId + 2];
-		_vm->_linesManager.ZONEP[i].field9 = v9[bufId + 3];
-		_vm->_linesManager.ZONEP[i].fieldA = v9[bufId + 4];
-		_vm->_linesManager.ZONEP[i].fieldB = v9[bufId + 5];
-		_vm->_linesManager.ZONEP[i].fieldC = v9[bufId + 6];
-		_vm->_linesManager.ZONEP[i].fieldD = v9[bufId + 7];
-		_vm->_linesManager.ZONEP[i].fieldE = v9[bufId + 8];
-		_vm->_linesManager.ZONEP[i].fieldF = v9[bufId + 9];
+		_vm->_linesManager.ZONEP[i]._verbFl1 = v9[bufId];
+		_vm->_linesManager.ZONEP[i]._verbFl2 = v9[bufId + 1];
+		_vm->_linesManager.ZONEP[i]._verbFl3 = v9[bufId + 2];
+		_vm->_linesManager.ZONEP[i]._verbFl4 = v9[bufId + 3];
+		_vm->_linesManager.ZONEP[i]._verbFl5 = v9[bufId + 4];
+		_vm->_linesManager.ZONEP[i]._verbFl6 = v9[bufId + 5];
+		_vm->_linesManager.ZONEP[i]._verbFl7 = v9[bufId + 6];
+		_vm->_linesManager.ZONEP[i]._verbFl8 = v9[bufId + 7];
+		_vm->_linesManager.ZONEP[i]._verbFl9 = v9[bufId + 8];
+		_vm->_linesManager.ZONEP[i]._verbFl10 = v9[bufId + 9];
 
 		bufId += 10;
 	}
 	v9 += 1010;
 	for (int i = 0; i < 100; i++)
-		_vm->_linesManager.ZONEP[i + 1].field12 = READ_LE_UINT16(v9 + 2 * i);
+		_vm->_linesManager.ZONEP[i + 1]._messageId = READ_LE_UINT16(v9 + 2 * i);
 
 	_vm->_globals.freeMemory(ptr);
 	_vm->_linesManager.CARRE_ZONE();
@@ -2094,7 +2094,7 @@ void ObjectsManager::clearScreen() {
 	_changeVerbFl = false;
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 	_vm->_globals._oldDirection = DIR_NONE;
-	_vm->_graphicsManager.RESET_SEGMENT_VESA();
+	_vm->_graphicsManager.resetVesaSegment();
 }
 
 /**
@@ -2244,139 +2244,139 @@ void ObjectsManager::nextVerbIcon() {
 
 		if (_vm->_eventsManager._mouseCursorId == 5 || _vm->_eventsManager._mouseCursorId == 6) {
 			_vm->_eventsManager._mouseCursorId = 6;
-			if (_vm->_linesManager.ZONEP[_zoneNum].field6 == 1)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl1 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 7) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].field7 == 1)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl2 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 8) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].field8 == 1)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl3 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 9) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].field9 == 1)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl4 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 10) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldA == 1)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl5 == 1)
 				return;
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 11) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldB == 1)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl6 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 12) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldC == 1)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl7 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 13) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldD == 1)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl8 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 14) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldE == 1)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl9 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 15) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldF == 1)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl10 == 1)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 16) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].field6 == 2)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl1 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 17) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].field9 == 2)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl4 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 18) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldA == 2)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl5 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 19) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldB == 2)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl6 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 20) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldC == 2)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl7 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 21) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldF == 2)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl10 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 22) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldD == 2)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl8 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 23) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].field8 == 2)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl3 == 2)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 24) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].field9 == 3)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl4 == 3)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
 		}
 
 		if (_vm->_eventsManager._mouseCursorId == 25) {
-			if (_vm->_linesManager.ZONEP[_zoneNum].fieldE == 2)
+			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl9 == 2)
 				return;
 		}
 		_vm->_eventsManager._mouseCursorId = 4;
@@ -3148,17 +3148,17 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 					_vm->_linesManager.ZONEP[i]._destX = 0;
 					_vm->_linesManager.ZONEP[i]._destY = 0;
 					_vm->_linesManager.ZONEP[i]._spriteIndex = 0;
-					_vm->_linesManager.ZONEP[i].field6 = 0;
-					_vm->_linesManager.ZONEP[i].field7 = 0;
-					_vm->_linesManager.ZONEP[i].field8 = 0;
-					_vm->_linesManager.ZONEP[i].field9 = 0;
-					_vm->_linesManager.ZONEP[i].fieldA = 0;
-					_vm->_linesManager.ZONEP[i].fieldB = 0;
-					_vm->_linesManager.ZONEP[i].fieldC = 0;
-					_vm->_linesManager.ZONEP[i].fieldD = 0;
-					_vm->_linesManager.ZONEP[i].fieldE = 0;
-					_vm->_linesManager.ZONEP[i].fieldF = 0;
-					_vm->_linesManager.ZONEP[i].field12 = 0;
+					_vm->_linesManager.ZONEP[i]._verbFl1 = 0;
+					_vm->_linesManager.ZONEP[i]._verbFl2 = 0;
+					_vm->_linesManager.ZONEP[i]._verbFl3 = 0;
+					_vm->_linesManager.ZONEP[i]._verbFl4 = 0;
+					_vm->_linesManager.ZONEP[i]._verbFl5 = 0;
+					_vm->_linesManager.ZONEP[i]._verbFl6 = 0;
+					_vm->_linesManager.ZONEP[i]._verbFl7 = 0;
+					_vm->_linesManager.ZONEP[i]._verbFl8 = 0;
+					_vm->_linesManager.ZONEP[i]._verbFl9 = 0;
+					_vm->_linesManager.ZONEP[i]._verbFl10 = 0;
+					_vm->_linesManager.ZONEP[i]._messageId = 0;
 				}
 
 				int curLineIdx = 0;
@@ -3188,20 +3188,20 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 				byte *v22 = ptr + idx + (10 * curLineIdx + 606) + 4;
 				for (int i = 1; i <= 100; i++) {
 					int j = (i - 1) * 10;
-					_vm->_linesManager.ZONEP[i].field6 = v22[j];
-					_vm->_linesManager.ZONEP[i].field7 = v22[j + 1];
-					_vm->_linesManager.ZONEP[i].field8 = v22[j + 2];
-					_vm->_linesManager.ZONEP[i].field9 = v22[j + 3];
-					_vm->_linesManager.ZONEP[i].fieldA = v22[j + 4];
-					_vm->_linesManager.ZONEP[i].fieldB = v22[j + 5];
-					_vm->_linesManager.ZONEP[i].fieldC = v22[j + 6];
-					_vm->_linesManager.ZONEP[i].fieldD = v22[j + 7];
-					_vm->_linesManager.ZONEP[i].fieldE = v22[j + 8];
-					_vm->_linesManager.ZONEP[i].fieldF = v22[j + 9];
+					_vm->_linesManager.ZONEP[i]._verbFl1 = v22[j];
+					_vm->_linesManager.ZONEP[i]._verbFl2 = v22[j + 1];
+					_vm->_linesManager.ZONEP[i]._verbFl3 = v22[j + 2];
+					_vm->_linesManager.ZONEP[i]._verbFl4 = v22[j + 3];
+					_vm->_linesManager.ZONEP[i]._verbFl5 = v22[j + 4];
+					_vm->_linesManager.ZONEP[i]._verbFl6 = v22[j + 5];
+					_vm->_linesManager.ZONEP[i]._verbFl7 = v22[j + 6];
+					_vm->_linesManager.ZONEP[i]._verbFl8 = v22[j + 7];
+					_vm->_linesManager.ZONEP[i]._verbFl9 = v22[j + 8];
+					_vm->_linesManager.ZONEP[i]._verbFl10 = v22[j + 9];
 				}
 				int dep = 1010;
 				for (int i = 1; i <= 100; i++) {
-					_vm->_linesManager.ZONEP[i].field12 = READ_LE_INT16(v22 + dep);
+					_vm->_linesManager.ZONEP[i]._messageId = READ_LE_INT16(v22 + dep);
 					dep += 2;
 				}
 				_vm->_linesManager.CARRE_ZONE();
@@ -3286,10 +3286,10 @@ void ObjectsManager::SPECIAL_INI() {
 		enableVerb(21, 5);
 		enableVerb(22, 5);
 		enableVerb(23, 5);
-		_vm->_linesManager.ZONEP[20].field12 = 30;
-		_vm->_linesManager.ZONEP[21].field12 = 30;
-		_vm->_linesManager.ZONEP[22].field12 = 30;
-		_vm->_linesManager.ZONEP[23].field12 = 30;
+		_vm->_linesManager.ZONEP[20]._messageId = 30;
+		_vm->_linesManager.ZONEP[21]._messageId = 30;
+		_vm->_linesManager.ZONEP[22]._messageId = 30;
+		_vm->_linesManager.ZONEP[23]._messageId = 30;
 		for (int i = 200; i <= 214; i++) {
 			if (_vm->_globals._saveData->_data[i] != 2)
 				_vm->_globals._saveData->_data[i] = 0;
@@ -3347,42 +3347,42 @@ void ObjectsManager::disableVerb(int idx, int a2) {
 	switch (a2) {
 	case 6:
 	case 16:
-		_vm->_linesManager.ZONEP[idx].field6 = 0;
+		_vm->_linesManager.ZONEP[idx]._verbFl1 = 0;
 		break;
 	case 7:
-		_vm->_linesManager.ZONEP[idx].field7 = 0;
+		_vm->_linesManager.ZONEP[idx]._verbFl2 = 0;
 		break;
 	case 5:
 	case 8:
-		_vm->_linesManager.ZONEP[idx].field8 = 0;
+		_vm->_linesManager.ZONEP[idx]._verbFl3 = 0;
 		break;
 	case 9:
 	case 17:
 	case 24:
-		_vm->_linesManager.ZONEP[idx].field9 = 0;
+		_vm->_linesManager.ZONEP[idx]._verbFl4 = 0;
 		break;
 	case 10:
 	case 18:
-		_vm->_linesManager.ZONEP[idx].fieldA = 0;
+		_vm->_linesManager.ZONEP[idx]._verbFl5 = 0;
 		break;
 	case 11:
 	case 19:
-		_vm->_linesManager.ZONEP[idx].fieldB = 0;
+		_vm->_linesManager.ZONEP[idx]._verbFl6 = 0;
 		break;
 	case 12:
 	case 20:
-		_vm->_linesManager.ZONEP[idx].fieldC = 0;
+		_vm->_linesManager.ZONEP[idx]._verbFl7 = 0;
 		break;
 	case 13:
 	case 22:
-		_vm->_linesManager.ZONEP[idx].fieldD = 0;
+		_vm->_linesManager.ZONEP[idx]._verbFl8 = 0;
 	case 14:
 	case 21:
 	case 25:
-		_vm->_linesManager.ZONEP[idx].fieldE = 0;
+		_vm->_linesManager.ZONEP[idx]._verbFl9 = 0;
 		break;
 	case 15:
-		_vm->_linesManager.ZONEP[idx].fieldF = 0;
+		_vm->_linesManager.ZONEP[idx]._verbFl10 = 0;
 		break;
 	}
 	_changeVerbFl = true;
@@ -3391,64 +3391,64 @@ void ObjectsManager::disableVerb(int idx, int a2) {
 void ObjectsManager::enableVerb(int idx, int a2) {
 	switch (a2) {
 	case 5:
-		_vm->_linesManager.ZONEP[idx].field8 = 2;
+		_vm->_linesManager.ZONEP[idx]._verbFl3 = 2;
 		break;
 	case 6:
-		_vm->_linesManager.ZONEP[idx].field6 = 1;
+		_vm->_linesManager.ZONEP[idx]._verbFl1 = 1;
 		break;
 	case 7:
-		_vm->_linesManager.ZONEP[idx].field7 = 1;
+		_vm->_linesManager.ZONEP[idx]._verbFl2 = 1;
 		break;
 	case 8:
-		_vm->_linesManager.ZONEP[idx].field8 = 1;
+		_vm->_linesManager.ZONEP[idx]._verbFl3 = 1;
 		break;
 	case 9:
-		_vm->_linesManager.ZONEP[idx].field9 = 1;
+		_vm->_linesManager.ZONEP[idx]._verbFl4 = 1;
 		break;
 	case 10:
-		_vm->_linesManager.ZONEP[idx].fieldA = 1;
+		_vm->_linesManager.ZONEP[idx]._verbFl5 = 1;
 		break;
 	case 11:
-		_vm->_linesManager.ZONEP[idx].fieldB = 1;
+		_vm->_linesManager.ZONEP[idx]._verbFl6 = 1;
 		break;
 	case 12:
-		_vm->_linesManager.ZONEP[idx].fieldC = 1;
+		_vm->_linesManager.ZONEP[idx]._verbFl7 = 1;
 		break;
 	case 13:
-		_vm->_linesManager.ZONEP[idx].fieldD = 1;
+		_vm->_linesManager.ZONEP[idx]._verbFl8 = 1;
 		break;
 	case 14:
-		_vm->_linesManager.ZONEP[idx].fieldD = 1;
+		_vm->_linesManager.ZONEP[idx]._verbFl8 = 1;
 		break;
 	case 15:
-		_vm->_linesManager.ZONEP[idx].fieldE = 1;
+		_vm->_linesManager.ZONEP[idx]._verbFl9 = 1;
 		break;
 	case 16:
-		_vm->_linesManager.ZONEP[idx].field6 = 2;
+		_vm->_linesManager.ZONEP[idx]._verbFl1 = 2;
 		break;
 	case 17:
-		_vm->_linesManager.ZONEP[idx].field9 = 2;
+		_vm->_linesManager.ZONEP[idx]._verbFl4 = 2;
 		break;
 	case 18:
-		_vm->_linesManager.ZONEP[idx].fieldA = 2;
+		_vm->_linesManager.ZONEP[idx]._verbFl5 = 2;
 		break;
 	case 19:
-		_vm->_linesManager.ZONEP[idx].fieldB = 2;
+		_vm->_linesManager.ZONEP[idx]._verbFl6 = 2;
 		break;
 	case 20:
-		_vm->_linesManager.ZONEP[idx].fieldC = 2;
+		_vm->_linesManager.ZONEP[idx]._verbFl7 = 2;
 		break;
 	case 21:
-		_vm->_linesManager.ZONEP[idx].fieldE = 2;
+		_vm->_linesManager.ZONEP[idx]._verbFl9 = 2;
 		break;
 	case 22:
-		_vm->_linesManager.ZONEP[idx].fieldD = 2;
+		_vm->_linesManager.ZONEP[idx]._verbFl8 = 2;
 		break;
 	case 24:
-		_vm->_linesManager.ZONEP[idx].field9 = 3;
+		_vm->_linesManager.ZONEP[idx]._verbFl4 = 3;
 		break;
 	case 25:
-		_vm->_linesManager.ZONEP[idx].fieldE = 2;
+		_vm->_linesManager.ZONEP[idx]._verbFl9 = 2;
 		break;
 	}
 }

@@ -76,18 +76,18 @@ struct ZonePItem {
 	int _destX;
 	int _destY;
 	int _spriteIndex;
-	int field6;
-	int field7;
-	int field8;
-	int field9;
-	int fieldA;
-	int fieldB;
-	int fieldC;
-	int fieldD;
-	int fieldE;
-	int fieldF;
+	int _verbFl1;
+	int _verbFl2;
+	int _verbFl3;
+	int _verbFl4;
+	int _verbFl5;
+	int _verbFl6;
+	int _verbFl7;
+	int _verbFl8;
+	int _verbFl9;
+	int _verbFl10;
 	bool _enabledFl;
-	int field12;
+	int _messageId;
 };
 
 struct RouteItem {
@@ -106,25 +106,26 @@ private:
 
 	int _pathFindingMaxDepth;
 	SmoothItem _smoothRoute[4000];
-	int NV_LIGNEDEP;
-	int NV_LIGNEOFS;
-	int NV_POSI;
-	int NVPX;
-	int NVPY;
 	Directions _smoothMoveDirection;
-	RouteItem super_parcours[8001];
-	byte *BUFFERTAPE;
-	RouteItem *essai0;
-	RouteItem *essai1;
-	int16 *BufLig;
 	LigneZoneItem _zoneLine[401];
-	LigneItem Ligne[400];
 	SegmentItem _segment[101];
 	SquareZoneItem _squareZone[101];
 	int _currentSegmentId;
 	int _maxLineIdx;
 	int _lastLine;
 	int _linesNumb;
+	int _newLineIdx;
+	int _newLineDataIdx;
+	int _newRouteIdx;
+	int _newPosX;
+	int _newPosY;
+
+	byte *_largeBuf;
+	RouteItem *essai0;
+	RouteItem *essai1;
+	int16 *_lineBuf;
+	LigneItem _lineItem[400];
+	RouteItem _bestRoute[8001];
 
 	int checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow);
 	void removeZoneLine(int idx);

@@ -2391,7 +2391,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 1;
 		break;
 	case MKTAG24('Z', 'C', 'H'):
-		_vm->_linesManager.ZONEP[READ_LE_INT16(dataP + 5)].field12 = READ_LE_INT16(dataP + 7);
+		_vm->_linesManager.ZONEP[READ_LE_INT16(dataP + 5)]._messageId = READ_LE_INT16(dataP + 7);
 		opcodeType = 1;
 		break;
 	case MKTAG24('J', 'U', 'M'):
