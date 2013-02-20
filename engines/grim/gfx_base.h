@@ -136,6 +136,7 @@ public:
 	virtual void drawEMIModelFace(const EMIModel *model, const EMIMeshFace *face) = 0;
 	virtual void drawModelFace(const Mesh *mesh, const MeshFace *face) = 0;
 	virtual void drawSprite(const Sprite *sprite) = 0;
+	virtual void drawMesh(const Mesh *mesh);
 
 	virtual void enableLights() = 0;
 	virtual void disableLights() = 0;

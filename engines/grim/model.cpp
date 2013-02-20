@@ -522,8 +522,7 @@ void Mesh::draw() const {
 	if (_lightingMode == 0)
 		g_driver->disableLights();
 
-	for (int i = 0; i < _numFaces; i++)
-		_faces[i].draw(this);
+	g_driver->drawMesh(this);
 
 	if (_lightingMode == 0)
 		g_driver->enableLights();
