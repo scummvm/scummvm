@@ -20,7 +20,9 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "common/endian.h"
+#include "common/func.h"
 
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
@@ -417,6 +419,7 @@ void Mesh::loadBinary(Common::SeekableReadStream *data, Material *materials[]) {
 	data->read(f, 4);
 	_radius = get_float(f);
 	data->seek(24, SEEK_CUR);
+	sortFaces();
 }
 
 void Mesh::loadText(TextSplitter *ts, Material *materials[]) {
@@ -508,6 +511,49 @@ void Mesh::loadText(TextSplitter *ts, Material *materials[]) {
 		ts->scanString(" %d: %f %f %f", 4, &num, &x, &y, &z);
 		_faces[num]._normal = Math::Vector3d(x, y, z);
 	}
+	sortFaces();
+}
+
+static void copyMeshFace(MeshFace *to, const MeshFace *from) {
+	memcpy(to, from, sizeof(MeshFace));
+	int verts = from->_numVertices;
+	to->_vertices = new int[verts];
+	memcpy(to->_vertices, from->_vertices, verts * sizeof(int));
+	if (from->_texVertices) {
+		to->_texVertices = new int[verts];
+		memcpy(to->_texVertices, from->_texVertices, verts * sizeof(int));
+	}
+}
+
+void Mesh::sortFaces() {
+	if (_numFaces < 2)
+		return;
+
+	MeshFace *newFaces = new MeshFace[_numFaces];
+	int *newMaterialid = new int[_numFaces];
+	bool *copied = new bool[_numFaces];
+	for (int i = 0; i < _numFaces; ++i)
+		copied[i] = false;
+
+	for (int cur = 0, writeIdx = 0; cur < _numFaces; ++cur) {
+		if (copied[cur])
+			continue;
+
+		for (int other = cur; other < _numFaces; ++other) {
+			if (_faces[cur]._material == _faces[other]._material && !copied[other]) {
+				copied[other] = true;
+				copyMeshFace(&newFaces[writeIdx], &_faces[other]);
+				newMaterialid[writeIdx] = _materialid[other];
+				writeIdx++;
+			}
+		}
+	}
+
+	delete[] _faces;
+	_faces = newFaces;
+	delete[] _materialid;
+	_materialid = newMaterialid;
+	delete[] copied;
 }
 
 void Mesh::update() {

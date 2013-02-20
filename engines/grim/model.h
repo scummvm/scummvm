@@ -130,6 +130,9 @@ public:
 	int _numFaces;
 	MeshFace *_faces;
 	Math::Matrix4 _matrix;
+
+private:
+	void sortFaces();
 };
 
 class ModelNode {
