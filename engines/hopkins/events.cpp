@@ -188,7 +188,7 @@ void EventsManager::changeMouseCursor(int id) {
 	if (_mouseCursorId == 23)
 		return;
 
-	if (id == 4 && _mouseCursorId == 4 && _vm->_globals.NOMARCHE)
+	if (id == 4 && _mouseCursorId == 4 && _vm->_globals._freezeCharacterFl)
 		cursorId = 0;
 	if (cursorId == 25)
 		cursorId = 5;

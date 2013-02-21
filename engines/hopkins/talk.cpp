@@ -1016,16 +1016,16 @@ void TalkManager::animateObject(const Common::String &a2) {
 	startCharacterAnim0(_paletteBufferIdx, false);
 	byte *oldAnswerBufferPtr = _vm->_globals._answerBuffer;
 	_vm->_globals._answerBuffer = g_PTRNUL;
-	_vm->_globals.NOMARCHE = true;
+	_vm->_globals._freezeCharacterFl = true;
 	_vm->_objectsManager.loadLinkFile(screenFilename);
 	_vm->_objectsManager.PERSO_ON = true;
-	_vm->_globals.GOACTION = false;
+	_vm->_globals._actionMoveTo = false;
 	_vm->_objectsManager._zoneNum = -1;
 	initCharacterAnim();
 	VISU_PARLE();
 	dialogWait();
 	_vm->_graphicsManager.initScreen(screenFilename, 2, true);
-	_vm->_globals.NOMARCHE = true;
+	_vm->_globals._freezeCharacterFl = true;
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager._zoneNum = -1;
 	do {
@@ -1036,7 +1036,7 @@ void TalkManager::animateObject(const Common::String &a2) {
 			_vm->_objectsManager.handleRightButton();
 
 		_vm->_linesManager.checkZone();
-		if (_vm->_globals.GOACTION)
+		if (_vm->_globals._actionMoveTo)
 			_vm->_objectsManager.PARADISE();
 		_vm->_eventsManager.VBL();
 	} while (!_vm->_globals._exitId);
@@ -1060,7 +1060,7 @@ void TalkManager::animateObject(const Common::String &a2) {
 	_vm->_objectsManager.loadLinkFile(curScreenFilename);
 	_vm->_graphicsManager.initScreen(curScreenFilename, 2, true);
 	_vm->_objectsManager._disableFl = false;
-	_vm->_globals.NOMARCHE = false;
+	_vm->_globals._freezeCharacterFl = false;
 	if (_vm->_globals._exitId == 101)
 		_vm->_globals._exitId = 0;
 

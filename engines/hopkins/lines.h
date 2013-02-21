@@ -62,7 +62,7 @@ struct SegmentItem {
 };
 
 struct SquareZoneItem {
-	int _enabledFl;
+	bool _enabledFl;
 	int _left;
 	int _right;
 	int _top;
@@ -130,19 +130,19 @@ private:
 	int checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow);
 	void removeZoneLine(int idx);
 	void removeLine(int idx);
+	int checkCollision(int xp, int yp);
 	bool checkCollisionLine(int xp, int yp, int *foundDataIdx, int *foundLineIdx, int startLineIdx, int endLineIdx);
 	bool checkSmoothMove(int fromX, int fromY, int destX, int destY);
 	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
+	int characterRoute(int fromX, int fromY, int destX, int destY, int a5, int a6, int a7);
+	int testLine(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
 
 	int CALC_PROPRE(int idx);
 	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, RouteItem *route, int a8, int a9);
 	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, RouteItem *route);
 	bool MIRACLE(int fromX, int fromY, int a3, int a4, int a5);
 	int GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int a7, RouteItem *route);
-	int PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, int a6, int a7);
 	bool PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5);
-	int TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
-	int colision(int xp, int yp);
 
 public:
 	RouteItem *_route;

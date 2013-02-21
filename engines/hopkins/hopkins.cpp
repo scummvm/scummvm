@@ -2051,7 +2051,7 @@ void HopkinsEngine::playEnding() {
 	_globals.iRegul = 1;
 	_soundManager.playSound(26);
 	_linesManager._route = (RouteItem *)g_PTRNUL;
-	_globals.NOMARCHE = true;
+	_globals._freezeCharacterFl = true;
 	_globals._exitId = 0;
 	_soundManager.loadSample(1, "SOUND90.WAV");
 	_graphicsManager.loadImage("IM100");
@@ -2738,7 +2738,7 @@ void HopkinsEngine::OCEAN_HOME() {
 void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, Directions defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
 	_globals._cityMapEnabledFl = false;
 	_graphicsManager._noFadingFl = false;
-	_globals.NOMARCHE = false;
+	_globals._freezeCharacterFl = false;
 	_globals._exitId = 0;
 	_globals._disableInventFl = true;
 	_soundManager.playSound(soundId);

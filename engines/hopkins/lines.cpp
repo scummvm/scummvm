@@ -1146,7 +1146,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 		v126[i] = 1300;
 	}
 
-	if (PARC_PERS(fromX, fromY, clipDestX, clipDestY, -1, -1, 0) == 1)
+	if (characterRoute(fromX, fromY, clipDestX, clipDestY, -1, -1, 0) == 1)
 		return _bestRoute;
 
 	int v14 = 0;
@@ -1321,7 +1321,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 		v114 = v136[7];
 	}
 
-	int v55 = PARC_PERS(fromX, fromY, clipDestX, clipDestY, v115, v121, 0);
+	int v55 = characterRoute(fromX, fromY, clipDestX, clipDestY, v115, v121, 0);
 	
 	if (v55 == 1)
 		return _bestRoute;
@@ -1418,7 +1418,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 					_bestRoute[v112].set(_lineItem[v110]._lineData[2 * v72], _lineItem[v110]._lineData[2 * v72 + 1], _lineItem[v110]._directionRouteInc);
 					v112++;
 					if (_lineItem[v110]._lineDataEndIdx > 30 && v72 == _lineItem[v110]._lineDataEndIdx / 2) {
-						int v78 = PARC_PERS(_lineItem[v110]._lineData[2 * v72], _lineItem[v110]._lineData[2 * v72 + 1], clipDestX, clipDestY, v110, v121, v112);
+						int v78 = characterRoute(_lineItem[v110]._lineData[2 * v72], _lineItem[v110]._lineData[2 * v72 + 1], clipDestX, clipDestY, v110, v121, v112);
 						if (v78 == 1)
 							return &_bestRoute[0];
 						if (v78 == 2 || MIRACLE(v119, v118, v110, v121, v112)) {
@@ -1436,7 +1436,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				if (loopCond)
 					break;
 
-				int v79 = PARC_PERS(v119, v118, clipDestX, clipDestY, v116, v121, v112);
+				int v79 = characterRoute(v119, v118, clipDestX, clipDestY, v116, v121, v112);
 				if (v79 == 1)
 					return &_bestRoute[0];
 				if (v79 == 2 || MIRACLE(v119, v118, v116, v121, v112)) {
@@ -1468,7 +1468,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 					_bestRoute[v112].set(_lineItem[v117]._lineData[2 * dataIdx], _lineItem[v117]._lineData[2 * dataIdx + 1], _lineItem[v117]._directionRouteDec);
 					v112++;
 					if (_lineItem[v117]._lineDataEndIdx > 30 && dataIdx == _lineItem[v117]._lineDataEndIdx / 2) {
-						int v88 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
+						int v88 = characterRoute(v119, v118, clipDestX, clipDestY, v117, v121, v112);
 						if (v88 == 1)
 							return &_bestRoute[0];
 						if (v88 == 2 || MIRACLE(v119, v118, v117, v121, v112)) {
@@ -1484,7 +1484,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				if (loopCond)
 					break;
 
-				int v89 = PARC_PERS(v119, v118, clipDestX, clipDestY, v117, v121, v112);
+				int v89 = characterRoute(v119, v118, clipDestX, clipDestY, v117, v121, v112);
 				if (v89 == 1)
 					return &_bestRoute[0];
 				if (v89 == 2 || MIRACLE(v119, v118, v117, v121, v112)) {
@@ -1510,14 +1510,14 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 			v112 = _lineItem[v121].appendToRouteDec(v114, v120, _bestRoute, v112);
 		}
 	}
-	if (PARC_PERS(_bestRoute[v112 - 1]._x, _bestRoute[v112 - 1]._y, clipDestX, clipDestY, -1, -1, v112) != 1) {
+	if (characterRoute(_bestRoute[v112 - 1]._x, _bestRoute[v112 - 1]._y, clipDestX, clipDestY, -1, -1, v112) != 1) {
 		_bestRoute[v112].invalidate();
 	}
 
 	return &_bestRoute[0];
 }
 
-int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, int a6, int a7) {
+int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int a5, int a6, int a7) {
 	int v18;
 	int v19;
 	int v20;
@@ -1553,11 +1553,9 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 	int v115;
 	int v117;
 	int collLineIdx;
-	int collDataIdx;
+	int collDataIdx = 0;
 	int v140;
-	int v141;
 	int v142;
-	int v143;
 	bool colResult = false;
 
 	int curX = fromX;
@@ -1610,6 +1608,8 @@ int LinesManager::PARC_PERS(int fromX, int fromY, int destX, int destY, int a5, 
 
 	int distX, v10, distY, v12, v13, v14;
 	int repeatFlag = 0;
+	int v143 = 0;
+	int v141 = 0;
 	for (;;) {
 		v111 = curX;
 		v109 = curY;
@@ -2397,10 +2397,10 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5) {
 	int lineIdxTestLeft;
 	int lineIdxTestRight;
 
-	int idxTestUp = TEST_LIGNE(paramX, paramY - 2, &v42, &lineIdxTestUp, &dataIdxTestUp);
-	int idxTestDown = TEST_LIGNE(paramX, paramY + 2, &v43, &lineIdxTestDown, &dataIdxTestDown);
-	int idxTestLeft = TEST_LIGNE(paramX - 2, paramY, &v44, &lineIdxTestLeft, &dataIdxTestLeft);
-	int idxTestRight = TEST_LIGNE(paramX + 2, paramY, &v45, &lineIdxTestRight, &dataIdxTestRight);
+	int idxTestUp = testLine(paramX, paramY - 2, &v42, &lineIdxTestUp, &dataIdxTestUp);
+	int idxTestDown = testLine(paramX, paramY + 2, &v43, &lineIdxTestDown, &dataIdxTestDown);
+	int idxTestLeft = testLine(paramX - 2, paramY, &v44, &lineIdxTestLeft, &dataIdxTestLeft);
+	int idxTestRight = testLine(paramX + 2, paramY, &v45, &lineIdxTestRight, &dataIdxTestRight);
 	if (idxTestUp == -1 && idxTestDown == -1 && idxTestLeft == -1 && idxTestRight == -1)
 		return false;
 
@@ -2482,7 +2482,7 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5) {
 }
 
 // Test line
-int LinesManager::TEST_LIGNE(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx) {
+int LinesManager::testLine(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx) {
 	int16 *lineData;
 	int lineDataEndIdx;
 	int collLineIdx;
@@ -2616,7 +2616,7 @@ int LinesManager::MZONE() {
 		}
 		_currentSegmentId = 0;
 		for (int squareZoneId = 0; squareZoneId <= 99; squareZoneId++) {
-			if (ZONEP[squareZoneId]._enabledFl && _squareZone[squareZoneId]._enabledFl == 1
+			if (ZONEP[squareZoneId]._enabledFl && _squareZone[squareZoneId]._enabledFl
 				&& _squareZone[squareZoneId]._left <= xp && _squareZone[squareZoneId]._right >= xp
 				&& _squareZone[squareZoneId]._top <= yp && _squareZone[squareZoneId]._bottom >= yp) {
 					if (_squareZone[squareZoneId]._squareZoneFl)
@@ -2633,7 +2633,7 @@ int LinesManager::MZONE() {
 
 		int colRes1 = 0;
 		for (int yCurrent = yp; yCurrent >= 0; --yCurrent) {
-			colRes1 = colision(xp, yCurrent);
+			colRes1 = checkCollision(xp, yCurrent);
 			if (colRes1 != -1 && ZONEP[colRes1]._enabledFl)
 				break;
 		}
@@ -2643,7 +2643,7 @@ int LinesManager::MZONE() {
 
 		int colRes2 = 0;
 		for (int j = yp; j < _vm->_graphicsManager._maxY; ++j) {
-			colRes2 = colision(xp, j);
+			colRes2 = checkCollision(xp, j);
 			if (colRes2 != -1 && ZONEP[colRes1]._enabledFl)
 				break;
 		}
@@ -2653,7 +2653,7 @@ int LinesManager::MZONE() {
 
 		int colRes3 = 0;
 		for (int k = xp; k >= 0; --k) {
-			colRes3 = colision(k, yp);
+			colRes3 = checkCollision(k, yp);
 			if (colRes3 != -1 && ZONEP[colRes1]._enabledFl)
 				break;
 		}
@@ -2662,7 +2662,7 @@ int LinesManager::MZONE() {
 
 		int colRes4 = 0;
 		for (int xCurrent = xp; _vm->_graphicsManager._maxX > xCurrent; ++xCurrent) {
-			colRes4 = colision(xCurrent, yp);
+			colRes4 = checkCollision(xCurrent, yp);
 			if (colRes4 != -1 && ZONEP[colRes1]._enabledFl)
 				break;
 		}
@@ -2677,7 +2677,7 @@ int LinesManager::MZONE() {
 	return result;
 }
 
-int LinesManager::colision(int xp, int yp) {
+int LinesManager::checkCollision(int xp, int yp) {
 	if (_currentSegmentId <= 0)
 		return -1;
 
@@ -2730,7 +2730,7 @@ int LinesManager::colision(int xp, int yp) {
 // Square Zone
 void LinesManager::CARRE_ZONE() {
 	for (int idx = 0; idx < 100; ++idx) {
-		_squareZone[idx]._enabledFl = 0;
+		_squareZone[idx]._enabledFl = false;
 		_squareZone[idx]._squareZoneFl = false;
 		_squareZone[idx]._left = 1280;
 		_squareZone[idx]._right = 0;
@@ -2746,7 +2746,7 @@ void LinesManager::CARRE_ZONE() {
 			continue;
 
 		int carreZoneId = _zoneLine[idx]._bobZoneIdx;
-		_squareZone[carreZoneId]._enabledFl = 1;
+		_squareZone[carreZoneId]._enabledFl = true;
 		if (_squareZone[carreZoneId]._maxZoneLineIdx < idx)
 			_squareZone[carreZoneId]._maxZoneLineIdx = idx;
 		if (_squareZone[carreZoneId]._minZoneLineIdx > idx)
@@ -2801,7 +2801,7 @@ void LinesManager::clearAll() {
 	}
 
 	for (int idx = 0; idx < 100; ++idx)
-		_squareZone[idx]._enabledFl = 0;
+		_squareZone[idx]._enabledFl = false;
 
 	// FIXME: Delete these somewhere
 	_vm->_linesManager.essai0 = new RouteItem[8334];
@@ -2903,7 +2903,7 @@ void LinesManager::checkZone() {
 	if (_vm->_globals.compteur_71 <= 1)
 		return;
 
-	if (_vm->_globals.NOMARCHE || (_route == (RouteItem *)g_PTRNUL) || _vm->_globals.compteur_71 > 4) {
+	if (_vm->_globals._freezeCharacterFl || (_route == (RouteItem *)g_PTRNUL) || _vm->_globals.compteur_71 > 4) {
 		_vm->_globals.compteur_71 = 0;
 		int zoneId;
 		if (_vm->_globals._oldMouseX != mouseX || _vm->_globals._oldMouseY != oldMouseY) {
@@ -2954,7 +2954,7 @@ void LinesManager::checkZone() {
 		_vm->_globals._oldMouseX = mouseX;
 		_vm->_globals._oldMouseY = oldMouseY;
 		_vm->_globals._oldMouseZoneId = zoneId;
-		if (_vm->_globals.NOMARCHE && (_vm->_eventsManager._mouseCursorId == 4)) {
+		if (_vm->_globals._freezeCharacterFl && (_vm->_eventsManager._mouseCursorId == 4)) {
 			if (zoneId != -1 && zoneId != 0)
 				_vm->_objectsManager.handleRightButton();
 		}

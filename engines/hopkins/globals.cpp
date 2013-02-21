@@ -127,7 +127,7 @@ Globals::Globals() {
 	_sortedDisplayCount = 0;
 	NOT_VERIF = false;
 	_characterType = 0;
-	GOACTION = false;
+	_actionMoveTo = false;
 	Compteur = 0;
 	_actionDirection = DIR_NONE;
 
@@ -157,7 +157,7 @@ Globals::Globals() {
 	// Reset flags
 	_censorshipFl = false;
 	_disableInventFl = false;
-	NOMARCHE = false;
+	_freezeCharacterFl = false;
 	_optionDialogFl = false;
 	_cacheFl = false;
 	_introSpeechOffFl = false;

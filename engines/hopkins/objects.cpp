@@ -1307,7 +1307,7 @@ void ObjectsManager::GOHOME() {
 			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
 			_vm->_globals._actionDirection = DIR_NONE;
 			int zoneId;
-			if (_vm->_globals.GOACTION)
+			if (_vm->_globals._actionMoveTo)
 				zoneId = _vm->_globals._saveData->_data[svField2];
 			else
 				zoneId = _zoneNum;
@@ -1525,7 +1525,7 @@ void ObjectsManager::GOHOME() {
 
 		if (newPosX == -1 && newPosY == -1) {
 			int zoneId;
-			if (_vm->_globals.GOACTION)
+			if (_vm->_globals._actionMoveTo)
 				zoneId = _vm->_globals._saveData->_data[svField2];
 			else
 				zoneId = _zoneNum;
@@ -1741,7 +1741,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_globals._characterMaxPosY = 440;
 	_vm->_globals._cityMapEnabledFl = true;
 	_vm->_graphicsManager._noFadingFl = false;
-	_vm->_globals.NOMARCHE = false;
+	_vm->_globals._freezeCharacterFl = false;
 	_spritePtr = g_PTRNUL;
 	_vm->_globals._exitId = 0;
 	_vm->_globals.NOT_VERIF = true;
@@ -1811,7 +1811,7 @@ void ObjectsManager::handleCityMap() {
 		_vm->_linesManager.checkZone();
 		GOHOME2();
 
-		if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL && _vm->_globals.GOACTION)
+		if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL && _vm->_globals._actionMoveTo)
 			PARADISE();
 		_vm->_eventsManager.VBL();
 
@@ -1875,7 +1875,7 @@ void ObjectsManager::handleLeftButton() {
 			return;
 		}
 	}
-	if (_vm->_globals._cityMapEnabledFl && _vm->_globals.GOACTION) {
+	if (_vm->_globals._cityMapEnabledFl && _vm->_globals._actionMoveTo) {
 		_vm->_linesManager.checkZone();
 		if (_zoneNum <= 0)
 			return;
@@ -1888,9 +1888,9 @@ void ObjectsManager::handleLeftButton() {
 		_vm->_linesManager.essai2[routeIdx].invalidate();;
 	}
 
-	if (_vm->_globals.GOACTION) {
+	if (_vm->_globals._actionMoveTo) {
 		_vm->_linesManager.checkZone();
-		_vm->_globals.GOACTION = false;
+		_vm->_globals._actionMoveTo = false;
 		_vm->_globals._saveData->_data[svField1] = 0;
 		_vm->_globals._saveData->_data[svField2] = 0;
 	}
@@ -1903,7 +1903,7 @@ void ObjectsManager::handleLeftButton() {
 			destY = _vm->_linesManager.ZONEP[_zoneNum]._destY;
 		}
 	}
-	_vm->_globals.GOACTION = false;
+	_vm->_globals._actionMoveTo = false;
 	RouteItem *oldRoute = _vm->_linesManager._route;
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 	if (_forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
@@ -1930,7 +1930,7 @@ void ObjectsManager::handleLeftButton() {
 			}
 		}
 	} else {
-		if (!_vm->_globals.NOMARCHE && !_vm->_globals._cityMapEnabledFl) {
+		if (!_vm->_globals._freezeCharacterFl && !_vm->_globals._cityMapEnabledFl) {
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), destX, destY);
 			if (_vm->_linesManager._route != (RouteItem *)g_PTRNUL)
 				_vm->_linesManager.PACOURS_PROPRE(_vm->_linesManager._route);
@@ -1944,7 +1944,7 @@ void ObjectsManager::handleLeftButton() {
 		}
 	}
 
-	if (!_vm->_globals.NOMARCHE && _vm->_globals._cityMapEnabledFl)
+	if (!_vm->_globals._freezeCharacterFl && _vm->_globals._cityMapEnabledFl)
 		_vm->_linesManager._route = _vm->_linesManager.cityMapCarRoute(getSpriteX(0), getSpriteY(0), destX, destY);
 
 	if (_zoneNum != -1 && _zoneNum != 0) {
@@ -1957,7 +1957,7 @@ void ObjectsManager::handleLeftButton() {
 			_vm->_globals._saveData->_data[svField1] = 6;
 		_vm->_globals._saveData->_data[svField2] = _zoneNum;
 		_vm->_globals._saveData->_data[svField3] = _curObjectIndex;
-		_vm->_globals.GOACTION = true;
+		_vm->_globals._actionMoveTo = true;
 	}
 	_vm->_fontManager.hideText(5);
 	_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
@@ -2051,11 +2051,11 @@ void ObjectsManager::PARADISE() {
 		_vm->_eventsManager._mouseCursorId = 0;
 		_vm->_eventsManager.changeMouseCursor(0);
 	}
-	if (_vm->_globals.NOMARCHE && _vm->_eventsManager._mouseCursorId == 4) {
+	if (_vm->_globals._freezeCharacterFl && _vm->_eventsManager._mouseCursorId == 4) {
 		if (_zoneNum != -1 && _zoneNum != 0)
 			handleRightButton();
 	}
-	_vm->_globals.GOACTION = false;
+	_vm->_globals._actionMoveTo = false;
 }
 
 /**
@@ -2089,7 +2089,7 @@ void ObjectsManager::clearScreen() {
 	_vm->_eventsManager._mouseSpriteId = 0;
 	_vm->_globals._saveData->_data[svField1] = 0;
 	_vm->_globals._saveData->_data[svField2] = 0;
-	_vm->_globals.GOACTION = false;
+	_vm->_globals._actionMoveTo = false;
 	_forceZoneFl = true;
 	_changeVerbFl = false;
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
@@ -2236,7 +2236,7 @@ void ObjectsManager::nextVerbIcon() {
 
 	for(;;) {
 		if (_vm->_eventsManager._mouseCursorId == 4) {
-			if (!_vm->_globals.NOMARCHE || _zoneNum == -1 || _zoneNum == 0)
+			if (!_vm->_globals._freezeCharacterFl || _zoneNum == -1 || _zoneNum == 0)
 				return;
 
 			++_vm->_eventsManager._mouseCursorId;
@@ -3689,7 +3689,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_globals.iRegul = 1;
 	_vm->_soundManager.playSound(soundNum);
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
-	_vm->_globals.NOMARCHE = true;
+	_vm->_globals._freezeCharacterFl = true;
 	_vm->_globals._exitId = 0;
 	if (!backgroundFile.empty())
 		_vm->_graphicsManager.loadImage(backgroundFile);
@@ -3744,7 +3744,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 			handleRightButton();
 		_vm->_dialogsManager.testDialogOpening();
 		_vm->_linesManager.checkZone();
-		if (_vm->_globals.GOACTION)
+		if (_vm->_globals._actionMoveTo)
 			PARADISE();
 		if (!_vm->_globals._exitId)
 			_vm->_eventsManager.VBL();
@@ -3776,7 +3776,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_dialogsManager._removeInventFl = false;
 	_vm->_globals._cityMapEnabledFl = false;
 	_vm->_graphicsManager._noFadingFl = false;
-	_vm->_globals.NOMARCHE = false;
+	_vm->_globals._freezeCharacterFl = false;
 	_vm->_globals._exitId = 0;
 	_vm->_globals.NOT_VERIF = true;
 	_vm->_soundManager.playSound(soundNum);
@@ -3884,7 +3884,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 			_vm->_linesManager.checkZone();
 			if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL
 					|| (GOHOME(), _vm->_linesManager._route == (RouteItem *)g_PTRNUL)) {
-				if (_vm->_globals.GOACTION)
+				if (_vm->_globals._actionMoveTo)
 					PARADISE();
 			}
 			handleSpecialGames();

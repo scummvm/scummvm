@@ -305,7 +305,9 @@ public:
 	int _oldRouteDestY;
 	int _oldZoneNum;
 
-	bool NOMARCHE;
+	bool _actionMoveTo;
+	bool _freezeCharacterFl;
+
 	int iRegul;
 	byte *BUF_ZONE;
 	BqeAnimItem _animBqe[35];
@@ -324,7 +326,6 @@ public:
 	int Compteur;
 	int compteur_71;
 	Common::String FICH_ZONE;
-	bool GOACTION;
 	Common::String FICH_TEXTE;
 
 	Globals();
