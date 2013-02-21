@@ -34,6 +34,10 @@ class Debugger : public GUI::Debugger {
 private:
 	MortevielleEngine *_vm;
 
+protected:
+	bool Cmd_showAllQuestions(int argc, const char **argv);
+	bool Cmd_resetParano(int argc, const char **argv);
+
 public:
 	Debugger();
 	virtual ~Debugger() {}
