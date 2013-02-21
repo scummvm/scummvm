@@ -288,9 +288,13 @@ void SaveLoadManager::convertThumb16To8(Graphics::Surface *thumb16, Graphics::Su
 	thumb8->create(thumb16->w, thumb16->h, Graphics::PixelFormat::createFormatCLUT8());
 	Graphics::PixelFormat pixelFormat16(2, 5, 6, 5, 0, 11, 5, 0, 0);
 
-	uint16 palette[PALETTE_SIZE];
-	for (int palIndex = 0; palIndex < PALETTE_SIZE; ++palIndex)
-		palette[palIndex] = READ_LE_UINT16(&_vm->_graphicsManager.PAL_PIXELS[palIndex * 2]);
+	byte paletteR[PALETTE_SIZE];
+	byte paletteG[PALETTE_SIZE];
+	byte paletteB[PALETTE_SIZE];
+	for (int palIndex = 0; palIndex < PALETTE_SIZE; ++palIndex) {
+		uint16 p = READ_LE_UINT16(&_vm->_graphicsManager.PAL_PIXELS[palIndex * 2]);
+		pixelFormat16.colorToRGB(p, paletteR[palIndex], paletteG[palIndex], paletteB[palIndex]);
+	}
 
 	const uint16 *srcP = (const uint16 *)thumb16->pixels;
 	byte *destP = (byte *)thumb8->pixels;
@@ -306,8 +310,9 @@ void SaveLoadManager::convertThumb16To8(Graphics::Surface *thumb16, Graphics::Su
 			// Scan the palette for the closest match
 			int difference = 99999, foundIndex = 0;
 			for (int palIndex = 0; palIndex < PALETTE_SIZE; ++palIndex) {
-				byte rCurrent, gCurrent, bCurrent;
-				pixelFormat16.colorToRGB(palette[palIndex], rCurrent, gCurrent, bCurrent);
+				byte rCurrent = paletteR[palIndex];
+				byte gCurrent = paletteG[palIndex];
+				byte bCurrent = paletteB[palIndex];
 
 				int diff = ABS((int)r - (int)rCurrent) + ABS((int)g - (int)gCurrent) + ABS((int)b - (int)bCurrent);
 				if (diff < difference) {
