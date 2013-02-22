@@ -579,7 +579,6 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 
 	oldMusicVol = _musicVolume;
 	if (!loadVoice(filename, catPos, catLen, _sWav[20])) {
-		warning("Couldn't load sample: %s", filename.c_str());
 		_sWav[20]._active = false;
 	} else {
 		_sWav[20]._active = true;
@@ -772,7 +771,8 @@ bool SoundManager::loadVoice(const Common::String &filename, size_t fileOffset, 
 	if (!f.open(filename)) {
 		// Fallback to APC...
 		if (!f.open(setExtension(filename, ".APC"))) {
-			warning("Could not open %s for reading", filename.c_str());
+			if (!_vm->getIsDemo())
+				error("Could not open %s for reading", filename.c_str());
 			return false;
 		}
 	}

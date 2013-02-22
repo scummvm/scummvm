@@ -142,7 +142,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 			if (!_vm->_soundManager._voiceOffFl)
 				_vm->_soundManager.mixVoice(mesgId, 4, displayedTxtFl);
-		} else { // if (TRAVAILOBJET)
+		} else { // if (_tempObjectFl)
 			if (_vm->_globals._saveData->_data[svField356]) {
 				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals._textFilename, 55, 20, dataP[8], 35, 253);
 				bool displayedTxtFl = false;
