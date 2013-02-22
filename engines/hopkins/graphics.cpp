@@ -395,8 +395,14 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 }
 
 // Clear Palette
+// CHECKME: Some versions of the game don't include it, some contains nothing more than 
+// than a loop doing nothing, some others just map the last value. While debugging, it
+// seems that this function is called once the palette is already cleared, so it would be useless
+// This code could most likely be removed.
 void GraphicsManager::clearPalette() {
-	SD_PIXELS[0] = 0;
+	uint16 col0 = mapRGB(0, 0, 0);
+	for (int i = 0; i < 512; i += 2)
+		WRITE_LE_UINT16(&SD_PIXELS[i], col0);
 }
 
 void GraphicsManager::SCANLINE(int pitch) {
