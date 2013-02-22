@@ -346,7 +346,7 @@ void ObjectsManager::displaySprite() {
 			}
 		}
 
-		if (_vm->_globals._cacheFl)
+		if (_vm->_globals._hidingActiveFl)
 			checkCache();
 	}
 
@@ -510,7 +510,6 @@ void ObjectsManager::resetBob(int idx) {
 	bob.field1E = 0;
 	bob.field20 = 0;
 	bob.field22 = 0;
-	bob._offsetY = 0;
 	bob.field34 = false;
 	bob._zoomFactor = 0;
 	bob._flipFl = false;
@@ -591,7 +590,7 @@ void ObjectsManager::displayBob(int idx) {
 
 	int16 v9 = READ_LE_INT16(data + 2);
 	int16 v8 = READ_LE_INT16(data + 4);
-	int16 offsetY = READ_LE_INT16(data + 6);
+	// data[6] isn't used, read skipped
 	int16 v6 = READ_LE_INT16(data + 8);
 
 	if (!v9)
@@ -614,7 +613,6 @@ void ObjectsManager::displayBob(int idx) {
 	_bob[idx].field1E = v9;
 	_bob[idx].field20 = v6;
 	_bob[idx].field22 = v8;
-	_bob[idx]._offsetY = offsetY;
 }
 
 void ObjectsManager::hideBob(int idx) {
@@ -627,22 +625,22 @@ void ObjectsManager::BOB_OFFSET(int idx, int offset) {
 }
 
 void ObjectsManager::SCBOB(int idx) {
-	if (_vm->_globals.Cache[idx]._useCount == 0)
+	if (_vm->_globals._hidingItem[idx]._useCount == 0)
 		return;
 
 	for (int i = 0; i <= 20; i++) {
 		if ((_bob[i].field0) && (!_bob[i]._disabledAnimationFl) && (!_bob[i].field34) && (_bob[i]._frameIndex != 250)) {
 			int oldRight = _bob[i]._oldX + _bob[i]._oldWidth;
 			int oldBottom = _bob[i]._oldY + _bob[i]._oldHeight;
-			int cachedRight = _vm->_globals.Cache[idx]._width + _vm->_globals.Cache[idx]._x;
+			int cachedRight = _vm->_globals._hidingItem[idx]._width + _vm->_globals._hidingItem[idx]._x;
 
-			if ((oldBottom > _vm->_globals.Cache[idx]._y) && (oldBottom < _vm->_globals.Cache[idx].field14 +_vm->_globals.Cache[idx]._height + _vm->_globals.Cache[idx]._y)) {
-				if ((oldRight >= _vm->_globals.Cache[idx]._x && oldRight <= cachedRight)
-				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x)
-				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x)
-				 || (_bob[i]._oldWidth >= _vm->_globals.Cache[idx]._x && oldRight <= cachedRight)
-				 || (_bob[i]._oldWidth <= _vm->_globals.Cache[idx]._x && oldRight >= cachedRight))
-					++_vm->_globals.Cache[idx]._useCount;
+			if ((oldBottom > _vm->_globals._hidingItem[idx]._y) && (oldBottom < _vm->_globals._hidingItem[idx].field14 +_vm->_globals._hidingItem[idx]._height + _vm->_globals._hidingItem[idx]._y)) {
+				if ((oldRight >= _vm->_globals._hidingItem[idx]._x && oldRight <= cachedRight)
+				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= _vm->_globals._hidingItem[idx]._x)
+				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= _vm->_globals._hidingItem[idx]._x)
+				 || (_bob[i]._oldWidth >= _vm->_globals._hidingItem[idx]._x && oldRight <= cachedRight)
+				 || (_bob[i]._oldWidth <= _vm->_globals._hidingItem[idx]._x && oldRight >= cachedRight))
+					++_vm->_globals._hidingItem[idx]._useCount;
 			}
 		}
 	}
@@ -733,41 +731,41 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 
 void ObjectsManager::checkCache() {
 	for (int cacheIdx = 0; cacheIdx <= 19; cacheIdx++) {
-		if (_vm->_globals.Cache[cacheIdx]._useCount == 0)
+		if (_vm->_globals._hidingItem[cacheIdx]._useCount == 0)
 			continue;
 
-		int _oldUseCount = _vm->_globals.Cache[cacheIdx]._useCount;
+		int _oldUseCount = _vm->_globals._hidingItem[cacheIdx]._useCount;
 		for (int spriteIdx = 0; spriteIdx <= 4; spriteIdx++) {
 			if (_sprite[spriteIdx]._animationType == 1 && _sprite[spriteIdx]._spriteIndex != 250) {
 				int right = _sprite[spriteIdx]._width + _sprite[spriteIdx]._destX;
 				int bottom = _sprite[spriteIdx]._height + _sprite[spriteIdx]._destY;
-				int cachedRight = _vm->_globals.Cache[cacheIdx]._width + _vm->_globals.Cache[cacheIdx]._x;
+				int cachedRight = _vm->_globals._hidingItem[cacheIdx]._width + _vm->_globals._hidingItem[cacheIdx]._x;
 
-				if (bottom > _vm->_globals.Cache[cacheIdx]._y && bottom < (_vm->_globals.Cache[cacheIdx].field14 + _vm->_globals.Cache[cacheIdx]._height + _vm->_globals.Cache[cacheIdx]._y)) {
-					if ((right >= _vm->_globals.Cache[cacheIdx]._x && right <= cachedRight)
-					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx]._destX)
-					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx]._destX)
-					 || (_vm->_globals.Cache[cacheIdx]._x <= _sprite[spriteIdx]._destX && right <= cachedRight)
-					 || (_vm->_globals.Cache[cacheIdx]._x >= _sprite[spriteIdx]._destX && right >= cachedRight))
-						++_vm->_globals.Cache[cacheIdx]._useCount;
+				if (bottom > _vm->_globals._hidingItem[cacheIdx]._y && bottom < (_vm->_globals._hidingItem[cacheIdx].field14 + _vm->_globals._hidingItem[cacheIdx]._height + _vm->_globals._hidingItem[cacheIdx]._y)) {
+					if ((right >= _vm->_globals._hidingItem[cacheIdx]._x && right <= cachedRight)
+					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals._hidingItem[cacheIdx]._x <= _sprite[spriteIdx]._destX)
+					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals._hidingItem[cacheIdx]._x <= _sprite[spriteIdx]._destX)
+					 || (_vm->_globals._hidingItem[cacheIdx]._x <= _sprite[spriteIdx]._destX && right <= cachedRight)
+					 || (_vm->_globals._hidingItem[cacheIdx]._x >= _sprite[spriteIdx]._destX && right >= cachedRight))
+						++_vm->_globals._hidingItem[cacheIdx]._useCount;
 				}
 			}
 		}
 
 		SCBOB(cacheIdx);
-		if (_vm->_globals.Cache[cacheIdx]._useCount == _oldUseCount) {
-			if (_vm->_globals.Cache[cacheIdx].field10) {
-				_vm->_globals.Cache[cacheIdx].field10 = false;
-				_vm->_globals.Cache[cacheIdx]._useCount = 1;
+		if (_vm->_globals._hidingItem[cacheIdx]._useCount == _oldUseCount) {
+			if (_vm->_globals._hidingItem[cacheIdx].field10) {
+				_vm->_globals._hidingItem[cacheIdx].field10 = false;
+				_vm->_globals._hidingItem[cacheIdx]._useCount = 1;
 			}
 		} else {
-			int priority = _vm->_globals.Cache[cacheIdx].field14 + _vm->_globals.Cache[cacheIdx]._height + _vm->_globals.Cache[cacheIdx]._y;
+			int priority = _vm->_globals._hidingItem[cacheIdx].field14 + _vm->_globals._hidingItem[cacheIdx]._height + _vm->_globals._hidingItem[cacheIdx]._y;
 			if (priority > 440)
 				priority = 500;
 
 			beforeSort(SORT_CACHE, cacheIdx, priority);
-			_vm->_globals.Cache[cacheIdx]._useCount = 1;
-			_vm->_globals.Cache[cacheIdx].field10 = true;
+			_vm->_globals._hidingItem[cacheIdx]._useCount = 1;
+			_vm->_globals._hidingItem[cacheIdx].field10 = true;
 		}
 	}
 }
@@ -811,12 +809,12 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 }
 
 void ObjectsManager::displayCache(int idx) {
-	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals.CACHE_BANQUE[1],
-	    _vm->_globals.Cache[idx]._x + 300, _vm->_globals.Cache[idx]._y + 300,
-	    _vm->_globals.Cache[idx]._spriteIndex);
+	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._hidingItemData[1],
+	    _vm->_globals._hidingItem[idx]._x + 300, _vm->_globals._hidingItem[idx]._y + 300,
+	    _vm->_globals._hidingItem[idx]._spriteIndex);
 
-	_vm->_graphicsManager.addVesaSegment(_vm->_globals.Cache[idx]._x, _vm->_globals.Cache[idx]._y,
-	    _vm->_globals.Cache[idx]._x + _vm->_globals.Cache[idx]._width, _vm->_globals.Cache[idx]._y + _vm->_globals.Cache[idx]._height);
+	_vm->_graphicsManager.addVesaSegment(_vm->_globals._hidingItem[idx]._x, _vm->_globals._hidingItem[idx]._y,
+	    _vm->_globals._hidingItem[idx]._x + _vm->_globals._hidingItem[idx]._width, _vm->_globals._hidingItem[idx]._y + _vm->_globals._hidingItem[idx]._height);
 }
 
 // Compute Sprite
@@ -1749,7 +1747,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_globals.iRegul = 1;
 	_vm->_graphicsManager.loadImage("PLAN");
 	_vm->_linesManager.loadLines("PLAN.OB2");
-	_vm->_globals.loadCache("PLAN.CA2");
+	_vm->_globals.loadHidingItems("PLAN.CA2");
 	loadZone("PLAN.ZO2");
 	_spritePtr = _vm->_fileManager.loadFile("VOITURE.SPR");
 	_vm->_animationManager.loadAnim("PLAN");
@@ -1759,7 +1757,7 @@ void ObjectsManager::handleCityMap() {
 		_vm->_globals.B_CACHE_OFF(i);
 	_vm->_globals.B_CACHE_OFF(19);
 	_vm->_globals.B_CACHE_OFF(20);
-	_vm->_globals.CACHE_ON();
+	_vm->_globals.enableHiding();
 
 	if (!_mapCarPosX && !_mapCarPosY) {
 		_mapCarPosX = 900;
@@ -2066,11 +2064,11 @@ void ObjectsManager::clearScreen() {
 	_vm->_graphicsManager.endDisplayBob();
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
-	_vm->_globals.CLEAR_VBOB();
+	_vm->_globals.clearVBob();
 	_vm->_animationManager.clearAnim();
 	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
-	_vm->_globals.resetCache();
+	_vm->_globals.resetHidingItems();
 
 	for (int i = 0; i <= 48; i++) {
 		_vm->_linesManager.BOBZONE[i] = 0;
@@ -3074,42 +3072,42 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 		for (int idx = 0; idx < 500; ++idx)
 			_vm->_globals._spriteSize[idx] = READ_LE_INT16((uint16 *)ptr + idx);
 
-		_vm->_globals.resetCache();
+		_vm->_globals.resetHidingItems();
 
 		Common::String filename2 = Common::String((const char *)ptr + 1000);
 		if (!filename2.empty()) {
-			_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.searchCat(filename2, 8);
+			_vm->_globals._hidingItemData[1] = _vm->_fileManager.searchCat(filename2, 8);
 
-			if (_vm->_globals.CACHE_BANQUE[1] || _vm->_globals.CACHE_BANQUE[1] == g_PTRNUL) {
-				_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.loadFile(filename2);
+			if (_vm->_globals._hidingItemData[1] || _vm->_globals._hidingItemData[1] == g_PTRNUL) {
+				_vm->_globals._hidingItemData[1] = _vm->_fileManager.loadFile(filename2);
 			} else {
-				_vm->_globals.CACHE_BANQUE[1] = _vm->_fileManager.loadFile("RES_SLI.RES");
+				_vm->_globals._hidingItemData[1] = _vm->_fileManager.loadFile("RES_SLI.RES");
 			}
 
 			int curDataCacheId = 60;
 			byte *curDataPtr = ptr + 1000;
 			for (int cacheIdx = 0; cacheIdx <= 21; cacheIdx++) {
 				int curSpriteId = READ_LE_INT16(curDataPtr + 2 * curDataCacheId);
-				_vm->_globals.Cache[cacheIdx]._spriteIndex = curSpriteId;
-				_vm->_globals.Cache[cacheIdx]._x = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 2);
-				_vm->_globals.Cache[cacheIdx]._y = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 4);
-				_vm->_globals.Cache[cacheIdx].field14 = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 8);
+				_vm->_globals._hidingItem[cacheIdx]._spriteIndex = curSpriteId;
+				_vm->_globals._hidingItem[cacheIdx]._x = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 2);
+				_vm->_globals._hidingItem[cacheIdx]._y = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 4);
+				_vm->_globals._hidingItem[cacheIdx].field14 = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 8);
 
-				if (!_vm->_globals.CACHE_BANQUE[1]) {
-					_vm->_globals.Cache[cacheIdx]._useCount = 0;
+				if (!_vm->_globals._hidingItemData[1]) {
+					_vm->_globals._hidingItem[cacheIdx]._useCount = 0;
 				} else {
-					_vm->_globals.Cache[cacheIdx]._spriteData = _vm->_globals.CACHE_BANQUE[1];
-					_vm->_globals.Cache[cacheIdx]._width = getWidth(_vm->_globals.CACHE_BANQUE[1], curSpriteId);
-					_vm->_globals.Cache[cacheIdx]._height = getHeight(_vm->_globals.CACHE_BANQUE[1], curSpriteId);
-					_vm->_globals.Cache[cacheIdx]._useCount = 1;
+					_vm->_globals._hidingItem[cacheIdx]._spriteData = _vm->_globals._hidingItemData[1];
+					_vm->_globals._hidingItem[cacheIdx]._width = getWidth(_vm->_globals._hidingItemData[1], curSpriteId);
+					_vm->_globals._hidingItem[cacheIdx]._height = getHeight(_vm->_globals._hidingItemData[1], curSpriteId);
+					_vm->_globals._hidingItem[cacheIdx]._useCount = 1;
 				}
-				if (!_vm->_globals.Cache[cacheIdx]._x && !_vm->_globals.Cache[cacheIdx]._y
-							&& !_vm->_globals.Cache[cacheIdx]._spriteIndex)
-					_vm->_globals.Cache[cacheIdx]._useCount = 0;
+				if (!_vm->_globals._hidingItem[cacheIdx]._x && !_vm->_globals._hidingItem[cacheIdx]._y
+							&& !_vm->_globals._hidingItem[cacheIdx]._spriteIndex)
+					_vm->_globals._hidingItem[cacheIdx]._useCount = 0;
 
 				curDataCacheId += 5;
 			}
-			_vm->_globals.CACHE_ON();
+			_vm->_globals.enableHiding();
 		}
 	}
 
@@ -3298,8 +3296,8 @@ void ObjectsManager::SPECIAL_INI() {
 
 	case 73:
 		if (!_vm->_globals._saveData->_data[svField318]) {
-			_vm->_globals.CACHE_SUB(0);
-			_vm->_globals.CACHE_SUB(1);
+			_vm->_globals.resetHidingUseCount(0);
+			_vm->_globals.resetHidingUseCount(1);
 		}
 		break;
 
@@ -3834,7 +3832,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		_vm->_graphicsManager._scrollPosX = (int16)getSpriteX(0) - 320;
 	computeAndSetSpriteSize();
 	animateSprite(0);
-	_vm->_globals.CACHE_ON();
+	_vm->_globals.enableHiding();
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 	computeAndSetSpriteSize();
 	SPECIAL_INI();

@@ -94,7 +94,7 @@ struct SortItem {
 	int _priority;
 };
 
-struct CacheItem {
+struct HidingItem {
 	int _x;
 	int _spriteIndex;
 	int _y;
@@ -239,8 +239,8 @@ private:
 
 	byte *_inventoryObject;
 
-	void INIT_ANIM();
-	void INIT_VBOB();
+	void initAnimBqe();
+	void initVBob();
 
 public:
 	bool _disableInventFl;
@@ -248,7 +248,7 @@ public:
 	bool _linuxEndDemoFl;
 	bool _censorshipFl;
 	bool _introSpeechOffFl;
-	bool _cacheFl;
+	bool _hidingActiveFl;
 	bool _forceHideText;
 	int _exitId;
 	Directions _oceanDirection;
@@ -308,10 +308,12 @@ public:
 	bool _actionMoveTo;
 	bool _freezeCharacterFl;
 	bool _checkDistanceFl;
+	byte *_hidingItemData[6];
+	HidingItem _hidingItem[25];
+	BqeAnimItem _animBqe[35];
 
 	int iRegul;
 	byte *BUF_ZONE;
-	BqeAnimItem _animBqe[35];
 	byte *SPRITE_ECRAN;
 	byte *PERSO;
 	ObjetWItem ObjetW[300];
@@ -320,8 +322,6 @@ public:
 	ListeItem Liste[6];
 	ListeItem Liste2[35];
 	BankItem Bank[8];
-	byte *CACHE_BANQUE[6];
-	CacheItem Cache[25];
 	VBobItem VBob[30];
 	int Compteur;
 	int compteur_71;
@@ -337,15 +337,15 @@ public:
 	void loadObjects();
 	void clearAll();
 	void loadCharacterData();
-	void resetCache();
-	void loadCache(const Common::String &file);
+	void resetHidingItems();
+	void loadHidingItems(const Common::String &file);
+	void enableHiding();
+	void disableHiding();
+	void resetHidingUseCount(int idx);
+	void setHidingUseCount(int idx);
 
-	void CLEAR_VBOB();
-	void CACHE_ON();
-	void CACHE_OFF();
+	void clearVBob();
 	void B_CACHE_OFF(int idx);
-	void CACHE_SUB(int idx);
-	void CACHE_ADD(int idx);
 };
 
 // Global null pointer

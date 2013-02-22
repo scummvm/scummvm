@@ -2028,7 +2028,7 @@ void HopkinsEngine::BASED() {
 		_eventsManager.VBL();
 
 	_graphicsManager.fadeInLong();
-	_globals.CACHE_ON();
+	_globals.enableHiding();
 
 	do
 		_eventsManager.VBL();
@@ -2036,7 +2036,7 @@ void HopkinsEngine::BASED() {
 
 	_graphicsManager.fadeOutLong();
 	_graphicsManager.endDisplayBob();
-	_globals.resetCache();
+	_globals.resetHidingItems();
 	_globals._disableInventFl = false;
 	_globals._exitId = 93;
 	_globals.iRegul = 0;

@@ -66,7 +66,6 @@ struct BobItem {
 	int field1E;
 	int field20;
 	int field22;
-	int _offsetY; // Unused variable?
 	bool field34; // Set to true in B_CACHE_OFF()
 	int _zoomFactor;
 	bool _flipFl;

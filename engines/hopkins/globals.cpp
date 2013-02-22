@@ -68,8 +68,6 @@ Globals::Globals() {
 	strcpy((char *)g_PTRNUL, "POINTERNULL");
 
 	// Initialize array properties
-	for (int i = 0; i < 6; ++i)
-		CACHE_BANQUE[i] = g_PTRNUL;
 	for (int i = 0; i < 35; ++i)
 		Common::fill((byte *)&_animBqe[i], (byte *)&_animBqe[i] + sizeof(BqeAnimItem), 0);
 	for (int i = 0; i < 8; ++i)
@@ -85,7 +83,7 @@ Globals::Globals() {
 	for (int i = 0; i < 300; ++i)
 		Common::fill((byte *)&ObjetW[i], (byte *)&ObjetW[i] + sizeof(ObjetWItem), 0);
 	for (int i = 0; i < 25; ++i)
-		Common::fill((byte *)&Cache[i], (byte *)&Cache[i] + sizeof(CacheItem), 0);
+		Common::fill((byte *)&_hidingItem[i], (byte *)&_hidingItem[i] + sizeof(HidingItem), 0);
 
 	for (int i = 0; i < 500; ++i)
 		_spriteSize[i] = 0;
@@ -143,9 +141,9 @@ Globals::Globals() {
 	_oceanDirection = DIR_NONE;
 
 	// Initialize pointers
+	for (int i = 0; i < 6; ++i)
+		_hidingItemData[i] = g_PTRNUL;
 	BUF_ZONE = NULL;
-	for (int idx = 0; idx < 6; ++idx)
-		CACHE_BANQUE[idx] = NULL;
 	SPRITE_ECRAN = NULL;
 	_saveData = NULL;
 	_inventoryObject = NULL;
@@ -159,7 +157,7 @@ Globals::Globals() {
 	_disableInventFl = false;
 	_freezeCharacterFl = false;
 	_optionDialogFl = false;
-	_cacheFl = false;
+	_hidingActiveFl = false;
 	_introSpeechOffFl = false;
 	_baseMapColor = 50;
 
@@ -180,7 +178,7 @@ Globals::Globals() {
 Globals::~Globals() {
 	freeMemory(BUF_ZONE);
 	for (int idx = 0; idx < 6; ++idx)
-		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
+		_hidingItemData[idx] = freeMemory(_hidingItemData[idx]);
 	freeMemory(SPRITE_ECRAN);
 	freeMemory((byte *)_saveData);
 	freeMemory(_inventoryObject);
@@ -188,7 +186,7 @@ Globals::~Globals() {
 	freeMemory(ADR_FICHIER_OBJ);
 	freeMemory(PERSO);
 
-	CLEAR_VBOB();
+	clearVBob();
 
 	free(g_PTRNUL);
 }
@@ -235,15 +233,15 @@ void Globals::setConfig() {
 
 void Globals::clearAll() {
 	for (int idx = 0; idx < 6; ++idx)
-		CACHE_BANQUE[idx] = g_PTRNUL;
+		_hidingItemData[idx] = g_PTRNUL;
 
-	INIT_ANIM();
+	initAnimBqe();
 
 	_boxWidth = 0;
 
 	_vm->_fontManager.clearAll();
 
-	INIT_VBOB();
+	initVBob();
 	ADR_FICHIER_OBJ = g_PTRNUL;
 	NUM_FICHIER_OBJ = 0;
 	_vm->_eventsManager._objectBuf = g_PTRNUL;
@@ -283,7 +281,7 @@ void Globals::loadCharacterData() {
 	_oldDirection = DIR_NONE;
 }
 
-void Globals::INIT_ANIM() {
+void Globals::initAnimBqe() {
 	for (int idx = 0; idx < 35; ++idx) {
 		_animBqe[idx]._data = g_PTRNUL;
 		_animBqe[idx]._enabledFl = false;
@@ -297,7 +295,7 @@ void Globals::INIT_ANIM() {
 	}
 }
 
-void Globals::INIT_VBOB() {
+void Globals::initVBob() {
 	for (int idx = 0; idx < 30; ++idx) {
 		VBob[idx].field4 = 0;
 		VBob[idx]._xp = 0;
@@ -309,7 +307,7 @@ void Globals::INIT_VBOB() {
 	}
 }
 
-void Globals::CLEAR_VBOB() {
+void Globals::clearVBob() {
 	for (int idx = 0; idx < 30; ++idx) {
 		VBob[idx].field4 = 0;
 		VBob[idx]._xp = 0;
@@ -353,34 +351,34 @@ byte *Globals::freeMemory(byte *p) {
 	return g_PTRNUL;
 }
 
-// Reset Cache
-void Globals::resetCache() {
+// Reset Hiding Items
+void Globals::resetHidingItems() {
 
 	for (int idx = 1; idx <= 5; ++idx) {
-		CACHE_BANQUE[idx] = freeMemory(CACHE_BANQUE[idx]);
+		_hidingItemData[idx] = freeMemory(_hidingItemData[idx]);
 	}
 
 	for (int idx = 0; idx <= 20; ++idx) {
-		Cache[idx]._spriteData = g_PTRNUL;
-		Cache[idx]._x = 0;
-		Cache[idx]._y = 0;
-		Cache[idx]._spriteIndex = 0;
-		Cache[idx]._useCount = 0;
-		Cache[idx]._width = 0;
-		Cache[idx]._height = 0;
-		Cache[idx].field10 = false;
-		Cache[idx].field14 = 0;
+		_hidingItem[idx]._spriteData = g_PTRNUL;
+		_hidingItem[idx]._x = 0;
+		_hidingItem[idx]._y = 0;
+		_hidingItem[idx]._spriteIndex = 0;
+		_hidingItem[idx]._useCount = 0;
+		_hidingItem[idx]._width = 0;
+		_hidingItem[idx]._height = 0;
+		_hidingItem[idx].field10 = false;
+		_hidingItem[idx].field14 = 0;
 	}
 
-	_cacheFl = false;
+	_hidingActiveFl = false;
 }
 
-void Globals::CACHE_ON() {
-	_cacheFl = true;
+void Globals::enableHiding() {
+	_hidingActiveFl = true;
 }
 
-void Globals::CACHE_OFF() {
-	_cacheFl = false;
+void Globals::disableHiding() {
+	_hidingActiveFl = false;
 }
 
 void Globals::B_CACHE_OFF(int idx) {
@@ -388,17 +386,17 @@ void Globals::B_CACHE_OFF(int idx) {
 	_vm->_objectsManager._bob[idx].field34 = true;
 }
 
-void Globals::CACHE_SUB(int idx) {
-	Cache[idx]._useCount = 0;
+void Globals::resetHidingUseCount(int idx) {
+	_hidingItem[idx]._useCount = 0;
 }
 
-void Globals::CACHE_ADD(int idx) {
-	Cache[idx]._useCount = 1;
+void Globals::setHidingUseCount(int idx) {
+	_hidingItem[idx]._useCount = 1;
 }
 
-// Load Cache
-void Globals::loadCache(const Common::String &file) {
-	resetCache();
+// Load Hiding Items
+void Globals::loadHidingItems(const Common::String &file) {
+	resetHidingItems();
 	byte *ptr = _vm->_fileManager.loadFile(file);
 	Common::String filename = Common::String((const char *)ptr);
 
@@ -407,27 +405,27 @@ void Globals::loadCache(const Common::String &file) {
 		return;
 
 	byte *spriteData = _vm->_fileManager.loadFile(filename);
-	CACHE_BANQUE[1] = spriteData;
+	_hidingItemData[1] = spriteData;
 	int curBufIdx = 60;
 	for (int i = 0; i <= 21; i++) {
-		Cache[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + curBufIdx);
-		Cache[i]._x = READ_LE_INT16((uint16 *)ptr + curBufIdx + 1);
-		Cache[i]._y = READ_LE_INT16((uint16 *)ptr + curBufIdx + 2);
-		Cache[i].field14 = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
+		_hidingItem[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + curBufIdx);
+		_hidingItem[i]._x = READ_LE_INT16((uint16 *)ptr + curBufIdx + 1);
+		_hidingItem[i]._y = READ_LE_INT16((uint16 *)ptr + curBufIdx + 2);
+		_hidingItem[i].field14 = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
 		if (spriteData == g_PTRNUL) {
-			Cache[i]._useCount = 0;
+			_hidingItem[i]._useCount = 0;
 		} else {
-			Cache[i]._spriteData = spriteData;
-			Cache[i]._width = _vm->_objectsManager.getWidth(spriteData, Cache[i]._spriteIndex);
-			Cache[i]._height = _vm->_objectsManager.getHeight(spriteData, Cache[i]._spriteIndex);
-			Cache[i]._useCount = 1;
+			_hidingItem[i]._spriteData = spriteData;
+			_hidingItem[i]._width = _vm->_objectsManager.getWidth(spriteData, _hidingItem[i]._spriteIndex);
+			_hidingItem[i]._height = _vm->_objectsManager.getHeight(spriteData, _hidingItem[i]._spriteIndex);
+			_hidingItem[i]._useCount = 1;
 		}
 
-		if ( !Cache[i]._x && !Cache[i]._y && !Cache[i]._spriteIndex)
-			Cache[i]._useCount = 0;
+		if ( !_hidingItem[i]._x && !_hidingItem[i]._y && !_hidingItem[i]._spriteIndex)
+			_hidingItem[i]._useCount = 0;
 		curBufIdx += 5;
 	}
-	CACHE_ON();
+	enableHiding();
 	freeMemory(ptr);
 }
 

@@ -619,7 +619,6 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 			_vm->_objectsManager._bob[idx].field1E = v4;
 			_vm->_objectsManager._bob[idx].field20 = -1;
 			_vm->_objectsManager._bob[idx].field22 = 0;
-			_vm->_objectsManager._bob[idx]._offsetY = 0;
 		}
 	}
 }
@@ -971,7 +970,7 @@ void TalkManager::animateObject(const Common::String &a2) {
 	_vm->_graphicsManager._scrollStatus = 1;
 	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
-	_vm->_globals.resetCache();
+	_vm->_globals.resetHidingItems();
 	
 	for (int i = 0; i <= 44; i++)
 		_vm->_linesManager.BOBZONE[i] = 0;
@@ -1050,7 +1049,7 @@ void TalkManager::animateObject(const Common::String &a2) {
 	_vm->_graphicsManager.NB_SCREEN(false);
 	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
-	_vm->_globals.resetCache();
+	_vm->_globals.resetHidingItems();
 	for (int i = 0; i <= 44; i++)
 		_vm->_linesManager.BOBZONE[i] = 0;
 

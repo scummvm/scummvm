@@ -539,7 +539,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_eventsManager._mouseButton = _vm->_eventsManager._curMouseButton;
 			_vm->_globals._disableInventFl = true;
 			_vm->_graphicsManager.fadeOutLong();
-			_vm->_globals.CACHE_OFF();
+			_vm->_globals.disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_fontManager.hideText(5);
 			_vm->_fontManager.hideText(9);
@@ -826,7 +826,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 49: {
-			_vm->_globals.CACHE_OFF();
+			_vm->_globals.disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0);
 			int v19 = 12;
@@ -861,7 +861,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager.animateSprite(0);
 				_vm->_objectsManager.stopBobAnimation(9);
 			}
-			_vm->_globals.CACHE_ON();
+			_vm->_globals.enableHiding();
 			break;
 			}
 
@@ -872,7 +872,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 51: {
 			_vm->_graphicsManager.fadeOutLong();
-			_vm->_globals.CACHE_OFF();
+			_vm->_globals.disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_fontManager.hideText(5);
 			_vm->_fontManager.hideText(9);
@@ -1889,10 +1889,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.loadLinkFile("IM73a");
 			_vm->_objectsManager.OBSSEUL = false;
-			_vm->_globals.CACHE_ON();
+			_vm->_globals.enableHiding();
 			_vm->_animationManager.NO_SEQ = false;
-			_vm->_globals.CACHE_ADD(0);
-			_vm->_globals.CACHE_ADD(1);
+			_vm->_globals.setHidingUseCount(0);
+			_vm->_globals.setHidingUseCount(1);
 			_vm->_graphicsManager.SETCOLOR4(252, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR4(253, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
@@ -1901,7 +1901,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 211:
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_globals.CACHE_OFF();
+			_vm->_globals.disableHiding();
 			_vm->_animationManager.NO_SEQ = true;
 			_vm->_soundManager._specialSoundNum = 211;
 			_vm->_animationManager.playSequence("SECRET2.SEQ", 1, 12, 100);
@@ -1946,7 +1946,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.loadLinkFile("IM93a");
 			_vm->_objectsManager.OBSSEUL = false;
-			_vm->_globals.CACHE_ON();
+			_vm->_globals.enableHiding();
 			_vm->_globals._checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = DIR_NONE;
@@ -1983,12 +1983,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.loadLinkFile("IM93c");
 			_vm->_objectsManager.OBSSEUL = false;
-			_vm->_globals.CACHE_ON();
+			_vm->_globals.enableHiding();
 			break;
 			}
 
 		case 231:
-			_vm->_globals.CACHE_OFF();
+			_vm->_globals.disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(12);
 			do {
@@ -2008,11 +2008,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager.getBobAnimDataIdx(12) != 12);
 			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.stopBobAnimation(12);
-			_vm->_globals.CACHE_ON();
+			_vm->_globals.enableHiding();
 			break;
 
 		case 233: {
-			_vm->_globals.CACHE_OFF();
+			_vm->_globals.disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(11);
 			int v46 = 0;
@@ -2025,7 +2025,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					v46 = 1;
 			} while (_vm->_objectsManager.getBobAnimDataIdx(11) != 13);
 			_vm->_objectsManager.stopBobAnimation(11);
-			_vm->_globals.CACHE_ON();
+			_vm->_globals.enableHiding();
 			_vm->_objectsManager.setBobAnimation(13);
 			do {
 				if (_vm->shouldQuit())
