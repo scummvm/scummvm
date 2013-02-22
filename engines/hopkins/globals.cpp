@@ -325,14 +325,15 @@ void Globals::loadObjects() {
 	byte *srcP = data;
 
 	for (int idx = 0; idx < 300; ++idx) {
-		_objectAuthIcons[idx]._objectFileNum = *srcP++;
-		_objectAuthIcons[idx]._idx = *srcP++;
-		_objectAuthIcons[idx]._flag1 = *srcP++;
-		_objectAuthIcons[idx]._flag2 = *srcP++;
-		_objectAuthIcons[idx]._flag3 = *srcP++;
-		_objectAuthIcons[idx]._flag4 = *srcP++;
-		_objectAuthIcons[idx]._flag5 = *srcP++;
-		_objectAuthIcons[idx]._flag6 = *srcP++;
+		ObjectAuthIcon *objectAuthIcon = &_objectAuthIcons[idx];
+		objectAuthIcon->_objectFileNum = *srcP++;
+		objectAuthIcon->_idx = *srcP++;
+		objectAuthIcon->_flag1 = *srcP++;
+		objectAuthIcon->_flag2 = *srcP++;
+		objectAuthIcon->_flag3 = *srcP++;
+		objectAuthIcon->_flag4 = *srcP++;
+		objectAuthIcon->_flag5 = *srcP++;
+		objectAuthIcon->_flag6 = *srcP++;
 	}
 
 	freeMemory(data);

@@ -109,19 +109,19 @@ private:
 	void CALCUL_BOB(int idx);
 
 	void checkHidingItem();
-	void DEF_SPRITE(int idx);
 	void displayHiding(int idx);
 	void computeSprite(int idx);
 	void beforeSort(SortMode sortMode, int index, int priority);
 	void displayBobAnim();
 	void displayVBob();
+	void DEF_SPRITE(int idx);
 
 	void clearSprite();
 	void setSpriteZoom(int idx, int zoomFactor);
 	
-	void GOHOME2();
 	void loadZone(const Common::String &file);
 	void changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
+	void GOHOME2();
 
 	void nextVerbIcon();
 	int getBobFrameIndex(int idx);
