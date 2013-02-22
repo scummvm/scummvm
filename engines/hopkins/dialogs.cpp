@@ -373,7 +373,7 @@ void DialogsManager::showInventory() {
 				int inventIdx = _vm->_globals._inventory[inventCount];
 				// The last two zones are not reserved for the inventory: Options and Save/Load
 				if (inventIdx && inventCount <= 29) {
-					byte *obj = _vm->_objectsManager.CAPTURE_OBJET(inventIdx, false);
+					byte *obj = _vm->_objectsManager.loadObjectFromFile(inventIdx, false);
 					_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, obj, _inventX + curPosX + 6,
 						curPosY + 120, _vm->_globals._objectWidth, _vm->_globals._objectHeight);
 					_vm->_globals.freeMemory(obj);

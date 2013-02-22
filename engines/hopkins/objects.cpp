@@ -104,41 +104,41 @@ void ObjectsManager::clearAll() {
  * Change Object
  */
 void ObjectsManager::changeObject(int objIndex) {
-	_vm->_eventsManager._objectBuf = CAPTURE_OBJET(objIndex, true);
+	_vm->_eventsManager._objectBuf = loadObjectFromFile(objIndex, true);
 	_curObjectIndex = objIndex;
 }
 
-byte *ObjectsManager::CAPTURE_OBJET(int objIndex, bool mode) {
+byte *ObjectsManager::loadObjectFromFile(int objIndex, bool mode) {
 	byte *dataP = NULL;
-	int val1 = _vm->_globals.ObjetW[objIndex].field0;
-	int val2 = _vm->_globals.ObjetW[objIndex]._idx;
+	int objectFileNum = _vm->_globals._objectAuthIcons[objIndex]._objectFileNum;
+	int idx = _vm->_globals._objectAuthIcons[objIndex]._idx;
 
 	if (mode)
-		++val2;
+		++idx;
 
-	if (val1 != _vm->_globals.NUM_FICHIER_OBJ) {
-		if (_vm->_globals.ADR_FICHIER_OBJ != g_PTRNUL)
-			ObjectsManager::DEL_FICHIER_OBJ();
-		if (val1 == 1) {
-			_vm->_globals.ADR_FICHIER_OBJ = ObjectsManager::loadSprite("OBJET1.SPR");
+	if (objectFileNum != _vm->_globals._curObjectFileNum) {
+		if (_vm->_globals._objectDataBuf != g_PTRNUL)
+			ObjectsManager::removeObjectDataBuf();
+		if (objectFileNum == 1) {
+			_vm->_globals._objectDataBuf = ObjectsManager::loadSprite("OBJET1.SPR");
 		}
-		_vm->_globals.NUM_FICHIER_OBJ = val1;
+		_vm->_globals._curObjectFileNum = objectFileNum;
 	}
 
-	int width = ObjectsManager::getWidth(_vm->_globals.ADR_FICHIER_OBJ, val2);
-	int height = ObjectsManager::getHeight(_vm->_globals.ADR_FICHIER_OBJ, val2);
+	int width = ObjectsManager::getWidth(_vm->_globals._objectDataBuf, idx);
+	int height = ObjectsManager::getHeight(_vm->_globals._objectDataBuf, idx);
 	_vm->_globals._objectWidth = width;
 	_vm->_globals._objectHeight = height;
 
 	if (mode) {
-		sprite_alone(_vm->_globals.ADR_FICHIER_OBJ, _vm->_eventsManager._objectBuf, val2);
+		sprite_alone(_vm->_globals._objectDataBuf, _vm->_eventsManager._objectBuf, idx);
 		dataP = _vm->_eventsManager._objectBuf;
 	} else { 
 		dataP = _vm->_globals.allocMemory(height * width);
 		if (dataP == g_PTRNUL)
 			error("CAPTURE_OBJET");
 
-		capture_mem_sprite(_vm->_globals.ADR_FICHIER_OBJ, dataP, val2);
+		capture_mem_sprite(_vm->_globals._objectDataBuf, dataP, idx);
 	}
 
 	return dataP;
@@ -258,9 +258,9 @@ void ObjectsManager::capture_mem_sprite(const byte *objectData, byte *sprite, in
 	memcpy(sprite, objP + 12, result);
 }
 
-void ObjectsManager::DEL_FICHIER_OBJ() {
-	_vm->_globals.NUM_FICHIER_OBJ = 0;
-	_vm->_globals.ADR_FICHIER_OBJ = _vm->_globals.freeMemory(_vm->_globals.ADR_FICHIER_OBJ);
+void ObjectsManager::removeObjectDataBuf() {
+	_vm->_globals._curObjectFileNum = 0;
+	_vm->_globals._objectDataBuf = _vm->_globals.freeMemory(_vm->_globals._objectDataBuf);
 }
 
 /**
@@ -341,13 +341,13 @@ void ObjectsManager::displaySprite() {
 			_vm->_globals.Liste[idx]._visibleFl = false;
 			if (_sprite[idx]._animationType == 1) {
 				computeSprite(idx);
-				if (_sprite[idx].field2A)
+				if (_sprite[idx]._activeFl)
 					beforeSort(SORT_SPRITE, idx, _sprite[idx]._height + _sprite[idx]._destY);
 			}
 		}
 
 		if (_vm->_globals._hidingActiveFl)
-			checkCache();
+			checkHidingItem();
 	}
 
 	if (_priorityFl && _vm->_globals._sortedDisplayCount) {
@@ -373,8 +373,8 @@ void ObjectsManager::displaySprite() {
 			case SORT_SPRITE:
 				DEF_SPRITE(_vm->_globals._sortedDisplay[idx]._index);
 				break;
-			case SORT_CACHE:
-				displayCache(_vm->_globals._sortedDisplay[idx]._index);
+			case SORT_HIDING:
+				displayHiding(_vm->_globals._sortedDisplay[idx]._index);
 				break;
 			default:
 				break;
@@ -382,7 +382,7 @@ void ObjectsManager::displaySprite() {
 			_vm->_globals._sortedDisplay[idx]._sortMode = SORT_NONE;
 		}
 	} else {
-		for (int idx = 1; idx < (_vm->_globals._sortedDisplayCount + 1); ++idx) {
+		for (int idx = 1; idx < _vm->_globals._sortedDisplayCount + 1; ++idx) {
 			switch (_vm->_globals._sortedDisplay[idx]._sortMode) {
 			case SORT_BOB:
 				setBobInfo(_vm->_globals._sortedDisplay[idx]._index);
@@ -390,8 +390,8 @@ void ObjectsManager::displaySprite() {
 			case SORT_SPRITE:
 				DEF_SPRITE(_vm->_globals._sortedDisplay[idx]._index);
 				break;
-			case SORT_CACHE:
-				displayCache(_vm->_globals._sortedDisplay[idx]._index);
+			case SORT_HIDING:
+				displayHiding(_vm->_globals._sortedDisplay[idx]._index);
 				break;
 			default:
 				break;
@@ -729,49 +729,48 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 	_bob[idx]._oldHeight = height;
 }
 
-void ObjectsManager::checkCache() {
-	for (int cacheIdx = 0; cacheIdx <= 19; cacheIdx++) {
-		if (_vm->_globals._hidingItem[cacheIdx]._useCount == 0)
+void ObjectsManager::checkHidingItem() {
+	for (int hidingItemIdx = 0; hidingItemIdx <= 19; hidingItemIdx++) {
+		if (_vm->_globals._hidingItem[hidingItemIdx]._useCount == 0)
 			continue;
 
-		int _oldUseCount = _vm->_globals._hidingItem[cacheIdx]._useCount;
+		int _oldUseCount = _vm->_globals._hidingItem[hidingItemIdx]._useCount;
 		for (int spriteIdx = 0; spriteIdx <= 4; spriteIdx++) {
 			if (_sprite[spriteIdx]._animationType == 1 && _sprite[spriteIdx]._spriteIndex != 250) {
 				int right = _sprite[spriteIdx]._width + _sprite[spriteIdx]._destX;
 				int bottom = _sprite[spriteIdx]._height + _sprite[spriteIdx]._destY;
-				int cachedRight = _vm->_globals._hidingItem[cacheIdx]._width + _vm->_globals._hidingItem[cacheIdx]._x;
+				int cachedRight = _vm->_globals._hidingItem[hidingItemIdx]._width + _vm->_globals._hidingItem[hidingItemIdx]._x;
 
-				if (bottom > _vm->_globals._hidingItem[cacheIdx]._y && bottom < (_vm->_globals._hidingItem[cacheIdx].field14 + _vm->_globals._hidingItem[cacheIdx]._height + _vm->_globals._hidingItem[cacheIdx]._y)) {
-					if ((right >= _vm->_globals._hidingItem[cacheIdx]._x && right <= cachedRight)
-					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals._hidingItem[cacheIdx]._x <= _sprite[spriteIdx]._destX)
-					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals._hidingItem[cacheIdx]._x <= _sprite[spriteIdx]._destX)
-					 || (_vm->_globals._hidingItem[cacheIdx]._x <= _sprite[spriteIdx]._destX && right <= cachedRight)
-					 || (_vm->_globals._hidingItem[cacheIdx]._x >= _sprite[spriteIdx]._destX && right >= cachedRight))
-						++_vm->_globals._hidingItem[cacheIdx]._useCount;
+				if (bottom > _vm->_globals._hidingItem[hidingItemIdx]._y && bottom < (_vm->_globals._hidingItem[hidingItemIdx].field14 + _vm->_globals._hidingItem[hidingItemIdx]._height + _vm->_globals._hidingItem[hidingItemIdx]._y)) {
+					if ((right >= _vm->_globals._hidingItem[hidingItemIdx]._x && right <= cachedRight)
+					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals._hidingItem[hidingItemIdx]._x <= _sprite[spriteIdx]._destX)
+					 || (cachedRight >= _sprite[spriteIdx]._destX && _vm->_globals._hidingItem[hidingItemIdx]._x <= _sprite[spriteIdx]._destX)
+					 || (_vm->_globals._hidingItem[hidingItemIdx]._x <= _sprite[spriteIdx]._destX && right <= cachedRight)
+					 || (_vm->_globals._hidingItem[hidingItemIdx]._x >= _sprite[spriteIdx]._destX && right >= cachedRight))
+						++_vm->_globals._hidingItem[hidingItemIdx]._useCount;
 				}
 			}
 		}
 
-		SCBOB(cacheIdx);
-		if (_vm->_globals._hidingItem[cacheIdx]._useCount == _oldUseCount) {
-			if (_vm->_globals._hidingItem[cacheIdx].field10) {
-				_vm->_globals._hidingItem[cacheIdx].field10 = false;
-				_vm->_globals._hidingItem[cacheIdx]._useCount = 1;
-			}
-		} else {
-			int priority = _vm->_globals._hidingItem[cacheIdx].field14 + _vm->_globals._hidingItem[cacheIdx]._height + _vm->_globals._hidingItem[cacheIdx]._y;
+		SCBOB(hidingItemIdx);
+		if (_vm->_globals._hidingItem[hidingItemIdx]._useCount != _oldUseCount) {
+			int priority = _vm->_globals._hidingItem[hidingItemIdx].field14 + _vm->_globals._hidingItem[hidingItemIdx]._height + _vm->_globals._hidingItem[hidingItemIdx]._y;
 			if (priority > 440)
 				priority = 500;
 
-			beforeSort(SORT_CACHE, cacheIdx, priority);
-			_vm->_globals._hidingItem[cacheIdx]._useCount = 1;
-			_vm->_globals._hidingItem[cacheIdx].field10 = true;
+			beforeSort(SORT_HIDING, hidingItemIdx, priority);
+			_vm->_globals._hidingItem[hidingItemIdx]._useCount = 1;
+			_vm->_globals._hidingItem[hidingItemIdx].field10 = true;
+		} else if (_vm->_globals._hidingItem[hidingItemIdx].field10) {
+			_vm->_globals._hidingItem[hidingItemIdx].field10 = false;
+			_vm->_globals._hidingItem[hidingItemIdx]._useCount = 1;
 		}
+
 	}
 }
 
 void ObjectsManager::DEF_SPRITE(int idx) {
-	if (!_sprite[idx].field2A)
+	if (!_sprite[idx]._activeFl)
 		return;
 
 	if (_sprite[idx]._rleFl)
@@ -808,7 +807,7 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 		    _vm->_globals.Liste[idx]._posX + _vm->_globals.Liste[idx]._width, _vm->_globals.Liste[idx]._posY + _vm->_globals.Liste[idx]._height);
 }
 
-void ObjectsManager::displayCache(int idx) {
+void ObjectsManager::displayHiding(int idx) {
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._hidingItemData[1],
 	    _vm->_globals._hidingItem[idx]._x + 300, _vm->_globals._hidingItem[idx]._y + 300,
 	    _vm->_globals._hidingItem[idx]._spriteIndex);
@@ -819,7 +818,7 @@ void ObjectsManager::displayCache(int idx) {
 
 // Compute Sprite
 void ObjectsManager::computeSprite(int idx) {
-	_sprite[idx].field2A = false;
+	_sprite[idx]._activeFl = false;
 	int spriteIndex = _sprite[idx]._spriteIndex;
 	if (spriteIndex == 250)
 		return;
@@ -878,7 +877,7 @@ void ObjectsManager::computeSprite(int idx) {
 	int newPosY = _sprite[idx]._spritePos.y - deltaY;
 	_sprite[idx]._destX = newPosX;
 	_sprite[idx]._destY = newPosY;
-	_sprite[idx].field2A = true;
+	_sprite[idx]._activeFl = true;
 	_sprite[idx]._zoomPct = zoomPercent;
 	_sprite[idx]._reducePct = reducePercent;
 
@@ -2477,13 +2476,13 @@ void ObjectsManager::nextObjectIcon(int idx) {
 	do {
 		if (nextCursorId == 2 || nextCursorId == 5 || nextCursorId == 6) {
 			_vm->_eventsManager._mouseCursorId = 6;
-			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field2 == 1)
+			if (_vm->_globals._objectAuthIcons[_vm->_globals._inventory[idx]]._flag1 == 1)
 				return;
 			nextCursorId++;
 		}
 		if (nextCursorId == 7) {
 			_vm->_eventsManager._mouseCursorId = 7;
-			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field3 == 1)
+			if (_vm->_globals._objectAuthIcons[_vm->_globals._inventory[idx]]._flag2 == 1)
 				return;
 			nextCursorId++;
 		}	
@@ -2493,35 +2492,35 @@ void ObjectsManager::nextObjectIcon(int idx) {
 		}
 		if (nextCursorId == 9 || nextCursorId == 10) {
 			_vm->_eventsManager._mouseCursorId = 10;
-			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field7 == 1)
+			if (_vm->_globals._objectAuthIcons[_vm->_globals._inventory[idx]]._flag6 == 1)
 				return;
 			nextCursorId = 11;
 		}
 
 		if (nextCursorId == 11) {
 			_vm->_eventsManager._mouseCursorId = 11;
-			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field4 == 1)
+			if (_vm->_globals._objectAuthIcons[_vm->_globals._inventory[idx]]._flag3 == 1)
 				return;
 			nextCursorId++;
 		}
 
 		if (nextCursorId == 12 || nextCursorId == 13) {
 			_vm->_eventsManager._mouseCursorId = 13;
-			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field5 == 1)
+			if (_vm->_globals._objectAuthIcons[_vm->_globals._inventory[idx]]._flag4 == 1)
 				return;
 			nextCursorId = 14;
 		}
 
 		if (nextCursorId == 14 || nextCursorId == 15) {
 			_vm->_eventsManager._mouseCursorId = 15;
-			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field6 == 1)
+			if (_vm->_globals._objectAuthIcons[_vm->_globals._inventory[idx]]._flag5 == 1)
 				return;
 			nextCursorId = 23;
 		}
 
 		if (nextCursorId >= 16 && nextCursorId <= 23) {
 			_vm->_eventsManager._mouseCursorId = 23;
-			if (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field6 == 2)
+			if (_vm->_globals._objectAuthIcons[_vm->_globals._inventory[idx]]._flag5 == 2)
 				return;
 			nextCursorId = 24;
 		}
@@ -2531,7 +2530,7 @@ void ObjectsManager::nextObjectIcon(int idx) {
 		}
 		
 		nextCursorId = 6;
-	} while (_vm->_globals.ObjetW[_vm->_globals._inventory[idx]].field7 != 2);
+	} while (_vm->_globals._objectAuthIcons[_vm->_globals._inventory[idx]]._flag6 != 2);
 }
 
 void ObjectsManager::takeInventoryObject(int idx) {
@@ -3227,7 +3226,7 @@ void ObjectsManager::SPECIAL_INI() {
 			VBOB(_vm->_globals.SPRITE_ECRAN, 5, 15, 28, 1);
 			_vm->_fontManager.hideText(9);
 			if (!_vm->_soundManager._textOffFl) {
-				_vm->_fontManager.initTextBuffers(9, 383, _vm->_globals.FICH_TEXTE, 220, 72, 6, 36, 253);
+				_vm->_fontManager.initTextBuffers(9, 383, _vm->_globals._textFilename, 220, 72, 6, 36, 253);
 				if (!_vm->_soundManager._textOffFl)
 					_vm->_fontManager.showText(9);
 			}

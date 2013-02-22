@@ -42,7 +42,7 @@ struct SpriteItem {
 	int field12;
 	int field14;
 	bool _rleFl;
-	bool field2A;
+	bool _activeFl;
 	int _destX;
 	int _destY;
 	int _width;
@@ -97,7 +97,7 @@ private:
 	byte *_gestureBuf;
 
 	void sprite_alone(const byte *objectData, byte *sprite, int objIndex);
-	void DEL_FICHIER_OBJ();
+	void removeObjectDataBuf();
 
 	int getOffsetX(const byte *spriteData, int spriteIndex, bool isSize);
 	int getOffsetY(const byte *spriteData, int spriteIndex, bool isSize);
@@ -108,9 +108,9 @@ private:
 	void SCBOB(int idx);
 	void CALCUL_BOB(int idx);
 
-	void checkCache();
+	void checkHidingItem();
 	void DEF_SPRITE(int idx);
-	void displayCache(int idx);
+	void displayHiding(int idx);
 	void computeSprite(int idx);
 	void beforeSort(SortMode sortMode, int index, int priority);
 	void displayBobAnim();
@@ -224,7 +224,7 @@ public:
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
-	byte *CAPTURE_OBJET(int objIndex, bool mode);
+	byte *loadObjectFromFile(int objIndex, bool mode);
 	void OPTI_OBJET();
 	void hideBob(int idx);
 	void displayBob(int idx);

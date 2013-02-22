@@ -81,7 +81,7 @@ Globals::Globals() {
 		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
 	}
 	for (int i = 0; i < 300; ++i)
-		Common::fill((byte *)&ObjetW[i], (byte *)&ObjetW[i] + sizeof(ObjetWItem), 0);
+		Common::fill((byte *)&_objectAuthIcons[i], (byte *)&_objectAuthIcons[i] + sizeof(ObjectAuthIcon), 0);
 	for (int i = 0; i < 25; ++i)
 		Common::fill((byte *)&_hidingItem[i], (byte *)&_hidingItem[i] + sizeof(HidingItem), 0);
 
@@ -104,7 +104,7 @@ Globals::Globals() {
 	_oldDirection = DIR_NONE;
 	_oldDirectionSpriteIdx = 59;
 	_lastDirection = DIR_NONE;
-	NUM_FICHIER_OBJ = 0;
+	_curObjectFileNum = 0;
 	_boxWidth = 0;
 	_objectWidth = _objectHeight = 0;
 	_catalogPos = 0;
@@ -148,7 +148,7 @@ Globals::Globals() {
 	_saveData = NULL;
 	_inventoryObject = NULL;
 	_answerBuffer = g_PTRNUL;
-	ADR_FICHIER_OBJ = NULL;
+	_objectDataBuf = NULL;
 	PERSO = NULL;
 	_optionDialogSpr = NULL;
 
@@ -183,7 +183,7 @@ Globals::~Globals() {
 	freeMemory((byte *)_saveData);
 	freeMemory(_inventoryObject);
 	freeMemory(_answerBuffer);
-	freeMemory(ADR_FICHIER_OBJ);
+	freeMemory(_objectDataBuf);
 	freeMemory(PERSO);
 
 	clearVBob();
@@ -217,16 +217,16 @@ void Globals::setConfig() {
 
 	switch (_language) {
 	case LANG_EN:
-		FICH_ZONE = "ZONEAN.TXT";
-		FICH_TEXTE = "TEXTEAN.TXT";
+		_zoneFilename = "ZONEAN.TXT";
+		_textFilename = "TEXTEAN.TXT";
 		break;
 	case LANG_FR:
-		FICH_ZONE = "ZONE01.TXT";
-		FICH_TEXTE = "TEXTE01.TXT";
+		_zoneFilename = "ZONE01.TXT";
+		_textFilename = "TEXTE01.TXT";
 		break;
 	case LANG_SP:
-		FICH_ZONE = "ZONEES.TXT";
-		FICH_TEXTE = "TEXTEES.TXT";
+		_zoneFilename = "ZONEES.TXT";
+		_textFilename = "TEXTEES.TXT";
 		break;
 	}
 }
@@ -242,8 +242,8 @@ void Globals::clearAll() {
 	_vm->_fontManager.clearAll();
 
 	initVBob();
-	ADR_FICHIER_OBJ = g_PTRNUL;
-	NUM_FICHIER_OBJ = 0;
+	_objectDataBuf = g_PTRNUL;
+	_curObjectFileNum = 0;
 	_vm->_eventsManager._objectBuf = g_PTRNUL;
 	_vm->_dialogsManager._inventWin1 = g_PTRNUL;
 	_vm->_dialogsManager._inventBuf2 = g_PTRNUL;
@@ -263,7 +263,7 @@ void Globals::clearAll() {
 	_vm->_eventsManager._objectBuf = allocMemory(2500);
 	_inventoryObject = allocMemory(2500);
 
-	ADR_FICHIER_OBJ = g_PTRNUL;
+	_objectDataBuf = g_PTRNUL;
 }
 
 void Globals::loadCharacterData() {
@@ -325,14 +325,14 @@ void Globals::loadObjects() {
 	byte *srcP = data;
 
 	for (int idx = 0; idx < 300; ++idx) {
-		ObjetW[idx].field0 = *srcP++;
-		ObjetW[idx]._idx = *srcP++;
-		ObjetW[idx].field2 = *srcP++;
-		ObjetW[idx].field3 = *srcP++;
-		ObjetW[idx].field4 = *srcP++;
-		ObjetW[idx].field5 = *srcP++;
-		ObjetW[idx].field6 = *srcP++;
-		ObjetW[idx].field7 = *srcP++;
+		_objectAuthIcons[idx]._objectFileNum = *srcP++;
+		_objectAuthIcons[idx]._idx = *srcP++;
+		_objectAuthIcons[idx]._flag1 = *srcP++;
+		_objectAuthIcons[idx]._flag2 = *srcP++;
+		_objectAuthIcons[idx]._flag3 = *srcP++;
+		_objectAuthIcons[idx]._flag4 = *srcP++;
+		_objectAuthIcons[idx]._flag5 = *srcP++;
+		_objectAuthIcons[idx]._flag6 = *srcP++;
 	}
 
 	freeMemory(data);

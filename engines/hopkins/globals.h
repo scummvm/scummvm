@@ -29,7 +29,6 @@
 
 namespace Hopkins {
 
-
 struct BqeAnimItem {
 	byte *_data;
 	bool _enabledFl;
@@ -69,21 +68,21 @@ struct VBobItem {
 	byte *_oldSpriteData;
 };
 
-struct ObjetWItem {
-	byte field0;
+struct ObjectAuthIcon {
+	byte _objectFileNum;
 	byte _idx;
-	byte field2;
-	byte field3;
-	byte field4;
-	byte field5;
-	byte field6;
-	byte field7;
+	byte _flag1;
+	byte _flag2;
+	byte _flag3;
+	byte _flag4;
+	byte _flag5;
+	byte _flag6;
 };
 
 /**
  * Mode for SortItem records
  */
-enum SortMode { SORT_NONE = 0, SORT_BOB = 1, SORT_SPRITE = 2, SORT_CACHE = 3 };
+enum SortMode { SORT_NONE = 0, SORT_BOB = 1, SORT_SPRITE = 2, SORT_HIDING = 3 };
 
 /**
  * Structure to represent a pending display of either a Bob, Sprite, or Cache Item.
@@ -96,8 +95,8 @@ struct SortItem {
 
 struct HidingItem {
 	int _x;
-	int _spriteIndex;
 	int _y;
+	int _spriteIndex;
 	int _width;
 	int _height;
 	int _useCount;
@@ -311,22 +310,22 @@ public:
 	byte *_hidingItemData[6];
 	HidingItem _hidingItem[25];
 	BqeAnimItem _animBqe[35];
+	ObjectAuthIcon _objectAuthIcons[300];
+	int _curObjectFileNum;
+	byte *_objectDataBuf;
+	Common::String _zoneFilename;
+	Common::String _textFilename;
 
 	int iRegul;
 	byte *BUF_ZONE;
 	byte *SPRITE_ECRAN;
 	byte *PERSO;
-	ObjetWItem ObjetW[300];
-	int NUM_FICHIER_OBJ;
-	byte *ADR_FICHIER_OBJ;
 	ListeItem Liste[6];
 	ListeItem Liste2[35];
 	BankItem Bank[8];
 	VBobItem VBob[30];
 	int Compteur;
 	int compteur_71;
-	Common::String FICH_ZONE;
-	Common::String FICH_TEXTE;
 
 	Globals();
 	~Globals();
@@ -343,8 +342,8 @@ public:
 	void disableHiding();
 	void resetHidingUseCount(int idx);
 	void setHidingUseCount(int idx);
-
 	void clearVBob();
+
 	void B_CACHE_OFF(int idx);
 };
 
