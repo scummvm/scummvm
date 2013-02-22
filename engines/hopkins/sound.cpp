@@ -476,7 +476,7 @@ void SoundManager::checkVoiceActivity() {
 	}
 }
 
-bool SoundManager::mixVoice(int voiceId, int voiceMode) {
+bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	int fileNumber;
 	int oldMusicVol;
 	bool breakFlag;
@@ -577,24 +577,25 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 		catLen = 0;
 	}
 
-	if (!loadVoice(filename, catPos, catLen, _sWav[20]))
-		error("Couldn't load sample: %s", filename.c_str());
-
-	_sWav[20]._active = true;
-
-	// Reduce music volume during speech
 	oldMusicVol = _musicVolume;
-	if (!_musicOffFl && _musicVolume > 2) {
-		_musicVolume = (signed int)((long double)_musicVolume - (long double)_musicVolume / 100.0 * 45.0);
-		setMODMusicVolume(_musicVolume);
-	}
+	if (!loadVoice(filename, catPos, catLen, _sWav[20])) {
+		warning("Couldn't load sample: %s", filename.c_str());
+		_sWav[20]._active = false;
+	} else {
+		_sWav[20]._active = true;
 
+		// Reduce music volume during speech
+		if (!_musicOffFl && _musicVolume > 2) {
+			_musicVolume = (signed int)((long double)_musicVolume - (long double)_musicVolume / 100.0 * 45.0);
+			setMODMusicVolume(_musicVolume);
+		}
+	}
 	playVoice();
 
 	_vm->_eventsManager._escKeyFl = false;
 
 	// Loop for playing voice
-	breakFlag = 0;
+	breakFlag = false;
 	do {
 		if (_specialSoundNum != 4 && !_skipRefreshFl)
 			_vm->_eventsManager.VBL();
@@ -603,8 +604,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode) {
 		_vm->_eventsManager.refreshEvents();
 		if (_vm->_eventsManager._escKeyFl)
 			break;
-		if (!checkVoiceStatus(2))
+		if (!checkVoiceStatus(2) && _sWav[20]._active)
 			breakFlag = true;
+		if (!_sWav[20]._active && !dispTxtFl)
+			break;
 	} while (!_vm->shouldQuit() && !breakFlag);
 
 
@@ -741,7 +744,7 @@ void SoundManager::stopVoice(int voiceIndex) {
 
 void SoundManager::playVoice() {
 	if (!_sWav[20]._active)
-		error("Bad handle");
+		return;
 
 	if (!_voice[2]._status) {
 		int wavIndex = _voice[2]._wavIndex;
@@ -767,9 +770,11 @@ bool SoundManager::removeWavSample(int wavIndex) {
 bool SoundManager::loadVoice(const Common::String &filename, size_t fileOffset, size_t entryLength, SwavItem &item) {
 	Common::File f;
 	if (!f.open(filename)) {
-		// Fallback from WAV to APC...
-		if (!f.open(setExtension(filename, ".APC")))
-			error("Could not open %s for reading", filename.c_str());
+		// Fallback to APC...
+		if (!f.open(setExtension(filename, ".APC"))) {
+			warning("Could not open %s for reading", filename.c_str());
+			return false;
+		}
 	}
 
 	f.seek(fileOffset);
@@ -783,9 +788,12 @@ void SoundManager::loadWavSample(int wavIndex, const Common::String &filename, b
 	if (_sWav[wavIndex]._active)
 		removeWavSample(wavIndex);
 
-	loadVoice(filename, 0, 0, _sWav[wavIndex]);
-	_sWav[wavIndex]._active = true;
-	_sWav[wavIndex]._freeSampleFl = freeSample;
+	if (loadVoice(filename, 0, 0, _sWav[wavIndex])) {
+		_sWav[wavIndex]._active = true;
+		_sWav[wavIndex]._freeSampleFl = freeSample;
+	} else{
+		_sWav[wavIndex]._active = false;
+	}
 }
 
 void SoundManager::loadWav(const Common::String &file, int wavIndex) {

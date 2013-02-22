@@ -3218,13 +3218,14 @@ void ObjectsManager::SPECIAL_INI() {
 				_vm->_eventsManager.VBL();
 			VBOB(_vm->_globals.SPRITE_ECRAN, 5, 15, 28, 1);
 			_vm->_fontManager.hideText(9);
+			bool displayedTxtFl = false;
 			if (!_vm->_soundManager._textOffFl) {
 				_vm->_fontManager.initTextBuffers(9, 383, _vm->_globals._textFilename, 220, 72, 6, 36, 253);
-				if (!_vm->_soundManager._textOffFl)
-					_vm->_fontManager.showText(9);
+				_vm->_fontManager.showText(9);
+				displayedTxtFl = true;
 			}
 			if (!_vm->_soundManager._voiceOffFl)
-				_vm->_soundManager.mixVoice(383, 4);
+				_vm->_soundManager.mixVoice(383, 4, displayedTxtFl);
 			_vm->_globals._saveData->_data[svField270] = 1;
 			_vm->_globals._saveData->_data[svField300] = 1;
 			_vm->_globals._saveData->_data[svField320] = 1;

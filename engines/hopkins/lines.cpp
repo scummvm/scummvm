@@ -153,6 +153,7 @@ int LinesManager::checkInventoryHotspots(int posX, int posY) {
  */
 int LinesManager::checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow) {
 	int result = minZoneNum;
+
 	if (posX >= _vm->_graphicsManager._scrollOffset + 158 && posX < _vm->_graphicsManager._scrollOffset + 208)
 		return result;
 

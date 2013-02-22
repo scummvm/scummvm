@@ -380,11 +380,13 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 		VISU_PARLE();
 	}
 
+	bool displayedTxtFl = false;
 	if (!_vm->_soundManager._textOffFl) {
 		_vm->_fontManager.initTextBuffers(9, mesgId, _answersFilename, mesgPosX, mesgPosY, 5, mesgLength, 252);
 		_vm->_fontManager.showText(9);
+		displayedTxtFl = true;
 	}
-	if (!_vm->_soundManager.mixVoice(mesgId, 1)) {
+	if (!_vm->_soundManager.mixVoice(mesgId, 1, displayedTxtFl)) {
 		_vm->_eventsManager._curMouseButton = 0;
 		_vm->_eventsManager._mouseButton = 0;
 

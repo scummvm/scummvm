@@ -132,22 +132,27 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_eventsManager.VBL();
 				} while (_vm->_soundManager._soundFl);
 			}
+			bool displayedTxtFl = false;
 			if (!_vm->_soundManager._textOffFl) {
 				int textPosX = READ_LE_INT16(dataP + 9);
 				int textPosY = READ_LE_INT16(dataP + 11);
 				_vm->_fontManager.initTextBuffers(9, mesgId, _vm->_globals._textFilename, 2 * textPosX, 2 * textPosY + 40, 6, dataP[7], 253);
-				if (!_vm->_soundManager._textOffFl)
-					_vm->_fontManager.showText(9);
+				_vm->_fontManager.showText(9);
+				displayedTxtFl = true;
 			}
 			if (!_vm->_soundManager._voiceOffFl)
-				_vm->_soundManager.mixVoice(mesgId, 4);
+				_vm->_soundManager.mixVoice(mesgId, 4, displayedTxtFl);
 		} else { // if (TRAVAILOBJET)
 			if (_vm->_globals._saveData->_data[svField356]) {
 				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals._textFilename, 55, 20, dataP[8], 35, 253);
-				if (!_vm->_soundManager._textOffFl)
+				bool displayedTxtFl = false;
+				if (!_vm->_soundManager._textOffFl) {
 					_vm->_fontManager.showText(9);
+					displayedTxtFl = true;
+				}
+
 				if (!_vm->_soundManager._voiceOffFl)
-					_vm->_soundManager.mixVoice(635, 4);
+					_vm->_soundManager.mixVoice(635, 4, displayedTxtFl);
 			} else {
 				int textPosX = READ_LE_INT16(dataP + 9);
 				if (_vm->_globals._language == LANG_FR && !_vm->_soundManager._textOffFl)
@@ -158,11 +163,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 				}
 
-				if (!_vm->_soundManager._textOffFl)
+				bool displayedTxtFl = false;
+				if (!_vm->_soundManager._textOffFl) {
 					_vm->_fontManager.showText(9);
+					displayedTxtFl = true;
+				}
 
 				if (!_vm->_soundManager._voiceOffFl)
-					_vm->_soundManager.mixVoice(mesgId, 5);
+					_vm->_soundManager.mixVoice(mesgId, 5, displayedTxtFl);
 			}
 		}
 		break;
@@ -2163,12 +2171,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_objectsManager.setBobAnimation(2);
 			_vm->_fontManager.hideText(9);
+			bool displayedTxtFl = false;
 			if (!_vm->_soundManager._textOffFl) {
 				_vm->_fontManager.initTextBuffers(9, 617, _vm->_globals._textFilename, 91, 41, 3, 30, 253);
 				_vm->_fontManager.showText(9);
+				displayedTxtFl = true;
 			}
 			if (!_vm->_soundManager._voiceOffFl)
-				_vm->_soundManager.mixVoice(617, 4);
+				_vm->_soundManager.mixVoice(617, 4, displayedTxtFl);
 			for (int i = 0; i <= 29; i++) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game

@@ -123,7 +123,7 @@ public:
 
 	void updateScummVMSoundSettings();
 	void syncSoundSettings();
-	bool mixVoice(int voiceId, int voiceMode);
+	bool mixVoice(int voiceId, int voiceMode, bool displTxtFl = false);
 
 	void setMODMusicVolume(int volume);
 	void setMODSampleVolume();
