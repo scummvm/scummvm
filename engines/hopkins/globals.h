@@ -307,13 +307,13 @@ public:
 
 	bool _actionMoveTo;
 	bool _freezeCharacterFl;
+	bool _checkDistanceFl;
 
 	int iRegul;
 	byte *BUF_ZONE;
 	BqeAnimItem _animBqe[35];
 	byte *SPRITE_ECRAN;
 	byte *PERSO;
-	bool NOT_VERIF;
 	ObjetWItem ObjetW[300];
 	int NUM_FICHIER_OBJ;
 	byte *ADR_FICHIER_OBJ;

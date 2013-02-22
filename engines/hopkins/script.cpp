@@ -744,7 +744,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 46: {
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 564, 420);
 			_vm->_objectsManager._zoneNum = -1;
@@ -756,7 +756,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.VBL();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
 			_vm->_soundManager.loadSample(2, "SOUND45.WAV");
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0);
@@ -953,13 +953,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 59: {
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 445, 332);
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1053,13 +1053,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 81: {
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 119, 268);
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1370,7 +1370,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 105:
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
@@ -1384,7 +1384,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if (_vm->_globals._saveData->_data[svField253] > 2) {
 				_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 211, 393);
 			}
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1617,14 +1617,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("gred1.pe2");
 			_vm->_globals._introSpeechOffFl = false;
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 361, 325);
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_objectsManager._zoneNum = -1;
 			do {
 				if (_vm->shouldQuit())
@@ -1645,14 +1645,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("gbleu1.pe2");
 			_vm->_globals._introSpeechOffFl = false;
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 361, 325);
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_objectsManager._zoneNum = -1;
 			do {
 				if (_vm->shouldQuit())
@@ -1822,10 +1822,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_animationManager.playSequence("SORT.SEQ", 10, 4, 10, true);
 				_vm->_soundManager._specialSoundNum = 0;
 			}
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 330, 418);
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_objectsManager._zoneNum = 0;
 			do {
 				if (_vm->shouldQuit())
@@ -1854,10 +1854,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager.getBobAnimDataIdx(1) != 9);
 			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 330, 314);
 			_vm->_objectsManager._zoneNum = 0;
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1947,14 +1947,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.loadLinkFile("IM93a");
 			_vm->_objectsManager.OBSSEUL = false;
 			_vm->_globals.CACHE_ON();
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
 			_vm->_globals._oldDirection = DIR_NONE;
 			_vm->_globals.Compteur = 0;
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 488, 280);
-			_vm->_globals.NOT_VERIF = true;
+			_vm->_globals._checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game

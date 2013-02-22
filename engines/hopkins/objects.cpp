@@ -1744,7 +1744,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_globals._freezeCharacterFl = false;
 	_spritePtr = g_PTRNUL;
 	_vm->_globals._exitId = 0;
-	_vm->_globals.NOT_VERIF = true;
+	_vm->_globals._checkDistanceFl = true;
 	_vm->_soundManager.playSound(31);
 	_vm->_globals.iRegul = 1;
 	_vm->_graphicsManager.loadImage("PLAN");
@@ -2108,7 +2108,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 	_changeHeadFl = true;
 	_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, 532, 25, 65, 40, _vm->_graphicsManager._vesaBuffer, 532, 25);
 	_vm->_graphicsManager.addVesaSegment(532, 25, 597, 65);
-	_vm->_globals.NOT_VERIF = true;
+	_vm->_globals._checkDistanceFl = true;
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 
 	if (oldCharacter == CHARACTER_SAMANTHA && newCharacter == CHARACTER_HOPKINS
@@ -3722,13 +3722,13 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	if (_vm->_globals._screenId == 61) {
 		_vm->_animationManager.playSequence("OUVRE.SEQ", 10, 4, 10);
 		stopBobAnimation(3);
-		_vm->_globals.NOT_VERIF = true;
+		_vm->_globals._checkDistanceFl = true;
 		_oldCharacterPosX = getSpriteX(0);
 		_vm->_globals._oldDirection = DIR_NONE;
 		_vm->_globals.Compteur = 0;
 		_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 		_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), 330, 345);
-		_vm->_globals.NOT_VERIF = true;
+		_vm->_globals._checkDistanceFl = true;
 		do {
 			GOHOME();
 			_vm->_eventsManager.VBL();
@@ -3778,7 +3778,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals._freezeCharacterFl = false;
 	_vm->_globals._exitId = 0;
-	_vm->_globals.NOT_VERIF = true;
+	_vm->_globals._checkDistanceFl = true;
 	_vm->_soundManager.playSound(soundNum);
 	_vm->_globals.iRegul = 1;
 	if (!backgroundFile.empty())

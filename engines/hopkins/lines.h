@@ -171,8 +171,8 @@ public:
 	void enableZone(int idx);
 	void disableZone(int idx);
 	void checkZone();
+	int getMouseZone();
 
-	int MZONE();
 	void CARRE_ZONE();
 	RouteItem *PARCOURS2(int fromX, int fromY, int destX, int destY);
 	void PACOURS_PROPRE(RouteItem *route);

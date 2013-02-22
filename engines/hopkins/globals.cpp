@@ -125,7 +125,7 @@ Globals::Globals() {
 	_menuTextOff = 0;
 	_menuDisplayType = 0;
 	_sortedDisplayCount = 0;
-	NOT_VERIF = false;
+	_checkDistanceFl = false;
 	_characterType = 0;
 	_actionMoveTo = false;
 	Compteur = 0;
