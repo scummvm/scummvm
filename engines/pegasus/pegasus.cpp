@@ -616,7 +616,7 @@ void PegasusEngine::loadFromContinuePoint() {
 	// Failure to load a continue point is fatal
 
 	if (!_continuePoint)
-		error("Attempting to load from non-existant continue point");
+		error("Attempting to load from non-existent continue point");
 
 	_continuePoint->seek(0);
 

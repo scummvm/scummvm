@@ -506,7 +506,7 @@ void DrasculaEngine::animation_2_1() {
 		trackProtagonist = 3;
 		// The room number was originally changed here to "no_bj.alg",
 		// which doesn't exist. In reality, this was just a hack to
-		// set the room number to a non-existant one, so that BJ does
+		// set the room number to a non-existent one, so that BJ does
 		// not appear again when the room is refreshed after the
 		// animation where Count Drascula abducts her. We set the
 		// room number to -1 for the same purpose
@@ -1655,8 +1655,8 @@ void DrasculaEngine::animation_9_6() {
 	objExit = 108;
 	enterRoom(59);
 	// The room number was originally changed here to "nada.alg",
-	// which is a non-existant file. In reality, this was just a
-	// hack to set the room number to a non-existant one, so that
+	// which is a non-existent file. In reality, this was just a
+	// hack to set the room number to a non-existent one, so that
 	// room sprites do not appear again when the room is refreshed.
 	// We set the room number to -1 for the same purpose.
 	// Also check animation_2_1(), where the same hack was used

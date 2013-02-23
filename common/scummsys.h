@@ -51,7 +51,7 @@
 		#include <stdio.h>
 		#include <stdarg.h>
 
-		// MSVC's vsnprintf is either non-existant (2003) or bugged since it
+		// MSVC's vsnprintf is either non-existent (2003) or bugged since it
 		// does not always include a terminating NULL (2005+). To work around
 		// that we fix up the _vsnprintf included. Note that the return value
 		// will still not match C99's specs!

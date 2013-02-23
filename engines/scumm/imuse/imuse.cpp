@@ -1741,10 +1741,10 @@ void IMuseInternal::copyGlobalInstrument(byte slot, Instrument *dest) {
 		// In case we have an valid instrument set up, copy it to the part.
 		_global_instruments[slot].copy_to(dest);
 	} else if (_pcSpeaker) {
-		debug(0, "Trying to use non-existant global PC Speaker instrument %d", slot);
+		debug(0, "Trying to use non-existent global PC Speaker instrument %d", slot);
 		dest->pcspk(defaultInstr);
 	} else {
-		debug(0, "Trying to use non-existant global AdLib instrument %d", slot);
+		debug(0, "Trying to use non-existent global AdLib instrument %d", slot);
 		dest->adlib(defaultInstr);
 	}
 }

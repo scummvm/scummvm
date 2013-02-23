@@ -286,7 +286,7 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 		}
 
 		if (i == ss->numEntrance)
-			error("Non-existant scene entry number");
+			error("Non-existent scene entry number");
 
 		if (ss->hSceneScript) {
 			init.event = STARTUP;

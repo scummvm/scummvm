@@ -289,7 +289,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 	uint32 dwSampleIndex = _sampleIndex[id];
 
 	if (dwSampleIndex == 0) {
-		warning("Tinsel2 playSample, non-existant sample %d", id);
+		warning("Tinsel2 playSample, non-existent sample %d", id);
 		return false;
 	}
 

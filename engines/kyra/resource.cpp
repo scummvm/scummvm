@@ -185,7 +185,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 				// the demo version supplied with Kyra3 does not
 				// contain all pak files listed in filedata.fdt
 				// so we don't do anything here if they are non
-				// existant.
+				// existent.
 			} else if (!loadPakFile(filename)) {
 				delete f;
 				error("couldn't load file '%s'", filename.c_str());
