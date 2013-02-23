@@ -1285,55 +1285,55 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 77:
-			OCEAN(77, "OCEAN01", DIR_RIGHT, 0, 84, 0, 0, 25);
+			handleOceanMaze(77, "OCEAN01", DIR_RIGHT, 0, 84, 0, 0, 25);
 			break;
 
 		case 78:
-			OCEAN(78, "OCEAN02", DIR_UP, 0, 91, 84, 0, 25);
+			handleOceanMaze(78, "OCEAN02", DIR_UP, 0, 91, 84, 0, 25);
 			break;
 
 		case 79:
-			OCEAN(79, "OCEAN03", DIR_LEFT, 87, 0, 0, 83, 25);
+			handleOceanMaze(79, "OCEAN03", DIR_LEFT, 87, 0, 0, 83, 25);
 			break;
 
 		case 80:
-			OCEAN(80, "OCEAN04", DIR_UP, 86, 88, 0, 81, 25);
+			handleOceanMaze(80, "OCEAN04", DIR_UP, 86, 88, 0, 81, 25);
 			break;
 
 		case 81:
-			OCEAN(81, "OCEAN05", DIR_UP, 91, 82, 80, 85, 25);
+			handleOceanMaze(81, "OCEAN05", DIR_UP, 91, 82, 80, 85, 25);
 			break;
 
 		case 82:
-			OCEAN(82, "OCEAN06", DIR_LEFT, 81, 0, 88, 0, 25);
+			handleOceanMaze(82, "OCEAN06", DIR_LEFT, 81, 0, 88, 0, 25);
 			break;
 
 		case 83:
-			OCEAN(83, "OCEAN07", DIR_UP, 89, 0, 79, 88, 25);
+			handleOceanMaze(83, "OCEAN07", DIR_UP, 89, 0, 79, 88, 25);
 			break;
 
 		case 84:
-			OCEAN(84, "OCEAN08", DIR_UP, 77, 0, 0, 78, 25);
+			handleOceanMaze(84, "OCEAN08", DIR_UP, 77, 0, 0, 78, 25);
 			break;
 
 		case 85:
-			OCEAN(85, "OCEAN09", DIR_UP, 0, 0, 81, 0, 25);
+			handleOceanMaze(85, "OCEAN09", DIR_UP, 0, 0, 81, 0, 25);
 			break;
 
 		case 86:
-			OCEAN(86, "OCEAN10", DIR_UP, 0, 80, 0, 91, 25);
+			handleOceanMaze(86, "OCEAN10", DIR_UP, 0, 80, 0, 91, 25);
 			break;
 
 		case 87:
-			OCEAN(87, "OCEAN11", DIR_RIGHT, 0, 79, 90, 0, 25);
+			handleOceanMaze(87, "OCEAN11", DIR_RIGHT, 0, 79, 90, 0, 25);
 			break;
 
 		case 88:
-			OCEAN(88, "OCEAN12", DIR_UP, 80, 0, 83, 82, 25);
+			handleOceanMaze(88, "OCEAN12", DIR_UP, 80, 0, 83, 82, 25);
 			break;
 
 		case 89:
-			OCEAN(89, "OCEAN13", DIR_RIGHT, 0, 83, 0, 0, 25);
+			handleOceanMaze(89, "OCEAN13", DIR_RIGHT, 0, 83, 0, 0, 25);
 			break;
 
 		case 90:
@@ -1341,7 +1341,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 91:
-			OCEAN(91, "OCEAN15", DIR_RIGHT, 78, 81, 86, 0, 25);
+			handleOceanMaze(91, "OCEAN15", DIR_RIGHT, 78, 81, 86, 0, 25);
 			break;
 
 		case 93:
@@ -2523,7 +2523,7 @@ void HopkinsEngine::displayCredits() {
 	_eventsManager._mouseFl = true;
 }
 
-void HopkinsEngine::BTOCEAN() {
+void HopkinsEngine::handleOceanMouseEvents() {
 	_fontManager.hideText(9);
 	if (_eventsManager._mouseCursorId != 16)
 		return;
@@ -2563,7 +2563,7 @@ void HopkinsEngine::BTOCEAN() {
 			else if (_globals._speed == 3)
 				oldX -= 6;
 			_objectsManager.setSpriteX(0, oldX);
-			OCEAN_HOME();
+			setSubmarineSprites();
 			_eventsManager.VBL();
 			if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 				displAnim = true;
@@ -2599,7 +2599,7 @@ void HopkinsEngine::BTOCEAN() {
 			else if (_globals._speed == 3)
 				oldX += 6;
 			_objectsManager.setSpriteX(0, oldX);
-			OCEAN_HOME();
+			setSubmarineSprites();
 			_eventsManager.VBL();
 			if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 				displAnim = true;
@@ -2621,7 +2621,7 @@ void HopkinsEngine::BTOCEAN() {
 				else if (_globals._speed == 3)
 					oldX += 6;
 				_objectsManager.setSpriteX(0, oldX);
-				OCEAN_HOME();
+				setSubmarineSprites();
 				_eventsManager.VBL();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 					displAnim = true;
@@ -2644,7 +2644,7 @@ void HopkinsEngine::BTOCEAN() {
 				else if (_globals._speed == 3)
 					oldX -= 6;
 				_objectsManager.setSpriteX(0, oldX);
-				OCEAN_HOME();
+				setSubmarineSprites();
 				_eventsManager.VBL();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 					displAnim = true;
@@ -2675,7 +2675,7 @@ void HopkinsEngine::BTOCEAN() {
 				else if (_globals._speed == 3)
 					oldX += 6;
 				_objectsManager.setSpriteX(0, oldX);
-				OCEAN_HOME();
+				setSubmarineSprites();
 				_eventsManager.VBL();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 					displAnim = true;
@@ -2695,7 +2695,7 @@ void HopkinsEngine::BTOCEAN() {
 				else if (_globals._speed == 3)
 					oldX -= 6;
 				_objectsManager.setSpriteX(0, oldX);
-				OCEAN_HOME();
+				setSubmarineSprites();
 				_eventsManager.VBL();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY)
 					break;
@@ -2716,7 +2716,7 @@ void HopkinsEngine::BTOCEAN() {
 	}
 }
 
-void HopkinsEngine::OCEAN_HOME() {
+void HopkinsEngine::setSubmarineSprites() {
 	switch (_globals._oceanDirection) {
 	case DIR_UP:
 		_objectsManager.setSpriteIndex(0, 27);
@@ -2735,7 +2735,7 @@ void HopkinsEngine::OCEAN_HOME() {
 	}
 }
 
-void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, Directions defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
+void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFilename, Directions defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
 	_globals._cityMapEnabledFl = false;
 	_graphicsManager._noFadingFl = false;
 	_globals._freezeCharacterFl = false;
@@ -2809,9 +2809,9 @@ void HopkinsEngine::OCEAN(int16 curExitId, Common::String backgroundFilename, Di
 	for (;;) {
 		int mouseButton = _eventsManager.getMouseButton();
 		if (mouseButton && mouseButton == 1)
-			BTOCEAN();
+			handleOceanMouseEvents();
 		_linesManager.checkZone();
-		OCEAN_HOME();
+		setSubmarineSprites();
 		_eventsManager.VBL();
 		if (_globals._exitId || g_system->getEventManager()->shouldQuit())
 			break;

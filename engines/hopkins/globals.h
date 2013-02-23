@@ -236,8 +236,6 @@ class Globals {
 private:
 	HopkinsEngine *_vm;
 
-	byte *_inventoryObject;
-
 	void initAnimBqe();
 	void initVBob();
 

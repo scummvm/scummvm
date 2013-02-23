@@ -146,7 +146,6 @@ Globals::Globals() {
 	BUF_ZONE = NULL;
 	SPRITE_ECRAN = NULL;
 	_saveData = NULL;
-	_inventoryObject = NULL;
 	_answerBuffer = g_PTRNUL;
 	_objectDataBuf = NULL;
 	PERSO = NULL;
@@ -181,7 +180,6 @@ Globals::~Globals() {
 		_hidingItemData[idx] = freeMemory(_hidingItemData[idx]);
 	freeMemory(SPRITE_ECRAN);
 	freeMemory((byte *)_saveData);
-	freeMemory(_inventoryObject);
 	freeMemory(_answerBuffer);
 	freeMemory(_objectDataBuf);
 	freeMemory(PERSO);
@@ -261,7 +259,6 @@ void Globals::clearAll() {
 	_boxWidth = 240;
 
 	_vm->_eventsManager._objectBuf = allocMemory(2500);
-	_inventoryObject = allocMemory(2500);
 
 	_objectDataBuf = g_PTRNUL;
 }
@@ -360,15 +357,16 @@ void Globals::resetHidingItems() {
 	}
 
 	for (int idx = 0; idx <= 20; ++idx) {
-		_hidingItem[idx]._spriteData = g_PTRNUL;
-		_hidingItem[idx]._x = 0;
-		_hidingItem[idx]._y = 0;
-		_hidingItem[idx]._spriteIndex = 0;
-		_hidingItem[idx]._useCount = 0;
-		_hidingItem[idx]._width = 0;
-		_hidingItem[idx]._height = 0;
-		_hidingItem[idx].field10 = false;
-		_hidingItem[idx].field14 = 0;
+		HidingItem *hid = &_hidingItem[idx];
+		hid->_spriteData = g_PTRNUL;
+		hid->_x = 0;
+		hid->_y = 0;
+		hid->_spriteIndex = 0;
+		hid->_useCount = 0;
+		hid->_width = 0;
+		hid->_height = 0;
+		hid->field10 = false;
+		hid->field14 = 0;
 	}
 
 	_hidingActiveFl = false;

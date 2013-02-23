@@ -120,9 +120,9 @@ private:
 	 */
 	void drawBaseMap();
 
-	void BTOCEAN();
-	void OCEAN_HOME();
-	void OCEAN(int16 curExitId, Common::String backgroundFilename, Directions defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId);
+	void handleOceanMouseEvents();
+	void setSubmarineSprites();
+	void handleOceanMaze(int16 curExitId, Common::String backgroundFilename, Directions defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId);
 	void loadCredits();
 	void displayCredits(int startPosY, byte *buffer, char colour);
 	void displayCredits();
