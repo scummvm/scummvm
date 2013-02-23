@@ -579,6 +579,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 
 	oldMusicVol = _musicVolume;
 	if (!loadVoice(filename, catPos, catLen, _sWav[20])) {
+		// This case only concerns the English Win95 demo
+		// If it's not possible to load the voice, we force the active flag
+		// to false in order to make sure the missing buffer won't be played
+		// accidentally later
 		_sWav[20]._active = false;
 	} else {
 		_sWav[20]._active = true;
@@ -603,8 +607,12 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		_vm->_eventsManager.refreshEvents();
 		if (_vm->_eventsManager._escKeyFl)
 			break;
+		// We only check the voice status if the file has been loaded properly
+		// This avoids skipping completely the talk animations in the Win95 UK Demo
 		if (!checkVoiceStatus(2) && _sWav[20]._active)
 			breakFlag = true;
+		// This is specific to the Win95 UK Demo again: if nothing is displayed, 
+		// don't wait for a click event.
 		if (!_sWav[20]._active && !dispTxtFl)
 			break;
 	} while (!_vm->shouldQuit() && !breakFlag);
@@ -771,6 +779,8 @@ bool SoundManager::loadVoice(const Common::String &filename, size_t fileOffset, 
 	if (!f.open(filename)) {
 		// Fallback to APC...
 		if (!f.open(setExtension(filename, ".APC"))) {
+			// The English demo doesn't include the speech file. 
+			// This avoids it to crash when discussing with other characters
 			if (!_vm->getIsDemo())
 				error("Could not open %s for reading", filename.c_str());
 			return false;
