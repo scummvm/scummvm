@@ -31,6 +31,8 @@ MODULE_OBJS := \
 	translation.o \
 	unzip.o \
 	util.o \
+	winexe.o \
+	winexe_pe.o \
 	xmlparser.o \
 	zlib.o
 
