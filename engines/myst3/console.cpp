@@ -22,6 +22,7 @@
 
 #include "engines/myst3/console.h"
 #include "engines/myst3/database.h"
+#include "engines/myst3/effects.h"
 #include "engines/myst3/inventory.h"
 #include "engines/myst3/script.h"
 #include "engines/myst3/state.h"
@@ -340,21 +341,44 @@ bool Console::Cmd_DumpMasks(int argc, const char **argv) {
 	DebugPrintf("Extracting masks for node %d:\n", nodeId);
 
 	for (uint i = 0; i < 6; i++) {
-		bool water = _vm->_node->dumpFaceMask(nodeId, i, DirectorySubEntry::kWaterEffectMask);
+		bool water = dumpFaceMask(nodeId, i, DirectorySubEntry::kWaterEffectMask);
 		if (water)
 			DebugPrintf("Face %d: water OK\n", i);
 
-		bool effect2 = _vm->_node->dumpFaceMask(nodeId, i, DirectorySubEntry::kEffect2Mask);
+		bool effect2 = dumpFaceMask(nodeId, i, DirectorySubEntry::kEffect2Mask);
 		if (effect2)
 			DebugPrintf("Face %d: effect 2 OK\n", i);
 
-		bool magnet = _vm->_node->dumpFaceMask(nodeId, i, DirectorySubEntry::kMagneticEffectMask);
+		bool magnet = dumpFaceMask(nodeId, i, DirectorySubEntry::kMagneticEffectMask);
 		if (magnet)
 			DebugPrintf("Face %d: magnet OK\n", i);
 
 		if (!water && !effect2 && !magnet)
 			DebugPrintf("Face %d: No mask found\n", i);
 	}
+
+	return true;
+}
+
+bool Console::dumpFaceMask(uint16 index, int face, DirectorySubEntry::ResourceType type) {
+	const DirectorySubEntry *maskDesc = _vm->getFileDescription(0, index, face, type);
+
+	if (!maskDesc)
+		return false;
+
+	Common::MemoryReadStream *maskStream = maskDesc->getData();
+
+	Graphics::Surface *mask = Effect::loadMask(maskStream);
+
+	delete maskStream;
+
+	Common::DumpFile outFile;
+	outFile.open(Common::String::format("dump/%d-%d.masku_%d", index, face, type));
+	outFile.write(mask->getPixels(), mask->pitch * mask->h);
+	outFile.close();
+
+	mask->free();
+	delete mask;
 
 	return true;
 }

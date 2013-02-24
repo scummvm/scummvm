@@ -36,10 +36,12 @@ namespace Myst3 {
 class Texture;
 class Myst3Engine;
 class Subtitles;
+class Effect;
 
 class Face {
 	public:
 		Graphics::Surface *_bitmap;
+		Graphics::Surface *_finalBitmap;
 		Texture *_texture;
 
 		Face(Myst3Engine *vm);
@@ -48,6 +50,8 @@ class Face {
 		void setTextureFromJPEG(const DirectorySubEntry *jpegDesc);
 
 		void markTextureDirty() { _textureDirty = true; }
+		bool isTextureDirty() { return _textureDirty; }
+
 		void uploadTexture();
 
 	private:
@@ -126,6 +130,7 @@ class Node : Drawable {
 		Face *_faces[6];
 		Common::Array<SpotItem *> _spotItems;
 		Subtitles *_subtitles;
+		Common::Array<Effect *> _effects;
 
 	public:
 		Node(Myst3Engine *vm, uint16 id);
@@ -140,8 +145,6 @@ class Node : Drawable {
 
 		void loadSubtitles(uint32 id);
 		bool hasSubtitlesToDraw();
-
-		bool dumpFaceMask(uint16 index, int face, DirectorySubEntry::ResourceType type);
 };
 
 } // end of namespace Myst3

@@ -634,7 +634,7 @@ void Puzzles::pinball(int16 var) {
 	if (var >= 0)
 		return;
 
-	_vm->_state->setWaterEffectPaused(false);
+	_vm->_state->setWaterEffectRunning(false);
 
 	// Remove the default panel movies
 	_vm->removeMovie(10116);
@@ -840,7 +840,7 @@ void Puzzles::pinball(int16 var) {
 				_vm->_sound->playEffect(1028, 50);
 			} else if (jumpType == 1 || jumpType == 4) {
 				_vm->_state->setVar(26, jumpType);
-				_vm->_state->setWaterEffectPaused(true);
+				_vm->_state->setWaterEffectRunning(true);
 				// sound fade stop 1025, 7
 				return;
 			}

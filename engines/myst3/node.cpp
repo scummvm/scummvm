@@ -20,6 +20,7 @@
  *
  */
 
+#include "engines/myst3/effects.h"
 #include "engines/myst3/node.h"
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/state.h"
@@ -38,12 +39,18 @@ void Face::setTextureFromJPEG(const DirectorySubEntry *jpegDesc) {
 Face::Face(Myst3Engine *vm) :
 	_vm(vm),
 	_textureDirty(true),
-	_texture(0) {
+	_texture(0),
+	_bitmap(0),
+	_finalBitmap(0) {
 }
 
 void Face::uploadTexture() {
 	if (_textureDirty) {
-		_texture->update(_bitmap);
+		if (_finalBitmap)
+			_texture->update(_finalBitmap);
+		else
+			_texture->update(_bitmap);
+
 		_textureDirty = false;
 	}
 }
@@ -52,6 +59,11 @@ Face::~Face() {
 	_bitmap->free();
 	delete _bitmap;
 	_bitmap = 0;
+
+	if (_finalBitmap) {
+		_finalBitmap->free();
+		delete _finalBitmap;
+	}
 
 	if (_texture) {
 		_vm->_gfx->freeTexture(_texture);
@@ -63,60 +75,14 @@ Node::Node(Myst3Engine *vm, uint16 id) :
 	_subtitles(0) {
 	for (uint i = 0; i < 6; i++)
 		_faces[i] = 0;
-}
 
-bool Node::dumpFaceMask(uint16 index, int face, DirectorySubEntry::ResourceType type) {
-	static const int32 kMaskSize = 640 * 640;
-
-	byte *mask = new byte[kMaskSize];
-	memset(mask, 0, kMaskSize);
-	uint32 headerOffset = 0;
-	uint32 dataOffset = 0;
-
-	const DirectorySubEntry *maskDesc = _vm->getFileDescription(0, index, face, type);
-
-	if (!maskDesc) {
-		delete[] mask;
-		return false;
-	}
-
-	Common::MemoryReadStream *maskStream = maskDesc->getData();
-
-	while (headerOffset < 400) {
-		int blockX = (headerOffset / sizeof(dataOffset)) % 10;
-		int blockY = (headerOffset / sizeof(dataOffset)) / 10;
-
-		maskStream->seek(headerOffset, SEEK_SET);
-		dataOffset = maskStream->readUint32LE();
-		headerOffset = maskStream->pos();
-
-		if (dataOffset != 0) {
-			maskStream->seek(dataOffset, SEEK_SET);
-
-			for(int i = 63; i >= 0; i--) {
-				int x = 0;
-				byte numValues = maskStream->readByte();
-				for (int j = 0; j < numValues; j++) {
-					byte repeat = maskStream->readByte();
-					byte value = maskStream->readByte();
-					for (int k = 0; k < repeat; k++) {
-						mask[((blockY * 64) + i) * 640 + blockX * 64 + x] = value;
-						x++;
-					}
-				}
-			}
+	if (_vm->_state->getWaterEffects()) {
+		Effect *effect = WaterEffect::create(vm, id);
+		if (effect) {
+			_effects.push_back(effect);
+			_vm->_state->setWaterEffectActive(true);
 		}
 	}
-
-	delete maskStream;
-
-	Common::DumpFile outFile;
-	outFile.open(Common::String::format("dump/%d-%d.masku_%d", index, face, type));
-	outFile.write(mask, kMaskSize);
-	outFile.close();
-	delete[] mask;
-
-	return true;
 }
 
 Node::~Node() {
@@ -124,6 +90,12 @@ Node::~Node() {
 		delete _spotItems[i];
 	}
 	_spotItems.clear();
+
+	for (uint i = 0; i < _effects.size(); i++) {
+		delete _effects[i];
+	}
+	_effects.clear();
+	_vm->_state->setWaterEffectActive(false);
 
 	for (int i = 0; i < 6; i++) {
 		delete _faces[i];
@@ -205,6 +177,53 @@ void Node::update() {
 	// ... then redraw
 	for (uint i = 0; i < _spotItems.size(); i++) {
 		_spotItems[i]->updateDraw();
+	}
+
+	bool needsUpdate = false;
+	for (uint i = 0; i < _effects.size(); i++) {
+		needsUpdate |= _effects[i]->update();
+	}
+
+	// Apply the effects for all the faces
+	for (uint faceId = 0; faceId < 6; faceId++) {
+		Face *face = _faces[faceId];
+
+		if (face == 0) continue;
+
+		uint effectsForFace = 0;
+		for (uint i = 0; i < _effects.size(); i++) {
+			if (_effects[i]->hasFace(faceId))
+				effectsForFace++;
+		}
+
+		if (effectsForFace == 0) continue;
+		if (!needsUpdate && !face->isTextureDirty()) continue;
+
+		// Alloc the target surface if necessary
+		if (!face->_finalBitmap) {
+			face->_finalBitmap = new Graphics::Surface();
+			face->_finalBitmap->copyFrom(*face->_bitmap);
+		}
+
+		if (effectsForFace == 1) {
+			_effects[0]->applyForFace(faceId, face->_bitmap, face->_finalBitmap);
+
+			face->markTextureDirty();
+		} else if (effectsForFace == 2) {
+			// TODO: Keep the same temp surface to avoid heap fragmentation ?
+			Graphics::Surface *tmp = new Graphics::Surface();
+			tmp->copyFrom(*face->_bitmap);
+
+			_effects[0]->applyForFace(faceId, face->_bitmap, tmp);
+			_effects[1]->applyForFace(faceId, tmp, face->_finalBitmap);
+
+			tmp->free();
+			delete tmp;
+
+			face->markTextureDirty();
+		} else {
+			error("Unable to render more than 2 effects per faceId (%d)", effectsForFace);
+		}
 	}
 }
 

@@ -112,7 +112,7 @@ GameState::GameState(Myst3Engine *vm):
 
 	VAR(92, HotspotActiveRect, false)
 
-	VAR(93, WaterEffectPaused, true)
+	VAR(93, WaterEffectRunning, true)
 	VAR(94, WaterEffectActive, true)
 	VAR(95, WaterEffectSpeed, true)
 	VAR(96, WaterEffectAttenuation, true)

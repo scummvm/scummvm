@@ -92,7 +92,7 @@ public:
 
 	DECLARE_VAR(92, HotspotActiveRect)
 
-	DECLARE_VAR(93, WaterEffectPaused)
+	DECLARE_VAR(93, WaterEffectRunning)
 	DECLARE_VAR(94, WaterEffectActive)
 	DECLARE_VAR(95, WaterEffectSpeed)
 	DECLARE_VAR(96, WaterEffectAttenuation)
