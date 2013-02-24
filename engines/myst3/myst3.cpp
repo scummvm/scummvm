@@ -250,6 +250,7 @@ void Myst3Engine::openArchives() {
 		menuLanguage = "POLISH";
 		break;
 	case Common::EN_ANY:
+	case Common::RU_RUS:
 	default:
 		menuLanguage = "ENGLISH";
 		break;
@@ -278,8 +279,7 @@ void Myst3Engine::openArchives() {
 			break;
 		}
 	} else {
-		if (getDefaultLanguage() == Common::EN_ANY
-				|| ConfMan.getInt("text_language")) {
+		if (isMonolingual() || ConfMan.getInt("text_language")) {
 			textLanguage = menuLanguage;
 		} else {
 			textLanguage = "ENGLISHjp";
@@ -290,7 +290,7 @@ void Myst3Engine::openArchives() {
 	addArchive("OVER101.m3o", false);
 	addArchive(textLanguage + ".m3t", true);
 
-	if (getExecutableVersion()->flags & kFlagDVD || getDefaultLanguage() != Common::EN_ANY)
+	if (getExecutableVersion()->flags & kFlagDVD || !isMonolingual())
 		if (!addArchive("language.m3u", false))
 			addArchive(menuLanguage + ".m3u", true);
 
@@ -319,6 +319,11 @@ bool Myst3Engine::checkDatafiles() {
 	}
 #endif // USE_SAFEDISC
 	return true;
+}
+
+bool Myst3Engine::isMonolingual() const {
+	return getDefaultLanguage() == Common::EN_ANY
+			|| getDefaultLanguage() == Common::RU_RUS;
 }
 
 HotSpot *Myst3Engine::getHoveredHotspot(NodePtr nodeData, uint16 var) {

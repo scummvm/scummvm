@@ -158,6 +158,7 @@ private:
 
 	Common::SeekableSubReadStreamEndian *openDatabaseFile() const;
 	Common::SeekableReadStream *decompressPEFDataSegment(Common::SeekableReadStream *stream, uint segmentID) const;
+	Common::SeekableReadStream *extractRussianM3R(Common::SeekableReadStream *stream) const;
 
 	static uint32 safeDiscDecode1(uint32 data);
 	static uint32 safeDiscDecode2(uint32 data);

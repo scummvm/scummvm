@@ -29,6 +29,7 @@
 #include "common/md5.h"
 #include "common/memstream.h"
 #include "common/substream.h"
+#include "common/winexe_pe.h"
 
 namespace Myst3 {
 
@@ -524,6 +525,8 @@ Common::SeekableSubReadStreamEndian *Database::openDatabaseFile() const {
 		delete stream;
 		stream = segment;
 		bigEndian = true;
+	} else if (_vm->getDefaultLanguage() == Common::RU_RUS) {
+		stream = extractRussianM3R(stream);
 	} else if (_executableVersion->safeDiskKey) {
 #ifdef USE_SAFEDISC
 		SafeDisc sd;
@@ -703,6 +706,125 @@ Common::SeekableReadStream *Database::decompressPEFDataSegment(Common::SeekableR
 		error("Failed to unpack PEF pattern-initialized section");
 
 	return new Common::MemoryReadStream(data, unpackedSize, DisposeAfterUse::YES);
+}
+
+
+/**
+ * This class performs NRV 2d decompression
+ *
+ * The implementation is based upon the GPLv2 licensed UCL library
+ * from http://www.oberhumer.com/opensource/ucl/
+ */
+class NRV2D {
+public :
+	static void uncompress(Common::SeekableReadStream *src, byte *dst) {
+		uint bc = 0;
+		uint32 bb = 0;
+		uint olen = 0, last_m_off = 1;
+
+		for (;;) {
+			uint32 m_off, m_len;
+
+			while (getBit(bb, bc, src)) {
+				dst[olen++] = src->readByte();
+			}
+
+			m_off = 1;
+			for (;;) {
+				m_off = m_off * 2 + getBit(bb, bc, src);
+
+				if (getBit(bb, bc, src))
+					break;
+
+				m_off = (m_off - 1) * 2 + getBit(bb, bc, src);
+			}
+
+			if (m_off == 2) {
+				m_off = last_m_off;
+				m_len = getBit(bb, bc, src);
+			} else {
+				m_off = (m_off - 3) * 256 + src->readByte();
+
+				if (m_off == 0xFFFFFFFF)
+					break;
+
+				m_len = (m_off ^ 0xFFFFFFFF) & 1;
+				m_off >>= 1;
+				last_m_off = ++m_off;
+			}
+
+			m_len = m_len * 2 + getBit(bb, bc, src);
+			if (m_len == 0) {
+				m_len++;
+				do {
+					m_len = m_len * 2 + getBit(bb, bc, src);
+				} while (!getBit(bb, bc, src));
+				m_len += 2;
+			}
+
+			m_len += (m_off > 0x500);
+
+			{
+				const byte *m_pos = dst + olen - m_off;
+
+				dst[olen++] = *m_pos++;
+				do
+					dst[olen++] = *m_pos++;
+				while (--m_len > 0);
+			}
+		}
+	}
+
+private:
+	static uint getBit(uint32 &bb, uint &bc, Common::SeekableReadStream *src) {
+		if (bc == 0) {
+			bc = 32;
+			bb = src->readUint32LE();
+		}
+		return (bb >> --bc) & 1;
+	}
+};
+
+Common::SeekableReadStream *Database::extractRussianM3R(Common::SeekableReadStream *stream) const {
+	/*
+	 * The Russian version comes with a weird packaging. It doesn't have the
+	 * usual M3.exe but instead comes with M3R.exe and inst.dat.
+	 *
+	 * inst.dat is an UPX executable with the compressed section removed.
+	 *
+	 * M3R.exe is a Delphi programmed launcher. Its "INFO" resource contains
+	 * the missing section from inst.dat
+	 *
+	 * Here is how the original works :
+	 * - M3R.exe loads inst.dat in memory as an executable.
+	 * - MR3.exe extracts the INFO resource from itself,
+	 * 		and uses a very simple patch mechanism to modify the in-memory
+	 * 		representation of inst.dat.
+	 * - At this point, the inst.dat in memory representation is a hacked up UPX
+	 * 		compressed M3.exe. MR3.exe resumes execution of the compressed M3.exe.
+	 * - M3.exe uncompresses itself in memory using the NRV algorithm.
+	 * - The game starts.
+	 */
+
+	// Extract the INFO resource from M3R.exe
+	Common::PEResources m3r;
+	m3r.loadFromEXE(stream);
+	Common::SeekableReadStream *compressed = m3r.getResource(Common::kPERCData, Common::String("INFO"));
+
+	// Skip the header
+	compressed->skip(4); // Patch offset
+	compressed->skip(4); // Patch size
+
+	// The uncompressed size is not stored anywhere, just allocate slightly
+	// more memory than actually needed
+	byte *data = (byte *)malloc(1100*1024);
+
+	// Perform the decompression
+	NRV2D::uncompress(compressed, data);
+
+	delete compressed;
+
+	return new Common::MemoryReadStream(data, 2*1024*1024, DisposeAfterUse::YES);
 }
 
 #define ROL32(x,b) (((x) << (b)) | ((x) >> (32 - (b))))

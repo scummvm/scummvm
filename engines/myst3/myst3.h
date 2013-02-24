@@ -110,6 +110,7 @@ public:
 	bool hasFeature(EngineFeature f) const;
 	Common::Platform getPlatform() const;
 	Common::Language getDefaultLanguage() const;
+	bool isMonolingual() const;
 	const ExecutableVersion *getExecutableVersion() const;
 
 	bool canLoadGameStateCurrently();

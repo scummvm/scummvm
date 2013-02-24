@@ -60,6 +60,7 @@ static const ExecutableVersion v110win = { "1.1 Windows",    kFlagNone,      "M3
 static const ExecutableVersion v120mjp = { "1.2 Macintosh",  kFlagNone,      "Myst3 Exile JP",                0,        0x11230,  0x1116C,  0x112F8,  0         };
 static const ExecutableVersion v120mac = { "1.2 Macintosh",  kFlagNone,      "Myst3",                         0,        0x112D0,  0x1120C,  0x11398,  0         };
 static const ExecutableVersion v120sd  = { "1.2 Windows",    kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0,  &sdKey110 };
+static const ExecutableVersion v120rus = { "1.2 Windows",    kFlagNone,      "M3R.exe",                       0x401000, 0x85108,  0x85040,  0x851D0,  0         };
 static const ExecutableVersion v122sd  = { "1.22 Windows",   kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0,  &sdKey122 };
 static const ExecutableVersion v12xwin = { "1.2x Windows",   kFlagNone,      "M3.exe",                        0x400000, 0x86108,  0x86040,  0x861D0,  0         };
 static const ExecutableVersion v122osx = { "1.22 Mac OS X",  kFlagNone,      "Myst3 OS X US",                 0,        0x118C4,  0x11800,  0x1198C,  0         };
@@ -95,6 +96,7 @@ static const Myst3GameDescription gameDescriptions[] = {
 	MYST3ENTRY(Common::kPlatformWindows, Common::FR_FRA, 0,     "M3.exe", "3510a29ba7db40fa7310e15aac807e8e", &v120sd ) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::JA_JPN, 0,     "M3.exe", "89f4ceb295420c01116bc4bee7bcd9c4", &v120sd ) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "7a4eaea5f19f621e05e732d657c15fe3", &v12xwin) // 1.2
+	MYST3ENTRY(Common::kPlatformWindows, Common::RU_RUS, 0,     "M3R.exe","4ce43b84c1d0869a84b5f361f8914a9f", &v120rus) // 1.2
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "6dbe2eed529684c7fb64f0801462b89c", &v12xwin) // 1.21
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "c8ca22d347f947cd52d95229d0f6a3f3", &v12xwin) // 1.22
 	MYST3ENTRY(Common::kPlatformWindows, Common::EN_ANY, 0,     "M3.exe", "9d76f2f836ef9382e45f354a532f042d", &v122sd ) // 1.22
