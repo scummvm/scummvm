@@ -55,6 +55,8 @@ enum Platform {
 	kPlatformPSX,
 	kPlatformCDi,
 	kPlatformIOS,
+	kPlatformOS2,
+	kPlatformBeOS,
 
 	kPlatformUnknown = -1
 };
