@@ -90,6 +90,14 @@ private:
 public:
 	ProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo);
 
+	Modules::Module *getModule() {
+		// Ordinarily, the Module is not meant to be seen outside of
+		// this class, but occasionally, it's useful to be able to
+		// manipulate it directly. The Hopkins engine uses this to
+		// repair a broken song.
+		return &_module;
+	}
+
 private:
 	void interrupt();
 
@@ -462,8 +470,12 @@ void ProtrackerStream::interrupt() {
 
 namespace Audio {
 
-AudioStream *makeProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo) {
-	return new Modules::ProtrackerStream(stream, offs, rate, stereo);
+AudioStream *makeProtrackerStream(Common::SeekableReadStream *stream, int offs, int rate, bool stereo, Modules::Module **module) {
+	Modules::ProtrackerStream *protrackerStream = new Modules::ProtrackerStream(stream, offs, rate, stereo);
+	if (module) {
+		*module = protrackerStream->getModule();
+	}
+	return (AudioStream *)protrackerStream;
 }
 
 } // End of namespace Audio
