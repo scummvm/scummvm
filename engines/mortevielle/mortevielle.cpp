@@ -597,7 +597,7 @@ void MortevielleEngine::mainGame() {
 		loadCFIEC();
 
 	for (_crep = 1; _crep <= _x26KeyCount; ++_crep)
-		decodeNumber(&_cfiecBuffer[161 * 16], ((822 * 128) - (161 * 16)) / 64);
+		decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 
 	loadBRUIT5();
 	_menu.initMenu();
@@ -2497,6 +2497,9 @@ void MortevielleEngine::loadCFIEC() {
 
 	for (int32 i = 0; i < fileSize; ++i)
 		_cfiecBuffer[i] = f.readByte();
+
+	for (int i = fileSize; i < _cfiecBufferSize; i++)
+		_cfiecBuffer[i] = 0;
 
 	f.close();
 
