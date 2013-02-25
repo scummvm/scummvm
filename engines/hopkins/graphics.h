@@ -31,6 +31,7 @@
 
 namespace Hopkins {
 
+#define DIRTY_RECTS_SIZE 250
 #define PALETTE_SIZE 256
 #define PALETTE_BLOCK_SIZE (PALETTE_SIZE * 3)
 #define PALETTE_EXT_BLOCK_SIZE 800
@@ -63,7 +64,8 @@ private:
 	bool _initGraphicsFl;
 	int _screenWidth;
 	int _screenHeight;
-	Graphics::Surface *_videoPtr;
+	byte *_videoPtr;
+	bool _isPhysicalPtr;
 	int _width;
 	int _posXClipped, _posYClipped;
 	bool _clipFl;
@@ -94,6 +96,7 @@ public:
 	byte _oldPalette[PALETTE_EXT_BLOCK_SIZE];
 	byte *_vesaScreen;
 	byte *_vesaBuffer;
+	byte *_screenBuffer;
 	int _scrollOffset;
 	int _scrollPosX;
 	bool _largeScreenFl;
@@ -108,8 +111,8 @@ public:
 	bool _skipVideoLockFl;
 	int _fadeDefaultSpeed;
 
-	int NBBLOC;
-	BlocItem BLOC[250];
+	int _dirtyRectCount;
+	BlocItem _dirtyRects[DIRTY_RECTS_SIZE];
 	int WinScan;
 	byte *PAL_PIXELS;
 	bool MANU_SCROLL;
@@ -119,7 +122,7 @@ public:
 	~GraphicsManager();
 
 	void setParent(HopkinsEngine *vm);
-	void lockScreen();
+	void lockScreen(bool shouldUsePhysicalScreen = false);
 	void unlockScreen();
 	void clearPalette();
 	void clearScreen();

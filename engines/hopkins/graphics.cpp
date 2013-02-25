@@ -47,7 +47,11 @@ GraphicsManager::GraphicsManager() {
 	_scrollPosX = 0;
 	_largeScreenFl = false;
 	_oldScrollPosX = 0;
-	NBBLOC = 0;
+	_dirtyRectCount = 0;
+	_vesaScreen = NULL;
+	_vesaBuffer = NULL;
+	_screenBuffer = NULL;
+	_isPhysicalPtr = false;
 
 	_lineNbr2 = 0;
 	Agr_x = Agr_y = 0;
@@ -73,14 +77,15 @@ GraphicsManager::GraphicsManager() {
 	Common::fill(&_palette[0], &_palette[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_oldPalette[0], &_oldPalette[PALETTE_EXT_BLOCK_SIZE], 0);
 
-	for (int i = 0; i < 250; ++i)
-		Common::fill((byte *)&BLOC[i], (byte *)&BLOC[i] + sizeof(BlocItem), 0);
+	for (int i = 0; i < DIRTY_RECTS_SIZE; ++i)
+		Common::fill((byte *)&_dirtyRects[i], (byte *)&_dirtyRects[i] + sizeof(BlocItem), 0);
 
 }
 
 GraphicsManager::~GraphicsManager() {
 	_vm->_globals.freeMemory(_vesaScreen);
 	_vm->_globals.freeMemory(_vesaBuffer);
+	_vm->_globals.freeMemory(_screenBuffer);
 }
 
 void GraphicsManager::setParent(HopkinsEngine *vm) {
@@ -107,14 +112,13 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		// Init surfaces
 		_vesaScreen = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 		_vesaBuffer = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		_screenBuffer = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 		_videoPtr = NULL;
 		_screenWidth = width;
 		_screenHeight = height;
 
-		// Clear the screen pitch. This will be set on the first lockScreen call
-		WinScan = 0;
-
+		WinScan = width * 2;
 		PAL_PIXELS = SD_PIXELS;
 		_lineNbr = width;
 
@@ -127,12 +131,19 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 /**
  * (try to) Lock Screen
  */
-void GraphicsManager::lockScreen() {
+void GraphicsManager::lockScreen(bool shouldUsePhysicalScreen) {
 	if (!_skipVideoLockFl) {
 		if (_lockCounter++ == 0) {
-			_videoPtr = g_system->lockScreen();
-			if (WinScan == 0)
-				WinScan = _videoPtr->pitch;
+			if (shouldUsePhysicalScreen) {
+				Graphics::Surface *s = g_system->lockScreen();
+				_videoPtr = (byte *)s->pixels;
+				WinScan = s->pitch;
+			} else {
+				_videoPtr = _screenBuffer;
+				WinScan = _width * 2;
+			}
+
+			_isPhysicalPtr = shouldUsePhysicalScreen;
 		}
 	}		
 }
@@ -143,7 +154,9 @@ void GraphicsManager::lockScreen() {
 void GraphicsManager::unlockScreen() {
 	assert(_videoPtr);
 	if (--_lockCounter == 0) {
-		g_system->unlockScreen();
+		if (_isPhysicalPtr)
+			g_system->unlockScreen();
+
 		_videoPtr = NULL;
 	}
 }
@@ -153,7 +166,7 @@ void GraphicsManager::unlockScreen() {
  */
 void GraphicsManager::clearScreen() {
 	assert(_videoPtr);
-	_videoPtr->fillRect(Common::Rect(0, 0, _screenWidth, _screenHeight), 0);
+	Common::fill(_videoPtr, _videoPtr + WinScan * _screenHeight, 0);
 }
 
 /**
@@ -395,14 +408,10 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 }
 
 // Clear Palette
-// CHECKME: Some versions of the game don't include it, some contains nothing more than 
-// than a loop doing nothing, some others just map the last value. While debugging, it
-// seems that this function is called once the palette is already cleared, so it would be useless
-// This code could most likely be removed.
 void GraphicsManager::clearPalette() {
-	uint16 col0 = mapRGB(0, 0, 0);
-	for (int i = 0; i < 512; i += 2)
-		WRITE_LE_UINT16(&SD_PIXELS[i], col0);
+	// As weird as it sounds, this is what the original Linux executable does, 
+	// and not a full array clear.
+	SD_PIXELS[0] = 0;
 }
 
 void GraphicsManager::SCANLINE(int pitch) {
@@ -417,7 +426,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 
 	assert(_videoPtr);
 	const byte *srcP = xs + _lineNbr2 * ys + surface;
-	byte *destP = (byte *)_videoPtr->pixels + destX * 2 + WinScan * destY;
+	byte *destP = (byte *)_videoPtr + destX * 2 + WinScan * destY;
 
 	for (int yp = 0; yp < height; ++yp) {
 		// Copy over the line, using the source pixels as lookups into the pixels palette
@@ -436,6 +445,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 	}
 
 	unlockScreen();
+	addVesaSegment(xs, ys, xs + width, ys + height);
 }
 
 // TODO: See if PAL_PIXELS can be converted to a uint16 array
@@ -448,7 +458,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 
 	assert(_videoPtr);
 	const byte *srcP = xs + _lineNbr2 * ys + surface;
-	byte *destP = (byte *)_videoPtr->pixels + destX + destX + WinScan * destY;
+	byte *destP = (byte *)_videoPtr + destX + destX + WinScan * destY;
 	int yNext = height;
 	Agr_x = 0;
 	Agr_y = 0;
@@ -494,6 +504,8 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 		srcP = _lineNbr2 + srcCopyP;
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
+
+	addVesaSegment(xs, ys, xs + width, ys + width);
 }
 
 void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
@@ -506,7 +518,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 
 	assert(_videoPtr);
 	const byte *srcP = surface + xp + 320 * yp;
-	byte *destP = (byte *)_videoPtr->pixels + 30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY;
+	byte *destP = (byte *)_videoPtr + 30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY;
 	int yCount = height;
 	int xCount = width;
 
@@ -531,6 +543,8 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 		srcP = loopSrcP + 320;
 		yCount = yCtr - 1;
 	} while (yCtr != 1);
+
+	addVesaSegment(xp, yp, xp + width, yp + width);
 }
 
 /** 
@@ -816,7 +830,7 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 			if (srcByte == 211) {
 				int pixelCount = srcP[1];
 				int pixelIndex = srcP[2];
-				byte *destP = (byte *)_videoPtr->pixels + destOffset * 2;
+				byte *destP = (byte *)_videoPtr + destOffset * 2;
 				destOffset += pixelCount;
 
 				while (pixelCount--) {
@@ -829,7 +843,7 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 			} else {
 				int pixelCount = srcByte - 211;
 				int pixelIndex = srcP[1];
-				byte *destP = (byte *)_videoPtr->pixels + destOffset * 2;
+				byte *destP = (byte *)_videoPtr + destOffset * 2;
 				destOffset += pixelCount;
 
 				while (pixelCount--) {
@@ -841,7 +855,7 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 				srcP += 2;
 			}
 		} else {
-			byte *destP = (byte *)_videoPtr->pixels + destOffset * 2;
+			byte *destP = (byte *)_videoPtr + destOffset * 2;
 			destP[0] = PAL_PIXELS[2 * srcByte];
 			destP[1] = PAL_PIXELS[(2 * srcByte) + 1];
 			++srcP;
@@ -875,7 +889,7 @@ void GraphicsManager::copyVideoVbe16a(const byte *srcData) {
 			}
 		}
 
-		WRITE_LE_UINT16((byte *)_videoPtr->pixels + destOffset * 2, READ_LE_UINT16(PAL_PIXELS + 2 * srcByte));
+		WRITE_LE_UINT16((byte *)_videoPtr + destOffset * 2, READ_LE_UINT16(PAL_PIXELS + 2 * srcByte));
 		++srcP;
 		++destOffset;
 	}
@@ -1080,10 +1094,10 @@ void GraphicsManager::displayAllBob() {
 }
 
 void GraphicsManager::resetVesaSegment() {
-	for (int idx = 0; idx <= NBBLOC; idx++)
-		BLOC[idx]._activeFl = false;
+	for (int idx = 0; idx <= _dirtyRectCount; idx++)
+		_dirtyRects[idx]._activeFl = false;
 
-	NBBLOC = 0;
+	_dirtyRectCount = 0;
 }
 
 // Add VESA Segment
@@ -1099,15 +1113,15 @@ void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
 	if (y1 < _minY)
 		y1 = _minY;
 
-	for (int blocIndex = 0; blocIndex <= NBBLOC; blocIndex++) {
-		BlocItem &bloc = BLOC[blocIndex];
+	for (int blocIndex = 0; blocIndex <= _dirtyRectCount; blocIndex++) {
+		BlocItem &bloc = _dirtyRects[blocIndex];
 		if (bloc._activeFl && tempX >= bloc._x1 && x2 <= bloc._x2 && y1 >= bloc._y1 && y2 <= bloc._y2)
 			addFlag = false;
 	};
 
 	if (addFlag) {
-		assert(NBBLOC < 250);
-		BlocItem &bloc = BLOC[++NBBLOC];
+		assert(_dirtyRectCount < DIRTY_RECTS_SIZE);
+		BlocItem &bloc = _dirtyRects[++_dirtyRectCount];
 
 		bloc._activeFl = true;
 		bloc._x1 = tempX;
@@ -1119,13 +1133,13 @@ void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
 
 // Display VESA Segment
 void GraphicsManager::displayVesaSegment() {
-	if (NBBLOC == 0)
+	if (_dirtyRectCount == 0)
 		return;
 
 	lockScreen();
 
-	for (int idx = 1; idx <= NBBLOC; ++idx) {
-		BlocItem &bloc = BLOC[idx];
+	for (int idx = 1; idx <= _dirtyRectCount; ++idx) {
+		BlocItem &bloc = _dirtyRects[idx];
 		Common::Rect &dstRect = dstrect[idx - 1];
 		if (!bloc._activeFl)
 			continue;
@@ -1154,11 +1168,15 @@ void GraphicsManager::displayVesaSegment() {
 			unlockScreen();
 		}
 
-		BLOC[idx]._activeFl = false;
+		byte *srcP = _videoPtr + WinScan * dstRect.top + (dstRect.left * 2);
+		g_system->copyRectToScreen(srcP, WinScan, dstRect.left, dstRect.top, 
+			dstRect.width(), dstRect.height());
+
+		_dirtyRects[idx]._activeFl = false;
 	}
 
-	NBBLOC = 0;
 	unlockScreen();
+	_dirtyRectCount = 0;	
 }
 
 void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment) {
@@ -1184,7 +1202,7 @@ void GraphicsManager::copy16bFromSurfaceScaleX2(const byte *surface) {
 
 	assert(_videoPtr);
 	const byte *curSurface = surface;
-	byte *destPtr = 30 * WinScan + (byte *)_videoPtr->pixels;
+	byte *destPtr = 30 * WinScan + (byte *)_videoPtr;
 	for (int y = 200; y; y--) {
 		byte *oldDestPtr = destPtr;
 		for (int x = 320; x; x--) {

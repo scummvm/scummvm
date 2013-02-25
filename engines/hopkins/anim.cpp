@@ -79,7 +79,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	f.read(screenP, nbytes);
 
 	if (_clearAnimationFl) {
-		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager.lockScreen(true);
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.unlockScreen();
 	}
@@ -94,7 +94,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	} else {
 		_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
-		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager.lockScreen(true);
 		if (hasScreenCopy)
 			_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
@@ -145,7 +145,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 			if (!_vm->_eventsManager._escKeyFl) {
 				_vm->_eventsManager._rateCounter = 0;
-				_vm->_graphicsManager.lockScreen();
+				_vm->_graphicsManager.lockScreen(true);
 				if (hasScreenCopy) {
 					if (*screenP != kByteStop) {
 						_vm->_graphicsManager.copyWinscanVbe3(screenP, screenCopy);
@@ -260,7 +260,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		oldScrollPosX = _vm->_graphicsManager._scrollPosX;
 		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
 		_vm->_graphicsManager.scrollScreen(0);
-		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager.lockScreen(true);
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.unlockScreen();
 		_vm->_graphicsManager._maxX = SCREEN_WIDTH;
@@ -275,7 +275,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 		} else {
 			_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
-			_vm->_graphicsManager.lockScreen();
+			_vm->_graphicsManager.lockScreen(true);
 			if (hasScreenCopy)
 				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			else
@@ -319,7 +319,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			}
 
 			_vm->_eventsManager._rateCounter = 0;
-			_vm->_graphicsManager.lockScreen();
+			_vm->_graphicsManager.lockScreen(true);
 			if (*screenP != kByteStop) {
 				if (hasScreenCopy) {
 					_vm->_graphicsManager.copyWinscanVbe3(screenP, screenCopy);
@@ -382,7 +382,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 
 	memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager._oldPalette, 769);
 	_vm->_graphicsManager.clearPalette();
-	_vm->_graphicsManager.lockScreen();
+	_vm->_graphicsManager.lockScreen(true);
 	_vm->_graphicsManager.clearScreen();
 	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager._scrollPosX = oldScrollPosX;
@@ -390,12 +390,12 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	if (_vm->_graphicsManager._largeScreenFl) {
 		_vm->_graphicsManager.SCANLINE(2 * SCREEN_WIDTH);
 		_vm->_graphicsManager._maxX = 2 * SCREEN_WIDTH;
-		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager.lockScreen(true);
 		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	} else {
 		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
 		_vm->_graphicsManager._maxX = SCREEN_WIDTH;
-		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager.lockScreen(true);
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
@@ -642,7 +642,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		}
 		_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	} else {
-		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager.lockScreen(true);
 		if (hasScreenCopy)
 			_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
@@ -718,7 +718,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 				break;
 
 			_vm->_eventsManager._rateCounter = 0;
-			_vm->_graphicsManager.lockScreen();
+			_vm->_graphicsManager.lockScreen(true);
 			if (hasScreenCopy) {
 				if (*screenP != kByteStop) {
 					_vm->_graphicsManager.copyWinscanVbe(screenP, screenCopy);
@@ -801,7 +801,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			}
 			_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 		} else {
-			_vm->_graphicsManager.lockScreen();
+			_vm->_graphicsManager.lockScreen(true);
 			_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 			if (multiScreenFl)
 				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
@@ -844,7 +844,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			}
 
 			_vm->_eventsManager._rateCounter = 0;
-			_vm->_graphicsManager.lockScreen();
+			_vm->_graphicsManager.lockScreen(true);
 			if (multiScreenFl) {
 				if (*screenP != kByteStop) {
 					_vm->_graphicsManager.copyWinscanVbe(screenP, screenCopy);
