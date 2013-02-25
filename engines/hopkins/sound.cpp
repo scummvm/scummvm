@@ -35,7 +35,7 @@
 #include "audio/mods/protracker.h"
 #include "audio/decoders/raw.h"
 
-namespace Audio {
+namespace Hopkins {
 
 class APC_ADPCMStream : public Audio::DVI_ADPCMStream {
 public:
@@ -70,7 +70,7 @@ Audio::RewindableAudioStream *makeAPCStream(Common::SeekableReadStream *stream, 
 	return new APC_ADPCMStream(stream, disposeAfterUse, rate, stereo ? 2 : 1);
 }
 
-class TwaAudioStream : public AudioStream {
+class TwaAudioStream : public Audio::AudioStream {
 public:
 	TwaAudioStream(Common::String name, Common::SeekableReadStream *stream) {
 		_name = name;
@@ -152,7 +152,7 @@ protected:
 		Common::File *file = new Common::File();
 
 		if (file->open(filename + ".APC")) {
-			_cueStream = Audio::makeAPCStream(file, DisposeAfterUse::YES);
+			_cueStream = makeAPCStream(file, DisposeAfterUse::YES);
 			return true;
 		}
 
@@ -183,12 +183,6 @@ private:
 Audio::AudioStream *makeTwaStream(Common::String name, Common::SeekableReadStream *stream) {
 	return new TwaAudioStream(name, stream);
 }
-
-}
-
-/*------------------------------------------------------------------------*/
-
-namespace Hopkins {
 
 SoundManager::SoundManager() {
 	_specialSoundNum = 0;
@@ -436,7 +430,7 @@ void SoundManager::loadMusic(const Common::String &file) {
 		if (!f.open(filename))
 			error("Error opening file %s", filename.c_str());
 
-		Audio::AudioStream *twaStream = Audio::makeTwaStream(file.c_str(), &f);
+		Audio::AudioStream *twaStream = makeTwaStream(file.c_str(), &f);
 		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, twaStream);
 		f.close();
 	}
@@ -897,7 +891,7 @@ void SoundManager::updateScummVMSoundSettings() {
  */
 Audio::RewindableAudioStream *SoundManager::makeSoundStream(Common::SeekableReadStream *stream) {
 	if (_vm->getPlatform() == Common::kPlatformWindows)
-		return Audio::makeAPCStream(stream, DisposeAfterUse::YES);
+		return makeAPCStream(stream, DisposeAfterUse::YES);
 	else if (_vm->getPlatform() == Common::kPlatformLinux)
 		return Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 	else
