@@ -75,6 +75,7 @@ void DialogsManager::showOptionsDialog() {
 	_vm->_globals._optionDialogSpr = _vm->_fileManager.loadFile(filename);
 	_vm->_globals._optionDialogFl = true;
 
+	int scrollOffset = _vm->_graphicsManager._scrollOffset;
 	bool doneFlag = false;
 	do {
 		if (_vm->_eventsManager.getMouseButton()) {
@@ -83,7 +84,7 @@ void DialogsManager::showOptionsDialog() {
 			mousePos.y = _vm->_eventsManager.getMouseY();
 
 			if (!_vm->_soundManager._musicOffFl) {
-				if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 300 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 327 && mousePos.y <= 138) {
+				if (mousePos.x >= scrollOffset + 300 && mousePos.y > 113 && mousePos.x <= scrollOffset + 327 && mousePos.y <= 138) {
 					// Change the music volume
 					++_vm->_soundManager._musicVolume;
 
@@ -96,7 +97,7 @@ void DialogsManager::showOptionsDialog() {
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 
-				if (!_vm->_soundManager._musicOffFl && mousePos.x >= _vm->_graphicsManager._scrollOffset + 331 && mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 138) {
+				if (!_vm->_soundManager._musicOffFl && mousePos.x >= scrollOffset + 331 && mousePos.y > 113 && mousePos.x <= scrollOffset + 358 && mousePos.y <= 138) {
 					--_vm->_soundManager._musicVolume;
 					if (_vm->_soundManager._musicVolume >= 0)
 						_vm->_soundManager.playSoundFile("bruit2.wav");
@@ -109,7 +110,8 @@ void DialogsManager::showOptionsDialog() {
 				}
 			}
 			if (!_vm->_soundManager._soundOffFl) {
-				if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 300 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 327 && mousePos.y <= 165) {
+				// increase volume
+				if (mousePos.x >= scrollOffset + 300 && mousePos.y > 140 && mousePos.x <= scrollOffset + 327 && mousePos.y <= 165) {
 					++_vm->_soundManager._soundVolume;
 					if (_vm->_soundManager._soundVolume <= 16)
 						_vm->_soundManager.playSoundFile("bruit2.wav");
@@ -120,7 +122,8 @@ void DialogsManager::showOptionsDialog() {
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 
-				if (!_vm->_soundManager._soundOffFl && mousePos.x >= _vm->_graphicsManager._scrollOffset + 331 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 165) {
+				// Decrease volume
+				if (!_vm->_soundManager._soundOffFl && mousePos.x >= scrollOffset + 331 && mousePos.y > 140 && mousePos.x <= scrollOffset + 358 && mousePos.y <= 165) {
 					--_vm->_soundManager._soundVolume;
 					if (_vm->_soundManager._soundVolume >= 0)
 						_vm->_soundManager.playSoundFile("bruit2.wav");
@@ -133,7 +136,7 @@ void DialogsManager::showOptionsDialog() {
 			}
 
 			if (!_vm->_soundManager._voiceOffFl) {
-				if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 300 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 327 && mousePos.y <= 192) {
+				if (mousePos.x >= scrollOffset + 300 && mousePos.y > 167 && mousePos.x <= scrollOffset + 327 && mousePos.y <= 192) {
 					++_vm->_soundManager._voiceVolume;
 
 					if (_vm->_soundManager._voiceVolume <= 16)
@@ -145,7 +148,7 @@ void DialogsManager::showOptionsDialog() {
 					_vm->_soundManager.updateScummVMSoundSettings();
 				}
 
-				if (!_vm->_soundManager._voiceOffFl && mousePos.x >= _vm->_graphicsManager._scrollOffset + 331 && mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 192) {
+				if (!_vm->_soundManager._voiceOffFl && mousePos.x >= scrollOffset + 331 && mousePos.y > 167 && mousePos.x <= scrollOffset + 358 && mousePos.y <= 192) {
 					--_vm->_soundManager._voiceVolume;
 					if (_vm->_soundManager._voiceVolume >= 0)
 						_vm->_soundManager.playSoundFile("bruit2.wav");
@@ -157,18 +160,18 @@ void DialogsManager::showOptionsDialog() {
 				}
 			}
 
-			if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 431) {
-				if (mousePos.y > 194 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 489 && mousePos.y <= 219)
+			if (mousePos.x >= scrollOffset + 431) {
+				if (mousePos.y > 194 && mousePos.x <= scrollOffset + 489 && mousePos.y <= 219)
 					_vm->_soundManager._textOffFl = !_vm->_soundManager._textOffFl;
 
-				if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 431) {
-					if (mousePos.y > 167 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 489 && mousePos.y <= 192) {
+				if (mousePos.x >= scrollOffset + 431) {
+					if (mousePos.y > 167 && mousePos.x <= scrollOffset + 489 && mousePos.y <= 192) {
 						_vm->_soundManager._voiceOffFl = !_vm->_soundManager._voiceOffFl;
 
 						_vm->_soundManager.updateScummVMSoundSettings();
 					}
-					if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 431) {
-						if (mousePos.y > 113 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 489 && mousePos.y <= 138) {
+					if (mousePos.x >= scrollOffset + 431) {
+						if (mousePos.y > 113 && mousePos.x <= scrollOffset + 489 && mousePos.y <= 138) {
 							if (_vm->_soundManager._musicOffFl) {
 								_vm->_soundManager._musicOffFl = false;
 								_vm->_soundManager.setMODMusicVolume(_vm->_soundManager._musicVolume);
@@ -180,7 +183,7 @@ void DialogsManager::showOptionsDialog() {
 							_vm->_soundManager.updateScummVMSoundSettings();
 						}
 
-						if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 431 && mousePos.y > 140 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 489 && mousePos.y <= 165) {
+						if (mousePos.x >= scrollOffset + 431 && mousePos.y > 140 && mousePos.x <= scrollOffset + 489 && mousePos.y <= 165) {
 							_vm->_soundManager._soundOffFl = !_vm->_soundManager._soundOffFl;
 
 							_vm->_soundManager.updateScummVMSoundSettings();
@@ -189,13 +192,13 @@ void DialogsManager::showOptionsDialog() {
 				}
 			}
 
-			if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 175 && mousePos.y > 285 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 281 && mousePos.y <= 310) {
+			if (mousePos.x >= scrollOffset + 175 && mousePos.y > 285 && mousePos.x <= scrollOffset + 281 && mousePos.y <= 310) {
 				_vm->_globals._exitId = 300;
 				doneFlag = true;
 			}
-			if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 355 && mousePos.y > 285 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 490 && mousePos.y <= 310)
+			if (mousePos.x >= scrollOffset + 355 && mousePos.y > 285 && mousePos.x <= scrollOffset + 490 && mousePos.y <= 310)
 				doneFlag = true;
-			if (mousePos.x >= _vm->_graphicsManager._scrollOffset + 300 && mousePos.y > 194 && mousePos.x <= _vm->_graphicsManager._scrollOffset + 358 && mousePos.y <= 219) {
+			if (mousePos.x >= scrollOffset + 300 && mousePos.y > 194 && mousePos.x <= scrollOffset + 358 && mousePos.y <= 219) {
 				switch (_vm->_graphicsManager._scrollSpeed) {
 				case 1:
 					_vm->_graphicsManager._scrollSpeed = 2;
@@ -237,7 +240,7 @@ void DialogsManager::showOptionsDialog() {
 			//if (mousePos.x >= _vm->_graphicsManager.ofscroll + 348 && mousePos.y > 248 && mousePos.x <= _vm->_graphicsManager.ofscroll + 394 && mousePos.y <= 273)
 			//	_vm->_globals._speed = 2;
 
-			if (   mousePos.x < _vm->_graphicsManager._scrollOffset + 165 || mousePos.x > _vm->_graphicsManager._scrollOffset + 496 
+			if (   mousePos.x < scrollOffset + 165 || mousePos.x > scrollOffset + 496 
 				|| mousePos.y < 107 || mousePos.y > 318)
 				doneFlag = true;
 		}
@@ -298,10 +301,10 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_eventsManager.VBL();
 	} while (!doneFlag);
 
-	_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _vm->_graphicsManager._scrollOffset + 164,
-		107, 335, 215, _vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._scrollOffset + 164, 107);
-	_vm->_graphicsManager.addVesaSegment(_vm->_graphicsManager._scrollOffset + 164, 107,
-		_vm->_graphicsManager._scrollOffset + 498, 320);
+	_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, scrollOffset + 164,
+		107, 335, 215, _vm->_graphicsManager._vesaBuffer, scrollOffset + 164, 107);
+	_vm->_graphicsManager.addVesaSegment(scrollOffset + 164, 107,
+		scrollOffset + 498, 320);
 
 	_vm->_globals._optionDialogSpr = _vm->_globals.freeMemory(_vm->_globals._optionDialogSpr);
 	_vm->_globals._optionDialogFl = false;

@@ -157,20 +157,20 @@ public:
 	void initScreen(const Common::String &file, int mode, bool initializeScreen);
 	void displayAllBob();
 	void endDisplayBob();
+	void updateScreen();
+	void reduceScreenPart(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
 
 	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void SETCOLOR4(int palIndex, int r, int g, int b);
 	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment = true);
-	void updateScreen();
 	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY);
-	void SCANLINE(int pitch);
+	void setScreenWidth(int pitch);
 	void Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void NB_SCREEN(bool initPalette);
-	void Reduc_Ecran(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
 };
 
 } // End of namespace Hopkins

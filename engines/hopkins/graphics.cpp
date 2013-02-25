@@ -128,13 +128,14 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
  * (try to) Lock Screen
  */
 void GraphicsManager::lockScreen() {
-	if (!_skipVideoLockFl) {
-		if (_lockCounter++ == 0) {
-			_videoPtr = g_system->lockScreen();
-			if (WinScan == 0)
-				WinScan = _videoPtr->pitch;
-		}
-	}		
+	if (_skipVideoLockFl)
+		return;
+
+	if (_lockCounter++ == 0) {
+		_videoPtr = g_system->lockScreen();
+		if (WinScan == 0)
+			WinScan = _videoPtr->pitch;
+	}
 }
 
 /**
@@ -169,13 +170,13 @@ void GraphicsManager::loadImage(const Common::String &file) {
  * Load VGA Image
  */
 void GraphicsManager::loadVgaImage(const Common::String &file) {
-	SCANLINE(SCREEN_WIDTH);
+	setScreenWidth(SCREEN_WIDTH);
 	lockScreen();
 	clearScreen();
 	unlockScreen();
 	loadPCX320(_vesaScreen, file, _palette);
 	memcpy(_vesaBuffer, _vesaScreen, 64000);
-	SCANLINE(320);
+	setScreenWidth(320);
 	_maxX = 320;
 
 	lockScreen();
@@ -209,14 +210,14 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	clearPalette();
 
 	if (!_largeScreenFl) {
-		SCANLINE(SCREEN_WIDTH);
+		setScreenWidth(SCREEN_WIDTH);
 		_maxX = SCREEN_WIDTH;
 		lockScreen();
 		clearScreen();
 		m_scroll16(_vesaScreen, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		unlockScreen();
 	} else {
-		SCANLINE(SCREEN_WIDTH * 2);
+		setScreenWidth(SCREEN_WIDTH * 2);
 		_maxX = SCREEN_WIDTH * 2;
 		lockScreen();
 		clearScreen();
@@ -405,7 +406,7 @@ void GraphicsManager::clearPalette() {
 		WRITE_LE_UINT16(&SD_PIXELS[i], col0);
 }
 
-void GraphicsManager::SCANLINE(int pitch) {
+void GraphicsManager::setScreenWidth(int pitch) {
 	_lineNbr = _lineNbr2 = pitch;
 }
 
@@ -1776,7 +1777,7 @@ void GraphicsManager::copyWinscanVbe(const byte *src, byte *dest) {
 }
 
 // Reduce Screen
-void GraphicsManager::Reduc_Ecran(const byte *srcSurface, byte *destSurface, int xp, int yp, int width, int height, int zoom) {
+void GraphicsManager::reduceScreenPart(const byte *srcSurface, byte *destSurface, int xp, int yp, int width, int height, int zoom) {
 	const byte *srcP = xp + _lineNbr2 * yp + srcSurface;
 	byte *destP = destSurface;
 	Red = zoom;

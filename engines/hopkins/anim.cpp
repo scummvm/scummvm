@@ -258,7 +258,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 
 		_vm->_graphicsManager.clearPalette();
 		oldScrollPosX = _vm->_graphicsManager._scrollPosX;
-		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
+		_vm->_graphicsManager.setScreenWidth(SCREEN_WIDTH);
 		_vm->_graphicsManager.scrollScreen(0);
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
@@ -388,12 +388,12 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	_vm->_graphicsManager._scrollPosX = oldScrollPosX;
 	_vm->_graphicsManager.scrollScreen(oldScrollPosX);
 	if (_vm->_graphicsManager._largeScreenFl) {
-		_vm->_graphicsManager.SCANLINE(2 * SCREEN_WIDTH);
+		_vm->_graphicsManager.setScreenWidth(2 * SCREEN_WIDTH);
 		_vm->_graphicsManager._maxX = 2 * SCREEN_WIDTH;
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	} else {
-		_vm->_graphicsManager.SCANLINE(SCREEN_WIDTH);
+		_vm->_graphicsManager.setScreenWidth(SCREEN_WIDTH);
 		_vm->_graphicsManager._maxX = SCREEN_WIDTH;
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();

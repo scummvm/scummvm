@@ -612,7 +612,7 @@ void ComputerManager::setModeVGA256() {
 	_vm->_graphicsManager.clearScreen();
 	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.clearPalette();
-	_vm->_graphicsManager.SCANLINE(320);
+	_vm->_graphicsManager.setScreenWidth(320);
 }
 
 /**

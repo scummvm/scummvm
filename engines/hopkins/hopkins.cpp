@@ -1856,7 +1856,7 @@ void HopkinsEngine::displayEndDemo() {
 
 void HopkinsEngine::bombExplosion() {
 	_graphicsManager._lineNbr = SCREEN_WIDTH;
-	_graphicsManager.SCANLINE(SCREEN_WIDTH);
+	_graphicsManager.setScreenWidth(SCREEN_WIDTH);
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
