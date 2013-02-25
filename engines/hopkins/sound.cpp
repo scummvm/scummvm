@@ -589,7 +589,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 
 		// Reduce music volume during speech
 		if (!_musicOffFl && _musicVolume > 2) {
-			_musicVolume = (signed int)((long double)_musicVolume - (long double)_musicVolume / 100.0 * 45.0);
+			_musicVolume -= _musicVolume * 9 / 20;
 			setMODMusicVolume(_musicVolume);
 		}
 	}
