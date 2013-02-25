@@ -161,7 +161,7 @@ public:
 	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void SETCOLOR4(int palIndex, int r, int g, int b);
 	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment = true);
-	void DD_VBL();
+	void updateScreen();
 	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY);
 	void SCANLINE(int pitch);

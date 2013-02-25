@@ -263,7 +263,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.DD_VBL();
+		_vm->_graphicsManager.updateScreen();
 		restoreFBIRoom();
 	} else {
 		// Password doesn't match - Access Denied
@@ -277,7 +277,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.DD_VBL();
+		_vm->_graphicsManager.updateScreen();
 		restoreFBIRoom();
 		_vm->_eventsManager.mouseOff();
 	}

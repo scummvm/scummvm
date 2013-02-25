@@ -148,7 +148,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_graphicsManager.unlockScreen();
 	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
 	_vm->_globals._disableInventFl = oldDisableInventFl;
-	_vm->_graphicsManager.DD_VBL();
+	_vm->_graphicsManager.updateScreen();
 	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager.VBL();
 	_vm->_graphicsManager._scrollStatus = 0;
@@ -1084,7 +1084,7 @@ void TalkManager::animateObject(const Common::String &a2) {
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
 	_vm->_globals._disableInventFl = false;
-	_vm->_graphicsManager.DD_VBL();
+	_vm->_graphicsManager.updateScreen();
 	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager.VBL();
 	_vm->_graphicsManager._scrollStatus = 0;

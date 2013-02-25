@@ -339,7 +339,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.DD_VBL();
+			_graphicsManager.updateScreen();
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.clearPalette();
@@ -657,7 +657,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.DD_VBL();
+			_graphicsManager.updateScreen();
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.clearPalette();
@@ -1430,7 +1430,7 @@ bool HopkinsEngine::runFull() {
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
-			_graphicsManager.DD_VBL();
+			_graphicsManager.updateScreen();
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.clearPalette();
@@ -1626,7 +1626,7 @@ void HopkinsEngine::playIntro() {
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
 	_graphicsManager.clearPalette();
-	_graphicsManager.DD_VBL();
+	_graphicsManager.updateScreen();
 	_soundManager.playSound(11);
 	_graphicsManager.loadImage("intro1");
 	_graphicsManager.scrollScreen(0);

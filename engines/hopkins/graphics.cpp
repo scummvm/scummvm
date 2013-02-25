@@ -560,7 +560,7 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
 		// Set the transition palette and refresh the screen
 		setPaletteVGA256(palData2);
 		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		DD_VBL();
+		updateScreen();
 
 		// Added a delay in order to see the fading
 		_vm->_eventsManager.delay(20);
@@ -571,7 +571,7 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
 
 	// Refresh the screen
 	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	DD_VBL();
+	updateScreen();
 }
 
 /** 
@@ -590,7 +590,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 
 			setPaletteVGA256(palData);
 			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			DD_VBL();
+			updateScreen();
 
 			_vm->_eventsManager.delay(20);
 		}
@@ -602,7 +602,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 
 	setPaletteVGA256(palData);
 	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	return DD_VBL();
+	return updateScreen();
 }
 
 /** 
@@ -661,7 +661,7 @@ void GraphicsManager::fadeInBreakout() {
 	lockScreen();
 	copy16bFromSurfaceScaleX2(_vesaBuffer);
 	unlockScreen();
-	DD_VBL();
+	updateScreen();
 }
 
 /** 
@@ -676,7 +676,7 @@ void GraphicsManager::fateOutBreakout() {
 	lockScreen();
 	copy16bFromSurfaceScaleX2(_vesaBuffer);
 	unlockScreen();
-	DD_VBL();
+	updateScreen();
 }
 
 void GraphicsManager::setPaletteVGA256(const byte *palette) {
@@ -686,7 +686,7 @@ void GraphicsManager::setPaletteVGA256(const byte *palette) {
 void GraphicsManager::setPaletteVGA256WithRefresh(const byte *palette, const byte *surface) {
 	changePalette(palette);
 	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	DD_VBL();
+	updateScreen();
 }
 
 void GraphicsManager::SETCOLOR3(int palIndex, int r, int g, int b) {
@@ -724,7 +724,7 @@ uint16 GraphicsManager::mapRGB(byte r, byte g, byte b) {
 			| (b >> format.bLoss) << format.bShift;
 }
 
-void GraphicsManager::DD_VBL() {
+void GraphicsManager::updateScreen() {
 	// TODO: Is this okay here?
 	g_system->updateScreen();
 }
@@ -1744,7 +1744,7 @@ void GraphicsManager::NB_SCREEN(bool initPalette) {
 	unlockScreen();
 
 	memcpy(_vesaScreen, _vesaBuffer, 614399);
-	DD_VBL();
+	updateScreen();
 }
 
 void GraphicsManager::copyWinscanVbe(const byte *src, byte *dest) {

@@ -2613,7 +2613,7 @@ void ObjectsManager::handleSpecialGames() {
 		memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
 
 		_vm->_graphicsManager._scrollStatus = 0;
-		_vm->_graphicsManager.DD_VBL();
+		_vm->_graphicsManager.updateScreen();
 		break;
 	case 20:
 		_vm->_globals._saveData->_data[svField132] = (getSpriteX(0) > 65 && getSpriteX(0) <= 124 && getSpriteY(0) > 372 && getSpriteY(0) <= 398) ? 1 : 0;

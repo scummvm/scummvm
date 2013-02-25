@@ -100,7 +100,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		else
 			_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.DD_VBL();
+		_vm->_graphicsManager.updateScreen();
 	}
 	_vm->_eventsManager._rateCounter = 0;
 	_vm->_eventsManager._escKeyFl = false;
@@ -155,7 +155,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 					_vm->_graphicsManager.copyVideoVbe16(screenP);
 				}
 				_vm->_graphicsManager.unlockScreen();
-				_vm->_graphicsManager.DD_VBL();
+				_vm->_graphicsManager.updateScreen();
 				_vm->_soundManager.checkSoundEnd();
 			}
 		}
@@ -281,7 +281,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			else
 				_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			_vm->_graphicsManager.unlockScreen();
-			_vm->_graphicsManager.DD_VBL();
+			_vm->_graphicsManager.updateScreen();
 		}
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
@@ -329,7 +329,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 				}
 			}
 			_vm->_graphicsManager.unlockScreen();
-			_vm->_graphicsManager.DD_VBL();
+			_vm->_graphicsManager.updateScreen();
 			_vm->_soundManager.checkSoundEnd();
 		}
 
@@ -401,7 +401,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	}
 	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.fadeInShort();
-	_vm->_graphicsManager.DD_VBL();
+	_vm->_graphicsManager.updateScreen();
 
 	_vm->_eventsManager.mouseOn();
 }
@@ -648,7 +648,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		else
 			_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.DD_VBL();
+		_vm->_graphicsManager.updateScreen();
 	}
 	bool skipFl = false;
 	if (_vm->getIsDemo()) {
@@ -728,7 +728,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 				_vm->_graphicsManager.copyVideoVbe16a(screenP);
 			}
 			_vm->_graphicsManager.unlockScreen();
-			_vm->_graphicsManager.DD_VBL();
+			_vm->_graphicsManager.updateScreen();
 			_vm->_soundManager.checkSoundEnd();
 		}
 	}
@@ -808,7 +808,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			else
 				_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			_vm->_graphicsManager.unlockScreen();
-			_vm->_graphicsManager.DD_VBL();
+			_vm->_graphicsManager.updateScreen();
 		}
 		_vm->_eventsManager._rateCounter = 0;
 		_vm->_eventsManager._escKeyFl = false;
@@ -854,7 +854,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 				_vm->_graphicsManager.copyVideoVbe16a(screenP);
 			}
 			_vm->_graphicsManager.unlockScreen();
-			_vm->_graphicsManager.DD_VBL();
+			_vm->_graphicsManager.updateScreen();
 			_vm->_soundManager.checkSoundEnd();
 		}
 	}
