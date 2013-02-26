@@ -105,7 +105,7 @@ void DreamWebEngine::useMon() {
 	workToScreenM();
 }
 	
-int DreamWebEngine::findCommand(const char* cmdList[]) {
+int DreamWebEngine::findCommand(const char *const cmdList[]) {
 	// Loop over all commands in the list and see if we get a match
 	int cmd = 0;
 	while (cmdList[cmd] != NULL) {
@@ -126,7 +126,7 @@ int DreamWebEngine::findCommand(const char* cmdList[]) {
 }
 
 bool DreamWebEngine::execCommand() {
-	static const char *comlist[] = {
+	static const char *const comlist[] = {
 		"EXIT",
 		"HELP",
 		"LIST",
@@ -136,7 +136,7 @@ bool DreamWebEngine::execCommand() {
 		NULL
 	};
 	
-	static const char *comlistFR[] = {
+	static const char *const comlistFR[] = {
 		"SORTIR",
 		"AIDE",
 		"LISTE",
@@ -146,7 +146,7 @@ bool DreamWebEngine::execCommand() {
 		NULL
 	};
 	
-	static const char *comlistDE[] = {
+	static const char *const comlistDE[] = {
 		"ENDE",
 		"HILFE",
 		"LISTE",
@@ -155,8 +155,8 @@ bool DreamWebEngine::execCommand() {
 		"DATEN",
 		NULL
 	};
-	
-	static const char *comlistIT[] = {
+	 
+	static const char *const comlistIT[] = {
 		"ESCI",
 		"AIUTO",
 		"ELENCA",

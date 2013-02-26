@@ -513,7 +513,7 @@ public:
 	void dirCom();
 	void useMon();
 	bool execCommand();
-	int findCommand(const char* cmdList[]);
+	int findCommand(const char *const cmdList[]);
 
 	// from newplace.cpp
 	void getUnderCentre();
