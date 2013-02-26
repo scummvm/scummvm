@@ -126,7 +126,7 @@ public:
 	void unlockScreen();
 	void clearPalette();
 	void clearScreen();
-	void addVesaSegment(int x1, int y1, int x2, int y2);
+	void addDirtyRect(int x1, int y1, int x2, int y2);
 	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void loadImage(const Common::String &file);
 	void loadVgaImage(const Common::String &file);

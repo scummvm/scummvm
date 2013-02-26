@@ -118,7 +118,7 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		_screenWidth = width;
 		_screenHeight = height;
 
-		WinScan = width * 2;
+		WinScan = SCREEN_WIDTH * 2;
 		PAL_PIXELS = SD_PIXELS;
 		_lineNbr = width;
 
@@ -140,7 +140,7 @@ void GraphicsManager::lockScreen(bool shouldUsePhysicalScreen) {
 				WinScan = s->pitch;
 			} else {
 				_videoPtr = _screenBuffer;
-				WinScan = _width * 2;
+				WinScan = SCREEN_WIDTH * 2;
 			}
 
 			_isPhysicalPtr = shouldUsePhysicalScreen;
@@ -203,6 +203,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
  */
 void GraphicsManager::loadScreen(const Common::String &file) {
 	Common::File f;
+	assert(!_videoPtr || !_isPhysicalPtr);
 
 	bool flag = true;
 	if (_vm->_fileManager.searchCat(file, 6) == g_PTRNUL) {
@@ -242,7 +243,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 		}
 	}
 
-	memcpy(_vesaBuffer, _vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	memcpy(_vesaBuffer, _vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);	
 }
 
 void GraphicsManager::initColorTable(int minIndex, int maxIndex, byte *palette) {
@@ -445,7 +446,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 	}
 
 	unlockScreen();
-	addVesaSegment(xs, ys, xs + width, ys + height);
+	addDirtyRect(xs, ys, xs + width, ys + height);
 }
 
 // TODO: See if PAL_PIXELS can be converted to a uint16 array
@@ -505,7 +506,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
 
-	addVesaSegment(xs, ys, xs + width, ys + width);
+	addDirtyRect(xs, ys, xs + width, ys + width);
 }
 
 void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
@@ -544,7 +545,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 		yCount = yCtr - 1;
 	} while (yCtr != 1);
 
-	addVesaSegment(xp, yp, xp + width, yp + width);
+	addDirtyRect(xp, yp, xp + width, yp + width);
 }
 
 /** 
@@ -1101,7 +1102,7 @@ void GraphicsManager::resetVesaSegment() {
 }
 
 // Add VESA Segment
-void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
+void GraphicsManager::addDirtyRect(int x1, int y1, int x2, int y2) {
 	int tempX = x1;
 	bool addFlag = true;
 	if (x2 > _maxX)
@@ -1190,7 +1191,7 @@ void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, i
 		Sprite_Vesa(_vesaScreen, objectData, xp + 300, yp + 300, idx);
 	}
 	if (addSegment)
-		addVesaSegment(xp, yp, xp + width, yp + height);
+		addDirtyRect(xp, yp, xp + width, yp + height);
 }
 
 /**
@@ -1609,7 +1610,7 @@ void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int sp
 		Sprite_Vesa(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex);
 	}
 	if (addSegment)
-		addVesaSegment(xp, yp, xp + width, yp + height);
+		addDirtyRect(xp, yp, xp + width, yp + height);
 }
 
 void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY) {
@@ -1635,7 +1636,7 @@ void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width
 	if (croppedWidth > 0 && croppedHeight > 0) {
 		int height2 = croppedHeight;
 		Copy_Mem(surface, left, top, croppedWidth, croppedHeight, destSurface, destX, destY);
-		addVesaSegment(left, top, left + croppedWidth, top + height2);
+		addDirtyRect(left, top, left + croppedWidth, top + height2);
 	}
 }
 

@@ -411,7 +411,7 @@ void EventsManager::VBL() {
 		}
 	} else if (yp < _vm->_graphicsManager._maxY && xp < _vm->_graphicsManager._maxX && width > 1 && height > 1) {
 		_vm->_eventsManager.updateCursor();
-		_vm->_graphicsManager.addVesaSegment(xp, yp, right, bottom);
+		_vm->_graphicsManager.addDirtyRect(xp, yp, right, bottom);
 	}
 
 	_vm->_globals._speed = 2;

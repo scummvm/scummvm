@@ -426,13 +426,13 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 			x1 -= _vm->_fontManager._fontFixedWidth;
 			x2 = x1 + 2 * _vm->_fontManager._fontFixedWidth;
 			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, 3 * _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-			_vm->_graphicsManager.addVesaSegment(x1, yp, x2, yp + 12);
+			_vm->_graphicsManager.addDirtyRect(x1, yp, x2, yp + 12);
 			_vm->_fontManager.displayTextVesa(x1, yp, "_", 252);
 		}
 		if (mappedChar != '*') {
 			char newChar = mappedChar;
 			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-			_vm->_graphicsManager.addVesaSegment(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
+			_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
 			_inputBuf[textIndex] = newChar;
 
 			Common::String charString = Common::String::format("%c_", newChar);
@@ -444,7 +444,7 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 	} while (textIndex != textIdx && curChar != 13);
 
 	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-	_vm->_graphicsManager.addVesaSegment(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
+	_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
 
 	_vm->_eventsManager.VBL();
 	_inputBuf[textIndex] = 0;

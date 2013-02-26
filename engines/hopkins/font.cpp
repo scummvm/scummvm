@@ -166,7 +166,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				yp,
 				_text[idx]._width,
 				_text[idx]._height);
-			_vm->_graphicsManager.addVesaSegment(xp, yp, xp + width, yp + height);
+			_vm->_graphicsManager.addDirtyRect(xp, yp, xp + width, yp + height);
 		}
 	} else {
 		int lineCount = 0;
@@ -405,7 +405,7 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 		}
 	}
 
-	_vm->_graphicsManager.addVesaSegment(xp, yp, currentX, yp + 12);
+	_vm->_graphicsManager.addDirtyRect(xp, yp, currentX, yp + 12);
 }
 
 /**
@@ -463,7 +463,7 @@ void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, i
 
 			int charStartPosX = charEndPosX;
 			charEndPosX += charWidth;
-			_vm->_graphicsManager.addVesaSegment(charStartPosX, yp, charEndPosX, yp + 12);
+			_vm->_graphicsManager.addDirtyRect(charStartPosX, yp, charEndPosX, yp + 12);
 			if (_vm->_eventsManager._escKeyFl) {
 				_vm->_globals.iRegul = 1;
 				_vm->_eventsManager.VBL();
