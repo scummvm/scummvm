@@ -134,15 +134,15 @@ private:
 	bool checkCollisionLine(int xp, int yp, int *foundDataIdx, int *foundLineIdx, int startLineIdx, int endLineIdx);
 	bool checkSmoothMove(int fromX, int fromY, int destX, int destY);
 	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
-	int characterRoute(int fromX, int fromY, int destX, int destY, int a5, int a6, int a7);
+	int characterRoute(int fromX, int fromY, int destX, int destY, int startLineIdx, int endLineIdx, int routeIdx);
 	int testLine(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
 
 	int CALC_PROPRE(int idx);
 	int CONTOURNE(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route);
 	int CONTOURNE1(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route, int a8, int a9);
-	bool MIRACLE(int fromX, int fromY, int a3, int a4, int a5);
-	int GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int routerIdx, RouteItem *route);
-	bool PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5);
+	bool MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, int routeIdx);
+	int GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int destX, int destY, int routerIdx, RouteItem *route);
+	bool PLAN_TEST(int paramX, int paramY, int superRouteIdx, int a4, int a5);
 
 public:
 	RouteItem *_route;
@@ -161,7 +161,7 @@ public:
 	int checkInventoryHotspots(int posX, int posY);
 	void addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx);
 	void loadLines(const Common::String &file);
-	void addLine(int idx, Directions direction, int a3, int a4, int a5, int a6);
+	void addLine(int lineIdx, Directions direction, int a3, int a4, int a5, int a6);
 	void initRoute();
 	RouteItem *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	void clearAllZones();
