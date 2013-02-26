@@ -1696,7 +1696,7 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 		}
 	}
 	if (READ_BE_UINT24(ptr) != MKTAG24('I', 'N', 'I')) {
-		error("Invalid INI File %s", file);
+		error("Invalid INI File %s", file.c_str());
 	} else {
 		bool doneFlag = false;
 		int dataOffset = 1;
