@@ -568,7 +568,7 @@ void DialogsManager::testDialogOpening() {
  */
 void DialogsManager::showLoadGame() {
 	_vm->_eventsManager.VBL();
-	showSaveLoad(2);
+	showSaveLoad(MODE_LOAD);
 
 	int slotNumber;
 	do {
@@ -597,7 +597,7 @@ void DialogsManager::showLoadGame() {
 void DialogsManager::showSaveGame() {
 	_vm->_eventsManager.VBL();
 
-	showSaveLoad(1);
+	showSaveLoad(MODE_SAVE);
 	int slotNumber;
 	do {
 		slotNumber = searchSavegames();
@@ -625,7 +625,7 @@ void DialogsManager::showSaveGame() {
 /**
  * Load/Save dialog
  */
-void DialogsManager::showSaveLoad(int a1) {
+void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 	Common::String filename;
 
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
@@ -649,14 +649,14 @@ void DialogsManager::showSaveLoad(int a1) {
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 483, 360, 0);
 
 	if (_vm->_globals._language == LANG_FR) {
-		if (a1 == 1)
+		if (mode == MODE_SAVE)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 525, 375, 1);
-		else if (a1 == 2)
+		else if (mode == MODE_LOAD)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 515, 375, 2);
 	} else {
-		if (a1 == 1)
+		if (mode == MODE_SAVE)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 535, 372, 1);
-		else if (a1 == 2)
+		else if (mode == MODE_LOAD)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager._startPos.x + 539, 372, 2);
 	}
 

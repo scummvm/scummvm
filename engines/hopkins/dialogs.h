@@ -31,6 +31,8 @@ namespace Hopkins {
 
 class HopkinsEngine;
 
+enum SaveLoadMode { MODE_SAVE = 1, MODE_LOAD = 2 };
+
 /**
  * Class for manging game dialogs
  */
@@ -38,7 +40,7 @@ class DialogsManager {
 private:
 	HopkinsEngine *_vm;
 
-	void showSaveLoad(int a1);
+	void showSaveLoad(SaveLoadMode mode);
 	int  searchSavegames();
 public:
 	byte *_inventWin1;
