@@ -1103,29 +1103,25 @@ void GraphicsManager::resetVesaSegment() {
 
 // Add VESA Segment
 void GraphicsManager::addDirtyRect(int x1, int y1, int x2, int y2) {
-	int tempX = x1;
 	bool addFlag = true;
-	if (x2 > _maxX)
-		x2 = _maxX;
-	if (y2 > _maxY)
-		y2 = _maxY;
-	if (x1 < _minX)
-		tempX = _minX;
-	if (y1 < _minY)
-		y1 = _minY;
+
+	x1 = CLIP(x1, _minX, _maxX);
+	y1 = CLIP(y1, _minY, _maxY);
+	x2 = CLIP(x2, _minX, _maxX);
+	y2 = CLIP(y2, _minY, _maxY);
 
 	for (int blocIndex = 0; blocIndex <= _dirtyRectCount; blocIndex++) {
 		BlocItem &bloc = _dirtyRects[blocIndex];
-		if (bloc._activeFl && tempX >= bloc._x1 && x2 <= bloc._x2 && y1 >= bloc._y1 && y2 <= bloc._y2)
+		if (bloc._activeFl && x1 >= bloc._x1 && x2 <= bloc._x2 && y1 >= bloc._y1 && y2 <= bloc._y2)
 			addFlag = false;
 	};
 
-	if (addFlag) {
+	if (addFlag && (x2 > x1) && (y2 > y1)) {
 		assert(_dirtyRectCount < DIRTY_RECTS_SIZE);
 		BlocItem &bloc = _dirtyRects[++_dirtyRectCount];
 
 		bloc._activeFl = true;
-		bloc._x1 = tempX;
+		bloc._x1 = x1;
 		bloc._x2 = x2;
 		bloc._y1 = y1;
 		bloc._y2 = y2;
