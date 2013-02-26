@@ -257,7 +257,7 @@ void LinesManager::addLine(int idx, Directions direction, int a3, int a4, int a5
 	Common::fill(v10, v10 + 4 * v34 + 8, 0);
 	_lineItem[idx]._lineData = (int16 *)v10;
 
-	int16 *v32 = _lineItem[idx]._lineData;
+	int16 *curLineData = _lineItem[idx]._lineData;
 	int v36 = 1000 * v8;
 	int v39 = 1000 * v8 / (v34 - 1);
 	int v37 = 1000 * v33 / (v34 - 1);
@@ -265,65 +265,62 @@ void LinesManager::addLine(int idx, Directions direction, int a3, int a4, int a5
 		v39 = -v39;
 	if (a6 < a4)
 		v37 = -v37;
-	int v11 = (int)v39 / 1000;
-	int v12 = (int)v37 / 1000;
-	if (!v11) {
-		if (v12 == -1) {
+	int dirX = (int)v39 / 1000; // -1: Left, 0: None, 1: Right
+	int dirY = (int)v37 / 1000; // -1: Up, 0: None, 1: Right
+	if (!dirX) {
+		if (dirY == -1) {
 			_lineItem[idx]._directionRouteInc = DIR_UP;
 			_lineItem[idx]._directionRouteDec = DIR_DOWN;
-		}
-		if (v12 == 1) {
+		} else if (dirY == 1) {
 			_lineItem[idx]._directionRouteInc = DIR_DOWN;
 			_lineItem[idx]._directionRouteDec = DIR_UP;
 		}
-	}
-	if (v11 == 1) {
-		if (v12 == -1) {
+		// If dirY == 0, no move
+	} else if (dirX == 1) {
+		if (dirY == -1) {
 			_lineItem[idx]._directionRouteInc = DIR_UP_RIGHT;
 			_lineItem[idx]._directionRouteDec = DIR_DOWN_LEFT;
-		}
-		if (!v12) {
+		} else if (!dirY) {
 			_lineItem[idx]._directionRouteInc = DIR_RIGHT;
 			_lineItem[idx]._directionRouteDec = DIR_LEFT;
-		}
-		if (v12 == 1) {
+		} else if (dirY == 1) {
 			_lineItem[idx]._directionRouteInc = DIR_DOWN_RIGHT;
 			_lineItem[idx]._directionRouteDec = DIR_UP_LEFT;
 		}
-	}
-	if (v11 == -1) {
-		if (v12 == 1) {
+	} else if (dirX == -1) {
+		if (dirY == 1) {
 			_lineItem[idx]._directionRouteInc = DIR_DOWN_LEFT;
 			_lineItem[idx]._directionRouteDec = DIR_UP_RIGHT;
-		}
-		if (!v12) {
+		} else if (!dirY) {
 			_lineItem[idx]._directionRouteInc = DIR_LEFT;
 			_lineItem[idx]._directionRouteDec = DIR_RIGHT;
-		}
-		if (v12 == -1) {
+		} else if (dirY == -1) {
 			_lineItem[idx]._directionRouteInc = DIR_UP_LEFT;
 			_lineItem[idx]._directionRouteDec = DIR_DOWN_RIGHT;
 		}
 	}
-	if (v11 == 1 && v37 > 250 && v37 <= 999) {
-		_lineItem[idx]._directionRouteInc = DIR_DOWN_RIGHT;
-		_lineItem[idx]._directionRouteDec = DIR_UP_LEFT;
+
+	// Second pass to soften cases where dirY == 0
+	if (dirX == 1) {
+		if (v37 > 250 && v37 <= 999) {
+			_lineItem[idx]._directionRouteInc = DIR_DOWN_RIGHT;
+			_lineItem[idx]._directionRouteDec = DIR_UP_LEFT;
+		} else if (v37 < -250 && v37 > -1000) {
+			_lineItem[idx]._directionRouteInc = DIR_UP_RIGHT;
+			_lineItem[idx]._directionRouteDec = DIR_DOWN_LEFT;
+		}
+	} else if (dirX == -1) {
+		if (v37 > 250 && v37 <= 999) {
+			_lineItem[idx]._directionRouteInc = DIR_DOWN_LEFT;
+			_lineItem[idx]._directionRouteDec = DIR_UP_RIGHT;
+		} else if (v37 < -250 && v37 > -1000) {
+			// In the original code, the test was on positive values and 
+			// was impossible to meet. 
+			_lineItem[idx]._directionRouteInc = DIR_UP_LEFT;
+			_lineItem[idx]._directionRouteDec = DIR_DOWN_RIGHT;
+		}
 	}
-	if (v11 == -1 && v37 > 250 && v37 <= 999) {
-		_lineItem[idx]._directionRouteInc = DIR_DOWN_LEFT;
-		_lineItem[idx]._directionRouteDec = DIR_UP_RIGHT;
-	}
-	if (v11 == 1 && v37 < -250 && v37 > -1000) {
-		_lineItem[idx]._directionRouteInc = DIR_UP_RIGHT;
-		_lineItem[idx]._directionRouteDec = DIR_DOWN_LEFT;
-	}
-	// This condition is impossible to meet!
-	// Code present in the Linux and BeOS executables
-	// CHECKME: maybe it should be checking negative values?
-	if (v11 == -1 && v37 <= 249 && v37 > 1000) {
-		_lineItem[idx]._directionRouteInc = DIR_UP_LEFT;
-		_lineItem[idx]._directionRouteDec = DIR_DOWN_RIGHT;
-	}
+
 	int v40 = v36 / v34;
 	int v38 = 1000 * v33 / v34;
 	if (a5 < a3)
@@ -336,21 +333,21 @@ void LinesManager::addLine(int idx, Directions direction, int a3, int a4, int a5
 	int v30 = 1000 * a4 / 1000;
 	int v35 = v34 - 1;
 	for (int v26 = 0; v26 < v35; v26++) {
-		v32[0] = v31;
-		v32[1] = v30;
-		v32 += 2;
+		curLineData[0] = v31;
+		curLineData[1] = v30;
+		curLineData += 2;
 
 		v24 += v40;
 		v25 += v38;
 		v31 = v24 / 1000;
 		v30 = v25 / 1000;
 	}
-	v32[0] = a5;
-	v32[1] = a6;
+	curLineData[0] = a5;
+	curLineData[1] = a6;
 
-	v32 += 2;
-	v32[0] = -1;
-	v32[1] = -1;
+	curLineData += 2;
+	curLineData[0] = -1;
+	curLineData[1] = -1;
 
 	_lineItem[idx]._lineDataEndIdx = v35 + 1;
 	_lineItem[idx]._direction = direction;
