@@ -193,7 +193,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	Common::File f;
 
 	bool flag = true;
-	if (_vm->_fileManager.searchCat(file, 6) == g_PTRNUL) {
+	if (_vm->_fileManager.searchCat(file, RES_PIC) == g_PTRNUL) {
 		if (!f.open(file))
 			error("loadScreen - %s", file.c_str());
 
@@ -1678,7 +1678,7 @@ void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp,
 
 void GraphicsManager::initScreen(const Common::String &file, int mode, bool initializeScreen) {
 	Common::String filename = file + ".ini";
-	byte *ptr = _vm->_fileManager.searchCat(filename, 1);
+	byte *ptr = _vm->_fileManager.searchCat(filename, RES_INI);
 
 	if (ptr == g_PTRNUL) {
 		ptr = _vm->_fileManager.loadFile(filename);
@@ -1687,7 +1687,7 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 		filename = file + ".spr";
 		_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
 		if (initializeScreen) {
-			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.searchCat(filename, 8);
+			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.searchCat(filename, RES_SLI);
 			if (_vm->_globals.SPRITE_ECRAN) {
 				_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.loadFile(filename);
 			} else {
@@ -1696,7 +1696,7 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 		}
 	}
 	if (READ_BE_UINT24(ptr) != MKTAG24('I', 'N', 'I')) {
-		error("Error, file not ini");
+		error("Invalid INI File %s", file);
 	} else {
 		bool doneFlag = false;
 		int dataOffset = 1;
@@ -1722,7 +1722,7 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 	_vm->_globals._answerBuffer = _vm->_globals.freeMemory(_vm->_globals._answerBuffer);
 
 	filename = file + ".rep";
-	byte *dataP = _vm->_fileManager.searchCat(filename, 2);
+	byte *dataP = _vm->_fileManager.searchCat(filename, RES_REP);
 	if (dataP == g_PTRNUL)
 		dataP = _vm->_fileManager.loadFile(filename);
 

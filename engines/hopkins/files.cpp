@@ -96,7 +96,7 @@ bool FileManager::fileExists(const Common::String &file) {
 /**
  * Search file in Cat file
  */
-byte *FileManager::searchCat(const Common::String &file, int a2) {
+byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
 	byte *ptr = NULL;
 	Common::File f;
 
@@ -104,8 +104,8 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 	Common::String secondaryFilename = "";
 	filename.toUppercase();
 
-	switch (a2) {
-	case 1:
+	switch (mode) {
+	case RES_INI:
 		if (!f.exists("RES_INI.CAT"))
 			return g_PTRNUL;
 
@@ -113,7 +113,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		secondaryFilename = "RES_INI.RES";
 		break;
 
-	case 2:
+	case RES_REP:
 		if (!f.exists("RES_REP.CAT"))
 			return g_PTRNUL;
 
@@ -121,7 +121,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		secondaryFilename = "RES_REP.RES";
 		break;
 
-	case 3:
+	case RES_LIN:
 		if (!f.exists("RES_LIN.CAT"))
 			return g_PTRNUL;
 
@@ -129,7 +129,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		secondaryFilename = "RES_LIN.RES";
 		break;
 
-	case 4:
+	case RES_ANI:
 		if (!f.exists("RES_ANI.CAT"))
 			return g_PTRNUL;
 
@@ -137,7 +137,7 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		secondaryFilename = "RES_ANI.RES";
 		break;
 
-	case 5:
+	case RES_PER:
 		if (!f.exists("RES_PER.CAT"))
 			return g_PTRNUL;
 
@@ -145,28 +145,28 @@ byte *FileManager::searchCat(const Common::String &file, int a2) {
 		secondaryFilename = "RES_PER.RES";
 		break;
 
-	case 6:
+	case RES_PIC:
 		if (!f.exists("PIC.CAT"))
 			return g_PTRNUL;
 
 		ptr = loadFile("PIC.CAT");
 		break;
 
-	case 7:
+	case RES_SAN:
 		if (!f.exists("RES_SAN.CAT"))
 			return g_PTRNUL;
 
 		ptr = loadFile("RES_SAN.CAT");
 		break;
 
-	case 8:
+	case RES_SLI:
 		if (!f.exists("RES_SLI.CAT"))
 			return g_PTRNUL;
 
 		ptr = loadFile("RES_SLI.CAT");
 		break;
 
-	case 9: {
+	case RES_VOI: {
 		Common::String tmpFilename;
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			tmpFilename = "ENG_VOI.CAT";

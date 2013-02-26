@@ -520,7 +520,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 
 	filename = Common::String::format("%s%d", prefix.c_str(), mappedFileNumber);
 
-	if (!_vm->_fileManager.searchCat(filename + ".WAV", 9)) {
+	if (!_vm->_fileManager.searchCat(filename + ".WAV", RES_VOI)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
 		// Win95 and Linux versions uses another set of names
@@ -533,7 +533,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 
 		catPos = _vm->_globals._catalogPos;
 		catLen = _vm->_globals._catalogSize;
-	} else if (!_vm->_fileManager.searchCat(filename + ".APC", 9)) {
+	} else if (!_vm->_fileManager.searchCat(filename + ".APC", RES_VOI)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
 		// Win95 and Linux versions uses another set of names
@@ -546,7 +546,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 
 		catPos = _vm->_globals._catalogPos;
 		catLen = _vm->_globals._catalogSize;
-	} else if (!_vm->_fileManager.searchCat(filename + ".RAW", 9)) {
+	} else if (!_vm->_fileManager.searchCat(filename + ".RAW", RES_VOI)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
 		// Win95 and Linux versions uses another set of names

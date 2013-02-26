@@ -2535,7 +2535,7 @@ void ObjectsManager::OPTI_OBJET() {
 	int lastOpcodeResult = 1;
 
 	file = "OBJET1.ini";
-	data = _vm->_fileManager.searchCat(file, 1);
+	data = _vm->_fileManager.searchCat(file, RES_INI);
 	if (data == g_PTRNUL) {
 		data = _vm->_fileManager.loadFile(file);
 		if (data == g_PTRNUL)
@@ -3047,7 +3047,7 @@ int ObjectsManager::getBobFrameIndex(int idx) {
 void ObjectsManager::loadLinkFile(const Common::String &file) {
 	Common::File f;
 	Common::String filename = file + ".LNK";
-	byte *ptr = _vm->_fileManager.searchCat(filename, 3);
+	byte *ptr = _vm->_fileManager.searchCat(filename, RES_LIN);
 	size_t nbytes = _vm->_globals._catalogSize;
 	if (ptr == g_PTRNUL) {
 		if (!f.open(filename))
@@ -3068,7 +3068,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 
 		Common::String filename2 = Common::String((const char *)ptr + 1000);
 		if (!filename2.empty()) {
-			_vm->_globals._hidingItemData[1] = _vm->_fileManager.searchCat(filename2, 8);
+			_vm->_globals._hidingItemData[1] = _vm->_fileManager.searchCat(filename2, RES_SLI);
 
 			if (_vm->_globals._hidingItemData[1] || _vm->_globals._hidingItemData[1] == g_PTRNUL) {
 				_vm->_globals._hidingItemData[1] = _vm->_fileManager.loadFile(filename2);
