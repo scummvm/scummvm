@@ -138,10 +138,10 @@ private:
 	int testLine(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
 
 	int CALC_PROPRE(int idx);
-	int CONTOURNE1(int a1, int a2, int a3, int a4, int a5, RouteItem *route, int a8, int a9);
-	int CONTOURNE(int a1, int a2, int a3, int a4, int a5, RouteItem *route);
+	int CONTOURNE(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route);
+	int CONTOURNE1(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route, int a8, int a9);
 	bool MIRACLE(int fromX, int fromY, int a3, int a4, int a5);
-	int GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int a7, RouteItem *route);
+	int GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int routerIdx, RouteItem *route);
 	bool PLAN_TEST(int paramX, int paramY, int a3, int a4, int a5);
 
 public:

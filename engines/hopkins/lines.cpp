@@ -451,77 +451,77 @@ void LinesManager::initRoute() {
 }
 
 // Avoid
-int LinesManager::CONTOURNE(int a1, int a2, int a3, int a4, int a5, RouteItem *route) {
-	int v36 = a1;
-	int v7 = a2;
-	int v8 = a3;
-	if (a1 < a4) {
-		v8 = _lineItem[a1].appendToRouteInc(a2, -1, route, v8);
+int LinesManager::CONTOURNE(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route) {
+	int curLineIdx = lineIdx;
+	int curLineDataIdx = lineDataIdx;
+	int curRouteIdx = routeIdx;
+	if (lineIdx < destLineIdx) {
+		curRouteIdx = _lineItem[lineIdx].appendToRouteInc(lineDataIdx, -1, route, curRouteIdx);
 
-		for (int i = a1 + 1; i < a4; i++)
-			v8 = _lineItem[i].appendToRouteInc(0, -1, route, v8);
+		for (int i = lineIdx + 1; i < destLineIdx; i++)
+			curRouteIdx = _lineItem[i].appendToRouteInc(0, -1, route, curRouteIdx);
 
-		v7 = 0;
-		v36 = a4;
+		curLineDataIdx = 0;
+		curLineIdx = destLineIdx;
 	}
-	if (v36 > a4) {
-		v8 = _lineItem[v36].appendToRouteDec(v7, 0, route, v8);
-		for (int i = v36 - 1; i > a4; i--)
-			v8 = _lineItem[i].appendToRouteDec(-1, 0, route, v8);
-		v7 = _lineItem[a4]._lineDataEndIdx - 1;
-		v36 = a4;
+	if (curLineIdx > destLineIdx) {
+		curRouteIdx = _lineItem[curLineIdx].appendToRouteDec(curLineDataIdx, 0, route, curRouteIdx);
+		for (int i = curLineIdx - 1; i > destLineIdx; i--)
+			curRouteIdx = _lineItem[i].appendToRouteDec(-1, 0, route, curRouteIdx);
+		curLineDataIdx = _lineItem[destLineIdx]._lineDataEndIdx - 1;
+		curLineIdx = destLineIdx;
 	}
-	if (v36 == a4) {
-		if (a5 >= v7) {
-			v8 = _lineItem[a4].appendToRouteInc(v7, a5, route, v8);
+	if (curLineIdx == destLineIdx) {
+		if (destLineDataIdx >= curLineDataIdx) {
+			curRouteIdx = _lineItem[destLineIdx].appendToRouteInc(curLineDataIdx, destLineDataIdx, route, curRouteIdx);
 		} else {
-			v8 = _lineItem[a4].appendToRouteDec(v7, a5, route, v8);
+			curRouteIdx = _lineItem[destLineIdx].appendToRouteDec(curLineDataIdx, destLineDataIdx, route, curRouteIdx);
 		}
 	}
-	return v8;
+	return curRouteIdx;
 }
 
 // Avoid 1
-int LinesManager::CONTOURNE1(int a1, int a2, int a3, int a4, int a5, RouteItem *route, int a8, int a9) {
-	int v9 = a1;
-	int v10 = a2;
-	int v40 = a3;
-	if (a4 < a1) {
-		v40 = _lineItem[a1].appendToRouteInc(a2, -1, route, v40);
-		int v15 = a1 + 1;
+int LinesManager::CONTOURNE1(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route, int a8, int a9) {
+	int curLineIdx = lineIdx;
+	int curLineDataIdx = lineDataIdx;
+	int curRouteIdx = routeIdx;
+	if (destLineIdx < lineIdx) {
+		curRouteIdx = _lineItem[lineIdx].appendToRouteInc(lineDataIdx, -1, route, curRouteIdx);
+		int v15 = lineIdx + 1;
 		if (v15 == a9 + 1)
 			v15 = a8;
-		while (a4 != v15) {
-			v40 = _lineItem[v15].appendToRouteInc(0, -1, route, v40);
+		while (destLineIdx != v15) {
+			curRouteIdx = _lineItem[v15].appendToRouteInc(0, -1, route, curRouteIdx);
 			++v15;
 			if (a9 + 1 == v15)
 				v15 = a8;
 		}
-		v10 = 0;
-		v9 = a4;
+		curLineDataIdx = 0;
+		curLineIdx = destLineIdx;
 	}
-	if (a4 > v9) {
-		v40 = _lineItem[v9].appendToRouteDec(v10, 0, route, v40);
-		int v24 = v9 - 1;
+	if (destLineIdx > curLineIdx) {
+		curRouteIdx = _lineItem[curLineIdx].appendToRouteDec(curLineDataIdx, 0, route, curRouteIdx);
+		int v24 = curLineIdx - 1;
 		if (v24 == a8 - 1)
 			v24 = a9;
-		while (a4 != v24) {
-			v40 = _lineItem[v24].appendToRouteDec(-1, 0, route, v40);
+		while (destLineIdx != v24) {
+			curRouteIdx = _lineItem[v24].appendToRouteDec(-1, 0, route, curRouteIdx);
 			--v24;
 			if (a8 - 1 == v24)
 				v24 = a9;
 		}
-		v10 = _lineItem[a4]._lineDataEndIdx - 1;
-		v9 = a4;
+		curLineDataIdx = _lineItem[destLineIdx]._lineDataEndIdx - 1;
+		curLineIdx = destLineIdx;
 	}
-	if (a4 == v9) {
-		if (a5 >= v10) {
-			v40 = _lineItem[a4].appendToRouteInc(v10, a5, route, v40);
+	if (destLineIdx == curLineIdx) {
+		if (destLineDataIdx >= curLineDataIdx) {
+			curRouteIdx = _lineItem[destLineIdx].appendToRouteInc(curLineDataIdx, destLineDataIdx, route, curRouteIdx);
 		} else {
-			v40 = _lineItem[a4].appendToRouteDec(v10, a5, route, v40);
+			curRouteIdx = _lineItem[destLineIdx].appendToRouteDec(curLineDataIdx, destLineDataIdx, route, curRouteIdx);
 		}
 	}
-	return v40;
+	return curRouteIdx;
 }
 
 bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
@@ -773,13 +773,13 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int a3, int a4, int a5) {
 	return false;
 }
 
-int LinesManager::GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int a7, RouteItem *route) {
-	int result = a7;
+int LinesManager::GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a6, int routerIdx, RouteItem *route) {
+	int result = routerIdx;
 	int v80 = -1;
 	++_pathFindingMaxDepth;
 	if (_pathFindingMaxDepth > 10) {
 		warning("PathFinding - Max depth reached");
-		route[a7].invalidate();
+		route[routerIdx].invalidate();
 		return -1;
 	}
 	int16 *v10 = _lineItem[lineIdx]._lineData;
@@ -985,7 +985,7 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a
 				break;;
 		}
 		if (v74 != -1 && v38 != -1 && v76 != -1 && v75 != -1) {
-			route[a7].invalidate();
+			route[routerIdx].invalidate();
 			return -1;
 		}
 	}
@@ -1005,9 +1005,9 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int a3, int a4, int a5, int a
 			} while (v80 != v42);
 			if (abs(v80 - lineIdx) == v43) {
 				if (dataIdx >  abs(_lineItem[lineIdx]._lineDataEndIdx / 2)) {
-					result = CONTOURNE(lineIdx, dataIdx, a7, v80, v77, route);
+					result = CONTOURNE(lineIdx, dataIdx, routerIdx, v80, v77, route);
 				} else {
-					result = CONTOURNE1(lineIdx, dataIdx, a7, v80, v77, route, v92, v91);
+					result = CONTOURNE1(lineIdx, dataIdx, routerIdx, v80, v77, route, v92, v91);
 				}
 			}
 			if (abs(v80 - lineIdx) < v43)
