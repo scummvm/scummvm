@@ -128,7 +128,7 @@ private:
 	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
 
 	void SPECIAL_INI();
-	void ACTION(const byte *spriteData, const Common::String &actionStr, int a3, int a4, int speed, bool flipFl);
+	void ACTION(const byte *spriteData, const Common::String &actionStr, int speed, bool flipFl);
 public:
 	bool _disableFl;
 	bool _forestFl;
@@ -228,16 +228,16 @@ public:
 	void OPTI_OBJET();
 	void hideBob(int idx);
 	void displayBob(int idx);
-	void SPACTION(byte *spriteData, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl);
+	void SPACTION(byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl);
 	void BOB_VIVANT(int idx);
 	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);
 	void VBOB_OFF(int idx);
 	void OPTI_ONE(int idx, int animIdx, int destPosi, int animAction);
-	void SCI_OPTI_ONE(int idx, int animIdx, int a3, int a4);
+	void SCI_OPTI_ONE(int idx, int animIdx, int animDataIdx, int a4);
 	void GOHOME();
 	void OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx);
 	void BOB_OFFSET(int idx, int offset);
-	void SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int speed);
+	void SPACTION1(byte *spriteData, const Common::String &animString, int speed);
 	void PARADISE();
 };
 

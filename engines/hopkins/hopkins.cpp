@@ -2540,13 +2540,13 @@ void HopkinsEngine::handleOceanMouseEvents() {
 	case 1:
 		switch (_globals._oceanDirection) {
 		case DIR_UP:
-			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 0, 0, 6, false);
+			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 6, false);
 			break;
 		case DIR_RIGHT:
-			_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 0, 0, 6, false);
+			_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 6, false);
 			break;
 		case DIR_DOWN:
-			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 0, 0, 6, false);
+			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 6, false);
 			break;
 		default:
 			break;
@@ -2577,13 +2577,13 @@ void HopkinsEngine::handleOceanMouseEvents() {
 	case 2:
 		switch (_globals._oceanDirection) {
 		case DIR_UP:
-			_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
+			_objectsManager.SPACTION(_globals.PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 6, false);
 			break;
 		case DIR_DOWN:
-			_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 6, false);
+			_objectsManager.SPACTION(_globals.PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 6, false);
 			break;
 		case DIR_LEFT:
-			_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 0, 0, 6, false);
+			_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 6, false);
 			break;
 		default:
 			break;
@@ -2629,10 +2629,10 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				}
 			} while (oldX <= 235);
 			if (!displAnim)
-				_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 0, 0, 6, false);
+				_objectsManager.SPACTION(_globals.PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 6, false);
 			break;
 		case DIR_DOWN:
-			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
+			_objectsManager.SPACTION(_globals.PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 6, false);
 			break;
 		case DIR_LEFT:
 			oldX = _objectsManager.getSpriteX(0);
@@ -2652,7 +2652,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				}
 			} while (oldX > 236);
 			if (!displAnim)
-				_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 0, 0, 6, false);
+				_objectsManager.SPACTION(_globals.PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 6, false);
 			break;
 		default:
 			break;
@@ -2663,7 +2663,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 	case 4:
 		switch (_globals._oceanDirection) {
 		case DIR_UP:
-			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
+			_objectsManager.SPACTION(_globals.PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 6, false);
 			break;
 		case DIR_RIGHT:
 			oldX = _objectsManager.getSpriteX(0);
@@ -2683,7 +2683,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				}
 			} while (oldX <= 235);
 			if (!displAnim)
-				_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 0, 0, 6, false);
+				_objectsManager.SPACTION(_globals.PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 6, false);
 			break;
 		case DIR_LEFT:
 			oldX = _objectsManager.getSpriteX(0);
@@ -2702,7 +2702,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 
 				if (oldX <= 236) {
 					if (!displAnim)
-						_objectsManager.SPACTION(_globals.PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 0, 0, 6, false);
+						_objectsManager.SPACTION(_globals.PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 6, false);
 					break;
 				}
 			}

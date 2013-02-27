@@ -2757,34 +2757,34 @@ void ObjectsManager::doActionBack(int idx) {
 	
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 8, false);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 5:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,-1,", 8, false);
 		break;
 	case 6:
-		SPACTION1(_gestureBuf, "20,19,18,17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "20,19,18,17,16,15,-1,", 8);
 		break;
 	case 7:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,22,23,24,-1,", 8, false);
 		break;
 	case 8:
-		SPACTION1(_gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 8);
 		break;
 	case 9:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,22,23,24,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,22,23,24,-1,", 8, false);
 		break;
 	case 10:
-		SPACTION1(_gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 8);
 		break;
 	}
 }
@@ -2798,34 +2798,34 @@ void ObjectsManager::doActionRight(int idx) {
 	
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, false);
+		ACTION(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 8, false);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "1,2,3,4,5,6,7,8,-1,", 8, false);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, false);
+		ACTION(_gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 8, false);
 		break;
 	case 5:
-		SPACTION(_gestureBuf, "23,24,25,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "23,24,25,-1,", 8, false);
 		break;
 	case 6:
-		SPACTION1(_gestureBuf, "24,,23,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "24,,23,-1,", 8);
 		break;
 	case 7:
-		SPACTION(_gestureBuf, "23,24,25,26,27,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "23,24,25,26,27,-1,", 8, false);
 		break;
 	case 8:
-		SPACTION1(_gestureBuf, "26,25,24,23,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "26,25,24,23,-1,", 8);
 		break;
 	case 9:
-		SPACTION(_gestureBuf, "23,24,25,26,27,28,29,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "23,24,25,26,27,28,29,-1,", 8, false);
 		break;
 	case 10:
-		SPACTION1(_gestureBuf, "28,27,26,25,24,23,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "28,27,26,25,24,23,-1,", 8);
 		break;
 	}
 }
@@ -2839,34 +2839,34 @@ void ObjectsManager::doActionDiagRight(int idx) {
 
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 8, false);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 5:
-		SPACTION(_gestureBuf, "15,16,17,18,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "15,16,17,18,-1,", 8, false);
 		break;
 	case 6:
-		SPACTION1(_gestureBuf, "17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "17,16,15,-1,", 8);
 		break;
 	case 7:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "15,16,17,18,19,20-1,", 8, false);
 		break;
 	case 8:
-		SPACTION1(_gestureBuf, "19,18,17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "19,18,17,16,15,-1,", 8);
 		break;
 	case 9:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,-1,", 8, false);
 		break;
 	case 10:
-		SPACTION1(_gestureBuf, "20,19,18,17,15,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "20,19,18,17,15,-1,", 8);
 		break;
 	}
 }
@@ -2880,16 +2880,16 @@ void ObjectsManager::doActionFront(int idx) {
 	
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 0, 0, 8, false);
+		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 8, false);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, false);
+		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	}
 }
@@ -2903,34 +2903,34 @@ void ObjectsManager::doActionDiagLeft(int idx) {
 	
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, true);
+		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, true);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 0, 0, 8, true);
+		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 8, true);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 0, 0, 8, true);
+		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, true);
 		break;
 	case 5:
-		SPACTION(_gestureBuf, "15,16,17,18,-1,", 0, 0, 8, true);
+		SPACTION(_gestureBuf, "15,16,17,18,-1,", 8, true);
 		break;
 	case 6:
-		SPACTION1(_gestureBuf, "17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "17,16,15,-1,", 8);
 		break;
 	case 7:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,-1,", 0, 0, 8, true);
+		SPACTION(_gestureBuf, "15,16,17,18,19,20,-1,", 8, true);
 		break;
 	case 8:
-		SPACTION1(_gestureBuf, "19,18,17,16,15,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "19,18,17,16,15,-1,", 8);
 		break;
 	case 9:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,-1,", 0, 0, 8, true);
+		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,-1,", 8, true);
 		break;
 	case 10:
-		SPACTION1(_gestureBuf, "20,19,18,17,15,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "20,19,18,17,15,-1,", 8);
 		break;
 	}
 }
@@ -2944,34 +2944,34 @@ void ObjectsManager::doActionLeft(int idx) {
 	
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 0, 0, 8, true);
+		ACTION(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 8, true);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "1,2,3,4,5,6,7,8,-1,", 0, 0, 8, true);
+		SPACTION(_gestureBuf, "1,2,3,4,5,6,7,8,-1,", 8, true);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 0, 0, 8, true);
+		ACTION(_gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 8, true);
 		break;
 	case 5:
-		SPACTION(_gestureBuf, "23,24,25,-1,", 0, 0, 8, true);
+		SPACTION(_gestureBuf, "23,24,25,-1,", 8, true);
 		break;
 	case 6:
-		SPACTION1(_gestureBuf, "24,,23,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "24,,23,-1,", 8);
 		break;
 	case 7:
-		SPACTION(_gestureBuf, "23,24,25,26,27,-1,", 0, 0, 8, true);
+		SPACTION(_gestureBuf, "23,24,25,26,27,-1,", 8, true);
 		break;
 	case 8:
-		SPACTION1(_gestureBuf, "26,25,24,23,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "26,25,24,23,-1,", 8);
 		break;
 	case 9:
-		SPACTION(_gestureBuf, "23,24,25,26,27,28,29,-1,", 0, 0, 8, true);
+		SPACTION(_gestureBuf, "23,24,25,26,27,28,29,-1,", 8, true);
 		break;
 	case 10:
-		SPACTION1(_gestureBuf, "28,27,26,25,24,23,-1,", 0, 0, 8);
+		SPACTION1(_gestureBuf, "28,27,26,25,24,23,-1,", 8);
 		break;
 	}
 }
@@ -3316,7 +3316,7 @@ void ObjectsManager::OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int 
 		setBobAnimDataIdx(idx3, anim3Idx);
 }
 
-void ObjectsManager::SCI_OPTI_ONE(int idx, int animIdx, int a3, int a4) {
+void ObjectsManager::SCI_OPTI_ONE(int idx, int animIdx, int animDataIdx, int a4) {
 	_vm->_eventsManager._curMouseButton = 0;
 	_vm->_eventsManager._mouseButton = 0;
 
@@ -3329,7 +3329,7 @@ void ObjectsManager::SCI_OPTI_ONE(int idx, int animIdx, int a3, int a4) {
 		_vm->_eventsManager.VBL();
 		if (_vm->_eventsManager._curMouseButton)
 			break;
-	} while (a3 != getBobAnimDataIdx(idx));
+	} while (animDataIdx != getBobAnimDataIdx(idx));
 	if (!a4)
 		stopBobAnimation(idx);
 }
@@ -3444,7 +3444,7 @@ void ObjectsManager::enableVerb(int idx, int a2) {
 	}
 }
 
-void ObjectsManager::ACTION(const byte *spriteData, const Common::String &actionStr, int a3, int a4, int speed, bool flipFl) {
+void ObjectsManager::ACTION(const byte *spriteData, const Common::String &actionStr, int speed, bool flipFl) {
 	Common::String tmpStr = "";
 	int realSpeed = speed;
 	if (_vm->_globals._speed == 2)
@@ -3454,8 +3454,6 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &action
 	const byte *oldSpriteData = _sprite[0]._spriteData;
 	int spriteIndex = _sprite[0]._spriteIndex;
 	bool oldFlipFl = _sprite[0]._flipFl;
-	_sprite[0].field12 += a3;
-	_sprite[0].field14 += a4;
 	_sprite[0]._flipFl = flipFl;
 
 	int idx = 0;
@@ -3474,8 +3472,6 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &action
 			if (idx == -1) {
 				_sprite[0]._spriteData = oldSpriteData;
 				_sprite[0]._spriteIndex = spriteIndex;
-				_sprite[0].field12 -= a3;
-				_sprite[0].field14 -= a4;
 				_sprite[0]._flipFl = oldFlipFl;
 			} else {
 				_sprite[0]._spriteData = spriteData;
@@ -3489,7 +3485,7 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &action
 	}
 }
 
-void ObjectsManager::SPACTION(byte *spriteData, const Common::String &animationSeq, int a3, int a4, int speed, bool flipFl) {
+void ObjectsManager::SPACTION(byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl) {
 	Common::String tmpStr = "";
 
 	int realSpeed = speed;
@@ -3501,8 +3497,6 @@ void ObjectsManager::SPACTION(byte *spriteData, const Common::String &animationS
 	_oldSpriteData = _sprite[0]._spriteData;
 	_oldSpriteIndex = _sprite[0]._spriteIndex;
 	_oldFlipFl = _sprite[0]._flipFl;
-	_sprite[0].field12 += a3;
-	_sprite[0].field14 += a4;
 	_sprite[0]._flipFl = flipFl;
 
 	uint strPos = 0;
@@ -3533,7 +3527,7 @@ void ObjectsManager::SPACTION(byte *spriteData, const Common::String &animationS
 	} while (spriteIndex != -1);
 }
 
-void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animString, int a3, int a4, int speed) {
+void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animString, int speed) {
 	Common::String tmpStr = "";
 	int realSpeed = speed;
 	if (_vm->_globals._speed == 2)
@@ -3560,8 +3554,6 @@ void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animStrin
 			if (spriteIndex == -1) {
 				_sprite[0]._spriteData = _oldSpriteData;
 				_sprite[0]._spriteIndex = _oldSpriteIndex;
-				_sprite[0].field12 -= a3;
-				_sprite[0].field14 -= a4;
 				_sprite[0]._flipFl = _oldFlipFl;
 			} else {
 				_sprite[0]._spriteData = spriteData;
