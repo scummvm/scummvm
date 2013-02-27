@@ -42,7 +42,7 @@ public:
 	void setParent(HopkinsEngine *vm);
 
 	int handleOpcode(byte *dataP);
-	int handleIf(const byte *dataP, int a2);
+	int handleIf(const byte *dataP, int offset);
 	int handleGoto(const byte *dataP);
 };
 

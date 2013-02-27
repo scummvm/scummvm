@@ -2437,44 +2437,41 @@ int ScriptManager::handleGoto(const byte *dataP) {
 	return READ_LE_INT16(dataP + 5);
 }
 
-int ScriptManager::handleIf(const byte *dataP, int a2) {
-	int v20;
-	int v2 = a2;
+int ScriptManager::handleIf(const byte *dataP, int offset) {
+	int newOffset;
+	int curOffset = offset;
 	bool loopFl;
 	do {
 		loopFl = false;
-		int v3 = v2;
+		int tmpOffset = curOffset;
 		int opcodeType;
 		do {
 			if (_vm->shouldQuit())
 				return 0; // Exiting game
 
-			++v3;
-			opcodeType = checkOpcode(dataP + 20 * v3);
-			if (v3 > 400)
+			++tmpOffset;
+			if (tmpOffset > 400)
 				error("Control if failed");
+			opcodeType = checkOpcode(dataP + 20 * tmpOffset);
 		} while (opcodeType != 4); // EIF
-		v20 = v3;
-		int v6 = v2;
-		bool v7 = false;
+		newOffset = tmpOffset;
+		tmpOffset = curOffset;
 		do {
 			if (_vm->shouldQuit())
 				return 0; // Exiting game
 
-			++v6;
-			if (checkOpcode(dataP + 20 * v6) == 3) // IIF
-				v7 = true;
-			if (v6 > 400)
+			++tmpOffset;
+			if (tmpOffset > 400)
 				error("Control if failed ");
-			if (v7) {
-				v2 = v20;
+			if (checkOpcode(dataP + 20 * tmpOffset) == 3) { // IIF
+				curOffset = newOffset;
 				loopFl = true;
 				break;
 			}
-		} while (v20 != v6);
+		} while (newOffset != tmpOffset);
 	} while (loopFl);
 
-	const byte *buf = dataP + 20 * a2;
+	const byte *buf = dataP + 20 * offset;
 	byte oper = buf[13];
 	byte oper2 = buf[14];
 	byte operType = buf[15];
@@ -2503,14 +2500,14 @@ int ScriptManager::handleIf(const byte *dataP, int a2) {
 	}
 	
 	if ((operType == 3) && check1Fl) {
-		return (a2 + 1);
+		return (offset + 1);
 	} else if ((operType == 1) && check1Fl && check2Fl) {
-		return (a2 + 1);
+		return (offset + 1);
 	} else if ((operType == 2) && (check1Fl || check2Fl)) {
-		return (a2 + 1);
+		return (offset + 1);
 	}
 
-	return (v20 + 1);
+	return (newOffset + 1);
 }
 
 int ScriptManager::checkOpcode(const byte *dataP) {
