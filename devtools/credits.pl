@@ -590,6 +590,11 @@ begin_credits("Credits");
 				add_person("Jordi Vilalta Prat", "jvprat", "");
 			end_section();
 
+			begin_section("Hopkins");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
+
 			begin_section("Hugo");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Oystein Eftevaag", "vinterstum", "");
