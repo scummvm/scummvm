@@ -65,7 +65,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 		_characterSize = _vm->_fileManager.fileSize(filename);
 	}
 	// CHECKME:_data[svField4] is useless?
-	_vm->_globals._saveData->_data[svField4] = 0;
+	_vm->_globals._saveData->_data[svUseless4] = 0;
 
 	getStringFromBuffer(40, spriteFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
@@ -166,7 +166,7 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	}
 
 	// CHECKME:_data[svField4] is useless?
-	_vm->_globals._saveData->_data[svField4] = 0;
+	_vm->_globals._saveData->_data[svUseless4] = 0;
 
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
@@ -351,7 +351,7 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 	// CHECKME:_data[svField4] is useless?
 	int v7 = READ_LE_INT16((uint16 *)charBuf + 9);
 	if (v7)
-		_vm->_globals._saveData->_data[svField4] = v7;
+		_vm->_globals._saveData->_data[svUseless4] = v7;
 
 	if (!frameNumb)
 		frameNumb = 10;
@@ -794,35 +794,35 @@ void TalkManager::REPONSE(int zone, int verb) {
 		ptr = _vm->_globals.allocMemory(620);
 		assert(ptr != g_PTRNUL);
 		memset(ptr, 0, 620);
-		uint16 v7 = 0;
-		int v12 = 0;
+		uint16 curAnswerIdx = 0;
+		int idx = 0;
 		bool innerLoopCond = false;
 		do {
 			tagFound = false;
-			if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'C')) {
-				++v12;
-				assert(v12 < (620 / 20));
+			if (READ_BE_UINT16(&curAnswerBuf[curAnswerIdx]) == MKTAG16('F', 'C')) {
+				++idx;
+				assert(idx < (620 / 20));
 
-				byte *v8 = (ptr + 20 * v12);
+				byte *answerBuf = (ptr + 20 * idx);
 				uint16 anwerIdx = 0;
 				do {
 					assert(anwerIdx < 20);
-					v8[anwerIdx++] = curAnswerBuf[v7++];
-					if (READ_BE_UINT16(&curAnswerBuf[v7]) == MKTAG16('F', 'F')) {
+					answerBuf[anwerIdx++] = curAnswerBuf[curAnswerIdx++];
+					if (READ_BE_UINT16(&curAnswerBuf[curAnswerIdx]) == MKTAG16('F', 'F')) {
 						tagFound = true;
-						v8[anwerIdx] = 'F';
-						v8[anwerIdx + 1] = 'F';
-						++v7;
+						answerBuf[anwerIdx] = 'F';
+						answerBuf[anwerIdx + 1] = 'F';
+						++curAnswerIdx;
 					}
 				} while (!tagFound);
 			}
 			if (!tagFound) {
-				uint32 signature24 = READ_BE_UINT24(&curAnswerBuf[v7]);
+				uint32 signature24 = READ_BE_UINT24(&curAnswerBuf[curAnswerIdx]);
 				if (signature24 == MKTAG24('C', 'O', 'D') || signature24 == MKTAG24('F', 'I', 'N'))
 					innerLoopCond = true;
 			}
-			curAnswerBuf += v7 + 1;
-			v7 = 0;
+			curAnswerBuf += curAnswerIdx + 1;
+			curAnswerIdx = 0;
 		} while (!innerLoopCond);
 		innerLoopCond = false;
 		int lastOpcodeResult = 1;
@@ -858,13 +858,13 @@ void TalkManager::REPONSE(int zone, int verb) {
 		} while (!innerLoopCond);
 	} while (outerLoopFl);
 	_vm->_globals.freeMemory(ptr);
-	_vm->_globals._saveData->_data[svField2] = 0;
+	_vm->_globals._saveData->_data[svLastZoneNum] = 0;
 	return;
 }
 
 void TalkManager::REPONSE2(int zone, int verb) {
 	int indx = 0;
-	if (verb != 5 || _vm->_globals._saveData->_data[svField3] != 4)
+	if (verb != 5 || _vm->_globals._saveData->_data[svLastObjectIndex] != 4)
 		return;
 
 	if (zone == 22 || zone == 23) {
@@ -965,7 +965,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 	}
 }
 
-void TalkManager::animateObject(const Common::String &a2) {
+void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
 	_vm->_eventsManager.VBL();
@@ -980,11 +980,11 @@ void TalkManager::animateObject(const Common::String &a2) {
 	_vm->_objectsManager._zoneNum = -1;
 	_vm->_eventsManager._mouseCursorId = 4;
 	_vm->_eventsManager.changeMouseCursor(0);
-	_characterBuffer = _vm->_fileManager.searchCat(a2, RES_PER);
+	_characterBuffer = _vm->_fileManager.searchCat(filename, RES_PER);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
-		_characterBuffer = _vm->_fileManager.loadFile(a2);
-		_characterSize = _vm->_fileManager.fileSize(a2);
+		_characterBuffer = _vm->_fileManager.loadFile(filename);
+		_characterSize = _vm->_fileManager.fileSize(filename);
 	}
 	Common::String screenFilename;
 	Common::String spriteFilename;

@@ -1296,7 +1296,7 @@ void ObjectsManager::GOHOME() {
 			_vm->_globals._actionDirection = DIR_NONE;
 			int zoneId;
 			if (_vm->_globals._actionMoveTo)
-				zoneId = _vm->_globals._saveData->_data[svField2];
+				zoneId = _vm->_globals._saveData->_data[svLastZoneNum];
 			else
 				zoneId = _zoneNum;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
@@ -1514,7 +1514,7 @@ void ObjectsManager::GOHOME() {
 		if (newPosX == -1 && newPosY == -1) {
 			int zoneId;
 			if (_vm->_globals._actionMoveTo)
-				zoneId = _vm->_globals._saveData->_data[svField2];
+				zoneId = _vm->_globals._saveData->_data[svLastZoneNum];
 			else
 				zoneId = _zoneNum;
 			setSpriteIndex(0, _vm->_globals._oldDirection + 59);
@@ -1879,8 +1879,8 @@ void ObjectsManager::handleLeftButton() {
 	if (_vm->_globals._actionMoveTo) {
 		_vm->_linesManager.checkZone();
 		_vm->_globals._actionMoveTo = false;
-		_vm->_globals._saveData->_data[svField1] = 0;
-		_vm->_globals._saveData->_data[svField2] = 0;
+		_vm->_globals._saveData->_data[svLastMouseCursor] = 0;
+		_vm->_globals._saveData->_data[svLastZoneNum] = 0;
 	}
 
 	if (_vm->_globals._cityMapEnabledFl && (_vm->_eventsManager._mouseCursorId != 4 || _zoneNum <= 0))
@@ -1937,14 +1937,14 @@ void ObjectsManager::handleLeftButton() {
 
 	if (_zoneNum != -1 && _zoneNum != 0) {
 		if (_vm->_eventsManager._mouseCursorId == 23)
-			_vm->_globals._saveData->_data[svField1] = 5;
+			_vm->_globals._saveData->_data[svLastMouseCursor] = 5;
 		else 
-			_vm->_globals._saveData->_data[svField1] = _vm->_eventsManager._mouseCursorId;
+			_vm->_globals._saveData->_data[svLastMouseCursor] = _vm->_eventsManager._mouseCursorId;
 
 		if (_vm->_globals._cityMapEnabledFl)
-			_vm->_globals._saveData->_data[svField1] = 6;
-		_vm->_globals._saveData->_data[svField2] = _zoneNum;
-		_vm->_globals._saveData->_data[svField3] = _curObjectIndex;
+			_vm->_globals._saveData->_data[svLastMouseCursor] = 6;
+		_vm->_globals._saveData->_data[svLastZoneNum] = _zoneNum;
+		_vm->_globals._saveData->_data[svLastObjectIndex] = _curObjectIndex;
 		_vm->_globals._actionMoveTo = true;
 	}
 	_vm->_fontManager.hideText(5);
@@ -1960,8 +1960,8 @@ void ObjectsManager::handleLeftButton() {
 }
 
 void ObjectsManager::PARADISE() {
-	char result = _vm->_globals._saveData->_data[svField1];
-	if (result && _vm->_globals._saveData->_data[svField2] && result != 4 && result > 3) {
+	char result = _vm->_globals._saveData->_data[svLastMouseCursor];
+	if (result && _vm->_globals._saveData->_data[svLastZoneNum] && result != 4 && result > 3) {
 		_vm->_fontManager.hideText(5);
 		if (!_forestFl || _zoneNum < 20 || _zoneNum > 23) {
 			if (_vm->_graphicsManager._largeScreenFl) {
@@ -2008,20 +2008,20 @@ void ObjectsManager::PARADISE() {
 				_vm->_eventsManager.VBL();
 				_vm->_graphicsManager._scrollStatus = 0;
 			}
-			_vm->_talkManager.REPONSE(_vm->_globals._saveData->_data[svField2], _vm->_globals._saveData->_data[svField1]);
+			_vm->_talkManager.REPONSE(_vm->_globals._saveData->_data[svLastZoneNum], _vm->_globals._saveData->_data[svLastMouseCursor]);
 		} else {
-			_vm->_talkManager.REPONSE2(_vm->_globals._saveData->_data[svField2], _vm->_globals._saveData->_data[svField1]);
+			_vm->_talkManager.REPONSE2(_vm->_globals._saveData->_data[svLastZoneNum], _vm->_globals._saveData->_data[svLastMouseCursor]);
 		}
 		_vm->_eventsManager.changeMouseCursor(4);
 		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_linesManager.ZONEP[_zoneNum]._enabledFl) {
 			_zoneNum = -1;
 			_forceZoneFl = true;
 		}
-		if (_zoneNum != _vm->_globals._saveData->_data[svField2] || _zoneNum == -1 || _zoneNum == 0) {
+		if (_zoneNum != _vm->_globals._saveData->_data[svLastZoneNum] || _zoneNum == -1 || _zoneNum == 0) {
 			_vm->_eventsManager._mouseCursorId = 4;
 			_changeVerbFl = false;
 		} else {
-			_vm->_eventsManager._mouseCursorId = _vm->_globals._saveData->_data[svField1];
+			_vm->_eventsManager._mouseCursorId = _vm->_globals._saveData->_data[svLastMouseCursor];
 			if (_changeVerbFl) {
 				nextVerbIcon();
 				_changeVerbFl = false;
@@ -2032,8 +2032,8 @@ void ObjectsManager::PARADISE() {
 		if (_vm->_eventsManager._mouseCursorId != 23)
 			_vm->_eventsManager.changeMouseCursor(_vm->_eventsManager._mouseCursorId);
 		_zoneNum = 0;
-		_vm->_globals._saveData->_data[svField1] = 0;
-		_vm->_globals._saveData->_data[svField2] = 0;
+		_vm->_globals._saveData->_data[svLastMouseCursor] = 0;
+		_vm->_globals._saveData->_data[svLastZoneNum] = 0;
 	}
 	if (_vm->_globals._cityMapEnabledFl) {
 		_vm->_eventsManager._mouseCursorId = 0;
@@ -2075,8 +2075,8 @@ void ObjectsManager::clearScreen() {
 	_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
 	_vm->_eventsManager._startPos.x = 0;
 	_vm->_eventsManager._mouseSpriteId = 0;
-	_vm->_globals._saveData->_data[svField1] = 0;
-	_vm->_globals._saveData->_data[svField2] = 0;
+	_vm->_globals._saveData->_data[svLastMouseCursor] = 0;
+	_vm->_globals._saveData->_data[svLastZoneNum] = 0;
 	_vm->_globals._actionMoveTo = false;
 	_forceZoneFl = true;
 	_changeVerbFl = false;
@@ -2181,21 +2181,21 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 
 		switch (newCharacter) {
 		case CHARACTER_HOPKINS:
-			_vm->_globals._saveData->_data[svField121] = 0;
+			_vm->_globals._saveData->_data[svUseless21] = 0;
 			_vm->_globals._saveData->_data[svField354] = 0;
 			_vm->_globals._saveData->_data[svField356] = 0;
 			_vm->_globals._saveData->_data[svField357] = 1;
 			_vm->_globals._exitId = _vm->_globals._saveData->_realHopkins._location;
 			break;
 		case CHARACTER_HOPKINS_CLONE:
-			_vm->_globals._saveData->_data[svField121] = 1;
+			_vm->_globals._saveData->_data[svUseless21] = 1;
 			_vm->_globals._saveData->_data[svField354] = 1;
 			_vm->_globals._saveData->_data[svField356] = 0;
 			_vm->_globals._saveData->_data[svField357] = 0;
 			_vm->_globals._exitId = _vm->_globals._saveData->_cloneHopkins._location;
 			break;
 		case CHARACTER_SAMANTHA:
-			_vm->_globals._saveData->_data[svField121] = 0;
+			_vm->_globals._saveData->_data[svUseless21] = 0;
 			_vm->_globals._saveData->_data[svField354] = 0;
 			_vm->_globals._saveData->_data[svField356] = 1;
 			_vm->_globals._saveData->_data[svField357] = 0;
@@ -3228,7 +3228,7 @@ void ObjectsManager::SPECIAL_INI() {
 				_vm->_soundManager.mixVoice(383, 4, displayedTxtFl);
 			_vm->_globals._saveData->_data[svField270] = 1;
 			_vm->_globals._saveData->_data[svField300] = 1;
-			_vm->_globals._saveData->_data[svField320] = 1;
+			_vm->_globals._saveData->_data[svUseless320] = 1;
 			if (_vm->_soundManager._voiceOffFl) {
 				for (int i = 0; i <= 199; i++)
 					_vm->_eventsManager.VBL();
@@ -3790,12 +3790,11 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 			_vm->_globals._characterType = 0;
 		}
 	}
-	if (!_vm->_globals._characterType) {
-		if (_vm->_globals._saveData->_data[svField122] == 1) {
-			_vm->_globals.PERSO = _vm->_fileManager.loadFile("HOPFEM.SPR");
-			_vm->_globals._characterType = 1;
-		}
+	if (!_vm->_globals._characterType && _vm->_globals._saveData->_data[svField122] == 1) {
+		_vm->_globals.PERSO = _vm->_fileManager.loadFile("HOPFEM.SPR");
+		_vm->_globals._characterType = 1;
 	}
+
 	if (_vm->_globals._characterType != 2 && _vm->_globals._saveData->_data[svField356] == 1) {
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PSAMAN.SPR");
 		_vm->_globals._characterType = 2;

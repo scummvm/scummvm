@@ -118,22 +118,21 @@ struct CharacterLocation {
 };
 
 enum SauvegardeOffset {
-	svField1 = 1
-	, svField2 = 2
-	, svField3 = 3
-	, svField4 = 4
-	, svField5 = 5
-	, svField6 = 6
-	, svField8 = 8
-	, svField9 = 9
-	, svField10 = 10
-	, svField13 = 13
+	svLastMouseCursor = 1
+	, svLastZoneNum = 2
+	, svLastObjectIndex = 3
+	, svUseless4 = 4
+	, svLastScreenId5 = 5
+	, svLastScreenId6 = 6
+	, svUseless8 = 8
+	, svUseless9 = 9
+	, svUseless10 = 10
 	, svField80 = 80
 	, svField94 = 94
 	, svField95 = 95
 	, svField113 = 113
 	, svField117 = 117
-	, svField121 = 121
+	, svUseless21 = 121
 	, svField122 = 122
 	, svField123 = 123
 	, svField132 = 132
@@ -145,23 +144,13 @@ enum SauvegardeOffset {
 	, svField171 = 171
 	, svField172 = 172
 	, svField173 = 173
-	, svField176 = 176
+	, svUseless176 = 176
 	, svField177 = 177
-	, svField180 = 180
 	, svField181 = 181
-	, svField182 = 182
 	, svField183 = 183
 	, svField184 = 184
-	, svField185 = 185
 	, svField186 = 186
-	, svField187 = 187
 	, svField188 = 188
-	, svField189 = 189
-	, svField190 = 190
-	, svField191 = 191
-	, svField192 = 192
-	, svField193 = 193
-	, svField194 = 194
 	, svField220 = 220
 	, svField225 = 225
 	, svField228 = 228
@@ -173,21 +162,20 @@ enum SauvegardeOffset {
 	, svField311 = 311
 	, svField312 = 312
 	, svField318 = 318
-	, svField320 = 320
+	, svUseless320 = 320
 	, svField330 = 330
 	, svField333 = 333
-	, svField338 = 338
-	, svField339 = 339
-	, svField340 = 340
+	, svUseless338 = 338
+	, svUseless339 = 339
+	, svUseless340 = 340
 	, svField341 = 341
-	, svField349 = 349
-	, svField352 = 352
+	, svUseless352 = 352
 	, svField353 = 353
 	, svField354 = 354
 	, svField355 = 355
 	, svField356 = 356
 	, svField357 = 357
-	, svField399 = 399
+	, svUseless399 = 399
 	, svField401 = 401
 };
 

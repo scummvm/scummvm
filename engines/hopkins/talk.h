@@ -70,7 +70,7 @@ public:
 
 	void startStaticCharacterDialogue(const Common::String &filename);
 	void startAnimatedCharacterDialogue(const Common::String &filename);
-	void animateObject(const Common::String &a2);
+	void animateObject(const Common::String &filename);
 
 	void REPONSE(int zone, int verb);
 	void REPONSE2(int zone, int verb);
