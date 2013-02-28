@@ -416,9 +416,9 @@ void DialogsManager::showInventory() {
 					break;
 
 				_vm->_scriptManager._tempObjectFl = true;
-				_vm->_globals._saveData->_data[svField3] = _vm->_objectsManager._curObjectIndex;
-				_vm->_globals._saveData->_data[svField8] = _vm->_globals._inventory[newInventoryItem];
-				_vm->_globals._saveData->_data[svField9] = _vm->_eventsManager._mouseCursorId;
+				_vm->_globals._saveData->_data[svLastObjectIndex] = _vm->_objectsManager._curObjectIndex;
+				_vm->_globals._saveData->_data[svUseless8] = _vm->_globals._inventory[newInventoryItem];
+				_vm->_globals._saveData->_data[svUseless9] = _vm->_eventsManager._mouseCursorId;
 				_vm->_objectsManager.OPTI_OBJET();
 				_vm->_scriptManager._tempObjectFl = false;
 
