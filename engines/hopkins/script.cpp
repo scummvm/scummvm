@@ -266,8 +266,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 	case MKTAG24('S', 'T', 'E'):
 		if (!_vm->_objectsManager._disableFl) {
 			_vm->_globals._prevScreenId = _vm->_globals._screenId;
-			_vm->_globals._saveData->_data[svLastScreenId6] = _vm->_globals._screenId;
-			_vm->_globals._screenId = _vm->_globals._saveData->_data[svLastScreenId5] = dataP[5];
+			_vm->_globals._saveData->_data[svLastPrevScreenId] = _vm->_globals._screenId;
+			_vm->_globals._screenId = _vm->_globals._saveData->_data[svLastScreenId] = dataP[5];
 			vbobFrameIndex = dataP[6];
 		}
 		opcodeType = 1;
@@ -279,7 +279,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		break;
 	case MKTAG24('P', 'E', 'R'): {
 		int specialOpcode = READ_LE_INT16(dataP + 5);
-		if (!_vm->_globals._saveData->_data[svField122] && !_vm->_globals._saveData->_data[svField356]) {
+		if (!_vm->_globals._saveData->_data[svAlternateSpriteFl] && !_vm->_globals._saveData->_data[svField356]) {
 			vbobFrameIndex = 0;
 
 			switch (specialOpcode) {
@@ -935,7 +935,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 56:
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile("HOPFEM.SPR");
 			_vm->_globals._characterType = 1;
-			_vm->_globals._saveData->_data[svField122] = 1;
+			_vm->_globals._saveData->_data[svAlternateSpriteFl] = 1;
 			_vm->_globals.loadCharacterData();
 			_vm->_objectsManager._sprite[0].field12 = 28;
 			_vm->_objectsManager._sprite[0].field14 = 155;
@@ -945,7 +945,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 57:
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
 			_vm->_globals._characterType = 0;
-			_vm->_globals._saveData->_data[svField122] = 0;
+			_vm->_globals._saveData->_data[svAlternateSpriteFl] = 0;
 			_vm->_globals.loadCharacterData();
 			_vm->_objectsManager._sprite[0].field12 = 34;
 			_vm->_objectsManager._sprite[0].field14 = 190;
@@ -1825,7 +1825,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 208: {
 			_vm->_globals._disableInventFl = true;
-			if (_vm->_globals._saveData->_data[svLastScreenId6] != _vm->_globals._saveData->_data[svField401]) {
+			if (_vm->_globals._saveData->_data[svLastPrevScreenId] != _vm->_globals._saveData->_data[svField401]) {
 				_vm->_soundManager._specialSoundNum = 208;
 				_vm->_animationManager.playSequence("SORT.SEQ", 10, 4, 10, true);
 				_vm->_soundManager._specialSoundNum = 0;
@@ -2190,7 +2190,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			v51->_pos.y = _vm->_objectsManager.getSpriteY(0);
 			v51->_startSpriteIndex = 57;
 			v51->_location = 97;
-			_vm->_globals._saveData->_data[svUseless21] = 1;
+			_vm->_globals._saveData->_data[svHopkinsCloneFl] = 1;
 			_vm->_globals._saveData->_data[svUseless352] = 1;
 			_vm->_globals._saveData->_data[svField353] = 1;
 			_vm->_globals._saveData->_data[svField354] = 1;

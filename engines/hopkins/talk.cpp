@@ -64,8 +64,8 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 		_characterBuffer = _vm->_fileManager.loadFile(filename);
 		_characterSize = _vm->_fileManager.fileSize(filename);
 	}
-	// CHECKME:_data[svField4] is useless?
-	_vm->_globals._saveData->_data[svUseless4] = 0;
+
+	_vm->_globals._saveData->_data[svDialogField4] = 0;
 
 	getStringFromBuffer(40, spriteFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
@@ -165,8 +165,7 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 		_characterSize = _vm->_fileManager.fileSize(filename);
 	}
 
-	// CHECKME:_data[svField4] is useless?
-	_vm->_globals._saveData->_data[svUseless4] = 0;
+	_vm->_globals._saveData->_data[svDialogField4] = 0;
 
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
@@ -348,10 +347,9 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 	_dialogueMesgId3 = READ_LE_INT16((uint16 *)charBuf + 7);
 	int frameNumb = READ_LE_INT16((uint16 *)charBuf + 8);
 
-	// CHECKME:_data[svField4] is useless?
 	int v7 = READ_LE_INT16((uint16 *)charBuf + 9);
 	if (v7)
-		_vm->_globals._saveData->_data[svUseless4] = v7;
+		_vm->_globals._saveData->_data[svDialogField4] = v7;
 
 	if (!frameNumb)
 		frameNumb = 10;

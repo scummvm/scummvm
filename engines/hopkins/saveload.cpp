@@ -142,7 +142,7 @@ void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSaveg
 Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName) {
 	/* Pack any necessary data into the savegame data structure */
 	// Set the selected slot number
-	_vm->_globals._saveData->_data[svUseless10] = slot;
+	_vm->_globals._saveData->_data[svLastSavegameSlot] = slot;
 
 	// Set up the inventory
 	for (int i = 0; i < 35; ++i)
@@ -203,9 +203,9 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 		_vm->_globals._inventory[i] = _vm->_globals._saveData->_inventory[i];
 
 	// Set variables from loaded data as necessary
-	_vm->_globals._saveData->_data[svUseless10] = slot;
-	_vm->_globals._exitId = _vm->_globals._saveData->_data[svLastScreenId5];
-	_vm->_globals._saveData->_data[svLastScreenId6] = 0;
+	_vm->_globals._saveData->_data[svLastSavegameSlot] = slot;
+	_vm->_globals._exitId = _vm->_globals._saveData->_data[svLastScreenId];
+	_vm->_globals._saveData->_data[svLastPrevScreenId] = 0;
 	_vm->_globals._screenId = 0;
 	_vm->_objectsManager._mapCarPosX = _vm->_globals._saveData->_mapCarPosX;
 	_vm->_objectsManager._mapCarPosY = _vm->_globals._saveData->_mapCarPosY;

@@ -1784,7 +1784,7 @@ void ObjectsManager::handleCityMap() {
 				_vm->_globals._introSpeechOffFl = false;
 				mouseButton = 0;
 			}
-			if (_vm->_globals._saveData->_data[svField80] == 1 && !_vm->_globals._saveData->_data[svField172]) {
+			if (_vm->_globals._saveData->_data[svFreedHostageFl] == 1 && !_vm->_globals._saveData->_data[svField172]) {
 				_vm->_globals._saveData->_data[svField172] = 1;
 				_vm->_globals._introSpeechOffFl = true;
 				_vm->_talkManager.startAnimatedCharacterDialogue("APPEL2.pe2");
@@ -2181,21 +2181,21 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 
 		switch (newCharacter) {
 		case CHARACTER_HOPKINS:
-			_vm->_globals._saveData->_data[svUseless21] = 0;
+			_vm->_globals._saveData->_data[svHopkinsCloneFl] = 0;
 			_vm->_globals._saveData->_data[svField354] = 0;
 			_vm->_globals._saveData->_data[svField356] = 0;
 			_vm->_globals._saveData->_data[svField357] = 1;
 			_vm->_globals._exitId = _vm->_globals._saveData->_realHopkins._location;
 			break;
 		case CHARACTER_HOPKINS_CLONE:
-			_vm->_globals._saveData->_data[svUseless21] = 1;
+			_vm->_globals._saveData->_data[svHopkinsCloneFl] = 1;
 			_vm->_globals._saveData->_data[svField354] = 1;
 			_vm->_globals._saveData->_data[svField356] = 0;
 			_vm->_globals._saveData->_data[svField357] = 0;
 			_vm->_globals._exitId = _vm->_globals._saveData->_cloneHopkins._location;
 			break;
 		case CHARACTER_SAMANTHA:
-			_vm->_globals._saveData->_data[svUseless21] = 0;
+			_vm->_globals._saveData->_data[svHopkinsCloneFl] = 0;
 			_vm->_globals._saveData->_data[svField354] = 0;
 			_vm->_globals._saveData->_data[svField356] = 1;
 			_vm->_globals._saveData->_data[svField357] = 0;
@@ -3785,12 +3785,12 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	if (_vm->_globals._characterType) {
-		if (!_vm->_globals._saveData->_data[svField122] && !_vm->_globals._saveData->_data[svField356]) {
+		if (!_vm->_globals._saveData->_data[svAlternateSpriteFl] && !_vm->_globals._saveData->_data[svField356]) {
 			_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
 			_vm->_globals._characterType = 0;
 		}
 	}
-	if (!_vm->_globals._characterType && _vm->_globals._saveData->_data[svField122] == 1) {
+	if (!_vm->_globals._characterType && _vm->_globals._saveData->_data[svAlternateSpriteFl] == 1) {
 		_vm->_globals.PERSO = _vm->_fileManager.loadFile("HOPFEM.SPR");
 		_vm->_globals._characterType = 1;
 	}
