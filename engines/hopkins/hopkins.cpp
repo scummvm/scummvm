@@ -183,7 +183,7 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 3:
-			if (!_globals._saveData->_data[svField170]) {
+			if (!_globals._saveData->_data[svBankAttackAnimPlayedFl]) {
 				_soundManager.playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsManager.loadImage("fond");
@@ -214,7 +214,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_soundManager.removeSample(3);
 				_soundManager.removeSample(4);
 				_graphicsManager.fadeOutLong();
-				_globals._saveData->_data[svField170] = 1;
+				_globals._saveData->_data[svBankAttackAnimPlayedFl] = 1;
 			}
 			_linesManager.setMaxLineIdx(5);
 			_globals._characterMaxPosY = 450;
@@ -246,7 +246,7 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 7:
-			if (_globals._saveData->_data[svField220])
+			if (_globals._saveData->_data[svBombBoxOpenedFl])
 				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
 				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
@@ -261,7 +261,7 @@ bool HopkinsEngine::runWin95Demo() {
 		case 9:
 			_globals._characterMaxPosY = 440;
 			_linesManager.setMaxLineIdx(20);
-			if (_globals._saveData->_data[svField225])
+			if (_globals._saveData->_data[svBombDisarmedFl])
 			  _objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 			  bombExplosion();
@@ -280,7 +280,7 @@ bool HopkinsEngine::runWin95Demo() {
 		case 12:
 			_globals._characterMaxPosY = 450;
 			_linesManager.setMaxLineIdx(20);
-			if (_globals._saveData->_data[svField225]) {
+			if (_globals._saveData->_data[svBombDisarmedFl]) {
 				if (_globals._language == LANG_FR)
 					_graphicsManager.loadImage("ENDFR");
 				else
@@ -292,8 +292,8 @@ bool HopkinsEngine::runWin95Demo() {
 				while (_eventsManager.getMouseButton() != 1);
 				_graphicsManager.fadeOutLong();
 				restoreSystem();
-			}
-			bombExplosion();
+			} else 
+				bombExplosion();
 			break;
 
 		case 13:
@@ -488,7 +488,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 3:
-			if (!_globals._saveData->_data[svField170]) {
+			if (!_globals._saveData->_data[svBankAttackAnimPlayedFl]) {
 				_soundManager.playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsManager.loadImage("fond");
@@ -521,7 +521,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				_soundManager.removeSample(2);
 				_soundManager.removeSample(3);
 				_soundManager.removeSample(4);
-				_globals._saveData->_data[svField170] = 1;
+				_globals._saveData->_data[svBankAttackAnimPlayedFl] = 1;
 			}
 
 			_linesManager.setMaxLineIdx(5);
@@ -551,7 +551,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 7:
-			if (_globals._saveData->_data[svField220])
+			if (_globals._saveData->_data[svBombBoxOpenedFl])
 				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
 				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
@@ -567,10 +567,10 @@ bool HopkinsEngine::runLinuxDemo() {
 			_linesManager.setMaxLineIdx(20);
 			_globals._characterMaxPosY = 440;
 
-			if (!_globals._saveData->_data[svField225])
+			if (!_globals._saveData->_data[svBombDisarmedFl])
 				bombExplosion();
-
-			_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
+			else 
+				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			break;
 
 		case 10:
@@ -586,7 +586,7 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 12:
 			_linesManager.setMaxLineIdx(20);
 			_globals._characterMaxPosY = 450;
-			if (_globals._saveData->_data[svField225])
+			if (_globals._saveData->_data[svBombDisarmedFl])
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			else
 				bombExplosion();
@@ -819,6 +819,9 @@ bool HopkinsEngine::runFull() {
 		if (g_system->getEventManager()->shouldQuit())
 			return false;
 
+		_globals._exitId = 93;
+		_globals._saveData->_data[svEscapeLeftJailFl] = 0;
+
 		switch (_globals._exitId) {
 		case 1:
 			_linesManager.setMaxLineIdx(40);
@@ -827,7 +830,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 3:
-			if (!_globals._saveData->_data[svField170]) {
+			if (!_globals._saveData->_data[svBankAttackAnimPlayedFl]) {
 				_soundManager.playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsManager.loadImage("fond");
@@ -866,7 +869,7 @@ bool HopkinsEngine::runFull() {
 				_soundManager.removeSample(4);
 				if (getPlatform() != Common::kPlatformLinux)
 					_graphicsManager.fadeOutLong();
-				_globals._saveData->_data[svField170] = 1;
+				_globals._saveData->_data[svBankAttackAnimPlayedFl] = 1;
 			}
 			_linesManager.setMaxLineIdx(5);
 			_globals._characterMaxPosY = 450;
@@ -895,7 +898,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 7:
-			if (_globals._saveData->_data[svField220])
+			if (_globals._saveData->_data[svBombBoxOpenedFl])
 				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
 				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
@@ -910,7 +913,7 @@ bool HopkinsEngine::runFull() {
 		case 9:
 			_linesManager.setMaxLineIdx(20);
 			_globals._characterMaxPosY = 440;
-			if (_globals._saveData->_data[svField225])
+			if (_globals._saveData->_data[svBombDisarmedFl])
 				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 				bombExplosion();
@@ -929,7 +932,7 @@ bool HopkinsEngine::runFull() {
 		case 12:
 			_linesManager.setMaxLineIdx(20);
 			_globals._characterMaxPosY = 450;
-			if (_globals._saveData->_data[svField225])
+			if (_globals._saveData->_data[svBombDisarmedFl])
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			else
 				bombExplosion();
@@ -1048,7 +1051,7 @@ bool HopkinsEngine::runFull() {
 		case 24:
 			_linesManager.setMaxLineIdx(5);
 			_globals._characterMaxPosY = 450;
-			if (_globals._saveData->_data[svField181] == 1)
+			if (_globals._saveData->_data[svCinemaDogGoneFl] == 1)
 				_objectsManager.PERSONAGE2("IM24", "IM24A", "ANIM24", "IM24", 1, true);
 			else
 				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
@@ -1075,7 +1078,7 @@ bool HopkinsEngine::runFull() {
 		case 27:
 			_linesManager.setMaxLineIdx(15);
 			_globals._characterMaxPosY = 440;
-			if (_globals._saveData->_data[svField177] == 1)
+			if (_globals._saveData->_data[svPoolDogGoneFl] == 1)
 				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
 			else
 				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
@@ -1206,7 +1209,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 61:
-			if (_globals._saveData->_data[svField311] == 1 && !_globals._saveData->_data[svField312])
+			if (_globals._saveData->_data[svBaseElevatorCond1] == 1 && !_globals._saveData->_data[svBaseFireFl])
 				handleConflagration();
 			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
 			break;
@@ -1274,7 +1277,7 @@ bool HopkinsEngine::runFull() {
 		case 73:
 			_linesManager.setMaxLineIdx(15);
 			_globals._characterMaxPosY = 445;
-			if (_globals._saveData->_data[svField318] == 1)
+			if (_globals._saveData->_data[svSecondElevatorAvailableFl] == 1)
 				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
 			else
 				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
@@ -1347,7 +1350,7 @@ bool HopkinsEngine::runFull() {
 		case 93:
 			_linesManager.setMaxLineIdx(5);
 			_globals._characterMaxPosY = 445;
-			if (_globals._saveData->_data[svField330]) {
+			if (_globals._saveData->_data[svEscapeLeftJailFl]) {
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
 					_objectsManager.PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 29, true);
 				else
@@ -1961,7 +1964,7 @@ void HopkinsEngine::handleConflagration() {
 
 	_graphicsManager.fadeOutLong();
 	_graphicsManager.endDisplayBob();
-	_globals._saveData->_data[svField312] = 1;
+	_globals._saveData->_data[svBaseFireFl] = 1;
 	_globals._disableInventFl = false;
 }
 

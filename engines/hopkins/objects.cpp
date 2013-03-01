@@ -1777,15 +1777,17 @@ void ObjectsManager::handleCityMap() {
 	do {
 		int mouseButton = _vm->_eventsManager.getMouseButton();
 		if (mouseButton) {
-			if (_vm->_globals._saveData->_data[svField170] == 1 && !_vm->_globals._saveData->_data[svField171]) {
-				_vm->_globals._saveData->_data[svField171] = 1;
+			// First cop call : Go to the bank and free the hostages
+			if (_vm->_globals._saveData->_data[svBankAttackAnimPlayedFl] == 1 && !_vm->_globals._saveData->_data[svCopCall1PlayedFl]) {
+				_vm->_globals._saveData->_data[svCopCall1PlayedFl] = 1;
 				_vm->_globals._introSpeechOffFl = true;
 				_vm->_talkManager.startAnimatedCharacterDialogue("APPEL1.pe2");
 				_vm->_globals._introSpeechOffFl = false;
 				mouseButton = 0;
 			}
-			if (_vm->_globals._saveData->_data[svFreedHostageFl] == 1 && !_vm->_globals._saveData->_data[svField172]) {
-				_vm->_globals._saveData->_data[svField172] = 1;
+			// Second cop call: Helico has been found in the empty lot
+			if (_vm->_globals._saveData->_data[svFreedHostageFl] == 1 && !_vm->_globals._saveData->_data[svCopCall2PlayedFl]) {
+				_vm->_globals._saveData->_data[svCopCall2PlayedFl] = 1;
 				_vm->_globals._introSpeechOffFl = true;
 				_vm->_talkManager.startAnimatedCharacterDialogue("APPEL2.pe2");
 				_vm->_globals._introSpeechOffFl = false;
@@ -3228,7 +3230,7 @@ void ObjectsManager::SPECIAL_INI() {
 				_vm->_soundManager.mixVoice(383, 4, displayedTxtFl);
 			_vm->_globals._saveData->_data[svField270] = 1;
 			_vm->_globals._saveData->_data[svField300] = 1;
-			_vm->_globals._saveData->_data[svUseless320] = 1;
+			_vm->_globals._saveData->_data[svField320] = 1;
 			if (_vm->_soundManager._voiceOffFl) {
 				for (int i = 0; i <= 199; i++)
 					_vm->_eventsManager.VBL();
@@ -3281,14 +3283,14 @@ void ObjectsManager::SPECIAL_INI() {
 		_vm->_linesManager.ZONEP[21]._messageId = 30;
 		_vm->_linesManager.ZONEP[22]._messageId = 30;
 		_vm->_linesManager.ZONEP[23]._messageId = 30;
-		for (int i = 200; i <= 214; i++) {
+		for (int i = svField200; i <= svField214; i++) {
 			if (_vm->_globals._saveData->_data[i] != 2)
 				_vm->_globals._saveData->_data[i] = 0;
 		}
 		break;
 
 	case 73:
-		if (!_vm->_globals._saveData->_data[svField318]) {
+		if (!_vm->_globals._saveData->_data[svSecondElevatorAvailableFl]) {
 			_vm->_globals.resetHidingUseCount(0);
 			_vm->_globals.resetHidingUseCount(1);
 		}
