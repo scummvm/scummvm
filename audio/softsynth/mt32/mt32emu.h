@@ -59,18 +59,6 @@
 #define MT32EMU_MONITOR_TVA 0
 #define MT32EMU_MONITOR_TVF 0
 
-// The WG algorithm involves dozens of transcendent maths, e.g. exponents and trigonometry.
-// Unfortunately, the majority of systems perform such computations inefficiently,
-// standard math libs and FPUs make no optimisations for single precision floats,
-// and use no LUTs to speedup computing internal taylor series. Though, there're rare exceptions,
-// and there's a hope it will become common soon.
-// So, this is the crucial point of speed optimisations. We have now eliminated all the transcendent maths
-// within the critical path and use LUTs instead.
-// Besides, since the LA32 chip is assumed to use similar LUTs inside, the overall emulation accuracy should be better.
-// 0: Use LUTs to speedup WG. Most common setting. You can expect about 50% performance boost.
-// 1: Use precise float math. Use this setting to achieve more accurate wave generator. If your system performs better with this setting, it is really notable. :)
-#define MT32EMU_ACCURATE_WG 0
-
 // Configuration
 // The maximum number of partials playing simultaneously
 #define MT32EMU_MAX_PARTIALS 32
@@ -86,6 +74,10 @@
 // 1: Use Accurate Reverb model aka AReverb
 // 2: Use Bit-perfect Boss Reverb model aka BReverb (for developers, not much practical use)
 #define MT32EMU_USE_REVERBMODEL 1
+
+// 0: Use refined wave generator based on logarithmic fixed-point computations and LUTs
+// 1: Use legacy accurate wave generator based on float computations
+#define MT32EMU_ACCURATE_WG 0
 
 namespace MT32Emu
 {
@@ -110,6 +102,8 @@ const unsigned int MAX_PRERENDER_SAMPLES = 1024;
 #include "Tables.h"
 #include "Poly.h"
 #include "LA32Ramp.h"
+#include "LA32WaveGenerator.h"
+#include "LegacyWaveGenerator.h"
 #include "TVA.h"
 #include "TVP.h"
 #include "TVF.h"

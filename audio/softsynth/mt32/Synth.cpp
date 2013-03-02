@@ -345,17 +345,7 @@ bool Synth::loadPCMROM(const ROMImage &pcmROMImage) {
 			}
 			log = log | (short)(bit << (15 - u));
 		}
-		bool negative = log < 0;
-		log &= 0x7FFF;
-
-		// CONFIRMED from sample analysis to be 99.99%+ accurate with current TVA multiplier
-		float lin = EXP2F((32787 - log) / -2048.0f);
-
-		if (negative) {
-			lin = -lin;
-		}
-
-		pcmROMData[i] = lin;
+		pcmROMData[i] = log;
 	}
 
 	delete[] buffer;
@@ -462,7 +452,7 @@ bool Synth::open(const ROMImage &controlROMImage, const ROMImage &pcmROMImage) {
 	// 1MB PCM ROM for CM-32L, LAPC-I, CM-64, CM-500
 	// Note that the size below is given in samples (16-bit), not bytes
 	pcmROMSize = controlROMMap->pcmCount == 256 ? 512 * 1024 : 256 * 1024;
-	pcmROMData = new float[pcmROMSize];
+	pcmROMData = new Bit16s[pcmROMSize];
 
 #if MT32EMU_MONITOR_INIT
 	printDebug("Loading PCM ROM");

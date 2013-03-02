@@ -44,12 +44,7 @@ private:
 	int structurePosition; // 0 or 1 of a structure pair
 	StereoVolume stereoVolume;
 
-	// Distance in (possibly fractional) samples from the start of the current pulse
-	float wavePos;
-
-	float lastFreq;
-
-	float myBuffer[MAX_SAMPLES_PER_RUN];
+	Bit16s myBuffer[MAX_SAMPLES_PER_RUN];
 
 	// Only used for PCM partials
 	int pcmNum;
@@ -60,17 +55,16 @@ private:
 	// Range: 0-255
 	int pulseWidthVal;
 
-	float pcmPosition;
-
 	Poly *poly;
 
 	LA32Ramp ampRamp;
 	LA32Ramp cutoffModifierRamp;
 
-	float *mixBuffersRingMix(float *buf1, float *buf2, unsigned long len);
-	float *mixBuffersRing(float *buf1, float *buf2, unsigned long len);
+	// TODO: This should be owned by PartialPair
+	LA32PartialPair la32Pair;
 
-	float getPCMSample(unsigned int position);
+	Bit32u getAmpValue();
+	Bit32u getCutoffValue();
 
 public:
 	const PatchCache *patchCache;
@@ -90,7 +84,6 @@ public:
 	unsigned long debugGetSampleNum() const;
 
 	int getOwnerPart() const;
-	int getKey() const;
 	const Poly *getPoly() const;
 	bool isActive() const;
 	void activate(int part);
@@ -111,7 +104,7 @@ public:
 	bool produceOutput(float *leftBuf, float *rightBuf, unsigned long length);
 
 	// This function writes mono sample output to the provided buffer, and returns the number of samples written
-	unsigned long generateSamples(float *partialBuf, unsigned long length);
+	unsigned long generateSamples(Bit16s *partialBuf, unsigned long length);
 };
 
 }

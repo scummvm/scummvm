@@ -82,9 +82,13 @@ void LA32Ramp::startRamp(Bit8u target, Bit8u increment) {
 	if (increment == 0) {
 		largeIncrement = 0;
 	} else {
-		// Using integer argument here, no precision loss:
+		// Three bits in the fractional part, no need to interpolate
 		// (unsigned int)(EXP2F(((increment & 0x7F) + 24) / 8.0f) + 0.125f)
-		largeIncrement = (unsigned int)(EXP2I(((increment & 0x7F) + 24) << 9) + 0.125f);
+		Bit32u expArg = increment & 0x7F;
+		largeIncrement = 8191 - Tables::getInstance().exp9[~(expArg << 6) & 511];
+		largeIncrement <<= expArg >> 3;
+		largeIncrement += 64;
+		largeIncrement >>= 9;
 	}
 	descending = (increment & 0x80) != 0;
 	if (descending) {

@@ -6,6 +6,8 @@ MODULE_OBJS := \
 	DelayReverb.o \
 	FreeverbModel.o \
 	LA32Ramp.o \
+	LA32WaveGenerator.o \
+	LegacyWaveGenerator.o \
 	Part.o \
 	Partial.o \
 	PartialManager.o \

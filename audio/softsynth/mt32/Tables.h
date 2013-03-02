@@ -56,9 +56,10 @@ public:
 	// CONFIRMED:
 	Bit8u pulseWidth100To255[101];
 
-	float exp2[4096];
-	float resAmpFadeFactor[8];
-	float sinf10[5120];
+	Bit16u exp9[512];
+	Bit16u logsin9[512];
+
+	const Bit8u *resAmpDecayFactor;
 };
 
 }
