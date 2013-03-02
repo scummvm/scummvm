@@ -24,6 +24,7 @@
 #define HOPKINS_GRAPHICS_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/endian.h"
 #include "common/rect.h"
 #include "common/str.h"
@@ -44,14 +45,6 @@ struct RGB8 {
 	byte r;
 	byte g;
 	byte b;
-};
-
-struct BlocItem {
-	uint16 _activeFl;
-	int _x1;
-	int _y1;
-	int _x2;
-	int _y2;
 };
 
 class HopkinsEngine;
@@ -111,8 +104,7 @@ public:
 	bool _skipVideoLockFl;
 	int _fadeDefaultSpeed;
 
-	int _dirtyRectCount;
-	BlocItem _dirtyRects[DIRTY_RECTS_SIZE];
+	Common::Array<Common::Rect> _dirtyRects;
 	int WinScan;
 	byte *PAL_PIXELS;
 	bool MANU_SCROLL;

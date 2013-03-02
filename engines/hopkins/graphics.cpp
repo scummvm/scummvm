@@ -47,7 +47,6 @@ GraphicsManager::GraphicsManager() {
 	_scrollPosX = 0;
 	_largeScreenFl = false;
 	_oldScrollPosX = 0;
-	_dirtyRectCount = 0;
 	_vesaScreen = NULL;
 	_vesaBuffer = NULL;
 	_screenBuffer = NULL;
@@ -76,10 +75,6 @@ GraphicsManager::GraphicsManager() {
 	Common::fill(&_colorTable[0], &_colorTable[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_palette[0], &_palette[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_oldPalette[0], &_oldPalette[PALETTE_EXT_BLOCK_SIZE], 0);
-
-	for (int i = 0; i < DIRTY_RECTS_SIZE; ++i)
-		Common::fill((byte *)&_dirtyRects[i], (byte *)&_dirtyRects[i] + sizeof(BlocItem), 0);
-
 }
 
 GraphicsManager::~GraphicsManager() {
@@ -1095,72 +1090,62 @@ void GraphicsManager::displayAllBob() {
 }
 
 void GraphicsManager::resetVesaSegment() {
-	for (int idx = 0; idx <= _dirtyRectCount; idx++)
-		_dirtyRects[idx]._activeFl = false;
-
-	_dirtyRectCount = 0;
+	_dirtyRects.clear();
 }
 
 // Add VESA Segment
 void GraphicsManager::addDirtyRect(int x1, int y1, int x2, int y2) {
-	bool addFlag = true;
-
 	x1 = CLIP(x1, _minX, _maxX);
 	y1 = CLIP(y1, _minY, _maxY);
 	x2 = CLIP(x2, _minX, _maxX);
 	y2 = CLIP(y2, _minY, _maxY);
 
-	for (int blocIndex = 0; blocIndex <= _dirtyRectCount; blocIndex++) {
-		BlocItem &bloc = _dirtyRects[blocIndex];
-		if (bloc._activeFl && x1 >= bloc._x1 && x2 <= bloc._x2 && y1 >= bloc._y1 && y2 <= bloc._y2)
-			addFlag = false;
-	};
+	Common::Rect newRect(x1, y1, x2, y2);
+	if (!newRect.isValidRect())
+		return;
 
-	if (addFlag && (x2 > x1) && (y2 > y1)) {
-		assert(_dirtyRectCount < DIRTY_RECTS_SIZE);
-		BlocItem &bloc = _dirtyRects[++_dirtyRectCount];
-
-		bloc._activeFl = true;
-		bloc._x1 = x1;
-		bloc._x2 = x2;
-		bloc._y1 = y1;
-		bloc._y2 = y2;
+	// Don't bother adding the rect if it's contained within another existing one
+	for (uint rectIndex = 0; rectIndex < _dirtyRects.size(); ++rectIndex) {
+		const Common::Rect &r = _dirtyRects[rectIndex];
+		if (r.contains(newRect))
+			return;
 	}
+
+	assert(_dirtyRects.size() < DIRTY_RECTS_SIZE);
+	_dirtyRects.push_back(newRect);
 }
 
 // Display VESA Segment
 void GraphicsManager::displayVesaSegment() {
-	if (_dirtyRectCount == 0)
+	if (_dirtyRects.size() == 0)
 		return;
 
 	lockScreen();
 
-	for (int idx = 1; idx <= _dirtyRectCount; ++idx) {
-		BlocItem &bloc = _dirtyRects[idx];
-		Common::Rect &dstRect = dstrect[idx - 1];
-		if (!bloc._activeFl)
-			continue;
+	for (uint idx = 0; idx < _dirtyRects.size(); ++idx) {
+		Common::Rect &r = _dirtyRects[idx];
+		Common::Rect &dstRect = dstrect[idx];
 
 		if (_vm->_eventsManager._breakoutFl) {
-			Copy_Vga16(_vesaBuffer, bloc._x1, bloc._y1, bloc._x2 - bloc._x1, bloc._y2 - bloc._y1, bloc._x1, bloc._y1);
-			dstRect.left = bloc._x1 * 2;
-			dstRect.top = bloc._y1 * 2 + 30;
-			dstRect.setWidth((bloc._x2 - bloc._x1) * 2);
-			dstRect.setHeight((bloc._y2 - bloc._y1) * 2);
-		} else if (bloc._x2 > _vm->_eventsManager._startPos.x && bloc._x1 < _vm->_eventsManager._startPos.x + SCREEN_WIDTH) {
-			if (bloc._x1 < _vm->_eventsManager._startPos.x)
-				bloc._x1 = _vm->_eventsManager._startPos.x;
-			if (bloc._x2 > _vm->_eventsManager._startPos.x + SCREEN_WIDTH)
-				bloc._x2 = _vm->_eventsManager._startPos.x + SCREEN_WIDTH;
+			Copy_Vga16(_vesaBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
+			dstRect.left = r.left * 2;
+			dstRect.top = r.top * 2 + 30;
+			dstRect.setWidth((r.right - r.left) * 2);
+			dstRect.setHeight((r.bottom - r.top) * 2);
+		} else if (r.right > _vm->_eventsManager._startPos.x && r.left < _vm->_eventsManager._startPos.x + SCREEN_WIDTH) {
+			if (r.left < _vm->_eventsManager._startPos.x)
+				r.left = _vm->_eventsManager._startPos.x;
+			if (r.right > _vm->_eventsManager._startPos.x + SCREEN_WIDTH)
+				r.right = _vm->_eventsManager._startPos.x + SCREEN_WIDTH;
 
 			// WORKAROUND: Original didn't lock the screen for access
 			lockScreen();
-			m_scroll16(_vesaBuffer, bloc._x1, bloc._y1, bloc._x2 - bloc._x1, bloc._y2 - bloc._y1, bloc._x1 - _vm->_eventsManager._startPos.x, bloc._y1);
+			m_scroll16(_vesaBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_eventsManager._startPos.x, r.top);
 
-			dstRect.left = bloc._x1 - _vm->_eventsManager._startPos.x;
-			dstRect.top = bloc._y1;
-			dstRect.setWidth(bloc._x2 - bloc._x1);
-			dstRect.setHeight(bloc._y2 - bloc._y1);
+			dstRect.left = r.left - _vm->_eventsManager._startPos.x;
+			dstRect.top = r.top;
+			dstRect.setWidth(r.right - r.left);
+			dstRect.setHeight(r.bottom - r.top);
 
 			unlockScreen();
 		}
@@ -1168,12 +1153,10 @@ void GraphicsManager::displayVesaSegment() {
 		byte *srcP = _videoPtr + WinScan * dstRect.top + (dstRect.left * 2);
 		g_system->copyRectToScreen(srcP, WinScan, dstRect.left, dstRect.top, 
 			dstRect.width(), dstRect.height());
-
-		_dirtyRects[idx]._activeFl = false;
 	}
 
 	unlockScreen();
-	_dirtyRectCount = 0;	
+	resetVesaSegment();
 }
 
 void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment) {
