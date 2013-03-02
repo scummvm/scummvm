@@ -612,7 +612,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 
 	setPaletteVGA256(palData);
 	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	return DD_VBL();
+	DD_VBL();
 }
 
 /** 
@@ -735,7 +735,10 @@ uint16 GraphicsManager::mapRGB(byte r, byte g, byte b) {
 }
 
 void GraphicsManager::DD_VBL() {
-	// TODO: Is this okay here?
+	// Display any aras of the screen that need refreshing
+	displayRefreshRects();
+
+	// Update the screen
 	g_system->updateScreen();
 }
 
@@ -1093,7 +1096,11 @@ void GraphicsManager::resetVesaSegment() {
 	_dirtyRects.clear();
 }
 
-// Add VESA Segment
+void GraphicsManager::resetRefreshRects() {
+	_refreshRects.clear();
+}
+
+// Add a game area dirty rectangle
 void GraphicsManager::addDirtyRect(int x1, int y1, int x2, int y2) {
 	x1 = CLIP(x1, _minX, _maxX);
 	y1 = CLIP(y1, _minY, _maxY);
@@ -1115,7 +1122,19 @@ void GraphicsManager::addDirtyRect(int x1, int y1, int x2, int y2) {
 	_dirtyRects.push_back(newRect);
 }
 
-// Display VESA Segment
+// Add a refresh rect
+void GraphicsManager::addRefreshRect(const Common::Rect &r) {
+	// Ensure that an existing dest rectangle doesn't already contain the new one
+	for (uint idx = 0; idx < _refreshRects.size(); ++idx) {
+		if (_refreshRects[idx].contains(r))
+			return;
+	}
+
+	assert(_refreshRects.size() < DIRTY_RECTS_SIZE);
+	_refreshRects.push_back(r);
+}
+
+// Draw any game dirty rects onto the screen intermediate surface
 void GraphicsManager::displayVesaSegment() {
 	if (_dirtyRects.size() == 0)
 		return;
@@ -1124,7 +1143,7 @@ void GraphicsManager::displayVesaSegment() {
 
 	for (uint idx = 0; idx < _dirtyRects.size(); ++idx) {
 		Common::Rect &r = _dirtyRects[idx];
-		Common::Rect &dstRect = dstrect[idx];
+		Common::Rect dstRect;
 
 		if (_vm->_eventsManager._breakoutFl) {
 			Copy_Vga16(_vesaBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
@@ -1157,6 +1176,19 @@ void GraphicsManager::displayVesaSegment() {
 
 	unlockScreen();
 	resetVesaSegment();
+}
+
+void GraphicsManager::displayRefreshRects() {
+	if (_refreshRects.size() == 0)
+		return;
+/*
+	for (uint idx = 0; idx < _refreshRects.size(); ++idx) {
+		const Common::Rect &r = _refreshRects[idx];
+
+		g_system->copyRectToScreen(_screenBuffer, WinScan,)
+	}
+*/
+	resetRefreshRects();
 }
 
 void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment) {

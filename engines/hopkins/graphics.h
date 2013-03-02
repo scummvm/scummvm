@@ -99,12 +99,18 @@ public:
 	int _minX, _minY;
 	int _maxX, _maxY;
 	bool _noFadingFl;
-	Common::Rect dstrect[50];
 	int _scrollStatus;
 	bool _skipVideoLockFl;
 	int _fadeDefaultSpeed;
 
+	/**
+	 * The _dirtyRects list contains paletted game areas that need to be redrawn. 
+	 * The _dstrect array is the list of areas of the screen that ScummVM needs to be redrawn.
+	 * Some areas, such as the animation managers, skip the _dirtyRects and use _dstrec directly.
+	 */
 	Common::Array<Common::Rect> _dirtyRects;
+	Common::Array<Common::Rect> _refreshRects;
+
 	int WinScan;
 	byte *PAL_PIXELS;
 	bool MANU_SCROLL;
@@ -118,7 +124,12 @@ public:
 	void unlockScreen();
 	void clearPalette();
 	void clearScreen();
+	void resetVesaSegment();
+	void resetRefreshRects();
 	void addDirtyRect(int x1, int y1, int x2, int y2);
+	void addRefreshRect(const Common::Rect &r);
+	void displayVesaSegment();
+	void displayRefreshRects();
 	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void loadImage(const Common::String &file);
 	void loadVgaImage(const Common::String &file);
@@ -131,8 +142,6 @@ public:
 	void fadeOutLong();
 	void fadeOutShort();
 	void fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment = true);
-	void displayVesaSegment();
-	void resetVesaSegment();
 	void copyWinscanVbe3(const byte *srcData, byte *destSurface);
 	void copyWinscanVbe(const byte *srcP, byte *destP);
 	void copyVideoVbe16(const byte *srcData);

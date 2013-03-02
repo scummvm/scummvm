@@ -222,7 +222,7 @@ void EventsManager::checkForNextFrameCounter() {
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
 		++_gameCounter;
 		_priorFrameTime = milli;
-		g_system->updateScreen();
+		_vm->_graphicsManager.DD_VBL();
 
 		// Signal the ScummVM debugger
 		_vm->_debugger.onFrame();
@@ -465,7 +465,9 @@ void EventsManager::VBL() {
 			_vm->_graphicsManager.lockScreen();
 			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._scrollPosX, 20, SCREEN_WIDTH, 440, 0, 20);
 			_vm->_graphicsManager.unlockScreen();
-			_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
+			
+			_vm->_graphicsManager.resetRefreshRects();
+			_vm->_graphicsManager.addRefreshRect(Common::Rect(0, 20, SCREEN_WIDTH, 460));
 
 			_vm->_graphicsManager.resetVesaSegment();
 
