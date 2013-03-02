@@ -2687,31 +2687,29 @@ int LinesManager::checkCollision(int xp, int yp) {
 		int yMin = yp - 4;
 
 		do {
-			int16 *dataP = _zoneLine[curZoneLineIdx]._zoneData;
+			LigneZoneItem *curZoneLine = &_zoneLine[curZoneLineIdx];
+			int16 *dataP = curZoneLine->_zoneData;
 			if (dataP != (int16 *)g_PTRNUL) {
-				int count = _zoneLine[curZoneLineIdx]._count;
-				int v1 = dataP[0];
-				int v2 = dataP[1];
-				int v3 = dataP[count * 2 - 2];
-				int v4 = dataP[count * 2 - 1];
+				int count = curZoneLine->_count;
+				int startX = dataP[0];
+				int startY = dataP[1];
+				int destX = dataP[count * 2 - 2];
+				int destY = dataP[count * 2 - 1];
 
 				bool flag = true;
-				if (v1 < v3 && (xMax < v1 || xMin > v3))
-					flag = false;
-				if (v1 >= v3 && (xMin > v1 || xMax < v3))
-					flag = false;
-				if (v2 < v4 && (yMax < v2 || yMin > v4))
-					flag = false;
-				if (v2 >= v4 && (yMin > v2 || yMax < v4))
+				if ((startX < destX && (xMax < startX || xMin > destX))  ||
+				    (startX >= destX && (xMin > startX || xMax < destX)) ||
+				    (startY < destY && (yMax < startY || yMin > destY))  ||
+				    (startY >= destY && (yMin > startY || yMax < destY)))
 					flag = false;
 
-				if (flag && _zoneLine[curZoneLineIdx]._count > 0) {
+				if (flag && curZoneLine->_count > 0) {
 					for (int i = 0; i < count; ++i) {
 						int xCheck = *dataP++;
 						int yCheck = *dataP++;
 
 						if ((xp == xCheck || (xp + 1) == xCheck) && (yp == yCheck))
-							return _zoneLine[curZoneLineIdx]._bobZoneIdx;
+							return curZoneLine->_bobZoneIdx;
 					}
 				}
 			}
@@ -2724,14 +2722,15 @@ int LinesManager::checkCollision(int xp, int yp) {
 // Square Zone
 void LinesManager::CARRE_ZONE() {
 	for (int idx = 0; idx < 100; ++idx) {
-		_squareZone[idx]._enabledFl = false;
-		_squareZone[idx]._squareZoneFl = false;
-		_squareZone[idx]._left = 1280;
-		_squareZone[idx]._right = 0;
-		_squareZone[idx]._top = 460;
-		_squareZone[idx]._bottom = 0;
-		_squareZone[idx]._minZoneLineIdx = 401;
-		_squareZone[idx]._maxZoneLineIdx = 0;
+		SquareZoneItem *curZone = &_squareZone[idx];
+		curZone->_enabledFl = false;
+		curZone->_squareZoneFl = false;
+		curZone->_left = 1280;
+		curZone->_right = 0;
+		curZone->_top = 460;
+		curZone->_bottom = 0;
+		curZone->_minZoneLineIdx = 401;
+		curZone->_maxZoneLineIdx = 0;
 	}
 
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
@@ -2739,25 +2738,25 @@ void LinesManager::CARRE_ZONE() {
 		if (dataP == (int16 *)g_PTRNUL)
 			continue;
 
-		int carreZoneId = _zoneLine[idx]._bobZoneIdx;
-		_squareZone[carreZoneId]._enabledFl = true;
-		if (_squareZone[carreZoneId]._maxZoneLineIdx < idx)
-			_squareZone[carreZoneId]._maxZoneLineIdx = idx;
-		if (_squareZone[carreZoneId]._minZoneLineIdx > idx)
-			_squareZone[carreZoneId]._minZoneLineIdx = idx;
+		SquareZoneItem *curZone = &_squareZone[_zoneLine[idx]._bobZoneIdx];
+		curZone->_enabledFl = true;
+		if (curZone->_maxZoneLineIdx < idx)
+			curZone->_maxZoneLineIdx = idx;
+		if (curZone->_minZoneLineIdx > idx)
+			curZone->_minZoneLineIdx = idx;
 
 		for (int i = 0; i < _zoneLine[idx]._count; i++) {
 			int zoneX = *dataP++;
 			int zoneY = *dataP++;
 
-			if (_squareZone[carreZoneId]._left >= zoneX)
-				_squareZone[carreZoneId]._left = zoneX;
-			if (_squareZone[carreZoneId]._right <= zoneX)
-				_squareZone[carreZoneId]._right = zoneX;
-			if (_squareZone[carreZoneId]._top >= zoneY)
-				_squareZone[carreZoneId]._top = zoneY;
-			if (_squareZone[carreZoneId]._bottom <= zoneY)
-				_squareZone[carreZoneId]._bottom = zoneY;
+			if (curZone->_left >= zoneX)
+				curZone->_left = zoneX;
+			if (curZone->_right <= zoneX)
+				curZone->_right = zoneX;
+			if (curZone->_top >= zoneY)
+				curZone->_top = zoneY;
+			if (curZone->_bottom <= zoneY)
+				curZone->_bottom = zoneY;
 		}
 	}
 
