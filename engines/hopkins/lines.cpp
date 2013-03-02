@@ -982,7 +982,7 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 				break;
 			v38 = foundLineIdx;
 			if (v37 <= 0 || v69 >= v37)
-				break;;
+				break;
 		}
 		if (v74 != -1 && v38 != -1 && v76 != -1 && v75 != -1) {
 			route[routerIdx].invalidate();

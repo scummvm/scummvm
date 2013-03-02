@@ -278,7 +278,7 @@ void ObjectsManager::addObject(int objIndex) {
 	for (;;) {
 		++arrIndex;
 		if ((!_vm->_globals._inventory[arrIndex]) || (arrIndex == 32))
-			break;;
+			break;
 	}
 
 	_vm->_globals._inventory[arrIndex] = objIndex;
@@ -1875,7 +1875,7 @@ void ObjectsManager::handleLeftButton() {
 			++routeIdx;
 		} while (_vm->_linesManager._route[routeIdx]._x != -1);
 
-		_vm->_linesManager.essai2[routeIdx].invalidate();;
+		_vm->_linesManager.essai2[routeIdx].invalidate();
 	}
 
 	if (_vm->_globals._actionMoveTo) {

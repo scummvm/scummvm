@@ -2643,7 +2643,7 @@ void Mars::startUpFromSpaceChase() {
 
 	// Open the spot sounds movie again...
 	_spotSounds.initFromQuickTime(getSoundSpotsName());
-	_spotSounds.setVolume(_vm->getSoundFXLevel());;
+	_spotSounds.setVolume(_vm->getSoundFXLevel());
 
 	initOnePicture(&_shuttleInterface1, "Images/Mars/MCmain1.pict", kShuttleBackgroundOrder, kShuttle1Left,
 							kShuttle1Top, true);
