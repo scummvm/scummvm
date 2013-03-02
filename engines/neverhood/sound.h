@@ -124,14 +124,6 @@ protected:
 	SoundResource *_soundResource;
 };
 
-// TODO Give this a better name
-
-/*
-template<class T>
-class SoundManItems : public Common::Array<T> {
-};
-*/
-
 class SoundMan {
 public:
 	SoundMan(NeverhoodEngine *vm);

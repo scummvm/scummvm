@@ -153,7 +153,7 @@ Common::SeekableReadStream *BlbArchive::createStream(uint index) {
 
 Common::SeekableReadStream *BlbArchive::createStream(BlbArchiveEntry *entry) {
 	return new SafeMutexedSeekableSubReadStream(&_fd, entry->offset, entry->offset + entry->diskSize,
-		DisposeAfterUse::NO,_mutex);
+		DisposeAfterUse::NO, _mutex);
 }
 
 } // End of namespace Neverhood

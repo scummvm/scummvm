@@ -583,7 +583,7 @@ void TextEditWidget::onClick() {
 			_cursorPos = 0;
 		else {
 			int newCursorPos = mousePos.x / _fontSurface->getCharWidth();
-			if (mousePos.x % _fontSurface->getCharWidth() > _fontSurface->getCharWidth() / 2 && newCursorPos <= (int)_entryString.size())//###
+			if (mousePos.x % _fontSurface->getCharWidth() > _fontSurface->getCharWidth() / 2 && newCursorPos <= (int)_entryString.size())
 				++newCursorPos;
 			_cursorPos = MIN((int)_entryString.size(), newCursorPos);
 		}

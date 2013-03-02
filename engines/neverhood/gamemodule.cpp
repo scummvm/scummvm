@@ -84,7 +84,6 @@ GameModule::GameModule(NeverhoodEngine *vm)
 }
 
 GameModule::~GameModule() {
-
 	_vm->_soundMan->deleteSoundGroup(0x002D0031);
 	delete _childObject;
 	_childObject = NULL;
@@ -196,7 +195,8 @@ void GameModule::initMemoryPuzzle() {
 		}
 		setSubVar(VA_IS_PUZZLE_INIT, 0xC8606803, 1);
 
-		// DEBUG>>> Some debug code: Leave two matching tiles open
+		// DEBUG Enable to autosolve all tiles and leave only two matching tiles open
+#if 0		
 		for (int i = 0; i < 48; i++)
 			setSubVar(VA_IS_TILE_MATCH, i, 1);
 		int debugIndex = 0;
@@ -207,7 +207,7 @@ void GameModule::initMemoryPuzzle() {
 				break;
 			}
 		}
-		// <<<DEBUG
+#endif		
 
 	}
 }
@@ -345,8 +345,9 @@ uint32 GameModule::handleMessage(int messageNum, const MessageParam &param, Enti
 }
 
 void GameModule::startup() {
-#if 0
-	createModule(1500, 0); // Logos and intro video // Real game start
+#if 1
+	// Logos and intro video // Real game start
+	createModule(1500, 0);
 #else
 	// DEBUG>>>
 	/*
@@ -395,63 +396,7 @@ void GameModule::startup() {
 #if 1
 	_vm->gameState().which = 0;
 	_vm->gameState().sceneNum = 0;
-	createModule(1000, -1);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 5;
-	_vm->gameState().which = 0;
-	createModule(2800, -1);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 0;
-	createModule(2000, -1);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 5;
-	createModule(2200, -1);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 7;
-	createModule(2200, -1);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 1;
-	createModule(1000, -1);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 8;
-	_vm->gameState().which = 1;
-	createModule(1600, -1);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 6;
-	createModule(1900, -1);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 0;
-	createModule(2100, 3);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 8;
-	createModule(2600, -1);
-#endif
-#if 0
-	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 1;
-	createModule(2700, -1);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 1;
-	createModule(2800, -1);
-#endif
-#if 0
-	_vm->gameState().which = 0;
-	_vm->gameState().sceneNum = 0;
-	createModule(2500, -1);
-#endif
-#if 0
-	_vm->gameState().sceneNum = 1;
-	createModule(2300, -1);
+	createModule(2400, 0);
 #endif
 
 #endif
@@ -739,6 +684,7 @@ void GameModule::updateModule() {
 			createModule(2300, 1);
 			break;
 		case 2300:
+		debug("module 23000 _moduleResult : %d", _moduleResult);
 			if (_moduleResult == 2)
 				createModule(1200, 0);
 			else if (_moduleResult == 0)

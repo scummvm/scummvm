@@ -47,6 +47,7 @@ Module2200::~Module2200() {
 }
 
 void Module2200::createScene(int sceneNum, int which) {
+	debug("Module2200::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:
@@ -1221,7 +1222,6 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetUpdateHandler(&Scene2205::update);
 	
 	setHitRects(0x004B0620);
-	loadDataResource(0x00144822);
 	if (getGlobalVar(V_LIGHTS_ON)) {
 		_isLightOn = true;
 		setBackground(0x0008028D);
@@ -1263,6 +1263,9 @@ Scene2205::Scene2205(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_klaymen->setClipRect(_ssDoorFrame->getDrawRect().x, 0, 640, 480);
 	_klaymen->setSoundFlag(true);
+	
+	loadDataResource(0x00144822);
+	
 }
 	
 void Scene2205::update() {

@@ -355,7 +355,6 @@ DataResource::~DataResource() {
 void DataResource::load(uint32 fileHash) {
 	if (_resourceHandle.fileHash() == fileHash)
 		return;
-	debug("DataResource::load(%08X)", fileHash);
 	const byte *data = NULL;
 	uint32 dataSize = 0;
 	unload();

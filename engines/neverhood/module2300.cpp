@@ -140,7 +140,7 @@ void Module2300::updateScene() {
 			break;
 		case 2:
 			if (_moduleResult == 1)
-				leaveModule(3);
+				leaveModule(1);
 			else
 				createScene(1, 5);
 			break;

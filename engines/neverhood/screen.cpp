@@ -86,18 +86,18 @@ void Screen::update() {
 		renderItem._refresh = true;
 	}
 
-	RectArray *updateRects = _microTiles->getRectangles();
+	RectangleList *updateRects = _microTiles->getRectangles();
 
 	for (RenderQueue::iterator it = _renderQueue->begin(); it != _renderQueue->end(); ++it) {
 		RenderItem &renderItem = (*it);
-		for (RectArray::iterator ri = updateRects->begin(); ri != updateRects->end(); ++ri)
+		for (RectangleList::iterator ri = updateRects->begin(); ri != updateRects->end(); ++ri)
 			blitRenderItem(renderItem, *ri);
 	}
 	
 	SWAP(_renderQueue, _prevRenderQueue);
 	_renderQueue->clear();
 
-	for (Common::Array<Common::Rect>::iterator ri = updateRects->begin(); ri != updateRects->end(); ++ri) {
+	for (RectangleList::iterator ri = updateRects->begin(); ri != updateRects->end(); ++ri) {
 		Common::Rect &r = *ri;
 		_vm->_system->copyRectToScreen((const byte*)_backScreen->getBasePtr(r.left, r.top), _backScreen->pitch, r.left, r.top, r.width(), r.height());
 	}

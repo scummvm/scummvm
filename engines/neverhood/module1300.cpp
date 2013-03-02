@@ -1701,6 +1701,7 @@ Scene1317::Scene1317(NeverhoodEngine *vm, Module *parentModule)
 	
 	SetMessageHandler(&Scene1317::handleMessage);
 	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x08982841, true, false));
+	_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 	insertScreenMouse(0x08284011);
 	showMouse(false);
 	_smackerFileHash = 0;

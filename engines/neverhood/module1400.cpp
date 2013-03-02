@@ -339,7 +339,7 @@ uint32 AsScene1401BackDoor::handleMessage(int messageNum, const MessageParam &pa
 		break;
 	case 0x4808:
 		_countdown = 168;
-		if (_isOpen)
+		if (!_isOpen)
 			stOpenDoor();
 		break;						
 	}
@@ -743,7 +743,7 @@ uint32 Scene1401::handleMessage(int messageNum, const MessageParam &param, Entit
 			if (_asProjector && _asProjector->getX() > 404 && _asProjector->getX() < 504)
 				sendMessage(_asProjector , 0x4839, 0);
 		} else if (sender == _ssButton)
-			sendMessage(_ssButton, 0x4808, 0);
+			sendMessage(_asBackDoor, 0x4808, 0);
 		break;
 	case 0x4826:
 		if (sender == _asProjector) {
@@ -968,7 +968,7 @@ uint32 Scene1402::handleMessage(int messageNum, const MessageParam &param, Entit
 		break;
 	case 0x4826:
 		if (sender == _asProjector) {
-			if (sendMessage(_asProjector, 0x408C, _klaymen->getX() > _asProjector->getX() ? 1 : 0) != 0) {
+			if (sendMessage(_asProjector, 0x480C, _klaymen->getX() > _asProjector->getX() ? 1 : 0) != 0) {
 				sendEntityMessage(_klaymen, 0x1014, _asProjector);
 				setMessageList2(0x004B0BB8);
 			} else
@@ -1309,7 +1309,7 @@ Scene1403::Scene1403(NeverhoodEngine *vm, Module *parentModule, int which)
 	}
 	_klaymen->setRepl(64, 0);
 
-	if (getGlobalVar(V_PROJECTOR_LOCATION) == 4) {
+	if (getGlobalVar(V_PROJECTOR_LOCATION) == 0) {
 		_asProjector = insertSprite<AsCommonProjector>(this, _klaymen, (Sprite*)NULL);
 		addCollisionSprite(_asProjector);
 		if (getGlobalVar(V_PROJECTOR_SLOT) == 4) {

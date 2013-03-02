@@ -756,7 +756,6 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	_isTurning(false), _lockSymbolsPart1Countdown(1), _lockSymbolsPart2Countdown(1) {
 
 	_cannonTargetStatus = getGlobalVar(V_CANNON_TARGET_STATUS);
-	debug("_cannonTargetStatus = %d", _cannonTargetStatus);
 	
 	_vm->gameModule()->initCannonSymbolsPuzzle();
 	
@@ -809,11 +808,12 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 	SetMessageHandler(&Scene3009::handleMessage);
 	SetUpdateHandler(&Scene3009::update);
 
-	// DEBUG: Set the correct code
+	// DEBUG Enable to set the correct code
+#if 0	
 	for (int i = 0; i < 6; i++)
 		setSubVar(VA_CURR_CANNON_SYMBOLS, i, _correctSymbols[i]);
 	sendMessage(this, 0x2003, 0);
-	//setGlobalVar(V_ROBOT_TARGET, 1);   
+#endif   
 
 }
 
@@ -1224,10 +1224,12 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	int initCountdown = 0;
 
-	// DEBUG: Enable all buttons
+	// DEBUG Enable to activate all buttons
+#if 0	
 	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[0], 1);
 	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[1], 1);
 	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[2], 1);
+#endif	
 
 	setBackground(0x80802626);
 	setPalette(0x80802626);
@@ -1448,7 +1450,7 @@ void AsScene3011Symbol::change(int symbolIndex, bool isNoisy) {
 }
 
 Scene3011::Scene3011(NeverhoodEngine *vm, Module *parentModule, int which)
-	: Scene(vm, parentModule), _updateStatus(0), _buttonClicked(false), _currentSymbolIndex(0) {
+	: Scene(vm, parentModule), _updateStatus(0), _buttonClicked(false), _currentSymbolIndex(0), _countdown(0) {
 
 	_vm->gameModule()->initCodeSymbolsPuzzle();
 	_noisySymbolIndex = getGlobalVar(V_NOISY_SYMBOL_INDEX);

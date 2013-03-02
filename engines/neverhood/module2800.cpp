@@ -284,7 +284,6 @@ void Module2800::updateScene() {
 				createScene(9, 4);
 			break;
 		case 9:
-			debug("scene 9 _moduleResult = %d", _moduleResult);
 			if (_moduleResult == 1)
 				createScene(11, 0);
 			else if (_moduleResult == 2)

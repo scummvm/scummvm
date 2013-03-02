@@ -108,9 +108,9 @@ void MicroTileArray::updateBoundingBox(BoundingBox &boundingBox, byte x0, byte y
 	setBoundingBox(boundingBox, x0, y0, x1, y1);
 }
 
-RectArray *MicroTileArray::getRectangles() {
+RectangleList *MicroTileArray::getRectangles() {
 
-	RectArray *rects = new RectArray();
+	RectangleList *rects = new RectangleList();
 
 	int x, y;
 	int x0, y0, x1, y1;

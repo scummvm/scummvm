@@ -100,7 +100,7 @@ SmackerPlayer::~SmackerPlayer() {
 }
 
 void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
-	debug("SmackerPlayer::open(%08X)", fileHash);
+	debug(0, "SmackerPlayer::open(%08X)", fileHash);
 	
 	_fileHash = fileHash;
 	_keepLastFrame = keepLastFrame;

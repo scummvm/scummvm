@@ -58,7 +58,6 @@ void ResourceMan::addArchive(const Common::String &filename) {
 			_entries[archiveEntry->fileHash] = newEntry;
 		}
 	}
-	debug("_entries.size() = %d", _entries.size());
 }
 
 ResourceFileEntry *ResourceMan::findEntrySimple(uint32 fileHash) {

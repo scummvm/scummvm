@@ -28,7 +28,7 @@ SmackerScene::SmackerScene(NeverhoodEngine *vm, Module *parentModule, bool doubl
 	: Scene(vm, parentModule), _doubleSurface(doubleSurface), _canSkip(canSkip), _canAbort(canAbort), _videoPlayedBefore(false),
 	_fileHashListIndex(-1), _fileHashList(NULL), _playNextVideoFlag(false) {
 
-	debug("SmackerScene::SmackerScene(%d, %d, %d)", doubleSurface, canSkip, canAbort);
+	debug(0, "SmackerScene::SmackerScene(%d, %d, %d)", doubleSurface, canSkip, canAbort);
 
 	// NOTE: Merged from SmackerScene::init, maybe split again if needed (incl. parameter flags)
 	
@@ -53,18 +53,18 @@ SmackerScene::~SmackerScene() {
 }
 
 void SmackerScene::setFileHash(uint32 fileHash) {
-	debug("SmackerScene::setFileHash(%08X)", fileHash);
+	debug(0, "SmackerScene::setFileHash(%08X)", fileHash);
 	_fileHash[0] = fileHash;
 	_fileHashList = _fileHash;
 }
 
 void SmackerScene::setFileHashList(const uint32 *fileHashList) {
-	debug("SmackerScene::setFileHashList(...)");
+	debug(0, "SmackerScene::setFileHashList(...)");
 	_fileHashList = fileHashList;
 }
 
 void SmackerScene::nextVideo() {
-	debug("SmackerScene::nextVideo()");
+	debug(0, "SmackerScene::nextVideo()");
 
 	_fileHashListIndex++;
 	

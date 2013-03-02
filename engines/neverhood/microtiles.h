@@ -25,7 +25,7 @@
 #define NEVERHOOD_MICROTILES_H
 
 #include "common/scummsys.h"
-#include "common/array.h"
+#include "common/list.h"
 #include "common/util.h"
 #include "common/rect.h"
 
@@ -37,7 +37,7 @@ const BoundingBox FullBoundingBox  = 0x00001F1F;
 const BoundingBox EmptyBoundingBox = 0x00000000;
 const int TileSize = 32;
 
-typedef Common::Array<Common::Rect> RectArray;
+typedef Common::List<Common::Rect> RectangleList;
 
 class MicroTileArray {
 public:
@@ -45,7 +45,7 @@ public:
 	~MicroTileArray();
 	void addRect(Common::Rect r);
 	void clear();
-	RectArray *getRectangles();
+	RectangleList *getRectangles();
 protected:
 	BoundingBox *_tiles;
 	int16 _tilesW, _tilesH;
