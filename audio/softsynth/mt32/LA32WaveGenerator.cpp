@@ -55,8 +55,10 @@ void LA32Utilites::addLogSamples(LogSample &logSample1, const LogSample &logSamp
 Bit32u LA32WaveGenerator::getSampleStep() {
 	// sampleStep = EXP2F(pitch / 4096.0f + 4.0f)
 	Bit32u sampleStep = LA32Utilites::interpolateExp(~pitch & 4095);
+	sampleStep &= ~1;
 	sampleStep <<= pitch >> 12;
 	sampleStep >>= 8;
+	sampleStep &= ~1;
 	return sampleStep;
 }
 
