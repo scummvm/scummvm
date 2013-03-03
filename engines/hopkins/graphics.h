@@ -110,6 +110,7 @@ public:
 	 */
 	Common::Array<Common::Rect> _dirtyRects;
 	Common::Array<Common::Rect> _refreshRects;
+	bool _showDirtyRects;
 
 	int WinScan;
 	byte *PAL_PIXELS;

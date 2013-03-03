@@ -51,6 +51,7 @@ GraphicsManager::GraphicsManager() {
 	_vesaBuffer = NULL;
 	_screenBuffer = NULL;
 	_isPhysicalPtr = false;
+	_showDirtyRects = false;
 
 	_lineNbr2 = 0;
 	Agr_x = Agr_y = 0;
@@ -1142,6 +1143,13 @@ void GraphicsManager::displayDirtyRects() {
 		return;
 
 	lockScreen();
+	
+	// Refresh the entire screen 
+	Graphics::Surface *screenSurface = NULL;
+	if (_showDirtyRects) {
+		screenSurface = g_system->lockScreen();
+		g_system->copyRectToScreen(_screenBuffer, WinScan, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	}
 
 	for (uint idx = 0; idx < _dirtyRects.size(); ++idx) {
 		Common::Rect &r = _dirtyRects[idx];
@@ -1176,10 +1184,16 @@ void GraphicsManager::displayDirtyRects() {
 			byte *srcP = _videoPtr + WinScan * dstRect.top + (dstRect.left * 2);
 			g_system->copyRectToScreen(srcP, WinScan, dstRect.left, dstRect.top, 
 				dstRect.width(), dstRect.height());
+
+			if (_showDirtyRects)
+				screenSurface->frameRect(dstRect, 0xffffff);
 		}
 	}
 
 	unlockScreen();
+	if (_showDirtyRects)
+		g_system->unlockScreen();
+
 	resetDirtyRects();
 }
 
