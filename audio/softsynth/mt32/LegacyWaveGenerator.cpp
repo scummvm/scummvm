@@ -179,7 +179,7 @@ float LA32WaveGenerator::generateNextSample(const Bit32u ampVal, const Bit16u pi
 
 		// 1st cosine segment
 		if (relWavePos < cosineLen) {
-			sample = -cosf(FLOAT_PI * relWavePos / cosineLen);
+			sample = -cos(FLOAT_PI * relWavePos / cosineLen);
 		} else
 
 		// high linear segment
@@ -189,7 +189,7 @@ float LA32WaveGenerator::generateNextSample(const Bit32u ampVal, const Bit16u pi
 
 		// 2nd cosine segment
 		if (relWavePos < (2 * cosineLen + hLen)) {
-			sample = cosf(FLOAT_PI * (relWavePos - (cosineLen + hLen)) / cosineLen);
+			sample = cos(FLOAT_PI * (relWavePos - (cosineLen + hLen)) / cosineLen);
 		} else {
 
 		// low linear segment
@@ -258,7 +258,7 @@ float LA32WaveGenerator::generateNextSample(const Bit32u ampVal, const Bit16u pi
 
 		// sawtooth waves
 		if (sawtoothWaveform) {
-			sample *= cosf(FLOAT_2PI * wavePos / waveLen);
+			sample *= cos(FLOAT_2PI * wavePos / waveLen);
 		}
 
 		wavePos++;
