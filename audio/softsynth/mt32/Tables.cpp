@@ -82,7 +82,7 @@ Tables::Tables() {
 
 	// There is a logarithmic sine table inside the LA32 chip. The table contains 13-bit integer values.
 	for (int i = 1; i < 512; i++) {
-		logsin9[i] = Bit16u(0.5f - LOG2F(sinf((i + 0.5f) / 1024.0f * FLOAT_PI)) * 1024.0f);
+		logsin9[i] = Bit16u(0.5f - LOG2F(sin((i + 0.5f) / 1024.0f * FLOAT_PI)) * 1024.0f);
 	}
 
 	// The very first value is clamped to the maximum possible 13-bit integer
