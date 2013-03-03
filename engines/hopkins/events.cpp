@@ -446,7 +446,7 @@ void EventsManager::VBL() {
 	_vm->_globals._speed = 2;
 	_rateCounter = 0;
 	if (!_vm->_graphicsManager._largeScreenFl || _vm->_graphicsManager._scrollStatus == 1) {
-		_vm->_graphicsManager.displayVesaSegment();
+		_vm->_graphicsManager.displayDirtyRects();
 	} else {
 		if (_vm->_graphicsManager._scrollStatus != 2) {
 			if (getMouseX() > _vm->_graphicsManager._scrollPosX + 620)
@@ -459,7 +459,7 @@ void EventsManager::VBL() {
 		if (_vm->_graphicsManager._scrollPosX > SCREEN_WIDTH)
 			_vm->_graphicsManager._scrollPosX = SCREEN_WIDTH;
 		if (_vm->_graphicsManager._oldScrollPosX == _vm->_graphicsManager._scrollPosX) {
-			_vm->_graphicsManager.displayVesaSegment();
+			_vm->_graphicsManager.displayDirtyRects();
 		} else {
 			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.lockScreen();
@@ -469,7 +469,7 @@ void EventsManager::VBL() {
 			_vm->_graphicsManager.resetRefreshRects();
 			_vm->_graphicsManager.addRefreshRect(Common::Rect(0, 20, SCREEN_WIDTH, 460));
 
-			_vm->_graphicsManager.resetVesaSegment();
+			_vm->_graphicsManager.resetDirtyRects();
 
 			_startPos.x = _vm->_graphicsManager._scrollPosX;
 			_vm->_graphicsManager._scrollOffset = _vm->_graphicsManager._scrollPosX;

@@ -124,11 +124,11 @@ public:
 	void unlockScreen();
 	void clearPalette();
 	void clearScreen();
-	void resetVesaSegment();
+	void resetDirtyRects();
 	void resetRefreshRects();
 	void addDirtyRect(int x1, int y1, int x2, int y2);
 	void addRefreshRect(const Common::Rect &r);
-	void displayVesaSegment();
+	void displayDirtyRects();
 	void displayRefreshRects();
 	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void loadImage(const Common::String &file);

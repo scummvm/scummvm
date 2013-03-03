@@ -127,7 +127,7 @@ void ComputerManager::setTextPosition(int yp, int xp) {
  */
 void ComputerManager::showComputer(ComputerEnum mode) {
 	_vm->_eventsManager._escKeyFl = false;
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 	setVideoMode();
 	setTextColor(4);
 	setTextPosition(2, 4);
@@ -287,7 +287,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	else // Free access or Samantha
 		_vm->_globals._exitId = 14;
 
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 }
 
 static const char _englishText[] = 
@@ -557,9 +557,9 @@ void ComputerManager::displayGamesSubMenu() {
 	loadHiscore();
 	setModeVGA256();
 	newLevel();
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 	playBreakout();
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 	_breakoutSpr = _vm->_globals.freeMemory(_breakoutSpr);
 	_breakoutLevel = (int16 *)_vm->_globals.freeMemory((byte *)_breakoutLevel);
 	_vm->_objectsManager._sprite[0]._spriteData = oldSpriteData;
@@ -726,7 +726,7 @@ void ComputerManager::playBreakout() {
 			_ballPosition = Common::Point(_padPositionX + 14, 187);
 			_vm->_objectsManager.setSpriteY(1, 187);
 			_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
-			_vm->_graphicsManager.resetVesaSegment();
+			_vm->_graphicsManager.resetDirtyRects();
 			_vm->_eventsManager.VBL();
 			_vm->_graphicsManager.fadeInBreakout();
 
@@ -801,7 +801,7 @@ void ComputerManager::playBreakout() {
  * @return		The selected button index: 1 = Game, 2 = Quit
  */
 int ComputerManager::displayHiscores() {
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 	loadHiscore();
 	_vm->_graphicsManager.loadVgaImage("HISCORE.PCX");
 	byte *ptr = _vm->_fileManager.loadFile("ALPHA.SPR");
@@ -827,7 +827,7 @@ int ComputerManager::displayHiscores() {
 	}
 
 	_vm->_graphicsManager.fadeInBreakout();
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 	int buttonIndex = 0;
 	do {
 		_vm->_eventsManager.refreshEvents();

@@ -1092,7 +1092,7 @@ void GraphicsManager::displayAllBob() {
 	}
 }
 
-void GraphicsManager::resetVesaSegment() {
+void GraphicsManager::resetDirtyRects() {
 	_dirtyRects.clear();
 }
 
@@ -1135,7 +1135,7 @@ void GraphicsManager::addRefreshRect(const Common::Rect &r) {
 }
 
 // Draw any game dirty rects onto the screen intermediate surface
-void GraphicsManager::displayVesaSegment() {
+void GraphicsManager::displayDirtyRects() {
 	if (_dirtyRects.size() == 0)
 		return;
 
@@ -1175,7 +1175,7 @@ void GraphicsManager::displayVesaSegment() {
 	}
 
 	unlockScreen();
-	resetVesaSegment();
+	resetDirtyRects();
 }
 
 void GraphicsManager::displayRefreshRects() {

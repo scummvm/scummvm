@@ -343,7 +343,7 @@ bool HopkinsEngine::runWin95Demo() {
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.clearPalette();
-			_graphicsManager.resetVesaSegment();
+			_graphicsManager.resetDirtyRects();
 			break;
 
 		case 114:
@@ -661,7 +661,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.clearPalette();
-			_graphicsManager.resetVesaSegment();
+			_graphicsManager.resetDirtyRects();
 			break;
 
 		case 114:
@@ -1434,7 +1434,7 @@ bool HopkinsEngine::runFull() {
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.clearPalette();
-			_graphicsManager.resetVesaSegment();
+			_graphicsManager.resetDirtyRects();
 			break;
 
 		case 114:
@@ -1905,7 +1905,7 @@ void HopkinsEngine::restoreSystem() {
 
 void HopkinsEngine::endLinuxDemo() {
 	_globals._linuxEndDemoFl = true;
-	_graphicsManager.resetVesaSegment();
+	_graphicsManager.resetDirtyRects();
 	_objectsManager._forestFl = false;
 	_eventsManager._breakoutFl = false;
 	_globals._disableInventFl = true;

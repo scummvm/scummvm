@@ -2082,7 +2082,7 @@ void ObjectsManager::clearScreen() {
 	_changeVerbFl = false;
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 	_vm->_globals._oldDirection = DIR_NONE;
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 }
 
 /**
