@@ -162,6 +162,8 @@ void GraphicsManager::unlockScreen() {
 void GraphicsManager::clearScreen() {
 	assert(_videoPtr);
 	Common::fill(_videoPtr, _videoPtr + WinScan * _screenHeight, 0);
+	if (!_isPhysicalPtr)
+		addRefreshRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
 /**
@@ -1179,15 +1181,14 @@ void GraphicsManager::displayDirtyRects() {
 }
 
 void GraphicsManager::displayRefreshRects() {
-	if (_refreshRects.size() == 0)
-		return;
-/*
+	// Loop through copying over any  specified rects to the screen
 	for (uint idx = 0; idx < _refreshRects.size(); ++idx) {
 		const Common::Rect &r = _refreshRects[idx];
 
-		g_system->copyRectToScreen(_screenBuffer, WinScan,)
+		byte *srcP = _screenBuffer + WinScan * r.top + (r.left * 2);
+		g_system->copyRectToScreen(srcP, WinScan, r.left, r.top, r.width(), r.height());
 	}
-*/
+
 	resetRefreshRects();
 }
 
