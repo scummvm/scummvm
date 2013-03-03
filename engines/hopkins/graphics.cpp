@@ -1171,9 +1171,12 @@ void GraphicsManager::displayDirtyRects() {
 			unlockScreen();
 		}
 
-		byte *srcP = _videoPtr + WinScan * dstRect.top + (dstRect.left * 2);
-		g_system->copyRectToScreen(srcP, WinScan, dstRect.left, dstRect.top, 
-			dstRect.width(), dstRect.height());
+		// If it's a valid rect, then copy it over
+		if (dstRect.isValidRect() && dstRect.width() > 0 && dstRect.height() > 0) {
+			byte *srcP = _videoPtr + WinScan * dstRect.top + (dstRect.left * 2);
+			g_system->copyRectToScreen(srcP, WinScan, dstRect.left, dstRect.top, 
+				dstRect.width(), dstRect.height());
+		}
 	}
 
 	unlockScreen();
