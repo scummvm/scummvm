@@ -466,10 +466,10 @@ void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, i
 			_vm->_graphicsManager.addVesaSegment(charStartPosX, yp, charEndPosX, yp + 12);
 			if (_vm->_eventsManager._escKeyFl) {
 				_vm->_globals.iRegul = 1;
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} else {
 				_vm->_globals.iRegul = 4;
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 				_vm->_globals.iRegul = 1;
 			}
 		}

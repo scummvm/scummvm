@@ -139,7 +139,7 @@ bool HopkinsEngine::runWin95Demo() {
 
 	for (int i = 1; i < 50; i++) {
 		_graphicsManager.copySurface(_graphicsManager._vesaScreen, 0, 0, 640, 440, _graphicsManager._vesaBuffer, 0, 0);
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	}
 
 	_globals.iRegul = 0;
@@ -288,7 +288,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_graphicsManager.fadeInLong();
 				_eventsManager.mouseOn();
 				do
-					_eventsManager.VBL();
+					_eventsManager.refreshScreenAndEvents();
 				while (_eventsManager.getMouseButton() != 1);
 				_graphicsManager.fadeOutLong();
 				restoreSystem();
@@ -1602,10 +1602,10 @@ void HopkinsEngine::playIntro() {
 	byte paletteData2[PALETTE_EXT_BLOCK_SIZE];
 
 	memset(&paletteData, 0, PALETTE_EXT_BLOCK_SIZE);
-	_eventsManager.VBL();
+	_eventsManager.refreshScreenAndEvents();
 	_eventsManager._mouseFl = false;
 	_globals.iRegul = 1;
-	_eventsManager.VBL();
+	_eventsManager.refreshScreenAndEvents();
 	_soundManager.playSound(16);
 	_animationManager._clearAnimationFl = true;
 	_animationManager.playAnim("J1.anm", 12, 12, 50);
@@ -1639,7 +1639,7 @@ void HopkinsEngine::playIntro() {
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	for (int i = 0; i <= 4; i++)
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 	_globals.iRegul = 1;
 	_graphicsManager.fadeInLong();
@@ -1657,10 +1657,10 @@ void HopkinsEngine::playIntro() {
 
 			if (_eventsManager.getMouseX() < _graphicsManager._scrollPosX + 10)
 				_eventsManager.setMouseXY(_eventsManager._mousePos.x + 4, _eventsManager.getMouseY());
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 		} while (!shouldQuit() && !loopCond && _graphicsManager._scrollPosX != SCREEN_WIDTH);
 
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 		_graphicsManager._scrollStatus = 0;
 
 		if (shouldQuit())
@@ -1684,17 +1684,17 @@ void HopkinsEngine::playIntro() {
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
 	for (int i = 0; i <= 4; i++)
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 	_globals.iRegul = 1;
 	_graphicsManager.fadeInLong();
 	for (uint i = 0; i < 200 / _globals._speed; ++i)
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 	_objectsManager.setBobAnimation(3);
 	_soundManager.mixVoice(5, 3);
 	_objectsManager.stopBobAnimation(3);
-	_eventsManager.VBL();
+	_eventsManager.refreshScreenAndEvents();
 	memcpy(&paletteData2, _graphicsManager._palette, 796);
 
 	_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
@@ -1726,7 +1726,7 @@ void HopkinsEngine::playIntro() {
 	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
 	for (int i = 0; i <= 3; i++)
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 	_globals.iRegul = 1;
 	_graphicsManager.setPaletteVGA256WithRefresh(paletteData2, _graphicsManager._vesaBuffer);
@@ -1735,9 +1735,9 @@ void HopkinsEngine::playIntro() {
 	while (!shouldQuit() && !_eventsManager._escKeyFl) {
 		if (introIndex == 12) {
 			_objectsManager.setBobAnimation(3);
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 			_soundManager.mixVoice(6, 3);
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 			_objectsManager.stopBobAnimation(3);
 		}
 
@@ -1751,28 +1751,28 @@ void HopkinsEngine::playIntro() {
 		_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
 
 		for (int i = 1; i < 2 * introIndex; i++)
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 
 		_graphicsManager.setPaletteVGA256WithRefresh(paletteData2, _graphicsManager._vesaBuffer);
 
 		for (int i = 1; i < 20 - introIndex; i++)
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 
 		introIndex += 2;
 		if (introIndex > 15) {
 			_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
 			for (uint j = 1; j < 100 / _globals._speed; ++j)
-				_eventsManager.VBL();
+				_eventsManager.refreshScreenAndEvents();
 
 			_objectsManager.setBobAnimation(3);
 			_soundManager.mixVoice(7, 3);
 			_objectsManager.stopBobAnimation(3);
 
 			for (uint k = 1; k < 60 / _globals._speed; ++k)
-				_eventsManager.VBL();
+				_eventsManager.refreshScreenAndEvents();
 			_objectsManager.setBobAnimation(5);
 			for (uint l = 0; l < 20 / _globals._speed; ++l)
-				_eventsManager.VBL();
+				_eventsManager.refreshScreenAndEvents();
 
 			Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
 			_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
@@ -1784,7 +1784,7 @@ void HopkinsEngine::playIntro() {
 					_objectsManager.stopBobAnimation(3);
 				}
 
-				_eventsManager.VBL();
+				_eventsManager.refreshScreenAndEvents();
 			}
 
 			_graphicsManager.fadeOutLong();
@@ -1876,14 +1876,14 @@ void HopkinsEngine::bombExplosion() {
 	_objectsManager.stopBobAnimation(7);
 
 	for (int idx = 0; idx < 5; ++idx) {
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	}
 
 	_graphicsManager.fadeInLong();
 	_eventsManager.mouseOff();
 
 	for (int idx = 0; idx < 20; ++idx) {
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	}
 
 	_globals._introSpeechOffFl = true;
@@ -1892,7 +1892,7 @@ void HopkinsEngine::bombExplosion() {
 	_objectsManager.setBobAnimation(7);
 
 	for (int idx = 0; idx < 100; ++idx) {
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	}
 
 	_graphicsManager.fadeOutLong();
@@ -1923,7 +1923,7 @@ void HopkinsEngine::endLinuxDemo() {
 	bool mouseClicked = false;
 
 	do {
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 		if (_eventsManager.getMouseButton() == 1)
 			mouseClicked = true;
@@ -1947,20 +1947,20 @@ void HopkinsEngine::handleConflagration() {
 	_graphicsManager.displayAllBob();
 
 	for (int cpt = 0; cpt <= 4; cpt++)
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 	_graphicsManager.fadeInLong();
 	_globals.iRegul = 1;
 
 	for (int cpt = 0; cpt <= 249; cpt++)
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 	_globals._introSpeechOffFl = true;
 	_talkManager.startAnimatedCharacterDialogue("SVGARD1.pe2");
 	_globals._introSpeechOffFl = false;
 
 	for (int cpt = 0; cpt <= 49; cpt++)
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 	_graphicsManager.fadeOutLong();
 	_graphicsManager.endDisplayBob();
@@ -2028,13 +2028,13 @@ void HopkinsEngine::BASED() {
 	_objectsManager.loadLinkFile("IM92");
 
 	for (int cpt = 0; cpt <= 4; cpt++)
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 	_graphicsManager.fadeInLong();
 	_globals.enableHiding();
 
 	do
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	while (_objectsManager.getBobAnimDataIdx(8) != 22);
 
 	_graphicsManager.fadeOutLong();
@@ -2071,13 +2071,13 @@ void HopkinsEngine::playEnding() {
 	_eventsManager.changeMouseCursor(0);
 
 	for (int cpt = 0; cpt <= 4; cpt++)
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 	_graphicsManager.fadeInLong();
 	_globals.iRegul = 1;
 
 	do
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	while (_objectsManager.getBobAnimDataIdx(6) != 54);
 
 	_globals._introSpeechOffFl = true;
@@ -2089,13 +2089,13 @@ void HopkinsEngine::playEnding() {
 	_objectsManager.setBobAnimation(7);
 
 	do
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	while (_objectsManager.getBobAnimDataIdx(7) != 54);
 
 	_soundManager.playSample(1);
 
 	do
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	while (_objectsManager.getBobAnimDataIdx(7) != 65);
 
 	_globals._introSpeechOffFl = true;
@@ -2104,21 +2104,21 @@ void HopkinsEngine::playEnding() {
 	_globals._disableInventFl = true;
 
 	do
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	while (_objectsManager.getBobAnimDataIdx(7) != 72);
 
 	_globals._introSpeechOffFl = true;
 	_talkManager.startAnimatedCharacterDialogue("DUELH1.PE2");
 
 	do
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	while (_objectsManager.getBobAnimDataIdx(7) != 81);
 
 	_globals._introSpeechOffFl = true;
 	_talkManager.startAnimatedCharacterDialogue("DUELB5.PE2");
 
 	do
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	while (_objectsManager.getBobAnimDataIdx(7) != 120);
 
 	_objectsManager.stopBobAnimation(7);
@@ -2170,13 +2170,13 @@ void HopkinsEngine::playEnding() {
 		_globals._disableInventFl = true;
 
 		do
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 		while (_objectsManager.getBobAnimDataIdx(8) != 5);
 
 		_soundManager.directPlayWav("SOUND41.WAV");
 
 		do
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 		while (_objectsManager.getBobAnimDataIdx(8) != 21);
 
 		_graphicsManager.fadeOutLong();
@@ -2336,7 +2336,7 @@ int HopkinsEngine::handleBaseMap() {
 			_eventsManager.changeMouseCursor(0);
 			_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 		}
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 		if ((mouseButton == 1) && zone)
 			loopCond = true;
 	} while (!loopCond);
@@ -2504,10 +2504,10 @@ void HopkinsEngine::displayCredits() {
 		}
 		--_globals._creditsPosY;
 		if (_globals._creditsStartX != -1 || _globals._creditsEndX != -1 || _globals._creditsStartY != -1 || _globals._creditsEndY != -1) {
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 			_graphicsManager.copySurface(_graphicsManager._vesaScreen, 60, 50, 520, 380, _graphicsManager._vesaBuffer, 60, 50);
 		} else {
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 		}
 		if (_globals._creditsItem[_globals._creditsLineNumb - 1]._linePosY <= 39) {
 			_globals._creditsPosY = 440;
@@ -2567,7 +2567,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				oldX -= 6;
 			_objectsManager.setSpriteX(0, oldX);
 			setSubmarineSprites();
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 			if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 				displAnim = true;
 				break;
@@ -2603,7 +2603,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				oldX += 6;
 			_objectsManager.setSpriteX(0, oldX);
 			setSubmarineSprites();
-			_eventsManager.VBL();
+			_eventsManager.refreshScreenAndEvents();
 			if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 				displAnim = true;
 				break;
@@ -2625,7 +2625,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 					oldX += 6;
 				_objectsManager.setSpriteX(0, oldX);
 				setSubmarineSprites();
-				_eventsManager.VBL();
+				_eventsManager.refreshScreenAndEvents();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 					displAnim = true;
 					break;
@@ -2648,7 +2648,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 					oldX -= 6;
 				_objectsManager.setSpriteX(0, oldX);
 				setSubmarineSprites();
-				_eventsManager.VBL();
+				_eventsManager.refreshScreenAndEvents();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 					displAnim = true;
 					break;
@@ -2679,7 +2679,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 					oldX += 6;
 				_objectsManager.setSpriteX(0, oldX);
 				setSubmarineSprites();
-				_eventsManager.VBL();
+				_eventsManager.refreshScreenAndEvents();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY) {
 					displAnim = true;
 					break;
@@ -2699,7 +2699,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 					oldX -= 6;
 				_objectsManager.setSpriteX(0, oldX);
 				setSubmarineSprites();
-				_eventsManager.VBL();
+				_eventsManager.refreshScreenAndEvents();
 				if (_eventsManager.getMouseButton() == 1 && oldPosX == _eventsManager.getMouseX() && _eventsManager.getMouseY() == oldPosY)
 					break;
 
@@ -2802,7 +2802,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	_eventsManager.changeMouseCursor(4);
 
 	for (int cpt = 0; cpt <= 4; cpt++)
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 
 	if (!_graphicsManager._noFadingFl)
 		_graphicsManager.fadeInLong();
@@ -2815,7 +2815,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 			handleOceanMouseEvents();
 		_linesManager.checkZone();
 		setSubmarineSprites();
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 		if (_globals._exitId || g_system->getEventManager()->shouldQuit())
 			break;
 	}
@@ -2871,7 +2871,7 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 		else if (xp >= 424 && xp <= 602 && yp >= 406 && yp <= 445)
 			buttonIndex = 1;
 
-		_eventsManager.VBL();
+		_eventsManager.refreshScreenAndEvents();
 	} while (!shouldQuit() && (buttonIndex == 0 || _eventsManager.getMouseButton() != 1));
 
 	_globals._disableInventFl = false;

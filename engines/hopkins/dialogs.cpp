@@ -59,7 +59,7 @@ void DialogsManager::setParent(HopkinsEngine *vm) {
 
 void DialogsManager::showOptionsDialog() {
 	_vm->_eventsManager.changeMouseCursor(0);
-	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.refreshScreenAndEvents();
 	Common::String filename;
 	if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 		filename = "OPTION.SPR";
@@ -298,7 +298,7 @@ void DialogsManager::showOptionsDialog() {
 			break;
 		}
 
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	} while (!doneFlag);
 
 	_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, scrollOffset + 164,
@@ -321,7 +321,7 @@ void DialogsManager::showInventory() {
 		inventAnim();
 		_vm->_eventsManager.getMouseX();
 		_vm->_eventsManager.getMouseY();
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	}
 	_inventWin1 = g_PTRNUL;
 
@@ -424,7 +424,7 @@ void DialogsManager::showInventory() {
 
 				if (_vm->_soundManager._voiceOffFl) {
 					do
-						_vm->_eventsManager.VBL();
+						_vm->_eventsManager.refreshScreenAndEvents();
 					while (!_vm->_globals._exitId && _vm->_eventsManager.getMouseButton() != 1);
 					_vm->_fontManager.hideText(9);
 				}
@@ -444,7 +444,7 @@ void DialogsManager::showInventory() {
 			}
 			if (_removeInventFl)
 				break;
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 			if (_vm->_globals._screenId >= 35 && _vm->_globals._screenId <= 40)
 				_vm->_objectsManager.handleSpecialGames();
 		}
@@ -567,13 +567,13 @@ void DialogsManager::testDialogOpening() {
  * Load Game dialog
  */
 void DialogsManager::showLoadGame() {
-	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.refreshScreenAndEvents();
 	showSaveLoad(MODE_LOAD);
 
 	int slotNumber;
 	do {
 		slotNumber = searchSavegames();
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	} while (!_vm->shouldQuit() && (!slotNumber || _vm->_eventsManager.getMouseButton() != 1));
 	_vm->_objectsManager._saveLoadFl = false;
 	_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x + 183, 60, 274, 353, _vm->_graphicsManager._vesaBuffer, _vm->_eventsManager._startPos.x + 183, 60);
@@ -595,13 +595,13 @@ void DialogsManager::showLoadGame() {
  * Save Game dialog
  */
 void DialogsManager::showSaveGame() {
-	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.refreshScreenAndEvents();
 
 	showSaveLoad(MODE_SAVE);
 	int slotNumber;
 	do {
 		slotNumber = searchSavegames();
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	} while (!_vm->shouldQuit() && (!slotNumber || _vm->_eventsManager.getMouseButton() != 1));
 
 	_vm->_objectsManager._saveLoadFl = false;

@@ -1056,8 +1056,8 @@ void GraphicsManager::endDisplayBob() {
 			_vm->_objectsManager.hideBob(idx);
 	}
 
-	_vm->_eventsManager.VBL();
-	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.refreshScreenAndEvents();
+	_vm->_eventsManager.refreshScreenAndEvents();
 
 	for (int idx = 1; idx <= 20; ++idx) {
 		if (_vm->_globals._animBqe[idx]._enabledFl)

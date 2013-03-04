@@ -1766,7 +1766,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 
 	for (int i = 0; i <= 4; i++)
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 
 	_vm->_globals.iRegul = 1;
 	_vm->_graphicsManager.fadeInLong();
@@ -1803,7 +1803,7 @@ void ObjectsManager::handleCityMap() {
 
 		if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL && _vm->_globals._actionMoveTo)
 			PARADISE();
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 
 		if (_vm->_globals._exitId)
 			loopCond = true;
@@ -1983,7 +1983,7 @@ void ObjectsManager::PARADISE() {
 						if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager._scrollPosX + 620)
 							_vm->_eventsManager.setMouseXY(_vm->_eventsManager._mousePos.x - 4, _vm->_eventsManager.getMouseY());
 
-						_vm->_eventsManager.VBL();
+						_vm->_eventsManager.refreshScreenAndEvents();
 					} while (!loopCond && _vm->_eventsManager._startPos.x > getSpriteX(0) - 320);
 				} else if (_vm->_eventsManager._startPos.x + 320 - getSpriteX(0) < -160) {
 					bool loopCond = false;
@@ -2000,14 +2000,14 @@ void ObjectsManager::PARADISE() {
 						if (_vm->_eventsManager.getMouseX() < _vm->_graphicsManager._scrollPosX + 10)
 							_vm->_eventsManager.setMouseXY(_vm->_eventsManager._mousePos.x + 4, _vm->_eventsManager.getMouseY());
 
-						_vm->_eventsManager.VBL();
+						_vm->_eventsManager.refreshScreenAndEvents();
 					} while (!loopCond && _vm->_eventsManager._startPos.x < getSpriteX(0) - 320);
 				}
 				if (_vm->_eventsManager.getMouseX() > _vm->_graphicsManager._scrollPosX + 620)
 					_vm->_eventsManager.setMouseXY(_vm->_graphicsManager._scrollPosX + 610, 0);
 				if (_vm->_eventsManager.getMouseX() < _vm->_graphicsManager._scrollPosX + 10)
 					_vm->_eventsManager.setMouseXY(_vm->_graphicsManager._scrollPosX + 10, 0);
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 				_vm->_graphicsManager._scrollStatus = 0;
 			}
 			_vm->_talkManager.REPONSE(_vm->_globals._saveData->_data[svLastZoneNum], _vm->_globals._saveData->_data[svLastMouseCursor]);
@@ -2687,7 +2687,7 @@ void ObjectsManager::handleSpecialGames() {
 
 		_vm->_globals._disableInventFl = true;
 		do
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 		while (getBobAnimDataIdx(8) != 3);
 		_vm->_globals._introSpeechOffFl = true;
 		_vm->_talkManager.startAnimatedCharacterDialogue("GM3.PE2");
@@ -2987,7 +2987,7 @@ void ObjectsManager::OPTI_ONE(int idx, int animIdx, int destPosi, int animAction
 
 	// Make Hopkins walk to the expected place
 	do {
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	} while (destPosi != getBobAnimDataIdx(idx));
 
 	if (!animAction)
@@ -2996,7 +2996,7 @@ void ObjectsManager::OPTI_ONE(int idx, int animIdx, int destPosi, int animAction
 		_vm->_graphicsManager.fastDisplay(_bob[idx]._spriteData,
 			_bob[idx]._oldX, _bob[idx]._oldY, _bob[idx]._frameIndex);
 		stopBobAnimation(idx);
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	}
 }
 
@@ -3203,7 +3203,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 	_vm->_globals.freeMemory(ptr);
 }
 
-void ObjectsManager::SPECIAL_INI() {
+void ObjectsManager::sceneSpecialIni() {
 	switch (_vm->_globals._screenId) {
 	case 17:
 		if (_vm->_globals._prevScreenId == 20) {
@@ -3213,11 +3213,11 @@ void ObjectsManager::SPECIAL_INI() {
 			_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 			for (int i = 0; i <= 4; i++)
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			_vm->_graphicsManager.fadeInLong();
 			animateSprite(0);
 			for (int i = 0; i <= 4; i++)
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			VBOB(_vm->_globals.SPRITE_ECRAN, 5, 15, 28, 1);
 			_vm->_fontManager.hideText(9);
 			bool displayedTxtFl = false;
@@ -3233,12 +3233,12 @@ void ObjectsManager::SPECIAL_INI() {
 			_vm->_globals._saveData->_data[svField320] = 1;
 			if (_vm->_soundManager._voiceOffFl) {
 				for (int i = 0; i <= 199; i++)
-					_vm->_eventsManager.VBL();
+					_vm->_eventsManager.refreshScreenAndEvents();
 			}
 			_vm->_fontManager.hideText(9);
 			VBOB_OFF(5);
 			for (int i = 0; i <= 3; i++)
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_globals._disableInventFl = false;
 		}
@@ -3248,7 +3248,7 @@ void ObjectsManager::SPECIAL_INI() {
 		if (_vm->_globals._prevScreenId == 17) {
 			_vm->_eventsManager._mouseSpriteId = 4;
 			for (int i = 0; i <= 4; i++)
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			_vm->_graphicsManager.fadeInLong();
 			_vm->_globals.iRegul = 1;
 			_vm->_globals._disableInventFl = false;
@@ -3328,7 +3328,7 @@ void ObjectsManager::SCI_OPTI_ONE(int idx, int animIdx, int animDataIdx, int a4)
 	}
 
 	do {
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 		if (_vm->_eventsManager._curMouseButton)
 			break;
 	} while (animDataIdx != getBobAnimDataIdx(idx));
@@ -3480,7 +3480,7 @@ void ObjectsManager::ACTION(const byte *spriteData, const Common::String &action
 				_sprite[0]._spriteIndex = idx;
 			}
 			for (int i = 0; i < realSpeed; i++)
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			if (idx == -1)
 				break;
 		}
@@ -3525,7 +3525,7 @@ void ObjectsManager::SPACTION(byte *spriteData, const Common::String &animationS
 			_sprite[0]._spriteIndex = spriteIndex;
 		}
 		for (int i = 0; i < realSpeed; i++)
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 	} while (spriteIndex != -1);
 }
 
@@ -3563,7 +3563,7 @@ void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animStrin
 			}
 
 			for (int i = 0; i < realSpeed; i++)
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 
 			if (spriteIndex == -1)
 				break;
@@ -3702,7 +3702,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	_vm->_eventsManager.changeMouseCursor(4);
 	for (int i = 0; i <= 4; i++)
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	_vm->_graphicsManager.fadeInLong();
 	if (_vm->_globals._screenId == 61) {
 		_vm->_animationManager.playSequence("OUVRE.SEQ", 10, 4, 10);
@@ -3716,7 +3716,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_vm->_globals._checkDistanceFl = true;
 		do {
 			GOHOME();
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 		} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 		setSpriteIndex(0, 64);
 	}
@@ -3732,7 +3732,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		if (_vm->_globals._actionMoveTo)
 			PARADISE();
 		if (!_vm->_globals._exitId)
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 
 		if (_vm->_globals._exitId)
 			break;
@@ -3821,7 +3821,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_globals.enableHiding();
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 	computeAndSetSpriteSize();
-	SPECIAL_INI();
+	sceneSpecialIni();
 	_vm->_eventsManager._mouseSpriteId = 4;
 	_oldCharacterPosX = _characterPos.x;
 	_oldCharacterPosY = _characterPos.y;
@@ -3829,7 +3829,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_globals.Compteur = 0;
 
 	for (int idx = 0; idx < 5; ++idx)
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 
 	_vm->_globals.iRegul = 1;
 	if (!_vm->_graphicsManager._noFadingFl)
@@ -3872,7 +3872,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 					PARADISE();
 			}
 			handleSpecialGames();
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 			if (!_vm->_globals._exitId)
 				continue;
 		}

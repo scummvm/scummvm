@@ -127,7 +127,7 @@ private:
 	int getBobFrameIndex(int idx);
 	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
 
-	void SPECIAL_INI();
+	void sceneSpecialIni();
 	void ACTION(const byte *spriteData, const Common::String &actionStr, int speed, bool flipFl);
 public:
 	bool _disableFl;

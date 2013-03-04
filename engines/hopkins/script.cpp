@@ -129,7 +129,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				do {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
-					_vm->_eventsManager.VBL();
+					_vm->_eventsManager.refreshScreenAndEvents();
 				} while (_vm->_soundManager._soundFl);
 			}
 			bool displayedTxtFl = false;
@@ -196,7 +196,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 							return -1; // Exiting game
 
 						--v4;
-						_vm->_eventsManager.VBL();
+						_vm->_eventsManager.refreshScreenAndEvents();
 					} while (v4);
 				}
 			}
@@ -469,7 +469,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if (_vm->shouldQuit())
 				return -1; // Exiting game
 
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 		}
 		opcodeType = 1;
 		break;
@@ -538,8 +538,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 12:
 			_vm->_fontManager.hideText(9);
-			_vm->_eventsManager.VBL();
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
+			_vm->_eventsManager.refreshScreenAndEvents();
 			_vm->_talkManager.startAnimatedCharacterDialogue("bqetueur.pe2");
 			break;
 
@@ -570,7 +570,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			}
 
 			_vm->_eventsManager.mouseOff();
@@ -579,7 +579,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(3) != 100);
 			_vm->_graphicsManager.fadeOutDefaultLength(_vm->_graphicsManager._vesaBuffer);
 			_vm->_graphicsManager.endDisplayBob();
@@ -600,7 +600,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			}
 
 			_vm->_eventsManager.mouseOff();
@@ -683,7 +683,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
 
-					_vm->_eventsManager.VBL();
+					_vm->_eventsManager.refreshScreenAndEvents();
 				} while (_vm->_soundManager._soundFl);
 			}
 			_vm->_talkManager.startAnimatedCharacterDialogue("PTLAB.pe2");
@@ -761,7 +761,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					return -1; // Exiting game
 
 				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_globals._checkDistanceFl = true;
@@ -815,7 +815,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 249, 2);
 				if (_vm->_objectsManager.getBobAnimDataIdx(10) == 34)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 249, 3);
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(9) != 36);
 			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.stopBobAnimation(9);
@@ -863,7 +863,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				if (_vm->_objectsManager.getBobAnimDataIdx(10) == 12)
 					v20 = 0;
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(9) != v19);
 			if (v19 == 12) {
 				_vm->_objectsManager.animateSprite(0);
@@ -900,7 +900,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_soundManager.playWav(1);
 					v52 = true;
 				}
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(12) != 34);
 			_vm->_objectsManager.stopBobAnimation(2);
 			_vm->_graphicsManager.fadeOutLong();
@@ -973,7 +973,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					return -1; // Exiting game
 
 				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(7);
@@ -998,7 +998,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					v18 = 0;
 				if (_vm->_objectsManager.getBobAnimDataIdx(7) == 19)
 					_vm->_objectsManager.setBobAnimation(3);
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(3) != 48);
 			_vm->_soundManager.removeSample(1);
 			_vm->_objectsManager.setSpriteIndex(0, 62);
@@ -1049,7 +1049,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_objectsManager.setBobAnimDataIdx(4, 0);
 					_vm->_objectsManager.setBobAnimDataIdx(13, 0);
 				}
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 16);
 			_vm->_objectsManager.stopBobAnimation(12);
 			_vm->_objectsManager.stopBobAnimation(4);
@@ -1073,7 +1073,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					return -1; // Exiting game
 
 				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(11);
@@ -1100,7 +1100,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				if (_vm->_objectsManager.getBobAnimDataIdx(8) == 12)
 					v24 = 0;
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(8) != 32);
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 201, 14, 1);
 			_vm->_objectsManager.animateSprite(0);
@@ -1115,7 +1115,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(5) != 74);
 			_vm->_objectsManager.stopBobAnimation(5);
 			_vm->_objectsManager.stopBobAnimation(6);
@@ -1142,7 +1142,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(5) != 6);
 			_vm->_objectsManager.stopBobAnimation(5);
 			_vm->_objectsManager.setBobAnimation(6);
@@ -1204,7 +1204,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					}
 					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 8)
 						v25 = 0;
-					_vm->_eventsManager.VBL();
+					_vm->_eventsManager.refreshScreenAndEvents();
 				} while (_vm->_objectsManager.getBobAnimDataIdx(1) != 9);
 				_vm->_objectsManager.stopBobAnimation(1);
 				_vm->_objectsManager.stopBobAnimation(2);
@@ -1246,7 +1246,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					}
 					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 8)
 						v26 = 0;
-					_vm->_eventsManager.VBL();
+					_vm->_eventsManager.refreshScreenAndEvents();
 				} while (_vm->_objectsManager.getBobAnimDataIdx(1) != 9);
 				_vm->_objectsManager.stopBobAnimation(1);
 				_vm->_objectsManager.stopBobAnimation(3);
@@ -1326,7 +1326,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(9) != 15);
 			_vm->_objectsManager.stopBobAnimation(9);
 			_vm->_objectsManager.animateSprite(0);
@@ -1335,7 +1335,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(12) != 117);
 			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
 			_vm->_objectsManager.stopBobAnimation(12);
@@ -1363,9 +1363,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_talkManager.startAnimatedCharacterDialogue("tourist1.pe2");
 			_vm->_globals._introSpeechOffFl = false;
 			_vm->_animationManager.playAnim2("T421.ANM", 100, 14, 500);
-			_vm->_eventsManager.VBL();
-			_vm->_eventsManager.VBL();
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
+			_vm->_eventsManager.refreshScreenAndEvents();
+			_vm->_eventsManager.refreshScreenAndEvents();
 			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("tourist2.pe2");
 			_vm->_globals._introSpeechOffFl = false;
@@ -1398,7 +1398,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					return -1; // Exiting game
 
 				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setSpriteIndex(0, 60);
@@ -1428,7 +1428,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					}
 					if (_vm->_objectsManager.getBobAnimDataIdx(4) == 56)
 						v33 = 0;
-					_vm->_eventsManager.VBL();
+					_vm->_eventsManager.refreshScreenAndEvents();
 				} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 72);
 				_vm->_objectsManager.stopBobAnimation(4);
 			}
@@ -1457,7 +1457,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					}
 					if (_vm->_objectsManager.getBobAnimDataIdx(6) == 56)
 						v34 = 0;
-					_vm->_eventsManager.VBL();
+					_vm->_eventsManager.refreshScreenAndEvents();
 				} while (_vm->_objectsManager.getBobAnimDataIdx(6) != 72);
 				_vm->_objectsManager.stopBobAnimation(6);
 			}
@@ -1486,7 +1486,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					}
 					if (_vm->_objectsManager.getBobAnimDataIdx(5) == 56)
 						v35 = 0;
-					_vm->_eventsManager.VBL();
+					_vm->_eventsManager.refreshScreenAndEvents();
 				} while (_vm->_objectsManager.getBobAnimDataIdx(5) != 72);
 				_vm->_objectsManager.stopBobAnimation(5);
 			}
@@ -1506,28 +1506,28 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 10);
 			_vm->_soundManager.playWav(1);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 18);
 			_vm->_soundManager.playWav(2);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 62);
 			_vm->_soundManager.playWav(3);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 77);
 			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_objectsManager.animateSprite(0);
@@ -1544,28 +1544,28 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(5) != 10);
 			_vm->_soundManager.playWav(1);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(5) != 18);
 			_vm->_soundManager.playWav(2);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(5) != 38);
 			_vm->_soundManager.playWav(3);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(5) != 53);
 			_vm->_objectsManager.stopBobAnimation(5);
 			_vm->_objectsManager.animateSprite(0);
@@ -1639,7 +1639,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					return -1; // Exiting game
 
 				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_globals._exitId = 59;
 			break;
@@ -1667,7 +1667,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					return -1; // Exiting game
 
 				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_globals._exitId = 59;
 			break;
@@ -1688,7 +1688,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(10) != 7);
 			_vm->_objectsManager.setBobAnimation(6);
 			_vm->_objectsManager.stopBobAnimation(3);
@@ -1696,7 +1696,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(6) != 10);
 			_vm->_soundManager.playSoundFile("SOUND71.WAV");
 			_vm->_objectsManager.setBobAnimation(7);
@@ -1705,7 +1705,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(7) != 15);
 			_vm->_objectsManager.stopBobAnimation(5);
 			_vm->_objectsManager.setBobAnimation(8);
@@ -1714,7 +1714,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(8) != 76);
 			_vm->_objectsManager.stopBobAnimation(6);
 			_vm->_objectsManager.stopBobAnimation(7);
@@ -1748,7 +1748,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(3) != 18);
 			_vm->_objectsManager.stopBobAnimation(3);
 			_vm->_objectsManager.setBobAnimation(4);
@@ -1767,7 +1767,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 				if (_vm->_objectsManager.getBobAnimDataIdx(4) == 18)
 					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 18, 334, 0, false);
 			} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 26);
@@ -1790,7 +1790,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				if (_vm->_objectsManager.getBobAnimDataIdx(3) == 11)
 					v41 = 0;
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(3) != 50);
 			_vm->_objectsManager.stopBobAnimation(3);
 			_vm->_objectsManager.animateSprite(0);
@@ -1812,7 +1812,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				if (_vm->_objectsManager.getBobAnimDataIdx(4) == 11)
 					v42 = 0;
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 24);
 			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_objectsManager.animateSprite(0);
@@ -1840,7 +1840,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					return -1; // Exiting game
 
 				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.setSpriteIndex(0, 64);
 			_vm->_globals._exitId = _vm->_globals._saveData->_data[svField401];
@@ -1858,7 +1858,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(1) != 9);
 			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
@@ -1871,7 +1871,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					return -1; // Exiting game
 
 				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.setSpriteIndex(0, 64);
 			_vm->_objectsManager.setBobAnimation(2);
@@ -1880,7 +1880,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(2) != 10);
 			_vm->_objectsManager.stopBobAnimation(2);
 			_vm->_objectsManager.setBobAnimation(4);
@@ -1922,7 +1922,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			}
 
 			_vm->_graphicsManager.SETCOLOR4(252, 100, 100, 100);
@@ -1968,7 +1968,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					return -1; // Exiting game
 
 				_vm->_objectsManager.GOHOME();
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
 			int v45 = 0;
@@ -1981,7 +1981,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					v45 = 1;
 					_vm->_soundManager.playSoundFile("SOUND81.WAV");
 				}
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(7) != 15);
 			_vm->_objectsManager.stopBobAnimation(7);
 			_vm->_objectsManager.setSpriteX(0, 476);
@@ -2003,7 +2003,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(12) != 6);
 			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("PRMORT.pe2");
@@ -2012,7 +2012,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(12) != 12);
 			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.stopBobAnimation(12);
@@ -2028,7 +2028,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 				if (_vm->_objectsManager.getBobAnimDataIdx(11) == 10 && !v46)
 					v46 = 1;
 			} while (_vm->_objectsManager.getBobAnimDataIdx(11) != 13);
@@ -2039,7 +2039,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(13) != 48);
 			_vm->_globals._introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("HRADIO.PE2");
@@ -2170,7 +2170,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 				if (_vm->_objectsManager.getBobAnimDataIdx(1) == 12 && !soundFlag) {
 					_vm->_soundManager.playSoundFile("SOUND86.WAV");
 					soundFlag = true;
@@ -2199,7 +2199,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			}
 			CharacterLocation *v51 = &_vm->_globals._saveData->_realHopkins;
 			v51->_pos.x = _vm->_objectsManager.getSpriteX(0);

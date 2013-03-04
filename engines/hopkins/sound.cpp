@@ -595,7 +595,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	breakFlag = false;
 	do {
 		if (_specialSoundNum != 4 && !_skipRefreshFl)
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 		if (_vm->_eventsManager.getMouseButton())
 			break;
 		_vm->_eventsManager.refreshEvents();

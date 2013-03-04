@@ -604,7 +604,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	bool hasScreenCopy = false;
 	_vm->_eventsManager._mouseFl = false;
 	if (!NO_COUL) {
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 
 		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
 			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 307200);

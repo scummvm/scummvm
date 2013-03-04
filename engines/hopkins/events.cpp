@@ -334,12 +334,12 @@ int EventsManager::waitKeyPress() {
 		else if (_keyState[(byte)' '])
 			foundChar = ' ';
 
-		VBL();
+		refreshScreenAndEvents();
 	}
 
 	// Wait for keypress release
 	while (_keyState[(byte)foundChar] && !_vm->shouldQuit()) {
-		VBL();
+		refreshScreenAndEvents();
 		g_system->delayMillis(10);
 	}
 
@@ -347,7 +347,7 @@ int EventsManager::waitKeyPress() {
 	return foundChar;
 }
 
-void EventsManager::VBL() {
+void EventsManager::refreshScreenAndEvents() {
 	int bottom = 0;
 	int right = 0;
 	int height = 0;

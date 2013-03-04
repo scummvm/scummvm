@@ -270,7 +270,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		setTextColor(4);
 		setTextPosition(16, 25);
 		outText(Common::String(_menuText[5]._line));
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 		_vm->_eventsManager.delay(1000);
 
 		memset(_vm->_graphicsManager._vesaBuffer, 0, 307199);
@@ -440,13 +440,13 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 			++textIndex;
 			x1 += _vm->_fontManager._fontFixedWidth;
 		}
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	} while (textIndex != textIdx && curChar != 13);
 
 	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
 	_vm->_graphicsManager.addVesaSegment(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
 
-	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.refreshScreenAndEvents();
 	_inputBuf[textIndex] = 0;
 	_vm->_eventsManager._mouseFl = oldMouseFlag;
 }
@@ -515,7 +515,7 @@ void ComputerManager::readText(int idx) {
 			outText(curStr);
 
 			++lineNum;
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 			curStr = "";
 		} else if (curChar != '%') {
 			curStr += curChar;
@@ -727,7 +727,7 @@ void ComputerManager::playBreakout() {
 			_vm->_objectsManager.setSpriteY(1, 187);
 			_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
 			_vm->_graphicsManager.resetVesaSegment();
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 			_vm->_graphicsManager.fadeInBreakout();
 
 			// Wait for mouse press to start playing
@@ -740,7 +740,7 @@ void ComputerManager::playBreakout() {
 				_vm->_objectsManager.setSpriteX(0, _padPositionX);
 				_vm->_objectsManager.setSpriteX(1, _padPositionX + 14);
 				_vm->_objectsManager.setSpriteY(1, 187);
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (!_vm->shouldQuit() && _vm->_eventsManager.getMouseButton() != 1);
 
 			_breakoutSpeed = 1;
@@ -759,7 +759,7 @@ void ComputerManager::playBreakout() {
 					_padPositionX = 282;
 				_vm->_objectsManager.setSpriteX(0, _padPositionX);
 				lastBreakoutEvent = moveBall();
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (!_vm->shouldQuit() && !lastBreakoutEvent);
 			if (lastBreakoutEvent != 1)
 				break;
@@ -839,7 +839,7 @@ int ComputerManager::displayHiscores() {
 		else if (_vm->_eventsManager.getMouseButton() == 1 && ABS(xp - 583) <= 32 && ABS(yp - 396) <= 13)
 			buttonIndex = 2;
 
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	} while (!buttonIndex && !_vm->shouldQuit());
 
 	_vm->_eventsManager.mouseOff();
@@ -872,7 +872,7 @@ void ComputerManager::getScoreName() {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, curChar);
 
 		for (int idx = 0; idx < 12; ++idx)
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 	}
 	_score[5]._score = "         ";
 

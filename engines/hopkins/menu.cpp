@@ -125,7 +125,7 @@ int MenuManager::menu() {
 			_vm->_graphicsManager.fastDisplay(spriteData, 230, 322, frameIndex[2] + 4);
 			_vm->_graphicsManager.fastDisplay(spriteData, 230, 354, frameIndex[3] + 6);
 			_vm->_graphicsManager.fastDisplay(spriteData, 230, 386, frameIndex[4] + 8);
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 
 			if (_vm->_eventsManager.getMouseButton() == 1 && menuIndex != MENU_NONE)
 				selectionMade = true;
@@ -133,7 +133,7 @@ int MenuManager::menu() {
 
 		if (menuIndex > MENU_NONE) {
 			_vm->_graphicsManager.fastDisplay(spriteData, 230, 259 + 32 * (menuIndex - 1), 10 + (menuIndex - 1));
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 			_vm->_eventsManager.delay(200);
 		}
 

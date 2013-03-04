@@ -54,7 +54,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
-	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 1;
 	bool oldDisableInventFl = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
@@ -113,7 +113,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 				answer = dialogAnswer(dlgAnswer, false);
 			if (answer == -1)
 				dlgAnswer = _dialogueMesgId4;
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 		} while (dlgAnswer != _dialogueMesgId4);
 	}
 	if (_vm->_globals._introSpeechOffFl) {
@@ -150,7 +150,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_globals._disableInventFl = oldDisableInventFl;
 	_vm->_graphicsManager.updateScreen();
 	for (int i = 0; i <= 4; i++)
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 0;
 }
 
@@ -286,7 +286,7 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 			retVal = _dialogueMesgId4;
 		}
 
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 		if (_vm->_eventsManager.getMouseButton())
 			loopCond = true;
 		if (retVal == -1)
@@ -325,7 +325,7 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 		dialogTalk();
 	}
 
-	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.refreshScreenAndEvents();
   return retVal;
 }
 
@@ -390,11 +390,11 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 
 		if (_vm->getIsDemo()) {
 			for (int i = 0; i < frameNumb; i++) {
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 			}
 		} else {
 			for (int i = 0; i < frameNumb; i++) {
-				_vm->_eventsManager.VBL();
+				_vm->_eventsManager.refreshScreenAndEvents();
 				if (_vm->_eventsManager._mouseButton || _vm->_eventsManager._curMouseButton)
 					break;
 				if (_vm->_eventsManager.getMouseButton() && i + 1 > abs(frameNumb / 5))
@@ -496,8 +496,8 @@ void TalkManager::dialogEndTalk() {
 			_vm->_objectsManager.hideBob(idx);
 	}
 
-	_vm->_eventsManager.VBL();
-	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.refreshScreenAndEvents();
+	_vm->_eventsManager.refreshScreenAndEvents();
 
 	for (int idx = 21; idx <= 25; ++idx) {
 		if (_vm->_globals._animBqe[idx]._enabledFl)
@@ -882,7 +882,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		_vm->_soundManager.playSample(1);
 		_vm->_objectsManager.SPACTION1(_vm->_objectsManager._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
 		do
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 		while (_vm->_objectsManager.getBobAnimDataIdx(6) < 12);
 		_vm->_objectsManager.stopBobAnimation(6);
 		_vm->_objectsManager.setBobAnimation(8);
@@ -930,7 +930,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		_vm->_soundManager.playSample(1);
 		_vm->_objectsManager.SPACTION1(_vm->_objectsManager._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
 		do
-			_vm->_eventsManager.VBL();
+			_vm->_eventsManager.refreshScreenAndEvents();
 		while (_vm->_objectsManager.getBobAnimDataIdx(5) < 12);
 		_vm->_objectsManager.stopBobAnimation(5);
 		_vm->_objectsManager.setBobAnimation(7);
@@ -966,7 +966,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
-	_vm->_eventsManager.VBL();
+	_vm->_eventsManager.refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 1;
 	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
@@ -1037,7 +1037,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 		_vm->_linesManager.checkZone();
 		if (_vm->_globals._actionMoveTo)
 			_vm->_objectsManager.PARADISE();
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	} while (!_vm->_globals._exitId);
 	dialogEndTalk();
 	dialogTalk();
@@ -1084,7 +1084,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_globals._disableInventFl = false;
 	_vm->_graphicsManager.updateScreen();
 	for (int i = 0; i <= 4; i++)
-		_vm->_eventsManager.VBL();
+		_vm->_eventsManager.refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 0;
 }
 
