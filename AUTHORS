@@ -315,6 +315,8 @@ ScummVM Team
        Benjamin Haisch         - Heavily improved de-/encoder for DXA videos
        Jochen Hoenicke         - Speaker & PCjr sound support, AdLib work
                                  (retired)
+       Daniel ter Laan         - Restoring original Drascula tracks, and
+                                 writing convert_dxa.bat
        Chris Page              - Return to launcher, savestate improvements,
                                  leak fixes, ... (GSoC 2008 task) (retired)
        Robin Watts             - ARM assembly routines for nice speedups on

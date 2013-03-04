@@ -65,6 +65,7 @@ sub html_entities_to_ascii {
 	# &oslash;  -> o
 	# &ouml;    -> o / oe
 	# &auml;    -> a
+	# &euml;    -> e
 	# &uuml;    -> ue
 	# &aring;   -> aa
 	# &amp;     -> &
@@ -82,6 +83,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&aring;/aa/g;
 
 	$text =~ s/&auml;/a/g;
+	$text =~ s/&euml;/e/g;
 	$text =~ s/&uuml;/ue/g;
 	# HACK: Torbj*o*rn but G*oe*ffringmann and R*oe*ver and J*oe*rg
 	$text =~ s/Torbj&ouml;rn/Torbjorn/g;
@@ -108,6 +110,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&aring;/\\345/g;
 
 	$text =~ s/&auml;/\\344/g;
+	$text =~ s/&euml;/\\353/g;
 	$text =~ s/&ouml;/\\366/g;
 	$text =~ s/&uuml;/\\374/g;
 
@@ -133,6 +136,7 @@ sub html_entities_to_rtf {
 
 	# Back to hex numbers
 	$text =~ s/&auml;/\\'8a/g;
+	$text =~ s/&euml;/\\'eb/g;
 	$text =~ s/&ouml;/\\'9a/g;
 	$text =~ s/&uuml;/\\'9f/g;
 
@@ -156,6 +160,7 @@ sub html_entities_to_tex {
 
 	$text =~ s/&auml;/\\"a/g;
 	$text =~ s/&ouml;/\\"o/g;
+	$text =~ s/&euml;/\\"e/g;
 	$text =~ s/&uuml;/\\"u/g;
 
 	$text =~ s/&amp;/\\&/g;
@@ -841,6 +846,7 @@ begin_credits("Credits");
 				add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 				add_person("Benjamin Haisch", "john_doe", "Heavily improved de-/encoder for DXA videos");
 				add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, AdLib work (retired)");
+				add_person("Dani&euml;l ter Laan", "NoiZe", "Restoring original Drascula tracks, and writing convert_dxa.bat");
 				add_person("Chris Page", "cp88", "Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)");
 				add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
 			end_section();
