@@ -1147,7 +1147,7 @@ bool HopkinsEngine::runFull() {
 			}
 
 		case 50:
-			displayPlane();
+			playPlaneCutscene();
 			_globals._exitId = 51;
 			break;
 
@@ -1281,7 +1281,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 75:
-			BASE();
+			playSubmarineCutscene();
 			break;
 
 		case 77:
@@ -1337,7 +1337,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 90:
-			BASED();
+			playUnderwaterBaseCutscene();
 			break;
 
 		case 91:
@@ -1953,7 +1953,7 @@ void HopkinsEngine::handleConflagration() {
 	_globals._disableInventFl = false;
 }
 
-void HopkinsEngine::BASE() {
+void HopkinsEngine::playSubmarineCutscene() {
 	_globals.iRegul = 1;
 	_graphicsManager._lineNbr = SCREEN_WIDTH;
 	_graphicsManager.lockScreen();
@@ -1994,7 +1994,7 @@ void HopkinsEngine::BASE() {
 	_globals._exitId = 85;
 }
 
-void HopkinsEngine::BASED() {
+void HopkinsEngine::playUnderwaterBaseCutscene() {
 	_graphicsManager.lockScreen();
 	_graphicsManager.clearScreen();
 	_graphicsManager.unlockScreen();
@@ -2181,7 +2181,7 @@ void HopkinsEngine::playEnding() {
 	_globals.iRegul = 0;
 }
 
-void HopkinsEngine::displayPlane() {
+void HopkinsEngine::playPlaneCutscene() {
 	_soundManager.playSound(28);
 	_globals.iRegul = 1;
 	_graphicsManager.lockScreen();

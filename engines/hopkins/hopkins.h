@@ -99,10 +99,10 @@ private:
 	void displayEndDemo();
 	void bombExplosion();
 	void handleConflagration();
-	void BASE();
-	void BASED();
+	void playSubmarineCutscene();
+	void playUnderwaterBaseCutscene();
+	void playPlaneCutscene();
 	void playEnding();
-	void displayPlane();
 
 	/**
 	 * Displays the map screen in the underground base.
