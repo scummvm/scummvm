@@ -67,10 +67,9 @@ private:
 	Common::String _indexName;
 	int _index[4048];
 	byte *_tempText;
+	byte *_zoneText;
 
-	byte *BUF_ZONE;
-
-	void loadZoneTxt();
+	void loadZoneText();
 public:
 	byte *_font;
 	int _fontFixedWidth;
