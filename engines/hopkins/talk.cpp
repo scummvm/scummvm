@@ -638,14 +638,14 @@ void TalkManager::startCharacterAnim0(int startIdx, bool readOnlyFl) {
 	_characterAnim = _characterBuffer + animIdx + 25;
 	if (!readOnlyFl) {
 		int idx = 0;
-		int v7;
 		do {
-			v7 = READ_LE_INT16(&_characterAnim[2 * idx + 4]);
-			if (v7 && _vm->_globals._speed != 501)
+			if (!READ_LE_INT16(&_characterAnim[2 * idx + 4]))
+				break;
+			if (_vm->_globals._speed != 501)
 				_vm->_graphicsManager.fastDisplay(_characterSprite, _vm->_eventsManager._startPos.x + READ_LE_INT16(&_characterAnim[2 * idx]),
 				    READ_LE_INT16(&_characterAnim[2 * idx + 2]), _characterAnim[2 * idx + 8]);
 			idx += 5;
-		} while (_vm->_globals._speed != 501 && v7);
+		} while (_vm->_globals._speed != 501);
 	}
 }
 

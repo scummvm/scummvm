@@ -1682,7 +1682,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(9);
 			_vm->_objectsManager.setBobAnimation(10);
-			_vm->_objectsManager.BOB_OFFSET(10, 300);
+			_vm->_objectsManager.setBobOffset(10, 300);
 			_vm->_soundManager.playSoundFile("SOUND44.WAV");
 			do {
 				if (_vm->shouldQuit())
@@ -2410,7 +2410,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		break;
 	case MKTAG24('B', 'O', 'S'):
 		opcodeType = 1;
-		_vm->_objectsManager.BOB_OFFSET(READ_LE_INT16(dataP + 5), READ_LE_INT16(dataP + 7));
+		_vm->_objectsManager.setBobOffset(READ_LE_INT16(dataP + 5), READ_LE_INT16(dataP + 7));
 		break;
 	case MKTAG24('V', 'O', 'N'):
 		_vm->_objectsManager.enableVerb(READ_LE_INT16(dataP + 5), READ_LE_INT16(dataP + 7));

@@ -182,7 +182,7 @@ enum SauvegardeOffset {
 };
 
 // TODO: Sauvegrade1 fields should really be mapped into data array
-struct Sauvegarde {
+struct Savegame {
 	byte _data[2050];
 	CharacterLocation _cloneHopkins;
 	CharacterLocation _realHopkins;
@@ -259,7 +259,7 @@ public:
 	int _characterType;
 	uint _speed;
 	byte *_answerBuffer;
-	Sauvegarde *_saveData;
+	Savegame *_saveData;
 	Language _language;
 	HopkinsItem _hopkinsItem[70];
 	SortItem _sortedDisplay[51];
@@ -305,7 +305,6 @@ public:
 	Common::String _textFilename;
 
 	int iRegul;
-	byte *BUF_ZONE;
 	byte *SPRITE_ECRAN;
 	byte *PERSO;
 	ListeItem Liste[6];

@@ -197,6 +197,9 @@ public:
 	void removeObject(int objIndex);
 
 	void resetBob(int idx);
+	void hideBob(int idx);
+	void displayBob(int idx);
+	void setBobOffset(int idx, int offset);
 	void setBobAnimDataIdx(int idx, int animIdx);
 	void setBobAnimation(int idx);
 	void stopBobAnimation(int idx);
@@ -226,8 +229,6 @@ public:
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	byte *loadObjectFromFile(int objIndex, bool mode);
 	void OPTI_OBJET();
-	void hideBob(int idx);
-	void displayBob(int idx);
 	void SPACTION(byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl);
 	void BOB_VIVANT(int idx);
 	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);
@@ -236,7 +237,6 @@ public:
 	void SCI_OPTI_ONE(int idx, int animIdx, int animDataIdx, int a4);
 	void GOHOME();
 	void OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx);
-	void BOB_OFFSET(int idx, int offset);
 	void SPACTION1(byte *spriteData, const Common::String &animString, int speed);
 	void PARADISE();
 };

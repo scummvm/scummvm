@@ -620,7 +620,7 @@ void ObjectsManager::hideBob(int idx) {
 		_bob[idx].field0++;
 }
 
-void ObjectsManager::BOB_OFFSET(int idx, int offset) {
+void ObjectsManager::setBobOffset(int idx, int offset) {
 	_bob[idx]._oldX2 = offset;
 }
 

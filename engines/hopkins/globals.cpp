@@ -143,7 +143,6 @@ Globals::Globals() {
 	// Initialize pointers
 	for (int i = 0; i < 6; ++i)
 		_hidingItemData[i] = g_PTRNUL;
-	BUF_ZONE = NULL;
 	SPRITE_ECRAN = NULL;
 	_saveData = NULL;
 	_answerBuffer = g_PTRNUL;
@@ -175,7 +174,6 @@ Globals::Globals() {
 }
 
 Globals::~Globals() {
-	freeMemory(BUF_ZONE);
 	for (int idx = 0; idx < 6; ++idx)
 		_hidingItemData[idx] = freeMemory(_hidingItemData[idx]);
 	freeMemory(SPRITE_ECRAN);
@@ -247,14 +245,14 @@ void Globals::clearAll() {
 	_vm->_dialogsManager._inventBuf2 = g_PTRNUL;
 	_answerBuffer = g_PTRNUL;
 	SPRITE_ECRAN = g_PTRNUL;
-	_saveData = (Sauvegarde *)g_PTRNUL;
+	_saveData = (Savegame *)g_PTRNUL;
 	_vm->_objectsManager._curObjectIndex = 0;
 
 	_vm->_linesManager.clearAll();
 	_vm->_objectsManager.clearAll();
 
-	_saveData = (Sauvegarde *)malloc(sizeof(Sauvegarde));
-	memset(_saveData, 0, sizeof(Sauvegarde));
+	_saveData = (Savegame *)malloc(sizeof(Savegame));
+	memset(_saveData, 0, sizeof(Savegame));
 
 	_boxWidth = 240;
 

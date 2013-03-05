@@ -1566,18 +1566,6 @@ void HopkinsEngine::initializeSystem() {
 	_dialogsManager._inventoryIcons = _fileManager.loadFile("ICONE.SPR");
 	_objectsManager._headSprites = _fileManager.loadFile("TETE.SPR");
 
-	switch (_globals._language) {
-	case LANG_EN:
-		_globals.BUF_ZONE = _fileManager.loadFile("ZONEAN.TXT");
-		break;
-	case LANG_FR:
-		_globals.BUF_ZONE = _fileManager.loadFile("ZONE01.TXT");
-		break;
-	case LANG_SP:
-		_globals.BUF_ZONE = _fileManager.loadFile("ZONEES.TXT");
-		break;
-	}
-
 	_eventsManager.setMouseOn();
 	_eventsManager._mouseFl = false;
 

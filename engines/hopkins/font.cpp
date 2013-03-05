@@ -40,10 +40,25 @@ FontManager::FontManager() {
 
 FontManager::~FontManager() {
 	_vm->_globals.freeMemory(_font);
+	_vm->_globals.freeMemory(BUF_ZONE);
 }
 
 void FontManager::setParent(HopkinsEngine *vm) {
 	_vm = vm;
+}
+
+void FontManager::loadZoneTxt() {
+	switch (_vm->_globals._language) {
+	case LANG_EN:
+		BUF_ZONE = _vm->_fileManager.loadFile("ZONEAN.TXT");
+		break;
+	case LANG_FR:
+		BUF_ZONE = _vm->_fileManager.loadFile("ZONE01.TXT");
+		break;
+	case LANG_SP:
+		BUF_ZONE = _vm->_fileManager.loadFile("ZONEES.TXT");
+		break;
+	}
 }
 
 void FontManager::clearAll() {
@@ -71,13 +86,14 @@ void FontManager::clearAll() {
 		_index[idx] = 0;
 
 	_tempText = g_PTRNUL;
+	BUF_ZONE = g_PTRNUL;
 }
 
 void FontManager::initData() {
 	_font = _vm->_fileManager.loadFile("FONTE3.SPR");
 	_fontFixedWidth = 12;
 	_fontFixedHeight = 21;
-
+	loadZoneTxt();
 }
 /**
  * Display Text
@@ -209,8 +225,8 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			bufSize = 100;
 			_tempText = _vm->_globals.allocMemory(110);
 			Common::fill(&_tempText[0], &_tempText[110], 0);
-			memcpy(_tempText, _vm->_globals.BUF_ZONE + _index[messageId], 96);
-			WRITE_LE_UINT16((uint16 *)_tempText + 48, READ_LE_INT16(_vm->_globals.BUF_ZONE + _index[messageId] + 96));
+			memcpy(_tempText, BUF_ZONE + _index[messageId], 96);
+			WRITE_LE_UINT16((uint16 *)_tempText + 48, READ_LE_INT16(BUF_ZONE + _index[messageId] + 96));
 		}
 		byte *curTempTextPtr = _tempText;
 		for (int i = 0; i < bufSize; i++) {

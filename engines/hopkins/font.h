@@ -68,6 +68,9 @@ private:
 	int _index[4048];
 	byte *_tempText;
 
+	byte *BUF_ZONE;
+
+	void loadZoneTxt();
 public:
 	byte *_font;
 	int _fontFixedWidth;
