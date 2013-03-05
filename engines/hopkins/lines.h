@@ -121,8 +121,8 @@ private:
 	int _newPosY;
 
 	byte *_largeBuf;
-	RouteItem *essai0;
-	RouteItem *essai1;
+	RouteItem *_testRoute0;
+	RouteItem *testRoute1;
 	int16 *_lineBuf;
 	LigneItem _lineItem[400];
 	RouteItem _bestRoute[8001];
@@ -136,6 +136,9 @@ private:
 	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
 	int characterRoute(int fromX, int fromY, int destX, int destY, int startLineIdx, int endLineIdx, int routeIdx);
 	int testLine(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
+	void useRoute0(int idx, int curRouteIdx);
+	void useRoute1(int idx, int curRouteIdx);
+	void useRoute2(int idx, int curRouteIdx);
 
 	int CALC_PROPRE(int idx);
 	int CONTOURNE(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route);
@@ -146,7 +149,7 @@ private:
 
 public:
 	RouteItem *_route;
-	RouteItem *essai2;
+	RouteItem *testRoute2;
 
 	int BOBZONE[105];
 	bool BOBZONE_FLAG[105];

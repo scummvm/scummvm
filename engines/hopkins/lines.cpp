@@ -84,9 +84,9 @@ LinesManager::LinesManager() {
 	_lastLine = 0;
 	_maxLineIdx = 0;
 	_pathFindingMaxDepth = 0;
-	essai0 = NULL;
-	essai1 = NULL;
-	essai2 = NULL;
+	_testRoute0 = NULL;
+	testRoute1 = NULL;
+	testRoute2 = NULL;
 	_lineBuf = (int16 *)g_PTRNUL;
 	_route = (RouteItem *)g_PTRNUL;
 	_currentSegmentId = 0;
@@ -1511,6 +1511,39 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	return &_bestRoute[0];
 }
 
+void LinesManager::useRoute0(int idx, int curRouteIdx) {
+	if (idx) {
+		int i = 0;
+		do {
+			assert(curRouteIdx <= 8000);
+			_bestRoute[curRouteIdx++] = _testRoute0[i++];
+		} while (_testRoute0[i].isValid());
+	}
+	_bestRoute[curRouteIdx].invalidate();
+}
+
+void LinesManager::useRoute1(int idx, int curRouteIdx) {
+	if (idx) {
+		int i = 0;
+		do {
+			assert(curRouteIdx <= 8000);
+			_bestRoute[curRouteIdx++] = testRoute1[i++];
+		} while (testRoute1[i].isValid());
+	}
+	_bestRoute[curRouteIdx].invalidate();
+}
+
+void LinesManager::useRoute2(int idx, int curRouteIdx) {
+	if (idx) {
+		int i = 0;
+		do {
+			assert(curRouteIdx <= 8000);
+			_bestRoute[curRouteIdx++] = testRoute2[i++];
+		} while (testRoute2[i].isValid());
+	}
+	_bestRoute[curRouteIdx].invalidate();
+}
+
 int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int startLineIdx, int endLineIdx, int routeIdx) {
 	int v18;
 	int v19;
@@ -1544,8 +1577,8 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 	int v109;
 	int v111;
 	int v114;
-	int v115;
-	int v117;
+	int idxRoute0;
+	int idxRoute1;
 	int collLineIdx;
 	int collDataIdx = 0;
 	int v140;
@@ -1595,7 +1628,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 	}
 	v98 = curX;
 	v97 = curY;
-	v115 = 0;
+	idxRoute0 = 0;
 	v142 = -1;
 	v140 = -1;
 	collLineIdx = -1;
@@ -1608,8 +1641,9 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		v111 = curX;
 		v109 = curY;
 		if (destX >= curX - 2 && destX <= curX + 2 && destY >= curY - 2 && destY <= curY + 2) {
-			essai0[v115].invalidate();
-			goto retLABEL_essai0;
+			_testRoute0[idxRoute0].invalidate();
+			useRoute0(idxRoute0, curRouteIdx);
+			return 1;
 		}
 		distX = abs(curX - destX);
 		v10 = distX + 1;
@@ -1649,8 +1683,8 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 					break;
 				}
 
-				essai0[v115].set(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, newDirection);
-				v115++;
+				_testRoute0[idxRoute0].set(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, newDirection);
+				idxRoute0++;
 
 				if (repeatFlag == 1) {
 					repeatFlag = 2;
@@ -1673,8 +1707,9 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		if (v20 > (v95 + 1))
 			v108 = v20;
 		if (v108 <= 10) {
-			essai0[v115].invalidate();
-			goto retLABEL_essai0;
+			_testRoute0[idxRoute0].invalidate();
+			useRoute0(idxRoute0, curRouteIdx);
+			return 1;
 		}
 		v21 = v108 - 1;
 		v102 = 1000 * v20 / v21;
@@ -1752,28 +1787,32 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		}
 		v23 = 0;
 		if (v108 + 1 <= 0) {
-			essai0[v115].invalidate();
-			goto retLABEL_essai0;
+			_testRoute0[idxRoute0].invalidate();
+			useRoute0(idxRoute0, curRouteIdx);
+			return 1;
 		}
 		while (!checkCollisionLine(v104, v103, &v143, &v142, 0, _linesNumb)) {
-			essai0[v115].set(v104, v103, newDirection);
+			_testRoute0[idxRoute0].set(v104, v103, newDirection);
 			v106 += v102;
 			v105 += v100;
 			v104 = v106 / 1000;
 			v103 = v105 / 1000;
-			v115++;
+			idxRoute0++;
 			++v23;
 			if (v23 >= v108 + 1) {
-				essai0[v115].invalidate();
-				goto retLABEL_essai0;
+				_testRoute0[idxRoute0].invalidate();
+				useRoute0(idxRoute0, curRouteIdx);
+				return 1;
 			}
 		}
 		if (_lastLine >= v142)
 			break;
-		v24 = GENIAL(v142, v143, v104, v103, destX, destY, v115, essai0);
-		if (v24 == -1)
-			goto retLABEL_essai0;
-		v115 = v24;
+		v24 = GENIAL(v142, v143, v104, v103, destX, destY, idxRoute0, _testRoute0);
+		if (v24 == -1) {
+			useRoute0(idxRoute0, curRouteIdx);
+			return 1;
+		}
+		idxRoute0 = v24;
 		if (_newPosX != -1 || _newPosY != -1) {
 			v142 = -1;
 			break;
@@ -1782,17 +1821,18 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		curY = -1;
 	}
 
-	essai0[v115].invalidate();
+	_testRoute0[idxRoute0].invalidate();
 
-	v117 = 0;
+	idxRoute1 = 0;
 	v33 = v98;
 	v92 = v97;
 
 	while (true) {
 
 		if (destX >= v33 - 2 && destX <= v33 + 2 && destY >= v92 - 2 && destY <= v92 + 2) {
-			essai1[v117].invalidate();
-			goto retLABEL_essai1;
+			testRoute1[idxRoute1].invalidate();
+			useRoute1(idxRoute1, curRouteIdx);
+			return 1;
 		}
 		while (v33 != destX) {
 			if (checkCollisionLine(v33, v92, &v141, &v140, 0, _linesNumb)) {
@@ -1802,9 +1842,9 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			}
 
 			if (v33 < destX)
-				essai1[v117++].set(v33++, v92, DIR_RIGHT);
+				testRoute1[idxRoute1++].set(v33++, v92, DIR_RIGHT);
 			else
-				essai1[v117++].set(v33--, v92, DIR_LEFT);
+				testRoute1[idxRoute1++].set(v33--, v92, DIR_LEFT);
 		}
 		if (v33 != destX)
 			break;
@@ -1815,22 +1855,25 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				if (v140 <= _lastLine)
 					break;
 
-				int v44 = GENIAL(v140, v141, destX, v43, destX, destY, v117, essai1);
-				if (v44 == -1)
-					goto retLABEL_essai1;
-				v117 = v44;
+				int v44 = GENIAL(v140, v141, destX, v43, destX, destY, idxRoute1, testRoute1);
+				if (v44 == -1) {
+					useRoute1(idxRoute1, curRouteIdx);
+					return 1;
+				}
+				idxRoute1 = v44;
 				if (_newPosX != -1 && _newPosY != -1)
 					break;
 			}
 
 			if (v43 < destY)
-				essai1[v117++].set(destX, v43++, DIR_DOWN);
+				testRoute1[idxRoute1++].set(destX, v43++, DIR_DOWN);
 			else
-				essai1[v117++].set(destX, v43--, DIR_UP);
+				testRoute1[idxRoute1++].set(destX, v43--, DIR_UP);
 		}
 		if (v43 == destY) {
-			essai1[v117].invalidate();
-			goto retLABEL_essai1;
+			testRoute1[idxRoute1].invalidate();
+			useRoute1(idxRoute1, curRouteIdx);
+			return 1;
 		}
 		if (v140 <= _lastLine)
 			break;
@@ -1841,16 +1884,17 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			break;
 	}
 
-	essai1[v117].invalidate();
-	v117 = 0;
+	testRoute1[idxRoute1].invalidate();
+	idxRoute1 = 0;
 	v54 = v98;
 	v93 = v97;
 	while (true) {
 		int v61;
 		v114 = v54;
 		if (destX >= v54 - 2 && destX <= v54 + 2 && destY >= v93 - 2 && destY <= v93 + 2) {
-			essai2[v117].invalidate();
-			goto retLABEL_essai2;
+			testRoute2[idxRoute1].invalidate();
+			useRoute2(idxRoute1, curRouteIdx);
+			return 1;
 		}
 
 		v55 = v93;
@@ -1862,9 +1906,9 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			}
 
 			if (v55 < destY)
-				essai2[v117++].set(v114, v55++, DIR_DOWN);
+				testRoute2[idxRoute1++].set(v114, v55++, DIR_DOWN);
 			else
-				essai2[v117++].set(v114, v55--, DIR_UP);
+				testRoute2[idxRoute1++].set(v114, v55--, DIR_UP);
 		}
 		if (v55 != destY)
 			break;
@@ -1875,25 +1919,26 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				if (collLineIdx <= _lastLine)
 					break;
 
-				int v62 = GENIAL(collLineIdx, collDataIdx, v61, destY, destX, destY, v117, essai2);
+				int v62 = GENIAL(collLineIdx, collDataIdx, v61, destY, destX, destY, idxRoute1, testRoute2);
 				if (v62 == -1) {
-					// CHECKME: This goto was to retLABEL_essai1... 
-					goto retLABEL_essai2;
+					useRoute2(idxRoute1, curRouteIdx);
+					return 1;
 				}
-				v117 = v62;
+				idxRoute1 = v62;
 				if (_newPosX != -1 && _newPosY != -1)
 					break;
 			}
 
 			if (v61 < destX)
-				essai2[v117++].set(v61++, destY, DIR_RIGHT);
+				testRoute2[idxRoute1++].set(v61++, destY, DIR_RIGHT);
 			else
-				essai2[v117++].set(v61--, destY, DIR_LEFT);
+				testRoute2[idxRoute1++].set(v61--, destY, DIR_LEFT);
 		}
 		if (v61 == destX) {
 			collLineIdx = -1;
-			essai2[v117].invalidate();
-			goto retLABEL_essai2;
+			testRoute2[idxRoute1].invalidate();
+			useRoute2(idxRoute1, curRouteIdx);
+			return 1;
 		}
 		if (collLineIdx <= _lastLine)
 			break;
@@ -1905,40 +1950,40 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			break;
 	}
 
-	essai2[v117].invalidate();
+	testRoute2[idxRoute1].invalidate();
 
 	if (!v136) {
 		if (endLineIdx > foundLineIdx) {
-			if (essai0[0]._x != -1 && v142 > foundLineIdx && v140 <= v142 && collLineIdx <= v142 && endLineIdx >= v142) {
+			if (_testRoute0[0]._x != -1 && v142 > foundLineIdx && v140 <= v142 && collLineIdx <= v142 && endLineIdx >= v142) {
 				_newLineIdx = v142;
 				_newLineDataIdx = v143;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
-					_bestRoute[curRouteIdx++] = essai0[i++];
-				} while (essai0[i].isValid());
+					_bestRoute[curRouteIdx++] = _testRoute0[i++];
+				} while (_testRoute0[i].isValid());
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
-			if (essai1[0]._x != -1 && foundLineIdx < v140 && collLineIdx <= v140 && v142 <= v140 && endLineIdx >= v140) {
+			if (testRoute1[0]._x != -1 && foundLineIdx < v140 && collLineIdx <= v140 && v142 <= v140 && endLineIdx >= v140) {
 				_newLineIdx = v140;
 				_newLineDataIdx = v141;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
-					_bestRoute[curRouteIdx++] = essai1[i++];
-				} while (essai1[i].isValid());
+					_bestRoute[curRouteIdx++] = testRoute1[i++];
+				} while (testRoute1[i].isValid());
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
-			if (essai2[0]._x != -1 && foundLineIdx < collLineIdx && v140 < collLineIdx && v142 < collLineIdx && endLineIdx >= collLineIdx) {
+			if (testRoute2[0]._x != -1 && foundLineIdx < collLineIdx && v140 < collLineIdx && v142 < collLineIdx && endLineIdx >= collLineIdx) {
 				_newLineIdx = collLineIdx;
 				_newLineDataIdx = collDataIdx;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
-					_bestRoute[curRouteIdx++] = essai2[i++];
-				} while (essai2[i].isValid());
+					_bestRoute[curRouteIdx++] = testRoute2[i++];
+				} while (testRoute2[i].isValid());
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
@@ -1950,76 +1995,43 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				v142 = 1300;
 			if (collLineIdx == -1)
 				v142 = 1300;
-			if (essai1[0]._x != -1 && v140 < foundLineIdx && collLineIdx >= v140 && v142 >= v140 && endLineIdx <= v140) {
+			if (testRoute1[0]._x != -1 && v140 < foundLineIdx && collLineIdx >= v140 && v142 >= v140 && endLineIdx <= v140) {
 				_newLineIdx = v140;
 				_newLineDataIdx = v141;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
-					_bestRoute[curRouteIdx++] = essai1[i++];
-				} while (essai1[i].isValid());
+					_bestRoute[curRouteIdx++] = testRoute1[i++];
+				} while (testRoute1[i].isValid());
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
-			if (essai2[0]._x != -1 && foundLineIdx > collLineIdx && v140 >= collLineIdx && v142 >= collLineIdx && endLineIdx <= collLineIdx) {
+			if (testRoute2[0]._x != -1 && foundLineIdx > collLineIdx && v140 >= collLineIdx && v142 >= collLineIdx && endLineIdx <= collLineIdx) {
 				_newLineIdx = collLineIdx;
 				_newLineDataIdx = collDataIdx;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
-					_bestRoute[curRouteIdx++] = essai2[i++];
-				} while (essai2[i].isValid());
+					_bestRoute[curRouteIdx++] = testRoute2[i++];
+				} while (testRoute2[i].isValid());
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
 			// CHECKME: Checking essai0[0]._X might make more sense here?
-			if (essai1[0]._x != -1 && foundLineIdx > v142 && v140 >= v142 && collLineIdx >= v142 && endLineIdx <= v142) {
+			if (testRoute1[0]._x != -1 && foundLineIdx > v142 && v140 >= v142 && collLineIdx >= v142 && endLineIdx <= v142) {
 				_newLineIdx = v142;
 				_newLineDataIdx = v143;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
-					_bestRoute[curRouteIdx++] = essai0[i++];
-				} while (essai0[i].isValid());
+					_bestRoute[curRouteIdx++] = _testRoute0[i++];
+				} while (_testRoute0[i].isValid());
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
 		}
 	}
 	return 0;
-
-retLABEL_essai0:
-	if (v115) {
-		int i = 0;
-		do {
-			assert(curRouteIdx <= 8000);
-			_bestRoute[curRouteIdx++] = essai0[i++];
-		} while (essai0[i].isValid());
-	}
-	_bestRoute[curRouteIdx].invalidate();
-	return 1;
-
-retLABEL_essai1:
-	if (v117) {
-		int i = 0;
-		do {
-			assert(curRouteIdx <= 8000);
-			_bestRoute[curRouteIdx++] = essai1[i++];
-		} while (essai1[i].isValid());
-	}
-	_bestRoute[curRouteIdx].invalidate();
-	return 1;
-
-retLABEL_essai2:
-	if (v117) {
-		int i = 0;
-		do {
-			assert(curRouteIdx <= 8000);
-			_bestRoute[curRouteIdx++] = essai2[i++];
-		} while (essai2[i].isValid());
-	}
-	_bestRoute[curRouteIdx].invalidate();
-	return 1;
 }
 
 RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
@@ -2127,9 +2139,9 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			int v27 = 0;
 			int v28;
 			for (;;) {
-				v28 = essai2[v27]._x;
-				int v29 = essai2[v27]._y;
-				Directions v66 = essai2[v27]._dir;
+				v28 = testRoute2[v27]._x;
+				int v29 = testRoute2[v27]._y;
+				Directions v66 = testRoute2[v27]._dir;
 				v27++;
 
 				if (checkCollisionLine(v28, v29, &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine))
@@ -2137,7 +2149,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 
 				_bestRoute[superRouteIdx].set(v28, v29, v66);
 
-				essai0[superRouteIdx].set(v28, v29, v66);
+				_testRoute0[superRouteIdx].set(v28, v29, v66);
 				superRouteIdx++;
 				if (v28 == -1)
 					break;;
@@ -2775,9 +2787,9 @@ void LinesManager::clearAll() {
 		ZONEP[idx]._spriteIndex = 0;
 	}
 
-	essai0 = (RouteItem *)g_PTRNUL;
-	essai1 = (RouteItem *)g_PTRNUL;
-	essai2 = (RouteItem *)g_PTRNUL;
+	_testRoute0 = (RouteItem *)g_PTRNUL;
+	testRoute1 = (RouteItem *)g_PTRNUL;
+	testRoute2 = (RouteItem *)g_PTRNUL;
 	_lineBuf = (int16 *)g_PTRNUL;
 	_route = (RouteItem *)g_PTRNUL;
 
@@ -2797,15 +2809,15 @@ void LinesManager::clearAll() {
 		_squareZone[idx]._enabledFl = false;
 
 	// FIXME: Delete these somewhere
-	_vm->_linesManager.essai0 = new RouteItem[8334];
-	_vm->_linesManager.essai1 = new RouteItem[8334];
-	_vm->_linesManager.essai2 = new RouteItem[8334];
-	if (!_vm->_linesManager.essai0)
-		_vm->_linesManager.essai0 = (RouteItem*)g_PTRNUL;
-	if (!_vm->_linesManager.essai1)
-		_vm->_linesManager.essai1 = (RouteItem*)g_PTRNUL;
-	if (!_vm->_linesManager.essai2)
-		_vm->_linesManager.essai2 = (RouteItem*)g_PTRNUL;
+	_vm->_linesManager._testRoute0 = new RouteItem[8334];
+	_vm->_linesManager.testRoute1 = new RouteItem[8334];
+	_vm->_linesManager.testRoute2 = new RouteItem[8334];
+	if (!_vm->_linesManager._testRoute0)
+		_vm->_linesManager._testRoute0 = (RouteItem*)g_PTRNUL;
+	if (!_vm->_linesManager.testRoute1)
+		_vm->_linesManager.testRoute1 = (RouteItem*)g_PTRNUL;
+	if (!_vm->_linesManager.testRoute2)
+		_vm->_linesManager.testRoute2 = (RouteItem*)g_PTRNUL;
 	
 	_largeBuf = _vm->_globals.allocMemory(10000);
 	_vm->_linesManager._lineBuf = (int16 *)(_largeBuf);
