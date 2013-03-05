@@ -819,9 +819,6 @@ bool HopkinsEngine::runFull() {
 		if (g_system->getEventManager()->shouldQuit())
 			return false;
 
-		_globals._exitId = 93;
-		_globals._saveData->_data[svEscapeLeftJailFl] = 0;
-
 		switch (_globals._exitId) {
 		case 1:
 			_linesManager.setMaxLineIdx(40);
