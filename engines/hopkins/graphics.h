@@ -58,7 +58,6 @@ private:
 	int _screenWidth;
 	int _screenHeight;
 	byte *_videoPtr;
-	bool _isPhysicalPtr;
 	int _width;
 	int _posXClipped, _posYClipped;
 	bool _clipFl;
@@ -121,7 +120,7 @@ public:
 	~GraphicsManager();
 
 	void setParent(HopkinsEngine *vm);
-	void lockScreen(bool shouldUsePhysicalScreen = false);
+	void lockScreen();
 	void unlockScreen();
 	void clearPalette();
 	void clearScreen();

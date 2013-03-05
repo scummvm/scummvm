@@ -50,7 +50,6 @@ GraphicsManager::GraphicsManager() {
 	_vesaScreen = NULL;
 	_vesaBuffer = NULL;
 	_screenBuffer = NULL;
-	_isPhysicalPtr = false;
 	_showDirtyRects = false;
 
 	_lineNbr2 = 0;
@@ -127,19 +126,11 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 /**
  * (try to) Lock Screen
  */
-void GraphicsManager::lockScreen(bool shouldUsePhysicalScreen) {
+void GraphicsManager::lockScreen() {
 	if (!_skipVideoLockFl) {
 		if (_lockCounter++ == 0) {
-			if (shouldUsePhysicalScreen) {
-				Graphics::Surface *s = g_system->lockScreen();
-				_videoPtr = (byte *)s->pixels;
-				WinScan = s->pitch;
-			} else {
-				_videoPtr = _screenBuffer;
-				WinScan = SCREEN_WIDTH * 2;
-			}
-
-			_isPhysicalPtr = shouldUsePhysicalScreen;
+			_videoPtr = _screenBuffer;
+			WinScan = SCREEN_WIDTH * 2;
 		}
 	}		
 }
@@ -150,9 +141,6 @@ void GraphicsManager::lockScreen(bool shouldUsePhysicalScreen) {
 void GraphicsManager::unlockScreen() {
 	assert(_videoPtr);
 	if (--_lockCounter == 0) {
-		if (_isPhysicalPtr)
-			g_system->unlockScreen();
-
 		_videoPtr = NULL;
 	}
 }
@@ -163,8 +151,8 @@ void GraphicsManager::unlockScreen() {
 void GraphicsManager::clearScreen() {
 	assert(_videoPtr);
 	Common::fill(_videoPtr, _videoPtr + WinScan * _screenHeight, 0);
-	if (!_isPhysicalPtr)
-		addRefreshRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+
+	addRefreshRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
 /**
@@ -201,7 +189,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
  */
 void GraphicsManager::loadScreen(const Common::String &file) {
 	Common::File f;
-	assert(!_videoPtr || !_isPhysicalPtr);
+	assert(!_videoPtr);
 
 	bool flag = true;
 	if (_vm->_fileManager.searchCat(file, 6) == g_PTRNUL) {
@@ -1198,13 +1186,24 @@ void GraphicsManager::displayDirtyRects() {
 }
 
 void GraphicsManager::displayRefreshRects() {
+	Graphics::Surface *screenSurface = NULL;
+	if (_showDirtyRects) {
+		screenSurface = g_system->lockScreen();
+		g_system->copyRectToScreen(_screenBuffer, WinScan, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	}
 	// Loop through copying over any  specified rects to the screen
 	for (uint idx = 0; idx < _refreshRects.size(); ++idx) {
 		const Common::Rect &r = _refreshRects[idx];
 
 		byte *srcP = _screenBuffer + WinScan * r.top + (r.left * 2);
 		g_system->copyRectToScreen(srcP, WinScan, r.left, r.top, r.width(), r.height());
+
+		if (_showDirtyRects)
+			screenSurface->frameRect(r, 0xffffff);
 	}
+
+	if (_showDirtyRects)
+		g_system->unlockScreen();
 
 	resetRefreshRects();
 }
