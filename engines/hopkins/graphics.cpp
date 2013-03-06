@@ -727,6 +727,7 @@ uint16 GraphicsManager::mapRGB(byte r, byte g, byte b) {
 
 void GraphicsManager::DD_VBL() {
 	// Display any aras of the screen that need refreshing
+	displayDirtyRects();
 	displayRefreshRects();
 
 	// Update the screen
