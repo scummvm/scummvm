@@ -1552,13 +1552,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 	int v22;
 	int v23;
 	int v24;
-	int v33;
-	bool v45;
-	int v54;
 	int v55;
-	Directions newDirection;
-	int v92;
-	int v93;
 	int v94;
 	int v95;
 	int v96;
@@ -1572,25 +1566,17 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 	int v104;
 	int v105;
 	int v106;
-	int v107;
 	int v108;
-	int v109;
-	int v111;
 	int v114;
-	int idxRoute0;
-	int idxRoute1;
-	int collLineIdx;
-	int collDataIdx = 0;
-	int v140;
-	int v142;
+	int collDataIdxRoute2 = 0;
 	bool colResult = false;
 
 	int curX = fromX;
 	int curY = fromY;
 	int curRouteIdx = routeIdx;
-	bool v136 = false;
+	bool dummyLineFl = false;
 	if (startLineIdx == -1 && endLineIdx == -1)
-		v136 = true;
+		dummyLineFl = true;
 	int foundDataIdx;
 	int foundLineIdx = startLineIdx;
 	if (checkCollisionLine(fromX, fromY, &foundDataIdx, &foundLineIdx, 0, _linesNumb)) {
@@ -1628,40 +1614,41 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 	}
 	v98 = curX;
 	v97 = curY;
-	idxRoute0 = 0;
-	v142 = -1;
-	v140 = -1;
-	collLineIdx = -1;
+	int idxRoute0 = 0;
+	int collLineIdxRoute0 = -1;
+	int collLineIdxRoute1 = -1;
+	int collLineIdxRoute2 = -1;
 
-	int distX, v10, distY, v12, v13, v14;
+	int distX, distY, v13, v14;
 	int repeatFlag = 0;
-	int v143 = 0;
-	int v141 = 0;
+	int collDataIdxRoute0 = 0;
+	int collDataIdxRoute1 = 0;
 	for (;;) {
-		v111 = curX;
-		v109 = curY;
+		int newX = curX;
+		int newY = curY;
 		if (destX >= curX - 2 && destX <= curX + 2 && destY >= curY - 2 && destY <= curY + 2) {
 			_testRoute0[idxRoute0].invalidate();
 			_useRoute0(idxRoute0, curRouteIdx);
 			return 1;
 		}
-		distX = abs(curX - destX);
-		v10 = distX + 1;
-		distY = abs(curY - destY);
-		v107 = distY + 1;
-		if (v10 > v107)
-			v107 = v10;
-		v12 = v107 - 1;
-		assert(v12 != 0);
-		v101 = 1000 * v10 / v12;
-		v99 = 1000 * (distY + 1) / v12;
+		distX = abs(curX - destX) + 1;
+		distY = abs(curY - destY) + 1;
+		int maxDist;
+		if (distX > distY)
+			maxDist = distX;
+		else 
+			maxDist = distY;
+		maxDist--;
+		assert(maxDist != 0);
+		v101 = 1000 * distX / maxDist;
+		v99 = 1000 * distY / maxDist;
 		if (destX < curX)
 			v101 = -v101;
 		if (destY < curY)
 			v99 = -v99;
 		v13 = (int16)v101 / 1000;
 		v94 = (int16)v99 / 1000;
-		newDirection = DIR_NONE;
+		Directions newDirection = DIR_NONE;
 		if (v94 == -1 && (v101 >= 0 && v101 <= 150))
 			newDirection = DIR_UP;
 		if (v13 == 1 && (v99 >= -1 && v99 <= 150))
@@ -1673,13 +1660,13 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		if (v94 == -1 && (v101 >= -150 && v101 <= 0))
 			newDirection = DIR_UP;
 
-		if (newDirection == DIR_NONE && !checkSmoothMove(curX, v109, destX, destY) && !makeSmoothMove(curX, v109, destX, destY)) {
+		if (newDirection == DIR_NONE && !checkSmoothMove(curX, newY, destX, destY) && !makeSmoothMove(curX, newY, destX, destY)) {
 			newDirection = _smoothMoveDirection;
 			v14 = 0;
 			for (v14 = 0; _smoothRoute[v14]._posX != -1 && _smoothRoute[v14]._posY != -1; ++v14) {
-				if (checkCollisionLine(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, &v143, &v142, 0, _linesNumb)) {
-					if (v142 > _lastLine)
-						v142 = -1;
+				if (checkCollisionLine(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, &collDataIdxRoute0, &collLineIdxRoute0, 0, _linesNumb)) {
+					if (collLineIdxRoute0 > _lastLine)
+						collLineIdxRoute0 = -1;
 					break;
 				}
 
@@ -1697,12 +1684,12 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 
 			repeatFlag = 1;
 			v18 = v14 - 1;
-			v111 = _smoothRoute[v18]._posX;
-			v109 = _smoothRoute[v18]._posY;
+			newX = _smoothRoute[v18]._posX;
+			newY = _smoothRoute[v18]._posY;
 		}
-		v19 = abs(v111 - destX);
+		v19 = abs(newX - destX);
 		v20 = v19 + 1;
-		v95 = abs(v109 - destY);
+		v95 = abs(newY - destY);
 		v108 = v95 + 1;
 		if (v20 > (v95 + 1))
 			v108 = v20;
@@ -1714,15 +1701,15 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		v21 = v108 - 1;
 		v102 = 1000 * v20 / v21;
 		v100 = 1000 * (v95 + 1) / v21;
-		if (destX < v111)
+		if (destX < newX)
 			v102 = -v102;
-		if (destY < v109)
+		if (destY < newY)
 			v100 = -v100;
 		v22 = v102 / 1000;
 		v96 = v100 / 1000;
-		v106 = 1000 * v111;
-		v105 = 1000 * v109;
-		v104 = 1000 * v111 / 1000;
+		v106 = 1000 * newX;
+		v105 = 1000 * newY;
+		v104 = 1000 * newX / 1000;
 		v103 = v105 / 1000;
 		if (!(v102 / 1000) && v96 == -1)
 			newDirection = DIR_UP;
@@ -1791,7 +1778,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			_useRoute0(idxRoute0, curRouteIdx);
 			return 1;
 		}
-		while (!checkCollisionLine(v104, v103, &v143, &v142, 0, _linesNumb)) {
+		while (!checkCollisionLine(v104, v103, &collDataIdxRoute0, &collLineIdxRoute0, 0, _linesNumb)) {
 			_testRoute0[idxRoute0].set(v104, v103, newDirection);
 			v106 += v102;
 			v105 += v100;
@@ -1805,16 +1792,16 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				return 1;
 			}
 		}
-		if (_lastLine >= v142)
+		if (_lastLine >= collLineIdxRoute0)
 			break;
-		v24 = GENIAL(v142, v143, v104, v103, destX, destY, idxRoute0, _testRoute0);
+		v24 = GENIAL(collLineIdxRoute0, collDataIdxRoute0, v104, v103, destX, destY, idxRoute0, _testRoute0);
 		if (v24 == -1) {
 			_useRoute0(idxRoute0, curRouteIdx);
 			return 1;
 		}
 		idxRoute0 = v24;
 		if (_newPosX != -1 || _newPosY != -1) {
-			v142 = -1;
+			collLineIdxRoute0 = -1;
 			break;
 		}
 		curX = -1;
@@ -1823,39 +1810,39 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 
 	_testRoute0[idxRoute0].invalidate();
 
-	idxRoute1 = 0;
-	v33 = v98;
-	v92 = v97;
+	int idxRoute1 = 0;
+	int posXRoute1 = v98;
+	int posYRoute1 = v97;
 
 	while (true) {
 
-		if (destX >= v33 - 2 && destX <= v33 + 2 && destY >= v92 - 2 && destY <= v92 + 2) {
+		if (destX >= posXRoute1 - 2 && destX <= posXRoute1 + 2 && destY >= posYRoute1 - 2 && destY <= posYRoute1 + 2) {
 			_testRoute1[idxRoute1].invalidate();
 			useRoute1(idxRoute1, curRouteIdx);
 			return 1;
 		}
-		while (v33 != destX) {
-			if (checkCollisionLine(v33, v92, &v141, &v140, 0, _linesNumb)) {
-				if (v140 > _lastLine)
-					v140 = -1;
+		while (posXRoute1 != destX) {
+			if (checkCollisionLine(posXRoute1, posYRoute1, &collDataIdxRoute1, &collLineIdxRoute1, 0, _linesNumb)) {
+				if (collLineIdxRoute1 > _lastLine)
+					collLineIdxRoute1 = -1;
 				break;
 			}
 
-			if (v33 < destX)
-				_testRoute1[idxRoute1++].set(v33++, v92, DIR_RIGHT);
+			if (posXRoute1 < destX)
+				_testRoute1[idxRoute1++].set(posXRoute1++, posYRoute1, DIR_RIGHT);
 			else
-				_testRoute1[idxRoute1++].set(v33--, v92, DIR_LEFT);
+				_testRoute1[idxRoute1++].set(posXRoute1--, posYRoute1, DIR_LEFT);
 		}
-		if (v33 != destX)
+		if (posXRoute1 != destX)
 			break;
 
-		int curPosY = v92;
+		int curPosY = posYRoute1;
 		while (curPosY != destY) {
-			if (checkCollisionLine(destX, curPosY, &v141, &v140, 0, _linesNumb)) {
-				if (v140 <= _lastLine)
+			if (checkCollisionLine(destX, curPosY, &collDataIdxRoute1, &collLineIdxRoute1, 0, _linesNumb)) {
+				if (collLineIdxRoute1 <= _lastLine)
 					break;
 
-				int v44 = GENIAL(v140, v141, destX, curPosY, destX, destY, idxRoute1, _testRoute1);
+				int v44 = GENIAL(collLineIdxRoute1, collDataIdxRoute1, destX, curPosY, destX, destY, idxRoute1, _testRoute1);
 				if (v44 == -1) {
 					useRoute1(idxRoute1, curRouteIdx);
 					return 1;
@@ -1875,33 +1862,33 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			useRoute1(idxRoute1, curRouteIdx);
 			return 1;
 		}
-		if (v140 <= _lastLine)
+		if (collLineIdxRoute1 <= _lastLine)
 			break;
-		v33 = _newPosX;
-		v92 = _newPosY;
-		v45 = checkCollisionLine(_newPosX, _newPosY, &v141, &v140, 0, _lastLine);
-		if (v45 && v140 <= _lastLine)
+		posXRoute1 = _newPosX;
+		posYRoute1 = _newPosY;
+		bool colRes = checkCollisionLine(_newPosX, _newPosY, &collDataIdxRoute1, &collLineIdxRoute1, 0, _lastLine);
+		if (colRes && collLineIdxRoute1 <= _lastLine)
 			break;
 	}
 
 	_testRoute1[idxRoute1].invalidate();
 	idxRoute1 = 0;
-	v54 = v98;
-	v93 = v97;
+	int posXRoute2 = v98;
+	int posYRoute2 = v97;
 	while (true) {
 		int curPosX;
-		v114 = v54;
-		if (destX >= v54 - 2 && destX <= v54 + 2 && destY >= v93 - 2 && destY <= v93 + 2) {
+		v114 = posXRoute2;
+		if (destX >= posXRoute2 - 2 && destX <= posXRoute2 + 2 && destY >= posYRoute2 - 2 && destY <= posYRoute2 + 2) {
 			_testRoute2[idxRoute1].invalidate();
 			useRoute2(idxRoute1, curRouteIdx);
 			return 1;
 		}
 
-		v55 = v93;
+		v55 = posYRoute2;
 		while (v55 != destY) {
-			if (checkCollisionLine(v114, v55, &collDataIdx, &collLineIdx, 0, _linesNumb)) {
-				if (collLineIdx > _lastLine)
-					collLineIdx = -1;
+			if (checkCollisionLine(v114, v55, &collDataIdxRoute2, &collLineIdxRoute2, 0, _linesNumb)) {
+				if (collLineIdxRoute2 > _lastLine)
+					collLineIdxRoute2 = -1;
 				break;
 			}
 
@@ -1915,11 +1902,11 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 
 		curPosX = v114;
 		while (curPosX != destX) {
-			if (checkCollisionLine(curPosX, destY, &collDataIdx, &collLineIdx, 0, _linesNumb)) {
-				if (collLineIdx <= _lastLine)
+			if (checkCollisionLine(curPosX, destY, &collDataIdxRoute2, &collLineIdxRoute2, 0, _linesNumb)) {
+				if (collLineIdxRoute2 <= _lastLine)
 					break;
 
-				int tmpRouteIdx = GENIAL(collLineIdx, collDataIdx, curPosX, destY, destX, destY, idxRoute1, _testRoute2);
+				int tmpRouteIdx = GENIAL(collLineIdxRoute2, collDataIdxRoute2, curPosX, destY, destX, destY, idxRoute1, _testRoute2);
 				if (tmpRouteIdx == -1) {
 					useRoute2(idxRoute1, curRouteIdx);
 					return 1;
@@ -1935,28 +1922,28 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				_testRoute2[idxRoute1++].set(curPosX--, destY, DIR_LEFT);
 		}
 		if (curPosX == destX) {
-			collLineIdx = -1;
+			collLineIdxRoute2 = -1;
 			_testRoute2[idxRoute1].invalidate();
 			useRoute2(idxRoute1, curRouteIdx);
 			return 1;
 		}
-		if (collLineIdx <= _lastLine)
+		if (collLineIdxRoute2 <= _lastLine)
 			break;
 
-		v54 = _newPosX;
-		v93 = _newPosY;
-		colResult = checkCollisionLine(_newPosX, _newPosY, &collDataIdx, &collLineIdx, 0, _lastLine);
-		if (colResult && collLineIdx <= _lastLine)
+		posXRoute2 = _newPosX;
+		posYRoute2 = _newPosY;
+		colResult = checkCollisionLine(_newPosX, _newPosY, &collDataIdxRoute2, &collLineIdxRoute2, 0, _lastLine);
+		if (colResult && collLineIdxRoute2 <= _lastLine)
 			break;
 	}
 
 	_testRoute2[idxRoute1].invalidate();
 
-	if (!v136) {
+	if (!dummyLineFl) {
 		if (endLineIdx > foundLineIdx) {
-			if (_testRoute0[0]._x != -1 && v142 > foundLineIdx && v140 <= v142 && collLineIdx <= v142 && endLineIdx >= v142) {
-				_newLineIdx = v142;
-				_newLineDataIdx = v143;
+			if (_testRoute0[0]._x != -1 && collLineIdxRoute0 > foundLineIdx && collLineIdxRoute1 <= collLineIdxRoute0 && collLineIdxRoute2 <= collLineIdxRoute0 && endLineIdx >= collLineIdxRoute0) {
+				_newLineIdx = collLineIdxRoute0;
+				_newLineDataIdx = collDataIdxRoute0;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
@@ -1965,9 +1952,9 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
-			if (_testRoute1[0]._x != -1 && foundLineIdx < v140 && collLineIdx <= v140 && v142 <= v140 && endLineIdx >= v140) {
-				_newLineIdx = v140;
-				_newLineDataIdx = v141;
+			if (_testRoute1[0]._x != -1 && foundLineIdx < collLineIdxRoute1 && collLineIdxRoute2 <= collLineIdxRoute1 && collLineIdxRoute0 <= collLineIdxRoute1 && endLineIdx >= collLineIdxRoute1) {
+				_newLineIdx = collLineIdxRoute1;
+				_newLineDataIdx = collDataIdxRoute1;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
@@ -1976,9 +1963,9 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
-			if (_testRoute2[0]._x != -1 && foundLineIdx < collLineIdx && v140 < collLineIdx && v142 < collLineIdx && endLineIdx >= collLineIdx) {
-				_newLineIdx = collLineIdx;
-				_newLineDataIdx = collDataIdx;
+			if (_testRoute2[0]._x != -1 && foundLineIdx < collLineIdxRoute2 && collLineIdxRoute1 < collLineIdxRoute2 && collLineIdxRoute0 < collLineIdxRoute2 && endLineIdx >= collLineIdxRoute2) {
+				_newLineIdx = collLineIdxRoute2;
+				_newLineDataIdx = collDataIdxRoute2;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
@@ -1989,15 +1976,15 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			}
 		}
 		if (endLineIdx < foundLineIdx) {
-			if (v142 == -1)
-				v142 = 1300;
-			if (v140 == -1)
-				v142 = 1300;
-			if (collLineIdx == -1)
-				v142 = 1300;
-			if (_testRoute1[0]._x != -1 && v140 < foundLineIdx && collLineIdx >= v140 && v142 >= v140 && endLineIdx <= v140) {
-				_newLineIdx = v140;
-				_newLineDataIdx = v141;
+			if (collLineIdxRoute0 == -1)
+				collLineIdxRoute0 = 1300;
+			if (collLineIdxRoute1 == -1)
+				collLineIdxRoute0 = 1300;
+			if (collLineIdxRoute2 == -1)
+				collLineIdxRoute0 = 1300;
+			if (_testRoute1[0]._x != -1 && collLineIdxRoute1 < foundLineIdx && collLineIdxRoute2 >= collLineIdxRoute1 && collLineIdxRoute0 >= collLineIdxRoute1 && endLineIdx <= collLineIdxRoute1) {
+				_newLineIdx = collLineIdxRoute1;
+				_newLineDataIdx = collDataIdxRoute1;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
@@ -2006,9 +1993,9 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
-			if (_testRoute2[0]._x != -1 && foundLineIdx > collLineIdx && v140 >= collLineIdx && v142 >= collLineIdx && endLineIdx <= collLineIdx) {
-				_newLineIdx = collLineIdx;
-				_newLineDataIdx = collDataIdx;
+			if (_testRoute2[0]._x != -1 && foundLineIdx > collLineIdxRoute2 && collLineIdxRoute1 >= collLineIdxRoute2 && collLineIdxRoute0 >= collLineIdxRoute2 && endLineIdx <= collLineIdxRoute2) {
+				_newLineIdx = collLineIdxRoute2;
+				_newLineDataIdx = collDataIdxRoute2;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
@@ -2018,9 +2005,9 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				return 2;
 			}
 			// CHECKME: Checking essai0[0]._X might make more sense here?
-			if (_testRoute1[0]._x != -1 && foundLineIdx > v142 && v140 >= v142 && collLineIdx >= v142 && endLineIdx <= v142) {
-				_newLineIdx = v142;
-				_newLineDataIdx = v143;
+			if (_testRoute1[0]._x != -1 && foundLineIdx > collLineIdxRoute0 && collLineIdxRoute1 >= collLineIdxRoute0 && collLineIdxRoute2 >= collLineIdxRoute0 && endLineIdx <= collLineIdxRoute0) {
+				_newLineIdx = collLineIdxRoute0;
+				_newLineDataIdx = collDataIdxRoute0;
 				int i = 0;
 				do {
 					assert(curRouteIdx <= 8000);
