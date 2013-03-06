@@ -757,6 +757,7 @@ bool HopkinsEngine::runFull() {
 		_graphicsManager.fadeInLong();
 		_eventsManager.delay(500);
 		_graphicsManager.fadeOutLong();
+		_graphicsManager.clearVesaScreen();
 	} else {
 		// This piece of code, though named "display_version" in the original, 
 		// displays a "loading please wait" screen.
@@ -764,6 +765,8 @@ bool HopkinsEngine::runFull() {
 		_graphicsManager.fadeInLong();
 		_eventsManager.delay(500);
 		_graphicsManager.fadeOutLong();
+		_graphicsManager.clearVesaScreen();
+
 		_globals.iRegul = 1;
 	}
 

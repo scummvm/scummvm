@@ -124,9 +124,11 @@ public:
 	void unlockScreen();
 	void clearPalette();
 	void clearScreen();
+	void clearVesaScreen();
 	void resetDirtyRects();
 	void resetRefreshRects();
 	void addDirtyRect(int x1, int y1, int x2, int y2);
+	void addDirtyRect(const Common::Rect &r) { addDirtyRect(r.left, r.top, r.right, r.bottom); }
 	void addRefreshRect(const Common::Rect &r);
 	void displayDirtyRects();
 	void displayRefreshRects();

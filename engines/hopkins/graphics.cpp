@@ -150,9 +150,16 @@ void GraphicsManager::unlockScreen() {
  */
 void GraphicsManager::clearScreen() {
 	assert(_videoPtr);
-	Common::fill(_videoPtr, _videoPtr + WinScan * _screenHeight, 0);
 
+	Common::fill(_screenBuffer, _screenBuffer + WinScan * _screenHeight, 0);
 	addRefreshRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+}
+
+void GraphicsManager::clearVesaScreen() {
+	warning("clearVesa");
+	Common::fill(_vesaScreen, _vesaScreen + WinScan * _screenHeight, 0);
+	Common::fill(_vesaBuffer, _vesaBuffer + WinScan * _screenHeight, 0);
+	addDirtyRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
 /**
