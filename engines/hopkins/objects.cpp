@@ -1871,11 +1871,11 @@ void ObjectsManager::handleLeftButton() {
 			return;
 		int routeIdx = 0;
 		do {
-			_vm->_linesManager.testRoute2[routeIdx] = _vm->_linesManager._route[routeIdx];
+			_vm->_linesManager._testRoute2[routeIdx] = _vm->_linesManager._route[routeIdx];
 			++routeIdx;
 		} while (_vm->_linesManager._route[routeIdx]._x != -1);
 
-		_vm->_linesManager.testRoute2[routeIdx].invalidate();
+		_vm->_linesManager._testRoute2[routeIdx].invalidate();
 	}
 
 	if (_vm->_globals._actionMoveTo) {
