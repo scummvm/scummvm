@@ -527,19 +527,19 @@ int LinesManager::CONTOURNE1(int lineIdx, int lineDataIdx, int routeIdx, int des
 bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, int routeIdx) {
 	int v35 = 0;
 	int v36 = 0;
-	int v42 = 0;
-	int v43 = 0;
-	int v44 = 0;
-	int v45 = 0;
-	int v46 = 0;
-	int v47 = 0;
-	int v48 = 0;
-	int v49 = 0;
+	int lineIdxLeft = 0;
+	int lineDataIdxLeft = 0;
+	int lineIdxRight = 0;
+	int lineDataIdxRight = 0;
+	int linesIdxUp = 0;
+	int linesDataIdxUp = 0;
+	int lineIdxDown = 0;
+	int lineDataIdxDown = 0;
 
 	int curX = fromX;
 	int curY = fromY;
 	int curLineIdx = lineIdx;
-	int v7 = routeIdx;
+	int tmpRouteIdx = routeIdx;
 	int dummyDataIdx;
 	if (checkCollisionLine(fromX, fromY, &dummyDataIdx, &curLineIdx, 0, _linesNumb)) {
 		switch (_lineItem[curLineIdx]._direction) {
@@ -580,10 +580,10 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 	int v9 = 0;
 	int v10 = v40;
 	for (int i = v40; v40 + 200 > v10; i = v10) {
-		if (checkCollisionLine(v41, i, &v49, &v48, 0, _lastLine) == 1 && v48 <= _lastLine)
+		if (checkCollisionLine(v41, i, &lineDataIdxDown, &lineIdxDown, 0, _lastLine) == 1 && lineIdxDown <= _lastLine)
 			break;
-		v49 = 0;
-		v48 = -1;
+		lineDataIdxDown = 0;
+		lineIdxDown = -1;
 		++v9;
 		++v10;
 	}
@@ -591,10 +591,10 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 	int v12 = 0;
 	int v13 = v40;
 	for (int j = v40; v40 - 200 < v13; j = v13) {
-		if (checkCollisionLine(v41, j, &v47, &v46, 0, _lastLine) == 1 && v46 <= _lastLine)
+		if (checkCollisionLine(v41, j, &linesDataIdxUp, &linesIdxUp, 0, _lastLine) == 1 && linesIdxUp <= _lastLine)
 			break;
-		v47 = 0;
-		v46 = -1;
+		linesDataIdxUp = 0;
+		linesIdxUp = -1;
 		++v12;
 		--v13;
 	}
@@ -602,10 +602,10 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 	int v15 = 0;
 	int v16 = v41;
 	for (int k = v41; v41 + 200 > v16; k = v16) {
-		if (checkCollisionLine(k, v40, &v45, &v44, 0, _lastLine) == 1 && v44 <= _lastLine)
+		if (checkCollisionLine(k, v40, &lineDataIdxRight, &lineIdxRight, 0, _lastLine) == 1 && lineIdxRight <= _lastLine)
 			break;
-		v45 = 0;
-		v44 = -1;
+		lineDataIdxRight = 0;
+		lineIdxRight = -1;
 		++v15;
 		++v16;
 	}
@@ -613,157 +613,157 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 	int v18 = 0;
 	int v19 = v41;
 	for (int l = v41; v41 - 200 < v19; l = v19) {
-		if (checkCollisionLine(l, v40, &v43, &v42, 0, _lastLine) == 1 && v42 <= _lastLine)
+		if (checkCollisionLine(l, v40, &lineDataIdxLeft, &lineIdxLeft, 0, _lastLine) == 1 && lineIdxLeft <= _lastLine)
 			break;
-		v43 = 0;
-		v42 = -1;
+		lineDataIdxLeft = 0;
+		lineIdxLeft = -1;
 		++v18;
 		--v19;
 	}
 	if (destLineIdx > curLineIdx) {
-		if (v46 != -1 && v46 <= curLineIdx)
-			v46 = -1;
-		if (v44 != -1 && curLineIdx >= v44)
-			v44 = -1;
-		if (v48 != -1 && curLineIdx >= v48)
-			v48 = -1;
-		if (v42 != -1 && curLineIdx >= v42)
-			v42 = -1;
-		if (v46 != -1 && destLineIdx < v46)
-			v46 = -1;
-		if (v44 != -1 && destLineIdx < v44)
-			v44 = -1;
-		if (v48 != -1 && destLineIdx < v48)
-			v48 = -1;
-		if (v42 != -1 && destLineIdx < v42)
-			v42 = -1;
+		if (linesIdxUp != -1 && linesIdxUp <= curLineIdx)
+			linesIdxUp = -1;
+		if (lineIdxRight != -1 && curLineIdx >= lineIdxRight)
+			lineIdxRight = -1;
+		if (lineIdxDown != -1 && curLineIdx >= lineIdxDown)
+			lineIdxDown = -1;
+		if (lineIdxLeft != -1 && curLineIdx >= lineIdxLeft)
+			lineIdxLeft = -1;
+		if (linesIdxUp != -1 && destLineIdx < linesIdxUp)
+			linesIdxUp = -1;
+		if (lineIdxRight != -1 && destLineIdx < lineIdxRight)
+			lineIdxRight = -1;
+		if (lineIdxDown != -1 && destLineIdx < lineIdxDown)
+			lineIdxDown = -1;
+		if (lineIdxLeft != -1 && destLineIdx < lineIdxLeft)
+			lineIdxLeft = -1;
 	} else if (destLineIdx < curLineIdx) {
-		if (v46 != -1 && v46 >= curLineIdx)
-			v46 = -1;
-		if (v44 != -1 && curLineIdx <= v44)
-			v44 = -1;
-		if (v48 != -1 && curLineIdx <= v48)
-			v48 = -1;
-		if (v42 != -1 && curLineIdx <= v42)
-			v42 = -1;
-		if (v46 != -1 && destLineIdx > v46)
-			v46 = -1;
-		if (v44 != -1 && destLineIdx > v44)
-			v44 = -1;
-		if (v48 != -1 && destLineIdx > v48)
-			v48 = -1;
-		if (v42 != -1 && destLineIdx > v42)
-			v42 = -1;
+		if (linesIdxUp != -1 && linesIdxUp >= curLineIdx)
+			linesIdxUp = -1;
+		if (lineIdxRight != -1 && curLineIdx <= lineIdxRight)
+			lineIdxRight = -1;
+		if (lineIdxDown != -1 && curLineIdx <= lineIdxDown)
+			lineIdxDown = -1;
+		if (lineIdxLeft != -1 && curLineIdx <= lineIdxLeft)
+			lineIdxLeft = -1;
+		if (linesIdxUp != -1 && destLineIdx > linesIdxUp)
+			linesIdxUp = -1;
+		if (lineIdxRight != -1 && destLineIdx > lineIdxRight)
+			lineIdxRight = -1;
+		if (lineIdxDown != -1 && destLineIdx > lineIdxDown)
+			lineIdxDown = -1;
+		if (lineIdxLeft != -1 && destLineIdx > lineIdxLeft)
+			lineIdxLeft = -1;
 	}
-	if (v46 != -1 || v44 != -1 || v48 != -1 || v42 != -1) {
+	if (linesIdxUp != -1 || lineIdxRight != -1 || lineIdxDown != -1 || lineIdxLeft != -1) {
 		Directions newDir = DIR_NONE;
 		if (destLineIdx > curLineIdx) {
-			if (v48 <= v46 && v44 <= v46 && v42 <= v46 && v46 > curLineIdx)
+			if (lineIdxDown <= linesIdxUp && lineIdxRight <= linesIdxUp && lineIdxLeft <= linesIdxUp && linesIdxUp > curLineIdx)
 				newDir = DIR_UP;
-			if (v48 <= v44 && v46 <= v44 && v42 <= v44 && curLineIdx < v44)
+			if (lineIdxDown <= lineIdxRight && linesIdxUp <= lineIdxRight && lineIdxLeft <= lineIdxRight && curLineIdx < lineIdxRight)
 				newDir = DIR_RIGHT;
-			if (v46 <= v48 && v44 <= v48 && v42 <= v48 && curLineIdx < v48)
+			if (linesIdxUp <= lineIdxDown && lineIdxRight <= lineIdxDown && lineIdxLeft <= lineIdxDown && curLineIdx < lineIdxDown)
 				newDir = DIR_DOWN;
-			if (v48 <= v42 && v44 <= v42 && v46 <= v42 && curLineIdx < v42)
+			if (lineIdxDown <= lineIdxLeft && lineIdxRight <= lineIdxLeft && linesIdxUp <= lineIdxLeft && curLineIdx < lineIdxLeft)
 				newDir = DIR_LEFT;
 		} else if (destLineIdx < curLineIdx) {
-			if (v46 == -1)
-				v46 = 1300;
-			if (v44 == -1)
-				v44 = 1300;
-			if (v48 == -1)
-				v48 = 1300;
-			if (v42 == -1)
-				v42 = 1300;
-			if (v46 != 1300 && v48 >= v46 && v44 >= v46 && v42 >= v46 && v46 < curLineIdx)
+			if (linesIdxUp == -1)
+				linesIdxUp = 1300;
+			if (lineIdxRight == -1)
+				lineIdxRight = 1300;
+			if (lineIdxDown == -1)
+				lineIdxDown = 1300;
+			if (lineIdxLeft == -1)
+				lineIdxLeft = 1300;
+			if (linesIdxUp != 1300 && lineIdxDown >= linesIdxUp && lineIdxRight >= linesIdxUp && lineIdxLeft >= linesIdxUp && linesIdxUp < curLineIdx)
 				newDir = DIR_UP;
-			if (v44 != 1300 && v48 >= v44 && v46 >= v44 && v42 >= v44 && curLineIdx > v44)
+			if (lineIdxRight != 1300 && lineIdxDown >= lineIdxRight && linesIdxUp >= lineIdxRight && lineIdxLeft >= lineIdxRight && curLineIdx > lineIdxRight)
 				newDir = DIR_RIGHT;
-			if (v48 != 1300 && v46 >= v48 && v44 >= v48 && v42 >= v48 && curLineIdx > v48)
+			if (lineIdxDown != 1300 && linesIdxUp >= lineIdxDown && lineIdxRight >= lineIdxDown && lineIdxLeft >= lineIdxDown && curLineIdx > lineIdxDown)
 				newDir = DIR_DOWN;
-			if (v42 != 1300 && v48 >= v42 && v44 >= v42 && v46 >= v42 && curLineIdx > v42)
+			if (lineIdxLeft != 1300 && lineIdxDown >= lineIdxLeft && lineIdxRight >= lineIdxLeft && linesIdxUp >= lineIdxLeft && curLineIdx > lineIdxLeft)
 				newDir = DIR_LEFT;
 		}
 
 		switch(newDir) {
 		case DIR_UP:
-			v36 = v46;
-			v35 = v47;
+			v36 = linesIdxUp;
+			v35 = linesDataIdxUp;
 			for (int v22 = 0; v22 < v39; v22++) {
-				if (checkCollisionLine(v41, v40 - v22, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
-					int v23 = GENIAL(v46, v47, v41, v40 - v22, v41, v40 - v39, v7, &_bestRoute[0]);
-					if (v23 == -1)
+				if (checkCollisionLine(v41, v40 - v22, &linesDataIdxUp, &linesIdxUp, _lastLine + 1, _linesNumb) && _lastLine < linesIdxUp) {
+					int tmpRouteIdxUp = GENIAL(linesIdxUp, linesDataIdxUp, v41, v40 - v22, v41, v40 - v39, tmpRouteIdx, &_bestRoute[0]);
+					if (tmpRouteIdxUp == -1)
 						return false;
-					v7 = v23;
+					tmpRouteIdx = tmpRouteIdxUp;
 					if (_newPosY != -1)
 						v22 = _newPosY - v40;
 				}
-				_bestRoute[v7].set(v41, v40 - v22, DIR_UP);
-				v7++;
+				_bestRoute[tmpRouteIdx].set(v41, v40 - v22, DIR_UP);
+				tmpRouteIdx++;
 			}
 			_newLineIdx = v36;
 			_newLineDataIdx = v35;
-			_newRouteIdx = v7;
+			_newRouteIdx = tmpRouteIdx;
 			return true;
 			break;
 		case DIR_RIGHT:
-			v36 = v44;
-			v35 = v45;
+			v36 = lineIdxRight;
+			v35 = lineDataIdxRight;
 			for (int v31 = 0; v31 < v38; v31++) {
-				if (checkCollisionLine(v31 + v41, v40, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
-					int v32 = GENIAL(v46, v47, v31 + v41, v40, v38 + v41, v40, v7, &_bestRoute[0]);
-					if (v32 == -1)
+				if (checkCollisionLine(v31 + v41, v40, &linesDataIdxUp, &linesIdxUp, _lastLine + 1, _linesNumb) && _lastLine < linesIdxUp) {
+					int tmpRouteIdxRight = GENIAL(linesIdxUp, linesDataIdxUp, v31 + v41, v40, v38 + v41, v40, tmpRouteIdx, &_bestRoute[0]);
+					if (tmpRouteIdxRight == -1)
 						return false;
-					v7 = v32;
+					tmpRouteIdx = tmpRouteIdxRight;
 					if (_newPosX != -1)
 						v31 = _newPosX - v41;
 				}
-				_bestRoute[v7].set(v31 + v41, v40, DIR_RIGHT);
-				v7++;
+				_bestRoute[tmpRouteIdx].set(v31 + v41, v40, DIR_RIGHT);
+				tmpRouteIdx++;
 			}
 			_newLineIdx = v36;
 			_newLineDataIdx = v35;
-			_newRouteIdx = v7;
+			_newRouteIdx = tmpRouteIdx;
 			return true;
 			break;
 		case DIR_DOWN:
-			v36 = v48;
-			v35 = v49;
+			v36 = lineIdxDown;
+			v35 = lineDataIdxDown;
 			for (int v25 = 0; v25 < v37; v25++) {
-				if (checkCollisionLine(v41, v25 + v40, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
-					int v26 = GENIAL(v46, v47, v41, v25 + v40, v41, v37 + v40, v7, &_bestRoute[0]);
-					if (v26 == -1)
+				if (checkCollisionLine(v41, v25 + v40, &linesDataIdxUp, &linesIdxUp, _lastLine + 1, _linesNumb) && _lastLine < linesIdxUp) {
+					int tmpRouteIdxDown = GENIAL(linesIdxUp, linesDataIdxUp, v41, v25 + v40, v41, v37 + v40, tmpRouteIdx, &_bestRoute[0]);
+					if (tmpRouteIdxDown == -1)
 						return false;
-					v7 = v26;
+					tmpRouteIdx = tmpRouteIdxDown;
 					if (_newPosY != -1)
 						v25 = v40 - _newPosY;
 				}
-				_bestRoute[v7].set(v41, v25 + v40, DIR_DOWN);
-				v7++;
+				_bestRoute[tmpRouteIdx].set(v41, v25 + v40, DIR_DOWN);
+				tmpRouteIdx++;
 			}
 			_newLineIdx = v36;
 			_newLineDataIdx = v35;
-			_newRouteIdx = v7;
+			_newRouteIdx = tmpRouteIdx;
 			return true;
 			break;
 		case DIR_LEFT:
-			v36 = v42;
-			v35 = v43;
+			v36 = lineIdxLeft;
+			v35 = lineDataIdxLeft;
 			for (int v28 = 0; v28 < v18; v28++) {
-				if (checkCollisionLine(v41 - v28, v40, &v47, &v46, _lastLine + 1, _linesNumb) && _lastLine < v46) {
-					int v29 = GENIAL(v46, v47, v41 - v28, v40, v41 - v18, v40, v7, &_bestRoute[0]);
-					if (v29 == -1)
+				if (checkCollisionLine(v41 - v28, v40, &linesDataIdxUp, &linesIdxUp, _lastLine + 1, _linesNumb) && _lastLine < linesIdxUp) {
+					int tmpRouteIdxLeft = GENIAL(linesIdxUp, linesDataIdxUp, v41 - v28, v40, v41 - v18, v40, tmpRouteIdx, &_bestRoute[0]);
+					if (tmpRouteIdxLeft == -1)
 						return false;
-					v7 = v29;
+					tmpRouteIdx = tmpRouteIdxLeft;
 					if (_newPosX != -1)
 						v28 = v41 - _newPosX;
 				}
-				_bestRoute[v7].set(v41 - v28, v40, DIR_LEFT);
-				v7++;
+				_bestRoute[tmpRouteIdx].set(v41 - v28, v40, DIR_LEFT);
+				tmpRouteIdx++;
 			}
 			_newLineIdx = v36;
 			_newLineDataIdx = v35;
-			_newRouteIdx = v7;
+			_newRouteIdx = tmpRouteIdx;
 			return true;
 			break;
 		default:
@@ -1551,7 +1551,6 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 	int v21;
 	int v22;
 	int v23;
-	int v24;
 	int v55;
 	int v94;
 	int v95;
@@ -1794,12 +1793,12 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		}
 		if (_lastLine >= collLineIdxRoute0)
 			break;
-		v24 = GENIAL(collLineIdxRoute0, collDataIdxRoute0, v104, v103, destX, destY, idxRoute0, _testRoute0);
-		if (v24 == -1) {
+		int tmpRouteIdx = GENIAL(collLineIdxRoute0, collDataIdxRoute0, v104, v103, destX, destY, idxRoute0, _testRoute0);
+		if (tmpRouteIdx == -1) {
 			_useRoute0(idxRoute0, curRouteIdx);
 			return 1;
 		}
-		idxRoute0 = v24;
+		idxRoute0 = tmpRouteIdx;
 		if (_newPosX != -1 || _newPosY != -1) {
 			collLineIdxRoute0 = -1;
 			break;
@@ -1842,12 +1841,12 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				if (collLineIdxRoute1 <= _lastLine)
 					break;
 
-				int v44 = GENIAL(collLineIdxRoute1, collDataIdxRoute1, destX, curPosY, destX, destY, idxRoute1, _testRoute1);
-				if (v44 == -1) {
+				int tmpRouteIdx = GENIAL(collLineIdxRoute1, collDataIdxRoute1, destX, curPosY, destX, destY, idxRoute1, _testRoute1);
+				if (tmpRouteIdx == -1) {
 					useRoute1(idxRoute1, curRouteIdx);
 					return 1;
 				}
-				idxRoute1 = v44;
+				idxRoute1 = tmpRouteIdx;
 				if (_newPosX != -1 && _newPosY != -1)
 					break;
 			}
