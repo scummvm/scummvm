@@ -2073,8 +2073,8 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 
 	int v68 = 0;
 	int v69 = 0;
-	int v72 = 0;
-	int v73 = 0;
+	int curLineDataIdx = 0;
+	int curLineIdx = 0;
 
 	if (arrLineIdx[1] == -1)
 		arrDelta[1] = 1300;
@@ -2085,54 +2085,48 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	if (arrLineIdx[7] == -1)
 		arrDelta[7] = 1300;
 	if (arrLineIdx[1] != -1 || arrLineIdx[3] != -1 || arrLineIdx[5] != -1 || arrLineIdx[7] != -1) {
-		bool v23 = false;
 		if (arrLineIdx[5] != -1 && arrDelta[1] >= arrDelta[5] && arrDelta[3] >= arrDelta[5] && arrDelta[7] >= arrDelta[5]) {
-			v73 = arrLineIdx[5];
-			v72 = arrDataIdx[5];
-			v23 = true;
+			curLineIdx = arrLineIdx[5];
+			curLineDataIdx = arrDataIdx[5];
+		} else if (arrLineIdx[1] != -1 && arrDelta[5] >= arrDelta[1] && arrDelta[3] >= arrDelta[1] && arrDelta[7] >= arrDelta[1]) {
+			curLineIdx = arrLineIdx[1];
+			curLineDataIdx = arrDataIdx[1];
+		} else if (arrLineIdx[3] != -1 && arrDelta[1] >= arrDelta[3] && arrDelta[5] >= arrDelta[3] && arrDelta[7] >= arrDelta[3]) {
+			curLineIdx = arrLineIdx[3];
+			curLineDataIdx = arrDataIdx[3];
+		} else if (arrLineIdx[7] != -1 && arrDelta[5] >= arrDelta[7] && arrDelta[3] >= arrDelta[7] && arrDelta[1] >= arrDelta[7]) {
+			curLineIdx = arrLineIdx[7];
+			curLineDataIdx = arrDataIdx[7];
 		}
-		if (arrLineIdx[1] != -1 && !v23 && arrDelta[5] >= arrDelta[1] && arrDelta[3] >= arrDelta[1] && arrDelta[7] >= arrDelta[1]) {
-			v73 = arrLineIdx[1];
-			v72 = arrDataIdx[1];
-			v23 = true;
-		}
-		if (arrLineIdx[3] != -1 && !v23 && arrDelta[1] >= arrDelta[3] && arrDelta[5] >= arrDelta[3] && arrDelta[7] >= arrDelta[3]) {
-			v73 = arrLineIdx[3];
-			v72 = arrDataIdx[3];
-			v23 = true;
-		}
-		if (arrLineIdx[7] != -1 && !v23 && arrDelta[5] >= arrDelta[7] && arrDelta[3] >= arrDelta[7] && arrDelta[1] >= arrDelta[7]) {
-			v73 = arrLineIdx[7];
-			v72 = arrDataIdx[7];
-		}
-		for (int v24 = 0; v24 <= 8; v24++) {
-			arrLineIdx[v24] = -1;
-			arrDataIdx[v24] = 0;
-			arrDelta[v24] = 1300;
+
+		for (int i = 0; i <= 8; i++) {
+			arrLineIdx[i] = -1;
+			arrDataIdx[i] = 0;
+			arrDelta[i] = 1300;
 		}
 		if (checkCollisionLine(x1, y1, &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine)) {
 			v69 = arrLineIdx[1];
 			v68 = arrDataIdx[1];
 		} else if (checkCollisionLine(x1, y1, &arrDataIdx[1], &arrLineIdx[1], 0, _linesNumb)) {
-			int v27 = 0;
-			int v28;
+			int curRouteIdx = 0;
+			int curRouteX;
 			for (;;) {
-				v28 = _testRoute2[v27]._x;
-				int v29 = _testRoute2[v27]._y;
-				Directions v66 = _testRoute2[v27]._dir;
-				v27++;
+				curRouteX = _testRoute2[curRouteIdx]._x;
+				int curRouteY = _testRoute2[curRouteIdx]._y;
+				Directions v66 = _testRoute2[curRouteIdx]._dir;
+				curRouteIdx++;
 
-				if (checkCollisionLine(v28, v29, &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine))
+				if (checkCollisionLine(curRouteX, curRouteY, &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine))
 					break;
 
-				_bestRoute[superRouteIdx].set(v28, v29, v66);
+				_bestRoute[superRouteIdx].set(curRouteX, curRouteY, v66);
 
-				_testRoute0[superRouteIdx].set(v28, v29, v66);
+				_testRoute0[superRouteIdx].set(curRouteX, curRouteY, v66);
 				superRouteIdx++;
-				if (v28 == -1)
+				if (curRouteX == -1)
 					break;;
 			}
-			if (v28 != -1) {
+			if (curRouteX != -1) {
 				v69 = arrLineIdx[1];
 				v68 = arrDataIdx[1];
 			}
@@ -2144,10 +2138,10 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 		bool loopFl = true;
 		while (loopFl) {
 			loopFl = false;
-			if (v69 < v73) {
+			if (v69 < curLineIdx) {
 				superRouteIdx = _lineItem[v69].appendToRouteInc(v68, _lineItem[v69]._lineDataEndIdx - 2, _bestRoute, superRouteIdx);
-				for (int j = v69 + 1; j < v73; ++j) {
-					if (PLAN_TEST(_lineItem[j]._lineData[0], _lineItem[j]._lineData[1], superRouteIdx, j, v73)) {
+				for (int j = v69 + 1; j < curLineIdx; ++j) {
+					if (PLAN_TEST(_lineItem[j]._lineData[0], _lineItem[j]._lineData[1], superRouteIdx, j, curLineIdx)) {
 						v69 = _newLineIdx;
 						v68 = _newLineDataIdx;
 						superRouteIdx = _newRouteIdx;
@@ -2161,12 +2155,12 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 				if (loopFl)
 					continue;
 				v68 = 0;
-				v69 = v73;
+				v69 = curLineIdx;
 			}
-			if (v69 > v73) {
+			if (v69 > curLineIdx) {
 				superRouteIdx = _lineItem[v69].appendToRouteDec(v68, 0, _bestRoute, superRouteIdx);
-				for (int l = v69 - 1; l > v73; --l) {
-					if (PLAN_TEST(_lineItem[l]._lineData[2 * _lineItem[l]._lineDataEndIdx - 2], _lineItem[l]._lineData[2 * _lineItem[l]._lineDataEndIdx - 1], superRouteIdx, l, v73)) {
+				for (int l = v69 - 1; l > curLineIdx; --l) {
+					if (PLAN_TEST(_lineItem[l]._lineData[2 * _lineItem[l]._lineDataEndIdx - 2], _lineItem[l]._lineData[2 * _lineItem[l]._lineDataEndIdx - 1], superRouteIdx, l, curLineIdx)) {
 						v69 = _newLineIdx;
 						v68 = _newLineDataIdx;
 						superRouteIdx = _newRouteIdx; 
@@ -2179,14 +2173,14 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 				if (loopFl)
 					continue;
 
-				v68 = _lineItem[v73]._lineDataEndIdx - 1;
-				v69 = v73;
+				v68 = _lineItem[curLineIdx]._lineDataEndIdx - 1;
+				v69 = curLineIdx;
 			}
-			if (v69 == v73) {
-				if (v68 <= v72) {
-					superRouteIdx = _lineItem[v73].appendToRouteInc(v68, v72, _bestRoute, superRouteIdx);
+			if (v69 == curLineIdx) {
+				if (v68 <= curLineDataIdx) {
+					superRouteIdx = _lineItem[curLineIdx].appendToRouteInc(v68, curLineDataIdx, _bestRoute, superRouteIdx);
 				} else {
-					superRouteIdx = _lineItem[v73].appendToRouteDec(v68, v72, _bestRoute, superRouteIdx);
+					superRouteIdx = _lineItem[curLineIdx].appendToRouteDec(v68, curLineDataIdx, _bestRoute, superRouteIdx);
 				}
 			}
 		}
