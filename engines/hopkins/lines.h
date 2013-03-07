@@ -38,6 +38,8 @@ struct LigneZoneItem {
 	int16 *_zoneData;
 };
 
+#define INVALID_LINEIDX 1300
+
 struct RouteItem;
 
 struct LigneItem {
