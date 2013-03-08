@@ -2239,20 +2239,20 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int smoothIdx = 0;
 		int stepCount = 0;
 		while (curX > destX && destY > curY) {
-			int v25 = _vm->_globals._hopkinsItem[hopkinsIdx]._speedX;
-			int v40 = _vm->_globals._hopkinsItem[hopkinsIdx]._speedY;
+			int realSpeedX = _vm->_globals._hopkinsItem[hopkinsIdx]._speedX;
+			int realSpeedY = _vm->_globals._hopkinsItem[hopkinsIdx]._speedY;
 			int spriteSize = _vm->_globals._spriteSize[curY];
 			if (spriteSize < 0) {
-				v25 = _vm->_graphicsManager.zoomOut(v25, -spriteSize);
-				v40 = _vm->_graphicsManager.zoomOut(v40, -spriteSize);
+				realSpeedX = _vm->_graphicsManager.zoomOut(realSpeedX, -spriteSize);
+				realSpeedY = _vm->_graphicsManager.zoomOut(realSpeedY, -spriteSize);
 			} else if (spriteSize > 0) {
-				v25 = _vm->_graphicsManager.zoomIn(v25, spriteSize);
-				v40 = _vm->_graphicsManager.zoomIn(v40, spriteSize);
+				realSpeedX = _vm->_graphicsManager.zoomIn(realSpeedX, spriteSize);
+				realSpeedY = _vm->_graphicsManager.zoomIn(realSpeedY, spriteSize);
 			}
-			for (int i = 0; i < v25; i++) {
+			for (int i = 0; i < realSpeedX; i++) {
 				--curX;
 				_smoothRoute[smoothIdx]._posX = curX;
-				if (curY != curY + v40)
+				if (curY != curY + realSpeedY)
 					curY++;
 				_smoothRoute[smoothIdx]._posY = curY;
 				smoothIdx++;
@@ -2273,20 +2273,20 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int smoothIdx = 0;
 		int stepCount = 0;
 		while (curX < destX && destY > curY) {
-			int v14 = _vm->_globals._hopkinsItem[hopkinsIdx]._speedX;
-			int v39 = _vm->_globals._hopkinsItem[hopkinsIdx]._speedY;
+			int realSpeedX = _vm->_globals._hopkinsItem[hopkinsIdx]._speedX;
+			int realSpeedY = _vm->_globals._hopkinsItem[hopkinsIdx]._speedY;
 			int spriteSize = _vm->_globals._spriteSize[curY];
 			if (spriteSize < 0) {
-				v14 = _vm->_graphicsManager.zoomOut(v14, -spriteSize);
-				v39 = _vm->_graphicsManager.zoomOut(v39, -spriteSize);
+				realSpeedX = _vm->_graphicsManager.zoomOut(realSpeedX, -spriteSize);
+				realSpeedY = _vm->_graphicsManager.zoomOut(realSpeedY, -spriteSize);
 			} else if (spriteSize > 0) {
-				v14 = _vm->_graphicsManager.zoomIn(v14, spriteSize);
-				v39 = _vm->_graphicsManager.zoomIn(v39, spriteSize);
+				realSpeedX = _vm->_graphicsManager.zoomIn(realSpeedX, spriteSize);
+				realSpeedY = _vm->_graphicsManager.zoomIn(realSpeedY, spriteSize);
 			}
-			for (int i = 0; i < v14; i++) {
+			for (int i = 0; i < realSpeedX; i++) {
 				++curX;
 				_smoothRoute[smoothIdx]._posX = curX;
-				if (curY != curY + v39)
+				if (curY != curY + realSpeedY)
 					curY++;
 				_smoothRoute[smoothIdx]._posY = curY;
 				smoothIdx++;
@@ -2307,13 +2307,13 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int smoothIdx = 0;
 		int stepCount = 0;
 		while (curX > destX && destY < curY) {
-			int v11 = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedX, 25);
-			int v38 = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedY, 25);
+			int realSpeedX = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedX, 25);
+			int realSpeedY = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedY, 25);
 			int oldY = curY;
-			for (int v12 = 0; v12 < v11; v12++) {
+			for (int i = 0; i < realSpeedX; i++) {
 				--curX;
 				_smoothRoute[smoothIdx]._posX = curX;
-				if ((uint16)curY != (uint16)oldY + v38)
+				if ((uint16)curY != (uint16)oldY + realSpeedY)
 					curY--;
 				_smoothRoute[smoothIdx]._posY = curY;
 				smoothIdx++;
@@ -2362,10 +2362,10 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 }
 
 bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int a4, int a5) {
-	int v42;
-	int v43;
-	int v44;
-	int v45;
+	int sideTestUp;
+	int sideTestDown;
+	int sideTestLeft;
+	int sideTestRight;
 	int dataIdxTestUp;
 	int dataIdxTestDown;
 	int dataIdxTestLeft;
@@ -2375,10 +2375,10 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int a4, 
 	int lineIdxTestLeft;
 	int lineIdxTestRight;
 
-	int idxTestUp = testLine(paramX, paramY - 2, &v42, &lineIdxTestUp, &dataIdxTestUp);
-	int idxTestDown = testLine(paramX, paramY + 2, &v43, &lineIdxTestDown, &dataIdxTestDown);
-	int idxTestLeft = testLine(paramX - 2, paramY, &v44, &lineIdxTestLeft, &dataIdxTestLeft);
-	int idxTestRight = testLine(paramX + 2, paramY, &v45, &lineIdxTestRight, &dataIdxTestRight);
+	int idxTestUp = testLine(paramX, paramY - 2, &sideTestUp, &lineIdxTestUp, &dataIdxTestUp);
+	int idxTestDown = testLine(paramX, paramY + 2, &sideTestDown, &lineIdxTestDown, &dataIdxTestDown);
+	int idxTestLeft = testLine(paramX - 2, paramY, &sideTestLeft, &lineIdxTestLeft, &dataIdxTestLeft);
+	int idxTestRight = testLine(paramX + 2, paramY, &sideTestRight, &lineIdxTestRight, &dataIdxTestRight);
 	if (idxTestUp == -1 && idxTestDown == -1 && idxTestLeft == -1 && idxTestRight == -1)
 		return false;
 
@@ -2425,34 +2425,34 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int a4, 
 			return false;
 	}
 
-	int v33 = 0;
+	int sideTest = 0;
 	int idxTest = 0;
 	if (v8 == 1) {
 		idxTest = idxTestUp;
-		v33 = v42;
+		sideTest = sideTestUp;
 		_newLineIdx = lineIdxTestUp;
 		_newLineDataIdx = dataIdxTestUp;
 	} else if (v8 == 2) {
 		idxTest = idxTestDown;
-		v33 = v43;
+		sideTest = sideTestDown;
 		_newLineIdx = lineIdxTestDown;
 		_newLineDataIdx = dataIdxTestDown;
 	} else if (v8 == 3) {
 		idxTest = idxTestLeft;
-		v33 = v44;
+		sideTest = sideTestLeft;
 		_newLineIdx = lineIdxTestLeft;
 		_newLineDataIdx = dataIdxTestLeft;
 	} else if (v8 == 4) {
 		idxTest = idxTestRight;
-		v33 = v45;
+		sideTest = sideTestRight;
 		_newLineIdx = lineIdxTestRight;
 		_newLineDataIdx = dataIdxTestRight;
 	}
 
 	int routeIdx = superRouteIdx;
-	if (v33 == 1) {
+	if (sideTest == 1) {
 		routeIdx = _lineItem[idxTest].appendToRouteInc(0, -1, _bestRoute, routeIdx);
-	} else if (v33 == 2) {
+	} else if (sideTest == 2) {
 		routeIdx = _lineItem[idxTest].appendToRouteDec(-1, -1, _bestRoute, routeIdx);
 	}
 	_newRouteIdx = routeIdx;
