@@ -239,6 +239,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Myst Masterpiece Edition
+	// Polish Windows
+	// From pykman (Included in "Myst: Antologia")
+	{
+		{
+			"myst",
+			"Masterpiece Edition",
+			AD_ENTRY1("MYST.DAT", "4a05771b60f4a69869838d01e85c9e80"),
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_MYST,
+		GF_ME,
+		0,
+	},
+
 	// Riven: The Sequel to Myst
 	// Version 1.0 (5CD)
 	// From clone2727
@@ -338,6 +356,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1("a_Data.MHK", "aff2a384aaa9a0e0ec51010f708c5c04"),
 			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_RIVEN,
+		GF_DVD,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
+	// Version 1.02 (DVD, From "Myst: Antologia")
+	// From pykman
+	{
+		{
+			"riven",
+			"",
+			AD_ENTRY1("a_Data.MHK", "733a710cf5f848b441ec72d988ab8a3d"),
+			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)
