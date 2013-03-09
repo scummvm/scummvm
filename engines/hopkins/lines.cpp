@@ -2193,9 +2193,6 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 }
 
 bool LinesManager::checkSmoothMove(int fromX, int fromY, int destX, int destY) {
-	int foundLineIdx;
-	int foundDataIdx;
-
 	int distX = abs(fromX - destX) + 1;
 	int distY = abs(fromY - destY) + 1;
 	if (distX > distY)
@@ -2217,6 +2214,8 @@ bool LinesManager::checkSmoothMove(int fromX, int fromY, int destX, int destY) {
 
 	if (distY + 1 > 0) {
 		int stepCount = 0;
+		int foundLineIdx;
+		int foundDataIdx;
 		while (!checkCollisionLine(newPosX, newPosY, &foundDataIdx, &foundLineIdx, 0, _linesNumb) || foundLineIdx > _lastLine) {
 			smoothPosX += stepX;
 			smoothPosY += stepY;
@@ -2361,19 +2360,19 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 	return true;
 }
 
-bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int a4, int a5) {
+bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int paramStartLineIdx, int paramEndLineIdx) {
 	int sideTestUp;
 	int sideTestDown;
 	int sideTestLeft;
 	int sideTestRight;
-	int dataIdxTestUp;
-	int dataIdxTestDown;
-	int dataIdxTestLeft;
-	int dataIdxTestRight;
 	int lineIdxTestUp;
 	int lineIdxTestDown;
 	int lineIdxTestLeft;
 	int lineIdxTestRight;
+	int dataIdxTestUp;
+	int dataIdxTestDown;
+	int dataIdxTestLeft;
+	int dataIdxTestRight;
 
 	int idxTestUp = testLine(paramX, paramY - 2, &sideTestUp, &lineIdxTestUp, &dataIdxTestUp);
 	int idxTestDown = testLine(paramX, paramY + 2, &sideTestDown, &lineIdxTestDown, &dataIdxTestDown);
@@ -2382,67 +2381,68 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int a4, 
 	if (idxTestUp == -1 && idxTestDown == -1 && idxTestLeft == -1 && idxTestRight == -1)
 		return false;
 
-	int v8;
-	if (a4 == -1 || a5 == -1) {
+	// Direction: 1 = Up, 2 = Down, 3 = Left, 4 = Right
+	int direction;
+	if (paramStartLineIdx == -1 || paramEndLineIdx == -1) {
 		if (idxTestUp != -1)
-			v8 = 1;
+			direction = 1;
 		else if (idxTestDown != -1)
-			v8 = 2;
+			direction = 2;
 		else if (idxTestLeft != -1)
-			v8 = 3;
+			direction = 3;
 		else if (idxTestRight != -1)
-			v8 = 4;
+			direction = 4;
 		else 
 			return false;
 	} else {
-		int v28 = 100;
-		int v7 = 100;
-		int v35 = 100;
-		int v27 = 100;
-		int v36 = abs(a4 - a5);
+		int stepCountUp = 100;
+		int stepCountDown = 100;
+		int stepCountLeft = 100;
+		int stepCountRight = 100;
+		int paramStepCount = abs(paramStartLineIdx - paramEndLineIdx);
 		if (idxTestUp != -1) {
-			v28 = abs(lineIdxTestUp - a5);
+			stepCountUp = abs(lineIdxTestUp - paramEndLineIdx);
 		}
 		if (idxTestDown != -1) {
-			v7 = abs(lineIdxTestDown - a5);
+			stepCountDown = abs(lineIdxTestDown - paramEndLineIdx);
 		}
 		if (idxTestLeft != -1) {
-			v35 = abs(lineIdxTestLeft - a5);
+			stepCountLeft = abs(lineIdxTestLeft - paramEndLineIdx);
 		}
 		if (idxTestRight != -1) {
-			v27 = abs(lineIdxTestRight - a5);
+			stepCountRight = abs(lineIdxTestRight - paramEndLineIdx);
 		}
 
-		if (v28 < v36 && v28 <= v7 && v28 <= v35 && v28 <= v27)
-			v8 = 1;
-		else if (v36 > v7 && v28 >= v7 && v35 >= v7 && v27 >= v7)
-			v8 = 2;
-		else if (v35 < v36 && v35 <= v28 && v35 <= v7 && v35 <= v27)
-			v8 = 3;
-		else if (v27 < v36 && v27 <= v28 && v27 <= v7 && v27 <= v35)
-			v8 = 4;
+		if (stepCountUp < paramStepCount && stepCountUp <= stepCountDown && stepCountUp <= stepCountLeft && stepCountUp <= stepCountRight)
+			direction = 1;
+		else if (paramStepCount > stepCountDown && stepCountUp >= stepCountDown && stepCountLeft >= stepCountDown && stepCountRight >= stepCountDown)
+			direction = 2;
+		else if (stepCountLeft < paramStepCount && stepCountLeft <= stepCountUp && stepCountLeft <= stepCountDown && stepCountLeft <= stepCountRight)
+			direction = 3;
+		else if (stepCountRight < paramStepCount && stepCountRight <= stepCountUp && stepCountRight <= stepCountDown && stepCountRight <= stepCountLeft)
+			direction = 4;
 		else
 			return false;
 	}
 
 	int sideTest = 0;
 	int idxTest = 0;
-	if (v8 == 1) {
+	if (direction == 1) {
 		idxTest = idxTestUp;
 		sideTest = sideTestUp;
 		_newLineIdx = lineIdxTestUp;
 		_newLineDataIdx = dataIdxTestUp;
-	} else if (v8 == 2) {
+	} else if (direction == 2) {
 		idxTest = idxTestDown;
 		sideTest = sideTestDown;
 		_newLineIdx = lineIdxTestDown;
 		_newLineDataIdx = dataIdxTestDown;
-	} else if (v8 == 3) {
+	} else if (direction == 3) {
 		idxTest = idxTestLeft;
 		sideTest = sideTestLeft;
 		_newLineIdx = lineIdxTestLeft;
 		_newLineDataIdx = dataIdxTestLeft;
-	} else if (v8 == 4) {
+	} else if (direction == 4) {
 		idxTest = idxTestRight;
 		sideTest = sideTestRight;
 		_newLineIdx = lineIdxTestRight;

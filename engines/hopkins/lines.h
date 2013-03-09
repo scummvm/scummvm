@@ -147,7 +147,7 @@ private:
 	int CONTOURNE1(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route, int a8, int a9);
 	bool MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, int routeIdx);
 	int GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int destX, int destY, int routerIdx, RouteItem *route);
-	bool PLAN_TEST(int paramX, int paramY, int superRouteIdx, int a4, int a5);
+	bool PLAN_TEST(int paramX, int paramY, int superRouteIdx, int paramStartLineIdx, int paramEndLineIdx);
 
 public:
 	RouteItem *_route;
