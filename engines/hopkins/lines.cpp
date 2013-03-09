@@ -1528,27 +1528,15 @@ void LinesManager::useRoute2(int idx, int curRouteIdx) {
 
 int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int startLineIdx, int endLineIdx, int routeIdx) {
 	int v18;
-	int v19;
-	int v20;
 	int v21;
-	int v22;
 	int v23;
 	int v55;
-	int v94;
-	int v95;
-	int v96;
 	int v97;
 	int v98;
-	int v99;
-	int v100;
-	int v101;
-	int v102;
-	int v103;
-	int v104;
-	int v105;
-	int v106;
-	int v108;
-	int v114;
+	int curPosY;
+	int curPosX;
+	int newSmoothY;
+	int newSmoothX;
 	int collDataIdxRoute2 = 0;
 	bool colResult = false;
 
@@ -1600,7 +1588,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 	int collLineIdxRoute1 = -1;
 	int collLineIdxRoute2 = -1;
 
-	int distX, distY, v13, v14;
+	int distX, distY, v14;
 	int repeatFlag = 0;
 	int collDataIdxRoute0 = 0;
 	int collDataIdxRoute1 = 0;
@@ -1621,24 +1609,24 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			maxDist = distY;
 		maxDist--;
 		assert(maxDist != 0);
-		v101 = 1000 * distX / maxDist;
-		v99 = 1000 * distY / maxDist;
+		int stepX = 1000 * distX / maxDist;
+		int stepY = 1000 * distY / maxDist;
 		if (destX < curX)
-			v101 = -v101;
+			stepX = -stepX;
 		if (destY < curY)
-			v99 = -v99;
-		v13 = (int16)v101 / 1000;
-		v94 = (int16)v99 / 1000;
+			stepY = -stepY;
+		int vertDirection = (int16)stepX / 1000;
+		int horzDirection = (int16)stepY / 1000;
 		Directions newDirection = DIR_NONE;
-		if (v94 == -1 && (v101 >= 0 && v101 <= 150))
+		if (horzDirection == -1 && (stepX >= 0 && stepX <= 150))
 			newDirection = DIR_UP;
-		if (v13 == 1 && (v99 >= -1 && v99 <= 150))
+		if (vertDirection == 1 && (stepY >= -1 && stepY <= 150))
 			newDirection = DIR_RIGHT;
-		if (v94 == 1 && (v101 >= -150 && v101 <= 150))
+		if (horzDirection == 1 && (stepX >= -150 && stepX <= 150))
 			newDirection = DIR_DOWN;
-		if (v13 == -1 && (v99 >= -150 && v99 <= 150))
+		if (vertDirection == -1 && (stepY >= -150 && stepY <= 150))
 			newDirection = DIR_LEFT;
-		if (v94 == -1 && (v101 >= -150 && v101 <= 0))
+		if (horzDirection == -1 && (stepX >= -150 && stepX <= 0))
 			newDirection = DIR_UP;
 
 		if (newDirection == DIR_NONE && !checkSmoothMove(curX, newY, destX, destY) && !makeSmoothMove(curX, newY, destX, destY)) {
@@ -1668,106 +1656,105 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			newX = _smoothRoute[v18]._posX;
 			newY = _smoothRoute[v18]._posY;
 		}
-		v19 = abs(newX - destX);
-		v20 = v19 + 1;
-		v95 = abs(newY - destY);
-		v108 = v95 + 1;
-		if (v20 > (v95 + 1))
-			v108 = v20;
-		if (v108 <= 10) {
+		int newDistX = abs(newX - destX) + 1;
+		int newDistY = abs(newY - destY) + 1;
+		int newMaxDist = newDistY;
+		if (newDistX > newDistY)
+			newMaxDist = newDistX;
+		if (newMaxDist <= 10) {
 			_testRoute0[idxRoute0].invalidate();
 			_useRoute0(idxRoute0, curRouteIdx);
 			return 1;
 		}
-		v21 = v108 - 1;
-		v102 = 1000 * v20 / v21;
-		v100 = 1000 * (v95 + 1) / v21;
+		v21 = newMaxDist - 1;
+		int newStepX = 1000 * newDistX / v21;
+		int newStepY = 1000 * newDistY / v21;
 		if (destX < newX)
-			v102 = -v102;
+			newStepX = -newStepX;
 		if (destY < newY)
-			v100 = -v100;
-		v22 = v102 / 1000;
-		v96 = v100 / 1000;
-		v106 = 1000 * newX;
-		v105 = 1000 * newY;
-		v104 = 1000 * newX / 1000;
-		v103 = v105 / 1000;
-		if (!(v102 / 1000) && v96 == -1)
+			newStepY = -newStepY;
+		int newVertDirection = newStepX / 1000;
+		int newHorzDirection = newStepY / 1000;
+		newSmoothX = 1000 * newX;
+		newSmoothY = 1000 * newY;
+		curPosX = newSmoothX / 1000;
+		curPosY = newSmoothY / 1000;
+		if (!(newStepX / 1000) && newHorzDirection == -1)
 			newDirection = DIR_UP;
-		if (v22 == 1) {
-			if (v96 == -1)
+		if (newVertDirection == 1) {
+			if (newHorzDirection == -1)
 				newDirection = DIR_UP_RIGHT;
-			if (!v96)
+			if (!newHorzDirection)
 				newDirection = DIR_RIGHT;
-			if (v96 == 1)
+			if (newHorzDirection == 1)
 				newDirection = DIR_DOWN_RIGHT;
 		}
-		if (!v22 && v96 == 1)
+		if (!newVertDirection && newHorzDirection == 1)
 			newDirection = DIR_DOWN;
-		if ((v22 != -1) && (v96 == -1)) {
-			if (v102 >= 0 && v102 < 510)
+		if ((newVertDirection != -1) && (newHorzDirection == -1)) {
+			if (newStepX >= 0 && newStepX < 510)
 				newDirection = DIR_UP;
-			else if (v102 >= 510 && v102 <= 1000)
+			else if (newStepX >= 510 && newStepX <= 1000)
 				newDirection = DIR_UP_RIGHT;
 		} else {
-			if (v96 == 1)
+			if (newHorzDirection == 1)
 				newDirection = DIR_DOWN_LEFT;
-			else if (!v96)
+			else if (!newHorzDirection)
 				newDirection = DIR_LEFT;
-			else if (v96 == -1) {
-				if (v102 >= 0 && v102 < 510)
+			else if (newHorzDirection == -1) {
+				if (newStepX >= 0 && newStepX < 510)
 					newDirection = DIR_UP;
-				else if (v102 >= 510 && v102 <= 1000)
+				else if (newStepX >= 510 && newStepX <= 1000)
 					newDirection = DIR_UP_RIGHT;
 				else 
 					newDirection = DIR_UP_LEFT;
 			}
 		}
-		if (v22 == 1) {
-			if (v100 >= -1000 && v100 <= -510)
+		if (newVertDirection == 1) {
+			if (newStepY >= -1000 && newStepY <= -510)
 				newDirection = DIR_UP_RIGHT;
-			if (v100 >= -510 && v100 <= 510)
+			if (newStepY >= -510 && newStepY <= 510)
 				newDirection = DIR_RIGHT;
-			if (v100 >= 510 && v100 <= 1000)
+			if (newStepY >= 510 && newStepY <= 1000)
 				newDirection = DIR_DOWN_RIGHT;
 		}
-		if (v96 == 1) {
-			if (v102 >= 510 && v102 <= 1000)
+		if (newHorzDirection == 1) {
+			if (newStepX >= 510 && newStepX <= 1000)
 				newDirection = DIR_DOWN_RIGHT;
-			if (v102 >= -510 && v102 <= 510)
+			if (newStepX >= -510 && newStepX <= 510)
 				newDirection = DIR_DOWN;
-			if (v102 >= -1000 && v102 <= -510)
+			if (newStepX >= -1000 && newStepX <= -510)
 				newDirection = DIR_DOWN_LEFT;
 		}
-		if (v22 == -1) {
-			if (v100 >= 510 && v100 <= 1000)
+		if (newVertDirection == -1) {
+			if (newStepY >= 510 && newStepY <= 1000)
 				newDirection = DIR_DOWN_LEFT;
-			if (v100 >= -510 && v100 <= 510)
+			if (newStepY >= -510 && newStepY <= 510)
 				newDirection = DIR_LEFT;
-			if (v100 >= -1000 && v100 <= -510)
+			if (newStepY >= -1000 && newStepY <= -510)
 				newDirection = DIR_UP_LEFT;
 		}
-		if (v96 == -1) {
-			if (v102 >= -1000 && v102 <= -510)
+		if (newHorzDirection == -1) {
+			if (newStepX >= -1000 && newStepX <= -510)
 				newDirection = DIR_UP_LEFT;
-			if (v102 >= -510 && v102 <= 0)
+			if (newStepX >= -510 && newStepX <= 0)
 				newDirection = DIR_UP;
 		}
 		v23 = 0;
-		if (v108 + 1 <= 0) {
+		if (newMaxDist + 1 <= 0) {
 			_testRoute0[idxRoute0].invalidate();
 			_useRoute0(idxRoute0, curRouteIdx);
 			return 1;
 		}
-		while (!checkCollisionLine(v104, v103, &collDataIdxRoute0, &collLineIdxRoute0, 0, _linesNumb)) {
-			_testRoute0[idxRoute0].set(v104, v103, newDirection);
-			v106 += v102;
-			v105 += v100;
-			v104 = v106 / 1000;
-			v103 = v105 / 1000;
+		while (!checkCollisionLine(curPosX, curPosY, &collDataIdxRoute0, &collLineIdxRoute0, 0, _linesNumb)) {
+			_testRoute0[idxRoute0].set(curPosX, curPosY, newDirection);
+			newSmoothX += newStepX;
+			newSmoothY += newStepY;
+			curPosX = newSmoothX / 1000;
+			curPosY = newSmoothY / 1000;
 			idxRoute0++;
 			++v23;
-			if (v23 >= v108 + 1) {
+			if (v23 >= newMaxDist + 1) {
 				_testRoute0[idxRoute0].invalidate();
 				_useRoute0(idxRoute0, curRouteIdx);
 				return 1;
@@ -1775,7 +1762,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		}
 		if (_lastLine >= collLineIdxRoute0)
 			break;
-		int tmpRouteIdx = GENIAL(collLineIdxRoute0, collDataIdxRoute0, v104, v103, destX, destY, idxRoute0, _testRoute0);
+		int tmpRouteIdx = GENIAL(collLineIdxRoute0, collDataIdxRoute0, curPosX, curPosY, destX, destY, idxRoute0, _testRoute0);
 		if (tmpRouteIdx == -1) {
 			_useRoute0(idxRoute0, curRouteIdx);
 			return 1;
@@ -1858,7 +1845,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 	int posYRoute2 = v97;
 	while (true) {
 		int curPosX;
-		v114 = posXRoute2;
+		int v114 = posXRoute2;
 		if (destX >= posXRoute2 - 2 && destX <= posXRoute2 + 2 && destY >= posYRoute2 - 2 && destY <= posYRoute2 + 2) {
 			_testRoute2[idxRoute1].invalidate();
 			useRoute2(idxRoute1, curRouteIdx);
