@@ -129,7 +129,7 @@ public:
 	void resetRefreshRects();
 	void addDirtyRect(int x1, int y1, int x2, int y2);
 	void addDirtyRect(const Common::Rect &r) { addDirtyRect(r.left, r.top, r.right, r.bottom); }
-	void addRefreshRect(const Common::Rect &r);
+	void addRefreshRect(int x1, int y1, int x2, int y2);
 	void displayDirtyRects();
 	void displayRefreshRects();
 	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);

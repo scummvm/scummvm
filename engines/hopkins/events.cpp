@@ -467,7 +467,7 @@ void EventsManager::VBL() {
 			_vm->_graphicsManager.unlockScreen();
 			
 			_vm->_graphicsManager.resetRefreshRects();
-			_vm->_graphicsManager.addRefreshRect(Common::Rect(0, 20, SCREEN_WIDTH, 460));
+			_vm->_graphicsManager.addRefreshRect(0, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 20);
 
 			_vm->_graphicsManager.resetDirtyRects();
 

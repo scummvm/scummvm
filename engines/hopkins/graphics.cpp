@@ -152,11 +152,10 @@ void GraphicsManager::clearScreen() {
 	assert(_videoPtr);
 
 	Common::fill(_screenBuffer, _screenBuffer + WinScan * _screenHeight, 0);
-	addRefreshRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 void GraphicsManager::clearVesaScreen() {
-	warning("clearVesa");
 	Common::fill(_vesaScreen, _vesaScreen + WinScan * _screenHeight, 0);
 	Common::fill(_vesaBuffer, _vesaBuffer + WinScan * _screenHeight, 0);
 	addDirtyRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -439,7 +438,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 	}
 
 	unlockScreen();
-	addDirtyRect(xs, ys, xs + width, ys + height);
+	addRefreshRect(xs, ys, xs + width, ys + height);
 }
 
 // TODO: See if PAL_PIXELS can be converted to a uint16 array
@@ -499,7 +498,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
 
-	addDirtyRect(xs, ys, xs + width, ys + width);
+	addRefreshRect(xs, ys, xs + width, ys + width);
 }
 
 void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
@@ -538,7 +537,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 		yCount = yCtr - 1;
 	} while (yCtr != 1);
 
-	addDirtyRect(xp, yp, xp + width, yp + width);
+	addRefreshRect(xp, yp, xp + width, yp + width);
 }
 
 /** 
@@ -1122,15 +1121,18 @@ void GraphicsManager::addDirtyRect(int x1, int y1, int x2, int y2) {
 }
 
 // Add a refresh rect
-void GraphicsManager::addRefreshRect(const Common::Rect &r) {
-	// Ensure that an existing dest rectangle doesn't already contain the new one
-	for (uint idx = 0; idx < _refreshRects.size(); ++idx) {
-		if (_refreshRects[idx].contains(r))
-			return;
-	}
+void GraphicsManager::addRefreshRect(int x1, int y1, int x2, int y2) {
+	x1 = MAX(x1, 0);
+	y1 = MAX(y1, 0);
+	x2 = MIN(x2, SCREEN_WIDTH);
+	y2 = MIN(y2, SCREEN_HEIGHT);
 
-	assert(_refreshRects.size() < DIRTY_RECTS_SIZE);
-	_refreshRects.push_back(r);
+	if ((x2 > x1) && (y2 > y1)) {
+		Common::Rect r(x1, y1, x2, y2);
+
+		assert(_refreshRects.size() < DIRTY_RECTS_SIZE);
+		_refreshRects.push_back(r);
+	}
 }
 
 // Draw any game dirty rects onto the screen intermediate surface
