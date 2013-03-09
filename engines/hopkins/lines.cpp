@@ -188,49 +188,49 @@ int LinesManager::checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastR
 /**
  * Add Zone Line
  */
-void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx) {
+void LinesManager::addZoneLine(int idx, int fromX, int fromY, int destX, int destY, int bobZoneIdx) {
 	int16 *zoneData;
 
-	if (a2 == a3 && a3 == a4 && a3 == a5) {
+	if (fromX == fromY && fromY == destX && fromY == destY) {
 		BOBZONE_FLAG[bobZoneIdx] = true;
-		BOBZONE[bobZoneIdx] = a3;
+		BOBZONE[bobZoneIdx] = fromY;
 	} else {
 		assert (idx <= MAX_LINES);
 		_zoneLine[idx]._zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx]._zoneData);
 
-		int v8 = abs(a2 - a4);
-		int v9 = abs(a3 - a5);
-		int v20 = 1;
-		if (v8 <= v9)
-			v20 += v9;
+		int distX = abs(fromX - destX);
+		int distY = abs(fromY - destY);
+		int maxDist = 1;
+		if (distX <= distY)
+			maxDist += distY;
 		else
-			v20 += v8;
+			maxDist += distX;
 
-		zoneData = (int16 *)_vm->_globals.allocMemory(2 * sizeof(int16) * v20 + (4 * sizeof(int16)));
+		zoneData = (int16 *)_vm->_globals.allocMemory(2 * sizeof(int16) * maxDist + (4 * sizeof(int16)));
 		assert(zoneData != (int16 *)g_PTRNUL);
 
 		_zoneLine[idx]._zoneData = zoneData;
 
 		int16 *dataP = zoneData;
-		int v23 = 1000 * v8 / v20;
-		int v22 = 1000 * v9 / v20;
-		if (a4 < a2)
-			v23 = -v23;
-		if (a5 < a3)
-			v22 = -v22;
-		int v13 = 1000 * a2;
-		int v16 = 1000 * a3;
-		for (int i = 0; i < v20; i++) {
-			*dataP++ = v13 / 1000;
-			*dataP++ = v16 / 1000;
+		int stepX = 1000 * distX / maxDist;
+		int stepY = 1000 * distY / maxDist;
+		if (destX < fromX)
+			stepX = -stepX;
+		if (destY < fromY)
+			stepY = -stepY;
+		int smoothPosX = 1000 * fromX;
+		int smoothPosY = 1000 * fromY;
+		for (int i = 0; i < maxDist; i++) {
+			*dataP++ = smoothPosX / 1000;
+			*dataP++ = smoothPosY / 1000;
 
-			v13 += v23;
-			v16 += v22;
+			smoothPosX += stepX;
+			smoothPosY += stepY;
 		}
 		*dataP++ = -1;
 		*dataP++ = -1;
 
-		_zoneLine[idx]._count = v20;
+		_zoneLine[idx]._count = maxDist;
 		_zoneLine[idx]._bobZoneIdx = bobZoneIdx;
 	}
 }
@@ -238,35 +238,34 @@ void LinesManager::addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZ
 /**
  * Add Line
  */
-void LinesManager::addLine(int lineIdx, Directions direction, int a3, int a4, int a5, int a6) {
+void LinesManager::addLine(int lineIdx, Directions direction, int fromX, int fromY, int destX, int destY) {
 	assert (lineIdx <= MAX_LINES);
 
 	if (_linesNumb < lineIdx)
 		_linesNumb = lineIdx;
 
 	_lineItem[lineIdx]._lineData = (int16 *)_vm->_globals.freeMemory((byte *)_lineItem[lineIdx]._lineData);
-	int v8 = abs(a3 - a5) + 1;
-	int v34 = abs(a4 - a6) + 1;
-	int v33 = v34;
-	if (v8 > v34)
-		v34 = v8;
+	int distX = abs(fromX - destX) + 1;
+	int distY = abs(fromY - destY) + 1;
+	int maxDist = distY;
+	if (distX > maxDist)
+		maxDist = distX;
 
-	byte *v10 = _vm->_globals.allocMemory(4 * v34 + 8);
-	assert (v10 != g_PTRNUL);
+	byte *zoneData = _vm->_globals.allocMemory(4 * maxDist + 8);
+	assert (zoneData != g_PTRNUL);
 
-	Common::fill(v10, v10 + 4 * v34 + 8, 0);
-	_lineItem[lineIdx]._lineData = (int16 *)v10;
+	Common::fill(zoneData, zoneData + 4 * maxDist + 8, 0);
+	_lineItem[lineIdx]._lineData = (int16 *)zoneData;
 
 	int16 *curLineData = _lineItem[lineIdx]._lineData;
-	int v36 = 1000 * v8;
-	int v39 = 1000 * v8 / (v34 - 1);
-	int v37 = 1000 * v33 / (v34 - 1);
-	if (a5 < a3)
-		v39 = -v39;
-	if (a6 < a4)
-		v37 = -v37;
-	int dirX = (int)v39 / 1000; // -1: Left, 0: None, 1: Right
-	int dirY = (int)v37 / 1000; // -1: Up, 0: None, 1: Right
+	int stepX = 1000 * distX / (maxDist - 1);
+	int stepY = 1000 * distY / (maxDist - 1);
+	if (destX < fromX)
+		stepX = -stepX;
+	if (destY < fromY)
+		stepY = -stepY;
+	int dirX = (int)stepX / 1000; // -1: Left, 0: None, 1: Right
+	int dirY = (int)stepY / 1000; // -1: Up, 0: None, 1: Right
 	if (!dirX) {
 		if (dirY == -1) {
 			_lineItem[lineIdx]._directionRouteInc = DIR_UP;
@@ -302,18 +301,18 @@ void LinesManager::addLine(int lineIdx, Directions direction, int a3, int a4, in
 
 	// Second pass to soften cases where dirY == 0
 	if (dirX == 1) {
-		if (v37 > 250 && v37 <= 999) {
+		if (stepY > 250 && stepY <= 999) {
 			_lineItem[lineIdx]._directionRouteInc = DIR_DOWN_RIGHT;
 			_lineItem[lineIdx]._directionRouteDec = DIR_UP_LEFT;
-		} else if (v37 < -250 && v37 > -1000) {
+		} else if (stepY < -250 && stepY > -1000) {
 			_lineItem[lineIdx]._directionRouteInc = DIR_UP_RIGHT;
 			_lineItem[lineIdx]._directionRouteDec = DIR_DOWN_LEFT;
 		}
 	} else if (dirX == -1) {
-		if (v37 > 250 && v37 <= 999) {
+		if (stepY > 250 && stepY <= 999) {
 			_lineItem[lineIdx]._directionRouteInc = DIR_DOWN_LEFT;
 			_lineItem[lineIdx]._directionRouteDec = DIR_UP_RIGHT;
-		} else if (v37 < -250 && v37 > -1000) {
+		} else if (stepY < -250 && stepY > -1000) {
 			// In the original code, the test was on positive values and 
 			// was impossible to meet. 
 			_lineItem[lineIdx]._directionRouteInc = DIR_UP_LEFT;
@@ -321,35 +320,30 @@ void LinesManager::addLine(int lineIdx, Directions direction, int a3, int a4, in
 		}
 	}
 
-	int v40 = v36 / v34;
-	int v38 = 1000 * v33 / v34;
-	if (a5 < a3)
-		v40 = -v40;
-	if (a6 < a4)
-		v38 = -v38;
-	int v24 = 1000 * a3;
-	int v25 = 1000 * a4;
-	int v31 = 1000 * a3 / 1000;
-	int v30 = 1000 * a4 / 1000;
-	int v35 = v34 - 1;
-	for (int v26 = 0; v26 < v35; v26++) {
-		curLineData[0] = v31;
-		curLineData[1] = v30;
+	stepX = 1000 * distX / maxDist;
+	stepY = 1000 * distY / maxDist;
+	if (destX < fromX)
+		stepX = -stepX;
+	if (destY < fromY)
+		stepY = -stepY;
+	int smoothPosX = 1000 * fromX;
+	int smoothPosY = 1000 * fromY;
+	for (int i = 0; i < maxDist - 1; i++) {
+		curLineData[0] = smoothPosX / 1000;
+		curLineData[1] = smoothPosY / 1000;
 		curLineData += 2;
 
-		v24 += v40;
-		v25 += v38;
-		v31 = v24 / 1000;
-		v30 = v25 / 1000;
+		smoothPosX += stepX;
+		smoothPosY += stepY;
 	}
-	curLineData[0] = a5;
-	curLineData[1] = a6;
+	curLineData[0] = destX;
+	curLineData[1] = destY;
 
 	curLineData += 2;
 	curLineData[0] = -1;
 	curLineData[1] = -1;
 
-	_lineItem[lineIdx]._lineDataEndIdx = v35 + 1;
+	_lineItem[lineIdx]._lineDataEndIdx = maxDist;
 	_lineItem[lineIdx]._direction = direction;
 
 	++_linesNumb;
@@ -844,40 +838,36 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 		v93 = v16[v65 - 1];
 	}
 
-	int v58 = abs(fromX - destX) + 1;
-	int v85 = abs(fromY - destY) + 1;
-	int v20 = v85;
-	if (v58 > v20)
-		v85 = v58;
-	int v84 = 1000 * v58 / v85;
-	int v83 = 1000 * v20 / v85;
-	int v21 = 1000 * fromX;
-	int v22 = 1000 * fromY;
-	int v82 = fromX;
-	int v81 = fromY;
+	int distX = abs(fromX - destX) + 1;
+	int distY = abs(fromY - destY) + 1;
+	int maxDist = distY;
+	if (distX > distY)
+		maxDist = distX;
+	int stepX = 1000 * distX / maxDist;
+	int stepY = 1000 * distY / maxDist;
+	int smoothPosX = 1000 * fromX;
+	int smoothPosY = 1000 * fromY;
 	if (destX < fromX)
-		v84 = -v84;
+		stepX = -stepX;
 	if (destY < fromY)
-		v83 = -v83;
-	if (v85 > 800)
-		v85 = 800;
+		stepY = -stepY;
+	if (maxDist > 800)
+		maxDist = 800;
 
 	Common::fill(&_lineBuf[0], &_lineBuf[1000], 0);
 	int bugLigIdx = 0;
-	for (int v88 = 0; v88 < v85 + 1; v88++) {
-		_lineBuf[bugLigIdx] = v82;
-		_lineBuf[bugLigIdx + 1] = v81;
-		v21 += v84;
-		v22 += v83;
-		v82 = v21 / 1000;
-		v81 = v22 / 1000;
+	for (int i = 0; i < maxDist + 1; i++) {
+		_lineBuf[bugLigIdx] = smoothPosX / 1000;
+		_lineBuf[bugLigIdx + 1] = smoothPosY / 1000;
+		smoothPosX += stepX;
+		smoothPosY += stepY;
 		bugLigIdx += 2;
 	}
 	bugLigIdx -= 2;
 	int v77 = 0;
 	int v78 = 0;
 	int v79 = 0;
-	for (int v89 = v85 + 1; v89 > 0; v89--) {
+	for (int v89 = maxDist + 1; v89 > 0; v89--) {
 		if (checkCollisionLine(_lineBuf[bugLigIdx], _lineBuf[bugLigIdx + 1], &foundDataIdx, &foundLineIdx, v92, v91) && _lastLine < foundLineIdx) {
 			v80 = foundLineIdx;
 			v77 = foundDataIdx;

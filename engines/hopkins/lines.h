@@ -164,9 +164,9 @@ public:
 
 	void setMaxLineIdx(int idx);
 	int checkInventoryHotspots(int posX, int posY);
-	void addZoneLine(int idx, int a2, int a3, int a4, int a5, int bobZoneIdx);
+	void addZoneLine(int idx, int fromX, int fromY, int destX, int destY, int bobZoneIdx);
 	void loadLines(const Common::String &file);
-	void addLine(int lineIdx, Directions direction, int a3, int a4, int a5, int a6);
+	void addLine(int lineIdx, Directions direction, int fromX, int fromY, int destX, int destY);
 	void initRoute();
 	RouteItem *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	void clearAllZones();
