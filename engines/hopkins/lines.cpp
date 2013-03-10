@@ -1527,16 +1527,8 @@ void LinesManager::useRoute2(int idx, int curRouteIdx) {
 }
 
 int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int startLineIdx, int endLineIdx, int routeIdx) {
-	int v18;
-	int v21;
-	int v23;
-	int v55;
-	int v97;
-	int v98;
-	int curPosY;
-	int curPosX;
-	int newSmoothY;
-	int newSmoothX;
+	int oldY;
+	int oldX;
 	int collDataIdxRoute2 = 0;
 	bool colResult = false;
 
@@ -1581,14 +1573,14 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			break;
 		}
 	}
-	v98 = curX;
-	v97 = curY;
+	oldX = curX;
+	oldY = curY;
 	int idxRoute0 = 0;
 	int collLineIdxRoute0 = -1;
 	int collLineIdxRoute1 = -1;
 	int collLineIdxRoute2 = -1;
 
-	int distX, distY, v14;
+	int distX, distY;
 	int repeatFlag = 0;
 	int collDataIdxRoute0 = 0;
 	int collDataIdxRoute1 = 0;
@@ -1631,15 +1623,15 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 
 		if (newDirection == DIR_NONE && !checkSmoothMove(curX, newY, destX, destY) && !makeSmoothMove(curX, newY, destX, destY)) {
 			newDirection = _smoothMoveDirection;
-			v14 = 0;
-			for (v14 = 0; _smoothRoute[v14]._posX != -1 && _smoothRoute[v14]._posY != -1; ++v14) {
-				if (checkCollisionLine(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, &collDataIdxRoute0, &collLineIdxRoute0, 0, _linesNumb)) {
+			int smoothRouteIdx = 0;
+			for (smoothRouteIdx = 0; _smoothRoute[smoothRouteIdx]._posX != -1 && _smoothRoute[smoothRouteIdx]._posY != -1; ++smoothRouteIdx) {
+				if (checkCollisionLine(_smoothRoute[smoothRouteIdx]._posX, _smoothRoute[smoothRouteIdx]._posY, &collDataIdxRoute0, &collLineIdxRoute0, 0, _linesNumb)) {
 					if (collLineIdxRoute0 > _lastLine)
 						collLineIdxRoute0 = -1;
 					break;
 				}
 
-				_testRoute0[idxRoute0].set(_smoothRoute[v14]._posX, _smoothRoute[v14]._posY, newDirection);
+				_testRoute0[idxRoute0].set(_smoothRoute[smoothRouteIdx]._posX, _smoothRoute[smoothRouteIdx]._posY, newDirection);
 				idxRoute0++;
 
 				if (repeatFlag == 1) {
@@ -1648,13 +1640,12 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				}
 			}
 
-			if (repeatFlag != 2 && _smoothRoute[v14]._posX != -1 && _smoothRoute[v14]._posY != -1)
+			if (repeatFlag != 2 && _smoothRoute[smoothRouteIdx]._posX != -1 && _smoothRoute[smoothRouteIdx]._posY != -1)
 				break;
 
 			repeatFlag = 1;
-			v18 = v14 - 1;
-			newX = _smoothRoute[v18]._posX;
-			newY = _smoothRoute[v18]._posY;
+			newX = _smoothRoute[smoothRouteIdx - 1]._posX;
+			newY = _smoothRoute[smoothRouteIdx - 1]._posY;
 		}
 		int newDistX = abs(newX - destX) + 1;
 		int newDistY = abs(newY - destY) + 1;
@@ -1666,19 +1657,18 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			_useRoute0(idxRoute0, curRouteIdx);
 			return 1;
 		}
-		v21 = newMaxDist - 1;
-		int newStepX = 1000 * newDistX / v21;
-		int newStepY = 1000 * newDistY / v21;
+		int newStepX = 1000 * newDistX / (newMaxDist - 1);
+		int newStepY = 1000 * newDistY / (newMaxDist - 1);
 		if (destX < newX)
 			newStepX = -newStepX;
 		if (destY < newY)
 			newStepY = -newStepY;
 		int newVertDirection = newStepX / 1000;
 		int newHorzDirection = newStepY / 1000;
-		newSmoothX = 1000 * newX;
-		newSmoothY = 1000 * newY;
-		curPosX = newSmoothX / 1000;
-		curPosY = newSmoothY / 1000;
+		int newSmoothX = 1000 * newX;
+		int newSmoothY = 1000 * newY;
+		int curPosX = newSmoothX / 1000;
+		int curPosY = newSmoothY / 1000;
 		if (!(newStepX / 1000) && newHorzDirection == -1)
 			newDirection = DIR_UP;
 		if (newVertDirection == 1) {
@@ -1740,12 +1730,12 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			if (newStepX >= -510 && newStepX <= 0)
 				newDirection = DIR_UP;
 		}
-		v23 = 0;
 		if (newMaxDist + 1 <= 0) {
 			_testRoute0[idxRoute0].invalidate();
 			_useRoute0(idxRoute0, curRouteIdx);
 			return 1;
 		}
+		int curDist = 0;
 		while (!checkCollisionLine(curPosX, curPosY, &collDataIdxRoute0, &collLineIdxRoute0, 0, _linesNumb)) {
 			_testRoute0[idxRoute0].set(curPosX, curPosY, newDirection);
 			newSmoothX += newStepX;
@@ -1753,8 +1743,8 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 			curPosX = newSmoothX / 1000;
 			curPosY = newSmoothY / 1000;
 			idxRoute0++;
-			++v23;
-			if (v23 >= newMaxDist + 1) {
+			++curDist;
+			if (curDist >= newMaxDist + 1) {
 				_testRoute0[idxRoute0].invalidate();
 				_useRoute0(idxRoute0, curRouteIdx);
 				return 1;
@@ -1779,8 +1769,8 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 	_testRoute0[idxRoute0].invalidate();
 
 	int idxRoute1 = 0;
-	int posXRoute1 = v98;
-	int posYRoute1 = v97;
+	int posXRoute1 = oldX;
+	int posYRoute1 = oldY;
 
 	while (true) {
 
@@ -1841,34 +1831,33 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 
 	_testRoute1[idxRoute1].invalidate();
 	idxRoute1 = 0;
-	int posXRoute2 = v98;
-	int posYRoute2 = v97;
+	int posXRoute2 = oldX;
+	int posYRoute2 = oldY;
 	while (true) {
 		int curPosX;
-		int v114 = posXRoute2;
 		if (destX >= posXRoute2 - 2 && destX <= posXRoute2 + 2 && destY >= posYRoute2 - 2 && destY <= posYRoute2 + 2) {
 			_testRoute2[idxRoute1].invalidate();
 			useRoute2(idxRoute1, curRouteIdx);
 			return 1;
 		}
 
-		v55 = posYRoute2;
-		while (v55 != destY) {
-			if (checkCollisionLine(v114, v55, &collDataIdxRoute2, &collLineIdxRoute2, 0, _linesNumb)) {
+		int curPosYRoute2 = posYRoute2;
+		while (curPosYRoute2 != destY) {
+			if (checkCollisionLine(posXRoute2, curPosYRoute2, &collDataIdxRoute2, &collLineIdxRoute2, 0, _linesNumb)) {
 				if (collLineIdxRoute2 > _lastLine)
 					collLineIdxRoute2 = -1;
 				break;
 			}
 
-			if (v55 < destY)
-				_testRoute2[idxRoute1++].set(v114, v55++, DIR_DOWN);
+			if (curPosYRoute2 < destY)
+				_testRoute2[idxRoute1++].set(posXRoute2, curPosYRoute2++, DIR_DOWN);
 			else
-				_testRoute2[idxRoute1++].set(v114, v55--, DIR_UP);
+				_testRoute2[idxRoute1++].set(posXRoute2, curPosYRoute2--, DIR_UP);
 		}
-		if (v55 != destY)
+		if (curPosYRoute2 != destY)
 			break;
 
-		curPosX = v114;
+		curPosX = posXRoute2;
 		while (curPosX != destX) {
 			if (checkCollisionLine(curPosX, destY, &collDataIdxRoute2, &collLineIdxRoute2, 0, _linesNumb)) {
 				if (collLineIdxRoute2 <= _lastLine)
