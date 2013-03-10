@@ -86,6 +86,12 @@ endif
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
+	# Binary patch workaround for Iphone 5/IPad 4 "Illegal instruction: 4" toolchain issue (http://code.google.com/p/iphone-gcc-full/issues/detail?id=6)
+	cp scummvm scummvm-iph5
+	sed -i'' 's/\x00\x30\x93\xe4/\x00\x30\x93\xe5/g;s/\x00\x30\xd3\xe4/\x00\x30\xd3\xe5/g;' scummvm-iph5
+	ldid -S scummvm-iph5
+	chmod 755 scummvm-iph5
+	cp scummvm-iph5 $(bundle_name)/ScummVM-iph5
 
 # Location of static libs for the iPhone
 ifneq ($(BACKEND), iphone)
