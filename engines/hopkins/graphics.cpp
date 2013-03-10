@@ -1105,19 +1105,8 @@ void GraphicsManager::addDirtyRect(int x1, int y1, int x2, int y2) {
 	x2 = CLIP(x2, _minX, _maxX);
 	y2 = CLIP(y2, _minY, _maxY);
 
-	Common::Rect newRect(x1, y1, x2, y2);
-	if (!newRect.isValidRect())
-		return;
-
-	// Don't bother adding the rect if it's contained within another existing one
-	for (uint rectIndex = 0; rectIndex < _dirtyRects.size(); ++rectIndex) {
-		const Common::Rect &r = _dirtyRects[rectIndex];
-		if (r.contains(newRect))
-			return;
-	}
-
-	assert(_dirtyRects.size() < DIRTY_RECTS_SIZE);
-	_dirtyRects.push_back(newRect);
+	if ((x2 > x1) && (y2 > y1))	
+		addRectToArray(_dirtyRects, Common::Rect(x1, y1, x2, y2));
 }
 
 // Add a refresh rect
@@ -1127,12 +1116,25 @@ void GraphicsManager::addRefreshRect(int x1, int y1, int x2, int y2) {
 	x2 = MIN(x2, SCREEN_WIDTH);
 	y2 = MIN(y2, SCREEN_HEIGHT);
 
-	if ((x2 > x1) && (y2 > y1)) {
-		Common::Rect r(x1, y1, x2, y2);
+	if ((x2 > x1) && (y2 > y1))
+		addRectToArray(_refreshRects, Common::Rect(x1, y1, x2, y2));
+}
 
-		assert(_refreshRects.size() < DIRTY_RECTS_SIZE);
-		_refreshRects.push_back(r);
+void GraphicsManager::addRectToArray(Common::Array<Common::Rect> &rects, const Common::Rect &newRect) {
+	// Scan for an intersection with existing rects
+	for (uint rectIndex = 0; rectIndex < rects.size(); ++rectIndex) {
+		Common::Rect &r = rects[rectIndex];
+		
+		if (r.intersects(newRect)) {
+			// Rect either intersects or is completely inside existing one, so extend existing one as necessary
+			r.extend(newRect);
+			return;
+		}
 	}
+
+	// Ensure that the rect list doesn't get too big, and add the new one in
+	assert(_refreshRects.size() < DIRTY_RECTS_SIZE);
+	rects.push_back(newRect);
 }
 
 // Draw any game dirty rects onto the screen intermediate surface
