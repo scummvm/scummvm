@@ -482,28 +482,28 @@ int LinesManager::CONTOURNE1(int lineIdx, int lineDataIdx, int routeIdx, int des
 	int curRouteIdx = routeIdx;
 	if (destLineIdx < lineIdx) {
 		curRouteIdx = _lineItem[lineIdx].appendToRouteInc(lineDataIdx, -1, route, curRouteIdx);
-		int v15 = lineIdx + 1;
-		if (v15 == a9 + 1)
-			v15 = a8;
-		while (destLineIdx != v15) {
-			curRouteIdx = _lineItem[v15].appendToRouteInc(0, -1, route, curRouteIdx);
-			++v15;
-			if (a9 + 1 == v15)
-				v15 = a8;
+		int wrkLineIdx = lineIdx + 1;
+		if (wrkLineIdx == a9 + 1)
+			wrkLineIdx = a8;
+		while (destLineIdx != wrkLineIdx) {
+			curRouteIdx = _lineItem[wrkLineIdx].appendToRouteInc(0, -1, route, curRouteIdx);
+			++wrkLineIdx;
+			if (a9 + 1 == wrkLineIdx)
+				wrkLineIdx = a8;
 		}
 		curLineDataIdx = 0;
 		curLineIdx = destLineIdx;
 	}
 	if (destLineIdx > curLineIdx) {
 		curRouteIdx = _lineItem[curLineIdx].appendToRouteDec(curLineDataIdx, 0, route, curRouteIdx);
-		int v24 = curLineIdx - 1;
-		if (v24 == a8 - 1)
-			v24 = a9;
-		while (destLineIdx != v24) {
-			curRouteIdx = _lineItem[v24].appendToRouteDec(-1, 0, route, curRouteIdx);
-			--v24;
-			if (a8 - 1 == v24)
-				v24 = a9;
+		int wrkLineIdx = curLineIdx - 1;
+		if (wrkLineIdx == a8 - 1)
+			wrkLineIdx = a9;
+		while (destLineIdx != wrkLineIdx) {
+			curRouteIdx = _lineItem[wrkLineIdx].appendToRouteDec(-1, 0, route, curRouteIdx);
+			--wrkLineIdx;
+			if (a8 - 1 == wrkLineIdx)
+				wrkLineIdx = a9;
 		}
 		curLineDataIdx = _lineItem[destLineIdx]._lineDataEndIdx - 1;
 		curLineIdx = destLineIdx;
@@ -1074,7 +1074,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	int curLineY = 0;
 	int curLineX = 0;
 	int v126[9];
-	int v131[9];
+	int deltaArr[9];
 	int collLineDataIdxArr[9];
 	int collLineIdxArr[9];
 
@@ -1122,183 +1122,183 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	for (int i = 0; i <= 8; ++i) {
 		collLineIdxArr[i] = -1;
 		collLineDataIdxArr[i] = 0;
-		v131[i] = 1300;
+		deltaArr[i] = 1300;
 		v126[i] = 1300;
 	}
 
 	if (characterRoute(fromX, fromY, clipDestX, clipDestY, -1, -1, 0) == 1)
 		return _bestRoute;
 
-	int v14 = 0;
-	for (int tmpY = clipDestY; tmpY < _vm->_graphicsManager._maxY; tmpY++, v14++) { 
-		if (checkCollisionLine(clipDestX, tmpY, &collLineDataIdxArr[5], &collLineIdxArr[5], 0, _lastLine) && collLineIdxArr[5] <= _lastLine)
+	int tmpDelta = 0;
+	for (int tmpY = clipDestY; tmpY < _vm->_graphicsManager._maxY; tmpY++, tmpDelta++) { 
+		if (checkCollisionLine(clipDestX, tmpY, &collLineDataIdxArr[DIR_DOWN], &collLineIdxArr[DIR_DOWN], 0, _lastLine) && collLineIdxArr[DIR_DOWN] <= _lastLine)
 			break;
-		collLineDataIdxArr[5] = 0;
-		collLineIdxArr[5] = -1;
+		collLineDataIdxArr[DIR_DOWN] = 0;
+		collLineIdxArr[DIR_DOWN] = -1;
 	}
-	v131[5] = v14;
+	deltaArr[DIR_DOWN] = tmpDelta;
 
-	v14 = 0;
-	for (int tmpY = clipDestY; tmpY > _vm->_graphicsManager._minY; tmpY--, v14++) {
-		if (checkCollisionLine(clipDestX, tmpY, &collLineDataIdxArr[1], &collLineIdxArr[1], 0, _lastLine) && collLineIdxArr[1] <= _lastLine)
+	tmpDelta = 0;
+	for (int tmpY = clipDestY; tmpY > _vm->_graphicsManager._minY; tmpY--, tmpDelta++) {
+		if (checkCollisionLine(clipDestX, tmpY, &collLineDataIdxArr[DIR_UP], &collLineIdxArr[DIR_UP], 0, _lastLine) && collLineIdxArr[DIR_UP] <= _lastLine)
 			break;
-		collLineDataIdxArr[1] = 0;
-		collLineIdxArr[1] = -1;
-		if (v131[5] < v14 && collLineIdxArr[5] != -1)
+		collLineDataIdxArr[DIR_UP] = 0;
+		collLineIdxArr[DIR_UP] = -1;
+		if (deltaArr[DIR_DOWN] < tmpDelta && collLineIdxArr[DIR_DOWN] != -1)
 			break;
 	}
-	v131[1] = v14;
+	deltaArr[DIR_UP] = tmpDelta;
 
-	v14 = 0;
+	tmpDelta = 0;
 	for (int tmpX = clipDestX; tmpX < _vm->_graphicsManager._maxX; tmpX++) {
-		if (checkCollisionLine(tmpX, clipDestY, &collLineDataIdxArr[3], &collLineIdxArr[3], 0, _lastLine) && collLineIdxArr[3] <= _lastLine)
+		if (checkCollisionLine(tmpX, clipDestY, &collLineDataIdxArr[DIR_RIGHT], &collLineIdxArr[DIR_RIGHT], 0, _lastLine) && collLineIdxArr[DIR_RIGHT] <= _lastLine)
 			break;
-		collLineDataIdxArr[3] = 0;
-		collLineIdxArr[3] = -1;
-		++v14;
-		if (v131[1] < v14 && collLineIdxArr[1] != -1)
+		collLineDataIdxArr[DIR_RIGHT] = 0;
+		collLineIdxArr[DIR_RIGHT] = -1;
+		++tmpDelta;
+		if (deltaArr[DIR_UP] < tmpDelta && collLineIdxArr[DIR_UP] != -1)
 				break;
-		if (v131[5] < v14 && collLineIdxArr[5] != -1)
+		if (deltaArr[DIR_DOWN] < tmpDelta && collLineIdxArr[DIR_DOWN] != -1)
 			break;
 	}
-	v131[3] = v14;
+	deltaArr[DIR_RIGHT] = tmpDelta;
 
-	v14 = 0;
+	tmpDelta = 0;
 	for (int tmpX = clipDestX; tmpX > _vm->_graphicsManager._minX; tmpX--) {
-		if (checkCollisionLine(tmpX, clipDestY, &collLineDataIdxArr[7], &collLineIdxArr[7], 0, _lastLine) && collLineIdxArr[7] <= _lastLine)
+		if (checkCollisionLine(tmpX, clipDestY, &collLineDataIdxArr[DIR_LEFT], &collLineIdxArr[DIR_LEFT], 0, _lastLine) && collLineIdxArr[DIR_LEFT] <= _lastLine)
 			break;
-		collLineDataIdxArr[7] = 0;
-		collLineIdxArr[7] = -1;
-		++v14;
-		if (v131[1] < v14 && collLineIdxArr[1] != -1)
+		collLineDataIdxArr[DIR_LEFT] = 0;
+		collLineIdxArr[DIR_LEFT] = -1;
+		++tmpDelta;
+		if (deltaArr[DIR_UP] < tmpDelta && collLineIdxArr[DIR_UP] != -1)
 			break;
-		if (v131[5] < v14 && collLineIdxArr[5] != -1)
+		if (deltaArr[DIR_DOWN] < tmpDelta && collLineIdxArr[DIR_DOWN] != -1)
 			break;
-		if (v131[3] < v14 && collLineIdxArr[3] != -1)
+		if (deltaArr[DIR_RIGHT] < tmpDelta && collLineIdxArr[DIR_RIGHT] != -1)
 			break;
 	}
-	v131[7] = v14;
+	deltaArr[DIR_LEFT] = tmpDelta;
 
-	if (collLineIdxArr[1] < 0 || _lastLine < collLineIdxArr[1])
-		collLineIdxArr[1] = -1;
-	if (collLineIdxArr[3] < 0 || _lastLine < collLineIdxArr[3])
-		collLineIdxArr[3] = -1;
-	if (collLineIdxArr[5] < 0 || _lastLine < collLineIdxArr[5])
-		collLineIdxArr[5] = -1;
-	if (collLineIdxArr[7] < 0 || _lastLine < collLineIdxArr[7])
-		collLineIdxArr[7] = -1;
-	if (collLineIdxArr[1] < 0)
-		v131[1] = 1300;
-	if (collLineIdxArr[3] < 0)
-		v131[3] = 1300;
-	if (collLineIdxArr[5] < 0)
-		v131[5] = 1300;
-	if (collLineIdxArr[7] < 0)
-		v131[7] = 1300;
-	if (collLineIdxArr[1] == -1 && collLineIdxArr[3] == -1 && collLineIdxArr[5] == -1 && collLineIdxArr[7] == -1)
+	if (collLineIdxArr[DIR_UP] < 0 || _lastLine < collLineIdxArr[DIR_UP])
+		collLineIdxArr[DIR_UP] = -1;
+	if (collLineIdxArr[DIR_RIGHT] < 0 || _lastLine < collLineIdxArr[DIR_RIGHT])
+		collLineIdxArr[DIR_RIGHT] = -1;
+	if (collLineIdxArr[DIR_DOWN] < 0 || _lastLine < collLineIdxArr[DIR_DOWN])
+		collLineIdxArr[DIR_DOWN] = -1;
+	if (collLineIdxArr[DIR_LEFT] < 0 || _lastLine < collLineIdxArr[DIR_LEFT])
+		collLineIdxArr[DIR_LEFT] = -1;
+	if (collLineIdxArr[DIR_UP] < 0)
+		deltaArr[DIR_UP] = 1300;
+	if (collLineIdxArr[DIR_RIGHT] < 0)
+		deltaArr[DIR_RIGHT] = 1300;
+	if (collLineIdxArr[DIR_DOWN] < 0)
+		deltaArr[DIR_DOWN] = 1300;
+	if (collLineIdxArr[DIR_LEFT] < 0)
+		deltaArr[DIR_LEFT] = 1300;
+	if (collLineIdxArr[DIR_UP] == -1 && collLineIdxArr[DIR_RIGHT] == -1 && collLineIdxArr[DIR_DOWN] == -1 && collLineIdxArr[DIR_LEFT] == -1)
 		return (RouteItem *)g_PTRNUL;
 
-	if (collLineIdxArr[5] != -1 && v131[1] >= v131[5] && v131[3] >= v131[5] && v131[7] >= v131[5]) {
-		curLineIdx = collLineIdxArr[5];
-		curLineDataIdx = collLineDataIdxArr[5];
-	} else if (collLineIdxArr[1] != -1 && v131[5] >= v131[1] && v131[3] >= v131[1] && v131[7] >= v131[1]) {
-		curLineIdx = collLineIdxArr[1];
-		curLineDataIdx = collLineDataIdxArr[1];
-	} else if (collLineIdxArr[3] != -1 && v131[1] >= v131[3] && v131[5] >= v131[3] && v131[7] >= v131[3]) {
-		curLineIdx = collLineIdxArr[3];
-		curLineDataIdx = collLineDataIdxArr[3];
-	} else if (collLineIdxArr[7] != -1 && v131[5] >= v131[7] && v131[3] >= v131[7] && v131[1] >= v131[7]) {
-		curLineIdx = collLineIdxArr[7];
-		curLineDataIdx = collLineDataIdxArr[7];
+	if (collLineIdxArr[DIR_DOWN] != -1 && deltaArr[DIR_UP] >= deltaArr[DIR_DOWN] && deltaArr[DIR_RIGHT] >= deltaArr[DIR_DOWN] && deltaArr[DIR_LEFT] >= deltaArr[DIR_DOWN]) {
+		curLineIdx = collLineIdxArr[DIR_DOWN];
+		curLineDataIdx = collLineDataIdxArr[DIR_DOWN];
+	} else if (collLineIdxArr[DIR_UP] != -1 && deltaArr[DIR_DOWN] >= deltaArr[DIR_UP] && deltaArr[DIR_RIGHT] >= deltaArr[DIR_UP] && deltaArr[DIR_LEFT] >= deltaArr[DIR_UP]) {
+		curLineIdx = collLineIdxArr[DIR_UP];
+		curLineDataIdx = collLineDataIdxArr[DIR_UP];
+	} else if (collLineIdxArr[DIR_RIGHT] != -1 && deltaArr[DIR_UP] >= deltaArr[DIR_RIGHT] && deltaArr[DIR_DOWN] >= deltaArr[DIR_RIGHT] && deltaArr[DIR_LEFT] >= deltaArr[DIR_RIGHT]) {
+		curLineIdx = collLineIdxArr[DIR_RIGHT];
+		curLineDataIdx = collLineDataIdxArr[DIR_RIGHT];
+	} else if (collLineIdxArr[DIR_LEFT] != -1 && deltaArr[DIR_DOWN] >= deltaArr[DIR_LEFT] && deltaArr[DIR_RIGHT] >= deltaArr[DIR_LEFT] && deltaArr[DIR_UP] >= deltaArr[DIR_LEFT]) {
+		curLineIdx = collLineIdxArr[DIR_LEFT];
+		curLineDataIdx = collLineDataIdxArr[DIR_LEFT];
 	}
 
 	for (int i = 0; i <= 8; ++i) {
 		collLineIdxArr[i] = -1;
 		collLineDataIdxArr[i] = 0;
-		v131[i] = 1300;
+		deltaArr[i] = 1300;
 		v126[i] = 1300;
 	}
 
-	v14 = 0;
-	for (int tmpY = fromY; tmpY < _vm->_graphicsManager._maxY; tmpY++, v14++) {
-		if (checkCollisionLine(fromX, tmpY, &collLineDataIdxArr[5], &collLineIdxArr[5], 0, _lastLine) && collLineIdxArr[5] <= _lastLine)
+	tmpDelta = 0;
+	for (int tmpY = fromY; tmpY < _vm->_graphicsManager._maxY; tmpY++, tmpDelta++) {
+		if (checkCollisionLine(fromX, tmpY, &collLineDataIdxArr[DIR_DOWN], &collLineIdxArr[DIR_DOWN], 0, _lastLine) && collLineIdxArr[DIR_DOWN] <= _lastLine)
 			break;
-		collLineDataIdxArr[5] = 0;
-		collLineIdxArr[5] = -1;
+		collLineDataIdxArr[DIR_DOWN] = 0;
+		collLineIdxArr[DIR_DOWN] = -1;
 	}
-	v131[5] = v14 + 1;
+	deltaArr[DIR_DOWN] = tmpDelta + 1;
 
-	v14 = 0;
+	tmpDelta = 0;
 	for (int tmpY = fromY; tmpY > _vm->_graphicsManager._minY; tmpY--) {
-		if (checkCollisionLine(fromX, tmpY, &collLineDataIdxArr[1], &collLineIdxArr[1], 0, _lastLine) && collLineIdxArr[1] <= _lastLine)
+		if (checkCollisionLine(fromX, tmpY, &collLineDataIdxArr[DIR_UP], &collLineIdxArr[DIR_UP], 0, _lastLine) && collLineIdxArr[DIR_UP] <= _lastLine)
 			break;
-		collLineDataIdxArr[1] = 0;
-		collLineIdxArr[1] = -1;
-		++v14;
-		if (collLineIdxArr[5] != -1 && v14 > 80)
+		collLineDataIdxArr[DIR_UP] = 0;
+		collLineIdxArr[DIR_UP] = -1;
+		++tmpDelta;
+		if (collLineIdxArr[DIR_DOWN] != -1 && tmpDelta > 80)
 			break;
 	}
-	v131[1] = v14 + 1;
+	deltaArr[DIR_UP] = tmpDelta + 1;
 
-	v14 = 0;
+	tmpDelta = 0;
 	for (int tmpX = fromX; tmpX < _vm->_graphicsManager._maxX; tmpX++) {
-		if (checkCollisionLine(tmpX, fromY, &collLineDataIdxArr[3], &collLineIdxArr[3], 0, _lastLine) && collLineIdxArr[3] <= _lastLine)
+		if (checkCollisionLine(tmpX, fromY, &collLineDataIdxArr[DIR_RIGHT], &collLineIdxArr[DIR_RIGHT], 0, _lastLine) && collLineIdxArr[DIR_RIGHT] <= _lastLine)
 			break;
-		collLineDataIdxArr[3] = 0;
-		collLineIdxArr[3] = -1;
-		++v14;
-		if ((collLineIdxArr[5] != -1 || collLineIdxArr[1] != -1) && (v14 > 100))
+		collLineDataIdxArr[DIR_RIGHT] = 0;
+		collLineIdxArr[DIR_RIGHT] = -1;
+		++tmpDelta;
+		if ((collLineIdxArr[DIR_DOWN] != -1 || collLineIdxArr[DIR_UP] != -1) && (tmpDelta > 100))
 			break;
 	}
-	v131[3] = v14 + 1;
+	deltaArr[DIR_RIGHT] = tmpDelta + 1;
 
-	v14 = 0;
+	tmpDelta = 0;
 	for (int tmpX = fromX; tmpX > _vm->_graphicsManager._minX; tmpX--) {
-		if (checkCollisionLine(tmpX, fromY, &collLineDataIdxArr[7], &collLineIdxArr[7], 0, _lastLine) && collLineIdxArr[7] <= _lastLine)
+		if (checkCollisionLine(tmpX, fromY, &collLineDataIdxArr[DIR_LEFT], &collLineIdxArr[DIR_LEFT], 0, _lastLine) && collLineIdxArr[DIR_LEFT] <= _lastLine)
 			break;
-		collLineDataIdxArr[7] = 0;
-		collLineIdxArr[7] = -1;
-		++v14;
-		if ((collLineIdxArr[5] != -1 || collLineIdxArr[1] != -1 || collLineIdxArr[3] != -1) && (v14 > 100))
+		collLineDataIdxArr[DIR_LEFT] = 0;
+		collLineIdxArr[DIR_LEFT] = -1;
+		++tmpDelta;
+		if ((collLineIdxArr[DIR_DOWN] != -1 || collLineIdxArr[DIR_UP] != -1 || collLineIdxArr[DIR_RIGHT] != -1) && (tmpDelta > 100))
 			break;
 	}
-	v131[7] = v14 + 1;
+	deltaArr[DIR_LEFT] = tmpDelta + 1;
 
-	if (collLineIdxArr[1] != -1)
-		v126[1] = abs(collLineIdxArr[1] - curLineIdx);
+	if (collLineIdxArr[DIR_UP] != -1)
+		v126[DIR_UP] = abs(collLineIdxArr[DIR_UP] - curLineIdx);
 
-	if (collLineIdxArr[3] != -1)
-		v126[3] = abs(collLineIdxArr[3] - curLineIdx);
+	if (collLineIdxArr[DIR_RIGHT] != -1)
+		v126[DIR_RIGHT] = abs(collLineIdxArr[DIR_RIGHT] - curLineIdx);
 
-	if (collLineIdxArr[5] != -1)
-		v126[5] = abs(collLineIdxArr[5] - curLineIdx);
+	if (collLineIdxArr[DIR_DOWN] != -1)
+		v126[DIR_DOWN] = abs(collLineIdxArr[DIR_DOWN] - curLineIdx);
 
-	if (collLineIdxArr[7] != -1)
-		v126[7] = abs(collLineIdxArr[7] - curLineIdx);
+	if (collLineIdxArr[DIR_LEFT] != -1)
+		v126[DIR_LEFT] = abs(collLineIdxArr[DIR_LEFT] - curLineIdx);
 
-	if (collLineIdxArr[1] == -1 && collLineIdxArr[3] == -1 && collLineIdxArr[5] == -1 && collLineIdxArr[7] == -1)
+	if (collLineIdxArr[DIR_UP] == -1 && collLineIdxArr[DIR_RIGHT] == -1 && collLineIdxArr[DIR_DOWN] == -1 && collLineIdxArr[DIR_LEFT] == -1)
 		error("Nearest point not found");
 
-	if (collLineIdxArr[1] != -1 && v126[3] >= v126[1] && v126[5] >= v126[1] && v126[7] >= v126[1]) {
-		lineIdx = collLineIdxArr[1];
-		v111 = v131[1];
+	if (collLineIdxArr[DIR_UP] != -1 && v126[DIR_RIGHT] >= v126[DIR_UP] && v126[DIR_DOWN] >= v126[DIR_UP] && v126[DIR_LEFT] >= v126[DIR_UP]) {
+		lineIdx = collLineIdxArr[DIR_UP];
+		v111 = deltaArr[DIR_UP];
 		newDir = DIR_UP;
-		lineDataIdx = collLineDataIdxArr[1];
-	} else if (collLineIdxArr[5] != -1 && v126[3] >= v126[5] && v126[1] >= v126[5] && v126[7] >= v126[5]) {
-		lineIdx = collLineIdxArr[5];
-		v111 = v131[5];
+		lineDataIdx = collLineDataIdxArr[DIR_UP];
+	} else if (collLineIdxArr[DIR_DOWN] != -1 && v126[DIR_RIGHT] >= v126[DIR_DOWN] && v126[DIR_UP] >= v126[DIR_DOWN] && v126[DIR_LEFT] >= v126[DIR_DOWN]) {
+		lineIdx = collLineIdxArr[DIR_DOWN];
+		v111 = deltaArr[DIR_DOWN];
 		newDir = DIR_DOWN;
-		lineDataIdx = collLineDataIdxArr[5];
-	} else if (collLineIdxArr[3] != -1 && v126[1] >= v126[3] && v126[5] >= v126[3] && v126[7] >= v126[3]) {
-		lineIdx = collLineIdxArr[3];
-		v111 = v131[3];
+		lineDataIdx = collLineDataIdxArr[DIR_DOWN];
+	} else if (collLineIdxArr[DIR_RIGHT] != -1 && v126[DIR_UP] >= v126[DIR_RIGHT] && v126[DIR_DOWN] >= v126[DIR_RIGHT] && v126[DIR_LEFT] >= v126[DIR_RIGHT]) {
+		lineIdx = collLineIdxArr[DIR_RIGHT];
+		v111 = deltaArr[DIR_RIGHT];
 		newDir = DIR_RIGHT;
-		lineDataIdx = collLineDataIdxArr[3];
-	} else if (collLineIdxArr[7] != -1 && v126[1] >= v126[7] && v126[5] >= v126[7] && v126[3] >= v126[7]) {
-		lineIdx = collLineIdxArr[7];
-		v111 = v131[7];
+		lineDataIdx = collLineDataIdxArr[DIR_RIGHT];
+	} else if (collLineIdxArr[DIR_LEFT] != -1 && v126[DIR_UP] >= v126[DIR_LEFT] && v126[DIR_DOWN] >= v126[DIR_LEFT] && v126[DIR_RIGHT] >= v126[DIR_LEFT]) {
+		lineIdx = collLineIdxArr[DIR_LEFT];
+		v111 = deltaArr[DIR_LEFT];
 		newDir = DIR_LEFT;
-		lineDataIdx = collLineDataIdxArr[7];
+		lineDataIdx = collLineDataIdxArr[DIR_LEFT];
 	}
 
 	int v55 = characterRoute(fromX, fromY, clipDestX, clipDestY, lineIdx, curLineIdx, 0);
@@ -1998,71 +1998,71 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 
 	int delta = 0;
 	for (delta = 0; clipY2 + delta < _vm->_graphicsManager._maxY; delta++) {
-		if (checkCollisionLine(clipX2, clipY2 + delta, &arrDataIdx[5], &arrLineIdx[5], 0, _lastLine) && arrLineIdx[5] <= _lastLine)
+		if (checkCollisionLine(clipX2, clipY2 + delta, &arrDataIdx[DIR_DOWN], &arrLineIdx[DIR_DOWN], 0, _lastLine) && arrLineIdx[DIR_DOWN] <= _lastLine)
 			break;
-		arrDataIdx[5] = 0;
-		arrLineIdx[5] = -1;
+		arrDataIdx[DIR_DOWN] = 0;
+		arrLineIdx[DIR_DOWN] = -1;
 	}
-	arrDelta[5] = delta;
+	arrDelta[DIR_DOWN] = delta;
 
 	for (delta = 0; clipY2 - delta > _vm->_graphicsManager._minY; delta++) {
-		if (checkCollisionLine(clipX2, clipY2 - delta , &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine) && arrLineIdx[1] <= _lastLine)
+		if (checkCollisionLine(clipX2, clipY2 - delta , &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _lastLine) && arrLineIdx[DIR_UP] <= _lastLine)
 			break;
-		arrDataIdx[1] = 0;
-		arrLineIdx[1] = -1;
-		if (arrDelta[5] < delta && arrLineIdx[5] != -1)
+		arrDataIdx[DIR_UP] = 0;
+		arrLineIdx[DIR_UP] = -1;
+		if (arrDelta[DIR_DOWN] < delta && arrLineIdx[DIR_DOWN] != -1)
 			break;
 	}
-	arrDelta[1] = delta;
+	arrDelta[DIR_UP] = delta;
 
 	for (delta = 0; clipX2 + delta < _vm->_graphicsManager._maxX; delta++) {
-		if (checkCollisionLine(clipX2 + delta, clipY2, &arrDataIdx[3], &arrLineIdx[3], 0, _lastLine) && arrLineIdx[3] <= _lastLine)
+		if (checkCollisionLine(clipX2 + delta, clipY2, &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _lastLine) && arrLineIdx[DIR_UP] <= _lastLine)
 			break;
-		arrDataIdx[3] = 0;
-		arrLineIdx[3] = -1;
-		if (arrDelta[1] <= delta && arrLineIdx[1] != -1)
+		arrDataIdx[DIR_UP] = 0;
+		arrLineIdx[DIR_UP] = -1;
+		if (arrDelta[DIR_UP] <= delta && arrLineIdx[DIR_UP] != -1)
 			break;
-		if (arrDelta[5] <= delta && arrLineIdx[5] != -1)
+		if (arrDelta[DIR_DOWN] <= delta && arrLineIdx[DIR_DOWN] != -1)
 			break;
 	}
-	arrDelta[3] = delta;
+	arrDelta[DIR_UP] = delta;
 
 	for (delta = 0; clipX2 - delta > _vm->_graphicsManager._minX; delta++) {
-		if (checkCollisionLine(clipX2 - delta, clipY2, &arrDataIdx[7], &arrLineIdx[7], 0, _lastLine) && arrLineIdx[7] <= _lastLine)
+		if (checkCollisionLine(clipX2 - delta, clipY2, &arrDataIdx[DIR_LEFT], &arrLineIdx[DIR_LEFT], 0, _lastLine) && arrLineIdx[DIR_LEFT] <= _lastLine)
 			break;
-		arrDataIdx[7] = 0;
-		arrLineIdx[7] = -1;
-		if ((arrDelta[1] <= delta && arrLineIdx[1] != -1) || (arrDelta[3] <= delta && arrLineIdx[3] != -1) || (arrDelta[5] <= delta && arrLineIdx[5] != -1))
+		arrDataIdx[DIR_LEFT] = 0;
+		arrLineIdx[DIR_LEFT] = -1;
+		if ((arrDelta[DIR_UP] <= delta && arrLineIdx[DIR_UP] != -1) || (arrDelta[DIR_UP] <= delta && arrLineIdx[DIR_UP] != -1) || (arrDelta[DIR_DOWN] <= delta && arrLineIdx[DIR_DOWN] != -1))
 			break;
 	}
-	arrDelta[7] = delta;
+	arrDelta[DIR_LEFT] = delta;
 
 	int v68 = 0;
 	int v69 = 0;
 	int curLineDataIdx = 0;
 	int curLineIdx = 0;
 
-	if (arrLineIdx[1] == -1)
-		arrDelta[1] = 1300;
-	if (arrLineIdx[3] == -1)
-		arrDelta[3] = 1300;
-	if (arrLineIdx[5] == -1)
-		arrDelta[5] = 1300;
-	if (arrLineIdx[7] == -1)
-		arrDelta[7] = 1300;
-	if (arrLineIdx[1] != -1 || arrLineIdx[3] != -1 || arrLineIdx[5] != -1 || arrLineIdx[7] != -1) {
-		if (arrLineIdx[5] != -1 && arrDelta[1] >= arrDelta[5] && arrDelta[3] >= arrDelta[5] && arrDelta[7] >= arrDelta[5]) {
-			curLineIdx = arrLineIdx[5];
-			curLineDataIdx = arrDataIdx[5];
-		} else if (arrLineIdx[1] != -1 && arrDelta[5] >= arrDelta[1] && arrDelta[3] >= arrDelta[1] && arrDelta[7] >= arrDelta[1]) {
-			curLineIdx = arrLineIdx[1];
-			curLineDataIdx = arrDataIdx[1];
-		} else if (arrLineIdx[3] != -1 && arrDelta[1] >= arrDelta[3] && arrDelta[5] >= arrDelta[3] && arrDelta[7] >= arrDelta[3]) {
-			curLineIdx = arrLineIdx[3];
-			curLineDataIdx = arrDataIdx[3];
-		} else if (arrLineIdx[7] != -1 && arrDelta[5] >= arrDelta[7] && arrDelta[3] >= arrDelta[7] && arrDelta[1] >= arrDelta[7]) {
-			curLineIdx = arrLineIdx[7];
-			curLineDataIdx = arrDataIdx[7];
+	if (arrLineIdx[DIR_UP] == -1)
+		arrDelta[DIR_UP] = 1300;
+	if (arrLineIdx[DIR_UP] == -1)
+		arrDelta[DIR_UP] = 1300;
+	if (arrLineIdx[DIR_DOWN] == -1)
+		arrDelta[DIR_DOWN] = 1300;
+	if (arrLineIdx[DIR_LEFT] == -1)
+		arrDelta[DIR_LEFT] = 1300;
+	if (arrLineIdx[DIR_UP] != -1 || arrLineIdx[DIR_UP] != -1 || arrLineIdx[DIR_DOWN] != -1 || arrLineIdx[DIR_LEFT] != -1) {
+		if (arrLineIdx[DIR_DOWN] != -1 && arrDelta[DIR_UP] >= arrDelta[DIR_DOWN] && arrDelta[DIR_UP] >= arrDelta[DIR_DOWN] && arrDelta[DIR_LEFT] >= arrDelta[DIR_DOWN]) {
+			curLineIdx = arrLineIdx[DIR_DOWN];
+			curLineDataIdx = arrDataIdx[DIR_DOWN];
+		} else if (arrLineIdx[DIR_UP] != -1 && arrDelta[DIR_DOWN] >= arrDelta[DIR_UP] && arrDelta[DIR_UP] >= arrDelta[DIR_UP] && arrDelta[DIR_LEFT] >= arrDelta[DIR_UP]) {
+			curLineIdx = arrLineIdx[DIR_UP];
+			curLineDataIdx = arrDataIdx[DIR_UP];
+		} else if (arrLineIdx[DIR_UP] != -1 && arrDelta[DIR_UP] >= arrDelta[DIR_UP] && arrDelta[DIR_DOWN] >= arrDelta[DIR_UP] && arrDelta[DIR_LEFT] >= arrDelta[DIR_UP]) {
+			curLineIdx = arrLineIdx[DIR_UP];
+			curLineDataIdx = arrDataIdx[DIR_UP];
+		} else if (arrLineIdx[DIR_LEFT] != -1 && arrDelta[DIR_DOWN] >= arrDelta[DIR_LEFT] && arrDelta[DIR_UP] >= arrDelta[DIR_LEFT] && arrDelta[DIR_UP] >= arrDelta[DIR_LEFT]) {
+			curLineIdx = arrLineIdx[DIR_LEFT];
+			curLineDataIdx = arrDataIdx[DIR_LEFT];
 		}
 
 		for (int i = 0; i <= 8; i++) {
@@ -2070,10 +2070,10 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			arrDataIdx[i] = 0;
 			arrDelta[i] = 1300;
 		}
-		if (checkCollisionLine(x1, y1, &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine)) {
-			v69 = arrLineIdx[1];
-			v68 = arrDataIdx[1];
-		} else if (checkCollisionLine(x1, y1, &arrDataIdx[1], &arrLineIdx[1], 0, _linesNumb)) {
+		if (checkCollisionLine(x1, y1, &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _lastLine)) {
+			v69 = arrLineIdx[DIR_UP];
+			v68 = arrDataIdx[DIR_UP];
+		} else if (checkCollisionLine(x1, y1, &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _linesNumb)) {
 			int curRouteIdx = 0;
 			int curRouteX;
 			for (;;) {
@@ -2082,7 +2082,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 				Directions v66 = _testRoute2[curRouteIdx]._dir;
 				curRouteIdx++;
 
-				if (checkCollisionLine(curRouteX, curRouteY, &arrDataIdx[1], &arrLineIdx[1], 0, _lastLine))
+				if (checkCollisionLine(curRouteX, curRouteY, &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _lastLine))
 					break;
 
 				_bestRoute[superRouteIdx].set(curRouteX, curRouteY, v66);
@@ -2093,8 +2093,8 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 					break;;
 			}
 			if (curRouteX != -1) {
-				v69 = arrLineIdx[1];
-				v68 = arrDataIdx[1];
+				v69 = arrLineIdx[DIR_UP];
+				v68 = arrDataIdx[DIR_UP];
 			}
 		} else {
 			v69 = 1;
