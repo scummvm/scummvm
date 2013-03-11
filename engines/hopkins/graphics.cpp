@@ -438,7 +438,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 	}
 
 	unlockScreen();
-	addRefreshRect(xs, ys, xs + width, ys + height);
+	addRefreshRect(destX, destY, destX + width, destY + height);
 }
 
 // TODO: See if PAL_PIXELS can be converted to a uint16 array
@@ -498,7 +498,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
 
-	addRefreshRect(xs, ys, xs + width, ys + width);
+	addRefreshRect(destX, destY, destX + width, destY + width);
 }
 
 void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
@@ -537,7 +537,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 		yCount = yCtr - 1;
 	} while (yCtr != 1);
 
-	addRefreshRect(xp, yp, xp + width, yp + width);
+	addRefreshRect(destX, destY, destX + width, destY + width);
 }
 
 /** 
