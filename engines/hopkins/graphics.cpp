@@ -1122,19 +1122,39 @@ void GraphicsManager::addRefreshRect(int x1, int y1, int x2, int y2) {
 
 void GraphicsManager::addRectToArray(Common::Array<Common::Rect> &rects, const Common::Rect &newRect) {
 	// Scan for an intersection with existing rects
-	for (uint rectIndex = 0; rectIndex < rects.size(); ++rectIndex) {
+	uint rectIndex;
+	for (rectIndex = 0; rectIndex < rects.size(); ++rectIndex) {
 		Common::Rect &r = rects[rectIndex];
 		
 		if (r.intersects(newRect)) {
 			// Rect either intersects or is completely inside existing one, so extend existing one as necessary
 			r.extend(newRect);
-			return;
+			break;
 		}
 	}
+	if (rectIndex == rects.size()) {
+		// Rect not intersecting any existing one, so add it in
+		assert(rects.size() < DIRTY_RECTS_SIZE);
+		rects.push_back(newRect);
+	}
 
-	// Ensure that the rect list doesn't get too big, and add the new one in
-	assert(_refreshRects.size() < DIRTY_RECTS_SIZE);
-	rects.push_back(newRect);
+	// Take care of merging the existing rect list. This is done as a separate check even if
+	// a previous extending above has been done, since the merging of the new rect above may
+	// result in further rects now able to be merged
+
+	for (int srcIndex = rects.size() - 1; srcIndex > 0; --srcIndex) {
+		const Common::Rect &srcRect = rects[srcIndex];
+
+		// Loop through all the other rects to see if it intersects them
+		for (int destIndex = srcIndex - 1; destIndex >= 0; --destIndex) {
+			if (rects[destIndex].intersects(srcRect)) {
+				// Found an intersection, so extend the found one, and delete the original
+				rects[destIndex].extend(srcRect);
+				rects.remove_at(srcIndex);
+				break;
+			}
+		}
+	}
 }
 
 // Draw any game dirty rects onto the screen intermediate surface
