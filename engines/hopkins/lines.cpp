@@ -654,20 +654,20 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 				newDir = DIR_LEFT;
 		} else if (destLineIdx < curLineIdx) {
 			if (linesIdxUp == -1)
-				linesIdxUp = INVALID_LINEIDX;
+				linesIdxUp = INVALID_LINE_VALUE;
 			if (lineIdxRight == -1)
-				lineIdxRight = INVALID_LINEIDX;
+				lineIdxRight = INVALID_LINE_VALUE;
 			if (lineIdxDown == -1)
-				lineIdxDown = INVALID_LINEIDX;
+				lineIdxDown = INVALID_LINE_VALUE;
 			if (lineIdxLeft == -1)
-				lineIdxLeft = INVALID_LINEIDX;
-			if (linesIdxUp != INVALID_LINEIDX && lineIdxDown >= linesIdxUp && lineIdxRight >= linesIdxUp && lineIdxLeft >= linesIdxUp && linesIdxUp < curLineIdx)
+				lineIdxLeft = INVALID_LINE_VALUE;
+			if (linesIdxUp != INVALID_LINE_VALUE && lineIdxDown >= linesIdxUp && lineIdxRight >= linesIdxUp && lineIdxLeft >= linesIdxUp && linesIdxUp < curLineIdx)
 				newDir = DIR_UP;
-			if (lineIdxRight != INVALID_LINEIDX && lineIdxDown >= lineIdxRight && linesIdxUp >= lineIdxRight && lineIdxLeft >= lineIdxRight && curLineIdx > lineIdxRight)
+			if (lineIdxRight != INVALID_LINE_VALUE && lineIdxDown >= lineIdxRight && linesIdxUp >= lineIdxRight && lineIdxLeft >= lineIdxRight && curLineIdx > lineIdxRight)
 				newDir = DIR_RIGHT;
-			if (lineIdxDown != INVALID_LINEIDX && linesIdxUp >= lineIdxDown && lineIdxRight >= lineIdxDown && lineIdxLeft >= lineIdxDown && curLineIdx > lineIdxDown)
+			if (lineIdxDown != INVALID_LINE_VALUE && linesIdxUp >= lineIdxDown && lineIdxRight >= lineIdxDown && lineIdxLeft >= lineIdxDown && curLineIdx > lineIdxDown)
 				newDir = DIR_DOWN;
-			if (lineIdxLeft != INVALID_LINEIDX && lineIdxDown >= lineIdxLeft && lineIdxRight >= lineIdxLeft && linesIdxUp >= lineIdxLeft && curLineIdx > lineIdxLeft)
+			if (lineIdxLeft != INVALID_LINE_VALUE && lineIdxDown >= lineIdxLeft && lineIdxRight >= lineIdxLeft && linesIdxUp >= lineIdxLeft && curLineIdx > lineIdxLeft)
 				newDir = DIR_LEFT;
 		}
 
@@ -1073,7 +1073,7 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	int foundDataIdx;
 	int curLineY = 0;
 	int curLineX = 0;
-	int v126[9];
+	int stepArr[9];
 	int deltaArr[9];
 	int collLineDataIdxArr[9];
 	int collLineIdxArr[9];
@@ -1085,7 +1085,6 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	int lineIdx = 0;
 	int lineDataIdx = 0;
 	Directions newDir = DIR_NONE;
-	int v111 = 0;
 	if (destY <= 24)
 		clipDestY = 25;
 	if (!_vm->_globals._checkDistanceFl) {
@@ -1122,8 +1121,8 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	for (int i = 0; i <= 8; ++i) {
 		collLineIdxArr[i] = -1;
 		collLineDataIdxArr[i] = 0;
-		deltaArr[i] = 1300;
-		v126[i] = 1300;
+		deltaArr[i] = INVALID_LINE_VALUE;
+		stepArr[i] = INVALID_LINE_VALUE;
 	}
 
 	if (characterRoute(fromX, fromY, clipDestX, clipDestY, -1, -1, 0) == 1)
@@ -1188,13 +1187,13 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	if (collLineIdxArr[DIR_LEFT] < 0 || _lastLine < collLineIdxArr[DIR_LEFT])
 		collLineIdxArr[DIR_LEFT] = -1;
 	if (collLineIdxArr[DIR_UP] < 0)
-		deltaArr[DIR_UP] = 1300;
+		deltaArr[DIR_UP] = INVALID_LINE_VALUE;
 	if (collLineIdxArr[DIR_RIGHT] < 0)
-		deltaArr[DIR_RIGHT] = 1300;
+		deltaArr[DIR_RIGHT] = INVALID_LINE_VALUE;
 	if (collLineIdxArr[DIR_DOWN] < 0)
-		deltaArr[DIR_DOWN] = 1300;
+		deltaArr[DIR_DOWN] = INVALID_LINE_VALUE;
 	if (collLineIdxArr[DIR_LEFT] < 0)
-		deltaArr[DIR_LEFT] = 1300;
+		deltaArr[DIR_LEFT] = INVALID_LINE_VALUE;
 	if (collLineIdxArr[DIR_UP] == -1 && collLineIdxArr[DIR_RIGHT] == -1 && collLineIdxArr[DIR_DOWN] == -1 && collLineIdxArr[DIR_LEFT] == -1)
 		return (RouteItem *)g_PTRNUL;
 
@@ -1215,8 +1214,8 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	for (int i = 0; i <= 8; ++i) {
 		collLineIdxArr[i] = -1;
 		collLineDataIdxArr[i] = 0;
-		deltaArr[i] = 1300;
-		v126[i] = 1300;
+		deltaArr[i] = INVALID_LINE_VALUE;
+		stepArr[i] = INVALID_LINE_VALUE;
 	}
 
 	tmpDelta = 0;
@@ -1265,56 +1264,58 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	deltaArr[DIR_LEFT] = tmpDelta + 1;
 
 	if (collLineIdxArr[DIR_UP] != -1)
-		v126[DIR_UP] = abs(collLineIdxArr[DIR_UP] - curLineIdx);
+		stepArr[DIR_UP] = abs(collLineIdxArr[DIR_UP] - curLineIdx);
 
 	if (collLineIdxArr[DIR_RIGHT] != -1)
-		v126[DIR_RIGHT] = abs(collLineIdxArr[DIR_RIGHT] - curLineIdx);
+		stepArr[DIR_RIGHT] = abs(collLineIdxArr[DIR_RIGHT] - curLineIdx);
 
 	if (collLineIdxArr[DIR_DOWN] != -1)
-		v126[DIR_DOWN] = abs(collLineIdxArr[DIR_DOWN] - curLineIdx);
+		stepArr[DIR_DOWN] = abs(collLineIdxArr[DIR_DOWN] - curLineIdx);
 
 	if (collLineIdxArr[DIR_LEFT] != -1)
-		v126[DIR_LEFT] = abs(collLineIdxArr[DIR_LEFT] - curLineIdx);
+		stepArr[DIR_LEFT] = abs(collLineIdxArr[DIR_LEFT] - curLineIdx);
 
 	if (collLineIdxArr[DIR_UP] == -1 && collLineIdxArr[DIR_RIGHT] == -1 && collLineIdxArr[DIR_DOWN] == -1 && collLineIdxArr[DIR_LEFT] == -1)
 		error("Nearest point not found");
 
-	if (collLineIdxArr[DIR_UP] != -1 && v126[DIR_RIGHT] >= v126[DIR_UP] && v126[DIR_DOWN] >= v126[DIR_UP] && v126[DIR_LEFT] >= v126[DIR_UP]) {
+	int delta = 0;
+	if (collLineIdxArr[DIR_UP] != -1 && stepArr[DIR_RIGHT] >= stepArr[DIR_UP] && stepArr[DIR_DOWN] >= stepArr[DIR_UP] && stepArr[DIR_LEFT] >= stepArr[DIR_UP]) {
 		lineIdx = collLineIdxArr[DIR_UP];
-		v111 = deltaArr[DIR_UP];
+		delta = deltaArr[DIR_UP];
 		newDir = DIR_UP;
 		lineDataIdx = collLineDataIdxArr[DIR_UP];
-	} else if (collLineIdxArr[DIR_DOWN] != -1 && v126[DIR_RIGHT] >= v126[DIR_DOWN] && v126[DIR_UP] >= v126[DIR_DOWN] && v126[DIR_LEFT] >= v126[DIR_DOWN]) {
+	} else if (collLineIdxArr[DIR_DOWN] != -1 && stepArr[DIR_RIGHT] >= stepArr[DIR_DOWN] && stepArr[DIR_UP] >= stepArr[DIR_DOWN] && stepArr[DIR_LEFT] >= stepArr[DIR_DOWN]) {
 		lineIdx = collLineIdxArr[DIR_DOWN];
-		v111 = deltaArr[DIR_DOWN];
+		delta = deltaArr[DIR_DOWN];
 		newDir = DIR_DOWN;
 		lineDataIdx = collLineDataIdxArr[DIR_DOWN];
-	} else if (collLineIdxArr[DIR_RIGHT] != -1 && v126[DIR_UP] >= v126[DIR_RIGHT] && v126[DIR_DOWN] >= v126[DIR_RIGHT] && v126[DIR_LEFT] >= v126[DIR_RIGHT]) {
+	} else if (collLineIdxArr[DIR_RIGHT] != -1 && stepArr[DIR_UP] >= stepArr[DIR_RIGHT] && stepArr[DIR_DOWN] >= stepArr[DIR_RIGHT] && stepArr[DIR_LEFT] >= stepArr[DIR_RIGHT]) {
 		lineIdx = collLineIdxArr[DIR_RIGHT];
-		v111 = deltaArr[DIR_RIGHT];
+		delta = deltaArr[DIR_RIGHT];
 		newDir = DIR_RIGHT;
 		lineDataIdx = collLineDataIdxArr[DIR_RIGHT];
-	} else if (collLineIdxArr[DIR_LEFT] != -1 && v126[DIR_UP] >= v126[DIR_LEFT] && v126[DIR_DOWN] >= v126[DIR_LEFT] && v126[DIR_RIGHT] >= v126[DIR_LEFT]) {
+	} else if (collLineIdxArr[DIR_LEFT] != -1 && stepArr[DIR_UP] >= stepArr[DIR_LEFT] && stepArr[DIR_DOWN] >= stepArr[DIR_LEFT] && stepArr[DIR_RIGHT] >= stepArr[DIR_LEFT]) {
 		lineIdx = collLineIdxArr[DIR_LEFT];
-		v111 = deltaArr[DIR_LEFT];
+		delta = deltaArr[DIR_LEFT];
 		newDir = DIR_LEFT;
 		lineDataIdx = collLineDataIdxArr[DIR_LEFT];
 	}
 
-	int v55 = characterRoute(fromX, fromY, clipDestX, clipDestY, lineIdx, curLineIdx, 0);
+	int bestRouteNum = characterRoute(fromX, fromY, clipDestX, clipDestY, lineIdx, curLineIdx, 0);
 	
-	if (v55 == 1)
+	if (bestRouteNum == 1)
 		return _bestRoute;
 
-	if (v55 == 2) {
+	if (bestRouteNum == 2) {
 		lineIdx = _newLineIdx;
 		lineDataIdx = _newLineDataIdx;
 		routeIdx = _newRouteIdx;
 	} else {
-		if (newDir == DIR_UP) {
-			for (int deltaY = 0; deltaY < v111; deltaY++) {
+		switch (newDir) {
+		case DIR_UP:
+			for (int deltaY = 0; deltaY < delta; deltaY++) {
 				if (checkCollisionLine(fromX, fromY - deltaY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
-					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, fromX, fromY - deltaY, fromX, fromY - v111, routeIdx, _bestRoute);
+					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, fromX, fromY - deltaY, fromX, fromY - delta, routeIdx, _bestRoute);
 					if (tmpRouteIdx == -1) {
 						_bestRoute[routeIdx].invalidate();
 						return &_bestRoute[0];
@@ -1326,12 +1327,12 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				_bestRoute[routeIdx].set(fromX, fromY - deltaY, DIR_UP);
 				routeIdx++;
 			}
-		}
-		if (newDir == DIR_DOWN) {
-			for (int deltaY = 0; deltaY < v111; deltaY++) {
+			break;
+		case DIR_DOWN:
+			for (int deltaY = 0; deltaY < delta; deltaY++) {
 				if (checkCollisionLine(fromX, deltaY + fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb)
 				        && _lastLine < foundLineIdx) {
-					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, fromX, deltaY + fromY, fromX, v111 + fromY, routeIdx, &_bestRoute[0]);
+					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, fromX, deltaY + fromY, fromX, delta + fromY, routeIdx, &_bestRoute[0]);
 					if (tmpRouteIdx == -1) {
 						_bestRoute[routeIdx].invalidate();
 						return &_bestRoute[0];
@@ -1343,11 +1344,11 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				_bestRoute[routeIdx].set(fromX, fromY + deltaY, DIR_DOWN);
 				routeIdx++;
 			}
-		}
-		if (newDir == DIR_LEFT) {
-			for (int deltaX = 0; deltaX < v111; deltaX++) {
+			break;
+		case DIR_LEFT:
+			for (int deltaX = 0; deltaX < delta; deltaX++) {
 				if (checkCollisionLine(fromX - deltaX, fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
-					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, fromX - deltaX, fromY, fromX - v111, fromY, routeIdx, &_bestRoute[0]);
+					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, fromX - deltaX, fromY, fromX - delta, fromY, routeIdx, &_bestRoute[0]);
 					if (tmpRouteIdx == -1) {
 						_bestRoute[routeIdx].invalidate();
 						return &_bestRoute[0];
@@ -1359,11 +1360,11 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				_bestRoute[routeIdx].set(fromX - deltaX, fromY, DIR_LEFT);
 				routeIdx++;
 			}
-		}
-		if (newDir == DIR_RIGHT) {
-			for (int deltaX = 0; deltaX < v111; deltaX++) {
+			break;
+		case DIR_RIGHT:
+			for (int deltaX = 0; deltaX < delta; deltaX++) {
 				if (checkCollisionLine(deltaX + fromX, fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
-					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, deltaX + fromX, fromY, v111 + fromX, fromY, routeIdx, &_bestRoute[0]);
+					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, deltaX + fromX, fromY, delta + fromX, fromY, routeIdx, &_bestRoute[0]);
 					if (tmpRouteIdx == -1) {
 						_bestRoute[routeIdx].invalidate();
 						return &_bestRoute[0];
@@ -1375,10 +1376,12 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				_bestRoute[routeIdx].set(fromX + deltaX, fromY, DIR_RIGHT);
 				routeIdx++;
 			}
+			break;
+		default:
+			break;
 		}
 	}
 	
-
 	bool loopCond;
 	do {
 		loopCond = false;
@@ -1396,10 +1399,10 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 					_bestRoute[routeIdx].set(_lineItem[idx]._lineData[2 * dataIdx], _lineItem[idx]._lineData[2 * dataIdx + 1], _lineItem[idx]._directionRouteInc);
 					routeIdx++;
 					if (_lineItem[idx]._lineDataEndIdx > 30 && dataIdx == _lineItem[idx]._lineDataEndIdx / 2) {
-						int v78 = characterRoute(_lineItem[idx]._lineData[2 * dataIdx], _lineItem[idx]._lineData[2 * dataIdx + 1], clipDestX, clipDestY, idx, curLineIdx, routeIdx);
-						if (v78 == 1)
+						bestRouteNum = characterRoute(_lineItem[idx]._lineData[2 * dataIdx], _lineItem[idx]._lineData[2 * dataIdx + 1], clipDestX, clipDestY, idx, curLineIdx, routeIdx);
+						if (bestRouteNum == 1)
 							return &_bestRoute[0];
-						if (v78 == 2 || MIRACLE(curLineX, curLineY, idx, curLineIdx, routeIdx)) {
+						if (bestRouteNum == 2 || MIRACLE(curLineX, curLineY, idx, curLineIdx, routeIdx)) {
 							lineIdx = _newLineIdx;
 							lineDataIdx = _newLineDataIdx;
 							routeIdx = _newRouteIdx;
@@ -1412,10 +1415,10 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				if (loopCond)
 					break;
 
-				int v79 = characterRoute(curLineX, curLineY, clipDestX, clipDestY, idx, curLineIdx, routeIdx);
-				if (v79 == 1)
+				bestRouteNum = characterRoute(curLineX, curLineY, clipDestX, clipDestY, idx, curLineIdx, routeIdx);
+				if (bestRouteNum == 1)
 					return &_bestRoute[0];
-				if (v79 == 2 || MIRACLE(curLineX, curLineY, idx, curLineIdx, routeIdx)) {
+				if (bestRouteNum == 2 || MIRACLE(curLineX, curLineY, idx, curLineIdx, routeIdx)) {
 					lineIdx = _newLineIdx;
 					lineDataIdx = _newLineDataIdx;
 					routeIdx = _newRouteIdx;
@@ -1437,17 +1440,17 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				_bestRoute[routeIdx].set(_lineItem[lineIdx]._lineData[2 * dataIdx], _lineItem[lineIdx]._lineData[2 * dataIdx + 1], _lineItem[lineIdx]._directionRouteDec);
 				routeIdx++;
 			}
-			for (int v117 = lineIdx - 1; v117 > curLineIdx; v117--) {
-				for (int dataIdx = _lineItem[v117]._lineDataEndIdx - 1; dataIdx > -1; dataIdx--) {
-					curLineX = _lineItem[v117]._lineData[2 * dataIdx];
-					curLineY = _lineItem[v117]._lineData[2 * dataIdx + 1];
-					_bestRoute[routeIdx].set(_lineItem[v117]._lineData[2 * dataIdx], _lineItem[v117]._lineData[2 * dataIdx + 1], _lineItem[v117]._directionRouteDec);
+			for (int i = lineIdx - 1; i > curLineIdx; i--) {
+				for (int dataIdx = _lineItem[i]._lineDataEndIdx - 1; dataIdx > -1; dataIdx--) {
+					curLineX = _lineItem[i]._lineData[2 * dataIdx];
+					curLineY = _lineItem[i]._lineData[2 * dataIdx + 1];
+					_bestRoute[routeIdx].set(_lineItem[i]._lineData[2 * dataIdx], _lineItem[i]._lineData[2 * dataIdx + 1], _lineItem[i]._directionRouteDec);
 					routeIdx++;
-					if (_lineItem[v117]._lineDataEndIdx > 30 && dataIdx == _lineItem[v117]._lineDataEndIdx / 2) {
-						int v88 = characterRoute(curLineX, curLineY, clipDestX, clipDestY, v117, curLineIdx, routeIdx);
-						if (v88 == 1)
+					if (_lineItem[i]._lineDataEndIdx > 30 && dataIdx == _lineItem[i]._lineDataEndIdx / 2) {
+						bestRouteNum = characterRoute(curLineX, curLineY, clipDestX, clipDestY, i, curLineIdx, routeIdx);
+						if (bestRouteNum == 1)
 							return &_bestRoute[0];
-						if (v88 == 2 || MIRACLE(curLineX, curLineY, v117, curLineIdx, routeIdx)) {
+						if (bestRouteNum == 2 || MIRACLE(curLineX, curLineY, i, curLineIdx, routeIdx)) {
 							lineIdx = _newLineIdx;
 							lineDataIdx = _newLineDataIdx;
 							routeIdx = _newRouteIdx;
@@ -1460,10 +1463,10 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 				if (loopCond)
 					break;
 
-				int v89 = characterRoute(curLineX, curLineY, clipDestX, clipDestY, v117, curLineIdx, routeIdx);
-				if (v89 == 1)
+				bestRouteNum = characterRoute(curLineX, curLineY, clipDestX, clipDestY, i, curLineIdx, routeIdx);
+				if (bestRouteNum == 1)
 					return &_bestRoute[0];
-				if (v89 == 2 || MIRACLE(curLineX, curLineY, v117, curLineIdx, routeIdx)) {
+				if (bestRouteNum == 2 || MIRACLE(curLineX, curLineY, i, curLineIdx, routeIdx)) {
 					lineIdx = _newLineIdx;
 					lineDataIdx = _newLineDataIdx;
 					routeIdx = _newRouteIdx;
@@ -1934,11 +1937,11 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		}
 		if (endLineIdx < foundLineIdx) {
 			if (collLineIdxRoute0 == -1)
-				collLineIdxRoute0 = INVALID_LINEIDX;
+				collLineIdxRoute0 = INVALID_LINE_VALUE;
 			if (collLineIdxRoute1 == -1)
-				collLineIdxRoute0 = INVALID_LINEIDX;
+				collLineIdxRoute0 = INVALID_LINE_VALUE;
 			if (collLineIdxRoute2 == -1)
-				collLineIdxRoute0 = INVALID_LINEIDX;
+				collLineIdxRoute0 = INVALID_LINE_VALUE;
 			if (_testRoute1[0]._x != -1 && collLineIdxRoute1 < foundLineIdx && collLineIdxRoute2 >= collLineIdxRoute1 && collLineIdxRoute0 >= collLineIdxRoute1 && endLineIdx <= collLineIdxRoute1) {
 				_newLineIdx = collLineIdxRoute1;
 				_newLineDataIdx = collDataIdxRoute1;
@@ -2043,13 +2046,13 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	int curLineIdx = 0;
 
 	if (arrLineIdx[DIR_UP] == -1)
-		arrDelta[DIR_UP] = 1300;
+		arrDelta[DIR_UP] = INVALID_LINE_VALUE;
 	if (arrLineIdx[DIR_UP] == -1)
-		arrDelta[DIR_UP] = 1300;
+		arrDelta[DIR_UP] = INVALID_LINE_VALUE;
 	if (arrLineIdx[DIR_DOWN] == -1)
-		arrDelta[DIR_DOWN] = 1300;
+		arrDelta[DIR_DOWN] = INVALID_LINE_VALUE;
 	if (arrLineIdx[DIR_LEFT] == -1)
-		arrDelta[DIR_LEFT] = 1300;
+		arrDelta[DIR_LEFT] = INVALID_LINE_VALUE;
 	if (arrLineIdx[DIR_UP] != -1 || arrLineIdx[DIR_UP] != -1 || arrLineIdx[DIR_DOWN] != -1 || arrLineIdx[DIR_LEFT] != -1) {
 		if (arrLineIdx[DIR_DOWN] != -1 && arrDelta[DIR_UP] >= arrDelta[DIR_DOWN] && arrDelta[DIR_UP] >= arrDelta[DIR_DOWN] && arrDelta[DIR_LEFT] >= arrDelta[DIR_DOWN]) {
 			curLineIdx = arrLineIdx[DIR_DOWN];
@@ -2068,7 +2071,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 		for (int i = 0; i <= 8; i++) {
 			arrLineIdx[i] = -1;
 			arrDataIdx[i] = 0;
-			arrDelta[i] = 1300;
+			arrDelta[i] = INVALID_LINE_VALUE;
 		}
 		if (checkCollisionLine(x1, y1, &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _lastLine)) {
 			v69 = arrLineIdx[DIR_UP];
