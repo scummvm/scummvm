@@ -172,7 +172,7 @@ bool HopkinsEngine::runWin95Demo() {
 			}
 		}
 
-		if (g_system->getEventManager()->shouldQuit())
+		if (shouldQuit())
 			return false;
 
 		switch (_globals._exitId) {
@@ -452,14 +452,14 @@ bool HopkinsEngine::runLinuxDemo() {
 		if (!_globals._exitId) {
 			_globals._exitId = _menuManager.menu();
 			if (_globals._exitId == -1) {
-				if (!g_system->getEventManager()->shouldQuit())
+				if (!shouldQuit())
 					endLinuxDemo();
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				restoreSystem();
 			}
 		}
 
-		if (g_system->getEventManager()->shouldQuit())
+		if (shouldQuit())
 			return false;
 
 		switch (_globals._exitId) {
@@ -790,8 +790,11 @@ bool HopkinsEngine::runFull() {
 		_graphicsManager.fadeOutLong();
 	}
 
-	if (!_eventsManager._escKeyFl)
+	if (!_eventsManager._escKeyFl) {
 		playIntro();
+		if (shouldQuit())
+			return false;
+	}
 	if (getPlatform() != Common::kPlatformLinux) {
 		_graphicsManager.fadeOutShort();
 		_graphicsManager.loadImage("H2");
@@ -819,7 +822,7 @@ bool HopkinsEngine::runFull() {
 			}
 		}
 
-		if (g_system->getEventManager()->shouldQuit())
+		if (shouldQuit())
 			return false;
 
 		switch (_globals._exitId) {
@@ -1927,7 +1930,7 @@ void HopkinsEngine::endLinuxDemo() {
 
 		if (_eventsManager.getMouseButton() == 1)
 			mouseClicked = true;
-	} while (!mouseClicked && !g_system->getEventManager()->shouldQuit());
+	} while (!mouseClicked && !shouldQuit());
 
 	// Original tried to open a web browser link here. Since ScummVM doesn't support
 	// that, it's being skipped in favor of simply exiting
@@ -2520,7 +2523,7 @@ void HopkinsEngine::displayCredits() {
 		_globals._creditsEndX = -1;
 		_globals._creditsStartY = -1;
 		_globals._creditsEndY = -1;
-	} while ((_eventsManager.getMouseButton() != 1) && (!g_system->getEventManager()->shouldQuit()));
+	} while ((_eventsManager.getMouseButton() != 1) && (!shouldQuit()));
 	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
 	_eventsManager._mouseFl = true;
@@ -2816,7 +2819,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 		_linesManager.checkZone();
 		setSubmarineSprites();
 		_eventsManager.VBL();
-		if (_globals._exitId || g_system->getEventManager()->shouldQuit())
+		if (_globals._exitId || shouldQuit())
 			break;
 	}
 
