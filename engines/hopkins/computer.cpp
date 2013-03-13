@@ -556,8 +556,10 @@ void ComputerManager::displayGamesSubMenu() {
 	_breakoutSpr = _vm->_fileManager.loadFile("CASSE.SPR");
 	loadHiscore();
 	setModeVGA256();
+
 	newLevel();
-	_vm->_graphicsManager.resetDirtyRects();
+	_vm->_graphicsManager.DD_VBL();
+
 	playBreakout();
 	_vm->_graphicsManager.resetDirtyRects();
 	_breakoutSpr = _vm->_globals.freeMemory(_breakoutSpr);
@@ -642,12 +644,15 @@ void ComputerManager::newLevel() {
 
 	_breakoutLevel = (int16 *)_vm->_fileManager.loadFile(file);
 	displayBricks();
+
 	_vm->_objectsManager.addStaticSprite(_breakoutSpr, Common::Point(150, 192), 0, 13, 0, false, 0, 0);
 	_vm->_objectsManager.addStaticSprite(_breakoutSpr, Common::Point(164, 187), 1, 14, 0, false, 0, 0);
+
 	_ballPosition = Common::Point(164, 187);
 	_padPositionX = 150;
 	_vm->_objectsManager.animateSprite(0);
 	_vm->_objectsManager.animateSprite(1);
+ 
 	_vm->_eventsManager.mouseOn();
 	_vm->_soundManager.playSample(3, 5);
 }
