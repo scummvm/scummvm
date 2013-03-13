@@ -669,11 +669,11 @@ void ComputerManager::displayBricks() {
 	int cellTop;
 	int cellType;
 	for (int levelIdx = 0; ; levelIdx += 6) {
-		cellLeft = level[levelIdx];
+		cellLeft = (int16)FROM_LE_16(level[levelIdx]);
 		if (cellLeft == -1)
 			break;
-		cellTop = level[levelIdx + 1];
-		cellType = level[levelIdx + 4];
+		cellTop = FROM_LE_16(level[levelIdx + 1]);
+		cellType = FROM_LE_16(level[levelIdx + 4]);
 
 		if (cellType <= 6)
 			++_breakoutBrickNbr;
@@ -701,8 +701,6 @@ void ComputerManager::displayBricks() {
 			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 23);
 			break;
 		}
-
-		levelIdx += 6;
 	}
 
 	displayScore();
