@@ -185,6 +185,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 
 	lockScreen();
 	copy16bFromSurfaceScaleX2(_vesaBuffer);
+	addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	unlockScreen();
 
 	fadeInBreakout();
@@ -1165,12 +1166,6 @@ void GraphicsManager::displayDirtyRects() {
 	lockScreen();
 	
 	// Refresh the entire screen 
-	Graphics::Surface *screenSurface = NULL;
-	if (_showDirtyRects) {
-		screenSurface = g_system->lockScreen();
-		g_system->copyRectToScreen(_screenBuffer, WinScan, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	}
-
 	for (uint idx = 0; idx < _dirtyRects.size(); ++idx) {
 		Common::Rect &r = _dirtyRects[idx];
 		Common::Rect dstRect;
@@ -1199,21 +1194,12 @@ void GraphicsManager::displayDirtyRects() {
 			unlockScreen();
 		}
 
-		// If it's a valid rect, then copy it over
-		if (dstRect.isValidRect() && dstRect.width() > 0 && dstRect.height() > 0) {
-			byte *srcP = _videoPtr + WinScan * dstRect.top + (dstRect.left * 2);
-			g_system->copyRectToScreen(srcP, WinScan, dstRect.left, dstRect.top, 
-				dstRect.width(), dstRect.height());
-
-			if (_showDirtyRects)
-				screenSurface->frameRect(dstRect, 0xffffff);
-		}
+		// If it's a valid rect, then add it to the list of areas to refresh on the screen
+		if (dstRect.isValidRect() && dstRect.width() > 0 && dstRect.height() > 0)
+			addRectToArray(_refreshRects, dstRect);
 	}
 
 	unlockScreen();
-	if (_showDirtyRects)
-		g_system->unlockScreen();
-
 	resetDirtyRects();
 }
 
