@@ -862,14 +862,14 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 	}
 	bugLigIdx -= 2;
 	int v77 = 0;
-	int v78 = 0;
-	int v79 = 0;
+	int bufX = 0;
+	int bufY = 0;
 	for (int v89 = maxDist + 1; v89 > 0; v89--) {
 		if (checkCollisionLine(_lineBuf[bugLigIdx], _lineBuf[bugLigIdx + 1], &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx) && _lastLine < foundLineIdx) {
 			v80 = foundLineIdx;
 			v77 = foundDataIdx;
-			v78 = _lineBuf[bugLigIdx];
-			v79 = _lineBuf[bugLigIdx + 1];
+			bufX = _lineBuf[bugLigIdx];
+			bufY = _lineBuf[bugLigIdx + 1];
 			break;
 		}
 		bugLigIdx -= 2;
@@ -919,58 +919,58 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 	int v67 = v66 + 2;
 	int v71 = v70 + 2;
 	if (destX >= v69 && destX <= v67 && destY >= v73 && destY <= v71) {
-		int v34 = destY;
-		int v76 = -1;
+		int curY = destY;
+		int linesIdxUp = -1;
 		for (;;) {
-			--v34;
-			if (!checkCollisionLine(destX, v34, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+			--curY;
+			if (!checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
 				break;
 
-			v76 = foundLineIdx;
-			if (!v34 || v73 > v34)
+			linesIdxUp = foundLineIdx;
+			if (!curY || v73 > curY)
 				break;
 		}
-		int v35 = destY;
-		int v75 = -1;
+		curY = destY;
+		int lineIdxDown = -1;
 		for (;;) {
-			++v35;
-			if (!checkCollisionLine(destX, v35, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+			++curY;
+			if (!checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
 				break;
 
-			v75 = foundLineIdx;
-			if (_vm->_globals._characterMaxPosY <= v35 || v71 <= v35)
+			lineIdxDown = foundLineIdx;
+			if (_vm->_globals._characterMaxPosY <= curY || v71 <= curY)
 				break;
 		}
-		int v36 = destX;
-		int v74 = -1;
+		int curX = destX;
+		int lineIdxRight = -1;
 		for (;;) {
-			++v36;
-			if (!checkCollisionLine(v36, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+			++curX;
+			if (!checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
 				break;
 
-			v74 = foundLineIdx;
+			lineIdxRight = foundLineIdx;
 
-			if (_vm->_graphicsManager._maxX <= v36 || v67 <= v36)
+			if (_vm->_graphicsManager._maxX <= curX || v67 <= curX)
 				break;
 		}
-		int v37 = destX;
-		int v38 = -1;
+		curX = destX;
+		int lineIdxLeft = -1;
 		for(;;) {
-			--v37;
-			if (!checkCollisionLine(v37, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+			--curX;
+			if (!checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
 				break;
-			v38 = foundLineIdx;
-			if (v37 <= 0 || v69 >= v37)
+			lineIdxLeft = foundLineIdx;
+			if (curX <= 0 || v69 >= curX)
 				break;
 		}
-		if (v74 != -1 && v38 != -1 && v76 != -1 && v75 != -1) {
+		if (lineIdxRight != -1 && lineIdxLeft != -1 && linesIdxUp != -1 && lineIdxDown != -1) {
 			route[routerIdx].invalidate();
 			return -1;
 		}
 	}
-	if (v78 < fromX - 1 || v78 > fromX + 1 || v79 < fromY - 1 || v79 > fromY + 1) {
-		_newPosX = v78;
-		_newPosY = v79;
+	if (bufX < fromX - 1 || bufX > fromX + 1 || bufY < fromY - 1 || bufY > fromY + 1) {
+		_newPosX = bufX;
+		_newPosY = bufY;
 		if (lineIdx < v80) {
 			int v43 = 0;
 			int v42 = lineIdx;
