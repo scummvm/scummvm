@@ -141,7 +141,7 @@ public:
 	void fadeInDefaultLength(const byte *surface);
 	void fadeInShort();
 	void fadeOutDefaultLength(const byte *surface);
-	void fateOutBreakout();
+	void fadeOutBreakout();
 	void fadeOutLong();
 	void fadeOutShort();
 	void fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment = true);

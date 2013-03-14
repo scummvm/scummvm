@@ -715,6 +715,8 @@ void ComputerManager::displayLives() {
 
 	for (int i = 0, xp = 10; i < _breakoutLives - 1; i++, xp += 7)
 		_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 14);
+
+	_vm->_graphicsManager.DD_VBL();
 }
 
 /**
@@ -766,7 +768,7 @@ void ComputerManager::playBreakout() {
 			} while (!_vm->shouldQuit() && !lastBreakoutEvent);
 			if (lastBreakoutEvent != 1)
 				break;
-			_vm->_graphicsManager.fateOutBreakout();
+
 			--_breakoutLives;
 
 			if (_breakoutLives) {
@@ -774,6 +776,8 @@ void ComputerManager::playBreakout() {
 				if (_breakoutLives)
 					continue;
 			}
+
+			_vm->_graphicsManager.fadeOutBreakout();
 			_vm->_eventsManager.mouseOn();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.removeSprite(1);
@@ -794,7 +798,7 @@ void ComputerManager::playBreakout() {
 		}
 		if (lastBreakoutEvent != 2)
 			return;
-		_vm->_graphicsManager.fateOutBreakout();
+		_vm->_graphicsManager.fadeOutBreakout();
 		newLevel();
 	}
 }
@@ -846,7 +850,7 @@ int ComputerManager::displayHiscores() {
 	} while (!buttonIndex && !_vm->shouldQuit());
 
 	_vm->_eventsManager.mouseOff();
-	_vm->_graphicsManager.fateOutBreakout();
+	_vm->_graphicsManager.fadeOutBreakout();
 	_vm->_globals.freeMemory(ptr);
 	return buttonIndex;
 }
@@ -889,7 +893,7 @@ void ComputerManager::getScoreName() {
 	for (int i = scoreLen, scorePos = 8; i >= 0; i--) {
 		_score[5]._score.setChar(score[i], scorePos--);
 	}
-	_vm->_graphicsManager.fateOutBreakout();
+	_vm->_graphicsManager.fadeOutBreakout();
 	_vm->_globals.freeMemory(ptr);
 	saveScore();
 }

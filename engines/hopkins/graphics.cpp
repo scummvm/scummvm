@@ -675,7 +675,7 @@ void GraphicsManager::fadeInBreakout() {
 /** 
  * Fade out used by for the breakout mini-game
  */
-void GraphicsManager::fateOutBreakout() {
+void GraphicsManager::fadeOutBreakout() {
 	byte palette[PALETTE_EXT_BLOCK_SIZE];
 
 	memset(palette, 0, PALETTE_EXT_BLOCK_SIZE);
