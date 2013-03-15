@@ -874,51 +874,45 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 		}
 		bugLigIdx -= 2;
 	}
-	int v66 = 0;
-	int v68 = 0;
-	int v70 = 0;
-	int v72 = 0;
+	int maxLineX = 0;
+	int minLineX = 0;
+	int maxLineY = 0;
+	int minLineY = 0;
 	for (int i = startLineIdx; i <= endLineIdx; ++i) {
 		int16 *lineData = _lineItem[i]._lineData;
 		if (lineData == (int16 *)g_PTRNUL)
 			error("error in genial routine");
 		if (i == startLineIdx) {
-			v72 = lineData[2 * _lineItem[i]._lineDataEndIdx - 1];
-			if (lineData[1] <= lineData[2 * _lineItem[i]._lineDataEndIdx - 1])
-				v72 = lineData[1];
-			v70 = lineData[2 * _lineItem[i]._lineDataEndIdx - 1];
-			if (lineData[1] >= lineData[2 * _lineItem[i]._lineDataEndIdx - 1])
-				v70 = lineData[1];
-			v68 = lineData[2 * _lineItem[i]._lineDataEndIdx - 2];
-			if (lineData[0] <= lineData[2 * _lineItem[i]._lineDataEndIdx - 2])
-				v68 = lineData[0];
-			v66 = lineData[2 * _lineItem[i]._lineDataEndIdx - 2];
-			if (lineData[0] >= lineData[2 * _lineItem[i]._lineDataEndIdx - 2])
-				v66 = lineData[0];
+			minLineY = MIN(lineData[1], lineData[2 * _lineItem[i]._lineDataEndIdx - 1]);
+			maxLineY = MAX(lineData[1], lineData[2 * _lineItem[i]._lineDataEndIdx - 1]);
+
+			minLineX = MIN(lineData[0], lineData[2 * _lineItem[i]._lineDataEndIdx - 2]);
+			maxLineX = MAX(lineData[0], lineData[2 * _lineItem[i]._lineDataEndIdx - 2]);
 		} else {
-			if (lineData[1] < lineData[2 * _lineItem[i]._lineDataEndIdx - 1] && lineData[1] < v72)
-				v72 = lineData[1];
-			if (lineData[2 * _lineItem[i]._lineDataEndIdx - 1] < lineData[1] && lineData[2 * _lineItem[i]._lineDataEndIdx - 1] < v72)
-				v72 = lineData[2 * _lineItem[i]._lineDataEndIdx - 1];
-			if (lineData[1] > lineData[2 * _lineItem[i]._lineDataEndIdx - 1] && lineData[1] > v70)
-				v70 = lineData[1];
-			if (lineData[2 * _lineItem[i]._lineDataEndIdx - 1] > lineData[1] && lineData[2 * _lineItem[i]._lineDataEndIdx - 1] > v70)
-				v70 = lineData[2 * _lineItem[i]._lineDataEndIdx - 1];
-			if (lineData[0] < lineData[2 * _lineItem[i]._lineDataEndIdx - 2] && v68 > lineData[0])
-				v68 = lineData[0];
-			if (lineData[2 * _lineItem[i]._lineDataEndIdx - 2] < lineData[0] && v68 > lineData[2 * _lineItem[i]._lineDataEndIdx - 2])
-				v68 = lineData[2 * _lineItem[i]._lineDataEndIdx - 2];
-			if (lineData[0] > lineData[2 * _lineItem[i]._lineDataEndIdx - 2] && v66 < lineData[0])
-				v66 = lineData[0];
-			if (lineData[2 * _lineItem[i]._lineDataEndIdx - 2] > lineData[0] && v66 < lineData[2 * _lineItem[i]._lineDataEndIdx - 2])
-				v66 = lineData[2 * _lineItem[i]._lineDataEndIdx - 2];
+			if (lineData[1] < lineData[2 * _lineItem[i]._lineDataEndIdx - 1] && lineData[1] < minLineY)
+				minLineY = lineData[1];
+			if (lineData[2 * _lineItem[i]._lineDataEndIdx - 1] < lineData[1] && lineData[2 * _lineItem[i]._lineDataEndIdx - 1] < minLineY)
+				minLineY = lineData[2 * _lineItem[i]._lineDataEndIdx - 1];
+			if (lineData[1] > lineData[2 * _lineItem[i]._lineDataEndIdx - 1] && lineData[1] > maxLineY)
+				maxLineY = lineData[1];
+			if (lineData[2 * _lineItem[i]._lineDataEndIdx - 1] > lineData[1] && lineData[2 * _lineItem[i]._lineDataEndIdx - 1] > maxLineY)
+				maxLineY = lineData[2 * _lineItem[i]._lineDataEndIdx - 1];
+			if (lineData[0] < lineData[2 * _lineItem[i]._lineDataEndIdx - 2] && minLineX > lineData[0])
+				minLineX = lineData[0];
+			if (lineData[2 * _lineItem[i]._lineDataEndIdx - 2] < lineData[0] && minLineX > lineData[2 * _lineItem[i]._lineDataEndIdx - 2])
+				minLineX = lineData[2 * _lineItem[i]._lineDataEndIdx - 2];
+			if (lineData[0] > lineData[2 * _lineItem[i]._lineDataEndIdx - 2] && maxLineX < lineData[0])
+				maxLineX = lineData[0];
+			if (lineData[2 * _lineItem[i]._lineDataEndIdx - 2] > lineData[0] && maxLineX < lineData[2 * _lineItem[i]._lineDataEndIdx - 2])
+				maxLineX = lineData[2 * _lineItem[i]._lineDataEndIdx - 2];
 		}
 	}
-	int v69 = v68 - 2;
-	int v73 = v72 - 2;
-	int v67 = v66 + 2;
-	int v71 = v70 + 2;
-	if (destX >= v69 && destX <= v67 && destY >= v73 && destY <= v71) {
+
+	minLineX -= 2;
+	minLineY -= 2;
+	maxLineX += 2;
+	maxLineY += 2;
+	if (destX >= minLineX && destX <= maxLineX && destY >= minLineY && destY <= maxLineY) {
 		int curY = destY;
 		int linesIdxUp = -1;
 		for (;;) {
@@ -927,7 +921,7 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 				break;
 
 			linesIdxUp = foundLineIdx;
-			if (!curY || v73 > curY)
+			if (!curY || minLineY > curY)
 				break;
 		}
 		curY = destY;
@@ -938,7 +932,7 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 				break;
 
 			lineIdxDown = foundLineIdx;
-			if (_vm->_globals._characterMaxPosY <= curY || v71 <= curY)
+			if (_vm->_globals._characterMaxPosY <= curY || maxLineY <= curY)
 				break;
 		}
 		int curX = destX;
@@ -950,7 +944,7 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 
 			lineIdxRight = foundLineIdx;
 
-			if (_vm->_graphicsManager._maxX <= curX || v67 <= curX)
+			if (_vm->_graphicsManager._maxX <= curX || maxLineX <= curX)
 				break;
 		}
 		curX = destX;
@@ -960,7 +954,7 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 			if (!checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
 				break;
 			lineIdxLeft = foundLineIdx;
-			if (curX <= 0 || v69 >= curX)
+			if (curX <= 0 || minLineX >= curX)
 				break;
 		}
 		if (lineIdxRight != -1 && lineIdxLeft != -1 && linesIdxUp != -1 && lineIdxDown != -1) {
@@ -1480,11 +1474,10 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	} while (loopCond);
 
 	if (lineIdx == curLineIdx) {
-		if (lineDataIdx <= curLineDataIdx) {
+		if (lineDataIdx <= curLineDataIdx)
 			routeIdx = _lineItem[curLineIdx].appendToRouteInc(lineDataIdx, curLineDataIdx, _bestRoute, routeIdx);
-		} else {
+		else
 			routeIdx = _lineItem[curLineIdx].appendToRouteDec(lineDataIdx, curLineDataIdx, _bestRoute, routeIdx);
-		}
 	}
 	if (characterRoute(_bestRoute[routeIdx - 1]._x, _bestRoute[routeIdx - 1]._y, clipDestX, clipDestY, -1, -1, routeIdx) != 1) {
 		_bestRoute[routeIdx].invalidate();
