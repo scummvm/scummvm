@@ -170,6 +170,18 @@ void ScriptInterpreter::setupScriptFunctions() {
 }
 
 void ScriptInterpreter::loadScript(uint resIndex, uint slotIndex) {
+	if (_slots[slotIndex].resIndex && _slots[slotIndex].resIndex != resIndex && _vm->_screen->isTalkTextActive(slotIndex)) {
+		// WORKAROUND: This happens when examining the assembled
+		// pickaxe. It could lead to random characters being printed,
+		// or possibly even crashes, when subtitles are enabled.
+		//
+		// According to johndoe and he said there may be some bug or
+		// missing feature that causes this situation to happen at all,
+		// but he was ok with this workaround for now.
+		warning("Possible script bug: Loading script %d into slot %d that has an active talk text, probably for script %d", resIndex, slotIndex, _slots[slotIndex].resIndex);
+		_vm->_screen->finishTalkTextItem(slotIndex);
+	}
+
 	delete[] _slots[slotIndex].data;
 
  	_slots[slotIndex].resIndex = resIndex;

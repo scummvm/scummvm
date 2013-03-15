@@ -183,6 +183,7 @@ public:
 	void addTalkTextItemsToRenderQueue();
 	int16 getTalkTextDuration();
 	bool isTalkTextActive(int16 slotIndex);
+	void finishTalkTextItem(int16 slotIndex);
 	void finishTalkTextItems();
 	void keepTalkTextItemsAlive();
 

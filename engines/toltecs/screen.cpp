@@ -494,6 +494,14 @@ int16 Screen::getTalkTextDuration() {
 	return _talkTextItems[_talkTextItemNum].duration;
 }
 
+void Screen::finishTalkTextItem(int16 slotIndex) {
+	for (int16 i = 0; i <= _talkTextItemNum; i++) {
+		if (_talkTextItems[i].slotIndex == slotIndex) {
+			_talkTextItems[i].duration = 0;
+		}
+	}
+}
+
 void Screen::finishTalkTextItems() {
 	for (int16 i = 0; i <= _talkTextItemNum; i++) {
 		_talkTextItems[i].duration = 0;
