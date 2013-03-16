@@ -6,6 +6,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for 3 Skulls of the Toltecs.
    - Added support for Eye of the Beholder.
    - Added support for Eye of the Beholder II: The Legend of Darkmoon.
+   - Added support for Tony Tough and the Night of Roasted Moths
 
  General:
    - Added a new save/load chooser based on a grid of thumbnails. This is only
@@ -28,6 +29,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Improved audio support for Amiga and AtariST versions of Future Wars.
      Now music fades out slowly instead of stopping immediately. Sound
      effects are now properly panned, when requested by the game.
+
+  CGE:
+   - Soltys contains a puzzle requiring the ALT key to be pressed while clicking
+     on an object. This puzzle has been disabled on devices not using this key.
 
   Drascula:
    - Resolved multiple UI issues with the original save/load screen.
