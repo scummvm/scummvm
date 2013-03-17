@@ -498,7 +498,7 @@ void ObjectsManager::resetBob(int idx) {
 	BobItem &bob = _bob[idx];
 	ListeItem &item = _vm->_globals.Liste2[idx];
 
-	bob.field0 = 0;
+	bob._bobMode = 0;
 	bob._spriteData = g_PTRNUL;
 	bob._xp = 0;
 	bob._yp = 0;
@@ -508,8 +508,8 @@ void ObjectsManager::resetBob(int idx) {
 	bob._moveChange2 = 0;
 	bob._disabledAnimationFl = false;
 	bob._animData = g_PTRNUL;
-	bob.field1C = false;
-	bob.field1E = 0;
+	bob._bobMode10 = false;
+	bob._bobModeChange = 0;
 	bob.field20 = 0;
 	bob.field22 = 0;
 	bob.field34 = false;
@@ -577,7 +577,7 @@ void ObjectsManager::setBobInfo(int idx) {
 void ObjectsManager::displayBob(int idx) {
 	_priorityFl = true;
 
-	if (_bob[idx].field0)
+	if (_bob[idx]._bobMode)
 		return;
 
 	resetBob(idx);
@@ -609,17 +609,17 @@ void ObjectsManager::displayBob(int idx) {
 	}
 
 	_bob[idx]._animData = _vm->_globals._animBqe[idx]._data;
-	_bob[idx].field0 = 10;
+	_bob[idx]._bobMode = 10;
 	_bob[idx]._spriteData = _vm->_globals.Bank[bankIdx]._data;
 
-	_bob[idx].field1E = v9;
+	_bob[idx]._bobModeChange = v9;
 	_bob[idx].field20 = v6;
 	_bob[idx].field22 = v8;
 }
 
 void ObjectsManager::hideBob(int idx) {
-	if ((_bob[idx].field0 == 3) || (_bob[idx].field0 == 10))
-		_bob[idx].field0++;
+	if ((_bob[idx]._bobMode == 3) || (_bob[idx]._bobMode == 10))
+		_bob[idx]._bobMode++;
 }
 
 void ObjectsManager::setBobOffset(int idx, int offset) {
@@ -632,7 +632,7 @@ void ObjectsManager::SCBOB(int idx) {
 		return;
 
 	for (int i = 0; i <= 20; i++) {
-		if ((_bob[i].field0) && (!_bob[i]._disabledAnimationFl) && (!_bob[i].field34) && (_bob[i]._frameIndex != 250)) {
+		if ((_bob[i]._bobMode) && (!_bob[i]._disabledAnimationFl) && (!_bob[i].field34) && (_bob[i]._frameIndex != 250)) {
 			int oldRight = _bob[i]._oldX + _bob[i]._oldWidth;
 			int oldBottom = _bob[i]._oldY + _bob[i]._oldHeight;
 			int cachedRight = hid->_width + hid->_x;
@@ -921,30 +921,30 @@ void ObjectsManager::beforeSort(SortMode sortMode, int index, int priority) {
 void ObjectsManager::displayBobAnim() {
 	for (int idx = 1; idx <= 35; idx++) {
 		if (idx <= 20 && PERSO_ON) {
-			_bob[idx].field1C = false;
+			_bob[idx]._bobMode10 = false;
 			continue;
 		}
 
-		if (_bob[idx].field0 != 10) 
+		if (_bob[idx]._bobMode != 10) 
 			continue;
 
-		_bob[idx].field1C = false;
+		_bob[idx]._bobMode10 = false;
 		if (_bob[idx]._animData == g_PTRNUL || _bob[idx]._disabledAnimationFl || _bob[idx].field20 == 0 || _bob[idx].field20 < -1) {
-			if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
-				_bob[idx].field1C = true;
+			if (_bob[idx]._bobModeChange == 1 || _bob[idx]._bobModeChange == 2)
+				_bob[idx]._bobMode10 = true;
 			continue;
 		}
 
 		if (_bob[idx]._moveChange1 == _bob[idx]._moveChange2) {
-			_bob[idx].field1C = true;
+			_bob[idx]._bobMode10 = true;
 		} else {
 			_bob[idx]._moveChange2++;
-			_bob[idx].field1C = false;
+			_bob[idx]._bobMode10 = false;
 		}
 
-		if (!_bob[idx].field1C) {
-			if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
-				_bob[idx].field1C = true;
+		if (!_bob[idx]._bobMode10) {
+			if (_bob[idx]._bobModeChange == 1 || _bob[idx]._bobModeChange == 2)
+				_bob[idx]._bobMode10 = true;
 			continue;
 		}
 
@@ -967,8 +967,8 @@ void ObjectsManager::displayBobAnim() {
 			_bob[idx]._moveChange1 /= _vm->_globals._speed;
 			if (_bob[idx]._moveChange1 > 0) {
 				_bob[idx]._moveChange2 = 1;
-				if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
-					_bob[idx].field1C = true;
+				if (_bob[idx]._bobModeChange == 1 || _bob[idx]._bobModeChange == 2)
+					_bob[idx]._bobMode10 = true;
 				continue;
 			}
 
@@ -978,7 +978,7 @@ void ObjectsManager::displayBobAnim() {
 			if (_bob[idx].field20 > 0)
 				_bob[idx].field20--;
 			if (_bob[idx].field20 != -1 && _bob[idx].field20 <= 0) {
-				_bob[idx].field0 = 11;
+				_bob[idx]._bobMode = 11;
 			} else {
 				_bob[idx]._animDataIdx = 0;
 				byte *bobData = _bob[idx]._animData + 20;
@@ -1006,14 +1006,14 @@ void ObjectsManager::displayBobAnim() {
 		}
 
 		_bob[idx]._moveChange2 = 1;
-		if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
-			_bob[idx].field1C = true;
+		if (_bob[idx]._bobModeChange == 1 || _bob[idx]._bobModeChange == 2)
+			_bob[idx]._bobMode10 = true;
 	}
 
 	if (!PERSO_ON && BOBTOUS) {
 		for (int i = 0; i < 35; i++) {
-			if (_bob[i].field0 == 10 && !_bob[i]._disabledAnimationFl)
-				_bob[i].field1C = true;
+			if (_bob[i]._bobMode == 10 && !_bob[i]._disabledAnimationFl)
+				_bob[i]._bobMode10 = true;
 		}
 	}
 
@@ -1021,8 +1021,8 @@ void ObjectsManager::displayBobAnim() {
 
 	for (int i = 1; i <= 35; i++) {
 		if (i > 20 || !PERSO_ON) {
-			if ((_bob[i].field0 == 10) && (_bob[i].field1C)) {
-				if ((_bob[i].field1E != 2) && (_bob[i].field1E != 4)) {
+			if ((_bob[i]._bobMode == 10) && (_bob[i]._bobMode10)) {
+				if ((_bob[i]._bobModeChange != 2) && (_bob[i]._bobModeChange != 4)) {
 					if (_vm->_globals.Liste2[i]._visibleFl) {
 						_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen,
 							_vm->_globals.Liste2[i]._posX, _vm->_globals.Liste2[i]._posY,
@@ -1034,7 +1034,7 @@ void ObjectsManager::displayBobAnim() {
 				}
 			}
 
-			if (_bob[i].field0 == 11) {
+			if (_bob[i]._bobMode == 11) {
 				if (_vm->_globals.Liste2[i]._visibleFl) {
 					_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen,
 						_vm->_globals.Liste2[i]._posX, _vm->_globals.Liste2[i]._posY,
@@ -1044,14 +1044,14 @@ void ObjectsManager::displayBobAnim() {
 					_vm->_globals.Liste2[i]._visibleFl = false;
 				}
 
-				_bob[i].field0 = 0;
+				_bob[i]._bobMode = 0;
 			}
 		}
 	}
 
 	for (int i = 1; i <= 35; i++) {
 		_bob[i]._oldY = 0;
-		if (_bob[i].field0 == 10 && !_bob[i]._disabledAnimationFl && _bob[i].field1C) {
+		if (_bob[i]._bobMode == 10 && !_bob[i]._disabledAnimationFl && _bob[i]._bobMode10) {
 			CALCUL_BOB(i);
 			int priority = _bob[i]._oldX2 + _bob[i]._oldHeight + _bob[i]._oldY;
 
@@ -1070,7 +1070,7 @@ void ObjectsManager::displayVBob() {
 
 	for (int idx = 0; idx <= 29; idx++) {
 		VBobItem *vbob = &_vm->_globals.VBob[idx];
-		if (vbob->field4 == 4) {
+		if (vbob->_displayMode == 4) {
 			width = getWidth(vbob->_spriteData, vbob->_frameIndex);
 			height = getHeight(vbob->_spriteData, vbob->_frameIndex);
 
@@ -1083,7 +1083,7 @@ void ObjectsManager::displayVBob() {
 			_vm->_graphicsManager.addDirtyRect(vbob->_xp, vbob->_yp, vbob->_xp + width, height + vbob->_yp);
 			vbob->_surface = _vm->_globals.freeMemory(vbob->_surface);
 
-			vbob->field4 = 0;
+			vbob->_displayMode = 0;
 			vbob->_spriteData = g_PTRNUL;
 			vbob->_xp = 0;
 			vbob->_yp = 0;
@@ -1094,7 +1094,7 @@ void ObjectsManager::displayVBob() {
 			vbob->_oldSpriteData = g_PTRNUL;
 		}
 
-		if (vbob->field4 == 3) {
+		if (vbob->_displayMode == 3) {
 			width = getWidth(vbob->_oldSpriteData, vbob->_oldFrameIndex);
 			height = getHeight(vbob->_oldSpriteData, vbob->_oldFrameIndex);
 
@@ -1106,7 +1106,7 @@ void ObjectsManager::displayVBob() {
 
 			_vm->_graphicsManager.addDirtyRect(vbob->_oldX, vbob->_oldY, vbob->_oldX + width, vbob->_oldY + height);
 
-			vbob->field4 = 1;
+			vbob->_displayMode = 1;
 			vbob->_oldSpriteData = vbob->_spriteData;
 
 			vbob->_surface = _vm->_globals.freeMemory(vbob->_surface);
@@ -1116,7 +1116,7 @@ void ObjectsManager::displayVBob() {
 			vbob->_oldFrameIndex = vbob->_frameIndex;
 		}
 
-		if (vbob->field4 == 1) {
+		if (vbob->_displayMode == 1) {
 			width = getWidth(vbob->_spriteData, vbob->_frameIndex);
 			height = getHeight(vbob->_spriteData, vbob->_frameIndex);
 
@@ -1143,7 +1143,7 @@ void ObjectsManager::displayVBob() {
 			}
 
 			_vm->_graphicsManager.addDirtyRect(vbob->_xp, vbob->_yp , vbob->_xp + width, vbob->_yp + height);
-			vbob->field4 = 2;
+			vbob->_displayMode = 2;
 		}
 	}
 }
@@ -2709,8 +2709,8 @@ void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
 		error("MAX_VBOB exceeded");
 
 	VBobItem *vbob = &_vm->_globals.VBob[idx];
-	if (vbob->field4 <= 1) {
-		vbob->field4 = 1;
+	if (vbob->_displayMode <= 1) {
+		vbob->_displayMode = 1;
 		vbob->_xp = xp;
 		vbob->_yp = yp;
 		vbob->_frameIndex = frameIndex;
@@ -2720,8 +2720,8 @@ void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
 		vbob->_spriteData = src;
 		vbob->_oldSpriteData = src;
 		vbob->_surface = _vm->_globals.freeMemory(vbob->_surface);
-	} else if (vbob->field4 == 2 || vbob->field4 == 4) {
-		vbob->field4 = 3;
+	} else if (vbob->_displayMode == 2 || vbob->_displayMode == 4) {
+		vbob->_displayMode = 3;
 		vbob->_oldX = vbob->_xp;
 		vbob->_oldY = vbob->_yp;
 		vbob->_oldSpriteData = vbob->_spriteData;
@@ -2738,10 +2738,10 @@ void ObjectsManager::VBOB_OFF(int idx) {
 		error("MAX_VBOB exceeded");
 
 	VBobItem *vbob = &_vm->_globals.VBob[idx];
-	if (vbob->field4 <= 1)
-		vbob->field4 = 0;
+	if (vbob->_displayMode <= 1)
+		vbob->_displayMode = 0;
 	else
-		vbob->field4 = 4;
+		vbob->_displayMode = 4;
 }
 
 void ObjectsManager::doActionBack(int idx) {

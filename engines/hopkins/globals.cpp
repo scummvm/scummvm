@@ -292,7 +292,7 @@ void Globals::initAnimBqe() {
 
 void Globals::initVBob() {
 	for (int idx = 0; idx < 30; ++idx) {
-		VBob[idx].field4 = 0;
+		VBob[idx]._displayMode = 0;
 		VBob[idx]._xp = 0;
 		VBob[idx]._yp = 0;
 		VBob[idx]._frameIndex = 0;
@@ -304,7 +304,7 @@ void Globals::initVBob() {
 
 void Globals::clearVBob() {
 	for (int idx = 0; idx < 30; ++idx) {
-		VBob[idx].field4 = 0;
+		VBob[idx]._displayMode = 0;
 		VBob[idx]._xp = 0;
 		VBob[idx]._yp = 0;
 		VBob[idx]._frameIndex = 0;

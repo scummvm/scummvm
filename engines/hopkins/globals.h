@@ -57,7 +57,7 @@ struct LockAnimItem {
 
 struct VBobItem {
 	byte *_spriteData;
-	int field4;
+	int _displayMode;
 	int _xp;
 	int _yp;
 	int _frameIndex;

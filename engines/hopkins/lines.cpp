@@ -2532,7 +2532,7 @@ int LinesManager::getMouseZone() {
 	if ((_vm->_eventsManager._mousePos.y + _vm->_eventsManager._mouseOffset.y) > 19) {
 		for (int bobZoneId = 0; bobZoneId <= 48; bobZoneId++) {
 			int bobId = BOBZONE[bobZoneId];
-			if (bobId && BOBZONE_FLAG[bobZoneId] && _vm->_objectsManager._bob[bobId].field0 && _vm->_objectsManager._bob[bobId]._frameIndex != 250 &&
+			if (bobId && BOBZONE_FLAG[bobZoneId] && _vm->_objectsManager._bob[bobId]._bobMode && _vm->_objectsManager._bob[bobId]._frameIndex != 250 &&
 				!_vm->_objectsManager._bob[bobId]._disabledAnimationFl && xp > _vm->_objectsManager._bob[bobId]._oldX && 
 				xp < _vm->_objectsManager._bob[bobId]._oldWidth + _vm->_objectsManager._bob[bobId]._oldX && yp > _vm->_objectsManager._bob[bobId]._oldY) {
 					if (yp < _vm->_objectsManager._bob[bobId]._oldHeight + _vm->_objectsManager._bob[bobId]._oldY) {

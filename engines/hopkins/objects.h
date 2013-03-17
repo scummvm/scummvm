@@ -52,7 +52,7 @@ struct SpriteItem {
 };
 
 struct BobItem {
-	int field0;
+	int _bobMode;
 	byte *_spriteData;
 	int _xp;
 	int _yp;
@@ -62,8 +62,8 @@ struct BobItem {
 	int _moveChange2;
 	bool _disabledAnimationFl;
 	byte *_animData;
-	bool field1C;
-	int field1E;
+	bool _bobMode10;
+	int _bobModeChange;
 	int field20;
 	int field22;
 	bool field34; // Set to true in B_CACHE_OFF()

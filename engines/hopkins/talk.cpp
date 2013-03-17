@@ -602,21 +602,21 @@ void TalkManager::VISU_PARLE() {
 
 void TalkManager::BOB_VISU_PARLE(int idx) {
 	_vm->_objectsManager._priorityFl = true;
-	if (!_vm->_objectsManager._bob[idx].field0) {
+	if (!_vm->_objectsManager._bob[idx]._bobMode) {
 		_vm->_objectsManager.resetBob(idx);
 		byte *bqeData = _vm->_globals._animBqe[idx]._data;
-		int newField1E = READ_LE_INT16(bqeData + 2);
-		if (!newField1E)
-			newField1E = 1;
+		int newMode = READ_LE_INT16(bqeData + 2);
+		if (!newMode)
+			newMode = 1;
 		if (READ_LE_INT16(bqeData + 24)) {
 			_vm->_objectsManager._bob[idx]._isSpriteFl = true;
 			_vm->_objectsManager._bob[idx]._zoomFactor = 0;
 			_vm->_objectsManager._bob[idx]._flipFl = false;
 			_vm->_objectsManager._bob[idx]._animData = _vm->_globals._animBqe[idx]._data;
-			_vm->_objectsManager._bob[idx].field0 = 10;
+			_vm->_objectsManager._bob[idx]._bobMode = 10;
 			bqeData = _characterSprite;
 			_vm->_objectsManager._bob[idx]._spriteData = _characterSprite;
-			_vm->_objectsManager._bob[idx].field1E = newField1E;
+			_vm->_objectsManager._bob[idx]._bobModeChange = newMode;
 			_vm->_objectsManager._bob[idx].field20 = -1;
 			_vm->_objectsManager._bob[idx].field22 = 0;
 		}
