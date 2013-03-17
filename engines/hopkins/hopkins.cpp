@@ -834,6 +834,7 @@ bool HopkinsEngine::runFull() {
 
 		case 3:
 			if (!_globals._saveData->_data[svBankAttackAnimPlayedFl]) {
+				// Play the bank attack animation
 				_soundManager.playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
 					_graphicsManager.loadImage("fond");
@@ -865,13 +866,20 @@ bool HopkinsEngine::runFull() {
 				} else {
 					_animationManager.playAnim("BANQUE.ANM", 200, 28, 200);
 				}
+
 				_soundManager._specialSoundNum = 0;
 				_soundManager.removeSample(1);
 				_soundManager.removeSample(2);
 				_soundManager.removeSample(3);
 				_soundManager.removeSample(4);
-				if (getPlatform() != Common::kPlatformLinux)
+
+				if (getPlatform() != Common::kPlatformLinux) {
+					// Copy the end of the animation into the secondary buffer and fade out the screen
+					Common::fill(_graphicsManager._vesaBuffer, _graphicsManager._vesaBuffer +
+						SCREEN_WIDTH * 2 * SCREEN_HEIGHT, 0);
 					_graphicsManager.fadeOutLong();
+				}
+
 				_globals._saveData->_data[svBankAttackAnimPlayedFl] = 1;
 			}
 			_linesManager.setMaxLineIdx(5);
