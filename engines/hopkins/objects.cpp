@@ -414,7 +414,7 @@ void ObjectsManager::displaySprite() {
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventBuf2, _oldBorderPos.x + 300, _oldBorderPos.y + 300, _oldBorderSpriteIndex + 1);
 		if (_borderPos.x && _borderPos.y)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventBuf2, _borderPos.x + 300, _borderPos.y + 300, _borderSpriteIndex);
-		_vm->_graphicsManager.addVesaSegment(_vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventX + _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventY + _vm->_dialogsManager._inventHeight);
+		_vm->_graphicsManager.addDirtyRect(_vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventX + _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventY + _vm->_dialogsManager._inventHeight);
 	}
 
 	if (_saveLoadFl) {
@@ -422,7 +422,7 @@ void ObjectsManager::displaySprite() {
 		if (_saveLoadX && _saveLoadY)
 			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _saveLoadSprite2, _saveLoadX + _vm->_eventsManager._startPos.x + 300, _saveLoadY + 300, 0);
 
-		_vm->_graphicsManager.addVesaSegment(_vm->_eventsManager._startPos.x + 183, 60, _vm->_eventsManager._startPos.x + 457, 413);
+		_vm->_graphicsManager.addDirtyRect(_vm->_eventsManager._startPos.x + 183, 60, _vm->_eventsManager._startPos.x + 457, 413);
 	}
 
 	// If the Options dialog is activated, draw the elements
@@ -443,7 +443,7 @@ void ObjectsManager::displaySprite() {
 			_vm->_eventsManager._startPos.x + 600, 522, _vm->_globals._menuDisplayType);
 		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._optionDialogSpr,
 			_vm->_eventsManager._startPos.x + 611, 502, _vm->_globals._menuScrollSpeed);
-		_vm->_graphicsManager.addVesaSegment(_vm->_eventsManager._startPos.x + 164, 107, _vm->_eventsManager._startPos.x + 498, 320);
+		_vm->_graphicsManager.addDirtyRect(_vm->_eventsManager._startPos.x + 164, 107, _vm->_eventsManager._startPos.x + 498, 320);
 	}
 
 	// Loop to draw any on-screen text
@@ -565,7 +565,7 @@ void ObjectsManager::setBobInfo(int idx) {
 		_vm->_globals.Liste2[idx]._visibleFl = false;
 
 	if (_vm->_globals.Liste2[idx]._visibleFl)
-		_vm->_graphicsManager.addVesaSegment(
+		_vm->_graphicsManager.addDirtyRect(
              _vm->_globals.Liste2[idx]._posX,
              _vm->_globals.Liste2[idx]._posY,
              _vm->_globals.Liste2[idx]._posX + _vm->_globals.Liste2[idx]._width,
@@ -808,7 +808,7 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 		list->_visibleFl = false;
 
 	if (list->_visibleFl)
-		_vm->_graphicsManager.addVesaSegment( list->_posX, list->_posY, list->_posX + list->_width, list->_posY + list->_height);
+		_vm->_graphicsManager.addDirtyRect( list->_posX, list->_posY, list->_posX + list->_width, list->_posY + list->_height);
 }
 
 void ObjectsManager::displayHiding(int idx) {
@@ -816,7 +816,7 @@ void ObjectsManager::displayHiding(int idx) {
 
 	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_globals._hidingItemData[1], 
 		hid->_x + 300, hid->_y + 300, hid->_spriteIndex);
-	_vm->_graphicsManager.addVesaSegment(hid->_x, hid->_y, hid->_x + hid->_width, hid->_y + hid->_height);
+	_vm->_graphicsManager.addDirtyRect(hid->_x, hid->_y, hid->_x + hid->_width, hid->_y + hid->_height);
 }
 
 // Compute Sprite
@@ -1078,7 +1078,7 @@ void ObjectsManager::displayVBob() {
 			_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, vbob->_surface,
 				vbob->_xp, vbob->_yp, width, height);
 
-			_vm->_graphicsManager.addVesaSegment(vbob->_xp, vbob->_yp, vbob->_xp + width, height + vbob->_yp);
+			_vm->_graphicsManager.addDirtyRect(vbob->_xp, vbob->_yp, vbob->_xp + width, height + vbob->_yp);
 			vbob->_surface = _vm->_globals.freeMemory(vbob->_surface);
 
 			vbob->field4 = 0;
@@ -1102,7 +1102,7 @@ void ObjectsManager::displayVBob() {
 			_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, vbob->_surface,
 				vbob->_oldX, vbob->_oldY, width, height);
 
-			_vm->_graphicsManager.addVesaSegment(vbob->_oldX, vbob->_oldY, vbob->_oldX + width, vbob->_oldY + height);
+			_vm->_graphicsManager.addDirtyRect(vbob->_oldX, vbob->_oldY, vbob->_oldX + width, vbob->_oldY + height);
 
 			vbob->field4 = 1;
 			vbob->_oldSpriteData = vbob->_spriteData;
@@ -1141,7 +1141,7 @@ void ObjectsManager::displayVBob() {
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex);
 			}
 
-			_vm->_graphicsManager.addVesaSegment(vbob->_xp, vbob->_yp , vbob->_xp + width, vbob->_yp + height);
+			_vm->_graphicsManager.addDirtyRect(vbob->_xp, vbob->_yp , vbob->_xp + width, vbob->_yp + height);
 			vbob->field4 = 2;
 		}
 	}
@@ -2077,7 +2077,7 @@ void ObjectsManager::clearScreen() {
 	_changeVerbFl = false;
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 	_vm->_globals._oldDirection = DIR_NONE;
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 }
 
 /**
@@ -2090,7 +2090,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 
 	_changeHeadFl = true;
 	_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, 532, 25, 65, 40, _vm->_graphicsManager._vesaBuffer, 532, 25);
-	_vm->_graphicsManager.addVesaSegment(532, 25, 597, 65);
+	_vm->_graphicsManager.addDirtyRect(532, 25, 597, 65);
 	_vm->_globals._checkDistanceFl = true;
 	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 

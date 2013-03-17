@@ -222,7 +222,7 @@ void EventsManager::checkForNextFrameCounter() {
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
 		++_gameCounter;
 		_priorFrameTime = milli;
-		g_system->updateScreen();
+		_vm->_graphicsManager.DD_VBL();
 
 		// Signal the ScummVM debugger
 		_vm->_debugger.onFrame();
@@ -411,7 +411,7 @@ void EventsManager::refreshScreenAndEvents() {
 		}
 	} else if (yp < _vm->_graphicsManager._maxY && xp < _vm->_graphicsManager._maxX && width > 1 && height > 1) {
 		_vm->_eventsManager.updateCursor();
-		_vm->_graphicsManager.addVesaSegment(xp, yp, right, bottom);
+		_vm->_graphicsManager.addDirtyRect(xp, yp, right, bottom);
 	}
 
 	_vm->_globals._speed = 2;
@@ -446,7 +446,7 @@ void EventsManager::refreshScreenAndEvents() {
 	_vm->_globals._speed = 2;
 	_rateCounter = 0;
 	if (!_vm->_graphicsManager._largeScreenFl || _vm->_graphicsManager._scrollStatus == 1) {
-		_vm->_graphicsManager.displayVesaSegment();
+		_vm->_graphicsManager.displayDirtyRects();
 	} else {
 		if (_vm->_graphicsManager._scrollStatus != 2) {
 			if (getMouseX() > _vm->_graphicsManager._scrollPosX + 620)
@@ -459,15 +459,17 @@ void EventsManager::refreshScreenAndEvents() {
 		if (_vm->_graphicsManager._scrollPosX > SCREEN_WIDTH)
 			_vm->_graphicsManager._scrollPosX = SCREEN_WIDTH;
 		if (_vm->_graphicsManager._oldScrollPosX == _vm->_graphicsManager._scrollPosX) {
-			_vm->_graphicsManager.displayVesaSegment();
+			_vm->_graphicsManager.displayDirtyRects();
 		} else {
 			_vm->_fontManager.hideText(9);
 			_vm->_graphicsManager.lockScreen();
 			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._scrollPosX, 20, SCREEN_WIDTH, 440, 0, 20);
 			_vm->_graphicsManager.unlockScreen();
-			_vm->_graphicsManager.dstrect[0] = Common::Rect(0, 20, SCREEN_WIDTH, 460);
+			
+			_vm->_graphicsManager.resetRefreshRects();
+			_vm->_graphicsManager.addRefreshRect(0, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 20);
 
-			_vm->_graphicsManager.resetVesaSegment();
+			_vm->_graphicsManager.resetDirtyRects();
 
 			_startPos.x = _vm->_graphicsManager._scrollPosX;
 			_vm->_graphicsManager._scrollOffset = _vm->_graphicsManager._scrollPosX;

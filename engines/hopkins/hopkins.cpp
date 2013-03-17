@@ -172,7 +172,7 @@ bool HopkinsEngine::runWin95Demo() {
 			}
 		}
 
-		if (g_system->getEventManager()->shouldQuit())
+		if (shouldQuit())
 			return false;
 
 		switch (_globals._exitId) {
@@ -343,7 +343,7 @@ bool HopkinsEngine::runWin95Demo() {
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.clearPalette();
-			_graphicsManager.resetVesaSegment();
+			_graphicsManager.resetDirtyRects();
 			break;
 
 		case 114:
@@ -452,14 +452,14 @@ bool HopkinsEngine::runLinuxDemo() {
 		if (!_globals._exitId) {
 			_globals._exitId = _menuManager.menu();
 			if (_globals._exitId == -1) {
-				if (!g_system->getEventManager()->shouldQuit())
+				if (!shouldQuit())
 					endLinuxDemo();
 				_globals.PERSO = _globals.freeMemory(_globals.PERSO);
 				restoreSystem();
 			}
 		}
 
-		if (g_system->getEventManager()->shouldQuit())
+		if (shouldQuit())
 			return false;
 
 		switch (_globals._exitId) {
@@ -661,7 +661,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.clearPalette();
-			_graphicsManager.resetVesaSegment();
+			_graphicsManager.resetDirtyRects();
 			break;
 
 		case 114:
@@ -757,6 +757,7 @@ bool HopkinsEngine::runFull() {
 		_graphicsManager.fadeInLong();
 		_eventsManager.delay(500);
 		_graphicsManager.fadeOutLong();
+		_graphicsManager.clearVesaScreen();
 	} else {
 		// This piece of code, though named "display_version" in the original, 
 		// displays a "loading please wait" screen.
@@ -764,6 +765,8 @@ bool HopkinsEngine::runFull() {
 		_graphicsManager.fadeInLong();
 		_eventsManager.delay(500);
 		_graphicsManager.fadeOutLong();
+		_graphicsManager.clearVesaScreen();
+
 		_globals.iRegul = 1;
 	}
 
@@ -787,8 +790,11 @@ bool HopkinsEngine::runFull() {
 		_graphicsManager.fadeOutLong();
 	}
 
-	if (!_eventsManager._escKeyFl)
+	if (!_eventsManager._escKeyFl) {
 		playIntro();
+		if (shouldQuit())
+			return false;
+	}
 	if (getPlatform() != Common::kPlatformLinux) {
 		_graphicsManager.fadeOutShort();
 		_graphicsManager.loadImage("H2");
@@ -816,7 +822,7 @@ bool HopkinsEngine::runFull() {
 			}
 		}
 
-		if (g_system->getEventManager()->shouldQuit())
+		if (shouldQuit())
 			return false;
 
 		switch (_globals._exitId) {
@@ -1434,7 +1440,7 @@ bool HopkinsEngine::runFull() {
 			memset(_graphicsManager._vesaBuffer, 0, 307200);
 			memset(_graphicsManager._vesaScreen, 0, 307200);
 			_graphicsManager.clearPalette();
-			_graphicsManager.resetVesaSegment();
+			_graphicsManager.resetDirtyRects();
 			break;
 
 		case 114:
@@ -1893,7 +1899,7 @@ void HopkinsEngine::restoreSystem() {
 
 void HopkinsEngine::endLinuxDemo() {
 	_globals._linuxEndDemoFl = true;
-	_graphicsManager.resetVesaSegment();
+	_graphicsManager.resetDirtyRects();
 	_objectsManager._forestFl = false;
 	_eventsManager._breakoutFl = false;
 	_globals._disableInventFl = true;
@@ -1912,7 +1918,7 @@ void HopkinsEngine::endLinuxDemo() {
 
 		if (_eventsManager.getMouseButton() == 1)
 			mouseClicked = true;
-	} while (!mouseClicked && !g_system->getEventManager()->shouldQuit());
+	} while (!mouseClicked && !shouldQuit());
 
 	// Original tried to open a web browser link here. Since ScummVM doesn't support
 	// that, it's being skipped in favor of simply exiting
@@ -2505,7 +2511,7 @@ void HopkinsEngine::displayCredits() {
 		_globals._creditsEndX = -1;
 		_globals._creditsStartY = -1;
 		_globals._creditsEndY = -1;
-	} while ((_eventsManager.getMouseButton() != 1) && (!g_system->getEventManager()->shouldQuit()));
+	} while ((_eventsManager.getMouseButton() != 1) && (!shouldQuit()));
 	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
 	_eventsManager._mouseFl = true;
@@ -2800,8 +2806,9 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 			handleOceanMouseEvents();
 		_linesManager.checkZone();
 		setSubmarineSprites();
+
 		_eventsManager.refreshScreenAndEvents();
-		if (_globals._exitId || g_system->getEventManager()->shouldQuit())
+		if (_globals._exitId || shouldQuit())
 			break;
 	}
 

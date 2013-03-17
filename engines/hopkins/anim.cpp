@@ -100,6 +100,8 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		else
 			_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager.unlockScreen();
+
+		_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		_vm->_graphicsManager.updateScreen();
 	}
 	_vm->_eventsManager._rateCounter = 0;
@@ -155,6 +157,8 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 					_vm->_graphicsManager.copyVideoVbe16(screenP);
 				}
 				_vm->_graphicsManager.unlockScreen();
+
+				_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 				_vm->_graphicsManager.updateScreen();
 				_vm->_soundManager.checkSoundEnd();
 			}
@@ -263,6 +267,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		_vm->_graphicsManager.lockScreen();
 		_vm->_graphicsManager.clearScreen();
 		_vm->_graphicsManager.unlockScreen();
+
 		_vm->_graphicsManager._maxX = SCREEN_WIDTH;
 		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 			hasScreenCopy = true;
@@ -280,7 +285,10 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			else
 				_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+
 			_vm->_graphicsManager.unlockScreen();
+
+			_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsManager.updateScreen();
 		}
 		_vm->_eventsManager._rateCounter = 0;
@@ -329,6 +337,8 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 				}
 			}
 			_vm->_graphicsManager.unlockScreen();
+
+			_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsManager.updateScreen();
 			_vm->_soundManager.checkSoundEnd();
 		}
@@ -385,6 +395,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	_vm->_graphicsManager.lockScreen();
 	_vm->_graphicsManager.clearScreen();
 	_vm->_graphicsManager.unlockScreen();
+
 	_vm->_graphicsManager._scrollPosX = oldScrollPosX;
 	_vm->_graphicsManager.scrollScreen(oldScrollPosX);
 	if (_vm->_graphicsManager._largeScreenFl) {
@@ -400,6 +411,8 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	_vm->_graphicsManager.unlockScreen();
+	_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
 	_vm->_graphicsManager.fadeInShort();
 	_vm->_graphicsManager.updateScreen();
 
@@ -648,6 +661,8 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		else
 			_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager.unlockScreen();
+
+		_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		_vm->_graphicsManager.updateScreen();
 	}
 	bool skipFl = false;
@@ -728,6 +743,8 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 				_vm->_graphicsManager.copyVideoVbe16a(screenP);
 			}
 			_vm->_graphicsManager.unlockScreen();
+
+			_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsManager.updateScreen();
 			_vm->_soundManager.checkSoundEnd();
 		}
@@ -808,6 +825,8 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			else
 				_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			_vm->_graphicsManager.unlockScreen();
+
+			_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsManager.updateScreen();
 		}
 		_vm->_eventsManager._rateCounter = 0;
@@ -854,6 +873,8 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 				_vm->_graphicsManager.copyVideoVbe16a(screenP);
 			}
 			_vm->_graphicsManager.unlockScreen();
+
+			_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsManager.updateScreen();
 			_vm->_soundManager.checkSoundEnd();
 		}

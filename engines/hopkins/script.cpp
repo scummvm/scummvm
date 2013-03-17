@@ -2353,7 +2353,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				memcpy(_vm->_graphicsManager._oldPalette, _vm->_graphicsManager._palette, 769);
 				_vm->_animationManager.playAnim2("PLAN.ANM", 50, 10, 800);
 			}
-			_vm->_graphicsManager.NBBLOC = 0;
+			_vm->_graphicsManager.resetDirtyRects();
 			break;
 
 		case 608:

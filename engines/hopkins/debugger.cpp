@@ -30,10 +30,23 @@ namespace Hopkins {
 
 Debugger::Debugger() : GUI::Debugger() {
 	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("rects", WRAP_METHOD(Debugger, cmd_DirtyRects));
 }
 
 void Debugger::setParent(HopkinsEngine *vm) {
 	_vm = vm;
 }
+
+// Turns dirty rects on or off
+bool Debugger::cmd_DirtyRects(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("%s: [on | off]\n", argv[0]);
+		return true;
+	} else {
+		_vm->_graphicsManager._showDirtyRects = !strcmp(argv[1], "on");
+		return false;
+	}
+}
+
 
 } // End of namespace Hopkins

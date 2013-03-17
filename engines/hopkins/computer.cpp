@@ -127,7 +127,7 @@ void ComputerManager::setTextPosition(int yp, int xp) {
  */
 void ComputerManager::showComputer(ComputerEnum mode) {
 	_vm->_eventsManager._escKeyFl = false;
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 	setVideoMode();
 	setTextColor(4);
 	setTextPosition(2, 4);
@@ -287,7 +287,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	else // Free access or Samantha
 		_vm->_globals._exitId = 14;
 
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 }
 
 static const char _englishText[] = 
@@ -426,13 +426,13 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 			x1 -= _vm->_fontManager._fontFixedWidth;
 			x2 = x1 + 2 * _vm->_fontManager._fontFixedWidth;
 			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, 3 * _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-			_vm->_graphicsManager.addVesaSegment(x1, yp, x2, yp + 12);
+			_vm->_graphicsManager.addDirtyRect(x1, yp, x2, yp + 12);
 			_vm->_fontManager.displayTextVesa(x1, yp, "_", 252);
 		}
 		if (mappedChar != '*') {
 			char newChar = mappedChar;
 			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-			_vm->_graphicsManager.addVesaSegment(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
+			_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
 			_inputBuf[textIndex] = newChar;
 
 			Common::String charString = Common::String::format("%c_", newChar);
@@ -444,7 +444,7 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 	} while (textIndex != textIdx && curChar != 13);
 
 	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-	_vm->_graphicsManager.addVesaSegment(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
+	_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
 
 	_vm->_eventsManager.refreshScreenAndEvents();
 	_inputBuf[textIndex] = 0;
@@ -556,10 +556,12 @@ void ComputerManager::displayGamesSubMenu() {
 	_breakoutSpr = _vm->_fileManager.loadFile("CASSE.SPR");
 	loadHiscore();
 	setModeVGA256();
+
 	newLevel();
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.DD_VBL();
+
 	playBreakout();
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 	_breakoutSpr = _vm->_globals.freeMemory(_breakoutSpr);
 	_breakoutLevel = (int16 *)_vm->_globals.freeMemory((byte *)_breakoutLevel);
 	_vm->_objectsManager._sprite[0]._spriteData = oldSpriteData;
@@ -642,12 +644,15 @@ void ComputerManager::newLevel() {
 
 	_breakoutLevel = (int16 *)_vm->_fileManager.loadFile(file);
 	displayBricks();
+
 	_vm->_objectsManager.addStaticSprite(_breakoutSpr, Common::Point(150, 192), 0, 13, 0, false, 0, 0);
 	_vm->_objectsManager.addStaticSprite(_breakoutSpr, Common::Point(164, 187), 1, 14, 0, false, 0, 0);
+
 	_ballPosition = Common::Point(164, 187);
 	_padPositionX = 150;
 	_vm->_objectsManager.animateSprite(0);
 	_vm->_objectsManager.animateSprite(1);
+ 
 	_vm->_eventsManager.mouseOn();
 	_vm->_soundManager.playSample(3, 5);
 }
@@ -664,11 +669,11 @@ void ComputerManager::displayBricks() {
 	int cellTop;
 	int cellType;
 	for (int levelIdx = 0; ; levelIdx += 6) {
-		cellLeft = level[levelIdx];
+		cellLeft = (int16)FROM_LE_16(level[levelIdx]);
 		if (cellLeft == -1)
 			break;
-		cellTop = level[levelIdx + 1];
-		cellType = level[levelIdx + 4];
+		cellTop = FROM_LE_16(level[levelIdx + 1]);
+		cellType = FROM_LE_16(level[levelIdx + 4]);
 
 		if (cellType <= 6)
 			++_breakoutBrickNbr;
@@ -696,8 +701,6 @@ void ComputerManager::displayBricks() {
 			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 23);
 			break;
 		}
-
-		levelIdx += 6;
 	}
 
 	displayScore();
@@ -712,6 +715,8 @@ void ComputerManager::displayLives() {
 
 	for (int i = 0, xp = 10; i < _breakoutLives - 1; i++, xp += 7)
 		_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 14);
+
+	_vm->_graphicsManager.DD_VBL();
 }
 
 /**
@@ -726,7 +731,8 @@ void ComputerManager::playBreakout() {
 			_ballPosition = Common::Point(_padPositionX + 14, 187);
 			_vm->_objectsManager.setSpriteY(1, 187);
 			_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
-			_vm->_graphicsManager.resetVesaSegment();
+
+			_vm->_graphicsManager.resetDirtyRects();
 			_vm->_eventsManager.refreshScreenAndEvents();
 			_vm->_graphicsManager.fadeInBreakout();
 
@@ -763,7 +769,7 @@ void ComputerManager::playBreakout() {
 			} while (!_vm->shouldQuit() && !lastBreakoutEvent);
 			if (lastBreakoutEvent != 1)
 				break;
-			_vm->_graphicsManager.fateOutBreakout();
+
 			--_breakoutLives;
 
 			if (_breakoutLives) {
@@ -771,6 +777,8 @@ void ComputerManager::playBreakout() {
 				if (_breakoutLives)
 					continue;
 			}
+
+			_vm->_graphicsManager.fadeOutBreakout();
 			_vm->_eventsManager.mouseOn();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.removeSprite(1);
@@ -791,7 +799,7 @@ void ComputerManager::playBreakout() {
 		}
 		if (lastBreakoutEvent != 2)
 			return;
-		_vm->_graphicsManager.fateOutBreakout();
+		_vm->_graphicsManager.fadeOutBreakout();
 		newLevel();
 	}
 }
@@ -801,7 +809,7 @@ void ComputerManager::playBreakout() {
  * @return		The selected button index: 1 = Game, 2 = Quit
  */
 int ComputerManager::displayHiscores() {
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 	loadHiscore();
 	_vm->_graphicsManager.loadVgaImage("HISCORE.PCX");
 	byte *ptr = _vm->_fileManager.loadFile("ALPHA.SPR");
@@ -827,7 +835,7 @@ int ComputerManager::displayHiscores() {
 	}
 
 	_vm->_graphicsManager.fadeInBreakout();
-	_vm->_graphicsManager.resetVesaSegment();
+	_vm->_graphicsManager.resetDirtyRects();
 	int buttonIndex = 0;
 	do {
 		_vm->_eventsManager.refreshEvents();
@@ -843,7 +851,7 @@ int ComputerManager::displayHiscores() {
 	} while (!buttonIndex && !_vm->shouldQuit());
 
 	_vm->_eventsManager.mouseOff();
-	_vm->_graphicsManager.fateOutBreakout();
+	_vm->_graphicsManager.fadeOutBreakout();
 	_vm->_globals.freeMemory(ptr);
 	return buttonIndex;
 }
@@ -886,7 +894,7 @@ void ComputerManager::getScoreName() {
 	for (int i = scoreLen, scorePos = 8; i >= 0; i--) {
 		_score[5]._score.setChar(score[i], scorePos--);
 	}
-	_vm->_graphicsManager.fateOutBreakout();
+	_vm->_graphicsManager.fadeOutBreakout();
 	_vm->_globals.freeMemory(ptr);
 	saveScore();
 }

@@ -47,7 +47,10 @@ GraphicsManager::GraphicsManager() {
 	_scrollPosX = 0;
 	_largeScreenFl = false;
 	_oldScrollPosX = 0;
-	NBBLOC = 0;
+	_vesaScreen = NULL;
+	_vesaBuffer = NULL;
+	_screenBuffer = NULL;
+	_showDirtyRects = false;
 
 	_lineNbr2 = 0;
 	Agr_x = Agr_y = 0;
@@ -72,15 +75,12 @@ GraphicsManager::GraphicsManager() {
 	Common::fill(&_colorTable[0], &_colorTable[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_palette[0], &_palette[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_oldPalette[0], &_oldPalette[PALETTE_EXT_BLOCK_SIZE], 0);
-
-	for (int i = 0; i < 250; ++i)
-		Common::fill((byte *)&BLOC[i], (byte *)&BLOC[i] + sizeof(BlocItem), 0);
-
 }
 
 GraphicsManager::~GraphicsManager() {
 	_vm->_globals.freeMemory(_vesaScreen);
 	_vm->_globals.freeMemory(_vesaBuffer);
+	_vm->_globals.freeMemory(_screenBuffer);
 }
 
 void GraphicsManager::setParent(HopkinsEngine *vm) {
@@ -107,14 +107,13 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		// Init surfaces
 		_vesaScreen = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 		_vesaBuffer = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		_screenBuffer = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 		_videoPtr = NULL;
 		_screenWidth = width;
 		_screenHeight = height;
 
-		// Clear the screen pitch. This will be set on the first lockScreen call
-		WinScan = 0;
-
+		WinScan = SCREEN_WIDTH * 2;
 		PAL_PIXELS = SD_PIXELS;
 		_lineNbr = width;
 
@@ -128,14 +127,12 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
  * (try to) Lock Screen
  */
 void GraphicsManager::lockScreen() {
-	if (_skipVideoLockFl)
-		return;
-
-	if (_lockCounter++ == 0) {
-		_videoPtr = g_system->lockScreen();
-		if (WinScan == 0)
-			WinScan = _videoPtr->pitch;
-	}
+	if (!_skipVideoLockFl) {
+		if (_lockCounter++ == 0) {
+			_videoPtr = _screenBuffer;
+			WinScan = SCREEN_WIDTH * 2;
+		}
+	}		
 }
 
 /**
@@ -144,7 +141,6 @@ void GraphicsManager::lockScreen() {
 void GraphicsManager::unlockScreen() {
 	assert(_videoPtr);
 	if (--_lockCounter == 0) {
-		g_system->unlockScreen();
 		_videoPtr = NULL;
 	}
 }
@@ -154,7 +150,15 @@ void GraphicsManager::unlockScreen() {
  */
 void GraphicsManager::clearScreen() {
 	assert(_videoPtr);
-	_videoPtr->fillRect(Common::Rect(0, 0, _screenWidth, _screenHeight), 0);
+
+	Common::fill(_screenBuffer, _screenBuffer + WinScan * _screenHeight, 0);
+	addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+}
+
+void GraphicsManager::clearVesaScreen() {
+	Common::fill(_vesaScreen, _vesaScreen + WinScan * _screenHeight, 0);
+	Common::fill(_vesaBuffer, _vesaBuffer + WinScan * _screenHeight, 0);
+	addDirtyRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
 /**
@@ -181,6 +185,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 
 	lockScreen();
 	copy16bFromSurfaceScaleX2(_vesaBuffer);
+	addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	unlockScreen();
 
 	fadeInBreakout();
@@ -191,6 +196,7 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
  */
 void GraphicsManager::loadScreen(const Common::String &file) {
 	Common::File f;
+	assert(!_videoPtr);
 
 	bool flag = true;
 	if (_vm->_fileManager.searchCat(file, RES_PIC) == g_PTRNUL) {
@@ -230,7 +236,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 		}
 	}
 
-	memcpy(_vesaBuffer, _vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	memcpy(_vesaBuffer, _vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);	
 }
 
 void GraphicsManager::initColorTable(int minIndex, int maxIndex, byte *palette) {
@@ -396,14 +402,10 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 }
 
 // Clear Palette
-// CHECKME: Some versions of the game don't include it, some contains nothing more than 
-// than a loop doing nothing, some others just map the last value. While debugging, it
-// seems that this function is called once the palette is already cleared, so it would be useless
-// This code could most likely be removed.
 void GraphicsManager::clearPalette() {
-	uint16 col0 = mapRGB(0, 0, 0);
-	for (int i = 0; i < 512; i += 2)
-		WRITE_LE_UINT16(&SD_PIXELS[i], col0);
+	// As weird as it sounds, this is what the original Linux executable does, 
+	// and not a full array clear.
+	SD_PIXELS[0] = 0;
 }
 
 void GraphicsManager::setScreenWidth(int pitch) {
@@ -418,7 +420,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 
 	assert(_videoPtr);
 	const byte *srcP = xs + _lineNbr2 * ys + surface;
-	byte *destP = (byte *)_videoPtr->pixels + destX * 2 + WinScan * destY;
+	byte *destP = (byte *)_videoPtr + destX * 2 + WinScan * destY;
 
 	for (int yp = 0; yp < height; ++yp) {
 		// Copy over the line, using the source pixels as lookups into the pixels palette
@@ -437,6 +439,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 	}
 
 	unlockScreen();
+	addRefreshRect(destX, destY, destX + width, destY + height);
 }
 
 // TODO: See if PAL_PIXELS can be converted to a uint16 array
@@ -449,7 +452,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 
 	assert(_videoPtr);
 	const byte *srcP = xs + _lineNbr2 * ys + surface;
-	byte *destP = (byte *)_videoPtr->pixels + destX + destX + WinScan * destY;
+	byte *destP = (byte *)_videoPtr + destX + destX + WinScan * destY;
 	int yNext = height;
 	Agr_x = 0;
 	Agr_y = 0;
@@ -495,6 +498,8 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 		srcP = _lineNbr2 + srcCopyP;
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
+
+	addRefreshRect(destX, destY, destX + width, destY + width);
 }
 
 void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
@@ -507,7 +512,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 
 	assert(_videoPtr);
 	const byte *srcP = surface + xp + 320 * yp;
-	byte *destP = (byte *)_videoPtr->pixels + 30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY;
+	byte *destP = (byte *)_videoPtr + 30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY;
 	int yCount = height;
 	int xCount = width;
 
@@ -532,6 +537,8 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 		srcP = loopSrcP + 320;
 		yCount = yCtr - 1;
 	} while (yCtr != 1);
+
+	addRefreshRect(destX, destY, destX + width, destY + width);
 }
 
 /** 
@@ -603,7 +610,8 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 
 	setPaletteVGA256(palData);
 	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	return updateScreen();
+
+	updateScreen();
 }
 
 /** 
@@ -668,7 +676,7 @@ void GraphicsManager::fadeInBreakout() {
 /** 
  * Fade out used by for the breakout mini-game
  */
-void GraphicsManager::fateOutBreakout() {
+void GraphicsManager::fadeOutBreakout() {
 	byte palette[PALETTE_EXT_BLOCK_SIZE];
 
 	memset(palette, 0, PALETTE_EXT_BLOCK_SIZE);
@@ -727,6 +735,11 @@ uint16 GraphicsManager::mapRGB(byte r, byte g, byte b) {
 
 void GraphicsManager::updateScreen() {
 	// TODO: Is this okay here?
+	// Display any aras of the screen that need refreshing
+	displayDirtyRects();
+	displayRefreshRects();
+
+	// Update the screen
 	g_system->updateScreen();
 }
 
@@ -817,7 +830,7 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 			if (srcByte == 211) {
 				int pixelCount = srcP[1];
 				int pixelIndex = srcP[2];
-				byte *destP = (byte *)_videoPtr->pixels + destOffset * 2;
+				byte *destP = (byte *)_videoPtr + destOffset * 2;
 				destOffset += pixelCount;
 
 				while (pixelCount--) {
@@ -830,7 +843,7 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 			} else {
 				int pixelCount = srcByte - 211;
 				int pixelIndex = srcP[1];
-				byte *destP = (byte *)_videoPtr->pixels + destOffset * 2;
+				byte *destP = (byte *)_videoPtr + destOffset * 2;
 				destOffset += pixelCount;
 
 				while (pixelCount--) {
@@ -842,7 +855,7 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 				srcP += 2;
 			}
 		} else {
-			byte *destP = (byte *)_videoPtr->pixels + destOffset * 2;
+			byte *destP = (byte *)_videoPtr + destOffset * 2;
 			destP[0] = PAL_PIXELS[2 * srcByte];
 			destP[1] = PAL_PIXELS[(2 * srcByte) + 1];
 			++srcP;
@@ -876,7 +889,7 @@ void GraphicsManager::copyVideoVbe16a(const byte *srcData) {
 			}
 		}
 
-		WRITE_LE_UINT16((byte *)_videoPtr->pixels + destOffset * 2, READ_LE_UINT16(PAL_PIXELS + 2 * srcByte));
+		WRITE_LE_UINT16((byte *)_videoPtr + destOffset * 2, READ_LE_UINT16(PAL_PIXELS + 2 * srcByte));
 		++srcP;
 		++destOffset;
 	}
@@ -1080,86 +1093,139 @@ void GraphicsManager::displayAllBob() {
 	}
 }
 
-void GraphicsManager::resetVesaSegment() {
-	for (int idx = 0; idx <= NBBLOC; idx++)
-		BLOC[idx]._activeFl = false;
-
-	NBBLOC = 0;
+void GraphicsManager::resetDirtyRects() {
+	_dirtyRects.clear();
 }
 
-// Add VESA Segment
-void GraphicsManager::addVesaSegment(int x1, int y1, int x2, int y2) {
-	int tempX = x1;
-	bool addFlag = true;
-	if (x2 > _maxX)
-		x2 = _maxX;
-	if (y2 > _maxY)
-		y2 = _maxY;
-	if (x1 < _minX)
-		tempX = _minX;
-	if (y1 < _minY)
-		y1 = _minY;
+void GraphicsManager::resetRefreshRects() {
+	_refreshRects.clear();
+}
 
-	for (int blocIndex = 0; blocIndex <= NBBLOC; blocIndex++) {
-		BlocItem &bloc = BLOC[blocIndex];
-		if (bloc._activeFl && tempX >= bloc._x1 && x2 <= bloc._x2 && y1 >= bloc._y1 && y2 <= bloc._y2)
-			addFlag = false;
-	};
+// Add a game area dirty rectangle
+void GraphicsManager::addDirtyRect(int x1, int y1, int x2, int y2) {
+	x1 = CLIP(x1, _minX, _maxX);
+	y1 = CLIP(y1, _minY, _maxY);
+	x2 = CLIP(x2, _minX, _maxX);
+	y2 = CLIP(y2, _minY, _maxY);
 
-	if (addFlag) {
-		assert(NBBLOC < 250);
-		BlocItem &bloc = BLOC[++NBBLOC];
+	if ((x2 > x1) && (y2 > y1))	
+		addRectToArray(_dirtyRects, Common::Rect(x1, y1, x2, y2));
+}
 
-		bloc._activeFl = true;
-		bloc._x1 = tempX;
-		bloc._x2 = x2;
-		bloc._y1 = y1;
-		bloc._y2 = y2;
+// Add a refresh rect
+void GraphicsManager::addRefreshRect(int x1, int y1, int x2, int y2) {
+	x1 = MAX(x1, 0);
+	y1 = MAX(y1, 0);
+	x2 = MIN(x2, SCREEN_WIDTH);
+	y2 = MIN(y2, SCREEN_HEIGHT);
+
+	if ((x2 > x1) && (y2 > y1))
+		addRectToArray(_refreshRects, Common::Rect(x1, y1, x2, y2));
+}
+
+void GraphicsManager::addRectToArray(Common::Array<Common::Rect> &rects, const Common::Rect &newRect) {
+	// Scan for an intersection with existing rects
+	uint rectIndex;
+	for (rectIndex = 0; rectIndex < rects.size(); ++rectIndex) {
+		Common::Rect &r = rects[rectIndex];
+		
+		if (r.intersects(newRect)) {
+			// Rect either intersects or is completely inside existing one, so extend existing one as necessary
+			r.extend(newRect);
+			break;
+		}
+	}
+	if (rectIndex == rects.size()) {
+		// Rect not intersecting any existing one, so add it in
+		assert(rects.size() < DIRTY_RECTS_SIZE);
+		rects.push_back(newRect);
+	}
+
+	// Take care of merging the existing rect list. This is done as a separate check even if
+	// a previous extending above has been done, since the merging of the new rect above may
+	// result in further rects now able to be merged
+
+	for (int srcIndex = rects.size() - 1; srcIndex > 0; --srcIndex) {
+		const Common::Rect &srcRect = rects[srcIndex];
+
+		// Loop through all the other rects to see if it intersects them
+		for (int destIndex = srcIndex - 1; destIndex >= 0; --destIndex) {
+			if (rects[destIndex].intersects(srcRect)) {
+				// Found an intersection, so extend the found one, and delete the original
+				rects[destIndex].extend(srcRect);
+				rects.remove_at(srcIndex);
+				break;
+			}
+		}
 	}
 }
 
-// Display VESA Segment
-void GraphicsManager::displayVesaSegment() {
-	if (NBBLOC == 0)
+// Draw any game dirty rects onto the screen intermediate surface
+void GraphicsManager::displayDirtyRects() {
+	if (_dirtyRects.size() == 0)
 		return;
 
 	lockScreen();
-
-	for (int idx = 1; idx <= NBBLOC; ++idx) {
-		BlocItem &bloc = BLOC[idx];
-		Common::Rect &dstRect = dstrect[idx - 1];
-		if (!bloc._activeFl)
-			continue;
+	
+	// Refresh the entire screen 
+	for (uint idx = 0; idx < _dirtyRects.size(); ++idx) {
+		Common::Rect &r = _dirtyRects[idx];
+		Common::Rect dstRect;
 
 		if (_vm->_eventsManager._breakoutFl) {
-			Copy_Vga16(_vesaBuffer, bloc._x1, bloc._y1, bloc._x2 - bloc._x1, bloc._y2 - bloc._y1, bloc._x1, bloc._y1);
-			dstRect.left = bloc._x1 * 2;
-			dstRect.top = bloc._y1 * 2 + 30;
-			dstRect.setWidth((bloc._x2 - bloc._x1) * 2);
-			dstRect.setHeight((bloc._y2 - bloc._y1) * 2);
-		} else if (bloc._x2 > _vm->_eventsManager._startPos.x && bloc._x1 < _vm->_eventsManager._startPos.x + SCREEN_WIDTH) {
-			if (bloc._x1 < _vm->_eventsManager._startPos.x)
-				bloc._x1 = _vm->_eventsManager._startPos.x;
-			if (bloc._x2 > _vm->_eventsManager._startPos.x + SCREEN_WIDTH)
-				bloc._x2 = _vm->_eventsManager._startPos.x + SCREEN_WIDTH;
+			Copy_Vga16(_vesaBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
+			dstRect.left = r.left * 2;
+			dstRect.top = r.top * 2 + 30;
+			dstRect.setWidth((r.right - r.left) * 2);
+			dstRect.setHeight((r.bottom - r.top) * 2);
+		} else if (r.right > _vm->_eventsManager._startPos.x && r.left < _vm->_eventsManager._startPos.x + SCREEN_WIDTH) {
+			if (r.left < _vm->_eventsManager._startPos.x)
+				r.left = _vm->_eventsManager._startPos.x;
+			if (r.right > _vm->_eventsManager._startPos.x + SCREEN_WIDTH)
+				r.right = _vm->_eventsManager._startPos.x + SCREEN_WIDTH;
 
 			// WORKAROUND: Original didn't lock the screen for access
 			lockScreen();
-			m_scroll16(_vesaBuffer, bloc._x1, bloc._y1, bloc._x2 - bloc._x1, bloc._y2 - bloc._y1, bloc._x1 - _vm->_eventsManager._startPos.x, bloc._y1);
+			m_scroll16(_vesaBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_eventsManager._startPos.x, r.top);
 
-			dstRect.left = bloc._x1 - _vm->_eventsManager._startPos.x;
-			dstRect.top = bloc._y1;
-			dstRect.setWidth(bloc._x2 - bloc._x1);
-			dstRect.setHeight(bloc._y2 - bloc._y1);
+			dstRect.left = r.left - _vm->_eventsManager._startPos.x;
+			dstRect.top = r.top;
+			dstRect.setWidth(r.right - r.left);
+			dstRect.setHeight(r.bottom - r.top);
 
 			unlockScreen();
 		}
 
-		BLOC[idx]._activeFl = false;
+		// If it's a valid rect, then add it to the list of areas to refresh on the screen
+		if (dstRect.isValidRect() && dstRect.width() > 0 && dstRect.height() > 0)
+			addRectToArray(_refreshRects, dstRect);
 	}
 
-	NBBLOC = 0;
 	unlockScreen();
+	resetDirtyRects();
+}
+
+void GraphicsManager::displayRefreshRects() {
+	Graphics::Surface *screenSurface = NULL;
+	if (_showDirtyRects) {
+		screenSurface = g_system->lockScreen();
+		g_system->copyRectToScreen(_screenBuffer, WinScan, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	}
+	// Loop through copying over any  specified rects to the screen
+	for (uint idx = 0; idx < _refreshRects.size(); ++idx) {
+		const Common::Rect &r = _refreshRects[idx];
+
+		byte *srcP = _screenBuffer + WinScan * r.top + (r.left * 2);
+		g_system->copyRectToScreen(srcP, WinScan, r.left, r.top, r.width(), r.height());
+
+		if (_showDirtyRects)
+			screenSurface->frameRect(r, 0xffffff);
+	}
+
+	if (_showDirtyRects)
+		g_system->unlockScreen();
+
+	resetRefreshRects();
 }
 
 void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment) {
@@ -1173,7 +1239,7 @@ void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, i
 		Sprite_Vesa(_vesaScreen, objectData, xp + 300, yp + 300, idx);
 	}
 	if (addSegment)
-		addVesaSegment(xp, yp, xp + width, yp + height);
+		addDirtyRect(xp, yp, xp + width, yp + height);
 }
 
 /**
@@ -1185,7 +1251,7 @@ void GraphicsManager::copy16bFromSurfaceScaleX2(const byte *surface) {
 
 	assert(_videoPtr);
 	const byte *curSurface = surface;
-	byte *destPtr = 30 * WinScan + (byte *)_videoPtr->pixels;
+	byte *destPtr = 30 * WinScan + (byte *)_videoPtr;
 	for (int y = 200; y; y--) {
 		byte *oldDestPtr = destPtr;
 		for (int x = 320; x; x--) {
@@ -1592,7 +1658,7 @@ void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int sp
 		Sprite_Vesa(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex);
 	}
 	if (addSegment)
-		addVesaSegment(xp, yp, xp + width, yp + height);
+		addDirtyRect(xp, yp, xp + width, yp + height);
 }
 
 void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY) {
@@ -1618,7 +1684,7 @@ void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width
 	if (croppedWidth > 0 && croppedHeight > 0) {
 		int height2 = croppedHeight;
 		Copy_Mem(surface, left, top, croppedWidth, croppedHeight, destSurface, destX, destY);
-		addVesaSegment(left, top, left + croppedWidth, top + height2);
+		addDirtyRect(left, top, left + croppedWidth, top + height2);
 	}
 }
 
