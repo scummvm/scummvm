@@ -188,27 +188,29 @@ void ObjectsManager::setOffsetXY(byte *data, int idx, int xp, int yp, bool isSiz
 }
 
 int ObjectsManager::getOffsetX(const byte *spriteData, int spriteIndex, bool isSize) {
-	const byte *v3 = spriteData + 3;
+	const byte *data = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
-		v3 += READ_LE_UINT32(v3) + 16;
+		data += READ_LE_UINT32(data) + 16;
 
-	const byte *v5 = v3 + 8;
-	int result = READ_LE_INT16(v5);
+	int result;
 	if (isSize)
-		result = READ_LE_INT16(v5 + 4);
+		result = READ_LE_INT16(data + 12);
+	else
+		result = READ_LE_INT16(data + 8);
 
 	return result;
 }
 
 int ObjectsManager::getOffsetY(const byte *spriteData, int spriteIndex, bool isSize) {
-	const byte *v3 = spriteData + 3;
+	const byte *data = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
-		v3 += READ_LE_UINT32(v3) + 16;
+		data += READ_LE_UINT32(data) + 16;
 
-	const byte *v5 = v3 + 10;
-	int result = READ_LE_INT16(v5);
+	int result;
 	if (isSize)
-		result = READ_LE_INT16(v5 + 4);
+		result = READ_LE_INT16(data + 14);
+	else
+		result = READ_LE_INT16(data + 10);
 
 	return result;
 }
@@ -979,19 +981,19 @@ void ObjectsManager::displayBobAnim() {
 				_bob[idx].field0 = 11;
 			} else {
 				_bob[idx]._animDataIdx = 0;
-				byte *v21 = _bob[idx]._animData + 20;
-				_bob[idx]._xp = READ_LE_INT16(v21);
+				byte *bobData = _bob[idx]._animData + 20;
+				_bob[idx]._xp = READ_LE_INT16(bobData);
 
 				if (_vm->_globals._lockedAnims[idx]._enableFl)
 					_bob[idx]._xp = _vm->_globals._lockedAnims[idx]._posX;
 				if (PERSO_ON && idx > 20)
 					_bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
-				_bob[idx]._yp = READ_LE_INT16(v21 + 2);
-				_bob[idx].field12 = READ_LE_INT16(v21 + 4);
-				_bob[idx]._zoomFactor = READ_LE_INT16(v21 + 6);
-				_bob[idx]._frameIndex = v21[8];
-				_bob[idx]._flipFl = (v21[9] != 0);
+				_bob[idx]._yp = READ_LE_INT16(bobData + 2);
+				_bob[idx].field12 = READ_LE_INT16(bobData + 4);
+				_bob[idx]._zoomFactor = READ_LE_INT16(bobData + 6);
+				_bob[idx]._frameIndex = bobData[8];
+				_bob[idx]._flipFl = (bobData[9] != 0);
 				_bob[idx]._animDataIdx += 5;
 
 				if (_bob[idx].field12 > 0) {
@@ -1126,15 +1128,14 @@ void ObjectsManager::displayVBob() {
 			_vm->_graphicsManager.copySurfaceRect(_vm->_graphicsManager._vesaScreen, surface,
 				vbob->_xp, vbob->_yp, width, height);
 
-			byte *v10 = vbob->_spriteData;
-			if (*v10 == 78) {
-				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaScreen, v10,
+			if (*vbob->_spriteData == 78) {
+				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaScreen, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex, 0, 0, false);
 
 				_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex, 0, 0, false);
 			} else {
-				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, v10, 
+				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, vbob->_spriteData, 
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex);
 
 				_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaScreen, vbob->_spriteData,
@@ -1691,25 +1692,25 @@ void ObjectsManager::loadZone(const Common::String &file) {
 		bufId += 3;
 	}
 
-	byte *v9 = (ptr + 10 * zoneLineIdx + 606);
+	byte *verbData = (ptr + 10 * zoneLineIdx + 606);
 	bufId = 0;
 	for (int i = 1; i <= 100; i++) {
-		_vm->_linesManager.ZONEP[i]._verbFl1 = v9[bufId];
-		_vm->_linesManager.ZONEP[i]._verbFl2 = v9[bufId + 1];
-		_vm->_linesManager.ZONEP[i]._verbFl3 = v9[bufId + 2];
-		_vm->_linesManager.ZONEP[i]._verbFl4 = v9[bufId + 3];
-		_vm->_linesManager.ZONEP[i]._verbFl5 = v9[bufId + 4];
-		_vm->_linesManager.ZONEP[i]._verbFl6 = v9[bufId + 5];
-		_vm->_linesManager.ZONEP[i]._verbFl7 = v9[bufId + 6];
-		_vm->_linesManager.ZONEP[i]._verbFl8 = v9[bufId + 7];
-		_vm->_linesManager.ZONEP[i]._verbFl9 = v9[bufId + 8];
-		_vm->_linesManager.ZONEP[i]._verbFl10 = v9[bufId + 9];
+		_vm->_linesManager.ZONEP[i]._verbFl1 = verbData[bufId];
+		_vm->_linesManager.ZONEP[i]._verbFl2 = verbData[bufId + 1];
+		_vm->_linesManager.ZONEP[i]._verbFl3 = verbData[bufId + 2];
+		_vm->_linesManager.ZONEP[i]._verbFl4 = verbData[bufId + 3];
+		_vm->_linesManager.ZONEP[i]._verbFl5 = verbData[bufId + 4];
+		_vm->_linesManager.ZONEP[i]._verbFl6 = verbData[bufId + 5];
+		_vm->_linesManager.ZONEP[i]._verbFl7 = verbData[bufId + 6];
+		_vm->_linesManager.ZONEP[i]._verbFl8 = verbData[bufId + 7];
+		_vm->_linesManager.ZONEP[i]._verbFl9 = verbData[bufId + 8];
+		_vm->_linesManager.ZONEP[i]._verbFl10 = verbData[bufId + 9];
 
 		bufId += 10;
 	}
-	v9 += 1010;
+	verbData += 1010;
 	for (int i = 0; i < 100; i++)
-		_vm->_linesManager.ZONEP[i + 1]._messageId = READ_LE_UINT16(v9 + 2 * i);
+		_vm->_linesManager.ZONEP[i + 1]._messageId = READ_LE_UINT16(verbData + 2 * i);
 
 	_vm->_globals.freeMemory(ptr);
 	_vm->_linesManager.CARRE_ZONE();
@@ -3171,23 +3172,23 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 					curDataIdx += 3;
 				}
 
-				byte *v22 = ptr + idx + (10 * curLineIdx + 606) + 4;
+				byte *verbData = ptr + idx + (10 * curLineIdx + 606) + 4;
 				for (int i = 1; i <= 100; i++) {
 					int j = (i - 1) * 10;
-					_vm->_linesManager.ZONEP[i]._verbFl1 = v22[j];
-					_vm->_linesManager.ZONEP[i]._verbFl2 = v22[j + 1];
-					_vm->_linesManager.ZONEP[i]._verbFl3 = v22[j + 2];
-					_vm->_linesManager.ZONEP[i]._verbFl4 = v22[j + 3];
-					_vm->_linesManager.ZONEP[i]._verbFl5 = v22[j + 4];
-					_vm->_linesManager.ZONEP[i]._verbFl6 = v22[j + 5];
-					_vm->_linesManager.ZONEP[i]._verbFl7 = v22[j + 6];
-					_vm->_linesManager.ZONEP[i]._verbFl8 = v22[j + 7];
-					_vm->_linesManager.ZONEP[i]._verbFl9 = v22[j + 8];
-					_vm->_linesManager.ZONEP[i]._verbFl10 = v22[j + 9];
+					_vm->_linesManager.ZONEP[i]._verbFl1 = verbData[j];
+					_vm->_linesManager.ZONEP[i]._verbFl2 = verbData[j + 1];
+					_vm->_linesManager.ZONEP[i]._verbFl3 = verbData[j + 2];
+					_vm->_linesManager.ZONEP[i]._verbFl4 = verbData[j + 3];
+					_vm->_linesManager.ZONEP[i]._verbFl5 = verbData[j + 4];
+					_vm->_linesManager.ZONEP[i]._verbFl6 = verbData[j + 5];
+					_vm->_linesManager.ZONEP[i]._verbFl7 = verbData[j + 6];
+					_vm->_linesManager.ZONEP[i]._verbFl8 = verbData[j + 7];
+					_vm->_linesManager.ZONEP[i]._verbFl9 = verbData[j + 8];
+					_vm->_linesManager.ZONEP[i]._verbFl10 = verbData[j + 9];
 				}
 				int dep = 1010;
 				for (int i = 1; i <= 100; i++) {
-					_vm->_linesManager.ZONEP[i]._messageId = READ_LE_INT16(v22 + dep);
+					_vm->_linesManager.ZONEP[i]._messageId = READ_LE_INT16(verbData + dep);
 					dep += 2;
 				}
 				_vm->_linesManager.CARRE_ZONE();
