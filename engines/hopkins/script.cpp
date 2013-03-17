@@ -1222,37 +1222,32 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager.setBobAnimation(1);
 				_vm->_objectsManager.setBobAnimation(2);
 				_vm->_soundManager.loadSample(1, "SOUND40.WAV");
-				int v25 = 0;
-				do {
+				bool playFl = false;
+				for (;;) {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
 
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 1 && !v25) {
-						_vm->_soundManager.playSample(1);
-						v25 = 1;
+					switch (_vm->_objectsManager.getBobAnimDataIdx(1)) {
+					case 1:
+					case 3:
+					case 5:
+					case 7:
+						if (!playFl) {
+							_vm->_soundManager.playSample(1);
+							playFl = true;
+						}
+						break;
+					case 2:
+					case 4:
+					case 6:
+					case 8:
+						playFl = false;
+						break;
 					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 2)
-						v25 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 3 && !v25) {
-						_vm->_soundManager.playSample(1);
-						v25 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 4)
-						v25 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 5 && !v25) {
-						_vm->_soundManager.playSample(1);
-						v25 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 6)
-						v25 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 7 && !v25) {
-						_vm->_soundManager.playSample(1);
-						v25 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 8)
-						v25 = 0;
 					_vm->_eventsManager.refreshScreenAndEvents();
-				} while (_vm->_objectsManager.getBobAnimDataIdx(1) != 9);
+					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 9)
+						break;
+				}
 				_vm->_objectsManager.stopBobAnimation(1);
 				_vm->_objectsManager.stopBobAnimation(2);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
@@ -1264,37 +1259,32 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager.setBobAnimation(1);
 				_vm->_objectsManager.setBobAnimation(3);
 				_vm->_soundManager.loadSample(1, "SOUND40.WAV");
-				int v26 = 0;
-				do {
+				bool playFl = false;
+				for (;;) {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
 
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 1 && !v26) {
-						_vm->_soundManager.playSample(1);
-						v26 = 1;
+					switch (_vm->_objectsManager.getBobAnimDataIdx(1)) {
+					case 1:
+					case 3:
+					case 5:
+					case 7:
+						if (!playFl) {
+							_vm->_soundManager.playSample(1);
+							playFl = true;
+						}
+						break;
+					case 2:
+					case 4:
+					case 6:
+					case 8:
+						playFl = false;
+						break;
 					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 2)
-						v26 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 3 && !v26) {
-						_vm->_soundManager.playSample(1);
-						v26 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 4)
-						v26 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 5 && !v26) {
-						_vm->_soundManager.playSample(1);
-						v26 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 6)
-						v26 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 7 && !v26) {
-						_vm->_soundManager.playSample(1);
-						v26 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 8)
-						v26 = 0;
 					_vm->_eventsManager.refreshScreenAndEvents();
-				} while (_vm->_objectsManager.getBobAnimDataIdx(1) != 9);
+					if (_vm->_objectsManager.getBobAnimDataIdx(1) == 9)
+						break;
+				}
 				_vm->_objectsManager.stopBobAnimation(1);
 				_vm->_objectsManager.stopBobAnimation(3);
 				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
@@ -1452,89 +1442,86 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager.loadSample(1, "SOUND63.WAV");
 			if (_vm->_globals._saveData->_data[svField253] > 2) {
 				_vm->_objectsManager.setBobAnimation(4);
-				int v33 = 0;
-				do {
+				bool playFl = false;
+				for (;;) {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
 
-					if (_vm->_objectsManager.getBobAnimDataIdx(4) == 9 && !v33) {
-						_vm->_soundManager.playSample(1);
-						v33 = 1;
+					switch (_vm->_objectsManager.getBobAnimDataIdx(4)) {
+					case 9:
+					case 32:
+					case 55:
+						if (!playFl) {
+							_vm->_soundManager.playSample(1);
+							playFl = true;
+						}
+						break;
+					case 10:
+					case 33:
+					case 56:
+						playFl = false;
+						break;
 					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(4) == 10)
-						v33 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(4) == 32 && !v33) {
-						_vm->_soundManager.playSample(1);
-						v33 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(4) == 33)
-						v33 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(4) == 55 && !v33) {
-						_vm->_soundManager.playSample(1);
-						v33 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(4) == 56)
-						v33 = 0;
 					_vm->_eventsManager.refreshScreenAndEvents();
-				} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 72);
+					if (_vm->_objectsManager.getBobAnimDataIdx(4) == 72)
+						break;
+				}
 				_vm->_objectsManager.stopBobAnimation(4);
 			}
 			if (_vm->_globals._saveData->_data[svField253] == 1) {
 				_vm->_objectsManager.setBobAnimation(6);
-				int v34 = 0;
-				do {
+				bool playFl = false;
+				for (;;) {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
 
-					if (_vm->_objectsManager.getBobAnimDataIdx(6) == 9 && !v34) {
-						_vm->_soundManager.playSample(1);
-						v34 = 1;
+					switch (_vm->_objectsManager.getBobAnimDataIdx(6)) {
+					case 9:
+					case 32:
+					case 55:
+						if (!playFl) {
+							_vm->_soundManager.playSample(1);
+							playFl = true;
+						}
+						break;
+					case 10:
+					case 33:
+					case 56:
+						playFl = false;
+						break;
 					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(6) == 10)
-						v34 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(6) == 32 && !v34) {
-						_vm->_soundManager.playSample(1);
-						v34 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(6) == 33)
-						v34 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(6) == 55 && !v34) {
-						_vm->_soundManager.playSample(1);
-						v34 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(6) == 56)
-						v34 = 0;
 					_vm->_eventsManager.refreshScreenAndEvents();
-				} while (_vm->_objectsManager.getBobAnimDataIdx(6) != 72);
+					if (_vm->_objectsManager.getBobAnimDataIdx(6) == 72)
+						break;
+				}
 				_vm->_objectsManager.stopBobAnimation(6);
 			}
 			if (_vm->_globals._saveData->_data[svField253] == 2) {
 				_vm->_objectsManager.setBobAnimation(5);
-				int v35 = 0;
-				do {
+				bool playFl = false;
+				for (;;) {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
 
-					if (_vm->_objectsManager.getBobAnimDataIdx(5) == 9 && !v35) {
-						_vm->_soundManager.playSample(1);
-						v35 = 1;
+					switch (_vm->_objectsManager.getBobAnimDataIdx(5)) {
+					case 9:
+					case 32:
+					case 55:
+						if (!playFl) {
+							_vm->_soundManager.playSample(1);
+							playFl = true;
+						}
+						break;
+					case 10:
+					case 33:
+					case 56:
+						playFl = false;
+						break;
 					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(5) == 10)
-						v35 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(5) == 32 && !v35) {
-						_vm->_soundManager.playSample(1);
-						v35 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(5) == 33)
-						v35 = 0;
-					if (_vm->_objectsManager.getBobAnimDataIdx(5) == 55 && !v35) {
-						_vm->_soundManager.playSample(1);
-						v35 = 1;
-					}
-					if (_vm->_objectsManager.getBobAnimDataIdx(5) == 56)
-						v35 = 0;
 					_vm->_eventsManager.refreshScreenAndEvents();
-				} while (_vm->_objectsManager.getBobAnimDataIdx(5) != 72);
+					if (_vm->_objectsManager.getBobAnimDataIdx(5) == 72)
+						break;
+				}
 				_vm->_objectsManager.stopBobAnimation(5);
 			}
 			_vm->_objectsManager.animateSprite(0);
@@ -1826,19 +1813,26 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(3);
 			_vm->_soundManager.loadWav("SOUND67.WAV", 1);
-			int v41 = 0;
-			do {
+			bool playFl = false;
+			for (;;) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				if (_vm->_objectsManager.getBobAnimDataIdx(3) == 10 && !v41) {
-					_vm->_soundManager.playWav(1);
-					v41 = 1;
+				switch (_vm->_objectsManager.getBobAnimDataIdx(3)) {
+				case 10:
+					if (!playFl) {
+						_vm->_soundManager.playWav(1);
+						playFl = true;
+					}
+					break;
+				case 11:
+					playFl = false;
+					break;
 				}
-				if (_vm->_objectsManager.getBobAnimDataIdx(3) == 11)
-					v41 = 0;
 				_vm->_eventsManager.refreshScreenAndEvents();
-			} while (_vm->_objectsManager.getBobAnimDataIdx(3) != 50);
+				if (_vm->_objectsManager.getBobAnimDataIdx(3) == 50)
+					break;
+			}
 			_vm->_objectsManager.stopBobAnimation(3);
 			_vm->_objectsManager.animateSprite(0);
 			break;
