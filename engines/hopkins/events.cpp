@@ -222,7 +222,7 @@ void EventsManager::checkForNextFrameCounter() {
 	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
 		++_gameCounter;
 		_priorFrameTime = milli;
-		_vm->_graphicsManager.DD_VBL();
+		_vm->_graphicsManager.updateScreen();
 
 		// Signal the ScummVM debugger
 		_vm->_debugger.onFrame();

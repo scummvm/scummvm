@@ -558,7 +558,7 @@ void ComputerManager::displayGamesSubMenu() {
 	setModeVGA256();
 
 	newLevel();
-	_vm->_graphicsManager.DD_VBL();
+	_vm->_graphicsManager.updateScreen();
 
 	playBreakout();
 	_vm->_graphicsManager.resetDirtyRects();
@@ -716,7 +716,7 @@ void ComputerManager::displayLives() {
 	for (int i = 0, xp = 10; i < _breakoutLives - 1; i++, xp += 7)
 		_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 14);
 
-	_vm->_graphicsManager.DD_VBL();
+	_vm->_graphicsManager.updateScreen();
 }
 
 /**
