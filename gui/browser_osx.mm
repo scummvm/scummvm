@@ -31,8 +31,52 @@
 #include "common/translation.h"
 
 #include <AppKit/NSOpenPanel.h>
+#include <AppKit/NSButton.h>
 #include <Foundation/NSString.h>
 #include <Foundation/NSURL.h>
+
+@interface ShowHiddenFilesControler : NSObject {
+	NSOpenPanel* _panel;
+}
+
+- (id) init;
+- (void) dealloc;
+- (void) setOpenPanel : (NSOpenPanel*) panel;
+- (IBAction) showHiddenFiles : (id) sender;
+
+@end
+
+@implementation ShowHiddenFilesControler
+
+- (id) init {
+	self = [super init];
+	_panel = 0;
+	
+	return self;
+}
+
+- (void) dealloc {
+	[_panel release];
+	[super dealloc];
+}
+
+- (void) setOpenPanel : (NSOpenPanel*) panel {
+	_panel = panel;
+	[_panel retain];
+}
+
+
+- (IBAction) showHiddenFiles : (id) sender {
+	if ([sender state] == NSOnState) {
+		[_panel setShowsHiddenFiles: YES];
+		ConfMan.setBool("gui_browser_show_hidden", true, Common::ConfigManager::kApplicationDomain);
+	} else {
+		[_panel setShowsHiddenFiles: NO];
+		ConfMan.setBool("gui_browser_show_hidden", false, Common::ConfigManager::kApplicationDomain);
+	}
+}
+
+@end
 
 namespace GUI {
 
@@ -56,11 +100,13 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 
 	// Convert button text to NSString
 	_chooseRef = CFStringCreateWithCString(0, _("Choose"), stringEncoding);
+	_hiddenFilesRef = CFStringCreateWithCString(0, _("Show hidden files"), stringEncoding);
 }
 
 BrowserDialog::~BrowserDialog() {
 	CFRelease(_titleRef);
 	CFRelease(_chooseRef);
+	CFRelease(_hiddenFilesRef);
 }
 
 int BrowserDialog::runModal() {
@@ -82,6 +128,31 @@ int BrowserDialog::runModal() {
 	[panel setCanChooseDirectories:_isDirBrowser];
 	[panel setTitle:(NSString *)_titleRef];
 	[panel setPrompt:(NSString *)_chooseRef];
+
+	NSButton *shoHiddenFilesButton = 0;
+	ShowHiddenFilesControler *shoHiddenFilesControler = 0;
+	if ([panel respondsToSelector:@selector(setShowsHiddenFiles:)]) {
+		shoHiddenFilesButton = [[NSButton alloc] init];
+		[shoHiddenFilesButton retain];
+		[shoHiddenFilesButton setButtonType:NSSwitchButton];
+		[shoHiddenFilesButton setTitle:(NSString *)_hiddenFilesRef];
+		[shoHiddenFilesButton sizeToFit];
+		if (ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain)) {
+			[shoHiddenFilesButton setState:NSOnState];
+			[panel setShowsHiddenFiles: YES];
+		} else {
+			[shoHiddenFilesButton setState:NSOffState];
+			[panel setShowsHiddenFiles: NO];
+		}
+		[panel setAccessoryView:shoHiddenFilesButton];
+
+		shoHiddenFilesControler = [[ShowHiddenFilesControler alloc] init];
+		[shoHiddenFilesControler retain];
+		[shoHiddenFilesControler setOpenPanel:panel];
+		[shoHiddenFilesButton setTarget:shoHiddenFilesControler];
+		[shoHiddenFilesButton setAction:@selector(showHiddenFiles:)];
+	}
+
 	if ([panel runModal] == NSOKButton) {
 		NSURL *url = [panel URL];
 		if ([url isFileURL]) {
@@ -90,6 +161,11 @@ int BrowserDialog::runModal() {
 			choiceMade = true;
 		}
 	}
+
+	if (shoHiddenFilesButton != 0)
+		[shoHiddenFilesButton release];
+	if (shoHiddenFilesControler != 0)
+		[shoHiddenFilesControler release];
 
 	// If we were in fullscreen mode, switch back
 	if (wasFullscreen) {
