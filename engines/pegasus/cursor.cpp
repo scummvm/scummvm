@@ -82,8 +82,14 @@ void Cursor::setCurrentFrameIndex(int32 index) {
 		_index = index;
 		if (index != -1) {
 			loadCursorImage(_info[index]);
-			CursorMan.replaceCursorPalette(_info[index].palette, 0, _info[index].colorCount);
-			CursorMan.replaceCursor((byte *)_info[index].surface->pixels, _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, 0);
+
+			if (_info[index].surface->format.bytesPerPixel == 1) {
+				CursorMan.replaceCursorPalette(_info[index].palette, 0, _info[index].colorCount);
+				CursorMan.replaceCursor(_info[index].surface->pixels, _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, 0);
+			} else {
+				CursorMan.replaceCursor(_info[index].surface->pixels, _info[index].surface->w, _info[index].surface->h, _info[index].hotspot.x, _info[index].hotspot.y, _info[index].surface->format.RGBToColor(0xFF, 0xFF, 0xFF), false, &_info[index].surface->format);
+			}
+
 			((PegasusEngine *)g_engine)->_gfx->markCursorAsDirty();
 		}
 	}
@@ -135,9 +141,25 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 	if (cursorInfo.surface)
 		return;
 
+	PegasusEngine *vm = (PegasusEngine *)g_engine;
+
+	if (vm->isDVD()) {
+		// The DVD version has some higher color PICT images for its cursors
+		Common::SeekableReadStream *pictStream = vm->_resFork->getResource(MKTAG('P', 'I', 'C', 'T'), cursorInfo.tag + 1000);
+
+		if (pictStream) {
+			Graphics::PICTDecoder pict;
+			if (!pict.loadStream(*pictStream))
+				error("Failed to decode cursor PICT %d", cursorInfo.tag + 1000);
+
+			cursorInfo.surface = pict.getSurface()->convertTo(g_system->getScreenFormat());
+			delete pictStream;
+			return;
+		}
+	}
+
 	cursorInfo.surface = new Graphics::Surface();
 
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
 	Common::SeekableReadStream *cicnStream = vm->_resFork->getResource(MKTAG('c', 'i', 'c', 'n'), cursorInfo.tag);
 
 	if (!cicnStream)
