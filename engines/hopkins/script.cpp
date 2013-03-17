@@ -1842,19 +1842,26 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(4);
 			_vm->_soundManager.loadWav("SOUND69.WAV", 1);
-			int v42 = 0;
-			do {
+			bool playFl = false;
+			for (;;) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				if (_vm->_objectsManager.getBobAnimDataIdx(4) == 10 && !v42) {
-					_vm->_soundManager.playWav(1);
-					v42 = 1;
+				switch (_vm->_objectsManager.getBobAnimDataIdx(4)) {
+				case 10:
+					if (!playFl) {
+						_vm->_soundManager.playWav(1);
+						playFl = true;
+					}
+					break;
+				case 11:
+					playFl = false;
+					break;
 				}
-				if (_vm->_objectsManager.getBobAnimDataIdx(4) == 11)
-					v42 = 0;
 				_vm->_eventsManager.refreshScreenAndEvents();
-			} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 24);
+				if (_vm->_objectsManager.getBobAnimDataIdx(4) == 24)
+					break;
+			}
 			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_objectsManager.animateSprite(0);
 			break;
@@ -2012,14 +2019,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager.refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
-			int v45 = 0;
+			bool playFl = false;
 			_vm->_objectsManager.setBobAnimation(7);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				if (_vm->_objectsManager.getBobAnimDataIdx(7) == 9 && !v45) {
-					v45 = 1;
+				if (_vm->_objectsManager.getBobAnimDataIdx(7) == 9 && !playFl) {
+					playFl = true;
 					_vm->_soundManager.playSoundFile("SOUND81.WAV");
 				}
 				_vm->_eventsManager.refreshScreenAndEvents();
@@ -2064,14 +2071,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals.disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(11);
-			int v46 = 0;
+			bool playFl = false;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager.refreshScreenAndEvents();
-				if (_vm->_objectsManager.getBobAnimDataIdx(11) == 10 && !v46)
-					v46 = 1;
+				if (_vm->_objectsManager.getBobAnimDataIdx(11) == 10 && !playFl)
+					playFl = true;
 			} while (_vm->_objectsManager.getBobAnimDataIdx(11) != 13);
 			_vm->_objectsManager.stopBobAnimation(11);
 			_vm->_globals.enableHiding();
@@ -2242,11 +2249,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager.refreshScreenAndEvents();
 			}
-			CharacterLocation *v51 = &_vm->_globals._saveData->_realHopkins;
-			v51->_pos.x = _vm->_objectsManager.getSpriteX(0);
-			v51->_pos.y = _vm->_objectsManager.getSpriteY(0);
-			v51->_startSpriteIndex = 57;
-			v51->_location = 97;
+			CharacterLocation *realHopkins = &_vm->_globals._saveData->_realHopkins;
+			realHopkins->_pos.x = _vm->_objectsManager.getSpriteX(0);
+			realHopkins->_pos.y = _vm->_objectsManager.getSpriteY(0);
+			realHopkins->_startSpriteIndex = 57;
+			realHopkins->_location = 97;
 			_vm->_globals._saveData->_data[svHopkinsCloneFl] = 1;
 			_vm->_globals._saveData->_data[svField352] = 1;
 			_vm->_globals._saveData->_data[svField353] = 1;
