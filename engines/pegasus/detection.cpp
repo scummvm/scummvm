@@ -35,6 +35,10 @@ struct PegasusGameDescription {
 	ADGameDescription desc;
 };
 
+enum {
+	GF_DVD = (1 << 1)
+};
+
 bool PegasusEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL)
@@ -44,6 +48,14 @@ bool PegasusEngine::hasFeature(EngineFeature f) const {
 
 bool PegasusEngine::isDemo() const {
 	return (_gameDescription->desc.flags & ADGF_DEMO) != 0;
+}
+
+bool PegasusEngine::isDVD() const {
+	return (_gameDescription->desc.flags & GF_DVD) != 0;
+}
+
+bool PegasusEngine::isDVDDemo() const {
+	return isDemo() && isDVD();
 }
 
 } // End of namespace Pegasus
@@ -76,7 +88,19 @@ static const PegasusGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK|ADGF_DEMO,
+			ADGF_MACRESFORK | ADGF_DEMO,
+			GUIO1(GUIO_NOLAUNCHLOAD)
+		},
+	},
+
+	{
+		{
+			"pegasus",
+			"DVD Demo",
+			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
 			GUIO1(GUIO_NOLAUNCHLOAD)
 		},
 	},
