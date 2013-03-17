@@ -937,8 +937,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._characterType = 1;
 			_vm->_globals._saveData->_data[svAlternateSpriteFl] = 1;
 			_vm->_globals.loadCharacterData();
-			_vm->_objectsManager._sprite[0].field12 = 28;
-			_vm->_objectsManager._sprite[0].field14 = 155;
+			_vm->_objectsManager._sprite[0]._deltaX = 28;
+			_vm->_objectsManager._sprite[0]._deltaY = 155;
 			_vm->_objectsManager.computeAndSetSpriteSize();
 			break;
 
@@ -947,8 +947,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals._characterType = 0;
 			_vm->_globals._saveData->_data[svAlternateSpriteFl] = 0;
 			_vm->_globals.loadCharacterData();
-			_vm->_objectsManager._sprite[0].field12 = 34;
-			_vm->_objectsManager._sprite[0].field14 = 190;
+			_vm->_objectsManager._sprite[0]._deltaX = 34;
+			_vm->_objectsManager._sprite[0]._deltaY = 190;
 			_vm->_objectsManager.computeAndSetSpriteSize();
 			break;
 

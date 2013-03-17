@@ -838,9 +838,9 @@ void ObjectsManager::computeSprite(int idx) {
 		offY = getOffsetY(spr->_spriteData, spr->_spriteIndex, false);
 	}
 
-	int tmpX = spr->field12 + offX;
+	int tmpX = spr->_deltaX + offX;
 	int deltaX = tmpX;
-	int tmpY = spr->field14 + offY;
+	int tmpY = spr->_deltaY + offY;
 	int deltaY = tmpY;
 	int zoomPercent = 0;
 	int reducePercent = 0;
@@ -927,10 +927,7 @@ void ObjectsManager::displayBobAnim() {
 			continue;
 
 		_bob[idx].field1C = false;
-		int v1 = _bob[idx].field20;
-		if (v1 == -1)
-			v1 = 50;
-		if (_bob[idx]._animData == g_PTRNUL || _bob[idx]._disabledAnimationFl || v1 <= 0) {
+		if (_bob[idx]._animData == g_PTRNUL || _bob[idx]._disabledAnimationFl || _bob[idx].field20 == 0 || _bob[idx].field20 < -1) {
 			if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
 				_bob[idx].field1C = true;
 			continue;
@@ -964,11 +961,9 @@ void ObjectsManager::displayBobAnim() {
 		_bob[idx]._flipFl = (dataPtr[2 * dataIdx + 9] != 0);
 		_bob[idx]._animDataIdx += 5;
 
-		int v5 = _bob[idx].field12;
-		if (v5 > 0) {
-			int v6 = v5 / _vm->_globals._speed;
-			_bob[idx].field12 = v5 / _vm->_globals._speed;
-			if (v6 > 0) {
+		if (_bob[idx].field12 > 0) {
+			_bob[idx].field12 /= _vm->_globals._speed;
+			if (_bob[idx].field12 > 0) {
 				_bob[idx].field14 = 1;
 				if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
 					_bob[idx].field1C = true;
@@ -998,13 +993,11 @@ void ObjectsManager::displayBobAnim() {
 				_bob[idx]._frameIndex = v21[8];
 				_bob[idx]._flipFl = (v21[9] != 0);
 				_bob[idx]._animDataIdx += 5;
-				int v10 = _bob[idx].field12;
 
-				if (v10 > 0) {
-					int v11 = v10 / _vm->_globals._speed;
-					_bob[idx].field12 = v11;
+				if (_bob[idx].field12 > 0) {
+					_bob[idx].field12 /= _vm->_globals._speed;
 					// Original code. It can't be negative, so the check is on == 0
-					if (v11 <= 0)
+					if (_bob[idx].field12 <= 0)
 						_bob[idx].field12 = 1;
 				}
 			}
@@ -1058,13 +1051,13 @@ void ObjectsManager::displayBobAnim() {
 		_bob[i]._oldY = 0;
 		if (_bob[i].field0 == 10 && !_bob[i]._disabledAnimationFl && _bob[i].field1C) {
 			CALCUL_BOB(i);
-			int v19 = _bob[i]._oldX2 + _bob[i]._oldHeight + _bob[i]._oldY;
+			int priority = _bob[i]._oldX2 + _bob[i]._oldHeight + _bob[i]._oldY;
 
-			if (v19 > 450)
-				v19 = 600;
+			if (priority > 450)
+				priority = 600;
 
 			if (_bob[i]._activeFl)
-				beforeSort(SORT_BOB, i, v19);
+				beforeSort(SORT_BOB, i, priority);
 		}
 	}
 }
@@ -1194,7 +1187,7 @@ void ObjectsManager::animateSprite(int idx) {
 	_sprite[idx]._animationType = 1;
 }
 
-void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int a8, int a9) {
+void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int deltaX, int deltaY) {
 	assert (idx  <= MAX_SPRITE);
 
 	SpriteItem *spr = &_sprite[idx];
@@ -1203,8 +1196,8 @@ void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, 
 	spr->_spriteIndex = spriteIndex;
 	spr->_zoomFactor = zoomFactor;
 	spr->_flipFl = flipFl;
-	spr->field12 = a8;
-	spr->field14 = a9;
+	spr->_deltaX = deltaX;
+	spr->_deltaY = deltaY;
 	spr->_animationType = 0;
 
 	if (READ_BE_UINT24(spriteData) == MKTAG24('R', 'L', 'E')) {
@@ -3154,22 +3147,23 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 				}
 
 				int curLineIdx = 0;
-				int v28;
-				do {
-					v28 = READ_LE_INT16(curDataPtr + 2 * curDataIdx);
-					if (v28 != -1) {
+				for (;;) {
+					int bobZoneId = READ_LE_INT16(curDataPtr + 2 * curDataIdx);
+					if (bobZoneId != -1) {
 						_vm->_linesManager.addZoneLine(
 						    curLineIdx,
 						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 2),
 						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 4),
 						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 6),
 						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 8),
-						    v28);
-						_vm->_linesManager.ZONEP[v28]._enabledFl = true;
+						    bobZoneId);
+						_vm->_linesManager.ZONEP[bobZoneId]._enabledFl = true;
 					}
 					curDataIdx += 5;
 					++curLineIdx;
-				} while (v28 != -1);
+					if (bobZoneId == -1)
+						break;
+				}
 				for (int i = 1; i <= 100; i++) {
 					_vm->_linesManager.ZONEP[i]._destX = READ_LE_INT16(curDataPtr + 2 * curDataIdx);
 					_vm->_linesManager.ZONEP[i]._destY = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 2);

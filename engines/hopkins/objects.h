@@ -39,8 +39,8 @@ struct SpriteItem {
 	int _zoomFactor;
 	bool _flipFl;
 	int _spriteIndex;
-	int field12;
-	int field14;
+	int _deltaX;
+	int _deltaY;
 	bool _rleFl;
 	bool _activeFl;
 	int _destX;
@@ -174,7 +174,7 @@ public:
 	int getHeight(const byte *objectData, int idx);
 	byte *loadSprite(const Common::String &file);
 	void loadLinkFile(const Common::String &file);
-	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int a8, int a9);
+	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int deltaX, int deltaY);
 	void animateSprite(int idx);
 	void removeSprite(int idx);
 	void setSpriteX(int idx, int xp);
