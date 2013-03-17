@@ -101,8 +101,8 @@ struct HidingItem {
 	int _height;
 	int _useCount;
 	byte *_spriteData;
-	bool field10;
-	int field14;
+	bool _resetUseCount;
+	int _yOffset;
 };
 
 struct HopkinsItem {

@@ -504,8 +504,8 @@ void ObjectsManager::resetBob(int idx) {
 	bob._yp = 0;
 	bob._frameIndex = 0;
 	bob._animDataIdx = 0;
-	bob.field12 = 0;
-	bob.field14 = 0;
+	bob._moveChange1 = 0;
+	bob._moveChange2 = 0;
 	bob._disabledAnimationFl = false;
 	bob._animData = g_PTRNUL;
 	bob.field1C = false;
@@ -637,7 +637,7 @@ void ObjectsManager::SCBOB(int idx) {
 			int oldBottom = _bob[i]._oldY + _bob[i]._oldHeight;
 			int cachedRight = hid->_width + hid->_x;
 
-			if ((oldBottom > hid->_y) && (oldBottom < hid->field14 +hid->_height + hid->_y)) {
+			if ((oldBottom > hid->_y) && (oldBottom < hid->_yOffset +hid->_height + hid->_y)) {
 				if ((oldRight >= hid->_x && oldRight <= cachedRight)
 				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
 				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
@@ -746,7 +746,7 @@ void ObjectsManager::checkHidingItem() {
 				int bottom = spr->_height + spr->_destY;
 				int hidingRight = hid->_width + hid->_x;
 
-				if (bottom > hid->_y && bottom < (hid->field14 + hid->_height + hid->_y)) {
+				if (bottom > hid->_y && bottom < (hid->_yOffset + hid->_height + hid->_y)) {
 					if ((right >= hid->_x && right <= hidingRight)
 					 || (hidingRight >= spr->_destX && hid->_x <= spr->_destX)
 					 || (hidingRight >= spr->_destX && hid->_x <= spr->_destX)
@@ -759,15 +759,15 @@ void ObjectsManager::checkHidingItem() {
 
 		SCBOB(hidingItemIdx);
 		if (hid->_useCount != _oldUseCount) {
-			int priority = hid->field14 + hid->_height + hid->_y;
+			int priority = hid->_yOffset + hid->_height + hid->_y;
 			if (priority > 440)
 				priority = 500;
 
 			beforeSort(SORT_HIDING, hidingItemIdx, priority);
 			hid->_useCount = 1;
-			hid->field10 = true;
-		} else if (hid->field10) {
-			hid->field10 = false;
+			hid->_resetUseCount = true;
+		} else if (hid->_resetUseCount) {
+			hid->_resetUseCount = false;
 			hid->_useCount = 1;
 		}
 
@@ -935,10 +935,10 @@ void ObjectsManager::displayBobAnim() {
 			continue;
 		}
 
-		if (_bob[idx].field12 == _bob[idx].field14) {
+		if (_bob[idx]._moveChange1 == _bob[idx]._moveChange2) {
 			_bob[idx].field1C = true;
 		} else {
-			_bob[idx].field14++;
+			_bob[idx]._moveChange2++;
 			_bob[idx].field1C = false;
 		}
 
@@ -957,24 +957,24 @@ void ObjectsManager::displayBobAnim() {
 			_bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
 		_bob[idx]._yp = READ_LE_INT16(dataPtr + 2 * dataIdx + 2);
-		_bob[idx].field12 = READ_LE_INT16(dataPtr + 2 * dataIdx + 4);
+		_bob[idx]._moveChange1 = READ_LE_INT16(dataPtr + 2 * dataIdx + 4);
 		_bob[idx]._zoomFactor = READ_LE_INT16(dataPtr + 2 * dataIdx + 6);
 		_bob[idx]._frameIndex = dataPtr[2 * dataIdx + 8];
 		_bob[idx]._flipFl = (dataPtr[2 * dataIdx + 9] != 0);
 		_bob[idx]._animDataIdx += 5;
 
-		if (_bob[idx].field12 > 0) {
-			_bob[idx].field12 /= _vm->_globals._speed;
-			if (_bob[idx].field12 > 0) {
-				_bob[idx].field14 = 1;
+		if (_bob[idx]._moveChange1 > 0) {
+			_bob[idx]._moveChange1 /= _vm->_globals._speed;
+			if (_bob[idx]._moveChange1 > 0) {
+				_bob[idx]._moveChange2 = 1;
 				if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
 					_bob[idx].field1C = true;
 				continue;
 			}
 
-			_bob[idx].field12 = 1;
+			_bob[idx]._moveChange1 = 1;
 		}
-		if (!_bob[idx].field12) {
+		if (!_bob[idx]._moveChange1) {
 			if (_bob[idx].field20 > 0)
 				_bob[idx].field20--;
 			if (_bob[idx].field20 != -1 && _bob[idx].field20 <= 0) {
@@ -990,22 +990,22 @@ void ObjectsManager::displayBobAnim() {
 					_bob[idx]._xp += _vm->_eventsManager._startPos.x;
 
 				_bob[idx]._yp = READ_LE_INT16(bobData + 2);
-				_bob[idx].field12 = READ_LE_INT16(bobData + 4);
+				_bob[idx]._moveChange1 = READ_LE_INT16(bobData + 4);
 				_bob[idx]._zoomFactor = READ_LE_INT16(bobData + 6);
 				_bob[idx]._frameIndex = bobData[8];
 				_bob[idx]._flipFl = (bobData[9] != 0);
 				_bob[idx]._animDataIdx += 5;
 
-				if (_bob[idx].field12 > 0) {
-					_bob[idx].field12 /= _vm->_globals._speed;
+				if (_bob[idx]._moveChange1 > 0) {
+					_bob[idx]._moveChange1 /= _vm->_globals._speed;
 					// Original code. It can't be negative, so the check is on == 0
-					if (_bob[idx].field12 <= 0)
-						_bob[idx].field12 = 1;
+					if (_bob[idx]._moveChange1 <= 0)
+						_bob[idx]._moveChange1 = 1;
 				}
 			}
 		}
 
-		_bob[idx].field14 = 1;
+		_bob[idx]._moveChange2 = 1;
 		if (_bob[idx].field1E == 1 || _bob[idx].field1E == 2)
 			_bob[idx].field1C = true;
 	}
@@ -3000,8 +3000,8 @@ int ObjectsManager::getBobAnimDataIdx(int idx) {
 
 void ObjectsManager::setBobAnimDataIdx(int idx, int animIdx) {
 	_bob[idx]._animDataIdx = 5 * animIdx;
-	_bob[idx].field12 = 0;
-	_bob[idx].field14 = 0;
+	_bob[idx]._moveChange1 = 0;
+	_bob[idx]._moveChange2 = 0;
 }
 
 /**
@@ -3014,8 +3014,8 @@ void ObjectsManager::setBobAnimation(int idx) {
 	_bob[idx]._disabledAnimationFl = false;
 	_bob[idx]._animDataIdx = 5;
 	_bob[idx]._frameIndex = 250;
-	_bob[idx].field12 = 0;
-	_bob[idx].field14 = 0;
+	_bob[idx]._moveChange1 = 0;
+	_bob[idx]._moveChange2 = 0;
 }
 
 /**
@@ -3080,7 +3080,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 				hid->_spriteIndex = curSpriteId;
 				hid->_x = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 2);
 				hid->_y = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 4);
-				hid->field14 = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 8);
+				hid->_yOffset = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 8);
 
 				if (!_vm->_globals._hidingItemData[1]) {
 					hid->_useCount = 0;

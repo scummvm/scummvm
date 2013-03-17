@@ -58,8 +58,8 @@ struct BobItem {
 	int _yp;
 	int _frameIndex;
 	int _animDataIdx;
-	int field12;
-	int field14;
+	int _moveChange1;
+	int _moveChange2;
 	bool _disabledAnimationFl;
 	byte *_animData;
 	bool field1C;

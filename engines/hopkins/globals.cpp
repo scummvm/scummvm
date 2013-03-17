@@ -363,8 +363,8 @@ void Globals::resetHidingItems() {
 		hid->_useCount = 0;
 		hid->_width = 0;
 		hid->_height = 0;
-		hid->field10 = false;
-		hid->field14 = 0;
+		hid->_resetUseCount = false;
+		hid->_yOffset = 0;
 	}
 
 	_hidingActiveFl = false;
@@ -408,7 +408,7 @@ void Globals::loadHidingItems(const Common::String &file) {
 		_hidingItem[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + curBufIdx);
 		_hidingItem[i]._x = READ_LE_INT16((uint16 *)ptr + curBufIdx + 1);
 		_hidingItem[i]._y = READ_LE_INT16((uint16 *)ptr + curBufIdx + 2);
-		_hidingItem[i].field14 = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
+		_hidingItem[i]._yOffset = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
 		if (spriteData == g_PTRNUL) {
 			_hidingItem[i]._useCount = 0;
 		} else {
