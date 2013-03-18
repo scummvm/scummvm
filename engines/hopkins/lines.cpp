@@ -95,6 +95,9 @@ LinesManager::LinesManager() {
 
 LinesManager::~LinesManager() {
 	_vm->_globals.freeMemory(_largeBuf);
+	_vm->_globals.freeMemory((byte *) _testRoute0);
+	_vm->_globals.freeMemory((byte *) _testRoute1);
+	_vm->_globals.freeMemory((byte *) _testRoute2);
 }
 
 void LinesManager::setParent(HopkinsEngine *vm) {
@@ -761,7 +764,6 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 
 int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int destX, int destY, int routerIdx, RouteItem *route) {
 	int result = routerIdx;
-	int v80 = -1;
 	++_pathFindingMaxDepth;
 	if (_pathFindingMaxDepth > 10) {
 		warning("PathFinding - Max depth reached");
@@ -775,17 +777,17 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 	int curLineDataEndIdx;
 	bool loopCond = false;
 	for (;;) {
-		int v86 = startLineIdx - 1;
-		int v11 = 2 * _lineItem[startLineIdx - 1]._lineDataEndIdx;
+		int curLineIdx = startLineIdx - 1;
+		int endLineIdx = 2 * _lineItem[startLineIdx - 1]._lineDataEndIdx;
 
 		int16 *lineData = _lineItem[startLineIdx - 1]._lineData;
 		if (lineData == (int16 *)g_PTRNUL)
 			break;
-		while (lineData[v11 - 2] != lineX || lineY != lineData[v11 - 1]) {
-			--v86;
-			if (_lastLine - 1 != v86) {
-				v11 = 2 * _lineItem[v86]._lineDataEndIdx;
-				lineData = _lineItem[v86]._lineData;
+		while (lineData[endLineIdx - 2] != lineX || lineY != lineData[endLineIdx - 1]) {
+			--curLineIdx;
+			if (_lastLine - 1 != curLineIdx) {
+				endLineIdx = 2 * _lineItem[curLineIdx]._lineDataEndIdx;
+				lineData = _lineItem[curLineIdx]._lineData;
 				if (lineData != (int16 *)g_PTRNUL)
 					continue;
 			}
@@ -795,7 +797,7 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 		if (loopCond)
 			break;
 
-		startLineIdx = v86;
+		startLineIdx = curLineIdx;
 		lineX = lineData[0];
 		lineY = lineData[1];
 	}
@@ -861,13 +863,14 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 		bugLigIdx += 2;
 	}
 	bugLigIdx -= 2;
-	int v77 = 0;
+	int destDataIdx = 0;
+	int destLineIdx = -1;
 	int bufX = 0;
 	int bufY = 0;
-	for (int v89 = maxDist + 1; v89 > 0; v89--) {
+	for (int i = maxDist + 1; i > 0; i--) {
 		if (checkCollisionLine(_lineBuf[bugLigIdx], _lineBuf[bugLigIdx + 1], &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx) && _lastLine < foundLineIdx) {
-			v80 = foundLineIdx;
-			v77 = foundDataIdx;
+			destLineIdx = foundLineIdx;
+			destDataIdx = foundDataIdx;
 			bufX = _lineBuf[bugLigIdx];
 			bufY = _lineBuf[bugLigIdx + 1];
 			break;
@@ -965,55 +968,55 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 	if (bufX < fromX - 1 || bufX > fromX + 1 || bufY < fromY - 1 || bufY > fromY + 1) {
 		_newPosX = bufX;
 		_newPosY = bufY;
-		if (lineIdx < v80) {
-			int v43 = 0;
-			int v42 = lineIdx;
+		if (lineIdx < destLineIdx) {
+			int stepCount = 0;
+			int curLineIdx = lineIdx;
 			do {
-				if (v42 == startLineIdx - 1)
-					v42 = endLineIdx;
-				++v43;
-				--v42;
-				if (v42 == startLineIdx - 1)
-					v42 = endLineIdx;
-			} while (v80 != v42);
-			if (abs(v80 - lineIdx) == v43) {
+				if (curLineIdx == startLineIdx - 1)
+					curLineIdx = endLineIdx;
+				++stepCount;
+				--curLineIdx;
+				if (curLineIdx == startLineIdx - 1)
+					curLineIdx = endLineIdx;
+			} while (destLineIdx != curLineIdx);
+			if (abs(destLineIdx - lineIdx) == stepCount) {
 				if (dataIdx >  abs(_lineItem[lineIdx]._lineDataEndIdx / 2)) {
-					result = CONTOURNE(lineIdx, dataIdx, routerIdx, v80, v77, route);
+					result = CONTOURNE(lineIdx, dataIdx, routerIdx, destLineIdx, destDataIdx, route);
 				} else {
-					result = CONTOURNE1(lineIdx, dataIdx, routerIdx, v80, v77, route, startLineIdx, endLineIdx);
+					result = CONTOURNE1(lineIdx, dataIdx, routerIdx, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
 				}
 			}
-			if (abs(v80 - lineIdx) < v43)
-				result = CONTOURNE(lineIdx, dataIdx, result, v80, v77, route);
-			if (v43 < abs(v80 - lineIdx))
-				result = CONTOURNE1(lineIdx, dataIdx, result, v80, v77, route, startLineIdx, endLineIdx);
+			if (abs(destLineIdx - lineIdx) < stepCount)
+				result = CONTOURNE(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route);
+			if (stepCount < abs(destLineIdx - lineIdx))
+				result = CONTOURNE1(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
 		}
-		if (lineIdx > v80) {
-			int v45 = abs(lineIdx - v80);
-			int v47 = lineIdx;
-			int v48 = 0;
+		if (lineIdx > destLineIdx) {
+			int destStepCount = abs(lineIdx - destLineIdx);
+			int curLineIdx = lineIdx;
+			int curStepCount = 0;
 			do {
-				if (v47 == endLineIdx + 1)
-					v47 = startLineIdx;
-				++v48;
-				++v47;
-				if (v47 == endLineIdx + 1)
-					v47 = startLineIdx;
-			} while (v80 != v47);
-			if (v45 == v48) {
+				if (curLineIdx == endLineIdx + 1)
+					curLineIdx = startLineIdx;
+				++curStepCount;
+				++curLineIdx;
+				if (curLineIdx == endLineIdx + 1)
+					curLineIdx = startLineIdx;
+			} while (destLineIdx != curLineIdx);
+			if (destStepCount == curStepCount) {
 				if (dataIdx > abs(_lineItem[lineIdx]._lineDataEndIdx / 2)) {
-					result = CONTOURNE1(lineIdx, dataIdx, result, v80, v77, route, startLineIdx, endLineIdx);
+					result = CONTOURNE1(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
 				} else {
-					result = CONTOURNE(lineIdx, dataIdx, result, v80, v77, route);
+					result = CONTOURNE(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route);
 				}
 			}
-			if (v45 < v48)
-				result = CONTOURNE(lineIdx, dataIdx, result, v80, v77, route);
-			if (v48 < v45)
-				result = CONTOURNE1(lineIdx, dataIdx, result, v80, v77, route, startLineIdx, endLineIdx);
+			if (destStepCount < curStepCount)
+				result = CONTOURNE(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route);
+			if (curStepCount < destStepCount)
+				result = CONTOURNE1(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
 		}
-		if (lineIdx == v80)
-			result = CONTOURNE(lineIdx, dataIdx, result, lineIdx, v77, route);
+		if (lineIdx == destLineIdx)
+			result = CONTOURNE(lineIdx, dataIdx, result, lineIdx, destDataIdx, route);
 		for(;;) {
 			if (!checkCollisionLine(_newPosX, _newPosY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb))
 				break;
@@ -1952,7 +1955,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
-			// CHECKME: Checking essai0[0]._X might make more sense here?
+			// CHECKME: Checking essai0[0]._x might make more sense here?
 			if (_testRoute1[0]._x != -1 && foundLineIdx > collLineIdxRoute0 && collLineIdxRoute1 >= collLineIdxRoute0 && collLineIdxRoute2 >= collLineIdxRoute0 && endLineIdx <= collLineIdxRoute0) {
 				_newLineIdx = collLineIdxRoute0;
 				_newLineDataIdx = collDataIdxRoute0;
@@ -2491,7 +2494,7 @@ void LinesManager::PACOURS_PROPRE(RouteItem *route) {
 		if (oldDir != DIR_NONE && curDir != oldDir) {
 			int oldRouteIdx = routeIdx;
 			int routeCount = 0;
-			int v10 = CALC_PROPRE(route0Y);
+			int routeNum = CALC_PROPRE(route0Y);
 			int curRouteX = route[routeIdx]._x;
 			int curRouteY = route[routeIdx]._y;
 			while (curRouteX != -1 || curRouteY != -1) {
@@ -2503,7 +2506,7 @@ void LinesManager::PACOURS_PROPRE(RouteItem *route) {
 				curRouteX = route[routeIdx]._x;
 				curRouteY = route[routeIdx]._y;
 			}
-			if (routeCount < v10) {
+			if (routeCount < routeNum) {
 				int idx = oldRouteIdx;
 				for (int i = 0; i < routeCount; i++) {
 					route[idx]._dir = oldDir;
@@ -2737,19 +2740,18 @@ void LinesManager::clearAll() {
 	for (int idx = 0; idx < 100; ++idx)
 		_squareZone[idx]._enabledFl = false;
 
-	// FIXME: Delete these somewhere
-	_vm->_linesManager._testRoute0 = new RouteItem[8334];
-	_vm->_linesManager._testRoute1 = new RouteItem[8334];
-	_vm->_linesManager._testRoute2 = new RouteItem[8334];
-	if (!_vm->_linesManager._testRoute0)
-		_vm->_linesManager._testRoute0 = (RouteItem*)g_PTRNUL;
-	if (!_vm->_linesManager._testRoute1)
-		_vm->_linesManager._testRoute1 = (RouteItem*)g_PTRNUL;
-	if (!_vm->_linesManager._testRoute2)
-		_vm->_linesManager._testRoute2 = (RouteItem*)g_PTRNUL;
+	_testRoute0 = new RouteItem[8334];
+	_testRoute1 = new RouteItem[8334];
+	_testRoute2 = new RouteItem[8334];
+	if (!_testRoute0)
+		_testRoute0 = (RouteItem*)g_PTRNUL;
+	if (!_testRoute1)
+		_testRoute1 = (RouteItem*)g_PTRNUL;
+	if (!_testRoute2)
+		_testRoute2 = (RouteItem*)g_PTRNUL;
 	
 	_largeBuf = _vm->_globals.allocMemory(10000);
-	_vm->_linesManager._lineBuf = (int16 *)(_largeBuf);
+	_lineBuf = (int16 *)(_largeBuf);
 }
 
 /**

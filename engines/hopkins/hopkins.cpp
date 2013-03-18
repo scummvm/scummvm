@@ -1742,9 +1742,9 @@ void HopkinsEngine::playIntro() {
 
 		Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
 
-		for (int i = 1, v12 = 4 * introIndex; i <= PALETTE_BLOCK_SIZE; i++) {
-			if (_graphicsManager._palette[i] > v12)
-				_graphicsManager._palette[i] -= v12;
+		for (int i = 1, maxPalVal = 4 * introIndex; i <= PALETTE_BLOCK_SIZE; i++) {
+			if (_graphicsManager._palette[i] > maxPalVal)
+				_graphicsManager._palette[i] -= maxPalVal;
 		}
 
 		_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
