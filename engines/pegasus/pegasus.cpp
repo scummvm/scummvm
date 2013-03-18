@@ -1396,10 +1396,11 @@ void PegasusEngine::die(const DeathReason reason) {
 void PegasusEngine::doDeath() {
 #ifdef USE_THEORADEC
 	// The updated demo has a new Theora video for the closing
-	if (isDemo() && _deathReason == kPlayerWonGame) {
+	if (isDVDDemo() && _deathReason == kPlayerWonGame) {
 		Video::TheoraDecoder decoder;
 
 		if (decoder.loadFile("Images/Demo TSA/DemoClosing.ogg")) {
+			throwAwayEverything();
 			decoder.start();
 			playMovieScaled(&decoder, 0, 0);
 		}
@@ -1612,12 +1613,14 @@ void PegasusEngine::startNewGame() {
 		GameState.setPrehistoricBreakerThrown(false);
 
 #ifdef USE_THEORADEC
-		// The updated demo has a new Theora video for the closing
-		Video::TheoraDecoder decoder;
+		if (isDVD()) {
+			// The updated demo has a new Theora video for the closing
+			Video::TheoraDecoder decoder;
 
-		if (decoder.loadFile("Images/Demo TSA/DemoOpening.ogg")) {
-			decoder.start();
-			playMovieScaled(&decoder, 0, 0);
+			if (decoder.loadFile("Images/Demo TSA/DemoOpening.ogg")) {
+				decoder.start();
+				playMovieScaled(&decoder, 0, 0);
+			}
 		}
 #endif
 	} else {
