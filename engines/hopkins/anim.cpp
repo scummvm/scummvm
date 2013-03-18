@@ -702,8 +702,8 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		}
 	}
 	_vm->_eventsManager._rateCounter = 0;
-	int soundNumber = 0;
 	if (!skipFl) {
+		int soundNumber = 0;
 		for (;;) {
 			++soundNumber;
 			_vm->_soundManager.playAnimSound(soundNumber);

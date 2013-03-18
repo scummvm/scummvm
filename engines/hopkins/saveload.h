@@ -54,6 +54,7 @@ private:
 	void syncSavegameData(Common::Serializer &s, int version);
 	void syncCharacterLocation(Common::Serializer &s, CharacterLocation &item);
 public:
+	SaveLoadManager() {}
 	void setParent(HopkinsEngine *vm);
 
 	void initSaves();

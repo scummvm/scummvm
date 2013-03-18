@@ -2014,9 +2014,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			break;
 		arrDataIdx[DIR_UP] = 0;
 		arrLineIdx[DIR_UP] = -1;
-		if (arrDelta[DIR_UP] <= delta && arrLineIdx[DIR_UP] != -1)
-			break;
-		if (arrDelta[DIR_DOWN] <= delta && arrLineIdx[DIR_DOWN] != -1)
+		if ((arrDelta[DIR_UP] <= delta && arrLineIdx[DIR_UP] != -1) || (arrDelta[DIR_DOWN] <= delta && arrLineIdx[DIR_DOWN] != -1))
 			break;
 	}
 	arrDelta[DIR_UP] = delta;
