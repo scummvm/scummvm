@@ -58,6 +58,10 @@ bool PegasusEngine::isDVDDemo() const {
 	return isDemo() && isDVD();
 }
 
+bool PegasusEngine::isOldDemo() const {
+	return isDemo() && !isDVD();
+}
+
 } // End of namespace Pegasus
 
 static const PlainGameDescriptor pegasusGames[] = {

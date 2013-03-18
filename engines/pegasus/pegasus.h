@@ -97,6 +97,7 @@ public:
 	bool isDemo() const;
 	bool isDVD() const;
 	bool isDVDDemo() const;
+	bool isOldDemo() const;
 	void addIdler(Idler *idler);
 	void removeIdler(Idler *idler);
 	void addTimeBase(TimeBase *timeBase);

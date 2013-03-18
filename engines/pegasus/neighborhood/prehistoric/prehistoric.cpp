@@ -125,6 +125,13 @@ void Prehistoric::setUpAIRules() {
 			AIRule *rule = new AIRule(hasLogCondition, doneAction);
 			g_AIArea->addAIRule(rule);
 		} else {
+			AIPlayMessageAction *messageAction = new AIPlayMessageAction("Images/AI/Prehistoric/XP25W", false);
+			AIHasItemCondition *hasLogCondition = new AIHasItemCondition(kHistoricalLog);
+			AIRule *rule = new AIRule(hasLogCondition, messageAction);
+			g_AIArea->addAIRule(rule);
+		}
+
+		if (!_vm->isOldDemo()) {
 			AIPlayMessageAction *messageAction = new AIPlayMessageAction("Images/AI/Prehistoric/XP1NB", false);
 			AILocationCondition *locCondition = new AILocationCondition(1);
 			locCondition->addLocation(MakeRoomView(kPrehistoric16, kNorth));
@@ -158,11 +165,6 @@ void Prehistoric::setUpAIRules() {
 			messageAction = new AIPlayMessageAction("Images/AI/Prehistoric/XP18NB", false);
 			AITimerCondition *timerCondition = new AITimerCondition(kPrehistoricWarningTimeLimit, 1, true);
 			rule = new AIRule(timerCondition, messageAction);
-			g_AIArea->addAIRule(rule);
-
-			messageAction = new AIPlayMessageAction("Images/AI/Prehistoric/XP25W", false);
-			AIHasItemCondition *hasLogCondition = new AIHasItemCondition(kHistoricalLog);
-			rule = new AIRule(hasLogCondition, messageAction);
 			g_AIArea->addAIRule(rule);
 		}
 	}
@@ -595,7 +597,7 @@ Common::String Prehistoric::getEnvScanMovie() {
 	Common::String movieName = Neighborhood::getEnvScanMovie();
 
 	if (movieName.empty()) {
-		if (!_vm->isDemo()) {
+		if (!_vm->isOldDemo()) {
 			switch (GameState.getCurrentRoom()) {
 			case kPrehistoric16:
 			case kPrehistoric23:
