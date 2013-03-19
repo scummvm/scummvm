@@ -37,7 +37,8 @@
 
 namespace Hopkins {
 
-DialogsManager::DialogsManager() {
+DialogsManager::DialogsManager(HopkinsEngine *vm) {
+	_vm = vm;
 	_inventFl = false;
 	_inventDisplayedFl = false;
 	_removeInventFl = false;
@@ -51,10 +52,6 @@ DialogsManager::DialogsManager() {
 DialogsManager::~DialogsManager() {
 	_vm->_globals.freeMemory(_inventWin1);
 	_vm->_globals.freeMemory(_inventoryIcons);
-}
-
-void DialogsManager::setParent(HopkinsEngine *vm) {
-	_vm = vm;
 }
 
 void DialogsManager::showOptionsDialog() {

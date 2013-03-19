@@ -410,13 +410,13 @@ void ObjectsManager::displaySprite() {
 	}
 
 	_vm->_globals._sortedDisplayCount = 0;
-	if (_vm->_dialogsManager._inventDisplayedFl) {
-		_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventWin1, _vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventHeight);
+	if (_vm->_dialogsManager->_inventDisplayedFl) {
+		_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager->_inventWin1, _vm->_dialogsManager->_inventX, _vm->_dialogsManager->_inventY, _vm->_dialogsManager->_inventWidth, _vm->_dialogsManager->_inventHeight);
 		if (_oldBorderPos.x && _oldBorderPos.y)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventBuf2, _oldBorderPos.x + 300, _oldBorderPos.y + 300, _oldBorderSpriteIndex + 1);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager->_inventBuf2, _oldBorderPos.x + 300, _oldBorderPos.y + 300, _oldBorderSpriteIndex + 1);
 		if (_borderPos.x && _borderPos.y)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager._inventBuf2, _borderPos.x + 300, _borderPos.y + 300, _borderSpriteIndex);
-		_vm->_graphicsManager.addDirtyRect(_vm->_dialogsManager._inventX, _vm->_dialogsManager._inventY, _vm->_dialogsManager._inventX + _vm->_dialogsManager._inventWidth, _vm->_dialogsManager._inventY + _vm->_dialogsManager._inventHeight);
+			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_dialogsManager->_inventBuf2, _borderPos.x + 300, _borderPos.y + 300, _borderSpriteIndex);
+		_vm->_graphicsManager.addDirtyRect(_vm->_dialogsManager->_inventX, _vm->_dialogsManager->_inventY, _vm->_dialogsManager->_inventX + _vm->_dialogsManager->_inventWidth, _vm->_dialogsManager->_inventY + _vm->_dialogsManager->_inventHeight);
 	}
 
 	if (_saveLoadFl) {
@@ -486,7 +486,7 @@ void ObjectsManager::displaySprite() {
 		}
 	}
 
-	_vm->_dialogsManager.inventAnim();
+	_vm->_dialogsManager->inventAnim();
 }
 
 void ObjectsManager::initBob() {
@@ -1717,7 +1717,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 }
 
 void ObjectsManager::handleCityMap() {
-	_vm->_dialogsManager._inventFl = false;
+	_vm->_dialogsManager->_inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_vm->_linesManager.setMaxLineIdx(1);
 	_vm->_globals._characterMaxPosY = 440;
@@ -1823,16 +1823,16 @@ void ObjectsManager::handleLeftButton() {
 	int destX = _vm->_eventsManager.getMouseX();
 	int destY = _vm->_eventsManager.getMouseY();
 
-	if (!_vm->_dialogsManager._inventFl && !_vm->_globals._cityMapEnabledFl && 
+	if (!_vm->_dialogsManager->_inventFl && !_vm->_globals._cityMapEnabledFl && 
 		destX > _vm->_graphicsManager._scrollOffset - 30 && destX < _vm->_graphicsManager._scrollOffset + 50 && 
 		destY > -30 && destY < 50) {
 		int oldMouseCursor = _vm->_eventsManager._mouseCursorId;
-		_vm->_dialogsManager._inventFl = true;
-		_vm->_dialogsManager.showInventory();
-		_vm->_dialogsManager._inventFl = false;
+		_vm->_dialogsManager->_inventFl = true;
+		_vm->_dialogsManager->showInventory();
+		_vm->_dialogsManager->_inventFl = false;
 		_vm->_eventsManager._gameKey = KEY_NONE;
 		if (!_vm->_globals._exitId) {
-			_vm->_dialogsManager._inventFl = false;
+			_vm->_dialogsManager->_inventFl = false;
 			_vm->_eventsManager._mouseCursorId = oldMouseCursor;
 		}
 		return;
@@ -3622,7 +3622,7 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 	if (_vm->_globals._saveData->_data[savegameIdx]) {
 		if (_vm->_globals._saveData->_data[savegameIdx] == 1) {
 			if (((idx == 1 || idx == 2) && getBobAnimDataIdx(idx) == 26) || ((idx == 3 || idx == 4) && getBobAnimDataIdx(idx) == 27)) {
-				_vm->_dialogsManager._removeInventFl = true;
+				_vm->_dialogsManager->_removeInventFl = true;
 				_vm->_soundManager.playSample(1);
 				_vm->_globals._saveData->_data[savegameIdx] = 4;
 			}
@@ -3661,9 +3661,9 @@ void ObjectsManager::lockAnimX(int idx, int x) {
  */
 void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 							   const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen) {
-	_vm->_dialogsManager._inventFl = false;
+	_vm->_dialogsManager->_inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
-	_vm->_dialogsManager._removeInventFl = false;
+	_vm->_dialogsManager->_removeInventFl = false;
 	_vm->_graphicsManager._scrollOffset = 0;
 	_vm->_globals._cityMapEnabledFl = false;
 	_vm->_globals.iRegul = 1;
@@ -3722,7 +3722,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 			mouseButton = 1;
 		} else if (mouseButton == 2)
 			handleRightButton();
-		_vm->_dialogsManager.testDialogOpening();
+		_vm->_dialogsManager->testDialogOpening();
 		_vm->_linesManager.checkZone();
 		if (_vm->_globals._actionMoveTo)
 			PARADISE();
@@ -3749,11 +3749,11 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
  */
 void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
 								const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen) {
-	_vm->_dialogsManager._inventFl = false;
+	_vm->_dialogsManager->_inventFl = false;
 	_vm->_eventsManager._gameKey = KEY_NONE;
 	_verb = 4;
 	_vm->_graphicsManager._scrollOffset = 0;
-	_vm->_dialogsManager._removeInventFl = false;
+	_vm->_dialogsManager->_removeInventFl = false;
 	_vm->_globals._cityMapEnabledFl = false;
 	_vm->_graphicsManager._noFadingFl = false;
 	_vm->_globals._freezeCharacterFl = false;
@@ -3859,7 +3859,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 			}
 		}
 		if (!_vm->_globals._exitId) {
-			_vm->_dialogsManager.testDialogOpening();
+			_vm->_dialogsManager->testDialogOpening();
 			_vm->_linesManager.checkZone();
 			if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL
 					|| (GOHOME(), _vm->_linesManager._route == (RouteItem *)g_PTRNUL)) {

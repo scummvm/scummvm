@@ -52,9 +52,8 @@ public:
 	int _inventWidth, _inventHeight;
 	byte *_inventoryIcons;
 
-	DialogsManager();
+	DialogsManager(HopkinsEngine *vm);
 	~DialogsManager();
-	void setParent(HopkinsEngine *vm);
 	void inventAnim();
 	void showInventory();
 	void showLoadGame();

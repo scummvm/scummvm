@@ -145,7 +145,7 @@ public:
 	Debugger _debugger;
 	AnimationManager *_animationManager;
 	ComputerManager *_computerManager;
-	DialogsManager _dialogsManager;
+	DialogsManager *_dialogsManager;
 	EventsManager _eventsManager;
 	FontManager _fontManager;
 	Globals _globals;

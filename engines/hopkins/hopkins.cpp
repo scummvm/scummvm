@@ -42,9 +42,9 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	g_vm = this;
 	_animationManager = new AnimationManager(this);
 	_computerManager = new ComputerManager(this);
+	_dialogsManager = new DialogsManager(this);
 
 	_debugger.setParent(this);
-	_dialogsManager.setParent(this);
 	_eventsManager.setParent(this);
 	_fileManager.setParent(this);
 	_fontManager.setParent(this);
@@ -60,6 +60,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 }
 
 HopkinsEngine::~HopkinsEngine() {
+	delete _dialogsManager;
 	delete _computerManager;
 	delete _animationManager;
 }
@@ -1580,7 +1581,7 @@ void HopkinsEngine::initializeSystem() {
 	_eventsManager.initMouseData();
 	_fontManager.initData();
 
-	_dialogsManager._inventoryIcons = _fileManager.loadFile("ICONE.SPR");
+	_dialogsManager->_inventoryIcons = _fileManager.loadFile("ICONE.SPR");
 	_objectsManager._headSprites = _fileManager.loadFile("TETE.SPR");
 
 	_eventsManager.setMouseOn();
@@ -2049,7 +2050,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 
 void HopkinsEngine::playEnding() {
 	_globals.PERSO = _globals.freeMemory(_globals.PERSO);
-	_dialogsManager._removeInventFl = true;
+	_dialogsManager->_removeInventFl = true;
 	_globals._disableInventFl = true;
 	_graphicsManager._scrollOffset = 0;
 	_globals._cityMapEnabledFl = false;
@@ -2159,7 +2160,7 @@ void HopkinsEngine::playEnding() {
 		displayCredits();
 		_globals.iRegul = 0;
 		_globals._exitId = 300;
-		_dialogsManager._removeInventFl = false;
+		_dialogsManager->_removeInventFl = false;
 		_globals._disableInventFl = false;
 	} else {
 		_soundManager._specialSoundNum = 200;
@@ -2187,7 +2188,7 @@ void HopkinsEngine::playEnding() {
 		_soundManager.playSound(16);
 		_globals.iRegul = 1;
 		_soundManager._specialSoundNum = 0;
-		_dialogsManager._removeInventFl = false;
+		_dialogsManager->_removeInventFl = false;
 		_globals._disableInventFl = false;
 		_animationManager->playAnim("JOUR4A.anm", 12, 12, 1000);
 		_globals.iRegul = 0;

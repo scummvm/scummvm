@@ -241,8 +241,8 @@ void Globals::clearAll() {
 	_objectDataBuf = g_PTRNUL;
 	_curObjectFileNum = 0;
 	_vm->_eventsManager._objectBuf = g_PTRNUL;
-	_vm->_dialogsManager._inventWin1 = g_PTRNUL;
-	_vm->_dialogsManager._inventBuf2 = g_PTRNUL;
+	_vm->_dialogsManager->_inventWin1 = g_PTRNUL;
+	_vm->_dialogsManager->_inventBuf2 = g_PTRNUL;
 	_answerBuffer = g_PTRNUL;
 	SPRITE_ECRAN = g_PTRNUL;
 	_saveData = (Savegame *)g_PTRNUL;

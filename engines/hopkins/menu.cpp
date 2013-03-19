@@ -142,7 +142,7 @@ int MenuManager::menu() {
 			break;
 		} else if (menuIndex == LOAD_GAME) {
 			_vm->_globals._exitId = -1;
-			_vm->_dialogsManager.showLoadGame();
+			_vm->_dialogsManager->showLoadGame();
 
 			if (_vm->_globals._exitId != -1) {
 				result = _vm->_globals._exitId;
@@ -150,7 +150,7 @@ int MenuManager::menu() {
 			}
 			_vm->_globals._exitId = 0;
 		} else if (menuIndex == OPTIONS) {
-			_vm->_dialogsManager.showOptionsDialog();
+			_vm->_dialogsManager->showOptionsDialog();
 		} else if (menuIndex == INTRODUCTION) {
 			_vm->playIntro();
 		} else if (menuIndex == QUIT) {
