@@ -64,11 +64,11 @@ private:
 	int _specialWidth;
 
 	byte SD_PIXELS[PALETTE_SIZE * 2];
-	int Agr_x, Agr_y;
-	bool Agr_Flag_x, Agr_Flag_y;
+	int _enlargedX, _enlargedY;
+	bool _enlargedXFl, _enlargedYFl;
 	int clip_x1, clip_y1;
-	int Red_x, Red_y;
-	int Red;
+	int _reduceX, _reducedY;
+	int _zoomOutFactor;
 
 	void loadScreen(const Common::String &file);
 	void loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag);

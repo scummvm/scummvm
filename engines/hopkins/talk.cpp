@@ -347,9 +347,9 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 	_dialogueMesgId3 = READ_LE_INT16((uint16 *)charBuf + 7);
 	int frameNumb = READ_LE_INT16((uint16 *)charBuf + 8);
 
-	int v7 = READ_LE_INT16((uint16 *)charBuf + 9);
-	if (v7)
-		_vm->_globals._saveData->_data[svDialogField4] = v7;
+	int curBufVal = READ_LE_INT16((uint16 *)charBuf + 9);
+	if (curBufVal)
+		_vm->_globals._saveData->_data[svDialogField4] = curBufVal;
 
 	if (!frameNumb)
 		frameNumb = 10;
@@ -727,10 +727,10 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 			_vm->_globals._animBqe[idx]._data = _vm->_globals.allocMemory(animLength + 50);
 			_vm->_globals._animBqe[idx]._enabledFl = true;
 			memcpy(_vm->_globals._animBqe[idx]._data, (const byte *)(bufPerso + bufPos + 5), 20);
-			int v23 = READ_LE_INT16(bufPos + bufPerso + 29);
+			int bqeVal = READ_LE_INT16(bufPos + bufPerso + 29);
 			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 20, READ_LE_INT16(bufPos + bufPerso + 25));
 			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 22, READ_LE_INT16(bufPos + bufPerso + 27));
-			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 24, v23);
+			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 24, bqeVal);
 			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 26, READ_LE_INT16(bufPos + bufPerso + 31));
 			_vm->_globals._animBqe[idx]._data[28] = bufPerso[bufPos + 33];
 			_vm->_globals._animBqe[idx]._data[29] = bufPerso[bufPos + 34];
@@ -739,12 +739,12 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 			for (int i = 1; i < 5000; i++) {
 				bqeCurData += 10;
 				curBufPerso += 10;
-				if (!v23)
+				if (!bqeVal)
 					break;
-				v23 = READ_LE_INT16(curBufPerso + 4);
+				bqeVal = READ_LE_INT16(curBufPerso + 4);
 				WRITE_LE_UINT16(bqeCurData, READ_LE_INT16(curBufPerso));
 				WRITE_LE_UINT16(bqeCurData + 2, READ_LE_INT16(curBufPerso + 2));
-				WRITE_LE_UINT16(bqeCurData + 4, v23);
+				WRITE_LE_UINT16(bqeCurData + 4, bqeVal);
 				WRITE_LE_UINT16(bqeCurData + 6, READ_LE_INT16(curBufPerso + 6));
 				bqeCurData[8] = curBufPerso[8];
 				bqeCurData[9] = curBufPerso[9];

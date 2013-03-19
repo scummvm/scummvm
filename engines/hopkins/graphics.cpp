@@ -53,8 +53,8 @@ GraphicsManager::GraphicsManager() {
 	_showDirtyRects = false;
 
 	_lineNbr2 = 0;
-	Agr_x = Agr_y = 0;
-	Agr_Flag_x = Agr_Flag_y = false;
+	_enlargedX = _enlargedY = 0;
+	_enlargedXFl = _enlargedYFl = false;
 	_fadeDefaultSpeed = 15;
 	FADE_LINUX = 0;
 	_skipVideoLockFl = false;
@@ -66,8 +66,8 @@ GraphicsManager::GraphicsManager() {
 	_posXClipped = _posYClipped = 0;
 	clip_x1 = clip_y1 = 0;
 	_clipFl = false;
-	Red_x = Red_y = 0;
-	Red = 0;
+	_reduceX = _reducedY = 0;
+	_zoomOutFactor = 0;
 	_width = 0;
 	_specialWidth = 0;
 
@@ -247,9 +247,7 @@ void GraphicsManager::initColorTable(int minIndex, int maxIndex, byte *palette) 
 
 	for (int idx = 0; idx < 256; ++idx) {
 		byte v = _colorTable[idx];
-		if (v > 27)
-			_colorTable[idx] = 0;
-		if (!v)
+		if (v > 27 || !v)
 			_colorTable[idx] = 0;
 	}
 
@@ -454,9 +452,9 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 	const byte *srcP = xs + _lineNbr2 * ys + surface;
 	byte *destP = (byte *)_videoPtr + destX + destX + WinScan * destY;
 	int yNext = height;
-	Agr_x = 0;
-	Agr_y = 0;
-	Agr_Flag_y = false;
+	_enlargedX = 0;
+	_enlargedY = 0;
+	_enlargedYFl = false;
 
 	do {
 		for (;;) {
@@ -465,14 +463,14 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 			xCtr = width;
 			yCtr = yNext;
 			palette = PAL_PIXELS;
-			Agr_x = 0;
+			_enlargedX = 0;
 
 			do {
 				destP[0] = palette[2 * srcP[0]];
 				destP[1] = palette[(2 * srcP[0]) + 1];
 				destP += 2;
-				if (Agr_x >= 100) {
-					Agr_x -= 100;
+				if (_enlargedX >= 100) {
+					_enlargedX -= 100;
 					destP[0] = palette[2 * srcP[0]];
 					destP[1] = palette[(2 * srcP[0]) + 1];
 					destP += 2;
@@ -484,17 +482,17 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 			yNext = yCtr;
 			srcP = srcCopyP;
 			destP = WinScan + destCopyP;
-			if (Agr_Flag_y)
+			if (_enlargedYFl)
 				break;
 
-			if (Agr_y >= 0 && Agr_y < 100)
+			if (_enlargedY >= 0 && _enlargedY < 100)
 				break;
 
-			Agr_y -= 100;
-			Agr_Flag_y = true;
+			_enlargedY -= 100;
+			_enlargedYFl = true;
 		}
 
-		Agr_Flag_y = false;
+		_enlargedYFl = false;
 		srcP = _lineNbr2 + srcCopyP;
 		yNext = yCtr - 1;
 	} while (yCtr != 1);
@@ -1350,23 +1348,23 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 
 	byte *dest1P = xp300 + _lineNbr2 * (yp300 - 300) - 300 + surface;
 	if (zoom2) {
-		Agr_x = 0;
-		Agr_y = 0;
-		Agr_Flag_y = false;
-		Agr_Flag_x = false;
+		_enlargedX = 0;
+		_enlargedY = 0;
+		_enlargedYFl = false;
+		_enlargedXFl = false;
 		_width = spriteWidth;
 		int zoomedWidth = zoomIn(spriteWidth, zoom2);
 		int zoomedHeight = zoomIn(spriteHeight1, zoom2);
 		if (flipFl) {
-			byte *v29 = zoomedWidth + dest1P;
+			byte *clippedDestP = zoomedWidth + dest1P;
 			if (_posYClipped) {
 				if (_posYClipped < 0 || _posYClipped >= zoomedHeight)
 					return;
-				int v30 = 0;
-				while (zoomIn(++v30, zoom2) < _posYClipped)
+				int hiddenHeight = 0;
+				while (zoomIn(++hiddenHeight, zoom2) < _posYClipped)
 					;
-				spritePixelsP += _width * v30;
-				v29 += _lineNbr2 * _posYClipped;
+				spritePixelsP += _width * hiddenHeight;
+				clippedDestP += _lineNbr2 * _posYClipped;
 				zoomedHeight -= _posYClipped;
 			}
 			if (zoomedHeight > clip_y1)
@@ -1377,64 +1375,64 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 				zoomedWidth -= _posXClipped;
 			}
 			if (zoomedWidth > clip_x1) {
-				int v32 = zoomedWidth - clip_x1;
-				v29 -= v32;
-				int v33 = 0;
-				while (zoomIn(++v33, zoom2) < v32)
+				int clippedZoomedWidth = zoomedWidth - clip_x1;
+				clippedDestP -= clippedZoomedWidth;
+				int closestWidth = 0;
+				while (zoomIn(++closestWidth, zoom2) < clippedZoomedWidth)
 					;
-				spritePixelsP += v33;
+				spritePixelsP += closestWidth;
 				zoomedWidth = clip_x1;
 			}
-			int v63;
+			int curHeight;
 			do {
 				for (;;) {
-					v63 = zoomedHeight;
-					byte *v53 = v29;
+					curHeight = zoomedHeight;
+					byte *oldDestP = clippedDestP;
 					const byte *oldSpritePixelsP = spritePixelsP;
-					Agr_Flag_x = false;
-					Agr_x = 0;
-					for (int v35 = zoomedWidth; v35; Agr_Flag_x = false, v35--) {
+					_enlargedXFl = false;
+					_enlargedX = 0;
+					for (int i = zoomedWidth; i; _enlargedXFl = false, i--) {
 						for (;;) {
 							if (*spritePixelsP)
-								*v29 = *spritePixelsP;
-							--v29;
+								*clippedDestP = *spritePixelsP;
+							--clippedDestP;
 							++spritePixelsP;
-							if (!Agr_Flag_x)
-								Agr_x += zoom2;
-							if (Agr_x >= 0 && Agr_x < 100)
+							if (!_enlargedXFl)
+								_enlargedX += zoom2;
+							if (_enlargedX >= 0 && _enlargedX < 100)
 								break;
-							Agr_x -= 100;
+							_enlargedX -= 100;
 							--spritePixelsP;
-							Agr_Flag_x = true;
-							--v35;
-							if (!v35)
+							_enlargedXFl = true;
+							--i;
+							if (!i)
 								break;
 						}
 					}
 					spritePixelsP = _width + oldSpritePixelsP;
-					v29 = _lineNbr2 + v53;
-					if (!Agr_Flag_y)
-						Agr_y += zoom2;
-					if ((uint16)Agr_y < 100)
+					clippedDestP = _lineNbr2 + oldDestP;
+					if (!_enlargedYFl)
+						_enlargedY += zoom2;
+					if (_enlargedY  >= 0 && _enlargedY < 100)
 						break;
-					Agr_y -= 100;
+					_enlargedY -= 100;
 					spritePixelsP = oldSpritePixelsP;
-					Agr_Flag_y = true;
-					zoomedHeight = v63 - 1;
-					if (v63 == 1)
+					_enlargedYFl = true;
+					zoomedHeight = curHeight - 1;
+					if (curHeight == 1)
 						return;
 				}
-				Agr_Flag_y = false;
-				zoomedHeight = v63 - 1;
-			} while (v63 != 1);
+				_enlargedYFl = false;
+				zoomedHeight = curHeight - 1;
+			} while (curHeight != 1);
 		} else {
 			if (_posYClipped) {
 				if (_posYClipped >= zoomedHeight)
 					return;
-				int v23 = 0;
-				while (zoomIn(++v23, zoom2) < _posYClipped)
+				int closerHeight = 0;
+				while (zoomIn(++closerHeight, zoom2) < _posYClipped)
 					;
-				spritePixelsP += _width * v23;
+				spritePixelsP += _width * closerHeight;
 				dest1P += _lineNbr2 * _posYClipped;
 				zoomedHeight -= _posYClipped;
 			}
@@ -1443,92 +1441,90 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 			if (_posXClipped) {
 				if (_posXClipped >= zoomedWidth)
 					return;
-				int v26 = 0;
-				while (zoomIn(++v26, zoom2) < _posXClipped)
+				int closerWidth = 0;
+				while (zoomIn(++closerWidth, zoom2) < _posXClipped)
 					;
-				spritePixelsP += v26;
+				spritePixelsP += closerWidth;
 				dest1P += _posXClipped;
 				zoomedWidth = zoomedWidth - _posXClipped;
 			}
 			if (zoomedWidth > clip_x1)
 				zoomedWidth = clip_x1;
 
-			int v60;
+			int curHeight;
 			do {
 				for (;;) {
-					v60 = zoomedHeight;
+					curHeight = zoomedHeight;
 					byte *oldDest1P = dest1P;
 					const byte *oldSpritePixelsP = spritePixelsP;
-					Agr_Flag_x = false;
-					Agr_x = 0;
-					for (int v28 = zoomedWidth; v28; Agr_Flag_x = false, v28--) {
+					_enlargedXFl = false;
+					_enlargedX = 0;
+					for (int i = zoomedWidth; i; _enlargedXFl = false, i--) {
 						for (;;) {
 							if (*spritePixelsP)
 								*dest1P = *spritePixelsP;
 							++dest1P;
 							++spritePixelsP;
-							if (!Agr_Flag_x)
-								Agr_x += zoom2;
-							if ((uint16)Agr_x < 100)
+							if (!_enlargedXFl)
+								_enlargedX += zoom2;
+							if (_enlargedX >= 0 && _enlargedX < 100)
 								break;
-							Agr_x -= 100;
+							_enlargedX -= 100;
 							--spritePixelsP;
-							Agr_Flag_x = true;
-							--v28;
-							if (!v28)
+							_enlargedXFl = true;
+							--i;
+							if (!i)
 								break;
 						}
 					}
 					spritePixelsP = _width + oldSpritePixelsP;
 					dest1P = _lineNbr2 + oldDest1P;
-					if (!Agr_Flag_y)
-						Agr_y += zoom2;
-					if ((uint16)Agr_y < 100)
+					if (!_enlargedYFl)
+						_enlargedY += zoom2;
+					if (_enlargedY >= 0 && _enlargedY < 100)
 						break;
-					Agr_y -= 100;
+					_enlargedY -= 100;
 					spritePixelsP = oldSpritePixelsP;
-					Agr_Flag_y = true;
-					zoomedHeight = v60 - 1;
-					if (v60 == 1)
+					_enlargedYFl = true;
+					zoomedHeight = curHeight - 1;
+					if (curHeight == 1)
 						return;
 				}
-				Agr_Flag_y = false;
-				zoomedHeight = v60 - 1;
-			} while (v60 != 1);
+				_enlargedYFl = false;
+				zoomedHeight = curHeight - 1;
+			} while (curHeight != 1);
 		}
 	} else if (zoom1) {
-		Red_x = 0;
-		Red_y = 0;
+		_reduceX = 0;
+		_reducedY = 0;
 		_width = spriteWidth;
-		Red = zoom1;
+		_zoomOutFactor = zoom1;
 		if (zoom1 < 100) {
-			int v37 = zoomOut(spriteWidth, Red);
+			int zoomedSpriteWidth = zoomOut(spriteWidth, _zoomOutFactor);
 			if (flipFl) {
-				byte *v40 = v37 + dest1P;
+				byte *curDestP = zoomedSpriteWidth + dest1P;
 				do {
-					int v65 = spriteHeight2;
-					byte *v55 = v40;
-					Red_y += Red;
-					if ((uint16)Red_y < 100) {
-						Red_x = 0;
-						int v42 = v37;
-						for (int v41 = _width; v41; v41--) {
-							Red_x += Red;
-							if ((uint16)Red_x < 100) {
-								if (v42 >= _posXClipped && v42 < clip_x1 && *spritePixelsP)
-									*v40 = *spritePixelsP;
-								--v40;
+					byte *oldDestP = curDestP;
+					_reducedY += _zoomOutFactor;
+					if (_reducedY >= 0 && _reducedY < 100) {
+						_reduceX = 0;
+						int curWidth = zoomedSpriteWidth;
+						for (int i = _width; i; i--) {
+							_reduceX += _zoomOutFactor;
+							if (_reduceX >= 0 && _reduceX < 100) {
+								if (curWidth >= _posXClipped && curWidth < clip_x1 && *spritePixelsP)
+									*curDestP = *spritePixelsP;
+								--curDestP;
 								++spritePixelsP;
-								--v42;
+								--curWidth;
 							} else {
-								Red_x -= 100;
+								_reduceX -= 100;
 								++spritePixelsP;
 							}
 						}
-						spriteHeight2 = v65;
-						v40 = _lineNbr2 + v55;
+						curDestP = _lineNbr2 + oldDestP;
 					} else {
-						Red_y -= 100;
+						_reducedY -= 100;
 						spritePixelsP += _width;
 					}
 					--spriteHeight2;
@@ -1537,27 +1533,27 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 				do {
 					int oldSpriteHeight = spriteHeight2;
 					byte *oldDest1P = dest1P;
-					Red_y += Red;
-					if ((uint16)Red_y < 100) {
-						Red_x = 0;
-						int v39 = 0;
+					_reducedY += _zoomOutFactor;
+					if (_reducedY >= 0 && _reducedY < 100) {
+						_reduceX = 0;
+						int curX = 0;
 						for (int i = _width; i; i--) {
-							Red_x += Red;
-							if ((uint16)Red_x < 100) {
-								if (v39 >= _posXClipped && v39 < clip_x1 && *spritePixelsP)
+							_reduceX += _zoomOutFactor;
+							if (_reduceX >= 0 && _reduceX < 100) {
+								if (curX >= _posXClipped && curX < clip_x1 && *spritePixelsP)
 									*dest1P = *spritePixelsP;
 								++dest1P;
 								++spritePixelsP;
-								++v39;
+								++curX;
 							} else {
-								Red_x -= 100;
+								_reduceX -= 100;
 								++spritePixelsP;
 							}
 						}
 						spriteHeight2 = oldSpriteHeight;
 						dest1P = _lineNbr2 + oldDest1P;
 					} else {
-						Red_y -= 100;
+						_reducedY -= 100;
 						spritePixelsP += _width;
 					}
 					--spriteHeight2;
@@ -1846,28 +1842,28 @@ void GraphicsManager::copyWinscanVbe(const byte *src, byte *dest) {
 void GraphicsManager::reduceScreenPart(const byte *srcSurface, byte *destSurface, int xp, int yp, int width, int height, int zoom) {
 	const byte *srcP = xp + _lineNbr2 * yp + srcSurface;
 	byte *destP = destSurface;
-	Red = zoom;
+	_zoomOutFactor = zoom;
 	_width = width;
-	Red_x = 0;
-	Red_y = 0;
+	_reduceX = 0;
+	_reducedY = 0;
 	if (zoom < 100) {
 		for (int yCtr = 0; yCtr < height; ++yCtr, srcP += _lineNbr2) {
-			Red_y += Red;
-			if (Red_y < 100) {
-				Red_x = 0;
+			_reducedY += _zoomOutFactor;
+			if (_reducedY < 100) {
+				_reduceX = 0;
 				const byte *lineSrcP = srcP;
 
 				for (int xCtr = 0; xCtr < _width; ++xCtr) {
-					Red_x += Red;
-					if (Red_x < 100) {
+					_reduceX += _zoomOutFactor;
+					if (_reduceX < 100) {
 						*destP++ = *lineSrcP++;
 					} else {
-						Red_x -= 100;
+						_reduceX -= 100;
 						++lineSrcP;
 					}
 				}
 			} else {
-				Red_y -= 100;
+				_reducedY -= 100;
 			}
 		}
 	}
