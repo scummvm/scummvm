@@ -184,15 +184,13 @@ public:
 	void playIntro();
 
 	/**
-	 * Synchronises the sound settings from ScummVM into the engine
+	 * Synchronizes the sound settings from ScummVM into the engine
 	 */
 	virtual void syncSoundSettings();
 };
 
 // Global reference to the HopkinsEngine object
 extern HopkinsEngine *g_vm;
-
-#define GLOBALS g_vm->_globals
 
 } // End of namespace Hopkins
 
