@@ -268,7 +268,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 
 			_vm->_globals._boxWidth += 2;
 			_text[idx]._pos.x = 320 - abs(_vm->_globals._boxWidth / 2);
-			textPosX = _vm->_eventsManager._startPos.x + _text[idx]._pos.x;
+			textPosX = _vm->_eventsManager->_startPos.x + _text[idx]._pos.x;
 			lineCount = 1;
 			_text[idx]._lines[0] = Common::String((const char *)_tempText, textLength);
 		} else {
@@ -338,10 +338,10 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 
 			if ((_text[idx]._textType < 2) || (_text[idx]._textType > 3)) {
 				int i;
-				for (i = xp - _vm->_eventsManager._startPos.x; _vm->_globals._boxWidth + i > 638 && i > -2 && _text[idx]._textType; i -= 2)
+				for (i = xp - _vm->_eventsManager->_startPos.x; _vm->_globals._boxWidth + i > 638 && i > -2 && _text[idx]._textType; i -= 2)
 					;
 				_text[idx]._pos.x = i;
-				textPosX = _vm->_eventsManager._startPos.x + i;
+				textPosX = _vm->_eventsManager->_startPos.x + i;
 			} else {
 				_text[idx]._pos.x = textPosX;
 			}
@@ -352,7 +352,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		int saveHeight = (_fontFixedHeight + 1) * lineCount + 12;
 		if (_text[idx]._textType == 6) {
 			_text[idx]._pos.x = 315 - abs(saveWidth / 2);
-			textPosX = posX = _vm->_eventsManager._startPos.x + _text[idx]._pos.x;
+			textPosX = posX = _vm->_eventsManager->_startPos.x + _text[idx]._pos.x;
 			_text[idx]._pos.y = posY = 50;
 		}
 		int textType = _text[idx]._textType;
@@ -480,12 +480,12 @@ void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, i
 			int charStartPosX = charEndPosX;
 			charEndPosX += charWidth;
 			_vm->_graphicsManager.addDirtyRect(charStartPosX, yp, charEndPosX, yp + 12);
-			if (_vm->_eventsManager._escKeyFl) {
+			if (_vm->_eventsManager->_escKeyFl) {
 				_vm->_globals.iRegul = 1;
-				_vm->_eventsManager.refreshScreenAndEvents();
+				_vm->_eventsManager->refreshScreenAndEvents();
 			} else {
 				_vm->_globals.iRegul = 4;
-				_vm->_eventsManager.refreshScreenAndEvents();
+				_vm->_eventsManager->refreshScreenAndEvents();
 				_vm->_globals.iRegul = 1;
 			}
 		}

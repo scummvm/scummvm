@@ -56,7 +56,7 @@ int MenuManager::menu() {
 	result = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
 		_vm->_objectsManager._forestFl = false;
-		_vm->_eventsManager._breakoutFl = false;
+		_vm->_eventsManager->_breakoutFl = false;
 		_vm->_globals._disableInventFl = true;
 		_vm->_globals._exitId = 0;
 
@@ -87,10 +87,10 @@ int MenuManager::menu() {
 		else if (_vm->_globals._language == LANG_SP)
 			spriteData = _vm->_objectsManager.loadSprite("MENUES.SPR");
 
-		_vm->_eventsManager.mouseOn();
-		_vm->_eventsManager.changeMouseCursor(0);
-		_vm->_eventsManager._mouseCursorId = 0;
-		_vm->_eventsManager._mouseSpriteId = 0;
+		_vm->_eventsManager->mouseOn();
+		_vm->_eventsManager->changeMouseCursor(0);
+		_vm->_eventsManager->_mouseCursorId = 0;
+		_vm->_eventsManager->_mouseSpriteId = 0;
 
 		_vm->_soundManager.playSound(28);
 
@@ -101,7 +101,7 @@ int MenuManager::menu() {
 				return -1;
 
 			menuIndex = MENU_NONE;
-			mousePos = Common::Point(_vm->_eventsManager.getMouseX(), _vm->_eventsManager.getMouseY());
+			mousePos = Common::Point(_vm->_eventsManager->getMouseX(), _vm->_eventsManager->getMouseY());
 
 			if (mousePos.x >= 232 && mousePos.x <= 408) {
 				if (mousePos.y >= 261 && mousePos.y <= 284)
@@ -125,16 +125,16 @@ int MenuManager::menu() {
 			_vm->_graphicsManager.fastDisplay(spriteData, 230, 322, frameIndex[2] + 4);
 			_vm->_graphicsManager.fastDisplay(spriteData, 230, 354, frameIndex[3] + 6);
 			_vm->_graphicsManager.fastDisplay(spriteData, 230, 386, frameIndex[4] + 8);
-			_vm->_eventsManager.refreshScreenAndEvents();
+			_vm->_eventsManager->refreshScreenAndEvents();
 
-			if (_vm->_eventsManager.getMouseButton() == 1 && menuIndex != MENU_NONE)
+			if (_vm->_eventsManager->getMouseButton() == 1 && menuIndex != MENU_NONE)
 				selectionMade = true;
 		} while (!selectionMade);
 
 		if (menuIndex > MENU_NONE) {
 			_vm->_graphicsManager.fastDisplay(spriteData, 230, 259 + 32 * (menuIndex - 1), 10 + (menuIndex - 1));
-			_vm->_eventsManager.refreshScreenAndEvents();
-			_vm->_eventsManager.delay(200);
+			_vm->_eventsManager->refreshScreenAndEvents();
+			_vm->_eventsManager->delay(200);
 		}
 
 		if (menuIndex == PLAY_GAME) {

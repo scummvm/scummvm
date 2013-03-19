@@ -69,9 +69,8 @@ public:
 	byte *_objectBuf;
 	byte *_mouseCursor;
 
-	EventsManager();
+	EventsManager(HopkinsEngine *vm);
 	~EventsManager();
-	void setParent(HopkinsEngine *vm);
 	void initMouseData();
 
 	void delay(int totalMilli);

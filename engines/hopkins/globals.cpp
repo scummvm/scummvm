@@ -240,7 +240,7 @@ void Globals::clearAll() {
 	initVBob();
 	_objectDataBuf = g_PTRNUL;
 	_curObjectFileNum = 0;
-	_vm->_eventsManager._objectBuf = g_PTRNUL;
+	_vm->_eventsManager->_objectBuf = g_PTRNUL;
 	_vm->_dialogsManager->_inventWin1 = g_PTRNUL;
 	_vm->_dialogsManager->_inventBuf2 = g_PTRNUL;
 	_answerBuffer = g_PTRNUL;
@@ -256,7 +256,7 @@ void Globals::clearAll() {
 
 	_boxWidth = 240;
 
-	_vm->_eventsManager._objectBuf = allocMemory(2500);
+	_vm->_eventsManager->_objectBuf = allocMemory(2500);
 
 	_objectDataBuf = g_PTRNUL;
 }

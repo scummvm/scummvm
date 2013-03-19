@@ -28,13 +28,10 @@
 
 namespace Hopkins {
 
-Debugger::Debugger() : GUI::Debugger() {
+Debugger::Debugger(HopkinsEngine *vm) : GUI::Debugger() {
+	_vm = vm;
 	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("rects", WRAP_METHOD(Debugger, cmd_DirtyRects));
-}
-
-void Debugger::setParent(HopkinsEngine *vm) {
-	_vm = vm;
 }
 
 // Turns dirty rects on or off

@@ -142,11 +142,12 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 
 public:
-	Debugger _debugger;
 	AnimationManager *_animationManager;
 	ComputerManager *_computerManager;
 	DialogsManager *_dialogsManager;
-	EventsManager _eventsManager;
+	Debugger *_debugger;
+	EventsManager *_eventsManager;
+
 	FontManager _fontManager;
 	Globals _globals;
 	FileManager _fileManager;

@@ -33,7 +33,8 @@
 
 namespace Hopkins {
 
-EventsManager::EventsManager() {
+EventsManager::EventsManager(HopkinsEngine *vm) {
+	_vm = vm;
 	_mouseFl = false;
 	_mouseLinuxFl = false;
 	_mouseSizeX = _mouseSizeY = 0;
@@ -60,10 +61,6 @@ EventsManager::EventsManager() {
 EventsManager::~EventsManager() {
 	_vm->_globals.freeMemory(_objectBuf);
 	_vm->_globals.freeMemory(_mouseCursor);
-}
-
-void EventsManager::setParent(HopkinsEngine *vm) {
-	_vm = vm;
 }
 
 void EventsManager::initMouseData() {
@@ -225,7 +222,7 @@ void EventsManager::checkForNextFrameCounter() {
 		_vm->_graphicsManager.updateScreen();
 
 		// Signal the ScummVM debugger
-		_vm->_debugger.onFrame();
+		_vm->_debugger->onFrame();
 	}
 }
 
@@ -292,8 +289,8 @@ void EventsManager::handleKey(Common::Event &event) {
 	// Check for debugger
 	if ((event.kbd.keycode == Common::KEYCODE_d) && (event.kbd.flags & Common::KBD_CTRL)) {
 		// Attach to the debugger
-		_vm->_debugger.attach();
-		_vm->_debugger.onFrame();
+		_vm->_debugger->attach();
+		_vm->_debugger->onFrame();
 	}
 
 }
@@ -406,11 +403,11 @@ void EventsManager::refreshScreenAndEvents() {
 			if (yp + height > _vm->_graphicsManager._maxY)
 				height = _vm->_graphicsManager._maxY - yp;
 			if (width > 1 && height > 1) {
-				_vm->_eventsManager.updateCursor();
+				updateCursor();
 			}
 		}
 	} else if (yp < _vm->_graphicsManager._maxY && xp < _vm->_graphicsManager._maxX && width > 1 && height > 1) {
-		_vm->_eventsManager.updateCursor();
+		updateCursor();
 		_vm->_graphicsManager.addDirtyRect(xp, yp, right, bottom);
 	}
 

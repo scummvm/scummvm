@@ -589,17 +589,17 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	}
 	playVoice();
 
-	_vm->_eventsManager._escKeyFl = false;
+	_vm->_eventsManager->_escKeyFl = false;
 
 	// Loop for playing voice
 	breakFlag = false;
 	do {
 		if (_specialSoundNum != 4 && !_skipRefreshFl)
-			_vm->_eventsManager.refreshScreenAndEvents();
-		if (_vm->_eventsManager.getMouseButton())
+			_vm->_eventsManager->refreshScreenAndEvents();
+		if (_vm->_eventsManager->getMouseButton())
 			break;
-		_vm->_eventsManager.refreshEvents();
-		if (_vm->_eventsManager._escKeyFl)
+		_vm->_eventsManager->refreshEvents();
+		if (_vm->_eventsManager->_escKeyFl)
 			break;
 		// We only check the voice status if the file has been loaded properly
 		// This avoids skipping completely the talk animations in the Win95 UK Demo
@@ -620,7 +620,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	if (!_musicOffFl && _musicVolume > 2) {
 		setMODMusicVolume(_musicVolume);
 	}
-	_vm->_eventsManager._escKeyFl = false;
+	_vm->_eventsManager->_escKeyFl = false;
 	_skipRefreshFl = false;
 	return true;
 }

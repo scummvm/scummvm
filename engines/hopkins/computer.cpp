@@ -90,7 +90,7 @@ void ComputerManager::setTextMode() {
 	_vm->_graphicsManager.loadImage("WINTEXT");
 	_vm->_graphicsManager.fadeInLong();
 	loadMenu();
-	_vm->_eventsManager._mouseFl = false;
+	_vm->_eventsManager->_mouseFl = false;
 }
 
 /**
@@ -124,7 +124,7 @@ void ComputerManager::setTextPosition(int yp, int xp) {
  * @param mode		Which computer to display
  */
 void ComputerManager::showComputer(ComputerEnum mode) {
-	_vm->_eventsManager._escKeyFl = false;
+	_vm->_eventsManager->_escKeyFl = false;
 	_vm->_graphicsManager.resetDirtyRects();
 	setVideoMode();
 	setTextColor(4);
@@ -156,7 +156,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 
 	if (passwordMatch) {
 		while (!_vm->shouldQuit()) {
-			_vm->_eventsManager._escKeyFl = false;
+			_vm->_eventsManager->_escKeyFl = false;
 			clearScreen();
 			setTextColor(4);
 			setTextPosition(2, 4);
@@ -198,7 +198,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 			bool numericFlag = false;
 			char keyPressed;
 			do {
-				keyPressed = _vm->_eventsManager.waitKeyPress();
+				keyPressed = _vm->_eventsManager->waitKeyPress();
 				if (_vm->shouldQuit())
 					return;
 
@@ -268,8 +268,8 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		setTextColor(4);
 		setTextPosition(16, 25);
 		outText(Common::String(_menuText[5]._line));
-		_vm->_eventsManager.refreshScreenAndEvents();
-		_vm->_eventsManager.delay(1000);
+		_vm->_eventsManager->refreshScreenAndEvents();
+		_vm->_eventsManager->delay(1000);
 
 		memset(_vm->_graphicsManager._vesaBuffer, 0, 307199);
 		_vm->_graphicsManager.lockScreen();
@@ -277,7 +277,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_graphicsManager.unlockScreen();
 		_vm->_graphicsManager.updateScreen();
 		restoreFBIRoom();
-		_vm->_eventsManager.mouseOff();
+		_vm->_eventsManager->mouseOff();
 	}
 
 	if (mode == COMPUTER_HOPKINS)
@@ -402,12 +402,12 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 	int x2 = 0;
 
 	int textIndex = 0;
-	bool oldMouseFlag = _vm->_eventsManager._mouseFl;
-	_vm->_eventsManager._mouseFl = false;
+	bool oldMouseFlag = _vm->_eventsManager->_mouseFl;
+	_vm->_eventsManager->_mouseFl = false;
 
 	_vm->_fontManager.displayTextVesa(xp, yp, "_", 252);
 	do {
-		curChar = _vm->_eventsManager.waitKeyPress();
+		curChar = _vm->_eventsManager->waitKeyPress();
 		if (_vm->shouldQuit())
 			return;
 
@@ -438,15 +438,15 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 			++textIndex;
 			x1 += _vm->_fontManager._fontFixedWidth;
 		}
-		_vm->_eventsManager.refreshScreenAndEvents();
+		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (textIndex != textIdx && curChar != 13);
 
 	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
 	_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
 
-	_vm->_eventsManager.refreshScreenAndEvents();
+	_vm->_eventsManager->refreshScreenAndEvents();
 	_inputBuf[textIndex] = 0;
-	_vm->_eventsManager._mouseFl = oldMouseFlag;
+	_vm->_eventsManager->_mouseFl = oldMouseFlag;
 }
 
 /**
@@ -472,14 +472,14 @@ void ComputerManager::restoreFBIRoom() {
 	_vm->_fontManager._fontFixedWidth = 12;
 	_vm->_fontManager._fontFixedHeight = 21;
 
-	_vm->_eventsManager._mouseFl = true;
+	_vm->_eventsManager->_mouseFl = true;
 }
 
 /**
  * Display texts for the given menu entry
  */
 void ComputerManager::readText(int idx) {
-	_vm->_eventsManager._escKeyFl = false;
+	_vm->_eventsManager->_escKeyFl = false;
 
 	Common::String filename;
 	if (_vm->_globals._language == LANG_EN)
@@ -513,7 +513,7 @@ void ComputerManager::readText(int idx) {
 			outText(curStr);
 
 			++lineNum;
-			_vm->_eventsManager.refreshScreenAndEvents();
+			_vm->_eventsManager->refreshScreenAndEvents();
 			curStr = "";
 		} else if (curChar != '%') {
 			curStr += curChar;
@@ -522,7 +522,7 @@ void ComputerManager::readText(int idx) {
 		assert(pos <= fileSize);
 	} while (curChar != '%');
 
-	_vm->_eventsManager.waitKeyPress();
+	_vm->_eventsManager->waitKeyPress();
 	ptr = _vm->_globals.freeMemory(ptr);
 }
 
@@ -534,9 +534,9 @@ void ComputerManager::displayGamesSubMenu() {
 	uint oldSpeed = _vm->_globals._speed;
 
 	_vm->_globals._speed = 1;
-	_vm->_eventsManager.changeMouseCursor(0);
+	_vm->_eventsManager->changeMouseCursor(0);
 	_breakoutSpr = g_PTRNUL;
-	_vm->_eventsManager._breakoutFl = true;
+	_vm->_eventsManager->_breakoutFl = true;
 	_breakoutLevel = (int16 *)g_PTRNUL;
 	_breakoutBrickNbr = 0;
 	_breakoutScore = 0;
@@ -568,7 +568,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_soundManager.removeSample(2);
 	_vm->_soundManager.removeSample(3);
 	_vm->_globals._speed = oldSpeed;
-	_vm->_eventsManager._breakoutFl = false;
+	_vm->_eventsManager->_breakoutFl = false;
 	setVideoMode();
 	setTextColor(15);
 	clearScreen();
@@ -651,7 +651,7 @@ void ComputerManager::newLevel() {
 	_vm->_objectsManager.animateSprite(0);
 	_vm->_objectsManager.animateSprite(1);
  
-	_vm->_eventsManager.mouseOn();
+	_vm->_eventsManager->mouseOn();
 	_vm->_soundManager.playSample(3, 5);
 }
 
@@ -725,27 +725,27 @@ void ComputerManager::playBreakout() {
 	while (!_vm->shouldQuit()) {
 		while (!_vm->shouldQuit()) {
 			// Set up the racket and ball
-			_vm->_eventsManager.mouseOff();
+			_vm->_eventsManager->mouseOff();
 			_ballPosition = Common::Point(_padPositionX + 14, 187);
 			_vm->_objectsManager.setSpriteY(1, 187);
 			_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
 
 			_vm->_graphicsManager.resetDirtyRects();
-			_vm->_eventsManager.refreshScreenAndEvents();
+			_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_graphicsManager.fadeInBreakout();
 
 			// Wait for mouse press to start playing
 			do {
-				_padPositionX = _vm->_eventsManager.getMouseX();
-				if (_vm->_eventsManager._mousePos.x <= 4)
+				_padPositionX = _vm->_eventsManager->getMouseX();
+				if (_vm->_eventsManager->_mousePos.x <= 4)
 					_padPositionX = 5;
 				if (_padPositionX > 282)
 					_padPositionX = 282;
 				_vm->_objectsManager.setSpriteX(0, _padPositionX);
 				_vm->_objectsManager.setSpriteX(1, _padPositionX + 14);
 				_vm->_objectsManager.setSpriteY(1, 187);
-				_vm->_eventsManager.refreshScreenAndEvents();
-			} while (!_vm->shouldQuit() && _vm->_eventsManager.getMouseButton() != 1);
+				_vm->_eventsManager->refreshScreenAndEvents();
+			} while (!_vm->shouldQuit() && _vm->_eventsManager->getMouseButton() != 1);
 
 			_breakoutSpeed = 1;
 			_ballPosition = Common::Point(_padPositionX + 14, 187);
@@ -756,14 +756,14 @@ void ComputerManager::playBreakout() {
 			do {
 				_vm->_soundManager.checkSounds();
 
-				_padPositionX = _vm->_eventsManager.getMouseX();
-				if (_vm->_eventsManager._mousePos.x <= 4)
+				_padPositionX = _vm->_eventsManager->getMouseX();
+				if (_vm->_eventsManager->_mousePos.x <= 4)
 					_padPositionX = 5;
 				if (_padPositionX > 282)
 					_padPositionX = 282;
 				_vm->_objectsManager.setSpriteX(0, _padPositionX);
 				lastBreakoutEvent = moveBall();
-				_vm->_eventsManager.refreshScreenAndEvents();
+				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (!_vm->shouldQuit() && !lastBreakoutEvent);
 			if (lastBreakoutEvent != 1)
 				break;
@@ -777,7 +777,7 @@ void ComputerManager::playBreakout() {
 			}
 
 			_vm->_graphicsManager.fadeOutBreakout();
-			_vm->_eventsManager.mouseOn();
+			_vm->_eventsManager->mouseOn();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.removeSprite(1);
 			if (_breakoutScore > _breakoutHiscore)
@@ -836,19 +836,19 @@ int ComputerManager::displayHiscores() {
 	_vm->_graphicsManager.resetDirtyRects();
 	int buttonIndex = 0;
 	do {
-		_vm->_eventsManager.refreshEvents();
-		xp = _vm->_eventsManager.getMouseX();
-		yp = _vm->_eventsManager.getMouseY();
+		_vm->_eventsManager->refreshEvents();
+		xp = _vm->_eventsManager->getMouseX();
+		yp = _vm->_eventsManager->getMouseY();
 
-		if (_vm->_eventsManager.getMouseButton() == 1 && ABS(xp - 79) <= 33 && ABS(yp - 396) <= 13)
+		if (_vm->_eventsManager->getMouseButton() == 1 && ABS(xp - 79) <= 33 && ABS(yp - 396) <= 13)
 			buttonIndex = 1;
-		else if (_vm->_eventsManager.getMouseButton() == 1 && ABS(xp - 583) <= 32 && ABS(yp - 396) <= 13)
+		else if (_vm->_eventsManager->getMouseButton() == 1 && ABS(xp - 583) <= 32 && ABS(yp - 396) <= 13)
 			buttonIndex = 2;
 
-		_vm->_eventsManager.refreshScreenAndEvents();
+		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (!buttonIndex && !_vm->shouldQuit());
 
-	_vm->_eventsManager.mouseOff();
+	_vm->_eventsManager->mouseOff();
 	_vm->_graphicsManager.fadeOutBreakout();
 	_vm->_globals.freeMemory(ptr);
 	return buttonIndex;
@@ -868,7 +868,7 @@ void ComputerManager::getScoreName() {
 	for (int strPos = 0; strPos <= 4; strPos++) {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, 1);
 
-		char curChar = toupper(_vm->_eventsManager.waitKeyPress());
+		char curChar = toupper(_vm->_eventsManager->waitKeyPress());
 		if ((curChar < '0') && (curChar > 'Z'))
 			curChar = ' ';
 		if ((curChar > '9') && (curChar < 'A'))
@@ -878,7 +878,7 @@ void ComputerManager::getScoreName() {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, curChar);
 
 		for (int idx = 0; idx < 12; ++idx)
-			_vm->_eventsManager.refreshScreenAndEvents();
+			_vm->_eventsManager->refreshScreenAndEvents();
 	}
 	_score[5]._score = "         ";
 

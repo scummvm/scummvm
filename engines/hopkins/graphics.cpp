@@ -259,7 +259,7 @@ void GraphicsManager::initColorTable(int minIndex, int maxIndex, byte *palette) 
  */
 void GraphicsManager::scrollScreen(int amount) {
 	int result = CLIP(amount, 0, SCREEN_WIDTH);
-	_vm->_eventsManager._startPos.x = result;
+	_vm->_eventsManager->_startPos.x = result;
 	_scrollOffset = result;
 	_scrollPosX = result;
 }
@@ -565,18 +565,18 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
 
 		// Set the transition palette and refresh the screen
 		setPaletteVGA256(palData2);
-		m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		m_scroll16(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		updateScreen();
 
 		// Added a delay in order to see the fading
-		_vm->_eventsManager.delay(20);
+		_vm->_eventsManager->delay(20);
 	}
 
 	// Set the final palette
 	setPaletteVGA256(palette);
 
 	// Refresh the screen
-	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	m_scroll16(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	updateScreen();
 }
 
@@ -585,7 +585,7 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
  */
 void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface) {
 	byte palData[PALETTE_BLOCK_SIZE];
-	if ((step > 1) && (palette) && (!_vm->_eventsManager._escKeyFl)) {
+	if ((step > 1) && (palette) && (!_vm->_eventsManager->_escKeyFl)) {
 		int fadeStep = step;
 		for (int fadeIndex = 0; fadeIndex < fadeStep; fadeIndex++) {
 			for (int palOffset = 0; palOffset < PALETTE_BLOCK_SIZE; palOffset += 3) {
@@ -595,10 +595,10 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 			}
 
 			setPaletteVGA256(palData);
-			m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			m_scroll16(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			updateScreen();
 
-			_vm->_eventsManager.delay(20);
+			_vm->_eventsManager->delay(20);
 		}
 	}
 
@@ -607,7 +607,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 		palData[i] = 0;
 
 	setPaletteVGA256(palData);
-	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	m_scroll16(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
 	updateScreen();
 }
@@ -692,7 +692,7 @@ void GraphicsManager::setPaletteVGA256(const byte *palette) {
 
 void GraphicsManager::setPaletteVGA256WithRefresh(const byte *palette, const byte *surface) {
 	changePalette(palette);
-	m_scroll16(surface, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	m_scroll16(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	updateScreen();
 }
 
@@ -1067,8 +1067,8 @@ void GraphicsManager::endDisplayBob() {
 			_vm->_objectsManager.hideBob(idx);
 	}
 
-	_vm->_eventsManager.refreshScreenAndEvents();
-	_vm->_eventsManager.refreshScreenAndEvents();
+	_vm->_eventsManager->refreshScreenAndEvents();
+	_vm->_eventsManager->refreshScreenAndEvents();
 
 	for (int idx = 1; idx <= 20; ++idx) {
 		if (_vm->_globals._animBqe[idx]._enabledFl)
@@ -1170,23 +1170,23 @@ void GraphicsManager::displayDirtyRects() {
 		Common::Rect &r = _dirtyRects[idx];
 		Common::Rect dstRect;
 
-		if (_vm->_eventsManager._breakoutFl) {
+		if (_vm->_eventsManager->_breakoutFl) {
 			Copy_Vga16(_vesaBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
 			dstRect.left = r.left * 2;
 			dstRect.top = r.top * 2 + 30;
 			dstRect.setWidth((r.right - r.left) * 2);
 			dstRect.setHeight((r.bottom - r.top) * 2);
-		} else if (r.right > _vm->_eventsManager._startPos.x && r.left < _vm->_eventsManager._startPos.x + SCREEN_WIDTH) {
-			if (r.left < _vm->_eventsManager._startPos.x)
-				r.left = _vm->_eventsManager._startPos.x;
-			if (r.right > _vm->_eventsManager._startPos.x + SCREEN_WIDTH)
-				r.right = _vm->_eventsManager._startPos.x + SCREEN_WIDTH;
+		} else if (r.right > _vm->_eventsManager->_startPos.x && r.left < _vm->_eventsManager->_startPos.x + SCREEN_WIDTH) {
+			if (r.left < _vm->_eventsManager->_startPos.x)
+				r.left = _vm->_eventsManager->_startPos.x;
+			if (r.right > _vm->_eventsManager->_startPos.x + SCREEN_WIDTH)
+				r.right = _vm->_eventsManager->_startPos.x + SCREEN_WIDTH;
 
 			// WORKAROUND: Original didn't lock the screen for access
 			lockScreen();
-			m_scroll16(_vesaBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_eventsManager._startPos.x, r.top);
+			m_scroll16(_vesaBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_eventsManager->_startPos.x, r.top);
 
-			dstRect.left = r.left - _vm->_eventsManager._startPos.x;
+			dstRect.left = r.left - _vm->_eventsManager->_startPos.x;
 			dstRect.top = r.top;
 			dstRect.setWidth(r.right - r.left);
 			dstRect.setHeight(r.bottom - r.top);
@@ -1803,7 +1803,7 @@ void GraphicsManager::NB_SCREEN(bool initPalette) {
 		Trans_bloc2(_vesaBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
 
 	lockScreen();
-	m_scroll16(_vesaBuffer, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	m_scroll16(_vesaBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	unlockScreen();
 
 	memcpy(_vesaScreen, _vesaBuffer, 614399);

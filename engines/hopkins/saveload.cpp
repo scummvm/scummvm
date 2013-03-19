@@ -136,7 +136,7 @@ void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSaveg
 	out->writeSint16LE(td.tm_mday);
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
-	out->writeUint32LE(_vm->_eventsManager._gameCounter);
+	out->writeUint32LE(_vm->_eventsManager->_gameCounter);
 }
 
 Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName) {
@@ -235,7 +235,7 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 	thumb8.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 
 	_vm->_graphicsManager.reduceScreenPart(_vm->_graphicsManager._vesaBuffer, (byte *)thumb8.pixels,
-		_vm->_eventsManager._startPos.x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
+		_vm->_eventsManager->_startPos.x, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 40, 80);
 
 	// Convert the 8-bit pixel to 16 bit surface
 	s->create(w, h, Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));

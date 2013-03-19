@@ -54,7 +54,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
-	_vm->_eventsManager.refreshScreenAndEvents();
+	_vm->_eventsManager->refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 1;
 	bool oldDisableInventFl = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
@@ -101,9 +101,9 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_dialogueMesgId2 = _dialogueMesgId1 + 1;
 	_dialogueMesgId3 = _dialogueMesgId1 + 2;
 	_dialogueMesgId4 = _dialogueMesgId1 + 3;
-	int oldMouseCursorId = _vm->_eventsManager._mouseCursorId;
-	_vm->_eventsManager._mouseCursorId = 4;
-	_vm->_eventsManager.changeMouseCursor(0);
+	int oldMouseCursorId = _vm->_eventsManager->_mouseCursorId;
+	_vm->_eventsManager->_mouseCursorId = 4;
+	_vm->_eventsManager->changeMouseCursor(0);
 	if (!_vm->_globals._introSpeechOffFl) {
 		int answer = 0;
 		int dlgAnswer;
@@ -113,7 +113,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 				answer = dialogAnswer(dlgAnswer, false);
 			if (answer == -1)
 				dlgAnswer = _dialogueMesgId4;
-			_vm->_eventsManager.refreshScreenAndEvents();
+			_vm->_eventsManager->refreshScreenAndEvents();
 		} while (dlgAnswer != _dialogueMesgId4);
 	}
 	if (_vm->_globals._introSpeechOffFl) {
@@ -133,9 +133,9 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
-	_vm->_eventsManager._mouseCursorId = oldMouseCursorId;
+	_vm->_eventsManager->_mouseCursorId = oldMouseCursorId;
 
-	_vm->_eventsManager.changeMouseCursor(oldMouseCursorId);
+	_vm->_eventsManager->changeMouseCursor(oldMouseCursorId);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 
 	if (_vm->getIsDemo() == false)
@@ -144,13 +144,13 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	_vm->_graphicsManager.lockScreen();
-	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.unlockScreen();
 	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
 	_vm->_globals._disableInventFl = oldDisableInventFl;
 	_vm->_graphicsManager.updateScreen();
 	for (int i = 0; i <= 4; i++)
-		_vm->_eventsManager.refreshScreenAndEvents();
+		_vm->_eventsManager->refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 0;
 }
 
@@ -191,9 +191,9 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	_dialogueMesgId2 = _dialogueMesgId1 + 1;
 	_dialogueMesgId3 = _dialogueMesgId1 + 2;
 	_dialogueMesgId4 = _dialogueMesgId1 + 3;
-	int oldMouseCursorId = _vm->_eventsManager._mouseCursorId;
-	_vm->_eventsManager._mouseCursorId = 4;
-	_vm->_eventsManager.changeMouseCursor(0);
+	int oldMouseCursorId = _vm->_eventsManager->_mouseCursorId;
+	_vm->_eventsManager->_mouseCursorId = 4;
+	_vm->_eventsManager->changeMouseCursor(0);
 
 	if (!_vm->_globals._introSpeechOffFl) {
 		int answer;
@@ -215,9 +215,9 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	}
 
 	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
-	_vm->_eventsManager._mouseCursorId = oldMouseCursorId;
+	_vm->_eventsManager->_mouseCursorId = oldMouseCursorId;
 
-	_vm->_eventsManager.changeMouseCursor(oldMouseCursorId);
+	_vm->_eventsManager->changeMouseCursor(oldMouseCursorId);
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	// TODO: The original re-enables the mouse cursor here
@@ -268,7 +268,7 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 	int retVal = -1;
 	bool loopCond = false;
   	do {
-		int mousePosY = _vm->_eventsManager.getMouseY();
+		int mousePosY = _vm->_eventsManager->getMouseY();
 		if (sentence1PosY < mousePosY && mousePosY < (sentence2PosY - 1)) {
 			_vm->_fontManager.setOptimalColor(6, 7, 8, 5);
 			retVal = _dialogueMesgId1;
@@ -286,8 +286,8 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 			retVal = _dialogueMesgId4;
 		}
 
-		_vm->_eventsManager.refreshScreenAndEvents();
-		if (_vm->_eventsManager.getMouseButton())
+		_vm->_eventsManager->refreshScreenAndEvents();
+		if (_vm->_eventsManager->getMouseButton())
 			loopCond = true;
 		if (retVal == -1)
 			loopCond = false;
@@ -325,7 +325,7 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 		dialogTalk();
 	}
 
-	_vm->_eventsManager.refreshScreenAndEvents();
+	_vm->_eventsManager->refreshScreenAndEvents();
   return retVal;
 }
 
@@ -385,19 +385,19 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 		displayedTxtFl = true;
 	}
 	if (!_vm->_soundManager.mixVoice(mesgId, 1, displayedTxtFl)) {
-		_vm->_eventsManager._curMouseButton = 0;
-		_vm->_eventsManager._mouseButton = 0;
+		_vm->_eventsManager->_curMouseButton = 0;
+		_vm->_eventsManager->_mouseButton = 0;
 
 		if (_vm->getIsDemo()) {
 			for (int i = 0; i < frameNumb; i++) {
-				_vm->_eventsManager.refreshScreenAndEvents();
+				_vm->_eventsManager->refreshScreenAndEvents();
 			}
 		} else {
 			for (int i = 0; i < frameNumb; i++) {
-				_vm->_eventsManager.refreshScreenAndEvents();
-				if (_vm->_eventsManager._mouseButton || _vm->_eventsManager._curMouseButton)
+				_vm->_eventsManager->refreshScreenAndEvents();
+				if (_vm->_eventsManager->_mouseButton || _vm->_eventsManager->_curMouseButton)
 					break;
-				if (_vm->_eventsManager.getMouseButton() && i + 1 > abs(frameNumb / 5))
+				if (_vm->_eventsManager->getMouseButton() && i + 1 > abs(frameNumb / 5))
 					break;
 			}
 		}
@@ -496,8 +496,8 @@ void TalkManager::dialogEndTalk() {
 			_vm->_objectsManager.hideBob(idx);
 	}
 
-	_vm->_eventsManager.refreshScreenAndEvents();
-	_vm->_eventsManager.refreshScreenAndEvents();
+	_vm->_eventsManager->refreshScreenAndEvents();
+	_vm->_eventsManager->refreshScreenAndEvents();
 
 	for (int idx = 21; idx <= 25; ++idx) {
 		if (_vm->_globals._animBqe[idx]._enabledFl)
@@ -642,7 +642,7 @@ void TalkManager::startCharacterAnim0(int startIdx, bool readOnlyFl) {
 			if (!READ_LE_INT16(&_characterAnim[2 * idx + 4]))
 				break;
 			if (_vm->_globals._speed != 501)
-				_vm->_graphicsManager.fastDisplay(_characterSprite, _vm->_eventsManager._startPos.x + READ_LE_INT16(&_characterAnim[2 * idx]),
+				_vm->_graphicsManager.fastDisplay(_characterSprite, _vm->_eventsManager->_startPos.x + READ_LE_INT16(&_characterAnim[2 * idx]),
 				    READ_LE_INT16(&_characterAnim[2 * idx + 2]), _characterAnim[2 * idx + 8]);
 			idx += 5;
 		} while (_vm->_globals._speed != 501);
@@ -882,7 +882,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		_vm->_soundManager.playSample(1);
 		_vm->_objectsManager.SPACTION1(_vm->_objectsManager._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
 		do
-			_vm->_eventsManager.refreshScreenAndEvents();
+			_vm->_eventsManager->refreshScreenAndEvents();
 		while (_vm->_objectsManager.getBobAnimDataIdx(6) < 12);
 		_vm->_objectsManager.stopBobAnimation(6);
 		_vm->_objectsManager.setBobAnimation(8);
@@ -930,7 +930,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		_vm->_soundManager.playSample(1);
 		_vm->_objectsManager.SPACTION1(_vm->_objectsManager._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
 		do
-			_vm->_eventsManager.refreshScreenAndEvents();
+			_vm->_eventsManager->refreshScreenAndEvents();
 		while (_vm->_objectsManager.getBobAnimDataIdx(5) < 12);
 		_vm->_objectsManager.stopBobAnimation(5);
 		_vm->_objectsManager.setBobAnimation(7);
@@ -966,7 +966,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
-	_vm->_eventsManager.refreshScreenAndEvents();
+	_vm->_eventsManager->refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 1;
 	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
@@ -976,8 +976,8 @@ void TalkManager::animateObject(const Common::String &filename) {
 		_vm->_linesManager.BOBZONE[i] = 0;
 
 	_vm->_objectsManager._zoneNum = -1;
-	_vm->_eventsManager._mouseCursorId = 4;
-	_vm->_eventsManager.changeMouseCursor(0);
+	_vm->_eventsManager->_mouseCursorId = 4;
+	_vm->_eventsManager->changeMouseCursor(0);
 	_characterBuffer = _vm->_fileManager.searchCat(filename, RES_PER);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
@@ -1028,7 +1028,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager._zoneNum = -1;
 	do {
-		int mouseButton = _vm->_eventsManager.getMouseButton();
+		int mouseButton = _vm->_eventsManager->getMouseButton();
 		if (mouseButton == 1)
 			_vm->_objectsManager.handleLeftButton();
 		else if (mouseButton == 2)
@@ -1037,7 +1037,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 		_vm->_linesManager.checkZone();
 		if (_vm->_globals._actionMoveTo)
 			_vm->_objectsManager.PARADISE();
-		_vm->_eventsManager.refreshScreenAndEvents();
+		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (!_vm->_globals._exitId);
 	dialogEndTalk();
 	dialogTalk();
@@ -1067,8 +1067,8 @@ void TalkManager::animateObject(const Common::String &filename) {
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
-	_vm->_eventsManager._mouseCursorId = 4;
-	_vm->_eventsManager.changeMouseCursor(4);
+	_vm->_eventsManager->_mouseCursorId = 4;
+	_vm->_eventsManager->changeMouseCursor(4);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 
 	if (!_vm->getIsDemo())
@@ -1077,14 +1077,14 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	_vm->_graphicsManager.lockScreen();
-	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager._startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
 	_vm->_globals._disableInventFl = false;
 	_vm->_graphicsManager.updateScreen();
 	for (int i = 0; i <= 4; i++)
-		_vm->_eventsManager.refreshScreenAndEvents();
+		_vm->_eventsManager->refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 0;
 }
 
