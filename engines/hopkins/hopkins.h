@@ -143,7 +143,7 @@ protected:
 
 public:
 	Debugger _debugger;
-	AnimationManager _animationManager;
+	AnimationManager *_animationManager;
 	ComputerManager _computerManager;
 	DialogsManager _dialogsManager;
 	EventsManager _eventsManager;

@@ -35,7 +35,8 @@
 
 namespace Hopkins {
 
-AnimationManager::AnimationManager() {
+AnimationManager::AnimationManager(HopkinsEngine *vm) {
+	_vm = vm;
 	_clearAnimationFl = false;
 	NO_SEQ = false;
 	NO_COUL = false;

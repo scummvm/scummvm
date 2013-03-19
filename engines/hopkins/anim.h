@@ -44,8 +44,7 @@ public:
 	bool NO_SEQ;
 	bool NO_COUL;
 
-	AnimationManager();
-	void setParent(HopkinsEngine *vm) { _vm = vm; }
+	AnimationManager(HopkinsEngine *vm);
 
 	void loadAnim(const Common::String &animName);
 	void clearAnim();

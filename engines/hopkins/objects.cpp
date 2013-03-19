@@ -1734,7 +1734,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_globals.loadHidingItems("PLAN.CA2");
 	loadZone("PLAN.ZO2");
 	_spritePtr = _vm->_fileManager.loadFile("VOITURE.SPR");
-	_vm->_animationManager.loadAnim("PLAN");
+	_vm->_animationManager->loadAnim("PLAN");
 	_vm->_graphicsManager.displayAllBob();
 	_vm->_graphicsManager.initScreen("PLAN", 2, false);
 	for (int i = 0; i <= 15; i++)
@@ -2051,7 +2051,7 @@ void ObjectsManager::clearScreen() {
 	_vm->_fontManager.hideText(5);
 	_vm->_fontManager.hideText(9);
 	_vm->_globals.clearVBob();
-	_vm->_animationManager.clearAnim();
+	_vm->_animationManager->clearAnim();
 	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
 	_vm->_globals.resetHidingItems();
@@ -2589,10 +2589,10 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_graphicsManager.NB_SCREEN(true);
 		_vm->_soundManager._specialSoundNum = 198;
 		PERSO_ON = true;
-		_vm->_animationManager.NO_SEQ = true;
-		_vm->_animationManager._clearAnimationFl = false;
-		_vm->_animationManager.playAnim("otage.ANM", 1, 24, 500);
-		_vm->_animationManager.NO_SEQ = false;
+		_vm->_animationManager->NO_SEQ = true;
+		_vm->_animationManager->_clearAnimationFl = false;
+		_vm->_animationManager->playAnim("otage.ANM", 1, 24, 500);
+		_vm->_animationManager->NO_SEQ = false;
 		_vm->_soundManager._specialSoundNum = 0;
 		_vm->_graphicsManager.NB_SCREEN(false);
 
@@ -3633,7 +3633,7 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 		}
 		if (_vm->_globals._saveData->_data[savegameIdx] == 3) {
 			_vm->_graphicsManager.FADE_LINUX = 2;
-			_vm->_animationManager.playAnim("CREVE2.ANM", 100, 24, 500);
+			_vm->_animationManager->playAnim("CREVE2.ANM", 100, 24, 500);
 			_vm->_globals._exitId = 150;
 			_vm->_graphicsManager._noFadingFl = true;
 			hideBob(1);
@@ -3676,7 +3676,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	if (!linkFile.empty())
 		loadLinkFile(linkFile);
 	if (!animFile.empty())
-		_vm->_animationManager.loadAnim(animFile);
+		_vm->_animationManager->loadAnim(animFile);
 	_vm->_graphicsManager.displayAllBob();
 	if (!s4.empty()) {
 		if (initializeScreen)
@@ -3700,7 +3700,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_vm->_eventsManager.refreshScreenAndEvents();
 	_vm->_graphicsManager.fadeInLong();
 	if (_vm->_globals._screenId == 61) {
-		_vm->_animationManager.playSequence("OUVRE.SEQ", 10, 4, 10);
+		_vm->_animationManager->playSequence("OUVRE.SEQ", 10, 4, 10);
 		stopBobAnimation(3);
 		_vm->_globals._checkDistanceFl = true;
 		_oldCharacterPosX = getSpriteX(0);
@@ -3766,7 +3766,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	if (!linkFile.empty())
 		loadLinkFile(linkFile);
 	if (!animFile.empty()) {
-		_vm->_animationManager.loadAnim(animFile);
+		_vm->_animationManager->loadAnim(animFile);
 		_vm->_graphicsManager.displayAllBob();
 	}
 	if (!s4.empty()) {
