@@ -87,6 +87,9 @@ void Sound::playSound() {
 
 	stopSound();
 
+	// Make sure the sound is back at the beginning before we play it
+	_stream->rewind();
+
 	if (_fader)
 		setVolume(_fader->getFaderValue());
 
