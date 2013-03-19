@@ -50,13 +50,13 @@ void FontManager::setParent(HopkinsEngine *vm) {
 void FontManager::loadZoneText() {
 	switch (_vm->_globals._language) {
 	case LANG_EN:
-		_zoneText = _vm->_fileManager.loadFile("ZONEAN.TXT");
+		_zoneText = _vm->_fileManager->loadFile("ZONEAN.TXT");
 		break;
 	case LANG_FR:
-		_zoneText = _vm->_fileManager.loadFile("ZONE01.TXT");
+		_zoneText = _vm->_fileManager->loadFile("ZONE01.TXT");
 		break;
 	case LANG_SP:
-		_zoneText = _vm->_fileManager.loadFile("ZONEES.TXT");
+		_zoneText = _vm->_fileManager->loadFile("ZONEES.TXT");
 		break;
 	}
 }
@@ -90,7 +90,7 @@ void FontManager::clearAll() {
 }
 
 void FontManager::initData() {
-	_font = _vm->_fileManager.loadFile("FONTE3.SPR");
+	_font = _vm->_fileManager->loadFile("FONTE3.SPR");
 	_fontFixedWidth = 12;
 	_fontFixedHeight = 21;
 	loadZoneText();

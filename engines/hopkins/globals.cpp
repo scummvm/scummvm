@@ -316,7 +316,7 @@ void Globals::clearVBob() {
 
 // Load Object
 void Globals::loadObjects() {
-	byte *data = _vm->_fileManager.loadFile("OBJET.DAT");
+	byte *data = _vm->_fileManager->loadFile("OBJET.DAT");
 	byte *srcP = data;
 
 	for (int idx = 0; idx < 300; ++idx) {
@@ -394,14 +394,14 @@ void Globals::setHidingUseCount(int idx) {
 // Load Hiding Items
 void Globals::loadHidingItems(const Common::String &file) {
 	resetHidingItems();
-	byte *ptr = _vm->_fileManager.loadFile(file);
+	byte *ptr = _vm->_fileManager->loadFile(file);
 	Common::String filename = Common::String((const char *)ptr);
 
 	Common::File f;
 	if (!f.exists(filename))
 		return;
 
-	byte *spriteData = _vm->_fileManager.loadFile(filename);
+	byte *spriteData = _vm->_fileManager->loadFile(filename);
 	_hidingItemData[1] = spriteData;
 	int curBufIdx = 60;
 	for (int i = 0; i <= 21; i++) {

@@ -502,7 +502,7 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	_vm->_globals.Bank[idx]._loadedFl = true;
 	_vm->_globals.Bank[idx]._filename = filename;
 
-	byte *fileDataPtr = _vm->_fileManager.loadFile(filename);
+	byte *fileDataPtr = _vm->_fileManager->loadFile(filename);
 
 	_vm->_globals.Bank[idx]._fileHeader = 0;
 	if (fileDataPtr[1] == 'L' && fileDataPtr[2] == 'E')
@@ -543,7 +543,7 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 
 	Common::File f;
 	if (f.exists(ofsFilename)) {
-		byte *ofsData = _vm->_fileManager.loadFile(ofsFilename);
+		byte *ofsData = _vm->_fileManager->loadFile(ofsFilename);
 		byte *curOfsData = ofsData;
 		for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx]._objDataIdx; ++objIdx, curOfsData += 8) {
 			int x1 = READ_LE_INT16(curOfsData);

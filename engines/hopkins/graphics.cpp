@@ -199,7 +199,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	assert(!_videoPtr);
 
 	bool flag = true;
-	if (_vm->_fileManager.searchCat(file, RES_PIC) == g_PTRNUL) {
+	if (_vm->_fileManager->searchCat(file, RES_PIC) == g_PTRNUL) {
 		if (!f.open(file))
 			error("loadScreen - %s", file.c_str());
 
@@ -1740,20 +1740,20 @@ void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp,
 
 void GraphicsManager::initScreen(const Common::String &file, int mode, bool initializeScreen) {
 	Common::String filename = file + ".ini";
-	byte *ptr = _vm->_fileManager.searchCat(filename, RES_INI);
+	byte *ptr = _vm->_fileManager->searchCat(filename, RES_INI);
 
 	if (ptr == g_PTRNUL) {
-		ptr = _vm->_fileManager.loadFile(filename);
+		ptr = _vm->_fileManager->loadFile(filename);
 	}
 	if (!mode) {
 		filename = file + ".spr";
 		_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
 		if (initializeScreen) {
-			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.searchCat(filename, RES_SLI);
+			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager->searchCat(filename, RES_SLI);
 			if (_vm->_globals.SPRITE_ECRAN) {
-				_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.loadFile(filename);
+				_vm->_globals.SPRITE_ECRAN = _vm->_fileManager->loadFile(filename);
 			} else {
-				_vm->_globals.SPRITE_ECRAN = _vm->_fileManager.loadFile("RES_SLI.RES");
+				_vm->_globals.SPRITE_ECRAN = _vm->_fileManager->loadFile("RES_SLI.RES");
 			}
 		}
 	}
@@ -1784,9 +1784,9 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 	_vm->_globals._answerBuffer = _vm->_globals.freeMemory(_vm->_globals._answerBuffer);
 
 	filename = file + ".rep";
-	byte *dataP = _vm->_fileManager.searchCat(filename, RES_REP);
+	byte *dataP = _vm->_fileManager->searchCat(filename, RES_REP);
 	if (dataP == g_PTRNUL)
-		dataP = _vm->_fileManager.loadFile(filename);
+		dataP = _vm->_fileManager->loadFile(filename);
 
 	_vm->_globals._answerBuffer = dataP;
 	_vm->_objectsManager._forceZoneFl = true;

@@ -80,18 +80,18 @@ void EventsManager::initMouseData() {
 	switch (_vm->_globals._language) {
 	case LANG_EN:
 		if (!_mouseLinuxFl)
-			_mouseCursor = _vm->_fileManager.loadFile("SOUAN.SPR");
+			_mouseCursor = _vm->_fileManager->loadFile("SOUAN.SPR");
 		else
-			_mouseCursor = _vm->_fileManager.loadFile("LSOUAN.SPR");
+			_mouseCursor = _vm->_fileManager->loadFile("LSOUAN.SPR");
 		break;
 	case LANG_FR:
 		if (!_mouseLinuxFl)
-			_mouseCursor = _vm->_fileManager.loadFile("SOUFR.SPR");
+			_mouseCursor = _vm->_fileManager->loadFile("SOUFR.SPR");
 		else
-			_mouseCursor = _vm->_fileManager.loadFile("LSOUFR.SPR");
+			_mouseCursor = _vm->_fileManager->loadFile("LSOUFR.SPR");
 		break;
 	case LANG_SP:
-		_mouseCursor = _vm->_fileManager.loadFile("SOUES.SPR");
+		_mouseCursor = _vm->_fileManager->loadFile("SOUES.SPR");
 		break;
 	}
 }

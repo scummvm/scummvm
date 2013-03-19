@@ -33,10 +33,7 @@
 
 namespace Hopkins {
 
-FileManager::FileManager() {
-}
-
-void FileManager::setParent(HopkinsEngine *vm) {
+FileManager::FileManager(HopkinsEngine *vm) {
 	_vm = vm;
 }
 

@@ -45,8 +45,8 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_dialogsManager = new DialogsManager(this);
 	_debugger = new Debugger(this);
 	_eventsManager = new EventsManager(this);
+	_fileManager = new FileManager(this);
 
-	_fileManager.setParent(this);
 	_fontManager.setParent(this);
 	_globals.setParent(this);
 	_graphicsManager.setParent(this);
@@ -60,6 +60,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 }
 
 HopkinsEngine::~HopkinsEngine() {
+	delete _fileManager;
 	delete _eventsManager;
 	delete _debugger;
 	delete _dialogsManager;
@@ -103,7 +104,7 @@ Common::Error HopkinsEngine::run() {
 	_saveLoadManager.initSaves();
 
 	_globals.setConfig();
-	_fileManager.initCensorship();
+	_fileManager->initCensorship();
 	initializeSystem();
 
 	if (!getIsDemo())
@@ -155,7 +156,7 @@ bool HopkinsEngine::runWin95Demo() {
 		_globals._speed = 3;
 	_graphicsManager.fadeOutLong();
 	_globals.iRegul = 1;
-	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
+	_globals.PERSO = _fileManager->loadFile("PERSO.SPR");
 	_globals._characterType = 0;
 	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
@@ -445,7 +446,7 @@ bool HopkinsEngine::runLinuxDemo() {
 		playIntro();
 
 	_globals.iRegul = 0;
-	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
+	_globals.PERSO = _fileManager->loadFile("PERSO.SPR");
 	_globals._characterType = 0;
 	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
@@ -809,7 +810,7 @@ bool HopkinsEngine::runFull() {
 		_graphicsManager.fadeOutLong();
 	}
 	_globals.iRegul = 0;
-	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
+	_globals.PERSO = _fileManager->loadFile("PERSO.SPR");
 	_globals._characterType = 0;
 	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
 	memset(_globals._saveData, 0, 2000);
@@ -1536,7 +1537,7 @@ bool HopkinsEngine::runFull() {
 			_globals._exitId = handleBaseMap();	// Handles the base map (non-Windows)
 			//_globals._exitId = WBASE();	// Handles the 3D Doom level (Windows)
 			_soundManager.stopSound();
-			_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
+			_globals.PERSO = _fileManager->loadFile("PERSO.SPR");
 			_globals._characterType = 0;
 			_globals.iRegul = 0;
 			_graphicsManager._lineNbr = SCREEN_WIDTH;
@@ -1583,8 +1584,8 @@ void HopkinsEngine::initializeSystem() {
 	_eventsManager->initMouseData();
 	_fontManager.initData();
 
-	_dialogsManager->_inventoryIcons = _fileManager.loadFile("ICONE.SPR");
-	_objectsManager._headSprites = _fileManager.loadFile("TETE.SPR");
+	_dialogsManager->_inventoryIcons = _fileManager->loadFile("ICONE.SPR");
+	_objectsManager._headSprites = _fileManager->loadFile("TETE.SPR");
 
 	_eventsManager->setMouseOn();
 	_eventsManager->_mouseFl = false;
@@ -2196,7 +2197,7 @@ void HopkinsEngine::playEnding() {
 		_globals.iRegul = 0;
 		_globals._exitId = 300;
 	}
-	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
+	_globals.PERSO = _fileManager->loadFile("PERSO.SPR");
 	_globals._characterType = 0;
 	_globals.iRegul = 0;
 }
@@ -2382,13 +2383,13 @@ void HopkinsEngine::loadCredits() {
 	byte *bufPtr;
 	switch (_globals._language) {
 	case LANG_EN:
-		bufPtr = _fileManager.loadFile("CREAN.TXT");
+		bufPtr = _fileManager->loadFile("CREAN.TXT");
 		break;
 	case LANG_FR:
-		bufPtr = _fileManager.loadFile("CREFR.TXT");
+		bufPtr = _fileManager->loadFile("CREFR.TXT");
 		break;
 	case LANG_SP:
-		bufPtr = _fileManager.loadFile("CREES.TXT");
+		bufPtr = _fileManager->loadFile("CREES.TXT");
 		break;
 	default:
 		error("Unhandled language");
@@ -2750,7 +2751,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	_globals._exitId = 0;
 	_globals._disableInventFl = true;
 	_soundManager.playSound(soundId);
-	_globals.PERSO = _fileManager.loadFile("VAISSEAU.SPR");
+	_globals.PERSO = _fileManager->loadFile("VAISSEAU.SPR");
 	if (backgroundFilename.size())
 		_graphicsManager.loadImage(backgroundFilename);
 
@@ -2837,7 +2838,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	_graphicsManager.fadeOutLong();
 	_objectsManager.removeSprite(0);
 	_objectsManager.clearScreen();
-	_globals.PERSO = _fileManager.loadFile("PERSO.SPR");
+	_globals.PERSO = _fileManager->loadFile("PERSO.SPR");
 	_globals._characterType = 0;
 }
 

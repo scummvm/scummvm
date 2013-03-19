@@ -111,7 +111,7 @@ void LinesManager::loadLines(const Common::String &file) {
 	resetLines();
 	_linesNumb = 0;
 	_lastLine = 0;
-	byte *ptr = _vm->_fileManager.loadFile(file);
+	byte *ptr = _vm->_fileManager->loadFile(file);
 	for (int idx = 0; READ_LE_INT16((uint16 *)ptr + (idx * 5)) != -1; idx++) {
 		addLine(idx,
 		    (Directions)READ_LE_INT16((uint16 *)ptr + (idx * 5)),

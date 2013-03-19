@@ -147,10 +147,10 @@ public:
 	DialogsManager *_dialogsManager;
 	Debugger *_debugger;
 	EventsManager *_eventsManager;
+	FileManager *_fileManager;
 
 	FontManager _fontManager;
 	Globals _globals;
-	FileManager _fileManager;
 	GraphicsManager _graphicsManager;
 	LinesManager _linesManager;
 	MenuManager _menuManager;

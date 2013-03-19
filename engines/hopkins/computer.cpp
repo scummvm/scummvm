@@ -83,7 +83,7 @@ void ComputerManager::setTextMode() {
 	Common::File f;
 	if (!f.exists(filename))
 		filename = "FONTE.SPR"; // Used by the BeOS and OS/2 versions as an alternative
-	_vm->_fontManager._font = _vm->_fileManager.loadFile(filename);
+	_vm->_fontManager._font = _vm->_fileManager->loadFile(filename);
 	_vm->_fontManager._fontFixedWidth = 8;
 	_vm->_fontManager._fontFixedHeight = 8;
 
@@ -352,8 +352,8 @@ static const char _spanishText[] =
  */
 void ComputerManager::loadMenu() {
 	char *ptr;
-	if (_vm->_fileManager.fileExists("COMPUTAN.TXT")) {
-		ptr = (char *)_vm->_fileManager.loadFile("COMPUTAN.TXT");
+	if (_vm->_fileManager->fileExists("COMPUTAN.TXT")) {
+		ptr = (char *)_vm->_fileManager->loadFile("COMPUTAN.TXT");
 	} else if (_vm->_globals._language == LANG_FR) {
 		ptr = (char *)_vm->_globals.allocMemory(sizeof(_frenchText));
 		strcpy(ptr, _frenchText);
@@ -468,7 +468,7 @@ void ComputerManager::outText2(const Common::String &msg) {
  */
 void ComputerManager::restoreFBIRoom() {
 	_vm->_globals.freeMemory(_vm->_fontManager._font);
-	_vm->_fontManager._font = _vm->_fileManager.loadFile("FONTE3.SPR");
+	_vm->_fontManager._font = _vm->_fileManager->loadFile("FONTE3.SPR");
 	_vm->_fontManager._fontFixedWidth = 12;
 	_vm->_fontManager._fontFixedHeight = 21;
 
@@ -489,8 +489,8 @@ void ComputerManager::readText(int idx) {
 	else if (_vm->_globals._language == LANG_SP)
 		filename = "THOPKES.TXT";
 
-	byte *ptr = _vm->_fileManager.loadFile(filename);
-	uint16 fileSize = _vm->_fileManager.fileSize(filename);
+	byte *ptr = _vm->_fileManager->loadFile(filename);
+	uint16 fileSize = _vm->_fileManager->fileSize(filename);
 	int pos;
 	for (pos = 0; pos < fileSize; pos++) {
 		if (ptr[pos] == '%') {
@@ -551,7 +551,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_soundManager.loadSample(1, "SOUND37.WAV");
 	_vm->_soundManager.loadSample(2, "SOUND38.WAV");
 	_vm->_soundManager.loadSample(3, "SOUND39.WAV");
-	_breakoutSpr = _vm->_fileManager.loadFile("CASSE.SPR");
+	_breakoutSpr = _vm->_fileManager->loadFile("CASSE.SPR");
 	loadHiscore();
 	setModeVGA256();
 
@@ -640,7 +640,7 @@ void ComputerManager::newLevel() {
 	}
 	f.close();
 
-	_breakoutLevel = (int16 *)_vm->_fileManager.loadFile(file);
+	_breakoutLevel = (int16 *)_vm->_fileManager->loadFile(file);
 	displayBricks();
 
 	_vm->_objectsManager.addStaticSprite(_breakoutSpr, Common::Point(150, 192), 0, 13, 0, false, 0, 0);
@@ -810,7 +810,7 @@ int ComputerManager::displayHiscores() {
 	_vm->_graphicsManager.resetDirtyRects();
 	loadHiscore();
 	_vm->_graphicsManager.loadVgaImage("HISCORE.PCX");
-	byte *ptr = _vm->_fileManager.loadFile("ALPHA.SPR");
+	byte *ptr = _vm->_fileManager->loadFile("ALPHA.SPR");
 	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -863,7 +863,7 @@ void ComputerManager::getScoreName() {
 	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	byte *ptr = _vm->_fileManager.loadFile("ALPHA.SPR");
+	byte *ptr = _vm->_fileManager->loadFile("ALPHA.SPR");
 	_vm->_graphicsManager.fadeInBreakout();
 	for (int strPos = 0; strPos <= 4; strPos++) {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, 1);

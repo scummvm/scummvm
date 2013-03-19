@@ -69,7 +69,7 @@ void DialogsManager::showOptionsDialog() {
 			filename = "OPTIES.SPR";
 	}
 
-	_vm->_globals._optionDialogSpr = _vm->_fileManager.loadFile(filename);
+	_vm->_globals._optionDialogSpr = _vm->_fileManager->loadFile(filename);
 	_vm->_globals._optionDialogFl = true;
 
 	int scrollOffset = _vm->_graphicsManager._scrollOffset;
@@ -352,10 +352,10 @@ void DialogsManager::showInventory() {
 
 		size_t filesize = f.size();
 		_inventWin1 = _vm->_globals.allocMemory(filesize);
-		_vm->_fileManager.readStream(f, _inventWin1, filesize);
+		_vm->_fileManager->readStream(f, _inventWin1, filesize);
 		f.close();
 
-		_inventBuf2 = _vm->_fileManager.loadFile("INVENT2.SPR");
+		_inventBuf2 = _vm->_fileManager->loadFile("INVENT2.SPR");
 
 		_inventX = _vm->_graphicsManager._scrollOffset + 152;
 		_inventY = 114;

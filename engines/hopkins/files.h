@@ -41,8 +41,7 @@ class FileManager {
 public:
 	HopkinsEngine *_vm;
 
-	FileManager();
-	void setParent(HopkinsEngine *vm);
+	FileManager(HopkinsEngine *vm);
 
 	bool fileExists(const Common::String &file);
 	byte *loadFile(const Common::String &file);

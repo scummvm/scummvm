@@ -948,7 +948,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 56:
-			_vm->_globals.PERSO = _vm->_fileManager.loadFile("HOPFEM.SPR");
+			_vm->_globals.PERSO = _vm->_fileManager->loadFile("HOPFEM.SPR");
 			_vm->_globals._characterType = 1;
 			_vm->_globals._saveData->_data[svAlternateSpriteFl] = 1;
 			_vm->_globals.loadCharacterData();
@@ -958,7 +958,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 57:
-			_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
+			_vm->_globals.PERSO = _vm->_fileManager->loadFile("PERSO.SPR");
 			_vm->_globals._characterType = 0;
 			_vm->_globals._saveData->_data[svAlternateSpriteFl] = 0;
 			_vm->_globals.loadCharacterData();

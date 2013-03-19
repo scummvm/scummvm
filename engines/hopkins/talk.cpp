@@ -58,11 +58,11 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_graphicsManager._scrollStatus = 1;
 	bool oldDisableInventFl = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
-	_characterBuffer = _vm->_fileManager.searchCat(filename, RES_PER);
+	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
-		_characterBuffer = _vm->_fileManager.loadFile(filename);
-		_characterSize = _vm->_fileManager.fileSize(filename);
+		_characterBuffer = _vm->_fileManager->loadFile(filename);
+		_characterSize = _vm->_fileManager->fileSize(filename);
 	}
 
 	_vm->_globals._saveData->_data[svDialogField4] = 0;
@@ -79,7 +79,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	}
 	_dialogueMesgId1 = READ_LE_INT16((uint16 *)_characterBuffer + 40);
 	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
-	_characterSprite = _vm->_fileManager.searchCat(spriteFilename, RES_SAN);
+	_characterSprite = _vm->_fileManager->searchCat(spriteFilename, RES_SAN);
 	if (_characterSprite) {
 		_characterSprite = _vm->_objectsManager.loadSprite(spriteFilename);
 	} else {
@@ -158,11 +158,11 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	// TODO: The original disables the mouse cursor here
 	bool oldDisableInventFl = _vm->_globals._disableInventFl;
 	_vm->_globals._disableInventFl = true;
-	_characterBuffer = _vm->_fileManager.searchCat(filename, RES_PER);
+	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
-		_characterBuffer = _vm->_fileManager.loadFile(filename);
-		_characterSize = _vm->_fileManager.fileSize(filename);
+		_characterBuffer = _vm->_fileManager->loadFile(filename);
+		_characterSize = _vm->_fileManager->fileSize(filename);
 	}
 
 	_vm->_globals._saveData->_data[svDialogField4] = 0;
@@ -978,11 +978,11 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_objectsManager._zoneNum = -1;
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(0);
-	_characterBuffer = _vm->_fileManager.searchCat(filename, RES_PER);
+	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
 	_characterSize = _vm->_globals._catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
-		_characterBuffer = _vm->_fileManager.loadFile(filename);
-		_characterSize = _vm->_fileManager.fileSize(filename);
+		_characterBuffer = _vm->_fileManager->loadFile(filename);
+		_characterSize = _vm->_fileManager->fileSize(filename);
 	}
 	Common::String screenFilename;
 	Common::String spriteFilename;
@@ -994,7 +994,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	if (curScreenFilename == "NULL")
 		curScreenFilename = Common::String::format("IM%d", _vm->_globals._screenId);
 
-	_characterSprite = _vm->_fileManager.searchCat(spriteFilename, RES_SAN);
+	_characterSprite = _vm->_fileManager->searchCat(spriteFilename, RES_SAN);
 	if (_characterSprite)
 		_characterSprite = _vm->_objectsManager.loadSprite(spriteFilename);
 	else

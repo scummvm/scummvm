@@ -269,7 +269,7 @@ void ObjectsManager::removeObjectDataBuf() {
  * Load Sprite from file
  */
 byte *ObjectsManager::loadSprite(const Common::String &file) {
-	return _vm->_fileManager.loadFile(file);
+	return _vm->_fileManager->loadFile(file);
 }
 
 /**
@@ -1665,7 +1665,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	if (!f.exists(file))
 		error("File not found : %s", file.c_str());
 
-	byte *ptr = _vm->_fileManager.loadFile(file);
+	byte *ptr = _vm->_fileManager->loadFile(file);
 	int bufId = 0;
 	int zoneLineIdx = 0;
 	int bobZoneIdx;
@@ -1733,7 +1733,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_linesManager.loadLines("PLAN.OB2");
 	_vm->_globals.loadHidingItems("PLAN.CA2");
 	loadZone("PLAN.ZO2");
-	_spritePtr = _vm->_fileManager.loadFile("VOITURE.SPR");
+	_spritePtr = _vm->_fileManager->loadFile("VOITURE.SPR");
 	_vm->_animationManager->loadAnim("PLAN");
 	_vm->_graphicsManager.displayAllBob();
 	_vm->_graphicsManager.initScreen("PLAN", 2, false);
@@ -2115,7 +2115,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		_vm->_globals._saveData->_data[svField357] = 1;
 
 		loc = &_vm->_globals._saveData->_realHopkins;
-		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
+		_vm->_globals.PERSO = _vm->_fileManager->loadFile("PERSO.SPR");
 		_vm->_globals._characterType = 0;
 		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->_zoomFactor, false, 34, 190);
 		animateSprite(0);
@@ -2140,7 +2140,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		_vm->_globals._saveData->_data[svField357] = 0;
 
 		loc = &_vm->_globals._saveData->_samantha;
-		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PSAMAN.SPR");
+		_vm->_globals.PERSO = _vm->_fileManager->loadFile("PSAMAN.SPR");
 		_vm->_globals._characterType = 2;
 		addStaticSprite(_vm->_globals.PERSO, loc->_pos, 0, 64, loc->_zoomFactor, false, 20, 127);
 		animateSprite(0);
@@ -2531,9 +2531,9 @@ void ObjectsManager::OPTI_OBJET() {
 	int lastOpcodeResult = 1;
 
 	file = "OBJET1.ini";
-	data = _vm->_fileManager.searchCat(file, RES_INI);
+	data = _vm->_fileManager->searchCat(file, RES_INI);
 	if (data == g_PTRNUL) {
-		data = _vm->_fileManager.loadFile(file);
+		data = _vm->_fileManager->loadFile(file);
 		if (data == g_PTRNUL)
 			error("INI file %s not found", file.c_str());
 	}
@@ -2748,7 +2748,7 @@ void ObjectsManager::doActionBack(int idx) {
 	if (_curGestureFile != 1) {
 		_gestureBuf = _vm->_globals.freeMemory(_gestureBuf);
 		_curGestureFile = 1;
-		_gestureBuf = _vm->_fileManager.loadFile("DOS.SPR");
+		_gestureBuf = _vm->_fileManager->loadFile("DOS.SPR");
 	}
 	
 	switch (idx) {
@@ -2789,7 +2789,7 @@ void ObjectsManager::doActionRight(int idx) {
 	if (_curGestureFile != 3) {
 		_gestureBuf = _vm->_globals.freeMemory(_gestureBuf);
 		_curGestureFile = 3;
-		_gestureBuf = _vm->_fileManager.loadFile("PROFIL.SPR");
+		_gestureBuf = _vm->_fileManager->loadFile("PROFIL.SPR");
 	}
 	
 	switch (idx) {
@@ -2830,7 +2830,7 @@ void ObjectsManager::doActionDiagRight(int idx) {
 	if (_curGestureFile != 4) {
 		_gestureBuf = _vm->_globals.freeMemory(_gestureBuf);
 		_curGestureFile = 4;
-		_gestureBuf = _vm->_fileManager.loadFile("3Q.SPR");
+		_gestureBuf = _vm->_fileManager->loadFile("3Q.SPR");
 	}
 
 	switch (idx) {
@@ -2871,7 +2871,7 @@ void ObjectsManager::doActionFront(int idx) {
 	if (_curGestureFile != 2) {
 		_gestureBuf = _vm->_globals.freeMemory(_gestureBuf);
 		_curGestureFile = 2;
-		_gestureBuf = _vm->_fileManager.loadFile("FACE.SPR");
+		_gestureBuf = _vm->_fileManager->loadFile("FACE.SPR");
 	}
 	
 	switch (idx) {
@@ -2894,7 +2894,7 @@ void ObjectsManager::doActionDiagLeft(int idx) {
 	if (_curGestureFile != 4) {
 		_gestureBuf = _vm->_globals.freeMemory(_gestureBuf);
 		_curGestureFile = 4;
-		_gestureBuf = _vm->_fileManager.loadFile("3Q.SPR");
+		_gestureBuf = _vm->_fileManager->loadFile("3Q.SPR");
 	}
 	
 	switch (idx) {
@@ -2935,7 +2935,7 @@ void ObjectsManager::doActionLeft(int idx) {
 	if (_curGestureFile != 3) {
 		_gestureBuf = _vm->_globals.freeMemory(_gestureBuf);
 		_curGestureFile = 3;
-		_gestureBuf = _vm->_fileManager.loadFile("PROFIL.SPR");
+		_gestureBuf = _vm->_fileManager->loadFile("PROFIL.SPR");
 	}
 	
 	switch (idx) {
@@ -3043,7 +3043,7 @@ int ObjectsManager::getBobFrameIndex(int idx) {
 void ObjectsManager::loadLinkFile(const Common::String &file) {
 	Common::File f;
 	Common::String filename = file + ".LNK";
-	byte *ptr = _vm->_fileManager.searchCat(filename, RES_LIN);
+	byte *ptr = _vm->_fileManager->searchCat(filename, RES_LIN);
 	size_t nbytes = _vm->_globals._catalogSize;
 	if (ptr == g_PTRNUL) {
 		if (!f.open(filename))
@@ -3053,7 +3053,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 		ptr = _vm->_globals.allocMemory(nbytes);
 		if (g_PTRNUL == ptr)
 			error("INILINK");
-		_vm->_fileManager.readStream(f, ptr, nbytes);
+		_vm->_fileManager->readStream(f, ptr, nbytes);
 		f.close();
 	}
 	if (!OBSSEUL) {
@@ -3064,12 +3064,12 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 
 		Common::String filename2 = Common::String((const char *)ptr + 1000);
 		if (!filename2.empty()) {
-			_vm->_globals._hidingItemData[1] = _vm->_fileManager.searchCat(filename2, RES_SLI);
+			_vm->_globals._hidingItemData[1] = _vm->_fileManager->searchCat(filename2, RES_SLI);
 
 			if (_vm->_globals._hidingItemData[1] || _vm->_globals._hidingItemData[1] == g_PTRNUL) {
-				_vm->_globals._hidingItemData[1] = _vm->_fileManager.loadFile(filename2);
+				_vm->_globals._hidingItemData[1] = _vm->_fileManager->loadFile(filename2);
 			} else {
-				_vm->_globals._hidingItemData[1] = _vm->_fileManager.loadFile("RES_SLI.RES");
+				_vm->_globals._hidingItemData[1] = _vm->_fileManager->loadFile("RES_SLI.RES");
 			}
 
 			int curDataCacheId = 60;
@@ -3783,17 +3783,17 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
 	if (_vm->_globals._characterType) {
 		if (!_vm->_globals._saveData->_data[svAlternateSpriteFl] && !_vm->_globals._saveData->_data[svField356]) {
-			_vm->_globals.PERSO = _vm->_fileManager.loadFile("PERSO.SPR");
+			_vm->_globals.PERSO = _vm->_fileManager->loadFile("PERSO.SPR");
 			_vm->_globals._characterType = 0;
 		}
 	}
 	if (!_vm->_globals._characterType && _vm->_globals._saveData->_data[svAlternateSpriteFl] == 1) {
-		_vm->_globals.PERSO = _vm->_fileManager.loadFile("HOPFEM.SPR");
+		_vm->_globals.PERSO = _vm->_fileManager->loadFile("HOPFEM.SPR");
 		_vm->_globals._characterType = 1;
 	}
 
 	if (_vm->_globals._characterType != 2 && _vm->_globals._saveData->_data[svField356] == 1) {
-		_vm->_globals.PERSO = _vm->_fileManager.loadFile("PSAMAN.SPR");
+		_vm->_globals.PERSO = _vm->_fileManager->loadFile("PSAMAN.SPR");
 		_vm->_globals._characterType = 2;
 	}
 	_vm->_globals.loadCharacterData();
