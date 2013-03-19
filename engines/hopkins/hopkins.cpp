@@ -41,9 +41,9 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 		_gameDescription(gameDesc), _randomSource("Hopkins") {
 	g_vm = this;
 	_animationManager = new AnimationManager(this);
+	_computerManager = new ComputerManager(this);
 
 	_debugger.setParent(this);
-	_computerManager.setParent(this);
 	_dialogsManager.setParent(this);
 	_eventsManager.setParent(this);
 	_fileManager.setParent(this);
@@ -60,6 +60,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 }
 
 HopkinsEngine::~HopkinsEngine() {
+	delete _computerManager;
 	delete _animationManager;
 }
 
@@ -337,7 +338,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals._saveData->_data[svLastPrevScreenId] = _globals._screenId;
 			_globals._screenId = 113;
 			_globals._saveData->_data[svLastScreenId] = _globals._screenId;
-			_computerManager.showComputer(COMPUTER_HOPKINS);
+			_computerManager->showComputer(COMPUTER_HOPKINS);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
@@ -354,7 +355,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals._screenId = 114;
 			_globals._saveData->_data[svLastScreenId] = _globals._screenId;
 			_globals._exitId = 0;
-			_computerManager.showComputer(COMPUTER_SAMANTHA);
+			_computerManager->showComputer(COMPUTER_SAMANTHA);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
@@ -366,7 +367,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals._saveData->_data[svLastPrevScreenId] = _globals._screenId;
 			_globals._screenId = 115;
 			_globals._saveData->_data[svLastScreenId] = _globals._screenId;
-			_computerManager.showComputer(COMPUTER_PUBLIC);
+			_computerManager->showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
@@ -654,7 +655,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals._saveData->_data[svLastPrevScreenId] = _globals._screenId;
 			_globals._screenId = 113;
 			_globals._saveData->_data[svLastScreenId] = 113;
-			_computerManager.showComputer(COMPUTER_HOPKINS);
+			_computerManager->showComputer(COMPUTER_HOPKINS);
 
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
@@ -672,7 +673,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals._saveData->_data[svLastPrevScreenId] = _globals._screenId;
 			_globals._screenId = 114;
 			_globals._saveData->_data[svLastScreenId] = 114;
-			_computerManager.showComputer(COMPUTER_SAMANTHA);
+			_computerManager->showComputer(COMPUTER_SAMANTHA);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
@@ -684,7 +685,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals._saveData->_data[svLastPrevScreenId] = _globals._screenId;
 			_globals._screenId = 115;
 			_globals._saveData->_data[svLastScreenId] = 115;
-			_computerManager.showComputer(COMPUTER_PUBLIC);
+			_computerManager->showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
@@ -1442,7 +1443,7 @@ bool HopkinsEngine::runFull() {
 			_globals._saveData->_data[svLastPrevScreenId] = _globals._prevScreenId;
 			_globals._saveData->_data[svLastScreenId] = _globals._screenId;
 			_globals._exitId = 0;
-			_computerManager.showComputer(COMPUTER_HOPKINS);
+			_computerManager->showComputer(COMPUTER_HOPKINS);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
@@ -1459,7 +1460,7 @@ bool HopkinsEngine::runFull() {
 			_globals._screenId = 114;
 			_globals._saveData->_data[svLastPrevScreenId] = _globals._prevScreenId;
 			_globals._saveData->_data[svLastScreenId] = _globals._screenId;
-			_computerManager.showComputer(COMPUTER_SAMANTHA);
+			_computerManager->showComputer(COMPUTER_SAMANTHA);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();
@@ -1471,7 +1472,7 @@ bool HopkinsEngine::runFull() {
 			_globals._saveData->_data[svLastPrevScreenId] = _globals._prevScreenId;
 			_globals._saveData->_data[svLastScreenId] = _globals._screenId;
 			_globals._exitId = 0;
-			_computerManager.showComputer(COMPUTER_PUBLIC);
+			_computerManager->showComputer(COMPUTER_PUBLIC);
 			_graphicsManager.lockScreen();
 			_graphicsManager.clearScreen();
 			_graphicsManager.unlockScreen();

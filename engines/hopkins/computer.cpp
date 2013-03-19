@@ -35,7 +35,9 @@
 
 namespace Hopkins {
 
-ComputerManager::ComputerManager() {
+ComputerManager::ComputerManager(HopkinsEngine *vm) {
+	_vm = vm;
+
 	for (int i = 0; i < 50; i++) {
 		_menuText[i]._actvFl = false;
 		_menuText[i]._lineSize = 0;
@@ -56,10 +58,6 @@ ComputerManager::ComputerManager() {
 	_minBreakoutMoveSpeed = 0;
 	_maxBreakoutMoveSpeed = 0;
 	_lastBreakoutMoveSpeed = 0;
-}
-
-void ComputerManager::setParent(HopkinsEngine *vm) {
-	_vm = vm;
 }
 
 /**

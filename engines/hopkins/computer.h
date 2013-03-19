@@ -98,8 +98,7 @@ private:
 	void displayScoreChar(int charPos, int charDisp);
 
 public:
-	ComputerManager();
-	void setParent(HopkinsEngine *vm);
+	ComputerManager(HopkinsEngine *vm);
 
 	void showComputer(ComputerEnum mode);
 };
