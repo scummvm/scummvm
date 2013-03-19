@@ -2297,7 +2297,7 @@ int HopkinsEngine::handleBaseMap() {
 	// Load the map image
 	loadBaseMap();
 
-	// Set needed colours
+	// Set needed colors
 	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
@@ -2405,7 +2405,7 @@ void HopkinsEngine::loadCredits() {
 				loopCond = true;
 				break;
 			}
-			_globals._creditsItem[idxLines]._colour = curPtr[1];
+			_globals._creditsItem[idxLines]._color = curPtr[1];
 			_globals._creditsItem[idxLines]._actvFl = true;
 			_globals._creditsItem[idxLines]._linePosY = _globals._creditsPosY + idxLines * _globals._creditsStep;
 
@@ -2429,7 +2429,7 @@ void HopkinsEngine::loadCredits() {
 	_globals.freeMemory(bufPtr);
 }
 
-void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char colour) {
+void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char color) {
 	byte *bufPtr = buffer;
 	int strWidth = 0;
 	byte curChar;
@@ -2464,7 +2464,7 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char colour) {
 		if (!curChar)
 			break;
 		if (curChar > 31) {
-			_graphicsManager.displayFont(_graphicsManager._vesaBuffer, _fontManager._font, startPosX, startPosY, curChar - 32, colour);
+			_graphicsManager.displayFont(_graphicsManager._vesaBuffer, _fontManager._font, startPosX, startPosY, curChar - 32, color);
 			startPosX += _objectsManager.getWidth(_fontManager._font, curChar - 32);
 		}
 	}
@@ -2488,7 +2488,7 @@ void HopkinsEngine::displayCredits() {
 
 				if ((nextY - 21  >= 0) && (nextY - 21 <= 418)) {
 					int col = 0;
-					switch (_globals._creditsItem[i]._colour) {
+					switch (_globals._creditsItem[i]._color) {
 					case '1':
 						col = 163;
 						break;
@@ -2499,7 +2499,7 @@ void HopkinsEngine::displayCredits() {
 						col = 162;
 						break;
 					default:
-						warning("Unknown colour, default to col #1");
+						warning("Unknown color, default to col #1");
 						col = 163;
 						break;
 					}

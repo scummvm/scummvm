@@ -1703,7 +1703,7 @@ void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 wi
 }
 
 // Display Font
-void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int colour) {
+void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int color) {
 	const byte *spriteDataP = spriteData + 3;
 	for (int i = characterIndex; i; --i)
 		spriteDataP += READ_LE_UINT32(spriteDataP) + 16;
@@ -1726,7 +1726,7 @@ void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp,
 			byte destByte = *spritePixelsP;
 			if (*spritePixelsP) {
 				if (destByte == 252)
-					destByte = colour;
+					destByte = color;
 				*destP = destByte;
 			}
 

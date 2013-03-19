@@ -151,7 +151,7 @@ public:
 	void copyVideoVbe16a(const byte *srcData);
 	void copySurfaceRect(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height);
 	void restoreSurfaceRect(byte *destSurface, const byte *src, int xp, int yp, int width, int height);
-	void displayFont(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int colour);
+	void displayFont(byte *surface, const byte *spriteData, int xp, int yp, int characterIndex, int color);
 	void drawHorizontalLine(byte *surface, int xp, int yp, uint16 width, byte col);
 	void drawVerticalLine(byte *surface, int xp, int yp, int height, byte col);
 	void initColorTable(int minIndex, int maxIndex, byte *palette);

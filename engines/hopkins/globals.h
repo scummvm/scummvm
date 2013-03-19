@@ -194,7 +194,7 @@ struct Savegame {
 
 struct CreditItem {
 	bool _actvFl;
-	int _colour;
+	int _color;
 	int _linePosY;
 	int _lineSize;
 	byte _line[50];
