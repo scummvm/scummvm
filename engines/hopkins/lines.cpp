@@ -1085,11 +1085,11 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 		if (abs(fromX - destX) <= 4 && abs(fromY - clipDestY) <= 4)
 			return (RouteItem *)g_PTRNUL;
 
-		if (_vm->_globals->_oldZoneNum > 0 && _vm->_objectsManager._zoneNum > 0 && _vm->_globals->_oldZoneNum == _vm->_objectsManager._zoneNum)
+		if (_vm->_globals->_oldZoneNum > 0 && _vm->_objectsManager->_zoneNum > 0 && _vm->_globals->_oldZoneNum == _vm->_objectsManager->_zoneNum)
 			return (RouteItem *)g_PTRNUL;
 	}
 	_vm->_globals->_checkDistanceFl = false;
-	_vm->_globals->_oldZoneNum = _vm->_objectsManager._zoneNum;
+	_vm->_globals->_oldZoneNum = _vm->_objectsManager->_zoneNum;
 	_vm->_globals->_oldRouteFromX = fromX;
 	_vm->_globals->_oldRouteDestX = destX;
 	_vm->_globals->_oldRouteFromY = fromY;
@@ -2529,17 +2529,17 @@ int LinesManager::getMouseZone() {
 	if ((_vm->_eventsManager->_mousePos.y + _vm->_eventsManager->_mouseOffset.y) > 19) {
 		for (int bobZoneId = 0; bobZoneId <= 48; bobZoneId++) {
 			int bobId = BOBZONE[bobZoneId];
-			if (bobId && BOBZONE_FLAG[bobZoneId] && _vm->_objectsManager._bob[bobId]._bobMode && _vm->_objectsManager._bob[bobId]._frameIndex != 250 &&
-				!_vm->_objectsManager._bob[bobId]._disabledAnimationFl && xp > _vm->_objectsManager._bob[bobId]._oldX && 
-				xp < _vm->_objectsManager._bob[bobId]._oldWidth + _vm->_objectsManager._bob[bobId]._oldX && yp > _vm->_objectsManager._bob[bobId]._oldY) {
-					if (yp < _vm->_objectsManager._bob[bobId]._oldHeight + _vm->_objectsManager._bob[bobId]._oldY) {
+			if (bobId && BOBZONE_FLAG[bobZoneId] && _vm->_objectsManager->_bob[bobId]._bobMode && _vm->_objectsManager->_bob[bobId]._frameIndex != 250 &&
+				!_vm->_objectsManager->_bob[bobId]._disabledAnimationFl && xp > _vm->_objectsManager->_bob[bobId]._oldX && 
+				xp < _vm->_objectsManager->_bob[bobId]._oldWidth + _vm->_objectsManager->_bob[bobId]._oldX && yp > _vm->_objectsManager->_bob[bobId]._oldY) {
+					if (yp < _vm->_objectsManager->_bob[bobId]._oldHeight + _vm->_objectsManager->_bob[bobId]._oldY) {
 						if (ZONEP[bobZoneId]._spriteIndex == -1) {
 							ZONEP[bobZoneId]._destX = 0;
 							ZONEP[bobZoneId]._destY = 0;
 						}
 						if (!ZONEP[bobZoneId]._destX && !ZONEP[bobZoneId]._destY) {
-							ZONEP[bobZoneId]._destX = _vm->_objectsManager._bob[bobId]._oldWidth + _vm->_objectsManager._bob[bobId]._oldX;
-							ZONEP[bobZoneId]._destY = _vm->_objectsManager._bob[bobId]._oldHeight + _vm->_objectsManager._bob[bobId]._oldY + 6;
+							ZONEP[bobZoneId]._destX = _vm->_objectsManager->_bob[bobId]._oldWidth + _vm->_objectsManager->_bob[bobId]._oldX;
+							ZONEP[bobZoneId]._destY = _vm->_objectsManager->_bob[bobId]._oldHeight + _vm->_objectsManager->_bob[bobId]._oldY + 6;
 							ZONEP[bobZoneId]._spriteIndex = -1;
 						}
 						return bobZoneId;
@@ -2815,18 +2815,18 @@ void LinesManager::checkZone() {
 		|| _vm->_eventsManager->_startPos.x >= mouseX
 		|| (mouseY = _vm->_graphicsManager->_scrollOffset + 54, mouseX >= mouseY)
 		|| (mouseY = oldMouseY - 1, mouseY < 0 || mouseY > 59)) {
-			if (_vm->_objectsManager._visibleFl)
-				_vm->_objectsManager._eraseVisibleCounter = 4;
-			_vm->_objectsManager._visibleFl = false;
+			if (_vm->_objectsManager->_visibleFl)
+				_vm->_objectsManager->_eraseVisibleCounter = 4;
+			_vm->_objectsManager->_visibleFl = false;
 	} else {
-		_vm->_objectsManager._visibleFl = true;
+		_vm->_objectsManager->_visibleFl = true;
 	}
-	if (_vm->_objectsManager._forceZoneFl) {
+	if (_vm->_objectsManager->_forceZoneFl) {
 		_vm->_globals->compteur_71 = 100;
 		_vm->_globals->_oldMouseZoneId = -1;
 		_vm->_globals->_oldMouseX = -200;
 		_vm->_globals->_oldMouseY = -220;
-		_vm->_objectsManager._forceZoneFl = false;
+		_vm->_objectsManager->_forceZoneFl = false;
 	}
 
 	_vm->_globals->compteur_71++;
@@ -2871,7 +2871,7 @@ void LinesManager::checkZone() {
 						if (ZONEP[zoneId]._verbFl1 == 2) {
 							_vm->_eventsManager->changeMouseCursor(16);
 							_vm->_eventsManager->_mouseCursorId = 16;
-							_vm->_objectsManager.setVerb(16);
+							_vm->_objectsManager->setVerb(16);
 						}
 					}
 			} else {
@@ -2880,16 +2880,16 @@ void LinesManager::checkZone() {
 				_vm->_eventsManager->changeMouseCursor(4);
 			}
 		}
-		_vm->_objectsManager._zoneNum = zoneId;
+		_vm->_objectsManager->_zoneNum = zoneId;
 		_vm->_globals->_oldMouseX = mouseX;
 		_vm->_globals->_oldMouseY = oldMouseY;
 		_vm->_globals->_oldMouseZoneId = zoneId;
 		if (_vm->_globals->_freezeCharacterFl && (_vm->_eventsManager->_mouseCursorId == 4)) {
 			if (zoneId != -1 && zoneId != 0)
-				_vm->_objectsManager.handleRightButton();
+				_vm->_objectsManager->handleRightButton();
 		}
 		if ((_vm->_globals->_cityMapEnabledFl && zoneId == -1) || !zoneId) {
-			_vm->_objectsManager.setVerb(0);
+			_vm->_objectsManager->setVerb(0);
 			_vm->_eventsManager->_mouseCursorId = 0;
 			_vm->_eventsManager->changeMouseCursor(0);
 		}

@@ -393,7 +393,7 @@ void EventsManager::refreshScreenAndEvents() {
 	}
 
 	if (!_vm->_globals->_linuxEndDemoFl)
-		_vm->_objectsManager.displaySprite();
+		_vm->_objectsManager->displaySprite();
 	if (!_mouseFl) {
 		updateCursor();
 	} else if (_mouseCursorId == 23) {

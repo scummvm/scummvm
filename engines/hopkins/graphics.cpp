@@ -1062,7 +1062,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 void GraphicsManager::endDisplayBob() {
 	for (int idx = 1; idx <= 20; ++idx) {
 		if (_vm->_globals->_animBqe[idx]._enabledFl)
-			_vm->_objectsManager.hideBob(idx);
+			_vm->_objectsManager->hideBob(idx);
 	}
 
 	_vm->_eventsManager->refreshScreenAndEvents();
@@ -1070,7 +1070,7 @@ void GraphicsManager::endDisplayBob() {
 
 	for (int idx = 1; idx <= 20; ++idx) {
 		if (_vm->_globals->_animBqe[idx]._enabledFl)
-			_vm->_objectsManager.resetBob(idx);
+			_vm->_objectsManager->resetBob(idx);
 	}
 
 	for (int idx = 1; idx <= 29; ++idx) {
@@ -1085,7 +1085,7 @@ void GraphicsManager::endDisplayBob() {
 void GraphicsManager::displayAllBob() {
 	for (int idx = 1; idx <= 20; ++idx) {
 		if (_vm->_globals->_animBqe[idx]._enabledFl)
-			_vm->_objectsManager.displayBob(idx);
+			_vm->_objectsManager->displayBob(idx);
 	}
 }
 
@@ -1225,8 +1225,8 @@ void GraphicsManager::displayRefreshRects() {
 }
 
 void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment) {
-	int width = _vm->_objectsManager.getWidth(objectData, idx);
-	int height = _vm->_objectsManager.getHeight(objectData, idx);
+	int width = _vm->_objectsManager->getWidth(objectData, idx);
+	int height = _vm->_objectsManager->getHeight(objectData, idx);
 	if (*objectData == 78) {
 		Affiche_Perfect(_vesaScreen, objectData, xp + 300, yp + 300, idx, 0, 0, false);
 		Affiche_Perfect(_vesaBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
@@ -1641,8 +1641,8 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
  * Fast Display
  */
 void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment) {
-	int width = _vm->_objectsManager.getWidth(spriteData, spriteIndex);
-	int height = _vm->_objectsManager.getHeight(spriteData, spriteIndex);
+	int width = _vm->_objectsManager->getWidth(spriteData, spriteIndex);
+	int height = _vm->_objectsManager->getHeight(spriteData, spriteIndex);
 
 	if (*spriteData == 78) {
 		Affiche_Perfect(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
@@ -1787,8 +1787,8 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 		dataP = _vm->_fileManager->loadFile(filename);
 
 	_vm->_globals->_answerBuffer = dataP;
-	_vm->_objectsManager._forceZoneFl = true;
-	_vm->_objectsManager._changeVerbFl = false;
+	_vm->_objectsManager->_forceZoneFl = true;
+	_vm->_objectsManager->_changeVerbFl = false;
 }
 
 void GraphicsManager::NB_SCREEN(bool initPalette) {

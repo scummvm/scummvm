@@ -260,7 +260,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				byte curChar = _tempText[curStrIdx];
 				if (curChar <= 31)
 					curChar = ' ';
-				_vm->_globals->_boxWidth += _vm->_objectsManager.getWidth(_font, curChar - 32);
+				_vm->_globals->_boxWidth += _vm->_objectsManager->getWidth(_font, curChar - 32);
 			}
 
 			_vm->_globals->_boxWidth += 2;
@@ -316,7 +316,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 						byte curChar2 = (curIdx >= (int)line.size()) ? '\0' : line.c_str()[curIdx];
 						if (curChar2 <= 31)
 							curChar2 = ' ';
-						ptrc += _vm->_objectsManager.getWidth(_font, (byte)curChar2 - 32);
+						ptrc += _vm->_objectsManager->getWidth(_font, (byte)curChar2 - 32);
 					}
 					_textSortArray[i] = ptrc;
 				}
@@ -414,7 +414,7 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 		if (currChar >= 32) {
 			charIndex = currChar - 32;
 			_vm->_graphicsManager->displayFont(_vm->_graphicsManager->_vesaBuffer, _font, currentX, yp, currChar - 32, col);
-			currentX += _vm->_objectsManager.getWidth(_font, charIndex);
+			currentX += _vm->_objectsManager->getWidth(_font, charIndex);
 		}
 	}
 
@@ -431,7 +431,7 @@ void FontManager::displayText(int xp, int yp, const Common::String &message, int
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
 			_vm->_graphicsManager->displayFont(_vm->_graphicsManager->_vesaBuffer, _font, xp, yp, characterIndex, col);
-			xp += _vm->_objectsManager.getWidth(_font, characterIndex);
+			xp += _vm->_objectsManager->getWidth(_font, characterIndex);
 		}
 	}
 }
@@ -466,13 +466,13 @@ void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, i
 			int charWidth;
 			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS) {
 				if ((curChar >= 'A' && curChar <= 'Z') || (curChar >= 'a' && curChar <= 'z' && curChar != 'm' && curChar != 'w') || (curChar >= '0' && curChar <= '9') || curChar == '*' || (curChar >= 128 && curChar <= 168))
-					charWidth = _vm->_objectsManager.getWidth(_font, printChar) - 1;
+					charWidth = _vm->_objectsManager->getWidth(_font, printChar) - 1;
 				else if (curChar == 'm' || curChar == 'w')
-					charWidth = _vm->_objectsManager.getWidth(_font, printChar);
+					charWidth = _vm->_objectsManager->getWidth(_font, printChar);
 				else 
 					charWidth = 6;
 			} else 
-				charWidth = _vm->_objectsManager.getWidth(_font, printChar);
+				charWidth = _vm->_objectsManager->getWidth(_font, printChar);
 
 			int charStartPosX = charEndPosX;
 			charEndPosX += charWidth;

@@ -50,9 +50,9 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_globals = new Globals(this);
 	_graphicsManager = new GraphicsManager(this);
 	_linesManager = new LinesManager(this);
+	_menuManager = new MenuManager(this);
+	_objectsManager = new ObjectsManager(this);
 
-	_menuManager.setParent(this);
-	_objectsManager.setParent(this);
 	_saveLoadManager.setParent(this);
 	_scriptManager.setParent(this);
 	_soundManager.setParent(this);
@@ -60,6 +60,8 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 }
 
 HopkinsEngine::~HopkinsEngine() {
+	delete _objectsManager;
+	delete _menuManager;
 	delete _linesManager;
 	delete _graphicsManager;
 	delete _globals;
@@ -127,9 +129,9 @@ Common::Error HopkinsEngine::run() {
 
 bool HopkinsEngine::runWin95Demo() {
 	_globals->loadObjects();
-	_objectsManager.changeObject(14);
-	_objectsManager.addObject(14);
-	_objectsManager._helicopterFl = false;
+	_objectsManager->changeObject(14);
+	_objectsManager->addObject(14);
+	_objectsManager->_helicopterFl = false;
 
 	_globals->iRegul = 1;
 
@@ -162,7 +164,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals->iRegul = 1;
 	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
-	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
+	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
 	_globals->_exitId = 0;
 
@@ -175,7 +177,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_exitId = 0;
 
 		if (!_globals->_exitId) {
-			_globals->_exitId = _menuManager.menu();
+			_globals->_exitId = _menuManager->menu();
 			if (_globals->_exitId == -1) {
 				_globals->PERSO = _globals->freeMemory(_globals->PERSO);
 				restoreSystem();
@@ -190,7 +192,7 @@ bool HopkinsEngine::runWin95Demo() {
 		case 1:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 2, true);
+			_objectsManager->PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 2, true);
 			break;
 
 		case 3:
@@ -229,12 +231,12 @@ bool HopkinsEngine::runWin95Demo() {
 			}
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
+			_objectsManager->PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
 			_globals->_disableInventFl = true;
-			_objectsManager.handleCityMap();
+			_objectsManager->handleCityMap();
 			_globals->_disableInventFl = false;
 			break;
 
@@ -244,48 +246,48 @@ bool HopkinsEngine::runWin95Demo() {
 
 			if (_globals->_saveData->_data[svFreedHostageFl]) {
 				if (_globals->_saveData->_data[svFreedHostageFl] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
+					_objectsManager->PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			} else {
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
+				_objectsManager->PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			}
 			break;
 
 		case 6:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 460;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
+			_objectsManager->PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals->_saveData->_data[svBombBoxOpenedFl])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsManager->PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsManager->PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
+			_objectsManager->PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
 			_globals->_characterMaxPosY = 440;
 			_linesManager->setMaxLineIdx(20);
 			if (_globals->_saveData->_data[svBombDisarmedFl])
-			  _objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
+			  _objectsManager->PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 			  bombExplosion();
 			break;
 
 		case 10:
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
+			_objectsManager->PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
+			_objectsManager->PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
@@ -333,11 +335,11 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 111:
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
+			_objectsManager->PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
+			_objectsManager->PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -426,9 +428,9 @@ bool HopkinsEngine::runWin95Demo() {
 
 bool HopkinsEngine::runLinuxDemo() {
 	_globals->loadObjects();
-	_objectsManager.changeObject(14);
-	_objectsManager.addObject(14);
-	_objectsManager._helicopterFl = false;
+	_objectsManager->changeObject(14);
+	_objectsManager->addObject(14);
+	_objectsManager->_helicopterFl = false;
 
 	_eventsManager->mouseOff();
 
@@ -452,7 +454,7 @@ bool HopkinsEngine::runLinuxDemo() {
 	_globals->iRegul = 0;
 	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
-	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
+	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
 	_globals->_exitId = 0;
 
@@ -461,7 +463,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals->_exitId = 0;
 
 		if (!_globals->_exitId) {
-			_globals->_exitId = _menuManager.menu();
+			_globals->_exitId = _menuManager->menu();
 			if (_globals->_exitId == -1) {
 				if (!shouldQuit())
 					endLinuxDemo();
@@ -495,7 +497,7 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 1:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
+			_objectsManager->PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
 
 		case 3:
@@ -537,12 +539,12 @@ bool HopkinsEngine::runLinuxDemo() {
 
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
+			_objectsManager->PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
 			_globals->_disableInventFl = true;
-			_objectsManager.handleCityMap();
+			_objectsManager->handleCityMap();
 			_globals->_disableInventFl = false;
 			break;
 
@@ -550,28 +552,28 @@ bool HopkinsEngine::runLinuxDemo() {
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 455;
 			if (_globals->_saveData->_data[svFreedHostageFl] == 1)
-					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
+					_objectsManager->PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			else
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
+				_objectsManager->PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			break;
 
 		case 6:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 460;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
+			_objectsManager->PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals->_saveData->_data[svBombBoxOpenedFl])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsManager->PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsManager->PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
+			_objectsManager->PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
@@ -581,24 +583,24 @@ bool HopkinsEngine::runLinuxDemo() {
 			if (!_globals->_saveData->_data[svBombDisarmedFl])
 				bombExplosion();
 			else 
-				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
+				_objectsManager->PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			break;
 
 		case 10:
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
+			_objectsManager->PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
+			_objectsManager->PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svBombDisarmedFl])
-				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
+				_objectsManager->PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			else
 				bombExplosion();
 			break;
@@ -606,17 +608,17 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 13:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
+			_objectsManager->PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
+			_objectsManager->PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
 
 		case 15:
-			_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
+			_objectsManager->PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
 			break;
 
 		case 16:
@@ -624,25 +626,25 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals->_characterMaxPosY = 450;
 
 			if (_globals->_saveData->_data[svForestAvailableFl] == 1) {
-				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
+				_objectsManager->PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
 			} else if (!_globals->_saveData->_data[svForestAvailableFl]) {
-				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
+				_objectsManager->PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			}
 			break;
 
 		case 25:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
-			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
+			_objectsManager->PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
 			break;
 
 		case 26:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
+			_objectsManager->PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
 
 		case 33:
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
+			_objectsManager->PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
 			break;
 
 		case 35:
@@ -650,11 +652,11 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 111:
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
+			_objectsManager->PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
+			_objectsManager->PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -750,16 +752,16 @@ bool HopkinsEngine::runFull() {
 		_soundManager.playSound(16);
 
 	_globals->loadObjects();
-	_objectsManager.changeObject(14);
-	_objectsManager.addObject(14);
+	_objectsManager->changeObject(14);
+	_objectsManager->addObject(14);
 
 	if (getPlatform() == Common::kPlatformLinux) {
-		_objectsManager._helicopterFl = false;
+		_objectsManager->_helicopterFl = false;
 		_eventsManager->mouseOff();
 		// No code has been added to display the version as it's wrong 
 		// in my copy: it mentions a Win95 version v4 using DirectDraw (Strangerke)
 	} else if (getPlatform() == Common::kPlatformWindows) {
-		_objectsManager._helicopterFl = false;
+		_objectsManager->_helicopterFl = false;
 		_globals->iRegul = 1;
 		// This code displays the game version.
 		// It wasn't present in the original and could be put in the debugger
@@ -816,7 +818,7 @@ bool HopkinsEngine::runFull() {
 	_globals->iRegul = 0;
 	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
-	_objectsManager._mapCarPosX = _objectsManager._mapCarPosY = 0;
+	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
 	
 	_globals->_exitId = 0;
@@ -825,7 +827,7 @@ bool HopkinsEngine::runFull() {
 		if (_globals->_exitId == 300)
 			_globals->_exitId = 0;
 		if (!_globals->_exitId) {
-			_globals->_exitId = _menuManager.menu();
+			_globals->_exitId = _menuManager->menu();
 			if (_globals->_exitId == -1) {
 				_globals->PERSO = _globals->freeMemory(_globals->PERSO);
 				restoreSystem();
@@ -840,7 +842,7 @@ bool HopkinsEngine::runFull() {
 		case 1:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
+			_objectsManager->PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
 
 		case 3:
@@ -895,12 +897,12 @@ bool HopkinsEngine::runFull() {
 			}
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
-			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
+			_objectsManager->PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
 			_globals->_disableInventFl = true;
-			_objectsManager.handleCityMap();
+			_objectsManager->handleCityMap();
 			_globals->_disableInventFl = false;
 			break;
 
@@ -908,54 +910,54 @@ bool HopkinsEngine::runFull() {
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 455;
 			if (_globals->_saveData->_data[svFreedHostageFl] == 1)
-				_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
+				_objectsManager->PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			else
-				_objectsManager.PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
+				_objectsManager->PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			break;
 
 		case 6:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 460;
-			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
+			_objectsManager->PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals->_saveData->_data[svBombBoxOpenedFl])
-				_objectsManager.PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsManager->PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsManager.PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsManager->PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 450;
-			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
+			_objectsManager->PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svBombDisarmedFl])
-				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
+				_objectsManager->PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 				bombExplosion();
 			break;
 
 		case 10:
-			_objectsManager.PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
+			_objectsManager->PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
-			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
+			_objectsManager->PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svBombDisarmedFl])
-				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
+				_objectsManager->PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			else
 				bombExplosion();
 			break;
@@ -963,38 +965,38 @@ bool HopkinsEngine::runFull() {
 		case 13:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
+			_objectsManager->PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
+			_objectsManager->PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
 
 		case 15:
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-				_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
+				_objectsManager->PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
 			else
-				_objectsManager.PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 18, false);
+				_objectsManager->PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 18, false);
 			break;
 
 		case 16:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svForestAvailableFl] == 1)
-				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
+				_objectsManager->PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
 			else
-				_objectsManager.PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
+				_objectsManager->PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			break;
 
 		case 17:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svHutBurningFl] == 1)
-				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
+				_objectsManager->PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
 			else if (!_globals->_saveData->_data[svHutBurningFl])
-				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
+				_objectsManager->PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
 			if (_globals->_exitId == 18) {
 				_globals->iRegul = 1;
 				_graphicsManager->lockScreen();
@@ -1023,24 +1025,24 @@ bool HopkinsEngine::runFull() {
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-				_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29, false);
+				_objectsManager->PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29, false);
 			else
-				_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 6, false);
+				_objectsManager->PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 6, false);
 			break;
 
 		case 19:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svHeavenGuardGoneFl])
-				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
+				_objectsManager->PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
 			else
-				_objectsManager.PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
+				_objectsManager->PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
 			break;
 
 		case 20:
 			_linesManager->setMaxLineIdx(10);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
+			_objectsManager->PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
 			if (_globals->_exitId == 17) {
 				_globals->iRegul = 1;
 				_soundManager.stopSound();
@@ -1061,88 +1063,88 @@ bool HopkinsEngine::runFull() {
 		case 22:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
-			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
+			_objectsManager->PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
 			break;
 
 		case 23:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
+			_objectsManager->PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
 			break;
 
 		case 24:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svCinemaDogGoneFl] == 1)
-				_objectsManager.PERSONAGE2("IM24", "IM24A", "ANIM24", "IM24", 1, true);
+				_objectsManager->PERSONAGE2("IM24", "IM24A", "ANIM24", "IM24", 1, true);
 			else
-				_objectsManager.PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
+				_objectsManager->PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
 			break;
 
 		case 25:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-				_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
+				_objectsManager->PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
 			else
-				_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 8, true);
+				_objectsManager->PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 8, true);
 			break;
 
 		case 26:
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-				_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
+				_objectsManager->PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
 			else
-				_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 8, true);
+				_objectsManager->PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 8, true);
 			break;
 
 		case 27:
 			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svPoolDogGoneFl] == 1)
-				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
+				_objectsManager->PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
 			else
-				_objectsManager.PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
+				_objectsManager->PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
 			break;
 
 		case 28:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svCinemaCurtainCond1] != 1 || _globals->_saveData->_data[svCinemaCurtainCond2] != 1)
-				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
+				_objectsManager->PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
 			else
-				_objectsManager.PERSONAGE2("IM28A", "IM28", "ANIM28", "IM28", 1, false);
+				_objectsManager->PERSONAGE2("IM28A", "IM28", "ANIM28", "IM28", 1, false);
 			break;
 
 		case 29:
 			_linesManager->setMaxLineIdx(50);
 			_globals->_characterMaxPosY = 445;
-			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
+			_objectsManager->PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
 			break;
 
 		case 30:
 			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
+			_objectsManager->PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
 			break;
 
 		case 31:
-			_objectsManager.PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10, true);
+			_objectsManager->PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10, true);
 			break;
 
 		case 32:
 			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
-			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
+			_objectsManager->PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
 			break;
 
 		case 33:
-			_objectsManager.PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
+			_objectsManager->PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
 			break;
 
 		case 34:
-			_objectsManager.PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2, false);
+			_objectsManager->PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2, false);
 			break;
 
 		case 35:
@@ -1155,17 +1157,17 @@ bool HopkinsEngine::runFull() {
 			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			_globals->_disableInventFl = false;
-			_objectsManager._forestFl = true;
+			_objectsManager->_forestFl = true;
 			Common::String im = Common::String::format("IM%d", _globals->_exitId);
 			_soundManager.playSound(13);
-			if (_objectsManager._forestSprite == g_PTRNUL) {
-				_objectsManager._forestSprite = _objectsManager.loadSprite("HOPDEG.SPR");
+			if (_objectsManager->_forestSprite == g_PTRNUL) {
+				_objectsManager->_forestSprite = _objectsManager->loadSprite("HOPDEG.SPR");
 				_soundManager.loadSample(1, "SOUND41.WAV");
 			}
-			_objectsManager.PERSONAGE2(im, im, "BANDIT", im, 13, false);
+			_objectsManager->PERSONAGE2(im, im, "BANDIT", im, 13, false);
 			if (_globals->_exitId < 35 || _globals->_exitId > 49) {
-				_objectsManager._forestSprite = _globals->freeMemory(_objectsManager._forestSprite);
-				_objectsManager._forestFl = false;
+				_objectsManager->_forestSprite = _globals->freeMemory(_objectsManager->_forestSprite);
+				_objectsManager->_forestFl = false;
 				_soundManager.removeSample(1);
 			}
 			break;
@@ -1179,130 +1181,130 @@ bool HopkinsEngine::runFull() {
 		case 51:
 			_linesManager->setMaxLineIdx(10);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
+			_objectsManager->PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
 			break;
 
 		case 52:
 			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 445;
-			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
+			_objectsManager->PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
 			break;
 
 		case 54:
 			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
+			_objectsManager->PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
 			break;
 
 		case 55:
 			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 460;
-			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
+			_objectsManager->PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
 			break;
 
 		case 56:
 			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
+			_objectsManager->PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
 			break;
 
 		case 57:
 			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
+			_objectsManager->PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
 			break;
 
 		case 58:
 			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
+			_objectsManager->PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
 			break;
 
 		case 59:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
-			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
+			_objectsManager->PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
 			break;
 
 		case 60:
 			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
+			_objectsManager->PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
 			break;
 
 		case 61:
 			if (_globals->_saveData->_data[svBaseElevatorCond1] == 1 && !_globals->_saveData->_data[svBaseFireFl])
 				handleConflagration();
-			_objectsManager.PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
+			_objectsManager->PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
 			break;
 
 		case 62:
 			_linesManager->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
+			_objectsManager->PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
 			break;
 
 		case 63:
 			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
+			_objectsManager->PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
 			break;
 
 		case 64:
 			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
+			_objectsManager->PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
 			break;
 
 		case 65:
 			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
+			_objectsManager->PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
 			break;
 
 		case 66:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
-			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
+			_objectsManager->PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
 			break;
 
 		case 67:
 			_linesManager->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
+			_objectsManager->PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
 			break;
 
 		case 68:
 			_linesManager->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
+			_objectsManager->PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
 			break;
 
 		case 69:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
-			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
+			_objectsManager->PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
 			break;
 
 		case 70:
 			_linesManager->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
+			_objectsManager->PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
 			break;
 
 		case 71:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
-			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
+			_objectsManager->PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
 			break;
 
 		case 73:
 			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 445;
 			if (_globals->_saveData->_data[svSecondElevatorAvailableFl] == 1)
-				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
+				_objectsManager->PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
 			else
-				_objectsManager.PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
+				_objectsManager->PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
 			break;
 
 		case 75:
@@ -1374,39 +1376,39 @@ bool HopkinsEngine::runFull() {
 			_globals->_characterMaxPosY = 445;
 			if (_globals->_saveData->_data[svEscapeLeftJailFl]) {
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-					_objectsManager.PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 29, true);
+					_objectsManager->PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 29, true);
 				else
-					_objectsManager.PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 26, true);
+					_objectsManager->PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 26, true);
 			} else {
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-					_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29, true);
+					_objectsManager->PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29, true);
 				else
-					_objectsManager.PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 26, true);
+					_objectsManager->PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 26, true);
 			}
 			break;
 
 		case 94:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 440;
-			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
+			_objectsManager->PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
 			break;
 
 		case 95:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, false);
+			_objectsManager->PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, false);
 			break;
 
 		case 96:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
+			_objectsManager->PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
 			break;
 
 		case 97:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
+			_objectsManager->PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
 			if (_globals->_exitId == 18) {
 				_globals->iRegul = 1;
 				_soundManager.stopSound();
@@ -1424,13 +1426,13 @@ bool HopkinsEngine::runFull() {
 		case 98:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
+			_objectsManager->PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
 			break;
 
 		case 99:
 			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
-			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
+			_objectsManager->PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
 			break;
 
 		case 100:
@@ -1438,11 +1440,11 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 111:
-			_objectsManager.PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
+			_objectsManager->PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_objectsManager.PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
+			_objectsManager->PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -1589,7 +1591,7 @@ void HopkinsEngine::initializeSystem() {
 	_fontManager->initData();
 
 	_dialogsManager->_inventoryIcons = _fileManager->loadFile("ICONE.SPR");
-	_objectsManager._headSprites = _fileManager->loadFile("TETE.SPR");
+	_objectsManager->_headSprites = _fileManager->loadFile("TETE.SPR");
 
 	_eventsManager->setMouseOn();
 	_eventsManager->_mouseFl = false;
@@ -1685,8 +1687,8 @@ void HopkinsEngine::playIntro() {
 	_animationManager->loadAnim("INTRO2");
 	_graphicsManager->displayAllBob();
 	_soundManager.playSound(23);
-	_objectsManager.stopBobAnimation(3);
-	_objectsManager.stopBobAnimation(5);
+	_objectsManager->stopBobAnimation(3);
+	_objectsManager->stopBobAnimation(5);
 	_graphicsManager->_scrollOffset = 0;
 	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
@@ -1701,9 +1703,9 @@ void HopkinsEngine::playIntro() {
 	for (uint i = 0; i < 200 / _globals->_speed; ++i)
 		_eventsManager->refreshScreenAndEvents();
 
-	_objectsManager.setBobAnimation(3);
+	_objectsManager->setBobAnimation(3);
 	_soundManager.mixVoice(5, 3);
-	_objectsManager.stopBobAnimation(3);
+	_objectsManager->stopBobAnimation(3);
 	_eventsManager->refreshScreenAndEvents();
 	memcpy(&paletteData2, _graphicsManager->_palette, 796);
 
@@ -1726,9 +1728,9 @@ void HopkinsEngine::playIntro() {
 	_animationManager->loadAnim("INTRO2");
 	_graphicsManager->displayAllBob();
 	_soundManager.playSound(23);
-	_objectsManager.stopBobAnimation(3);
-	_objectsManager.stopBobAnimation(5);
-	_objectsManager.stopBobAnimation(1);
+	_objectsManager->stopBobAnimation(3);
+	_objectsManager->stopBobAnimation(5);
+	_objectsManager->stopBobAnimation(1);
 	_graphicsManager->_scrollOffset = 0;
 	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
@@ -1744,11 +1746,11 @@ void HopkinsEngine::playIntro() {
 	int introIndex = 0;
 	while (!shouldQuit() && !_eventsManager->_escKeyFl) {
 		if (introIndex == 12) {
-			_objectsManager.setBobAnimation(3);
+			_objectsManager->setBobAnimation(3);
 			_eventsManager->refreshScreenAndEvents();
 			_soundManager.mixVoice(6, 3);
 			_eventsManager->refreshScreenAndEvents();
-			_objectsManager.stopBobAnimation(3);
+			_objectsManager->stopBobAnimation(3);
 		}
 
 		Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager->_palette[0]);
@@ -1774,13 +1776,13 @@ void HopkinsEngine::playIntro() {
 			for (uint j = 1; j < 100 / _globals->_speed; ++j)
 				_eventsManager->refreshScreenAndEvents();
 
-			_objectsManager.setBobAnimation(3);
+			_objectsManager->setBobAnimation(3);
 			_soundManager.mixVoice(7, 3);
-			_objectsManager.stopBobAnimation(3);
+			_objectsManager->stopBobAnimation(3);
 
 			for (uint k = 1; k < 60 / _globals->_speed; ++k)
 				_eventsManager->refreshScreenAndEvents();
-			_objectsManager.setBobAnimation(5);
+			_objectsManager->setBobAnimation(5);
 			for (uint l = 0; l < 20 / _globals->_speed; ++l)
 				_eventsManager->refreshScreenAndEvents();
 
@@ -1789,9 +1791,9 @@ void HopkinsEngine::playIntro() {
 
 			for (uint m = 0; m < 50 / _globals->_speed; ++m) {
 				if (m == 30 / _globals->_speed) {
-					_objectsManager.setBobAnimation(3);
+					_objectsManager->setBobAnimation(3);
 					_soundManager.mixVoice(8, 3);
-					_objectsManager.stopBobAnimation(3);
+					_objectsManager->stopBobAnimation(3);
 				}
 
 				_eventsManager->refreshScreenAndEvents();
@@ -1883,7 +1885,7 @@ void HopkinsEngine::bombExplosion() {
 	_graphicsManager->loadImage("IM15");
 	_animationManager->loadAnim("ANIM15");
 	_graphicsManager->displayAllBob();
-	_objectsManager.stopBobAnimation(7);
+	_objectsManager->stopBobAnimation(7);
 
 	for (int idx = 0; idx < 5; ++idx) {
 		_eventsManager->refreshScreenAndEvents();
@@ -1899,7 +1901,7 @@ void HopkinsEngine::bombExplosion() {
 	_globals->_introSpeechOffFl = true;
 	_talkManager.startStaticCharacterDialogue("vire.pe2");
 	_globals->_introSpeechOffFl = false;
-	_objectsManager.setBobAnimation(7);
+	_objectsManager->setBobAnimation(7);
 
 	for (int idx = 0; idx < 100; ++idx) {
 		_eventsManager->refreshScreenAndEvents();
@@ -1919,7 +1921,7 @@ void HopkinsEngine::restoreSystem() {
 void HopkinsEngine::endLinuxDemo() {
 	_globals->_linuxEndDemoFl = true;
 	_graphicsManager->resetDirtyRects();
-	_objectsManager._forestFl = false;
+	_objectsManager->_forestFl = false;
 	_eventsManager->_breakoutFl = false;
 	_globals->_disableInventFl = true;
 	_graphicsManager->loadImage("BOX");
@@ -2035,7 +2037,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 	_graphicsManager->loadImage("IM92");
 	_animationManager->loadAnim("ANIM92");
 	_graphicsManager->displayAllBob();
-	_objectsManager.loadLinkFile("IM92");
+	_objectsManager->loadLinkFile("IM92");
 
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager->refreshScreenAndEvents();
@@ -2045,7 +2047,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 
 	do
 		_eventsManager->refreshScreenAndEvents();
-	while (_objectsManager.getBobAnimDataIdx(8) != 22);
+	while (_objectsManager->getBobAnimDataIdx(8) != 22);
 
 	_graphicsManager->fadeOutLong();
 	_graphicsManager->endDisplayBob();
@@ -2071,9 +2073,9 @@ void HopkinsEngine::playEnding() {
 	_animationManager->loadAnim("ANIM100");
 	_graphicsManager->displayAllBob();
 	_eventsManager->mouseOn();
-	_objectsManager.stopBobAnimation(7);
-	_objectsManager.stopBobAnimation(8);
-	_objectsManager.stopBobAnimation(9);
+	_objectsManager->stopBobAnimation(7);
+	_objectsManager->stopBobAnimation(8);
+	_objectsManager->stopBobAnimation(9);
 	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
@@ -2088,25 +2090,25 @@ void HopkinsEngine::playEnding() {
 
 	do
 		_eventsManager->refreshScreenAndEvents();
-	while (_objectsManager.getBobAnimDataIdx(6) != 54);
+	while (_objectsManager->getBobAnimDataIdx(6) != 54);
 
 	_globals->_introSpeechOffFl = true;
 	_talkManager.startAnimatedCharacterDialogue("GM4.PE2");
 	_globals->_disableInventFl = true;
-	_objectsManager.stopBobAnimation(6);
-	_objectsManager.stopBobAnimation(10);
-	_objectsManager.setBobAnimation(9);
-	_objectsManager.setBobAnimation(7);
+	_objectsManager->stopBobAnimation(6);
+	_objectsManager->stopBobAnimation(10);
+	_objectsManager->setBobAnimation(9);
+	_objectsManager->setBobAnimation(7);
 
 	do
 		_eventsManager->refreshScreenAndEvents();
-	while (_objectsManager.getBobAnimDataIdx(7) != 54);
+	while (_objectsManager->getBobAnimDataIdx(7) != 54);
 
 	_soundManager.playSample(1);
 
 	do
 		_eventsManager->refreshScreenAndEvents();
-	while (_objectsManager.getBobAnimDataIdx(7) != 65);
+	while (_objectsManager->getBobAnimDataIdx(7) != 65);
 
 	_globals->_introSpeechOffFl = true;
 	_talkManager.startAnimatedCharacterDialogue("DUELB4.PE2");
@@ -2115,23 +2117,23 @@ void HopkinsEngine::playEnding() {
 
 	do
 		_eventsManager->refreshScreenAndEvents();
-	while (_objectsManager.getBobAnimDataIdx(7) != 72);
+	while (_objectsManager->getBobAnimDataIdx(7) != 72);
 
 	_globals->_introSpeechOffFl = true;
 	_talkManager.startAnimatedCharacterDialogue("DUELH1.PE2");
 
 	do
 		_eventsManager->refreshScreenAndEvents();
-	while (_objectsManager.getBobAnimDataIdx(7) != 81);
+	while (_objectsManager->getBobAnimDataIdx(7) != 81);
 
 	_globals->_introSpeechOffFl = true;
 	_talkManager.startAnimatedCharacterDialogue("DUELB5.PE2");
 
 	do
 		_eventsManager->refreshScreenAndEvents();
-	while (_objectsManager.getBobAnimDataIdx(7) != 120);
+	while (_objectsManager->getBobAnimDataIdx(7) != 120);
 
-	_objectsManager.stopBobAnimation(7);
+	_objectsManager->stopBobAnimation(7);
 	if (_globals->_saveData->_data[svGameWonFl] == 1) {
 		_soundManager._specialSoundNum = 200;
 		_soundManager._skipRefreshFl = true;
@@ -2173,21 +2175,21 @@ void HopkinsEngine::playEnding() {
 		_soundManager._specialSoundNum = 200;
 		_soundManager._skipRefreshFl = true;
 		_animationManager->playAnim2("BERM.ANM", 100, 24, 300);
-		_objectsManager.stopBobAnimation(7);
-		_objectsManager.setBobAnimation(8);
+		_objectsManager->stopBobAnimation(7);
+		_objectsManager->setBobAnimation(8);
 		_globals->_introSpeechOffFl = true;
 		_talkManager.startAnimatedCharacterDialogue("GM5.PE2");
 		_globals->_disableInventFl = true;
 
 		do
 			_eventsManager->refreshScreenAndEvents();
-		while (_objectsManager.getBobAnimDataIdx(8) != 5);
+		while (_objectsManager->getBobAnimDataIdx(8) != 5);
 
 		_soundManager.directPlayWav("SOUND41.WAV");
 
 		do
 			_eventsManager->refreshScreenAndEvents();
-		while (_objectsManager.getBobAnimDataIdx(8) != 21);
+		while (_objectsManager->getBobAnimDataIdx(8) != 21);
 
 		_graphicsManager->fadeOutLong();
 		_graphicsManager->endDisplayBob();
@@ -2442,7 +2444,7 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char color) {
 		if (!curChar)
 			break;
 		if (curChar > 31)
-			strWidth += _objectsManager.getWidth(_fontManager->_font, curChar - 32);
+			strWidth += _objectsManager->getWidth(_fontManager->_font, curChar - 32);
 	}
 	int startPosX = 320 - strWidth / 2;
 	int endPosX = strWidth + startPosX;
@@ -2469,7 +2471,7 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char color) {
 			break;
 		if (curChar > 31) {
 			_graphicsManager->displayFont(_graphicsManager->_vesaBuffer, _fontManager->_font, startPosX, startPosY, curChar - 32, color);
-			startPosX += _objectsManager.getWidth(_fontManager->_font, curChar - 32);
+			startPosX += _objectsManager->getWidth(_fontManager->_font, curChar - 32);
 		}
 	}
 }
@@ -2542,24 +2544,24 @@ void HopkinsEngine::handleOceanMouseEvents() {
 		return;
 
 	_eventsManager->getMouseX();
-	if (_objectsManager._zoneNum <= 0)
+	if (_objectsManager->_zoneNum <= 0)
 		return;
 
 	int oldPosX = _eventsManager->getMouseX();
 	int oldPosY = _eventsManager->getMouseY();
 	bool displAnim = false;
 	int oldX;
-	switch (_objectsManager._zoneNum) {
+	switch (_objectsManager->_zoneNum) {
 	case 1:
 		switch (_globals->_oceanDirection) {
 		case DIR_UP:
-			_objectsManager.SPACTION(_globals->PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 6, false);
 			break;
 		case DIR_RIGHT:
-			_objectsManager.SPACTION(_globals->PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 6, false);
 			break;
 		case DIR_DOWN:
-			_objectsManager.SPACTION(_globals->PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 6, false);
 			break;
 		default:
 			break;
@@ -2567,7 +2569,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 
 		_globals->_oceanDirection = DIR_LEFT;
 		_globals->_exitId = 1;
-		oldX = _objectsManager.getSpriteX(0);
+		oldX = _objectsManager->getSpriteX(0);
 		for (;;) {
 			if (_globals->_speed == 1)
 				oldX -= 2;
@@ -2575,7 +2577,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				oldX -= 4;
 			else if (_globals->_speed == 3)
 				oldX -= 6;
-			_objectsManager.setSpriteX(0, oldX);
+			_objectsManager->setSpriteX(0, oldX);
 			setSubmarineSprites();
 			_eventsManager->refreshScreenAndEvents();
 			if (_eventsManager->getMouseButton() == 1 && oldPosX == _eventsManager->getMouseX() && _eventsManager->getMouseY() == oldPosY) {
@@ -2590,20 +2592,20 @@ void HopkinsEngine::handleOceanMouseEvents() {
 	case 2:
 		switch (_globals->_oceanDirection) {
 		case DIR_UP:
-			_objectsManager.SPACTION(_globals->PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 6, false);
 			break;
 		case DIR_DOWN:
-			_objectsManager.SPACTION(_globals->PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 6, false);
 			break;
 		case DIR_LEFT:
-			_objectsManager.SPACTION(_globals->PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 6, false);
 			break;
 		default:
 			break;
 		}
 		_globals->_oceanDirection = DIR_RIGHT;
 		_globals->_exitId = 2;
-		oldX = _objectsManager.getSpriteX(0);
+		oldX = _objectsManager->getSpriteX(0);
 		for (;;) {
 			if (_globals->_speed == 1)
 				oldX += 2;
@@ -2611,7 +2613,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				oldX += 4;
 			else if (_globals->_speed == 3)
 				oldX += 6;
-			_objectsManager.setSpriteX(0, oldX);
+			_objectsManager->setSpriteX(0, oldX);
 			setSubmarineSprites();
 			_eventsManager->refreshScreenAndEvents();
 			if (_eventsManager->getMouseButton() == 1 && oldPosX == _eventsManager->getMouseX() && _eventsManager->getMouseY() == oldPosY) {
@@ -2625,7 +2627,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 	case 3:
 		switch (_globals->_oceanDirection) {
 		case DIR_RIGHT:
-			oldX = _objectsManager.getSpriteX(0);
+			oldX = _objectsManager->getSpriteX(0);
 			do {
 				if (_globals->_speed == 1)
 					oldX += 2;
@@ -2633,7 +2635,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 					oldX += 4;
 				else if (_globals->_speed == 3)
 					oldX += 6;
-				_objectsManager.setSpriteX(0, oldX);
+				_objectsManager->setSpriteX(0, oldX);
 				setSubmarineSprites();
 				_eventsManager->refreshScreenAndEvents();
 				if (_eventsManager->getMouseButton() == 1 && oldPosX == _eventsManager->getMouseX() && _eventsManager->getMouseY() == oldPosY) {
@@ -2642,13 +2644,13 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				}
 			} while (oldX <= 235);
 			if (!displAnim)
-				_objectsManager.SPACTION(_globals->PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 6, false);
+				_objectsManager->SPACTION(_globals->PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 6, false);
 			break;
 		case DIR_DOWN:
-			_objectsManager.SPACTION(_globals->PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 6, false);
 			break;
 		case DIR_LEFT:
-			oldX = _objectsManager.getSpriteX(0);
+			oldX = _objectsManager->getSpriteX(0);
 			do {
 				if (_globals->_speed == 1)
 					oldX -= 2;
@@ -2656,7 +2658,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 					oldX -= 4;
 				else if (_globals->_speed == 3)
 					oldX -= 6;
-				_objectsManager.setSpriteX(0, oldX);
+				_objectsManager->setSpriteX(0, oldX);
 				setSubmarineSprites();
 				_eventsManager->refreshScreenAndEvents();
 				if (_eventsManager->getMouseButton() == 1 && oldPosX == _eventsManager->getMouseX() && _eventsManager->getMouseY() == oldPosY) {
@@ -2665,7 +2667,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				}
 			} while (oldX > 236);
 			if (!displAnim)
-				_objectsManager.SPACTION(_globals->PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 6, false);
+				_objectsManager->SPACTION(_globals->PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 6, false);
 			break;
 		default:
 			break;
@@ -2676,10 +2678,10 @@ void HopkinsEngine::handleOceanMouseEvents() {
 	case 4:
 		switch (_globals->_oceanDirection) {
 		case DIR_UP:
-			_objectsManager.SPACTION(_globals->PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 6, false);
 			break;
 		case DIR_RIGHT:
-			oldX = _objectsManager.getSpriteX(0);
+			oldX = _objectsManager->getSpriteX(0);
 			do {
 				if (_globals->_speed == 1)
 					oldX += 2;
@@ -2687,7 +2689,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 					oldX += 4;
 				else if (_globals->_speed == 3)
 					oldX += 6;
-				_objectsManager.setSpriteX(0, oldX);
+				_objectsManager->setSpriteX(0, oldX);
 				setSubmarineSprites();
 				_eventsManager->refreshScreenAndEvents();
 				if (_eventsManager->getMouseButton() == 1 && oldPosX == _eventsManager->getMouseX() && _eventsManager->getMouseY() == oldPosY) {
@@ -2696,10 +2698,10 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				}
 			} while (oldX <= 235);
 			if (!displAnim)
-				_objectsManager.SPACTION(_globals->PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 6, false);
+				_objectsManager->SPACTION(_globals->PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 6, false);
 			break;
 		case DIR_LEFT:
-			oldX = _objectsManager.getSpriteX(0);
+			oldX = _objectsManager->getSpriteX(0);
 			for (;;) {
 				if (_globals->_speed == 1)
 					oldX -= 2;
@@ -2707,7 +2709,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 					oldX -= 4;
 				else if (_globals->_speed == 3)
 					oldX -= 6;
-				_objectsManager.setSpriteX(0, oldX);
+				_objectsManager->setSpriteX(0, oldX);
 				setSubmarineSprites();
 				_eventsManager->refreshScreenAndEvents();
 				if (_eventsManager->getMouseButton() == 1 && oldPosX == _eventsManager->getMouseX() && _eventsManager->getMouseY() == oldPosY)
@@ -2715,7 +2717,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 
 				if (oldX <= 236) {
 					if (!displAnim)
-						_objectsManager.SPACTION(_globals->PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 6, false);
+						_objectsManager->SPACTION(_globals->PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 6, false);
 					break;
 				}
 			}
@@ -2732,16 +2734,16 @@ void HopkinsEngine::handleOceanMouseEvents() {
 void HopkinsEngine::setSubmarineSprites() {
 	switch (_globals->_oceanDirection) {
 	case DIR_UP:
-		_objectsManager.setSpriteIndex(0, 27);
+		_objectsManager->setSpriteIndex(0, 27);
 		break;
 	case DIR_RIGHT:
-		_objectsManager.setSpriteIndex(0, 0);
+		_objectsManager->setSpriteIndex(0, 0);
 		break;
 	case DIR_DOWN:
-		_objectsManager.setSpriteIndex(0, 9);
+		_objectsManager->setSpriteIndex(0, 9);
 		break;
 	case DIR_LEFT:
-		_objectsManager.setSpriteIndex(0, 18);
+		_objectsManager->setSpriteIndex(0, 18);
 		break;
 	default:
 		break;
@@ -2760,13 +2762,13 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 		_graphicsManager->loadImage(backgroundFilename);
 
 	if (curExitId == 77)
-		_objectsManager.loadLinkFile("IM77");
+		_objectsManager->loadLinkFile("IM77");
 	else if (curExitId == 84)
-		_objectsManager.loadLinkFile("IM84");
+		_objectsManager->loadLinkFile("IM84");
 	else if (curExitId == 91)
-		_objectsManager.loadLinkFile("IM91");
+		_objectsManager->loadLinkFile("IM91");
 	else
-		_objectsManager.loadLinkFile("ocean");
+		_objectsManager->loadLinkFile("ocean");
 
 	if (!exit1)
 		_linesManager->disableZone(1);
@@ -2782,31 +2784,31 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 
 	switch (_globals->_oceanDirection) {
 	case DIR_UP:
-		_objectsManager._characterPos.x = 236;
-		_objectsManager._startSpriteIndex = 27;
+		_objectsManager->_characterPos.x = 236;
+		_objectsManager->_startSpriteIndex = 27;
 		break;
 	case DIR_RIGHT:
-		_objectsManager._characterPos.x = -20;
-		_objectsManager._startSpriteIndex = 0;
+		_objectsManager->_characterPos.x = -20;
+		_objectsManager->_startSpriteIndex = 0;
 		break;
 	case DIR_DOWN:
-		_objectsManager._characterPos.x = 236;
-		_objectsManager._startSpriteIndex = 9;
+		_objectsManager->_characterPos.x = 236;
+		_objectsManager->_startSpriteIndex = 9;
 		break;
 	case DIR_LEFT:
-		_objectsManager._characterPos.x = 415;
-		_objectsManager._startSpriteIndex = 18;
+		_objectsManager->_characterPos.x = 415;
+		_objectsManager->_startSpriteIndex = 18;
 		break;
 	default:
 		break;
 	}
 
-	_objectsManager.addStaticSprite(_globals->PERSO, Common::Point(_objectsManager._characterPos.x, 110), 0, _objectsManager._startSpriteIndex, 0, false, 0, 0);
+	_objectsManager->addStaticSprite(_globals->PERSO, Common::Point(_objectsManager->_characterPos.x, 110), 0, _objectsManager->_startSpriteIndex, 0, false, 0, 0);
 	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
-	_objectsManager.animateSprite(0);
+	_objectsManager->animateSprite(0);
 	_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_eventsManager->mouseOn();
 	_eventsManager->changeMouseCursor(4);
@@ -2840,8 +2842,8 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	else if (_globals->_exitId == 4)
 		_globals->_exitId = exit4;
 	_graphicsManager->fadeOutLong();
-	_objectsManager.removeSprite(0);
-	_objectsManager.clearScreen();
+	_objectsManager->removeSprite(0);
+	_objectsManager->clearScreen();
 	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
 }
@@ -2861,7 +2863,7 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	_graphicsManager->_maxX = SCREEN_WIDTH;
 	_graphicsManager->_maxY = SCREEN_HEIGHT - 1;
 	_eventsManager->_breakoutFl = false;
-	_objectsManager._forestFl = false;
+	_objectsManager->_forestFl = false;
 	_globals->_disableInventFl = true;
 	_globals->_exitId = 0;
 

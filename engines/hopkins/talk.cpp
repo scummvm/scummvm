@@ -81,9 +81,9 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
 	_characterSprite = _vm->_fileManager->searchCat(spriteFilename, RES_SAN);
 	if (_characterSprite) {
-		_characterSprite = _vm->_objectsManager.loadSprite(spriteFilename);
+		_characterSprite = _vm->_objectsManager->loadSprite(spriteFilename);
 	} else {
-		_characterSprite = _vm->_objectsManager.loadSprite("RES_SAN.RES");
+		_characterSprite = _vm->_objectsManager->loadSprite("RES_SAN.RES");
 	}
 
 	if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
@@ -94,7 +94,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	if (!_vm->_graphicsManager->_lineNbr)
 		_vm->_graphicsManager->_scrollOffset = 0;
 	_vm->_graphicsManager->NB_SCREEN(true);
-	_vm->_objectsManager.PERSO_ON = true;
+	_vm->_objectsManager->PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, false);
 	startCharacterAnim0(_paletteBufferIdx, false);
 	initCharacterAnim();
@@ -132,7 +132,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-	_vm->_objectsManager.PERSO_ON = false;
+	_vm->_objectsManager->PERSO_ON = false;
 	_vm->_eventsManager->_mouseCursorId = oldMouseCursorId;
 
 	_vm->_eventsManager->changeMouseCursor(oldMouseCursorId);
@@ -233,15 +233,15 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 48;
 		int curVal = READ_LE_INT16(bufPtr);
 		if (curVal != 0)
-			_vm->_objectsManager.setBobAnimation(curVal);
+			_vm->_objectsManager->setBobAnimation(curVal);
 		if (curVal != 1)
-			_vm->_objectsManager.setBobAnimation(READ_LE_INT16(bufPtr + 1));
+			_vm->_objectsManager->setBobAnimation(READ_LE_INT16(bufPtr + 1));
 		if (curVal != 2)
-			_vm->_objectsManager.setBobAnimation(READ_LE_INT16(bufPtr + 2));
+			_vm->_objectsManager->setBobAnimation(READ_LE_INT16(bufPtr + 2));
 		if (curVal != 3)
-			_vm->_objectsManager.setBobAnimation(READ_LE_INT16(bufPtr + 3));
+			_vm->_objectsManager->setBobAnimation(READ_LE_INT16(bufPtr + 3));
 		if (curVal != 4)
-			_vm->_objectsManager.setBobAnimation(READ_LE_INT16(bufPtr + 4));
+			_vm->_objectsManager->setBobAnimation(READ_LE_INT16(bufPtr + 4));
 	} else {
 		dialogWait();
 	}
@@ -304,23 +304,23 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 
 		int curVal = READ_LE_INT16(bufPtr);
 		if (curVal != 0)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 1);
 		if (curVal != 1)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 2);
 		if (curVal != 2)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 3);
 		if (curVal != 3)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 4);
 		if (curVal != 4)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 	} else {
 		dialogTalk();
 	}
@@ -357,23 +357,23 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
 		int curVal = READ_LE_INT16(bufPtr);
 		if (curVal)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 1);
 		if (curVal)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 2);
 		if (curVal)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 3);
 		if (curVal)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 4);
 		if (curVal)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 	} else {
 		VISU_PARLE();
 	}
@@ -409,23 +409,23 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
 		int curVal = READ_LE_INT16(bufPtr);
 		if (curVal)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 1);
 		if (curVal)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 2);
 		if (curVal)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 3);
 		if (curVal)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 
 		curVal = READ_LE_INT16(bufPtr + 4);
 		if (curVal)
-			_vm->_objectsManager.stopBobAnimation(curVal);
+			_vm->_objectsManager->stopBobAnimation(curVal);
 	} else {
 		dialogEndTalk();
 	}
@@ -481,19 +481,19 @@ void TalkManager::dialogWait() {
 void TalkManager::dialogTalk() {
 	for (int idx = 26; idx <= 30; ++idx) {
 		if (_vm->_globals->_animBqe[idx]._enabledFl)
-			_vm->_objectsManager.hideBob(idx);
+			_vm->_objectsManager->hideBob(idx);
 	}
 
 	for (int idx = 26; idx <= 30; ++idx) {
 		if (_vm->_globals->_animBqe[idx]._enabledFl)
-			_vm->_objectsManager.resetBob(idx);
+			_vm->_objectsManager->resetBob(idx);
 	}
 }
 
 void TalkManager::dialogEndTalk() {
 	for (int idx = 21; idx <= 25; ++idx) {
 		if (_vm->_globals->_animBqe[idx]._enabledFl)
-			_vm->_objectsManager.hideBob(idx);
+			_vm->_objectsManager->hideBob(idx);
 	}
 
 	_vm->_eventsManager->refreshScreenAndEvents();
@@ -501,7 +501,7 @@ void TalkManager::dialogEndTalk() {
 
 	for (int idx = 21; idx <= 25; ++idx) {
 		if (_vm->_globals->_animBqe[idx]._enabledFl)
-			_vm->_objectsManager.resetBob(idx);
+			_vm->_objectsManager->resetBob(idx);
 	}
 }
 
@@ -601,24 +601,24 @@ void TalkManager::VISU_PARLE() {
 }
 
 void TalkManager::BOB_VISU_PARLE(int idx) {
-	_vm->_objectsManager._priorityFl = true;
-	if (!_vm->_objectsManager._bob[idx]._bobMode) {
-		_vm->_objectsManager.resetBob(idx);
+	_vm->_objectsManager->_priorityFl = true;
+	if (!_vm->_objectsManager->_bob[idx]._bobMode) {
+		_vm->_objectsManager->resetBob(idx);
 		byte *bqeData = _vm->_globals->_animBqe[idx]._data;
 		int newMode = READ_LE_INT16(bqeData + 2);
 		if (!newMode)
 			newMode = 1;
 		if (READ_LE_INT16(bqeData + 24)) {
-			_vm->_objectsManager._bob[idx]._isSpriteFl = true;
-			_vm->_objectsManager._bob[idx]._zoomFactor = 0;
-			_vm->_objectsManager._bob[idx]._flipFl = false;
-			_vm->_objectsManager._bob[idx]._animData = _vm->_globals->_animBqe[idx]._data;
-			_vm->_objectsManager._bob[idx]._bobMode = 10;
+			_vm->_objectsManager->_bob[idx]._isSpriteFl = true;
+			_vm->_objectsManager->_bob[idx]._zoomFactor = 0;
+			_vm->_objectsManager->_bob[idx]._flipFl = false;
+			_vm->_objectsManager->_bob[idx]._animData = _vm->_globals->_animBqe[idx]._data;
+			_vm->_objectsManager->_bob[idx]._bobMode = 10;
 			bqeData = _characterSprite;
-			_vm->_objectsManager._bob[idx]._spriteData = _characterSprite;
-			_vm->_objectsManager._bob[idx]._bobModeChange = newMode;
-			_vm->_objectsManager._bob[idx].field20 = -1;
-			_vm->_objectsManager._bob[idx].field22 = 0;
+			_vm->_objectsManager->_bob[idx]._spriteData = _characterSprite;
+			_vm->_objectsManager->_bob[idx]._bobModeChange = newMode;
+			_vm->_objectsManager->_bob[idx].field20 = -1;
+			_vm->_objectsManager->_bob[idx].field22 = 0;
 		}
 	}
 }
@@ -848,8 +848,8 @@ void TalkManager::REPONSE(int zone, int verb) {
 			else if (opcodeType == 6) {
 				// JUMP
 				_vm->_globals->freeMemory(ptr);
-				zoneObj = _vm->_objectsManager._jumpZone;
-				verbObj = _vm->_objectsManager._jumpVerb;
+				zoneObj = _vm->_objectsManager->_jumpZone;
+				verbObj = _vm->_objectsManager->_jumpVerb;
 				outerLoopFl = true;
 				break;
 			}
@@ -866,26 +866,26 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		return;
 
 	if (zone == 22 || zone == 23) {
-		_vm->_objectsManager.setFlipSprite(0, false);
-		_vm->_objectsManager.setSpriteIndex(0, 62);
-		_vm->_objectsManager.SPACTION(_vm->_objectsManager._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 4, false);
+		_vm->_objectsManager->setFlipSprite(0, false);
+		_vm->_objectsManager->setSpriteIndex(0, 62);
+		_vm->_objectsManager->SPACTION(_vm->_objectsManager->_forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 4, false);
 		if (zone == 22) {
-			_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(3));
-			_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(3));
+			_vm->_objectsManager->lockAnimX(6, _vm->_objectsManager->getBobPosX(3));
+			_vm->_objectsManager->lockAnimX(8, _vm->_objectsManager->getBobPosX(3));
 		} else { // zone == 23
-			_vm->_objectsManager.lockAnimX(6, _vm->_objectsManager.getBobPosX(4));
-			_vm->_objectsManager.lockAnimX(8, _vm->_objectsManager.getBobPosX(4));
+			_vm->_objectsManager->lockAnimX(6, _vm->_objectsManager->getBobPosX(4));
+			_vm->_objectsManager->lockAnimX(8, _vm->_objectsManager->getBobPosX(4));
 		}
-		_vm->_objectsManager.stopBobAnimation(3);
-		_vm->_objectsManager.stopBobAnimation(4);
-		_vm->_objectsManager.setBobAnimation(6);
+		_vm->_objectsManager->stopBobAnimation(3);
+		_vm->_objectsManager->stopBobAnimation(4);
+		_vm->_objectsManager->setBobAnimation(6);
 		_vm->_soundManager.playSample(1);
-		_vm->_objectsManager.SPACTION1(_vm->_objectsManager._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
+		_vm->_objectsManager->SPACTION1(_vm->_objectsManager->_forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
 		do
 			_vm->_eventsManager->refreshScreenAndEvents();
-		while (_vm->_objectsManager.getBobAnimDataIdx(6) < 12);
-		_vm->_objectsManager.stopBobAnimation(6);
-		_vm->_objectsManager.setBobAnimation(8);
+		while (_vm->_objectsManager->getBobAnimDataIdx(6) < 12);
+		_vm->_objectsManager->stopBobAnimation(6);
+		_vm->_objectsManager->setBobAnimation(8);
 		
 		switch (_vm->_globals->_screenId) {
 		case 35:
@@ -914,26 +914,26 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		_vm->_linesManager->disableZone(22);
 		_vm->_linesManager->disableZone(23);
 	} else if (zone == 20 || zone == 21) {
-		_vm->_objectsManager.setFlipSprite(0, true);
-		_vm->_objectsManager.setSpriteIndex(0, 62);
-		_vm->_objectsManager.SPACTION(_vm->_objectsManager._forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 4, true);
+		_vm->_objectsManager->setFlipSprite(0, true);
+		_vm->_objectsManager->setSpriteIndex(0, 62);
+		_vm->_objectsManager->SPACTION(_vm->_objectsManager->_forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 4, true);
 		if (zone == 20) {
-			_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(1));
-			_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(1));
+			_vm->_objectsManager->lockAnimX(5, _vm->_objectsManager->getBobPosX(1));
+			_vm->_objectsManager->lockAnimX(7, _vm->_objectsManager->getBobPosX(1));
 		} else { // zone == 21
-			_vm->_objectsManager.lockAnimX(5, _vm->_objectsManager.getBobPosX(2));
-			_vm->_objectsManager.lockAnimX(7, _vm->_objectsManager.getBobPosX(2));
+			_vm->_objectsManager->lockAnimX(5, _vm->_objectsManager->getBobPosX(2));
+			_vm->_objectsManager->lockAnimX(7, _vm->_objectsManager->getBobPosX(2));
 		}
-		_vm->_objectsManager.stopBobAnimation(1);
-		_vm->_objectsManager.stopBobAnimation(2);
-		_vm->_objectsManager.setBobAnimation(5);
+		_vm->_objectsManager->stopBobAnimation(1);
+		_vm->_objectsManager->stopBobAnimation(2);
+		_vm->_objectsManager->setBobAnimation(5);
 		_vm->_soundManager.playSample(1);
-		_vm->_objectsManager.SPACTION1(_vm->_objectsManager._forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
+		_vm->_objectsManager->SPACTION1(_vm->_objectsManager->_forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
 		do
 			_vm->_eventsManager->refreshScreenAndEvents();
-		while (_vm->_objectsManager.getBobAnimDataIdx(5) < 12);
-		_vm->_objectsManager.stopBobAnimation(5);
-		_vm->_objectsManager.setBobAnimation(7);
+		while (_vm->_objectsManager->getBobAnimDataIdx(5) < 12);
+		_vm->_objectsManager->stopBobAnimation(5);
+		_vm->_objectsManager->setBobAnimation(7);
 		switch (_vm->_globals->_screenId) {
 		case 35:
 			indx = 200;
@@ -975,7 +975,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	for (int i = 0; i <= 44; i++)
 		_vm->_linesManager->BOBZONE[i] = 0;
 
-	_vm->_objectsManager._zoneNum = -1;
+	_vm->_objectsManager->_zoneNum = -1;
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(0);
 	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
@@ -996,9 +996,9 @@ void TalkManager::animateObject(const Common::String &filename) {
 
 	_characterSprite = _vm->_fileManager->searchCat(spriteFilename, RES_SAN);
 	if (_characterSprite)
-		_characterSprite = _vm->_objectsManager.loadSprite(spriteFilename);
+		_characterSprite = _vm->_objectsManager->loadSprite(spriteFilename);
 	else
-		_characterSprite = _vm->_objectsManager.loadSprite("RES_SAN.RES");
+		_characterSprite = _vm->_objectsManager->loadSprite("RES_SAN.RES");
 
 	if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
 		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
@@ -1010,33 +1010,33 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_graphicsManager->NB_SCREEN(true);
 	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
 	_vm->_graphicsManager->NB_SCREEN(true);
-	_vm->_objectsManager.PERSO_ON = true;
+	_vm->_objectsManager->PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, true);
 	startCharacterAnim0(_paletteBufferIdx, false);
 	byte *oldAnswerBufferPtr = _vm->_globals->_answerBuffer;
 	_vm->_globals->_answerBuffer = g_PTRNUL;
 	_vm->_globals->_freezeCharacterFl = true;
-	_vm->_objectsManager.loadLinkFile(screenFilename);
-	_vm->_objectsManager.PERSO_ON = true;
+	_vm->_objectsManager->loadLinkFile(screenFilename);
+	_vm->_objectsManager->PERSO_ON = true;
 	_vm->_globals->_actionMoveTo = false;
-	_vm->_objectsManager._zoneNum = -1;
+	_vm->_objectsManager->_zoneNum = -1;
 	initCharacterAnim();
 	VISU_PARLE();
 	dialogWait();
 	_vm->_graphicsManager->initScreen(screenFilename, 2, true);
 	_vm->_globals->_freezeCharacterFl = true;
-	_vm->_objectsManager._forceZoneFl = true;
-	_vm->_objectsManager._zoneNum = -1;
+	_vm->_objectsManager->_forceZoneFl = true;
+	_vm->_objectsManager->_zoneNum = -1;
 	do {
 		int mouseButton = _vm->_eventsManager->getMouseButton();
 		if (mouseButton == 1)
-			_vm->_objectsManager.handleLeftButton();
+			_vm->_objectsManager->handleLeftButton();
 		else if (mouseButton == 2)
-			_vm->_objectsManager.handleRightButton();
+			_vm->_objectsManager->handleRightButton();
 
 		_vm->_linesManager->checkZone();
 		if (_vm->_globals->_actionMoveTo)
-			_vm->_objectsManager.PARADISE();
+			_vm->_objectsManager->PARADISE();
 		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (!_vm->_globals->_exitId);
 	dialogEndTalk();
@@ -1055,10 +1055,10 @@ void TalkManager::animateObject(const Common::String &filename) {
 
 	_vm->_globals->freeMemory(_vm->_globals->_answerBuffer);
 	_vm->_globals->_answerBuffer = oldAnswerBufferPtr;
-	_vm->_objectsManager._disableFl = true;
-	_vm->_objectsManager.loadLinkFile(curScreenFilename);
+	_vm->_objectsManager->_disableFl = true;
+	_vm->_objectsManager->loadLinkFile(curScreenFilename);
 	_vm->_graphicsManager->initScreen(curScreenFilename, 2, true);
-	_vm->_objectsManager._disableFl = false;
+	_vm->_objectsManager->_disableFl = false;
 	_vm->_globals->_freezeCharacterFl = false;
 	if (_vm->_globals->_exitId == 101)
 		_vm->_globals->_exitId = 0;
@@ -1066,7 +1066,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-	_vm->_objectsManager.PERSO_ON = false;
+	_vm->_objectsManager->PERSO_ON = false;
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(4);
 	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);

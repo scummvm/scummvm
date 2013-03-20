@@ -244,10 +244,10 @@ void Globals::clearAll() {
 	_answerBuffer = g_PTRNUL;
 	SPRITE_ECRAN = g_PTRNUL;
 	_saveData = (Savegame *)g_PTRNUL;
-	_vm->_objectsManager._curObjectIndex = 0;
+	_vm->_objectsManager->_curObjectIndex = 0;
 
 	_vm->_linesManager->clearAll();
-	_vm->_objectsManager.clearAll();
+	_vm->_objectsManager->clearAll();
 
 	_saveData = (Savegame *)malloc(sizeof(Savegame));
 	memset(_saveData, 0, sizeof(Savegame));
@@ -378,7 +378,7 @@ void Globals::disableHiding() {
 
 void Globals::B_CACHE_OFF(int idx) {
 	assert(idx < 36);
-	_vm->_objectsManager._bob[idx].field34 = true;
+	_vm->_objectsManager->_bob[idx].field34 = true;
 }
 
 void Globals::resetHidingUseCount(int idx) {
@@ -411,8 +411,8 @@ void Globals::loadHidingItems(const Common::String &file) {
 			_hidingItem[i]._useCount = 0;
 		} else {
 			_hidingItem[i]._spriteData = spriteData;
-			_hidingItem[i]._width = _vm->_objectsManager.getWidth(spriteData, _hidingItem[i]._spriteIndex);
-			_hidingItem[i]._height = _vm->_objectsManager.getHeight(spriteData, _hidingItem[i]._spriteIndex);
+			_hidingItem[i]._width = _vm->_objectsManager->getWidth(spriteData, _hidingItem[i]._spriteIndex);
+			_hidingItem[i]._height = _vm->_objectsManager->getHeight(spriteData, _hidingItem[i]._spriteIndex);
 			_hidingItem[i]._useCount = 1;
 		}
 

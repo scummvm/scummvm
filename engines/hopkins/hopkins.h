@@ -152,9 +152,9 @@ public:
 	Globals *_globals;
 	GraphicsManager *_graphicsManager;
 	LinesManager *_linesManager;
+	MenuManager *_menuManager;
+	ObjectsManager *_objectsManager;
 
-	MenuManager _menuManager;
-	ObjectsManager _objectsManager;
 	SaveLoadManager _saveLoadManager;
 	ScriptManager _scriptManager;
 	SoundManager _soundManager;

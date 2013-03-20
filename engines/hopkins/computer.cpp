@@ -530,7 +530,7 @@ void ComputerManager::readText(int idx) {
  * Display breakout when Games sub-menu is selected
  */
 void ComputerManager::displayGamesSubMenu() {
-	const byte *oldSpriteData = _vm->_objectsManager._sprite[0]._spriteData;
+	const byte *oldSpriteData = _vm->_objectsManager->_sprite[0]._spriteData;
 	uint oldSpeed = _vm->_globals->_speed;
 
 	_vm->_globals->_speed = 1;
@@ -562,7 +562,7 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_graphicsManager->resetDirtyRects();
 	_breakoutSpr = _vm->_globals->freeMemory(_breakoutSpr);
 	_breakoutLevel = (int16 *)_vm->_globals->freeMemory((byte *)_breakoutLevel);
-	_vm->_objectsManager._sprite[0]._spriteData = oldSpriteData;
+	_vm->_objectsManager->_sprite[0]._spriteData = oldSpriteData;
 
 	_vm->_soundManager.removeSample(1);
 	_vm->_soundManager.removeSample(2);
@@ -619,8 +619,8 @@ void ComputerManager::setModeVGA256() {
  * Load new level
  */
 void ComputerManager::newLevel() {
-	_vm->_objectsManager.removeSprite(0);
-	_vm->_objectsManager.removeSprite(1);
+	_vm->_objectsManager->removeSprite(0);
+	_vm->_objectsManager->removeSprite(1);
 	++_breakoutLives;
 	if (_breakoutLives > 11)
 		_breakoutLives = 11;
@@ -643,13 +643,13 @@ void ComputerManager::newLevel() {
 	_breakoutLevel = (int16 *)_vm->_fileManager->loadFile(file);
 	displayBricks();
 
-	_vm->_objectsManager.addStaticSprite(_breakoutSpr, Common::Point(150, 192), 0, 13, 0, false, 0, 0);
-	_vm->_objectsManager.addStaticSprite(_breakoutSpr, Common::Point(164, 187), 1, 14, 0, false, 0, 0);
+	_vm->_objectsManager->addStaticSprite(_breakoutSpr, Common::Point(150, 192), 0, 13, 0, false, 0, 0);
+	_vm->_objectsManager->addStaticSprite(_breakoutSpr, Common::Point(164, 187), 1, 14, 0, false, 0, 0);
 
 	_ballPosition = Common::Point(164, 187);
 	_padPositionX = 150;
-	_vm->_objectsManager.animateSprite(0);
-	_vm->_objectsManager.animateSprite(1);
+	_vm->_objectsManager->animateSprite(0);
+	_vm->_objectsManager->animateSprite(1);
  
 	_vm->_eventsManager->mouseOn();
 	_vm->_soundManager.playSample(3, 5);
@@ -727,8 +727,8 @@ void ComputerManager::playBreakout() {
 			// Set up the racket and ball
 			_vm->_eventsManager->mouseOff();
 			_ballPosition = Common::Point(_padPositionX + 14, 187);
-			_vm->_objectsManager.setSpriteY(1, 187);
-			_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
+			_vm->_objectsManager->setSpriteY(1, 187);
+			_vm->_objectsManager->setSpriteX(1, _ballPosition.x);
 
 			_vm->_graphicsManager->resetDirtyRects();
 			_vm->_eventsManager->refreshScreenAndEvents();
@@ -741,9 +741,9 @@ void ComputerManager::playBreakout() {
 					_padPositionX = 5;
 				if (_padPositionX > 282)
 					_padPositionX = 282;
-				_vm->_objectsManager.setSpriteX(0, _padPositionX);
-				_vm->_objectsManager.setSpriteX(1, _padPositionX + 14);
-				_vm->_objectsManager.setSpriteY(1, 187);
+				_vm->_objectsManager->setSpriteX(0, _padPositionX);
+				_vm->_objectsManager->setSpriteX(1, _padPositionX + 14);
+				_vm->_objectsManager->setSpriteY(1, 187);
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (!_vm->shouldQuit() && _vm->_eventsManager->getMouseButton() != 1);
 
@@ -761,7 +761,7 @@ void ComputerManager::playBreakout() {
 					_padPositionX = 5;
 				if (_padPositionX > 282)
 					_padPositionX = 282;
-				_vm->_objectsManager.setSpriteX(0, _padPositionX);
+				_vm->_objectsManager->setSpriteX(0, _padPositionX);
 				lastBreakoutEvent = moveBall();
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (!_vm->shouldQuit() && !lastBreakoutEvent);
@@ -778,8 +778,8 @@ void ComputerManager::playBreakout() {
 
 			_vm->_graphicsManager->fadeOutBreakout();
 			_vm->_eventsManager->mouseOn();
-			_vm->_objectsManager.removeSprite(0);
-			_vm->_objectsManager.removeSprite(1);
+			_vm->_objectsManager->removeSprite(0);
+			_vm->_objectsManager->removeSprite(1);
 			if (_breakoutScore > _breakoutHiscore)
 				getScoreName();
 			if (displayHiscores() != 1)
@@ -1094,8 +1094,8 @@ int ComputerManager::moveBall() {
 	if (_ballPosition.y > 194)
 		retVal = 1;
 	checkBallCollisions();
-	_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
-	_vm->_objectsManager.setSpriteY(1, _ballPosition.y);
+	_vm->_objectsManager->setSpriteX(1, _ballPosition.x);
+	_vm->_objectsManager->setSpriteY(1, _ballPosition.y);
 	if (!_breakoutBrickNbr)
 		retVal = 2;
 	return retVal;

@@ -164,10 +164,9 @@ public:
 	bool BOBTOUS;
 	bool OBSSEUL;
 
-	ObjectsManager();
+	ObjectsManager(HopkinsEngine *vm);
 	~ObjectsManager();
 
-	void setParent(HopkinsEngine *vm);
 	void clearAll();
 
 	int getWidth(const byte *objectData, int idx);

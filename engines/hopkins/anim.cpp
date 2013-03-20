@@ -520,8 +520,8 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 
 	int objectDataIdx = 0;
 	for(objectDataIdx = 0; objectDataIdx <= 249; objectDataIdx++) {
-		int width = _vm->_objectsManager.getWidth(fileDataPtr, objectDataIdx);
-		int height = _vm->_objectsManager.getHeight(fileDataPtr, objectDataIdx);
+		int width = _vm->_objectsManager->getWidth(fileDataPtr, objectDataIdx);
+		int height = _vm->_objectsManager->getHeight(fileDataPtr, objectDataIdx);
 		if (!width && !height)
 			break;
 	}
@@ -551,9 +551,9 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 			int x2 = READ_LE_INT16(curOfsData + 4);
 			int y2 = READ_LE_INT16(curOfsData + 6);
 
-			_vm->_objectsManager.setOffsetXY(_vm->_globals->Bank[idx]._data, objIdx, x1, y1, 0);
+			_vm->_objectsManager->setOffsetXY(_vm->_globals->Bank[idx]._data, objIdx, x1, y1, 0);
 			if (_vm->_globals->Bank[idx]._fileHeader == 2)
-				_vm->_objectsManager.setOffsetXY(_vm->_globals->Bank[idx]._data, objIdx, x2, y2, 1);
+				_vm->_objectsManager->setOffsetXY(_vm->_globals->Bank[idx]._data, objIdx, x2, y2, 1);
 		}
 
 		_vm->_globals->freeMemory(ofsData);

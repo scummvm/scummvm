@@ -35,7 +35,9 @@
 
 namespace Hopkins {
 
-ObjectsManager::ObjectsManager() {
+ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
+	_vm = vm;
+
 	for (int i = 0; i < 6; ++i)
 		Common::fill((byte *)&_sprite[i], (byte *)&_sprite[i] + sizeof(SpriteItem), 0);
 
@@ -87,10 +89,6 @@ ObjectsManager::~ObjectsManager() {
 	_vm->_globals->freeMemory(_forestSprite);
 	_vm->_globals->freeMemory(_gestureBuf);
 	_vm->_globals->freeMemory(_headSprites);
-}
-
-void ObjectsManager::setParent(HopkinsEngine *vm) {
-	_vm = vm;
 }
 
 void ObjectsManager::clearAll() {

@@ -37,11 +37,11 @@
 
 namespace Hopkins {
 
-void MenuManager::setParent(HopkinsEngine *vm) {
+enum MenuSelection { MENU_NONE = 0, PLAY_GAME = 1, LOAD_GAME = 2, OPTIONS = 3, INTRODUCTION = 4, QUIT = 5 };
+
+MenuManager::MenuManager(HopkinsEngine *vm) {
 	_vm = vm;
 }
-
-enum MenuSelection { MENU_NONE = 0, PLAY_GAME = 1, LOAD_GAME = 2, OPTIONS = 3, INTRODUCTION = 4, QUIT = 5 };
 
 int MenuManager::menu() {
 	byte *spriteData = NULL;
@@ -55,7 +55,7 @@ int MenuManager::menu() {
 
 	result = 0;
 	while (!g_system->getEventManager()->shouldQuit()) {
-		_vm->_objectsManager._forestFl = false;
+		_vm->_objectsManager->_forestFl = false;
 		_vm->_eventsManager->_breakoutFl = false;
 		_vm->_globals->_disableInventFl = true;
 		_vm->_globals->_exitId = 0;
@@ -64,7 +64,7 @@ int MenuManager::menu() {
 			_vm->_globals->_inventory[idx] = 0;
 
 		memset(_vm->_globals->_saveData, 0, 2000);
-		_vm->_objectsManager.addObject(14);
+		_vm->_objectsManager->addObject(14);
 		memset(frameIndex, 0, sizeof(int) * ARRAYSIZE(frameIndex));
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
@@ -79,13 +79,13 @@ int MenuManager::menu() {
 		_vm->_graphicsManager->fadeInLong();
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			spriteData = _vm->_objectsManager.loadSprite("MENU.SPR");
+			spriteData = _vm->_objectsManager->loadSprite("MENU.SPR");
 		else if (_vm->_globals->_language == LANG_EN)
-			spriteData = _vm->_objectsManager.loadSprite("MENUAN.SPR");
+			spriteData = _vm->_objectsManager->loadSprite("MENUAN.SPR");
 		else if (_vm->_globals->_language == LANG_FR)
-			spriteData = _vm->_objectsManager.loadSprite("MENUFR.SPR");
+			spriteData = _vm->_objectsManager->loadSprite("MENUFR.SPR");
 		else if (_vm->_globals->_language == LANG_SP)
-			spriteData = _vm->_objectsManager.loadSprite("MENUES.SPR");
+			spriteData = _vm->_objectsManager->loadSprite("MENUES.SPR");
 
 		_vm->_eventsManager->mouseOn();
 		_vm->_eventsManager->changeMouseCursor(0);
