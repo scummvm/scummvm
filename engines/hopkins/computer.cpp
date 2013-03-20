@@ -77,15 +77,15 @@ void ComputerManager::setTextMode() {
 	_vm->_graphicsManager.unlockScreen();
 
 	_vm->_graphicsManager._lineNbr = SCREEN_WIDTH;
-	_vm->_fontManager._font = _vm->_globals.freeMemory(_vm->_fontManager._font);
+	_vm->_fontManager->_font = _vm->_globals.freeMemory(_vm->_fontManager->_font);
 
 	Common::String filename = "STFONT.SPR";
 	Common::File f;
 	if (!f.exists(filename))
 		filename = "FONTE.SPR"; // Used by the BeOS and OS/2 versions as an alternative
-	_vm->_fontManager._font = _vm->_fileManager->loadFile(filename);
-	_vm->_fontManager._fontFixedWidth = 8;
-	_vm->_fontManager._fontFixedHeight = 8;
+	_vm->_fontManager->_font = _vm->_fileManager->loadFile(filename);
+	_vm->_fontManager->_fontFixedWidth = 8;
+	_vm->_fontManager->_fontFixedHeight = 8;
 
 	_vm->_graphicsManager.loadImage("WINTEXT");
 	_vm->_graphicsManager.fadeInLong();
@@ -405,7 +405,7 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 	bool oldMouseFlag = _vm->_eventsManager->_mouseFl;
 	_vm->_eventsManager->_mouseFl = false;
 
-	_vm->_fontManager.displayTextVesa(xp, yp, "_", 252);
+	_vm->_fontManager->displayTextVesa(xp, yp, "_", 252);
 	do {
 		curChar = _vm->_eventsManager->waitKeyPress();
 		if (_vm->shouldQuit())
@@ -421,28 +421,28 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 		// BackSpace
 		if (curChar == 8 && textIndex > 0) {
 			_inputBuf[textIndex--] = 0;
-			x1 -= _vm->_fontManager._fontFixedWidth;
-			x2 = x1 + 2 * _vm->_fontManager._fontFixedWidth;
-			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, 3 * _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
+			x1 -= _vm->_fontManager->_fontFixedWidth;
+			x2 = x1 + 2 * _vm->_fontManager->_fontFixedWidth;
+			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, 3 * _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
 			_vm->_graphicsManager.addDirtyRect(x1, yp, x2, yp + 12);
-			_vm->_fontManager.displayTextVesa(x1, yp, "_", 252);
+			_vm->_fontManager->displayTextVesa(x1, yp, "_", 252);
 		}
 		if (mappedChar != '*') {
 			char newChar = mappedChar;
-			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-			_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
+			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
+			_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager->_fontFixedWidth + x1, yp + 12);
 			_inputBuf[textIndex] = newChar;
 
 			Common::String charString = Common::String::format("%c_", newChar);
-			_vm->_fontManager.displayTextVesa(x1, yp, charString, 252);
+			_vm->_fontManager->displayTextVesa(x1, yp, charString, 252);
 			++textIndex;
-			x1 += _vm->_fontManager._fontFixedWidth;
+			x1 += _vm->_fontManager->_fontFixedWidth;
 		}
 		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (textIndex != textIdx && curChar != 13);
 
-	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager._fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-	_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager._fontFixedWidth + x1, yp + 12);
+	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
+	_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager->_fontFixedWidth + x1, yp + 12);
 
 	_vm->_eventsManager->refreshScreenAndEvents();
 	_inputBuf[textIndex] = 0;
@@ -453,24 +453,24 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
  * Outputs a text string
  */
 void ComputerManager::outText(const Common::String &msg) {
-	_vm->_fontManager.renderTextDisplay(_textPosition.x, _textPosition.y, msg, _textColor);
+	_vm->_fontManager->renderTextDisplay(_textPosition.x, _textPosition.y, msg, _textColor);
 }
 
 /**
  * Outputs a text string
  */
 void ComputerManager::outText2(const Common::String &msg) {
-	_vm->_fontManager.displayTextVesa(_textPosition.x, _textPosition.y, msg, _textColor);
+	_vm->_fontManager->displayTextVesa(_textPosition.x, _textPosition.y, msg, _textColor);
 }
 
 /**
  * Restores the scene for the FBI headquarters room
  */
 void ComputerManager::restoreFBIRoom() {
-	_vm->_globals.freeMemory(_vm->_fontManager._font);
-	_vm->_fontManager._font = _vm->_fileManager->loadFile("FONTE3.SPR");
-	_vm->_fontManager._fontFixedWidth = 12;
-	_vm->_fontManager._fontFixedHeight = 21;
+	_vm->_globals.freeMemory(_vm->_fontManager->_font);
+	_vm->_fontManager->_font = _vm->_fileManager->loadFile("FONTE3.SPR");
+	_vm->_fontManager->_fontFixedWidth = 12;
+	_vm->_fontManager->_fontFixedHeight = 21;
 
 	_vm->_eventsManager->_mouseFl = true;
 }

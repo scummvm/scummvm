@@ -77,9 +77,8 @@ public:
 	TxtItem _text[12];
 	TxtItemList _textList[12];
 
-	FontManager();
+	FontManager(HopkinsEngine *vm);
 	~FontManager();
-	void setParent(HopkinsEngine *vm);
 	void clearAll();
 	void initData();
 

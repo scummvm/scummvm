@@ -2850,7 +2850,7 @@ void LinesManager::checkZone() {
 			_vm->_eventsManager->_mouseCursorId = 4;
 			_vm->_eventsManager->changeMouseCursor(4);
 			if (_vm->_globals._forceHideText) {
-				_vm->_fontManager.hideText(5);
+				_vm->_fontManager->hideText(5);
 				_vm->_globals._forceHideText = false;
 				return;
 			}
@@ -2862,8 +2862,8 @@ void LinesManager::checkZone() {
 				ZONEP[zoneId]._verbFl7 || ZONEP[zoneId]._verbFl8 ||
 				ZONEP[zoneId]._verbFl9 || ZONEP[zoneId]._verbFl10) {
 					if (_vm->_globals._oldMouseZoneId != zoneId) {
-						_vm->_fontManager.initTextBuffers(5, ZONEP[zoneId]._messageId, _vm->_globals._zoneFilename, 0, 430, 0, 0, 252);
-						_vm->_fontManager.showText(5);
+						_vm->_fontManager->initTextBuffers(5, ZONEP[zoneId]._messageId, _vm->_globals._zoneFilename, 0, 430, 0, 0, 252);
+						_vm->_fontManager->showText(5);
 						_vm->_globals._forceHideText = true;
 					}
 					_vm->_globals._hotspotTextColor += 25;

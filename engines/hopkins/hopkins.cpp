@@ -46,8 +46,8 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_debugger = new Debugger(this);
 	_eventsManager = new EventsManager(this);
 	_fileManager = new FileManager(this);
+	_fontManager = new FontManager(this);
 
-	_fontManager.setParent(this);
 	_globals.setParent(this);
 	_graphicsManager.setParent(this);
 	_linesManager.setParent(this);
@@ -60,6 +60,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 }
 
 HopkinsEngine::~HopkinsEngine() {
+	delete _fontManager;
 	delete _fileManager;
 	delete _eventsManager;
 	delete _debugger;
@@ -1582,7 +1583,7 @@ void HopkinsEngine::initializeSystem() {
 	_globals.clearAll();
 
 	_eventsManager->initMouseData();
-	_fontManager.initData();
+	_fontManager->initData();
 
 	_dialogsManager->_inventoryIcons = _fileManager->loadFile("ICONE.SPR");
 	_objectsManager._headSprites = _fileManager->loadFile("TETE.SPR");
@@ -2288,7 +2289,7 @@ void HopkinsEngine::drawBaseMap() {
 	memcpy(_graphicsManager._vesaBuffer, _graphicsManager._vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 	// Write some explanatory text
-	_fontManager.displayText(40, 200, "ScummVM base map - select a square for different rooms", 255);
+	_fontManager->displayText(40, 200, "ScummVM base map - select a square for different rooms", 255);
 }
 
 int HopkinsEngine::handleBaseMap() {
@@ -2438,7 +2439,7 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char color) {
 		if (!curChar)
 			break;
 		if (curChar > 31)
-			strWidth += _objectsManager.getWidth(_fontManager._font, curChar - 32);
+			strWidth += _objectsManager.getWidth(_fontManager->_font, curChar - 32);
 	}
 	int startPosX = 320 - strWidth / 2;
 	int endPosX = strWidth + startPosX;
@@ -2464,8 +2465,8 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char color) {
 		if (!curChar)
 			break;
 		if (curChar > 31) {
-			_graphicsManager.displayFont(_graphicsManager._vesaBuffer, _fontManager._font, startPosX, startPosY, curChar - 32, color);
-			startPosX += _objectsManager.getWidth(_fontManager._font, curChar - 32);
+			_graphicsManager.displayFont(_graphicsManager._vesaBuffer, _fontManager->_font, startPosX, startPosY, curChar - 32, color);
+			startPosX += _objectsManager.getWidth(_fontManager->_font, curChar - 32);
 		}
 	}
 }
@@ -2533,7 +2534,7 @@ void HopkinsEngine::displayCredits() {
 }
 
 void HopkinsEngine::handleOceanMouseEvents() {
-	_fontManager.hideText(9);
+	_fontManager->hideText(9);
 	if (_eventsManager->_mouseCursorId != 16)
 		return;
 

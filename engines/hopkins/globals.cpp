@@ -235,7 +235,7 @@ void Globals::clearAll() {
 
 	_boxWidth = 0;
 
-	_vm->_fontManager.clearAll();
+	_vm->_fontManager->clearAll();
 
 	initVBob();
 	_objectDataBuf = g_PTRNUL;

@@ -298,20 +298,20 @@ void ObjectsManager::displaySprite() {
 	// Handle copying any background areas that text are going to be drawn on
 	_vm->_globals._sortedDisplayCount = 0;
 	for (int idx = 0; idx <= 10; ++idx) {
-		if (_vm->_fontManager._textList[idx]._enabledFl && _vm->_fontManager._text[idx]._textType != 2) {
-			clipX = _vm->_fontManager._textList[idx]._pos.x - 2;
+		if (_vm->_fontManager->_textList[idx]._enabledFl && _vm->_fontManager->_text[idx]._textType != 2) {
+			clipX = _vm->_fontManager->_textList[idx]._pos.x - 2;
 
 			if (clipX < _vm->_graphicsManager._minX)
 				clipX = _vm->_graphicsManager._minX;
 	
-			clipY = _vm->_fontManager._textList[idx]._pos.y - 2;
+			clipY = _vm->_fontManager->_textList[idx]._pos.y - 2;
 			if (clipY < _vm->_graphicsManager._minY)
 				clipY = _vm->_graphicsManager._minY;
 
 			_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, clipX, clipY,
-				_vm->_fontManager._textList[idx]._width + 4, _vm->_fontManager._textList[idx]._height + 4,
+				_vm->_fontManager->_textList[idx]._width + 4, _vm->_fontManager->_textList[idx]._height + 4,
 				_vm->_graphicsManager._vesaBuffer, clipX, clipY);
-			_vm->_fontManager._textList[idx]._enabledFl = false;
+			_vm->_fontManager->_textList[idx]._enabledFl = false;
 		}
 	}
 
@@ -450,39 +450,39 @@ void ObjectsManager::displaySprite() {
 
 	// Loop to draw any on-screen text
 	for (int idx = 0; idx <= 10; ++idx) {
-		if (_vm->_fontManager._text[idx]._textOnFl) {
-			if ((_vm->_fontManager._text[idx]._textType < 2) || (_vm->_fontManager._text[idx]._textType > 3))
-				_vm->_fontManager.box(idx,
-					_vm->_fontManager._text[idx]._messageId, _vm->_fontManager._text[idx]._filename,
-					_vm->_eventsManager->_startPos.x + _vm->_fontManager._text[idx]._pos.x, _vm->_fontManager._text[idx]._pos.y);
+		if (_vm->_fontManager->_text[idx]._textOnFl) {
+			if ((_vm->_fontManager->_text[idx]._textType < 2) || (_vm->_fontManager->_text[idx]._textType > 3))
+				_vm->_fontManager->box(idx,
+					_vm->_fontManager->_text[idx]._messageId, _vm->_fontManager->_text[idx]._filename,
+					_vm->_eventsManager->_startPos.x + _vm->_fontManager->_text[idx]._pos.x, _vm->_fontManager->_text[idx]._pos.y);
 			else
-				_vm->_fontManager.box(idx,
-					_vm->_fontManager._text[idx]._messageId, _vm->_fontManager._text[idx]._filename,
-					_vm->_fontManager._text[idx]._pos.x, _vm->_fontManager._text[idx]._pos.y);
-			_vm->_fontManager._textList[idx]._enabledFl = true;
+				_vm->_fontManager->box(idx,
+					_vm->_fontManager->_text[idx]._messageId, _vm->_fontManager->_text[idx]._filename,
+					_vm->_fontManager->_text[idx]._pos.x, _vm->_fontManager->_text[idx]._pos.y);
+			_vm->_fontManager->_textList[idx]._enabledFl = true;
 
-			if ((_vm->_fontManager._text[idx]._textType < 2) || (_vm->_fontManager._text[idx]._textType > 3))
-				_vm->_fontManager._textList[idx]._pos.x = _vm->_eventsManager->_startPos.x + _vm->_fontManager._text[idx]._pos.x;
+			if ((_vm->_fontManager->_text[idx]._textType < 2) || (_vm->_fontManager->_text[idx]._textType > 3))
+				_vm->_fontManager->_textList[idx]._pos.x = _vm->_eventsManager->_startPos.x + _vm->_fontManager->_text[idx]._pos.x;
 			else
-				_vm->_fontManager._textList[idx]._pos.x = _vm->_fontManager._text[idx]._pos.x;
+				_vm->_fontManager->_textList[idx]._pos.x = _vm->_fontManager->_text[idx]._pos.x;
 
-			_vm->_fontManager._textList[idx]._pos.y = _vm->_fontManager._text[idx]._pos.y;
-			_vm->_fontManager._textList[idx]._width = _vm->_fontManager._text[idx]._width;
-			_vm->_fontManager._textList[idx]._height = _vm->_fontManager._text[idx]._height;
+			_vm->_fontManager->_textList[idx]._pos.y = _vm->_fontManager->_text[idx]._pos.y;
+			_vm->_fontManager->_textList[idx]._width = _vm->_fontManager->_text[idx]._width;
+			_vm->_fontManager->_textList[idx]._height = _vm->_fontManager->_text[idx]._height;
 
-			if (_vm->_fontManager._textList[idx]._pos.x < _vm->_graphicsManager._minX)
-				_vm->_fontManager._textList[idx]._pos.x = _vm->_graphicsManager._minX - 1;
-			if (_vm->_fontManager._textList[idx]._pos.y < _vm->_graphicsManager._minY)
-				_vm->_fontManager._textList[idx]._pos.y = _vm->_graphicsManager._minY - 1;
+			if (_vm->_fontManager->_textList[idx]._pos.x < _vm->_graphicsManager._minX)
+				_vm->_fontManager->_textList[idx]._pos.x = _vm->_graphicsManager._minX - 1;
+			if (_vm->_fontManager->_textList[idx]._pos.y < _vm->_graphicsManager._minY)
+				_vm->_fontManager->_textList[idx]._pos.y = _vm->_graphicsManager._minY - 1;
 
-			int posX = _vm->_fontManager._textList[idx]._pos.x;
-			if (_vm->_fontManager._textList[idx]._width + posX > _vm->_graphicsManager._maxX)
-				_vm->_fontManager._textList[idx]._width = _vm->_graphicsManager._maxX - posX;
-			int posY = _vm->_fontManager._textList[idx]._pos.y;
-			if (_vm->_fontManager._textList[idx]._height + posY > _vm->_graphicsManager._maxY)
-				_vm->_fontManager._textList[idx]._height = _vm->_graphicsManager._maxY - posY;
-			if (_vm->_fontManager._textList[idx]._width <= 0 || _vm->_fontManager._textList[idx]._height <= 0)
-				_vm->_fontManager._textList[idx]._enabledFl = false;
+			int posX = _vm->_fontManager->_textList[idx]._pos.x;
+			if (_vm->_fontManager->_textList[idx]._width + posX > _vm->_graphicsManager._maxX)
+				_vm->_fontManager->_textList[idx]._width = _vm->_graphicsManager._maxX - posX;
+			int posY = _vm->_fontManager->_textList[idx]._pos.y;
+			if (_vm->_fontManager->_textList[idx]._height + posY > _vm->_graphicsManager._maxY)
+				_vm->_fontManager->_textList[idx]._height = _vm->_graphicsManager._maxY - posY;
+			if (_vm->_fontManager->_textList[idx]._width <= 0 || _vm->_fontManager->_textList[idx]._height <= 0)
+				_vm->_fontManager->_textList[idx]._enabledFl = false;
 		}
 	}
 
@@ -1819,7 +1819,7 @@ void ObjectsManager::handleCityMap() {
  * Handle Left button
  */
 void ObjectsManager::handleLeftButton() {
-	_vm->_fontManager.hideText(9);
+	_vm->_fontManager->hideText(9);
 	int destX = _vm->_eventsManager->getMouseX();
 	int destY = _vm->_eventsManager->getMouseY();
 
@@ -1943,7 +1943,7 @@ void ObjectsManager::handleLeftButton() {
 		_vm->_globals._saveData->_data[svLastObjectIndex] = _curObjectIndex;
 		_vm->_globals._actionMoveTo = true;
 	}
-	_vm->_fontManager.hideText(5);
+	_vm->_fontManager->hideText(5);
 	_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 	if (_vm->_globals._screenId == 20 && _vm->_globals._saveData->_data[svField132] == 1
 				&& _curObjectIndex == 20 && _zoneNum == 12
@@ -1958,7 +1958,7 @@ void ObjectsManager::handleLeftButton() {
 void ObjectsManager::PARADISE() {
 	char result = _vm->_globals._saveData->_data[svLastMouseCursor];
 	if (result && _vm->_globals._saveData->_data[svLastZoneNum] && result != 4 && result > 3) {
-		_vm->_fontManager.hideText(5);
+		_vm->_fontManager->hideText(5);
 		if (!_forestFl || _zoneNum < 20 || _zoneNum > 23) {
 			if (_vm->_graphicsManager._largeScreenFl) {
 				_vm->_graphicsManager._scrollStatus = 2;
@@ -2048,8 +2048,8 @@ void ObjectsManager::PARADISE() {
 void ObjectsManager::clearScreen() {
 	clearSprite();
 	_vm->_graphicsManager.endDisplayBob();
-	_vm->_fontManager.hideText(5);
-	_vm->_fontManager.hideText(9);
+	_vm->_fontManager->hideText(5);
+	_vm->_fontManager->hideText(9);
 	_vm->_globals.clearVBob();
 	_vm->_animationManager->clearAnim();
 	_vm->_linesManager.clearAllZones();
@@ -3214,11 +3214,11 @@ void ObjectsManager::sceneSpecialIni() {
 			for (int i = 0; i <= 4; i++)
 				_vm->_eventsManager->refreshScreenAndEvents();
 			VBOB(_vm->_globals.SPRITE_ECRAN, 5, 15, 28, 1);
-			_vm->_fontManager.hideText(9);
+			_vm->_fontManager->hideText(9);
 			bool displayedTxtFl = false;
 			if (!_vm->_soundManager._textOffFl) {
-				_vm->_fontManager.initTextBuffers(9, 383, _vm->_globals._textFilename, 220, 72, 6, 36, 253);
-				_vm->_fontManager.showText(9);
+				_vm->_fontManager->initTextBuffers(9, 383, _vm->_globals._textFilename, 220, 72, 6, 36, 253);
+				_vm->_fontManager->showText(9);
 				displayedTxtFl = true;
 			}
 			if (!_vm->_soundManager._voiceOffFl)
@@ -3230,7 +3230,7 @@ void ObjectsManager::sceneSpecialIni() {
 				for (int i = 0; i <= 199; i++)
 					_vm->_eventsManager->refreshScreenAndEvents();
 			}
-			_vm->_fontManager.hideText(9);
+			_vm->_fontManager->hideText(9);
 			VBOB_OFF(5);
 			for (int i = 0; i <= 3; i++)
 				_vm->_eventsManager->refreshScreenAndEvents();

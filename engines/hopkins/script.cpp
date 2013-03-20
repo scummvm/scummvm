@@ -136,18 +136,18 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if (!_vm->_soundManager._textOffFl) {
 				int textPosX = READ_LE_INT16(dataP + 9);
 				int textPosY = READ_LE_INT16(dataP + 11);
-				_vm->_fontManager.initTextBuffers(9, mesgId, _vm->_globals._textFilename, 2 * textPosX, 2 * textPosY + 40, 6, dataP[7], 253);
-				_vm->_fontManager.showText(9);
+				_vm->_fontManager->initTextBuffers(9, mesgId, _vm->_globals._textFilename, 2 * textPosX, 2 * textPosY + 40, 6, dataP[7], 253);
+				_vm->_fontManager->showText(9);
 				displayedTxtFl = true;
 			}
 			if (!_vm->_soundManager._voiceOffFl)
 				_vm->_soundManager.mixVoice(mesgId, 4, displayedTxtFl);
 		} else { // if (_tempObjectFl)
 			if (_vm->_globals._saveData->_data[svField356]) {
-				_vm->_fontManager.initTextBuffers(9, 635, _vm->_globals._textFilename, 55, 20, dataP[8], 35, 253);
+				_vm->_fontManager->initTextBuffers(9, 635, _vm->_globals._textFilename, 55, 20, dataP[8], 35, 253);
 				bool displayedTxtFl = false;
 				if (!_vm->_soundManager._textOffFl) {
-					_vm->_fontManager.showText(9);
+					_vm->_fontManager->showText(9);
 					displayedTxtFl = true;
 				}
 
@@ -156,16 +156,16 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} else {
 				int textPosX = READ_LE_INT16(dataP + 9);
 				if (_vm->_globals._language == LANG_FR && !_vm->_soundManager._textOffFl)
-					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
+					_vm->_fontManager->initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 				else if (_vm->_globals._language == LANG_EN && !_vm->_soundManager._textOffFl)
-					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
+					_vm->_fontManager->initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 				else if (_vm->_globals._language == LANG_SP && !_vm->_soundManager._textOffFl) {
-					_vm->_fontManager.initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
+					_vm->_fontManager->initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 				}
 
 				bool displayedTxtFl = false;
 				if (!_vm->_soundManager._textOffFl) {
-					_vm->_fontManager.showText(9);
+					_vm->_fontManager->showText(9);
 					displayedTxtFl = true;
 				}
 
@@ -537,7 +537,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 12:
-			_vm->_fontManager.hideText(9);
+			_vm->_fontManager->hideText(9);
 			_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_talkManager.startAnimatedCharacterDialogue("bqetueur.pe2");
@@ -549,8 +549,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager.fadeOutLong();
 			_vm->_globals.disableHiding();
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_fontManager.hideText(5);
-			_vm->_fontManager.hideText(9);
+			_vm->_fontManager->hideText(5);
+			_vm->_fontManager->hideText(9);
 			_vm->_graphicsManager.endDisplayBob();
 			_vm->_objectsManager.clearScreen();
 
@@ -895,8 +895,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager.fadeOutLong();
 			_vm->_globals.disableHiding();
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_fontManager.hideText(5);
-			_vm->_fontManager.hideText(9);
+			_vm->_fontManager->hideText(5);
+			_vm->_fontManager->hideText(9);
 			_vm->_graphicsManager.endDisplayBob();
 			_vm->_graphicsManager.loadImage("IM20f");
 			_vm->_animationManager->loadAnim("ANIM20f");
@@ -2234,11 +2234,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager.getBobAnimDataIdx(1) != 32);
 			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_objectsManager.setBobAnimation(2);
-			_vm->_fontManager.hideText(9);
+			_vm->_fontManager->hideText(9);
 			bool displayedTxtFl = false;
 			if (!_vm->_soundManager._textOffFl) {
-				_vm->_fontManager.initTextBuffers(9, 617, _vm->_globals._textFilename, 91, 41, 3, 30, 253);
-				_vm->_fontManager.showText(9);
+				_vm->_fontManager->initTextBuffers(9, 617, _vm->_globals._textFilename, 91, 41, 3, 30, 253);
+				_vm->_fontManager->showText(9);
 				displayedTxtFl = true;
 			}
 			if (!_vm->_soundManager._voiceOffFl)

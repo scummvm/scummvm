@@ -422,7 +422,7 @@ void DialogsManager::showInventory() {
 					do
 						_vm->_eventsManager->refreshScreenAndEvents();
 					while (!_vm->_globals._exitId && _vm->_eventsManager->getMouseButton() != 1);
-					_vm->_fontManager.hideText(9);
+					_vm->_fontManager->hideText(9);
 				}
 				if (_vm->_globals._exitId) {
 					if (_vm->_globals._exitId == 2) {
@@ -446,7 +446,7 @@ void DialogsManager::showInventory() {
 		}
 	} while (loopFl);
 
-	_vm->_fontManager.hideText(9);
+	_vm->_fontManager->hideText(9);
 	if (_inventDisplayedFl) {
 		_inventDisplayedFl = false;
 		_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _inventX, 114, _inventWidth, _inventHeight, _vm->_graphicsManager._vesaBuffer, _inventX, 114);

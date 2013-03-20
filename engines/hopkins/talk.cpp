@@ -52,8 +52,8 @@ void TalkManager::setParent(HopkinsEngine *vm) {
 void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename) {
 	Common::String spriteFilename;
 
-	_vm->_fontManager.hideText(5);
-	_vm->_fontManager.hideText(9);
+	_vm->_fontManager->hideText(5);
+	_vm->_fontManager->hideText(9);
 	_vm->_eventsManager->refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 1;
 	bool oldDisableInventFl = _vm->_globals._disableInventFl;
@@ -256,33 +256,33 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 	int sentence2PosY = sentence3PosY - 20 * sentence2LineNumb;
 	int sentence1PosY = sentence2PosY - 20 * sentence1LineNumb;
 
-	_vm->_fontManager.initTextBuffers(5, _dialogueMesgId1, _questionsFilename, 5, sentence1PosY, 0, 65, 255);
-	_vm->_fontManager.initTextBuffers(6, _dialogueMesgId2, _questionsFilename, 5, sentence2PosY, 0, 65, 255);
-	_vm->_fontManager.initTextBuffers(7, _dialogueMesgId3, _questionsFilename, 5, sentence3PosY, 0, 65, 255);
-	_vm->_fontManager.initTextBuffers(8, _dialogueMesgId4, _questionsFilename, 5, sentence4PosY, 0, 65, 255);
-	_vm->_fontManager.showText(5);
-	_vm->_fontManager.showText(6);
-	_vm->_fontManager.showText(7);
-	_vm->_fontManager.showText(8);
+	_vm->_fontManager->initTextBuffers(5, _dialogueMesgId1, _questionsFilename, 5, sentence1PosY, 0, 65, 255);
+	_vm->_fontManager->initTextBuffers(6, _dialogueMesgId2, _questionsFilename, 5, sentence2PosY, 0, 65, 255);
+	_vm->_fontManager->initTextBuffers(7, _dialogueMesgId3, _questionsFilename, 5, sentence3PosY, 0, 65, 255);
+	_vm->_fontManager->initTextBuffers(8, _dialogueMesgId4, _questionsFilename, 5, sentence4PosY, 0, 65, 255);
+	_vm->_fontManager->showText(5);
+	_vm->_fontManager->showText(6);
+	_vm->_fontManager->showText(7);
+	_vm->_fontManager->showText(8);
 
 	int retVal = -1;
 	bool loopCond = false;
   	do {
 		int mousePosY = _vm->_eventsManager->getMouseY();
 		if (sentence1PosY < mousePosY && mousePosY < (sentence2PosY - 1)) {
-			_vm->_fontManager.setOptimalColor(6, 7, 8, 5);
+			_vm->_fontManager->setOptimalColor(6, 7, 8, 5);
 			retVal = _dialogueMesgId1;
 		}
 		if (sentence2PosY < mousePosY && mousePosY < (sentence3PosY - 1)) {
-			_vm->_fontManager.setOptimalColor(5, 7, 8, 6);
+			_vm->_fontManager->setOptimalColor(5, 7, 8, 6);
 			retVal = _dialogueMesgId2;
 		}
 		if (sentence3PosY < mousePosY && mousePosY < (sentence4PosY - 1)) {
-			_vm->_fontManager.setOptimalColor(5, 6, 8, 7);
+			_vm->_fontManager->setOptimalColor(5, 6, 8, 7);
 			retVal = _dialogueMesgId3;
 		}
 		if (sentence4PosY < mousePosY && mousePosY < 419) {
-			_vm->_fontManager.setOptimalColor(5, 6, 7, 8);
+			_vm->_fontManager->setOptimalColor(5, 6, 7, 8);
 			retVal = _dialogueMesgId4;
 		}
 
@@ -294,10 +294,10 @@ int TalkManager::dialogQuestion(bool animatedFl) {
 	} while (!_vm->shouldQuit() && !loopCond);
 
 	_vm->_soundManager.mixVoice(retVal, 1);
-	_vm->_fontManager.hideText(5);
-	_vm->_fontManager.hideText(6);
-	_vm->_fontManager.hideText(7);
-	_vm->_fontManager.hideText(8);
+	_vm->_fontManager->hideText(5);
+	_vm->_fontManager->hideText(6);
+	_vm->_fontManager->hideText(7);
+	_vm->_fontManager->hideText(8);
 
 	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 48;
@@ -380,8 +380,8 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 
 	bool displayedTxtFl = false;
 	if (!_vm->_soundManager._textOffFl) {
-		_vm->_fontManager.initTextBuffers(9, mesgId, _answersFilename, mesgPosX, mesgPosY, 5, mesgLength, 252);
-		_vm->_fontManager.showText(9);
+		_vm->_fontManager->initTextBuffers(9, mesgId, _answersFilename, mesgPosX, mesgPosY, 5, mesgLength, 252);
+		_vm->_fontManager->showText(9);
 		displayedTxtFl = true;
 	}
 	if (!_vm->_soundManager.mixVoice(mesgId, 1, displayedTxtFl)) {
@@ -404,7 +404,7 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 	}
 
 	if (!_vm->_soundManager._textOffFl)
-		_vm->_fontManager.hideText(9);
+		_vm->_fontManager->hideText(9);
 	if (animatedFl) {
 		uint16 *bufPtr = (uint16 *)_characterBuffer + 43;
 		int curVal = READ_LE_INT16(bufPtr);
@@ -506,7 +506,7 @@ void TalkManager::dialogEndTalk() {
 }
 
 int TalkManager::countBoxLines(int idx, const Common::String &file) {
-	_vm->_fontManager._fontFixedWidth = 11;
+	_vm->_fontManager->_fontFixedWidth = 11;
 
 	// Build up the filename
 	Common::String filename;
@@ -964,8 +964,8 @@ void TalkManager::REPONSE2(int zone, int verb) {
 }
 
 void TalkManager::animateObject(const Common::String &filename) {
-	_vm->_fontManager.hideText(5);
-	_vm->_fontManager.hideText(9);
+	_vm->_fontManager->hideText(5);
+	_vm->_fontManager->hideText(9);
 	_vm->_eventsManager->refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 1;
 	_vm->_linesManager.clearAllZones();

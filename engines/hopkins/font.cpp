@@ -34,17 +34,14 @@
 
 namespace Hopkins {
 
-FontManager::FontManager() {
+FontManager::FontManager(HopkinsEngine *vm) {
+	_vm = vm;
 	clearAll();
 }
 
 FontManager::~FontManager() {
 	_vm->_globals.freeMemory(_font);
 	_vm->_globals.freeMemory(_zoneText);
-}
-
-void FontManager::setParent(HopkinsEngine *vm) {
-	_vm = vm;
 }
 
 void FontManager::loadZoneText() {

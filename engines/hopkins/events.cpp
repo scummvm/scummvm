@@ -458,7 +458,7 @@ void EventsManager::refreshScreenAndEvents() {
 		if (_vm->_graphicsManager._oldScrollPosX == _vm->_graphicsManager._scrollPosX) {
 			_vm->_graphicsManager.displayDirtyRects();
 		} else {
-			_vm->_fontManager.hideText(9);
+			_vm->_fontManager->hideText(9);
 			_vm->_graphicsManager.lockScreen();
 			_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._scrollPosX, 20, SCREEN_WIDTH, 440, 0, 20);
 			_vm->_graphicsManager.unlockScreen();
