@@ -87,9 +87,9 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	}
 
 	if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
 	else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
+		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
 
 	if (!_vm->_graphicsManager->_lineNbr)
 		_vm->_graphicsManager->_scrollOffset = 0;
@@ -129,7 +129,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_characterSprite = _vm->_globals->freeMemory(_characterSprite);
 	_vm->_graphicsManager->NB_SCREEN(false);
 
-	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
+	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager->PERSO_ON = false;
@@ -825,16 +825,16 @@ void TalkManager::REPONSE(int zone, int verb) {
 		innerLoopCond = false;
 		int lastOpcodeResult = 1;
 		do {
-			int opcodeType = _vm->_scriptManager.handleOpcode(ptr + 20 * lastOpcodeResult);
+			int opcodeType = _vm->_scriptManager->handleOpcode(ptr + 20 * lastOpcodeResult);
 			if (_vm->shouldQuit())
 				return;
 
 			if (opcodeType == 2)
 				// GOTO
-				lastOpcodeResult =  _vm->_scriptManager.handleGoto(ptr + 20 * lastOpcodeResult);
+				lastOpcodeResult =  _vm->_scriptManager->handleGoto(ptr + 20 * lastOpcodeResult);
 			else if (opcodeType == 3)
 				// IF
-				lastOpcodeResult =  _vm->_scriptManager.handleIf(ptr, lastOpcodeResult);
+				lastOpcodeResult =  _vm->_scriptManager->handleIf(ptr, lastOpcodeResult);
 
 			if (lastOpcodeResult == -1)
 				error("Invalid IFF function");
@@ -1001,9 +1001,9 @@ void TalkManager::animateObject(const Common::String &filename) {
 		_characterSprite = _vm->_objectsManager->loadSprite("RES_SAN.RES");
 
 	if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
 	else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
+		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
 
 	if (!_vm->_graphicsManager->_lineNbr)
 		_vm->_graphicsManager->_scrollOffset = 0;
@@ -1063,7 +1063,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	if (_vm->_globals->_exitId == 101)
 		_vm->_globals->_exitId = 0;
 
-	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
+	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager->PERSO_ON = false;

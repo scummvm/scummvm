@@ -2540,14 +2540,14 @@ void ObjectsManager::OPTI_OBJET() {
 		error("File %s is not an INI file", file.c_str());
 
 	for (;;) {
-		int opcodeType = _vm->_scriptManager.handleOpcode(data + 20 * lastOpcodeResult);
+		int opcodeType = _vm->_scriptManager->handleOpcode(data + 20 * lastOpcodeResult);
 		if (_vm->shouldQuit())
 			return;
 
 		if (opcodeType == 2)
-			lastOpcodeResult = _vm->_scriptManager.handleGoto(data + 20 * lastOpcodeResult);
+			lastOpcodeResult = _vm->_scriptManager->handleGoto(data + 20 * lastOpcodeResult);
 		else if (opcodeType == 3)
-			lastOpcodeResult = _vm->_scriptManager.handleIf(data, lastOpcodeResult);
+			lastOpcodeResult = _vm->_scriptManager->handleIf(data, lastOpcodeResult);
 
 		if (lastOpcodeResult == -1)
 			error("defective IFF function");
@@ -2580,7 +2580,7 @@ void ObjectsManager::handleSpecialGames() {
 		oldPalette = _vm->_globals->allocMemory(1000);
 		memcpy(oldPalette, _vm->_graphicsManager->_palette, 769);
 
-		_vm->_saveLoadManager.saveFile("TEMP1.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+		_vm->_saveLoadManager->saveFile("TEMP1.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
 
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
@@ -2594,7 +2594,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_soundManager._specialSoundNum = 0;
 		_vm->_graphicsManager->NB_SCREEN(false);
 
-		_vm->_saveLoadManager.load("TEMP1.SCR", _vm->_graphicsManager->_vesaScreen);
+		_vm->_saveLoadManager->load("TEMP1.SCR", _vm->_graphicsManager->_vesaScreen);
 		g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
 
 		PERSO_ON = false;

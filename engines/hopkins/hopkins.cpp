@@ -52,14 +52,16 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_linesManager = new LinesManager(this);
 	_menuManager = new MenuManager(this);
 	_objectsManager = new ObjectsManager(this);
+	_saveLoadManager = new SaveLoadManager(this);
+	_scriptManager = new ScriptManager(this);
 
-	_saveLoadManager.setParent(this);
-	_scriptManager.setParent(this);
 	_soundManager.setParent(this);
 	_talkManager.setParent(this);
 }
 
 HopkinsEngine::~HopkinsEngine() {
+	delete _scriptManager;
+	delete _saveLoadManager;
 	delete _objectsManager;
 	delete _menuManager;
 	delete _linesManager;
@@ -96,18 +98,18 @@ bool HopkinsEngine::canSaveGameStateCurrently() {
  * Load the savegame at the specified slot index
  */
 Common::Error HopkinsEngine::loadGameState(int slot) {
-	return _saveLoadManager.loadGame(slot);
+	return _saveLoadManager->loadGame(slot);
 }
 
 /**
  * Save the game to the given slot index, and with the given name
  */
 Common::Error HopkinsEngine::saveGameState(int slot, const Common::String &desc) {
-	return _saveLoadManager.saveGame(slot, desc);
+	return _saveLoadManager->saveGame(slot, desc);
 }
 
 Common::Error HopkinsEngine::run() {
-	_saveLoadManager.initSaves();
+	_saveLoadManager->initSaves();
 
 	_globals->setConfig();
 	_fileManager->initCensorship();

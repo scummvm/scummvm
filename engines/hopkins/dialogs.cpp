@@ -411,12 +411,12 @@ void DialogsManager::showInventory() {
 				if (_vm->_eventsManager->_mouseCursorId == 8)
 					break;
 
-				_vm->_scriptManager._tempObjectFl = true;
+				_vm->_scriptManager->_tempObjectFl = true;
 				_vm->_globals->_saveData->_data[svLastObjectIndex] = _vm->_objectsManager->_curObjectIndex;
 				_vm->_globals->_saveData->_data[svLastInventoryItem] = _vm->_globals->_inventory[newInventoryItem];
 				_vm->_globals->_saveData->_data[svLastInvMouseCursor] = _vm->_eventsManager->_mouseCursorId;
 				_vm->_objectsManager->OPTI_OBJET();
-				_vm->_scriptManager._tempObjectFl = false;
+				_vm->_scriptManager->_tempObjectFl = false;
 
 				if (_vm->_soundManager._voiceOffFl) {
 					do
@@ -581,7 +581,7 @@ void DialogsManager::showLoadGame() {
 	_vm->_objectsManager->_saveLoadY = 0;
 
 	if (slotNumber != 7) {
-		_vm->_saveLoadManager.loadGame(slotNumber);
+		_vm->_saveLoadManager->loadGame(slotNumber);
 	}
 
 	_vm->_objectsManager->changeObject(14);
@@ -614,7 +614,7 @@ void DialogsManager::showSaveGame() {
 		Common::String saveName = Common::String::format("Save #%d", slotNumber);
 
 		// Save the game
-		_vm->_saveLoadManager.saveGame(slotNumber, saveName);
+		_vm->_saveLoadManager->saveGame(slotNumber, saveName);
 	}
 }
 
@@ -658,9 +658,9 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 
 	for (int slotNumber = 1; slotNumber <= 6; ++slotNumber) {
 		hopkinsSavegameHeader header;
-		if (_vm->_saveLoadManager.readSavegameHeader(slotNumber, header)) {
+		if (_vm->_saveLoadManager->readSavegameHeader(slotNumber, header)) {
 			Graphics::Surface thumb8;
-			_vm->_saveLoadManager.convertThumb16To8(header._thumbnail, &thumb8);
+			_vm->_saveLoadManager->convertThumb16To8(header._thumbnail, &thumb8);
 
 			byte *thumb = (byte *)thumb8.pixels;
 

@@ -1762,14 +1762,14 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 		int dataOffset = 1;
 
 		do {
-			int dataVal1 = _vm->_scriptManager.handleOpcode(ptr + 20 * dataOffset);
+			int dataVal1 = _vm->_scriptManager->handleOpcode(ptr + 20 * dataOffset);
 			if (_vm->shouldQuit())
 				return;
 
 			if (dataVal1 == 2)
-				dataOffset =  _vm->_scriptManager.handleGoto((ptr + 20 * dataOffset));
+				dataOffset =  _vm->_scriptManager->handleGoto((ptr + 20 * dataOffset));
 			if (dataVal1 == 3)
-				dataOffset =  _vm->_scriptManager.handleIf(ptr, dataOffset);
+				dataOffset =  _vm->_scriptManager->handleIf(ptr, dataOffset);
 			if (dataOffset == -1)
 				error("Error, defective IFF");
 			if (dataVal1 == 1 || dataVal1 == 4)

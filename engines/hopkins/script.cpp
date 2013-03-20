@@ -35,12 +35,9 @@
 
 namespace Hopkins {
 
-ScriptManager::ScriptManager() {
-	_tempObjectFl = false;
-}
-
-void ScriptManager::setParent(HopkinsEngine *vm) {
+ScriptManager::ScriptManager(HopkinsEngine *vm) {
 	_vm = vm;
+	_tempObjectFl = false;
 }
 
 int ScriptManager::handleOpcode(byte *dataP) {

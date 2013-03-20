@@ -582,7 +582,7 @@ void ComputerManager::displayGamesSubMenu() {
  */
 void ComputerManager::loadHiscore() {
 	byte *ptr = _vm->_globals->allocMemory(100);
-	_vm->_saveLoadManager.load("HISCORE.DAT", ptr);
+	_vm->_saveLoadManager->load("HISCORE.DAT", ptr);
 
 	for (int scoreIndex = 0; scoreIndex < 6; ++scoreIndex) {
 		for (int i = 0; i < 5; ++i) {
@@ -992,7 +992,7 @@ void ComputerManager::saveScore() {
 		ptr[curBufPtr + 15] = 0;
 	}
 
-	_vm->_saveLoadManager.saveFile("HISCORE.DAT", ptr, 100);
+	_vm->_saveLoadManager->saveFile("HISCORE.DAT", ptr, 100);
 	_vm->_globals->freeMemory(ptr);
 }
 

@@ -54,8 +54,7 @@ private:
 	void syncSavegameData(Common::Serializer &s, int version);
 	void syncCharacterLocation(Common::Serializer &s, CharacterLocation &item);
 public:
-	SaveLoadManager() {}
-	void setParent(HopkinsEngine *vm);
+	SaveLoadManager(HopkinsEngine *vm);
 
 	void initSaves();
 	bool save(const Common::String &file, const void *buf, size_t n);

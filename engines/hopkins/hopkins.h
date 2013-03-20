@@ -154,9 +154,9 @@ public:
 	LinesManager *_linesManager;
 	MenuManager *_menuManager;
 	ObjectsManager *_objectsManager;
+	SaveLoadManager *_saveLoadManager;
+	ScriptManager *_scriptManager;
 
-	SaveLoadManager _saveLoadManager;
-	ScriptManager _scriptManager;
 	SoundManager _soundManager;
 	TalkManager _talkManager;
 

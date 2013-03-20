@@ -242,9 +242,9 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		memcpy(_vm->_graphicsManager->_oldPalette, _vm->_graphicsManager->_palette, 769);
 
 		if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
 		else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
+			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
 
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
@@ -388,7 +388,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	}
 	_vm->_graphicsManager->FADE_LINUX = 0;
 
-	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
+	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	memcpy(_vm->_graphicsManager->_palette, _vm->_graphicsManager->_oldPalette, 769);
@@ -621,9 +621,9 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_eventsManager->refreshScreenAndEvents();
 
 		if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
 		else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
+			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
 	}
@@ -771,7 +771,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	f.close();
 
 	if (!NO_COUL) {
-		_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
+		_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 		_vm->_eventsManager->_mouseFl = true;

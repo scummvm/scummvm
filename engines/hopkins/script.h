@@ -38,8 +38,7 @@ private:
 public:
 	bool _tempObjectFl;
 
-	ScriptManager();
-	void setParent(HopkinsEngine *vm);
+	ScriptManager(HopkinsEngine *vm);
 
 	int handleOpcode(byte *dataP);
 	int handleIf(const byte *dataP, int offset);
