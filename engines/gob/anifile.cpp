@@ -159,7 +159,7 @@ void ANIFile::loadAnimation(Animation &animation, FrameArray &frames,
 		area.left  = area.top    =  0x7FFF;
 		area.right = area.bottom = -0x7FFF;
 
-		for (ChunkList::const_iterator c = frame.begin(); c != frame.end(); c++) {
+		for (ChunkList::const_iterator c = frame.begin(); c != frame.end(); ++c) {
 			uint16 cL, cT, cR, cB;
 
 			if (!getCoordinates(c->layer, c->part, cL, cT, cR, cB))
