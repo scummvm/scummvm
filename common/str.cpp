@@ -370,7 +370,7 @@ void String::clear() {
 }
 
 void String::setChar(char c, uint32 p) {
-	assert(p <= _size);
+	assert(p < _size);
 
 	makeUnique();
 	_str[p] = c;
