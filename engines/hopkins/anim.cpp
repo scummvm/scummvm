@@ -107,7 +107,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	}
 	_vm->_eventsManager->_rateCounter = 0;
 	_vm->_eventsManager->_escKeyFl = false;
-	_vm->_soundManager.loadAnimSound();
+	_vm->_soundManager->loadAnimSound();
 
 	if (_vm->_globals->iRegul == 1) {
 		// Do pre-animation delay
@@ -124,7 +124,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		int frameNumber = 0;
 		while (!_vm->shouldQuit()) {
 			++frameNumber;
-			_vm->_soundManager.playAnimSound(frameNumber);
+			_vm->_soundManager->playAnimSound(frameNumber);
 
 			byte imageStr[17];
 			// Read frame header
@@ -142,7 +142,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 						break;
 
 					_vm->_eventsManager->refreshEvents();
-					_vm->_soundManager.checkSoundEnd();
+					_vm->_soundManager->checkSoundEnd();
 				} while (!_vm->shouldQuit() && _vm->_eventsManager->_rateCounter < rate2);
 			}
 
@@ -161,7 +161,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 				_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 				_vm->_graphicsManager->updateScreen();
-				_vm->_soundManager.checkSoundEnd();
+				_vm->_soundManager->checkSoundEnd();
 			}
 		}
 	}
@@ -173,13 +173,13 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 				break;
 
 			_vm->_eventsManager->refreshEvents();
-			_vm->_soundManager.checkSoundEnd();
+			_vm->_soundManager->checkSoundEnd();
 		} while (_vm->_eventsManager->_rateCounter < rate3);
 	}
 
 	if (!_vm->_eventsManager->_escKeyFl) {
 		_vm->_eventsManager->_rateCounter = 0;
-		_vm->_soundManager.checkSoundEnd();
+		_vm->_soundManager->checkSoundEnd();
 	}
 
 	if (_vm->_graphicsManager->FADE_LINUX == 2 && !hasScreenCopy) {
@@ -294,7 +294,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		}
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
-		_vm->_soundManager.loadAnimSound();
+		_vm->_soundManager->loadAnimSound();
 		if (_vm->_globals->iRegul == 1) {
 			while (!_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate1) {
 				_vm->_eventsManager->refreshEvents();
@@ -310,7 +310,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			if (_vm->_eventsManager->_escKeyFl)
 				break;
 			++frameNumber;
-			_vm->_soundManager.playAnimSound(frameNumber);
+			_vm->_soundManager->playAnimSound(frameNumber);
 			byte imageStr[17];
 			if (f.read(imageStr, 16) != 16)
 				break;
@@ -323,7 +323,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			if (_vm->_globals->iRegul == 1) {
 				while (!_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate2) {
 					_vm->_eventsManager->refreshEvents();
-					_vm->_soundManager.checkSoundEnd();
+					_vm->_soundManager->checkSoundEnd();
 				}
 			}
 
@@ -341,13 +341,13 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 
 			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsManager->updateScreen();
-			_vm->_soundManager.checkSoundEnd();
+			_vm->_soundManager->checkSoundEnd();
 		}
 
 		if (_vm->_globals->iRegul == 1) {
 			while (!_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate3) {
 				_vm->_eventsManager->refreshEvents();
-				_vm->_soundManager.checkSoundEnd();
+				_vm->_soundManager->checkSoundEnd();
 			}
 		}
 	}
@@ -670,7 +670,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	if (_vm->getIsDemo()) {
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
-		_vm->_soundManager.loadAnimSound();
+		_vm->_soundManager->loadAnimSound();
 		if (_vm->_globals->iRegul == 1) {
 			do {
 				if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
@@ -680,7 +680,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 				_vm->_eventsManager->_escKeyFl = false;
 				_vm->_eventsManager->refreshEvents();
-				_vm->_soundManager.checkSoundEnd();
+				_vm->_soundManager->checkSoundEnd();
 			} while (_vm->_eventsManager->_rateCounter < rate1);
 		}
 	} else {
@@ -688,7 +688,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 			_vm->_graphicsManager->fadeInDefaultLength(screenP);
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
-		_vm->_soundManager.loadAnimSound();
+		_vm->_soundManager->loadAnimSound();
 		if (_vm->_globals->iRegul == 1) {
 			do {
 				if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
@@ -698,7 +698,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 				_vm->_eventsManager->_escKeyFl = false;
 				_vm->_eventsManager->refreshEvents();
-				_vm->_soundManager.checkSoundEnd();
+				_vm->_soundManager->checkSoundEnd();
 			} while (_vm->_eventsManager->_rateCounter < rate1);
 		}
 	}
@@ -707,7 +707,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		int soundNumber = 0;
 		for (;;) {
 			++soundNumber;
-			_vm->_soundManager.playAnimSound(soundNumber);
+			_vm->_soundManager->playAnimSound(soundNumber);
 			byte imageStr[17];
 			if (f.read(imageStr, 16) != 16)
 				break;
@@ -726,7 +726,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 					_vm->_eventsManager->_escKeyFl = false;
 					_vm->_eventsManager->refreshEvents();
-					_vm->_soundManager.checkSoundEnd();
+					_vm->_soundManager->checkSoundEnd();
 				} while (_vm->_eventsManager->_rateCounter < rate2);
 			}
 
@@ -747,7 +747,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsManager->updateScreen();
-			_vm->_soundManager.checkSoundEnd();
+			_vm->_soundManager->checkSoundEnd();
 		}
 	}
 
@@ -760,7 +760,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 			_vm->_eventsManager->_escKeyFl = false;
 			_vm->_eventsManager->refreshEvents();
-			_vm->_soundManager.checkSoundEnd();
+			_vm->_soundManager->checkSoundEnd();
 		} while (_vm->_eventsManager->_rateCounter < rate3);
 	}
 
@@ -832,11 +832,11 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		}
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
-		_vm->_soundManager.loadAnimSound();
+		_vm->_soundManager->loadAnimSound();
 		if (_vm->_globals->iRegul == 1) {
 			do {
 				_vm->_eventsManager->refreshEvents();
-				_vm->_soundManager.checkSoundEnd();
+				_vm->_soundManager->checkSoundEnd();
 			} while (!_vm->shouldQuit() && !_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate1);
 		}
 		break;
@@ -846,7 +846,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		_vm->_eventsManager->_rateCounter = 0;
 		frameNumber = 0;
 		while (!_vm->shouldQuit()) {
-			_vm->_soundManager.playAnimSound(frameNumber++);
+			_vm->_soundManager->playAnimSound(frameNumber++);
 
 			byte imageStr[17];
 			if (f.read(imageStr, 16) != 16)
@@ -877,7 +877,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsManager->updateScreen();
-			_vm->_soundManager.checkSoundEnd();
+			_vm->_soundManager->checkSoundEnd();
 		}
 	}
 
@@ -885,7 +885,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		// Wait for third rate delay
 		do {
 			_vm->_eventsManager->refreshEvents();
-			_vm->_soundManager.checkSoundEnd();
+			_vm->_soundManager->checkSoundEnd();
 		} while (!_vm->shouldQuit() && !_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate3);
 	}
 

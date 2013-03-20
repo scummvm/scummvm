@@ -202,7 +202,7 @@ void EventsManager::changeMouseCursor(int id) {
  * Check Events
  */
 void EventsManager::refreshEvents() {
-	_vm->_soundManager.checkSounds();
+	_vm->_soundManager->checkSounds();
 
 	pollEvents();
 }
@@ -478,7 +478,7 @@ void EventsManager::refreshScreenAndEvents() {
 	}
 	_curMouseButton = _mouseButton;
 	_mouseButton = 0;
-	_vm->_soundManager.checkSoundEnd();
+	_vm->_soundManager->checkSoundEnd();
 	refreshEvents();
 }
 

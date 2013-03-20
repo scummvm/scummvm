@@ -156,8 +156,8 @@ public:
 	ObjectsManager *_objectsManager;
 	SaveLoadManager *_saveLoadManager;
 	ScriptManager *_scriptManager;
+	SoundManager *_soundManager;
 
-	SoundManager _soundManager;
 	TalkManager _talkManager;
 
 public:

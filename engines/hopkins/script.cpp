@@ -122,52 +122,52 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (mesgId == 363)
 					mesgId = 636;
 			}
-			if (!_vm->_soundManager._soundOffFl && _vm->_soundManager._soundFl) {
+			if (!_vm->_soundManager->_soundOffFl && _vm->_soundManager->_soundFl) {
 				do {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
 					_vm->_eventsManager->refreshScreenAndEvents();
-				} while (_vm->_soundManager._soundFl);
+				} while (_vm->_soundManager->_soundFl);
 			}
 			bool displayedTxtFl = false;
-			if (!_vm->_soundManager._textOffFl) {
+			if (!_vm->_soundManager->_textOffFl) {
 				int textPosX = READ_LE_INT16(dataP + 9);
 				int textPosY = READ_LE_INT16(dataP + 11);
 				_vm->_fontManager->initTextBuffers(9, mesgId, _vm->_globals->_textFilename, 2 * textPosX, 2 * textPosY + 40, 6, dataP[7], 253);
 				_vm->_fontManager->showText(9);
 				displayedTxtFl = true;
 			}
-			if (!_vm->_soundManager._voiceOffFl)
-				_vm->_soundManager.mixVoice(mesgId, 4, displayedTxtFl);
+			if (!_vm->_soundManager->_voiceOffFl)
+				_vm->_soundManager->mixVoice(mesgId, 4, displayedTxtFl);
 		} else { // if (_tempObjectFl)
 			if (_vm->_globals->_saveData->_data[svField356]) {
 				_vm->_fontManager->initTextBuffers(9, 635, _vm->_globals->_textFilename, 55, 20, dataP[8], 35, 253);
 				bool displayedTxtFl = false;
-				if (!_vm->_soundManager._textOffFl) {
+				if (!_vm->_soundManager->_textOffFl) {
 					_vm->_fontManager->showText(9);
 					displayedTxtFl = true;
 				}
 
-				if (!_vm->_soundManager._voiceOffFl)
-					_vm->_soundManager.mixVoice(635, 4, displayedTxtFl);
+				if (!_vm->_soundManager->_voiceOffFl)
+					_vm->_soundManager->mixVoice(635, 4, displayedTxtFl);
 			} else {
 				int textPosX = READ_LE_INT16(dataP + 9);
-				if (_vm->_globals->_language == LANG_FR && !_vm->_soundManager._textOffFl)
+				if (_vm->_globals->_language == LANG_FR && !_vm->_soundManager->_textOffFl)
 					_vm->_fontManager->initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
-				else if (_vm->_globals->_language == LANG_EN && !_vm->_soundManager._textOffFl)
+				else if (_vm->_globals->_language == LANG_EN && !_vm->_soundManager->_textOffFl)
 					_vm->_fontManager->initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
-				else if (_vm->_globals->_language == LANG_SP && !_vm->_soundManager._textOffFl) {
+				else if (_vm->_globals->_language == LANG_SP && !_vm->_soundManager->_textOffFl) {
 					_vm->_fontManager->initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 				}
 
 				bool displayedTxtFl = false;
-				if (!_vm->_soundManager._textOffFl) {
+				if (!_vm->_soundManager->_textOffFl) {
 					_vm->_fontManager->showText(9);
 					displayedTxtFl = true;
 				}
 
-				if (!_vm->_soundManager._voiceOffFl)
-					_vm->_soundManager.mixVoice(mesgId, 5, displayedTxtFl);
+				if (!_vm->_soundManager->_voiceOffFl)
+					_vm->_soundManager->mixVoice(mesgId, 5, displayedTxtFl);
 			}
 		}
 		break;
@@ -554,7 +554,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo()) {
 				_vm->_graphicsManager->fadeOutLong();
 			} else {
-				_vm->_soundManager.playSoundFile("SOUND17.WAV");
+				_vm->_soundManager->playSoundFile("SOUND17.WAV");
 				_vm->_graphicsManager->FADE_LINUX = 2;
 				_vm->_animationManager->playSequence2("HELICO.SEQ", 10, 4, 10);
 			}
@@ -583,10 +583,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 			// If uncensored, rip the throat of the hostage
 			if (!_vm->_globals->_censorshipFl) {
-				_vm->_soundManager._specialSoundNum = 16;
+				_vm->_soundManager->_specialSoundNum = 16;
 				_vm->_graphicsManager->FADE_LINUX = 2;
 				_vm->_animationManager->playAnim("EGORGE.ANM", 50, 28, 500);
-				_vm->_soundManager._specialSoundNum = 0;
+				_vm->_soundManager->_specialSoundNum = 0;
 			}
 			_vm->_animationManager->loadAnim("ASCEN");
 			_vm->_eventsManager->mouseOff();
@@ -607,12 +607,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager->endDisplayBob();
 
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
-				_vm->_soundManager.playSoundFile("SOUND17.WAV");
+				_vm->_soundManager->playSoundFile("SOUND17.WAV");
 
-			_vm->_soundManager._specialSoundNum = 14;
+			_vm->_soundManager->_specialSoundNum = 14;
 			_vm->_graphicsManager->FADE_LINUX = 2;
 			_vm->_animationManager->playSequence2("ASSOM.SEQ", 10, 4, 500);
-			_vm->_soundManager._specialSoundNum = 0;
+			_vm->_soundManager->_specialSoundNum = 0;
 
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
 				_vm->_graphicsManager->fadeOutLong();
@@ -675,13 +675,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 35:
-			if (!_vm->_soundManager._soundOffFl) {
+			if (!_vm->_soundManager->_soundOffFl) {
 				do {
 					if (_vm->shouldQuit())
 						return -1; // Exiting game
 
 					_vm->_eventsManager->refreshScreenAndEvents();
-				} while (_vm->_soundManager._soundFl);
+				} while (_vm->_soundManager->_soundFl);
 			}
 			_vm->_talkManager.startAnimatedCharacterDialogue("PTLAB.pe2");
 			break;
@@ -710,17 +710,17 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 38:
-			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
-			_vm->_soundManager.loadSample(2, "SOUND42.WAV");
-			_vm->_soundManager.loadSample(3, "SOUND41.WAV");
-			_vm->_soundManager._specialSoundNum = 17;
+			_vm->_soundManager->loadSample(1, "SOUND44.WAV");
+			_vm->_soundManager->loadSample(2, "SOUND42.WAV");
+			_vm->_soundManager->loadSample(3, "SOUND41.WAV");
+			_vm->_soundManager->_specialSoundNum = 17;
 			_vm->_animationManager->playSequence("grenade.SEQ", 1, 32, 100);
-			_vm->_soundManager._specialSoundNum = 0;
+			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->FADE_LINUX = 2;
 			_vm->_animationManager->playAnim("CREVE17.ANM", 24, 24, 200);
-			_vm->_soundManager.removeSample(1);
-			_vm->_soundManager.removeSample(2);
-			_vm->_soundManager.removeSample(3);
+			_vm->_soundManager->removeSample(1);
+			_vm->_soundManager->removeSample(2);
+			_vm->_soundManager->removeSample(3);
 			_vm->_graphicsManager->_noFadingFl = true;
 			break;
 
@@ -762,8 +762,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_globals->_checkDistanceFl = true;
-			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
-			_vm->_soundManager.loadSample(2, "SOUND45.WAV");
+			_vm->_soundManager->loadSample(1, "SOUND44.WAV");
+			_vm->_soundManager->loadSample(2, "SOUND45.WAV");
 			_vm->_objectsManager->OPTI_BOBON(9, 10, -1, 0, 0, 0);
 			bool playFl = false;
 			for (;;) {
@@ -775,7 +775,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				case 16:
 				case 28:
 					if (!playFl) {
-						_vm->_soundManager.playSample(1);
+						_vm->_soundManager->playSample(1);
 						playFl = true;
 					}
 					break;
@@ -791,7 +791,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				case 22:
 				case 33:
 					if (!playFl) {
-						_vm->_soundManager.playSample(2);
+						_vm->_soundManager->playSample(2);
 						playFl = true;
 					}
 					break;
@@ -817,8 +817,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->animateSprite(0);
 			_vm->_objectsManager->stopBobAnimation(9);
 			_vm->_objectsManager->stopBobAnimation(10);
-			_vm->_soundManager.removeSample(1);
-			_vm->_soundManager.removeSample(2);
+			_vm->_soundManager->removeSample(1);
+			_vm->_soundManager->removeSample(2);
 			break;
 			}
 
@@ -849,7 +849,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				case 4:
 				case 18:
 					if (!playFl) {
-						_vm->_soundManager.directPlayWav("SOUND44.WAV");
+						_vm->_soundManager->directPlayWav("SOUND44.WAV");
 						playFl = true;
 					}
 					break;
@@ -862,7 +862,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				switch (_vm->_objectsManager->getBobAnimDataIdx(10)) {
 				case 11:
 					if (!playFl) {
-						_vm->_soundManager.directPlayWav("SOUND45.WAV");
+						_vm->_soundManager->directPlayWav("SOUND45.WAV");
 						playFl = true;
 					}
 					break;
@@ -884,7 +884,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 50:
-			_vm->_soundManager.playSoundFile("SOUND46.WAv");
+			_vm->_soundManager->playSoundFile("SOUND46.WAv");
 			_vm->_objectsManager->OPTI_ONE(11, 0, 23, 0);
 			break;
 
@@ -900,14 +900,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager->displayAllBob();
 			_vm->_eventsManager->mouseOff();
 			_vm->_graphicsManager->fadeInLong();
-			_vm->_soundManager.loadWav("SOUND46.WAV", 1);
+			_vm->_soundManager->loadWav("SOUND46.WAV", 1);
 			bool playFl = false;
 			for (;;) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				if (_vm->_objectsManager->getBobAnimDataIdx(12) == 5 && !playFl) {
-					_vm->_soundManager.playWav(1);
+					_vm->_soundManager->playWav(1);
 					playFl = true;
 				}
 				_vm->_eventsManager->refreshScreenAndEvents();
@@ -991,7 +991,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->setBobAnimation(7);
 			_vm->_objectsManager->setBobAnimDataIdx(7, 0);
 			bool playFl = false;
-			_vm->_soundManager.loadSample(1, "SOUND40.WAV");
+			_vm->_soundManager->loadSample(1, "SOUND40.WAV");
 			for (;;) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1000,7 +1000,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				case 10:
 				case 18:
 					if (!playFl) {
-						_vm->_soundManager.playSample(1);
+						_vm->_soundManager->playSample(1);
 						playFl = true;
 					}
 					break;
@@ -1016,7 +1016,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->_objectsManager->getBobAnimDataIdx(3) == 48)
 					break;
 			}
-			_vm->_soundManager.removeSample(1);
+			_vm->_soundManager->removeSample(1);
 			_vm->_objectsManager->setSpriteIndex(0, 62);
 			_vm->_objectsManager->animateSprite(0);
 			_vm->_objectsManager->setBobAnimation(6);
@@ -1039,8 +1039,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->setBobAnimation(13);
 			_vm->_objectsManager->setBobAnimDataIdx(12, 0);
 			_vm->_objectsManager->setBobAnimDataIdx(13, 0);
-			_vm->_soundManager.loadWav("SOUND44.WAV", 1);
-			_vm->_soundManager.loadWav("SOUND71.WAV", 2);
+			_vm->_soundManager->loadWav("SOUND44.WAV", 1);
+			_vm->_soundManager->loadWav("SOUND71.WAV", 2);
 			bool playFl = false;
 			for (;;) {
 				if (_vm->shouldQuit())
@@ -1049,7 +1049,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				switch (_vm->_objectsManager->getBobAnimDataIdx(12)) {
 				case 4:
 					if (!playFl) {
-						_vm->_soundManager.playWav(1);
+						_vm->_soundManager->playWav(1);
 						playFl = true;
 					}
 					break;
@@ -1061,7 +1061,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				switch (_vm->_objectsManager->getBobAnimDataIdx(4)) {
 				case 5:
 					if (!playFl) {
-						_vm->_soundManager.playWav(2);
+						_vm->_soundManager->playWav(2);
 						playFl = true;
 					}
 				case 6:
@@ -1110,9 +1110,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->setBobAnimation(8);
 			_vm->_objectsManager->setBobAnimDataIdx(11, 0);
 			_vm->_objectsManager->setBobAnimDataIdx(8, 0);
-			_vm->_soundManager.loadWav("SOUND44.WAV", 1);
-			_vm->_soundManager.loadWav("SOUND48.WAV", 2);
-			_vm->_soundManager.loadWav("SOUND49.WAV", 3);
+			_vm->_soundManager->loadWav("SOUND44.WAV", 1);
+			_vm->_soundManager->loadWav("SOUND48.WAV", 2);
+			_vm->_soundManager->loadWav("SOUND49.WAV", 3);
 			bool playFl = false;
 			for (;;) {
 				if (_vm->shouldQuit())
@@ -1121,7 +1121,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				switch (_vm->_objectsManager->getBobAnimDataIdx(11)) {
 				case 4:
 					if (!playFl) {
-						_vm->_soundManager.playWav(1);
+						_vm->_soundManager->playWav(1);
 						playFl = true;
 					}
 					break;
@@ -1133,7 +1133,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				switch (_vm->_objectsManager->getBobAnimDataIdx(8)) {
 				case 11:
 					if (!playFl) {
-						_vm->_soundManager.playWav(2);
+						_vm->_soundManager->playWav(2);
 						playFl = true;
 					}
 					break;
@@ -1154,7 +1154,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->setBobAnimation(6);
 			_vm->_objectsManager->setBobAnimDataIdx(5, 0);
 			_vm->_objectsManager->setBobAnimDataIdx(6, 0);
-			_vm->_soundManager.playWav(3);
+			_vm->_soundManager->playWav(3);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1218,7 +1218,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager->setBobAnimDataIdx(2, 0);
 				_vm->_objectsManager->setBobAnimation(1);
 				_vm->_objectsManager->setBobAnimation(2);
-				_vm->_soundManager.loadSample(1, "SOUND40.WAV");
+				_vm->_soundManager->loadSample(1, "SOUND40.WAV");
 				bool playFl = false;
 				for (;;) {
 					if (_vm->shouldQuit())
@@ -1230,7 +1230,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					case 5:
 					case 7:
 						if (!playFl) {
-							_vm->_soundManager.playSample(1);
+							_vm->_soundManager->playSample(1);
 							playFl = true;
 						}
 						break;
@@ -1248,14 +1248,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager->stopBobAnimation(1);
 				_vm->_objectsManager->stopBobAnimation(2);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 160, 6);
-				_vm->_soundManager.removeSample(1);
+				_vm->_soundManager->removeSample(1);
 			}
 			if (_vm->_globals->_saveData->_data[svField183] == 2) {
 				_vm->_objectsManager->setBobAnimDataIdx(1, 0);
 				_vm->_objectsManager->setBobAnimDataIdx(3, 0);
 				_vm->_objectsManager->setBobAnimation(1);
 				_vm->_objectsManager->setBobAnimation(3);
-				_vm->_soundManager.loadSample(1, "SOUND40.WAV");
+				_vm->_soundManager->loadSample(1, "SOUND40.WAV");
 				bool playFl = false;
 				for (;;) {
 					if (_vm->shouldQuit())
@@ -1267,7 +1267,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					case 5:
 					case 7:
 						if (!playFl) {
-							_vm->_soundManager.playSample(1);
+							_vm->_soundManager->playSample(1);
 							playFl = true;
 						}
 						break;
@@ -1285,12 +1285,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager->stopBobAnimation(1);
 				_vm->_objectsManager->stopBobAnimation(3);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 161, 8);
-				_vm->_soundManager.removeSample(1);
+				_vm->_soundManager->removeSample(1);
 			}
 			break;
 
 		case 90:
-			_vm->_soundManager.playSoundFile("SOUND52.WAV");
+			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField186]) {
 				_vm->_animationManager->playSequence("CIB5A.SEQ", 1, 12, 1);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
@@ -1303,7 +1303,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 91:
-			_vm->_soundManager.playSoundFile("SOUND52.WAV");
+			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField186]) {
 				_vm->_animationManager->playSequence("CIB5B.SEQ", 1, 12, 1);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
@@ -1316,7 +1316,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 92:
-			_vm->_soundManager.playSoundFile("SOUND52.WAV");
+			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField184]) {
 				_vm->_animationManager->playSequence("CIB6A.SEQ", 1, 12, 1);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
@@ -1329,7 +1329,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 93:
-			_vm->_soundManager.playSoundFile("SOUND52.WAV");
+			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField184]) {
 				_vm->_animationManager->playSequence("CIB6B.SEQ", 1, 12, 1);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
@@ -1364,7 +1364,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager->getBobAnimDataIdx(9) != 15);
 			_vm->_objectsManager->stopBobAnimation(9);
 			_vm->_objectsManager->animateSprite(0);
-			_vm->_soundManager.playSoundFile("SOUND50.WAV");
+			_vm->_soundManager->playSoundFile("SOUND50.WAV");
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1436,7 +1436,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_objectsManager->setSpriteIndex(0, 60);
-			_vm->_soundManager.loadSample(1, "SOUND63.WAV");
+			_vm->_soundManager->loadSample(1, "SOUND63.WAV");
 			if (_vm->_globals->_saveData->_data[svField253] > 2) {
 				_vm->_objectsManager->setBobAnimation(4);
 				bool playFl = false;
@@ -1449,7 +1449,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					case 32:
 					case 55:
 						if (!playFl) {
-							_vm->_soundManager.playSample(1);
+							_vm->_soundManager->playSample(1);
 							playFl = true;
 						}
 						break;
@@ -1477,7 +1477,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					case 32:
 					case 55:
 						if (!playFl) {
-							_vm->_soundManager.playSample(1);
+							_vm->_soundManager->playSample(1);
 							playFl = true;
 						}
 						break;
@@ -1505,7 +1505,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					case 32:
 					case 55:
 						if (!playFl) {
-							_vm->_soundManager.playSample(1);
+							_vm->_soundManager->playSample(1);
 							playFl = true;
 						}
 						break;
@@ -1523,37 +1523,37 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 			_vm->_objectsManager->animateSprite(0);
 			_vm->_objectsManager->doActionBack(1);
-			_vm->_soundManager.removeSample(1);
+			_vm->_soundManager->removeSample(1);
 			break;
 
 		case 106:
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_objectsManager->setBobAnimation(4);
 			_vm->_objectsManager->setBobAnimDataIdx(4, 0);
-			_vm->_soundManager.loadWav("SOUND61.WAV", 1);
-			_vm->_soundManager.loadWav("SOUND62.WAV", 2);
-			_vm->_soundManager.loadWav("SOUND61.WAV", 3);
+			_vm->_soundManager->loadWav("SOUND61.WAV", 1);
+			_vm->_soundManager->loadWav("SOUND62.WAV", 2);
+			_vm->_soundManager->loadWav("SOUND61.WAV", 3);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(4) != 10);
-			_vm->_soundManager.playWav(1);
+			_vm->_soundManager->playWav(1);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(4) != 18);
-			_vm->_soundManager.playWav(2);
+			_vm->_soundManager->playWav(2);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(4) != 62);
-			_vm->_soundManager.playWav(3);
+			_vm->_soundManager->playWav(3);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1568,30 +1568,30 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_objectsManager->setBobAnimation(5);
 			_vm->_objectsManager->setBobAnimDataIdx(5, 0);
-			_vm->_soundManager.loadWav("SOUND61.WAV", 1);
-			_vm->_soundManager.loadWav("SOUND62.WAV", 2);
-			_vm->_soundManager.loadWav("SOUND61.WAV", 3);
+			_vm->_soundManager->loadWav("SOUND61.WAV", 1);
+			_vm->_soundManager->loadWav("SOUND62.WAV", 2);
+			_vm->_soundManager->loadWav("SOUND61.WAV", 3);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(5) != 10);
-			_vm->_soundManager.playWav(1);
+			_vm->_soundManager->playWav(1);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(5) != 18);
-			_vm->_soundManager.playWav(2);
+			_vm->_soundManager->playWav(2);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(5) != 38);
-			_vm->_soundManager.playWav(3);
+			_vm->_soundManager->playWav(3);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1714,7 +1714,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->setBobAnimation(9);
 			_vm->_objectsManager->setBobAnimation(10);
 			_vm->_objectsManager->setBobOffset(10, 300);
-			_vm->_soundManager.playSoundFile("SOUND44.WAV");
+			_vm->_soundManager->playSoundFile("SOUND44.WAV");
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1729,7 +1729,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(6) != 10);
-			_vm->_soundManager.playSoundFile("SOUND71.WAV");
+			_vm->_soundManager->playSoundFile("SOUND71.WAV");
 			_vm->_objectsManager->setBobAnimation(7);
 			_vm->_objectsManager->stopBobAnimation(4);
 			do {
@@ -1740,7 +1740,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager->getBobAnimDataIdx(7) != 15);
 			_vm->_objectsManager->stopBobAnimation(5);
 			_vm->_objectsManager->setBobAnimation(8);
-			_vm->_soundManager.playSoundFile("SOUND70.WAV");
+			_vm->_soundManager->playSoundFile("SOUND70.WAV");
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1809,7 +1809,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 204: {
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_objectsManager->setBobAnimation(3);
-			_vm->_soundManager.loadWav("SOUND67.WAV", 1);
+			_vm->_soundManager->loadWav("SOUND67.WAV", 1);
 			bool playFl = false;
 			for (;;) {
 				if (_vm->shouldQuit())
@@ -1818,7 +1818,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				switch (_vm->_objectsManager->getBobAnimDataIdx(3)) {
 				case 10:
 					if (!playFl) {
-						_vm->_soundManager.playWav(1);
+						_vm->_soundManager->playWav(1);
 						playFl = true;
 					}
 					break;
@@ -1838,7 +1838,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 205: {
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_objectsManager->setBobAnimation(4);
-			_vm->_soundManager.loadWav("SOUND69.WAV", 1);
+			_vm->_soundManager->loadWav("SOUND69.WAV", 1);
 			bool playFl = false;
 			for (;;) {
 				if (_vm->shouldQuit())
@@ -1847,7 +1847,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				switch (_vm->_objectsManager->getBobAnimDataIdx(4)) {
 				case 10:
 					if (!playFl) {
-						_vm->_soundManager.playWav(1);
+						_vm->_soundManager->playWav(1);
 						playFl = true;
 					}
 					break;
@@ -1871,9 +1871,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 208: {
 			_vm->_globals->_disableInventFl = true;
 			if (_vm->_globals->_saveData->_data[svLastPrevScreenId] != _vm->_globals->_saveData->_data[svField401]) {
-				_vm->_soundManager._specialSoundNum = 208;
+				_vm->_soundManager->_specialSoundNum = 208;
 				_vm->_animationManager->playSequence("SORT.SEQ", 10, 4, 10, true);
-				_vm->_soundManager._specialSoundNum = 0;
+				_vm->_soundManager->_specialSoundNum = 0;
 			}
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
@@ -1920,7 +1920,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager->setSpriteIndex(0, 64);
 			_vm->_objectsManager->setBobAnimation(2);
-			_vm->_soundManager.playSoundFile("SOUND66.WAV");
+			_vm->_soundManager->playSoundFile("SOUND66.WAV");
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1934,9 +1934,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 210:
 			_vm->_animationManager->NO_SEQ = true;
-			_vm->_soundManager._specialSoundNum = 210;
+			_vm->_soundManager->_specialSoundNum = 210;
 			_vm->_animationManager->playSequence2("SECRET1.SEQ", 1, 12, 1);
-			_vm->_soundManager._specialSoundNum = 0;
+			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 192, 152, 0);
 			_vm->_objectsManager->setBobAnimation(9);
 			_vm->_objectsManager->OBSSEUL = true;
@@ -1956,9 +1956,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_globals->disableHiding();
 			_vm->_animationManager->NO_SEQ = true;
-			_vm->_soundManager._specialSoundNum = 211;
+			_vm->_soundManager->_specialSoundNum = 211;
 			_vm->_animationManager->playSequence("SECRET2.SEQ", 1, 12, 100);
-			_vm->_soundManager._specialSoundNum = 0;
+			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_animationManager->NO_SEQ = false;
 			_vm->_graphicsManager->_noFadingFl = true;
 			_vm->_graphicsManager->fadeOutLong();
@@ -1989,9 +1989,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 229:
-			_vm->_soundManager._specialSoundNum = 229;
+			_vm->_soundManager->_specialSoundNum = 229;
 			_vm->_animationManager->playSequence("MUR.SEQ", 1, 12, 1);
-			_vm->_soundManager._specialSoundNum = 0;
+			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 340, 157, 2);
 			break;
 
@@ -2024,7 +2024,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				if (_vm->_objectsManager->getBobAnimDataIdx(7) == 9 && !playFl) {
 					playFl = true;
-					_vm->_soundManager.playSoundFile("SOUND81.WAV");
+					_vm->_soundManager->playSoundFile("SOUND81.WAV");
 				}
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(7) != 15);
@@ -2105,7 +2105,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					vbobFrameIndex = 4;
 				else if (v47 == 1)
 					vbobFrameIndex = 6;
-				_vm->_soundManager.playSoundFile("SOUND83.WAV");
+				_vm->_soundManager->playSoundFile("SOUND83.WAV");
 				_vm->_objectsManager->OPTI_ONE(vbobFrameIndex, 26, 50, 0);
 				if (_vm->_globals->_saveData->_data[svField341] == 1)
 					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 0);
@@ -2120,7 +2120,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->_globals->_saveData->_data[svField341] == 3)
 					_vm->_globals->_saveData->_data[svField340] = 0;
 			}
-			_vm->_soundManager.playSoundFile("SOUND83.WAV");
+			_vm->_soundManager->playSoundFile("SOUND83.WAV");
 			_vm->_objectsManager->OPTI_ONE(6, 0, 23, 0);
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 1);
 			break;
@@ -2140,7 +2140,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 			if (_vm->_globals->_saveData->_data[svField341]) {
-				_vm->_soundManager.playSoundFile("SOUND83.WAV");
+				_vm->_soundManager->playSoundFile("SOUND83.WAV");
 				_vm->_objectsManager->OPTI_ONE(vbobFrameIndex, 26, 50, 0);
 				
 				switch (_vm->_globals->_saveData->_data[svField341]) {
@@ -2159,7 +2159,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 			}
 
-			_vm->_soundManager.playSoundFile("SOUND83.WAV");
+			_vm->_soundManager->playSoundFile("SOUND83.WAV");
 			_vm->_objectsManager->OPTI_ONE(5, 0, 23, 0);
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 3);
 			break;
@@ -2179,7 +2179,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 			if (_vm->_globals->_saveData->_data[svField341]) {
-				_vm->_soundManager.playSoundFile("SOUND83.WAV");
+				_vm->_soundManager->playSoundFile("SOUND83.WAV");
 				_vm->_objectsManager->OPTI_ONE(vbobFrameIndex, 26, 50, 0);
 				switch (_vm->_globals->_saveData->_data[svField341]) {
 				case 1:
@@ -2196,7 +2196,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					break;
 				}
 			}
-			_vm->_soundManager.playSoundFile("SOUND83.WAV");
+			_vm->_soundManager->playSoundFile("SOUND83.WAV");
 			_vm->_objectsManager->OPTI_ONE(4, 0, 23, 0);
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 5);
 			break;
@@ -2204,7 +2204,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 239:
 			_vm->_objectsManager->removeSprite(0);
-			_vm->_soundManager.playSoundFile("SOUND84.WAV");
+			_vm->_soundManager->playSoundFile("SOUND84.WAV");
 			_vm->_objectsManager->OPTI_ONE(16, 0, 10, 0);
 			break;
 
@@ -2217,13 +2217,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 				if (_vm->_objectsManager->getBobAnimDataIdx(1) == 12 && !soundFlag) {
-					_vm->_soundManager.playSoundFile("SOUND86.WAV");
+					_vm->_soundManager->playSoundFile("SOUND86.WAV");
 					soundFlag = true;
 				}
 				if (_vm->_objectsManager->getBobAnimDataIdx(1) == 13)
 					soundFlag = false;
 				if (_vm->_objectsManager->getBobAnimDataIdx(1) == 25 && !soundFlag) {
-					_vm->_soundManager.playSoundFile("SOUND85.WAV");
+					_vm->_soundManager->playSoundFile("SOUND85.WAV");
 					soundFlag = true;
 				}
 				if (_vm->_objectsManager->getBobAnimDataIdx(1) == 25)
@@ -2233,13 +2233,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->setBobAnimation(2);
 			_vm->_fontManager->hideText(9);
 			bool displayedTxtFl = false;
-			if (!_vm->_soundManager._textOffFl) {
+			if (!_vm->_soundManager->_textOffFl) {
 				_vm->_fontManager->initTextBuffers(9, 617, _vm->_globals->_textFilename, 91, 41, 3, 30, 253);
 				_vm->_fontManager->showText(9);
 				displayedTxtFl = true;
 			}
-			if (!_vm->_soundManager._voiceOffFl)
-				_vm->_soundManager.mixVoice(617, 4, displayedTxtFl);
+			if (!_vm->_soundManager->_voiceOffFl)
+				_vm->_soundManager->mixVoice(617, 4, displayedTxtFl);
 			for (int i = 0; i <= 29; i++) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -2264,7 +2264,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		// Resurrect Samantha's clone
 		case 242: {
-			_vm->_soundManager.playSoundFile("SOUND87.WAV");
+			_vm->_soundManager->playSoundFile("SOUND87.WAV");
 			_vm->_animationManager->NO_SEQ = true;
 			_vm->_animationManager->playSequence("RESUF.SEQ", 1, 24, 1);
 			_vm->_animationManager->NO_SEQ = false;
@@ -2288,7 +2288,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 243:
-			_vm->_soundManager.playSoundFile("SOUND88.WAV");
+			_vm->_soundManager->playSoundFile("SOUND88.WAV");
 			if (_vm->_globals->_saveData->_data[svField341] == 2) {
 				_vm->_animationManager->NO_SEQ = true;
 				_vm->_animationManager->playSequence("RESU.SEQ", 2, 24, 2);
@@ -2299,7 +2299,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 245:
-			_vm->_soundManager.playSoundFile("SOUND89.WAV");
+			_vm->_soundManager->playSoundFile("SOUND89.WAV");
 			_vm->_objectsManager->OPTI_ONE(5, 0, 6, 0);
 			_vm->_linesManager->ZONEP[4]._destX = 276;
 			_vm->_objectsManager->enableVerb(4, 19);
@@ -2349,10 +2349,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 603:
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
 			_vm->_objectsManager->OPTI_ONE(3, 0, 16, 4);
-			_vm->_soundManager._specialSoundNum = 199;
+			_vm->_soundManager->_specialSoundNum = 199;
 			_vm->_graphicsManager->FADE_LINUX = 2;
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
-			_vm->_soundManager._specialSoundNum = 0;
+			_vm->_soundManager->_specialSoundNum = 0;
 			memset(_vm->_graphicsManager->_vesaBuffer, 0, 614400);
 			_vm->_graphicsManager->_noFadingFl = true;
 			_vm->_globals->_exitId = 151;
@@ -2361,9 +2361,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 604:
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
 			_vm->_objectsManager->OPTI_ONE(1, 0, 16, 4);
-			_vm->_soundManager._specialSoundNum = 199;
+			_vm->_soundManager->_specialSoundNum = 199;
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
-			_vm->_soundManager._specialSoundNum = 0;
+			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->_noFadingFl = true;
 			memset(_vm->_graphicsManager->_vesaBuffer, 0, 614400);
 			_vm->_globals->_exitId = 151;
@@ -2373,10 +2373,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
 			_vm->_objectsManager->OPTI_ONE(5, 0, 16, 4);
 			_vm->_graphicsManager->fadeOutShort();
-			_vm->_soundManager._specialSoundNum = 199;
+			_vm->_soundManager->_specialSoundNum = 199;
 			_vm->_graphicsManager->FADE_LINUX = 2;
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
-			_vm->_soundManager._specialSoundNum = 0;
+			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->_noFadingFl = true;
 			memset(_vm->_graphicsManager->_vesaBuffer, 0, 614400);
 			_vm->_globals->_exitId = 151;
@@ -2474,7 +2474,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		int soundNum = READ_LE_INT16(dataP + 5);
 
 		Common::String file = Common::String::format("SOUND%d.WAV", soundNum);
-		_vm->_soundManager.playSoundFile(file);
+		_vm->_soundManager->playSoundFile(file);
 		opcodeType = 1;
 		break;
 		}

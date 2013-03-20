@@ -1725,7 +1725,7 @@ void ObjectsManager::handleCityMap() {
 	_spritePtr = g_PTRNUL;
 	_vm->_globals->_exitId = 0;
 	_vm->_globals->_checkDistanceFl = true;
-	_vm->_soundManager.playSound(31);
+	_vm->_soundManager->playSound(31);
 	_vm->_globals->iRegul = 1;
 	_vm->_graphicsManager->loadImage("PLAN");
 	_vm->_linesManager->loadLines("PLAN.OB2");
@@ -2585,13 +2585,13 @@ void ObjectsManager::handleSpecialGames() {
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
 		_vm->_graphicsManager->NB_SCREEN(true);
-		_vm->_soundManager._specialSoundNum = 198;
+		_vm->_soundManager->_specialSoundNum = 198;
 		PERSO_ON = true;
 		_vm->_animationManager->NO_SEQ = true;
 		_vm->_animationManager->_clearAnimationFl = false;
 		_vm->_animationManager->playAnim("otage.ANM", 1, 24, 500);
 		_vm->_animationManager->NO_SEQ = false;
-		_vm->_soundManager._specialSoundNum = 0;
+		_vm->_soundManager->_specialSoundNum = 0;
 		_vm->_graphicsManager->NB_SCREEN(false);
 
 		_vm->_saveLoadManager->load("TEMP1.SCR", _vm->_graphicsManager->_vesaScreen);
@@ -2662,7 +2662,7 @@ void ObjectsManager::handleSpecialGames() {
 			setBobAnimation(6);
 			_vm->_globals->_saveData->_data[svField261] = 2;
 			_vm->_linesManager->disableZone(15);
-			_vm->_soundManager.playSoundFile("SOUND75.WAV");
+			_vm->_soundManager->playSoundFile("SOUND75.WAV");
 		}
 		if (_vm->_globals->_saveData->_data[svField261] == 2 && getBobAnimDataIdx(6) == 6) {
 			stopBobAnimation(6);
@@ -3214,17 +3214,17 @@ void ObjectsManager::sceneSpecialIni() {
 			VBOB(_vm->_globals->SPRITE_ECRAN, 5, 15, 28, 1);
 			_vm->_fontManager->hideText(9);
 			bool displayedTxtFl = false;
-			if (!_vm->_soundManager._textOffFl) {
+			if (!_vm->_soundManager->_textOffFl) {
 				_vm->_fontManager->initTextBuffers(9, 383, _vm->_globals->_textFilename, 220, 72, 6, 36, 253);
 				_vm->_fontManager->showText(9);
 				displayedTxtFl = true;
 			}
-			if (!_vm->_soundManager._voiceOffFl)
-				_vm->_soundManager.mixVoice(383, 4, displayedTxtFl);
+			if (!_vm->_soundManager->_voiceOffFl)
+				_vm->_soundManager->mixVoice(383, 4, displayedTxtFl);
 			_vm->_globals->_saveData->_data[svField270] = 1;
 			_vm->_globals->_saveData->_data[svField300] = 1;
 			_vm->_globals->_saveData->_data[svField320] = 1;
-			if (_vm->_soundManager._voiceOffFl) {
+			if (_vm->_soundManager->_voiceOffFl) {
 				for (int i = 0; i <= 199; i++)
 					_vm->_eventsManager->refreshScreenAndEvents();
 			}
@@ -3621,7 +3621,7 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 		if (_vm->_globals->_saveData->_data[savegameIdx] == 1) {
 			if (((idx == 1 || idx == 2) && getBobAnimDataIdx(idx) == 26) || ((idx == 3 || idx == 4) && getBobAnimDataIdx(idx) == 27)) {
 				_vm->_dialogsManager->_removeInventFl = true;
-				_vm->_soundManager.playSample(1);
+				_vm->_soundManager->playSample(1);
 				_vm->_globals->_saveData->_data[savegameIdx] = 4;
 			}
 		}
@@ -3665,7 +3665,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_graphicsManager->_scrollOffset = 0;
 	_vm->_globals->_cityMapEnabledFl = false;
 	_vm->_globals->iRegul = 1;
-	_vm->_soundManager.playSound(soundNum);
+	_vm->_soundManager->playSound(soundNum);
 	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_vm->_globals->_freezeCharacterFl = true;
 	_vm->_globals->_exitId = 0;
@@ -3757,7 +3757,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_globals->_freezeCharacterFl = false;
 	_vm->_globals->_exitId = 0;
 	_vm->_globals->_checkDistanceFl = true;
-	_vm->_soundManager.playSound(soundNum);
+	_vm->_soundManager->playSound(soundNum);
 	_vm->_globals->iRegul = 1;
 	if (!backgroundFile.empty())
 		_vm->_graphicsManager->loadImage(backgroundFile);

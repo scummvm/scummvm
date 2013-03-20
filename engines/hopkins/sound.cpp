@@ -184,7 +184,9 @@ Audio::AudioStream *makeTwaStream(Common::String name, Common::SeekableReadStrea
 	return new TwaAudioStream(name, stream);
 }
 
-SoundManager::SoundManager() {
+SoundManager::SoundManager(HopkinsEngine *vm) {
+	_vm = vm;
+
 	_specialSoundNum = 0;
 	_soundVolume = 0;
 	_voiceVolume = 0;
@@ -213,11 +215,6 @@ SoundManager::~SoundManager() {
 	delMusic();
 	_vm->_mixer->stopHandle(_musicHandle);
 	_modPlayingFl = false;
-}
-
-void SoundManager::setParent(HopkinsEngine *vm) {
-	_vm = vm;
-	_specialSoundNum = 0;
 }
 
 void SoundManager::checkSoundEnd() {

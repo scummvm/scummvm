@@ -92,7 +92,7 @@ int MenuManager::menu() {
 		_vm->_eventsManager->_mouseCursorId = 0;
 		_vm->_eventsManager->_mouseSpriteId = 0;
 
-		_vm->_soundManager.playSound(28);
+		_vm->_soundManager->playSound(28);
 
 		// Loop to make menu selection
 		bool selectionMade = false;

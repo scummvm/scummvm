@@ -104,9 +104,8 @@ public:
 	int _voiceVolume;
 	int _specialSoundNum;
 public:
-	SoundManager();
+	SoundManager(HopkinsEngine *vm);
 	~SoundManager();
-	void setParent(HopkinsEngine *vm);
 
 	void loadAnimSound();
 	void playAnimSound(int soundNumber);

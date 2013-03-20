@@ -548,9 +548,9 @@ void ComputerManager::displayGamesSubMenu() {
 	_vm->_graphicsManager->_minY = 0;
 	_vm->_graphicsManager->_maxX = 320;
 	_vm->_graphicsManager->_maxY = 200;
-	_vm->_soundManager.loadSample(1, "SOUND37.WAV");
-	_vm->_soundManager.loadSample(2, "SOUND38.WAV");
-	_vm->_soundManager.loadSample(3, "SOUND39.WAV");
+	_vm->_soundManager->loadSample(1, "SOUND37.WAV");
+	_vm->_soundManager->loadSample(2, "SOUND38.WAV");
+	_vm->_soundManager->loadSample(3, "SOUND39.WAV");
 	_breakoutSpr = _vm->_fileManager->loadFile("CASSE.SPR");
 	loadHiscore();
 	setModeVGA256();
@@ -564,9 +564,9 @@ void ComputerManager::displayGamesSubMenu() {
 	_breakoutLevel = (int16 *)_vm->_globals->freeMemory((byte *)_breakoutLevel);
 	_vm->_objectsManager->_sprite[0]._spriteData = oldSpriteData;
 
-	_vm->_soundManager.removeSample(1);
-	_vm->_soundManager.removeSample(2);
-	_vm->_soundManager.removeSample(3);
+	_vm->_soundManager->removeSample(1);
+	_vm->_soundManager->removeSample(2);
+	_vm->_soundManager->removeSample(3);
 	_vm->_globals->_speed = oldSpeed;
 	_vm->_eventsManager->_breakoutFl = false;
 	setVideoMode();
@@ -652,7 +652,7 @@ void ComputerManager::newLevel() {
 	_vm->_objectsManager->animateSprite(1);
  
 	_vm->_eventsManager->mouseOn();
-	_vm->_soundManager.playSample(3, 5);
+	_vm->_soundManager->playSample(3, 5);
 }
 
 /**
@@ -754,7 +754,7 @@ void ComputerManager::playBreakout() {
 
 			// Play loop
 			do {
-				_vm->_soundManager.checkSounds();
+				_vm->_soundManager->checkSounds();
 
 				_padPositionX = _vm->_eventsManager->getMouseX();
 				if (_vm->_eventsManager->_mousePos.x <= 4)
@@ -1055,21 +1055,21 @@ int ComputerManager::moveBall() {
 
 	_lastBreakoutMoveSpeed = moveSpeed;
 	if (_ballPosition.x <= 6) {
-		_vm->_soundManager.playSample(2, 6);
+		_vm->_soundManager->playSample(2, 6);
 		_ballPosition.x = randVal + 6;
 		_ballRightFl = !_ballRightFl;
 	} else if (_ballPosition.x > 307) {
-		_vm->_soundManager.playSample(2, 6);
+		_vm->_soundManager->playSample(2, 6);
 		_ballPosition.x = 307 - randVal;
 		_ballRightFl = !_ballRightFl;
 	}
 
 	if (_ballPosition.y <= 6) {
-		_vm->_soundManager.playSample(2, 6);
+		_vm->_soundManager->playSample(2, 6);
 		_ballPosition.y = randVal + 7;
 		_ballUpFl = !_ballUpFl;
 	} else if (_ballPosition.y >= 186 && _ballPosition.y <= 194) {
-		_vm->_soundManager.playSample(2, 6);
+		_vm->_soundManager->playSample(2, 6);
 		int ballPosXRight = _ballPosition.x + 6;
 		if ((_ballPosition.x > _padPositionX - 2) && (ballPosXRight < _padPositionX + 36)) {
 			_ballUpFl = false;
@@ -1180,9 +1180,9 @@ void ComputerManager::checkBallCollisions() {
 			}
 			if (collisionFl) {
 				if (cellType == 31) {
-					_vm->_soundManager.playSample(2, 6);
+					_vm->_soundManager->playSample(2, 6);
 				} else {
-					_vm->_soundManager.playSample(1, 5);
+					_vm->_soundManager->playSample(1, 5);
 					_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellUp, 16);
 					switch (cellType) {
 					case 1:
