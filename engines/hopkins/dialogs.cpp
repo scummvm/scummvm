@@ -394,7 +394,7 @@ void DialogsManager::showInventory() {
 			int mousePosY = _vm->_eventsManager->getMouseY();
 			int mouseButton = _vm->_eventsManager->getMouseButton();
 			int oldInventoryItem = newInventoryItem;
-			newInventoryItem = _vm->_linesManager.checkInventoryHotspots(mousePosX, mousePosY);
+			newInventoryItem = _vm->_linesManager->checkInventoryHotspots(mousePosX, mousePosY);
 			if (newInventoryItem != oldInventoryItem)
 				_vm->_objectsManager.initBorder(newInventoryItem);
 			if (_vm->_eventsManager->_mouseCursorId != 1 && _vm->_eventsManager->_mouseCursorId != 2 && _vm->_eventsManager->_mouseCursorId != 3 && _vm->_eventsManager->_mouseCursorId != 16) {

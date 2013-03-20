@@ -157,9 +157,8 @@ public:
 	bool BOBZONE_FLAG[105];
 	ZonePItem ZONEP[106];
 
-	LinesManager();
+	LinesManager(HopkinsEngine *vm);
 	~LinesManager();
-	void setParent(HopkinsEngine *vm);
 	void clearAll();
 
 	void setMaxLineIdx(int idx);

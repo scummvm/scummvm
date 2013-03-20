@@ -30,26 +30,9 @@
 
 namespace Hopkins {
 
+LinesManager::LinesManager(HopkinsEngine *vm) {
+	_vm = vm;
 
-int LigneItem::appendToRouteInc(int from, int to, RouteItem *route, int index) {
-	if (to == -1)
-		to = _lineDataEndIdx;
-
-	for (int i = from; i < to; ++i)
-		route[index++].set(_lineData[2*i], _lineData[2*i+1], _directionRouteInc);
-	return index;
-}
-int LigneItem::appendToRouteDec(int from, int to, RouteItem *route, int index) {
-	if (from == -1)
-		from = _lineDataEndIdx - 1;
-
-	for (int i = from; i > to; --i)
-		route[index++].set(_lineData[2*i], _lineData[2*i+1], _directionRouteDec);
-	return index;
-}
-
-
-LinesManager::LinesManager() {
 	for (int i = 0; i < MAX_LINES; ++i) {
 		Common::fill((byte *)&_zoneLine[i], (byte *)&_zoneLine[i] + sizeof(LigneZoneItem), 0);
 		Common::fill((byte *)&_lineItem[i], (byte *)&_lineItem[i] + sizeof(LigneItem), 0);
@@ -100,8 +83,21 @@ LinesManager::~LinesManager() {
 	_vm->_globals->freeMemory((byte *) _testRoute2);
 }
 
-void LinesManager::setParent(HopkinsEngine *vm) {
-	_vm = vm;
+int LigneItem::appendToRouteInc(int from, int to, RouteItem *route, int index) {
+	if (to == -1)
+		to = _lineDataEndIdx;
+
+	for (int i = from; i < to; ++i)
+		route[index++].set(_lineData[2*i], _lineData[2*i+1], _directionRouteInc);
+	return index;
+}
+int LigneItem::appendToRouteDec(int from, int to, RouteItem *route, int index) {
+	if (from == -1)
+		from = _lineDataEndIdx - 1;
+
+	for (int i = from; i > to; --i)
+		route[index++].set(_lineData[2*i], _lineData[2*i+1], _directionRouteDec);
+	return index;
 }
 
 /**

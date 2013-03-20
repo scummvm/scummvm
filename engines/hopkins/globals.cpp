@@ -246,7 +246,7 @@ void Globals::clearAll() {
 	_saveData = (Savegame *)g_PTRNUL;
 	_vm->_objectsManager._curObjectIndex = 0;
 
-	_vm->_linesManager.clearAll();
+	_vm->_linesManager->clearAll();
 	_vm->_objectsManager.clearAll();
 
 	_saveData = (Savegame *)malloc(sizeof(Savegame));

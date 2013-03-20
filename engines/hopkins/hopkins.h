@@ -151,8 +151,8 @@ public:
 	FontManager *_fontManager;
 	Globals *_globals;
 	GraphicsManager *_graphicsManager;
+	LinesManager *_linesManager;
 
-	LinesManager _linesManager;
 	MenuManager _menuManager;
 	ObjectsManager _objectsManager;
 	SaveLoadManager _saveLoadManager;

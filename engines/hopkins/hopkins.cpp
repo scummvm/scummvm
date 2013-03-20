@@ -49,8 +49,8 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_fontManager = new FontManager(this);
 	_globals = new Globals(this);
 	_graphicsManager = new GraphicsManager(this);
+	_linesManager = new LinesManager(this);
 
-	_linesManager.setParent(this);
 	_menuManager.setParent(this);
 	_objectsManager.setParent(this);
 	_saveLoadManager.setParent(this);
@@ -60,6 +60,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 }
 
 HopkinsEngine::~HopkinsEngine() {
+	delete _linesManager;
 	delete _graphicsManager;
 	delete _globals;
 	delete _fontManager;
@@ -187,7 +188,7 @@ bool HopkinsEngine::runWin95Demo() {
 
 		switch (_globals->_exitId) {
 		case 1:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 2, true);
 			break;
@@ -226,7 +227,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_graphicsManager->fadeOutLong();
 				_globals->_saveData->_data[svBankAttackAnimPlayedFl] = 1;
 			}
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
@@ -238,7 +239,7 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 5:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 455;
 
 			if (_globals->_saveData->_data[svFreedHostageFl]) {
@@ -250,7 +251,7 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 6:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 460;
 			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
@@ -263,14 +264,14 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 8:
-			_linesManager.setMaxLineIdx(15);
+			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 450;
 			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
 			_globals->_characterMaxPosY = 440;
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			if (_globals->_saveData->_data[svBombDisarmedFl])
 			  _objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
@@ -282,14 +283,14 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 11:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
 			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
 			_globals->_characterMaxPosY = 450;
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			if (_globals->_saveData->_data[svBombDisarmedFl]) {
 				if (_globals->_language == LANG_FR)
 					_graphicsManager->loadImage("ENDFR");
@@ -492,7 +493,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 1:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
@@ -534,7 +535,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				_globals->_saveData->_data[svBankAttackAnimPlayedFl] = 1;
 			}
 
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
@@ -546,7 +547,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 5:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 455;
 			if (_globals->_saveData->_data[svFreedHostageFl] == 1)
 					_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
@@ -555,7 +556,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 6:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 460;
 			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
@@ -568,13 +569,13 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 8:
-			_linesManager.setMaxLineIdx(15);
+			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 450;
 			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 440;
 
 			if (!_globals->_saveData->_data[svBombDisarmedFl])
@@ -588,13 +589,13 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 11:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
 			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svBombDisarmedFl])
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
@@ -603,13 +604,13 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 13:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
@@ -619,7 +620,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 16:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 
 			if (_globals->_saveData->_data[svForestAvailableFl] == 1) {
@@ -630,13 +631,13 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 25:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
 			_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
 			break;
 
 		case 26:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
 
@@ -837,7 +838,7 @@ bool HopkinsEngine::runFull() {
 
 		switch (_globals->_exitId) {
 		case 1:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
@@ -892,7 +893,7 @@ bool HopkinsEngine::runFull() {
 
 				_globals->_saveData->_data[svBankAttackAnimPlayedFl] = 1;
 			}
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			_objectsManager.PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
@@ -904,7 +905,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 5:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 455;
 			if (_globals->_saveData->_data[svFreedHostageFl] == 1)
 				_objectsManager.PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
@@ -913,7 +914,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 6:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 460;
 			_objectsManager.PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
@@ -926,13 +927,13 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 8:
-			_linesManager.setMaxLineIdx(15);
+			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 450;
 			_objectsManager.PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svBombDisarmedFl])
 				_objectsManager.PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
@@ -945,13 +946,13 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 11:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
 			_objectsManager.PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svBombDisarmedFl])
 				_objectsManager.PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
@@ -960,13 +961,13 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 13:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
@@ -979,7 +980,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 16:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svForestAvailableFl] == 1)
 				_objectsManager.PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
@@ -988,7 +989,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 17:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svHutBurningFl] == 1)
 				_objectsManager.PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
@@ -1019,7 +1020,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 18:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
 				_objectsManager.PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29, false);
@@ -1028,7 +1029,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 19:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svHeavenGuardGoneFl])
 				_objectsManager.PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
@@ -1037,7 +1038,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 20:
-			_linesManager.setMaxLineIdx(10);
+			_linesManager->setMaxLineIdx(10);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
 			if (_globals->_exitId == 17) {
@@ -1058,19 +1059,19 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 22:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
 			_objectsManager.PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
 			break;
 
 		case 23:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
 			break;
 
 		case 24:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svCinemaDogGoneFl] == 1)
 				_objectsManager.PERSONAGE2("IM24", "IM24A", "ANIM24", "IM24", 1, true);
@@ -1079,7 +1080,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 25:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
 				_objectsManager.PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
@@ -1088,7 +1089,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 26:
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
 				_objectsManager.PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
@@ -1097,7 +1098,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 27:
-			_linesManager.setMaxLineIdx(15);
+			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svPoolDogGoneFl] == 1)
 				_objectsManager.PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
@@ -1106,7 +1107,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 28:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svCinemaCurtainCond1] != 1 || _globals->_saveData->_data[svCinemaCurtainCond2] != 1)
 				_objectsManager.PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
@@ -1115,13 +1116,13 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 29:
-			_linesManager.setMaxLineIdx(50);
+			_linesManager->setMaxLineIdx(50);
 			_globals->_characterMaxPosY = 445;
 			_objectsManager.PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
 			break;
 
 		case 30:
-			_linesManager.setMaxLineIdx(15);
+			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
 			break;
@@ -1131,7 +1132,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 32:
-			_linesManager.setMaxLineIdx(20);
+			_linesManager->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
 			_objectsManager.PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
 			break;
@@ -1151,7 +1152,7 @@ bool HopkinsEngine::runFull() {
 		case 39:
 		case 40:
 		case 41: {
-			_linesManager.setMaxLineIdx(40);
+			_linesManager->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			_globals->_disableInventFl = false;
 			_objectsManager._forestFl = true;
@@ -1176,55 +1177,55 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 51:
-			_linesManager.setMaxLineIdx(10);
+			_linesManager->setMaxLineIdx(10);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
 			break;
 
 		case 52:
-			_linesManager.setMaxLineIdx(15);
+			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 445;
 			_objectsManager.PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
 			break;
 
 		case 54:
-			_linesManager.setMaxLineIdx(30);
+			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
 			break;
 
 		case 55:
-			_linesManager.setMaxLineIdx(30);
+			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 460;
 			_objectsManager.PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
 			break;
 
 		case 56:
-			_linesManager.setMaxLineIdx(30);
+			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
 			break;
 
 		case 57:
-			_linesManager.setMaxLineIdx(30);
+			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
 			break;
 
 		case 58:
-			_linesManager.setMaxLineIdx(30);
+			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
 			break;
 
 		case 59:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
 			_objectsManager.PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
 			break;
 
 		case 60:
-			_linesManager.setMaxLineIdx(30);
+			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
 			break;
@@ -1236,67 +1237,67 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 62:
-			_linesManager.setMaxLineIdx(8);
+			_linesManager->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
 			break;
 
 		case 63:
-			_linesManager.setMaxLineIdx(30);
+			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
 			break;
 
 		case 64:
-			_linesManager.setMaxLineIdx(30);
+			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
 			break;
 
 		case 65:
-			_linesManager.setMaxLineIdx(30);
+			_linesManager->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
 			break;
 
 		case 66:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
 			_objectsManager.PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
 			break;
 
 		case 67:
-			_linesManager.setMaxLineIdx(8);
+			_linesManager->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
 			break;
 
 		case 68:
-			_linesManager.setMaxLineIdx(8);
+			_linesManager->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
 			break;
 
 		case 69:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
 			_objectsManager.PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
 			break;
 
 		case 70:
-			_linesManager.setMaxLineIdx(8);
+			_linesManager->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
 			break;
 
 		case 71:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
 			_objectsManager.PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
 			break;
 
 		case 73:
-			_linesManager.setMaxLineIdx(15);
+			_linesManager->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 445;
 			if (_globals->_saveData->_data[svSecondElevatorAvailableFl] == 1)
 				_objectsManager.PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
@@ -1369,7 +1370,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 93:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
 			if (_globals->_saveData->_data[svEscapeLeftJailFl]) {
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
@@ -1385,25 +1386,25 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 94:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 440;
 			_objectsManager.PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
 			break;
 
 		case 95:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, false);
 			break;
 
 		case 96:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
 			break;
 
 		case 97:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
 			if (_globals->_exitId == 18) {
@@ -1421,13 +1422,13 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 98:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
 			break;
 
 		case 99:
-			_linesManager.setMaxLineIdx(5);
+			_linesManager->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
 			_objectsManager.PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
 			break;
@@ -2062,7 +2063,7 @@ void HopkinsEngine::playEnding() {
 	_globals->_cityMapEnabledFl = false;
 	_globals->iRegul = 1;
 	_soundManager.playSound(26);
-	_linesManager._route = (RouteItem *)g_PTRNUL;
+	_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_globals->_freezeCharacterFl = true;
 	_globals->_exitId = 0;
 	_soundManager.loadSample(1, "SOUND90.WAV");
@@ -2768,13 +2769,13 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 		_objectsManager.loadLinkFile("ocean");
 
 	if (!exit1)
-		_linesManager.disableZone(1);
+		_linesManager->disableZone(1);
 	if (!exit2)
-		_linesManager.disableZone(2);
+		_linesManager->disableZone(2);
 	if (!exit3)
-		_linesManager.disableZone(3);
+		_linesManager->disableZone(3);
 	if (!exit4)
-		_linesManager.disableZone(4);
+		_linesManager->disableZone(4);
 
 	if (!_globals->_oceanDirection)
 		_globals->_oceanDirection = defaultDirection;
@@ -2806,7 +2807,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 	_objectsManager.animateSprite(0);
-	_linesManager._route = (RouteItem *)g_PTRNUL;
+	_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_eventsManager->mouseOn();
 	_eventsManager->changeMouseCursor(4);
 
@@ -2822,7 +2823,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 		int mouseButton = _eventsManager->getMouseButton();
 		if (mouseButton && mouseButton == 1)
 			handleOceanMouseEvents();
-		_linesManager.checkZone();
+		_linesManager->checkZone();
 		setSubmarineSprites();
 
 		_eventsManager->refreshScreenAndEvents();

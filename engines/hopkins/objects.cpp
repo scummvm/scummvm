@@ -1256,7 +1256,7 @@ void ObjectsManager::setFlipSprite(int idx, bool flipFl) {
 }
 
 void ObjectsManager::GOHOME() {
-	if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL)
+	if (_vm->_linesManager->_route == (RouteItem *)g_PTRNUL)
 		return;
 
 	if (_vm->_globals->Compteur > 1) {
@@ -1274,10 +1274,10 @@ void ObjectsManager::GOHOME() {
 	_vm->_globals->Compteur = 0;
 	if (_vm->_globals->_oldDirection == DIR_NONE) {
 		computeAndSetSpriteSize();
-		newPosX = _vm->_linesManager._route->_x;
-		newPosY = _vm->_linesManager._route->_y;
-		newDirection = _vm->_linesManager._route->_dir;
-		_vm->_linesManager._route++;
+		newPosX = _vm->_linesManager->_route->_x;
+		newPosY = _vm->_linesManager->_route->_y;
+		newDirection = _vm->_linesManager->_route->_dir;
+		_vm->_linesManager->_route++;
 
 		if (newPosX != -1 || newPosY != -1) {
 			_vm->_globals->_oldDirection = newDirection;
@@ -1293,21 +1293,21 @@ void ObjectsManager::GOHOME() {
 				zoneId = _vm->_globals->_saveData->_data[svLastZoneNum];
 			else
 				zoneId = _zoneNum;
-			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_vm->_globals->Compteur = 0;
-			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			_vm->_globals->_oldDirection = DIR_NONE;
 			if (zoneId > 0) {
-				if (_vm->_linesManager.ZONEP[zoneId]._destX && _vm->_linesManager.ZONEP[zoneId]._destY && _vm->_linesManager.ZONEP[zoneId]._destY != 31) {
-					if (_vm->_linesManager.ZONEP[zoneId]._spriteIndex == -1) {
-						_vm->_linesManager.ZONEP[zoneId]._destX = 0;
-						_vm->_linesManager.ZONEP[zoneId]._destY = 0;
-						_vm->_linesManager.ZONEP[zoneId]._spriteIndex = 0;
+				if (_vm->_linesManager->ZONEP[zoneId]._destX && _vm->_linesManager->ZONEP[zoneId]._destY && _vm->_linesManager->ZONEP[zoneId]._destY != 31) {
+					if (_vm->_linesManager->ZONEP[zoneId]._spriteIndex == -1) {
+						_vm->_linesManager->ZONEP[zoneId]._destX = 0;
+						_vm->_linesManager->ZONEP[zoneId]._destY = 0;
+						_vm->_linesManager->ZONEP[zoneId]._spriteIndex = 0;
 					} else {
-						setSpriteIndex(0, _vm->_linesManager.ZONEP[zoneId]._spriteIndex);
-						_vm->_globals->_actionDirection = _vm->_linesManager.ZONEP[zoneId]._spriteIndex - 59;
+						setSpriteIndex(0, _vm->_linesManager->ZONEP[zoneId]._spriteIndex);
+						_vm->_globals->_actionDirection = _vm->_linesManager->ZONEP[zoneId]._spriteIndex - 59;
 					}
 				}
 			}
@@ -1500,10 +1500,10 @@ void ObjectsManager::GOHOME() {
 	}
 	bool loopCond = false;
 	do {
-		newPosX = _vm->_linesManager._route->_x;
-		newPosY = _vm->_linesManager._route->_y;
-		newDirection = (Directions)_vm->_linesManager._route->_dir;
-		_vm->_linesManager._route++;
+		newPosX = _vm->_linesManager->_route->_x;
+		newPosY = _vm->_linesManager->_route->_y;
+		newDirection = (Directions)_vm->_linesManager->_route->_dir;
+		_vm->_linesManager->_route++;
 
 		if (newPosX == -1 && newPosY == -1) {
 			int zoneId;
@@ -1513,7 +1513,7 @@ void ObjectsManager::GOHOME() {
 				zoneId = _zoneNum;
 			setSpriteIndex(0, _vm->_globals->_oldDirection + 59);
 			_vm->_globals->_actionDirection = DIR_NONE;
-			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_vm->_globals->Compteur = 0;
@@ -1522,14 +1522,14 @@ void ObjectsManager::GOHOME() {
 			_oldCharacterPosY = getSpriteY(0);
 
 			if (zoneId > 0) {
-				if (_vm->_linesManager.ZONEP[zoneId]._destX && _vm->_linesManager.ZONEP[zoneId]._destY && _vm->_linesManager.ZONEP[zoneId]._destY != 31) {
-					if ( _vm->_linesManager.ZONEP[zoneId]._spriteIndex == -1) {
-						_vm->_linesManager.ZONEP[zoneId]._destX = 0;
-						_vm->_linesManager.ZONEP[zoneId]._destY = 0;
-						_vm->_linesManager.ZONEP[zoneId]._spriteIndex = 0;
+				if (_vm->_linesManager->ZONEP[zoneId]._destX && _vm->_linesManager->ZONEP[zoneId]._destY && _vm->_linesManager->ZONEP[zoneId]._destY != 31) {
+					if ( _vm->_linesManager->ZONEP[zoneId]._spriteIndex == -1) {
+						_vm->_linesManager->ZONEP[zoneId]._destX = 0;
+						_vm->_linesManager->ZONEP[zoneId]._destY = 0;
+						_vm->_linesManager->ZONEP[zoneId]._spriteIndex = 0;
 					} else {
-						setSpriteIndex(0,  _vm->_linesManager.ZONEP[zoneId]._spriteIndex);
-						_vm->_globals->_actionDirection = _vm->_linesManager.ZONEP[zoneId]._spriteIndex - 59;
+						setSpriteIndex(0,  _vm->_linesManager->ZONEP[zoneId]._spriteIndex);
+						_vm->_globals->_actionDirection = _vm->_linesManager->ZONEP[zoneId]._spriteIndex - 59;
 					}
 				}
 			}
@@ -1573,7 +1573,7 @@ void ObjectsManager::GOHOME() {
 }
 
 void ObjectsManager::GOHOME2() {
-	if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL)
+	if (_vm->_linesManager->_route == (RouteItem *)g_PTRNUL)
 		return;
 
 	int realSpeed = 2;
@@ -1585,10 +1585,10 @@ void ObjectsManager::GOHOME2() {
 	int countColisionPixel = 0;
 
 	for (;;) {
-		int nexPosX = _vm->_linesManager._route->_x;
-		int newPosY = _vm->_linesManager._route->_y;
-		Directions newDirection = (Directions)_vm->_linesManager._route->_dir;
-		_vm->_linesManager._route++;
+		int nexPosX = _vm->_linesManager->_route->_x;
+		int newPosY = _vm->_linesManager->_route->_y;
+		Directions newDirection = (Directions)_vm->_linesManager->_route->_dir;
+		_vm->_linesManager->_route++;
 
 		if ((nexPosX == -1) && (newPosY == -1))
 			break;
@@ -1636,7 +1636,7 @@ void ObjectsManager::GOHOME2() {
 		break;
 	}
 
-	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 }
 
 /**
@@ -1644,21 +1644,21 @@ void ObjectsManager::GOHOME2() {
  */
 void ObjectsManager::loadZone(const Common::String &file) {
 	for (int i = 1; i <= 100; i++) {
-		_vm->_linesManager.ZONEP[i]._destX = 0;
-		_vm->_linesManager.ZONEP[i]._destY = 0;
-		_vm->_linesManager.ZONEP[i]._spriteIndex = 0;
-		_vm->_linesManager.ZONEP[i]._verbFl1 = 0;
-		_vm->_linesManager.ZONEP[i]._verbFl2 = 0;
-		_vm->_linesManager.ZONEP[i]._verbFl3 = 0;
-		_vm->_linesManager.ZONEP[i]._verbFl4 = 0;
-		_vm->_linesManager.ZONEP[i]._verbFl5 = 0;
-		_vm->_linesManager.ZONEP[i]._verbFl6 = 0;
-		_vm->_linesManager.ZONEP[i]._verbFl7 = 0;
-		_vm->_linesManager.ZONEP[i]._verbFl8 = 0;
-		_vm->_linesManager.ZONEP[i]._verbFl9 = 0;
-		_vm->_linesManager.ZONEP[i]._verbFl10 = 0;
-		_vm->_linesManager.ZONEP[i]._messageId = 0;
-		_vm->_linesManager.ZONEP[i]._enabledFl = false;
+		_vm->_linesManager->ZONEP[i]._destX = 0;
+		_vm->_linesManager->ZONEP[i]._destY = 0;
+		_vm->_linesManager->ZONEP[i]._spriteIndex = 0;
+		_vm->_linesManager->ZONEP[i]._verbFl1 = 0;
+		_vm->_linesManager->ZONEP[i]._verbFl2 = 0;
+		_vm->_linesManager->ZONEP[i]._verbFl3 = 0;
+		_vm->_linesManager->ZONEP[i]._verbFl4 = 0;
+		_vm->_linesManager->ZONEP[i]._verbFl5 = 0;
+		_vm->_linesManager->ZONEP[i]._verbFl6 = 0;
+		_vm->_linesManager->ZONEP[i]._verbFl7 = 0;
+		_vm->_linesManager->ZONEP[i]._verbFl8 = 0;
+		_vm->_linesManager->ZONEP[i]._verbFl9 = 0;
+		_vm->_linesManager->ZONEP[i]._verbFl10 = 0;
+		_vm->_linesManager->ZONEP[i]._messageId = 0;
+		_vm->_linesManager->ZONEP[i]._enabledFl = false;
 	}
 
 	Common::File f;
@@ -1672,54 +1672,54 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	do {
 		bobZoneIdx = READ_LE_INT16((uint16 *)ptr + bufId);
 		if (bobZoneIdx != -1) {
-			_vm->_linesManager.addZoneLine(
+			_vm->_linesManager->addZoneLine(
 			    zoneLineIdx,
 			    READ_LE_UINT16((uint16 *)ptr + bufId + 1),
 			    READ_LE_UINT16((uint16 *)ptr + bufId + 2),
 			    READ_LE_UINT16((uint16 *)ptr + bufId + 3),
 			    READ_LE_UINT16((uint16 *)ptr + bufId + 4),
 			    bobZoneIdx);
-			_vm->_linesManager.ZONEP[bobZoneIdx]._enabledFl = true;
+			_vm->_linesManager->ZONEP[bobZoneIdx]._enabledFl = true;
 		}
 		bufId += 5;
 		++zoneLineIdx;
 	} while (bobZoneIdx != -1);
 
 	for (int i = 1; i <= 100; i++) {
-		_vm->_linesManager.ZONEP[i]._destX = READ_LE_INT16((uint16 *)ptr + bufId);
-		_vm->_linesManager.ZONEP[i]._destY = READ_LE_INT16((uint16 *)ptr + bufId + 1);
-		_vm->_linesManager.ZONEP[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + bufId + 2);
+		_vm->_linesManager->ZONEP[i]._destX = READ_LE_INT16((uint16 *)ptr + bufId);
+		_vm->_linesManager->ZONEP[i]._destY = READ_LE_INT16((uint16 *)ptr + bufId + 1);
+		_vm->_linesManager->ZONEP[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + bufId + 2);
 		bufId += 3;
 	}
 
 	byte *verbData = (ptr + 10 * zoneLineIdx + 606);
 	bufId = 0;
 	for (int i = 1; i <= 100; i++) {
-		_vm->_linesManager.ZONEP[i]._verbFl1 = verbData[bufId];
-		_vm->_linesManager.ZONEP[i]._verbFl2 = verbData[bufId + 1];
-		_vm->_linesManager.ZONEP[i]._verbFl3 = verbData[bufId + 2];
-		_vm->_linesManager.ZONEP[i]._verbFl4 = verbData[bufId + 3];
-		_vm->_linesManager.ZONEP[i]._verbFl5 = verbData[bufId + 4];
-		_vm->_linesManager.ZONEP[i]._verbFl6 = verbData[bufId + 5];
-		_vm->_linesManager.ZONEP[i]._verbFl7 = verbData[bufId + 6];
-		_vm->_linesManager.ZONEP[i]._verbFl8 = verbData[bufId + 7];
-		_vm->_linesManager.ZONEP[i]._verbFl9 = verbData[bufId + 8];
-		_vm->_linesManager.ZONEP[i]._verbFl10 = verbData[bufId + 9];
+		_vm->_linesManager->ZONEP[i]._verbFl1 = verbData[bufId];
+		_vm->_linesManager->ZONEP[i]._verbFl2 = verbData[bufId + 1];
+		_vm->_linesManager->ZONEP[i]._verbFl3 = verbData[bufId + 2];
+		_vm->_linesManager->ZONEP[i]._verbFl4 = verbData[bufId + 3];
+		_vm->_linesManager->ZONEP[i]._verbFl5 = verbData[bufId + 4];
+		_vm->_linesManager->ZONEP[i]._verbFl6 = verbData[bufId + 5];
+		_vm->_linesManager->ZONEP[i]._verbFl7 = verbData[bufId + 6];
+		_vm->_linesManager->ZONEP[i]._verbFl8 = verbData[bufId + 7];
+		_vm->_linesManager->ZONEP[i]._verbFl9 = verbData[bufId + 8];
+		_vm->_linesManager->ZONEP[i]._verbFl10 = verbData[bufId + 9];
 
 		bufId += 10;
 	}
 	verbData += 1010;
 	for (int i = 0; i < 100; i++)
-		_vm->_linesManager.ZONEP[i + 1]._messageId = READ_LE_UINT16(verbData + 2 * i);
+		_vm->_linesManager->ZONEP[i + 1]._messageId = READ_LE_UINT16(verbData + 2 * i);
 
 	_vm->_globals->freeMemory(ptr);
-	_vm->_linesManager.CARRE_ZONE();
+	_vm->_linesManager->CARRE_ZONE();
 }
 
 void ObjectsManager::handleCityMap() {
 	_vm->_dialogsManager->_inventFl = false;
 	_vm->_eventsManager->_gameKey = KEY_NONE;
-	_vm->_linesManager.setMaxLineIdx(1);
+	_vm->_linesManager->setMaxLineIdx(1);
 	_vm->_globals->_characterMaxPosY = 440;
 	_vm->_globals->_cityMapEnabledFl = true;
 	_vm->_graphicsManager->_noFadingFl = false;
@@ -1730,7 +1730,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_soundManager.playSound(31);
 	_vm->_globals->iRegul = 1;
 	_vm->_graphicsManager->loadImage("PLAN");
-	_vm->_linesManager.loadLines("PLAN.OB2");
+	_vm->_linesManager->loadLines("PLAN.OB2");
 	_vm->_globals->loadHidingItems("PLAN.CA2");
 	loadZone("PLAN.ZO2");
 	_spritePtr = _vm->_fileManager->loadFile("VOITURE.SPR");
@@ -1753,7 +1753,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_graphicsManager->scrollScreen(getSpriteX(0) - 320);
 	_vm->_graphicsManager->_scrollOffset = getSpriteX(0) - 320;
 	animateSprite(0);
-	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
@@ -1792,10 +1792,10 @@ void ObjectsManager::handleCityMap() {
 				handleLeftButton();
 		}
 
-		_vm->_linesManager.checkZone();
+		_vm->_linesManager->checkZone();
 		GOHOME2();
 
-		if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL && _vm->_globals->_actionMoveTo)
+		if (_vm->_linesManager->_route == (RouteItem *)g_PTRNUL && _vm->_globals->_actionMoveTo)
 			PARADISE();
 		_vm->_eventsManager->refreshScreenAndEvents();
 
@@ -1860,20 +1860,20 @@ void ObjectsManager::handleLeftButton() {
 		}
 	}
 	if (_vm->_globals->_cityMapEnabledFl && _vm->_globals->_actionMoveTo) {
-		_vm->_linesManager.checkZone();
+		_vm->_linesManager->checkZone();
 		if (_zoneNum <= 0)
 			return;
 		int routeIdx = 0;
 		do {
-			_vm->_linesManager._testRoute2[routeIdx] = _vm->_linesManager._route[routeIdx];
+			_vm->_linesManager->_testRoute2[routeIdx] = _vm->_linesManager->_route[routeIdx];
 			++routeIdx;
-		} while (_vm->_linesManager._route[routeIdx]._x != -1);
+		} while (_vm->_linesManager->_route[routeIdx]._x != -1);
 
-		_vm->_linesManager._testRoute2[routeIdx].invalidate();
+		_vm->_linesManager->_testRoute2[routeIdx].invalidate();
 	}
 
 	if (_vm->_globals->_actionMoveTo) {
-		_vm->_linesManager.checkZone();
+		_vm->_linesManager->checkZone();
 		_vm->_globals->_actionMoveTo = false;
 		_vm->_globals->_saveData->_data[svLastMouseCursor] = 0;
 		_vm->_globals->_saveData->_data[svLastZoneNum] = 0;
@@ -1882,54 +1882,54 @@ void ObjectsManager::handleLeftButton() {
 	if (_vm->_globals->_cityMapEnabledFl && (_vm->_eventsManager->_mouseCursorId != 4 || _zoneNum <= 0))
 		return;
 	if (_zoneNum != -1 && _zoneNum != 0) {
-		if (_vm->_linesManager.ZONEP[_zoneNum]._destX && _vm->_linesManager.ZONEP[_zoneNum]._destY && _vm->_linesManager.ZONEP[_zoneNum]._destY != 31) {
-			destX = _vm->_linesManager.ZONEP[_zoneNum]._destX;
-			destY = _vm->_linesManager.ZONEP[_zoneNum]._destY;
+		if (_vm->_linesManager->ZONEP[_zoneNum]._destX && _vm->_linesManager->ZONEP[_zoneNum]._destY && _vm->_linesManager->ZONEP[_zoneNum]._destY != 31) {
+			destX = _vm->_linesManager->ZONEP[_zoneNum]._destX;
+			destY = _vm->_linesManager->ZONEP[_zoneNum]._destY;
 		}
 	}
 	_vm->_globals->_actionMoveTo = false;
-	RouteItem *oldRoute = _vm->_linesManager._route;
-	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+	RouteItem *oldRoute = _vm->_linesManager->_route;
+	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	if (_forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
 		if (getSpriteY(0) > 374 && getSpriteY(0) <= 410) {
-			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			setSpriteIndex(0, _vm->_globals->_oldDirectionSpriteIdx);
 			_vm->_globals->_actionDirection = DIR_NONE;
-			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_vm->_globals->Compteur = 0;
 			_vm->_globals->_oldDirection = DIR_NONE;
 		} else {
-			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
-			if (_vm->_linesManager._route != (RouteItem *)g_PTRNUL)
-				_vm->_linesManager.PACOURS_PROPRE(_vm->_linesManager._route);
+			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
+			if (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL)
+				_vm->_linesManager->PACOURS_PROPRE(_vm->_linesManager->_route);
 			_oldCharacterPosX = getSpriteX(0);
 			_oldCharacterPosY = getSpriteY(0);
 			_vm->_globals->Compteur = 0;
-			if (_vm->_linesManager._route != (RouteItem *)g_PTRNUL || oldRoute == _vm->_linesManager._route) {
+			if (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL || oldRoute == _vm->_linesManager->_route) {
 				_vm->_globals->_oldDirection = DIR_NONE;
 			} else {
-				_vm->_linesManager._route = oldRoute;
+				_vm->_linesManager->_route = oldRoute;
 			}
 		}
 	} else {
 		if (!_vm->_globals->_freezeCharacterFl && !_vm->_globals->_cityMapEnabledFl) {
-			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), destX, destY);
-			if (_vm->_linesManager._route != (RouteItem *)g_PTRNUL)
-				_vm->_linesManager.PACOURS_PROPRE(_vm->_linesManager._route);
+			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(getSpriteX(0), getSpriteY(0), destX, destY);
+			if (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL)
+				_vm->_linesManager->PACOURS_PROPRE(_vm->_linesManager->_route);
 			_oldCharacterPosX = getSpriteX(0);
 			_oldCharacterPosY = getSpriteY(0);
 			_vm->_globals->Compteur = 0;
-			if (_vm->_linesManager._route != (RouteItem *)g_PTRNUL || oldRoute == _vm->_linesManager._route)
+			if (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL || oldRoute == _vm->_linesManager->_route)
 				_vm->_globals->_oldDirection = DIR_NONE;
 			else
-				_vm->_linesManager._route = oldRoute;
+				_vm->_linesManager->_route = oldRoute;
 		}
 	}
 
 	if (!_vm->_globals->_freezeCharacterFl && _vm->_globals->_cityMapEnabledFl)
-		_vm->_linesManager._route = _vm->_linesManager.cityMapCarRoute(getSpriteX(0), getSpriteY(0), destX, destY);
+		_vm->_linesManager->_route = _vm->_linesManager->cityMapCarRoute(getSpriteX(0), getSpriteY(0), destX, destY);
 
 	if (_zoneNum != -1 && _zoneNum != 0) {
 		if (_vm->_eventsManager->_mouseCursorId == 23)
@@ -1949,7 +1949,7 @@ void ObjectsManager::handleLeftButton() {
 				&& _curObjectIndex == 20 && _zoneNum == 12
 				&& _vm->_eventsManager->_mouseCursorId == 23) {
 		// Special case for throwing darts at the switch in Purgatory - the player shouldn't move
-		_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+		_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 		getSpriteX(0);
 		getSpriteY(0);
 	}
@@ -2009,7 +2009,7 @@ void ObjectsManager::PARADISE() {
 			_vm->_talkManager.REPONSE2(_vm->_globals->_saveData->_data[svLastZoneNum], _vm->_globals->_saveData->_data[svLastMouseCursor]);
 		}
 		_vm->_eventsManager->changeMouseCursor(4);
-		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_linesManager.ZONEP[_zoneNum]._enabledFl) {
+		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_linesManager->ZONEP[_zoneNum]._enabledFl) {
 			_zoneNum = -1;
 			_forceZoneFl = true;
 		}
@@ -2052,21 +2052,21 @@ void ObjectsManager::clearScreen() {
 	_vm->_fontManager->hideText(9);
 	_vm->_globals->clearVBob();
 	_vm->_animationManager->clearAnim();
-	_vm->_linesManager.clearAllZones();
-	_vm->_linesManager.resetLines();
+	_vm->_linesManager->clearAllZones();
+	_vm->_linesManager->resetLines();
 	_vm->_globals->resetHidingItems();
 
 	for (int i = 0; i <= 48; i++) {
-		_vm->_linesManager.BOBZONE[i] = 0;
-		_vm->_linesManager.BOBZONE_FLAG[i] = false;
+		_vm->_linesManager->BOBZONE[i] = 0;
+		_vm->_linesManager->BOBZONE_FLAG[i] = false;
 	}
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_verb = 4;
 	_zoneNum = 0;
 	_forceZoneFl = true;
-	_vm->_linesManager.resetLinesNumb();
-	_vm->_linesManager.resetLastLine();
-	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+	_vm->_linesManager->resetLinesNumb();
+	_vm->_linesManager->resetLastLine();
+	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_vm->_globals->_answerBuffer = _vm->_globals->freeMemory(_vm->_globals->_answerBuffer);
 	_vm->_globals->SPRITE_ECRAN = _vm->_globals->freeMemory(_vm->_globals->SPRITE_ECRAN);
 	_vm->_eventsManager->_startPos.x = 0;
@@ -2076,7 +2076,7 @@ void ObjectsManager::clearScreen() {
 	_vm->_globals->_actionMoveTo = false;
 	_forceZoneFl = true;
 	_changeVerbFl = false;
-	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_vm->_globals->_oldDirection = DIR_NONE;
 	_vm->_graphicsManager->resetDirtyRects();
 }
@@ -2093,7 +2093,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, 532, 25, 65, 40, _vm->_graphicsManager->_vesaBuffer, 532, 25);
 	_vm->_graphicsManager->addDirtyRect(532, 25, 597, 65);
 	_vm->_globals->_checkDistanceFl = true;
-	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 
 	if (oldCharacter == CHARACTER_SAMANTHA && newCharacter == CHARACTER_HOPKINS
 		&& _vm->_globals->_saveData->_realHopkins._location == _vm->_globals->_screenId) {
@@ -2228,139 +2228,139 @@ void ObjectsManager::nextVerbIcon() {
 
 		if (_vm->_eventsManager->_mouseCursorId == 5 || _vm->_eventsManager->_mouseCursorId == 6) {
 			_vm->_eventsManager->_mouseCursorId = 6;
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl1 == 1)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl1 == 1)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 7) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl2 == 1)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl2 == 1)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 8) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl3 == 1)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl3 == 1)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 9) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl4 == 1)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl4 == 1)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 10) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl5 == 1)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl5 == 1)
 				return;
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 11) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl6 == 1)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl6 == 1)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 12) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl7 == 1)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl7 == 1)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 13) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl8 == 1)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl8 == 1)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 14) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl9 == 1)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl9 == 1)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 15) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl10 == 1)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl10 == 1)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 16) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl1 == 2)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl1 == 2)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 17) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl4 == 2)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl4 == 2)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 18) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl5 == 2)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl5 == 2)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 19) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl6 == 2)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl6 == 2)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 20) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl7 == 2)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl7 == 2)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 21) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl10 == 2)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl10 == 2)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 22) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl8 == 2)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl8 == 2)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 23) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl3 == 2)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl3 == 2)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 24) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl4 == 3)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl4 == 3)
 				return;
 
 			++_vm->_eventsManager->_mouseCursorId;
 		}
 
 		if (_vm->_eventsManager->_mouseCursorId == 25) {
-			if (_vm->_linesManager.ZONEP[_zoneNum]._verbFl9 == 2)
+			if (_vm->_linesManager->ZONEP[_zoneNum]._verbFl9 == 2)
 				return;
 		}
 		_vm->_eventsManager->_mouseCursorId = 4;
@@ -2663,14 +2663,14 @@ void ObjectsManager::handleSpecialGames() {
 			setBobAnimDataIdx(5, 0);
 			setBobAnimation(6);
 			_vm->_globals->_saveData->_data[svField261] = 2;
-			_vm->_linesManager.disableZone(15);
+			_vm->_linesManager->disableZone(15);
 			_vm->_soundManager.playSoundFile("SOUND75.WAV");
 		}
 		if (_vm->_globals->_saveData->_data[svField261] == 2 && getBobAnimDataIdx(6) == 6) {
 			stopBobAnimation(6);
 			setBobAnimDataIdx(6, 0);
 			setBobAnimation(7);
-			_vm->_linesManager.enableZone(14);
+			_vm->_linesManager->enableZone(14);
 			_vm->_globals->_saveData->_data[svField261] = 3;
 		}
 		_vm->_globals->_disableInventFl = false;
@@ -3099,18 +3099,18 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 		}
 	}
 
-	_vm->_linesManager.resetLines();
+	_vm->_linesManager->resetLines();
 	for (size_t idx = 0; idx < nbytes - 3; idx++) {
 		if (READ_BE_UINT24(&ptr[idx]) == MKTAG24('O', 'B', '2')) {
 			byte *curDataPtr = &ptr[idx + 4];
 			int lineDataIdx = 0;
 			int curLineIdx = 0;
-			_vm->_linesManager.resetLinesNumb();
+			_vm->_linesManager->resetLinesNumb();
 			Directions curDirection;
 			do {
 				curDirection = (Directions)READ_LE_INT16(curDataPtr + 2 * lineDataIdx);
 				if (curDirection != DIR_NONE) {
-					_vm->_linesManager.addLine(
+					_vm->_linesManager->addLine(
 					    curLineIdx,
 					    curDirection,
 					    READ_LE_INT16(curDataPtr + 2 * lineDataIdx + 2),
@@ -3121,7 +3121,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 				lineDataIdx += 5;
 				++curLineIdx;
 			} while (curDirection != DIR_NONE);
-			_vm->_linesManager.initRoute();
+			_vm->_linesManager->initRoute();
 		}
 	}
 
@@ -3131,34 +3131,34 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 				byte *curDataPtr = &ptr[idx + 4];
 				int curDataIdx = 0;
 				for (int i = 1; i <= 100; i++) {
-					_vm->_linesManager.ZONEP[i]._destX = 0;
-					_vm->_linesManager.ZONEP[i]._destY = 0;
-					_vm->_linesManager.ZONEP[i]._spriteIndex = 0;
-					_vm->_linesManager.ZONEP[i]._verbFl1 = 0;
-					_vm->_linesManager.ZONEP[i]._verbFl2 = 0;
-					_vm->_linesManager.ZONEP[i]._verbFl3 = 0;
-					_vm->_linesManager.ZONEP[i]._verbFl4 = 0;
-					_vm->_linesManager.ZONEP[i]._verbFl5 = 0;
-					_vm->_linesManager.ZONEP[i]._verbFl6 = 0;
-					_vm->_linesManager.ZONEP[i]._verbFl7 = 0;
-					_vm->_linesManager.ZONEP[i]._verbFl8 = 0;
-					_vm->_linesManager.ZONEP[i]._verbFl9 = 0;
-					_vm->_linesManager.ZONEP[i]._verbFl10 = 0;
-					_vm->_linesManager.ZONEP[i]._messageId = 0;
+					_vm->_linesManager->ZONEP[i]._destX = 0;
+					_vm->_linesManager->ZONEP[i]._destY = 0;
+					_vm->_linesManager->ZONEP[i]._spriteIndex = 0;
+					_vm->_linesManager->ZONEP[i]._verbFl1 = 0;
+					_vm->_linesManager->ZONEP[i]._verbFl2 = 0;
+					_vm->_linesManager->ZONEP[i]._verbFl3 = 0;
+					_vm->_linesManager->ZONEP[i]._verbFl4 = 0;
+					_vm->_linesManager->ZONEP[i]._verbFl5 = 0;
+					_vm->_linesManager->ZONEP[i]._verbFl6 = 0;
+					_vm->_linesManager->ZONEP[i]._verbFl7 = 0;
+					_vm->_linesManager->ZONEP[i]._verbFl8 = 0;
+					_vm->_linesManager->ZONEP[i]._verbFl9 = 0;
+					_vm->_linesManager->ZONEP[i]._verbFl10 = 0;
+					_vm->_linesManager->ZONEP[i]._messageId = 0;
 				}
 
 				int curLineIdx = 0;
 				for (;;) {
 					int bobZoneId = READ_LE_INT16(curDataPtr + 2 * curDataIdx);
 					if (bobZoneId != -1) {
-						_vm->_linesManager.addZoneLine(
+						_vm->_linesManager->addZoneLine(
 						    curLineIdx,
 						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 2),
 						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 4),
 						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 6),
 						    READ_LE_INT16(curDataPtr + 2 * curDataIdx + 8),
 						    bobZoneId);
-						_vm->_linesManager.ZONEP[bobZoneId]._enabledFl = true;
+						_vm->_linesManager->ZONEP[bobZoneId]._enabledFl = true;
 					}
 					curDataIdx += 5;
 					++curLineIdx;
@@ -3166,32 +3166,32 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 						break;
 				}
 				for (int i = 1; i <= 100; i++) {
-					_vm->_linesManager.ZONEP[i]._destX = READ_LE_INT16(curDataPtr + 2 * curDataIdx);
-					_vm->_linesManager.ZONEP[i]._destY = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 2);
-					_vm->_linesManager.ZONEP[i]._spriteIndex = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 4);
+					_vm->_linesManager->ZONEP[i]._destX = READ_LE_INT16(curDataPtr + 2 * curDataIdx);
+					_vm->_linesManager->ZONEP[i]._destY = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 2);
+					_vm->_linesManager->ZONEP[i]._spriteIndex = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 4);
 					curDataIdx += 3;
 				}
 
 				byte *verbData = ptr + idx + (10 * curLineIdx + 606) + 4;
 				for (int i = 1; i <= 100; i++) {
 					int j = (i - 1) * 10;
-					_vm->_linesManager.ZONEP[i]._verbFl1 = verbData[j];
-					_vm->_linesManager.ZONEP[i]._verbFl2 = verbData[j + 1];
-					_vm->_linesManager.ZONEP[i]._verbFl3 = verbData[j + 2];
-					_vm->_linesManager.ZONEP[i]._verbFl4 = verbData[j + 3];
-					_vm->_linesManager.ZONEP[i]._verbFl5 = verbData[j + 4];
-					_vm->_linesManager.ZONEP[i]._verbFl6 = verbData[j + 5];
-					_vm->_linesManager.ZONEP[i]._verbFl7 = verbData[j + 6];
-					_vm->_linesManager.ZONEP[i]._verbFl8 = verbData[j + 7];
-					_vm->_linesManager.ZONEP[i]._verbFl9 = verbData[j + 8];
-					_vm->_linesManager.ZONEP[i]._verbFl10 = verbData[j + 9];
+					_vm->_linesManager->ZONEP[i]._verbFl1 = verbData[j];
+					_vm->_linesManager->ZONEP[i]._verbFl2 = verbData[j + 1];
+					_vm->_linesManager->ZONEP[i]._verbFl3 = verbData[j + 2];
+					_vm->_linesManager->ZONEP[i]._verbFl4 = verbData[j + 3];
+					_vm->_linesManager->ZONEP[i]._verbFl5 = verbData[j + 4];
+					_vm->_linesManager->ZONEP[i]._verbFl6 = verbData[j + 5];
+					_vm->_linesManager->ZONEP[i]._verbFl7 = verbData[j + 6];
+					_vm->_linesManager->ZONEP[i]._verbFl8 = verbData[j + 7];
+					_vm->_linesManager->ZONEP[i]._verbFl9 = verbData[j + 8];
+					_vm->_linesManager->ZONEP[i]._verbFl10 = verbData[j + 9];
 				}
 				int dep = 1010;
 				for (int i = 1; i <= 100; i++) {
-					_vm->_linesManager.ZONEP[i]._messageId = READ_LE_INT16(verbData + dep);
+					_vm->_linesManager->ZONEP[i]._messageId = READ_LE_INT16(verbData + dep);
 					dep += 2;
 				}
-				_vm->_linesManager.CARRE_ZONE();
+				_vm->_linesManager->CARRE_ZONE();
 			}
 		}
 	}
@@ -3262,22 +3262,22 @@ void ObjectsManager::sceneSpecialIni() {
 	case 39:
 	case 40:
 	case 41:
-		_vm->_linesManager.BOBZONE[20] = 1;
-		_vm->_linesManager.BOBZONE[21] = 2;
-		_vm->_linesManager.BOBZONE[22] = 3;
-		_vm->_linesManager.BOBZONE[23] = 4;
-		_vm->_linesManager.BOBZONE_FLAG[20] = true;
-		_vm->_linesManager.BOBZONE_FLAG[21] = true;
-		_vm->_linesManager.BOBZONE_FLAG[22] = true;
-		_vm->_linesManager.BOBZONE_FLAG[23] = true;
+		_vm->_linesManager->BOBZONE[20] = 1;
+		_vm->_linesManager->BOBZONE[21] = 2;
+		_vm->_linesManager->BOBZONE[22] = 3;
+		_vm->_linesManager->BOBZONE[23] = 4;
+		_vm->_linesManager->BOBZONE_FLAG[20] = true;
+		_vm->_linesManager->BOBZONE_FLAG[21] = true;
+		_vm->_linesManager->BOBZONE_FLAG[22] = true;
+		_vm->_linesManager->BOBZONE_FLAG[23] = true;
 		enableVerb(20, 5);
 		enableVerb(21, 5);
 		enableVerb(22, 5);
 		enableVerb(23, 5);
-		_vm->_linesManager.ZONEP[20]._messageId = 30;
-		_vm->_linesManager.ZONEP[21]._messageId = 30;
-		_vm->_linesManager.ZONEP[22]._messageId = 30;
-		_vm->_linesManager.ZONEP[23]._messageId = 30;
+		_vm->_linesManager->ZONEP[20]._messageId = 30;
+		_vm->_linesManager->ZONEP[21]._messageId = 30;
+		_vm->_linesManager->ZONEP[22]._messageId = 30;
+		_vm->_linesManager->ZONEP[23]._messageId = 30;
 		for (int i = svField200; i <= svField214; i++) {
 			if (_vm->_globals->_saveData->_data[i] != 2)
 				_vm->_globals->_saveData->_data[i] = 0;
@@ -3335,42 +3335,42 @@ void ObjectsManager::disableVerb(int idx, int a2) {
 	switch (a2) {
 	case 6:
 	case 16:
-		_vm->_linesManager.ZONEP[idx]._verbFl1 = 0;
+		_vm->_linesManager->ZONEP[idx]._verbFl1 = 0;
 		break;
 	case 7:
-		_vm->_linesManager.ZONEP[idx]._verbFl2 = 0;
+		_vm->_linesManager->ZONEP[idx]._verbFl2 = 0;
 		break;
 	case 5:
 	case 8:
-		_vm->_linesManager.ZONEP[idx]._verbFl3 = 0;
+		_vm->_linesManager->ZONEP[idx]._verbFl3 = 0;
 		break;
 	case 9:
 	case 17:
 	case 24:
-		_vm->_linesManager.ZONEP[idx]._verbFl4 = 0;
+		_vm->_linesManager->ZONEP[idx]._verbFl4 = 0;
 		break;
 	case 10:
 	case 18:
-		_vm->_linesManager.ZONEP[idx]._verbFl5 = 0;
+		_vm->_linesManager->ZONEP[idx]._verbFl5 = 0;
 		break;
 	case 11:
 	case 19:
-		_vm->_linesManager.ZONEP[idx]._verbFl6 = 0;
+		_vm->_linesManager->ZONEP[idx]._verbFl6 = 0;
 		break;
 	case 12:
 	case 20:
-		_vm->_linesManager.ZONEP[idx]._verbFl7 = 0;
+		_vm->_linesManager->ZONEP[idx]._verbFl7 = 0;
 		break;
 	case 13:
 	case 22:
-		_vm->_linesManager.ZONEP[idx]._verbFl8 = 0;
+		_vm->_linesManager->ZONEP[idx]._verbFl8 = 0;
 	case 14:
 	case 21:
 	case 25:
-		_vm->_linesManager.ZONEP[idx]._verbFl9 = 0;
+		_vm->_linesManager->ZONEP[idx]._verbFl9 = 0;
 		break;
 	case 15:
-		_vm->_linesManager.ZONEP[idx]._verbFl10 = 0;
+		_vm->_linesManager->ZONEP[idx]._verbFl10 = 0;
 		break;
 	}
 	_changeVerbFl = true;
@@ -3379,64 +3379,64 @@ void ObjectsManager::disableVerb(int idx, int a2) {
 void ObjectsManager::enableVerb(int idx, int a2) {
 	switch (a2) {
 	case 5:
-		_vm->_linesManager.ZONEP[idx]._verbFl3 = 2;
+		_vm->_linesManager->ZONEP[idx]._verbFl3 = 2;
 		break;
 	case 6:
-		_vm->_linesManager.ZONEP[idx]._verbFl1 = 1;
+		_vm->_linesManager->ZONEP[idx]._verbFl1 = 1;
 		break;
 	case 7:
-		_vm->_linesManager.ZONEP[idx]._verbFl2 = 1;
+		_vm->_linesManager->ZONEP[idx]._verbFl2 = 1;
 		break;
 	case 8:
-		_vm->_linesManager.ZONEP[idx]._verbFl3 = 1;
+		_vm->_linesManager->ZONEP[idx]._verbFl3 = 1;
 		break;
 	case 9:
-		_vm->_linesManager.ZONEP[idx]._verbFl4 = 1;
+		_vm->_linesManager->ZONEP[idx]._verbFl4 = 1;
 		break;
 	case 10:
-		_vm->_linesManager.ZONEP[idx]._verbFl5 = 1;
+		_vm->_linesManager->ZONEP[idx]._verbFl5 = 1;
 		break;
 	case 11:
-		_vm->_linesManager.ZONEP[idx]._verbFl6 = 1;
+		_vm->_linesManager->ZONEP[idx]._verbFl6 = 1;
 		break;
 	case 12:
-		_vm->_linesManager.ZONEP[idx]._verbFl7 = 1;
+		_vm->_linesManager->ZONEP[idx]._verbFl7 = 1;
 		break;
 	case 13:
-		_vm->_linesManager.ZONEP[idx]._verbFl8 = 1;
+		_vm->_linesManager->ZONEP[idx]._verbFl8 = 1;
 		break;
 	case 14:
-		_vm->_linesManager.ZONEP[idx]._verbFl8 = 1;
+		_vm->_linesManager->ZONEP[idx]._verbFl8 = 1;
 		break;
 	case 15:
-		_vm->_linesManager.ZONEP[idx]._verbFl9 = 1;
+		_vm->_linesManager->ZONEP[idx]._verbFl9 = 1;
 		break;
 	case 16:
-		_vm->_linesManager.ZONEP[idx]._verbFl1 = 2;
+		_vm->_linesManager->ZONEP[idx]._verbFl1 = 2;
 		break;
 	case 17:
-		_vm->_linesManager.ZONEP[idx]._verbFl4 = 2;
+		_vm->_linesManager->ZONEP[idx]._verbFl4 = 2;
 		break;
 	case 18:
-		_vm->_linesManager.ZONEP[idx]._verbFl5 = 2;
+		_vm->_linesManager->ZONEP[idx]._verbFl5 = 2;
 		break;
 	case 19:
-		_vm->_linesManager.ZONEP[idx]._verbFl6 = 2;
+		_vm->_linesManager->ZONEP[idx]._verbFl6 = 2;
 		break;
 	case 20:
-		_vm->_linesManager.ZONEP[idx]._verbFl7 = 2;
+		_vm->_linesManager->ZONEP[idx]._verbFl7 = 2;
 		break;
 	case 21:
-		_vm->_linesManager.ZONEP[idx]._verbFl9 = 2;
+		_vm->_linesManager->ZONEP[idx]._verbFl9 = 2;
 		break;
 	case 22:
-		_vm->_linesManager.ZONEP[idx]._verbFl8 = 2;
+		_vm->_linesManager->ZONEP[idx]._verbFl8 = 2;
 		break;
 	case 24:
-		_vm->_linesManager.ZONEP[idx]._verbFl4 = 3;
+		_vm->_linesManager->ZONEP[idx]._verbFl4 = 3;
 		break;
 	case 25:
-		_vm->_linesManager.ZONEP[idx]._verbFl9 = 2;
+		_vm->_linesManager->ZONEP[idx]._verbFl9 = 2;
 		break;
 	}
 }
@@ -3668,7 +3668,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_globals->_cityMapEnabledFl = false;
 	_vm->_globals->iRegul = 1;
 	_vm->_soundManager.playSound(soundNum);
-	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_vm->_globals->_freezeCharacterFl = true;
 	_vm->_globals->_exitId = 0;
 	if (!backgroundFile.empty())
@@ -3688,7 +3688,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	if (_vm->_globals->_screenId == 61) {
 		addStaticSprite(_vm->_globals->PERSO, Common::Point(330, 418), 0, 60, 0, false, 34, 190);
 		animateSprite(0);
-		_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+		_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 		computeAndSetSpriteSize();
 	}
 	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
@@ -3706,13 +3706,13 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_oldCharacterPosX = getSpriteX(0);
 		_vm->_globals->_oldDirection = DIR_NONE;
 		_vm->_globals->Compteur = 0;
-		_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
-		_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(getSpriteX(0), getSpriteY(0), 330, 345);
+		_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
+		_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(getSpriteX(0), getSpriteY(0), 330, 345);
 		_vm->_globals->_checkDistanceFl = true;
 		do {
 			GOHOME();
 			_vm->_eventsManager->refreshScreenAndEvents();
-		} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
+		} while (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL);
 		setSpriteIndex(0, 64);
 	}
 	do {
@@ -3723,7 +3723,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		} else if (mouseButton == 2)
 			handleRightButton();
 		_vm->_dialogsManager->testDialogOpening();
-		_vm->_linesManager.checkZone();
+		_vm->_linesManager->checkZone();
 		if (_vm->_globals->_actionMoveTo)
 			PARADISE();
 		if (!_vm->_globals->_exitId)
@@ -3814,7 +3814,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	computeAndSetSpriteSize();
 	animateSprite(0);
 	_vm->_globals->enableHiding();
-	_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	computeAndSetSpriteSize();
 	sceneSpecialIni();
 	_vm->_eventsManager->_mouseSpriteId = 4;
@@ -3845,7 +3845,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 					int yp = _vm->_eventsManager->getMouseY();
 
 					if ((xCheck == xp) && (yCheck == yp)) {
-						_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
+						_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 						PARADISE();
 						if (_vm->_globals->_exitId)
 							breakFlag = true;
@@ -3860,9 +3860,9 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		}
 		if (!_vm->_globals->_exitId) {
 			_vm->_dialogsManager->testDialogOpening();
-			_vm->_linesManager.checkZone();
-			if (_vm->_linesManager._route == (RouteItem *)g_PTRNUL
-					|| (GOHOME(), _vm->_linesManager._route == (RouteItem *)g_PTRNUL)) {
+			_vm->_linesManager->checkZone();
+			if (_vm->_linesManager->_route == (RouteItem *)g_PTRNUL
+					|| (GOHOME(), _vm->_linesManager->_route == (RouteItem *)g_PTRNUL)) {
 				if (_vm->_globals->_actionMoveTo)
 					PARADISE();
 			}
