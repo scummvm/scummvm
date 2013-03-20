@@ -161,7 +161,7 @@ bool DreamWebEngine::execCommand() {
 		"AIUTO",
 		"ELENCA",
 		"LEGGI",
-		"ACCEDI",
+		"REGISTRA",
 		"CHIAVI",
 		NULL
 	};
