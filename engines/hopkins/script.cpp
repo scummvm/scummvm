@@ -176,7 +176,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		if (!_vm->_objectsManager->_disableFl) {
 			int vbobIdx = dataP[5];
 			vbobFrameIndex = dataP[6];
-			int v4 = dataP[7];
+			int moveChange = dataP[7];
 			int vbobPosX = READ_LE_INT16(dataP + 8);
 			int vbobPosY = READ_LE_INT16(dataP + 10);
 			if (vbobIdx == 52) {
@@ -185,16 +185,16 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager->BOB_VIVANT(vbobFrameIndex);
 			} else if (vbobIdx != 50) {
 				_vm->_objectsManager->VBOB(_vm->_globals->SPRITE_ECRAN, vbobIdx, vbobPosX, vbobPosY, vbobFrameIndex);
-				if (v4)
-					v4 /= _vm->_globals->_speed;
-				if (v4 > 1) {
+				if (moveChange)
+					moveChange /= _vm->_globals->_speed;
+				if (moveChange > 1) {
 					do {
 						if (_vm->shouldQuit())
 							return -1; // Exiting game
 
-						--v4;
+						--moveChange;
 						_vm->_eventsManager->refreshScreenAndEvents();
-					} while (v4);
+					} while (moveChange);
 				}
 			}
 		}
@@ -2097,28 +2097,35 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 236: {
-			char v47 = _vm->_globals->_saveData->_data[svField341];
-			if (v47) {
-				if (v47 == 2)
-					vbobFrameIndex = 5;
-				else if (v47 == 3)
-					vbobFrameIndex = 4;
-				else if (v47 == 1)
+			if (_vm->_globals->_saveData->_data[svField341]) {
+				switch (_vm->_globals->_saveData->_data[svField341]) {
+				case 1:
 					vbobFrameIndex = 6;
+					break;
+				case 2:
+					vbobFrameIndex = 5;
+					break;
+				case 3:
+					vbobFrameIndex = 4;
+					break;
+				}
 				_vm->_soundManager->playSoundFile("SOUND83.WAV");
 				_vm->_objectsManager->OPTI_ONE(vbobFrameIndex, 26, 50, 0);
-				if (_vm->_globals->_saveData->_data[svField341] == 1)
+
+				switch (_vm->_globals->_saveData->_data[svField341]) {
+				case 1:
 					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 0);
-				if (_vm->_globals->_saveData->_data[svField341] == 2)
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 2);
-				if (_vm->_globals->_saveData->_data[svField341] == 3)
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 4);
-				if (_vm->_globals->_saveData->_data[svField341] == 1)
 					_vm->_globals->_saveData->_data[svField338] = 0;
-				if (_vm->_globals->_saveData->_data[svField341] == 2)
+					break;
+				case 2:
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 2);
 					_vm->_globals->_saveData->_data[svField339] = 0;
-				if (_vm->_globals->_saveData->_data[svField341] == 3)
+					break;
+				case 3:
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 4);
 					_vm->_globals->_saveData->_data[svField340] = 0;
+					break;
+				}
 			}
 			_vm->_soundManager->playSoundFile("SOUND83.WAV");
 			_vm->_objectsManager->OPTI_ONE(6, 0, 23, 0);
