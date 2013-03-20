@@ -314,9 +314,8 @@ public:
 	int Compteur;
 	int compteur_71;
 
-	Globals();
+	Globals(HopkinsEngine *vm);
 	~Globals();
-	void setParent(HopkinsEngine *vm);
 	byte *allocMemory(int count);
 	byte *freeMemory(byte *p);
 	void setConfig();

@@ -142,14 +142,14 @@ void SaveLoadManager::writeSavegameHeader(Common::OutSaveFile *out, hopkinsSaveg
 Common::Error SaveLoadManager::saveGame(int slot, const Common::String &saveName) {
 	/* Pack any necessary data into the savegame data structure */
 	// Set the selected slot number
-	_vm->_globals._saveData->_data[svLastSavegameSlot] = slot;
+	_vm->_globals->_saveData->_data[svLastSavegameSlot] = slot;
 
 	// Set up the inventory
 	for (int i = 0; i < 35; ++i)
-		_vm->_globals._saveData->_inventory[i] = _vm->_globals._inventory[i];
+		_vm->_globals->_saveData->_inventory[i] = _vm->_globals->_inventory[i];
 
-	_vm->_globals._saveData->_mapCarPosX = _vm->_objectsManager._mapCarPosX;
-	_vm->_globals._saveData->_mapCarPosY = _vm->_objectsManager._mapCarPosY;
+	_vm->_globals->_saveData->_mapCarPosX = _vm->_objectsManager._mapCarPosX;
+	_vm->_globals->_saveData->_mapCarPosY = _vm->_objectsManager._mapCarPosY;
 
 	/* Create the savegame */
 	Common::OutSaveFile *savefile = g_system->getSavefileManager()->openForSaving(_vm->generateSaveName(slot));
@@ -200,15 +200,15 @@ Common::Error SaveLoadManager::loadGame(int slot) {
 
 	// Unpack the inventory
 	for (int i = 0; i < 35; ++i)
-		_vm->_globals._inventory[i] = _vm->_globals._saveData->_inventory[i];
+		_vm->_globals->_inventory[i] = _vm->_globals->_saveData->_inventory[i];
 
 	// Set variables from loaded data as necessary
-	_vm->_globals._saveData->_data[svLastSavegameSlot] = slot;
-	_vm->_globals._exitId = _vm->_globals._saveData->_data[svLastScreenId];
-	_vm->_globals._saveData->_data[svLastPrevScreenId] = 0;
-	_vm->_globals._screenId = 0;
-	_vm->_objectsManager._mapCarPosX = _vm->_globals._saveData->_mapCarPosX;
-	_vm->_objectsManager._mapCarPosY = _vm->_globals._saveData->_mapCarPosY;
+	_vm->_globals->_saveData->_data[svLastSavegameSlot] = slot;
+	_vm->_globals->_exitId = _vm->_globals->_saveData->_data[svLastScreenId];
+	_vm->_globals->_saveData->_data[svLastPrevScreenId] = 0;
+	_vm->_globals->_screenId = 0;
+	_vm->_objectsManager._mapCarPosX = _vm->_globals->_saveData->_mapCarPosX;
+	_vm->_objectsManager._mapCarPosY = _vm->_globals->_saveData->_mapCarPosY;
 
 	return Common::kNoError;
 }
@@ -259,19 +259,19 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 }
 
 void SaveLoadManager::syncSavegameData(Common::Serializer &s, int version) {
-	s.syncBytes(&_vm->_globals._saveData->_data[0], 2050);
-	syncCharacterLocation(s, _vm->_globals._saveData->_cloneHopkins);
-	syncCharacterLocation(s, _vm->_globals._saveData->_realHopkins);
-	syncCharacterLocation(s, _vm->_globals._saveData->_samantha);
+	s.syncBytes(&_vm->_globals->_saveData->_data[0], 2050);
+	syncCharacterLocation(s, _vm->_globals->_saveData->_cloneHopkins);
+	syncCharacterLocation(s, _vm->_globals->_saveData->_realHopkins);
+	syncCharacterLocation(s, _vm->_globals->_saveData->_samantha);
 
 	for (int i = 0; i < 35; ++i)
-		s.syncAsSint16LE(_vm->_globals._saveData->_inventory[i]);
+		s.syncAsSint16LE(_vm->_globals->_saveData->_inventory[i]);
 
 	if (version > 1) {
-		s.syncAsSint16LE(_vm->_globals._saveData->_mapCarPosX);
-		s.syncAsSint16LE(_vm->_globals._saveData->_mapCarPosY);
+		s.syncAsSint16LE(_vm->_globals->_saveData->_mapCarPosX);
+		s.syncAsSint16LE(_vm->_globals->_saveData->_mapCarPosY);
 	} else {
-		_vm->_globals._saveData->_mapCarPosX = _vm->_globals._saveData->_mapCarPosY = 0;
+		_vm->_globals->_saveData->_mapCarPosX = _vm->_globals->_saveData->_mapCarPosY = 0;
 	}
 
 }

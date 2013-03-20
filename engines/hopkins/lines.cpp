@@ -94,10 +94,10 @@ LinesManager::LinesManager() {
 }
 
 LinesManager::~LinesManager() {
-	_vm->_globals.freeMemory(_largeBuf);
-	_vm->_globals.freeMemory((byte *) _testRoute0);
-	_vm->_globals.freeMemory((byte *) _testRoute1);
-	_vm->_globals.freeMemory((byte *) _testRoute2);
+	_vm->_globals->freeMemory(_largeBuf);
+	_vm->_globals->freeMemory((byte *) _testRoute0);
+	_vm->_globals->freeMemory((byte *) _testRoute1);
+	_vm->_globals->freeMemory((byte *) _testRoute2);
 }
 
 void LinesManager::setParent(HopkinsEngine *vm) {
@@ -121,7 +121,7 @@ void LinesManager::loadLines(const Common::String &file) {
 		    READ_LE_INT16((uint16 *)ptr + (idx * 5) + 4));
 	}
 	initRoute();
-	_vm->_globals.freeMemory(ptr);
+	_vm->_globals->freeMemory(ptr);
 }
 
 /** 
@@ -199,7 +199,7 @@ void LinesManager::addZoneLine(int idx, int fromX, int fromY, int destX, int des
 		BOBZONE[bobZoneIdx] = fromY;
 	} else {
 		assert (idx <= MAX_LINES);
-		_zoneLine[idx]._zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx]._zoneData);
+		_zoneLine[idx]._zoneData = (int16 *)_vm->_globals->freeMemory((byte *)_zoneLine[idx]._zoneData);
 
 		int distX = abs(fromX - destX);
 		int distY = abs(fromY - destY);
@@ -209,7 +209,7 @@ void LinesManager::addZoneLine(int idx, int fromX, int fromY, int destX, int des
 		else
 			maxDist += distX;
 
-		zoneData = (int16 *)_vm->_globals.allocMemory(2 * sizeof(int16) * maxDist + (4 * sizeof(int16)));
+		zoneData = (int16 *)_vm->_globals->allocMemory(2 * sizeof(int16) * maxDist + (4 * sizeof(int16)));
 		assert(zoneData != (int16 *)g_PTRNUL);
 
 		_zoneLine[idx]._zoneData = zoneData;
@@ -247,14 +247,14 @@ void LinesManager::addLine(int lineIdx, Directions direction, int fromX, int fro
 	if (_linesNumb < lineIdx)
 		_linesNumb = lineIdx;
 
-	_lineItem[lineIdx]._lineData = (int16 *)_vm->_globals.freeMemory((byte *)_lineItem[lineIdx]._lineData);
+	_lineItem[lineIdx]._lineData = (int16 *)_vm->_globals->freeMemory((byte *)_lineItem[lineIdx]._lineData);
 	int distX = abs(fromX - destX) + 1;
 	int distY = abs(fromY - destY) + 1;
 	int maxDist = distY;
 	if (distX > maxDist)
 		maxDist = distX;
 
-	byte *zoneData = _vm->_globals.allocMemory(4 * maxDist + 8);
+	byte *zoneData = _vm->_globals->allocMemory(4 * maxDist + 8);
 	assert (zoneData != g_PTRNUL);
 
 	Common::fill(zoneData, zoneData + 4 * maxDist + 8, 0);
@@ -935,7 +935,7 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 				break;
 
 			lineIdxDown = foundLineIdx;
-			if (_vm->_globals._characterMaxPosY <= curY || maxLineY <= curY)
+			if (_vm->_globals->_characterMaxPosY <= curY || maxLineY <= curY)
 				break;
 		}
 		int curX = destX;
@@ -1081,23 +1081,23 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	Directions newDir = DIR_NONE;
 	if (destY <= 24)
 		clipDestY = 25;
-	if (!_vm->_globals._checkDistanceFl) {
-		if (abs(fromX - _vm->_globals._oldRouteFromX) <= 4 && abs(fromY - _vm->_globals._oldRouteFromY) <= 4 &&
-		    abs(_vm->_globals._oldRouteDestX - destX) <= 4 && abs(_vm->_globals._oldRouteDestY - clipDestY) <= 4)
+	if (!_vm->_globals->_checkDistanceFl) {
+		if (abs(fromX - _vm->_globals->_oldRouteFromX) <= 4 && abs(fromY - _vm->_globals->_oldRouteFromY) <= 4 &&
+		    abs(_vm->_globals->_oldRouteDestX - destX) <= 4 && abs(_vm->_globals->_oldRouteDestY - clipDestY) <= 4)
 			return (RouteItem *)g_PTRNUL;
 
 		if (abs(fromX - destX) <= 4 && abs(fromY - clipDestY) <= 4)
 			return (RouteItem *)g_PTRNUL;
 
-		if (_vm->_globals._oldZoneNum > 0 && _vm->_objectsManager._zoneNum > 0 && _vm->_globals._oldZoneNum == _vm->_objectsManager._zoneNum)
+		if (_vm->_globals->_oldZoneNum > 0 && _vm->_objectsManager._zoneNum > 0 && _vm->_globals->_oldZoneNum == _vm->_objectsManager._zoneNum)
 			return (RouteItem *)g_PTRNUL;
 	}
-	_vm->_globals._checkDistanceFl = false;
-	_vm->_globals._oldZoneNum = _vm->_objectsManager._zoneNum;
-	_vm->_globals._oldRouteFromX = fromX;
-	_vm->_globals._oldRouteDestX = destX;
-	_vm->_globals._oldRouteFromY = fromY;
-	_vm->_globals._oldRouteDestY = clipDestY;
+	_vm->_globals->_checkDistanceFl = false;
+	_vm->_globals->_oldZoneNum = _vm->_objectsManager._zoneNum;
+	_vm->_globals->_oldRouteFromX = fromX;
+	_vm->_globals->_oldRouteDestX = destX;
+	_vm->_globals->_oldRouteFromY = fromY;
+	_vm->_globals->_oldRouteDestY = clipDestY;
 	_pathFindingMaxDepth = 0;
 	int routeIdx = 0;
 	if (destX <= 19)
@@ -1106,8 +1106,8 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 		clipDestY = 20;
 	if (clipDestX > _vm->_graphicsManager._maxX - 10)
 		clipDestX = _vm->_graphicsManager._maxX - 10;
-	if (clipDestY > _vm->_globals._characterMaxPosY)
-		clipDestY = _vm->_globals._characterMaxPosY;
+	if (clipDestY > _vm->_globals->_characterMaxPosY)
+		clipDestY = _vm->_globals->_characterMaxPosY;
 
 	if (abs(fromX - clipDestX) <= 3 && abs(fromY - clipDestY) <= 3)
 		return (RouteItem *)g_PTRNUL;
@@ -2196,9 +2196,9 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int smoothIdx = 0;
 		int stepCount = 0;
 		while (curX > destX && destY > curY) {
-			int realSpeedX = _vm->_globals._hopkinsItem[hopkinsIdx]._speedX;
-			int realSpeedY = _vm->_globals._hopkinsItem[hopkinsIdx]._speedY;
-			int spriteSize = _vm->_globals._spriteSize[curY];
+			int realSpeedX = _vm->_globals->_hopkinsItem[hopkinsIdx]._speedX;
+			int realSpeedY = _vm->_globals->_hopkinsItem[hopkinsIdx]._speedY;
+			int spriteSize = _vm->_globals->_spriteSize[curY];
 			if (spriteSize < 0) {
 				realSpeedX = _vm->_graphicsManager.zoomOut(realSpeedX, -spriteSize);
 				realSpeedY = _vm->_graphicsManager.zoomOut(realSpeedY, -spriteSize);
@@ -2230,9 +2230,9 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int smoothIdx = 0;
 		int stepCount = 0;
 		while (curX < destX && destY > curY) {
-			int realSpeedX = _vm->_globals._hopkinsItem[hopkinsIdx]._speedX;
-			int realSpeedY = _vm->_globals._hopkinsItem[hopkinsIdx]._speedY;
-			int spriteSize = _vm->_globals._spriteSize[curY];
+			int realSpeedX = _vm->_globals->_hopkinsItem[hopkinsIdx]._speedX;
+			int realSpeedY = _vm->_globals->_hopkinsItem[hopkinsIdx]._speedY;
+			int spriteSize = _vm->_globals->_spriteSize[curY];
 			if (spriteSize < 0) {
 				realSpeedX = _vm->_graphicsManager.zoomOut(realSpeedX, -spriteSize);
 				realSpeedY = _vm->_graphicsManager.zoomOut(realSpeedY, -spriteSize);
@@ -2264,8 +2264,8 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int smoothIdx = 0;
 		int stepCount = 0;
 		while (curX > destX && destY < curY) {
-			int realSpeedX = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedX, 25);
-			int realSpeedY = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedY, 25);
+			int realSpeedX = _vm->_graphicsManager.zoomOut(_vm->_globals->_hopkinsItem[hopkinsIdx]._speedX, 25);
+			int realSpeedY = _vm->_graphicsManager.zoomOut(_vm->_globals->_hopkinsItem[hopkinsIdx]._speedY, 25);
 			int oldY = curY;
 			for (int i = 0; i < realSpeedX; i++) {
 				--curX;
@@ -2292,8 +2292,8 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 		int stepCount = 0;
 		while (curX < destX && destY < curY) {
 			int oldY = curY;
-			int realSpeedX = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedX, 25);
-			int realSpeedY = _vm->_graphicsManager.zoomOut(_vm->_globals._hopkinsItem[hopkinsIdx]._speedY, 25);
+			int realSpeedX = _vm->_graphicsManager.zoomOut(_vm->_globals->_hopkinsItem[hopkinsIdx]._speedX, 25);
+			int realSpeedY = _vm->_graphicsManager.zoomOut(_vm->_globals->_hopkinsItem[hopkinsIdx]._speedY, 25);
 			for (int i = 0; i < realSpeedX; i++) {
 				++curX;
 				_smoothRoute[smoothIdx]._posX = curX;
@@ -2460,12 +2460,12 @@ int LinesManager::testLine(int paramX, int paramY, int *a3, int *foundLineIdx, i
 }
 
 int LinesManager::CALC_PROPRE(int idx) {
-	int size = _vm->_globals._spriteSize[idx];
-	if (_vm->_globals._characterType == 1) {
+	int size = _vm->_globals->_spriteSize[idx];
+	if (_vm->_globals->_characterType == 1) {
 		if (size < 0)
 			size = -size;
 		size = 20 * (5 * size - 100) / -80;
-	} else if (_vm->_globals._characterType == 2) {
+	} else if (_vm->_globals->_characterType == 2) {
 		if (size < 0)
 			size = -size;
 		size = 20 * (5 * size - 165) / -67;
@@ -2748,7 +2748,7 @@ void LinesManager::clearAll() {
 	if (!_testRoute2)
 		_testRoute2 = (RouteItem*)g_PTRNUL;
 	
-	_largeBuf = _vm->_globals.allocMemory(10000);
+	_largeBuf = _vm->_globals->allocMemory(10000);
 	_lineBuf = (int16 *)(_largeBuf);
 }
 
@@ -2765,7 +2765,7 @@ void LinesManager::clearAllZones() {
  */
 void LinesManager::removeZoneLine(int idx) {
 	assert (idx <= MAX_LINES);
-	_zoneLine[idx]._zoneData = (int16 *)_vm->_globals.freeMemory((byte *)_zoneLine[idx]._zoneData);
+	_zoneLine[idx]._zoneData = (int16 *)_vm->_globals->freeMemory((byte *)_zoneLine[idx]._zoneData);
 }
 
 void LinesManager::resetLines() {
@@ -2780,7 +2780,7 @@ void LinesManager::resetLines() {
 void LinesManager::removeLine(int idx) {
 	if (idx > MAX_LINES)
 		error("Attempting to add a line obstacle > MAX_LIGNE.");
-	_lineItem[idx]._lineData = (int16 *)_vm->_globals.freeMemory((byte *)_lineItem[idx]._lineData);
+	_lineItem[idx]._lineData = (int16 *)_vm->_globals->freeMemory((byte *)_lineItem[idx]._lineData);
 }
 
 void LinesManager::setMaxLineIdx(int idx) {
@@ -2815,7 +2815,7 @@ void LinesManager::checkZone() {
 	int mouseX = _vm->_eventsManager->getMouseX();
 	int mouseY = _vm->_eventsManager->getMouseY();
 	int oldMouseY = mouseY;
-	if (_vm->_globals._cityMapEnabledFl
+	if (_vm->_globals->_cityMapEnabledFl
 		|| _vm->_eventsManager->_startPos.x >= mouseX
 		|| (mouseY = _vm->_graphicsManager._scrollOffset + 54, mouseX >= mouseY)
 		|| (mouseY = oldMouseY - 1, mouseY < 0 || mouseY > 59)) {
@@ -2826,32 +2826,32 @@ void LinesManager::checkZone() {
 		_vm->_objectsManager._visibleFl = true;
 	}
 	if (_vm->_objectsManager._forceZoneFl) {
-		_vm->_globals.compteur_71 = 100;
-		_vm->_globals._oldMouseZoneId = -1;
-		_vm->_globals._oldMouseX = -200;
-		_vm->_globals._oldMouseY = -220;
+		_vm->_globals->compteur_71 = 100;
+		_vm->_globals->_oldMouseZoneId = -1;
+		_vm->_globals->_oldMouseX = -200;
+		_vm->_globals->_oldMouseY = -220;
 		_vm->_objectsManager._forceZoneFl = false;
 	}
 
-	_vm->_globals.compteur_71++;
-	if (_vm->_globals.compteur_71 <= 1)
+	_vm->_globals->compteur_71++;
+	if (_vm->_globals->compteur_71 <= 1)
 		return;
 
-	if (_vm->_globals._freezeCharacterFl || (_route == (RouteItem *)g_PTRNUL) || _vm->_globals.compteur_71 > 4) {
-		_vm->_globals.compteur_71 = 0;
+	if (_vm->_globals->_freezeCharacterFl || (_route == (RouteItem *)g_PTRNUL) || _vm->_globals->compteur_71 > 4) {
+		_vm->_globals->compteur_71 = 0;
 		int zoneId;
-		if (_vm->_globals._oldMouseX != mouseX || _vm->_globals._oldMouseY != oldMouseY) {
+		if (_vm->_globals->_oldMouseX != mouseX || _vm->_globals->_oldMouseY != oldMouseY) {
 			zoneId = getMouseZone();
 		} else {
-			zoneId = _vm->_globals._oldMouseZoneId;
+			zoneId = _vm->_globals->_oldMouseZoneId;
 		}
-		if (_vm->_globals._oldMouseZoneId != zoneId) {
+		if (_vm->_globals->_oldMouseZoneId != zoneId) {
 			_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
 			_vm->_eventsManager->_mouseCursorId = 4;
 			_vm->_eventsManager->changeMouseCursor(4);
-			if (_vm->_globals._forceHideText) {
+			if (_vm->_globals->_forceHideText) {
 				_vm->_fontManager->hideText(5);
-				_vm->_globals._forceHideText = false;
+				_vm->_globals->_forceHideText = false;
 				return;
 			}
 		}
@@ -2861,16 +2861,16 @@ void LinesManager::checkZone() {
 				ZONEP[zoneId]._verbFl5 || ZONEP[zoneId]._verbFl6 ||
 				ZONEP[zoneId]._verbFl7 || ZONEP[zoneId]._verbFl8 ||
 				ZONEP[zoneId]._verbFl9 || ZONEP[zoneId]._verbFl10) {
-					if (_vm->_globals._oldMouseZoneId != zoneId) {
-						_vm->_fontManager->initTextBuffers(5, ZONEP[zoneId]._messageId, _vm->_globals._zoneFilename, 0, 430, 0, 0, 252);
+					if (_vm->_globals->_oldMouseZoneId != zoneId) {
+						_vm->_fontManager->initTextBuffers(5, ZONEP[zoneId]._messageId, _vm->_globals->_zoneFilename, 0, 430, 0, 0, 252);
 						_vm->_fontManager->showText(5);
-						_vm->_globals._forceHideText = true;
+						_vm->_globals->_forceHideText = true;
 					}
-					_vm->_globals._hotspotTextColor += 25;
-					if (_vm->_globals._hotspotTextColor > 100)
-						_vm->_globals._hotspotTextColor = 0;
-					_vm->_graphicsManager.SETCOLOR4(251, _vm->_globals._hotspotTextColor, _vm->_globals._hotspotTextColor,
-						_vm->_globals._hotspotTextColor);
+					_vm->_globals->_hotspotTextColor += 25;
+					if (_vm->_globals->_hotspotTextColor > 100)
+						_vm->_globals->_hotspotTextColor = 0;
+					_vm->_graphicsManager.SETCOLOR4(251, _vm->_globals->_hotspotTextColor, _vm->_globals->_hotspotTextColor,
+						_vm->_globals->_hotspotTextColor);
 					if (_vm->_eventsManager->_mouseCursorId == 4) {
 						if (ZONEP[zoneId]._verbFl1 == 2) {
 							_vm->_eventsManager->changeMouseCursor(16);
@@ -2885,14 +2885,14 @@ void LinesManager::checkZone() {
 			}
 		}
 		_vm->_objectsManager._zoneNum = zoneId;
-		_vm->_globals._oldMouseX = mouseX;
-		_vm->_globals._oldMouseY = oldMouseY;
-		_vm->_globals._oldMouseZoneId = zoneId;
-		if (_vm->_globals._freezeCharacterFl && (_vm->_eventsManager->_mouseCursorId == 4)) {
+		_vm->_globals->_oldMouseX = mouseX;
+		_vm->_globals->_oldMouseY = oldMouseY;
+		_vm->_globals->_oldMouseZoneId = zoneId;
+		if (_vm->_globals->_freezeCharacterFl && (_vm->_eventsManager->_mouseCursorId == 4)) {
 			if (zoneId != -1 && zoneId != 0)
 				_vm->_objectsManager.handleRightButton();
 		}
-		if ((_vm->_globals._cityMapEnabledFl && zoneId == -1) || !zoneId) {
+		if ((_vm->_globals->_cityMapEnabledFl && zoneId == -1) || !zoneId) {
 			_vm->_objectsManager.setVerb(0);
 			_vm->_eventsManager->_mouseCursorId = 0;
 			_vm->_eventsManager->changeMouseCursor(0);

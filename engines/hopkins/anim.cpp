@@ -86,7 +86,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	}
 	if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 		hasScreenCopy = true;
-		screenCopy = _vm->_globals.allocMemory(307200);
+		screenCopy = _vm->_globals->allocMemory(307200);
 		memcpy(screenCopy, screenP, 307200);
 	}
 	if (NO_SEQ) {
@@ -109,7 +109,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	_vm->_eventsManager->_escKeyFl = false;
 	_vm->_soundManager.loadAnimSound();
 
-	if (_vm->_globals.iRegul == 1) {
+	if (_vm->_globals->iRegul == 1) {
 		// Do pre-animation delay
 		do {
 			if (_vm->_eventsManager->_escKeyFl)
@@ -136,7 +136,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
 
-			if (_vm->_globals.iRegul == 1) {
+			if (_vm->_globals->iRegul == 1) {
 				do {
 					if (_vm->_eventsManager->_escKeyFl)
 						break;
@@ -166,7 +166,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		}
 	}
 
-	if (_vm->_globals.iRegul == 1 && !_vm->_eventsManager->_escKeyFl) {
+	if (_vm->_globals->iRegul == 1 && !_vm->_eventsManager->_escKeyFl) {
 		// Do post-animation delay
 		do {
 			if (_vm->_eventsManager->_escKeyFl)
@@ -183,7 +183,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	}
 
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
-		screenCopy = _vm->_globals.allocMemory(307200);
+		screenCopy = _vm->_globals->allocMemory(307200);
 
 		f.seek(6);
 		f.read(_vm->_graphicsManager._palette, 800);
@@ -208,12 +208,12 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 				_vm->_graphicsManager.copyWinscanVbe3(screenP, screenCopy);
 		}
 		_vm->_graphicsManager.fadeOutDefaultLength(screenCopy);
-		screenCopy = _vm->_globals.freeMemory(screenCopy);
+		screenCopy = _vm->_globals->freeMemory(screenCopy);
 	}
 	if (hasScreenCopy) {
 		if (_vm->_graphicsManager.FADE_LINUX == 2)
 			_vm->_graphicsManager.fadeOutDefaultLength(screenCopy);
-		screenCopy = _vm->_globals.freeMemory(screenCopy);
+		screenCopy = _vm->_globals->freeMemory(screenCopy);
 	}
 
 	_vm->_graphicsManager.FADE_LINUX = 0;
@@ -272,7 +272,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		_vm->_graphicsManager._maxX = SCREEN_WIDTH;
 		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 			hasScreenCopy = true;
-			screenCopy = _vm->_globals.allocMemory(307200);
+			screenCopy = _vm->_globals->allocMemory(307200);
 			memcpy(screenCopy, screenP, 307200);
 		}
 		if (NO_SEQ) {
@@ -295,7 +295,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
 		_vm->_soundManager.loadAnimSound();
-		if (_vm->_globals.iRegul == 1) {
+		if (_vm->_globals->iRegul == 1) {
 			while (!_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate1) {
 				_vm->_eventsManager->refreshEvents();
 			}
@@ -320,7 +320,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 				break;
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
-			if (_vm->_globals.iRegul == 1) {
+			if (_vm->_globals->iRegul == 1) {
 				while (!_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate2) {
 					_vm->_eventsManager->refreshEvents();
 					_vm->_soundManager.checkSoundEnd();
@@ -344,7 +344,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			_vm->_soundManager.checkSoundEnd();
 		}
 
-		if (_vm->_globals.iRegul == 1) {
+		if (_vm->_globals->iRegul == 1) {
 			while (!_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate3) {
 				_vm->_eventsManager->refreshEvents();
 				_vm->_soundManager.checkSoundEnd();
@@ -362,7 +362,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		size_t nbytes = f.readUint32LE();
 		f.skip(14);
 		f.read(screenP, nbytes);
-		byte *ptra = _vm->_globals.allocMemory(307200);
+		byte *ptra = _vm->_globals->allocMemory(307200);
 		memcpy(ptra, screenP, 307200);
 
 		for (;;) {
@@ -379,12 +379,12 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 				_vm->_graphicsManager.copyWinscanVbe3(screenP, ptra);
 		}
 		_vm->_graphicsManager.fadeOutDefaultLength(ptra);
-		ptra = _vm->_globals.freeMemory(ptra);
+		ptra = _vm->_globals->freeMemory(ptra);
 	}
 	if (hasScreenCopy) {
 		if (_vm->_graphicsManager.FADE_LINUX == 2)
 			_vm->_graphicsManager.fadeOutDefaultLength(screenCopy);
-		_vm->_globals.freeMemory(screenCopy);
+		_vm->_globals->freeMemory(screenCopy);
 	}
 	_vm->_graphicsManager.FADE_LINUX = 0;
 
@@ -467,14 +467,14 @@ void AnimationManager::loadAnim(const Common::String &animName) {
 		}
 	}
 
-	byte *data = _vm->_globals.allocMemory(nbytes + 1);
+	byte *data = _vm->_globals->allocMemory(nbytes + 1);
 	f.read(data, nbytes);
 	f.close();
 
 	for (int idx = 1; idx <= 20; ++idx)
 		searchAnim(data, idx, nbytes);
 
-	_vm->_globals.freeMemory(data);
+	_vm->_globals->freeMemory(data);
 }
 
 /**
@@ -482,15 +482,15 @@ void AnimationManager::loadAnim(const Common::String &animName) {
  */
 void AnimationManager::clearAnim() {
 	for (int idx = 0; idx < 35; ++idx) {
-		_vm->_globals._animBqe[idx]._data = _vm->_globals.freeMemory(_vm->_globals._animBqe[idx]._data);
-		_vm->_globals._animBqe[idx]._enabledFl = false;
+		_vm->_globals->_animBqe[idx]._data = _vm->_globals->freeMemory(_vm->_globals->_animBqe[idx]._data);
+		_vm->_globals->_animBqe[idx]._enabledFl = false;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
-		_vm->_globals.Bank[idx]._data = _vm->_globals.freeMemory(_vm->_globals.Bank[idx]._data);
-		_vm->_globals.Bank[idx]._loadedFl = false;
-		_vm->_globals.Bank[idx]._filename = "";
-		_vm->_globals.Bank[idx]._fileHeader = 0;
+		_vm->_globals->Bank[idx]._data = _vm->_globals->freeMemory(_vm->_globals->Bank[idx]._data);
+		_vm->_globals->Bank[idx]._loadedFl = false;
+		_vm->_globals->Bank[idx]._filename = "";
+		_vm->_globals->Bank[idx]._fileHeader = 0;
 	}
 }
 
@@ -499,24 +499,24 @@ void AnimationManager::clearAnim() {
  */
 int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	int result = 0;
-	_vm->_globals.Bank[idx]._loadedFl = true;
-	_vm->_globals.Bank[idx]._filename = filename;
+	_vm->_globals->Bank[idx]._loadedFl = true;
+	_vm->_globals->Bank[idx]._filename = filename;
 
 	byte *fileDataPtr = _vm->_fileManager->loadFile(filename);
 
-	_vm->_globals.Bank[idx]._fileHeader = 0;
+	_vm->_globals->Bank[idx]._fileHeader = 0;
 	if (fileDataPtr[1] == 'L' && fileDataPtr[2] == 'E')
-		_vm->_globals.Bank[idx]._fileHeader = 1;
+		_vm->_globals->Bank[idx]._fileHeader = 1;
 	else if (fileDataPtr[1] == 'O' && fileDataPtr[2] == 'R')
-		_vm->_globals.Bank[idx]._fileHeader = 2;
+		_vm->_globals->Bank[idx]._fileHeader = 2;
 
-	if (!_vm->_globals.Bank[idx]._fileHeader) {
-		_vm->_globals.freeMemory(fileDataPtr);
-		_vm->_globals.Bank[idx]._loadedFl = false;
+	if (!_vm->_globals->Bank[idx]._fileHeader) {
+		_vm->_globals->freeMemory(fileDataPtr);
+		_vm->_globals->Bank[idx]._loadedFl = false;
 		result = -1;
 	}
 	
-	_vm->_globals.Bank[idx]._data = fileDataPtr;
+	_vm->_globals->Bank[idx]._data = fileDataPtr;
 
 	int objectDataIdx = 0;
 	for(objectDataIdx = 0; objectDataIdx <= 249; objectDataIdx++) {
@@ -527,13 +527,13 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	}
 
 	if (objectDataIdx > 249) {
-		_vm->_globals.freeMemory(fileDataPtr);
-		_vm->_globals.Bank[idx]._loadedFl = false;
+		_vm->_globals->freeMemory(fileDataPtr);
+		_vm->_globals->Bank[idx]._loadedFl = false;
 		result = -2;
 	}
-	_vm->_globals.Bank[idx]._objDataIdx = objectDataIdx;
+	_vm->_globals->Bank[idx]._objDataIdx = objectDataIdx;
 
-	Common::String ofsFilename = _vm->_globals.Bank[idx]._filename;
+	Common::String ofsFilename = _vm->_globals->Bank[idx]._filename;
 	char ch;
 	do {
 		ch = ofsFilename.lastChar();
@@ -545,18 +545,18 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	if (f.exists(ofsFilename)) {
 		byte *ofsData = _vm->_fileManager->loadFile(ofsFilename);
 		byte *curOfsData = ofsData;
-		for (int objIdx = 0; objIdx < _vm->_globals.Bank[idx]._objDataIdx; ++objIdx, curOfsData += 8) {
+		for (int objIdx = 0; objIdx < _vm->_globals->Bank[idx]._objDataIdx; ++objIdx, curOfsData += 8) {
 			int x1 = READ_LE_INT16(curOfsData);
 			int y1 = READ_LE_INT16(curOfsData + 2);
 			int x2 = READ_LE_INT16(curOfsData + 4);
 			int y2 = READ_LE_INT16(curOfsData + 6);
 
-			_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x1, y1, 0);
-			if (_vm->_globals.Bank[idx]._fileHeader == 2)
-				_vm->_objectsManager.setOffsetXY(_vm->_globals.Bank[idx]._data, objIdx, x2, y2, 1);
+			_vm->_objectsManager.setOffsetXY(_vm->_globals->Bank[idx]._data, objIdx, x1, y1, 0);
+			if (_vm->_globals->Bank[idx]._fileHeader == 2)
+				_vm->_objectsManager.setOffsetXY(_vm->_globals->Bank[idx]._data, objIdx, x2, y2, 1);
 		}
 
-		_vm->_globals.freeMemory(ofsData);
+		_vm->_globals->freeMemory(ofsData);
 		result = 0;
 	}
 
@@ -578,18 +578,18 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) 
 					if (READ_BE_UINT32(&data[curBufferPos]) == MKTAG('A', 'N', 'I', 'M') || READ_BE_UINT24(&data[curBufferPos]) == MKTAG24('F', 'I', 'N'))
 						innerLoopCond = true;
 					if (bufSize < curBufferPos) {
-						_vm->_globals._animBqe[animIndex]._enabledFl = false;
-						_vm->_globals._animBqe[animIndex]._data = g_PTRNUL;
+						_vm->_globals->_animBqe[animIndex]._enabledFl = false;
+						_vm->_globals->_animBqe[animIndex]._data = g_PTRNUL;
 						return;
 					}
 					++curBufferPos;
 					++count;
 				} while (!innerLoopCond);
-				_vm->_globals._animBqe[animIndex]._data = _vm->_globals.allocMemory(count + 50);
-				_vm->_globals._animBqe[animIndex]._enabledFl = true;
-				memcpy(_vm->_globals._animBqe[animIndex]._data, data + dataIdx + 5, 20);
+				_vm->_globals->_animBqe[animIndex]._data = _vm->_globals->allocMemory(count + 50);
+				_vm->_globals->_animBqe[animIndex]._enabledFl = true;
+				memcpy(_vm->_globals->_animBqe[animIndex]._data, data + dataIdx + 5, 20);
 
-				byte *dataP = _vm->_globals._animBqe[animIndex]._data;
+				byte *dataP = _vm->_globals->_animBqe[animIndex]._data;
 				int curDestDataIndx = 20;
 				int curSrcDataIndx = dataIdx + 25;
 
@@ -642,7 +642,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	byte *screenCopy = NULL;
 	if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 		hasScreenCopy = true;
-		screenCopy = _vm->_globals.allocMemory(307200);
+		screenCopy = _vm->_globals->allocMemory(307200);
 		memcpy(screenCopy, screenP, 307200);
 	}
 	if (NO_SEQ) {
@@ -671,7 +671,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
 		_vm->_soundManager.loadAnimSound();
-		if (_vm->_globals.iRegul == 1) {
+		if (_vm->_globals->iRegul == 1) {
 			do {
 				if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
 					skipFl = true;
@@ -689,7 +689,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
 		_vm->_soundManager.loadAnimSound();
-		if (_vm->_globals.iRegul == 1) {
+		if (_vm->_globals->iRegul == 1) {
 			do {
 				if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
 					skipFl = true;
@@ -717,7 +717,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 				break;
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
-			if (_vm->_globals.iRegul == 1) {
+			if (_vm->_globals->iRegul == 1) {
 				do {
 					if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
 						skipFl = true;
@@ -751,7 +751,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		}
 	}
 
-	if (_vm->_globals.iRegul == 1 && !skipFl) {
+	if (_vm->_globals->iRegul == 1 && !skipFl) {
 		do {
 			if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
 				skipFl = true;
@@ -777,7 +777,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_eventsManager->_mouseFl = true;
 	}
 	if (hasScreenCopy)
-		_vm->_globals.freeMemory(screenCopy);
+		_vm->_globals->freeMemory(screenCopy);
 }
 
 /**
@@ -809,7 +809,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
 			multiScreenFl = true;
-			screenCopy = _vm->_globals.allocMemory(307200);
+			screenCopy = _vm->_globals->allocMemory(307200);
 			memcpy((void *)screenCopy, screenP, 307200);
 		}
 		if (NO_SEQ) {
@@ -833,7 +833,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
 		_vm->_soundManager.loadAnimSound();
-		if (_vm->_globals.iRegul == 1) {
+		if (_vm->_globals->iRegul == 1) {
 			do {
 				_vm->_eventsManager->refreshEvents();
 				_vm->_soundManager.checkSoundEnd();
@@ -857,7 +857,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 				break;
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
-			if (_vm->_globals.iRegul == 1) {
+			if (_vm->_globals->iRegul == 1) {
 				do {
 					_vm->_eventsManager->refreshEvents();
 				} while (!_vm->shouldQuit() && !_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate2);
@@ -881,7 +881,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		}
 	}
 
-	if (_vm->_globals.iRegul == 1) {
+	if (_vm->_globals->iRegul == 1) {
 		// Wait for third rate delay
 		do {
 			_vm->_eventsManager->refreshEvents();
@@ -892,7 +892,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 	_vm->_eventsManager->_rateCounter = 0;
 
 	if (_vm->_graphicsManager.FADE_LINUX == 2 && !multiScreenFl) {
-		byte *ptra = _vm->_globals.allocMemory(307200);
+		byte *ptra = _vm->_globals->allocMemory(307200);
 
 		f.seek(6);
 		f.read(_vm->_graphicsManager._palette, 800);
@@ -916,12 +916,12 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 				_vm->_graphicsManager.copyWinscanVbe(screenP, ptra);
 		}
 		_vm->_graphicsManager.fadeOutDefaultLength(ptra);
-		ptra = _vm->_globals.freeMemory(ptra);
+		ptra = _vm->_globals->freeMemory(ptra);
 	}
 	if (multiScreenFl) {
 		if (_vm->_graphicsManager.FADE_LINUX == 2)
 			_vm->_graphicsManager.fadeOutDefaultLength(screenCopy);
-		_vm->_globals.freeMemory(screenCopy);
+		_vm->_globals->freeMemory(screenCopy);
 	}
 	_vm->_graphicsManager.FADE_LINUX = 0;
 

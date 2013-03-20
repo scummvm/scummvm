@@ -57,7 +57,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		int mesgId = READ_LE_INT16(dataP + 13);
 		opcodeType = 1;
 		if (!_tempObjectFl) {
-			if (_vm->_globals._saveData->_data[svField356] == 1) {
+			if (_vm->_globals->_saveData->_data[svField356] == 1) {
 				if (mesgId == 53)
 					mesgId = 644;
 				if (mesgId == 624)
@@ -136,15 +136,15 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if (!_vm->_soundManager._textOffFl) {
 				int textPosX = READ_LE_INT16(dataP + 9);
 				int textPosY = READ_LE_INT16(dataP + 11);
-				_vm->_fontManager->initTextBuffers(9, mesgId, _vm->_globals._textFilename, 2 * textPosX, 2 * textPosY + 40, 6, dataP[7], 253);
+				_vm->_fontManager->initTextBuffers(9, mesgId, _vm->_globals->_textFilename, 2 * textPosX, 2 * textPosY + 40, 6, dataP[7], 253);
 				_vm->_fontManager->showText(9);
 				displayedTxtFl = true;
 			}
 			if (!_vm->_soundManager._voiceOffFl)
 				_vm->_soundManager.mixVoice(mesgId, 4, displayedTxtFl);
 		} else { // if (_tempObjectFl)
-			if (_vm->_globals._saveData->_data[svField356]) {
-				_vm->_fontManager->initTextBuffers(9, 635, _vm->_globals._textFilename, 55, 20, dataP[8], 35, 253);
+			if (_vm->_globals->_saveData->_data[svField356]) {
+				_vm->_fontManager->initTextBuffers(9, 635, _vm->_globals->_textFilename, 55, 20, dataP[8], 35, 253);
 				bool displayedTxtFl = false;
 				if (!_vm->_soundManager._textOffFl) {
 					_vm->_fontManager->showText(9);
@@ -155,11 +155,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_soundManager.mixVoice(635, 4, displayedTxtFl);
 			} else {
 				int textPosX = READ_LE_INT16(dataP + 9);
-				if (_vm->_globals._language == LANG_FR && !_vm->_soundManager._textOffFl)
+				if (_vm->_globals->_language == LANG_FR && !_vm->_soundManager._textOffFl)
 					_vm->_fontManager->initTextBuffers(9, mesgId, "OBJET1.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
-				else if (_vm->_globals._language == LANG_EN && !_vm->_soundManager._textOffFl)
+				else if (_vm->_globals->_language == LANG_EN && !_vm->_soundManager._textOffFl)
 					_vm->_fontManager->initTextBuffers(9, mesgId, "OBJETAN.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
-				else if (_vm->_globals._language == LANG_SP && !_vm->_soundManager._textOffFl) {
+				else if (_vm->_globals->_language == LANG_SP && !_vm->_soundManager._textOffFl) {
 					_vm->_fontManager->initTextBuffers(9, mesgId, "OBJETES.TXT", 2 * textPosX, 60, 6, dataP[7], 253);
 				}
 
@@ -183,13 +183,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int vbobPosX = READ_LE_INT16(dataP + 8);
 			int vbobPosY = READ_LE_INT16(dataP + 10);
 			if (vbobIdx == 52) {
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, vbobPosX, READ_LE_INT16(dataP + 10), vbobFrameIndex);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, vbobPosX, READ_LE_INT16(dataP + 10), vbobFrameIndex);
 			} else if (vbobIdx == 51) {
 				_vm->_objectsManager.BOB_VIVANT(vbobFrameIndex);
 			} else if (vbobIdx != 50) {
-				_vm->_objectsManager.VBOB(_vm->_globals.SPRITE_ECRAN, vbobIdx, vbobPosX, vbobPosY, vbobFrameIndex);
+				_vm->_objectsManager.VBOB(_vm->_globals->SPRITE_ECRAN, vbobIdx, vbobPosX, vbobPosY, vbobFrameIndex);
 				if (v4)
-					v4 /= _vm->_globals._speed;
+					v4 /= _vm->_globals->_speed;
 				if (v4 > 1) {
 					do {
 						if (_vm->shouldQuit())
@@ -210,49 +210,49 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager._characterPos.y = READ_LE_INT16(dataP + 8);
 				_vm->_objectsManager._startSpriteIndex = dataP[5];
 				if (_vm->_objectsManager._changeHeadFl) {
-					if (_vm->_globals._saveData->_data[svField354] == 1
-							&& _vm->_globals._saveData->_cloneHopkins._pos.x && _vm->_globals._saveData->_cloneHopkins._pos.y
-							&& _vm->_globals._saveData->_cloneHopkins._startSpriteIndex && _vm->_globals._saveData->_cloneHopkins._location) {
+					if (_vm->_globals->_saveData->_data[svField354] == 1
+							&& _vm->_globals->_saveData->_cloneHopkins._pos.x && _vm->_globals->_saveData->_cloneHopkins._pos.y
+							&& _vm->_globals->_saveData->_cloneHopkins._startSpriteIndex && _vm->_globals->_saveData->_cloneHopkins._location) {
 
-						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_cloneHopkins._pos;
-						_vm->_objectsManager._startSpriteIndex = _vm->_globals._saveData->_cloneHopkins._startSpriteIndex;
+						_vm->_objectsManager._characterPos = _vm->_globals->_saveData->_cloneHopkins._pos;
+						_vm->_objectsManager._startSpriteIndex = _vm->_globals->_saveData->_cloneHopkins._startSpriteIndex;
 					}
-					if (_vm->_globals._saveData->_data[svField356] == 1
-							&& _vm->_globals._saveData->_samantha._pos.x && _vm->_globals._saveData->_samantha._pos.y
-							&& _vm->_globals._saveData->_samantha._startSpriteIndex && _vm->_globals._saveData->_samantha._location) {
-						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_samantha._pos;
-						_vm->_objectsManager._startSpriteIndex = _vm->_globals._saveData->_samantha._startSpriteIndex;
+					if (_vm->_globals->_saveData->_data[svField356] == 1
+							&& _vm->_globals->_saveData->_samantha._pos.x && _vm->_globals->_saveData->_samantha._pos.y
+							&& _vm->_globals->_saveData->_samantha._startSpriteIndex && _vm->_globals->_saveData->_samantha._location) {
+						_vm->_objectsManager._characterPos = _vm->_globals->_saveData->_samantha._pos;
+						_vm->_objectsManager._startSpriteIndex = _vm->_globals->_saveData->_samantha._startSpriteIndex;
 					}
-					if (_vm->_globals._saveData->_data[svField357] == 1
-							&& _vm->_globals._saveData->_realHopkins._pos.x && _vm->_globals._saveData->_realHopkins._pos.y
-							&& _vm->_globals._saveData->_realHopkins._startSpriteIndex && _vm->_globals._saveData->_realHopkins._location) {
-						_vm->_objectsManager._characterPos = _vm->_globals._saveData->_realHopkins._pos;
-						_vm->_objectsManager._startSpriteIndex = _vm->_globals._saveData->_realHopkins._startSpriteIndex;
+					if (_vm->_globals->_saveData->_data[svField357] == 1
+							&& _vm->_globals->_saveData->_realHopkins._pos.x && _vm->_globals->_saveData->_realHopkins._pos.y
+							&& _vm->_globals->_saveData->_realHopkins._startSpriteIndex && _vm->_globals->_saveData->_realHopkins._location) {
+						_vm->_objectsManager._characterPos = _vm->_globals->_saveData->_realHopkins._pos;
+						_vm->_objectsManager._startSpriteIndex = _vm->_globals->_saveData->_realHopkins._startSpriteIndex;
 					}
 				}
-				if (_vm->_globals._saveData->_data[svField356] == 1
-						&& _vm->_globals._saveData->_realHopkins._location == _vm->_globals._screenId) {
+				if (_vm->_globals->_saveData->_data[svField356] == 1
+						&& _vm->_globals->_saveData->_realHopkins._location == _vm->_globals->_screenId) {
 					_vm->_objectsManager.addStaticSprite(
 					    _vm->_objectsManager._headSprites,
-					    _vm->_globals._saveData->_realHopkins._pos,
+					    _vm->_globals->_saveData->_realHopkins._pos,
 					    1,
 					    2,
-					    _vm->_globals._saveData->_realHopkins._zoomFactor,
+					    _vm->_globals->_saveData->_realHopkins._zoomFactor,
 					    false,
 					    34,
 					    190);
 					_vm->_objectsManager.animateSprite(1);
 					_vm->_objectsManager._twoCharactersFl = true;
 				}
-				if (_vm->_globals._saveData->_data[svField357] == 1
-				        && _vm->_globals._saveData->_data[svField355] == 1
-				        && _vm->_globals._saveData->_samantha._location == _vm->_globals._screenId) {
+				if (_vm->_globals->_saveData->_data[svField357] == 1
+				        && _vm->_globals->_saveData->_data[svField355] == 1
+				        && _vm->_globals->_saveData->_samantha._location == _vm->_globals->_screenId) {
 					_vm->_objectsManager.addStaticSprite(
 					    _vm->_objectsManager._headSprites,
-					    _vm->_globals._saveData->_samantha._pos,
+					    _vm->_globals->_saveData->_samantha._pos,
 					    1,
 					    3,
-					    _vm->_globals._saveData->_samantha._zoomFactor,
+					    _vm->_globals->_saveData->_samantha._zoomFactor,
 					    false,
 					    20,
 					    127);
@@ -265,9 +265,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		break;
 	case MKTAG24('S', 'T', 'E'):
 		if (!_vm->_objectsManager._disableFl) {
-			_vm->_globals._prevScreenId = _vm->_globals._screenId;
-			_vm->_globals._saveData->_data[svLastPrevScreenId] = _vm->_globals._screenId;
-			_vm->_globals._screenId = _vm->_globals._saveData->_data[svLastScreenId] = dataP[5];
+			_vm->_globals->_prevScreenId = _vm->_globals->_screenId;
+			_vm->_globals->_saveData->_data[svLastPrevScreenId] = _vm->_globals->_screenId;
+			_vm->_globals->_screenId = _vm->_globals->_saveData->_data[svLastScreenId] = dataP[5];
 			vbobFrameIndex = dataP[6];
 		}
 		opcodeType = 1;
@@ -279,178 +279,178 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		break;
 	case MKTAG24('P', 'E', 'R'): {
 		int specialOpcode = READ_LE_INT16(dataP + 5);
-		if (!_vm->_globals._saveData->_data[svAlternateSpriteFl] && !_vm->_globals._saveData->_data[svField356]) {
+		if (!_vm->_globals->_saveData->_data[svAlternateSpriteFl] && !_vm->_globals->_saveData->_data[svField356]) {
 			vbobFrameIndex = 0;
 
 			switch (specialOpcode) {
 			case 1:
 			case 14:
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(4);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(4);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(4);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(4);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(4);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(4);
 				break;
 			case 2:
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(7);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(7);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(7);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(7);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(7);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(7);
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(8);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(8);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(8);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(8);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(8);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(8);
 				break;
 			case 19:
 			case 4:
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(1);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(1);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(1);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(1);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(1);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(1);
 				break;
 			case 5:
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(5);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(5);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(5);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(5);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(5);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(5);
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(6);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(6);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(6);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(6);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(6);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(6);
 				break;
 			case 17:
 			case 7:
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(2);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(2);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(2);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(2);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(2);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(2);
 				break;
 			case 18:
 			case 8:
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(3);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(3);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(3);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(3);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(3);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(3);
 				break;
 			case 9:
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(5);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(5);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(5);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(5);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(5);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(5);
 				break;
 			case 10:
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(6);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(6);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(6);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(6);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(6);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(6);
 				break;
 			case 15:
 			case 11:
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(7);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(7);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(7);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(7);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(7);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(7);
 				break;
 			case 16:
 			case 12:
-				if (_vm->_globals._actionDirection == DIR_UP)
+				if (_vm->_globals->_actionDirection == DIR_UP)
 					_vm->_objectsManager.doActionBack(8);
-				if (_vm->_globals._actionDirection == DIR_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_RIGHT)
 					_vm->_objectsManager.doActionRight(8);
-				if (_vm->_globals._actionDirection == DIR_UP_RIGHT)
+				if (_vm->_globals->_actionDirection == DIR_UP_RIGHT)
 					_vm->_objectsManager.doActionDiagRight(8);
-				if (_vm->_globals._actionDirection == DIR_DOWN)
+				if (_vm->_globals->_actionDirection == DIR_DOWN)
 					_vm->_objectsManager.doActionFront(8);
-				if (_vm->_globals._actionDirection == DIR_UP_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_UP_LEFT)
 					_vm->_objectsManager.doActionDiagLeft(8);
-				if (_vm->_globals._actionDirection == DIR_LEFT)
+				if (_vm->_globals->_actionDirection == DIR_LEFT)
 					_vm->_objectsManager.doActionLeft(8);
 				break;
 			}
@@ -462,7 +462,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 1;
 		break;
 	case MKTAG24('W', 'A', 'I'): {
-		uint frameNumb = READ_LE_UINT16(dataP + 5) / _vm->_globals._speed;
+		uint frameNumb = READ_LE_UINT16(dataP + 5) / _vm->_globals->_speed;
 		if (!frameNumb)
 			frameNumb = 1;
 		for (uint i = 0; i < frameNumb + 1; i++) {
@@ -497,11 +497,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 5;
 		break;
 	case MKTAG24('S', 'O', 'R'):
-		_vm->_globals._exitId = READ_LE_INT16(dataP + 5);
+		_vm->_globals->_exitId = READ_LE_INT16(dataP + 5);
 		opcodeType = 5;
 		break;
 	case MKTAG24('B', 'C', 'A'):
-		_vm->_globals.B_CACHE_OFF(READ_LE_INT16(dataP + 5));
+		_vm->_globals->B_CACHE_OFF(READ_LE_INT16(dataP + 5));
 		opcodeType = 1;
 		break;
 	case MKTAG24('A', 'N', 'I'): {
@@ -545,9 +545,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 13:
 			_vm->_eventsManager->_mouseButton = _vm->_eventsManager->_curMouseButton;
-			_vm->_globals._disableInventFl = true;
+			_vm->_globals->_disableInventFl = true;
 			_vm->_graphicsManager.fadeOutLong();
-			_vm->_globals.disableHiding();
+			_vm->_globals->disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_fontManager->hideText(5);
 			_vm->_fontManager->hideText(9);
@@ -585,7 +585,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager.endDisplayBob();
 
 			// If uncensored, rip the throat of the hostage
-			if (!_vm->_globals._censorshipFl) {
+			if (!_vm->_globals->_censorshipFl) {
 				_vm->_soundManager._specialSoundNum = 16;
 				_vm->_graphicsManager.FADE_LINUX = 2;
 				_vm->_animationManager->playAnim("EGORGE.ANM", 50, 28, 500);
@@ -620,7 +620,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
 				_vm->_graphicsManager.fadeOutLong();
 
-			_vm->_globals._disableInventFl = false;
+			_vm->_globals->_disableInventFl = false;
 			_vm->_objectsManager._helicopterFl = true;
 			break;
 
@@ -661,16 +661,16 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 27:
-			if (_vm->_globals._saveData->_data[svField94] != 1 || _vm->_globals._saveData->_data[svField95] != 1)
+			if (_vm->_globals->_saveData->_data[svField94] != 1 || _vm->_globals->_saveData->_data[svField95] != 1)
 				_vm->_talkManager.startAnimatedCharacterDialogue("STANDAR.pe2");
 			else
 				_vm->_talkManager.startAnimatedCharacterDialogue("STANDAR1.pe2");
 			break;
 
 		case 29:
-			_vm->_globals._disableInventFl = true;
+			_vm->_globals->_disableInventFl = true;
 			_vm->_talkManager.animateObject("TELEP.pe2");
-			_vm->_globals._disableInventFl = false;
+			_vm->_globals->_disableInventFl = false;
 			break;
 
 		case 32:
@@ -690,19 +690,19 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 36:
-			if (_vm->_globals._saveData->_data[svField270] == 2 && _vm->_globals._saveData->_data[svField94] == 1 && _vm->_globals._saveData->_data[svField95] == 1)
-				_vm->_globals._saveData->_data[svField270] = 3;
-			if (!_vm->_globals._saveData->_data[svField270])
+			if (_vm->_globals->_saveData->_data[svField270] == 2 && _vm->_globals->_saveData->_data[svField94] == 1 && _vm->_globals->_saveData->_data[svField95] == 1)
+				_vm->_globals->_saveData->_data[svField270] = 3;
+			if (!_vm->_globals->_saveData->_data[svField270])
 				_vm->_talkManager.startStaticCharacterDialogue("PATRON0.pe2");
-			if (_vm->_globals._saveData->_data[svField270] == 1)
+			if (_vm->_globals->_saveData->_data[svField270] == 1)
 				_vm->_talkManager.startStaticCharacterDialogue("PATRON1.pe2");
-			if (_vm->_globals._saveData->_data[svField270] == 2)
+			if (_vm->_globals->_saveData->_data[svField270] == 2)
 				_vm->_talkManager.startStaticCharacterDialogue("PATRON2.pe2");
-			if (_vm->_globals._saveData->_data[svField270] == 3)
+			if (_vm->_globals->_saveData->_data[svField270] == 3)
 				_vm->_talkManager.startStaticCharacterDialogue("PATRON3.pe2");
-			if (_vm->_globals._saveData->_data[svField270] > 3) {
+			if (_vm->_globals->_saveData->_data[svField270] > 3) {
 				_vm->_talkManager.startStaticCharacterDialogue("PATRON4.pe2");
-				_vm->_globals._saveData->_data[svField270] = 5;
+				_vm->_globals->_saveData->_data[svField270] = 5;
 			}
 			break;
 
@@ -752,7 +752,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 46: {
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 564, 420);
 			_vm->_objectsManager._zoneNum = -1;
@@ -764,7 +764,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_soundManager.loadSample(1, "SOUND44.WAV");
 			_vm->_soundManager.loadSample(2, "SOUND45.WAV");
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0);
@@ -802,14 +802,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					playFl = false;
 					break;
 				case 12:
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 249, 1);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 249, 1);
 					break;
 				case 23:
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 249, 2);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 249, 2);
 					playFl = false;
 					break;
 				case 34:
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 249, 3);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 249, 3);
 					playFl = false;
 					break;
 				}
@@ -834,12 +834,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 49: {
-			_vm->_globals.disableHiding();
+			_vm->_globals->disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.OPTI_BOBON(9, 10, -1, 0, 0, 0);
 
 			int endIdx;
-			if (_vm->_globals._saveData->_data[svField133] == 1)
+			if (_vm->_globals->_saveData->_data[svField133] == 1)
 				endIdx = 41;
 			else
 				endIdx = 12;
@@ -882,7 +882,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager.animateSprite(0);
 				_vm->_objectsManager.stopBobAnimation(9);
 			}
-			_vm->_globals.enableHiding();
+			_vm->_globals->enableHiding();
 			break;
 			}
 
@@ -893,7 +893,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 51: {
 			_vm->_graphicsManager.fadeOutLong();
-			_vm->_globals.disableHiding();
+			_vm->_globals->disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_fontManager->hideText(5);
 			_vm->_fontManager->hideText(9);
@@ -920,14 +920,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.stopBobAnimation(2);
 			_vm->_graphicsManager.fadeOutLong();
 			_vm->_graphicsManager._noFadingFl = true;
-			_vm->_globals._exitId = 20;
+			_vm->_globals->_exitId = 20;
 			break;
 			}
 
 		case 52:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("GARDE.PE2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 53:
@@ -948,41 +948,41 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 56:
-			_vm->_globals.PERSO = _vm->_fileManager->loadFile("HOPFEM.SPR");
-			_vm->_globals._characterType = 1;
-			_vm->_globals._saveData->_data[svAlternateSpriteFl] = 1;
-			_vm->_globals.loadCharacterData();
+			_vm->_globals->PERSO = _vm->_fileManager->loadFile("HOPFEM.SPR");
+			_vm->_globals->_characterType = 1;
+			_vm->_globals->_saveData->_data[svAlternateSpriteFl] = 1;
+			_vm->_globals->loadCharacterData();
 			_vm->_objectsManager._sprite[0]._deltaX = 28;
 			_vm->_objectsManager._sprite[0]._deltaY = 155;
 			_vm->_objectsManager.computeAndSetSpriteSize();
 			break;
 
 		case 57:
-			_vm->_globals.PERSO = _vm->_fileManager->loadFile("PERSO.SPR");
-			_vm->_globals._characterType = 0;
-			_vm->_globals._saveData->_data[svAlternateSpriteFl] = 0;
-			_vm->_globals.loadCharacterData();
+			_vm->_globals->PERSO = _vm->_fileManager->loadFile("PERSO.SPR");
+			_vm->_globals->_characterType = 0;
+			_vm->_globals->_saveData->_data[svAlternateSpriteFl] = 0;
+			_vm->_globals->loadCharacterData();
 			_vm->_objectsManager._sprite[0]._deltaX = 34;
 			_vm->_objectsManager._sprite[0]._deltaY = 190;
 			_vm->_objectsManager.computeAndSetSpriteSize();
 			break;
 
 		case 58:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("Gm1.PE2");
-			_vm->_globals._saveData->_data[svField176] = 1;
-			_vm->_globals._saveData->_data[svField270] = 2;
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_saveData->_data[svField176] = 1;
+			_vm->_globals->_saveData->_data[svField270] = 2;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 59: {
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = DIR_NONE;
-			_vm->_globals.Compteur = 0;
+			_vm->_globals->_oldDirection = DIR_NONE;
+			_vm->_globals->Compteur = 0;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 445, 332);
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1094,13 +1094,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 81: {
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = DIR_NONE;
-			_vm->_globals.Compteur = 0;
+			_vm->_globals->_oldDirection = DIR_NONE;
+			_vm->_globals->Compteur = 0;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 119, 268);
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1149,7 +1149,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->_objectsManager.getBobAnimDataIdx(8) == 32)
 					break;
 			}
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 201, 14, 1);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 201, 14, 1);
 			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.stopBobAnimation(11);
 			_vm->_objectsManager.stopBobAnimation(8);
@@ -1176,9 +1176,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 84:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("CVIGIL1.PE2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 85:
@@ -1199,24 +1199,24 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 86:
-			if (_vm->_globals._saveData->_data[svField231] == 1) {
+			if (_vm->_globals->_saveData->_data[svField231] == 1) {
 				_vm->_talkManager.startAnimatedCharacterDialogue("chotess1.pe2");
 			} else {
-				_vm->_globals._introSpeechOffFl = true;
+				_vm->_globals->_introSpeechOffFl = true;
 				_vm->_talkManager.startAnimatedCharacterDialogue("chotesse.pe2");
-				_vm->_globals._introSpeechOffFl = false;
+				_vm->_globals->_introSpeechOffFl = false;
 			}
 			break;
 
 		case 87:
-			if (_vm->_globals._saveData->_data[svField188])
+			if (_vm->_globals->_saveData->_data[svField188])
 				_vm->_talkManager.startAnimatedCharacterDialogue("stand2.pe2");
 			else
 				_vm->_talkManager.startAnimatedCharacterDialogue("stand1.pe2");
 			break;
 
 		case 88:
-			if (_vm->_globals._saveData->_data[svField183] == 1) {
+			if (_vm->_globals->_saveData->_data[svField183] == 1) {
 				_vm->_objectsManager.setBobAnimDataIdx(1, 0);
 				_vm->_objectsManager.setBobAnimDataIdx(2, 0);
 				_vm->_objectsManager.setBobAnimation(1);
@@ -1250,10 +1250,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				_vm->_objectsManager.stopBobAnimation(1);
 				_vm->_objectsManager.stopBobAnimation(2);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 160, 6);
 				_vm->_soundManager.removeSample(1);
 			}
-			if (_vm->_globals._saveData->_data[svField183] == 2) {
+			if (_vm->_globals->_saveData->_data[svField183] == 2) {
 				_vm->_objectsManager.setBobAnimDataIdx(1, 0);
 				_vm->_objectsManager.setBobAnimDataIdx(3, 0);
 				_vm->_objectsManager.setBobAnimation(1);
@@ -1287,67 +1287,67 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				_vm->_objectsManager.stopBobAnimation(1);
 				_vm->_objectsManager.stopBobAnimation(3);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 161, 8);
 				_vm->_soundManager.removeSample(1);
 			}
 			break;
 
 		case 90:
 			_vm->_soundManager.playSoundFile("SOUND52.WAV");
-			if (!_vm->_globals._saveData->_data[svField186]) {
+			if (!_vm->_globals->_saveData->_data[svField186]) {
 				_vm->_animationManager->playSequence("CIB5A.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
 			}
-			if (_vm->_globals._saveData->_data[svField186] == 1) {
+			if (_vm->_globals->_saveData->_data[svField186] == 1) {
 				_vm->_animationManager->playSequence("CIB5C.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 329, 87, 2);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 329, 87, 2);
 			}
 			break;
 
 		case 91:
 			_vm->_soundManager.playSoundFile("SOUND52.WAV");
-			if (!_vm->_globals._saveData->_data[svField186]) {
+			if (!_vm->_globals->_saveData->_data[svField186]) {
 				_vm->_animationManager->playSequence("CIB5B.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
 			}
-			if (_vm->_globals._saveData->_data[svField186] == 1) {
+			if (_vm->_globals->_saveData->_data[svField186] == 1) {
 				_vm->_animationManager->playSequence("CIB5D.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 160, 6);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 160, 6);
 			}
 			break;
 
 		case 92:
 			_vm->_soundManager.playSoundFile("SOUND52.WAV");
-			if (!_vm->_globals._saveData->_data[svField184]) {
+			if (!_vm->_globals->_saveData->_data[svField184]) {
 				_vm->_animationManager->playSequence("CIB6A.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
 			}
-			if (_vm->_globals._saveData->_data[svField184] == 1) {
+			if (_vm->_globals->_saveData->_data[svField184] == 1) {
 				_vm->_animationManager->playSequence("CIB6C.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 0);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 293, 139, 3);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 293, 139, 3);
 			}
 			break;
 
 		case 93:
 			_vm->_soundManager.playSoundFile("SOUND52.WAV");
-			if (!_vm->_globals._saveData->_data[svField184]) {
+			if (!_vm->_globals->_saveData->_data[svField184]) {
 				_vm->_animationManager->playSequence("CIB6B.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
 			}
-			if (_vm->_globals._saveData->_data[svField184] == 1) {
+			if (_vm->_globals->_saveData->_data[svField184] == 1) {
 				_vm->_animationManager->playSequence("CIB6D.SEQ", 1, 12, 1);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 155, 29, 5);
-				_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 283, 161, 8);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
+				_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 161, 8);
 			}
 			break;
 
 		case 94:
-			if (!_vm->_globals._saveData->_data[svField228])
+			if (!_vm->_globals->_saveData->_data[svField228])
 				_vm->_talkManager.startAnimatedCharacterDialogue("flicn.pe2");
-			if (_vm->_globals._saveData->_data[svField228] == 1)
+			if (_vm->_globals->_saveData->_data[svField228] == 1)
 				_vm->_talkManager.startAnimatedCharacterDialogue("flicn1.pe2");
 			break;
 
@@ -1374,16 +1374,16 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(12) != 117);
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 830, 122, 0);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 830, 122, 0);
 			_vm->_objectsManager.stopBobAnimation(12);
 			_vm->_objectsManager.stopBobAnimation(10);
 			_vm->_objectsManager.setBobAnimation(11);
 			break;
 
 		case 98:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("CVIGIL2.PE2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 100:
@@ -1396,40 +1396,40 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 103:
 			// Dice game
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("tourist1.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			_vm->_animationManager->playAnim2("T421.ANM", 100, 14, 500);
 			_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_eventsManager->refreshScreenAndEvents();
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("tourist2.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 104:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("tourist3.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 105:
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = DIR_NONE;
-			_vm->_globals.Compteur = 0;
+			_vm->_globals->_oldDirection = DIR_NONE;
+			_vm->_globals->Compteur = 0;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
-			if (_vm->_globals._saveData->_data[svField253] == 1) {
+			if (_vm->_globals->_saveData->_data[svField253] == 1) {
 				_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 201, 294);
 			}
-			if (_vm->_globals._saveData->_data[svField253] == 2) {
+			if (_vm->_globals->_saveData->_data[svField253] == 2) {
 				_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 158, 338);
 			}
-			if (_vm->_globals._saveData->_data[svField253] > 2) {
+			if (_vm->_globals->_saveData->_data[svField253] > 2) {
 				_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 211, 393);
 			}
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1440,7 +1440,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setSpriteIndex(0, 60);
 			_vm->_soundManager.loadSample(1, "SOUND63.WAV");
-			if (_vm->_globals._saveData->_data[svField253] > 2) {
+			if (_vm->_globals->_saveData->_data[svField253] > 2) {
 				_vm->_objectsManager.setBobAnimation(4);
 				bool playFl = false;
 				for (;;) {
@@ -1468,7 +1468,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				_vm->_objectsManager.stopBobAnimation(4);
 			}
-			if (_vm->_globals._saveData->_data[svField253] == 1) {
+			if (_vm->_globals->_saveData->_data[svField253] == 1) {
 				_vm->_objectsManager.setBobAnimation(6);
 				bool playFl = false;
 				for (;;) {
@@ -1496,7 +1496,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				_vm->_objectsManager.stopBobAnimation(6);
 			}
-			if (_vm->_globals._saveData->_data[svField253] == 2) {
+			if (_vm->_globals->_saveData->_data[svField253] == 2) {
 				_vm->_objectsManager.setBobAnimation(5);
 				bool playFl = false;
 				for (;;) {
@@ -1606,33 +1606,33 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 108:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("peche1.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 109:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("peche2.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 110:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("peche3.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 111:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("peche4.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 112:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("teint1.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 113:
@@ -1656,17 +1656,17 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 171: {
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("gred1.pe2");
-			_vm->_globals._introSpeechOffFl = false;
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_introSpeechOffFl = false;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = DIR_NONE;
-			_vm->_globals.Compteur = 0;
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_oldDirection = DIR_NONE;
+			_vm->_globals->Compteur = 0;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 361, 325);
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager._zoneNum = -1;
 			do {
 				if (_vm->shouldQuit())
@@ -1675,7 +1675,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
-			_vm->_globals._exitId = 59;
+			_vm->_globals->_exitId = 59;
 			break;
 			}
 
@@ -1684,17 +1684,17 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 173: {
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("gbleu1.pe2");
-			_vm->_globals._introSpeechOffFl = false;
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_introSpeechOffFl = false;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = DIR_NONE;
-			_vm->_globals.Compteur = 0;
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_oldDirection = DIR_NONE;
+			_vm->_globals->Compteur = 0;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 361, 325);
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager._zoneNum = -1;
 			do {
 				if (_vm->shouldQuit())
@@ -1703,7 +1703,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager.GOHOME();
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
-			_vm->_globals._exitId = 59;
+			_vm->_globals->_exitId = 59;
 			break;
 			}
 
@@ -1759,21 +1759,21 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 176:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("gred2.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 177:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("gbleu2.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 200:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("Gm2.PE2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 201:
@@ -1789,9 +1789,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 202:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("SVGARD2.PE2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 203:
@@ -1803,7 +1803,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 				if (_vm->_objectsManager.getBobAnimDataIdx(4) == 18)
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 18, 334, 0, false);
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 18, 334, 0, false);
 			} while (_vm->_objectsManager.getBobAnimDataIdx(4) != 26);
 			_vm->_objectsManager.stopBobAnimation(4);
 			_vm->_objectsManager.animateSprite(0);
@@ -1872,16 +1872,16 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 208: {
-			_vm->_globals._disableInventFl = true;
-			if (_vm->_globals._saveData->_data[svLastPrevScreenId] != _vm->_globals._saveData->_data[svField401]) {
+			_vm->_globals->_disableInventFl = true;
+			if (_vm->_globals->_saveData->_data[svLastPrevScreenId] != _vm->_globals->_saveData->_data[svField401]) {
 				_vm->_soundManager._specialSoundNum = 208;
 				_vm->_animationManager->playSequence("SORT.SEQ", 10, 4, 10, true);
 				_vm->_soundManager._specialSoundNum = 0;
 			}
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 330, 418);
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager._zoneNum = 0;
 			do {
 				if (_vm->shouldQuit())
@@ -1891,8 +1891,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_linesManager._route != (RouteItem *)g_PTRNUL);
 			_vm->_objectsManager.setSpriteIndex(0, 64);
-			_vm->_globals._exitId = _vm->_globals._saveData->_data[svField401];
-			_vm->_globals._disableInventFl = false;
+			_vm->_globals->_exitId = _vm->_globals->_saveData->_data[svField401];
+			_vm->_globals->_disableInventFl = false;
 			break;
 			}
 
@@ -1910,10 +1910,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager.getBobAnimDataIdx(1) != 9);
 			_vm->_objectsManager.stopBobAnimation(1);
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 330, 314);
 			_vm->_objectsManager._zoneNum = 0;
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -1940,15 +1940,15 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager._specialSoundNum = 210;
 			_vm->_animationManager->playSequence2("SECRET1.SEQ", 1, 12, 1);
 			_vm->_soundManager._specialSoundNum = 0;
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 192, 152, 0);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 192, 152, 0);
 			_vm->_objectsManager.setBobAnimation(9);
 			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.loadLinkFile("IM73a");
 			_vm->_objectsManager.OBSSEUL = false;
-			_vm->_globals.enableHiding();
+			_vm->_globals->enableHiding();
 			_vm->_animationManager->NO_SEQ = false;
-			_vm->_globals.setHidingUseCount(0);
-			_vm->_globals.setHidingUseCount(1);
+			_vm->_globals->setHidingUseCount(0);
+			_vm->_globals->setHidingUseCount(1);
 			_vm->_graphicsManager.SETCOLOR4(252, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR4(253, 100, 100, 100);
 			_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
@@ -1957,7 +1957,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 211:
 			_vm->_objectsManager.removeSprite(0);
-			_vm->_globals.disableHiding();
+			_vm->_globals->disableHiding();
 			_vm->_animationManager->NO_SEQ = true;
 			_vm->_soundManager._specialSoundNum = 211;
 			_vm->_animationManager->playSequence("SECRET2.SEQ", 1, 12, 100);
@@ -1980,37 +1980,37 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 215:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("aviat.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 216:
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("aviat1.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 229:
 			_vm->_soundManager._specialSoundNum = 229;
 			_vm->_animationManager->playSequence("MUR.SEQ", 1, 12, 1);
 			_vm->_soundManager._specialSoundNum = 0;
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 340, 157, 2);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 340, 157, 2);
 			break;
 
 		case 230: {
 			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.loadLinkFile("IM93a");
 			_vm->_objectsManager.OBSSEUL = false;
-			_vm->_globals.enableHiding();
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->enableHiding();
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager._oldCharacterPosX = _vm->_objectsManager.getSpriteX(0);
-			_vm->_globals._oldDirection = DIR_NONE;
-			_vm->_globals.Compteur = 0;
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_oldDirection = DIR_NONE;
+			_vm->_globals->Compteur = 0;
+			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager._route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager._route = _vm->_linesManager.PARCOURS2(_vm->_objectsManager.getSpriteX(0), _vm->_objectsManager.getSpriteY(0), 488, 280);
-			_vm->_globals._checkDistanceFl = true;
+			_vm->_globals->_checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -2035,16 +2035,16 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.setSpriteX(0, 476);
 			_vm->_objectsManager.setSpriteY(0, 278);
 			_vm->_objectsManager.animateSprite(0);
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 337, 154, 3);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 337, 154, 3);
 			_vm->_objectsManager.OBSSEUL = true;
 			_vm->_objectsManager.loadLinkFile("IM93c");
 			_vm->_objectsManager.OBSSEUL = false;
-			_vm->_globals.enableHiding();
+			_vm->_globals->enableHiding();
 			break;
 			}
 
 		case 231:
-			_vm->_globals.disableHiding();
+			_vm->_globals->disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(12);
 			do {
@@ -2053,9 +2053,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(12) != 6);
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("PRMORT.pe2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
@@ -2064,11 +2064,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager.getBobAnimDataIdx(12) != 12);
 			_vm->_objectsManager.animateSprite(0);
 			_vm->_objectsManager.stopBobAnimation(12);
-			_vm->_globals.enableHiding();
+			_vm->_globals->enableHiding();
 			break;
 
 		case 233: {
-			_vm->_globals.disableHiding();
+			_vm->_globals->disableHiding();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.setBobAnimation(11);
 			bool playFl = false;
@@ -2081,7 +2081,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					playFl = true;
 			} while (_vm->_objectsManager.getBobAnimDataIdx(11) != 13);
 			_vm->_objectsManager.stopBobAnimation(11);
-			_vm->_globals.enableHiding();
+			_vm->_globals->enableHiding();
 			_vm->_objectsManager.setBobAnimation(13);
 			do {
 				if (_vm->shouldQuit())
@@ -2089,18 +2089,18 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager.getBobAnimDataIdx(13) != 48);
-			_vm->_globals._introSpeechOffFl = true;
+			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkManager.startAnimatedCharacterDialogue("HRADIO.PE2");
-			_vm->_globals._introSpeechOffFl = false;
+			_vm->_globals->_introSpeechOffFl = false;
 			_vm->_graphicsManager.fadeOutLong();
 			_vm->_objectsManager.stopBobAnimation(13);
 			_vm->_graphicsManager._noFadingFl = true;
-			_vm->_globals._exitId = 94;
+			_vm->_globals->_exitId = 94;
 			break;
 			}
 
 		case 236: {
-			char v47 = _vm->_globals._saveData->_data[svField341];
+			char v47 = _vm->_globals->_saveData->_data[svField341];
 			if (v47) {
 				if (v47 == 2)
 					vbobFrameIndex = 5;
@@ -2110,27 +2110,27 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					vbobFrameIndex = 6;
 				_vm->_soundManager.playSoundFile("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(vbobFrameIndex, 26, 50, 0);
-				if (_vm->_globals._saveData->_data[svField341] == 1)
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
-				if (_vm->_globals._saveData->_data[svField341] == 2)
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
-				if (_vm->_globals._saveData->_data[svField341] == 3)
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
-				if (_vm->_globals._saveData->_data[svField341] == 1)
-					_vm->_globals._saveData->_data[svField338] = 0;
-				if (_vm->_globals._saveData->_data[svField341] == 2)
-					_vm->_globals._saveData->_data[svField339] = 0;
-				if (_vm->_globals._saveData->_data[svField341] == 3)
-					_vm->_globals._saveData->_data[svField340] = 0;
+				if (_vm->_globals->_saveData->_data[svField341] == 1)
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 0);
+				if (_vm->_globals->_saveData->_data[svField341] == 2)
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 2);
+				if (_vm->_globals->_saveData->_data[svField341] == 3)
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 4);
+				if (_vm->_globals->_saveData->_data[svField341] == 1)
+					_vm->_globals->_saveData->_data[svField338] = 0;
+				if (_vm->_globals->_saveData->_data[svField341] == 2)
+					_vm->_globals->_saveData->_data[svField339] = 0;
+				if (_vm->_globals->_saveData->_data[svField341] == 3)
+					_vm->_globals->_saveData->_data[svField340] = 0;
 			}
 			_vm->_soundManager.playSoundFile("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(6, 0, 23, 0);
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 1);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 1);
 			break;
 			}
 
 		case 237: {
-			switch (_vm->_globals._saveData->_data[svField341]) {
+			switch (_vm->_globals->_saveData->_data[svField341]) {
 			case 1:
 				vbobFrameIndex = 6;
 				break;
@@ -2142,34 +2142,34 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				break;
 			}
 
-			if (_vm->_globals._saveData->_data[svField341]) {
+			if (_vm->_globals->_saveData->_data[svField341]) {
 				_vm->_soundManager.playSoundFile("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(vbobFrameIndex, 26, 50, 0);
 				
-				switch (_vm->_globals._saveData->_data[svField341]) {
+				switch (_vm->_globals->_saveData->_data[svField341]) {
 				case 1:
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
-					_vm->_globals._saveData->_data[svField338] = 0;
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 0);
+					_vm->_globals->_saveData->_data[svField338] = 0;
 					break;
 				case 2:
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
-					_vm->_globals._saveData->_data[svField339] = 0;
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 2);
+					_vm->_globals->_saveData->_data[svField339] = 0;
 					break;
 				case 3:
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
-					_vm->_globals._saveData->_data[svField340] = 0;
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 4);
+					_vm->_globals->_saveData->_data[svField340] = 0;
 					break;
 				}
 			}
 
 			_vm->_soundManager.playSoundFile("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(5, 0, 23, 0);
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 3);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 3);
 			break;
 			}
 
 		case 238: {
-			switch (_vm->_globals._saveData->_data[svField341]) {
+			switch (_vm->_globals->_saveData->_data[svField341]) {
 			case 1:
 				vbobFrameIndex = 6;
 				break;
@@ -2181,27 +2181,27 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				break;
 			}
 
-			if (_vm->_globals._saveData->_data[svField341]) {
+			if (_vm->_globals->_saveData->_data[svField341]) {
 				_vm->_soundManager.playSoundFile("SOUND83.WAV");
 				_vm->_objectsManager.OPTI_ONE(vbobFrameIndex, 26, 50, 0);
-				switch (_vm->_globals._saveData->_data[svField341]) {
+				switch (_vm->_globals->_saveData->_data[svField341]) {
 				case 1:
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 27, 117, 0);
-					_vm->_globals._saveData->_data[svField338] = 0;
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 0);
+					_vm->_globals->_saveData->_data[svField338] = 0;
 					break;
 				case 2:
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 145, 166, 2);
-					_vm->_globals._saveData->_data[svField339] = 0;
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 2);
+					_vm->_globals->_saveData->_data[svField339] = 0;
 					break;
 				case 3:
-					_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 4);
-					_vm->_globals._saveData->_data[svField340] = 0;
+					_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 4);
+					_vm->_globals->_saveData->_data[svField340] = 0;
 					break;
 				}
 			}
 			_vm->_soundManager.playSoundFile("SOUND83.WAV");
 			_vm->_objectsManager.OPTI_ONE(4, 0, 23, 0);
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 296, 212, 5);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 5);
 			break;
 			}
 
@@ -2237,7 +2237,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_fontManager->hideText(9);
 			bool displayedTxtFl = false;
 			if (!_vm->_soundManager._textOffFl) {
-				_vm->_fontManager->initTextBuffers(9, 617, _vm->_globals._textFilename, 91, 41, 3, 30, 253);
+				_vm->_fontManager->initTextBuffers(9, 617, _vm->_globals->_textFilename, 91, 41, 3, 30, 253);
 				_vm->_fontManager->showText(9);
 				displayedTxtFl = true;
 			}
@@ -2249,15 +2249,15 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			}
-			CharacterLocation *realHopkins = &_vm->_globals._saveData->_realHopkins;
+			CharacterLocation *realHopkins = &_vm->_globals->_saveData->_realHopkins;
 			realHopkins->_pos.x = _vm->_objectsManager.getSpriteX(0);
 			realHopkins->_pos.y = _vm->_objectsManager.getSpriteY(0);
 			realHopkins->_startSpriteIndex = 57;
 			realHopkins->_location = 97;
-			_vm->_globals._saveData->_data[svHopkinsCloneFl] = 1;
-			_vm->_globals._saveData->_data[svField352] = 1;
-			_vm->_globals._saveData->_data[svField353] = 1;
-			_vm->_globals._saveData->_data[svField354] = 1;
+			_vm->_globals->_saveData->_data[svHopkinsCloneFl] = 1;
+			_vm->_globals->_saveData->_data[svField352] = 1;
+			_vm->_globals->_saveData->_data[svField353] = 1;
+			_vm->_globals->_saveData->_data[svField354] = 1;
 			break;
 			}
 
@@ -2272,19 +2272,19 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_animationManager->playSequence("RESUF.SEQ", 1, 24, 1);
 			_vm->_animationManager->NO_SEQ = false;
 
-			CharacterLocation *samantha = &_vm->_globals._saveData->_samantha;
+			CharacterLocation *samantha = &_vm->_globals->_saveData->_samantha;
 			samantha->_pos.x = 404;
 			samantha->_pos.y = 395;
 			samantha->_startSpriteIndex = 64;
-			samantha->_location = _vm->_globals._screenId;
-			samantha->_zoomFactor = -(100 * (67 - (100 - abs(_vm->_globals._spriteSize[790 / 2]))) / 67);
+			samantha->_location = _vm->_globals->_screenId;
+			samantha->_zoomFactor = -(100 * (67 - (100 - abs(_vm->_globals->_spriteSize[790 / 2]))) / 67);
 
-			_vm->_globals._saveData->_data[svField357] = 1;
-			_vm->_globals._saveData->_data[svField354] = 0;
-			_vm->_globals._saveData->_data[svField356] = 0;
-			_vm->_globals._saveData->_data[svField355] = 1;
+			_vm->_globals->_saveData->_data[svField357] = 1;
+			_vm->_globals->_saveData->_data[svField354] = 0;
+			_vm->_globals->_saveData->_data[svField356] = 0;
+			_vm->_globals->_saveData->_data[svField355] = 1;
 			_vm->_objectsManager._twoCharactersFl = true;
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 373, 191, 3);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 373, 191, 3);
 			_vm->_objectsManager.addStaticSprite(_vm->_objectsManager._headSprites, samantha->_pos, 1, 3, samantha->_zoomFactor, false, 20, 127);
 			_vm->_objectsManager.animateSprite(1);
 			break;
@@ -2292,7 +2292,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 243:
 			_vm->_soundManager.playSoundFile("SOUND88.WAV");
-			if (_vm->_globals._saveData->_data[svField341] == 2) {
+			if (_vm->_globals->_saveData->_data[svField341] == 2) {
 				_vm->_animationManager->NO_SEQ = true;
 				_vm->_animationManager->playSequence("RESU.SEQ", 2, 24, 2);
 				_vm->_animationManager->NO_SEQ = false;
@@ -2306,8 +2306,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager.OPTI_ONE(5, 0, 6, 0);
 			_vm->_linesManager.ZONEP[4]._destX = 276;
 			_vm->_objectsManager.enableVerb(4, 19);
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 285, 379, 0);
-			_vm->_globals._saveData->_data[svField399] = 1;
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 285, 379, 0);
+			_vm->_globals->_saveData->_data[svField399] = 1;
 			break;
 
 		case 246:
@@ -2321,7 +2321,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager._noFadingFl = true;
 			_vm->_graphicsManager.fadeOutLong();
 			_vm->_objectsManager.PERSO_ON = false;
-			_vm->_globals._exitId = 100;
+			_vm->_globals->_exitId = 100;
 			break;
 
 		case 600:
@@ -2340,17 +2340,17 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 601:
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
 			_vm->_objectsManager.OPTI_ONE(2, 0, 16, 4);
 			break;
 
 		case 602:
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
 			_vm->_objectsManager.OPTI_ONE(4, 0, 16, 4);
 			break;
 
 		case 603:
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
 			_vm->_objectsManager.OPTI_ONE(3, 0, 16, 4);
 			_vm->_soundManager._specialSoundNum = 199;
 			_vm->_graphicsManager.FADE_LINUX = 2;
@@ -2358,22 +2358,22 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager._specialSoundNum = 0;
 			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
 			_vm->_graphicsManager._noFadingFl = true;
-			_vm->_globals._exitId = 151;
+			_vm->_globals->_exitId = 151;
 			break;
 
 		case 604:
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
 			_vm->_objectsManager.OPTI_ONE(1, 0, 16, 4);
 			_vm->_soundManager._specialSoundNum = 199;
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager._specialSoundNum = 0;
 			_vm->_graphicsManager._noFadingFl = true;
 			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
-			_vm->_globals._exitId = 151;
+			_vm->_globals->_exitId = 151;
 			break;
 
 		case 605:
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
 			_vm->_objectsManager.OPTI_ONE(5, 0, 16, 4);
 			_vm->_graphicsManager.fadeOutShort();
 			_vm->_soundManager._specialSoundNum = 199;
@@ -2382,17 +2382,17 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager._specialSoundNum = 0;
 			_vm->_graphicsManager._noFadingFl = true;
 			memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
-			_vm->_globals._exitId = 151;
+			_vm->_globals->_exitId = 151;
 			break;
 
 		case 606:
-			_vm->_graphicsManager.fastDisplay(_vm->_globals.SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager.fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
 			_vm->_objectsManager.OPTI_ONE(6, 0, 16, 4);
 			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
 				_vm->_animationManager->playAnim("BOMBE3A.ANM", 50, 14, 500);
 				memset(_vm->_graphicsManager._vesaBuffer, 0, 614400);
 			}
-			_vm->_globals._exitId = 6;
+			_vm->_globals->_exitId = 6;
 			break;
 
 		case 607:
@@ -2449,12 +2449,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 1;
 		int idx = READ_LE_INT16(dataP + 5);
 		assert(idx >= 0 && idx < 2050);
-		_vm->_globals._saveData->_data[idx] = dataP[7];
+		_vm->_globals->_saveData->_data[idx] = dataP[7];
 		break;
 		}
 	case MKTAG24('A', 'D', 'D'):
 		opcodeType = 1;
-		_vm->_globals._saveData->_data[READ_LE_INT16(dataP + 5)] += dataP[7];
+		_vm->_globals->_saveData->_data[READ_LE_INT16(dataP + 5)] += dataP[7];
 		break;
 	case MKTAG24('B', 'O', 'S'):
 		opcodeType = 1;
@@ -2542,24 +2542,24 @@ int ScriptManager::handleIf(const byte *dataP, int offset) {
 	int saveDataIdx1 = READ_LE_INT16(buf + 5);
 	int compVal1 = READ_LE_INT16(buf + 7);
 	bool check1Fl = false;
-	if ((oper == 1 && _vm->_globals._saveData->_data[saveDataIdx1] == compVal1) ||
-	    (oper == 2 && _vm->_globals._saveData->_data[saveDataIdx1] != compVal1) ||
-	    (oper == 3 && _vm->_globals._saveData->_data[saveDataIdx1] <= compVal1) ||
-	    (oper == 4 && _vm->_globals._saveData->_data[saveDataIdx1] >= compVal1) ||
-	    (oper == 5 && _vm->_globals._saveData->_data[saveDataIdx1] > compVal1) ||
-	    (oper == 6 && _vm->_globals._saveData->_data[saveDataIdx1] < compVal1))
+	if ((oper == 1 && _vm->_globals->_saveData->_data[saveDataIdx1] == compVal1) ||
+	    (oper == 2 && _vm->_globals->_saveData->_data[saveDataIdx1] != compVal1) ||
+	    (oper == 3 && _vm->_globals->_saveData->_data[saveDataIdx1] <= compVal1) ||
+	    (oper == 4 && _vm->_globals->_saveData->_data[saveDataIdx1] >= compVal1) ||
+	    (oper == 5 && _vm->_globals->_saveData->_data[saveDataIdx1] > compVal1) ||
+	    (oper == 6 && _vm->_globals->_saveData->_data[saveDataIdx1] < compVal1))
 		check1Fl = true;
 
 	bool check2Fl = false;
 	if (operType != 3) {
 		int saveDataIdx2 = READ_LE_INT16(buf + 9);
 		int compVal2 = READ_LE_INT16(buf + 11);
-		if ((oper2 == 1 && compVal2 == _vm->_globals._saveData->_data[saveDataIdx2]) ||
-		    (oper2 == 2 && compVal2 != _vm->_globals._saveData->_data[saveDataIdx2]) ||
-		    (oper2 == 3 && compVal2 >= _vm->_globals._saveData->_data[saveDataIdx2]) ||
-		    (oper2 == 4 && compVal2 <= _vm->_globals._saveData->_data[saveDataIdx2]) ||
-		    (oper2 == 5 && compVal2 < _vm->_globals._saveData->_data[saveDataIdx2]) ||
-		    (oper2 == 6 && compVal2 > _vm->_globals._saveData->_data[saveDataIdx2]))
+		if ((oper2 == 1 && compVal2 == _vm->_globals->_saveData->_data[saveDataIdx2]) ||
+		    (oper2 == 2 && compVal2 != _vm->_globals->_saveData->_data[saveDataIdx2]) ||
+		    (oper2 == 3 && compVal2 >= _vm->_globals->_saveData->_data[saveDataIdx2]) ||
+		    (oper2 == 4 && compVal2 <= _vm->_globals->_saveData->_data[saveDataIdx2]) ||
+		    (oper2 == 5 && compVal2 < _vm->_globals->_saveData->_data[saveDataIdx2]) ||
+		    (oper2 == 6 && compVal2 > _vm->_globals->_saveData->_data[saveDataIdx2]))
 			check2Fl = true;
 	}
 	

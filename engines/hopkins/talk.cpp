@@ -56,25 +56,25 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_fontManager->hideText(9);
 	_vm->_eventsManager->refreshScreenAndEvents();
 	_vm->_graphicsManager._scrollStatus = 1;
-	bool oldDisableInventFl = _vm->_globals._disableInventFl;
-	_vm->_globals._disableInventFl = true;
+	bool oldDisableInventFl = _vm->_globals->_disableInventFl;
+	_vm->_globals->_disableInventFl = true;
 	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
-	_characterSize = _vm->_globals._catalogSize;
+	_characterSize = _vm->_globals->_catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
 		_characterBuffer = _vm->_fileManager->loadFile(filename);
 		_characterSize = _vm->_fileManager->fileSize(filename);
 	}
 
-	_vm->_globals._saveData->_data[svDialogField4] = 0;
+	_vm->_globals->_saveData->_data[svDialogField4] = 0;
 
 	getStringFromBuffer(40, spriteFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
-	if (_vm->_globals._language == LANG_FR) {
+	if (_vm->_globals->_language == LANG_FR) {
 		_answersFilename = _questionsFilename = "RUE.TXT";
-	} else if (_vm->_globals._language == LANG_EN) {
+	} else if (_vm->_globals->_language == LANG_EN) {
 		_answersFilename = _questionsFilename = "RUEAN.TXT";
-	} else if (_vm->_globals._language == LANG_SP) {
+	} else if (_vm->_globals->_language == LANG_SP) {
 		_answersFilename = _questionsFilename = "RUEES.TXT";
 	}
 	_dialogueMesgId1 = READ_LE_INT16((uint16 *)_characterBuffer + 40);
@@ -104,7 +104,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	int oldMouseCursorId = _vm->_eventsManager->_mouseCursorId;
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(0);
-	if (!_vm->_globals._introSpeechOffFl) {
+	if (!_vm->_globals->_introSpeechOffFl) {
 		int answer = 0;
 		int dlgAnswer;
 		do {
@@ -116,7 +116,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 			_vm->_eventsManager->refreshScreenAndEvents();
 		} while (dlgAnswer != _dialogueMesgId4);
 	}
-	if (_vm->_globals._introSpeechOffFl) {
+	if (_vm->_globals->_introSpeechOffFl) {
 		int idx = 1;
 		int answer;
 		do
@@ -124,9 +124,9 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 		while (answer != -1);
 	}
 	clearCharacterAnim();
-	_vm->_globals._introSpeechOffFl = false;
-	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
-	_characterSprite = _vm->_globals.freeMemory(_characterSprite);
+	_vm->_globals->_introSpeechOffFl = false;
+	_characterBuffer = _vm->_globals->freeMemory(_characterBuffer);
+	_characterSprite = _vm->_globals->freeMemory(_characterSprite);
 	_vm->_graphicsManager.NB_SCREEN(false);
 
 	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
@@ -147,7 +147,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager.unlockScreen();
 	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
-	_vm->_globals._disableInventFl = oldDisableInventFl;
+	_vm->_globals->_disableInventFl = oldDisableInventFl;
 	_vm->_graphicsManager.updateScreen();
 	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager->refreshScreenAndEvents();
@@ -156,21 +156,21 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 
 void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	// TODO: The original disables the mouse cursor here
-	bool oldDisableInventFl = _vm->_globals._disableInventFl;
-	_vm->_globals._disableInventFl = true;
+	bool oldDisableInventFl = _vm->_globals->_disableInventFl;
+	_vm->_globals->_disableInventFl = true;
 	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
-	_characterSize = _vm->_globals._catalogSize;
+	_characterSize = _vm->_globals->_catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
 		_characterBuffer = _vm->_fileManager->loadFile(filename);
 		_characterSize = _vm->_fileManager->fileSize(filename);
 	}
 
-	_vm->_globals._saveData->_data[svDialogField4] = 0;
+	_vm->_globals->_saveData->_data[svDialogField4] = 0;
 
 	getStringFromBuffer(0, _questionsFilename, (const char *)_characterBuffer);
 	getStringFromBuffer(20, _answersFilename, (const char *)_characterBuffer);
 
-	switch (_vm->_globals._language) {
+	switch (_vm->_globals->_language) {
 	case LANG_EN:
 		_questionsFilename = "RUEAN.TXT";
 		_answersFilename = "RUEAN.TXT";
@@ -195,7 +195,7 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(0);
 
-	if (!_vm->_globals._introSpeechOffFl) {
+	if (!_vm->_globals->_introSpeechOffFl) {
 		int answer;
 		do {
 			answer = dialogQuestion(true);
@@ -206,7 +206,7 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 		} while (answer != _dialogueMesgId4);
 	}
 
-	if (_vm->_globals._introSpeechOffFl) {
+	if (_vm->_globals->_introSpeechOffFl) {
 		int idx = 1;
 		int answer;
 		do
@@ -214,14 +214,14 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 		while (answer != -1);
 	}
 
-	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
+	_characterBuffer = _vm->_globals->freeMemory(_characterBuffer);
 	_vm->_eventsManager->_mouseCursorId = oldMouseCursorId;
 
 	_vm->_eventsManager->changeMouseCursor(oldMouseCursorId);
 	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	// TODO: The original re-enables the mouse cursor here
-	_vm->_globals._disableInventFl = oldDisableInventFl;
+	_vm->_globals->_disableInventFl = oldDisableInventFl;
 }
 
 void TalkManager::getStringFromBuffer(int srcStart, Common::String &dest, const char *srcData) {
@@ -349,7 +349,7 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 
 	int curBufVal = READ_LE_INT16((uint16 *)charBuf + 9);
 	if (curBufVal)
-		_vm->_globals._saveData->_data[svDialogField4] = curBufVal;
+		_vm->_globals->_saveData->_data[svDialogField4] = curBufVal;
 
 	if (!frameNumb)
 		frameNumb = 10;
@@ -473,26 +473,26 @@ void TalkManager::searchCharacterPalette(int startIdx, bool dark) {
 
 void TalkManager::dialogWait() {
 	for (int idx = 26; idx <= 30; ++idx) {
-		if (_vm->_globals._animBqe[idx]._enabledFl)
+		if (_vm->_globals->_animBqe[idx]._enabledFl)
 			BOB_VISU_PARLE(idx);
 	}
 }
 
 void TalkManager::dialogTalk() {
 	for (int idx = 26; idx <= 30; ++idx) {
-		if (_vm->_globals._animBqe[idx]._enabledFl)
+		if (_vm->_globals->_animBqe[idx]._enabledFl)
 			_vm->_objectsManager.hideBob(idx);
 	}
 
 	for (int idx = 26; idx <= 30; ++idx) {
-		if (_vm->_globals._animBqe[idx]._enabledFl)
+		if (_vm->_globals->_animBqe[idx]._enabledFl)
 			_vm->_objectsManager.resetBob(idx);
 	}
 }
 
 void TalkManager::dialogEndTalk() {
 	for (int idx = 21; idx <= 25; ++idx) {
-		if (_vm->_globals._animBqe[idx]._enabledFl)
+		if (_vm->_globals->_animBqe[idx]._enabledFl)
 			_vm->_objectsManager.hideBob(idx);
 	}
 
@@ -500,7 +500,7 @@ void TalkManager::dialogEndTalk() {
 	_vm->_eventsManager->refreshScreenAndEvents();
 
 	for (int idx = 21; idx <= 25; ++idx) {
-		if (_vm->_globals._animBqe[idx]._enabledFl)
+		if (_vm->_globals->_animBqe[idx]._enabledFl)
 			_vm->_objectsManager.resetBob(idx);
 	}
 }
@@ -531,7 +531,7 @@ int TalkManager::countBoxLines(int idx, const Common::String &file) {
 		error("Error opening file - %s", dest.c_str());
 
 	f.seek(indexData[idx]);
-	byte *decryptBuf = _vm->_globals.allocMemory(2058);
+	byte *decryptBuf = _vm->_globals->allocMemory(2058);
 	assert(decryptBuf != g_PTRNUL);
 
 	f.read(decryptBuf, 2048);
@@ -589,13 +589,13 @@ int TalkManager::countBoxLines(int idx, const Common::String &file) {
 		++lineCount;
 		curBufIndx += lineSize;
 	} while (curChar != '%');
-	_vm->_globals.freeMemory(decryptBuf);
+	_vm->_globals->freeMemory(decryptBuf);
 	return lineCount;
 }
 
 void TalkManager::VISU_PARLE() {
 	for (int idx = 21; idx <= 25; ++idx) {
-		if (_vm->_globals._animBqe[idx]._enabledFl)
+		if (_vm->_globals->_animBqe[idx]._enabledFl)
 			BOB_VISU_PARLE(idx);
 	}
 }
@@ -604,7 +604,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 	_vm->_objectsManager._priorityFl = true;
 	if (!_vm->_objectsManager._bob[idx]._bobMode) {
 		_vm->_objectsManager.resetBob(idx);
-		byte *bqeData = _vm->_globals._animBqe[idx]._data;
+		byte *bqeData = _vm->_globals->_animBqe[idx]._data;
 		int newMode = READ_LE_INT16(bqeData + 2);
 		if (!newMode)
 			newMode = 1;
@@ -612,7 +612,7 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 			_vm->_objectsManager._bob[idx]._isSpriteFl = true;
 			_vm->_objectsManager._bob[idx]._zoomFactor = 0;
 			_vm->_objectsManager._bob[idx]._flipFl = false;
-			_vm->_objectsManager._bob[idx]._animData = _vm->_globals._animBqe[idx]._data;
+			_vm->_objectsManager._bob[idx]._animData = _vm->_globals->_animBqe[idx]._data;
 			_vm->_objectsManager._bob[idx]._bobMode = 10;
 			bqeData = _characterSprite;
 			_vm->_objectsManager._bob[idx]._spriteData = _characterSprite;
@@ -641,11 +641,11 @@ void TalkManager::startCharacterAnim0(int startIdx, bool readOnlyFl) {
 		do {
 			if (!READ_LE_INT16(&_characterAnim[2 * idx + 4]))
 				break;
-			if (_vm->_globals._speed != 501)
+			if (_vm->_globals->_speed != 501)
 				_vm->_graphicsManager.fastDisplay(_characterSprite, _vm->_eventsManager->_startPos.x + READ_LE_INT16(&_characterAnim[2 * idx]),
 				    READ_LE_INT16(&_characterAnim[2 * idx + 2]), _characterAnim[2 * idx + 8]);
 			idx += 5;
-		} while (_vm->_globals._speed != 501);
+		} while (_vm->_globals->_speed != 501);
 	}
 }
 
@@ -698,8 +698,8 @@ void TalkManager::initCharacterAnim() {
 
 void TalkManager::clearCharacterAnim() {
 	for (int idx = 21; idx <= 34; ++idx) {
-		_vm->_globals._animBqe[idx]._data = _vm->_globals.freeMemory(_vm->_globals._animBqe[idx]._data);
-		_vm->_globals._animBqe[idx]._enabledFl = false;
+		_vm->_globals->_animBqe[idx]._data = _vm->_globals->freeMemory(_vm->_globals->_animBqe[idx]._data);
+		_vm->_globals->_animBqe[idx]._enabledFl = false;
 	}
 }
 
@@ -716,25 +716,25 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 				if (READ_BE_UINT32(curPtr) == MKTAG('A', 'N', 'I', 'M') || READ_BE_UINT24(curPtr) == MKTAG24('F', 'I', 'N'))
 					loopCond = true;
 				if (bufIndx > bufferSize) {
-					_vm->_globals._animBqe[idx]._enabledFl = false;
-					_vm->_globals._animBqe[idx]._data = g_PTRNUL;
+					_vm->_globals->_animBqe[idx]._enabledFl = false;
+					_vm->_globals->_animBqe[idx]._data = g_PTRNUL;
 					return false;
 				}
 				++bufIndx;
 				++animLength;
 				++curPtr;
 			} while (!loopCond);
-			_vm->_globals._animBqe[idx]._data = _vm->_globals.allocMemory(animLength + 50);
-			_vm->_globals._animBqe[idx]._enabledFl = true;
-			memcpy(_vm->_globals._animBqe[idx]._data, (const byte *)(bufPerso + bufPos + 5), 20);
+			_vm->_globals->_animBqe[idx]._data = _vm->_globals->allocMemory(animLength + 50);
+			_vm->_globals->_animBqe[idx]._enabledFl = true;
+			memcpy(_vm->_globals->_animBqe[idx]._data, (const byte *)(bufPerso + bufPos + 5), 20);
 			int bqeVal = READ_LE_INT16(bufPos + bufPerso + 29);
-			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 20, READ_LE_INT16(bufPos + bufPerso + 25));
-			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 22, READ_LE_INT16(bufPos + bufPerso + 27));
-			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 24, bqeVal);
-			WRITE_LE_UINT16(_vm->_globals._animBqe[idx]._data + 26, READ_LE_INT16(bufPos + bufPerso + 31));
-			_vm->_globals._animBqe[idx]._data[28] = bufPerso[bufPos + 33];
-			_vm->_globals._animBqe[idx]._data[29] = bufPerso[bufPos + 34];
-			byte *bqeCurData = _vm->_globals._animBqe[idx]._data + 20;
+			WRITE_LE_UINT16(_vm->_globals->_animBqe[idx]._data + 20, READ_LE_INT16(bufPos + bufPerso + 25));
+			WRITE_LE_UINT16(_vm->_globals->_animBqe[idx]._data + 22, READ_LE_INT16(bufPos + bufPerso + 27));
+			WRITE_LE_UINT16(_vm->_globals->_animBqe[idx]._data + 24, bqeVal);
+			WRITE_LE_UINT16(_vm->_globals->_animBqe[idx]._data + 26, READ_LE_INT16(bufPos + bufPerso + 31));
+			_vm->_globals->_animBqe[idx]._data[28] = bufPerso[bufPos + 33];
+			_vm->_globals->_animBqe[idx]._data[29] = bufPerso[bufPos + 34];
+			byte *bqeCurData = _vm->_globals->_animBqe[idx]._data + 20;
 			const byte *curBufPerso = bufPos + bufPerso + 25;
 			for (int i = 1; i < 5000; i++) {
 				bqeCurData += 10;
@@ -770,10 +770,10 @@ void TalkManager::REPONSE(int zone, int verb) {
 	do {
 		outerLoopFl = false;
 		bool tagFound = false;
-		if (_vm->_globals._answerBuffer == g_PTRNUL)
+		if (_vm->_globals->_answerBuffer == g_PTRNUL)
 			return;
 
-		byte *curAnswerBuf = _vm->_globals._answerBuffer;
+		byte *curAnswerBuf = _vm->_globals->_answerBuffer;
 		for (;;) {
 			if (READ_BE_UINT24(curAnswerBuf) == MKTAG24('F', 'I', 'N'))
 				return;
@@ -789,7 +789,7 @@ void TalkManager::REPONSE(int zone, int verb) {
 
 		// 'COD' tag found
 		curAnswerBuf += 5;
-		ptr = _vm->_globals.allocMemory(620);
+		ptr = _vm->_globals->allocMemory(620);
 		assert(ptr != g_PTRNUL);
 		memset(ptr, 0, 620);
 		uint16 curAnswerIdx = 0;
@@ -847,7 +847,7 @@ void TalkManager::REPONSE(int zone, int verb) {
 				innerLoopCond = true;
 			else if (opcodeType == 6) {
 				// JUMP
-				_vm->_globals.freeMemory(ptr);
+				_vm->_globals->freeMemory(ptr);
 				zoneObj = _vm->_objectsManager._jumpZone;
 				verbObj = _vm->_objectsManager._jumpVerb;
 				outerLoopFl = true;
@@ -855,14 +855,14 @@ void TalkManager::REPONSE(int zone, int verb) {
 			}
 		} while (!innerLoopCond);
 	} while (outerLoopFl);
-	_vm->_globals.freeMemory(ptr);
-	_vm->_globals._saveData->_data[svLastZoneNum] = 0;
+	_vm->_globals->freeMemory(ptr);
+	_vm->_globals->_saveData->_data[svLastZoneNum] = 0;
 	return;
 }
 
 void TalkManager::REPONSE2(int zone, int verb) {
 	int indx = 0;
-	if (verb != 5 || _vm->_globals._saveData->_data[svLastObjectIndex] != 4)
+	if (verb != 5 || _vm->_globals->_saveData->_data[svLastObjectIndex] != 4)
 		return;
 
 	if (zone == 22 || zone == 23) {
@@ -887,7 +887,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		_vm->_objectsManager.stopBobAnimation(6);
 		_vm->_objectsManager.setBobAnimation(8);
 		
-		switch (_vm->_globals._screenId) {
+		switch (_vm->_globals->_screenId) {
 		case 35:
 			indx = 201;
 			break;
@@ -910,7 +910,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 			indx = 213;
 			break;
 		}
-		_vm->_globals._saveData->_data[indx] = 2;
+		_vm->_globals->_saveData->_data[indx] = 2;
 		_vm->_linesManager.disableZone(22);
 		_vm->_linesManager.disableZone(23);
 	} else if (zone == 20 || zone == 21) {
@@ -934,7 +934,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		while (_vm->_objectsManager.getBobAnimDataIdx(5) < 12);
 		_vm->_objectsManager.stopBobAnimation(5);
 		_vm->_objectsManager.setBobAnimation(7);
-		switch (_vm->_globals._screenId) {
+		switch (_vm->_globals->_screenId) {
 		case 35:
 			indx = 200;
 			break;
@@ -957,7 +957,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 			indx = 212;
 			break;
 		}
-		_vm->_globals._saveData->_data[indx] = 2;
+		_vm->_globals->_saveData->_data[indx] = 2;
 		_vm->_linesManager.disableZone(21);
 		_vm->_linesManager.disableZone(20);
 	}
@@ -970,7 +970,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_graphicsManager._scrollStatus = 1;
 	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
-	_vm->_globals.resetHidingItems();
+	_vm->_globals->resetHidingItems();
 	
 	for (int i = 0; i <= 44; i++)
 		_vm->_linesManager.BOBZONE[i] = 0;
@@ -979,7 +979,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(0);
 	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
-	_characterSize = _vm->_globals._catalogSize;
+	_characterSize = _vm->_globals->_catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
 		_characterBuffer = _vm->_fileManager->loadFile(filename);
 		_characterSize = _vm->_fileManager->fileSize(filename);
@@ -992,7 +992,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	getStringFromBuffer(20, curScreenFilename, (const char *)_characterBuffer);
 
 	if (curScreenFilename == "NULL")
-		curScreenFilename = Common::String::format("IM%d", _vm->_globals._screenId);
+		curScreenFilename = Common::String::format("IM%d", _vm->_globals->_screenId);
 
 	_characterSprite = _vm->_fileManager->searchCat(spriteFilename, RES_SAN);
 	if (_characterSprite)
@@ -1013,18 +1013,18 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_objectsManager.PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, true);
 	startCharacterAnim0(_paletteBufferIdx, false);
-	byte *oldAnswerBufferPtr = _vm->_globals._answerBuffer;
-	_vm->_globals._answerBuffer = g_PTRNUL;
-	_vm->_globals._freezeCharacterFl = true;
+	byte *oldAnswerBufferPtr = _vm->_globals->_answerBuffer;
+	_vm->_globals->_answerBuffer = g_PTRNUL;
+	_vm->_globals->_freezeCharacterFl = true;
 	_vm->_objectsManager.loadLinkFile(screenFilename);
 	_vm->_objectsManager.PERSO_ON = true;
-	_vm->_globals._actionMoveTo = false;
+	_vm->_globals->_actionMoveTo = false;
 	_vm->_objectsManager._zoneNum = -1;
 	initCharacterAnim();
 	VISU_PARLE();
 	dialogWait();
 	_vm->_graphicsManager.initScreen(screenFilename, 2, true);
-	_vm->_globals._freezeCharacterFl = true;
+	_vm->_globals->_freezeCharacterFl = true;
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager._zoneNum = -1;
 	do {
@@ -1035,33 +1035,33 @@ void TalkManager::animateObject(const Common::String &filename) {
 			_vm->_objectsManager.handleRightButton();
 
 		_vm->_linesManager.checkZone();
-		if (_vm->_globals._actionMoveTo)
+		if (_vm->_globals->_actionMoveTo)
 			_vm->_objectsManager.PARADISE();
 		_vm->_eventsManager->refreshScreenAndEvents();
-	} while (!_vm->_globals._exitId);
+	} while (!_vm->_globals->_exitId);
 	dialogEndTalk();
 	dialogTalk();
 	clearCharacterAnim();
 	clearCharacterAnim();
-	_vm->_globals._introSpeechOffFl = false;
-	_characterBuffer = _vm->_globals.freeMemory(_characterBuffer);
-	_characterSprite = _vm->_globals.freeMemory(_characterSprite);
+	_vm->_globals->_introSpeechOffFl = false;
+	_characterBuffer = _vm->_globals->freeMemory(_characterBuffer);
+	_characterSprite = _vm->_globals->freeMemory(_characterSprite);
 	_vm->_graphicsManager.NB_SCREEN(false);
 	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
-	_vm->_globals.resetHidingItems();
+	_vm->_globals->resetHidingItems();
 	for (int i = 0; i <= 44; i++)
 		_vm->_linesManager.BOBZONE[i] = 0;
 
-	_vm->_globals.freeMemory(_vm->_globals._answerBuffer);
-	_vm->_globals._answerBuffer = oldAnswerBufferPtr;
+	_vm->_globals->freeMemory(_vm->_globals->_answerBuffer);
+	_vm->_globals->_answerBuffer = oldAnswerBufferPtr;
 	_vm->_objectsManager._disableFl = true;
 	_vm->_objectsManager.loadLinkFile(curScreenFilename);
 	_vm->_graphicsManager.initScreen(curScreenFilename, 2, true);
 	_vm->_objectsManager._disableFl = false;
-	_vm->_globals._freezeCharacterFl = false;
-	if (_vm->_globals._exitId == 101)
-		_vm->_globals._exitId = 0;
+	_vm->_globals->_freezeCharacterFl = false;
+	if (_vm->_globals->_exitId == 101)
+		_vm->_globals->_exitId = 0;
 
 	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
@@ -1081,7 +1081,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_graphicsManager.unlockScreen();
 	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
 	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
-	_vm->_globals._disableInventFl = false;
+	_vm->_globals->_disableInventFl = false;
 	_vm->_graphicsManager.updateScreen();
 	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager->refreshScreenAndEvents();

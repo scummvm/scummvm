@@ -57,34 +57,34 @@ int MenuManager::menu() {
 	while (!g_system->getEventManager()->shouldQuit()) {
 		_vm->_objectsManager._forestFl = false;
 		_vm->_eventsManager->_breakoutFl = false;
-		_vm->_globals._disableInventFl = true;
-		_vm->_globals._exitId = 0;
+		_vm->_globals->_disableInventFl = true;
+		_vm->_globals->_exitId = 0;
 
 		for (int idx = 0; idx < 31; ++idx)
-			_vm->_globals._inventory[idx] = 0;
+			_vm->_globals->_inventory[idx] = 0;
 
-		memset(_vm->_globals._saveData, 0, 2000);
+		memset(_vm->_globals->_saveData, 0, 2000);
 		_vm->_objectsManager.addObject(14);
 		memset(frameIndex, 0, sizeof(int) * ARRAYSIZE(frameIndex));
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			_vm->_graphicsManager.loadImage("MENU");
-		else if (_vm->_globals._language == LANG_EN)
+		else if (_vm->_globals->_language == LANG_EN)
 			_vm->_graphicsManager.loadImage("MENUAN");
-		else if (_vm->_globals._language == LANG_FR)
+		else if (_vm->_globals->_language == LANG_FR)
 			_vm->_graphicsManager.loadImage("MENUFR");
-		else if (_vm->_globals._language == LANG_SP)
+		else if (_vm->_globals->_language == LANG_SP)
 			_vm->_graphicsManager.loadImage("MENUES");
 
 		_vm->_graphicsManager.fadeInLong();
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			spriteData = _vm->_objectsManager.loadSprite("MENU.SPR");
-		else if (_vm->_globals._language == LANG_EN)
+		else if (_vm->_globals->_language == LANG_EN)
 			spriteData = _vm->_objectsManager.loadSprite("MENUAN.SPR");
-		else if (_vm->_globals._language == LANG_FR)
+		else if (_vm->_globals->_language == LANG_FR)
 			spriteData = _vm->_objectsManager.loadSprite("MENUFR.SPR");
-		else if (_vm->_globals._language == LANG_SP)
+		else if (_vm->_globals->_language == LANG_SP)
 			spriteData = _vm->_objectsManager.loadSprite("MENUES.SPR");
 
 		_vm->_eventsManager->mouseOn();
@@ -141,14 +141,14 @@ int MenuManager::menu() {
 			result = 1;
 			break;
 		} else if (menuIndex == LOAD_GAME) {
-			_vm->_globals._exitId = -1;
+			_vm->_globals->_exitId = -1;
 			_vm->_dialogsManager->showLoadGame();
 
-			if (_vm->_globals._exitId != -1) {
-				result = _vm->_globals._exitId;
+			if (_vm->_globals->_exitId != -1) {
+				result = _vm->_globals->_exitId;
 				break;
 			}
-			_vm->_globals._exitId = 0;
+			_vm->_globals->_exitId = 0;
 		} else if (menuIndex == OPTIONS) {
 			_vm->_dialogsManager->showOptionsDialog();
 		} else if (menuIndex == INTRODUCTION) {
@@ -159,8 +159,8 @@ int MenuManager::menu() {
 		}
 	}
 
-	_vm->_globals.freeMemory(spriteData);
-	_vm->_globals._disableInventFl = false;
+	_vm->_globals->freeMemory(spriteData);
+	_vm->_globals->_disableInventFl = false;
 	_vm->_graphicsManager.fadeOutLong();
 	return result;
 }

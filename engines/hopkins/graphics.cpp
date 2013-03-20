@@ -78,9 +78,9 @@ GraphicsManager::GraphicsManager() {
 }
 
 GraphicsManager::~GraphicsManager() {
-	_vm->_globals.freeMemory(_vesaScreen);
-	_vm->_globals.freeMemory(_vesaBuffer);
-	_vm->_globals.freeMemory(_screenBuffer);
+	_vm->_globals->freeMemory(_vesaScreen);
+	_vm->_globals->freeMemory(_vesaBuffer);
+	_vm->_globals->freeMemory(_screenBuffer);
 }
 
 void GraphicsManager::setParent(HopkinsEngine *vm) {
@@ -105,9 +105,9 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		initGraphics(width, height, true, &pixelFormat16);
 
 		// Init surfaces
-		_vesaScreen = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
-		_vesaBuffer = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
-		_screenBuffer = _vm->_globals.allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		_vesaScreen = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		_vesaBuffer = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		_screenBuffer = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 		_videoPtr = NULL;
 		_screenWidth = width;
@@ -312,7 +312,7 @@ void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte
 		// Load PCX from within the PIC resource
 		if (!f.open("PIC.RES"))
 			error("Error opening PIC.RES.");
-		f.seek(_vm->_globals._catalogPos);
+		f.seek(_vm->_globals->_catalogPos);
 	} else {
 		// Load stand alone PCX file
 		if (!f.open(file))
@@ -345,7 +345,7 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 
 	f.read(surface, 128);
 	int imageSize = filesize - 896;
-	byte *ptr = _vm->_globals.allocMemory(65024);
+	byte *ptr = _vm->_globals->allocMemory(65024);
 	size_t curBufSize;
 	int imageNumb;
 	int imageDataSize;
@@ -396,7 +396,7 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 	f.read(palette, 768);
 	f.close();
 
-	_vm->_globals.freeMemory(ptr);
+	_vm->_globals->freeMemory(ptr);
 }
 
 // Clear Palette
@@ -1063,7 +1063,7 @@ void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp,
 
 void GraphicsManager::endDisplayBob() {
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_globals._animBqe[idx]._enabledFl)
+		if (_vm->_globals->_animBqe[idx]._enabledFl)
 			_vm->_objectsManager.hideBob(idx);
 	}
 
@@ -1071,22 +1071,22 @@ void GraphicsManager::endDisplayBob() {
 	_vm->_eventsManager->refreshScreenAndEvents();
 
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_globals._animBqe[idx]._enabledFl)
+		if (_vm->_globals->_animBqe[idx]._enabledFl)
 			_vm->_objectsManager.resetBob(idx);
 	}
 
 	for (int idx = 1; idx <= 29; ++idx) {
-		_vm->_globals._lockedAnims[idx]._enableFl = false;
+		_vm->_globals->_lockedAnims[idx]._enableFl = false;
 	}
 
 	for (int idx = 1; idx <= 20; ++idx) {
-		_vm->_globals._animBqe[idx]._enabledFl = false;
+		_vm->_globals->_animBqe[idx]._enabledFl = false;
 	}
 }
 
 void GraphicsManager::displayAllBob() {
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_globals._animBqe[idx]._enabledFl)
+		if (_vm->_globals->_animBqe[idx]._enabledFl)
 			_vm->_objectsManager.displayBob(idx);
 	}
 }
@@ -1747,13 +1747,13 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 	}
 	if (!mode) {
 		filename = file + ".spr";
-		_vm->_globals.SPRITE_ECRAN = _vm->_globals.freeMemory(_vm->_globals.SPRITE_ECRAN);
+		_vm->_globals->SPRITE_ECRAN = _vm->_globals->freeMemory(_vm->_globals->SPRITE_ECRAN);
 		if (initializeScreen) {
-			_vm->_globals.SPRITE_ECRAN = _vm->_fileManager->searchCat(filename, RES_SLI);
-			if (_vm->_globals.SPRITE_ECRAN) {
-				_vm->_globals.SPRITE_ECRAN = _vm->_fileManager->loadFile(filename);
+			_vm->_globals->SPRITE_ECRAN = _vm->_fileManager->searchCat(filename, RES_SLI);
+			if (_vm->_globals->SPRITE_ECRAN) {
+				_vm->_globals->SPRITE_ECRAN = _vm->_fileManager->loadFile(filename);
 			} else {
-				_vm->_globals.SPRITE_ECRAN = _vm->_fileManager->loadFile("RES_SLI.RES");
+				_vm->_globals->SPRITE_ECRAN = _vm->_fileManager->loadFile("RES_SLI.RES");
 			}
 		}
 	}
@@ -1780,15 +1780,15 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 				doneFlag = true;
 		} while (!doneFlag);
 	}
-	_vm->_globals.freeMemory(ptr);
-	_vm->_globals._answerBuffer = _vm->_globals.freeMemory(_vm->_globals._answerBuffer);
+	_vm->_globals->freeMemory(ptr);
+	_vm->_globals->_answerBuffer = _vm->_globals->freeMemory(_vm->_globals->_answerBuffer);
 
 	filename = file + ".rep";
 	byte *dataP = _vm->_fileManager->searchCat(filename, RES_REP);
 	if (dataP == g_PTRNUL)
 		dataP = _vm->_fileManager->loadFile(filename);
 
-	_vm->_globals._answerBuffer = dataP;
+	_vm->_globals->_answerBuffer = dataP;
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager._changeVerbFl = false;
 }

@@ -149,8 +149,8 @@ public:
 	EventsManager *_eventsManager;
 	FileManager *_fileManager;
 	FontManager *_fontManager;
+	Globals *_globals;
 
-	Globals _globals;
 	GraphicsManager _graphicsManager;
 	LinesManager _linesManager;
 	MenuManager _menuManager;

@@ -273,7 +273,7 @@ void SoundManager::loadAnimSound() {
 }
 
 void SoundManager::playAnimSound(int soundNumber) {
-	if (!_vm->_globals._censorshipFl && _specialSoundNum == 2) {
+	if (!_vm->_globals->_censorshipFl && _specialSoundNum == 2) {
 		switch (soundNumber) {
 		case 20:
 			playSample(5);
@@ -524,41 +524,41 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
 		// Win95 and Linux versions uses another set of names
-		else if (_vm->_globals._language == LANG_FR)
+		else if (_vm->_globals->_language == LANG_FR)
 			filename = "RES_VFR.RES";
-		else if (_vm->_globals._language == LANG_EN)
+		else if (_vm->_globals->_language == LANG_EN)
 			filename = "RES_VAN.RES";
-		else if (_vm->_globals._language == LANG_SP)
+		else if (_vm->_globals->_language == LANG_SP)
 			filename = "RES_VES.RES";
 
-		catPos = _vm->_globals._catalogPos;
-		catLen = _vm->_globals._catalogSize;
+		catPos = _vm->_globals->_catalogPos;
+		catLen = _vm->_globals->_catalogSize;
 	} else if (!_vm->_fileManager->searchCat(filename + ".APC", RES_VOI)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
 		// Win95 and Linux versions uses another set of names
-		else if (_vm->_globals._language == LANG_FR)
+		else if (_vm->_globals->_language == LANG_FR)
 			filename = "RES_VFR.RES";
-		else if (_vm->_globals._language == LANG_EN)
+		else if (_vm->_globals->_language == LANG_EN)
 			filename = "RES_VAN.RES";
-		else if (_vm->_globals._language == LANG_SP)
+		else if (_vm->_globals->_language == LANG_SP)
 			filename = "RES_VES.RES";
 
-		catPos = _vm->_globals._catalogPos;
-		catLen = _vm->_globals._catalogSize;
+		catPos = _vm->_globals->_catalogPos;
+		catLen = _vm->_globals->_catalogSize;
 	} else if (!_vm->_fileManager->searchCat(filename + ".RAW", RES_VOI)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
 		// Win95 and Linux versions uses another set of names
-		else if (_vm->_globals._language == LANG_FR)
+		else if (_vm->_globals->_language == LANG_FR)
 			filename = "RES_VFR.RES";
-		else if (_vm->_globals._language == LANG_EN)
+		else if (_vm->_globals->_language == LANG_EN)
 			filename = "RES_VAN.RES";
-		else if (_vm->_globals._language == LANG_SP)
+		else if (_vm->_globals->_language == LANG_SP)
 			filename = "RES_VES.RES";
 
-		catPos = _vm->_globals._catalogPos;
-		catLen = _vm->_globals._catalogSize;
+		catPos = _vm->_globals->_catalogPos;
+		catLen = _vm->_globals->_catalogSize;
 	} else {
 		if (!f.exists(filename + ".WAV")) {
 			if (!f.exists(filename + ".APC"))

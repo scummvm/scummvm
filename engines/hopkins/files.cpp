@@ -47,7 +47,7 @@ byte *FileManager::loadFile(const Common::String &file) {
 
 	// Allocate space for the file contents
 	size_t filesize = f.size();
-	byte *data = _vm->_globals.allocMemory(filesize);
+	byte *data = _vm->_globals->allocMemory(filesize);
 	if (!data)
 		error("Error allocating space for file being loaded - %s", file.c_str());
 
@@ -68,16 +68,16 @@ int FileManager::readStream(Common::ReadStream &stream, void *buf, size_t nbytes
  * Initialize censorship based on blood.dat file
  */
 void FileManager::initCensorship() {
-	_vm->_globals._censorshipFl = false;
+	_vm->_globals->_censorshipFl = false;
 
 	// If file doesn't exist, fallback to uncensored
 	if (fileExists("BLOOD.DAT")) {
 		char *data = (char *)loadFile("BLOOD.DAT");
 
 		if ((data[6] == 'u' && data[7] == 'k') || (data[6] == 'U' && data[7] == 'K'))
-			_vm->_globals._censorshipFl = true;
+			_vm->_globals->_censorshipFl = true;
 
-		_vm->_globals.freeMemory((byte *)data);
+		_vm->_globals->freeMemory((byte *)data);
 	}
 }
 
@@ -169,7 +169,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
 			tmpFilename = "ENG_VOI.CAT";
 		// Win95 and Linux versions uses another set of names
 		else {
-			switch (_vm->_globals._language) {
+			switch (_vm->_globals->_language) {
 			case LANG_EN:
 				tmpFilename = "RES_VAN.CAT";
 				break;
@@ -204,32 +204,32 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
 		if (name == filename) {
 			// Found entry for file, so get it's details from the catalogue entry
 			const byte *pData = ptr + offsetVal;
-			_vm->_globals._catalogPos = READ_LE_UINT32(pData + 15);
-			_vm->_globals._catalogSize = READ_LE_UINT32(pData + 19);
+			_vm->_globals->_catalogPos = READ_LE_UINT32(pData + 15);
+			_vm->_globals->_catalogSize = READ_LE_UINT32(pData + 19);
 			matchFlag = true;
 		}
 
 		if (name == "FINIS") {
-			_vm->_globals.freeMemory(ptr);
+			_vm->_globals->freeMemory(ptr);
 			return g_PTRNUL;
 		}
 
 		offsetVal += 23;
 	}
 
-	_vm->_globals.freeMemory(ptr);
+	_vm->_globals->freeMemory(ptr);
 
 	if (secondaryFilename != "") {
 		if (!f.open(secondaryFilename))
 			error("CHARGE_FICHIER");
 
-		f.seek(_vm->_globals._catalogPos);
+		f.seek(_vm->_globals->_catalogPos);
 
-		byte *catData = _vm->_globals.allocMemory(_vm->_globals._catalogSize);
+		byte *catData = _vm->_globals->allocMemory(_vm->_globals->_catalogSize);
 		if (catData == g_PTRNUL)
 			error("CHARGE_FICHIER");
 
-		readStream(f, catData, _vm->_globals._catalogSize);
+		readStream(f, catData, _vm->_globals->_catalogSize);
 		f.close();
 		result = catData;
 	} else {

@@ -62,7 +62,9 @@ const int HOPKINS_PERSO_2[] = {
 		0, 2, 0, 2, 0, 2, 0, 1, 0, 2, 0, 2
 };
 
-Globals::Globals() {
+Globals::Globals(HopkinsEngine *vm) {
+	_vm = vm;
+
 	// Set up the special g_PTRNUL variable
 	g_PTRNUL = (byte *)malloc(16);
 	strcpy((char *)g_PTRNUL, "POINTERNULL");
@@ -185,10 +187,6 @@ Globals::~Globals() {
 	clearVBob();
 
 	free(g_PTRNUL);
-}
-
-void Globals::setParent(HopkinsEngine *vm) {
-	_vm = vm;
 }
 
 void Globals::setConfig() {

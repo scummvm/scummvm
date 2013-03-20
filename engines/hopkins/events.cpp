@@ -59,8 +59,8 @@ EventsManager::EventsManager(HopkinsEngine *vm) {
 }
 
 EventsManager::~EventsManager() {
-	_vm->_globals.freeMemory(_objectBuf);
-	_vm->_globals.freeMemory(_mouseCursor);
+	_vm->_globals->freeMemory(_objectBuf);
+	_vm->_globals->freeMemory(_mouseCursor);
 }
 
 void EventsManager::initMouseData() {
@@ -77,7 +77,7 @@ void EventsManager::initMouseData() {
 		_mouseSizeY = 20;
 	}
 
-	switch (_vm->_globals._language) {
+	switch (_vm->_globals->_language) {
 	case LANG_EN:
 		if (!_mouseLinuxFl)
 			_mouseCursor = _vm->_fileManager->loadFile("SOUAN.SPR");
@@ -185,7 +185,7 @@ void EventsManager::changeMouseCursor(int id) {
 	if (_mouseCursorId == 23)
 		return;
 
-	if (id == 4 && _mouseCursorId == 4 && _vm->_globals._freezeCharacterFl)
+	if (id == 4 && _mouseCursorId == 4 && _vm->_globals->_freezeCharacterFl)
 		cursorId = 0;
 	if (cursorId == 25)
 		cursorId = 5;
@@ -364,8 +364,8 @@ void EventsManager::refreshScreenAndEvents() {
 		width = _mouseSizeX;
 		height = _mouseSizeY;
 		if (_mouseCursorId == 23) {
-			width = _vm->_globals._objectWidth;
-			height = _vm->_globals._objectHeight;
+			width = _vm->_globals->_objectWidth;
+			height = _vm->_globals->_objectHeight;
 		} else {
 			if (_breakoutFl) {
 				if (xp < _vm->_graphicsManager._minX)
@@ -392,7 +392,7 @@ void EventsManager::refreshScreenAndEvents() {
 		}
 	}
 
-	if (!_vm->_globals._linuxEndDemoFl)
+	if (!_vm->_globals->_linuxEndDemoFl)
 		_vm->_objectsManager.displaySprite();
 	if (!_mouseFl) {
 		updateCursor();
@@ -411,14 +411,14 @@ void EventsManager::refreshScreenAndEvents() {
 		_vm->_graphicsManager.addDirtyRect(xp, yp, right, bottom);
 	}
 
-	_vm->_globals._speed = 2;
+	_vm->_globals->_speed = 2;
 	bool externalLoopFl = false;
 	do {
 		while (!_vm->shouldQuit()) {
 			checkForNextFrameCounter();
 			bool innerLoopFl = false;
 
-			while (_breakoutFl || _vm->_globals.iRegul != 1) {
+			while (_breakoutFl || _vm->_globals->iRegul != 1) {
 				checkForNextFrameCounter();
 
 				if (!_breakoutFl) {
@@ -430,7 +430,7 @@ void EventsManager::refreshScreenAndEvents() {
 					break;
 				}
 			}
-			if (innerLoopFl || _vm->_globals._speed != 2)
+			if (innerLoopFl || _vm->_globals->_speed != 2)
 				break;
 			if (externalLoopFl ||_rateCounter > 9) {
 				externalLoopFl = true;
@@ -439,8 +439,8 @@ void EventsManager::refreshScreenAndEvents() {
 		}
 		if (externalLoopFl)
 			break;
-	} while (!_vm->shouldQuit() && _vm->_globals.iRegul == 3 && _rateCounter <= 15);
-	_vm->_globals._speed = 2;
+	} while (!_vm->shouldQuit() && _vm->_globals->iRegul == 3 && _rateCounter <= 15);
+	_vm->_globals->_speed = 2;
 	_rateCounter = 0;
 	if (!_vm->_graphicsManager._largeScreenFl || _vm->_graphicsManager._scrollStatus == 1) {
 		_vm->_graphicsManager.displayDirtyRects();
@@ -487,14 +487,14 @@ void EventsManager::updateCursor() {
 	Common::Rect clipBounds(_vm->_graphicsManager._minX, _vm->_graphicsManager._minY,
 		_vm->_graphicsManager._maxX, _vm->_graphicsManager._maxY);
 	_vm->_graphicsManager._minX = _vm->_graphicsManager._minY = 0;
-	_vm->_graphicsManager._maxX = _vm->_globals._objectWidth;
-	_vm->_graphicsManager._maxY = _vm->_globals._objectHeight;
+	_vm->_graphicsManager._maxX = _vm->_globals->_objectWidth;
+	_vm->_graphicsManager._maxY = _vm->_globals->_objectHeight;
 	int pitch = _vm->_graphicsManager._lineNbr2;
-	_vm->_graphicsManager._lineNbr2 = _vm->_globals._objectWidth;
+	_vm->_graphicsManager._lineNbr2 = _vm->_globals->_objectWidth;
 
 	// Create the temporary cursor surface
-	byte *cursorSurface = new byte[_vm->_globals._objectHeight * _vm->_globals._objectWidth];
-	Common::fill(cursorSurface, cursorSurface + _vm->_globals._objectHeight * _vm->_globals._objectWidth, 0);
+	byte *cursorSurface = new byte[_vm->_globals->_objectHeight * _vm->_globals->_objectWidth];
+	Common::fill(cursorSurface, cursorSurface + _vm->_globals->_objectHeight * _vm->_globals->_objectWidth, 0);
 
 	if (_mouseCursorId != 23) {
 		// Draw standard cursor
@@ -530,7 +530,7 @@ void EventsManager::updateCursor() {
 
 	// Set the ScummVM cursor from the surface
 	CursorMan.replaceCursorPalette(cursorPalette, 0, PALETTE_SIZE - 1);
-	CursorMan.replaceCursor(cursorSurface, _vm->_globals._objectWidth, _vm->_globals._objectHeight,
+	CursorMan.replaceCursor(cursorSurface, _vm->_globals->_objectWidth, _vm->_globals->_objectHeight,
 		xOffset, 0, 0, true);
 
 	// Delete the cursor surface and palette
