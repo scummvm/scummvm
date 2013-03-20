@@ -72,7 +72,7 @@ void DialogsManager::showOptionsDialog() {
 	_vm->_globals->_optionDialogSpr = _vm->_fileManager->loadFile(filename);
 	_vm->_globals->_optionDialogFl = true;
 
-	int scrollOffset = _vm->_graphicsManager._scrollOffset;
+	int scrollOffset = _vm->_graphicsManager->_scrollOffset;
 	bool doneFlag = false;
 	do {
 		if (_vm->_eventsManager->getMouseButton()) {
@@ -196,45 +196,45 @@ void DialogsManager::showOptionsDialog() {
 			if (mousePos.x >= scrollOffset + 355 && mousePos.y > 285 && mousePos.x <= scrollOffset + 490 && mousePos.y <= 310)
 				doneFlag = true;
 			if (mousePos.x >= scrollOffset + 300 && mousePos.y > 194 && mousePos.x <= scrollOffset + 358 && mousePos.y <= 219) {
-				switch (_vm->_graphicsManager._scrollSpeed) {
+				switch (_vm->_graphicsManager->_scrollSpeed) {
 				case 1:
-					_vm->_graphicsManager._scrollSpeed = 2;
+					_vm->_graphicsManager->_scrollSpeed = 2;
 					break;
 				case 2:
-					_vm->_graphicsManager._scrollSpeed = 4;
+					_vm->_graphicsManager->_scrollSpeed = 4;
 					break;
 				case 4:
-					_vm->_graphicsManager._scrollSpeed = 8;
+					_vm->_graphicsManager->_scrollSpeed = 8;
 					break;
 				case 8:
-					_vm->_graphicsManager._scrollSpeed = 16;
+					_vm->_graphicsManager->_scrollSpeed = 16;
 					break;
 				case 16:
-					_vm->_graphicsManager._scrollSpeed = 32;
+					_vm->_graphicsManager->_scrollSpeed = 32;
 					break;
 				case 32:
-					_vm->_graphicsManager._scrollSpeed = 48;
+					_vm->_graphicsManager->_scrollSpeed = 48;
 					break;
 				case 48:
-					_vm->_graphicsManager._scrollSpeed = 64;
+					_vm->_graphicsManager->_scrollSpeed = 64;
 					break;
 				case 64:
-					_vm->_graphicsManager._scrollSpeed = 128;
+					_vm->_graphicsManager->_scrollSpeed = 128;
 					break;
 				case 128:
-					_vm->_graphicsManager._scrollSpeed = 160;
+					_vm->_graphicsManager->_scrollSpeed = 160;
 					break;
 				case 160:
-					_vm->_graphicsManager._scrollSpeed = 320;
+					_vm->_graphicsManager->_scrollSpeed = 320;
 					break;
 				case 320:
-					_vm->_graphicsManager._scrollSpeed = 1;
+					_vm->_graphicsManager->_scrollSpeed = 1;
 					break;
 				}
 			}
 
 			// Values are blocked, thus handling the zone is useless
-			//if (mousePos.x >= _vm->_graphicsManager.ofscroll + 348 && mousePos.y > 248 && mousePos.x <= _vm->_graphicsManager.ofscroll + 394 && mousePos.y <= 273)
+			//if (mousePos.x >= _vm->_graphicsManager->ofscroll + 348 && mousePos.y > 248 && mousePos.x <= _vm->_graphicsManager->ofscroll + 394 && mousePos.y <= 273)
 			//	_vm->_globals->_speed = 2;
 
 			if (   mousePos.x < scrollOffset + 165 || mousePos.x > scrollOffset + 496 
@@ -256,7 +256,7 @@ void DialogsManager::showOptionsDialog() {
 
 		_vm->_globals->_menuDisplayType = 9;
 
-		switch (_vm->_graphicsManager._scrollSpeed) {
+		switch (_vm->_graphicsManager->_scrollSpeed) {
 		case 1:
 			_vm->_globals->_menuScrollSpeed = 12;
 			break;
@@ -298,9 +298,9 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (!doneFlag);
 
-	_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, scrollOffset + 164,
-		107, 335, 215, _vm->_graphicsManager._vesaBuffer, scrollOffset + 164, 107);
-	_vm->_graphicsManager.addDirtyRect(scrollOffset + 164, 107, scrollOffset + 498, 320);
+	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, scrollOffset + 164,
+		107, 335, 215, _vm->_graphicsManager->_vesaBuffer, scrollOffset + 164, 107);
+	_vm->_graphicsManager->addDirtyRect(scrollOffset + 164, 107, scrollOffset + 498, 320);
 
 	_vm->_globals->_optionDialogSpr = _vm->_globals->freeMemory(_vm->_globals->_optionDialogSpr);
 	_vm->_globals->_optionDialogFl = false;
@@ -310,7 +310,7 @@ void DialogsManager::showInventory() {
 	if (_removeInventFl || _inventDisplayedFl || _vm->_globals->_disableInventFl)
 		return;
 
-	_vm->_graphicsManager._scrollStatus = 1;
+	_vm->_graphicsManager->_scrollStatus = 1;
 	_vm->_objectsManager._eraseVisibleCounter = 4;
 	_vm->_objectsManager._visibleFl = false;
 	for (int i = 0; i <= 1; i++) {
@@ -327,7 +327,7 @@ void DialogsManager::showInventory() {
 		_vm->_eventsManager->_curMouseButton = 0;
 		_vm->_eventsManager->_mouseButton = 0;
 		_vm->_globals->_disableInventFl = true;
-		_vm->_graphicsManager.SETCOLOR4(251, 100, 100, 100);
+		_vm->_graphicsManager->SETCOLOR4(251, 100, 100, 100);
 
 		Common::String filename;
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
@@ -357,12 +357,12 @@ void DialogsManager::showInventory() {
 
 		_inventBuf2 = _vm->_fileManager->loadFile("INVENT2.SPR");
 
-		_inventX = _vm->_graphicsManager._scrollOffset + 152;
+		_inventX = _vm->_graphicsManager->_scrollOffset + 152;
 		_inventY = 114;
 		_inventWidth = _vm->_objectsManager.getWidth(_inventWin1, 0);
 		_inventHeight = _vm->_objectsManager.getHeight(_inventWin1, 0);
 
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _inventWin1, _inventX + 300, 414, 0, 0, 0, false);
+		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, _inventWin1, _inventX + 300, 414, 0, 0, 0, false);
 		int curPosY = 0;
 		int inventCount = 0;
 		for (int inventLine = 1; inventLine <= 5; inventLine++) {
@@ -373,7 +373,7 @@ void DialogsManager::showInventory() {
 				// The last two zones are not reserved for the inventory: Options and Save/Load
 				if (inventIdx && inventCount <= 29) {
 					byte *obj = _vm->_objectsManager.loadObjectFromFile(inventIdx, false);
-					_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, obj, _inventX + curPosX + 6,
+					_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, obj, _inventX + curPosX + 6,
 						curPosY + 120, _vm->_globals->_objectWidth, _vm->_globals->_objectHeight);
 					_vm->_globals->freeMemory(obj);
 				}
@@ -381,7 +381,7 @@ void DialogsManager::showInventory() {
 			};
 			curPosY += 38;
 		}
-		_vm->_graphicsManager.copySurfaceRect(_vm->_graphicsManager._vesaBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
+		_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_vesaBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 		_vm->_eventsManager->_curMouseButton = 0;
 		int newInventoryItem = 0;
 
@@ -449,8 +449,8 @@ void DialogsManager::showInventory() {
 	_vm->_fontManager->hideText(9);
 	if (_inventDisplayedFl) {
 		_inventDisplayedFl = false;
-		_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _inventX, 114, _inventWidth, _inventHeight, _vm->_graphicsManager._vesaBuffer, _inventX, 114);
-		_vm->_graphicsManager.addDirtyRect(_inventX, 114, _inventX + _inventWidth, _inventWidth + 114);
+		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _inventX, 114, _inventWidth, _inventHeight, _vm->_graphicsManager->_vesaBuffer, _inventX, 114);
+		_vm->_graphicsManager->addDirtyRect(_inventX, 114, _inventX + _inventWidth, _inventWidth + 114);
 		_vm->_objectsManager.BOBTOUS = true;
 	}
 
@@ -469,7 +469,7 @@ void DialogsManager::showInventory() {
 	_vm->_objectsManager._oldBorderPos = Common::Point(0, 0);
 	_vm->_objectsManager._borderPos = Common::Point(0, 0);
 	_vm->_globals->_disableInventFl = false;
-	_vm->_graphicsManager._scrollStatus = 0;
+	_vm->_graphicsManager->_scrollStatus = 0;
 }
 
 /**
@@ -480,41 +480,41 @@ void DialogsManager::inventAnim() {
 		return;
 
 	if (_vm->_objectsManager._eraseVisibleCounter && !_vm->_objectsManager._visibleFl) {
-		_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _vm->_objectsManager._oldInventoryPosX, 27, 48, 38,
-			_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._oldInventoryPosX, 27);
-		_vm->_graphicsManager.addDirtyRect(_vm->_objectsManager._oldInventoryPosX, 27, _vm->_objectsManager._oldInventoryPosX + 48, 65);
+		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _vm->_objectsManager._oldInventoryPosX, 27, 48, 38,
+			_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._oldInventoryPosX, 27);
+		_vm->_graphicsManager->addDirtyRect(_vm->_objectsManager._oldInventoryPosX, 27, _vm->_objectsManager._oldInventoryPosX + 48, 65);
 		--_vm->_objectsManager._eraseVisibleCounter;
 	}
 
 	if (_vm->_objectsManager._visibleFl) {
 		if (_vm->_objectsManager._oldInventoryPosX <= 1)
 			_vm->_objectsManager._oldInventoryPosX = 2;
-		_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _vm->_objectsManager._oldInventoryPosX, 27, 48, 38,
-			_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._oldInventoryPosX, 27);
+		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _vm->_objectsManager._oldInventoryPosX, 27, 48, 38,
+			_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._oldInventoryPosX, 27);
 
-		_vm->_graphicsManager.addDirtyRect(_vm->_objectsManager._oldInventoryPosX, 27, _vm->_objectsManager._oldInventoryPosX + 48, 65);
-		int newOffset = _vm->_graphicsManager._scrollOffset + 2;
-		_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _inventoryIcons, newOffset + 300, 327, 0);
-		_vm->_graphicsManager.addDirtyRect(newOffset, 27, newOffset + 45, 62);
+		_vm->_graphicsManager->addDirtyRect(_vm->_objectsManager._oldInventoryPosX, 27, _vm->_objectsManager._oldInventoryPosX + 48, 65);
+		int newOffset = _vm->_graphicsManager->_scrollOffset + 2;
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _inventoryIcons, newOffset + 300, 327, 0);
+		_vm->_graphicsManager->addDirtyRect(newOffset, 27, newOffset + 45, 62);
 		_vm->_objectsManager._oldInventoryPosX = newOffset;
 	}
 
 	if (_vm->_globals->_saveData->_data[svField357] == 1) {
 		if (_vm->_globals->_saveData->_data[svField353] == 1)
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._headSprites, 832, 325, 0, 0, 0, false);
+			_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._headSprites, 832, 325, 0, 0, 0, false);
 		if (_vm->_globals->_saveData->_data[svField355] == 1)
-			_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._headSprites, 866, 325, 1, 0, 0, false);
-		_vm->_graphicsManager.addDirtyRect(532, 25, 560, 60);
-		_vm->_graphicsManager.addDirtyRect(566, 25, 594, 60);
+			_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._headSprites, 866, 325, 1, 0, 0, false);
+		_vm->_graphicsManager->addDirtyRect(532, 25, 560, 60);
+		_vm->_graphicsManager->addDirtyRect(566, 25, 594, 60);
 	}
 	if (_vm->_globals->_saveData->_data[svField356] == 1) {
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._headSprites, 832, 325, 0, 0, 0, false);
-		_vm->_graphicsManager.addDirtyRect(532, 25, 560, 60);
+		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._headSprites, 832, 325, 0, 0, 0, false);
+		_vm->_graphicsManager->addDirtyRect(532, 25, 560, 60);
 	}
 
 	if (_vm->_globals->_saveData->_data[svField354] == 1) {
-		_vm->_graphicsManager.Affiche_Perfect(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._headSprites, 832, 325, 0, 0, 0, false);
-		_vm->_graphicsManager.addDirtyRect(532, 25, 560, 60);
+		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._headSprites, 832, 325, 0, 0, 0, false);
+		_vm->_graphicsManager->addDirtyRect(532, 25, 560, 60);
 	}
 }
 
@@ -537,19 +537,19 @@ void DialogsManager::testDialogOpening() {
 		showInventory();
 		break;
 	case KEY_OPTIONS:
-		_vm->_graphicsManager._scrollStatus = 1;
+		_vm->_graphicsManager->_scrollStatus = 1;
 		showOptionsDialog();
-		_vm->_graphicsManager._scrollStatus = 0;
+		_vm->_graphicsManager->_scrollStatus = 0;
 		break;
 	case KEY_LOAD:
-		_vm->_graphicsManager._scrollStatus = 1;
+		_vm->_graphicsManager->_scrollStatus = 1;
 		showLoadGame();
-		_vm->_graphicsManager._scrollStatus = 0;
+		_vm->_graphicsManager->_scrollStatus = 0;
 		break;
 	case KEY_SAVE:
-		_vm->_graphicsManager._scrollStatus = 1;
+		_vm->_graphicsManager->_scrollStatus = 1;
 		showSaveGame();
-		_vm->_graphicsManager._scrollStatus = 0;
+		_vm->_graphicsManager->_scrollStatus = 0;
 		break;
 	default:
 		break;
@@ -572,8 +572,8 @@ void DialogsManager::showLoadGame() {
 		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (!_vm->shouldQuit() && (!slotNumber || _vm->_eventsManager->getMouseButton() != 1));
 	_vm->_objectsManager._saveLoadFl = false;
-	_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353, _vm->_graphicsManager._vesaBuffer, _vm->_eventsManager->_startPos.x + 183, 60);
-	_vm->_graphicsManager.addDirtyRect(_vm->_eventsManager->_startPos.x + 183, 60, 457, 413);
+	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353, _vm->_graphicsManager->_vesaBuffer, _vm->_eventsManager->_startPos.x + 183, 60);
+	_vm->_graphicsManager->addDirtyRect(_vm->_eventsManager->_startPos.x + 183, 60, 457, 413);
 	_vm->_objectsManager.BOBTOUS = true;
 	_vm->_objectsManager._saveLoadSprite = _vm->_globals->freeMemory(_vm->_objectsManager._saveLoadSprite);
 	_vm->_objectsManager._saveLoadSprite2 = _vm->_globals->freeMemory(_vm->_objectsManager._saveLoadSprite2);
@@ -601,8 +601,8 @@ void DialogsManager::showSaveGame() {
 	} while (!_vm->shouldQuit() && (!slotNumber || _vm->_eventsManager->getMouseButton() != 1));
 
 	_vm->_objectsManager._saveLoadFl = false;
-	_vm->_graphicsManager.copySurface(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353, _vm->_graphicsManager._vesaBuffer, _vm->_eventsManager->_startPos.x + 183, 60);
-	_vm->_graphicsManager.addDirtyRect(_vm->_eventsManager->_startPos.x + 183, 60, _vm->_eventsManager->_startPos.x + 457, 413);
+	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353, _vm->_graphicsManager->_vesaBuffer, _vm->_eventsManager->_startPos.x + 183, 60);
+	_vm->_graphicsManager->addDirtyRect(_vm->_eventsManager->_startPos.x + 183, 60, _vm->_eventsManager->_startPos.x + 457, 413);
 	_vm->_objectsManager.BOBTOUS = true;
 	_vm->_objectsManager._saveLoadSprite = _vm->_globals->freeMemory(_vm->_objectsManager._saveLoadSprite);
 	_vm->_objectsManager._saveLoadSprite2 = _vm->_globals->freeMemory(_vm->_objectsManager._saveLoadSprite2);
@@ -642,18 +642,18 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 
 	_vm->_objectsManager._saveLoadSprite = _vm->_objectsManager.loadSprite(filename);
 	_vm->_objectsManager._saveLoadSprite2 = _vm->_objectsManager.loadSprite("SAVE2.SPR");
-	_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 483, 360, 0);
+	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 483, 360, 0);
 
 	if (_vm->_globals->_language == LANG_FR) {
 		if (mode == MODE_SAVE)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 525, 375, 1);
+			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 525, 375, 1);
 		else if (mode == MODE_LOAD)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 515, 375, 2);
+			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 515, 375, 2);
 	} else {
 		if (mode == MODE_SAVE)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 535, 372, 1);
+			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 535, 372, 1);
 		else if (mode == MODE_LOAD)
-			_vm->_graphicsManager.Sprite_Vesa(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 539, 372, 2);
+			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 539, 372, 2);
 	}
 
 	for (int slotNumber = 1; slotNumber <= 6; ++slotNumber) {
@@ -666,22 +666,22 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 
 			switch (slotNumber) {
 			case 1:
-				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 112, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 112, 128, 87);
 				break;
 			case 2:
-				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 112, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 112, 128, 87);
 				break;
 			case 3:
-				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 203, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 203, 128, 87);
 				break;
 			case 4:
-				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 203, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 203, 128, 87);
 				break;
 			case 5:
-				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 294, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 294, 128, 87);
 				break;
 			case 6:
-				_vm->_graphicsManager.restoreSurfaceRect(_vm->_graphicsManager._vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 294, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 294, 128, 87);
 				break;
 			}
 
@@ -691,7 +691,7 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 		}
 	}
 
-	_vm->_graphicsManager.copySurfaceRect(_vm->_graphicsManager._vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353);
+	_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager._saveLoadSprite, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353);
 	_vm->_objectsManager._saveLoadFl = true;
 	_vm->_objectsManager._saveLoadX = 0;
 	_vm->_objectsManager._saveLoadY = 0;
@@ -704,7 +704,7 @@ int DialogsManager::searchSavegames() {
 	int xp = _vm->_eventsManager->getMouseX();
 	int yp = _vm->_eventsManager->getMouseY();
 
-	_vm->_graphicsManager._scrollOffset = _vm->_eventsManager->_startPos.x;
+	_vm->_graphicsManager->_scrollOffset = _vm->_eventsManager->_startPos.x;
 
 	int slotNumber = 0;
 	if (yp >= 112 && yp <= 198) {
@@ -712,32 +712,32 @@ int DialogsManager::searchSavegames() {
 			slotNumber = 1;
 			_vm->_objectsManager._saveLoadX = 189;
 			_vm->_objectsManager._saveLoadY = 111;
-		} else if (xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452) {
+		} else if (xp > _vm->_graphicsManager->_scrollOffset + 322 && xp < _vm->_graphicsManager->_scrollOffset + 452) {
 			slotNumber = 2;
 			_vm->_objectsManager._saveLoadX = 322;
 			_vm->_objectsManager._saveLoadY = 111;
 		}
 	} else if (yp >= 203 && yp <= 289) {
-		if (xp > _vm->_graphicsManager._scrollOffset + 189 && xp < _vm->_graphicsManager._scrollOffset + 318) {
+		if (xp > _vm->_graphicsManager->_scrollOffset + 189 && xp < _vm->_graphicsManager->_scrollOffset + 318) {
 			slotNumber = 3;
 			_vm->_objectsManager._saveLoadX = 189;
 			_vm->_objectsManager._saveLoadY = 202;
-		} else if (xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452) {
+		} else if (xp > _vm->_graphicsManager->_scrollOffset + 322 && xp < _vm->_graphicsManager->_scrollOffset + 452) {
 			slotNumber = 4;
 			_vm->_objectsManager._saveLoadX = 322;
 			_vm->_objectsManager._saveLoadY = 202;
 		}
 	} else if (yp >= 294 && yp <= 380) {
-		if (xp > _vm->_graphicsManager._scrollOffset + 189 && xp < _vm->_graphicsManager._scrollOffset + 318) {
+		if (xp > _vm->_graphicsManager->_scrollOffset + 189 && xp < _vm->_graphicsManager->_scrollOffset + 318) {
 			slotNumber = 5;
 			_vm->_objectsManager._saveLoadX = 189;
 			_vm->_objectsManager._saveLoadY = 293;
-		} else if (xp > _vm->_graphicsManager._scrollOffset + 322 && xp < _vm->_graphicsManager._scrollOffset + 452) {
+		} else if (xp > _vm->_graphicsManager->_scrollOffset + 322 && xp < _vm->_graphicsManager->_scrollOffset + 452) {
 			slotNumber = 6;
 			_vm->_objectsManager._saveLoadX = 322;
 			_vm->_objectsManager._saveLoadY = 293;
 		}
-	} else if (yp >= 388 && yp <= 404 && xp > _vm->_graphicsManager._scrollOffset + 273 && xp < _vm->_graphicsManager._scrollOffset + 355) {
+	} else if (yp >= 388 && yp <= 404 && xp > _vm->_graphicsManager->_scrollOffset + 273 && xp < _vm->_graphicsManager->_scrollOffset + 355) {
 		slotNumber = 7;
 		_vm->_objectsManager._saveLoadX = 0;
 		_vm->_objectsManager._saveLoadY = 0;

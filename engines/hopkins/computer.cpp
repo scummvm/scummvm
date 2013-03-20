@@ -71,12 +71,12 @@ void ComputerManager::setVideoMode() {
  * Sets up Textual entry mode
  */
 void ComputerManager::setTextMode() {
-	_vm->_graphicsManager.clearPalette();
-	_vm->_graphicsManager.lockScreen();
-	_vm->_graphicsManager.clearScreen();
-	_vm->_graphicsManager.unlockScreen();
+	_vm->_graphicsManager->clearPalette();
+	_vm->_graphicsManager->lockScreen();
+	_vm->_graphicsManager->clearScreen();
+	_vm->_graphicsManager->unlockScreen();
 
-	_vm->_graphicsManager._lineNbr = SCREEN_WIDTH;
+	_vm->_graphicsManager->_lineNbr = SCREEN_WIDTH;
 	_vm->_fontManager->_font = _vm->_globals->freeMemory(_vm->_fontManager->_font);
 
 	Common::String filename = "STFONT.SPR";
@@ -87,8 +87,8 @@ void ComputerManager::setTextMode() {
 	_vm->_fontManager->_fontFixedWidth = 8;
 	_vm->_fontManager->_fontFixedHeight = 8;
 
-	_vm->_graphicsManager.loadImage("WINTEXT");
-	_vm->_graphicsManager.fadeInLong();
+	_vm->_graphicsManager->loadImage("WINTEXT");
+	_vm->_graphicsManager->fadeInLong();
 	loadMenu();
 	_vm->_eventsManager->_mouseFl = false;
 }
@@ -97,8 +97,8 @@ void ComputerManager::setTextMode() {
  * Clear the screen
  */
 void ComputerManager::clearScreen() {
-	_vm->_graphicsManager.loadImage("WINTEXT");
-	_vm->_graphicsManager.fadeInLong();
+	_vm->_graphicsManager->loadImage("WINTEXT");
+	_vm->_graphicsManager->fadeInLong();
 }
 
 /**
@@ -125,7 +125,7 @@ void ComputerManager::setTextPosition(int yp, int xp) {
  */
 void ComputerManager::showComputer(ComputerEnum mode) {
 	_vm->_eventsManager->_escKeyFl = false;
-	_vm->_graphicsManager.resetDirtyRects();
+	_vm->_graphicsManager->resetDirtyRects();
 	setVideoMode();
 	setTextColor(4);
 	setTextPosition(2, 4);
@@ -258,10 +258,10 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 				}
 			}
 		}
-		_vm->_graphicsManager.lockScreen();
-		_vm->_graphicsManager.clearScreen();
-		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.updateScreen();
+		_vm->_graphicsManager->lockScreen();
+		_vm->_graphicsManager->clearScreen();
+		_vm->_graphicsManager->unlockScreen();
+		_vm->_graphicsManager->updateScreen();
 		restoreFBIRoom();
 	} else {
 		// Password doesn't match - Access Denied
@@ -271,11 +271,11 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_eventsManager->refreshScreenAndEvents();
 		_vm->_eventsManager->delay(1000);
 
-		memset(_vm->_graphicsManager._vesaBuffer, 0, 307199);
-		_vm->_graphicsManager.lockScreen();
-		_vm->_graphicsManager.clearScreen();
-		_vm->_graphicsManager.unlockScreen();
-		_vm->_graphicsManager.updateScreen();
+		memset(_vm->_graphicsManager->_vesaBuffer, 0, 307199);
+		_vm->_graphicsManager->lockScreen();
+		_vm->_graphicsManager->clearScreen();
+		_vm->_graphicsManager->unlockScreen();
+		_vm->_graphicsManager->updateScreen();
 		restoreFBIRoom();
 		_vm->_eventsManager->mouseOff();
 	}
@@ -285,7 +285,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	else // Free access or Samantha
 		_vm->_globals->_exitId = 14;
 
-	_vm->_graphicsManager.resetDirtyRects();
+	_vm->_graphicsManager->resetDirtyRects();
 }
 
 static const char _englishText[] = 
@@ -423,14 +423,14 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 			_inputBuf[textIndex--] = 0;
 			x1 -= _vm->_fontManager->_fontFixedWidth;
 			x2 = x1 + 2 * _vm->_fontManager->_fontFixedWidth;
-			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, 3 * _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-			_vm->_graphicsManager.addDirtyRect(x1, yp, x2, yp + 12);
+			_vm->_graphicsManager->Copy_Mem(_vm->_graphicsManager->_vesaScreen, x1, yp, 3 * _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager->_vesaBuffer, x1, yp);
+			_vm->_graphicsManager->addDirtyRect(x1, yp, x2, yp + 12);
 			_vm->_fontManager->displayTextVesa(x1, yp, "_", 252);
 		}
 		if (mappedChar != '*') {
 			char newChar = mappedChar;
-			_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-			_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager->_fontFixedWidth + x1, yp + 12);
+			_vm->_graphicsManager->Copy_Mem(_vm->_graphicsManager->_vesaScreen, x1, yp, _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager->_vesaBuffer, x1, yp);
+			_vm->_graphicsManager->addDirtyRect(x1, yp, _vm->_fontManager->_fontFixedWidth + x1, yp + 12);
 			_inputBuf[textIndex] = newChar;
 
 			Common::String charString = Common::String::format("%c_", newChar);
@@ -441,8 +441,8 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (textIndex != textIdx && curChar != 13);
 
-	_vm->_graphicsManager.Copy_Mem(_vm->_graphicsManager._vesaScreen, x1, yp, _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager._vesaBuffer, x1, yp);
-	_vm->_graphicsManager.addDirtyRect(x1, yp, _vm->_fontManager->_fontFixedWidth + x1, yp + 12);
+	_vm->_graphicsManager->Copy_Mem(_vm->_graphicsManager->_vesaScreen, x1, yp, _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager->_vesaBuffer, x1, yp);
+	_vm->_graphicsManager->addDirtyRect(x1, yp, _vm->_fontManager->_fontFixedWidth + x1, yp + 12);
 
 	_vm->_eventsManager->refreshScreenAndEvents();
 	_inputBuf[textIndex] = 0;
@@ -545,9 +545,9 @@ void ComputerManager::displayGamesSubMenu() {
 	_ballRightFl = false;
 	_ballUpFl = false;
 	_breakoutLevelNbr = 0;
-	_vm->_graphicsManager._minY = 0;
-	_vm->_graphicsManager._maxX = 320;
-	_vm->_graphicsManager._maxY = 200;
+	_vm->_graphicsManager->_minY = 0;
+	_vm->_graphicsManager->_maxX = 320;
+	_vm->_graphicsManager->_maxY = 200;
 	_vm->_soundManager.loadSample(1, "SOUND37.WAV");
 	_vm->_soundManager.loadSample(2, "SOUND38.WAV");
 	_vm->_soundManager.loadSample(3, "SOUND39.WAV");
@@ -556,10 +556,10 @@ void ComputerManager::displayGamesSubMenu() {
 	setModeVGA256();
 
 	newLevel();
-	_vm->_graphicsManager.updateScreen();
+	_vm->_graphicsManager->updateScreen();
 
 	playBreakout();
-	_vm->_graphicsManager.resetDirtyRects();
+	_vm->_graphicsManager->resetDirtyRects();
 	_breakoutSpr = _vm->_globals->freeMemory(_breakoutSpr);
 	_breakoutLevel = (int16 *)_vm->_globals->freeMemory((byte *)_breakoutLevel);
 	_vm->_objectsManager._sprite[0]._spriteData = oldSpriteData;
@@ -572,9 +572,9 @@ void ComputerManager::displayGamesSubMenu() {
 	setVideoMode();
 	setTextColor(15);
 	clearScreen();
-	_vm->_graphicsManager._maxX = 680;
-	_vm->_graphicsManager._minY = 0;
-	_vm->_graphicsManager._maxY = 460;
+	_vm->_graphicsManager->_maxX = 680;
+	_vm->_graphicsManager->_minY = 0;
+	_vm->_graphicsManager->_maxY = 460;
 }
 
 /**
@@ -608,11 +608,11 @@ void ComputerManager::loadHiscore() {
  * VGA 256 col
  */
 void ComputerManager::setModeVGA256() {
-	_vm->_graphicsManager.lockScreen();
-	_vm->_graphicsManager.clearScreen();
-	_vm->_graphicsManager.unlockScreen();
-	_vm->_graphicsManager.clearPalette();
-	_vm->_graphicsManager.setScreenWidth(320);
+	_vm->_graphicsManager->lockScreen();
+	_vm->_graphicsManager->clearScreen();
+	_vm->_graphicsManager->unlockScreen();
+	_vm->_graphicsManager->clearPalette();
+	_vm->_graphicsManager->setScreenWidth(320);
 }
 
 /**
@@ -624,7 +624,7 @@ void ComputerManager::newLevel() {
 	++_breakoutLives;
 	if (_breakoutLives > 11)
 		_breakoutLives = 11;
-	_vm->_graphicsManager.loadVgaImage("CASSEF.PCX");
+	_vm->_graphicsManager->loadVgaImage("CASSEF.PCX");
 	displayLives();
 	_breakoutLevel = (int16 *)_vm->_globals->freeMemory((byte *)_breakoutLevel);
 
@@ -678,25 +678,25 @@ void ComputerManager::displayBricks() {
 
 		switch (cellType) {
 		case 1:
-			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 21);
+			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 21);
 			break;
 		case 2:
-			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 22);
+			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 22);
 			break;
 		case 3:
-			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 17);
+			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 17);
 			break;
 		case 4:
-			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 20);
+			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 20);
 			break;
 		case 5:
-			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 19);
+			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 19);
 			break;
 		case 6:
-			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 18);
+			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 18);
 			break;
 		case 31:
-			_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 23);
+			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 23);
 			break;
 		}
 	}
@@ -709,12 +709,12 @@ void ComputerManager::displayBricks() {
  */
 void ComputerManager::displayLives() {
 	for (int i = 0, xp = 10; i <= 11; i++, xp += 7)
-		_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 15);
+		_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 15);
 
 	for (int i = 0, xp = 10; i < _breakoutLives - 1; i++, xp += 7)
-		_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 14);
+		_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 14);
 
-	_vm->_graphicsManager.updateScreen();
+	_vm->_graphicsManager->updateScreen();
 }
 
 /**
@@ -730,9 +730,9 @@ void ComputerManager::playBreakout() {
 			_vm->_objectsManager.setSpriteY(1, 187);
 			_vm->_objectsManager.setSpriteX(1, _ballPosition.x);
 
-			_vm->_graphicsManager.resetDirtyRects();
+			_vm->_graphicsManager->resetDirtyRects();
 			_vm->_eventsManager->refreshScreenAndEvents();
-			_vm->_graphicsManager.fadeInBreakout();
+			_vm->_graphicsManager->fadeInBreakout();
 
 			// Wait for mouse press to start playing
 			do {
@@ -776,7 +776,7 @@ void ComputerManager::playBreakout() {
 					continue;
 			}
 
-			_vm->_graphicsManager.fadeOutBreakout();
+			_vm->_graphicsManager->fadeOutBreakout();
 			_vm->_eventsManager->mouseOn();
 			_vm->_objectsManager.removeSprite(0);
 			_vm->_objectsManager.removeSprite(1);
@@ -797,7 +797,7 @@ void ComputerManager::playBreakout() {
 		}
 		if (lastBreakoutEvent != 2)
 			return;
-		_vm->_graphicsManager.fadeOutBreakout();
+		_vm->_graphicsManager->fadeOutBreakout();
 		newLevel();
 	}
 }
@@ -807,14 +807,14 @@ void ComputerManager::playBreakout() {
  * @return		The selected button index: 1 = Game, 2 = Quit
  */
 int ComputerManager::displayHiscores() {
-	_vm->_graphicsManager.resetDirtyRects();
+	_vm->_graphicsManager->resetDirtyRects();
 	loadHiscore();
-	_vm->_graphicsManager.loadVgaImage("HISCORE.PCX");
+	_vm->_graphicsManager->loadVgaImage("HISCORE.PCX");
 	byte *ptr = _vm->_fileManager->loadFile("ALPHA.SPR");
-	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
+	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
+	_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 
 	int yp;
 	int xp;
@@ -832,8 +832,8 @@ int ComputerManager::displayHiscores() {
 			displayHiscoreLine(ptr, 9 * i + 199, yp, _score[scoreIndex]._score[i]);
 	}
 
-	_vm->_graphicsManager.fadeInBreakout();
-	_vm->_graphicsManager.resetDirtyRects();
+	_vm->_graphicsManager->fadeInBreakout();
+	_vm->_graphicsManager->resetDirtyRects();
 	int buttonIndex = 0;
 	do {
 		_vm->_eventsManager->refreshEvents();
@@ -849,7 +849,7 @@ int ComputerManager::displayHiscores() {
 	} while (!buttonIndex && !_vm->shouldQuit());
 
 	_vm->_eventsManager->mouseOff();
-	_vm->_graphicsManager.fadeOutBreakout();
+	_vm->_graphicsManager->fadeOutBreakout();
 	_vm->_globals->freeMemory(ptr);
 	return buttonIndex;
 }
@@ -858,13 +858,13 @@ int ComputerManager::displayHiscores() {
  * Display a screen to enter player name in the case of a new hiscore
  */
 void ComputerManager::getScoreName() {
-	_vm->_graphicsManager.loadVgaImage("NAME.PCX");
-	_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-	_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-	_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_vm->_graphicsManager->loadVgaImage("NAME.PCX");
+	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
+	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
+	_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 	byte *ptr = _vm->_fileManager->loadFile("ALPHA.SPR");
-	_vm->_graphicsManager.fadeInBreakout();
+	_vm->_graphicsManager->fadeInBreakout();
 	for (int strPos = 0; strPos <= 4; strPos++) {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, 1);
 
@@ -892,7 +892,7 @@ void ComputerManager::getScoreName() {
 	for (int i = scoreLen, scorePos = 8; i >= 0; i--) {
 		_score[5]._score.setChar(score[i], scorePos--);
 	}
-	_vm->_graphicsManager.fadeOutBreakout();
+	_vm->_graphicsManager->fadeOutBreakout();
 	_vm->_globals->freeMemory(ptr);
 	saveScore();
 }
@@ -941,7 +941,7 @@ void ComputerManager::displayScoreChar(int charPos, int charDisp) {
 	if (charDisp >= '0' && charDisp <= '9')
 		idx = charDisp - 45;
 
-	_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, xp, 11, idx);
+	_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, xp, 11, idx);
 }
 
 /**
@@ -1010,7 +1010,7 @@ void ComputerManager::displayHiscoreLine(byte *objectData, int x, int y, int cur
 		idx = curChar - 'A' + 10;
 	else if (curChar == 1)
 		idx = 37;
-	_vm->_graphicsManager.AFFICHE_SPEEDVGA(objectData, x, y, idx);
+	_vm->_graphicsManager->AFFICHE_SPEEDVGA(objectData, x, y, idx);
 }
 
 /**
@@ -1183,7 +1183,7 @@ void ComputerManager::checkBallCollisions() {
 					_vm->_soundManager.playSample(2, 6);
 				} else {
 					_vm->_soundManager.playSample(1, 5);
-					_vm->_graphicsManager.AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellUp, 16);
+					_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellUp, 16);
 					switch (cellType) {
 					case 1:
 						_breakoutScore += 10;

@@ -48,8 +48,8 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_fileManager = new FileManager(this);
 	_fontManager = new FontManager(this);
 	_globals = new Globals(this);
+	_graphicsManager = new GraphicsManager(this);
 
-	_graphicsManager.setParent(this);
 	_linesManager.setParent(this);
 	_menuManager.setParent(this);
 	_objectsManager.setParent(this);
@@ -60,6 +60,7 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 }
 
 HopkinsEngine::~HopkinsEngine() {
+	delete _graphicsManager;
 	delete _globals;
 	delete _fontManager;
 	delete _fileManager;
@@ -131,13 +132,13 @@ bool HopkinsEngine::runWin95Demo() {
 
 	_globals->iRegul = 1;
 
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
-	_graphicsManager.clearPalette();
+	_graphicsManager->lockScreen();
+	_graphicsManager->clearScreen();
+	_graphicsManager->unlockScreen();
+	_graphicsManager->clearPalette();
 
-	_graphicsManager.loadImage("H2");
-	_graphicsManager.fadeInLong();
+	_graphicsManager->loadImage("H2");
+	_graphicsManager->fadeInLong();
 
 	if (!_eventsManager->_escKeyFl)
 		playIntro();
@@ -147,7 +148,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals->_speed = 1;
 
 	for (int i = 1; i < 50; i++) {
-		_graphicsManager.copySurface(_graphicsManager._vesaScreen, 0, 0, 640, 440, _graphicsManager._vesaBuffer, 0, 0);
+		_graphicsManager->copySurface(_graphicsManager->_vesaScreen, 0, 0, 640, 440, _graphicsManager->_vesaBuffer, 0, 0);
 		_eventsManager->refreshScreenAndEvents();
 	}
 
@@ -156,7 +157,7 @@ bool HopkinsEngine::runWin95Demo() {
 		_globals->_speed = 2;
 	if (_eventsManager->_rateCounter > 700)
 		_globals->_speed = 3;
-	_graphicsManager.fadeOutLong();
+	_graphicsManager->fadeOutLong();
 	_globals->iRegul = 1;
 	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
@@ -195,24 +196,24 @@ bool HopkinsEngine::runWin95Demo() {
 			if (!_globals->_saveData->_data[svBankAttackAnimPlayedFl]) {
 				_soundManager.playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
-					_graphicsManager.loadImage("fond");
+					_graphicsManager->loadImage("fond");
 				else {
 					if (_globals->_language == LANG_FR)
-						_graphicsManager.loadImage("fondfr");
+						_graphicsManager->loadImage("fondfr");
 					else if (_globals->_language == LANG_EN)
-						_graphicsManager.loadImage("fondan");
+						_graphicsManager->loadImage("fondan");
 					else if (_globals->_language == LANG_SP)
-						_graphicsManager.loadImage("fondes");
+						_graphicsManager->loadImage("fondes");
 				}
-				_graphicsManager.fadeInLong();
+				_graphicsManager->fadeInLong();
 				_eventsManager->delay(500);
-				_graphicsManager.fadeOutLong();
+				_graphicsManager->fadeOutLong();
 				_globals->iRegul = 1;
 				_soundManager._specialSoundNum = 2;
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
+				_graphicsManager->lockScreen();
+				_graphicsManager->clearScreen();
+				_graphicsManager->unlockScreen();
+				_graphicsManager->clearPalette();
 				if (!_globals->_censorshipFl)
 					_animationManager->playAnim("BANQUE.ANM", 200, 28, 200);
 				else
@@ -222,7 +223,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_soundManager.removeSample(2);
 				_soundManager.removeSample(3);
 				_soundManager.removeSample(4);
-				_graphicsManager.fadeOutLong();
+				_graphicsManager->fadeOutLong();
 				_globals->_saveData->_data[svBankAttackAnimPlayedFl] = 1;
 			}
 			_linesManager.setMaxLineIdx(5);
@@ -291,15 +292,15 @@ bool HopkinsEngine::runWin95Demo() {
 			_linesManager.setMaxLineIdx(20);
 			if (_globals->_saveData->_data[svBombDisarmedFl]) {
 				if (_globals->_language == LANG_FR)
-					_graphicsManager.loadImage("ENDFR");
+					_graphicsManager->loadImage("ENDFR");
 				else
-					_graphicsManager.loadImage("ENDUK");
-				_graphicsManager.fadeInLong();
+					_graphicsManager->loadImage("ENDUK");
+				_graphicsManager->fadeInLong();
 				_eventsManager->mouseOn();
 				do
 					_eventsManager->refreshScreenAndEvents();
 				while (_eventsManager->getMouseButton() != 1);
-				_graphicsManager.fadeOutLong();
+				_graphicsManager->fadeOutLong();
 				restoreSystem();
 			} else 
 				bombExplosion();
@@ -345,14 +346,14 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_screenId = 113;
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_computerManager->showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.updateScreen();
-			memset(_graphicsManager._vesaBuffer, 0, 307200);
-			memset(_graphicsManager._vesaScreen, 0, 307200);
-			_graphicsManager.clearPalette();
-			_graphicsManager.resetDirtyRects();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->updateScreen();
+			memset(_graphicsManager->_vesaBuffer, 0, 307200);
+			memset(_graphicsManager->_vesaScreen, 0, 307200);
+			_graphicsManager->clearPalette();
+			_graphicsManager->resetDirtyRects();
 			break;
 
 		case 114:
@@ -362,9 +363,9 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_globals->_exitId = 0;
 			_computerManager->showComputer(COMPUTER_SAMANTHA);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
 			break;
 
 		case 115:
@@ -374,18 +375,18 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_screenId = 115;
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_computerManager->showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
 			break;
 
 		case 150:
 			_soundManager.playSound(28);
 			_globals->iRegul = 4; // CHECKME!
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->clearPalette();
 			_animationManager->playAnim("JOUR1A.anm", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -394,14 +395,14 @@ bool HopkinsEngine::runWin95Demo() {
 		case 151:
 			_soundManager.playSound(28);
 			_globals->iRegul = 4; // CHECKME!
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
-			_graphicsManager.loadImage("njour3a");
-			_graphicsManager.fadeInLong();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->clearPalette();
+			_graphicsManager->loadImage("njour3a");
+			_graphicsManager->fadeInLong();
 			_eventsManager->delay(5000);
-			_graphicsManager.fadeOutLong();
+			_graphicsManager->fadeOutLong();
 			_globals->_exitId = 300;
 			_globals->iRegul = 0;
 			break;
@@ -409,10 +410,10 @@ bool HopkinsEngine::runWin95Demo() {
 		case 152:
 			_soundManager.playSound(28);
 			_globals->iRegul = 4; // CHECKME!
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->clearPalette();
 			_animationManager->playAnim("JOUR4A.anm", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -430,19 +431,19 @@ bool HopkinsEngine::runLinuxDemo() {
 
 	_eventsManager->mouseOff();
 
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
+	_graphicsManager->lockScreen();
+	_graphicsManager->clearScreen();
+	_graphicsManager->unlockScreen();
 
-	_graphicsManager.loadImage("LINUX");
-	_graphicsManager.fadeInLong();
+	_graphicsManager->loadImage("LINUX");
+	_graphicsManager->fadeInLong();
 	_eventsManager->delay(1500);
-	_graphicsManager.fadeOutLong();
+	_graphicsManager->fadeOutLong();
 
-	_graphicsManager.loadImage("H2");
-	_graphicsManager.fadeInLong();
+	_graphicsManager->loadImage("H2");
+	_graphicsManager->fadeInLong();
 	_eventsManager->delay(500);
-	_graphicsManager.fadeOutLong();
+	_graphicsManager->fadeOutLong();
 
 	if (!_eventsManager->_escKeyFl)
 		playIntro();
@@ -500,26 +501,26 @@ bool HopkinsEngine::runLinuxDemo() {
 			if (!_globals->_saveData->_data[svBankAttackAnimPlayedFl]) {
 				_soundManager.playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
-					_graphicsManager.loadImage("fond");
+					_graphicsManager->loadImage("fond");
 				else {
 					if (_globals->_language == LANG_FR)
-						_graphicsManager.loadImage("fondfr");
+						_graphicsManager->loadImage("fondfr");
 					else if (_globals->_language == LANG_EN)
-						_graphicsManager.loadImage("fondan");
+						_graphicsManager->loadImage("fondan");
 					else if (_globals->_language == LANG_SP)
-						_graphicsManager.loadImage("fondes");
+						_graphicsManager->loadImage("fondes");
 				}
-				_graphicsManager.fadeInLong();
+				_graphicsManager->fadeInLong();
 				_eventsManager->delay(500);
-				_graphicsManager.fadeOutLong();
+				_graphicsManager->fadeOutLong();
 				_globals->iRegul = 1;
 				_soundManager._specialSoundNum = 2;
 
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
-				_graphicsManager.FADE_LINUX = 2;
+				_graphicsManager->lockScreen();
+				_graphicsManager->clearScreen();
+				_graphicsManager->unlockScreen();
+				_graphicsManager->clearPalette();
+				_graphicsManager->FADE_LINUX = 2;
 
 				if (!_globals->_censorshipFl)
 					_animationManager->playAnim("BANQUE.ANM", 200, 28, 200);
@@ -663,14 +664,14 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals->_saveData->_data[svLastScreenId] = 113;
 			_computerManager->showComputer(COMPUTER_HOPKINS);
 
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.updateScreen();
-			memset(_graphicsManager._vesaBuffer, 0, 307200);
-			memset(_graphicsManager._vesaScreen, 0, 307200);
-			_graphicsManager.clearPalette();
-			_graphicsManager.resetDirtyRects();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->updateScreen();
+			memset(_graphicsManager->_vesaBuffer, 0, 307200);
+			memset(_graphicsManager->_vesaScreen, 0, 307200);
+			_graphicsManager->clearPalette();
+			_graphicsManager->resetDirtyRects();
 			break;
 
 		case 114:
@@ -680,9 +681,9 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals->_screenId = 114;
 			_globals->_saveData->_data[svLastScreenId] = 114;
 			_computerManager->showComputer(COMPUTER_SAMANTHA);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
 			break;
 
 		case 115:
@@ -692,20 +693,20 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals->_screenId = 115;
 			_globals->_saveData->_data[svLastScreenId] = 115;
 			_computerManager->showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
 			break;
 
 		case 150:
 			_soundManager.playSound(16);
 			_globals->iRegul = 1;
 
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
-			_graphicsManager.FADE_LINUX = 2;
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->clearPalette();
+			_graphicsManager->FADE_LINUX = 2;
 			_animationManager->playAnim("JOUR1A.anm", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -715,11 +716,11 @@ bool HopkinsEngine::runLinuxDemo() {
 			_soundManager.playSound(16);
 			_globals->iRegul = 1;
 
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
-			_graphicsManager.FADE_LINUX = 2;
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->clearPalette();
+			_graphicsManager->FADE_LINUX = 2;
 			_animationManager->playAnim("JOUR3A.anm", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -729,11 +730,11 @@ bool HopkinsEngine::runLinuxDemo() {
 			_soundManager.playSound(16);
 			_globals->iRegul = 1;
 
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
-			_graphicsManager.FADE_LINUX = 2;
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->clearPalette();
+			_graphicsManager->FADE_LINUX = 2;
 			_animationManager->playAnim("JOUR4A.anm", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -762,41 +763,41 @@ bool HopkinsEngine::runFull() {
 		// This code displays the game version.
 		// It wasn't present in the original and could be put in the debugger
 		// It has been added there for debug purposes
-		_graphicsManager.loadImage("VERSW");
-		_graphicsManager.fadeInLong();
+		_graphicsManager->loadImage("VERSW");
+		_graphicsManager->fadeInLong();
 		_eventsManager->delay(500);
-		_graphicsManager.fadeOutLong();
-		_graphicsManager.clearVesaScreen();
+		_graphicsManager->fadeOutLong();
+		_graphicsManager->clearVesaScreen();
 	} else {
 		// This piece of code, though named "display_version" in the original, 
 		// displays a "loading please wait" screen.
-		_graphicsManager.loadImage("VERSW");
-		_graphicsManager.fadeInLong();
+		_graphicsManager->loadImage("VERSW");
+		_graphicsManager->fadeInLong();
 		_eventsManager->delay(500);
-		_graphicsManager.fadeOutLong();
-		_graphicsManager.clearVesaScreen();
+		_graphicsManager->fadeOutLong();
+		_graphicsManager->clearVesaScreen();
 
 		_globals->iRegul = 1;
 	}
 
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
-	_graphicsManager.clearPalette();
+	_graphicsManager->lockScreen();
+	_graphicsManager->clearScreen();
+	_graphicsManager->unlockScreen();
+	_graphicsManager->clearPalette();
 	
 	if (getPlatform() == Common::kPlatformLinux) {
-		_graphicsManager.loadImage("H2");
-		_graphicsManager.fadeInLong();
+		_graphicsManager->loadImage("H2");
+		_graphicsManager->fadeInLong();
 		_eventsManager->delay(500);
-		_graphicsManager.fadeOutLong();
+		_graphicsManager->fadeOutLong();
 
 		_globals->_speed = 2;
 		_globals->iRegul = 1;
-		_graphicsManager.FADE_LINUX = 2;
+		_graphicsManager->FADE_LINUX = 2;
 		_animationManager->playAnim("MP.ANM", 10, 16, 200);
 	} else {
 		_animationManager->playAnim("MP.ANM", 10, 16, 200);
-		_graphicsManager.fadeOutLong();
+		_graphicsManager->fadeOutLong();
 	}
 
 	if (!_eventsManager->_escKeyFl) {
@@ -805,11 +806,11 @@ bool HopkinsEngine::runFull() {
 			return false;
 	}
 	if (getPlatform() != Common::kPlatformLinux) {
-		_graphicsManager.fadeOutShort();
-		_graphicsManager.loadImage("H2");
-		_graphicsManager.fadeInLong();
+		_graphicsManager->fadeOutShort();
+		_graphicsManager->loadImage("H2");
+		_graphicsManager->fadeInLong();
 		_eventsManager->delay(500);
-		_graphicsManager.fadeOutLong();
+		_graphicsManager->fadeOutLong();
 	}
 	_globals->iRegul = 0;
 	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
@@ -846,27 +847,27 @@ bool HopkinsEngine::runFull() {
 				// Play the bank attack animation
 				_soundManager.playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
-					_graphicsManager.loadImage("fond");
+					_graphicsManager->loadImage("fond");
 				else {
 					if (_globals->_language == LANG_FR)
-						_graphicsManager.loadImage("fondfr");
+						_graphicsManager->loadImage("fondfr");
 					else if (_globals->_language == LANG_EN)
-						_graphicsManager.loadImage("fondan");
+						_graphicsManager->loadImage("fondan");
 					else if (_globals->_language == LANG_SP)
-						_graphicsManager.loadImage("fondes");
+						_graphicsManager->loadImage("fondes");
 				}
-				_graphicsManager.fadeInLong();
+				_graphicsManager->fadeInLong();
 				_eventsManager->delay(500);
-				_graphicsManager.fadeOutLong();
+				_graphicsManager->fadeOutLong();
 				_globals->iRegul = 1;
 				_soundManager._specialSoundNum = 2;
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
+				_graphicsManager->lockScreen();
+				_graphicsManager->clearScreen();
+				_graphicsManager->unlockScreen();
+				_graphicsManager->clearPalette();
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows) {
 					if (getPlatform() == Common::kPlatformLinux)
-						_graphicsManager.FADE_LINUX = 2;
+						_graphicsManager->FADE_LINUX = 2;
 
 					if (!_globals->_censorshipFl)
 						_animationManager->playAnim("BANQUE.ANM", 200, 28, 200);
@@ -884,9 +885,9 @@ bool HopkinsEngine::runFull() {
 
 				if (getPlatform() != Common::kPlatformLinux) {
 					// Copy the end of the animation into the secondary buffer and fade out the screen
-					Common::fill(_graphicsManager._vesaBuffer, _graphicsManager._vesaBuffer +
+					Common::fill(_graphicsManager->_vesaBuffer, _graphicsManager->_vesaBuffer +
 						SCREEN_WIDTH * 2 * SCREEN_HEIGHT, 0);
-					_graphicsManager.fadeOutLong();
+					_graphicsManager->fadeOutLong();
 				}
 
 				_globals->_saveData->_data[svBankAttackAnimPlayedFl] = 1;
@@ -995,23 +996,23 @@ bool HopkinsEngine::runFull() {
 				_objectsManager.PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
 			if (_globals->_exitId == 18) {
 				_globals->iRegul = 1;
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
+				_graphicsManager->lockScreen();
+				_graphicsManager->clearScreen();
+				_graphicsManager->unlockScreen();
+				_graphicsManager->clearPalette();
 				_soundManager.stopSound();
 				if (getPlatform() == Common::kPlatformLinux) {
 					_soundManager.playSound(29);
-					_graphicsManager.FADE_LINUX = 2;
+					_graphicsManager->FADE_LINUX = 2;
 					_animationManager->playAnim("PURG1A.ANM", 12, 18, 50);
 				} else if (getPlatform() == Common::kPlatformWindows) {
 					_soundManager.playSound(29);
 					_animationManager->playAnim("PURG1A.ANM", 12, 18, 50);
-					_graphicsManager.fadeOutShort();
+					_graphicsManager->fadeOutShort();
 				} else {
 					_soundManager.playSound(6);
 					_animationManager->playAnim("PURG1A.ANM", 12, 18, 50);
-					_graphicsManager.fadeOutShort();
+					_graphicsManager->fadeOutShort();
 				}
 				_globals->iRegul = 0;
 			}
@@ -1042,16 +1043,16 @@ bool HopkinsEngine::runFull() {
 			if (_globals->_exitId == 17) {
 				_globals->iRegul = 1;
 				_soundManager.stopSound();
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
+				_graphicsManager->lockScreen();
+				_graphicsManager->clearScreen();
+				_graphicsManager->unlockScreen();
+				_graphicsManager->clearPalette();
 				_soundManager.playSound(6);
 				if (getPlatform() == Common::kPlatformLinux)
-					_graphicsManager.FADE_LINUX = 2;
+					_graphicsManager->FADE_LINUX = 2;
 				_animationManager->playAnim("PURG2A.ANM", 12, 18, 50);
 				if (getPlatform() != Common::kPlatformLinux)
-					_graphicsManager.fadeOutShort();
+					_graphicsManager->fadeOutShort();
 				_globals->iRegul = 0;
 			}
 			break;
@@ -1408,13 +1409,13 @@ bool HopkinsEngine::runFull() {
 			if (_globals->_exitId == 18) {
 				_globals->iRegul = 1;
 				_soundManager.stopSound();
-				_graphicsManager.lockScreen();
-				_graphicsManager.clearScreen();
-				_graphicsManager.unlockScreen();
-				_graphicsManager.clearPalette();
+				_graphicsManager->lockScreen();
+				_graphicsManager->clearScreen();
+				_graphicsManager->unlockScreen();
+				_graphicsManager->clearPalette();
 				_soundManager.playSound(6);
 				_animationManager->playAnim("PURG1A.ANM", 12, 18, 50);
-				_graphicsManager.fadeOutShort();
+				_graphicsManager->fadeOutShort();
 				_globals->iRegul = 0;
 			}
 			break;
@@ -1450,14 +1451,14 @@ bool HopkinsEngine::runFull() {
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_globals->_exitId = 0;
 			_computerManager->showComputer(COMPUTER_HOPKINS);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.updateScreen();
-			memset(_graphicsManager._vesaBuffer, 0, 307200);
-			memset(_graphicsManager._vesaScreen, 0, 307200);
-			_graphicsManager.clearPalette();
-			_graphicsManager.resetDirtyRects();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->updateScreen();
+			memset(_graphicsManager->_vesaBuffer, 0, 307200);
+			memset(_graphicsManager->_vesaScreen, 0, 307200);
+			_graphicsManager->clearPalette();
+			_graphicsManager->resetDirtyRects();
 			break;
 
 		case 114:
@@ -1467,9 +1468,9 @@ bool HopkinsEngine::runFull() {
 			_globals->_saveData->_data[svLastPrevScreenId] = _globals->_prevScreenId;
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_computerManager->showComputer(COMPUTER_SAMANTHA);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
 			break;
 
 		case 115:
@@ -1479,20 +1480,20 @@ bool HopkinsEngine::runFull() {
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_globals->_exitId = 0;
 			_computerManager->showComputer(COMPUTER_PUBLIC);
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
 			break;
 
 		case 150:
 			_soundManager.playSound(16);
 			_globals->iRegul = 1;
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
-				_graphicsManager.FADE_LINUX = 2;
+				_graphicsManager->FADE_LINUX = 2;
 			_animationManager->playAnim("JOUR1A.ANM", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -1501,12 +1502,12 @@ bool HopkinsEngine::runFull() {
 		case 151:
 			_soundManager.playSound(16);
 			_globals->iRegul = 1;
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
-				_graphicsManager.FADE_LINUX = 2;
+				_graphicsManager->FADE_LINUX = 2;
 			_animationManager->playAnim("JOUR3A.ANM", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -1515,12 +1516,12 @@ bool HopkinsEngine::runFull() {
 		case 152:
 			_soundManager.playSound(16);
 			_globals->iRegul = 1;
-			_graphicsManager.lockScreen();
-			_graphicsManager.clearScreen();
-			_graphicsManager.unlockScreen();
-			_graphicsManager.clearPalette();
+			_graphicsManager->lockScreen();
+			_graphicsManager->clearScreen();
+			_graphicsManager->unlockScreen();
+			_graphicsManager->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
-				_graphicsManager.FADE_LINUX = 2;
+				_graphicsManager->FADE_LINUX = 2;
 			_animationManager->playAnim("JOUR4A.ANM", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -1542,7 +1543,7 @@ bool HopkinsEngine::runFull() {
 			_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
 			_globals->_characterType = 0;
 			_globals->iRegul = 0;
-			_graphicsManager._lineNbr = SCREEN_WIDTH;
+			_graphicsManager->_lineNbr = SCREEN_WIDTH;
 			break;
 		}
 	}
@@ -1561,7 +1562,7 @@ int HopkinsEngine::getRandomNumber(int maxNumber) {
 
 void HopkinsEngine::initializeSystem() {
 	// Set graphics mode
-	_graphicsManager.setGraphicalMode(SCREEN_WIDTH, SCREEN_HEIGHT);
+	_graphicsManager->setGraphicalMode(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	// Synchronize the sound settings from ScummVM
 	_soundManager.syncSoundSettings();
@@ -1633,69 +1634,69 @@ void HopkinsEngine::playIntro() {
 		return;
 
 	_soundManager.mixVoice(3, 3);
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
-	_graphicsManager.clearPalette();
-	_graphicsManager.updateScreen();
+	_graphicsManager->lockScreen();
+	_graphicsManager->clearScreen();
+	_graphicsManager->unlockScreen();
+	_graphicsManager->clearPalette();
+	_graphicsManager->updateScreen();
 	_soundManager.playSound(11);
-	_graphicsManager.loadImage("intro1");
-	_graphicsManager.scrollScreen(0);
-	_graphicsManager._scrollOffset = 0;
-	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->loadImage("intro1");
+	_graphicsManager->scrollScreen(0);
+	_graphicsManager->_scrollOffset = 0;
+	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 	for (int i = 0; i <= 4; i++)
 		_eventsManager->refreshScreenAndEvents();
 
 	_globals->iRegul = 1;
-	_graphicsManager.fadeInLong();
-	if (_graphicsManager._largeScreenFl) {
-		_graphicsManager._scrollStatus = 2;
-		_graphicsManager._scrollPosX = 0;
+	_graphicsManager->fadeInLong();
+	if (_graphicsManager->_largeScreenFl) {
+		_graphicsManager->_scrollStatus = 2;
+		_graphicsManager->_scrollPosX = 0;
 
 		bool loopCond = false;
 		do {
-			_graphicsManager._scrollPosX += 2;
-			if (_graphicsManager._scrollPosX > (SCREEN_WIDTH - 2)) {
-				_graphicsManager._scrollPosX = SCREEN_WIDTH;
+			_graphicsManager->_scrollPosX += 2;
+			if (_graphicsManager->_scrollPosX > (SCREEN_WIDTH - 2)) {
+				_graphicsManager->_scrollPosX = SCREEN_WIDTH;
 				loopCond = true;
 			}
 
-			if (_eventsManager->getMouseX() < _graphicsManager._scrollPosX + 10)
+			if (_eventsManager->getMouseX() < _graphicsManager->_scrollPosX + 10)
 				_eventsManager->setMouseXY(_eventsManager->_mousePos.x + 4, _eventsManager->getMouseY());
 			_eventsManager->refreshScreenAndEvents();
-		} while (!shouldQuit() && !loopCond && _graphicsManager._scrollPosX != SCREEN_WIDTH);
+		} while (!shouldQuit() && !loopCond && _graphicsManager->_scrollPosX != SCREEN_WIDTH);
 
 		_eventsManager->refreshScreenAndEvents();
-		_graphicsManager._scrollStatus = 0;
+		_graphicsManager->_scrollStatus = 0;
 
 		if (shouldQuit())
 			return;
 	}
 
 	_soundManager.mixVoice(4, 3);
-	_graphicsManager.fadeOutLong();
-	_graphicsManager._scrollStatus = 0;
-	_graphicsManager.loadImage("intro2");
-	_graphicsManager.scrollScreen(0);
+	_graphicsManager->fadeOutLong();
+	_graphicsManager->_scrollStatus = 0;
+	_graphicsManager->loadImage("intro2");
+	_graphicsManager->scrollScreen(0);
 	_animationManager->loadAnim("INTRO2");
-	_graphicsManager.displayAllBob();
+	_graphicsManager->displayAllBob();
 	_soundManager.playSound(23);
 	_objectsManager.stopBobAnimation(3);
 	_objectsManager.stopBobAnimation(5);
-	_graphicsManager._scrollOffset = 0;
-	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->_scrollOffset = 0;
+	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 
 	for (int i = 0; i <= 4; i++)
 		_eventsManager->refreshScreenAndEvents();
 
 	_globals->iRegul = 1;
-	_graphicsManager.fadeInLong();
+	_graphicsManager->fadeInLong();
 	for (uint i = 0; i < 200 / _globals->_speed; ++i)
 		_eventsManager->refreshScreenAndEvents();
 
@@ -1703,41 +1704,41 @@ void HopkinsEngine::playIntro() {
 	_soundManager.mixVoice(5, 3);
 	_objectsManager.stopBobAnimation(3);
 	_eventsManager->refreshScreenAndEvents();
-	memcpy(&paletteData2, _graphicsManager._palette, 796);
+	memcpy(&paletteData2, _graphicsManager->_palette, 796);
 
-	_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
-	_graphicsManager.endDisplayBob();
+	_graphicsManager->setPaletteVGA256WithRefresh(paletteData, _graphicsManager->_vesaBuffer);
+	_graphicsManager->endDisplayBob();
 
 	if (shouldQuit() || _eventsManager->_escKeyFl)
 		return;
 
 	_soundManager._specialSoundNum = 5;
-	_graphicsManager.FADE_LINUX = 2;
+	_graphicsManager->FADE_LINUX = 2;
 	_animationManager->playAnim("ELEC.ANM", 10, 26, 200);
 	_soundManager._specialSoundNum = 0;
 
 	if (shouldQuit() || _eventsManager->_escKeyFl)
 		return;
 
-	_graphicsManager.loadImage("intro2");
-	_graphicsManager.scrollScreen(0);
+	_graphicsManager->loadImage("intro2");
+	_graphicsManager->scrollScreen(0);
 	_animationManager->loadAnim("INTRO2");
-	_graphicsManager.displayAllBob();
+	_graphicsManager->displayAllBob();
 	_soundManager.playSound(23);
 	_objectsManager.stopBobAnimation(3);
 	_objectsManager.stopBobAnimation(5);
 	_objectsManager.stopBobAnimation(1);
-	_graphicsManager._scrollOffset = 0;
-	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->_scrollOffset = 0;
+	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 
 	for (int i = 0; i <= 3; i++)
 		_eventsManager->refreshScreenAndEvents();
 
 	_globals->iRegul = 1;
-	_graphicsManager.setPaletteVGA256WithRefresh(paletteData2, _graphicsManager._vesaBuffer);
+	_graphicsManager->setPaletteVGA256WithRefresh(paletteData2, _graphicsManager->_vesaBuffer);
 
 	int introIndex = 0;
 	while (!shouldQuit() && !_eventsManager->_escKeyFl) {
@@ -1749,26 +1750,26 @@ void HopkinsEngine::playIntro() {
 			_objectsManager.stopBobAnimation(3);
 		}
 
-		Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
+		Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager->_palette[0]);
 
 		for (int i = 1, maxPalVal = 4 * introIndex; i <= PALETTE_BLOCK_SIZE; i++) {
-			if (_graphicsManager._palette[i] > maxPalVal)
-				_graphicsManager._palette[i] -= maxPalVal;
+			if (_graphicsManager->_palette[i] > maxPalVal)
+				_graphicsManager->_palette[i] -= maxPalVal;
 		}
 
-		_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
+		_graphicsManager->setPaletteVGA256WithRefresh(_graphicsManager->_palette, _graphicsManager->_vesaBuffer);
 
 		for (int i = 1; i < 2 * introIndex; i++)
 			_eventsManager->refreshScreenAndEvents();
 
-		_graphicsManager.setPaletteVGA256WithRefresh(paletteData2, _graphicsManager._vesaBuffer);
+		_graphicsManager->setPaletteVGA256WithRefresh(paletteData2, _graphicsManager->_vesaBuffer);
 
 		for (int i = 1; i < 20 - introIndex; i++)
 			_eventsManager->refreshScreenAndEvents();
 
 		introIndex += 2;
 		if (introIndex > 15) {
-			_graphicsManager.setPaletteVGA256WithRefresh(paletteData, _graphicsManager._vesaBuffer);
+			_graphicsManager->setPaletteVGA256WithRefresh(paletteData, _graphicsManager->_vesaBuffer);
 			for (uint j = 1; j < 100 / _globals->_speed; ++j)
 				_eventsManager->refreshScreenAndEvents();
 
@@ -1782,8 +1783,8 @@ void HopkinsEngine::playIntro() {
 			for (uint l = 0; l < 20 / _globals->_speed; ++l)
 				_eventsManager->refreshScreenAndEvents();
 
-			Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager._palette[0]);
-			_graphicsManager.setPaletteVGA256WithRefresh(_graphicsManager._palette, _graphicsManager._vesaBuffer);
+			Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager->_palette[0]);
+			_graphicsManager->setPaletteVGA256WithRefresh(_graphicsManager->_palette, _graphicsManager->_vesaBuffer);
 
 			for (uint m = 0; m < 50 / _globals->_speed; ++m) {
 				if (m == 30 / _globals->_speed) {
@@ -1795,8 +1796,8 @@ void HopkinsEngine::playIntro() {
 				_eventsManager->refreshScreenAndEvents();
 			}
 
-			_graphicsManager.fadeOutLong();
-			_graphicsManager.endDisplayBob();
+			_graphicsManager->fadeOutLong();
+			_graphicsManager->endDisplayBob();
 			_animationManager->_clearAnimationFl = true;
 			_soundManager.playSound(3);
 			_soundManager._specialSoundNum = 1;
@@ -1814,7 +1815,7 @@ void HopkinsEngine::playIntro() {
 				return;
 
 			_animationManager->_clearAnimationFl = false;
-			_graphicsManager.FADE_LINUX = 2;
+			_graphicsManager->FADE_LINUX = 2;
 			_animationManager->playAnim("J4.anm", 12, 12, 1000);
 			break;
 		}
@@ -1831,17 +1832,17 @@ void HopkinsEngine::displayNotAvailable() {
 		return;
 
 	if (_globals->_language == LANG_FR)
-		_graphicsManager.loadImage("ndfr");
+		_graphicsManager->loadImage("ndfr");
 	else
-		_graphicsManager.loadImage("nduk");
+		_graphicsManager->loadImage("nduk");
 
-	_graphicsManager.fadeInLong();
+	_graphicsManager->fadeInLong();
 	if (_soundManager._voiceOffFl)
 		_eventsManager->delay(500);
 	else
 		_soundManager.mixVoice(628, 4);
 
-	_graphicsManager.fadeOutLong();
+	_graphicsManager->fadeOutLong();
 	_globals->_exitId = 4;
 }
 
@@ -1855,39 +1856,39 @@ void HopkinsEngine::handleNotAvailable(int sortie) {
 void HopkinsEngine::displayEndDemo() {
 	_soundManager.playSound(28);
 	if (_globals->_language == LANG_FR)
-		_graphicsManager.loadImage("endfr");
+		_graphicsManager->loadImage("endfr");
 	else
-		_graphicsManager.loadImage("enduk");
+		_graphicsManager->loadImage("enduk");
 
-	_graphicsManager.fadeInLong();
+	_graphicsManager->fadeInLong();
 	_eventsManager->delay(1500);
-	_graphicsManager.fadeOutLong();
+	_graphicsManager->fadeOutLong();
 	_globals->_exitId = 0;
 }
 
 void HopkinsEngine::bombExplosion() {
-	_graphicsManager._lineNbr = SCREEN_WIDTH;
-	_graphicsManager.setScreenWidth(SCREEN_WIDTH);
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
-	_graphicsManager.clearPalette();
+	_graphicsManager->_lineNbr = SCREEN_WIDTH;
+	_graphicsManager->setScreenWidth(SCREEN_WIDTH);
+	_graphicsManager->lockScreen();
+	_graphicsManager->clearScreen();
+	_graphicsManager->unlockScreen();
+	_graphicsManager->clearPalette();
 
 	_globals->iRegul = 1;
 	_soundManager._specialSoundNum = 199;
-	_graphicsManager.FADE_LINUX = 2;
+	_graphicsManager->FADE_LINUX = 2;
 	_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
 	_soundManager._specialSoundNum = 0;
-	_graphicsManager.loadImage("IM15");
+	_graphicsManager->loadImage("IM15");
 	_animationManager->loadAnim("ANIM15");
-	_graphicsManager.displayAllBob();
+	_graphicsManager->displayAllBob();
 	_objectsManager.stopBobAnimation(7);
 
 	for (int idx = 0; idx < 5; ++idx) {
 		_eventsManager->refreshScreenAndEvents();
 	}
 
-	_graphicsManager.fadeInLong();
+	_graphicsManager->fadeInLong();
 	_eventsManager->mouseOff();
 
 	for (int idx = 0; idx < 20; ++idx) {
@@ -1903,8 +1904,8 @@ void HopkinsEngine::bombExplosion() {
 		_eventsManager->refreshScreenAndEvents();
 	}
 
-	_graphicsManager.fadeOutLong();
-	_graphicsManager.endDisplayBob();
+	_graphicsManager->fadeOutLong();
+	_graphicsManager->endDisplayBob();
 	_globals->iRegul = 0;
 	_globals->_exitId = 151;
 }
@@ -1916,13 +1917,13 @@ void HopkinsEngine::restoreSystem() {
 
 void HopkinsEngine::endLinuxDemo() {
 	_globals->_linuxEndDemoFl = true;
-	_graphicsManager.resetDirtyRects();
+	_graphicsManager->resetDirtyRects();
 	_objectsManager._forestFl = false;
 	_eventsManager->_breakoutFl = false;
 	_globals->_disableInventFl = true;
-	_graphicsManager.loadImage("BOX");
+	_graphicsManager->loadImage("BOX");
 	_soundManager.playSound(28);
-	_graphicsManager.fadeInLong();
+	_graphicsManager->fadeInLong();
 	_eventsManager->mouseOn();
 	_eventsManager->changeMouseCursor(0);
 	_eventsManager->_mouseCursorId = 0;
@@ -1940,24 +1941,24 @@ void HopkinsEngine::endLinuxDemo() {
 	// Original tried to open a web browser link here. Since ScummVM doesn't support
 	// that, it's being skipped in favor of simply exiting
 
-	_graphicsManager.fadeOutLong();
+	_graphicsManager->fadeOutLong();
 }
 
 void HopkinsEngine::handleConflagration() {
 	_globals->_disableInventFl = true;
 	_globals->iRegul = 1;
-	_graphicsManager.loadImage("IM71");
+	_graphicsManager->loadImage("IM71");
 	_animationManager->loadAnim("ANIM71");
-	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
-	_graphicsManager.displayAllBob();
+	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->displayAllBob();
 
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager->refreshScreenAndEvents();
 
-	_graphicsManager.fadeInLong();
+	_graphicsManager->fadeInLong();
 	_globals->iRegul = 1;
 
 	for (int cpt = 0; cpt <= 249; cpt++)
@@ -1970,19 +1971,19 @@ void HopkinsEngine::handleConflagration() {
 	for (int cpt = 0; cpt <= 49; cpt++)
 		_eventsManager->refreshScreenAndEvents();
 
-	_graphicsManager.fadeOutLong();
-	_graphicsManager.endDisplayBob();
+	_graphicsManager->fadeOutLong();
+	_graphicsManager->endDisplayBob();
 	_globals->_saveData->_data[svBaseFireFl] = 1;
 	_globals->_disableInventFl = false;
 }
 
 void HopkinsEngine::playSubmarineCutscene() {
 	_globals->iRegul = 1;
-	_graphicsManager._lineNbr = SCREEN_WIDTH;
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
-	_graphicsManager.clearPalette();
+	_graphicsManager->_lineNbr = SCREEN_WIDTH;
+	_graphicsManager->lockScreen();
+	_graphicsManager->clearScreen();
+	_graphicsManager->unlockScreen();
+	_graphicsManager->clearPalette();
 	_animationManager->_clearAnimationFl = true;
 	_soundManager.playSound(25);
 	_animationManager->playAnim("base00a.anm", 10, 18, 18);
@@ -2008,7 +2009,7 @@ void HopkinsEngine::playSubmarineCutscene() {
 	if (!_eventsManager->_escKeyFl)
 		_animationManager->playAnim("OC20a.anm", 10, 18, 18);
 	if (!_eventsManager->_escKeyFl) {
-		_graphicsManager.FADE_LINUX = 2;
+		_graphicsManager->FADE_LINUX = 2;
 		_animationManager->playAnim("OC30a.anm", 10, 18, 18);
 	}
 
@@ -2018,35 +2019,35 @@ void HopkinsEngine::playSubmarineCutscene() {
 }
 
 void HopkinsEngine::playUnderwaterBaseCutscene() {
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
-	_graphicsManager.clearPalette();
+	_graphicsManager->lockScreen();
+	_graphicsManager->clearScreen();
+	_graphicsManager->unlockScreen();
+	_graphicsManager->clearPalette();
 	_animationManager->NO_SEQ = false;
 	_soundManager.playSound(26);
 	_globals->iRegul = 1;
 	_globals->_disableInventFl = true;
 	_animationManager->NO_COUL = true;
-	_graphicsManager.FADE_LINUX = 2;
+	_graphicsManager->FADE_LINUX = 2;
 	_animationManager->playSequence("abase.seq", 50, 15, 50);
 	_animationManager->NO_COUL = false;
-	_graphicsManager.loadImage("IM92");
+	_graphicsManager->loadImage("IM92");
 	_animationManager->loadAnim("ANIM92");
-	_graphicsManager.displayAllBob();
+	_graphicsManager->displayAllBob();
 	_objectsManager.loadLinkFile("IM92");
 
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager->refreshScreenAndEvents();
 
-	_graphicsManager.fadeInLong();
+	_graphicsManager->fadeInLong();
 	_globals->enableHiding();
 
 	do
 		_eventsManager->refreshScreenAndEvents();
 	while (_objectsManager.getBobAnimDataIdx(8) != 22);
 
-	_graphicsManager.fadeOutLong();
-	_graphicsManager.endDisplayBob();
+	_graphicsManager->fadeOutLong();
+	_graphicsManager->endDisplayBob();
 	_globals->resetHidingItems();
 	_globals->_disableInventFl = false;
 	_globals->_exitId = 93;
@@ -2057,7 +2058,7 @@ void HopkinsEngine::playEnding() {
 	_globals->PERSO = _globals->freeMemory(_globals->PERSO);
 	_dialogsManager->_removeInventFl = true;
 	_globals->_disableInventFl = true;
-	_graphicsManager._scrollOffset = 0;
+	_graphicsManager->_scrollOffset = 0;
 	_globals->_cityMapEnabledFl = false;
 	_globals->iRegul = 1;
 	_soundManager.playSound(26);
@@ -2065,23 +2066,23 @@ void HopkinsEngine::playEnding() {
 	_globals->_freezeCharacterFl = true;
 	_globals->_exitId = 0;
 	_soundManager.loadSample(1, "SOUND90.WAV");
-	_graphicsManager.loadImage("IM100");
+	_graphicsManager->loadImage("IM100");
 	_animationManager->loadAnim("ANIM100");
-	_graphicsManager.displayAllBob();
+	_graphicsManager->displayAllBob();
 	_eventsManager->mouseOn();
 	_objectsManager.stopBobAnimation(7);
 	_objectsManager.stopBobAnimation(8);
 	_objectsManager.stopBobAnimation(9);
-	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 	_eventsManager->changeMouseCursor(0);
 
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager->refreshScreenAndEvents();
 
-	_graphicsManager.fadeInLong();
+	_graphicsManager->fadeInLong();
 	_globals->iRegul = 1;
 
 	do
@@ -2133,12 +2134,12 @@ void HopkinsEngine::playEnding() {
 	if (_globals->_saveData->_data[svGameWonFl] == 1) {
 		_soundManager._specialSoundNum = 200;
 		_soundManager._skipRefreshFl = true;
-		_graphicsManager.FADE_LINUX = 2;
+		_graphicsManager->FADE_LINUX = 2;
 		_animationManager->playAnim("BERM.ANM", 100, 24, 300);
-		_graphicsManager.endDisplayBob();
+		_graphicsManager->endDisplayBob();
 		_soundManager.removeSample(1);
-		_graphicsManager.loadImage("PLAN3");
-		_graphicsManager.fadeInLong();
+		_graphicsManager->loadImage("PLAN3");
+		_graphicsManager->fadeInLong();
 
 		_eventsManager->_rateCounter = 0;
 		if (!_eventsManager->_escKeyFl) {
@@ -2147,16 +2148,16 @@ void HopkinsEngine::playEnding() {
 			while (_eventsManager->_rateCounter < 2000 / _globals->_speed && !_eventsManager->_escKeyFl);
 		}
 		_eventsManager->_escKeyFl = false;
-		_graphicsManager.fadeOutLong();
+		_graphicsManager->fadeOutLong();
 		_globals->iRegul = 1;
 		_soundManager._specialSoundNum = 0;
-		_graphicsManager.FADE_LINUX = 2;
+		_graphicsManager->FADE_LINUX = 2;
 		_animationManager->playAnim("JOUR2A.anm", 12, 12, 1000);
 		_soundManager.playSound(11);
-		_graphicsManager.lockScreen();
-		_graphicsManager.clearScreen();
-		_graphicsManager.unlockScreen();
-		_graphicsManager.clearPalette();
+		_graphicsManager->lockScreen();
+		_graphicsManager->clearScreen();
+		_graphicsManager->unlockScreen();
+		_graphicsManager->clearPalette();
 		_animationManager->playAnim("FF1a.anm", 18, 18, 9);
 		_animationManager->playAnim("FF1a.anm", 9, 18, 9);
 		_animationManager->playAnim("FF1a.anm", 9, 18, 18);
@@ -2187,8 +2188,8 @@ void HopkinsEngine::playEnding() {
 			_eventsManager->refreshScreenAndEvents();
 		while (_objectsManager.getBobAnimDataIdx(8) != 21);
 
-		_graphicsManager.fadeOutLong();
-		_graphicsManager.endDisplayBob();
+		_graphicsManager->fadeOutLong();
+		_graphicsManager->endDisplayBob();
 		_soundManager.removeSample(1);
 		_soundManager.playSound(16);
 		_globals->iRegul = 1;
@@ -2207,10 +2208,10 @@ void HopkinsEngine::playEnding() {
 void HopkinsEngine::playPlaneCutscene() {
 	_soundManager.playSound(28);
 	_globals->iRegul = 1;
-	_graphicsManager.lockScreen();
-	_graphicsManager.clearScreen();
-	_graphicsManager.unlockScreen();
-	_graphicsManager.clearPalette();
+	_graphicsManager->lockScreen();
+	_graphicsManager->clearScreen();
+	_graphicsManager->unlockScreen();
+	_graphicsManager->clearPalette();
 
 	_animationManager->_clearAnimationFl = false;
 	_animationManager->playAnim("aerop00a.anm", 10, 18, 18);
@@ -2241,7 +2242,7 @@ void HopkinsEngine::playPlaneCutscene() {
 	if (!_eventsManager->_escKeyFl)
 		_animationManager->playAnim("trans40a.anm", 10, 18, 18);
 	if (!_eventsManager->_escKeyFl) {
-		_graphicsManager.FADE_LINUX = 2;
+		_graphicsManager->FADE_LINUX = 2;
 		_animationManager->playAnim("PARA00a.anm", 9, 9, 9);
 	}
 
@@ -2255,7 +2256,7 @@ void HopkinsEngine::loadBaseMap() {
 
 	if (f.exists(filename)) {
 		// PBASE file exists, so go ahead and load it
-		_graphicsManager.loadImage("PBASE");
+		_graphicsManager->loadImage("PBASE");
 	} else {
 		// PBASE file doesn't exist, so draw a substitute screen
 		drawBaseMap();
@@ -2263,7 +2264,7 @@ void HopkinsEngine::loadBaseMap() {
 }
 
 void HopkinsEngine::drawBaseMap() {
-	memset(_graphicsManager._vesaScreen, 0, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	memset(_graphicsManager->_vesaScreen, 0, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 	// List of rectangle areas to draw for exit points
 	const int rects[] = {
@@ -2281,13 +2282,13 @@ void HopkinsEngine::drawBaseMap() {
 		Common::Rect r(rectP[0], rectP[1], rectP[2], rectP[3]);
 
 		for (int yp = r.top; yp <= r.bottom; ++yp) {
-			byte *pDest = _graphicsManager._vesaScreen + yp * SCREEN_WIDTH + r.left;
+			byte *pDest = _graphicsManager->_vesaScreen + yp * SCREEN_WIDTH + r.left;
 			Common::fill(pDest, pDest + r.width(), 0xff);
 		}
 	}
 
 	// Copy the calculated screen
-	memcpy(_graphicsManager._vesaBuffer, _graphicsManager._vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	memcpy(_graphicsManager->_vesaBuffer, _graphicsManager->_vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 	// Write some explanatory text
 	_fontManager->displayText(40, 200, "ScummVM base map - select a square for different rooms", 255);
@@ -2300,12 +2301,12 @@ int HopkinsEngine::handleBaseMap() {
 	loadBaseMap();
 
 	// Set needed colors
-	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 	_eventsManager->changeMouseCursor(0);
-	_graphicsManager.fadeInLong();
+	_graphicsManager->fadeInLong();
 	bool loopCond = false;
 	int zone;
 	do {
@@ -2339,10 +2340,10 @@ int HopkinsEngine::handleBaseMap() {
 			_globals->_baseMapColor += 25;
 			if (_globals->_baseMapColor > 100)
 				_globals->_baseMapColor = 0;
-			_graphicsManager.SETCOLOR4(251, _globals->_baseMapColor, _globals->_baseMapColor, _globals->_baseMapColor);
+			_graphicsManager->SETCOLOR4(251, _globals->_baseMapColor, _globals->_baseMapColor, _globals->_baseMapColor);
 		} else {
 			_eventsManager->changeMouseCursor(0);
-			_graphicsManager.SETCOLOR4(251, 100, 100, 100);
+			_graphicsManager->SETCOLOR4(251, 100, 100, 100);
 		}
 		_eventsManager->refreshScreenAndEvents();
 		if ((mouseButton == 1) && zone)
@@ -2350,7 +2351,7 @@ int HopkinsEngine::handleBaseMap() {
 	} while (!loopCond);
 
 	_globals->_disableInventFl = false;
-	_graphicsManager.fadeOutLong();
+	_graphicsManager->fadeOutLong();
 
 	int result;
 	switch (zone) {
@@ -2466,7 +2467,7 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char color) {
 		if (!curChar)
 			break;
 		if (curChar > 31) {
-			_graphicsManager.displayFont(_graphicsManager._vesaBuffer, _fontManager->_font, startPosX, startPosY, curChar - 32, color);
+			_graphicsManager->displayFont(_graphicsManager->_vesaBuffer, _fontManager->_font, startPosX, startPosY, curChar - 32, color);
 			startPosX += _objectsManager.getWidth(_fontManager->_font, curChar - 32);
 		}
 	}
@@ -2475,8 +2476,8 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char color) {
 void HopkinsEngine::displayCredits() {
 	loadCredits();
 	_globals->_creditsPosY = 436;
-	_graphicsManager.loadImage("GENERIC");
-	_graphicsManager.fadeInLong();
+	_graphicsManager->loadImage("GENERIC");
+	_graphicsManager->fadeInLong();
 	_soundManager.playSound(28);
 	_eventsManager->_mouseFl = false;
 	_globals->iRegul = 3;
@@ -2513,7 +2514,7 @@ void HopkinsEngine::displayCredits() {
 		--_globals->_creditsPosY;
 		if (_globals->_creditsStartX != -1 || _globals->_creditsEndX != -1 || _globals->_creditsStartY != -1 || _globals->_creditsEndY != -1) {
 			_eventsManager->refreshScreenAndEvents();
-			_graphicsManager.copySurface(_graphicsManager._vesaScreen, 60, 50, 520, 380, _graphicsManager._vesaBuffer, 60, 50);
+			_graphicsManager->copySurface(_graphicsManager->_vesaScreen, 60, 50, 520, 380, _graphicsManager->_vesaBuffer, 60, 50);
 		} else {
 			_eventsManager->refreshScreenAndEvents();
 		}
@@ -2529,7 +2530,7 @@ void HopkinsEngine::displayCredits() {
 		_globals->_creditsStartY = -1;
 		_globals->_creditsEndY = -1;
 	} while ((_eventsManager->getMouseButton() != 1) && (!shouldQuit()));
-	_graphicsManager.fadeOutLong();
+	_graphicsManager->fadeOutLong();
 	_globals->iRegul = 1;
 	_eventsManager->_mouseFl = true;
 }
@@ -2748,14 +2749,14 @@ void HopkinsEngine::setSubmarineSprites() {
 
 void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFilename, Directions defaultDirection, int16 exit1, int16 exit2, int16 exit3, int16 exit4, int16 soundId) {
 	_globals->_cityMapEnabledFl = false;
-	_graphicsManager._noFadingFl = false;
+	_graphicsManager->_noFadingFl = false;
 	_globals->_freezeCharacterFl = false;
 	_globals->_exitId = 0;
 	_globals->_disableInventFl = true;
 	_soundManager.playSound(soundId);
 	_globals->PERSO = _fileManager->loadFile("VAISSEAU.SPR");
 	if (backgroundFilename.size())
-		_graphicsManager.loadImage(backgroundFilename);
+		_graphicsManager->loadImage(backgroundFilename);
 
 	if (curExitId == 77)
 		_objectsManager.loadLinkFile("IM77");
@@ -2800,10 +2801,10 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	}
 
 	_objectsManager.addStaticSprite(_globals->PERSO, Common::Point(_objectsManager._characterPos.x, 110), 0, _objectsManager._startSpriteIndex, 0, false, 0, 0);
-	_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
+	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 	_objectsManager.animateSprite(0);
 	_linesManager._route = (RouteItem *)g_PTRNUL;
 	_eventsManager->mouseOn();
@@ -2812,9 +2813,9 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	for (int cpt = 0; cpt <= 4; cpt++)
 		_eventsManager->refreshScreenAndEvents();
 
-	if (!_graphicsManager._noFadingFl)
-		_graphicsManager.fadeInLong();
-	_graphicsManager._noFadingFl = false;
+	if (!_graphicsManager->_noFadingFl)
+		_graphicsManager->fadeInLong();
+	_graphicsManager->_noFadingFl = false;
 	_globals->iRegul = 1;
 
 	for (;;) {
@@ -2837,7 +2838,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 		_globals->_exitId = exit3;
 	else if (_globals->_exitId == 4)
 		_globals->_exitId = exit4;
-	_graphicsManager.fadeOutLong();
+	_graphicsManager->fadeOutLong();
 	_objectsManager.removeSprite(0);
 	_objectsManager.clearScreen();
 	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
@@ -2854,17 +2855,17 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	int xp, yp;
 	int buttonIndex;
 
-	_graphicsManager._minX = 0;
-	_graphicsManager._minY = 0;
-	_graphicsManager._maxX = SCREEN_WIDTH;
-	_graphicsManager._maxY = SCREEN_HEIGHT - 1;
+	_graphicsManager->_minX = 0;
+	_graphicsManager->_minY = 0;
+	_graphicsManager->_maxX = SCREEN_WIDTH;
+	_graphicsManager->_maxY = SCREEN_HEIGHT - 1;
 	_eventsManager->_breakoutFl = false;
 	_objectsManager._forestFl = false;
 	_globals->_disableInventFl = true;
 	_globals->_exitId = 0;
 
-	_graphicsManager.loadImage("ADULT");
-	_graphicsManager.fadeInLong();
+	_graphicsManager->loadImage("ADULT");
+	_graphicsManager->fadeInLong();
 	_eventsManager->mouseOn();
 	_eventsManager->changeMouseCursor(0);
 	_eventsManager->_mouseCursorId = 0;
@@ -2884,17 +2885,17 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 	} while (!shouldQuit() && (buttonIndex == 0 || _eventsManager->getMouseButton() != 1));
 
 	_globals->_disableInventFl = false;
-	_graphicsManager.fadeOutLong();
+	_graphicsManager->fadeOutLong();
 
 	if (buttonIndex != 2) {
 		// Quit game
 		return false;
 	} else {
 		// Continue
-		_graphicsManager._minX = 0;
-		_graphicsManager._maxY = 20;
-		_graphicsManager._maxX = SCREEN_WIDTH;
-		_graphicsManager._maxY = SCREEN_HEIGHT - 20;
+		_graphicsManager->_minX = 0;
+		_graphicsManager->_maxY = 20;
+		_graphicsManager->_maxX = SCREEN_WIDTH;
+		_graphicsManager->_maxY = SCREEN_HEIGHT - 20;
 		return true;
 	}
 }

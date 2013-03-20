@@ -59,7 +59,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	_vm->_eventsManager->mouseOff();
 
 	bool hasScreenCopy = false;
-	byte *screenP = _vm->_graphicsManager._vesaScreen;
+	byte *screenP = _vm->_graphicsManager->_vesaScreen;
 
 	Common::String tmpStr;
 	// The Windows 95 demo only contains the interlaced version of the BOMBE1 and BOMBE2 videos
@@ -73,37 +73,37 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		error("File not found - %s", tmpStr.c_str());
 
 	f.skip(6);
-	f.read(_vm->_graphicsManager._palette, 800);
+	f.read(_vm->_graphicsManager->_palette, 800);
 	f.skip(4);
 	size_t nbytes = f.readUint32LE();
 	f.skip(14);
 	f.read(screenP, nbytes);
 
 	if (_clearAnimationFl) {
-		_vm->_graphicsManager.lockScreen();
-		_vm->_graphicsManager.clearScreen();
-		_vm->_graphicsManager.unlockScreen();
+		_vm->_graphicsManager->lockScreen();
+		_vm->_graphicsManager->clearScreen();
+		_vm->_graphicsManager->unlockScreen();
 	}
-	if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
+	if (_vm->_graphicsManager->WinScan / 2 > SCREEN_WIDTH) {
 		hasScreenCopy = true;
 		screenCopy = _vm->_globals->allocMemory(307200);
 		memcpy(screenCopy, screenP, 307200);
 	}
 	if (NO_SEQ) {
 		if (hasScreenCopy)
-			memcpy(screenCopy, _vm->_graphicsManager._vesaBuffer, 307200);
-		_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
+			memcpy(screenCopy, _vm->_graphicsManager->_vesaBuffer, 307200);
+		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 	} else {
-		_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
-		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
+		_vm->_graphicsManager->lockScreen();
 		if (hasScreenCopy)
-			_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager->m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
-			_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		_vm->_graphicsManager.unlockScreen();
+			_vm->_graphicsManager->m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->unlockScreen();
 
-		_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		_vm->_graphicsManager.updateScreen();
+		_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		_vm->_graphicsManager->updateScreen();
 	}
 	_vm->_eventsManager->_rateCounter = 0;
 	_vm->_eventsManager->_escKeyFl = false;
@@ -148,19 +148,19 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 			if (!_vm->_eventsManager->_escKeyFl) {
 				_vm->_eventsManager->_rateCounter = 0;
-				_vm->_graphicsManager.lockScreen();
+				_vm->_graphicsManager->lockScreen();
 				if (hasScreenCopy) {
 					if (*screenP != kByteStop) {
-						_vm->_graphicsManager.copyWinscanVbe3(screenP, screenCopy);
-						_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+						_vm->_graphicsManager->copyWinscanVbe3(screenP, screenCopy);
+						_vm->_graphicsManager->m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 					}
 				} else if (*screenP != kByteStop) {
-					_vm->_graphicsManager.copyVideoVbe16(screenP);
+					_vm->_graphicsManager->copyVideoVbe16(screenP);
 				}
-				_vm->_graphicsManager.unlockScreen();
+				_vm->_graphicsManager->unlockScreen();
 
-				_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-				_vm->_graphicsManager.updateScreen();
+				_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+				_vm->_graphicsManager->updateScreen();
 				_vm->_soundManager.checkSoundEnd();
 			}
 		}
@@ -182,11 +182,11 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		_vm->_soundManager.checkSoundEnd();
 	}
 
-	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
+	if (_vm->_graphicsManager->FADE_LINUX == 2 && !hasScreenCopy) {
 		screenCopy = _vm->_globals->allocMemory(307200);
 
 		f.seek(6);
-		f.read(_vm->_graphicsManager._palette, 800);
+		f.read(_vm->_graphicsManager->_palette, 800);
 		f.skip(4);
 		nbytes = f.readUint32LE();
 		f.skip(14);
@@ -205,20 +205,20 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
 			if (*screenP != kByteStop)
-				_vm->_graphicsManager.copyWinscanVbe3(screenP, screenCopy);
+				_vm->_graphicsManager->copyWinscanVbe3(screenP, screenCopy);
 		}
-		_vm->_graphicsManager.fadeOutDefaultLength(screenCopy);
+		_vm->_graphicsManager->fadeOutDefaultLength(screenCopy);
 		screenCopy = _vm->_globals->freeMemory(screenCopy);
 	}
 	if (hasScreenCopy) {
-		if (_vm->_graphicsManager.FADE_LINUX == 2)
-			_vm->_graphicsManager.fadeOutDefaultLength(screenCopy);
+		if (_vm->_graphicsManager->FADE_LINUX == 2)
+			_vm->_graphicsManager->fadeOutDefaultLength(screenCopy);
 		screenCopy = _vm->_globals->freeMemory(screenCopy);
 	}
 
-	_vm->_graphicsManager.FADE_LINUX = 0;
+	_vm->_graphicsManager->FADE_LINUX = 0;
 	f.close();
-	_vm->_graphicsManager._skipVideoLockFl = false;
+	_vm->_graphicsManager->_skipVideoLockFl = false;
 
 	_vm->_eventsManager->mouseOn();
 }
@@ -239,58 +239,58 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 
 	bool hasScreenCopy = false;
 	while (!_vm->shouldQuit()) {
-		memcpy(_vm->_graphicsManager._oldPalette, _vm->_graphicsManager._palette, 769);
+		memcpy(_vm->_graphicsManager->_oldPalette, _vm->_graphicsManager->_palette, 769);
 
-		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 307200);
-		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 614400);
+		if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
+			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+		else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
+			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
 
-		if (!_vm->_graphicsManager._lineNbr)
-			_vm->_graphicsManager._scrollOffset = 0;
+		if (!_vm->_graphicsManager->_lineNbr)
+			_vm->_graphicsManager->_scrollOffset = 0;
 
-		screenP = _vm->_graphicsManager._vesaScreen;
+		screenP = _vm->_graphicsManager->_vesaScreen;
 		if (!f.open(filename))
 			error("Error opening file - %s", filename.c_str());
 
 		f.skip(6);
-		f.read(_vm->_graphicsManager._palette, 800);
+		f.read(_vm->_graphicsManager->_palette, 800);
 		f.skip(4);
 		size_t nbytes = f.readUint32LE();
 		f.skip(14);
 
 		f.read(screenP, nbytes);
 
-		_vm->_graphicsManager.clearPalette();
-		oldScrollPosX = _vm->_graphicsManager._scrollPosX;
-		_vm->_graphicsManager.setScreenWidth(SCREEN_WIDTH);
-		_vm->_graphicsManager.scrollScreen(0);
-		_vm->_graphicsManager.lockScreen();
-		_vm->_graphicsManager.clearScreen();
-		_vm->_graphicsManager.unlockScreen();
+		_vm->_graphicsManager->clearPalette();
+		oldScrollPosX = _vm->_graphicsManager->_scrollPosX;
+		_vm->_graphicsManager->setScreenWidth(SCREEN_WIDTH);
+		_vm->_graphicsManager->scrollScreen(0);
+		_vm->_graphicsManager->lockScreen();
+		_vm->_graphicsManager->clearScreen();
+		_vm->_graphicsManager->unlockScreen();
 
-		_vm->_graphicsManager._maxX = SCREEN_WIDTH;
-		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
+		_vm->_graphicsManager->_maxX = SCREEN_WIDTH;
+		if (_vm->_graphicsManager->WinScan / 2 > SCREEN_WIDTH) {
 			hasScreenCopy = true;
 			screenCopy = _vm->_globals->allocMemory(307200);
 			memcpy(screenCopy, screenP, 307200);
 		}
 		if (NO_SEQ) {
 			if (hasScreenCopy)
-				memcpy(screenCopy, _vm->_graphicsManager._vesaBuffer, 307200);
-			_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
+				memcpy(screenCopy, _vm->_graphicsManager->_vesaBuffer, 307200);
+			_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 		} else {
-			_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
-			_vm->_graphicsManager.lockScreen();
+			_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
+			_vm->_graphicsManager->lockScreen();
 			if (hasScreenCopy)
-				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				_vm->_graphicsManager->m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			else
-				_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				_vm->_graphicsManager->m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
-			_vm->_graphicsManager.unlockScreen();
+			_vm->_graphicsManager->unlockScreen();
 
-			_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-			_vm->_graphicsManager.updateScreen();
+			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			_vm->_graphicsManager->updateScreen();
 		}
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
@@ -328,19 +328,19 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			}
 
 			_vm->_eventsManager->_rateCounter = 0;
-			_vm->_graphicsManager.lockScreen();
+			_vm->_graphicsManager->lockScreen();
 			if (*screenP != kByteStop) {
 				if (hasScreenCopy) {
-					_vm->_graphicsManager.copyWinscanVbe3(screenP, screenCopy);
-					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					_vm->_graphicsManager->copyWinscanVbe3(screenP, screenCopy);
+					_vm->_graphicsManager->m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				} else {
-					_vm->_graphicsManager.copyVideoVbe16(screenP);
+					_vm->_graphicsManager->copyVideoVbe16(screenP);
 				}
 			}
-			_vm->_graphicsManager.unlockScreen();
+			_vm->_graphicsManager->unlockScreen();
 
-			_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-			_vm->_graphicsManager.updateScreen();
+			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			_vm->_graphicsManager->updateScreen();
 			_vm->_soundManager.checkSoundEnd();
 		}
 
@@ -352,12 +352,12 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		}
 	}
 
-	_vm->_graphicsManager._skipVideoLockFl = false;
+	_vm->_graphicsManager->_skipVideoLockFl = false;
 	f.close();
 
-	if (_vm->_graphicsManager.FADE_LINUX == 2 && !hasScreenCopy) {
+	if (_vm->_graphicsManager->FADE_LINUX == 2 && !hasScreenCopy) {
 		f.seek(6);
-		f.read(_vm->_graphicsManager._palette, 800);
+		f.read(_vm->_graphicsManager->_palette, 800);
 		f.skip(4);
 		size_t nbytes = f.readUint32LE();
 		f.skip(14);
@@ -376,46 +376,46 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
 			if (*screenP != kByteStop)
-				_vm->_graphicsManager.copyWinscanVbe3(screenP, ptra);
+				_vm->_graphicsManager->copyWinscanVbe3(screenP, ptra);
 		}
-		_vm->_graphicsManager.fadeOutDefaultLength(ptra);
+		_vm->_graphicsManager->fadeOutDefaultLength(ptra);
 		ptra = _vm->_globals->freeMemory(ptra);
 	}
 	if (hasScreenCopy) {
-		if (_vm->_graphicsManager.FADE_LINUX == 2)
-			_vm->_graphicsManager.fadeOutDefaultLength(screenCopy);
+		if (_vm->_graphicsManager->FADE_LINUX == 2)
+			_vm->_graphicsManager->fadeOutDefaultLength(screenCopy);
 		_vm->_globals->freeMemory(screenCopy);
 	}
-	_vm->_graphicsManager.FADE_LINUX = 0;
+	_vm->_graphicsManager->FADE_LINUX = 0;
 
-	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-	memcpy(_vm->_graphicsManager._palette, _vm->_graphicsManager._oldPalette, 769);
-	_vm->_graphicsManager.clearPalette();
-	_vm->_graphicsManager.lockScreen();
-	_vm->_graphicsManager.clearScreen();
-	_vm->_graphicsManager.unlockScreen();
+	memcpy(_vm->_graphicsManager->_palette, _vm->_graphicsManager->_oldPalette, 769);
+	_vm->_graphicsManager->clearPalette();
+	_vm->_graphicsManager->lockScreen();
+	_vm->_graphicsManager->clearScreen();
+	_vm->_graphicsManager->unlockScreen();
 
-	_vm->_graphicsManager._scrollPosX = oldScrollPosX;
-	_vm->_graphicsManager.scrollScreen(oldScrollPosX);
-	if (_vm->_graphicsManager._largeScreenFl) {
-		_vm->_graphicsManager.setScreenWidth(2 * SCREEN_WIDTH);
-		_vm->_graphicsManager._maxX = 2 * SCREEN_WIDTH;
-		_vm->_graphicsManager.lockScreen();
-		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager->_scrollPosX = oldScrollPosX;
+	_vm->_graphicsManager->scrollScreen(oldScrollPosX);
+	if (_vm->_graphicsManager->_largeScreenFl) {
+		_vm->_graphicsManager->setScreenWidth(2 * SCREEN_WIDTH);
+		_vm->_graphicsManager->_maxX = 2 * SCREEN_WIDTH;
+		_vm->_graphicsManager->lockScreen();
+		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_vesaBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	} else {
-		_vm->_graphicsManager.setScreenWidth(SCREEN_WIDTH);
-		_vm->_graphicsManager._maxX = SCREEN_WIDTH;
-		_vm->_graphicsManager.lockScreen();
-		_vm->_graphicsManager.clearScreen();
-		_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->setScreenWidth(SCREEN_WIDTH);
+		_vm->_graphicsManager->_maxX = SCREEN_WIDTH;
+		_vm->_graphicsManager->lockScreen();
+		_vm->_graphicsManager->clearScreen();
+		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
-	_vm->_graphicsManager.unlockScreen();
-	_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_vm->_graphicsManager->unlockScreen();
+	_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-	_vm->_graphicsManager.fadeInShort();
-	_vm->_graphicsManager.updateScreen();
+	_vm->_graphicsManager->fadeInShort();
+	_vm->_graphicsManager->updateScreen();
 
 	_vm->_eventsManager->mouseOn();
 }
@@ -620,51 +620,51 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	if (!NO_COUL) {
 		_vm->_eventsManager->refreshScreenAndEvents();
 
-		if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 307200);
-		else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 614400);
-		if (!_vm->_graphicsManager._lineNbr)
-			_vm->_graphicsManager._scrollOffset = 0;
+		if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
+			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+		else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
+			_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
+		if (!_vm->_graphicsManager->_lineNbr)
+			_vm->_graphicsManager->_scrollOffset = 0;
 	}
-	byte *screenP = _vm->_graphicsManager._vesaScreen;
+	byte *screenP = _vm->_graphicsManager->_vesaScreen;
 	Common::File f;
 	if (!f.open(file))
 		error("Error opening file - %s", file.c_str());
 
 	f.skip(6);
-	f.read(_vm->_graphicsManager._palette, 800);
+	f.read(_vm->_graphicsManager->_palette, 800);
 	f.skip(4);
 	size_t nbytes = f.readUint32LE();
 	f.skip(14);
 	f.read(screenP, nbytes);
 
 	byte *screenCopy = NULL;
-	if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
+	if (_vm->_graphicsManager->WinScan / 2 > SCREEN_WIDTH) {
 		hasScreenCopy = true;
 		screenCopy = _vm->_globals->allocMemory(307200);
 		memcpy(screenCopy, screenP, 307200);
 	}
 	if (NO_SEQ) {
 		if (hasScreenCopy)
-			memcpy(screenCopy, _vm->_graphicsManager._vesaBuffer, 307200);
+			memcpy(screenCopy, _vm->_graphicsManager->_vesaBuffer, 307200);
 		if (!_vm->getIsDemo()) {
-			_vm->_graphicsManager.SETCOLOR3(252, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR3(251, 100, 100, 100);
-			_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+			_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
+			_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+			_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
+			_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 		}
-		_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
+		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 	} else {
-		_vm->_graphicsManager.lockScreen();
+		_vm->_graphicsManager->lockScreen();
 		if (hasScreenCopy)
-			_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager->m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		else
-			_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		_vm->_graphicsManager.unlockScreen();
+			_vm->_graphicsManager->m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->unlockScreen();
 
-		_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		_vm->_graphicsManager.updateScreen();
+		_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		_vm->_graphicsManager->updateScreen();
 	}
 	bool skipFl = false;
 	if (_vm->getIsDemo()) {
@@ -685,7 +685,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		}
 	} else {
 		if (NO_COUL)
-			_vm->_graphicsManager.fadeInDefaultLength(screenP);
+			_vm->_graphicsManager->fadeInDefaultLength(screenP);
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
 		_vm->_soundManager.loadAnimSound();
@@ -734,19 +734,19 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 				break;
 
 			_vm->_eventsManager->_rateCounter = 0;
-			_vm->_graphicsManager.lockScreen();
+			_vm->_graphicsManager->lockScreen();
 			if (hasScreenCopy) {
 				if (*screenP != kByteStop) {
-					_vm->_graphicsManager.copyWinscanVbe(screenP, screenCopy);
-					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					_vm->_graphicsManager->copyWinscanVbe(screenP, screenCopy);
+					_vm->_graphicsManager->m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				}
 			} else if (*screenP != kByteStop) {
-				_vm->_graphicsManager.copyVideoVbe16a(screenP);
+				_vm->_graphicsManager->copyVideoVbe16a(screenP);
 			}
-			_vm->_graphicsManager.unlockScreen();
+			_vm->_graphicsManager->unlockScreen();
 
-			_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-			_vm->_graphicsManager.updateScreen();
+			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			_vm->_graphicsManager->updateScreen();
 			_vm->_soundManager.checkSoundEnd();
 		}
 	}
@@ -767,11 +767,11 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	if (!skipFl)
 		_vm->_eventsManager->_rateCounter = 0;
 
-	_vm->_graphicsManager._skipVideoLockFl = false;
+	_vm->_graphicsManager->_skipVideoLockFl = false;
 	f.close();
 
 	if (!NO_COUL) {
-		_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+		_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 		_vm->_eventsManager->_mouseFl = true;
@@ -795,19 +795,19 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			return;
 
 		_vm->_eventsManager->_mouseFl = false;
-		screenP = _vm->_graphicsManager._vesaScreen;
+		screenP = _vm->_graphicsManager->_vesaScreen;
 
 		if (!f.open(file))
 			error("File not found - %s", file.c_str());
 
 		f.skip(6);
-		f.read(_vm->_graphicsManager._palette, 800);
+		f.read(_vm->_graphicsManager->_palette, 800);
 		f.skip(4);
 		size_t nbytes = f.readUint32LE();
 		f.skip(14);
 		f.read(screenP, nbytes);
 
-		if (_vm->_graphicsManager.WinScan / 2 > SCREEN_WIDTH) {
+		if (_vm->_graphicsManager->WinScan / 2 > SCREEN_WIDTH) {
 			multiScreenFl = true;
 			screenCopy = _vm->_globals->allocMemory(307200);
 			memcpy((void *)screenCopy, screenP, 307200);
@@ -815,20 +815,20 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		if (NO_SEQ) {
 			if (multiScreenFl) {
 				assert(screenCopy != NULL);
-				memcpy((void *)screenCopy, _vm->_graphicsManager._vesaBuffer, 307200);
+				memcpy((void *)screenCopy, _vm->_graphicsManager->_vesaBuffer, 307200);
 			}
-			_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
+			_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 		} else {
-			_vm->_graphicsManager.lockScreen();
-			_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
+			_vm->_graphicsManager->lockScreen();
+			_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 			if (multiScreenFl)
-				_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+				_vm->_graphicsManager->m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			else
-				_vm->_graphicsManager.m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			_vm->_graphicsManager.unlockScreen();
+				_vm->_graphicsManager->m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager->unlockScreen();
 
-			_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-			_vm->_graphicsManager.updateScreen();
+			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			_vm->_graphicsManager->updateScreen();
 		}
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
@@ -864,19 +864,19 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			}
 
 			_vm->_eventsManager->_rateCounter = 0;
-			_vm->_graphicsManager.lockScreen();
+			_vm->_graphicsManager->lockScreen();
 			if (multiScreenFl) {
 				if (*screenP != kByteStop) {
-					_vm->_graphicsManager.copyWinscanVbe(screenP, screenCopy);
-					_vm->_graphicsManager.m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+					_vm->_graphicsManager->copyWinscanVbe(screenP, screenCopy);
+					_vm->_graphicsManager->m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 				}
 			} else if (*screenP != kByteStop) {
-				_vm->_graphicsManager.copyVideoVbe16a(screenP);
+				_vm->_graphicsManager->copyVideoVbe16a(screenP);
 			}
-			_vm->_graphicsManager.unlockScreen();
+			_vm->_graphicsManager->unlockScreen();
 
-			_vm->_graphicsManager.addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-			_vm->_graphicsManager.updateScreen();
+			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			_vm->_graphicsManager->updateScreen();
 			_vm->_soundManager.checkSoundEnd();
 		}
 	}
@@ -891,11 +891,11 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 	_vm->_eventsManager->_rateCounter = 0;
 
-	if (_vm->_graphicsManager.FADE_LINUX == 2 && !multiScreenFl) {
+	if (_vm->_graphicsManager->FADE_LINUX == 2 && !multiScreenFl) {
 		byte *ptra = _vm->_globals->allocMemory(307200);
 
 		f.seek(6);
-		f.read(_vm->_graphicsManager._palette, 800);
+		f.read(_vm->_graphicsManager->_palette, 800);
 		f.skip(4);
 		size_t nbytes = f.readUint32LE();
 		f.skip(14);
@@ -913,17 +913,17 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
 			if (*screenP != kByteStop)
-				_vm->_graphicsManager.copyWinscanVbe(screenP, ptra);
+				_vm->_graphicsManager->copyWinscanVbe(screenP, ptra);
 		}
-		_vm->_graphicsManager.fadeOutDefaultLength(ptra);
+		_vm->_graphicsManager->fadeOutDefaultLength(ptra);
 		ptra = _vm->_globals->freeMemory(ptra);
 	}
 	if (multiScreenFl) {
-		if (_vm->_graphicsManager.FADE_LINUX == 2)
-			_vm->_graphicsManager.fadeOutDefaultLength(screenCopy);
+		if (_vm->_graphicsManager->FADE_LINUX == 2)
+			_vm->_graphicsManager->fadeOutDefaultLength(screenCopy);
 		_vm->_globals->freeMemory(screenCopy);
 	}
-	_vm->_graphicsManager.FADE_LINUX = 0;
+	_vm->_graphicsManager->FADE_LINUX = 0;
 
 	f.close();
 	_vm->_eventsManager->_mouseFl = true;

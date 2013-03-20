@@ -116,10 +116,9 @@ public:
 	bool MANU_SCROLL;
 	int FADE_LINUX;
 public:
-	GraphicsManager();
+	GraphicsManager(HopkinsEngine *vm);
 	~GraphicsManager();
 
-	void setParent(HopkinsEngine *vm);
 	void lockScreen();
 	void unlockScreen();
 	void clearPalette();

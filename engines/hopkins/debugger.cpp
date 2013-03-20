@@ -40,7 +40,7 @@ bool Debugger::cmd_DirtyRects(int argc, const char **argv) {
 		DebugPrintf("%s: [on | off]\n", argv[0]);
 		return true;
 	} else {
-		_vm->_graphicsManager._showDirtyRects = !strcmp(argv[1], "on");
+		_vm->_graphicsManager->_showDirtyRects = !strcmp(argv[1], "on");
 		return false;
 	}
 }

@@ -55,7 +55,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_fontManager->hideText(5);
 	_vm->_fontManager->hideText(9);
 	_vm->_eventsManager->refreshScreenAndEvents();
-	_vm->_graphicsManager._scrollStatus = 1;
+	_vm->_graphicsManager->_scrollStatus = 1;
 	bool oldDisableInventFl = _vm->_globals->_disableInventFl;
 	_vm->_globals->_disableInventFl = true;
 	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
@@ -86,14 +86,14 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 		_characterSprite = _vm->_objectsManager.loadSprite("RES_SAN.RES");
 	}
 
-	if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 307200);
-	else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 614400);
+	if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
+		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+	else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
+		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
 
-	if (!_vm->_graphicsManager._lineNbr)
-		_vm->_graphicsManager._scrollOffset = 0;
-	_vm->_graphicsManager.NB_SCREEN(true);
+	if (!_vm->_graphicsManager->_lineNbr)
+		_vm->_graphicsManager->_scrollOffset = 0;
+	_vm->_graphicsManager->NB_SCREEN(true);
 	_vm->_objectsManager.PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, false);
 	startCharacterAnim0(_paletteBufferIdx, false);
@@ -127,31 +127,31 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_globals->_introSpeechOffFl = false;
 	_characterBuffer = _vm->_globals->freeMemory(_characterBuffer);
 	_characterSprite = _vm->_globals->freeMemory(_characterSprite);
-	_vm->_graphicsManager.NB_SCREEN(false);
+	_vm->_graphicsManager->NB_SCREEN(false);
 
-	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
 	_vm->_eventsManager->_mouseCursorId = oldMouseCursorId;
 
 	_vm->_eventsManager->changeMouseCursor(oldMouseCursorId);
-	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
 
 	if (_vm->getIsDemo() == false)
-		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+		_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 
-	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
-	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
-	_vm->_graphicsManager.lockScreen();
-	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	_vm->_graphicsManager.unlockScreen();
-	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
+	_vm->_graphicsManager->initColorTable(145, 150, _vm->_graphicsManager->_palette);
+	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
+	_vm->_graphicsManager->lockScreen();
+	_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager->unlockScreen();
+	memcpy(_vm->_graphicsManager->_vesaBuffer, _vm->_graphicsManager->_vesaScreen, 614399);
 	_vm->_globals->_disableInventFl = oldDisableInventFl;
-	_vm->_graphicsManager.updateScreen();
+	_vm->_graphicsManager->updateScreen();
 	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager->refreshScreenAndEvents();
-	_vm->_graphicsManager._scrollStatus = 0;
+	_vm->_graphicsManager->_scrollStatus = 0;
 }
 
 void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
@@ -218,8 +218,8 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	_vm->_eventsManager->_mouseCursorId = oldMouseCursorId;
 
 	_vm->_eventsManager->changeMouseCursor(oldMouseCursorId);
-	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
-	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
+	_vm->_graphicsManager->initColorTable(145, 150, _vm->_graphicsManager->_palette);
+	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 	// TODO: The original re-enables the mouse cursor here
 	_vm->_globals->_disableInventFl = oldDisableInventFl;
 }
@@ -467,8 +467,8 @@ void TalkManager::searchCharacterPalette(int startIdx, bool dark) {
 	else
 		_characterPalette[761] = 255;
 
-	_vm->_graphicsManager.setPaletteVGA256(_characterPalette);
-	_vm->_graphicsManager.initColorTable(145, 150, _characterPalette);
+	_vm->_graphicsManager->setPaletteVGA256(_characterPalette);
+	_vm->_graphicsManager->initColorTable(145, 150, _characterPalette);
 }
 
 void TalkManager::dialogWait() {
@@ -642,7 +642,7 @@ void TalkManager::startCharacterAnim0(int startIdx, bool readOnlyFl) {
 			if (!READ_LE_INT16(&_characterAnim[2 * idx + 4]))
 				break;
 			if (_vm->_globals->_speed != 501)
-				_vm->_graphicsManager.fastDisplay(_characterSprite, _vm->_eventsManager->_startPos.x + READ_LE_INT16(&_characterAnim[2 * idx]),
+				_vm->_graphicsManager->fastDisplay(_characterSprite, _vm->_eventsManager->_startPos.x + READ_LE_INT16(&_characterAnim[2 * idx]),
 				    READ_LE_INT16(&_characterAnim[2 * idx + 2]), _characterAnim[2 * idx + 8]);
 			idx += 5;
 		} while (_vm->_globals->_speed != 501);
@@ -967,7 +967,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_fontManager->hideText(5);
 	_vm->_fontManager->hideText(9);
 	_vm->_eventsManager->refreshScreenAndEvents();
-	_vm->_graphicsManager._scrollStatus = 1;
+	_vm->_graphicsManager->_scrollStatus = 1;
 	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
 	_vm->_globals->resetHidingItems();
@@ -1000,16 +1000,16 @@ void TalkManager::animateObject(const Common::String &filename) {
 	else
 		_characterSprite = _vm->_objectsManager.loadSprite("RES_SAN.RES");
 
-	if (_vm->_graphicsManager._lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 307200);
-	else if (_vm->_graphicsManager._lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager._vesaScreen, 614400);
+	if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
+		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+	else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
+		_vm->_saveLoadManager.saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
 
-	if (!_vm->_graphicsManager._lineNbr)
-		_vm->_graphicsManager._scrollOffset = 0;
-	_vm->_graphicsManager.NB_SCREEN(true);
+	if (!_vm->_graphicsManager->_lineNbr)
+		_vm->_graphicsManager->_scrollOffset = 0;
+	_vm->_graphicsManager->NB_SCREEN(true);
 	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
-	_vm->_graphicsManager.NB_SCREEN(true);
+	_vm->_graphicsManager->NB_SCREEN(true);
 	_vm->_objectsManager.PERSO_ON = true;
 	searchCharacterPalette(_paletteBufferIdx, true);
 	startCharacterAnim0(_paletteBufferIdx, false);
@@ -1023,7 +1023,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	initCharacterAnim();
 	VISU_PARLE();
 	dialogWait();
-	_vm->_graphicsManager.initScreen(screenFilename, 2, true);
+	_vm->_graphicsManager->initScreen(screenFilename, 2, true);
 	_vm->_globals->_freezeCharacterFl = true;
 	_vm->_objectsManager._forceZoneFl = true;
 	_vm->_objectsManager._zoneNum = -1;
@@ -1046,7 +1046,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_globals->_introSpeechOffFl = false;
 	_characterBuffer = _vm->_globals->freeMemory(_characterBuffer);
 	_characterSprite = _vm->_globals->freeMemory(_characterSprite);
-	_vm->_graphicsManager.NB_SCREEN(false);
+	_vm->_graphicsManager->NB_SCREEN(false);
 	_vm->_linesManager.clearAllZones();
 	_vm->_linesManager.resetLines();
 	_vm->_globals->resetHidingItems();
@@ -1057,35 +1057,35 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_globals->_answerBuffer = oldAnswerBufferPtr;
 	_vm->_objectsManager._disableFl = true;
 	_vm->_objectsManager.loadLinkFile(curScreenFilename);
-	_vm->_graphicsManager.initScreen(curScreenFilename, 2, true);
+	_vm->_graphicsManager->initScreen(curScreenFilename, 2, true);
 	_vm->_objectsManager._disableFl = false;
 	_vm->_globals->_freezeCharacterFl = false;
 	if (_vm->_globals->_exitId == 101)
 		_vm->_globals->_exitId = 0;
 
-	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager._vesaScreen);
+	_vm->_saveLoadManager.load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager.PERSO_ON = false;
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(4);
-	_vm->_graphicsManager.SETCOLOR3(253, 100, 100, 100);
+	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
 
 	if (!_vm->getIsDemo())
-		_vm->_graphicsManager.SETCOLOR3(254, 0, 0, 0);
+		_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 
-	_vm->_graphicsManager.initColorTable(145, 150, _vm->_graphicsManager._palette);
-	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
-	_vm->_graphicsManager.lockScreen();
-	_vm->_graphicsManager.m_scroll16(_vm->_graphicsManager._vesaScreen, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	_vm->_graphicsManager.unlockScreen();
-	_vm->_graphicsManager.setPaletteVGA256(_vm->_graphicsManager._palette);
-	memcpy(_vm->_graphicsManager._vesaBuffer, _vm->_graphicsManager._vesaScreen, 614399);
+	_vm->_graphicsManager->initColorTable(145, 150, _vm->_graphicsManager->_palette);
+	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
+	_vm->_graphicsManager->lockScreen();
+	_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager->unlockScreen();
+	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
+	memcpy(_vm->_graphicsManager->_vesaBuffer, _vm->_graphicsManager->_vesaScreen, 614399);
 	_vm->_globals->_disableInventFl = false;
-	_vm->_graphicsManager.updateScreen();
+	_vm->_graphicsManager->updateScreen();
 	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager->refreshScreenAndEvents();
-	_vm->_graphicsManager._scrollStatus = 0;
+	_vm->_graphicsManager->_scrollStatus = 0;
 }
 
 } // End of namespace Hopkins

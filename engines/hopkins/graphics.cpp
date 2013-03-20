@@ -35,7 +35,9 @@
 
 namespace Hopkins {
 
-GraphicsManager::GraphicsManager() {
+GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
+	_vm = vm;
+
 	_lockCounter = 0;
 	_initGraphicsFl = false;
 	_screenWidth = _screenHeight = 0;
@@ -75,20 +77,10 @@ GraphicsManager::GraphicsManager() {
 	Common::fill(&_colorTable[0], &_colorTable[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_palette[0], &_palette[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_oldPalette[0], &_oldPalette[PALETTE_EXT_BLOCK_SIZE], 0);
-}
-
-GraphicsManager::~GraphicsManager() {
-	_vm->_globals->freeMemory(_vesaScreen);
-	_vm->_globals->freeMemory(_vesaBuffer);
-	_vm->_globals->freeMemory(_screenBuffer);
-}
-
-void GraphicsManager::setParent(HopkinsEngine *vm) {
-	_vm = vm;
-
+	
 	if (_vm->getIsDemo()) {
 		if (_vm->getPlatform() == Common::kPlatformLinux)
-		// CHECKME: Should be false?
+			// CHECKME: Should be false?
 			MANU_SCROLL = true;
 		else
 			MANU_SCROLL = false;
@@ -97,6 +89,12 @@ void GraphicsManager::setParent(HopkinsEngine *vm) {
 		MANU_SCROLL = false;
 		_scrollSpeed = 32;
 	}
+}
+
+GraphicsManager::~GraphicsManager() {
+	_vm->_globals->freeMemory(_vesaScreen);
+	_vm->_globals->freeMemory(_vesaBuffer);
+	_vm->_globals->freeMemory(_screenBuffer);
 }
 
 void GraphicsManager::setGraphicalMode(int width, int height) {

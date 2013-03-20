@@ -68,15 +68,15 @@ int MenuManager::menu() {
 		memset(frameIndex, 0, sizeof(int) * ARRAYSIZE(frameIndex));
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			_vm->_graphicsManager.loadImage("MENU");
+			_vm->_graphicsManager->loadImage("MENU");
 		else if (_vm->_globals->_language == LANG_EN)
-			_vm->_graphicsManager.loadImage("MENUAN");
+			_vm->_graphicsManager->loadImage("MENUAN");
 		else if (_vm->_globals->_language == LANG_FR)
-			_vm->_graphicsManager.loadImage("MENUFR");
+			_vm->_graphicsManager->loadImage("MENUFR");
 		else if (_vm->_globals->_language == LANG_SP)
-			_vm->_graphicsManager.loadImage("MENUES");
+			_vm->_graphicsManager->loadImage("MENUES");
 
-		_vm->_graphicsManager.fadeInLong();
+		_vm->_graphicsManager->fadeInLong();
 
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			spriteData = _vm->_objectsManager.loadSprite("MENU.SPR");
@@ -120,11 +120,11 @@ int MenuManager::menu() {
 			if (menuIndex > MENU_NONE)
 				frameIndex[menuIndex - 1] = 1;
 
-			_vm->_graphicsManager.fastDisplay(spriteData, 230, 259, frameIndex[0]);
-			_vm->_graphicsManager.fastDisplay(spriteData, 230, 291, frameIndex[1] + 2);
-			_vm->_graphicsManager.fastDisplay(spriteData, 230, 322, frameIndex[2] + 4);
-			_vm->_graphicsManager.fastDisplay(spriteData, 230, 354, frameIndex[3] + 6);
-			_vm->_graphicsManager.fastDisplay(spriteData, 230, 386, frameIndex[4] + 8);
+			_vm->_graphicsManager->fastDisplay(spriteData, 230, 259, frameIndex[0]);
+			_vm->_graphicsManager->fastDisplay(spriteData, 230, 291, frameIndex[1] + 2);
+			_vm->_graphicsManager->fastDisplay(spriteData, 230, 322, frameIndex[2] + 4);
+			_vm->_graphicsManager->fastDisplay(spriteData, 230, 354, frameIndex[3] + 6);
+			_vm->_graphicsManager->fastDisplay(spriteData, 230, 386, frameIndex[4] + 8);
 			_vm->_eventsManager->refreshScreenAndEvents();
 
 			if (_vm->_eventsManager->getMouseButton() == 1 && menuIndex != MENU_NONE)
@@ -132,7 +132,7 @@ int MenuManager::menu() {
 		} while (!selectionMade);
 
 		if (menuIndex > MENU_NONE) {
-			_vm->_graphicsManager.fastDisplay(spriteData, 230, 259 + 32 * (menuIndex - 1), 10 + (menuIndex - 1));
+			_vm->_graphicsManager->fastDisplay(spriteData, 230, 259 + 32 * (menuIndex - 1), 10 + (menuIndex - 1));
 			_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_eventsManager->delay(200);
 		}
@@ -161,7 +161,7 @@ int MenuManager::menu() {
 
 	_vm->_globals->freeMemory(spriteData);
 	_vm->_globals->_disableInventFl = false;
-	_vm->_graphicsManager.fadeOutLong();
+	_vm->_graphicsManager->fadeOutLong();
 	return result;
 }
 

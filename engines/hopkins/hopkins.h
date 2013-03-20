@@ -150,8 +150,8 @@ public:
 	FileManager *_fileManager;
 	FontManager *_fontManager;
 	Globals *_globals;
+	GraphicsManager *_graphicsManager;
 
-	GraphicsManager _graphicsManager;
 	LinesManager _linesManager;
 	MenuManager _menuManager;
 	ObjectsManager _objectsManager;
