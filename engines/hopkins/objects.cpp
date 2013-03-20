@@ -1773,7 +1773,7 @@ void ObjectsManager::handleCityMap() {
 			if (_vm->_globals->_saveData->_data[svBankAttackAnimPlayedFl] == 1 && !_vm->_globals->_saveData->_data[svCopCall1PlayedFl]) {
 				_vm->_globals->_saveData->_data[svCopCall1PlayedFl] = 1;
 				_vm->_globals->_introSpeechOffFl = true;
-				_vm->_talkManager.startAnimatedCharacterDialogue("APPEL1.pe2");
+				_vm->_talkManager->startAnimatedCharacterDialogue("APPEL1.pe2");
 				_vm->_globals->_introSpeechOffFl = false;
 				mouseButton = 0;
 			}
@@ -1781,7 +1781,7 @@ void ObjectsManager::handleCityMap() {
 			if (_vm->_globals->_saveData->_data[svFreedHostageFl] == 1 && !_vm->_globals->_saveData->_data[svCopCall2PlayedFl]) {
 				_vm->_globals->_saveData->_data[svCopCall2PlayedFl] = 1;
 				_vm->_globals->_introSpeechOffFl = true;
-				_vm->_talkManager.startAnimatedCharacterDialogue("APPEL2.pe2");
+				_vm->_talkManager->startAnimatedCharacterDialogue("APPEL2.pe2");
 				_vm->_globals->_introSpeechOffFl = false;
 				mouseButton = 0;
 				_vm->_eventsManager->_curMouseButton = 0;
@@ -2002,9 +2002,9 @@ void ObjectsManager::PARADISE() {
 				_vm->_eventsManager->refreshScreenAndEvents();
 				_vm->_graphicsManager->_scrollStatus = 0;
 			}
-			_vm->_talkManager.REPONSE(_vm->_globals->_saveData->_data[svLastZoneNum], _vm->_globals->_saveData->_data[svLastMouseCursor]);
+			_vm->_talkManager->REPONSE(_vm->_globals->_saveData->_data[svLastZoneNum], _vm->_globals->_saveData->_data[svLastMouseCursor]);
 		} else {
-			_vm->_talkManager.REPONSE2(_vm->_globals->_saveData->_data[svLastZoneNum], _vm->_globals->_saveData->_data[svLastMouseCursor]);
+			_vm->_talkManager->REPONSE2(_vm->_globals->_saveData->_data[svLastZoneNum], _vm->_globals->_saveData->_data[svLastMouseCursor]);
 		}
 		_vm->_eventsManager->changeMouseCursor(4);
 		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_linesManager->ZONEP[_zoneNum]._enabledFl) {
@@ -2571,7 +2571,7 @@ void ObjectsManager::handleSpecialGames() {
 
 		_vm->_globals->_saveData->_data[svField173] = 1;
 		_vm->_globals->_introSpeechOffFl = true;
-		_vm->_talkManager.startAnimatedCharacterDialogue("flicspe1.pe2");
+		_vm->_talkManager->startAnimatedCharacterDialogue("flicspe1.pe2");
 		_vm->_globals->_introSpeechOffFl = false;
 
 		if (_vm->_globals->_censorshipFl)
@@ -2682,7 +2682,7 @@ void ObjectsManager::handleSpecialGames() {
 			_vm->_eventsManager->refreshScreenAndEvents();
 		while (getBobAnimDataIdx(8) != 3);
 		_vm->_globals->_introSpeechOffFl = true;
-		_vm->_talkManager.startAnimatedCharacterDialogue("GM3.PE2");
+		_vm->_talkManager->startAnimatedCharacterDialogue("GM3.PE2");
 		stopBobAnimation(8);
 		_vm->_globals->_saveData->_data[svField333] = 1;
 		_vm->_globals->_disableInventFl = false;
@@ -2692,14 +2692,14 @@ void ObjectsManager::handleSpecialGames() {
 
 void ObjectsManager::BOB_VIVANT(int idx) {
 	int startPos = 10 * idx;
-	if (!READ_LE_UINT16(_vm->_talkManager._characterAnim + startPos + 4))
+	if (!READ_LE_UINT16(_vm->_talkManager->_characterAnim + startPos + 4))
 		return;
 
-	int xp = READ_LE_INT16(_vm->_talkManager._characterAnim + startPos);
-	int yp = READ_LE_INT16(_vm->_talkManager._characterAnim + startPos + 2);
-	int spriteIndex = _vm->_talkManager._characterAnim[startPos + 8];
+	int xp = READ_LE_INT16(_vm->_talkManager->_characterAnim + startPos);
+	int yp = READ_LE_INT16(_vm->_talkManager->_characterAnim + startPos + 2);
+	int spriteIndex = _vm->_talkManager->_characterAnim[startPos + 8];
 
-	_vm->_graphicsManager->fastDisplay(_vm->_talkManager._characterSprite, xp, yp, spriteIndex);
+	_vm->_graphicsManager->fastDisplay(_vm->_talkManager->_characterSprite, xp, yp, spriteIndex);
 }
 
 void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
@@ -3247,7 +3247,7 @@ void ObjectsManager::sceneSpecialIni() {
 			_vm->_globals->_disableInventFl = false;
 			_vm->_graphicsManager->_noFadingFl = true;
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("MAGE1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("MAGE1.pe2");
 			_vm->_graphicsManager->_noFadingFl = true;
 			_vm->_globals->_disableInventFl = false;
 		}

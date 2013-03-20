@@ -65,8 +65,7 @@ public:
 	byte *_characterAnim;
 	byte *_characterSprite;
 
-	TalkManager();
-	void setParent(HopkinsEngine *vm);
+	TalkManager(HopkinsEngine *vm);
 
 	void startStaticCharacterDialogue(const Common::String &filename);
 	void startAnimatedCharacterDialogue(const Common::String &filename);

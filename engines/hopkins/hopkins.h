@@ -157,8 +157,7 @@ public:
 	SaveLoadManager *_saveLoadManager;
 	ScriptManager *_scriptManager;
 	SoundManager *_soundManager;
-
-	TalkManager _talkManager;
+	TalkManager *_talkManager;
 
 public:
 	HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc);

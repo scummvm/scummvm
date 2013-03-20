@@ -55,11 +55,11 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_saveLoadManager = new SaveLoadManager(this);
 	_scriptManager = new ScriptManager(this);
 	_soundManager = new SoundManager(this);
-
-	_talkManager.setParent(this);
+	_talkManager = new TalkManager(this);
 }
 
 HopkinsEngine::~HopkinsEngine() {
+	delete _talkManager;
 	delete _soundManager;
 	delete _scriptManager;
 	delete _saveLoadManager;
@@ -1902,7 +1902,7 @@ void HopkinsEngine::bombExplosion() {
 	}
 
 	_globals->_introSpeechOffFl = true;
-	_talkManager.startStaticCharacterDialogue("vire.pe2");
+	_talkManager->startStaticCharacterDialogue("vire.pe2");
 	_globals->_introSpeechOffFl = false;
 	_objectsManager->setBobAnimation(7);
 
@@ -1971,7 +1971,7 @@ void HopkinsEngine::handleConflagration() {
 		_eventsManager->refreshScreenAndEvents();
 
 	_globals->_introSpeechOffFl = true;
-	_talkManager.startAnimatedCharacterDialogue("SVGARD1.pe2");
+	_talkManager->startAnimatedCharacterDialogue("SVGARD1.pe2");
 	_globals->_introSpeechOffFl = false;
 
 	for (int cpt = 0; cpt <= 49; cpt++)
@@ -2096,7 +2096,7 @@ void HopkinsEngine::playEnding() {
 	while (_objectsManager->getBobAnimDataIdx(6) != 54);
 
 	_globals->_introSpeechOffFl = true;
-	_talkManager.startAnimatedCharacterDialogue("GM4.PE2");
+	_talkManager->startAnimatedCharacterDialogue("GM4.PE2");
 	_globals->_disableInventFl = true;
 	_objectsManager->stopBobAnimation(6);
 	_objectsManager->stopBobAnimation(10);
@@ -2114,7 +2114,7 @@ void HopkinsEngine::playEnding() {
 	while (_objectsManager->getBobAnimDataIdx(7) != 65);
 
 	_globals->_introSpeechOffFl = true;
-	_talkManager.startAnimatedCharacterDialogue("DUELB4.PE2");
+	_talkManager->startAnimatedCharacterDialogue("DUELB4.PE2");
 	_eventsManager->mouseOff();
 	_globals->_disableInventFl = true;
 
@@ -2123,14 +2123,14 @@ void HopkinsEngine::playEnding() {
 	while (_objectsManager->getBobAnimDataIdx(7) != 72);
 
 	_globals->_introSpeechOffFl = true;
-	_talkManager.startAnimatedCharacterDialogue("DUELH1.PE2");
+	_talkManager->startAnimatedCharacterDialogue("DUELH1.PE2");
 
 	do
 		_eventsManager->refreshScreenAndEvents();
 	while (_objectsManager->getBobAnimDataIdx(7) != 81);
 
 	_globals->_introSpeechOffFl = true;
-	_talkManager.startAnimatedCharacterDialogue("DUELB5.PE2");
+	_talkManager->startAnimatedCharacterDialogue("DUELB5.PE2");
 
 	do
 		_eventsManager->refreshScreenAndEvents();
@@ -2181,7 +2181,7 @@ void HopkinsEngine::playEnding() {
 		_objectsManager->stopBobAnimation(7);
 		_objectsManager->setBobAnimation(8);
 		_globals->_introSpeechOffFl = true;
-		_talkManager.startAnimatedCharacterDialogue("GM5.PE2");
+		_talkManager->startAnimatedCharacterDialogue("GM5.PE2");
 		_globals->_disableInventFl = true;
 
 		do

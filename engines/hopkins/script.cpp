@@ -518,26 +518,26 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 7:
-			_vm->_talkManager.startAnimatedCharacterDialogue("rueh1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("rueh1.pe2");
 			break;
 
 		case 8:
-			_vm->_talkManager.startAnimatedCharacterDialogue("ruef1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("ruef1.pe2");
 			break;
 
 		case 10:
-			_vm->_talkManager.startAnimatedCharacterDialogue("bqeflic1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("bqeflic1.pe2");
 			break;
 
 		case 11:
-			_vm->_talkManager.startAnimatedCharacterDialogue("bqeflic2.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("bqeflic2.pe2");
 			break;
 
 		case 12:
 			_vm->_fontManager->hideText(9);
 			_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_eventsManager->refreshScreenAndEvents();
-			_vm->_talkManager.startAnimatedCharacterDialogue("bqetueur.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("bqetueur.pe2");
 			break;
 
 		case 13:
@@ -622,56 +622,56 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 16:
-			_vm->_talkManager.startAnimatedCharacterDialogue("ftoubib.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("ftoubib.pe2");
 			break;
 
 		case 17:
-			_vm->_talkManager.startAnimatedCharacterDialogue("flic2b.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("flic2b.pe2");
 			break;
 
 		case 18:
-			_vm->_talkManager.startAnimatedCharacterDialogue("fjour.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("fjour.pe2");
 			break;
 
 		case 20:
-			_vm->_talkManager.startAnimatedCharacterDialogue("PUNK.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("PUNK.pe2");
 			break;
 
 		case 21:
-			_vm->_talkManager.startAnimatedCharacterDialogue("MEDLEG.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("MEDLEG.pe2");
 			break;
 
 		case 22:
-			_vm->_talkManager.animateObject("CADAVRE1.pe2");
+			_vm->_talkManager->animateObject("CADAVRE1.pe2");
 			break;
 
 		case 23:
-			_vm->_talkManager.startStaticCharacterDialogue("CHERCHE1.pe2");
+			_vm->_talkManager->startStaticCharacterDialogue("CHERCHE1.pe2");
 			break;
 
 		case 25:
-			_vm->_talkManager.startAnimatedCharacterDialogue("AGENT1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("AGENT1.pe2");
 			break;
 
 		case 26:
-			_vm->_talkManager.startAnimatedCharacterDialogue("AGENT2.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("AGENT2.pe2");
 			break;
 
 		case 27:
 			if (_vm->_globals->_saveData->_data[svField94] != 1 || _vm->_globals->_saveData->_data[svField95] != 1)
-				_vm->_talkManager.startAnimatedCharacterDialogue("STANDAR.pe2");
+				_vm->_talkManager->startAnimatedCharacterDialogue("STANDAR.pe2");
 			else
-				_vm->_talkManager.startAnimatedCharacterDialogue("STANDAR1.pe2");
+				_vm->_talkManager->startAnimatedCharacterDialogue("STANDAR1.pe2");
 			break;
 
 		case 29:
 			_vm->_globals->_disableInventFl = true;
-			_vm->_talkManager.animateObject("TELEP.pe2");
+			_vm->_talkManager->animateObject("TELEP.pe2");
 			_vm->_globals->_disableInventFl = false;
 			break;
 
 		case 32:
-			_vm->_talkManager.startAnimatedCharacterDialogue("SAMAN.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("SAMAN.pe2");
 			break;
 
 		case 35:
@@ -683,22 +683,22 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					_vm->_eventsManager->refreshScreenAndEvents();
 				} while (_vm->_soundManager->_soundFl);
 			}
-			_vm->_talkManager.startAnimatedCharacterDialogue("PTLAB.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("PTLAB.pe2");
 			break;
 
 		case 36:
 			if (_vm->_globals->_saveData->_data[svField270] == 2 && _vm->_globals->_saveData->_data[svField94] == 1 && _vm->_globals->_saveData->_data[svField95] == 1)
 				_vm->_globals->_saveData->_data[svField270] = 3;
 			if (!_vm->_globals->_saveData->_data[svField270])
-				_vm->_talkManager.startStaticCharacterDialogue("PATRON0.pe2");
+				_vm->_talkManager->startStaticCharacterDialogue("PATRON0.pe2");
 			if (_vm->_globals->_saveData->_data[svField270] == 1)
-				_vm->_talkManager.startStaticCharacterDialogue("PATRON1.pe2");
+				_vm->_talkManager->startStaticCharacterDialogue("PATRON1.pe2");
 			if (_vm->_globals->_saveData->_data[svField270] == 2)
-				_vm->_talkManager.startStaticCharacterDialogue("PATRON2.pe2");
+				_vm->_talkManager->startStaticCharacterDialogue("PATRON2.pe2");
 			if (_vm->_globals->_saveData->_data[svField270] == 3)
-				_vm->_talkManager.startStaticCharacterDialogue("PATRON3.pe2");
+				_vm->_talkManager->startStaticCharacterDialogue("PATRON3.pe2");
 			if (_vm->_globals->_saveData->_data[svField270] > 3) {
-				_vm->_talkManager.startStaticCharacterDialogue("PATRON4.pe2");
+				_vm->_talkManager->startStaticCharacterDialogue("PATRON4.pe2");
 				_vm->_globals->_saveData->_data[svField270] = 5;
 			}
 			break;
@@ -725,27 +725,27 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 40:
-			_vm->_talkManager.startAnimatedCharacterDialogue("MAGE.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("MAGE.pe2");
 			break;
 
 		case 41:
-			_vm->_talkManager.startAnimatedCharacterDialogue("MORT3.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("MORT3.pe2");
 			break;
 
 		case 42:
-			_vm->_talkManager.startAnimatedCharacterDialogue("MORT2.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("MORT2.pe2");
 			break;
 
 		case 43:
-			_vm->_talkManager.startAnimatedCharacterDialogue("MORT1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("MORT1.pe2");
 			break;
 
 		case 44:
-			_vm->_talkManager.startAnimatedCharacterDialogue("MORT3A.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("MORT3A.pe2");
 			break;
 
 		case 45:
-			_vm->_talkManager.startAnimatedCharacterDialogue("FEM3.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("FEM3.pe2");
 			break;
 
 		case 46: {
@@ -823,11 +823,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 47:
-			_vm->_talkManager.startAnimatedCharacterDialogue("BARMAN.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("BARMAN.pe2");
 			break;
 
 		case 48:
-			_vm->_talkManager.startAnimatedCharacterDialogue("SAMAN2.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("SAMAN2.pe2");
 			break;
 
 		case 49: {
@@ -923,16 +923,16 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 52:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("GARDE.PE2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("GARDE.PE2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 53:
-			_vm->_talkManager.startAnimatedCharacterDialogue("GARDE1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("GARDE1.pe2");
 			break;
 
 		case 54:
-			_vm->_talkManager.startAnimatedCharacterDialogue("GARDE2.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("GARDE2.pe2");
 			break;
 
 		case 55:
@@ -966,7 +966,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 58:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("Gm1.PE2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("Gm1.PE2");
 			_vm->_globals->_saveData->_data[svField176] = 1;
 			_vm->_globals->_saveData->_data[svField270] = 2;
 			_vm->_globals->_introSpeechOffFl = false;
@@ -1026,11 +1026,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 62:
-			_vm->_talkManager.animateObject("SBCADA.pe2");
+			_vm->_talkManager->animateObject("SBCADA.pe2");
 			break;
 
 		case 65:
-			_vm->_talkManager.animateObject("ScCADA.pe2");
+			_vm->_talkManager->animateObject("ScCADA.pe2");
 			break;
 
 		case 80: {
@@ -1169,12 +1169,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 83:
-			_vm->_talkManager.startAnimatedCharacterDialogue("CVIGIL.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("CVIGIL.pe2");
 			break;
 
 		case 84:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("CVIGIL1.PE2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("CVIGIL1.PE2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
@@ -1197,19 +1197,19 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 86:
 			if (_vm->_globals->_saveData->_data[svField231] == 1) {
-				_vm->_talkManager.startAnimatedCharacterDialogue("chotess1.pe2");
+				_vm->_talkManager->startAnimatedCharacterDialogue("chotess1.pe2");
 			} else {
 				_vm->_globals->_introSpeechOffFl = true;
-				_vm->_talkManager.startAnimatedCharacterDialogue("chotesse.pe2");
+				_vm->_talkManager->startAnimatedCharacterDialogue("chotesse.pe2");
 				_vm->_globals->_introSpeechOffFl = false;
 			}
 			break;
 
 		case 87:
 			if (_vm->_globals->_saveData->_data[svField188])
-				_vm->_talkManager.startAnimatedCharacterDialogue("stand2.pe2");
+				_vm->_talkManager->startAnimatedCharacterDialogue("stand2.pe2");
 			else
-				_vm->_talkManager.startAnimatedCharacterDialogue("stand1.pe2");
+				_vm->_talkManager->startAnimatedCharacterDialogue("stand1.pe2");
 			break;
 
 		case 88:
@@ -1343,9 +1343,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 94:
 			if (!_vm->_globals->_saveData->_data[svField228])
-				_vm->_talkManager.startAnimatedCharacterDialogue("flicn.pe2");
+				_vm->_talkManager->startAnimatedCharacterDialogue("flicn.pe2");
 			if (_vm->_globals->_saveData->_data[svField228] == 1)
-				_vm->_talkManager.startAnimatedCharacterDialogue("flicn1.pe2");
+				_vm->_talkManager->startAnimatedCharacterDialogue("flicn1.pe2");
 			break;
 
 		case 95:
@@ -1379,35 +1379,35 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 98:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("CVIGIL2.PE2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("CVIGIL2.PE2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 100:
-			_vm->_talkManager.startAnimatedCharacterDialogue("tourist.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("tourist.pe2");
 			break;
 
 		case 101:
-			_vm->_talkManager.startAnimatedCharacterDialogue("tahi1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("tahi1.pe2");
 			break;
 
 		case 103:
 			// Dice game
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("tourist1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("tourist1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			_vm->_animationManager->playAnim2("T421.ANM", 100, 14, 500);
 			_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("tourist2.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("tourist2.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 104:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("tourist3.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("tourist3.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
@@ -1604,57 +1604,57 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 108:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("peche1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("peche1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 109:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("peche2.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("peche2.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 110:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("peche3.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("peche3.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 111:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("peche4.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("peche4.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 112:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("teint1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("teint1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 113:
-			_vm->_talkManager.startAnimatedCharacterDialogue("teint.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("teint.pe2");
 			break;
 
 		case 114:
-			_vm->_talkManager.startAnimatedCharacterDialogue("tahibar.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("tahibar.pe2");
 			break;
 
 		case 115:
-			_vm->_talkManager.startAnimatedCharacterDialogue("ilebar.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("ilebar.pe2");
 			break;
 
 		case 116:
-			_vm->_talkManager.startAnimatedCharacterDialogue("Profred.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("Profred.pe2");
 			break;
 
 		case 170:
-			_vm->_talkManager.startAnimatedCharacterDialogue("GRED.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("GRED.pe2");
 			break;
 
 		case 171: {
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("gred1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("gred1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_oldCharacterPosX = _vm->_objectsManager->getSpriteX(0);
@@ -1677,12 +1677,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 172:
-			_vm->_talkManager.startAnimatedCharacterDialogue("GBLEU.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("GBLEU.pe2");
 			break;
 
 		case 173: {
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("gbleu1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("gbleu1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_oldCharacterPosX = _vm->_objectsManager->getSpriteX(0);
@@ -1705,7 +1705,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 174:
-			_vm->_talkManager.startAnimatedCharacterDialogue("Profbl.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("Profbl.pe2");
 			break;
 
 		case 175:
@@ -1757,19 +1757,19 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 176:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("gred2.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("gred2.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 177:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("gbleu2.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("gbleu2.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 200:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("Gm2.PE2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("Gm2.PE2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
@@ -1787,7 +1787,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 202:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("SVGARD2.PE2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("SVGARD2.PE2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
@@ -1865,7 +1865,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 207:
-			_vm->_talkManager.animateObject("PANNEAU.PE2");
+			_vm->_talkManager->animateObject("PANNEAU.PE2");
 			break;
 
 		case 208: {
@@ -1978,13 +1978,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 215:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("aviat.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("aviat.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
 		case 216:
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("aviat1.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("aviat1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			break;
 
@@ -2051,7 +2051,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(12) != 6);
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("PRMORT.pe2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("PRMORT.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
 			do {
 				if (_vm->shouldQuit())
@@ -2087,7 +2087,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(13) != 48);
 			_vm->_globals->_introSpeechOffFl = true;
-			_vm->_talkManager.startAnimatedCharacterDialogue("HRADIO.PE2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("HRADIO.PE2");
 			_vm->_globals->_introSpeechOffFl = false;
 			_vm->_graphicsManager->fadeOutLong();
 			_vm->_objectsManager->stopBobAnimation(13);
@@ -2259,7 +2259,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 241:
-			_vm->_talkManager.startAnimatedCharacterDialogue("RECEP.PE2");
+			_vm->_talkManager->startAnimatedCharacterDialogue("RECEP.PE2");
 			break;
 
 		// Resurrect Samantha's clone

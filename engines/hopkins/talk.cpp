@@ -35,7 +35,8 @@
 
 namespace Hopkins {
 
-TalkManager::TalkManager() {
+TalkManager::TalkManager(HopkinsEngine *vm) {
+	_vm = vm;
 	_characterBuffer = NULL;
 	_characterPalette = NULL;
 	_characterSprite = NULL;
@@ -43,10 +44,6 @@ TalkManager::TalkManager() {
 	_characterSize = 0;
 	_dialogueMesgId1 = _dialogueMesgId2 = _dialogueMesgId3 = _dialogueMesgId4 = 0;
 	_paletteBufferIdx = 0;
-}
-
-void TalkManager::setParent(HopkinsEngine *vm) {
-	_vm = vm;
 }
 
 void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename) {
