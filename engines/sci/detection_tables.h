@@ -1522,6 +1522,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::ES_ESP, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 6 - Italian DOS Floppy (supplied by guybrush79 in bug report #3606719)
+	{"kq6", "", {
+		{"resource.map", 0, "48c9fc8e96cbdac078ca7d3df274e29a", 8942},
+		{"resource.000", 0, "d3358ba7306378aed83d02b5c3f11311", 8531908},
+		{"resource.msg", 0, "b7e8220be596fd6a9287eae5a8fd354a", 279886},
+		AD_LISTEND},
+	 	Common::IT_ITA, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// King's Quest 6 - English DOS CD (from the King's Quest Collection)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
 	// SCI interpreter version 1.001.054
