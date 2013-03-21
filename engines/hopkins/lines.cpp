@@ -2006,21 +2006,21 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	arrDelta[DIR_UP] = delta;
 
 	for (delta = 0; clipX2 + delta < _vm->_graphicsManager->_maxX; delta++) {
-		if (checkCollisionLine(clipX2 + delta, clipY2, &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _lastLine) && arrLineIdx[DIR_UP] <= _lastLine)
+		if (checkCollisionLine(clipX2 + delta, clipY2, &arrDataIdx[DIR_RIGHT], &arrLineIdx[DIR_RIGHT], 0, _lastLine) && arrLineIdx[DIR_RIGHT] <= _lastLine)
 			break;
-		arrDataIdx[DIR_UP] = 0;
-		arrLineIdx[DIR_UP] = -1;
+		arrDataIdx[DIR_RIGHT] = 0;
+		arrLineIdx[DIR_RIGHT] = -1;
 		if ((arrDelta[DIR_UP] <= delta && arrLineIdx[DIR_UP] != -1) || (arrDelta[DIR_DOWN] <= delta && arrLineIdx[DIR_DOWN] != -1))
 			break;
 	}
-	arrDelta[DIR_UP] = delta;
+	arrDelta[DIR_RIGHT] = delta;
 
 	for (delta = 0; clipX2 - delta > _vm->_graphicsManager->_minX; delta++) {
 		if (checkCollisionLine(clipX2 - delta, clipY2, &arrDataIdx[DIR_LEFT], &arrLineIdx[DIR_LEFT], 0, _lastLine) && arrLineIdx[DIR_LEFT] <= _lastLine)
 			break;
 		arrDataIdx[DIR_LEFT] = 0;
 		arrLineIdx[DIR_LEFT] = -1;
-		if ((arrDelta[DIR_UP] <= delta && arrLineIdx[DIR_UP] != -1) || (arrDelta[DIR_UP] <= delta && arrLineIdx[DIR_UP] != -1) || (arrDelta[DIR_DOWN] <= delta && arrLineIdx[DIR_DOWN] != -1))
+		if ((arrDelta[DIR_UP] <= delta && arrLineIdx[DIR_UP] != -1) || (arrDelta[DIR_RIGHT] <= delta && arrLineIdx[DIR_RIGHT] != -1) || (arrDelta[DIR_DOWN] <= delta && arrLineIdx[DIR_DOWN] != -1))
 			break;
 	}
 	arrDelta[DIR_LEFT] = delta;
@@ -2032,23 +2032,23 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 
 	if (arrLineIdx[DIR_UP] == -1)
 		arrDelta[DIR_UP] = INVALID_LINE_VALUE;
-	if (arrLineIdx[DIR_UP] == -1)
-		arrDelta[DIR_UP] = INVALID_LINE_VALUE;
+	if (arrLineIdx[DIR_RIGHT] == -1)
+		arrDelta[DIR_RIGHT] = INVALID_LINE_VALUE;
 	if (arrLineIdx[DIR_DOWN] == -1)
 		arrDelta[DIR_DOWN] = INVALID_LINE_VALUE;
 	if (arrLineIdx[DIR_LEFT] == -1)
 		arrDelta[DIR_LEFT] = INVALID_LINE_VALUE;
-	if (arrLineIdx[DIR_UP] != -1 || arrLineIdx[DIR_UP] != -1 || arrLineIdx[DIR_DOWN] != -1 || arrLineIdx[DIR_LEFT] != -1) {
-		if (arrLineIdx[DIR_DOWN] != -1 && arrDelta[DIR_UP] >= arrDelta[DIR_DOWN] && arrDelta[DIR_UP] >= arrDelta[DIR_DOWN] && arrDelta[DIR_LEFT] >= arrDelta[DIR_DOWN]) {
+	if (arrLineIdx[DIR_UP] != -1 || arrLineIdx[DIR_RIGHT] != -1 || arrLineIdx[DIR_DOWN] != -1 || arrLineIdx[DIR_LEFT] != -1) {
+		if (arrLineIdx[DIR_DOWN] != -1 && arrDelta[DIR_UP] >= arrDelta[DIR_DOWN] && arrDelta[DIR_RIGHT] >= arrDelta[DIR_DOWN] && arrDelta[DIR_LEFT] >= arrDelta[DIR_DOWN]) {
 			curLineIdx = arrLineIdx[DIR_DOWN];
 			curLineDataIdx = arrDataIdx[DIR_DOWN];
-		} else if (arrLineIdx[DIR_UP] != -1 && arrDelta[DIR_DOWN] >= arrDelta[DIR_UP] && arrDelta[DIR_UP] >= arrDelta[DIR_UP] && arrDelta[DIR_LEFT] >= arrDelta[DIR_UP]) {
+		} else if (arrLineIdx[DIR_UP] != -1 && arrDelta[DIR_DOWN] >= arrDelta[DIR_UP] && arrDelta[DIR_RIGHT] >= arrDelta[DIR_UP] && arrDelta[DIR_LEFT] >= arrDelta[DIR_UP]) {
 			curLineIdx = arrLineIdx[DIR_UP];
 			curLineDataIdx = arrDataIdx[DIR_UP];
-		} else if (arrLineIdx[DIR_UP] != -1 && arrDelta[DIR_UP] >= arrDelta[DIR_UP] && arrDelta[DIR_DOWN] >= arrDelta[DIR_UP] && arrDelta[DIR_LEFT] >= arrDelta[DIR_UP]) {
-			curLineIdx = arrLineIdx[DIR_UP];
-			curLineDataIdx = arrDataIdx[DIR_UP];
-		} else if (arrLineIdx[DIR_LEFT] != -1 && arrDelta[DIR_DOWN] >= arrDelta[DIR_LEFT] && arrDelta[DIR_UP] >= arrDelta[DIR_LEFT] && arrDelta[DIR_UP] >= arrDelta[DIR_LEFT]) {
+		} else if (arrLineIdx[DIR_RIGHT] != -1 && arrDelta[DIR_UP] >= arrDelta[DIR_RIGHT] && arrDelta[DIR_DOWN] >= arrDelta[DIR_RIGHT] && arrDelta[DIR_LEFT] >= arrDelta[DIR_RIGHT]) {
+			curLineIdx = arrLineIdx[DIR_RIGHT];
+			curLineDataIdx = arrDataIdx[DIR_RIGHT];
+		} else if (arrLineIdx[DIR_LEFT] != -1 && arrDelta[DIR_DOWN] >= arrDelta[DIR_LEFT] && arrDelta[DIR_RIGHT] >= arrDelta[DIR_LEFT] && arrDelta[DIR_UP] >= arrDelta[DIR_LEFT]) {
 			curLineIdx = arrLineIdx[DIR_LEFT];
 			curLineDataIdx = arrDataIdx[DIR_LEFT];
 		}
