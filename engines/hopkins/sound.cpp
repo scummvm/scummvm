@@ -732,10 +732,8 @@ void SoundManager::stopVoice(int voiceIndex) {
 	if (_voice[voiceIndex]._status) {
 		_voice[voiceIndex]._status = false;
 		int wavIndex = _voice[voiceIndex]._wavIndex;
-		if (_sWav[wavIndex]._active) {
-			if (_sWav[wavIndex]._freeSampleFl)
-				removeWavSample(wavIndex);
-		}
+		if (_sWav[wavIndex]._active && _sWav[wavIndex]._freeSampleFl)
+			removeWavSample(wavIndex);
 	}
 	_voice[voiceIndex]._status = false;
 }
@@ -802,21 +800,23 @@ void SoundManager::loadWav(const Common::String &file, int wavIndex) {
 }
 
 void SoundManager::playWav(int wavIndex) {
-	if (!_soundFl && !_soundOffFl) {
-		_soundFl = true;
-		_currentSoundIndex = wavIndex;
-		playWavSample(1, wavIndex);
-	}
+	if (_soundFl || _soundOffFl)
+		return;
+
+	_soundFl = true;
+	_currentSoundIndex = wavIndex;
+	playWavSample(1, wavIndex);
 }
 
 void SoundManager::delWav(int wavIndex) {
-	if (removeWavSample(wavIndex)) {
-		if (checkVoiceStatus(1))
-			stopVoice(1);
+	if (!removeWavSample(wavIndex))
+		return;
 
-		_currentSoundIndex = 0;
-		_soundFl = false;
-	}
+	if (checkVoiceStatus(1))
+		stopVoice(1);
+
+	_currentSoundIndex = 0;
+	_soundFl = false;
 }
 
 void SoundManager::playWavSample(int voiceIndex, int wavIndex) {
