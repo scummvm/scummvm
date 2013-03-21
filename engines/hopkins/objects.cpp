@@ -588,15 +588,15 @@ void ObjectsManager::displayBob(int idx) {
 		return;
 
 
-	int16 v9 = READ_LE_INT16(data + 2);
-	int16 v8 = READ_LE_INT16(data + 4);
+	int16 bobModeChange = READ_LE_INT16(data + 2);
+	int16 newField22 = READ_LE_INT16(data + 4);
 	// data[6] isn't used, read skipped
-	int16 v6 = READ_LE_INT16(data + 8);
+	int16 newField20 = READ_LE_INT16(data + 8);
 
-	if (!v9)
-		v9 = 1;
-	if (!v6)
-		v6 = -1;
+	if (!bobModeChange)
+		bobModeChange = 1;
+	if (!newField20)
+		newField20 = -1;
 
 	_bob[idx]._isSpriteFl = false;
 
@@ -610,9 +610,9 @@ void ObjectsManager::displayBob(int idx) {
 	_bob[idx]._bobMode = 10;
 	_bob[idx]._spriteData = _vm->_globals->Bank[bankIdx]._data;
 
-	_bob[idx]._bobModeChange = v9;
-	_bob[idx].field20 = v6;
-	_bob[idx].field22 = v8;
+	_bob[idx]._bobModeChange = bobModeChange;
+	_bob[idx].field20 = newField20;
+	_bob[idx].field22 = newField22;
 }
 
 void ObjectsManager::hideBob(int idx) {

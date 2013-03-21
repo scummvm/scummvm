@@ -2067,15 +2067,15 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			for (;;) {
 				curRouteX = _testRoute2[curRouteIdx]._x;
 				int curRouteY = _testRoute2[curRouteIdx]._y;
-				Directions v66 = _testRoute2[curRouteIdx]._dir;
+				Directions curRouteDir = _testRoute2[curRouteIdx]._dir;
 				curRouteIdx++;
 
 				if (checkCollisionLine(curRouteX, curRouteY, &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _lastLine))
 					break;
 
-				_bestRoute[superRouteIdx].set(curRouteX, curRouteY, v66);
+				_bestRoute[superRouteIdx].set(curRouteX, curRouteY, curRouteDir);
 
-				_testRoute0[superRouteIdx].set(curRouteX, curRouteY, v66);
+				_testRoute0[superRouteIdx].set(curRouteX, curRouteY, curRouteDir);
 				superRouteIdx++;
 				if (curRouteX == -1)
 					break;;
