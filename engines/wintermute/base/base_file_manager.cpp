@@ -53,7 +53,8 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////
-BaseFileManager::BaseFileManager(Common::Language lang) {
+BaseFileManager::BaseFileManager(Common::Language lang, bool detectionMode) {
+	_detectionMode = detectionMode;
 	_language = lang;
 	_resources = nullptr;
 	initResources();
@@ -232,12 +233,14 @@ bool BaseFileManager::registerPackage(Common::FSNode file, const Common::String 
 
 void BaseFileManager::initResources() {
 	_resources = Common::makeZipArchive("wintermute.zip");
-	if (!_resources) {
+	if (!_resources && !_detectionMode) { // Wintermute.zip is unavailable during detection
 		error("Couldn't load wintermute.zip");
 	}
-	assert(_resources->hasFile("syste_font.bmp"));
-	assert(_resources->hasFile("invalid.bmp"));
-	assert(_resources->hasFile("invalid_debug.bmp"));
+	if (_resources) {
+		assert(_resources->hasFile("syste_font.bmp"));
+		assert(_resources->hasFile("invalid.bmp"));
+		assert(_resources->hasFile("invalid_debug.bmp"));
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -277,7 +280,7 @@ bool BaseFileManager::hasFile(const Common::String &filename) {
 	if (_packages.hasFile(filename)) {
 		return true;    // We don't bother checking if the file can actually be opened, something bigger is wrong if that is the case.
 	}
-	if (_resources->hasFile(filename)) {
+	if (!_detectionMode && _resources->hasFile(filename)) {
 		return true;
 	}
 	return false;
@@ -337,7 +340,9 @@ Common::SeekableReadStream *BaseFileManager::openFileRaw(const Common::String &f
 		return ret;
 	}
 
-	ret = _resources->createReadStreamForMember(filename);
+	if (!_detectionMode) {
+		ret = _resources->createReadStreamForMember(filename);
+	}
 	if (ret) {
 		return ret;
 	}

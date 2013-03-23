@@ -45,7 +45,7 @@ public:
 	Common::SeekableReadStream *openFile(const Common::String &filename, bool absPathWarning = true, bool keepTrackOf = true);
 	byte *readWholeFile(const Common::String &filename, uint32 *size = nullptr, bool mustExist = true);
 
-	BaseFileManager(Common::Language lang);
+	BaseFileManager(Common::Language lang, bool detectionMode = false);
 	virtual ~BaseFileManager();
 	// Used only for detection
 	bool registerPackages(const Common::FSList &fslist);
@@ -65,6 +65,7 @@ private:
 	Common::FSList _packagePaths;
 	bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset);
 	bool registerPackage(Common::FSNode package, const Common::String &filename = "", bool searchSignature = false);
+	bool _detectionMode;
 	Common::SearchSet _packages;
 	Common::Array<Common::SeekableReadStream *> _openFiles;
 	Common::Language _language;

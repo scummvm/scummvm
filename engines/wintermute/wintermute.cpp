@@ -311,7 +311,7 @@ bool WintermuteEngine::getGameInfo(const Common::FSList &fslist, Common::String 
 	caption = name = "(invalid)";
 	Common::SeekableReadStream *stream = nullptr;
 	// Quick-fix, instead of possibly breaking the persistence-system, let's just roll with it
-	BaseFileManager *fileMan = new BaseFileManager(Common::UNK_LANG);
+	BaseFileManager *fileMan = new BaseFileManager(Common::UNK_LANG, true);
 	fileMan->registerPackages(fslist);
 	stream = fileMan->openFile("startup.settings", false, false);
 
