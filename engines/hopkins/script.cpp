@@ -714,7 +714,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager->loadSample(2, "SOUND42.WAV");
 			_vm->_soundManager->loadSample(3, "SOUND41.WAV");
 			_vm->_soundManager->_specialSoundNum = 17;
-			_vm->_animationManager->playSequence("grenade.SEQ", 1, 32, 100);
+			_vm->_animationManager->playSequence("grenade.SEQ", 1, 32, 100, false, false);
 			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->FADE_LINUX = 2;
 			_vm->_animationManager->playAnim("CREVE17.ANM", 24, 24, 200);
@@ -1292,11 +1292,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 90:
 			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField186]) {
-				_vm->_animationManager->playSequence("CIB5A.SEQ", 1, 12, 1);
+				_vm->_animationManager->playSequence("CIB5A.SEQ", 1, 12, 1, false, false);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
-			}
-			if (_vm->_globals->_saveData->_data[svField186] == 1) {
-				_vm->_animationManager->playSequence("CIB5C.SEQ", 1, 12, 1);
+			} else if (_vm->_globals->_saveData->_data[svField186] == 1) {
+				_vm->_animationManager->playSequence("CIB5C.SEQ", 1, 12, 1, false, false);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 329, 87, 2);
 			}
@@ -1305,11 +1304,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 91:
 			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField186]) {
-				_vm->_animationManager->playSequence("CIB5B.SEQ", 1, 12, 1);
+				_vm->_animationManager->playSequence("CIB5B.SEQ", 1, 12, 1, false, false);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
-			}
-			if (_vm->_globals->_saveData->_data[svField186] == 1) {
-				_vm->_animationManager->playSequence("CIB5D.SEQ", 1, 12, 1);
+			} else if (_vm->_globals->_saveData->_data[svField186] == 1) {
+				_vm->_animationManager->playSequence("CIB5D.SEQ", 1, 12, 1, false, false);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 160, 6);
 			}
@@ -1318,11 +1316,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 92:
 			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField184]) {
-				_vm->_animationManager->playSequence("CIB6A.SEQ", 1, 12, 1);
+				_vm->_animationManager->playSequence("CIB6A.SEQ", 1, 12, 1, false, false);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
-			}
-			if (_vm->_globals->_saveData->_data[svField184] == 1) {
-				_vm->_animationManager->playSequence("CIB6C.SEQ", 1, 12, 1);
+			} else if (_vm->_globals->_saveData->_data[svField184] == 1) {
+				_vm->_animationManager->playSequence("CIB6C.SEQ", 1, 12, 1, false, false);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 293, 139, 3);
 			}
@@ -1331,11 +1328,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 93:
 			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField184]) {
-				_vm->_animationManager->playSequence("CIB6B.SEQ", 1, 12, 1);
+				_vm->_animationManager->playSequence("CIB6B.SEQ", 1, 12, 1, false, false);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
-			}
-			if (_vm->_globals->_saveData->_data[svField184] == 1) {
-				_vm->_animationManager->playSequence("CIB6D.SEQ", 1, 12, 1);
+			} else if (_vm->_globals->_saveData->_data[svField184] == 1) {
+				_vm->_animationManager->playSequence("CIB6D.SEQ", 1, 12, 1, false, false);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 161, 8);
 			}
@@ -1872,7 +1868,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals->_disableInventFl = true;
 			if (_vm->_globals->_saveData->_data[svLastPrevScreenId] != _vm->_globals->_saveData->_data[svField401]) {
 				_vm->_soundManager->_specialSoundNum = 208;
-				_vm->_animationManager->playSequence("SORT.SEQ", 10, 4, 10, true);
+				_vm->_animationManager->playSequence("SORT.SEQ", 10, 4, 10, true, false);
 				_vm->_soundManager->_specialSoundNum = 0;
 			}
 			_vm->_globals->_checkDistanceFl = true;
@@ -1986,7 +1982,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 229:
 			_vm->_soundManager->_specialSoundNum = 229;
-			_vm->_animationManager->playSequence("MUR.SEQ", 1, 12, 1);
+			_vm->_animationManager->playSequence("MUR.SEQ", 1, 12, 1, false, false);
 			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 340, 157, 2);
 			break;

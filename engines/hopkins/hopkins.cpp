@@ -2032,10 +2032,8 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 	_soundManager->playSound(26);
 	_globals->iRegul = 1;
 	_globals->_disableInventFl = true;
-	_animationManager->NO_COUL = true;
 	_graphicsManager->FADE_LINUX = 2;
-	_animationManager->playSequence("abase.seq", 50, 15, 50);
-	_animationManager->NO_COUL = false;
+	_animationManager->playSequence("abase.seq", 50, 15, 50, false, false, true);
 	_graphicsManager->loadImage("IM92");
 	_animationManager->loadAnim("ANIM92");
 	_graphicsManager->displayAllBob();

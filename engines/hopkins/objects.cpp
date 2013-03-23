@@ -3696,7 +3696,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_vm->_eventsManager->refreshScreenAndEvents();
 	_vm->_graphicsManager->fadeInLong();
 	if (_vm->_globals->_screenId == 61) {
-		_vm->_animationManager->playSequence("OUVRE.SEQ", 10, 4, 10);
+		_vm->_animationManager->playSequence("OUVRE.SEQ", 10, 4, 10, false, false);
 		stopBobAnimation(3);
 		_vm->_globals->_checkDistanceFl = true;
 		_oldCharacterPosX = getSpriteX(0);

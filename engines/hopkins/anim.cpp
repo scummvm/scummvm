@@ -38,7 +38,6 @@ namespace Hopkins {
 AnimationManager::AnimationManager(HopkinsEngine *vm) {
 	_vm = vm;
 	_clearAnimationFl = false;
-	NO_COUL = false;
 }
 
 /**
@@ -605,13 +604,13 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) 
 /**
  * Play sequence
  */
-void AnimationManager::playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl, bool skipSeqFl) {
+void AnimationManager::playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl, bool skipSeqFl, bool noColFl) {
 	if (_vm->shouldQuit())
 		return;
 
 	bool hasScreenCopy = false;
 	_vm->_eventsManager->_mouseFl = false;
-	if (!NO_COUL) {
+	if (!noColFl) {
 		_vm->_eventsManager->refreshScreenAndEvents();
 
 		if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
@@ -678,7 +677,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 			} while (_vm->_eventsManager->_rateCounter < rate1);
 		}
 	} else {
-		if (NO_COUL)
+		if (noColFl)
 			_vm->_graphicsManager->fadeInDefaultLength(screenP);
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
@@ -764,7 +763,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	_vm->_graphicsManager->_skipVideoLockFl = false;
 	f.close();
 
-	if (!NO_COUL) {
+	if (!noColFl) {
 		_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 

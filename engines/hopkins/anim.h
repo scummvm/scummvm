@@ -41,7 +41,6 @@ private:
 
 public:
 	bool _clearAnimationFl;
-	bool NO_COUL;
 
 	AnimationManager(HopkinsEngine *vm);
 
@@ -49,7 +48,7 @@ public:
 	void clearAnim();
 	void playAnim(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl = false);
 	void playAnim2(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3);
-	void playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl = false, bool skipSeqFl = false);
+	void playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl, bool skipSeqFl, bool noColFl = false);
 	void playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl = false);
 };
 
