@@ -1933,9 +1933,8 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 		case 210:
-			_vm->_animationManager->NO_SEQ = true;
 			_vm->_soundManager->_specialSoundNum = 210;
-			_vm->_animationManager->playSequence2("SECRET1.SEQ", 1, 12, 1);
+			_vm->_animationManager->playSequence2("SECRET1.SEQ", 1, 12, 1, true);
 			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 192, 152, 0);
 			_vm->_objectsManager->setBobAnimation(9);
@@ -1943,7 +1942,6 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->loadLinkFile("IM73a");
 			_vm->_objectsManager->OBSSEUL = false;
 			_vm->_globals->enableHiding();
-			_vm->_animationManager->NO_SEQ = false;
 			_vm->_globals->setHidingUseCount(0);
 			_vm->_globals->setHidingUseCount(1);
 			_vm->_graphicsManager->SETCOLOR4(252, 100, 100, 100);
@@ -1955,11 +1953,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 211:
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_globals->disableHiding();
-			_vm->_animationManager->NO_SEQ = true;
 			_vm->_soundManager->_specialSoundNum = 211;
-			_vm->_animationManager->playSequence("SECRET2.SEQ", 1, 12, 100);
+			_vm->_animationManager->playSequence("SECRET2.SEQ", 1, 12, 100, false, true);
 			_vm->_soundManager->_specialSoundNum = 0;
-			_vm->_animationManager->NO_SEQ = false;
 			_vm->_graphicsManager->_noFadingFl = true;
 			_vm->_graphicsManager->fadeOutLong();
 
@@ -2272,9 +2268,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		// Resurrect Samantha's clone
 		case 242: {
 			_vm->_soundManager->playSoundFile("SOUND87.WAV");
-			_vm->_animationManager->NO_SEQ = true;
-			_vm->_animationManager->playSequence("RESUF.SEQ", 1, 24, 1);
-			_vm->_animationManager->NO_SEQ = false;
+			_vm->_animationManager->playSequence("RESUF.SEQ", 1, 24, 1, false, true);
 
 			CharacterLocation *samantha = &_vm->_globals->_saveData->_samantha;
 			samantha->_pos.x = 404;
@@ -2297,9 +2291,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 243:
 			_vm->_soundManager->playSoundFile("SOUND88.WAV");
 			if (_vm->_globals->_saveData->_data[svField341] == 2) {
-				_vm->_animationManager->NO_SEQ = true;
-				_vm->_animationManager->playSequence("RESU.SEQ", 2, 24, 2);
-				_vm->_animationManager->NO_SEQ = false;
+				_vm->_animationManager->playSequence("RESU.SEQ", 2, 24, 2, false, true);
 			} else {
 				_vm->_objectsManager->OPTI_ONE(7, 0, 14, 0);
 			}
@@ -2319,9 +2311,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->OPTI_ONE(6, 0, 15, 0);
 			_vm->_objectsManager->PERSO_ON = true;
 			_vm->_graphicsManager->NB_SCREEN(true);
-			_vm->_animationManager->NO_SEQ = true;
-			_vm->_animationManager->playSequence2("TUNNEL.SEQ", 1, 18, 20);
-			_vm->_animationManager->NO_SEQ = false;
+			_vm->_animationManager->playSequence2("TUNNEL.SEQ", 1, 18, 20, true);
 			_vm->_graphicsManager->_noFadingFl = true;
 			_vm->_graphicsManager->fadeOutLong();
 			_vm->_objectsManager->PERSO_ON = false;

@@ -38,7 +38,6 @@ namespace Hopkins {
 AnimationManager::AnimationManager(HopkinsEngine *vm) {
 	_vm = vm;
 	_clearAnimationFl = false;
-	NO_SEQ = false;
 	NO_COUL = false;
 }
 
@@ -49,7 +48,7 @@ AnimationManager::AnimationManager(HopkinsEngine *vm) {
  * @param rate2			Delay amount between animation frames
  * @param rate3			Delay amount after animation finishes
  */
-void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
+void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl) {
 	byte *screenCopy = NULL;
 	Common::File f;
 
@@ -89,7 +88,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		screenCopy = _vm->_globals->allocMemory(307200);
 		memcpy(screenCopy, screenP, 307200);
 	}
-	if (NO_SEQ) {
+	if (skipSeqFl) {
 		if (hasScreenCopy)
 			memcpy(screenCopy, _vm->_graphicsManager->_vesaBuffer, 307200);
 		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
@@ -275,23 +274,18 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			screenCopy = _vm->_globals->allocMemory(307200);
 			memcpy(screenCopy, screenP, 307200);
 		}
-		if (NO_SEQ) {
-			if (hasScreenCopy)
-				memcpy(screenCopy, _vm->_graphicsManager->_vesaBuffer, 307200);
-			_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
-		} else {
-			_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
-			_vm->_graphicsManager->lockScreen();
-			if (hasScreenCopy)
-				_vm->_graphicsManager->m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			else
-				_vm->_graphicsManager->m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
-			_vm->_graphicsManager->unlockScreen();
+		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
+		_vm->_graphicsManager->lockScreen();
+		if (hasScreenCopy)
+			_vm->_graphicsManager->m_scroll16A(screenCopy, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		else
+			_vm->_graphicsManager->m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
-			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-			_vm->_graphicsManager->updateScreen();
-		}
+		_vm->_graphicsManager->unlockScreen();
+		_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		_vm->_graphicsManager->updateScreen();
+
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
 		_vm->_soundManager->loadAnimSound();
@@ -611,7 +605,7 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) 
 /**
  * Play sequence
  */
-void AnimationManager::playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl) {
+void AnimationManager::playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl, bool skipSeqFl) {
 	if (_vm->shouldQuit())
 		return;
 
@@ -645,7 +639,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		screenCopy = _vm->_globals->allocMemory(307200);
 		memcpy(screenCopy, screenP, 307200);
 	}
-	if (NO_SEQ) {
+	if (skipSeqFl) {
 		if (hasScreenCopy)
 			memcpy(screenCopy, _vm->_graphicsManager->_vesaBuffer, 307200);
 		if (!_vm->getIsDemo()) {
@@ -783,7 +777,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 /**
  * Play Sequence type 2
  */
-void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3) {
+void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl) {
 	byte *screenCopy = NULL;
 	byte *screenP;
 	int frameNumber;
@@ -812,7 +806,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			screenCopy = _vm->_globals->allocMemory(307200);
 			memcpy((void *)screenCopy, screenP, 307200);
 		}
-		if (NO_SEQ) {
+		if (skipSeqFl) {
 			if (multiScreenFl) {
 				assert(screenCopy != NULL);
 				memcpy((void *)screenCopy, _vm->_graphicsManager->_vesaBuffer, 307200);

@@ -2029,7 +2029,6 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 	_graphicsManager->clearScreen();
 	_graphicsManager->unlockScreen();
 	_graphicsManager->clearPalette();
-	_animationManager->NO_SEQ = false;
 	_soundManager->playSound(26);
 	_globals->iRegul = 1;
 	_globals->_disableInventFl = true;
