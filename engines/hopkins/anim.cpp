@@ -660,40 +660,22 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_graphicsManager->updateScreen();
 	}
 	bool skipFl = false;
-	if (_vm->getIsDemo()) {
-		_vm->_eventsManager->_rateCounter = 0;
-		_vm->_eventsManager->_escKeyFl = false;
-		_vm->_soundManager->loadAnimSound();
-		if (_vm->_globals->iRegul == 1) {
-			do {
-				if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
-					skipFl = true;
-					break;
-				}
+	if (noColFl)
+		_vm->_graphicsManager->fadeInDefaultLength(screenP);
+	_vm->_eventsManager->_rateCounter = 0;
+	_vm->_eventsManager->_escKeyFl = false;
+	_vm->_soundManager->loadAnimSound();
+	if (_vm->_globals->iRegul == 1) {
+		do {
+			if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
+				skipFl = true;
+				break;
+			}
 
-				_vm->_eventsManager->_escKeyFl = false;
-				_vm->_eventsManager->refreshEvents();
-				_vm->_soundManager->checkSoundEnd();
-			} while (_vm->_eventsManager->_rateCounter < rate1);
-		}
-	} else {
-		if (noColFl)
-			_vm->_graphicsManager->fadeInDefaultLength(screenP);
-		_vm->_eventsManager->_rateCounter = 0;
-		_vm->_eventsManager->_escKeyFl = false;
-		_vm->_soundManager->loadAnimSound();
-		if (_vm->_globals->iRegul == 1) {
-			do {
-				if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
-					skipFl = true;
-					break;
-				}
-
-				_vm->_eventsManager->_escKeyFl = false;
-				_vm->_eventsManager->refreshEvents();
-				_vm->_soundManager->checkSoundEnd();
-			} while (_vm->_eventsManager->_rateCounter < rate1);
-		}
+			_vm->_eventsManager->_escKeyFl = false;
+			_vm->_eventsManager->refreshEvents();
+			_vm->_soundManager->checkSoundEnd();
+		} while (_vm->_eventsManager->_rateCounter < rate1);
 	}
 	_vm->_eventsManager->_rateCounter = 0;
 	if (!skipFl) {
