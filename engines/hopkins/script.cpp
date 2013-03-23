@@ -689,17 +689,26 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 36:
 			if (_vm->_globals->_saveData->_data[svField270] == 2 && _vm->_globals->_saveData->_data[svField94] == 1 && _vm->_globals->_saveData->_data[svField95] == 1)
 				_vm->_globals->_saveData->_data[svField270] = 3;
-			if (!_vm->_globals->_saveData->_data[svField270])
+			
+			switch (_vm->_globals->_saveData->_data[svField270]) {
+			case 0:
 				_vm->_talkManager->startStaticCharacterDialogue("PATRON0.pe2");
-			if (_vm->_globals->_saveData->_data[svField270] == 1)
+				break;
+			case 1:
 				_vm->_talkManager->startStaticCharacterDialogue("PATRON1.pe2");
-			if (_vm->_globals->_saveData->_data[svField270] == 2)
+				break;
+			case 2:
 				_vm->_talkManager->startStaticCharacterDialogue("PATRON2.pe2");
-			if (_vm->_globals->_saveData->_data[svField270] == 3)
+				break;
+			case 3:
 				_vm->_talkManager->startStaticCharacterDialogue("PATRON3.pe2");
-			if (_vm->_globals->_saveData->_data[svField270] > 3) {
-				_vm->_talkManager->startStaticCharacterDialogue("PATRON4.pe2");
-				_vm->_globals->_saveData->_data[svField270] = 5;
+				break;
+			default:
+				if (_vm->_globals->_saveData->_data[svField270] > 3) {
+					_vm->_talkManager->startStaticCharacterDialogue("PATRON4.pe2");
+					_vm->_globals->_saveData->_data[svField270] = 5;
+				}
+				break;
 			}
 			break;
 
@@ -1340,7 +1349,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 94:
 			if (!_vm->_globals->_saveData->_data[svField228])
 				_vm->_talkManager->startAnimatedCharacterDialogue("flicn.pe2");
-			if (_vm->_globals->_saveData->_data[svField228] == 1)
+			else if (_vm->_globals->_saveData->_data[svField228] == 1)
 				_vm->_talkManager->startAnimatedCharacterDialogue("flicn1.pe2");
 			break;
 
@@ -1413,14 +1422,17 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals->_oldDirection = DIR_NONE;
 			_vm->_globals->Compteur = 0;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-			if (_vm->_globals->_saveData->_data[svField253] == 1) {
+			switch (_vm->_globals->_saveData->_data[svField253]) {
+			case 1:
 				_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 201, 294);
-			}
-			if (_vm->_globals->_saveData->_data[svField253] == 2) {
+				break;
+			case 2:
 				_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 158, 338);
-			}
-			if (_vm->_globals->_saveData->_data[svField253] > 2) {
-				_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 211, 393);
+				break;
+			default:
+				if (_vm->_globals->_saveData->_data[svField253] > 2)
+					_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 211, 393);
+				break;
 			}
 			_vm->_globals->_checkDistanceFl = true;
 			do {
@@ -2215,18 +2227,26 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					return -1; // Exiting game
 
 				_vm->_eventsManager->refreshScreenAndEvents();
-				if (_vm->_objectsManager->getBobAnimDataIdx(1) == 12 && !soundFlag) {
-					_vm->_soundManager->playSoundFile("SOUND86.WAV");
-					soundFlag = true;
-				}
-				if (_vm->_objectsManager->getBobAnimDataIdx(1) == 13)
+				switch (_vm->_objectsManager->getBobAnimDataIdx(1)) {
+				case 12:
+					if (!soundFlag) {
+						_vm->_soundManager->playSoundFile("SOUND86.WAV");
+						soundFlag = true;
+					}
+					break;
+				case 13:
+				// The original was starting then stopping sound at 25
+				// It looked wrong so the check was set on 26
+				case 26:
 					soundFlag = false;
-				if (_vm->_objectsManager->getBobAnimDataIdx(1) == 25 && !soundFlag) {
-					_vm->_soundManager->playSoundFile("SOUND85.WAV");
-					soundFlag = true;
+					break;
+				case 25:
+					if (!soundFlag) {
+						_vm->_soundManager->playSoundFile("SOUND85.WAV");
+						soundFlag = true;
+					}
+					break;
 				}
-				if (_vm->_objectsManager->getBobAnimDataIdx(1) == 25)
-					soundFlag = false;
 			} while (_vm->_objectsManager->getBobAnimDataIdx(1) != 32);
 			_vm->_objectsManager->stopBobAnimation(1);
 			_vm->_objectsManager->setBobAnimation(2);
