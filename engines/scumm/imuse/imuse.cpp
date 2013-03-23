@@ -46,7 +46,6 @@ namespace Scumm {
 IMuseInternal::IMuseInternal() :
 	_native_mt32(false),
 	_enable_gs(false),
-	_sc55(false),
 	_midi_adlib(NULL),
 	_midi_native(NULL),
 	_sysex(NULL),
@@ -495,12 +494,9 @@ uint32 IMuseInternal::property(int prop, uint32 value) {
 	case IMuse::PROP_GS:
 		_enable_gs = (value > 0);
 
-		// If True Roland MT-32 is not selected, run in GM or GS mode.
-		// If it is selected, change the Roland GS synth to MT-32 mode.
-		if (_midi_native && !_native_mt32)
-			initGM(_midi_native);
-		else if (_midi_native && _native_mt32 && _enable_gs) {
-			_sc55 = true;
+		// GS Mode emulates MT-32 on a GS device, so _native_mt32 should always be true
+		if (_midi_native && _enable_gs) {
+			_native_mt32 = true;
 			initGM(_midi_native);
 		}
 		break;
@@ -1499,7 +1495,7 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 
 	if (_enable_gs) {
 		// All GS devices recognize the GS Reset command,
-		// even with Roland's ID. It is impractical to
+		// even using Roland's ID. It is impractical to
 		// support other manufacturers' devices for
 		// further GS settings, as there are limitless
 		// numbers of them out there that would each
@@ -1513,30 +1509,28 @@ void IMuseInternal::initGM(MidiDriver *midi) {
 		midi->sysEx(buffer, 9);
 		debug(2, "GS SysEx: GS Reset");
 		_system->delayMillis(200);
+		
+		// Set global Master Tune to 442.0kHz, as on the MT-32
+		memcpy(&buffer[4], "\x40\x00\x00\x00\x04\x04\x0F\x29", 8);
+		midi->sysEx(buffer, 12);
+		debug(2, "GS SysEx: Master Tune set to 442.0kHz");
 
-		if (_sc55) {
-			// This mode is for GS devices that support an MT-32-compatible
-			// Map, such as the Roland Sound Canvas line of modules. It
-			// will allow them to work with True MT-32 mode, but will
-			// obviously still ignore MT-32 SysEx (and thus custom
-			// instruments).
+		// Note: All Roland GS devices support CM-64/32L maps
 
-			// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
-			for (i = 0; i < 16; ++i) {
-				midi->send((127 << 16) | (0  << 8) | (0xB0 | i));
-				midi->send((1   << 16) | (32 << 8) | (0xB0 | i));
-				midi->send((0   << 16) | (0  << 8) | (0xC0 | i));
-			}
-			debug(2, "GS Program Change: CM-64/32L Map Selected");
-
-			// Set Percussion Channel to SC-55 Map (CC#32, 01H), then
-			// Switch Drum Map to CM-64/32L (MT-32 Compatible Drums)
-			midi->getPercussionChannel()->controlChange(0, 0);
-			midi->getPercussionChannel()->controlChange(32, 1);
-			midi->send(127 << 8 | 0xC0 | 9);
-			debug(2, "GS Program Change: Drum Map is CM-64/32L");
-
+		// Set Channels 1-16 to SC-55 Map, then CM-64/32L Variation
+		for (i = 0; i < 16; ++i) {
+			midi->send((127 << 16) | (0  << 8) | (0xB0 | i));
+			midi->send((1   << 16) | (32 << 8) | (0xB0 | i));
+			midi->send((0   << 16) | (0  << 8) | (0xC0 | i));
 		}
+		debug(2, "GS Program Change: CM-64/32L Map Selected");
+
+		// Set Percussion Channel to SC-55 Map (CC#32, 01H), then
+		// Switch Drum Map to CM-64/32L (MT-32 Compatible Drums)
+		midi->getPercussionChannel()->controlChange(0, 0);
+		midi->getPercussionChannel()->controlChange(32, 1);
+		midi->send(127 << 8 | 0xC0 | 9);
+		debug(2, "GS Program Change: Drum Map is CM-64/32L");
 
 		// Set Master Chorus to 0. The MT-32 has no chorus capability.
 		memcpy(&buffer[4], "\x40\x01\x3A\x00\x05", 5);
