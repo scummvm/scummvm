@@ -135,7 +135,7 @@ $(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR) $(DIST_FILE
 		zip -r ../`basename $$i` *; \
 	done
 	@$(RM) -rf $(PATH_BUILD_ASSETS)/tmp
-	$(AAPT) package -f -0 zip -M $< -S $(PATH_RESOURCES) -A $(PATH_BUILD_ASSETS) -I $(ANDROID_JAR) -F $@
+	$(AAPT) package -f -0 "" -M $< -S $(PATH_RESOURCES) -A $(PATH_BUILD_ASSETS) -I $(ANDROID_JAR) -F $@
 
 $(PATH_BUILD)/%/$(FILE_RESOURCES): $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml $(PATH_STAGE_PREFIX).%/res/drawable/residualvm.png plugins/lib%.so $(ANDROID_JAR)
 	$(AAPT) package -f -M $< -S $(PATH_STAGE_PREFIX).$*/res -I $(ANDROID_JAR) -F $@

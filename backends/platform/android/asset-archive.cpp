@@ -313,6 +313,7 @@ AssetFdReadStream::AssetFdReadStream(JNIEnv *env, jobject assetfd) :
 	assert(FID_descriptor);
 
 	_fd = env->GetIntField(javafd, FID_descriptor);
+	seek(0, SEEK_SET);
 }
 
 AssetFdReadStream::~AssetFdReadStream() {
