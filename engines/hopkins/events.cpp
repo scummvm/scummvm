@@ -51,7 +51,7 @@ EventsManager::EventsManager(HopkinsEngine *vm) {
 	_gameKey = KEY_NONE;
 	_mouseCursorId = 0;
 	_oldIconId = 0;
-	_objectBuf = NULL;
+	_objectBuf = g_PTRNUL;
 
 	Common::fill(&_keyState[0], &_keyState[256], false);
 	_priorCounterTime = 0;
@@ -61,6 +61,11 @@ EventsManager::EventsManager(HopkinsEngine *vm) {
 EventsManager::~EventsManager() {
 	_vm->_globals->freeMemory(_objectBuf);
 	_vm->_globals->freeMemory(_mouseCursor);
+}
+
+void EventsManager::clearAll() {
+	_objectBuf = _vm->_globals->freeMemory(_objectBuf);
+	_objectBuf = _vm->_globals->allocMemory(2500);
 }
 
 void EventsManager::initMouseData() {

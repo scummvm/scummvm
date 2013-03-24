@@ -71,6 +71,7 @@ public:
 
 	EventsManager(HopkinsEngine *vm);
 	~EventsManager();
+	void clearAll();
 	void initMouseData();
 
 	void delay(int totalMilli);
@@ -85,7 +86,6 @@ public:
 	void mouseOn();
 	void mouseOff();
 	void setMouseOn();
-
 	void refreshScreenAndEvents();
 };
 

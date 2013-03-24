@@ -238,7 +238,6 @@ void Globals::clearAll() {
 	initVBob();
 	_objectDataBuf = g_PTRNUL;
 	_curObjectFileNum = 0;
-	_vm->_eventsManager->_objectBuf = g_PTRNUL;
 	_vm->_dialogsManager->clearAll();
 	_answerBuffer = g_PTRNUL;
 	SPRITE_ECRAN = g_PTRNUL;
@@ -253,7 +252,7 @@ void Globals::clearAll() {
 
 	_boxWidth = 240;
 
-	_vm->_eventsManager->_objectBuf = allocMemory(2500);
+	_vm->_eventsManager->clearAll();
 
 	_objectDataBuf = g_PTRNUL;
 }
