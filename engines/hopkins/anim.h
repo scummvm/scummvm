@@ -51,7 +51,7 @@ public:
 	void playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl, bool skipSeqFl, bool noColFl = false);
 	void playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl = false);
 	
-	void setClearAnimFlag() { _clearAnimationFl = true; }
+	void setClearAnimFlag()   { _clearAnimationFl = true; }
 	void unsetClearAnimFlag() { _clearAnimationFl = false; }
 };
 

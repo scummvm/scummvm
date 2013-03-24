@@ -1804,9 +1804,9 @@ void HopkinsEngine::playIntro() {
 
 			_graphicsManager->fadeOutLong();
 			_graphicsManager->endDisplayBob();
-			_animationManager->setClearAnimFlag();
 			_soundManager->playSound(3);
 			_soundManager->_specialSoundNum = 1;
+			_animationManager->setClearAnimFlag();
 			_animationManager->playAnim("INTRO1.anm", 10, 24, 18);
 			_soundManager->_specialSoundNum = 0;
 			if (shouldQuit() || _eventsManager->_escKeyFl)
