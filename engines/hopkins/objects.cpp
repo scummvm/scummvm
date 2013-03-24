@@ -88,6 +88,7 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_lastDirection = DIR_NONE;
 	_oldDirection = DIR_NONE;
 	_oldDirectionSpriteIdx = 59;
+	_objectWidth = _objectHeight = 0;
 }
 
 ObjectsManager::~ObjectsManager() {
@@ -130,8 +131,8 @@ byte *ObjectsManager::loadObjectFromFile(int objIndex, bool mode) {
 
 	int width = ObjectsManager::getWidth(_vm->_globals->_objectDataBuf, idx);
 	int height = ObjectsManager::getHeight(_vm->_globals->_objectDataBuf, idx);
-	_vm->_globals->_objectWidth = width;
-	_vm->_globals->_objectHeight = height;
+	_objectWidth = width;
+	_objectHeight = height;
 
 	if (mode) {
 		sprite_alone(_vm->_globals->_objectDataBuf, _vm->_eventsManager->_objectBuf, idx);

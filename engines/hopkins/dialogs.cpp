@@ -396,7 +396,7 @@ void DialogsManager::showInventory() {
 				if (inventIdx && inventCount <= 29) {
 					byte *obj = _vm->_objectsManager->loadObjectFromFile(inventIdx, false);
 					_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, obj, _inventX + curPosX + 6,
-						curPosY + 120, _vm->_globals->_objectWidth, _vm->_globals->_objectHeight);
+						curPosY + 120, _vm->_objectsManager->getObjectWidth(), _vm->_objectsManager->getObjectHeight());
 					_vm->_globals->freeMemory(obj);
 				}
 				curPosX += 54;

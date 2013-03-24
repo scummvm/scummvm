@@ -103,7 +103,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	_linuxEndDemoFl = false;
 	_speed = 1;
 	_curObjectFileNum = 0;
-	_objectWidth = _objectHeight = 0;
 	_catalogPos = 0;
 	_catalogSize = 0;
 	iRegul = 0;

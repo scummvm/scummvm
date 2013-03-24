@@ -369,8 +369,8 @@ void EventsManager::refreshScreenAndEvents() {
 		width = _mouseSizeX;
 		height = _mouseSizeY;
 		if (_mouseCursorId == 23) {
-			width = _vm->_globals->_objectWidth;
-			height = _vm->_globals->_objectHeight;
+			width = _vm->_objectsManager->getObjectWidth();
+			height = _vm->_objectsManager->getObjectHeight();
 		} else {
 			if (_breakoutFl) {
 				if (xp < _vm->_graphicsManager->_minX)
@@ -492,14 +492,14 @@ void EventsManager::updateCursor() {
 	Common::Rect clipBounds(_vm->_graphicsManager->_minX, _vm->_graphicsManager->_minY,
 		_vm->_graphicsManager->_maxX, _vm->_graphicsManager->_maxY);
 	_vm->_graphicsManager->_minX = _vm->_graphicsManager->_minY = 0;
-	_vm->_graphicsManager->_maxX = _vm->_globals->_objectWidth;
-	_vm->_graphicsManager->_maxY = _vm->_globals->_objectHeight;
+	_vm->_graphicsManager->_maxX = _vm->_objectsManager->getObjectWidth();
+	_vm->_graphicsManager->_maxY = _vm->_objectsManager->getObjectHeight();
 	int pitch = _vm->_graphicsManager->_lineNbr2;
-	_vm->_graphicsManager->_lineNbr2 = _vm->_globals->_objectWidth;
+	_vm->_graphicsManager->_lineNbr2 = _vm->_objectsManager->getObjectWidth();
 
 	// Create the temporary cursor surface
-	byte *cursorSurface = new byte[_vm->_globals->_objectHeight * _vm->_globals->_objectWidth];
-	Common::fill(cursorSurface, cursorSurface + _vm->_globals->_objectHeight * _vm->_globals->_objectWidth, 0);
+	byte *cursorSurface = new byte[_vm->_objectsManager->getObjectHeight() * _vm->_objectsManager->getObjectWidth()];
+	Common::fill(cursorSurface, cursorSurface + _vm->_objectsManager->getObjectHeight() * _vm->_objectsManager->getObjectWidth(), 0);
 
 	if (_mouseCursorId != 23) {
 		// Draw standard cursor
@@ -535,7 +535,7 @@ void EventsManager::updateCursor() {
 
 	// Set the ScummVM cursor from the surface
 	CursorMan.replaceCursorPalette(cursorPalette, 0, PALETTE_SIZE - 1);
-	CursorMan.replaceCursor(cursorSurface, _vm->_globals->_objectWidth, _vm->_globals->_objectHeight,
+	CursorMan.replaceCursor(cursorSurface, _vm->_objectsManager->getObjectWidth(), _vm->_objectsManager->getObjectHeight(),
 		xOffset, 0, 0, true);
 
 	// Delete the cursor surface and palette

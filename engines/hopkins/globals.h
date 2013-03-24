@@ -240,7 +240,6 @@ public:
 	Directions _oceanDirection;
 	int _actionDirection;
 	int _inventory[36];
-	int _objectWidth, _objectHeight;
 	int _screenId;
 	int _prevScreenId;
 	int _characterMaxPosY;

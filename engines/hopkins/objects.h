@@ -86,6 +86,7 @@ class ObjectsManager {
 private:
 	HopkinsEngine *_vm;
 
+	int _objectWidth, _objectHeight;
 	int _oldBorderSpriteIndex;
 	int _borderSpriteIndex;
 	byte *_spritePtr;
@@ -248,6 +249,8 @@ public:
 
 	void resetOldFrameIndex() { _oldFrameIndex = -1; }
 	void resetOldDirection()  { _oldDirection = DIR_NONE; }
+	int getObjectWidth()  { return _objectWidth; }
+	int getObjectHeight() { return _objectHeight; }
 };
 
 } // End of namespace Hopkins
