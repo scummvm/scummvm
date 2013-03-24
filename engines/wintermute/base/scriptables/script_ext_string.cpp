@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/scriptables/script_ext_string.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
 #include "engines/wintermute/utils/string_util.h"
+#include "common/str.h"
 #include "common/tokenizer.h"
 
 namespace Wintermute {
