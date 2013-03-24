@@ -126,14 +126,6 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
 		secondaryFilename = "RES_LIN.RES";
 		break;
 
-	case RES_ANI:
-		if (!f.exists("RES_ANI.CAT"))
-			return g_PTRNUL;
-
-		ptr = loadFile("RES_ANI.CAT");
-		secondaryFilename = "RES_ANI.RES";
-		break;
-
 	case RES_PER:
 		if (!f.exists("RES_PER.CAT"))
 			return g_PTRNUL;

@@ -64,7 +64,7 @@ EventsManager::~EventsManager() {
 }
 
 void EventsManager::clearAll() {
-	_objectBuf = _vm->_globals->freeMemory(_objectBuf);
+	_vm->_globals->freeMemory(_objectBuf);
 	_objectBuf = _vm->_globals->allocMemory(2500);
 }
 
