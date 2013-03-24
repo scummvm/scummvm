@@ -295,30 +295,26 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		Common::Array<WideString> parts;
 
-
-
-		Common::StringTokenizer tokenizer(str, delims);
-		while (!tokenizer.empty()) {
-			Common::String str2 = tokenizer.nextToken();
-			parts.push_back(str2);
+		uint32 start = 0;
+		for(uint32 i = 0; i < str.size() + 1; i++) {
+			char ch = str.c_str()[i];
+			if(ch=='\0' || delims.contains(ch))
+			{
+				char *part = new char[i - start + 1];
+				if(i != start) {
+					strlcpy(part, str.c_str() + start, i - start + 1);
+					part[i - start] = '\0';
+				} else {
+					part[0] = '\0';
+				}
+				val = new ScValue(_gameRef, part);
+				array->push(val);
+				delete[] part;
+				delete val;
+				val = nullptr;
+				start = i + 1;
+			}
 		}
-		// TODO: Clean this up
-		/*do {
-		    pos = StringUtil::IndexOf(Common::String(str.c_str() + start), delims, start);
-		    //pos = str.find_first_of(delims, start);
-		    if (pos == start) {
-		        start = pos + 1;
-		    } else if (pos == str.size()) {
-		        parts.push_back(Common::String(str.c_str() + start));
-		        break;
-		    } else {
-		        parts.push_back(Common::String(str.c_str() + start, pos - start));
-		        start = pos + 1;
-		    }
-		    //start = str.find_first_not_of(delims, start);
-		    start = StringUtil::LastIndexOf(Common::String(str.c_str() + start), delims, start) + 1;
-
-		} while (pos != str.size());*/
 
 		for (Common::Array<WideString>::iterator it = parts.begin(); it != parts.end(); ++it) {
 			WideString &part = (*it);
