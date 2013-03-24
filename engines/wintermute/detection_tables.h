@@ -28,10 +28,15 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},
 	{"actualdest",      "Actual Destination"},
+	{"carolreed4",      "Carol Reed 4 - East Side Story"},
+	{"carolreed5",      "Carol Reed 5 - The Colour of Murder"},
+	{"carolreed6",      "Carol Reed 6 - Black Circle"},
+	{"carolreed7",      "Carol Reed 7 - Blue Madonna"},
+	{"carolreed8",      "Carol Reed 8 - Amber's Blood"},
+	{"carolreed9",      "Carol Reed 9 - Cold Case Summer"},
 	{"chivalry",        "Chivalry is Not Dead"},
 	{"deadcity",        "Dead City"},
 	{"dirtysplit",      "Dirty Split"},
-	{"eastside",        "East Side Story"},
 	{"ghostsheet",      "Ghost in the Sheet"},
 	{"hamlet",          "Hamlet or the last game without MMORPS features, shaders and product placement"},
 	{"julia",           "J.U.L.I.A."},
@@ -71,6 +76,78 @@ static const ADGameDescription gameDescriptions[] = {
 		"actualdest",
 		"",
 		AD_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Carol Reed 4 - East Side Story (Demo)
+	{
+		"carolreed4",
+		"Demo",
+		AD_ENTRY1s("data.dcp", "b3f8b09bb4b05ee3e9d14697525257f9", 59296246),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
+	// Carol Reed 4 - East Side Story
+	{
+		"carolreed4",
+		"",
+		AD_ENTRY1s("data.dcp", "b26377797f060afc2d440d820100c1ce", 529320536),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
+	// Carol Reed 5 - The Colour of Murder
+	{
+		"carolreed5",
+		"",
+		AD_ENTRY1s("data.dcp", "3fcfca44209545d0e26774156427b494", 603660415),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Carol Reed 6 - Black Circle
+	{
+		"carolreed6",
+		"",
+		AD_ENTRY1s("data.dcp", "0e4c532beecf23d85012168753f41189", 456258147),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Carol Reed 7 - Blue Madonna
+	{
+		"carolreed7",
+		"",
+		AD_ENTRY1s("data.dcp", "24e3db3e2fabfc956713796d87a3efb0", 495471147),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Carol Reed 8 - Amber's Blood
+	{
+		"carolreed8",
+		"",
+		AD_ENTRY1s("data.dcp", "859d16b0d5b9b255e470cbded2c6cedc", 502714557),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Carol Reed 9 - Cold Case Summer
+	{
+		"carolreed9",
+		"",
+		AD_ENTRY1s("data.dcp", "2b343b48a7aee508d728a546b414a255", 620005266),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
@@ -156,17 +233,6 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
-		GUIO0()
-	},
-	// East Side Story (Demo)
-	{
-		"eastside",
-		"Demo",
-		AD_ENTRY1s("data.dcp", "b3f8b09bb4b05ee3e9d14697525257f9", 59296246),
-		Common::EN_ANY,
-		Common::kPlatformWindows,
-		ADGF_UNSTABLE |
-		ADGF_DEMO,
 		GUIO0()
 	},
 	// Ghosts in the Sheet
