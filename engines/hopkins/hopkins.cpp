@@ -1593,7 +1593,7 @@ void HopkinsEngine::initializeSystem() {
 	_eventsManager->initMouseData();
 	_fontManager->initData();
 
-	_dialogsManager->_inventoryIcons = _fileManager->loadFile("ICONE.SPR");
+	_dialogsManager->loadIcons();
 	_objectsManager->_headSprites = _fileManager->loadFile("TETE.SPR");
 
 	_eventsManager->setMouseOn();
@@ -2059,7 +2059,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 
 void HopkinsEngine::playEnding() {
 	_globals->PERSO = _globals->freeMemory(_globals->PERSO);
-	_dialogsManager->_removeInventFl = true;
+	_dialogsManager->disableInvent();
 	_globals->_disableInventFl = true;
 	_graphicsManager->_scrollOffset = 0;
 	_globals->_cityMapEnabledFl = false;
@@ -2169,7 +2169,7 @@ void HopkinsEngine::playEnding() {
 		displayCredits();
 		_globals->iRegul = 0;
 		_globals->_exitId = 300;
-		_dialogsManager->_removeInventFl = false;
+		_dialogsManager->enableInvent();
 		_globals->_disableInventFl = false;
 	} else {
 		_soundManager->_specialSoundNum = 200;
@@ -2197,7 +2197,7 @@ void HopkinsEngine::playEnding() {
 		_soundManager->playSound(16);
 		_globals->iRegul = 1;
 		_soundManager->_specialSoundNum = 0;
-		_dialogsManager->_removeInventFl = false;
+		_dialogsManager->enableInvent();
 		_globals->_disableInventFl = false;
 		_animationManager->playAnim("JOUR4A.anm", 12, 12, 1000);
 		_globals->iRegul = 0;

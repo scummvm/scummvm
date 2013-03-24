@@ -408,9 +408,8 @@ void ObjectsManager::displaySprite() {
 	}
 
 	_vm->_globals->_sortedDisplayCount = 0;
-	if (_vm->_dialogsManager->_inventDisplayedFl) {
-		_vm->_dialogsManager->drawInvent(_oldBorderPos, _oldBorderSpriteIndex, _borderPos, _borderSpriteIndex);
-	}
+
+	_vm->_dialogsManager->drawInvent(_oldBorderPos, _oldBorderSpriteIndex, _borderPos, _borderSpriteIndex);
 
 	if (_saveLoadFl) {
 		_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, _saveLoadSprite, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353);
@@ -3613,7 +3612,7 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 	if (_vm->_globals->_saveData->_data[savegameIdx]) {
 		if (_vm->_globals->_saveData->_data[savegameIdx] == 1) {
 			if (((idx == 1 || idx == 2) && getBobAnimDataIdx(idx) == 26) || ((idx == 3 || idx == 4) && getBobAnimDataIdx(idx) == 27)) {
-				_vm->_dialogsManager->_removeInventFl = true;
+				_vm->_dialogsManager->disableInvent();
 				_vm->_soundManager->playSample(1);
 				_vm->_globals->_saveData->_data[savegameIdx] = 4;
 			}
@@ -3654,7 +3653,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 							   const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen) {
 	_vm->_dialogsManager->_inventFl = false;
 	_vm->_eventsManager->_gameKey = KEY_NONE;
-	_vm->_dialogsManager->_removeInventFl = false;
+	_vm->_dialogsManager->enableInvent();
 	_vm->_graphicsManager->_scrollOffset = 0;
 	_vm->_globals->_cityMapEnabledFl = false;
 	_vm->_globals->iRegul = 1;
@@ -3744,7 +3743,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_eventsManager->_gameKey = KEY_NONE;
 	_verb = 4;
 	_vm->_graphicsManager->_scrollOffset = 0;
-	_vm->_dialogsManager->_removeInventFl = false;
+	_vm->_dialogsManager->enableInvent();
 	_vm->_globals->_cityMapEnabledFl = false;
 	_vm->_graphicsManager->_noFadingFl = false;
 	_vm->_globals->_freezeCharacterFl = false;
