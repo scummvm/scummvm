@@ -128,7 +128,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	_checkDistanceFl = false;
 	_characterType = 0;
 	_actionMoveTo = false;
-	Compteur = 0;
 	_actionDirection = DIR_NONE;
 
 	_creditsStartX = -1;

@@ -95,6 +95,7 @@ private:
 	bool _oldFlipFl;
 	int _curGestureFile;
 	byte *_gestureBuf;
+	int _homeRateCounter;
 
 	void sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	void removeObjectDataBuf();
@@ -221,12 +222,14 @@ public:
 	void doActionLeft(int idx);
 	void doActionDiagRight(int idx);
 	void doActionDiagLeft(int idx);
+	byte *loadObjectFromFile(int objIndex, bool mode);
+
+	void resetHomeRateCounter() { _homeRateCounter = 0; }
 
 	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
-	byte *loadObjectFromFile(int objIndex, bool mode);
 	void OPTI_OBJET();
 	void SPACTION(byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl);
 	void BOB_VIVANT(int idx);

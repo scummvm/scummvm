@@ -985,7 +985,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_oldCharacterPosX = _vm->_objectsManager->getSpriteX(0);
 			_vm->_globals->_oldDirection = DIR_NONE;
-			_vm->_globals->Compteur = 0;
+			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 445, 332);
 			_vm->_globals->_checkDistanceFl = true;
@@ -1103,7 +1103,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_oldCharacterPosX = _vm->_objectsManager->getSpriteX(0);
 			_vm->_globals->_oldDirection = DIR_NONE;
-			_vm->_globals->Compteur = 0;
+			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 119, 268);
 			_vm->_globals->_checkDistanceFl = true;
@@ -1420,7 +1420,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_oldCharacterPosX = _vm->_objectsManager->getSpriteX(0);
 			_vm->_globals->_oldDirection = DIR_NONE;
-			_vm->_globals->Compteur = 0;
+			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			switch (_vm->_globals->_saveData->_data[svField253]) {
 			case 1:
@@ -1667,7 +1667,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_oldCharacterPosX = _vm->_objectsManager->getSpriteX(0);
 			_vm->_globals->_oldDirection = DIR_NONE;
-			_vm->_globals->Compteur = 0;
+			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 361, 325);
@@ -1695,7 +1695,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_oldCharacterPosX = _vm->_objectsManager->getSpriteX(0);
 			_vm->_globals->_oldDirection = DIR_NONE;
-			_vm->_globals->Compteur = 0;
+			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 361, 325);
@@ -2007,7 +2007,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_oldCharacterPosX = _vm->_objectsManager->getSpriteX(0);
 			_vm->_globals->_oldDirection = DIR_NONE;
-			_vm->_globals->Compteur = 0;
+			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 488, 280);
