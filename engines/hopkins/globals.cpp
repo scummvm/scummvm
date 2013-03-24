@@ -107,13 +107,12 @@ Globals::Globals(HopkinsEngine *vm) {
 	_oldDirectionSpriteIdx = 59;
 	_lastDirection = DIR_NONE;
 	_curObjectFileNum = 0;
-	_boxWidth = 0;
 	_objectWidth = _objectHeight = 0;
 	_catalogPos = 0;
 	_catalogSize = 0;
 	iRegul = 0;
 	_exitId = 0;
-	PERSO = 0;
+	_characterSpriteBuf = 0;
 	_screenId = 0;
 	_prevScreenId = 0;
 	_characterMaxPosY = 0;
@@ -144,11 +143,11 @@ Globals::Globals(HopkinsEngine *vm) {
 	// Initialize pointers
 	for (int i = 0; i < 6; ++i)
 		_hidingItemData[i] = g_PTRNUL;
-	SPRITE_ECRAN = NULL;
+	_levelSpriteBuf = NULL;
 	_saveData = NULL;
 	_answerBuffer = g_PTRNUL;
 	_objectDataBuf = NULL;
-	PERSO = NULL;
+	_characterSpriteBuf = NULL;
 	_optionDialogSpr = NULL;
 
 	// Reset flags
@@ -176,11 +175,11 @@ Globals::Globals(HopkinsEngine *vm) {
 Globals::~Globals() {
 	for (int idx = 0; idx < 6; ++idx)
 		_hidingItemData[idx] = freeMemory(_hidingItemData[idx]);
-	freeMemory(SPRITE_ECRAN);
+	freeMemory(_levelSpriteBuf);
 	freeMemory((byte *)_saveData);
 	freeMemory(_answerBuffer);
 	freeMemory(_objectDataBuf);
-	freeMemory(PERSO);
+	freeMemory(_characterSpriteBuf);
 
 	clearVBob();
 
@@ -229,8 +228,6 @@ void Globals::clearAll() {
 
 	initAnimBqe();
 
-	_boxWidth = 0;
-
 	_vm->_fontManager->clearAll();
 
 	initVBob();
@@ -238,7 +235,7 @@ void Globals::clearAll() {
 	_curObjectFileNum = 0;
 	_vm->_dialogsManager->clearAll();
 	_answerBuffer = g_PTRNUL;
-	SPRITE_ECRAN = g_PTRNUL;
+	_levelSpriteBuf = g_PTRNUL;
 	_saveData = (Savegame *)g_PTRNUL;
 	_vm->_objectsManager->_curObjectIndex = 0;
 
@@ -247,8 +244,6 @@ void Globals::clearAll() {
 
 	_saveData = (Savegame *)malloc(sizeof(Savegame));
 	memset(_saveData, 0, sizeof(Savegame));
-
-	_boxWidth = 240;
 
 	_vm->_eventsManager->clearAll();
 

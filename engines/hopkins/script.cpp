@@ -180,11 +180,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			int vbobPosX = READ_LE_INT16(dataP + 8);
 			int vbobPosY = READ_LE_INT16(dataP + 10);
 			if (vbobIdx == 52) {
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, vbobPosX, READ_LE_INT16(dataP + 10), vbobFrameIndex);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, vbobPosX, READ_LE_INT16(dataP + 10), vbobFrameIndex);
 			} else if (vbobIdx == 51) {
 				_vm->_objectsManager->BOB_VIVANT(vbobFrameIndex);
 			} else if (vbobIdx != 50) {
-				_vm->_objectsManager->VBOB(_vm->_globals->SPRITE_ECRAN, vbobIdx, vbobPosX, vbobPosY, vbobFrameIndex);
+				_vm->_objectsManager->VBOB(_vm->_globals->_levelSpriteBuf, vbobIdx, vbobPosX, vbobPosY, vbobFrameIndex);
 				if (moveChange)
 					moveChange /= _vm->_globals->_speed;
 				if (moveChange > 1) {
@@ -808,14 +808,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					playFl = false;
 					break;
 				case 12:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 249, 1);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 249, 1);
 					break;
 				case 23:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 249, 2);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 249, 2);
 					playFl = false;
 					break;
 				case 34:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 249, 3);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 249, 3);
 					playFl = false;
 					break;
 				}
@@ -954,7 +954,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 56:
-			_vm->_globals->PERSO = _vm->_fileManager->loadFile("HOPFEM.SPR");
+			_vm->_globals->_characterSpriteBuf = _vm->_fileManager->loadFile("HOPFEM.SPR");
 			_vm->_globals->_characterType = 1;
 			_vm->_globals->_saveData->_data[svAlternateSpriteFl] = 1;
 			_vm->_globals->loadCharacterData();
@@ -964,7 +964,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 57:
-			_vm->_globals->PERSO = _vm->_fileManager->loadFile("PERSO.SPR");
+			_vm->_globals->_characterSpriteBuf = _vm->_fileManager->loadFile("PERSO.SPR");
 			_vm->_globals->_characterType = 0;
 			_vm->_globals->_saveData->_data[svAlternateSpriteFl] = 0;
 			_vm->_globals->loadCharacterData();
@@ -1155,7 +1155,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				if (_vm->_objectsManager->getBobAnimDataIdx(8) == 32)
 					break;
 			}
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 201, 14, 1);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 201, 14, 1);
 			_vm->_objectsManager->animateSprite(0);
 			_vm->_objectsManager->stopBobAnimation(11);
 			_vm->_objectsManager->stopBobAnimation(8);
@@ -1256,7 +1256,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				_vm->_objectsManager->stopBobAnimation(1);
 				_vm->_objectsManager->stopBobAnimation(2);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 160, 6);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 283, 160, 6);
 				_vm->_soundManager->removeSample(1);
 			}
 			if (_vm->_globals->_saveData->_data[svField183] == 2) {
@@ -1293,7 +1293,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 				_vm->_objectsManager->stopBobAnimation(1);
 				_vm->_objectsManager->stopBobAnimation(3);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 161, 8);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 283, 161, 8);
 				_vm->_soundManager->removeSample(1);
 			}
 			break;
@@ -1302,11 +1302,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField186]) {
 				_vm->_animationManager->playSequence("CIB5A.SEQ", 1, 12, 1, false, false);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 155, 29, 0);
 			} else if (_vm->_globals->_saveData->_data[svField186] == 1) {
 				_vm->_animationManager->playSequence("CIB5C.SEQ", 1, 12, 1, false, false);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 329, 87, 2);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 155, 29, 0);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 329, 87, 2);
 			}
 			break;
 
@@ -1314,11 +1314,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField186]) {
 				_vm->_animationManager->playSequence("CIB5B.SEQ", 1, 12, 1, false, false);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 155, 29, 5);
 			} else if (_vm->_globals->_saveData->_data[svField186] == 1) {
 				_vm->_animationManager->playSequence("CIB5D.SEQ", 1, 12, 1, false, false);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 160, 6);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 155, 29, 5);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 283, 160, 6);
 			}
 			break;
 
@@ -1326,11 +1326,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField184]) {
 				_vm->_animationManager->playSequence("CIB6A.SEQ", 1, 12, 1, false, false);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 155, 29, 0);
 			} else if (_vm->_globals->_saveData->_data[svField184] == 1) {
 				_vm->_animationManager->playSequence("CIB6C.SEQ", 1, 12, 1, false, false);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 0);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 293, 139, 3);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 155, 29, 0);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 293, 139, 3);
 			}
 			break;
 
@@ -1338,11 +1338,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField184]) {
 				_vm->_animationManager->playSequence("CIB6B.SEQ", 1, 12, 1, false, false);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 155, 29, 5);
 			} else if (_vm->_globals->_saveData->_data[svField184] == 1) {
 				_vm->_animationManager->playSequence("CIB6D.SEQ", 1, 12, 1, false, false);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 155, 29, 5);
-				_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 283, 161, 8);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 155, 29, 5);
+				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 283, 161, 8);
 			}
 			break;
 
@@ -1376,7 +1376,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(12) != 117);
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 830, 122, 0);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 830, 122, 0);
 			_vm->_objectsManager->stopBobAnimation(12);
 			_vm->_objectsManager->stopBobAnimation(10);
 			_vm->_objectsManager->setBobAnimation(11);
@@ -1808,7 +1808,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 				if (_vm->_objectsManager->getBobAnimDataIdx(4) == 18)
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 18, 334, 0, false);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 18, 334, 0, false);
 			} while (_vm->_objectsManager->getBobAnimDataIdx(4) != 26);
 			_vm->_objectsManager->stopBobAnimation(4);
 			_vm->_objectsManager->animateSprite(0);
@@ -1944,7 +1944,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager->_specialSoundNum = 210;
 			_vm->_animationManager->playSequence2("SECRET1.SEQ", 1, 12, 1, true);
 			_vm->_soundManager->_specialSoundNum = 0;
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 192, 152, 0);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 192, 152, 0);
 			_vm->_objectsManager->setBobAnimation(9);
 			_vm->_objectsManager->OBSSEUL = true;
 			_vm->_objectsManager->loadLinkFile("IM73a");
@@ -1996,7 +1996,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager->_specialSoundNum = 229;
 			_vm->_animationManager->playSequence("MUR.SEQ", 1, 12, 1, false, false);
 			_vm->_soundManager->_specialSoundNum = 0;
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 340, 157, 2);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 340, 157, 2);
 			break;
 
 		case 230: {
@@ -2036,7 +2036,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->setSpriteX(0, 476);
 			_vm->_objectsManager->setSpriteY(0, 278);
 			_vm->_objectsManager->animateSprite(0);
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 337, 154, 3);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 337, 154, 3);
 			_vm->_objectsManager->OBSSEUL = true;
 			_vm->_objectsManager->loadLinkFile("IM93c");
 			_vm->_objectsManager->OBSSEUL = false;
@@ -2118,22 +2118,22 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 				switch (_vm->_globals->_saveData->_data[svField341]) {
 				case 1:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 0);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 27, 117, 0);
 					_vm->_globals->_saveData->_data[svField338] = 0;
 					break;
 				case 2:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 2);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 145, 166, 2);
 					_vm->_globals->_saveData->_data[svField339] = 0;
 					break;
 				case 3:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 4);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 296, 212, 4);
 					_vm->_globals->_saveData->_data[svField340] = 0;
 					break;
 				}
 			}
 			_vm->_soundManager->playSoundFile("SOUND83.WAV");
 			_vm->_objectsManager->OPTI_ONE(6, 0, 23, 0);
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 1);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 27, 117, 1);
 			break;
 			}
 
@@ -2156,15 +2156,15 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				
 				switch (_vm->_globals->_saveData->_data[svField341]) {
 				case 1:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 0);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 27, 117, 0);
 					_vm->_globals->_saveData->_data[svField338] = 0;
 					break;
 				case 2:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 2);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 145, 166, 2);
 					_vm->_globals->_saveData->_data[svField339] = 0;
 					break;
 				case 3:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 4);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 296, 212, 4);
 					_vm->_globals->_saveData->_data[svField340] = 0;
 					break;
 				}
@@ -2172,7 +2172,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 			_vm->_soundManager->playSoundFile("SOUND83.WAV");
 			_vm->_objectsManager->OPTI_ONE(5, 0, 23, 0);
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 3);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 145, 166, 3);
 			break;
 			}
 
@@ -2194,22 +2194,22 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager->OPTI_ONE(vbobFrameIndex, 26, 50, 0);
 				switch (_vm->_globals->_saveData->_data[svField341]) {
 				case 1:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 27, 117, 0);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 27, 117, 0);
 					_vm->_globals->_saveData->_data[svField338] = 0;
 					break;
 				case 2:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 145, 166, 2);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 145, 166, 2);
 					_vm->_globals->_saveData->_data[svField339] = 0;
 					break;
 				case 3:
-					_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 4);
+					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 296, 212, 4);
 					_vm->_globals->_saveData->_data[svField340] = 0;
 					break;
 				}
 			}
 			_vm->_soundManager->playSoundFile("SOUND83.WAV");
 			_vm->_objectsManager->OPTI_ONE(4, 0, 23, 0);
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 296, 212, 5);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 296, 212, 5);
 			break;
 			}
 
@@ -2298,7 +2298,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals->_saveData->_data[svField356] = 0;
 			_vm->_globals->_saveData->_data[svField355] = 1;
 			_vm->_objectsManager->_twoCharactersFl = true;
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 373, 191, 3);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 373, 191, 3);
 			_vm->_objectsManager->addStaticSprite(_vm->_objectsManager->_headSprites, samantha->_pos, 1, 3, samantha->_zoomFactor, false, 20, 127);
 			_vm->_objectsManager->animateSprite(1);
 			break;
@@ -2318,7 +2318,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->OPTI_ONE(5, 0, 6, 0);
 			_vm->_linesManager->ZONEP[4]._destX = 276;
 			_vm->_objectsManager->enableVerb(4, 19);
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 285, 379, 0);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 285, 379, 0);
 			_vm->_globals->_saveData->_data[svField399] = 1;
 			break;
 
@@ -2350,17 +2350,17 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 601:
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
 			_vm->_objectsManager->OPTI_ONE(2, 0, 16, 4);
 			break;
 
 		case 602:
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
 			_vm->_objectsManager->OPTI_ONE(4, 0, 16, 4);
 			break;
 
 		case 603:
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
 			_vm->_objectsManager->OPTI_ONE(3, 0, 16, 4);
 			_vm->_soundManager->_specialSoundNum = 199;
 			_vm->_graphicsManager->FADE_LINUX = 2;
@@ -2372,7 +2372,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 604:
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
 			_vm->_objectsManager->OPTI_ONE(1, 0, 16, 4);
 			_vm->_soundManager->_specialSoundNum = 199;
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
@@ -2383,7 +2383,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 605:
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
 			_vm->_objectsManager->OPTI_ONE(5, 0, 16, 4);
 			_vm->_graphicsManager->fadeOutShort();
 			_vm->_soundManager->_specialSoundNum = 199;
@@ -2396,7 +2396,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 606:
-			_vm->_graphicsManager->fastDisplay(_vm->_globals->SPRITE_ECRAN, 513, 163, 7, false);
+			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
 			_vm->_objectsManager->OPTI_ONE(6, 0, 16, 4);
 			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
 				_vm->_animationManager->playAnim("BOMBE3A.ANM", 50, 14, 500);

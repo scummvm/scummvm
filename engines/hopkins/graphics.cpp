@@ -1745,13 +1745,13 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 	}
 	if (!mode) {
 		filename = file + ".spr";
-		_vm->_globals->SPRITE_ECRAN = _vm->_globals->freeMemory(_vm->_globals->SPRITE_ECRAN);
+		_vm->_globals->_levelSpriteBuf = _vm->_globals->freeMemory(_vm->_globals->_levelSpriteBuf);
 		if (initializeScreen) {
-			_vm->_globals->SPRITE_ECRAN = _vm->_fileManager->searchCat(filename, RES_SLI);
-			if (_vm->_globals->SPRITE_ECRAN) {
-				_vm->_globals->SPRITE_ECRAN = _vm->_fileManager->loadFile(filename);
+			_vm->_globals->_levelSpriteBuf = _vm->_fileManager->searchCat(filename, RES_SLI);
+			if (_vm->_globals->_levelSpriteBuf) {
+				_vm->_globals->_levelSpriteBuf = _vm->_fileManager->loadFile(filename);
 			} else {
-				_vm->_globals->SPRITE_ECRAN = _vm->_fileManager->loadFile("RES_SLI.RES");
+				_vm->_globals->_levelSpriteBuf = _vm->_fileManager->loadFile("RES_SLI.RES");
 			}
 		}
 	}

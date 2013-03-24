@@ -68,6 +68,7 @@ private:
 	int _index[4048];
 	byte *_tempText;
 	byte *_zoneText;
+	int _boxWidth;
 
 	void loadZoneText();
 public:

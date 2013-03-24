@@ -249,7 +249,6 @@ public:
 	int _objectWidth, _objectHeight;
 	int _screenId;
 	int _prevScreenId;
-	int _boxWidth;
 	int _characterMaxPosY;
 	int _baseMapColor;
 	int _spriteSize[500];
@@ -301,12 +300,12 @@ public:
 	ObjectAuthIcon _objectAuthIcons[300];
 	int _curObjectFileNum;
 	byte *_objectDataBuf;
+	byte *_characterSpriteBuf;
 	Common::String _zoneFilename;
 	Common::String _textFilename;
+	byte *_levelSpriteBuf;
 
 	int iRegul;
-	byte *SPRITE_ECRAN;
-	byte *PERSO;
 	ListeItem Liste[6];
 	ListeItem Liste2[35];
 	BankItem Bank[8];

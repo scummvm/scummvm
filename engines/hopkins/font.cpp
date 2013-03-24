@@ -84,6 +84,8 @@ void FontManager::clearAll() {
 
 	_tempText = g_PTRNUL;
 	_zoneText = g_PTRNUL;
+
+	_boxWidth = 240;
 }
 
 void FontManager::initData() {
@@ -160,7 +162,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		error("Bad number for text");
 	_fontFixedWidth = 11;
 
-	_vm->_globals->_boxWidth = 11 * _text[idx]._length;
+	_boxWidth = 11 * _text[idx]._length;
 	if (_text[idx]._textLoadedFl) {
 		int textType = _text[idx]._textType;
 		if (textType != 6 && textType != 1 && textType != 3 && textType != 5) {
@@ -254,29 +256,29 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 
 		if (bufSize && bufSize > textLength) {
 			_text[idx]._length = textLength;
-			_vm->_globals->_boxWidth = 0;
+			_boxWidth = 0;
 
 			for (int curStrIdx = 0; curStrIdx < textLength + 1; curStrIdx++) {
 				byte curChar = _tempText[curStrIdx];
 				if (curChar <= 31)
 					curChar = ' ';
-				_vm->_globals->_boxWidth += _vm->_objectsManager->getWidth(_font, curChar - 32);
+				_boxWidth += _vm->_objectsManager->getWidth(_font, curChar - 32);
 			}
 
-			_vm->_globals->_boxWidth += 2;
-			_text[idx]._pos.x = 320 - abs(_vm->_globals->_boxWidth / 2);
+			_boxWidth += 2;
+			_text[idx]._pos.x = 320 - abs(_boxWidth / 2);
 			textPosX = _vm->_eventsManager->_startPos.x + _text[idx]._pos.x;
 			lineCount = 1;
 			_text[idx]._lines[0] = Common::String((const char *)_tempText, textLength);
 		} else {
-			if (!_vm->_globals->_boxWidth)
-				_vm->_globals->_boxWidth = 240;
+			if (!_boxWidth)
+				_boxWidth = 240;
 			int tempTextIdx = 0;
 			int lineSize;
 			byte curChar;
 			do {
 				int curLineSize = 0;
-				int ptrb = _vm->_globals->_boxWidth - 4;
+				int ptrb = _boxWidth - 4;
 				for (;;) {
 					lineSize = curLineSize;
 					do
@@ -330,12 +332,12 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 
 			for (int i = 0; i <= 19; i++) {
 				if (_textSortArray[i])
-					_vm->_globals->_boxWidth = _textSortArray[i];
+					_boxWidth = _textSortArray[i];
 			}
 
 			if ((_text[idx]._textType < 2) || (_text[idx]._textType > 3)) {
 				int i;
-				for (i = xp - _vm->_eventsManager->_startPos.x; _vm->_globals->_boxWidth + i > 638 && i > -2 && _text[idx]._textType; i -= 2)
+				for (i = xp - _vm->_eventsManager->_startPos.x; _boxWidth + i > 638 && i > -2 && _text[idx]._textType; i -= 2)
 					;
 				_text[idx]._pos.x = i;
 				textPosX = _vm->_eventsManager->_startPos.x + i;
@@ -345,7 +347,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		}
 		int posX = textPosX;
 		int posY = yp;
-		int saveWidth = _vm->_globals->_boxWidth + 10;
+		int saveWidth = _boxWidth + 10;
 		int saveHeight = (_fontFixedHeight + 1) * lineCount + 12;
 		if (_text[idx]._textType == 6) {
 			_text[idx]._pos.x = 315 - abs(saveWidth / 2);

@@ -2061,7 +2061,7 @@ void ObjectsManager::clearScreen() {
 	_vm->_linesManager->resetLastLine();
 	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_vm->_globals->_answerBuffer = _vm->_globals->freeMemory(_vm->_globals->_answerBuffer);
-	_vm->_globals->SPRITE_ECRAN = _vm->_globals->freeMemory(_vm->_globals->SPRITE_ECRAN);
+	_vm->_globals->_levelSpriteBuf = _vm->_globals->freeMemory(_vm->_globals->_levelSpriteBuf);
 	_vm->_eventsManager->_startPos.x = 0;
 	_vm->_eventsManager->_mouseSpriteId = 0;
 	_vm->_globals->_saveData->_data[svLastMouseCursor] = 0;
@@ -2108,9 +2108,9 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		_vm->_globals->_saveData->_data[svField357] = 1;
 
 		loc = &_vm->_globals->_saveData->_realHopkins;
-		_vm->_globals->PERSO = _vm->_fileManager->loadFile("PERSO.SPR");
+		_vm->_globals->_characterSpriteBuf = _vm->_fileManager->loadFile("PERSO.SPR");
 		_vm->_globals->_characterType = 0;
-		addStaticSprite(_vm->_globals->PERSO, loc->_pos, 0, 64, loc->_zoomFactor, false, 34, 190);
+		addStaticSprite(_vm->_globals->_characterSpriteBuf, loc->_pos, 0, 64, loc->_zoomFactor, false, 34, 190);
 		animateSprite(0);
 		_vm->_globals->loadCharacterData();
 	} else if (oldCharacter == CHARACTER_HOPKINS && newCharacter == CHARACTER_SAMANTHA
@@ -2133,9 +2133,9 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		_vm->_globals->_saveData->_data[svField357] = 0;
 
 		loc = &_vm->_globals->_saveData->_samantha;
-		_vm->_globals->PERSO = _vm->_fileManager->loadFile("PSAMAN.SPR");
+		_vm->_globals->_characterSpriteBuf = _vm->_fileManager->loadFile("PSAMAN.SPR");
 		_vm->_globals->_characterType = 2;
-		addStaticSprite(_vm->_globals->PERSO, loc->_pos, 0, 64, loc->_zoomFactor, false, 20, 127);
+		addStaticSprite(_vm->_globals->_characterSpriteBuf, loc->_pos, 0, 64, loc->_zoomFactor, false, 20, 127);
 		animateSprite(0);
 		_vm->_globals->loadCharacterData();
 	} else {
@@ -3204,7 +3204,7 @@ void ObjectsManager::sceneSpecialIni() {
 			animateSprite(0);
 			for (int i = 0; i <= 4; i++)
 				_vm->_eventsManager->refreshScreenAndEvents();
-			VBOB(_vm->_globals->SPRITE_ECRAN, 5, 15, 28, 1);
+			VBOB(_vm->_globals->_levelSpriteBuf, 5, 15, 28, 1);
 			_vm->_fontManager->hideText(9);
 			bool displayedTxtFl = false;
 			if (!_vm->_soundManager->_textOffFl) {
@@ -3677,7 +3677,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	}
 	_vm->_eventsManager->mouseOn();
 	if (_vm->_globals->_screenId == 61) {
-		addStaticSprite(_vm->_globals->PERSO, Common::Point(330, 418), 0, 60, 0, false, 34, 190);
+		addStaticSprite(_vm->_globals->_characterSpriteBuf, Common::Point(330, 418), 0, 60, 0, false, 34, 190);
 		animateSprite(0);
 		_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 		computeAndSetSpriteSize();
@@ -3774,29 +3774,29 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 	if (_vm->_globals->_characterType) {
 		if (!_vm->_globals->_saveData->_data[svAlternateSpriteFl] && !_vm->_globals->_saveData->_data[svField356]) {
-			_vm->_globals->PERSO = _vm->_fileManager->loadFile("PERSO.SPR");
+			_vm->_globals->_characterSpriteBuf = _vm->_fileManager->loadFile("PERSO.SPR");
 			_vm->_globals->_characterType = 0;
 		}
 	}
 	if (!_vm->_globals->_characterType && _vm->_globals->_saveData->_data[svAlternateSpriteFl] == 1) {
-		_vm->_globals->PERSO = _vm->_fileManager->loadFile("HOPFEM.SPR");
+		_vm->_globals->_characterSpriteBuf = _vm->_fileManager->loadFile("HOPFEM.SPR");
 		_vm->_globals->_characterType = 1;
 	}
 
 	if (_vm->_globals->_characterType != 2 && _vm->_globals->_saveData->_data[svField356] == 1) {
-		_vm->_globals->PERSO = _vm->_fileManager->loadFile("PSAMAN.SPR");
+		_vm->_globals->_characterSpriteBuf = _vm->_fileManager->loadFile("PSAMAN.SPR");
 		_vm->_globals->_characterType = 2;
 	}
 	_vm->_globals->loadCharacterData();
 	switch (_vm->_globals->_characterType) {
 	case 0:
-		addStaticSprite(_vm->_globals->PERSO, _characterPos, 0, _startSpriteIndex, 0, false, 34, 190);
+		addStaticSprite(_vm->_globals->_characterSpriteBuf, _characterPos, 0, _startSpriteIndex, 0, false, 34, 190);
 		break;
 	case 1:
-		addStaticSprite(_vm->_globals->PERSO, _characterPos, 0, _startSpriteIndex, 0, false, 28, 155);
+		addStaticSprite(_vm->_globals->_characterSpriteBuf, _characterPos, 0, _startSpriteIndex, 0, false, 28, 155);
 		break;
 	case 2:
-		addStaticSprite(_vm->_globals->PERSO, _characterPos, 0, _startSpriteIndex, 0, false, 20, 127);
+		addStaticSprite(_vm->_globals->_characterSpriteBuf, _characterPos, 0, _startSpriteIndex, 0, false, 20, 127);
 		break;
 	}
 	_vm->_eventsManager->setMouseXY(_characterPos);

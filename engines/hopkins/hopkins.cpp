@@ -165,7 +165,7 @@ bool HopkinsEngine::runWin95Demo() {
 		_globals->_speed = 3;
 	_graphicsManager->fadeOutLong();
 	_globals->iRegul = 1;
-	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
+	_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
 	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
@@ -182,7 +182,7 @@ bool HopkinsEngine::runWin95Demo() {
 		if (!_globals->_exitId) {
 			_globals->_exitId = _menuManager->menu();
 			if (_globals->_exitId == -1) {
-				_globals->PERSO = _globals->freeMemory(_globals->PERSO);
+				_globals->_characterSpriteBuf = _globals->freeMemory(_globals->_characterSpriteBuf);
 				restoreSystem();
 				return false;
 			}
@@ -455,7 +455,7 @@ bool HopkinsEngine::runLinuxDemo() {
 		playIntro();
 
 	_globals->iRegul = 0;
-	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
+	_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
 	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
@@ -470,7 +470,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			if (_globals->_exitId == -1) {
 				if (!shouldQuit())
 					endLinuxDemo();
-				_globals->PERSO = _globals->freeMemory(_globals->PERSO);
+				_globals->_characterSpriteBuf = _globals->freeMemory(_globals->_characterSpriteBuf);
 				restoreSystem();
 			}
 		}
@@ -819,7 +819,7 @@ bool HopkinsEngine::runFull() {
 		_graphicsManager->fadeOutLong();
 	}
 	_globals->iRegul = 0;
-	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
+	_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
 	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
@@ -832,7 +832,7 @@ bool HopkinsEngine::runFull() {
 		if (!_globals->_exitId) {
 			_globals->_exitId = _menuManager->menu();
 			if (_globals->_exitId == -1) {
-				_globals->PERSO = _globals->freeMemory(_globals->PERSO);
+				_globals->_characterSpriteBuf = _globals->freeMemory(_globals->_characterSpriteBuf);
 				restoreSystem();
 				return false;
 			}
@@ -1539,21 +1539,21 @@ bool HopkinsEngine::runFull() {
 		case 197:
 		case 198:
 		case 199:
-			_globals->PERSO = _globals->freeMemory(_globals->PERSO);
+			_globals->_characterSpriteBuf = _globals->freeMemory(_globals->_characterSpriteBuf);
 			_globals->iRegul = 1;
 			_soundManager->stopSound();
 			_soundManager->playSound(23);
 			_globals->_exitId = handleBaseMap();	// Handles the base map (non-Windows)
 			//_globals->_exitId = WBASE();	// Handles the 3D Doom level (Windows)
 			_soundManager->stopSound();
-			_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
+			_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 			_globals->_characterType = 0;
 			_globals->iRegul = 0;
 			_graphicsManager->_lineNbr = SCREEN_WIDTH;
 			break;
 		}
 	}
-	_globals->PERSO = _globals->freeMemory(_globals->PERSO);
+	_globals->_characterSpriteBuf = _globals->freeMemory(_globals->_characterSpriteBuf);
 	restoreSystem();
 	return true;
 }
@@ -2058,7 +2058,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 }
 
 void HopkinsEngine::playEnding() {
-	_globals->PERSO = _globals->freeMemory(_globals->PERSO);
+	_globals->_characterSpriteBuf = _globals->freeMemory(_globals->_characterSpriteBuf);
 	_dialogsManager->disableInvent();
 	_globals->_disableInventFl = true;
 	_graphicsManager->_scrollOffset = 0;
@@ -2203,7 +2203,7 @@ void HopkinsEngine::playEnding() {
 		_globals->iRegul = 0;
 		_globals->_exitId = 300;
 	}
-	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
+	_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
 	_globals->iRegul = 0;
 }
@@ -2547,13 +2547,13 @@ void HopkinsEngine::handleOceanMouseEvents() {
 	case 1:
 		switch (_globals->_oceanDirection) {
 		case DIR_UP:
-			_objectsManager->SPACTION(_globals->PERSO, "27,26,25,24,23,22,21,20,19,18,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->_characterSpriteBuf, "27,26,25,24,23,22,21,20,19,18,-1,", 6, false);
 			break;
 		case DIR_RIGHT:
-			_objectsManager->SPACTION(_globals->PERSO, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->_characterSpriteBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,-1,", 6, false);
 			break;
 		case DIR_DOWN:
-			_objectsManager->SPACTION(_globals->PERSO, "9,10,11,12,13,14,15,16,17,18,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->_characterSpriteBuf, "9,10,11,12,13,14,15,16,17,18,-1,", 6, false);
 			break;
 		default:
 			break;
@@ -2584,13 +2584,13 @@ void HopkinsEngine::handleOceanMouseEvents() {
 	case 2:
 		switch (_globals->_oceanDirection) {
 		case DIR_UP:
-			_objectsManager->SPACTION(_globals->PERSO, "27,28,29,30,31,32,33,34,35,36,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->_characterSpriteBuf, "27,28,29,30,31,32,33,34,35,36,-1,", 6, false);
 			break;
 		case DIR_DOWN:
-			_objectsManager->SPACTION(_globals->PERSO, "9,8,7,6,5,4,3,2,1,0,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->_characterSpriteBuf, "9,8,7,6,5,4,3,2,1,0,-1,", 6, false);
 			break;
 		case DIR_LEFT:
-			_objectsManager->SPACTION(_globals->PERSO, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->_characterSpriteBuf, "18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,-1,", 6, false);
 			break;
 		default:
 			break;
@@ -2636,10 +2636,10 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				}
 			} while (oldX <= 235);
 			if (!displAnim)
-				_objectsManager->SPACTION(_globals->PERSO, "36,35,34,33,32,31,30,29,28,27,-1,", 6, false);
+				_objectsManager->SPACTION(_globals->_characterSpriteBuf, "36,35,34,33,32,31,30,29,28,27,-1,", 6, false);
 			break;
 		case DIR_DOWN:
-			_objectsManager->SPACTION(_globals->PERSO, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->_characterSpriteBuf, "9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,-1,", 6, false);
 			break;
 		case DIR_LEFT:
 			oldX = _objectsManager->getSpriteX(0);
@@ -2659,7 +2659,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				}
 			} while (oldX > 236);
 			if (!displAnim)
-				_objectsManager->SPACTION(_globals->PERSO, "18,19,20,21,22,23,24,25,26,27,-1,", 6, false);
+				_objectsManager->SPACTION(_globals->_characterSpriteBuf, "18,19,20,21,22,23,24,25,26,27,-1,", 6, false);
 			break;
 		default:
 			break;
@@ -2670,7 +2670,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 	case 4:
 		switch (_globals->_oceanDirection) {
 		case DIR_UP:
-			_objectsManager->SPACTION(_globals->PERSO, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 6, false);
+			_objectsManager->SPACTION(_globals->_characterSpriteBuf, "27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,-1,", 6, false);
 			break;
 		case DIR_RIGHT:
 			oldX = _objectsManager->getSpriteX(0);
@@ -2690,7 +2690,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 				}
 			} while (oldX <= 235);
 			if (!displAnim)
-				_objectsManager->SPACTION(_globals->PERSO, "0,1,2,3,4,5,6,7,8,9,-1,", 6, false);
+				_objectsManager->SPACTION(_globals->_characterSpriteBuf, "0,1,2,3,4,5,6,7,8,9,-1,", 6, false);
 			break;
 		case DIR_LEFT:
 			oldX = _objectsManager->getSpriteX(0);
@@ -2709,7 +2709,7 @@ void HopkinsEngine::handleOceanMouseEvents() {
 
 				if (oldX <= 236) {
 					if (!displAnim)
-						_objectsManager->SPACTION(_globals->PERSO, "18,17,16,15,14,13,12,11,10,9,-1,", 6, false);
+						_objectsManager->SPACTION(_globals->_characterSpriteBuf, "18,17,16,15,14,13,12,11,10,9,-1,", 6, false);
 					break;
 				}
 			}
@@ -2749,7 +2749,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	_globals->_exitId = 0;
 	_globals->_disableInventFl = true;
 	_soundManager->playSound(soundId);
-	_globals->PERSO = _fileManager->loadFile("VAISSEAU.SPR");
+	_globals->_characterSpriteBuf = _fileManager->loadFile("VAISSEAU.SPR");
 	if (backgroundFilename.size())
 		_graphicsManager->loadImage(backgroundFilename);
 
@@ -2795,7 +2795,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 		break;
 	}
 
-	_objectsManager->addStaticSprite(_globals->PERSO, Common::Point(_objectsManager->_characterPos.x, 110), 0, _objectsManager->_startSpriteIndex, 0, false, 0, 0);
+	_objectsManager->addStaticSprite(_globals->_characterSpriteBuf, Common::Point(_objectsManager->_characterPos.x, 110), 0, _objectsManager->_startSpriteIndex, 0, false, 0, 0);
 	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
@@ -2836,7 +2836,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	_graphicsManager->fadeOutLong();
 	_objectsManager->removeSprite(0);
 	_objectsManager->clearScreen();
-	_globals->PERSO = _fileManager->loadFile("PERSO.SPR");
+	_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
 }
 
