@@ -124,6 +124,11 @@ private:
 	int _newPosX;
 	int _newPosY;
 	int _oldMouseX, _oldMouseY;
+	int _oldRouteFromX;
+	int _oldRouteFromY;
+	int _oldRouteDestX;
+	int _oldRouteDestY;
+	int _oldZoneNum;
 
 	byte *_largeBuf;
 	RouteItem *_testRoute0;

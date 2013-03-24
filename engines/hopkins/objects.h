@@ -108,6 +108,9 @@ private:
 	int _homeRateCounter;
 	int _sortedDisplayCount;
 	SortItem _sortedDisplay[51];
+	byte *_hidingItemData[6];
+	HidingItem _hidingItem[25];
+	bool _hidingActiveFl;
 
 	void sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	void removeObjectDataBuf();
@@ -236,8 +239,18 @@ public:
 	void doActionDiagRight(int idx);
 	void doActionDiagLeft(int idx);
 	byte *loadObjectFromFile(int objIndex, bool mode);
+	void resetHidingItems();
+	void resetHidingUseCount(int idx);
+	void setHidingUseCount(int idx);
+	void loadHidingItems(const Common::String &file);
+	void enableHiding();
+	void disableHiding();
 
 	void resetHomeRateCounter() { _homeRateCounter = 0; }
+	void resetOldFrameIndex() { _oldFrameIndex = -1; }
+	void resetOldDirection()  { _oldDirection = DIR_NONE; }
+	int getObjectWidth()  { return _objectWidth; }
+	int getObjectHeight() { return _objectHeight; }
 
 	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
@@ -254,11 +267,6 @@ public:
 	void OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx);
 	void SPACTION1(byte *spriteData, const Common::String &animString, int speed);
 	void PARADISE();
-
-	void resetOldFrameIndex() { _oldFrameIndex = -1; }
-	void resetOldDirection()  { _oldDirection = DIR_NONE; }
-	int getObjectWidth()  { return _objectWidth; }
-	int getObjectHeight() { return _objectHeight; }
 };
 
 } // End of namespace Hopkins

@@ -176,7 +176,8 @@ enum SauvegardeOffset {
 	, svField401 = 401
 };
 
-// TODO: Sauvegrade1 fields should really be mapped into data array
+// As Script engine directly access savegame fields, 
+// refactoring it in separated fields properly named is impossible
 struct Savegame {
 	byte _data[2050];
 	CharacterLocation _cloneHopkins;
@@ -230,7 +231,6 @@ public:
 	bool _linuxEndDemoFl;
 	bool _censorshipFl;
 	bool _introSpeechOffFl;
-	bool _hidingActiveFl;
 	int _exitId;
 	Directions _oceanDirection;
 	int _actionDirection;
@@ -266,17 +266,10 @@ public:
 
 	byte *_optionDialogSpr;
 	bool _optionDialogFl;
-	int _oldRouteFromX;
-	int _oldRouteFromY;
-	int _oldRouteDestX;
-	int _oldRouteDestY;
-	int _oldZoneNum;
 
 	bool _actionMoveTo;
 	bool _freezeCharacterFl;
 	bool _checkDistanceFl;
-	byte *_hidingItemData[6];
-	HidingItem _hidingItem[25];
 	BqeAnimItem _animBqe[35];
 	ObjectAuthIcon _objectAuthIcons[300];
 	int _curObjectFileNum;
@@ -300,12 +293,6 @@ public:
 	void loadObjects();
 	void clearAll();
 	void loadCharacterData();
-	void resetHidingItems();
-	void loadHidingItems(const Common::String &file);
-	void enableHiding();
-	void disableHiding();
-	void resetHidingUseCount(int idx);
-	void setHidingUseCount(int idx);
 	void clearVBob();
 
 	void B_CACHE_OFF(int idx);

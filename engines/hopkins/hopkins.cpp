@@ -2043,7 +2043,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 		_eventsManager->refreshScreenAndEvents();
 
 	_graphicsManager->fadeInLong();
-	_globals->enableHiding();
+	_objectsManager->enableHiding();
 
 	do
 		_eventsManager->refreshScreenAndEvents();
@@ -2051,7 +2051,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 
 	_graphicsManager->fadeOutLong();
 	_graphicsManager->endDisplayBob();
-	_globals->resetHidingItems();
+	_objectsManager->resetHidingItems();
 	_globals->_disableInventFl = false;
 	_globals->_exitId = 93;
 	_globals->iRegul = 0;

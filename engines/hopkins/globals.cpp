@@ -82,9 +82,6 @@ Globals::Globals(HopkinsEngine *vm) {
 		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
 	for (int i = 0; i < 300; ++i)
 		Common::fill((byte *)&_objectAuthIcons[i], (byte *)&_objectAuthIcons[i] + sizeof(ObjectAuthIcon), 0);
-	for (int i = 0; i < 25; ++i)
-		Common::fill((byte *)&_hidingItem[i], (byte *)&_hidingItem[i] + sizeof(HidingItem), 0);
-
 	for (int i = 0; i < 500; ++i)
 		_spriteSize[i] = 0;
 	for (int i = 0; i < 70; ++i)
@@ -129,8 +126,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	_oceanDirection = DIR_NONE;
 
 	// Initialize pointers
-	for (int i = 0; i < 6; ++i)
-		_hidingItemData[i] = g_PTRNUL;
 	_levelSpriteBuf = NULL;
 	_saveData = NULL;
 	_answerBuffer = g_PTRNUL;
@@ -143,21 +138,11 @@ Globals::Globals(HopkinsEngine *vm) {
 	_disableInventFl = false;
 	_freezeCharacterFl = false;
 	_optionDialogFl = false;
-	_hidingActiveFl = false;
 	_introSpeechOffFl = false;
 	_baseMapColor = 50;
-
-	// Reset indexed variables
-	_oldRouteFromX = 0;
-	_oldRouteFromY = 0;
-	_oldRouteDestX = 0;
-	_oldRouteDestY = 0;
-	_oldZoneNum = 0;
 }
 
 Globals::~Globals() {
-	for (int idx = 0; idx < 6; ++idx)
-		_hidingItemData[idx] = freeMemory(_hidingItemData[idx]);
 	freeMemory(_levelSpriteBuf);
 	freeMemory((byte *)_saveData);
 	freeMemory(_answerBuffer);
@@ -206,9 +191,6 @@ void Globals::setConfig() {
 }
 
 void Globals::clearAll() {
-	for (int idx = 0; idx < 6; ++idx)
-		_hidingItemData[idx] = g_PTRNUL;
-
 	initAnimBqe();
 
 	_vm->_fontManager->clearAll();
@@ -319,83 +301,9 @@ byte *Globals::freeMemory(byte *p) {
 	return g_PTRNUL;
 }
 
-// Reset Hiding Items
-void Globals::resetHidingItems() {
-
-	for (int idx = 1; idx <= 5; ++idx) {
-		_hidingItemData[idx] = freeMemory(_hidingItemData[idx]);
-	}
-
-	for (int idx = 0; idx <= 20; ++idx) {
-		HidingItem *hid = &_hidingItem[idx];
-		hid->_spriteData = g_PTRNUL;
-		hid->_x = 0;
-		hid->_y = 0;
-		hid->_spriteIndex = 0;
-		hid->_useCount = 0;
-		hid->_width = 0;
-		hid->_height = 0;
-		hid->_resetUseCount = false;
-		hid->_yOffset = 0;
-	}
-
-	_hidingActiveFl = false;
-}
-
-void Globals::enableHiding() {
-	_hidingActiveFl = true;
-}
-
-void Globals::disableHiding() {
-	_hidingActiveFl = false;
-}
-
 void Globals::B_CACHE_OFF(int idx) {
 	assert(idx < 36);
 	_vm->_objectsManager->_bob[idx].field34 = true;
-}
-
-void Globals::resetHidingUseCount(int idx) {
-	_hidingItem[idx]._useCount = 0;
-}
-
-void Globals::setHidingUseCount(int idx) {
-	_hidingItem[idx]._useCount = 1;
-}
-
-// Load Hiding Items
-void Globals::loadHidingItems(const Common::String &file) {
-	resetHidingItems();
-	byte *ptr = _vm->_fileManager->loadFile(file);
-	Common::String filename = Common::String((const char *)ptr);
-
-	Common::File f;
-	if (!f.exists(filename))
-		return;
-
-	byte *spriteData = _vm->_fileManager->loadFile(filename);
-	_hidingItemData[1] = spriteData;
-	int curBufIdx = 60;
-	for (int i = 0; i <= 21; i++) {
-		_hidingItem[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + curBufIdx);
-		_hidingItem[i]._x = READ_LE_INT16((uint16 *)ptr + curBufIdx + 1);
-		_hidingItem[i]._y = READ_LE_INT16((uint16 *)ptr + curBufIdx + 2);
-		_hidingItem[i]._yOffset = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
-		if (spriteData == g_PTRNUL) {
-			_hidingItem[i]._useCount = 0;
-		} else {
-			_hidingItem[i]._spriteData = spriteData;
-			_hidingItem[i]._width = _vm->_objectsManager->getWidth(spriteData, _hidingItem[i]._spriteIndex);
-			_hidingItem[i]._height = _vm->_objectsManager->getHeight(spriteData, _hidingItem[i]._spriteIndex);
-			_hidingItem[i]._useCount = 1;
-		}
-
-		if ( !_hidingItem[i]._x && !_hidingItem[i]._y && !_hidingItem[i]._spriteIndex)
-			_hidingItem[i]._useCount = 0;
-		curBufIdx += 5;
-	}
-	enableHiding();
-	freeMemory(ptr);
 }
 
 } // End of namespace Hopkins

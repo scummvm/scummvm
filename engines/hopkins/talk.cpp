@@ -967,7 +967,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_graphicsManager->_scrollStatus = 1;
 	_vm->_linesManager->clearAllZones();
 	_vm->_linesManager->resetLines();
-	_vm->_globals->resetHidingItems();
+	_vm->_objectsManager->resetHidingItems();
 	
 	for (int i = 0; i <= 44; i++)
 		_vm->_linesManager->BOBZONE[i] = 0;
@@ -1046,7 +1046,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_graphicsManager->NB_SCREEN(false);
 	_vm->_linesManager->clearAllZones();
 	_vm->_linesManager->resetLines();
-	_vm->_globals->resetHidingItems();
+	_vm->_objectsManager->resetHidingItems();
 	for (int i = 0; i <= 44; i++)
 		_vm->_linesManager->BOBZONE[i] = 0;
 

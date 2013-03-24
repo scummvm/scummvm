@@ -52,6 +52,12 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	for (int i = 0; i < 51; ++i)
 		Common::fill((byte *)&_sortedDisplay[i], (byte *)&_sortedDisplay[i] + sizeof(SortItem), 0);
 
+	for (int i = 0; i < 25; ++i)
+		Common::fill((byte *)&_hidingItem[i], (byte *)&_hidingItem[i] + sizeof(HidingItem), 0);
+
+	for (int i = 0; i < 6; ++i)
+		_hidingItemData[i] = g_PTRNUL;
+
 	_helicopterFl = false;
 	_priorityFl = false;
 	_oldBorderPos = Common::Point(0, 0);
@@ -97,12 +103,16 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_oldDirection = DIR_NONE;
 	_oldDirectionSpriteIdx = 59;
 	_objectWidth = _objectHeight = 0;
+	_hidingActiveFl = false;
 }
 
 ObjectsManager::~ObjectsManager() {
 	_vm->_globals->freeMemory(_forestSprite);
 	_vm->_globals->freeMemory(_gestureBuf);
 	_vm->_globals->freeMemory(_headSprites);
+
+	for (int idx = 0; idx < 6; ++idx)
+		_hidingItemData[idx] = _vm->_globals->freeMemory(_hidingItemData[idx]);
 }
 
 void ObjectsManager::clearAll() {
@@ -110,6 +120,31 @@ void ObjectsManager::clearAll() {
 	_forestSprite = _vm->_globals->freeMemory(_forestSprite);
 	_curGestureFile = 0;
 	_gestureBuf = _vm->_globals->freeMemory(_gestureBuf);
+
+	for (int idx = 0; idx < 6; ++idx)
+		_hidingItemData[idx] = _vm->_globals->freeMemory(_hidingItemData[idx]);
+}
+
+// Reset Hiding Items
+void ObjectsManager::resetHidingItems() {
+	for (int idx = 1; idx <= 5; ++idx) {
+		_hidingItemData[idx] = _vm->_globals->freeMemory(_hidingItemData[idx]);
+	}
+
+	for (int idx = 0; idx <= 20; ++idx) {
+		HidingItem *hid = &_hidingItem[idx];
+		hid->_spriteData = g_PTRNUL;
+		hid->_x = 0;
+		hid->_y = 0;
+		hid->_spriteIndex = 0;
+		hid->_useCount = 0;
+		hid->_width = 0;
+		hid->_height = 0;
+		hid->_resetUseCount = false;
+		hid->_yOffset = 0;
+	}
+
+	_hidingActiveFl = false;
 }
 
 /**
@@ -360,7 +395,7 @@ void ObjectsManager::displaySprite() {
 			}
 		}
 
-		if (_vm->_globals->_hidingActiveFl)
+		if (_hidingActiveFl)
 			checkHidingItem();
 	}
 
@@ -633,7 +668,7 @@ void ObjectsManager::setBobOffset(int idx, int offset) {
 }
 
 void ObjectsManager::SCBOB(int idx) {
-	HidingItem *hid = &_vm->_globals->_hidingItem[idx];
+	HidingItem *hid = &_hidingItem[idx];
 	if (hid->_useCount == 0)
 		return;
 
@@ -740,7 +775,7 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 
 void ObjectsManager::checkHidingItem() {
 	for (int hidingItemIdx = 0; hidingItemIdx <= 19; hidingItemIdx++) {
-		HidingItem *hid = &_vm->_globals->_hidingItem[hidingItemIdx];
+		HidingItem *hid = &_hidingItem[hidingItemIdx];
 		if (hid->_useCount == 0)
 			continue;
 
@@ -820,9 +855,9 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 }
 
 void ObjectsManager::displayHiding(int idx) {
-	HidingItem *hid = &_vm->_globals->_hidingItem[idx];
+	HidingItem *hid = &_hidingItem[idx];
 
-	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_globals->_hidingItemData[1], 
+	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _hidingItemData[1], 
 		hid->_x + 300, hid->_y + 300, hid->_spriteIndex);
 	_vm->_graphicsManager->addDirtyRect(hid->_x, hid->_y, hid->_x + hid->_width, hid->_y + hid->_height);
 }
@@ -1737,7 +1772,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_globals->iRegul = 1;
 	_vm->_graphicsManager->loadImage("PLAN");
 	_vm->_linesManager->loadLines("PLAN.OB2");
-	_vm->_globals->loadHidingItems("PLAN.CA2");
+	loadHidingItems("PLAN.CA2");
 	loadZone("PLAN.ZO2");
 	_spritePtr = _vm->_fileManager->loadFile("VOITURE.SPR");
 	_vm->_animationManager->loadAnim("PLAN");
@@ -1747,7 +1782,7 @@ void ObjectsManager::handleCityMap() {
 		_vm->_globals->B_CACHE_OFF(i);
 	_vm->_globals->B_CACHE_OFF(19);
 	_vm->_globals->B_CACHE_OFF(20);
-	_vm->_globals->enableHiding();
+	enableHiding();
 
 	if (!_mapCarPosX && !_mapCarPosY) {
 		_mapCarPosX = 900;
@@ -2060,7 +2095,7 @@ void ObjectsManager::clearScreen() {
 	_vm->_animationManager->clearAnim();
 	_vm->_linesManager->clearAllZones();
 	_vm->_linesManager->resetLines();
-	_vm->_globals->resetHidingItems();
+	resetHidingItems();
 
 	for (int i = 0; i <= 48; i++) {
 		_vm->_linesManager->BOBZONE[i] = 0;
@@ -3064,34 +3099,34 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 		for (int idx = 0; idx < 500; ++idx)
 			_vm->_globals->_spriteSize[idx] = READ_LE_INT16((uint16 *)ptr + idx);
 
-		_vm->_globals->resetHidingItems();
+		resetHidingItems();
 
 		Common::String filename2 = Common::String((const char *)ptr + 1000);
 		if (!filename2.empty()) {
-			_vm->_globals->_hidingItemData[1] = _vm->_fileManager->searchCat(filename2, RES_SLI);
+			_hidingItemData[1] = _vm->_fileManager->searchCat(filename2, RES_SLI);
 
-			if (_vm->_globals->_hidingItemData[1] || _vm->_globals->_hidingItemData[1] == g_PTRNUL) {
-				_vm->_globals->_hidingItemData[1] = _vm->_fileManager->loadFile(filename2);
+			if (_hidingItemData[1] || _hidingItemData[1] == g_PTRNUL) {
+				_hidingItemData[1] = _vm->_fileManager->loadFile(filename2);
 			} else {
-				_vm->_globals->_hidingItemData[1] = _vm->_fileManager->loadFile("RES_SLI.RES");
+				_hidingItemData[1] = _vm->_fileManager->loadFile("RES_SLI.RES");
 			}
 
 			int curDataCacheId = 60;
 			byte *curDataPtr = ptr + 1000;
 			for (int hidingIdx = 0; hidingIdx <= 21; hidingIdx++) {
-				HidingItem *hid = &_vm->_globals->_hidingItem[hidingIdx];
+				HidingItem *hid = &_hidingItem[hidingIdx];
 				int curSpriteId = READ_LE_INT16(curDataPtr + 2 * curDataCacheId);
 				hid->_spriteIndex = curSpriteId;
 				hid->_x = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 2);
 				hid->_y = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 4);
 				hid->_yOffset = READ_LE_INT16(curDataPtr + 2 * curDataCacheId + 8);
 
-				if (!_vm->_globals->_hidingItemData[1]) {
+				if (!_hidingItemData[1]) {
 					hid->_useCount = 0;
 				} else {
-					hid->_spriteData = _vm->_globals->_hidingItemData[1];
-					hid->_width = getWidth(_vm->_globals->_hidingItemData[1], curSpriteId);
-					hid->_height = getHeight(_vm->_globals->_hidingItemData[1], curSpriteId);
+					hid->_spriteData = _hidingItemData[1];
+					hid->_width = getWidth(_hidingItemData[1], curSpriteId);
+					hid->_height = getHeight(_hidingItemData[1], curSpriteId);
 					hid->_useCount = 1;
 				}
 				if (!hid->_x && !hid->_y && !hid->_spriteIndex)
@@ -3099,7 +3134,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 
 				curDataCacheId += 5;
 			}
-			_vm->_globals->enableHiding();
+			enableHiding();
 		}
 	}
 
@@ -3290,8 +3325,8 @@ void ObjectsManager::sceneSpecialIni() {
 
 	case 73:
 		if (!_vm->_globals->_saveData->_data[svSecondElevatorAvailableFl]) {
-			_vm->_globals->resetHidingUseCount(0);
-			_vm->_globals->resetHidingUseCount(1);
+			resetHidingUseCount(0);
+			resetHidingUseCount(1);
 		}
 		break;
 
@@ -3817,7 +3852,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		_vm->_graphicsManager->_scrollPosX = (int16)getSpriteX(0) - 320;
 	computeAndSetSpriteSize();
 	animateSprite(0);
-	_vm->_globals->enableHiding();
+	enableHiding();
 	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	computeAndSetSpriteSize();
 	sceneSpecialIni();
@@ -3899,4 +3934,56 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 void ObjectsManager::setVerb(int id) {
 	_verb = id;
 }
+
+void ObjectsManager::resetHidingUseCount(int idx) {
+	_hidingItem[idx]._useCount = 0;
+}
+
+void ObjectsManager::setHidingUseCount(int idx) {
+	_hidingItem[idx]._useCount = 1;
+}
+
+// Load Hiding Items
+void ObjectsManager::loadHidingItems(const Common::String &file) {
+	resetHidingItems();
+	byte *ptr = _vm->_fileManager->loadFile(file);
+	Common::String filename = Common::String((const char *)ptr);
+
+	Common::File f;
+	if (!f.exists(filename))
+		return;
+
+	byte *spriteData = _vm->_fileManager->loadFile(filename);
+	_hidingItemData[1] = spriteData;
+	int curBufIdx = 60;
+	for (int i = 0; i <= 21; i++) {
+		_hidingItem[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + curBufIdx);
+		_hidingItem[i]._x = READ_LE_INT16((uint16 *)ptr + curBufIdx + 1);
+		_hidingItem[i]._y = READ_LE_INT16((uint16 *)ptr + curBufIdx + 2);
+		_hidingItem[i]._yOffset = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
+		if (spriteData == g_PTRNUL) {
+			_hidingItem[i]._useCount = 0;
+		} else {
+			_hidingItem[i]._spriteData = spriteData;
+			_hidingItem[i]._width = _vm->_objectsManager->getWidth(spriteData, _hidingItem[i]._spriteIndex);
+			_hidingItem[i]._height = _vm->_objectsManager->getHeight(spriteData, _hidingItem[i]._spriteIndex);
+			_hidingItem[i]._useCount = 1;
+		}
+
+		if ( !_hidingItem[i]._x && !_hidingItem[i]._y && !_hidingItem[i]._spriteIndex)
+			_hidingItem[i]._useCount = 0;
+		curBufIdx += 5;
+	}
+	enableHiding();
+	_vm->_globals->freeMemory(ptr);
+}
+
+void ObjectsManager::enableHiding() {
+	_hidingActiveFl = true;
+}
+
+void ObjectsManager::disableHiding() {
+	_hidingActiveFl = false;
+}
+
 } // End of namespace Hopkins

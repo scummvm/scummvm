@@ -80,6 +80,11 @@ LinesManager::LinesManager(HopkinsEngine *vm) {
 	_oldMouseZoneId = 0;
 	_oldMouseX = 0;
 	_oldMouseY = 0;
+	_oldRouteFromX = 0;
+	_oldRouteFromY = 0;
+	_oldRouteDestX = 0;
+	_oldRouteDestY = 0;
+	_oldZoneNum = 0;
 }
 
 LinesManager::~LinesManager() {
@@ -1084,22 +1089,22 @@ RouteItem *LinesManager::PARCOURS2(int fromX, int fromY, int destX, int destY) {
 	if (destY <= 24)
 		clipDestY = 25;
 	if (!_vm->_globals->_checkDistanceFl) {
-		if (abs(fromX - _vm->_globals->_oldRouteFromX) <= 4 && abs(fromY - _vm->_globals->_oldRouteFromY) <= 4 &&
-		    abs(_vm->_globals->_oldRouteDestX - destX) <= 4 && abs(_vm->_globals->_oldRouteDestY - clipDestY) <= 4)
+		if (abs(fromX - _oldRouteFromX) <= 4 && abs(fromY - _oldRouteFromY) <= 4 &&
+		    abs(_oldRouteDestX - destX) <= 4 && abs(_oldRouteDestY - clipDestY) <= 4)
 			return (RouteItem *)g_PTRNUL;
 
 		if (abs(fromX - destX) <= 4 && abs(fromY - clipDestY) <= 4)
 			return (RouteItem *)g_PTRNUL;
 
-		if (_vm->_globals->_oldZoneNum > 0 && _vm->_objectsManager->_zoneNum > 0 && _vm->_globals->_oldZoneNum == _vm->_objectsManager->_zoneNum)
+		if (_oldZoneNum > 0 && _vm->_objectsManager->_zoneNum > 0 && _oldZoneNum == _vm->_objectsManager->_zoneNum)
 			return (RouteItem *)g_PTRNUL;
 	}
 	_vm->_globals->_checkDistanceFl = false;
-	_vm->_globals->_oldZoneNum = _vm->_objectsManager->_zoneNum;
-	_vm->_globals->_oldRouteFromX = fromX;
-	_vm->_globals->_oldRouteDestX = destX;
-	_vm->_globals->_oldRouteFromY = fromY;
-	_vm->_globals->_oldRouteDestY = clipDestY;
+	_oldZoneNum = _vm->_objectsManager->_zoneNum;
+	_oldRouteFromX = fromX;
+	_oldRouteDestX = destX;
+	_oldRouteFromY = fromY;
+	_oldRouteDestY = clipDestY;
 	_pathFindingMaxDepth = 0;
 	int routeIdx = 0;
 	if (destX <= 19)
