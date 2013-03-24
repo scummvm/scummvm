@@ -74,6 +74,7 @@ LinesManager::LinesManager(HopkinsEngine *vm) {
 	_route = (RouteItem *)g_PTRNUL;
 	_currentSegmentId = 0;
 	_largeBuf = g_PTRNUL;
+	_zoneSkipCount = 0;
 }
 
 LinesManager::~LinesManager() {
@@ -2822,19 +2823,19 @@ void LinesManager::checkZone() {
 		_vm->_objectsManager->_visibleFl = true;
 	}
 	if (_vm->_objectsManager->_forceZoneFl) {
-		_vm->_globals->compteur_71 = 100;
+		_zoneSkipCount = 100;
 		_vm->_globals->_oldMouseZoneId = -1;
 		_vm->_globals->_oldMouseX = -200;
 		_vm->_globals->_oldMouseY = -220;
 		_vm->_objectsManager->_forceZoneFl = false;
 	}
 
-	_vm->_globals->compteur_71++;
-	if (_vm->_globals->compteur_71 <= 1)
+	_zoneSkipCount++;
+	if (_zoneSkipCount <= 1)
 		return;
 
-	if (_vm->_globals->_freezeCharacterFl || (_route == (RouteItem *)g_PTRNUL) || _vm->_globals->compteur_71 > 4) {
-		_vm->_globals->compteur_71 = 0;
+	if (_vm->_globals->_freezeCharacterFl || (_route == (RouteItem *)g_PTRNUL) || _zoneSkipCount > 4) {
+		_zoneSkipCount = 0;
 		int zoneId;
 		if (_vm->_globals->_oldMouseX != mouseX || _vm->_globals->_oldMouseY != oldMouseY) {
 			zoneId = getMouseZone();

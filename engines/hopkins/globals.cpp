@@ -170,7 +170,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	_oldZoneNum = 0;
 	_oldMouseX = 0;
 	_oldMouseY = 0;
-	compteur_71 = 0;
 	_forceHideText = false;
 }
 

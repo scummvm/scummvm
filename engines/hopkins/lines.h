@@ -128,6 +128,7 @@ private:
 	int16 *_lineBuf;
 	LigneItem _lineItem[400];
 	RouteItem _bestRoute[8001];
+	int _zoneSkipCount;
 
 	int checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow);
 	void removeZoneLine(int idx);

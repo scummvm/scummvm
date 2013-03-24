@@ -311,7 +311,6 @@ public:
 	ListeItem Liste2[35];
 	BankItem Bank[8];
 	VBobItem VBob[30];
-	int compteur_71;
 
 	Globals(HopkinsEngine *vm);
 	~Globals();
