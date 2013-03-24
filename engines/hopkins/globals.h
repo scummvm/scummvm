@@ -239,7 +239,6 @@ public:
 	int _exitId;
 	Directions _oceanDirection;
 	int _actionDirection;
-	int _hotspotTextColor;
 	int _inventory[36];
 	int _objectWidth, _objectHeight;
 	int _screenId;

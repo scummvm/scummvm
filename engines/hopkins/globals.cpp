@@ -156,7 +156,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	_baseMapColor = 50;
 
 	// Reset indexed variables
-	_hotspotTextColor = 0;
 	_oldRouteFromX = 0;
 	_oldRouteFromY = 0;
 	_oldRouteDestX = 0;
