@@ -35,6 +35,9 @@ namespace Hopkins {
 
 FileManager::FileManager(HopkinsEngine *vm) {
 	_vm = vm;
+
+	_catalogPos = 0;
+	_catalogSize = 0;
 }
 
 /**
@@ -196,8 +199,8 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
 		if (name == filename) {
 			// Found entry for file, so get it's details from the catalogue entry
 			const byte *pData = ptr + offsetVal;
-			_vm->_globals->_catalogPos = READ_LE_UINT32(pData + 15);
-			_vm->_globals->_catalogSize = READ_LE_UINT32(pData + 19);
+			_catalogPos = READ_LE_UINT32(pData + 15);
+			_catalogSize = READ_LE_UINT32(pData + 19);
 			matchFlag = true;
 		}
 
@@ -215,13 +218,13 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
 		if (!f.open(secondaryFilename))
 			error("CHARGE_FICHIER");
 
-		f.seek(_vm->_globals->_catalogPos);
+		f.seek(_catalogPos);
 
-		byte *catData = _vm->_globals->allocMemory(_vm->_globals->_catalogSize);
+		byte *catData = _vm->_globals->allocMemory(_catalogSize);
 		if (catData == g_PTRNUL)
 			error("CHARGE_FICHIER");
 
-		readStream(f, catData, _vm->_globals->_catalogSize);
+		readStream(f, catData, _catalogSize);
 		f.close();
 		result = catData;
 	} else {

@@ -50,11 +50,6 @@ struct ListeItem {
 	int _height;
 };
 
-struct LockAnimItem {
-	bool _enableFl;
-	int _posX;
-};
-
 struct VBobItem {
 	byte *_spriteData;
 	int _displayMode;
@@ -271,9 +266,6 @@ public:
 
 	byte *_optionDialogSpr;
 	bool _optionDialogFl;
-	uint32 _catalogPos;
-	uint32 _catalogSize;
-	LockAnimItem _lockedAnims[30];
 	int _oldRouteFromX;
 	int _oldRouteFromY;
 	int _oldRouteDestX;

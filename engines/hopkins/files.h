@@ -38,6 +38,9 @@ enum CatMode { RES_INI = 1, RES_REP = 2, RES_LIN = 3, RES_PER = 5,
 
 class FileManager {
 public:
+	uint32 _catalogPos;
+	uint32 _catalogSize;
+
 	HopkinsEngine *_vm;
 
 	FileManager(HopkinsEngine *vm);

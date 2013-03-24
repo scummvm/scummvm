@@ -80,6 +80,11 @@ struct BobItem {
 	int _zoomOutFactor;
 };
 
+struct LockAnimItem {
+	bool _enableFl;
+	int _posX;
+};
+
 class HopkinsEngine;
 
 class ObjectsManager {
@@ -167,6 +172,7 @@ public:
 	byte *_headSprites;
 	SpriteItem _sprite[6];
 	BobItem _bob[36];
+	LockAnimItem _lockedAnims[30];
 
 	bool PERSO_ON;
 	bool BOBTOUS;

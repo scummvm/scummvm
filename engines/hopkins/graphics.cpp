@@ -310,7 +310,7 @@ void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte
 		// Load PCX from within the PIC resource
 		if (!f.open("PIC.RES"))
 			error("Error opening PIC.RES.");
-		f.seek(_vm->_globals->_catalogPos);
+		f.seek(_vm->_fileManager->_catalogPos);
 	} else {
 		// Load stand alone PCX file
 		if (!f.open(file))
@@ -1074,7 +1074,7 @@ void GraphicsManager::endDisplayBob() {
 	}
 
 	for (int idx = 1; idx <= 29; ++idx) {
-		_vm->_globals->_lockedAnims[idx]._enableFl = false;
+		_vm->_objectsManager->_lockedAnims[idx]._enableFl = false;
 	}
 
 	for (int idx = 1; idx <= 20; ++idx) {

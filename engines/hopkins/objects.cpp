@@ -44,6 +44,10 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	for (int i = 0; i < 36; ++i)
 		Common::fill((byte *)&_bob[i], (byte *)&_bob[i] + sizeof(BobItem), 0);
 
+	for (int i = 0; i < 30; ++i) {
+		Common::fill((byte *)&_lockedAnims[i], (byte *)&_lockedAnims[i] + sizeof(LockAnimItem), 0);
+	}
+
 	_sortedDisplayCount = 0;
 	for (int i = 0; i < 51; ++i)
 		Common::fill((byte *)&_sortedDisplay[i], (byte *)&_sortedDisplay[i] + sizeof(SortItem), 0);
@@ -953,8 +957,8 @@ void ObjectsManager::displayBobAnim() {
 		byte *dataPtr = _bob[idx]._animData + 20;
 		int dataIdx = _bob[idx]._animDataIdx;
 		_bob[idx]._xp = READ_LE_INT16(dataPtr + 2 * dataIdx);
-		if (_vm->_globals->_lockedAnims[idx]._enableFl)
-			_bob[idx]._xp = _vm->_globals->_lockedAnims[idx]._posX;
+		if (_vm->_objectsManager->_lockedAnims[idx]._enableFl)
+			_bob[idx]._xp = _vm->_objectsManager->_lockedAnims[idx]._posX;
 		if ( PERSO_ON && idx > 20 )
 			_bob[idx]._xp += _vm->_eventsManager->_startPos.x;
 
@@ -986,8 +990,8 @@ void ObjectsManager::displayBobAnim() {
 				byte *bobData = _bob[idx]._animData + 20;
 				_bob[idx]._xp = READ_LE_INT16(bobData);
 
-				if (_vm->_globals->_lockedAnims[idx]._enableFl)
-					_bob[idx]._xp = _vm->_globals->_lockedAnims[idx]._posX;
+				if (_vm->_objectsManager->_lockedAnims[idx]._enableFl)
+					_bob[idx]._xp = _vm->_objectsManager->_lockedAnims[idx]._posX;
 				if (PERSO_ON && idx > 20)
 					_bob[idx]._xp += _vm->_eventsManager->_startPos.x;
 
@@ -3044,7 +3048,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 	Common::File f;
 	Common::String filename = file + ".LNK";
 	byte *ptr = _vm->_fileManager->searchCat(filename, RES_LIN);
-	size_t nbytes = _vm->_globals->_catalogSize;
+	size_t nbytes = _vm->_fileManager->_catalogSize;
 	if (ptr == g_PTRNUL) {
 		if (!f.open(filename))
 			error("Error opening file - %s", filename.c_str());
@@ -3652,8 +3656,8 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 }
 
 void ObjectsManager::lockAnimX(int idx, int x) {
-	_vm->_globals->_lockedAnims[idx]._enableFl = true;
-	_vm->_globals->_lockedAnims[idx]._posX = x;
+	_vm->_objectsManager->_lockedAnims[idx]._enableFl = true;
+	_vm->_objectsManager->_lockedAnims[idx]._posX = x;
 }
 
 /**

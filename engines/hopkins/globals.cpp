@@ -78,10 +78,8 @@ Globals::Globals(HopkinsEngine *vm) {
 		Common::fill((byte *)&Liste[i], (byte *)&Liste[i] + sizeof(ListeItem), 0);
 	for (int i = 0; i < 35; ++i)
 		Common::fill((byte *)&Liste2[i], (byte *)&Liste2[i] + sizeof(ListeItem), 0);
-	for (int i = 0; i < 30; ++i) {
-		Common::fill((byte *)&_lockedAnims[i], (byte *)&_lockedAnims[i] + sizeof(LockAnimItem), 0);
+	for (int i = 0; i < 30; ++i)
 		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
-	}
 	for (int i = 0; i < 300; ++i)
 		Common::fill((byte *)&_objectAuthIcons[i], (byte *)&_objectAuthIcons[i] + sizeof(ObjectAuthIcon), 0);
 	for (int i = 0; i < 25; ++i)
@@ -101,8 +99,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	_linuxEndDemoFl = false;
 	_speed = 1;
 	_curObjectFileNum = 0;
-	_catalogPos = 0;
-	_catalogSize = 0;
 	iRegul = 0;
 	_exitId = 0;
 	_characterSpriteBuf = 0;

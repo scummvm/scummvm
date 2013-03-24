@@ -56,7 +56,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	bool oldDisableInventFl = _vm->_globals->_disableInventFl;
 	_vm->_globals->_disableInventFl = true;
 	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
-	_characterSize = _vm->_globals->_catalogSize;
+	_characterSize = _vm->_fileManager->_catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
 		_characterBuffer = _vm->_fileManager->loadFile(filename);
 		_characterSize = _vm->_fileManager->fileSize(filename);
@@ -156,7 +156,7 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	bool oldDisableInventFl = _vm->_globals->_disableInventFl;
 	_vm->_globals->_disableInventFl = true;
 	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
-	_characterSize = _vm->_globals->_catalogSize;
+	_characterSize = _vm->_fileManager->_catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
 		_characterBuffer = _vm->_fileManager->loadFile(filename);
 		_characterSize = _vm->_fileManager->fileSize(filename);
@@ -976,7 +976,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(0);
 	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
-	_characterSize = _vm->_globals->_catalogSize;
+	_characterSize = _vm->_fileManager->_catalogSize;
 	if (_characterBuffer == g_PTRNUL) {
 		_characterBuffer = _vm->_fileManager->loadFile(filename);
 		_characterSize = _vm->_fileManager->fileSize(filename);

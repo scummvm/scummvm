@@ -528,8 +528,8 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		else if (_vm->_globals->_language == LANG_SP)
 			filename = "RES_VES.RES";
 
-		catPos = _vm->_globals->_catalogPos;
-		catLen = _vm->_globals->_catalogSize;
+		catPos = _vm->_fileManager->_catalogPos;
+		catLen = _vm->_fileManager->_catalogSize;
 	} else if (!_vm->_fileManager->searchCat(filename + ".APC", RES_VOI)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
@@ -541,8 +541,8 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		else if (_vm->_globals->_language == LANG_SP)
 			filename = "RES_VES.RES";
 
-		catPos = _vm->_globals->_catalogPos;
-		catLen = _vm->_globals->_catalogSize;
+		catPos = _vm->_fileManager->_catalogPos;
+		catLen = _vm->_fileManager->_catalogSize;
 	} else if (!_vm->_fileManager->searchCat(filename + ".RAW", RES_VOI)) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
@@ -554,8 +554,8 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		else if (_vm->_globals->_language == LANG_SP)
 			filename = "RES_VES.RES";
 
-		catPos = _vm->_globals->_catalogPos;
-		catLen = _vm->_globals->_catalogSize;
+		catPos = _vm->_fileManager->_catalogPos;
+		catLen = _vm->_fileManager->_catalogSize;
 	} else {
 		if (!f.exists(filename + ".WAV")) {
 			if (!f.exists(filename + ".APC"))
