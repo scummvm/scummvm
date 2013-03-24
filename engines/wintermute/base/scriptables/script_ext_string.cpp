@@ -303,7 +303,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			{
 				char *part = new char[i - start + 1];
 				if(i != start) {
-					strlcpy(part, str.c_str() + start, i - start + 1);
+					Common::strlcpy(part, str.c_str() + start, i - start + 1);
 					part[i - start] = '\0';
 				} else {
 					part[0] = '\0';
