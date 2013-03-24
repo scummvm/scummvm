@@ -102,9 +102,6 @@ Globals::Globals(HopkinsEngine *vm) {
 
 	_linuxEndDemoFl = false;
 	_speed = 1;
-	_oldDirection = DIR_NONE;
-	_oldDirectionSpriteIdx = 59;
-	_lastDirection = DIR_NONE;
 	_curObjectFileNum = 0;
 	_objectWidth = _objectHeight = 0;
 	_catalogPos = 0;
@@ -260,7 +257,7 @@ void Globals::loadCharacterData() {
 	}
 
 	_vm->_objectsManager->resetOldFrameIndex();
-	_oldDirection = DIR_NONE;
+	_vm->_objectsManager->resetOldDirection();
 }
 
 void Globals::initAnimBqe() {

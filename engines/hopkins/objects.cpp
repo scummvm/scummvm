@@ -85,6 +85,9 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_curGestureFile = 0;
 	_headSprites = NULL;
 	_homeRateCounter = 0;
+	_lastDirection = DIR_NONE;
+	_oldDirection = DIR_NONE;
+	_oldDirectionSpriteIdx = 59;
 }
 
 ObjectsManager::~ObjectsManager() {
@@ -1266,7 +1269,7 @@ void ObjectsManager::GOHOME() {
 	int oldPosY = 0;
 	int oldFrameIdx = 0;
 	_homeRateCounter = 0;
-	if (_vm->_globals->_oldDirection == DIR_NONE) {
+	if (_oldDirection == DIR_NONE) {
 		computeAndSetSpriteSize();
 		newPosX = _vm->_linesManager->_route->_x;
 		newPosY = _vm->_linesManager->_route->_y;
@@ -1274,13 +1277,13 @@ void ObjectsManager::GOHOME() {
 		_vm->_linesManager->_route++;
 
 		if (newPosX != -1 || newPosY != -1) {
-			_vm->_globals->_oldDirection = newDirection;
-			_vm->_globals->_oldDirectionSpriteIdx = newDirection + 59;
+			_oldDirection = newDirection;
+			_oldDirectionSpriteIdx = newDirection + 59;
 			_oldFrameIndex = 0;
 			_oldCharacterPosX = newPosX;
 			_oldCharacterPosY = newPosY;
 		} else {
-			setSpriteIndex(0, _vm->_globals->_oldDirection + 59);
+			setSpriteIndex(0, _oldDirection + 59);
 			_vm->_globals->_actionDirection = DIR_NONE;
 			int zoneId;
 			if (_vm->_globals->_actionMoveTo)
@@ -1292,7 +1295,7 @@ void ObjectsManager::GOHOME() {
 			setFlipSprite(0, false);
 			_homeRateCounter = 0;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-			_vm->_globals->_oldDirection = DIR_NONE;
+			_oldDirection = DIR_NONE;
 			if (zoneId > 0) {
 				if (_vm->_linesManager->ZONEP[zoneId]._destX && _vm->_linesManager->ZONEP[zoneId]._destY && _vm->_linesManager->ZONEP[zoneId]._destY != 31) {
 					if (_vm->_linesManager->ZONEP[zoneId]._spriteIndex == -1) {
@@ -1309,7 +1312,7 @@ void ObjectsManager::GOHOME() {
 		_homeRateCounter = 0;
 		return;
 	}
-	if (_vm->_globals->_oldDirection == DIR_RIGHT) {
+	if (_oldDirection == DIR_RIGHT) {
 		if (_oldFrameIndex < 24 || _oldFrameIndex > 35) {
 			oldPosX = _oldCharacterPosX;
 			oldPosY = _oldCharacterPosY;
@@ -1333,7 +1336,7 @@ void ObjectsManager::GOHOME() {
 		}
 		_homeRateCounter = 5 / _vm->_globals->_speed;
 	}
-	if (_vm->_globals->_oldDirection == DIR_LEFT) {
+	if (_oldDirection == DIR_LEFT) {
 		if (_oldFrameIndex < 24 || _oldFrameIndex > 35) {
 			oldPosX = _oldCharacterPosX;
 			oldPosY = _oldCharacterPosY;
@@ -1356,7 +1359,7 @@ void ObjectsManager::GOHOME() {
 		}
 		_homeRateCounter = 5 / _vm->_globals->_speed;
 	}
-	if (_vm->_globals->_oldDirection == DIR_UP) {
+	if (_oldDirection == DIR_UP) {
 		if (_oldFrameIndex > 11) {
 			oldPosX = _oldCharacterPosX;
 			oldPosY = _oldCharacterPosY;
@@ -1377,7 +1380,7 @@ void ObjectsManager::GOHOME() {
 		_homeRateCounter = 4 / _vm->_globals->_speed;
 	}
 
-	if (_vm->_globals->_oldDirection == DIR_DOWN) {
+	if (_oldDirection == DIR_DOWN) {
 		if (_oldFrameIndex < 48 || _oldFrameIndex > 59) {
 			oldPosX = _oldCharacterPosX;
 			oldPosY = _oldCharacterPosY;
@@ -1397,7 +1400,7 @@ void ObjectsManager::GOHOME() {
 		}
 		_homeRateCounter = 4 / _vm->_globals->_speed;
 	}
-	if (_vm->_globals->_oldDirection == DIR_UP_RIGHT) {
+	if (_oldDirection == DIR_UP_RIGHT) {
 		if (_oldFrameIndex < 12 || _oldFrameIndex > 23) {
 			oldPosX = _oldCharacterPosX;
 			oldPosY = _oldCharacterPosY;
@@ -1421,7 +1424,7 @@ void ObjectsManager::GOHOME() {
 		}
 		_homeRateCounter = 5 / _vm->_globals->_speed;
 	}
-	if (_vm->_globals->_oldDirection == DIR_UP_LEFT) {
+	if (_oldDirection == DIR_UP_LEFT) {
 		if (_oldFrameIndex < 12 || _oldFrameIndex > 23) {
 			oldPosX = _oldCharacterPosX;
 			oldPosY = _oldCharacterPosY;
@@ -1444,7 +1447,7 @@ void ObjectsManager::GOHOME() {
 		}
 		_homeRateCounter = 5 / _vm->_globals->_speed;
 	}
-	if (_vm->_globals->_oldDirection == DIR_DOWN_RIGHT) {
+	if (_oldDirection == DIR_DOWN_RIGHT) {
 		if (_oldFrameIndex < 36 || _oldFrameIndex > 47) {
 			oldPosX = _oldCharacterPosX;
 			oldPosY = _oldCharacterPosY;
@@ -1468,7 +1471,7 @@ void ObjectsManager::GOHOME() {
 		}
 		_homeRateCounter = 5 / _vm->_globals->_speed;
 	}
-	if (_vm->_globals->_oldDirection == DIR_DOWN_LEFT) {
+	if (_oldDirection == DIR_DOWN_LEFT) {
 		if (_oldFrameIndex < 36 || _oldFrameIndex > 47) {
 			oldPosX = _oldCharacterPosX;
 			oldPosY = _oldCharacterPosY;
@@ -1505,13 +1508,13 @@ void ObjectsManager::GOHOME() {
 				zoneId = _vm->_globals->_saveData->_data[svLastZoneNum];
 			else
 				zoneId = _zoneNum;
-			setSpriteIndex(0, _vm->_globals->_oldDirection + 59);
+			setSpriteIndex(0, _oldDirection + 59);
 			_vm->_globals->_actionDirection = DIR_NONE;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_homeRateCounter = 0;
-			_vm->_globals->_oldDirection = DIR_NONE;
+			_oldDirection = DIR_NONE;
 			_oldCharacterPosX = getSpriteX(0);
 			_oldCharacterPosY = getSpriteY(0);
 
@@ -1530,37 +1533,37 @@ void ObjectsManager::GOHOME() {
 			_homeRateCounter = 0;
 			return;
 		}
-		if (_vm->_globals->_oldDirection != newDirection)
+		if (_oldDirection != newDirection)
 			break;
-		if ((newDirection == DIR_RIGHT && newPosX >= oldPosX) || (_vm->_globals->_oldDirection == DIR_LEFT && newPosX <= oldPosX) ||
-		    (_vm->_globals->_oldDirection == DIR_UP && newPosY <= oldPosY) || (_vm->_globals->_oldDirection == DIR_DOWN && newPosY >= oldPosY) ||
-		    (_vm->_globals->_oldDirection == DIR_UP_RIGHT && newPosX >= oldPosX)  || (_vm->_globals->_oldDirection == DIR_UP_LEFT && newPosX <= oldPosX) ||
-		    (_vm->_globals->_oldDirection == DIR_DOWN_RIGHT && newPosX >= oldPosX) || (_vm->_globals->_oldDirection == DIR_DOWN_LEFT && newPosX <= oldPosX))
+		if ((newDirection == DIR_RIGHT && newPosX >= oldPosX) || (_oldDirection == DIR_LEFT && newPosX <= oldPosX) ||
+		    (_oldDirection == DIR_UP && newPosY <= oldPosY) || (_oldDirection == DIR_DOWN && newPosY >= oldPosY) ||
+		    (_oldDirection == DIR_UP_RIGHT && newPosX >= oldPosX)  || (_oldDirection == DIR_UP_LEFT && newPosX <= oldPosX) ||
+		    (_oldDirection == DIR_DOWN_RIGHT && newPosX >= oldPosX) || (_oldDirection == DIR_DOWN_LEFT && newPosX <= oldPosX))
 			loopCond = true;
 	} while (!loopCond);
 	if (loopCond) {
 		computeAndSetSpriteSize();
-		if ((_vm->_globals->_oldDirection == DIR_DOWN_LEFT) || (_vm->_globals->_oldDirection == DIR_LEFT) || (_vm->_globals->_oldDirection == DIR_UP_LEFT))
+		if ((_oldDirection == DIR_DOWN_LEFT) || (_oldDirection == DIR_LEFT) || (_oldDirection == DIR_UP_LEFT))
 			setFlipSprite(0, true);
 
-		if ((_vm->_globals->_oldDirection == DIR_UP) || (_vm->_globals->_oldDirection == DIR_UP_RIGHT) || (_vm->_globals->_oldDirection == DIR_RIGHT) ||
-		    (_vm->_globals->_oldDirection == DIR_DOWN_RIGHT) || (_vm->_globals->_oldDirection == DIR_DOWN))
+		if ((_oldDirection == DIR_UP) || (_oldDirection == DIR_UP_RIGHT) || (_oldDirection == DIR_RIGHT) ||
+		    (_oldDirection == DIR_DOWN_RIGHT) || (_oldDirection == DIR_DOWN))
 			setFlipSprite(0, false);
 
 		setSpriteX(0, newPosX);
 		setSpriteY(0, newPosY);
 		setSpriteIndex(0, oldFrameIdx);
 	} else {
-		if ((_vm->_globals->_oldDirection == DIR_DOWN_LEFT) || (_vm->_globals->_oldDirection == DIR_LEFT) || (_vm->_globals->_oldDirection == DIR_UP_LEFT))
+		if ((_oldDirection == DIR_DOWN_LEFT) || (_oldDirection == DIR_LEFT) || (_oldDirection == DIR_UP_LEFT))
 			setFlipSprite(0, true);
 
-		if ((_vm->_globals->_oldDirection == DIR_UP) || (_vm->_globals->_oldDirection == DIR_UP_RIGHT) || (_vm->_globals->_oldDirection == DIR_RIGHT) ||
-		    (_vm->_globals->_oldDirection == DIR_DOWN_RIGHT) || (_vm->_globals->_oldDirection == DIR_DOWN))
+		if ((_oldDirection == DIR_UP) || (_oldDirection == DIR_UP_RIGHT) || (_oldDirection == DIR_RIGHT) ||
+		    (_oldDirection == DIR_DOWN_RIGHT) || (_oldDirection == DIR_DOWN))
 			setFlipSprite(0, false);
 		_homeRateCounter = 0;
 	}
-	_vm->_globals->_oldDirection = newDirection;
-	_vm->_globals->_oldDirectionSpriteIdx = newDirection + 59;
+	_oldDirection = newDirection;
+	_oldDirectionSpriteIdx = newDirection + 59;
 	_oldFrameIndex = oldFrameIdx;
 	_oldCharacterPosX = newPosX;
 	_oldCharacterPosY = newPosY;
@@ -1589,10 +1592,10 @@ void ObjectsManager::GOHOME2() {
 
 		++countColisionPixel;
 		if (countColisionPixel >= realSpeed) {
-			_vm->_globals->_lastDirection = newDirection;
+			_lastDirection = newDirection;
 			setSpriteX(0, nexPosX);
 			setSpriteY(0, newPosY);
-			switch (_vm->_globals->_lastDirection) {
+			switch (_lastDirection) {
 			case DIR_UP:
 				setSpriteIndex(0, 4);
 				break;
@@ -1613,7 +1616,7 @@ void ObjectsManager::GOHOME2() {
 		}
 	}
 
-	switch (_vm->_globals->_lastDirection) {
+	switch (_lastDirection) {
 	case DIR_UP:
 		setSpriteIndex(0, 0);
 		break;
@@ -1887,13 +1890,13 @@ void ObjectsManager::handleLeftButton() {
 	if (_forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
 		if (getSpriteY(0) > 374 && getSpriteY(0) <= 410) {
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-			setSpriteIndex(0, _vm->_globals->_oldDirectionSpriteIdx);
+			setSpriteIndex(0, _oldDirectionSpriteIdx);
 			_vm->_globals->_actionDirection = DIR_NONE;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_homeRateCounter = 0;
-			_vm->_globals->_oldDirection = DIR_NONE;
+			_oldDirection = DIR_NONE;
 		} else {
 			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
 			if (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL)
@@ -1902,7 +1905,7 @@ void ObjectsManager::handleLeftButton() {
 			_oldCharacterPosY = getSpriteY(0);
 			_homeRateCounter = 0;
 			if (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL || oldRoute == _vm->_linesManager->_route) {
-				_vm->_globals->_oldDirection = DIR_NONE;
+				_oldDirection = DIR_NONE;
 			} else {
 				_vm->_linesManager->_route = oldRoute;
 			}
@@ -1916,7 +1919,7 @@ void ObjectsManager::handleLeftButton() {
 			_oldCharacterPosY = getSpriteY(0);
 			_homeRateCounter = 0;
 			if (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL || oldRoute == _vm->_linesManager->_route)
-				_vm->_globals->_oldDirection = DIR_NONE;
+				_oldDirection = DIR_NONE;
 			else
 				_vm->_linesManager->_route = oldRoute;
 		}
@@ -2071,7 +2074,7 @@ void ObjectsManager::clearScreen() {
 	_forceZoneFl = true;
 	_changeVerbFl = false;
 	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-	_vm->_globals->_oldDirection = DIR_NONE;
+	_oldDirection = DIR_NONE;
 	_vm->_graphicsManager->resetDirtyRects();
 }
 
@@ -3696,7 +3699,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		stopBobAnimation(3);
 		_vm->_globals->_checkDistanceFl = true;
 		_oldCharacterPosX = getSpriteX(0);
-		_vm->_globals->_oldDirection = DIR_NONE;
+		_oldDirection = DIR_NONE;
 		_homeRateCounter = 0;
 		_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 		_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(getSpriteX(0), getSpriteY(0), 330, 345);
@@ -3812,7 +3815,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_eventsManager->_mouseSpriteId = 4;
 	_oldCharacterPosX = _characterPos.x;
 	_oldCharacterPosY = _characterPos.y;
-	_vm->_globals->_oldDirection = DIR_NONE;
+	_oldDirection = DIR_NONE;
 	_homeRateCounter = 0;
 
 	for (int idx = 0; idx < 5; ++idx)

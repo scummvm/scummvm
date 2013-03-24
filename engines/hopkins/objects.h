@@ -93,6 +93,9 @@ private:
 	int _verb;
 	int _oldSpriteIndex;
 	int _oldFrameIndex;
+	int _oldDirectionSpriteIdx;
+	Directions _oldDirection;
+	Directions _lastDirection;
 	bool _oldFlipFl;
 	int _curGestureFile;
 	byte *_gestureBuf;
@@ -244,6 +247,7 @@ public:
 	void PARADISE();
 
 	void resetOldFrameIndex() { _oldFrameIndex = -1; }
+	void resetOldDirection()  { _oldDirection = DIR_NONE; }
 };
 
 } // End of namespace Hopkins
