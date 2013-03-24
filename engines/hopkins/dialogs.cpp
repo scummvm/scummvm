@@ -51,9 +51,23 @@ DialogsManager::DialogsManager(HopkinsEngine *vm) {
 
 DialogsManager::~DialogsManager() {
 	_vm->_globals->freeMemory(_inventWin1);
+	_vm->_globals->freeMemory(_inventBuf2);
 	_vm->_globals->freeMemory(_inventoryIcons);
 }
 
+void DialogsManager::clearAll() {
+	_inventWin1 = g_PTRNUL;
+	_inventBuf2 = g_PTRNUL;
+}
+
+void DialogsManager::drawInvent(Common::Point oldBorder, int oldBorderSpriteIndex, Common::Point newBorder, int newBorderSpriteIndex) {
+	_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
+	if (oldBorder.x && oldBorder.y)
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_dialogsManager->_inventBuf2, oldBorder.x + 300, oldBorder.y + 300, oldBorderSpriteIndex + 1);
+	if (newBorder.x && newBorder.y)
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_dialogsManager->_inventBuf2, newBorder.x + 300, newBorder.y + 300, newBorderSpriteIndex);
+	_vm->_graphicsManager->addDirtyRect(_vm->_dialogsManager->_inventX, _vm->_dialogsManager->_inventY, _vm->_dialogsManager->_inventX + _vm->_dialogsManager->_inventWidth, _vm->_dialogsManager->_inventY + _vm->_dialogsManager->_inventHeight);
+}
 void DialogsManager::showOptionsDialog() {
 	_vm->_eventsManager->changeMouseCursor(0);
 	_vm->_eventsManager->refreshScreenAndEvents();

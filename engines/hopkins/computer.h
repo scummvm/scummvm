@@ -84,18 +84,16 @@ private:
 	void displayLives();
 	void displayBricks();
 	void displayGamesSubMenu();
-	void displayScore();
 	int  displayHiscores();
 	void displayHiscoreLine(byte *objectData, int x, int y, int curChar);
-	void playBreakout();
-	void saveScore();
-	int moveBall();
-	void checkBallCollisions();
-	void getScoreName();
-
 	void displayMessage(int xp, int yp, int textIdx);
-
+	void displayScore();
 	void displayScoreChar(int charPos, int charDisp);
+	void getScoreName();
+	void playBreakout();
+	int  moveBall();
+	void saveScore();
+	void checkBallCollisions();
 
 public:
 	ComputerManager(HopkinsEngine *vm);
