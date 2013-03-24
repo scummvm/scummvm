@@ -34,14 +34,14 @@ class HopkinsEngine;
 
 class AnimationManager {
 private:
+	bool _clearAnimationFl;
+
 	HopkinsEngine *_vm;
 
 	int loadSpriteBank(int idx, const Common::String &filename);
 	void searchAnim(const byte *data, int animIndex, int count);
 
 public:
-	bool _clearAnimationFl;
-
 	AnimationManager(HopkinsEngine *vm);
 
 	void loadAnim(const Common::String &animName);
@@ -50,6 +50,9 @@ public:
 	void playAnim2(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3);
 	void playSequence(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipEscFl, bool skipSeqFl, bool noColFl = false);
 	void playSequence2(const Common::String &file, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl = false);
+	
+	void setClearAnimFlag() { _clearAnimationFl = true; }
+	void unsetClearAnimFlag() { _clearAnimationFl = false; }
 };
 
 } // End of namespace Hopkins

@@ -1622,7 +1622,7 @@ void HopkinsEngine::playIntro() {
 	_globals->iRegul = 1;
 	_eventsManager->refreshScreenAndEvents();
 	_soundManager->playSound(16);
-	_animationManager->_clearAnimationFl = true;
+	_animationManager->setClearAnimFlag();
 	_animationManager->playAnim("J1.anm", 12, 12, 50);
 	if (shouldQuit() || _eventsManager->_escKeyFl)
 		return;
@@ -1804,7 +1804,7 @@ void HopkinsEngine::playIntro() {
 
 			_graphicsManager->fadeOutLong();
 			_graphicsManager->endDisplayBob();
-			_animationManager->_clearAnimationFl = true;
+			_animationManager->setClearAnimFlag();
 			_soundManager->playSound(3);
 			_soundManager->_specialSoundNum = 1;
 			_animationManager->playAnim("INTRO1.anm", 10, 24, 18);
@@ -1820,8 +1820,8 @@ void HopkinsEngine::playIntro() {
 			if (shouldQuit() || _eventsManager->_escKeyFl)
 				return;
 
-			_animationManager->_clearAnimationFl = false;
 			_graphicsManager->FADE_LINUX = 2;
+			_animationManager->unsetClearAnimFlag();
 			_animationManager->playAnim("J4.anm", 12, 12, 1000);
 			break;
 		}
@@ -1990,8 +1990,8 @@ void HopkinsEngine::playSubmarineCutscene() {
 	_graphicsManager->clearScreen();
 	_graphicsManager->unlockScreen();
 	_graphicsManager->clearPalette();
-	_animationManager->_clearAnimationFl = true;
 	_soundManager->playSound(25);
+	_animationManager->setClearAnimFlag();
 	_animationManager->playAnim("base00a.anm", 10, 18, 18);
 	if (!_eventsManager->_escKeyFl)
 		_animationManager->playAnim("base05a.anm", 10, 18, 18);
@@ -2020,7 +2020,7 @@ void HopkinsEngine::playSubmarineCutscene() {
 	}
 
 	_eventsManager->_escKeyFl = false;
-	_animationManager->_clearAnimationFl = false;
+	_animationManager->unsetClearAnimFlag();
 	_globals->_exitId = 85;
 }
 
@@ -2216,7 +2216,7 @@ void HopkinsEngine::playPlaneCutscene() {
 	_graphicsManager->unlockScreen();
 	_graphicsManager->clearPalette();
 
-	_animationManager->_clearAnimationFl = false;
+	_animationManager->unsetClearAnimFlag();
 	_animationManager->playAnim("aerop00a.anm", 10, 18, 18);
 	if (!_eventsManager->_escKeyFl)
 		_animationManager->playAnim("serop10a.anm", 10, 18, 18);
@@ -2250,7 +2250,7 @@ void HopkinsEngine::playPlaneCutscene() {
 	}
 
 	_eventsManager->_escKeyFl = false;
-	_animationManager->_clearAnimationFl = false;
+	_animationManager->unsetClearAnimFlag();
 }
 
 void HopkinsEngine::loadBaseMap() {

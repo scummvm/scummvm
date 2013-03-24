@@ -2587,7 +2587,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_graphicsManager->NB_SCREEN(true);
 		_vm->_soundManager->_specialSoundNum = 198;
 		PERSO_ON = true;
-		_vm->_animationManager->_clearAnimationFl = false;
+		_vm->_animationManager->unsetClearAnimFlag();
 		_vm->_animationManager->playAnim("otage.ANM", 1, 24, 500, true);
 		_vm->_soundManager->_specialSoundNum = 0;
 		_vm->_graphicsManager->NB_SCREEN(false);
