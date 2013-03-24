@@ -172,6 +172,8 @@ bool BaseRenderOSystem::flip() {
 		_dirtyRect = nullptr;
 		g_system->updateScreen();
 		_needsFlip = false;
+		_drawNum = 1;
+		addDirtyRect(_renderRect);
 		return true;
 	}
 	if (!_disableDirtyRects) {
@@ -646,6 +648,8 @@ void BaseRenderOSystem::endSaveLoad() {
 		it = _renderQueue.erase(it);
 		delete ticket;
 	}
+	_lastAddedTicket = _renderQueue.begin();
+	_previousTicket = nullptr;
 	// HACK: After a save the buffer will be drawn before the scripts get to update it,
 	// so just skip this single frame.
 	_skipThisFrame = true;
