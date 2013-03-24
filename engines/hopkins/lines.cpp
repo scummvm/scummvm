@@ -77,6 +77,9 @@ LinesManager::LinesManager(HopkinsEngine *vm) {
 	_zoneSkipCount = 0;
 	_hotspotTextColor = 0;
 	_forceHideText = false;
+	_oldMouseZoneId = 0;
+	_oldMouseX = 0;
+	_oldMouseY = 0;
 }
 
 LinesManager::~LinesManager() {
@@ -2826,9 +2829,9 @@ void LinesManager::checkZone() {
 	}
 	if (_vm->_objectsManager->_forceZoneFl) {
 		_zoneSkipCount = 100;
-		_vm->_globals->_oldMouseZoneId = -1;
-		_vm->_globals->_oldMouseX = -200;
-		_vm->_globals->_oldMouseY = -220;
+		_oldMouseZoneId = -1;
+		_oldMouseX = -200;
+		_oldMouseY = -220;
 		_vm->_objectsManager->_forceZoneFl = false;
 	}
 
@@ -2839,12 +2842,12 @@ void LinesManager::checkZone() {
 	if (_vm->_globals->_freezeCharacterFl || (_route == (RouteItem *)g_PTRNUL) || _zoneSkipCount > 4) {
 		_zoneSkipCount = 0;
 		int zoneId;
-		if (_vm->_globals->_oldMouseX != mouseX || _vm->_globals->_oldMouseY != oldMouseY) {
+		if (_oldMouseX != mouseX || _oldMouseY != oldMouseY) {
 			zoneId = getMouseZone();
 		} else {
-			zoneId = _vm->_globals->_oldMouseZoneId;
+			zoneId = _oldMouseZoneId;
 		}
-		if (_vm->_globals->_oldMouseZoneId != zoneId) {
+		if (_oldMouseZoneId != zoneId) {
 			_vm->_graphicsManager->SETCOLOR4(251, 100, 100, 100);
 			_vm->_eventsManager->_mouseCursorId = 4;
 			_vm->_eventsManager->changeMouseCursor(4);
@@ -2860,7 +2863,7 @@ void LinesManager::checkZone() {
 				ZONEP[zoneId]._verbFl5 || ZONEP[zoneId]._verbFl6 ||
 				ZONEP[zoneId]._verbFl7 || ZONEP[zoneId]._verbFl8 ||
 				ZONEP[zoneId]._verbFl9 || ZONEP[zoneId]._verbFl10) {
-					if (_vm->_globals->_oldMouseZoneId != zoneId) {
+					if (_oldMouseZoneId != zoneId) {
 						_vm->_fontManager->initTextBuffers(5, ZONEP[zoneId]._messageId, _vm->_globals->_zoneFilename, 0, 430, 0, 0, 252);
 						_vm->_fontManager->showText(5);
 						_forceHideText = true;
@@ -2883,9 +2886,9 @@ void LinesManager::checkZone() {
 			}
 		}
 		_vm->_objectsManager->_zoneNum = zoneId;
-		_vm->_globals->_oldMouseX = mouseX;
-		_vm->_globals->_oldMouseY = oldMouseY;
-		_vm->_globals->_oldMouseZoneId = zoneId;
+		_oldMouseX = mouseX;
+		_oldMouseY = oldMouseY;
+		_oldMouseZoneId = zoneId;
 		if (_vm->_globals->_freezeCharacterFl && (_vm->_eventsManager->_mouseCursorId == 4)) {
 			if (zoneId != -1 && zoneId != 0)
 				_vm->_objectsManager->handleRightButton();

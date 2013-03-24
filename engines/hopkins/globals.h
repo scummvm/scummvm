@@ -245,16 +245,12 @@ public:
 	int _characterMaxPosY;
 	int _baseMapColor;
 	int _spriteSize[500];
-	int _sortedDisplayCount;
-	int _oldMouseZoneId;
-	int _oldMouseX, _oldMouseY;
 	int _characterType;
 	uint _speed;
 	byte *_answerBuffer;
 	Savegame *_saveData;
 	Language _language;
 	HopkinsItem _hopkinsItem[70];
-	SortItem _sortedDisplay[51];
 
 	CreditItem _creditsItem[200];
 	int _creditsLineNumb;

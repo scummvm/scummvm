@@ -44,6 +44,10 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	for (int i = 0; i < 36; ++i)
 		Common::fill((byte *)&_bob[i], (byte *)&_bob[i] + sizeof(BobItem), 0);
 
+	_sortedDisplayCount = 0;
+	for (int i = 0; i < 51; ++i)
+		Common::fill((byte *)&_sortedDisplay[i], (byte *)&_sortedDisplay[i] + sizeof(SortItem), 0);
+
 	_helicopterFl = false;
 	_priorityFl = false;
 	_oldBorderPos = Common::Point(0, 0);
@@ -300,7 +304,7 @@ void ObjectsManager::displaySprite() {
 	uint16 arr[50];
 
 	// Handle copying any background areas that text are going to be drawn on
-	_vm->_globals->_sortedDisplayCount = 0;
+	_sortedDisplayCount = 0;
 	for (int idx = 0; idx <= 10; ++idx) {
 		if (_vm->_fontManager->_textList[idx]._enabledFl && _vm->_fontManager->_text[idx]._textType != 2) {
 			clipX = _vm->_fontManager->_textList[idx]._pos.x - 2;
@@ -356,64 +360,64 @@ void ObjectsManager::displaySprite() {
 			checkHidingItem();
 	}
 
-	if (_priorityFl && _vm->_globals->_sortedDisplayCount) {
+	if (_priorityFl && _sortedDisplayCount) {
 		for (int i = 1; i <= 48; i++) 
 			arr[i] = i;
 
 		do {
 			loopCondFl = false;
-			for (int sortIdx = 1; sortIdx < _vm->_globals->_sortedDisplayCount; sortIdx++) {
-				if (_vm->_globals->_sortedDisplay[arr[sortIdx]]._priority > _vm->_globals->_sortedDisplay[arr[sortIdx + 1]]._priority) {
+			for (int sortIdx = 1; sortIdx < _sortedDisplayCount; sortIdx++) {
+				if (_sortedDisplay[arr[sortIdx]]._priority > _sortedDisplay[arr[sortIdx + 1]]._priority) {
 					SWAP(arr[sortIdx], arr[sortIdx + 1]);
 					loopCondFl = true;
 				}
 			}
 		} while (loopCondFl);
 
-		for (int sortIdx = 1; sortIdx < _vm->_globals->_sortedDisplayCount + 1; sortIdx++) {
+		for (int sortIdx = 1; sortIdx < _sortedDisplayCount + 1; sortIdx++) {
 			int idx = arr[sortIdx];
-			switch (_vm->_globals->_sortedDisplay[idx]._sortMode) {
+			switch (_sortedDisplay[idx]._sortMode) {
 			case SORT_BOB:
-				setBobInfo(_vm->_globals->_sortedDisplay[idx]._index);
+				setBobInfo(_sortedDisplay[idx]._index);
 				break;
 			case SORT_SPRITE:
-				DEF_SPRITE(_vm->_globals->_sortedDisplay[idx]._index);
+				DEF_SPRITE(_sortedDisplay[idx]._index);
 				break;
 			case SORT_HIDING:
-				displayHiding(_vm->_globals->_sortedDisplay[idx]._index);
+				displayHiding(_sortedDisplay[idx]._index);
 				break;
 			default:
 				break;
 			}
-			_vm->_globals->_sortedDisplay[idx]._sortMode = SORT_NONE;
+			_sortedDisplay[idx]._sortMode = SORT_NONE;
 		}
 	} else {
-		for (int idx = 1; idx < _vm->_globals->_sortedDisplayCount + 1; ++idx) {
-			switch (_vm->_globals->_sortedDisplay[idx]._sortMode) {
+		for (int idx = 1; idx < _sortedDisplayCount + 1; ++idx) {
+			switch (_sortedDisplay[idx]._sortMode) {
 			case SORT_BOB:
-				setBobInfo(_vm->_globals->_sortedDisplay[idx]._index);
+				setBobInfo(_sortedDisplay[idx]._index);
 				break;
 			case SORT_SPRITE:
-				DEF_SPRITE(_vm->_globals->_sortedDisplay[idx]._index);
+				DEF_SPRITE(_sortedDisplay[idx]._index);
 				break;
 			case SORT_HIDING:
-				displayHiding(_vm->_globals->_sortedDisplay[idx]._index);
+				displayHiding(_sortedDisplay[idx]._index);
 				break;
 			default:
 				break;
 			}
-			_vm->_globals->_sortedDisplay[idx]._sortMode = SORT_NONE;
+			_sortedDisplay[idx]._sortMode = SORT_NONE;
 		}
 	}
 
 	// Reset the Sort array
 	for (int idx = 0; idx < 50; ++idx) {
-		_vm->_globals->_sortedDisplay[idx]._sortMode = SORT_NONE;
-		_vm->_globals->_sortedDisplay[idx]._index = 0;
-		_vm->_globals->_sortedDisplay[idx]._priority = 0;
+		_sortedDisplay[idx]._sortMode = SORT_NONE;
+		_sortedDisplay[idx]._index = 0;
+		_sortedDisplay[idx]._priority = 0;
 	}
 
-	_vm->_globals->_sortedDisplayCount = 0;
+	_sortedDisplayCount = 0;
 
 	_vm->_dialogsManager->drawInvent(_oldBorderPos, _oldBorderSpriteIndex, _borderPos, _borderSpriteIndex);
 
@@ -907,12 +911,12 @@ void ObjectsManager::computeSprite(int idx) {
 
 // Before Sort
 void ObjectsManager::beforeSort(SortMode sortMode, int index, int priority) {
-	++_vm->_globals->_sortedDisplayCount;
-	assert (_vm->_globals->_sortedDisplayCount <= 48);
+	++_sortedDisplayCount;
+	assert (_sortedDisplayCount <= 48);
 
-	_vm->_globals->_sortedDisplay[_vm->_globals->_sortedDisplayCount]._sortMode = sortMode;
-	_vm->_globals->_sortedDisplay[_vm->_globals->_sortedDisplayCount]._index = index;
-	_vm->_globals->_sortedDisplay[_vm->_globals->_sortedDisplayCount]._priority = priority;
+	_sortedDisplay[_sortedDisplayCount]._sortMode = sortMode;
+	_sortedDisplay[_sortedDisplayCount]._index = index;
+	_sortedDisplay[_sortedDisplayCount]._priority = priority;
 }
 
 // Display BOB Anim

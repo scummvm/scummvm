@@ -101,6 +101,8 @@ private:
 	int _curGestureFile;
 	byte *_gestureBuf;
 	int _homeRateCounter;
+	int _sortedDisplayCount;
+	SortItem _sortedDisplay[51];
 
 	void sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	void removeObjectDataBuf();

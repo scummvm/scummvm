@@ -123,6 +123,7 @@ private:
 	int _newRouteIdx;
 	int _newPosX;
 	int _newPosY;
+	int _oldMouseX, _oldMouseY;
 
 	byte *_largeBuf;
 	RouteItem *_testRoute0;
@@ -131,6 +132,7 @@ private:
 	LigneItem _lineItem[400];
 	RouteItem _bestRoute[8001];
 	int _zoneSkipCount;
+	int _oldMouseZoneId;
 
 	int checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow);
 	void removeZoneLine(int idx);

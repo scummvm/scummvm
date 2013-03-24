@@ -94,8 +94,6 @@ Globals::Globals(HopkinsEngine *vm) {
 
 	for (int i = 0; i < 36; ++i)
 		_inventory[i] = 0;
-	for (int i = 0; i < 51; ++i)
-		Common::fill((byte *)&_sortedDisplay[i], (byte *)&_sortedDisplay[i] + sizeof(SortItem), 0);
 
 	// Initialize fields
 	_language = LANG_EN;
@@ -118,7 +116,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	_menuMusicOff = 0;
 	_menuTextOff = 0;
 	_menuDisplayType = 0;
-	_sortedDisplayCount = 0;
 	_checkDistanceFl = false;
 	_characterType = 0;
 	_actionMoveTo = false;
@@ -159,10 +156,7 @@ Globals::Globals(HopkinsEngine *vm) {
 	_oldRouteFromY = 0;
 	_oldRouteDestX = 0;
 	_oldRouteDestY = 0;
-	_oldMouseZoneId = 0;
 	_oldZoneNum = 0;
-	_oldMouseX = 0;
-	_oldMouseY = 0;
 }
 
 Globals::~Globals() {
