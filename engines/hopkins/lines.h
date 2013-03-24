@@ -106,6 +106,7 @@ class LinesManager {
 private:
 	HopkinsEngine *_vm;
 
+	bool _forceHideText;
 	int _pathFindingMaxDepth;
 	SmoothItem _smoothRoute[4000];
 	Directions _smoothMoveDirection;

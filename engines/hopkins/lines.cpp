@@ -75,6 +75,7 @@ LinesManager::LinesManager(HopkinsEngine *vm) {
 	_currentSegmentId = 0;
 	_largeBuf = g_PTRNUL;
 	_zoneSkipCount = 0;
+	_forceHideText = false;
 }
 
 LinesManager::~LinesManager() {
@@ -2846,9 +2847,9 @@ void LinesManager::checkZone() {
 			_vm->_graphicsManager->SETCOLOR4(251, 100, 100, 100);
 			_vm->_eventsManager->_mouseCursorId = 4;
 			_vm->_eventsManager->changeMouseCursor(4);
-			if (_vm->_globals->_forceHideText) {
+			if (_forceHideText) {
 				_vm->_fontManager->hideText(5);
-				_vm->_globals->_forceHideText = false;
+				_forceHideText = false;
 				return;
 			}
 		}
@@ -2861,7 +2862,7 @@ void LinesManager::checkZone() {
 					if (_vm->_globals->_oldMouseZoneId != zoneId) {
 						_vm->_fontManager->initTextBuffers(5, ZONEP[zoneId]._messageId, _vm->_globals->_zoneFilename, 0, 430, 0, 0, 252);
 						_vm->_fontManager->showText(5);
-						_vm->_globals->_forceHideText = true;
+						_forceHideText = true;
 					}
 					_vm->_globals->_hotspotTextColor += 25;
 					if (_vm->_globals->_hotspotTextColor > 100)

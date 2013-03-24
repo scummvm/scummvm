@@ -102,7 +102,6 @@ Globals::Globals(HopkinsEngine *vm) {
 
 	_linuxEndDemoFl = false;
 	_speed = 1;
-	_oldFrameIndex = 0;
 	_oldDirection = DIR_NONE;
 	_oldDirectionSpriteIdx = 59;
 	_lastDirection = DIR_NONE;
@@ -169,7 +168,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	_oldZoneNum = 0;
 	_oldMouseX = 0;
 	_oldMouseY = 0;
-	_forceHideText = false;
 }
 
 Globals::~Globals() {
@@ -261,7 +259,7 @@ void Globals::loadCharacterData() {
 		_hopkinsItem[idx]._speedY = *srcP++;
 	}
 
-	_oldFrameIndex = -1;
+	_vm->_objectsManager->resetOldFrameIndex();
 	_oldDirection = DIR_NONE;
 }
 

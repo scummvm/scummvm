@@ -236,14 +236,12 @@ public:
 	bool _censorshipFl;
 	bool _introSpeechOffFl;
 	bool _hidingActiveFl;
-	bool _forceHideText;
 	int _exitId;
 	Directions _oceanDirection;
 	Directions _oldDirection;
 	int _oldDirectionSpriteIdx;
 	int _actionDirection;
 	Directions _lastDirection;
-	int _oldFrameIndex;
 	int _hotspotTextColor;
 	int _inventory[36];
 	int _objectWidth, _objectHeight;

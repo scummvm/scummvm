@@ -92,6 +92,7 @@ private:
 	const byte *_oldSpriteData;
 	int _verb;
 	int _oldSpriteIndex;
+	int _oldFrameIndex;
 	bool _oldFlipFl;
 	int _curGestureFile;
 	byte *_gestureBuf;
@@ -241,6 +242,8 @@ public:
 	void OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx);
 	void SPACTION1(byte *spriteData, const Common::String &animString, int speed);
 	void PARADISE();
+
+	void resetOldFrameIndex() { _oldFrameIndex = -1; }
 };
 
 } // End of namespace Hopkins
