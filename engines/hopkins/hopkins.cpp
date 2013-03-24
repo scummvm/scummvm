@@ -2464,16 +2464,8 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char color) {
 	if (endPosY > _globals->_creditsEndY)
 		_globals->_creditsEndY = endPosY;
 
-	bufPtr = buffer;
-	for (;;) {
-		curChar = *bufPtr++;
-		if (!curChar)
-			break;
-		if (curChar > 31) {
-			_graphicsManager->displayFont(_graphicsManager->_vesaBuffer, _fontManager->_font, startPosX, startPosY, curChar - 32, color);
-			startPosX += _objectsManager->getWidth(_fontManager->_font, curChar - 32);
-		}
-	}
+	Common::String message = Common::String((char *)buffer);
+	_fontManager->displayText(startPosX, startPosY, message, color);
 }
 
 void HopkinsEngine::displayCredits() {
