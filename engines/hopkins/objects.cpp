@@ -48,6 +48,9 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 		Common::fill((byte *)&_lockedAnims[i], (byte *)&_lockedAnims[i] + sizeof(LockAnimItem), 0);
 	}
 
+	for (int i = 0; i < 300; ++i)
+		Common::fill((byte *)&_objectAuthIcons[i], (byte *)&_objectAuthIcons[i] + sizeof(ObjectAuthIcon), 0);
+
 	_sortedDisplayCount = 0;
 	for (int i = 0; i < 51; ++i)
 		Common::fill((byte *)&_sortedDisplay[i], (byte *)&_sortedDisplay[i] + sizeof(SortItem), 0);
@@ -72,10 +75,8 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_saveLoadSprite2 = g_PTRNUL;
 	_spritePtr = g_PTRNUL;
 	_oldSpriteData = g_PTRNUL;
-	PERSO_ON = false;
 	_saveLoadFl = false;
 	_visibleFl = false;
-	BOBTOUS = false;
 	_zoneNum = 0;
 	_forceZoneFl = false;
 	_changeVerbFl = false;
@@ -85,7 +86,6 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_twoCharactersFl = false;
 	_characterPos = Common::Point(0, 0);
 	_startSpriteIndex = 0;
-	OBSSEUL = false;
 	_jumpVerb = 0;
 	_jumpZone = 0;
 	_oldSpriteIndex = 0;
@@ -104,12 +104,18 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_oldDirectionSpriteIdx = 59;
 	_objectWidth = _objectHeight = 0;
 	_hidingActiveFl = false;
+	_curObjectFileNum = 0;
+	_objectDataBuf = g_PTRNUL;
+	PERSO_ON = false;
+	BOBTOUS = false;
+	OBSSEUL = false;
 }
 
 ObjectsManager::~ObjectsManager() {
 	_vm->_globals->freeMemory(_forestSprite);
 	_vm->_globals->freeMemory(_gestureBuf);
 	_vm->_globals->freeMemory(_headSprites);
+	_vm->_globals->freeMemory(_objectDataBuf);
 
 	for (int idx = 0; idx < 6; ++idx)
 		_hidingItemData[idx] = _vm->_globals->freeMemory(_hidingItemData[idx]);
@@ -120,9 +126,32 @@ void ObjectsManager::clearAll() {
 	_forestSprite = _vm->_globals->freeMemory(_forestSprite);
 	_curGestureFile = 0;
 	_gestureBuf = _vm->_globals->freeMemory(_gestureBuf);
+	_curObjectFileNum = 0;
 
 	for (int idx = 0; idx < 6; ++idx)
 		_hidingItemData[idx] = _vm->_globals->freeMemory(_hidingItemData[idx]);
+
+	_objectDataBuf = _vm->_globals->freeMemory(_objectDataBuf);
+}
+
+// Load Object
+void ObjectsManager::loadObjects() {
+	byte *data = _vm->_fileManager->loadFile("OBJET.DAT");
+	byte *srcP = data;
+
+	for (int idx = 0; idx < 300; ++idx) {
+		ObjectAuthIcon *objectAuthIcon = &_objectAuthIcons[idx];
+		objectAuthIcon->_objectFileNum = *srcP++;
+		objectAuthIcon->_idx = *srcP++;
+		objectAuthIcon->_flag1 = *srcP++;
+		objectAuthIcon->_flag2 = *srcP++;
+		objectAuthIcon->_flag3 = *srcP++;
+		objectAuthIcon->_flag4 = *srcP++;
+		objectAuthIcon->_flag5 = *srcP++;
+		objectAuthIcon->_flag6 = *srcP++;
+	}
+
+	_vm->_globals->freeMemory(data);
 }
 
 // Reset Hiding Items
@@ -157,35 +186,35 @@ void ObjectsManager::changeObject(int objIndex) {
 
 byte *ObjectsManager::loadObjectFromFile(int objIndex, bool mode) {
 	byte *dataP = NULL;
-	int objectFileNum = _vm->_globals->_objectAuthIcons[objIndex]._objectFileNum;
-	int idx = _vm->_globals->_objectAuthIcons[objIndex]._idx;
+	int objectFileNum = _objectAuthIcons[objIndex]._objectFileNum;
+	int idx = _objectAuthIcons[objIndex]._idx;
 
 	if (mode)
 		++idx;
 
-	if (objectFileNum != _vm->_globals->_curObjectFileNum) {
-		if (_vm->_globals->_objectDataBuf != g_PTRNUL)
-			ObjectsManager::removeObjectDataBuf();
+	if (objectFileNum != _curObjectFileNum) {
+		if (_objectDataBuf != g_PTRNUL)
+			removeObjectDataBuf();
 		if (objectFileNum == 1) {
-			_vm->_globals->_objectDataBuf = ObjectsManager::loadSprite("OBJET1.SPR");
+			_objectDataBuf = loadSprite("OBJET1.SPR");
 		}
-		_vm->_globals->_curObjectFileNum = objectFileNum;
+		_curObjectFileNum = objectFileNum;
 	}
 
-	int width = ObjectsManager::getWidth(_vm->_globals->_objectDataBuf, idx);
-	int height = ObjectsManager::getHeight(_vm->_globals->_objectDataBuf, idx);
+	int width = getWidth(_objectDataBuf, idx);
+	int height = getHeight(_objectDataBuf, idx);
 	_objectWidth = width;
 	_objectHeight = height;
 
 	if (mode) {
-		sprite_alone(_vm->_globals->_objectDataBuf, _vm->_eventsManager->_objectBuf, idx);
+		sprite_alone(_objectDataBuf, _vm->_eventsManager->_objectBuf, idx);
 		dataP = _vm->_eventsManager->_objectBuf;
 	} else { 
 		dataP = _vm->_globals->allocMemory(height * width);
 		if (dataP == g_PTRNUL)
 			error("CAPTURE_OBJET");
 
-		capture_mem_sprite(_vm->_globals->_objectDataBuf, dataP, idx);
+		capture_mem_sprite(_objectDataBuf, dataP, idx);
 	}
 
 	return dataP;
@@ -308,8 +337,8 @@ void ObjectsManager::capture_mem_sprite(const byte *objectData, byte *sprite, in
 }
 
 void ObjectsManager::removeObjectDataBuf() {
-	_vm->_globals->_curObjectFileNum = 0;
-	_vm->_globals->_objectDataBuf = _vm->_globals->freeMemory(_vm->_globals->_objectDataBuf);
+	_curObjectFileNum = 0;
+	_objectDataBuf = _vm->_globals->freeMemory(_objectDataBuf);
 }
 
 /**
@@ -2504,13 +2533,13 @@ void ObjectsManager::nextObjectIcon(int idx) {
 	do {
 		if (nextCursorId == 2 || nextCursorId == 5 || nextCursorId == 6) {
 			_vm->_eventsManager->_mouseCursorId = 6;
-			if (_vm->_globals->_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag1 == 1)
+			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag1 == 1)
 				return;
 			nextCursorId++;
 		}
 		if (nextCursorId == 7) {
 			_vm->_eventsManager->_mouseCursorId = 7;
-			if (_vm->_globals->_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag2 == 1)
+			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag2 == 1)
 				return;
 			nextCursorId++;
 		}	
@@ -2520,35 +2549,35 @@ void ObjectsManager::nextObjectIcon(int idx) {
 		}
 		if (nextCursorId == 9 || nextCursorId == 10) {
 			_vm->_eventsManager->_mouseCursorId = 10;
-			if (_vm->_globals->_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag6 == 1)
+			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag6 == 1)
 				return;
 			nextCursorId = 11;
 		}
 
 		if (nextCursorId == 11) {
 			_vm->_eventsManager->_mouseCursorId = 11;
-			if (_vm->_globals->_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag3 == 1)
+			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag3 == 1)
 				return;
 			nextCursorId++;
 		}
 
 		if (nextCursorId == 12 || nextCursorId == 13) {
 			_vm->_eventsManager->_mouseCursorId = 13;
-			if (_vm->_globals->_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag4 == 1)
+			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag4 == 1)
 				return;
 			nextCursorId = 14;
 		}
 
 		if (nextCursorId == 14 || nextCursorId == 15) {
 			_vm->_eventsManager->_mouseCursorId = 15;
-			if (_vm->_globals->_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag5 == 1)
+			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag5 == 1)
 				return;
 			nextCursorId = 23;
 		}
 
 		if (nextCursorId >= 16 && nextCursorId <= 23) {
 			_vm->_eventsManager->_mouseCursorId = 23;
-			if (_vm->_globals->_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag5 == 2)
+			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag5 == 2)
 				return;
 			nextCursorId = 24;
 		}
@@ -2558,7 +2587,7 @@ void ObjectsManager::nextObjectIcon(int idx) {
 		}
 		
 		nextCursorId = 6;
-	} while (_vm->_globals->_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag6 != 2);
+	} while (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag6 != 2);
 }
 
 void ObjectsManager::takeInventoryObject(int idx) {

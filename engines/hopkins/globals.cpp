@@ -80,8 +80,6 @@ Globals::Globals(HopkinsEngine *vm) {
 		Common::fill((byte *)&Liste2[i], (byte *)&Liste2[i] + sizeof(ListeItem), 0);
 	for (int i = 0; i < 30; ++i)
 		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
-	for (int i = 0; i < 300; ++i)
-		Common::fill((byte *)&_objectAuthIcons[i], (byte *)&_objectAuthIcons[i] + sizeof(ObjectAuthIcon), 0);
 	for (int i = 0; i < 500; ++i)
 		_spriteSize[i] = 0;
 	for (int i = 0; i < 70; ++i)
@@ -95,7 +93,6 @@ Globals::Globals(HopkinsEngine *vm) {
 
 	_linuxEndDemoFl = false;
 	_speed = 1;
-	_curObjectFileNum = 0;
 	iRegul = 0;
 	_exitId = 0;
 	_characterSpriteBuf = 0;
@@ -129,7 +126,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	_levelSpriteBuf = NULL;
 	_saveData = NULL;
 	_answerBuffer = g_PTRNUL;
-	_objectDataBuf = NULL;
 	_characterSpriteBuf = NULL;
 	_optionDialogSpr = NULL;
 
@@ -146,7 +142,6 @@ Globals::~Globals() {
 	freeMemory(_levelSpriteBuf);
 	freeMemory((byte *)_saveData);
 	freeMemory(_answerBuffer);
-	freeMemory(_objectDataBuf);
 	freeMemory(_characterSpriteBuf);
 
 	clearVBob();
@@ -196,8 +191,6 @@ void Globals::clearAll() {
 	_vm->_fontManager->clearAll();
 
 	initVBob();
-	_objectDataBuf = g_PTRNUL;
-	_curObjectFileNum = 0;
 	_vm->_dialogsManager->clearAll();
 	_answerBuffer = g_PTRNUL;
 	_levelSpriteBuf = g_PTRNUL;
@@ -211,8 +204,6 @@ void Globals::clearAll() {
 	memset(_saveData, 0, sizeof(Savegame));
 
 	_vm->_eventsManager->clearAll();
-
-	_objectDataBuf = g_PTRNUL;
 }
 
 void Globals::loadCharacterData() {
@@ -266,26 +257,6 @@ void Globals::clearVBob() {
 		VBob[idx]._spriteData = g_PTRNUL;
 		VBob[idx]._oldSpriteData = g_PTRNUL;
 	}
-}
-
-// Load Object
-void Globals::loadObjects() {
-	byte *data = _vm->_fileManager->loadFile("OBJET.DAT");
-	byte *srcP = data;
-
-	for (int idx = 0; idx < 300; ++idx) {
-		ObjectAuthIcon *objectAuthIcon = &_objectAuthIcons[idx];
-		objectAuthIcon->_objectFileNum = *srcP++;
-		objectAuthIcon->_idx = *srcP++;
-		objectAuthIcon->_flag1 = *srcP++;
-		objectAuthIcon->_flag2 = *srcP++;
-		objectAuthIcon->_flag3 = *srcP++;
-		objectAuthIcon->_flag4 = *srcP++;
-		objectAuthIcon->_flag5 = *srcP++;
-		objectAuthIcon->_flag6 = *srcP++;
-	}
-
-	freeMemory(data);
 }
 
 byte *Globals::allocMemory(int count) {

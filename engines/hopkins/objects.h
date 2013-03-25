@@ -32,6 +32,17 @@
 #define MAX_SPRITE 5
 namespace Hopkins {
 
+struct ObjectAuthIcon {
+	byte _objectFileNum;
+	byte _idx;
+	byte _flag1;
+	byte _flag2;
+	byte _flag3;
+	byte _flag4;
+	byte _flag5;
+	byte _flag6;
+};
+
 struct SpriteItem {
 	int _animationType;
 	const byte *_spriteData;
@@ -111,6 +122,9 @@ private:
 	byte *_hidingItemData[6];
 	HidingItem _hidingItem[25];
 	bool _hidingActiveFl;
+	ObjectAuthIcon _objectAuthIcons[300];
+	int _curObjectFileNum;
+	byte *_objectDataBuf;
 
 	void sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	void removeObjectDataBuf();
@@ -238,6 +252,7 @@ public:
 	void doActionLeft(int idx);
 	void doActionDiagRight(int idx);
 	void doActionDiagLeft(int idx);
+	void loadObjects();
 	byte *loadObjectFromFile(int objIndex, bool mode);
 	void resetHidingItems();
 	void resetHidingUseCount(int idx);

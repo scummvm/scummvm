@@ -63,17 +63,6 @@ struct VBobItem {
 	byte *_oldSpriteData;
 };
 
-struct ObjectAuthIcon {
-	byte _objectFileNum;
-	byte _idx;
-	byte _flag1;
-	byte _flag2;
-	byte _flag3;
-	byte _flag4;
-	byte _flag5;
-	byte _flag6;
-};
-
 /**
  * Mode for SortItem records
  */
@@ -271,9 +260,6 @@ public:
 	bool _freezeCharacterFl;
 	bool _checkDistanceFl;
 	BqeAnimItem _animBqe[35];
-	ObjectAuthIcon _objectAuthIcons[300];
-	int _curObjectFileNum;
-	byte *_objectDataBuf;
 	byte *_characterSpriteBuf;
 	Common::String _zoneFilename;
 	Common::String _textFilename;
@@ -290,7 +276,6 @@ public:
 	byte *allocMemory(int count);
 	byte *freeMemory(byte *p);
 	void setConfig();
-	void loadObjects();
 	void clearAll();
 	void loadCharacterData();
 	void clearVBob();

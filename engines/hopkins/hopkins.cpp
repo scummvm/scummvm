@@ -131,7 +131,7 @@ Common::Error HopkinsEngine::run() {
 }
 
 bool HopkinsEngine::runWin95Demo() {
-	_globals->loadObjects();
+	_objectsManager->loadObjects();
 	_objectsManager->changeObject(14);
 	_objectsManager->addObject(14);
 	_objectsManager->_helicopterFl = false;
@@ -430,7 +430,7 @@ bool HopkinsEngine::runWin95Demo() {
 }
 
 bool HopkinsEngine::runLinuxDemo() {
-	_globals->loadObjects();
+	_objectsManager->loadObjects();
 	_objectsManager->changeObject(14);
 	_objectsManager->addObject(14);
 	_objectsManager->_helicopterFl = false;
@@ -754,7 +754,7 @@ bool HopkinsEngine::runFull() {
 	if (getPlatform() == Common::kPlatformLinux)
 		_soundManager->playSound(16);
 
-	_globals->loadObjects();
+	_objectsManager->loadObjects();
 	_objectsManager->changeObject(14);
 	_objectsManager->addObject(14);
 
