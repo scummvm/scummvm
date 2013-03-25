@@ -1030,8 +1030,8 @@ void ObjectsManager::displayBobAnim() {
 		byte *dataPtr = _bob[idx]._animData + 20;
 		int dataIdx = _bob[idx]._animDataIdx;
 		_bob[idx]._xp = READ_LE_INT16(dataPtr + 2 * dataIdx);
-		if (_vm->_objectsManager->_lockedAnims[idx]._enableFl)
-			_bob[idx]._xp = _vm->_objectsManager->_lockedAnims[idx]._posX;
+		if (_lockedAnims[idx]._enableFl)
+			_bob[idx]._xp = _lockedAnims[idx]._posX;
 		if ( PERSO_ON && idx > 20 )
 			_bob[idx]._xp += _vm->_eventsManager->_startPos.x;
 
@@ -1063,8 +1063,8 @@ void ObjectsManager::displayBobAnim() {
 				byte *bobData = _bob[idx]._animData + 20;
 				_bob[idx]._xp = READ_LE_INT16(bobData);
 
-				if (_vm->_objectsManager->_lockedAnims[idx]._enableFl)
-					_bob[idx]._xp = _vm->_objectsManager->_lockedAnims[idx]._posX;
+				if (_lockedAnims[idx]._enableFl)
+					_bob[idx]._xp = _lockedAnims[idx]._posX;
 				if (PERSO_ON && idx > 20)
 					_bob[idx]._xp += _vm->_eventsManager->_startPos.x;
 
@@ -3729,8 +3729,8 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 }
 
 void ObjectsManager::lockAnimX(int idx, int x) {
-	_vm->_objectsManager->_lockedAnims[idx]._enableFl = true;
-	_vm->_objectsManager->_lockedAnims[idx]._posX = x;
+	_lockedAnims[idx]._enableFl = true;
+	_lockedAnims[idx]._posX = x;
 }
 
 /**
@@ -4003,8 +4003,8 @@ void ObjectsManager::loadHidingItems(const Common::String &file) {
 			_hidingItem[i]._useCount = 0;
 		} else {
 			_hidingItem[i]._spriteData = spriteData;
-			_hidingItem[i]._width = _vm->_objectsManager->getWidth(spriteData, _hidingItem[i]._spriteIndex);
-			_hidingItem[i]._height = _vm->_objectsManager->getHeight(spriteData, _hidingItem[i]._spriteIndex);
+			_hidingItem[i]._width = getWidth(spriteData, _hidingItem[i]._spriteIndex);
+			_hidingItem[i]._height = getHeight(spriteData, _hidingItem[i]._spriteIndex);
 			_hidingItem[i]._useCount = 1;
 		}
 
