@@ -2039,7 +2039,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 	_graphicsManager->displayAllBob();
 	_objectsManager->loadLinkFile("IM92");
 
-	for (int cpt = 0; cpt <= 4; cpt++)
+	for (int cpt = 0; cpt <= 4 && !shouldQuit(); cpt++) 
 		_eventsManager->refreshScreenAndEvents();
 
 	_graphicsManager->fadeInLong();
@@ -2047,14 +2047,16 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 
 	do
 		_eventsManager->refreshScreenAndEvents();
-	while (_objectsManager->getBobAnimDataIdx(8) != 22);
+	while (!shouldQuit() && _objectsManager->getBobAnimDataIdx(8) != 22);
 
-	_graphicsManager->fadeOutLong();
-	_graphicsManager->endDisplayBob();
-	_objectsManager->resetHidingItems();
-	_globals->_disableInventFl = false;
-	_globals->_exitId = 93;
-	_globals->iRegul = 0;
+	if (!shouldQuit()) {
+		_graphicsManager->fadeOutLong();
+		_graphicsManager->endDisplayBob();
+		_objectsManager->resetHidingItems();
+		_globals->_disableInventFl = false;
+		_globals->_exitId = 93;
+		_globals->iRegul = 0;
+	}
 }
 
 void HopkinsEngine::playEnding() {

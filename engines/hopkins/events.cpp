@@ -420,11 +420,11 @@ void EventsManager::refreshScreenAndEvents() {
 	bool externalLoopFl = false;
 	do {
 		while (!_vm->shouldQuit()) {
-			checkForNextFrameCounter();
+			pollEvents();
 			bool innerLoopFl = false;
 
-			while (_breakoutFl || _vm->_globals->iRegul != 1) {
-				checkForNextFrameCounter();
+			while (!_vm->shouldQuit() && (_breakoutFl || _vm->_globals->iRegul != 1)) {
+				pollEvents();
 
 				if (!_breakoutFl) {
 					innerLoopFl = true;
