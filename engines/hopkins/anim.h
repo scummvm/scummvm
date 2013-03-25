@@ -30,6 +30,19 @@
 
 namespace Hopkins {
 
+struct BankItem {
+	byte *_data;
+	bool _loadedFl;
+	Common::String _filename;
+	int _fileHeader;
+	int _objDataIdx;
+};
+
+struct BqeAnimItem {
+	byte *_data;
+	bool _enabledFl;
+};
+
 class HopkinsEngine;
 
 class AnimationManager {
@@ -38,11 +51,16 @@ private:
 
 	HopkinsEngine *_vm;
 
+	void initAnimBqe();
 	int loadSpriteBank(int idx, const Common::String &filename);
 	void searchAnim(const byte *data, int animIndex, int count);
 
 public:
+	BqeAnimItem _animBqe[35];
+	BankItem Bank[8];
+
 	AnimationManager(HopkinsEngine *vm);
+	void clearAll();
 
 	void loadAnim(const Common::String &animName);
 	void clearAnim();

@@ -91,9 +91,48 @@ struct BobItem {
 	int _zoomOutFactor;
 };
 
+struct HidingItem {
+	int _x;
+	int _y;
+	int _spriteIndex;
+	int _width;
+	int _height;
+	int _useCount;
+	byte *_spriteData;
+	bool _resetUseCount;
+	int _yOffset;
+};
+
 struct LockAnimItem {
 	bool _enableFl;
 	int _posX;
+};
+
+struct VBobItem {
+	byte *_spriteData;
+	int _displayMode;
+	int _xp;
+	int _yp;
+	int _frameIndex;
+	byte *_surface;
+	int _oldX;
+	int _oldY;
+	int _oldFrameIndex;
+	byte *_oldSpriteData;
+};
+
+/**
+ * Mode for SortItem records
+ */
+enum SortMode { SORT_NONE = 0, SORT_BOB = 1, SORT_SPRITE = 2, SORT_HIDING = 3 };
+
+/**
+ * Structure to represent a pending display of either a Bob, Sprite, or Cache Item.
+ */
+struct SortItem {
+	SortMode _sortMode;
+	int _index;
+	int _priority;
 };
 
 class HopkinsEngine;
@@ -125,6 +164,10 @@ private:
 	ObjectAuthIcon _objectAuthIcons[300];
 	int _curObjectFileNum;
 	byte *_objectDataBuf;
+	VBobItem VBob[30];
+
+	void initVBob();
+	void clearVBob();
 
 	void sprite_alone(const byte *objectData, byte *sprite, int objIndex);
 	void removeObjectDataBuf();

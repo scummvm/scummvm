@@ -70,16 +70,10 @@ Globals::Globals(HopkinsEngine *vm) {
 	strcpy((char *)g_PTRNUL, "POINTERNULL");
 
 	// Initialize array properties
-	for (int i = 0; i < 35; ++i)
-		Common::fill((byte *)&_animBqe[i], (byte *)&_animBqe[i] + sizeof(BqeAnimItem), 0);
-	for (int i = 0; i < 8; ++i)
-		Common::fill((byte *)&Bank[i], (byte *)&Bank[i] + sizeof(BankItem), 0);
 	for (int i = 0; i < 6; ++i)
 		Common::fill((byte *)&Liste[i], (byte *)&Liste[i] + sizeof(ListeItem), 0);
 	for (int i = 0; i < 35; ++i)
 		Common::fill((byte *)&Liste2[i], (byte *)&Liste2[i] + sizeof(ListeItem), 0);
-	for (int i = 0; i < 30; ++i)
-		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
 	for (int i = 0; i < 500; ++i)
 		_spriteSize[i] = 0;
 	for (int i = 0; i < 70; ++i)
@@ -143,9 +137,6 @@ Globals::~Globals() {
 	freeMemory((byte *)_saveData);
 	freeMemory(_answerBuffer);
 	freeMemory(_characterSpriteBuf);
-
-	clearVBob();
-
 	free(g_PTRNUL);
 }
 
@@ -186,11 +177,7 @@ void Globals::setConfig() {
 }
 
 void Globals::clearAll() {
-	initAnimBqe();
-
 	_vm->_fontManager->clearAll();
-
-	initVBob();
 	_vm->_dialogsManager->clearAll();
 	_answerBuffer = g_PTRNUL;
 	_levelSpriteBuf = g_PTRNUL;
@@ -219,44 +206,6 @@ void Globals::loadCharacterData() {
 
 	_vm->_objectsManager->resetOldFrameIndex();
 	_vm->_objectsManager->resetOldDirection();
-}
-
-void Globals::initAnimBqe() {
-	for (int idx = 0; idx < 35; ++idx) {
-		_animBqe[idx]._data = g_PTRNUL;
-		_animBqe[idx]._enabledFl = false;
-	}
-
-	for (int idx = 0; idx < 8; ++idx) {
-		Bank[idx]._data = g_PTRNUL;
-		Bank[idx]._loadedFl = false;
-		Bank[idx]._filename = "";
-		Bank[idx]._fileHeader = 0;
-	}
-}
-
-void Globals::initVBob() {
-	for (int idx = 0; idx < 30; ++idx) {
-		VBob[idx]._displayMode = 0;
-		VBob[idx]._xp = 0;
-		VBob[idx]._yp = 0;
-		VBob[idx]._frameIndex = 0;
-		VBob[idx]._surface = g_PTRNUL;
-		VBob[idx]._spriteData = g_PTRNUL;
-		VBob[idx]._oldSpriteData = g_PTRNUL;
-	}
-}
-
-void Globals::clearVBob() {
-	for (int idx = 0; idx < 30; ++idx) {
-		VBob[idx]._displayMode = 0;
-		VBob[idx]._xp = 0;
-		VBob[idx]._yp = 0;
-		VBob[idx]._frameIndex = 0;
-		VBob[idx]._surface = freeMemory(VBob[idx]._surface);
-		VBob[idx]._spriteData = g_PTRNUL;
-		VBob[idx]._oldSpriteData = g_PTRNUL;
-	}
 }
 
 byte *Globals::allocMemory(int count) {

@@ -38,6 +38,14 @@ namespace Hopkins {
 AnimationManager::AnimationManager(HopkinsEngine *vm) {
 	_vm = vm;
 	_clearAnimationFl = false;
+	for (int i = 0; i < 8; ++i)
+		Common::fill((byte *)&Bank[i], (byte *)&Bank[i] + sizeof(BankItem), 0);
+	for (int i = 0; i < 35; ++i)
+		Common::fill((byte *)&_animBqe[i], (byte *)&_animBqe[i] + sizeof(BqeAnimItem), 0);
+}
+
+void AnimationManager::clearAll() {
+	initAnimBqe();
 }
 
 /**
@@ -475,15 +483,15 @@ void AnimationManager::loadAnim(const Common::String &animName) {
  */
 void AnimationManager::clearAnim() {
 	for (int idx = 0; idx < 35; ++idx) {
-		_vm->_globals->_animBqe[idx]._data = _vm->_globals->freeMemory(_vm->_globals->_animBqe[idx]._data);
-		_vm->_globals->_animBqe[idx]._enabledFl = false;
+		_animBqe[idx]._data = _vm->_globals->freeMemory(_animBqe[idx]._data);
+		_animBqe[idx]._enabledFl = false;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
-		_vm->_globals->Bank[idx]._data = _vm->_globals->freeMemory(_vm->_globals->Bank[idx]._data);
-		_vm->_globals->Bank[idx]._loadedFl = false;
-		_vm->_globals->Bank[idx]._filename = "";
-		_vm->_globals->Bank[idx]._fileHeader = 0;
+		Bank[idx]._data = _vm->_globals->freeMemory(Bank[idx]._data);
+		Bank[idx]._loadedFl = false;
+		Bank[idx]._filename = "";
+		Bank[idx]._fileHeader = 0;
 	}
 }
 
@@ -492,24 +500,24 @@ void AnimationManager::clearAnim() {
  */
 int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	int result = 0;
-	_vm->_globals->Bank[idx]._loadedFl = true;
-	_vm->_globals->Bank[idx]._filename = filename;
+	Bank[idx]._loadedFl = true;
+	Bank[idx]._filename = filename;
 
 	byte *fileDataPtr = _vm->_fileManager->loadFile(filename);
 
-	_vm->_globals->Bank[idx]._fileHeader = 0;
+	Bank[idx]._fileHeader = 0;
 	if (fileDataPtr[1] == 'L' && fileDataPtr[2] == 'E')
-		_vm->_globals->Bank[idx]._fileHeader = 1;
+		Bank[idx]._fileHeader = 1;
 	else if (fileDataPtr[1] == 'O' && fileDataPtr[2] == 'R')
-		_vm->_globals->Bank[idx]._fileHeader = 2;
+		Bank[idx]._fileHeader = 2;
 
-	if (!_vm->_globals->Bank[idx]._fileHeader) {
+	if (!Bank[idx]._fileHeader) {
 		_vm->_globals->freeMemory(fileDataPtr);
-		_vm->_globals->Bank[idx]._loadedFl = false;
+		Bank[idx]._loadedFl = false;
 		result = -1;
 	}
 	
-	_vm->_globals->Bank[idx]._data = fileDataPtr;
+	Bank[idx]._data = fileDataPtr;
 
 	int objectDataIdx = 0;
 	for(objectDataIdx = 0; objectDataIdx <= 249; objectDataIdx++) {
@@ -521,12 +529,12 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 
 	if (objectDataIdx > 249) {
 		_vm->_globals->freeMemory(fileDataPtr);
-		_vm->_globals->Bank[idx]._loadedFl = false;
+		Bank[idx]._loadedFl = false;
 		result = -2;
 	}
-	_vm->_globals->Bank[idx]._objDataIdx = objectDataIdx;
+	Bank[idx]._objDataIdx = objectDataIdx;
 
-	Common::String ofsFilename = _vm->_globals->Bank[idx]._filename;
+	Common::String ofsFilename = Bank[idx]._filename;
 	char ch;
 	do {
 		ch = ofsFilename.lastChar();
@@ -538,15 +546,15 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 	if (f.exists(ofsFilename)) {
 		byte *ofsData = _vm->_fileManager->loadFile(ofsFilename);
 		byte *curOfsData = ofsData;
-		for (int objIdx = 0; objIdx < _vm->_globals->Bank[idx]._objDataIdx; ++objIdx, curOfsData += 8) {
+		for (int objIdx = 0; objIdx < Bank[idx]._objDataIdx; ++objIdx, curOfsData += 8) {
 			int x1 = READ_LE_INT16(curOfsData);
 			int y1 = READ_LE_INT16(curOfsData + 2);
 			int x2 = READ_LE_INT16(curOfsData + 4);
 			int y2 = READ_LE_INT16(curOfsData + 6);
 
-			_vm->_objectsManager->setOffsetXY(_vm->_globals->Bank[idx]._data, objIdx, x1, y1, 0);
-			if (_vm->_globals->Bank[idx]._fileHeader == 2)
-				_vm->_objectsManager->setOffsetXY(_vm->_globals->Bank[idx]._data, objIdx, x2, y2, 1);
+			_vm->_objectsManager->setOffsetXY(Bank[idx]._data, objIdx, x1, y1, 0);
+			if (Bank[idx]._fileHeader == 2)
+				_vm->_objectsManager->setOffsetXY(Bank[idx]._data, objIdx, x2, y2, 1);
 		}
 
 		_vm->_globals->freeMemory(ofsData);
@@ -571,18 +579,18 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) 
 					if (READ_BE_UINT32(&data[curBufferPos]) == MKTAG('A', 'N', 'I', 'M') || READ_BE_UINT24(&data[curBufferPos]) == MKTAG24('F', 'I', 'N'))
 						innerLoopCond = true;
 					if (bufSize < curBufferPos) {
-						_vm->_globals->_animBqe[animIndex]._enabledFl = false;
-						_vm->_globals->_animBqe[animIndex]._data = g_PTRNUL;
+						_animBqe[animIndex]._enabledFl = false;
+						_animBqe[animIndex]._data = g_PTRNUL;
 						return;
 					}
 					++curBufferPos;
 					++count;
 				} while (!innerLoopCond);
-				_vm->_globals->_animBqe[animIndex]._data = _vm->_globals->allocMemory(count + 50);
-				_vm->_globals->_animBqe[animIndex]._enabledFl = true;
-				memcpy(_vm->_globals->_animBqe[animIndex]._data, data + dataIdx + 5, 20);
+				_animBqe[animIndex]._data = _vm->_globals->allocMemory(count + 50);
+				_animBqe[animIndex]._enabledFl = true;
+				memcpy(_animBqe[animIndex]._data, data + dataIdx + 5, 20);
 
-				byte *dataP = _vm->_globals->_animBqe[animIndex]._data;
+				byte *dataP = _animBqe[animIndex]._data;
 				int curDestDataIndx = 20;
 				int curSrcDataIndx = dataIdx + 25;
 
@@ -902,6 +910,20 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 	f.close();
 	_vm->_eventsManager->_mouseFl = true;
+}
+
+void AnimationManager::initAnimBqe() {
+	for (int idx = 0; idx < 35; ++idx) {
+		_animBqe[idx]._data = g_PTRNUL;
+		_animBqe[idx]._enabledFl = false;
+	}
+
+	for (int idx = 0; idx < 8; ++idx) {
+		Bank[idx]._data = g_PTRNUL;
+		Bank[idx]._loadedFl = false;
+		Bank[idx]._filename = "";
+		Bank[idx]._fileHeader = 0;
+	}
 }
 
 } // End of namespace Hopkins

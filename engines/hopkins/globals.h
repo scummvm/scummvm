@@ -29,64 +29,12 @@
 
 namespace Hopkins {
 
-struct BqeAnimItem {
-	byte *_data;
-	bool _enabledFl;
-};
-
-struct BankItem {
-	byte *_data;
-	bool _loadedFl;
-	Common::String _filename;
-	int _fileHeader;
-	int _objDataIdx;
-};
-
 struct ListeItem {
 	bool _visibleFl;
 	int _posX;
 	int _posY;
 	int _width;
 	int _height;
-};
-
-struct VBobItem {
-	byte *_spriteData;
-	int _displayMode;
-	int _xp;
-	int _yp;
-	int _frameIndex;
-	byte *_surface;
-	int _oldX;
-	int _oldY;
-	int _oldFrameIndex;
-	byte *_oldSpriteData;
-};
-
-/**
- * Mode for SortItem records
- */
-enum SortMode { SORT_NONE = 0, SORT_BOB = 1, SORT_SPRITE = 2, SORT_HIDING = 3 };
-
-/**
- * Structure to represent a pending display of either a Bob, Sprite, or Cache Item.
- */
-struct SortItem {
-	SortMode _sortMode;
-	int _index;
-	int _priority;
-};
-
-struct HidingItem {
-	int _x;
-	int _y;
-	int _spriteIndex;
-	int _width;
-	int _height;
-	int _useCount;
-	byte *_spriteData;
-	bool _resetUseCount;
-	int _yOffset;
 };
 
 struct HopkinsItem {
@@ -211,9 +159,6 @@ class Globals {
 private:
 	HopkinsEngine *_vm;
 
-	void initAnimBqe();
-	void initVBob();
-
 public:
 	bool _disableInventFl;
 	bool _cityMapEnabledFl;
@@ -259,7 +204,6 @@ public:
 	bool _actionMoveTo;
 	bool _freezeCharacterFl;
 	bool _checkDistanceFl;
-	BqeAnimItem _animBqe[35];
 	byte *_characterSpriteBuf;
 	Common::String _zoneFilename;
 	Common::String _textFilename;
@@ -268,8 +212,6 @@ public:
 	int iRegul;
 	ListeItem Liste[6];
 	ListeItem Liste2[35];
-	BankItem Bank[8];
-	VBobItem VBob[30];
 
 	Globals(HopkinsEngine *vm);
 	~Globals();
@@ -278,7 +220,6 @@ public:
 	void setConfig();
 	void clearAll();
 	void loadCharacterData();
-	void clearVBob();
 
 	void B_CACHE_OFF(int idx);
 };

@@ -45,6 +45,7 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 		Common::fill((byte *)&_bob[i], (byte *)&_bob[i] + sizeof(BobItem), 0);
 
 	for (int i = 0; i < 30; ++i) {
+		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
 		Common::fill((byte *)&_lockedAnims[i], (byte *)&_lockedAnims[i] + sizeof(LockAnimItem), 0);
 	}
 
@@ -116,6 +117,7 @@ ObjectsManager::~ObjectsManager() {
 	_vm->_globals->freeMemory(_gestureBuf);
 	_vm->_globals->freeMemory(_headSprites);
 	_vm->_globals->freeMemory(_objectDataBuf);
+	clearVBob();
 
 	for (int idx = 0; idx < 6; ++idx)
 		_hidingItemData[idx] = _vm->_globals->freeMemory(_hidingItemData[idx]);
@@ -132,6 +134,7 @@ void ObjectsManager::clearAll() {
 		_hidingItemData[idx] = _vm->_globals->freeMemory(_hidingItemData[idx]);
 
 	_objectDataBuf = _vm->_globals->freeMemory(_objectDataBuf);
+	initVBob();
 }
 
 // Load Object
@@ -652,11 +655,11 @@ void ObjectsManager::displayBob(int idx) {
 
 	resetBob(idx);
 
-	const byte *data = _vm->_globals->_animBqe[idx]._data;
+	const byte *data = _vm->_animationManager->_animBqe[idx]._data;
 	int bankIdx = READ_LE_INT16(data);
 	if (!bankIdx)
 		return;
-	if ((!_vm->_globals->Bank[bankIdx]._loadedFl) || (!READ_LE_UINT16(data + 24)))
+	if ((!_vm->_animationManager->Bank[bankIdx]._loadedFl) || (!READ_LE_UINT16(data + 24)))
 		return;
 
 
@@ -672,15 +675,15 @@ void ObjectsManager::displayBob(int idx) {
 
 	_bob[idx]._isSpriteFl = false;
 
-	if (_vm->_globals->Bank[bankIdx]._fileHeader == 1) {
+	if (_vm->_animationManager->Bank[bankIdx]._fileHeader == 1) {
 		_bob[idx]._isSpriteFl = true;
 		_bob[idx]._zoomFactor = 0;
 		_bob[idx]._flipFl = false;
 	}
 
-	_bob[idx]._animData = _vm->_globals->_animBqe[idx]._data;
+	_bob[idx]._animData = _vm->_animationManager->_animBqe[idx]._data;
 	_bob[idx]._bobMode = 10;
-	_bob[idx]._spriteData = _vm->_globals->Bank[bankIdx]._data;
+	_bob[idx]._spriteData = _vm->_animationManager->Bank[bankIdx]._data;
 
 	_bob[idx]._bobModeChange = bobModeChange;
 	_bob[idx].field20 = newField20;
@@ -1139,7 +1142,7 @@ void ObjectsManager::displayVBob() {
 	int width, height;
 
 	for (int idx = 0; idx <= 29; idx++) {
-		VBobItem *vbob = &_vm->_globals->VBob[idx];
+		VBobItem *vbob = &VBob[idx];
 		if (vbob->_displayMode == 4) {
 			width = getWidth(vbob->_spriteData, vbob->_frameIndex);
 			height = getHeight(vbob->_spriteData, vbob->_frameIndex);
@@ -2120,7 +2123,7 @@ void ObjectsManager::clearScreen() {
 	_vm->_graphicsManager->endDisplayBob();
 	_vm->_fontManager->hideText(5);
 	_vm->_fontManager->hideText(9);
-	_vm->_globals->clearVBob();
+	clearVBob();
 	_vm->_animationManager->clearAnim();
 	_vm->_linesManager->clearAllZones();
 	_vm->_linesManager->resetLines();
@@ -2776,7 +2779,7 @@ void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
 
-	VBobItem *vbob = &_vm->_globals->VBob[idx];
+	VBobItem *vbob = &VBob[idx];
 	if (vbob->_displayMode <= 1) {
 		vbob->_displayMode = 1;
 		vbob->_xp = xp;
@@ -2805,7 +2808,7 @@ void ObjectsManager::VBOB_OFF(int idx) {
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
 
-	VBobItem *vbob = &_vm->_globals->VBob[idx];
+	VBobItem *vbob = &VBob[idx];
 	if (vbob->_displayMode <= 1)
 		vbob->_displayMode = 0;
 	else
@@ -4005,6 +4008,30 @@ void ObjectsManager::loadHidingItems(const Common::String &file) {
 	}
 	enableHiding();
 	_vm->_globals->freeMemory(ptr);
+}
+
+void ObjectsManager::initVBob() {
+	for (int idx = 0; idx < 30; ++idx) {
+		VBob[idx]._displayMode = 0;
+		VBob[idx]._xp = 0;
+		VBob[idx]._yp = 0;
+		VBob[idx]._frameIndex = 0;
+		VBob[idx]._surface = g_PTRNUL;
+		VBob[idx]._spriteData = g_PTRNUL;
+		VBob[idx]._oldSpriteData = g_PTRNUL;
+	}
+}
+
+void ObjectsManager::clearVBob() {
+	for (int idx = 0; idx < 30; ++idx) {
+		VBob[idx]._displayMode = 0;
+		VBob[idx]._xp = 0;
+		VBob[idx]._yp = 0;
+		VBob[idx]._frameIndex = 0;
+		VBob[idx]._surface = _vm->_globals->freeMemory(VBob[idx]._surface);
+		VBob[idx]._spriteData = g_PTRNUL;
+		VBob[idx]._oldSpriteData = g_PTRNUL;
+	}
 }
 
 void ObjectsManager::enableHiding() {
