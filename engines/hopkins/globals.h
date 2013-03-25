@@ -29,14 +29,6 @@
 
 namespace Hopkins {
 
-struct ListeItem {
-	bool _visibleFl;
-	int _posX;
-	int _posY;
-	int _width;
-	int _height;
-};
-
 struct HopkinsItem {
 	int _speedX;
 	int _speedY;
@@ -210,8 +202,6 @@ public:
 	byte *_levelSpriteBuf;
 
 	int iRegul;
-	ListeItem Liste[6];
-	ListeItem Liste2[35];
 
 	Globals(HopkinsEngine *vm);
 	~Globals();
@@ -220,8 +210,6 @@ public:
 	void setConfig();
 	void clearAll();
 	void loadCharacterData();
-
-	void B_CACHE_OFF(int idx);
 };
 
 // Global null pointer

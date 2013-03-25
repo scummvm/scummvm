@@ -62,6 +62,12 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	for (int i = 0; i < 6; ++i)
 		_hidingItemData[i] = g_PTRNUL;
 
+	for (int i = 0; i < 6; ++i)
+		Common::fill((byte *)&Liste[i], (byte *)&Liste[i] + sizeof(ListeItem), 0);
+
+	for (int i = 0; i < 35; ++i)
+		Common::fill((byte *)&Liste2[i], (byte *)&Liste2[i] + sizeof(ListeItem), 0);
+
 	_helicopterFl = false;
 	_priorityFl = false;
 	_oldBorderPos = Common::Point(0, 0);
@@ -396,19 +402,19 @@ void ObjectsManager::displaySprite() {
 
 	if (!PERSO_ON) {
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
-			if (_vm->_globals->Liste[idx]._visibleFl) {
-				clipX = _vm->_globals->Liste[idx]._posX - 2;
+			if (Liste[idx]._visibleFl) {
+				clipX = Liste[idx]._posX - 2;
 				if (clipX < _vm->_graphicsManager->_minX)
 					clipX = _vm->_graphicsManager->_minX;
 
-				clipY = _vm->_globals->Liste[idx]._posY - 2;
+				clipY = Liste[idx]._posY - 2;
 				if (clipY < _vm->_graphicsManager->_minY)
 					clipY = _vm->_graphicsManager->_minY;
 
 				_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, clipX, clipY,
-					_vm->_globals->Liste[idx]._width + 4, _vm->_globals->Liste[idx]._height + 4,
+					Liste[idx]._width + 4, Liste[idx]._height + 4,
 					_vm->_graphicsManager->_vesaBuffer, clipX, clipY);
-				_vm->_globals->Liste[idx]._visibleFl = false;
+				Liste[idx]._visibleFl = false;
 			}
 		}
 	}
@@ -419,7 +425,7 @@ void ObjectsManager::displaySprite() {
 	if (!PERSO_ON) {
 		// Handle drawing characters on the screen
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
-			_vm->_globals->Liste[idx]._visibleFl = false;
+			Liste[idx]._visibleFl = false;
 			if (_sprite[idx]._animationType == 1) {
 				computeSprite(idx);
 				if (_sprite[idx]._activeFl)
@@ -569,7 +575,7 @@ void ObjectsManager::initBob() {
 
 void ObjectsManager::resetBob(int idx) {
 	BobItem &bob = _bob[idx];
-	ListeItem &item = _vm->_globals->Liste2[idx];
+	ListeItem &item = Liste2[idx];
 
 	bob._bobMode = 0;
 	bob._spriteData = g_PTRNUL;
@@ -613,38 +619,38 @@ void ObjectsManager::setBobInfo(int idx) {
 			_bob[idx]._zoomOutFactor, _bob[idx]._zooInmFactor,
 			_bob[idx]._flipFl);
 
-	_vm->_globals->Liste2[idx]._visibleFl = true;
-	_vm->_globals->Liste2[idx]._posX = xp;
-	_vm->_globals->Liste2[idx]._posY = yp;
+	Liste2[idx]._visibleFl = true;
+	Liste2[idx]._posX = xp;
+	Liste2[idx]._posY = yp;
 
-	_vm->_globals->Liste2[idx]._width = _bob[idx]._oldWidth;
-	_vm->_globals->Liste2[idx]._height = _bob[idx]._oldHeight;
+	Liste2[idx]._width = _bob[idx]._oldWidth;
+	Liste2[idx]._height = _bob[idx]._oldHeight;
 
-	if (_vm->_globals->Liste2[idx]._posX < _vm->_graphicsManager->_minX) {
-		_vm->_globals->Liste2[idx]._width -= _vm->_graphicsManager->_minX - _vm->_globals->Liste2[idx]._posX;
-		_vm->_globals->Liste2[idx]._posX = _vm->_graphicsManager->_minX;
+	if (Liste2[idx]._posX < _vm->_graphicsManager->_minX) {
+		Liste2[idx]._width -= _vm->_graphicsManager->_minX - Liste2[idx]._posX;
+		Liste2[idx]._posX = _vm->_graphicsManager->_minX;
 	}
 
-	if (_vm->_globals->Liste2[idx]._posY < _vm->_graphicsManager->_minY) {
-		_vm->_globals->Liste2[idx]._height -= _vm->_graphicsManager->_minY - _vm->_globals->Liste2[idx]._posY;
-		_vm->_globals->Liste2[idx]._posY = _vm->_graphicsManager->_minY;
+	if (Liste2[idx]._posY < _vm->_graphicsManager->_minY) {
+		Liste2[idx]._height -= _vm->_graphicsManager->_minY - Liste2[idx]._posY;
+		Liste2[idx]._posY = _vm->_graphicsManager->_minY;
 	}
 
-	if (_vm->_globals->Liste2[idx]._width + _vm->_globals->Liste2[idx]._posX > _vm->_graphicsManager->_maxX)
-		_vm->_globals->Liste2[idx]._width = _vm->_graphicsManager->_maxX - _vm->_globals->Liste2[idx]._posX;
+	if (Liste2[idx]._width + Liste2[idx]._posX > _vm->_graphicsManager->_maxX)
+		Liste2[idx]._width = _vm->_graphicsManager->_maxX - Liste2[idx]._posX;
 
-	if (_vm->_globals->Liste2[idx]._height + _vm->_globals->Liste2[idx]._posY > _vm->_graphicsManager->_maxY)
-		_vm->_globals->Liste2[idx]._height = _vm->_graphicsManager->_maxY - _vm->_globals->Liste2[idx]._posY;
+	if (Liste2[idx]._height + Liste2[idx]._posY > _vm->_graphicsManager->_maxY)
+		Liste2[idx]._height = _vm->_graphicsManager->_maxY - Liste2[idx]._posY;
 
-	if (_vm->_globals->Liste2[idx]._width <= 0 || _vm->_globals->Liste2[idx]._height <= 0)
-		_vm->_globals->Liste2[idx]._visibleFl = false;
+	if (Liste2[idx]._width <= 0 || Liste2[idx]._height <= 0)
+		Liste2[idx]._visibleFl = false;
 
-	if (_vm->_globals->Liste2[idx]._visibleFl)
+	if (Liste2[idx]._visibleFl)
 		_vm->_graphicsManager->addDirtyRect(
-             _vm->_globals->Liste2[idx]._posX,
-             _vm->_globals->Liste2[idx]._posY,
-             _vm->_globals->Liste2[idx]._posX + _vm->_globals->Liste2[idx]._width,
-             _vm->_globals->Liste2[idx]._posY + _vm->_globals->Liste2[idx]._height);
+             Liste2[idx]._posX,
+             Liste2[idx]._posY,
+             Liste2[idx]._posX + Liste2[idx]._width,
+             Liste2[idx]._posY + Liste2[idx]._height);
 }
 
 void ObjectsManager::displayBob(int idx) {
@@ -783,9 +789,9 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 	_bob[idx]._zooInmFactor = posZoom;
 	_bob[idx]._zoomOutFactor = negZoom;
 
-	_vm->_globals->Liste2[idx]._visibleFl = true;
-	_vm->_globals->Liste2[idx]._posX = newX;
-	_vm->_globals->Liste2[idx]._posY = newY;
+	Liste2[idx]._visibleFl = true;
+	Liste2[idx]._posX = newX;
+	Liste2[idx]._posY = newY;
 
 	int width = getWidth(_bob[idx]._spriteData, _bob[idx]._frameIndex);
 	int height = getHeight(_bob[idx]._spriteData, _bob[idx]._frameIndex);
@@ -799,8 +805,8 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 		width = _vm->_graphicsManager->zoomOut(width, negZoom);
 	}
 
-	_vm->_globals->Liste2[idx]._width = width;
-	_vm->_globals->Liste2[idx]._height = height;
+	Liste2[idx]._width = width;
+	Liste2[idx]._height = height;
 	_bob[idx]._oldWidth = width;
 	_bob[idx]._oldHeight = height;
 }
@@ -859,7 +865,7 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, spr->_spriteData,
 		    spr->_destX + 300, spr->_destY + 300,  spr->_spriteIndex, spr->_reducePct, spr->_zoomPct, spr->_flipFl);
 
-	ListeItem *list = &_vm->_globals->Liste[idx];
+	ListeItem *list = &Liste[idx];
 	list->_width = spr->_width;
 	list->_height = spr->_height;
 
@@ -961,9 +967,9 @@ void ObjectsManager::computeSprite(int idx) {
 	spr->_zoomPct = zoomPercent;
 	spr->_reducePct = reducePercent;
 
-	_vm->_globals->Liste[idx]._visibleFl = true;
-	_vm->_globals->Liste[idx]._posX = newPosX;
-	_vm->_globals->Liste[idx]._posY = newPosY;
+	Liste[idx]._visibleFl = true;
+	Liste[idx]._posX = newPosX;
+	Liste[idx]._posY = newPosY;
 
 	int width = getWidth(spr->_spriteData, spr->_spriteIndex);
 	int height = getHeight(spr->_spriteData, spr->_spriteIndex);
@@ -1096,25 +1102,25 @@ void ObjectsManager::displayBobAnim() {
 		if (i > 20 || !PERSO_ON) {
 			if ((_bob[i]._bobMode == 10) && (_bob[i]._bobMode10)) {
 				if ((_bob[i]._bobModeChange != 2) && (_bob[i]._bobModeChange != 4)) {
-					if (_vm->_globals->Liste2[i]._visibleFl) {
+					if (Liste2[i]._visibleFl) {
 						_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen,
-							_vm->_globals->Liste2[i]._posX, _vm->_globals->Liste2[i]._posY,
-							_vm->_globals->Liste2[i]._width, _vm->_globals->Liste2[i]._height,
-							_vm->_graphicsManager->_vesaBuffer, _vm->_globals->Liste2[i]._posX,
-							_vm->_globals->Liste2[i]._posY);
-						_vm->_globals->Liste2[i]._visibleFl = false;
+							Liste2[i]._posX, Liste2[i]._posY,
+							Liste2[i]._width, Liste2[i]._height,
+							_vm->_graphicsManager->_vesaBuffer, Liste2[i]._posX,
+							Liste2[i]._posY);
+						Liste2[i]._visibleFl = false;
 					}
 				}
 			}
 
 			if (_bob[i]._bobMode == 11) {
-				if (_vm->_globals->Liste2[i]._visibleFl) {
+				if (Liste2[i]._visibleFl) {
 					_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen,
-						_vm->_globals->Liste2[i]._posX, _vm->_globals->Liste2[i]._posY,
-						_vm->_globals->Liste2[i]._width, _vm->_globals->Liste2[i]._height,
+						Liste2[i]._posX, Liste2[i]._posY,
+						Liste2[i]._width, Liste2[i]._height,
 						_vm->_graphicsManager->_vesaBuffer,
-						_vm->_globals->Liste2[i]._posX, _vm->_globals->Liste2[i]._posY);
-					_vm->_globals->Liste2[i]._visibleFl = false;
+						Liste2[i]._posX, Liste2[i]._posY);
+					Liste2[i]._visibleFl = false;
 				}
 
 				_bob[i]._bobMode = 0;
@@ -1247,7 +1253,7 @@ void ObjectsManager::clearSprite() {
 	}
 
 	for (int idx = 0; idx < MAX_SPRITE; idx++) {
-		ListeItem *list = &_vm->_globals->Liste[idx];
+		ListeItem *list = &Liste[idx];
 		list->_visibleFl = false;
 		list->_posX = 0;
 		list->_posY = 0;
@@ -1811,9 +1817,9 @@ void ObjectsManager::handleCityMap() {
 	_vm->_graphicsManager->displayAllBob();
 	_vm->_graphicsManager->initScreen("PLAN", 2, false);
 	for (int i = 0; i <= 15; i++)
-		_vm->_globals->B_CACHE_OFF(i);
-	_vm->_globals->B_CACHE_OFF(19);
-	_vm->_globals->B_CACHE_OFF(20);
+		B_CACHE_OFF(i);
+	B_CACHE_OFF(19);
+	B_CACHE_OFF(20);
 	enableHiding();
 
 	if (!_mapCarPosX && !_mapCarPosY) {
@@ -4032,6 +4038,11 @@ void ObjectsManager::clearVBob() {
 		VBob[idx]._spriteData = g_PTRNUL;
 		VBob[idx]._oldSpriteData = g_PTRNUL;
 	}
+}
+
+void ObjectsManager::B_CACHE_OFF(int idx) {
+	assert(idx < 36);
+	_bob[idx].field34 = true;
 }
 
 void ObjectsManager::enableHiding() {

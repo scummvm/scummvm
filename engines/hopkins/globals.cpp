@@ -70,10 +70,6 @@ Globals::Globals(HopkinsEngine *vm) {
 	strcpy((char *)g_PTRNUL, "POINTERNULL");
 
 	// Initialize array properties
-	for (int i = 0; i < 6; ++i)
-		Common::fill((byte *)&Liste[i], (byte *)&Liste[i] + sizeof(ListeItem), 0);
-	for (int i = 0; i < 35; ++i)
-		Common::fill((byte *)&Liste2[i], (byte *)&Liste2[i] + sizeof(ListeItem), 0);
 	for (int i = 0; i < 500; ++i)
 		_spriteSize[i] = 0;
 	for (int i = 0; i < 70; ++i)
@@ -219,11 +215,6 @@ byte *Globals::freeMemory(byte *p) {
 	if (p != g_PTRNUL)
 		free(p);
 	return g_PTRNUL;
-}
-
-void Globals::B_CACHE_OFF(int idx) {
-	assert(idx < 36);
-	_vm->_objectsManager->_bob[idx].field34 = true;
 }
 
 } // End of namespace Hopkins

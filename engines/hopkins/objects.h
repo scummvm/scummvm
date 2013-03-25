@@ -121,6 +121,14 @@ struct VBobItem {
 	byte *_oldSpriteData;
 };
 
+struct ListeItem {
+	bool _visibleFl;
+	int _posX;
+	int _posY;
+	int _width;
+	int _height;
+};
+
 /**
  * Mode for SortItem records
  */
@@ -164,7 +172,10 @@ private:
 	ObjectAuthIcon _objectAuthIcons[300];
 	int _curObjectFileNum;
 	byte *_objectDataBuf;
+
 	VBobItem VBob[30];
+	ListeItem Liste[6];
+	ListeItem Liste2[35];
 
 	void initVBob();
 	void clearVBob();
@@ -325,6 +336,7 @@ public:
 	void OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx);
 	void SPACTION1(byte *spriteData, const Common::String &animString, int speed);
 	void PARADISE();
+	void B_CACHE_OFF(int idx);
 };
 
 } // End of namespace Hopkins
