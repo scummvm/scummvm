@@ -63,12 +63,14 @@ private:
 	bool _clipFl;
 	int _specialWidth;
 
-	byte SD_PIXELS[PALETTE_SIZE * 2];
 	int _enlargedX, _enlargedY;
 	bool _enlargedXFl, _enlargedYFl;
 	int clip_x1, clip_y1;
 	int _reduceX, _reducedY;
 	int _zoomOutFactor;
+
+	byte SD_PIXELS[PALETTE_SIZE * 2];
+	bool MANU_SCROLL;
 
 	void loadScreen(const Common::String &file);
 	void loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
@@ -77,10 +79,10 @@ private:
 	void fadeOut(const byte *palette, int step, const byte *surface);
 	void changePalette(const byte *palette);
 	uint16 mapRGB(byte r, byte g, byte b);
+	void copy16bFromSurfaceScaleX2(const byte *surface);
 
 	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
 	void Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
-	void copy16bFromSurfaceScaleX2(const byte *surface);
 public:
 	int _lineNbr;
 	byte _colorTable[PALETTE_EXT_BLOCK_SIZE];
@@ -113,7 +115,6 @@ public:
 
 	int WinScan;
 	byte *PAL_PIXELS;
-	bool MANU_SCROLL;
 	int FADE_LINUX;
 public:
 	GraphicsManager(HopkinsEngine *vm);
@@ -165,13 +166,13 @@ public:
 	void endDisplayBob();
 	void updateScreen();
 	void reduceScreenPart(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
+	void setScreenWidth(int pitch);
 
 	void SETCOLOR3(int palIndex, int r, int g, int b);
 	void SETCOLOR4(int palIndex, int r, int g, int b);
 	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment = true);
 	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY);
-	void setScreenWidth(int pitch);
 	void Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);

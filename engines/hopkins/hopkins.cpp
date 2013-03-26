@@ -2457,14 +2457,11 @@ void HopkinsEngine::displayCredits(int startPosY, byte *buffer, char color) {
 		_globals->_creditsStartY = startPosY;
 		_globals->_creditsEndY = endPosY;
 	}
-	if (startPosX < _globals->_creditsStartX)
-		_globals->_creditsStartX = startPosX;
-	if (endPosX > _globals->_creditsEndX)
-		_globals->_creditsEndX = endPosX;
-	if (_globals->_creditsStartY > startPosY)
-		_globals->_creditsStartY = startPosY;
-	if (endPosY > _globals->_creditsEndY)
-		_globals->_creditsEndY = endPosY;
+
+	_globals->_creditsStartX = MIN(_globals->_creditsStartX, startPosX);
+	_globals->_creditsEndX = MAX(_globals->_creditsEndX, endPosX);
+	_globals->_creditsStartY = MIN(_globals->_creditsStartY, startPosY);
+	_globals->_creditsEndY = MAX(_globals->_creditsEndY, endPosY);
 
 	Common::String message = Common::String((char *)buffer);
 	_fontManager->displayText(startPosX, startPosY, message, color);

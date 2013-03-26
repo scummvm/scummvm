@@ -2698,14 +2698,10 @@ void LinesManager::CARRE_ZONE() {
 			int zoneX = *dataP++;
 			int zoneY = *dataP++;
 
-			if (curZone->_left >= zoneX)
-				curZone->_left = zoneX;
-			if (curZone->_right <= zoneX)
-				curZone->_right = zoneX;
-			if (curZone->_top >= zoneY)
-				curZone->_top = zoneY;
-			if (curZone->_bottom <= zoneY)
-				curZone->_bottom = zoneY;
+			curZone->_left = MIN(curZone->_left, zoneX);
+			curZone->_right = MAX(curZone->_right, zoneX);
+			curZone->_top = MIN(curZone->_top, zoneY);
+			curZone->_bottom = MAX(curZone->_bottom, zoneY);
 		}
 	}
 

@@ -456,10 +456,7 @@ void EventsManager::refreshScreenAndEvents() {
 			if (getMouseX() < _vm->_graphicsManager->_scrollPosX + 10)
 				_vm->_graphicsManager->_scrollPosX -= _vm->_graphicsManager->_scrollSpeed;
 		}
-		if (_vm->_graphicsManager->_scrollPosX < 0)
-			_vm->_graphicsManager->_scrollPosX = 0;
-		if (_vm->_graphicsManager->_scrollPosX > SCREEN_WIDTH)
-			_vm->_graphicsManager->_scrollPosX = SCREEN_WIDTH;
+		_vm->_graphicsManager->_scrollPosX = CLIP(_vm->_graphicsManager->_scrollPosX, 0, SCREEN_WIDTH);
 		if (_vm->_graphicsManager->_oldScrollPosX == _vm->_graphicsManager->_scrollPosX) {
 			_vm->_graphicsManager->displayDirtyRects();
 		} else {
