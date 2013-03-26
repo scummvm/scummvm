@@ -1987,7 +1987,6 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 
 	int clipX2 = x2;
 	int clipY2 = y2;
-	int superRouteIdx = 0;
 	if (x2 <= 14)
 		clipX2 = 15;
 	if (y2 <= 14)
@@ -2036,11 +2035,6 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	}
 	arrDelta[DIR_LEFT] = delta;
 
-	int curRouteDataIdx = 0;
-	int curRouteLineIdx = 0;
-	int curLineDataIdx = 0;
-	int curLineIdx = 0;
-
 	if (arrLineIdx[DIR_UP] == -1)
 		arrDelta[DIR_UP] = INVALID_LINE_VALUE;
 	if (arrLineIdx[DIR_RIGHT] == -1)
@@ -2050,6 +2044,8 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 	if (arrLineIdx[DIR_LEFT] == -1)
 		arrDelta[DIR_LEFT] = INVALID_LINE_VALUE;
 	if (arrLineIdx[DIR_UP] != -1 || arrLineIdx[DIR_RIGHT] != -1 || arrLineIdx[DIR_DOWN] != -1 || arrLineIdx[DIR_LEFT] != -1) {
+		int curLineDataIdx = 0;
+		int curLineIdx = 0;
 		if (arrLineIdx[DIR_DOWN] != -1 && arrDelta[DIR_UP] >= arrDelta[DIR_DOWN] && arrDelta[DIR_RIGHT] >= arrDelta[DIR_DOWN] && arrDelta[DIR_LEFT] >= arrDelta[DIR_DOWN]) {
 			curLineIdx = arrLineIdx[DIR_DOWN];
 			curLineDataIdx = arrDataIdx[DIR_DOWN];
@@ -2069,6 +2065,10 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 			arrDataIdx[i] = 0;
 			arrDelta[i] = INVALID_LINE_VALUE;
 		}
+
+		int superRouteIdx = 0;
+		int curRouteDataIdx = 0;
+		int curRouteLineIdx = 0;
 		if (checkCollisionLine(x1, y1, &arrDataIdx[DIR_UP], &arrLineIdx[DIR_UP], 0, _lastLine)) {
 			curRouteLineIdx = arrLineIdx[DIR_UP];
 			curRouteDataIdx = arrDataIdx[DIR_UP];

@@ -89,6 +89,8 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 		MANU_SCROLL = false;
 		_scrollSpeed = 32;
 	}
+
+	_noFadingFl = false;
 }
 
 GraphicsManager::~GraphicsManager() {

@@ -125,6 +125,8 @@ Globals::Globals(HopkinsEngine *vm) {
 	_freezeCharacterFl = false;
 	_optionDialogFl = false;
 	_introSpeechOffFl = false;
+	_cityMapEnabledFl = false;
+
 	_baseMapColor = 50;
 }
 

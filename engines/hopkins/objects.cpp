@@ -718,7 +718,9 @@ void ObjectsManager::SCBOB(int idx) {
 
 			if ((oldBottom > hid->_y) && (oldBottom < hid->_yOffset +hid->_height + hid->_y)) {
 				if ((oldRight >= hid->_x && oldRight <= cachedRight)
-				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
+				// CHECKME: The original was doing the test two times. This looks like an 
+				// original bug
+				// || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
 				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
 				 || (_bob[i]._oldWidth >= hid->_x && oldRight <= cachedRight)
 				 || (_bob[i]._oldWidth <= hid->_x && oldRight >= cachedRight))
@@ -827,7 +829,9 @@ void ObjectsManager::checkHidingItem() {
 
 				if (bottom > hid->_y && bottom < (hid->_yOffset + hid->_height + hid->_y)) {
 					if ((right >= hid->_x && right <= hidingRight)
-					 || (hidingRight >= spr->_destX && hid->_x <= spr->_destX)
+					// CHECKME: The original was doing the test two times. This looks like an 
+					// original bug
+					// || (hidingRight >= spr->_destX && hid->_x <= spr->_destX)
 					 || (hidingRight >= spr->_destX && hid->_x <= spr->_destX)
 					 || (hid->_x <= spr->_destX && right <= hidingRight)
 					 || (hid->_x >= spr->_destX && right >= hidingRight))

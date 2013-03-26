@@ -58,6 +58,7 @@ ComputerManager::ComputerManager(HopkinsEngine *vm) {
 	_minBreakoutMoveSpeed = 0;
 	_maxBreakoutMoveSpeed = 0;
 	_lastBreakoutMoveSpeed = 0;
+	_breakoutHiscore = 0;
 }
 
 /**
