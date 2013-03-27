@@ -662,7 +662,8 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 			_vm->_eventsManager->_rateCounter = 0;
 			_vm->_graphicsManager->lockScreen();
-			_vm->_graphicsManager->copyVideoVbe16a(screenP);
+			if (*screenP != kByteStop)
+				_vm->_graphicsManager->copyVideoVbe16a(screenP);
 			_vm->_graphicsManager->unlockScreen();
 
 			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -769,7 +770,8 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 			_vm->_eventsManager->_rateCounter = 0;
 			_vm->_graphicsManager->lockScreen();
-			_vm->_graphicsManager->copyVideoVbe16a(screenP);
+			if (*screenP != kByteStop)
+				_vm->_graphicsManager->copyVideoVbe16a(screenP);
 			_vm->_graphicsManager->unlockScreen();
 
 			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
