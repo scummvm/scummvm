@@ -100,6 +100,7 @@ public:
 	int _minX, _minY;
 	int _maxX, _maxY;
 	bool _noFadingFl;
+	bool _fadingFl;
 	int _scrollStatus;
 	bool _skipVideoLockFl;
 	int _fadeDefaultSpeed;
@@ -115,7 +116,6 @@ public:
 
 	int WinScan;
 	byte *PAL_PIXELS;
-	int FADE_LINUX;
 public:
 	GraphicsManager(HopkinsEngine *vm);
 	~GraphicsManager();

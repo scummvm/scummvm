@@ -188,7 +188,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		_vm->_soundManager->checkSoundEnd();
 	}
 
-	if (_vm->_graphicsManager->FADE_LINUX == 2 && !hasScreenCopy) {
+	if (_vm->_graphicsManager->_fadingFl && !hasScreenCopy) {
 		screenCopy = _vm->_globals->allocMemory(307200);
 
 		f.seek(6);
@@ -217,12 +217,12 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		screenCopy = _vm->_globals->freeMemory(screenCopy);
 	}
 	if (hasScreenCopy) {
-		if (_vm->_graphicsManager->FADE_LINUX == 2)
+		if (_vm->_graphicsManager->_fadingFl)
 			_vm->_graphicsManager->fadeOutDefaultLength(screenCopy);
 		screenCopy = _vm->_globals->freeMemory(screenCopy);
 	}
 
-	_vm->_graphicsManager->FADE_LINUX = 0;
+	_vm->_graphicsManager->_fadingFl = false;
 	f.close();
 	_vm->_graphicsManager->_skipVideoLockFl = false;
 
@@ -356,7 +356,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	_vm->_graphicsManager->_skipVideoLockFl = false;
 	f.close();
 
-	if (_vm->_graphicsManager->FADE_LINUX == 2 && !hasScreenCopy) {
+	if (_vm->_graphicsManager->_fadingFl && !hasScreenCopy) {
 		f.seek(6);
 		f.read(_vm->_graphicsManager->_palette, 800);
 		f.skip(4);
@@ -383,11 +383,11 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		ptra = _vm->_globals->freeMemory(ptra);
 	}
 	if (hasScreenCopy) {
-		if (_vm->_graphicsManager->FADE_LINUX == 2)
+		if (_vm->_graphicsManager->_fadingFl)
 			_vm->_graphicsManager->fadeOutDefaultLength(screenCopy);
 		_vm->_globals->freeMemory(screenCopy);
 	}
-	_vm->_graphicsManager->FADE_LINUX = 0;
+	_vm->_graphicsManager->_fadingFl = false;
 
 	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
@@ -874,7 +874,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 	_vm->_eventsManager->_rateCounter = 0;
 
-	if (_vm->_graphicsManager->FADE_LINUX == 2 && !multiScreenFl) {
+	if (_vm->_graphicsManager->_fadingFl && !multiScreenFl) {
 		byte *ptra = _vm->_globals->allocMemory(307200);
 
 		f.seek(6);
@@ -902,11 +902,11 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		ptra = _vm->_globals->freeMemory(ptra);
 	}
 	if (multiScreenFl) {
-		if (_vm->_graphicsManager->FADE_LINUX == 2)
+		if (_vm->_graphicsManager->_fadingFl)
 			_vm->_graphicsManager->fadeOutDefaultLength(screenCopy);
 		_vm->_globals->freeMemory(screenCopy);
 	}
-	_vm->_graphicsManager->FADE_LINUX = 0;
+	_vm->_graphicsManager->_fadingFl = false;
 
 	f.close();
 	_vm->_eventsManager->_mouseFl = true;

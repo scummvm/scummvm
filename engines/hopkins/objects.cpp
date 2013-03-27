@@ -3713,7 +3713,7 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 				_vm->_globals->_saveData->_data[savegameIdx] = 3;
 		}
 		if (_vm->_globals->_saveData->_data[savegameIdx] == 3) {
-			_vm->_graphicsManager->FADE_LINUX = 2;
+			_vm->_graphicsManager->_fadingFl = true;
 			_vm->_animationManager->playAnim("CREVE2.ANM", 100, 24, 500);
 			_vm->_globals->_exitId = 150;
 			_vm->_graphicsManager->_noFadingFl = true;

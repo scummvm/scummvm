@@ -58,7 +58,7 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	_enlargedX = _enlargedY = 0;
 	_enlargedXFl = _enlargedYFl = false;
 	_fadeDefaultSpeed = 15;
-	FADE_LINUX = 0;
+	_fadingFl = false;
 	_skipVideoLockFl = false;
 	_scrollStatus = 0;
 	_minX = 0;

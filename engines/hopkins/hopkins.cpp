@@ -526,7 +526,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				_graphicsManager->clearScreen();
 				_graphicsManager->unlockScreen();
 				_graphicsManager->clearPalette();
-				_graphicsManager->FADE_LINUX = 2;
+				_graphicsManager->_fadingFl = true;
 
 				if (!_globals->_censorshipFl)
 					_animationManager->playAnim("BANQUE.ANM", 200, 28, 200);
@@ -712,7 +712,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
 			_graphicsManager->clearPalette();
-			_graphicsManager->FADE_LINUX = 2;
+			_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR1A.anm", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -726,7 +726,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
 			_graphicsManager->clearPalette();
-			_graphicsManager->FADE_LINUX = 2;
+			_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR3A.anm", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -740,7 +740,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
 			_graphicsManager->clearPalette();
-			_graphicsManager->FADE_LINUX = 2;
+			_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR4A.anm", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -799,7 +799,7 @@ bool HopkinsEngine::runFull() {
 
 		_globals->_speed = 2;
 		_globals->iRegul = 1;
-		_graphicsManager->FADE_LINUX = 2;
+		_graphicsManager->_fadingFl = true;
 		_animationManager->playAnim("MP.ANM", 10, 16, 200);
 	} else {
 		_animationManager->playAnim("MP.ANM", 10, 16, 200);
@@ -873,7 +873,7 @@ bool HopkinsEngine::runFull() {
 				_graphicsManager->clearPalette();
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows) {
 					if (getPlatform() == Common::kPlatformLinux)
-						_graphicsManager->FADE_LINUX = 2;
+						_graphicsManager->_fadingFl = true;
 
 					if (!_globals->_censorshipFl)
 						_animationManager->playAnim("BANQUE.ANM", 200, 28, 200);
@@ -1009,7 +1009,7 @@ bool HopkinsEngine::runFull() {
 				_soundManager->stopSound();
 				if (getPlatform() == Common::kPlatformLinux) {
 					_soundManager->playSound(29);
-					_graphicsManager->FADE_LINUX = 2;
+					_graphicsManager->_fadingFl = true;
 					_animationManager->playAnim("PURG1A.ANM", 12, 18, 50);
 				} else if (getPlatform() == Common::kPlatformWindows) {
 					_soundManager->playSound(29);
@@ -1055,7 +1055,7 @@ bool HopkinsEngine::runFull() {
 				_graphicsManager->clearPalette();
 				_soundManager->playSound(6);
 				if (getPlatform() == Common::kPlatformLinux)
-					_graphicsManager->FADE_LINUX = 2;
+					_graphicsManager->_fadingFl = true;
 				_animationManager->playAnim("PURG2A.ANM", 12, 18, 50);
 				if (getPlatform() != Common::kPlatformLinux)
 					_graphicsManager->fadeOutShort();
@@ -1499,7 +1499,7 @@ bool HopkinsEngine::runFull() {
 			_graphicsManager->unlockScreen();
 			_graphicsManager->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
-				_graphicsManager->FADE_LINUX = 2;
+				_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR1A.ANM", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -1513,7 +1513,7 @@ bool HopkinsEngine::runFull() {
 			_graphicsManager->unlockScreen();
 			_graphicsManager->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
-				_graphicsManager->FADE_LINUX = 2;
+				_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR3A.ANM", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -1527,7 +1527,7 @@ bool HopkinsEngine::runFull() {
 			_graphicsManager->unlockScreen();
 			_graphicsManager->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
-				_graphicsManager->FADE_LINUX = 2;
+				_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR4A.ANM", 12, 12, 2000);
 			_globals->iRegul = 0;
 			_globals->_exitId = 300;
@@ -1719,7 +1719,7 @@ void HopkinsEngine::playIntro() {
 		return;
 
 	_soundManager->_specialSoundNum = 5;
-	_graphicsManager->FADE_LINUX = 2;
+	_graphicsManager->_fadingFl = true;
 	_animationManager->playAnim("ELEC.ANM", 10, 26, 200);
 	_soundManager->_specialSoundNum = 0;
 
@@ -1820,7 +1820,7 @@ void HopkinsEngine::playIntro() {
 			if (shouldQuit() || _eventsManager->_escKeyFl)
 				return;
 
-			_graphicsManager->FADE_LINUX = 2;
+			_graphicsManager->_fadingFl = true;
 			_animationManager->unsetClearAnimFlag();
 			_animationManager->playAnim("J4.anm", 12, 12, 1000);
 			break;
@@ -1882,7 +1882,7 @@ void HopkinsEngine::bombExplosion() {
 
 	_globals->iRegul = 1;
 	_soundManager->_specialSoundNum = 199;
-	_graphicsManager->FADE_LINUX = 2;
+	_graphicsManager->_fadingFl = true;
 	_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
 	_soundManager->_specialSoundNum = 0;
 	_graphicsManager->loadImage("IM15");
@@ -2015,7 +2015,7 @@ void HopkinsEngine::playSubmarineCutscene() {
 	if (!_eventsManager->_escKeyFl)
 		_animationManager->playAnim("OC20a.anm", 10, 18, 18);
 	if (!_eventsManager->_escKeyFl) {
-		_graphicsManager->FADE_LINUX = 2;
+		_graphicsManager->_fadingFl = true;
 		_animationManager->playAnim("OC30a.anm", 10, 18, 18);
 	}
 
@@ -2032,7 +2032,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 	_soundManager->playSound(26);
 	_globals->iRegul = 1;
 	_globals->_disableInventFl = true;
-	_graphicsManager->FADE_LINUX = 2;
+	_graphicsManager->_fadingFl = true;
 	_animationManager->playSequence("abase.seq", 50, 15, 50, false, false, true);
 	_graphicsManager->loadImage("IM92");
 	_animationManager->loadAnim("ANIM92");
@@ -2139,7 +2139,7 @@ void HopkinsEngine::playEnding() {
 	if (_globals->_saveData->_data[svGameWonFl] == 1) {
 		_soundManager->_specialSoundNum = 200;
 		_soundManager->_skipRefreshFl = true;
-		_graphicsManager->FADE_LINUX = 2;
+		_graphicsManager->_fadingFl = true;
 		_animationManager->playAnim("BERM.ANM", 100, 24, 300);
 		_graphicsManager->endDisplayBob();
 		_soundManager->removeSample(1);
@@ -2156,7 +2156,7 @@ void HopkinsEngine::playEnding() {
 		_graphicsManager->fadeOutLong();
 		_globals->iRegul = 1;
 		_soundManager->_specialSoundNum = 0;
-		_graphicsManager->FADE_LINUX = 2;
+		_graphicsManager->_fadingFl = true;
 		_animationManager->playAnim("JOUR2A.anm", 12, 12, 1000);
 		_soundManager->playSound(11);
 		_graphicsManager->lockScreen();
@@ -2247,7 +2247,7 @@ void HopkinsEngine::playPlaneCutscene() {
 	if (!_eventsManager->_escKeyFl)
 		_animationManager->playAnim("trans40a.anm", 10, 18, 18);
 	if (!_eventsManager->_escKeyFl) {
-		_graphicsManager->FADE_LINUX = 2;
+		_graphicsManager->_fadingFl = true;
 		_animationManager->playAnim("PARA00a.anm", 9, 9, 9);
 	}
 

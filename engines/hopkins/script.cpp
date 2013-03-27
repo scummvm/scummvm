@@ -555,7 +555,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_graphicsManager->fadeOutLong();
 			} else {
 				_vm->_soundManager->playSoundFile("SOUND17.WAV");
-				_vm->_graphicsManager->FADE_LINUX = 2;
+				_vm->_graphicsManager->_fadingFl = true;
 				_vm->_animationManager->playSequence2("HELICO.SEQ", 10, 4, 10);
 			}
 
@@ -584,7 +584,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			// If uncensored, rip the throat of the hostage
 			if (!_vm->_globals->_censorshipFl) {
 				_vm->_soundManager->_specialSoundNum = 16;
-				_vm->_graphicsManager->FADE_LINUX = 2;
+				_vm->_graphicsManager->_fadingFl = true;
 				_vm->_animationManager->playAnim("EGORGE.ANM", 50, 28, 500);
 				_vm->_soundManager->_specialSoundNum = 0;
 			}
@@ -610,7 +610,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_soundManager->playSoundFile("SOUND17.WAV");
 
 			_vm->_soundManager->_specialSoundNum = 14;
-			_vm->_graphicsManager->FADE_LINUX = 2;
+			_vm->_graphicsManager->_fadingFl = true;
 			_vm->_animationManager->playSequence2("ASSOM.SEQ", 10, 4, 500);
 			_vm->_soundManager->_specialSoundNum = 0;
 
@@ -713,7 +713,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 37:
-			_vm->_graphicsManager->FADE_LINUX = 2;
+			_vm->_graphicsManager->_fadingFl = true;
 			_vm->_animationManager->playSequence2("corde.SEQ", 32, 32, 100);
 			_vm->_graphicsManager->_noFadingFl = true;
 			break;
@@ -725,7 +725,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager->_specialSoundNum = 17;
 			_vm->_animationManager->playSequence("grenade.SEQ", 1, 32, 100, false, false);
 			_vm->_soundManager->_specialSoundNum = 0;
-			_vm->_graphicsManager->FADE_LINUX = 2;
+			_vm->_graphicsManager->_fadingFl = true;
 			_vm->_animationManager->playAnim("CREVE17.ANM", 24, 24, 200);
 			_vm->_soundManager->removeSample(1);
 			_vm->_soundManager->removeSample(2);
@@ -2336,7 +2336,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 600:
 			if (!_vm->getIsDemo()) {
-				_vm->_graphicsManager->FADE_LINUX = 2;
+				_vm->_graphicsManager->_fadingFl = true;
 				_vm->_graphicsManager->_fadeDefaultSpeed = 1;
 				_vm->_animationManager->playAnim("BOMBE1A.ANM", 100, 18, 100);
 			}
@@ -2363,7 +2363,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
 			_vm->_objectsManager->OPTI_ONE(3, 0, 16, 4);
 			_vm->_soundManager->_specialSoundNum = 199;
-			_vm->_graphicsManager->FADE_LINUX = 2;
+			_vm->_graphicsManager->_fadingFl = true;
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager->_specialSoundNum = 0;
 			memset(_vm->_graphicsManager->_vesaBuffer, 0, 614400);
@@ -2387,7 +2387,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->OPTI_ONE(5, 0, 16, 4);
 			_vm->_graphicsManager->fadeOutShort();
 			_vm->_soundManager->_specialSoundNum = 199;
-			_vm->_graphicsManager->FADE_LINUX = 2;
+			_vm->_graphicsManager->_fadingFl = true;
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->_noFadingFl = true;
