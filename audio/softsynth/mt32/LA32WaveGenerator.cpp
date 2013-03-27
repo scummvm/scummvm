@@ -32,10 +32,10 @@ static const LogSample SILENCE = {65535, LogSample::POSITIVE};
 
 Bit16u LA32Utilites::interpolateExp(const Bit16u fract) {
 	Bit16u expTabIndex = fract >> 3;
-	Bit16u extraBits = fract & 7;
+	Bit16u extraBits = ~fract & 7;
 	Bit16u expTabEntry2 = 8191 - Tables::getInstance().exp9[expTabIndex];
 	Bit16u expTabEntry1 = expTabIndex == 0 ? 8191 : (8191 - Tables::getInstance().exp9[expTabIndex - 1]);
-	return expTabEntry1 + (((expTabEntry2 - expTabEntry1) * extraBits) >> 3);
+	return expTabEntry2 + (((expTabEntry1 - expTabEntry2) * extraBits) >> 3);
 }
 
 Bit16s LA32Utilites::unlog(const LogSample &logSample) {
@@ -55,7 +55,6 @@ void LA32Utilites::addLogSamples(LogSample &logSample1, const LogSample &logSamp
 Bit32u LA32WaveGenerator::getSampleStep() {
 	// sampleStep = EXP2F(pitch / 4096.0f + 4.0f)
 	Bit32u sampleStep = LA32Utilites::interpolateExp(~pitch & 4095);
-	sampleStep &= ~1;
 	sampleStep <<= pitch >> 12;
 	sampleStep >>= 8;
 	sampleStep &= ~1;
@@ -240,7 +239,7 @@ void LA32WaveGenerator::generateNextPCMWaveLogSamples() {
 	} else {
 		secondPCMLogSample = SILENCE;
 	}
-	// pcmSampleStep = EXP2F(pitch / 4096. - 5.);
+	// pcmSampleStep = (Bit32u)EXP2F(pitch / 4096.0f + 3.0f);
 	Bit32u pcmSampleStep = LA32Utilites::interpolateExp(~pitch & 4095);
 	pcmSampleStep <<= pitch >> 12;
 	// Seeing the actual lengths of the PCM wave for pitches 00..12,
