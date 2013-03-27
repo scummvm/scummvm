@@ -175,7 +175,6 @@ public:
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY);
 	void Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
-	void m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void NB_SCREEN(bool initPalette);
 };

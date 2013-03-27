@@ -51,7 +51,7 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	_oldScrollPosX = 0;
 	_vesaScreen = NULL;
 	_vesaBuffer = NULL;
-	_screenBuffer = NULL;
+	_screenBuffer = g_PTRNUL;
 	_showDirtyRects = false;
 
 	_lineNbr2 = 0;
@@ -438,66 +438,6 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 
 	unlockScreen();
 	addRefreshRect(destX, destY, destX + width, destY + height);
-}
-
-// TODO: See if PAL_PIXELS can be converted to a uint16 array
-void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
-	int xCtr;
-	const byte *palette;
-	int yCtr;
-	const byte *srcCopyP;
-	byte *destCopyP;
-
-	assert(_videoPtr);
-	const byte *srcP = xs + _lineNbr2 * ys + surface;
-	byte *destP = (byte *)_videoPtr + destX + destX + _screenLineSize * destY;
-	int yNext = height;
-	_enlargedX = 0;
-	_enlargedY = 0;
-	_enlargedYFl = false;
-
-	do {
-		for (;;) {
-			destCopyP = destP;
-			srcCopyP = srcP;
-			xCtr = width;
-			yCtr = yNext;
-			palette = PAL_PIXELS;
-			_enlargedX = 0;
-
-			do {
-				destP[0] = palette[2 * srcP[0]];
-				destP[1] = palette[(2 * srcP[0]) + 1];
-				destP += 2;
-				if (_enlargedX >= 100) {
-					_enlargedX -= 100;
-					destP[0] = palette[2 * srcP[0]];
-					destP[1] = palette[(2 * srcP[0]) + 1];
-					destP += 2;
-				}
-				++srcP;
-				--xCtr;
-			} while (xCtr);
-
-			yNext = yCtr;
-			srcP = srcCopyP;
-			destP = _screenLineSize + destCopyP;
-			if (_enlargedYFl)
-				break;
-
-			if (_enlargedY >= 0 && _enlargedY < 100)
-				break;
-
-			_enlargedY -= 100;
-			_enlargedYFl = true;
-		}
-
-		_enlargedYFl = false;
-		srcP = _lineNbr2 + srcCopyP;
-		yNext = yCtr - 1;
-	} while (yCtr != 1);
-
-	addRefreshRect(destX, destY, destX + width, destY + width);
 }
 
 void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
@@ -1177,10 +1117,8 @@ void GraphicsManager::displayDirtyRects() {
 			dstRect.setWidth((r.right - r.left) * 2);
 			dstRect.setHeight((r.bottom - r.top) * 2);
 		} else if (r.right > _vm->_eventsManager->_startPos.x && r.left < _vm->_eventsManager->_startPos.x + SCREEN_WIDTH) {
-			if (r.left < _vm->_eventsManager->_startPos.x)
-				r.left = _vm->_eventsManager->_startPos.x;
-			if (r.right > _vm->_eventsManager->_startPos.x + SCREEN_WIDTH)
-				r.right = _vm->_eventsManager->_startPos.x + SCREEN_WIDTH;
+			r.left = MAX<int16>(r.left, _vm->_eventsManager->_startPos.x);
+			r.right = MIN<int16>(r.right, (int16)_vm->_eventsManager->_startPos.x + SCREEN_WIDTH);
 
 			// WORKAROUND: Original didn't lock the screen for access
 			lockScreen();
