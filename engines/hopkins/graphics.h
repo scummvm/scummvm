@@ -84,26 +84,27 @@ private:
 	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
 	void Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
 public:
-	int _lineNbr;
 	byte _colorTable[PALETTE_EXT_BLOCK_SIZE];
 	byte _palette[PALETTE_EXT_BLOCK_SIZE];
 	byte _oldPalette[PALETTE_EXT_BLOCK_SIZE];
 	byte *_vesaScreen;
 	byte *_vesaBuffer;
 	byte *_screenBuffer;
+	bool _largeScreenFl;
+	bool _noFadingFl;
+	bool _fadingFl;
+	bool _skipVideoLockFl;
 	int _scrollOffset;
 	int _scrollPosX;
-	bool _largeScreenFl;
 	int _oldScrollPosX;
 	int _scrollSpeed;
+	int _lineNbr;
 	int _lineNbr2;
 	int _minX, _minY;
 	int _maxX, _maxY;
-	bool _noFadingFl;
-	bool _fadingFl;
 	int _scrollStatus;
-	bool _skipVideoLockFl;
 	int _fadeDefaultSpeed;
+	int _screenLineSize;
 
 	/**
 	 * The _dirtyRects list contains paletted game areas that need to be redrawn. 
@@ -114,7 +115,6 @@ public:
 	Common::Array<Common::Rect> _refreshRects;
 	bool _showDirtyRects;
 
-	int WinScan;
 	byte *PAL_PIXELS;
 public:
 	GraphicsManager(HopkinsEngine *vm);

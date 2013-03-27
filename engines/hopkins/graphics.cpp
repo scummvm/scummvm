@@ -41,7 +41,7 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	_lockCounter = 0;
 	_initGraphicsFl = false;
 	_screenWidth = _screenHeight = 0;
-	WinScan = 0;
+	_screenLineSize = 0;
 	PAL_PIXELS = NULL;
 	_lineNbr = 0;
 	_videoPtr = NULL;
@@ -113,7 +113,7 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		_screenWidth = width;
 		_screenHeight = height;
 
-		WinScan = SCREEN_WIDTH * 2;
+		_screenLineSize = SCREEN_WIDTH * 2;
 		PAL_PIXELS = SD_PIXELS;
 		_lineNbr = width;
 
@@ -130,7 +130,7 @@ void GraphicsManager::lockScreen() {
 	if (!_skipVideoLockFl) {
 		if (_lockCounter++ == 0) {
 			_videoPtr = _screenBuffer;
-			WinScan = SCREEN_WIDTH * 2;
+			_screenLineSize = SCREEN_WIDTH * 2;
 		}
 	}		
 }
@@ -151,13 +151,13 @@ void GraphicsManager::unlockScreen() {
 void GraphicsManager::clearScreen() {
 	assert(_videoPtr);
 
-	Common::fill(_screenBuffer, _screenBuffer + WinScan * _screenHeight, 0);
+	Common::fill(_screenBuffer, _screenBuffer + _screenLineSize * _screenHeight, 0);
 	addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 }
 
 void GraphicsManager::clearVesaScreen() {
-	Common::fill(_vesaScreen, _vesaScreen + WinScan * _screenHeight, 0);
-	Common::fill(_vesaBuffer, _vesaBuffer + WinScan * _screenHeight, 0);
+	Common::fill(_vesaScreen, _vesaScreen + _screenLineSize * _screenHeight, 0);
+	Common::fill(_vesaBuffer, _vesaBuffer + _screenLineSize * _screenHeight, 0);
 	addDirtyRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
@@ -418,7 +418,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 
 	assert(_videoPtr);
 	const byte *srcP = xs + _lineNbr2 * ys + surface;
-	byte *destP = (byte *)_videoPtr + destX * 2 + WinScan * destY;
+	byte *destP = (byte *)_videoPtr + destX * 2 + _screenLineSize * destY;
 
 	for (int yp = 0; yp < height; ++yp) {
 		// Copy over the line, using the source pixels as lookups into the pixels palette
@@ -433,7 +433,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 		}
 		// Move to the start of the next line
 		srcP += _lineNbr2;
-		destP += WinScan;
+		destP += _screenLineSize;
 	}
 
 	unlockScreen();
@@ -450,7 +450,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 
 	assert(_videoPtr);
 	const byte *srcP = xs + _lineNbr2 * ys + surface;
-	byte *destP = (byte *)_videoPtr + destX + destX + WinScan * destY;
+	byte *destP = (byte *)_videoPtr + destX + destX + _screenLineSize * destY;
 	int yNext = height;
 	_enlargedX = 0;
 	_enlargedY = 0;
@@ -481,7 +481,7 @@ void GraphicsManager::m_scroll16A(const byte *surface, int xs, int ys, int width
 
 			yNext = yCtr;
 			srcP = srcCopyP;
-			destP = WinScan + destCopyP;
+			destP = _screenLineSize + destCopyP;
 			if (_enlargedYFl)
 				break;
 
@@ -510,7 +510,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 
 	assert(_videoPtr);
 	const byte *srcP = surface + xp + 320 * yp;
-	byte *destP = (byte *)_videoPtr + 30 * WinScan + destX + destX + destX + destX + WinScan * 2 * destY;
+	byte *destP = (byte *)_videoPtr + 30 * _screenLineSize + destX + destX + destX + destX + _screenLineSize * 2 * destY;
 	int yCount = height;
 	int xCount = width;
 
@@ -523,15 +523,15 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 		palette = PAL_PIXELS;
 
 		do {
-			destP[0] = destP[2] = destP[WinScan] = destP[WinScan + 2] = palette[2 * srcP[0]];
-			destP[1] = destP[3] = destP[WinScan + 1] = destP[WinScan + 3] = palette[(2 * srcP[0]) + 1];
+			destP[0] = destP[2] = destP[_screenLineSize] = destP[_screenLineSize + 2] = palette[2 * srcP[0]];
+			destP[1] = destP[3] = destP[_screenLineSize + 1] = destP[_screenLineSize + 3] = palette[(2 * srcP[0]) + 1];
 			++srcP;
 			destP += 4;
 			--xCtr;
 		} while (xCtr);
 
 		xCount = savedXCount;
-		destP = loopDestP + WinScan * 2;
+		destP = loopDestP + _screenLineSize * 2;
 		srcP = loopSrcP + 320;
 		yCount = yCtr - 1;
 	} while (yCtr != 1);
@@ -1207,14 +1207,14 @@ void GraphicsManager::displayRefreshRects() {
 	Graphics::Surface *screenSurface = NULL;
 	if (_showDirtyRects) {
 		screenSurface = g_system->lockScreen();
-		g_system->copyRectToScreen(_screenBuffer, WinScan, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		g_system->copyRectToScreen(_screenBuffer, _screenLineSize, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 	// Loop through copying over any  specified rects to the screen
 	for (uint idx = 0; idx < _refreshRects.size(); ++idx) {
 		const Common::Rect &r = _refreshRects[idx];
 
-		byte *srcP = _screenBuffer + WinScan * r.top + (r.left * 2);
-		g_system->copyRectToScreen(srcP, WinScan, r.left, r.top, r.width(), r.height());
+		byte *srcP = _screenBuffer + _screenLineSize * r.top + (r.left * 2);
+		g_system->copyRectToScreen(srcP, _screenLineSize, r.left, r.top, r.width(), r.height());
 
 		if (_showDirtyRects)
 			screenSurface->frameRect(r, 0xffffff);
@@ -1249,18 +1249,18 @@ void GraphicsManager::copy16bFromSurfaceScaleX2(const byte *surface) {
 
 	assert(_videoPtr);
 	const byte *curSurface = surface;
-	byte *destPtr = 30 * WinScan + (byte *)_videoPtr;
+	byte *destPtr = 30 * _screenLineSize + (byte *)_videoPtr;
 	for (int y = 200; y; y--) {
 		byte *oldDestPtr = destPtr;
 		for (int x = 320; x; x--) {
 			curPixel = 2 * *curSurface;
 			palPtr = PAL_PIXELS + curPixel;
-			destPtr[0] = destPtr[2] = destPtr[WinScan] = destPtr[WinScan + 2] = palPtr[0];
-			destPtr[1] = destPtr[3] = destPtr[WinScan + 1] = destPtr[WinScan + 3] = palPtr[1];
+			destPtr[0] = destPtr[2] = destPtr[_screenLineSize] = destPtr[_screenLineSize + 2] = palPtr[0];
+			destPtr[1] = destPtr[3] = destPtr[_screenLineSize + 1] = destPtr[_screenLineSize + 3] = palPtr[1];
 			++curSurface;
 			destPtr += 4;
 		}
-		destPtr = WinScan * 2 + oldDestPtr;
+		destPtr = _screenLineSize * 2 + oldDestPtr;
 	}
 }
 

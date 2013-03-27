@@ -90,7 +90,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		_vm->_graphicsManager->clearScreen();
 		_vm->_graphicsManager->unlockScreen();
 	}
-	if (_vm->_graphicsManager->WinScan / 2 > SCREEN_WIDTH) {
+	if (_vm->_graphicsManager->_screenLineSize / 2 > SCREEN_WIDTH) {
 		hasScreenCopy = true;
 		screenCopy = _vm->_globals->allocMemory(307200);
 		memcpy(screenCopy, screenP, 307200);
@@ -276,7 +276,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		_vm->_graphicsManager->unlockScreen();
 
 		_vm->_graphicsManager->_maxX = SCREEN_WIDTH;
-		if (_vm->_graphicsManager->WinScan / 2 > SCREEN_WIDTH) {
+		if (_vm->_graphicsManager->_screenLineSize / 2 > SCREEN_WIDTH) {
 			hasScreenCopy = true;
 			screenCopy = _vm->_globals->allocMemory(307200);
 			memcpy(screenCopy, screenP, 307200);
@@ -641,7 +641,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	f.read(screenP, nbytes);
 
 	byte *screenCopy = NULL;
-	if (_vm->_graphicsManager->WinScan / 2 > SCREEN_WIDTH) {
+	if (_vm->_graphicsManager->_screenLineSize / 2 > SCREEN_WIDTH) {
 		hasScreenCopy = true;
 		screenCopy = _vm->_globals->allocMemory(307200);
 		memcpy(screenCopy, screenP, 307200);
@@ -790,7 +790,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		f.skip(14);
 		f.read(screenP, nbytes);
 
-		if (_vm->_graphicsManager->WinScan / 2 > SCREEN_WIDTH) {
+		if (_vm->_graphicsManager->_screenLineSize / 2 > SCREEN_WIDTH) {
 			multiScreenFl = true;
 			screenCopy = _vm->_globals->allocMemory(307200);
 			memcpy((void *)screenCopy, screenP, 307200);
