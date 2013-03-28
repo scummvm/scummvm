@@ -187,7 +187,6 @@ private:
 	int getOffsetY(const byte *spriteData, int spriteIndex, bool isSize);
 
 	void capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
-	void initBob();
 	void setBobInfo(int idx);
 	void SCBOB(int idx);
 	void CALCUL_BOB(int idx);
@@ -208,7 +207,6 @@ private:
 	void GOHOME2();
 
 	void nextVerbIcon();
-	int getBobFrameIndex(int idx);
 	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
 
 	void sceneSpecialIni();
@@ -288,7 +286,6 @@ public:
 	void setBobAnimation(int idx);
 	void stopBobAnimation(int idx);
 	int getBobPosX(int idx);
-	int getBobPosY(int idx);
 
 	void handleCityMap();
 	void clearScreen();

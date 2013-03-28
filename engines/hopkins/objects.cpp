@@ -568,11 +568,6 @@ void ObjectsManager::displaySprite() {
 	_vm->_dialogsManager->inventAnim();
 }
 
-void ObjectsManager::initBob() {
-	for (int idx = 0; idx < 35; ++idx)
-		resetBob(idx);
-}
-
 void ObjectsManager::resetBob(int idx) {
 	BobItem &bob = _bob[idx];
 	ListeItem &item = Liste2[idx];
@@ -3111,14 +3106,6 @@ void ObjectsManager::stopBobAnimation(int idx) {
  */
 int ObjectsManager::getBobPosX(int idx) {
 	return _bob[idx]._xp;
-}
-
-int ObjectsManager::getBobPosY(int idx) {
-	return _bob[idx]._yp;
-}
-
-int ObjectsManager::getBobFrameIndex(int idx) {
-	return _bob[idx]._frameIndex;
 }
 
 void ObjectsManager::loadLinkFile(const Common::String &file) {
