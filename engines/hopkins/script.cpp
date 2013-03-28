@@ -760,7 +760,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 46: {
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 564, 420);
+			_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 564, 420);
 			_vm->_objectsManager->_zoneNum = -1;
 			do {
 				if (_vm->shouldQuit())
@@ -987,7 +987,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->resetOldDirection();
 			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 445, 332);
+			_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 445, 332);
 			_vm->_globals->_checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
@@ -1105,7 +1105,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->resetOldDirection();
 			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 119, 268);
+			_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 119, 268);
 			_vm->_globals->_checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())
@@ -1424,14 +1424,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			switch (_vm->_globals->_saveData->_data[svField253]) {
 			case 1:
-				_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 201, 294);
+				_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 201, 294);
 				break;
 			case 2:
-				_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 158, 338);
+				_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 158, 338);
 				break;
 			default:
 				if (_vm->_globals->_saveData->_data[svField253] > 2)
-					_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 211, 393);
+					_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 211, 393);
 				break;
 			}
 			_vm->_globals->_checkDistanceFl = true;
@@ -1670,7 +1670,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 361, 325);
+			_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 361, 325);
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_zoneNum = -1;
 			do {
@@ -1698,7 +1698,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 361, 325);
+			_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 361, 325);
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_zoneNum = -1;
 			do {
@@ -1885,7 +1885,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 330, 418);
+			_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 330, 418);
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_zoneNum = 0;
 			do {
@@ -1916,7 +1916,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->stopBobAnimation(1);
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 			_vm->_globals->_checkDistanceFl = true;
-			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 330, 314);
+			_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 330, 314);
 			_vm->_objectsManager->_zoneNum = 0;
 			_vm->_globals->_checkDistanceFl = true;
 			do {
@@ -2010,7 +2010,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->resetHomeRateCounter();
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 488, 280);
+			_vm->_linesManager->_route = _vm->_linesManager->findRoute(_vm->_objectsManager->getSpriteX(0), _vm->_objectsManager->getSpriteY(0), 488, 280);
 			_vm->_globals->_checkDistanceFl = true;
 			do {
 				if (_vm->shouldQuit())

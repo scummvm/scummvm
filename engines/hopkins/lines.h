@@ -148,11 +148,11 @@ private:
 	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
 	int characterRoute(int fromX, int fromY, int destX, int destY, int startLineIdx, int endLineIdx, int routeIdx);
 	int testLine(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
-	void _useRoute0(int idx, int curRouteIdx);
+	void useRoute0(int idx, int curRouteIdx);
 	void useRoute1(int idx, int curRouteIdx);
 	void useRoute2(int idx, int curRouteIdx);
+	int computeYSteps(int idx);
 
-	int CALC_PROPRE(int idx);
 	int CONTOURNE(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route);
 	int CONTOURNE1(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route, int a8, int a9);
 	bool MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, int routeIdx);
@@ -177,8 +177,10 @@ public:
 	void loadLines(const Common::String &file);
 	void addLine(int lineIdx, Directions direction, int fromX, int fromY, int destX, int destY);
 	void initRoute();
+	RouteItem *findRoute(int fromX, int fromY, int destX, int destY);
 	RouteItem *cityMapCarRoute(int x1, int y1, int x2, int y2);
 	void clearAllZones();
+	void initSquareZones();
 	void resetLines();
 	void resetLinesNumb();
 	void resetLastLine();
@@ -186,10 +188,7 @@ public:
 	void disableZone(int idx);
 	void checkZone();
 	int getMouseZone();
-
-	void CARRE_ZONE();
-	RouteItem *PARCOURS2(int fromX, int fromY, int destX, int destY);
-	void PACOURS_PROPRE(RouteItem *route);
+	void optimizeRoute(RouteItem *route);
 };
 
 } // End of namespace Hopkins

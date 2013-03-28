@@ -1796,7 +1796,7 @@ void ObjectsManager::loadZone(const Common::String &file) {
 		_vm->_linesManager->ZONEP[i + 1]._messageId = READ_LE_UINT16(verbData + 2 * i);
 
 	_vm->_globals->freeMemory(ptr);
-	_vm->_linesManager->CARRE_ZONE();
+	_vm->_linesManager->initSquareZones();
 }
 
 void ObjectsManager::handleCityMap() {
@@ -1984,9 +1984,9 @@ void ObjectsManager::handleLeftButton() {
 			_homeRateCounter = 0;
 			_oldDirection = DIR_NONE;
 		} else {
-			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
+			_vm->_linesManager->_route = _vm->_linesManager->findRoute(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
 			if (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL)
-				_vm->_linesManager->PACOURS_PROPRE(_vm->_linesManager->_route);
+				_vm->_linesManager->optimizeRoute(_vm->_linesManager->_route);
 			_oldCharacterPosX = getSpriteX(0);
 			_oldCharacterPosY = getSpriteY(0);
 			_homeRateCounter = 0;
@@ -1998,9 +1998,9 @@ void ObjectsManager::handleLeftButton() {
 		}
 	} else {
 		if (!_vm->_globals->_freezeCharacterFl && !_vm->_globals->_cityMapEnabledFl) {
-			_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(getSpriteX(0), getSpriteY(0), destX, destY);
+			_vm->_linesManager->_route = _vm->_linesManager->findRoute(getSpriteX(0), getSpriteY(0), destX, destY);
 			if (_vm->_linesManager->_route != (RouteItem *)g_PTRNUL)
-				_vm->_linesManager->PACOURS_PROPRE(_vm->_linesManager->_route);
+				_vm->_linesManager->optimizeRoute(_vm->_linesManager->_route);
 			_oldCharacterPosX = getSpriteX(0);
 			_oldCharacterPosY = getSpriteY(0);
 			_homeRateCounter = 0;
@@ -3272,7 +3272,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 					_vm->_linesManager->ZONEP[i]._messageId = READ_LE_INT16(verbData + dep);
 					dep += 2;
 				}
-				_vm->_linesManager->CARRE_ZONE();
+				_vm->_linesManager->initSquareZones();
 			}
 		}
 	}
@@ -3788,7 +3788,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_oldDirection = DIR_NONE;
 		_homeRateCounter = 0;
 		_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
-		_vm->_linesManager->_route = _vm->_linesManager->PARCOURS2(getSpriteX(0), getSpriteY(0), 330, 345);
+		_vm->_linesManager->_route = _vm->_linesManager->findRoute(getSpriteX(0), getSpriteY(0), 330, 345);
 		_vm->_globals->_checkDistanceFl = true;
 		do {
 			GOHOME();
