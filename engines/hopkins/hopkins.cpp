@@ -56,6 +56,8 @@ HopkinsEngine::HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDe
 	_scriptManager = new ScriptManager(this);
 	_soundManager = new SoundManager(this);
 	_talkManager = new TalkManager(this);
+
+	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }
 
 HopkinsEngine::~HopkinsEngine() {
@@ -143,11 +145,13 @@ bool HopkinsEngine::runWin95Demo() {
 	_graphicsManager->unlockScreen();
 	_graphicsManager->clearPalette();
 
-	_graphicsManager->loadImage("H2");
-	_graphicsManager->fadeInLong();
+	if (_startGameSlot == -1) {
+		_graphicsManager->loadImage("H2");
+		_graphicsManager->fadeInLong();
 
-	if (!_eventsManager->_escKeyFl)
-		playIntro();
+		if (!_eventsManager->_escKeyFl)
+			playIntro();
+	}
 
 	_eventsManager->_rateCounter = 0;
 	_globals->iRegul = 1;
@@ -163,13 +167,20 @@ bool HopkinsEngine::runWin95Demo() {
 		_globals->_speed = 2;
 	if (_eventsManager->_rateCounter > 700)
 		_globals->_speed = 3;
-	_graphicsManager->fadeOutLong();
-	_globals->iRegul = 1;
-	_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
+
+	if (_startGameSlot == -1) {
+		_graphicsManager->fadeOutLong();
+		_globals->iRegul = 1;
+		_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
+	}
+
 	_globals->_characterType = 0;
 	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
 	_globals->_exitId = 0;
+
+	if (_startGameSlot != -1)
+		_saveLoadManager->loadGame(_startGameSlot);
 
 	if (getLanguage() != Common::PL_POL)
 		if (!displayAdultDisclaimer())
@@ -441,18 +452,20 @@ bool HopkinsEngine::runLinuxDemo() {
 	_graphicsManager->clearScreen();
 	_graphicsManager->unlockScreen();
 
-	_graphicsManager->loadImage("LINUX");
-	_graphicsManager->fadeInLong();
-	_eventsManager->delay(1500);
-	_graphicsManager->fadeOutLong();
+	if (_startGameSlot == -1) {
+		_graphicsManager->loadImage("LINUX");
+		_graphicsManager->fadeInLong();
+		_eventsManager->delay(1500);
+		_graphicsManager->fadeOutLong();
 
-	_graphicsManager->loadImage("H2");
-	_graphicsManager->fadeInLong();
-	_eventsManager->delay(500);
-	_graphicsManager->fadeOutLong();
+		_graphicsManager->loadImage("H2");
+		_graphicsManager->fadeInLong();
+		_eventsManager->delay(500);
+		_graphicsManager->fadeOutLong();
 
-	if (!_eventsManager->_escKeyFl)
-		playIntro();
+		if (!_eventsManager->_escKeyFl)
+			playIntro();
+	}
 
 	_globals->iRegul = 0;
 	_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
@@ -460,6 +473,9 @@ bool HopkinsEngine::runLinuxDemo() {
 	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
 	_globals->_exitId = 0;
+
+	if (_startGameSlot != -1)
+		_saveLoadManager->loadGame(_startGameSlot);
 
 	for (;;) {
 		if (_globals->_exitId == 300)
@@ -751,7 +767,7 @@ bool HopkinsEngine::runLinuxDemo() {
 }
 
 bool HopkinsEngine::runFull() {
-	if (getPlatform() == Common::kPlatformLinux)
+	if (_startGameSlot == -1 && getPlatform() == Common::kPlatformLinux)
 		_soundManager->playSound(16);
 
 	_objectsManager->loadObjects();
@@ -769,18 +785,22 @@ bool HopkinsEngine::runFull() {
 		// This code displays the game version.
 		// It wasn't present in the original and could be put in the debugger
 		// It has been added there for debug purposes
-		_graphicsManager->loadImage("VERSW");
-		_graphicsManager->fadeInLong();
-		_eventsManager->delay(500);
-		_graphicsManager->fadeOutLong();
+		if (_startGameSlot == -1) {
+			_graphicsManager->loadImage("VERSW");
+			_graphicsManager->fadeInLong();
+			_eventsManager->delay(500);
+			_graphicsManager->fadeOutLong();
+		}
 		_graphicsManager->clearVesaScreen();
 	} else {
 		// This piece of code, though named "display_version" in the original, 
 		// displays a "loading please wait" screen.
-		_graphicsManager->loadImage("VERSW");
-		_graphicsManager->fadeInLong();
-		_eventsManager->delay(500);
-		_graphicsManager->fadeOutLong();
+		if (_startGameSlot == -1) {
+			_graphicsManager->loadImage("VERSW");
+			_graphicsManager->fadeInLong();
+			_eventsManager->delay(500);
+			_graphicsManager->fadeOutLong();
+		}
 		_graphicsManager->clearVesaScreen();
 
 		_globals->iRegul = 1;
@@ -791,27 +811,28 @@ bool HopkinsEngine::runFull() {
 	_graphicsManager->unlockScreen();
 	_graphicsManager->clearPalette();
 	
-	if (getPlatform() == Common::kPlatformLinux) {
-		_graphicsManager->loadImage("H2");
-		_graphicsManager->fadeInLong();
-		_eventsManager->delay(500);
-		_graphicsManager->fadeOutLong();
-
-		_globals->_speed = 2;
-		_globals->iRegul = 1;
-		_graphicsManager->_fadingFl = true;
-		_animationManager->playAnim("MP.ANM", 10, 16, 200);
-	} else {
-		_animationManager->playAnim("MP.ANM", 10, 16, 200);
-		_graphicsManager->fadeOutLong();
+	if (_startGameSlot == -1) {
+		if (getPlatform() == Common::kPlatformLinux) {
+				_graphicsManager->loadImage("H2");
+				_graphicsManager->fadeInLong();
+				_eventsManager->delay(500);
+				_graphicsManager->fadeOutLong();
+				_globals->_speed = 2;
+				_globals->iRegul = 1;
+				_graphicsManager->_fadingFl = true;
+				_animationManager->playAnim("MP.ANM", 10, 16, 200);
+		} else {
+			_animationManager->playAnim("MP.ANM", 10, 16, 200);
+			_graphicsManager->fadeOutLong();
+		}
 	}
 
-	if (!_eventsManager->_escKeyFl) {
+	if (!_eventsManager->_escKeyFl && _startGameSlot == -1) {
 		playIntro();
 		if (shouldQuit())
 			return false;
 	}
-	if (getPlatform() != Common::kPlatformLinux) {
+	if (getPlatform() != Common::kPlatformLinux && _startGameSlot == -1) {
 		_graphicsManager->fadeOutShort();
 		_graphicsManager->loadImage("H2");
 		_graphicsManager->fadeInLong();
@@ -825,6 +846,9 @@ bool HopkinsEngine::runFull() {
 	memset(_globals->_saveData, 0, 2000);
 	
 	_globals->_exitId = 0;
+
+	if (_startGameSlot != -1)
+		_saveLoadManager->loadGame(_startGameSlot);
 
 	for (;;) {
 		if (_globals->_exitId == 300)

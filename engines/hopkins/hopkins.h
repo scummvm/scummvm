@@ -177,7 +177,7 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-
+	int _startGameSlot;
 	/**
 	 * Run the introduction sequence
 	 */
