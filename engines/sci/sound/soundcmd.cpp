@@ -501,12 +501,15 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 				processStopSound(obj, false);
 		}
 	} else {
-		// Slot actually has no data (which would mean that a sound-resource w/
-		// unsupported data is used.
-		//  (example lsl5 - sound resource 744 - it's Roland exclusive
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-		// If we don't set signal here, at least the switch to the mud wrestling
-		// room in lsl5 will not work.
+		// The sound slot has no data for the currently selected sound card.
+		// An example can be found during the mud wrestling scene in LSL5, room
+		// 730: sound 744 (a splat sound heard when Lana Luscious jumps in the
+		// mud) only contains MIDI channel data. If a non-MIDI sound card is
+		// selected (like Adlib), then the scene freezes. We also need to stop
+		// the sound at this point, otherwise KQ6 Mac breaks because the rest
+		// of the object needs to be reset to avoid a continuous stream of
+		// sound cues.
+		processStopSound(obj, true);	// this also sets the signal selector
 	}
 
 	if (musicSlot->fadeCompleted) {
