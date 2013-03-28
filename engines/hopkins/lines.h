@@ -139,6 +139,8 @@ private:
 	int _zoneSkipCount;
 	int _oldMouseZoneId;
 
+	int avoidObstacle(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route);
+	int avoidObstacleOnSegment(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route, int startLineIdx, int endLineIdx);
 	int checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow);
 	void removeZoneLine(int idx);
 	void removeLine(int idx);
@@ -152,11 +154,9 @@ private:
 	void useRoute1(int idx, int curRouteIdx);
 	void useRoute2(int idx, int curRouteIdx);
 	int computeYSteps(int idx);
+	int computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY, int destX, int destY, int routerIdx, RouteItem *route);
 
-	int CONTOURNE(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route);
-	int CONTOURNE1(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route, int a8, int a9);
 	bool MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, int routeIdx);
-	int GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int destX, int destY, int routerIdx, RouteItem *route);
 	bool PLAN_TEST(int paramX, int paramY, int superRouteIdx, int paramStartLineIdx, int paramEndLineIdx);
 
 public:

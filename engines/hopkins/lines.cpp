@@ -454,8 +454,8 @@ void LinesManager::initRoute() {
 	}
 }
 
-// Avoid
-int LinesManager::CONTOURNE(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route) {
+// Avoid obstacle
+int LinesManager::avoidObstacle(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route) {
 	int curLineIdx = lineIdx;
 	int curLineDataIdx = lineDataIdx;
 	int curRouteIdx = routeIdx;
@@ -485,21 +485,21 @@ int LinesManager::CONTOURNE(int lineIdx, int lineDataIdx, int routeIdx, int dest
 	return curRouteIdx;
 }
 
-// Avoid 1
-int LinesManager::CONTOURNE1(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route, int a8, int a9) {
+// Avoid Obstacle, taking into account start/End lind Idx
+int LinesManager::avoidObstacleOnSegment(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route, int startLineIdx, int endLineIdx) {
 	int curLineIdx = lineIdx;
 	int curLineDataIdx = lineDataIdx;
 	int curRouteIdx = routeIdx;
 	if (destLineIdx < lineIdx) {
 		curRouteIdx = _lineItem[lineIdx].appendToRouteInc(lineDataIdx, -1, route, curRouteIdx);
 		int wrkLineIdx = lineIdx + 1;
-		if (wrkLineIdx == a9 + 1)
-			wrkLineIdx = a8;
+		if (wrkLineIdx == endLineIdx + 1)
+			wrkLineIdx = startLineIdx;
 		while (destLineIdx != wrkLineIdx) {
 			curRouteIdx = _lineItem[wrkLineIdx].appendToRouteInc(0, -1, route, curRouteIdx);
 			++wrkLineIdx;
-			if (a9 + 1 == wrkLineIdx)
-				wrkLineIdx = a8;
+			if (endLineIdx + 1 == wrkLineIdx)
+				wrkLineIdx = startLineIdx;
 		}
 		curLineDataIdx = 0;
 		curLineIdx = destLineIdx;
@@ -507,13 +507,13 @@ int LinesManager::CONTOURNE1(int lineIdx, int lineDataIdx, int routeIdx, int des
 	if (destLineIdx > curLineIdx) {
 		curRouteIdx = _lineItem[curLineIdx].appendToRouteDec(curLineDataIdx, 0, route, curRouteIdx);
 		int wrkLineIdx = curLineIdx - 1;
-		if (wrkLineIdx == a8 - 1)
-			wrkLineIdx = a9;
+		if (wrkLineIdx == startLineIdx - 1)
+			wrkLineIdx = endLineIdx;
 		while (destLineIdx != wrkLineIdx) {
 			curRouteIdx = _lineItem[wrkLineIdx].appendToRouteDec(-1, 0, route, curRouteIdx);
 			--wrkLineIdx;
-			if (a8 - 1 == wrkLineIdx)
-				wrkLineIdx = a9;
+			if (startLineIdx - 1 == wrkLineIdx)
+				wrkLineIdx = endLineIdx;
 		}
 		curLineDataIdx = _lineItem[destLineIdx]._lineDataEndIdx - 1;
 		curLineIdx = destLineIdx;
@@ -687,7 +687,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 			newLinesDataIdx = linesDataIdxUp;
 			for (int i = 0; i < stepVertDecCount; i++) {
 				if (checkCollisionLine(curX, curY - i, &linesDataIdxUp, &linesIdxUp, _lastLine + 1, _linesNumb) && _lastLine < linesIdxUp) {
-					int tmpRouteIdxUp = GENIAL(linesIdxUp, linesDataIdxUp, curX, curY - i, curX, curY - stepVertDecCount, tmpRouteIdx, &_bestRoute[0]);
+					int tmpRouteIdxUp = computeRouteIdx(linesIdxUp, linesDataIdxUp, curX, curY - i, curX, curY - stepVertDecCount, tmpRouteIdx, &_bestRoute[0]);
 					if (tmpRouteIdxUp == -1)
 						return false;
 					tmpRouteIdx = tmpRouteIdxUp;
@@ -707,7 +707,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 			newLinesDataIdx = lineDataIdxRight;
 			for (int i = 0; i < stepHoriIncCount; i++) {
 				if (checkCollisionLine(i + curX, curY, &linesDataIdxUp, &linesIdxUp, _lastLine + 1, _linesNumb) && _lastLine < linesIdxUp) {
-					int tmpRouteIdxRight = GENIAL(linesIdxUp, linesDataIdxUp, i + curX, curY, stepHoriIncCount + curX, curY, tmpRouteIdx, &_bestRoute[0]);
+					int tmpRouteIdxRight = computeRouteIdx(linesIdxUp, linesDataIdxUp, i + curX, curY, stepHoriIncCount + curX, curY, tmpRouteIdx, &_bestRoute[0]);
 					if (tmpRouteIdxRight == -1)
 						return false;
 					tmpRouteIdx = tmpRouteIdxRight;
@@ -727,7 +727,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 			newLinesDataIdx = lineDataIdxDown;
 			for (int i = 0; i < stepVertIncCount; i++) {
 				if (checkCollisionLine(curX, i + curY, &linesDataIdxUp, &linesIdxUp, _lastLine + 1, _linesNumb) && _lastLine < linesIdxUp) {
-					int tmpRouteIdxDown = GENIAL(linesIdxUp, linesDataIdxUp, curX, i + curY, curX, stepVertIncCount + curY, tmpRouteIdx, &_bestRoute[0]);
+					int tmpRouteIdxDown = computeRouteIdx(linesIdxUp, linesDataIdxUp, curX, i + curY, curX, stepVertIncCount + curY, tmpRouteIdx, &_bestRoute[0]);
 					if (tmpRouteIdxDown == -1)
 						return false;
 					tmpRouteIdx = tmpRouteIdxDown;
@@ -747,7 +747,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 			newLinesDataIdx = lineDataIdxLeft;
 			for (int i = 0; i < stepHoriDecCount; i++) {
 				if (checkCollisionLine(curX - i, curY, &linesDataIdxUp, &linesIdxUp, _lastLine + 1, _linesNumb) && _lastLine < linesIdxUp) {
-					int tmpRouteIdxLeft = GENIAL(linesIdxUp, linesDataIdxUp, curX - i, curY, curX - stepHoriDecCount, curY, tmpRouteIdx, &_bestRoute[0]);
+					int tmpRouteIdxLeft = computeRouteIdx(linesIdxUp, linesDataIdxUp, curX - i, curY, curX - stepHoriDecCount, curY, tmpRouteIdx, &_bestRoute[0]);
 					if (tmpRouteIdxLeft == -1)
 						return false;
 					tmpRouteIdx = tmpRouteIdxLeft;
@@ -769,7 +769,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 	return false;
 }
 
-int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int destX, int destY, int routerIdx, RouteItem *route) {
+int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY, int destX, int destY, int routerIdx, RouteItem *route) {
 	int result = routerIdx;
 	++_pathFindingMaxDepth;
 	if (_pathFindingMaxDepth > 10) {
@@ -988,15 +988,15 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 			} while (destLineIdx != curLineIdx);
 			if (abs(destLineIdx - lineIdx) == stepCount) {
 				if (dataIdx >  abs(_lineItem[lineIdx]._lineDataEndIdx / 2)) {
-					result = CONTOURNE(lineIdx, dataIdx, routerIdx, destLineIdx, destDataIdx, route);
+					result = avoidObstacle(lineIdx, dataIdx, routerIdx, destLineIdx, destDataIdx, route);
 				} else {
-					result = CONTOURNE1(lineIdx, dataIdx, routerIdx, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
+					result = avoidObstacleOnSegment(lineIdx, dataIdx, routerIdx, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
 				}
 			}
 			if (abs(destLineIdx - lineIdx) < stepCount)
-				result = CONTOURNE(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route);
+				result = avoidObstacle(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route);
 			if (stepCount < abs(destLineIdx - lineIdx))
-				result = CONTOURNE1(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
+				result = avoidObstacleOnSegment(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
 		}
 		if (lineIdx > destLineIdx) {
 			int destStepCount = abs(lineIdx - destLineIdx);
@@ -1012,18 +1012,18 @@ int LinesManager::GENIAL(int lineIdx, int dataIdx, int fromX, int fromY, int des
 			} while (destLineIdx != curLineIdx);
 			if (destStepCount == curStepCount) {
 				if (dataIdx > abs(_lineItem[lineIdx]._lineDataEndIdx / 2)) {
-					result = CONTOURNE1(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
+					result = avoidObstacleOnSegment(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
 				} else {
-					result = CONTOURNE(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route);
+					result = avoidObstacle(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route);
 				}
 			}
 			if (destStepCount < curStepCount)
-				result = CONTOURNE(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route);
+				result = avoidObstacle(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route);
 			if (curStepCount < destStepCount)
-				result = CONTOURNE1(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
+				result = avoidObstacleOnSegment(lineIdx, dataIdx, result, destLineIdx, destDataIdx, route, startLineIdx, endLineIdx);
 		}
 		if (lineIdx == destLineIdx)
-			result = CONTOURNE(lineIdx, dataIdx, result, lineIdx, destDataIdx, route);
+			result = avoidObstacle(lineIdx, dataIdx, result, lineIdx, destDataIdx, route);
 		for(;;) {
 			if (!checkCollisionLine(_newPosX, _newPosY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb))
 				break;
@@ -1316,7 +1316,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 		case DIR_UP:
 			for (int deltaY = 0; deltaY < delta; deltaY++) {
 				if (checkCollisionLine(fromX, fromY - deltaY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
-					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, fromX, fromY - deltaY, fromX, fromY - delta, routeIdx, _bestRoute);
+					int tmpRouteIdx = computeRouteIdx(foundLineIdx, foundDataIdx, fromX, fromY - deltaY, fromX, fromY - delta, routeIdx, _bestRoute);
 					if (tmpRouteIdx == -1) {
 						_bestRoute[routeIdx].invalidate();
 						return &_bestRoute[0];
@@ -1333,7 +1333,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 			for (int deltaY = 0; deltaY < delta; deltaY++) {
 				if (checkCollisionLine(fromX, deltaY + fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb)
 				        && _lastLine < foundLineIdx) {
-					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, fromX, deltaY + fromY, fromX, delta + fromY, routeIdx, &_bestRoute[0]);
+					int tmpRouteIdx = computeRouteIdx(foundLineIdx, foundDataIdx, fromX, deltaY + fromY, fromX, delta + fromY, routeIdx, &_bestRoute[0]);
 					if (tmpRouteIdx == -1) {
 						_bestRoute[routeIdx].invalidate();
 						return &_bestRoute[0];
@@ -1349,7 +1349,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 		case DIR_LEFT:
 			for (int deltaX = 0; deltaX < delta; deltaX++) {
 				if (checkCollisionLine(fromX - deltaX, fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
-					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, fromX - deltaX, fromY, fromX - delta, fromY, routeIdx, &_bestRoute[0]);
+					int tmpRouteIdx = computeRouteIdx(foundLineIdx, foundDataIdx, fromX - deltaX, fromY, fromX - delta, fromY, routeIdx, &_bestRoute[0]);
 					if (tmpRouteIdx == -1) {
 						_bestRoute[routeIdx].invalidate();
 						return &_bestRoute[0];
@@ -1365,7 +1365,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 		case DIR_RIGHT:
 			for (int deltaX = 0; deltaX < delta; deltaX++) {
 				if (checkCollisionLine(deltaX + fromX, fromY, &foundDataIdx, &foundLineIdx, _lastLine + 1, _linesNumb) && _lastLine < foundLineIdx) {
-					int tmpRouteIdx = GENIAL(foundLineIdx, foundDataIdx, deltaX + fromX, fromY, delta + fromX, fromY, routeIdx, &_bestRoute[0]);
+					int tmpRouteIdx = computeRouteIdx(foundLineIdx, foundDataIdx, deltaX + fromX, fromY, delta + fromX, fromY, routeIdx, &_bestRoute[0]);
 					if (tmpRouteIdx == -1) {
 						_bestRoute[routeIdx].invalidate();
 						return &_bestRoute[0];
@@ -1753,7 +1753,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		}
 		if (_lastLine >= collLineIdxRoute0)
 			break;
-		int tmpRouteIdx = GENIAL(collLineIdxRoute0, collDataIdxRoute0, curPosX, curPosY, destX, destY, idxRoute0, _testRoute0);
+		int tmpRouteIdx = computeRouteIdx(collLineIdxRoute0, collDataIdxRoute0, curPosX, curPosY, destX, destY, idxRoute0, _testRoute0);
 		if (tmpRouteIdx == -1) {
 			useRoute0(idxRoute0, curRouteIdx);
 			return 1;
@@ -1801,7 +1801,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				if (collLineIdxRoute1 <= _lastLine)
 					break;
 
-				int tmpRouteIdx = GENIAL(collLineIdxRoute1, collDataIdxRoute1, destX, curPosY, destX, destY, idxRoute1, _testRoute1);
+				int tmpRouteIdx = computeRouteIdx(collLineIdxRoute1, collDataIdxRoute1, destX, curPosY, destX, destY, idxRoute1, _testRoute1);
 				if (tmpRouteIdx == -1) {
 					useRoute1(idxRoute1, curRouteIdx);
 					return 1;
@@ -1864,7 +1864,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				if (collLineIdxRoute2 <= _lastLine)
 					break;
 
-				int tmpRouteIdx = GENIAL(collLineIdxRoute2, collDataIdxRoute2, curPosX, destY, destX, destY, idxRoute1, _testRoute2);
+				int tmpRouteIdx = computeRouteIdx(collLineIdxRoute2, collDataIdxRoute2, curPosX, destY, destX, destY, idxRoute1, _testRoute2);
 				if (tmpRouteIdx == -1) {
 					useRoute2(idxRoute1, curRouteIdx);
 					return 1;
