@@ -762,14 +762,6 @@ void GfxFrameout::kernelFrameout() {
 					// Translate back to actual coordinate within scrollable plane
 					nsRect.translate(it->planeOffsetX, it->planeOffsetY);
 
-					if (view && view->isSci2Hires()) {
-						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
-						view->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
-					} else if (getSciVersion() >= SCI_VERSION_2_1) {
-						_coordAdjuster->fromDisplayToScript(nsRect.top, nsRect.left);
-						_coordAdjuster->fromDisplayToScript(nsRect.bottom, nsRect.right);
-					}
-
 					if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
 						// HACK: Some (?) objects in Phantasmagoria 2 have no NS rect. Skip them for now.
 						// TODO: Remove once we figure out how Phantasmagoria 2 draws objects on screen.
@@ -777,12 +769,15 @@ void GfxFrameout::kernelFrameout() {
 							continue;
 					}
 
-					// FIXME: We should not update the object's NS rect here.
-					// This breaks the sliders in the control panel screen in
-					// QFG4, but disabling it does not change any functionality,
-					// as the object(s) will be drawn on screen with the
-					// calculated coordinates.
-					//g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					if (view && view->isSci2Hires()) {
+						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
+						view->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
+						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					} else if (getSciVersion() >= SCI_VERSION_2_1 && _resMan->detectHires()) {
+						_coordAdjuster->fromDisplayToScript(nsRect.top, nsRect.left);
+						_coordAdjuster->fromDisplayToScript(nsRect.bottom, nsRect.right);
+						g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
+					}
 				}
 
 				// Don't attempt to draw sprites that are outside the visible
