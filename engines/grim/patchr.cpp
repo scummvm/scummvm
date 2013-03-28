@@ -373,7 +373,7 @@ Common::SeekableReadStream *wrapPatchedFile(Common::SeekableReadStream *rs, cons
 		PatchedFile *pf = new PatchedFile;
 		if (pf->load(rs, patchfile)) {
 			rs = Common::wrapBufferedSeekableReadStream(pf, 1024, DisposeAfterUse::YES);
-			Debug::debug(Debug::Patchr, "Patch for %s sucessfully loaded", filename.c_str());
+			Debug::debug(Debug::Patchr, "Patch for %s successfully loaded", filename.c_str());
 			break;
 		}
 

@@ -755,48 +755,48 @@ void GrimEngine::savegameRestore() {
 	_currSet = NULL;
 
 	Bitmap::getPool().restoreObjects(_savedState);
-	Debug::debug(Debug::Engine, "Bitmaps restored succesfully.");
+	Debug::debug(Debug::Engine, "Bitmaps restored successfully.");
 
 	Font::getPool().restoreObjects(_savedState);
-	Debug::debug(Debug::Engine, "Fonts restored succesfully.");
+	Debug::debug(Debug::Engine, "Fonts restored successfully.");
 
 	ObjectState::getPool().restoreObjects(_savedState);
-	Debug::debug(Debug::Engine, "ObjectStates restored succesfully.");
+	Debug::debug(Debug::Engine, "ObjectStates restored successfully.");
 
 	Set::getPool().restoreObjects(_savedState);
-	Debug::debug(Debug::Engine, "Sets restored succesfully.");
+	Debug::debug(Debug::Engine, "Sets restored successfully.");
 
 	TextObject::getPool().restoreObjects(_savedState);
-	Debug::debug(Debug::Engine, "TextObjects restored succesfully.");
+	Debug::debug(Debug::Engine, "TextObjects restored successfully.");
 
 	PrimitiveObject::getPool().restoreObjects(_savedState);
-	Debug::debug(Debug::Engine, "PrimitiveObjects restored succesfully.");
+	Debug::debug(Debug::Engine, "PrimitiveObjects restored successfully.");
 
 	Actor::getPool().restoreObjects(_savedState);
-	Debug::debug(Debug::Engine, "Actors restored succesfully.");
+	Debug::debug(Debug::Engine, "Actors restored successfully.");
 
 	if (getGameType() == GType_MONKEY4) {
 		PoolSound::getPool().restoreObjects(_savedState);
-		Debug::debug(Debug::Engine, "Pool sounds saved succesfully.");
+		Debug::debug(Debug::Engine, "Pool sounds saved successfully.");
 	}
 
 	restoreGRIM();
-	Debug::debug(Debug::Engine, "Engine restored succesfully.");
+	Debug::debug(Debug::Engine, "Engine restored successfully.");
 
 	g_driver->restoreState(_savedState);
-	Debug::debug(Debug::Engine, "Renderer restored succesfully.");
+	Debug::debug(Debug::Engine, "Renderer restored successfully.");
 
 	g_imuse->restoreState(_savedState);
-	Debug::debug(Debug::Engine, "iMuse restored succesfully.");
+	Debug::debug(Debug::Engine, "iMuse restored successfully.");
 
 	g_movie->restoreState(_savedState);
-	Debug::debug(Debug::Engine, "Movie restored succesfully.");
+	Debug::debug(Debug::Engine, "Movie restored successfully.");
 
 	_iris->restoreState(_savedState);
-	Debug::debug(Debug::Engine, "Iris restored succesfully.");
+	Debug::debug(Debug::Engine, "Iris restored successfully.");
 
 	lua_Restore(_savedState);
-	Debug::debug(Debug::Engine, "Lua restored succesfully.");
+	Debug::debug(Debug::Engine, "Lua restored successfully.");
 
 	delete _savedState;
 
@@ -915,45 +915,45 @@ void GrimEngine::savegameSave() {
 	savegameCallback();
 
 	Bitmap::getPool().saveObjects(_savedState);
-	Debug::debug(Debug::Engine, "Bitmaps saved succesfully.");
+	Debug::debug(Debug::Engine, "Bitmaps saved successfully.");
 
 	Font::getPool().saveObjects(_savedState);
-	Debug::debug(Debug::Engine, "Fonts saved succesfully.");
+	Debug::debug(Debug::Engine, "Fonts saved successfully.");
 
 	ObjectState::getPool().saveObjects(_savedState);
-	Debug::debug(Debug::Engine, "ObjectStates saved succesfully.");
+	Debug::debug(Debug::Engine, "ObjectStates saved successfully.");
 
 	Set::getPool().saveObjects(_savedState);
-	Debug::debug(Debug::Engine, "Sets saved succesfully.");
+	Debug::debug(Debug::Engine, "Sets saved successfully.");
 
 	TextObject::getPool().saveObjects(_savedState);
-	Debug::debug(Debug::Engine, "TextObjects saved succesfully.");
+	Debug::debug(Debug::Engine, "TextObjects saved successfully.");
 
 	PrimitiveObject::getPool().saveObjects(_savedState);
-	Debug::debug(Debug::Engine, "PrimitiveObjects saved succesfully.");
+	Debug::debug(Debug::Engine, "PrimitiveObjects saved successfully.");
 
 	Actor::getPool().saveObjects(_savedState);
-	Debug::debug(Debug::Engine, "Actors saved succesfully.");
+	Debug::debug(Debug::Engine, "Actors saved successfully.");
 
 	if (getGameType() == GType_MONKEY4) {
 		PoolSound::getPool().saveObjects(_savedState);
-		Debug::debug(Debug::Engine, "Pool sounds saved succesfully.");
+		Debug::debug(Debug::Engine, "Pool sounds saved successfully.");
 	}
 
 	saveGRIM();
-	Debug::debug(Debug::Engine, "Engine saved succesfully.");
+	Debug::debug(Debug::Engine, "Engine saved successfully.");
 
 	g_driver->saveState(_savedState);
-	Debug::debug(Debug::Engine, "Renderer saved succesfully.");
+	Debug::debug(Debug::Engine, "Renderer saved successfully.");
 
 	g_imuse->saveState(_savedState);
-	Debug::debug(Debug::Engine, "iMuse saved succesfully.");
+	Debug::debug(Debug::Engine, "iMuse saved successfully.");
 
 	g_movie->saveState(_savedState);
-	Debug::debug(Debug::Engine, "Movie saved succesfully.");
+	Debug::debug(Debug::Engine, "Movie saved successfully.");
 
 	_iris->saveState(_savedState);
-	Debug::debug(Debug::Engine, "Iris saved succesfully.");
+	Debug::debug(Debug::Engine, "Iris saved successfully.");
 
 	lua_Save(_savedState);
 
