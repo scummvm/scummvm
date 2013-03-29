@@ -188,8 +188,8 @@ private:
 
 	void capture_mem_sprite(const byte *objectData, byte *sprite, int objIndex);
 	void setBobInfo(int idx);
-	void SCBOB(int idx);
-	void CALCUL_BOB(int idx);
+	void computeHideCounter(int idx);
+	void initBobVariables(int idx);
 
 	void checkHidingItem();
 	void displayHiding(int idx);
@@ -197,8 +197,7 @@ private:
 	void beforeSort(SortMode sortMode, int index, int priority);
 	void displayBobAnim();
 	void displayVBob();
-	void DEF_SPRITE(int idx);
-
+	void showSprite(int idx);
 	void clearSprite();
 	void setSpriteZoom(int idx, int zoomFactor);
 	
@@ -210,7 +209,7 @@ private:
 	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
 
 	void sceneSpecialIni();
-	void ACTION(const byte *spriteData, const Common::String &actionStr, int speed, bool flipFl);
+	void showActionAnimation(const byte *spriteData, const Common::String &actionStr, int speed, bool flipFl);
 public:
 	bool _disableFl;
 	bool _forestFl;

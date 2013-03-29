@@ -458,7 +458,7 @@ void ObjectsManager::displaySprite() {
 				setBobInfo(_sortedDisplay[idx]._index);
 				break;
 			case SORT_SPRITE:
-				DEF_SPRITE(_sortedDisplay[idx]._index);
+				showSprite(_sortedDisplay[idx]._index);
 				break;
 			case SORT_HIDING:
 				displayHiding(_sortedDisplay[idx]._index);
@@ -475,7 +475,7 @@ void ObjectsManager::displaySprite() {
 				setBobInfo(_sortedDisplay[idx]._index);
 				break;
 			case SORT_SPRITE:
-				DEF_SPRITE(_sortedDisplay[idx]._index);
+				showSprite(_sortedDisplay[idx]._index);
 				break;
 			case SORT_HIDING:
 				displayHiding(_sortedDisplay[idx]._index);
@@ -700,7 +700,7 @@ void ObjectsManager::setBobOffset(int idx, int offset) {
 	_bob[idx]._oldX2 = offset;
 }
 
-void ObjectsManager::SCBOB(int idx) {
+void ObjectsManager::computeHideCounter(int idx) {
 	HidingItem *hid = &_hidingItem[idx];
 	if (hid->_useCount == 0)
 		return;
@@ -709,23 +709,23 @@ void ObjectsManager::SCBOB(int idx) {
 		if ((_bob[i]._bobMode) && (!_bob[i]._disabledAnimationFl) && (!_bob[i].field34) && (_bob[i]._frameIndex != 250)) {
 			int oldRight = _bob[i]._oldX + _bob[i]._oldWidth;
 			int oldBottom = _bob[i]._oldY + _bob[i]._oldHeight;
-			int cachedRight = hid->_width + hid->_x;
+			int hiddenRight = hid->_x + hid->_width;
 
-			if ((oldBottom > hid->_y) && (oldBottom < hid->_yOffset +hid->_height + hid->_y)) {
-				if ((oldRight >= hid->_x && oldRight <= cachedRight)
+			if ((oldBottom > hid->_y) && (oldBottom < hid->_yOffset + hid->_height + hid->_y)) {
+				if ((oldRight >= hid->_x && oldRight <= hiddenRight)
 				// CHECKME: The original was doing the test two times. This looks like an 
 				// original bug
 				// || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
-				 || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
-				 || (_bob[i]._oldWidth >= hid->_x && oldRight <= cachedRight)
-				 || (_bob[i]._oldWidth <= hid->_x && oldRight >= cachedRight))
+				 || (hiddenRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
+				 || (_bob[i]._oldWidth >= hid->_x && oldRight <= hiddenRight)
+				 || (_bob[i]._oldWidth <= hid->_x && oldRight >= hiddenRight))
 					++hid->_useCount;
 			}
 		}
 	}
 }
 
-void ObjectsManager::CALCUL_BOB(int idx) {
+void ObjectsManager::initBobVariables(int idx) {
 	_bob[idx]._activeFl = false;
 	if (_bob[idx]._isSpriteFl) {
 		_bob[idx]._flipFl = false;
@@ -747,11 +747,9 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 
 	int negZoom = 0;
 	int posZoom = 0;
-	if (_bob[idx]._zoomFactor < 0) {
-		negZoom = -_bob[idx]._zoomFactor;
-		if (negZoom > 95)
-			negZoom = 95;
-	} else
+	if (_bob[idx]._zoomFactor < 0)
+		negZoom = CLIP(-_bob[idx]._zoomFactor, 0, 95);
+	else
 		posZoom = _bob[idx]._zoomFactor;
 
 	if (posZoom) {
@@ -796,10 +794,9 @@ void ObjectsManager::CALCUL_BOB(int idx) {
 	if (posZoom) {
 		width = _vm->_graphicsManager->zoomIn(width, posZoom);
 		height = _vm->_graphicsManager->zoomIn(height, posZoom);
-	}
-	if (negZoom) {
-		height = _vm->_graphicsManager->zoomOut(height, negZoom);
+	} else if (negZoom) {
 		width = _vm->_graphicsManager->zoomOut(width, negZoom);
+		height = _vm->_graphicsManager->zoomOut(height, negZoom);
 	}
 
 	Liste2[idx]._width = width;
@@ -835,7 +832,7 @@ void ObjectsManager::checkHidingItem() {
 			}
 		}
 
-		SCBOB(hidingItemIdx);
+		computeHideCounter(hidingItemIdx);
 		if (hid->_useCount != _oldUseCount) {
 			int priority = hid->_yOffset + hid->_height + hid->_y;
 			if (priority > 440)
@@ -852,7 +849,7 @@ void ObjectsManager::checkHidingItem() {
 	}
 }
 
-void ObjectsManager::DEF_SPRITE(int idx) {
+void ObjectsManager::showSprite(int idx) {
 	SpriteItem *spr = &_sprite[idx];
 	if (!spr->_activeFl)
 		return;
@@ -878,11 +875,8 @@ void ObjectsManager::DEF_SPRITE(int idx) {
 		list->_posY = _vm->_graphicsManager->_minY;
 	}
 
-	if (list->_width + list->_posX > _vm->_graphicsManager->_maxX)
-		list->_width = _vm->_graphicsManager->_maxX - list->_posX;
-
-	if (list->_height + list->_posY > _vm->_graphicsManager->_maxY)
-		list->_height = _vm->_graphicsManager->_maxY - list->_posY;
+	list->_width = MIN(list->_width, _vm->_graphicsManager->_maxX - list->_posX);
+	list->_height = MIN(list->_height, _vm->_graphicsManager->_maxY - list->_posY);
 
 	if (list->_width <= 0 || list->_height <= 0)
 		list->_visibleFl = false;
@@ -1130,7 +1124,7 @@ void ObjectsManager::displayBobAnim() {
 	for (int i = 1; i <= 35; i++) {
 		_bob[i]._oldY = 0;
 		if (_bob[i]._bobMode == 10 && !_bob[i]._disabledAnimationFl && _bob[i]._bobMode10) {
-			CALCUL_BOB(i);
+			initBobVariables(i);
 			int priority = _bob[i]._oldX2 + _bob[i]._oldHeight + _bob[i]._oldY;
 
 			if (priority > 450)
@@ -2829,7 +2823,7 @@ void ObjectsManager::doActionBack(int idx) {
 	
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, false);
+		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 2:
 		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 8, false);
@@ -2838,7 +2832,7 @@ void ObjectsManager::doActionBack(int idx) {
 		SPACTION1(_gestureBuf, "12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, false);
+		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 5:
 		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,-1,", 8, false);
@@ -2870,7 +2864,7 @@ void ObjectsManager::doActionRight(int idx) {
 	
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 8, false);
+		showActionAnimation(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 8, false);
 		break;
 	case 2:
 		SPACTION(_gestureBuf, "1,2,3,4,5,6,7,8,-1,", 8, false);
@@ -2879,7 +2873,7 @@ void ObjectsManager::doActionRight(int idx) {
 		SPACTION1(_gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 8, false);
+		showActionAnimation(_gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 8, false);
 		break;
 	case 5:
 		SPACTION(_gestureBuf, "23,24,25,-1,", 8, false);
@@ -2911,7 +2905,7 @@ void ObjectsManager::doActionDiagRight(int idx) {
 
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, false);
+		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 2:
 		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 8, false);
@@ -2920,7 +2914,7 @@ void ObjectsManager::doActionDiagRight(int idx) {
 		SPACTION1(_gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, false);
+		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 5:
 		SPACTION(_gestureBuf, "15,16,17,18,-1,", 8, false);
@@ -2952,7 +2946,7 @@ void ObjectsManager::doActionFront(int idx) {
 	
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 8, false);
+		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 2:
 		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 8, false);
@@ -2961,7 +2955,7 @@ void ObjectsManager::doActionFront(int idx) {
 		SPACTION1(_gestureBuf, "14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 8, false);
+		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	}
 }
@@ -2975,7 +2969,7 @@ void ObjectsManager::doActionDiagLeft(int idx) {
 	
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, true);
+		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, true);
 		break;
 	case 2:
 		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 8, true);
@@ -2984,7 +2978,7 @@ void ObjectsManager::doActionDiagLeft(int idx) {
 		SPACTION1(_gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, true);
+		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, true);
 		break;
 	case 5:
 		SPACTION(_gestureBuf, "15,16,17,18,-1,", 8, true);
@@ -3016,7 +3010,7 @@ void ObjectsManager::doActionLeft(int idx) {
 	
 	switch (idx) {
 	case 1:
-		ACTION(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 8, true);
+		showActionAnimation(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 8, true);
 		break;
 	case 2:
 		SPACTION(_gestureBuf, "1,2,3,4,5,6,7,8,-1,", 8, true);
@@ -3025,7 +3019,7 @@ void ObjectsManager::doActionLeft(int idx) {
 		SPACTION1(_gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 8);
 		break;
 	case 4:
-		ACTION(_gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 8, true);
+		showActionAnimation(_gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 8, true);
 		break;
 	case 5:
 		SPACTION(_gestureBuf, "23,24,25,-1,", 8, true);
@@ -3509,7 +3503,7 @@ void ObjectsManager::enableVerb(int idx, int a2) {
 	}
 }
 
-void ObjectsManager::ACTION(const byte *spriteData, const Common::String &actionStr, int speed, bool flipFl) {
+void ObjectsManager::showActionAnimation(const byte *spriteData, const Common::String &actionStr, int speed, bool flipFl) {
 	Common::String tmpStr = "";
 	int realSpeed = speed;
 	if (_vm->_globals->_speed == 2)
