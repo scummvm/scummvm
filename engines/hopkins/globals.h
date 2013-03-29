@@ -210,6 +210,8 @@ public:
 	void setConfig();
 	void clearAll();
 	void loadCharacterData();
+
+	int _curRoomNum;
 };
 
 // Global null pointer

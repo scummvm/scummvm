@@ -126,7 +126,7 @@ private:
 	void loadCredits();
 	void displayCredits(int startPosY, byte *buffer, char color);
 	void displayCredits();
-	void handleNotAvailable(int sortie);
+	void handleNotAvailable(int nextScreen);
 
 	bool runWin95Demo();
 	bool runLinuxDemo();

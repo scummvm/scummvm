@@ -128,6 +128,7 @@ Globals::Globals(HopkinsEngine *vm) {
 	_cityMapEnabledFl = false;
 
 	_baseMapColor = 50;
+	_curRoomNum = 0;
 }
 
 Globals::~Globals() {

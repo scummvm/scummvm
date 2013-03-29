@@ -202,6 +202,8 @@ bool HopkinsEngine::runWin95Demo() {
 		if (shouldQuit())
 			return false;
 
+		_globals->_curRoomNum = _globals->_exitId;
+
 		switch (_globals->_exitId) {
 		case 1:
 			_linesManager->setMaxLineIdx(40);
@@ -493,6 +495,8 @@ bool HopkinsEngine::runLinuxDemo() {
 
 		if (shouldQuit())
 			return false;
+
+		_globals->_curRoomNum = _globals->_exitId;
 
 		switch (_globals->_exitId) {
 		case 17:
@@ -864,6 +868,8 @@ bool HopkinsEngine::runFull() {
 
 		if (shouldQuit())
 			return false;
+
+		_globals->_curRoomNum = _globals->_exitId;
 
 		switch (_globals->_exitId) {
 		case 1:
@@ -1876,11 +1882,11 @@ void HopkinsEngine::displayNotAvailable() {
 	_globals->_exitId = 4;
 }
 
-void HopkinsEngine::handleNotAvailable(int sortie) {
-	// Use the code of the linux demo instead of the code of the Windows demo.
+void HopkinsEngine::handleNotAvailable(int nextScreen) {
+	// Use the code of the Linux demo instead of the code of the Windows demo.
 	// The behavior is somewhat better, and common code is easier to maintain.
 	displayNotAvailable();
-	_globals->_exitId = sortie;
+	_globals->_exitId = nextScreen;
 }
 
 void HopkinsEngine::displayEndDemo() {
