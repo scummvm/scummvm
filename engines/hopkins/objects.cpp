@@ -586,7 +586,7 @@ void ObjectsManager::resetBob(int idx) {
 	bob._bobModeChange = 0;
 	bob.field20 = 0;
 	bob.field22 = 0;
-	bob.field34 = false;
+	bob._disableFl = false;
 	bob._zoomFactor = 0;
 	bob._flipFl = false;
 	bob._oldX2 = 0;
@@ -706,7 +706,7 @@ void ObjectsManager::computeHideCounter(int idx) {
 		return;
 
 	for (int i = 0; i <= 20; i++) {
-		if ((_bob[i]._bobMode) && (!_bob[i]._disabledAnimationFl) && (!_bob[i].field34) && (_bob[i]._frameIndex != 250)) {
+		if ((_bob[i]._bobMode) && (!_bob[i]._disabledAnimationFl) && (!_bob[i]._disableFl) && (_bob[i]._frameIndex != 250)) {
 			int oldRight = _bob[i]._oldX + _bob[i]._oldWidth;
 			int oldBottom = _bob[i]._oldY + _bob[i]._oldHeight;
 			int hiddenRight = hid->_x + hid->_width;
@@ -1810,10 +1810,10 @@ void ObjectsManager::handleCityMap() {
 	_vm->_graphicsManager->displayAllBob();
 	_vm->_graphicsManager->initScreen("PLAN", 2, false);
 	for (int i = 0; i <= 15; i++)
-		B_CACHE_OFF(i);
-	B_CACHE_OFF(19);
-	B_CACHE_OFF(20);
-	enableHiding();
+		disableHidingItem(i);
+	disableHidingItem(19);
+	disableHidingItem(20);
+	enableHidingBehavior();
 
 	if (!_mapCarPosX && !_mapCarPosY) {
 		_mapCarPosX = 900;
@@ -2826,31 +2826,31 @@ void ObjectsManager::doActionBack(int idx) {
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,13,-1,", 8, false);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,9,10,11,12,13,12,11,12,13,12,11,12,13,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 5:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,19,20,21,-1,", 8, false);
 		break;
 	case 6:
-		SPACTION1(_gestureBuf, "20,19,18,17,16,15,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "20,19,18,17,16,15,-1,", 8);
 		break;
 	case 7:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,22,23,24,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,19,20,21,22,23,24,-1,", 8, false);
 		break;
 	case 8:
-		SPACTION1(_gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 8);
 		break;
 	case 9:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,22,23,24,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,19,20,21,22,23,24,-1,", 8, false);
 		break;
 	case 10:
-		SPACTION1(_gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "23,22,21,20,19,18,17,16,15,-1,", 8);
 		break;
 	}
 }
@@ -2867,31 +2867,31 @@ void ObjectsManager::doActionRight(int idx) {
 		showActionAnimation(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 8, false);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "1,2,3,4,5,6,7,8,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "1,2,3,4,5,6,7,8,-1,", 8, false);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 8);
 		break;
 	case 4:
 		showActionAnimation(_gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 8, false);
 		break;
 	case 5:
-		SPACTION(_gestureBuf, "23,24,25,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "23,24,25,-1,", 8, false);
 		break;
 	case 6:
-		SPACTION1(_gestureBuf, "24,,23,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "24,,23,-1,", 8);
 		break;
 	case 7:
-		SPACTION(_gestureBuf, "23,24,25,26,27,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "23,24,25,26,27,-1,", 8, false);
 		break;
 	case 8:
-		SPACTION1(_gestureBuf, "26,25,24,23,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "26,25,24,23,-1,", 8);
 		break;
 	case 9:
-		SPACTION(_gestureBuf, "23,24,25,26,27,28,29,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "23,24,25,26,27,28,29,-1,", 8, false);
 		break;
 	case 10:
-		SPACTION1(_gestureBuf, "28,27,26,25,24,23,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "28,27,26,25,24,23,-1,", 8);
 		break;
 	}
 }
@@ -2908,31 +2908,31 @@ void ObjectsManager::doActionDiagRight(int idx) {
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 8, false);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 5:
-		SPACTION(_gestureBuf, "15,16,17,18,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,-1,", 8, false);
 		break;
 	case 6:
-		SPACTION1(_gestureBuf, "17,16,15,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "17,16,15,-1,", 8);
 		break;
 	case 7:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,19,20-1,", 8, false);
 		break;
 	case 8:
-		SPACTION1(_gestureBuf, "19,18,17,16,15,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "19,18,17,16,15,-1,", 8);
 		break;
 	case 9:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,19,20,21,-1,", 8, false);
 		break;
 	case 10:
-		SPACTION1(_gestureBuf, "20,19,18,17,15,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "20,19,18,17,15,-1,", 8);
 		break;
 	}
 }
@@ -2949,10 +2949,10 @@ void ObjectsManager::doActionFront(int idx) {
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 8, false);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,15,-1,", 8, false);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,9,10,11,12,13,14,13,12,11,10,9,7,6,5,4,3,2,1,0,-1,", 8, false);
@@ -2972,31 +2972,31 @@ void ObjectsManager::doActionDiagLeft(int idx) {
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, true);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 8, true);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,-1,", 8, true);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8);
 		break;
 	case 4:
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,9,10,11,12,11,12,11,12,11,12,11,10,9,8,7,6,5,4,3,2,1,0,-1,", 8, true);
 		break;
 	case 5:
-		SPACTION(_gestureBuf, "15,16,17,18,-1,", 8, true);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,-1,", 8, true);
 		break;
 	case 6:
-		SPACTION1(_gestureBuf, "17,16,15,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "17,16,15,-1,", 8);
 		break;
 	case 7:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,-1,", 8, true);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,19,20,-1,", 8, true);
 		break;
 	case 8:
-		SPACTION1(_gestureBuf, "19,18,17,16,15,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "19,18,17,16,15,-1,", 8);
 		break;
 	case 9:
-		SPACTION(_gestureBuf, "15,16,17,18,19,20,21,-1,", 8, true);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,19,20,21,-1,", 8, true);
 		break;
 	case 10:
-		SPACTION1(_gestureBuf, "20,19,18,17,15,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "20,19,18,17,15,-1,", 8);
 		break;
 	}
 }
@@ -3013,31 +3013,31 @@ void ObjectsManager::doActionLeft(int idx) {
 		showActionAnimation(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 8, true);
 		break;
 	case 2:
-		SPACTION(_gestureBuf, "1,2,3,4,5,6,7,8,-1,", 8, true);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "1,2,3,4,5,6,7,8,-1,", 8, true);
 		break;
 	case 3:
-		SPACTION1(_gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "9,10,11,12,13,14,15,16,17,18,19,20,-1,", 8);
 		break;
 	case 4:
 		showActionAnimation(_gestureBuf, "1,2,3,4,5,6,7,8,8,7,6,5,4,3,2,1,-1,", 8, true);
 		break;
 	case 5:
-		SPACTION(_gestureBuf, "23,24,25,-1,", 8, true);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "23,24,25,-1,", 8, true);
 		break;
 	case 6:
-		SPACTION1(_gestureBuf, "24,,23,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "24,,23,-1,", 8);
 		break;
 	case 7:
-		SPACTION(_gestureBuf, "23,24,25,26,27,-1,", 8, true);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "23,24,25,26,27,-1,", 8, true);
 		break;
 	case 8:
-		SPACTION1(_gestureBuf, "26,25,24,23,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "26,25,24,23,-1,", 8);
 		break;
 	case 9:
-		SPACTION(_gestureBuf, "23,24,25,26,27,28,29,-1,", 8, true);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "23,24,25,26,27,28,29,-1,", 8, true);
 		break;
 	case 10:
-		SPACTION1(_gestureBuf, "28,27,26,25,24,23,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "28,27,26,25,24,23,-1,", 8);
 		break;
 	}
 }
@@ -3157,7 +3157,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file) {
 
 				curDataCacheId += 5;
 			}
-			enableHiding();
+			enableHidingBehavior();
 		}
 	}
 
@@ -3544,7 +3544,7 @@ void ObjectsManager::showActionAnimation(const byte *spriteData, const Common::S
 	}
 }
 
-void ObjectsManager::SPACTION(byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl) {
+void ObjectsManager::showSpecialActionAnimationWithFlip(byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl) {
 	Common::String tmpStr = "";
 
 	int realSpeed = speed;
@@ -3586,7 +3586,7 @@ void ObjectsManager::SPACTION(byte *spriteData, const Common::String &animationS
 	} while (spriteIndex != -1);
 }
 
-void ObjectsManager::SPACTION1(byte *spriteData, const Common::String &animString, int speed) {
+void ObjectsManager::showSpecialActionAnimation(byte *spriteData, const Common::String &animString, int speed) {
 	Common::String tmpStr = "";
 	int realSpeed = speed;
 	if (_vm->_globals->_speed == 2)
@@ -3875,7 +3875,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		_vm->_graphicsManager->_scrollPosX = (int16)getSpriteX(0) - 320;
 	computeAndSetSpriteSize();
 	animateSprite(0);
-	enableHiding();
+	enableHidingBehavior();
 	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	computeAndSetSpriteSize();
 	sceneSpecialIni();
@@ -3997,7 +3997,7 @@ void ObjectsManager::loadHidingItems(const Common::String &file) {
 			_hidingItem[i]._useCount = 0;
 		curBufIdx += 5;
 	}
-	enableHiding();
+	enableHidingBehavior();
 	_vm->_globals->freeMemory(ptr);
 }
 
@@ -4025,16 +4025,16 @@ void ObjectsManager::clearVBob() {
 	}
 }
 
-void ObjectsManager::B_CACHE_OFF(int idx) {
+void ObjectsManager::disableHidingItem(int idx) {
 	assert(idx < 36);
-	_bob[idx].field34 = true;
+	_bob[idx]._disableFl = true;
 }
 
-void ObjectsManager::enableHiding() {
+void ObjectsManager::enableHidingBehavior() {
 	_hidingActiveFl = true;
 }
 
-void ObjectsManager::disableHiding() {
+void ObjectsManager::disableHidingBehavior() {
 	_hidingActiveFl = false;
 }
 

@@ -77,7 +77,7 @@ struct BobItem {
 	int _bobModeChange;
 	int field20;
 	int field22;
-	bool field34; // Set to true in B_CACHE_OFF()
+	bool _disableFl; // Set to true in B_CACHE_OFF()
 	int _zoomFactor;
 	bool _flipFl;
 	bool _isSpriteFl;
@@ -308,8 +308,8 @@ public:
 	void resetHidingUseCount(int idx);
 	void setHidingUseCount(int idx);
 	void loadHidingItems(const Common::String &file);
-	void enableHiding();
-	void disableHiding();
+	void enableHidingBehavior();
+	void disableHidingBehavior();
 
 	void resetHomeRateCounter() { _homeRateCounter = 0; }
 	void resetOldFrameIndex() { _oldFrameIndex = -1; }
@@ -317,12 +317,14 @@ public:
 	int getObjectWidth()  { return _objectWidth; }
 	int getObjectHeight() { return _objectHeight; }
 
+	void showSpecialActionAnimationWithFlip(byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl);
+	void showSpecialActionAnimation(byte *spriteData, const Common::String &animString, int speed);
+
 	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	void OPTI_OBJET();
-	void SPACTION(byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl);
 	void BOB_VIVANT(int idx);
 	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);
 	void VBOB_OFF(int idx);
@@ -330,9 +332,8 @@ public:
 	void SCI_OPTI_ONE(int idx, int animIdx, int animDataIdx, int a4);
 	void GOHOME();
 	void OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx);
-	void SPACTION1(byte *spriteData, const Common::String &animString, int speed);
 	void PARADISE();
-	void B_CACHE_OFF(int idx);
+	void disableHidingItem(int idx);
 };
 
 } // End of namespace Hopkins

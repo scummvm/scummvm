@@ -865,7 +865,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 	if (zone == 22 || zone == 23) {
 		_vm->_objectsManager->setFlipSprite(0, false);
 		_vm->_objectsManager->setSpriteIndex(0, 62);
-		_vm->_objectsManager->SPACTION(_vm->_objectsManager->_forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 4, false);
+		_vm->_objectsManager->showSpecialActionAnimationWithFlip(_vm->_objectsManager->_forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 4, false);
 		if (zone == 22) {
 			_vm->_objectsManager->lockAnimX(6, _vm->_objectsManager->getBobPosX(3));
 			_vm->_objectsManager->lockAnimX(8, _vm->_objectsManager->getBobPosX(3));
@@ -877,7 +877,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		_vm->_objectsManager->stopBobAnimation(4);
 		_vm->_objectsManager->setBobAnimation(6);
 		_vm->_soundManager->playSample(1);
-		_vm->_objectsManager->SPACTION1(_vm->_objectsManager->_forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
+		_vm->_objectsManager->showSpecialActionAnimation(_vm->_objectsManager->_forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
 		do
 			_vm->_eventsManager->refreshScreenAndEvents();
 		while (_vm->_objectsManager->getBobAnimDataIdx(6) < 12);
@@ -913,7 +913,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 	} else if (zone == 20 || zone == 21) {
 		_vm->_objectsManager->setFlipSprite(0, true);
 		_vm->_objectsManager->setSpriteIndex(0, 62);
-		_vm->_objectsManager->SPACTION(_vm->_objectsManager->_forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 4, true);
+		_vm->_objectsManager->showSpecialActionAnimationWithFlip(_vm->_objectsManager->_forestSprite, "2,3,4,5,6,7,8,9,10,11,12,-1,", 4, true);
 		if (zone == 20) {
 			_vm->_objectsManager->lockAnimX(5, _vm->_objectsManager->getBobPosX(1));
 			_vm->_objectsManager->lockAnimX(7, _vm->_objectsManager->getBobPosX(1));
@@ -925,7 +925,7 @@ void TalkManager::REPONSE2(int zone, int verb) {
 		_vm->_objectsManager->stopBobAnimation(2);
 		_vm->_objectsManager->setBobAnimation(5);
 		_vm->_soundManager->playSample(1);
-		_vm->_objectsManager->SPACTION1(_vm->_objectsManager->_forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
+		_vm->_objectsManager->showSpecialActionAnimation(_vm->_objectsManager->_forestSprite, "13,14,15,14,13,12,13,14,15,16,-1,", 4);
 		do
 			_vm->_eventsManager->refreshScreenAndEvents();
 		while (_vm->_objectsManager->getBobAnimDataIdx(5) < 12);

@@ -498,7 +498,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 5;
 		break;
 	case MKTAG24('B', 'C', 'A'):
-		_vm->_objectsManager->B_CACHE_OFF(READ_LE_INT16(dataP + 5));
+		_vm->_objectsManager->disableHidingItem(READ_LE_INT16(dataP + 5));
 		opcodeType = 1;
 		break;
 	case MKTAG24('A', 'N', 'I'): {
@@ -544,7 +544,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_eventsManager->_mouseButton = _vm->_eventsManager->_curMouseButton;
 			_vm->_globals->_disableInventFl = true;
 			_vm->_graphicsManager->fadeOutLong();
-			_vm->_objectsManager->disableHiding();
+			_vm->_objectsManager->disableHidingBehavior();
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_fontManager->hideText(5);
 			_vm->_fontManager->hideText(9);
@@ -840,7 +840,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 49: {
-			_vm->_objectsManager->disableHiding();
+			_vm->_objectsManager->disableHidingBehavior();
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_objectsManager->OPTI_BOBON(9, 10, -1, 0, 0, 0);
 
@@ -888,7 +888,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_objectsManager->animateSprite(0);
 				_vm->_objectsManager->stopBobAnimation(9);
 			}
-			_vm->_objectsManager->enableHiding();
+			_vm->_objectsManager->enableHidingBehavior();
 			break;
 			}
 
@@ -899,7 +899,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 51: {
 			_vm->_graphicsManager->fadeOutLong();
-			_vm->_objectsManager->disableHiding();
+			_vm->_objectsManager->disableHidingBehavior();
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_fontManager->hideText(5);
 			_vm->_fontManager->hideText(9);
@@ -1949,7 +1949,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->OBSSEUL = true;
 			_vm->_objectsManager->loadLinkFile("IM73a");
 			_vm->_objectsManager->OBSSEUL = false;
-			_vm->_objectsManager->enableHiding();
+			_vm->_objectsManager->enableHidingBehavior();
 			_vm->_objectsManager->setHidingUseCount(0);
 			_vm->_objectsManager->setHidingUseCount(1);
 			_vm->_graphicsManager->SETCOLOR4(252, 100, 100, 100);
@@ -1960,7 +1960,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 211:
 			_vm->_objectsManager->removeSprite(0);
-			_vm->_objectsManager->disableHiding();
+			_vm->_objectsManager->disableHidingBehavior();
 			_vm->_soundManager->_specialSoundNum = 211;
 			_vm->_animationManager->playSequence("SECRET2.SEQ", 1, 12, 100, false, true);
 			_vm->_soundManager->_specialSoundNum = 0;
@@ -2003,7 +2003,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->OBSSEUL = true;
 			_vm->_objectsManager->loadLinkFile("IM93a");
 			_vm->_objectsManager->OBSSEUL = false;
-			_vm->_objectsManager->enableHiding();
+			_vm->_objectsManager->enableHidingBehavior();
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_oldCharacterPosX = _vm->_objectsManager->getSpriteX(0);
 			_vm->_objectsManager->resetOldDirection();
@@ -2040,12 +2040,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->OBSSEUL = true;
 			_vm->_objectsManager->loadLinkFile("IM93c");
 			_vm->_objectsManager->OBSSEUL = false;
-			_vm->_objectsManager->enableHiding();
+			_vm->_objectsManager->enableHidingBehavior();
 			break;
 			}
 
 		case 231:
-			_vm->_objectsManager->disableHiding();
+			_vm->_objectsManager->disableHidingBehavior();
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_objectsManager->setBobAnimation(12);
 			do {
@@ -2065,11 +2065,11 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager->getBobAnimDataIdx(12) != 12);
 			_vm->_objectsManager->animateSprite(0);
 			_vm->_objectsManager->stopBobAnimation(12);
-			_vm->_objectsManager->enableHiding();
+			_vm->_objectsManager->enableHidingBehavior();
 			break;
 
 		case 233: {
-			_vm->_objectsManager->disableHiding();
+			_vm->_objectsManager->disableHidingBehavior();
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_objectsManager->setBobAnimation(11);
 			bool playFl = false;
@@ -2082,7 +2082,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					playFl = true;
 			} while (_vm->_objectsManager->getBobAnimDataIdx(11) != 13);
 			_vm->_objectsManager->stopBobAnimation(11);
-			_vm->_objectsManager->enableHiding();
+			_vm->_objectsManager->enableHidingBehavior();
 			_vm->_objectsManager->setBobAnimation(13);
 			do {
 				if (_vm->shouldQuit())
