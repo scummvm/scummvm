@@ -32,6 +32,7 @@ Debugger::Debugger(HopkinsEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 	DCmd_Register("continue", WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("rects", WRAP_METHOD(Debugger, cmd_DirtyRects));
+	DCmd_Register("teleport", WRAP_METHOD(Debugger, cmd_Teleport));
 }
 
 // Turns dirty rects on or off
@@ -45,5 +46,15 @@ bool Debugger::cmd_DirtyRects(int argc, const char **argv) {
 	}
 }
 
+// Change room number
+bool Debugger::cmd_Teleport(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("%s: [Room number]\n", argv[0]);
+		return true;
+	} else {
+		_vm->_globals->_exitId = atoi(argv[1]);
+		return false;
+	}
+}
 
 } // End of namespace Hopkins
