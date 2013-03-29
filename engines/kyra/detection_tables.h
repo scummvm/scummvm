@@ -1414,6 +1414,23 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_FLOPPY_FLAGS
 	},
 
+	{ // French floppy version 1.20, bug #3608967 "Lands of Lore - french version 1.20 MD5"
+		{
+			"lol",
+			"Extracted",
+			{
+				{"GENERAL.PAK", 0, "a9e22c450c4f1de6a600261183430394", -1 },
+				{"CHAPTER7.PAK", 0, "fb5294f7445318876741c8db39ba0b1a", -1 },
+				{ 0, 0, 0, 0 }
+			},
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO8(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS)
+		},
+		LOL_FLOPPY_FLAGS
+	},
+
 	{ // French floppy version 1.23, bug #3552534 "KYRA: LOL Floppy FR version unknown"
 		{
 			"lol",
