@@ -87,8 +87,8 @@ public:
 	byte _colorTable[PALETTE_EXT_BLOCK_SIZE];
 	byte _palette[PALETTE_EXT_BLOCK_SIZE];
 	byte _oldPalette[PALETTE_EXT_BLOCK_SIZE];
-	byte *_vesaScreen;
-	byte *_vesaBuffer;
+	byte *_backBuffer;
+	byte *_frontBuffer;
 	byte *_screenBuffer;
 	bool _largeScreenFl;
 	bool _noFadingFl;

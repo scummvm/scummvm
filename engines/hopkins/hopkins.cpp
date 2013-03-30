@@ -158,7 +158,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_globals->_speed = 1;
 
 	for (int i = 1; i < 50; i++) {
-		_graphicsManager->copySurface(_graphicsManager->_vesaScreen, 0, 0, 640, 440, _graphicsManager->_vesaBuffer, 0, 0);
+		_graphicsManager->copySurface(_graphicsManager->_backBuffer, 0, 0, 640, 440, _graphicsManager->_frontBuffer, 0, 0);
 		_eventsManager->refreshScreenAndEvents();
 	}
 
@@ -369,8 +369,8 @@ bool HopkinsEngine::runWin95Demo() {
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
 			_graphicsManager->updateScreen();
-			memset(_graphicsManager->_vesaBuffer, 0, 307200);
-			memset(_graphicsManager->_vesaScreen, 0, 307200);
+			memset(_graphicsManager->_frontBuffer, 0, 307200);
+			memset(_graphicsManager->_backBuffer, 0, 307200);
 			_graphicsManager->clearPalette();
 			_graphicsManager->resetDirtyRects();
 			break;
@@ -694,8 +694,8 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
 			_graphicsManager->updateScreen();
-			memset(_graphicsManager->_vesaBuffer, 0, 307200);
-			memset(_graphicsManager->_vesaScreen, 0, 307200);
+			memset(_graphicsManager->_frontBuffer, 0, 307200);
+			memset(_graphicsManager->_backBuffer, 0, 307200);
 			_graphicsManager->clearPalette();
 			_graphicsManager->resetDirtyRects();
 			break;
@@ -921,7 +921,7 @@ bool HopkinsEngine::runFull() {
 
 				if (getPlatform() != Common::kPlatformLinux) {
 					// Copy the end of the animation into the secondary buffer and fade out the screen
-					Common::fill(_graphicsManager->_vesaBuffer, _graphicsManager->_vesaBuffer +
+					Common::fill(_graphicsManager->_frontBuffer, _graphicsManager->_frontBuffer +
 						SCREEN_WIDTH * 2 * SCREEN_HEIGHT, 0);
 					_graphicsManager->fadeOutLong();
 				}
@@ -1491,8 +1491,8 @@ bool HopkinsEngine::runFull() {
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
 			_graphicsManager->updateScreen();
-			memset(_graphicsManager->_vesaBuffer, 0, 307200);
-			memset(_graphicsManager->_vesaScreen, 0, 307200);
+			memset(_graphicsManager->_frontBuffer, 0, 307200);
+			memset(_graphicsManager->_backBuffer, 0, 307200);
 			_graphicsManager->clearPalette();
 			_graphicsManager->resetDirtyRects();
 			break;
@@ -1742,7 +1742,7 @@ void HopkinsEngine::playIntro() {
 	_eventsManager->refreshScreenAndEvents();
 	memcpy(&paletteData2, _graphicsManager->_palette, 796);
 
-	_graphicsManager->setPaletteVGA256WithRefresh(paletteData, _graphicsManager->_vesaBuffer);
+	_graphicsManager->setPaletteVGA256WithRefresh(paletteData, _graphicsManager->_frontBuffer);
 	_graphicsManager->endDisplayBob();
 
 	if (shouldQuit() || _eventsManager->_escKeyFl)
@@ -1774,7 +1774,7 @@ void HopkinsEngine::playIntro() {
 		_eventsManager->refreshScreenAndEvents();
 
 	_globals->iRegul = 1;
-	_graphicsManager->setPaletteVGA256WithRefresh(paletteData2, _graphicsManager->_vesaBuffer);
+	_graphicsManager->setPaletteVGA256WithRefresh(paletteData2, _graphicsManager->_frontBuffer);
 
 	int introIndex = 0;
 	while (!shouldQuit() && !_eventsManager->_escKeyFl) {
@@ -1793,19 +1793,19 @@ void HopkinsEngine::playIntro() {
 				_graphicsManager->_palette[i] -= maxPalVal;
 		}
 
-		_graphicsManager->setPaletteVGA256WithRefresh(_graphicsManager->_palette, _graphicsManager->_vesaBuffer);
+		_graphicsManager->setPaletteVGA256WithRefresh(_graphicsManager->_palette, _graphicsManager->_frontBuffer);
 
 		for (int i = 1; i < 2 * introIndex; i++)
 			_eventsManager->refreshScreenAndEvents();
 
-		_graphicsManager->setPaletteVGA256WithRefresh(paletteData2, _graphicsManager->_vesaBuffer);
+		_graphicsManager->setPaletteVGA256WithRefresh(paletteData2, _graphicsManager->_frontBuffer);
 
 		for (int i = 1; i < 20 - introIndex; i++)
 			_eventsManager->refreshScreenAndEvents();
 
 		introIndex += 2;
 		if (introIndex > 15) {
-			_graphicsManager->setPaletteVGA256WithRefresh(paletteData, _graphicsManager->_vesaBuffer);
+			_graphicsManager->setPaletteVGA256WithRefresh(paletteData, _graphicsManager->_frontBuffer);
 			for (uint j = 1; j < 100 / _globals->_speed; ++j)
 				_eventsManager->refreshScreenAndEvents();
 
@@ -1820,7 +1820,7 @@ void HopkinsEngine::playIntro() {
 				_eventsManager->refreshScreenAndEvents();
 
 			Common::copy(&paletteData2[0], &paletteData2[PALETTE_BLOCK_SIZE], &_graphicsManager->_palette[0]);
-			_graphicsManager->setPaletteVGA256WithRefresh(_graphicsManager->_palette, _graphicsManager->_vesaBuffer);
+			_graphicsManager->setPaletteVGA256WithRefresh(_graphicsManager->_palette, _graphicsManager->_frontBuffer);
 
 			for (uint m = 0; m < 50 / _globals->_speed; ++m) {
 				if (m == 30 / _globals->_speed) {
@@ -2299,7 +2299,7 @@ void HopkinsEngine::loadBaseMap() {
 }
 
 void HopkinsEngine::drawBaseMap() {
-	memset(_graphicsManager->_vesaScreen, 0, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	memset(_graphicsManager->_backBuffer, 0, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 	// List of rectangle areas to draw for exit points
 	const int rects[] = {
@@ -2317,13 +2317,13 @@ void HopkinsEngine::drawBaseMap() {
 		Common::Rect r(rectP[0], rectP[1], rectP[2], rectP[3]);
 
 		for (int yp = r.top; yp <= r.bottom; ++yp) {
-			byte *pDest = _graphicsManager->_vesaScreen + yp * SCREEN_WIDTH + r.left;
+			byte *pDest = _graphicsManager->_backBuffer + yp * SCREEN_WIDTH + r.left;
 			Common::fill(pDest, pDest + r.width(), 0xff);
 		}
 	}
 
 	// Copy the calculated screen
-	memcpy(_graphicsManager->_vesaBuffer, _graphicsManager->_vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	memcpy(_graphicsManager->_frontBuffer, _graphicsManager->_backBuffer, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 	// Write some explanatory text
 	_fontManager->displayText(40, 200, "ScummVM base map - select a square for different rooms", 255);
@@ -2538,7 +2538,7 @@ void HopkinsEngine::displayCredits() {
 		--_globals->_creditsPosY;
 		if (_globals->_creditsStartX != -1 || _globals->_creditsEndX != -1 || _globals->_creditsStartY != -1 || _globals->_creditsEndY != -1) {
 			_eventsManager->refreshScreenAndEvents();
-			_graphicsManager->copySurface(_graphicsManager->_vesaScreen, 60, 50, 520, 380, _graphicsManager->_vesaBuffer, 60, 50);
+			_graphicsManager->copySurface(_graphicsManager->_backBuffer, 60, 50, 520, 380, _graphicsManager->_frontBuffer, 60, 50);
 		} else {
 			_eventsManager->refreshScreenAndEvents();
 		}

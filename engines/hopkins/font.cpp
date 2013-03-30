@@ -175,7 +175,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			int height = _text[idx]._height;
 			int width = _text[idx]._width;
 			_vm->_graphicsManager->restoreSurfaceRect(
-				_vm->_graphicsManager->_vesaBuffer,
+				_vm->_graphicsManager->_frontBuffer,
 				_text[idx]._textBlock,
 				xp,
 				yp,
@@ -361,15 +361,15 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			if (ptrd == g_PTRNUL)
 				error("Cutting a block for text box (%d)", size);
 
-			_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_vesaBuffer, ptrd, posX, posY, saveWidth, saveHeight);
+			_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_frontBuffer, ptrd, posX, posY, saveWidth, saveHeight);
 			_vm->_graphicsManager->Trans_bloc2(ptrd, _vm->_graphicsManager->_colorTable, size);
-			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, ptrd, posX, posY, saveWidth, saveHeight);
+			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, ptrd, posX, posY, saveWidth, saveHeight);
 			_vm->_globals->freeMemory(ptrd);
 
-			_vm->_graphicsManager->drawHorizontalLine(_vm->_graphicsManager->_vesaBuffer, posX, posY, saveWidth, (byte)-2);
-			_vm->_graphicsManager->drawHorizontalLine(_vm->_graphicsManager->_vesaBuffer, posX, saveHeight + posY, saveWidth, (byte)-2);
-			_vm->_graphicsManager->drawVerticalLine(_vm->_graphicsManager->_vesaBuffer, posX, posY, saveHeight, (byte)-2);
-			_vm->_graphicsManager->drawVerticalLine(_vm->_graphicsManager->_vesaBuffer, saveWidth + posX, posY, saveHeight, (byte)-2);
+			_vm->_graphicsManager->drawHorizontalLine(_vm->_graphicsManager->_frontBuffer, posX, posY, saveWidth, (byte)-2);
+			_vm->_graphicsManager->drawHorizontalLine(_vm->_graphicsManager->_frontBuffer, posX, saveHeight + posY, saveWidth, (byte)-2);
+			_vm->_graphicsManager->drawVerticalLine(_vm->_graphicsManager->_frontBuffer, posX, posY, saveHeight, (byte)-2);
+			_vm->_graphicsManager->drawVerticalLine(_vm->_graphicsManager->_frontBuffer, saveWidth + posX, posY, saveHeight, (byte)-2);
 		}
 		_text[idx]._lineCount = lineCount;
 		int textPosY = posY + 5;
@@ -395,7 +395,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_text[idx]._textBlock = ptre;
 			_text[idx]._width = blockWidth;
 			_text[idx]._height = blockHeight;
-			_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_vesaBuffer, _text[idx]._textBlock, posX, posY, _text[idx]._width, blockHeight);
+			_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_frontBuffer, _text[idx]._textBlock, posX, posY, _text[idx]._width, blockHeight);
 		}
 		_tempText = _vm->_globals->freeMemory(_tempText);
 	}
@@ -415,7 +415,7 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 			break;
 		if (currChar >= 32) {
 			charIndex = currChar - 32;
-			_vm->_graphicsManager->displayFont(_vm->_graphicsManager->_vesaBuffer, _font, currentX, yp, currChar - 32, col);
+			_vm->_graphicsManager->displayFont(_vm->_graphicsManager->_frontBuffer, _font, currentX, yp, currChar - 32, col);
 			currentX += _vm->_objectsManager->getWidth(_font, charIndex);
 		}
 	}
@@ -432,7 +432,7 @@ void FontManager::displayText(int xp, int yp, const Common::String &message, int
 
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
-			_vm->_graphicsManager->displayFont(_vm->_graphicsManager->_vesaBuffer, _font, xp, yp, characterIndex, col);
+			_vm->_graphicsManager->displayFont(_vm->_graphicsManager->_frontBuffer, _font, xp, yp, characterIndex, col);
 			xp += _vm->_objectsManager->getWidth(_font, characterIndex);
 		}
 	}
@@ -459,7 +459,7 @@ void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, i
 			break;
 		if (curChar >= 32) {
 			byte printChar = curChar - 32;
-			_vm->_graphicsManager->displayFont(_vm->_graphicsManager->_vesaBuffer, _font, charEndPosX, yp, printChar, fontCol);
+			_vm->_graphicsManager->displayFont(_vm->_graphicsManager->_frontBuffer, _font, charEndPosX, yp, printChar, fontCol);
 
 			// UGLY HACK: For some obscure reason, the BeOS and OS/2 versions use another font file, which doesn't have variable width.
 			// All the fonts have a length of 9, which results in completely broken text in the computer.

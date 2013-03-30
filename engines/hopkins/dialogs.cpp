@@ -68,11 +68,11 @@ void DialogsManager::drawInvent(Common::Point oldBorder, int oldBorderSpriteInde
 	if (!_vm->_dialogsManager->_inventDisplayedFl)
 		return;
 
-	_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
+	_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 	if (oldBorder.x && oldBorder.y)
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_dialogsManager->_inventBuf2, oldBorder.x + 300, oldBorder.y + 300, oldBorderSpriteIndex + 1);
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_dialogsManager->_inventBuf2, oldBorder.x + 300, oldBorder.y + 300, oldBorderSpriteIndex + 1);
 	if (newBorder.x && newBorder.y)
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_dialogsManager->_inventBuf2, newBorder.x + 300, newBorder.y + 300, newBorderSpriteIndex);
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_dialogsManager->_inventBuf2, newBorder.x + 300, newBorder.y + 300, newBorderSpriteIndex);
 	_vm->_graphicsManager->addDirtyRect(_vm->_dialogsManager->_inventX, _vm->_dialogsManager->_inventY, _vm->_dialogsManager->_inventX + _vm->_dialogsManager->_inventWidth, _vm->_dialogsManager->_inventY + _vm->_dialogsManager->_inventHeight);
 }
 
@@ -320,8 +320,8 @@ void DialogsManager::showOptionsDialog() {
 		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (!doneFlag);
 
-	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, scrollOffset + 164,
-		107, 335, 215, _vm->_graphicsManager->_vesaBuffer, scrollOffset + 164, 107);
+	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, scrollOffset + 164,
+		107, 335, 215, _vm->_graphicsManager->_frontBuffer, scrollOffset + 164, 107);
 	_vm->_graphicsManager->addDirtyRect(scrollOffset + 164, 107, scrollOffset + 498, 320);
 
 	_vm->_globals->_optionDialogSpr = _vm->_globals->freeMemory(_vm->_globals->_optionDialogSpr);
@@ -384,7 +384,7 @@ void DialogsManager::showInventory() {
 		_inventWidth = _vm->_objectsManager->getWidth(_inventWin1, 0);
 		_inventHeight = _vm->_objectsManager->getHeight(_inventWin1, 0);
 
-		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, _inventWin1, _inventX + 300, 414, 0, 0, 0, false);
+		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, _inventWin1, _inventX + 300, 414, 0, 0, 0, false);
 		int curPosY = 0;
 		int inventCount = 0;
 		for (int inventLine = 1; inventLine <= 5; inventLine++) {
@@ -395,7 +395,7 @@ void DialogsManager::showInventory() {
 				// The last two zones are not reserved for the inventory: Options and Save/Load
 				if (inventIdx && inventCount <= 29) {
 					byte *obj = _vm->_objectsManager->loadObjectFromFile(inventIdx, false);
-					_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, obj, _inventX + curPosX + 6,
+					_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, obj, _inventX + curPosX + 6,
 						curPosY + 120, _vm->_objectsManager->getObjectWidth(), _vm->_objectsManager->getObjectHeight());
 					_vm->_globals->freeMemory(obj);
 				}
@@ -403,7 +403,7 @@ void DialogsManager::showInventory() {
 			};
 			curPosY += 38;
 		}
-		_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_vesaBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
+		_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_frontBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 		_vm->_eventsManager->_curMouseButton = 0;
 		int newInventoryItem = 0;
 
@@ -471,7 +471,7 @@ void DialogsManager::showInventory() {
 	_vm->_fontManager->hideText(9);
 	if (_inventDisplayedFl) {
 		_inventDisplayedFl = false;
-		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _inventX, 114, _inventWidth, _inventHeight, _vm->_graphicsManager->_vesaBuffer, _inventX, 114);
+		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, _inventX, 114, _inventWidth, _inventHeight, _vm->_graphicsManager->_frontBuffer, _inventX, 114);
 		_vm->_graphicsManager->addDirtyRect(_inventX, 114, _inventX + _inventWidth, _inventWidth + 114);
 		_vm->_objectsManager->_refreshBobMode10Fl = true;
 	}
@@ -502,8 +502,8 @@ void DialogsManager::inventAnim() {
 		return;
 
 	if (_vm->_objectsManager->_eraseVisibleCounter && !_vm->_objectsManager->_visibleFl) {
-		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _vm->_objectsManager->_oldInventoryPosX, 27, 48, 38,
-			_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_oldInventoryPosX, 27);
+		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, _vm->_objectsManager->_oldInventoryPosX, 27, 48, 38,
+			_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_oldInventoryPosX, 27);
 		_vm->_graphicsManager->addDirtyRect(_vm->_objectsManager->_oldInventoryPosX, 27, _vm->_objectsManager->_oldInventoryPosX + 48, 65);
 		--_vm->_objectsManager->_eraseVisibleCounter;
 	}
@@ -511,31 +511,31 @@ void DialogsManager::inventAnim() {
 	if (_vm->_objectsManager->_visibleFl) {
 		if (_vm->_objectsManager->_oldInventoryPosX <= 1)
 			_vm->_objectsManager->_oldInventoryPosX = 2;
-		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _vm->_objectsManager->_oldInventoryPosX, 27, 48, 38,
-			_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_oldInventoryPosX, 27);
+		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, _vm->_objectsManager->_oldInventoryPosX, 27, 48, 38,
+			_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_oldInventoryPosX, 27);
 
 		_vm->_graphicsManager->addDirtyRect(_vm->_objectsManager->_oldInventoryPosX, 27, _vm->_objectsManager->_oldInventoryPosX + 48, 65);
 		int newOffset = _vm->_graphicsManager->_scrollOffset + 2;
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _inventoryIcons, newOffset + 300, 327, 0);
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _inventoryIcons, newOffset + 300, 327, 0);
 		_vm->_graphicsManager->addDirtyRect(newOffset, 27, newOffset + 45, 62);
 		_vm->_objectsManager->_oldInventoryPosX = newOffset;
 	}
 
 	if (_vm->_globals->_saveData->_data[svField357] == 1) {
 		if (_vm->_globals->_saveData->_data[svField353] == 1)
-			_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
+			_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
 		if (_vm->_globals->_saveData->_data[svField355] == 1)
-			_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_headSprites, 866, 325, 1, 0, 0, false);
+			_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 866, 325, 1, 0, 0, false);
 		_vm->_graphicsManager->addDirtyRect(532, 25, 560, 60);
 		_vm->_graphicsManager->addDirtyRect(566, 25, 594, 60);
 	}
 	if (_vm->_globals->_saveData->_data[svField356] == 1) {
-		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
+		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
 		_vm->_graphicsManager->addDirtyRect(532, 25, 560, 60);
 	}
 
 	if (_vm->_globals->_saveData->_data[svField354] == 1) {
-		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
+		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
 		_vm->_graphicsManager->addDirtyRect(532, 25, 560, 60);
 	}
 }
@@ -594,7 +594,7 @@ void DialogsManager::showLoadGame() {
 		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (!_vm->shouldQuit() && (!slotNumber || _vm->_eventsManager->getMouseButton() != 1));
 	_vm->_objectsManager->_saveLoadFl = false;
-	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353, _vm->_graphicsManager->_vesaBuffer, _vm->_eventsManager->_startPos.x + 183, 60);
+	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353, _vm->_graphicsManager->_frontBuffer, _vm->_eventsManager->_startPos.x + 183, 60);
 	_vm->_graphicsManager->addDirtyRect(_vm->_eventsManager->_startPos.x + 183, 60, 457, 413);
 	_vm->_objectsManager->_refreshBobMode10Fl = true;
 	_vm->_objectsManager->_saveLoadSprite = _vm->_globals->freeMemory(_vm->_objectsManager->_saveLoadSprite);
@@ -623,7 +623,7 @@ void DialogsManager::showSaveGame() {
 	} while (!_vm->shouldQuit() && (!slotNumber || _vm->_eventsManager->getMouseButton() != 1));
 
 	_vm->_objectsManager->_saveLoadFl = false;
-	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353, _vm->_graphicsManager->_vesaBuffer, _vm->_eventsManager->_startPos.x + 183, 60);
+	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353, _vm->_graphicsManager->_frontBuffer, _vm->_eventsManager->_startPos.x + 183, 60);
 	_vm->_graphicsManager->addDirtyRect(_vm->_eventsManager->_startPos.x + 183, 60, _vm->_eventsManager->_startPos.x + 457, 413);
 	_vm->_objectsManager->_refreshBobMode10Fl = true;
 	_vm->_objectsManager->_saveLoadSprite = _vm->_globals->freeMemory(_vm->_objectsManager->_saveLoadSprite);
@@ -664,18 +664,18 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 
 	_vm->_objectsManager->_saveLoadSprite = _vm->_objectsManager->loadSprite(filename);
 	_vm->_objectsManager->_saveLoadSprite2 = _vm->_objectsManager->loadSprite("SAVE2.SPR");
-	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 483, 360, 0);
+	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 483, 360, 0);
 
 	if (_vm->_globals->_language == LANG_FR) {
 		if (mode == MODE_SAVE)
-			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 525, 375, 1);
+			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 525, 375, 1);
 		else if (mode == MODE_LOAD)
-			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 515, 375, 2);
+			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 515, 375, 2);
 	} else {
 		if (mode == MODE_SAVE)
-			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 535, 372, 1);
+			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 535, 372, 1);
 		else if (mode == MODE_LOAD)
-			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 539, 372, 2);
+			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 539, 372, 2);
 	}
 
 	for (int slotNumber = 1; slotNumber <= 6; ++slotNumber) {
@@ -688,22 +688,22 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 
 			switch (slotNumber) {
 			case 1:
-				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 112, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 112, 128, 87);
 				break;
 			case 2:
-				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 112, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 112, 128, 87);
 				break;
 			case 3:
-				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 203, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 203, 128, 87);
 				break;
 			case 4:
-				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 203, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 203, 128, 87);
 				break;
 			case 5:
-				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 294, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, thumb, _vm->_eventsManager->_startPos.x + 190, 294, 128, 87);
 				break;
 			case 6:
-				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 294, 128, 87);
+				_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, thumb, _vm->_eventsManager->_startPos.x + 323, 294, 128, 87);
 				break;
 			}
 
@@ -713,7 +713,7 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 		}
 	}
 
-	_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_vesaBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353);
+	_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353);
 	_vm->_objectsManager->_saveLoadFl = true;
 	_vm->_objectsManager->_saveLoadX = 0;
 	_vm->_objectsManager->_saveLoadY = 0;

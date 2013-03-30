@@ -571,14 +571,14 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 			_vm->_eventsManager->mouseOff();
-			_vm->_graphicsManager->fadeInDefaultLength(_vm->_graphicsManager->_vesaBuffer);
+			_vm->_graphicsManager->fadeInDefaultLength(_vm->_graphicsManager->_frontBuffer);
 			do {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} while (_vm->_objectsManager->getBobAnimDataIdx(3) != 100);
-			_vm->_graphicsManager->fadeOutDefaultLength(_vm->_graphicsManager->_vesaBuffer);
+			_vm->_graphicsManager->fadeOutDefaultLength(_vm->_graphicsManager->_frontBuffer);
 			_vm->_graphicsManager->endDisplayBob();
 
 			// If uncensored, rip the throat of the hostage
@@ -601,9 +601,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 			_vm->_eventsManager->mouseOff();
-			_vm->_graphicsManager->fadeInDefaultLength(_vm->_graphicsManager->_vesaBuffer);
+			_vm->_graphicsManager->fadeInDefaultLength(_vm->_graphicsManager->_frontBuffer);
 			_vm->_objectsManager->SCI_OPTI_ONE(1, 0, 17, 3);
-			_vm->_graphicsManager->fadeOutDefaultLength(_vm->_graphicsManager->_vesaBuffer);
+			_vm->_graphicsManager->fadeOutDefaultLength(_vm->_graphicsManager->_frontBuffer);
 			_vm->_graphicsManager->endDisplayBob();
 
 			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
@@ -2354,7 +2354,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_graphicsManager->_fadingFl = true;
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager->_specialSoundNum = 0;
-			memset(_vm->_graphicsManager->_vesaBuffer, 0, 614400);
+			memset(_vm->_graphicsManager->_frontBuffer, 0, 614400);
 			_vm->_graphicsManager->_noFadingFl = true;
 			_vm->_globals->_exitId = 151;
 			break;
@@ -2366,7 +2366,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->_noFadingFl = true;
-			memset(_vm->_graphicsManager->_vesaBuffer, 0, 614400);
+			memset(_vm->_graphicsManager->_frontBuffer, 0, 614400);
 			_vm->_globals->_exitId = 151;
 			break;
 
@@ -2379,7 +2379,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->_noFadingFl = true;
-			memset(_vm->_graphicsManager->_vesaBuffer, 0, 614400);
+			memset(_vm->_graphicsManager->_frontBuffer, 0, 614400);
 			_vm->_globals->_exitId = 151;
 			break;
 
@@ -2388,7 +2388,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->OPTI_ONE(6, 0, 16, 4);
 			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
 				_vm->_animationManager->playAnim("BOMBE3A.ANM", 50, 14, 500);
-				memset(_vm->_graphicsManager->_vesaBuffer, 0, 614400);
+				memset(_vm->_graphicsManager->_frontBuffer, 0, 614400);
 			}
 			_vm->_globals->_exitId = 6;
 			break;

@@ -84,9 +84,9 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	}
 
 	if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 307200);
 	else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
+		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 614400);
 
 	if (!_vm->_graphicsManager->_lineNbr)
 		_vm->_graphicsManager->_scrollOffset = 0;
@@ -126,7 +126,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_characterSprite = _vm->_globals->freeMemory(_characterSprite);
 	_vm->_graphicsManager->NB_SCREEN(false);
 
-	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
+	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_backBuffer);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager->_charactersEnabledFl = false;
@@ -141,9 +141,9 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_graphicsManager->initColorTable(145, 150, _vm->_graphicsManager->_palette);
 	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 	_vm->_graphicsManager->lockScreen();
-	_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager->unlockScreen();
-	memcpy(_vm->_graphicsManager->_vesaBuffer, _vm->_graphicsManager->_vesaScreen, 614399);
+	memcpy(_vm->_graphicsManager->_frontBuffer, _vm->_graphicsManager->_backBuffer, 614399);
 	_vm->_globals->_disableInventFl = oldDisableInventFl;
 	_vm->_graphicsManager->updateScreen();
 	for (int i = 0; i <= 4; i++)
@@ -998,9 +998,9 @@ void TalkManager::animateObject(const Common::String &filename) {
 		_characterSprite = _vm->_objectsManager->loadSprite("RES_SAN.RES");
 
 	if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 307200);
 	else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
+		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 614400);
 
 	if (!_vm->_graphicsManager->_lineNbr)
 		_vm->_graphicsManager->_scrollOffset = 0;
@@ -1060,7 +1060,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	if (_vm->_globals->_exitId == 101)
 		_vm->_globals->_exitId = 0;
 
-	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
+	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_backBuffer);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	_vm->_objectsManager->_charactersEnabledFl = false;
@@ -1074,10 +1074,10 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_graphicsManager->initColorTable(145, 150, _vm->_graphicsManager->_palette);
 	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 	_vm->_graphicsManager->lockScreen();
-	_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager->unlockScreen();
 	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
-	memcpy(_vm->_graphicsManager->_vesaBuffer, _vm->_graphicsManager->_vesaScreen, 614399);
+	memcpy(_vm->_graphicsManager->_frontBuffer, _vm->_graphicsManager->_backBuffer, 614399);
 	_vm->_globals->_disableInventFl = false;
 	_vm->_graphicsManager->updateScreen();
 	for (int i = 0; i <= 4; i++)

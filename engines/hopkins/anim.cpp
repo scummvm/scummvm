@@ -63,7 +63,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 	_vm->_eventsManager->mouseOff();
 
-	byte *screenP = _vm->_graphicsManager->_vesaScreen;
+	byte *screenP = _vm->_graphicsManager->_backBuffer;
 
 	Common::String tmpStr;
 	// The Windows 95 demo only contains the interlaced version of the BOMBE1 and BOMBE2 videos
@@ -223,14 +223,14 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		memcpy(_vm->_graphicsManager->_oldPalette, _vm->_graphicsManager->_palette, 769);
 
 		if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 307200);
 		else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
+			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 614400);
 
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
 
-		screenP = _vm->_graphicsManager->_vesaScreen;
+		screenP = _vm->_graphicsManager->_backBuffer;
 		if (!f.open(filename))
 			error("Error opening file - %s", filename.c_str());
 
@@ -344,7 +344,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	}
 	_vm->_graphicsManager->_fadingFl = false;
 
-	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
+	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_backBuffer);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 	memcpy(_vm->_graphicsManager->_palette, _vm->_graphicsManager->_oldPalette, 769);
@@ -359,13 +359,13 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		_vm->_graphicsManager->setScreenWidth(2 * SCREEN_WIDTH);
 		_vm->_graphicsManager->_maxX = 2 * SCREEN_WIDTH;
 		_vm->_graphicsManager->lockScreen();
-		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_vesaBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_frontBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	} else {
 		_vm->_graphicsManager->setScreenWidth(SCREEN_WIDTH);
 		_vm->_graphicsManager->_maxX = SCREEN_WIDTH;
 		_vm->_graphicsManager->lockScreen();
 		_vm->_graphicsManager->clearScreen();
-		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_vesaBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_frontBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	_vm->_graphicsManager->unlockScreen();
 	_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -576,13 +576,13 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_eventsManager->refreshScreenAndEvents();
 
 		if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 307200);
 		else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_vesaScreen, 614400);
+			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 614400);
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
 	}
-	byte *screenP = _vm->_graphicsManager->_vesaScreen;
+	byte *screenP = _vm->_graphicsManager->_backBuffer;
 	Common::File f;
 	if (!f.open(file))
 		error("Error opening file - %s", file.c_str());
@@ -691,7 +691,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	f.close();
 
 	if (!noColFl) {
-		_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
+		_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_backBuffer);
 		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
 		_vm->_eventsManager->_mouseFl = true;
@@ -711,7 +711,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			return;
 
 		_vm->_eventsManager->_mouseFl = false;
-		screenP = _vm->_graphicsManager->_vesaScreen;
+		screenP = _vm->_graphicsManager->_backBuffer;
 
 		if (!f.open(file))
 			error("File not found - %s", file.c_str());

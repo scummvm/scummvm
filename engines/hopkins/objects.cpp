@@ -392,9 +392,9 @@ void ObjectsManager::displaySprite() {
 			if (clipY < _vm->_graphicsManager->_minY)
 				clipY = _vm->_graphicsManager->_minY;
 
-			_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, clipX, clipY,
+			_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, clipX, clipY,
 				_vm->_fontManager->_textList[idx]._width + 4, _vm->_fontManager->_textList[idx]._height + 4,
-				_vm->_graphicsManager->_vesaBuffer, clipX, clipY);
+				_vm->_graphicsManager->_frontBuffer, clipX, clipY);
 			_vm->_fontManager->_textList[idx]._enabledFl = false;
 		}
 	}
@@ -410,9 +410,9 @@ void ObjectsManager::displaySprite() {
 				if (clipY < _vm->_graphicsManager->_minY)
 					clipY = _vm->_graphicsManager->_minY;
 
-				_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, clipX, clipY,
+				_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, clipX, clipY,
 					Liste[idx]._width + 4, Liste[idx]._height + 4,
-					_vm->_graphicsManager->_vesaBuffer, clipX, clipY);
+					_vm->_graphicsManager->_frontBuffer, clipX, clipY);
 				Liste[idx]._visibleFl = false;
 			}
 		}
@@ -498,30 +498,30 @@ void ObjectsManager::displaySprite() {
 	_vm->_dialogsManager->drawInvent(_oldBorderPos, _oldBorderSpriteIndex, _borderPos, _borderSpriteIndex);
 
 	if (_saveLoadFl) {
-		_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, _saveLoadSprite, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353);
+		_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, _saveLoadSprite, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353);
 		if (_saveLoadX && _saveLoadY)
-			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _saveLoadSprite2, _saveLoadX + _vm->_eventsManager->_startPos.x + 300, _saveLoadY + 300, 0);
+			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _saveLoadSprite2, _saveLoadX + _vm->_eventsManager->_startPos.x + 300, _saveLoadY + 300, 0);
 
 		_vm->_graphicsManager->addDirtyRect(_vm->_eventsManager->_startPos.x + 183, 60, _vm->_eventsManager->_startPos.x + 457, 413);
 	}
 
 	// If the Options dialog is activated, draw the elements
 	if (_vm->_globals->_optionDialogFl) {
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 464, 407, 0);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 657, 556, _vm->_globals->_menuSpeed);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 731, 495, _vm->_globals->_menuTextOff);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 731, 468, _vm->_globals->_menuVoiceOff);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 731, 441, _vm->_globals->_menuSoundOff);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 731, 414, _vm->_globals->_menuMusicOff);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 600, 522, _vm->_globals->_menuDisplayType);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 611, 502, _vm->_globals->_menuScrollSpeed);
 		_vm->_graphicsManager->addDirtyRect(_vm->_eventsManager->_startPos.x + 164, 107, _vm->_eventsManager->_startPos.x + 498, 320);
 	}
@@ -605,10 +605,10 @@ void ObjectsManager::setBobInfo(int idx) {
 	int yp = _bob[idx]._oldY;
 
 	if (_bob[idx]._isSpriteFl)
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _bob[idx]._spriteData,
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _bob[idx]._spriteData,
 			xp + 300, yp + 300, _bob[idx]._frameIndex);
 	else
-		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer,
+		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer,
 			_bob[idx]._spriteData, xp + 300, yp + 300, _bob[idx]._frameIndex,
 			_bob[idx]._zoomOutFactor, _bob[idx]._zooInmFactor,
 			_bob[idx]._flipFl);
@@ -854,10 +854,10 @@ void ObjectsManager::showSprite(int idx) {
 		return;
 
 	if (spr->_rleFl)
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, spr->_spriteData,
+		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, spr->_spriteData,
 		    spr->_destX + 300, spr->_destY + 300, spr->_spriteIndex);
 	else
-		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, spr->_spriteData,
+		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, spr->_spriteData,
 		    spr->_destX + 300, spr->_destY + 300,  spr->_spriteIndex, spr->_reducePct, spr->_zoomPct, spr->_flipFl);
 
 	ListeItem *list = &Liste[idx];
@@ -887,7 +887,7 @@ void ObjectsManager::showSprite(int idx) {
 void ObjectsManager::displayHiding(int idx) {
 	HidingItem *hid = &_hidingItem[idx];
 
-	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, _hidingItemData[1], 
+	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _hidingItemData[1], 
 		hid->_x + 300, hid->_y + 300, hid->_spriteIndex);
 	_vm->_graphicsManager->addDirtyRect(hid->_x, hid->_y, hid->_x + hid->_width, hid->_y + hid->_height);
 }
@@ -1095,10 +1095,10 @@ void ObjectsManager::displayBobAnim() {
 			if ((_bob[i]._bobMode == 10) && (_bob[i]._bobMode10)) {
 				if ((_bob[i]._bobModeChange != 2) && (_bob[i]._bobModeChange != 4)) {
 					if (Liste2[i]._visibleFl) {
-						_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen,
+						_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer,
 							Liste2[i]._posX, Liste2[i]._posY,
 							Liste2[i]._width, Liste2[i]._height,
-							_vm->_graphicsManager->_vesaBuffer, Liste2[i]._posX,
+							_vm->_graphicsManager->_frontBuffer, Liste2[i]._posX,
 							Liste2[i]._posY);
 						Liste2[i]._visibleFl = false;
 					}
@@ -1107,10 +1107,10 @@ void ObjectsManager::displayBobAnim() {
 
 			if (_bob[i]._bobMode == 11) {
 				if (Liste2[i]._visibleFl) {
-					_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen,
+					_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer,
 						Liste2[i]._posX, Liste2[i]._posY,
 						Liste2[i]._width, Liste2[i]._height,
-						_vm->_graphicsManager->_vesaBuffer,
+						_vm->_graphicsManager->_frontBuffer,
 						Liste2[i]._posX, Liste2[i]._posY);
 					Liste2[i]._visibleFl = false;
 				}
@@ -1145,10 +1145,10 @@ void ObjectsManager::displayVBob() {
 			width = getWidth(vbob->_spriteData, vbob->_frameIndex);
 			height = getHeight(vbob->_spriteData, vbob->_frameIndex);
 
-			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaScreen, vbob->_surface,
+			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_backBuffer, vbob->_surface,
 				vbob->_xp, vbob->_yp, width, height);
 
-			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, vbob->_surface,
+			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, vbob->_surface,
 				vbob->_xp, vbob->_yp, width, height);
 
 			_vm->_graphicsManager->addDirtyRect(vbob->_xp, vbob->_yp, vbob->_xp + width, height + vbob->_yp);
@@ -1169,10 +1169,10 @@ void ObjectsManager::displayVBob() {
 			width = getWidth(vbob->_oldSpriteData, vbob->_oldFrameIndex);
 			height = getHeight(vbob->_oldSpriteData, vbob->_oldFrameIndex);
 
-			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaScreen, vbob->_surface,
+			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_backBuffer, vbob->_surface,
 				vbob->_oldX, vbob->_oldY, width, height);
 
-			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_vesaBuffer, vbob->_surface,
+			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, vbob->_surface,
 				vbob->_oldX, vbob->_oldY, width, height);
 
 			_vm->_graphicsManager->addDirtyRect(vbob->_oldX, vbob->_oldY, vbob->_oldX + width, vbob->_oldY + height);
@@ -1196,20 +1196,20 @@ void ObjectsManager::displayVBob() {
 			byte *surface = _vm->_globals->allocMemory(height * width);
 			vbob->_surface = surface;
 
-			_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_vesaScreen, surface,
+			_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_backBuffer, surface,
 				vbob->_xp, vbob->_yp, width, height);
 
 			if (*vbob->_spriteData == 78) {
-				_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaScreen, vbob->_spriteData,
+				_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_backBuffer, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex, 0, 0, false);
 
-				_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_vesaBuffer, vbob->_spriteData,
+				_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex, 0, 0, false);
 			} else {
-				_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaBuffer, vbob->_spriteData, 
+				_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, vbob->_spriteData, 
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex);
 
-				_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_vesaScreen, vbob->_spriteData,
+				_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_backBuffer, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex);
 			}
 
@@ -2161,7 +2161,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 	CharacterLocation *loc;
 
 	_changeHeadFl = true;
-	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, 532, 25, 65, 40, _vm->_graphicsManager->_vesaBuffer, 532, 25);
+	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, 532, 25, 65, 40, _vm->_graphicsManager->_frontBuffer, 532, 25);
 	_vm->_graphicsManager->addDirtyRect(532, 25, 597, 65);
 	_vm->_globals->_checkDistanceFl = true;
 	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
@@ -2653,7 +2653,7 @@ void ObjectsManager::handleSpecialGames() {
 		oldPalette = _vm->_globals->allocMemory(1000);
 		memcpy(oldPalette, _vm->_graphicsManager->_palette, 769);
 
-		_vm->_saveLoadManager->saveFile("TEMP1.SCR", _vm->_graphicsManager->_vesaScreen, 307200);
+		_vm->_saveLoadManager->saveFile("TEMP1.SCR", _vm->_graphicsManager->_backBuffer, 307200);
 
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
@@ -2665,7 +2665,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_soundManager->_specialSoundNum = 0;
 		_vm->_graphicsManager->NB_SCREEN(false);
 
-		_vm->_saveLoadManager->load("TEMP1.SCR", _vm->_graphicsManager->_vesaScreen);
+		_vm->_saveLoadManager->load("TEMP1.SCR", _vm->_graphicsManager->_backBuffer);
 		g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
 
 		_charactersEnabledFl = false;
@@ -2673,9 +2673,9 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 		_vm->_globals->freeMemory(oldPalette);
 		_vm->_graphicsManager->lockScreen();
-		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager->unlockScreen();
-		memcpy(_vm->_graphicsManager->_vesaBuffer, _vm->_graphicsManager->_vesaScreen, 614399);
+		memcpy(_vm->_graphicsManager->_frontBuffer, _vm->_graphicsManager->_backBuffer, 614399);
 
 		_vm->_graphicsManager->_scrollStatus = 0;
 		_vm->_graphicsManager->updateScreen();

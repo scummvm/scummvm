@@ -49,8 +49,8 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	_scrollPosX = 0;
 	_largeScreenFl = false;
 	_oldScrollPosX = 0;
-	_vesaScreen = NULL;
-	_vesaBuffer = NULL;
+	_backBuffer = NULL;
+	_frontBuffer = NULL;
 	_screenBuffer = g_PTRNUL;
 	_showDirtyRects = false;
 
@@ -94,8 +94,8 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 }
 
 GraphicsManager::~GraphicsManager() {
-	_vm->_globals->freeMemory(_vesaScreen);
-	_vm->_globals->freeMemory(_vesaBuffer);
+	_vm->_globals->freeMemory(_backBuffer);
+	_vm->_globals->freeMemory(_frontBuffer);
 	_vm->_globals->freeMemory(_screenBuffer);
 }
 
@@ -105,8 +105,8 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		initGraphics(width, height, true, &pixelFormat16);
 
 		// Init surfaces
-		_vesaScreen = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
-		_vesaBuffer = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		_backBuffer = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+		_frontBuffer = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 		_screenBuffer = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 		_videoPtr = NULL;
@@ -156,8 +156,8 @@ void GraphicsManager::clearScreen() {
 }
 
 void GraphicsManager::clearVesaScreen() {
-	Common::fill(_vesaScreen, _vesaScreen + _screenLineSize * _screenHeight, 0);
-	Common::fill(_vesaBuffer, _vesaBuffer + _screenLineSize * _screenHeight, 0);
+	Common::fill(_backBuffer, _backBuffer + _screenLineSize * _screenHeight, 0);
+	Common::fill(_frontBuffer, _frontBuffer + _screenLineSize * _screenHeight, 0);
 	addDirtyRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
 }
 
@@ -178,13 +178,13 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 	lockScreen();
 	clearScreen();
 	unlockScreen();
-	loadPCX320(_vesaScreen, file, _palette);
-	memcpy(_vesaBuffer, _vesaScreen, 64000);
+	loadPCX320(_backBuffer, file, _palette);
+	memcpy(_frontBuffer, _backBuffer, 64000);
 	setScreenWidth(320);
 	_maxX = 320;
 
 	lockScreen();
-	copy16bFromSurfaceScaleX2(_vesaBuffer);
+	copy16bFromSurfaceScaleX2(_frontBuffer);
 	addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	unlockScreen();
 
@@ -209,7 +209,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	}
 
 	scrollScreen(0);
-	loadPCX640(_vesaScreen, file, _palette, flag);
+	loadPCX640(_backBuffer, file, _palette, flag);
 
 	_scrollPosX = 0;
 	_oldScrollPosX = 0;
@@ -220,7 +220,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 		_maxX = SCREEN_WIDTH;
 		lockScreen();
 		clearScreen();
-		m_scroll16(_vesaScreen, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		m_scroll16(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		unlockScreen();
 	} else {
 		setScreenWidth(SCREEN_WIDTH * 2);
@@ -231,12 +231,12 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 
 		if (MANU_SCROLL) {
 			lockScreen();
-			m_scroll16(_vesaScreen, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			m_scroll16(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			unlockScreen();
 		}
 	}
 
-	memcpy(_vesaBuffer, _vesaScreen, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);	
+	memcpy(_frontBuffer, _backBuffer, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);	
 }
 
 void GraphicsManager::initColorTable(int minIndex, int maxIndex, byte *palette) {
@@ -557,7 +557,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
  */
 void GraphicsManager::fadeInShort() {
 	_fadeDefaultSpeed = 1;
-	fadeIn(_palette, 1, (const byte *)_vesaBuffer);
+	fadeIn(_palette, 1, (const byte *)_frontBuffer);
 }
 
 /** 
@@ -565,7 +565,7 @@ void GraphicsManager::fadeInShort() {
  */
 void GraphicsManager::fadeOutShort() {
 	_fadeDefaultSpeed = 1;
-	fadeOut(_palette, 1, (const byte *)_vesaBuffer);
+	fadeOut(_palette, 1, (const byte *)_frontBuffer);
 }
 
 /** 
@@ -573,7 +573,7 @@ void GraphicsManager::fadeOutShort() {
  */
 void GraphicsManager::fadeInLong() {
 	_fadeDefaultSpeed = 15;
-	fadeIn(_palette, 20, (const byte *)_vesaBuffer);
+	fadeIn(_palette, 20, (const byte *)_frontBuffer);
 }
 
 /** 
@@ -581,7 +581,7 @@ void GraphicsManager::fadeInLong() {
  */
 void GraphicsManager::fadeOutLong() {
 	_fadeDefaultSpeed = 15;
-	fadeOut(_palette, 20, (const byte *)_vesaBuffer);
+	fadeOut(_palette, 20, (const byte *)_frontBuffer);
 }
 
 /** 
@@ -606,7 +606,7 @@ void GraphicsManager::fadeOutDefaultLength(const byte *surface) {
 void GraphicsManager::fadeInBreakout() {
 	setPaletteVGA256(_palette);
 	lockScreen();
-	copy16bFromSurfaceScaleX2(_vesaBuffer);
+	copy16bFromSurfaceScaleX2(_frontBuffer);
 	unlockScreen();
 	updateScreen();
 }
@@ -621,7 +621,7 @@ void GraphicsManager::fadeOutBreakout() {
 	setPaletteVGA256(palette);
 
 	lockScreen();
-	copy16bFromSurfaceScaleX2(_vesaBuffer);
+	copy16bFromSurfaceScaleX2(_frontBuffer);
 	unlockScreen();
 	updateScreen();
 }
@@ -1111,7 +1111,7 @@ void GraphicsManager::displayDirtyRects() {
 		Common::Rect dstRect;
 
 		if (_vm->_eventsManager->_breakoutFl) {
-			Copy_Vga16(_vesaBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
+			Copy_Vga16(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
 			dstRect.left = r.left * 2;
 			dstRect.top = r.top * 2 + 30;
 			dstRect.setWidth((r.right - r.left) * 2);
@@ -1122,7 +1122,7 @@ void GraphicsManager::displayDirtyRects() {
 
 			// WORKAROUND: Original didn't lock the screen for access
 			lockScreen();
-			m_scroll16(_vesaBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_eventsManager->_startPos.x, r.top);
+			m_scroll16(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_eventsManager->_startPos.x, r.top);
 
 			dstRect.left = r.left - _vm->_eventsManager->_startPos.x;
 			dstRect.top = r.top;
@@ -1168,11 +1168,11 @@ void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, i
 	int width = _vm->_objectsManager->getWidth(objectData, idx);
 	int height = _vm->_objectsManager->getHeight(objectData, idx);
 	if (*objectData == 78) {
-		Affiche_Perfect(_vesaScreen, objectData, xp + 300, yp + 300, idx, 0, 0, false);
-		Affiche_Perfect(_vesaBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
+		Affiche_Perfect(_backBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
+		Affiche_Perfect(_frontBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
 	} else {
-		Sprite_Vesa(_vesaBuffer, objectData, xp + 300, yp + 300, idx);
-		Sprite_Vesa(_vesaScreen, objectData, xp + 300, yp + 300, idx);
+		Sprite_Vesa(_frontBuffer, objectData, xp + 300, yp + 300, idx);
+		Sprite_Vesa(_backBuffer, objectData, xp + 300, yp + 300, idx);
 	}
 	if (addSegment)
 		addDirtyRect(xp, yp, xp + width, yp + height);
@@ -1585,11 +1585,11 @@ void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int sp
 	int height = _vm->_objectsManager->getHeight(spriteData, spriteIndex);
 
 	if (*spriteData == 78) {
-		Affiche_Perfect(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
-		Affiche_Perfect(_vesaBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
+		Affiche_Perfect(_backBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
+		Affiche_Perfect(_frontBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
 	} else {
-		Sprite_Vesa(_vesaBuffer, spriteData, xp + 300, yp + 300, spriteIndex);
-		Sprite_Vesa(_vesaScreen, spriteData, xp + 300, yp + 300, spriteIndex);
+		Sprite_Vesa(_frontBuffer, spriteData, xp + 300, yp + 300, spriteIndex);
+		Sprite_Vesa(_backBuffer, spriteData, xp + 300, yp + 300, spriteIndex);
 	}
 	if (addSegment)
 		addDirtyRect(xp, yp, xp + width, yp + height);
@@ -1736,15 +1736,15 @@ void GraphicsManager::NB_SCREEN(bool initPalette) {
 		initColorTable(50, 65, _palette);
 
 	if (_lineNbr == SCREEN_WIDTH)
-		Trans_bloc2(_vesaBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT);
+		Trans_bloc2(_frontBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT);
 	else if (_lineNbr == (SCREEN_WIDTH * 2))
-		Trans_bloc2(_vesaBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
+		Trans_bloc2(_frontBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
 
 	lockScreen();
-	m_scroll16(_vesaBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	m_scroll16(_frontBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	unlockScreen();
 
-	memcpy(_vesaScreen, _vesaBuffer, 614399);
+	memcpy(_backBuffer, _frontBuffer, 614399);
 	updateScreen();
 }
 
