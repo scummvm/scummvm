@@ -855,7 +855,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				break;
 			case INV_CHAINSAW:
 				if (_actor[1].kicking || _actor[1].field_44)
-					_actor[0].act[2].state = 20;
+					_actor[0].act[2].state = 106;
 				else {
 					smlayer_setActorFacing(0, 2, 20, 180);
 					_actor[0].act[2].state = 20;
@@ -1170,11 +1170,12 @@ void Insane::actor02Reaction(int32 buttons) {
 
 		if (!smlayer_actorNeedRedraw(0, 2)) {
 			switchBenWeapon();
-			_actor[0].act[2].tilt = 0;
+			_actor[0].act[2].state = 1;
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;
 	case 36:
+		_actor[0].lost = true;
 		smlayer_setActorLayer(0, 2, 5);
 		_actor[0].kicking = false;
 		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
