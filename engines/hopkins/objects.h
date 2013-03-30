@@ -244,7 +244,6 @@ public:
 
 	bool PERSO_ON;
 	bool BOBTOUS;
-	bool OBSSEUL;
 
 	ObjectsManager(HopkinsEngine *vm);
 	~ObjectsManager();
@@ -254,7 +253,7 @@ public:
 	int getWidth(const byte *objectData, int idx);
 	int getHeight(const byte *objectData, int idx);
 	byte *loadSprite(const Common::String &file);
-	void loadLinkFile(const Common::String &file);
+	void loadLinkFile(const Common::String &file, bool OBSSEUL = false);
 	void addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int deltaX, int deltaY);
 	void animateSprite(int idx);
 	void removeSprite(int idx);
@@ -310,6 +309,7 @@ public:
 	void loadHidingItems(const Common::String &file);
 	void enableHidingBehavior();
 	void disableHidingBehavior();
+	void disableHidingItem(int idx);
 
 	void resetHomeRateCounter() { _homeRateCounter = 0; }
 	void resetOldFrameIndex() { _oldFrameIndex = -1; }
@@ -333,7 +333,6 @@ public:
 	void GOHOME();
 	void OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx);
 	void PARADISE();
-	void disableHidingItem(int idx);
 };
 
 } // End of namespace Hopkins

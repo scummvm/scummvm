@@ -948,9 +948,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->stopBobAnimation(1);
 			_vm->_objectsManager->OPTI_ONE(15, 0, 12, 0);
 			_vm->_objectsManager->stopBobAnimation(15);
-			_vm->_objectsManager->OBSSEUL = true;
-			_vm->_objectsManager->loadLinkFile("IM19a");
-			_vm->_objectsManager->OBSSEUL = false;
+			_vm->_objectsManager->loadLinkFile("IM19a", true);
 			break;
 
 		case 56:
@@ -1093,9 +1091,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->stopBobAnimation(12);
 			_vm->_objectsManager->stopBobAnimation(4);
 			_vm->_objectsManager->animateSprite(0);
-			_vm->_objectsManager->OBSSEUL = true;
-			_vm->_objectsManager->loadLinkFile("IM27a");
-			_vm->_objectsManager->OBSSEUL = false;
+			_vm->_objectsManager->loadLinkFile("IM27a", true);
 			break;
 			}
 
@@ -1199,9 +1195,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			} while (_vm->_objectsManager->getBobAnimDataIdx(5) != 6);
 			_vm->_objectsManager->stopBobAnimation(5);
 			_vm->_objectsManager->setBobAnimation(6);
-			_vm->_objectsManager->OBSSEUL = true;
-			_vm->_objectsManager->loadLinkFile("IM24a");
-			_vm->_objectsManager->OBSSEUL = false;
+			_vm->_objectsManager->loadLinkFile("IM24a", true);
 			break;
 
 		case 86:
@@ -1946,9 +1940,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_soundManager->_specialSoundNum = 0;
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 192, 152, 0);
 			_vm->_objectsManager->setBobAnimation(9);
-			_vm->_objectsManager->OBSSEUL = true;
-			_vm->_objectsManager->loadLinkFile("IM73a");
-			_vm->_objectsManager->OBSSEUL = false;
+			_vm->_objectsManager->loadLinkFile("IM73a", true);
 			_vm->_objectsManager->enableHidingBehavior();
 			_vm->_objectsManager->setHidingUseCount(0);
 			_vm->_objectsManager->setHidingUseCount(1);
@@ -2000,9 +1992,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			break;
 
 		case 230: {
-			_vm->_objectsManager->OBSSEUL = true;
-			_vm->_objectsManager->loadLinkFile("IM93a");
-			_vm->_objectsManager->OBSSEUL = false;
+			_vm->_objectsManager->loadLinkFile("IM93a", true);
 			_vm->_objectsManager->enableHidingBehavior();
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_objectsManager->_oldCharacterPosX = _vm->_objectsManager->getSpriteX(0);
@@ -2037,9 +2027,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->setSpriteY(0, 278);
 			_vm->_objectsManager->animateSprite(0);
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 337, 154, 3);
-			_vm->_objectsManager->OBSSEUL = true;
-			_vm->_objectsManager->loadLinkFile("IM93c");
-			_vm->_objectsManager->OBSSEUL = false;
+			_vm->_objectsManager->loadLinkFile("IM93c", true);
 			_vm->_objectsManager->enableHidingBehavior();
 			break;
 			}
@@ -2316,7 +2304,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 245:
 			_vm->_soundManager->playSoundFile("SOUND89.WAV");
 			_vm->_objectsManager->OPTI_ONE(5, 0, 6, 0);
-			_vm->_linesManager->ZONEP[4]._destX = 276;
+			_vm->_linesManager->_zone[4]._destX = 276;
 			_vm->_objectsManager->enableVerb(4, 19);
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 285, 379, 0);
 			_vm->_globals->_saveData->_data[svField399] = 1;
@@ -2475,7 +2463,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		opcodeType = 1;
 		break;
 	case MKTAG24('Z', 'C', 'H'):
-		_vm->_linesManager->ZONEP[READ_LE_INT16(dataP + 5)]._messageId = READ_LE_INT16(dataP + 7);
+		_vm->_linesManager->_zone[READ_LE_INT16(dataP + 5)]._messageId = READ_LE_INT16(dataP + 7);
 		opcodeType = 1;
 		break;
 	case MKTAG24('J', 'U', 'M'):

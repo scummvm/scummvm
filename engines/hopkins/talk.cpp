@@ -970,7 +970,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_objectsManager->resetHidingItems();
 	
 	for (int i = 0; i <= 44; i++)
-		_vm->_linesManager->BOBZONE[i] = 0;
+		_vm->_linesManager->_bobZone[i] = 0;
 
 	_vm->_objectsManager->_zoneNum = -1;
 	_vm->_eventsManager->_mouseCursorId = 4;
@@ -1048,7 +1048,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_linesManager->resetLines();
 	_vm->_objectsManager->resetHidingItems();
 	for (int i = 0; i <= 44; i++)
-		_vm->_linesManager->BOBZONE[i] = 0;
+		_vm->_linesManager->_bobZone[i] = 0;
 
 	_vm->_globals->freeMemory(_vm->_globals->_answerBuffer);
 	_vm->_globals->_answerBuffer = oldAnswerBufferPtr;

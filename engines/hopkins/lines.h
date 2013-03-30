@@ -74,7 +74,7 @@ struct SquareZoneItem {
 	bool _squareZoneFl;
 };
 
-struct ZonePItem {
+struct ZoneItem {
 	int _destX;
 	int _destY;
 	int _spriteIndex;
@@ -163,9 +163,9 @@ public:
 	RouteItem *_route;
 	RouteItem *_testRoute2;
 
-	int BOBZONE[105];
-	bool BOBZONE_FLAG[105];
-	ZonePItem ZONEP[106];
+	int _bobZone[105];
+	bool _bobZoneFl[105];
+	ZoneItem _zone[106];
 
 	LinesManager(HopkinsEngine *vm);
 	~LinesManager();

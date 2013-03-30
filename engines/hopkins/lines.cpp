@@ -50,12 +50,12 @@ LinesManager::LinesManager(HopkinsEngine *vm) {
 	}
 
 	for (int i = 0; i < 105; ++i) {
-		BOBZONE[i] = 0;
-		BOBZONE_FLAG[i] = false;
+		_bobZone[i] = 0;
+		_bobZoneFl[i] = false;
 	}
 
 	for (int i = 0; i < 106; ++i)
-		Common::fill((byte *)&ZONEP[i], (byte *)&ZONEP[i] + sizeof(ZonePItem), 0);
+		Common::fill((byte *)&_zone[i], (byte *)&_zone[i] + sizeof(ZoneItem), 0);
 
 	_linesNumb = 0;
 	_newLineIdx = 0;
@@ -202,8 +202,8 @@ void LinesManager::addZoneLine(int idx, int fromX, int fromY, int destX, int des
 	int16 *zoneData;
 
 	if (fromX == fromY && fromY == destX && fromY == destY) {
-		BOBZONE_FLAG[bobZoneIdx] = true;
-		BOBZONE[bobZoneIdx] = fromY;
+		_bobZoneFl[bobZoneIdx] = true;
+		_bobZone[bobZoneIdx] = fromY;
 	} else {
 		assert (idx <= MAX_LINES);
 		_zoneLine[idx]._zoneData = (int16 *)_vm->_globals->freeMemory((byte *)_zoneLine[idx]._zoneData);
@@ -2540,19 +2540,19 @@ int LinesManager::getMouseZone() {
 	int yp = _vm->_eventsManager->_mousePos.y + _vm->_eventsManager->_mouseOffset.y;
 	if ((_vm->_eventsManager->_mousePos.y + _vm->_eventsManager->_mouseOffset.y) > 19) {
 		for (int bobZoneId = 0; bobZoneId <= 48; bobZoneId++) {
-			int bobId = BOBZONE[bobZoneId];
-			if (bobId && BOBZONE_FLAG[bobZoneId] && _vm->_objectsManager->_bob[bobId]._bobMode && _vm->_objectsManager->_bob[bobId]._frameIndex != 250 &&
+			int bobId = _bobZone[bobZoneId];
+			if (bobId && _bobZoneFl[bobZoneId] && _vm->_objectsManager->_bob[bobId]._bobMode && _vm->_objectsManager->_bob[bobId]._frameIndex != 250 &&
 				!_vm->_objectsManager->_bob[bobId]._disabledAnimationFl && xp > _vm->_objectsManager->_bob[bobId]._oldX && 
 				xp < _vm->_objectsManager->_bob[bobId]._oldWidth + _vm->_objectsManager->_bob[bobId]._oldX && yp > _vm->_objectsManager->_bob[bobId]._oldY) {
 					if (yp < _vm->_objectsManager->_bob[bobId]._oldHeight + _vm->_objectsManager->_bob[bobId]._oldY) {
-						if (ZONEP[bobZoneId]._spriteIndex == -1) {
-							ZONEP[bobZoneId]._destX = 0;
-							ZONEP[bobZoneId]._destY = 0;
+						if (_zone[bobZoneId]._spriteIndex == -1) {
+							_zone[bobZoneId]._destX = 0;
+							_zone[bobZoneId]._destY = 0;
 						}
-						if (!ZONEP[bobZoneId]._destX && !ZONEP[bobZoneId]._destY) {
-							ZONEP[bobZoneId]._destX = _vm->_objectsManager->_bob[bobId]._oldWidth + _vm->_objectsManager->_bob[bobId]._oldX;
-							ZONEP[bobZoneId]._destY = _vm->_objectsManager->_bob[bobId]._oldHeight + _vm->_objectsManager->_bob[bobId]._oldY + 6;
-							ZONEP[bobZoneId]._spriteIndex = -1;
+						if (!_zone[bobZoneId]._destX && !_zone[bobZoneId]._destY) {
+							_zone[bobZoneId]._destX = _vm->_objectsManager->_bob[bobId]._oldWidth + _vm->_objectsManager->_bob[bobId]._oldX;
+							_zone[bobZoneId]._destY = _vm->_objectsManager->_bob[bobId]._oldHeight + _vm->_objectsManager->_bob[bobId]._oldY + 6;
+							_zone[bobZoneId]._spriteIndex = -1;
 						}
 						return bobZoneId;
 					}
@@ -2560,7 +2560,7 @@ int LinesManager::getMouseZone() {
 		}
 		_currentSegmentId = 0;
 		for (int squareZoneId = 0; squareZoneId <= 99; squareZoneId++) {
-			if (ZONEP[squareZoneId]._enabledFl && _squareZone[squareZoneId]._enabledFl
+			if (_zone[squareZoneId]._enabledFl && _squareZone[squareZoneId]._enabledFl
 				&& _squareZone[squareZoneId]._left <= xp && _squareZone[squareZoneId]._right >= xp
 				&& _squareZone[squareZoneId]._top <= yp && _squareZone[squareZoneId]._bottom >= yp) {
 					if (_squareZone[squareZoneId]._squareZoneFl)
@@ -2578,7 +2578,7 @@ int LinesManager::getMouseZone() {
 		int colRes1 = 0;
 		for (int yCurrent = yp; yCurrent >= 0; --yCurrent) {
 			colRes1 = checkCollision(xp, yCurrent);
-			if (colRes1 != -1 && ZONEP[colRes1]._enabledFl)
+			if (colRes1 != -1 && _zone[colRes1]._enabledFl)
 				break;
 		}
 
@@ -2588,7 +2588,7 @@ int LinesManager::getMouseZone() {
 		int colRes2 = 0;
 		for (int j = yp; j < _vm->_graphicsManager->_maxY; ++j) {
 			colRes2 = checkCollision(xp, j);
-			if (colRes2 != -1 && ZONEP[colRes1]._enabledFl)
+			if (colRes2 != -1 && _zone[colRes1]._enabledFl)
 				break;
 		}
 
@@ -2598,7 +2598,7 @@ int LinesManager::getMouseZone() {
 		int colRes3 = 0;
 		for (int k = xp; k >= 0; --k) {
 			colRes3 = checkCollision(k, yp);
-			if (colRes3 != -1 && ZONEP[colRes1]._enabledFl)
+			if (colRes3 != -1 && _zone[colRes1]._enabledFl)
 				break;
 		}
 		if (colRes3 == -1)
@@ -2607,7 +2607,7 @@ int LinesManager::getMouseZone() {
 		int colRes4 = 0;
 		for (int xCurrent = xp; _vm->_graphicsManager->_maxX > xCurrent; ++xCurrent) {
 			colRes4 = checkCollision(xCurrent, yp);
-			if (colRes4 != -1 && ZONEP[colRes1]._enabledFl)
+			if (colRes4 != -1 && _zone[colRes1]._enabledFl)
 				break;
 		}
 		if (colRes1 == colRes2 && colRes1 == colRes3 && colRes1 == colRes4)
@@ -2714,9 +2714,9 @@ void LinesManager::initSquareZones() {
 
 void LinesManager::clearAll() {
 	for (int idx = 0; idx < 105; ++idx) {
-		ZONEP[idx]._destX = 0;
-		ZONEP[idx]._destY = 0;
-		ZONEP[idx]._spriteIndex = 0;
+		_zone[idx]._destX = 0;
+		_zone[idx]._destY = 0;
+		_zone[idx]._spriteIndex = 0;
 	}
 
 	_testRoute0 = (RouteItem *)g_PTRNUL;
@@ -2798,18 +2798,18 @@ void LinesManager::resetLinesNumb() {
 }
 
 void LinesManager::enableZone(int idx) {
-	if (BOBZONE[idx]) {
-		BOBZONE_FLAG[idx] = true;
+	if (_bobZone[idx]) {
+		_bobZoneFl[idx] = true;
 	} else {
-		ZONEP[idx]._enabledFl = true;
+		_zone[idx]._enabledFl = true;
 	}
 }
 
 void LinesManager::disableZone(int idx) {
-	if (BOBZONE[idx]) {
-		BOBZONE_FLAG[idx] = false;
+	if (_bobZone[idx]) {
+		_bobZoneFl[idx] = false;
 	} else {
-		ZONEP[idx]._enabledFl = false;
+		_zone[idx]._enabledFl = false;
 	}
 }
 
@@ -2858,13 +2858,13 @@ void LinesManager::checkZone() {
 			}
 		}
 		if (zoneId != -1) {
-			if (ZONEP[zoneId]._verbFl1 || ZONEP[zoneId]._verbFl2 ||
-				ZONEP[zoneId]._verbFl3 || ZONEP[zoneId]._verbFl4 ||
-				ZONEP[zoneId]._verbFl5 || ZONEP[zoneId]._verbFl6 ||
-				ZONEP[zoneId]._verbFl7 || ZONEP[zoneId]._verbFl8 ||
-				ZONEP[zoneId]._verbFl9 || ZONEP[zoneId]._verbFl10) {
+			if (_zone[zoneId]._verbFl1 || _zone[zoneId]._verbFl2 ||
+				_zone[zoneId]._verbFl3 || _zone[zoneId]._verbFl4 ||
+				_zone[zoneId]._verbFl5 || _zone[zoneId]._verbFl6 ||
+				_zone[zoneId]._verbFl7 || _zone[zoneId]._verbFl8 ||
+				_zone[zoneId]._verbFl9 || _zone[zoneId]._verbFl10) {
 					if (_oldMouseZoneId != zoneId) {
-						_vm->_fontManager->initTextBuffers(5, ZONEP[zoneId]._messageId, _vm->_globals->_zoneFilename, 0, 430, 0, 0, 252);
+						_vm->_fontManager->initTextBuffers(5, _zone[zoneId]._messageId, _vm->_globals->_zoneFilename, 0, 430, 0, 0, 252);
 						_vm->_fontManager->showText(5);
 						_forceHideText = true;
 					}
@@ -2873,7 +2873,7 @@ void LinesManager::checkZone() {
 						_hotspotTextColor = 0;
 					_vm->_graphicsManager->SETCOLOR4(251, _hotspotTextColor, _hotspotTextColor, _hotspotTextColor);
 					if (_vm->_eventsManager->_mouseCursorId == 4) {
-						if (ZONEP[zoneId]._verbFl1 == 2) {
+						if (_zone[zoneId]._verbFl1 == 2) {
 							_vm->_eventsManager->changeMouseCursor(16);
 							_vm->_eventsManager->_mouseCursorId = 16;
 							_vm->_objectsManager->setVerb(16);
