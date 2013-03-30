@@ -1892,6 +1892,7 @@ void Insane::actor12Reaction(int32 buttons) {
 				break;
 			}
 		}
+		_actor[1].kicking = true;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
 		break;
 	case 20:
@@ -1932,6 +1933,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].kicking = false;
 		if (_actor[1].act[2].frame >= 5) {
 			smlayer_setActorFacing(1, 2, 25, 180);
+			smlayer_setActorLayer(1, 2, 5);
 			_actor[1].act[2].state = 65;
 		}
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
@@ -2012,7 +2014,6 @@ void Insane::actor12Reaction(int32 buttons) {
 			} else {
 				smlayer_setActorFacing(1, 2, 20, 180);
 				_actor[1].act[2].state = 28;
-				break;
 			}
 		}
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
@@ -2063,10 +2064,8 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_setActorLayer(1, 2, 5);
 		_actor[1].kicking = false;
 
-		if (!smlayer_actorNeedRedraw(1, 2)) {
+		if (!smlayer_actorNeedRedraw(1, 2))
 			switchEnemyWeapon();
-			_actor[1].act[2].tilt = 0;
-		}
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
 		break;
 	case 36:
@@ -2156,16 +2155,8 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].kicking = false;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
 		break;
+	case 62:
 	case 65:
-		smlayer_setActorLayer(1, 2, 5);
-		if (_actor[1].act[2].animTilt) {
-			smlayer_setActorFacing(1, 2, 25, 180);
-			_actor[1].act[2].animTilt = 0;
-		}
-		_actor[1].weaponClass = 1;
-		_actor[1].kicking = false;
-		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
-		break;
 	case 66:
 		smlayer_setActorLayer(1, 2, 5);
 		if (_actor[1].act[2].animTilt) {
@@ -2322,6 +2313,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_startSfx(100);
 		_actor[1].act[2].state = 90;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
+		smlayer_setActorLayer(1, 2, 26);
 		break;
 	case 90:
 		smlayer_setActorLayer(1, 2, 26);
@@ -2531,7 +2523,6 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].act[0].room = 0;
 		_actor[1].cursorX = 0;
 		_actor[1].act[2].state = 116;
-		smlayer_startVoice(232);
 		break;
 	case 116:
 		smlayer_setActorLayer(1, 2, 25);
