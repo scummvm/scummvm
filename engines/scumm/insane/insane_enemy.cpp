@@ -2343,6 +2343,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].kicking = false;
 		break;
 	case 92:
+	case 96:
 		smlayer_setActorLayer(1, 2, 5);
 		_actor[1].kicking = false;
 		break;
@@ -2353,6 +2354,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_setActorFacing(1, 2, 18, 180);
 		_actor[1].act[2].state = 94;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
+		smlayer_startSfx(102);
 		break;
 	case 94:
 		smlayer_setActorLayer(1, 2, 4);
