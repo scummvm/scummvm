@@ -634,7 +634,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].newFacingFlag = 1;
 		_actor[0].kicking = false;
 		if ((_actor[0].act[2].frame == 3) && (calcEnemyDamage(0, 0) == 1)) {
-			_actor[1].damage = weaponDamage(0);
+			_actor[1].damage += weaponDamage(0);
 			smlayer_startSfx(64);
 			_actor[1].cursorX = 320;
 		}
@@ -805,7 +805,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
 					(_actor[1].x - _actor[0].x >= weaponMinRange(0))) {
 					smlayer_startSfx(76);
-					_actor[1].damage = weaponDamage(0);
+					_actor[1].damage += weaponDamage(0);
 				}
 				break;
 			default:
@@ -813,7 +813,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					smlayer_startSfx(76);
 				break;
 			}
-			smlayer_setActorFacing(0, 2, 21,180);
+			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 17;
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
