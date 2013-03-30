@@ -113,8 +113,8 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_hidingActiveFl = false;
 	_curObjectFileNum = 0;
 	_objectDataBuf = g_PTRNUL;
-	PERSO_ON = false;
-	BOBTOUS = false;
+	_charactersEnabledFl = false;
+	_refreshBobMode10Fl = false;
 }
 
 ObjectsManager::~ObjectsManager() {
@@ -399,7 +399,7 @@ void ObjectsManager::displaySprite() {
 		}
 	}
 
-	if (!PERSO_ON) {
+	if (!_charactersEnabledFl) {
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
 			if (Liste[idx]._visibleFl) {
 				clipX = Liste[idx]._posX - 2;
@@ -421,7 +421,7 @@ void ObjectsManager::displaySprite() {
 	displayBobAnim();
 	displayVBob();
 
-	if (!PERSO_ON) {
+	if (!_charactersEnabledFl) {
 		// Handle drawing characters on the screen
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
 			Liste[idx]._visibleFl = false;
@@ -991,7 +991,7 @@ void ObjectsManager::beforeSort(SortMode sortMode, int index, int priority) {
 // Display BOB Anim
 void ObjectsManager::displayBobAnim() {
 	for (int idx = 1; idx <= 35; idx++) {
-		if (idx <= 20 && PERSO_ON) {
+		if (idx <= 20 && _charactersEnabledFl) {
 			_bob[idx]._bobMode10 = false;
 			continue;
 		}
@@ -1024,7 +1024,7 @@ void ObjectsManager::displayBobAnim() {
 		_bob[idx]._xp = READ_LE_INT16(dataPtr + 2 * dataIdx);
 		if (_lockedAnims[idx]._enableFl)
 			_bob[idx]._xp = _lockedAnims[idx]._posX;
-		if ( PERSO_ON && idx > 20 )
+		if ( _charactersEnabledFl && idx > 20 )
 			_bob[idx]._xp += _vm->_eventsManager->_startPos.x;
 
 		_bob[idx]._yp = READ_LE_INT16(dataPtr + 2 * dataIdx + 2);
@@ -1057,7 +1057,7 @@ void ObjectsManager::displayBobAnim() {
 
 				if (_lockedAnims[idx]._enableFl)
 					_bob[idx]._xp = _lockedAnims[idx]._posX;
-				if (PERSO_ON && idx > 20)
+				if (_charactersEnabledFl && idx > 20)
 					_bob[idx]._xp += _vm->_eventsManager->_startPos.x;
 
 				_bob[idx]._yp = READ_LE_INT16(bobData + 2);
@@ -1081,17 +1081,17 @@ void ObjectsManager::displayBobAnim() {
 			_bob[idx]._bobMode10 = true;
 	}
 
-	if (!PERSO_ON && BOBTOUS) {
+	if (!_charactersEnabledFl && _refreshBobMode10Fl) {
 		for (int i = 0; i < 35; i++) {
 			if (_bob[i]._bobMode == 10 && !_bob[i]._disabledAnimationFl)
 				_bob[i]._bobMode10 = true;
 		}
 	}
 
-	BOBTOUS = false;
+	_refreshBobMode10Fl = false;
 
 	for (int i = 1; i <= 35; i++) {
-		if (i > 20 || !PERSO_ON) {
+		if (i > 20 || !_charactersEnabledFl) {
 			if ((_bob[i]._bobMode == 10) && (_bob[i]._bobMode10)) {
 				if ((_bob[i]._bobModeChange != 2) && (_bob[i]._bobModeChange != 4)) {
 					if (Liste2[i]._visibleFl) {
@@ -2659,7 +2659,7 @@ void ObjectsManager::handleSpecialGames() {
 			_vm->_graphicsManager->_scrollOffset = 0;
 		_vm->_graphicsManager->NB_SCREEN(true);
 		_vm->_soundManager->_specialSoundNum = 198;
-		PERSO_ON = true;
+		_charactersEnabledFl = true;
 		_vm->_animationManager->unsetClearAnimFlag();
 		_vm->_animationManager->playAnim("otage.ANM", 1, 24, 500, true);
 		_vm->_soundManager->_specialSoundNum = 0;
@@ -2668,7 +2668,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_saveLoadManager->load("TEMP1.SCR", _vm->_graphicsManager->_vesaScreen);
 		g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
 
-		PERSO_ON = false;
+		_charactersEnabledFl = false;
 		memcpy(_vm->_graphicsManager->_palette, oldPalette, 769);
 		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 		_vm->_globals->freeMemory(oldPalette);

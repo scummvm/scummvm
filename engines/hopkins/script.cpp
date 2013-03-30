@@ -2313,12 +2313,12 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 246:
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_objectsManager->OPTI_ONE(6, 0, 15, 0);
-			_vm->_objectsManager->PERSO_ON = true;
+			_vm->_objectsManager->_charactersEnabledFl = true;
 			_vm->_graphicsManager->NB_SCREEN(true);
 			_vm->_animationManager->playSequence2("TUNNEL.SEQ", 1, 18, 20, true);
 			_vm->_graphicsManager->_noFadingFl = true;
 			_vm->_graphicsManager->fadeOutLong();
-			_vm->_objectsManager->PERSO_ON = false;
+			_vm->_objectsManager->_charactersEnabledFl = false;
 			_vm->_globals->_exitId = 100;
 			break;
 

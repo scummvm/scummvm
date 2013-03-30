@@ -473,7 +473,7 @@ void DialogsManager::showInventory() {
 		_inventDisplayedFl = false;
 		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _inventX, 114, _inventWidth, _inventHeight, _vm->_graphicsManager->_vesaBuffer, _inventX, 114);
 		_vm->_graphicsManager->addDirtyRect(_inventX, 114, _inventX + _inventWidth, _inventWidth + 114);
-		_vm->_objectsManager->BOBTOUS = true;
+		_vm->_objectsManager->_refreshBobMode10Fl = true;
 	}
 
 	_inventWin1 = _vm->_globals->freeMemory(_inventWin1);
@@ -596,7 +596,7 @@ void DialogsManager::showLoadGame() {
 	_vm->_objectsManager->_saveLoadFl = false;
 	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353, _vm->_graphicsManager->_vesaBuffer, _vm->_eventsManager->_startPos.x + 183, 60);
 	_vm->_graphicsManager->addDirtyRect(_vm->_eventsManager->_startPos.x + 183, 60, 457, 413);
-	_vm->_objectsManager->BOBTOUS = true;
+	_vm->_objectsManager->_refreshBobMode10Fl = true;
 	_vm->_objectsManager->_saveLoadSprite = _vm->_globals->freeMemory(_vm->_objectsManager->_saveLoadSprite);
 	_vm->_objectsManager->_saveLoadSprite2 = _vm->_globals->freeMemory(_vm->_objectsManager->_saveLoadSprite2);
 	_vm->_objectsManager->_saveLoadX = 0;
@@ -625,7 +625,7 @@ void DialogsManager::showSaveGame() {
 	_vm->_objectsManager->_saveLoadFl = false;
 	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_vesaScreen, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353, _vm->_graphicsManager->_vesaBuffer, _vm->_eventsManager->_startPos.x + 183, 60);
 	_vm->_graphicsManager->addDirtyRect(_vm->_eventsManager->_startPos.x + 183, 60, _vm->_eventsManager->_startPos.x + 457, 413);
-	_vm->_objectsManager->BOBTOUS = true;
+	_vm->_objectsManager->_refreshBobMode10Fl = true;
 	_vm->_objectsManager->_saveLoadSprite = _vm->_globals->freeMemory(_vm->_objectsManager->_saveLoadSprite);
 	_vm->_objectsManager->_saveLoadSprite2 = _vm->_globals->freeMemory(_vm->_objectsManager->_saveLoadSprite2);
 	_vm->_objectsManager->_saveLoadX = 0;

@@ -241,9 +241,8 @@ public:
 	SpriteItem _sprite[6];
 	BobItem _bob[36];
 	LockAnimItem _lockedAnims[30];
-
-	bool PERSO_ON;
-	bool BOBTOUS;
+	bool _charactersEnabledFl;
+	bool _refreshBobMode10Fl;
 
 	ObjectsManager(HopkinsEngine *vm);
 	~ObjectsManager();

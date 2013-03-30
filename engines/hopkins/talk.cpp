@@ -91,7 +91,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	if (!_vm->_graphicsManager->_lineNbr)
 		_vm->_graphicsManager->_scrollOffset = 0;
 	_vm->_graphicsManager->NB_SCREEN(true);
-	_vm->_objectsManager->PERSO_ON = true;
+	_vm->_objectsManager->_charactersEnabledFl = true;
 	searchCharacterPalette(_paletteBufferIdx, false);
 	startCharacterAnim0(_paletteBufferIdx, false);
 	initCharacterAnim();
@@ -129,7 +129,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-	_vm->_objectsManager->PERSO_ON = false;
+	_vm->_objectsManager->_charactersEnabledFl = false;
 	_vm->_eventsManager->_mouseCursorId = oldMouseCursorId;
 
 	_vm->_eventsManager->changeMouseCursor(oldMouseCursorId);
@@ -1007,14 +1007,14 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_graphicsManager->NB_SCREEN(true);
 	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
 	_vm->_graphicsManager->NB_SCREEN(true);
-	_vm->_objectsManager->PERSO_ON = true;
+	_vm->_objectsManager->_charactersEnabledFl = true;
 	searchCharacterPalette(_paletteBufferIdx, true);
 	startCharacterAnim0(_paletteBufferIdx, false);
 	byte *oldAnswerBufferPtr = _vm->_globals->_answerBuffer;
 	_vm->_globals->_answerBuffer = g_PTRNUL;
 	_vm->_globals->_freezeCharacterFl = true;
 	_vm->_objectsManager->loadLinkFile(screenFilename);
-	_vm->_objectsManager->PERSO_ON = true;
+	_vm->_objectsManager->_charactersEnabledFl = true;
 	_vm->_globals->_actionMoveTo = false;
 	_vm->_objectsManager->_zoneNum = -1;
 	initCharacterAnim();
@@ -1063,7 +1063,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_vesaScreen);
 	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
 
-	_vm->_objectsManager->PERSO_ON = false;
+	_vm->_objectsManager->_charactersEnabledFl = false;
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(4);
 	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
