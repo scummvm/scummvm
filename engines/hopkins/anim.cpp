@@ -56,7 +56,6 @@ void AnimationManager::clearAll() {
  * @param rate3			Delay amount after animation finishes
  */
 void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl) {
-	byte *screenCopy = NULL;
 	Common::File f;
 
 	if (_vm->shouldQuit())
@@ -172,7 +171,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	}
 
 	if (_vm->_graphicsManager->_fadingFl) {
-		screenCopy = _vm->_globals->allocMemory(307200);
+		byte *screenCopy = _vm->_globals->allocMemory(307200);
 
 		f.seek(6);
 		f.read(_vm->_graphicsManager->_palette, 800);
@@ -197,7 +196,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 				_vm->_graphicsManager->copyWinscanVbe3(screenP, screenCopy);
 		}
 		_vm->_graphicsManager->fadeOutDefaultLength(screenCopy);
-		screenCopy = _vm->_globals->freeMemory(screenCopy);
+		_vm->_globals->freeMemory(screenCopy);
 	}
 
 	_vm->_graphicsManager->_fadingFl = false;
