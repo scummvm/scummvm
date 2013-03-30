@@ -51,8 +51,8 @@ const SciWorkaroundEntry arithmeticWorkarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,  workaround
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CASTLEBRAIN,   280,   280,  0,         "programmer", "dispatchEvent",  -1,    0, { WORKAROUND_FAKE, 0xf } }, // pressing 'q' on the computer screen in the robot room, and closing the help dialog that pops up (bug #3039656). Moves the cursor to the view with the ID returned (in this case, the robot hand)
-	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3 - temps 504 and 505
-	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu, like in hoyle 3
+	{ GID_CNICK_KQ,       -1,     0,  1,          "Character", "say",            -1,   -1, { WORKAROUND_FAKE,   0 } }, // checkers/backgammon, like in hoyle 3 - temps 504 and 505 - bug #3606025
+	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering the control menu, like in hoyle 3
 	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
 	{ GID_ECOQUEST,       -1,    -1,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
 	{ GID_FANMADE,       516,   979,  0,                   "", "export 0",       -1,   20, { WORKAROUND_FAKE,   0 } }, // Happens in Grotesteing after the logos
