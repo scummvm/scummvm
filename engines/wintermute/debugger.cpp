@@ -22,12 +22,15 @@
 
 #include "engines/wintermute/debugger.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 
 namespace Wintermute {
 
 Console::Console(WintermuteEngine *vm) : GUI::Debugger(), _engineRef(vm) {
 	DCmd_Register("show_fps", WRAP_METHOD(Console, Cmd_ShowFps));
+	DCmd_Register("dump_file", WRAP_METHOD(Console, Cmd_DumpFile));
 }
 
 Console::~Console(void) {
@@ -44,5 +47,38 @@ bool Console::Cmd_ShowFps(int argc, const char **argv) {
 	}
 	return true;
 }
-	
+
+bool Console::Cmd_DumpFile(int argc, const char **argv) {
+	if (argc != 3) {
+		DebugPrintf("Usage: %s <file path> <output file name>\n", argv[0]);
+		return true;
+	}
+
+	Common::String filePath = argv[1];
+	Common::String outFileName = argv[2];
+
+	BaseFileManager *fileManager = BaseEngine::instance().getFileManager();
+	Common::SeekableReadStream *inFile = fileManager->openFile(filePath);
+	if (!inFile) {
+		DebugPrintf("File '%s' not found\n", argv[1]);
+		return true;
+	}
+
+	Common::DumpFile *outFile = new Common::DumpFile();
+	outFile->open(outFileName);
+
+	byte *data = new byte[inFile->size()];
+	inFile->read(data, inFile->size());
+	outFile->write(data, inFile->size());
+	outFile->finalize();
+	outFile->close();
+	delete[] data;
+
+	delete outFile;
+	delete inFile;
+
+	DebugPrintf("Resource file '%s' dumped to file '%s'\n", argv[1], argv[2]);
+	return true;
+}
+
 } // end of namespace Wintermute
