@@ -75,8 +75,8 @@ struct BobItem {
 	byte *_animData;
 	bool _bobMode10;
 	int _bobModeChange;
-	int field20;
-	int field22;
+	int _modeChangeCtr;
+	int _modeChangeUnused;
 	bool _disableFl; // Set to true in B_CACHE_OFF()
 	int _zoomFactor;
 	bool _flipFl;

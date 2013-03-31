@@ -614,8 +614,8 @@ void TalkManager::BOB_VISU_PARLE(int idx) {
 			bqeData = _characterSprite;
 			_vm->_objectsManager->_bob[idx]._spriteData = _characterSprite;
 			_vm->_objectsManager->_bob[idx]._bobModeChange = newMode;
-			_vm->_objectsManager->_bob[idx].field20 = -1;
-			_vm->_objectsManager->_bob[idx].field22 = 0;
+			_vm->_objectsManager->_bob[idx]._modeChangeCtr = -1;
+			_vm->_objectsManager->_bob[idx]._modeChangeUnused = 0;
 		}
 	}
 }

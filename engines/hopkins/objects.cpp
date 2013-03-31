@@ -583,8 +583,8 @@ void ObjectsManager::resetBob(int idx) {
 	bob._animData = g_PTRNUL;
 	bob._bobMode10 = false;
 	bob._bobModeChange = 0;
-	bob.field20 = 0;
-	bob.field22 = 0;
+	bob._modeChangeCtr = 0;
+	bob._modeChangeUnused = 0;
 	bob._disableFl = false;
 	bob._zoomFactor = 0;
 	bob._flipFl = false;
@@ -666,12 +666,12 @@ void ObjectsManager::displayBob(int idx) {
 	int16 bobModeChange = READ_LE_INT16(data + 2);
 	int16 newField22 = READ_LE_INT16(data + 4);
 	// data[6] isn't used, read skipped
-	int16 newField20 = READ_LE_INT16(data + 8);
+	int16 newModeChangeCtr = READ_LE_INT16(data + 8);
 
 	if (!bobModeChange)
 		bobModeChange = 1;
-	if (!newField20)
-		newField20 = -1;
+	if (!newModeChangeCtr)
+		newModeChangeCtr = -1;
 
 	_bob[idx]._isSpriteFl = false;
 
@@ -686,8 +686,8 @@ void ObjectsManager::displayBob(int idx) {
 	_bob[idx]._spriteData = _vm->_animationManager->Bank[bankIdx]._data;
 
 	_bob[idx]._bobModeChange = bobModeChange;
-	_bob[idx].field20 = newField20;
-	_bob[idx].field22 = newField22;
+	_bob[idx]._modeChangeCtr = newModeChangeCtr;
+	_bob[idx]._modeChangeUnused = newField22;
 }
 
 void ObjectsManager::hideBob(int idx) {
@@ -1000,7 +1000,7 @@ void ObjectsManager::displayBobAnim() {
 			continue;
 
 		_bob[idx]._bobMode10 = false;
-		if (_bob[idx]._animData == g_PTRNUL || _bob[idx]._disabledAnimationFl || _bob[idx].field20 == 0 || _bob[idx].field20 < -1) {
+		if (_bob[idx]._animData == g_PTRNUL || _bob[idx]._disabledAnimationFl || _bob[idx]._modeChangeCtr == 0 || _bob[idx]._modeChangeCtr < -1) {
 			if (_bob[idx]._bobModeChange == 1 || _bob[idx]._bobModeChange == 2)
 				_bob[idx]._bobMode10 = true;
 			continue;
@@ -1046,9 +1046,9 @@ void ObjectsManager::displayBobAnim() {
 			_bob[idx]._moveChange1 = 1;
 		}
 		if (!_bob[idx]._moveChange1) {
-			if (_bob[idx].field20 > 0)
-				_bob[idx].field20--;
-			if (_bob[idx].field20 != -1 && _bob[idx].field20 <= 0) {
+			if (_bob[idx]._modeChangeCtr > 0)
+				_bob[idx]._modeChangeCtr--;
+			if (_bob[idx]._modeChangeCtr != -1 && _bob[idx]._modeChangeCtr <= 0) {
 				_bob[idx]._bobMode = 11;
 			} else {
 				_bob[idx]._animDataIdx = 0;
