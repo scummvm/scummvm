@@ -2068,10 +2068,10 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 	_animationManager->loadAnim("ANIM92");
 	_graphicsManager->displayAllBob();
 	_objectsManager->loadLinkFile("IM92");
-
+/*
 	for (int cpt = 0; cpt <= 4 && !shouldQuit(); cpt++) 
 		_eventsManager->refreshScreenAndEvents();
-
+*/
 	_graphicsManager->fadeInLong();
 	_objectsManager->enableHidingBehavior();
 
