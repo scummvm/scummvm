@@ -138,7 +138,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_objectsManager->addObject(14);
 	_objectsManager->_helicopterFl = false;
 
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 
 	_graphicsManager->lockScreen();
 	_graphicsManager->clearScreen();
@@ -154,7 +154,7 @@ bool HopkinsEngine::runWin95Demo() {
 	}
 
 	_eventsManager->_rateCounter = 0;
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_globals->_speed = 1;
 
 	for (int i = 1; i < 50; i++) {
@@ -162,7 +162,7 @@ bool HopkinsEngine::runWin95Demo() {
 		_eventsManager->refreshScreenAndEvents();
 	}
 
-	_globals->iRegul = 0;
+	_globals->_eventMode = EVENTMODE_DEFAULT;
 	if (_eventsManager->_rateCounter > 475)
 		_globals->_speed = 2;
 	if (_eventsManager->_rateCounter > 700)
@@ -170,7 +170,7 @@ bool HopkinsEngine::runWin95Demo() {
 
 	if (_startGameSlot == -1) {
 		_graphicsManager->fadeOutLong();
-		_globals->iRegul = 1;
+		_globals->_eventMode = EVENTMODE_IGNORE;
 		_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 	}
 
@@ -227,7 +227,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_graphicsManager->fadeInLong();
 				_eventsManager->delay(500);
 				_graphicsManager->fadeOutLong();
-				_globals->iRegul = 1;
+				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundManager->_specialSoundNum = 2;
 				_graphicsManager->lockScreen();
 				_graphicsManager->clearScreen();
@@ -401,19 +401,19 @@ bool HopkinsEngine::runWin95Demo() {
 
 		case 150:
 			_soundManager->playSound(28);
-			_globals->iRegul = 4; // CHECKME!
+			_globals->_eventMode = EVENTMODE_ALT; // CHECKME!
 			_graphicsManager->lockScreen();
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
 			_graphicsManager->clearPalette();
 			_animationManager->playAnim("JOUR1A.anm", 12, 12, 2000);
-			_globals->iRegul = 0;
+			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
 
 		case 151:
 			_soundManager->playSound(28);
-			_globals->iRegul = 4; // CHECKME!
+			_globals->_eventMode = EVENTMODE_ALT; // CHECKME!
 			_graphicsManager->lockScreen();
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
@@ -423,18 +423,18 @@ bool HopkinsEngine::runWin95Demo() {
 			_eventsManager->delay(5000);
 			_graphicsManager->fadeOutLong();
 			_globals->_exitId = 300;
-			_globals->iRegul = 0;
+			_globals->_eventMode = EVENTMODE_DEFAULT;
 			break;
 
 		case 152:
 			_soundManager->playSound(28);
-			_globals->iRegul = 4; // CHECKME!
+			_globals->_eventMode = EVENTMODE_ALT; // CHECKME!
 			_graphicsManager->lockScreen();
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
 			_graphicsManager->clearPalette();
 			_animationManager->playAnim("JOUR4A.anm", 12, 12, 2000);
-			_globals->iRegul = 0;
+			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
 		}
@@ -469,7 +469,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			playIntro();
 	}
 
-	_globals->iRegul = 0;
+	_globals->_eventMode = EVENTMODE_DEFAULT;
 	_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
 	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
@@ -539,7 +539,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				_graphicsManager->fadeInLong();
 				_eventsManager->delay(500);
 				_graphicsManager->fadeOutLong();
-				_globals->iRegul = 1;
+				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundManager->_specialSoundNum = 2;
 
 				_graphicsManager->lockScreen();
@@ -726,7 +726,7 @@ bool HopkinsEngine::runLinuxDemo() {
 
 		case 150:
 			_soundManager->playSound(16);
-			_globals->iRegul = 1;
+			_globals->_eventMode = EVENTMODE_IGNORE;
 
 			_graphicsManager->lockScreen();
 			_graphicsManager->clearScreen();
@@ -734,13 +734,13 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager->clearPalette();
 			_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR1A.anm", 12, 12, 2000);
-			_globals->iRegul = 0;
+			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
 
 		case 151:
 			_soundManager->playSound(16);
-			_globals->iRegul = 1;
+			_globals->_eventMode = EVENTMODE_IGNORE;
 
 			_graphicsManager->lockScreen();
 			_graphicsManager->clearScreen();
@@ -748,13 +748,13 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager->clearPalette();
 			_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR3A.anm", 12, 12, 2000);
-			_globals->iRegul = 0;
+			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
 
 		case 152:
 			_soundManager->playSound(16);
-			_globals->iRegul = 1;
+			_globals->_eventMode = EVENTMODE_IGNORE;
 
 			_graphicsManager->lockScreen();
 			_graphicsManager->clearScreen();
@@ -762,7 +762,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsManager->clearPalette();
 			_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR4A.anm", 12, 12, 2000);
-			_globals->iRegul = 0;
+			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
 		}
@@ -785,7 +785,7 @@ bool HopkinsEngine::runFull() {
 		// in my copy: it mentions a Win95 version v4 using DirectDraw (Strangerke)
 	} else if (getPlatform() == Common::kPlatformWindows) {
 		_objectsManager->_helicopterFl = false;
-		_globals->iRegul = 1;
+		_globals->_eventMode = EVENTMODE_IGNORE;
 		// This code displays the game version.
 		// It wasn't present in the original and could be put in the debugger
 		// It has been added there for debug purposes
@@ -807,7 +807,7 @@ bool HopkinsEngine::runFull() {
 		}
 		_graphicsManager->clearVesaScreen();
 
-		_globals->iRegul = 1;
+		_globals->_eventMode = EVENTMODE_IGNORE;
 	}
 
 	_graphicsManager->lockScreen();
@@ -822,7 +822,7 @@ bool HopkinsEngine::runFull() {
 				_eventsManager->delay(500);
 				_graphicsManager->fadeOutLong();
 				_globals->_speed = 2;
-				_globals->iRegul = 1;
+				_globals->_eventMode = EVENTMODE_IGNORE;
 				_graphicsManager->_fadingFl = true;
 				_animationManager->playAnim("MP.ANM", 10, 16, 200);
 		} else {
@@ -843,7 +843,7 @@ bool HopkinsEngine::runFull() {
 		_eventsManager->delay(500);
 		_graphicsManager->fadeOutLong();
 	}
-	_globals->iRegul = 0;
+	_globals->_eventMode = EVENTMODE_DEFAULT;
 	_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
 	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
@@ -895,7 +895,7 @@ bool HopkinsEngine::runFull() {
 				_graphicsManager->fadeInLong();
 				_eventsManager->delay(500);
 				_graphicsManager->fadeOutLong();
-				_globals->iRegul = 1;
+				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundManager->_specialSoundNum = 2;
 				_graphicsManager->lockScreen();
 				_graphicsManager->clearScreen();
@@ -1031,7 +1031,7 @@ bool HopkinsEngine::runFull() {
 			else if (!_globals->_saveData->_data[svHutBurningFl])
 				_objectsManager->PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
 			if (_globals->_exitId == 18) {
-				_globals->iRegul = 1;
+				_globals->_eventMode = EVENTMODE_IGNORE;
 				_graphicsManager->lockScreen();
 				_graphicsManager->clearScreen();
 				_graphicsManager->unlockScreen();
@@ -1050,7 +1050,7 @@ bool HopkinsEngine::runFull() {
 					_animationManager->playAnim("PURG1A.ANM", 12, 18, 50);
 					_graphicsManager->fadeOutShort();
 				}
-				_globals->iRegul = 0;
+				_globals->_eventMode = EVENTMODE_DEFAULT;
 			}
 			break;
 
@@ -1077,7 +1077,7 @@ bool HopkinsEngine::runFull() {
 			_globals->_characterMaxPosY = 440;
 			_objectsManager->PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
 			if (_globals->_exitId == 17) {
-				_globals->iRegul = 1;
+				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundManager->stopSound();
 				_graphicsManager->lockScreen();
 				_graphicsManager->clearScreen();
@@ -1089,7 +1089,7 @@ bool HopkinsEngine::runFull() {
 				_animationManager->playAnim("PURG2A.ANM", 12, 18, 50);
 				if (getPlatform() != Common::kPlatformLinux)
 					_graphicsManager->fadeOutShort();
-				_globals->iRegul = 0;
+				_globals->_eventMode = EVENTMODE_DEFAULT;
 			}
 			break;
 
@@ -1443,7 +1443,7 @@ bool HopkinsEngine::runFull() {
 			_globals->_characterMaxPosY = 435;
 			_objectsManager->PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
 			if (_globals->_exitId == 18) {
-				_globals->iRegul = 1;
+				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundManager->stopSound();
 				_graphicsManager->lockScreen();
 				_graphicsManager->clearScreen();
@@ -1452,7 +1452,7 @@ bool HopkinsEngine::runFull() {
 				_soundManager->playSound(6);
 				_animationManager->playAnim("PURG1A.ANM", 12, 18, 50);
 				_graphicsManager->fadeOutShort();
-				_globals->iRegul = 0;
+				_globals->_eventMode = EVENTMODE_DEFAULT;
 			}
 			break;
 
@@ -1523,7 +1523,7 @@ bool HopkinsEngine::runFull() {
 
 		case 150:
 			_soundManager->playSound(16);
-			_globals->iRegul = 1;
+			_globals->_eventMode = EVENTMODE_IGNORE;
 			_graphicsManager->lockScreen();
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
@@ -1531,13 +1531,13 @@ bool HopkinsEngine::runFull() {
 			if (getPlatform() == Common::kPlatformLinux)
 				_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR1A.ANM", 12, 12, 2000);
-			_globals->iRegul = 0;
+			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
 
 		case 151:
 			_soundManager->playSound(16);
-			_globals->iRegul = 1;
+			_globals->_eventMode = EVENTMODE_IGNORE;
 			_graphicsManager->lockScreen();
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
@@ -1545,13 +1545,13 @@ bool HopkinsEngine::runFull() {
 			if (getPlatform() == Common::kPlatformLinux)
 				_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR3A.ANM", 12, 12, 2000);
-			_globals->iRegul = 0;
+			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
 
 		case 152:
 			_soundManager->playSound(16);
-			_globals->iRegul = 1;
+			_globals->_eventMode = EVENTMODE_IGNORE;
 			_graphicsManager->lockScreen();
 			_graphicsManager->clearScreen();
 			_graphicsManager->unlockScreen();
@@ -1559,7 +1559,7 @@ bool HopkinsEngine::runFull() {
 			if (getPlatform() == Common::kPlatformLinux)
 				_graphicsManager->_fadingFl = true;
 			_animationManager->playAnim("JOUR4A.ANM", 12, 12, 2000);
-			_globals->iRegul = 0;
+			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
 
@@ -1570,7 +1570,7 @@ bool HopkinsEngine::runFull() {
 		case 198:
 		case 199:
 			_globals->_characterSpriteBuf = _globals->freeMemory(_globals->_characterSpriteBuf);
-			_globals->iRegul = 1;
+			_globals->_eventMode = EVENTMODE_IGNORE;
 			_soundManager->stopSound();
 			_soundManager->playSound(23);
 			_globals->_exitId = handleBaseMap();	// Handles the base map (non-Windows)
@@ -1578,7 +1578,7 @@ bool HopkinsEngine::runFull() {
 			_soundManager->stopSound();
 			_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 			_globals->_characterType = 0;
-			_globals->iRegul = 0;
+			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_graphicsManager->_lineNbr = SCREEN_WIDTH;
 			break;
 		}
@@ -1649,7 +1649,7 @@ void HopkinsEngine::playIntro() {
 	memset(&paletteData, 0, PALETTE_EXT_BLOCK_SIZE);
 	_eventsManager->refreshScreenAndEvents();
 	_eventsManager->_mouseFl = false;
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_eventsManager->refreshScreenAndEvents();
 	_soundManager->playSound(16);
 	_animationManager->setClearAnimFlag();
@@ -1686,7 +1686,7 @@ void HopkinsEngine::playIntro() {
 	for (int i = 0; i <= 4; i++)
 		_eventsManager->refreshScreenAndEvents();
 
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_graphicsManager->fadeInLong();
 	if (_graphicsManager->_largeScreenFl) {
 		_graphicsManager->_scrollStatus = 2;
@@ -1731,7 +1731,7 @@ void HopkinsEngine::playIntro() {
 	for (int i = 0; i <= 4; i++)
 		_eventsManager->refreshScreenAndEvents();
 
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_graphicsManager->fadeInLong();
 	for (uint i = 0; i < 200 / _globals->_speed; ++i)
 		_eventsManager->refreshScreenAndEvents();
@@ -1773,7 +1773,7 @@ void HopkinsEngine::playIntro() {
 	for (int i = 0; i <= 3; i++)
 		_eventsManager->refreshScreenAndEvents();
 
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_graphicsManager->setPaletteVGA256WithRefresh(paletteData2, _graphicsManager->_frontBuffer);
 
 	int introIndex = 0;
@@ -1910,7 +1910,7 @@ void HopkinsEngine::bombExplosion() {
 	_graphicsManager->unlockScreen();
 	_graphicsManager->clearPalette();
 
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_soundManager->_specialSoundNum = 199;
 	_graphicsManager->_fadingFl = true;
 	_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
@@ -1942,7 +1942,7 @@ void HopkinsEngine::bombExplosion() {
 
 	_graphicsManager->fadeOutLong();
 	_graphicsManager->endDisplayBob();
-	_globals->iRegul = 0;
+	_globals->_eventMode = EVENTMODE_DEFAULT;
 	_globals->_exitId = 151;
 }
 
@@ -1982,7 +1982,7 @@ void HopkinsEngine::endLinuxDemo() {
 
 void HopkinsEngine::handleConflagration() {
 	_globals->_disableInventFl = true;
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_graphicsManager->loadImage("IM71");
 	_animationManager->loadAnim("ANIM71");
 	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
@@ -1995,7 +1995,7 @@ void HopkinsEngine::handleConflagration() {
 		_eventsManager->refreshScreenAndEvents();
 
 	_graphicsManager->fadeInLong();
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 
 	for (int cpt = 0; cpt <= 249; cpt++)
 		_eventsManager->refreshScreenAndEvents();
@@ -2014,7 +2014,7 @@ void HopkinsEngine::handleConflagration() {
 }
 
 void HopkinsEngine::playSubmarineCutscene() {
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_graphicsManager->_lineNbr = SCREEN_WIDTH;
 	_graphicsManager->lockScreen();
 	_graphicsManager->clearScreen();
@@ -2060,7 +2060,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 	_graphicsManager->unlockScreen();
 	_graphicsManager->clearPalette();
 	_soundManager->playSound(26);
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_globals->_disableInventFl = true;
 	_graphicsManager->_fadingFl = true;
 	_animationManager->playSequence("abase.seq", 50, 15, 50, false, false, true);
@@ -2085,7 +2085,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 		_objectsManager->resetHidingItems();
 		_globals->_disableInventFl = false;
 		_globals->_exitId = 93;
-		_globals->iRegul = 0;
+		_globals->_eventMode = EVENTMODE_DEFAULT;
 	}
 }
 
@@ -2095,7 +2095,7 @@ void HopkinsEngine::playEnding() {
 	_globals->_disableInventFl = true;
 	_graphicsManager->_scrollOffset = 0;
 	_globals->_cityMapEnabledFl = false;
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_soundManager->playSound(26);
 	_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_globals->_freezeCharacterFl = true;
@@ -2118,7 +2118,7 @@ void HopkinsEngine::playEnding() {
 		_eventsManager->refreshScreenAndEvents();
 
 	_graphicsManager->fadeInLong();
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 
 	do
 		_eventsManager->refreshScreenAndEvents();
@@ -2184,7 +2184,7 @@ void HopkinsEngine::playEnding() {
 		}
 		_eventsManager->_escKeyFl = false;
 		_graphicsManager->fadeOutLong();
-		_globals->iRegul = 1;
+		_globals->_eventMode = EVENTMODE_IGNORE;
 		_soundManager->_specialSoundNum = 0;
 		_graphicsManager->_fadingFl = true;
 		_animationManager->playAnim("JOUR2A.anm", 12, 12, 1000);
@@ -2199,7 +2199,7 @@ void HopkinsEngine::playEnding() {
 		_animationManager->playAnim("FF1a.anm", 9, 18, 9);
 		_animationManager->playAnim("FF2a.anm", 24, 24, 100);
 		displayCredits();
-		_globals->iRegul = 0;
+		_globals->_eventMode = EVENTMODE_DEFAULT;
 		_globals->_exitId = 300;
 		_dialogsManager->enableInvent();
 		_globals->_disableInventFl = false;
@@ -2227,22 +2227,22 @@ void HopkinsEngine::playEnding() {
 		_graphicsManager->endDisplayBob();
 		_soundManager->removeSample(1);
 		_soundManager->playSound(16);
-		_globals->iRegul = 1;
+		_globals->_eventMode = EVENTMODE_IGNORE;
 		_soundManager->_specialSoundNum = 0;
 		_dialogsManager->enableInvent();
 		_globals->_disableInventFl = false;
 		_animationManager->playAnim("JOUR4A.anm", 12, 12, 1000);
-		_globals->iRegul = 0;
+		_globals->_eventMode = EVENTMODE_DEFAULT;
 		_globals->_exitId = 300;
 	}
 	_globals->_characterSpriteBuf = _fileManager->loadFile("PERSO.SPR");
 	_globals->_characterType = 0;
-	_globals->iRegul = 0;
+	_globals->_eventMode = EVENTMODE_DEFAULT;
 }
 
 void HopkinsEngine::playPlaneCutscene() {
 	_soundManager->playSound(28);
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_graphicsManager->lockScreen();
 	_graphicsManager->clearScreen();
 	_graphicsManager->unlockScreen();
@@ -2504,7 +2504,7 @@ void HopkinsEngine::displayCredits() {
 	_graphicsManager->fadeInLong();
 	_soundManager->playSound(28);
 	_eventsManager->_mouseFl = false;
-	_globals->iRegul = 3;
+	_globals->_eventMode = EVENTMODE_CREDITS;
 	_globals->_creditsStartX = _globals->_creditsEndX = _globals->_creditsStartY = _globals->_creditsEndY = -1;
 	int soundId = 28;
 	do {
@@ -2555,7 +2555,7 @@ void HopkinsEngine::displayCredits() {
 		_globals->_creditsEndY = -1;
 	} while ((_eventsManager->getMouseButton() != 1) && (!shouldQuit()));
 	_graphicsManager->fadeOutLong();
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 	_eventsManager->_mouseFl = true;
 }
 
@@ -2840,7 +2840,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	if (!_graphicsManager->_noFadingFl)
 		_graphicsManager->fadeInLong();
 	_graphicsManager->_noFadingFl = false;
-	_globals->iRegul = 1;
+	_globals->_eventMode = EVENTMODE_IGNORE;
 
 	for (;;) {
 		int mouseButton = _eventsManager->getMouseButton();

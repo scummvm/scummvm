@@ -103,7 +103,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	_vm->_eventsManager->_escKeyFl = false;
 	_vm->_soundManager->loadAnimSound();
 
-	if (_vm->_globals->iRegul == 1) {
+	if (_vm->_globals->_eventMode == 1) {
 		// Do pre-animation delay
 		do {
 			if (_vm->_eventsManager->_escKeyFl)
@@ -130,7 +130,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
 
-			if (_vm->_globals->iRegul == 1) {
+			if (_vm->_globals->_eventMode == 1) {
 				do {
 					if (_vm->_eventsManager->_escKeyFl)
 						break;
@@ -154,7 +154,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		}
 	}
 
-	if (_vm->_globals->iRegul == 1 && !_vm->_eventsManager->_escKeyFl) {
+	if (_vm->_globals->_eventMode == 1 && !_vm->_eventsManager->_escKeyFl) {
 		// Do post-animation delay
 		do {
 			if (_vm->_eventsManager->_escKeyFl)
@@ -261,7 +261,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
 		_vm->_soundManager->loadAnimSound();
-		if (_vm->_globals->iRegul == 1) {
+		if (_vm->_globals->_eventMode == 1) {
 			while (!_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate1) {
 				_vm->_eventsManager->refreshEvents();
 			}
@@ -286,7 +286,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 				break;
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
-			if (_vm->_globals->iRegul == 1) {
+			if (_vm->_globals->_eventMode == 1) {
 				while (!_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate2) {
 					_vm->_eventsManager->refreshEvents();
 					_vm->_soundManager->checkSoundEnd();
@@ -305,7 +305,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			_vm->_soundManager->checkSoundEnd();
 		}
 
-		if (_vm->_globals->iRegul == 1) {
+		if (_vm->_globals->_eventMode == 1) {
 			while (!_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate3) {
 				_vm->_eventsManager->refreshEvents();
 				_vm->_soundManager->checkSoundEnd();
@@ -616,7 +616,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	_vm->_eventsManager->_rateCounter = 0;
 	_vm->_eventsManager->_escKeyFl = false;
 	_vm->_soundManager->loadAnimSound();
-	if (_vm->_globals->iRegul == 1) {
+	if (_vm->_globals->_eventMode == 1) {
 		do {
 			if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
 				skipFl = true;
@@ -643,7 +643,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 				break;
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
-			if (_vm->_globals->iRegul == 1) {
+			if (_vm->_globals->_eventMode == 1) {
 				do {
 					if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
 						skipFl = true;
@@ -671,7 +671,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		}
 	}
 
-	if (_vm->_globals->iRegul == 1 && !skipFl) {
+	if (_vm->_globals->_eventMode == 1 && !skipFl) {
 		do {
 			if (_vm->shouldQuit() || (_vm->_eventsManager->_escKeyFl && !skipEscFl)) {
 				skipFl = true;
@@ -737,7 +737,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		_vm->_eventsManager->_rateCounter = 0;
 		_vm->_eventsManager->_escKeyFl = false;
 		_vm->_soundManager->loadAnimSound();
-		if (_vm->_globals->iRegul == 1) {
+		if (_vm->_globals->_eventMode == 1) {
 			do {
 				_vm->_eventsManager->refreshEvents();
 				_vm->_soundManager->checkSoundEnd();
@@ -761,7 +761,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 				break;
 
 			f.read(screenP, READ_LE_UINT32(imageStr + 8));
-			if (_vm->_globals->iRegul == 1) {
+			if (_vm->_globals->_eventMode == 1) {
 				do {
 					_vm->_eventsManager->refreshEvents();
 				} while (!_vm->shouldQuit() && !_vm->_eventsManager->_escKeyFl && _vm->_eventsManager->_rateCounter < rate2);
@@ -779,7 +779,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		}
 	}
 
-	if (_vm->_globals->iRegul == 1) {
+	if (_vm->_globals->_eventMode == 1) {
 		// Wait for third rate delay
 		do {
 			_vm->_eventsManager->refreshEvents();

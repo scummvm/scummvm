@@ -141,6 +141,12 @@ enum Directions {
 	DIR_UP_LEFT = 8
 };
 
+enum EventMode {
+	EVENTMODE_DEFAULT = 0,
+	EVENTMODE_IGNORE = 1,
+	EVENTMODE_CREDITS = 3,
+	EVENTMODE_ALT = 4
+};
 
 class HopkinsEngine;
 
@@ -201,7 +207,7 @@ public:
 	Common::String _textFilename;
 	byte *_levelSpriteBuf;
 
-	int iRegul;
+	EventMode _eventMode;
 
 	Globals(HopkinsEngine *vm);
 	~Globals();

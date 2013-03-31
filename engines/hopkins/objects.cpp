@@ -1799,7 +1799,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_globals->_exitId = 0;
 	_vm->_globals->_checkDistanceFl = true;
 	_vm->_soundManager->playSound(31);
-	_vm->_globals->iRegul = 1;
+	_vm->_globals->_eventMode = EVENTMODE_IGNORE;
 	_vm->_graphicsManager->loadImage("PLAN");
 	_vm->_linesManager->loadLines("PLAN.OB2");
 	loadHidingItems("PLAN.CA2");
@@ -1833,7 +1833,7 @@ void ObjectsManager::handleCityMap() {
 	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager->refreshScreenAndEvents();
 
-	_vm->_globals->iRegul = 1;
+	_vm->_globals->_eventMode = EVENTMODE_IGNORE;
 	_vm->_graphicsManager->fadeInLong();
 	_vm->_eventsManager->changeMouseCursor(4);
 	_vm->_graphicsManager->_noFadingFl = false;
@@ -1876,7 +1876,7 @@ void ObjectsManager::handleCityMap() {
 
 	if (!_vm->_graphicsManager->_noFadingFl)
 		_vm->_graphicsManager->fadeOutLong();
-	_vm->_globals->iRegul = 0;
+	_vm->_globals->_eventMode = EVENTMODE_DEFAULT;
 	_vm->_graphicsManager->_noFadingFl = false;
 	_mapCarPosX = getSpriteX(0);
 	_mapCarPosY = getSpriteY(0);
@@ -3306,7 +3306,7 @@ void ObjectsManager::sceneSpecialIni() {
 			for (int i = 0; i <= 4; i++)
 				_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_graphicsManager->fadeInLong();
-			_vm->_globals->iRegul = 1;
+			_vm->_globals->_eventMode = EVENTMODE_IGNORE;
 			_vm->_globals->_disableInventFl = false;
 			_vm->_graphicsManager->_noFadingFl = true;
 			_vm->_globals->_introSpeechOffFl = true;
@@ -3727,7 +3727,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_dialogsManager->enableInvent();
 	_vm->_graphicsManager->_scrollOffset = 0;
 	_vm->_globals->_cityMapEnabledFl = false;
-	_vm->_globals->iRegul = 1;
+	_vm->_globals->_eventMode = EVENTMODE_IGNORE;
 	_vm->_soundManager->playSound(soundNum);
 	_vm->_linesManager->_route = (RouteItem *)g_PTRNUL;
 	_vm->_globals->_freezeCharacterFl = true;
@@ -3802,7 +3802,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	if (_vm->_globals->_screenId == 61)
 		removeSprite(0);
 	clearScreen();
-	_vm->_globals->iRegul = 0;
+	_vm->_globals->_eventMode = EVENTMODE_DEFAULT;
 }
 
 /**
@@ -3821,7 +3821,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	_vm->_globals->_exitId = 0;
 	_vm->_globals->_checkDistanceFl = true;
 	_vm->_soundManager->playSound(soundNum);
-	_vm->_globals->iRegul = 1;
+	_vm->_globals->_eventMode = EVENTMODE_IGNORE;
 	if (!backgroundFile.empty())
 		_vm->_graphicsManager->loadImage(backgroundFile);
 	if (!linkFile.empty())
@@ -3887,7 +3887,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	for (int idx = 0; idx < 5; ++idx)
 		_vm->_eventsManager->refreshScreenAndEvents();
 
-	_vm->_globals->iRegul = 1;
+	_vm->_globals->_eventMode = EVENTMODE_IGNORE;
 	if (!_vm->_graphicsManager->_noFadingFl)
 		_vm->_graphicsManager->fadeInLong();
 	_vm->_graphicsManager->_noFadingFl = false;
@@ -3950,7 +3950,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	} else {
 		_helicopterFl = false;
 	}
-	_vm->_globals->iRegul = 0;
+	_vm->_globals->_eventMode = EVENTMODE_DEFAULT;
 }
 
 void ObjectsManager::setVerb(int id) {

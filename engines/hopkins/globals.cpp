@@ -83,7 +83,7 @@ Globals::Globals(HopkinsEngine *vm) {
 
 	_linuxEndDemoFl = false;
 	_speed = 1;
-	iRegul = 0;
+	_eventMode = EVENTMODE_DEFAULT;
 	_exitId = 0;
 	_characterSpriteBuf = 0;
 	_screenId = 0;

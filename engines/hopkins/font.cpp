@@ -480,12 +480,12 @@ void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, i
 			charEndPosX += charWidth;
 			_vm->_graphicsManager->addDirtyRect(charStartPosX, yp, charEndPosX, yp + 12);
 			if (_vm->_eventsManager->_escKeyFl) {
-				_vm->_globals->iRegul = 1;
+				_vm->_globals->_eventMode = EVENTMODE_IGNORE;
 				_vm->_eventsManager->refreshScreenAndEvents();
 			} else {
-				_vm->_globals->iRegul = 4;
+				_vm->_globals->_eventMode = EVENTMODE_ALT;
 				_vm->_eventsManager->refreshScreenAndEvents();
-				_vm->_globals->iRegul = 1;
+				_vm->_globals->_eventMode = EVENTMODE_IGNORE;
 			}
 		}
 		curChar = *srcP++;

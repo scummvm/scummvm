@@ -423,7 +423,7 @@ void EventsManager::refreshScreenAndEvents() {
 			pollEvents();
 			bool innerLoopFl = false;
 
-			while (!_vm->shouldQuit() && (_breakoutFl || _vm->_globals->iRegul != 1)) {
+			while (!_vm->shouldQuit() && (_breakoutFl || _vm->_globals->_eventMode != EVENTMODE_IGNORE)) {
 				pollEvents();
 
 				if (!_breakoutFl) {
@@ -444,7 +444,7 @@ void EventsManager::refreshScreenAndEvents() {
 		}
 		if (externalLoopFl)
 			break;
-	} while (!_vm->shouldQuit() && _vm->_globals->iRegul == 3 && _rateCounter <= 15);
+	} while (!_vm->shouldQuit() && _vm->_globals->_eventMode == 3 && _rateCounter <= 15);
 	_vm->_globals->_speed = 2;
 	_rateCounter = 0;
 	if (!_vm->_graphicsManager->_largeScreenFl || _vm->_graphicsManager->_scrollStatus == 1) {
