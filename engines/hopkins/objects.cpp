@@ -664,7 +664,7 @@ void ObjectsManager::displayBob(int idx) {
 
 
 	int16 bobModeChange = READ_LE_INT16(data + 2);
-	int16 newField22 = READ_LE_INT16(data + 4);
+	int16 modeChangeUnused = READ_LE_INT16(data + 4);
 	// data[6] isn't used, read skipped
 	int16 newModeChangeCtr = READ_LE_INT16(data + 8);
 
@@ -687,7 +687,7 @@ void ObjectsManager::displayBob(int idx) {
 
 	_bob[idx]._bobModeChange = bobModeChange;
 	_bob[idx]._modeChangeCtr = newModeChangeCtr;
-	_bob[idx]._modeChangeUnused = newField22;
+	_bob[idx]._modeChangeUnused = modeChangeUnused;
 }
 
 void ObjectsManager::hideBob(int idx) {
