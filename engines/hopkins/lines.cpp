@@ -2425,7 +2425,7 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int para
 }
 
 // Test line
-int LinesManager::testLine(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx) {
+int LinesManager::testLine(int paramX, int paramY, int *testValue, int *foundLineIdx, int *foundDataIdx) {
 	int16 *lineData;
 	int lineDataEndIdx;
 	int collLineIdx;
@@ -2435,7 +2435,7 @@ int LinesManager::testLine(int paramX, int paramY, int *a3, int *foundLineIdx, i
 		lineData = _lineItem[idx]._lineData;
 		lineDataEndIdx = _lineItem[idx]._lineDataEndIdx;
 		if (lineData[0] == paramX && lineData[1] == paramY) {
-			*a3 = 1;
+			*testValue = 1;
 			int posX = lineData[2 * (lineDataEndIdx - 1)];
 			int posY = lineData[2 * (lineDataEndIdx - 1) + 1];
 			if (_lineItem[idx]._directionRouteInc == DIR_DOWN || _lineItem[idx]._directionRouteInc == DIR_UP)
@@ -2449,7 +2449,7 @@ int LinesManager::testLine(int paramX, int paramY, int *a3, int *foundLineIdx, i
 			return idx;
 		}
 		if (lineData[2 * (lineDataEndIdx - 1)] == paramX && lineData[2 * (lineDataEndIdx - 1) + 1] == paramY) {
-			*a3 = 2;
+			*testValue = 2;
 			int posX = lineData[0];
 			int posY = lineData[1];
 			if (_lineItem[idx]._directionRouteInc == DIR_DOWN || _lineItem[idx]._directionRouteInc == DIR_UP)

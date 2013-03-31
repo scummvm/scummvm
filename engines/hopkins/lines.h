@@ -149,7 +149,7 @@ private:
 	bool checkSmoothMove(int fromX, int fromY, int destX, int destY);
 	bool makeSmoothMove(int fromX, int fromY, int destX, int destY);
 	int characterRoute(int fromX, int fromY, int destX, int destY, int startLineIdx, int endLineIdx, int routeIdx);
-	int testLine(int paramX, int paramY, int *a3, int *foundLineIdx, int *foundDataIdx);
+	int testLine(int paramX, int paramY, int *testValue, int *foundLineIdx, int *foundDataIdx);
 	void useRoute0(int idx, int curRouteIdx);
 	void useRoute1(int idx, int curRouteIdx);
 	void useRoute2(int idx, int curRouteIdx);
