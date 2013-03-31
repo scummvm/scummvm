@@ -222,10 +222,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	while (!_vm->shouldQuit()) {
 		memcpy(_vm->_graphicsManager->_oldPalette, _vm->_graphicsManager->_palette, 769);
 
-		if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 307200);
-		else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 614400);
+		_vm->_graphicsManager->backupScreen();
 
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
@@ -344,8 +341,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	}
 	_vm->_graphicsManager->_fadingFl = false;
 
-	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_backBuffer);
-	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
+	_vm->_graphicsManager->restoreScreen();
 
 	memcpy(_vm->_graphicsManager->_palette, _vm->_graphicsManager->_oldPalette, 769);
 	_vm->_graphicsManager->clearPalette();
@@ -575,10 +571,8 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	if (!noColFl) {
 		_vm->_eventsManager->refreshScreenAndEvents();
 
-		if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 307200);
-		else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-			_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 614400);
+		_vm->_graphicsManager->backupScreen();
+
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
 	}
@@ -691,8 +685,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 	f.close();
 
 	if (!noColFl) {
-		_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_backBuffer);
-		g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
+		_vm->_graphicsManager->restoreScreen();
 
 		_vm->_eventsManager->_mouseFl = true;
 	}

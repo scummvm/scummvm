@@ -2653,7 +2653,7 @@ void ObjectsManager::handleSpecialGames() {
 		oldPalette = _vm->_globals->allocMemory(1000);
 		memcpy(oldPalette, _vm->_graphicsManager->_palette, 769);
 
-		_vm->_saveLoadManager->saveFile("TEMP1.SCR", _vm->_graphicsManager->_backBuffer, 307200);
+		_vm->_graphicsManager->backupScreen();
 
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
@@ -2665,8 +2665,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_soundManager->_specialSoundNum = 0;
 		_vm->_graphicsManager->NB_SCREEN(false);
 
-		_vm->_saveLoadManager->load("TEMP1.SCR", _vm->_graphicsManager->_backBuffer);
-		g_system->getSavefileManager()->removeSavefile("TEMP1.SCR");
+		_vm->_graphicsManager->restoreScreen();
 
 		_charactersEnabledFl = false;
 		memcpy(_vm->_graphicsManager->_palette, oldPalette, 769);

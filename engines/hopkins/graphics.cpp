@@ -52,6 +52,7 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	_backBuffer = NULL;
 	_frontBuffer = NULL;
 	_screenBuffer = g_PTRNUL;
+	_backupScreen = g_PTRNUL;
 	_showDirtyRects = false;
 
 	_lineNbr2 = 0;
@@ -97,6 +98,7 @@ GraphicsManager::~GraphicsManager() {
 	_vm->_globals->freeMemory(_backBuffer);
 	_vm->_globals->freeMemory(_frontBuffer);
 	_vm->_globals->freeMemory(_screenBuffer);
+	_vm->_globals->freeMemory(_backupScreen);
 }
 
 void GraphicsManager::setGraphicalMode(int width, int height) {
@@ -1824,6 +1826,32 @@ void GraphicsManager::drawVerticalLine(byte *surface, int xp, int yp, int height
 		*destP = col;
 		destP += _lineNbr2;
 	}
+}
+
+/**
+ * Backup the current screen
+ */
+void GraphicsManager::backupScreen() {
+	// Allocate a new data block for the screen, if necessary
+	if (_vm->_graphicsManager->_backupScreen == g_PTRNUL)
+		_vm->_graphicsManager->_backupScreen = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+
+	// Backup the screen
+	Common::copy(_vm->_graphicsManager->_backBuffer, _vm->_graphicsManager->_backBuffer +
+		SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsManager->_backupScreen);
+}
+
+/**
+ * Restore a previously backed up screen
+ */
+void GraphicsManager::restoreScreen() {
+	assert(_vm->_graphicsManager->_backupScreen != g_PTRNUL);
+
+	// Restore the screen and free the buffer
+	Common::copy(_vm->_graphicsManager->_backupScreen, _vm->_graphicsManager->_backupScreen +
+		SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsManager->_backBuffer);
+	_vm->_globals->freeMemory(_vm->_graphicsManager->_backupScreen);
+	_backupScreen = g_PTRNUL;
 }
 
 } // End of namespace Hopkins

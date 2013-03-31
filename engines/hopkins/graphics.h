@@ -90,6 +90,7 @@ public:
 	byte *_backBuffer;
 	byte *_frontBuffer;
 	byte *_screenBuffer;
+	byte *_backupScreen;
 	bool _largeScreenFl;
 	bool _noFadingFl;
 	bool _fadingFl;
@@ -177,6 +178,8 @@ public:
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void NB_SCREEN(bool initPalette);
+	void backupScreen();
+	void restoreScreen();
 };
 
 } // End of namespace Hopkins

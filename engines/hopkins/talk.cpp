@@ -83,10 +83,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 		_characterSprite = _vm->_objectsManager->loadSprite("RES_SAN.RES");
 	}
 
-	if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 307200);
-	else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 614400);
+	_vm->_graphicsManager->backupScreen();
 
 	if (!_vm->_graphicsManager->_lineNbr)
 		_vm->_graphicsManager->_scrollOffset = 0;
@@ -126,8 +123,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_characterSprite = _vm->_globals->freeMemory(_characterSprite);
 	_vm->_graphicsManager->NB_SCREEN(false);
 
-	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_backBuffer);
-	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
+	_vm->_graphicsManager->restoreScreen();
 
 	_vm->_objectsManager->_charactersEnabledFl = false;
 	_vm->_eventsManager->_mouseCursorId = oldMouseCursorId;
@@ -997,10 +993,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	else
 		_characterSprite = _vm->_objectsManager->loadSprite("RES_SAN.RES");
 
-	if (_vm->_graphicsManager->_lineNbr == SCREEN_WIDTH)
-		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 307200);
-	else if (_vm->_graphicsManager->_lineNbr == (SCREEN_WIDTH * 2))
-		_vm->_saveLoadManager->saveFile("TEMP.SCR", _vm->_graphicsManager->_backBuffer, 614400);
+	_vm->_graphicsManager->backupScreen();
 
 	if (!_vm->_graphicsManager->_lineNbr)
 		_vm->_graphicsManager->_scrollOffset = 0;
@@ -1060,8 +1053,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	if (_vm->_globals->_exitId == 101)
 		_vm->_globals->_exitId = 0;
 
-	_vm->_saveLoadManager->load("TEMP.SCR", _vm->_graphicsManager->_backBuffer);
-	g_system->getSavefileManager()->removeSavefile("TEMP.SCR");
+	_vm->_graphicsManager->restoreScreen();
 
 	_vm->_objectsManager->_charactersEnabledFl = false;
 	_vm->_eventsManager->_mouseCursorId = 4;
