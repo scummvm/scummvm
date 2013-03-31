@@ -67,9 +67,9 @@ LinesManager::LinesManager(HopkinsEngine *vm) {
 	_lastLine = 0;
 	_maxLineIdx = 0;
 	_pathFindingMaxDepth = 0;
-	_testRoute0 = NULL;
-	_testRoute1 = NULL;
-	_testRoute2 = NULL;
+	_testRoute0 = (RouteItem *)g_PTRNUL;
+	_testRoute1 = (RouteItem *)g_PTRNUL;
+	_testRoute2 = (RouteItem *)g_PTRNUL;
 	_lineBuf = (int16 *)g_PTRNUL;
 	_route = (RouteItem *)g_PTRNUL;
 	_currentSegmentId = 0;
@@ -89,9 +89,12 @@ LinesManager::LinesManager(HopkinsEngine *vm) {
 
 LinesManager::~LinesManager() {
 	_vm->_globals->freeMemory(_largeBuf);
-	_vm->_globals->freeMemory((byte *) _testRoute0);
-	_vm->_globals->freeMemory((byte *) _testRoute1);
-	_vm->_globals->freeMemory((byte *) _testRoute2);
+	if (_testRoute0 != (RouteItem *)g_PTRNUL)
+		delete[] _testRoute0;
+	if (_testRoute1 != (RouteItem *)g_PTRNUL)
+		delete[] _testRoute1;
+	if (_testRoute2 != (RouteItem *)g_PTRNUL)
+		delete[] _testRoute2;
 }
 
 int LigneItem::appendToRouteInc(int from, int to, RouteItem *route, int index) {
