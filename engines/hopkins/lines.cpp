@@ -2448,19 +2448,22 @@ int LinesManager::testLine(int paramX, int paramY, int *testValue, int *foundLin
 			*foundDataIdx = collDataIdx;
 			return idx;
 		}
-		if (lineData[2 * (lineDataEndIdx - 1)] == paramX && lineData[2 * (lineDataEndIdx - 1) + 1] == paramY) {
-			*testValue = 2;
-			int posX = lineData[0];
-			int posY = lineData[1];
-			if (_lineItem[idx]._directionRouteInc == DIR_DOWN || _lineItem[idx]._directionRouteInc == DIR_UP)
-				posY -= 2;
-			if (_lineItem[idx]._directionRouteInc == DIR_RIGHT || _lineItem[idx]._directionRouteDec == DIR_LEFT)
-				posX -= 2;
-			if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _lastLine))
-				error("Error in test line");
-			*foundLineIdx = collLineIdx;
-			*foundDataIdx = collDataIdx;
-			return idx;
+
+		if (lineDataEndIdx > 0) {
+			if (lineData[2 * (lineDataEndIdx - 1)] == paramX && lineData[2 * (lineDataEndIdx - 1) + 1] == paramY) {
+				*testValue = 2;
+				int posX = lineData[0];
+				int posY = lineData[1];
+				if (_lineItem[idx]._directionRouteInc == DIR_DOWN || _lineItem[idx]._directionRouteInc == DIR_UP)
+					posY -= 2;
+				if (_lineItem[idx]._directionRouteInc == DIR_RIGHT || _lineItem[idx]._directionRouteDec == DIR_LEFT)
+					posX -= 2;
+				if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _lastLine))
+					error("Error in test line");
+				*foundLineIdx = collLineIdx;
+				*foundDataIdx = collDataIdx;
+				return idx;
+			}
 		}
 	}
 	return -1;
