@@ -2075,9 +2075,9 @@ void ObjectsManager::PARADISE() {
 				_vm->_eventsManager->refreshScreenAndEvents();
 				_vm->_graphicsManager->_scrollStatus = 0;
 			}
-			_vm->_talkManager->REPONSE(_vm->_globals->_saveData->_data[svLastZoneNum], _vm->_globals->_saveData->_data[svLastMouseCursor]);
+			_vm->_talkManager->handleAnswer(_vm->_globals->_saveData->_data[svLastZoneNum], _vm->_globals->_saveData->_data[svLastMouseCursor]);
 		} else {
-			_vm->_talkManager->REPONSE2(_vm->_globals->_saveData->_data[svLastZoneNum], _vm->_globals->_saveData->_data[svLastMouseCursor]);
+			_vm->_talkManager->handleForestAnswser(_vm->_globals->_saveData->_data[svLastZoneNum], _vm->_globals->_saveData->_data[svLastMouseCursor]);
 		}
 		_vm->_eventsManager->changeMouseCursor(4);
 		if (_zoneNum != -1 && _zoneNum != 0 && !_vm->_linesManager->_zone[_zoneNum]._enabledFl) {

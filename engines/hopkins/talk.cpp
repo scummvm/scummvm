@@ -368,7 +368,7 @@ int TalkManager::dialogAnswer(int idx, bool animatedFl) {
 		if (curVal)
 			_vm->_objectsManager->stopBobAnimation(curVal);
 	} else {
-		VISU_PARLE();
+		dialogAnim();
 	}
 
 	bool displayedTxtFl = false;
@@ -467,7 +467,7 @@ void TalkManager::searchCharacterPalette(int startIdx, bool dark) {
 void TalkManager::dialogWait() {
 	for (int idx = 26; idx <= 30; ++idx) {
 		if (_vm->_animationManager->_animBqe[idx]._enabledFl)
-			BOB_VISU_PARLE(idx);
+			displayBobDialogAnim(idx);
 	}
 }
 
@@ -586,14 +586,14 @@ int TalkManager::countBoxLines(int idx, const Common::String &file) {
 	return lineCount;
 }
 
-void TalkManager::VISU_PARLE() {
+void TalkManager::dialogAnim() {
 	for (int idx = 21; idx <= 25; ++idx) {
 		if (_vm->_animationManager->_animBqe[idx]._enabledFl)
-			BOB_VISU_PARLE(idx);
+			displayBobDialogAnim(idx);
 	}
 }
 
-void TalkManager::BOB_VISU_PARLE(int idx) {
+void TalkManager::displayBobDialogAnim(int idx) {
 	_vm->_objectsManager->_priorityFl = true;
 	if (!_vm->_objectsManager->_bob[idx]._bobMode) {
 		_vm->_objectsManager->resetBob(idx);
@@ -754,7 +754,7 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 	return result;
 }
 
-void TalkManager::REPONSE(int zone, int verb) {
+void TalkManager::handleAnswer(int zone, int verb) {
 	byte zoneObj = zone;
 	byte verbObj = verb;
 	
@@ -853,7 +853,7 @@ void TalkManager::REPONSE(int zone, int verb) {
 	return;
 }
 
-void TalkManager::REPONSE2(int zone, int verb) {
+void TalkManager::handleForestAnswser(int zone, int verb) {
 	int indx = 0;
 	if (verb != 5 || _vm->_globals->_saveData->_data[svLastObjectIndex] != 4)
 		return;
@@ -1011,7 +1011,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_globals->_actionMoveTo = false;
 	_vm->_objectsManager->_zoneNum = -1;
 	initCharacterAnim();
-	VISU_PARLE();
+	dialogAnim();
 	dialogWait();
 	_vm->_graphicsManager->initScreen(screenFilename, 2, true);
 	_vm->_globals->_freezeCharacterFl = true;
