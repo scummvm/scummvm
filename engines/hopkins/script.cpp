@@ -514,7 +514,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		switch (READ_LE_INT16(dataP + 5)) {
 		case 6:
 			_vm->_objectsManager->removeSprite(0);
-			_vm->_objectsManager->OPTI_ONE(20, 0, 14, 4);
+			_vm->_objectsManager->setAndPlayAnim(20, 0, 14, true);
 			break;
 
 		case 7:
@@ -894,7 +894,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 50:
 			_vm->_soundManager->playSoundFile("SOUND46.WAv");
-			_vm->_objectsManager->OPTI_ONE(11, 0, 23, 0);
+			_vm->_objectsManager->setAndPlayAnim(11, 0, 23, false);
 			break;
 
 		case 51: {
@@ -946,7 +946,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 55:
 			_vm->_objectsManager->stopBobAnimation(1);
-			_vm->_objectsManager->OPTI_ONE(15, 0, 12, 0);
+			_vm->_objectsManager->setAndPlayAnim(15, 0, 12, false);
 			_vm->_objectsManager->stopBobAnimation(15);
 			_vm->_objectsManager->loadLinkFile("IM19a", true);
 			break;
@@ -2102,7 +2102,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 					break;
 				}
 				_vm->_soundManager->playSoundFile("SOUND83.WAV");
-				_vm->_objectsManager->OPTI_ONE(vbobFrameIndex, 26, 50, 0);
+				_vm->_objectsManager->setAndPlayAnim(vbobFrameIndex, 26, 50, false);
 
 				switch (_vm->_globals->_saveData->_data[svField341]) {
 				case 1:
@@ -2120,7 +2120,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 			}
 			_vm->_soundManager->playSoundFile("SOUND83.WAV");
-			_vm->_objectsManager->OPTI_ONE(6, 0, 23, 0);
+			_vm->_objectsManager->setAndPlayAnim(6, 0, 23, false);
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 27, 117, 1);
 			break;
 			}
@@ -2140,7 +2140,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 			if (_vm->_globals->_saveData->_data[svField341]) {
 				_vm->_soundManager->playSoundFile("SOUND83.WAV");
-				_vm->_objectsManager->OPTI_ONE(vbobFrameIndex, 26, 50, 0);
+				_vm->_objectsManager->setAndPlayAnim(vbobFrameIndex, 26, 50, false);
 				
 				switch (_vm->_globals->_saveData->_data[svField341]) {
 				case 1:
@@ -2159,7 +2159,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			}
 
 			_vm->_soundManager->playSoundFile("SOUND83.WAV");
-			_vm->_objectsManager->OPTI_ONE(5, 0, 23, 0);
+			_vm->_objectsManager->setAndPlayAnim(5, 0, 23, false);
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 145, 166, 3);
 			break;
 			}
@@ -2179,7 +2179,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 			if (_vm->_globals->_saveData->_data[svField341]) {
 				_vm->_soundManager->playSoundFile("SOUND83.WAV");
-				_vm->_objectsManager->OPTI_ONE(vbobFrameIndex, 26, 50, 0);
+				_vm->_objectsManager->setAndPlayAnim(vbobFrameIndex, 26, 50, false);
 				switch (_vm->_globals->_saveData->_data[svField341]) {
 				case 1:
 					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 27, 117, 0);
@@ -2196,7 +2196,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				}
 			}
 			_vm->_soundManager->playSoundFile("SOUND83.WAV");
-			_vm->_objectsManager->OPTI_ONE(4, 0, 23, 0);
+			_vm->_objectsManager->setAndPlayAnim(4, 0, 23, false);
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 296, 212, 5);
 			break;
 			}
@@ -2204,7 +2204,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 239:
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_soundManager->playSoundFile("SOUND84.WAV");
-			_vm->_objectsManager->OPTI_ONE(16, 0, 10, 0);
+			_vm->_objectsManager->setAndPlayAnim(16, 0, 10, false);
 			break;
 
 		case 240: {
@@ -2297,13 +2297,13 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if (_vm->_globals->_saveData->_data[svField341] == 2) {
 				_vm->_animationManager->playSequence("RESU.SEQ", 2, 24, 2, false, true);
 			} else {
-				_vm->_objectsManager->OPTI_ONE(7, 0, 14, 0);
+				_vm->_objectsManager->setAndPlayAnim(7, 0, 14, false);
 			}
 			break;
 
 		case 245:
 			_vm->_soundManager->playSoundFile("SOUND89.WAV");
-			_vm->_objectsManager->OPTI_ONE(5, 0, 6, 0);
+			_vm->_objectsManager->setAndPlayAnim(5, 0, 6, false);
 			_vm->_linesManager->_zone[4]._destX = 276;
 			_vm->_objectsManager->enableVerb(4, 19);
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 285, 379, 0);
@@ -2312,7 +2312,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 246:
 			_vm->_objectsManager->removeSprite(0);
-			_vm->_objectsManager->OPTI_ONE(6, 0, 15, 0);
+			_vm->_objectsManager->setAndPlayAnim(6, 0, 15, false);
 			_vm->_objectsManager->_charactersEnabledFl = true;
 			_vm->_graphicsManager->NB_SCREEN(true);
 			_vm->_animationManager->playSequence2("TUNNEL.SEQ", 1, 18, 20, true);
@@ -2339,17 +2339,17 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 601:
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
-			_vm->_objectsManager->OPTI_ONE(2, 0, 16, 4);
+			_vm->_objectsManager->setAndPlayAnim(2, 0, 16, true);
 			break;
 
 		case 602:
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
-			_vm->_objectsManager->OPTI_ONE(4, 0, 16, 4);
+			_vm->_objectsManager->setAndPlayAnim(4, 0, 16, true);
 			break;
 
 		case 603:
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
-			_vm->_objectsManager->OPTI_ONE(3, 0, 16, 4);
+			_vm->_objectsManager->setAndPlayAnim(3, 0, 16, true);
 			_vm->_soundManager->_specialSoundNum = 199;
 			_vm->_graphicsManager->_fadingFl = true;
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
@@ -2361,7 +2361,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 604:
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
-			_vm->_objectsManager->OPTI_ONE(1, 0, 16, 4);
+			_vm->_objectsManager->setAndPlayAnim(1, 0, 16, true);
 			_vm->_soundManager->_specialSoundNum = 199;
 			_vm->_animationManager->playAnim("BOMBE2A.ANM", 50, 14, 500);
 			_vm->_soundManager->_specialSoundNum = 0;
@@ -2372,7 +2372,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 605:
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
-			_vm->_objectsManager->OPTI_ONE(5, 0, 16, 4);
+			_vm->_objectsManager->setAndPlayAnim(5, 0, 16, true);
 			_vm->_graphicsManager->fadeOutShort();
 			_vm->_soundManager->_specialSoundNum = 199;
 			_vm->_graphicsManager->_fadingFl = true;
@@ -2385,7 +2385,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 		case 606:
 			_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
-			_vm->_objectsManager->OPTI_ONE(6, 0, 16, 4);
+			_vm->_objectsManager->setAndPlayAnim(6, 0, 16, true);
 			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
 				_vm->_animationManager->playAnim("BOMBE3A.ANM", 50, 14, 500);
 				memset(_vm->_graphicsManager->_frontBuffer, 0, 614400);

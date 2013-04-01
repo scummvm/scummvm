@@ -3040,12 +3040,10 @@ void ObjectsManager::doActionLeft(int idx) {
 	}
 }
 
-void ObjectsManager::OPTI_ONE(int idx, int animIdx, int destPosi, int animAction) {
+void ObjectsManager::setAndPlayAnim(int idx, int animIdx, int destPosi, bool animAction) {
 	// Set Hopkins animation and position
-	if (animAction != 3) {
-		setBobAnimation(idx);
-		setBobAnimDataIdx(idx, animIdx);
-	}
+	setBobAnimation(idx);
+	setBobAnimDataIdx(idx, animIdx);
 
 	// Make Hopkins walk to the expected place
 	do {
@@ -3054,7 +3052,7 @@ void ObjectsManager::OPTI_ONE(int idx, int animIdx, int destPosi, int animAction
 
 	if (!animAction)
 		stopBobAnimation(idx);
-	else if (animAction == 4) {
+	else {
 		_vm->_graphicsManager->fastDisplay(_bob[idx]._spriteData,
 			_bob[idx]._oldX, _bob[idx]._oldY, _bob[idx]._frameIndex);
 		stopBobAnimation(idx);
