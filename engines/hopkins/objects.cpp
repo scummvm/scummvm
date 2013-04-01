@@ -2596,7 +2596,7 @@ void ObjectsManager::takeInventoryObject(int idx) {
 		changeObject(idx);
 }
 
-void ObjectsManager::OPTI_OBJET() {
+void ObjectsManager::loadObjectIniFile() {
 	byte *data;
 	Common::String file;
 	int lastOpcodeResult = 1;
@@ -2760,7 +2760,7 @@ void ObjectsManager::handleSpecialGames() {
 	}
 }
 
-void ObjectsManager::BOB_VIVANT(int idx) {
+void ObjectsManager::quickDisplayBobSprite(int idx) {
 	int startPos = 10 * idx;
 	if (!READ_LE_UINT16(_vm->_talkManager->_characterAnim + startPos + 4))
 		return;
@@ -2772,7 +2772,7 @@ void ObjectsManager::BOB_VIVANT(int idx) {
 	_vm->_graphicsManager->fastDisplay(_vm->_talkManager->_characterSprite, xp, yp, spriteIndex);
 }
 
-void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
+void ObjectsManager::initVbob(byte *src, int idx, int xp, int yp, int frameIndex) {
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
 
@@ -2801,7 +2801,7 @@ void ObjectsManager::VBOB(byte *src, int idx, int xp, int yp, int frameIndex) {
 	}
 }
 
-void ObjectsManager::VBOB_OFF(int idx) {
+void ObjectsManager::disableVbob(int idx) {
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
 
@@ -3273,7 +3273,7 @@ void ObjectsManager::sceneSpecialIni() {
 			animateSprite(0);
 			for (int i = 0; i <= 4; i++)
 				_vm->_eventsManager->refreshScreenAndEvents();
-			VBOB(_vm->_globals->_levelSpriteBuf, 5, 15, 28, 1);
+			initVbob(_vm->_globals->_levelSpriteBuf, 5, 15, 28, 1);
 			_vm->_fontManager->hideText(9);
 			bool displayedTxtFl = false;
 			if (!_vm->_soundManager->_textOffFl) {
@@ -3291,7 +3291,7 @@ void ObjectsManager::sceneSpecialIni() {
 					_vm->_eventsManager->refreshScreenAndEvents();
 			}
 			_vm->_fontManager->hideText(9);
-			VBOB_OFF(5);
+			disableVbob(5);
 			for (int i = 0; i <= 3; i++)
 				_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_graphicsManager->_noFadingFl = true;

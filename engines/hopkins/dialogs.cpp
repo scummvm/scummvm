@@ -437,7 +437,7 @@ void DialogsManager::showInventory() {
 				_vm->_globals->_saveData->_data[svLastObjectIndex] = _vm->_objectsManager->_curObjectIndex;
 				_vm->_globals->_saveData->_data[svLastInventoryItem] = _vm->_globals->_inventory[newInventoryItem];
 				_vm->_globals->_saveData->_data[svLastInvMouseCursor] = _vm->_eventsManager->_mouseCursorId;
-				_vm->_objectsManager->OPTI_OBJET();
+				_vm->_objectsManager->loadObjectIniFile();
 				_vm->_scriptManager->_tempObjectFl = false;
 
 				if (_vm->_soundManager->_voiceOffFl) {

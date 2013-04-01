@@ -320,15 +320,15 @@ public:
 	void showSpecialActionAnimation(byte *spriteData, const Common::String &animString, int speed);
 	void checkEventBobAnim(int idx, int animIdx, int animDataIdx, int a4);
 	void setMultiBobAnim(int idx1, int idx2, int anim1Idx, int anim2Idx);
+	void loadObjectIniFile();
+	void quickDisplayBobSprite(int idx);
+	void initVbob(byte *src, int idx, int xp, int yp, int frameIndex);
+	void disableVbob(int idx);
 
 	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
 	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
-	void OPTI_OBJET();
-	void BOB_VIVANT(int idx);
-	void VBOB(byte *src, int idx, int xp, int yp, int frameIndex);
-	void VBOB_OFF(int idx);
 	void OPTI_ONE(int idx, int animIdx, int destPosi, int animAction);
 	void GOHOME();
 	void PARADISE();

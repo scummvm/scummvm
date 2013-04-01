@@ -182,9 +182,9 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if (vbobIdx == 52) {
 				_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, vbobPosX, READ_LE_INT16(dataP + 10), vbobFrameIndex);
 			} else if (vbobIdx == 51) {
-				_vm->_objectsManager->BOB_VIVANT(vbobFrameIndex);
+				_vm->_objectsManager->quickDisplayBobSprite(vbobFrameIndex);
 			} else if (vbobIdx != 50) {
-				_vm->_objectsManager->VBOB(_vm->_globals->_levelSpriteBuf, vbobIdx, vbobPosX, vbobPosY, vbobFrameIndex);
+				_vm->_objectsManager->initVbob(_vm->_globals->_levelSpriteBuf, vbobIdx, vbobPosX, vbobPosY, vbobFrameIndex);
 				if (moveChange)
 					moveChange /= _vm->_globals->_speed;
 				if (moveChange > 1) {
@@ -271,7 +271,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		break;
 	case MKTAG24('B', 'O', 'F'):
 		if (!_vm->_objectsManager->_disableFl)
-			_vm->_objectsManager->VBOB_OFF(READ_LE_INT16(dataP + 5));
+			_vm->_objectsManager->disableVbob(READ_LE_INT16(dataP + 5));
 		opcodeType = 1;
 		break;
 	case MKTAG24('P', 'E', 'R'): {
