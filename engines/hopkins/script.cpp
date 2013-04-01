@@ -602,7 +602,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 
 			_vm->_eventsManager->mouseOff();
 			_vm->_graphicsManager->fadeInDefaultLength(_vm->_graphicsManager->_frontBuffer);
-			_vm->_objectsManager->SCI_OPTI_ONE(1, 0, 17, 3);
+			_vm->_objectsManager->checkEventBobAnim(1, 0, 17, 3);
 			_vm->_graphicsManager->fadeOutDefaultLength(_vm->_graphicsManager->_frontBuffer);
 			_vm->_graphicsManager->endDisplayBob();
 
@@ -773,7 +773,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_globals->_checkDistanceFl = true;
 			_vm->_soundManager->loadSample(1, "SOUND44.WAV");
 			_vm->_soundManager->loadSample(2, "SOUND45.WAV");
-			_vm->_objectsManager->OPTI_BOBON(9, 10, -1, 0, 0, 0);
+			_vm->_objectsManager->setMultiBobAnim(9, 10, 0, 0);
 			bool playFl = false;
 			for (;;) {
 				if (_vm->shouldQuit())
@@ -842,7 +842,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 49: {
 			_vm->_objectsManager->disableHidingBehavior();
 			_vm->_objectsManager->removeSprite(0);
-			_vm->_objectsManager->OPTI_BOBON(9, 10, -1, 0, 0, 0);
+			_vm->_objectsManager->setMultiBobAnim(9, 10, 0, 0);
 
 			int endIdx;
 			if (_vm->_globals->_saveData->_data[svField133] == 1)

@@ -3358,22 +3358,18 @@ void ObjectsManager::sceneSpecialIni() {
 	}
 }
 
-void ObjectsManager::OPTI_BOBON(int idx1, int idx2, int idx3, int anim1Idx, int anim2Idx, int anim3Idx) {
+void ObjectsManager::setMultiBobAnim(int idx1, int idx2, int anim1Idx, int anim2Idx) {
 	if (idx1 != -1)
 		setBobAnimation(idx1);
 	if (idx2 != -1)
 		setBobAnimation(idx2);
-	if (idx3 != -1)
-		setBobAnimation(idx3);
 	if (idx1 != -1)
 		setBobAnimDataIdx(idx1, anim1Idx);
 	if (idx2 != -1)
 		setBobAnimDataIdx(idx2, anim2Idx);
-	if (idx3 != -1)
-		setBobAnimDataIdx(idx3, anim3Idx);
 }
 
-void ObjectsManager::SCI_OPTI_ONE(int idx, int animIdx, int animDataIdx, int a4) {
+void ObjectsManager::checkEventBobAnim(int idx, int animIdx, int animDataIdx, int a4) {
 	_vm->_eventsManager->_curMouseButton = 0;
 	_vm->_eventsManager->_mouseButton = 0;
 
