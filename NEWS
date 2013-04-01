@@ -73,6 +73,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      General MIDI instruments, and should sound a lot closer to the original.
    - Added sound and music support for the Macintosh version of Loom.
    - Handle double-clicking in the Macintosh version of Loom.
+   - Major bugfixes in INSANE (bike fights).
 
 1.5.0 (2012-07-27)
  New Games:
