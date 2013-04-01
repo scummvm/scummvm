@@ -267,7 +267,7 @@ void SoundCommandParser::processStopSound(reg_t obj, bool sampleFinishedPlaying)
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 
 	musicSlot->dataInc = 0;
-	musicSlot->signal = 0;
+	musicSlot->signal = SIGNAL_OFFSET;
 	_music->soundStop(musicSlot);
 }
 
