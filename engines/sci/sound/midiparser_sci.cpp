@@ -475,7 +475,13 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	case 0xC:
 		info.basic.param1 = *(_position._playPos++);
 		info.basic.param2 = 0;
-		if (info.channel() == 0xF) {// SCI special case
+		// Normally, song signalling events are sent through the special SCI
+		// channel 15. There are some songs where that special channel is
+		// missing completely, and the signals are sent through the other
+		// channels. Such a case is the Windows version of KQ5CD, songs 1840,
+		// 1843 and 1849 (bug #3605269). Therefore, we check if channel 15 is
+		// present, and if not, we accept signals from all other channels.
+		if (info.channel() == 0xF || !_channelUsed[15]) {	// SCI special channel
 			if (info.basic.param1 != kSetSignalLoop) {
 				// At least in kq5/french&mac the first scene in the intro has
 				// a song that sets signal to 4 immediately on tick 0. Signal
@@ -491,6 +497,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					_position._playTick || info.delta) {
 					_signalSet = true;
 					_signalToSet = info.basic.param1;
+					debugC(kDebugLevelSound, "Setting signal of song %d to %d from channel %d",
+							_pSnd->resourceId, _signalToSet, info.channel());
 				}
 			} else {
 				_loopTick = _position._playTick + info.delta;
