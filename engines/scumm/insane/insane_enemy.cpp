@@ -1113,7 +1113,7 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 	else if (act1x > 280)
 		_actor[actor1].cursorX = -160;
 	else
-		_actor[actor1].cursorX = 00;
+		_actor[actor1].cursorX = 0;
 
 	if (_actor[actor1].weapon == -1)
 		retval = 2;
