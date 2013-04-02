@@ -410,7 +410,7 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
 
 	const char *srcP = message.c_str();
 	for (;;) {
-		char currChar = *srcP++;
+		byte currChar = *srcP++;
 		if (!currChar)
 			break;
 		if (currChar >= 32) {
@@ -428,7 +428,7 @@ void FontManager::displayTextVesa(int xp, int yp, const Common::String &message,
  */
 void FontManager::displayText(int xp, int yp, const Common::String &message, int col) {
 	for (uint idx = 0; idx < message.size(); ++idx) {
-		char currentChar = message[idx];
+		byte currentChar = (byte)message[idx];
 
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
