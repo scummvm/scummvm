@@ -62,6 +62,10 @@ bool PegasusEngine::isOldDemo() const {
 	return isDemo() && !isDVD();
 }
 
+bool PegasusEngine::isWindows() const {
+	return _gameDescription->desc.platform == Common::kPlatformWindows;
+}
+
 } // End of namespace Pegasus
 
 static const PlainGameDescriptor pegasusGames[] = {
@@ -104,6 +108,18 @@ static const PegasusGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
+			GUIO1(GUIO_NOLAUNCHLOAD)
+		},
+	},
+
+		{
+		{
+			"pegasus",
+			"DVD Demo",
+			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
 			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
 			GUIO1(GUIO_NOLAUNCHLOAD)
 		},
