@@ -1081,7 +1081,7 @@ void GfxOpenGL::createFont(Font *font) {
 }
 
 void GfxOpenGL::destroyFont(Font *font) {
-	FontUserData *data = (FontUserData *)font->getUserData();
+	const FontUserData *data = (const FontUserData *)font->getUserData();
 	if (data) {
 		glDeleteTextures(1, &(data->texture));
 		delete data;
@@ -1581,17 +1581,24 @@ void GfxOpenGL::irisAroundRegion(int x1, int y1, int x2, int y2) {
 
 	glColor3f(0.0f, 0.0f, 0.0f);
 
+	//Explicitly cast to avoid problems with C++11
+	float fx1 = x1;
+	float fx2 = x2;
+	float fy1 = y1;
+	float fy2 = y2;
+	float width = _screenWidth;
+	float height = _screenHeight;
 	float points[20] = {
 		0.0f, 0.0f,
-		0.0f, y1,
-		_screenWidth, 0.0f,
-		x2, y1,
-		_screenWidth, _screenHeight,
-		x2, y2,
-		0.0f, _screenHeight,
-		x1, y2,
-		0.0f, y1,
-		x1, y1
+		0.0f, fy1,
+		width, 0.0f,
+		fx2, fy1,
+		width, height,
+		fx2, fy2,
+		0.0f, height,
+		fx1, fy2,
+		0.0f, fy1,
+		fx1, fy1
 	};
 
 	glEnableClientState(GL_VERTEX_ARRAY);
