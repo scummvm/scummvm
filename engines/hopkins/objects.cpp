@@ -3124,7 +3124,7 @@ void ObjectsManager::loadLinkFile(const Common::String &file, bool skipDetails) 
 		if (!filename2.empty()) {
 			_hidingItemData[1] = _vm->_fileManager->searchCat(filename2, RES_SLI);
 
-			if (_hidingItemData[1] || _hidingItemData[1] == g_PTRNUL) {
+			if (_hidingItemData[1]) {
 				_hidingItemData[1] = _vm->_fileManager->loadFile(filename2);
 			} else {
 				_hidingItemData[1] = _vm->_fileManager->loadFile("RES_SLI.RES");

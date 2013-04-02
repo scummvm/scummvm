@@ -183,7 +183,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
 		ptr = loadFile(tmpFilename);
 		break;
 		}
-		// Deliberate fall-through to
+
 	default:
 		break;
 	}
