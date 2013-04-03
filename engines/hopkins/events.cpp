@@ -44,7 +44,7 @@ EventsManager::EventsManager(HopkinsEngine *vm) {
 	_mouseSpriteId = 0;
 	_curMouseButton = 0;
 	_mouseButton = 0;
-	_mouseCursor = NULL;
+	_mouseCursor = g_PTRNUL;
 	_gameCounter = 0;
 	_rateCounter = 0;
 	_escKeyFl = false;

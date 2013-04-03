@@ -42,15 +42,15 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	_initGraphicsFl = false;
 	_screenWidth = _screenHeight = 0;
 	_screenLineSize = 0;
-	PAL_PIXELS = NULL;
+	PAL_PIXELS = g_PTRNUL;
 	_lineNbr = 0;
 	_videoPtr = NULL;
 	_scrollOffset = 0;
 	_scrollPosX = 0;
 	_largeScreenFl = false;
 	_oldScrollPosX = 0;
-	_backBuffer = NULL;
-	_frontBuffer = NULL;
+	_backBuffer = g_PTRNUL;
+	_frontBuffer = g_PTRNUL;
 	_screenBuffer = g_PTRNUL;
 	_backupScreen = g_PTRNUL;
 	_showDirtyRects = false;

@@ -113,11 +113,11 @@ Globals::Globals(HopkinsEngine *vm) {
 	_oceanDirection = DIR_NONE;
 
 	// Initialize pointers
-	_levelSpriteBuf = NULL;
-	_saveData = NULL;
+	_levelSpriteBuf = g_PTRNUL;
+	_saveData = (Savegame *)g_PTRNUL;
 	_answerBuffer = g_PTRNUL;
-	_characterSpriteBuf = NULL;
-	_optionDialogSpr = NULL;
+	_characterSpriteBuf = g_PTRNUL;
+	_optionDialogSpr = g_PTRNUL;
 
 	// Reset flags
 	_censorshipFl = false;

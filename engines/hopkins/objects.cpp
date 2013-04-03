@@ -101,10 +101,10 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_curObjectIndex = 0;
 	_forestFl = false;
 	_mapCarPosX = _mapCarPosY = 0;
-	_forestSprite = NULL;
-	_gestureBuf = NULL;
+	_forestSprite = g_PTRNUL;
+	_gestureBuf = g_PTRNUL;
 	_curGestureFile = 0;
-	_headSprites = NULL;
+	_headSprites = g_PTRNUL;
 	_homeRateCounter = 0;
 	_lastDirection = DIR_NONE;
 	_oldDirection = DIR_NONE;
@@ -193,7 +193,7 @@ void ObjectsManager::changeObject(int objIndex) {
 }
 
 byte *ObjectsManager::loadObjectFromFile(int objIndex, bool mode) {
-	byte *dataP = NULL;
+	byte *dataP = g_PTRNUL;
 	int objectFileNum = _objectAuthIcons[objIndex]._objectFileNum;
 	int idx = _objectAuthIcons[objIndex]._idx;
 

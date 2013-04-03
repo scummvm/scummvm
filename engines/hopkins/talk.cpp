@@ -37,10 +37,10 @@ namespace Hopkins {
 
 TalkManager::TalkManager(HopkinsEngine *vm) {
 	_vm = vm;
-	_characterBuffer = NULL;
-	_characterPalette = NULL;
-	_characterSprite = NULL;
-	_characterAnim = NULL;
+	_characterBuffer = g_PTRNUL;
+	_characterPalette = g_PTRNUL;
+	_characterSprite = g_PTRNUL;
+	_characterAnim = g_PTRNUL;
 	_characterSize = 0;
 	_dialogueMesgId1 = _dialogueMesgId2 = _dialogueMesgId3 = _dialogueMesgId4 = 0;
 	_paletteBufferIdx = 0;
