@@ -2602,8 +2602,9 @@ void ObjectsManager::loadObjectIniFile() {
 	int lastOpcodeResult = 1;
 
 	file = "OBJET1.ini";
-	data = _vm->_fileManager->searchCat(file, RES_INI);
-	if (data == g_PTRNUL) {
+	bool fileFoundFl = false;
+	data = _vm->_fileManager->searchCat(file, RES_INI, fileFoundFl);
+	if (!fileFoundFl) {
 		data = _vm->_fileManager->loadFile(file);
 		if (data == g_PTRNUL)
 			error("INI file %s not found", file.c_str());
@@ -3101,15 +3102,16 @@ int ObjectsManager::getBobPosX(int idx) {
 void ObjectsManager::loadLinkFile(const Common::String &file, bool skipDetails) {
 	Common::File f;
 	Common::String filename = file + ".LNK";
-	byte *ptr = _vm->_fileManager->searchCat(filename, RES_LIN);
+	bool fileFoundFl = false;
+	byte *ptr = _vm->_fileManager->searchCat(filename, RES_LIN, fileFoundFl);
 	size_t nbytes = _vm->_fileManager->_catalogSize;
-	if (ptr == g_PTRNUL) {
+	if (!fileFoundFl) {
 		if (!f.open(filename))
 			error("Error opening file - %s", filename.c_str());
 
 		nbytes = f.size();
 		ptr = _vm->_globals->allocMemory(nbytes);
-		if (g_PTRNUL == ptr)
+		if (ptr == g_PTRNUL)
 			error("INILINK");
 		_vm->_fileManager->readStream(f, ptr, nbytes);
 		f.close();
@@ -3122,9 +3124,10 @@ void ObjectsManager::loadLinkFile(const Common::String &file, bool skipDetails) 
 
 		Common::String filename2 = Common::String((const char *)ptr + 1000);
 		if (!filename2.empty()) {
-			_hidingItemData[1] = _vm->_fileManager->searchCat(filename2, RES_SLI);
+			fileFoundFl = false;
+			_hidingItemData[1] = _vm->_fileManager->searchCat(filename2, RES_SLI, fileFoundFl);
 
-			if (_hidingItemData[1]) {
+			if (!fileFoundFl) {
 				_hidingItemData[1] = _vm->_fileManager->loadFile(filename2);
 			} else {
 				_hidingItemData[1] = _vm->_fileManager->loadFile("RES_SLI.RES");

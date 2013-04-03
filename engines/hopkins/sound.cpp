@@ -517,33 +517,9 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 
 	filename = Common::String::format("%s%d", prefix.c_str(), mappedFileNumber);
 
-	if (!_vm->_fileManager->searchCat(filename + ".WAV", RES_VOI)) {
-		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			filename = "ENG_VOI.RES";
-		// Win95 and Linux versions uses another set of names
-		else if (_vm->_globals->_language == LANG_FR)
-			filename = "RES_VFR.RES";
-		else if (_vm->_globals->_language == LANG_EN)
-			filename = "RES_VAN.RES";
-		else if (_vm->_globals->_language == LANG_SP)
-			filename = "RES_VES.RES";
-
-		catPos = _vm->_fileManager->_catalogPos;
-		catLen = _vm->_fileManager->_catalogSize;
-	} else if (!_vm->_fileManager->searchCat(filename + ".APC", RES_VOI)) {
-		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
-			filename = "ENG_VOI.RES";
-		// Win95 and Linux versions uses another set of names
-		else if (_vm->_globals->_language == LANG_FR)
-			filename = "RES_VFR.RES";
-		else if (_vm->_globals->_language == LANG_EN)
-			filename = "RES_VAN.RES";
-		else if (_vm->_globals->_language == LANG_SP)
-			filename = "RES_VES.RES";
-
-		catPos = _vm->_fileManager->_catalogPos;
-		catLen = _vm->_fileManager->_catalogSize;
-	} else if (!_vm->_fileManager->searchCat(filename + ".RAW", RES_VOI)) {
+	bool fileFoundFl = false;
+	_vm->_fileManager->searchCat(filename + ".WAV", RES_VOI, fileFoundFl);
+	if (fileFoundFl) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
 		// Win95 and Linux versions uses another set of names
@@ -557,17 +533,48 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		catPos = _vm->_fileManager->_catalogPos;
 		catLen = _vm->_fileManager->_catalogSize;
 	} else {
-		if (!f.exists(filename + ".WAV")) {
-			if (!f.exists(filename + ".APC"))
-				return false;
-			filename = filename + ".APC";
-		} else
-			filename = filename + ".WAV";
+		_vm->_fileManager->searchCat(filename + ".APC", RES_VOI, fileFoundFl);
+		if (fileFoundFl) {
+			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+				filename = "ENG_VOI.RES";
+			// Win95 and Linux versions uses another set of names
+			else if (_vm->_globals->_language == LANG_FR)
+				filename = "RES_VFR.RES";
+			else if (_vm->_globals->_language == LANG_EN)
+				filename = "RES_VAN.RES";
+			else if (_vm->_globals->_language == LANG_SP)
+				filename = "RES_VES.RES";
 
-		catPos = 0;
-		catLen = 0;
+			catPos = _vm->_fileManager->_catalogPos;
+			catLen = _vm->_fileManager->_catalogSize;
+		} else {
+			_vm->_fileManager->searchCat(filename + ".RAW", RES_VOI, fileFoundFl);
+			if (fileFoundFl) {
+				if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
+					filename = "ENG_VOI.RES";
+				// Win95 and Linux versions uses another set of names
+				else if (_vm->_globals->_language == LANG_FR)
+					filename = "RES_VFR.RES";
+				else if (_vm->_globals->_language == LANG_EN)
+					filename = "RES_VAN.RES";
+				else if (_vm->_globals->_language == LANG_SP)
+					filename = "RES_VES.RES";
+
+				catPos = _vm->_fileManager->_catalogPos;
+				catLen = _vm->_fileManager->_catalogSize;
+			} else {
+				if (!f.exists(filename + ".WAV")) {
+					if (!f.exists(filename + ".APC"))
+						return false;
+					filename = filename + ".APC";
+				} else
+					filename = filename + ".WAV";
+
+				catPos = 0;
+				catLen = 0;
+			}
+		}
 	}
-
 	oldMusicVol = _musicVolume;
 	if (!loadVoice(filename, catPos, catLen, _sWav[20])) {
 		// This case only concerns the English Win95 demo

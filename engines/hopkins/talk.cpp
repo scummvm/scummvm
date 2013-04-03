@@ -55,9 +55,10 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_graphicsManager->_scrollStatus = 1;
 	bool oldDisableInventFl = _vm->_globals->_disableInventFl;
 	_vm->_globals->_disableInventFl = true;
-	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
+	bool fileFoundFl = false;
+	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER, fileFoundFl);
 	_characterSize = _vm->_fileManager->_catalogSize;
-	if (_characterBuffer == g_PTRNUL) {
+	if (!fileFoundFl) {
 		_characterBuffer = _vm->_fileManager->loadFile(filename);
 		_characterSize = _vm->_fileManager->fileSize(filename);
 	}
@@ -76,8 +77,9 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	}
 	_dialogueMesgId1 = READ_LE_INT16((uint16 *)_characterBuffer + 40);
 	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
-	_characterSprite = _vm->_fileManager->searchCat(spriteFilename, RES_SAN);
-	if (_characterSprite) {
+	fileFoundFl = false;
+	_characterSprite = _vm->_fileManager->searchCat(spriteFilename, RES_SAN, fileFoundFl);
+	if (!fileFoundFl) {
 		_characterSprite = _vm->_objectsManager->loadSprite(spriteFilename);
 	} else {
 		_characterSprite = _vm->_objectsManager->loadSprite("RES_SAN.RES");
@@ -151,9 +153,10 @@ void TalkManager::startStaticCharacterDialogue(const Common::String &filename) {
 	// TODO: The original disables the mouse cursor here
 	bool oldDisableInventFl = _vm->_globals->_disableInventFl;
 	_vm->_globals->_disableInventFl = true;
-	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
+	bool fileFoundFl = false;
+	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER, fileFoundFl);
 	_characterSize = _vm->_fileManager->_catalogSize;
-	if (_characterBuffer == g_PTRNUL) {
+	if (!fileFoundFl) {
 		_characterBuffer = _vm->_fileManager->loadFile(filename);
 		_characterSize = _vm->_fileManager->fileSize(filename);
 	}
@@ -971,9 +974,10 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_objectsManager->_zoneNum = -1;
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(0);
-	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER);
+	bool fileFoundFl = false;
+	_characterBuffer = _vm->_fileManager->searchCat(filename, RES_PER, fileFoundFl);
 	_characterSize = _vm->_fileManager->_catalogSize;
-	if (_characterBuffer == g_PTRNUL) {
+	if (!fileFoundFl) {
 		_characterBuffer = _vm->_fileManager->loadFile(filename);
 		_characterSize = _vm->_fileManager->fileSize(filename);
 	}
@@ -987,8 +991,9 @@ void TalkManager::animateObject(const Common::String &filename) {
 	if (curScreenFilename == "NULL")
 		curScreenFilename = Common::String::format("IM%d", _vm->_globals->_screenId);
 
-	_characterSprite = _vm->_fileManager->searchCat(spriteFilename, RES_SAN);
-	if (_characterSprite)
+	fileFoundFl = false;
+	_characterSprite = _vm->_fileManager->searchCat(spriteFilename, RES_SAN, fileFoundFl);
+	if (!fileFoundFl)
 		_characterSprite = _vm->_objectsManager->loadSprite(spriteFilename);
 	else
 		_characterSprite = _vm->_objectsManager->loadSprite("RES_SAN.RES");

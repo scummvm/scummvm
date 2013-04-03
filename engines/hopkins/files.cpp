@@ -96,8 +96,9 @@ bool FileManager::fileExists(const Common::String &file) {
 /**
  * Search file in Cat file
  */
-byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
+byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fileFoundFl) {
 	byte *ptr = NULL;
+	fileFoundFl = true;
 	Common::File f;
 
 	Common::String filename = file;
@@ -106,54 +107,68 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
 
 	switch (mode) {
 	case RES_INI:
-		if (!f.exists("RES_INI.CAT"))
-			return g_PTRNUL;
+		if (!f.exists("RES_INI.CAT")) {
+			fileFoundFl = false;
+			return NULL;
+		}
 
 		ptr = loadFile("RES_INI.CAT");
 		secondaryFilename = "RES_INI.RES";
 		break;
 
 	case RES_REP:
-		if (!f.exists("RES_REP.CAT"))
-			return g_PTRNUL;
+		if (!f.exists("RES_REP.CAT")) {
+			fileFoundFl = false;
+			return NULL;
+		}
 
 		ptr = loadFile("RES_REP.CAT");
 		secondaryFilename = "RES_REP.RES";
 		break;
 
 	case RES_LIN:
-		if (!f.exists("RES_LIN.CAT"))
-			return g_PTRNUL;
+		if (!f.exists("RES_LIN.CAT")) {
+			fileFoundFl = false;
+			return NULL;
+		}
 
 		ptr = loadFile("RES_LIN.CAT");
 		secondaryFilename = "RES_LIN.RES";
 		break;
 
 	case RES_PER:
-		if (!f.exists("RES_PER.CAT"))
-			return g_PTRNUL;
+		if (!f.exists("RES_PER.CAT")) {
+			fileFoundFl = false;
+			return NULL;
+		}
 
 		ptr = loadFile("RES_PER.CAT");
 		secondaryFilename = "RES_PER.RES";
 		break;
 
 	case RES_PIC:
-		if (!f.exists("PIC.CAT"))
-			return g_PTRNUL;
+		if (!f.exists("PIC.CAT")) {
+			fileFoundFl = false;
+			return NULL;
+		}
 
 		ptr = loadFile("PIC.CAT");
 		break;
 
 	case RES_SAN:
-		if (!f.exists("RES_SAN.CAT"))
-			return g_PTRNUL;
+		if (!f.exists("RES_SAN.CAT")) {
+			fileFoundFl = false;
+			return NULL;
+		}
 
 		ptr = loadFile("RES_SAN.CAT");
 		break;
 
 	case RES_SLI:
-		if (!f.exists("RES_SLI.CAT"))
-			return g_PTRNUL;
+		if (!f.exists("RES_SLI.CAT")) {
+			fileFoundFl = false;
+			return NULL;
+		}
 
 		ptr = loadFile("RES_SLI.CAT");
 		break;
@@ -177,8 +192,10 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
 			}
 		}
 
-		if (!f.exists(tmpFilename))
-			return g_PTRNUL;
+		if (!f.exists(tmpFilename)) {
+			fileFoundFl = false;
+			return NULL;
+		}
 
 		ptr = loadFile(tmpFilename);
 		break;
@@ -206,7 +223,8 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode) {
 
 		if (name == "FINIS") {
 			_vm->_globals->freeMemory(ptr);
-			return g_PTRNUL;
+			fileFoundFl = false;
+			return NULL;
 		}
 
 		offsetVal += 23;

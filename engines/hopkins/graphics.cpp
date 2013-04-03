@@ -201,7 +201,9 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	assert(!_videoPtr);
 
 	bool flag = true;
-	if (_vm->_fileManager->searchCat(file, RES_PIC) == g_PTRNUL) {
+	bool fileFoundFl = false;
+	_vm->_fileManager->searchCat(file, RES_PIC, fileFoundFl);
+	if (!fileFoundFl) {
 		if (!f.open(file))
 			error("loadScreen - %s", file.c_str());
 
@@ -1680,17 +1682,21 @@ void GraphicsManager::displayFont(byte *surface, const byte *spriteData, int xp,
 
 void GraphicsManager::initScreen(const Common::String &file, int mode, bool initializeScreen) {
 	Common::String filename = file + ".ini";
-	byte *ptr = _vm->_fileManager->searchCat(filename, RES_INI);
+	bool fileFoundFl = false;
 
-	if (ptr == g_PTRNUL) {
+	byte *ptr = _vm->_fileManager->searchCat(filename, RES_INI, fileFoundFl);
+
+	if (!fileFoundFl) {
 		ptr = _vm->_fileManager->loadFile(filename);
 	}
+
 	if (!mode) {
 		filename = file + ".spr";
 		_vm->_globals->_levelSpriteBuf = _vm->_globals->freeMemory(_vm->_globals->_levelSpriteBuf);
 		if (initializeScreen) {
-			_vm->_globals->_levelSpriteBuf = _vm->_fileManager->searchCat(filename, RES_SLI);
-			if (_vm->_globals->_levelSpriteBuf) {
+			fileFoundFl = false;
+			_vm->_globals->_levelSpriteBuf = _vm->_fileManager->searchCat(filename, RES_SLI, fileFoundFl);
+			if (!fileFoundFl) {
 				_vm->_globals->_levelSpriteBuf = _vm->_fileManager->loadFile(filename);
 			} else {
 				_vm->_globals->_levelSpriteBuf = _vm->_fileManager->loadFile("RES_SLI.RES");
@@ -1724,8 +1730,9 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 	_vm->_globals->_answerBuffer = _vm->_globals->freeMemory(_vm->_globals->_answerBuffer);
 
 	filename = file + ".rep";
-	byte *dataP = _vm->_fileManager->searchCat(filename, RES_REP);
-	if (dataP == g_PTRNUL)
+	fileFoundFl = false;
+	byte *dataP = _vm->_fileManager->searchCat(filename, RES_REP, fileFoundFl);
+	if (!fileFoundFl)
 		dataP = _vm->_fileManager->loadFile(filename);
 
 	_vm->_globals->_answerBuffer = dataP;
