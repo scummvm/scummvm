@@ -418,6 +418,11 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 				musicSlot->signal = 0;
 		}
 
+		// HACK to fix scripts waiting indefinitely after getting the "love"
+		// page from the spider (bug #3596335).
+		if (g_sci->getGameId() == GID_KQ6 && musicSlot->resourceId == 465 && musicSlot->fadeTo == 0)
+			musicSlot->dataInc = 1;
+
 		musicSlot->fadeTicker = 0;
 		break;
 
