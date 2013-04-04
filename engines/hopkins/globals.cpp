@@ -106,7 +106,7 @@ Globals::Globals(HopkinsEngine *vm) {
 
 	// Initialize pointers
 	_levelSpriteBuf = NULL;
-	_saveData = (Savegame *)NULL;
+	_saveData = NULL;
 	_answerBuffer = NULL;
 	_characterSpriteBuf = NULL;
 	_optionDialogSpr = NULL;
@@ -172,7 +172,7 @@ void Globals::clearAll() {
 	_vm->_dialogsManager->clearAll();
 	_answerBuffer = NULL;
 	_levelSpriteBuf = NULL;
-	_saveData = (Savegame *)NULL;
+	_saveData = NULL;
 	_vm->_objectsManager->_curObjectIndex = 0;
 
 	_vm->_linesManager->clearAll();

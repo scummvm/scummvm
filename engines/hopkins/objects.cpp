@@ -1327,7 +1327,7 @@ void ObjectsManager::setFlipSprite(int idx, bool flipFl) {
 }
 
 void ObjectsManager::GOHOME() {
-	if (_vm->_linesManager->_route == (RouteItem *)NULL)
+	if (_vm->_linesManager->_route == NULL)
 		return;
 
 	if (_homeRateCounter > 1) {
@@ -1364,11 +1364,11 @@ void ObjectsManager::GOHOME() {
 				zoneId = _vm->_globals->_saveData->_data[svLastZoneNum];
 			else
 				zoneId = _zoneNum;
-			_vm->_linesManager->_route = (RouteItem *)NULL;
+			_vm->_linesManager->_route = NULL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_homeRateCounter = 0;
-			_vm->_linesManager->_route = (RouteItem *)NULL;
+			_vm->_linesManager->_route = NULL;
 			_oldDirection = DIR_NONE;
 			if (zoneId > 0) {
 				if (_vm->_linesManager->_zone[zoneId]._destX && _vm->_linesManager->_zone[zoneId]._destY && _vm->_linesManager->_zone[zoneId]._destY != 31) {
@@ -1584,7 +1584,7 @@ void ObjectsManager::GOHOME() {
 				zoneId = _zoneNum;
 			setSpriteIndex(0, _oldDirection + 59);
 			_vm->_globals->_actionDirection = DIR_NONE;
-			_vm->_linesManager->_route = (RouteItem *)NULL;
+			_vm->_linesManager->_route = NULL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_homeRateCounter = 0;
@@ -1644,7 +1644,7 @@ void ObjectsManager::GOHOME() {
 }
 
 void ObjectsManager::GOHOME2() {
-	if (_vm->_linesManager->_route == (RouteItem *)NULL)
+	if (_vm->_linesManager->_route == NULL)
 		return;
 
 	int realSpeed = 2;
@@ -1707,7 +1707,7 @@ void ObjectsManager::GOHOME2() {
 		break;
 	}
 
-	_vm->_linesManager->_route = (RouteItem *)NULL;
+	_vm->_linesManager->_route = NULL;
 }
 
 /**
@@ -1824,7 +1824,7 @@ void ObjectsManager::handleCityMap() {
 	_vm->_graphicsManager->scrollScreen(getSpriteX(0) - 320);
 	_vm->_graphicsManager->_scrollOffset = getSpriteX(0) - 320;
 	animateSprite(0);
-	_vm->_linesManager->_route = (RouteItem *)NULL;
+	_vm->_linesManager->_route = NULL;
 	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
 	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
 	_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
@@ -1866,7 +1866,7 @@ void ObjectsManager::handleCityMap() {
 		_vm->_linesManager->checkZone();
 		GOHOME2();
 
-		if (_vm->_linesManager->_route == (RouteItem *)NULL && _vm->_globals->_actionMoveTo)
+		if (_vm->_linesManager->_route == NULL && _vm->_globals->_actionMoveTo)
 			PARADISE();
 		_vm->_eventsManager->refreshScreenAndEvents();
 
@@ -1960,25 +1960,25 @@ void ObjectsManager::handleLeftButton() {
 	}
 	_vm->_globals->_actionMoveTo = false;
 	RouteItem *oldRoute = _vm->_linesManager->_route;
-	_vm->_linesManager->_route = (RouteItem *)NULL;
+	_vm->_linesManager->_route = NULL;
 	if (_forestFl && _zoneNum >= 20 && _zoneNum <= 23) {
 		if (getSpriteY(0) > 374 && getSpriteY(0) <= 410) {
-			_vm->_linesManager->_route = (RouteItem *)NULL;
+			_vm->_linesManager->_route = NULL;
 			setSpriteIndex(0, _oldDirectionSpriteIdx);
 			_vm->_globals->_actionDirection = DIR_NONE;
-			_vm->_linesManager->_route = (RouteItem *)NULL;
+			_vm->_linesManager->_route = NULL;
 			computeAndSetSpriteSize();
 			setFlipSprite(0, false);
 			_homeRateCounter = 0;
 			_oldDirection = DIR_NONE;
 		} else {
 			_vm->_linesManager->_route = _vm->_linesManager->findRoute(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
-			if (_vm->_linesManager->_route != (RouteItem *)NULL)
+			if (_vm->_linesManager->_route != NULL)
 				_vm->_linesManager->optimizeRoute(_vm->_linesManager->_route);
 			_oldCharacterPosX = getSpriteX(0);
 			_oldCharacterPosY = getSpriteY(0);
 			_homeRateCounter = 0;
-			if (_vm->_linesManager->_route != (RouteItem *)NULL || oldRoute == _vm->_linesManager->_route) {
+			if (_vm->_linesManager->_route != NULL || oldRoute == _vm->_linesManager->_route) {
 				_oldDirection = DIR_NONE;
 			} else {
 				_vm->_linesManager->_route = oldRoute;
@@ -1987,12 +1987,12 @@ void ObjectsManager::handleLeftButton() {
 	} else {
 		if (!_vm->_globals->_freezeCharacterFl && !_vm->_globals->_cityMapEnabledFl) {
 			_vm->_linesManager->_route = _vm->_linesManager->findRoute(getSpriteX(0), getSpriteY(0), destX, destY);
-			if (_vm->_linesManager->_route != (RouteItem *)NULL)
+			if (_vm->_linesManager->_route != NULL)
 				_vm->_linesManager->optimizeRoute(_vm->_linesManager->_route);
 			_oldCharacterPosX = getSpriteX(0);
 			_oldCharacterPosY = getSpriteY(0);
 			_homeRateCounter = 0;
-			if (_vm->_linesManager->_route != (RouteItem *)NULL || oldRoute == _vm->_linesManager->_route)
+			if (_vm->_linesManager->_route != NULL || oldRoute == _vm->_linesManager->_route)
 				_oldDirection = DIR_NONE;
 			else
 				_vm->_linesManager->_route = oldRoute;
@@ -2020,7 +2020,7 @@ void ObjectsManager::handleLeftButton() {
 				&& _curObjectIndex == 20 && _zoneNum == 12
 				&& _vm->_eventsManager->_mouseCursorId == 23) {
 		// Special case for throwing darts at the switch in Purgatory - the player shouldn't move
-		_vm->_linesManager->_route = (RouteItem *)NULL;
+		_vm->_linesManager->_route = NULL;
 		getSpriteX(0);
 		getSpriteY(0);
 	}
@@ -2137,7 +2137,7 @@ void ObjectsManager::clearScreen() {
 	_forceZoneFl = true;
 	_vm->_linesManager->resetLinesNumb();
 	_vm->_linesManager->resetLastLine();
-	_vm->_linesManager->_route = (RouteItem *)NULL;
+	_vm->_linesManager->_route = NULL;
 	_vm->_globals->_answerBuffer = _vm->_globals->freeMemory(_vm->_globals->_answerBuffer);
 	_vm->_globals->_levelSpriteBuf = _vm->_globals->freeMemory(_vm->_globals->_levelSpriteBuf);
 	_vm->_eventsManager->_startPos.x = 0;
@@ -2147,7 +2147,7 @@ void ObjectsManager::clearScreen() {
 	_vm->_globals->_actionMoveTo = false;
 	_forceZoneFl = true;
 	_changeVerbFl = false;
-	_vm->_linesManager->_route = (RouteItem *)NULL;
+	_vm->_linesManager->_route = NULL;
 	_oldDirection = DIR_NONE;
 	_vm->_graphicsManager->resetDirtyRects();
 }
@@ -2164,7 +2164,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 	_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, 532, 25, 65, 40, _vm->_graphicsManager->_frontBuffer, 532, 25);
 	_vm->_graphicsManager->addDirtyRect(532, 25, 597, 65);
 	_vm->_globals->_checkDistanceFl = true;
-	_vm->_linesManager->_route = (RouteItem *)NULL;
+	_vm->_linesManager->_route = NULL;
 
 	if (oldCharacter == CHARACTER_SAMANTHA && newCharacter == CHARACTER_HOPKINS
 		&& _vm->_globals->_saveData->_realHopkins._location == _vm->_globals->_screenId) {
@@ -3725,7 +3725,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	_vm->_globals->_cityMapEnabledFl = false;
 	_vm->_globals->_eventMode = EVENTMODE_IGNORE;
 	_vm->_soundManager->playSound(soundNum);
-	_vm->_linesManager->_route = (RouteItem *)NULL;
+	_vm->_linesManager->_route = NULL;
 	_vm->_globals->_freezeCharacterFl = true;
 	_vm->_globals->_exitId = 0;
 	if (!backgroundFile.empty())
@@ -3745,7 +3745,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 	if (_vm->_globals->_screenId == 61) {
 		addStaticSprite(_vm->_globals->_characterSpriteBuf, Common::Point(330, 418), 0, 60, 0, false, 34, 190);
 		animateSprite(0);
-		_vm->_linesManager->_route = (RouteItem *)NULL;
+		_vm->_linesManager->_route = NULL;
 		computeAndSetSpriteSize();
 	}
 	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
@@ -3763,13 +3763,13 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_oldCharacterPosX = getSpriteX(0);
 		_oldDirection = DIR_NONE;
 		_homeRateCounter = 0;
-		_vm->_linesManager->_route = (RouteItem *)NULL;
+		_vm->_linesManager->_route = NULL;
 		_vm->_linesManager->_route = _vm->_linesManager->findRoute(getSpriteX(0), getSpriteY(0), 330, 345);
 		_vm->_globals->_checkDistanceFl = true;
 		do {
 			GOHOME();
 			_vm->_eventsManager->refreshScreenAndEvents();
-		} while (_vm->_linesManager->_route != (RouteItem *)NULL);
+		} while (_vm->_linesManager->_route != NULL);
 		setSpriteIndex(0, 64);
 	}
 	do {
@@ -3871,7 +3871,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	computeAndSetSpriteSize();
 	animateSprite(0);
 	enableHidingBehavior();
-	_vm->_linesManager->_route = (RouteItem *)NULL;
+	_vm->_linesManager->_route = NULL;
 	computeAndSetSpriteSize();
 	sceneSpecialIni();
 	_vm->_eventsManager->_mouseSpriteId = 4;
@@ -3902,7 +3902,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 					int yp = _vm->_eventsManager->getMouseY();
 
 					if ((xCheck == xp) && (yCheck == yp)) {
-						_vm->_linesManager->_route = (RouteItem *)NULL;
+						_vm->_linesManager->_route = NULL;
 						PARADISE();
 						if (_vm->_globals->_exitId)
 							breakFlag = true;
@@ -3918,8 +3918,8 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 		if (!_vm->_globals->_exitId) {
 			_vm->_dialogsManager->testDialogOpening();
 			_vm->_linesManager->checkZone();
-			if (_vm->_linesManager->_route == (RouteItem *)NULL
-					|| (GOHOME(), _vm->_linesManager->_route == (RouteItem *)NULL)) {
+			if (_vm->_linesManager->_route == NULL
+					|| (GOHOME(), _vm->_linesManager->_route == NULL)) {
 				if (_vm->_globals->_actionMoveTo)
 					PARADISE();
 			}
