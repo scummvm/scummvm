@@ -61,7 +61,7 @@ static bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset) 
 	uint32 bytesRead = startPos;
 
 	while (bytesRead < fileSize - 16) {
-		uint32 toRead = MIN((unsigned int)32768, fileSize - bytesRead);
+		uint32 toRead = MIN<unsigned int>((unsigned int)32768, fileSize - bytesRead);
 		f->seek((int32)startPos, SEEK_SET);
 		uint32 actuallyRead = f->read(buf, toRead);
 		if (actuallyRead != toRead) {
