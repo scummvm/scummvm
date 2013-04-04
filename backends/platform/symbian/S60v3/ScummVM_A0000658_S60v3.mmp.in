@@ -112,7 +112,6 @@ SOURCEPATH ..\..\..\..\base
 SOURCEPATH ..\..\..\..
 
 // backend EPOC/SDL/ESDL specific includes
-SOURCE backends\platform\sdl\hardwarekeys.cpp
 SOURCE backends\platform\sdl\sdl.cpp
 SOURCE backends\audiocd\sdl\sdl-audiocd.cpp
 SOURCE backends\audiocd\default\default-audiocd.cpp
@@ -133,7 +132,6 @@ source common\error.cpp
 source common\quicktime.cpp
 
 // Special for graphics
-source graphics\iff.cpp
 source backends\graphics\symbiansdl\symbiansdl-graphics.cpp
 source backends\graphics\surfacesdl\surfacesdl-graphics.cpp
 source engines\obsolete.cpp
@@ -144,7 +142,7 @@ LIBRARY euser.lib apparc.lib fbscli.lib
 LIBRARY estlib.lib apgrfx.lib
 LIBRARY gdi.lib hal.lib bitgdi.lib
 LIBRARY mediaclientaudiostream.lib efsrv.lib ws32.lib
-library avkon.lib bafl.lib
+library avkon.lib bafl.lib  remconcoreapi.lib remconinterfacebase.lib
 
 CAPABILITY LocalServices ReadUserData
 MACRO SDL_BACKEND

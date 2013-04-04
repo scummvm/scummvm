@@ -4,20 +4,21 @@
 	@WorkingEngines = qw(
 		scumm agos sky queen gob groovie saga drascula
 		kyra lure agi touche parallaction cine
-		cruise made m4 tinsel tucker sword1 sword2 draci sci teenagent mohawk hugo toon lastexpress tsage
+		cruise made tinsel tucker sword1 sword2 draci sci teenagent mohawk hugo toon lastexpress tsage cge
+		composer toltecs tony wintermute pegasus
 	);
 
 	@WorkingEngines_1st = qw(
 		scumm queen groovie saga drascula
 		touche parallaction cine
-?		cruise made m4 tucker lastexpress
+?		cruise made tucker lastexpress composer wintermute
 	);
 
 	@WorkingEngines_2nd = qw(
 		agos sky gob kyra lure 
 		agi tinsel sword1 sword2 
 		draci sci teenagent hugo toon
-		tsage
+		tsage cge toltecs tony pegasus
 	);
 
 	@TestingEngines = qw(
@@ -32,6 +33,7 @@
 		ihnm
 		lol
 		agos2
+		eob
 	);
 
 	#disabled subengines lol saga2 personal nightmare
