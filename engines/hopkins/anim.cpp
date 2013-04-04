@@ -531,7 +531,7 @@ void AnimationManager::searchAnim(const byte *data, int animIndex, int bufSize) 
 						innerLoopCond = true;
 					if (bufSize < curBufferPos) {
 						_animBqe[animIndex]._enabledFl = false;
-						_animBqe[animIndex]._data = g_PTRNUL;
+						_animBqe[animIndex]._data = NULL;
 						return;
 					}
 					++curBufferPos;
@@ -817,12 +817,12 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 
 void AnimationManager::initAnimBqe() {
 	for (int idx = 0; idx < 35; ++idx) {
-		_animBqe[idx]._data = g_PTRNUL;
+		_animBqe[idx]._data = NULL;
 		_animBqe[idx]._enabledFl = false;
 	}
 
 	for (int idx = 0; idx < 8; ++idx) {
-		Bank[idx]._data = g_PTRNUL;
+		Bank[idx]._data = NULL;
 		Bank[idx]._loadedFl = false;
 		Bank[idx]._filename = "";
 		Bank[idx]._fileHeader = 0;

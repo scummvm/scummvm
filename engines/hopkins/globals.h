@@ -220,9 +220,6 @@ public:
 	int _curRoomNum;
 };
 
-// Global null pointer
-extern byte *g_PTRNUL;
-
 } // End of namespace Hopkins
 
 #endif /* HOPKINS_GLOBALS_H */

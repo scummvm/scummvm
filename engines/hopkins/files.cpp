@@ -239,7 +239,7 @@ byte *FileManager::searchCat(const Common::String &file, CatMode mode, bool &fil
 		f.seek(_catalogPos);
 
 		byte *catData = _vm->_globals->allocMemory(_catalogSize);
-		if (catData == g_PTRNUL)
+		if (catData == NULL)
 			error("CHARGE_FICHIER");
 
 		readStream(f, catData, _catalogSize);

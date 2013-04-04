@@ -59,7 +59,7 @@ void FontManager::loadZoneText() {
 }
 
 void FontManager::clearAll() {
-	_font = g_PTRNUL;
+	_font = NULL;
 	_fontFixedHeight = 0;
 	_fontFixedWidth = 0;
 
@@ -82,8 +82,8 @@ void FontManager::clearAll() {
 	for (int idx = 0; idx < 4048; idx++)
 		_index[idx] = 0;
 
-	_tempText = g_PTRNUL;
-	_zoneText = g_PTRNUL;
+	_tempText = NULL;
+	_zoneText = NULL;
 
 	_boxWidth = 240;
 }
@@ -214,7 +214,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			f.seek(_index[messageId]);
 
 			_tempText = _vm->_globals->allocMemory(2058);
-			if (_tempText == g_PTRNUL)
+			if (_tempText == NULL)
 				error("Error allocating text");
 
 			Common::fill(&_tempText[0], &_tempText[2058], 0);
@@ -358,7 +358,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 		if (textType == 1 || textType == 3 || textType == 5 || textType == 6) {
 			int size = saveHeight * saveWidth;
 			byte *ptrd = _vm->_globals->allocMemory(size);
-			if (ptrd == g_PTRNUL)
+			if (ptrd == NULL)
 				error("Cutting a block for text box (%d)", size);
 
 			_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_frontBuffer, ptrd, posX, posY, saveWidth, saveHeight);
@@ -389,7 +389,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 			_text[idx]._textBlock = _vm->_globals->freeMemory(_text[idx]._textBlock);
 			int blockSize = blockHeight * blockWidth;
 			byte *ptre = _vm->_globals->allocMemory(blockSize + 20);
-			if (ptre == g_PTRNUL)
+			if (ptre == NULL)
 				error("Cutting a block for text box (%d)", blockSize);
 
 			_text[idx]._textBlock = ptre;

@@ -44,14 +44,14 @@ EventsManager::EventsManager(HopkinsEngine *vm) {
 	_mouseSpriteId = 0;
 	_curMouseButton = 0;
 	_mouseButton = 0;
-	_mouseCursor = g_PTRNUL;
+	_mouseCursor = NULL;
 	_gameCounter = 0;
 	_rateCounter = 0;
 	_escKeyFl = false;
 	_gameKey = KEY_NONE;
 	_mouseCursorId = 0;
 	_oldIconId = 0;
-	_objectBuf = g_PTRNUL;
+	_objectBuf = NULL;
 
 	Common::fill(&_keyState[0], &_keyState[256], false);
 	_priorCounterTime = 0;

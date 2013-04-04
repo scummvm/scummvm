@@ -32,10 +32,6 @@
 
 namespace Hopkins {
 
-// Global null pointer. This is needed by the engine to recognise NULL pointers, since
-// there are places that differentiate between it and a 0 'error' value
-byte *g_PTRNUL;
-
 // Default data for the Hopkins array
 
 const int HOPKINS_PERSO_0[] = {
@@ -64,10 +60,6 @@ const int HOPKINS_PERSO_2[] = {
 
 Globals::Globals(HopkinsEngine *vm) {
 	_vm = vm;
-
-	// Set up the special g_PTRNUL variable
-	g_PTRNUL = (byte *)malloc(16);
-	strcpy((char *)g_PTRNUL, "POINTERNULL");
 
 	// Initialize array properties
 	for (int i = 0; i < 500; ++i)
@@ -113,11 +105,11 @@ Globals::Globals(HopkinsEngine *vm) {
 	_oceanDirection = DIR_NONE;
 
 	// Initialize pointers
-	_levelSpriteBuf = g_PTRNUL;
-	_saveData = (Savegame *)g_PTRNUL;
-	_answerBuffer = g_PTRNUL;
-	_characterSpriteBuf = g_PTRNUL;
-	_optionDialogSpr = g_PTRNUL;
+	_levelSpriteBuf = NULL;
+	_saveData = (Savegame *)NULL;
+	_answerBuffer = NULL;
+	_characterSpriteBuf = NULL;
+	_optionDialogSpr = NULL;
 
 	// Reset flags
 	_censorshipFl = false;
@@ -136,7 +128,7 @@ Globals::~Globals() {
 	freeMemory((byte *)_saveData);
 	freeMemory(_answerBuffer);
 	freeMemory(_characterSpriteBuf);
-	free(g_PTRNUL);
+	free(NULL);
 }
 
 void Globals::setConfig() {
@@ -178,9 +170,9 @@ void Globals::setConfig() {
 void Globals::clearAll() {
 	_vm->_fontManager->clearAll();
 	_vm->_dialogsManager->clearAll();
-	_answerBuffer = g_PTRNUL;
-	_levelSpriteBuf = g_PTRNUL;
-	_saveData = (Savegame *)g_PTRNUL;
+	_answerBuffer = NULL;
+	_levelSpriteBuf = NULL;
+	_saveData = (Savegame *)NULL;
 	_vm->_objectsManager->_curObjectIndex = 0;
 
 	_vm->_linesManager->clearAll();
@@ -210,14 +202,14 @@ void Globals::loadCharacterData() {
 byte *Globals::allocMemory(int count) {
 	byte *result = (byte *)malloc(count);
 	if (!result)
-		result = g_PTRNUL;
+		result = NULL;
 	return result;
 }
 
 byte *Globals::freeMemory(byte *p) {
-	if (p != g_PTRNUL)
+	if (p != NULL)
 		free(p);
-	return g_PTRNUL;
+	return NULL;
 }
 
 } // End of namespace Hopkins

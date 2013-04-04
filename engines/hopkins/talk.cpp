@@ -37,10 +37,10 @@ namespace Hopkins {
 
 TalkManager::TalkManager(HopkinsEngine *vm) {
 	_vm = vm;
-	_characterBuffer = g_PTRNUL;
-	_characterPalette = g_PTRNUL;
-	_characterSprite = g_PTRNUL;
-	_characterAnim = g_PTRNUL;
+	_characterBuffer = NULL;
+	_characterPalette = NULL;
+	_characterSprite = NULL;
+	_characterAnim = NULL;
 	_characterSize = 0;
 	_dialogueMesgId1 = _dialogueMesgId2 = _dialogueMesgId3 = _dialogueMesgId4 = 0;
 	_paletteBufferIdx = 0;
@@ -528,7 +528,7 @@ int TalkManager::countBoxLines(int idx, const Common::String &file) {
 
 	f.seek(indexData[idx]);
 	byte *decryptBuf = _vm->_globals->allocMemory(2058);
-	assert(decryptBuf != g_PTRNUL);
+	assert(decryptBuf != NULL);
 
 	f.read(decryptBuf, 2048);
 	f.close();
@@ -713,7 +713,7 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 					loopCond = true;
 				if (bufIndx > bufferSize) {
 					_vm->_animationManager->_animBqe[idx]._enabledFl = false;
-					_vm->_animationManager->_animBqe[idx]._data = g_PTRNUL;
+					_vm->_animationManager->_animBqe[idx]._data = NULL;
 					return false;
 				}
 				++bufIndx;
@@ -762,11 +762,11 @@ void TalkManager::handleAnswer(int zone, int verb) {
 	byte verbObj = verb;
 	
 	bool outerLoopFl;
-	byte *ptr = g_PTRNUL;
+	byte *ptr = NULL;
 	do {
 		outerLoopFl = false;
 		bool tagFound = false;
-		if (_vm->_globals->_answerBuffer == g_PTRNUL)
+		if (_vm->_globals->_answerBuffer == NULL)
 			return;
 
 		byte *curAnswerBuf = _vm->_globals->_answerBuffer;
@@ -786,7 +786,7 @@ void TalkManager::handleAnswer(int zone, int verb) {
 		// 'COD' tag found
 		curAnswerBuf += 5;
 		ptr = _vm->_globals->allocMemory(620);
-		assert(ptr != g_PTRNUL);
+		assert(ptr != NULL);
 		memset(ptr, 0, 620);
 		uint16 curAnswerIdx = 0;
 		int idx = 0;
@@ -1009,7 +1009,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	searchCharacterPalette(_paletteBufferIdx, true);
 	startCharacterAnim0(_paletteBufferIdx, false);
 	byte *oldAnswerBufferPtr = _vm->_globals->_answerBuffer;
-	_vm->_globals->_answerBuffer = g_PTRNUL;
+	_vm->_globals->_answerBuffer = NULL;
 	_vm->_globals->_freezeCharacterFl = true;
 	_vm->_objectsManager->loadLinkFile(screenFilename);
 	_vm->_objectsManager->_charactersEnabledFl = true;

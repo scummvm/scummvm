@@ -44,9 +44,9 @@ ComputerManager::ComputerManager(HopkinsEngine *vm) {
 		memset(_menuText[i]._line, 0, 90);
 	}
 	Common::fill(&_inputBuf[0], &_inputBuf[200], '\0');
-	_breakoutSpr = g_PTRNUL;
+	_breakoutSpr = NULL;
 	_textColor = 0;
-	_breakoutLevel = (int16 *)g_PTRNUL;
+	_breakoutLevel = (int16 *)NULL;
 	_breakoutBrickNbr = 0;
 	_breakoutScore = 0;
 	_breakoutLives = 0;
@@ -536,9 +536,9 @@ void ComputerManager::displayGamesSubMenu() {
 
 	_vm->_globals->_speed = 1;
 	_vm->_eventsManager->changeMouseCursor(0);
-	_breakoutSpr = g_PTRNUL;
+	_breakoutSpr = NULL;
 	_vm->_eventsManager->_breakoutFl = true;
-	_breakoutLevel = (int16 *)g_PTRNUL;
+	_breakoutLevel = (int16 *)NULL;
 	_breakoutBrickNbr = 0;
 	_breakoutScore = 0;
 	_breakoutLives = 5;

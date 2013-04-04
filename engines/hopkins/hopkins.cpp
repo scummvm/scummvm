@@ -1193,7 +1193,7 @@ bool HopkinsEngine::runFull() {
 			_objectsManager->_forestFl = true;
 			Common::String im = Common::String::format("IM%d", _globals->_exitId);
 			_soundManager->playSound(13);
-			if (_objectsManager->_forestSprite == g_PTRNUL) {
+			if (_objectsManager->_forestSprite == NULL) {
 				_objectsManager->_forestSprite = _objectsManager->loadSprite("HOPDEG.SPR");
 				_soundManager->loadSample(1, "SOUND41.WAV");
 			}
@@ -2097,7 +2097,7 @@ void HopkinsEngine::playEnding() {
 	_globals->_cityMapEnabledFl = false;
 	_globals->_eventMode = EVENTMODE_IGNORE;
 	_soundManager->playSound(26);
-	_linesManager->_route = (RouteItem *)g_PTRNUL;
+	_linesManager->_route = (RouteItem *)NULL;
 	_globals->_freezeCharacterFl = true;
 	_globals->_exitId = 0;
 	_soundManager->loadSample(1, "SOUND90.WAV");
@@ -2830,7 +2830,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
 	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
 	_objectsManager->animateSprite(0);
-	_linesManager->_route = (RouteItem *)g_PTRNUL;
+	_linesManager->_route = (RouteItem *)NULL;
 	_eventsManager->mouseOn();
 	_eventsManager->changeMouseCursor(4);
 
