@@ -528,7 +528,7 @@ int TalkManager::countBoxLines(int idx, const Common::String &file) {
 
 	f.seek(indexData[idx]);
 	byte *decryptBuf = _vm->_globals->allocMemory(2058);
-	assert(decryptBuf != NULL);
+	assert(decryptBuf);
 
 	f.read(decryptBuf, 2048);
 	f.close();
@@ -553,7 +553,7 @@ int TalkManager::countBoxLines(int idx, const Common::String &file) {
 
 	// Separate strings
 	for (int i = 0; i < 2048; i++) {
-		if ( decryptBuf[i] == 10 || decryptBuf[i] == 13 )
+		if ( decryptBuf[i] == 10 || decryptBuf[i] == 13)
 			decryptBuf[i] = 0;
 	}
 
@@ -786,7 +786,7 @@ void TalkManager::handleAnswer(int zone, int verb) {
 		// 'COD' tag found
 		curAnswerBuf += 5;
 		ptr = _vm->_globals->allocMemory(620);
-		assert(ptr != NULL);
+		assert(ptr);
 		memset(ptr, 0, 620);
 		uint16 curAnswerIdx = 0;
 		int idx = 0;

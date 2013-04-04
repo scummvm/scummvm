@@ -201,7 +201,7 @@ byte *ObjectsManager::loadObjectFromFile(int objIndex, bool mode) {
 		++idx;
 
 	if (objectFileNum != _curObjectFileNum) {
-		if (_objectDataBuf != NULL)
+		if (_objectDataBuf)
 			removeObjectDataBuf();
 		if (objectFileNum == 1) {
 			_objectDataBuf = loadSprite("OBJET1.SPR");
@@ -1024,7 +1024,7 @@ void ObjectsManager::displayBobAnim() {
 		_bob[idx]._xp = READ_LE_INT16(dataPtr + 2 * dataIdx);
 		if (_lockedAnims[idx]._enableFl)
 			_bob[idx]._xp = _lockedAnims[idx]._posX;
-		if ( _charactersEnabledFl && idx > 20 )
+		if ( _charactersEnabledFl && idx > 20)
 			_bob[idx]._xp += _vm->_eventsManager->_startPos.x;
 
 		_bob[idx]._yp = READ_LE_INT16(dataPtr + 2 * dataIdx + 2);
@@ -1610,8 +1610,8 @@ void ObjectsManager::GOHOME() {
 		if (_oldDirection != newDirection)
 			break;
 		if ((newDirection == DIR_RIGHT && newPosX >= oldPosX) || (_oldDirection == DIR_LEFT && newPosX <= oldPosX) ||
-		    (_oldDirection == DIR_UP && newPosY <= oldPosY) || (_oldDirection == DIR_DOWN && newPosY >= oldPosY) ||
-		    (_oldDirection == DIR_UP_RIGHT && newPosX >= oldPosX)  || (_oldDirection == DIR_UP_LEFT && newPosX <= oldPosX) ||
+		    (_oldDirection == DIR_UP && newPosY <= oldPosY)   || (_oldDirection == DIR_DOWN && newPosY >= oldPosY) ||
+		    (_oldDirection == DIR_UP_RIGHT && newPosX >= oldPosX)   || (_oldDirection == DIR_UP_LEFT && newPosX <= oldPosX) ||
 		    (_oldDirection == DIR_DOWN_RIGHT && newPosX >= oldPosX) || (_oldDirection == DIR_DOWN_LEFT && newPosX <= oldPosX))
 			loopCond = true;
 	} while (!loopCond);
@@ -1973,12 +1973,12 @@ void ObjectsManager::handleLeftButton() {
 			_oldDirection = DIR_NONE;
 		} else {
 			_vm->_linesManager->_route = _vm->_linesManager->findRoute(getSpriteX(0), getSpriteY(0), getSpriteX(0), 390);
-			if (_vm->_linesManager->_route != NULL)
+			if (_vm->_linesManager->_route)
 				_vm->_linesManager->optimizeRoute(_vm->_linesManager->_route);
 			_oldCharacterPosX = getSpriteX(0);
 			_oldCharacterPosY = getSpriteY(0);
 			_homeRateCounter = 0;
-			if (_vm->_linesManager->_route != NULL || oldRoute == _vm->_linesManager->_route) {
+			if (_vm->_linesManager->_route || oldRoute == _vm->_linesManager->_route) {
 				_oldDirection = DIR_NONE;
 			} else {
 				_vm->_linesManager->_route = oldRoute;
@@ -1987,12 +1987,12 @@ void ObjectsManager::handleLeftButton() {
 	} else {
 		if (!_vm->_globals->_freezeCharacterFl && !_vm->_globals->_cityMapEnabledFl) {
 			_vm->_linesManager->_route = _vm->_linesManager->findRoute(getSpriteX(0), getSpriteY(0), destX, destY);
-			if (_vm->_linesManager->_route != NULL)
+			if (_vm->_linesManager->_route)
 				_vm->_linesManager->optimizeRoute(_vm->_linesManager->_route);
 			_oldCharacterPosX = getSpriteX(0);
 			_oldCharacterPosY = getSpriteY(0);
 			_homeRateCounter = 0;
-			if (_vm->_linesManager->_route != NULL || oldRoute == _vm->_linesManager->_route)
+			if (_vm->_linesManager->_route || oldRoute == _vm->_linesManager->_route)
 				_oldDirection = DIR_NONE;
 			else
 				_vm->_linesManager->_route = oldRoute;
@@ -3769,7 +3769,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		do {
 			GOHOME();
 			_vm->_eventsManager->refreshScreenAndEvents();
-		} while (_vm->_linesManager->_route != NULL);
+		} while (_vm->_linesManager->_route);
 		setSpriteIndex(0, 64);
 	}
 	do {

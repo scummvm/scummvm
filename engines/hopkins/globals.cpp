@@ -207,7 +207,7 @@ byte *Globals::allocMemory(int count) {
 }
 
 byte *Globals::freeMemory(byte *p) {
-	if (p != NULL)
+	if (p)
 		free(p);
 	return NULL;
 }

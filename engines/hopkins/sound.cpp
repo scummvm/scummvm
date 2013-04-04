@@ -728,7 +728,7 @@ void SoundManager::playSample(int wavIndex, int voiceMode) {
 bool SoundManager::checkVoiceStatus(int voiceIndex) {
 	if (_voice[voiceIndex]._status) {
 		int wavIndex = _voice[voiceIndex]._wavIndex;
-		if (_sWav[wavIndex]._audioStream != NULL && _sWav[wavIndex]._audioStream->endOfStream())
+		if (_sWav[wavIndex]._audioStream && _sWav[wavIndex]._audioStream->endOfStream())
 			stopVoice(voiceIndex);
 	}
 

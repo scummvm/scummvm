@@ -89,11 +89,11 @@ LinesManager::LinesManager(HopkinsEngine *vm) {
 
 LinesManager::~LinesManager() {
 	_vm->_globals->freeMemory(_largeBuf);
-	if (_testRoute0 != NULL)
+	if (_testRoute0)
 		delete[] _testRoute0;
-	if (_testRoute1 != NULL)
+	if (_testRoute1)
 		delete[] _testRoute1;
-	if (_testRoute2 != NULL)
+	if (_testRoute2)
 		delete[] _testRoute2;
 }
 
@@ -220,7 +220,7 @@ void LinesManager::addZoneLine(int idx, int fromX, int fromY, int destX, int des
 			maxDist += distX;
 
 		zoneData = (int16 *)_vm->_globals->allocMemory(2 * sizeof(int16) * maxDist + (4 * sizeof(int16)));
-		assert(zoneData != NULL);
+		assert(zoneData);
 
 		_zoneLine[idx]._zoneData = zoneData;
 
@@ -265,7 +265,7 @@ void LinesManager::addLine(int lineIdx, Directions direction, int fromX, int fro
 		maxDist = distX;
 
 	byte *zoneData = _vm->_globals->allocMemory(4 * maxDist + 8);
-	assert (zoneData != NULL);
+	assert (zoneData);
 
 	Common::fill(zoneData, zoneData + 4 * maxDist + 8, 0);
 	_lineItem[lineIdx]._lineData = (int16 *)zoneData;
@@ -800,7 +800,7 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 			if (_lastLine - 1 != curLineIdx) {
 				endLineIdx = 2 * _lineItem[curLineIdx]._lineDataEndIdx;
 				lineData = _lineItem[curLineIdx]._lineData;
-				if (lineData != NULL)
+				if (lineData)
 					continue;
 			}
 			loopCond = true;
@@ -835,7 +835,7 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 			if (curLineIdx != _linesNumb + 1) {
 				nextLineDataEndIdx = 2 * _lineItem[curLineIdx]._lineDataEndIdx;
 				lineData = _lineItem[curLineIdx]._lineData;
-				if (lineData != NULL)
+				if (lineData)
 					continue;
 			}
 			loopCond = true;
@@ -2649,7 +2649,7 @@ int LinesManager::checkCollision(int xp, int yp) {
 		do {
 			LigneZoneItem *curZoneLine = &_zoneLine[curZoneLineIdx];
 			int16 *dataP = curZoneLine->_zoneData;
-			if (dataP != NULL) {
+			if (dataP) {
 				int count = curZoneLine->_count;
 				int startX = dataP[0];
 				int startY = dataP[1];

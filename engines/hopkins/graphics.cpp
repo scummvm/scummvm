@@ -1238,7 +1238,7 @@ void GraphicsManager::restoreSurfaceRect(byte *destSurface, const byte *src, int
 /**
  * Compute the value of a parameter plus a given percentage
  */
-int GraphicsManager::zoomIn(int val, int percentage ) {
+int GraphicsManager::zoomIn(int val, int percentage) {
 	if (val)
 		val += percentage * (long int)val / 100;
 
@@ -1852,7 +1852,7 @@ void GraphicsManager::backupScreen() {
  * Restore a previously backed up screen
  */
 void GraphicsManager::restoreScreen() {
-	assert(_vm->_graphicsManager->_backupScreen != NULL);
+	assert(_vm->_graphicsManager->_backupScreen);
 
 	// Restore the screen and free the buffer
 	Common::copy(_vm->_graphicsManager->_backupScreen, _vm->_graphicsManager->_backupScreen +
