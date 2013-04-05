@@ -177,11 +177,16 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 		writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundPlaying);
 	}
 
-	// WORKAROUND: Song 1849 in the Windows version of KQ5CD does not have
-	// correct signalling data, causing the game scripts to wait indefinitely
-	// for the missing signal. We signal the game scripts to stop waiting
-	// forever by setting the song's dataInc selector to something other than 0
-	if (g_sci->getGameId() == GID_KQ5 && resourceId == 1849)
+	// WORKAROUND: Songs 1840, 1843 and 1849 in the Windows version of KQ5CD
+	// are all missing their channel 15 (all played during its ending
+	// sequences, when fighting with Mordack). This makes the game scripts
+	// wait indefinitely for the missing signals in these songs. In the
+	// original interpreter, this bug manifests as an "Out of heap" error. We
+	// signal the game scripts to stop waiting forever by setting the song's
+	// dataInc selector to something other than 0. This causes Mordack's
+	// appearing animation to occur a bit earlier than expected, but at least
+	// the game doesn't freeze at that point. Fixes bug #3605269.
+	if (g_sci->getGameId() == GID_KQ5 && (resourceId == 1840 || resourceId == 1843 || resourceId == 1849))
 		musicSlot->dataInc = 1;
 
 	musicSlot->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
