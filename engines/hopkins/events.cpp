@@ -464,7 +464,7 @@ void EventsManager::refreshScreenAndEvents() {
 			_vm->_graphicsManager->lockScreen();
 			_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_frontBuffer, _vm->_graphicsManager->_scrollPosX, 20, SCREEN_WIDTH, 440, 0, 20);
 			_vm->_graphicsManager->unlockScreen();
-			
+
 			_vm->_graphicsManager->resetRefreshRects();
 			_vm->_graphicsManager->addRefreshRect(0, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 20);
 

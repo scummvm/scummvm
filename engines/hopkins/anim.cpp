@@ -467,7 +467,7 @@ int AnimationManager::loadSpriteBank(int idx, const Common::String &filename) {
 		Bank[idx]._loadedFl = false;
 		result = -1;
 	}
-	
+
 	Bank[idx]._data = fileDataPtr;
 
 	int objectDataIdx = 0;

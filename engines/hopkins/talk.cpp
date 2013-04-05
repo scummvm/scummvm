@@ -760,7 +760,7 @@ bool TalkManager::searchCharacterAnim(int idx, const byte *bufPerso, int animId,
 void TalkManager::handleAnswer(int zone, int verb) {
 	byte zoneObj = zone;
 	byte verbObj = verb;
-	
+
 	bool outerLoopFl;
 	byte *ptr = NULL;
 	do {
@@ -882,7 +882,7 @@ void TalkManager::handleForestAnswser(int zone, int verb) {
 		while (_vm->_objectsManager->getBobAnimDataIdx(6) < 12);
 		_vm->_objectsManager->stopBobAnimation(6);
 		_vm->_objectsManager->setBobAnimation(8);
-		
+
 		switch (_vm->_globals->_screenId) {
 		case 35:
 			indx = 201;
@@ -967,7 +967,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_linesManager->clearAllZones();
 	_vm->_linesManager->resetLines();
 	_vm->_objectsManager->resetHidingItems();
-	
+
 	for (int i = 0; i <= 44; i++)
 		_vm->_linesManager->_bobZone[i] = 0;
 

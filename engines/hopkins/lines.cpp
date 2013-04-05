@@ -134,7 +134,7 @@ void LinesManager::loadLines(const Common::String &file) {
 	_vm->_globals->freeMemory(ptr);
 }
 
-/** 
+/**
  * Check Hotspots in Inventory screen
  * Returns the ID of the hotspot under mouse
  */
@@ -326,8 +326,8 @@ void LinesManager::addLine(int lineIdx, Directions direction, int fromX, int fro
 			_lineItem[lineIdx]._directionRouteInc = DIR_DOWN_LEFT;
 			_lineItem[lineIdx]._directionRouteDec = DIR_UP_RIGHT;
 		} else if (stepY < -250 && stepY > -1000) {
-			// In the original code, the test was on positive values and 
-			// was impossible to meet. 
+			// In the original code, the test was on positive values and
+			// was impossible to meet.
 			_lineItem[lineIdx]._directionRouteInc = DIR_UP_LEFT;
 			_lineItem[lineIdx]._directionRouteDec = DIR_DOWN_RIGHT;
 		}
@@ -435,7 +435,7 @@ void LinesManager::initRoute() {
 
 		int curLineX = curLineData[2 * curDataIdx - 2];
 		int curLineY = curLineData[2 * curDataIdx - 1];
-		if (_vm->_graphicsManager->_maxX == curLineX || _vm->_graphicsManager->_maxY == curLineY || 
+		if (_vm->_graphicsManager->_maxX == curLineX || _vm->_graphicsManager->_maxY == curLineY ||
 			_vm->_graphicsManager->_minX == curLineX || _vm->_graphicsManager->_minY == curLineY ||
 			(lineX == curLineX && lineY == curLineY))
 			break;
@@ -1135,7 +1135,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 		return _bestRoute;
 
 	int tmpDelta = 0;
-	for (int tmpY = clipDestY; tmpY < _vm->_graphicsManager->_maxY; tmpY++, tmpDelta++) { 
+	for (int tmpY = clipDestY; tmpY < _vm->_graphicsManager->_maxY; tmpY++, tmpDelta++) {
 		if (checkCollisionLine(clipDestX, tmpY, &collLineDataIdxArr[DIR_DOWN], &collLineIdxArr[DIR_DOWN], 0, _lastLine) && collLineIdxArr[DIR_DOWN] <= _lastLine)
 			break;
 		collLineDataIdxArr[DIR_DOWN] = 0;
@@ -1308,7 +1308,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 	}
 
 	int bestRouteNum = characterRoute(fromX, fromY, clipDestX, clipDestY, lineIdx, curLineIdx, 0);
-	
+
 	if (bestRouteNum == 1)
 		return _bestRoute;
 
@@ -1387,7 +1387,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 			break;
 		}
 	}
-	
+
 	bool loopCond;
 	do {
 		loopCond = false;
@@ -1603,7 +1603,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		int maxDist;
 		if (distX > distY)
 			maxDist = distX;
-		else 
+		else
 			maxDist = distY;
 		maxDist--;
 		assert(maxDist != 0);
@@ -1702,7 +1702,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 					newDirection = DIR_UP;
 				else if (newStepX >= 510 && newStepX <= 1000)
 					newDirection = DIR_UP_RIGHT;
-				else 
+				else
 					newDirection = DIR_UP_LEFT;
 			}
 		}
@@ -2133,7 +2133,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 					if (PLAN_TEST(_lineItem[l]._lineData[2 * _lineItem[l]._lineDataEndIdx - 2], _lineItem[l]._lineData[2 * _lineItem[l]._lineDataEndIdx - 1], superRouteIdx, l, curLineIdx)) {
 						curRouteLineIdx = _newLineIdx;
 						curRouteDataIdx = _newLineDataIdx;
-						superRouteIdx = _newRouteIdx; 
+						superRouteIdx = _newRouteIdx;
 						loopFl = true;
 						break;
 					}
@@ -2362,7 +2362,7 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int para
 			direction = 3;
 		else if (idxTestRight != -1)
 			direction = 4;
-		else 
+		else
 			return false;
 	} else {
 		int stepCountUp = 100;
@@ -2552,7 +2552,7 @@ int LinesManager::getMouseZone() {
 		for (int bobZoneId = 0; bobZoneId <= 48; bobZoneId++) {
 			int bobId = _bobZone[bobZoneId];
 			if (bobId && _bobZoneFl[bobZoneId] && _vm->_objectsManager->_bob[bobId]._bobMode && _vm->_objectsManager->_bob[bobId]._frameIndex != 250 &&
-				!_vm->_objectsManager->_bob[bobId]._disabledAnimationFl && xp > _vm->_objectsManager->_bob[bobId]._oldX && 
+				!_vm->_objectsManager->_bob[bobId]._disabledAnimationFl && xp > _vm->_objectsManager->_bob[bobId]._oldX &&
 				xp < _vm->_objectsManager->_bob[bobId]._oldWidth + _vm->_objectsManager->_bob[bobId]._oldX && yp > _vm->_objectsManager->_bob[bobId]._oldY) {
 					if (yp < _vm->_objectsManager->_bob[bobId]._oldHeight + _vm->_objectsManager->_bob[bobId]._oldY) {
 						if (_zone[bobZoneId]._spriteIndex == -1) {
@@ -2759,7 +2759,7 @@ void LinesManager::clearAll() {
 		_testRoute1 = NULL;
 	if (!_testRoute2)
 		_testRoute2 = NULL;
-	
+
 	_largeBuf = _vm->_globals->allocMemory(10000);
 	_lineBuf = (int16 *)(_largeBuf);
 }

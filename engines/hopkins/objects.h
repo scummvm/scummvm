@@ -200,7 +200,7 @@ private:
 	void showSprite(int idx);
 	void clearSprite();
 	void setSpriteZoom(int idx, int zoomFactor);
-	
+
 	void loadZone(const Common::String &file);
 	void changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
 	void GOHOME2();
@@ -232,7 +232,7 @@ public:
 	int _mapCarPosX, _mapCarPosY;
 	int _oldCharacterPosX, _oldCharacterPosY;
 	Common::Point _borderPos;
-	Common::Point _oldBorderPos; 
+	Common::Point _oldBorderPos;
 	Common::Point _characterPos;
 	byte *_forestSprite;
 	byte *_saveLoadSprite;

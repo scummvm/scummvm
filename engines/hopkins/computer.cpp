@@ -289,7 +289,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 	_vm->_graphicsManager->resetDirtyRects();
 }
 
-static const char _englishText[] = 
+static const char _englishText[] =
 "% ****** FBI COMPUTER NUMBER 4985 ****** J.HOPKINS COMPUTER ******\n"
 "% ****** FBI COMPUTER NUMBER 4998 ****** S.COLLINS COMPUTER ******\n"
 "% ****** FBI COMPUTER NUMBER 4997 ****** ACCES FREE COMPUTER ******\n"
@@ -308,7 +308,7 @@ static const char _englishText[] =
 "% 6) SCIENTIST KIDNAPPED (next).\n"
 "%% fin\n";
 
-static const char _frenchText[] =  
+static const char _frenchText[] =
 "% ****** FBI COMPUTER NUMBER 4985 ****** J.HOPKINS COMPUTER ******\n"
 "% ****** FBI COMPUTER NUMBER 4998 ****** S.COLLINS COMPUTER ******\n"
 "% ****** FBI COMPUTER NUMBER 4997 ****** ACCES FREE COMPUTER ******\n"
@@ -328,7 +328,7 @@ static const char _frenchText[] =
 "% 6) DISPARITIONS (suite).\n"
 "%% fin\n";
 
-static const char _spanishText[] =  
+static const char _spanishText[] =
 "% **** ORDENADOR DEL FBI NUMERO 4985 **** ORDENADOR J.HOPKINS *****\n"
 "% **** ORDENADOR DEL FBI NUMERO 4998 **** ORDENADOR S.COLLINS *****\n"
 "% *** ORDENADOR DEL FBI NUMERO 4997 *** ORDENADOR DE ACCESO LIBRE ***\n"
@@ -651,7 +651,7 @@ void ComputerManager::newLevel() {
 	_padPositionX = 150;
 	_vm->_objectsManager->animateSprite(0);
 	_vm->_objectsManager->animateSprite(1);
- 
+
 	_vm->_eventsManager->mouseOn();
 	_vm->_soundManager->playSample(3, 5);
 }

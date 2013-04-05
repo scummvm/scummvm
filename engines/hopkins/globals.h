@@ -105,7 +105,7 @@ enum SauvegardeOffset {
 	, svField401 = 401
 };
 
-// As Script engine directly access savegame fields, 
+// As Script engine directly access savegame fields,
 // refactoring it in separated fields properly named is impossible
 struct Savegame {
 	byte _data[2050];
@@ -130,7 +130,7 @@ enum Language { LANG_EN = 0, LANG_FR = 1, LANG_SP = 2};
 enum PlayerCharacter { CHARACTER_HOPKINS = 0, CHARACTER_HOPKINS_CLONE = 1, CHARACTER_SAMANTHA = 2 };
 
 enum Directions {
-	DIR_NONE = -1, 
+	DIR_NONE = -1,
 	DIR_UP = 1,
 	DIR_UP_RIGHT = 2,
 	DIR_RIGHT = 3,

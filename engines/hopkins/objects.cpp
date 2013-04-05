@@ -217,7 +217,7 @@ byte *ObjectsManager::loadObjectFromFile(int objIndex, bool mode) {
 	if (mode) {
 		sprite_alone(_objectDataBuf, _vm->_eventsManager->_objectBuf, idx);
 		dataP = _vm->_eventsManager->_objectBuf;
-	} else { 
+	} else {
 		dataP = _vm->_globals->allocMemory(height * width);
 		if (dataP == NULL)
 			error("CAPTURE_OBJET");
@@ -387,7 +387,7 @@ void ObjectsManager::displaySprite() {
 
 			if (clipX < _vm->_graphicsManager->_minX)
 				clipX = _vm->_graphicsManager->_minX;
-	
+
 			clipY = _vm->_fontManager->_textList[idx]._pos.y - 2;
 			if (clipY < _vm->_graphicsManager->_minY)
 				clipY = _vm->_graphicsManager->_minY;
@@ -437,7 +437,7 @@ void ObjectsManager::displaySprite() {
 	}
 
 	if (_priorityFl && _sortedDisplayCount) {
-		for (int i = 1; i <= 48; i++) 
+		for (int i = 1; i <= 48; i++)
 			arr[i] = i;
 
 		do {
@@ -712,7 +712,7 @@ void ObjectsManager::computeHideCounter(int idx) {
 
 			if ((oldBottom > hid->_y) && (oldBottom < hid->_yOffset + hid->_height + hid->_y)) {
 				if ((oldRight >= hid->_x && oldRight <= hiddenRight)
-				// CHECKME: The original was doing the test two times. This looks like an 
+				// CHECKME: The original was doing the test two times. This looks like an
 				// original bug
 				// || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
 				 || (hiddenRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
@@ -820,7 +820,7 @@ void ObjectsManager::checkHidingItem() {
 
 				if (bottom > hid->_y && bottom < (hid->_yOffset + hid->_height + hid->_y)) {
 					if ((right >= hid->_x && right <= hidingRight)
-					// CHECKME: The original was doing the test two times. This looks like an 
+					// CHECKME: The original was doing the test two times. This looks like an
 					// original bug
 					// || (hidingRight >= spr->_destX && hid->_x <= spr->_destX)
 					 || (hidingRight >= spr->_destX && hid->_x <= spr->_destX)
@@ -887,7 +887,7 @@ void ObjectsManager::showSprite(int idx) {
 void ObjectsManager::displayHiding(int idx) {
 	HidingItem *hid = &_hidingItem[idx];
 
-	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _hidingItemData[1], 
+	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _hidingItemData[1],
 		hid->_x + 300, hid->_y + 300, hid->_spriteIndex);
 	_vm->_graphicsManager->addDirtyRect(hid->_x, hid->_y, hid->_x + hid->_width, hid->_y + hid->_height);
 }
@@ -922,7 +922,7 @@ void ObjectsManager::computeSprite(int idx) {
 		reducePercent = -spr->_zoomFactor;
 		if (reducePercent > 95)
 			reducePercent = 95;
-	} else 
+	} else
 		zoomPercent = spr->_zoomFactor;
 
 	if (zoomPercent) {
@@ -996,7 +996,7 @@ void ObjectsManager::displayBobAnim() {
 			continue;
 		}
 
-		if (_bob[idx]._bobMode != 10) 
+		if (_bob[idx]._bobMode != 10)
 			continue;
 
 		_bob[idx]._bobMode10 = false;
@@ -1206,7 +1206,7 @@ void ObjectsManager::displayVBob() {
 				_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex, 0, 0, false);
 			} else {
-				_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, vbob->_spriteData, 
+				_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex);
 
 				_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_backBuffer, vbob->_spriteData,
@@ -1894,8 +1894,8 @@ void ObjectsManager::handleLeftButton() {
 	int destX = _vm->_eventsManager->getMouseX();
 	int destY = _vm->_eventsManager->getMouseY();
 
-	if (!_vm->_dialogsManager->_inventFl && !_vm->_globals->_cityMapEnabledFl && 
-		destX > _vm->_graphicsManager->_scrollOffset - 30 && destX < _vm->_graphicsManager->_scrollOffset + 50 && 
+	if (!_vm->_dialogsManager->_inventFl && !_vm->_globals->_cityMapEnabledFl &&
+		destX > _vm->_graphicsManager->_scrollOffset - 30 && destX < _vm->_graphicsManager->_scrollOffset + 50 &&
 		destY > -30 && destY < 50) {
 		int oldMouseCursor = _vm->_eventsManager->_mouseCursorId;
 		_vm->_dialogsManager->_inventFl = true;
@@ -2005,7 +2005,7 @@ void ObjectsManager::handleLeftButton() {
 	if (_zoneNum != -1 && _zoneNum != 0) {
 		if (_vm->_eventsManager->_mouseCursorId == 23)
 			_vm->_globals->_saveData->_data[svLastMouseCursor] = 5;
-		else 
+		else
 			_vm->_globals->_saveData->_data[svLastMouseCursor] = _vm->_eventsManager->_mouseCursorId;
 
 		if (_vm->_globals->_cityMapEnabledFl)
@@ -2526,7 +2526,7 @@ void ObjectsManager::nextObjectIcon(int idx) {
 	if (_vm->_eventsManager->_mouseCursorId == 0 || _vm->_eventsManager->_mouseCursorId == 2 ||
 	    _vm->_eventsManager->_mouseCursorId == 3 || _vm->_eventsManager->_mouseCursorId == 16)
 		return;
-		
+
 	int nextCursorId = _vm->_eventsManager->_mouseCursorId + 1;
 	if (nextCursorId > 25)
 		nextCursorId = 6;
@@ -2543,7 +2543,7 @@ void ObjectsManager::nextObjectIcon(int idx) {
 			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag2 == 1)
 				return;
 			nextCursorId++;
-		}	
+		}
 		if (nextCursorId == 8) {
 			_vm->_eventsManager->_mouseCursorId = 8;
 			return;
@@ -2586,7 +2586,7 @@ void ObjectsManager::nextObjectIcon(int idx) {
 		if (nextCursorId == 24 || nextCursorId == 25) {
 			_vm->_eventsManager->_mouseCursorId = 25;
 		}
-		
+
 		nextCursorId = 6;
 	} while (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag6 != 2);
 }
@@ -2819,7 +2819,7 @@ void ObjectsManager::doActionBack(int idx) {
 		_curGestureFile = 1;
 		_gestureBuf = _vm->_fileManager->loadFile("DOS.SPR");
 	}
-	
+
 	switch (idx) {
 	case 1:
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, false);
@@ -2860,7 +2860,7 @@ void ObjectsManager::doActionRight(int idx) {
 		_curGestureFile = 3;
 		_gestureBuf = _vm->_fileManager->loadFile("PROFIL.SPR");
 	}
-	
+
 	switch (idx) {
 	case 1:
 		showActionAnimation(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 8, false);
@@ -2942,7 +2942,7 @@ void ObjectsManager::doActionFront(int idx) {
 		_curGestureFile = 2;
 		_gestureBuf = _vm->_fileManager->loadFile("FACE.SPR");
 	}
-	
+
 	switch (idx) {
 	case 1:
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,9,9,9,9,9,9,7,6,5,4,3,2,1,0,-1,", 8, false);
@@ -2965,7 +2965,7 @@ void ObjectsManager::doActionDiagLeft(int idx) {
 		_curGestureFile = 4;
 		_gestureBuf = _vm->_fileManager->loadFile("3Q.SPR");
 	}
-	
+
 	switch (idx) {
 	case 1:
 		showActionAnimation(_gestureBuf, "0,1,2,3,4,5,6,7,8,8,8,8,8,7,6,5,4,3,2,1,0,-1,", 8, true);
@@ -3006,7 +3006,7 @@ void ObjectsManager::doActionLeft(int idx) {
 		_curGestureFile = 3;
 		_gestureBuf = _vm->_fileManager->loadFile("PROFIL.SPR");
 	}
-	
+
 	switch (idx) {
 	case 1:
 		showActionAnimation(_gestureBuf, "20,19,18,17,16,15,14,13,13,13,13,13,14,15,16,17,18,19,20,-1,", 8, true);
@@ -3638,7 +3638,7 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 	case 36:
 		if (idx > 2)
 			savegameIdx = 203;
-		else 
+		else
 			savegameIdx = 202;
 		break;
 	case 37:

@@ -108,7 +108,7 @@ public:
 	int _screenLineSize;
 
 	/**
-	 * The _dirtyRects list contains paletted game areas that need to be redrawn. 
+	 * The _dirtyRects list contains paletted game areas that need to be redrawn.
 	 * The _dstrect array is the list of areas of the screen that ScummVM needs to be redrawn.
 	 * Some areas, such as the animation managers, skip the _dirtyRects and use _dstrec directly.
 	 */

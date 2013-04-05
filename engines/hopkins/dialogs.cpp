@@ -259,7 +259,7 @@ void DialogsManager::showOptionsDialog() {
 			//if (mousePos.x >= _vm->_graphicsManager->ofscroll + 348 && mousePos.y > 248 && mousePos.x <= _vm->_graphicsManager->ofscroll + 394 && mousePos.y <= 273)
 			//	_vm->_globals->_speed = 2;
 
-			if (   mousePos.x < scrollOffset + 165 || mousePos.x > scrollOffset + 496 
+			if (   mousePos.x < scrollOffset + 165 || mousePos.x > scrollOffset + 496
 				|| mousePos.y < 107 || mousePos.y > 318)
 				doneFlag = true;
 		}

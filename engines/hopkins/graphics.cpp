@@ -78,7 +78,7 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	Common::fill(&_colorTable[0], &_colorTable[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_palette[0], &_palette[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_oldPalette[0], &_oldPalette[PALETTE_EXT_BLOCK_SIZE], 0);
-	
+
 	if (_vm->getIsDemo()) {
 		if (_vm->getPlatform() == Common::kPlatformLinux)
 			// CHECKME: Should be false?
@@ -134,7 +134,7 @@ void GraphicsManager::lockScreen() {
 			_videoPtr = _screenBuffer;
 			_screenLineSize = SCREEN_WIDTH * 2;
 		}
-	}		
+	}
 }
 
 /**
@@ -240,7 +240,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 		}
 	}
 
-	memcpy(_frontBuffer, _backBuffer, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);	
+	memcpy(_frontBuffer, _backBuffer, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 }
 
 void GraphicsManager::initColorTable(int minIndex, int maxIndex, byte *palette) {
@@ -405,7 +405,7 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 
 // Clear Palette
 void GraphicsManager::clearPalette() {
-	// As weird as it sounds, this is what the original Linux executable does, 
+	// As weird as it sounds, this is what the original Linux executable does,
 	// and not a full array clear.
 	SD_PIXELS[0] = 0;
 }
@@ -483,7 +483,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 	addRefreshRect(destX, destY, destX + width, destY + width);
 }
 
-/** 
+/**
  * Fade in. the step number is determine by parameter.
  */
 void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface) {
@@ -524,7 +524,7 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
 	updateScreen();
 }
 
-/** 
+/**
  * Fade out. the step number is determine by parameter.
  */
 void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface) {
@@ -556,7 +556,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 	updateScreen();
 }
 
-/** 
+/**
  * Short fade in. The step number is 1, the default step number is also set to 1.
  */
 void GraphicsManager::fadeInShort() {
@@ -564,7 +564,7 @@ void GraphicsManager::fadeInShort() {
 	fadeIn(_palette, 1, (const byte *)_frontBuffer);
 }
 
-/** 
+/**
  * Short fade out. The step number is 1, the default step number is also set to 1.
  */
 void GraphicsManager::fadeOutShort() {
@@ -572,7 +572,7 @@ void GraphicsManager::fadeOutShort() {
 	fadeOut(_palette, 1, (const byte *)_frontBuffer);
 }
 
-/** 
+/**
  * Long fade in. The step number is 20, the default step number is also set to 15.
  */
 void GraphicsManager::fadeInLong() {
@@ -580,7 +580,7 @@ void GraphicsManager::fadeInLong() {
 	fadeIn(_palette, 20, (const byte *)_frontBuffer);
 }
 
-/** 
+/**
  * Long fade out. The step number is 20, the default step number is also set to 15.
  */
 void GraphicsManager::fadeOutLong() {
@@ -588,7 +588,7 @@ void GraphicsManager::fadeOutLong() {
 	fadeOut(_palette, 20, (const byte *)_frontBuffer);
 }
 
-/** 
+/**
  * Fade in. The step number used is the default step number.
  */
 void GraphicsManager::fadeInDefaultLength(const byte *surface) {
@@ -596,7 +596,7 @@ void GraphicsManager::fadeInDefaultLength(const byte *surface) {
 	fadeIn(_palette, _fadeDefaultSpeed, surface);
 }
 
-/** 
+/**
  * Fade out. The step number used is the default step number.
  */
 void GraphicsManager::fadeOutDefaultLength(const byte *surface) {
@@ -604,7 +604,7 @@ void GraphicsManager::fadeOutDefaultLength(const byte *surface) {
 	fadeOut(_palette, _fadeDefaultSpeed, surface);
 }
 
-/** 
+/**
  * Fade in used by for the breakout mini-game
  */
 void GraphicsManager::fadeInBreakout() {
@@ -615,7 +615,7 @@ void GraphicsManager::fadeInBreakout() {
 	updateScreen();
 }
 
-/** 
+/**
  * Fade out used by for the breakout mini-game
  */
 void GraphicsManager::fadeOutBreakout() {
@@ -1050,7 +1050,7 @@ void GraphicsManager::addDirtyRect(int x1, int y1, int x2, int y2) {
 	x2 = CLIP(x2, _minX, _maxX);
 	y2 = CLIP(y2, _minY, _maxY);
 
-	if ((x2 > x1) && (y2 > y1))	
+	if ((x2 > x1) && (y2 > y1))
 		addRectToArray(_dirtyRects, Common::Rect(x1, y1, x2, y2));
 }
 
@@ -1070,7 +1070,7 @@ void GraphicsManager::addRectToArray(Common::Array<Common::Rect> &rects, const C
 	uint rectIndex;
 	for (rectIndex = 0; rectIndex < rects.size(); ++rectIndex) {
 		Common::Rect &r = rects[rectIndex];
-		
+
 		if (r.intersects(newRect)) {
 			// Rect either intersects or is completely inside existing one, so extend existing one as necessary
 			r.extend(newRect);
@@ -1108,8 +1108,8 @@ void GraphicsManager::displayDirtyRects() {
 		return;
 
 	lockScreen();
-	
-	// Refresh the entire screen 
+
+	// Refresh the entire screen
 	for (uint idx = 0; idx < _dirtyRects.size(); ++idx) {
 		Common::Rect &r = _dirtyRects[idx];
 		Common::Rect dstRect;

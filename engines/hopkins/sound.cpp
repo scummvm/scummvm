@@ -609,7 +609,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		// This avoids skipping completely the talk animations in the Win95 UK Demo
 		if (!checkVoiceStatus(2) && _sWav[20]._active)
 			breakFlag = true;
-		// This is specific to the Win95 UK Demo again: if nothing is displayed, 
+		// This is specific to the Win95 UK Demo again: if nothing is displayed,
 		// don't wait for a click event.
 		if (!_sWav[20]._active && !dispTxtFl)
 			break;
@@ -700,12 +700,12 @@ void SoundManager::playSample(int wavIndex, int voiceMode) {
 
 	if (_soundFl)
 		delWav(_currentSoundIndex);
-	
+
 	switch (voiceMode) {
 	case 5:
 	case 8:
 	// Case added to identify the former PLAY_SAMPLE2 calls
-	case 9: 
+	case 9:
 		if (checkVoiceStatus(1))
 			stopVoice(1);
 		playWavSample(1, wavIndex);
@@ -775,7 +775,7 @@ bool SoundManager::loadVoice(const Common::String &filename, size_t fileOffset, 
 	if (!f.open(filename)) {
 		// Fallback to APC...
 		if (!f.open(setExtension(filename, ".APC"))) {
-			// The English demo doesn't include the speech file. 
+			// The English demo doesn't include the speech file.
 			// This avoids it to crash when discussing with other characters
 			if (!_vm->getIsDemo())
 				error("Could not open %s for reading", filename.c_str());

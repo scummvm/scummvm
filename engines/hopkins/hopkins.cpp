@@ -321,7 +321,7 @@ bool HopkinsEngine::runWin95Demo() {
 				while (_eventsManager->getMouseButton() != 1);
 				_graphicsManager->fadeOutLong();
 				restoreSystem();
-			} else 
+			} else
 				bombExplosion();
 			break;
 
@@ -605,7 +605,7 @@ bool HopkinsEngine::runLinuxDemo() {
 
 			if (!_globals->_saveData->_data[svBombDisarmedFl])
 				bombExplosion();
-			else 
+			else
 				_objectsManager->PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			break;
 
@@ -781,7 +781,7 @@ bool HopkinsEngine::runFull() {
 	if (getPlatform() == Common::kPlatformLinux) {
 		_objectsManager->_helicopterFl = false;
 		_eventsManager->mouseOff();
-		// No code has been added to display the version as it's wrong 
+		// No code has been added to display the version as it's wrong
 		// in my copy: it mentions a Win95 version v4 using DirectDraw (Strangerke)
 	} else if (getPlatform() == Common::kPlatformWindows) {
 		_objectsManager->_helicopterFl = false;
@@ -797,7 +797,7 @@ bool HopkinsEngine::runFull() {
 		}
 		_graphicsManager->clearVesaScreen();
 	} else {
-		// This piece of code, though named "display_version" in the original, 
+		// This piece of code, though named "display_version" in the original,
 		// displays a "loading please wait" screen.
 		if (_startGameSlot == -1) {
 			_graphicsManager->loadImage("VERSW");
@@ -814,7 +814,7 @@ bool HopkinsEngine::runFull() {
 	_graphicsManager->clearScreen();
 	_graphicsManager->unlockScreen();
 	_graphicsManager->clearPalette();
-	
+
 	if (_startGameSlot == -1) {
 		if (getPlatform() == Common::kPlatformLinux) {
 				_graphicsManager->loadImage("H2");
@@ -848,7 +848,7 @@ bool HopkinsEngine::runFull() {
 	_globals->_characterType = 0;
 	_objectsManager->_mapCarPosX = _objectsManager->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
-	
+
 	_globals->_exitId = 0;
 
 	if (_startGameSlot != -1)
@@ -2069,7 +2069,7 @@ void HopkinsEngine::playUnderwaterBaseCutscene() {
 	_graphicsManager->displayAllBob();
 	_objectsManager->loadLinkFile("IM92");
 /*
-	for (int cpt = 0; cpt <= 4 && !shouldQuit(); cpt++) 
+	for (int cpt = 0; cpt <= 4 && !shouldQuit(); cpt++)
 		_eventsManager->refreshScreenAndEvents();
 */
 	_graphicsManager->fadeInLong();
@@ -2310,8 +2310,8 @@ void HopkinsEngine::drawBaseMap() {
 		162, 365, 162 + 21, 365 + 23,
 		106, 267, 106 + 20, 267 + 26
 	};
-	
-	// Loop through displaying 
+
+	// Loop through displaying
 	const int *rectP = &rects[0];
 	for (int rectIndex = 0; rectIndex < 6; ++rectIndex, rectP += 4) {
 		Common::Rect r(rectP[0], rectP[1], rectP[2], rectP[3]);

@@ -471,9 +471,9 @@ void FontManager::renderTextDisplay(int xp, int yp, const Common::String &msg, i
 					charWidth = _vm->_objectsManager->getWidth(_font, printChar) - 1;
 				else if (curChar == 'm' || curChar == 'w')
 					charWidth = _vm->_objectsManager->getWidth(_font, printChar);
-				else 
+				else
 					charWidth = 6;
-			} else 
+			} else
 				charWidth = _vm->_objectsManager->getWidth(_font, printChar);
 
 			int charStartPosX = charEndPosX;

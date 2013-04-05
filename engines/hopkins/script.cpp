@@ -689,7 +689,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 		case 36:
 			if (_vm->_globals->_saveData->_data[svField270] == 2 && _vm->_globals->_saveData->_data[svField94] == 1 && _vm->_globals->_saveData->_data[svField95] == 1)
 				_vm->_globals->_saveData->_data[svField270] = 3;
-			
+
 			switch (_vm->_globals->_saveData->_data[svField270]) {
 			case 0:
 				_vm->_talkManager->startStaticCharacterDialogue("PATRON0.pe2");
@@ -2141,7 +2141,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			if (_vm->_globals->_saveData->_data[svField341]) {
 				_vm->_soundManager->playSoundFile("SOUND83.WAV");
 				_vm->_objectsManager->setAndPlayAnim(vbobFrameIndex, 26, 50, false);
-				
+
 				switch (_vm->_globals->_saveData->_data[svField341]) {
 				case 1:
 					_vm->_graphicsManager->fastDisplay(_vm->_globals->_levelSpriteBuf, 27, 117, 0);
@@ -2560,7 +2560,7 @@ int ScriptManager::handleIf(const byte *dataP, int offset) {
 		    (oper2 == 6 && compVal2 > _vm->_globals->_saveData->_data[saveDataIdx2]))
 			check2Fl = true;
 	}
-	
+
 	if ((operType == 3) && check1Fl) {
 		return (offset + 1);
 	} else if ((operType == 1) && check1Fl && check2Fl) {
