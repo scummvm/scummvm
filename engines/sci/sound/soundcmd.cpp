@@ -201,6 +201,10 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 			resourceId, musicSlot->loop, musicSlot->priority, musicSlot->volume);
 
 	_music->soundPlay(musicSlot);
+
+	// Reset any left-over signals
+	musicSlot->signal = 0;
+	musicSlot->fadeStep = 0;
 }
 
 reg_t SoundCommandParser::kDoSoundRestore(int argc, reg_t *argv, reg_t acc) {
