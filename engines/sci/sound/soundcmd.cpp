@@ -385,8 +385,6 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 
 	case 4: // SCI01+
 	case 5: // SCI1+ (SCI1 late sound scheme), with fade and continue
-		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
-
 		if (argc == 5) {
 			// TODO: We currently treat this argument as a boolean, but may
 			// have to handle different non-zero values differently. (e.g.,
@@ -394,13 +392,12 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 			// There is a script bug in KQ6, room 460 (the room with the flying
 			// books). An object is passed here, which should not be treated as
 			// a true flag. Fixes bugs #3555404 and #3291115.
-			// We should only stop after fading if the music is fading down. Fixes
-			// bugs #3267956 and #3605377.
-			musicSlot->stopAfterFading = (argv[4].isNumber() && argv[4].toUint16() != 0 && musicSlot->fadeTo < musicSlot->volume);
+			musicSlot->stopAfterFading = (argv[4].isNumber() && argv[4].toUint16() != 0);
 		} else {
 			musicSlot->stopAfterFading = false;
 		}
 
+		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
 		// Check if the song is already at the requested volume. If it is, don't
 		// perform any fading. Happens for example during the intro of Longbow.
 		if (musicSlot->fadeTo != musicSlot->volume) {
@@ -410,20 +407,23 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 			else
 				musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;
 			musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
-			// Reset the song signal when starting to fade. Fixes bug #3267956,
-			// where it was set to -1 when fading started, thus it stopped immediately
-			musicSlot->signal = 0;
 		} else {
 			// Stop the music, if requested. Fixes bug #3555404.
-			// Reset the song signal when starting to fade. Fixes bug #3267956,
-			// where it was set to -1 when fading started, thus it stopped immediately
 			if (musicSlot->stopAfterFading)
 				processStopSound(obj, false);
-			else
-				musicSlot->signal = 0;
 		}
 
 		musicSlot->fadeTicker = 0;
+
+		// WORKAROUND/HACK: In the labyrinth in KQ6, when falling in the pit and
+		// lighting the lantern, the game scripts perform a fade in of the game
+		// music, but set it to stop after fading. Remove that flag here. This is
+		// marked as both a workaround and a hack because this issue could be a
+		// problem with our fading code and an incorrect handling of that
+		// parameter, or a script bug in that scene. Fixes bug #3267956.
+		if (g_sci->getGameId() == GID_KQ6 && g_sci->getEngineState()->currentRoomNumber() == 406 &&
+			musicSlot->resourceId == 400)
+			musicSlot->stopAfterFading = false;
 		break;
 
 	default:
