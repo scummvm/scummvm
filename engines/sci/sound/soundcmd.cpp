@@ -402,9 +402,11 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;
 		musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
 		musicSlot->fadeTicker = 0;
-		// TODO: We handle this as a bit field (i.e. containing values 0 and 1),
-		// but some games pass other values here as well (e.g. some KQ6 scripts
-		// pass 3 here)
+
+		// argv[4] is a boolean. Scripts sometimes pass strange values,
+		// but SSCI ignores these. (Verified in KQ6.)
+		// KQ6 room 460 even passes an object, but treating this as 'true'
+		// seems fine in that case.
 		musicSlot->stopAfterFading = (argc == 5) ? (argv[4].toUint16() != 0) : false;
 		break;
 
