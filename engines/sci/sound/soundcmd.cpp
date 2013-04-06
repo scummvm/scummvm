@@ -407,7 +407,10 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 		// but SSCI only checks for zero/non-zero. (Verified in KQ6.)
 		// KQ6 room 460 even passes an object, but treating this as 'true'
 		// seems fine in that case.
-		musicSlot->stopAfterFading = (argc == 5) ? (argv[4].toUint16() != 0) : false;
+		if (argc == 5)
+			musicSlot->stopAfterFading = !argv[4].isNull();
+		else
+			musicSlot->stopAfterFading = false;
 		break;
 
 	default:
