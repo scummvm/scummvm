@@ -783,7 +783,6 @@ void SoundMidiPC::onTimer(void *data) {
 				midi->_sfx[i]->stopPlaying();
 			}
 
-			midi->_output->setSourceVolume(0, midi->_musicVolume, true);
 			midi->_fadeMusicOut = false;
 		}
 	}
