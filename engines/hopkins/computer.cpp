@@ -468,6 +468,8 @@ void ComputerManager::outText2(const Common::String &msg) {
  * Restores the scene for the FBI headquarters room
  */
 void ComputerManager::restoreFBIRoom() {
+	_vm->_graphicsManager->fadeOutShort();
+
 	_vm->_globals->freeMemory(_vm->_fontManager->_font);
 	_vm->_fontManager->_font = _vm->_fileManager->loadFile("FONTE3.SPR");
 	_vm->_fontManager->_fontFixedWidth = 12;
