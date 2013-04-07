@@ -517,6 +517,8 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		// fireworks).
 		// It is also needed in other games, e.g. LSL6 when talking to the
 		// receptionist (bug #3192166).
+		// CHECKME: At least kq5cd/win and kq6 set signal to 0xFE here, but
+		// kq5cd/dos does not set signal at all. Needs more investigation.
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			processStopSound(obj, false);
