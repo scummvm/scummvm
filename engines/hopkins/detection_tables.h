@@ -219,7 +219,27 @@ static const HopkinsGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
+
 	},
+
+	{
+		// Hopkins FBI Win32, French uninstalled, provided by SylvainTV
+		{
+			"hopkins",
+				0,
+			{
+				{"Hopkins.exe", 0, "277a5c144bf9ec7d8450ae37afb85090", 419281},
+				{"RES_VFR.RES", 0, "b8a3849063c9eeefe80e82cfce1ad3cd", 39269361},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+
+	},
+
 
 	{ AD_TABLE_END_MARKER }
 };
