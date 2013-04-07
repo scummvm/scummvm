@@ -48,7 +48,7 @@ public:
 	bool preventRest() const;
 
 	void loadState(Common::SeekableSubReadStreamEndian &in, bool origFile = false);
-	void saveState(Common::OutSaveFile *out);
+	void saveState(Common::OutSaveFile *out, bool origFile = false);
 	void reset();
 
 private:

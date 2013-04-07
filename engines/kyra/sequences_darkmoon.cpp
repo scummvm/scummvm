@@ -142,7 +142,6 @@ int DarkMoonEngine::mainMenu() {
 
 		case 3:
 			// transfer party
-			//seq_playFinale();
 			menuChoice = -3;
 			break;
 

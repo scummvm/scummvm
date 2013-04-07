@@ -850,6 +850,7 @@ protected:
 	// Default parameters will import all present original save files and push them to the top of the save dialog.
 	bool importOriginalSaveFile(int destSlot, const char *sourceFile = 0);
 	Common::String readOriginalSaveFile(Common::String &file);
+	bool saveAsOriginalSaveFile(int slot = -1);
 
 	void *generateMonsterTempData(LevelTempData *tmp);
 	void restoreMonsterTempData(LevelTempData *tmp);

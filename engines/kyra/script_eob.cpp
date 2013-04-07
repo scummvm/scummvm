@@ -221,10 +221,16 @@ void EoBInfProcessor::loadState(Common::SeekableSubReadStreamEndian &in, bool or
 		_flagTable[i] = in.readUint32();
 }
 
-void EoBInfProcessor::saveState(Common::OutSaveFile *out) {
-	out->writeByte(_preventRest);
-	for (int i = 0; i < 18; i++)
-		out->writeUint32BE(_flagTable[i]);
+void EoBInfProcessor::saveState(Common::OutSaveFile *out, bool origFile) {
+	if (_vm->game() == GI_EOB2 || !origFile)
+		out->writeByte(_preventRest);
+	int numFlags = (_vm->game() == GI_EOB1 && origFile) ? 13 : 18;
+	for (int i = 0; i < numFlags; i++) {
+		if (origFile)
+			out->writeUint32LE(_flagTable[i]);
+		else
+			out->writeUint32BE(_flagTable[i]);
+	}
 }
 
 void EoBInfProcessor::reset() {
