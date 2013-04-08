@@ -2800,7 +2800,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	if (!exit4)
 		_linesManager->disableZone(4);
 
-	if (!_globals->_oceanDirection)
+	if (_globals->_oceanDirection == DIR_NONE)
 		_globals->_oceanDirection = defaultDirection;
 
 	switch (_globals->_oceanDirection) {
