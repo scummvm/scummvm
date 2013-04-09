@@ -224,7 +224,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 		_maxX = SCREEN_WIDTH;
 		lockScreen();
 		clearScreen();
-		m_scroll16(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		copy16BitRect(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		unlockScreen();
 	} else {
 		setScreenWidth(SCREEN_WIDTH * 2);
@@ -235,7 +235,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 
 		if (MANU_SCROLL) {
 			lockScreen();
-			m_scroll16(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			copy16BitRect(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			unlockScreen();
 		}
 	}
@@ -247,7 +247,7 @@ void GraphicsManager::initColorTable(int minIndex, int maxIndex, byte *palette) 
 	for (int idx = 0; idx < 256; ++idx)
 		_colorTable[idx] = idx;
 
-	Trans_bloc(_colorTable, palette, 256, minIndex, maxIndex);
+	translateSurface(_colorTable, palette, 256, minIndex, maxIndex);
 
 	for (int idx = 0; idx < 256; ++idx) {
 		byte v = _colorTable[idx];
@@ -268,7 +268,7 @@ void GraphicsManager::scrollScreen(int amount) {
 	_scrollPosX = result;
 }
 
-void GraphicsManager::Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold) {
+void GraphicsManager::translateSurface(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold) {
 	byte *destPosP = destP;
 	for (int idx = 0; idx < count; ++idx) {
 		int palIndex = *destPosP;
@@ -294,7 +294,7 @@ void GraphicsManager::Trans_bloc(byte *destP, const byte *srcP, int count, int m
 	}
 }
 
-void GraphicsManager::Trans_bloc2(byte *surface, byte *col, int size) {
+void GraphicsManager::fillSurface(byte *surface, byte *col, int size) {
 	byte dataVal;
 
 	byte *dataP = surface;
@@ -417,7 +417,7 @@ void GraphicsManager::setScreenWidth(int pitch) {
 /**
  * Copies data from a 8-bit palette surface into the 16-bit screen
  */
-void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
+void GraphicsManager::copy16BitRect(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
 	lockScreen();
 
 	assert(_videoPtr);
@@ -444,7 +444,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 	addRefreshRect(destX, destY, destX + width, destY + height);
 }
 
-void GraphicsManager::copyTo16Bit(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
+void GraphicsManager::copy8BitRect(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
 	int xCtr;
 	const byte *palette;
 	int savedXCount;
@@ -509,7 +509,7 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
 
 		// Set the transition palette and refresh the screen
 		setPaletteVGA256(palData2);
-		m_scroll16(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		copy16BitRect(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		updateScreen();
 
 		// Added a delay in order to see the fading
@@ -520,7 +520,7 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
 	setPaletteVGA256(palette);
 
 	// Refresh the screen
-	m_scroll16(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	copy16BitRect(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	updateScreen();
 }
 
@@ -539,7 +539,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 			}
 
 			setPaletteVGA256(palData);
-			m_scroll16(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			copy16BitRect(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			updateScreen();
 
 			_vm->_eventsManager->delay(20);
@@ -551,7 +551,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 		palData[i] = 0;
 
 	setPaletteVGA256(palData);
-	m_scroll16(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	copy16BitRect(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
 	updateScreen();
 }
@@ -636,7 +636,7 @@ void GraphicsManager::setPaletteVGA256(const byte *palette) {
 
 void GraphicsManager::setPaletteVGA256WithRefresh(const byte *palette, const byte *surface) {
 	changePalette(palette);
-	m_scroll16(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	copy16BitRect(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	updateScreen();
 }
 
@@ -1115,7 +1115,7 @@ void GraphicsManager::displayDirtyRects() {
 		Common::Rect dstRect;
 
 		if (_vm->_eventsManager->_breakoutFl) {
-			copyTo16Bit(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
+			copy8BitRect(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
 			dstRect.left = r.left * 2;
 			dstRect.top = r.top * 2 + 30;
 			dstRect.setWidth((r.right - r.left) * 2);
@@ -1126,7 +1126,7 @@ void GraphicsManager::displayDirtyRects() {
 
 			// WORKAROUND: Original didn't lock the screen for access
 			lockScreen();
-			m_scroll16(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_eventsManager->_startPos.x, r.top);
+			copy16BitRect(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_eventsManager->_startPos.x, r.top);
 
 			dstRect.left = r.left - _vm->_eventsManager->_startPos.x;
 			dstRect.top = r.top;
@@ -1622,12 +1622,12 @@ void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width
 
 	if (croppedWidth > 0 && croppedHeight > 0) {
 		int height2 = croppedHeight;
-		Copy_Mem(surface, left, top, croppedWidth, croppedHeight, destSurface, destX, destY);
+		copyRect(surface, left, top, croppedWidth, croppedHeight, destSurface, destX, destY);
 		addDirtyRect(left, top, left + croppedWidth, top + height2);
 	}
 }
 
-void GraphicsManager::Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY) {
+void GraphicsManager::copyRect(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY) {
 	const byte *srcP = x1 + _lineNbr2 * y1 + srcSurface;
 	byte *destP = destX + _lineNbr2 * destY + destSurface;
 	int yp = height;
@@ -1741,17 +1741,17 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 	_vm->_objectsManager->_changeVerbFl = false;
 }
 
-void GraphicsManager::NB_SCREEN(bool initPalette) {
+void GraphicsManager::displayScreen(bool initPalette) {
 	if (initPalette)
 		initColorTable(50, 65, _palette);
 
 	if (_lineNbr == SCREEN_WIDTH)
-		Trans_bloc2(_frontBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT);
+		fillSurface(_frontBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT);
 	else if (_lineNbr == (SCREEN_WIDTH * 2))
-		Trans_bloc2(_frontBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
+		fillSurface(_frontBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
 
 	lockScreen();
-	m_scroll16(_frontBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	copy16BitRect(_frontBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	unlockScreen();
 
 	memcpy(_backBuffer, _frontBuffer, 614399);

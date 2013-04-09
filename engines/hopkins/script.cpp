@@ -2314,7 +2314,7 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->removeSprite(0);
 			_vm->_objectsManager->setAndPlayAnim(6, 0, 15, false);
 			_vm->_objectsManager->_charactersEnabledFl = true;
-			_vm->_graphicsManager->NB_SCREEN(true);
+			_vm->_graphicsManager->displayScreen(true);
 			_vm->_animationManager->playSequence2("TUNNEL.SEQ", 1, 18, 20, true);
 			_vm->_graphicsManager->_noFadingFl = true;
 			_vm->_graphicsManager->fadeOutLong();

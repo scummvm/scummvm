@@ -2658,13 +2658,13 @@ void ObjectsManager::handleSpecialGames() {
 
 		if (!_vm->_graphicsManager->_lineNbr)
 			_vm->_graphicsManager->_scrollOffset = 0;
-		_vm->_graphicsManager->NB_SCREEN(true);
+		_vm->_graphicsManager->displayScreen(true);
 		_vm->_soundManager->_specialSoundNum = 198;
 		_charactersEnabledFl = true;
 		_vm->_animationManager->unsetClearAnimFlag();
 		_vm->_animationManager->playAnim("otage.ANM", 1, 24, 500, true);
 		_vm->_soundManager->_specialSoundNum = 0;
-		_vm->_graphicsManager->NB_SCREEN(false);
+		_vm->_graphicsManager->displayScreen(false);
 
 		_vm->_graphicsManager->restoreScreen();
 
@@ -2673,7 +2673,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 		_vm->_globals->freeMemory(oldPalette);
 		_vm->_graphicsManager->lockScreen();
-		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->copy16BitRect(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager->unlockScreen();
 		memcpy(_vm->_graphicsManager->_frontBuffer, _vm->_graphicsManager->_backBuffer, 614399);
 

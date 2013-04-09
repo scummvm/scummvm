@@ -362,7 +362,7 @@ void FontManager::box(int idx, int messageId, const Common::String &filename, in
 				error("Cutting a block for text box (%d)", size);
 
 			_vm->_graphicsManager->copySurfaceRect(_vm->_graphicsManager->_frontBuffer, ptrd, posX, posY, saveWidth, saveHeight);
-			_vm->_graphicsManager->Trans_bloc2(ptrd, _vm->_graphicsManager->_colorTable, size);
+			_vm->_graphicsManager->fillSurface(ptrd, _vm->_graphicsManager->_colorTable, size);
 			_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, ptrd, posX, posY, saveWidth, saveHeight);
 			_vm->_globals->freeMemory(ptrd);
 

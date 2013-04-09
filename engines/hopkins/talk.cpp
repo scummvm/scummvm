@@ -89,7 +89,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 
 	if (!_vm->_graphicsManager->_lineNbr)
 		_vm->_graphicsManager->_scrollOffset = 0;
-	_vm->_graphicsManager->NB_SCREEN(true);
+	_vm->_graphicsManager->displayScreen(true);
 	_vm->_objectsManager->_charactersEnabledFl = true;
 	searchCharacterPalette(_paletteBufferIdx, false);
 	startCharacterAnim0(_paletteBufferIdx, false);
@@ -123,7 +123,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_globals->_introSpeechOffFl = false;
 	_characterBuffer = _vm->_globals->freeMemory(_characterBuffer);
 	_characterSprite = _vm->_globals->freeMemory(_characterSprite);
-	_vm->_graphicsManager->NB_SCREEN(false);
+	_vm->_graphicsManager->displayScreen(false);
 
 	_vm->_graphicsManager->restoreScreen();
 
@@ -139,7 +139,7 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_graphicsManager->initColorTable(145, 150, _vm->_graphicsManager->_palette);
 	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 	_vm->_graphicsManager->lockScreen();
-	_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager->copy16BitRect(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager->unlockScreen();
 	memcpy(_vm->_graphicsManager->_frontBuffer, _vm->_graphicsManager->_backBuffer, 614399);
 	_vm->_globals->_disableInventFl = oldDisableInventFl;
@@ -1002,9 +1002,9 @@ void TalkManager::animateObject(const Common::String &filename) {
 
 	if (!_vm->_graphicsManager->_lineNbr)
 		_vm->_graphicsManager->_scrollOffset = 0;
-	_vm->_graphicsManager->NB_SCREEN(true);
+	_vm->_graphicsManager->displayScreen(true);
 	_paletteBufferIdx = 20 * READ_LE_INT16((uint16 *)_characterBuffer + 42) + 110;
-	_vm->_graphicsManager->NB_SCREEN(true);
+	_vm->_graphicsManager->displayScreen(true);
 	_vm->_objectsManager->_charactersEnabledFl = true;
 	searchCharacterPalette(_paletteBufferIdx, true);
 	startCharacterAnim0(_paletteBufferIdx, false);
@@ -1041,7 +1041,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_globals->_introSpeechOffFl = false;
 	_characterBuffer = _vm->_globals->freeMemory(_characterBuffer);
 	_characterSprite = _vm->_globals->freeMemory(_characterSprite);
-	_vm->_graphicsManager->NB_SCREEN(false);
+	_vm->_graphicsManager->displayScreen(false);
 	_vm->_linesManager->clearAllZones();
 	_vm->_linesManager->resetLines();
 	_vm->_objectsManager->resetHidingItems();
@@ -1071,7 +1071,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_graphicsManager->initColorTable(145, 150, _vm->_graphicsManager->_palette);
 	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 	_vm->_graphicsManager->lockScreen();
-	_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	_vm->_graphicsManager->copy16BitRect(_vm->_graphicsManager->_backBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	_vm->_graphicsManager->unlockScreen();
 	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 	memcpy(_vm->_graphicsManager->_frontBuffer, _vm->_graphicsManager->_backBuffer, 614399);

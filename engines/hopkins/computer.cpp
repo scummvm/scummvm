@@ -424,13 +424,13 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 			_inputBuf[textIndex--] = 0;
 			x1 -= _vm->_fontManager->_fontFixedWidth;
 			x2 = x1 + 2 * _vm->_fontManager->_fontFixedWidth;
-			_vm->_graphicsManager->Copy_Mem(_vm->_graphicsManager->_backBuffer, x1, yp, 3 * _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager->_frontBuffer, x1, yp);
+			_vm->_graphicsManager->copyRect(_vm->_graphicsManager->_backBuffer, x1, yp, 3 * _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager->_frontBuffer, x1, yp);
 			_vm->_graphicsManager->addDirtyRect(x1, yp, x2, yp + 12);
 			_vm->_fontManager->displayTextVesa(x1, yp, "_", 252);
 		}
 		if (mappedChar != '*') {
 			char newChar = mappedChar;
-			_vm->_graphicsManager->Copy_Mem(_vm->_graphicsManager->_backBuffer, x1, yp, _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager->_frontBuffer, x1, yp);
+			_vm->_graphicsManager->copyRect(_vm->_graphicsManager->_backBuffer, x1, yp, _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager->_frontBuffer, x1, yp);
 			_vm->_graphicsManager->addDirtyRect(x1, yp, _vm->_fontManager->_fontFixedWidth + x1, yp + 12);
 			_inputBuf[textIndex] = newChar;
 
@@ -442,7 +442,7 @@ void ComputerManager::displayMessage(int xp, int yp, int textIdx) {
 		_vm->_eventsManager->refreshScreenAndEvents();
 	} while (textIndex != textIdx && curChar != 13);
 
-	_vm->_graphicsManager->Copy_Mem(_vm->_graphicsManager->_backBuffer, x1, yp, _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager->_frontBuffer, x1, yp);
+	_vm->_graphicsManager->copyRect(_vm->_graphicsManager->_backBuffer, x1, yp, _vm->_fontManager->_fontFixedWidth, 12, _vm->_graphicsManager->_frontBuffer, x1, yp);
 	_vm->_graphicsManager->addDirtyRect(x1, yp, _vm->_fontManager->_fontFixedWidth + x1, yp + 12);
 
 	_vm->_eventsManager->refreshScreenAndEvents();

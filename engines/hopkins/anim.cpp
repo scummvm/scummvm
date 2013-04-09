@@ -93,7 +93,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	} else {
 		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 		_vm->_graphicsManager->lockScreen();
-		_vm->_graphicsManager->m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager->unlockScreen();
 
 		_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -249,7 +249,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		_vm->_graphicsManager->_maxX = SCREEN_WIDTH;
 		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 		_vm->_graphicsManager->lockScreen();
-		_vm->_graphicsManager->m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
 		_vm->_graphicsManager->unlockScreen();
 		_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -355,13 +355,13 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		_vm->_graphicsManager->setScreenWidth(2 * SCREEN_WIDTH);
 		_vm->_graphicsManager->_maxX = 2 * SCREEN_WIDTH;
 		_vm->_graphicsManager->lockScreen();
-		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_frontBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->copy16BitRect(_vm->_graphicsManager->_frontBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	} else {
 		_vm->_graphicsManager->setScreenWidth(SCREEN_WIDTH);
 		_vm->_graphicsManager->_maxX = SCREEN_WIDTH;
 		_vm->_graphicsManager->lockScreen();
 		_vm->_graphicsManager->clearScreen();
-		_vm->_graphicsManager->m_scroll16(_vm->_graphicsManager->_frontBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->copy16BitRect(_vm->_graphicsManager->_frontBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	_vm->_graphicsManager->unlockScreen();
 	_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -598,7 +598,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 	} else {
 		_vm->_graphicsManager->lockScreen();
-		_vm->_graphicsManager->m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		_vm->_graphicsManager->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		_vm->_graphicsManager->unlockScreen();
 
 		_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -721,7 +721,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		} else {
 			_vm->_graphicsManager->lockScreen();
 			_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
-			_vm->_graphicsManager->m_scroll16(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			_vm->_graphicsManager->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			_vm->_graphicsManager->unlockScreen();
 
 			_vm->_graphicsManager->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
