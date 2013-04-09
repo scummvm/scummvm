@@ -133,7 +133,6 @@ int BrowserDialog::runModal() {
 	ShowHiddenFilesControler *shoHiddenFilesControler = 0;
 	if ([panel respondsToSelector:@selector(setShowsHiddenFiles:)]) {
 		shoHiddenFilesButton = [[NSButton alloc] init];
-		[shoHiddenFilesButton retain];
 		[shoHiddenFilesButton setButtonType:NSSwitchButton];
 		[shoHiddenFilesButton setTitle:(NSString *)_hiddenFilesRef];
 		[shoHiddenFilesButton sizeToFit];
@@ -147,7 +146,6 @@ int BrowserDialog::runModal() {
 		[panel setAccessoryView:shoHiddenFilesButton];
 
 		shoHiddenFilesControler = [[ShowHiddenFilesControler alloc] init];
-		[shoHiddenFilesControler retain];
 		[shoHiddenFilesControler setOpenPanel:panel];
 		[shoHiddenFilesButton setTarget:shoHiddenFilesControler];
 		[shoHiddenFilesButton setAction:@selector(showHiddenFiles:)];
@@ -162,10 +160,8 @@ int BrowserDialog::runModal() {
 		}
 	}
 
-	if (shoHiddenFilesButton != 0)
-		[shoHiddenFilesButton release];
-	if (shoHiddenFilesControler != 0)
-		[shoHiddenFilesControler release];
+	[shoHiddenFilesButton release];
+	[shoHiddenFilesControler release];
 
 	// If we were in fullscreen mode, switch back
 	if (wasFullscreen) {
