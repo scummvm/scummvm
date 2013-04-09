@@ -212,6 +212,10 @@ void EventsManager::refreshEvents() {
 }
 
 void EventsManager::checkForNextFrameCounter() {
+	int32 delay = 10 - (g_system->getMillis() - _priorCounterTime);
+	if (delay > 0)
+		_vm->_system->delayMillis(delay);
+
 	// Check for whether to increment the game counter
 	uint32 milli = g_system->getMillis();
 	while ((milli - _priorCounterTime) >= 10) {
