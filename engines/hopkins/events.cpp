@@ -54,8 +54,7 @@ EventsManager::EventsManager(HopkinsEngine *vm) {
 	_objectBuf = NULL;
 
 	Common::fill(&_keyState[0], &_keyState[256], false);
-	_priorCounterTime = 0;
-	_priorFrameTime = 0;
+	_priorCounterTime = _priorFrameTime = g_system->getMillis();
 }
 
 EventsManager::~EventsManager() {
