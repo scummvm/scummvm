@@ -590,10 +590,10 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 
 	if (skipSeqFl) {
 		if (!_vm->getIsDemo()) {
-			_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+			_vm->_graphicsManager->setColorPercentage(252, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage(253, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage(251, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage(254, 0, 0, 0);
 		}
 		_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
 	} else {

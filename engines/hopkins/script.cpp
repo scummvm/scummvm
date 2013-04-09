@@ -1944,10 +1944,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 			_vm->_objectsManager->enableHidingBehavior();
 			_vm->_objectsManager->setHidingUseCount(0);
 			_vm->_objectsManager->setHidingUseCount(1);
-			_vm->_graphicsManager->SETCOLOR4(252, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR4(253, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR4(251, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR4(254, 0, 0, 0);
+			_vm->_graphicsManager->setColorPercentage2(252, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage2(253, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage2(251, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage2(254, 0, 0, 0);
 			break;
 
 		case 211:
@@ -1966,10 +1966,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_eventsManager->refreshScreenAndEvents();
 			}
 
-			_vm->_graphicsManager->SETCOLOR4(252, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR4(253, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR4(251, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR4(254, 0, 0, 0);
+			_vm->_graphicsManager->setColorPercentage2(252, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage2(253, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage2(251, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage2(254, 0, 0, 0);
 			break;
 
 		case 215:
@@ -2329,10 +2329,10 @@ int ScriptManager::handleOpcode(byte *dataP) {
 				_vm->_animationManager->playAnim("BOMBE1A.ANM", 100, 18, 100);
 			}
 			_vm->_graphicsManager->loadImage("BOMBEB");
-			_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+			_vm->_graphicsManager->setColorPercentage(252, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage(253, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage(251, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage(254, 0, 0, 0);
 			_vm->_graphicsManager->initScreen("BOMBE", 2, true);
 			_vm->_graphicsManager->fadeInShort();
 			break;

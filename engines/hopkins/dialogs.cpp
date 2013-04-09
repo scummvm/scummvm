@@ -70,9 +70,9 @@ void DialogsManager::drawInvent(Common::Point oldBorder, int oldBorderSpriteInde
 
 	_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 	if (oldBorder.x && oldBorder.y)
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_dialogsManager->_inventBuf2, oldBorder.x + 300, oldBorder.y + 300, oldBorderSpriteIndex + 1);
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_dialogsManager->_inventBuf2, oldBorder.x + 300, oldBorder.y + 300, oldBorderSpriteIndex + 1);
 	if (newBorder.x && newBorder.y)
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_dialogsManager->_inventBuf2, newBorder.x + 300, newBorder.y + 300, newBorderSpriteIndex);
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_dialogsManager->_inventBuf2, newBorder.x + 300, newBorder.y + 300, newBorderSpriteIndex);
 	_vm->_graphicsManager->addDirtyRect(_vm->_dialogsManager->_inventX, _vm->_dialogsManager->_inventY, _vm->_dialogsManager->_inventX + _vm->_dialogsManager->_inventWidth, _vm->_dialogsManager->_inventY + _vm->_dialogsManager->_inventHeight);
 }
 
@@ -349,7 +349,7 @@ void DialogsManager::showInventory() {
 		_vm->_eventsManager->_curMouseButton = 0;
 		_vm->_eventsManager->_mouseButton = 0;
 		_vm->_globals->_disableInventFl = true;
-		_vm->_graphicsManager->SETCOLOR4(251, 100, 100, 100);
+		_vm->_graphicsManager->setColorPercentage2(251, 100, 100, 100);
 
 		Common::String filename;
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
@@ -384,7 +384,7 @@ void DialogsManager::showInventory() {
 		_inventWidth = _vm->_objectsManager->getWidth(_inventWin1, 0);
 		_inventHeight = _vm->_objectsManager->getHeight(_inventWin1, 0);
 
-		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, _inventWin1, _inventX + 300, 414, 0, 0, 0, false);
+		_vm->_graphicsManager->drawCompressedSprite(_vm->_graphicsManager->_frontBuffer, _inventWin1, _inventX + 300, 414, 0, 0, 0, false);
 		int curPosY = 0;
 		int inventCount = 0;
 		for (int inventLine = 1; inventLine <= 5; inventLine++) {
@@ -516,26 +516,26 @@ void DialogsManager::inventAnim() {
 
 		_vm->_graphicsManager->addDirtyRect(_vm->_objectsManager->_oldInventoryPosX, 27, _vm->_objectsManager->_oldInventoryPosX + 48, 65);
 		int newOffset = _vm->_graphicsManager->_scrollOffset + 2;
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _inventoryIcons, newOffset + 300, 327, 0);
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _inventoryIcons, newOffset + 300, 327, 0);
 		_vm->_graphicsManager->addDirtyRect(newOffset, 27, newOffset + 45, 62);
 		_vm->_objectsManager->_oldInventoryPosX = newOffset;
 	}
 
 	if (_vm->_globals->_saveData->_data[svField357] == 1) {
 		if (_vm->_globals->_saveData->_data[svField353] == 1)
-			_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
+			_vm->_graphicsManager->drawCompressedSprite(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
 		if (_vm->_globals->_saveData->_data[svField355] == 1)
-			_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 866, 325, 1, 0, 0, false);
+			_vm->_graphicsManager->drawCompressedSprite(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 866, 325, 1, 0, 0, false);
 		_vm->_graphicsManager->addDirtyRect(532, 25, 560, 60);
 		_vm->_graphicsManager->addDirtyRect(566, 25, 594, 60);
 	}
 	if (_vm->_globals->_saveData->_data[svField356] == 1) {
-		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
+		_vm->_graphicsManager->drawCompressedSprite(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
 		_vm->_graphicsManager->addDirtyRect(532, 25, 560, 60);
 	}
 
 	if (_vm->_globals->_saveData->_data[svField354] == 1) {
-		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
+		_vm->_graphicsManager->drawCompressedSprite(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_headSprites, 832, 325, 0, 0, 0, false);
 		_vm->_graphicsManager->addDirtyRect(532, 25, 560, 60);
 	}
 }
@@ -664,18 +664,18 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 
 	_vm->_objectsManager->_saveLoadSprite = _vm->_objectsManager->loadSprite(filename);
 	_vm->_objectsManager->_saveLoadSprite2 = _vm->_objectsManager->loadSprite("SAVE2.SPR");
-	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 483, 360, 0);
+	_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 483, 360, 0);
 
 	if (_vm->_globals->_language == LANG_FR) {
 		if (mode == MODE_SAVE)
-			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 525, 375, 1);
+			_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 525, 375, 1);
 		else if (mode == MODE_LOAD)
-			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 515, 375, 2);
+			_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 515, 375, 2);
 	} else {
 		if (mode == MODE_SAVE)
-			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 535, 372, 1);
+			_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 535, 372, 1);
 		else if (mode == MODE_LOAD)
-			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 539, 372, 2);
+			_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_saveLoadSprite, _vm->_eventsManager->_startPos.x + 539, 372, 2);
 	}
 
 	for (int slotNumber = 1; slotNumber <= 6; ++slotNumber) {

@@ -500,28 +500,28 @@ void ObjectsManager::displaySprite() {
 	if (_saveLoadFl) {
 		_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, _saveLoadSprite, _vm->_eventsManager->_startPos.x + 183, 60, 274, 353);
 		if (_saveLoadX && _saveLoadY)
-			_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _saveLoadSprite2, _saveLoadX + _vm->_eventsManager->_startPos.x + 300, _saveLoadY + 300, 0);
+			_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _saveLoadSprite2, _saveLoadX + _vm->_eventsManager->_startPos.x + 300, _saveLoadY + 300, 0);
 
 		_vm->_graphicsManager->addDirtyRect(_vm->_eventsManager->_startPos.x + 183, 60, _vm->_eventsManager->_startPos.x + 457, 413);
 	}
 
 	// If the Options dialog is activated, draw the elements
 	if (_vm->_globals->_optionDialogFl) {
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 464, 407, 0);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 657, 556, _vm->_globals->_menuSpeed);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 731, 495, _vm->_globals->_menuTextOff);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 731, 468, _vm->_globals->_menuVoiceOff);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 731, 441, _vm->_globals->_menuSoundOff);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 731, 414, _vm->_globals->_menuMusicOff);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 600, 522, _vm->_globals->_menuDisplayType);
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_globals->_optionDialogSpr,
 			_vm->_eventsManager->_startPos.x + 611, 502, _vm->_globals->_menuScrollSpeed);
 		_vm->_graphicsManager->addDirtyRect(_vm->_eventsManager->_startPos.x + 164, 107, _vm->_eventsManager->_startPos.x + 498, 320);
 	}
@@ -605,10 +605,10 @@ void ObjectsManager::setBobInfo(int idx) {
 	int yp = _bob[idx]._oldY;
 
 	if (_bob[idx]._isSpriteFl)
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _bob[idx]._spriteData,
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _bob[idx]._spriteData,
 			xp + 300, yp + 300, _bob[idx]._frameIndex);
 	else
-		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer,
+		_vm->_graphicsManager->drawCompressedSprite(_vm->_graphicsManager->_frontBuffer,
 			_bob[idx]._spriteData, xp + 300, yp + 300, _bob[idx]._frameIndex,
 			_bob[idx]._zoomOutFactor, _bob[idx]._zooInmFactor,
 			_bob[idx]._flipFl);
@@ -854,10 +854,10 @@ void ObjectsManager::showSprite(int idx) {
 		return;
 
 	if (spr->_rleFl)
-		_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, spr->_spriteData,
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, spr->_spriteData,
 		    spr->_destX + 300, spr->_destY + 300, spr->_spriteIndex);
 	else
-		_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, spr->_spriteData,
+		_vm->_graphicsManager->drawCompressedSprite(_vm->_graphicsManager->_frontBuffer, spr->_spriteData,
 		    spr->_destX + 300, spr->_destY + 300,  spr->_spriteIndex, spr->_reducePct, spr->_zoomPct, spr->_flipFl);
 
 	ListeItem *list = &Liste[idx];
@@ -887,7 +887,7 @@ void ObjectsManager::showSprite(int idx) {
 void ObjectsManager::displayHiding(int idx) {
 	HidingItem *hid = &_hidingItem[idx];
 
-	_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, _hidingItemData[1],
+	_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _hidingItemData[1],
 		hid->_x + 300, hid->_y + 300, hid->_spriteIndex);
 	_vm->_graphicsManager->addDirtyRect(hid->_x, hid->_y, hid->_x + hid->_width, hid->_y + hid->_height);
 }
@@ -1200,16 +1200,16 @@ void ObjectsManager::displayVBob() {
 				vbob->_xp, vbob->_yp, width, height);
 
 			if (*vbob->_spriteData == 78) {
-				_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_backBuffer, vbob->_spriteData,
+				_vm->_graphicsManager->drawCompressedSprite(_vm->_graphicsManager->_backBuffer, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex, 0, 0, false);
 
-				_vm->_graphicsManager->Affiche_Perfect(_vm->_graphicsManager->_frontBuffer, vbob->_spriteData,
+				_vm->_graphicsManager->drawCompressedSprite(_vm->_graphicsManager->_frontBuffer, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex, 0, 0, false);
 			} else {
-				_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_frontBuffer, vbob->_spriteData,
+				_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex);
 
-				_vm->_graphicsManager->Sprite_Vesa(_vm->_graphicsManager->_backBuffer, vbob->_spriteData,
+				_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_backBuffer, vbob->_spriteData,
 					vbob->_xp + 300, vbob->_yp + 300, vbob->_frameIndex);
 			}
 
@@ -1825,10 +1825,10 @@ void ObjectsManager::handleCityMap() {
 	_vm->_graphicsManager->_scrollOffset = getSpriteX(0) - 320;
 	animateSprite(0);
 	_vm->_linesManager->_route = NULL;
-	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_vm->_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(254, 0, 0, 0);
 
 	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager->refreshScreenAndEvents();
@@ -2015,7 +2015,7 @@ void ObjectsManager::handleLeftButton() {
 		_vm->_globals->_actionMoveTo = true;
 	}
 	_vm->_fontManager->hideText(5);
-	_vm->_graphicsManager->SETCOLOR4(251, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage2(251, 100, 100, 100);
 	if (_vm->_globals->_screenId == 20 && _vm->_globals->_saveData->_data[svField132] == 1
 				&& _curObjectIndex == 20 && _zoneNum == 12
 				&& _vm->_eventsManager->_mouseCursorId == 23) {
@@ -3264,10 +3264,10 @@ void ObjectsManager::sceneSpecialIni() {
 	case 17:
 		if (_vm->_globals->_prevScreenId == 20) {
 			_vm->_globals->_disableInventFl = true;
-			_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-			_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+			_vm->_graphicsManager->setColorPercentage(252, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage(253, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage(251, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage(254, 0, 0, 0);
 			for (int i = 0; i <= 4; i++)
 				_vm->_eventsManager->refreshScreenAndEvents();
 			_vm->_graphicsManager->fadeInLong();
@@ -3748,10 +3748,10 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_vm->_linesManager->_route = NULL;
 		computeAndSetSpriteSize();
 	}
-	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_vm->_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(254, 0, 0, 0);
 	_vm->_eventsManager->changeMouseCursor(4);
 	for (int i = 0; i <= 4; i++)
 		_vm->_eventsManager->refreshScreenAndEvents();
@@ -3834,10 +3834,10 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 	}
 	_vm->_eventsManager->mouseOn();
 	_vm->_eventsManager->_mouseCursorId = 4;
-	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_vm->_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(254, 0, 0, 0);
 	if (_vm->_globals->_characterType) {
 		if (!_vm->_globals->_saveData->_data[svAlternateSpriteFl] && !_vm->_globals->_saveData->_data[svField356]) {
 			_vm->_globals->_characterSpriteBuf = _vm->_fileManager->loadFile("PERSO.SPR");

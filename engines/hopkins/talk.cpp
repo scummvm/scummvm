@@ -131,10 +131,10 @@ void TalkManager::startAnimatedCharacterDialogue(const Common::String &filename)
 	_vm->_eventsManager->_mouseCursorId = oldMouseCursorId;
 
 	_vm->_eventsManager->changeMouseCursor(oldMouseCursorId);
-	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(253, 100, 100, 100);
 
 	if (_vm->getIsDemo() == false)
-		_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+		_vm->_graphicsManager->setColorPercentage(254, 0, 0, 0);
 
 	_vm->_graphicsManager->initColorTable(145, 150, _vm->_graphicsManager->_palette);
 	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);
@@ -1063,10 +1063,10 @@ void TalkManager::animateObject(const Common::String &filename) {
 	_vm->_objectsManager->_charactersEnabledFl = false;
 	_vm->_eventsManager->_mouseCursorId = 4;
 	_vm->_eventsManager->changeMouseCursor(4);
-	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(253, 100, 100, 100);
 
 	if (!_vm->getIsDemo())
-		_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+		_vm->_graphicsManager->setColorPercentage(254, 0, 0, 0);
 
 	_vm->_graphicsManager->initColorTable(145, 150, _vm->_graphicsManager->_palette);
 	_vm->_graphicsManager->setPaletteVGA256(_vm->_graphicsManager->_palette);

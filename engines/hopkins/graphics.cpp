@@ -42,7 +42,7 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	_initGraphicsFl = false;
 	_screenWidth = _screenHeight = 0;
 	_screenLineSize = 0;
-	PAL_PIXELS = NULL;
+	_palettePixels = NULL;
 	_lineNbr = 0;
 	_videoPtr = NULL;
 	_scrollOffset = 0;
@@ -116,7 +116,7 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		_screenHeight = height;
 
 		_screenLineSize = SCREEN_WIDTH * 2;
-		PAL_PIXELS = SD_PIXELS;
+		_palettePixels = SD_PIXELS;
 		_lineNbr = width;
 
 		_initGraphicsFl = true;
@@ -430,8 +430,8 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 		byte *lineDestP = destP;
 
 		for (int xp = 0; xp < width; ++xp) {
-			lineDestP[0] = PAL_PIXELS[lineSrcP[0] * 2];
-			lineDestP[1] = PAL_PIXELS[(lineSrcP[0] * 2) + 1];
+			lineDestP[0] = _palettePixels[lineSrcP[0] * 2];
+			lineDestP[1] = _palettePixels[(lineSrcP[0] * 2) + 1];
 			lineDestP += 2;
 			lineSrcP++;
 		}
@@ -444,7 +444,7 @@ void GraphicsManager::m_scroll16(const byte *surface, int xs, int ys, int width,
 	addRefreshRect(destX, destY, destX + width, destY + height);
 }
 
-void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
+void GraphicsManager::copyTo16Bit(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
 	int xCtr;
 	const byte *palette;
 	int savedXCount;
@@ -464,7 +464,7 @@ void GraphicsManager::Copy_Vga16(const byte *surface, int xp, int yp, int width,
 		loopSrcP = srcP;
 		loopDestP = destP;
 		savedXCount = xCount;
-		palette = PAL_PIXELS;
+		palette = _palettePixels;
 
 		do {
 			destP[0] = destP[2] = destP[_screenLineSize] = destP[_screenLineSize + 2] = palette[2 * srcP[0]];
@@ -640,14 +640,14 @@ void GraphicsManager::setPaletteVGA256WithRefresh(const byte *palette, const byt
 	updateScreen();
 }
 
-void GraphicsManager::SETCOLOR3(int palIndex, int r, int g, int b) {
+void GraphicsManager::setColorPercentage(int palIndex, int r, int g, int b) {
 	int palOffset = 3 * palIndex;
 	_palette[palOffset] = 255 * r / 100;
 	_palette[palOffset + 1] = 255 * g / 100;
 	_palette[palOffset + 2] = 255 * b / 100;
 }
 
-void GraphicsManager::SETCOLOR4(int palIndex, int r, int g, int b) {
+void GraphicsManager::setColorPercentage2(int palIndex, int r, int g, int b) {
 	int rv = 255 * r / 100;
 	int gv = 255 * g / 100;
 	int bv = 255 * b / 100;
@@ -776,8 +776,8 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 				destOffset += pixelCount;
 
 				while (pixelCount--) {
-					destP[0] = PAL_PIXELS[2 * pixelIndex];
-					destP[1] = PAL_PIXELS[(2 * pixelIndex) + 1];
+					destP[0] = _palettePixels[2 * pixelIndex];
+					destP[1] = _palettePixels[(2 * pixelIndex) + 1];
 					destP += 2;
 				}
 
@@ -789,8 +789,8 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 				destOffset += pixelCount;
 
 				while (pixelCount--) {
-					destP[0] = PAL_PIXELS[2 * pixelIndex];
-					destP[1] = PAL_PIXELS[(2 * pixelIndex) + 1];
+					destP[0] = _palettePixels[2 * pixelIndex];
+					destP[1] = _palettePixels[(2 * pixelIndex) + 1];
 					destP += 2;
 				}
 
@@ -798,8 +798,8 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 			}
 		} else {
 			byte *destP = (byte *)_videoPtr + destOffset * 2;
-			destP[0] = PAL_PIXELS[2 * srcByte];
-			destP[1] = PAL_PIXELS[(2 * srcByte) + 1];
+			destP[0] = _palettePixels[2 * srcByte];
+			destP[1] = _palettePixels[(2 * srcByte) + 1];
 			++srcP;
 			++destOffset;
 		}
@@ -831,7 +831,7 @@ void GraphicsManager::copyVideoVbe16a(const byte *srcData) {
 			}
 		}
 
-		WRITE_LE_UINT16((byte *)_videoPtr + destOffset * 2, READ_LE_UINT16(PAL_PIXELS + 2 * srcByte));
+		WRITE_LE_UINT16((byte *)_videoPtr + destOffset * 2, READ_LE_UINT16(_palettePixels + 2 * srcByte));
 		++srcP;
 		++destOffset;
 	}
@@ -879,7 +879,7 @@ void GraphicsManager::copySurfaceRect(const byte *srcSurface, byte *destSurface,
  * @param yp			Y co-ordinate. FOr some reason, starts from 300 = top row
  * @param spriteIndex	Index of the sprite to draw
  */
-void GraphicsManager::Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex) {
+void GraphicsManager::drawVesaSprite(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex) {
 	// Get a pointer to the start of the desired sprite
 	const byte *spriteP = spriteData + 3;
 	for (int i = spriteIndex; i; --i)
@@ -1115,7 +1115,7 @@ void GraphicsManager::displayDirtyRects() {
 		Common::Rect dstRect;
 
 		if (_vm->_eventsManager->_breakoutFl) {
-			Copy_Vga16(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
+			copyTo16Bit(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
 			dstRect.left = r.left * 2;
 			dstRect.top = r.top * 2 + 30;
 			dstRect.setWidth((r.right - r.left) * 2);
@@ -1168,15 +1168,34 @@ void GraphicsManager::displayRefreshRects() {
 	resetRefreshRects();
 }
 
-void GraphicsManager::AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment) {
+
+/**
+ * Fast Display of either a compressed or vesa sprite
+ */
+void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment) {
+	int width = _vm->_objectsManager->getWidth(spriteData, spriteIndex);
+	int height = _vm->_objectsManager->getHeight(spriteData, spriteIndex);
+
+	if (*spriteData == 78) {
+		drawCompressedSprite(_backBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
+		drawCompressedSprite(_frontBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
+	} else {
+		drawVesaSprite(_frontBuffer, spriteData, xp + 300, yp + 300, spriteIndex);
+		drawVesaSprite(_backBuffer, spriteData, xp + 300, yp + 300, spriteIndex);
+	}
+	if (addSegment)
+		addDirtyRect(xp, yp, xp + width, yp + height);
+}
+
+void GraphicsManager::fastDisplay2(const byte *objectData, int xp, int yp, int idx, bool addSegment) {
 	int width = _vm->_objectsManager->getWidth(objectData, idx);
 	int height = _vm->_objectsManager->getHeight(objectData, idx);
 	if (*objectData == 78) {
-		Affiche_Perfect(_backBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
-		Affiche_Perfect(_frontBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
+		drawCompressedSprite(_backBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
+		drawCompressedSprite(_frontBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
 	} else {
-		Sprite_Vesa(_frontBuffer, objectData, xp + 300, yp + 300, idx);
-		Sprite_Vesa(_backBuffer, objectData, xp + 300, yp + 300, idx);
+		drawVesaSprite(_frontBuffer, objectData, xp + 300, yp + 300, idx);
+		drawVesaSprite(_backBuffer, objectData, xp + 300, yp + 300, idx);
 	}
 	if (addSegment)
 		addDirtyRect(xp, yp, xp + width, yp + height);
@@ -1196,7 +1215,7 @@ void GraphicsManager::copy16bFromSurfaceScaleX2(const byte *surface) {
 		byte *oldDestPtr = destPtr;
 		for (int x = 320; x; x--) {
 			curPixel = 2 * *curSurface;
-			palPtr = PAL_PIXELS + curPixel;
+			palPtr = _palettePixels + curPixel;
 			destPtr[0] = destPtr[2] = destPtr[_screenLineSize] = destPtr[_screenLineSize + 2] = palPtr[0];
 			destPtr[1] = destPtr[3] = destPtr[_screenLineSize + 1] = destPtr[_screenLineSize + 3] = palPtr[1];
 			++curSurface;
@@ -1256,7 +1275,7 @@ int GraphicsManager::zoomOut(int val, int percentage) {
 }
 
 // Display 'Perfect?'
-void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl) {
+void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl) {
 	const byte *spriteStartP = srcData + 3;
 	for (int i = frameIndex; i; --i)
 		spriteStartP += READ_LE_UINT32(spriteStartP) + 16;
@@ -1579,24 +1598,6 @@ void GraphicsManager::Affiche_Perfect(byte *surface, const byte *srcData, int xp
 			} while (yCtr1 != 1);
 		}
 	}
-}
-
-/**
- * Fast Display
- */
-void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment) {
-	int width = _vm->_objectsManager->getWidth(spriteData, spriteIndex);
-	int height = _vm->_objectsManager->getHeight(spriteData, spriteIndex);
-
-	if (*spriteData == 78) {
-		Affiche_Perfect(_backBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
-		Affiche_Perfect(_frontBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
-	} else {
-		Sprite_Vesa(_frontBuffer, spriteData, xp + 300, yp + 300, spriteIndex);
-		Sprite_Vesa(_backBuffer, spriteData, xp + 300, yp + 300, spriteIndex);
-	}
-	if (addSegment)
-		addDirtyRect(xp, yp, xp + width, yp + height);
 }
 
 void GraphicsManager::copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY) {

@@ -681,25 +681,25 @@ void ComputerManager::displayBricks() {
 
 		switch (cellType) {
 		case 1:
-			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 21);
+			_vm->_graphicsManager->fastDisplay2(_breakoutSpr, cellLeft, cellTop, 21);
 			break;
 		case 2:
-			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 22);
+			_vm->_graphicsManager->fastDisplay2(_breakoutSpr, cellLeft, cellTop, 22);
 			break;
 		case 3:
-			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 17);
+			_vm->_graphicsManager->fastDisplay2(_breakoutSpr, cellLeft, cellTop, 17);
 			break;
 		case 4:
-			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 20);
+			_vm->_graphicsManager->fastDisplay2(_breakoutSpr, cellLeft, cellTop, 20);
 			break;
 		case 5:
-			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 19);
+			_vm->_graphicsManager->fastDisplay2(_breakoutSpr, cellLeft, cellTop, 19);
 			break;
 		case 6:
-			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 18);
+			_vm->_graphicsManager->fastDisplay2(_breakoutSpr, cellLeft, cellTop, 18);
 			break;
 		case 31:
-			_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellTop, 23);
+			_vm->_graphicsManager->fastDisplay2(_breakoutSpr, cellLeft, cellTop, 23);
 			break;
 		}
 	}
@@ -712,10 +712,10 @@ void ComputerManager::displayBricks() {
  */
 void ComputerManager::displayLives() {
 	for (int i = 0, xp = 10; i <= 11; i++, xp += 7)
-		_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 15);
+		_vm->_graphicsManager->fastDisplay2(_breakoutSpr, xp, 10, 15);
 
 	for (int i = 0, xp = 10; i < _breakoutLives - 1; i++, xp += 7)
-		_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, xp, 10, 14);
+		_vm->_graphicsManager->fastDisplay2(_breakoutSpr, xp, 10, 14);
 
 	_vm->_graphicsManager->updateScreen();
 }
@@ -814,10 +814,10 @@ int ComputerManager::displayHiscores() {
 	loadHiscore();
 	_vm->_graphicsManager->loadVgaImage("HISCORE.PCX");
 	byte *ptr = _vm->_fileManager->loadFile("ALPHA.SPR");
-	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_vm->_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(254, 0, 0, 0);
 
 	int yp;
 	int xp;
@@ -862,10 +862,10 @@ int ComputerManager::displayHiscores() {
  */
 void ComputerManager::getScoreName() {
 	_vm->_graphicsManager->loadVgaImage("NAME.PCX");
-	_vm->_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_vm->_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_vm->_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_vm->_graphicsManager->setColorPercentage(254, 0, 0, 0);
 	byte *ptr = _vm->_fileManager->loadFile("ALPHA.SPR");
 	_vm->_graphicsManager->fadeInBreakout();
 	for (int strPos = 0; strPos <= 4; strPos++) {
@@ -944,7 +944,7 @@ void ComputerManager::displayScoreChar(int charPos, int charDisp) {
 	if (charDisp >= '0' && charDisp <= '9')
 		idx = charDisp - 45;
 
-	_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, xp, 11, idx);
+	_vm->_graphicsManager->fastDisplay2(_breakoutSpr, xp, 11, idx);
 }
 
 /**
@@ -1013,7 +1013,7 @@ void ComputerManager::displayHiscoreLine(byte *objectData, int x, int y, int cur
 		idx = curChar - 'A' + 10;
 	else if (curChar == 1)
 		idx = 37;
-	_vm->_graphicsManager->AFFICHE_SPEEDVGA(objectData, x, y, idx);
+	_vm->_graphicsManager->fastDisplay2(objectData, x, y, idx);
 }
 
 /**
@@ -1186,7 +1186,7 @@ void ComputerManager::checkBallCollisions() {
 					_vm->_soundManager->playSample(2, 6);
 				} else {
 					_vm->_soundManager->playSample(1, 5);
-					_vm->_graphicsManager->AFFICHE_SPEEDVGA(_breakoutSpr, cellLeft, cellUp, 16);
+					_vm->_graphicsManager->fastDisplay2(_breakoutSpr, cellLeft, cellUp, 16);
 					switch (cellType) {
 					case 1:
 						_breakoutScore += 10;

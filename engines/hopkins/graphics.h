@@ -82,7 +82,7 @@ private:
 	void copy16bFromSurfaceScaleX2(const byte *surface);
 
 	void Trans_bloc(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
-	void Copy_Vga16(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
+	void copyTo16Bit(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
 public:
 	byte _colorTable[PALETTE_EXT_BLOCK_SIZE];
 	byte _palette[PALETTE_EXT_BLOCK_SIZE];
@@ -116,7 +116,7 @@ public:
 	Common::Array<Common::Rect> _refreshRects;
 	bool _showDirtyRects;
 
-	byte *PAL_PIXELS;
+	byte *_palettePixels;
 public:
 	GraphicsManager(HopkinsEngine *vm);
 	~GraphicsManager();
@@ -169,12 +169,12 @@ public:
 	void reduceScreenPart(const byte *srcSruface, byte *destSurface, int xp, int yp, int width, int height, int zoom);
 	void setScreenWidth(int pitch);
 
-	void SETCOLOR3(int palIndex, int r, int g, int b);
-	void SETCOLOR4(int palIndex, int r, int g, int b);
-	void AFFICHE_SPEEDVGA(const byte *objectData, int xp, int yp, int idx, bool addSegment = true);
-	void Affiche_Perfect(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl);
+	void setColorPercentage(int palIndex, int r, int g, int b);
+	void setColorPercentage2(int palIndex, int r, int g, int b);
+	void fastDisplay2(const byte *objectData, int xp, int yp, int idx, bool addSegment = true);
+	void drawCompressedSprite(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl);
 	void Copy_Mem(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY);
-	void Sprite_Vesa(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex);
+	void drawVesaSprite(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex);
 	void m_scroll16(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void Trans_bloc2(byte *surface, byte *col, int size);
 	void NB_SCREEN(bool initPalette);

@@ -249,7 +249,7 @@ void SaveLoadManager::createThumbnail(Graphics::Surface *s) {
 		uint16 *lineDestP = destP;
 
 		for (int xp = 0; xp < w; ++xp)
-			*lineDestP++ = *(uint16 *)&_vm->_graphicsManager->PAL_PIXELS[*lineSrcP++ * 2];
+			*lineDestP++ = *(uint16 *)&_vm->_graphicsManager->_palettePixels[*lineSrcP++ * 2];
 
 		// Move to the start of the next line
 		srcP += w;
@@ -292,7 +292,7 @@ void SaveLoadManager::convertThumb16To8(Graphics::Surface *thumb16, Graphics::Su
 	byte paletteG[PALETTE_SIZE];
 	byte paletteB[PALETTE_SIZE];
 	for (int palIndex = 0; palIndex < PALETTE_SIZE; ++palIndex) {
-		uint16 p = READ_LE_UINT16(&_vm->_graphicsManager->PAL_PIXELS[palIndex * 2]);
+		uint16 p = READ_LE_UINT16(&_vm->_graphicsManager->_palettePixels[palIndex * 2]);
 		pixelFormat16.colorToRGB(p, paletteR[palIndex], paletteG[palIndex], paletteB[palIndex]);
 	}
 

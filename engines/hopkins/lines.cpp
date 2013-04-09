@@ -2858,7 +2858,7 @@ void LinesManager::checkZone() {
 			zoneId = _oldMouseZoneId;
 		}
 		if (_oldMouseZoneId != zoneId) {
-			_vm->_graphicsManager->SETCOLOR4(251, 100, 100, 100);
+			_vm->_graphicsManager->setColorPercentage2(251, 100, 100, 100);
 			_vm->_eventsManager->_mouseCursorId = 4;
 			_vm->_eventsManager->changeMouseCursor(4);
 			if (_forceHideText) {
@@ -2881,7 +2881,7 @@ void LinesManager::checkZone() {
 					_hotspotTextColor += 25;
 					if (_hotspotTextColor > 100)
 						_hotspotTextColor = 0;
-					_vm->_graphicsManager->SETCOLOR4(251, _hotspotTextColor, _hotspotTextColor, _hotspotTextColor);
+					_vm->_graphicsManager->setColorPercentage2(251, _hotspotTextColor, _hotspotTextColor, _hotspotTextColor);
 					if (_vm->_eventsManager->_mouseCursorId == 4) {
 						if (_zone[zoneId]._verbFl1 == 2) {
 							_vm->_eventsManager->changeMouseCursor(16);
@@ -2890,7 +2890,7 @@ void LinesManager::checkZone() {
 						}
 					}
 			} else {
-				_vm->_graphicsManager->SETCOLOR4(251, 100, 100, 100);
+				_vm->_graphicsManager->setColorPercentage2(251, 100, 100, 100);
 				_vm->_eventsManager->_mouseCursorId = 4;
 				_vm->_eventsManager->changeMouseCursor(4);
 			}

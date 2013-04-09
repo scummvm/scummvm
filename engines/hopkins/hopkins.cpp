@@ -1679,10 +1679,10 @@ void HopkinsEngine::playIntro() {
 	_graphicsManager->loadImage("intro1");
 	_graphicsManager->scrollScreen(0);
 	_graphicsManager->_scrollOffset = 0;
-	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_graphicsManager->setColorPercentage(254, 0, 0, 0);
 	for (int i = 0; i <= 4; i++)
 		_eventsManager->refreshScreenAndEvents();
 
@@ -1723,10 +1723,10 @@ void HopkinsEngine::playIntro() {
 	_objectsManager->stopBobAnimation(3);
 	_objectsManager->stopBobAnimation(5);
 	_graphicsManager->_scrollOffset = 0;
-	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_graphicsManager->setColorPercentage(254, 0, 0, 0);
 
 	for (int i = 0; i <= 4; i++)
 		_eventsManager->refreshScreenAndEvents();
@@ -1765,10 +1765,10 @@ void HopkinsEngine::playIntro() {
 	_objectsManager->stopBobAnimation(5);
 	_objectsManager->stopBobAnimation(1);
 	_graphicsManager->_scrollOffset = 0;
-	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_graphicsManager->setColorPercentage(254, 0, 0, 0);
 
 	for (int i = 0; i <= 3; i++)
 		_eventsManager->refreshScreenAndEvents();
@@ -1985,10 +1985,10 @@ void HopkinsEngine::handleConflagration() {
 	_globals->_eventMode = EVENTMODE_IGNORE;
 	_graphicsManager->loadImage("IM71");
 	_animationManager->loadAnim("ANIM71");
-	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_graphicsManager->setColorPercentage(254, 0, 0, 0);
 	_graphicsManager->displayAllBob();
 
 	for (int cpt = 0; cpt <= 4; cpt++)
@@ -2108,10 +2108,10 @@ void HopkinsEngine::playEnding() {
 	_objectsManager->stopBobAnimation(7);
 	_objectsManager->stopBobAnimation(8);
 	_objectsManager->stopBobAnimation(9);
-	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_graphicsManager->setColorPercentage(254, 0, 0, 0);
 	_eventsManager->changeMouseCursor(0);
 
 	for (int cpt = 0; cpt <= 4; cpt++)
@@ -2336,10 +2336,10 @@ int HopkinsEngine::handleBaseMap() {
 	loadBaseMap();
 
 	// Set needed colors
-	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_graphicsManager->setColorPercentage(254, 0, 0, 0);
 	_eventsManager->changeMouseCursor(0);
 	_graphicsManager->fadeInLong();
 	bool loopCond = false;
@@ -2375,10 +2375,10 @@ int HopkinsEngine::handleBaseMap() {
 			_globals->_baseMapColor += 25;
 			if (_globals->_baseMapColor > 100)
 				_globals->_baseMapColor = 0;
-			_graphicsManager->SETCOLOR4(251, _globals->_baseMapColor, _globals->_baseMapColor, _globals->_baseMapColor);
+			_graphicsManager->setColorPercentage2(251, _globals->_baseMapColor, _globals->_baseMapColor, _globals->_baseMapColor);
 		} else {
 			_eventsManager->changeMouseCursor(0);
-			_graphicsManager->SETCOLOR4(251, 100, 100, 100);
+			_graphicsManager->setColorPercentage2(251, 100, 100, 100);
 		}
 		_eventsManager->refreshScreenAndEvents();
 		if ((mouseButton == 1) && zone)
@@ -2825,10 +2825,10 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	}
 
 	_objectsManager->addStaticSprite(_globals->_characterSpriteBuf, Common::Point(_objectsManager->_characterPos.x, 110), 0, _objectsManager->_startSpriteIndex, 0, false, 0, 0);
-	_graphicsManager->SETCOLOR3(252, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(253, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(251, 100, 100, 100);
-	_graphicsManager->SETCOLOR3(254, 0, 0, 0);
+	_graphicsManager->setColorPercentage(252, 100, 100, 100);
+	_graphicsManager->setColorPercentage(253, 100, 100, 100);
+	_graphicsManager->setColorPercentage(251, 100, 100, 100);
+	_graphicsManager->setColorPercentage(254, 0, 0, 0);
 	_objectsManager->animateSprite(0);
 	_linesManager->_route = NULL;
 	_eventsManager->mouseOn();

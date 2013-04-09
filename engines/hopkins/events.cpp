@@ -212,9 +212,9 @@ void EventsManager::refreshEvents() {
 }
 
 void EventsManager::checkForNextFrameCounter() {
-	int32 delay = 10 - (g_system->getMillis() - _priorCounterTime);
-	if (delay > 0)
-		_vm->_system->delayMillis(delay);
+	int32 delayAmount = 10 - (g_system->getMillis() - _priorCounterTime);
+	if (delayAmount > 0)
+		_vm->_system->delayMillis(delayAmount);
 
 	// Check for whether to increment the game counter
 	uint32 milli = g_system->getMillis();
@@ -503,10 +503,10 @@ void EventsManager::updateCursor() {
 
 	if (_mouseCursorId != 23) {
 		// Draw standard cursor
-		_vm->_graphicsManager->Sprite_Vesa(cursorSurface, _mouseCursor, 300, 300, _mouseSpriteId);
+		_vm->_graphicsManager->drawVesaSprite(cursorSurface, _mouseCursor, 300, 300, _mouseSpriteId);
 	} else {
 		// Draw the active inventory object
-		_vm->_graphicsManager->Affiche_Perfect(cursorSurface, _objectBuf, 300, 300, 0, 0, 0, false);
+		_vm->_graphicsManager->drawCompressedSprite(cursorSurface, _objectBuf, 300, 300, 0, 0, 0, false);
 	}
 
 	// Reset the clipping bounds
@@ -520,7 +520,7 @@ void EventsManager::updateCursor() {
 	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
 
 	byte *cursorPalette = new byte[3 * PALETTE_SIZE];
-	uint16 *paletteColors = (uint16 *)_vm->_graphicsManager->PAL_PIXELS;
+	uint16 *paletteColors = (uint16 *)_vm->_graphicsManager->_palettePixels;
 
 	for (int i = 0; i < PALETTE_SIZE; i++) {
 		uint8 r, g, b;
