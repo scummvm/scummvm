@@ -475,7 +475,6 @@ void EventsManager::refreshScreenAndEvents() {
 
 			_startPos.x = _vm->_graphicsManager->_scrollPosX;
 			_vm->_graphicsManager->_scrollOffset = _vm->_graphicsManager->_scrollPosX;
-			_vm->_graphicsManager->_scrollPosX = _vm->_graphicsManager->_scrollPosX;
 		}
 		_vm->_graphicsManager->_oldScrollPosX = _vm->_graphicsManager->_scrollPosX;
 		_startPos.x = _vm->_graphicsManager->_scrollPosX;
