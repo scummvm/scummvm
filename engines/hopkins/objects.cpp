@@ -381,20 +381,20 @@ void ObjectsManager::displaySprite() {
 	// Handle copying any background areas that text are going to be drawn on
 	_sortedDisplayCount = 0;
 	for (int idx = 0; idx <= 10; ++idx) {
-		if (_vm->_fontMan->_textList[idx]._enabledFl && _vm->_fontMan->_text[idx]._textType != 2) {
-			clipX = _vm->_fontMan->_textList[idx]._pos.x - 2;
+		TxtItemList *curTxtList = &_vm->_fontMan->_textList[idx];
+		if (curTxtList->_enabledFl && _vm->_fontMan->_text[idx]._textType != 2) {
+			clipX = curTxtList->_pos.x - 2;
 
 			if (clipX < _vm->_graphicsMan->_minX)
 				clipX = _vm->_graphicsMan->_minX;
 
-			clipY = _vm->_fontMan->_textList[idx]._pos.y - 2;
+			clipY = curTxtList->_pos.y - 2;
 			if (clipY < _vm->_graphicsMan->_minY)
 				clipY = _vm->_graphicsMan->_minY;
 
 			_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, clipX, clipY,
-				_vm->_fontMan->_textList[idx]._width + 4, _vm->_fontMan->_textList[idx]._height + 4,
-				_vm->_graphicsMan->_frontBuffer, clipX, clipY);
-			_vm->_fontMan->_textList[idx]._enabledFl = false;
+				curTxtList->_width + 4, curTxtList->_height + 4, _vm->_graphicsMan->_frontBuffer, clipX, clipY);
+			curTxtList->_enabledFl = false;
 		}
 	}
 
@@ -497,39 +497,41 @@ void ObjectsManager::displaySprite() {
 	_vm->_dialog->drawInvent(_oldBorderPos, _oldBorderSpriteIndex, _borderPos, _borderSpriteIndex);
 
 	if (_saveLoadFl) {
-		_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, _saveLoadSprite, _vm->_events->_startPos.x + 183, 60, 274, 353);
+		int16 posX = _vm->_events->_startPos.x;
+		_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, _saveLoadSprite, posX + 183, 60, 274, 353);
 		if (_saveLoadX && _saveLoadY)
-			_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _saveLoadSprite2, _saveLoadX + _vm->_events->_startPos.x + 300, _saveLoadY + 300, 0);
+			_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _saveLoadSprite2, _saveLoadX + posX + 300, _saveLoadY + 300, 0);
 
-		_vm->_graphicsMan->addDirtyRect(_vm->_events->_startPos.x + 183, 60, _vm->_events->_startPos.x + 457, 413);
+		_vm->_graphicsMan->addDirtyRect(posX + 183, 60, posX + 457, 413);
 	}
 
 	// If the Options dialog is activated, draw the elements
 	if (_vm->_globals->_optionDialogFl) {
+		int16 posX = _vm->_events->_startPos.x;
 		_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _vm->_globals->_optionDialogSpr,
-			_vm->_events->_startPos.x + 464, 407, 0);
+			posX + 464, 407, 0);
 		_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _vm->_globals->_optionDialogSpr,
-			_vm->_events->_startPos.x + 657, 556, _vm->_globals->_menuSpeed);
+			posX + 657, 556, _vm->_globals->_menuSpeed);
 		_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _vm->_globals->_optionDialogSpr,
-			_vm->_events->_startPos.x + 731, 495, _vm->_globals->_menuTextOff);
+			posX + 731, 495, _vm->_globals->_menuTextOff);
 		_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _vm->_globals->_optionDialogSpr,
-			_vm->_events->_startPos.x + 731, 468, _vm->_globals->_menuVoiceOff);
+			posX + 731, 468, _vm->_globals->_menuVoiceOff);
 		_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _vm->_globals->_optionDialogSpr,
-			_vm->_events->_startPos.x + 731, 441, _vm->_globals->_menuSoundOff);
+			posX + 731, 441, _vm->_globals->_menuSoundOff);
 		_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _vm->_globals->_optionDialogSpr,
-			_vm->_events->_startPos.x + 731, 414, _vm->_globals->_menuMusicOff);
+			posX + 731, 414, _vm->_globals->_menuMusicOff);
 		_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _vm->_globals->_optionDialogSpr,
-			_vm->_events->_startPos.x + 600, 522, _vm->_globals->_menuDisplayType);
+			posX + 600, 522, _vm->_globals->_menuDisplayType);
 		_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _vm->_globals->_optionDialogSpr,
-			_vm->_events->_startPos.x + 611, 502, _vm->_globals->_menuScrollSpeed);
-		_vm->_graphicsMan->addDirtyRect(_vm->_events->_startPos.x + 164, 107, _vm->_events->_startPos.x + 498, 320);
+			posX + 611, 502, _vm->_globals->_menuScrollSpeed);
+		_vm->_graphicsMan->addDirtyRect(posX + 164, 107, posX + 498, 320);
 	}
 
 	// Loop to draw any on-screen text
 	for (int idx = 0; idx <= 10; ++idx) {
-		Hopkins::TxtItem *curTxt = &_vm->_fontMan->_text[idx];
+		TxtItem *curTxt = &_vm->_fontMan->_text[idx];
 		if (curTxt->_textOnFl) {
-			Hopkins::TxtItemList *curTxtList = &_vm->_fontMan->_textList[idx];
+			TxtItemList *curTxtList = &_vm->_fontMan->_textList[idx];
 			if ((curTxt->_textType < 2) || (curTxt->_textType > 3))
 				_vm->_fontMan->box(idx, curTxt->_messageId, curTxt->_filename, _vm->_events->_startPos.x + curTxt->_pos.x, curTxt->_pos.y);
 			else
@@ -595,59 +597,59 @@ void ObjectsManager::resetBob(int idx) {
 }
 
 void ObjectsManager::setBobInfo(int idx) {
-	if (!_bob[idx]._activeFl)
+	BobItem *curBob = &_bob[idx];
+
+	if (!curBob->_activeFl)
 		return;
 
-	int xp = _bob[idx]._oldX;
-	int yp = _bob[idx]._oldY;
+	int xp = curBob->_oldX;
+	int yp = curBob->_oldY;
 
-	if (_bob[idx]._isSpriteFl)
-		_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, _bob[idx]._spriteData,
-			xp + 300, yp + 300, _bob[idx]._frameIndex);
+	if (curBob->_isSpriteFl)
+		_vm->_graphicsMan->drawVesaSprite(_vm->_graphicsMan->_frontBuffer, curBob->_spriteData,
+			xp + 300, yp + 300, curBob->_frameIndex);
 	else
 		_vm->_graphicsMan->drawCompressedSprite(_vm->_graphicsMan->_frontBuffer,
-			_bob[idx]._spriteData, xp + 300, yp + 300, _bob[idx]._frameIndex,
-			_bob[idx]._zoomOutFactor, _bob[idx]._zooInmFactor,
-			_bob[idx]._flipFl);
+			curBob->_spriteData, xp + 300, yp + 300, curBob->_frameIndex,
+			curBob->_zoomOutFactor, curBob->_zooInmFactor, curBob->_flipFl);
 
-	Liste2[idx]._visibleFl = true;
-	Liste2[idx]._posX = xp;
-	Liste2[idx]._posY = yp;
+	ListeItem *curLst = &Liste2[idx];
+	curLst->_visibleFl = true;
+	curLst->_posX = xp;
+	curLst->_posY = yp;
 
-	Liste2[idx]._width = _bob[idx]._oldWidth;
-	Liste2[idx]._height = _bob[idx]._oldHeight;
+	curLst->_width = curBob->_oldWidth;
+	curLst->_height = curBob->_oldHeight;
 
-	if (Liste2[idx]._posX < _vm->_graphicsMan->_minX) {
-		Liste2[idx]._width -= _vm->_graphicsMan->_minX - Liste2[idx]._posX;
-		Liste2[idx]._posX = _vm->_graphicsMan->_minX;
+	if (curLst->_posX < _vm->_graphicsMan->_minX) {
+		curLst->_width -= _vm->_graphicsMan->_minX - curLst->_posX;
+		curLst->_posX = _vm->_graphicsMan->_minX;
 	}
 
-	if (Liste2[idx]._posY < _vm->_graphicsMan->_minY) {
-		Liste2[idx]._height -= _vm->_graphicsMan->_minY - Liste2[idx]._posY;
-		Liste2[idx]._posY = _vm->_graphicsMan->_minY;
+	if (curLst->_posY < _vm->_graphicsMan->_minY) {
+		curLst->_height -= _vm->_graphicsMan->_minY - curLst->_posY;
+		curLst->_posY = _vm->_graphicsMan->_minY;
 	}
 
-	if (Liste2[idx]._width + Liste2[idx]._posX > _vm->_graphicsMan->_maxX)
-		Liste2[idx]._width = _vm->_graphicsMan->_maxX - Liste2[idx]._posX;
+	if (curLst->_width + curLst->_posX > _vm->_graphicsMan->_maxX)
+		curLst->_width = _vm->_graphicsMan->_maxX - curLst->_posX;
 
-	if (Liste2[idx]._height + Liste2[idx]._posY > _vm->_graphicsMan->_maxY)
-		Liste2[idx]._height = _vm->_graphicsMan->_maxY - Liste2[idx]._posY;
+	if (curLst->_height + curLst->_posY > _vm->_graphicsMan->_maxY)
+		curLst->_height = _vm->_graphicsMan->_maxY - curLst->_posY;
 
-	if (Liste2[idx]._width <= 0 || Liste2[idx]._height <= 0)
-		Liste2[idx]._visibleFl = false;
+	if (curLst->_width <= 0 || curLst->_height <= 0)
+		curLst->_visibleFl = false;
 
-	if (Liste2[idx]._visibleFl)
-		_vm->_graphicsMan->addDirtyRect(
-             Liste2[idx]._posX,
-             Liste2[idx]._posY,
-             Liste2[idx]._posX + Liste2[idx]._width,
-             Liste2[idx]._posY + Liste2[idx]._height);
+	if (curLst->_visibleFl)
+		_vm->_graphicsMan->addDirtyRect(curLst->_posX, curLst->_posY, curLst->_posX + curLst->_width, curLst->_posY + curLst->_height);
 }
 
 void ObjectsManager::displayBob(int idx) {
+	BobItem *curBob = &_bob[idx];
+
 	_priorityFl = true;
 
-	if (_bob[idx]._bobMode)
+	if (curBob->_bobMode)
 		return;
 
 	resetBob(idx);
@@ -670,26 +672,27 @@ void ObjectsManager::displayBob(int idx) {
 	if (!newModeChangeCtr)
 		newModeChangeCtr = -1;
 
-	_bob[idx]._isSpriteFl = false;
+	curBob->_isSpriteFl = false;
 
 	if (_vm->_animMan->Bank[bankIdx]._fileHeader == 1) {
-		_bob[idx]._isSpriteFl = true;
-		_bob[idx]._zoomFactor = 0;
-		_bob[idx]._flipFl = false;
+		curBob->_isSpriteFl = true;
+		curBob->_zoomFactor = 0;
+		curBob->_flipFl = false;
 	}
 
-	_bob[idx]._animData = _vm->_animMan->_animBqe[idx]._data;
-	_bob[idx]._bobMode = 10;
-	_bob[idx]._spriteData = _vm->_animMan->Bank[bankIdx]._data;
+	curBob->_animData = _vm->_animMan->_animBqe[idx]._data;
+	curBob->_bobMode = 10;
+	curBob->_spriteData = _vm->_animMan->Bank[bankIdx]._data;
 
-	_bob[idx]._bobModeChange = bobModeChange;
-	_bob[idx]._modeChangeCtr = newModeChangeCtr;
-	_bob[idx]._modeChangeUnused = modeChangeUnused;
+	curBob->_bobModeChange = bobModeChange;
+	curBob->_modeChangeCtr = newModeChangeCtr;
+	curBob->_modeChangeUnused = modeChangeUnused;
 }
 
 void ObjectsManager::hideBob(int idx) {
-	if ((_bob[idx]._bobMode == 3) || (_bob[idx]._bobMode == 10))
-		_bob[idx]._bobMode++;
+	BobItem *curBob = &_bob[idx];
+	if ((curBob->_bobMode == 3) || (curBob->_bobMode == 10))
+		curBob->_bobMode++;
 }
 
 void ObjectsManager::setBobOffset(int idx, int offset) {
@@ -702,19 +705,20 @@ void ObjectsManager::computeHideCounter(int idx) {
 		return;
 
 	for (int i = 0; i <= 20; i++) {
-		if ((_bob[i]._bobMode) && (!_bob[i]._disabledAnimationFl) && (!_bob[i]._disableFl) && (_bob[i]._frameIndex != 250)) {
-			int oldRight = _bob[i]._oldX + _bob[i]._oldWidth;
-			int oldBottom = _bob[i]._oldY + _bob[i]._oldHeight;
+		BobItem *curBob = &_bob[i];
+		if ((curBob->_bobMode) && (!curBob->_disabledAnimationFl) && (!curBob->_disableFl) && (curBob->_frameIndex != 250)) {
+			int oldRight = curBob->_oldX + curBob->_oldWidth;
+			int oldBottom = curBob->_oldY + curBob->_oldHeight;
 			int hiddenRight = hid->_x + hid->_width;
 
 			if ((oldBottom > hid->_y) && (oldBottom < hid->_yOffset + hid->_height + hid->_y)) {
 				if ((oldRight >= hid->_x && oldRight <= hiddenRight)
 				// CHECKME: The original was doing the test two times. This looks like an
 				// original bug
-				// || (cachedRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
-				 || (hiddenRight >= _bob[i]._oldWidth && _bob[i]._oldWidth >= hid->_x)
-				 || (_bob[i]._oldWidth >= hid->_x && oldRight <= hiddenRight)
-				 || (_bob[i]._oldWidth <= hid->_x && oldRight >= hiddenRight))
+				// || (cachedRight >= curBob->_oldWidth && curBob->_oldWidth >= hid->_x)
+				 || (hiddenRight >= curBob->_oldWidth && curBob->_oldWidth >= hid->_x)
+				 || (curBob->_oldWidth >= hid->_x && oldRight <= hiddenRight)
+				 || (curBob->_oldWidth <= hid->_x && oldRight >= hiddenRight))
 					++hid->_useCount;
 			}
 		}
@@ -722,31 +726,33 @@ void ObjectsManager::computeHideCounter(int idx) {
 }
 
 void ObjectsManager::initBobVariables(int idx) {
-	_bob[idx]._activeFl = false;
-	if (_bob[idx]._isSpriteFl) {
-		_bob[idx]._flipFl = false;
-		_bob[idx]._zoomFactor = 0;
+	BobItem *bob = &_bob[idx];
+
+	bob->_activeFl = false;
+	if (bob->_isSpriteFl) {
+		bob->_flipFl = false;
+		bob->_zoomFactor = 0;
 	}
 
-	int spriteIdx = _bob[idx]._frameIndex;
+	int spriteIdx = bob->_frameIndex;
 	if (spriteIdx == 250)
 		return;
 
 	int deltaY, deltaX;
-	if (_bob[idx]._flipFl) {
-		deltaX = getOffsetX(_bob[idx]._spriteData, spriteIdx, true);
-		deltaY = getOffsetY(_bob[idx]._spriteData, _bob[idx]._frameIndex, true);
+	if (bob->_flipFl) {
+		deltaX = getOffsetX(bob->_spriteData, spriteIdx, true);
+		deltaY = getOffsetY(bob->_spriteData, bob->_frameIndex, true);
 	} else {
-		deltaX = getOffsetX(_bob[idx]._spriteData, spriteIdx, false);
-		deltaY = getOffsetY(_bob[idx]._spriteData, _bob[idx]._frameIndex, false);
+		deltaX = getOffsetX(bob->_spriteData, spriteIdx, false);
+		deltaY = getOffsetY(bob->_spriteData, bob->_frameIndex, false);
 	}
 
 	int negZoom = 0;
 	int posZoom = 0;
-	if (_bob[idx]._zoomFactor < 0)
-		negZoom = CLIP(-_bob[idx]._zoomFactor, 0, 95);
+	if (bob->_zoomFactor < 0)
+		negZoom = CLIP(-bob->_zoomFactor, 0, 95);
 	else
-		posZoom = _bob[idx]._zoomFactor;
+		posZoom = bob->_zoomFactor;
 
 	if (posZoom) {
 		if (deltaX >= 0)
@@ -772,20 +778,20 @@ void ObjectsManager::initBobVariables(int idx) {
 			deltaY = -_vm->_graphicsMan->zoomOut(abs(deltaX), negZoom);
 	}
 
-	int newX = _bob[idx]._xp - deltaX;
-	int newY = _bob[idx]._yp - deltaY;
-	_bob[idx]._activeFl = true;
-	_bob[idx]._oldX = newX;
-	_bob[idx]._oldY = newY;
-	_bob[idx]._zooInmFactor = posZoom;
-	_bob[idx]._zoomOutFactor = negZoom;
+	int newX = bob->_xp - deltaX;
+	int newY = bob->_yp - deltaY;
+	bob->_activeFl = true;
+	bob->_oldX = newX;
+	bob->_oldY = newY;
+	bob->_zooInmFactor = posZoom;
+	bob->_zoomOutFactor = negZoom;
 
 	Liste2[idx]._visibleFl = true;
 	Liste2[idx]._posX = newX;
 	Liste2[idx]._posY = newY;
 
-	int width = getWidth(_bob[idx]._spriteData, _bob[idx]._frameIndex);
-	int height = getHeight(_bob[idx]._spriteData, _bob[idx]._frameIndex);
+	int width = getWidth(bob->_spriteData, bob->_frameIndex);
+	int height = getHeight(bob->_spriteData, bob->_frameIndex);
 
 	if (posZoom) {
 		width = _vm->_graphicsMan->zoomIn(width, posZoom);
@@ -797,8 +803,8 @@ void ObjectsManager::initBobVariables(int idx) {
 
 	Liste2[idx]._width = width;
 	Liste2[idx]._height = height;
-	_bob[idx]._oldWidth = width;
-	_bob[idx]._oldHeight = height;
+	bob->_oldWidth = width;
+	bob->_oldHeight = height;
 }
 
 void ObjectsManager::checkHidingItem() {
@@ -988,109 +994,112 @@ void ObjectsManager::beforeSort(SortMode sortMode, int index, int priority) {
 // Display BOB Anim
 void ObjectsManager::displayBobAnim() {
 	for (int idx = 1; idx <= 35; idx++) {
+		BobItem *bob = &_bob[idx];
 		if (idx <= 20 && _charactersEnabledFl) {
-			_bob[idx]._bobMode10 = false;
+			bob->_bobMode10 = false;
 			continue;
 		}
 
-		if (_bob[idx]._bobMode != 10)
+		if (bob->_bobMode != 10)
 			continue;
 
-		_bob[idx]._bobMode10 = false;
-		if (_bob[idx]._animData == NULL || _bob[idx]._disabledAnimationFl || _bob[idx]._modeChangeCtr == 0 || _bob[idx]._modeChangeCtr < -1) {
-			if (_bob[idx]._bobModeChange == 1 || _bob[idx]._bobModeChange == 2)
-				_bob[idx]._bobMode10 = true;
+		bob->_bobMode10 = false;
+		if (bob->_animData == NULL || bob->_disabledAnimationFl || bob->_modeChangeCtr == 0 || bob->_modeChangeCtr < -1) {
+			if (bob->_bobModeChange == 1 || bob->_bobModeChange == 2)
+				bob->_bobMode10 = true;
 			continue;
 		}
 
-		if (_bob[idx]._moveChange1 == _bob[idx]._moveChange2) {
-			_bob[idx]._bobMode10 = true;
+		if (bob->_moveChange1 == bob->_moveChange2) {
+			bob->_bobMode10 = true;
 		} else {
-			_bob[idx]._moveChange2++;
-			_bob[idx]._bobMode10 = false;
+			bob->_moveChange2++;
+			bob->_bobMode10 = false;
 		}
 
-		if (!_bob[idx]._bobMode10) {
-			if (_bob[idx]._bobModeChange == 1 || _bob[idx]._bobModeChange == 2)
-				_bob[idx]._bobMode10 = true;
+		if (!bob->_bobMode10) {
+			if (bob->_bobModeChange == 1 || bob->_bobModeChange == 2)
+				bob->_bobMode10 = true;
 			continue;
 		}
 
-		byte *dataPtr = _bob[idx]._animData + 20;
-		int dataIdx = _bob[idx]._animDataIdx;
-		_bob[idx]._xp = READ_LE_INT16(dataPtr + 2 * dataIdx);
+		byte *dataPtr = bob->_animData + 20;
+		int dataIdx = bob->_animDataIdx;
+		bob->_xp = READ_LE_INT16(dataPtr + 2 * dataIdx);
 		if (_lockedAnims[idx]._enableFl)
-			_bob[idx]._xp = _lockedAnims[idx]._posX;
+			bob->_xp = _lockedAnims[idx]._posX;
 		if ( _charactersEnabledFl && idx > 20)
-			_bob[idx]._xp += _vm->_events->_startPos.x;
+			bob->_xp += _vm->_events->_startPos.x;
 
-		_bob[idx]._yp = READ_LE_INT16(dataPtr + 2 * dataIdx + 2);
-		_bob[idx]._moveChange1 = READ_LE_INT16(dataPtr + 2 * dataIdx + 4);
-		_bob[idx]._zoomFactor = READ_LE_INT16(dataPtr + 2 * dataIdx + 6);
-		_bob[idx]._frameIndex = dataPtr[2 * dataIdx + 8];
-		_bob[idx]._flipFl = (dataPtr[2 * dataIdx + 9] != 0);
-		_bob[idx]._animDataIdx += 5;
+		bob->_yp = READ_LE_INT16(dataPtr + 2 * dataIdx + 2);
+		bob->_moveChange1 = READ_LE_INT16(dataPtr + 2 * dataIdx + 4);
+		bob->_zoomFactor = READ_LE_INT16(dataPtr + 2 * dataIdx + 6);
+		bob->_frameIndex = dataPtr[2 * dataIdx + 8];
+		bob->_flipFl = (dataPtr[2 * dataIdx + 9] != 0);
+		bob->_animDataIdx += 5;
 
-		if (_bob[idx]._moveChange1 > 0) {
-			_bob[idx]._moveChange1 /= _vm->_globals->_speed;
-			if (_bob[idx]._moveChange1 > 0) {
-				_bob[idx]._moveChange2 = 1;
-				if (_bob[idx]._bobModeChange == 1 || _bob[idx]._bobModeChange == 2)
-					_bob[idx]._bobMode10 = true;
+		if (bob->_moveChange1 > 0) {
+			bob->_moveChange1 /= _vm->_globals->_speed;
+			if (bob->_moveChange1 > 0) {
+				bob->_moveChange2 = 1;
+				if (bob->_bobModeChange == 1 || bob->_bobModeChange == 2)
+					bob->_bobMode10 = true;
 				continue;
 			}
 
-			_bob[idx]._moveChange1 = 1;
+			bob->_moveChange1 = 1;
 		}
-		if (!_bob[idx]._moveChange1) {
-			if (_bob[idx]._modeChangeCtr > 0)
-				_bob[idx]._modeChangeCtr--;
-			if (_bob[idx]._modeChangeCtr != -1 && _bob[idx]._modeChangeCtr <= 0) {
-				_bob[idx]._bobMode = 11;
+		if (!bob->_moveChange1) {
+			if (bob->_modeChangeCtr > 0)
+				bob->_modeChangeCtr--;
+			if (bob->_modeChangeCtr != -1 && bob->_modeChangeCtr <= 0) {
+				bob->_bobMode = 11;
 			} else {
-				_bob[idx]._animDataIdx = 0;
-				byte *bobData = _bob[idx]._animData + 20;
-				_bob[idx]._xp = READ_LE_INT16(bobData);
+				bob->_animDataIdx = 0;
+				byte *bobData = bob->_animData + 20;
+				bob->_xp = READ_LE_INT16(bobData);
 
 				if (_lockedAnims[idx]._enableFl)
-					_bob[idx]._xp = _lockedAnims[idx]._posX;
+					bob->_xp = _lockedAnims[idx]._posX;
 				if (_charactersEnabledFl && idx > 20)
-					_bob[idx]._xp += _vm->_events->_startPos.x;
+					bob->_xp += _vm->_events->_startPos.x;
 
-				_bob[idx]._yp = READ_LE_INT16(bobData + 2);
-				_bob[idx]._moveChange1 = READ_LE_INT16(bobData + 4);
-				_bob[idx]._zoomFactor = READ_LE_INT16(bobData + 6);
-				_bob[idx]._frameIndex = bobData[8];
-				_bob[idx]._flipFl = (bobData[9] != 0);
-				_bob[idx]._animDataIdx += 5;
+				bob->_yp = READ_LE_INT16(bobData + 2);
+				bob->_moveChange1 = READ_LE_INT16(bobData + 4);
+				bob->_zoomFactor = READ_LE_INT16(bobData + 6);
+				bob->_frameIndex = bobData[8];
+				bob->_flipFl = (bobData[9] != 0);
+				bob->_animDataIdx += 5;
 
-				if (_bob[idx]._moveChange1 > 0) {
-					_bob[idx]._moveChange1 /= _vm->_globals->_speed;
+				if (bob->_moveChange1 > 0) {
+					bob->_moveChange1 /= _vm->_globals->_speed;
 					// Original code. It can't be negative, so the check is on == 0
-					if (_bob[idx]._moveChange1 <= 0)
-						_bob[idx]._moveChange1 = 1;
+					if (bob->_moveChange1 <= 0)
+						bob->_moveChange1 = 1;
 				}
 			}
 		}
 
-		_bob[idx]._moveChange2 = 1;
-		if (_bob[idx]._bobModeChange == 1 || _bob[idx]._bobModeChange == 2)
-			_bob[idx]._bobMode10 = true;
+		bob->_moveChange2 = 1;
+		if (bob->_bobModeChange == 1 || bob->_bobModeChange == 2)
+			bob->_bobMode10 = true;
 	}
 
 	if (!_charactersEnabledFl && _refreshBobMode10Fl) {
 		for (int i = 0; i < 35; i++) {
-			if (_bob[i]._bobMode == 10 && !_bob[i]._disabledAnimationFl)
-				_bob[i]._bobMode10 = true;
+			BobItem *curBob = &_bob[i];
+			if (curBob->_bobMode == 10 && !curBob->_disabledAnimationFl)
+				curBob->_bobMode10 = true;
 		}
 	}
 
 	_refreshBobMode10Fl = false;
 
 	for (int i = 1; i <= 35; i++) {
+		BobItem *curBob = &_bob[i];
 		if (i > 20 || !_charactersEnabledFl) {
-			if ((_bob[i]._bobMode == 10) && (_bob[i]._bobMode10)) {
-				if ((_bob[i]._bobModeChange != 2) && (_bob[i]._bobModeChange != 4)) {
+			if ((curBob->_bobMode == 10) && (curBob->_bobMode10)) {
+				if ((curBob->_bobModeChange != 2) && (curBob->_bobModeChange != 4)) {
 					if (Liste2[i]._visibleFl) {
 						_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer,
 							Liste2[i]._posX, Liste2[i]._posY,
@@ -1102,7 +1111,7 @@ void ObjectsManager::displayBobAnim() {
 				}
 			}
 
-			if (_bob[i]._bobMode == 11) {
+			if (curBob->_bobMode == 11) {
 				if (Liste2[i]._visibleFl) {
 					_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer,
 						Liste2[i]._posX, Liste2[i]._posY,
@@ -1112,21 +1121,22 @@ void ObjectsManager::displayBobAnim() {
 					Liste2[i]._visibleFl = false;
 				}
 
-				_bob[i]._bobMode = 0;
+				curBob->_bobMode = 0;
 			}
 		}
 	}
 
 	for (int i = 1; i <= 35; i++) {
-		_bob[i]._oldY = 0;
-		if (_bob[i]._bobMode == 10 && !_bob[i]._disabledAnimationFl && _bob[i]._bobMode10) {
+		BobItem *curBob = &_bob[i];
+		curBob->_oldY = 0;
+		if (curBob->_bobMode == 10 && !curBob->_disabledAnimationFl && curBob->_bobMode10) {
 			initBobVariables(i);
-			int priority = _bob[i]._oldX2 + _bob[i]._oldHeight + _bob[i]._oldY;
+			int priority = curBob->_oldX2 + curBob->_oldHeight + curBob->_oldY;
 
 			if (priority > 450)
 				priority = 600;
 
-			if (_bob[i]._activeFl)
+			if (curBob->_activeFl)
 				beforeSort(SORT_BOB, i, priority);
 		}
 	}
@@ -1368,14 +1378,15 @@ void ObjectsManager::GOHOME() {
 			_vm->_linesMan->_route = NULL;
 			_oldDirection = DIR_NONE;
 			if (zoneId > 0) {
-				if (_vm->_linesMan->_zone[zoneId]._destX && _vm->_linesMan->_zone[zoneId]._destY && _vm->_linesMan->_zone[zoneId]._destY != 31) {
-					if (_vm->_linesMan->_zone[zoneId]._spriteIndex == -1) {
-						_vm->_linesMan->_zone[zoneId]._destX = 0;
-						_vm->_linesMan->_zone[zoneId]._destY = 0;
-						_vm->_linesMan->_zone[zoneId]._spriteIndex = 0;
+				ZoneItem *curZone = &_vm->_linesMan->_zone[zoneId];
+				if (curZone->_destX && curZone->_destY && curZone->_destY != 31) {
+					if (curZone->_spriteIndex == -1) {
+						curZone->_destX = 0;
+						curZone->_destY = 0;
+						curZone->_spriteIndex = 0;
 					} else {
-						setSpriteIndex(0, _vm->_linesMan->_zone[zoneId]._spriteIndex);
-						_vm->_globals->_actionDirection = _vm->_linesMan->_zone[zoneId]._spriteIndex - 59;
+						setSpriteIndex(0, curZone->_spriteIndex);
+						_vm->_globals->_actionDirection = curZone->_spriteIndex - 59;
 					}
 				}
 			}
@@ -1590,14 +1601,15 @@ void ObjectsManager::GOHOME() {
 			_oldCharacterPosY = getSpriteY(0);
 
 			if (zoneId > 0) {
-				if (_vm->_linesMan->_zone[zoneId]._destX && _vm->_linesMan->_zone[zoneId]._destY && _vm->_linesMan->_zone[zoneId]._destY != 31) {
-					if ( _vm->_linesMan->_zone[zoneId]._spriteIndex == -1) {
-						_vm->_linesMan->_zone[zoneId]._destX = 0;
-						_vm->_linesMan->_zone[zoneId]._destY = 0;
-						_vm->_linesMan->_zone[zoneId]._spriteIndex = 0;
+				ZoneItem *curZone = &_vm->_linesMan->_zone[zoneId];
+				if (curZone->_destX && curZone->_destY && curZone->_destY != 31) {
+					if ( curZone->_spriteIndex == -1) {
+						curZone->_destX = 0;
+						curZone->_destY = 0;
+						curZone->_spriteIndex = 0;
 					} else {
-						setSpriteIndex(0,  _vm->_linesMan->_zone[zoneId]._spriteIndex);
-						_vm->_globals->_actionDirection = _vm->_linesMan->_zone[zoneId]._spriteIndex - 59;
+						setSpriteIndex(0,  curZone->_spriteIndex);
+						_vm->_globals->_actionDirection = curZone->_spriteIndex - 59;
 					}
 				}
 			}
@@ -1712,21 +1724,22 @@ void ObjectsManager::GOHOME2() {
  */
 void ObjectsManager::loadZone(const Common::String &file) {
 	for (int i = 1; i <= 100; i++) {
-		_vm->_linesMan->_zone[i]._destX = 0;
-		_vm->_linesMan->_zone[i]._destY = 0;
-		_vm->_linesMan->_zone[i]._spriteIndex = 0;
-		_vm->_linesMan->_zone[i]._verbFl1 = 0;
-		_vm->_linesMan->_zone[i]._verbFl2 = 0;
-		_vm->_linesMan->_zone[i]._verbFl3 = 0;
-		_vm->_linesMan->_zone[i]._verbFl4 = 0;
-		_vm->_linesMan->_zone[i]._verbFl5 = 0;
-		_vm->_linesMan->_zone[i]._verbFl6 = 0;
-		_vm->_linesMan->_zone[i]._verbFl7 = 0;
-		_vm->_linesMan->_zone[i]._verbFl8 = 0;
-		_vm->_linesMan->_zone[i]._verbFl9 = 0;
-		_vm->_linesMan->_zone[i]._verbFl10 = 0;
-		_vm->_linesMan->_zone[i]._messageId = 0;
-		_vm->_linesMan->_zone[i]._enabledFl = false;
+		ZoneItem *curZone = &_vm->_linesMan->_zone[i];
+		curZone->_destX = 0;
+		curZone->_destY = 0;
+		curZone->_spriteIndex = 0;
+		curZone->_verbFl1 = 0;
+		curZone->_verbFl2 = 0;
+		curZone->_verbFl3 = 0;
+		curZone->_verbFl4 = 0;
+		curZone->_verbFl5 = 0;
+		curZone->_verbFl6 = 0;
+		curZone->_verbFl7 = 0;
+		curZone->_verbFl8 = 0;
+		curZone->_verbFl9 = 0;
+		curZone->_verbFl10 = 0;
+		curZone->_messageId = 0;
+		curZone->_enabledFl = false;
 	}
 
 	Common::File f;
@@ -1754,25 +1767,27 @@ void ObjectsManager::loadZone(const Common::String &file) {
 	} while (bobZoneIdx != -1);
 
 	for (int i = 1; i <= 100; i++) {
-		_vm->_linesMan->_zone[i]._destX = READ_LE_INT16((uint16 *)ptr + bufId);
-		_vm->_linesMan->_zone[i]._destY = READ_LE_INT16((uint16 *)ptr + bufId + 1);
-		_vm->_linesMan->_zone[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + bufId + 2);
+		ZoneItem *curZone = &_vm->_linesMan->_zone[i];
+		curZone->_destX = READ_LE_INT16((uint16 *)ptr + bufId);
+		curZone->_destY = READ_LE_INT16((uint16 *)ptr + bufId + 1);
+		curZone->_spriteIndex = READ_LE_INT16((uint16 *)ptr + bufId + 2);
 		bufId += 3;
 	}
 
 	byte *verbData = (ptr + 10 * zoneLineIdx + 606);
 	bufId = 0;
 	for (int i = 1; i <= 100; i++) {
-		_vm->_linesMan->_zone[i]._verbFl1 = verbData[bufId];
-		_vm->_linesMan->_zone[i]._verbFl2 = verbData[bufId + 1];
-		_vm->_linesMan->_zone[i]._verbFl3 = verbData[bufId + 2];
-		_vm->_linesMan->_zone[i]._verbFl4 = verbData[bufId + 3];
-		_vm->_linesMan->_zone[i]._verbFl5 = verbData[bufId + 4];
-		_vm->_linesMan->_zone[i]._verbFl6 = verbData[bufId + 5];
-		_vm->_linesMan->_zone[i]._verbFl7 = verbData[bufId + 6];
-		_vm->_linesMan->_zone[i]._verbFl8 = verbData[bufId + 7];
-		_vm->_linesMan->_zone[i]._verbFl9 = verbData[bufId + 8];
-		_vm->_linesMan->_zone[i]._verbFl10 = verbData[bufId + 9];
+		ZoneItem *curZone = &_vm->_linesMan->_zone[i];
+		curZone->_verbFl1 = verbData[bufId];
+		curZone->_verbFl2 = verbData[bufId + 1];
+		curZone->_verbFl3 = verbData[bufId + 2];
+		curZone->_verbFl4 = verbData[bufId + 3];
+		curZone->_verbFl5 = verbData[bufId + 4];
+		curZone->_verbFl6 = verbData[bufId + 5];
+		curZone->_verbFl7 = verbData[bufId + 6];
+		curZone->_verbFl8 = verbData[bufId + 7];
+		curZone->_verbFl9 = verbData[bufId + 8];
+		curZone->_verbFl10 = verbData[bufId + 9];
 
 		bufId += 10;
 	}
@@ -1950,9 +1965,10 @@ void ObjectsManager::handleLeftButton() {
 	if (_vm->_globals->_cityMapEnabledFl && (_vm->_events->_mouseCursorId != 4 || _zoneNum <= 0))
 		return;
 	if (_zoneNum != -1 && _zoneNum != 0) {
-		if (_vm->_linesMan->_zone[_zoneNum]._destX && _vm->_linesMan->_zone[_zoneNum]._destY && _vm->_linesMan->_zone[_zoneNum]._destY != 31) {
-			destX = _vm->_linesMan->_zone[_zoneNum]._destX;
-			destY = _vm->_linesMan->_zone[_zoneNum]._destY;
+		ZoneItem *curZone = &_vm->_linesMan->_zone[_zoneNum];
+		if (curZone->_destX && curZone->_destY && curZone->_destY != 31) {
+			destX = curZone->_destX;
+			destY = curZone->_destY;
 		}
 	}
 	_vm->_globals->_actionMoveTo = false;
@@ -3049,8 +3065,8 @@ void ObjectsManager::setAndPlayAnim(int idx, int animIdx, int destPosi, bool ani
 	if (!animAction)
 		stopBobAnimation(idx);
 	else {
-		_vm->_graphicsMan->fastDisplay(_bob[idx]._spriteData,
-			_bob[idx]._oldX, _bob[idx]._oldY, _bob[idx]._frameIndex);
+		BobItem *bob = &_bob[idx];
+		_vm->_graphicsMan->fastDisplay(bob->_spriteData, bob->_oldX, bob->_oldY, bob->_frameIndex);
 		stopBobAnimation(idx);
 		_vm->_events->refreshScreenAndEvents();
 	}
@@ -3061,23 +3077,25 @@ int ObjectsManager::getBobAnimDataIdx(int idx) {
 }
 
 void ObjectsManager::setBobAnimDataIdx(int idx, int animIdx) {
-	_bob[idx]._animDataIdx = 5 * animIdx;
-	_bob[idx]._moveChange1 = 0;
-	_bob[idx]._moveChange2 = 0;
+	BobItem *bob = &_bob[idx];
+	bob->_animDataIdx = 5 * animIdx;
+	bob->_moveChange1 = 0;
+	bob->_moveChange2 = 0;
 }
 
 /**
  * Set Hopkins animation
  */
 void ObjectsManager::setBobAnimation(int idx) {
-	if (!_bob[idx]._disabledAnimationFl)
+	BobItem *bob = &_bob[idx];
+	if (!bob->_disabledAnimationFl)
 		return;
 
-	_bob[idx]._disabledAnimationFl = false;
-	_bob[idx]._animDataIdx = 5;
-	_bob[idx]._frameIndex = 250;
-	_bob[idx]._moveChange1 = 0;
-	_bob[idx]._moveChange2 = 0;
+	bob->_disabledAnimationFl = false;
+	bob->_animDataIdx = 5;
+	bob->_frameIndex = 250;
+	bob->_moveChange1 = 0;
+	bob->_moveChange2 = 0;
 }
 
 /**
