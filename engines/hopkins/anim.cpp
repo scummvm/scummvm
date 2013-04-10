@@ -632,10 +632,8 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 				break;
 
 			_vm->_events->_rateCounter = 0;
-			_vm->_graphicsMan->lockScreen();
 			if (*screenP != kByteStop)
 				_vm->_graphicsMan->copyVideoVbe16a(screenP);
-			_vm->_graphicsMan->unlockScreen();
 
 			_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsMan->updateScreen();
@@ -697,9 +695,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		if (skipSeqFl) {
 			_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
 		} else {
-			_vm->_graphicsMan->lockScreen();
 			_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
-			_vm->_graphicsMan->unlockScreen();
 			_vm->_graphicsMan->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
 			_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -739,10 +735,8 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 			}
 
 			_vm->_events->_rateCounter = 0;
-			_vm->_graphicsMan->lockScreen();
 			if (*screenP != kByteStop)
 				_vm->_graphicsMan->copyVideoVbe16a(screenP);
-			_vm->_graphicsMan->unlockScreen();
 
 			_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsMan->updateScreen();

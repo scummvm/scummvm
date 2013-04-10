@@ -801,6 +801,7 @@ void GraphicsManager::copyVideoVbe16a(const byte *srcData) {
 	int destOffset = 0;
 	const byte *srcP = srcData;
 
+	lockScreen();
 	for (;;) {
 		srcByte = srcP[0];
 		if (srcByte == kByteStop)
@@ -825,6 +826,7 @@ void GraphicsManager::copyVideoVbe16a(const byte *srcData) {
 		++srcP;
 		++destOffset;
 	}
+	unlockScreen();
 }
 
 void GraphicsManager::copySurfaceRect(const byte *srcSurface, byte *destSurface, int xs, int ys, int width, int height) {

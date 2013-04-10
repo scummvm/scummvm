@@ -83,6 +83,9 @@ private:
 
 	void translateSurface(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
 	void copy8BitRect(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
+
+	void lockScreen();
+	void unlockScreen();
 public:
 	byte _colorTable[PALETTE_EXT_BLOCK_SIZE];
 	byte _palette[PALETTE_EXT_BLOCK_SIZE];
@@ -121,8 +124,6 @@ public:
 	GraphicsManager(HopkinsEngine *vm);
 	~GraphicsManager();
 
-	void lockScreen();
-	void unlockScreen();
 	void clearPalette();
 	void clearScreen();
 	void clearVesaScreen();
