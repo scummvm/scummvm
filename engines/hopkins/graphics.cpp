@@ -733,7 +733,8 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 		byte srcByte = srcP[0];
 		if (srcByte >= 222) {
 			if (srcByte == kByteStop)
-				return;
+				break;
+
 			if (srcByte < kSetOffset) {
 				destOffset += srcByte - 221;
 				srcByte = *++srcP;
@@ -754,7 +755,7 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 
 		if (destOffset > SCREEN_WIDTH * SCREEN_HEIGHT) {
 			warning("HACK: Stopping anim, out of bounds - 0x%x %d", srcByte, destOffset);
-			return;
+			break;
 		}
 
 		if (srcByte > 210) {
@@ -805,7 +806,7 @@ void GraphicsManager::copyVideoVbe16a(const byte *srcData) {
 	for (;;) {
 		srcByte = srcP[0];
 		if (srcByte == kByteStop)
-			return;
+			break;
 		if (srcP[0] > kByteStop) {
 			if (srcByte == k8bVal) {
 				destOffset += srcP[1];
