@@ -418,15 +418,17 @@ void DialogsManager::showInventory() {
 			newInventoryItem = _vm->_linesMan->checkInventoryHotspots(mousePosX, mousePosY);
 			if (newInventoryItem != oldInventoryItem)
 				_vm->_objectsMan->initBorder(newInventoryItem);
-			if (_vm->_events->_mouseCursorId != 1 && _vm->_events->_mouseCursorId != 2 && _vm->_events->_mouseCursorId != 3 && _vm->_events->_mouseCursorId != 16) {
+			int cursorId = _vm->_events->_mouseCursorId;
+			if (cursorId != 1 && cursorId != 2 && cursorId != 3 && cursorId != 16) {
 				if (mouseButton == 2) {
 					_vm->_objectsMan->nextObjectIcon(newInventoryItem);
-					if (_vm->_events->_mouseCursorId != 23)
-						_vm->_events->changeMouseCursor(_vm->_events->_mouseCursorId);
+					if (cursorId != 23)
+						_vm->_events->changeMouseCursor(cursorId);
 				}
 			}
+			cursorId = _vm->_events->_mouseCursorId;
 			if (mouseButton == 1) {
-				if (_vm->_events->_mouseCursorId == 1 || _vm->_events->_mouseCursorId == 2 || _vm->_events->_mouseCursorId == 3 || _vm->_events->_mouseCursorId == 16 || !_vm->_events->_mouseCursorId)
+				if (cursorId == 1 || cursorId == 2 || cursorId == 3 || cursorId == 16 || !cursorId)
 					break;
 				_vm->_objectsMan->takeInventoryObject(_vm->_globals->_inventory[newInventoryItem]);
 				if (_vm->_events->_mouseCursorId == 8)
@@ -478,11 +480,12 @@ void DialogsManager::showInventory() {
 	_inventWin1 = _vm->_globals->freeMemory(_inventWin1);
 	_inventBuf2 = _vm->_globals->freeMemory(_inventBuf2);
 
-	if (_vm->_events->_mouseCursorId == 1)
+	int cursorId = _vm->_events->_mouseCursorId;
+	if (cursorId == 1)
 		showOptionsDialog();
-	else if (_vm->_events->_mouseCursorId == 3)
+	else if (cursorId == 3)
 		showLoadGame();
-	else if (_vm->_events->_mouseCursorId == 2)
+	else if (cursorId == 2)
 		showSaveGame();
 
 	_vm->_events->_mouseCursorId = 4;

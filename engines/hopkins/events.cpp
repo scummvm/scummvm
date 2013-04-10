@@ -183,7 +183,7 @@ void EventsManager::mouseOn() {
 /**
  * Change Mouse Cursor
  */
-void EventsManager::changeMouseCursor(int id) {
+void EventsManager::changeMouseCursor(const int id) {
 	int cursorId = id;
 
 	if (_mouseCursorId == 23)

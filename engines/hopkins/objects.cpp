@@ -2522,11 +2522,11 @@ void ObjectsManager::initBorder(int zoneIdx) {
  * Get next icon for an object in the inventory
  */
 void ObjectsManager::nextObjectIcon(int idx) {
-	if (_vm->_events->_mouseCursorId == 0 || _vm->_events->_mouseCursorId == 2 ||
-	    _vm->_events->_mouseCursorId == 3 || _vm->_events->_mouseCursorId == 16)
+	int cursorId = _vm->_events->_mouseCursorId;
+	if (cursorId == 0 || cursorId == 2 || cursorId == 3 || cursorId == 16)
 		return;
 
-	int nextCursorId = _vm->_events->_mouseCursorId + 1;
+	int nextCursorId = cursorId + 1;
 	if (nextCursorId > 25)
 		nextCursorId = 6;
 

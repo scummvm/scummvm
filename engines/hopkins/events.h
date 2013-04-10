@@ -75,7 +75,7 @@ public:
 	void initMouseData();
 
 	void delay(int totalMilli);
-	void changeMouseCursor(int id);
+	void changeMouseCursor(const int id);
 	void refreshEvents();
 	int waitKeyPress();
 	int getMouseX();
