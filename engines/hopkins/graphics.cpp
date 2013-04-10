@@ -151,10 +151,12 @@ void GraphicsManager::unlockScreen() {
  * Clear Screen
  */
 void GraphicsManager::clearScreen() {
+	lockScreen();
 	assert(_videoPtr);
 
 	Common::fill(_screenBuffer, _screenBuffer + _screenLineSize * _screenHeight, 0);
 	addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	unlockScreen();
 }
 
 void GraphicsManager::clearVesaScreen() {
@@ -177,9 +179,7 @@ void GraphicsManager::loadImage(const Common::String &file) {
  */
 void GraphicsManager::loadVgaImage(const Common::String &file) {
 	setScreenWidth(SCREEN_WIDTH);
-	lockScreen();
 	clearScreen();
-	unlockScreen();
 	loadPCX320(_backBuffer, file, _palette);
 	memcpy(_frontBuffer, _backBuffer, 64000);
 	setScreenWidth(320);
@@ -222,16 +222,14 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 	if (!_largeScreenFl) {
 		setScreenWidth(SCREEN_WIDTH);
 		_maxX = SCREEN_WIDTH;
-		lockScreen();
 		clearScreen();
+		lockScreen();
 		copy16BitRect(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		unlockScreen();
 	} else {
 		setScreenWidth(SCREEN_WIDTH * 2);
 		_maxX = SCREEN_WIDTH * 2;
-		lockScreen();
 		clearScreen();
-		unlockScreen();
 
 		if (MANU_SCROLL) {
 			lockScreen();

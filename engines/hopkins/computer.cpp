@@ -73,9 +73,7 @@ void ComputerManager::setVideoMode() {
  */
 void ComputerManager::setTextMode() {
 	_vm->_graphicsMan->clearPalette();
-	_vm->_graphicsMan->lockScreen();
 	_vm->_graphicsMan->clearScreen();
-	_vm->_graphicsMan->unlockScreen();
 
 	_vm->_graphicsMan->_lineNbr = SCREEN_WIDTH;
 	_vm->_fontMan->_font = _vm->_globals->freeMemory(_vm->_fontMan->_font);
@@ -259,9 +257,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 				}
 			}
 		}
-		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->clearScreen();
-		_vm->_graphicsMan->unlockScreen();
 		_vm->_graphicsMan->updateScreen();
 		restoreFBIRoom();
 	} else {
@@ -273,9 +269,7 @@ void ComputerManager::showComputer(ComputerEnum mode) {
 		_vm->_events->delay(1000);
 
 		memset(_vm->_graphicsMan->_frontBuffer, 0, 307199);
-		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->clearScreen();
-		_vm->_graphicsMan->unlockScreen();
 		_vm->_graphicsMan->updateScreen();
 		restoreFBIRoom();
 		_vm->_events->mouseOff();
@@ -611,9 +605,7 @@ void ComputerManager::loadHiscore() {
  * VGA 256 col
  */
 void ComputerManager::setModeVGA256() {
-	_vm->_graphicsMan->lockScreen();
 	_vm->_graphicsMan->clearScreen();
-	_vm->_graphicsMan->unlockScreen();
 	_vm->_graphicsMan->clearPalette();
 	_vm->_graphicsMan->setScreenWidth(320);
 }

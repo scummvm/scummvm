@@ -83,11 +83,9 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 	f.skip(14);
 	f.read(screenP, nbytes);
 
-	if (_clearAnimationFl) {
-		_vm->_graphicsMan->lockScreen();
+	if (_clearAnimationFl)
 		_vm->_graphicsMan->clearScreen();
-		_vm->_graphicsMan->unlockScreen();
-	}
+
 	if (skipSeqFl) {
 		_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
 	} else {
@@ -243,15 +241,14 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		oldScrollPosX = _vm->_graphicsMan->_scrollPosX;
 		_vm->_graphicsMan->setScreenWidth(SCREEN_WIDTH);
 		_vm->_graphicsMan->scrollScreen(0);
-		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->clearScreen();
-		_vm->_graphicsMan->unlockScreen();
 		_vm->_graphicsMan->_maxX = SCREEN_WIDTH;
 		_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
+
 		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-
 		_vm->_graphicsMan->unlockScreen();
+
 		_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		_vm->_graphicsMan->updateScreen();
 
@@ -345,9 +342,7 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 
 	memcpy(_vm->_graphicsMan->_palette, _vm->_graphicsMan->_oldPalette, 769);
 	_vm->_graphicsMan->clearPalette();
-	_vm->_graphicsMan->lockScreen();
 	_vm->_graphicsMan->clearScreen();
-	_vm->_graphicsMan->unlockScreen();
 
 	_vm->_graphicsMan->_scrollPosX = oldScrollPosX;
 	_vm->_graphicsMan->scrollScreen(oldScrollPosX);
@@ -359,8 +354,8 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	} else {
 		_vm->_graphicsMan->setScreenWidth(SCREEN_WIDTH);
 		_vm->_graphicsMan->_maxX = SCREEN_WIDTH;
-		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->clearScreen();
+		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->copy16BitRect(_vm->_graphicsMan->_frontBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 	_vm->_graphicsMan->unlockScreen();

@@ -140,9 +140,7 @@ bool HopkinsEngine::runWin95Demo() {
 
 	_globals->_eventMode = EVENTMODE_IGNORE;
 
-	_graphicsMan->lockScreen();
 	_graphicsMan->clearScreen();
-	_graphicsMan->unlockScreen();
 	_graphicsMan->clearPalette();
 
 	if (_startGameSlot == -1) {
@@ -229,9 +227,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_graphicsMan->fadeOutLong();
 				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundMan->_specialSoundNum = 2;
-				_graphicsMan->lockScreen();
 				_graphicsMan->clearScreen();
-				_graphicsMan->unlockScreen();
 				_graphicsMan->clearPalette();
 				if (!_globals->_censorshipFl)
 					_animMan->playAnim("BANQUE.ANM", 200, 28, 200);
@@ -365,9 +361,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_screenId = 113;
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_computer->showComputer(COMPUTER_HOPKINS);
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->updateScreen();
 			memset(_graphicsMan->_frontBuffer, 0, 307200);
 			memset(_graphicsMan->_backBuffer, 0, 307200);
@@ -382,9 +376,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_globals->_exitId = 0;
 			_computer->showComputer(COMPUTER_SAMANTHA);
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			break;
 
 		case 115:
@@ -394,17 +386,13 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_screenId = 115;
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_computer->showComputer(COMPUTER_PUBLIC);
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			break;
 
 		case 150:
 			_soundMan->playSound(28);
 			_globals->_eventMode = EVENTMODE_ALT; // CHECKME!
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->clearPalette();
 			_animMan->playAnim("JOUR1A.anm", 12, 12, 2000);
 			_globals->_eventMode = EVENTMODE_DEFAULT;
@@ -414,9 +402,7 @@ bool HopkinsEngine::runWin95Demo() {
 		case 151:
 			_soundMan->playSound(28);
 			_globals->_eventMode = EVENTMODE_ALT; // CHECKME!
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->clearPalette();
 			_graphicsMan->loadImage("njour3a");
 			_graphicsMan->fadeInLong();
@@ -429,9 +415,7 @@ bool HopkinsEngine::runWin95Demo() {
 		case 152:
 			_soundMan->playSound(28);
 			_globals->_eventMode = EVENTMODE_ALT; // CHECKME!
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->clearPalette();
 			_animMan->playAnim("JOUR4A.anm", 12, 12, 2000);
 			_globals->_eventMode = EVENTMODE_DEFAULT;
@@ -450,9 +434,7 @@ bool HopkinsEngine::runLinuxDemo() {
 
 	_events->mouseOff();
 
-	_graphicsMan->lockScreen();
 	_graphicsMan->clearScreen();
-	_graphicsMan->unlockScreen();
 
 	if (_startGameSlot == -1) {
 		_graphicsMan->loadImage("LINUX");
@@ -542,9 +524,7 @@ bool HopkinsEngine::runLinuxDemo() {
 				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundMan->_specialSoundNum = 2;
 
-				_graphicsMan->lockScreen();
 				_graphicsMan->clearScreen();
-				_graphicsMan->unlockScreen();
 				_graphicsMan->clearPalette();
 				_graphicsMan->_fadingFl = true;
 
@@ -690,9 +670,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals->_saveData->_data[svLastScreenId] = 113;
 			_computer->showComputer(COMPUTER_HOPKINS);
 
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->updateScreen();
 			memset(_graphicsMan->_frontBuffer, 0, 307200);
 			memset(_graphicsMan->_backBuffer, 0, 307200);
@@ -707,9 +685,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals->_screenId = 114;
 			_globals->_saveData->_data[svLastScreenId] = 114;
 			_computer->showComputer(COMPUTER_SAMANTHA);
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			break;
 
 		case 115:
@@ -719,18 +695,14 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals->_screenId = 115;
 			_globals->_saveData->_data[svLastScreenId] = 115;
 			_computer->showComputer(COMPUTER_PUBLIC);
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			break;
 
 		case 150:
 			_soundMan->playSound(16);
 			_globals->_eventMode = EVENTMODE_IGNORE;
 
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->clearPalette();
 			_graphicsMan->_fadingFl = true;
 			_animMan->playAnim("JOUR1A.anm", 12, 12, 2000);
@@ -742,9 +714,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_soundMan->playSound(16);
 			_globals->_eventMode = EVENTMODE_IGNORE;
 
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->clearPalette();
 			_graphicsMan->_fadingFl = true;
 			_animMan->playAnim("JOUR3A.anm", 12, 12, 2000);
@@ -756,9 +726,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_soundMan->playSound(16);
 			_globals->_eventMode = EVENTMODE_IGNORE;
 
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->clearPalette();
 			_graphicsMan->_fadingFl = true;
 			_animMan->playAnim("JOUR4A.anm", 12, 12, 2000);
@@ -810,9 +778,7 @@ bool HopkinsEngine::runFull() {
 		_globals->_eventMode = EVENTMODE_IGNORE;
 	}
 
-	_graphicsMan->lockScreen();
 	_graphicsMan->clearScreen();
-	_graphicsMan->unlockScreen();
 	_graphicsMan->clearPalette();
 
 	if (_startGameSlot == -1) {
@@ -897,9 +863,7 @@ bool HopkinsEngine::runFull() {
 				_graphicsMan->fadeOutLong();
 				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundMan->_specialSoundNum = 2;
-				_graphicsMan->lockScreen();
 				_graphicsMan->clearScreen();
-				_graphicsMan->unlockScreen();
 				_graphicsMan->clearPalette();
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows) {
 					if (getPlatform() == Common::kPlatformLinux)
@@ -1032,9 +996,7 @@ bool HopkinsEngine::runFull() {
 				_objectsMan->PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
 			if (_globals->_exitId == 18) {
 				_globals->_eventMode = EVENTMODE_IGNORE;
-				_graphicsMan->lockScreen();
 				_graphicsMan->clearScreen();
-				_graphicsMan->unlockScreen();
 				_graphicsMan->clearPalette();
 				_soundMan->stopSound();
 				if (getPlatform() == Common::kPlatformLinux) {
@@ -1079,9 +1041,7 @@ bool HopkinsEngine::runFull() {
 			if (_globals->_exitId == 17) {
 				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundMan->stopSound();
-				_graphicsMan->lockScreen();
 				_graphicsMan->clearScreen();
-				_graphicsMan->unlockScreen();
 				_graphicsMan->clearPalette();
 				_soundMan->playSound(6);
 				if (getPlatform() == Common::kPlatformLinux)
@@ -1445,9 +1405,7 @@ bool HopkinsEngine::runFull() {
 			if (_globals->_exitId == 18) {
 				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundMan->stopSound();
-				_graphicsMan->lockScreen();
 				_graphicsMan->clearScreen();
-				_graphicsMan->unlockScreen();
 				_graphicsMan->clearPalette();
 				_soundMan->playSound(6);
 				_animMan->playAnim("PURG1A.ANM", 12, 18, 50);
@@ -1487,9 +1445,7 @@ bool HopkinsEngine::runFull() {
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_globals->_exitId = 0;
 			_computer->showComputer(COMPUTER_HOPKINS);
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->updateScreen();
 			memset(_graphicsMan->_frontBuffer, 0, 307200);
 			memset(_graphicsMan->_backBuffer, 0, 307200);
@@ -1504,9 +1460,7 @@ bool HopkinsEngine::runFull() {
 			_globals->_saveData->_data[svLastPrevScreenId] = _globals->_prevScreenId;
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_computer->showComputer(COMPUTER_SAMANTHA);
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			break;
 
 		case 115:
@@ -1516,17 +1470,13 @@ bool HopkinsEngine::runFull() {
 			_globals->_saveData->_data[svLastScreenId] = _globals->_screenId;
 			_globals->_exitId = 0;
 			_computer->showComputer(COMPUTER_PUBLIC);
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			break;
 
 		case 150:
 			_soundMan->playSound(16);
 			_globals->_eventMode = EVENTMODE_IGNORE;
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
 				_graphicsMan->_fadingFl = true;
@@ -1538,9 +1488,7 @@ bool HopkinsEngine::runFull() {
 		case 151:
 			_soundMan->playSound(16);
 			_globals->_eventMode = EVENTMODE_IGNORE;
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
 				_graphicsMan->_fadingFl = true;
@@ -1552,9 +1500,7 @@ bool HopkinsEngine::runFull() {
 		case 152:
 			_soundMan->playSound(16);
 			_globals->_eventMode = EVENTMODE_IGNORE;
-			_graphicsMan->lockScreen();
 			_graphicsMan->clearScreen();
-			_graphicsMan->unlockScreen();
 			_graphicsMan->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
 				_graphicsMan->_fadingFl = true;
@@ -1670,9 +1616,7 @@ void HopkinsEngine::playIntro() {
 		return;
 
 	_soundMan->mixVoice(3, 3);
-	_graphicsMan->lockScreen();
 	_graphicsMan->clearScreen();
-	_graphicsMan->unlockScreen();
 	_graphicsMan->clearPalette();
 	_graphicsMan->updateScreen();
 	_soundMan->playSound(11);
@@ -1905,9 +1849,7 @@ void HopkinsEngine::displayEndDemo() {
 void HopkinsEngine::bombExplosion() {
 	_graphicsMan->_lineNbr = SCREEN_WIDTH;
 	_graphicsMan->setScreenWidth(SCREEN_WIDTH);
-	_graphicsMan->lockScreen();
 	_graphicsMan->clearScreen();
-	_graphicsMan->unlockScreen();
 	_graphicsMan->clearPalette();
 
 	_globals->_eventMode = EVENTMODE_IGNORE;
@@ -2016,9 +1958,7 @@ void HopkinsEngine::handleConflagration() {
 void HopkinsEngine::playSubmarineCutscene() {
 	_globals->_eventMode = EVENTMODE_IGNORE;
 	_graphicsMan->_lineNbr = SCREEN_WIDTH;
-	_graphicsMan->lockScreen();
 	_graphicsMan->clearScreen();
-	_graphicsMan->unlockScreen();
 	_graphicsMan->clearPalette();
 	_soundMan->playSound(25);
 	_animMan->setClearAnimFlag();
@@ -2055,9 +1995,7 @@ void HopkinsEngine::playSubmarineCutscene() {
 }
 
 void HopkinsEngine::playUnderwaterBaseCutscene() {
-	_graphicsMan->lockScreen();
 	_graphicsMan->clearScreen();
-	_graphicsMan->unlockScreen();
 	_graphicsMan->clearPalette();
 	_soundMan->playSound(26);
 	_globals->_eventMode = EVENTMODE_IGNORE;
@@ -2189,9 +2127,7 @@ void HopkinsEngine::playEnding() {
 		_graphicsMan->_fadingFl = true;
 		_animMan->playAnim("JOUR2A.anm", 12, 12, 1000);
 		_soundMan->playSound(11);
-		_graphicsMan->lockScreen();
 		_graphicsMan->clearScreen();
-		_graphicsMan->unlockScreen();
 		_graphicsMan->clearPalette();
 		_animMan->playAnim("FF1a.anm", 18, 18, 9);
 		_animMan->playAnim("FF1a.anm", 9, 18, 9);
@@ -2243,9 +2179,7 @@ void HopkinsEngine::playEnding() {
 void HopkinsEngine::playPlaneCutscene() {
 	_soundMan->playSound(28);
 	_globals->_eventMode = EVENTMODE_IGNORE;
-	_graphicsMan->lockScreen();
 	_graphicsMan->clearScreen();
-	_graphicsMan->unlockScreen();
 	_graphicsMan->clearPalette();
 
 	_animMan->unsetClearAnimFlag();
