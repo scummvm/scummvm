@@ -725,6 +725,8 @@ void GraphicsManager::copyWinscanVbe3(const byte *srcData, byte *destSurface) {
 void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 	const byte *srcP = srcData;
 	int destOffset = 0;
+
+	lockScreen();
 	assert(_videoPtr);
 
 	for (;;) {
@@ -791,6 +793,7 @@ void GraphicsManager::copyVideoVbe16(const byte *srcData) {
 			++destOffset;
 		}
 	}
+	unlockScreen();
 }
 
 void GraphicsManager::copyVideoVbe16a(const byte *srcData) {

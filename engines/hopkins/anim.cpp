@@ -137,10 +137,8 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 			if (!_vm->_events->_escKeyFl) {
 				_vm->_events->_rateCounter = 0;
-				_vm->_graphicsMan->lockScreen();
 				if (*screenP != kByteStop)
 					_vm->_graphicsMan->copyVideoVbe16(screenP);
-				_vm->_graphicsMan->unlockScreen();
 
 				_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 				_vm->_graphicsMan->updateScreen();
@@ -282,11 +280,8 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			}
 
 			_vm->_events->_rateCounter = 0;
-			_vm->_graphicsMan->lockScreen();
-			if (*screenP != kByteStop) {
+			if (*screenP != kByteStop)
 				_vm->_graphicsMan->copyVideoVbe16(screenP);
-			}
-			_vm->_graphicsMan->unlockScreen();
 
 			_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsMan->updateScreen();
