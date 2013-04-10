@@ -464,10 +464,7 @@ void EventsManager::refreshScreenAndEvents() {
 			_vm->_graphicsMan->displayDirtyRects();
 		} else {
 			_vm->_fontMan->hideText(9);
-			_vm->_graphicsMan->lockScreen();
 			_vm->_graphicsMan->copy16BitRect(_vm->_graphicsMan->_frontBuffer, _vm->_graphicsMan->_scrollPosX, 20, SCREEN_WIDTH, 440, 0, 20);
-			_vm->_graphicsMan->unlockScreen();
-
 			_vm->_graphicsMan->resetRefreshRects();
 			_vm->_graphicsMan->addRefreshRect(0, 20, SCREEN_WIDTH, SCREEN_HEIGHT - 20);
 

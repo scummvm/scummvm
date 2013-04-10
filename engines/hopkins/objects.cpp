@@ -2671,9 +2671,7 @@ void ObjectsManager::handleSpecialGames() {
 		memcpy(_vm->_graphicsMan->_palette, oldPalette, 769);
 		_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
 		_vm->_globals->freeMemory(oldPalette);
-		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->copy16BitRect(_vm->_graphicsMan->_backBuffer, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		_vm->_graphicsMan->unlockScreen();
 		memcpy(_vm->_graphicsMan->_frontBuffer, _vm->_graphicsMan->_backBuffer, 614399);
 
 		_vm->_graphicsMan->_scrollStatus = 0;

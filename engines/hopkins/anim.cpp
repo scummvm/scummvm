@@ -90,10 +90,7 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 		_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
 	} else {
 		_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
-		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		_vm->_graphicsMan->unlockScreen();
-
 		_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		_vm->_graphicsMan->updateScreen();
 	}
@@ -243,12 +240,9 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 		_vm->_graphicsMan->scrollScreen(0);
 		_vm->_graphicsMan->clearScreen();
 		_vm->_graphicsMan->_maxX = SCREEN_WIDTH;
+
 		_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
-
-		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		_vm->_graphicsMan->unlockScreen();
-
 		_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		_vm->_graphicsMan->updateScreen();
 
@@ -349,16 +343,13 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 	if (_vm->_graphicsMan->_largeScreenFl) {
 		_vm->_graphicsMan->setScreenWidth(2 * SCREEN_WIDTH);
 		_vm->_graphicsMan->_maxX = 2 * SCREEN_WIDTH;
-		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->copy16BitRect(_vm->_graphicsMan->_frontBuffer, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	} else {
 		_vm->_graphicsMan->setScreenWidth(SCREEN_WIDTH);
 		_vm->_graphicsMan->_maxX = SCREEN_WIDTH;
 		_vm->_graphicsMan->clearScreen();
-		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->copy16BitRect(_vm->_graphicsMan->_frontBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
-	_vm->_graphicsMan->unlockScreen();
 	_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 	_vm->_graphicsMan->fadeInShort();
@@ -592,10 +583,7 @@ void AnimationManager::playSequence(const Common::String &file, uint32 rate1, ui
 		}
 		_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
 	} else {
-		_vm->_graphicsMan->lockScreen();
 		_vm->_graphicsMan->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		_vm->_graphicsMan->unlockScreen();
-
 		_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		_vm->_graphicsMan->updateScreen();
 	}
@@ -716,8 +704,8 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		} else {
 			_vm->_graphicsMan->lockScreen();
 			_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
-			_vm->_graphicsMan->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			_vm->_graphicsMan->unlockScreen();
+			_vm->_graphicsMan->copy16BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
 			_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			_vm->_graphicsMan->updateScreen();

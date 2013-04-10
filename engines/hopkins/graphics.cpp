@@ -223,19 +223,15 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 		setScreenWidth(SCREEN_WIDTH);
 		_maxX = SCREEN_WIDTH;
 		clearScreen();
-		lockScreen();
+
 		copy16BitRect(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-		unlockScreen();
 	} else {
 		setScreenWidth(SCREEN_WIDTH * 2);
 		_maxX = SCREEN_WIDTH * 2;
 		clearScreen();
 
-		if (MANU_SCROLL) {
-			lockScreen();
+		if (MANU_SCROLL)
 			copy16BitRect(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-			unlockScreen();
-		}
 	}
 
 	memcpy(_frontBuffer, _backBuffer, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
@@ -1122,16 +1118,12 @@ void GraphicsManager::displayDirtyRects() {
 			r.left = MAX<int16>(r.left, _vm->_events->_startPos.x);
 			r.right = MIN<int16>(r.right, (int16)_vm->_events->_startPos.x + SCREEN_WIDTH);
 
-			// WORKAROUND: Original didn't lock the screen for access
-			lockScreen();
 			copy16BitRect(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_events->_startPos.x, r.top);
 
 			dstRect.left = r.left - _vm->_events->_startPos.x;
 			dstRect.top = r.top;
 			dstRect.setWidth(r.right - r.left);
 			dstRect.setHeight(r.bottom - r.top);
-
-			unlockScreen();
 		}
 
 		// If it's a valid rect, then add it to the list of areas to refresh on the screen
@@ -1748,10 +1740,7 @@ void GraphicsManager::displayScreen(bool initPalette) {
 	else if (_lineNbr == (SCREEN_WIDTH * 2))
 		fillSurface(_frontBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
 
-	lockScreen();
 	copy16BitRect(_frontBuffer, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
-	unlockScreen();
-
 	memcpy(_backBuffer, _frontBuffer, 614399);
 	updateScreen();
 }
