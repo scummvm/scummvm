@@ -168,20 +168,20 @@ void Globals::setConfig() {
 }
 
 void Globals::clearAll() {
-	_vm->_fontManager->clearAll();
-	_vm->_dialogsManager->clearAll();
+	_vm->_fontMan->clearAll();
+	_vm->_dialog->clearAll();
 	_answerBuffer = NULL;
 	_levelSpriteBuf = NULL;
 	_saveData = NULL;
-	_vm->_objectsManager->_curObjectIndex = 0;
+	_vm->_objectsMan->_curObjectIndex = 0;
 
-	_vm->_linesManager->clearAll();
-	_vm->_objectsManager->clearAll();
+	_vm->_linesMan->clearAll();
+	_vm->_objectsMan->clearAll();
 
 	_saveData = (Savegame *)malloc(sizeof(Savegame));
 	memset(_saveData, 0, sizeof(Savegame));
 
-	_vm->_eventsManager->clearAll();
+	_vm->_events->clearAll();
 }
 
 void Globals::loadCharacterData() {
@@ -195,8 +195,8 @@ void Globals::loadCharacterData() {
 		_hopkinsItem[idx]._speedY = *srcP++;
 	}
 
-	_vm->_objectsManager->resetOldFrameIndex();
-	_vm->_objectsManager->resetOldDirection();
+	_vm->_objectsMan->resetOldFrameIndex();
+	_vm->_objectsMan->resetOldDirection();
 }
 
 byte *Globals::allocMemory(int count) {

@@ -142,22 +142,22 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 
 public:
-	AnimationManager *_animationManager;
-	ComputerManager *_computerManager;
-	DialogsManager *_dialogsManager;
-	Debugger *_debugger;
-	EventsManager *_eventsManager;
-	FileManager *_fileManager;
-	FontManager *_fontManager;
+	AnimationManager *_animMan;
+	ComputerManager *_computer;
+	DialogsManager *_dialog;
+	Debugger *_debug;
+	EventsManager *_events;
+	FileManager *_fileIO;
+	FontManager *_fontMan;
 	Globals *_globals;
-	GraphicsManager *_graphicsManager;
-	LinesManager *_linesManager;
-	MenuManager *_menuManager;
-	ObjectsManager *_objectsManager;
-	SaveLoadManager *_saveLoadManager;
-	ScriptManager *_scriptManager;
-	SoundManager *_soundManager;
-	TalkManager *_talkManager;
+	GraphicsManager *_graphicsMan;
+	LinesManager *_linesMan;
+	MenuManager *_menuMan;
+	ObjectsManager *_objectsMan;
+	SaveLoadManager *_saveLoad;
+	ScriptManager *_script;
+	SoundManager *_soundMan;
+	TalkManager *_talkMan;
 
 public:
 	HopkinsEngine(OSystem *syst, const HopkinsGameDescription *gameDesc);

@@ -518,7 +518,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	filename = Common::String::format("%s%d", prefix.c_str(), mappedFileNumber);
 
 	bool fileFoundFl = false;
-	_vm->_fileManager->searchCat(filename + ".WAV", RES_VOI, fileFoundFl);
+	_vm->_fileIO->searchCat(filename + ".WAV", RES_VOI, fileFoundFl);
 	if (fileFoundFl) {
 		if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 			filename = "ENG_VOI.RES";
@@ -530,10 +530,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 		else if (_vm->_globals->_language == LANG_SP)
 			filename = "RES_VES.RES";
 
-		catPos = _vm->_fileManager->_catalogPos;
-		catLen = _vm->_fileManager->_catalogSize;
+		catPos = _vm->_fileIO->_catalogPos;
+		catLen = _vm->_fileIO->_catalogSize;
 	} else {
-		_vm->_fileManager->searchCat(filename + ".APC", RES_VOI, fileFoundFl);
+		_vm->_fileIO->searchCat(filename + ".APC", RES_VOI, fileFoundFl);
 		if (fileFoundFl) {
 			if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 				filename = "ENG_VOI.RES";
@@ -545,10 +545,10 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 			else if (_vm->_globals->_language == LANG_SP)
 				filename = "RES_VES.RES";
 
-			catPos = _vm->_fileManager->_catalogPos;
-			catLen = _vm->_fileManager->_catalogSize;
+			catPos = _vm->_fileIO->_catalogPos;
+			catLen = _vm->_fileIO->_catalogSize;
 		} else {
-			_vm->_fileManager->searchCat(filename + ".RAW", RES_VOI, fileFoundFl);
+			_vm->_fileIO->searchCat(filename + ".RAW", RES_VOI, fileFoundFl);
 			if (fileFoundFl) {
 				if (_vm->getPlatform() == Common::kPlatformOS2 || _vm->getPlatform() == Common::kPlatformBeOS)
 					filename = "ENG_VOI.RES";
@@ -560,8 +560,8 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 				else if (_vm->_globals->_language == LANG_SP)
 					filename = "RES_VES.RES";
 
-				catPos = _vm->_fileManager->_catalogPos;
-				catLen = _vm->_fileManager->_catalogSize;
+				catPos = _vm->_fileIO->_catalogPos;
+				catLen = _vm->_fileIO->_catalogSize;
 			} else {
 				if (!f.exists(filename + ".WAV")) {
 					if (!f.exists(filename + ".APC"))
@@ -593,17 +593,17 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	}
 	playVoice();
 
-	_vm->_eventsManager->_escKeyFl = false;
+	_vm->_events->_escKeyFl = false;
 
 	// Loop for playing voice
 	breakFlag = false;
 	do {
 		if (_specialSoundNum != 4 && !_skipRefreshFl)
-			_vm->_eventsManager->refreshScreenAndEvents();
-		if (_vm->_eventsManager->getMouseButton())
+			_vm->_events->refreshScreenAndEvents();
+		if (_vm->_events->getMouseButton())
 			break;
-		_vm->_eventsManager->refreshEvents();
-		if (_vm->_eventsManager->_escKeyFl)
+		_vm->_events->refreshEvents();
+		if (_vm->_events->_escKeyFl)
 			break;
 		// We only check the voice status if the file has been loaded properly
 		// This avoids skipping completely the talk animations in the Win95 UK Demo
@@ -624,7 +624,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	if (!_musicOffFl && _musicVolume > 2) {
 		setMODMusicVolume(_musicVolume);
 	}
-	_vm->_eventsManager->_escKeyFl = false;
+	_vm->_events->_escKeyFl = false;
 	_skipRefreshFl = false;
 	return true;
 }

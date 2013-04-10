@@ -202,7 +202,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 
 	bool flag = true;
 	bool fileFoundFl = false;
-	_vm->_fileManager->searchCat(file, RES_PIC, fileFoundFl);
+	_vm->_fileIO->searchCat(file, RES_PIC, fileFoundFl);
 	if (!fileFoundFl) {
 		if (!f.open(file))
 			error("loadScreen - %s", file.c_str());
@@ -263,7 +263,7 @@ void GraphicsManager::initColorTable(int minIndex, int maxIndex, byte *palette) 
  */
 void GraphicsManager::scrollScreen(int amount) {
 	int result = CLIP(amount, 0, SCREEN_WIDTH);
-	_vm->_eventsManager->_startPos.x = result;
+	_vm->_events->_startPos.x = result;
 	_scrollOffset = result;
 	_scrollPosX = result;
 }
@@ -316,7 +316,7 @@ void GraphicsManager::loadPCX640(byte *surface, const Common::String &file, byte
 		// Load PCX from within the PIC resource
 		if (!f.open("PIC.RES"))
 			error("Error opening PIC.RES.");
-		f.seek(_vm->_fileManager->_catalogPos);
+		f.seek(_vm->_fileIO->_catalogPos);
 	} else {
 		// Load stand alone PCX file
 		if (!f.open(file))
@@ -509,18 +509,18 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
 
 		// Set the transition palette and refresh the screen
 		setPaletteVGA256(palData2);
-		copy16BitRect(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		copy16BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		updateScreen();
 
 		// Added a delay in order to see the fading
-		_vm->_eventsManager->delay(20);
+		_vm->_events->delay(20);
 	}
 
 	// Set the final palette
 	setPaletteVGA256(palette);
 
 	// Refresh the screen
-	copy16BitRect(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	copy16BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	updateScreen();
 }
 
@@ -529,7 +529,7 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
  */
 void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface) {
 	byte palData[PALETTE_BLOCK_SIZE];
-	if ((step > 1) && (palette) && (!_vm->_eventsManager->_escKeyFl)) {
+	if ((step > 1) && (palette) && (!_vm->_events->_escKeyFl)) {
 		int fadeStep = step;
 		for (int fadeIndex = 0; fadeIndex < fadeStep; fadeIndex++) {
 			for (int palOffset = 0; palOffset < PALETTE_BLOCK_SIZE; palOffset += 3) {
@@ -539,10 +539,10 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 			}
 
 			setPaletteVGA256(palData);
-			copy16BitRect(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			copy16BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			updateScreen();
 
-			_vm->_eventsManager->delay(20);
+			_vm->_events->delay(20);
 		}
 	}
 
@@ -551,7 +551,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 		palData[i] = 0;
 
 	setPaletteVGA256(palData);
-	copy16BitRect(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	copy16BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
 	updateScreen();
 }
@@ -636,7 +636,7 @@ void GraphicsManager::setPaletteVGA256(const byte *palette) {
 
 void GraphicsManager::setPaletteVGA256WithRefresh(const byte *palette, const byte *surface) {
 	changePalette(palette);
-	copy16BitRect(surface, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	copy16BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	updateScreen();
 }
 
@@ -1007,31 +1007,31 @@ void GraphicsManager::drawVesaSprite(byte *surface, const byte *spriteData, int 
 
 void GraphicsManager::endDisplayBob() {
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_animationManager->_animBqe[idx]._enabledFl)
-			_vm->_objectsManager->hideBob(idx);
+		if (_vm->_animMan->_animBqe[idx]._enabledFl)
+			_vm->_objectsMan->hideBob(idx);
 	}
 
-	_vm->_eventsManager->refreshScreenAndEvents();
-	_vm->_eventsManager->refreshScreenAndEvents();
+	_vm->_events->refreshScreenAndEvents();
+	_vm->_events->refreshScreenAndEvents();
 
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_animationManager->_animBqe[idx]._enabledFl)
-			_vm->_objectsManager->resetBob(idx);
+		if (_vm->_animMan->_animBqe[idx]._enabledFl)
+			_vm->_objectsMan->resetBob(idx);
 	}
 
 	for (int idx = 1; idx <= 29; ++idx) {
-		_vm->_objectsManager->_lockedAnims[idx]._enableFl = false;
+		_vm->_objectsMan->_lockedAnims[idx]._enableFl = false;
 	}
 
 	for (int idx = 1; idx <= 20; ++idx) {
-		_vm->_animationManager->_animBqe[idx]._enabledFl = false;
+		_vm->_animMan->_animBqe[idx]._enabledFl = false;
 	}
 }
 
 void GraphicsManager::displayAllBob() {
 	for (int idx = 1; idx <= 20; ++idx) {
-		if (_vm->_animationManager->_animBqe[idx]._enabledFl)
-			_vm->_objectsManager->displayBob(idx);
+		if (_vm->_animMan->_animBqe[idx]._enabledFl)
+			_vm->_objectsMan->displayBob(idx);
 	}
 }
 
@@ -1114,21 +1114,21 @@ void GraphicsManager::displayDirtyRects() {
 		Common::Rect &r = _dirtyRects[idx];
 		Common::Rect dstRect;
 
-		if (_vm->_eventsManager->_breakoutFl) {
+		if (_vm->_events->_breakoutFl) {
 			copy8BitRect(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
 			dstRect.left = r.left * 2;
 			dstRect.top = r.top * 2 + 30;
 			dstRect.setWidth((r.right - r.left) * 2);
 			dstRect.setHeight((r.bottom - r.top) * 2);
-		} else if (r.right > _vm->_eventsManager->_startPos.x && r.left < _vm->_eventsManager->_startPos.x + SCREEN_WIDTH) {
-			r.left = MAX<int16>(r.left, _vm->_eventsManager->_startPos.x);
-			r.right = MIN<int16>(r.right, (int16)_vm->_eventsManager->_startPos.x + SCREEN_WIDTH);
+		} else if (r.right > _vm->_events->_startPos.x && r.left < _vm->_events->_startPos.x + SCREEN_WIDTH) {
+			r.left = MAX<int16>(r.left, _vm->_events->_startPos.x);
+			r.right = MIN<int16>(r.right, (int16)_vm->_events->_startPos.x + SCREEN_WIDTH);
 
 			// WORKAROUND: Original didn't lock the screen for access
 			lockScreen();
-			copy16BitRect(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_eventsManager->_startPos.x, r.top);
+			copy16BitRect(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_events->_startPos.x, r.top);
 
-			dstRect.left = r.left - _vm->_eventsManager->_startPos.x;
+			dstRect.left = r.left - _vm->_events->_startPos.x;
 			dstRect.top = r.top;
 			dstRect.setWidth(r.right - r.left);
 			dstRect.setHeight(r.bottom - r.top);
@@ -1173,8 +1173,8 @@ void GraphicsManager::displayRefreshRects() {
  * Fast Display of either a compressed or vesa sprite
  */
 void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int spriteIndex, bool addSegment) {
-	int width = _vm->_objectsManager->getWidth(spriteData, spriteIndex);
-	int height = _vm->_objectsManager->getHeight(spriteData, spriteIndex);
+	int width = _vm->_objectsMan->getWidth(spriteData, spriteIndex);
+	int height = _vm->_objectsMan->getHeight(spriteData, spriteIndex);
 
 	if (*spriteData == 78) {
 		drawCompressedSprite(_backBuffer, spriteData, xp + 300, yp + 300, spriteIndex, 0, 0, false);
@@ -1188,8 +1188,8 @@ void GraphicsManager::fastDisplay(const byte *spriteData, int xp, int yp, int sp
 }
 
 void GraphicsManager::fastDisplay2(const byte *objectData, int xp, int yp, int idx, bool addSegment) {
-	int width = _vm->_objectsManager->getWidth(objectData, idx);
-	int height = _vm->_objectsManager->getHeight(objectData, idx);
+	int width = _vm->_objectsMan->getWidth(objectData, idx);
+	int height = _vm->_objectsMan->getHeight(objectData, idx);
 	if (*objectData == 78) {
 		drawCompressedSprite(_backBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
 		drawCompressedSprite(_frontBuffer, objectData, xp + 300, yp + 300, idx, 0, 0, false);
@@ -1685,10 +1685,10 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 	Common::String filename = file + ".ini";
 	bool fileFoundFl = false;
 
-	byte *ptr = _vm->_fileManager->searchCat(filename, RES_INI, fileFoundFl);
+	byte *ptr = _vm->_fileIO->searchCat(filename, RES_INI, fileFoundFl);
 
 	if (!fileFoundFl) {
-		ptr = _vm->_fileManager->loadFile(filename);
+		ptr = _vm->_fileIO->loadFile(filename);
 	}
 
 	if (!mode) {
@@ -1696,11 +1696,11 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 		_vm->_globals->_levelSpriteBuf = _vm->_globals->freeMemory(_vm->_globals->_levelSpriteBuf);
 		if (initializeScreen) {
 			fileFoundFl = false;
-			_vm->_globals->_levelSpriteBuf = _vm->_fileManager->searchCat(filename, RES_SLI, fileFoundFl);
+			_vm->_globals->_levelSpriteBuf = _vm->_fileIO->searchCat(filename, RES_SLI, fileFoundFl);
 			if (!fileFoundFl) {
-				_vm->_globals->_levelSpriteBuf = _vm->_fileManager->loadFile(filename);
+				_vm->_globals->_levelSpriteBuf = _vm->_fileIO->loadFile(filename);
 			} else {
-				_vm->_globals->_levelSpriteBuf = _vm->_fileManager->loadFile("RES_SLI.RES");
+				_vm->_globals->_levelSpriteBuf = _vm->_fileIO->loadFile("RES_SLI.RES");
 			}
 		}
 	}
@@ -1711,14 +1711,14 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 		int dataOffset = 1;
 
 		do {
-			int dataVal1 = _vm->_scriptManager->handleOpcode(ptr + 20 * dataOffset);
+			int dataVal1 = _vm->_script->handleOpcode(ptr + 20 * dataOffset);
 			if (_vm->shouldQuit())
 				return;
 
 			if (dataVal1 == 2)
-				dataOffset =  _vm->_scriptManager->handleGoto((ptr + 20 * dataOffset));
+				dataOffset =  _vm->_script->handleGoto((ptr + 20 * dataOffset));
 			if (dataVal1 == 3)
-				dataOffset =  _vm->_scriptManager->handleIf(ptr, dataOffset);
+				dataOffset =  _vm->_script->handleIf(ptr, dataOffset);
 			if (dataOffset == -1)
 				error("Error, defective IFF");
 			if (dataVal1 == 1 || dataVal1 == 4)
@@ -1732,13 +1732,13 @@ void GraphicsManager::initScreen(const Common::String &file, int mode, bool init
 
 	filename = file + ".rep";
 	fileFoundFl = false;
-	byte *dataP = _vm->_fileManager->searchCat(filename, RES_REP, fileFoundFl);
+	byte *dataP = _vm->_fileIO->searchCat(filename, RES_REP, fileFoundFl);
 	if (!fileFoundFl)
-		dataP = _vm->_fileManager->loadFile(filename);
+		dataP = _vm->_fileIO->loadFile(filename);
 
 	_vm->_globals->_answerBuffer = dataP;
-	_vm->_objectsManager->_forceZoneFl = true;
-	_vm->_objectsManager->_changeVerbFl = false;
+	_vm->_objectsMan->_forceZoneFl = true;
+	_vm->_objectsMan->_changeVerbFl = false;
 }
 
 void GraphicsManager::displayScreen(bool initPalette) {
@@ -1751,7 +1751,7 @@ void GraphicsManager::displayScreen(bool initPalette) {
 		fillSurface(_frontBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
 
 	lockScreen();
-	copy16BitRect(_frontBuffer, _vm->_eventsManager->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	copy16BitRect(_frontBuffer, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	unlockScreen();
 
 	memcpy(_backBuffer, _frontBuffer, 614399);
@@ -1841,24 +1841,24 @@ void GraphicsManager::drawVerticalLine(byte *surface, int xp, int yp, int height
  */
 void GraphicsManager::backupScreen() {
 	// Allocate a new data block for the screen, if necessary
-	if (_vm->_graphicsManager->_backupScreen == NULL)
-		_vm->_graphicsManager->_backupScreen = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
+	if (_vm->_graphicsMan->_backupScreen == NULL)
+		_vm->_graphicsMan->_backupScreen = _vm->_globals->allocMemory(SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
 
 	// Backup the screen
-	Common::copy(_vm->_graphicsManager->_backBuffer, _vm->_graphicsManager->_backBuffer +
-		SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsManager->_backupScreen);
+	Common::copy(_vm->_graphicsMan->_backBuffer, _vm->_graphicsMan->_backBuffer +
+		SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsMan->_backupScreen);
 }
 
 /**
  * Restore a previously backed up screen
  */
 void GraphicsManager::restoreScreen() {
-	assert(_vm->_graphicsManager->_backupScreen);
+	assert(_vm->_graphicsMan->_backupScreen);
 
 	// Restore the screen and free the buffer
-	Common::copy(_vm->_graphicsManager->_backupScreen, _vm->_graphicsManager->_backupScreen +
-		SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsManager->_backBuffer);
-	_vm->_globals->freeMemory(_vm->_graphicsManager->_backupScreen);
+	Common::copy(_vm->_graphicsMan->_backupScreen, _vm->_graphicsMan->_backupScreen +
+		SCREEN_WIDTH * 2 * SCREEN_HEIGHT, _vm->_graphicsMan->_backBuffer);
+	_vm->_globals->freeMemory(_vm->_graphicsMan->_backupScreen);
 	_backupScreen = NULL;
 }
 
