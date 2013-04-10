@@ -43,6 +43,7 @@ DialogsManager::DialogsManager(HopkinsEngine *vm) {
 	_inventDisplayedFl = false;
 	_removeInventFl = false;
 	_inventX = _inventY = 0;
+	_oldInventX = 0;
 	_inventWidth = _inventHeight = 0;
 	_inventWin1 = NULL;
 	_inventBuf2 = NULL;
@@ -502,23 +503,23 @@ void DialogsManager::inventAnim() {
 		return;
 
 	if (_vm->_objectsManager->_eraseVisibleCounter && !_vm->_objectsManager->_visibleFl) {
-		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, _vm->_objectsManager->_oldInventoryPosX, 27, 48, 38,
-			_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_oldInventoryPosX, 27);
-		_vm->_graphicsManager->addDirtyRect(_vm->_objectsManager->_oldInventoryPosX, 27, _vm->_objectsManager->_oldInventoryPosX + 48, 65);
+		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, _oldInventX, 27, 48, 38, 
+			_vm->_graphicsManager->_frontBuffer, _oldInventX, 27);
+		_vm->_graphicsManager->addDirtyRect(_oldInventX, 27, _oldInventX + 48, 65);
 		--_vm->_objectsManager->_eraseVisibleCounter;
 	}
 
 	if (_vm->_objectsManager->_visibleFl) {
-		if (_vm->_objectsManager->_oldInventoryPosX <= 1)
-			_vm->_objectsManager->_oldInventoryPosX = 2;
-		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, _vm->_objectsManager->_oldInventoryPosX, 27, 48, 38,
-			_vm->_graphicsManager->_frontBuffer, _vm->_objectsManager->_oldInventoryPosX, 27);
+		if (_oldInventX <= 1)
+			_oldInventX = 2;
+		_vm->_graphicsManager->copySurface(_vm->_graphicsManager->_backBuffer, _oldInventX, 27, 48, 38,
+			_vm->_graphicsManager->_frontBuffer, _oldInventX, 27);
 
-		_vm->_graphicsManager->addDirtyRect(_vm->_objectsManager->_oldInventoryPosX, 27, _vm->_objectsManager->_oldInventoryPosX + 48, 65);
+		_vm->_graphicsManager->addDirtyRect(_oldInventX, 27, _oldInventX + 48, 65);
 		int newOffset = _vm->_graphicsManager->_scrollOffset + 2;
 		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _inventoryIcons, newOffset + 300, 327, 0);
 		_vm->_graphicsManager->addDirtyRect(newOffset, 27, newOffset + 45, 62);
-		_vm->_objectsManager->_oldInventoryPosX = newOffset;
+		_oldInventX = newOffset;
 	}
 
 	if (_vm->_globals->_saveData->_data[svField357] == 1) {

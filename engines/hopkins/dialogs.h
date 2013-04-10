@@ -46,6 +46,7 @@ private:
 	bool _removeInventFl;
 	int _inventX, _inventY;
 	int _inventWidth, _inventHeight;
+	int _oldInventX;
 
 	HopkinsEngine *_vm;
 

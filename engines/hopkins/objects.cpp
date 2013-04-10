@@ -75,7 +75,6 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	_borderPos = Common::Point(0, 0);
 	_borderSpriteIndex = 0;
 	_saveLoadX = _saveLoadY = 0;
-	_oldInventoryPosX = _oldInventoryPosY = 0;
 	_oldCharacterPosX = _oldCharacterPosY = 0;
 	_eraseVisibleCounter = 0;
 	_saveLoadSprite = NULL;

@@ -227,7 +227,6 @@ public:
 	int _eraseVisibleCounter;
 	int _curObjectIndex;
 	int _startSpriteIndex;
-	int _oldInventoryPosX, _oldInventoryPosY;
 	int _saveLoadX, _saveLoadY;
 	int _mapCarPosX, _mapCarPosY;
 	int _oldCharacterPosX, _oldCharacterPosY;
