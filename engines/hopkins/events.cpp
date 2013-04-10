@@ -447,7 +447,7 @@ void EventsManager::refreshScreenAndEvents() {
 		}
 		if (externalLoopFl)
 			break;
-	} while (!_vm->shouldQuit() && _vm->_globals->_eventMode == 3 && _rateCounter <= 15);
+	} while (!_vm->shouldQuit() && _vm->_globals->_eventMode == EVENTMODE_CREDITS && _rateCounter <= 15);
 	_vm->_globals->_speed = 2;
 	_rateCounter = 0;
 	if (!_vm->_graphicsMan->_largeScreenFl || _vm->_graphicsMan->_scrollStatus == 1) {
