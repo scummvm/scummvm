@@ -400,19 +400,19 @@ void ObjectsManager::displaySprite() {
 
 	if (!_charactersEnabledFl) {
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
-			if (Liste[idx]._visibleFl) {
-				clipX = Liste[idx]._posX - 2;
+			ListeItem *curList = &Liste[idx];
+			if (curList->_visibleFl) {
+				clipX = curList->_posX - 2;
 				if (clipX < _vm->_graphicsMan->_minX)
 					clipX = _vm->_graphicsMan->_minX;
 
-				clipY = Liste[idx]._posY - 2;
+				clipY = curList->_posY - 2;
 				if (clipY < _vm->_graphicsMan->_minY)
 					clipY = _vm->_graphicsMan->_minY;
 
 				_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, clipX, clipY,
-					Liste[idx]._width + 4, Liste[idx]._height + 4,
-					_vm->_graphicsMan->_frontBuffer, clipX, clipY);
-				Liste[idx]._visibleFl = false;
+					curList->_width + 4, curList->_height + 4, _vm->_graphicsMan->_frontBuffer, clipX, clipY);
+				curList->_visibleFl = false;
 			}
 		}
 	}
@@ -424,10 +424,11 @@ void ObjectsManager::displaySprite() {
 		// Handle drawing characters on the screen
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
 			Liste[idx]._visibleFl = false;
-			if (_sprite[idx]._animationType == 1) {
+			SpriteItem *curSpr = &_sprite[idx];
+			if (curSpr->_animationType == 1) {
 				computeSprite(idx);
-				if (_sprite[idx]._activeFl)
-					beforeSort(SORT_SPRITE, idx, _sprite[idx]._height + _sprite[idx]._destY);
+				if (curSpr->_activeFl)
+					beforeSort(SORT_SPRITE, idx, curSpr->_height + curSpr->_destY);
 			}
 		}
 
@@ -487,9 +488,10 @@ void ObjectsManager::displaySprite() {
 
 	// Reset the Sort array
 	for (int idx = 0; idx < 50; ++idx) {
-		_sortedDisplay[idx]._sortMode = SORT_NONE;
-		_sortedDisplay[idx]._index = 0;
-		_sortedDisplay[idx]._priority = 0;
+		SortItem *disp = &_sortedDisplay[idx];
+		disp->_sortMode = SORT_NONE;
+		disp->_index = 0;
+		disp->_priority = 0;
 	}
 
 	_sortedDisplayCount = 0;
@@ -786,9 +788,10 @@ void ObjectsManager::initBobVariables(int idx) {
 	bob->_zooInmFactor = posZoom;
 	bob->_zoomOutFactor = negZoom;
 
-	Liste2[idx]._visibleFl = true;
-	Liste2[idx]._posX = newX;
-	Liste2[idx]._posY = newY;
+	ListeItem *curList = &Liste2[idx];
+	curList->_visibleFl = true;
+	curList->_posX = newX;
+	curList->_posY = newY;
 
 	int width = getWidth(bob->_spriteData, bob->_frameIndex);
 	int height = getHeight(bob->_spriteData, bob->_frameIndex);
@@ -801,8 +804,8 @@ void ObjectsManager::initBobVariables(int idx) {
 		height = _vm->_graphicsMan->zoomOut(height, negZoom);
 	}
 
-	Liste2[idx]._width = width;
-	Liste2[idx]._height = height;
+	curList->_width = width;
+	curList->_height = height;
 	bob->_oldWidth = width;
 	bob->_oldHeight = height;
 }
@@ -1097,28 +1100,23 @@ void ObjectsManager::displayBobAnim() {
 
 	for (int i = 1; i <= 35; i++) {
 		BobItem *curBob = &_bob[i];
+		ListeItem *curList = &Liste2[i];
 		if (i > 20 || !_charactersEnabledFl) {
 			if ((curBob->_bobMode == 10) && (curBob->_bobMode10)) {
 				if ((curBob->_bobModeChange != 2) && (curBob->_bobModeChange != 4)) {
-					if (Liste2[i]._visibleFl) {
-						_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer,
-							Liste2[i]._posX, Liste2[i]._posY,
-							Liste2[i]._width, Liste2[i]._height,
-							_vm->_graphicsMan->_frontBuffer, Liste2[i]._posX,
-							Liste2[i]._posY);
-						Liste2[i]._visibleFl = false;
+					if (curList->_visibleFl) {
+						_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, curList->_posX, curList->_posY,
+							curList->_width, curList->_height, _vm->_graphicsMan->_frontBuffer, curList->_posX, curList->_posY);
+						curList->_visibleFl = false;
 					}
 				}
 			}
 
 			if (curBob->_bobMode == 11) {
-				if (Liste2[i]._visibleFl) {
-					_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer,
-						Liste2[i]._posX, Liste2[i]._posY,
-						Liste2[i]._width, Liste2[i]._height,
-						_vm->_graphicsMan->_frontBuffer,
-						Liste2[i]._posX, Liste2[i]._posY);
-					Liste2[i]._visibleFl = false;
+				if (curList->_visibleFl) {
+					_vm->_graphicsMan->copySurface(_vm->_graphicsMan->_backBuffer, curList->_posX, curList->_posY,
+						curList->_width, curList->_height, _vm->_graphicsMan->_frontBuffer, curList->_posX, curList->_posY);
+					curList->_visibleFl = false;
 				}
 
 				curBob->_bobMode = 0;
@@ -2537,6 +2535,8 @@ void ObjectsManager::initBorder(int zoneIdx) {
  */
 void ObjectsManager::nextObjectIcon(int idx) {
 	int cursorId = _vm->_events->_mouseCursorId;
+	ObjectAuthIcon *curAuthIco = &_objectAuthIcons[_vm->_globals->_inventory[idx]];
+
 	if (cursorId == 0 || cursorId == 2 || cursorId == 3 || cursorId == 16)
 		return;
 
@@ -2547,13 +2547,13 @@ void ObjectsManager::nextObjectIcon(int idx) {
 	do {
 		if (nextCursorId == 2 || nextCursorId == 5 || nextCursorId == 6) {
 			_vm->_events->_mouseCursorId = 6;
-			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag1 == 1)
+			if (curAuthIco->_flag1 == 1)
 				return;
 			nextCursorId++;
 		}
 		if (nextCursorId == 7) {
 			_vm->_events->_mouseCursorId = 7;
-			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag2 == 1)
+			if (curAuthIco->_flag2 == 1)
 				return;
 			nextCursorId++;
 		}
@@ -2563,35 +2563,35 @@ void ObjectsManager::nextObjectIcon(int idx) {
 		}
 		if (nextCursorId == 9 || nextCursorId == 10) {
 			_vm->_events->_mouseCursorId = 10;
-			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag6 == 1)
+			if (curAuthIco->_flag6 == 1)
 				return;
 			nextCursorId = 11;
 		}
 
 		if (nextCursorId == 11) {
 			_vm->_events->_mouseCursorId = 11;
-			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag3 == 1)
+			if (curAuthIco->_flag3 == 1)
 				return;
 			nextCursorId++;
 		}
 
 		if (nextCursorId == 12 || nextCursorId == 13) {
 			_vm->_events->_mouseCursorId = 13;
-			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag4 == 1)
+			if (curAuthIco->_flag4 == 1)
 				return;
 			nextCursorId = 14;
 		}
 
 		if (nextCursorId == 14 || nextCursorId == 15) {
 			_vm->_events->_mouseCursorId = 15;
-			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag5 == 1)
+			if (curAuthIco->_flag5 == 1)
 				return;
 			nextCursorId = 23;
 		}
 
 		if (nextCursorId >= 16 && nextCursorId <= 23) {
 			_vm->_events->_mouseCursorId = 23;
-			if (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag5 == 2)
+			if (curAuthIco->_flag5 == 2)
 				return;
 			nextCursorId = 24;
 		}
@@ -2601,7 +2601,7 @@ void ObjectsManager::nextObjectIcon(int idx) {
 		}
 
 		nextCursorId = 6;
-	} while (_objectAuthIcons[_vm->_globals->_inventory[idx]]._flag6 != 2);
+	} while (curAuthIco->_flag6 != 2);
 }
 
 void ObjectsManager::takeInventoryObject(int idx) {
@@ -3205,20 +3205,21 @@ void ObjectsManager::loadLinkFile(const Common::String &file, bool skipDetails) 
 				byte *curDataPtr = &ptr[idx + 4];
 				int curDataIdx = 0;
 				for (int i = 1; i <= 100; i++) {
-					_vm->_linesMan->_zone[i]._destX = 0;
-					_vm->_linesMan->_zone[i]._destY = 0;
-					_vm->_linesMan->_zone[i]._spriteIndex = 0;
-					_vm->_linesMan->_zone[i]._verbFl1 = 0;
-					_vm->_linesMan->_zone[i]._verbFl2 = 0;
-					_vm->_linesMan->_zone[i]._verbFl3 = 0;
-					_vm->_linesMan->_zone[i]._verbFl4 = 0;
-					_vm->_linesMan->_zone[i]._verbFl5 = 0;
-					_vm->_linesMan->_zone[i]._verbFl6 = 0;
-					_vm->_linesMan->_zone[i]._verbFl7 = 0;
-					_vm->_linesMan->_zone[i]._verbFl8 = 0;
-					_vm->_linesMan->_zone[i]._verbFl9 = 0;
-					_vm->_linesMan->_zone[i]._verbFl10 = 0;
-					_vm->_linesMan->_zone[i]._messageId = 0;
+					ZoneItem *curZone = &_vm->_linesMan->_zone[i];
+					curZone->_destX = 0;
+					curZone->_destY = 0;
+					curZone->_spriteIndex = 0;
+					curZone->_verbFl1 = 0;
+					curZone->_verbFl2 = 0;
+					curZone->_verbFl3 = 0;
+					curZone->_verbFl4 = 0;
+					curZone->_verbFl5 = 0;
+					curZone->_verbFl6 = 0;
+					curZone->_verbFl7 = 0;
+					curZone->_verbFl8 = 0;
+					curZone->_verbFl9 = 0;
+					curZone->_verbFl10 = 0;
+					curZone->_messageId = 0;
 				}
 
 				int curLineIdx = 0;
@@ -3240,25 +3241,27 @@ void ObjectsManager::loadLinkFile(const Common::String &file, bool skipDetails) 
 						break;
 				}
 				for (int i = 1; i <= 100; i++) {
-					_vm->_linesMan->_zone[i]._destX = READ_LE_INT16(curDataPtr + 2 * curDataIdx);
-					_vm->_linesMan->_zone[i]._destY = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 2);
-					_vm->_linesMan->_zone[i]._spriteIndex = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 4);
+					ZoneItem *curZone = &_vm->_linesMan->_zone[i];
+					curZone->_destX = READ_LE_INT16(curDataPtr + 2 * curDataIdx);
+					curZone->_destY = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 2);
+					curZone->_spriteIndex = READ_LE_INT16(curDataPtr + 2 * curDataIdx + 4);
 					curDataIdx += 3;
 				}
 
 				byte *verbData = ptr + idx + (10 * curLineIdx + 606) + 4;
 				for (int i = 1; i <= 100; i++) {
 					int j = (i - 1) * 10;
-					_vm->_linesMan->_zone[i]._verbFl1 = verbData[j];
-					_vm->_linesMan->_zone[i]._verbFl2 = verbData[j + 1];
-					_vm->_linesMan->_zone[i]._verbFl3 = verbData[j + 2];
-					_vm->_linesMan->_zone[i]._verbFl4 = verbData[j + 3];
-					_vm->_linesMan->_zone[i]._verbFl5 = verbData[j + 4];
-					_vm->_linesMan->_zone[i]._verbFl6 = verbData[j + 5];
-					_vm->_linesMan->_zone[i]._verbFl7 = verbData[j + 6];
-					_vm->_linesMan->_zone[i]._verbFl8 = verbData[j + 7];
-					_vm->_linesMan->_zone[i]._verbFl9 = verbData[j + 8];
-					_vm->_linesMan->_zone[i]._verbFl10 = verbData[j + 9];
+					ZoneItem *curZone = &_vm->_linesMan->_zone[i];
+					curZone->_verbFl1 = verbData[j];
+					curZone->_verbFl2 = verbData[j + 1];
+					curZone->_verbFl3 = verbData[j + 2];
+					curZone->_verbFl4 = verbData[j + 3];
+					curZone->_verbFl5 = verbData[j + 4];
+					curZone->_verbFl6 = verbData[j + 5];
+					curZone->_verbFl7 = verbData[j + 6];
+					curZone->_verbFl8 = verbData[j + 7];
+					curZone->_verbFl9 = verbData[j + 8];
+					curZone->_verbFl10 = verbData[j + 9];
 				}
 				int dep = 1010;
 				for (int i = 1; i <= 100; i++) {
@@ -3402,111 +3405,114 @@ void ObjectsManager::checkEventBobAnim(int idx, int animIdx, int animDataIdx, in
 }
 
 void ObjectsManager::disableVerb(int idx, int a2) {
+	ZoneItem *curZone = &_vm->_linesMan->_zone[idx];
 	switch (a2) {
 	case 6:
 	case 16:
-		_vm->_linesMan->_zone[idx]._verbFl1 = 0;
+		curZone->_verbFl1 = 0;
 		break;
 	case 7:
-		_vm->_linesMan->_zone[idx]._verbFl2 = 0;
+		curZone->_verbFl2 = 0;
 		break;
 	case 5:
 	case 8:
-		_vm->_linesMan->_zone[idx]._verbFl3 = 0;
+		curZone->_verbFl3 = 0;
 		break;
 	case 9:
 	case 17:
 	case 24:
-		_vm->_linesMan->_zone[idx]._verbFl4 = 0;
+		curZone->_verbFl4 = 0;
 		break;
 	case 10:
 	case 18:
-		_vm->_linesMan->_zone[idx]._verbFl5 = 0;
+		curZone->_verbFl5 = 0;
 		break;
 	case 11:
 	case 19:
-		_vm->_linesMan->_zone[idx]._verbFl6 = 0;
+		curZone->_verbFl6 = 0;
 		break;
 	case 12:
 	case 20:
-		_vm->_linesMan->_zone[idx]._verbFl7 = 0;
+		curZone->_verbFl7 = 0;
 		break;
 	case 13:
 	case 22:
-		_vm->_linesMan->_zone[idx]._verbFl8 = 0;
+		curZone->_verbFl8 = 0;
 	case 14:
 	case 21:
 	case 25:
-		_vm->_linesMan->_zone[idx]._verbFl9 = 0;
+		curZone->_verbFl9 = 0;
 		break;
 	case 15:
-		_vm->_linesMan->_zone[idx]._verbFl10 = 0;
+		curZone->_verbFl10 = 0;
 		break;
 	}
 	_changeVerbFl = true;
 }
 
 void ObjectsManager::enableVerb(int idx, int a2) {
+	ZoneItem *curZone = &_vm->_linesMan->_zone[idx];
+
 	switch (a2) {
 	case 5:
-		_vm->_linesMan->_zone[idx]._verbFl3 = 2;
+		curZone->_verbFl3 = 2;
 		break;
 	case 6:
-		_vm->_linesMan->_zone[idx]._verbFl1 = 1;
+		curZone->_verbFl1 = 1;
 		break;
 	case 7:
-		_vm->_linesMan->_zone[idx]._verbFl2 = 1;
+		curZone->_verbFl2 = 1;
 		break;
 	case 8:
-		_vm->_linesMan->_zone[idx]._verbFl3 = 1;
+		curZone->_verbFl3 = 1;
 		break;
 	case 9:
-		_vm->_linesMan->_zone[idx]._verbFl4 = 1;
+		curZone->_verbFl4 = 1;
 		break;
 	case 10:
-		_vm->_linesMan->_zone[idx]._verbFl5 = 1;
+		curZone->_verbFl5 = 1;
 		break;
 	case 11:
-		_vm->_linesMan->_zone[idx]._verbFl6 = 1;
+		curZone->_verbFl6 = 1;
 		break;
 	case 12:
-		_vm->_linesMan->_zone[idx]._verbFl7 = 1;
+		curZone->_verbFl7 = 1;
 		break;
 	case 13:
-		_vm->_linesMan->_zone[idx]._verbFl8 = 1;
+		curZone->_verbFl8 = 1;
 		break;
 	case 14:
-		_vm->_linesMan->_zone[idx]._verbFl8 = 1;
+		curZone->_verbFl8 = 1;
 		break;
 	case 15:
-		_vm->_linesMan->_zone[idx]._verbFl9 = 1;
+		curZone->_verbFl9 = 1;
 		break;
 	case 16:
-		_vm->_linesMan->_zone[idx]._verbFl1 = 2;
+		curZone->_verbFl1 = 2;
 		break;
 	case 17:
-		_vm->_linesMan->_zone[idx]._verbFl4 = 2;
+		curZone->_verbFl4 = 2;
 		break;
 	case 18:
-		_vm->_linesMan->_zone[idx]._verbFl5 = 2;
+		curZone->_verbFl5 = 2;
 		break;
 	case 19:
-		_vm->_linesMan->_zone[idx]._verbFl6 = 2;
+		curZone->_verbFl6 = 2;
 		break;
 	case 20:
-		_vm->_linesMan->_zone[idx]._verbFl7 = 2;
+		curZone->_verbFl7 = 2;
 		break;
 	case 21:
-		_vm->_linesMan->_zone[idx]._verbFl9 = 2;
+		curZone->_verbFl9 = 2;
 		break;
 	case 22:
-		_vm->_linesMan->_zone[idx]._verbFl8 = 2;
+		curZone->_verbFl8 = 2;
 		break;
 	case 24:
-		_vm->_linesMan->_zone[idx]._verbFl4 = 3;
+		curZone->_verbFl4 = 3;
 		break;
 	case 25:
-		_vm->_linesMan->_zone[idx]._verbFl9 = 2;
+		curZone->_verbFl9 = 2;
 		break;
 	}
 }
@@ -3988,21 +3994,22 @@ void ObjectsManager::loadHidingItems(const Common::String &file) {
 	_hidingItemData[1] = spriteData;
 	int curBufIdx = 60;
 	for (int i = 0; i <= 21; i++) {
-		_hidingItem[i]._spriteIndex = READ_LE_INT16((uint16 *)ptr + curBufIdx);
-		_hidingItem[i]._x = READ_LE_INT16((uint16 *)ptr + curBufIdx + 1);
-		_hidingItem[i]._y = READ_LE_INT16((uint16 *)ptr + curBufIdx + 2);
-		_hidingItem[i]._yOffset = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
+		HidingItem *hid = &_hidingItem[i];
+		hid->_spriteIndex = READ_LE_INT16((uint16 *)ptr + curBufIdx);
+		hid->_x = READ_LE_INT16((uint16 *)ptr + curBufIdx + 1);
+		hid->_y = READ_LE_INT16((uint16 *)ptr + curBufIdx + 2);
+		hid->_yOffset = READ_LE_INT16((uint16 *)ptr + curBufIdx + 4);
 		if (spriteData == NULL) {
-			_hidingItem[i]._useCount = 0;
+			hid->_useCount = 0;
 		} else {
-			_hidingItem[i]._spriteData = spriteData;
-			_hidingItem[i]._width = getWidth(spriteData, _hidingItem[i]._spriteIndex);
-			_hidingItem[i]._height = getHeight(spriteData, _hidingItem[i]._spriteIndex);
-			_hidingItem[i]._useCount = 1;
+			hid->_spriteData = spriteData;
+			hid->_width = getWidth(spriteData, hid->_spriteIndex);
+			hid->_height = getHeight(spriteData, hid->_spriteIndex);
+			hid->_useCount = 1;
 		}
 
-		if ( !_hidingItem[i]._x && !_hidingItem[i]._y && !_hidingItem[i]._spriteIndex)
-			_hidingItem[i]._useCount = 0;
+		if ( !hid->_x && !hid->_y && !hid->_spriteIndex)
+			hid->_useCount = 0;
 		curBufIdx += 5;
 	}
 	enableHidingBehavior();
@@ -4011,25 +4018,27 @@ void ObjectsManager::loadHidingItems(const Common::String &file) {
 
 void ObjectsManager::initVBob() {
 	for (int idx = 0; idx < 30; ++idx) {
-		VBob[idx]._displayMode = 0;
-		VBob[idx]._xp = 0;
-		VBob[idx]._yp = 0;
-		VBob[idx]._frameIndex = 0;
-		VBob[idx]._surface = NULL;
-		VBob[idx]._spriteData = NULL;
-		VBob[idx]._oldSpriteData = NULL;
+		VBobItem *vbob = &VBob[idx];
+		vbob->_displayMode = 0;
+		vbob->_xp = 0;
+		vbob->_yp = 0;
+		vbob->_frameIndex = 0;
+		vbob->_surface = NULL;
+		vbob->_spriteData = NULL;
+		vbob->_oldSpriteData = NULL;
 	}
 }
 
 void ObjectsManager::clearVBob() {
 	for (int idx = 0; idx < 30; ++idx) {
-		VBob[idx]._displayMode = 0;
-		VBob[idx]._xp = 0;
-		VBob[idx]._yp = 0;
-		VBob[idx]._frameIndex = 0;
-		VBob[idx]._surface = _vm->_globals->freeMemory(VBob[idx]._surface);
-		VBob[idx]._spriteData = NULL;
-		VBob[idx]._oldSpriteData = NULL;
+		VBobItem *vbob = &VBob[idx];
+		vbob->_displayMode = 0;
+		vbob->_xp = 0;
+		vbob->_yp = 0;
+		vbob->_frameIndex = 0;
+		vbob->_surface = _vm->_globals->freeMemory(vbob->_surface);
+		vbob->_spriteData = NULL;
+		vbob->_oldSpriteData = NULL;
 	}
 }
 
