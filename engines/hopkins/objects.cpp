@@ -527,39 +527,37 @@ void ObjectsManager::displaySprite() {
 
 	// Loop to draw any on-screen text
 	for (int idx = 0; idx <= 10; ++idx) {
-		if (_vm->_fontMan->_text[idx]._textOnFl) {
-			if ((_vm->_fontMan->_text[idx]._textType < 2) || (_vm->_fontMan->_text[idx]._textType > 3))
-				_vm->_fontMan->box(idx,
-					_vm->_fontMan->_text[idx]._messageId, _vm->_fontMan->_text[idx]._filename,
-					_vm->_events->_startPos.x + _vm->_fontMan->_text[idx]._pos.x, _vm->_fontMan->_text[idx]._pos.y);
+		Hopkins::TxtItem *curTxt = &_vm->_fontMan->_text[idx];
+		if (curTxt->_textOnFl) {
+			Hopkins::TxtItemList *curTxtList = &_vm->_fontMan->_textList[idx];
+			if ((curTxt->_textType < 2) || (curTxt->_textType > 3))
+				_vm->_fontMan->box(idx, curTxt->_messageId, curTxt->_filename, _vm->_events->_startPos.x + curTxt->_pos.x, curTxt->_pos.y);
 			else
-				_vm->_fontMan->box(idx,
-					_vm->_fontMan->_text[idx]._messageId, _vm->_fontMan->_text[idx]._filename,
-					_vm->_fontMan->_text[idx]._pos.x, _vm->_fontMan->_text[idx]._pos.y);
-			_vm->_fontMan->_textList[idx]._enabledFl = true;
+				_vm->_fontMan->box(idx, curTxt->_messageId, curTxt->_filename, curTxt->_pos.x, curTxt->_pos.y);
+			curTxtList->_enabledFl = true;
 
-			if ((_vm->_fontMan->_text[idx]._textType < 2) || (_vm->_fontMan->_text[idx]._textType > 3))
-				_vm->_fontMan->_textList[idx]._pos.x = _vm->_events->_startPos.x + _vm->_fontMan->_text[idx]._pos.x;
+			if ((curTxt->_textType < 2) || (curTxt->_textType > 3))
+				curTxtList->_pos.x = _vm->_events->_startPos.x + curTxt->_pos.x;
 			else
-				_vm->_fontMan->_textList[idx]._pos.x = _vm->_fontMan->_text[idx]._pos.x;
+				curTxtList->_pos.x = curTxt->_pos.x;
 
-			_vm->_fontMan->_textList[idx]._pos.y = _vm->_fontMan->_text[idx]._pos.y;
-			_vm->_fontMan->_textList[idx]._width = _vm->_fontMan->_text[idx]._width;
-			_vm->_fontMan->_textList[idx]._height = _vm->_fontMan->_text[idx]._height;
+			curTxtList->_pos.y = curTxt->_pos.y;
+			curTxtList->_width = curTxt->_width;
+			curTxtList->_height = curTxt->_height;
 
-			if (_vm->_fontMan->_textList[idx]._pos.x < _vm->_graphicsMan->_minX)
-				_vm->_fontMan->_textList[idx]._pos.x = _vm->_graphicsMan->_minX - 1;
-			if (_vm->_fontMan->_textList[idx]._pos.y < _vm->_graphicsMan->_minY)
-				_vm->_fontMan->_textList[idx]._pos.y = _vm->_graphicsMan->_minY - 1;
+			if (curTxtList->_pos.x < _vm->_graphicsMan->_minX)
+				curTxtList->_pos.x = _vm->_graphicsMan->_minX - 1;
+			if (curTxtList->_pos.y < _vm->_graphicsMan->_minY)
+				curTxtList->_pos.y = _vm->_graphicsMan->_minY - 1;
 
-			int posX = _vm->_fontMan->_textList[idx]._pos.x;
-			if (_vm->_fontMan->_textList[idx]._width + posX > _vm->_graphicsMan->_maxX)
-				_vm->_fontMan->_textList[idx]._width = _vm->_graphicsMan->_maxX - posX;
-			int posY = _vm->_fontMan->_textList[idx]._pos.y;
-			if (_vm->_fontMan->_textList[idx]._height + posY > _vm->_graphicsMan->_maxY)
-				_vm->_fontMan->_textList[idx]._height = _vm->_graphicsMan->_maxY - posY;
-			if (_vm->_fontMan->_textList[idx]._width <= 0 || _vm->_fontMan->_textList[idx]._height <= 0)
-				_vm->_fontMan->_textList[idx]._enabledFl = false;
+			int posX = curTxtList->_pos.x;
+			if (curTxtList->_width + posX > _vm->_graphicsMan->_maxX)
+				curTxtList->_width = _vm->_graphicsMan->_maxX - posX;
+			int posY = curTxtList->_pos.y;
+			if (curTxtList->_height + posY > _vm->_graphicsMan->_maxY)
+				curTxtList->_height = _vm->_graphicsMan->_maxY - posY;
+			if (curTxtList->_width <= 0 || curTxtList->_height <= 0)
+				curTxtList->_enabledFl = false;
 		}
 	}
 
