@@ -185,10 +185,8 @@ void GraphicsManager::loadVgaImage(const Common::String &file) {
 	setScreenWidth(320);
 	_maxX = 320;
 
-	lockScreen();
 	copy16bFromSurfaceScaleX2(_frontBuffer);
 	addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-	unlockScreen();
 
 	fadeInBreakout();
 }
@@ -603,9 +601,7 @@ void GraphicsManager::fadeOutDefaultLength(const byte *surface) {
  */
 void GraphicsManager::fadeInBreakout() {
 	setPaletteVGA256(_palette);
-	lockScreen();
 	copy16bFromSurfaceScaleX2(_frontBuffer);
-	unlockScreen();
 	updateScreen();
 }
 
@@ -617,10 +613,7 @@ void GraphicsManager::fadeOutBreakout() {
 
 	memset(palette, 0, PALETTE_EXT_BLOCK_SIZE);
 	setPaletteVGA256(palette);
-
-	lockScreen();
 	copy16bFromSurfaceScaleX2(_frontBuffer);
-	unlockScreen();
 	updateScreen();
 }
 
@@ -1198,6 +1191,8 @@ void GraphicsManager::copy16bFromSurfaceScaleX2(const byte *surface) {
 	byte *palPtr;
 	int curPixel;
 
+	lockScreen();
+
 	assert(_videoPtr);
 	const byte *curSurface = surface;
 	byte *destPtr = 30 * _screenLineSize + (byte *)_videoPtr;
@@ -1213,6 +1208,8 @@ void GraphicsManager::copy16bFromSurfaceScaleX2(const byte *surface) {
 		}
 		destPtr = _screenLineSize * 2 + oldDestPtr;
 	}
+
+	unlockScreen();
 }
 
 void GraphicsManager::restoreSurfaceRect(byte *destSurface, const byte *src, int xp, int yp, int width, int height) {
