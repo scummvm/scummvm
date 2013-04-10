@@ -100,8 +100,6 @@ void DialogsManager::showOptionsDialog() {
 	do {
 		if (_vm->_eventsManager->getMouseButton()) {
 			Common::Point mousePos(_vm->_eventsManager->getMouseX(), _vm->_eventsManager->getMouseY());
-			mousePos.x = _vm->_eventsManager->getMouseX();
-			mousePos.y = _vm->_eventsManager->getMouseY();
 
 			if (!_vm->_soundManager->_musicOffFl) {
 				if (mousePos.x >= scrollOffset + 300 && mousePos.y > 113 && mousePos.x <= scrollOffset + 327 && mousePos.y <= 138) {
