@@ -66,15 +66,15 @@ void DialogsManager::loadIcons() {
 }
 
 void DialogsManager::drawInvent(Common::Point oldBorder, int oldBorderSpriteIndex, Common::Point newBorder, int newBorderSpriteIndex) {
-	if (!_vm->_dialogsManager->_inventDisplayedFl)
+	if (!_inventDisplayedFl)
 		return;
 
 	_vm->_graphicsManager->restoreSurfaceRect(_vm->_graphicsManager->_frontBuffer, _inventWin1, _inventX, _inventY, _inventWidth, _inventHeight);
 	if (oldBorder.x && oldBorder.y)
-		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_dialogsManager->_inventBuf2, oldBorder.x + 300, oldBorder.y + 300, oldBorderSpriteIndex + 1);
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _inventBuf2, oldBorder.x + 300, oldBorder.y + 300, oldBorderSpriteIndex + 1);
 	if (newBorder.x && newBorder.y)
-		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _vm->_dialogsManager->_inventBuf2, newBorder.x + 300, newBorder.y + 300, newBorderSpriteIndex);
-	_vm->_graphicsManager->addDirtyRect(_vm->_dialogsManager->_inventX, _vm->_dialogsManager->_inventY, _vm->_dialogsManager->_inventX + _vm->_dialogsManager->_inventWidth, _vm->_dialogsManager->_inventY + _vm->_dialogsManager->_inventHeight);
+		_vm->_graphicsManager->drawVesaSprite(_vm->_graphicsManager->_frontBuffer, _inventBuf2, newBorder.x + 300, newBorder.y + 300, newBorderSpriteIndex);
+	_vm->_graphicsManager->addDirtyRect(_inventX, _inventY, _inventX + _inventWidth, _inventY + _inventHeight);
 }
 
 void DialogsManager::showOptionsDialog() {
