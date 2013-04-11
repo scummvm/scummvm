@@ -48,7 +48,7 @@ private:
 	HopkinsEngine *_vm;
 
 	void pollEvents();
-	void handleKey(Common::Event &event);
+	void handleKey(const Common::Event &event);
 	void checkForNextFrameCounter();
 	void updateCursor();
 
@@ -75,7 +75,7 @@ public:
 	void initMouseData();
 
 	void delay(int totalMilli);
-	void changeMouseCursor(const int id);
+	void changeMouseCursor(int id);
 	void refreshEvents();
 	int waitKeyPress();
 	int getMouseX();

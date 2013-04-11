@@ -85,7 +85,7 @@ private:
 	void displayBricks();
 	void displayGamesSubMenu();
 	int  displayHiscores();
-	void displayHiscoreLine(byte *objectData, int x, int y, int curChar);
+	void displayHiscoreLine(const byte *objectData, int x, int y, int curChar);
 	void displayMessage(int xp, int yp, int textIdx);
 	void displayScore();
 	void displayScoreChar(int charPos, int charDisp);

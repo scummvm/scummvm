@@ -109,7 +109,7 @@ struct LockAnimItem {
 };
 
 struct VBobItem {
-	byte *_spriteData;
+	const byte *_spriteData;
 	int _displayMode;
 	int _xp;
 	int _yp;
@@ -118,7 +118,7 @@ struct VBobItem {
 	int _oldX;
 	int _oldY;
 	int _oldFrameIndex;
-	byte *_oldSpriteData;
+	const byte *_oldSpriteData;
 };
 
 struct ListeItem {
@@ -315,13 +315,13 @@ public:
 	int getObjectWidth()  { return _objectWidth; }
 	int getObjectHeight() { return _objectHeight; }
 
-	void showSpecialActionAnimationWithFlip(byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl);
-	void showSpecialActionAnimation(byte *spriteData, const Common::String &animString, int speed);
+	void showSpecialActionAnimationWithFlip(const byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl);
+	void showSpecialActionAnimation(const byte *spriteData, const Common::String &animString, int speed);
 	void checkEventBobAnim(int idx, int animIdx, int animDataIdx, int a4);
 	void setMultiBobAnim(int idx1, int idx2, int anim1Idx, int anim2Idx);
 	void loadObjectIniFile();
 	void quickDisplayBobSprite(int idx);
-	void initVbob(byte *src, int idx, int xp, int yp, int frameIndex);
+	void initVbob(const byte *src, int idx, int xp, int yp, int frameIndex);
 	void disableVbob(int idx);
 	void setAndPlayAnim(int idx, int animIdx, int destPosi, bool animAction);
 

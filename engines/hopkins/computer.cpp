@@ -994,7 +994,7 @@ void ComputerManager::saveScore() {
 /**
  * Display parts of the hiscore line
  */
-void ComputerManager::displayHiscoreLine(byte *objectData, int x, int y, int curChar) {
+void ComputerManager::displayHiscoreLine(const byte *objectData, int x, int y, int curChar) {
 	int idx = 36;
 
 	if (curChar == 100)

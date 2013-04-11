@@ -40,7 +40,7 @@ ScriptManager::ScriptManager(HopkinsEngine *vm) {
 	_tempObjectFl = false;
 }
 
-int ScriptManager::handleOpcode(byte *dataP) {
+int ScriptManager::handleOpcode(const byte *dataP) {
 	if (READ_BE_UINT16(dataP) != MKTAG16('F', 'C'))
 		return 0;
 

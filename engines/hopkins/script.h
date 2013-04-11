@@ -40,7 +40,7 @@ public:
 
 	ScriptManager(HopkinsEngine *vm);
 
-	int handleOpcode(byte *dataP);
+	int handleOpcode(const byte *dataP);
 	int handleIf(const byte *dataP, int offset);
 	int handleGoto(const byte *dataP);
 };

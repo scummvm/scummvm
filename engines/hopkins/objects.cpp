@@ -2784,7 +2784,7 @@ void ObjectsManager::quickDisplayBobSprite(int idx) {
 	_vm->_graphicsMan->fastDisplay(_vm->_talkMan->_characterSprite, xp, yp, spriteIndex);
 }
 
-void ObjectsManager::initVbob(byte *src, int idx, int xp, int yp, int frameIndex) {
+void ObjectsManager::initVbob(const byte *src, int idx, int xp, int yp, int frameIndex) {
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
 
@@ -3558,7 +3558,7 @@ void ObjectsManager::showActionAnimation(const byte *spriteData, const Common::S
 	}
 }
 
-void ObjectsManager::showSpecialActionAnimationWithFlip(byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl) {
+void ObjectsManager::showSpecialActionAnimationWithFlip(const byte *spriteData, const Common::String &animationSeq, int speed, bool flipFl) {
 	Common::String tmpStr = "";
 
 	int realSpeed = speed;
@@ -3600,7 +3600,7 @@ void ObjectsManager::showSpecialActionAnimationWithFlip(byte *spriteData, const 
 	} while (spriteIndex != -1);
 }
 
-void ObjectsManager::showSpecialActionAnimation(byte *spriteData, const Common::String &animString, int speed) {
+void ObjectsManager::showSpecialActionAnimation(const byte *spriteData, const Common::String &animString, int speed) {
 	Common::String tmpStr = "";
 	int realSpeed = speed;
 	if (_vm->_globals->_speed == 2)

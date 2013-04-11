@@ -183,7 +183,7 @@ void EventsManager::mouseOn() {
 /**
  * Change Mouse Cursor
  */
-void EventsManager::changeMouseCursor(const int id) {
+void EventsManager::changeMouseCursor(int id) {
 	int cursorId = id;
 
 	if (_mouseCursorId == 23)
@@ -282,7 +282,7 @@ void EventsManager::pollEvents() {
 		_keyState[(byte)chr] = false;
 }
 
-void EventsManager::handleKey(Common::Event &event) {
+void EventsManager::handleKey(const Common::Event &event) {
 	_escKeyFl = (event.kbd.keycode == Common::KEYCODE_ESCAPE);
 
 	if (event.kbd.keycode == Common::KEYCODE_i || event.kbd.keycode == Common::KEYCODE_TAB)
