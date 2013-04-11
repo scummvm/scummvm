@@ -691,25 +691,25 @@ void DialogsManager::showSaveLoad(SaveLoadMode mode) {
 
 			byte *thumb = (byte *)thumb8.pixels;
 
-			int16 startPosX = _vm->_events->_startPos.x;
+			int16 startPosX_ = _vm->_events->_startPos.x;
 			switch (slotNumber) {
 			case 1:
-				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX + 190, 112, 128, 87);
+				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX_ + 190, 112, 128, 87);
 				break;
 			case 2:
-				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX + 323, 112, 128, 87);
+				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX_ + 323, 112, 128, 87);
 				break;
 			case 3:
-				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX + 190, 203, 128, 87);
+				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX_ + 190, 203, 128, 87);
 				break;
 			case 4:
-				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX + 323, 203, 128, 87);
+				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX_ + 323, 203, 128, 87);
 				break;
 			case 5:
-				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX + 190, 294, 128, 87);
+				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX_ + 190, 294, 128, 87);
 				break;
 			case 6:
-				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX + 323, 294, 128, 87);
+				_vm->_graphicsMan->restoreSurfaceRect(_vm->_graphicsMan->_frontBuffer, thumb, startPosX_ + 323, 294, 128, 87);
 				break;
 			}
 
