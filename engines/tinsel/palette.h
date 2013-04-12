@@ -107,7 +107,7 @@ void PaletteStats();	// Shows the maximum number of palettes used at once
 
 void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable); // Maps PSX CLUTs to original palette in resource file
 
-void PalettesToVideoDAC();	// Update the video DAC with palettes currently the the DAC queue
+void PalettesToVideoDAC();	// Update the video DAC with palettes currently in the DAC queue
 
 void UpdateDACqueueHandle(
 	int posInDAC,		// position in video DAC
