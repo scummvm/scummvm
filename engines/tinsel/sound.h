@@ -109,7 +109,7 @@ public:
 	bool playSample(int id, Audio::Mixer::SoundType type, Audio::SoundHandle *handle = 0);
 	bool playSample(int id, int sub, bool bLooped, int x, int y, int priority,
 			Audio::Mixer::SoundType type, Audio::SoundHandle *handle = 0);
-	bool playDW1MacMusic(int dwFileOffset);
+	void playDW1MacMusic(Common::File &s, uint32 length);
 
 	void stopAllSamples();                // Stops any currently playing sample
 	void stopSpecSample(int id, int sub = 0); // Stops a specific sample
