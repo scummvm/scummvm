@@ -666,7 +666,7 @@ bool ChangeScene(bool bReset) {
 			default:
 				// Trigger pre-load and fade and start countdown
 				CountOut = COUNTOUT_COUNT;
-				FadeOutFast(NULL);
+				FadeOutFast();
 				if (TinselV2)
 					_vm->_pcmMusic->startFadeOut(COUNTOUT_COUNT);
 				break;

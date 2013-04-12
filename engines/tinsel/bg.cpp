@@ -153,7 +153,7 @@ static void BGmainProcess(CORO_PARAM, const void *param) {
 		}
 
 		if (g_bDoFadeIn) {
-			FadeInFast(NULL);
+			FadeInFast();
 			g_bDoFadeIn = false;
 		} else if (TinselV2)
 			PokeInTagColor();

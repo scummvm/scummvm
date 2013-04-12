@@ -1151,14 +1151,14 @@ static void FaceTag(int actor, HPOLYGON hp) {
  * FadeIn
  */
 static void FadeIn() {
-	FadeInMedium(NULL);
+	FadeInMedium();
 }
 
 /**
  * FadeOut
  */
 static void FadeOut() {
-	FadeOutMedium(NULL);
+	FadeOutMedium();
 }
 
 /**

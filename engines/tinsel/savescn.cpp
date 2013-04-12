@@ -303,7 +303,7 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 	switch (n) {
 	case RS_COUNT + COUNTOUT_COUNT:
 		// Trigger pre-load and fade and start countdown
-		FadeOutFast(NULL);
+		FadeOutFast();
 		break;
 
 	case RS_COUNT:
