@@ -40,6 +40,8 @@
 
 #include "gui/message.h"
 
+#include "graphics/cursorman.h"
+
 namespace Mohawk {
 
 // read a null-terminated string from a stream
@@ -223,7 +225,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 					}
 				}
 
-				if (found)
+				if (found && CursorMan.isVisible())
 					found->handleMouseDown(event.mouse);
 				break;
 
