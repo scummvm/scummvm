@@ -146,8 +146,6 @@ void FadingPalette(PALQ *pPalQ, bool bFading);
 
 void CreateTranslucentPalette(SCNHANDLE BackPal);
 
-void CreateGhostPalette(SCNHANDLE hPalette);
-
 void NoFadingPalettes();	// All fading processes have just been killed
 
 void DimPartPalette(

@@ -360,7 +360,6 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 			RestoreActorZ(sd->savedActorZ);
 			RestoreZpositions(sd->zPositions);
 			RestoreSysVars(sd->SavedSystemVars);
-			CreateGhostPalette(BgPal());
 			RestoreActors(sd->NumSavedActors, sd->SavedActorInfo);
 			RestoreSoundReels(sd->SavedSoundReels);
 			return 1;
