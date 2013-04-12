@@ -272,7 +272,7 @@ static void MacDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 					tempDest += rptLength;
 				}
 
-				int overflow = (copyBytes % 2) == 0 ? 0 : 2 - (copyBytes % 2);
+				int overflow = (copyBytes & 1);
 				x += runLength;
 				srcP += runLength + overflow;
 			}
