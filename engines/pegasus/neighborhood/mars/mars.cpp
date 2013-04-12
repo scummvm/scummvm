@@ -1035,7 +1035,6 @@ void Mars::checkContinuePoint(const RoomID room, const DirectionConstant directi
 	case MakeRoomView(kMars51, kEast):
 	case MakeRoomView(kMars56, kEast):
 	case MakeRoomView(kMars60, kWest):
-	case MakeRoomView(kMarsMaze004, kWest):
 	case MakeRoomView(kMarsMaze009, kWest):
 	case MakeRoomView(kMarsMaze012, kWest):
 	case MakeRoomView(kMarsMaze037, kWest):
@@ -1058,6 +1057,11 @@ void Mars::checkContinuePoint(const RoomID room, const DirectionConstant directi
 	case MakeRoomView(kMarsMaze187, kWest):
 	case MakeRoomView(kMarsMaze199, kWest):
 		makeContinuePoint();
+		break;
+	case MakeRoomView(kMarsMaze004, kWest):
+		// WORKAROUND: See Mars::arriveAt() for more details.
+		if (GameState.isTakenItemID(kCardBomb))
+			makeContinuePoint();
 		break;
 	case MakeRoomView(kMars05, kEast):
 	case MakeRoomView(kMars06, kEast):
@@ -1392,6 +1396,13 @@ void Mars::arriveAt(const RoomID room, const DirectionConstant direction) {
 		break;
 	case MakeRoomView(kMarsRobotShuttle, kEast):
 		setCurrentActivation(kActivationRobotHeadClosed);
+		break;
+	case MakeRoomView(kMarsMaze004, kWest):
+		// WORKAROUND: You're not supposed to continue through the maze without the
+		// bomb or the game will not be completable. We're using the previously unused
+		// bomb death here to prevent progress (you didn't find the bomb, after all).
+		if (!GameState.isTakenItemID(kCardBomb))
+			didntFindBomb();
 		break;
 	case MakeRoomView(kMarsMaze007, kNorth):
 		launchMaze007Robot();
