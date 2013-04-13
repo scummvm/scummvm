@@ -615,6 +615,8 @@ void SeqPlayer_HOF::runLoop() {
 
 	if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie)
 		_screen->fadeToBlack();
+	else if (!_isFinale && !_startupSaveLoadable)
+		_result = 1;
 
 	if (!_result)
 		delayTicks(75);
@@ -689,8 +691,6 @@ void SeqPlayer_HOF::playScenes() {
 			_screen->copyPage(2, 0);
 			_screen->updateScreen();
 		}
-
-		//_screen->copyPage(2, 6);
 
 		if (sq.flags & 1) {
 			playAnimation(&anim, sq.startFrame, sq.numFrames, sq.duration, sq.xPos, sq.yPos, _config->seqProc[_curScene], &_screen->getPalette(1), &_screen->getPalette(0), 30, 0);
@@ -793,11 +793,9 @@ bool SeqPlayer_HOF::checkPlaybackStatus() {
 		doTransition(0);
 		fadeOutMusic();
 		_abortPlayback = true;
-	} else {
-		return true;
 	}
 
-	return false;
+	return true;
 }
 
 void SeqPlayer_HOF::doTransition(int type) {
@@ -1778,15 +1776,19 @@ int SeqPlayer_HOF::cbHOF_title(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		if (_result == 1) {
 			_curScene = _lastScene;
 			_preventLooping = true;
-		} else {
-			setCountDown(200);
 		}
 
-		if (_result == 4)
+		if (_result == 2) {
+			_result = 0;
+		} else if (_result == 4) {
+			setCountDown(200);
 			_vm->quitGame();
+		}
 
 		_screen->hideMouse();
 		_screen->setCurPage(cp);
+	} else if (frm == 25) {
+		setCountDown(200);
 	}
 
 	return 0;
