@@ -43,6 +43,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mirage",          "Mirage"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"reversion1",      "Reversion: The Escape"},
+	{"reversion2",	    "Reversion: The Meeting"},
 	{"rosemary",        "Rosemary"},
 	{"thebox",          "The Box"},
 	{"twc",             "the white chamber"},
@@ -387,6 +388,44 @@ static const ADGameDescription gameDescriptions[] = {
 			AD_LISTEND
 		},
 		Common::PT_BRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Meeting (Chinese)
+	{
+		"reversion2",
+		"",
+		{
+			{"xlanguage_nz.dcp", 0, "8c3709474a87a7876109025dff41ff3f", 8746015},
+			{"data.dcp", 0, "f7938cbfdc48f07934550245a3286921", 255672016},
+			AD_LISTEND
+		},
+		Common::ZH_CNA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Meeting (English)
+	{
+		"reversion2",
+		"",
+		{
+			{"xlanguage_en.dcp", 0, "512c4621132116f68db45a3eda95a158", 58439451},
+			{"data.dcp", 0, "f7938cbfdc48f07934550245a3286921", 255672016},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Meeting (Spanish)
+	{
+		"reversion2",
+		"",
+		AD_ENTRY1s("data.dcp", "f7938cbfdc48f07934550245a3286921", 255672016),
+		Common::ES_ESP,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
