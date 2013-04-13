@@ -313,7 +313,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"chinese.dcp", 0, "cf97150739499a4c15f51dc534ff85a1", 6330561},
-			("data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
 			AD_LISTEND
 		},
 		Common::ZH_CNA,
@@ -327,7 +327,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"english.dcp", 0, "7b2f061d7c91365c5d04605f1de032b3", 5702699},
-			("data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -341,7 +341,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"french.dcp", 0, "214204b6022c5ed67fada44557690faf", 6327400},
-			("data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
 			AD_LISTEND
 		},
 		Common::FR_FRA,
@@ -355,7 +355,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"german.dcp", 0, "96677823b36d580a4a29e3659071071c", 6340699},
-			("data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
 			AD_LISTEND
 		},
 		Common::DE_DEU,
@@ -369,7 +369,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"italian.dcp", 0, "9ce80c1835108f10170a02969f71efe1", 6301836},
-			("data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
 			AD_LISTEND
 		},
 		Common::IT_ITA,
@@ -383,7 +383,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"portugues.dcp", 0, "8772501afa2c630a7c697eb99e9c7bda", 5053303},
-			("data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531),
+			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
 			AD_LISTEND
 		},
 		Common::PT_BRA,
