@@ -82,7 +82,7 @@ private:
 	void copy16bFromSurfaceScaleX2(const byte *surface);
 
 	void translateSurface(byte *destP, const byte *srcP, int count, int minThreshold, int maxThreshold);
-	void copy8BitRect(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
+	void displayScaled8BitRect(const byte *surface, int xp, int yp, int width, int height, int destX, int destY);
 
 	void lockScreen();
 	void unlockScreen();
@@ -176,7 +176,7 @@ public:
 	void drawCompressedSprite(byte *surface, const byte *srcData, int xp300, int yp300, int frameIndex, int zoom1, int zoom2, bool flipFl);
 	void copyRect(const byte *srcSurface, int x1, int y1, uint16 width, int height, byte *destSurface, int destX, int destY);
 	void drawVesaSprite(byte *surface, const byte *spriteData, int xp, int yp, int spriteIndex);
-	void copy16BitRect(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
+	void display8BitRect(const byte *surface, int xs, int ys, int width, int height, int destX, int destY);
 	void fillSurface(byte *surface, byte *col, int size);
 	void displayScreen(bool initPalette);
 	void backupScreen();

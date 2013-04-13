@@ -222,14 +222,14 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 		_maxX = SCREEN_WIDTH;
 		clearScreen();
 
-		copy16BitRect(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		display8BitRect(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	} else {
 		setScreenWidth(SCREEN_WIDTH * 2);
 		_maxX = SCREEN_WIDTH * 2;
 		clearScreen();
 
 		if (MANU_SCROLL)
-			copy16BitRect(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			display8BitRect(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 
 	memcpy(_frontBuffer, _backBuffer, SCREEN_WIDTH * 2 * SCREEN_HEIGHT);
@@ -409,7 +409,7 @@ void GraphicsManager::setScreenWidth(int pitch) {
 /**
  * Copies data from a 8-bit palette surface into the 16-bit screen
  */
-void GraphicsManager::copy16BitRect(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
+void GraphicsManager::display8BitRect(const byte *surface, int xs, int ys, int width, int height, int destX, int destY) {
 	lockScreen();
 
 	assert(_videoPtr);
@@ -436,7 +436,7 @@ void GraphicsManager::copy16BitRect(const byte *surface, int xs, int ys, int wid
 	addRefreshRect(destX, destY, destX + width, destY + height);
 }
 
-void GraphicsManager::copy8BitRect(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
+void GraphicsManager::displayScaled8BitRect(const byte *surface, int xp, int yp, int width, int height, int destX, int destY) {
 	int xCtr;
 	const byte *palette;
 	int savedXCount;
@@ -501,7 +501,7 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
 
 		// Set the transition palette and refresh the screen
 		setPaletteVGA256(palData2);
-		copy16BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+		display8BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 		updateScreen();
 
 		// Added a delay in order to see the fading
@@ -512,7 +512,7 @@ void GraphicsManager::fadeIn(const byte *palette, int step, const byte *surface)
 	setPaletteVGA256(palette);
 
 	// Refresh the screen
-	copy16BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	display8BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	updateScreen();
 }
 
@@ -531,7 +531,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 			}
 
 			setPaletteVGA256(palData);
-			copy16BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+			display8BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 			updateScreen();
 
 			_vm->_events->delay(20);
@@ -543,7 +543,7 @@ void GraphicsManager::fadeOut(const byte *palette, int step, const byte *surface
 		palData[i] = 0;
 
 	setPaletteVGA256(palData);
-	copy16BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	display8BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
 	updateScreen();
 }
@@ -623,7 +623,7 @@ void GraphicsManager::setPaletteVGA256(const byte *palette) {
 
 void GraphicsManager::setPaletteVGA256WithRefresh(const byte *palette, const byte *surface) {
 	changePalette(palette);
-	copy16BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	display8BitRect(surface, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	updateScreen();
 }
 
@@ -1108,7 +1108,7 @@ void GraphicsManager::displayDirtyRects() {
 		Common::Rect dstRect;
 
 		if (_vm->_events->_breakoutFl) {
-			copy8BitRect(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
+			displayScaled8BitRect(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left, r.top);
 			dstRect.left = r.left * 2;
 			dstRect.top = r.top * 2 + 30;
 			dstRect.setWidth((r.right - r.left) * 2);
@@ -1117,7 +1117,7 @@ void GraphicsManager::displayDirtyRects() {
 			r.left = MAX<int16>(r.left, _vm->_events->_startPos.x);
 			r.right = MIN<int16>(r.right, (int16)_vm->_events->_startPos.x + SCREEN_WIDTH);
 
-			copy16BitRect(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_events->_startPos.x, r.top);
+			display8BitRect(_frontBuffer, r.left, r.top, r.right - r.left, r.bottom - r.top, r.left - _vm->_events->_startPos.x, r.top);
 
 			dstRect.left = r.left - _vm->_events->_startPos.x;
 			dstRect.top = r.top;
@@ -1743,7 +1743,7 @@ void GraphicsManager::displayScreen(bool initPalette) {
 	else if (_lineNbr == (SCREEN_WIDTH * 2))
 		fillSurface(_frontBuffer, _colorTable, SCREEN_WIDTH * SCREEN_HEIGHT * 2);
 
-	copy16BitRect(_frontBuffer, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	display8BitRect(_frontBuffer, _vm->_events->_startPos.x, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	memcpy(_backBuffer, _frontBuffer, 614399);
 	updateScreen();
 }
