@@ -67,14 +67,14 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	_maxX = SCREEN_WIDTH * 2;
 	_maxY = SCREEN_HEIGHT - 20;
 	_posXClipped = _posYClipped = 0;
-	clip_x1 = clip_y1 = 0;
+	_clipX1 = _clipY1 = 0;
 	_clipFl = false;
 	_reduceX = _reducedY = 0;
 	_zoomOutFactor = 0;
 	_width = 0;
 	_specialWidth = 0;
 
-	Common::fill(&SD_PIXELS[0], &SD_PIXELS[PALETTE_SIZE * 2], 0);
+	Common::fill(&_paletteBuffer[0], &_paletteBuffer[PALETTE_SIZE * 2], 0);
 	Common::fill(&_colorTable[0], &_colorTable[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_palette[0], &_palette[PALETTE_EXT_BLOCK_SIZE], 0);
 	Common::fill(&_oldPalette[0], &_oldPalette[PALETTE_EXT_BLOCK_SIZE], 0);
@@ -82,12 +82,12 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	if (_vm->getIsDemo()) {
 		if (_vm->getPlatform() == Common::kPlatformLinux)
 			// CHECKME: Should be false?
-			MANU_SCROLL = true;
+			_manualScroll = true;
 		else
-			MANU_SCROLL = false;
+			_manualScroll = false;
 		_scrollSpeed = 16;
 	} else {
-		MANU_SCROLL = false;
+		_manualScroll = false;
 		_scrollSpeed = 32;
 	}
 
@@ -116,7 +116,7 @@ void GraphicsManager::setGraphicalMode(int width, int height) {
 		_screenHeight = height;
 
 		_screenLineSize = SCREEN_WIDTH * 2;
-		_palettePixels = SD_PIXELS;
+		_palettePixels = _paletteBuffer;
 		_lineNbr = width;
 
 		_initGraphicsFl = true;
@@ -228,7 +228,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 		_maxX = SCREEN_WIDTH * 2;
 		clearScreen();
 
-		if (MANU_SCROLL)
+		if (_manualScroll)
 			display8BitRect(_backBuffer, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 	}
 
@@ -399,7 +399,7 @@ void GraphicsManager::loadPCX320(byte *surface, const Common::String &file, byte
 void GraphicsManager::clearPalette() {
 	// As weird as it sounds, this is what the original Linux executable does,
 	// and not a full array clear.
-	SD_PIXELS[0] = 0;
+	_paletteBuffer[0] = 0;
 }
 
 void GraphicsManager::setScreenWidth(int pitch) {
@@ -644,13 +644,13 @@ void GraphicsManager::setColorPercentage2(int palIndex, int r, int g, int b) {
 	_palette[palOffset + 1] = gv;
 	_palette[palOffset + 2] = bv;
 
-	WRITE_LE_UINT16(&SD_PIXELS[2 * palIndex], mapRGB(rv, gv, bv));
+	WRITE_LE_UINT16(&_paletteBuffer[2 * palIndex], mapRGB(rv, gv, bv));
 }
 
 void GraphicsManager::changePalette(const byte *palette) {
 	const byte *srcP = &palette[0];
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx, srcP += 3) {
-		WRITE_LE_UINT16(&SD_PIXELS[2 * idx], mapRGB(srcP[0], srcP[1], srcP[2]));
+		WRITE_LE_UINT16(&_paletteBuffer[2 * idx], mapRGB(srcP[0], srcP[1], srcP[2]));
 	}
 }
 
@@ -888,7 +888,7 @@ void GraphicsManager::drawVesaSprite(byte *surface, const byte *spriteData, int 
 	int height = READ_LE_UINT16(spriteP);
 
 	// Clip X
-	clip_x1 = width;
+	_clipX1 = width;
 	if ((xp + width) <= _minX + 300)
 		return;
 	if (xp < _minX + 300) {
@@ -897,7 +897,7 @@ void GraphicsManager::drawVesaSprite(byte *surface, const byte *spriteData, int 
 	}
 
 	// Clip Y
-	clip_y1 = height;
+	_clipY1 = height;
 	if (yp <= 0)
 		return;
 	if (yp < _minY + 300) {
@@ -913,7 +913,7 @@ void GraphicsManager::drawVesaSprite(byte *surface, const byte *spriteData, int 
 		if (xAmount <= 10)
 			return;
 
-		clip_x1 = xAmount - 10;
+		_clipX1 = xAmount - 10;
 		_clipFl = true;
 	}
 
@@ -925,8 +925,8 @@ void GraphicsManager::drawVesaSprite(byte *surface, const byte *spriteData, int 
 		if (yAmount <= 10)
 			return;
 
-		// clip_y1 is always positive thanks to the previous check
-		clip_y1 = yAmount - 10;
+		// _clipY1 is always positive thanks to the previous check
+		_clipY1 = yAmount - 10;
 		_clipFl = true;
 	}
 
@@ -945,7 +945,7 @@ void GraphicsManager::drawVesaSprite(byte *surface, const byte *spriteData, int 
 	// Handling for clipped versus non-clipped
 	if (_clipFl) {
 		// Clipped version
-		for (int yc = 0; yc < clip_y1; ++yc, destP += _lineNbr2) {
+		for (int yc = 0; yc < _clipY1; ++yc, destP += _lineNbr2) {
 			byte *tempDestP = destP;
 			byte byteVal;
 			int xc = 0;
@@ -958,7 +958,7 @@ void GraphicsManager::drawVesaSprite(byte *surface, const byte *spriteData, int 
 				if (byteVal == 254) {
 					// Copy pixel range
 					for (int xv = 0; xv < width; ++xv, ++xc, ++spriteP, ++tempDestP) {
-						if (_posYClipped == 0 && xc >= _posXClipped && xc < clip_x1)
+						if (_posYClipped == 0 && xc >= _posXClipped && xc < _clipX1)
 							*tempDestP = *spriteP;
 					}
 				} else {
@@ -1281,14 +1281,14 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 	const byte *spritePixelsP = spriteSizeP + 10;
 	_posXClipped = 0;
 	_posYClipped = 0;
-	clip_x1 = 0;
-	clip_y1 = 0;
+	_clipX1 = 0;
+	_clipY1 = 0;
 	if ((xp300 <= _minX) || (yp300 <= _minY) || (xp300 >= _maxX + 300) || 	(yp300 >= _maxY + 300))
 		return;
 
 	// Clipped values are greater or equal to zero, thanks to the previous test
-	clip_x1 = _maxX + 300 - xp300;
-	clip_y1 = _maxY + 300 - yp300;
+	_clipX1 = _maxX + 300 - xp300;
+	_clipY1 = _maxY + 300 - yp300;
 
 	// _minX is never negative, and should be always 0
 	// The previous check insures that xp300 it's always greater to it
@@ -1321,21 +1321,21 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 				clippedDestP += _lineNbr2 * _posYClipped;
 				zoomedHeight -= _posYClipped;
 			}
-			if (zoomedHeight > clip_y1)
-				zoomedHeight = clip_y1;
+			if (zoomedHeight > _clipY1)
+				zoomedHeight = _clipY1;
 			if (_posXClipped) {
 				if (_posXClipped >= zoomedWidth)
 					return;
 				zoomedWidth -= _posXClipped;
 			}
-			if (zoomedWidth > clip_x1) {
-				int clippedZoomedWidth = zoomedWidth - clip_x1;
+			if (zoomedWidth > _clipX1) {
+				int clippedZoomedWidth = zoomedWidth - _clipX1;
 				clippedDestP -= clippedZoomedWidth;
 				int closestWidth = 0;
 				while (zoomIn(++closestWidth, zoom2) < clippedZoomedWidth)
 					;
 				spritePixelsP += closestWidth;
-				zoomedWidth = clip_x1;
+				zoomedWidth = _clipX1;
 			}
 			int curHeight;
 			do {
@@ -1390,8 +1390,8 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 				dest1P += _lineNbr2 * _posYClipped;
 				zoomedHeight -= _posYClipped;
 			}
-			if (zoomedHeight > clip_y1)
-				zoomedHeight = clip_y1;
+			if (zoomedHeight > _clipY1)
+				zoomedHeight = _clipY1;
 			if (_posXClipped) {
 				if (_posXClipped >= zoomedWidth)
 					return;
@@ -1402,8 +1402,8 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 				dest1P += _posXClipped;
 				zoomedWidth = zoomedWidth - _posXClipped;
 			}
-			if (zoomedWidth > clip_x1)
-				zoomedWidth = clip_x1;
+			if (zoomedWidth > _clipX1)
+				zoomedWidth = _clipX1;
 
 			int curHeight;
 			do {
@@ -1466,7 +1466,7 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 						for (int i = _width; i; i--) {
 							_reduceX += _zoomOutFactor;
 							if (_reduceX >= 0 && _reduceX < 100) {
-								if (curWidth >= _posXClipped && curWidth < clip_x1 && *spritePixelsP)
+								if (curWidth >= _posXClipped && curWidth < _clipX1 && *spritePixelsP)
 									*curDestP = *spritePixelsP;
 								--curDestP;
 								++spritePixelsP;
@@ -1494,7 +1494,7 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 						for (int i = _width; i; i--) {
 							_reduceX += _zoomOutFactor;
 							if (_reduceX >= 0 && _reduceX < 100) {
-								if (curX >= _posXClipped && curX < clip_x1 && *spritePixelsP)
+								if (curX >= _posXClipped && curX < _clipX1 && *spritePixelsP)
 									*dest1P = *spritePixelsP;
 								++dest1P;
 								++spritePixelsP;
@@ -1526,18 +1526,18 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 				dest2P += _lineNbr2 * _posYClipped;
 				spriteHeight1 -= _posYClipped;
 			}
-			if (spriteHeight1 > clip_y1)
-				spriteHeight1 = clip_y1;
+			if (spriteHeight1 > _clipY1)
+				spriteHeight1 = _clipY1;
 
 			if (_posXClipped >= spriteWidth)
 				return;
 			spriteWidth -= _posXClipped;
 
-			if (spriteWidth > clip_x1) {
-				int clippedWidth = spriteWidth - clip_x1;
+			if (spriteWidth > _clipX1) {
+				int clippedWidth = spriteWidth - _clipX1;
 				spritePixelsP += clippedWidth;
 				dest2P -= clippedWidth;
-				spriteWidth = clip_x1;
+				spriteWidth = _clipX1;
 			}
 			int yCtr2;
 			do {
@@ -1563,8 +1563,8 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 				dest1P += _lineNbr2 * _posYClipped;
 				spriteHeight1 -= _posYClipped;
 			}
-			if (spriteHeight1 > clip_y1)
-				spriteHeight1 = clip_y1;
+			if (spriteHeight1 > _clipY1)
+				spriteHeight1 = _clipY1;
 			if (_posXClipped) {
 				if (_posXClipped >= spriteWidth)
 					return;
@@ -1572,8 +1572,8 @@ void GraphicsManager::drawCompressedSprite(byte *surface, const byte *srcData, i
 				dest1P += _posXClipped;
 				spriteWidth -= _posXClipped;
 			}
-			if (spriteWidth > clip_x1)
-				spriteWidth = clip_x1;
+			if (spriteWidth > _clipX1)
+				spriteWidth = _clipX1;
 			int yCtr1;
 			do {
 				yCtr1 = spriteHeight1;

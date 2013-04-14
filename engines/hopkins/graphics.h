@@ -65,12 +65,11 @@ private:
 
 	int _enlargedX, _enlargedY;
 	bool _enlargedXFl, _enlargedYFl;
-	int clip_x1, clip_y1;
+	int _clipX1, _clipY1;
 	int _reduceX, _reducedY;
 	int _zoomOutFactor;
 
-	byte SD_PIXELS[PALETTE_SIZE * 2];
-	bool MANU_SCROLL;
+	bool _manualScroll;
 
 	void loadScreen(const Common::String &file);
 	void loadPCX640(byte *surface, const Common::String &file, byte *palette, bool typeFlag);
@@ -87,6 +86,7 @@ private:
 	void lockScreen();
 	void unlockScreen();
 public:
+	byte _paletteBuffer[PALETTE_SIZE * 2];
 	byte _colorTable[PALETTE_EXT_BLOCK_SIZE];
 	byte _palette[PALETTE_EXT_BLOCK_SIZE];
 	byte _oldPalette[PALETTE_EXT_BLOCK_SIZE];
