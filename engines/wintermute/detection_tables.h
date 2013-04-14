@@ -314,7 +314,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"chinese.dcp", 0, "cf97150739499a4c15f51dc534ff85a1", 6330561},
-			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
+			{"data.dcp", 0, "cb9865dc7e1db2990a8cf4bc13cf4999", 257643032},
 			AD_LISTEND
 		},
 		Common::ZH_CNA,
@@ -328,7 +328,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"english.dcp", 0, "7b2f061d7c91365c5d04605f1de032b3", 5702699},
-			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
+			{"data.dcp", 0, "cb9865dc7e1db2990a8cf4bc13cf4999", 257643032},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
@@ -342,7 +342,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"french.dcp", 0, "214204b6022c5ed67fada44557690faf", 6327400},
-			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
+			{"data.dcp", 0, "cb9865dc7e1db2990a8cf4bc13cf4999", 257643032},
 			AD_LISTEND
 		},
 		Common::FR_FRA,
@@ -356,7 +356,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"german.dcp", 0, "96677823b36d580a4a29e3659071071c", 6340699},
-			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
+			{"data.dcp", 0, "cb9865dc7e1db2990a8cf4bc13cf4999", 257643032},
 			AD_LISTEND
 		},
 		Common::DE_DEU,
@@ -370,7 +370,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"italian.dcp", 0, "9ce80c1835108f10170a02969f71efe1", 6301836},
-			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
+			{"data.dcp", 0, "cb9865dc7e1db2990a8cf4bc13cf4999", 257643032},
 			AD_LISTEND
 		},
 		Common::IT_ITA,
@@ -384,7 +384,91 @@ static const ADGameDescription gameDescriptions[] = {
 		"Version 1.1",
 		{
 			{"portugues.dcp", 0, "8772501afa2c630a7c697eb99e9c7bda", 5053303},
-			{"data.dcp", 0, "cd616f98ebfd047e0c540b50b4b70761", 254384531},
+			{"data.dcp", 0, "cb9865dc7e1db2990a8cf4bc13cf4999", 257643032},
+			AD_LISTEND
+		},
+		Common::PT_BRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3 (Chinese)
+	{
+		"reversion1",
+		"Version 1.3",
+		{
+			{"xlanguage_nz.dcp", 0, "92c4065156e464211685bf799b3279fd", 5130600},
+			{"data.dcp", 0, "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907},
+			AD_LISTEND
+		},
+		Common::ZH_CNA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3 (English)
+	{
+		"reversion1",
+		"Version 1.3",
+		{
+			{"xlanguage_en.dcp", 0, "05845e1283920a6e4044f2a54f7a9519", 4818543},
+			{"data.dcp", 0, "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907},
+			AD_LISTEND
+		},
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3 (French)
+	{
+		"reversion1",
+		"Version 1.3",
+		{
+			{"xlanguage_fr.dcp", 0, "441795490e9307eb2ed07830779881ac", 5425959},
+			{"data.dcp", 0, "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907},
+			AD_LISTEND
+		},
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3 (German)
+	{
+		"reversion1",
+		"Version 1.3",
+		{
+			{"xlanguage_de.dcp", 0, "b588041015b93e54b4c246ca77d01e76", 5423798},
+			{"data.dcp", 0, "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907},
+			AD_LISTEND
+		},
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3 (Italian)
+	{
+		"reversion1",
+		"Version 1.3",
+		{
+			{"xlanguage_it.dcp", 0, "a1f4199079b75ee10cded41f05b45d5f", 5386424},
+			{"data.dcp", 0, "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907},
+			AD_LISTEND
+		},
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Reversion: The Escape Version 1.3 (Portuguese)
+	{
+		"reversion1",
+		"Version 1.3",
+		{
+			{"xlanguage_pt.dcp", 0, "3d653debd37e56756a79401e1004c4d2", 4149165},
+			{"data.dcp", 0, "9ebb12f6fd7c038d079f81beb3bd96d5", 254185907},
 			AD_LISTEND
 		},
 		Common::PT_BRA,
@@ -398,7 +482,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		{
 			{"xlanguage_nz.dcp", 0, "8c3709474a87a7876109025dff41ff3f", 8746015},
-			{"data.dcp", 0, "f7938cbfdc48f07934550245a3286921", 255672016},
+			{"data.dcp", 0, "cb9865dc7e1db2990a8cf4bc13cf4999", 257643032},
 			AD_LISTEND
 		},
 		Common::ZH_CNA,
@@ -411,7 +495,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"reversion2",
 		"",
 		{
-			{"xlanguage_en.dcp", 0, "512c4621132116f68db45a3eda95a158", 58439451},
+			{"xlanguage_en.dcp", 0, "ca357d86618d1ab76a21c913f4403cbd", 8414976},
 			{"data.dcp", 0, "f7938cbfdc48f07934550245a3286921", 255672016},
 			AD_LISTEND
 		},
