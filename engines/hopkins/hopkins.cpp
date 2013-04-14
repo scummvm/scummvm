@@ -206,7 +206,7 @@ bool HopkinsEngine::runWin95Demo() {
 		case 1:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 2, true);
+			_objectsMan->sceneControl2("IM01", "IM01", "ANIM01", "IM01", 2, true);
 			break;
 
 		case 3:
@@ -243,7 +243,7 @@ bool HopkinsEngine::runWin95Demo() {
 			}
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
-			_objectsMan->PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
+			_objectsMan->sceneControl2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
@@ -258,48 +258,48 @@ bool HopkinsEngine::runWin95Demo() {
 
 			if (_globals->_saveData->_data[svFreedHostageFl]) {
 				if (_globals->_saveData->_data[svFreedHostageFl] == 1)
-					_objectsMan->PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
+					_objectsMan->sceneControl2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			} else {
-				_objectsMan->PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
+				_objectsMan->sceneControl2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			}
 			break;
 
 		case 6:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 460;
-			_objectsMan->PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
+			_objectsMan->sceneControl2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals->_saveData->_data[svBombBoxOpenedFl])
-				_objectsMan->PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsMan->sceneControl("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsMan->PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsMan->sceneControl("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_linesMan->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 450;
-			_objectsMan->PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
+			_objectsMan->sceneControl2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
 			_globals->_characterMaxPosY = 440;
 			_linesMan->setMaxLineIdx(20);
 			if (_globals->_saveData->_data[svBombDisarmedFl])
-			  _objectsMan->PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
+			  _objectsMan->sceneControl2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 			  bombExplosion();
 			break;
 
 		case 10:
-			_objectsMan->PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
+			_objectsMan->sceneControl("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
-			_objectsMan->PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
+			_objectsMan->sceneControl2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
@@ -347,11 +347,11 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 111:
-			_objectsMan->PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
+			_objectsMan->sceneControl("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_objectsMan->PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
+			_objectsMan->sceneControl("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -502,7 +502,7 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 1:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
+			_objectsMan->sceneControl2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
 
 		case 3:
@@ -542,7 +542,7 @@ bool HopkinsEngine::runLinuxDemo() {
 
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
-			_objectsMan->PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
+			_objectsMan->sceneControl2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
@@ -555,28 +555,28 @@ bool HopkinsEngine::runLinuxDemo() {
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 455;
 			if (_globals->_saveData->_data[svFreedHostageFl] == 1)
-					_objectsMan->PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
+					_objectsMan->sceneControl2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			else
-				_objectsMan->PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
+				_objectsMan->sceneControl2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			break;
 
 		case 6:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 460;
-			_objectsMan->PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
+			_objectsMan->sceneControl2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals->_saveData->_data[svBombBoxOpenedFl])
-				_objectsMan->PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsMan->sceneControl("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsMan->PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsMan->sceneControl("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_linesMan->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 450;
-			_objectsMan->PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
+			_objectsMan->sceneControl2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
@@ -586,24 +586,24 @@ bool HopkinsEngine::runLinuxDemo() {
 			if (!_globals->_saveData->_data[svBombDisarmedFl])
 				bombExplosion();
 			else
-				_objectsMan->PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
+				_objectsMan->sceneControl2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			break;
 
 		case 10:
-			_objectsMan->PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
+			_objectsMan->sceneControl("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
-			_objectsMan->PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
+			_objectsMan->sceneControl2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svBombDisarmedFl])
-				_objectsMan->PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
+				_objectsMan->sceneControl2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			else
 				bombExplosion();
 			break;
@@ -611,17 +611,17 @@ bool HopkinsEngine::runLinuxDemo() {
 		case 13:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
+			_objectsMan->sceneControl2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
+			_objectsMan->sceneControl2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
 
 		case 15:
-			_objectsMan->PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
+			_objectsMan->sceneControl("IM15", "IM15", "ANIM15", "IM15", 29, false);
 			break;
 
 		case 16:
@@ -629,25 +629,25 @@ bool HopkinsEngine::runLinuxDemo() {
 			_globals->_characterMaxPosY = 450;
 
 			if (_globals->_saveData->_data[svForestAvailableFl] == 1) {
-				_objectsMan->PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
+				_objectsMan->sceneControl2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
 			} else if (!_globals->_saveData->_data[svForestAvailableFl]) {
-				_objectsMan->PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
+				_objectsMan->sceneControl2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			}
 			break;
 
 		case 25:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
-			_objectsMan->PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
+			_objectsMan->sceneControl2("IM25", "IM25", "ANIM25", "IM25", 30, true);
 			break;
 
 		case 26:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
+			_objectsMan->sceneControl2("IM26", "IM26", "ANIM26", "IM26", 30, true);
 
 		case 33:
-			_objectsMan->PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
+			_objectsMan->sceneControl("IM33", "IM33", "ANIM33", "IM33", 8, false);
 			break;
 
 		case 35:
@@ -655,11 +655,11 @@ bool HopkinsEngine::runLinuxDemo() {
 			break;
 
 		case 111:
-			_objectsMan->PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
+			_objectsMan->sceneControl("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_objectsMan->PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
+			_objectsMan->sceneControl("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:
@@ -841,7 +841,7 @@ bool HopkinsEngine::runFull() {
 		case 1:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM01", "IM01", "ANIM01", "IM01", 1, true);
+			_objectsMan->sceneControl2("IM01", "IM01", "ANIM01", "IM01", 1, true);
 			break;
 
 		case 3:
@@ -894,7 +894,7 @@ bool HopkinsEngine::runFull() {
 			}
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
-			_objectsMan->PERSONAGE2("IM03", "IM03", "ANIM03", "IM03", 2, false);
+			_objectsMan->sceneControl2("IM03", "IM03", "ANIM03", "IM03", 2, false);
 			break;
 
 		case 4:
@@ -907,54 +907,54 @@ bool HopkinsEngine::runFull() {
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 455;
 			if (_globals->_saveData->_data[svFreedHostageFl] == 1)
-				_objectsMan->PERSONAGE2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
+				_objectsMan->sceneControl2("IM05", "IM05A", "ANIM05B", "IM05", 3, false);
 			else
-				_objectsMan->PERSONAGE2("IM05", "IM05", "ANIM05", "IM05", 3, false);
+				_objectsMan->sceneControl2("IM05", "IM05", "ANIM05", "IM05", 3, false);
 			break;
 
 		case 6:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 460;
-			_objectsMan->PERSONAGE2("IM06", "IM06", "ANIM06", "IM06", 2, true);
+			_objectsMan->sceneControl2("IM06", "IM06", "ANIM06", "IM06", 2, true);
 			break;
 
 		case 7:
 			if (_globals->_saveData->_data[svBombBoxOpenedFl])
-				_objectsMan->PERSONAGE("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsMan->sceneControl("BOMBEB", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			else
-				_objectsMan->PERSONAGE("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
+				_objectsMan->sceneControl("BOMBEA", "BOMBE", "BOMBE", "BOMBE", 2, true);
 			break;
 
 		case 8:
 			_linesMan->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 450;
-			_objectsMan->PERSONAGE2("IM08", "IM08", "ANIM08", "IM08", 2, true);
+			_objectsMan->sceneControl2("IM08", "IM08", "ANIM08", "IM08", 2, true);
 			break;
 
 		case 9:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svBombDisarmedFl])
-				_objectsMan->PERSONAGE2("IM09", "IM09", "ANIM09", "IM09", 10, true);
+				_objectsMan->sceneControl2("IM09", "IM09", "ANIM09", "IM09", 10, true);
 			else
 				bombExplosion();
 			break;
 
 		case 10:
-			_objectsMan->PERSONAGE("IM10", "IM10", "ANIM10", "IM10", 9, false);
+			_objectsMan->sceneControl("IM10", "IM10", "ANIM10", "IM10", 9, false);
 			break;
 
 		case 11:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
-			_objectsMan->PERSONAGE2("IM11", "IM11", "ANIM11", "IM11", 2, false);
+			_objectsMan->sceneControl2("IM11", "IM11", "ANIM11", "IM11", 2, false);
 			break;
 
 		case 12:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svBombDisarmedFl])
-				_objectsMan->PERSONAGE2("IM12", "IM12", "ANIM12", "IM12", 1, false);
+				_objectsMan->sceneControl2("IM12", "IM12", "ANIM12", "IM12", 1, false);
 			else
 				bombExplosion();
 			break;
@@ -962,38 +962,38 @@ bool HopkinsEngine::runFull() {
 		case 13:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM13", "IM13", "ANIM13", "IM13", 1, true);
+			_objectsMan->sceneControl2("IM13", "IM13", "ANIM13", "IM13", 1, true);
 			break;
 
 		case 14:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM14", "IM14", "ANIM14", "IM14", 1, true);
+			_objectsMan->sceneControl2("IM14", "IM14", "ANIM14", "IM14", 1, true);
 			break;
 
 		case 15:
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-				_objectsMan->PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 29, false);
+				_objectsMan->sceneControl("IM15", "IM15", "ANIM15", "IM15", 29, false);
 			else
-				_objectsMan->PERSONAGE("IM15", "IM15", "ANIM15", "IM15", 18, false);
+				_objectsMan->sceneControl("IM15", "IM15", "ANIM15", "IM15", 18, false);
 			break;
 
 		case 16:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svForestAvailableFl] == 1)
-				_objectsMan->PERSONAGE2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
+				_objectsMan->sceneControl2("IM16", "IM16A", "ANIM16", "IM16", 7, true);
 			else
-				_objectsMan->PERSONAGE2("IM16", "IM16", "ANIM16", "IM16", 7, true);
+				_objectsMan->sceneControl2("IM16", "IM16", "ANIM16", "IM16", 7, true);
 			break;
 
 		case 17:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svHutBurningFl] == 1)
-				_objectsMan->PERSONAGE2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
+				_objectsMan->sceneControl2("IM17", "IM17A", "ANIM17", "IM17", 11, true);
 			else if (!_globals->_saveData->_data[svHutBurningFl])
-				_objectsMan->PERSONAGE2("IM17", "IM17", "ANIM17", "IM17", 11, true);
+				_objectsMan->sceneControl2("IM17", "IM17", "ANIM17", "IM17", 11, true);
 			if (_globals->_exitId == 18) {
 				_globals->_eventMode = EVENTMODE_IGNORE;
 				_graphicsMan->clearScreen();
@@ -1020,24 +1020,24 @@ bool HopkinsEngine::runFull() {
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-				_objectsMan->PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 29, false);
+				_objectsMan->sceneControl2("IM18", "IM18", "ANIM18", "IM18", 29, false);
 			else
-				_objectsMan->PERSONAGE2("IM18", "IM18", "ANIM18", "IM18", 6, false);
+				_objectsMan->sceneControl2("IM18", "IM18", "ANIM18", "IM18", 6, false);
 			break;
 
 		case 19:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svHeavenGuardGoneFl])
-				_objectsMan->PERSONAGE2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
+				_objectsMan->sceneControl2("IM19", "IM19A", "ANIM19", "IM19", 6, true);
 			else
-				_objectsMan->PERSONAGE2("IM19", "IM19", "ANIM19", "IM19", 6, true);
+				_objectsMan->sceneControl2("IM19", "IM19", "ANIM19", "IM19", 6, true);
 			break;
 
 		case 20:
 			_linesMan->setMaxLineIdx(10);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM20", "IM20", "ANIM20", "IM20", 6, true);
+			_objectsMan->sceneControl2("IM20", "IM20", "ANIM20", "IM20", 6, true);
 			if (_globals->_exitId == 17) {
 				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundMan->stopSound();
@@ -1056,88 +1056,88 @@ bool HopkinsEngine::runFull() {
 		case 22:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
-			_objectsMan->PERSONAGE2("IM22", "IM22", "ANIM22", "IM22", 6, true);
+			_objectsMan->sceneControl2("IM22", "IM22", "ANIM22", "IM22", 6, true);
 			break;
 
 		case 23:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM23", "IM23", "ANIM23", "IM23", 6, true);
+			_objectsMan->sceneControl2("IM23", "IM23", "ANIM23", "IM23", 6, true);
 			break;
 
 		case 24:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svCinemaDogGoneFl] == 1)
-				_objectsMan->PERSONAGE2("IM24", "IM24A", "ANIM24", "IM24", 1, true);
+				_objectsMan->sceneControl2("IM24", "IM24A", "ANIM24", "IM24", 1, true);
 			else
-				_objectsMan->PERSONAGE2("IM24", "IM24", "ANIM24", "IM24", 1, true);
+				_objectsMan->sceneControl2("IM24", "IM24", "ANIM24", "IM24", 1, true);
 			break;
 
 		case 25:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-				_objectsMan->PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 30, true);
+				_objectsMan->sceneControl2("IM25", "IM25", "ANIM25", "IM25", 30, true);
 			else
-				_objectsMan->PERSONAGE2("IM25", "IM25", "ANIM25", "IM25", 8, true);
+				_objectsMan->sceneControl2("IM25", "IM25", "ANIM25", "IM25", 8, true);
 			break;
 
 		case 26:
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-				_objectsMan->PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 30, true);
+				_objectsMan->sceneControl2("IM26", "IM26", "ANIM26", "IM26", 30, true);
 			else
-				_objectsMan->PERSONAGE2("IM26", "IM26", "ANIM26", "IM26", 8, true);
+				_objectsMan->sceneControl2("IM26", "IM26", "ANIM26", "IM26", 8, true);
 			break;
 
 		case 27:
 			_linesMan->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 440;
 			if (_globals->_saveData->_data[svPoolDogGoneFl] == 1)
-				_objectsMan->PERSONAGE2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
+				_objectsMan->sceneControl2("IM27", "IM27A", "ANIM27", "IM27", 27, true);
 			else
-				_objectsMan->PERSONAGE2("IM27", "IM27", "ANIM27", "IM27", 27, true);
+				_objectsMan->sceneControl2("IM27", "IM27", "ANIM27", "IM27", 27, true);
 			break;
 
 		case 28:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 450;
 			if (_globals->_saveData->_data[svCinemaCurtainCond1] != 1 || _globals->_saveData->_data[svCinemaCurtainCond2] != 1)
-				_objectsMan->PERSONAGE2("IM28", "IM28", "ANIM28", "IM28", 1, false);
+				_objectsMan->sceneControl2("IM28", "IM28", "ANIM28", "IM28", 1, false);
 			else
-				_objectsMan->PERSONAGE2("IM28A", "IM28", "ANIM28", "IM28", 1, false);
+				_objectsMan->sceneControl2("IM28A", "IM28", "ANIM28", "IM28", 1, false);
 			break;
 
 		case 29:
 			_linesMan->setMaxLineIdx(50);
 			_globals->_characterMaxPosY = 445;
-			_objectsMan->PERSONAGE2("IM29", "IM29", "ANIM29", "IM29", 1, true);
+			_objectsMan->sceneControl2("IM29", "IM29", "ANIM29", "IM29", 1, true);
 			break;
 
 		case 30:
 			_linesMan->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM30", "IM30", "ANIM30", "IM30", 24, false);
+			_objectsMan->sceneControl2("IM30", "IM30", "ANIM30", "IM30", 24, false);
 			break;
 
 		case 31:
-			_objectsMan->PERSONAGE("IM31", "IM31", "ANIM31", "IM31", 10, true);
+			_objectsMan->sceneControl("IM31", "IM31", "ANIM31", "IM31", 10, true);
 			break;
 
 		case 32:
 			_linesMan->setMaxLineIdx(20);
 			_globals->_characterMaxPosY = 445;
-			_objectsMan->PERSONAGE2("IM32", "IM32", "ANIM32", "IM32", 2, true);
+			_objectsMan->sceneControl2("IM32", "IM32", "ANIM32", "IM32", 2, true);
 			break;
 
 		case 33:
-			_objectsMan->PERSONAGE("IM33", "IM33", "ANIM33", "IM33", 8, false);
+			_objectsMan->sceneControl("IM33", "IM33", "ANIM33", "IM33", 8, false);
 			break;
 
 		case 34:
-			_objectsMan->PERSONAGE("IM34", "IM34", "ANIM34", "IM34", 2, false);
+			_objectsMan->sceneControl("IM34", "IM34", "ANIM34", "IM34", 2, false);
 			break;
 
 		case 35:
@@ -1157,7 +1157,7 @@ bool HopkinsEngine::runFull() {
 				_objectsMan->_forestSprite = _objectsMan->loadSprite("HOPDEG.SPR");
 				_soundMan->loadSample(1, "SOUND41.WAV");
 			}
-			_objectsMan->PERSONAGE2(im, im, "BANDIT", im, 13, false);
+			_objectsMan->sceneControl2(im, im, "BANDIT", im, 13, false);
 			if (_globals->_exitId < 35 || _globals->_exitId > 49) {
 				_objectsMan->_forestSprite = _globals->freeMemory(_objectsMan->_forestSprite);
 				_objectsMan->_forestFl = false;
@@ -1174,130 +1174,130 @@ bool HopkinsEngine::runFull() {
 		case 51:
 			_linesMan->setMaxLineIdx(10);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM51", "IM51", "ANIM51", "IM51", 14, true);
+			_objectsMan->sceneControl2("IM51", "IM51", "ANIM51", "IM51", 14, true);
 			break;
 
 		case 52:
 			_linesMan->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 445;
-			_objectsMan->PERSONAGE2("IM52", "IM52", "ANIM52", "IM52", 14, true);
+			_objectsMan->sceneControl2("IM52", "IM52", "ANIM52", "IM52", 14, true);
 			break;
 
 		case 54:
 			_linesMan->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM54", "IM54", "ANIM54", "IM54", 14, true);
+			_objectsMan->sceneControl2("IM54", "IM54", "ANIM54", "IM54", 14, true);
 			break;
 
 		case 55:
 			_linesMan->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 460;
-			_objectsMan->PERSONAGE2("IM55", "IM55", "ANIM55", "IM55", 14, false);
+			_objectsMan->sceneControl2("IM55", "IM55", "ANIM55", "IM55", 14, false);
 			break;
 
 		case 56:
 			_linesMan->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM56", "IM56", "ANIM56", "IM56", 14, false);
+			_objectsMan->sceneControl2("IM56", "IM56", "ANIM56", "IM56", 14, false);
 			break;
 
 		case 57:
 			_linesMan->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM57", "IM57", "ANIM57", "IM57", 14, true);
+			_objectsMan->sceneControl2("IM57", "IM57", "ANIM57", "IM57", 14, true);
 			break;
 
 		case 58:
 			_linesMan->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM58", "IM58", "ANIM58", "IM58", 14, false);
+			_objectsMan->sceneControl2("IM58", "IM58", "ANIM58", "IM58", 14, false);
 			break;
 
 		case 59:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
-			_objectsMan->PERSONAGE2("IM59", "IM59", "ANIM59", "IM59", 21, false);
+			_objectsMan->sceneControl2("IM59", "IM59", "ANIM59", "IM59", 21, false);
 			break;
 
 		case 60:
 			_linesMan->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM60", "IM60", "ANIM60", "IM60", 21, false);
+			_objectsMan->sceneControl2("IM60", "IM60", "ANIM60", "IM60", 21, false);
 			break;
 
 		case 61:
 			if (_globals->_saveData->_data[svBaseElevatorCond1] == 1 && !_globals->_saveData->_data[svBaseFireFl])
 				handleConflagration();
-			_objectsMan->PERSONAGE("IM61", "IM61", "ANIM61", "IM61", 21, false);
+			_objectsMan->sceneControl("IM61", "IM61", "ANIM61", "IM61", 21, false);
 			break;
 
 		case 62:
 			_linesMan->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM62", "IM62", NULL, "IM62", 21, false);
+			_objectsMan->sceneControl2("IM62", "IM62", NULL, "IM62", 21, false);
 			break;
 
 		case 63:
 			_linesMan->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM63", "IM63", "ANIM63", "IM63", 21, false);
+			_objectsMan->sceneControl2("IM63", "IM63", "ANIM63", "IM63", 21, false);
 			break;
 
 		case 64:
 			_linesMan->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM64", "IM64", "ANIM64", "IM64", 21, true);
+			_objectsMan->sceneControl2("IM64", "IM64", "ANIM64", "IM64", 21, true);
 			break;
 
 		case 65:
 			_linesMan->setMaxLineIdx(30);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM65", "IM65", "ANIM65", "IM65", 21, false);
+			_objectsMan->sceneControl2("IM65", "IM65", "ANIM65", "IM65", 21, false);
 			break;
 
 		case 66:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
-			_objectsMan->PERSONAGE2("IM66", "IM66", "ANIM66", "IM66", 21, false);
+			_objectsMan->sceneControl2("IM66", "IM66", "ANIM66", "IM66", 21, false);
 			break;
 
 		case 67:
 			_linesMan->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM67", "IM67", NULL, "IM67", 21, false);
+			_objectsMan->sceneControl2("IM67", "IM67", NULL, "IM67", 21, false);
 			break;
 
 		case 68:
 			_linesMan->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM68", "IM68", "ANIM68", "IM68", 21, true);
+			_objectsMan->sceneControl2("IM68", "IM68", "ANIM68", "IM68", 21, true);
 			break;
 
 		case 69:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
-			_objectsMan->PERSONAGE2("IM69", "IM69", "ANIM69", "IM69", 21, false);
+			_objectsMan->sceneControl2("IM69", "IM69", "ANIM69", "IM69", 21, false);
 			break;
 
 		case 70:
 			_linesMan->setMaxLineIdx(8);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM70", "IM70", NULL, "IM70", 21, false);
+			_objectsMan->sceneControl2("IM70", "IM70", NULL, "IM70", 21, false);
 			break;
 
 		case 71:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 445;
-			_objectsMan->PERSONAGE2("IM71", "IM71", "ANIM71", "IM71", 21, false);
+			_objectsMan->sceneControl2("IM71", "IM71", "ANIM71", "IM71", 21, false);
 			break;
 
 		case 73:
 			_linesMan->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 445;
 			if (_globals->_saveData->_data[svSecondElevatorAvailableFl] == 1)
-				_objectsMan->PERSONAGE2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
+				_objectsMan->sceneControl2("IM73", "IM73A", "ANIM73", "IM73", 21, true);
 			else
-				_objectsMan->PERSONAGE2("IM73", "IM73", "ANIM73", "IM73", 21, true);
+				_objectsMan->sceneControl2("IM73", "IM73", "ANIM73", "IM73", 21, true);
 			break;
 
 		case 75:
@@ -1369,39 +1369,39 @@ bool HopkinsEngine::runFull() {
 			_globals->_characterMaxPosY = 445;
 			if (_globals->_saveData->_data[svEscapeLeftJailFl]) {
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-					_objectsMan->PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 29, true);
+					_objectsMan->sceneControl2("IM93", "IM93C", "ANIM93", "IM93", 29, true);
 				else
-					_objectsMan->PERSONAGE2("IM93", "IM93C", "ANIM93", "IM93", 26, true);
+					_objectsMan->sceneControl2("IM93", "IM93C", "ANIM93", "IM93", 26, true);
 			} else {
 				if (getPlatform() == Common::kPlatformLinux || getPlatform() == Common::kPlatformWindows)
-					_objectsMan->PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 29, true);
+					_objectsMan->sceneControl2("IM93", "IM93", "ANIM93", "IM93", 29, true);
 				else
-					_objectsMan->PERSONAGE2("IM93", "IM93", "ANIM93", "IM93", 26, true);
+					_objectsMan->sceneControl2("IM93", "IM93", "ANIM93", "IM93", 26, true);
 			}
 			break;
 
 		case 94:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 440;
-			_objectsMan->PERSONAGE2("IM94", "IM94", "ANIM94", "IM94", 19, true);
+			_objectsMan->sceneControl2("IM94", "IM94", "ANIM94", "IM94", 19, true);
 			break;
 
 		case 95:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM95", "IM95", "ANIM95", "IM95", 19, false);
+			_objectsMan->sceneControl2("IM95", "IM95", "ANIM95", "IM95", 19, false);
 			break;
 
 		case 96:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM96", "IM96", "ANIM96", "IM96", 19, false);
+			_objectsMan->sceneControl2("IM96", "IM96", "ANIM96", "IM96", 19, false);
 			break;
 
 		case 97:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM97", "IM97", "ANIM97", "IM97", 19, false);
+			_objectsMan->sceneControl2("IM97", "IM97", "ANIM97", "IM97", 19, false);
 			if (_globals->_exitId == 18) {
 				_globals->_eventMode = EVENTMODE_IGNORE;
 				_soundMan->stopSound();
@@ -1417,13 +1417,13 @@ bool HopkinsEngine::runFull() {
 		case 98:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM98", "IM98", "ANIM98", "IM98", 19, true);
+			_objectsMan->sceneControl2("IM98", "IM98", "ANIM98", "IM98", 19, true);
 			break;
 
 		case 99:
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 435;
-			_objectsMan->PERSONAGE2("IM99", "IM99", "ANIM99", "IM99", 19, true);
+			_objectsMan->sceneControl2("IM99", "IM99", "ANIM99", "IM99", 19, true);
 			break;
 
 		case 100:
@@ -1431,11 +1431,11 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 111:
-			_objectsMan->PERSONAGE("IM111", "IM111", "ANIM111", "IM111", 10, false);
+			_objectsMan->sceneControl("IM111", "IM111", "ANIM111", "IM111", 10, false);
 			break;
 
 		case 112:
-			_objectsMan->PERSONAGE("IM112", "IM112", "ANIM112", "IM112", 10, false);
+			_objectsMan->sceneControl("IM112", "IM112", "ANIM112", "IM112", 10, false);
 			break;
 
 		case 113:

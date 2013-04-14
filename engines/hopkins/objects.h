@@ -173,9 +173,9 @@ private:
 	int _curObjectFileNum;
 	byte *_objectDataBuf;
 
-	VBobItem VBob[30];
-	ListeItem Liste[6];
-	ListeItem Liste2[35];
+	VBobItem _vBob[30];
+	ListeItem _liste[6];
+	ListeItem _liste2[35];
 
 	void initVBob();
 	void clearVBob();
@@ -203,7 +203,7 @@ private:
 
 	void loadZone(const Common::String &file);
 	void changeCharacterHead(PlayerCharacter oldCharacter, PlayerCharacter newCharacter);
-	void GOHOME2();
+	void goHome2();
 
 	void nextVerbIcon();
 	void handleForest(int screenId, int minX, int maxX, int minY, int maxY, int idx);
@@ -325,12 +325,12 @@ public:
 	void disableVbob(int idx);
 	void setAndPlayAnim(int idx, int animIdx, int destPosi, bool animAction);
 
-	void PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
+	void sceneControl(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
-	void PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
+	void sceneControl2(const Common::String &backgroundFile, const Common::String &linkFile,
 		const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen);
-	void GOHOME();
-	void PARADISE();
+	void goHome();
+	void paradise();
 };
 
 } // End of namespace Hopkins

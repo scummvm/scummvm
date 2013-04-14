@@ -1029,7 +1029,7 @@ void TalkManager::animateObject(const Common::String &filename) {
 
 		_vm->_linesMan->checkZone();
 		if (_vm->_globals->_actionMoveTo)
-			_vm->_objectsMan->PARADISE();
+			_vm->_objectsMan->paradise();
 		_vm->_events->refreshScreenAndEvents();
 	} while (!_vm->_globals->_exitId);
 	dialogEndTalk();

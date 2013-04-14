@@ -766,7 +766,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_objectsMan->GOHOME();
+				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_objectsMan->removeSprite(0);
@@ -991,7 +991,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_objectsMan->GOHOME();
+				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_objectsMan->removeSprite(0);
@@ -1107,7 +1107,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_objectsMan->GOHOME();
+				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_objectsMan->removeSprite(0);
@@ -1433,7 +1433,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_objectsMan->GOHOME();
+				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_objectsMan->removeSprite(0);
@@ -1671,7 +1671,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_objectsMan->GOHOME();
+				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_globals->_exitId = 59;
@@ -1699,7 +1699,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_objectsMan->GOHOME();
+				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_globals->_exitId = 59;
@@ -1886,7 +1886,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_objectsMan->GOHOME();
+				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_objectsMan->setSpriteIndex(0, 64);
@@ -1917,7 +1917,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_objectsMan->GOHOME();
+				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_objectsMan->setSpriteIndex(0, 64);
@@ -2006,7 +2006,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 				if (_vm->shouldQuit())
 					return -1; // Exiting game
 
-				_vm->_objectsMan->GOHOME();
+				_vm->_objectsMan->goHome();
 				_vm->_events->refreshScreenAndEvents();
 			} while (_vm->_linesMan->_route != (RouteItem *)NULL);
 			_vm->_objectsMan->removeSprite(0);

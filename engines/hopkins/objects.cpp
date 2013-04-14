@@ -45,7 +45,7 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 		Common::fill((byte *)&_bob[i], (byte *)&_bob[i] + sizeof(BobItem), 0);
 
 	for (int i = 0; i < 30; ++i) {
-		Common::fill((byte *)&VBob[i], (byte *)&VBob[i] + sizeof(VBobItem), 0);
+		Common::fill((byte *)&_vBob[i], (byte *)&_vBob[i] + sizeof(VBobItem), 0);
 		Common::fill((byte *)&_lockedAnims[i], (byte *)&_lockedAnims[i] + sizeof(LockAnimItem), 0);
 	}
 
@@ -63,10 +63,10 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 		_hidingItemData[i] = NULL;
 
 	for (int i = 0; i < 6; ++i)
-		Common::fill((byte *)&Liste[i], (byte *)&Liste[i] + sizeof(ListeItem), 0);
+		Common::fill((byte *)&_liste[i], (byte *)&_liste[i] + sizeof(ListeItem), 0);
 
 	for (int i = 0; i < 35; ++i)
-		Common::fill((byte *)&Liste2[i], (byte *)&Liste2[i] + sizeof(ListeItem), 0);
+		Common::fill((byte *)&_liste2[i], (byte *)&_liste2[i] + sizeof(ListeItem), 0);
 
 	_helicopterFl = false;
 	_priorityFl = false;
@@ -400,7 +400,7 @@ void ObjectsManager::displaySprite() {
 
 	if (!_charactersEnabledFl) {
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
-			ListeItem *curList = &Liste[idx];
+			ListeItem *curList = &_liste[idx];
 			if (curList->_visibleFl) {
 				clipX = curList->_posX - 2;
 				if (clipX < _vm->_graphicsMan->_minX)
@@ -423,7 +423,7 @@ void ObjectsManager::displaySprite() {
 	if (!_charactersEnabledFl) {
 		// Handle drawing characters on the screen
 		for (int idx = 0; idx < MAX_SPRITE; ++idx) {
-			Liste[idx]._visibleFl = false;
+			_liste[idx]._visibleFl = false;
 			SpriteItem *curSpr = &_sprite[idx];
 			if (curSpr->_animationType == 1) {
 				computeSprite(idx);
@@ -570,7 +570,7 @@ void ObjectsManager::displaySprite() {
 
 void ObjectsManager::resetBob(int idx) {
 	BobItem &bob = _bob[idx];
-	ListeItem &item = Liste2[idx];
+	ListeItem &item = _liste2[idx];
 
 	bob._bobMode = 0;
 	bob._spriteData = NULL;
@@ -615,7 +615,7 @@ void ObjectsManager::setBobInfo(int idx) {
 			curBob->_spriteData, xp + 300, yp + 300, curBob->_frameIndex,
 			curBob->_zoomOutFactor, curBob->_zooInmFactor, curBob->_flipFl);
 
-	ListeItem *curLst = &Liste2[idx];
+	ListeItem *curLst = &_liste2[idx];
 	curLst->_visibleFl = true;
 	curLst->_posX = xp;
 	curLst->_posY = yp;
@@ -788,7 +788,7 @@ void ObjectsManager::initBobVariables(int idx) {
 	bob->_zooInmFactor = posZoom;
 	bob->_zoomOutFactor = negZoom;
 
-	ListeItem *curList = &Liste2[idx];
+	ListeItem *curList = &_liste2[idx];
 	curList->_visibleFl = true;
 	curList->_posX = newX;
 	curList->_posY = newY;
@@ -866,7 +866,7 @@ void ObjectsManager::showSprite(int idx) {
 		_vm->_graphicsMan->drawCompressedSprite(_vm->_graphicsMan->_frontBuffer, spr->_spriteData,
 		    spr->_destX + 300, spr->_destY + 300,  spr->_spriteIndex, spr->_reducePct, spr->_zoomPct, spr->_flipFl);
 
-	ListeItem *list = &Liste[idx];
+	ListeItem *list = &_liste[idx];
 	list->_width = spr->_width;
 	list->_height = spr->_height;
 
@@ -965,9 +965,9 @@ void ObjectsManager::computeSprite(int idx) {
 	spr->_zoomPct = zoomPercent;
 	spr->_reducePct = reducePercent;
 
-	Liste[idx]._visibleFl = true;
-	Liste[idx]._posX = newPosX;
-	Liste[idx]._posY = newPosY;
+	_liste[idx]._visibleFl = true;
+	_liste[idx]._posX = newPosX;
+	_liste[idx]._posY = newPosY;
 
 	int width = getWidth(spr->_spriteData, spr->_spriteIndex);
 	int height = getHeight(spr->_spriteData, spr->_spriteIndex);
@@ -1100,7 +1100,7 @@ void ObjectsManager::displayBobAnim() {
 
 	for (int i = 1; i <= 35; i++) {
 		BobItem *curBob = &_bob[i];
-		ListeItem *curList = &Liste2[i];
+		ListeItem *curList = &_liste2[i];
 		if (i > 20 || !_charactersEnabledFl) {
 			if ((curBob->_bobMode == 10) && (curBob->_bobMode10)) {
 				if ((curBob->_bobModeChange != 2) && (curBob->_bobModeChange != 4)) {
@@ -1145,7 +1145,7 @@ void ObjectsManager::displayVBob() {
 	int width, height;
 
 	for (int idx = 0; idx <= 29; idx++) {
-		VBobItem *vbob = &VBob[idx];
+		VBobItem *vbob = &_vBob[idx];
 		if (vbob->_displayMode == 4) {
 			width = getWidth(vbob->_spriteData, vbob->_frameIndex);
 			height = getHeight(vbob->_spriteData, vbob->_frameIndex);
@@ -1250,7 +1250,7 @@ void ObjectsManager::clearSprite() {
 	}
 
 	for (int idx = 0; idx < MAX_SPRITE; idx++) {
-		ListeItem *list = &Liste[idx];
+		ListeItem *list = &_liste[idx];
 		list->_visibleFl = false;
 		list->_posX = 0;
 		list->_posY = 0;
@@ -1331,7 +1331,7 @@ void ObjectsManager::setFlipSprite(int idx, bool flipFl) {
 		_sprite[idx]._flipFl = flipFl;
 }
 
-void ObjectsManager::GOHOME() {
+void ObjectsManager::goHome() {
 	if (_vm->_linesMan->_route == NULL)
 		return;
 
@@ -1650,7 +1650,7 @@ void ObjectsManager::GOHOME() {
 	_oldCharacterPosY = newPosY;
 }
 
-void ObjectsManager::GOHOME2() {
+void ObjectsManager::goHome2() {
 	if (_vm->_linesMan->_route == NULL)
 		return;
 
@@ -1874,10 +1874,10 @@ void ObjectsManager::handleCityMap() {
 		}
 
 		_vm->_linesMan->checkZone();
-		GOHOME2();
+		goHome2();
 
 		if (_vm->_linesMan->_route == NULL && _vm->_globals->_actionMoveTo)
-			PARADISE();
+			paradise();
 		_vm->_events->refreshScreenAndEvents();
 
 		if (_vm->_globals->_exitId)
@@ -2037,7 +2037,7 @@ void ObjectsManager::handleLeftButton() {
 	}
 }
 
-void ObjectsManager::PARADISE() {
+void ObjectsManager::paradise() {
 	char result = _vm->_globals->_saveData->_data[svLastMouseCursor];
 	if (result && _vm->_globals->_saveData->_data[svLastZoneNum] && result != 4 && result > 3) {
 		_vm->_fontMan->hideText(5);
@@ -2788,7 +2788,7 @@ void ObjectsManager::initVbob(const byte *src, int idx, int xp, int yp, int fram
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
 
-	VBobItem *vbob = &VBob[idx];
+	VBobItem *vbob = &_vBob[idx];
 	if (vbob->_displayMode <= 1) {
 		vbob->_displayMode = 1;
 		vbob->_xp = xp;
@@ -2817,7 +2817,7 @@ void ObjectsManager::disableVbob(int idx) {
 	if (idx > 29)
 		error("MAX_VBOB exceeded");
 
-	VBobItem *vbob = &VBob[idx];
+	VBobItem *vbob = &_vBob[idx];
 	if (vbob->_displayMode <= 1)
 		vbob->_displayMode = 0;
 	else
@@ -3735,7 +3735,7 @@ void ObjectsManager::lockAnimX(int idx, int x) {
 /**
  * Game scene control method
  */
-void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Common::String &linkFile,
+void ObjectsManager::sceneControl(const Common::String &backgroundFile, const Common::String &linkFile,
 							   const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen) {
 	_vm->_dialog->_inventFl = false;
 	_vm->_events->_gameKey = KEY_NONE;
@@ -3786,7 +3786,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_vm->_linesMan->_route = _vm->_linesMan->findRoute(getSpriteX(0), getSpriteY(0), 330, 345);
 		_vm->_globals->_checkDistanceFl = true;
 		do {
-			GOHOME();
+			goHome();
 			_vm->_events->refreshScreenAndEvents();
 		} while (_vm->_linesMan->_route);
 		setSpriteIndex(0, 64);
@@ -3801,7 +3801,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 		_vm->_dialog->testDialogOpening();
 		_vm->_linesMan->checkZone();
 		if (_vm->_globals->_actionMoveTo)
-			PARADISE();
+			paradise();
 		if (!_vm->_globals->_exitId)
 			_vm->_events->refreshScreenAndEvents();
 
@@ -3823,7 +3823,7 @@ void ObjectsManager::PERSONAGE(const Common::String &backgroundFile, const Commo
 /**
  * Game scene control method
  */
-void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Common::String &linkFile,
+void ObjectsManager::sceneControl2(const Common::String &backgroundFile, const Common::String &linkFile,
 								const Common::String &animFile, const Common::String &s4, int soundNum, bool initializeScreen) {
 	_vm->_dialog->_inventFl = false;
 	_vm->_events->_gameKey = KEY_NONE;
@@ -3922,7 +3922,7 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 
 					if ((xCheck == xp) && (yCheck == yp)) {
 						_vm->_linesMan->_route = NULL;
-						PARADISE();
+						paradise();
 						if (_vm->_globals->_exitId)
 							breakFlag = true;
 					}
@@ -3938,9 +3938,9 @@ void ObjectsManager::PERSONAGE2(const Common::String &backgroundFile, const Comm
 			_vm->_dialog->testDialogOpening();
 			_vm->_linesMan->checkZone();
 			if (_vm->_linesMan->_route == NULL
-					|| (GOHOME(), _vm->_linesMan->_route == NULL)) {
+					|| (goHome(), _vm->_linesMan->_route == NULL)) {
 				if (_vm->_globals->_actionMoveTo)
-					PARADISE();
+					paradise();
 			}
 			handleSpecialGames();
 			_vm->_events->refreshScreenAndEvents();
@@ -4018,7 +4018,7 @@ void ObjectsManager::loadHidingItems(const Common::String &file) {
 
 void ObjectsManager::initVBob() {
 	for (int idx = 0; idx < 30; ++idx) {
-		VBobItem *vbob = &VBob[idx];
+		VBobItem *vbob = &_vBob[idx];
 		vbob->_displayMode = 0;
 		vbob->_xp = 0;
 		vbob->_yp = 0;
@@ -4031,7 +4031,7 @@ void ObjectsManager::initVBob() {
 
 void ObjectsManager::clearVBob() {
 	for (int idx = 0; idx < 30; ++idx) {
-		VBobItem *vbob = &VBob[idx];
+		VBobItem *vbob = &_vBob[idx];
 		vbob->_displayMode = 0;
 		vbob->_xp = 0;
 		vbob->_yp = 0;
