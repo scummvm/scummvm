@@ -37,6 +37,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"chivalry",        "Chivalry is Not Dead"},
 	{"deadcity",        "Dead City"},
 	{"dirtysplit",      "Dirty Split"},
+	{"dreamscape",      "Dreamscape"},
 	{"ghostsheet",      "Ghost in the Sheet"},
 	{"hamlet",          "Hamlet or the last game without MMORPS features, shaders and product placement"},
 	{"julia",           "J.U.L.I.A."},
@@ -232,6 +233,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("data.dcp", "139d8a25579e969f8b37d20e6e3de5f9", 92668291),
 		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Dreamscape
+	{
+		"dreamscape",
+		"",
+		AD_ENTRY1s("data.dcp",  "7a5752ed4446c862be9f02d7932acf54", 17034377),
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
