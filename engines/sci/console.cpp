@@ -2350,8 +2350,7 @@ bool Console::cmdVMVarlist(int argc, const char **argv) {
 
 	for (int i = 0; i < 4; i++) {
 		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(s->variablesSegment[i], s->variables[i] - s->variablesBase[i])));
-		if (s->variablesMax)
-			DebugPrintf("  total %d", s->variablesMax[i]);
+		DebugPrintf("  total %d", s->variablesMax[i]);
 		DebugPrintf("\n");
 	}
 
@@ -2408,7 +2407,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 			return true;
 		}
 
-		if ((s->variablesMax) && (s->variablesMax[varType] <= varIndex)) {
+		if (s->variablesMax[varType] <= varIndex) {
 			DebugPrintf("Maximum variable number for this type is %d (0x%x)\n", s->variablesMax[varType], s->variablesMax[varType]);
 			return true;
 		}
