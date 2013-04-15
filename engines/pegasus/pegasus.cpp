@@ -239,6 +239,9 @@ bool PegasusEngine::detectOpeningClosingDirectory() {
 void PegasusEngine::createItems() {
 	Common::SeekableReadStream *res = _resFork->getResource(MKTAG('N', 'I', 't', 'm'), 0x80);
 
+	if (!res)
+		error("Couldn't find neighborhood items resource");
+
 	uint16 entryCount = res->readUint16BE();
 
 	for (uint16 i = 0; i < entryCount; i++) {
