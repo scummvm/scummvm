@@ -531,6 +531,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		varNames.push_back(name);
 	}
 	delete nameStream;
+	delete[] stringOffsets;
 
 	// Load in External Command Names
 	nameStream = _vm->getResource(ID_NAME, ExternalCommandNames);
@@ -552,6 +553,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		xNames.push_back(name);
 	}
 	delete nameStream;
+	delete[] stringOffsets;
 
 	// Get CARD/HSPT data and dump their scripts
 	if (!scumm_stricmp(argv[2], "CARD")) {
