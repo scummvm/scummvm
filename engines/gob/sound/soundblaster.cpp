@@ -98,7 +98,7 @@ void SoundBlaster::playComposition(const int16 *composition, int16 freqVal,
 	do {
 		i++;
 		_composition[i] = composition[i];
-	} while ((i < 50) && (composition[i] != -1));
+	} while ((i < 49) && (composition[i] != -1));
 
 	_compositionPos = -1;
 	nextCompositionPos();
