@@ -674,6 +674,8 @@ bool VideoDecoder::addStreamFileTrack(const Common::String &baseName) {
 
 	if (result)
 		addTrack(track);
+	else
+		delete track;
 
 	return result;
 }
