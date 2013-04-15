@@ -551,8 +551,6 @@ void EoBCoreEngine::drawMonsters(int index) {
 
 			SpriteDecoration *dcr = &_monsterDecorations[(p->decorations[ii] - 1) * 6 + subFrame + shpIndex - 1];
 
-			if (!dcr)
-				continue;
 			if (!dcr->shp)
 				continue;
 
