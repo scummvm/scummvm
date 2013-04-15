@@ -2507,6 +2507,7 @@ bool Console::cmdValueType(int argc, const char **argv) {
 		break;
 	case SIG_TYPE_INTEGER:
 		DebugPrintf("Integer");
+		break;
 	case SIG_TYPE_INTEGER | SIG_TYPE_NULL:
 		DebugPrintf("Null");
 		break;
