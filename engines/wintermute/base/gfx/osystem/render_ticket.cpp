@@ -72,7 +72,7 @@ RenderTicket::~RenderTicket() {
 
 bool RenderTicket::operator==(RenderTicket &t) {
 	if ((t._owner != _owner) ||
-		(t._batchNum != t._batchNum) ||
+		(t._batchNum != _batchNum) ||
 		(t._hasAlpha != _hasAlpha) ||
 		(t._mirror != _mirror) ||
 		(t._colorMod != _colorMod) ||
