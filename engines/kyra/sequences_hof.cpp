@@ -942,8 +942,8 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 	bool finished = false;
 	uint32 startTime = _system->getMillis();
 
-	int origW = wsaObj->width();
-	int origH = wsaObj->width();
+	int origW = wsaObj ? wsaObj->width() : 0;
+	int origH = wsaObj ? wsaObj->height() : 0;
 	int drwX = x;
 	int drwY = y;
 	int drwW = origW;
