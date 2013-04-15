@@ -247,6 +247,9 @@ void EoBCoreEngine::updateAttackingMonsterFlags() {
 		m2 = m;
 	}
 
+	if (!m2)
+		return;
+
 	if (m2->type == 7)
 		setScriptFlags(4);
 
