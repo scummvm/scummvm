@@ -653,6 +653,8 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 			}
 		}
 
+		assert(shp);
+
 		shp = _screen->scaleShape(shp, sclValue);
 
 		if (rstFade) {
