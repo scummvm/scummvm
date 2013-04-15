@@ -1291,6 +1291,7 @@ void Caldoria::activateHotspots() {
 				_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRightDrawerNoKeysCloseSpotID);
 			}
 		}
+		break;
 	case kCaldoriaReplicator:
 		if (GameState.getCaldoriaMadeOJ())
 			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaMakeOJSpotID);
