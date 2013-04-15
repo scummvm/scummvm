@@ -2564,8 +2564,8 @@ bool BaseGame::displayQuickMsg() {
 
 	// display
 	for (uint32 i = 0; i < _quickMessages.size(); i++) {
-		_systemFont->drawText((byte *)_quickMessages[i]->getText(), 0, posY, _renderer->_width);
-		posY += _systemFont->getTextHeight((byte *)_quickMessages[i]->getText(), _renderer->_width);
+		_systemFont->drawText((const byte *)_quickMessages[i]->getText(), 0, posY, _renderer->_width);
+		posY += _systemFont->getTextHeight((const byte *)_quickMessages[i]->getText(), _renderer->_width);
 	}
 	return STATUS_OK;
 }

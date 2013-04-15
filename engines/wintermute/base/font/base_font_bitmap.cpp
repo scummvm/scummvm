@@ -76,20 +76,20 @@ void BaseFontBitmap::drawText(const byte *text, int x, int y, int width, TTextAl
 
 
 //////////////////////////////////////////////////////////////////////
-int BaseFontBitmap::getTextHeight(byte *text, int width) {
+int BaseFontBitmap::getTextHeight(const byte *text, int width) {
 	return textHeightDraw(text, 0, 0, width, TAL_LEFT, false);
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int BaseFontBitmap::getTextWidth(byte *text, int maxLength) {
+int BaseFontBitmap::getTextWidth(const byte *text, int maxLength) {
 	AnsiString str;
 
 	if (_gameRef->_textEncoding == TEXT_UTF8) {
-		WideString wstr = StringUtil::utf8ToWide(Utf8String((char *)text));
+		WideString wstr = StringUtil::utf8ToWide(Utf8String((const char *)text));
 		str = StringUtil::wideToAnsi(wstr);
 	} else {
-		str = AnsiString((char *)text);
+		str = AnsiString((const char *)text);
 	}
 
 	if (maxLength >= 0 && str.size() > (uint32)maxLength) {

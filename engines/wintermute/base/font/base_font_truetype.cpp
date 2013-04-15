@@ -111,13 +111,13 @@ void BaseFontTT::initLoop() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int BaseFontTT::getTextWidth(byte *text, int maxLength) {
+int BaseFontTT::getTextWidth(const byte *text, int maxLength) {
 	WideString textStr;
 
 	if (_gameRef->_textEncoding == TEXT_UTF8) {
-		textStr = StringUtil::utf8ToWide((char *)text);
+		textStr = StringUtil::utf8ToWide((const char *)text);
 	} else {
-		textStr = StringUtil::ansiToWide((char *)text);
+		textStr = StringUtil::ansiToWide((const char *)text);
 	}
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
@@ -132,13 +132,13 @@ int BaseFontTT::getTextWidth(byte *text, int maxLength) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int BaseFontTT::getTextHeight(byte *text, int width) {
+int BaseFontTT::getTextHeight(const byte *text, int width) {
 	WideString textStr;
 
 	if (_gameRef->_textEncoding == TEXT_UTF8) {
-		textStr = StringUtil::utf8ToWide((char *)text);
+		textStr = StringUtil::utf8ToWide((const char *)text);
 	} else {
-		textStr = StringUtil::ansiToWide((char *)text);
+		textStr = StringUtil::ansiToWide((const char *)text);
 	}
 
 
