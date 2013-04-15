@@ -238,6 +238,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			// as the text shown in this screen is very short (one-liners).
 			// Just output an empty string here instead of showing an error.
 			record.string = "";
+			delete reader;
 			return true;
 		}
 
