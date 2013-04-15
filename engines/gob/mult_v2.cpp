@@ -754,8 +754,10 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 
 	case 1:
 		animData.frame = 0;
-		*(animObj.pPosX) += animLayer->animDeltaX;
-		*(animObj.pPosY) += animLayer->animDeltaY;
+		if (animLayer) {
+			*(animObj.pPosX) += animLayer->animDeltaX;
+			*(animObj.pPosY) += animLayer->animDeltaY;
+		}
 		break;
 
 	case 2:
