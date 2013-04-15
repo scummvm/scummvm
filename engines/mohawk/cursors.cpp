@@ -160,6 +160,7 @@ void NECursorManager::setCursor(uint16 id) {
 			Graphics::Cursor *cursor = cursorGroup->cursors[0].cursor;
 			CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 			CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
+			delete cursorGroup;
 			return;
 		}
 	}
