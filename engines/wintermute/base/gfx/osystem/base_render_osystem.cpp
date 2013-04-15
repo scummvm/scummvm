@@ -484,7 +484,8 @@ void BaseRenderOSystem::drawTickets() {
 	_drawNum = 1;
 	for (it = _renderQueue.begin(); it != _renderQueue.end(); ++it) {
 		RenderTicket *ticket = *it;
-		assert(ticket->_drawNum == _drawNum++);
+		assert(ticket->_drawNum == _drawNum);
+		++_drawNum;
 		if (ticket->_dstRect.intersects(*_dirtyRect)) {
 			// dstClip is the area we want redrawn.
 			Common::Rect dstClip(ticket->_dstRect);
