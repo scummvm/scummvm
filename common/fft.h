@@ -67,7 +67,6 @@ private:
 	Complex *_tmpBuf;
 
 	int _splitRadix;
-	int _permutation;
 
 	static int splitRadixPermutation(int i, int n, int inverse);
 
