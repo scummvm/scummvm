@@ -120,6 +120,7 @@ bool BaseSurfaceOSystem::create(const Common::String &filename, bool defaultCK, 
 bool BaseSurfaceOSystem::finishLoad() {
 	BaseImage *image = new BaseImage();
 	if (!image->loadFile(_filename)) {
+		delete image;
 		return false;
 	}
 
