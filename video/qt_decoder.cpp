@@ -712,14 +712,18 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() 
 	uint32 descId;
 	Common::SeekableReadStream *frameData = getNextFramePacket(descId);
 
-	if (!frameData || !descId || descId > _parent->sampleDescs.size())
+	if (!frameData || !descId || descId > _parent->sampleDescs.size()) {
+		delete frameData;
 		return 0;
+	}
 
 	// Find which video description entry we want
 	VideoSampleDesc *entry = (VideoSampleDesc *)_parent->sampleDescs[descId - 1];
 
-	if (!entry->_videoCodec)
+	if (!entry->_videoCodec) {
+		delete frameData;
 		return 0;
+	}
 
 	const Graphics::Surface *frame = entry->_videoCodec->decodeImage(frameData);
 	delete frameData;
