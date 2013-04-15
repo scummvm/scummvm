@@ -567,6 +567,7 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 					case 2:
 					case 6:
 						flg |= 0x10;
+						// fall through
 					case 0:
 					case 4:
 						shpIndex = _flyingItemShapes[shpIndex].shapeLeft;
