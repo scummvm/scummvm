@@ -2388,6 +2388,8 @@ reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 				debugN("\n");
 #endif
 			}
+
+			delete polygon;
 		}
 
 		node = s->_segMan->lookupNode(node->succ);
