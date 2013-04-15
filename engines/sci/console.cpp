@@ -284,6 +284,7 @@ void Console::postEnter() {
 #endif
 
 			VideoState emptyState;
+			emptyState.reset();
 			emptyState.fileName = _videoFile;
 			emptyState.flags = kDoubled;	// always allow the videos to be double sized
 			playVideo(videoDecoder, emptyState);
