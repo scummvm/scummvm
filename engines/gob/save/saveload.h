@@ -806,7 +806,6 @@ protected:
 		uint8 _id;
 		int   _slot;
 
-		TempHandler *_tmp;
 		GameHandler *_game;
 	};
 
