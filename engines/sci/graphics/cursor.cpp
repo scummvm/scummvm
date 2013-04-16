@@ -532,6 +532,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 
 	if (!macCursor->readFromStream(resStream)) {
 		warning("Failed to load Mac cursor %d", viewNum);
+		delete macCursor;
 		return;
 	}
 
