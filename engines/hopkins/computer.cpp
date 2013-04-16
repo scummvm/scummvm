@@ -864,7 +864,7 @@ void ComputerManager::getScoreName() {
 		displayHiscoreLine(ptr, 9 * strPos + 140, 78, 1);
 
 		char curChar = toupper(_vm->_events->waitKeyPress());
-		if ((curChar < '0') && (curChar > 'Z'))
+		if ((curChar < '0') || (curChar > 'Z'))
 			curChar = ' ';
 		if ((curChar > '9') && (curChar < 'A'))
 			curChar = ' ';
