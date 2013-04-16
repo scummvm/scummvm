@@ -206,6 +206,7 @@ void ListWidget::scrollTo(int item) {
 
 	if (_currentPos != item) {
 		_currentPos = item;
+		checkBounds();
 		scrollBarRecalc();
 	}
 }
@@ -467,6 +468,7 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	case kSetPositionCmd:
 		if (_currentPos != (int)data) {
 			_currentPos = data;
+			checkBounds();
 			draw();
 
 			// Scrollbar actions cause list focus (which triggers a redraw)
@@ -550,6 +552,13 @@ Common::Rect ListWidget::getEditRect() const {
 	return r;
 }
 
+void ListWidget::checkBounds() {
+	if (_currentPos < 0 || _entriesPerPage > (int)_list.size())
+		_currentPos = 0;
+	else if (_currentPos + _entriesPerPage > (int)_list.size())
+		_currentPos = _list.size() - _entriesPerPage;
+}
+
 void ListWidget::scrollToCurrent() {
 	// Only do something if the current item is not in our view port
 	if (_selectedItem < _currentPos) {
@@ -560,11 +569,7 @@ void ListWidget::scrollToCurrent() {
 		_currentPos = _selectedItem - _entriesPerPage + 1;
 	}
 
-	if (_currentPos < 0 || _entriesPerPage > (int)_list.size())
-		_currentPos = 0;
-	else if (_currentPos + _entriesPerPage > (int)_list.size())
-		_currentPos = _list.size() - _entriesPerPage;
-
+	checkBounds();
 	_scrollBar->_currentPos = _currentPos;
 	_scrollBar->recalc();
 }
