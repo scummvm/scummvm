@@ -251,15 +251,14 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 			if (curChannel != 0xF)
 				containsMidiData = true;
 
-			if (command != kEndOfTrack) {
-				// Write delta
-				while (delta > 240) {
-					*outData++ = 0xF8;
-					delta -= 240;
-				}
-				*outData++ = (byte)delta;
-				delta = 0;
+			// Write delta
+			while (delta > 240) {
+				*outData++ = 0xF8;
+				delta -= 240;
 			}
+			*outData++ = (byte)delta;
+			delta = 0;
+
 			// Write command
 			switch (command) {
 			case 0xF0: // sysEx
@@ -302,7 +301,7 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	}
 
 	// Insert stop event
-	*outData++ = 0;    // Delta
+	// (Delta is already output above)
 	*outData++ = 0xFF; // Meta event
 	*outData++ = 0x2F; // End of track (EOT)
 	*outData++ = 0x00;
