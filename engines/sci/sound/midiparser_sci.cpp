@@ -531,8 +531,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// Check if the hold ID marker is the same as the hold ID
 				// marker set for that song by cmdSetSoundHold.
 				// If it is, loop back, but don't stop notes when jumping.
-				if (info.basic.param2 == _pSnd->hold)
+				if (info.basic.param2 == _pSnd->hold) {
+					uint32 extraDelta = info.delta;
 					jumpToTick(_loopTick, false, false);
+					_nextEvent.delta += extraDelta;
+				}
 				break;
 			case kUpdateCue:
 				_dataincAdd = true;
@@ -635,7 +638,9 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// treats this case as an infinite loop (bug #3311911).
 				if (_pSnd->loop || _pSnd->hold > 0) {
 					// We need to play it again...
+					uint32 extraDelta = info.delta;
 					jumpToTick(_loopTick);
+					_nextEvent.delta += extraDelta;
 				} else {
 					_pSnd->status = kSoundStopped;
 					_pSnd->setSignal(SIGNAL_OFFSET);
