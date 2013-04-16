@@ -487,8 +487,8 @@ bool JPEGDecoder::readDQT() {
 
 		// Validate the table id
 		tableId &= 0xF;
-		if (tableId > JPEG_MAX_QUANT_TABLES) {
-			warning("JPEG: Invalid number of components");
+		if (tableId >= JPEG_MAX_QUANT_TABLES) {
+			warning("JPEG: Invalid quantization table");
 			return false;
 		}
 
