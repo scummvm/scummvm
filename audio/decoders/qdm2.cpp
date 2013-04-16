@@ -872,7 +872,7 @@ void initVlcSparse(VLC *vlc, int nb_bits, int nb_codes,
 	                codes, codes_wrap, codes_size,
 	                symbols, symbols_wrap, symbols_size,
 	                0, 0, 4 | 2) < 0) {
-		free(&vlc->table);
+		free(vlc->table);
 		return; // Error
 	}
 
