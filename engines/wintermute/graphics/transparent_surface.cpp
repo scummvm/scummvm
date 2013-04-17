@@ -218,7 +218,7 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 	height = height * 2 / 3;
 #endif
 
-	Graphics::Surface *img;
+	Graphics::Surface *img = nullptr;
 	Graphics::Surface *imgScaled = nullptr;
 	byte *savedPixels = nullptr;
 	if ((width != srcImage.w) || (height != srcImage.h)) {
@@ -371,14 +371,15 @@ Common::Rect TransparentSurface::blit(Graphics::Surface &target, int posX, int p
 		}
 	}
 
+	retSize.setWidth(img->w);
+	retSize.setHeight(img->h);
+
 	if (imgScaled) {
 		imgScaled->pixels = savedPixels;
 		imgScaled->free();
 		delete imgScaled;
 	}
 
-	retSize.setWidth(img->w);
-	retSize.setHeight(img->h);
 	return retSize;
 }
 
