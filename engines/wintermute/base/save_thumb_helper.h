@@ -35,7 +35,7 @@ class BaseGame;
 
 class SaveThumbHelper {
 public:
-	SaveThumbHelper(BaseGame *inGame);
+	SaveThumbHelper(const BaseGame *inGame);
 	virtual ~SaveThumbHelper(void);
 	bool storeThumbnail(bool doFlip = false);
 	bool storeScummVMThumbNail(bool doFlip = false);
