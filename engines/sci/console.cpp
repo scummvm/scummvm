@@ -2227,6 +2227,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 	DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 			track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
 
+	delete soundRes;
 	return true;
 }
 
