@@ -1497,7 +1497,7 @@ bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
+bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
 	BaseGame::getVersion(verMajor, verMinor, nullptr, nullptr);
 
 	if (extMajor) {
@@ -1766,7 +1766,7 @@ bool AdGame::addBranchResponse(int id) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::branchResponseUsed(int id) {
+bool AdGame::branchResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
 		if (_responsesBranch[i]->_id == id) {
@@ -1793,7 +1793,7 @@ bool AdGame::addGameResponse(int id) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::gameResponseUsed(int id) {
+bool AdGame::gameResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
 	for (uint32 i = 0; i < _responsesGame.size(); i++) {
 		AdResponseContext *respContext = _responsesGame[i];
@@ -1958,7 +1958,7 @@ bool AdGame::isItemTaken(char *itemName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AdItem *AdGame::getItemByName(const char *name) {
+AdItem *AdGame::getItemByName(const char *name) const {
 	for (uint32 i = 0; i < _items.size(); i++) {
 		if (scumm_stricmp(_items[i]->getName(), name) == 0) {
 			return _items[i];

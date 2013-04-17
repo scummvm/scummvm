@@ -111,7 +111,7 @@ public:
 	int getSaveThumbHeight() const { return _thumbnailHeight; }
 
 	bool _editorMode;
-	void getOffset(int *offsetX, int *offsetY);
+	void getOffset(int *offsetX, int *offsetY) const;
 	void setOffset(int offsetX, int offsetY);
 	int getSequence();
 
@@ -172,7 +172,7 @@ public:
 	// compatibility bits
 	bool _compatKillMethodThreads;
 
-	const char* getGameId() { return _gameId.c_str(); }
+	const char* getGameId() const { return _gameId.c_str(); }
 	void setGameId(const Common::String& gameId) { _gameId = gameId; }
 	uint32 _surfaceGCCycleTime;
 	bool _smartCache; // RO
@@ -184,7 +184,7 @@ public:
 
 	virtual bool handleMouseWheel(int delta);
 	bool _quitting;
-	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
+	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const;
 
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
 	virtual void handleKeyRelease(Common::Event *event);
@@ -239,8 +239,8 @@ public:
 	void setInteractive(bool state);
 	virtual bool windowLoadHook(UIWindow *win, char **buf, char **params);
 	virtual bool windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name);
-	bool getCurrentViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr);
-	bool getCurrentViewportRect(Rect32 *rect, bool *custom = nullptr);
+	bool getCurrentViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr) const;
+	bool getCurrentViewportRect(Rect32 *rect, bool *custom = nullptr) const;
 	bool popViewport();
 	bool pushViewport(BaseViewport *Viewport);
 	bool setActiveObject(BaseObject *Obj);

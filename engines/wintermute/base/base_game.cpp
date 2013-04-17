@@ -620,7 +620,7 @@ void BaseGame::setOffset(int offsetX, int offsetY) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseGame::getOffset(int *offsetX, int *offsetY) {
+void BaseGame::getOffset(int *offsetX, int *offsetY) const {
 	if (offsetX != nullptr) {
 		*offsetX = _offsetX;
 	}
@@ -3270,7 +3270,7 @@ bool BaseGame::handleMouseWheel(int delta) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
+bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
 	if (verMajor) {
 		*verMajor = DCGF_VER_MAJOR;
 	}
@@ -3372,7 +3372,7 @@ bool BaseGame::popViewport() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
+bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
 	if (rect == nullptr) {
 		return STATUS_FAILED;
 	} else {
@@ -3397,7 +3397,7 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) {
+bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) const {
 	if (_viewportSP >= 0) {
 		if (offsetX) {
 			*offsetX = _viewportStack[_viewportSP]->_offsetX;

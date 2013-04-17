@@ -63,7 +63,7 @@ public:
 	bool _tempDisableSaveState;
 	virtual bool resetContent();
 	bool addItem(AdItem *item);
-	AdItem *getItemByName(const char *name);
+	AdItem *getItemByName(const char *name) const;
 
 	AdObject *_inventoryOwner;
 	bool isItemTaken(char *itemName);
@@ -71,11 +71,11 @@ public:
 	bool unregisterInventory(AdInventory *inv);
 	virtual bool displayContent(bool update = true, bool displayAll = false);
 
-	bool gameResponseUsed(int ID);
+	bool gameResponseUsed(int ID) const;
 	bool addGameResponse(int ID);
 	bool resetResponse(int ID);
 
-	bool branchResponseUsed(int ID);
+	bool branchResponseUsed(int ID) const;
 	bool addBranchResponse(int ID);
 	bool clearBranchResponses(char *name);
 	bool startDlgBranch(const char *branchName, const char *scriptName, const char *eventName);
@@ -93,7 +93,7 @@ public:
 
 	TTalkSkipButton _talkSkipButton;
 
-	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor);
+	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const;
 	bool scheduleChangeScene(const char *filename, bool fadeIn);
 	void setPrevSceneName(const char *name);
 	void setPrevSceneFilename(const char *name);
