@@ -286,7 +286,7 @@ bool SystemClassRegistry::loadInstances(BaseGame *gameRef, BasePersistenceManage
 
 	for (int i = 0; i < numInstances; i++) {
 		if (i % 20 == 0) {
-			gameRef->_renderer->setIndicatorVal((int)(50.0f + 50.0f / (float)((float)numInstances / (float)i)));
+			gameRef->_renderer->setIndicatorVal((int)(50.0f + 50.0f / (float)((float)numInstances / (float)(i + 1))));
 		}
 
 		checkHeader("<INSTANCE_HEAD>", persistMgr);
