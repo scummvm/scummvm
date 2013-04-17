@@ -71,6 +71,8 @@ bool StaticBitmap::initBitmapResource(const Common::String &filename) {
 	// RenderObject Eigenschaften aktualisieren
 	_originalWidth = _width = bitmapPtr->getWidth();
 	_originalHeight = _height = bitmapPtr->getHeight();
+	
+	_isSolid = bitmapPtr->isSolid();
 
 	// Bild-Resource freigeben
 	bitmapPtr->release();
@@ -81,7 +83,7 @@ bool StaticBitmap::initBitmapResource(const Common::String &filename) {
 StaticBitmap::~StaticBitmap() {
 }
 
-bool StaticBitmap::doRender() {
+bool StaticBitmap::doRender(RectangleList *updateRects) {
 	// Bitmap holen
 	Resource *resourcePtr = Kernel::getInstance()->getResourceManager()->requestResource(_resourceFilename);
 	assert(resourcePtr);
@@ -98,12 +100,14 @@ bool StaticBitmap::doRender() {
 		result = bitmapResourcePtr->blit(_absoluteX, _absoluteY,
 		                                 (_flipV ? BitmapResource::FLIP_V : 0) |
 		                                 (_flipH ? BitmapResource::FLIP_H : 0),
-		                                 0, _modulationColor, -1, -1);
+		                                 0, _modulationColor, -1, -1,
+										 updateRects);
 	} else {
 		result = bitmapResourcePtr->blit(_absoluteX, _absoluteY,
 		                                 (_flipV ? BitmapResource::FLIP_V : 0) |
 		                                 (_flipH ? BitmapResource::FLIP_H : 0),
-		                                 0, _modulationColor, _width, _height);
+		                                 0, _modulationColor, _width, _height,
+										 updateRects);
 	}
 
 	// Resource freigeben

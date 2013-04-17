@@ -53,6 +53,8 @@ namespace Sword25 {
 
 class Kernel;
 class RenderObjectManager;
+class RenderObjectQueue;
+class RectangleList;
 class Bitmap;
 class Animation;
 class AnimationTemplate;
@@ -218,7 +220,10 @@ public:
 	            Dieses kann entweder direkt geschehen oder durch den Aufruf von UpdateObjectState() an einem Vorfahren-Objekt.<br>
 	            Diese Methode darf nur von BS_RenderObjectManager aufgerufen werden.
 	*/
-	bool render();
+	bool render(RectangleList *updateRects, const Common::Array<int> &updateRectsMinZ);
+
+	void collectRenderQueue(RenderObjectQueue *renderQueue);
+
 	/**
 	    @brief Bereitet das Objekt und alle seine Unterobjekte auf einen Rendervorgang vor.
 	           Hierbei werden alle Dirty-Rectangles berechnet und die Renderreihenfolge aktualisiert.
@@ -230,7 +235,7 @@ public:
 	    @brief Löscht alle Kinderobjekte.
 	*/
 	void deleteAllChildren();
-
+	
 	// Accessor-Methoden
 	// -----------------
 	/**
@@ -299,6 +304,9 @@ public:
 	int         getZ() const {
 		return _z;
 	}
+	
+	int getAbsoluteZ() const;
+	
 	/**
 	    @brief Gibt die Breite des Objektes zurück.
 	 */
@@ -352,6 +360,15 @@ public:
 		return _handle;
 	}
 
+	// Get the RenderObjects current version	
+	int getVersion() const {
+		return _version;
+	}
+	
+	bool isSolid() const {
+		return _isSolid;
+	}
+
 	// Persistenz-Methoden
 	// -------------------
 	virtual bool persist(OutputPersistenceBlock &writer);
@@ -388,6 +405,13 @@ protected:
 	int         _oldZ;
 	bool        _oldVisible;
 
+	static int _nextGlobalVersion;
+	
+	int _version;
+
+	// This should be set to true if the RenderObject is NOT alpha-blended to optimize drawing
+	bool _isSolid;
+
 	/// Ein Pointer auf den BS_RenderObjektManager, der das Objekt verwaltet.
 	RenderObjectManager *_managerPtr;
 
@@ -402,7 +426,7 @@ protected:
 	    @return Gibt false zurück, falls das Rendern fehlgeschlagen ist.
 	    @remark
 	 */
-	virtual bool doRender() = 0; // { return true; }
+	virtual bool doRender(RectangleList *updateRects) = 0; // { return true; }
 
 	// RenderObject-Baum Variablen
 	// ---------------------------

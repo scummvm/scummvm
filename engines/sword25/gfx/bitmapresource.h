@@ -123,9 +123,10 @@ public:
 	          int flipping = FLIP_NONE,
 	          Common::Rect *pSrcPartRect = NULL,
 	          uint color = BS_ARGB(255, 255, 255, 255),
-	          int width = -1, int height = -1) {
+	          int width = -1, int height = -1,
+			  RectangleList *updateRects = 0) {
 		assert(_pImage);
-		return _pImage->blit(posX, posY, flipping, pSrcPartRect, color, width, height);
+		return _pImage->blit(posX, posY, flipping, pSrcPartRect, color, width, height, updateRects);
 	}
 
 	/**
@@ -200,6 +201,11 @@ public:
 	bool isColorModulationAllowed() {
 		assert(_pImage);
 		return _pImage->isColorModulationAllowed();
+	}
+
+	bool isSolid() {
+		assert(_pImage);
+		return _pImage->isSolid();
 	}
 
 private:

@@ -129,7 +129,7 @@ void Text::setAutoWrapThreshold(uint autoWrapThreshold) {
 	}
 }
 
-bool Text::doRender() {
+bool Text::doRender(RectangleList *updateRects) {
 	// Font-Resource locken.
 	FontResource *fontPtr = lockFontResource();
 	if (!fontPtr)
@@ -171,7 +171,7 @@ bool Text::doRender() {
 
 			Common::Rect renderRect(curX, curY, curX + curRect.width(), curY + curRect.height());
 			renderRect.translate(curRect.left - curX, curRect.top - curY);
-			result = charMapPtr->blit(curX, curY, Image::FLIP_NONE, &renderRect, _modulationColor);
+			result = charMapPtr->blit(curX, curY, Image::FLIP_NONE, &renderRect, _modulationColor, -1, -1, updateRects);
 			if (!result)
 				break;
 

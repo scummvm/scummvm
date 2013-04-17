@@ -48,6 +48,8 @@
 
 namespace Sword25 {
 
+int RenderObject::_nextGlobalVersion = 0;
+
 RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle) :
 	_managerPtr(0),
 	_parentPtr(parentPtr),
@@ -65,7 +67,9 @@ RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, 
 	_type(type),
 	_initSuccess(false),
 	_refreshForced(true),
-	_handle(0) {
+	_handle(0),
+	_version(++_nextGlobalVersion),
+	_isSolid(false) {
 
 	// Renderobject registrieren, abhängig vom Handle-Parameter entweder mit beliebigem oder vorgegebenen Handle.
 	if (handle == 0)
@@ -106,7 +110,7 @@ RenderObject::~RenderObject() {
 	RenderObjectRegistry::instance().deregisterObject(this);
 }
 
-bool RenderObject::render() {
+bool RenderObject::render(RectangleList *updateRects, const Common::Array<int> &updateRectsMinZ) {
 	// Objektänderungen validieren
 	validateObject();
 
@@ -121,15 +125,37 @@ bool RenderObject::render() {
 	}
 
 	// Objekt zeichnen.
-	doRender();
+	bool needRender = false;
+	int index = 0;
+
+	// Only draw if the bounding box intersects any update rectangle and
+	// the object is in front of the minimum Z value.
+	for (RectangleList::iterator rectIt = updateRects->begin(); !needRender && rectIt != updateRects->end(); ++rectIt, ++index)
+		needRender = (_bbox.contains(*rectIt) || _bbox.intersects(*rectIt)) && getAbsoluteZ() >= updateRectsMinZ[index];
+
+	if (needRender)
+		doRender(updateRects);
 
 	// Dann müssen die Kinder gezeichnet werden
 	RENDEROBJECT_ITER it = _children.begin();
 	for (; it != _children.end(); ++it)
-		if (!(*it)->render())
+		if (!(*it)->render(updateRects, updateRectsMinZ))
 			return false;
 
 	return true;
+}
+
+void RenderObject::collectRenderQueue(RenderObjectQueue *renderQueue) {
+
+	if (!_visible)
+		return;
+
+	renderQueue->add(this);
+
+	RENDEROBJECT_ITER it = _children.begin();
+	for (; it != _children.end(); ++it)
+		(*it)->collectRenderQueue(renderQueue);
+
 }
 
 void RenderObject::validateObject() {
@@ -157,6 +183,8 @@ bool RenderObject::updateObjectState() {
 
 		// Die Bounding-Box neu berechnen und Update-Regions registrieren.
 		updateBoxes();
+		
+		++_version;
 
 		// Änderungen Validieren
 		validateObject();
@@ -287,6 +315,13 @@ void RenderObject::setZ(int z) {
 		error("Tried to set a negative Z value (%d).", z);
 	else
 		_z = z;
+}
+
+int RenderObject::getAbsoluteZ() const {
+	if (_parentPtr.isValid())
+		return _parentPtr->getAbsoluteZ() + _z;
+	else
+		return _z;
 }
 
 void RenderObject::setVisible(bool visible) {

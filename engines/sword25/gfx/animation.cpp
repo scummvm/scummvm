@@ -170,7 +170,7 @@ void Animation::setFrame(uint nr) {
 	forceRefresh();
 }
 
-bool Animation::doRender() {
+bool Animation::doRender(RectangleList *updateRects) {
 	AnimationDescription *animationDescriptionPtr = getAnimationDescription();
 	assert(animationDescriptionPtr);
 	assert(_currentFrame < animationDescriptionPtr->getFrameCount());
@@ -191,12 +191,14 @@ bool Animation::doRender() {
 		result = pBitmapResource->blit(_absoluteX, _absoluteY,
 		                               (animationDescriptionPtr->getFrame(_currentFrame).flipV ? BitmapResource::FLIP_V : 0) |
 		                               (animationDescriptionPtr->getFrame(_currentFrame).flipH ? BitmapResource::FLIP_H : 0),
-		                               0, _modulationColor, _width, _height);
+		                               0, _modulationColor, _width, _height,
+									   updateRects);
 	} else {
 		result = pBitmapResource->blit(_absoluteX, _absoluteY,
 		                               (animationDescriptionPtr->getFrame(_currentFrame).flipV ? BitmapResource::FLIP_V : 0) |
 		                               (animationDescriptionPtr->getFrame(_currentFrame).flipH ? BitmapResource::FLIP_H : 0),
-		                               0, _modulationColor, -1, -1);
+		                               0, _modulationColor, -1, -1,
+									   updateRects);
 	}
 
 	// Resource freigeben

@@ -59,7 +59,7 @@ public:
 	virtual bool unpersist(InputPersistenceBlock &reader);
 
 protected:
-	virtual bool doRender();
+	virtual bool doRender(RectangleList *updateRects);
 
 private:
 	uint _color;
