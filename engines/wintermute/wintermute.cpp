@@ -51,6 +51,7 @@ WintermuteEngine::WintermuteEngine() : Engine(g_system) {
 	_game = new AdGame("");
 	_debugger = nullptr;
 	_trigDebug = false;
+	_gameDescription = nullptr;
 }
 
 WintermuteEngine::WintermuteEngine(OSystem *syst, const ADGameDescription *desc)
