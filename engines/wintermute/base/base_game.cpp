@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_game_music.h"
+#include "engines/wintermute/base/base_game_settings.h"
 #include "engines/wintermute/base/base_fader.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/font/base_font.h"
@@ -43,7 +44,6 @@
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_transition_manager.h"
 #include "engines/wintermute/base/base_viewport.h"
-#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_save_thumb_helper.h"
 #include "engines/wintermute/base/base_surface_storage.h"
@@ -143,21 +143,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 
 	_useD3D = false;
 
-	_stringTable = new BaseStringTable(this);
-
 	_musicSystem = new BaseGameMusic(this);
-
-	_settingsResWidth = 800;
-	_settingsResHeight = 600;
-	_settingsRequireAcceleration = false;
-	_settingsRequireSound = false;
-	_settingsTLMode = 0;
-	_settingsAllowWindowed = true;
-	_settingsGameFile = nullptr;
-	_settingsAllowAdvanced = false;
-	_settingsAllowAccessTab = true;
-	_settingsAllowAboutTab = true;
-	_settingsAllowDesktopRes = false;
 
 	_editorForceScripts = false;
 	_editorAlwaysRegister = false;
@@ -171,7 +157,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_scheduledLoadSlot = -1;
 
 	_personalizedSave = false;
-	_compressedSavegames = true;
 
 	_editorMode = false;
 	//_doNotExpandStrings = false;
@@ -192,8 +177,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 
 	_thumbnailWidth = _thumbnailHeight = 0;
 
-	_richSavedGames = false;
-	_savedGameExt = "dsv";
 	_localSaveDir = "saves";
 
 	_saveDirChecked = false;
@@ -237,6 +220,8 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	#else*/
 	_touchInterface = false;
 	_constrainedMemory = false;
+	
+	_settings = new BaseGameSettings(this);
 //#endif
 
 }
@@ -253,8 +238,6 @@ BaseGame::~BaseGame() {
 
 	cleanup();
 
-	delete[] _settingsGameFile;
-
 	delete _cachedThumbnail;
 
 	delete _mathClass;
@@ -269,10 +252,8 @@ BaseGame::~BaseGame() {
 	//SAFE_DELETE(_keyboardState);
 
 	delete _renderer;
-	delete _stringTable;
 	delete _musicSystem;
-
-	_settingsGameFile = nullptr;
+	delete _settings;
 
 	_cachedThumbnail = nullptr;
 
@@ -287,8 +268,8 @@ BaseGame::~BaseGame() {
 	_soundMgr = nullptr;
 
 	_renderer = nullptr;
-	_stringTable = nullptr;
 	_musicSystem = nullptr;
+	_settings = nullptr;
 
 	DEBUG_DebugDisable();
 	debugC(kWintermuteDebugLog, "--- shutting down normally ---\n");
@@ -364,6 +345,42 @@ bool BaseGame::cleanup() {
 	return STATUS_OK;
 }
 
+//////////////////////////////////////////////////////////////////////
+bool BaseGame::initConfManSettings() {
+	if (ConfMan.hasKey("debug_mode")) {
+		if (ConfMan.getBool("debug_mode")) {
+			DEBUG_DebugEnable("./wme.log");
+		}
+	}
+
+	if (ConfMan.hasKey("show_fps")) {
+		_debugShowFPS = ConfMan.getBool("show_fps");
+	} else {
+		_debugShowFPS = false;
+	}
+
+	if (ConfMan.hasKey("disable_smartcache")) {
+		_smartCache = ConfMan.getBool("disable_smartcache");
+	} else {
+		_smartCache = true;
+	}
+
+	if (!_smartCache) {
+		LOG(0, "Smart cache is DISABLED");
+	}
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////
+bool BaseGame::initRenderer() {
+	bool windowedMode = !ConfMan.getBool("fullscreen");
+	return _renderer->initRenderer(_settings->getResWidth(), _settings->getResHeight(), windowedMode);
+}
+
+//////////////////////////////////////////////////////////////////////
+bool BaseGame::loadGameSettingsFile() {
+	return loadFile(_settings->getGameFile());
+}
 
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize1() {
@@ -992,7 +1009,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			clearOld = val->getBool();
 		}
 
-		if (DID_FAIL(_stringTable->loadFile(filename, clearOld))) {
+		if (DID_FAIL(_settings->loadStringTable(filename, clearOld))) {
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -1070,7 +1087,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 		char *str = new char[strlen(val->getString()) + 1];
 		strcpy(str, val->getString());
-		_stringTable->expand(&str);
+		expandStringByStringTable(&str);
 		stack->pushString(str);
 		delete[] str;
 		return STATUS_OK;
@@ -3043,132 +3060,6 @@ bool BaseGame::displayWindows(bool inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::loadSettings(const char *filename) {
-	TOKEN_TABLE_START(commands)
-	TOKEN_TABLE(SETTINGS)
-	TOKEN_TABLE(GAME)
-	TOKEN_TABLE(STRING_TABLE)
-	TOKEN_TABLE(RESOLUTION)
-	TOKEN_TABLE(REQUIRE_3D_ACCELERATION)
-	TOKEN_TABLE(REQUIRE_SOUND)
-	TOKEN_TABLE(HWTL_MODE)
-	TOKEN_TABLE(ALLOW_WINDOWED_MODE)
-	TOKEN_TABLE(ALLOW_ACCESSIBILITY_TAB)
-	TOKEN_TABLE(ALLOW_ABOUT_TAB)
-	TOKEN_TABLE(ALLOW_ADVANCED)
-	TOKEN_TABLE(ALLOW_DESKTOP_RES)
-	TOKEN_TABLE(REGISTRY_PATH)
-	TOKEN_TABLE(RICH_SAVED_GAMES)
-	TOKEN_TABLE(SAVED_GAME_EXT)
-	TOKEN_TABLE(GUID)
-	TOKEN_TABLE_END
-
-
-	byte *origBuffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (origBuffer == nullptr) {
-		_gameRef->LOG(0, "BaseGame::LoadSettings failed for file '%s'", filename);
-		return STATUS_FAILED;
-	}
-
-	bool ret = STATUS_OK;
-
-	byte *buffer = origBuffer;
-	byte *params;
-	int cmd;
-	BaseParser parser;
-
-	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
-		_gameRef->LOG(0, "'SETTINGS' keyword expected in game settings file.");
-		return STATUS_FAILED;
-	}
-	buffer = params;
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
-		switch (cmd) {
-		case TOKEN_GAME:
-			delete[] _settingsGameFile;
-			_settingsGameFile = new char[strlen((char *)params) + 1];
-			if (_settingsGameFile) {
-				strcpy(_settingsGameFile, (char *)params);
-			}
-			break;
-
-		case TOKEN_STRING_TABLE:
-			if (DID_FAIL(_stringTable->loadFile((char *)params))) {
-				cmd = PARSERR_GENERIC;
-			}
-			break;
-
-		case TOKEN_RESOLUTION:
-			parser.scanStr((char *)params, "%d,%d", &_settingsResWidth, &_settingsResHeight);
-			break;
-
-		case TOKEN_REQUIRE_3D_ACCELERATION:
-			parser.scanStr((char *)params, "%b", &_settingsRequireAcceleration);
-			break;
-
-		case TOKEN_REQUIRE_SOUND:
-			parser.scanStr((char *)params, "%b", &_settingsRequireSound);
-			break;
-
-		case TOKEN_HWTL_MODE:
-			parser.scanStr((char *)params, "%d", &_settingsTLMode);
-			break;
-
-		case TOKEN_ALLOW_WINDOWED_MODE:
-			parser.scanStr((char *)params, "%b", &_settingsAllowWindowed);
-			break;
-
-		case TOKEN_ALLOW_DESKTOP_RES:
-			parser.scanStr((char *)params, "%b", &_settingsAllowDesktopRes);
-			break;
-
-		case TOKEN_ALLOW_ADVANCED:
-			parser.scanStr((char *)params, "%b", &_settingsAllowAdvanced);
-			break;
-
-		case TOKEN_ALLOW_ACCESSIBILITY_TAB:
-			parser.scanStr((char *)params, "%b", &_settingsAllowAccessTab);
-			break;
-
-		case TOKEN_ALLOW_ABOUT_TAB:
-			parser.scanStr((char *)params, "%b", &_settingsAllowAboutTab);
-			break;
-
-		case TOKEN_REGISTRY_PATH:
-			//BaseEngine::instance().getRegistry()->setBasePath((char *)params);
-			break;
-
-		case TOKEN_RICH_SAVED_GAMES:
-			parser.scanStr((char *)params, "%b", &_richSavedGames);
-			break;
-
-		case TOKEN_SAVED_GAME_EXT:
-			_savedGameExt = (char *)params;
-			break;
-
-		case TOKEN_GUID:
-			break;
-		}
-	}
-	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in game settings '%s'", filename);
-		ret = STATUS_FAILED;
-	}
-	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading game settings '%s'", filename);
-		ret = STATUS_FAILED;
-	}
-
-	_settingsAllowWindowed = true; // TODO: These two settings should probably be cleaned out altogether.
-	_compressedSavegames = true;
-
-	delete[] origBuffer;
-
-	return ret;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	if (!persistMgr->getIsSaving()) {
 		cleanup();
@@ -4012,6 +3903,20 @@ void BaseGame::addMem(int bytes) {
 //////////////////////////////////////////////////////////////////////////
 AnsiString BaseGame::getDeviceType() const {
 	return "computer";
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::loadSettings(const char *filename) {
+	return _settings->loadSettings(filename);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void BaseGame::expandStringByStringTable(char **str) const {
+	_settings->expandStringByStringTable(str);
+}
+
+char *BaseGame::getKeyFromStringTable(const char *str) const {
+	return _settings->getKeyFromStringTable(str);
 }
 
 } // end of namespace Wintermute

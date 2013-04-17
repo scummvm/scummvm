@@ -142,29 +142,7 @@ int WintermuteEngine::init() {
 	BaseEngine::instance().setGameRef(_game);
 	BasePlatform::initialize(this, _game, 0, nullptr);
 
-	bool windowedMode = !ConfMan.getBool("fullscreen");
-
-	if (ConfMan.hasKey("debug_mode")) {
-		if (ConfMan.getBool("debug_mode")) {
-			_game->DEBUG_DebugEnable("./wme.log");
-		}
-	}
-
-	if (ConfMan.hasKey("show_fps")) {
-		_game->_debugShowFPS = ConfMan.getBool("show_fps");
-	} else {
-		_game->_debugShowFPS = false;
-	}
-
-	if (ConfMan.hasKey("disable_smartcache")) {
-		_game->_smartCache = ConfMan.getBool("disable_smartcache");
-	} else {
-		_game->_smartCache = true;
-	}
-
-	if (!_game->_smartCache) {
-		_game->LOG(0, "Smart cache is DISABLED");
-	}
+	_game->initConfManSettings();
 
 	// load general game settings
 	_game->initialize1();
@@ -183,10 +161,8 @@ int WintermuteEngine::init() {
 
 	_game->initialize2();
 
-	bool ret;
+	bool ret = _game->initRenderer();
 
-	// initialize the renderer
-	ret = _game->_renderer->initRenderer(_game->_settingsResWidth, _game->_settingsResHeight, windowedMode);
 	if (DID_FAIL(ret)) {
 		_game->LOG(ret, "Error initializing renderer. Exiting.");
 
@@ -207,7 +183,7 @@ int WintermuteEngine::init() {
 	// load game
 	uint32 dataInitStart = g_system->getMillis();
 
-	if (DID_FAIL(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
+	if (DID_FAIL(_game->loadGameSettingsFile())) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
 		delete _game;
 		_game = nullptr;

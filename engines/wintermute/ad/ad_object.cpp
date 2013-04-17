@@ -38,7 +38,6 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_frame.h"
 #include "engines/wintermute/base/base_sprite.h"
-#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/font/base_font.h"
@@ -901,7 +900,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	_sentence->_sound = nullptr;
 
 	_sentence->setText(text);
-	_gameRef->_stringTable->expand(&_sentence->_text);
+	_gameRef->expandStringByStringTable(&_sentence->_text);
 	_sentence->setStances(stances);
 	_sentence->_duration = duration;
 	_sentence->_align = Align;
@@ -913,7 +912,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	// try to locate speech file automatically
 	bool deleteSound = false;
 	if (!sound) {
-		char *key = _gameRef->_stringTable->getKey(text);
+		char *key = _gameRef->getKeyFromStringTable(text);
 		if (key) {
 			sound = ((AdGame *)_gameRef)->findSpeechFile(key);
 			delete[] key;

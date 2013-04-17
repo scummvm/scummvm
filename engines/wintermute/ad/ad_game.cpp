@@ -43,7 +43,6 @@
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/sound/base_sound.h"
-#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_transition_manager.h"
 #include "engines/wintermute/base/base_sprite.h"
@@ -522,7 +521,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			if (res) {
 				res->_iD = id;
 				res->setText(text);
-				_stringTable->expand(&res->_text);
+				expandStringByStringTable(&res->_text);
 				if (!val1->isNULL()) {
 					res->setIcon(val1->getString());
 				}

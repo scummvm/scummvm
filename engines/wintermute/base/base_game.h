@@ -47,7 +47,6 @@ class BaseTransitionMgr;
 class ScEngine;
 class BaseFontStorage;
 class BaseGameMusic;
-class BaseStringTable;
 class BaseQuickMsg;
 class UIWindow;
 class BaseViewport;
@@ -59,6 +58,7 @@ class SXMath;
 class BaseKeyboardState;
 class VideoPlayer;
 class VideoTheoraPlayer;
+class BaseGameSettings;
 
 class BaseGame: public BaseObject {
 public:
@@ -128,10 +128,18 @@ public:
 	uint32 _currentTime;
 	uint32 _deltaTime;
 
+	// Init-functions:
+	bool initConfManSettings();
+	bool initRenderer();
+	bool loadGameSettingsFile();
 	bool initialize1();
 	bool initialize2();
 	bool initialize3();
 	BaseTransitionMgr *_transMgr;
+	
+	// String Table
+	void expandStringByStringTable(char **str) const;
+	char *getKeyFromStringTable(const char *str) const;
 
 	void LOG(bool res, const char *fmt, ...);
 
@@ -155,10 +163,6 @@ public:
 
 	int _viewportSP;
 
-	BaseStringTable *_stringTable;
-	int _settingsResWidth;
-	int _settingsResHeight;
-	char *_settingsGameFile;
 	bool _suppressScriptErrors;
 	bool _mouseLeftDown; // TODO: Hide
 
@@ -268,22 +272,16 @@ private:
 
 	bool _mouseRightDown;
 	bool _mouseMidlleDown;
-	bool _settingsRequireAcceleration;
-	bool _settingsAllowWindowed;
-	bool _settingsAllowAdvanced;
-	bool _settingsAllowAccessTab;
-	bool _settingsAllowAboutTab;
-	bool _settingsRequireSound;
-	bool _settingsAllowDesktopRes;
-	int _settingsTLMode;
+	
+	BaseGameSettings *_settings;
+	
 	virtual bool invalidateDeviceObjects();
 	virtual bool restoreDeviceObjects();
 
 	// TODO: This can probably be removed completely:
 	bool _saveDirChecked;
-	bool _richSavedGames;
+
 	Common::String _localSaveDir;
-	Common::String _savedGameExt;
 
 	bool _reportTextureFormat;
 
@@ -298,7 +296,6 @@ private:
 	void *_engineLogCallbackData;
 
 	bool _videoSubtitles;
-	bool _compressedSavegames;
 
 	bool _personalizedSave;
 
