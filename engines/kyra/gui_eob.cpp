@@ -2056,9 +2056,8 @@ void GUI_EoB::runCampMenu() {
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE])
 			inputFlag = 0x8007;
-		else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+		else if (prevHighlightButton && (inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]))
 			inputFlag = 0x8000 + prevHighlightButton->index;
-		}
 
 		Button *clickedButton = _vm->gui_getButton(buttonList, inputFlag & 0x7FFF);
 
