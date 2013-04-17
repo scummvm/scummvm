@@ -463,8 +463,8 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize3() { // renderer is initialized
-	_posX = _renderer->_width / 2;
-	_posY = _renderer->_height / 2;
+	_posX = _renderer->getWidth() / 2;
+	_posY = _renderer->getHeight() / 2;
 	_renderer->initIndicator();
 	return STATUS_OK;
 }
@@ -1105,9 +1105,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 		x = MAX(x, 0);
-		x = MIN(x, _renderer->_width);
+		x = MIN(x, _renderer->getWidth());
 		y = MAX(y, 0);
-		y = MIN(y, _renderer->_height);
+		y = MIN(y, _renderer->getHeight());
 		Point32 p;
 		p.x = x + _renderer->_drawOffsetX;
 		p.y = y + _renderer->_drawOffsetY;
@@ -1605,8 +1605,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "ScreenshotEx") == 0) {
 		stack->correctParams(3);
 		const char *filename = stack->pop()->getString();
-		int sizeX = stack->pop()->getInt(_renderer->_width);
-		int sizeY = stack->pop()->getInt(_renderer->_height);
+		int sizeX = stack->pop()->getInt(_renderer->getWidth());
+		int sizeY = stack->pop()->getInt(_renderer->getHeight());
 
 		bool ret = _gameRef->_renderer->saveScreenShot(filename, sizeX, sizeY);
 
@@ -2041,7 +2041,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// ScreenWidth (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "ScreenWidth") {
-		_scValue->setInt(_renderer->_width);
+		_scValue->setInt(_renderer->getWidth());
 		return _scValue;
 	}
 
@@ -2049,7 +2049,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// ScreenHeight (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "ScreenHeight") {
-		_scValue->setInt(_renderer->_height);
+		_scValue->setInt(_renderer->getHeight());
 		return _scValue;
 	}
 
@@ -2581,8 +2581,8 @@ bool BaseGame::displayQuickMsg() {
 
 	// display
 	for (uint32 i = 0; i < _quickMessages.size(); i++) {
-		_systemFont->drawText((const byte *)_quickMessages[i]->getText(), 0, posY, _renderer->_width);
-		posY += _systemFont->getTextHeight((const byte *)_quickMessages[i]->getText(), _renderer->_width);
+		_systemFont->drawText((const byte *)_quickMessages[i]->getText(), 0, posY, _renderer->getWidth());
+		posY += _systemFont->getTextHeight((const byte *)_quickMessages[i]->getText(), _renderer->getWidth());
 	}
 	return STATUS_OK;
 }
@@ -3364,8 +3364,8 @@ bool BaseGame::popViewport() {
 		_renderer->setViewport(_viewportStack[_viewportSP]->getRect());
 	} else _renderer->setViewport(_renderer->_drawOffsetX,
 		                              _renderer->_drawOffsetY,
-		                              _renderer->_width + _renderer->_drawOffsetX,
-		                              _renderer->_height + _renderer->_drawOffsetY);
+		                              _renderer->getWidth() + _renderer->_drawOffsetX,
+		                              _renderer->getHeight() + _renderer->_drawOffsetY);
 
 	return STATUS_OK;
 }
@@ -3384,8 +3384,8 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
 		} else {
 			BasePlatform::setRect(rect,   _renderer->_drawOffsetX,
 			                      _renderer->_drawOffsetY,
-			                      _renderer->_width + _renderer->_drawOffsetX,
-			                      _renderer->_height + _renderer->_drawOffsetY);
+			                      _renderer->getWidth() + _renderer->_drawOffsetX,
+			                      _renderer->getHeight() + _renderer->_drawOffsetY);
 			if (custom) {
 				*custom = false;
 			}
@@ -3759,33 +3759,33 @@ bool BaseGame::displayDebugInfo() {
 
 	if (_gameRef->_debugDebugMode) {
 		if (!_gameRef->_renderer->_windowed) {
-			sprintf(str, "Mode: %dx%dx%d", _renderer->_width, _renderer->_height, _renderer->_bPP);
+			sprintf(str, "Mode: %dx%dx%d", _renderer->getWidth(), _renderer->getHeight(), _renderer->_bPP);
 		} else {
-			sprintf(str, "Mode: %dx%d windowed", _renderer->_width, _renderer->_height);
+			sprintf(str, "Mode: %dx%d windowed", _renderer->getWidth(), _renderer->getHeight());
 		}
 
 		Common::strlcat(str, " (", strLength);
 		Common::strlcat(str, _renderer->getName().c_str(), strLength);
 		Common::strlcat(str, ")", strLength);
-		_systemFont->drawText((byte *)str, 0, 0, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 0, _renderer->getWidth(), TAL_RIGHT);
 
 		_renderer->displayDebugInfo();
 
 		int scrTotal, scrRunning, scrWaiting, scrPersistent;
 		scrTotal = _scEngine->getNumScripts(&scrRunning, &scrWaiting, &scrPersistent);
 		sprintf(str, "Running scripts: %d (r:%d w:%d p:%d)", scrTotal, scrRunning, scrWaiting, scrPersistent);
-		_systemFont->drawText((byte *)str, 0, 70, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 70, _renderer->getWidth(), TAL_RIGHT);
 
 
 		sprintf(str, "Timer: %d", _timer);
-		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
+		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->getWidth(), TAL_RIGHT);
 
 		if (_activeObject != nullptr) {
-			_systemFont->drawText((const byte *)_activeObject->getName(), 0, 150, _renderer->_width, TAL_RIGHT);
+			_systemFont->drawText((const byte *)_activeObject->getName(), 0, 150, _renderer->getWidth(), TAL_RIGHT);
 		}
 
 		sprintf(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
-		_systemFont->drawText((byte *)str, 0, 170, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 170, _renderer->getWidth(), TAL_RIGHT);
 
 	}
 

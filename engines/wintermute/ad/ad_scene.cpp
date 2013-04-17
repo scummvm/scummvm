@@ -1014,8 +1014,8 @@ bool AdScene::traverseNodes(bool doUpdate) {
 				}
 				if (_shieldWindow) {
 					_shieldWindow->_posX = _shieldWindow->_posY = 0;
-					_shieldWindow->_width = _gameRef->_renderer->_width;
-					_shieldWindow->_height = _gameRef->_renderer->_height;
+					_shieldWindow->_width = _gameRef->_renderer->getWidth();
+					_shieldWindow->_height = _gameRef->_renderer->getHeight();
 					_shieldWindow->display();
 				}
 			}
@@ -1694,10 +1694,10 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		int height = stack->pop()->getInt();
 
 		if (width <= 0) {
-			width = _gameRef->_renderer->_width;
+			width = _gameRef->_renderer->getWidth();
 		}
 		if (height <= 0) {
-			height = _gameRef->_renderer->_height;
+			height = _gameRef->_renderer->getHeight();
 		}
 
 		if (!_viewport) {
@@ -2569,10 +2569,10 @@ bool AdScene::getViewportSize(int *width, int *height) {
 		}
 	} else {
 		if (width) {
-			*width  = _gameRef->_renderer->_width;
+			*width  = _gameRef->_renderer->getWidth();
 		}
 		if (height) {
-			*height = _gameRef->_renderer->_height;
+			*height = _gameRef->_renderer->getHeight();
 		}
 	}
 	return STATUS_OK;

@@ -280,7 +280,7 @@ bool BaseSoundMgr::resumeAll() {
 
 //////////////////////////////////////////////////////////////////////////
 float BaseSoundMgr::posToPan(int x, int y) {
-	float relPos = (float)x / ((float)_gameRef->_renderer->_width);
+	float relPos = (float)x / ((float)_gameRef->_renderer->getWidth());
 
 	float minPan = -0.7f;
 	float maxPan = 0.7f;

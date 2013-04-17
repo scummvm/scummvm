@@ -168,8 +168,6 @@ public:
 	bool _ready;
 	bool _windowed;
 	int _bPP;
-	int _height;
-	int _width;
 	uint32 _window;
 	uint32 _forceAlphaColor;
 
@@ -186,7 +184,13 @@ public:
 	void setSaveImage(const char *filename, int x, int y);
 
 	bool displayIndicator();
+
+	int getWidth() const { return _width; }
+	int getHeight() const { return _height; }
 protected:
+	int _height;
+	int _width;
+
 	Common::String _loadImageName;
 	Common::String _saveImageName;
 	int _saveImageX;
@@ -205,7 +209,7 @@ protected:
 	bool _loadInProgress;
 	bool _indicatorDisplay;
 	int _indicatorProgress;
-protected:
+
 	uint32 _clipperWindow;
 
 	Rect32 _windowRect;

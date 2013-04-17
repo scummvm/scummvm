@@ -224,8 +224,8 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		width = (float)_theoraDecoder->getWidth();
 		height = (float)_theoraDecoder->getHeight();
 	} else {
-		width = (float)_gameRef->_renderer->_width;
-		height = (float)_gameRef->_renderer->_height;
+		width = (float)_gameRef->_renderer->getWidth();
+		height = (float)_gameRef->_renderer->getHeight();
 	}
 
 	switch (type) {
@@ -236,18 +236,18 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		break;
 
 	case VID_PLAY_STRETCH: {
-		float zoomX = (float)((float)_gameRef->_renderer->_width / width * 100);
-		float zoomY = (float)((float)_gameRef->_renderer->_height / height * 100);
+		float zoomX = (float)((float)_gameRef->_renderer->getWidth() / width * 100);
+		float zoomY = (float)((float)_gameRef->_renderer->getHeight() / height * 100);
 		_playZoom = MIN(zoomX, zoomY);
-		_posX = (int)((_gameRef->_renderer->_width - width * (_playZoom / 100)) / 2);
-		_posY = (int)((_gameRef->_renderer->_height - height * (_playZoom / 100)) / 2);
+		_posX = (int)((_gameRef->_renderer->getWidth() - width * (_playZoom / 100)) / 2);
+		_posY = (int)((_gameRef->_renderer->getHeight() - height * (_playZoom / 100)) / 2);
 	}
 	break;
 
 	case VID_PLAY_CENTER:
 		_playZoom = 100.0f;
-		_posX = (int)((_gameRef->_renderer->_width - width) / 2);
-		_posY = (int)((_gameRef->_renderer->_height - height) / 2);
+		_posX = (int)((_gameRef->_renderer->getWidth() - width) / 2);
+		_posY = (int)((_gameRef->_renderer->getHeight() - height) / 2);
 		break;
 	}
 	_theoraDecoder->start();

@@ -179,7 +179,7 @@ bool AdResponseBox::createButtons() {
 
 				btn->_width = _responseArea.right - _responseArea.left;
 				if (btn->_width <= 0) {
-					btn->_width = _gameRef->_renderer->_width;
+					btn->_width = _gameRef->_renderer->getWidth();
 				}
 			}
 			btn->setName("response");
@@ -515,8 +515,8 @@ bool AdResponseBox::display() {
 	// go exclusive
 	if (_shieldWindow) {
 		_shieldWindow->_posX = _shieldWindow->_posY = 0;
-		_shieldWindow->_width = _gameRef->_renderer->_width;
-		_shieldWindow->_height = _gameRef->_renderer->_height;
+		_shieldWindow->_width = _gameRef->_renderer->getWidth();
+		_shieldWindow->_height = _gameRef->_renderer->getHeight();
 
 		_shieldWindow->display();
 	}

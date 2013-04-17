@@ -68,8 +68,8 @@ bool BaseViewport::setRect(int left, int top, int right, int bottom, bool noChec
 	if (!noCheck) {
 		left = MAX(left, 0);
 		top = MAX(top, 0);
-		right = MIN(right, _gameRef->_renderer->_width);
-		bottom = MIN(bottom, _gameRef->_renderer->_height);
+		right = MIN(right, _gameRef->_renderer->getWidth());
+		bottom = MIN(bottom, _gameRef->_renderer->getHeight());
 	}
 
 	BasePlatform::setRect(&_rect, left, top, right, bottom);

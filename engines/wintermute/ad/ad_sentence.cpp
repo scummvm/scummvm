@@ -56,7 +56,7 @@ AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
 	_font = nullptr;
 
 	_pos.x = _pos.y = 0;
-	_width = _gameRef->_renderer->_width;
+	_width = _gameRef->_renderer->getWidth();
 
 	_align = (TTextAlign)TAL_CENTER;
 
@@ -214,7 +214,7 @@ bool AdSentence::display() {
 
 
 		x = MAX(x, 0);
-		x = MIN(x, _gameRef->_renderer->_width - _width);
+		x = MIN(x, _gameRef->_renderer->getWidth() - _width);
 		y = MAX(y, 0);
 
 		_font->drawText((byte *)_text, x, y, _width, _align);

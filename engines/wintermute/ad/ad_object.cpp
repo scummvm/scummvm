@@ -959,10 +959,10 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	if (_subtitlesWidth > 0) {
 		width = _subtitlesWidth;
 	} else {
-		if ((x < _gameRef->_renderer->_width / 4 || x > _gameRef->_renderer->_width * 0.75) && !_gameRef->_touchInterface) {
-			width = MAX(_gameRef->_renderer->_width / 4, MIN(x * 2, (_gameRef->_renderer->_width - x) * 2));
+		if ((x < _gameRef->_renderer->getWidth() / 4 || x > _gameRef->_renderer->getWidth() * 0.75) && !_gameRef->_touchInterface) {
+			width = MAX(_gameRef->_renderer->getWidth() / 4, MIN(x * 2, (_gameRef->_renderer->getWidth() - x) * 2));
 		} else {
-			width = _gameRef->_renderer->_width / 2;
+			width = _gameRef->_renderer->getWidth() / 2;
 		}
 	}
 
@@ -981,8 +981,8 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	}
 
 
-	x = MIN(MAX(0, x), _gameRef->_renderer->_width - width);
-	y = MIN(MAX(0, y), _gameRef->_renderer->_height - height);
+	x = MIN(MAX(0, x), _gameRef->_renderer->getWidth() - width);
+	y = MIN(MAX(0, y), _gameRef->_renderer->getHeight() - height);
 
 	_sentence->_width = width;
 
