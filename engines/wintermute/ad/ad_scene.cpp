@@ -2774,11 +2774,11 @@ float AdScene::getRotationAt(int x, int y) {
 	}
 
 	int delta_x = next->_posX - prev->_posX;
-	float delta_rot = next->_rotation - prev->_rotation;
+	float delta_rot = next->getRotation() - prev->getRotation();
 	x -= prev->_posX;
 
 	float percent = (float)x / ((float)delta_x / 100.0f);
-	return prev->_rotation + delta_rot / 100 * percent;
+	return prev->getRotation() + delta_rot / 100 * percent;
 }
 
 

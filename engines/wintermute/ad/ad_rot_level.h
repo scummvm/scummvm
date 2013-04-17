@@ -34,11 +34,12 @@
 namespace Wintermute {
 
 class AdRotLevel : public BaseObject {
+	float _rotation;
 public:
 	DECLARE_PERSISTENT(AdRotLevel, BaseObject)
 	AdRotLevel(BaseGame *inGame);
 	virtual ~AdRotLevel();
-	float _rotation;
+	float getRotation() const { return _rotation; }
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
