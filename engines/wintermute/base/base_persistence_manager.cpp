@@ -79,6 +79,16 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 	_savedVerMajor = _savedVerMinor = _savedVerBuild = 0;
 	_savedExtMajor = _savedExtMinor = 0;
 
+	_savedTimestamp.tm_sec = 0;
+	_savedTimestamp.tm_min = 0;
+	_savedTimestamp.tm_hour = 0;
+	_savedTimestamp.tm_mday = 0;
+	_savedTimestamp.tm_mon = 0;
+	_savedTimestamp.tm_year = 0;
+	_savedTimestamp.tm_wday = 0;
+
+	_savedPlayTime = 0;
+
 	_thumbnailDataSize = 0;
 	_thumbnailData = nullptr;
 	if (savePrefix) {
