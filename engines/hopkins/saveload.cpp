@@ -292,7 +292,7 @@ void SaveLoadManager::convertThumb16To8(Graphics::Surface *thumb16, Graphics::Su
 	byte paletteG[PALETTE_SIZE];
 	byte paletteB[PALETTE_SIZE];
 	for (int palIndex = 0; palIndex < PALETTE_SIZE; ++palIndex) {
-		uint16 p = READ_LE_UINT16(&_vm->_graphicsMan->_palettePixels[palIndex * 2]);
+		uint16 p = READ_UINT16(&_vm->_graphicsMan->_palettePixels[palIndex * 2]);
 		pixelFormat16.colorToRGB(p, paletteR[palIndex], paletteG[palIndex], paletteB[palIndex]);
 	}
 
