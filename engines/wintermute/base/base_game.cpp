@@ -1836,7 +1836,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "StoreSaveThumbnail") == 0) {
 		stack->correctParams(0);
 		delete _cachedThumbnail;
-		_cachedThumbnail = new BaseSaveThumbHelper(this);
+		_cachedThumbnail = new SaveThumbHelper(this);
 		if (DID_FAIL(_cachedThumbnail->storeThumbnail())) {
 			delete _cachedThumbnail;
 			_cachedThumbnail = nullptr;

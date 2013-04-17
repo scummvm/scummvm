@@ -28,17 +28,15 @@
 #ifndef WINTERMUTE_BASE_SAVE_THUMB_HELPER_H
 #define WINTERMUTE_BASE_SAVE_THUMB_HELPER_H
 
-
-#include "engines/wintermute/base/base.h"
-
 namespace Wintermute {
 
 class BaseImage;
+class BaseGame;
 
-class BaseSaveThumbHelper : public BaseClass {
+class SaveThumbHelper {
 public:
-	BaseSaveThumbHelper(BaseGame *inGame);
-	virtual ~BaseSaveThumbHelper(void);
+	SaveThumbHelper(BaseGame *inGame);
+	virtual ~SaveThumbHelper(void);
 	bool storeThumbnail(bool doFlip = false);
 	bool storeScummVMThumbNail(bool doFlip = false);
 
@@ -47,6 +45,7 @@ public:
 private:
 	BaseImage *storeThumb(bool doFlip, int width, int height);
 	BaseImage *_richThumbnail;
+	BaseGame *_gameRef;
 };
 
 } // end of namespace Wintermute

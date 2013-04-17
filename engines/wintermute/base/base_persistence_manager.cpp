@@ -228,7 +228,7 @@ bool BasePersistenceManager::initSave(const char *desc) {
 	if (_saveStream) {
 		// get thumbnails
 		if (!_gameRef->_cachedThumbnail) {
-			_gameRef->_cachedThumbnail = new BaseSaveThumbHelper(_gameRef);
+			_gameRef->_cachedThumbnail = new SaveThumbHelper(_gameRef);
 			if (DID_FAIL(_gameRef->_cachedThumbnail->storeThumbnail(true))) {
 				delete _gameRef->_cachedThumbnail;
 				_gameRef->_cachedThumbnail = nullptr;

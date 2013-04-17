@@ -44,21 +44,21 @@ class BaseFader;
 class BaseFont;
 class BaseFileManager;
 class BaseTransitionMgr;
-class ScEngine;
 class BaseFontStorage;
 class BaseGameMusic;
 class BaseQuickMsg;
-class UIWindow;
 class BaseViewport;
 class BaseRenderer;
 class BaseRegistry;
-class BaseSaveThumbHelper;
 class BaseSurfaceStorage;
-class SXMath;
 class BaseKeyboardState;
+class BaseGameSettings;
+class ScEngine;
+class SXMath;
+class UIWindow;
 class VideoPlayer;
 class VideoTheoraPlayer;
-class BaseGameSettings;
+class SaveThumbHelper;
 
 class BaseGame: public BaseObject {
 public:
@@ -247,7 +247,7 @@ public:
 	BaseSprite *_lastCursor;
 	bool drawCursor(BaseSprite *Cursor);
 
-	BaseSaveThumbHelper *_cachedThumbnail;
+	SaveThumbHelper *_cachedThumbnail;
 	void addMem(int bytes);
 	bool _touchInterface;
 	bool _constrainedMemory;

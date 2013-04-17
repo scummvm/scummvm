@@ -35,20 +35,20 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseSaveThumbHelper::BaseSaveThumbHelper(BaseGame *inGame) : BaseClass(inGame) {
+SaveThumbHelper::SaveThumbHelper(BaseGame *inGame) {
 	_thumbnail = nullptr;
 	_scummVMThumb = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseSaveThumbHelper::~BaseSaveThumbHelper(void) {
+SaveThumbHelper::~SaveThumbHelper(void) {
 	delete _thumbnail;
 	_thumbnail = nullptr;
 	delete _scummVMThumb;
 	_scummVMThumb = nullptr;
 }
 
-BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
+BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 	BaseImage *thumbnail = nullptr;
 	if (_gameRef->getSaveThumbWidth() > 0 && _gameRef->getSaveThumbHeight() > 0) {
 		if (doFlip) {
@@ -80,7 +80,7 @@ BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
+bool SaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
 	_thumbnail = nullptr;
 
@@ -96,7 +96,7 @@ bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
+bool SaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
 	delete _scummVMThumb;
 	_scummVMThumb = nullptr;
 	
