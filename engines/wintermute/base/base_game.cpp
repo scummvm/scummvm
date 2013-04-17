@@ -3858,8 +3858,9 @@ bool BaseGame::onWindowClose() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayDebugInfo() {
-	char str[100];
-
+	const uint32 strLength = 100;
+	char str[strLength];
+	
 	if (_debugShowFPS) {
 		sprintf(str, "FPS: %d", _gameRef->_fps);
 		_systemFont->drawText((byte *)str, 0, 0, 100, TAL_LEFT);
@@ -3872,9 +3873,9 @@ bool BaseGame::displayDebugInfo() {
 			sprintf(str, "Mode: %dx%d windowed", _renderer->_width, _renderer->_height);
 		}
 
-		strcat(str, " (");
-		strcat(str, _renderer->getName().c_str());
-		strcat(str, ")");
+		Common::strlcat(str, " (", strLength);
+		Common::strlcat(str, _renderer->getName().c_str(), strLength);
+		Common::strlcat(str, ")", strLength);
 		_systemFont->drawText((byte *)str, 0, 0, _renderer->_width, TAL_RIGHT);
 
 		_renderer->displayDebugInfo();
