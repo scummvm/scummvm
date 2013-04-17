@@ -915,7 +915,7 @@ void AdActor::getNextStep() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void AdActor::initLine(BasePoint startPt, BasePoint endPt) {
+void AdActor::initLine(const BasePoint &startPt, const BasePoint &endPt) {
 	_pFCount = MAX((abs(endPt.x - startPt.x)) , (abs(endPt.y - startPt.y)));
 
 	_pFStepX = (double)(endPt.x - startPt.x) / _pFCount;

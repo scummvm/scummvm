@@ -93,7 +93,7 @@ private:
 	bool mergeAnims(const char *animsFilename);
 	BaseSprite *_animSprite2;
 
-	void initLine(BasePoint startPt, BasePoint endPt);
+	void initLine(const BasePoint &startPt, const BasePoint &endPt);
 	void getNextStep();
 	void followPath();
 	double _pFStepX;
