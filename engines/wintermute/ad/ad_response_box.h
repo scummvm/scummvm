@@ -45,7 +45,7 @@ public:
 	bool getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
 	void addResponse(AdResponse* response);
-	bool handleResponse(AdResponse *response);
+	bool handleResponse(const AdResponse *response);
 	bool handleResponseNum(uint32 num);
 	int32 getIdForResponseNum(uint32 num) const;
 	void setLastResponseText(const char *text, const char *textOrig);

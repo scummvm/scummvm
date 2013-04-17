@@ -656,7 +656,7 @@ bool AdResponseBox::handleResponseNum(uint32 num) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdResponseBox::handleResponse(AdResponse *response) {
+bool AdResponseBox::handleResponse(const AdResponse *response) {
 	setLastResponseText(response->_text, response->_textOrig);
 
 	AdGame *adGame = (AdGame *)_gameRef;
