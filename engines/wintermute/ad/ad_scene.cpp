@@ -755,7 +755,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_CAMERA:
-			strcpy(camera, (char *)params);
+			Common::strlcpy(camera, (char *)params, MAX_PATH_LENGTH);
 			break;
 
 		case TOKEN_EDITOR_MARGIN_H:
