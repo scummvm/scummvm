@@ -230,7 +230,7 @@ int WintermuteEngine::messageLoop() {
 			_trigDebug = false;
 		}
 
-		if (_game && _game->_renderer->_active && _game->_renderer->_ready) {
+		if (_game && _game->_renderer->_active && _game->_renderer->isReady()) {
 			_game->displayContent();
 			_game->displayQuickMsg();
 

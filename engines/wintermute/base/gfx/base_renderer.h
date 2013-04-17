@@ -166,8 +166,11 @@ public:
 	bool pointInViewport(Point32 *P);
 	bool _active;
 	bool _ready;
-	bool _windowed;
-	int _bPP;
+
+	bool isReady() const { return _ready; }
+	bool isWindowed() const { return _windowed; }
+	int getBPP() const { return _bPP; }
+
 	uint32 _window;
 	uint32 _forceAlphaColor;
 
@@ -190,6 +193,9 @@ public:
 protected:
 	int _height;
 	int _width;
+
+	bool _windowed;
+	int _bPP;
 
 	Common::String _loadImageName;
 	Common::String _saveImageName;

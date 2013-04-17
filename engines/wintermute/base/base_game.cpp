@@ -2001,7 +2001,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// WindowedMode (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "WindowedMode") {
-		_scValue->setBool(_renderer->_windowed);
+		_scValue->setBool(_renderer->isWindowed());
 		return _scValue;
 	}
 
@@ -3726,7 +3726,7 @@ bool BaseGame::onMouseMiddleUp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onPaint() {
-	if (_renderer && _renderer->_windowed && _renderer->_ready) {
+	if (_renderer && _renderer->isWindowed() && _renderer->isReady()) {
 		_renderer->initLoop();
 		displayContent(false, true);
 		displayDebugInfo();
@@ -3758,8 +3758,8 @@ bool BaseGame::displayDebugInfo() {
 	}
 
 	if (_gameRef->_debugDebugMode) {
-		if (!_gameRef->_renderer->_windowed) {
-			sprintf(str, "Mode: %dx%dx%d", _renderer->getWidth(), _renderer->getHeight(), _renderer->_bPP);
+		if (!_gameRef->_renderer->isWindowed()) {
+			sprintf(str, "Mode: %dx%dx%d", _renderer->getWidth(), _renderer->getHeight(), _renderer->getBPP());
 		} else {
 			sprintf(str, "Mode: %dx%d windowed", _renderer->getWidth(), _renderer->getHeight());
 		}
