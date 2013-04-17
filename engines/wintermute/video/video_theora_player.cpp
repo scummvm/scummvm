@@ -317,7 +317,7 @@ bool VideoTheoraPlayer::update() {
 		}
 	}
 	// Skip the busy-loop?
-	if ((!_texture || !_videoFrameReady) && !_theoraDecoder->endOfVideo()) {
+	if ((!_texture || !_videoFrameReady) && _theoraDecoder && !_theoraDecoder->endOfVideo()) {
 		// end playback
 		if (!_looping) {
 			_state = THEORA_STATE_FINISHED;
