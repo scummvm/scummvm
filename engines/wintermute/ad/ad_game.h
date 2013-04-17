@@ -151,8 +151,8 @@ private:
 	BaseArray<AdSceneState *> _sceneStates;
 	BaseArray<char *> _dlgPendingBranches;
 
-	BaseArray<AdResponseContext *> _responsesBranch;
-	BaseArray<AdResponseContext *> _responsesGame;
+	BaseArray<const AdResponseContext *> _responsesBranch;
+	BaseArray<const AdResponseContext *> _responsesGame;
 
 	AdResponseBox *_responseBox;
 	AdInventoryBox *_inventoryBox;

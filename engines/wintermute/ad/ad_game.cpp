@@ -519,9 +519,14 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		if (_responseBox) {
 			AdResponse *res = new AdResponse(_gameRef);
 			if (res) {
-				res->_iD = id;
-				res->setText(text);
-				expandStringByStringTable(&res->_text);
+				res->setID(id);
+
+				char *expandedText = new char[strlen(text) + 1];
+				Common::strlcpy(expandedText, text, strlen(text) + 1);
+				expandStringByStringTable(&expandedText);
+				res->setText(expandedText);
+				delete[] expandedText;
+
 				if (!val1->isNULL()) {
 					res->setIcon(val1->getString());
 				}
@@ -1742,7 +1747,7 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::clearBranchResponses(char *name) {
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
-		if (scumm_stricmp(name, _responsesBranch[i]->_context) == 0) {
+		if (scumm_stricmp(name, _responsesBranch[i]->getContext()) == 0) {
 			delete _responsesBranch[i];
 			_responsesBranch.remove_at(i);
 			i--;
@@ -1770,7 +1775,7 @@ bool AdGame::branchResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
 		if (_responsesBranch[i]->_id == id) {
-			if ((context == nullptr && _responsesBranch[i]->_context == nullptr) || scumm_stricmp(context, _responsesBranch[i]->_context) == 0) {
+			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0) {
 				return true;
 			}
 		}
@@ -1796,9 +1801,9 @@ bool AdGame::addGameResponse(int id) {
 bool AdGame::gameResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
 	for (uint32 i = 0; i < _responsesGame.size(); i++) {
-		AdResponseContext *respContext = _responsesGame[i];
+		const AdResponseContext *respContext = _responsesGame[i];
 		if (respContext->_id == id) {
-			if ((context == nullptr && respContext->_context == nullptr) || ((context != nullptr && respContext->_context != nullptr) && scumm_stricmp(context, respContext->_context) == 0)) {
+			if ((context == nullptr && respContext->getContext() == nullptr) || ((context != nullptr && respContext->getContext() != nullptr) && scumm_stricmp(context, respContext->getContext()) == 0)) {
 				return true;
 			}
 		}
@@ -1813,7 +1818,7 @@ bool AdGame::resetResponse(int id) {
 
 	for (uint32 i = 0; i < _responsesGame.size(); i++) {
 		if (_responsesGame[i]->_id == id) {
-			if ((context == nullptr && _responsesGame[i]->_context == nullptr) || scumm_stricmp(context, _responsesGame[i]->_context) == 0) {
+			if ((context == nullptr && _responsesGame[i]->getContext() == nullptr) || scumm_stricmp(context, _responsesGame[i]->getContext()) == 0) {
 				delete _responsesGame[i];
 				_responsesGame.remove_at(i);
 				break;
@@ -1823,7 +1828,7 @@ bool AdGame::resetResponse(int id) {
 
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
 		if (_responsesBranch[i]->_id == id) {
-			if ((context == nullptr && _responsesBranch[i]->_context == nullptr) || scumm_stricmp(context, _responsesBranch[i]->_context) == 0) {
+			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0) {
 				delete _responsesBranch[i];
 				_responsesBranch.remove_at(i);
 				break;

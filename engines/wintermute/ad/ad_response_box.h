@@ -44,7 +44,7 @@ public:
 	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
 	bool getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
-	void addResponse(AdResponse* response);
+	void addResponse(const AdResponse* response);
 	bool handleResponse(const AdResponse *response);
 	bool handleResponseNum(uint32 num);
 	int32 getIdForResponseNum(uint32 num) const;
@@ -87,7 +87,7 @@ private:
 	int _verticalAlign;
 	TTextAlign _align;
 	BaseArray<UIButton *> _respButtons;
-	BaseArray<AdResponse *> _responses;
+	BaseArray<const AdResponse *> _responses;
 	UIWindow *_shieldWindow;
 	char *_lastResponseText;
 	char *_lastResponseTextOrig;
