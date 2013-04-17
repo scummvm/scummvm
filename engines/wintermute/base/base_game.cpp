@@ -3402,11 +3402,11 @@ bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *
 void BaseGame::setWindowTitle() {
 	if (_renderer) {
 		char title[512];
-		strcpy(title, _caption[0]);
+		Common::strlcpy(title, _caption[0], 512);
 		if (title[0] != '\0') {
-			strcat(title, " - ");
+			Common::strlcat(title, " - ", 512);
 		}
-		strcat(title, "WME Lite");
+		Common::strlcat(title, "WME Lite", 512);
 
 
 		Utf8String utf8Title;
