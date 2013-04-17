@@ -239,6 +239,9 @@ int WintermuteEngine::messageLoop() {
 	const uint32 maxFPS = 60;
 	const uint32 frameTime = 2 * (uint32)((1.0 / maxFPS) * 1000);
 	while (!done) {
+		if (!_game) {
+			break;
+		}
 		_debugger->onFrame();
 
 		Common::Event event;
@@ -272,7 +275,7 @@ int WintermuteEngine::messageLoop() {
 			}
 			prevTime = time;
 		}
-		if (_game->_quitting) {
+		if (_game && _game->_quitting) {
 			break;
 		}
 	}
