@@ -644,13 +644,13 @@ void GraphicsManager::setColorPercentage2(int palIndex, int r, int g, int b) {
 	_palette[palOffset + 1] = gv;
 	_palette[palOffset + 2] = bv;
 
-	WRITE_LE_UINT16(&_paletteBuffer[2 * palIndex], mapRGB(rv, gv, bv));
+	WRITE_UINT16(&_paletteBuffer[2 * palIndex], mapRGB(rv, gv, bv));
 }
 
 void GraphicsManager::changePalette(const byte *palette) {
 	const byte *srcP = &palette[0];
 	for (int idx = 0; idx < PALETTE_SIZE; ++idx, srcP += 3) {
-		WRITE_LE_UINT16(&_paletteBuffer[2 * idx], mapRGB(srcP[0], srcP[1], srcP[2]));
+		WRITE_UINT16(&_paletteBuffer[2 * idx], mapRGB(srcP[0], srcP[1], srcP[2]));
 	}
 }
 
