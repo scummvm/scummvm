@@ -259,7 +259,7 @@ Common::String EoBCoreEngine::initLevelData(int sub) {
 	}
 
 	if (_flags.gameID == GI_EOB2)
-		pos = initScriptTimers(pos);
+		initScriptTimers(pos);
 
 	return _curGfxFile;
 }
