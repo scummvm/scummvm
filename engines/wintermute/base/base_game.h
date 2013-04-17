@@ -107,8 +107,8 @@ public:
 	void DEBUG_DumpClassRegistry();
 	bool setWaitCursor(const char *filename);
 
-	int _thumbnailWidth;
-	int _thumbnailHeight;
+	int getSaveThumbWidth() const { return _thumbnailWidth; }
+	int getSaveThumbHeight() const { return _thumbnailHeight; }
 
 	bool _editorMode;
 	void getOffset(int *offsetX, int *offsetY);
@@ -302,6 +302,9 @@ private:
 	bool _videoSubtitles;
 
 	bool _personalizedSave;
+
+	int _thumbnailWidth;
+	int _thumbnailHeight;
 
 	void setWindowTitle();
 
