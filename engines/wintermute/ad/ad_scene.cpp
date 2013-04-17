@@ -189,7 +189,7 @@ void AdScene::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::getPath(BasePoint source, BasePoint target, AdPath *path, BaseObject *requester) {
+bool AdScene::getPath(const BasePoint &source, const BasePoint &target, AdPath *path, BaseObject *requester) {
 	if (!_pfReady) {
 		return false;
 	} else {

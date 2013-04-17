@@ -117,7 +117,7 @@ public:
 	bool isWalkableAt(int x, int y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
 	AdLayer *_mainLayer;
 	float getZoomAt(int x, int y);
-	bool getPath(BasePoint source, BasePoint target, AdPath *path, BaseObject *requester = nullptr);
+	bool getPath(const BasePoint &source, const BasePoint &target, AdPath *path, BaseObject *requester = nullptr);
 	AdScene(BaseGame *inGame);
 	virtual ~AdScene();
 	BaseArray<AdLayer *> _layers;
