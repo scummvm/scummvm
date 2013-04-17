@@ -243,10 +243,10 @@ int WintermuteEngine::messageLoop() {
 			}
 
 			// ***** flip
-			if (!_game->_suspendedRendering) {
+			if (!_game->getSuspendedRendering()) {
 				_game->_renderer->flip();
 			}
-			if (_game->_loading) {
+			if (_game->getIsLoading()) {
 				_game->loadGame(_game->_scheduledLoadSlot);
 			}
 			prevTime = time;

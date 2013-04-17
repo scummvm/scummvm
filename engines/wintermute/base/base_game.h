@@ -97,7 +97,7 @@ public:
 
 	void setShowFPS(bool enabled) { _debugShowFPS = enabled; }
 
-	bool _suspendedRendering;
+	bool getSuspendedRendering() const { return _suspendedRendering; }
 
 	TTextEncoding _textEncoding;
 	bool _textRTL;
@@ -179,7 +179,8 @@ public:
 	bool _subtitles; // RO
 
 	int _scheduledLoadSlot;
-	bool _loading;
+
+	bool getIsLoading() const { return _loading; }
 
 	virtual bool handleMouseWheel(int delta);
 	bool _quitting;
@@ -286,6 +287,7 @@ private:
 	bool _saveDirChecked;
 
 	Common::String _localSaveDir;
+	bool _loading;
 
 	bool _reportTextureFormat;
 
@@ -307,6 +309,8 @@ private:
 	int _thumbnailHeight;
 
 	void setWindowTitle();
+
+	bool _suspendedRendering;
 
 	BaseSprite *_cursorNoninteractive;
 	BaseKeyboardState *_keyboardState;

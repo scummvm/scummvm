@@ -243,7 +243,7 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
-	if (_gameRef->_suspendedRendering) {
+	if (_gameRef->getSuspendedRendering()) {
 		return STATUS_OK;
 	}
 
