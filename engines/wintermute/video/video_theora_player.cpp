@@ -335,7 +335,7 @@ bool VideoTheoraPlayer::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 VideoTheoraPlayer::getMovieTime() {
+uint32 VideoTheoraPlayer::getMovieTime() const {
 	if (!_playbackStarted) {
 		return 0;
 	} else {
@@ -432,7 +432,7 @@ bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-byte VideoTheoraPlayer::getAlphaAt(int x, int y) {
+byte VideoTheoraPlayer::getAlphaAt(int x, int y) const {
 	if (_alphaImage) {
 		return _alphaImage->getAlphaAt(x, y);
 	} else {
@@ -525,7 +525,7 @@ bool VideoTheoraPlayer::initializeSimple() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseSurface *VideoTheoraPlayer::getTexture() {
+BaseSurface *VideoTheoraPlayer::getTexture() const {
 	return _texture;
 }
 
