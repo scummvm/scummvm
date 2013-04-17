@@ -78,8 +78,6 @@ bool DynamicBitmap::doRender(RectangleList *updateRects) {
 	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 	assert(pGfx);
 	
-	//return true;//DEBUG
-
 	// Draw the bitmap
 	bool result;
 	if (_scaleFactorX == 1.0f && _scaleFactorY == 1.0f) {

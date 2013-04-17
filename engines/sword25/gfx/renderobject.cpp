@@ -219,9 +219,10 @@ Common::Rect RenderObject::calcBoundingBox() const {
 	return bbox;
 }
 
-void RenderObject::calcAbsolutePos(int &x, int &y) const {
+void RenderObject::calcAbsolutePos(int &x, int &y, int &z) const {
 	x = calcAbsoluteX();
 	y = calcAbsoluteY();
+	z = calcAbsoluteZ();
 }
 
 int RenderObject::calcAbsoluteX() const {
@@ -236,6 +237,13 @@ int RenderObject::calcAbsoluteY() const {
 		return _parentPtr->getAbsoluteY() + _y;
 	else
 		return _y;
+}
+
+int RenderObject::calcAbsoluteZ() const {
+	if (_parentPtr.isValid())
+		return _parentPtr->getAbsoluteZ() + _z;
+	else
+		return _z;
 }
 
 void RenderObject::deleteAllChildren() {
@@ -281,7 +289,7 @@ void RenderObject::sortRenderObjects() {
 }
 
 void RenderObject::updateAbsolutePos() {
-	calcAbsolutePos(_absoluteX, _absoluteY);
+	calcAbsolutePos(_absoluteX, _absoluteY, _absoluteZ);
 
 	RENDEROBJECT_ITER it = _children.begin();
 	for (; it != _children.end(); ++it)
@@ -313,15 +321,10 @@ void RenderObject::setY(int y) {
 void RenderObject::setZ(int z) {
 	if (z < 0)
 		error("Tried to set a negative Z value (%d).", z);
-	else
+	else {
 		_z = z;
-}
-
-int RenderObject::getAbsoluteZ() const {
-	if (_parentPtr.isValid())
-		return _parentPtr->getAbsoluteZ() + _z;
-	else
-		return _z;
+		updateAbsolutePos();
+	}
 }
 
 void RenderObject::setVisible(bool visible) {
