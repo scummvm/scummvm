@@ -94,10 +94,10 @@ public:
 	bool _shuttingDown;
 
 	virtual bool displayDebugInfo();
-	bool _debugShowFPS;
+
+	void setShowFPS(bool enabled) { _debugShowFPS = enabled; }
 
 	bool _suspendedRendering;
-	int _soundBufferSizeSec;
 
 	TTextEncoding _textEncoding;
 	bool _textRTL;
@@ -152,11 +152,8 @@ public:
 	BaseGame(const Common::String &gameId);
 	virtual ~BaseGame();
 
-	void DEBUG_DebugDisable();
-	void DEBUG_DebugEnable(const char *filename = nullptr);
 	bool _debugDebugMode;
 
-	void *_debugLogFile;
 	int _sequence;
 	virtual bool loadFile(const char *filename);
 	virtual bool loadBuffer(byte *buffer, bool complete = true);
@@ -268,13 +265,20 @@ protected:
 	VideoPlayer *_videoPlayer;
 	VideoTheoraPlayer *_theoraPlayer;
 private:
+	bool _debugShowFPS;
+	void *_debugLogFile;
+	void DEBUG_DebugDisable();
+	void DEBUG_DebugEnable(const char *filename = nullptr);
+
 	BaseObject *_mainObject;
 
 	bool _mouseRightDown;
 	bool _mouseMidlleDown;
 	
 	BaseGameSettings *_settings;
-	
+
+	int _soundBufferSizeSec;
+
 	virtual bool invalidateDeviceObjects();
 	virtual bool restoreDeviceObjects();
 
