@@ -153,7 +153,7 @@ public:
 	BaseArray<AdRotLevel *> _rotLevels;
 
 	virtual bool restoreDeviceObjects();
-	int getPointsDist(BasePoint p1, BasePoint p2, BaseObject *requester = nullptr);
+	int getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester = nullptr);
 
 	// scripting interface
 	virtual ScValue *scGetProperty(const Common::String &name);

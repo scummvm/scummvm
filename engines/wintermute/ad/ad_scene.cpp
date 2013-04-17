@@ -420,7 +420,7 @@ bool AdScene::isWalkableAt(int x, int y, bool checkFreeObjects, BaseObject *requ
 
 
 //////////////////////////////////////////////////////////////////////////
-int AdScene::getPointsDist(BasePoint p1, BasePoint p2, BaseObject *requester) {
+int AdScene::getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester) {
 	double xStep, yStep, x, y;
 	int xLength, yLength, xCount, yCount;
 	int x1, y1, x2, y2;
