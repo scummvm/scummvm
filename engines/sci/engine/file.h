@@ -121,7 +121,7 @@ public:
 	uint32 read(char *buffer, uint32 size);
 	uint32 readLine(char *buffer, uint32 size);
 	uint32 write(const char *buffer, uint32 size);
-	bool seek(int32 offset, int whence);
+	bool seek(int32 offset, Common::SeekWhence whence);
 	void close();
 
 private:

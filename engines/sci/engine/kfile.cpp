@@ -313,11 +313,11 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 				s->_virtualIndexFile = new VirtualIndexFile(50);
 			}
 
-			s->_virtualIndexFile->seek(0, SEEK_SET);
+			s->_virtualIndexFile->seek(0, Common::kSeekSet);
 			s->_virtualIndexFile->write(saves[savegameNr].name, strlen(saves[savegameNr].name));
 			s->_virtualIndexFile->write("\0", 1);
 			s->_virtualIndexFile->write("\0", 1);	// Spot description (empty)
-			s->_virtualIndexFile->seek(0, SEEK_SET);
+			s->_virtualIndexFile->seek(0, Common::kSeekSet);
 			return make_reg(0, VIRTUALFILE_HANDLE);
 		}
 	}
@@ -518,7 +518,7 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	uint16 handle = argv[0].toUint16();
 	uint16 offset = ABS<int16>(argv[1].toSint16());	// can be negative
-	uint16 whence = argv[2].toUint16();
+	Common::SeekWhence whence = (Common::SeekWhence)argv[2].toUint16();
 	debugC(kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
 
 #ifdef ENABLE_SCI32
@@ -532,13 +532,13 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 		// Backward seeking isn't supported in zip file streams, thus adapt the
 		// parameters accordingly if games ask for such a seek mode. A known
 		// case where this is requested is the save file manager in Phantasmagoria
-		if (whence == SEEK_END) {
-			whence = SEEK_SET;
+		if (whence == Common::kSeekEnd) {
+			whence = Common::kSeekSet;
 			offset = f->_in->size() - offset;
 		}
 
 		// FIXME: use SeekWhence in here
-		return make_reg(0, f->_in->seek(offset, (Common::SeekWhence)whence));
+		return make_reg(0, f->_in->seek(offset, whence));
 	} else if (f && f->_out) {
 		error("kFileIOSeek: Unsupported seek operation on a writeable stream (offset: %d, whence: %d)", offset, whence);
 	}
