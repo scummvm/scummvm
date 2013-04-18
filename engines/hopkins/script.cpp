@@ -1067,6 +1067,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 						_vm->_soundMan->playWav(2);
 						playFl = true;
 					}
+					break;
 				case 6:
 					playFl = false;
 					break;
