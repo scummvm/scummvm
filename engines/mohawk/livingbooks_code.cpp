@@ -669,6 +669,24 @@ void LBCode::parseMain() {
 		_stack.push(_stack.pop().isZero() ? 1 : 0);
 		break;
 
+	case kTokenEval:
+		// FIXME: original token?
+		debugN("..");
+		nextToken();
+		parseStatement();
+		if (!_stack.size())
+			error("eval op failed");
+		{
+		// FIXME: XXX
+		LBValue in = _stack.pop();
+		if (in.type != kLBValueString)
+			error("eval op on non-string");
+		Common::String varname = in.string;
+		LBValue &val = _vm->_variables[varname];
+		_stack.push(val);
+		}
+		break;
+
 	case kTokenGeneralCommand:
 		runGeneralCommand();
 		break;
