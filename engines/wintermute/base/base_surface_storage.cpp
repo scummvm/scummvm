@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
@@ -54,7 +55,7 @@ BaseSurfaceStorage::~BaseSurfaceStorage() {
 bool BaseSurfaceStorage::cleanup(bool warn) {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		if (warn) {
-			_gameRef->LOG(0, "BaseSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
+			BaseEngine::LOG(0, "BaseSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
 		}
 		delete _surfaces[i];
 	}
@@ -66,15 +67,15 @@ bool BaseSurfaceStorage::cleanup(bool warn) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::initLoop() {
-	if (_gameRef->_smartCache && _gameRef->_liveTimer - _lastCleanupTime >= _gameRef->_surfaceGCCycleTime) {
-		_lastCleanupTime = _gameRef->_liveTimer;
+	if (_gameRef->_smartCache && _gameRef->getLiveTimer()->getTime() - _lastCleanupTime >= _gameRef->_surfaceGCCycleTime) {
+		_lastCleanupTime = _gameRef->getLiveTimer()->getTime();
 		sortSurfaces();
 		for (uint32 i = 0; i < _surfaces.size(); i++) {
 			if (_surfaces[i]->_lifeTime <= 0) {
 				break;
 			}
 
-			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && (int)(_gameRef->_liveTimer - _surfaces[i]->_lastUsedTime) >= _surfaces[i]->_lifeTime) {
+			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && (int)(_gameRef->getLiveTimer()->getTime() - _surfaces[i]->_lastUsedTime) >= _surfaces[i]->_lifeTime) {
 				//_gameRef->QuickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
 				_surfaces[i]->invalidate();
 			}
@@ -111,7 +112,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool
 
 	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
 		if (filename.size()) {
-			_gameRef->LOG(0, "Missing image: '%s'", filename.c_str());
+			BaseEngine::LOG(0, "Missing image: '%s'", filename.c_str());
 		}
 		if (_gameRef->_debugDebugMode) {
 			return addSurface("invalid_debug.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
@@ -121,7 +122,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool
 	}
 
 	BaseSurface *surface;
-	surface = _gameRef->_renderer->createSurface();
+	surface = BaseEngine::getRenderer()->createSurface();
 
 	if (!surface) {
 		return nullptr;
@@ -144,7 +145,7 @@ bool BaseSurfaceStorage::restoreAll() {
 	for (uint32 i = 0; i < _surfaces.size(); i++) {
 		ret = _surfaces[i]->restore();
 		if (ret != STATUS_OK) {
-			_gameRef->LOG(0, "BaseSurfaceStorage::RestoreAll failed");
+			BaseEngine::LOG(0, "BaseSurfaceStorage::RestoreAll failed");
 			return ret;
 		}
 	}

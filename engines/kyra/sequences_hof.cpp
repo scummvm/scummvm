@@ -942,8 +942,8 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 	bool finished = false;
 	uint32 startTime = _system->getMillis();
 
-	int origW = wsaObj->width();
-	int origH = wsaObj->width();
+	int origW = wsaObj ? wsaObj->width() : 0;
+	int origH = wsaObj ? wsaObj->height() : 0;
 	int drwX = x;
 	int drwY = y;
 	int drwW = origW;
@@ -1041,7 +1041,8 @@ void SeqPlayer_HOF::playDialogueAnimation(uint16 strID, uint16 soundID, int text
 	int dur = int(strlen(_sequenceStrings[strID])) * (_vm->gameFlags().isTalkie ? 7 : 15);
 	if (_vm->textEnabled()) {
 		int slot = displaySubTitle(strID, textPosX, textPosY, dur, textWidth);
-		_textSlots[slot].textcolor = textColor;
+		if (slot >= 0)
+			_textSlots[slot].textcolor = textColor;
 	}
 	_specialAnimTimeOutTotal = _system->getMillis() + dur * _vm->tickLength();
 	int curframe = animStartFrame;

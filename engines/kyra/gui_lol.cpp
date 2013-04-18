@@ -697,7 +697,7 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 		t = _system->getMillis();
 		if (_buttonPressTimer > t)
 			delay(_buttonPressTimer - t);
-
+		// fall through
 	case 2:
 		mode = 0;
 		_lastButtonShape = 0;

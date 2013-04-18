@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/base_transition_manager.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 
 namespace Wintermute {
@@ -103,7 +104,7 @@ bool BaseTransitionMgr::update() {
 		uint32 time = g_system->getMillis() - _lastTime;
 		int alpha = (int)(255 - (float)time / (float)FADE_DURATION * 255);
 		alpha = MIN(255, MAX(alpha, 0));
-		_gameRef->_renderer->fade((uint16)alpha);
+		BaseEngine::getRenderer()->fade((uint16)alpha);
 
 		if (time > FADE_DURATION) {
 			_state = TRANS_MGR_READY;
@@ -115,7 +116,7 @@ bool BaseTransitionMgr::update() {
 		uint32 time = g_system->getMillis() - _lastTime;
 		int alpha = (int)((float)time / (float)FADE_DURATION * 255);
 		alpha = MIN(255, MAX(alpha, 0));
-		_gameRef->_renderer->fade((uint16)alpha);
+		BaseEngine::getRenderer()->fade((uint16)alpha);
 
 		if (time > FADE_DURATION) {
 			_state = TRANS_MGR_READY;

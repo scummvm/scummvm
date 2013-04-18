@@ -40,9 +40,9 @@ Console::~Console(void) {
 bool Console::Cmd_ShowFps(int argc, const char **argv) {
 	if (argc > 1) {
 		if (Common::String(argv[1]) == "true") {
-			_engineRef->_game->_debugShowFPS = true;
+			_engineRef->_game->setShowFPS(true);
 		} else if (Common::String(argv[1]) == "false") {
-			_engineRef->_game->_debugShowFPS = false;
+			_engineRef->_game->setShowFPS(false);;
 		}
 	}
 	return true;

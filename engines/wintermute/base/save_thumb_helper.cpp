@@ -26,7 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_save_thumb_helper.h"
+#include "engines/wintermute/base/save_thumb_helper.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_game.h"
@@ -35,22 +35,22 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseSaveThumbHelper::BaseSaveThumbHelper(BaseGame *inGame) : BaseClass(inGame) {
+SaveThumbHelper::SaveThumbHelper(const BaseGame *inGame) {
 	_thumbnail = nullptr;
 	_scummVMThumb = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseSaveThumbHelper::~BaseSaveThumbHelper(void) {
+SaveThumbHelper::~SaveThumbHelper(void) {
 	delete _thumbnail;
 	_thumbnail = nullptr;
 	delete _scummVMThumb;
 	_scummVMThumb = nullptr;
 }
 
-BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
+BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 	BaseImage *thumbnail = nullptr;
-	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
+	if (_gameRef->getSaveThumbWidth() > 0 && _gameRef->getSaveThumbHeight() > 0) {
 		if (doFlip) {
 			// when using opengl on windows it seems to be necessary to do this twice
 			// works normally for direct3d
@@ -67,7 +67,7 @@ BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 		}
 		
 		// normal thumbnail
-		if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
+		if (_gameRef->getSaveThumbWidth() > 0 && _gameRef->getSaveThumbHeight() > 0) {
 			thumbnail = new BaseImage();
 			thumbnail->copyFrom(screenshot, width, height);
 		}
@@ -80,13 +80,13 @@ BaseImage *BaseSaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
+bool SaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
 	_thumbnail = nullptr;
 
-	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
+	if (_gameRef->getSaveThumbWidth() > 0 && _gameRef->getSaveThumbHeight() > 0) {
 
-		_thumbnail = storeThumb(doFlip, _gameRef->_thumbnailWidth, _gameRef->_thumbnailHeight);
+		_thumbnail = storeThumb(doFlip, _gameRef->getSaveThumbWidth(), _gameRef->getSaveThumbHeight());
 		if (!_thumbnail) {
 			return STATUS_FAILED;
 		}
@@ -96,7 +96,7 @@ bool BaseSaveThumbHelper::storeThumbnail(bool doFlip) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
+bool SaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
 	delete _scummVMThumb;
 	_scummVMThumb = nullptr;
 	

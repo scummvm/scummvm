@@ -394,7 +394,7 @@ Frames* DosDisk_ns::loadFrames(const char* name) {
 	- path data [bit 8] (walkable areas)
 */
 void DosDisk_ns::unpackBackground(Common::ReadStream *stream, byte *screen, byte *mask, byte *path) {
-	byte storage[127];
+	byte storage[128];
 	uint32 storageLen = 0, len = 0;
 	uint32 j = 0;
 

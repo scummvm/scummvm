@@ -75,7 +75,7 @@ bool SaveLoad::loadGame(const Common::String &filename, BaseGame *gameRef) {
 
 	gameRef->_renderer->endSaveLoad();
 
-	//_gameRef->LOG(0, "Load end %d", BaseUtils::GetUsedMemMB());
+	//BaseEngine::LOG(0, "Load end %d", BaseUtils::GetUsedMemMB());
 	// AdGame:
 	if (DID_SUCCEED(ret)) {
 		SystemClassRegistry::getInstance()->enumInstances(SaveLoad::afterLoadRegion, "AdRegion", nullptr);

@@ -224,8 +224,8 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		width = (float)_theoraDecoder->getWidth();
 		height = (float)_theoraDecoder->getHeight();
 	} else {
-		width = (float)_gameRef->_renderer->_width;
-		height = (float)_gameRef->_renderer->_height;
+		width = (float)_gameRef->_renderer->getWidth();
+		height = (float)_gameRef->_renderer->getHeight();
 	}
 
 	switch (type) {
@@ -236,18 +236,18 @@ bool VideoTheoraPlayer::play(TVideoPlayback type, int x, int y, bool freezeGame,
 		break;
 
 	case VID_PLAY_STRETCH: {
-		float zoomX = (float)((float)_gameRef->_renderer->_width / width * 100);
-		float zoomY = (float)((float)_gameRef->_renderer->_height / height * 100);
+		float zoomX = (float)((float)_gameRef->_renderer->getWidth() / width * 100);
+		float zoomY = (float)((float)_gameRef->_renderer->getHeight() / height * 100);
 		_playZoom = MIN(zoomX, zoomY);
-		_posX = (int)((_gameRef->_renderer->_width - width * (_playZoom / 100)) / 2);
-		_posY = (int)((_gameRef->_renderer->_height - height * (_playZoom / 100)) / 2);
+		_posX = (int)((_gameRef->_renderer->getWidth() - width * (_playZoom / 100)) / 2);
+		_posY = (int)((_gameRef->_renderer->getHeight() - height * (_playZoom / 100)) / 2);
 	}
 	break;
 
 	case VID_PLAY_CENTER:
 		_playZoom = 100.0f;
-		_posX = (int)((_gameRef->_renderer->_width - width) / 2);
-		_posY = (int)((_gameRef->_renderer->_height - height) / 2);
+		_posX = (int)((_gameRef->_renderer->getWidth() - width) / 2);
+		_posY = (int)((_gameRef->_renderer->getHeight() - height) / 2);
 		break;
 	}
 	_theoraDecoder->start();
@@ -274,7 +274,7 @@ bool VideoTheoraPlayer::stop() {
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::update() {
-	_currentTime = _freezeGame ? _gameRef->_liveTimer : _gameRef->_timer;
+	_currentTime = _freezeGame ? _gameRef->getLiveTimer()->getTime() : _gameRef->getTimer()->getTime();
 
 	if (!isPlaying()) {
 		return STATUS_OK;
@@ -317,7 +317,7 @@ bool VideoTheoraPlayer::update() {
 		}
 	}
 	// Skip the busy-loop?
-	if ((!_texture || !_videoFrameReady) && !_theoraDecoder->endOfVideo()) {
+	if ((!_texture || !_videoFrameReady) && _theoraDecoder && !_theoraDecoder->endOfVideo()) {
 		// end playback
 		if (!_looping) {
 			_state = THEORA_STATE_FINISHED;
@@ -335,7 +335,7 @@ bool VideoTheoraPlayer::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 VideoTheoraPlayer::getMovieTime() {
+uint32 VideoTheoraPlayer::getMovieTime() const {
 	if (!_playbackStarted) {
 		return 0;
 	} else {
@@ -432,7 +432,7 @@ bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-byte VideoTheoraPlayer::getAlphaAt(int x, int y) {
+byte VideoTheoraPlayer::getAlphaAt(int x, int y) const {
 	if (_alphaImage) {
 		return _alphaImage->getAlphaAt(x, y);
 	} else {
@@ -525,7 +525,7 @@ bool VideoTheoraPlayer::initializeSimple() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-BaseSurface *VideoTheoraPlayer::getTexture() {
+BaseSurface *VideoTheoraPlayer::getTexture() const {
 	return _texture;
 }
 

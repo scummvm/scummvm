@@ -90,4 +90,36 @@ uint32 BaseEngine::randInt(int from, int to) {
 	return _rnd->getRandomNumberRng(from, to);
 }
 
+BaseSoundMgr *BaseEngine::getSoundMgr() {
+	if (instance()._gameRef) {
+		return _gameRef->_soundMgr;
+	} else {
+		return nullptr;
+	}
+}
+
+BaseRenderer *BaseEngine::getRenderer() {
+	if (instance()._gameRef) {
+		return instance()._gameRef->_renderer;
+	} else {
+		return nullptr;
+	}
+}
+
+const Timer *BaseEngine::getTimer() {
+	if (instance()._gameRef) {
+		return instance()._gameRef->getTimer();
+	} else {
+		return nullptr;
+	}
+}
+
+const Timer *BaseEngine::getLiveTimer() {
+	if (instance()._gameRef) {
+		return instance()._gameRef->getLiveTimer();
+	} else {
+		return nullptr;
+	}
+}
+
 } // end of namespace Wintermute

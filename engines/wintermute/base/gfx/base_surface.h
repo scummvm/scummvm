@@ -41,7 +41,7 @@ public:
 	virtual bool prepareToDraw();
 	uint32 _lastUsedTime;
 	bool _valid;
-	int _lifeTime;
+	int32 _lifeTime;
 
 	bool _pixelOpReady;
 	BaseSurface(BaseGame *inGame);
@@ -90,8 +90,8 @@ protected:
 
 	bool _keepLoaded;
 	Common::String _filename;
-	int _height;
-	int _width;
+	int32 _height;
+	int32 _width;
 
 };
 

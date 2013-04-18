@@ -32,7 +32,8 @@
 #include "engines/wintermute/math/matrix4.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/timer.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
@@ -131,7 +132,7 @@ bool PartEmitter::addSprite(const char *filename) {
 	// check if file exists
 	Common::SeekableReadStream *File = BaseFileManager::getEngineInstance()->openFile(filename);
 	if (!File) {
-		_gameRef->LOG(0, "Sprite '%s' not found", filename);
+		BaseEngine::LOG(0, "Sprite '%s' not found", filename);
 		return STATUS_FAILED;
 	} else {
 		BaseFileManager::getEngineInstance()->closeFile(File);
@@ -252,7 +253,7 @@ bool PartEmitter::update() {
 	if (!_running) {
 		return STATUS_OK;
 	} else {
-		return updateInternal(_gameRef->_timer, _gameRef->_timerDelta);
+		return updateInternal(BaseEngine::getTimer()->getTime(), BaseEngine::getTimer()->getTimeDelta());
 	}
 }
 
@@ -321,7 +322,7 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::display(BaseRegion *region) {
 	if (_sprites.size() <= 1) {
-		_gameRef->_renderer->startSpriteBatch();
+		BaseEngine::getRenderer()->startSpriteBatch();
 	}
 
 	for (uint32 i = 0; i < _particles.size(); i++) {
@@ -335,7 +336,7 @@ bool PartEmitter::display(BaseRegion *region) {
 	}
 
 	if (_sprites.size() <= 1) {
-		_gameRef->_renderer->endSpriteBatch();
+		BaseEngine::getRenderer()->endSpriteBatch();
 	}
 
 	return STATUS_OK;
@@ -353,7 +354,7 @@ bool PartEmitter::start() {
 	if (_overheadTime > 0) {
 		uint32 delta = 500;
 		int steps = _overheadTime / delta;
-		uint32 currentTime = _gameRef->_timer - _overheadTime;
+		uint32 currentTime = BaseEngine::getTimer()->getTime() - _overheadTime;
 
 		for (int i = 0; i < steps; i++) {
 			updateInternal(currentTime, delta);

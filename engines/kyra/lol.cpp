@@ -1363,7 +1363,7 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 		{ 0x21, 0xAA, 0x99, 0x00, 0x4253 }
 	};
 
-	if (charNum > 3)
+	if (charNum > 2)
 		return;
 
 	LoLCharacter *c = &_characters[charNum];
@@ -1851,7 +1851,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 	} else if (charId > 0) {
 		int i = 0;
 
-		for (; i < 4; i++) {
+		for (; i < 3; i++) {
 			if (_characters[i].id != charId || !(_characters[i].flags & 1))
 				continue;
 			if (charId == ch)

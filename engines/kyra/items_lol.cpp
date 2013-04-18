@@ -265,6 +265,7 @@ bool LoLEngine::addItemToInventory(Item itemIndex) {
 		gui_drawInventory();
 	}
 
+	assert(pos > 0 && pos < 48);
 	_inventory[pos] = itemIndex;
 	gui_drawInventory();
 

@@ -3655,7 +3655,8 @@ if test "$_opengl" = auto ; then
 			# Test the current header for OpenGL
 			cat > $TMPC << EOF
 #include <$i>
-int main(void) { return GL_VERSION_1_1; }
+#include <stdio.h>
+int main(void) { printf("ANTIVIRUS FALSE POSITIVE WORKAROUND"); return GL_VERSION_1_1; }
 EOF
 			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
 

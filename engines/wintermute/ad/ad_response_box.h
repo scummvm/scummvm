@@ -44,8 +44,8 @@ public:
 	BaseObject *getPrevAccessObject(BaseObject *CurrObject);
 	bool getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly);
 
-	void addResponse(AdResponse* response);
-	bool handleResponse(AdResponse *response);
+	void addResponse(const AdResponse* response);
+	bool handleResponse(const AdResponse *response);
 	bool handleResponseNum(uint32 num);
 	int32 getIdForResponseNum(uint32 num) const;
 	void setLastResponseText(const char *text, const char *textOrig);
@@ -73,21 +73,21 @@ public:
 
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	UIWindow *getResponseWindow();
 	uint32 getNumResponses() const;
 private:
-	int _spacing;
-	int _scrollOffset;
+	int32 _spacing;
+	int32 _scrollOffset;
 	BaseFont *_fontHover;
 	BaseFont *_font;
 	bool _horizontal;
 	Rect32 _responseArea;
-	int _verticalAlign;
+	int32 _verticalAlign;
 	TTextAlign _align;
 	BaseArray<UIButton *> _respButtons;
-	BaseArray<AdResponse *> _responses;
+	BaseArray<const AdResponse *> _responses;
 	UIWindow *_shieldWindow;
 	char *_lastResponseText;
 	char *_lastResponseTextOrig;

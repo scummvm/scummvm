@@ -913,7 +913,8 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		if (res) {
 			if (isMt32GmPatch(res->data, res->size)) {
 				readMt32GmPatch(res->data, res->size);
-				strncpy((char *)_goodbyeMsg, "      ScummVM       ", 20);
+				// Note that _goodbyeMsg is not zero-terminated
+				memcpy(_goodbyeMsg, "      ScummVM       ", 20);
 			} else {
 				readMt32Patch(res->data, res->size);
 			}

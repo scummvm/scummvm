@@ -57,7 +57,7 @@ public:
 	ScStack(BaseGame *inGame);
 	virtual ~ScStack();
 	BaseArray<ScValue *> _values;
-	int _sP;
+	int32 _sP;
 
 };
 

@@ -46,7 +46,7 @@ public:
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
 	const char *scToString();
 private:
-	int _length;
+	int32 _length;
 	ScValue *_values;
 	Common::String _strRep;
 };

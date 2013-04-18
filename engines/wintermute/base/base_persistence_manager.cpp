@@ -31,10 +31,10 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
-#include "engines/wintermute/base/base_save_thumb_helper.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/math/vector2.h"
 #include "engines/wintermute/base/gfx/base_image.h"
+#include "engines/wintermute/base/save_thumb_helper.h"
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/graphics/transparent_surface.h"
 #include "engines/wintermute/wintermute.h"
@@ -78,6 +78,16 @@ BasePersistenceManager::BasePersistenceManager(const char *savePrefix, bool dele
 //	_savedTimestamp = 0;
 	_savedVerMajor = _savedVerMinor = _savedVerBuild = 0;
 	_savedExtMajor = _savedExtMinor = 0;
+
+	_savedTimestamp.tm_sec = 0;
+	_savedTimestamp.tm_min = 0;
+	_savedTimestamp.tm_hour = 0;
+	_savedTimestamp.tm_mday = 0;
+	_savedTimestamp.tm_mon = 0;
+	_savedTimestamp.tm_year = 0;
+	_savedTimestamp.tm_wday = 0;
+
+	_savedPlayTime = 0;
 
 	_thumbnailDataSize = 0;
 	_thumbnailData = nullptr;
@@ -218,7 +228,7 @@ bool BasePersistenceManager::initSave(const char *desc) {
 	if (_saveStream) {
 		// get thumbnails
 		if (!_gameRef->_cachedThumbnail) {
-			_gameRef->_cachedThumbnail = new BaseSaveThumbHelper(_gameRef);
+			_gameRef->_cachedThumbnail = new SaveThumbHelper(_gameRef);
 			if (DID_FAIL(_gameRef->_cachedThumbnail->storeThumbnail(true))) {
 				delete _gameRef->_cachedThumbnail;
 				_gameRef->_cachedThumbnail = nullptr;

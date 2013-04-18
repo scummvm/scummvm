@@ -192,7 +192,9 @@ bool BaseFileManager::registerPackages() {
 	Common::FSList files;
 	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); ++it) {
 		debugC(kWintermuteDebugFileAccess, "Should register folder: %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
-		(*it).getChildren(files, Common::FSNode::kListFilesOnly);
+		if ((*it).getChildren(files, Common::FSNode::kListFilesOnly)) {
+			warning("getChildren() failed for path: %s", (*it).getDisplayName().c_str());
+		}
 		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
 			if (!fileIt->getName().hasSuffix(".dcp")) {
 				continue;
@@ -249,7 +251,7 @@ Common::SeekableReadStream *BaseFileManager::openPkgFile(const Common::String &f
 	upcName.toUppercase();
 	Common::SeekableReadStream *file = nullptr;
 	char fileName[MAX_PATH_LENGTH];
-	strcpy(fileName, upcName.c_str());
+	Common::strlcpy(fileName, upcName.c_str(), MAX_PATH_LENGTH);
 
 	// correct slashes
 	for (uint32 i = 0; i < upcName.size(); i++) {

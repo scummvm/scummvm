@@ -249,6 +249,7 @@ void EoBCoreEngine::timerSpecialCharacterUpdate(int timerNum) {
 		case 2:
 		case 3:
 			setCharEventTimer(charIndex, (c->effectFlags & 0x10000) ? 9 : 36, evt + 2, 1);
+			// fall through
 		case 0:
 		case 1:
 		case 4:

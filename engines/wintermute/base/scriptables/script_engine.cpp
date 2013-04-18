@@ -285,7 +285,7 @@ bool ScEngine::tick() {
 					_scripts[i]->run();
 				}
 			} else {
-				if (_scripts[i]->_waitTime <= _gameRef->_timer) {
+				if (_scripts[i]->_waitTime <= _gameRef->getTimer()->getTime()) {
 					_scripts[i]->run();
 				}
 			}

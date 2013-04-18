@@ -43,7 +43,6 @@
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/sound/base_sound.h"
-#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_transition_manager.h"
 #include "engines/wintermute/base/base_sprite.h"
@@ -520,9 +519,14 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		if (_responseBox) {
 			AdResponse *res = new AdResponse(_gameRef);
 			if (res) {
-				res->_iD = id;
-				res->setText(text);
-				_stringTable->expand(&res->_text);
+				res->setID(id);
+
+				char *expandedText = new char[strlen(text) + 1];
+				Common::strlcpy(expandedText, text, strlen(text) + 1);
+				expandStringByStringTable(&expandedText);
+				res->setText(expandedText);
+				delete[] expandedText;
+
 				if (!val1->isNULL()) {
 					res->setIcon(val1->getString());
 				}
@@ -850,10 +854,10 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		int height = stack->pop()->getInt();
 
 		if (width <= 0) {
-			width = _renderer->_width;
+			width = _renderer->getWidth();
 		}
 		if (height <= 0) {
-			height = _renderer->_height;
+			height = _renderer->getHeight();
 		}
 
 		if (!_sceneViewport) {
@@ -1498,7 +1502,7 @@ bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
+bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
 	BaseGame::getVersion(verMajor, verMinor, nullptr, nullptr);
 
 	if (extMajor) {
@@ -1743,7 +1747,7 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::clearBranchResponses(char *name) {
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
-		if (scumm_stricmp(name, _responsesBranch[i]->_context) == 0) {
+		if (scumm_stricmp(name, _responsesBranch[i]->getContext()) == 0) {
 			delete _responsesBranch[i];
 			_responsesBranch.remove_at(i);
 			i--;
@@ -1767,11 +1771,11 @@ bool AdGame::addBranchResponse(int id) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::branchResponseUsed(int id) {
+bool AdGame::branchResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
 		if (_responsesBranch[i]->_id == id) {
-			if ((context == nullptr && _responsesBranch[i]->_context == nullptr) || scumm_stricmp(context, _responsesBranch[i]->_context) == 0) {
+			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0) {
 				return true;
 			}
 		}
@@ -1794,12 +1798,12 @@ bool AdGame::addGameResponse(int id) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::gameResponseUsed(int id) {
+bool AdGame::gameResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
 	for (uint32 i = 0; i < _responsesGame.size(); i++) {
-		AdResponseContext *respContext = _responsesGame[i];
+		const AdResponseContext *respContext = _responsesGame[i];
 		if (respContext->_id == id) {
-			if ((context == nullptr && respContext->_context == nullptr) || ((context != nullptr && respContext->_context != nullptr) && scumm_stricmp(context, respContext->_context) == 0)) {
+			if ((context == nullptr && respContext->getContext() == nullptr) || ((context != nullptr && respContext->getContext() != nullptr) && scumm_stricmp(context, respContext->getContext()) == 0)) {
 				return true;
 			}
 		}
@@ -1814,7 +1818,7 @@ bool AdGame::resetResponse(int id) {
 
 	for (uint32 i = 0; i < _responsesGame.size(); i++) {
 		if (_responsesGame[i]->_id == id) {
-			if ((context == nullptr && _responsesGame[i]->_context == nullptr) || scumm_stricmp(context, _responsesGame[i]->_context) == 0) {
+			if ((context == nullptr && _responsesGame[i]->getContext() == nullptr) || scumm_stricmp(context, _responsesGame[i]->getContext()) == 0) {
 				delete _responsesGame[i];
 				_responsesGame.remove_at(i);
 				break;
@@ -1824,7 +1828,7 @@ bool AdGame::resetResponse(int id) {
 
 	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
 		if (_responsesBranch[i]->_id == id) {
-			if ((context == nullptr && _responsesBranch[i]->_context == nullptr) || scumm_stricmp(context, _responsesBranch[i]->_context) == 0) {
+			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0) {
 				delete _responsesBranch[i];
 				_responsesBranch.remove_at(i);
 				break;
@@ -1959,7 +1963,7 @@ bool AdGame::isItemTaken(char *itemName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AdItem *AdGame::getItemByName(const char *name) {
+AdItem *AdGame::getItemByName(const char *name) const {
 	for (uint32 i = 0; i < _items.size(); i++) {
 		if (scumm_stricmp(_items[i]->getName(), name) == 0) {
 			return _items[i];
@@ -2260,10 +2264,10 @@ bool AdGame::displayDebugInfo() {
 	char str[100];
 	if (_gameRef->_debugDebugMode) {
 		sprintf(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + _scene->getOffsetLeft(), _mousePos.y + _scene->getOffsetTop());
-		_systemFont->drawText((byte *)str, 0, 90, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 90, _renderer->getWidth(), TAL_RIGHT);
 
 		sprintf(str, "Scene: %s (prev: %s)", (_scene && _scene->getName()) ? _scene->getName() : "???", _prevSceneName ? _prevSceneName : "???");
-		_systemFont->drawText((byte *)str, 0, 110, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 110, _renderer->getWidth(), TAL_RIGHT);
 	}
 	return BaseGame::displayDebugInfo();
 }

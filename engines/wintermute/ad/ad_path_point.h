@@ -42,7 +42,7 @@ public:
 	virtual ~AdPathPoint();
 	AdPathPoint *_origin;
 	bool _marked;
-	int _distance;
+	int32 _distance;
 };
 
 } // end of namespace Wintermute

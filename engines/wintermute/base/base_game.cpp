@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_game_music.h"
+#include "engines/wintermute/base/base_game_settings.h"
 #include "engines/wintermute/base/base_fader.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/font/base_font.h"
@@ -43,11 +44,10 @@
 #include "engines/wintermute/base/base_sub_frame.h"
 #include "engines/wintermute/base/base_transition_manager.h"
 #include "engines/wintermute/base/base_viewport.h"
-#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_region.h"
-#include "engines/wintermute/base/base_save_thumb_helper.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/saveload.h"
+#include "engines/wintermute/base/save_thumb_helper.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
@@ -81,7 +81,7 @@ IMPLEMENT_PERSISTENT(BaseGame, true)
 
 
 //////////////////////////////////////////////////////////////////////
-BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gameId) {
+BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gameId), _timerNormal(), _timerLive() {
 	_shuttingDown = false;
 
 	_state = GAME_RUNNING;
@@ -122,14 +122,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_subtitles = true;
 	_videoSubtitles = true;
 
-	_timer = 0;
-	_timerDelta = 0;
-	_timerLast = 0;
-
-	_liveTimer = 0;
-	_liveTimerDelta = 0;
-	_liveTimerLast = 0;
-
 	_sequence = 0;
 
 	_mousePos.x = _mousePos.y = 0;
@@ -143,21 +135,7 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 
 	_useD3D = false;
 
-	_stringTable = new BaseStringTable(this);
-
 	_musicSystem = new BaseGameMusic(this);
-
-	_settingsResWidth = 800;
-	_settingsResHeight = 600;
-	_settingsRequireAcceleration = false;
-	_settingsRequireSound = false;
-	_settingsTLMode = 0;
-	_settingsAllowWindowed = true;
-	_settingsGameFile = nullptr;
-	_settingsAllowAdvanced = false;
-	_settingsAllowAccessTab = true;
-	_settingsAllowAboutTab = true;
-	_settingsAllowDesktopRes = false;
 
 	_editorForceScripts = false;
 	_editorAlwaysRegister = false;
@@ -171,7 +149,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	_scheduledLoadSlot = -1;
 
 	_personalizedSave = false;
-	_compressedSavegames = true;
 
 	_editorMode = false;
 	//_doNotExpandStrings = false;
@@ -192,8 +169,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 
 	_thumbnailWidth = _thumbnailHeight = 0;
 
-	_richSavedGames = false;
-	_savedGameExt = "dsv";
 	_localSaveDir = "saves";
 
 	_saveDirChecked = false;
@@ -237,6 +212,8 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 	#else*/
 	_touchInterface = false;
 	_constrainedMemory = false;
+	
+	_settings = new BaseGameSettings(this);
 //#endif
 
 }
@@ -253,8 +230,6 @@ BaseGame::~BaseGame() {
 
 	cleanup();
 
-	delete[] _settingsGameFile;
-
 	delete _cachedThumbnail;
 
 	delete _mathClass;
@@ -269,10 +244,8 @@ BaseGame::~BaseGame() {
 	//SAFE_DELETE(_keyboardState);
 
 	delete _renderer;
-	delete _stringTable;
 	delete _musicSystem;
-
-	_settingsGameFile = nullptr;
+	delete _settings;
 
 	_cachedThumbnail = nullptr;
 
@@ -287,8 +260,8 @@ BaseGame::~BaseGame() {
 	_soundMgr = nullptr;
 
 	_renderer = nullptr;
-	_stringTable = nullptr;
 	_musicSystem = nullptr;
+	_settings = nullptr;
 
 	DEBUG_DebugDisable();
 	debugC(kWintermuteDebugLog, "--- shutting down normally ---\n");
@@ -364,6 +337,42 @@ bool BaseGame::cleanup() {
 	return STATUS_OK;
 }
 
+//////////////////////////////////////////////////////////////////////
+bool BaseGame::initConfManSettings() {
+	if (ConfMan.hasKey("debug_mode")) {
+		if (ConfMan.getBool("debug_mode")) {
+			DEBUG_DebugEnable("./wme.log");
+		}
+	}
+
+	if (ConfMan.hasKey("show_fps")) {
+		_debugShowFPS = ConfMan.getBool("show_fps");
+	} else {
+		_debugShowFPS = false;
+	}
+
+	if (ConfMan.hasKey("disable_smartcache")) {
+		_smartCache = ConfMan.getBool("disable_smartcache");
+	} else {
+		_smartCache = true;
+	}
+
+	if (!_smartCache) {
+		LOG(0, "Smart cache is DISABLED");
+	}
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////
+bool BaseGame::initRenderer() {
+	bool windowedMode = !ConfMan.getBool("fullscreen");
+	return _renderer->initRenderer(_settings->getResWidth(), _settings->getResHeight(), windowedMode);
+}
+
+//////////////////////////////////////////////////////////////////////
+bool BaseGame::loadGameSettingsFile() {
+	return loadFile(_settings->getGameFile());
+}
 
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize1() {
@@ -446,8 +455,8 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize3() { // renderer is initialized
-	_posX = _renderer->_width / 2;
-	_posY = _renderer->_height / 2;
+	_posX = _renderer->getWidth() / 2;
+	_posY = _renderer->getHeight() / 2;
 	_renderer->initIndicator();
 	return STATUS_OK;
 }
@@ -544,16 +553,12 @@ bool BaseGame::initLoop() {
 	_lastTime  = _currentTime;
 	_fpsTime += _deltaTime;
 
-	_liveTimerDelta = _liveTimer - _liveTimerLast;
-	_liveTimerLast = _liveTimer;
-	_liveTimer += MIN((uint32)1000, _deltaTime);
+	_timerLive.updateTime(_deltaTime, 1000);
 
 	if (_state != GAME_FROZEN) {
-		_timerDelta = _timer - _timerLast;
-		_timerLast = _timer;
-		_timer += MIN((uint32)1000, _deltaTime);
+		_timerNormal.updateTime(_deltaTime, 1000);
 	} else {
-		_timerDelta = 0;
+		_timerNormal.setTimeDelta(0);
 	}
 
 	_framesRendered++;
@@ -603,7 +608,7 @@ void BaseGame::setOffset(int offsetX, int offsetY) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseGame::getOffset(int *offsetX, int *offsetY) {
+void BaseGame::getOffset(int *offsetX, int *offsetY) const {
 	if (offsetX != nullptr) {
 		*offsetX = _offsetX;
 	}
@@ -992,7 +997,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			clearOld = val->getBool();
 		}
 
-		if (DID_FAIL(_stringTable->loadFile(filename, clearOld))) {
+		if (DID_FAIL(_settings->loadStringTable(filename, clearOld))) {
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -1070,7 +1075,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 		char *str = new char[strlen(val->getString()) + 1];
 		strcpy(str, val->getString());
-		_stringTable->expand(&str);
+		expandStringByStringTable(&str);
 		stack->pushString(str);
 		delete[] str;
 		return STATUS_OK;
@@ -1088,9 +1093,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 		x = MAX(x, 0);
-		x = MIN(x, _renderer->_width);
+		x = MIN(x, _renderer->getWidth());
 		y = MAX(y, 0);
-		y = MIN(y, _renderer->_height);
+		y = MIN(y, _renderer->getHeight());
 		Point32 p;
 		p.x = x + _renderer->_drawOffsetX;
 		p.y = y + _renderer->_drawOffsetY;
@@ -1588,8 +1593,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "ScreenshotEx") == 0) {
 		stack->correctParams(3);
 		const char *filename = stack->pop()->getString();
-		int sizeX = stack->pop()->getInt(_renderer->_width);
-		int sizeY = stack->pop()->getInt(_renderer->_height);
+		int sizeX = stack->pop()->getInt(_renderer->getWidth());
+		int sizeY = stack->pop()->getInt(_renderer->getHeight());
 
 		bool ret = _gameRef->_renderer->saveScreenShot(filename, sizeX, sizeY);
 
@@ -1819,7 +1824,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "StoreSaveThumbnail") == 0) {
 		stack->correctParams(0);
 		delete _cachedThumbnail;
-		_cachedThumbnail = new BaseSaveThumbHelper(this);
+		_cachedThumbnail = new SaveThumbHelper(this);
 		if (DID_FAIL(_cachedThumbnail->storeThumbnail())) {
 			delete _cachedThumbnail;
 			_cachedThumbnail = nullptr;
@@ -1968,7 +1973,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// CurrentTime (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "CurrentTime") {
-		_scValue->setInt((int)_timer);
+		_scValue->setInt((int)getTimer()->getTime());
 		return _scValue;
 	}
 
@@ -1984,7 +1989,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// WindowedMode (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "WindowedMode") {
-		_scValue->setBool(_renderer->_windowed);
+		_scValue->setBool(_renderer->isWindowed());
 		return _scValue;
 	}
 
@@ -2024,7 +2029,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// ScreenWidth (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "ScreenWidth") {
-		_scValue->setInt(_renderer->_width);
+		_scValue->setInt(_renderer->getWidth());
 		return _scValue;
 	}
 
@@ -2032,7 +2037,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// ScreenHeight (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "ScreenHeight") {
-		_scValue->setInt(_renderer->_height);
+		_scValue->setInt(_renderer->getHeight());
 		return _scValue;
 	}
 
@@ -2564,8 +2569,8 @@ bool BaseGame::displayQuickMsg() {
 
 	// display
 	for (uint32 i = 0; i < _quickMessages.size(); i++) {
-		_systemFont->drawText((const byte *)_quickMessages[i]->getText(), 0, posY, _renderer->_width);
-		posY += _systemFont->getTextHeight((const byte *)_quickMessages[i]->getText(), _renderer->_width);
+		_systemFont->drawText((const byte *)_quickMessages[i]->getText(), 0, posY, _renderer->getWidth());
+		posY += _systemFont->getTextHeight((const byte *)_quickMessages[i]->getText(), _renderer->getWidth());
 	}
 	return STATUS_OK;
 }
@@ -2996,7 +3001,7 @@ bool BaseGame::saveGame(int slot, const char *desc, bool quickSave) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::loadGame(int slot) {
+bool BaseGame::loadGame(uint32 slot) {
 	//_gameRef->LOG(0, "Load start %d", BaseUtils::GetUsedMemMB());
 
 	_loading = false;
@@ -3043,132 +3048,6 @@ bool BaseGame::displayWindows(bool inGame) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::loadSettings(const char *filename) {
-	TOKEN_TABLE_START(commands)
-	TOKEN_TABLE(SETTINGS)
-	TOKEN_TABLE(GAME)
-	TOKEN_TABLE(STRING_TABLE)
-	TOKEN_TABLE(RESOLUTION)
-	TOKEN_TABLE(REQUIRE_3D_ACCELERATION)
-	TOKEN_TABLE(REQUIRE_SOUND)
-	TOKEN_TABLE(HWTL_MODE)
-	TOKEN_TABLE(ALLOW_WINDOWED_MODE)
-	TOKEN_TABLE(ALLOW_ACCESSIBILITY_TAB)
-	TOKEN_TABLE(ALLOW_ABOUT_TAB)
-	TOKEN_TABLE(ALLOW_ADVANCED)
-	TOKEN_TABLE(ALLOW_DESKTOP_RES)
-	TOKEN_TABLE(REGISTRY_PATH)
-	TOKEN_TABLE(RICH_SAVED_GAMES)
-	TOKEN_TABLE(SAVED_GAME_EXT)
-	TOKEN_TABLE(GUID)
-	TOKEN_TABLE_END
-
-
-	byte *origBuffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (origBuffer == nullptr) {
-		_gameRef->LOG(0, "BaseGame::LoadSettings failed for file '%s'", filename);
-		return STATUS_FAILED;
-	}
-
-	bool ret = STATUS_OK;
-
-	byte *buffer = origBuffer;
-	byte *params;
-	int cmd;
-	BaseParser parser;
-
-	if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_SETTINGS) {
-		_gameRef->LOG(0, "'SETTINGS' keyword expected in game settings file.");
-		return STATUS_FAILED;
-	}
-	buffer = params;
-	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
-		switch (cmd) {
-		case TOKEN_GAME:
-			delete[] _settingsGameFile;
-			_settingsGameFile = new char[strlen((char *)params) + 1];
-			if (_settingsGameFile) {
-				strcpy(_settingsGameFile, (char *)params);
-			}
-			break;
-
-		case TOKEN_STRING_TABLE:
-			if (DID_FAIL(_stringTable->loadFile((char *)params))) {
-				cmd = PARSERR_GENERIC;
-			}
-			break;
-
-		case TOKEN_RESOLUTION:
-			parser.scanStr((char *)params, "%d,%d", &_settingsResWidth, &_settingsResHeight);
-			break;
-
-		case TOKEN_REQUIRE_3D_ACCELERATION:
-			parser.scanStr((char *)params, "%b", &_settingsRequireAcceleration);
-			break;
-
-		case TOKEN_REQUIRE_SOUND:
-			parser.scanStr((char *)params, "%b", &_settingsRequireSound);
-			break;
-
-		case TOKEN_HWTL_MODE:
-			parser.scanStr((char *)params, "%d", &_settingsTLMode);
-			break;
-
-		case TOKEN_ALLOW_WINDOWED_MODE:
-			parser.scanStr((char *)params, "%b", &_settingsAllowWindowed);
-			break;
-
-		case TOKEN_ALLOW_DESKTOP_RES:
-			parser.scanStr((char *)params, "%b", &_settingsAllowDesktopRes);
-			break;
-
-		case TOKEN_ALLOW_ADVANCED:
-			parser.scanStr((char *)params, "%b", &_settingsAllowAdvanced);
-			break;
-
-		case TOKEN_ALLOW_ACCESSIBILITY_TAB:
-			parser.scanStr((char *)params, "%b", &_settingsAllowAccessTab);
-			break;
-
-		case TOKEN_ALLOW_ABOUT_TAB:
-			parser.scanStr((char *)params, "%b", &_settingsAllowAboutTab);
-			break;
-
-		case TOKEN_REGISTRY_PATH:
-			//BaseEngine::instance().getRegistry()->setBasePath((char *)params);
-			break;
-
-		case TOKEN_RICH_SAVED_GAMES:
-			parser.scanStr((char *)params, "%b", &_richSavedGames);
-			break;
-
-		case TOKEN_SAVED_GAME_EXT:
-			_savedGameExt = (char *)params;
-			break;
-
-		case TOKEN_GUID:
-			break;
-		}
-	}
-	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in game settings '%s'", filename);
-		ret = STATUS_FAILED;
-	}
-	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading game settings '%s'", filename);
-		ret = STATUS_FAILED;
-	}
-
-	_settingsAllowWindowed = true; // TODO: These two settings should probably be cleaned out altogether.
-	_compressedSavegames = true;
-
-	delete[] origBuffer;
-
-	return ret;
-}
-
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	if (!persistMgr->getIsSaving()) {
 		cleanup();
@@ -3213,13 +3092,8 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_videoFont));
 	persistMgr->transfer(TMEMBER(_videoSubtitles));
 
-	persistMgr->transfer(TMEMBER(_timer));
-	persistMgr->transfer(TMEMBER(_timerDelta));
-	persistMgr->transfer(TMEMBER(_timerLast));
-
-	persistMgr->transfer(TMEMBER(_liveTimer));
-	persistMgr->transfer(TMEMBER(_liveTimerDelta));
-	persistMgr->transfer(TMEMBER(_liveTimerLast));
+	_timerNormal.persist(persistMgr);
+	_timerLive.persist(persistMgr);
 
 	_renderer->persistSaveLoadImages(persistMgr);
 
@@ -3349,7 +3223,7 @@ void BaseGame::handleKeyRelease(Common::Event *event) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::handleMouseWheel(int delta) {
+bool BaseGame::handleMouseWheel(int32 delta) {
 	bool handled = false;
 	if (_focusedWindow) {
 		handled = _gameRef->_focusedWindow->handleMouseWheel(delta);
@@ -3379,7 +3253,7 @@ bool BaseGame::handleMouseWheel(int delta) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) {
+bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
 	if (verMajor) {
 		*verMajor = DCGF_VER_MAJOR;
 	}
@@ -3402,11 +3276,11 @@ bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *
 void BaseGame::setWindowTitle() {
 	if (_renderer) {
 		char title[512];
-		strcpy(title, _caption[0]);
+		Common::strlcpy(title, _caption[0], 512);
 		if (title[0] != '\0') {
-			strcat(title, " - ");
+			Common::strlcat(title, " - ", 512);
 		}
-		strcat(title, "WME Lite");
+		Common::strlcat(title, "WME Lite", 512);
 
 
 		Utf8String utf8Title;
@@ -3473,15 +3347,15 @@ bool BaseGame::popViewport() {
 		_renderer->setViewport(_viewportStack[_viewportSP]->getRect());
 	} else _renderer->setViewport(_renderer->_drawOffsetX,
 		                              _renderer->_drawOffsetY,
-		                              _renderer->_width + _renderer->_drawOffsetX,
-		                              _renderer->_height + _renderer->_drawOffsetY);
+		                              _renderer->getWidth() + _renderer->_drawOffsetX,
+		                              _renderer->getHeight() + _renderer->_drawOffsetY);
 
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
+bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
 	if (rect == nullptr) {
 		return STATUS_FAILED;
 	} else {
@@ -3493,8 +3367,8 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
 		} else {
 			BasePlatform::setRect(rect,   _renderer->_drawOffsetX,
 			                      _renderer->_drawOffsetY,
-			                      _renderer->_width + _renderer->_drawOffsetX,
-			                      _renderer->_height + _renderer->_drawOffsetY);
+			                      _renderer->getWidth() + _renderer->_drawOffsetX,
+			                      _renderer->getHeight() + _renderer->_drawOffsetY);
 			if (custom) {
 				*custom = false;
 			}
@@ -3506,7 +3380,7 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) {
+bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) const {
 	if (_viewportSP >= 0) {
 		if (offsetX) {
 			*offsetX = _viewportStack[_viewportSP]->_offsetX;
@@ -3835,7 +3709,7 @@ bool BaseGame::onMouseMiddleUp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onPaint() {
-	if (_renderer && _renderer->_windowed && _renderer->_ready) {
+	if (_renderer && _renderer->isWindowed() && _renderer->isReady()) {
 		_renderer->initLoop();
 		displayContent(false, true);
 		displayDebugInfo();
@@ -3858,42 +3732,43 @@ bool BaseGame::onWindowClose() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayDebugInfo() {
-	char str[100];
-
+	const uint32 strLength = 100;
+	char str[strLength];
+	
 	if (_debugShowFPS) {
 		sprintf(str, "FPS: %d", _gameRef->_fps);
 		_systemFont->drawText((byte *)str, 0, 0, 100, TAL_LEFT);
 	}
 
 	if (_gameRef->_debugDebugMode) {
-		if (!_gameRef->_renderer->_windowed) {
-			sprintf(str, "Mode: %dx%dx%d", _renderer->_width, _renderer->_height, _renderer->_bPP);
+		if (!_gameRef->_renderer->isWindowed()) {
+			sprintf(str, "Mode: %dx%dx%d", _renderer->getWidth(), _renderer->getHeight(), _renderer->getBPP());
 		} else {
-			sprintf(str, "Mode: %dx%d windowed", _renderer->_width, _renderer->_height);
+			sprintf(str, "Mode: %dx%d windowed", _renderer->getWidth(), _renderer->getHeight());
 		}
 
-		strcat(str, " (");
-		strcat(str, _renderer->getName().c_str());
-		strcat(str, ")");
-		_systemFont->drawText((byte *)str, 0, 0, _renderer->_width, TAL_RIGHT);
+		Common::strlcat(str, " (", strLength);
+		Common::strlcat(str, _renderer->getName().c_str(), strLength);
+		Common::strlcat(str, ")", strLength);
+		_systemFont->drawText((byte *)str, 0, 0, _renderer->getWidth(), TAL_RIGHT);
 
 		_renderer->displayDebugInfo();
 
 		int scrTotal, scrRunning, scrWaiting, scrPersistent;
 		scrTotal = _scEngine->getNumScripts(&scrRunning, &scrWaiting, &scrPersistent);
 		sprintf(str, "Running scripts: %d (r:%d w:%d p:%d)", scrTotal, scrRunning, scrWaiting, scrPersistent);
-		_systemFont->drawText((byte *)str, 0, 70, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 70, _renderer->getWidth(), TAL_RIGHT);
 
 
-		sprintf(str, "Timer: %d", _timer);
-		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->_width, TAL_RIGHT);
+		sprintf(str, "Timer: %d", getTimer()->getTime());
+		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->getWidth(), TAL_RIGHT);
 
 		if (_activeObject != nullptr) {
-			_systemFont->drawText((const byte *)_activeObject->getName(), 0, 150, _renderer->_width, TAL_RIGHT);
+			_systemFont->drawText((const byte *)_activeObject->getName(), 0, 150, _renderer->getWidth(), TAL_RIGHT);
 		}
 
 		sprintf(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
-		_systemFont->drawText((byte *)str, 0, 170, _renderer->_width, TAL_RIGHT);
+		_systemFont->drawText((byte *)str, 0, 170, _renderer->getWidth(), TAL_RIGHT);
 
 	}
 
@@ -4004,13 +3879,27 @@ void BaseGame::autoSaveOnExit() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseGame::addMem(int bytes) {
+void BaseGame::addMem(int32 bytes) {
 	_usedMem += bytes;
 }
 
 //////////////////////////////////////////////////////////////////////////
 AnsiString BaseGame::getDeviceType() const {
 	return "computer";
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::loadSettings(const char *filename) {
+	return _settings->loadSettings(filename);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void BaseGame::expandStringByStringTable(char **str) const {
+	_settings->expandStringByStringTable(str);
+}
+
+char *BaseGame::getKeyFromStringTable(const char *str) const {
+	return _settings->getKeyFromStringTable(str);
 }
 
 } // end of namespace Wintermute

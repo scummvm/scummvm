@@ -456,8 +456,6 @@ uint8 *Screen_EoB::encodeShape(uint16 x, uint16 y, uint16 w, uint16 h, bool enco
 						if (col < 0x10) {
 							*pal++ = s;
 							c = colorMap[s] = col++;
-							if (!col)
-								c = 0;
 						} else {
 							c = 0;
 						}

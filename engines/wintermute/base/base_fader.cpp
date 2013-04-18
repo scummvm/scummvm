@@ -27,7 +27,8 @@
  */
 
 #include "engines/wintermute/base/base_fader.h"
-#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/timer.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "common/util.h"
 
@@ -71,7 +72,7 @@ bool BaseFader::update() {
 	if (_system) {
 		time = g_system->getMillis() - _startTime;
 	} else {
-		time = _gameRef->_timer - _startTime;
+		time = BaseEngine::getTimer()->getTime() - _startTime;
 	}
 
 	if (time >= _duration) {
@@ -97,7 +98,7 @@ bool BaseFader::display() {
 	}
 
 	if (_currentAlpha > 0x00) {
-		_gameRef->_renderer->fadeToColor(_red, _green, _blue, _currentAlpha);
+		BaseEngine::getRenderer()->fadeToColor(_red, _green, _blue, _currentAlpha);
 	}
 	return STATUS_OK;
 }
@@ -129,7 +130,7 @@ bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	if (_system) {
 		_startTime = g_system->getMillis();
 	} else {
-		_startTime = _gameRef->_timer;
+		_startTime = BaseEngine::getTimer()->getTime();
 	}
 
 	return STATUS_OK;
@@ -155,7 +156,7 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	if (_system) {
 		_startTime = g_system->getMillis();
 	} else {
-		_startTime = _gameRef->_timer;
+		_startTime = BaseEngine::getTimer()->getTime();
 	}
 
 

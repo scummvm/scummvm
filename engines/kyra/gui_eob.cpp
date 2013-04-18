@@ -1300,24 +1300,24 @@ void EoBCoreEngine::gui_processWeaponSlotClickRight(int charIndex, int slotIndex
 
 	case 14:
 		// Potion
-		usePotion(charIndex, wslot);
+		usePotion(charIndex, slotIndex);
 		break;
 
 	case 18:
-		useWand(charIndex, wslot);
+		useWand(charIndex, slotIndex);
 		break;
 
 	case 19:
 		// eob2 horn
-		useHorn(charIndex, wslot);
+		useHorn(charIndex, slotIndex);
 		break;
 
 	case 20:
 		if (vl == 1)
 			inflictCharacterDamage(charIndex, 200);
 		else
-			useMagicScroll(charIndex, 55, wslot);
-		deleteInventoryItem(charIndex, wslot);
+			useMagicScroll(charIndex, 55, slotIndex);
+		deleteInventoryItem(charIndex, slotIndex);
 		break;
 
 	default:
@@ -2056,9 +2056,8 @@ void GUI_EoB::runCampMenu() {
 
 		if (inputFlag == _vm->_keyMap[Common::KEYCODE_ESCAPE])
 			inputFlag = 0x8007;
-		else if (inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+		else if (prevHighlightButton && (inputFlag == _vm->_keyMap[Common::KEYCODE_KP5] || inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]))
 			inputFlag = 0x8000 + prevHighlightButton->index;
-		}
 
 		Button *clickedButton = _vm->gui_getButton(buttonList, inputFlag & 0x7FFF);
 

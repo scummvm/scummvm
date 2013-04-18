@@ -56,14 +56,14 @@ public:
 	BaseSound *_sound;
 	TTextAlign _align;
 	bool display();
-	int _width;
+	int32 _width;
 	Point32 _pos;
 	BaseFont *_font;
 	char *getNextStance();
 	char *getCurrentStance();
 	void setStances(const char *stances);
 	void setText(const char *text);
-	int _currentStance;
+	int32 _currentStance;
 	uint32 _startTime;
 	char *_stances;
 	char *_text;

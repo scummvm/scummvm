@@ -503,7 +503,6 @@ int LoLEngine::checkBlockOccupiedByParty(int x, int y, int testFlag) {
 void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 	LevelBlockProperty *l = _visibleBlocks[blockArrayIndex];
 	uint16 s = l->assignedObjects;
-	LoLObject *obj = findObject(s);
 
 	if (l->direction != _currentDirection) {
 		l->drawObjects = 0;
@@ -511,8 +510,7 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 
 		while (s) {
 			reassignDrawObjects(_currentDirection, s, l, true);
-			obj = findObject(s);
-			s = obj->nextAssignedObject;
+			s = findObject(s)->nextAssignedObject;
 		}
 	}
 
@@ -567,6 +565,7 @@ void LoLEngine::drawBlockObjects(int blockArrayIndex) {
 					case 2:
 					case 6:
 						flg |= 0x10;
+						// fall through
 					case 0:
 					case 4:
 						shpIndex = _flyingItemShapes[shpIndex].shapeLeft;

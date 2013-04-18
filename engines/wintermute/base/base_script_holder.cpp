@@ -29,6 +29,7 @@
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/base/base_script_holder.h"
 #include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script.h"
@@ -301,7 +302,7 @@ bool BaseScriptHolder::addScript(const char *filename) {
 	for (uint32 i = 0; i < _scripts.size(); i++) {
 		if (scumm_stricmp(_scripts[i]->_filename, filename) == 0) {
 			if (_scripts[i]->_state != SCRIPT_FINISHED) {
-				_gameRef->LOG(0, "BaseScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, getName());
+				BaseEngine::LOG(0, "BaseScriptHolder::AddScript - trying to add script '%s' mutiple times (obj: '%s')", filename, getName());
 				return STATUS_OK;
 			}
 		}
@@ -382,7 +383,7 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_PROPERTY) {
-			_gameRef->LOG(0, "'PROPERTY' keyword expected.");
+			BaseEngine::LOG(0, "'PROPERTY' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -420,7 +421,7 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 		delete[] propValue;
 		propName = nullptr;
 		propValue = nullptr;
-		_gameRef->LOG(0, "Syntax error in PROPERTY definition");
+		BaseEngine::LOG(0, "Syntax error in PROPERTY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC || propName == nullptr || propValue == nullptr) {
@@ -428,7 +429,7 @@ bool BaseScriptHolder::parseProperty(byte *buffer, bool complete) {
 		delete[] propValue;
 		propName = nullptr;
 		propValue = nullptr;
-		_gameRef->LOG(0, "Error loading PROPERTY definition");
+		BaseEngine::LOG(0, "Error loading PROPERTY definition");
 		return STATUS_FAILED;
 	}
 

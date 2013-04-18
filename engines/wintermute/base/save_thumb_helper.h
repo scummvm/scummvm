@@ -25,37 +25,27 @@
  * http://dead-code.org/redir.php?target=wmelite
  * Copyright (c) 2011 Jan Nedoma
  */
-
-#ifndef WINTERMUTE_ADTALKNODE_H
-#define WINTERMUTE_ADTALKNODE_H
-
-#include "engines/wintermute/persistent.h"
-#include "engines/wintermute/base/base.h"
+#ifndef WINTERMUTE_BASE_SAVE_THUMB_HELPER_H
+#define WINTERMUTE_BASE_SAVE_THUMB_HELPER_H
 
 namespace Wintermute {
-class AdSpriteSet;
-class BaseSprite;
-class AdTalkNode : public BaseClass {
+
+class BaseImage;
+class BaseGame;
+
+class SaveThumbHelper {
 public:
-	char *_spriteSetFilename;
-	AdSpriteSet *_spriteSet;
-	BaseSprite *getSprite(TDirection dir);
-	bool isInTimeInterval(uint32 time, TDirection dir);
-	bool loadSprite();
-	DECLARE_PERSISTENT(AdTalkNode, BaseClass)
+	SaveThumbHelper(const BaseGame *inGame);
+	virtual ~SaveThumbHelper(void);
+	bool storeThumbnail(bool doFlip = false);
+	bool storeScummVMThumbNail(bool doFlip = false);
 
-	AdTalkNode(BaseGame *inGame);
-	virtual ~AdTalkNode();
-	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
-	char *_spriteFilename;
-	BaseSprite *_sprite;
-	uint32 _startTime;
-	uint32 _endTime;
-	bool _playToEnd;
-	bool _preCache;
-	char *_comment;
-
+	BaseImage *_thumbnail;
+	BaseImage *_scummVMThumb;
+private:
+	BaseImage *storeThumb(bool doFlip, int width, int height);
+	BaseImage *_richThumbnail;
+	BaseGame *_gameRef;
 };
 
 } // end of namespace Wintermute

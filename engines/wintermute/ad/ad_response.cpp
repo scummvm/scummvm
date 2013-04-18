@@ -143,4 +143,36 @@ bool AdResponse::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
+void AdResponse::setID(int32 id) {
+	_iD = id;
+}
+
+BaseSprite *AdResponse::getIcon() const {
+	return _icon;
+}
+
+BaseSprite *AdResponse::getIconHover() const {
+	return _iconHover;
+}
+
+BaseSprite *AdResponse::getIconPressed() const {
+	return _iconPressed;
+}
+
+BaseFont *AdResponse::getFont() const {
+	return _font;
+}
+
+int32 AdResponse::getID() const {
+	return _iD;
+}
+		
+const char *AdResponse::getText() const {
+	return _text;
+}
+
+const char *AdResponse::getTextOrig() const {
+	return _textOrig;
+}
+
 } // end of namespace Wintermute

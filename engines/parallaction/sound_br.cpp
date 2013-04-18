@@ -507,10 +507,14 @@ void SoundMan_br::execute(int command, const char *parm) {
 		stopMusic();
 		break;
 	case SC_SETMUSICFILE:
+		if (!parm)
+			error("no parameter passed to SC_SETMUSICFILE");
 		setMusicFile(parm);
 		break;
 
 	case SC_PLAYSFX:
+		if (!parm)
+			error("no parameter passed to SC_PLAYSFX");
 		playSfx(parm, _sfxChannel, _sfxLooping, _sfxVolume);
 		break;
 	case SC_STOPSFX:

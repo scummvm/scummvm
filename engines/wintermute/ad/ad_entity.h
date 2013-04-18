@@ -42,7 +42,7 @@ public:
 	void updatePosition();
 	virtual int getHeight();
 	BaseRegion *_region;
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	virtual bool update();
 	virtual bool display();
 	AdEntity(BaseGame *inGame);
@@ -56,10 +56,10 @@ public:
 	const char* getItemName() const;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
 private:
 	int32 _walkToX;
 	int32 _walkToY;

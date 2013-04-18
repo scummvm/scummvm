@@ -247,6 +247,9 @@ void EoBCoreEngine::updateAttackingMonsterFlags() {
 		m2 = m;
 	}
 
+	if (!m2)
+		return;
+
 	if (m2->type == 7)
 		setScriptFlags(4);
 
@@ -551,8 +554,6 @@ void EoBCoreEngine::drawMonsters(int index) {
 
 			SpriteDecoration *dcr = &_monsterDecorations[(p->decorations[ii] - 1) * 6 + subFrame + shpIndex - 1];
 
-			if (!dcr)
-				continue;
 			if (!dcr->shp)
 				continue;
 
@@ -651,6 +652,8 @@ void EoBCoreEngine::drawFlyingObjects(int index) {
 				y = 44;
 			}
 		}
+
+		assert(shp);
 
 		shp = _screen->scaleShape(shp, sclValue);
 

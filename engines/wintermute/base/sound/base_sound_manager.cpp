@@ -30,7 +30,6 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/string_util.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
@@ -123,7 +122,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 
 	bool res = sound->loadFromFile(useFilename);
 	if (DID_FAIL(res)) {
-		_gameRef->LOG(res, "Error loading sound '%s'", useFilename.c_str());
+		BaseEngine::LOG(res, "Error loading sound '%s'", useFilename.c_str());
 		delete sound;
 		return nullptr;
 	}
@@ -280,7 +279,7 @@ bool BaseSoundMgr::resumeAll() {
 
 //////////////////////////////////////////////////////////////////////////
 float BaseSoundMgr::posToPan(int x, int y) {
-	float relPos = (float)x / ((float)_gameRef->_renderer->_width);
+	float relPos = (float)x / ((float)BaseEngine::getRenderer()->getWidth());
 
 	float minPan = -0.7f;
 	float maxPan = 0.7f;

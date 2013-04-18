@@ -48,16 +48,6 @@
 #define LUA_ERRMEM	4
 #define LUA_ERRERR	5
 
-// Added in ScummVM. Refer to http://www.lua.org/manual/5.1/manual.html
-static const char* luaErrorDescription[] = {
-	"No error",
-	"Coroutine yield",	// not an actual error, see lua_resume
-	"Runtime error",
-	"Syntax error during pre-compilation",	// refer to lua_load
-	"Memory allocation error",
-	"Error while running the error handler function"
-};
-
 typedef struct lua_State lua_State;
 
 typedef int (*lua_CFunction) (lua_State *L);

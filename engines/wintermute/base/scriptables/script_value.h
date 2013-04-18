@@ -87,7 +87,7 @@ public:
 	ScValue *_valRef;
 private:
 	bool _valBool;
-	int _valInt;
+	int32 _valInt;
 	double _valFloat;
 	char *_valString;
 public:

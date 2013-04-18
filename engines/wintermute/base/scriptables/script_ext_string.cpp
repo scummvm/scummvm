@@ -270,7 +270,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 		char separators[MAX_PATH_LENGTH] = ",";
 		if (!val->isNULL()) {
-			strcpy(separators, val->getString());
+			Common::strlcpy(separators, val->getString(), MAX_PATH_LENGTH);
 		}
 
 		SXArray *array = new SXArray(_gameRef);

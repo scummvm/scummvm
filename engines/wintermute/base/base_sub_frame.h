@@ -72,7 +72,7 @@ public:
 	byte _cKRed;
 	byte _cKGreen;
 	byte _cKBlue;
-	int _lifeTime;
+	int32 _lifeTime;
 	bool _keepLoaded;
 
 	bool _2DOnly;

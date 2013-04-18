@@ -127,8 +127,8 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		}
 		if (_shieldWindow) {
 			_shieldWindow->_posX = _shieldWindow->_posY = 0;
-			_shieldWindow->_width = _gameRef->_renderer->_width;
-			_shieldWindow->_height = _gameRef->_renderer->_height;
+			_shieldWindow->_width = _gameRef->_renderer->getWidth();
+			_shieldWindow->_height = _gameRef->_renderer->getHeight();
 
 			_shieldWindow->display();
 		}
@@ -141,8 +141,8 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		}
 		if (_shieldButton) {
 			_shieldButton->_posX = _shieldButton->_posY = 0;
-			_shieldButton->_width = _gameRef->_renderer->_width;
-			_shieldButton->_height = _gameRef->_renderer->_height;
+			_shieldButton->_width = _gameRef->_renderer->getWidth();
+			_shieldButton->_height = _gameRef->_renderer->getHeight();
 
 			_shieldButton->display();
 		}
@@ -431,7 +431,7 @@ bool UIWindow::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TITLE:
 			setText((char *)params);
-			_gameRef->_stringTable->expand(&_text);
+			_gameRef->expandStringByStringTable(&_text);
 			break;
 
 		case TOKEN_TITLE_ALIGN:
@@ -885,8 +885,8 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Center") == 0) {
 		stack->correctParams(0);
-		_posX = (_gameRef->_renderer->_width - _width) / 2;
-		_posY = (_gameRef->_renderer->_height - _height) / 2;
+		_posX = (_gameRef->_renderer->getWidth() - _width) / 2;
+		_posY = (_gameRef->_renderer->getHeight() - _height) / 2;
 		stack->pushNULL();
 		return STATUS_OK;
 	}

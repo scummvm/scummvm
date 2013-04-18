@@ -189,7 +189,7 @@ void AdScene::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::getPath(BasePoint source, BasePoint target, AdPath *path, BaseObject *requester) {
+bool AdScene::getPath(const BasePoint &source, const BasePoint &target, AdPath *path, BaseObject *requester) {
 	if (!_pfReady) {
 		return false;
 	} else {
@@ -420,7 +420,7 @@ bool AdScene::isWalkableAt(int x, int y, bool checkFreeObjects, BaseObject *requ
 
 
 //////////////////////////////////////////////////////////////////////////
-int AdScene::getPointsDist(BasePoint p1, BasePoint p2, BaseObject *requester) {
+int AdScene::getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester) {
 	double xStep, yStep, x, y;
 	int xLength, yLength, xCount, yCount;
 	int x1, y1, x2, y2;
@@ -755,7 +755,7 @@ bool AdScene::loadBuffer(byte *buffer, bool complete) {
 			break;
 
 		case TOKEN_CAMERA:
-			strcpy(camera, (char *)params);
+			Common::strlcpy(camera, (char *)params, MAX_PATH_LENGTH);
 			break;
 
 		case TOKEN_EDITOR_MARGIN_H:
@@ -931,13 +931,13 @@ bool AdScene::traverseNodes(bool doUpdate) {
 
 		if (_autoScroll) {
 			// adjust horizontal scroll
-			if (_gameRef->_timer - _lastTimeH >= _scrollTimeH) {
-				int timesMissed = (_gameRef->_timer - _lastTimeH) / _scrollTimeH;
+			if (_gameRef->getTimer()->getTime() - _lastTimeH >= _scrollTimeH) {
+				int timesMissed = (_gameRef->getTimer()->getTime() - _lastTimeH) / _scrollTimeH;
 				// Cap the amount of catch-up to avoid jittery characters.
 				if (timesMissed > 2) {
 					timesMissed = 2;
 				}
-				_lastTimeH = _gameRef->_timer;
+				_lastTimeH = _gameRef->getTimer()->getTime();
 				if (_offsetLeft < _targetOffsetLeft) {
 					_offsetLeft += _scrollPixelsH * timesMissed;
 					_offsetLeft = MIN(_offsetLeft, _targetOffsetLeft);
@@ -948,13 +948,13 @@ bool AdScene::traverseNodes(bool doUpdate) {
 			}
 
 			// adjust vertical scroll
-			if (_gameRef->_timer - _lastTimeV >= _scrollTimeV) {
-				int timesMissed = (_gameRef->_timer - _lastTimeV) / _scrollTimeV;
+			if (_gameRef->getTimer()->getTime() - _lastTimeV >= _scrollTimeV) {
+				int timesMissed = (_gameRef->getTimer()->getTime() - _lastTimeV) / _scrollTimeV;
 				// Cap the amount of catch-up to avoid jittery characters.
 				if (timesMissed > 2) {
 					timesMissed = 2;
 				}
-				_lastTimeV = _gameRef->_timer;
+				_lastTimeV = _gameRef->getTimer()->getTime();
 				if (_offsetTop < _targetOffsetTop) {
 					_offsetTop += _scrollPixelsV * timesMissed;
 					_offsetTop = MIN(_offsetTop, _targetOffsetTop);
@@ -1014,8 +1014,8 @@ bool AdScene::traverseNodes(bool doUpdate) {
 				}
 				if (_shieldWindow) {
 					_shieldWindow->_posX = _shieldWindow->_posY = 0;
-					_shieldWindow->_width = _gameRef->_renderer->_width;
-					_shieldWindow->_height = _gameRef->_renderer->_height;
+					_shieldWindow->_width = _gameRef->_renderer->getWidth();
+					_shieldWindow->_height = _gameRef->_renderer->getHeight();
 					_shieldWindow->display();
 				}
 			}
@@ -1694,10 +1694,10 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		int height = stack->pop()->getInt();
 
 		if (width <= 0) {
-			width = _gameRef->_renderer->_width;
+			width = _gameRef->_renderer->getWidth();
 		}
 		if (height <= 0) {
-			height = _gameRef->_renderer->_height;
+			height = _gameRef->_renderer->getHeight();
 		}
 
 		if (!_viewport) {
@@ -2569,10 +2569,10 @@ bool AdScene::getViewportSize(int *width, int *height) {
 		}
 	} else {
 		if (width) {
-			*width  = _gameRef->_renderer->_width;
+			*width  = _gameRef->_renderer->getWidth();
 		}
 		if (height) {
-			*height = _gameRef->_renderer->_height;
+			*height = _gameRef->_renderer->getHeight();
 		}
 	}
 	return STATUS_OK;
@@ -2774,11 +2774,11 @@ float AdScene::getRotationAt(int x, int y) {
 	}
 
 	int delta_x = next->_posX - prev->_posX;
-	float delta_rot = next->_rotation - prev->_rotation;
+	float delta_rot = next->getRotation() - prev->getRotation();
 	x -= prev->_posX;
 
 	float percent = (float)x / ((float)delta_x / 100.0f);
-	return prev->_rotation + delta_rot / 100 * percent;
+	return prev->getRotation() + delta_rot / 100 * percent;
 }
 
 

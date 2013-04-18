@@ -83,24 +83,24 @@ private:
 	AdSpriteSet *getAnimByName(const Common::String &animName);
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
 
 	bool setDefaultAnimNames();
 	BaseSprite *getTalkStanceOld(const char *stance);
 	bool mergeAnims(const char *animsFilename);
 	BaseSprite *_animSprite2;
 
-	void initLine(BasePoint startPt, BasePoint endPt);
+	void initLine(const BasePoint &startPt, const BasePoint &endPt);
 	void getNextStep();
 	void followPath();
 	double _pFStepX;
 	double _pFStepY;
 	double _pFX;
 	double _pFY;
-	int _pFCount;
+	int32 _pFCount;
 };
 
 } // end of namespace Wintermute

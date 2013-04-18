@@ -59,26 +59,26 @@ namespace Wintermute {
 class BaseParser {
 public:
 	struct TokenDesc {
-		int32   id;
+		int32 id;
 		const char *token;
 	};
 
 public:
-	int scanStr(const char *in, const char *format, ...);
+	int32 scanStr(const char *in, const char *format, ...);
 	int32 getCommand(char **buf, const TokenDesc *tokens, char **params);
 	BaseParser();
 	virtual ~BaseParser();
 private:
 	char *getLastOffender();
 	void skipToken(char **buf, char *tok, char *msg = nullptr);
-	int getTokenInt(char **buf);
+	int32 getTokenInt(char **buf);
 	float getTokenFloat(char **buf);
 	Common::String getToken(char **buf);
 	char *getAssignmentText(char **buf);
 	char *getSubText(char **buf, char open, char close);
 	void skipCharacters(char **buf, const char *toSkip);
 	int32 getObject(char **buf, const TokenDesc *tokens, char **name, char **data);
-	int _parserLine;
+	int32 _parserLine;
 	char _lastOffender[255];
 	char *_whiteSpace;
 };

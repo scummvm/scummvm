@@ -47,8 +47,8 @@ public:
 
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
-	int _moveY;
-	int _moveX;
+	int32 _moveY;
+	int32 _moveX;
 	uint32 _delay;
 	BaseArray<BaseSubFrame *> _subframes;
 	bool draw(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, bool allFrames = false, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
@@ -60,10 +60,10 @@ public:
 	BaseArray<const char *> _applyEvent;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
 private:
 	bool _keyframe;
 	bool _editorExpanded;

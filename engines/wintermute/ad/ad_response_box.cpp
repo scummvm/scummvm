@@ -144,16 +144,16 @@ bool AdResponseBox::createButtons() {
 			btn->_sharedFonts = btn->_sharedImages = true;
 			btn->_sharedCursors = true;
 			// iconic
-			if (_responses[i]->_icon) {
-				btn->_image = _responses[i]->_icon;
-				if (_responses[i]->_iconHover) {
-					btn->_imageHover = _responses[i]->_iconHover;
+			if (_responses[i]->getIcon()) {
+				btn->_image = _responses[i]->getIcon();
+				if (_responses[i]->getIconHover()) {
+					btn->_imageHover = _responses[i]->getIconHover();
 				}
-				if (_responses[i]->_iconPressed) {
-					btn->_imagePress = _responses[i]->_iconPressed;
+				if (_responses[i]->getIconPressed()) {
+					btn->_imagePress = _responses[i]->getIconPressed();
 				}
 
-				btn->setCaption(_responses[i]->_text);
+				btn->setCaption(_responses[i]->getText());
 				if (_cursor) {
 					btn->_cursor = _cursor;
 				} else if (_gameRef->_activeCursor) {
@@ -162,7 +162,7 @@ bool AdResponseBox::createButtons() {
 			}
 			// textual
 			else {
-				btn->setText(_responses[i]->_text);
+				btn->setText(_responses[i]->getText());
 				btn->_font = (_font == nullptr) ? _gameRef->getSystemFont() : _font;
 				btn->_fontHover = (_fontHover == nullptr) ? _gameRef->getSystemFont() : _fontHover;
 				btn->_fontPress = btn->_fontHover;
@@ -173,13 +173,13 @@ bool AdResponseBox::createButtons() {
 				}
 
 
-				if (_responses[i]->_font) {
-					btn->_font = _responses[i]->_font;
+				if (_responses[i]->getFont()) {
+					btn->_font = _responses[i]->getFont();
 				}
 
 				btn->_width = _responseArea.right - _responseArea.left;
 				if (btn->_width <= 0) {
-					btn->_width = _gameRef->_renderer->_width;
+					btn->_width = _gameRef->_renderer->getWidth();
 				}
 			}
 			btn->setName("response");
@@ -196,7 +196,7 @@ bool AdResponseBox::createButtons() {
 			_respButtons.add(btn);
 
 			if (_responseArea.bottom - _responseArea.top < btn->_height) {
-				_gameRef->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", _responses[i]->_text);
+				_gameRef->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", _responses[i]->getText());
 				_responseArea.bottom += (btn->_height - (_responseArea.bottom - _responseArea.top));
 			}
 		}
@@ -515,8 +515,8 @@ bool AdResponseBox::display() {
 	// go exclusive
 	if (_shieldWindow) {
 		_shieldWindow->_posX = _shieldWindow->_posY = 0;
-		_shieldWindow->_width = _gameRef->_renderer->_width;
-		_shieldWindow->_height = _gameRef->_renderer->_height;
+		_shieldWindow->_width = _gameRef->_renderer->getWidth();
+		_shieldWindow->_height = _gameRef->_renderer->getHeight();
 
 		_shieldWindow->display();
 	}
@@ -548,7 +548,7 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 			_scrollOffset++;
 		} else if (scumm_stricmp(obj->getName(), "response") == 0) {
 			if (_waitingScript) {
-				_waitingScript->_stack->pushInt(_responses[param2]->_iD);
+				_waitingScript->_stack->pushInt(_responses[param2]->getID());
 			}
 			handleResponse(_responses[param2]);
 			_waitingScript = nullptr;
@@ -601,7 +601,7 @@ bool AdResponseBox::weedResponses() {
 	for (uint32 i = 0; i < _responses.size(); i++) {
 		switch (_responses[i]->_responseType) {
 		case RESPONSE_ONCE:
-			if (adGame->branchResponseUsed(_responses[i]->_iD)) {
+			if (adGame->branchResponseUsed(_responses[i]->getID())) {
 				delete _responses[i];
 				_responses.remove_at(i);
 				i--;
@@ -609,7 +609,7 @@ bool AdResponseBox::weedResponses() {
 			break;
 
 		case RESPONSE_ONCE_GAME:
-			if (adGame->gameResponseUsed(_responses[i]->_iD)) {
+			if (adGame->gameResponseUsed(_responses[i]->getID())) {
 				delete _responses[i];
 				_responses.remove_at(i);
 				i--;
@@ -642,13 +642,13 @@ UIWindow *AdResponseBox::getResponseWindow() {
 	return _window;
 }
 
-void AdResponseBox::addResponse(AdResponse *response) {
+void AdResponseBox::addResponse(const AdResponse *response) {
 	_responses.add(response);
 }
 
 int32 AdResponseBox::getIdForResponseNum(uint32 num) const {
 	assert(num < _responses.size());
-	return _responses[num]->_iD;
+	return _responses[num]->getID();
 }
 
 bool AdResponseBox::handleResponseNum(uint32 num) {
@@ -656,18 +656,18 @@ bool AdResponseBox::handleResponseNum(uint32 num) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdResponseBox::handleResponse(AdResponse *response) {
-	setLastResponseText(response->_text, response->_textOrig);
+bool AdResponseBox::handleResponse(const AdResponse *response) {
+	setLastResponseText(response->getText(), response->getTextOrig());
 
 	AdGame *adGame = (AdGame *)_gameRef;
 
 	switch (response->_responseType) {
 	case RESPONSE_ONCE:
-		adGame->addBranchResponse(response->_iD);
+		adGame->addBranchResponse(response->getID());
 		break;
 
 	case RESPONSE_ONCE_GAME:
-		adGame->addGameResponse(response->_iD);
+		adGame->addGameResponse(response->getID());
 		break;
 	default:
 		debugC(kWintermuteDebugGeneral, "AdResponseBox::HandleResponse - Unhandled enum");
