@@ -40,6 +40,7 @@ class BaseFileManager;
 class BaseRegistry;
 class BaseGame;
 class BaseSoundMgr;
+class BaseRenderer;
 class SystemClassRegistry;
 class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 	void init(Common::Language lang);
@@ -62,6 +63,7 @@ public:
 	BaseGame *getGameRef() { return _gameRef; }
 	BaseFileManager *getFileManager() { return _fileManager; }
 	BaseSoundMgr *getSoundMgr();
+	BaseRenderer *getRenderer();
 	static void LOG(bool res, const char *fmt, ...);
 	const char *getGameId() { return _gameId.c_str(); }
 };

@@ -26,9 +26,10 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_viewport.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 
 namespace Wintermute {
@@ -68,8 +69,8 @@ bool BaseViewport::setRect(int left, int top, int right, int bottom, bool noChec
 	if (!noCheck) {
 		left = MAX(left, 0);
 		top = MAX(top, 0);
-		right = MIN(right, _gameRef->_renderer->getWidth());
-		bottom = MIN(bottom, _gameRef->_renderer->getHeight());
+		right = MIN(right, BaseEngine::instance().getRenderer()->getWidth());
+		bottom = MIN(bottom, BaseEngine::instance().getRenderer()->getHeight());
 	}
 
 	BasePlatform::setRect(&_rect, left, top, right, bottom);

@@ -31,6 +31,8 @@
 
 
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 class BaseObject;
