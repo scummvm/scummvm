@@ -82,7 +82,7 @@ void condIsSet(AgiGame *state, uint8 *p) {
 }
 
 void condIsSetV(AgiGame *state, uint8 *p) {
-	state->testResult = testIsSet(getvar(p[1]));
+	state->testResult = testIsSet(getvar(p[0]));
 }
 
 void condIsSetV1(AgiGame *state, uint8 *p) {
