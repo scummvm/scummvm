@@ -60,6 +60,12 @@ void EventDispatcher::dispatch() {
 			}
 		}
 	}
+
+	List<Event> delayedEvents = _mapper->getDelayedEvents();
+	for (List<Event>::iterator k = delayedEvents.begin(); k != delayedEvents.end(); ++k) {
+		const Event delayedEvent = *k;
+		dispatchEvent(delayedEvent);
+	}
 }
 
 void EventDispatcher::registerMapper(EventMapper *mapper) {

@@ -32,6 +32,7 @@
 #include "common/keyboard.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "video/smk_decoder.h"
 
@@ -92,7 +93,7 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 }
 
 void Scene::playMovie(const char *filename) {
-	Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder(_vm->_mixer);
+	Video::SmackerDecoder *smkDecoder = new Video::SmackerDecoder();
 
 	if (!smkDecoder->loadFile(filename))
 		return;
@@ -101,14 +102,16 @@ void Scene::playMovie(const char *filename) {
 	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
 	bool skipVideo = false;
 
+	smkDecoder->start();
+
 	while (!_vm->shouldQuit() && !smkDecoder->endOfVideo() && !skipVideo) {
 		if (smkDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
 			if (frame) {
-				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+				_vm->_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 
 				if (smkDecoder->hasDirtyPalette())
-					smkDecoder->setSystemPalette();
+					_vm->_system->getPaletteManager()->setPalette(smkDecoder->getPalette(), 0, 256);
 
 				_vm->_system->updateScreen();
 			}

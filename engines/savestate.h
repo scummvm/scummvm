@@ -40,6 +40,8 @@ struct Surface;
  *
  * Further possibilites are a thumbnail, play time, creation date,
  * creation time, delete protected, write protection.
+ *
+ * Saves are writable and deletable by default.
  */
 class SaveStateDescriptor {
 public:

@@ -186,7 +186,7 @@ void EoBCoreEngine::timerProcessFlyingObjects(int timerNum) {
 		if (!fo->enable)
 			continue;
 
-		bool endFlight = fo->distance ? false : true;
+		bool endFlight = fo->distance == 0;
 
 		uint8 pos = dirPosIndex[(fo->direction << 2) + (fo->curPos & 3)];
 		uint16 bl = fo->curBlock;

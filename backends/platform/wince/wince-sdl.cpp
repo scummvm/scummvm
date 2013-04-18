@@ -622,6 +622,7 @@ void OSystem_WINCE3::getTimeAndDate(TimeDate &t) const {
 	t.tm_hour   = systime.wHour;
 	t.tm_min    = systime.wMinute;
 	t.tm_sec    = systime.wSecond;
+	t.tm_wday   = systime.wDayOfWeek;
 }
 
 Common::String OSystem_WINCE3::getSystemLanguage() const {

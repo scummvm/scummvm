@@ -213,7 +213,7 @@ private:
  */
 class SJISFont : public Font {
 public:
-	SJISFont(Screen *s, Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool outlineSize);
+	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool outlineSize);
 	~SJISFont() { unload(); }
 
 	bool usesOverlay() const { return true; }
@@ -233,7 +233,6 @@ private:
 	const uint8 _invisColor;
 	const bool _is16Color;
 
-	const Screen *_screen;
 	int _sjisWidth, _asciiWidth;
 	int _fontHeight;
 };

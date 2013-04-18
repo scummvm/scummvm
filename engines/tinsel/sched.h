@@ -24,104 +24,15 @@
 #ifndef TINSEL_SCHED_H     // prevent multiple includes
 #define TINSEL_SCHED_H
 
+#include "common/coroutines.h"
 #include "tinsel/dw.h"	// new data types
-#include "tinsel/coroutine.h"
 #include "tinsel/events.h"
+#include "tinsel/pcode.h"
 #include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
-// the size of process specific info
-#define	PARAM_SIZE	32
-
-// the maximum number of processes
-#define	NUM_PROCESS	(TinselV2 ? 70 : 64)
-#define MAX_PROCESSES 70
-
-typedef void (*CORO_ADDR)(CoroContext &, const void *);
-
-/** process structure */
-struct PROCESS {
-	PROCESS *pNext;	///< pointer to next process in active or free list
-	PROCESS *pPrevious;	///< pointer to previous process in active or free list
-
-	CoroContext state;		///< the state of the coroutine
-	CORO_ADDR  coroAddr;	///< the entry point of the coroutine
-
-	int sleepTime;		///< number of scheduler cycles to sleep
-	int pid;		///< process ID
-	char param[PARAM_SIZE];	///< process specific info
-};
-typedef PROCESS *PPROCESS;
-
 struct INT_CONTEXT;
-
-/**
- * Create and manage "processes" (really coroutines).
- */
-class Scheduler {
-public:
-	/** Pointer to a function of the form "void function(PPROCESS)" */
-	typedef void (*VFPTRPP)(PROCESS *);
-
-private:
-
-	/** list of all processes */
-	PROCESS *processList;
-
-	/** active process list - also saves scheduler state */
-	PROCESS *active;
-
-	/** pointer to free process list */
-	PROCESS *pFreeProcesses;
-
-	/** the currently active process */
-	PROCESS *pCurrent;
-
-#ifdef DEBUG
-	// diagnostic process counters
-	int numProcs;
-	int maxProcs;
-
-	void CheckStack();
-#endif
-
-	/**
-	 * Called from killProcess() to enable other resources
-	 * a process may be allocated to be released.
-	 */
-	VFPTRPP pRCfunction;
-
-
-public:
-
-	Scheduler();
-	~Scheduler();
-
-	void reset();
-
-	#ifdef	DEBUG
-	void printStats();
-	#endif
-
-	void schedule();
-	void rescheduleAll();
-	void reschedule(PPROCESS pReSchedProc = NULL);
-	void giveWay(PPROCESS pReSchedProc = NULL);
-
-	PROCESS *createProcess(int pid, CORO_ADDR coroAddr, const void *pParam, int sizeParam);
-	void killProcess(PROCESS *pKillProc);
-
-	PROCESS *getCurrentProcess();
-	int getCurrentPID() const;
-	int killMatchingProcess(int pidKill, int pidMask = -1);
-
-
-	void setResourceCallback(VFPTRPP pFunc);
-
-};
-
-extern Scheduler *g_scheduler;	// FIXME: Temporary global var, to be used until everything has been OOifyied
 
 //----------------- FUNCTION PROTOTYPES --------------------
 

@@ -182,7 +182,7 @@ int main(void) {
 #endif
 
 /* unit/speed tests */
-#if defined (PSP_ENABLE_UNIT_TESTS) || defined (PSP_ENABLE_SPEED_TESTS)
+#if defined(PSP_ENABLE_UNIT_TESTS) || defined(PSP_ENABLE_SPEED_TESTS)
 	PSP_INFO_PRINT("running tests\n");
 	psp_tests();
 	sceKernelSleepThread();	// that's it. That's all we're doing

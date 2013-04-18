@@ -43,10 +43,6 @@ namespace Graphics {
 
 namespace {
 
-inline int ftFloor26_6(FT_Pos x) {
-	return x / 64;
-}
-
 inline int ftCeil26_6(FT_Pos x) {
 	return (x + 63) / 64;
 }
@@ -69,6 +65,10 @@ private:
 	FT_Library _library;
 	bool _initialized;
 };
+
+void shutdownTTF() {
+	TTFLibrary::destroy();
+}
 
 #define g_ttf ::Graphics::TTFLibrary::instance()
 
@@ -101,7 +101,7 @@ public:
 	TTFFont();
 	virtual ~TTFFont();
 
-	bool load(Common::SeekableReadStream &stream, int size, bool monochrome, const uint32 *mapping);
+	bool load(Common::SeekableReadStream &stream, int size, uint dpi, bool monochrome, const uint32 *mapping);
 
 	virtual int getFontHeight() const;
 
@@ -157,7 +157,7 @@ TTFFont::~TTFFont() {
 	}
 }
 
-bool TTFFont::load(Common::SeekableReadStream &stream, int size, bool monochrome, const uint32 *mapping) {
+bool TTFFont::load(Common::SeekableReadStream &stream, int size, uint dpi, bool monochrome, const uint32 *mapping) {
 	if (!g_ttf.isInitialized())
 		return false;
 
@@ -195,7 +195,7 @@ bool TTFFont::load(Common::SeekableReadStream &stream, int size, bool monochrome
 	// Check whether we have kerning support
 	_hasKerning = (FT_HAS_KERNING(_face) != 0);
 
-	if (FT_Set_Char_Size(_face, 0, size * 64, 0, 0)) {
+	if (FT_Set_Char_Size(_face, 0, size * 64, dpi, dpi)) {
 		delete[] _ttfFile;
 		_ttfFile = 0;
 
@@ -338,7 +338,7 @@ void TTFFont::drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const
 		return;
 
 	if (y < 0) {
-		srcPos += y * glyph.image.pitch;
+		srcPos -= y * glyph.image.pitch;
 		h += y;
 		y = 0;
 	}
@@ -395,11 +395,11 @@ bool TTFFont::cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr) {
 
 	FT_Glyph_Metrics &metrics = _face->glyph->metrics;
 
-	glyph.xOffset = ftFloor26_6(metrics.horiBearingX);
+	glyph.xOffset = _face->glyph->bitmap_left;
 	int xMax = glyph.xOffset + ftCeil26_6(metrics.width);
-	glyph.yOffset = _ascent - ftFloor26_6(metrics.horiBearingY);
+	glyph.yOffset = _ascent - _face->glyph->bitmap_top;
 
-	glyph.advance = ftCeil26_6(metrics.horiAdvance);
+	glyph.advance = ftCeil26_6(_face->glyph->advance.x);
 
 	// In case we got a negative xMin we adjust that, this might make some
 	// characters make a bit odd, but it's the only way we can assure no
@@ -462,10 +462,10 @@ bool TTFFont::cacheGlyph(Glyph &glyph, FT_UInt &slot, uint chr) {
 	return true;
 }
 
-Font *loadTTFFont(Common::SeekableReadStream &stream, int size, bool monochrome, const uint32 *mapping) {
+Font *loadTTFFont(Common::SeekableReadStream &stream, int size, uint dpi, bool monochrome, const uint32 *mapping) {
 	TTFFont *font = new TTFFont();
 
-	if (!font->load(stream, size, monochrome, mapping)) {
+	if (!font->load(stream, size, dpi, monochrome, mapping)) {
 		delete font;
 		return 0;
 	}

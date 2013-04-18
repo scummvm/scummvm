@@ -29,54 +29,54 @@
 #include "gob/dataio.h"
 #include "gob/surface.h"
 #include "gob/video.h"
-#include "gob/rxyfile.h"
+#include "gob/cmpfile.h"
 #include "gob/decfile.h"
 
 namespace Gob {
 
-DECFile::Layer::Layer() : surface(0), coordinates(0) {
-}
-
-DECFile::Layer::~Layer() {
-	delete coordinates;
-	delete surface;
-}
-
-
 DECFile::DECFile(GobEngine *vm, const Common::String &fileName,
                  uint16 width, uint16 height, uint8 bpp) : _vm(vm),
-	_width(width), _height(height), _bpp(bpp), _hasPadding(false) {
+	_width(width), _height(height), _bpp(bpp), _hasPadding(false), _backdrop(0) {
 
-	_backdrop = new Surface(_width, _height, _bpp);
+	bool bigEndian = false;
+	Common::String endianFileName = fileName;
 
-	Common::SeekableReadStream *dec = _vm->_dataIO->getFile(fileName);
-	if (dec) {
-		Common::SeekableSubReadStreamEndian sub(dec, 0, dec->size(), false, DisposeAfterUse::YES);
+	if ((_vm->getEndiannessMethod() == kEndiannessMethodAltFile) &&
+	    !_vm->_dataIO->hasFile(fileName)) {
+		// If the game has alternate big-endian files, look if one exist
 
-		load(sub, fileName);
-		return;
-	}
+		Common::String alternateFileName = fileName;
+		alternateFileName.setChar('_', 0);
 
-	// File doesn't exist, try to open the big-endian'd alternate file
-	Common::String alternateFileName = fileName;
-	alternateFileName.setChar('_', 0);
+		if (_vm->_dataIO->hasFile(alternateFileName)) {
+			bigEndian      = true;
+			endianFileName = alternateFileName;
+		}
+	} else if ((_vm->getEndiannessMethod() == kEndiannessMethodBE) ||
+	           ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) &&
+	            (_vm->getEndianness() == kEndiannessBE)))
+		// Game always little endian or it follows the system and it is big endian
+		bigEndian = true;
 
-	dec = _vm->_dataIO->getFile(alternateFileName);
-	if (dec) {
-		Common::SeekableSubReadStreamEndian sub(dec, 0, dec->size(), true, DisposeAfterUse::YES);
+	Common::SeekableReadStream *ani = _vm->_dataIO->getFile(endianFileName);
+	if (ani) {
+		Common::SeekableSubReadStreamEndian sub(ani, 0, ani->size(), bigEndian, DisposeAfterUse::YES);
 
 		// The big endian version pads a few fields to even size
-		_hasPadding = true;
+		_hasPadding = bigEndian;
 
 		load(sub, fileName);
 		return;
 	}
 
-	warning("DECFile::DECFile(): No such file \"%s\"", fileName.c_str());
+	warning("DECFile::DECFile(): No such file \"%s\" (\"%s\")", endianFileName.c_str(), fileName.c_str());
 }
 
 DECFile::~DECFile() {
 	delete _backdrop;
+
+	for (LayerArray::iterator l = _layers.begin(); l != _layers.end(); ++l)
+		delete *l;
 }
 
 void DECFile::load(Common::SeekableSubReadStreamEndian &dec, const Common::String &fileName) {
@@ -102,9 +102,9 @@ void DECFile::load(Common::SeekableSubReadStreamEndian &dec, const Common::Strin
 	}
 
 	// Load the layers
-	_layers.resize(MAX(0, layerCount - 1));
-	for (LayerArray::iterator l = _layers.begin(); l != _layers.end(); ++l)
-		loadLayer(*l, dec);
+	_layers.reserve(MAX(0, layerCount - 1));
+	for (int i = 0; i < layerCount - 1; i++)
+		_layers.push_back(loadLayer(dec));
 
 	// Load the backdrop parts
 	if (backdropCount > 0)
@@ -113,43 +113,19 @@ void DECFile::load(Common::SeekableSubReadStreamEndian &dec, const Common::Strin
 
 void DECFile::loadBackdrop(Common::SeekableSubReadStreamEndian &dec) {
 	// Interestingly, DEC files reference "FOO.LBM" instead of "FOO.CMP"
-	Common::String file = Util::setExtension(Util::readString(dec, 13), ".CMP");
+	Common::String file = Util::setExtension(Util::readString(dec, 13), "");
 	if (_hasPadding)
 		dec.skip(1);
 
-	if (file.empty() || !_vm->_dataIO->hasFile(file))
-		return;
-
-	_vm->_video->drawPackedSprite(file.c_str(), *_backdrop);
+	_backdrop = new CMPFile(_vm, file, _width, _height, _bpp);
 }
 
-void DECFile::loadLayer(Layer &layer, Common::SeekableSubReadStreamEndian &dec) {
-	Common::String file = Util::readString(dec, 13);
+CMPFile *DECFile::loadLayer(Common::SeekableSubReadStreamEndian &dec) {
+	Common::String file = Util::setExtension(Util::readString(dec, 13), "");
 	if (_hasPadding)
 		dec.skip(1);
 
-	if (file.empty())
-		return;
-
-	Common::String fileRXY = Util::setExtension(file, ".RXY");
-	Common::String fileCMP = Util::setExtension(file, ".CMP");
-	if (!_vm->_dataIO->hasFile(fileRXY) || !_vm->_dataIO->hasFile(fileCMP))
-		return;
-
-	loadLayer(layer, fileRXY, fileCMP);
-}
-
-void DECFile::loadLayer(Layer &layer, const Common::String &fileRXY,
-                                      const Common::String &fileCMP) {
-
-	Common::SeekableReadStream *dataRXY = _vm->_dataIO->getFile(fileRXY);
-	if (!dataRXY)
-		return;
-
-	layer.coordinates = new RXYFile(*dataRXY);
-	layer.surface     = new Surface(_width, layer.coordinates->getHeight(), _bpp);
-
-	_vm->_video->drawPackedSprite(fileCMP.c_str(), *layer.surface);
+	return new CMPFile(_vm, file, _width, _height, _bpp);
 }
 
 void DECFile::loadParts(Common::SeekableSubReadStreamEndian &dec) {
@@ -188,7 +164,10 @@ void DECFile::draw(Surface &dest) const {
 }
 
 void DECFile::drawBackdrop(Surface &dest) const {
-	dest.blit(*_backdrop);
+	if (!_backdrop)
+		return;
+
+	_backdrop->draw(dest, 0, 0, 0);
 }
 
 void DECFile::drawLayer(Surface &dest, uint16 layer, uint16 part,
@@ -197,18 +176,7 @@ void DECFile::drawLayer(Surface &dest, uint16 layer, uint16 part,
 	if (layer >= _layers.size())
 		return;
 
-	const Layer &l = _layers[layer];
-	if (!l.surface || !l.coordinates)
-		return;
-
-	if (part >= l.coordinates->size())
-		return;
-
-	const RXYFile::Coordinates &c = (*l.coordinates)[part];
-	if (c.left == 0xFFFF)
-		return;
-
-	dest.blit(*l.surface, c.left, c.top, c.right, c.bottom, x, y, transp);
+	_layers[layer]->draw(dest, part, x, y, transp);
 }
 
 } // End of namespace Gob

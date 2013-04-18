@@ -130,7 +130,18 @@ $(PATH_STAGE_PREFIX).%/res/drawable/scummvm.png: $(PATH_RESOURCES)/drawable/scum
 $(FILE_RESOURCES_MAIN): $(FILE_MANIFEST) $(RESOURCES) $(ANDROID_JAR8) $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA)
 	$(INSTALL) -d $(PATH_BUILD_ASSETS)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) $(PATH_BUILD_ASSETS)/
-	$(AAPT) package -f -M $< -S $(PATH_RESOURCES) -A $(PATH_BUILD_ASSETS) -I $(ANDROID_JAR8) -F $@
+	work_dir=`pwd`; \
+	for i in $(PATH_BUILD_ASSETS)/*.zip; do \
+		echo "recompress $$i"; \
+		cd $$work_dir; \
+		$(RM) -rf $(PATH_BUILD_ASSETS)/tmp; \
+		$(MKDIR) $(PATH_BUILD_ASSETS)/tmp; \
+		unzip -q $$i -d $(PATH_BUILD_ASSETS)/tmp; \
+		cd $(PATH_BUILD_ASSETS)/tmp; \
+		zip -r ../`basename $$i` *; \
+	done
+	@$(RM) -rf $(PATH_BUILD_ASSETS)/tmp
+	$(AAPT) package -f -0 zip -M $< -S $(PATH_RESOURCES) -A $(PATH_BUILD_ASSETS) -I $(ANDROID_JAR8) -F $@
 
 $(PATH_BUILD)/%/$(FILE_RESOURCES): $(PATH_BUILD)/%/AndroidManifest.xml $(PATH_STAGE_PREFIX).%/res/values/strings.xml $(PATH_STAGE_PREFIX).%/res/drawable/scummvm.png plugins/lib%.so $(ANDROID_JAR8)
 	$(AAPT) package -f -M $< -S $(PATH_STAGE_PREFIX).$*/res -I $(ANDROID_JAR8) -F $@

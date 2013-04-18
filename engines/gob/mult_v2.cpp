@@ -1082,7 +1082,7 @@ void Mult_v2::animate() {
 			continue;
 
 		for (int j = 0; j < numAnims; j++) {
-			Mult_Object &animObj2 = *_renderObjs[i];
+			Mult_Object &animObj2 = *_renderObjs[j];
 			Mult_AnimData &animData2 = *(animObj2.pAnimData);
 
 			if (i == j)

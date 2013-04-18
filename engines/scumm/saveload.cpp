@@ -1298,7 +1298,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		s->saveLoadArrayOf(_16BitPalette, 512, sizeof(_16BitPalette[0]), sleUint16);
 	}
 
-	
+
 	// FM-Towns specific (extra palette data, color cycle data, etc.)
 	// In earlier save game versions (below 87) the FM-Towns specific data would get saved (and loaded) even in non FM-Towns games.
 	// This would cause an unnecessary save file incompatibility between DS (which uses the DISABLE_TOWNS_DUAL_LAYER_MODE setting)

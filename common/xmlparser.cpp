@@ -20,15 +20,11 @@
  *
  */
 
-// FIXME: Avoid using fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
-#define FORBIDDEN_SYMBOL_EXCEPTION_stderr
-
-
 #include "common/xmlparser.h"
 #include "common/archive.h"
 #include "common/fs.h"
 #include "common/memstream.h"
+#include "common/system.h"
 
 namespace Common {
 
@@ -123,17 +119,19 @@ bool XMLParser::parserError(const String &errStr) {
 			keyClosing = currentPosition;
 	}
 
-	fprintf(stderr, "\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
+	Common::String errorMessage = Common::String::format("\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
 
 	currentPosition = (keyClosing - keyOpening);
 	_stream->seek(keyOpening, SEEK_SET);
 
 	while (currentPosition--)
-		fprintf(stderr, "%c", _stream->readByte());
+		errorMessage += (char)_stream->readByte();
 
-	fprintf(stderr, "\n\nParser error: ");
-	fprintf(stderr, "%s", errStr.c_str());
-	fprintf(stderr, "\n\n");
+	errorMessage += "\n\nParser error: ";
+	errorMessage += errStr;
+	errorMessage += "\n\n";
+
+	g_system->logMessage(LogMessageType::kError, errorMessage.c_str());
 
 	return false;
 }

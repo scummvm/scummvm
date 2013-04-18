@@ -173,7 +173,7 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOASPECT)
 	},
-	
+
 	// The Last Express (Russian)
 	//   expressw.exe 1999-04-05 15:33:56
 	//   express.exe  ???
@@ -211,6 +211,7 @@ public:
 		return "LastExpress Engine (C) 1997 Smoking Car Productions";
 	}
 
+protected:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
 };
 

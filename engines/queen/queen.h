@@ -112,6 +112,8 @@ public:
 	void update(bool checkPlayerInput = false);
 
 	bool canLoadOrSave() const;
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
 	Common::Error saveGameState(int slot, const Common::String &desc);
 	Common::Error loadGameState(int slot);
 	void makeGameStateName(int slot, char *buf) const;

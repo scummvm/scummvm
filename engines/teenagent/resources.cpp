@@ -22,6 +22,7 @@
 #include "teenagent/resources.h"
 #include "teenagent/teenagent.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "common/zlib.h"
 
 namespace TeenAgent {
@@ -64,28 +65,47 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File *dat_file = new Common::File();
 	if (!dat_file->open("teenagent.dat")) {
 		delete dat_file;
-		Common::String errorMessage = "You're missing the 'teenagent.dat' file. Get it from the ScummVM website";
-		GUIErrorMessage(errorMessage);
+		Common::String errorMessage = _("You're missing the 'teenagent.dat' file. Get it from the ScummVM website");
 		warning("%s", errorMessage.c_str());
+		GUIErrorMessage(errorMessage);
 		return false;
 	}
+
+	// teenagent.dat used to be compressed with zlib compression. The usage of
+	// zlib here is no longer needed, and it's maintained only for backwards
+	// compatibility.
 	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(dat_file);
+
+#if !defined(USE_ZLIB)
+	uint16 header = dat->readUint16BE();
+	bool isCompressed = (header == 0x1F8B ||
+				     ((header & 0x0F00) == 0x0800 &&
+				      header % 31 == 0));
+	dat->seek(-2, SEEK_CUR);
+
+	if (isCompressed) {
+		// teenagent.dat is compressed, but zlib hasn't been compiled in
+		delete dat;
+		Common::String errorMessage = _("The teenagent.dat file is compressed and zlib hasn't been included in this executable. Please decompress it");
+		warning("%s", errorMessage.c_str());
+		GUIErrorMessage(errorMessage);
+		return false;
+	}
+#endif
+
 	cseg.read(dat, 0xb3b0);
 	dseg.read(dat, 0xe790);
 	eseg.read(dat, 0x8be2);
-
 	delete dat;
 
-	{
-		FilePack varia;
-		varia.open("varia.res");
-		font7.load(varia, 7);
-		font7.width_pack = 1;
-		font7.height = 11;
-		font8.load(varia, 8);
-		font8.height = 31;
-		varia.close();
-	}
+	FilePack varia;
+	varia.open("varia.res");
+	font7.load(varia, 7);
+	font7.width_pack = 1;
+	font7.height = 11;
+	font8.load(varia, 8);
+	font8.height = 31;
+	varia.close();
 
 	off.open("off.res");
 	on.open("on.res");

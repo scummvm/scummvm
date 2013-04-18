@@ -34,17 +34,10 @@ public:
 	GPHEventSource();
 
 protected:
-	bool _stickBtn[32];
-
 	/**
 	 * Button state for L button modifier
 	 */
 	bool _buttonStateL;
-
-	/**
-	 * Handles the stick movement
-	 */
-	void moveStick();
 
 	bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);

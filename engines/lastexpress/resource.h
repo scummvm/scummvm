@@ -42,7 +42,7 @@ public:
 	// Loading
 	bool loadArchive(ArchiveIndex type);
 	static bool isArchivePresent(ArchiveIndex type);
-	Common::SeekableReadStream *getFileStream(const Common::String &name);
+	Common::SeekableReadStream *getFileStream(const Common::String &name) const;
 
 	// Archive functions
 	bool hasFile(const Common::String &name) const;

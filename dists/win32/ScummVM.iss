@@ -45,6 +45,7 @@ Name: {group}\ScummVM; Filename: {app}\scummvm.exe; WorkingDir: {app}; Comment: 
 Name: {group}\ScummVM (noconsole); Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: scummvm; Flags: createonlyiffileexists; IconIndex: 0
 Name: {group}\Authors; Filename: {app}\AUTHORS.txt; WorkingDir: {app}; Comment: AUTHORS; Flags: createonlyiffileexists
 Name: {group}\Copying; Filename: {app}\COPYING.txt; WorkingDir: {app}; Comment: COPYING; Flags: createonlyiffileexists
+Name: {group}\Copying.BSD; Filename: {app}\COPYING.BSD.txt; WorkingDir: {app}; Comment: COPYING.BSD; Flags: createonlyiffileexists
 Name: {group}\Copying.FREEFONT; Filename: {app}\COPYING.FREEFONT.txt; WorkingDir: {app}; Comment: COPYING.FREEFONT; Flags: createonlyiffileexists
 Name: {group}\Copying.LGPL; Filename: {app}\COPYING.LGPL.txt; WorkingDir: {app}; Comment: COPYING.LGPL; Flags: createonlyiffileexists
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
@@ -84,6 +85,7 @@ Name: "{userappdata}\ScummVM\Saved Games"; MinVersion: 0, 1
 [Files]
 Source: AUTHORS.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.txt; DestDir: {app}; Flags: ignoreversion
+Source: COPYING.BSD.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.FREEFONT.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYING.LGPL.txt; DestDir: {app}; Flags: ignoreversion
 Source: COPYRIGHT.txt; DestDir: {app}; Flags: ignoreversion
@@ -106,18 +108,6 @@ Source: doc/se/LasMig.txt; DestDir: {app}; Flags: ignoreversion isreadme; Langua
 Source: README-SDL.txt; DestDir: {app}; Flags: ignoreversion
 Source: scummvm.exe; DestDir: {app}; Flags: ignoreversion
 Source: SDL.dll; DestDir: {app}
-Source: scummclassic.zip; DestDir: {app}; Flags: ignoreversion
-Source: scummmodern.zip; DestDir: {app}; Flags: ignoreversion
-Source: drascula.dat; DestDir: {app}; Flags: ignoreversion
-Source: hugo.dat; DestDir: {app}; Flags: ignoreversion
-Source: kyra.dat; DestDir: {app}; Flags: ignoreversion
-Source: lure.dat; DestDir: {app}; Flags: ignoreversion
-Source: pred.dic; DestDir: {app}; Flags: ignoreversion
-Source: queen.tbl; DestDir: {app}; Flags: ignoreversion
-Source: sky.cpt; DestDir: {app}; Flags: ignoreversion
-Source: teenagent.dat; DestDir: {app}; Flags: ignoreversion
-Source: toon.dat; DestDir: {app}; Flags: ignoreversion
-Source: translations.dat; DestDir: {app}; Flags: ignoreversion
 ;Mirgration script for saved games in Windows NT4 onwards
 Source: migration.bat; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
 Source: migration.txt; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1

@@ -88,13 +88,13 @@ static uint16 mapNewStackIDToOld(uint16 newID) {
 	return 0;
 }
 
-bool RivenSaveLoad::loadGame(Common::String filename) {
+Common::Error RivenSaveLoad::loadGame(Common::String filename) {
 	if (_vm->getFeatures() & GF_DEMO) // Don't load games in the demo
-		return false;
+		return Common::kNoError;
 
 	Common::InSaveFile *loadFile =  _saveFileMan->openForLoading(filename);
 	if (!loadFile)
-		return false;
+		return Common::kReadingFailed;
 
 	debug(0, "Loading game from \'%s\'", filename.c_str());
 
@@ -103,7 +103,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	if (!mhk->openStream(loadFile)) {
 		warning("Save file is not a Mohawk archive");
 		delete mhk;
-		return false;
+		return Common::Error(Common::kUnknownError, "Invalid save file");
 	}
 
 	// First, let's make sure we're using a saved game file from this version of Riven by checking the VERS resource
@@ -114,7 +114,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 		|| (saveGameVersion == kDVDSaveGameVersion && !(_vm->getFeatures() & GF_DVD))) {
 		warning("Incompatible saved game versions. No support for this yet");
 		delete mhk;
-		return false;
+		return Common::Error(Common::kUnknownError, "Incompatible save version");
 	}
 
 	// Now, we'll read in the variable values.
@@ -206,7 +206,7 @@ bool RivenSaveLoad::loadGame(Common::String filename) {
 	delete zips;
 	delete mhk;
 
-	return true;
+	return Common::kNoError;
 }
 
 Common::MemoryWriteStreamDynamic *RivenSaveLoad::genVERSSection() {
@@ -273,7 +273,7 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genZIPSSection() {
 	return stream;
 }
 
-bool RivenSaveLoad::saveGame(Common::String filename) {
+Common::Error RivenSaveLoad::saveGame(Common::String filename) {
 	// NOTE: This code is designed to only output a Mohawk archive
 	// for a Riven saved game. It's hardcoded to do this because
 	// (as of right now) this is the only place in the engine
@@ -295,7 +295,7 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 
 	Common::OutSaveFile *saveFile = _saveFileMan->openForSaving(filename);
 	if (!saveFile)
-		return false;
+		return Common::kWritingFailed;
 
 	debug (0, "Saving game to \'%s\'", filename.c_str());
 
@@ -418,7 +418,7 @@ bool RivenSaveLoad::saveGame(Common::String filename) {
 	delete varsSection;
 	delete zipsSection;
 
-	return true;
+	return Common::kNoError;
 }
 
 void RivenSaveLoad::deleteSave(Common::String saveName) {

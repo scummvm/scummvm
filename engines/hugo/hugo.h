@@ -80,18 +80,18 @@ static const int kMaxPath = 256;                    // Max length of a full path
 static const int kHeroMaxWidth = 24;                // Maximum width of hero
 static const int kHeroMinWidth = 16;                // Minimum width of hero
 
-typedef char command_t[kMaxLineSize + 8];           // Command line (+spare for prompt,cursor)
+typedef char Command[kMaxLineSize + 8];             // Command line (+spare for prompt,cursor)
 
-struct config_t {                                   // User's config (saved)
-	bool musicFl;                                   // State of Music button/menu item
-	bool soundFl;                                   // State of Sound button/menu item
-	bool turboFl;                                   // State of Turbo button/menu item
-	bool playlist[kMaxTunes];                       // Tune playlist
+struct Config {                                     // User's config (saved)
+	bool _musicFl;                                    // State of Music button/menu item
+	bool _soundFl;                                    // State of Sound button/menu item
+	bool _turboFl;                                    // State of Turbo button/menu item
+	bool _playlist[kMaxTunes];                        // Tune playlist
 };
 
-typedef byte icondib_t[kXPix * kInvDy];             // Icon bar dib
-typedef byte viewdib_t[(long)kXPix * kYPix];        // Viewport dib
-typedef byte overlay_t[kOvlSize];                   // Overlay file
+typedef byte Icondib[kXPix * kInvDy];               // Icon bar dib
+typedef byte Viewdib[(long)kXPix * kYPix];          // Viewport dib
+typedef byte Overlay[kOvlSize];                     // Overlay file
 
 enum GameType {
 	kGameTypeNone  = 0,
@@ -131,12 +131,12 @@ enum HugoRegistered {
 /**
  * Inventory icon bar states
  */
-enum istate_t {kInventoryOff, kInventoryUp, kInventoryDown, kInventoryActive};
+enum Istate {kInventoryOff, kInventoryUp, kInventoryDown, kInventoryActive};
 
 /**
  * Game view state machine
  */
-enum vstate_t {kViewIdle, kViewIntroInit, kViewIntro, kViewPlay, kViewInvent, kViewExit};
+enum Vstate {kViewIdle, kViewIntroInit, kViewIntro, kViewPlay, kViewInvent, kViewExit};
 
 /**
  * Enumerate whether object is foreground, background or 'floating'
@@ -152,12 +152,12 @@ enum {kPriorityForeground, kPriorityBackground, kPriorityFloating, kPriorityOver
 /**
  * Display list functions
  */
-enum dupdate_t {kDisplayInit, kDisplayAdd, kDisplayDisplay, kDisplayRestore};
+enum Dupdate {kDisplayInit, kDisplayAdd, kDisplayDisplay, kDisplayRestore};
 
 /**
  * Priority for sound effect
  */
-enum priority_t {kSoundPriorityLow, kSoundPriorityMedium, kSoundPriorityHigh};
+enum Priority {kSoundPriorityLow, kSoundPriorityMedium, kSoundPriorityHigh};
 
 enum HugoGameFeatures {
 	GF_PACKED = (1 << 0) // Database
@@ -170,47 +170,31 @@ enum seqTextEngine {
 
 struct HugoGameDescription;
 
-struct status_t {                                   // Game status (not saved)
-	bool     storyModeFl;                           // Game is telling story - no commands
-	bool     gameOverFl;                            // Game is over - hero knobbled
-	bool     lookFl;                                // Toolbar "look" button pressed
-	bool     recallFl;                              // Toolbar "recall" button pressed
-	bool     newScreenFl;                           // New screen just loaded in dib_a
-	bool     godModeFl;                             // Allow DEBUG features in live version
-	bool     showBoundariesFl;                      // Flag used to show and hide boundaries,
+struct Status {                                     // Game status (not saved)
+	bool     _storyModeFl;                          // Game is telling story - no commands
+	bool     _gameOverFl;                           // Game is over - hero knobbled
+	bool     _lookFl;                               // Toolbar "look" button pressed
+	bool     _recallFl;                             // Toolbar "recall" button pressed
+	bool     _newScreenFl;                          // New screen just loaded in dib_a
+	bool     _godModeFl;                            // Allow DEBUG features in live version
+	bool     _showBoundariesFl;                     // Flag used to show and hide boundaries,
 	                                                // used by the console
-	bool     doQuitFl;
-	bool     skipIntroFl;
-	bool     helpFl;
-	uint32   tick;                                  // Current time in ticks
-	vstate_t viewState;                             // View state machine
-	int16    song;                                  // Current song
-
-// Strangerke - Suppress as related to playback
-//	bool     playbackFl;                            // Game is in playback mode
-//	bool     recordFl;                              // Game is in record mode
-// Strangerke - Not used ?
-//	bool     helpFl;                                // Calling WinHelp (don't disable music)
-//	bool     mmtimeFl;                              // Multimedia timer supported
-//	bool     demoFl;                                // Game is in demo mode
-//	bool     textBoxFl;                             // Game is (halted) in text box
-//	int16    screenWidth;                           // Desktop screen width
-//	int16    saveSlot;                              // Current slot to save/restore game
-//	int16    cx, cy;                                // Cursor position (dib coords)
-//	uint32   saveTick;                              // Time of last save in ticks
-//
-//	typedef char fpath_t[kMaxPath];                 // File path
-//	fpath_t  path;                                  // Alternate path for saved files
+	bool     _doQuitFl;
+	bool     _skipIntroFl;
+	bool     _helpFl;
+	uint32   _tick;                                 // Current time in ticks
+	Vstate   _viewState;                            // View state machine
+	int16    _song;                                 // Current song
 };
 
 /**
  * Structure to define an EXIT or other collision-activated hotspot
  */
-struct hotspot_t {
-	int        screenIndex;                         // Screen in which hotspot appears
-	int        x1, y1, x2, y2;                      // Bounding box of hotspot
-	uint16     actIndex;                            // Actions to carry out if a 'hit'
-	int16      viewx, viewy, direction;             // Used in auto-route mode
+struct Hotspot {
+	int        _screenIndex;                        // Screen in which hotspot appears
+	int        _x1, _y1, _x2, _y2;                  // Bounding box of hotspot
+	uint16     _actIndex;                           // Actions to carry out if a 'hit'
+	int16      _viewx, _viewy, _direction;          // Used in auto-route mode
 };
 
 class FileManager;
@@ -241,19 +225,19 @@ public:
 	uint16 _numStates;
 	int8   _normalTPS;                              // Number of ticks (frames) per second.
 	                                                // 8 for Win versions, 9 for DOS versions
-	object_t *_hero;
-	byte  *_screen_p;
+	Object *_hero;
+	byte  *_screenPtr;
 	byte  _heroImage;
 	byte  *_screenStates;
-	command_t _line;                                // Line of user text input
-	config_t  _config;                              // User's config
+	Command _line;                                  // Line of user text input
+	Config  _config;                                // User's config
 	int16     *_defltTunes;
 	uint16    _look;
 	uint16    _take;
 	uint16    _drop;
 
-	maze_t      _maze;                              // Maze control structure
-	hugo_boot_t _boot;                              // Boot info structure
+	Maze      _maze;                                // Maze control structure
+	hugoBoot  _boot;                                // Boot info structure
 
 	GUI::Debugger *getDebugger();
 
@@ -262,8 +246,8 @@ public:
 	const char *_episode;
 	Common::String _picDir;
 
-	command_t _statusLine;
-	command_t _scoreLine;
+	Command _statusLine;
+	Command _scoreLine;
 
 	const HugoGameDescription *_gameDescription;
 	uint32 getFeatures() const;
@@ -295,7 +279,7 @@ public:
 	void shutdown();
 	void syncSoundSettings();
 
-	status_t &getGameStatus();
+	Status &getGameStatus();
 	int getScore() const;
 	void setScore(const int newScore);
 	void adjustScore(const int adjustment);
@@ -330,7 +314,7 @@ protected:
 private:
 	static const int kTurboTps = 16;                // This many in turbo mode
 
-	status_t _status;                               // Game status structure
+	Status _status;                                 // Game status structure
 	uint32 _lastTime;
 	uint32 _curTime;
 

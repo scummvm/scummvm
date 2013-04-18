@@ -24,7 +24,6 @@
 #define BACKENDS_GRAPHICS_OP_H
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
-#include "graphics/scaler/aspect.h" // for aspect2Real
 #include "graphics/scaler/downscaler.h"
 
 enum {
@@ -35,28 +34,8 @@ class OPGraphicsManager : public SurfaceSdlGraphicsManager {
 public:
 	OPGraphicsManager(SdlEventSource *sdlEventSource);
 
-//	bool hasFeature(OSystem::Feature f);
-//	void setFeatureState(OSystem::Feature f, bool enable);
-//	bool getFeatureState(OSystem::Feature f);
-//	int getDefaultGraphicsMode() const;
-
-//	void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
-//	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-//	bool setGraphicsMode(const char *name);
-//	bool setGraphicsMode(int mode);
-//	void setGraphicsModeIntern();
-//	void internUpdateScreen();
-//	void showOverlay();
-//	void hideOverlay();
 	bool loadGFXMode();
-//	void drawMouse();
-//	void undrawMouse();
-//	virtual void warpMouse(int x, int y);
-
-//	SurfaceSdlGraphicsManager::MousePos *getMouseCurState();
-//	SurfaceSdlGraphicsManager::VideoState *getVideoMode();
-
-//	virtual void adjustMouseEvent(const Common::Event &event);
+	void unloadGFXMode();
 };
 
 #endif /* BACKENDS_GRAPHICS_OP_H */

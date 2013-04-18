@@ -681,6 +681,51 @@ static const byte feeble_windowFont[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
+void AGOSEngine_Feeble::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
+	const byte *src;
+	byte color, *dst;
+	uint dstPitch, h, w, i;
+
+	if (_noOracleScroll)
+		return;
+
+	_videoLockOut |= 0x8000;
+
+	dst = getBackGround();
+	dstPitch = _backGroundBuf->pitch;
+	h = 13;
+	w = getFeebleFontSize(chr);
+
+	if (_language == Common::PL_POL) {
+		if (!strcmp(getExtra(), "4CD"))
+			src = polish4CD_feeble_windowFont + (chr - 32) * 13;
+		else
+			src = polish2CD_feeble_windowFont + (chr - 32) * 13;
+	} else {
+		src = feeble_windowFont + (chr - 32) * 13;
+	}
+	dst += y * dstPitch + x + window->textColumnOffset;
+
+	color = window->textColor;
+
+	do {
+		int8 b = *src++;
+		i = 0;
+		do {
+			if (b < 0) {
+				if (dst[i] == 0)
+					dst[i] = color;
+			}
+
+			b <<= 1;
+		} while (++i != w);
+		dst += dstPitch;
+	} while (--h);
+
+	_videoLockOut &= ~0x8000;
+}
+#endif
+
 static const byte english_simon1AGAFontData[] = {
 	0x00,0x00,0x00,0x20,0x00,0x00,0x20,0x50,0x20,0x10,0x40,0x88,0x30,0x40,0x00,0x88,0x20,0x00,0x00,0x50,0x20,0x00,0x00,0x50,0x00,0x00,0x00,0x20,0x00,0x00,0x20,0x50,0x00,0x00,0x00,0x20,0x00,0x00,0x00,0x00,0x05,
 	0x00,0x00,0x00,0x30,0x00,0x10,0x20,0x48,0x10,0x20,0x00,0x48,0x20,0x40,0x00,0x90,0x00,0x00,0x00,0x60,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x05,
@@ -1252,51 +1297,6 @@ void AGOSEngine::renderString(uint vgaSpriteId, uint color, uint width, uint hei
 		}
 	}
 }
-
-void AGOSEngine_Feeble::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
-	const byte *src;
-	byte color, *dst;
-	uint dstPitch, h, w, i;
-
-	if (_noOracleScroll)
-		return;
-
-	_videoLockOut |= 0x8000;
-
-	dst = getBackGround();
-	dstPitch = _backGroundBuf->pitch;
-	h = 13;
-	w = getFeebleFontSize(chr);
-
-	if (_language == Common::PL_POL) {
-		if (!strcmp(getExtra(), "4CD"))
-			src = polish4CD_feeble_windowFont + (chr - 32) * 13;
-		else
-			src = polish2CD_feeble_windowFont + (chr - 32) * 13;
-	} else {
-		src = feeble_windowFont + (chr - 32) * 13;
-	}
-	dst += y * dstPitch + x + window->textColumnOffset;
-
-	color = window->textColor;
-
-	do {
-		int8 b = *src++;
-		i = 0;
-		do {
-			if (b < 0) {
-				if (dst[i] == 0)
-					dst[i] = color;
-			}
-
-			b <<= 1;
-		} while (++i != w);
-		dst += dstPitch;
-	} while (--h);
-
-	_videoLockOut &= ~0x8000;
-}
-#endif
 
 static const byte czech_simonFont[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,

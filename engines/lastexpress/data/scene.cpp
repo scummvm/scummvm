@@ -28,7 +28,6 @@
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
-#include "common/textconsole.h"
 #include "common/stream.h"
 
 namespace LastExpress {
@@ -122,7 +121,7 @@ bool SceneHotspot::isInside(const Common::Point &point) {
 // Scene
 Scene::~Scene() {
 	// Free the hotspots
-	for (int i = 0; i < (int)_hotspots.size(); i++)
+	for (uint i = 0; i < _hotspots.size(); i++)
 		delete _hotspots[i];
 }
 
@@ -172,7 +171,7 @@ bool Scene::checkHotSpot(const Common::Point &coord, SceneHotspot **hotspot) {
 	bool found = false;
 	int _location = 0;
 
-	for (int i = 0; i < (int)_hotspots.size(); i++) {
+	for (uint i = 0; i < _hotspots.size(); i++) {
 		if (_hotspots[i]->isInside(coord)) {
 			if (_location <= _hotspots[i]->location) {
 				_location = _hotspots[i]->location;
@@ -224,7 +223,7 @@ Common::String Scene::toString() {
 	// Hotspots
 	if (_hotspots.size() != 0) {
 		output += "\nHotspots:\n";
-		for (int i = 0; i < (int)_hotspots.size(); i++)
+		for (uint i = 0; i < _hotspots.size(); i++)
 			output += _hotspots[i]->toString() + "\n";
 	}
 
@@ -241,7 +240,7 @@ SceneLoader::~SceneLoader() {
 
 void SceneLoader::clear() {
 	// Remove all scenes
-	for (int i = 0; i < (int)_scenes.size(); i++)
+	for (uint i = 0; i < _scenes.size(); i++)
 		delete _scenes[i];
 
 	_scenes.clear();
@@ -292,9 +291,9 @@ Scene *SceneLoader::get(SceneIndex index) {
 		return NULL;
 
 	// Load the hotspots if needed
-	_scenes[(int)index]->loadHotspots(_stream);
+	_scenes[(uint)index]->loadHotspots(_stream);
 
-	return _scenes[(int)index];
+	return _scenes[(uint)index];
 }
 
 } // End of namespace LastExpress

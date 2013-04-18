@@ -182,8 +182,7 @@
 #define LUAI_FUNC	static
 #define LUAI_DATA	/* empty */
 
-#elif defined(__GNUC__) && ((__GNUC__*100 + __GNUC_MINOR__) >= 302) && \
-      defined(__ELF__) && !defined(__PLAYSTATION2__)
+#elif GCC_ATLEAST(3, 2) && defined(__ELF__) && !defined(__PLAYSTATION2__)
 /*
 ** The PS2 gcc compiler doesn't like the visibility attribute, so
 ** we use the normal "extern" definitions in the block below

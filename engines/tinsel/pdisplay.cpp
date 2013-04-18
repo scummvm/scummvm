@@ -23,9 +23,9 @@
  * PointProcess()
  */
 
+#include "common/coroutines.h"
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
-#include "tinsel/coroutine.h"
 #include "tinsel/cursor.h"
 #include "tinsel/dw.h"
 #include "tinsel/events.h"
@@ -265,7 +265,7 @@ void DisablePointing() {
 		if (hPoly != NOPOLY && PolyType(hPoly) == TAG && PolyIsPointedTo(hPoly)) {
 			SetPolyPointedTo(hPoly, false);
 			SetPolyTagWanted(hPoly, false, false, 0);
-			PolygonEvent(nullContext, hPoly, UNPOINT, 0, false, 0);
+			PolygonEvent(Common::nullContext, hPoly, UNPOINT, 0, false, 0);
 		}
 	}
 
@@ -275,7 +275,7 @@ void DisablePointing() {
 			SetActorPointedTo(i, false);
 			SetActorTagWanted(i, false, false, 0);
 
-			ActorEvent(nullContext, i, UNPOINT, false, 0);
+			ActorEvent(Common::nullContext, i, UNPOINT, false, 0);
 		}
 	}
 }

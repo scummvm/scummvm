@@ -21,6 +21,7 @@
  */
 
 #include <FUiCtrlMessageBox.h>
+#include <FLocales.h>
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -42,7 +43,9 @@
 
 using namespace Osp::Base;
 using namespace Osp::Base::Runtime;
+using namespace Osp::Locales;
 using namespace Osp::Ui::Controls;
+using namespace Osp::System;
 
 #define DEFAULT_CONFIG_FILE "/Home/scummvm.ini"
 #define RESOURCE_PATH       "/Res"
@@ -305,7 +308,7 @@ void BadaSystem::initBackend() {
 	ConfMan.registerDefault("aspect_ratio", false);
 	ConfMan.setBool("confirm_exit", false);
 
-	Osp::System::SystemTime::GetTicks(_epoch);
+	SystemTime::GetTicks(_epoch);
 
 	if (E_SUCCESS != initModules()) {
 		AppLog("initModules failed");
@@ -372,7 +375,7 @@ bool BadaSystem::pollEvent(Common::Event &event) {
 
 uint32 BadaSystem::getMillis() {
 	long long result, ticks = 0;
-	Osp::System::SystemTime::GetTicks(ticks);
+	SystemTime::GetTicks(ticks);
 	result = ticks - _epoch;
 	return result;
 }
@@ -392,13 +395,18 @@ void BadaSystem::updateScreen() {
 void BadaSystem::getTimeAndDate(TimeDate &td) const {
 	DateTime currentTime;
 
-	if (E_SUCCESS == Osp::System::SystemTime::GetCurrentTime(currentTime)) {
+	if (E_SUCCESS == SystemTime::GetCurrentTime(WALL_TIME, currentTime)) {
 		td.tm_sec = currentTime.GetSecond();
 		td.tm_min = currentTime.GetMinute();
 		td.tm_hour = currentTime.GetHour();
 		td.tm_mday = currentTime.GetDay();
 		td.tm_mon = currentTime.GetMonth();
 		td.tm_year = currentTime.GetYear();
+
+		Calendar *calendar = Calendar::CreateInstanceN(CALENDAR_GREGORIAN);
+		calendar->SetTime(currentTime);
+		td.tm_wday = calendar->GetTimeField(TIME_FIELD_DAY_OF_WEEK) - 1;
+		delete calendar;
 	}
 }
 

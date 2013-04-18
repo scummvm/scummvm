@@ -62,7 +62,7 @@ protected:
 	virtual void grabPalette(byte *colors, uint start, uint num);
 public:
 
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual void setShakePos(int shakeOffset);
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
@@ -72,15 +72,15 @@ public:
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual void clearOverlay();
-	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	virtual void grabOverlay(void *buf, int pitch);
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayWidth(void);
 	virtual int16 getOverlayHeight(void);
 
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = 0);
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale = false, const Graphics::PixelFormat *format = 0);
 
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);

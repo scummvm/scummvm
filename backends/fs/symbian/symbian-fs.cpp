@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#if defined (__SYMBIAN32__)
+#if defined(__SYMBIAN32__)
 
 #include "backends/fs/symbian/symbian-fs.h"
 #include "backends/fs/symbian/symbianstream.h"
@@ -230,4 +230,4 @@ Common::SeekableReadStream *SymbianFilesystemNode::createReadStream() {
 Common::WriteStream *SymbianFilesystemNode::createWriteStream() {
 	return SymbianStdioStream::makeFromPath(getPath(), true);
 }
-#endif //#if defined (__SYMBIAN32__)
+#endif //#if defined(__SYMBIAN32__)

@@ -62,8 +62,8 @@ public:
 	void updateScreen(void);
 	void grabPalette(uint8 *pal, uint8 start, uint16 num);
 	//- overlay routines
-	void copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h);
-	void grabOverlay(uint16 *buf, uint16 pitch);
+	void copyOverlayRect(const byte *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h);
+	void grabOverlay(byte *buf, uint16 pitch);
 	void clearOverlay(void);
 	void showOverlay(void);
 	void hideOverlay(void);

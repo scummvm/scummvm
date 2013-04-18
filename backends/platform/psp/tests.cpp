@@ -25,7 +25,7 @@
 
 #include "backends/platform/psp/tests.h"
 
-#if defined (PSP_ENABLE_UNIT_TESTS) || defined (PSP_ENABLE_SPEED_TESTS)
+#if defined(PSP_ENABLE_UNIT_TESTS) || defined(PSP_ENABLE_SPEED_TESTS)
 
 #include "common/scummsys.h"
 #include <pspiofilemgr_fcntl.h>
@@ -729,4 +729,4 @@ void psp_tests() {
 #endif
 }
 
-#endif /* (PSP_ENABLE_UNIT_TESTS) || defined (PSP_ENABLE_SPEED_TESTS) */
+#endif /* (PSP_ENABLE_UNIT_TESTS) || defined(PSP_ENABLE_SPEED_TESTS) */

@@ -133,6 +133,19 @@ int AgiEngine::handleController(int key) {
 	if (key == BUTTON_LEFT &&
 			(int)_mouse.y >= _game.lineUserInput * CHAR_LINES &&
 			(int)_mouse.y <= (_game.lineUserInput + 1) * CHAR_LINES) {
+		GUI::PredictiveDialog _predictiveDialog;
+		_predictiveDialog.runModal();
+		strcpy(_predictiveResult, _predictiveDialog.getResult());
+		if (strcmp(_predictiveResult, "")) {
+			if (_game.inputMode == INPUT_NONE) {
+				for (int n = 0; _predictiveResult[n]; n++)
+					keyEnqueue(_predictiveResult[n]);
+			} else {
+				strcpy((char *)_game.inputBuffer, _predictiveResult);
+				handleKeys(KEY_ENTER);
+			}
+		}
+		/*
 		if (predictiveDialog()) {
 			if (_game.inputMode == INPUT_NONE) {
 				for (int n = 0; _predictiveResult[n]; n++)
@@ -142,6 +155,7 @@ int AgiEngine::handleController(int key) {
 				handleKeys(KEY_ENTER);
 			}
 		}
+		*/
 		return true;
 	}
 
@@ -217,6 +231,17 @@ void AgiEngine::handleGetstring(int key) {
 	case BUTTON_LEFT:
 		if ((int)_mouse.y >= _stringdata.y * CHAR_LINES &&
 				(int)_mouse.y <= (_stringdata.y + 1) * CHAR_LINES) {
+			GUI::PredictiveDialog _predictiveDialog;
+			_predictiveDialog.runModal();
+			strcpy(_predictiveResult, _predictiveDialog.getResult());
+			if (strcmp(_predictiveResult, "")) {
+				strcpy(_game.strings[_stringdata.str], _predictiveResult);
+				newInputMode(INPUT_NORMAL);
+				_gfx->printCharacter(_stringdata.x + strlen(_game.strings[_stringdata.str]) + 1,
+								_stringdata.y, ' ', _game.colorFg, _game.colorBg);
+				return;
+			}
+			/*
 			if (predictiveDialog()) {
 				strcpy(_game.strings[_stringdata.str], _predictiveResult);
 				newInputMode(INPUT_NORMAL);
@@ -224,6 +249,7 @@ void AgiEngine::handleGetstring(int key) {
 								_stringdata.y, ' ', _game.colorFg, _game.colorBg);
 				return;
 			}
+			*/
 		}
 		break;
 	case KEY_ENTER:

@@ -53,7 +53,8 @@ CoktelDecoder::CoktelDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 	_mixer(mixer), _soundType(soundType), _width(0), _height(0), _x(0), _y(0),
 	_defaultX(0), _defaultY(0), _features(0), _frameCount(0), _paletteDirty(false),
 	_ownSurface(true), _frameRate(12), _hasSound(false), _soundEnabled(false),
-	_soundStage(kSoundNone), _audioStream(0) {
+	_soundStage(kSoundNone), _audioStream(0), _startTime(0), _pauseStartTime(0),
+	_isPaused(false) {
 
 	assert(_mixer);
 
@@ -261,6 +262,10 @@ bool CoktelDecoder::isPaletted() const {
 	return true;
 }
 
+int CoktelDecoder::getCurFrame() const {
+	return _curFrame;
+}
+
 void CoktelDecoder::close() {
 	disableSound();
 	freeSurface();
@@ -273,9 +278,22 @@ void CoktelDecoder::close() {
 
 	_features = 0;
 
-	_frameCount = 0;
+	_curFrame   = -1;
+	_frameCount =  0;
+
+	_startTime = 0;
 
 	_hasSound = false;
+
+	_isPaused = false;
+}
+
+Audio::Mixer::SoundType CoktelDecoder::getSoundType() const {
+	return _soundType;
+}
+
+Audio::AudioStream *CoktelDecoder::getAudioStream() const {
+	return _audioStream;
 }
 
 uint16 CoktelDecoder::getWidth() const {
@@ -291,6 +309,7 @@ uint32 CoktelDecoder::getFrameCount() const {
 }
 
 const byte *CoktelDecoder::getPalette() {
+	_paletteDirty = false;
 	return _palette;
 }
 
@@ -625,12 +644,43 @@ Common::Rational CoktelDecoder::getFrameRate() const {
 	return _frameRate;
 }
 
+uint32 CoktelDecoder::getTimeToNextFrame() const {
+	if (endOfVideo() || _curFrame < 0)
+		return 0;
+
+	uint32 elapsedTime        = g_system->getMillis() - _startTime;
+	uint32 nextFrameStartTime = (Common::Rational((_curFrame + 1) * 1000) / getFrameRate()).toInt();
+
+	if (nextFrameStartTime <= elapsedTime)
+		return 0;
+
+	return nextFrameStartTime - elapsedTime;
+}
+
 uint32 CoktelDecoder::getStaticTimeToNextFrame() const {
 	return (1000 / _frameRate).toInt();
 }
 
+void CoktelDecoder::pauseVideo(bool pause) {
+	if (_isPaused != pause) {
+		if (_isPaused) {
+			// Add the time we were paused to the initial starting time
+			_startTime += g_system->getMillis() - _pauseStartTime;
+		} else {
+			// Store the time we paused for use later
+			_pauseStartTime = g_system->getMillis();
+		}
+
+		_isPaused = pause;
+	}
+}
+
 inline void CoktelDecoder::unsignedToSigned(byte *buffer, int length) {
 	while (length-- > 0) *buffer++ ^= 0x80;
+}
+
+bool CoktelDecoder::endOfVideo() const {
+	return !isVideoLoaded() || (getCurFrame() >= (int32)getFrameCount() - 1);
 }
 
 
@@ -644,6 +694,21 @@ PreIMDDecoder::PreIMDDecoder(uint16 width, uint16 height,
 
 PreIMDDecoder::~PreIMDDecoder() {
 	close();
+}
+
+bool PreIMDDecoder::reloadStream(Common::SeekableReadStream *stream) {
+	if (!_stream)
+		return false;
+
+	if (!stream->seek(_stream->pos())) {
+		close();
+		return false;
+	}
+
+	delete _stream;
+	_stream = stream;
+
+	return true;
 }
 
 bool PreIMDDecoder::seek(int32 frame, int whence, bool restart) {
@@ -690,8 +755,6 @@ bool PreIMDDecoder::loadStream(Common::SeekableReadStream *stream) {
 }
 
 void PreIMDDecoder::close() {
-	reset();
-
 	CoktelDecoder::close();
 
 	delete _stream;
@@ -838,6 +901,21 @@ IMDDecoder::IMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 
 IMDDecoder::~IMDDecoder() {
 	close();
+}
+
+bool IMDDecoder::reloadStream(Common::SeekableReadStream *stream) {
+	if (!_stream)
+		return false;
+
+	if (!stream->seek(_stream->pos())) {
+		close();
+		return false;
+	}
+
+	delete _stream;
+	_stream = stream;
+
+	return true;
 }
 
 bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
@@ -1129,8 +1207,6 @@ bool IMDDecoder::loadFrameTables(uint32 framePosPos, uint32 frameCoordsPos) {
 }
 
 void IMDDecoder::close() {
-	reset();
-
 	CoktelDecoder::close();
 
 	delete _stream;
@@ -1194,8 +1270,6 @@ void IMDDecoder::processFrame() {
 	_curFrame++;
 
 	_dirtyRects.clear();
-
-	_paletteDirty = false;
 
 	uint32 cmd = 0;
 	bool hasNextCmd = false;
@@ -1512,7 +1586,7 @@ VMDDecoder::VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 	_soundLastFilledFrame(0), _audioFormat(kAudioFormat8bitRaw),
 	_hasVideo(false), _videoCodec(0), _blitMode(0), _bytesPerPixel(0),
 	_firstFramePos(0), _videoBufferSize(0), _externalCodec(false), _codec(0),
-	_subtitle(-1), _isPaletted(true) {
+	_subtitle(-1), _isPaletted(true), _autoStartSound(true) {
 
 	_videoBuffer   [0] = 0;
 	_videoBuffer   [1] = 0;
@@ -1524,6 +1598,21 @@ VMDDecoder::VMDDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 
 VMDDecoder::~VMDDecoder() {
 	close();
+}
+
+bool VMDDecoder::reloadStream(Common::SeekableReadStream *stream) {
+	if (!_stream)
+		return false;
+
+	if (!stream->seek(_stream->pos())) {
+		close();
+		return false;
+	}
+
+	delete _stream;
+	_stream = stream;
+
+	return true;
 }
 
 bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
@@ -1959,8 +2048,6 @@ bool VMDDecoder::readFiles() {
 }
 
 void VMDDecoder::close() {
-	reset();
-
 	CoktelDecoder::close();
 
 	delete _stream;
@@ -2040,7 +2127,6 @@ void VMDDecoder::processFrame() {
 
 	_dirtyRects.clear();
 
-	_paletteDirty = false;
 	_subtitle     = -1;
 
 	bool startSound = false;
@@ -2160,8 +2246,9 @@ void VMDDecoder::processFrame() {
 
 	if (startSound && _soundEnabled) {
 		if (_hasSound && _audioStream) {
-			_mixer->playStream(_soundType, &_audioHandle, _audioStream,
-					-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+			if (_autoStartSound)
+				_mixer->playStream(_soundType, &_audioHandle, _audioStream,
+						-1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 			_soundStage = kSoundPlaying;
 		} else
 			_soundStage = kSoundNone;
@@ -2685,6 +2772,94 @@ bool VMDDecoder::hasVideo() const {
 
 bool VMDDecoder::isPaletted() const {
 	return _isPaletted;
+}
+
+void VMDDecoder::setAutoStartSound(bool autoStartSound) {
+	_autoStartSound = autoStartSound;
+}
+
+AdvancedVMDDecoder::AdvancedVMDDecoder(Audio::Mixer::SoundType soundType) {
+	_decoder = new VMDDecoder(g_system->getMixer(), soundType);
+	_decoder->setAutoStartSound(false);
+}
+
+AdvancedVMDDecoder::~AdvancedVMDDecoder() {
+	close();
+	delete _decoder;
+}
+
+bool AdvancedVMDDecoder::loadStream(Common::SeekableReadStream *stream) {
+	close();
+
+	if (!_decoder->loadStream(stream))
+		return false;
+
+	if (_decoder->hasVideo()) {
+		_videoTrack = new VMDVideoTrack(_decoder);
+		addTrack(_videoTrack);
+	}
+
+	if (_decoder->hasSound()) {
+		_audioTrack = new VMDAudioTrack(_decoder);
+		addTrack(_audioTrack);
+	}
+
+	return true;
+}
+
+void AdvancedVMDDecoder::close() {
+	VideoDecoder::close();
+	_decoder->close();
+}
+
+AdvancedVMDDecoder::VMDVideoTrack::VMDVideoTrack(VMDDecoder *decoder) : _decoder(decoder) {
+}
+
+uint16 AdvancedVMDDecoder::VMDVideoTrack::getWidth() const {
+	return _decoder->getWidth();
+}
+
+uint16 AdvancedVMDDecoder::VMDVideoTrack::getHeight() const {
+	return _decoder->getHeight();
+}
+
+Graphics::PixelFormat AdvancedVMDDecoder::VMDVideoTrack::getPixelFormat() const {
+	return _decoder->getPixelFormat();
+}
+
+int AdvancedVMDDecoder::VMDVideoTrack::getCurFrame() const {
+	return _decoder->getCurFrame();
+}
+
+int AdvancedVMDDecoder::VMDVideoTrack::getFrameCount() const {
+	return _decoder->getFrameCount();
+}
+
+const Graphics::Surface *AdvancedVMDDecoder::VMDVideoTrack::decodeNextFrame() {
+	return _decoder->decodeNextFrame();
+}
+
+const byte *AdvancedVMDDecoder::VMDVideoTrack::getPalette() const {
+	return _decoder->getPalette();
+}
+
+bool AdvancedVMDDecoder::VMDVideoTrack::hasDirtyPalette() const {
+	return _decoder->hasDirtyPalette();
+}
+
+Common::Rational AdvancedVMDDecoder::VMDVideoTrack::getFrameRate() const {
+	return _decoder->getFrameRate();
+}
+
+AdvancedVMDDecoder::VMDAudioTrack::VMDAudioTrack(VMDDecoder *decoder) : _decoder(decoder) {
+}
+
+Audio::Mixer::SoundType AdvancedVMDDecoder::VMDAudioTrack::getSoundType() const {
+	return _decoder->getSoundType();
+}
+
+Audio::AudioStream *AdvancedVMDDecoder::VMDAudioTrack::getAudioStream() const {
+	return _decoder->getAudioStream();
 }
 
 } // End of namespace Video

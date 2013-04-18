@@ -419,8 +419,6 @@ void KyraEngine_HoF::startup() {
 	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 	_screen->loadBitmap("_PLAYFLD.CPS", 3, 3, 0);
 	_screen->copyPage(3, 0);
-	_screen->showMouse();
-	_screen->hideMouse();
 
 	clearAnimObjects();
 
@@ -784,20 +782,16 @@ void KyraEngine_HoF::updateMouse() {
 
 	if (type != 0 && _mouseState != type && _screen->isMouseVisible()) {
 		_mouseState = type;
-		_screen->hideMouse();
 		_screen->setMouseCursor(xOffset, yOffset, getShapePtr(shapeIndex));
-		_screen->showMouse();
 	}
 
 	if (type == 0 && _mouseState != _itemInHand && _screen->isMouseVisible()) {
 		if ((mouse.y > 145) || (mouse.x > 6 && mouse.x < 312 && mouse.y > 6 && mouse.y < 135)) {
 			_mouseState = _itemInHand;
-			_screen->hideMouse();
 			if (_itemInHand == kItemNone)
 				_screen->setMouseCursor(0, 0, getShapePtr(0));
 			else
 				_screen->setMouseCursor(8, 15, getShapePtr(_itemInHand+64));
-			_screen->showMouse();
 		}
 	}
 }
@@ -914,7 +908,6 @@ void KyraEngine_HoF::showMessageFromCCode(int id, int16 palIndex, int) {
 
 void KyraEngine_HoF::showMessage(const char *string, int16 palIndex) {
 	_shownMessage = string;
-	_screen->hideMouse();
 	_screen->fillRect(0, 190, 319, 199, 0xCF);
 
 	if (string) {
@@ -932,7 +925,6 @@ void KyraEngine_HoF::showMessage(const char *string, int16 palIndex) {
 	}
 
 	_fadeMessagePalette = false;
-	_screen->showMouse();
 }
 
 void KyraEngine_HoF::showChapterMessage(int id, int16 palIndex) {
@@ -1116,9 +1108,7 @@ int KyraEngine_HoF::getDrawLayer(int x, int y) {
 
 void KyraEngine_HoF::backUpPage0() {
 	if (_screenBuffer) {
-		_screen->hideMouse();
 		memcpy(_screenBuffer, _screen->getCPagePtr(0), 64000);
-		_screen->showMouse();
 	}
 }
 

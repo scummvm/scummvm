@@ -110,6 +110,9 @@ public:
 	void closeLiveSound();
 	void closeAll();
 
+	bool reopenVideo(int slot = 0);
+	bool reopenAll();
+
 	void pauseVideo(int slot, bool pause);
 	void pauseAll(bool pause);
 
@@ -163,6 +166,8 @@ private:
 
 		bool isEmpty() const;
 		void close();
+
+		void reopen();
 	};
 
 	static const int kVideoSlotCount = 32;
@@ -187,6 +192,8 @@ private:
 	Common::String findFile(const Common::String &file, Properties &properties);
 
 	::Video::CoktelDecoder *openVideo(const Common::String &file, Properties &properties);
+
+	bool reopenVideo(Video &video);
 
 	bool playFrame(int slot, Properties &properties);
 

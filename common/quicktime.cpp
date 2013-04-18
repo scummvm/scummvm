@@ -111,19 +111,29 @@ bool QuickTimeParser::parseStream(SeekableReadStream *stream, DisposeAfterUse::F
 }
 
 void QuickTimeParser::init() {
-	// Remove unknown/unhandled tracks
 	for (uint32 i = 0; i < _tracks.size(); i++) {
+		// Remove unknown/unhandled tracks
 		if (_tracks[i]->codecType == CODEC_TYPE_MOV_OTHER) {
 			delete _tracks[i];
 			_tracks.remove_at(i);
 			i--;
+		} else {
+			// If this track doesn't have a declared scale, use the movie scale
+			if (_tracks[i]->timeScale == 0)
+				_tracks[i]->timeScale = _timeScale;
+
+			// If this track doesn't have an edit list (like in MPEG-4 files),
+			// fake an entry of one edit that takes up the entire sample
+			if (_tracks[i]->editCount == 0) {
+				_tracks[i]->editCount = 1;
+				_tracks[i]->editList = new EditListEntry[1];
+				_tracks[i]->editList[0].trackDuration = _tracks[i]->duration;
+				_tracks[i]->editList[0].timeOffset = 0;
+				_tracks[i]->editList[0].mediaTime = 0;
+				_tracks[i]->editList[0].mediaRate = 1;
+			}
 		}
 	}
-
-	// Adjust time scale
-	for (uint32 i = 0; i < _tracks.size(); i++)
-		if (!_tracks[i]->timeScale)
-			_tracks[i]->timeScale = _timeScale;
 }
 
 void QuickTimeParser::initParseTable() {
@@ -154,6 +164,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readCMOV,    MKTAG('c', 'm', 'o', 'v') },
 		{ &QuickTimeParser::readWAVE,    MKTAG('w', 'a', 'v', 'e') },
 		{ &QuickTimeParser::readESDS,    MKTAG('e', 's', 'd', 's') },
+		{ &QuickTimeParser::readSMI,     MKTAG('S', 'M', 'I', ' ') },
 		{ 0, 0 }
 	};
 
@@ -206,7 +217,11 @@ int QuickTimeParser::readDefault(Atom atom) {
 
 		a.size -= 8;
 
-		if (_parseTable[i].type == 0) { // skip leaf atoms data
+		if (a.size + (uint32)_fd->pos() > (uint32)_fd->size()) {
+			_fd->seek(_fd->size());
+			debug(0, "Skipping junk found at the end of the QuickTime file");
+			return 0;
+		} else if (_parseTable[i].type == 0) { // skip leaf atom data
 			debug(0, ">>> Skipped [%s]", tag2str(a.type));
 
 			_fd->seek(a.size, SEEK_CUR);
@@ -677,7 +692,7 @@ int QuickTimeParser::readWAVE(Atom atom) {
 		return -1;
 
 	if (track->sampleDescs[0]->getCodecTag() == MKTAG('Q', 'D', 'M', '2')) // Read extra data for QDM2
-		track->extraData = _fd->readStream(atom.size - 8);
+		track->extraData = _fd->readStream(atom.size);
 	else if (atom.size > 8)
 		return readDefault(atom);
 	else
@@ -748,6 +763,18 @@ int QuickTimeParser::readESDS(Atom atom) {
 	track->extraData = _fd->readStream(length);
 
 	debug(0, "MPEG-4 object type = %02x", track->objectTypeMP4);
+	return 0;
+}
+
+int QuickTimeParser::readSMI(Atom atom) {
+	if (_tracks.empty())
+		return 0;
+
+	Track *track = _tracks.back();
+
+	// This atom just contains SVQ3 extra data
+	track->extraData = _fd->readStream(atom.size);
+
 	return 0;
 }
 

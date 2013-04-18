@@ -46,7 +46,13 @@ const char *MSBuildProvider::getPropertiesExtension() {
 }
 
 int MSBuildProvider::getVisualStudioVersion() {
-	return 2010;
+	if (_version == 10)
+		return 2010;
+
+	if (_version == 11)
+		return 2012;
+
+	error("Unsupported version passed to getVisualStudioVersion");
 }
 
 namespace {
@@ -58,9 +64,10 @@ inline void outputConfiguration(std::ostream &project, const std::string &config
 	           "\t\t</ProjectConfiguration>\n";
 }
 
-inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config) {
+inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, int version) {
 	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n"
 	           "\t\t<ConfigurationType>" << ((name == setup.projectName || setup.devTools) ? "Application" : "StaticLibrary") << "</ConfigurationType>\n"
+	           "\t\t<PlatformToolset>v" << version << "0</PlatformToolset>\n"
 	           "\t</PropertyGroup>\n";
 }
 
@@ -98,17 +105,18 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	           "\t\t<ProjectGuid>{" << uuid << "}</ProjectGuid>\n"
 	           "\t\t<RootNamespace>" << name << "</RootNamespace>\n"
 	           "\t\t<Keyword>Win32Proj</Keyword>\n"
+	           "\t\t<VCTargetsPath Condition=\"'$(VCTargetsPath11)' != '' and '$(VSVersion)' == '' and $(VisualStudioVersion) == ''\">$(VCTargetsPath11)</VCTargetsPath>\n"
 	           "\t</PropertyGroup>\n";
 
 	// Shared configuration
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
-	outputConfigurationType(setup, project, name, "Release|Win32");
-	outputConfigurationType(setup, project, name, "Analysis|Win32");
-	outputConfigurationType(setup, project, name, "Debug|Win32");
-	outputConfigurationType(setup, project, name, "Release|x64");
-	outputConfigurationType(setup, project, name, "Analysis|x64");
-	outputConfigurationType(setup, project, name, "Debug|x64");
+	outputConfigurationType(setup, project, name, "Release|Win32", _version);
+	outputConfigurationType(setup, project, name, "Analysis|Win32", _version);
+	outputConfigurationType(setup, project, name, "Debug|Win32", _version);
+	outputConfigurationType(setup, project, name, "Release|x64", _version);
+	outputConfigurationType(setup, project, name, "Analysis|x64", _version);
+	outputConfigurationType(setup, project, name, "Debug|x64", _version);
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
 	           "\t<ImportGroup Label=\"ExtensionSettings\">\n"
@@ -233,9 +241,11 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 
 	// Check for project-specific warnings:
 	std::map<std::string, StringList>::iterator warningsIterator = _projectWarnings.find(name);
+	bool enableLanguageExtensions = find(_enableLanguageExtensions.begin(), _enableLanguageExtensions.end(), name) != _enableLanguageExtensions.end();
+	bool disableEditAndContinue = find(_disableEditAndContinue.begin(), _disableEditAndContinue.end(), name) != _disableEditAndContinue.end();
 
 	// Nothing to add here, move along!
-	if (!setup.devTools && name != setup.projectName && name != "sword25" && name != "tinsel" && name != "grim" && warningsIterator == _projectWarnings.end())
+	if (!setup.devTools && name != setup.projectName && !enableLanguageExtensions && !disableEditAndContinue && warningsIterator == _projectWarnings.end())
 		return;
 
 	std::string warnings = "";
@@ -246,16 +256,17 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << configuration << "|" << (isWin32 ? "Win32" : "x64") << "'\">\n"
 	           "\t\t<ClCompile>\n";
 
-	// Compile configuration
-	if (setup.devTools || name == setup.projectName || name == "sword25" || name == "grim") {
+	// Language Extensions
+	if (setup.devTools || name == setup.projectName || enableLanguageExtensions)
 		project << "\t\t\t<DisableLanguageExtensions>false</DisableLanguageExtensions>\n";
-	} else {
-		if (name == "tinsel" && !isRelease)
-			project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
 
-		if (warningsIterator != _projectWarnings.end())
-			project << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
-	}
+	// Edit and Continue
+	if ((name == setup.projectName || disableEditAndContinue) && !isRelease)
+		project << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
+
+	// Warnings
+	if (warningsIterator != _projectWarnings.end())
+		project << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n";
 
 	project << "\t\t</ClCompile>\n";
 
@@ -395,6 +406,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 		              "\t\t</ClCompile>\n"
 		              "\t\t<Link>\n"
 		              "\t\t\t<GenerateDebugInformation>true</GenerateDebugInformation>\n"
+		              "\t\t\t<ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>\n"
 		              "\t\t\t<IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n";
 	}
 

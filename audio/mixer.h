@@ -97,7 +97,7 @@ public:
 	 * @param stream	the actual AudioStream to be played
 	 * @param id	a unique id assigned to this stream
 	 * @param volume	the volume with which to play the sound, ranging from 0 to 255
-	 * @param balance	the balance with which to play the sound, ranging from -128 to 127
+	 * @param balance	the balance with which to play the sound, ranging from -127 to 127 (full left to full right), 0 is balanced, -128 is invalid
 	 * @param autofreeStream	a flag indicating whether the stream should be
 	 *                          freed after playback finished
 	 * @param permanent	a flag indicating whether a plain stopAll call should

@@ -34,7 +34,7 @@
 namespace Kyra {
 
 SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
-	: Sound(vm, mixer), _lastTrack(-1), _currentSFX(0), _musicTrackData(0), _sfxFileData(0), _cdaPlaying(0),
+	: Sound(vm, mixer), _lastTrack(-1), _musicTrackData(0), _sfxFileData(0), _cdaPlaying(0),
 	_sfxFileIndex((uint)-1), _musicFadeTable(0), _sfxWDTable(0), _sfxBTTable(0), _sfxChannel(0x46) {
 
 	_driver = new TownsEuphonyDriver(_mixer);

@@ -89,14 +89,14 @@ byte Input::_resMouseArrow_BR_Amiga[512] = {
 /*
 	This palette snippet is used for animations in Big Red Adventure.
 */
-byte _braAmigaFramesDefaultPalette[48] = {
+byte braAmigaFramesDefaultPalette[48] = {
 	0x00, 0x00, 0x00, 0x14, 0x14, 0x14, 0xFF, 0xE0, 0xCF, 0x7F, 0x7F, 0x7F, 0xD9, 0x9C, 0x84, 0x00,
 	0x9E, 0xF0, 0x91, 0xCC, 0x36, 0xFF, 0x6A, 0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xDC, 0x11, 0xB0, 0xEE,
 	0xF0, 0xFF, 0x17, 0x3D, 0x18, 0xAC, 0x3A, 0xB0, 0x00, 0x00, 0x7D, 0x00, 0x00, 0xFF, 0xA8, 0xFF,
 };
 
 
-byte _amigaTopazFont[2600] = {
+byte amigaTopazFont[2600] = {
 	0x00, 0x00, 0x03, 0xf3, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x79, 0x00, 0x00, 0x03, 0xe9, 0x00, 0x00, 0x02, 0x79,
 	0x70, 0xff, 0x4e, 0x75, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00,
@@ -263,7 +263,7 @@ byte _amigaTopazFont[2600] = {
 };
 
 
-const char *_callableNamesRes_ns[] = {
+const char *callableNamesRes_ns[] = {
 	"Projector",
 	"HBOff",
 	"StartIntro",
@@ -292,7 +292,7 @@ const char *_callableNamesRes_ns[] = {
 };
 
 
-const char *_callableNamesRes_br[] = {
+const char *callableNamesRes_br[] = {
 	"blufade",
 	"resetpalette",
 	"ferrcycle",
@@ -301,15 +301,15 @@ const char *_callableNamesRes_br[] = {
 	"password"
 };
 
-const char *_dinoName = "dino";
-const char *_donnaName = "donna";
-const char *_doughName = "dough";
-const char *_drkiName = "drki";
+const char *g_dinoName = "dino";
+const char *g_donnaName = "donna";
+const char *g_doughName = "dough";
+const char *g_drkiName = "drki";
 
-const char *_minidinoName = "minidino";
-const char *_minidonnaName = "minidonna";
-const char *_minidoughName = "minidough";
-const char *_minidrkiName = "minidrki";
+const char *g_minidinoName = "minidino";
+const char *g_minidonnaName = "minidonna";
+const char *g_minidoughName = "minidough";
+const char *g_minidrkiName = "minidrki";
 
 #define CALLABLE_NS(x) &Parallaction_ns::x
 
@@ -391,7 +391,7 @@ const Parallaction_br::Callable Parallaction_br::_amigaCallables[] = {
 
 void Parallaction_ns::initResources() {
 
-	_callableNames = new Table(ARRAYSIZE(_callableNamesRes_ns), _callableNamesRes_ns);
+	_callableNames = new Table(ARRAYSIZE(callableNamesRes_ns), callableNamesRes_ns);
 
 	_localFlagNames = new FixedTable(NUM_LOCATIONS, 1);
 	_localFlagNames->addData("visited");
@@ -406,7 +406,7 @@ void Parallaction_ns::initResources() {
 
 void Parallaction_br::initResources() {
 
-	_callableNames = new Table(ARRAYSIZE(_callableNamesRes_br), _callableNamesRes_br);
+	_callableNames = new Table(ARRAYSIZE(callableNamesRes_br), callableNamesRes_br);
 
 	_localFlagNames = new FixedTable(NUM_LOCATIONS, 2);
 	_localFlagNames->addData("visited");

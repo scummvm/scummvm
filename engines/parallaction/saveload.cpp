@@ -88,7 +88,7 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	_vm->_score = atoi(s.c_str());
 
 	s = f->readLine();
-	_globalFlags = atoi(s.c_str());
+	g_globalFlags = atoi(s.c_str());
 
 	s = f->readLine();
 	_vm->_numLocations = atoi(s.c_str());
@@ -151,7 +151,7 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	sprintf(s, "%s\n", _vm->_char.getFullName());
 	f->writeString(s);
 
-	sprintf(s, "%s\n", _saveData1);
+	sprintf(s, "%s\n", g_saveData1);
 	f->writeString(s);
 	sprintf(s, "%d\n", _vm->_char._ani->getX());
 	f->writeString(s);
@@ -159,7 +159,7 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	f->writeString(s);
 	sprintf(s, "%d\n", _vm->_score);
 	f->writeString(s);
-	sprintf(s, "%u\n", _globalFlags);
+	sprintf(s, "%u\n", g_globalFlags);
 	f->writeString(s);
 
 	sprintf(s, "%d\n", _vm->_numLocations);
@@ -180,20 +180,13 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 }
 
 int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const Common::String &caption, const Common::String &button) {
-	GUI::SaveLoadChooser slc(caption, button);
-	slc.setSaveMode(saveMode);
+	GUI::SaveLoadChooser slc(caption, button, saveMode);
 
 	selectedName.clear();
 
-	Common::String gameId = ConfMan.get("gameid");
-
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
-	int idx = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	int idx = slc.runModalWithCurrentTarget();
 	if (idx >= 0) {
 		selectedName = slc.getResultString();
-		slc.close();
 	}
 
 	return idx;

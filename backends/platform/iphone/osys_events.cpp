@@ -46,41 +46,40 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 		return true;
 	}
 
-	int eventType;
-	int x, y;
+	InternalEvent internalEvent;
 
-	if (iPhone_fetchEvent(&eventType, &x, &y)) {
-		switch ((InputEvent)eventType) {
+	if (iPhone_fetchEvent(&internalEvent)) {
+		switch (internalEvent.type) {
 		case kInputMouseDown:
-			if (!handleEvent_mouseDown(event, x, y))
+			if (!handleEvent_mouseDown(event, internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
 
 		case kInputMouseUp:
-			if (!handleEvent_mouseUp(event, x, y))
+			if (!handleEvent_mouseUp(event, internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
 
 		case kInputMouseDragged:
-			if (!handleEvent_mouseDragged(event, x, y))
+			if (!handleEvent_mouseDragged(event, internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
 		case kInputMouseSecondDragged:
-			if (!handleEvent_mouseSecondDragged(event, x, y))
+			if (!handleEvent_mouseSecondDragged(event, internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
 		case kInputMouseSecondDown:
 			_secondaryTapped = true;
-			if (!handleEvent_secondMouseDown(event, x, y))
+			if (!handleEvent_secondMouseDown(event, internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
 		case kInputMouseSecondUp:
 			_secondaryTapped = false;
-			if (!handleEvent_secondMouseUp(event, x, y))
+			if (!handleEvent_secondMouseUp(event, internalEvent.value1, internalEvent.value2))
 				return false;
 			break;
 		case kInputOrientationChanged:
-			handleEvent_orientationChanged(x);
+			handleEvent_orientationChanged(internalEvent.value1);
 			return false;
 			break;
 
@@ -90,11 +89,11 @@ bool OSystem_IPHONE::pollEvent(Common::Event &event) {
 			break;
 
 		case kInputKeyPressed:
-			handleEvent_keyPressed(event, x);
+			handleEvent_keyPressed(event, internalEvent.value1);
 			break;
 
 		case kInputSwipe:
-			if (!handleEvent_swipe(event, x))
+			if (!handleEvent_swipe(event, internalEvent.value1))
 				return false;
 			break;
 

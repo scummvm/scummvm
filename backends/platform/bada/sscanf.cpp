@@ -56,7 +56,7 @@ bool scanInt(const char **in, va_list *ap, int max) {
 
 	bool err = false;
 	if (end == *in || (max > 0 && (end - *in) > max)) {
-		err = true; 
+		err = true;
 	} else {
 		*arg = (int)n;
 		*in = end;

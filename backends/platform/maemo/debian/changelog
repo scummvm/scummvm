@@ -1,8 +1,20 @@
-scummvm (1.5.0~git) unstable; urgency=low
+scummvm (1.6.0~git) unstable; urgency=low
 
   * Development snapshot
 
- -- Tarek Soliman <tsoliman@scummvm.org>  Tue, 15 Nov 2011 14:56:57 -0600
+ -- Tarek Soliman <tsoliman@scummvm.org>  Tue, 10 Jul 2012 23:02:00 -0500
+
+scummvm (1.5.0) unstable; urgency=low
+
+  * 1.5.0 release
+
+ -- Tarek Soliman <tsoliman@scummvm.org>  Fri, 20 Jul 2012 14:48:44 -0500
+
+scummvm (1.4.1) unstable; urgency=low
+
+  * 1.4.1 release
+
+ -- Tarek Soliman <tsoliman@scummvm.org>  Wed, 11 Jan 2012 17:17:26 -0600
 
 scummvm (1.4.0) unstable; urgency=low
 

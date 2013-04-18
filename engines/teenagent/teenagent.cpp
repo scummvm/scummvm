@@ -389,7 +389,7 @@ bool TeenAgentEngine::showLogo() {
 				return true;
 			}
 
-			_system->copyRectToScreen((const byte *)s.pixels, s.w, s.x, s.y, s.w, s.h);
+			_system->copyRectToScreen(s.pixels, s.w, s.x, s.y, s.w, s.h);
 			_system->updateScreen();
 
 			_system->delayMillis(100);
@@ -535,9 +535,8 @@ Common::Error TeenAgentEngine::run() {
 
 	syncSoundSettings();
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
 	setMusic(1);
-	music->start();
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
 
 	int load_slot = Common::ConfigManager::instance().getInt("save_slot");
 	if (load_slot >= 0) {

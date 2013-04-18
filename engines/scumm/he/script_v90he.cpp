@@ -244,6 +244,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box2.right = pop();
 		_wizParams.box2.top = pop();
 		_wizParams.box2.left = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 134: // HE99+
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
@@ -253,6 +254,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.box2.right = pop();
 		_wizParams.box2.top = pop();
 		_wizParams.box2.left = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 135: // HE99+
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
@@ -260,6 +262,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.fillColor = pop();
 		_wizParams.box2.top = _wizParams.box2.bottom = pop();
 		_wizParams.box2.left = _wizParams.box2.right = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 136: // HE99+
 		_wizParams.processFlags |= kWPFFillColor | kWPFClipBox2;
@@ -267,6 +270,7 @@ void ScummEngine_v90he::o90_wizImageOps() {
 		_wizParams.fillColor = pop();
 		_wizParams.box2.top = _wizParams.box2.bottom = pop();
 		_wizParams.box2.left = _wizParams.box2.right = pop();
+		adjustRect(_wizParams.box2);
 		break;
 	case 137: // HE99+
 		_wizParams.processFlags |= kWPFDstResNum;
@@ -1488,6 +1492,7 @@ void ScummEngine_v90he::o90_floodFill() {
 		_floodFillParams.box.top = 0;
 		_floodFillParams.box.right = 639;
 		_floodFillParams.box.bottom = 479;
+		adjustRect(_floodFillParams.box);
 		break;
 	case 65:
 		_floodFillParams.y = pop();
@@ -1501,6 +1506,7 @@ void ScummEngine_v90he::o90_floodFill() {
 		_floodFillParams.box.right = pop();
 		_floodFillParams.box.top = pop();
 		_floodFillParams.box.left = pop();
+		adjustRect(_floodFillParams.box);
 		break;
 	case 255:
 		floodFill(&_floodFillParams, this);
@@ -1666,7 +1672,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 		{
 			Common::Rect r2;
 			_sprite->getSpriteBounds(args2[0], false, r2);
-			Common::Rect r1(args1[0], args1[1], args1[2], args1[3]);
+			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
 			if (r2.isValidRect() == false) {
 				push(0);
 				break;
@@ -1711,7 +1717,7 @@ void ScummEngine_v90he::o90_getPolygonOverlap() {
 		{
 			Common::Rect r2;
 			_sprite->getSpriteBounds(args2[0], true, r2);
-			Common::Rect r1(args1[0], args1[1], args1[2], args1[3]);
+			Common::Rect r1(args1[0], args1[1], args1[2] + 1, args1[3] + 1);
 			if (r2.isValidRect() == false) {
 				push(0);
 				break;
@@ -2373,8 +2379,8 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 	case 2001:
 		_logicHE->dispatch(args[1], num - 2, (int32 *)&args[2]);
 		break;
-	case 201102:
-		// Used in puttzoo iOS
+	case 201102: // Used in puttzoo iOS
+	case 20111014: // Used in spyfox iOS
 		break;
 	default:
 		error("o90_kernelSetFunctions: default case %d (param count %d)", args[0], num);

@@ -154,30 +154,10 @@ public:
 	MohawkSurface *decodeImage(Common::SeekableReadStream *stream);
 
 protected:
-	byte getBitsPerPixel() { return _info.bitsPerPixel; }
+	byte getBitsPerPixel() { return _bitsPerPixel; }
 
 private:
-	struct BitmapHeader {
-		uint16 type;
-		uint32 size;
-		uint16 res1;
-		uint16 res2;
-		uint32 imageOffset;
-	} _header;
-
-	struct InfoHeader {
-		uint32 size;
-		uint32 width;
-		uint32 height;
-		uint16 planes;
-		uint16 bitsPerPixel;
-		uint32 compression;
-		uint32 imageSize;
-		uint32 pixelsPerMeterX;
-		uint32 pixelsPerMeterY;
-		uint32 colorsUsed;
-		uint32 colorsImportant;
-	} _info;
+	uint16 _bitsPerPixel;
 };
 
 #endif

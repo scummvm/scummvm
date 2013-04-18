@@ -99,7 +99,7 @@ public:
 	void setCursorPalette(const byte *colors, uint start, uint num);
 
 	// Screen related
-	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 	Graphics::Surface *lockScreen();
 	void unlockScreen();
 	void updateScreen();
@@ -109,8 +109,8 @@ public:
 	void showOverlay();
 	void hideOverlay();
 	void clearOverlay();
-	void grabOverlay(OverlayColor *buf, int pitch);
-	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	void grabOverlay(void *buf, int pitch);
+	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
 	int16 getOverlayHeight();
 	int16 getOverlayWidth();
 	Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
@@ -118,7 +118,7 @@ public:
 	// Mouse related
 	bool showMouse(bool visible);
 	void warpMouse(int x, int y);
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
+	void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format);
 
 	// Events and input
 	bool pollEvent(Common::Event &event);

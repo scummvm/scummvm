@@ -34,7 +34,7 @@ namespace Gob {
 
 class GobEngine;
 class Surface;
-class RXYFile;
+class CMPFile;
 
 /** A DEC file, describing a "decal" (background).
  *
@@ -60,14 +60,6 @@ public:
 	               uint16 x, uint16 y, int32 transp = -1) const;
 
 private:
-	struct Layer {
-		Surface *surface;     ///< The surface containing the layer sprite.
-		RXYFile *coordinates; ///< The coordinates describing the layer sprite parts.
-
-		Layer();
-		~Layer();
-	};
-
 	struct Part {
 		uint8 layer;
 		uint8 part;
@@ -77,8 +69,8 @@ private:
 		bool transp;
 	};
 
-	typedef Common::Array<Layer> LayerArray;
-	typedef Common::Array<Part>  PartArray;
+	typedef Common::Array<CMPFile *> LayerArray;
+	typedef Common::Array<Part>      PartArray;
 
 	GobEngine *_vm;
 
@@ -88,7 +80,7 @@ private:
 
 	byte _hasPadding;
 
-	Surface *_backdrop;
+	CMPFile *_backdrop;
 
 	LayerArray _layers;
 	PartArray  _parts;
@@ -98,9 +90,7 @@ private:
 
 	void loadBackdrop(Common::SeekableSubReadStreamEndian &dec);
 
-	void loadLayer(Layer &layer, Common::SeekableSubReadStreamEndian &dec);
-	void loadLayer(Layer &layer, const Common::String &fileRXY,
-	                             const Common::String &fileCMP);
+	CMPFile *loadLayer(Common::SeekableSubReadStreamEndian &dec);
 
 	void loadParts(Common::SeekableSubReadStreamEndian &dec);
 	void loadPart(Part &part, Common::SeekableSubReadStreamEndian &dec);

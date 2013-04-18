@@ -24,7 +24,7 @@
 #ifndef TINSEL_PLAY_H	// prevent multiple includes
 #define TINSEL_PLAY_H
 
-#include "tinsel/coroutine.h"
+#include "common/coroutines.h"
 #include "tinsel/dw.h"
 #include "tinsel/multiobj.h"
 

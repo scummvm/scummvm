@@ -41,7 +41,7 @@ int AgiEngine::loadWords_v1(Common::File &f) {
 	int k;
 
 	debug(0, "Loading dictionary");
-	
+
 	// Loop through alphabet, as words in the dictionary file are sorted by
 	// first character
 	f.seek(f.pos() + 26 * 2, SEEK_SET);
@@ -131,7 +131,7 @@ int AgiEngine::findWord(const char *word, int *flen) {
 
 	*flen = 0;
 	Common::Array<AgiWord *> &a = _game.words[c];
-	
+
 	for (int i = 0; i < (int)a.size(); i++) {
 		int wlen = strlen(a[i]->word);
 		// Keep looking till we find the word itself, or the whole phrase.

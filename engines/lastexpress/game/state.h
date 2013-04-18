@@ -621,6 +621,8 @@ public:
 	State(LastExpressEngine *engine);
 	~State();
 
+	void reset();
+
 	// Accessors
 	Inventory  *getGameInventory() { return _inventory; }
 	Objects    *getGameObjects() { return _objects; }

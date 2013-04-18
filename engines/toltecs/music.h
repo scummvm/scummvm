@@ -37,8 +37,6 @@ public:
 	MusicPlayer(bool isGM = true);
 
 	void playMIDI(const byte *data, uint32 size, bool loop = false);
-	void pause();
-	void resume();
 	void stopAndClear();
 
 	// MidiDriver_BASE interface implementation

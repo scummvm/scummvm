@@ -161,49 +161,6 @@ GPHEventSource::GPHEventSource()
 	: _buttonStateL(false) {
 }
 
-void GPHEventSource::moveStick() {
-	bool stickBtn[32];
-
-	memcpy(stickBtn, _stickBtn, sizeof(stickBtn));
-
-	if ((stickBtn[0]) || (stickBtn[2]) || (stickBtn[4]) || (stickBtn[6]))
-		stickBtn[1] = stickBtn[3] = stickBtn[5] = stickBtn[7] = 0;
-
-	if ((stickBtn[1]) || (stickBtn[2]) || (stickBtn[3])) {
-		if (_km.x_down_count != 2) {
-			_km.x_vel = -1;
-			_km.x_down_count = 1;
-		} else
-			_km.x_vel = -4;
-	} else if ((stickBtn[5]) || (stickBtn[6]) || (stickBtn[7])) {
-		if (_km.x_down_count != 2) {
-			_km.x_vel = 1;
-			_km.x_down_count = 1;
-		} else
-			_km.x_vel = 4;
-	} else {
-		_km.x_vel = 0;
-		_km.x_down_count = 0;
-	}
-
-	if ((stickBtn[0]) || (stickBtn[1]) || (stickBtn[7])) {
-		if (_km.y_down_count != 2) {
-			_km.y_vel = -1;
-			_km.y_down_count = 1;
-		} else
-			_km.y_vel = -4;
-	} else if ((stickBtn[3]) || (stickBtn[4]) || (stickBtn[5])) {
-		if (_km.y_down_count != 2) {
-			_km.y_vel = 1;
-			_km.y_down_count = 1;
-		} else
-			_km.y_vel = 4;
-	} else {
-		_km.y_vel = 0;
-		_km.y_down_count = 0;
-	}
-}
-
 /* Custom handleMouseButtonDown/handleMouseButtonUp to deal with 'Tap Mode' for the touchscreen */
 
 bool GPHEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
@@ -268,19 +225,110 @@ bool GPHEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 
 bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 
-	_stickBtn[ev.jbutton.button] = 1;
 	event.kbd.flags = 0;
 
 	switch (ev.jbutton.button) {
 	case BUTTON_UP:
-	case BUTTON_UPLEFT:
-	case BUTTON_LEFT:
-	case BUTTON_DOWNLEFT:
+		if (_km.y_down_count != 2) {
+			_km.y_vel = -1;
+			_km.y_down_count = 1;
+		} else {
+			_km.y_vel = -4;
+		}
+		event.type = Common::EVENT_MOUSEMOVE;
+		processMouseEvent(event, _km.x, _km.y);
+		break;
 	case BUTTON_DOWN:
-	case BUTTON_DOWNRIGHT:
+		if (_km.y_down_count != 2) {
+			_km.y_vel = 1;
+			_km.y_down_count = 1;
+		} else {
+			_km.y_vel = 4;
+		}
+		event.type = Common::EVENT_MOUSEMOVE;
+		processMouseEvent(event, _km.x, _km.y);
+		break;
+	case BUTTON_LEFT:
+		if (_km.x_down_count != 2) {
+			_km.x_vel = -1;
+			_km.x_down_count = 1;
+		} else {
+			_km.x_vel = -4;
+		}
+		event.type = Common::EVENT_MOUSEMOVE;
+		processMouseEvent(event, _km.x, _km.y);
+		break;
 	case BUTTON_RIGHT:
+		if (_km.x_down_count != 3) {
+			_km.x_vel = 1;
+			_km.x_down_count = 1;
+		} else {
+			_km.x_vel = 4;
+		}
+		event.type = Common::EVENT_MOUSEMOVE;
+		processMouseEvent(event, _km.x, _km.y);
+		break;
+	case BUTTON_UPLEFT:
+		if (_km.x_down_count != 2) {
+			_km.x_vel = -1;
+			_km.x_down_count = 1;
+		} else {
+				_km.x_vel = -4;
+		}
+		if (_km.y_down_count != 2) {
+			_km.y_vel = -1;
+			_km.y_down_count = 1;
+		} else {
+			_km.y_vel = -4;
+		}
+		event.type = Common::EVENT_MOUSEMOVE;
+		processMouseEvent(event, _km.x, _km.y);
+		break;
 	case BUTTON_UPRIGHT:
-		moveStick();
+		if (_km.x_down_count != 2) {
+			_km.x_vel = 1;
+			_km.x_down_count = 1;
+		} else {
+			_km.x_vel = 4;
+		}
+		if (_km.y_down_count != 2) {
+			_km.y_vel = -1;
+			_km.y_down_count = 1;
+		} else {
+			_km.y_vel = -4;
+		}
+		event.type = Common::EVENT_MOUSEMOVE;
+		processMouseEvent(event, _km.x, _km.y);
+		break;
+	case BUTTON_DOWNLEFT:
+		if (_km.x_down_count != 2) {
+			_km.x_vel = -1;
+			_km.x_down_count = 1;
+		} else {
+			_km.x_vel = -4;
+		}
+		if (_km.y_down_count != 2) {
+			_km.y_vel = 1;
+			_km.y_down_count = 1;
+		} else {
+			_km.y_vel = 4;
+		}
+		event.type = Common::EVENT_MOUSEMOVE;
+		processMouseEvent(event, _km.x, _km.y);
+		break;
+	case BUTTON_DOWNRIGHT:
+		if (_km.x_down_count != 2) {
+			_km.x_vel = 1;
+			_km.x_down_count = 1;
+		} else {
+			_km.x_vel = 4;
+		}
+		if (_km.y_down_count != 2) {
+			_km.y_vel = 1;
+			_km.y_down_count = 1;
+		} else {
+			_km.y_vel = 4;
+		}
 		event.type = Common::EVENT_MOUSEMOVE;
 		processMouseEvent(event, _km.x, _km.y);
 		break;
@@ -391,7 +439,6 @@ bool GPHEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 
 bool GPHEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 
-	_stickBtn[ev.jbutton.button] = 0;
 	event.kbd.flags = 0;
 
 	switch (ev.jbutton.button) {
@@ -403,7 +450,10 @@ bool GPHEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	case BUTTON_DOWNRIGHT:
 	case BUTTON_RIGHT:
 	case BUTTON_UPRIGHT:
-		moveStick();
+		_km.y_vel = 0;
+		_km.y_down_count = 0;
+		_km.x_vel = 0;
+		_km.x_down_count = 0;
 		event.type = Common::EVENT_MOUSEMOVE;
 		processMouseEvent(event, _km.x, _km.y);
 		break;

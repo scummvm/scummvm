@@ -125,7 +125,7 @@ private:
 
 public:
 	// TODO: document this
-	reg_t getClassAddress(int classnr, ScriptLoadType lock, reg_t caller);
+	reg_t getClassAddress(int classnr, ScriptLoadType lock, uint16 callerSegment);
 
 	/**
 	 * Return a pointer to the specified script.
@@ -471,14 +471,6 @@ private:
 	void createClassTable();
 
 	SegmentId findFreeSegment() const;
-
-	/**
-	 * Check segment validity
-	 * @param[in] seg	The segment to validate
-	 * @return 			false if 'seg' is an invalid segment, true if
-	 * 					'seg' is a valid segment
-	 */
-	bool check(SegmentId seg);
 };
 
 } // End of namespace Sci

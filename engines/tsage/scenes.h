@@ -67,7 +67,7 @@ public:
 
 	void setZoomPercents(int yStart, int minPercent, int yEnd, int maxPercent);
 	void loadBackground(int xAmount, int yAmount);
-	
+
 	void loadSceneData(int sceneNum);
 };
 

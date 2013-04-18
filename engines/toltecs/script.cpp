@@ -183,10 +183,7 @@ void ScriptInterpreter::setMainScript(uint slotIndex) {
 }
 
 void ScriptInterpreter::runScript() {
-	uint32 lastScreenUpdate = 0;
-
 	while (!_vm->shouldQuit()) {
-
 		if (_vm->_movieSceneFlag)
 			_vm->_mouseButton = 0;
 
@@ -197,7 +194,7 @@ void ScriptInterpreter::runScript() {
 				_vm->saveGameState(_vm->_saveLoadSlot, _vm->_saveLoadDescription);
 			_vm->_saveLoadRequested = 0;
 		}
-			
+
 		if (_switchLocalDataNear) {
 			_switchLocalDataNear = false;
 			_localData = getSlotData(_regs.reg4);
@@ -214,20 +211,10 @@ void ScriptInterpreter::runScript() {
 			_localData = _stack + 2;
 			_switchLocalDataNear = true;
 		}
-		
+
 		byte opcode = readByte();
 		execOpcode(opcode);
-
-		// Update the screen at semi-regular intervals, else the mouse
-		// cursor will be jerky.
-		uint32 now = _vm->_system->getMillis();
-		if (now < lastScreenUpdate || now - lastScreenUpdate > 10) {
-			_vm->_system->updateScreen();
-			lastScreenUpdate = _vm->_system->getMillis();
-		}
-
 	}
-
 }
 
 byte ScriptInterpreter::readByte() {
@@ -547,7 +534,7 @@ const char *getVarName(uint variable) {
 
 int16 ScriptInterpreter::getGameVar(uint variable) {
 	debug(0, "ScriptInterpreter::getGameVar(%d{%s})", variable, getVarName(variable));
-	
+
 	switch (variable) {
 	case  0: return _vm->_mouseDisabled;
 	case  1: return _vm->_mouseY;
@@ -579,7 +566,7 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 
 void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 	debug(0, "ScriptInterpreter::setGameVar(%d{%s}, %d)", variable, getVarName(variable), value);
-	
+
 	switch (variable) {
 	case 0:
 		_vm->_mouseDisabled = value;
@@ -718,7 +705,7 @@ void ScriptInterpreter::saveState(Common::WriteStream *out) {
 	// Save stack
 	out->write(_stack, kScriptStackSize);
 	out->writeUint16LE(_savedSp);
-	
+
 	// Save IP
 	out->writeUint16LE((int16)(_code - getSlotData(_regs.reg4)));
 
@@ -1046,29 +1033,21 @@ void ScriptInterpreter::sfHandleInput() {
 			Only scancodes known to be used (so far) are converted
 		*/
 		switch (_vm->_keyState.keycode) {
-		case Common::KEYCODE_ESCAPE: 
+		case Common::KEYCODE_ESCAPE:
 			keyCode = 1;
 			break;
 		case Common::KEYCODE_F10:
 			keyCode = 68;
 			break;
 		default:
-			break;			
+			break;
 		}
 	}
 	localWrite16(varOfs, keyCode);
 }
 
 void ScriptInterpreter::sfRunOptionsScreen() {
-	_vm->_screen->loadMouseCursor(12);
-	_vm->_palette->loadAddPalette(9, 224);
-	_vm->_palette->setDeltaPalette(_vm->_palette->getMainPalette(), 7, 0, 31, 224);
-	_vm->_screen->finishTalkTextItems();
-	_vm->_screen->clearSprites();
-	CursorMan.showMouse(true);
-	_vm->_menuSystem->run();
-	_vm->_keyState.reset();
-	_switchLocalDataNear = true;
+	_vm->showMenu(kMenuIdMain);
 }
 
 /* NOTE: The opcodes sfPrecacheSprites, sfPrecacheSounds1, sfPrecacheSounds2 and
@@ -1076,7 +1055,7 @@ void ScriptInterpreter::sfRunOptionsScreen() {
 	of data so the game doesn't stall while playing (due to the slow speed of
 	CD-Drives back then). This is not needed in ScummVM since all supported
 	systems are fast enough to load data in-game. */
-		
+
 void ScriptInterpreter::sfPrecacheSprites() {
 	// See note above
 }
@@ -1102,7 +1081,9 @@ void ScriptInterpreter::sfSaveStackPtr() {
 }
 
 void ScriptInterpreter::sfPlayMovie() {
+	CursorMan.showMouse(false);
 	_vm->_moviePlayer->playMovie(arg16(3));
+	CursorMan.showMouse(true);
 }
 
 } // End of namespace Toltecs

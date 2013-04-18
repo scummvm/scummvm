@@ -91,9 +91,9 @@ void Cursor::setStyle(CursorStyle style) {
 
 	// Reuse the screen pixel format
 	Graphics::PixelFormat pf = g_system->getScreenFormat();
-	CursorMan.replaceCursor((const byte *)getCursorImage(style),
+	CursorMan.replaceCursor(getCursorImage(style),
 	                        32, 32, _cursors[style].hotspotX, _cursors[style].hotspotY,
-	                        0, 1, &pf);
+	                        0, false, &pf);
 }
 
 const uint16 *Cursor::getCursorImage(CursorStyle style) const {
@@ -128,7 +128,7 @@ Common::Rect Icon::draw(Graphics::Surface *surface) {
 		for (int i = 0; i < 32; i++) {
 
 			// Adjust brightness
-			if (_brightnessIndex == -1)
+			if (_brightnessIndex == -1 || _brightnessIndex >= ARRAYSIZE(brigthnessData))
 				*s = *image;
 			else
 				*s = (*image & brigthnessData[_brightnessIndex]) >> _brightnessIndex;

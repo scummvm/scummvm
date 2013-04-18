@@ -24,7 +24,6 @@
 #define LASTEXPRESS_AUGUST_H
 
 #include "lastexpress/entities/entity.h"
-#include "lastexpress/entities/entity_intern.h"
 
 namespace LastExpress {
 

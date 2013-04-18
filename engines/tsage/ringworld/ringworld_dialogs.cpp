@@ -59,7 +59,7 @@ void RightClickButton::highlight() {
 		_savedButton = NULL;
 	} else {
 		// Highlight button by getting the needed highlighted image resource
-		_savedButton = Surface_getArea(g_globals->gfxManager().getSurface(), _bounds);
+		_savedButton = surfaceGetArea(g_globals->gfxManager().getSurface(), _bounds);
 
 		uint size;
 		byte *imgData = g_resourceManager->getSubResource(7, 2, _buttonIndex, &size);
@@ -122,7 +122,7 @@ RightClickButton *RightClickDialog::findButton(const Common::Point &pt) {
 
 void RightClickDialog::draw() {
 	// Save the covered background area
-	_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
+	_savedArea = surfaceGetArea(g_globals->_gfxManagerInstance.getSurface(), _bounds);
 
 	// Draw the dialog image
 	g_globals->gfxManager().copyFrom(_surface, _bounds.left, _bounds.top);

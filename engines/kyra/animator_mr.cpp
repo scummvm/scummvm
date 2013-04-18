@@ -175,9 +175,7 @@ void KyraEngine_MR::refreshAnimObjects(int force) {
 			height -= height + y - (maxY + 1);
 
 		if (height > 0) {
-			_screen->hideMouse();
 			_screen->copyRegion(x, y, x, y, width, height, 2, 0, Screen::CR_NO_P_CHECK);
-			_screen->showMouse();
 		}
 
 		curObject->needRefresh = false;
@@ -209,9 +207,7 @@ void KyraEngine_MR::updateItemAnimations() {
 				nextFrame = true;
 				_screen->drawShape(2, getShapePtr(422 + i), 9, 0, 0, 0);
 				_screen->drawShape(2, getShapePtr(shpIdx), 9, 0, 0, 0);
-				_screen->hideMouse();
 				_screen->copyRegion(9, 0, _inventoryX[i], _inventoryY[i], 24, 20, 2, 0, Screen::CR_NO_P_CHECK);
-				_screen->showMouse();
 			}
 		}
 	}

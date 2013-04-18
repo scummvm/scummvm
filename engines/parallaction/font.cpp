@@ -29,7 +29,7 @@
 namespace Parallaction {
 
 
-extern byte _amigaTopazFont[];
+extern byte amigaTopazFont[];
 
 class BraFont : public Font {
 
@@ -675,7 +675,7 @@ void Parallaction_ns::initFonts() {
 		_introFont = _disk->loadFont("slide");
 	} else {
 		_dialogueFont = _disk->loadFont("comic");
-		Common::MemoryReadStream stream(_amigaTopazFont, 2600, DisposeAfterUse::NO);
+		Common::MemoryReadStream stream(amigaTopazFont, 2600, DisposeAfterUse::NO);
 		_labelFont = new AmigaFont(stream);
 		_menuFont = _disk->loadFont("slide");
 		_introFont = _disk->loadFont("intro");

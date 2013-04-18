@@ -36,46 +36,6 @@ class SeekableReadStream;
 
 namespace Graphics {
 
-/** A Windows cursor. */
-class WinCursor : public Cursor {
-public:
-	WinCursor();
-	~WinCursor();
-
-	/** Return the cursor's width. */
-	uint16 getWidth() const;
-	/** Return the cursor's height. */
-	uint16 getHeight() const;
-	/** Return the cursor's hotspot's x coordinate. */
-	uint16 getHotspotX() const;
-	/** Return the cursor's hotspot's y coordinate. */
-	uint16 getHotspotY() const;
-	/** Return the cursor's transparent key. */
-	byte getKeyColor() const;
-
-	const byte *getSurface() const { return _surface; }
-
-	const byte *getPalette() const { return _palette; }
-	byte getPaletteStartIndex() const { return 0; }
-	uint16 getPaletteCount() const { return 256; }
-
-	/** Read the cursor's data out of a stream. */
-	bool readFromStream(Common::SeekableReadStream &stream);
-
-private:
-	byte *_surface;
-	byte _palette[256 * 3];
-
-	uint16 _width;    ///< The cursor's width.
-	uint16 _height;   ///< The cursor's height.
-	uint16 _hotspotX; ///< The cursor's hotspot's x coordinate.
-	uint16 _hotspotY; ///< The cursor's hotspot's y coordinate.
-	byte   _keyColor; ///< The cursor's transparent key
-
-	/** Clear the cursor. */
-	void clear();
-};
-
 /**
  * A structure holding an array of cursors from a single Windows Executable cursor group.
  *
@@ -91,7 +51,7 @@ struct WinCursorGroup {
 
 	struct CursorItem {
 		Common::WinResourceID id;
-		WinCursor *cursor;
+		Cursor *cursor;
 	};
 
 	Common::Array<CursorItem> cursors;

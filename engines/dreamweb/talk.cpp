@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -52,7 +53,7 @@ void DreamWebEngine::talk() {
 		readMouse();
 		animPointer();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		_getBack = 0;
@@ -67,9 +68,8 @@ void DreamWebEngine::talk() {
 	redrawMainScrn();
 	workToScreenM();
 	if (_speechLoaded) {
-		cancelCh1();
-		_volumeDirection = -1;
-		_volumeTo = 0;
+		_sound->cancelCh1();
+		_sound->volumeChange(0, -1);
 	}
 }
 
@@ -99,12 +99,10 @@ void DreamWebEngine::startTalk() {
 	printDirect(&str, 66, &y, 241, true);
 
 	if (hasSpeech()) {
-		_speechLoaded = false;
-		loadSpeech('R', _realLocation, 'C', 64*(_character & 0x7F));
+		_speechLoaded = _sound->loadSpeech('R', _realLocation, 'C', 64*(_character & 0x7F));
 		if (_speechLoaded) {
-			_volumeDirection = 1;
-			_volumeTo = 6;
-			playChannel1(50 + 12);
+			_sound->volumeChange(6, 1);
+			_sound->playChannel1(62);
 		}
 	}
 }
@@ -155,9 +153,9 @@ void DreamWebEngine::doSomeTalk() {
 
 		printDirect(str, 164, 64, 144, false);
 
-		loadSpeech('R', _realLocation, 'C', (64 * (_character & 0x7F)) + _talkPos);
+		_speechLoaded = _sound->loadSpeech('R', _realLocation, 'C', (64 * (_character & 0x7F)) + _talkPos);
 		if (_speechLoaded)
-			playChannel1(62);
+			_sound->playChannel1(62);
 
 		_pointerMode = 3;
 		workToScreenM();
@@ -181,9 +179,9 @@ void DreamWebEngine::doSomeTalk() {
 			convIcons();
 			printDirect(str, 48, 128, 144, false);
 
-			loadSpeech('R', _realLocation, 'C', (64 * (_character & 0x7F)) + _talkPos);
+			_speechLoaded = _sound->loadSpeech('R', _realLocation, 'C', (64 * (_character & 0x7F)) + _talkPos);
 			if (_speechLoaded)
-				playChannel1(62);
+				_sound->playChannel1(62);
 
 			_pointerMode = 3;
 			workToScreenM();
@@ -211,7 +209,7 @@ bool DreamWebEngine::hangOnPQ() {
 		readMouse();
 		animPointer();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		checkCoords(quitList);
@@ -220,11 +218,11 @@ bool DreamWebEngine::hangOnPQ() {
 			// Quit conversation
 			delPointer();
 			_pointerMode = 0;
-			cancelCh1();
+			_sound->cancelCh1();
 			return true;
 		}
 
-		if (_speechLoaded && _channel1Playing == 255) {
+		if (_speechLoaded && !_sound->isChannel1Playing()) {
 			speechFlag++;
 			if (speechFlag == 40)
 				break;
@@ -237,7 +235,7 @@ bool DreamWebEngine::hangOnPQ() {
 }
 
 void DreamWebEngine::redes() {
-	if (_channel1Playing != 255 || _talkMode != 2) {
+	if (_sound->isChannel1Playing() || _talkMode != 2) {
 		blank();
 		return;
 	}

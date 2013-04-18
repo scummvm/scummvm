@@ -297,7 +297,7 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 		_paint16->eraseRect(rect);
 		_paint16->frameRect(rect);
 		rect.grow(-2);
-		_ports->textGreyedOutput(style & 1 ? false : true);
+		_ports->textGreyedOutput(!(style & SCI_CONTROLS_STYLE_ENABLED));
 		_text16->Box(text, false, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
 		_ports->textGreyedOutput(false);
 		rect.grow(1);

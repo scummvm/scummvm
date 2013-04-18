@@ -80,7 +80,8 @@ enum SoundFlag {
 	kFlagMusic       = 0x5000010,
 	kFlagType3       = 0x6000000,
 	kFlagLoop        = 0x6001008,
-	kFlagType9       = 0x7000000
+	kFlagType9       = 0x7000000,
+	kFlagNIS         = 0x7002010
 };
 
 enum SoundState {
@@ -1731,62 +1732,6 @@ enum ActionIndex {
 
 	kActionEnd
 };
-
-//////////////////////////////////////////////////////////////////////////
-// Functors classes used by the engine
-//////////////////////////////////////////////////////////////////////////
-
-// FIXME is this achievable with the existing Functor1Mem function
-template<class Arg, class Res, class T>
-class Functor1MemConst : public Common::Functor1<Arg, Res> {
-public:
-	typedef Res (T::*FuncType)(Arg) const;
-
-	Functor1MemConst(T *t, const FuncType &func) : _t(t), _func(func) {}
-
-	bool isValid() const { return _func != 0 && _t != 0; }
-	Res operator()(Arg v1) const {
-		return (_t->*_func)(v1);
-	}
-private:
-	mutable T *_t;
-	const FuncType _func;
-};
-
-// FIXME move this to existing func.h file
-template<class Arg1, class Arg2, class Arg3, class Arg4, class Result>
-struct QuaternaryFunction {
-	typedef Arg1 FirstArgumentType;
-	typedef Arg2 SecondArgumentType;
-	typedef Arg3 ThirdArgumentType;
-	typedef Arg4 FourthArgumentType;
-	typedef Result ResultType;
-};
-
-template<class Arg1, class Arg2, class Arg3, class Arg4, class Res>
-struct Functor4 : public QuaternaryFunction<Arg1, Arg2, Arg3, Arg4, Res> {
-	virtual ~Functor4() {}
-
-	virtual bool isValid() const = 0;
-	virtual Res operator()(Arg1, Arg2, Arg3, Arg4) const = 0;
-};
-
-template<class Arg1, class Arg2, class Arg3, class Arg4, class Res, class T>
-class Functor4Mem : public Functor4<Arg1, Arg2, Arg3, Arg4, Res> {
-public:
-	typedef Res (T::*FuncType)(Arg1, Arg2, Arg3, Arg4);
-
-	Functor4Mem(T *t, const FuncType &func) : _t(t), _func(func) {}
-
-	bool isValid() const { return _func != 0 && _t != 0; }
-	Res operator()(Arg1 v1, Arg2 v2, Arg3 v3, Arg4 v4) const {
-		return (_t->*_func)(v1, v2, v3, v4);
-	}
-private:
-	mutable T *_t;
-	const FuncType _func;
-};
-
 
 } // End of namespace LastExpress
 

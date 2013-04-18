@@ -64,7 +64,7 @@ bool PEResources::loadFromEXE(SeekableReadStream *stream) {
 	if (!stream)
 		return false;
 
-	if (stream->readUint16BE() != 'MZ')
+	if (stream->readUint16BE() != MKTAG16('M', 'Z'))
 		return false;
 
 	stream->skip(58);

@@ -32,6 +32,8 @@ public:
 	MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version);
 
 protected:
+	StringList _enableLanguageExtensions;
+	StringList _disableEditAndContinue;
 
 	void createWorkspace(const BuildSetup &setup);
 

@@ -723,7 +723,7 @@ void GfxAnimate::printAnimateList(Console *con) {
 	const AnimateList::iterator end = _list.end();
 
 	for (it = _list.begin(); it != end; ++it) {
-		Script *scr = _s->_segMan->getScriptIfLoaded(it->object.segment);
+		Script *scr = _s->_segMan->getScriptIfLoaded(it->object.getSegment());
 		int16 scriptNo = scr ? scr->getScriptNumber() : -1;
 
 		con->DebugPrintf("%04x:%04x (%s), script %d, view %d (%d, %d), pal %d, "

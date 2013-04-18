@@ -143,7 +143,7 @@ protected:
 	virtual void grabPalette(byte *colors, uint start, uint num);
 
 public:
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	virtual void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual void updateScreen();
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
@@ -152,8 +152,8 @@ public:
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual void clearOverlay();
-	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	virtual void grabOverlay(void *buf, int pitch);
+	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
 	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<5551>(); }
@@ -161,7 +161,7 @@ public:
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
+	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 255, bool dontScale = false, const Graphics::PixelFormat *format = NULL);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual bool pollEvent(Common::Event &event);

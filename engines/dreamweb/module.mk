@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	dreamweb.o \
 	keypad.o \
 	monitor.o \
+	mouse.o \
 	newplace.o \
 	object.o \
 	pathfind.o \

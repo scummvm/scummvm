@@ -28,13 +28,13 @@
 #include "lastexpress/data/cursor.h"
 #include "lastexpress/data/scene.h"
 #include "lastexpress/data/sequence.h"
-#include "lastexpress/data/snd.h"
 #include "lastexpress/data/subtitle.h"
 
 #include "lastexpress/fight/fight.h"
 
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/beetle.h"
+#include "lastexpress/game/entities.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
@@ -44,15 +44,12 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
 #include "common/debug-channels.h"
-#include "common/events.h"
 #include "common/md5.h"
 
 namespace LastExpress {
@@ -88,7 +85,6 @@ Debugger::Debugger(LastExpressEngine *engine) : _engine(engine), _command(NULL),
 	DCmd_Register("entity",    WRAP_METHOD(Debugger, cmdEntity));
 
 	// Misc
-	DCmd_Register("loadgame",  WRAP_METHOD(Debugger, cmdLoadGame));
 	DCmd_Register("chapter",   WRAP_METHOD(Debugger, cmdSwitchChapter));
 	DCmd_Register("clear",     WRAP_METHOD(Debugger, cmdClear));
 
@@ -142,6 +138,9 @@ void Debugger::copyCommand(int argc, const char **argv) {
 
 	for (int i = 0; i < _numParams; i++) {
 		_commandParams[i] = (char *)malloc(strlen(argv[i]) + 1);
+		if (_commandParams[i] == NULL)
+			error("[Debugger::copyCommand] Cannot allocate memory for command parameters");
+
 		memset(_commandParams[i], 0, strlen(argv[i]) + 1);
 		strcpy(_commandParams[i], argv[i]);
 	}
@@ -155,9 +154,18 @@ void Debugger::callCommand() {
 		(*_command)(_numParams, const_cast<const char **>(_commandParams));
 }
 
-void Debugger::loadArchive(ArchiveIndex index) const {
-	_engine->getResourceManager()->loadArchive(index);
-	getScenes()->loadSceneDataFile(index);
+bool Debugger::loadArchive(int index) {
+	if (index < 1 || index > 3) {
+		DebugPrintf("Invalid cd number (was: %d, valid: [1-3])\n", index);
+		return false;
+	}
+
+	if (!_engine->getResourceManager()->loadArchive((ArchiveIndex)index))
+		return false;
+
+	getScenes()->loadSceneDataFile((ArchiveIndex)index);
+
+	return true;
 }
 
 // Restore loaded archive
@@ -236,8 +244,10 @@ bool Debugger::cmdListFiles(int argc, const char **argv) {
 		Common::String filter(const_cast<char *>(argv[1]));
 
 		// Load the proper archive
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive(getNumber(argv[2])))
+				return true;
+		}
 
 		Common::ArchiveMemberList list;
 		int count = _engine->getResourceManager()->listMatchingMembers(list, filter);
@@ -320,8 +330,10 @@ bool Debugger::cmdShowFrame(int argc, const char **argv) {
 		Common::String filename(const_cast<char *>(argv[1]));
 		filename += ".seq";
 
-		if (argc == 4)
-			loadArchive((ArchiveIndex)getNumber(argv[3]));
+		if (argc == 4) {
+			if (!loadArchive(getNumber(argv[3])))
+				return true;
+		}
 
 		if (!_engine->getResourceManager()->hasFile(filename)) {
 			DebugPrintf("Cannot find file: %s\n", filename.c_str());
@@ -380,8 +392,10 @@ bool Debugger::cmdShowBg(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 		Common::String filename(const_cast<char *>(argv[1]));
 
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive(getNumber(argv[2])))
+				return true;
+		}
 
 		if (!_engine->getResourceManager()->hasFile(filename + ".BG")) {
 			DebugPrintf("Cannot find file: %s\n", (filename + ".BG").c_str());
@@ -433,8 +447,10 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 		Common::String filename(const_cast<char *>(argv[1]));
 		filename += ".seq";
 
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive(getNumber(argv[2])))
+				return true;
+		}
 
 		if (!_engine->getResourceManager()->hasFile(filename)) {
 			DebugPrintf("Cannot find file: %s\n", filename.c_str());
@@ -508,8 +524,10 @@ bool Debugger::cmdPlaySeq(int argc, const char **argv) {
 bool Debugger::cmdPlaySnd(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive(getNumber(argv[2])))
+				return true;
+		}
 
 		// Add .SND at the end of the filename if needed
 		Common::String name(const_cast<char *>(argv[1]));
@@ -523,7 +541,7 @@ bool Debugger::cmdPlaySnd(int argc, const char **argv) {
 
 		_engine->_system->getMixer()->stopAll();
 
-		_soundStream->load(getArchive(name));
+		_soundStream->load(getArchive(name), 16);
 
 		if (argc == 3)
 			restoreArchive();
@@ -545,8 +563,10 @@ bool Debugger::cmdPlaySbe(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 		Common::String filename(const_cast<char *>(argv[1]));
 
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive(getNumber(argv[2])))
+				return true;
+		}
 
 		filename += ".sbe";
 
@@ -608,11 +628,13 @@ bool Debugger::cmdPlayNis(int argc, const char **argv) {
 	if (argc == 2 || argc == 3) {
 		Common::String name(const_cast<char *>(argv[1]));
 
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive(getNumber(argv[2])))
+				return true;
+		}
 
 		// If we got a nis filename, check that the file exists
-		if (name.contains('.') && _engine->getResourceManager()->hasFile(name)) {
+		if (name.contains('.') && !_engine->getResourceManager()->hasFile(name)) {
 			DebugPrintf("Cannot find file: %s\n", name.c_str());
 			return true;
 		}
@@ -665,8 +687,10 @@ bool Debugger::cmdLoadScene(int argc, const char **argv) {
 		SceneIndex index = (SceneIndex)getNumber(argv[1]);
 
 		// Check args
-		if (argc == 3)
-			loadArchive((ArchiveIndex)getNumber(argv[2]));
+		if (argc == 3) {
+			if (!loadArchive(getNumber(argv[2])))
+				return true;
+		}
 
 		if (index > 2500) {
 			DebugPrintf("Error: invalid index value (0-2500)");
@@ -1088,30 +1112,6 @@ label_error:
 		DebugPrintf("Syntax: entity <index>\n");
 		for (int i = 0; i < 40; i += 4)
 			DebugPrintf(" %s - %d        %s - %d        %s - %d        %s - %d\n", ENTITY_NAME(i), i, ENTITY_NAME(i+1), i+1, ENTITY_NAME(i+2), i+2, ENTITY_NAME(i+3), i+3);
-	}
-
-	return true;
-}
-
-/**
- * Command: loads a game
- *
- * @param argc The argument count.
- * @param argv The values.
- *
- * @return true if it was handled, false otherwise
- */
-bool Debugger::cmdLoadGame(int argc, const char **argv) {
-	if (argc == 2) {
-		int id = getNumber(argv[1]);
-
-		if (id == 0 || id > 6)
-			goto error;
-
-		getSaveLoad()->loadGame((GameId)(id - 1));
-	} else {
-error:
-		DebugPrintf("Syntax: loadgame <id> (id=1-6)\n");
 	}
 
 	return true;

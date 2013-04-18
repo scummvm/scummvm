@@ -245,7 +245,7 @@ void GPHGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined (DEBUG)
+#if defined(DEBUG)
 	assert(_hwscreen != NULL);
 	assert(_hwscreen->map->sw_data != NULL);
 #endif
@@ -486,7 +486,13 @@ bool GPHGraphicsManager::loadGFXMode() {
 		if (_videoMode.aspectRatioCorrection)
 			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
 	}
-	return SurfaceSdlGraphicsManager::loadGFXMode();
+	SurfaceSdlGraphicsManager::loadGFXMode();
+
+	// The old GP2X hacked SDL needs this after any call to SDL_SetVideoMode
+	// and it does not hurt other devices.
+	SDL_ShowCursor(SDL_DISABLE);
+
+	return true;
 }
 
 bool GPHGraphicsManager::hasFeature(OSystem::Feature f) {

@@ -121,11 +121,11 @@ void MystCursorManager::setCursor(uint16 id) {
 
 	// Myst ME stores some cursors as 24bpp images instead of 8bpp
 	if (surface->format.bytesPerPixel == 1) {
-		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
+		CursorMan.replaceCursor(surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
 		CursorMan.replaceCursorPalette(mhkSurface->getPalette(), 0, 256);
 	} else {
 		Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
-		CursorMan.replaceCursor((byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), 1, &pixelFormat);
+		CursorMan.replaceCursor(surface->pixels, surface->w, surface->h, hotspotX, hotspotY, pixelFormat.RGBToColor(255, 255, 255), false, &pixelFormat);
 	}
 
 	_vm->_needsUpdate = true;
@@ -157,7 +157,7 @@ void NECursorManager::setCursor(uint16 id) {
 		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_exe, id);
 
 		if (cursorGroup) {
-			Graphics::WinCursor *cursor = cursorGroup->cursors[0].cursor;
+			Graphics::Cursor *cursor = cursorGroup->cursors[0].cursor;
 			CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 			CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
 			return;
@@ -257,7 +257,7 @@ void PECursorManager::setCursor(uint16 id) {
 		Graphics::WinCursorGroup *cursorGroup = Graphics::WinCursorGroup::createCursorGroup(*_exe, id);
 
 		if (cursorGroup) {
-			Graphics::WinCursor *cursor = cursorGroup->cursors[0].cursor;
+			Graphics::Cursor *cursor = cursorGroup->cursors[0].cursor;
 			CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(), cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
 			CursorMan.replaceCursorPalette(cursor->getPalette(), 0, 256);
 			delete cursorGroup;

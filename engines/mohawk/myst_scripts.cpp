@@ -161,7 +161,7 @@ void MystScriptParser::runScript(MystScript script, MystResource *invokingResour
 	_vm->_gfx->enableDrawingTimeSimulation(true);
 
 	for (uint16 i = 0; i < script->size(); i++) {
-		MystScriptEntry &entry = script->operator[](i);
+		MystScriptEntry &entry = (*script)[i];
 		debugC(kDebugScript, "\tOpcode %d: %d", i, entry.opcode);
 
 		if (entry.type == kMystScriptNormal)
@@ -207,7 +207,7 @@ MystScript MystScriptParser::readScript(Common::SeekableReadStream *stream, Myst
 	script->resize(opcodeCount);
 
 	for (uint16 i = 0; i < opcodeCount; i++) {
-		MystScriptEntry &entry = script->operator[](i);
+		MystScriptEntry &entry = (*script)[i];
 		entry.type = type;
 
 		// Resource ID only exists in INIT and EXIT scripts

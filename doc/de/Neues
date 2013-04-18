@@ -1,33 +1,91 @@
-﻿Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
+Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
 Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
-1.5.0 (??.??.????)
+1.5.0 (27.07.2012)
  Neue Spiele:
+   - Unterstützung für Backyard Baseball 2003 hinzugefügt.
+   - Unterstützung für Blue Force hinzugefügt.
+   - Unterstützung für Darby der Drache hinzugefügt.
+   - Unterstützung für Dreamweb hinzugefügt.
+   - Unterstützung für Geisha hinzugefügt.
+   - Unterstützung für Gregor und der Heißluftballon hinzugefügt.
+   - Unterstützung für Magic Tales: Liam Finds a Story hinzugefügt.
+   - Unterstützung für Once Upon A Time: Little Red Riding Hood hinzugefügt.
+   - Unterstützung für Sleeping Cub's Test of Courage hinzugefügt.
    - Unterstützung für Soltys hinzugefügt.
+   - Unterstützung für The Princess and the Crab hinzugefügt.
 
- SDL-Portierungen:
-   - Unterstützung für OpenGL hinzugefügt. (GSoC-Aufgabe)
+Allgemein:
+   - MT-32-Emulationscode auf den neusten Stand des Munt-Projekt-Schnappschusses
+     gebracht. Die Emulation hat sich drastisch verbessert.
+   - Unterstützung für TrueType-Schriftarten über FreeType2 in unserer
+     grafischen Benutzeroberfläche hinzugefügt. Damit einhergehend wurde auch
+     GNU FreeFont zu unserem modernen Thema hinzugefügt. Beachten Sie, dass
+     nicht alle Ports hiervon profitieren.
+   - Baskische Übersetzung hinzugefügt.
+   - Spiel- und engine-spezifische Optionen in den Engines AGI, DREAMWEB, KYRA,
+     QUEEN, SKY und SCI hinzugefügt. Es ist nun möglich, diese über den
+     Engine-Reiter anzusprechen, wenn man ein Spiel hinzufügt oder dessen
+     Spieloptionen bearbeitet. In den meisten Fällen müssen Sie jedes Spiel
+     einmal starten oder diese alle in ScummVMs Spieleliste neu hinzufügen, um
+     den Reiter für spielspezifische Optionen zu erhalten.
+   - Aussehen von vorhersagendem Eingabedialog verbessert.
+   - Verschiedene Verbesserungen der grafischen Benutzeroberfläche.
+
+ Baphomets Fluch 1:
+   - Falsche Soundeffekte in der DOS-/Windows-Demo korrigiert.
+   - Unterstützung für PlayStation-Videos hinzugefügt.
+   - Fehlende Untertitel zur Demo hinzugefügt.
+
+ Baphomets Fluch 2:
+   - Unterstützung für PlayStation-Videos hinzugefügt.
 
  Cine:
    - Roland-MT-32-Ausgabetreiber integriert.
+
+ Drascula:
+   - Spanische Untertitel zur Zwischensequenz mit Von Braun
+     hinzugefügt (3069981: Keine Untertitel in Szene mit „Von Braun“).
+
+ Gob:
+   - Absturz in Lost in Time beseitigt.
+   - AdLib-Abspieler umgeschrieben. Den nun funktionierenden MDY-Abspieler in
+     Fascination und Geisha aktiviert.
 
  SCUMM:
    - Unterstützung für die Macintosh-Version von SPY Fox in Hold the Mustard
      hinzugefügt.
    - Dialog zur Auswahl des Schwierigkeitsgrads für Loom FM-TOWNS hinzugefügt.
+   - Grafische Störungen in HE98-Version von Pajama Sam's Lost & Found
+     beseitigt.
 
- Sword1:
-   - Falsche Soundeffekte in der DOS-/Windows-Demo korrigiert.
+ iPhone-Portierung:
+   - Verhalten von Geste für F5 (Menü) geändert, um stattdessen das Hauptmenü zu
+     öffnen.
+   - Unterstützung für spezifische Mauszeigerpaletten hinzugefügt. Hierdurch
+     wird beispielsweise der rote Zeiger im modernen Thema verwendet.
+   - Unterstützung für Seitenverhältniskorrektur hinzugefügt.
+   - Unterstützung für 16 Bits pro Pixel bei Spielen integriert.
+
+ Maemo-Portierung:
+   - Unterstützung für Nokia 770 mit dem Betriebssystem OS2008 HE hinzugefügt.
+   - Konfigurierbare Tastenzuweisung hinzugefügt.
 
  Windows-Portierung:
-   - Standardmäßiger Speicherort für Spielstände bei
+   - Standard-Verzeichnis für Spielstände bei
      Windows NT4/2000/XP/Vista/7 geändert.
+     (Die Stapelverarbeitungsdatei migration.bat kann verwendet werden, um die
+     Spielstände vom alten Standard-Verzeichnis in das neue zu kopieren.)
 
 1.4.1 (27.01.2012)
  AGOS:
    - Das Laden von Videos direkt aus InstallShield-Archiven in der
      Windows-Version von Floyd - Es gibt noch Helden korrigiert.
+
+ Baphomets Fluch 2:
+   - Leichte Grafikverbesserung für PSX-Version.
+
 
  BASS:
    - Unterstützung für verbesserte Musik von James Woodcock hinzugefügt
@@ -51,9 +109,6 @@ Sie auf Englisch unter:
    - Fehler in einem Fall beseitigt, bei welchem bei Beginn eines neuen Liedes
      nicht alle Kanäle zurückgesetzt wurden und somit einige Noten falsch
      klangen.
-
- Sword2:
-   - Leichte Grafikverbesserung für PSX-Version.
 
 1.4.0 (11.11.2011)
  Neue Spiele:
@@ -82,6 +137,12 @@ Sie auf Englisch unter:
    - Laden und Speichern in der PC-Version von Waxworks repariert.
    - Musik in den PC-Versionen von Elvira 1 und 2 sowie Waxworks korrigiert.
 
+ Baphomets Fluch 1:
+   - Aufhängen in Windows-Demo beseitigt.
+   - Absturz beseitigt, wenn Untertitelpaket für Zwischensequenzen in
+     Macintosh-Version verwendet wird.
+
+
  Groovie:
    - Unterstützung für die iOS-Version von The 7th Guest hinzugefügt.
 
@@ -104,11 +165,6 @@ Sie auf Englisch unter:
      Indiana Jones and the Last Crusade.
    - Palettenhandhabung in der Amiga-Version von Indiana Jones and the
      Fate of Atlantis verbessert.
-
- Sword1:
-   - Aufhängen in Windows-Demo beseitigt.
-   - Absturz beseitigt, wenn Untertitelpaket für Zwischensequenzen in
-     Macintosh-Version verwendet wird.
 
  Tinsel:
    - Löschen von Spielständen aus der Liste der Speicherstände korrigiert (im
@@ -189,7 +245,7 @@ Sie auf Englisch unter:
 
  Drascula:
    - Deutsche und französische Untertitel zur Zwischensequenz mit Von Braun
-     hinzugefügt (3069981: Keine Untertitel in Szene mit “Von Braun“).
+     hinzugefügt (3069981: Keine Untertitel in Szene mit „Von Braun“).
    - Französische Übersetzung des Spiels verbessert.
    - Unterstützung für Rückkehr zur Spieleliste hinzugefügt.
 
@@ -1313,7 +1369,7 @@ Sie auf Englisch unter:
    - Grafische Benutzeroberfläche für SoundFont-Einstellungen hinzugefügt
      (werden momentan nur von CoreAudio und FluidSynth-MIDI-Treibern
      verwendet).
-   - Der MPEG-Spieler konnte aussetzen, wenn der Ton vorzeitig endet.
+   - Der MPEG-Abspieler konnte aussetzen, wenn der Ton vorzeitig endet.
    - Automatische Skalierung der Benutzeroberfläche verbessert, um den vollen
      Vorteil des Bildschirms auszunutzen.
    - Fehlerbeseitigungen für GCC 4
@@ -1667,7 +1723,3 @@ Sie auf Englisch unter:
 
 0.0.1 (08.10.2001)
 - Erste Version
-
-
-(Deutscher Text basiert auf NEWS mit SHA1-ID:
-ab2b020ff10b2e5d25cc93757029838c7eac6b41)

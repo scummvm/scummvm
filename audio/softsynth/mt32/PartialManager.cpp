@@ -148,7 +148,7 @@ bool PartialManager::abortFirstPolyPreferHeldWhereReserveExceeded(int minPart) {
 bool PartialManager::freePartials(unsigned int needed, int partNum) {
 	// CONFIRMED: Barring bugs, this matches the real LAPC-I according to information from Mok.
 
-	// BUG: There's a bug in the LAPC-I implementation: 
+	// BUG: There's a bug in the LAPC-I implementation:
 	// When allocating for rhythm part, or when allocating for a part that is using fewer partials than it has reserved,
 	// held and playing polys on the rhythm part can potentially be aborted before releasing polys on the rhythm part.
 	// This bug isn't present on MT-32.

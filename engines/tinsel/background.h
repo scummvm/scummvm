@@ -24,9 +24,9 @@
 #ifndef TINSEL_BACKGND_H     // prevent multiple includes
 #define TINSEL_BACKGND_H
 
+#include "common/coroutines.h"
 #include "common/frac.h"
 #include "common/rect.h"
-#include "tinsel/coroutine.h"
 #include "tinsel/dw.h"	// for SCNHANDLE
 #include "tinsel/palette.h"	// palette definitions
 

@@ -23,15 +23,18 @@
 #ifndef SWORD1_ANIMATION_H
 #define SWORD1_ANIMATION_H
 
-#include "video/dxa_decoder.h"
-#include "video/video_decoder.h"
-
 #include "common/list.h"
-
-#include "audio/audiostream.h"
 
 #include "sword1/screen.h"
 #include "sword1/sound.h"
+
+namespace Graphics {
+struct Surface;
+}
+
+namespace Video {
+class VideoDecoder;
+}
 
 namespace Sword1 {
 
@@ -55,21 +58,9 @@ public:
 	}
 };
 
-class DXADecoderWithSound : public Video::DXADecoder {
-public:
-	DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle);
-	~DXADecoderWithSound() {}
-
-	uint32 getElapsedTime() const;
-
-private:
-	Audio::Mixer *_mixer;
-	Audio::SoundHandle *_bgSoundHandle;
-};
-
 class MoviePlayer {
 public:
-	MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Video::VideoDecoder *decoder, DecoderType decoderType);
+	MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, OSystem *system, Video::VideoDecoder *decoder, DecoderType decoderType);
 	virtual ~MoviePlayer();
 	bool load(uint32 id);
 	void play();
@@ -78,7 +69,6 @@ protected:
 	SwordEngine *_vm;
 	Text *_textMan;
 	ResMan *_resMan;
-	Audio::Mixer *_snd;
 	OSystem *_system;
 	Common::List<MovieText> _movieTexts;
 	int _textX, _textY, _textWidth, _textHeight;
@@ -88,8 +78,6 @@ protected:
 	DecoderType _decoderType;
 
 	Video::VideoDecoder *_decoder;
-	Audio::SoundHandle *_bgSoundHandle;
-	Audio::AudioStream *_bgSoundStream;
 
 	bool playVideo();
 	void performPostProcessing(byte *screen);
@@ -100,7 +88,7 @@ protected:
 	void convertColor(byte r, byte g, byte b, float &h, float &s, float &v);
 };
 
-MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *resMan, Audio::Mixer *snd, OSystem *system);
+MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, ResMan *resMan, OSystem *system);
 
 } // End of namespace Sword1
 

@@ -106,7 +106,7 @@ GUI::Debugger *HugoEngine::getDebugger() {
 	return _console;
 }
 
-status_t &HugoEngine::getGameStatus() {
+Status &HugoEngine::getGameStatus() {
 	return _status;
 }
 
@@ -249,24 +249,24 @@ Common::Error HugoEngine::run() {
 
 	initStatus();                                   // Initialize game status
 	initConfig();                                   // Initialize user's config
-	if (!_status.doQuitFl) {
+	if (!_status._doQuitFl) {
 		initialize();
 		resetConfig();                              // Reset user's config
 		initMachine();
 
 		// Start the state machine
-		_status.viewState = kViewIntroInit;
+		_status._viewState = kViewIntroInit;
 
 		int16 loadSlot = Common::ConfigManager::instance().getInt("save_slot");
 		if (loadSlot >= 0) {
-			_status.skipIntroFl = true;
+			_status._skipIntroFl = true;
 			_file->restoreGame(loadSlot);
 		} else {
 			_file->saveGame(0, "New Game");
 		}
 	}
 
-	while (!_status.doQuitFl) {
+	while (!_status._doQuitFl) {
 		_screen->drawBoundaries();
 		g_system->updateScreen();
 		runMachine();
@@ -289,20 +289,20 @@ Common::Error HugoEngine::run() {
 				_mouse->setRightButton();
 				break;
 			case Common::EVENT_QUIT:
-				_status.doQuitFl = true;
+				_status._doQuitFl = true;
 				break;
 			default:
 				break;
 			}
 		}
-		if (_status.helpFl) {
-			_status.helpFl = false;
+		if (_status._helpFl) {
+			_status._helpFl = false;
 			_file->instructions();
 		}
 
 		_mouse->mouseHandler();                     // Mouse activity - adds to display list
 		_screen->displayList(kDisplayDisplay);      // Blit the display list to screen
-		_status.doQuitFl |= shouldQuit();           // update game quit flag
+		_status._doQuitFl |= shouldQuit();           // update game quit flag
 	}
 	return Common::kNoError;
 }
@@ -323,10 +323,10 @@ void HugoEngine::initMachine() {
  * Hugo game state machine - called during onIdle
  */
 void HugoEngine::runMachine() {
-	status_t &gameStatus = getGameStatus();
+	Status &gameStatus = getGameStatus();
 
 	// Don't process if gameover
-	if (gameStatus.gameOverFl)
+	if (gameStatus._gameOverFl)
 		return;
 
 	_curTime = g_system->getMillis();
@@ -338,19 +338,19 @@ void HugoEngine::runMachine() {
 
 	_lastTime = _curTime;
 
-	switch (gameStatus.viewState) {
+	switch (gameStatus._viewState) {
 	case kViewIdle:                                 // Not processing state machine
 		_screen->hideCursor();
 		_intro->preNewGame();                       // Any processing before New Game selected
 		break;
 	case kViewIntroInit:                            // Initialization before intro begins
 		_intro->introInit();
-		gameStatus.viewState = kViewIntro;
+		gameStatus._viewState = kViewIntro;
 		break;
 	case kViewIntro:                                // Do any game-dependant preamble
 		if (_intro->introPlay()) {                  // Process intro screen
 			_scheduler->newScreen(0);               // Initialize first screen
-			gameStatus.viewState = kViewPlay;
+			gameStatus._viewState = kViewPlay;
 		}
 		break;
 	case kViewPlay:                                 // Playing game
@@ -368,8 +368,8 @@ void HugoEngine::runMachine() {
 		_inventory->runInventory();                 // Process Inventory state machine
 		break;
 	case kViewExit:                                 // Game over or user exited
-		gameStatus.viewState = kViewIdle;
-		_status.doQuitFl = true;
+		gameStatus._viewState = kViewIdle;
+		_status._doQuitFl = true;
 		break;
 	}
 }
@@ -427,7 +427,7 @@ bool HugoEngine::loadHugoDat() {
 	_scheduler->loadActListArr(in);
 	_scheduler->loadAlNewscrIndex(in);
 	_hero = &_object->_objects[kHeroIndex];         // This always points to hero
-	_screen_p = &(_object->_objects[kHeroIndex].screenIndex); // Current screen is hero's
+	_screenPtr = &(_object->_objects[kHeroIndex]._screenIndex); // Current screen is hero's
 	_heroImage = kHeroIndex;                        // Current in use hero image
 
 	for (int varnt = 0; varnt < _numVariant; varnt++) {
@@ -527,33 +527,20 @@ void HugoEngine::initPlaylist(bool playlist[kMaxTunes]) {
  */
 void HugoEngine::initStatus() {
 	debugC(1, kDebugEngine, "initStatus");
-	_status.storyModeFl      = false;               // Not in story mode
-	_status.gameOverFl       = false;               // Hero not knobbled yet
-	_status.lookFl           = false;               // Toolbar "look" button
-	_status.recallFl         = false;               // Toolbar "recall" button
-	_status.newScreenFl      = false;               // Screen not just loaded
-	_status.godModeFl        = false;               // No special cheats allowed
-	_status.showBoundariesFl = false;               // Boundaries hidden by default
-	_status.doQuitFl         = false;
-	_status.skipIntroFl      = false;
-	_status.helpFl           = false;
+	_status._storyModeFl      = false;               // Not in story mode
+	_status._gameOverFl       = false;               // Hero not knobbled yet
+	_status._lookFl           = false;               // Toolbar "look" button
+	_status._recallFl         = false;               // Toolbar "recall" button
+	_status._newScreenFl      = false;               // Screen not just loaded
+	_status._godModeFl        = false;               // No special cheats allowed
+	_status._showBoundariesFl = false;               // Boundaries hidden by default
+	_status._doQuitFl         = false;
+	_status._skipIntroFl      = false;
+	_status._helpFl           = false;
 
 	// Initialize every start of new game
-	_status.tick            = 0;                    // Tick count
-	_status.viewState       = kViewIdle;            // View state
-
-// Strangerke - Suppress as related to playback
-//	_status.recordFl      = false;                  // Not record mode
-//	_status.playbackFl    = false;                  // Not playback mode
-// Strangerke - Not used ?
-//	_status.mmtime        = false;                  // Multimedia timer support
-//	_status.helpFl        = false;                  // Not calling WinHelp()
-//	_status.demoFl        = false;                  // Not demo mode
-//	_status.path[0]       = 0;                      // Path to write files
-//	_status.screenWidth   = 0;                      // Desktop screen width
-//	_status.saveTick      = 0;                      // Time of last save
-//	_status.saveSlot      = 0;                      // Slot to save/restore game
-//	_status.textBoxFl     = false;                  // Not processing a text box
+	_status._tick            = 0;                    // Tick count
+	_status._viewState       = kViewIdle;            // View state
 }
 
 /**
@@ -562,11 +549,11 @@ void HugoEngine::initStatus() {
 void HugoEngine::initConfig() {
 	debugC(1, kDebugEngine, "initConfig()");
 
-	_config.musicFl = true;                            // Music state initially on
-	_config.soundFl = true;                            // Sound state initially on
-	_config.turboFl = false;                           // Turbo state initially off
-	initPlaylist(_config.playlist);                    // Initialize default tune playlist
-	_file->readBootFile();                             // Read startup structure
+	_config._musicFl = true;                            // Music state initially on
+	_config._soundFl = true;                            // Sound state initially on
+	_config._turboFl = false;                           // Turbo state initially off
+	initPlaylist(_config._playlist);                    // Initialize default tune playlist
+	_file->readBootFile();                              // Read startup structure
 }
 
 /**
@@ -577,7 +564,7 @@ void HugoEngine::resetConfig() {
 
 	// Find first tune and play it
 	for (int16 i = 0; i < kMaxTunes; i++) {
-		if (_config.playlist[i]) {
+		if (_config._playlist[i]) {
 			_sound->playMusic(i);
 			break;
 		}
@@ -587,7 +574,7 @@ void HugoEngine::resetConfig() {
 void HugoEngine::initialize() {
 	debugC(1, kDebugEngine, "initialize");
 
-	_maze.enabledFl = false;
+	_maze._enabledFl = false;
 	_line[0] = '\0';
 
 	_sound->initSound();
@@ -639,10 +626,10 @@ void HugoEngine::readScreenFiles(const int screenNum) {
 	memcpy(_screen->getBackBuffer(), _screen->getFrontBuffer(), sizeof(_screen->getFrontBuffer())); // Make a copy
 
 	// Workaround for graphic glitches in DOS versions. Cleaning the overlays fix the problem
-	memset(_object->_objBound, '\0', sizeof(overlay_t));
-	memset(_object->_boundary, '\0', sizeof(overlay_t));
-	memset(_object->_overlay,  '\0', sizeof(overlay_t));
-	memset(_object->_ovlBase,  '\0', sizeof(overlay_t));
+	memset(_object->_objBound, '\0', sizeof(Overlay));
+	memset(_object->_boundary, '\0', sizeof(Overlay));
+	memset(_object->_overlay,  '\0', sizeof(Overlay));
+	memset(_object->_ovlBase,  '\0', sizeof(Overlay));
 
 	_file->readOverlay(screenNum, _object->_boundary, kOvlBoundary); // Boundary file
 	_file->readOverlay(screenNum, _object->_overlay, kOvlOverlay);   // Overlay file
@@ -660,7 +647,7 @@ void HugoEngine::readScreenFiles(const int screenNum) {
 void HugoEngine::setNewScreen(const int screenNum) {
 	debugC(1, kDebugEngine, "setNewScreen(%d)", screenNum);
 
-	*_screen_p = screenNum;                         // HERO object
+	*_screenPtr = screenNum;                        // HERO object
 	_object->setCarriedScreen(screenNum);           // Carried objects
 }
 
@@ -679,10 +666,10 @@ void HugoEngine::calcMaxScore() {
 void HugoEngine::endGame() {
 	debugC(1, kDebugEngine, "endGame");
 
-	if (_boot.registered != kRegRegistered)
+	if (_boot._registered != kRegRegistered)
 		Utils::notifyBox(_text->getTextEngine(kEsAdvertise));
 	Utils::notifyBox(Common::String::format("%s\n%s", _episode, getCopyrightString()));
-	_status.viewState = kViewExit;
+	_status._viewState = kViewExit;
 }
 
 bool HugoEngine::canLoadGameStateCurrently() {
@@ -690,11 +677,11 @@ bool HugoEngine::canLoadGameStateCurrently() {
 }
 
 bool HugoEngine::canSaveGameStateCurrently() {
-	return (_status.viewState == kViewPlay);
+	return (_status._viewState == kViewPlay);
 }
 
 int8 HugoEngine::getTPS() const {
-	return ((_config.turboFl) ? kTurboTps : _normalTPS);
+	return ((_config._turboFl) ? kTurboTps : _normalTPS);
 }
 
 void HugoEngine::syncSoundSettings() {

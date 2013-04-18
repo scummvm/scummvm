@@ -62,7 +62,7 @@ class NSArchive : public Common::Archive {
 	Common::SeekableReadStream	*_stream;
 
 	char			_archiveDir[MAX_ARCHIVE_ENTRIES][32];
-	uint32			_archiveLenghts[MAX_ARCHIVE_ENTRIES];
+	uint32			_archiveLengths[MAX_ARCHIVE_ENTRIES];
 	uint32			_archiveOffsets[MAX_ARCHIVE_ENTRIES];
 	uint32			_numFiles;
 
@@ -103,8 +103,8 @@ NSArchive::NSArchive(Common::SeekableReadStream *stream, Common::Platform platfo
 	uint32 dataOffset = (isSmallArchive) ? SMALL_ARCHIVE_DATA_OFS : NORMAL_ARCHIVE_DATA_OFS;
 	for (uint16 i = 0; i < _numFiles; i++) {
 		_archiveOffsets[i] = dataOffset;
-		_archiveLenghts[i] = _stream->readUint32BE();
-		dataOffset += _archiveLenghts[i];
+		_archiveLengths[i] = _stream->readUint32BE();
+		dataOffset += _archiveLengths[i];
 	}
 
 }
@@ -133,7 +133,7 @@ Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::S
 	debugC(9, kDebugDisk, "NSArchive::createReadStreamForMember: '%s' found in slot %i", name.c_str(), index);
 
 	int offset = _archiveOffsets[index];
-	int endOffset = _archiveOffsets[index] + _archiveLenghts[index];
+	int endOffset = _archiveOffsets[index] + _archiveLengths[index];
 	return new Common::SeekableSubReadStream(_stream, offset, endOffset, DisposeAfterUse::NO);
 }
 
@@ -262,8 +262,15 @@ Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
 
 Script* Disk_ns::loadLocation(const char *name) {
 	char path[PATH_LEN];
+	const char *charName = _vm->_char.getBaseName();
 
-	sprintf(path, "%s%s/%s.loc", _vm->_char.getBaseName(), _language.c_str(), name);
+	// WORKAROUND: Special case for the Multilingual DOS version: during the ending
+	// sequence, it tries to load a non-existing file using "Dinor" as a character
+	// name. In this case, the character name should be just "dino".
+	if (!strcmp(charName, "Dinor"))
+		charName = "dino";
+
+	sprintf(path, "%s%s/%s.loc", charName, _language.c_str(), name);
 	debugC(3, kDebugDisk, "Disk_ns::loadLocation(%s): trying '%s'", name, path);
 	Common::SeekableReadStream *stream = tryOpenFile(path);
 
@@ -328,7 +335,7 @@ GfxObj* DosDisk_ns::loadTalk(const char *name) {
 	}
 
 	char v20[30];
-	if (_engineFlags & kEngineTransformedDonna) {
+	if (g_engineFlags & kEngineTransformedDonna) {
 		sprintf(v20, "%stta.cnv", name);
 	} else {
 		sprintf(v20, "%stal.cnv", name);
@@ -832,7 +839,7 @@ void AmigaDisk_ns::decodeCnv(byte *data, uint16 numFrames, uint16 width, uint16 
 	assert(buf);
 	stream->read(buf, rawsize);
 	unpackBitmap(data, buf, numFrames, bytesPerPlane, height);
-	delete []buf;
+	delete[] buf;
 }
 
 #undef NUM_PLANES

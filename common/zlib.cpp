@@ -85,6 +85,60 @@ bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen,
 	return true;
 }
 
+enum {
+	kTempBufSize = 65536
+};
+
+bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcLen) {
+	if (!dst || !dstLen || !src || !srcLen)
+		return false;
+
+	// See if we have sync bytes. If so, just use our function for that.
+	if (srcLen >= 4 && READ_BE_UINT32(src + srcLen - 4) == 0xFFFF)
+		return inflateZlibHeaderless(dst, dstLen, src, srcLen);
+
+	// Otherwise, we have some custom code we get to use here.
+
+	byte *temp = (byte *)malloc(kTempBufSize);
+
+	uint32 bytesRead = 0, bytesProcessed = 0;
+	while (bytesRead < srcLen) {
+		uint16 chunkSize = READ_LE_UINT16(src + bytesRead);
+		bytesRead += 2;
+
+		// Initialize zlib
+		z_stream stream;
+		stream.next_in = const_cast<byte *>(src + bytesRead);
+		stream.avail_in = chunkSize;
+		stream.next_out = temp;
+		stream.avail_out = kTempBufSize;
+		stream.zalloc = Z_NULL;
+		stream.zfree = Z_NULL;
+		stream.opaque = Z_NULL;
+
+		// Negative MAX_WBITS tells zlib there's no zlib header
+		int err = inflateInit2(&stream, -MAX_WBITS);
+		if (err != Z_OK)
+			return false;
+
+		err = inflate(&stream, Z_FINISH);
+		if (err != Z_OK && err != Z_STREAM_END) {
+			inflateEnd(&stream);
+			free(temp);
+			return false;
+		}
+
+		memcpy(dst + bytesProcessed, temp, stream.total_out);
+		bytesProcessed += stream.total_out;
+
+		inflateEnd(&stream);
+		bytesRead += chunkSize;
+	}
+
+	free(temp);
+	return true;
+}
+
 /**
  * A simple wrapper class which can be used to wrap around an arbitrary
  * other SeekableReadStream and will then provide on-the-fly decompression support.
@@ -107,7 +161,7 @@ protected:
 
 public:
 
-	GZipReadStream(SeekableReadStream *w) : _wrapped(w), _stream() {
+	GZipReadStream(SeekableReadStream *w, uint32 knownSize = 0) : _wrapped(w), _stream() {
 		assert(w != 0);
 
 		// Verify file header is correct
@@ -122,7 +176,8 @@ public:
 			_origSize = w->readUint32LE();
 		} else {
 			// Original size not available in zlib format
-			_origSize = 0;
+			// use an otherwise known size if supplied.
+			_origSize = knownSize;
 		}
 		_pos = 0;
 		w->seek(0, SEEK_SET);
@@ -336,7 +391,7 @@ public:
 
 #endif	// USE_ZLIB
 
-SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped) {
+SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint32 knownSize) {
 #if defined(USE_ZLIB)
 	if (toBeWrapped) {
 		uint16 header = toBeWrapped->readUint16BE();
@@ -345,7 +400,7 @@ SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped) {
 				      header % 31 == 0));
 		toBeWrapped->seek(-2, SEEK_CUR);
 		if (isCompressed)
-			return new GZipReadStream(toBeWrapped);
+			return new GZipReadStream(toBeWrapped, knownSize);
 	}
 #endif
 	return toBeWrapped;

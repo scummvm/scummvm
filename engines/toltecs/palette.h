@@ -66,7 +66,7 @@ protected:
 		int16 id;
 		byte index, count;
 	};
-	
+
 	typedef Common::Array<PaletteFragment> PaletteFragmentArray;
 
 	ToltecsEngine *_vm;

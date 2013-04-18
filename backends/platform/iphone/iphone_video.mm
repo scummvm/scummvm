@@ -65,23 +65,8 @@ void iPhone_updateScreen() {
 	}
 }
 
-bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY) {
-	id event = [g_iPhoneViewInstance getEvent];
-	if (event == nil) {
-		return false;
-	}
-
-	id type = [event objectForKey:@"type"];
-
-	if (type == nil) {
-		printf("fetchEvent says: No type!\n");
-		return false;
-	}
-
-	*outEvent = [type intValue];
-	*outX = [[event objectForKey:@"x"] intValue];
-	*outY = [[event objectForKey:@"y"] intValue];
-	return true;
+bool iPhone_fetchEvent(InternalEvent *event) {
+	return [g_iPhoneViewInstance fetchEvent:event];
 }
 
 uint getSizeNextPOT(uint size) {
@@ -197,6 +182,8 @@ const char *iPhone_getDocumentsDir() {
 	_firstTouch = NULL;
 	_secondTouch = NULL;
 
+	_eventLock = [[NSLock alloc] init];
+
 	_gameScreenVertCoords[0] = _gameScreenVertCoords[1] =
 	    _gameScreenVertCoords[2] = _gameScreenVertCoords[3] =
 	    _gameScreenVertCoords[4] = _gameScreenVertCoords[5] =
@@ -242,6 +229,7 @@ const char *iPhone_getDocumentsDir() {
 	_videoContext.overlayTexture.free();
 	_videoContext.mouseTexture.free();
 
+	[_eventLock dealloc];
 	[super dealloc];
 }
 
@@ -280,6 +268,11 @@ const char *iPhone_getDocumentsDir() {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); printOpenGLError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter); printOpenGLError();
+	// We use GL_CLAMP_TO_EDGE here to avoid artifacts when linear filtering
+	// is used. If we would not use this for example the cursor in Loom would
+	// have a line/border artifact on the right side of the covered rect.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); printOpenGLError();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); printOpenGLError();
 }
 
 - (void)setGraphicsMode {
@@ -488,7 +481,7 @@ const char *iPhone_getDocumentsDir() {
 		else if (_videoContext.screenWidth == 640 && _videoContext.screenHeight == 400)
 			adjustedHeight = 480;
 	}
-	
+
 	float overlayPortraitRatio;
 
 	if (_orientation == UIDeviceOrientationLandscapeLeft || _orientation ==  UIDeviceOrientationLandscapeRight) {
@@ -575,23 +568,23 @@ const char *iPhone_getDocumentsDir() {
 	}
 }
 
-- (id)getEvent {
-	if (_events == nil || [_events count] == 0) {
-		return nil;
-	}
-
-	id event = [_events objectAtIndex: 0];
-
-	[_events removeObjectAtIndex: 0];
-
-	return event;
+- (void)addEvent:(InternalEvent)event {
+	[_eventLock lock];
+	_events.push_back(event);
+	[_eventLock unlock];
 }
 
-- (void)addEvent:(NSDictionary *)event {
-	if (_events == nil)
-		_events = [[NSMutableArray alloc] init];
+- (bool)fetchEvent:(InternalEvent *)event {
+	[_eventLock lock];
+	if (_events.empty()) {
+		[_eventLock unlock];
+		return false;
+	}
 
-	[_events addObject: event];
+	*event = *_events.begin();
+	_events.pop_front();
+	[_eventLock unlock];
+	return true;
 }
 
 /**
@@ -664,14 +657,7 @@ const char *iPhone_getDocumentsDir() {
 		return;
 	}
 
-	[self addEvent:
-		[[NSDictionary alloc] initWithObjectsAndKeys:
-		 [NSNumber numberWithInt:kInputOrientationChanged], @"type",
-		 [NSNumber numberWithInt:orientation], @"x",
-		 [NSNumber numberWithInt:0], @"y",
-		 nil
-		]
-	];
+	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -686,14 +672,7 @@ const char *iPhone_getDocumentsDir() {
 			return;
 
 		_firstTouch = touch;
-		[self addEvent:
-		 [[NSDictionary alloc] initWithObjectsAndKeys:
-		  [NSNumber numberWithInt:kInputMouseDown], @"type",
-		  [NSNumber numberWithInt:x], @"x",
-		  [NSNumber numberWithInt:y], @"y",
-		  nil
-		  ]
-		 ];
+		[self addEvent:InternalEvent(kInputMouseDown, x, y)];
 		break;
 		}
 
@@ -704,14 +683,7 @@ const char *iPhone_getDocumentsDir() {
 			return;
 
 		_secondTouch = touch;
-		[self addEvent:
-		 [[NSDictionary alloc] initWithObjectsAndKeys:
-		  [NSNumber numberWithInt:kInputMouseSecondDown], @"type",
-		  [NSNumber numberWithInt:x], @"x",
-		  [NSNumber numberWithInt:y], @"y",
-		  nil
-		  ]
-		 ];
+		[self addEvent:InternalEvent(kInputMouseSecondDown, x, y)];
 		break;
 		}
 	}
@@ -727,27 +699,13 @@ const char *iPhone_getDocumentsDir() {
 			if (![self getMouseCoords:point eventX:&x eventY:&y])
 				return;
 
-			[self addEvent:
-			 [[NSDictionary alloc] initWithObjectsAndKeys:
-			  [NSNumber numberWithInt:kInputMouseDragged], @"type",
-			  [NSNumber numberWithInt:x], @"x",
-			  [NSNumber numberWithInt:y], @"y",
-			  nil
-			  ]
-			 ];
+			[self addEvent:InternalEvent(kInputMouseDragged, x, y)];
 		} else if (touch == _secondTouch) {
 			CGPoint point = [touch locationInView:self];
 			if (![self getMouseCoords:point eventX:&x eventY:&y])
 				return;
 
-			[self addEvent:
-			 [[NSDictionary alloc] initWithObjectsAndKeys:
-			  [NSNumber numberWithInt:kInputMouseSecondDragged], @"type",
-			  [NSNumber numberWithInt:x], @"x",
-			  [NSNumber numberWithInt:y], @"y",
-			  nil
-			  ]
-			 ];
+			[self addEvent:InternalEvent(kInputMouseSecondDragged, x, y)];
 		}
 	}
 }
@@ -763,14 +721,7 @@ const char *iPhone_getDocumentsDir() {
 		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
-		[self addEvent:
-		 [[NSDictionary alloc] initWithObjectsAndKeys:
-		  [NSNumber numberWithInt:kInputMouseUp], @"type",
-		  [NSNumber numberWithInt:x], @"x",
-		  [NSNumber numberWithInt:y], @"y",
-		  nil
-		  ]
-		 ];
+		[self addEvent:InternalEvent(kInputMouseUp, x, y)];
 		break;
 		}
 
@@ -780,14 +731,7 @@ const char *iPhone_getDocumentsDir() {
 		if (![self getMouseCoords:point eventX:&x eventY:&y])
 			return;
 
-		[self addEvent:
-		 [[NSDictionary alloc] initWithObjectsAndKeys:
-		  [NSNumber numberWithInt:kInputMouseSecondUp], @"type",
-		  [NSNumber numberWithInt:x], @"x",
-		  [NSNumber numberWithInt:y], @"y",
-		  nil
-		  ]
-		 ];
+		[self addEvent:InternalEvent(kInputMouseSecondUp, x, y)];
 		break;
 		}
 	}
@@ -797,14 +741,7 @@ const char *iPhone_getDocumentsDir() {
 }
 
 - (void)handleKeyPress:(unichar)c {
-	[self addEvent:
-		[[NSDictionary alloc] initWithObjectsAndKeys:
-		 [NSNumber numberWithInt:kInputKeyPressed], @"type",
-		 [NSNumber numberWithInt:c], @"x",
-		 [NSNumber numberWithInt:0], @"y",
-		 nil
-		]
-	];
+	[self addEvent:InternalEvent(kInputKeyPressed, c, 0)];
 }
 
 - (BOOL)canHandleSwipes {
@@ -814,38 +751,16 @@ const char *iPhone_getDocumentsDir() {
 - (int)swipe:(int)num withEvent:(struct __GSEvent *)event {
 	//printf("swipe: %i\n", num);
 
-	[self addEvent:
-		[[NSDictionary alloc] initWithObjectsAndKeys:
-		 [NSNumber numberWithInt:kInputSwipe], @"type",
-		 [NSNumber numberWithInt:num], @"x",
-		 [NSNumber numberWithInt:0], @"y",
-		 nil
-		]
-	];
-
+	[self addEvent:InternalEvent(kInputSwipe, num, 0)];
 	return 0;
 }
 
 - (void)applicationSuspend {
-	[self addEvent:
-		[[NSDictionary alloc] initWithObjectsAndKeys:
-		 [NSNumber numberWithInt:kInputApplicationSuspended], @"type",
-		 [NSNumber numberWithInt:0], @"x",
-		 [NSNumber numberWithInt:0], @"y",
-		 nil
-		]
-	];
+	[self addEvent:InternalEvent(kInputApplicationSuspended, 0, 0)];
 }
 
 - (void)applicationResume {
-	[self addEvent:
-		[[NSDictionary alloc] initWithObjectsAndKeys:
-		 [NSNumber numberWithInt:kInputApplicationResumed], @"type",
-		 [NSNumber numberWithInt:0], @"x",
-		 [NSNumber numberWithInt:0], @"y",
-		 nil
-		]
-	];
+	[self addEvent:InternalEvent(kInputApplicationResumed, 0, 0)];
 }
 
 @end

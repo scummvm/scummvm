@@ -95,8 +95,23 @@ bool Screen::init() {
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
 	_isAmiga = (_vm->gameFlags().platform == Common::kPlatformAmiga);
 
-	if (ConfMan.hasKey("render_mode"))
-		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+	// We only check the "render_mode" setting for both Eye of the Beholder
+	// games here, since all the other games do not support the render_mode
+	// setting or handle it differently, like Kyra 1 PC-98. This avoids
+	// graphics glitches and crashes in other games, when the user sets his
+	// global render_mode setting to EGA for example.
+	// TODO/FIXME: It would be nice not to hardcode this. But there is no
+	// trivial/non annoying way to do mode checks in an easy fashion right
+	// now.
+	// In a more general sense, we might want to think about a way to only
+	// pass valid config values, as in values which the engine can work with,
+	// to the engines. We already limit the selection via our GUIO flags in
+	// the game specific settings, but this is not enough due to global
+	// settings allowing everything.
+	if (_vm->game() == GI_EOB1 || _vm->game() == GI_EOB2) {
+		if (ConfMan.hasKey("render_mode"))
+			_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+	}
 
 	// CGA and EGA modes use additional pages to do the CGA/EGA specific graphics conversions.
 	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderEGA) {
@@ -126,7 +141,7 @@ bool Screen::init() {
 			if (!font)
 				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
 
-			_fonts[FID_SJIS_FNT] = new SJISFont(this, font, _sjisInvisibleColor, _use16ColorMode, !_use16ColorMode);
+			_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, _use16ColorMode, !_use16ColorMode);
 		}
 	}
 
@@ -1113,8 +1128,6 @@ void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
 
 void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2) {
 	assert(x1 >= 0 && y1 >= 0);
-	hideMouse();
-
 	fillRect(x1, y1, x2, y1 + 1, color1);
 	fillRect(x2 - 1, y1, x2, y2, color1);
 
@@ -1122,8 +1135,6 @@ void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color
 	drawClippedLine(x1 + 1, y1 + 1, x1 + 1, y2 - 1, color2);
 	drawClippedLine(x1, y2 - 1, x2 - 1, y2 - 1, color2);
 	drawClippedLine(x1, y2, x2, y2, color2);
-
-	showMouse();
 }
 
 void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
@@ -3584,8 +3595,8 @@ void AMIGAFont::unload() {
 	memset(_chars, 0, sizeof(_chars));
 }
 
-SJISFont::SJISFont(Screen *s, Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool outlineSize)
-    : _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color), _screen(s) {
+SJISFont::SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool outlineSize)
+    : _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color) {
 	assert(_font);
 
 	_font->setDrawingMode(outlineSize ? Graphics::FontSJIS::kOutlineMode : Graphics::FontSJIS::kDefaultMode);

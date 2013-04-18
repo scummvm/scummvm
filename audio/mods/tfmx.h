@@ -20,11 +20,8 @@
  *
  */
 
-// see if all engines using this class are DISABLED
-#if !defined(ENABLE_SCUMM)
-
-// normal Header Guard
-#elif !defined(AUDIO_MODS_TFMX_H)
+// Only compiled if SCUMM is built-in or we're building for dynamic modules
+#if !defined(AUDIO_MODS_TFMX_H) && (defined(ENABLE_SCUMM) || defined(DYNAMIC_MODULES))
 #define AUDIO_MODS_TFMX_H
 
 #include "audio/mods/paula.h"

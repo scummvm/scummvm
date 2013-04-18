@@ -36,7 +36,7 @@
 
 namespace Cine {
 
-bool disableSystemMenu = false;
+int16 disableSystemMenu = 0;
 bool inMenu;
 
 int16 commandVar3[4];
@@ -99,8 +99,7 @@ byte isInPause = 0;
  * Bit on = mouse button down
  * Bit off = mouse button up
  */
-enum MouseButtonState
-{
+enum MouseButtonState {
 	kLeftMouseButton  = (1 << 0),
 	kRightMouseButton = (1 << 1)
 };
@@ -271,7 +270,7 @@ int16 getObjectUnderCursor(uint16 x, uint16 y) {
 			} else if (it->type == 1 && gfxGetBit(xdif, ydif, g_cine->_animDataTable[frame].data(), g_cine->_animDataTable[frame]._width * 4)) {
 				return it->objIdx;
 			}
-		} else if (it->type == 0)	{ // use generated mask
+		} else if (it->type == 0) { // use generated mask
 			if (gfxGetBit(xdif, ydif, g_cine->_animDataTable[frame].mask(), g_cine->_animDataTable[frame]._width)) {
 				return it->objIdx;
 			}
@@ -341,7 +340,7 @@ void CineEngine::makeSystemMenu() {
 	int16 mouseX, mouseY, mouseButton;
 	int16 selectedSave;
 
-	if (!disableSystemMenu) {
+	if (disableSystemMenu != 1) {
 		inMenu = true;
 
 		do {
@@ -358,128 +357,122 @@ void CineEngine::makeSystemMenu() {
 		systemCommand = makeMenuChoice(systemMenu, numEntry, mouseX, mouseY, 140);
 
 		switch (systemCommand) {
-		case 0: // Pause
-			{
-				renderer->drawString(otherMessages[2], 0);
-				waitPlayerInput();
-				break;
+		case 0: { // Pause
+			renderer->drawString(otherMessages[2], 0);
+			waitPlayerInput();
+			break;
+		}
+		case 1: { // Restart Game
+			getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
+			if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
+				_restartRequested = true;
 			}
-		case 1: // Restart Game
-			{
-				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
-				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
-					_restartRequested = true;
-				}
-				break;
+			break;
+		}
+		case 2: { // Quit
+			getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
+			if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
+				quitGame();
 			}
-		case 2: // Quit
-			{
-				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
-				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
-					quitGame();
-				}
-				break;
-			}
-		case 3:	// Select save drive... change ?
-			{
-				break;
-			}
-		case 4:	// load game
-			{
-				if (loadSaveDirectory()) {
+			break;
+		}
+		case 3: { // Select save drive... change ?
+			break;
+		}
+		case 4: { // load game
+			if (loadSaveDirectory()) {
 //					int16 selectedSave;
 
+				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
+				selectedSave = makeMenuChoice(currentSaveName, 10, mouseX, mouseY + 8, 180);
+
+				if (selectedSave >= 0) {
+					char saveNameBuffer[256];
+					sprintf(saveNameBuffer, "%s.%1d", _targetName.c_str(), selectedSave);
+
 					getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
-					selectedSave = makeMenuChoice(currentSaveName, 10, mouseX, mouseY + 8, 180);
+					if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
+						char loadString[256];
 
-					if (selectedSave >= 0) {
-						char saveNameBuffer[256];
-						sprintf(saveNameBuffer, "%s.%1d", _targetName.c_str(), selectedSave);
+						sprintf(loadString, otherMessages[3], currentSaveName[selectedSave]);
+						renderer->drawString(loadString, 0);
 
-						getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
-						if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
-							char loadString[256];
-
-							sprintf(loadString, otherMessages[3], currentSaveName[selectedSave]);
-							renderer->drawString(loadString, 0);
-
-							makeLoad(saveNameBuffer);
-						} else {
-							renderer->drawString(otherMessages[4], 0);
-							waitPlayerInput();
-							checkDataDisk(-1);
-						}
+						makeLoad(saveNameBuffer);
 					} else {
 						renderer->drawString(otherMessages[4], 0);
 						waitPlayerInput();
 						checkDataDisk(-1);
 					}
 				} else {
-					renderer->drawString(otherMessages[5], 0);
+					renderer->drawString(otherMessages[4], 0);
 					waitPlayerInput();
 					checkDataDisk(-1);
 				}
-				break;
+			} else {
+				renderer->drawString(otherMessages[5], 0);
+				waitPlayerInput();
+				checkDataDisk(-1);
 			}
-		case 5: // Save game
-			{
-				loadSaveDirectory();
-				selectedSave = makeMenuChoice(currentSaveName, 10, mouseX, mouseY + 8, 180);
+			break;
+		}
+		case 5: { // Save game
+			loadSaveDirectory();
+			selectedSave = makeMenuChoice(currentSaveName, 10, mouseX, mouseY + 8, 180);
 
-				if (selectedSave >= 0) {
-					char saveFileName[256];
-					char saveName[20];
-					saveName[0] = 0;
+			if (selectedSave >= 0) {
+				char saveFileName[256];
+				char saveName[20];
+				saveName[0] = 0;
 
-					if (!makeTextEntryMenu(otherMessages[6], saveName, 20, 120))
+				if (!makeTextEntryMenu(otherMessages[6], saveName, 20, 120))
+					break;
+
+				strncpy(currentSaveName[selectedSave], saveName, 20);
+
+				sprintf(saveFileName, "%s.%1d", _targetName.c_str(), selectedSave);
+
+				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
+				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
+					char saveString[256];
+					Common::String tmp = Common::String::format("%s.dir", _targetName.c_str());
+
+					Common::OutSaveFile *fHandle = _saveFileMan->openForSaving(tmp);
+					if (!fHandle) {
+						warning("Unable to open file %s for saving", tmp.c_str());
 						break;
-
-					strncpy(currentSaveName[selectedSave], saveName, 20);
-
-					sprintf(saveFileName, "%s.%1d", _targetName.c_str(), selectedSave);
-
-					getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
-					if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
-						char saveString[256];
-						Common::String tmp = Common::String::format("%s.dir", _targetName.c_str());
-
-						Common::OutSaveFile *fHandle = _saveFileMan->openForSaving(tmp);
-						if (!fHandle) {
-							warning("Unable to open file %s for saving", tmp.c_str());
-							break;
-						}
-
-						fHandle->write(currentSaveName, 200);
-						delete fHandle;
-
-						sprintf(saveString, otherMessages[3], currentSaveName[selectedSave]);
-						renderer->drawString(saveString, 0);
-
-						makeSave(saveFileName);
-
-						checkDataDisk(-1);
-					} else {
-						renderer->drawString(otherMessages[4], 0);
-						waitPlayerInput();
-						checkDataDisk(-1);
 					}
+
+					fHandle->write(currentSaveName, 200);
+					delete fHandle;
+
+					sprintf(saveString, otherMessages[3], currentSaveName[selectedSave]);
+					renderer->drawString(saveString, 0);
+
+					makeSave(saveFileName);
+
+					checkDataDisk(-1);
+				} else {
+					renderer->drawString(otherMessages[4], 0);
+					waitPlayerInput();
+					checkDataDisk(-1);
 				}
-				break;
 			}
+			break;
+		}
 		}
 
 		inMenu = false;
 	}
 }
 
-void drawMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 offset, int16 color, byte* page) {
-	gfxDrawLine(x + offset, y + offset, x + width - offset, y + offset, color, page);	// top
-	gfxDrawLine(x + offset, currentY + 4 - offset, x + width - offset, currentY + 4 - offset, color, page);	// bottom
-	gfxDrawLine(x + offset, y + offset, x + offset, currentY + 4 - offset, color, page);	// left
-	gfxDrawLine(x + width - offset, y + offset, x + width - offset, currentY + 4 - offset, color, page);	// right
+void drawMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 offset, int16 color, byte *page) {
+	gfxDrawLine(x + offset, y + offset, x + width - offset, y + offset, color, page);   // top
+	gfxDrawLine(x + offset, currentY + 4 - offset, x + width - offset, currentY + 4 - offset, color, page); // bottom
+	gfxDrawLine(x + offset, y + offset, x + offset, currentY + 4 - offset, color, page);    // left
+	gfxDrawLine(x + width - offset, y + offset, x + width - offset, currentY + 4 - offset, color, page);    // right
 }
 
-void drawDoubleMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 color, byte* page) {
+void drawDoubleMessageBox(int16 x, int16 y, int16 width, int16 currentY, int16 color, byte *page) {
 	drawMessageBox(x, y, width, currentY, 1, 0, page);
 	drawMessageBox(x, y, width, currentY, 0, color, page);
 }
@@ -544,14 +537,16 @@ int16 buildObjectListCommand(int16 param) {
 
 int16 selectSubObject(int16 x, int16 y, int16 param) {
 	int16 listSize = buildObjectListCommand(param);
-	int16 selectedObject;
+	int16 selectedObject = -1;
 	bool osExtras = g_cine->getGameType() == Cine::GType_OS;
 
 	if (!listSize) {
 		return -2;
 	}
 
-	selectedObject = makeMenuChoice(objectListCommand, listSize, x, y, 140, osExtras);
+	if (disableSystemMenu == 0) {
+		selectedObject = makeMenuChoice(objectListCommand, listSize, x, y, 140, osExtras);
+	}
 
 	if (selectedObject == -1)
 		return -1;
@@ -579,7 +574,7 @@ void makeCommandLine() {
 		g_cine->_commandBuffer = "";
 	}
 
-	if ((playerCommand != -1) && (choiceResultTable[playerCommand] == 2)) {	// need object selection ?
+	if ((playerCommand != -1) && (choiceResultTable[playerCommand] == 2)) { // need object selection?
 		int16 si;
 
 		getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
@@ -633,7 +628,7 @@ void makeCommandLine() {
 	}
 
 	if (g_cine->getGameType() == Cine::GType_OS && playerCommand != 2) {
-		if (playerCommand != -1 && canUseOnObject != 0)	{ // call use on sub object
+		if (playerCommand != -1 && canUseOnObject != 0) { // call use on sub object
 			int16 si;
 
 			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
@@ -691,9 +686,6 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 	int16 var_4;
 	SelectionMenu *menu;
 
-	if (disableSystemMenu)
-		return -1;
-
 	paramY = (height * 9) + 10;
 
 	if (X + width > 319) {
@@ -743,11 +735,11 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 				mainLoopSub6();
 			}
 
-			if (menuVar4 && currentSelection > 0) {	// go up
+			if (menuVar4 && currentSelection > 0) { // go up
 				currentSelection--;
 			}
 
-			if (menuVar5) {	// go down
+			if (menuVar5) { // go down
 				if (height - 1 > currentSelection) {
 					currentSelection++;
 				}
@@ -764,7 +756,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 			}
 		}
 
-		if (currentSelection != oldSelection) {	// old != new
+		if (currentSelection != oldSelection) { // old != new
 			if (needMouseSave) {
 				hideMouse();
 			}
@@ -790,7 +782,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
 	} while (button && !g_cine->shouldQuit());
 
-	if (var_4 == 2)	{	// recheck
+	if (var_4 == 2) { // recheck
 		if (!recheckValue)
 			return -1;
 		else
@@ -810,14 +802,18 @@ void makeActionMenu() {
 	getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
 	if (g_cine->getGameType() == Cine::GType_OS) {
-		playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70, true);
+		if (disableSystemMenu == 0) {
+			playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70, true);
+		}
 
 		if (playerCommand >= 8000) {
 			playerCommand -= 8000;
 			canUseOnObject = canUseOnItemTable[playerCommand];
 		}
 	} else {
-		playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
+		if (disableSystemMenu == 0) {
+			playerCommand = makeMenuChoice(defaultActionCommand, 6, mouseX, mouseY, 70);
+		}
 	}
 
 	inMenu = false;
@@ -1182,7 +1178,7 @@ void removeMessages() {
 	Common::List<overlay>::iterator it;
 	bool remove;
 
-	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end(); ) {
+	for (it = g_cine->_overlayList.begin(); it != g_cine->_overlayList.end();) {
 		if (g_cine->getGameType() == Cine::GType_OS) {
 			// NOTE: These are really removeOverlay calls that have been deferred.
 			// In Operation Stealth's disassembly elements are removed from the
@@ -1345,7 +1341,7 @@ void modifySeqListElement(uint16 objIdx, int16 var4Test, int16 param1, int16 par
 }
 
 void computeMove1(SeqListElement &element, int16 x, int16 y, int16 param1,
-    int16 param2, int16 x2, int16 y2) {
+                  int16 param2, int16 x2, int16 y2) {
 	element.var16 = 0;
 	element.var14 = 0;
 
@@ -1394,7 +1390,7 @@ uint16 addAni(uint16 param1, uint16 objIdx, const int8 *ptr, SeqListElement &ele
 	int16 di;
 
 	debug(5, "addAni: param1 = %d, objIdx = %d, ptr = %p, element.var8 = %d, element.var14 = %d param3 = %d",
-		param1, objIdx, ptr, element.var8, element.var14, param3);
+	      param1, objIdx, ptr, element.var8, element.var14, param3);
 
 	// In the original an error string is set and 0 is returned if the following doesn't hold
 	assert(ptr);
@@ -1410,16 +1406,16 @@ uint16 addAni(uint16 param1, uint16 objIdx, const int8 *ptr, SeqListElement &ele
 	di = (g_cine->_objectTable[objIdx].costume + 1) % (*ptrData);
 	++ptrData; // Jump over the just read byte
 	// Here ptr2 seems to be indexing a table of structs (8 bytes per struct):
-	//	struct {
-	//		int8 x;			// 0 (Used with checkCollision)
-	//		int8 y;			// 1 (Used with checkCollision)
-	//		int8 numZones;	// 2 (Used with checkCollision)
-	//		int8 var3;		// 3 (Not used in this function)
-	//		int8 xAdd;		// 4 (Used with an object)
-	//		int8 yAdd;		// 5 (Used with an object)
-	//		int8 maskAdd;	// 6 (Used with an object)
-	//		int8 frameAdd;	// 7 (Used with an object)
-	//	};
+	// struct {
+	//      int8 x;         // 0 (Used with checkCollision)
+	//      int8 y;         // 1 (Used with checkCollision)
+	//      int8 numZones;  // 2 (Used with checkCollision)
+	//      int8 var3;      // 3 (Not used in this function)
+	//      int8 xAdd;      // 4 (Used with an object)
+	//      int8 yAdd;      // 5 (Used with an object)
+	//      int8 maskAdd;   // 6 (Used with an object)
+	//      int8 frameAdd;  // 7 (Used with an object)
+	// };
 	ptr2 = ptrData + di * 8;
 
 	// We might probably safely discard the AND by 1 here because
@@ -1569,8 +1565,7 @@ void processSeqListElement(SeqListElement &element) {
 		var_4 = -1;
 
 		if ((element.var16 == 1
-			&& !addAni(3, element.objIdx, ptr1, element, 0, &var_4)) || (element.var16 == 2	&& !addAni(2, element.objIdx, ptr1, element, 0,
-			    &var_4))) {
+			&& !addAni(3, element.objIdx, ptr1, element, 0, &var_4)) || (element.var16 == 2 && !addAni(2, element.objIdx, ptr1, element, 0, &var_4))) {
 			if (element.varC == 255) {
 				g_cine->_globalVars[VAR_MOUSE_Y_POS] = 0;
 			}
@@ -1699,9 +1694,9 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 			}
 			break;
 		default:
-			if (((keycode >= 'a') && (keycode <='z')) ||
-				((keycode >= '0') && (keycode <='9')) ||
-				((keycode >= 'A') && (keycode <='Z')) ||
+			if (((keycode >= 'a') && (keycode <= 'z')) ||
+				((keycode >= '0') && (keycode <= '9')) ||
+				((keycode >= 'A') && (keycode <= 'Z')) ||
 				(keycode == ' ')) {
 				if (inputLength < stringMaxLength - 1) {
 					ch[0] = keycode;

@@ -32,10 +32,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -90,7 +88,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION_I(4, Kahina, updateFromTime, uint32)
 	if (savepoint.action == kAction137503360) {
 		ENTITY_PARAM(0, 2) = 1;
-		CALLBACK_ACTION();
+		callbackAction();
 	}
 
 	Entity::updateFromTime(savepoint);
@@ -111,7 +109,7 @@ IMPLEMENT_FUNCTION_I(6, Kahina, function6, TimeValue)
 		if (params->param1 < getState()->time && !params->param2) {
 			params->param2 = 1;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 
@@ -141,7 +139,7 @@ IMPLEMENT_FUNCTION_I(6, Kahina, function6, TimeValue)
 
 		case 1:
 			if (ENTITY_PARAM(0, 1) || ENTITY_PARAM(0, 2)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -151,7 +149,7 @@ IMPLEMENT_FUNCTION_I(6, Kahina, function6, TimeValue)
 		case 2:
 		case 3:
 			if (ENTITY_PARAM(0, 1) || ENTITY_PARAM(0, 2)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -163,7 +161,7 @@ IMPLEMENT_FUNCTION_I(6, Kahina, function6, TimeValue)
 
 		case 4:
 			if (ENTITY_PARAM(0, 2)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -173,7 +171,7 @@ IMPLEMENT_FUNCTION_I(6, Kahina, function6, TimeValue)
 
 		case 5:
 			if (ENTITY_PARAM(0, 1) || ENTITY_PARAM(0, 2)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -185,7 +183,7 @@ IMPLEMENT_FUNCTION_I(6, Kahina, function6, TimeValue)
 	case kAction137503360:
 		ENTITY_PARAM(0, 2) = 1;
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -198,12 +196,12 @@ IMPLEMENT_FUNCTION_II(7, Kahina, updateEntity2, CarIndex, EntityPosition)
 
 	case kActionNone:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 		} else if (getEntities()->isDistanceBetweenEntities(kEntityKahina, kEntityPlayer, 1000)
 				&& !getEntities()->isInGreenCarEntrance(kEntityPlayer)
 				&& !getEntities()->isInsideCompartments(kEntityPlayer)
@@ -211,14 +209,14 @@ IMPLEMENT_FUNCTION_II(7, Kahina, updateEntity2, CarIndex, EntityPosition)
 
 			if (getData()->car == kCarGreenSleeping || getData()->car == kCarRedSleeping) {
 				ENTITY_PARAM(0, 1) = 1;
-				CALLBACK_ACTION();
+				callbackAction();
 			}
 		}
 		break;
 
 	case kAction137503360:
 		ENTITY_PARAM(0, 2) = 1;
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -249,7 +247,7 @@ IMPLEMENT_FUNCTION(10, Kahina, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Kahina, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -269,7 +267,7 @@ IMPLEMENT_FUNCTION(11, Kahina, chapter1Handler)
 		return;
 
 	if (getProgress().jacket != kJacketOriginal)
-		TIME_CHECK_SAVEPOINT(kTime1107000, params->param1, kEntityKahina, kEntityMertens, kAction238732837);
+		Entity::timeCheckSavepoint(kTime1107000, params->param1, kEntityKahina, kEntityMertens, kAction238732837);
 
 	if (getProgress().eventMertensKronosInvitation)
 		setup_function12();
@@ -282,7 +280,7 @@ IMPLEMENT_FUNCTION(12, Kahina, function12)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime1485000, params->param2, setup_function13);
+		Entity::timeCheck(kTime1485000, params->param2, WRAP_SETUP_FUNCTION(Kahina, setup_function13));
 		break;
 
 	case kActionKnock:
@@ -372,12 +370,12 @@ IMPLEMENT_FUNCTION(14, Kahina, function14)
 
 	case kActionExitCompartment:
 		getEntities()->exitCompartment(kEntityKahina, kObjectCompartmentF);
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kAction4:
 		getEntities()->exitCompartment(kEntityKahina, kObjectCompartmentF);
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionDefault:
@@ -396,10 +394,10 @@ IMPLEMENT_FUNCTION(15, Kahina, function15)
 
 	case kActionNone:
 		if (params->param2 != kTimeInvalid) {
-			UPDATE_PARAM_PROC_TIME(params->param1, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param2, 0)
+			if (Entity::updateParameterTime((TimeValue)params->param1, !getEntities()->isPlayerInCar(kCarRedSleeping), params->param2, 0)) {
 				setCallback(9);
 				setup_updateEntity(kCarRedSleeping, kPosition_4070);
-			UPDATE_PARAM_PROC_END
+			}
 		}
 		break;
 
@@ -542,7 +540,7 @@ IMPLEMENT_FUNCTION(15, Kahina, function15)
 		case 17:
 			getEntities()->clearSequences(kEntityKahina);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -582,18 +580,18 @@ IMPLEMENT_FUNCTION(17, Kahina, chapter2Handler)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM_PROC(params->param2, getState()->time, 9000)
+			if (Entity::updateParameter(params->param2, getState()->time, 9000)) {
 				params->param1 = 1;
 				params->param2 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (getEvent(kEventKahinaAskSpeakFirebird) && getEvent(kEventKronosConversationFirebird) && getEntities()->isInsideTrainCar(kEntityPlayer, kCarKronos)) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 900)
+			if (Entity::updateParameter(params->param3, getState()->time, 900)) {
 				setCallback(1);
 				setup_savegame(kSavegameTypeEvent, kEventKronosConversationFirebird);
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 label_callback_3:
@@ -729,7 +727,7 @@ IMPLEMENT_FUNCTION_II(19, Kahina, function19, CarIndex, EntityPosition)
 			RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_function22);
 
 		if (getEntities()->updateEntity(kEntityKahina, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionExcuseMeCath:
@@ -745,7 +743,7 @@ IMPLEMENT_FUNCTION_II(19, Kahina, function19, CarIndex, EntityPosition)
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(kEntityKahina, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -787,16 +785,17 @@ label_callback_2:
 		}
 
 		if (!params->param1) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 9000)
+			if (Entity::updateParameter(params->param3, getState()->time, 9000)) {
 				params->param1 = 1;
 				params->param3 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (getEvent(kEventKahinaAskSpeakFirebird)
 		 && !getEvent(kEventKronosConversationFirebird)
 		 && getEntities()->isInsideTrainCar(kEntityPlayer, kCarKronos)) {
-			UPDATE_PARAM(params->param4, getState()->time, 900);
+			if (!Entity::updateParameter(params->param4, getState()->time, 900))
+				break;
 
 			setCallback(3);
 			setup_savegame(kSavegameTypeEvent, kEventKronosConversationFirebird);
@@ -928,11 +927,11 @@ IMPLEMENT_FUNCTION(21, Kahina, function21)
 				params->param3 = (uint)getState()->time + 4500;
 
 			if (params->param6 != kTimeInvalid) {
-				UPDATE_PARAM_PROC_TIME(params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param5, 0)
+				if (Entity::updateParameterTime((TimeValue)params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param5, 0)) {
 					setCallback(2);
 					setup_function23();
 					break;
-				UPDATE_PARAM_PROC_END
+				}
 			}
 		}
 
@@ -943,14 +942,14 @@ label_callback_2:
 				params->param4 = (uint)getState()->time + 4500;
 
 			if (params->param6 != kTimeInvalid) {
-				UPDATE_PARAM_PROC_TIME(params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param6, 0)
+				if (Entity::updateParameterTime((TimeValue)params->param3, (getEntities()->isPlayerPosition(kCarKronos, 80) || getEntities()->isPlayerPosition(kCarKronos, 88)), params->param6, 0)) {
 					getSound()->playSound(kEntityPlayer, "LIB014", getSound()->getSoundFlag(kEntityKahina));
 					getSound()->playSound(kEntityPlayer, "LIB015", getSound()->getSoundFlag(kEntityKahina));
 
 					getEntities()->drawSequenceLeft(kEntityKahina, "202a");
 
 					params->param2 = 0;
-				UPDATE_PARAM_PROC_END
+				}
 			}
 		}
 
@@ -1125,7 +1124,7 @@ IMPLEMENT_FUNCTION(23, Kahina, function23)
 		case 7:
 			getEntities()->clearSequences(kEntityKahina);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -1262,7 +1261,7 @@ IMPLEMENT_FUNCTION(25, Kahina, function25)
 		getProgress().field_78 = 1;
 		ENTITY_PARAM(0, 3) = 0;
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionCallback:
@@ -1303,7 +1302,7 @@ IMPLEMENT_FUNCTION(25, Kahina, function25)
 		case 13:
 			getEntities()->clearSequences(kEntityKahina);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 6:
@@ -1387,7 +1386,7 @@ IMPLEMENT_FUNCTION(26, Kahina, function26)
 		getInventory()->setLocationAndProcess(kItemBriefcase, kObjectLocation2);
 		getProgress().field_78 = 1;
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kActionCallback:
@@ -1429,7 +1428,7 @@ IMPLEMENT_FUNCTION(26, Kahina, function26)
 		case 9:
 			getEntities()->clearSequences(kEntityKahina);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 6:

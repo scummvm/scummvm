@@ -176,7 +176,7 @@ public:
 	Graphics::Surface *lockScreen();
 	void unlockScreen();
 	void showWorkScreen();
-	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h);
 	void updateScreenAndWait(int delay);
 
 	int16 addToSpriteList(int16 index, int16 xofs, int16 yofs);

@@ -98,7 +98,7 @@ public:
 
 void freeAnimDataTable();
 void freeAnimDataRange(byte startIdx, byte numIdx);
-int loadResource(const char *resourceName, int16 idx = -1);
+int loadResource(const char *resourceName, int16 idx = -1, int16 frameIndex = -1);
 void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGameFormat saveGameFormat);
 void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency);
 

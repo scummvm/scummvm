@@ -103,7 +103,7 @@ private:
  */
 template<class T>
 class SharedPtr {
-#if !((__GNUC__ == 2) && (__GNUC_MINOR__ >= 95))
+#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 	template<class T2> friend class SharedPtr;
 #endif
 public:
@@ -200,7 +200,7 @@ public:
 	 * This should just be used for debugging purposes.
 	 */
 	RefValue refCount() const { return _refCount ? *_refCount : 0; }
-#if !((__GNUC__ == 2) && (__GNUC_MINOR__ >= 95))
+#if !defined(__GNUC__) || GCC_ATLEAST(3, 0)
 private:
 #endif
 	void decRef() {

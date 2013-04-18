@@ -26,6 +26,7 @@
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/event.h"
 
+#include "sci/engine/file.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -68,21 +69,26 @@ static const uint16 s_halfWidthSJISMap[256] = {
 };
 
 EngineState::EngineState(SegManager *segMan)
-: _segMan(segMan), _dirseeker() {
+: _segMan(segMan),
+#ifdef ENABLE_SCI32
+	_virtualIndexFile(0),
+#endif
+	_dirseeker() {
 
 	reset(false);
 }
 
 EngineState::~EngineState() {
 	delete _msgState;
+#ifdef ENABLE_SCI32
+	delete _virtualIndexFile;
+#endif
 }
 
 void EngineState::reset(bool isRestoring) {
 	if (!isRestoring) {
 		_memorySegmentSize = 0;
-
 		_fileHandles.resize(5);
-
 		abortScriptProcessing = kAbortNone;
 	}
 
@@ -116,6 +122,11 @@ void EngineState::reset(bool isRestoring) {
 
 	_videoState.reset();
 	_syncedAudioOptions = false;
+
+	_vmdPalStart = 0;
+	_vmdPalEnd = 256;
+
+	_palCycleToColor = 255;
 }
 
 void EngineState::speedThrottler(uint32 neededSleep) {

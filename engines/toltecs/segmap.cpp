@@ -48,7 +48,7 @@ void SegmentMap::load(byte *source) {
 	uint16 maskRectCount = READ_LE_UINT16(source);
 	source += 2;
 	uint16 maskRectDataSize = maskRectCount * 12 + 2;
-	
+
 	debug(0, "SegmentMap::load() maskRectCount = %d", maskRectCount);
 
 	for (uint16 i = 0; i < maskRectCount; i++) {
@@ -74,25 +74,25 @@ void SegmentMap::load(byte *source) {
 	// Load path rects
 
 	source += 2; // skip rects array size
-	
+
 	uint16 pathRectCount = READ_LE_UINT16(source);
 	source += 2;
-	
+
 	debug(0, "SegmentMap::load() pathRectCount = %d", pathRectCount);
-	
+
 	for (uint16 i = 0; i < pathRectCount; i++) {
 		SegmapPathRect pathRect;
 		pathRect.y1 = READ_LE_UINT16(source);
 		pathRect.x1 = READ_LE_UINT16(source + 2);
 		pathRect.y2 = pathRect.y1 + READ_LE_UINT16(source + 4);
 		pathRect.x2 = pathRect.x1 + READ_LE_UINT16(source + 6);
-		
+
 		debug(0, "SegmentMap::load() (%d, %d, %d, %d)", pathRect.x1, pathRect.y1, pathRect.x2, pathRect.y2);
 
 		source += 8;
 		_pathRects.push_back(pathRect);
 	}
-	
+
 	// Load info rects
 
 	source += 2; // skip rects array size
@@ -141,7 +141,7 @@ void SegmentMap::adjustPathPoint(int16 &x, int16 &y) {
 
 	uint32 minDistance = 0xFFFFFFFF, distance;
 	int16 adjustedX = 0, adjustedY = 0, x2, y2;
-	
+
 	for (int16 rectIndex = 0; rectIndex < (int16)_pathRects.size(); rectIndex++) {
 
 		if (x >= _pathRects[rectIndex].x1 && x < _pathRects[rectIndex].x2) {
@@ -174,7 +174,7 @@ void SegmentMap::adjustPathPoint(int16 &x, int16 &y) {
 		}
 
 	}
-	
+
 	x = adjustedX;
 	y = adjustedY;
 
@@ -318,7 +318,7 @@ void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 so
 		pointsArray[0] = 0;
 		pointsArray[1] = TO_LE_16(_pathNodesCount + 1);
 	}
-	
+
 	debug(0, "SegmentMap::findPath() count = %d", FROM_LE_16(pointsArray[1]));
 
 #if 0 // DEBUG: Draw the path we found
@@ -335,7 +335,7 @@ void SegmentMap::findPath(int16 *pointsArray, int16 destX, int16 destY, int16 so
 		sy = y;
 	}
 #endif
-	
+
 }
 
 int8 SegmentMap::getScalingAtPoint(int16 x, int16 y) {

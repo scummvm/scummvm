@@ -23,6 +23,7 @@
 #include "dreamweb/dreamweb.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
+#include "graphics/decoders/pcx.h"
 
 namespace DreamWeb {
 
@@ -144,10 +145,6 @@ void DreamWebEngine::doShake() {
 	setShakePos(offset >= 0 ? offset : -offset);
 }
 
-void DreamWebEngine::vSync() {
-	waitForVSync();
-}
-
 void DreamWebEngine::setMode() {
 	waitForVSync();
 	initGraphics(320, 200, false);
@@ -156,70 +153,33 @@ void DreamWebEngine::setMode() {
 void DreamWebEngine::showPCX(const Common::String &suffix) {
 	Common::String name = getDatafilePrefix() + suffix;
 	Common::File pcxFile;
-
 	if (!pcxFile.open(name)) {
 		warning("showpcx: Could not open '%s'", name.c_str());
 		return;
 	}
 
-	uint8 *mainGamePal;
-	int i, j;
+	Graphics::PCXDecoder pcx;
+	if (!pcx.loadStream(pcxFile)) {
+		warning("showpcx: Could not process '%s'", name.c_str());
+		return;
+	}
 
 	// Read the 16-color palette into the 'maingamepal' buffer. Note that
 	// the color components have to be adjusted from 8 to 6 bits.
-
-	pcxFile.seek(16, SEEK_SET);
-	mainGamePal = _mainPal;
-	pcxFile.read(mainGamePal, 48);
-
-	memset(mainGamePal + 48, 0xff, 720);
-	for (i = 0; i < 48; i++) {
-		mainGamePal[i] >>= 2;
+	memset(_mainPal, 0xff, 256 * 3);
+	memcpy(_mainPal, pcx.getPalette(), 48);
+	for (int i = 0; i < 48; i++) {
+		_mainPal[i] >>= 2;
 	}
-
-	// Decode the image data.
 
 	Graphics::Surface *s = g_system->lockScreen();
-	Common::Rect rect(640, 480);
-
-	s->fillRect(rect, 0);
-	pcxFile.seek(128, SEEK_SET);
-
-	for (int y = 0; y < 480; y++) {
-		byte *dst = (byte *)s->getBasePtr(0, y);
-		int decoded = 0;
-
-		while (decoded < 320) {
-			byte col = pcxFile.readByte();
-			byte len;
-
-			if ((col & 0xc0) == 0xc0) {
-				len = col & 0x3f;
-				col = pcxFile.readByte();
-			} else {
-				len = 1;
-			}
-
-			// The image uses 16 colors and is stored as four bit
-			// planes, one for each bit of the color, least
-			// significant bit plane first.
-
-			for (i = 0; i < len; i++) {
-				int plane = decoded / 80;
-				int pos = decoded % 80;
-
-				for (j = 0; j < 8; j++) {
-					byte bit = (col >> (7 - j)) & 1;
-					dst[8 * pos + j] |= (bit << plane);
-				}
-
-				decoded++;
-			}
-		}
-	}
-
+	s->fillRect(Common::Rect(640, 480), 0);
+	const Graphics::Surface *pcxSurface = pcx.getSurface();
+	if (pcxSurface->format.bytesPerPixel != 1)
+		error("Invalid bytes per pixel in PCX surface (%d)", pcxSurface->format.bytesPerPixel);
+	for (uint16 y = 0; y < pcxSurface->h; y++)
+		memcpy((byte *)s->getBasePtr(0, y), pcxSurface->getBasePtr(0, y), pcxSurface->w);
 	g_system->unlockScreen();
-	pcxFile.close();
 }
 
 void DreamWebEngine::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
@@ -374,9 +334,9 @@ void DreamWebEngine::zoom() {
 		for (size_t j = 0; j < 23; ++j) {
 			uint8 v = src[j];
 			dst[2*j+0] = v;
-			dst[2*j+1] = v; 
+			dst[2*j+1] = v;
 			dst[2*j+320] = v;
-			dst[2*j+321] = v; 
+			dst[2*j+321] = v;
 		}
 		src += 320;
 		dst += 320*2;

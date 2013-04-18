@@ -58,7 +58,7 @@ public:
 	            uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie);
 
 	/** Is the fish dead? */
-	bool isDead();
+	bool isDead() const;
 
 private:
 	enum State {

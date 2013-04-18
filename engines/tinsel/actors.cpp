@@ -319,8 +319,8 @@ static void ActorRestoredProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->pic = RestoreInterpretContext(r->pic);
-	
-	// The newly added check here specially sets the process to RES_NOT when loading a savegame. 
+
+	// The newly added check here specially sets the process to RES_NOT when loading a savegame.
 	// This is needed particularly for the Psychiatrist scene in Discworld 1 - otherwise Rincewind
 	// can't go upstairs without leaving the building and returning.  If this patch causes problems
 	// in other scenes, an added check for the hCode == 1174490602 could be added.
@@ -340,7 +340,7 @@ void RestoreActorProcess(int id, INT_CONTEXT *pic, bool savegameFlag) {
 	if (savegameFlag)
 		pic->resumeState = RES_SAVEGAME;
 
-	g_scheduler->createProcess(PID_TCODE, ActorRestoredProcess, &r, sizeof(r));
+	CoroScheduler.createProcess(PID_TCODE, ActorRestoredProcess, &r, sizeof(r));
 }
 
 /**
@@ -358,7 +358,7 @@ void ActorEvent(int ano, TINSEL_EVENT event, PLR_EVENT be) {
 		atp.event = event;
 		atp.bev = be;
 		atp.pic = NULL;
-		g_scheduler->createProcess(PID_TCODE, ActorTinselProcess, &atp, sizeof(atp));
+		CoroScheduler.createProcess(PID_TCODE, ActorTinselProcess, &atp, sizeof(atp));
 	}
 }
 
@@ -369,7 +369,7 @@ void ActorEvent(CORO_PARAM, int ano, TINSEL_EVENT tEvent, bool bWait, int myEsca
 	ATP_INIT atp;
 	int	index;
 	CORO_BEGIN_CONTEXT;
-		PPROCESS pProc;
+		Common::PPROCESS pProc;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -389,7 +389,7 @@ void ActorEvent(CORO_PARAM, int ano, TINSEL_EVENT tEvent, bool bWait, int myEsca
 			myEscape);
 
 	if (atp.pic != NULL) {
-		_ctx->pProc = g_scheduler->createProcess(PID_TCODE, ActorTinselProcess, &atp, sizeof(atp));
+		_ctx->pProc = CoroScheduler.createProcess(PID_TCODE, ActorTinselProcess, &atp, sizeof(atp));
 		AttachInterpret(atp.pic, _ctx->pProc);
 
 		if (bWait)
@@ -474,8 +474,8 @@ void StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript) {
 			// Run actor's script for this scene
 			if (bRunScript) {
 				// Send in reverse order - they get swapped round in the scheduler
-				ActorEvent(nullContext, taggedActors[i].id, SHOWEVENT, false, 0);
-				ActorEvent(nullContext, taggedActors[i].id, STARTUP, false, 0);
+				ActorEvent(Common::nullContext, taggedActors[i].id, SHOWEVENT, false, 0);
+				ActorEvent(Common::nullContext, taggedActors[i].id, STARTUP, false, 0);
 			}
 		}
 	}

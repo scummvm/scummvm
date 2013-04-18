@@ -93,7 +93,7 @@ const char *getSciVersionDesc(SciVersion version) {
 
 //#define SCI_VERBOSE_RESMAN 1
 
-static const char *const sci_error_types[] = {
+static const char *const s_errorDescriptions[] = {
 	"No error",
 	"I/O error",
 	"Resource is empty (size 0)",
@@ -101,10 +101,8 @@ static const char *const sci_error_types[] = {
 	"resource.map file not found",
 	"No resource files found",
 	"Unknown compression method",
-	"Decompression failed: Decompression buffer overflow",
 	"Decompression failed: Sanity check failed",
-	"Decompression failed: Resource too big",
-	"SCI version is unsupported"
+	"Decompression failed: Resource too big"
 };
 
 static const char *const s_resourceTypeNames[] = {
@@ -576,7 +574,7 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	if (error) {
 		warning("Error %d occurred while reading %s from resource file %s: %s",
 				error, res->_id.toString().c_str(), res->getResourceLocation().c_str(),
-				sci_error_types[error]);
+				s_errorDescriptions[error]);
 		res->unalloc();
 	}
 
@@ -1876,6 +1874,9 @@ int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream
 	uint32 wCompression, szUnpacked;
 	ResourceType type;
 
+	if (file->size() == 0)
+		return SCI_ERROR_EMPTY_RESOURCE;
+
 	switch (volVersion) {
 	case kResVersionSci0Sci1Early:
 	case kResVersionSci1Middle:
@@ -1920,7 +1921,7 @@ int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream
 		break;
 #endif
 	default:
-		return SCI_ERROR_INVALID_RESMAP_ENTRY;
+		return SCI_ERROR_RESMAP_INVALID_ENTRY;
 	}
 
 	// check if there were errors while reading
@@ -1961,7 +1962,7 @@ int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream
 		compression = kCompUnknown;
 	}
 
-	return compression == kCompUnknown ? SCI_ERROR_UNKNOWN_COMPRESSION : 0;
+	return (compression == kCompUnknown) ? SCI_ERROR_UNKNOWN_COMPRESSION : SCI_ERROR_NONE;
 }
 
 int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file) {
@@ -2589,7 +2590,7 @@ Common::String ResourceManager::findSierraGameId() {
 	if (!heap)
 		return "";
 
-	int16 gameObjectOffset = findGameObject(false).offset;
+	int16 gameObjectOffset = findGameObject(false).getOffset();
 
 	if (!gameObjectOffset)
 		return "";

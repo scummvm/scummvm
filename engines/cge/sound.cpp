@@ -91,6 +91,12 @@ void Sound::sndDigiStart(SmpInfo *PSmpInfo) {
 	// Start the new sound
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle,
 		Audio::makeLoopingAudioStream(_audioStream, (uint)PSmpInfo->_counter));
+
+	// CGE pan:
+	// 8 = Center
+	// Less = Left
+	// More = Right
+	_vm->_mixer->setChannelBalance(_soundHandle, (int8)CLIP(((PSmpInfo->_span - 8) * 16), -127, 127));
 }
 
 void Sound::stop() {
@@ -148,8 +154,11 @@ void Fx::preload(int ref0) {
 		DataCk *wav = loadWave(&file);
 		if (wav) {
 			Handler *p = &_cache[find(0)];
-			if (p >= cacheLim)
+			if (p >= cacheLim) {
+				delete wav;
 				break;
+			}
+			delete p->_wav;
 			p->_wav = wav;
 			p->_ref = ref;
 		} else {
@@ -166,6 +175,7 @@ DataCk *Fx::load(int idx, int ref) {
 	DataCk *wav = loadWave(&file);
 	if (wav) {
 		Handler *p = &_cache[idx];
+		delete p->_wav;
 		p->_wav = wav;
 		p->_ref = ref;
 	} else {

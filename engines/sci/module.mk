@@ -10,6 +10,7 @@ MODULE_OBJS := \
 	sci.o \
 	util.o \
 	engine/features.o \
+	engine/file.o \
 	engine/gc.o \
 	engine/kernel.o \
 	engine/kevent.o \
@@ -79,6 +80,7 @@ MODULE_OBJS := \
 	
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
+	engine/kgraphics32.o \
 	graphics/controls32.o \
 	graphics/frameout.o \
 	graphics/paint32.o \

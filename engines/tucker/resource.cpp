@@ -29,6 +29,9 @@
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/wave.h"
 
+#include "graphics/surface.h"
+#include "graphics/decoders/pcx.h"
+
 #include "tucker/tucker.h"
 #include "tucker/graphics.h"
 
@@ -298,23 +301,21 @@ void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
 			return;
 		}
 	}
-	f.seek(128, SEEK_SET);
-	int size = 0;
-	while (size < 64000) {
-		int code = f.readByte();
-		if (code >= 0xC0) {
-			const int sz = code - 0xC0;
-			code = f.readByte();
-			memset(dst + size, code, sz);
-			size += sz;
-		} else {
-			dst[size++] = code;
-		}
-	}
+
+	::Graphics::PCXDecoder pcx;
+	if (!pcx.loadStream(f))
+		error("Error while reading PCX image");
+
+	const ::Graphics::Surface *pcxSurface = pcx.getSurface();
+	if (pcxSurface->format.bytesPerPixel != 1)
+		error("Invalid bytes per pixel in PCX surface (%d)", pcxSurface->format.bytesPerPixel);
+	if (pcxSurface->w != 320 || pcxSurface->h != 200)
+		error("Invalid PCX surface size (%d x %d)", pcxSurface->w, pcxSurface->h);
+	for (uint16 y = 0; y < pcxSurface->h; y++)
+		memcpy(dst + y * 320, pcxSurface->getBasePtr(0, y), pcxSurface->w);
+
 	if (type != 0) {
-		if (f.readByte() != 12)
-			return;
-		f.read(_currentPalette, 768);
+		memcpy(_currentPalette, pcx.getPalette(), 3 * 256);
 		setBlackPalette();
 	}
 }

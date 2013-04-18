@@ -31,6 +31,10 @@
 #include "gob/iniconfig.h"
 #include "gob/databases.h"
 
+namespace Common {
+	class PEResources;
+}
+
 namespace Gob {
 
 class Cheater_Geisha;
@@ -138,8 +142,9 @@ protected:
 
 	VariableStack _varStack;
 
-	// The busy-wait detection in o1_keyFunc breaks fast scrolling in Ween
-	bool _noBusyWait;
+	// Busy-wait detection
+	bool   _noBusyWait;
+	uint32 _lastBusyWait;
 
 	GobEngine *_vm;
 
@@ -168,6 +173,8 @@ protected:
 	void storeString(const char *value);
 
 	uint32 readValue(uint16 index, uint16 type);
+
+	void handleBusyWait();
 };
 
 class Inter_v1 : public Inter {
@@ -509,6 +516,20 @@ protected:
 	void oFascin_setWinFlags();
 };
 
+class Inter_LittleRed : public Inter_v2 {
+public:
+	Inter_LittleRed(GobEngine *vm);
+	virtual ~Inter_LittleRed() {}
+
+protected:
+	virtual void setupOpcodesDraw();
+	virtual void setupOpcodesFunc();
+	virtual void setupOpcodesGob();
+
+	void oLittleRed_keyFunc(OpFuncParams &params);
+	void oLittleRed_playComposition(OpFuncParams &params);
+};
+
 class Inter_v3 : public Inter_v2 {
 public:
 	Inter_v3(GobEngine *vm);
@@ -648,7 +669,7 @@ private:
 class Inter_v7 : public Inter_Playtoons {
 public:
 	Inter_v7(GobEngine *vm);
-	virtual ~Inter_v7() {}
+	virtual ~Inter_v7();
 
 protected:
 	virtual void setupOpcodesDraw();
@@ -684,7 +705,12 @@ private:
 	INIConfig _inis;
 	Databases _databases;
 
+	Common::PEResources *_cursors;
+
 	Common::String findFile(const Common::String &mask);
+
+	bool loadCursorFile();
+	void resizeCursors(int16 width, int16 height, int16 count, bool transparency);
 };
 
 } // End of namespace Gob

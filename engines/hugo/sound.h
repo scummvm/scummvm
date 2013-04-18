@@ -97,7 +97,7 @@ private:
 
 	void stopSound();
 	void stopMusic();
-	void playMIDI(sound_pt seq_p, uint16 size);
+	void playMIDI(SoundPtr seqPtr, uint16 size);
 };
 
 } // End of namespace Hugo

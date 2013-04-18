@@ -27,7 +27,6 @@
 #include "lastexpress/debug.h"
 
 #include "common/stream.h"
-#include "common/textconsole.h"
 
 namespace LastExpress {
 
@@ -77,7 +76,7 @@ void FrameInfo::read(Common::SeekableReadStream *in, bool isSequence) {
 
 // AnimFrame
 
-AnimFrame::AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f) : _palette(NULL) {
+AnimFrame::AnimFrame(Common::SeekableReadStream *in, const FrameInfo &f, bool ignoreSubtype) : _palette(NULL), _ignoreSubtype(ignoreSubtype) {
 	_palSize = 1;
 	// TODO: use just the needed rectangle
 	_image.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());

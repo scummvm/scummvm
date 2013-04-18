@@ -53,20 +53,20 @@ Fighter::Fighter(LastExpressEngine *engine) : _engine(engine) {
 }
 
 Fighter::~Fighter() {
-	clearSequences();
-}
-
-//////////////////////////////////////////////////////////////////////////
-// Cleanup
-//////////////////////////////////////////////////////////////////////////
-void Fighter::clearSequences() {
 	// The original game resets the function pointers to default values, just before deleting the struct
 
 	getScenes()->removeAndRedraw(&_frame, false);
 
 	// Free sequences
-	for (int i = 0; i < (int)_sequences.size(); i++)
+	for (uint i = 0; i < _sequences.size(); i++)
 		SAFE_DELETE(_sequences[i]);
+
+	// Zero-out passed pointers
+	_sequence = NULL;
+	_opponent = NULL;
+	_fight = NULL;
+
+	_engine = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -113,6 +113,9 @@ void Fighter::draw() {
 // Processing
 //////////////////////////////////////////////////////////////////////////
 void Fighter::process() {
+	if (!_fight)
+		error("[Fighter::handleAction] Fighter not initialized properly");
+
 	if (!_sequence) {
 		if (_frame) {
 			getScenes()->removeFromQueue(_frame);
@@ -188,6 +191,9 @@ void Fighter::process() {
 // Default actions
 //////////////////////////////////////////////////////////////////////////
 void Fighter::handleAction(FightAction action) {
+	if (!_opponent || !_fight)
+		error("[Fighter::handleAction] Fighter not initialized properly");
+
 	switch (action) {
 	default:
 		return;
@@ -243,7 +249,10 @@ void Opponent::update() {
 // Helpers
 //////////////////////////////////////////////////////////////////////////
 bool Fighter::checkFrame(uint32 val) {
-	return (_frame->getInfo()->field_33 & val);
+	if (!_frame)
+		error("[Fighter::checkFrame] Invalid current frame");
+
+	return (bool)(_frame->getInfo()->field_33 & val);
 }
 
 } // End of namespace LastExpress

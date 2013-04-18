@@ -34,6 +34,7 @@ class WriteStream;
 }
 
 #include "sci/sci.h"
+#include "sci/engine/file.h"
 #include "sci/engine/seg_manager.h"
 
 #include "sci/parser/vocabulary.h"
@@ -42,41 +43,18 @@ class WriteStream;
 
 namespace Sci {
 
+class FileHandle;
+class DirSeeker;
 class EventManager;
 class MessageState;
 class SoundCommandParser;
+class VirtualIndexFile;
 
 enum AbortGameState {
 	kAbortNone = 0,
 	kAbortLoadGame = 1,
 	kAbortRestartGame = 2,
 	kAbortQuitGame = 3
-};
-
-class DirSeeker {
-protected:
-	reg_t _outbuffer;
-	Common::StringArray _files;
-	Common::StringArray _virtualFiles;
-	Common::StringArray::const_iterator _iter;
-
-public:
-	DirSeeker() {
-		_outbuffer = NULL_REG;
-		_iter = _files.begin();
-	}
-
-	reg_t firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan);
-	reg_t nextFile(SegManager *segMan);
-
-	Common::String getVirtualFilename(uint fileNumber);
-
-private:
-	void addAsVirtualFiles(Common::String title, Common::String fileMask);
-};
-
-enum {
-	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
 };
 
 // We assume that scripts give us savegameId 0->99 for creating a new save slot
@@ -90,20 +68,6 @@ enum {
 	GAMEISRESTARTING_NONE = 0,
 	GAMEISRESTARTING_RESTART = 1,
 	GAMEISRESTARTING_RESTORE = 2
-};
-
-class FileHandle {
-public:
-	Common::String _name;
-	Common::SeekableReadStream *_in;
-	Common::WriteStream *_out;
-
-public:
-	FileHandle();
-	~FileHandle();
-
-	void close();
-	bool isOpen() const;
 };
 
 enum VideoFlags {
@@ -162,6 +126,10 @@ public:
 
 	int16 _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
 	int16 _lastSaveNewId;    // last newly created filename-id by kSaveGame
+
+#ifdef ENABLE_SCI32
+	VirtualIndexFile *_virtualIndexFile;
+#endif
 
 	uint _chosenQfGImportItem; // Remembers the item selected in QfG import rooms
 
@@ -228,7 +196,10 @@ public:
 	byte _memorySegment[kMemorySegmentMax];
 
 	VideoState _videoState;
+	uint16 _vmdPalStart, _vmdPalEnd;
 	bool _syncedAudioOptions;
+
+	uint16 _palCycleToColor;
 
 	/**
 	 * Resets the engine state.

@@ -54,18 +54,18 @@ enum VoiceType {VOICETYPE_0 = 0, VOICETYPE_1 = 1};
 
 class SoundDriverEntry {
 public:
-	int driverNum;
-	SoundDriverStatus status;
-	int field2, field6;
-	Common::String shortDescription;
-	Common::String longDescription;
+	int _driverNum;
+	SoundDriverStatus _status;
+	int _field2, _field6;
+	Common::String _shortDescription;
+	Common::String _longDescription;
 };
 
 struct GroupData {
-	uint32 groupMask;
-	byte v1;
-	byte v2;
-	const byte *pData;
+	uint32 _groupMask;
+	byte _v1;
+	byte _v2;
+	const byte *_pData;
 };
 
 struct RegisterValue {
@@ -229,31 +229,31 @@ public:
 
 	// _sf methods
 	static SoundManager &sfManager();
-	static void _sfTerminate();
-	static int _sfDetermineGroup(const byte *soundData);
-	static void _sfAddToPlayList(Sound *sound);
-	static void _sfRemoveFromPlayList(Sound *sound);
-	static bool _sfIsOnPlayList(Sound *sound);
-	static void _sfRethinkSoundDrivers();
-	static void _sfRethinkVoiceTypes();
-	static void _sfUpdateVolume(Sound *sound);
-	static void _sfDereferenceAll();
-	static void _sfUpdatePriority(Sound *sound);
-	static void _sfUpdateLoop(Sound *sound);
-	static void _sfSetMasterVol(int volume);
-	static void _sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum);
-	static void _sfExtractGroupMask();
-	static bool _sfInstallDriver(SoundDriver *driver);
-	static void _sfUnInstallDriver(SoundDriver *driver);
-	static void _sfInstallPatchBank(SoundDriver *driver, const byte *bankData);
-	static void _sfDoAddToPlayList(Sound *sound);
-	static bool _sfDoRemoveFromPlayList(Sound *sound);
-	static void _sfDoUpdateVolume(Sound *sound);
-	static void _sfSoundServer();
-	static void _sfProcessFading();
-	static void _sfUpdateVoiceStructs();
-	static void _sfUpdateVoiceStructs2();
-	static void _sfUpdateCallback(void *ref);
+	static void sfTerminate();
+	static int sfDetermineGroup(const byte *soundData);
+	static void sfAddToPlayList(Sound *sound);
+	static void sfRemoveFromPlayList(Sound *sound);
+	static bool sfIsOnPlayList(Sound *sound);
+	static void sfRethinkSoundDrivers();
+	static void sfRethinkVoiceTypes();
+	static void sfUpdateVolume(Sound *sound);
+	static void sfDereferenceAll();
+	static void sfUpdatePriority(Sound *sound);
+	static void sfUpdateLoop(Sound *sound);
+	static void sfSetMasterVol(int volume);
+	static void sfExtractTrackInfo(trackInfoStruct *trackInfo, const byte *soundData, int groupNum);
+	static void sfExtractGroupMask();
+	static bool sfInstallDriver(SoundDriver *driver);
+	static void sfUnInstallDriver(SoundDriver *driver);
+	static void sfInstallPatchBank(SoundDriver *driver, const byte *bankData);
+	static void sfDoAddToPlayList(Sound *sound);
+	static bool sfDoRemoveFromPlayList(Sound *sound);
+	static void sfDoUpdateVolume(Sound *sound);
+	static void sfSoundServer();
+	static void sfProcessFading();
+	static void sfUpdateVoiceStructs();
+	static void sfUpdateVoiceStructs2();
+	static void sfUpdateCallback(void *ref);
 };
 
 class Sound: public EventHandler {
@@ -343,23 +343,23 @@ public:
 	void orientAfterDriverChange();
 
 	// _so methods
-	void _soPrimeSound(bool dontQueue);
-	void _soSetTimeIndex(uint timeIndex);
-	bool _soServiceTracks();
-	void _soPrimeChannelData();
-	void _soRemoteReceive();
-	void _soServiceTrackType0(int trackIndex, const byte *channelData);
-	void _soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceType mode, int v0);
-	void _soPlaySound(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0, int v1);
-	void _soPlaySound2(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0);
-	void _soProc38(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int cmd, int value);
-	void _soProc40(VoiceTypeStruct *vtStruct, int channelNum, int pitchBlend);
-	void _soDoTrackCommand(int channelNum, int command, int value);
-	bool _soDoUpdateTracks(int command, int value);
-	void _soSetTrackPos(int trackIndex, int trackPos, int cueValue);
+	void soPrimeSound(bool dontQueue);
+	void soSetTimeIndex(uint timeIndex);
+	bool soServiceTracks();
+	void soPrimeChannelData();
+	void soRemoteReceive();
+	void soServiceTrackType0(int trackIndex, const byte *channelData);
+	void soUpdateDamper(VoiceTypeStruct *voiceType, int channelNum, VoiceType mode, int v0);
+	void soPlaySound(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0, int v1);
+	void soPlaySound2(VoiceTypeStruct *vtStruct, const byte *channelData, int channelNum, VoiceType voiceType, int v0);
+	void soProc38(VoiceTypeStruct *vtStruct, int channelNum, VoiceType voiceType, int cmd, int value);
+	void soProc40(VoiceTypeStruct *vtStruct, int channelNum, int pitchBlend);
+	void soDoTrackCommand(int channelNum, int command, int value);
+	bool soDoUpdateTracks(int command, int value);
+	void soSetTrackPos(int trackIndex, int trackPos, int cueValue);
 
-	void _soServiceTrackType1(int trackIndex, const byte *channelData);
-	int _soFindSound(VoiceTypeStruct *vtStruct, int channelNum);
+	void soServiceTrackType1(int trackIndex, const byte *channelData);
+	int soFindSound(VoiceTypeStruct *vtStruct, int channelNum);
 };
 
 class ASound: public EventHandler {

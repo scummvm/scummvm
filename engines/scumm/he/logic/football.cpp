@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/savefile.h"
+
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
 
@@ -35,16 +37,16 @@ public:
 	LogicHEfootball(ScummEngine_v90he *vm) : LogicHE(vm) {}
 
 	int versionID();
-	int32 dispatch(int op, int numArgs, int32 *args);
+	virtual int32 dispatch(int op, int numArgs, int32 *args);
 
-private:
-	int op_1004(int32 *args);
-	int op_1006(int32 *args);
-	int op_1007(int32 *args);
-	int op_1010(int32 *args);
-	int op_1022(int32 *args);
-	int op_1023(int32 *args);
-	int op_1024(int32 *args);
+protected:
+	int lineEquation3D(int32 *args);
+	virtual int translateWorldToScreen(int32 *args);
+	int fieldGoalScreenTranslation(int32 *args);
+	virtual int translateScreenToWorld(int32 *args);
+	int nextPoint(int32 *args);
+	int computePlayerBallIntercepts(int32 *args);
+	int computeTwoCircleIntercepts(int32 *args);
 };
 
 int LogicHEfootball::versionID() {
@@ -56,31 +58,31 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 
 	switch (op) {
 	case 1004:
-		res = op_1004(args);
+		res = lineEquation3D(args);
 		break;
 
 	case 1006:
-		res = op_1006(args);
+		res = translateWorldToScreen(args);
 		break;
 
 	case 1007:
-		res = op_1007(args);
+		res = fieldGoalScreenTranslation(args);
 		break;
 
 	case 1010:
-		res = op_1010(args);
+		res = translateScreenToWorld(args);
 		break;
 
 	case 1022:
-		res = op_1022(args);
+		res = nextPoint(args);
 		break;
 
 	case 1023:
-		res = op_1023(args);
+		res = computePlayerBallIntercepts(args);
 		break;
 
 	case 1024:
-		res = op_1024(args);
+		res = computeTwoCircleIntercepts(args);
 		break;
 
 	case 8221968:
@@ -123,8 +125,8 @@ int32 LogicHEfootball::dispatch(int op, int numArgs, int32 *args) {
 	return res;
 }
 
-int LogicHEfootball::op_1004(int32 *args) {
-	// Identical to LogicHEsoccer::op_1004
+int LogicHEfootball::lineEquation3D(int32 *args) {
+	// Identical to soccer's 1004 opcode
 	double res, a2, a4, a5;
 
 	a5 = ((double)args[4] - (double)args[1]) / ((double)args[5] - (double)args[2]);
@@ -141,8 +143,8 @@ int LogicHEfootball::op_1004(int32 *args) {
 	return 1;
 }
 
-int LogicHEfootball::op_1006(int32 *args) {
-	// This seems to be more or less the inverse of op_1010
+int LogicHEfootball::translateWorldToScreen(int32 *args) {
+	// This is more or less the inverse of translateScreenToWorld
 	const double a1 = args[1];
 	double res;
 
@@ -167,7 +169,7 @@ int LogicHEfootball::op_1006(int32 *args) {
 	return 1;
 }
 
-int LogicHEfootball::op_1007(int32 *args) {
+int LogicHEfootball::fieldGoalScreenTranslation(int32 *args) {
 	double res, temp;
 
 	temp = (double)args[1] * 0.32;
@@ -188,8 +190,8 @@ int LogicHEfootball::op_1007(int32 *args) {
 	return 1;
 }
 
-int LogicHEfootball::op_1010(int32 *args) {
-	// This seems to be more or less the inverse of op_1006
+int LogicHEfootball::translateScreenToWorld(int32 *args) {
+	// This is more or less the inverse of translateWorldToScreen
 	double a1 = (640.0 - (double)args[1] - 26.0) / 1.1588235e-1;
 
 	// 2.9411764e-4 = 1/3400
@@ -205,7 +207,7 @@ int LogicHEfootball::op_1010(int32 *args) {
 	return 1;
 }
 
-int LogicHEfootball::op_1022(int32 *args) {
+int LogicHEfootball::nextPoint(int32 *args) {
 	double res;
 	double var10 = args[4] - args[1];
 	double var8 = args[5] - args[2];
@@ -226,7 +228,7 @@ int LogicHEfootball::op_1022(int32 *args) {
 	return 1;
 }
 
-int LogicHEfootball::op_1023(int32 *args) {
+int LogicHEfootball::computePlayerBallIntercepts(int32 *args) {
 	double var10, var18, var20, var28, var30, var30_;
 	double argf[7];
 
@@ -272,7 +274,8 @@ int LogicHEfootball::op_1023(int32 *args) {
 	return 1;
 }
 
-int LogicHEfootball::op_1024(int32 *args) {
+int LogicHEfootball::computeTwoCircleIntercepts(int32 *args) {
+	// Looks like this was just dummied out
 	writeScummVar(108, 0);
 	writeScummVar(109, 0);
 	writeScummVar(110, 0);
@@ -281,8 +284,125 @@ int LogicHEfootball::op_1024(int32 *args) {
 	return 1;
 }
 
+class LogicHEfootball2002 : public LogicHEfootball {
+public:
+	LogicHEfootball2002(ScummEngine_v90he *vm) : LogicHEfootball(vm) {}
+
+	int32 dispatch(int op, int numArgs, int32 *args);
+
+private:
+	int translateWorldToScreen(int32 *args);
+	int translateScreenToWorld(int32 *args);
+	int getDayOfWeek();
+	int initScreenTranslations();
+	int getPlaybookFiles(int32 *args);
+	int largestFreeBlock();
+};
+
+int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
+	int32 res = 0;
+
+	switch (op) {
+	case 1025:
+		res = getDayOfWeek();
+		break;
+
+	case 1026:
+		res = initScreenTranslations();
+		break;
+
+	case 1027:
+		res = getPlaybookFiles(args);
+		break;
+
+	case 1028:
+		res = largestFreeBlock();
+		break;
+
+	case 1029:
+		// Clean-up off heap
+		// Dummied in the Windows U32
+		res = 1;
+		break;
+
+	case 1516:
+		// Start auto LAN game
+		break;
+
+	default:
+		res = LogicHEfootball::dispatch(op, numArgs, args);
+		break;
+	}
+
+	return res;
+}
+
+int LogicHEfootball2002::translateWorldToScreen(int32 *args) {
+	// TODO: Implement modified 2002 version
+	return LogicHEfootball::translateWorldToScreen(args);
+}
+
+int LogicHEfootball2002::translateScreenToWorld(int32 *args) {
+	// TODO: Implement modified 2002 version
+	return LogicHEfootball::translateScreenToWorld(args);
+}
+
+int LogicHEfootball2002::getDayOfWeek() {
+	// Get day of week, store in var 108
+
+	TimeDate time;
+	_vm->_system->getTimeAndDate(time);
+	writeScummVar(108, time.tm_wday);
+
+	return 1;
+}
+
+int LogicHEfootball2002::initScreenTranslations() {
+	// TODO: Set values used by translateWorldToScreen/translateScreenToWorld
+	return 1;
+}
+
+int LogicHEfootball2002::getPlaybookFiles(int32 *args) {
+	// Get the pattern and then skip over the directory prefix ("*\" or "*:")
+	Common::String pattern = (const char *)_vm->getStringAddress(args[0] & ~0x33539000) + 2;
+
+	// Prepare a buffer to hold the file names
+	char buffer[1000];
+	buffer[0] = 0;
+
+	// Get the list of file names that match the pattern and iterate over it
+	Common::StringArray fileList = _vm->getSaveFileManager()->listSavefiles(pattern);
+
+	for (uint32 i = 0; i < fileList.size() && strlen(buffer) < 970; i++) {
+		// Isolate the base part of the filename and concatenate it to our buffer
+		Common::String fileName = Common::String(fileList[i].c_str(), fileList[i].size() - (pattern.size() - 1));
+		strcat(buffer, fileName.c_str());
+		strcat(buffer, ">"); // names separated by '>'
+	}
+
+	// Now store the result in an array
+	int array = _vm->setupStringArray(strlen(buffer));
+	strcpy((char *)_vm->getStringAddress(array), buffer);
+
+	// And store the array index in variable 108
+	writeScummVar(108, array);
+
+	return 1;
+}
+
+int LogicHEfootball2002::largestFreeBlock() {
+	// The Windows version always sets the variable to this
+	// The Mac version actually checks for the largest free block
+	writeScummVar(108, 100000000);
+	return 1;
+}
+
 LogicHE *makeLogicHEfootball(ScummEngine_v90he *vm) {
 	return new LogicHEfootball(vm);
+}
+
+LogicHE *makeLogicHEfootball2002(ScummEngine_v90he *vm) {
+	return new LogicHEfootball2002(vm);
 }
 
 } // End of namespace Scumm

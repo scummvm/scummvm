@@ -563,7 +563,7 @@ void MidiPlayer_Midi::readMt32GmPatch(const byte *data, int size) {
 
 			switch (command & 0xf0) {
 			case 0xf0: {
-				byte *sysExEnd = (byte *)memchr(midi + i, 0xf7, midiSize - i);
+				const byte *sysExEnd = (const byte *)memchr(midi + i, 0xf7, midiSize - i);
 
 				if (!sysExEnd)
 					error("Failed to find end of sysEx");

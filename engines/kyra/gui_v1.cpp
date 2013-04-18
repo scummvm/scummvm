@@ -70,8 +70,6 @@ void GUI_v1::initMenuLayout(Menu &menu) {
 void GUI_v1::initMenu(Menu &menu) {
 	_menuButtonList = 0;
 
-	_screen->hideMouse();
-
 	int textX;
 	int textY;
 
@@ -192,7 +190,6 @@ void GUI_v1::initMenu(Menu &menu) {
 		updateMenuButton(scrollDownButton);
 	}
 
-	_screen->showMouse();
 	_screen->updateScreen();
 }
 
@@ -309,10 +306,8 @@ void GUI_v1::updateMenuButton(Button *button) {
 	if (!_displayMenu)
 		return;
 
-	_screen->hideMouse();
 	updateButton(button);
 	_screen->updateScreen();
-	_screen->showMouse();
 }
 
 void GUI_v1::updateButton(Button *button) {
@@ -340,12 +335,10 @@ int GUI_v1::redrawButtonCallback(Button *button) {
 	if (!_displayMenu)
 		return 0;
 
-	_screen->hideMouse();
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		_screen->drawBox(button->x + 1, button->y + 1, button->x + button->width - 1, button->y + button->height - 1, 17);
 	else
 		_screen->drawBox(button->x + 1, button->y + 1, button->x + button->width - 1, button->y + button->height - 1, 0xF8);
-	_screen->showMouse();
 
 	return 0;
 }
@@ -354,12 +347,10 @@ int GUI_v1::redrawShadedButtonCallback(Button *button) {
 	if (!_displayMenu)
 		return 0;
 
-	_screen->hideMouse();
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 31, 18);
 	else
 		_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 0xF9, 0xFA);
-	_screen->showMouse();
 
 	return 0;
 }

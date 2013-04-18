@@ -386,4 +386,42 @@ Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo
 	return Timestamp(result.secs(), result.numberOfFrames(), result.framerate());
 }
 
+/**
+ * An AudioStream wrapper that cuts off the amount of samples read after a
+ * given time length is reached.
+ */
+class LimitingAudioStream : public AudioStream {
+public:
+	LimitingAudioStream(AudioStream *parentStream, const Audio::Timestamp &length, DisposeAfterUse::Flag disposeAfterUse) :
+			_parentStream(parentStream), _samplesRead(0), _disposeAfterUse(disposeAfterUse),
+			_totalSamples(length.convertToFramerate(getRate()).totalNumberOfFrames() * getChannels()) {}
+
+	~LimitingAudioStream() {
+		if (_disposeAfterUse == DisposeAfterUse::YES)
+			delete _parentStream;
+	}
+
+	int readBuffer(int16 *buffer, const int numSamples) {
+		// Cap us off so we don't read past _totalSamples
+		int samplesRead = _parentStream->readBuffer(buffer, MIN<int>(numSamples, _totalSamples - _samplesRead));
+		_samplesRead += samplesRead;
+		return samplesRead;
+	}
+
+	bool endOfData() const { return _parentStream->endOfData() || _samplesRead >= _totalSamples; }
+	bool isStereo() const { return _parentStream->isStereo(); }
+	int getRate() const { return _parentStream->getRate(); }
+
+private:
+	int getChannels() const { return isStereo() ? 2 : 1; }
+
+	AudioStream *_parentStream;
+	DisposeAfterUse::Flag _disposeAfterUse;
+	uint32 _totalSamples, _samplesRead;
+};
+
+AudioStream *makeLimitingAudioStream(AudioStream *parentStream, const Timestamp &length, DisposeAfterUse::Flag disposeAfterUse) {
+	return new LimitingAudioStream(parentStream, length, disposeAfterUse);
+}
+
 } // End of namespace Audio

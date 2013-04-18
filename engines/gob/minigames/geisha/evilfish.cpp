@@ -171,7 +171,7 @@ void EvilFish::mutate(uint16 animSwimLeft, uint16 animSwimRight,
 	}
 }
 
-bool EvilFish::isDead() {
+bool EvilFish::isDead() const {
 	return !isVisible() || (_state == kStateNone) || (_state == kStateDie);
 }
 

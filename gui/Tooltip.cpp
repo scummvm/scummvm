@@ -37,7 +37,7 @@ Tooltip::Tooltip() :
 }
 
 void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
-	assert(widget->getTooltip());
+	assert(widget->hasTooltip());
 
 	_maxWidth = g_gui.xmlEval()->getVar("Globals.Tooltip.MaxWidth", 100);
 	_xdelta = g_gui.xmlEval()->getVar("Globals.Tooltip.XDelta", 0);

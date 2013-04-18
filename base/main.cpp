@@ -55,6 +55,13 @@
 #include "audio/mididrv.h"
 #include "audio/musicplugin.h"  /* for music manager */
 
+#include "graphics/cursorman.h"
+#include "graphics/fontman.h"
+#include "graphics/yuv_to_rgb.h"
+#ifdef USE_FREETYPE2
+#include "graphics/fonts/ttf.h"
+#endif
+
 #include "backends/keymapper/keymapper.h"
 
 #if defined(_WIN32_WCE)
@@ -195,7 +202,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	}
 
 	// On creation the engine should have set up all debug levels so we can use
-	// the command line arugments here
+	// the command line arguments here
 	Common::StringTokenizer tokenizer(edebuglevels, " ,");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
@@ -205,6 +212,12 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 
 	// Initialize any game-specific keymaps
 	engine->initKeymap();
+
+	// Set default values for all of the custom engine options
+	const ExtraGuiOptions engineOptions = (*plugin)->getExtraGuiOptions(Common::String());
+	for (uint i = 0; i < engineOptions.size(); i++) {
+		ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
+	}
 
 	// Inform backend that the engine is about to be run
 	system.engineInit();
@@ -487,10 +500,20 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	PluginManager::destroy();
 	GUI::GuiManager::destroy();
 	Common::ConfigManager::destroy();
+	Common::DebugManager::destroy();
+	Common::EventRecorder::destroy();
 	Common::SearchManager::destroy();
 #ifdef USE_TRANSLATION
 	Common::TranslationManager::destroy();
 #endif
+	MusicManager::destroy();
+	Graphics::CursorManager::destroy();
+	Graphics::FontManager::destroy();
+#ifdef USE_FREETYPE2
+	Graphics::shutdownTTF();
+#endif
+	EngineManager::destroy();
+	Graphics::YUVToRGBManager::destroy();
 
 	return 0;
 }

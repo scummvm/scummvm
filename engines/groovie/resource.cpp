@@ -242,6 +242,7 @@ uint32 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
 		if (resname.hasPrefix(name.c_str())) {
 			debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource %18s matches %s", readname, name.c_str());
 			found = true;
+			break;
 		}
 	}
 

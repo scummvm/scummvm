@@ -36,10 +36,10 @@ class Picture;
 class ToonEngine;
 
 struct AnimationFrame {
-	int32 _x1;
-	int32 _y1;
-	int32 _x2;
-	int32 _y2;
+	int16 _x1;
+	int16 _y1;
+	int16 _x2;
+	int16 _y2;
 	int32 _ref;
 	uint8 *_data;
 };
@@ -49,10 +49,10 @@ public:
 	Animation(ToonEngine *vm);
 	~Animation();
 
-	int32 _x1;
-	int32 _y1;
-	int32 _x2;
-	int32 _y2;
+	int16 _x1;
+	int16 _y1;
+	int16 _x2;
+	int16 _y2;
 	int32 _numFrames;
 	int32 _fps;
 	AnimationFrame *_frames;
@@ -61,18 +61,18 @@ public:
 	char _name[32];
 
 	bool loadAnimation(const Common::String &file);
-	void drawFrame(Graphics::Surface &surface, int32 frame, int32 x, int32 y);
-	void drawFontFrame(Graphics::Surface &surface, int32 frame, int32 x, int32 y, byte *colorMap);
-	void drawFrameOnPicture(int32 frame, int32 x, int32 y);
-	void drawFrameWithMask(Graphics::Surface &surface, int32 frame, int32 xx, int32 yy, int32 zz, Picture *mask);
-	void drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 frame, int32 xx, int32 yy, int32 zz, Picture *mask, int32 scale);
+	void drawFrame(Graphics::Surface &surface, int32 frame, int16 x, int16 y);
+	void drawFontFrame(Graphics::Surface &surface, int32 frame, int16 x, int16 y, byte *colorMap);
+	void drawFrameOnPicture(int32 frame, int16 x, int16 y);
+	void drawFrameWithMask(Graphics::Surface &surface, int32 frame, int16 xx, int16 yy, int32 zz, Picture *mask);
+	void drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 frame, int16 xx, int16 yy, int32 zz, Picture *mask, int32 scale);
 	void drawStrip(int32 offset = 0);
 	void applyPalette(int32 offset, int32 srcOffset, int32 numEntries);
 	Common::Rect getFrameRect(int32 frame);
-	int32 getFrameWidth(int32 frame);
-	int32 getFrameHeight(int32 frame);
-	int32 getWidth() const;
-	int32 getHeight() const;
+	int16 getFrameWidth(int32 frame);
+	int16 getFrameHeight(int32 frame);
+	int16 getWidth() const;
+	int16 getHeight() const;
 	Common::Rect getRect();
 protected:
 	ToonEngine *_vm;
@@ -92,25 +92,25 @@ public:
 	void renderOnPicture();
 	void setAnimation(Animation *animation, bool setRange = true);
 	void playAnimation();
-	void setAnimationRange(int32 rangeStart, int rangeEnd);
+	void setAnimationRange(int32 rangeStart, int32 rangeEnd);
 	void setFps(int32 fps);
 	void setLooping(bool enable);
 	void stopAnimation();
 	void setFrame(int32 position);
 	void forceFrame(int32 position);
-	void setPosition(int32 x, int32 y, int32 z, bool relative = false);
+	void setPosition(int16 x, int16 y, int32 z, bool relative = false);
 	Animation *getAnimation() const { return _animation; }
 	void setScale(int32 scale, bool align = false);
 	void setVisible(bool visible);
 	bool getVisible() const { return _visible; }
 	void setUseMask(bool useMask);
-	void moveRelative(int32 dx, int32 dy, int32 dz);
-	void getRect(int32 *x1, int32 *y1, int32 *x2, int32 *y2) const;
-	int32 getX() const { return _x; }
-	int32 getY() const { return _y; }
+	void moveRelative(int16 dx, int16 dy, int32 dz);
+	void getRect(int16 *x1, int16 *y1, int16 *x2, int16 *y2) const;
+	int16 getX() const { return _x; }
+	int16 getY() const { return _y; }
 	int32 getZ() const { return _z; }
-	int32 getX2() const;
-	int32 getY2() const;
+	int16 getX2() const;
+	int16 getY2() const;
 	int32 getZ2() const;
 	int32 getFrame() const { return _currentFrame; }
 	void reset();
@@ -120,8 +120,8 @@ public:
 	void setId(int32 id) { _id = id; }
 	int32 getId() const { return _id; }
 
-	void setX(int32 x, bool relative = false);
-	void setY(int32 y, bool relative = false);
+	void setX(int16 x, bool relative = false);
+	void setY(int16 y, bool relative = false);
 	void setZ(int32 z, bool relative = false);
 	void setLayerZ(int32 layer);
 	int32 getLayerZ() const;
@@ -133,8 +133,8 @@ protected:
 	int32 _currentTime;
 	int32 _fps;
 	Animation *_animation;
-	int32 _x;
-	int32 _y;
+	int16 _x;
+	int16 _y;
 	int32 _z;
 	int32 _layerZ;
 	int32 _rangeStart;

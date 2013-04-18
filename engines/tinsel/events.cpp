@@ -22,10 +22,10 @@
  * Also provides a couple of utility functions.
  */
 
+#include "common/coroutines.h"
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
 #include "tinsel/config.h"
-#include "tinsel/coroutine.h"
 #include "tinsel/cursor.h"
 #include "tinsel/dw.h"
 #include "tinsel/events.h"
@@ -276,7 +276,7 @@ static void WalkProcess(CORO_PARAM, const void *param) {
 void WalkTo(int x, int y) {
 	WP_INIT to = { x, y };
 
-	g_scheduler->createProcess(PID_TCODE, WalkProcess, &to, sizeof(to));
+	CoroScheduler.createProcess(PID_TCODE, WalkProcess, &to, sizeof(to));
 }
 
 /**
@@ -295,7 +295,7 @@ static void ProcessUserEvent(TINSEL_EVENT uEvent, const Common::Point &coOrds, P
 	if ((actor = GetTaggedActor()) != 0) {
 		// Event for a tagged actor
 		if (TinselV2)
-			ActorEvent(nullContext, actor, uEvent, false, 0);
+			ActorEvent(Common::nullContext, actor, uEvent, false, 0);
 		else
 			ActorEvent(actor, uEvent, be);
 	} else if ((hPoly = GetTaggedPoly()) != NOPOLY) {
@@ -303,7 +303,7 @@ static void ProcessUserEvent(TINSEL_EVENT uEvent, const Common::Point &coOrds, P
 		if (!TinselV2)
 			RunPolyTinselCode(hPoly, uEvent, be, false);
 		else if (uEvent != PROV_WALKTO)
-			PolygonEvent(nullContext, hPoly, uEvent, 0, false, 0);
+			PolygonEvent(Common::nullContext, hPoly, uEvent, 0, false, 0);
 
 	} else {
 		GetCursorXY(&aniX, &aniY, true);
@@ -312,7 +312,7 @@ static void ProcessUserEvent(TINSEL_EVENT uEvent, const Common::Point &coOrds, P
 		if ((hPoly = InPolygon(aniX, aniY, TAG)) != NOPOLY ||
 			(!TinselV2 && ((hPoly = InPolygon(aniX, aniY, EXIT)) != NOPOLY))) {
 			if (TinselV2 && (uEvent != PROV_WALKTO))
-				PolygonEvent(nullContext, hPoly, uEvent, 0, false, 0);
+				PolygonEvent(Common::nullContext, hPoly, uEvent, 0, false, 0);
 			else if (!TinselV2)
 				RunPolyTinselCode(hPoly, uEvent, be, false);
 		} else if ((uEvent == PROV_WALKTO) || (uEvent == WALKTO)) {
@@ -604,7 +604,7 @@ void PolyTinselProcess(CORO_PARAM, const void *param) {
 void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bool bWait,
 				  int myEscape, bool *result) {
 	CORO_BEGIN_CONTEXT;
-		PPROCESS pProc;
+		Common::PPROCESS pProc;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -623,7 +623,7 @@ void PolygonEvent(CORO_PARAM, HPOLYGON hPoly, TINSEL_EVENT tEvent, int actor, bo
 			NULL,			// No Object
 			myEscape);
 	if (to.pic != NULL) {
-		_ctx->pProc = g_scheduler->createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
+		_ctx->pProc = CoroScheduler.createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
 		AttachInterpret(to.pic, _ctx->pProc);
 
 		if (bWait)
@@ -640,14 +640,14 @@ void RunPolyTinselCode(HPOLYGON hPoly, TINSEL_EVENT event, PLR_EVENT be, bool tc
 	PTP_INIT to = { hPoly, event, be, tc, 0, NULL };
 
 	assert(!TinselV2);
-	g_scheduler->createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
+	CoroScheduler.createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
 }
 
 void effRunPolyTinselCode(HPOLYGON hPoly, TINSEL_EVENT event, int actor) {
 	PTP_INIT to = { hPoly, event, PLR_NOEVENT, false, actor, NULL };
 
 	assert(!TinselV2);
-	g_scheduler->createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
+	CoroScheduler.createProcess(PID_TCODE, PolyTinselProcess, &to, sizeof(to));
 }
 
 /**

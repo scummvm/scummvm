@@ -43,6 +43,7 @@ namespace Maemo {
 
 OSystem_SDL_Maemo::OSystem_SDL_Maemo()
 	:
+	_eventObserver(0),
 	OSystem_POSIX() {
 }
 
@@ -84,6 +85,9 @@ static void registerDefaultKeyBindings(Common::KeymapperDefaultBindings *_keymap
 #endif
 
 void OSystem_SDL_Maemo::initBackend() {
+	ConfMan.registerDefault("fullscreen", true);
+	ConfMan.registerDefault("aspect_ratio", true);
+
 	// Create the events manager
 	if (_eventSource == 0)
 		_eventSource = new MaemoSdlEventSource();
@@ -180,6 +184,7 @@ void OSystem_SDL_Maemo::setupIcon() {
 	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
 }
 
+#ifdef ENABLE_KEYMAPPER
 static const Common::KeyTableEntry maemoKeys[] = {
 	// Function keys
 	{"MENU", Common::KEYCODE_F11, 0, "Menu", false},
@@ -191,7 +196,6 @@ static const Common::KeyTableEntry maemoKeys[] = {
 	{0, Common::KEYCODE_INVALID, 0, 0, false}
 };
 
-#ifdef ENABLE_KEYMAPPER
 Common::HardwareInputSet *OSystem_SDL_Maemo::getHardwareInputSet() {
 	return new Common::HardwareInputSet(true, maemoKeys);
 }

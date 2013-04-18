@@ -67,9 +67,6 @@ protected:
 	virtual void handleNextFrame();
 	virtual bool processFrame() = 0;
 	virtual void startSound() {}
-
-protected:
-	uint32 _firstFrameOffset;
 };
 
 class MoviePlayerDXA : public MoviePlayer, Video::DXADecoder {
@@ -82,6 +79,9 @@ public:
 	void playVideo();
 	void nextFrame();
 	virtual void stopVideo();
+
+protected:
+	void readSoundData(Common::SeekableReadStream *stream);
 
 private:
 	void handleNextFrame();

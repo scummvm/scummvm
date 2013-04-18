@@ -23,8 +23,6 @@
 #ifndef COMMON_GUI_OPTIONS_H
 #define COMMON_GUI_OPTIONS_H
 
-#include "common/language.h"
-
 #define GUIO_NONE			"\000"
 #define GUIO_NOSUBTITLES	"\001"
 #define GUIO_NOMUSIC		"\002"
@@ -46,7 +44,6 @@
 #define GUIO_MIDIGM			"\021"
 
 #define GUIO_NOASPECT		"\022"
-#define GUIO_EGAUNDITHER	"\023"
 
 #define GUIO_RENDERHERCGREEN	"\030"
 #define GUIO_RENDERHERCAMBER	"\031"
@@ -58,6 +55,16 @@
 #define GUIO_RENDERPC9821	"\037"
 #define GUIO_RENDERPC9801	"\040"
 
+// Special GUIO flags for the AdvancedDetector's caching of game specific
+// options.
+#define GUIO_GAMEOPTIONS1	"\041"
+#define GUIO_GAMEOPTIONS2	"\042"
+#define GUIO_GAMEOPTIONS3	"\043"
+#define GUIO_GAMEOPTIONS4	"\044"
+#define GUIO_GAMEOPTIONS5	"\045"
+#define GUIO_GAMEOPTIONS6	"\046"
+#define GUIO_GAMEOPTIONS7	"\047"
+
 #define GUIO0() (GUIO_NONE)
 #define GUIO1(a) (a)
 #define GUIO2(a,b) (a b)
@@ -65,15 +72,16 @@
 #define GUIO4(a,b,c,d) (a b c d)
 #define GUIO5(a,b,c,d,e) (a b c d e)
 #define GUIO6(a,b,c,d,e,f) (a b c d e f)
+#define GUIO7(a,b,c,d,e,f,g) (a b c d e f g)
+#define GUIO8(a,b,c,d,e,f,g,h) (a b c d e f g h)
 
 namespace Common {
 
+class String;
 
 bool checkGameGUIOption(const String &option, const String &str);
-bool checkGameGUIOptionLanguage(Common::Language lang, const String &str);
 String parseGameGUIOptions(const String &str);
 const String getGameGUIOptionsDescription(const String &options);
-const String getGameGUIOptionsDescriptionLanguage(Common::Language lang);
 
 /**
  * Updates the GUI options of the current config manager

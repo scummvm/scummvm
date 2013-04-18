@@ -28,22 +28,17 @@
 #include "common/system.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
-#include "graphics/colormasks.h"
 
 namespace Video {
 
 RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Codec() {
-	_pixelFormat = g_system->getScreenFormat();
-
 	// We need to increase the surface size to a multiple of 4
 	uint16 wMod = width % 4;
-	if(wMod != 0)
+	if (wMod != 0)
 		width += 4 - wMod;
 
-	debug(2, "RPZA corrected width: %d", width);
-
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, _pixelFormat);
+	_surface->create(width, height, getPixelFormat());
 }
 
 RPZADecoder::~RPZADecoder() {
@@ -59,18 +54,11 @@ RPZADecoder::~RPZADecoder() {
 	} \
 	totalBlocks--; \
 	if (totalBlocks < 0) \
-		error("block counter just went negative (this should not happen)") \
+		error("rpza block counter just went negative (this should not happen)") \
 
-// Convert from RGB555 to the format specified by the screen
 #define PUT_PIXEL(color) \
-	if ((int32)blockPtr < _surface->w * _surface->h) { \
-		byte r = 0, g = 0, b = 0; \
-		Graphics::colorToRGB<Graphics::ColorMasks<555> >(color, r, g, b); \
-		if (_pixelFormat.bytesPerPixel == 2) \
-			*((uint16 *)_surface->pixels + blockPtr) = _pixelFormat.RGBToColor(r, g, b); \
-		else \
-			*((uint32 *)_surface->pixels + blockPtr) = _pixelFormat.RGBToColor(r, g, b); \
-	} \
+	if ((int32)blockPtr < _surface->w * _surface->h) \
+		WRITE_UINT16((uint16 *)_surface->pixels + blockPtr, color); \
 	blockPtr++
 
 const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *stream) {

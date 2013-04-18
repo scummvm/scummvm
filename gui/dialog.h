@@ -29,6 +29,12 @@
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
 
+#ifdef ENABLE_KEYMAPPER
+namespace Common {
+struct Event;
+}
+#endif
+
 namespace GUI {
 
 class Widget;
@@ -46,6 +52,7 @@ protected:
 	Widget	*_mouseWidget;
 	Widget  *_focusedWidget;
 	Widget  *_dragWidget;
+	Widget 	*_tickleWidget;
 	bool	_visible;
 
 	ThemeEngine::DialogBackground _backgroundType;
@@ -65,7 +72,13 @@ public:
 	void	setFocusWidget(Widget *widget);
 	Widget *getFocusWidget() { return _focusedWidget; }
 
+	void setTickleWidget(Widget *widget) { _tickleWidget = widget; }
+	void unSetTickleWidget() { _tickleWidget = NULL; }
+	Widget *getTickleWidget() { return _tickleWidget; }
+
 	virtual void reflowLayout();
+	virtual void lostFocus();
+	virtual void receivedFocus() {}
 
 protected:
 	virtual void open();
@@ -82,6 +95,9 @@ protected:
 	virtual void handleKeyUp(Common::KeyState state);
 	virtual void handleMouseMoved(int x, int y, int button);
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
+#ifdef ENABLE_KEYMAPPER
+	virtual void handleOtherEvent(Common::Event evt);
+#endif
 
 	Widget *findWidget(int x, int y); // Find the widget at pos x,y if any
 	Widget *findWidget(const char *name);

@@ -59,7 +59,7 @@ void loadObject(char *pObjectName) {
 	assert(numEntry <= NUM_MAX_OBJECT);
 
 	for (i = 0; i < numEntry; i++) {
-		if (g_cine->_objectTable[i].costume != -2 && g_cine->_objectTable[i].costume != -3) {	// flag is keep ?
+		if (g_cine->_objectTable[i].costume != -2 && g_cine->_objectTable[i].costume != -3) { // flag is keep?
 			Common::MemoryReadStream readS(ptr, entrySize);
 
 			g_cine->_objectTable[i].x = readS.readSint16BE();

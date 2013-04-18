@@ -92,7 +92,8 @@ void loadRelatedPalette(const char *fileName) {
 	paletteIndex = findPaletteFromName(localName);
 
 	if (paletteIndex == -1) {
-		for (i = 0; i < 16; i++) {	// generate default palette
+		// generate default palette
+		for (i = 0; i < 16; i++) {
 			paletteBuffer1[i] = paletteBuffer2[i] = (i << 4) + i;
 		}
 	} else {

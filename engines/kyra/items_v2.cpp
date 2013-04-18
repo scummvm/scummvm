@@ -82,26 +82,19 @@ void KyraEngine_v2::resetItem(int index) {
 }
 
 void KyraEngine_v2::setHandItem(Item item) {
-	Screen *scr = screen();
-	scr->hideMouse();
-
 	if (item == kItemNone) {
 		removeHandItem();
 	} else {
 		setMouseCursor(item);
 		_itemInHand = item;
 	}
-
-	scr->showMouse();
 }
 
 void KyraEngine_v2::removeHandItem() {
 	Screen *scr = screen();
-	scr->hideMouse();
 	scr->setMouseCursor(0, 0, getShapePtr(0));
 	_itemInHand = kItemNone;
 	_mouseState = kItemNone;
-	scr->showMouse();
 }
 
 } // end of namesapce Kyra

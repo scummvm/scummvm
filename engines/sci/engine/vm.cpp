@@ -119,7 +119,7 @@ extern const char *opcodeNames[]; // from scriptdebug.cpp
 
 static reg_t read_var(EngineState *s, int type, int index) {
 	if (validate_variable(s->variables[type], s->stack_base, type, s->variablesMax[type], index)) {
-		if (s->variables[type][index].segment == 0xffff) {
+		if (s->variables[type][index].getSegment() == 0xffff) {
 			switch (type) {
 			case VAR_TEMP: {
 				// Uninitialized read on a temp
@@ -195,8 +195,8 @@ static void write_var(EngineState *s, int type, int index, reg_t value) {
 		//  this happens at least in sq1/room 44 (slot-machine), because a send is missing parameters, then
 		//  those parameters are taken from uninitialized stack and afterwards they are copied back into temps
 		//  if we don't remove the segment, we would get false-positive uninitialized reads later
-		if (type == VAR_TEMP && value.segment == 0xffff)
-			value.segment = 0;
+		if (type == VAR_TEMP && value.getSegment() == 0xffff)
+			value.setSegment(0);
 
 		s->variables[type][index] = value;
 
@@ -225,30 +225,15 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		scr = s->_segMan->getScript(seg);
 	}
 
-	int temp = scr->validateExportFunc(pubfunct, false);
-
-	if (getSciVersion() == SCI_VERSION_3)
-		temp += scr->getCodeBlockOffset();
-
-	if (!temp) {
-#ifdef ENABLE_SCI32
-		if (g_sci->getGameId() == GID_TORIN && script == 64036) {
-			// Script 64036 in Torin's Passage is empty and contains an invalid
-			// (empty) export
-		} else if (g_sci->getGameId() == GID_RAMA && script == 64908) {
-			// Script 64908 in the demo of RAMA contains an invalid (empty)
-			// export
-		} else
-#endif
-			error("Request for invalid exported function 0x%x of script %d", pubfunct, script);
+	uint32 exportAddr = scr->validateExportFunc(pubfunct, false);
+	if (!exportAddr)
 		return NULL;
-	}
 
 	// Check if a breakpoint is set on this method
 	g_sci->checkExportBreakpoint(script, pubfunct);
 
 	ExecStack xstack(calling_obj, calling_obj, sp, argc, argp,
-						seg, make_reg(seg, temp), -1, pubfunct, -1,
+						seg, make_reg32(seg, exportAddr), -1, pubfunct, -1,
 						s->_executionStack.size() - 1, EXEC_STACK_TYPE_CALL);
 	s->_executionStack.push_back(xstack);
 	return &(s->_executionStack.back());
@@ -304,11 +289,12 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 		ExecStackType stackType = EXEC_STACK_TYPE_VARSELECTOR;
 		StackPtr curSP = NULL;
-		reg_t curFP = NULL_REG;
+		reg32_t curFP = make_reg32(0, 0);
 		if (selectorType == kSelectorMethod) {
 			stackType = EXEC_STACK_TYPE_CALL;
 			curSP = sp;
-			curFP = funcp;
+			// TODO: Will this offset suffice for large SCI3 scripts?
+			curFP = make_reg32(funcp.getSegment(), funcp.getOffset());
 			sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
 		}
 
@@ -342,7 +328,7 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc,
 	// Add stack frame to indicate we're executing a callk.
 	// This is useful in debugger backtraces if this
 	// kernel function calls a script itself.
-	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, 0xFFFF, NULL_REG,
+	ExecStack xstack(NULL_REG, NULL_REG, NULL, argc, argv - 1, 0xFFFF, make_reg32(0, 0),
 						kernelCallNr, -1, -1, s->_executionStack.size() - 1, EXEC_STACK_TYPE_KERNEL);
 	s->_executionStack.push_back(xstack);
 }
@@ -578,16 +564,16 @@ void run_vm(EngineState *s) {
 		int var_type; // See description below
 		int var_number;
 
-		g_sci->_debugState.old_pc_offset = s->xs->addr.pc.offset;
+		g_sci->_debugState.old_pc_offset = s->xs->addr.pc.getOffset();
 		g_sci->_debugState.old_sp = s->xs->sp;
 
 		if (s->abortScriptProcessing != kAbortNone)
 			return; // Stop processing
 
 		if (s->_executionStackPosChanged) {
-			scr = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.segment);
+			scr = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.getSegment());
 			if (!scr)
-				error("No script in segment %d",  s->xs->addr.pc.segment);
+				error("No script in segment %d",  s->xs->addr.pc.getSegment());
 			s->xs = &(s->_executionStack.back());
 			s->_executionStackPosChanged = false;
 
@@ -624,13 +610,13 @@ void run_vm(EngineState *s) {
 
 		s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
 
-		if (s->xs->addr.pc.offset >= scr->getBufSize())
+		if (s->xs->addr.pc.getOffset() >= scr->getBufSize())
 			error("run_vm(): program counter gone astray, addr: %d, code buffer size: %d",
-			s->xs->addr.pc.offset, scr->getBufSize());
+			s->xs->addr.pc.getOffset(), scr->getBufSize());
 
 		// Get opcode
 		byte extOpcode;
-		s->xs->addr.pc.offset += readPMachineInstruction(scr->getBuf() + s->xs->addr.pc.offset, extOpcode, opparams);
+		s->xs->addr.pc.incOffset(readPMachineInstruction(scr->getBuf(s->xs->addr.pc.getOffset()), extOpcode, opparams));
 		const byte opcode = extOpcode >> 1;
 		//debug("%s: %d, %d, %d, %d, acc = %04x:%04x, script %d, local script %d", opcodeNames[opcode], opparams[0], opparams[1], opparams[2], opparams[3], PRINT_REG(s->r_acc), scr->getScriptNumber(), local_script->getScriptNumber());
 
@@ -705,7 +691,7 @@ void run_vm(EngineState *s) {
 			break;
 
 		case op_not: // 0x0c (12)
-			s->r_acc = make_reg(0, !(s->r_acc.offset || s->r_acc.segment));
+			s->r_acc = make_reg(0, !(s->r_acc.getOffset() || s->r_acc.getSegment()));
 			// Must allow pointers to be negated, as this is used for checking whether objects exist
 			break;
 
@@ -765,30 +751,30 @@ void run_vm(EngineState *s) {
 
 		case op_bt: // 0x17 (23)
 			// Branch relative if true
-			if (s->r_acc.offset || s->r_acc.segment)
-				s->xs->addr.pc.offset += opparams[0];
+			if (s->r_acc.getOffset() || s->r_acc.getSegment())
+				s->xs->addr.pc.incOffset(opparams[0]);
 
-			if (s->xs->addr.pc.offset >= local_script->getScriptSize())
+			if (s->xs->addr.pc.getOffset() >= local_script->getScriptSize())
 				error("[VM] op_bt: request to jump past the end of script %d (offset %d, script is %d bytes)",
-					local_script->getScriptNumber(), s->xs->addr.pc.offset, local_script->getScriptSize());
+					local_script->getScriptNumber(), s->xs->addr.pc.getOffset(), local_script->getScriptSize());
 			break;
 
 		case op_bnt: // 0x18 (24)
 			// Branch relative if not true
-			if (!(s->r_acc.offset || s->r_acc.segment))
-				s->xs->addr.pc.offset += opparams[0];
+			if (!(s->r_acc.getOffset() || s->r_acc.getSegment()))
+				s->xs->addr.pc.incOffset(opparams[0]);
 
-			if (s->xs->addr.pc.offset >= local_script->getScriptSize())
+			if (s->xs->addr.pc.getOffset() >= local_script->getScriptSize())
 				error("[VM] op_bnt: request to jump past the end of script %d (offset %d, script is %d bytes)",
-					local_script->getScriptNumber(), s->xs->addr.pc.offset, local_script->getScriptSize());
+					local_script->getScriptNumber(), s->xs->addr.pc.getOffset(), local_script->getScriptSize());
 			break;
 
 		case op_jmp: // 0x19 (25)
-			s->xs->addr.pc.offset += opparams[0];
+			s->xs->addr.pc.incOffset(opparams[0]);
 
-			if (s->xs->addr.pc.offset >= local_script->getScriptSize())
+			if (s->xs->addr.pc.getOffset() >= local_script->getScriptSize())
 				error("[VM] op_jmp: request to jump past the end of script %d (offset %d, script is %d bytes)",
-					local_script->getScriptNumber(), s->xs->addr.pc.offset, local_script->getScriptSize());
+					local_script->getScriptNumber(), s->xs->addr.pc.getOffset(), local_script->getScriptSize());
 			break;
 
 		case op_ldi: // 0x1a (26)
@@ -831,13 +817,13 @@ void run_vm(EngineState *s) {
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
 			           + 1 + s->r_rest;
 			StackPtr call_base = s->xs->sp - argc;
-			s->xs->sp[1].offset += s->r_rest;
+			s->xs->sp[1].incOffset(s->r_rest);
 
-			uint16 localCallOffset = s->xs->addr.pc.offset + opparams[0];
+			uint32 localCallOffset = s->xs->addr.pc.getOffset() + opparams[0];
 
 			ExecStack xstack(s->xs->objp, s->xs->objp, s->xs->sp,
 							(call_base->requireUint16()) + s->r_rest, call_base,
-							s->xs->local_segment, make_reg(s->xs->addr.pc.segment, localCallOffset),
+							s->xs->local_segment, make_reg32(s->xs->addr.pc.getSegment(), localCallOffset),
 							NULL_SELECTOR, -1, localCallOffset, s->_executionStack.size() - 1,
 							EXEC_STACK_TYPE_CALL);
 
@@ -894,9 +880,9 @@ void run_vm(EngineState *s) {
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
 
-			s->xs->sp[0].offset += s->r_rest;
+			s->xs->sp[0].incOffset(s->r_rest);
 			xs_new = execute_method(s, 0, opparams[0], s_temp, s->xs->objp,
-									s->xs->sp[0].offset, s->xs->sp);
+									s->xs->sp[0].getOffset(), s->xs->sp);
 			s->r_rest = 0; // Used up the &rest adjustment
 			if (xs_new)    // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
@@ -908,11 +894,10 @@ void run_vm(EngineState *s) {
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
 
-			s->xs->sp[0].offset += s->r_rest;
+			s->xs->sp[0].incOffset(s->r_rest);
 			xs_new = execute_method(s, opparams[0], opparams[1], s_temp, s->xs->objp,
-									s->xs->sp[0].offset, s->xs->sp);
+									s->xs->sp[0].getOffset(), s->xs->sp);
 			s->r_rest = 0; // Used up the &rest adjustment
-
 			if (xs_new)  // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
 			break;
@@ -965,7 +950,7 @@ void run_vm(EngineState *s) {
 			s_temp = s->xs->sp;
 			s->xs->sp -= ((opparams[0] >> 1) + s->r_rest); // Adjust stack
 
-			s->xs->sp[1].offset += s->r_rest;
+			s->xs->sp[1].incOffset(s->r_rest);
 			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp,
 									(int)(opparams[0] >> 1) + (uint16)s->r_rest, s->xs->sp);
 
@@ -996,7 +981,7 @@ void run_vm(EngineState *s) {
 		case op_class: // 0x28 (40)
 			// Get class address
 			s->r_acc = s->_segMan->getClassAddress((unsigned)opparams[0], SCRIPT_GET_LOCK,
-											s->xs->addr.pc);
+											s->xs->addr.pc.getSegment());
 			break;
 
 		case 0x29: // (41)
@@ -1008,7 +993,7 @@ void run_vm(EngineState *s) {
 			s_temp = s->xs->sp;
 			s->xs->sp -= ((opparams[0] >> 1) + s->r_rest); // Adjust stack
 
-			s->xs->sp[1].offset += s->r_rest;
+			s->xs->sp[1].incOffset(s->r_rest);
 			xs_new = send_selector(s, s->xs->objp, s->xs->objp,
 									s_temp, (int)(opparams[0] >> 1) + (uint16)s->r_rest,
 									s->xs->sp);
@@ -1021,7 +1006,7 @@ void run_vm(EngineState *s) {
 
 		case op_super: // 0x2b (43)
 			// Send to any class
-			r_temp = s->_segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, s->xs->addr.pc);
+			r_temp = s->_segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, s->xs->addr.pc.getSegment());
 
 			if (!r_temp.isPointer())
 				error("[VM]: Invalid superclass in object");
@@ -1029,7 +1014,7 @@ void run_vm(EngineState *s) {
 				s_temp = s->xs->sp;
 				s->xs->sp -= ((opparams[1] >> 1) + s->r_rest); // Adjust stack
 
-				s->xs->sp[1].offset += s->r_rest;
+				s->xs->sp[1].incOffset(s->r_rest);
 				xs_new = send_selector(s, r_temp, s->xs->objp, s_temp,
 										(int)(opparams[1] >> 1) + (uint16)s->r_rest,
 										s->xs->sp);
@@ -1058,14 +1043,14 @@ void run_vm(EngineState *s) {
 			var_number = temp & 0x03; // Get variable type
 
 			// Get variable block offset
-			r_temp.segment = s->variablesSegment[var_number];
-			r_temp.offset = s->variables[var_number] - s->variablesBase[var_number];
+			r_temp.setSegment(s->variablesSegment[var_number]);
+			r_temp.setOffset(s->variables[var_number] - s->variablesBase[var_number]);
 
 			if (temp & 0x08)  // Add accumulator offset if requested
-				r_temp.offset += s->r_acc.requireSint16();
+				r_temp.incOffset(s->r_acc.requireSint16());
 
-			r_temp.offset += opparams[1];  // Add index
-			r_temp.offset *= 2; // variables are 16 bit
+			r_temp.incOffset(opparams[1]);  // Add index
+			r_temp.setOffset(r_temp.getOffset() * 2); // variables are 16 bit
 			// That's the immediate address now
 			s->r_acc = r_temp;
 			break;
@@ -1129,28 +1114,28 @@ void run_vm(EngineState *s) {
 		case op_lofsa: // 0x39 (57)
 		case op_lofss: // 0x3a (58)
 			// Load offset to accumulator or push to stack
-			r_temp.segment = s->xs->addr.pc.segment;
+			r_temp.setSegment(s->xs->addr.pc.getSegment());
 
 			switch (g_sci->_features->detectLofsType()) {
 			case SCI_VERSION_0_EARLY:
-				r_temp.offset = s->xs->addr.pc.offset + opparams[0];
+				r_temp.setOffset((uint16)s->xs->addr.pc.getOffset() + opparams[0]);
 				break;
 			case SCI_VERSION_1_MIDDLE:
-				r_temp.offset = opparams[0];
+				r_temp.setOffset(opparams[0]);
 				break;
 			case SCI_VERSION_1_1:
-				r_temp.offset = opparams[0] + local_script->getScriptSize();
+				r_temp.setOffset(opparams[0] + local_script->getScriptSize());
 				break;
 			case SCI_VERSION_3:
 				// In theory this can break if the variant with a one-byte argument is
 				// used. For now, assume it doesn't happen.
-				r_temp.offset = local_script->relocateOffsetSci3(s->xs->addr.pc.offset-2);
+				r_temp.setOffset(local_script->relocateOffsetSci3(s->xs->addr.pc.getOffset() - 2));
 				break;
 			default:
 				error("Unknown lofs type");
 			}
 
-			if (r_temp.offset >= scr->getBufSize())
+			if (r_temp.getOffset() >= scr->getBufSize())
 				error("VM: lofsa/lofss operation overflowed: %04x:%04x beyond end"
 				          " of script (at %04x)", PRINT_REG(r_temp), scr->getBufSize());
 
@@ -1188,6 +1173,7 @@ void run_vm(EngineState *s) {
 
 		case op_line: // 0x3f (63)
 			// Debug opcode (line number)
+			//debug("Script %d, line %d", scr->getScriptNumber(), opparams[0]);
 			break;
 
 		case op_lag: // 0x40 (64)

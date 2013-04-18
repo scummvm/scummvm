@@ -182,7 +182,7 @@ Common::Error Parallaction_ns::init() {
 	_cmdExec = new CommandExec_ns(this);
 	_programExec = new ProgramExec_ns(this);
 
-	_walker = new PathWalker_NS;
+	_walker = new PathWalker_NS(this);
 
 	_sarcophagusDeltaX = 0;
 	_movingSarcophagus = false;
@@ -310,6 +310,7 @@ void Parallaction_ns::changeBackground(const char* background, const char* mask,
 		_system->delayMillis(20);
 		_gfx->setPalette(pal);
 		_gfx->updateScreen();
+		return;
 	}
 
 	if (path == 0) {
@@ -382,8 +383,8 @@ void Parallaction_ns::changeLocation() {
 		changeCharacter(locname.character());
 	}
 
-	strcpy(_saveData1, locname.location());
-	parseLocation(_saveData1);
+	strcpy(g_saveData1, locname.location());
+	parseLocation(g_saveData1);
 
 	if (_location._startPosition.x != -1000) {
 		_char._ani->setX(_location._startPosition.x);
@@ -399,7 +400,7 @@ void Parallaction_ns::changeLocation() {
 
 	// BUG #1837503: kEngineChangeLocation flag must be cleared *before* commands
 	// and acommands are executed, so that it can be set again if needed.
-	_engineFlags &= ~kEngineChangeLocation;
+	g_engineFlags &= ~kEngineChangeLocation;
 
 	_cmdExec->run(_location._commands);
 
@@ -412,6 +413,11 @@ void Parallaction_ns::changeLocation() {
 
 	if (!_intro) {
 		_input->setMouseState(oldMouseState);
+		// WORKAROUND: Fix a script bug in the Multilingual DOS version of
+		// Nippon Safes: the mouse cursor is incorrectly hidden outside the
+		// cave at the end of the game. Fix it here.
+		if (!strcmp(_location._name, "ingressocav"))
+			_input->setMouseState(MOUSE_ENABLED_SHOW);
 	}
 
 	debugC(1, kDebugExec, "changeLocation() done");
@@ -526,10 +532,10 @@ void Parallaction_ns::cleanupGame() {
 	_soundManI->stopMusic();
 
 	_inTestResult = false;
-	_engineFlags &= ~kEngineTransformedDonna;
+	g_engineFlags &= ~kEngineTransformedDonna;
 
 	_numLocations = 0;
-	_globalFlags = 0;
+	g_globalFlags = 0;
 	memset(_localFlags, 0, sizeof(_localFlags));
 	memset(_locationNames, 0, sizeof(_locationNames));
 
@@ -553,7 +559,7 @@ void Parallaction_ns::scheduleWalk(int16 x, int16 y, bool fromUser) {
 	}
 
 	_walker->buildPath(a, x, y);
-	_engineFlags |= kEngineWalking;
+	g_engineFlags |= kEngineWalking;
 }
 
 }// namespace Parallaction

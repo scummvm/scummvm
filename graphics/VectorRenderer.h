@@ -55,7 +55,7 @@ struct DrawStep {
 	bool autoWidth, autoHeight;
 	int16 x, y, w, h; /**< width, height and position, if not measured automatically.
 						  negative values mean counting from the opposite direction */
-						  
+
 	Common::Rect padding;
 
 	enum VectorAlignment {

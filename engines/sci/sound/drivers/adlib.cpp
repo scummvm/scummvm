@@ -807,6 +807,9 @@ int MidiPlayer_AdLib::open(ResourceManager *resMan) {
 			int size = f.size();
 			const uint patchSize = 1344;
 
+			// Note: Funseeker's Guide also has another version of adl.drv, 8803 bytes.
+			// This isn't supported, but it's not really used anywhere, as that demo
+			// doesn't have sound anyway.
 			if ((size == 5684) || (size == 5720) || (size == 5727)) {
 				byte *buf = new byte[patchSize];
 

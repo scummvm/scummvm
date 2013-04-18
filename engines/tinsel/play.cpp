@@ -21,9 +21,9 @@
  * Plays films within a scene, takes into account the actor in each 'column'.								|
  */
 
+#include "common/coroutines.h"
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
-#include "tinsel/coroutine.h"
 #include "tinsel/dw.h"
 #include "tinsel/film.h"
 #include "tinsel/handle.h"
@@ -395,7 +395,7 @@ static void SoundReelWaitCheck() {
 	if (--g_soundReelWait == 0) {
 		for (int i = 0; i < MAX_SOUNDREELS; i++) {
 			if (g_soundReels[i].hFilm) {
-				g_scheduler->createProcess(PID_REEL, ResSoundReel, &i, sizeof(i));
+				CoroScheduler.createProcess(PID_REEL, ResSoundReel, &i, sizeof(i));
 			}
 		}
 	}
@@ -1001,7 +1001,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 		NewestFilm(hFilm, &pFilm->reels[i]);
 
 		ppi.column = i;
-		g_scheduler->createProcess(PID_REEL, PlayProcess, &ppi, sizeof(PPINIT));
+		CoroScheduler.createProcess(PID_REEL, PlayProcess, &ppi, sizeof(PPINIT));
 	}
 
 	if (TinselV2) {
@@ -1011,7 +1011,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 		CORO_GIVE_WAY;
 
 		if (myescEvent && myescEvent != GetEscEvents())
-			g_scheduler->rescheduleAll();
+			CoroScheduler.rescheduleAll();
 	}
 
 	CORO_END_CODE;
@@ -1063,7 +1063,7 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
 		NewestFilm(hFilm, &pFilm->reels[i]);
 
 		_ctx->ppi.column = i;
-		g_scheduler->createProcess(PID_REEL, PlayProcess, &_ctx->ppi, sizeof(PPINIT));
+		CoroScheduler.createProcess(PID_REEL, PlayProcess, &_ctx->ppi, sizeof(PPINIT));
 	}
 
 	if (TinselV2) {
@@ -1078,7 +1078,7 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
 		// Wait until film changes or loop count increases
 		while (GetActorPresFilm(_ctx->i) == hFilm && GetLoopCount(_ctx->i) == _ctx->loopCount) {
 			if (myescEvent && myescEvent != GetEscEvents()) {
-				g_scheduler->rescheduleAll();
+				CoroScheduler.rescheduleAll();
 				break;
 			}
 
@@ -1126,7 +1126,7 @@ void RestoreActorReels(SCNHANDLE hFilm, short reelnum, short z, int x, int y) {
 	NewestFilm(hFilm, &pfilm->reels[reelnum]);
 
 	// Start display process for the reel
-	g_scheduler->createProcess(PID_REEL, PlayProcess, &ppi, sizeof(ppi));
+	CoroScheduler.createProcess(PID_REEL, PlayProcess, &ppi, sizeof(ppi));
 }
 
 /**
@@ -1160,7 +1160,7 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 			NewestFilm(hFilm, &pFilm->reels[i]);
 
 			// Start display process for the reel
-			g_scheduler->createProcess(PID_REEL, PlayProcess, &ppi, sizeof(ppi));
+			CoroScheduler.createProcess(PID_REEL, PlayProcess, &ppi, sizeof(ppi));
 
 			g_soundReelWait++;
 		}

@@ -1436,7 +1436,7 @@ void LoLEngine::increaseExperience(int charNum, int skill, uint32 points) {
 
 	bool loop = true;
 	while (loop) {
-		if (_characters[charNum].experiencePts[skill] <= _expRequirements[_characters[charNum].skillLevels[skill]])
+		if (_characters[charNum].experiencePts[skill] < _expRequirements[_characters[charNum].skillLevels[skill]])
 			break;
 
 		_characters[charNum].skillLevels[skill]++;
@@ -2894,11 +2894,11 @@ int LoLEngine::processMagicVaelansCube() {
 	uint8 s = _levelBlockProperties[bl].walls[_currentDirection ^ 2];
 	uint8 flg = _wllWallFlags[s];
 
-	int v = (s == 47 && (_currentLevel == 17 || _currentLevel == 24)) ? 1 : 0;
-	if ((_wllVmpMap[s] == 1 || _wllVmpMap[s] == 2) && (flg & 1) && (_currentLevel == 22)) {
+	int res = (s == 47 && (_currentLevel == 17 || _currentLevel == 24)) ? 1 : 0;
+	if ((_wllVmpMap[s] == 1 || _wllVmpMap[s] == 2) && (!(flg & 1)) && (_currentLevel != 22)) {
 		memset(_levelBlockProperties[bl].walls, 0, 4);
 		gui_drawScene(0);
-		v = 1;
+		res = 1;
 	}
 
 	uint16 o = _levelBlockProperties[bl].assignedObjects;
@@ -2906,7 +2906,7 @@ int LoLEngine::processMagicVaelansCube() {
 		LoLMonster *m = &_monsters[o & 0x7fff];
 		if (m->properties->flags & 0x1000) {
 			inflictDamage(o, 100, 0xffff, 0, 0x80);
-			v = 1;
+			res = 1;
 		}
 		o = m->nextAssignedObject;
 	}
@@ -2922,7 +2922,7 @@ int LoLEngine::processMagicVaelansCube() {
 	delete[] tmpPal1;
 	delete[] tmpPal2;
 
-	return v;
+	return res;
 }
 
 int LoLEngine::processMagicGuardian(int charNum) {

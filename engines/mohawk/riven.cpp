@@ -171,7 +171,7 @@ Common::Error MohawkEngine_Riven::run() {
 			error ("Could not find saved game");
 
 		// Attempt to load the game. On failure, just send us to the main menu.
-		if (!_saveLoad->loadGame(savedGamesList[gameToLoad])) {
+		if (_saveLoad->loadGame(savedGamesList[gameToLoad]).getCode() != Common::kNoError) {
 			changeToStack(aspit);
 			changeToCard(1);
 		}
@@ -646,7 +646,7 @@ Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
 	}
 
 	delete nameStream;
-	delete [] stringOffsets;
+	delete[] stringOffsets;
 	return name;
 }
 
@@ -713,23 +713,15 @@ void MohawkEngine_Riven::delayAndUpdate(uint32 ms) {
 }
 
 void MohawkEngine_Riven::runLoadDialog() {
-	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"));
-	slc.setSaveMode(false);
+	GUI::SaveLoadChooser slc(_("Load game:"), _("Load"), false);
 
-	Common::String gameId = ConfMan.get("gameid");
-
-	const EnginePlugin *plugin = 0;
-	EngineMan.findGame(gameId, &plugin);
-
-	int slot = slc.runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
+	int slot = slc.runModalWithCurrentTarget();
 	if (slot >= 0)
 		loadGameState(slot);
-
-	slc.close();
 }
 
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
-	return _saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot]) ? Common::kNoError : Common::kUnknownError;
+	return _saveLoad->loadGame(_saveLoad->generateSaveGameList()[slot]);
 }
 
 Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &desc) {
@@ -738,7 +730,7 @@ Common::Error MohawkEngine_Riven::saveGameState(int slot, const Common::String &
 	if ((uint)slot < saveList.size())
 		_saveLoad->deleteSave(saveList[slot]);
 
-	return _saveLoad->saveGame(Common::String(desc)) ? Common::kNoError : Common::kUnknownError;
+	return _saveLoad->saveGame(desc);
 }
 
 Common::String MohawkEngine_Riven::getStackName(uint16 stack) const {
@@ -979,7 +971,7 @@ void MohawkEngine_Riven::doVideoTimer(VideoHandle handle, bool force) {
 		return;
 
 	// Run the opcode if we can at this point
-	if (force || _video->getElapsedTime(handle) >= _scriptMan->getStoredMovieOpcodeTime())
+	if (force || _video->getTime(handle) >= _scriptMan->getStoredMovieOpcodeTime())
 		_scriptMan->runStoredMovieOpcode();
 }
 

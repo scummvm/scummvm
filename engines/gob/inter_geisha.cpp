@@ -55,7 +55,7 @@ Inter_Geisha::Inter_Geisha(GobEngine *vm) : Inter_v1(vm),
 	_diving      = new Geisha::Diving(vm);
 	_penetration = new Geisha::Penetration(vm);
 
-	_cheater = new Cheater_Geisha(vm, _diving);
+	_cheater = new Cheater_Geisha(vm, _diving, _penetration);
 
 	_vm->_console->registerCheater(_cheater);
 }
@@ -200,8 +200,12 @@ void Inter_Geisha::oGeisha_checkData(OpFuncParams &params) {
 	if (mode == SaveLoad::kSaveModeNone) {
 
 		exists = _vm->_dataIO->hasFile(file);
-		if (!exists)
-			warning("File \"%s\" not found", file.c_str());
+		if (!exists) {
+			// NOTE: Geisha looks if fin.tot exists to check if it needs to open disk3.stk.
+			//       This is completely normal, so don't print a warning.
+			if (file != "fin.tot")
+				warning("File \"%s\" not found", file.c_str());
+		}
 
 	} else if (mode == SaveLoad::kSaveModeSave)
 		exists = _vm->_saveLoad->getSize(file.c_str()) >= 0;
@@ -272,12 +276,12 @@ void Inter_Geisha::oGeisha_writeData(OpFuncParams &params) {
 }
 
 void Inter_Geisha::oGeisha_gamePenetration(OpGobParams &params) {
-	uint16 var1      = _vm->_game->_script->readUint16();
-	uint16 var2      = _vm->_game->_script->readUint16();
-	uint16 var3      = _vm->_game->_script->readUint16();
-	uint16 resultVar = _vm->_game->_script->readUint16();
+	uint16 hasAccessPass = _vm->_game->_script->readUint16();
+	uint16 hasMaxEnergy  = _vm->_game->_script->readUint16();
+	uint16 testMode      = _vm->_game->_script->readUint16();
+	uint16 resultVar     = _vm->_game->_script->readUint16();
 
-	bool result = _penetration->play(var1, var2, var3);
+	bool result = _penetration->play(hasAccessPass, hasMaxEnergy, testMode);
 
 	WRITE_VAR_UINT32(resultVar, result ? 1 : 0);
 }
@@ -298,9 +302,8 @@ void Inter_Geisha::oGeisha_loadTitleMusic(OpGobParams &params) {
 }
 
 void Inter_Geisha::oGeisha_playMusic(OpGobParams &params) {
-	// TODO: The MDYPlayer is still broken!
-	warning("Geisha Stub: oGeisha_playMusic");
-	// _vm->_sound->adlibPlay();
+	_vm->_sound->adlibSetRepeating(-1);
+	_vm->_sound->adlibPlay();
 }
 
 void Inter_Geisha::oGeisha_stopMusic(OpGobParams &params) {

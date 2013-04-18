@@ -54,7 +54,7 @@ public:
 	uint16 _width, _height;
 	uint16 _frameNumber, _frameCount;
 	uint32 _keepFrameCounter;
-	
+
 	uint32 _curFrameSize;
 	uint32 _nextFrameSize, _nextFrameOffset;
 

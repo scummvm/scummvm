@@ -40,7 +40,7 @@
 namespace Sword25 {
 
 #define lua_pushbooleancpp(L, b) (lua_pushboolean(L, b ? 1 : 0))
-#define lua_tobooleancpp(L, i) (lua_toboolean(L, i) == 0 ? false : true)
+#define lua_tobooleancpp(L, i) (lua_toboolean(L, i) != 0)
 
 struct lua_constant_reg {
 	const char     *Name;

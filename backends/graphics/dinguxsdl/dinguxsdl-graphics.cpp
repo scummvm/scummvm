@@ -218,7 +218,7 @@ void DINGUXSdlGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined (DEBUG) && ! defined(_WIN32_WCE) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
+#if defined(DEBUG) && ! defined(_WIN32_WCE) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
 	assert(_hwscreen != NULL);
 	assert(_hwscreen->map->sw_data != NULL);
 #endif
@@ -432,7 +432,7 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 	// Forcefully disable aspect ratio correction for games
 	// which starts with a native 240px height resolution.
 	// This fixes games with weird resolutions, like MM Nes (256x240)
-	if(_videoMode.screenHeight == 240) {
+	if (_videoMode.screenHeight == 240) {
 		_videoMode.aspectRatioCorrection = false;
 	}
 
@@ -479,7 +479,7 @@ void DINGUXSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 	case OSystem::kFeatureCursorPalette:
 		_cursorPaletteDisabled = !enable;
 		blitCursor();
-		break;	
+		break;
 	default:
 		break;
 	}

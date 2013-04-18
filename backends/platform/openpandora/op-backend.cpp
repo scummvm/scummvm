@@ -54,52 +54,14 @@
 /* Dump console info to files. */
 #define DUMP_STDOUT
 
-static SDL_Cursor *hiddenCursor;
-
 OSystem_OP::OSystem_OP()
 	:
 	OSystem_POSIX() {
 }
 
-//static Uint32 timer_handler(Uint32 interval, void *param) {
-//	((DefaultTimerManager *)param)->handler();
-//	return interval;
-//}
-
 void OSystem_OP::initBackend() {
 
 	assert(!_inited);
-
-	// Create the events manager
-	if (_eventSource == 0)
-		_eventSource = new OPEventSource();
-
-	// Create the graphics manager
-	if (_graphicsManager == 0) {
-		_graphicsManager = new OPGraphicsManager(_eventSource);
-	}
-
-//	int joystick_num = ConfMan.getInt("joystick_num");
-//	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
-//
-//	if (ConfMan.hasKey("disable_sdl_parachute"))
-//		sdlFlags |= SDL_INIT_NOPARACHUTE;
-//
-//	if (joystick_num > -1)
-//		sdlFlags |= SDL_INIT_JOYSTICK;
-//
-//	if (SDL_Init(sdlFlags) == -1) {
-//		error("Could not initialize SDL: %s", SDL_GetError());
-//	}
-//
-
-	// Create the mixer manager
-//	if (_mixer == 0) {
-//		_mixerManager = new DoubleBufferSDLMixerManager();
-
-	// Setup and start mixer
-//		_mixerManager->init();
-//	}
 
 	/* Setup default save path to be workingdir/saves */
 
@@ -179,31 +141,20 @@ void OSystem_OP::initBackend() {
 	/* Make sure SDL knows that we have a joystick we want to use. */
 	ConfMan.setInt("joystick_num", 0);
 
-//	_graphicsMutex = createMutex();
+	// Create the events manager
+	if (_eventSource == 0)
+		_eventSource = new OPEventSource();
+
+	// Create the graphics manager
+	if (_graphicsManager == 0) {
+		_graphicsManager = new OPGraphicsManager(_eventSource);
+	}
 
 	/* Pass to POSIX method to do the heavy lifting */
 	OSystem_POSIX::initBackend();
 
 	_inited = true;
 }
-
-// enable joystick
-//	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
-//		printf("Using joystick: %s\n", SDL_JoystickName(0));
-//		_joystick = SDL_JoystickOpen(joystick_num);
-//	}
-//
-//	setupMixer();
-
-// Note: We could implement a custom SDLTimerManager by using
-// SDL_AddTimer. That might yield better timer resolution, but it would
-// also change the semantics of a timer: Right now, ScummVM timers
-// *never* run in parallel, due to the way they are implemented. If we
-// switched to SDL_AddTimer, each timer might run in a separate thread.
-// However, not all our code is prepared for that, so we can't just
-// switch. Still, it's a potential future change to keep in mind.
-//	_timer = new DefaultTimerManager();
-//	_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 
 void OSystem_OP::initSDL() {
 	// Check if SDL has not been initialized
@@ -217,38 +168,7 @@ void OSystem_OP::initSDL() {
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
 
-		uint8_t hiddenCursorData = 0;
-
-		hiddenCursor = SDL_CreateCursor(&hiddenCursorData, &hiddenCursorData, 8, 1, 0, 0);
-
-		/* On the OpenPandora we need to work around an SDL assumption that
-		   returns relative mouse coordinates when you get to the screen
-		   edges using the touchscreen. The workaround is to set a blank
-		   SDL cursor and not disable it (Hackish I know).
-
-		   The root issues likes in the Windows Manager GRAB code in SDL.
-		   That is why the issue is not seen on framebuffer devices like the
-		   GP2X (there is no X window manager ;)).
-		*/
-		SDL_ShowCursor(SDL_ENABLE);
-		SDL_SetCursor(hiddenCursor);
-		SDL_EnableUNICODE(1);
-
-//		memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
-//		memset(&_videoMode, 0, sizeof(_videoMode));
-//		memset(&_transactionDetails, 0, sizeof(_transactionDetails));
-
-//		_videoMode.mode = GFX_DOUBLESIZE;
-//		_videoMode.scaleFactor = 2;
-//		_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
-//		_scalerProc = Normal2x;
-//		_scalerType = 0;
-
-//		_videoMode.fullscreen = true;
-
 		_initedSDL = true;
-
-//	OSystem_POSIX::initSDL();
 	}
 }
 
@@ -274,8 +194,6 @@ void OSystem_OP::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 }
 
 void OSystem_OP::quit() {
-
-	SDL_FreeCursor(hiddenCursor);
 
 #ifdef DUMP_STDOUT
 	printf("%s\n", "Debug: STDOUT and STDERR text files closed.");

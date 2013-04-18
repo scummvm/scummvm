@@ -30,12 +30,16 @@ namespace Toon {
 
 class ToonstruckSmackerDecoder : public Video::SmackerDecoder {
 public:
-	ToonstruckSmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
-	virtual ~ToonstruckSmackerDecoder() {}
-	void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
-	bool loadFile(const Common::String &filename);
+	ToonstruckSmackerDecoder();
+
+	bool loadStream(Common::SeekableReadStream *stream);
 	bool isLowRes() { return _lowRes; }
+
 protected:
+	void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
+	SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const;
+
+private:
 	bool _lowRes;
 };
 

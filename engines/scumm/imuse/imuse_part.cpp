@@ -27,6 +27,7 @@
 #include "common/util.h"
 #include "scumm/imuse/imuse_internal.h"
 #include "scumm/saveload.h"
+#include "scumm/scumm.h"
 
 namespace Scumm {
 
@@ -365,7 +366,17 @@ void Part::set_instrument(uint b) {
 	_bank = (byte)(b >> 8);
 	if (_bank)
 		error("Non-zero instrument bank selection. Please report this");
-	_instrument.program((byte)b, _player->isMT32());
+	// HACK: Horrible hack to allow tracing of program change source.
+	// The Mac m68k versions of MI2 and Indy4 use a different program "bank"
+	// when it gets program change events through the iMuse SysEx handler.
+	// We emulate this by introducing a special instrument, which sets
+	// the instrument via sysEx_customInstrument. This seems to be
+	// exclusively used for special sound effects like the "spit" sound.
+	if (g_scumm->isMacM68kIMuse()) {
+		_instrument.macSfx(b);
+	} else {
+		_instrument.program((byte)b, _player->isMT32());
+	}
 	if (clearToTransmit())
 		_instrument.send(_mc);
 }

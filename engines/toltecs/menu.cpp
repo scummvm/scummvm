@@ -21,7 +21,10 @@
  *
  */
 
+#include "audio/mixer.h"
 #include "common/savefile.h"
+
+#include "common/config-manager.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/menu.h"
@@ -37,7 +40,7 @@ MenuSystem::MenuSystem(ToltecsEngine *vm) : _vm(vm) {
 MenuSystem::~MenuSystem() {
 }
 
-int MenuSystem::run() {
+int MenuSystem::run(MenuID menuId) {
 
 	//debug("MenuSystem::run()");
 
@@ -50,18 +53,13 @@ int MenuSystem::run() {
 	memcpy(backgroundOrig.getBasePtr(0,0), _vm->_screen->_frontScreen, 640 * 400);
 
 	_currMenuID = kMenuIdNone;
-	_newMenuID = kMenuIdMain;
+	_newMenuID = menuId;
 	_currItemID = kItemIdNone;
 	_editingDescription = false;
-	_cfgText = true;
-	_cfgVoices = true;
-	_cfgMasterVolume = 10;
-	_cfgVoicesVolume = 10;
-	_cfgMusicVolume = 10;
-	_cfgSoundFXVolume = 10;
-	_cfgBackgroundVolume = 10;
-	_running = true;    	
+
+	_running = true;
 	_top = 30 - _vm->_guiHeight / 2;
+
 	_needRedraw = false;
 
 	// TODO: buildColorTransTable2
@@ -78,10 +76,10 @@ int MenuSystem::run() {
 		update();
 		_vm->_system->updateScreen();
 	}
-	
+
 	// Restore original background
 	memcpy(_vm->_screen->_frontScreen, backgroundOrig.getBasePtr(0,0), 640 * 400);
-	_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
+	_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
 	_vm->_system->updateScreen();
 
 	// Cleanup
@@ -89,7 +87,7 @@ int MenuSystem::run() {
 	_background->free();
 	delete _background;
 
-	return 0;	
+	return 0;
 }
 
 void MenuSystem::update() {
@@ -103,8 +101,8 @@ void MenuSystem::update() {
 	handleEvents();
 
 	if (_needRedraw) {
-		//_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
-		_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, 400);
+		//_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen + 39 * 640 + 60, 640, 60, 39, 520, 247);
+		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, _top, 640, 400 - _top);
 		//debug("redraw");
 		_needRedraw = false;
 	}
@@ -204,7 +202,7 @@ void MenuSystem::handleKeyDown(const Common::KeyState& kbd) {
 
 ItemID MenuSystem::findItemAt(int x, int y) {
 	for (Common::Array<Item>::iterator iter = _items.begin(); iter != _items.end(); iter++) {
-		if ((*iter).rect.contains(x, y))
+		if ((*iter).rect.contains(x, y - _top))
 			return (*iter).id;
 	}
 	return kItemIdNone;
@@ -241,8 +239,8 @@ void MenuSystem::initMenu(MenuID menuID) {
 		drawString(0, 74, 320, 1, 229, _vm->getSysString(kStrWhatCanIDoForYou));
 		addClickTextItem(kItemIdLoad, 0, 115, 320, 0, _vm->getSysString(kStrLoad), 229, 255);
 		addClickTextItem(kItemIdSave, 0, 135, 320, 0, _vm->getSysString(kStrSave), 229, 255);
-		addClickTextItem(kItemIdToggleText, 0, 165, 320, 0, _vm->getSysString(kStrTextOn), 229, 255);
-		addClickTextItem(kItemIdToggleVoices, 0, 185, 320, 0, _vm->getSysString(kStrVoicesOn), 229, 255);
+		addClickTextItem(kItemIdToggleText, 0, 165, 320, 0, _vm->getSysString(_vm->_cfgText ? kStrTextOn : kStrTextOff), 229, 255);
+		addClickTextItem(kItemIdToggleVoices, 0, 185, 320, 0, _vm->getSysString(_vm->_cfgVoices ? kStrVoicesOn : kStrVoicesOff), 229, 255);
 		addClickTextItem(kItemIdVolumesMenu, 0, 215, 320, 0, _vm->getSysString(kStrVolume), 229, 255);
 		addClickTextItem(kItemIdPlay, 0, 245, 320, 0, _vm->getSysString(kStrPlay), 229, 255);
 		addClickTextItem(kItemIdQuit, 0, 275, 320, 0, _vm->getSysString(kStrQuit), 229, 255);
@@ -326,13 +324,13 @@ void MenuSystem::clickItem(ItemID id) {
 		_newMenuID = kMenuIdLoad;
 		break;
 	case kItemIdToggleText:
-		setCfgText(!_cfgText, true);
-		if (!_cfgVoices && !_cfgText)
+		setCfgText(!_vm->_cfgText, true);
+		if (!_vm->_cfgVoices && !_vm->_cfgText)
 			setCfgVoices(true, false);
 		break;
 	case kItemIdToggleVoices:
-		setCfgVoices(!_cfgVoices, true);
-		if (!_cfgVoices && !_cfgText)
+		setCfgVoices(!_vm->_cfgVoices, true);
+		if (!_vm->_cfgVoices && !_vm->_cfgText)
 			setCfgText(true, false);
 		break;
 	case kItemIdVolumesMenu:
@@ -416,7 +414,7 @@ void MenuSystem::restoreRect(int x, int y, int w, int h) {
 }
 
 void MenuSystem::shadeRect(int x, int y, int w, int h, byte color1, byte color2) {
-	byte *src = (byte *)_background->getBasePtr(x, y);
+	byte *src = (byte *)_vm->_screen->_frontScreen + x + y * 640;
 	for (int xc = 0; xc < w; xc++) {
 		src[xc] = color2;
 		src[xc + h * 640] = color1;
@@ -518,49 +516,51 @@ void MenuSystem::clickSavegameItem(ItemID id) {
 }
 
 void MenuSystem::setCfgText(bool value, bool active) {
-	if (_cfgText != value) {
+	if (_vm->_cfgText != value) {
 		Item *item = getItem(kItemIdToggleText);
-		_cfgText = value;
+		_vm->_cfgText = value;
 		restoreRect(item->rect.left, item->rect.top, item->rect.width() + 1, item->rect.height() - 2);
-		setItemCaption(item, _vm->getSysString(_cfgText ? kStrTextOn : kStrTextOff));
+		setItemCaption(item, _vm->getSysString(_vm->_cfgText ? kStrTextOn : kStrTextOff));
 		drawItem(kItemIdToggleText, true);
+		ConfMan.setBool("subtitles", value);
 	}
 }
 
 void MenuSystem::setCfgVoices(bool value, bool active) {
-	if (_cfgVoices != value) {
+	if (_vm->_cfgVoices != value) {
 		Item *item = getItem(kItemIdToggleVoices);
-		_cfgVoices = value;
+		_vm->_cfgVoices = value;
 		restoreRect(item->rect.left, item->rect.top, item->rect.width() + 1, item->rect.height() - 2);
-		setItemCaption(item, _vm->getSysString(_cfgVoices ? kStrVoicesOn : kStrVoicesOff));
+		setItemCaption(item, _vm->getSysString(_vm->_cfgVoices ? kStrVoicesOn : kStrVoicesOff));
 		drawItem(kItemIdToggleVoices, true);
+		ConfMan.setBool("speech_mute", !value);
 	}
 }
 
 void MenuSystem::drawVolumeBar(ItemID itemID) {
 	int w = 440, y, volume;
 	char text[21];
-	
+
 	switch (itemID) {
-	case kItemIdMaster:
+	case kItemIdMaster:	// unused in ScummVM, always 20
 		y = 130 + 25 * 0;
-		volume = _cfgMasterVolume;
+		volume = 20;
 		break;
 	case kItemIdVoices:
 		y = 130 + 25 * 1;
-		volume = _cfgVoicesVolume;
+		volume = _vm->_cfgVoicesVolume;
 		break;
 	case kItemIdMusic:
 		y = 130 + 25 * 2;
-		volume = _cfgMusicVolume;
+		volume = _vm->_cfgMusicVolume;
 		break;
 	case kItemIdSoundFX:
 		y = 130 + 25 * 3;
-		volume = _cfgSoundFXVolume;
+		volume = _vm->_cfgSoundFXVolume;
 		break;
-	case kItemIdBackground:
+	case kItemIdBackground:	// unused in ScummVM, always 20
 		y = 130 + 25 * 4;
-		volume = _cfgBackgroundVolume;
+		volume = 20;
 		break;
 	default:
 		return;
@@ -568,46 +568,48 @@ void MenuSystem::drawVolumeBar(ItemID itemID) {
 
 	Font font(_vm->_res->load(_vm->_screen->getFontResIndex(1))->data);
 	restoreRect(390, y - font.getHeight(), 100, 25);
-	
+
 	for (int i = 0; i < volume; i++)
 		text[i] = '|';
 	text[volume] = 0;
-	
+
 	drawString(0, y, w, 0, 246, text);
-	
+
 }
 
 void MenuSystem::changeVolumeBar(ItemID itemID, int delta) {
-
-	int *volume, newVolume;
+	byte newVolume;
 
 	switch (itemID) {
-	case kItemIdMaster:
-		volume = &_cfgMasterVolume;
-		break;
 	case kItemIdVoices:
-		volume = &_cfgVoicesVolume;
+		_vm->_cfgVoicesVolume = CLIP(_vm->_cfgVoicesVolume + delta, 0, 20);
+		// Always round volume up instead of down.
+		newVolume = (_vm->_cfgVoicesVolume * Audio::Mixer::kMaxChannelVolume + 19) / 20;
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, newVolume);
+		ConfMan.setInt("speech_volume", newVolume);
 		break;
 	case kItemIdMusic:
-		volume = &_cfgMusicVolume;
+		_vm->_cfgMusicVolume = CLIP(_vm->_cfgMusicVolume + delta, 0, 20);
+		newVolume = (_vm->_cfgMusicVolume * Audio::Mixer::kMaxChannelVolume + 19) / 20;
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, newVolume);
+		ConfMan.setInt("music_volume", newVolume);
 		break;
 	case kItemIdSoundFX:
-		volume = &_cfgSoundFXVolume;
+		_vm->_cfgSoundFXVolume = CLIP(_vm->_cfgSoundFXVolume + delta, 0, 20);
+		newVolume = (_vm->_cfgSoundFXVolume * Audio::Mixer::kMaxChannelVolume + 19) / 20;
+		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, newVolume);
+		ConfMan.setInt("sfx_volume", newVolume);
 		break;
+	case kItemIdMaster:
 	case kItemIdBackground:
-		volume = &_cfgBackgroundVolume;
+		// unused in ScummVM
 		break;
 	default:
 		return;
 	}
 
-	newVolume = CLIP(*volume + delta, 0, 20);
-
-	if (newVolume != *volume) {
-		*volume = newVolume;
-		drawVolumeBar(itemID);
-	}
-
+	_vm->syncSoundSettings();
+	drawVolumeBar(itemID);
 }
 
 } // End of namespace Toltecs

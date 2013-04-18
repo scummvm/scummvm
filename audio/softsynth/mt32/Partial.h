@@ -37,7 +37,7 @@ private:
 	const int debugPartialNum; // Only used for debugging
 	// Number of the sample currently being rendered by generateSamples(), or 0 if no run is in progress
 	// This is only kept available for debugging purposes.
-	unsigned long sampleNum; 
+	unsigned long sampleNum;
 
 	int ownerPart; // -1 if unassigned
 	int mixType;

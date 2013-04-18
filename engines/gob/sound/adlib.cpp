@@ -20,771 +20,621 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/file.h"
-#include "common/endian.h"
+#include "common/util.h"
 #include "common/textconsole.h"
+#include "common/debug.h"
+#include "common/config-manager.h"
+
+#include "audio/fmopl.h"
 
 #include "gob/gob.h"
 #include "gob/sound/adlib.h"
 
 namespace Gob {
 
-const unsigned char AdLib::_operators[] = {0, 1, 2, 8, 9, 10, 16, 17, 18};
-const unsigned char AdLib::_volRegNums[] = {
-	3,  4,  5,
-	11, 12, 13,
-	19, 20, 21
+static const int kPitchTom        = 24;
+static const int kPitchTomToSnare =  7;
+static const int kPitchSnareDrum  = kPitchTom + kPitchTomToSnare;
+
+
+// Is the operator a modulator (0) or a carrier (1)?
+const uint8 AdLib::kOperatorType[kOperatorCount] = {
+	0, 0, 0, 1, 1, 1,
+	0, 0, 0, 1, 1, 1,
+	0, 0, 0, 1, 1, 1
 };
 
-AdLib::AdLib(Audio::Mixer &mixer) : _mixer(&mixer) {
-	init();
-}
+// Operator number to register offset on the OPL
+const uint8 AdLib::kOperatorOffset[kOperatorCount] = {
+	 0,  1,  2,  3,  4,  5,
+	 8,  9, 10, 11, 12, 13,
+	16, 17, 18, 19, 20, 21
+};
 
-AdLib::~AdLib() {
-	Common::StackLock slock(_mutex);
+// For each operator, the voice it belongs to
+const uint8 AdLib::kOperatorVoice[kOperatorCount] = {
+	0, 1, 2,
+	0, 1, 2,
+	3, 4, 5,
+	3, 4, 5,
+	6, 7, 8,
+	6, 7, 8,
+};
 
-	_mixer->stopHandle(_handle);
-	OPLDestroy(_opl);
-	if (_data && _freeData)
-		delete[] _data;
-}
+// Voice to operator set, for the 9 melodyvoices (only 6 useable in percussion mode)
+const uint8 AdLib::kVoiceMelodyOperator[kOperatorsPerVoice][kMelodyVoiceCount] = {
+	{0, 1, 2, 6,  7,  8, 12, 13, 14},
+	{3, 4, 5, 9, 10, 11, 15, 16, 17}
+};
 
-void AdLib::init() {
-	_index = -1;
-	_data = 0;
-	_playPos = 0;
-	_dataSize = 0;
+// Voice to operator set, for the 5 percussion voices (only useable in percussion mode)
+const uint8 AdLib::kVoicePercussionOperator[kOperatorsPerVoice][kPercussionVoiceCount] = {
+	{12, 16, 14, 17, 13},
+	{15,  0,  0,  0,  0}
+};
+
+// Mask bits to set each percussion instrument on/off
+const byte AdLib::kPercussionMasks[kPercussionVoiceCount] = {0x10, 0x08, 0x04, 0x02, 0x01};
+
+// Default instrument presets
+const uint16 AdLib::kPianoParams   [kOperatorsPerVoice][kParamCount] = {
+	{ 1,  1,  3, 15,  5,  0,  1,  3, 15,  0,  0,  0,  1,  0},
+	{ 0,  1,  1, 15,  7,  0,  2,  4,  0,  0,  0,  1,  0,  0}  };
+const uint16 AdLib::kBaseDrumParams[kOperatorsPerVoice][kParamCount] = {
+	{ 0,  0,  0, 10,  4,  0,  8, 12, 11,  0,  0,  0,  1,  0 },
+	{ 0,  0,  0, 13,  4,  0,  6, 15,  0,  0,  0,  0,  1,  0 } };
+const uint16 AdLib::kSnareDrumParams[kParamCount] = {
+	  0, 12,  0, 15, 11,  0,  8,  5,  0,  0,  0,  0,  0,  0   };
+const uint16 AdLib::kTomParams      [kParamCount] = {
+	  0,  4,  0, 15, 11,  0,  7,  5,  0,  0,  0,  0,  0,  0   };
+const uint16 AdLib::kCymbalParams   [kParamCount] = {
+	  0,  1,  0, 15, 11,  0,  5,  5,  0,  0,  0,  0,  0,  0   };
+const uint16 AdLib::kHihatParams    [kParamCount] = {
+	  0,  1,  0, 15, 11,  0,  7,  5,  0,  0,  0,  0,  0,  0   };
+
+
+AdLib::AdLib(Audio::Mixer &mixer) : _mixer(&mixer), _opl(0),
+	_toPoll(0), _repCount(0), _first(true), _playing(false), _ended(true) {
 
 	_rate = _mixer->getOutputRate();
 
-	_opl = makeAdLibOPL(_rate);
+	initFreqs();
 
-	_first = true;
-	_ended = false;
-	_playing = false;
-
-	_freeData = false;
-
-	_repCount = -1;
-	_samplesTillPoll = 0;
-
-	for (int i = 0; i < 16; i ++)
-		_pollNotes[i] = 0;
-	setFreqs();
+	createOPL();
+	initOPL();
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
 			this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
+AdLib::~AdLib() {
+	_mixer->stopHandle(_handle);
+
+	delete _opl;
+}
+
+// Creates the OPL. Try to use the DOSBox emulator, unless that one is not compiled in,
+// or the user explicitly wants the MAME emulator. The MAME one is slightly buggy, leading
+// to some wrong sounds, especially noticeable in the title music of Gobliins 2, so we
+// really don't want to use it, if we can help it.
+void AdLib::createOPL() {
+	Common::String oplDriver = ConfMan.get("opl_driver");
+
+	if (oplDriver.empty() || (oplDriver == "auto") || (OPL::Config::parse(oplDriver) == -1)) {
+		// User has selected OPL driver auto detection or an invalid OPL driver.
+		// Set it to our preferred driver (DOSBox), if we can.
+
+		if (OPL::Config::parse("db") <= 0) {
+			warning("The DOSBox AdLib emulator is not compiled in. Please keep in mind that the MAME one is buggy");
+		} else
+			oplDriver = "db";
+
+	} else if (oplDriver == "mame") {
+		// User has selected the MAME OPL driver. It is buggy, so warn the user about that.
+
+		warning("You have selected the MAME AdLib emulator. It is buggy; AdLib music might be slightly glitchy now");
+	}
+
+	_opl = OPL::Config::create(OPL::Config::parse(oplDriver), OPL::Config::kOpl2);
+	if (!_opl || !_opl->init(_rate)) {
+		delete _opl;
+
+		error("Could not create an AdLib emulator");
+	}
+}
+
 int AdLib::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock slock(_mutex);
-	int samples;
-	int render;
 
-	if (!_playing || (numSamples < 0)) {
+	// Nothing to do, fill with silence
+	if (!_playing) {
 		memset(buffer, 0, numSamples * sizeof(int16));
 		return numSamples;
 	}
-	if (_first) {
-		memset(buffer, 0, numSamples * sizeof(int16));
-		pollMusic();
-		return numSamples;
-	}
 
-	samples = numSamples;
+	// Read samples from the OPL, polling in more music when necessary
+	uint32 samples = numSamples;
 	while (samples && _playing) {
-		if (_samplesTillPoll) {
-			render = (samples > _samplesTillPoll) ?  (_samplesTillPoll) : (samples);
+		if (_toPoll) {
+			const uint32 render = MIN(samples, _toPoll);
+
+			_opl->readBuffer(buffer, render);
+
+			buffer  += render;
 			samples -= render;
-			_samplesTillPoll -= render;
-			YM3812UpdateOne(_opl, buffer, render);
-			buffer += render;
+			_toPoll -= render;
+
 		} else {
-			pollMusic();
+			// Song ended, fill the rest with silence
 			if (_ended) {
 				memset(buffer, 0, samples * sizeof(int16));
 				samples = 0;
+				break;
 			}
+
+			// Poll more music
+			_toPoll = pollMusic(_first);
+			_first  = false;
 		}
 	}
 
+	// Song ended, loop if requested
 	if (_ended) {
-		_first = true;
-		_ended = false;
+		_toPoll = 0;
 
-		rewind();
+		// _repCount == 0: No looping (anymore); _repCount < 0: Infinite looping
+		if (_repCount != 0) {
+			if (_repCount > 0)
+				_repCount--;
 
-		_samplesTillPoll = 0;
-		if (_repCount == -1) {
+			_first  = true;
+			_ended  = false;
+
 			reset();
-			setVoices();
-		} else if (_repCount > 0) {
-			_repCount--;
-			reset();
-			setVoices();
-		}
-		else
+			rewind();
+		} else
 			_playing = false;
 	}
+
 	return numSamples;
 }
 
-void AdLib::writeOPL(byte reg, byte val) {
-	debugC(6, kDebugSound, "AdLib::writeOPL (%02X, %02X)", reg, val);
-	OPLWriteReg(_opl, reg, val);
+bool AdLib::isStereo() const {
+	return _opl->isStereo();
 }
 
-void AdLib::setFreqs() {
-	byte lin;
-	byte col;
-	long val = 0;
-
-	// Run through the 11 channels
-	for (lin = 0; lin < 11; lin ++) {
-		_notes[lin] = 0;
-		_notCol[lin] = 0;
-		_notLin[lin] = 0;
-		_notOn[lin] = false;
-	}
-
-	// Run through the 25 lines
-	for (lin = 0; lin < 25; lin ++) {
-		// Run through the 12 columns
-		for (col = 0; col < 12; col ++) {
-			if (!col)
-				val = (((0x2710L + lin * 0x18) * 0xCB78 / 0x3D090) << 0xE) *
-					9 / 0x1B503;
-			_freqs[lin][col] = (short)((val + 4) >> 3);
-			val = val * 0x6A / 0x64;
-		}
-	}
+bool AdLib::endOfData() const {
+	return !_playing;
 }
 
-void AdLib::reset() {
-	_first = true;
-	OPLResetChip(_opl);
-	_samplesTillPoll = 0;
-
-	setFreqs();
-	// Set frequencies and octave to 0; notes off
-	for (int i = 0; i < 9; i++) {
-		writeOPL(0xA0 | i, 0);
-		writeOPL(0xB0 | i, 0);
-		writeOPL(0xE0 | _operators[i]     , 0);
-		writeOPL(0xE0 |(_operators[i] + 3), 0);
-	}
-
-	// Authorize the control of the waveformes
-	writeOPL(0x01, 0x20);
+bool AdLib::endOfStream() const {
+	return false;
 }
 
-void AdLib::setKey(byte voice, byte note, bool on, bool spec) {
-	short freq = 0;
-	short octa = 0;
-
-	// Instruction AX
-	if (spec) {
-		// 0x7F donne 0x16B;
-		//     7F
-		// <<   7 =  3F80
-		// + E000 = 11F80
-		// & FFFF =  1F80
-		// *   19 = 31380
-		// / 2000 =    18 => Ligne 18h, colonne  0 => freq 16B
-
-		// 0x3A donne 0x2AF;
-		//     3A
-		// <<   7 =  1D00
-		// + E000 =  FD00 negatif
-		// *   19 = xB500
-		// / 2000 =    -2 => Ligne 17h, colonne -1
-
-		//     2E
-		// <<   7 =  1700
-		// + E000 =  F700 negatif
-		// *   19 = x1F00
-		// / 2000 =
-		short a;
-		short lin;
-		short col;
-
-		a = (note << 7) + 0xE000; // Volontairement tronque
-		a = (short)((long)a * 25 / 0x2000);
-		if (a < 0) {
-			col = - ((24 - a) / 25);
-			lin = (-a % 25);
-			if (lin)
-				lin = 25 - lin;
-		}
-		else {
-			col = a / 25;
-			lin = a % 25;
-		}
-
-		_notCol[voice] = col;
-		_notLin[voice] = lin;
-		note = _notes[voice];
-	}
-	// Instructions 0X 9X 8X
-	else {
-		note -= 12;
-		_notOn[voice] = on;
-	}
-
-	_notes[voice] = note;
-	note += _notCol[voice];
-	note = MIN((byte) 0x5F, note);
-	octa = note / 12;
-	freq = _freqs[_notLin[voice]][note - octa * 12];
-
-	writeOPL(0xA0 + voice,  freq & 0xFF);
-	writeOPL(0xB0 + voice, (freq >> 8) | (octa << 2) | (0x20 * (on ? 1 : 0)));
-
-	if (!freq)
-		warning("AdLib::setKey Voice %d, note %02X unknown", voice, note);
-}
-
-void AdLib::setVolume(byte voice, byte volume) {
-	debugC(6, kDebugSound, "AdLib::setVolume(%d, %d)", voice, volume);
-	//assert(voice >= 0 && voice <= 9);
-	volume = 0x3F - ((volume * 0x7E) + 0x7F) / 0xFE;
-	writeOPL(0x40 + _volRegNums[voice], volume);
-}
-
-void AdLib::pollMusic() {
-	if ((_playPos > (_data + _dataSize)) && (_dataSize != 0xFFFFFFFF)) {
-		_ended = true;
-		return;
-	}
-
-	interpret();
-}
-
-void AdLib::unload() {
-	_playing = false;
-	_index = -1;
-
-	if (_data && _freeData)
-		delete[] _data;
-
-	_freeData = false;
+int AdLib::getRate() const {
+	return _rate;
 }
 
 bool AdLib::isPlaying() const {
 	return _playing;
 }
 
-bool AdLib::getRepeating() const {
-	return _repCount != 0;
+int32 AdLib::getRepeating() const {
+	Common::StackLock slock(_mutex);
+
+	return _repCount;
 }
 
 void AdLib::setRepeating(int32 repCount) {
+	Common::StackLock slock(_mutex);
+
 	_repCount = repCount;
 }
 
-int AdLib::getIndex() const {
-	return _index;
+uint32 AdLib::getSamplesPerSecond() const {
+	return _rate * (isStereo() ? 2 : 1);
 }
 
 void AdLib::startPlay() {
-	if (_data) _playing = true;
+	Common::StackLock slock(_mutex);
+
+	_playing = true;
+	_ended   = false;
+	_first   = true;
+
+	reset();
+	rewind();
 }
 
 void AdLib::stopPlay() {
 	Common::StackLock slock(_mutex);
+
+	end(true);
+
 	_playing = false;
 }
 
-ADLPlayer::ADLPlayer(Audio::Mixer &mixer) : AdLib(mixer) {
+void AdLib::writeOPL(byte reg, byte val) {
+	debugC(6, kDebugSound, "AdLib::writeOPL (%02X, %02X)", reg, val);
+
+	_opl->writeReg(reg, val);
 }
 
-ADLPlayer::~ADLPlayer() {
+void AdLib::reset() {
+	allOff();
+	initOPL();
 }
 
-bool ADLPlayer::load(const char *fileName) {
-	Common::File song;
+void AdLib::allOff() {
+	// NOTE: Explicit casts are necessary, because of 5.16 paragraph 4 of the C++ standard
+	int numVoices = isPercussionMode() ? (int)kMaxVoiceCount : (int)kMelodyVoiceCount;
 
-	unload();
-	song.open(fileName);
-	if (!song.isOpen())
-		return false;
+	for (int i = 0; i < numVoices; i++)
+		noteOff(i);
+}
 
-	_freeData = true;
-	_dataSize = song.size();
-	_data = new byte[_dataSize];
-	song.read(_data, _dataSize);
-	song.close();
-
+void AdLib::end(bool killRepeat) {
 	reset();
-	setVoices();
-	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
 
-	return true;
+	_ended = true;
+
+	if (killRepeat)
+		_repCount = 0;
 }
 
-bool ADLPlayer::load(byte *data, uint32 size, int index) {
-	unload();
-	_repCount = 0;
+void AdLib::initOPL() {
+	_tremoloDepth = false;
+	_vibratoDepth = false;
+	_keySplit     = false;
 
-	_dataSize = size;
-	_data = data;
-	_index = index;
+	_enableWaveSelect = true;
 
-	reset();
-	setVoices();
-	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
-
-	return true;
-}
-
-void ADLPlayer::unload() {
-	AdLib::unload();
-}
-
-void ADLPlayer::interpret() {
-	unsigned char instr;
-	byte channel;
-	byte note;
-	byte volume;
-	uint16 tempo;
-
-	// First tempo, we'll ignore it...
-	if (_first) {
-		tempo = *(_playPos++);
-		// Tempo on 2 bytes
-		if (tempo & 0x80)
-			tempo = ((tempo & 3) << 8) | *(_playPos++);
-	}
-	_first = false;
-
-	// Instruction
-	instr = *(_playPos++);
-	channel = instr & 0x0F;
-
-	switch (instr & 0xF0) {
-		// Note on + Volume
-		case 0x00:
-			note = *(_playPos++);
-			_pollNotes[channel] = note;
-			setVolume(channel, *(_playPos++));
-			setKey(channel, note, true, false);
-			break;
-		// Note on
-		case 0x90:
-			note = *(_playPos++);
-			_pollNotes[channel] = note;
-			setKey(channel, note, true, false);
-			break;
-		// Last note off
-		case 0x80:
-			note = _pollNotes[channel];
-			setKey(channel, note, false, false);
-			break;
-		// Frequency on/off
-		case 0xA0:
-			note = *(_playPos++);
-			setKey(channel, note, _notOn[channel], true);
-			break;
-		// Volume
-		case 0xB0:
-			volume = *(_playPos++);
-			setVolume(channel, volume);
-			break;
-		// Program change
-		case 0xC0:
-			setVoice(channel, *(_playPos++), false);
-			break;
-		// Special
-		case 0xF0:
-			switch (instr & 0x0F) {
-			case 0xF: // End instruction
-				_ended = true;
-				_samplesTillPoll = 0;
-				return;
-			default:
-				warning("ADLPlayer: Unknown special command %X, stopping playback",
-						instr & 0x0F);
-				_repCount = 0;
-				_ended = true;
-				break;
-			}
-			break;
-		default:
-			warning("ADLPlayer: Unknown command %X, stopping playback",
-					instr & 0xF0);
-			_repCount = 0;
-			_ended = true;
-			break;
+	for (int i = 0; i < kMaxVoiceCount; i++) {
+		_voiceNote[i] = 0;
+		_voiceOn  [i] = 0;
 	}
 
-	// Temporization
-	tempo = *(_playPos++);
-	// End tempo
-	if (tempo == 0xFF) {
-		_ended = true;
+	_opl->reset();
+
+	initOperatorVolumes();
+	resetFreqs();
+
+	setPercussionMode(false);
+
+	setTremoloDepth(false);
+	setVibratoDepth(false);
+	setKeySplit(false);
+
+	for(int i = 0; i < kMelodyVoiceCount; i++)
+		voiceOff(i);
+
+	setPitchRange(1);
+
+	enableWaveSelect(true);
+}
+
+bool AdLib::isPercussionMode() const {
+	return _percussionMode;
+}
+
+void AdLib::setPercussionMode(bool percussion) {
+	if (percussion) {
+		voiceOff(kVoiceBaseDrum);
+		voiceOff(kVoiceSnareDrum);
+		voiceOff(kVoiceTom);
+
+		/* set the frequency for the last 4 percussion voices: */
+		setFreq(kVoiceTom, kPitchTom, 0);
+		setFreq(kVoiceSnareDrum, kPitchSnareDrum, 0);
+	}
+
+	_percussionMode = percussion;
+	_percussionBits = 0;
+
+	initOperatorParams();
+	writeTremoloVibratoDepthPercMode();
+}
+
+void AdLib::enableWaveSelect(bool enable) {
+	_enableWaveSelect = enable;
+
+	for (int i = 0; i < kOperatorCount; i++)
+		writeOPL(0xE0 + kOperatorOffset[i], 0);
+
+	writeOPL(0x011, _enableWaveSelect ? 0x20 : 0);
+}
+
+void AdLib::setPitchRange(uint8 range) {
+	_pitchRange     = CLIP<uint8>(range, 0, 12);
+	_pitchRangeStep = _pitchRange * kPitchStepCount;
+}
+
+void AdLib::setTremoloDepth(bool tremoloDepth) {
+	_tremoloDepth = tremoloDepth;
+
+	writeTremoloVibratoDepthPercMode();
+}
+
+void AdLib::setVibratoDepth(bool vibratoDepth) {
+	_vibratoDepth = vibratoDepth;
+
+	writeTremoloVibratoDepthPercMode();
+}
+
+void AdLib::setKeySplit(bool keySplit) {
+	_keySplit = keySplit;
+
+	writeKeySplit();
+}
+
+void AdLib::setVoiceTimbre(uint8 voice, const uint16 *params) {
+	const uint16 *params0 = params;
+	const uint16 *params1 = params + kParamCount - 1;
+	const uint16 *waves   = params + 2 * (kParamCount - 1);
+
+	const int voicePerc = voice - kVoiceBaseDrum;
+
+	if (!isPercussionMode() || (voice < kVoiceBaseDrum)) {
+		setOperatorParams(kVoiceMelodyOperator[0][voice], params0, waves[0]);
+		setOperatorParams(kVoiceMelodyOperator[1][voice], params1, waves[1]);
+	} else if (voice == kVoiceBaseDrum) {
+		setOperatorParams(kVoicePercussionOperator[0][voicePerc], params0, waves[0]);
+		setOperatorParams(kVoicePercussionOperator[1][voicePerc], params1, waves[1]);
+	} else {
+		setOperatorParams(kVoicePercussionOperator[0][voicePerc], params0, waves[0]);
+	}
+}
+
+void AdLib::setVoiceVolume(uint8 voice, uint8 volume) {
+	int oper;
+
+	const int voicePerc = voice - kVoiceBaseDrum;
+
+	if (!isPercussionMode() || (voice < kVoiceBaseDrum))
+		oper = kVoiceMelodyOperator[1][ voice];
+	else
+		oper = kVoicePercussionOperator[voice == kVoiceBaseDrum ? 1 : 0][voicePerc];
+
+	_operatorVolume[oper] = MIN<uint8>(volume, kMaxVolume);
+	writeKeyScaleLevelVolume(oper);
+}
+
+void AdLib::bendVoicePitch(uint8 voice, uint16 pitchBend) {
+	if (isPercussionMode() && (voice > kVoiceBaseDrum))
 		return;
-	}
-	// Tempo on 2 bytes
-	if (tempo & 0x80)
-		tempo = ((tempo & 3) << 8) | *(_playPos++);
-	if (!tempo)
-		tempo ++;
 
-	_samplesTillPoll = tempo * (_rate / 1000);
+	changePitch(voice, MIN<uint16>(pitchBend, kMaxPitch));
+	setFreq(voice, _voiceNote[voice], _voiceOn[voice]);
 }
 
-void ADLPlayer::reset() {
-	AdLib::reset();
-}
+void AdLib::noteOn(uint8 voice, uint8 note) {
+	note = MAX<int>(0, note - (kStandardMidC - kOPLMidC));
 
-void ADLPlayer::rewind() {
-	_playPos = _data + 3 + (_data[1] + 1) * 0x38;
-}
+	if (isPercussionMode() && (voice >= kVoiceBaseDrum)) {
 
-void ADLPlayer::setVoices() {
-	// Definitions of the 9 instruments
-	for (int i = 0; i < 9; i++)
-		setVoice(i, i, true);
-}
-
-void ADLPlayer::setVoice(byte voice, byte instr, bool set) {
-	uint16 strct[27];
-	byte channel;
-	byte *dataPtr;
-
-	// i = 0 :  0  1  2  3  4  5  6  7  8  9 10 11 12 26
-	// i = 1 : 13 14 15 16 17 18 19 20 21 22 23 24 25 27
-	for (int i = 0; i < 2; i++) {
-		dataPtr = _data + 3 + instr * 0x38 + i * 0x1A;
-		for (int j = 0; j < 27; j++) {
-			strct[j] = READ_LE_UINT16(dataPtr);
-			dataPtr += 2;
+		if        (voice == kVoiceBaseDrum) {
+			setFreq(kVoiceBaseDrum , note                   , false);
+		} else if (voice == kVoiceTom) {
+			setFreq(kVoiceTom      , note                   , false);
+			setFreq(kVoiceSnareDrum, note + kPitchTomToSnare, false);
 		}
-		channel = _operators[voice] + i * 3;
-		writeOPL(0xBD, 0x00);
-		writeOPL(0x08, 0x00);
-		writeOPL(0x40 | channel, ((strct[0] & 3) << 6) | (strct[8] & 0x3F));
-		if (!i)
-			writeOPL(0xC0 | voice,
-					((strct[2] & 7) << 1) | (1 - (strct[12] & 1)));
-		writeOPL(0x60 | channel, ((strct[3] & 0xF) << 4) | (strct[6] & 0xF));
-		writeOPL(0x80 | channel, ((strct[4] & 0xF) << 4) | (strct[7] & 0xF));
-		writeOPL(0x20 | channel, ((strct[9] & 1) << 7) |
-			((strct[10] & 1) << 6) | ((strct[5] & 1) << 5) |
-			((strct[11] & 1) << 4) |  (strct[1] & 0xF));
-		if (!i)
-			writeOPL(0xE0 | channel, (strct[26] & 3));
-		else
-			writeOPL(0xE0 | channel, (strct[14] & 3));
-		if (i && set)
-			writeOPL(0x40 | channel, 0);
+
+		_percussionBits |= kPercussionMasks[voice - kVoiceBaseDrum];
+		writeTremoloVibratoDepthPercMode();
+
+	} else
+		setFreq(voice, note, true);
+}
+
+void AdLib::noteOff(uint8 voice) {
+	if (isPercussionMode() && (voice >= kVoiceBaseDrum)) {
+		_percussionBits &= ~kPercussionMasks[voice - kVoiceBaseDrum];
+		writeTremoloVibratoDepthPercMode();
+	} else
+		setFreq(voice, _voiceNote[voice], false);
+}
+
+void AdLib::writeKeyScaleLevelVolume(uint8 oper) {
+	uint16 volume = 0;
+
+	volume = (63 - (_operatorParams[oper][kParamLevel] & 0x3F)) * _operatorVolume[oper];
+	volume = 63 - ((2 * volume + kMaxVolume) / (2 * kMaxVolume));
+
+	uint8 keyScale = _operatorParams[oper][kParamKeyScaleLevel] << 6;
+
+	writeOPL(0x40 + kOperatorOffset[oper], volume | keyScale);
+}
+
+void AdLib::writeKeySplit() {
+	writeOPL(0x08, _keySplit ? 0x40 : 0);
+}
+
+void AdLib::writeFeedbackFM(uint8 oper) {
+	if (kOperatorType[oper] == 1)
+		return;
+
+	uint8 value = 0;
+
+	value |= _operatorParams[oper][kParamFeedback] << 1;
+	value |= _operatorParams[oper][kParamFM] ? 0 : 1;
+
+	writeOPL(0xC0 + kOperatorVoice[oper], value);
+}
+
+void AdLib::writeAttackDecay(uint8 oper) {
+	uint8 value = 0;
+
+	value |= _operatorParams[oper][kParamAttack] << 4;
+	value |= _operatorParams[oper][kParamDecay] & 0x0F;
+
+	writeOPL(0x60 + kOperatorOffset[oper], value);
+}
+
+void AdLib::writeSustainRelease(uint8 oper) {
+	uint8 value = 0;
+
+	value |= _operatorParams[oper][kParamSustain] << 4;
+	value |= _operatorParams[oper][kParamRelease] & 0x0F;
+
+	writeOPL(0x80 + kOperatorOffset[oper], value);
+}
+
+void AdLib::writeTremoloVibratoSustainingKeyScaleRateFreqMulti(uint8 oper) {
+	uint8 value = 0;
+
+	value |= _operatorParams[oper][kParamAM]           ? 0x80 : 0;
+	value |= _operatorParams[oper][kParamVib]          ? 0x40 : 0;
+	value |= _operatorParams[oper][kParamSustaining]   ? 0x20 : 0;
+	value |= _operatorParams[oper][kParamKeyScaleRate] ? 0x10 : 0;
+	value |= _operatorParams[oper][kParamFreqMulti]    & 0x0F;
+
+	writeOPL(0x20 + kOperatorOffset[oper], value);
+}
+
+void AdLib::writeTremoloVibratoDepthPercMode() {
+	uint8 value = 0;
+
+	value |= _tremoloDepth       ? 0x80 : 0;
+	value |= _vibratoDepth       ? 0x40 : 0;
+	value |= isPercussionMode() ? 0x20 : 0;
+	value |= _percussionBits;
+
+	writeOPL(0xBD, value);
+}
+
+void AdLib::writeWaveSelect(uint8 oper) {
+	uint8 wave = 0;
+	if (_enableWaveSelect)
+		wave = _operatorParams[oper][kParamWaveSelect] & 0x03;
+
+	writeOPL(0xE0 + kOperatorOffset[ oper], wave);
+}
+
+void AdLib::writeAllParams(uint8 oper) {
+	writeTremoloVibratoDepthPercMode();
+	writeKeySplit();
+	writeKeyScaleLevelVolume(oper);
+	writeFeedbackFM(oper);
+	writeAttackDecay(oper);
+	writeSustainRelease(oper);
+	writeTremoloVibratoSustainingKeyScaleRateFreqMulti(oper);
+	writeWaveSelect(oper);
+}
+
+void AdLib::initOperatorParams() {
+	for (int i = 0; i < kOperatorCount; i++)
+		setOperatorParams(i, kPianoParams[kOperatorType[i]], kPianoParams[kOperatorType[i]][kParamCount - 1]);
+
+	if (isPercussionMode()) {
+		setOperatorParams(12, kBaseDrumParams [0], kBaseDrumParams [0][kParamCount - 1]);
+		setOperatorParams(15, kBaseDrumParams [1], kBaseDrumParams [1][kParamCount - 1]);
+		setOperatorParams(16, kSnareDrumParams   , kSnareDrumParams   [kParamCount - 1]);
+		setOperatorParams(14, kTomParams         , kTomParams         [kParamCount - 1]);
+		setOperatorParams(17, kCymbalParams      , kCymbalParams      [kParamCount - 1]);
+		setOperatorParams(13, kHihatParams       , kHihatParams       [kParamCount - 1]);
 	}
 }
 
-
-MDYPlayer::MDYPlayer(Audio::Mixer &mixer) : AdLib(mixer) {
-	init();
+void AdLib::initOperatorVolumes() {
+	for(int i = 0; i < kOperatorCount; i++)
+		_operatorVolume[i] = kMaxVolume;
 }
 
-MDYPlayer::~MDYPlayer() {
+void AdLib::setOperatorParams(uint8 oper, const uint16 *params, uint8 wave) {
+	byte *operParams = _operatorParams[oper];
+
+	for (int i = 0; i < (kParamCount - 1); i++)
+		operParams[i] = params[i];
+
+	operParams[kParamCount - 1] = wave & 0x03;
+
+	writeAllParams(oper);
 }
 
-void MDYPlayer::init() {
-	_soundMode = 0;
-
-	_timbres = 0;
-	_tbrCount = 0;
-	_tbrStart = 0;
-	_timbresSize = 0;
+void AdLib::voiceOff(uint8 voice) {
+	writeOPL(0xA0 + voice, 0);
+	writeOPL(0xB0 + voice, 0);
 }
 
-bool MDYPlayer::loadMDY(Common::SeekableReadStream &stream) {
-	unloadMDY();
+int32 AdLib::calcFreq(int32 deltaDemiToneNum, int32 deltaDemiToneDenom) {
+	int32 freq = 0;
 
-	_freeData = true;
+	freq  = ((deltaDemiToneDenom * 100) + 6 * deltaDemiToneNum) * 52088;
+	freq /= deltaDemiToneDenom * 2500;
 
-	byte mdyHeader[70];
-	stream.read(mdyHeader, 70);
-
-	_tickBeat = mdyHeader[36];
-	_beatMeasure = mdyHeader[37];
-	_totalTick = mdyHeader[38] + (mdyHeader[39] << 8) + (mdyHeader[40] << 16) + (mdyHeader[41] << 24);
-	_dataSize = mdyHeader[42] + (mdyHeader[43] << 8) + (mdyHeader[44] << 16) + (mdyHeader[45] << 24);
-	_nrCommand = mdyHeader[46] + (mdyHeader[47] << 8) + (mdyHeader[48] << 16) + (mdyHeader[49] << 24);
-// _soundMode is either 0 (melodic) or 1 (percussive)
-	_soundMode = mdyHeader[58];
-	assert((_soundMode == 0) || (_soundMode == 1));
-
-	_pitchBendRangeStep = 25*mdyHeader[59];
-	_basicTempo = mdyHeader[60] + (mdyHeader[61] << 8);
-
-	if (_pitchBendRangeStep < 25)
-		_pitchBendRangeStep = 25;
-	else if (_pitchBendRangeStep > 300)
-		_pitchBendRangeStep = 300;
-
-	_data = new byte[_dataSize];
-	stream.read(_data, _dataSize);
-
-	reset();
-	_playPos = _data;
-
-	return true;
+	return (freq * 147456) / 111875;
 }
 
-bool MDYPlayer::loadMDY(const char *fileName) {
-	Common::File song;
+void AdLib::setFreqs(uint16 *freqs, int32 num, int32 denom) {
+	int32 val = calcFreq(num, denom);
 
-	song.open(fileName);
-	if (!song.isOpen())
-		return false;
+	*freqs++ = (4 + val) >> 3;
 
-	bool loaded = loadMDY(song);
+	for (int i = 1; i < kHalfToneCount; i++) {
+		val = (val * 106) / 100;
 
-	song.close();
-
-	return loaded;
-}
-
-bool MDYPlayer::loadTBR(Common::SeekableReadStream &stream) {
-	unloadTBR();
-
-	_timbresSize = stream.size();
-
-	_timbres = new byte[_timbresSize];
-	stream.read(_timbres, _timbresSize);
-
-	reset();
-	setVoices();
-
-	return true;
-}
-
-bool MDYPlayer::loadTBR(const char *fileName) {
-	Common::File timbres;
-
-	timbres.open(fileName);
-	if (!timbres.isOpen())
-		return false;
-
-	bool loaded = loadTBR(timbres);
-
-	timbres.close();
-
-	return loaded;
-}
-
-void MDYPlayer::unload() {
-	unloadTBR();
-	unloadMDY();
-}
-
-void MDYPlayer::unloadMDY() {
-	AdLib::unload();
-}
-
-void MDYPlayer::unloadTBR() {
-	delete[] _timbres;
-
-	_timbres = 0;
-	_timbresSize = 0;
-}
-
-void MDYPlayer::interpret() {
-	unsigned char instr;
-	byte channel;
-	byte note;
-	byte volume;
-	uint8 tempoMult, tempoFrac;
-	uint8 ctrlByte1, ctrlByte2;
-	uint8 timbre;
-
-// TODO : Verify the loop for percussive mode (11 ?)
-	if (_first) {
-		for (int i = 0; i < 9; i ++)
-			setVolume(i, 0);
-
-//	TODO : Set pitch range
-
-		_tempo = _basicTempo;
-		_wait = *(_playPos++);
-		_first = false;
-	}
-	do {
-		instr = *_playPos;
-		debugC(6, kDebugSound, "MDYPlayer::interpret instr 0x%X", instr);
-		switch (instr) {
-		case 0xF8:
-			_wait = *(_playPos++);
-			break;
-		case 0xFC:
-			_ended = true;
-			_samplesTillPoll = 0;
-			return;
-		case 0xF0:
-			_playPos++;
-			ctrlByte1 = *(_playPos++);
-			ctrlByte2 = *(_playPos++);
-			debugC(6, kDebugSound, "MDYPlayer::interpret ctrlBytes 0x%X 0x%X", ctrlByte1, ctrlByte2);
-			if (ctrlByte1 != 0x7F || ctrlByte2 != 0) {
-				_playPos -= 2;
-				while (*(_playPos++) != 0xF7)
-					;
-			} else {
-				tempoMult = *(_playPos++);
-				tempoFrac = *(_playPos++);
-				_tempo = _basicTempo * tempoMult + (unsigned)(((long)_basicTempo * tempoFrac) >> 7);
-				_playPos++;
-			}
-			_wait = *(_playPos++);
-			break;
-		default:
-			if (instr >= 0x80) {
-				_playPos++;
-			}
-			channel = (int)(instr & 0x0f);
-
-			switch (instr & 0xf0) {
-			case 0x90:
-				note = *(_playPos++);
-				volume = *(_playPos++);
-				_pollNotes[channel] = note;
-				setVolume(channel, volume);
-				setKey(channel, note, true, false);
-				break;
-			case 0x80:
-				_playPos += 2;
-				note = _pollNotes[channel];
-				setKey(channel, note, false, false);
-				break;
-			case 0xA0:
-				setVolume(channel, *(_playPos++));
-				break;
-			case 0xC0:
-				timbre = *(_playPos++);
-				setVoice(channel, timbre, false);
-				break;
-			case 0xE0:
-				warning("MDYPlayer: Pitch bend not yet implemented");
-
-				note = *(_playPos)++;
-				note += (unsigned)(*(_playPos++)) << 7;
-
-				setKey(channel, note, _notOn[channel], true);
-
-				break;
-			case 0xB0:
-				_playPos += 2;
-				break;
-			case 0xD0:
-				_playPos++;
-				break;
-			default:
-				warning("MDYPlayer: Bad MIDI instr byte: 0%X", instr);
-				while ((*_playPos) < 0x80)
-					_playPos++;
-				if (*_playPos != 0xF8)
-					_playPos--;
-				break;
-			} //switch instr & 0xF0
-			_wait = *(_playPos++);
-			break;
-		} //switch instr
-	} while (_wait == 0);
-
-	if (_wait == 0xF8) {
-		_wait = 0xF0;
-		if (*_playPos != 0xF8)
-			_wait += *(_playPos++) & 0x0F;
-	}
-//		_playPos++;
-	_samplesTillPoll = _wait * (_rate / 1000);
-}
-
-void MDYPlayer::reset() {
-	AdLib::reset();
-
-// _soundMode 1 : Percussive mode.
-	if (_soundMode == 1) {
-		writeOPL(0xA6, 0);
-		writeOPL(0xB6, 0);
-		writeOPL(0xA7, 0);
-		writeOPL(0xB7, 0);
-		writeOPL(0xA8, 0);
-		writeOPL(0xB8, 0);
-
-// TODO set the correct frequency for the last 4 percussive voices
+		*freqs++ = (4 + val) >> 3;
 	}
 }
 
-void MDYPlayer::rewind() {
-	_playPos = _data;
+void AdLib::initFreqs() {
+	const int numStep = 100 / kPitchStepCount;
+
+	for (int i = 0; i < kPitchStepCount; i++)
+		setFreqs(_freqs[i], i * numStep, 100);
+
+	resetFreqs();
 }
 
-void MDYPlayer::setVoices() {
-	byte *timbrePtr;
-
-	timbrePtr = _timbres;
-	debugC(6, kDebugSound, "MDYPlayer::setVoices TBR version: %X.%X", timbrePtr[0], timbrePtr[1]);
-	timbrePtr += 2;
-
-	_tbrCount = READ_LE_UINT16(timbrePtr);
-	debugC(6, kDebugSound, "MDYPlayer::setVoices Timbres counter: %d", _tbrCount);
-	timbrePtr += 2;
-	_tbrStart = READ_LE_UINT16(timbrePtr);
-
-	timbrePtr += 2;
-	for (int i = 0; i < _tbrCount; i++)
-		setVoice(i, i, true);
-}
-
-void MDYPlayer::setVoice(byte voice, byte instr, bool set) {
-//	uint16 strct[27];
-	uint8 strct[27];
-	byte channel;
-	byte *timbrePtr;
-	char timbreName[10];
-
-	timbreName[9] = '\0';
-	for (int j = 0; j < 9; j++)
-		timbreName[j] = _timbres[6 + j + (instr * 9)];
-	debugC(6, kDebugSound, "MDYPlayer::setVoice Loading timbre %s", timbreName);
-
-	// i = 0 :  0  1  2  3  4  5  6  7  8  9 10 11 12 26
-	// i = 1 : 13 14 15 16 17 18 19 20 21 22 23 24 25 27
-	for (int i = 0; i < 2; i++) {
-		timbrePtr = _timbres + _tbrStart + instr * 0x38 + i * 0x1A;
-		for (int j = 0; j < 27; j++) {
-			if (timbrePtr >= (_timbres + _timbresSize)) {
-				warning("MDYPlayer: Instrument %d out of range (%d, %d)", instr,
-						(uint32) (timbrePtr - _timbres), _timbresSize);
-				strct[j] = 0;
-			} else
-				//strct[j] = READ_LE_UINT16(timbrePtr);
-				strct[j] = timbrePtr[0];
-			//timbrePtr += 2;
-			timbrePtr++;
-		}
-		channel = _operators[voice] + i * 3;
-		writeOPL(0xBD, 0x00);
-		writeOPL(0x08, 0x00);
-		writeOPL(0x40 | channel, ((strct[0] & 3) << 6) | (strct[8] & 0x3F));
-		if (!i)
-			writeOPL(0xC0 | voice,
-					((strct[2] & 7) << 1) | (1 - (strct[12] & 1)));
-		writeOPL(0x60 | channel, ((strct[3] & 0xF) << 4) | (strct[6] & 0xF));
-		writeOPL(0x80 | channel, ((strct[4] & 0xF) << 4) | (strct[7] & 0xF));
-		writeOPL(0x20 | channel, ((strct[9] & 1) << 7) |
-			((strct[10] & 1) << 6) | ((strct[5] & 1) << 5) |
-			((strct[11] & 1) << 4) |  (strct[1] & 0xF));
-		if (!i)
-			writeOPL(0xE0 | channel, (strct[26] & 3));
-		else {
-			writeOPL(0xE0 | channel, (strct[14] & 3));
-			writeOPL(0x40 | channel, 0);
-		}
+void AdLib::resetFreqs() {
+	for (int i = 0; i < kMaxVoiceCount; i++) {
+		_freqPtr       [i] = _freqs[0];
+		_halfToneOffset[i] = 0;
 	}
+}
+
+void AdLib::changePitch(uint8 voice, uint16 pitchBend) {
+
+	int full   = 0;
+	int frac   = 0;
+	int amount = ((pitchBend - kMidPitch) * _pitchRangeStep) / kMidPitch;
+
+	if (amount >= 0) {
+		// Bend up
+
+		full = amount / kPitchStepCount;
+		frac = amount % kPitchStepCount;
+
+	} else {
+		// Bend down
+
+		amount = kPitchStepCount - 1 - amount;
+
+		full = -(amount / kPitchStepCount);
+		frac = (amount - kPitchStepCount + 1) % kPitchStepCount;
+		if (frac)
+			frac = kPitchStepCount - frac;
+
+	}
+
+	_halfToneOffset[voice] = full;
+	_freqPtr       [voice] = _freqs[frac];
+}
+
+void AdLib::setFreq(uint8 voice, uint16 note, bool on) {
+	_voiceOn  [voice] = on;
+	_voiceNote[voice] = note;
+
+	note = CLIP<int>(note + _halfToneOffset[voice], 0, kNoteCount - 1);
+
+	uint16 freq = _freqPtr[voice][note % kHalfToneCount];
+
+	uint8 value = 0;
+	value |= on ? 0x20 : 0;
+	value |= ((note / kHalfToneCount) << 2) | ((freq >> 8) & 0x03);
+
+	writeOPL(0xA0 + voice, freq);
+	writeOPL(0xB0 + voice, value);
 }
 
 } // End of namespace Gob

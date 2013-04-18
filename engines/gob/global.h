@@ -127,7 +127,6 @@ public:
 	SurfacePtr _primarySurfDesc;
 
 	int16 _debugFlag;
-	int16 _inVM;
 
 	int16 _inter_animDataSize;
 

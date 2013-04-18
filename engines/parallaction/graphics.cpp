@@ -80,11 +80,11 @@ void drawCircle(int xCenter, int yCenter, int radius, int color, void (*plotProc
 
 Palette::Palette() {
 
-	int gameType = _vm->getGameType();
+	int gameType = g_vm->getGameType();
 
 	if (gameType == GType_Nippon) {
 		_colors = 32;
-		_hb = (_vm->getPlatform() == Common::kPlatformAmiga);
+		_hb = (g_vm->getPlatform() == Common::kPlatformAmiga);
 	} else
 	if (gameType == GType_BRA) {
 		_colors = 256;
@@ -766,7 +766,7 @@ Gfx::~Gfx() {
 
 	freeLabels();
 
-	delete []_unpackedBitmap;
+	delete[] _unpackedBitmap;
 
 	return;
 }

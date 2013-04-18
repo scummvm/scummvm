@@ -75,7 +75,7 @@ struct Complex {
 	float re, im;
 };
 
-#if defined(__GNUC__) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4))
+#if GCC_ATLEAST(3, 4)
 inline int intLog2(uint32 v) {
 	// This is a slightly optimized implementation of log2 for natural numbers
 	// targeting gcc. It also saves some binary size over our fallback

@@ -89,8 +89,6 @@ public:
 	static void convertPC98Gfx(uint8 *data, int w, int h, int pitch);
 
 private:
-	LoLEngine *_vm;
-
 	static const ScreenDim _screenDimTable256C[];
 	static const ScreenDim _screenDimTable16C[];
 	static const int _screenDimTableCount;

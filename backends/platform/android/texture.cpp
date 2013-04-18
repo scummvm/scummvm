@@ -52,9 +52,6 @@
 
 // Supported GL extensions
 static bool npot_supported = false;
-#ifdef GL_OES_draw_texture
-static bool draw_tex_supported = false;
-#endif
 
 static inline GLfixed xdiv(int numerator, int denominator) {
 	assert(numerator < (1 << 16));
@@ -85,11 +82,6 @@ void GLESBaseTexture::initGLExtensions() {
 
 		if (token == "GL_ARB_texture_non_power_of_two")
 			npot_supported = true;
-
-#ifdef GL_OES_draw_texture
-		if (token == "GL_OES_draw_texture")
-			draw_tex_supported = true;
-#endif
 	}
 }
 
@@ -180,45 +172,28 @@ void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
 void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	GLCALL(glBindTexture(GL_TEXTURE_2D, _texture_name));
 
-#ifdef GL_OES_draw_texture
-	// Great extension, but only works under specific conditions.
-	// Still a work-in-progress - disabled for now.
-	if (false && draw_tex_supported && !hasPalette()) {
-		//GLCALL(glTexEnvx(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE));
-		const GLint crop[4] = { 0, _surface.h, _surface.w, -_surface.h };
+	const GLfixed tex_width = xdiv(_surface.w, _texture_width);
+	const GLfixed tex_height = xdiv(_surface.h, _texture_height);
+	const GLfixed texcoords[] = {
+		0, 0,
+		tex_width, 0,
+		0, tex_height,
+		tex_width, tex_height,
+	};
 
-		GLCALL(glTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_CROP_RECT_OES, crop));
+	GLCALL(glTexCoordPointer(2, GL_FIXED, 0, texcoords));
 
-		// Android GLES bug?
-		GLCALL(glColor4ub(0xff, 0xff, 0xff, 0xff));
+	const GLshort vertices[] = {
+		x, y,
+		x + w, y,
+		x, y + h,
+		x + w, y + h,
+	};
 
-		GLCALL(glDrawTexiOES(x, y, 0, w, h));
-	} else
-#endif
-	{
-		const GLfixed tex_width = xdiv(_surface.w, _texture_width);
-		const GLfixed tex_height = xdiv(_surface.h, _texture_height);
-		const GLfixed texcoords[] = {
-			0, 0,
-			tex_width, 0,
-			0, tex_height,
-			tex_width, tex_height,
-		};
+	GLCALL(glVertexPointer(2, GL_SHORT, 0, vertices));
 
-		GLCALL(glTexCoordPointer(2, GL_FIXED, 0, texcoords));
-
-		const GLshort vertices[] = {
-			x, y,
-			x + w, y,
-			x, y + h,
-			x + w, y + h,
-		};
-
-		GLCALL(glVertexPointer(2, GL_SHORT, 0, vertices));
-
-		assert(ARRAYSIZE(vertices) == ARRAYSIZE(texcoords));
-		GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, ARRAYSIZE(vertices) / 2));
-	}
+	assert(ARRAYSIZE(vertices) == ARRAYSIZE(texcoords));
+	GLCALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, ARRAYSIZE(vertices) / 2));
 
 	clearDirty();
 }

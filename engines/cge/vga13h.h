@@ -29,6 +29,7 @@
 #define CGE_VGA13H_H
 
 #include "common/serializer.h"
+#include "common/events.h"
 #include "graphics/surface.h"
 #include "cge/general.h"
 #include "cge/bitmap.h"
@@ -146,7 +147,7 @@ public:
 	void step(int nr = -1);
 	Seq *setSeq(Seq *seq);
 	CommandHandler::Command *snList(SnList type);
-	virtual void touch(uint16 mask, int x, int y);
+	virtual void touch(uint16 mask, int x, int y, Common::KeyCode keyCode);
 	virtual void tick();
 	void sync(Common::Serializer &s);
 private:

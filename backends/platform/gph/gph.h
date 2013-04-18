@@ -26,12 +26,10 @@
 #if defined(GPH_DEVICE)
 
 #include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl.h"
+#include "backends/platform/sdl/sdl-sys.h"
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/events/gph/gph-events.h"
 #include "backends/graphics/gph/gph-graphics.h"
-
-#define __GP2XWIZ__
 
 #ifndef PATH_MAX
 #define PATH_MAX 255
@@ -45,6 +43,11 @@ public:
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
 	void initBackend();
 	void quit();
+
+protected:
+	bool _inited;
+	bool _initedSDL;
+	virtual void initSDL();
 };
 
 #endif

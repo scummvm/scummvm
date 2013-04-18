@@ -20,9 +20,6 @@
  *
  */
 
-// FIXME: Avoid using printf
-#define FORBIDDEN_SYMBOL_EXCEPTION_printf
-
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
@@ -31,6 +28,8 @@
 #include "common/md5.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
+
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
@@ -139,6 +138,13 @@ static const PlainGameDescriptor agiGames[] = {
 	{0, 0}
 };
 
+static const ExtraGuiOption agiExtraGuiOption = {
+	_s("Use original save/load screens"),
+	_s("Use the original save/load screens, instead of the ScummVM ones"),
+	"originalsaveload",
+	false
+};
+
 #include "agi/detection_tables.h"
 
 using namespace Agi;
@@ -162,6 +168,7 @@ public:
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const;
 	virtual void removeSaveState(const char *target, int slot) const;
@@ -177,7 +184,8 @@ bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave) ||
 		(f == kSavesSupportMetaInfo) ||
 		(f == kSavesSupportThumbnail) ||
-		(f == kSavesSupportCreationDate);
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime);
 }
 
 bool AgiBase::hasFeature(EngineFeature f) const {
@@ -217,6 +225,12 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	}
 
 	return res;
+}
+
+const ExtraGuiOptions AgiMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	options.push_back(agiExtraGuiOption);
+	return options;
 }
 
 SaveStateList AgiMetaEngine::listSaves(const char *target) const {
@@ -289,6 +303,10 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 			uint32 saveDate = in->readUint32BE();
 			uint16 saveTime = in->readUint16BE();
+			if (saveVersion >= 6) {
+				uint32 playTime = in->readUint32BE();
+				desc.setPlayTime(playTime * 1000);
+			}
 
 			int day = (saveDate >> 24) & 0xFF;
 			int month = (saveDate >> 16) & 0xFF;
@@ -470,10 +488,14 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXX
 		g_fallbackDesc.desc.gameid = _gameid.c_str();
 		g_fallbackDesc.desc.extra = _extra.c_str();
 
-		printf("Your game version has been detected using fallback matching as a\n");
-		printf("variant of %s (%s).\n", g_fallbackDesc.desc.gameid, g_fallbackDesc.desc.extra);
-		printf("If this is an original and unmodified version or new made Fanmade game,\n");
-		printf("please report any, information previously printed by ScummVM to the team.\n");
+		Common::String fallbackWarning;
+
+		fallbackWarning = "Your game version has been detected using fallback matching as a\n";
+		fallbackWarning += Common::String::format("variant of %s (%s).\n", g_fallbackDesc.desc.gameid, g_fallbackDesc.desc.extra);
+		fallbackWarning += "If this is an original and unmodified version or new made Fanmade game,\n";
+		fallbackWarning += "please report any, information previously printed by ScummVM to the team.\n";
+
+		g_system->logMessage(LogMessageType::kWarning, fallbackWarning.c_str());
 
 		return (const ADGameDescription *)&g_fallbackDesc;
 	}

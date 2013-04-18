@@ -27,6 +27,7 @@ BuildRequires: flac-devel
 BuildRequires: zlib-devel
 BuildRequires: nasm
 BuildRequires: SDL-devel >= 1.2.2
+BuildRequires: freetype-devel
 
 #------------------------------------------------------------------------------
 #   Description
@@ -94,7 +95,7 @@ fi
 #------------------------------------------------------------------------------
 %files
 %defattr(0644,root,root,0755)
-%doc AUTHORS README NEWS COPYING COPYING.LGPL COPYING.BSD COPYRIGHT
+%doc AUTHORS README NEWS COPYING COPYING.LGPL COPYING.FREEFONT COPYING.BSD COPYRIGHT
 %attr(0755,root,root)%{_bindir}/scummvm
 %{_datadir}/applications/*
 %{_datadir}/pixmaps/scummvm.xpm

@@ -36,7 +36,7 @@ namespace Scumm {
 class ScummEngine;
 
 /*
- * Optimized for use with periodical read/write phases when the buffer 
+ * Optimized for use with periodical read/write phases when the buffer
  * is filled in a write phase and completely read in a read phase.
  * The growing strategy is optimized for repeated small (e.g. 2 bytes)
  * single writes resulting in large buffers
@@ -133,7 +133,7 @@ static const double APPLEII_CPU_CLOCK = 1020484.5; // ~ 1.02 MHz
 
 /*
  * Converts the 1-bit speaker state values into audio samples.
- * This is done by aggregation of the speaker states at each 
+ * This is done by aggregation of the speaker states at each
  * CPU cycle in a sampling period into an audio sample.
  */
 class SampleConverter {
@@ -144,7 +144,7 @@ private:
 	}
 
 public:
-	SampleConverter() : 
+	SampleConverter() :
 		_cyclesPerSampleFP(0),
 		_missingCyclesFP(0),
 		_sampleCyclesSumFP(0),
@@ -156,7 +156,7 @@ public:
 	void reset() {
 		_missingCyclesFP = 0;
 		_sampleCyclesSumFP = 0;
-		_buffer.clear();	
+		_buffer.clear();
 	}
 
 	uint32 availableSize() const {
@@ -245,7 +245,7 @@ public:
 	virtual void setMusicVolume(int vol) { _sampleConverter.setMusicVolume(vol); }
 	void setSampleRate(int rate) {
 		_sampleRate = rate;
-		_sampleConverter.setSampleRate(rate); 
+		_sampleConverter.setSampleRate(rate);
 	}
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);

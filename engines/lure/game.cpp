@@ -71,12 +71,12 @@ void Game::tick() {
 	uint16 *idList = new uint16[res.activeHotspots().size()];
 	int idSize = 0;
 	for (i = res.activeHotspots().begin(); i != res.activeHotspots().end(); ++i) {
-		Hotspot *hotspot = (*i).get();
+		Hotspot const &hotspot = **i;
 
-		if (!_preloadFlag || ((hotspot->layer() != 0xff) &&
-			(hotspot->hotspotId() < FIRST_NONCHARACTER_ID)))
+		if (!_preloadFlag || ((hotspot.layer() != 0xff) &&
+			(hotspot.hotspotId() < FIRST_NONCHARACTER_ID)))
 			// Add hotspot to list to execute
-			idList[idSize++] = hotspot->hotspotId();
+			idList[idSize++] = hotspot.hotspotId();
 	}
 
 	debugC(ERROR_DETAILED, kLureDebugAnimations, "Hotspot ticks begin");

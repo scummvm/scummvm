@@ -98,7 +98,7 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 		midiMixChannels();
 	}
 
-	_num_tracks = 1;
+	_numTracks = 1;
 	_tracks[0] = _mixedData;
 	if (_pSnd)
 		setTrack(0);
@@ -144,7 +144,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 	_mixedData = outData;
 	long ticker = 0;
 	byte channelNr, curDelta;
-	byte midiCommand = 0, midiParam, global_prev = 0;
+	byte midiCommand = 0, midiParam, globalPrev = 0;
 	long newDelta;
 	SoundResource::Channel *channel;
 
@@ -190,13 +190,13 @@ byte *MidiParser_SCI::midiMixChannels() {
 			byte midiChannel = midiCommand & 0xF;
 			_channelUsed[midiChannel] = true;
 
-			if (midiCommand != global_prev)
+			if (midiCommand != globalPrev)
 				*outData++ = midiCommand;
 			*outData++ = midiParam;
 			if (nMidiParams[(midiCommand >> 4) - 8] == 2)
 				*outData++ = channel->data[channel->curPos++];
 			channel->prev = midiCommand;
-			global_prev = midiCommand;
+			globalPrev = midiCommand;
 		}
 	}
 
@@ -372,8 +372,8 @@ void MidiParser_SCI::unloadMusic() {
 		resetTracking();
 		allNotesOff();
 	}
-	_num_tracks = 0;
-	_active_track = 255;
+	_numTracks = 0;
+	_activeTrack = 255;
 	_resetOnPause = false;
 
 	if (_mixedData) {
@@ -454,26 +454,26 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		debugC(4, kDebugLevelSound, "signal %04x", _signalToSet);
 	}
 
-	info.start = _position._play_pos;
+	info.start = _position._playPos;
 	info.delta = 0;
-	while (*_position._play_pos == 0xF8) {
+	while (*_position._playPos == 0xF8) {
 		info.delta += 240;
-		_position._play_pos++;
+		_position._playPos++;
 	}
-	info.delta += *(_position._play_pos++);
+	info.delta += *(_position._playPos++);
 
 	// Process the next info.
-	if ((_position._play_pos[0] & 0xF0) >= 0x80)
-		info.event = *(_position._play_pos++);
+	if ((_position._playPos[0] & 0xF0) >= 0x80)
+		info.event = *(_position._playPos++);
 	else
-		info.event = _position._running_status;
+		info.event = _position._runningStatus;
 	if (info.event < 0x80)
 		return;
 
-	_position._running_status = info.event;
+	_position._runningStatus = info.event;
 	switch (info.command()) {
 	case 0xC:
-		info.basic.param1 = *(_position._play_pos++);
+		info.basic.param1 = *(_position._playPos++);
 		info.basic.param2 = 0;
 		if (info.channel() == 0xF) {// SCI special case
 			if (info.basic.param1 != kSetSignalLoop) {
@@ -488,23 +488,23 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// in glitches (e.g. the intro of LB1 Amiga gets stuck - bug
 				// #3297883). Refer to MusicEntry::setSignal() in sound/music.cpp.
 				if (_soundVersion <= SCI_VERSION_0_LATE ||
-					_position._play_tick || info.delta) {
+					_position._playTick || info.delta) {
 					_signalSet = true;
 					_signalToSet = info.basic.param1;
 				}
 			} else {
-				_loopTick = _position._play_tick + info.delta;
+				_loopTick = _position._playTick + info.delta;
 			}
 		}
 		break;
 	case 0xD:
-		info.basic.param1 = *(_position._play_pos++);
+		info.basic.param1 = *(_position._playPos++);
 		info.basic.param2 = 0;
 		break;
 
 	case 0xB:
-		info.basic.param1 = *(_position._play_pos++);
-		info.basic.param2 = *(_position._play_pos++);
+		info.basic.param1 = *(_position._playPos++);
+		info.basic.param2 = *(_position._playPos++);
 
 		// Reference for some events:
 		// http://wiki.scummvm.org/index.php/SCI/Specifications/Sound/SCI0_Resource_Format#Status_Reference
@@ -588,8 +588,8 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	case 0x9:
 	case 0xA:
 	case 0xE:
-		info.basic.param1 = *(_position._play_pos++);
-		info.basic.param2 = *(_position._play_pos++);
+		info.basic.param1 = *(_position._playPos++);
+		info.basic.param2 = *(_position._playPos++);
 		if (info.command() == 0x9 && info.basic.param2 == 0)
 			info.event = info.channel() | 0x80;
 		info.length = 0;
@@ -598,12 +598,12 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	case 0xF: // System Common, Meta or SysEx event
 		switch (info.event & 0x0F) {
 		case 0x2: // Song Position Pointer
-			info.basic.param1 = *(_position._play_pos++);
-			info.basic.param2 = *(_position._play_pos++);
+			info.basic.param1 = *(_position._playPos++);
+			info.basic.param2 = *(_position._playPos++);
 			break;
 
 		case 0x3: // Song Select
-			info.basic.param1 = *(_position._play_pos++);
+			info.basic.param1 = *(_position._playPos++);
 			info.basic.param2 = 0;
 			break;
 
@@ -617,16 +617,16 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			break;
 
 		case 0x0: // SysEx
-			info.length = readVLQ(_position._play_pos);
-			info.ext.data = _position._play_pos;
-			_position._play_pos += info.length;
+			info.length = readVLQ(_position._playPos);
+			info.ext.data = _position._playPos;
+			_position._playPos += info.length;
 			break;
 
 		case 0xF: // META event
-			info.ext.type = *(_position._play_pos++);
-			info.length = readVLQ(_position._play_pos);
-			info.ext.data = _position._play_pos;
-			_position._play_pos += info.length;
+			info.ext.type = *(_position._playPos++);
+			info.length = readVLQ(_position._playPos);
+			info.ext.data = _position._playPos;
+			_position._playPos += info.length;
 			if (info.ext.type == 0x2F) {// end of track reached
 				if (_pSnd->loop)
 					_pSnd->loop--;
@@ -677,21 +677,21 @@ void MidiParser_SCI::allNotesOff() {
 	// Turn off all active notes
 	for (i = 0; i < 128; ++i) {
 		for (j = 0; j < 16; ++j) {
-			if ((_active_notes[i] & (1 << j)) && (_channelRemap[j] != -1)){
+			if ((_activeNotes[i] & (1 << j)) && (_channelRemap[j] != -1)){
 				sendToDriver(0x80 | j, i, 0);
 			}
 		}
 	}
 
 	// Turn off all hanging notes
-	for (i = 0; i < ARRAYSIZE(_hanging_notes); i++) {
-		byte midiChannel = _hanging_notes[i].channel;
-		if ((_hanging_notes[i].time_left) && (_channelRemap[midiChannel] != -1)) {
-			sendToDriver(0x80 | midiChannel, _hanging_notes[i].note, 0);
-			_hanging_notes[i].time_left = 0;
+	for (i = 0; i < ARRAYSIZE(_hangingNotes); i++) {
+		byte midiChannel = _hangingNotes[i].channel;
+		if ((_hangingNotes[i].timeLeft) && (_channelRemap[midiChannel] != -1)) {
+			sendToDriver(0x80 | midiChannel, _hangingNotes[i].note, 0);
+			_hangingNotes[i].timeLeft = 0;
 		}
 	}
-	_hanging_notes_count = 0;
+	_hangingNotesCount = 0;
 
 	// To be sure, send an "All Note Off" event (but not all MIDI devices
 	// support this...).
@@ -703,7 +703,7 @@ void MidiParser_SCI::allNotesOff() {
 		}
 	}
 
-	memset(_active_notes, 0, sizeof(_active_notes));
+	memset(_activeNotes, 0, sizeof(_activeNotes));
 }
 
 void MidiParser_SCI::setMasterVolume(byte masterVolume) {

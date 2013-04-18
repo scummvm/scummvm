@@ -346,6 +346,14 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 		break;
 	}
 
+	if (BF_GLOBALS.getFlag(onBike) && !BF_GLOBALS.getFlag(onDuty)) {
+		BF_GLOBALS._sound1.play(30);
+	} else if ((BF_GLOBALS._dayNumber == 2) && (BF_GLOBALS._bookmark < bEndDayOne)) {
+		BF_GLOBALS._sound1.changeSound(49);
+	} else if (BF_GLOBALS._sceneManager._previousScene != 190) {
+		BF_GLOBALS._sound1.changeSound(33);
+	}
+
 	_item10.setDetails(4, 300, 7, 13, 16, 1);
 	_item11.setDetails(2, 300, 9, 13, 18, 1);
 	_item12.setDetails(5, 300, 10, 13, 19, 1);

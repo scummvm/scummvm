@@ -573,19 +573,19 @@ bool Actor_v2::checkWalkboxesHaveDirectPath(Common::Point &foundPath) {
 	return false;
 }
 
-bool Actor_v0::intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End, 
-	const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result) 
+bool Actor_v0::intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End,
+	const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result)
 {
 	const Common::Point v1 = line1End - line1Start; // line1(n1) = line1Start + n1 * v1
 	const Common::Point v2 = line2End - line2Start; // line2(n2) = line2Start + n2 * v2
-	
+
 	double det = v2.x * v1.y - v1.x * v2.y;
 	if (det == 0)
 		return false;
 
-	double n1 = ((double)v2.x * (line2Start.y - line1Start.y) - 
+	double n1 = ((double)v2.x * (line2Start.y - line1Start.y) -
 		         (double)v2.y * (line2Start.x - line1Start.x)) / det;
-	double n2 = ((double)v1.x * (line2Start.y - line1Start.y) - 
+	double n2 = ((double)v1.x * (line2Start.y - line1Start.y) -
 		         (double)v1.y * (line2Start.x - line1Start.x)) / det;
 
 	// both coefficients have to be in [0, 1], otherwise the intersection is
@@ -599,16 +599,16 @@ bool Actor_v0::intersectLineSegments(const Common::Point &line1Start, const Comm
 }
 
 /*
- * MM v0 allows the actor to walk in a direct line between boxes to the target 
+ * MM v0 allows the actor to walk in a direct line between boxes to the target
  * if actor and target share a horizontal or vertical corridor.
- * If such a corridor is found the actor is not forced to go horizontally or 
+ * If such a corridor is found the actor is not forced to go horizontally or
  * vertically from one box to the next but can also walk diagonally.
  *
- * Note: the original v0 interpreter sets the target destination for diagonal 
+ * Note: the original v0 interpreter sets the target destination for diagonal
  * walking only once and then rechecks whenever the actor reaches a new box if the
- * walk destination is still suitable for the current box. 
- * ScummVM does not perform such a check, so it is possible to leave the walkboxes 
- * in some cases, for example L-shaped rooms like the swimming pool (actor walks over water) 
+ * walk destination is still suitable for the current box.
+ * ScummVM does not perform such a check, so it is possible to leave the walkboxes
+ * in some cases, for example L-shaped rooms like the swimming pool (actor walks over water)
  * or the medical room (actor walks over examination table).
  * To solve this we intersect the new walk destination with the actor's walkbox borders,
  * so a recheck is done when the actor leaves his box. This is done by the
@@ -992,7 +992,7 @@ void Actor_v0::setDirection(int direction) {
 			res = 7;	// Face Camera
 			break;
 	}
-	
+
 	_animFrameRepeat = -1;
 	animateActor(res);
 	if (_moving)
@@ -1408,7 +1408,7 @@ void Actor::showActor() {
 
 	if (_vm->_game.version == 0) {
 		Actor_v0 *a = ((Actor_v0 *)this);
-		
+
 		a->_costCommand = a->_costCommandNew = 0xFF;
 
 		for (int i = 0; i < 8; ++i) {
@@ -2056,7 +2056,7 @@ void Actor_v0::animateCostume() {
 void Actor_v0::speakCheck() {
 	if (v0ActorTalkArray[_number] & 0x80)
 		return;
-	
+
 	int cmd = newDirToOldDir(_facing);
 
 	if (_speaking & 0x80)
@@ -2884,7 +2884,7 @@ void Actor_v0::animateActor(int anim) {
 
 		_costCommandNew = anim;
 		_vm->_costumeLoader->costumeDecodeData(this, 0, 0);
-		
+
 		if (dir == -1)
 			return;
 

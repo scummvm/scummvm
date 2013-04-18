@@ -706,16 +706,16 @@ void Diving::updateAnims() {
 	for (Common::List<ANIObject *>::iterator a = _anims.reverse_begin();
 			 a != _anims.end(); --a) {
 
-		(*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom);
-		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+		if ((*a)->clear(*_vm->_draw->_backSurface, left, top, right, bottom))
+			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 	}
 
 	// Draw the current animation frames
 	for (Common::List<ANIObject *>::iterator a = _anims.begin();
 			 a != _anims.end(); ++a) {
 
-		(*a)->draw(*_vm->_draw->_backSurface, left, top, right, bottom);
-		_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
+		if ((*a)->draw(*_vm->_draw->_backSurface, left, top, right, bottom))
+			_vm->_draw->dirtiedRect(_vm->_draw->_backSurface, left, top, right, bottom);
 
 		(*a)->advance();
 	}

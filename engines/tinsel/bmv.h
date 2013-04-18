@@ -24,12 +24,12 @@
 #ifndef TINSEL_BMV_H
 #define TINSEL_BMV_H
 
+#include "common/coroutines.h"
 #include "common/file.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
-#include "tinsel/coroutine.h"
 #include "tinsel/object.h"
 #include "tinsel/palette.h"
 

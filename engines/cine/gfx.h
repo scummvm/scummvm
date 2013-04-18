@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "common/stack.h"
 #include "cine/object.h"
+#include "cine/bg_list.h"
 
 namespace Cine {
 
@@ -151,6 +152,7 @@ protected:
 	void drawBorder(int x, int y, int width, int height, byte color);
 	void drawDoubleBorder(int x, int y, int width, int height, byte color);
 	virtual int drawChar(char character, int x, int y);
+	virtual int undrawChar(char character, int x, int y);
 	void drawLine(int x, int y, int width, int height, byte color);
 	void remaskSprite(byte *mask, Common::List<overlay>::iterator it);
 	virtual void drawBackground();
@@ -177,8 +179,8 @@ public:
 	void drawFrame();
 	void setCommand(Common::String cmd);
 
-	virtual void incrustMask(const ObjectStruct &obj, uint8 color = 0);
-	virtual void incrustSprite(const ObjectStruct &obj);
+	virtual void incrustMask(const BGIncrust &incrust, uint8 color = 0);
+	virtual void incrustSprite(const BGIncrust &incrust);
 
 	virtual void loadBg16(const byte *bg, const char *name, unsigned int idx = 0);
 	virtual void loadCt16(const byte *ct, const char *name);
@@ -223,6 +225,7 @@ private:
 protected:
 
 	void drawSprite(const ObjectStruct &obj);
+	void drawSprite(overlay *overlayPtr, const byte *spritePtr, int16 width, int16 height, byte *page, int16 x, int16 y, byte transparentColor, byte bpp);
 	int drawChar(char character, int x, int y);
 	void drawBackground();
 	void renderOverlay(const Common::List<overlay>::iterator &it);
@@ -238,8 +241,8 @@ public:
 
 	void clear();
 
-	void incrustMask(const ObjectStruct &obj, uint8 color = 0);
-	void incrustSprite(const ObjectStruct &obj);
+	void incrustMask(const BGIncrust &incrust, uint8 color = 0);
+	void incrustSprite(const BGIncrust &incrust);
 
 	void loadBg16(const byte *bg, const char *name, unsigned int idx = 0);
 	void loadCt16(const byte *ct, const char *name);
@@ -285,7 +288,7 @@ byte gfxGetColor(int16 x, int16 y, const byte *ptr, int16 width);
 
 void gfxResetRawPage(byte *pageRaw);
 void gfxConvertSpriteToRaw(byte *dst, const byte *src, uint16 w, uint16 h);
-void gfxCopyRawPage(byte *source, byte * dest);
+void gfxCopyRawPage(byte *source, byte *dest);
 void gfxFlipRawPage(byte *frontBuffer);
 void drawSpriteRaw(const byte *spritePtr, const byte *maskPtr, int16 width, int16 height, byte *page, int16 x, int16 y);
 void gfxDrawPlainBoxRaw(int16 x1, int16 y1, int16 x2, int16 y2, byte color, byte *page);

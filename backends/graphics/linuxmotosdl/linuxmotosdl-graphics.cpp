@@ -259,7 +259,7 @@ void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined (DEBUG) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
+#if defined(DEBUG) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
 	assert(_hwscreen != NULL);
 	assert(_hwscreen->map->sw_data != NULL);
 #endif

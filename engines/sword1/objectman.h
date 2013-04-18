@@ -53,6 +53,9 @@ public:
 	void saveLiveList(uint16 *dest); // for loading/saving
 	void loadLiveList(uint16 *src);
 private:
+	char *lockText(uint32 textId, uint8 language);
+	void unlockText(uint32 textId, uint8 language);
+
 	ResMan *_resMan;
 	static const uint32 _objectList[TOTAL_SECTIONS];    //a table of pointers to object files
 	static const uint32 _textList[TOTAL_SECTIONS][7];   //a table of pointers to text files
@@ -60,6 +63,22 @@ private:
 	uint8 *_cptData[TOTAL_SECTIONS];
 	static char _missingSubTitleStr[];
 	static const char *const _translationId2950145[7];        //translation for textId 2950145 (missing from cluster file for some langages)
+	static const char *const _translationId8455194[7];        //translation for textId 8455194 (missing in the demo)
+	static const char *const _translationId8455195[7];        //translation for textId 8455195 (missing in the demo)
+	static const char *const _translationId8455196[7];        //translation for textId 8455196 (missing in the demo)
+	static const char *const _translationId8455197[7];        //translation for textId 8455197 (missing in the demo)
+	static const char *const _translationId8455198[7];        //translation for textId 8455198 (missing in the demo)
+	static const char *const _translationId8455199[7];        //translation for textId 8455199 (missing in the demo)
+	static const char *const _translationId8455200[7];        //translation for textId 8455200 (missing in the demo)
+	static const char *const _translationId8455201[7];        //translation for textId 8455201 (missing in the demo)
+	static const char *const _translationId8455202[7];        //translation for textId 8455202 (missing in the demo)
+	static const char *const _translationId8455203[7];        //translation for textId 8455203 (missing in the demo)
+	static const char *const _translationId8455204[7];        //translation for textId 8455204 (missing in the demo)
+	static const char *const _translationId8455205[7];        //translation for textId 8455205 (missing in the demo)
+	static const char *const _translationId6488080[7];        //translation for textId 6488081 (missing in the demo)
+	static const char *const _translationId6488081[7];        //translation for textId 6488081 (missing in the demo)
+	static const char *const _translationId6488082[7];        //translation for textId 6488082 (missing in the demo)
+	static const char *const _translationId6488083[7];        //translation for textId 6488083 (missing in the demo)
 };
 
 } // End of namespace Sword1

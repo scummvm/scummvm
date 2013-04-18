@@ -592,7 +592,7 @@ void ClassicCostumeRenderer::proc3_ami(Codec1 &v1) {
 	} while (1);
 }
 
-void PCESetCostumeData(byte block[16][16], int index, byte value) {
+static void PCESetCostumeData(byte block[16][16], int index, byte value) {
 	int row = (index % 16);
 	int plane = (index / 16) % 4;
 	int colOffset = (index < 64) ? 8 : 0;
@@ -1188,7 +1188,7 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 		_draw_top = 200;
 		_draw_bottom = 0;
 	}
-	
+
 	// Invalid current position?
 	if (a->_cost.curpos[limb] == 0xFFFF)
 		return 0;
@@ -1377,7 +1377,7 @@ byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
 			// Reset the comstume command
 			a0->_costCommandNew = 0xFF;
 			a0->_costCommand = 0xFF;
-			
+
 			// Set the frame/start to invalid
 			a0->_cost.frame[limb] = 0xFFFF;
 			a0->_cost.start[limb] = 0xFFFF;

@@ -132,6 +132,7 @@ public:
 
 private:
 	uint16 _width;
+	uint16 _pitch;
 	uint16 _height;
 	uint _pixels;
 	uint16 _displayWidth;

@@ -770,7 +770,7 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 	if (_spellShapes) {
 		for (int i = 0; i < 4; i++) {
 			if (_spellShapes[i])
-				delete [] _spellShapes[i];
+				delete[] _spellShapes[i];
 		}
 		delete[] _spellShapes;
 	}
@@ -820,7 +820,7 @@ void EoBCoreEngine::releaseItemsAndDecorationsShapes() {
 			if (_firebeamShapes[i])
 				delete[] _firebeamShapes[i];
 		}
-		delete []_firebeamShapes;
+		delete[] _firebeamShapes;
 	}
 
 	delete[] _redSplatShape;
@@ -2066,7 +2066,7 @@ bool EoBCoreEngine::characterAttackHitTest(int charIndex, int monsterIndex, int 
 
 	s = CLIP(s, 1, 20);
 
-	return s < m ? false : true;
+	return s >= m;
 }
 
 bool EoBCoreEngine::monsterAttackHitTest(EoBMonsterInPlay *m, int charIndex) {
@@ -2300,7 +2300,7 @@ bool EoBCoreEngine::trySavingThrow(void *target, int hpModifier, int level, int 
 		s -= constMod[c->constitutionCur];
 	}
 
-	return rollDice(1, 20) < s ? false : true;
+	return rollDice(1, 20) >= s;
 }
 
 bool EoBCoreEngine::specialAttackSavingThrow(int charIndex, int type) {

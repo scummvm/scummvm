@@ -132,7 +132,7 @@ Common::Rect Animation::getRect() {
 	return Common::Rect(_x1, _y1, _x2, _y2);
 }
 
-void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int32 xx, int32 yy) {
+void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int16 xx, int16 yy) {
 	debugC(3, kDebugAnim, "drawFrame(surface, %d, %d, %d)", frame, xx, yy);
 	if (frame < 0)
 		frame = 0;
@@ -146,10 +146,13 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int32 xx, int
 	if (_frames[frame]._ref != -1)
 		frame = _frames[frame]._ref;
 
-	int32 rectX = _frames[frame]._x2 - _frames[frame]._x1;
-	int32 rectY = _frames[frame]._y2 - _frames[frame]._y1;
-	int32 offsX = 0;
-	int32 offsY = 0;
+	if (!_frames[frame]._data)
+		return;
+
+	int16 rectX = _frames[frame]._x2 - _frames[frame]._x1;
+	int16 rectY = _frames[frame]._y2 - _frames[frame]._y1;
+	int16 offsX = 0;
+	int16 offsY = 0;
 
 	_vm->addDirtyRect(xx + _x1 + _frames[frame]._x1, yy + _y1 + _frames[frame]._y1, xx + rectX + _x1 + _frames[frame]._x1 , yy + rectY + _y1 + _frames[frame]._y1);
 
@@ -186,10 +189,10 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int32 xx, int
 	int32 destPitch = surface.pitch;
 	uint8 *srcRow = _frames[frame]._data + offsX + (_frames[frame]._x2 - _frames[frame]._x1) * offsY;
 	uint8 *curRow = (uint8 *)surface.pixels + (yy + _frames[frame]._y1 + _y1 + offsY) * destPitch + (xx + _x1 + _frames[frame]._x1 + offsX);
-	for (int32 y = 0; y < rectY; y++) {
+	for (int16 y = 0; y < rectY; y++) {
 		uint8 *cur = curRow;
 		uint8 *c = srcRow + y * (_frames[frame]._x2 - _frames[frame]._x1);
-		for (int32 x = 0; x < rectX; x++) {
+		for (int16 x = 0; x < rectX; x++) {
 			if (*c)
 				*cur = *c;
 			c++;
@@ -199,27 +202,27 @@ void Animation::drawFrame(Graphics::Surface &surface, int32 frame, int32 xx, int
 	}
 }
 
-void Animation::drawFrameWithMask(Graphics::Surface &surface, int32 frame, int32 xx, int32 yy, int32 zz, Picture *mask) {
+void Animation::drawFrameWithMask(Graphics::Surface &surface, int32 frame, int16 xx, int16 yy, int32 zz, Picture *mask) {
 	debugC(1, kDebugAnim, "drawFrameWithMask(surface, %d, %d, %d, %d, mask)", frame, xx, yy, zz);
 	warning("STUB: drawFrameWithMask()");
 }
 
-void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 frame, int32 xx, int32 yy, int32 zz, Picture *mask, int32 scale) {
+void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 frame, int16 xx, int16 yy, int32 zz, Picture *mask, int32 scale) {
 	debugC(5, kDebugAnim, "drawFrameWithMaskAndScale(surface, %d, %d, %d, %d, mask, %d)", frame, xx, yy, zz, scale);
 	if (_frames[frame]._ref != -1)
 		frame = _frames[frame]._ref;
-	int32 rectX = _frames[frame]._x2 - _frames[frame]._x1;
-	int32 rectY = _frames[frame]._y2 - _frames[frame]._y1;
+	int16 rectX = _frames[frame]._x2 - _frames[frame]._x1;
+	int16 rectY = _frames[frame]._y2 - _frames[frame]._y1;
 
-	int32 finalWidth = rectX * scale / 1024;
-	int32 finalHeight = rectY * scale / 1024;
+	int16 finalWidth = rectX * scale / 1024;
+	int16 finalHeight = rectY * scale / 1024;
 
 	// compute final x1, y1, x2, y2
-	int32 xx1 = xx + _x1 + _frames[frame]._x1 * scale / 1024;
-	int32 yy1 = yy + _y1 + _frames[frame]._y1 * scale / 1024;
-	int32 xx2 = xx1 + finalWidth;
-	int32 yy2 = yy1 + finalHeight;
-	int32 w = _frames[frame]._x2 - _frames[frame]._x1;
+	int16 xx1 = xx + _x1 + _frames[frame]._x1 * scale / 1024;
+	int16 yy1 = yy + _y1 + _frames[frame]._y1 * scale / 1024;
+	int16 xx2 = xx1 + finalWidth;
+	int16 yy2 = yy1 + finalHeight;
+	int16 w = _frames[frame]._x2 - _frames[frame]._x1;
 
 	_vm->addDirtyRect(xx1, yy1, xx2, yy2);
 
@@ -229,37 +232,26 @@ void Animation::drawFrameWithMaskAndScale(Graphics::Surface &surface, int32 fram
 	uint8 *curRow = (uint8 *)surface.pixels;
 	uint8 *curRowMask = mask->getDataPtr();
 
-	if (strstr(_name, "SHADOW")) {
-		for (int y = yy1; y < yy2; y++) {
-			for (int x = xx1; x < xx2; x++) {
-				if (x < 0 || x >= 1280 || y < 0 || y >= 400)
-					continue;
+	bool shadowFlag = false;
+	if (strstr(_name, "SHADOW"))
+		shadowFlag = true;
 
-				uint8 *cur = curRow + x + y * destPitch;
-				uint8 *curMask = curRowMask + x + y * destPitchMask;
+	for (int16 y = yy1; y < yy2; y++) {
+		for (int16 x = xx1; x < xx2; x++) {
+			if (x < 0 || x >= 1280 || y < 0 || y >= 400)
+				continue;
 
-				// find the good c
-				int32 xs = (x - xx1) * 1024 / scale;
-				int32 ys = (y - yy1) * 1024 / scale;
-				uint8 *cc = &c[ys * w + xs];
-				if (*cc && ((*curMask) >= zz))
+			uint8 *cur = curRow + x + y * destPitch;
+			uint8 *curMask = curRowMask + x + y * destPitchMask;
+
+			// find the good c
+			int16 xs = (x - xx1) * 1024 / scale;
+			int16 ys = (y - yy1) * 1024 / scale;
+			uint8 *cc = &c[ys * w + xs];
+			if (*cc && ((*curMask) >= zz)) {
+				if (shadowFlag)
 					*cur = _vm->getShadowLUT()[*cur];
-			}
-		}
-	} else {
-		for (int y = yy1; y < yy2; y++) {
-			for (int x = xx1; x < xx2; x++) {
-				if (x < 0 || x >= 1280 || y < 0 || y >= 400)
-					continue;
-
-				uint8 *cur = curRow + x + y * destPitch;
-				uint8 *curMask = curRowMask + x + y * destPitchMask;
-
-				// find the good c
-				int32 xs = (x - xx1) * 1024 / scale;
-				int32 ys = (y - yy1) * 1024 / scale;
-				uint8 *cc = &c[ys * w + xs];
-				if (*cc && ((*curMask) >= zz))
+				else
 					*cur = *cc;
 			}
 		}
@@ -283,7 +275,7 @@ Common::Rect Animation::getFrameRect(int32 frame) {
 	return Common::Rect(_frames[frame]._x1, _frames[frame]._y1, _frames[frame]._x2, _frames[frame]._y2);
 }
 
-int32 Animation::getFrameWidth(int32 frame) {
+int16 Animation::getFrameWidth(int32 frame) {
 	debugC(4, kDebugAnim, "getFrameWidth(%d)", frame);
 	if ((frame < 0) || (frame >= _numFrames))
 		return 0;
@@ -294,7 +286,7 @@ int32 Animation::getFrameWidth(int32 frame) {
 	return _frames[frame]._x2 - _frames[frame]._x1;
 }
 
-int32 Animation::getFrameHeight(int32 frame) {
+int16 Animation::getFrameHeight(int32 frame) {
 	debugC(4, kDebugAnim, "getFrameHeight(%d)", frame);
 	if (frame < 0 || frame >= _numFrames)
 		return 0;
@@ -305,15 +297,15 @@ int32 Animation::getFrameHeight(int32 frame) {
 	return _frames[frame]._y2 - _frames[frame]._y1;
 }
 
-int32 Animation::getWidth() const {
+int16 Animation::getWidth() const {
 	return _x2 - _x1;
 }
 
-int32 Animation::getHeight() const {
+int16 Animation::getHeight() const {
 	return _y2 - _y1;
 }
 
-void Animation::drawFontFrame(Graphics::Surface &surface, int32 frame, int32 xx, int32 yy, byte *colorMap) {
+void Animation::drawFontFrame(Graphics::Surface &surface, int32 frame, int16 xx, int16 yy, byte *colorMap) {
 	debugC(4, kDebugAnim, "drawFontFrame(surface, %d, %d, %d, colorMap)", frame, xx, yy);
 	if (frame < 0)
 		frame = 0;
@@ -327,8 +319,8 @@ void Animation::drawFontFrame(Graphics::Surface &surface, int32 frame, int32 xx,
 	if (_frames[frame]._ref != -1)
 		frame = _frames[frame]._ref;
 
-	int32 rectX = _frames[frame]._x2 - _frames[frame]._x1;
-	int32 rectY = _frames[frame]._y2 - _frames[frame]._y1;
+	int16 rectX = _frames[frame]._x2 - _frames[frame]._x1;
+	int16 rectY = _frames[frame]._y2 - _frames[frame]._y1;
 
 	if ((xx + _x1 + _frames[frame]._x1 < 0) || (yy + _y1 + _frames[frame]._y1 < 0))
 		return;
@@ -348,9 +340,9 @@ void Animation::drawFontFrame(Graphics::Surface &surface, int32 frame, int32 xx,
 	int32 destPitch = surface.pitch;
 	uint8 *c = _frames[frame]._data;
 	uint8 *curRow = (uint8 *)surface.pixels + (yy + _frames[frame]._y1 + _y1) * destPitch + (xx + _x1 + _frames[frame]._x1);
-	for (int32 y = 0; y < rectY; y++) {
+	for (int16 y = 0; y < rectY; y++) {
 		unsigned char *cur = curRow;
-		for (int32 x = 0; x < rectX; x++) {
+		for (int16 x = 0; x < rectX; x++) {
 			if (*c && *c < 4)
 				*cur = colorMap[*c];
 			c++;
@@ -360,7 +352,7 @@ void Animation::drawFontFrame(Graphics::Surface &surface, int32 frame, int32 xx,
 	}
 }
 
-void Animation::drawFrameOnPicture(int32 frame, int32 xx, int32 yy) {
+void Animation::drawFrameOnPicture(int32 frame, int16 xx, int16 yy) {
 	debugC(1, kDebugAnim, "drawFrameOnPicture(%d, %d, %d)", frame, xx, yy);
 	if (frame < 0)
 		frame = 0;
@@ -374,8 +366,8 @@ void Animation::drawFrameOnPicture(int32 frame, int32 xx, int32 yy) {
 	if (_frames[frame]._ref != -1)
 		frame = _frames[frame]._ref;
 
-	int32 rectX = _frames[frame]._x2 - _frames[frame]._x1;
-	int32 rectY = _frames[frame]._y2 - _frames[frame]._y1;
+	int16 rectX = _frames[frame]._x2 - _frames[frame]._x1;
+	int16 rectY = _frames[frame]._y2 - _frames[frame]._y1;
 
 	Picture *pic = _vm->getPicture();
 
@@ -397,9 +389,9 @@ void Animation::drawFrameOnPicture(int32 frame, int32 xx, int32 yy) {
 	int32 destPitch = pic->getWidth();
 	uint8 *c = _frames[frame]._data;
 	uint8 *curRow = (uint8 *)pic->getDataPtr() + (yy + _frames[frame]._y1 + _y1) * destPitch + (xx + _x1 + _frames[frame]._x1);
-	for (int32 y = 0; y < rectY; y++) {
+	for (int16 y = 0; y < rectY; y++) {
 		unsigned char *cur = curRow;
-		for (int32 x = 0; x < rectX; x++) {
+		for (int16 x = 0; x < rectX; x++) {
 			if (*c)
 				*cur = *c;
 			c++;
@@ -466,8 +458,8 @@ void AnimationInstance::render() {
 		if (frame >= _animation->_numFrames)
 			frame = _animation->_numFrames - 1;
 
-		int32 x = _x;
-		int32 y = _y;
+		int16 x = _x;
+		int16 y = _y;
 
 		if (_alignBottom) {
 			int32 offsetX = (_animation->_x2 - _animation->_x1) / 2 * (_scale - 1024);
@@ -509,7 +501,7 @@ void AnimationInstance::setAnimation(Animation *animation, bool setRange) {
 	}
 }
 
-void AnimationInstance::setAnimationRange(int32 rangeStart, int rangeEnd) {
+void AnimationInstance::setAnimationRange(int32 rangeStart, int32 rangeEnd) {
 	debugC(5, kDebugAnim, "setAnimationRange(%d, %d)", rangeStart, rangeEnd);
 	_rangeStart = rangeStart;
 	_rangeEnd = rangeEnd;
@@ -521,7 +513,7 @@ void AnimationInstance::setAnimationRange(int32 rangeStart, int rangeEnd) {
 		_currentFrame = _rangeEnd;
 }
 
-void AnimationInstance::setPosition(int32 x, int32 y, int32 z, bool relative) {
+void AnimationInstance::setPosition(int16 x, int16 y, int32 z, bool relative) {
 	debugC(5, kDebugAnim, "setPosition(%d, %d, %d, %d)", x, y, z, (relative) ? 1 : 0);
 	if (relative || !_animation) {
 		_x = x;
@@ -534,7 +526,7 @@ void AnimationInstance::setPosition(int32 x, int32 y, int32 z, bool relative) {
 	}
 }
 
-void AnimationInstance::moveRelative(int32 dx, int32 dy, int32 dz) {
+void AnimationInstance::moveRelative(int16 dx, int16 dy, int32 dz) {
 	debugC(1, kDebugAnim, "moveRelative(%d, %d, %d)", dx, dy, dz);
 	_x += dx;
 	_y += dy;
@@ -579,13 +571,13 @@ void AnimationInstance::setUseMask(bool useMask) {
 	_useMask = useMask;
 }
 
-void AnimationInstance::getRect(int32 *x1, int32 *y1, int32 *x2, int32 *y2) const {
+void AnimationInstance::getRect(int16 *x1, int16 *y1, int16 *x2, int16 *y2) const {
 	debugC(5, kDebugAnim, "getRect(%d, %d, %d, %d)", *x1, *y1, *x2, *y2);
-	int32 rectX = _animation->_frames[_currentFrame]._x2 - _animation->_frames[_currentFrame]._x1;
-	int32 rectY = _animation->_frames[_currentFrame]._y2 - _animation->_frames[_currentFrame]._y1;
+	int16 rectX = _animation->_frames[_currentFrame]._x2 - _animation->_frames[_currentFrame]._x1;
+	int16 rectY = _animation->_frames[_currentFrame]._y2 - _animation->_frames[_currentFrame]._y1;
 
-	int32 finalWidth = rectX * _scale / 1024;
-	int32 finalHeight = rectY * _scale / 1024;
+	int16 finalWidth = rectX * _scale / 1024;
+	int16 finalHeight = rectY * _scale / 1024;
 
 	// compute final x1, y1, x2, y2
 	*x1 = _x + _animation->_x1 + _animation->_frames[_currentFrame]._x1 * _scale / 1024;
@@ -594,7 +586,7 @@ void AnimationInstance::getRect(int32 *x1, int32 *y1, int32 *x2, int32 *y2) cons
 	*y2 = *y1 + finalHeight;
 }
 
-void AnimationInstance::setX(int32 x, bool relative) {
+void AnimationInstance::setX(int16 x, bool relative) {
 	debugC(1, kDebugAnim, "setX(%d, %d)", x, (relative) ? 1 : 0);
 	if (relative || !_animation)
 		_x = x;
@@ -602,7 +594,7 @@ void AnimationInstance::setX(int32 x, bool relative) {
 		_x = x - _animation->_x1;
 }
 
-void AnimationInstance::setY(int32 y, bool relative) {
+void AnimationInstance::setY(int16 y, bool relative) {
 	debugC(1, kDebugAnim, "setY(%d, %d)", y, (relative) ? 1 : 0);
 	if (relative || !_animation)
 		_y = y;
@@ -625,11 +617,11 @@ int32 AnimationInstance::getLayerZ() const {
 	return _layerZ;
 }
 
-int32 AnimationInstance::getX2() const {
+int16 AnimationInstance::getX2() const {
 	return _x + _animation->_x1;
 }
 
-int32 AnimationInstance::getY2() const {
+int16 AnimationInstance::getY2() const {
 	return _y + _animation->_y1;
 }
 
@@ -658,6 +650,7 @@ void AnimationInstance::save(Common::WriteStream *stream) {
 	stream->writeSint32LE(_visible);
 	stream->writeSint32LE(_useMask);
 }
+
 void AnimationInstance::load(Common::ReadStream *stream) {
 	_currentFrame = stream->readSint32LE();
 	_currentTime = stream->readSint32LE();
@@ -706,14 +699,13 @@ void AnimationManager::updateInstance(AnimationInstance* instance) {
 }
 
 void AnimationManager::addInstance(AnimationInstance *instance) {
-
 	// if the instance already exists, we skip the add
 	for (uint32 i = 0; i < _instances.size(); i++) {
 		if (_instances[i] == instance)
 			return;
 	}
 
-	int found = -1;
+	int32 found = -1;
 
 	// here we now do an ordered insert (closer to the original game)
 	for (uint32 i = 0; i < _instances.size(); i++) {
@@ -723,11 +715,10 @@ void AnimationManager::addInstance(AnimationInstance *instance) {
 		}
 	}
 
-	if ( found == -1 ) {
+	if (found == -1)
 		_instances.push_back(instance);
-	} else {
+	else
 		_instances.insert_at(found, instance);
-	}
 }
 
 void AnimationManager::removeInstance(AnimationInstance *instance) {

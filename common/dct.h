@@ -33,6 +33,8 @@
 #include "common/math.h"
 #include "common/rdft.h"
 
+#include "common/cosinetables.h"
+
 namespace Common {
 
 /**
@@ -59,6 +61,7 @@ private:
 	int _bits;
 	TransformType _trans;
 
+	CosineTable _cos;
 	const float *_tCos;
 
 	float *_csc2;

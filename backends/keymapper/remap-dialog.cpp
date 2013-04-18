@@ -39,7 +39,7 @@ enum {
 };
 
 RemapDialog::RemapDialog()
-	: Dialog("KeyMapper"), _keymapTable(0), _activeRemapAction(0), _topAction(0), _remapTimeout(0), _topKeymapIsGui(false) {
+	: Dialog("KeyMapper"), _keymapTable(0), _topAction(0), _remapTimeout(0), _topKeymapIsGui(false) {
 
 	_keymapper = g_system->getEventManager()->getKeymapper();
 	assert(_keymapper);
@@ -243,16 +243,14 @@ void RemapDialog::clearMapping(uint i) {
 		return;
 
 	debug(3, "clear the mapping %u", i);
-	_activeRemapAction = _currentActions[_topAction + i].action;
-	_activeRemapAction->mapInput(0);
-	_activeRemapAction->getParent()->saveMappings();
+	Action *activeRemapAction = _currentActions[_topAction + i].action;
+	activeRemapAction->mapInput(0);
+	activeRemapAction->getParent()->saveMappings();
 	_changes = true;
 
 	// force refresh
-	_topAction = -1;
+	stopRemapping(true);
 	refreshKeymap();
-
-	_activeRemapAction = 0;
 }
 
 void RemapDialog::startRemapping(uint i) {
@@ -260,57 +258,56 @@ void RemapDialog::startRemapping(uint i) {
 		return;
 
 	_remapTimeout = g_system->getMillis() + kRemapTimeoutDelay;
-	_activeRemapAction = _currentActions[_topAction + i].action;
+	Action *activeRemapAction = _currentActions[_topAction + i].action;
 	_keymapWidgets[i].keyButton->setLabel("...");
 	_keymapWidgets[i].keyButton->draw();
-	_keymapper->setEnabled(false);
+	_keymapper->startRemappingMode(activeRemapAction);
 
 }
 
-void RemapDialog::stopRemapping() {
+void RemapDialog::stopRemapping(bool force) {
 	_topAction = -1;
 
 	refreshKeymap();
 
-	_activeRemapAction = 0;
-
-	_keymapper->setEnabled(true);
+	if (force)
+		_keymapper->stopRemappingMode();
 }
 
 void RemapDialog::handleKeyDown(Common::KeyState state) {
-	if (_activeRemapAction)
+	if (_keymapper->isRemapping())
 		return;
 
 	GUI::Dialog::handleKeyDown(state);
 }
 
 void RemapDialog::handleKeyUp(Common::KeyState state) {
-	if (_activeRemapAction) {
-		const HardwareInput *hwInput = _keymapper->findHardwareInput(state);
+	if (_keymapper->isRemapping())
+		return;
 
-		debug(4, "RemapDialog::handleKeyUp Key: %d, %d (%c), %x", state.keycode, state.ascii, (state.ascii ? state.ascii : ' '), state.flags);
+	GUI::Dialog::handleKeyUp(state);
+}
 
-		if (hwInput) {
-			_activeRemapAction->mapInput(hwInput);
-			_activeRemapAction->getParent()->saveMappings();
-			_changes = true;
-			stopRemapping();
-		}
+void RemapDialog::handleOtherEvent(Event ev) {
+	if (ev.type == EVENT_GUI_REMAP_COMPLETE_ACTION) {
+		// _keymapper is telling us that something changed
+		_changes = true;
+		stopRemapping();
 	} else {
-		GUI::Dialog::handleKeyUp(state);
+		GUI::Dialog::handleOtherEvent(ev);
 	}
 }
 
 void RemapDialog::handleMouseDown(int x, int y, int button, int clickCount) {
-	if (_activeRemapAction)
+	if (_keymapper->isRemapping())
 		stopRemapping();
 	else
 		Dialog::handleMouseDown(x, y, button, clickCount);
 }
 
 void RemapDialog::handleTickle() {
-	if (_activeRemapAction && g_system->getMillis() > _remapTimeout)
-		stopRemapping();
+	if (_keymapper->isRemapping() && g_system->getMillis() > _remapTimeout)
+		stopRemapping(true);
 	Dialog::handleTickle();
 }
 
@@ -354,9 +351,14 @@ void RemapDialog::loadKeymap() {
 				Keymapper::MapRecord mr = activeKeymaps[i];
 				debug(3, "RemapDialog::loadKeymap keymap: %s", mr.keymap->getName().c_str());
 				List<const HardwareInput *>::iterator inputIt = freeInputs.begin();
+				const HardwareInput *input = *inputIt;
 				while (inputIt != freeInputs.end()) {
 
-					Action *act = mr.keymap->getMappedAction((*inputIt)->key);
+					Action *act = 0;
+					if (input->type == kHardwareInputTypeKeyboard)
+						act = mr.keymap->getMappedAction(input->key);
+					else if (input->type == kHardwareInputTypeGeneric)
+						act = mr.keymap->getMappedAction(input->inputCode);
 
 					if (act) {
 						ActionInfo info = {act, true, act->description + " (" + mr.keymap->getName() + ")"};

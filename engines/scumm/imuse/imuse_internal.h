@@ -204,6 +204,7 @@ protected:
 
 	bool _isMT32;
 	bool _isMIDI;
+	bool _supportsPercussion;
 
 protected:
 	// Player part
@@ -458,6 +459,7 @@ protected:
 	byte *findStartOfSound(int sound, int ct = (kMThd | kFORM));
 	bool isMT32(int sound);
 	bool isMIDI(int sound);
+	bool supportsPercussion(int sound);
 	int get_queue_sound_status(int sound) const;
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);

@@ -63,7 +63,7 @@ Vmenu *Vmenu::_addr = NULL;
 int Vmenu::_recent = -1;
 
 Vmenu::Vmenu(CGEEngine *vm, Choice *list, int x, int y)
-	: Talk(vm, VMGather(list), kTBRect), _menu(list), _bar(NULL), _vm(vm) {
+	: Talk(vm, VMGather(list), kTBRect), _menu(list), _bar(NULL), _vmgt(NULL), _vm(vm) {
 	Choice *cp;
 
 	_addr = this;
@@ -89,11 +89,11 @@ Vmenu::~Vmenu() {
 
 #define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
 
-void Vmenu::touch(uint16 mask, int x, int y) {
+void Vmenu::touch(uint16 mask, int x, int y, Common::KeyCode keyCode) {
 	if (!_items)
 		return;
 
-	Sprite::touch(mask, x, y);
+	Sprite::touch(mask, x, y, keyCode);
 
 	y -= kTextVMargin - 1;
 	int n = 0;

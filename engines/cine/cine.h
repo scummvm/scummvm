@@ -159,7 +159,7 @@ private:
 	bool _preLoad;
 	int _timerDelayMultiplier;
 
- public:
+public:
 	// TODO: These are pseudo-global vars
 	// They better belong to appropriate classes
 	Common::Array<AnimData> _animDataTable;

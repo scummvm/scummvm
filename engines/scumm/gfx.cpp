@@ -755,7 +755,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 					memset(blackbuf, 0, 16 * 240); // Prepare a buffer 16px wide and 240px high, to fit on a lateral strip
 
 					width = 240; // Fix right strip
-					_system->copyRectToScreen((const byte *)blackbuf, 16, 0, 0, 16, 240); // Fix left strip
+					_system->copyRectToScreen(blackbuf, 16, 0, 0, 16, 240); // Fix left strip
 				}
 			}
 
@@ -763,7 +763,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	}
 
 	// Finally blit the whole thing to the screen
-	_system->copyRectToScreen((const byte *)src, pitch, x, y, width, height);
+	_system->copyRectToScreen(src, pitch, x, y, width, height);
 }
 
 // CGA

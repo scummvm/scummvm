@@ -145,7 +145,7 @@ static void Fader(const long multTable[], SCNHANDLE noFadeTable[]) {
 	if (TinselV2) {
 		// The is only ever one cuncurrent fade
 		// But this could be a fade out and the fade in is still going!
-		g_scheduler->killMatchingProcess(PID_FADER);
+		CoroScheduler.killMatchingProcess(PID_FADER);
 		NoFadingPalettes();
 	}
 
@@ -176,7 +176,7 @@ static void Fader(const long multTable[], SCNHANDLE noFadeTable[]) {
 			fade.pPalQ		= pPal;
 
 			// create a fader process for this palette
-			g_scheduler->createProcess(PID_FADER, FadeProcess, (void *)&fade, sizeof(FADE));
+			CoroScheduler.createProcess(PID_FADER, FadeProcess, (void *)&fade, sizeof(FADE));
 		}
 	}
 }

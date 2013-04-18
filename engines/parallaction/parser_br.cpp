@@ -767,10 +767,10 @@ void LocationParser_br::parseGetData(ZonePtr z) {
 		data->_gfxobj = obj;
 	} else
 	if (!scumm_stricmp(_tokens[0], "mask")) {
-		_out->_info->loadGfxObjMask(_tokens[1], data->_gfxobj);
+		_out->_info->loadGfxObjMask(_vm, _tokens[1], data->_gfxobj);
 	} else
 	if (!scumm_stricmp(_tokens[0], "path")) {
-		_out->_info->loadGfxObjPath(_tokens[1], data->_gfxobj);
+		_out->_info->loadGfxObjPath(_vm, _tokens[1], data->_gfxobj);
 	} else
 	if (!scumm_stricmp(_tokens[0], "icon")) {
 		data->_getIcon = 4 + _vm->_objectsNames->lookup(_tokens[1]);

@@ -52,6 +52,7 @@ Inter::Inter(GobEngine *vm) : _vm(vm), _varStack(600) {
 	_soundEndTimeKey = 0;
 	_soundStopVal = 0;
 
+	_lastBusyWait = 0;
 	_noBusyWait = false;
 
 	_variables = 0;
@@ -358,6 +359,9 @@ void Inter::allocateVars(uint32 count) {
 }
 
 void Inter::delocateVars() {
+	if (_vm->_game)
+		_vm->_game->deletedVars(_variables);
+
 	delete _variables;
 	_variables = 0;
 }
@@ -450,6 +454,17 @@ uint32 Inter::readValue(uint16 index, uint16 type) {
 	}
 
 	return 0;
+}
+
+void Inter::handleBusyWait() {
+	uint32 now = _vm->_util->getTimeKey();
+
+	if (!_noBusyWait)
+		if ((now - _lastBusyWait) <= 20)
+			_vm->_util->longDelay(1);
+
+	_lastBusyWait = now;
+	_noBusyWait   = false;
 }
 
 } // End of namespace Gob

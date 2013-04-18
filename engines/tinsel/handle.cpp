@@ -99,14 +99,16 @@ void SetupHandleTable() {
 	MEMHANDLE *pH;
 	TinselFile f;
 
-	if (f.open(TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME)) {
+	const char *indexFileName = TinselV1PSX ? PSX_INDEX_FILENAME : INDEX_FILENAME;
+
+	if (f.open(indexFileName)) {
 		// get size of index file
 		len = f.size();
 
 		if (len > 0) {
 			if ((len % RECORD_SIZE) != 0) {
 				// index file is corrupt
-				error(FILE_IS_CORRUPT, TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME);
+				error(FILE_IS_CORRUPT, indexFileName);
 			}
 
 			// calc number of handles
@@ -132,16 +134,16 @@ void SetupHandleTable() {
 
 			if (f.eos() || f.err()) {
 				// index file is corrupt
-				error(FILE_IS_CORRUPT, (TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME));
+				error(FILE_IS_CORRUPT, indexFileName);
 			}
 
 			// close the file
 			f.close();
 		} else {	// index file is corrupt
-			error(FILE_IS_CORRUPT, (TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME));
+			error(FILE_IS_CORRUPT, indexFileName);
 		}
 	} else {	// cannot find the index file
-		error(CANNOT_FIND_FILE, (TinselV1PSX? PSX_INDEX_FILENAME : INDEX_FILENAME));
+		error(CANNOT_FIND_FILE, indexFileName);
 	}
 
 	// allocate memory nodes and load all permanent graphics
@@ -361,7 +363,7 @@ byte *LockMem(SCNHANDLE offset) {
 
 			if (TinselV2) {
 				SetCD(pH->flags2 & fAllCds);
-				CdCD(nullContext);
+				CdCD(Common::nullContext);
 			}
 			LoadFile(pH);
 		}

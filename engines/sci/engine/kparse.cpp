@@ -48,7 +48,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 	const int debug_parser = 0;
 #endif
 
-	if (!heap_said_block.segment)
+	if (!heap_said_block.getSegment())
 		return NULL_REG;
 
 	said_block = (byte *)s->_segMan->derefBulkPtr(heap_said_block, 0);

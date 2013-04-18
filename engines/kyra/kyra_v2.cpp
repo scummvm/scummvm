@@ -198,8 +198,6 @@ void KyraEngine_v2::moveCharacter(int facing, int x, int y) {
 	y &= ~1;
 	_mainCharacter.facing = facing;
 
-	Screen *scr = screen();
-	scr->hideMouse();
 	switch (facing) {
 	case 0:
 		while (_mainCharacter.y1 > y)
@@ -224,7 +222,6 @@ void KyraEngine_v2::moveCharacter(int facing, int x, int y) {
 	default:
 		break;
 	}
-	scr->showMouse();
 }
 
 void KyraEngine_v2::updateCharPosWithUpdate() {

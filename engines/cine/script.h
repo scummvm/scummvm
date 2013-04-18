@@ -227,6 +227,7 @@ protected:
 	int o1_op72();
 	int o1_op73();
 	int o1_playSample();
+	int o1_playSampleSwapped();
 	int o1_disableSystemMenu();
 	int o1_loadMask5();
 	int o1_unloadMask5();

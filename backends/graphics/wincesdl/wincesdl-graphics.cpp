@@ -1023,22 +1023,24 @@ bool WINCESdlGraphicsManager::saveScreenshot(const char *filename) {
 	return true;
 }
 
-void WINCESdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void WINCESdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
 		return;
 
+	const byte *src = (const byte *)buf;
+
 	// Clip the coordinates
 	if (x < 0) {
 		w += x;
-		buf -= x;
+		src -= x * 2;
 		x = 0;
 	}
 
 	if (y < 0) {
 		h += y;
-		buf -= y * pitch;
+		src -= y * pitch;
 		y = 0;
 	}
 
@@ -1063,23 +1065,24 @@ void WINCESdlGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pit
 
 	byte *dst = (byte *)_overlayscreen->pixels + y * _overlayscreen->pitch + x * 2;
 	do {
-		memcpy(dst, buf, w * 2);
+		memcpy(dst, src, w * 2);
 		dst += _overlayscreen->pitch;
-		buf += pitch;
+		src += pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_overlayscreen);
 }
 
-void WINCESdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h) {
+void WINCESdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) {
 	assert(_transactionMode == kTransactionNone);
-	assert(src);
+	assert(buf);
 
 	if (_screen == NULL)
 		return;
 
 	Common::StackLock lock(_graphicsMutex); // Lock the mutex until this function ends
 
+	const byte *src = (const byte *)buf;
 	/* Clip the coordinates */
 	if (x < 0) {
 		w += x;
@@ -1128,7 +1131,7 @@ void WINCESdlGraphicsManager::copyRectToScreen(const byte *src, int pitch, int x
 	SDL_UnlockSurface(_screen);
 }
 
-void WINCESdlGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+void WINCESdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
 
 	undrawMouse();
 	if (w == 0 || h == 0)

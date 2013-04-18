@@ -103,7 +103,7 @@ void BadaScummVM::pauseGame(bool pause) {
 		if (pause && g_engine && !g_engine->isPaused()) {
 			_appForm->pushKey(Common::KEYCODE_SPACE);
 		}
-		
+
 		if (g_system) {
 			((BadaSystem *)g_system)->setMute(pause);
 		}

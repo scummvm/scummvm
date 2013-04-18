@@ -39,7 +39,7 @@
 #include "sword25/gfx/bitmap.h"
 
 #ifdef USE_THEORADEC
-#include "sword25/fmv/theora_decoder.h"
+#include "video/theora_decoder.h"
 #endif
 
 #define THEORA_INDIRECT_RENDERING
@@ -141,7 +141,7 @@ private:
 
 
 #ifdef USE_THEORADEC
-	TheoraDecoder _decoder;
+	Video::TheoraDecoder _decoder;
 
 	Graphics::Surface *_backSurface;
 	int _outX, _outY;

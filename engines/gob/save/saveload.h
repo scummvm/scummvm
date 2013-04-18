@@ -257,6 +257,33 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
+/** Save/Load class for A.J.'s World of Discovery. */
+class SaveLoad_AJWorld : public SaveLoad {
+public:
+	SaveLoad_AJWorld(GobEngine *vm, const char *targetName);
+	virtual ~SaveLoad_AJWorld();
+
+	SaveMode getSaveMode(const char *fileName) const;
+
+protected:
+	struct SaveFile {
+		const char *sourceName;
+		SaveMode mode;
+		SaveHandler *handler;
+		const char *description;
+	};
+
+	static SaveFile _saveFiles[];
+
+	TempSpriteHandler *_tempSpriteHandler;
+
+	SaveHandler *getHandler(const char *fileName) const;
+	const char *getDescription(const char *fileName) const;
+
+	const SaveFile *getSaveFile(const char *fileName) const;
+	SaveFile *getSaveFile(const char *fileName);
+};
+
 /** Save/Load class for Goblins 3 and Lost in Time. */
 class SaveLoad_v3 : public SaveLoad {
 public:

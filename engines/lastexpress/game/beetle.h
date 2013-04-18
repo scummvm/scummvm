@@ -111,6 +111,7 @@ private:
 	void updateFrame(SequenceFrame *frame) const;
 	void updateData(uint32 index);
 	void drawUpdate();
+	void invertDirection();
 };
 
 } // End of namespace LastExpress

@@ -373,7 +373,7 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 	    DebugMan.isDebugChannelEnabled(kGroovieDebugAll)) {
 		rect.translate(0, -80);
 		_vm->_graphicsMan->_foreground.frameRect(rect, 250);
-		_vm->_system->copyRectToScreen((byte *)_vm->_graphicsMan->_foreground.getBasePtr(0, 0), _vm->_graphicsMan->_foreground.pitch, 0, 80, 640, 320);
+		_vm->_system->copyRectToScreen(_vm->_graphicsMan->_foreground.getBasePtr(0, 0), _vm->_graphicsMan->_foreground.pitch, 0, 80, 640, 320);
 		_vm->_system->updateScreen();
 	}
 
@@ -1231,7 +1231,7 @@ void Script::o_copyrecttobg() {	// 0x37
 		memcpy(bg + offset, fg + offset, width);
 		offset += 640;
 	}
-	_vm->_system->copyRectToScreen((byte *)_vm->_graphicsMan->_background.getBasePtr(left, top - 80), 640, left, top, width, height);
+	_vm->_system->copyRectToScreen(_vm->_graphicsMan->_background.getBasePtr(left, top - 80), 640, left, top, width, height);
 	_vm->_graphicsMan->change();
 }
 

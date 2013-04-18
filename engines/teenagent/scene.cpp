@@ -423,7 +423,7 @@ void Scene::init(int id, const Common::Point &pos) {
 	if (now_playing != res->dseg.get_byte(0xDB90))
 		_engine->music->load(res->dseg.get_byte(0xDB90));
 
-	_system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
+	_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
 	setPalette(0);
 }
 
@@ -654,7 +654,7 @@ bool Scene::render(bool tick_game, bool tick_mark, uint32 delta) {
 		}
 
 		if (background.pixels && debug_features.feature[DebugFeatures::kShowBack]) {
-			_system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
+			_system->copyRectToScreen(background.pixels, background.pitch, 0, 0, background.w, background.h);
 		} else
 			_system->fillScreen(0);
 

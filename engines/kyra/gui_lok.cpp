@@ -48,19 +48,16 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			snd_playSoundEffect(0x36);
 			return 0;
 		} else {
-			_screen->hideMouse();
 			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 			snd_playSoundEffect(0x35);
 			setMouseItem(inventoryItem);
 			updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[0], 179);
 			_itemInHand = inventoryItem;
-			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = kItemNone;
 		}
 	} else {
 		if (inventoryItem != kItemNone) {
 			snd_playSoundEffect(0x35);
-			_screen->hideMouse();
 			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 			_screen->drawShape(0, _shapes[216 + _itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			setMouseItem(inventoryItem);
@@ -69,16 +66,13 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 				updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[0], 179);
 			else
 				updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[1], 179);
-			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
 			_itemInHand = inventoryItem;
 		} else {
 			snd_playSoundEffect(0x32);
-			_screen->hideMouse();
 			_screen->drawShape(0, _shapes[216 + _itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			_screen->setMouseCursor(1, 1, _shapes[0]);
 			updateSentenceCommand(_itemList[getItemListIndex(_itemInHand)], _placedList[0], 179);
-			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
 			_itemInHand = kItemNone;
 		}
@@ -243,7 +237,7 @@ int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 		}
 
 		if (mouseWheel && list->mouseWheel == mouseWheel && list->buttonCallback) {
-			if ((*list->buttonCallback.get())(list))
+			if ((*list->buttonCallback)(list))
 				break;
 		}
 
@@ -282,7 +276,7 @@ int GUI_LoK::processButtonList(Button *list, uint16 inputFlag, int8 mouseWheel) 
 
 			if (processMouseClick) {
 				if (list->buttonCallback) {
-					if ((*list->buttonCallback.get())(list))
+					if ((*list->buttonCallback)(list))
 						break;
 				}
 			}
@@ -349,7 +343,7 @@ void GUI_LoK::processButton(Button *button) {
 	if (processType == 1 && shape)
 		_screen->drawShape(_screen->_curPage, shape, x, y, button->dimTableIndex, 0x10);
 	else if (processType == 4 && callback)
-		(*callback.get())(button);
+		(*callback)(button);
 }
 
 void GUI_LoK::setGUILabels() {

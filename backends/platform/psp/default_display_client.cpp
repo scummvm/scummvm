@@ -123,15 +123,15 @@ void Overlay::setSize(uint32 width, uint32 height) {
 	_renderer.setDrawWholeBuffer();	// We need to let the renderer know how much to draw
 }
 
-void Overlay::copyToArray(OverlayColor *buf, int pitch) {
+void Overlay::copyToArray(void *buf, int pitch) {
 	DEBUG_ENTER_FUNC();
-	_buffer.copyToArray((byte *)buf, pitch * sizeof(OverlayColor));	// Change to bytes
+	_buffer.copyToArray((byte *)buf, pitch);	// Change to bytes
 }
 
-void Overlay::copyFromRect(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+void Overlay::copyFromRect(const void *buf, int pitch, int x, int y, int w, int h) {
 	DEBUG_ENTER_FUNC();
 
-	_buffer.copyFromRect((byte *)buf, pitch * sizeof(OverlayColor), x, y, w, h);	// Change to bytes
+	_buffer.copyFromRect((byte *)buf, pitch, x, y, w, h);	// Change to bytes
 	// debug
 	//_buffer.print(0xFF);
 	setDirty();

@@ -296,10 +296,8 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 		_animator->restoreAllObjectBackgrounds();
 
 		_screen->copyRegion(12, _text->_talkMessageY, 12, 136, 296, _text->_talkMessageH, 2, 2);
-		_screen->hideMouse();
 
 		_text->printCharacterText(processedString, charNum, _characterList[charNum].x1);
-		_screen->showMouse();
 	}
 
 	if (chatDuration == -2)
@@ -317,10 +315,8 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 		_screen->copyRegion(12, 136, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 2);
 		_animator->preserveAllBackgrounds();
 		_animator->prepDrawAllObjects();
-		_screen->hideMouse();
 
 		_screen->copyRegion(12, _text->_talkMessageY, 12, _text->_talkMessageY, 296, _text->_talkMessageH, 2, 0);
-		_screen->showMouse();
 		_animator->flagAllObjectsForRefresh();
 		_animator->copyChangedObjectsForward(0);
 	}
@@ -332,7 +328,6 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 }
 
 void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
-	_screen->hideMouse();
 	_screen->fillRect(8, 143, 311, 152, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
@@ -354,7 +349,6 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 	}
 
 	_text->printText(sentence, 8, 143, 0xFF, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
-	_screen->showMouse();
 	setTextFadeTimerCountdown(15);
 	_fadeText = false;
 }

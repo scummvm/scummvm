@@ -377,12 +377,12 @@ public:
 
 	int16 getValue() const {
 		assert(_accessor);
-		return _accessor->operator()();
+		return (*_accessor)();
 	}
 
 	void setValue(int16 value) {
 		assert(_mutator);
-		_mutator->operator()(value);
+		(*_mutator)(value);
 	}
 };
 

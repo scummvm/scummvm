@@ -45,8 +45,6 @@ void Init_v2::initVideo() {
 
 	_vm->_global->_mousePresent = 1;
 
-	_vm->_global->_inVM = 0;
-
 	_vm->_global->_colorCount = 16;
 	if (!_vm->isEGA() &&
 	   ((_vm->getPlatform() == Common::kPlatformPC) ||

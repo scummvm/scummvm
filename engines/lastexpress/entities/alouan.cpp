@@ -28,9 +28,6 @@
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
-
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
@@ -89,22 +86,22 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(6, Alouan, compartment6)
-	COMPARTMENT_TO(Alouan, kObjectCompartment6, kPosition_4070, "621Cf", "621Df");
+	Entity::goToCompartment(savepoint, kObjectCompartment6, kPosition_4070, "621Cf", "621Df");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(7, Alouan, compartment8)
-	COMPARTMENT_TO(Alouan, kObjectCompartment8, kPosition_2740, "621Ch", "621Dh");
+	Entity::goToCompartment(savepoint, kObjectCompartment8, kPosition_2740, "621Ch", "621Dh");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(8, Alouan, compartment6to8)
-	COMPARTMENT_FROM_TO(Alouan, kObjectCompartment6, kPosition_4070, "621Bf", kObjectCompartment8, kPosition_2740, "621Ah");
+	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment6, kPosition_4070, "621Bf", kObjectCompartment8, kPosition_2740, "621Ah");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(9, Alouan, compartment8to6)
-	COMPARTMENT_FROM_TO(Alouan, kObjectCompartment8, kPosition_2740, "621Bh", kObjectCompartment6, kPosition_4070, "621Af");
+	Entity::goToCompartmentFromCompartment(savepoint, kObjectCompartment8, kPosition_2740, "621Bh", kObjectCompartment6, kPosition_4070, "621Af");
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -114,7 +111,7 @@ IMPLEMENT_FUNCTION(10, Alouan, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Alouan, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -134,7 +131,8 @@ IMPLEMENT_FUNCTION(11, Alouan, chapter1Handler)
 
 	case kActionNone:
 
-		TIME_CHECK_CALLBACK(kTime1096200, params->param1, 1, setup_compartment8to6);
+		if (Entity::timeCheckCallback(kTime1096200, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8to6)))
+			break;
 
 label_callback1:
 		if (getState()->time > kTime1162800 && !params->param2) {
@@ -284,21 +282,28 @@ IMPLEMENT_FUNCTION(16, Alouan, chapter3Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK(kTimeCitySalzbourg, params->param1, 1, setup_compartment8to6);
+		if (Entity::timeCheckCallback(kTimeCitySalzbourg, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8to6)))
+			break;
 
 label_callback1:
-		if (params->param2 != kTimeInvalid && getState()->time > kTime1989000)
-			TIME_CHECK_CAR(kTime2119500, params->param5, 5, setup_compartment8);
+		if (params->param2 != kTimeInvalid && getState()->time > kTime1989000) {
+			if (Entity::timeCheckCar(kTime2119500, params->param5, 5, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8)))
+				break;
+		}
 
 label_callback2:
-		TIME_CHECK_CALLBACK_1(kTime2052000, params->param3, 3, setup_playSound, "Har1005");
+		if (Entity::timeCheckCallback(kTime2052000, params->param3, 3, "Har1005", WRAP_SETUP_FUNCTION_S(Alouan, setup_playSound)))
+			break;
 
 label_callback3:
-		TIME_CHECK_CALLBACK(kTime2133000, params->param4, 4, setup_compartment6to8);
+		if (Entity::timeCheckCallback(kTime2133000, params->param4, 4, WRAP_SETUP_FUNCTION(Alouan, setup_compartment6to8)))
+			break;
 
 label_callback4:
-		if (params->param5 != kTimeInvalid && getState()->time > kTime2151000)
-			TIME_CHECK_CAR(kTime2241000, params->param5, 5, setup_compartment8);
+		if (params->param5 != kTimeInvalid && getState()->time > kTime2151000) {
+			if (Entity::timeCheckCar(kTime2241000, params->param5, 5, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8)))
+				break;
+		}
 		break;
 
 	case kActionDefault:
@@ -355,11 +360,14 @@ IMPLEMENT_FUNCTION(18, Alouan, chapter4Handler)
 		break;
 
 	case kActionNone:
-		if (params->param1 != kTimeInvalid)
-			TIME_CHECK_CAR(kTime2443500, params->param1, 1, setup_compartment8);
+		if (params->param1 != kTimeInvalid) {
+			if (Entity::timeCheckCar(kTime2443500, params->param1, 1, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8)))
+				break;
+		}
 
 label_callback1:
-		TIME_CHECK_CALLBACK(kTime2455200, params->param2, 2, setup_compartment8to6);
+		if (Entity::timeCheckCallback(kTime2455200, params->param2, 2, WRAP_SETUP_FUNCTION(Alouan, setup_compartment8to6)))
+			break;
 
 label_callback2:
 		if (getState()->time > kTime2475000 && !params->param3) {
@@ -441,7 +449,9 @@ IMPLEMENT_FUNCTION(22, Alouan, function22)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM(params->param1, getState()->time, 2700);
+		if (!Entity::updateParameter(params->param1, getState()->time, 2700))
+			break;
+
 		setup_function23();
 		break;
 

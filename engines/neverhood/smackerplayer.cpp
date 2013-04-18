@@ -76,7 +76,7 @@ SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash,
 
 SmackerPlayer::~SmackerPlayer() {
 	close();
-}   
+}
 
 void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 	debug("SmackerPlayer::open(%08X)", fileHash);
@@ -98,7 +98,7 @@ void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 
 	// TODO: _keepLastFrame stuff
 
-	_smackerDecoder = new Video::SmackerDecoder(_vm->_mixer);
+	_smackerDecoder = new Video::SmackerDecoder();
 	_smackerDecoder->loadStream(_stream);
 	
 	_palette = new Palette(_vm);
@@ -154,7 +154,7 @@ void SmackerPlayer::rewind() {
 
 	_stream = _vm->_res->createStream(_fileHash);
 
-	_smackerDecoder = new Video::SmackerDecoder(_vm->_mixer);
+	_smackerDecoder = new Video::SmackerDecoder();
 	_smackerDecoder->loadStream(_stream);
 	
 }

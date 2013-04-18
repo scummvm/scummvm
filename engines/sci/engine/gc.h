@@ -32,7 +32,7 @@ namespace Sci {
 
 struct reg_t_Hash {
 	uint operator()(const reg_t& x) const {
-		return (x.segment << 3) ^ x.offset ^ (x.offset << 16);
+		return (x.getSegment() << 3) ^ x.getOffset() ^ (x.getOffset() << 16);
 	}
 };
 

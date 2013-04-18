@@ -289,10 +289,6 @@ public:
 		return _oldTimer2;
 	}
 
-	OSystem *getSystem() {
-		return _system;
-	}
-
 	AudioManager *getAudioManager() {
 		return _audioManager;
 	}
@@ -340,7 +336,6 @@ public:
 	void clearDirtyRects();
 
 protected:
-	OSystem *_system;
 	int32 _tickLength;
 	Resources *_resources;
 	TextResource *_genericTexts;

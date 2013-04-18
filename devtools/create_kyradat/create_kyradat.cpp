@@ -38,6 +38,8 @@
 #include "extract.h"
 
 #include "md5.h"
+#include "common/language.h"
+#include "common/platform.h"
 
 #include <string>
 #include <map>
@@ -45,7 +47,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 82
+	kKyraDatVersion = 83
 };
 
 const ExtractFilename extractFilenames[] = {

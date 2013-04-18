@@ -85,11 +85,6 @@ MODULE_OBJS := \
 	util/pluto/pluto.o \
 	util/pluto/plzio.o
 
-ifdef USE_THEORADEC
-MODULE_OBJS += \
-	fmv/theora_decoder.o
-endif
-
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)
 PLUGIN := 1

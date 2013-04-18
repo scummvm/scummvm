@@ -34,15 +34,15 @@
 
 namespace Hugo {
 
-struct target_t {                                   // Secondary target for action
-	uint16 nounIndex;                               // Secondary object
-	uint16 verbIndex;                               // Action on secondary object
+struct Target {                                      // Secondary target for action
+	uint16 _nounIndex;                               // Secondary object
+	uint16 _verbIndex;                               // Action on secondary object
 };
 
-struct uses_t {                                     // Define uses of certain objects
-	int16     objId;                                // Primary object
-	uint16    dataIndex;                            // String if no secondary object matches
-	target_t *targets;                              // List of secondary targets
+struct Uses {                                        // Define uses of certain objects
+	int16     _objId;                                // Primary object
+	uint16    _dataIndex;                            // String if no secondary object matches
+	Target   *_targets;                              // List of secondary targets
 };
 
 class ObjectHandler {
@@ -50,12 +50,12 @@ public:
 	ObjectHandler(HugoEngine *vm);
 	virtual ~ObjectHandler();
 
-	overlay_t _objBound;
-	overlay_t _boundary;                            // Boundary overlay file
-	overlay_t _overlay;                             // First overlay file
-	overlay_t _ovlBase;                             // First overlay base file
+	Overlay   _objBound;
+	Overlay   _boundary;                             // Boundary overlay file
+	Overlay   _overlay;                              // First overlay file
+	Overlay   _ovlBase;                              // First overlay base file
 
-	object_t  *_objects;
+	Object   *_objects;
 	uint16    _numObj;
 
 	byte getBoundaryOverlay(uint16 index) const;
@@ -65,7 +65,7 @@ public:
 
 	int  deltaX(const int x1, const int x2, const int vx, int y) const;
 	int  deltaY(const int x1, const int x2, const int vy, const int y) const;
-	void boundaryCollision(object_t *obj);
+	void boundaryCollision(Object *obj);
 	void clearBoundary(const int x1, const int x2, const int y);
 	void clearScreenBoundary(const int x1, const int x2, const int y);
 	void storeBoundary(const int x1, const int x2, const int y);
@@ -76,7 +76,7 @@ public:
 	virtual void swapImages(int objIndex1, int objIndex2) = 0;
 
 	bool isCarrying(uint16 wordIndex);
-	bool findObjectSpace(object_t *obj, int16 *destx, int16 *desty);
+	bool findObjectSpace(Object *obj, int16 *destx, int16 *desty);
 
 	int   calcMaxScore();
 	int16 findObject(uint16 x, uint16 y);
@@ -84,14 +84,14 @@ public:
 	void loadObjectArr(Common::ReadStream &in);
 	void loadObjectUses(Common::ReadStream &in);
 	void loadNumObj(Common::ReadStream &in);
-	void lookObject(object_t *obj);
+	void lookObject(Object *obj);
 	void readObjectImages();
-	void readObject(Common::ReadStream &in, object_t &curObject);
-	void readUse(Common::ReadStream &in, uses_t &curUse);
+	void readObject(Common::ReadStream &in, Object &curObject);
+	void readUse(Common::ReadStream &in, Uses &curUse);
 	void restoreAllSeq();
 	void restoreObjects(Common::SeekableReadStream *in);
 	void saveObjects(Common::WriteStream *out);
-	void saveSeq(object_t *obj);
+	void saveSeq(Object *obj);
 	void setCarriedScreen(int screenNum);
 	void showTakeables();
 	void useObject(int16 objId);
@@ -101,7 +101,7 @@ public:
 	bool isCarried(int objIndex) const;
 	void setCarry(int objIndex, bool val);
 	void setVelocity(int objIndex, int8 vx, int8 vy);
-	void setPath(int objIndex, path_t pathType, int16 vxPath, int16 vyPath);
+	void setPath(int objIndex, Path pathType, int16 vxPath, int16 vyPath);
 
 protected:
 	HugoEngine *_vm;
@@ -110,11 +110,11 @@ protected:
 	static const int kEdge2 = kEdge * 2;            // Push object further back on edge collision
 	static const int kMaxObjNumb = 128;             // Used in Update_images()
 
-	uint16     _objCount;
-	uses_t    *_uses;
-	uint16     _usesSize;
+	uint16    _objCount;
+	Uses     *_uses;
+	uint16    _usesSize;
 
-	void restoreSeq(object_t *obj);
+	void restoreSeq(Object *obj);
 
 	inline bool checkBoundary(int16 x, int16 y);
 	template<typename T>

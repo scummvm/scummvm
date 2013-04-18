@@ -28,10 +28,7 @@
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/state.h"
 
-#include "lastexpress/sound/sound.h"
-
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -113,11 +110,11 @@ IMPLEMENT_FUNCTION_NOSETUP(5, Servers0, callbackActionOnDirection)
 
 	case kActionNone:
 		if (getData()->direction != kDirectionRight)
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionExitCompartment:
-		CALLBACK_ACTION();
+		callbackAction();
  		break;
 
 	case kActionExcuseMeCath:
@@ -163,7 +160,7 @@ IMPLEMENT_FUNCTION(7, Servers0, function7)
 		case 2:
 			getEntities()->clearSequences(kEntityServers0);
 			getData()->entityPosition = kPosition_5900;
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -220,7 +217,7 @@ IMPLEMENT_FUNCTION(9, Servers0, function9)
 			ENTITY_PARAM(2, 2) = 0;
 			ENTITY_PARAM(1, 6) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -315,17 +312,17 @@ IMPLEMENT_FUNCTION(20, Servers0, chapter1Handler)
 
 	case kActionNone:
 		if (params->param2) {
-			UPDATE_PARAM_PROC(params->param3, getState()->time, 2700);
+			if (Entity::updateParameter(params->param3, getState()->time, 2700)) {
 				ENTITY_PARAM(0, 4) = 1;
 				params->param2 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (params->param1) {
-			UPDATE_PARAM_PROC(params->param4, getState()->time, 4500)
+			if (Entity::updateParameter(params->param4, getState()->time, 4500)) {
 				ENTITY_PARAM(0, 5) = 1;
 				params->param1 = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!getEntities()->isInKitchen(kEntityServers0) && !getEntities()->isSomebodyInsideRestaurantOrSalon())
@@ -486,7 +483,7 @@ IMPLEMENT_FUNCTION(25, Servers0, function25)
 			getEntities()->clearSequences(kEntityServers0);
 			ENTITY_PARAM(1, 3) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -647,7 +644,7 @@ IMPLEMENT_FUNCTION(29, Servers0, augustAnnaDateOrder)
 			getEntities()->clearSequences(kEntityServers0);
 			ENTITY_PARAM(1, 5) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -693,7 +690,7 @@ IMPLEMENT_FUNCTION(30, Servers0, function30)
 			getEntities()->clearSequences(kEntityServers0);
 			ENTITY_PARAM(2, 4) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -736,10 +733,10 @@ IMPLEMENT_FUNCTION(32, Servers0, chapter4Handler)
 		break;
 
 	case kActionNone:
-		UPDATE_PARAM_PROC(params->param2, getState()->time, 3600)
+		if (Entity::updateParameter(params->param2, getState()->time, 3600)) {
 			ENTITY_PARAM(1, 8) = 1;
 			params->param1 = 0;
-		UPDATE_PARAM_PROC_END
+		}
 
 		if (!getEntities()->isInKitchen(kEntityServers1) || !getEntities()->isSomebodyInsideRestaurantOrSalon())
 			break;
@@ -859,7 +856,7 @@ IMPLEMENT_FUNCTION(33, Servers0, augustOrderSteak)
 			getEntities()->clearSequences(kEntityServers0);
 			ENTITY_PARAM(1, 7) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -902,7 +899,7 @@ IMPLEMENT_FUNCTION(34, Servers0, augustServeDuck)
 			getEntities()->clearSequences(kEntityServers0);
 			ENTITY_PARAM(1, 8) = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -972,7 +969,7 @@ void Servers0::handleServer(const SavePoint &savepoint, const char *name, Entity
 			getSavePoints()->push(kEntityServers0, entity, action);
 			*parameter = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 	}
@@ -1027,7 +1024,7 @@ void Servers0::serveTable(const SavePoint &savepoint, const char *seq1, EntityIn
 			getEntities()->clearSequences(kEntityServers0);
 			*parameter = 0;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;

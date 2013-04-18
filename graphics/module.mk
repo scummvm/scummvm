@@ -12,11 +12,7 @@ MODULE_OBJS := \
 	fonts/ttf.o \
 	fonts/winfont.o \
 	iff.o \
-	imagedec.o \
-	jpeg.o \
 	maccursor.o \
-	pict.o \
-	png.o \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail_intern.o \
@@ -26,7 +22,13 @@ MODULE_OBJS := \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
 	wincursor.o \
-	yuv_to_rgb.o
+	yuv_to_rgb.o \
+	decoders/bmp.o \
+	decoders/jpeg.o \
+	decoders/pcx.o \
+	decoders/pict.o \
+	decoders/png.o \
+	decoders/tga.o
 
 ifdef USE_SCALERS
 MODULE_OBJS += \

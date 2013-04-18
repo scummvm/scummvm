@@ -34,6 +34,8 @@
 
 namespace Common {
 
+class CosineTable;
+
 /**
  * (Inverse) Fast Fourier Transform.
  *
@@ -64,13 +66,17 @@ private:
 	Complex *_expTab;
 	Complex *_tmpBuf;
 
-	const float *_tSin;
-	const float *_tCos;
-
 	int _splitRadix;
 	int _permutation;
 
 	static int splitRadixPermutation(int i, int n, int inverse);
+
+	CosineTable *_cosTables[13];
+
+	void fft4(Complex *z);
+	void fft8(Complex *z);
+	void fft16(Complex *z);
+	void fft(int n, int logn, Complex *z);
 };
 
 } // End of namespace Common

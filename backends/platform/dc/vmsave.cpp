@@ -316,8 +316,9 @@ public:
 class VMSaveManager : public Common::SaveFileManager {
 public:
 
-  virtual Common::OutSaveFile *openForSaving(const Common::String &filename) {
-	return Common::wrapCompressedWriteStream(new OutVMSave(filename.c_str()));
+  virtual Common::OutSaveFile *openForSaving(const Common::String &filename, bool compress = true) {
+	OutVMSave *s = new OutVMSave(filename.c_str());
+	return compress ? Common::wrapCompressedWriteStream(s) : s;
   }
 
   virtual Common::InSaveFile *openForLoading(const Common::String &filename) {

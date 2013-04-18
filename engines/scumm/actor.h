@@ -377,7 +377,7 @@ public:
 	virtual void saveLoadWithSerializer(Serializer *ser);
 
 protected:
-	bool intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End, 
+	bool intersectLineSegments(const Common::Point &line1Start, const Common::Point &line1End,
 		const Common::Point &line2Start, const Common::Point &line2End, Common::Point &result);
 	virtual bool checkWalkboxesHaveDirectPath(Common::Point &foundPath);
 };

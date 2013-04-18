@@ -111,9 +111,9 @@ private:
 	int _numSteps;
 public:
 	WalkingActionEntry(Direction dir, int steps): _direction(dir), _numSteps(steps) {}
-	Direction direction() { return _direction; }
+	Direction direction() const { return _direction; }
 	int &rawSteps() { return _numSteps; }
-	int numSteps();
+	int numSteps() const;
 };
 
 enum PathFinderResult {PF_UNFINISHED, PF_OK, PF_DEST_OCCUPIED, PF_PART_PATH, PF_NO_WALK};
@@ -158,11 +158,11 @@ public:
 	Common::String getDebugInfo() const;
 
 	void pop() { _list.erase(_list.begin()); }
-	WalkingActionEntry &top() { return **_list.begin(); }
-	bool isEmpty() { return _list.empty(); }
+	WalkingActionEntry &top() const { return **_list.begin(); }
+	bool isEmpty() const { return _list.empty(); }
 	int &stepCtr() { return _stepCtr; }
 
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
@@ -279,62 +279,62 @@ public:
 	void setAnimation(uint16 newAnimId);
 	void setAnimationIndex(int animIndex);
 	void setAnimation(HotspotAnimData *newRecord);
-	uint16 hotspotId() { return _hotspotId; }
-	uint16 originalId() { return _originalId; }
-	Surface &frames() { return *_frames; }
-	HotspotAnimData &anim() { return *_anim; }
-	HotspotData *resource() { return _data; }
-	uint16 numFrames() { return _numFrames; }
-	uint16 frameNumber() { return _frameNumber; }
+	uint16 hotspotId() const { return _hotspotId; }
+	uint16 originalId() const { return _originalId; }
+	Surface &frames() const { return *_frames; }
+	HotspotAnimData &anim() const { return *_anim; }
+	HotspotData *resource() const { return _data; }
+	uint16 numFrames() const { return _numFrames; }
+	uint16 frameNumber() const { return _frameNumber; }
 	void setFrameNumber(uint16 frameNum) {
 		assert(frameNum < _numFrames);
 		_frameNumber = frameNum;
 	}
 	void incFrameNumber();
-	Direction direction() { return _direction; }
-	uint16 frameWidth() { return _width; }
-	int16 x() { return _startX; }
-	int16 y() { return _startY; }
-	int16 destX() { return _destX; }
-	int16 destY() { return _destY; }
-	int8 talkX() { return _talkX; }
-	int8 talkY() { return _talkY; }
-	uint16 destHotspotId() { return _destHotspotId; }
-	uint16 blockedOffset() { return _blockedOffset; }
-	uint8 exitCtr() { return _exitCtr; }
-	bool walkFlag() { return _walkFlag; }
-	uint16 startRoomNumber() { return _startRoomNumber; }
-	uint16 width() { return _width; }
-	uint16 height() { return _height; }
-	uint16 widthCopy() { return _widthCopy; }
-	uint16 heightCopy() { return _heightCopy; }
-	uint16 yCorrection() { return _yCorrection; }
-	uint16 charRectY() { return _charRectY; }
-	uint16 roomNumber() { return _roomNumber; }
-	uint16 talkScript() {
+	Direction direction() const { return _direction; }
+	uint16 frameWidth() const { return _width; }
+	int16 x() const { return _startX; }
+	int16 y() const { return _startY; }
+	int16 destX() const { return _destX; }
+	int16 destY() const { return _destY; }
+	int8 talkX() const { return _talkX; }
+	int8 talkY() const { return _talkY; }
+	uint16 destHotspotId() const { return _destHotspotId; }
+	uint16 blockedOffset() const { return _blockedOffset; }
+	uint8 exitCtr() const { return _exitCtr; }
+	bool walkFlag() const { return _walkFlag; }
+	uint16 startRoomNumber() const { return _startRoomNumber; }
+	uint16 width() const { return _width; }
+	uint16 height() const { return _height; }
+	uint16 widthCopy() const { return _widthCopy; }
+	uint16 heightCopy() const { return _heightCopy; }
+	uint16 yCorrection() const { return _yCorrection; }
+	uint16 charRectY() const { return _charRectY; }
+	uint16 roomNumber() const { return _roomNumber; }
+	uint16 talkScript() const {
 		assert(_data);
 		return _data->talkScriptOffset;
 	}
-	uint16 hotspotScript() { return _hotspotScriptOffset; }
-	uint8 layer() { return _layer; }
-	bool skipFlag() { return _skipFlag; }
+	uint16 hotspotScript() const { return _hotspotScriptOffset; }
+	uint8 layer() const { return _layer; }
+	bool skipFlag() const { return _skipFlag; }
 	void setTickProc(uint16 newVal);
-	bool persistant() { return _persistant; }
+	bool persistant() const { return _persistant; }
 	void setPersistant(bool value) { _persistant = value; }
-	uint8 colorOffset() { return _colorOffset; }
+	uint8 colorOffset() const { return _colorOffset; }
 	void setColorOffset(uint8 value) { _colorOffset = value; }
 	void setRoomNumber(uint16 roomNum) {
 		_roomNumber = roomNum;
 		if (_data) _data->roomNumber = roomNum;
 	}
-	uint16 nameId();
+	uint16 nameId() const;
 	const char *getName();
 	bool isActiveAnimation();
 	void setPosition(int16 newX, int16 newY);
 	void setDestPosition(int16 newX, int16 newY) { _destX = newX; _destY = newY; }
 	void setDestHotspot(uint16 id) { _destHotspotId = id; }
 	void setExitCtr(uint8 value) { _exitCtr = value; }
-	BlockedState blockedState() {
+	BlockedState blockedState() const {
 		assert(_data);
 		return _data->blockedState;
 	}
@@ -342,7 +342,7 @@ public:
 		assert(_data);
 		_data->blockedState = newState;
 	}
-	bool blockedFlag() {
+	bool blockedFlag() const {
 		assert(_data);
 		return _data->blockedFlag;
 	}
@@ -376,7 +376,7 @@ public:
 	}
 	void setCharRectY(uint16 value) { _charRectY = value; }
 	void setSkipFlag(bool value) { _skipFlag = value; }
-	CharacterMode characterMode() {
+	CharacterMode characterMode() const {
 		assert(_data != NULL);
 		return _data->characterMode;
 	}
@@ -384,7 +384,7 @@ public:
 		assert(_data != NULL);
 		_data->characterMode = value;
 	}
-	uint16 delayCtr() {
+	uint16 delayCtr() const {
 		assert(_data);
 		return _data->delayCtr;
 	}
@@ -392,7 +392,7 @@ public:
 		assert(_data);
 		_data->delayCtr = value;
 	}
-	uint16 pauseCtr() {
+	uint16 pauseCtr() const {
 		assert(_data);
 		return _data->pauseCtr;
 	}
@@ -400,7 +400,7 @@ public:
 		assert(_data);
 		_data->pauseCtr = value;
 	}
-	VariantBool coveredFlag() {
+	VariantBool coveredFlag() const {
 		assert(_data);
 		return _data->coveredFlag;
 	}
@@ -408,7 +408,7 @@ public:
 		assert(_data);
 		_data->coveredFlag = value;
 	}
-	uint16 useHotspotId() {
+	uint16 useHotspotId() const {
 		assert(_data);
 		return _data->useHotspotId;
 	}
@@ -416,7 +416,7 @@ public:
 		assert(_data);
 		_data->useHotspotId = value;
 	}
-	uint16 talkGate() {
+	uint16 talkGate() const {
 		assert(_data);
 		return _data->talkGate;
 	}
@@ -424,7 +424,7 @@ public:
 		assert(_data);
 		_data->talkGate = value;
 	}
-	uint16 supportValue() { return _supportValue; }
+	uint16 supportValue() const { return _supportValue; }
 	void setSupportValue(uint16 value) { _supportValue = value; }
 
 	void copyTo(Surface *dest);
@@ -449,16 +449,16 @@ public:
 
 	void doAction();
 	void doAction(Action action, HotspotData *hotspot);
-	CurrentActionStack &currentActions() {
+	CurrentActionStack &currentActions() const {
 		assert(_data);
 		return _data->npcSchedule;
 	}
 	PathFinder &pathFinder() { return _pathFinder; }
 	DestStructure &tempDest() { return _tempDest; }
-	uint16 frameCtr() { return _frameCtr; }
+	uint16 frameCtr() const { return _frameCtr; }
 	void setFrameCtr(uint16 value) { _frameCtr = value; }
 	void decrFrameCtr() { if (_frameCtr > 0) --_frameCtr; }
-	uint8 actionCtr() {
+	uint8 actionCtr() const {
 		assert(_data);
 		return _data->actionCtr;
 	}
@@ -466,7 +466,7 @@ public:
 		assert(_data);
 		_data->actionCtr = v;
 	}
-	uint8 voiceCtr() { return _voiceCtr; }
+	uint8 voiceCtr() const { return _voiceCtr; }
 	void setVoiceCtr(uint8 v) { _voiceCtr = v; }
 
 	// Miscellaneous
@@ -477,13 +477,13 @@ public:
 	void scheduleConverse(uint16 destHotspot, uint16 messageId);
 	void handleTalkDialog();
 
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 
 class HotspotList: public Common::List<Common::SharedPtr<Hotspot> > {
 public:
-	void saveToStream(Common::WriteStream *stream);
+	void saveToStream(Common::WriteStream *stream) const;
 	void loadFromStream(Common::ReadStream *stream);
 };
 

@@ -48,7 +48,7 @@ bool CharacterDrew::setupPalette() {
 	return false;
 }
 
-void CharacterDrew::setPosition(int32 x, int32 y) {
+void CharacterDrew::setPosition(int16 x, int16 y) {
 	debugC(5, kDebugCharacter, "setPosition(%d, %d)", x, y);
 
 	_z = _vm->getLayerAtPoint(x, y);

@@ -65,15 +65,12 @@ protected:
  */
 class Overlay : public DefaultDisplayClient {
 public:
-	Overlay() {}
-	~Overlay() {}
-
 	void init();
 	bool allocate();
 	void setBytesPerPixel(uint32 size);
 	void setSize(uint32 width, uint32 height);
-	void copyToArray(OverlayColor *buf, int pitch);
-	void copyFromRect(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	void copyToArray(void *buf, int pitch);
+	void copyFromRect(const void *buf, int pitch, int x, int y, int w, int h);
 };
 
 /**
@@ -85,7 +82,6 @@ public:
 		memset(&_pixelFormat, 0, sizeof(_pixelFormat));
 		memset(&_frameBuffer, 0, sizeof(_frameBuffer));
 	}
-	~Screen() {}
 
 	void init();
 	bool allocate();

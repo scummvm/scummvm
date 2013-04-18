@@ -895,10 +895,10 @@ static void unpersistnumber(UnpersistInfo *upi)
 static void unpersiststring(UnpersistInfo *upi)
 {
 					/* perms reftbl sptbl ref */
-	int length;
+	size_t length;
 	char* string;
 	lua_checkstack(upi->L, 1);
-	verify(LIF(Z,read)(&upi->zio, &length, sizeof(int)) == 0);
+	verify(LIF(Z,read)(&upi->zio, &length, sizeof(size_t)) == 0);
 	string = pdep_newvector(upi->L, length, char);
 	verify(LIF(Z,read)(&upi->zio, string, length) == 0);
 	lua_pushlstring(upi->L, string, length);

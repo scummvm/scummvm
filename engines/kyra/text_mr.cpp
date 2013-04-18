@@ -145,9 +145,7 @@ void TextDisplayer_MR::printText(const char *str, int x, int y, uint8 c0, uint8 
 void TextDisplayer_MR::restoreScreen() {
 	_vm->restorePage3();
 	_vm->drawAnimObjects();
-	_screen->hideMouse();
 	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->showMouse();
 	_vm->flagAnimObjsForRefresh();
 	_vm->refreshAnimObjects(0);
 }
@@ -261,8 +259,6 @@ void KyraEngine_MR::objectChatInit(const char *str, int object, int vocHigh, int
 
 	restorePage3();
 
-	_screen->hideMouse();
-
 	_chatTextEnabled = textEnabled();
 	if (_chatTextEnabled) {
 		objectChatPrintText(str, object);
@@ -277,8 +273,6 @@ void KyraEngine_MR::objectChatInit(const char *str, int object, int vocHigh, int
 	} else {
 		_chatVocHigh = _chatVocLow = -1;
 	}
-
-	_screen->showMouse();
 }
 
 void KyraEngine_MR::objectChatPrintText(const char *str, int object) {

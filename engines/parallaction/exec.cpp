@@ -56,7 +56,7 @@ void ProgramExec::runScript(ProgramPtr script, AnimationPtr a) {
 }
 
 void ProgramExec::runScripts(ProgramList::iterator first, ProgramList::iterator last) {
-	if (_engineFlags & kEnginePauseJobs) {
+	if (g_engineFlags & kEnginePauseJobs) {
 		return;
 	}
 
@@ -110,7 +110,7 @@ void CommandExec::runList(CommandList::iterator first, CommandList::iterator las
 		}
 
 		if (cmd->_flagsOn & kFlagsGlobal) {
-			useFlags = _globalFlags | kFlagsGlobal;
+			useFlags = g_globalFlags | kFlagsGlobal;
 			useLocalFlags = false;
 		} else {
 			useFlags = _vm->getLocationFlags();
@@ -182,7 +182,7 @@ void CommandExec::suspend() {
 }
 
 void CommandExec::runSuspended() {
-	if (_engineFlags & kEngineWalking) {
+	if (g_engineFlags & kEngineWalking) {
 		return;
 	}
 

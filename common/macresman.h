@@ -25,6 +25,7 @@
  * Macintosh resource fork manager used in engines:
  * - groovie
  * - mohawk
+ * - pegasus
  * - sci
  * - scumm
  */
@@ -174,6 +175,8 @@ private:
 	bool loadFromRawFork(SeekableReadStream &stream);
 	bool loadFromMacBinary(SeekableReadStream &stream);
 	bool loadFromAppleDouble(SeekableReadStream &stream);
+
+	static Common::String constructAppleDoubleName(Common::String name);
 
 	enum {
 		kResForkNone = 0,

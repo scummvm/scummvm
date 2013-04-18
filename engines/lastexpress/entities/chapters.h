@@ -24,7 +24,6 @@
 #define LASTEXPRESS_CHAPTERS_H
 
 #include "lastexpress/entities/entity.h"
-#include "lastexpress/entities/entity_intern.h"
 
 namespace LastExpress {
 
@@ -154,8 +153,11 @@ public:
 	DECLARE_FUNCTION(chapter5Handler)
 
 private:
+	bool timeCheckEnterStation(TimeValue timeValue, uint &parameter, byte callback, const char *sequence, CityIndex cityIndex);
+	bool timeCheckExitStation(TimeValue timeValue, uint &parameter, byte callback, const char *sequence);
 	void enterExitStation(const SavePoint &savepoint, bool isEnteringStation);
 	void enterExitHelper(bool isEnteringStation);
+	void playSteam() const;
 };
 
 } // End of namespace LastExpress

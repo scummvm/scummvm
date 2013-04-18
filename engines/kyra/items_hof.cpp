@@ -300,8 +300,6 @@ void KyraEngine_HoF::itemDropDown(int startX, int startY, int dstX, int dstY, in
 }
 
 void KyraEngine_HoF::exchangeMouseItem(int itemPos) {
-	_screen->hideMouse();
-
 	deleteItemAnimEntry(itemPos);
 
 	int itemId = _itemList[itemPos].id;
@@ -317,7 +315,6 @@ void KyraEngine_HoF::exchangeMouseItem(int itemPos) {
 		str2 = getItemCommandStringPickUp(itemId);
 
 	updateCommandLineEx(itemId + 54, str2, 0xD6);
-	_screen->showMouse();
 
 	runSceneScript6();
 }
@@ -331,7 +328,6 @@ bool KyraEngine_HoF::pickUpItem(int x, int y) {
 	if (_itemInHand >= 0) {
 		exchangeMouseItem(itemPos);
 	} else {
-		_screen->hideMouse();
 		deleteItemAnimEntry(itemPos);
 		int itemId = _itemList[itemPos].id;
 		_itemList[itemPos].id = kItemNone;
@@ -344,7 +340,6 @@ bool KyraEngine_HoF::pickUpItem(int x, int y) {
 
 		updateCommandLineEx(itemId + 54, str2, 0xD6);
 		_itemInHand = itemId;
-		_screen->showMouse();
 
 		runSceneScript6();
 	}

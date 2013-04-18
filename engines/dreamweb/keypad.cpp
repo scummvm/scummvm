@@ -20,6 +20,7 @@
  *
  */
 
+#include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
 namespace DreamWeb {
@@ -62,11 +63,11 @@ void DreamWebEngine::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 d
 		readMouse();
 		showKeypad();
 		showPointer();
-		vSync();
+		waitForVSync();
 		if (_pressCount == 0) {
 			_pressed = 255;
 			_graphicPress = 255;
-			vSync();
+			waitForVSync();
 		} else
 			--_pressCount;
 
@@ -85,7 +86,7 @@ void DreamWebEngine::enterCode(uint8 digit0, uint8 digit1, uint8 digit2, uint8 d
 				if (_pressed == 11) {
 					if (isItRight(digit0, digit1, digit2, digit3))
 						_vars._lockStatus = 0;
-					playChannel1(11);
+					_sound->playChannel1(11);
 					_lightCount = 120;
 					_pressPointer = 0;
 				}
@@ -180,7 +181,7 @@ void DreamWebEngine::buttonPress(uint8 buttonId) {
 		_graphicPress = buttonId + 21;
 		_pressCount = 40;
 		if (buttonId != 11)
-			playChannel1(10);
+			_sound->playChannel1(10);
 	}
 }
 
@@ -252,7 +253,7 @@ void DreamWebEngine::useMenu() {
 		showMenu();
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpMenu();
 		dumpTextLine();
@@ -311,7 +312,7 @@ void DreamWebEngine::viewFolder() {
 		delPointer();
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		checkFolderCoords();
@@ -508,7 +509,7 @@ void DreamWebEngine::enterSymbol() {
 		showSymbol();
 		readMouse();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpTextLine();
 		dumpSymbol();
@@ -532,7 +533,7 @@ void DreamWebEngine::enterSymbol() {
 		_symbolGraphics.clear();
 		restoreReels();
 		workToScreenM();
-		playChannel1(13);
+		_sound->playChannel1(13);
 	} else {
 		removeSetObject(46);
 		placeSetObject(43);
@@ -743,7 +744,7 @@ void DreamWebEngine::useDiary() {
 		readMouse();
 		showDiaryKeys();
 		showPointer();
-		vSync();
+		waitForVSync();
 		dumpPointer();
 		dumpDiaryKeys();
 		dumpTextLine();
@@ -820,7 +821,7 @@ void DreamWebEngine::diaryKeyP() {
 		_pressCount)
 		return; // notkeyp
 
-	playChannel1(16);
+	_sound->playChannel1(16);
 	_pressCount = 12;
 	_pressed = 'P';
 	_diaryPage--;
@@ -837,7 +838,7 @@ void DreamWebEngine::diaryKeyN() {
 		_pressCount)
 		return; // notkeyn
 
-	playChannel1(16);
+	_sound->playChannel1(16);
 	_pressCount = 12;
 	_pressed = 'N';
 	_diaryPage++;

@@ -263,7 +263,7 @@ byte *readBundleSoundFile(const char *entryName, uint32 *size) {
 /** Rotate byte value to the left by n bits */
 byte rolByte(byte value, uint n) {
 	n %= 8;
-	return (byte) ((value << n) | (value >> (8 - n)));
+	return (byte)((value << n) | (value >> (8 - n)));
 }
 
 byte *readFile(const char *filename, bool crypted) {

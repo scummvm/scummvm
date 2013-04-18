@@ -43,9 +43,11 @@ Screen::Screen(ToltecsEngine *vm) : _vm(vm) {
 
 	// Screen shaking
 	_shakeActive = false;
+	_shakeTime = 0;
 	_shakeCounterInit = 0;
 	_shakeCounter = 0;
 	_shakePos = 0;
+	_shakeTime = 0;
 
 	// Verb line
 	_verbLineNum = 0;
@@ -73,7 +75,7 @@ Screen::~Screen() {
 
 	delete[] _frontScreen;
 	delete[] _backScreen;
-	
+
 	delete _renderQueue;
 
 }
@@ -114,7 +116,7 @@ void Screen::loadMouseCursor(uint resIndex) {
 		}
 	}
 	// FIXME: Where's the cursor hotspot? Using 8, 8 seems good enough for now.
-	CursorMan.replaceCursor((const byte*)mouseCursor, 16, 16, 8, 8, 0);
+	CursorMan.replaceCursor(mouseCursor, 16, 16, 8, 8, 0);
 }
 
 void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
@@ -129,7 +131,7 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 	byte *dest = _frontScreen + x + (y + _vm->_cameraHeight) * 640;
 
 	//debug(0, "Screen::drawGuiImage() x = %d; y = %d; w = %d; h = %d; resIndex = %d", x, y, width, height, resIndex);
-	
+
 	while (workHeight > 0) {
 		int count = 1;
 		byte pixel = *imageData++;
@@ -156,6 +158,7 @@ void Screen::drawGuiImage(int16 x, int16 y, uint resIndex) {
 
 void Screen::startShakeScreen(int16 shakeCounter) {
 	_shakeActive = true;
+	_shakeTime = 0;
 	_shakeCounterInit = shakeCounter;
 	_shakeCounter = shakeCounter;
 	_shakePos = 0;
@@ -166,15 +169,19 @@ void Screen::stopShakeScreen() {
 	_vm->_system->setShakePos(0);
 }
 
-void Screen::updateShakeScreen() {
-	if (_shakeActive) {
+bool Screen::updateShakeScreen() {
+	// Assume shaking happens no more often than 50 times per second
+	if (_shakeActive && _vm->_system->getMillis() - _shakeTime >= 20) {
+		_shakeTime = _vm->_system->getMillis();
 		_shakeCounter--;
 		if (_shakeCounter == 0) {
 			_shakeCounter = _shakeCounterInit;
 			_shakePos ^= 8;
 			_vm->_system->setShakePos(_shakePos);
+			return true;
 		}
 	}
+	return false;
 }
 
 void Screen::addStaticSprite(byte *spriteItem) {
@@ -247,7 +254,7 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 		} else {
 			loopNum |= 0x8000;
 		}
-		
+
 		WRITE_LE_UINT16(spriteItem + 0, loopNum);
 		WRITE_LE_UINT16(spriteItem + 4, frameNum);
 
@@ -308,9 +315,9 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 	wrapState.len2 = 0;
 
 	y = _verbLineY;
-	
+
 	memset(wrapState.textBuffer, 0, sizeof(wrapState.textBuffer));
-	
+
 	for (int16 i = 0; i <= _verbLineNum; i++) {
 		wrapState.sourceString = _vm->_script->getSlotData(_verbLineItems[i].slotIndex) + _verbLineItems[i].slotOffset;
 		len = wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
@@ -331,19 +338,19 @@ void Screen::updateVerbLine(int16 slotIndex, int16 slotOffset) {
 			wrapState.sourceString++;
 			wrapState.len1 -= len;
 			wrapState.len2 = len + 1;
-			
+
 			drawGuiText(_verbLineX - 1 - (wrapState.width / 2), y, 0xF9, 0xFF, _fontResIndexArray[0], wrapState);
 
 			wrapState.destString = wrapState.textBuffer;
 			wrapState.width = 0;
 			len = wrapGuiText(_fontResIndexArray[0], _verbLineWidth, wrapState);
 			wrapState.len1 += len;
-			
+
 			y += 9;
 		}
 		y += 9;
 	}
-	
+
 	wrapState.len1 -= len;
 	wrapState.len2 = len;
 
@@ -463,13 +470,12 @@ void Screen::addTalkTextRect(Font &font, int16 x, int16 &y, int16 length, int16 
 		textRect->x = CLIP<int16>(x - width / 2, 0, 640);
 		item->lineCount++;
 	}
-	
+
 	y += font.getHeight() - 1;
 
 }
 
 void Screen::addTalkTextItemsToRenderQueue() {
-
 	for (int16 i = 0; i <= _talkTextItemNum; i++) {
 		TalkTextItem *item = &_talkTextItems[i];
 		byte *text = _vm->_script->getSlotData(item->slotIndex) + item->slotOffset;
@@ -482,14 +488,15 @@ void Screen::addTalkTextItemsToRenderQueue() {
 		if (item->duration < 0)
 			item->duration = 0;
 
+		if (!_vm->_cfgText)
+			return;
+
 		for (byte j = 0; j < item->lineCount; j++) {
-			_renderQueue->addText(item->lines[j].x, item->lines[j].y, item->color, _fontResIndexArray[item->fontNum],
-				text, item->lines[j].length);
+			_renderQueue->addText(item->lines[j].x, item->lines[j].y, item->color,
+					_fontResIndexArray[item->fontNum], text, item->lines[j].length);
 			text += item->lines[j].length;
 		}
-		
 	}
-
 }
 
 int16 Screen::getTalkTextDuration() {
@@ -559,7 +566,7 @@ int16 Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wra
 
 	Font font(_vm->_res->load(fontResIndex)->data);
 	int16 len = 0;
-	
+
 	while (*wrapState.sourceString >= 0x20 && *wrapState.sourceString < 0xF0) {
 		byte ch = *wrapState.sourceString;
 		byte charWidth;
@@ -573,9 +580,9 @@ int16 Screen::wrapGuiText(uint fontResIndex, int maxWidth, GuiTextWrapState &wra
 		wrapState.width += charWidth;
 		*wrapState.destString++ = *wrapState.sourceString++;
 	}
-	
+
 	return len;
-	
+
 }
 
 void Screen::drawGuiText(int16 x, int16 y, byte fontColor1, byte fontColor2, uint fontResIndex, GuiTextWrapState &wrapState) {
@@ -765,7 +772,7 @@ void Screen::loadState(Common::ReadStream *in) {
 		_verbLineItems[i].slotIndex = in->readUint16LE();
 		_verbLineItems[i].slotOffset = in->readUint16LE();
 	}
-	
+
 	// Load talk text items
 	_talkTextX = in->readUint16LE();
 	_talkTextY = in->readUint16LE();
@@ -786,7 +793,7 @@ void Screen::loadState(Common::ReadStream *in) {
 			_talkTextItems[i].lines[j].length = in->readUint16LE();
 		}
 	}
-	
+
 	// Load GUI bitmap
 	{
 		byte *gui = _frontScreen + _vm->_cameraHeight * 640;

@@ -305,6 +305,7 @@ void MohawkEngine_Riven::initVars() {
 	_vars["gnmagcar"] = 1;
 	_vars["omusicplayer"] = 1;
 	_vars["transitionmode"] = kRivenTransitionSpeedFastest;
+	_vars["tdomeelev"] = 1;
 
 	// Randomize the telescope combination
 	uint32 &teleCombo = _vars["tcorrectorder"];

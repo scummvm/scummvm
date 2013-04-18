@@ -22,8 +22,6 @@
 
 #include "lastexpress/game/scenes.h"
 
-#include "lastexpress/data/scene.h"
-
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/beetle.h"
 #include "lastexpress/game/entities.h"
@@ -34,10 +32,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
 
@@ -493,7 +489,7 @@ bool SceneManager::checkCurrentPosition(bool doCheckOtherCars) const {
 	if (position == 99)
 		return true;
 
-	switch (car){
+	switch (car) {
 	default:
 		break;
 
@@ -743,24 +739,31 @@ void SceneManager::resetQueue() {
 	_queue.clear();
 }
 
+void SceneManager::setCoordinates(const Common::Rect &rect) {
+	_flagCoordinates = true;
+
+	if (_coords.right > rect.right)
+		_coords.right = rect.right;
+
+	if (_coords.bottom > rect.bottom)
+		_coords.bottom = rect.bottom;
+
+	if (_coords.left < rect.left)
+		_coords.left = rect.left;
+
+	if (_coords.top < rect.top)
+		_coords.top = rect.top;
+}
+
 void SceneManager::setCoordinates(SequenceFrame *frame) {
 
 	if (!frame || frame->getInfo()->subType == 3)
 		return;
 
-	_flagCoordinates = true;
-
-	if (_coords.right > (int)frame->getInfo()->xPos1)
-		_coords.right = (int16)frame->getInfo()->xPos1;
-
-	if (_coords.bottom > (int)frame->getInfo()->yPos1)
-		_coords.bottom = (int16)frame->getInfo()->yPos1;
-
-	if (_coords.left < (int)frame->getInfo()->xPos2)
-		_coords.left = (int16)frame->getInfo()->xPos2;
-
-	if (_coords.top < (int)frame->getInfo()->yPos2)
-		_coords.top = (int16)frame->getInfo()->yPos2;
+	setCoordinates(Common::Rect((int16)frame->getInfo()->xPos1,
+								(int16)frame->getInfo()->yPos1,
+								(int16)frame->getInfo()->xPos2,
+								(int16)frame->getInfo()->yPos2));
 }
 
 void SceneManager::resetCoordinates() {

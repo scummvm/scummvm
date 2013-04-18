@@ -20,11 +20,13 @@
  */
 
 #include "common/algorithm.h"
+#include "common/endian.h"
 #include "common/util.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
+#include "graphics/conversion.h"
 
 namespace Graphics {
 
@@ -46,6 +48,17 @@ void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
 		Graphics::drawLine(x0, y0, x1, y1, color, plotPoint<uint32>, this);
 	else
 		error("Surface::drawLine: bytesPerPixel must be 1, 2, or 4");
+}
+
+void Surface::drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, uint32 color) {
+	if (format.bytesPerPixel == 1)
+		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<byte>, this);
+	else if (format.bytesPerPixel == 2)
+		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<uint16>, this);
+	else if (format.bytesPerPixel == 4)
+		Graphics::drawThickLine(x0, y0, x1, y1, penX, penY, color, plotPoint<uint32>, this);
+	else
+		error("Surface::drawThickLine: bytesPerPixel must be 1, 2, or 4");
 }
 
 void Surface::create(uint16 width, uint16 height, const PixelFormat &f) {
@@ -268,6 +281,150 @@ void Surface::move(int dx, int dy, int height) {
 			dst += pitch - (pitch + dx * format.bytesPerPixel);
 		}
 	}
+}
+
+void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette) {
+	// Do not convert to the same format and ignore empty surfaces.
+	if (format == dstFormat || pixels == 0) {
+		return;
+	}
+
+	if (format.bytesPerPixel == 0 || format.bytesPerPixel > 4)
+		error("Surface::convertToInPlace(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp");
+
+	if (dstFormat.bytesPerPixel != 2 && dstFormat.bytesPerPixel != 4)
+		error("Surface::convertToInPlace(): Can only convert to 2Bpp and 4Bpp");
+
+	// In case the surface data needs more space allocate it.
+	if (dstFormat.bytesPerPixel > format.bytesPerPixel) {
+		void *const newPixels = realloc(pixels, w * h * dstFormat.bytesPerPixel);
+		if (!newPixels) {
+			error("Surface::convertToInPlace(): Out of memory");
+		}
+		pixels = newPixels;
+	}
+
+	// We take advantage of the fact that pitch is always w * format.bytesPerPixel.
+	// This is assured by the logic of Surface::create.
+
+	// We need to handle 1 Bpp surfaces special here.
+	if (format.bytesPerPixel == 1) {
+		assert(palette);
+
+		for (int y = h; y > 0; --y) {
+			const byte *srcRow = (const byte *)pixels + y * pitch - 1;
+			byte *dstRow = (byte *)pixels + y * w * dstFormat.bytesPerPixel - dstFormat.bytesPerPixel;
+
+			for (int x = 0; x < w; x++) {
+				byte index = *srcRow--;
+				byte r = palette[index * 3];
+				byte g = palette[index * 3 + 1];
+				byte b = palette[index * 3 + 2];
+
+				uint32 color = dstFormat.RGBToColor(r, g, b);
+
+				if (dstFormat.bytesPerPixel == 2)
+					*((uint16 *)dstRow) = color;
+				else
+					*((uint32 *)dstRow) = color;
+
+				dstRow -= dstFormat.bytesPerPixel;
+			}
+		}
+	} else {
+		crossBlit((byte *)pixels, (const byte *)pixels, w * dstFormat.bytesPerPixel, pitch, w, h, dstFormat, format);
+	}
+
+	// In case the surface data got smaller, free up some memory.
+	if (dstFormat.bytesPerPixel < format.bytesPerPixel) {
+		void *const newPixels = realloc(pixels, w * h * dstFormat.bytesPerPixel);
+		if (!newPixels) {
+			error("Surface::convertToInPlace(): Freeing memory failed");
+		}
+		pixels = newPixels;
+	}
+
+	// Update the surface specific data.
+	format = dstFormat;
+	pitch = w * dstFormat.bytesPerPixel;
+}
+
+Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *palette) const {
+	assert(pixels);
+
+	Graphics::Surface *surface = new Graphics::Surface();
+
+	// If the target format is the same, just copy
+	if (format == dstFormat) {
+		surface->copyFrom(*this);
+		return surface;
+	}
+
+	if (format.bytesPerPixel == 0 || format.bytesPerPixel > 4)
+		error("Surface::convertTo(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp");
+
+	if (dstFormat.bytesPerPixel != 2 && dstFormat.bytesPerPixel != 4)
+		error("Surface::convertTo(): Can only convert to 2Bpp and 4Bpp");
+
+	surface->create(w, h, dstFormat);
+
+	if (format.bytesPerPixel == 1) {
+		// Converting from paletted to high color
+		assert(palette);
+
+		for (int y = 0; y < h; y++) {
+			const byte *srcRow = (const byte *)getBasePtr(0, y);
+			byte *dstRow = (byte *)surface->getBasePtr(0, y);
+
+			for (int x = 0; x < w; x++) {
+				byte index = *srcRow++;
+				byte r = palette[index * 3];
+				byte g = palette[index * 3 + 1];
+				byte b = palette[index * 3 + 2];
+
+				uint32 color = dstFormat.RGBToColor(r, g, b);
+
+				if (dstFormat.bytesPerPixel == 2)
+					*((uint16 *)dstRow) = color;
+				else
+					*((uint32 *)dstRow) = color;
+
+				dstRow += dstFormat.bytesPerPixel;
+			}
+		}
+	} else {
+		// Converting from high color to high color
+		for (int y = 0; y < h; y++) {
+			const byte *srcRow = (const byte *)getBasePtr(0, y);
+			byte *dstRow = (byte *)surface->getBasePtr(0, y);
+
+			for (int x = 0; x < w; x++) {
+				uint32 srcColor;
+				if (format.bytesPerPixel == 2)
+					srcColor = READ_UINT16(srcRow);
+				else if (format.bytesPerPixel == 3)
+					srcColor = READ_UINT24(srcRow);
+				else
+					srcColor = READ_UINT32(srcRow);
+
+				srcRow += format.bytesPerPixel;
+
+				// Convert that color to the new format
+				byte r, g, b, a;
+				format.colorToARGB(srcColor, a, r, g, b);
+				uint32 color = dstFormat.ARGBToColor(a, r, g, b);
+
+				if (dstFormat.bytesPerPixel == 2)
+					*((uint16 *)dstRow) = color;
+				else
+					*((uint32 *)dstRow) = color;
+
+				dstRow += dstFormat.bytesPerPixel;
+			}
+		}
+	}
+
+	return surface;
 }
 
 } // End of namespace Graphics

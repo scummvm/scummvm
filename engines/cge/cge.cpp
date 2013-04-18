@@ -30,6 +30,8 @@
 #include "common/fs.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
+#include "gui/message.h"
+
 #include "cge/cge.h"
 #include "cge/vga13h.h"
 #include "cge/cge_main.h"
@@ -50,7 +52,6 @@ CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	DebugMan.addDebugChannel(kCGEDebugEngine, "engine", "CGE Engine debug channel");
 
 	_startupMode = 1;
-	_demoText    = kDemo;
 	_oldLev      = 0;
 	_pocPtr      = 0;
 	_bitmapPalette = NULL;
@@ -122,7 +123,7 @@ void CGEEngine::init() {
 	_maxScene   =  0;
 	_dark       = false;
 	_game       = false;
-	_finis      = false;
+	_endGame    = false;
 	_now        =  1;
 	_lev        = -1;
 	_recentStep = -2;
@@ -134,7 +135,6 @@ void CGEEngine::init() {
 	_soundOk = 1;
 	_sprTv = NULL;
 	_gameCase2Cpt = 0;
-	_offUseCount = 0;
 
 	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
 }
@@ -195,6 +195,16 @@ Common::Error CGEEngine::run() {
 	init();
 	// Run the game
 	cge_main();
+
+	// If game is finished, display ending message
+	if (_flag[3]) {
+		Common::String msg = Common::String(_text->getText(kSayTheEnd));
+		if (msg.size() != 0) {
+			g_system->delayMillis(10);
+			GUI::MessageDialog dialog(msg, "OK");
+			dialog.runModal();
+		}
+	}
 
 	// Remove game objects
 	deinit();

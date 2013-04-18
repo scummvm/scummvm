@@ -59,43 +59,43 @@ void ObjectHandler_v2d::updateImages() {
 	debugC(5, kDebugObject, "updateImages");
 
 	// Initialize the index array to visible objects in current screen
-	int  num_objs = 0;
+	int  objNumb = 0;
 	byte objindex[kMaxObjNumb];                     // Array of indeces to objects
 
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];
-		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling >= kCycleAlmostInvisible))
-			objindex[num_objs++] = i;
+		Object *obj = &_objects[i];
+		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_cycling >= kCycleAlmostInvisible))
+			objindex[objNumb++] = i;
 	}
 
 	// Sort the objects into increasing y+y2 (painter's algorithm)
-	qsort(objindex, num_objs, sizeof(objindex[0]), y2comp);
+	qsort(objindex, objNumb, sizeof(objindex[0]), y2comp);
 
 	// Add each visible object to display list
-	for (int i = 0; i < num_objs; i++) {
-		object_t *obj = &_objects[objindex[i]];
+	for (int i = 0; i < objNumb; i++) {
+		Object *obj = &_objects[objindex[i]];
 		// Count down inter-frame timer
-		if (obj->frameTimer)
-			obj->frameTimer--;
+		if (obj->_frameTimer)
+			obj->_frameTimer--;
 
-		if (obj->cycling > kCycleAlmostInvisible) { // Only if visible
-			switch (obj->cycling) {
+		if (obj->_cycling > kCycleAlmostInvisible) { // Only if visible
+			switch (obj->_cycling) {
 			case kCycleNotCycling:
-				_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr, obj->priority == kPriorityOverOverlay);
+				_vm->_screen->displayFrame(obj->_x, obj->_y, obj->_currImagePtr, obj->_priority == kPriorityOverOverlay);
 				break;
 			case kCycleForward:
-				if (obj->frameTimer)                // Not time to see next frame yet
-					_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr, obj->priority == kPriorityOverOverlay);
+				if (obj->_frameTimer)                // Not time to see next frame yet
+					_vm->_screen->displayFrame(obj->_x, obj->_y, obj->_currImagePtr, obj->_priority == kPriorityOverOverlay);
 				else
-					_vm->_screen->displayFrame(obj->x, obj->y, obj->currImagePtr->nextSeqPtr, obj->priority == kPriorityOverOverlay);
+					_vm->_screen->displayFrame(obj->_x, obj->_y, obj->_currImagePtr->_nextSeqPtr, obj->_priority == kPriorityOverOverlay);
 				break;
 			case kCycleBackward: {
-				seq_t *seqPtr = obj->currImagePtr;
-				if (!obj->frameTimer) {             // Show next frame
-					while (seqPtr->nextSeqPtr != obj->currImagePtr)
-						seqPtr = seqPtr->nextSeqPtr;
+				Seq *seqPtr = obj->_currImagePtr;
+				if (!obj->_frameTimer) {             // Show next frame
+					while (seqPtr->_nextSeqPtr != obj->_currImagePtr)
+						seqPtr = seqPtr->_nextSeqPtr;
 				}
-				_vm->_screen->displayFrame(obj->x, obj->y, seqPtr, obj->priority == kPriorityOverOverlay);
+				_vm->_screen->displayFrame(obj->_x, obj->_y, seqPtr, obj->_priority == kPriorityOverOverlay);
 				break;
 				}
 			default:
@@ -107,30 +107,30 @@ void ObjectHandler_v2d::updateImages() {
 	_vm->_scheduler->waitForRefresh();
 
 	// Cycle any animating objects
-	for (int i = 0; i < num_objs; i++) {
-		object_t *obj = &_objects[objindex[i]];
-		if (obj->cycling != kCycleInvisible) {
+	for (int i = 0; i < objNumb; i++) {
+		Object *obj = &_objects[objindex[i]];
+		if (obj->_cycling != kCycleInvisible) {
 			// Only if it's visible
-			if (obj->cycling == kCycleAlmostInvisible)
-				obj->cycling = kCycleInvisible;
+			if (obj->_cycling == kCycleAlmostInvisible)
+				obj->_cycling = kCycleInvisible;
 
 			// Now Rotate to next picture in sequence
-			switch (obj->cycling) {
+			switch (obj->_cycling) {
 			case kCycleNotCycling:
 				break;
 			case kCycleForward:
-				if (!obj->frameTimer) {
+				if (!obj->_frameTimer) {
 					// Time to step to next frame
-					obj->currImagePtr = obj->currImagePtr->nextSeqPtr;
+					obj->_currImagePtr = obj->_currImagePtr->_nextSeqPtr;
 					// Find out if this is last frame of sequence
 					// If so, reset frame_timer and decrement n_cycle
-					if (obj->frameInterval || obj->cycleNumb) {
-						obj->frameTimer = obj->frameInterval;
-						for (int j = 0; j < obj->seqNumb; j++) {
-							if (obj->currImagePtr->nextSeqPtr == obj->seqList[j].seqPtr) {
-								if (obj->cycleNumb) { // Decr cycleNumb if Non-continous
-									if (!--obj->cycleNumb)
-										obj->cycling = kCycleNotCycling;
+					if (obj->_frameInterval || obj->_cycleNumb) {
+						obj->_frameTimer = obj->_frameInterval;
+						for (int j = 0; j < obj->_seqNumb; j++) {
+							if (obj->_currImagePtr->_nextSeqPtr == obj->_seqList[j]._seqPtr) {
+								if (obj->_cycleNumb) { // Decr cycleNumb if Non-continous
+									if (!--obj->_cycleNumb)
+										obj->_cycling = kCycleNotCycling;
 								}
 							}
 						}
@@ -138,20 +138,20 @@ void ObjectHandler_v2d::updateImages() {
 				}
 				break;
 			case kCycleBackward: {
-				if (!obj->frameTimer) {
+				if (!obj->_frameTimer) {
 					// Time to step to prev frame
-					seq_t *seqPtr = obj->currImagePtr;
-					while (obj->currImagePtr->nextSeqPtr != seqPtr)
-						obj->currImagePtr = obj->currImagePtr->nextSeqPtr;
+					Seq *seqPtr = obj->_currImagePtr;
+					while (obj->_currImagePtr->_nextSeqPtr != seqPtr)
+						obj->_currImagePtr = obj->_currImagePtr->_nextSeqPtr;
 					// Find out if this is first frame of sequence
 					// If so, reset frame_timer and decrement n_cycle
-					if (obj->frameInterval || obj->cycleNumb) {
-						obj->frameTimer = obj->frameInterval;
-						for (int j = 0; j < obj->seqNumb; j++) {
-							if (obj->currImagePtr == obj->seqList[j].seqPtr) {
-								if (obj->cycleNumb){ // Decr cycleNumb if Non-continous
-									if (!--obj->cycleNumb)
-										obj->cycling = kCycleNotCycling;
+					if (obj->_frameInterval || obj->_cycleNumb) {
+						obj->_frameTimer = obj->_frameInterval;
+						for (int j = 0; j < obj->_seqNumb; j++) {
+							if (obj->_currImagePtr == obj->_seqList[j]._seqPtr) {
+								if (obj->_cycleNumb){ // Decr cycleNumb if Non-continous
+									if (!--obj->_cycleNumb)
+										obj->_cycling = kCycleNotCycling;
 								}
 							}
 						}
@@ -162,8 +162,8 @@ void ObjectHandler_v2d::updateImages() {
 			default:
 				break;
 			}
-			obj->oldx = obj->x;
-			obj->oldy = obj->y;
+			obj->_oldx = obj->_x;
+			obj->_oldy = obj->_y;
 		}
 	}
 }
@@ -183,175 +183,175 @@ void ObjectHandler_v2d::moveObjects() {
 	// and store all (visible) object baselines into the boundary file.
 	// Don't store foreground or background objects
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];               // Get pointer to object
-		seq_t *currImage = obj->currImagePtr;       // Get ptr to current image
-		if (obj->screenIndex == *_vm->_screen_p) {
-			switch (obj->pathType) {
+		Object *obj = &_objects[i];               // Get pointer to object
+		Seq *currImage = obj->_currImagePtr;       // Get ptr to current image
+		if (obj->_screenIndex == *_vm->_screenPtr) {
+			switch (obj->_pathType) {
 			case kPathChase:
 			case kPathChase2: {
-				int8 radius = obj->radius;          // Default to object's radius
+				int8 radius = obj->_radius;          // Default to object's radius
 				if (radius < 0)                     // If radius infinity, use closer value
 					radius = kStepDx;
 
 				// Allowable motion wrt boundary
-				int dx = _vm->_hero->x + _vm->_hero->currImagePtr->x1 - obj->x - currImage->x1;
-				int dy = _vm->_hero->y + _vm->_hero->currImagePtr->y2 - obj->y - currImage->y2 - 1;
+				int dx = _vm->_hero->_x + _vm->_hero->_currImagePtr->_x1 - obj->_x - currImage->_x1;
+				int dy = _vm->_hero->_y + _vm->_hero->_currImagePtr->_y2 - obj->_y - currImage->_y2 - 1;
 				if (abs(dx) <= radius)
-					obj->vx = 0;
+					obj->_vx = 0;
 				else
-					obj->vx = (dx > 0) ? MIN(dx, obj->vxPath) : MAX(dx, -obj->vxPath);
+					obj->_vx = (dx > 0) ? MIN(dx, obj->_vxPath) : MAX(dx, -obj->_vxPath);
 				if (abs(dy) <= radius)
-					obj->vy = 0;
+					obj->_vy = 0;
 				else
-					obj->vy = (dy > 0) ? MIN(dy, obj->vyPath) : MAX(dy, -obj->vyPath);
+					obj->_vy = (dy > 0) ? MIN(dy, obj->_vyPath) : MAX(dy, -obj->_vyPath);
 
 				// Set first image in sequence (if multi-seq object)
-				switch (obj->seqNumb) {
+				switch (obj->_seqNumb) {
 				case 4:
-					if (!obj->vx) {                 // Got 4 directions
-						if (obj->vx != obj->oldvx) { // vx just stopped
+					if (!obj->_vx) {                 // Got 4 directions
+						if (obj->_vx != obj->_oldvx) { // vx just stopped
 							if (dy > 0)
-								obj->currImagePtr = obj->seqList[SEQ_DOWN].seqPtr;
+								obj->_currImagePtr = obj->_seqList[SEQ_DOWN]._seqPtr;
 							else
-								obj->currImagePtr = obj->seqList[SEQ_UP].seqPtr;
+								obj->_currImagePtr = obj->_seqList[SEQ_UP]._seqPtr;
 						}
-					} else if (obj->vx != obj->oldvx) {
+					} else if (obj->_vx != obj->_oldvx) {
 						if (dx > 0)
-							obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
+							obj->_currImagePtr = obj->_seqList[SEQ_RIGHT]._seqPtr;
 						else
-							obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
+							obj->_currImagePtr = obj->_seqList[SEQ_LEFT]._seqPtr;
 					}
 					break;
 				case 3:
 				case 2:
-					if (obj->vx != obj->oldvx) {    // vx just stopped
+					if (obj->_vx != obj->_oldvx) {    // vx just stopped
 						if (dx > 0)                 // Left & right only
-							obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
+							obj->_currImagePtr = obj->_seqList[SEQ_RIGHT]._seqPtr;
 						else
-							obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
+							obj->_currImagePtr = obj->_seqList[SEQ_LEFT]._seqPtr;
 					}
 					break;
 				}
 
-				if (obj->vx || obj->vy) {
-					obj->cycling = kCycleForward;
+				if (obj->_vx || obj->_vy) {
+					obj->_cycling = kCycleForward;
 				} else {
-					obj->cycling = kCycleNotCycling;
+					obj->_cycling = kCycleNotCycling;
 					boundaryCollision(obj);         // Must have got hero!
 				}
-				obj->oldvx = obj->vx;
-				obj->oldvy = obj->vy;
-				currImage = obj->currImagePtr;      // Get (new) ptr to current image
+				obj->_oldvx = obj->_vx;
+				obj->_oldvy = obj->_vy;
+				currImage = obj->_currImagePtr;      // Get (new) ptr to current image
 				break;
 				}
 			case kPathWander2:
 			case kPathWander:
 				if (!_vm->_rnd->getRandomNumber(3 * _vm->_normalTPS)) {       // Kick on random interval
-					obj->vx = _vm->_rnd->getRandomNumber(obj->vxPath << 1) - obj->vxPath;
-					obj->vy = _vm->_rnd->getRandomNumber(obj->vyPath << 1) - obj->vyPath;
+					obj->_vx = _vm->_rnd->getRandomNumber(obj->_vxPath << 1) - obj->_vxPath;
+					obj->_vy = _vm->_rnd->getRandomNumber(obj->_vyPath << 1) - obj->_vyPath;
 
 					// Set first image in sequence (if multi-seq object)
-					if (obj->seqNumb > 1) {
-						if (!obj->vx && (obj->seqNumb >= 4)) {
-							if (obj->vx != obj->oldvx) { // vx just stopped
-								if (obj->vy > 0)
-									obj->currImagePtr = obj->seqList[SEQ_DOWN].seqPtr;
+					if (obj->_seqNumb > 1) {
+						if (!obj->_vx && (obj->_seqNumb >= 4)) {
+							if (obj->_vx != obj->_oldvx) { // vx just stopped
+								if (obj->_vy > 0)
+									obj->_currImagePtr = obj->_seqList[SEQ_DOWN]._seqPtr;
 								else
-									obj->currImagePtr = obj->seqList[SEQ_UP].seqPtr;
+									obj->_currImagePtr = obj->_seqList[SEQ_UP]._seqPtr;
 							}
-						} else if (obj->vx != obj->oldvx) {
-							if (obj->vx > 0)
-								obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
+						} else if (obj->_vx != obj->_oldvx) {
+							if (obj->_vx > 0)
+								obj->_currImagePtr = obj->_seqList[SEQ_RIGHT]._seqPtr;
 							else
-								obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
+								obj->_currImagePtr = obj->_seqList[SEQ_LEFT]._seqPtr;
 						}
 					}
-					obj->oldvx = obj->vx;
-					obj->oldvy = obj->vy;
-					currImage = obj->currImagePtr;  // Get (new) ptr to current image
+					obj->_oldvx = obj->_vx;
+					obj->_oldvy = obj->_vy;
+					currImage = obj->_currImagePtr;  // Get (new) ptr to current image
 				}
-				if (obj->vx || obj->vy)
-					obj->cycling = kCycleForward;
+				if (obj->_vx || obj->_vy)
+					obj->_cycling = kCycleForward;
 				break;
 			default:
 				; // Really, nothing
 			}
 			// Store boundaries
-			if ((obj->cycling > kCycleAlmostInvisible) && (obj->priority == kPriorityFloating))
-				storeBoundary(obj->x + currImage->x1, obj->x + currImage->x2, obj->y + currImage->y2);
+			if ((obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
+				storeBoundary(obj->_x + currImage->_x1, obj->_x + currImage->_x2, obj->_y + currImage->_y2);
 		}
 	}
 
 	// Move objects, allowing for boundaries
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];               // Get pointer to object
-		if ((obj->screenIndex == *_vm->_screen_p) && (obj->vx || obj->vy)) {
+		Object *obj = &_objects[i];               // Get pointer to object
+		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_vx || obj->_vy)) {
 			// Only process if it's moving
 
 			// Do object movement.  Delta_x,y return allowed movement in x,y
 			// to move as close to a boundary as possible without crossing it.
-			seq_t *currImage = obj->currImagePtr;   // Get ptr to current image
+			Seq *currImage = obj->_currImagePtr;   // Get ptr to current image
 			// object coordinates
-			int x1 = obj->x + currImage->x1;        // Left edge of object
-			int x2 = obj->x + currImage->x2;        // Right edge
-			int y1 = obj->y + currImage->y1;        // Top edge
-			int y2 = obj->y + currImage->y2;        // Bottom edge
+			int x1 = obj->_x + currImage->_x1;        // Left edge of object
+			int x2 = obj->_x + currImage->_x2;        // Right edge
+			int y1 = obj->_y + currImage->_y1;        // Top edge
+			int y2 = obj->_y + currImage->_y2;        // Bottom edge
 
-			if ((obj->cycling > kCycleAlmostInvisible) && (obj->priority == kPriorityFloating))
+			if ((obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
 				clearBoundary(x1, x2, y2);          // Clear our own boundary
 
 			// Allowable motion wrt boundary
-			int dx = deltaX(x1, x2, obj->vx, y2);
-			if (dx != obj->vx) {
+			int dx = deltaX(x1, x2, obj->_vx, y2);
+			if (dx != obj->_vx) {
 				// An object boundary collision!
 				boundaryCollision(obj);
-				obj->vx = 0;
+				obj->_vx = 0;
 			}
 
-			int dy = deltaY(x1, x2, obj->vy, y2);
-			if (dy != obj->vy) {
+			int dy = deltaY(x1, x2, obj->_vy, y2);
+			if (dy != obj->_vy) {
 				// An object boundary collision!
 				boundaryCollision(obj);
-				obj->vy = 0;
+				obj->_vy = 0;
 			}
 
-			if ((obj->cycling > kCycleAlmostInvisible) && (obj->priority == kPriorityFloating))
+			if ((obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
 				storeBoundary(x1, x2, y2);          // Re-store our own boundary
 
-			obj->x += dx;                           // Update object position
-			obj->y += dy;
+			obj->_x += dx;                           // Update object position
+			obj->_y += dy;
 
 			// Don't let object go outside screen
 			if (x1 < kEdge)
-				obj->x = kEdge2;
+				obj->_x = kEdge2;
 			if (x2 > (kXPix - kEdge))
-				obj->x = kXPix - kEdge2 - (x2 - x1);
+				obj->_x = kXPix - kEdge2 - (x2 - x1);
 			if (y1 < kEdge)
-				obj->y = kEdge2;
+				obj->_y = kEdge2;
 			if (y2 > (kYPix - kEdge))
-				obj->y = kYPix - kEdge2 - (y2 - y1);
+				obj->_y = kYPix - kEdge2 - (y2 - y1);
 
-			if ((obj->vx == 0) && (obj->vy == 0) && (obj->pathType != kPathWander2) && (obj->pathType != kPathChase2))
-				obj->cycling = kCycleNotCycling;
+			if ((obj->_vx == 0) && (obj->_vy == 0) && (obj->_pathType != kPathWander2) && (obj->_pathType != kPathChase2))
+				obj->_cycling = kCycleNotCycling;
 		}
 	}
 
 	// Clear all object baselines from the boundary file.
 	for (int i = 0; i < _numObj; i++) {
-		object_t *obj = &_objects[i];                   // Get pointer to object
-		seq_t *currImage = obj->currImagePtr;           // Get ptr to current image
-		if ((obj->screenIndex == *_vm->_screen_p) && (obj->cycling > kCycleAlmostInvisible) && (obj->priority == kPriorityFloating))
-			clearBoundary(obj->oldx + currImage->x1, obj->oldx + currImage->x2, obj->oldy + currImage->y2);
+		Object *obj = &_objects[i];                   // Get pointer to object
+		Seq *currImage = obj->_currImagePtr;           // Get ptr to current image
+		if ((obj->_screenIndex == *_vm->_screenPtr) && (obj->_cycling > kCycleAlmostInvisible) && (obj->_priority == kPriorityFloating))
+			clearBoundary(obj->_oldx + currImage->_x1, obj->_oldx + currImage->_x2, obj->_oldy + currImage->_y2);
 	}
 
 	// If maze mode is enabled, do special maze processing
-	if (_vm->_maze.enabledFl) {
-		seq_t *currImage = _vm->_hero->currImagePtr;    // Get ptr to current image
+	if (_vm->_maze._enabledFl) {
+		Seq *currImage = _vm->_hero->_currImagePtr;    // Get ptr to current image
 		// hero coordinates
-		int x1 = _vm->_hero->x + currImage->x1;         // Left edge of object
-		int x2 = _vm->_hero->x + currImage->x2;         // Right edge
-		int y1 = _vm->_hero->y + currImage->y1;         // Top edge
-		int y2 = _vm->_hero->y + currImage->y2;         // Bottom edge
+		int x1 = _vm->_hero->_x + currImage->_x1;         // Left edge of object
+		int x2 = _vm->_hero->_x + currImage->_x2;         // Right edge
+		int y1 = _vm->_hero->_y + currImage->_y1;         // Top edge
+		int y2 = _vm->_hero->_y + currImage->_y2;         // Bottom edge
 
 		_vm->_scheduler->processMaze(x1, x2, y1, y2);
 	}
@@ -359,11 +359,11 @@ void ObjectHandler_v2d::moveObjects() {
 
 void ObjectHandler_v2d::homeIn(const int objIndex1, const int objIndex2, const int8 objDx, const int8 objDy) {
 	// object obj1 will home in on object obj2
-	object_t *obj1 = &_objects[objIndex1];
-	object_t *obj2 = &_objects[objIndex2];
-	obj1->pathType = kPathAuto;
-	int dx = obj1->x + obj1->currImagePtr->x1 - obj2->x - obj2->currImagePtr->x1;
-	int dy = obj1->y + obj1->currImagePtr->y1 - obj2->y - obj2->currImagePtr->y1;
+	Object *obj1 = &_objects[objIndex1];
+	Object *obj2 = &_objects[objIndex2];
+	obj1->_pathType = kPathAuto;
+	int dx = obj1->_x + obj1->_currImagePtr->_x1 - obj2->_x - obj2->_currImagePtr->_x1;
+	int dy = obj1->_y + obj1->_currImagePtr->_y1 - obj2->_y - obj2->_currImagePtr->_y1;
 
 	if (dx == 0)                                        // Don't EVER divide by zero!
 		dx = 1;
@@ -371,11 +371,11 @@ void ObjectHandler_v2d::homeIn(const int objIndex1, const int objIndex2, const i
 		dy = 1;
 
 	if (abs(dx) > abs(dy)) {
-		obj1->vx = objDx * -sign<int8>(dx);
-		obj1->vy = abs((objDy * dy) / dx) * -sign<int8>(dy);
+		obj1->_vx = objDx * -sign<int8>(dx);
+		obj1->_vy = abs((objDy * dy) / dx) * -sign<int8>(dy);
 	} else {
-		obj1->vy = objDy * -sign<int8>(dy);
-		obj1->vx = abs((objDx * dx) / dy) * -sign<int8>(dx);
+		obj1->_vy = objDy * -sign<int8>(dy);
+		obj1->_vx = abs((objDx * dx) / dy) * -sign<int8>(dx);
 	}
 }
 } // End of namespace Hugo

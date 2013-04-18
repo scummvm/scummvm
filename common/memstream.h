@@ -92,13 +92,17 @@ private:
 	byte *_ptr;
 	const uint32 _bufSize;
 	uint32 _pos;
+	bool _err;
 public:
-	MemoryWriteStream(byte *buf, uint32 len) : _ptr(buf), _bufSize(len), _pos(0) {}
+	MemoryWriteStream(byte *buf, uint32 len) : _ptr(buf), _bufSize(len), _pos(0), _err(false) {}
 
 	uint32 write(const void *dataPtr, uint32 dataSize) {
 		// Write at most as many bytes as are still available...
-		if (dataSize > _bufSize - _pos)
+		if (dataSize > _bufSize - _pos) {
 			dataSize = _bufSize - _pos;
+			// We couldn't write all the data => set error indicator
+			_err = true;
+		}
 		memcpy(_ptr, dataPtr, dataSize);
 		_ptr += dataSize;
 		_pos += dataSize;
@@ -107,6 +111,9 @@ public:
 
 	uint32 pos() const { return _pos; }
 	uint32 size() const { return _bufSize; }
+
+	virtual bool err() const { return _err; }
+	virtual void clearErr() { _err = false; }
 };
 
 /**

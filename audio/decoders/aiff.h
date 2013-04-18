@@ -23,6 +23,7 @@
 /**
  * @file
  * Sound decoder used in engines:
+ *  - pegasus
  *  - saga
  *  - sci
  *  - sword1

@@ -135,19 +135,13 @@ public:
 	}
 
 	virtual const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
-		const ADGameDescription *matchedDesc = detectGameFilebased(allFiles, Touche::fileBasedFallback);
+		ADFilePropertiesMap filesProps;
 
-		if (matchedDesc) { // We got a match
-			Common::String report = Common::String::format(_("Your game version has been detected using "
-				"filename matching as a variant of %s."), matchedDesc->gameid);
-			report += "\n";
-			report += _("If this is an original and unmodified version, please report any");
-			report += "\n";
-			report += _("information previously printed by ScummVM to the team.");
-			report += "\n";
-			g_system->logMessage(LogMessageType::kInfo, report.c_str());
-		}
+		const ADGameDescription *matchedDesc = detectGameFilebased(allFiles, fslist, Touche::fileBasedFallback, &filesProps);
+		if (!matchedDesc)
+			return 0;
 
+		reportUnknown(fslist.begin()->getParent(), filesProps);
 		return matchedDesc;
 	}
 

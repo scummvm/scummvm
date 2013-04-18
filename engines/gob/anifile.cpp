@@ -28,50 +28,52 @@
 #include "gob/dataio.h"
 #include "gob/surface.h"
 #include "gob/video.h"
+#include "gob/cmpfile.h"
 #include "gob/anifile.h"
 
 namespace Gob {
-
-ANIFile::Layer::Layer() : surface(0), coordinates(0) {
-}
-
-ANIFile::Layer::~Layer() {
-	delete coordinates;
-	delete surface;
-}
-
 
 ANIFile::ANIFile(GobEngine *vm, const Common::String &fileName,
                  uint16 width, uint8 bpp) : _vm(vm),
 	_width(width), _bpp(bpp), _hasPadding(false) {
 
-	Common::SeekableReadStream *ani = _vm->_dataIO->getFile(fileName);
+	bool bigEndian = false;
+	Common::String endianFileName = fileName;
+
+	if ((_vm->getEndiannessMethod() == kEndiannessMethodAltFile) &&
+	    !_vm->_dataIO->hasFile(fileName)) {
+		// If the game has alternate big-endian files, look if one exist
+
+		Common::String alternateFileName = fileName;
+		alternateFileName.setChar('_', 0);
+
+		if (_vm->_dataIO->hasFile(alternateFileName)) {
+			bigEndian      = true;
+			endianFileName = alternateFileName;
+		}
+	} else if ((_vm->getEndiannessMethod() == kEndiannessMethodBE) ||
+	           ((_vm->getEndiannessMethod() == kEndiannessMethodSystem) &&
+	            (_vm->getEndianness() == kEndiannessBE)))
+		// Game always little endian or it follows the system and it is big endian
+		bigEndian = true;
+
+	Common::SeekableReadStream *ani = _vm->_dataIO->getFile(endianFileName);
 	if (ani) {
-		Common::SeekableSubReadStreamEndian sub(ani, 0, ani->size(), false, DisposeAfterUse::YES);
-
-		load(sub, fileName);
-		return;
-	}
-
-	// File doesn't exist, try to open the big-endian'd alternate file
-	Common::String alternateFileName = fileName;
-	alternateFileName.setChar('_', 0);
-
-	ani = _vm->_dataIO->getFile(alternateFileName);
-	if (ani) {
-		Common::SeekableSubReadStreamEndian sub(ani, 0, ani->size(), true, DisposeAfterUse::YES);
+		Common::SeekableSubReadStreamEndian sub(ani, 0, ani->size(), bigEndian, DisposeAfterUse::YES);
 
 		// The big endian version pads a few fields to even size
-		_hasPadding = true;
+		_hasPadding = bigEndian;
 
 		load(sub, fileName);
 		return;
 	}
 
-	warning("ANIFile::ANIFile(): No such file \"%s\"", fileName.c_str());
+	warning("ANIFile::ANIFile(): No such file \"%s\" (\"%s\")", endianFileName.c_str(), fileName.c_str());
 }
 
 ANIFile::~ANIFile() {
+	for (LayerArray::iterator l = _layers.begin(); l != _layers.end(); ++l)
+		delete *l;
 }
 
 void ANIFile::load(Common::SeekableSubReadStreamEndian &ani, const Common::String &fileName) {
@@ -90,9 +92,9 @@ void ANIFile::load(Common::SeekableSubReadStreamEndian &ani, const Common::Strin
 		if (_hasPadding)
 			ani.skip(1);
 
-		_layers.resize(layerCount - 1);
-		for (LayerArray::iterator l = _layers.begin(); l != _layers.end(); ++l)
-			loadLayer(*l, ani);
+		_layers.reserve(layerCount - 1);
+		for (int i = 0; i < layerCount - 1; i++)
+			_layers.push_back(loadLayer(ani));
 	}
 
 	_maxWidth  = 0;
@@ -158,14 +160,13 @@ void ANIFile::loadAnimation(Animation &animation, FrameArray &frames,
 		area.right = area.bottom = -0x7FFF;
 
 		for (ChunkList::const_iterator c = frame.begin(); c != frame.end(); c++) {
-			const Layer *layer;
-			const RXYFile::Coordinates *coords;
+			uint16 cL, cT, cR, cB;
 
-			if (!getPart(c->layer, c->part, layer, coords))
+			if (!getCoordinates(c->layer, c->part, cL, cT, cR, cB))
 				continue;
 
-			const uint16 width  = coords->right  - coords->left + 1;
-			const uint16 height = coords->bottom - coords->top  + 1;
+			const uint16 width  = cR - cL + 1;
+			const uint16 height = cB - cT + 1;
 
 			const uint16 l = c->x;
 			const uint16 t = c->y;
@@ -233,33 +234,12 @@ void ANIFile::loadFrames(FrameArray &frames, Common::SeekableSubReadStreamEndian
 	}
 }
 
-void ANIFile::loadLayer(Layer &layer, Common::SeekableSubReadStreamEndian &ani) {
-	Common::String file = Util::readString(ani, 13);
+CMPFile *ANIFile::loadLayer(Common::SeekableSubReadStreamEndian &ani) {
+	Common::String file = Util::setExtension(Util::readString(ani, 13), "");
 	if (_hasPadding)
 		ani.skip(1);
 
-	if (file.empty())
-		return;
-
-	Common::String fileRXY = Util::setExtension(file, ".RXY");
-	Common::String fileCMP = Util::setExtension(file, ".CMP");
-	if (!_vm->_dataIO->hasFile(fileRXY) || !_vm->_dataIO->hasFile(fileCMP))
-		return;
-
-	loadLayer(layer, fileRXY, fileCMP);
-}
-
-void ANIFile::loadLayer(Layer &layer, const Common::String &fileRXY,
-                                      const Common::String &fileCMP) {
-
-	Common::SeekableReadStream *dataRXY = _vm->_dataIO->getFile(fileRXY);
-	if (!dataRXY)
-		return;
-
-	layer.coordinates = new RXYFile(*dataRXY);
-	layer.surface     = new Surface(_width, layer.coordinates->getHeight(), _bpp);
-
-	_vm->_video->drawPackedSprite(fileCMP.c_str(), *layer.surface);
+	return new CMPFile(_vm, file, _width, 0, _bpp);
 }
 
 uint16 ANIFile::getAnimationCount() const {
@@ -277,24 +257,13 @@ const ANIFile::Animation &ANIFile::getAnimationInfo(uint16 animation) const {
 	return _animations[animation];
 }
 
-bool ANIFile::getPart(uint16 layer, uint16 part,
-                      const Layer *&l, const RXYFile::Coordinates *&c) const {
+bool ANIFile::getCoordinates(uint16 layer, uint16 part,
+                             uint16 &left, uint16 &top, uint16 &right, uint16 &bottom) const {
 
 	if (layer >= _layers.size())
 		return false;
 
-	l = &_layers[layer];
-	if (!l->surface || !l->coordinates)
-		return false;
-
-	if (part >= l->coordinates->size())
-		return false;
-
-	c = &(*l->coordinates)[part];
-	if (c->left == 0xFFFF)
-		return false;
-
-	return true;
+	return _layers[layer]->getCoordinates(part, left, top, right, bottom);
 }
 
 void ANIFile::draw(Surface &dest, uint16 animation, uint16 frame, int16 x, int16 y) const {
@@ -314,13 +283,15 @@ void ANIFile::draw(Surface &dest, uint16 animation, uint16 frame, int16 x, int16
 void ANIFile::drawLayer(Surface &dest, uint16 layer, uint16 part,
                         int16 x, int16 y, int32 transp) const {
 
-	const Layer *l;
-	const RXYFile::Coordinates *c;
-
-	if (!getPart(layer, part, l, c))
+	if (layer >= _layers.size())
 		return;
 
-	dest.blit(*l->surface, c->left, c->top, c->right, c->bottom, x, y, transp);
+	_layers[layer]->draw(dest, part, x, y, transp);
+}
+
+void ANIFile::recolor(uint8 from, uint8 to) {
+	for (LayerArray::iterator l = _layers.begin(); l != _layers.end(); ++l)
+		(*l)->recolor(from, to);
 }
 
 } // End of namespace Gob

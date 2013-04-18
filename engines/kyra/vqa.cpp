@@ -395,7 +395,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 	if (frameNum >= _header.numFrames || !_opened)
 		return;
 
-	bool foundSound = _stream ? false : true;
+	bool foundSound = !_stream;
 	bool foundFrame = false;
 	uint i;
 

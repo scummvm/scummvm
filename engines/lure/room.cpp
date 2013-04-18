@@ -138,8 +138,8 @@ void Room::leaveRoom() {
 	HotspotList &list = r.activeHotspots();
 	HotspotList::iterator i = list.begin();
 	while (i != list.end()) {
-		Hotspot *h = (i.operator*()).get();
-		if (!h->persistant()) {
+		Hotspot const &h = **i;
+		if (!h.persistant()) {
 			i = list.erase(i);
 		} else {
 			++i;
@@ -153,11 +153,11 @@ void Room::loadRoomHotspots() {
 
 	HotspotDataList::iterator i;
 	for (i = list.begin(); i != list.end(); ++i) {
-		HotspotData *rec = (*i).get();
+		HotspotData const &rec = **i;
 
-		if ((rec->hotspotId < 0x7530) && (rec->roomNumber == _roomNumber) &&
-			(rec->layer != 0))
-			r.activateHotspot(rec->hotspotId);
+		if ((rec.hotspotId < 0x7530) && (rec.roomNumber == _roomNumber) &&
+			(rec.layer != 0))
+			r.activateHotspot(rec.hotspotId);
 	}
 }
 
@@ -252,24 +252,24 @@ CursorType Room::checkRoomExits() {
 
 	RoomExitHotspotList::iterator i;
 	for (i = exits.begin(); i != exits.end(); ++i) {
-		RoomExitHotspotData *rec = (*i).get();
+		RoomExitHotspotData const &rec = **i;
 		skipFlag = false;
 
-		if (rec->hotspotId != 0) {
-			join = res.getExitJoin(rec->hotspotId);
+		if (rec.hotspotId != 0) {
+			join = res.getExitJoin(rec.hotspotId);
 			if ((join) && (join->blocked != 0))
 				skipFlag = true;
 		}
 
-		if (!skipFlag && (m.x() >= rec->xs) && (m.x() <= rec->xe) &&
-			(m.y() >= rec->ys) && (m.y() <= rec->ye)) {
+		if (!skipFlag && (m.x() >= rec.xs) && (m.x() <= rec.xe) &&
+			(m.y() >= rec.ys) && (m.y() <= rec.ye)) {
 			// Cursor is within exit area
-			CursorType cursorNum = (CursorType)rec->cursorNum;
-			_destRoomNumber = rec->destRoomNumber;
+			CursorType cursorNum = (CursorType)rec.cursorNum;
+			_destRoomNumber = rec.destRoomNumber;
 
 			// If it's a hotspotted exit, change arrow to the + arrow
-			if (rec->hotspotId != 0) {
-				_hotspotId = rec->hotspotId;
+			if (rec.hotspotId != 0) {
+				_hotspotId = rec.hotspotId;
 				_hotspot = res.getHotspot(_hotspotId);
 				_hotspotNameId = _hotspot->nameId;
 				_isExit = true;
@@ -437,7 +437,7 @@ void Room::update() {
 
 	// Handle first layer (layer 3)
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
-		Hotspot &h = *i.operator*();
+		Hotspot &h = **i;
 
 		if ((h.roomNumber() == _roomNumber) && h.isActiveAnimation() && (h.layer() == 3)) {
 			addAnimation(h);
@@ -449,28 +449,28 @@ void Room::update() {
 	Common::List<Hotspot *> tempList;
 	Common::List<Hotspot *>::iterator iTemp;
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
-		Hotspot *h = (i.operator*()).get();
+		Hotspot *h = i->get();
 		if ((h->layer() != 1) || (h->roomNumber() != _roomNumber) ||
 			h->skipFlag() || !h->isActiveAnimation())
 			continue;
 		int16 endY = h->y() + h->heightCopy();
 
 		for (iTemp = tempList.begin(); iTemp != tempList.end(); ++iTemp) {
-			Hotspot *hTemp = iTemp.operator*();
+			Hotspot *hTemp = *iTemp;
 			int16 tempY = hTemp->y() + hTemp->heightCopy();
 			if (endY < tempY) break;
 		}
 		tempList.insert(iTemp, h);
 	}
 	for (iTemp = tempList.begin(); iTemp != tempList.end(); ++iTemp) {
-		Hotspot &h = *iTemp.operator*();
+		Hotspot &h = **iTemp;
 		addAnimation(h);
 		addLayers(h);
 	}
 
 	// Handle third layer (layer 2)
 	for (i = hotspots.begin(); i != hotspots.end(); ++i) {
-		Hotspot &h = *i.operator*();
+		Hotspot &h = **i;
 
 		if ((h.roomNumber() == _roomNumber) && h.isActiveAnimation() && (h.layer() == 2)) {
 			addAnimation(h);

@@ -948,7 +948,7 @@ void Script::opSpeak(SCRIPTOP_PARAMS) {
 	// scripts change to scene 5, but do not clear the cutaway that appears
 	// before Gorrister's speech starts, resulting in a deadlock. We do this
 	// manually here.
-	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 1 && 
+	if (_vm->getGameId() == GID_IHNM && _vm->_scene->currentChapterNumber() == 1 &&
 		_vm->_scene->currentSceneNumber() == 5 && _vm->_anim->hasCutaway()) {
 		_vm->_anim->returnFromCutaway();
 	}

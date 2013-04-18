@@ -157,7 +157,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = NULL_REG;
 	}
 
-	if ((s->r_acc.offset) && (g_sci->_debugState.stopOnEvent)) {
+	if ((s->r_acc.getOffset()) && (g_sci->_debugState.stopOnEvent)) {
 		g_sci->_debugState.stopOnEvent = false;
 
 		// A SCI event occurred, and we have been asked to stop, so open the debug console
@@ -248,7 +248,7 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
-	if (obj.segment) {
+	if (obj.getSegment()) {
 		int16 x = readSelectorValue(segMan, obj, SELECTOR(x));
 		int16 y = readSelectorValue(segMan, obj, SELECTOR(y));
 
@@ -267,7 +267,7 @@ reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
-	if (obj.segment) {
+	if (obj.getSegment()) {
 		int16 x = readSelectorValue(segMan, obj, SELECTOR(x));
 		int16 y = readSelectorValue(segMan, obj, SELECTOR(y));
 

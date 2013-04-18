@@ -59,7 +59,6 @@ void insertPrioQueue(TimerSlot *head, TimerSlot *newSlot) {
 
 
 DefaultTimerManager::DefaultTimerManager() :
-	_timerHandler(0),
 	_head(0) {
 
 	_head = new TimerSlot();
@@ -157,7 +156,7 @@ void DefaultTimerManager::removeTimerProc(TimerProc callback) {
 	}
 
 	// We need to remove all names referencing the timer proc here.
-	// 
+	//
 	// Else we run into troubles, when the client code removes and readds timer
 	// callbacks.
 	//

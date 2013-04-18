@@ -161,7 +161,7 @@ void VirtualKeyboardGUI::run() {
 		_system->clearOverlay();
 	}
 	_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
-	_system->grabOverlay((OverlayColor *)_overlayBackup.pixels, _overlayBackup.w);
+	_system->grabOverlay(_overlayBackup.pixels, _overlayBackup.pitch);
 
 	setupCursor();
 
@@ -171,7 +171,7 @@ void VirtualKeyboardGUI::run() {
 
 	removeCursor();
 
-	_system->copyRectToOverlay((OverlayColor *)_overlayBackup.pixels, _overlayBackup.w, 0, 0, _overlayBackup.w, _overlayBackup.h);
+	_system->copyRectToOverlay(_overlayBackup.pixels, _overlayBackup.pitch, 0, 0, _overlayBackup.w, _overlayBackup.h);
 	if (!g_gui.isActive()) _system->hideOverlay();
 
 	_overlayBackup.free();
@@ -262,7 +262,7 @@ void VirtualKeyboardGUI::screenChanged() {
 		_screenH = newScreenH;
 
 		_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
-		_system->grabOverlay((OverlayColor *)_overlayBackup.pixels, _overlayBackup.w);
+		_system->grabOverlay(_overlayBackup.pixels, _overlayBackup.pitch);
 
 		if (!_kbd->checkModeResolutions()) {
 			_displaying = false;
@@ -371,7 +371,7 @@ void VirtualKeyboardGUI::redraw() {
 		blit(&surf, &_dispSurface, _dispX - _dirtyRect.left,
 		     _dispY - _dirtyRect.top, _dispBackColor);
 	}
-	_system->copyRectToOverlay((OverlayColor *)surf.pixels, surf.w,
+	_system->copyRectToOverlay(surf.pixels, surf.pitch,
 	                           _dirtyRect.left, _dirtyRect.top, surf.w, surf.h);
 
 	surf.free();

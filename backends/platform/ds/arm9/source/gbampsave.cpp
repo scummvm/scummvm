@@ -45,7 +45,7 @@ static Common::String getSavePath() {
 // GBAMP Save File Manager
 //////////////////////////
 
-Common::OutSaveFile *GBAMPSaveFileManager::openForSaving(const Common::String &filename) {
+Common::OutSaveFile *GBAMPSaveFileManager::openForSaving(const Common::String &filename, bool compress) {
 	Common::String fileSpec = getSavePath();
 	if (fileSpec.lastChar() != '/')
 		fileSpec += '/';

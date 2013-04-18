@@ -1298,7 +1298,6 @@ bool KyraEngine_MR::updateScore(int scoreId, int strId) {
 	setNextIdleAnimTimer();
 	_scoreFlagTable[scoreIndex] |= (1 << scoreBit);
 
-	_screen->hideMouse();
 	strcpy(_stringBuffer, (const char *)getTableEntry(_scoreFile, strId));
 	strcat(_stringBuffer, ":        ");
 
@@ -1308,7 +1307,6 @@ bool KyraEngine_MR::updateScore(int scoreId, int strId) {
 	if (count > 0)
 		scoreIncrease(count, _stringBuffer);
 
-	_screen->showMouse();
 	setNextIdleAnimTimer();
 	return true;
 }

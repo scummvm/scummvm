@@ -121,14 +121,12 @@ int KyraEngine_HoF::buttonInventory(Button *button) {
 	if (_itemInHand == kItemNone) {
 		if (item == kItemNone)
 			return 0;
-		_screen->hideMouse();
 		clearInventorySlot(inventorySlot, 0);
 		snd_playSoundEffect(0x0B);
 		setMouseCursor(item);
 		int string = (_lang == 1) ? getItemCommandStringPickUp(item) : 7;
 		updateCommandLineEx(item+54, string, 0xD6);
 		_itemInHand = (int16)item;
-		_screen->showMouse();
 		_mainCharacter.inventory[inventorySlot] = kItemNone;
 	} else {
 		if (_mainCharacter.inventory[inventorySlot] != kItemNone) {
@@ -137,23 +135,19 @@ int KyraEngine_HoF::buttonInventory(Button *button) {
 
 			item = _mainCharacter.inventory[inventorySlot];
 			snd_playSoundEffect(0x0B);
-			_screen->hideMouse();
 			clearInventorySlot(inventorySlot, 0);
 			drawInventoryShape(0, _itemInHand, inventorySlot);
 			setMouseCursor(item);
 			int string = (_lang == 1) ? getItemCommandStringPickUp(item) : 7;
 			updateCommandLineEx(item+54, string, 0xD6);
-			_screen->showMouse();
 			_mainCharacter.inventory[inventorySlot] = _itemInHand;
 			setHandItem(item);
 		} else {
 			snd_playSoundEffect(0x0C);
-			_screen->hideMouse();
 			drawInventoryShape(0, _itemInHand, inventorySlot);
 			_screen->setMouseCursor(0, 0, getShapePtr(0));
 			int string = (_lang == 1) ? getItemCommandStringInv(_itemInHand) : 8;
 			updateCommandLineEx(_itemInHand+54, string, 0xD6);
-			_screen->showMouse();
 			_mainCharacter.inventory[inventorySlot] = _itemInHand;
 			_itemInHand = kItemNone;
 		}
@@ -172,9 +166,7 @@ int KyraEngine_HoF::scrollInventory(Button *button) {
 	memcpy(src+5, dst, sizeof(Item)*5);
 	memcpy(dst, dst+5, sizeof(Item)*5);
 	memcpy(dst+5, temp, sizeof(Item)*5);
-	_screen->hideMouse();
 	_screen->copyRegion(0x46, 0x90, 0x46, 0x90, 0x71, 0x2E, 0, 2);
-	_screen->showMouse();
 	redrawInventory(2);
 	scrollInventoryWheel();
 	return 0;
@@ -199,9 +191,7 @@ int KyraEngine_HoF::findFreeVisibleInventorySlot() {
 void KyraEngine_HoF::removeSlotFromInventory(int slot) {
 	_mainCharacter.inventory[slot] = kItemNone;
 	if (slot < 10) {
-		_screen->hideMouse();
 		clearInventorySlot(slot, 0);
-		_screen->showMouse();
 	}
 }
 
@@ -223,14 +213,11 @@ bool KyraEngine_HoF::checkInventoryItemExchange(Item handItem, int slot) {
 
 		snd_playSoundEffect(0x68);
 		_mainCharacter.inventory[slot] = newItem;
-		_screen->hideMouse();
 		clearInventorySlot(slot, 0);
 		drawInventoryShape(0, newItem, slot);
 
 		if (removeItem)
 			removeHandItem();
-
-		_screen->showMouse();
 
 		if (_lang != 1)
 			updateCommandLineEx(newItem+54, 0x2E, 0xD6);
@@ -243,12 +230,10 @@ bool KyraEngine_HoF::checkInventoryItemExchange(Item handItem, int slot) {
 
 void KyraEngine_HoF::drawInventoryShape(int page, Item item, int slot) {
 	_screen->drawShape(page, getShapePtr(item+64), _inventoryX[slot], _inventoryY[slot], 0, 0);
-	_screen->updateScreen();
 }
 
 void KyraEngine_HoF::clearInventorySlot(int slot, int page) {
 	_screen->drawShape(page, getShapePtr(240+slot), _inventoryX[slot], _inventoryY[slot], 0, 0);
-	_screen->updateScreen();
 }
 
 void KyraEngine_HoF::redrawInventory(int page) {
@@ -256,7 +241,6 @@ void KyraEngine_HoF::redrawInventory(int page) {
 	_screen->_curPage = page;
 
 	const Item *inventory = _mainCharacter.inventory;
-	_screen->hideMouse();
 	for (int i = 0; i < 10; ++i) {
 		clearInventorySlot(i, page);
 		if (inventory[i] != kItemNone) {
@@ -264,7 +248,6 @@ void KyraEngine_HoF::redrawInventory(int page) {
 			drawInventoryShape(page, inventory[i], i);
 		}
 	}
-	_screen->showMouse();
 	_screen->updateScreen();
 
 	_screen->_curPage = pageBackUp;
@@ -277,17 +260,13 @@ void KyraEngine_HoF::scrollInventoryWheel() {
 	memcpy(_screenBuffer, _screen->getCPagePtr(2), 64000);
 	uint8 overlay[0x100];
 	_screen->generateOverlay(_screen->getPalette(0), overlay, 0, 50);
-	_screen->hideMouse();
 	_screen->copyRegion(0x46, 0x90, 0x46, 0x79, 0x71, 0x17, 0, 2, Screen::CR_NO_P_CHECK);
-	_screen->showMouse();
 	snd_playSoundEffect(0x25);
 
 	bool breakFlag = false;
 	for (int i = 0; i <= 6 && !breakFlag; ++i) {
 		if (movie.opened()) {
-			_screen->hideMouse();
 			movie.displayFrame(i % frames, 0, 0, 0, 0, 0, 0);
-			_screen->showMouse();
 			_screen->updateScreen();
 		}
 
@@ -355,9 +334,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 	_bookNewPage = _bookCurPage;
 
 	if (_screenBuffer) {
-		_screen->hideMouse();
 		memcpy(_screenBuffer, _screen->getCPagePtr(0), 64000);
-		_screen->showMouse();
 	}
 
 	_screen->copyPalette(2, 0);
@@ -382,9 +359,7 @@ int KyraEngine_HoF::bookButton(Button *button) {
 	restorePage3();
 
 	if (_screenBuffer) {
-		_screen->hideMouse();
 		_screen->copyBlockToPage(0, 0, 0, 320, 200, _screenBuffer);
-		_screen->showMouse();
 	}
 
 	setHandItem(_itemInHand);
@@ -471,7 +446,6 @@ void KyraEngine_HoF::showBookPage() {
 
 	int rightPageY = _bookPageYOffset[_bookCurPage+1];
 
-	_screen->hideMouse();
 	if (leftPage) {
 		bookDecodeText(leftPage);
 		bookPrintText(2, leftPage, 20, leftPageY+20, 0x31);
@@ -483,7 +457,6 @@ void KyraEngine_HoF::showBookPage() {
 		bookPrintText(2, rightPage, 176, rightPageY+20, 0x31);
 		delete[] rightPage;
 	}
-	_screen->showMouse();
 }
 
 void KyraEngine_HoF::bookLoop() {
@@ -517,10 +490,8 @@ void KyraEngine_HoF::bookLoop() {
 			loadBookBkgd();
 			showBookPage();
 			snd_playSoundEffect(0x64);
-			_screen->hideMouse();
 			_screen->copyRegion(0, 0, 0, 0, 0x140, 0xC8, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
-			_screen->showMouse();
 		}
 		_system->delayMillis(10);
 	}
@@ -550,9 +521,7 @@ void KyraEngine_HoF::bookPrintText(int dstPage, const uint8 *str, int x, int y, 
 	Screen::FontId oldFont = _screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_BOOKFONT_FNT);
 	_screen->_charWidth = -2;
 
-	_screen->hideMouse();
 	_screen->printText((const char *)str, x, y, color, (_flags.lang == Common::JA_JPN) ? 0xf6 : 0);
-	_screen->showMouse();
 
 	_screen->_charWidth = 0;
 	_screen->setFont(oldFont);
@@ -679,9 +648,7 @@ int GUI_HoF::optionsButton(Button *button) {
 	_restartGame = false;
 	_reloadTemporarySave = false;
 
-	_screen->hideMouse();
 	updateButton(&_vm->_inventoryButtons[0]);
-	_screen->showMouse();
 
 	if (!_screen->isMouseVisible() && button)
 		return 0;
@@ -690,9 +657,7 @@ int GUI_HoF::optionsButton(Button *button) {
 
 	if (_vm->_mouseState < -1) {
 		_vm->_mouseState = -1;
-		_screen->hideMouse();
 		_screen->setMouseCursor(1, 1, _vm->getShapePtr(0));
-		_screen->showMouse();
 		return 0;
 	}
 

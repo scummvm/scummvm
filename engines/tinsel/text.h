@@ -24,7 +24,7 @@
 #ifndef TINSEL_TEXT_H     // prevent multiple includes
 #define TINSEL_TEXT_H
 
-#include "tinsel/coroutine.h"
+#include "common/coroutines.h"
 #include "tinsel/object.h"	// object manager defines
 
 namespace Tinsel {

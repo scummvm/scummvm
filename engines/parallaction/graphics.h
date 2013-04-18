@@ -144,7 +144,7 @@ public:
 
 	~Cnv() {
 		if (_freeData)
-			delete []_data;
+			delete[] _data;
 	}
 
 	byte* getFramePtr(uint16 index) {
@@ -377,14 +377,14 @@ public:
 	void toggleMaskPatch(uint id, int x, int y, bool apply);
 	uint16 getMaskLayer(uint16 z) const;
 	void finalizeMask();
-	void loadGfxObjMask(const char *name, GfxObj *obj);
+	void loadGfxObjMask(Parallaction *vm, const char *name, GfxObj *obj);
 
 	// path management
 	bool hasPath();
 	uint addPathPatch(PathBuffer *patch);
 	void togglePathPatch(uint id, int x, int y, bool apply);
 	void finalizePath();
-	void loadGfxObjPath(const char *name, GfxObj *obj);
+	void loadGfxObjPath(Parallaction *vm, const char *name, GfxObj *obj);
 };
 
 

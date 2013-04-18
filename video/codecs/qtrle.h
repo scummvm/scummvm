@@ -34,13 +34,12 @@ public:
 	~QTRLEDecoder();
 
 	const Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	Graphics::PixelFormat getPixelFormat() const;
 
 private:
 	byte _bitsPerPixel;
 
 	Graphics::Surface *_surface;
-	Graphics::PixelFormat _pixelFormat;
 
 	void decode1(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
 	void decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange, byte bpp);

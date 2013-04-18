@@ -33,7 +33,6 @@
 #include "lastexpress/sound/entry.h"
 #include "lastexpress/sound/queue.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/graphics.h"
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/resource.h"
@@ -675,7 +674,7 @@ const char *SoundManager::getDialogName(EntityIndex entity) const {
 //////////////////////////////////////////////////////////////////////////
 // Letters & Messages
 //////////////////////////////////////////////////////////////////////////
-void SoundManager::readText(int id){
+void SoundManager::readText(int id) {
 	if (!_queue->isBuffered(kEntityTables4))
 		return;
 
@@ -1330,23 +1329,23 @@ void SoundManager::playLoopingSound(int param) {
 					}
 				} else {
 					switch (getEntityData(kEntityPlayer)->car) {
-					case 1:
-					case 6:
+					case kCarBaggageRear:
+					case kCarBaggage:
 						partNumber = 4;
 						break;
-					case 2:
-					case 3:
-					case 4:
-					case 5:
+					case kCarKronos:
+					case kCarGreenSleeping:
+					case kCarRedSleeping:
+					case kCarRestaurant:
 						partNumber = 1;
 						break;
-					case 7:
+					case kCarCoalTender:
 						partNumber = 5;
 						break;
-					case 8:
+					case kCarLocomotive:
 						partNumber = 99;
 						break;
-					case 9:
+					case kCar9:
 						partNumber = 3;
 						break;
 					default:
@@ -1357,13 +1356,13 @@ void SoundManager::playLoopingSound(int param) {
 			}
 
 			if (partNumber != 99)
-				sprintf(tmp, "LOOP%d%c.SND", partNumber, _engine->getRandom().getRandomNumber(numLoops[partNumber] - 1) + 'A');
+				sprintf(tmp, "LOOP%d%c.SND", partNumber, (char)(_engine->getRandom().getRandomNumber(numLoops[partNumber] - 1) + 'A'));
 		}
 
 		if (getFlags()->flag_3)
 			fnameLen = 5;
 
-		if (!entry || scumm_strnicmp(entry->getName2().c_str(), tmp, fnameLen)) {
+		if (!entry || scumm_strnicmp(entry->getName2().c_str(), tmp, (uint)fnameLen)) {
 			_loopingSoundDuration = _engine->getRandom().getRandomNumber(319) + 260;
 
 			if (partNumber != 99) {

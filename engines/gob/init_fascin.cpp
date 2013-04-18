@@ -44,10 +44,10 @@ void Init_Fascination::updateConfig() {
 }
 
 void Init_Fascination::initGame() {
-// HACK - Suppress ADLIB_FLAG as the MDY/TBR player is not working. suppress
-// the PC Speaker too, as the script checks in the intro for it's presence
+// HACK - Suppress
+// the PC Speaker, as the script checks in the intro for it's presence
 // to play or not some noices.
-	_vm->_global->_soundFlags = MIDI_FLAG | BLASTER_FLAG;
+	_vm->_global->_soundFlags = MIDI_FLAG | BLASTER_FLAG | ADLIB_FLAG;
 
 	Init::initGame();
 }

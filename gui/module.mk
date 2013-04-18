@@ -13,7 +13,9 @@ MODULE_OBJS := \
 	message.o \
 	object.o \
 	options.o \
+	predictivedialog.o \
 	saveload.o \
+	saveload-dialog.o \
 	themebrowser.o \
 	ThemeEngine.o \
 	ThemeEval.o \

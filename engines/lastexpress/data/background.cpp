@@ -107,6 +107,7 @@ byte *Background::decodeComponent(Common::SeekableReadStream *in, uint32 inSize,
 		return NULL;
 
 	// Initialize the decoding
+	memset(out, 0, outSize * sizeof(byte));
 	uint32 inPos = 0;
 	uint32 outPos = 0;
 

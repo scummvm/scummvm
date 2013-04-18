@@ -1463,22 +1463,16 @@ bool ZipArchive::hasFile(const String &name) const {
 }
 
 int ZipArchive::listMembers(ArchiveMemberList &list) const {
-	int matches = 0;
-	int err = unzGoToFirstFile(_zipFile);
+	int members = 0;
 
-	while (err == UNZ_OK) {
-		char szCurrentFileName[UNZ_MAXFILENAMEINZIP+1];
-		if (unzGetCurrentFileInfo(_zipFile, NULL,
-		                          szCurrentFileName, sizeof(szCurrentFileName)-1,
-		                          NULL, 0, NULL, 0) == UNZ_OK) {
-			list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(szCurrentFileName, this)));
-			matches++;
-		}
-
-		err = unzGoToNextFile(_zipFile);
+	const unz_s *const archive = (const unz_s *)_zipFile;
+	for (ZipHash::const_iterator i = archive->_hash.begin(), end = archive->_hash.end();
+	     i != end; ++i) {
+		list.push_back(ArchiveMemberList::value_type(new GenericArchiveMember(i->_key, this)));
+		++members;
 	}
 
-	return matches;
+	return members;
 }
 
 const ArchiveMemberPtr ZipArchive::getMember(const String &name) const {

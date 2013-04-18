@@ -33,25 +33,27 @@
 namespace Toon {
 
 class ToonEngine;
-class Picture {
 
+class Picture {
 public:
 	Picture(ToonEngine *vm);
 	~Picture();
+
 	bool loadPicture(const Common::String &file);
 	void setupPalette();
-	void draw(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32 dy);
-	void drawWithRectList(Graphics::Surface& surface, int32 x, int32 y, int32 dx, int32 dy, Common::Array<Common::Rect>& rectArray);
-	void drawMask(Graphics::Surface &surface, int32 x, int32 y, int32 dx, int32 dy);
-	void drawLineOnMask(int32 x, int32 y, int32 x2, int32 y2, bool walkable);
-	void floodFillNotWalkableOnMask(int32 x, int32 y);
-	uint8 getData(int32 x, int32 y);
+	void draw(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy);
+	void drawWithRectList(Graphics::Surface& surface, int16 x, int16 y, int16 dx, int16 dy, Common::Array<Common::Rect>& rectArray);
+	void drawMask(Graphics::Surface &surface, int16 x, int16 y, int16 dx, int16 dy);
+	void drawLineOnMask(int16 x, int16 y, int16 x2, int16 y2, bool walkable);
+	void floodFillNotWalkableOnMask(int16 x, int16 y);
+	uint8 getData(int16 x, int16 y);
 	uint8 *getDataPtr() { return _data; }
-	int32 getWidth() const { return _width; }
-	int32 getHeight() const { return _height; }
+	int16 getWidth() const { return _width; }
+	int16 getHeight() const { return _height; }
+
 protected:
-	int32 _width;
-	int32 _height;
+	int16 _width;
+	int16 _height;
 	uint8 *_data;
 	uint8 *_palette; // need to be copied at 3-387
 	int32 _paletteEntries;

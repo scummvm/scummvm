@@ -125,7 +125,7 @@ typedef signed long int int32;
 		PS2. http://gcc.gnu.org/ml/gcc-bugs/2004-01/msg01596.html might have found out the same problem there
 	*/
 
-#elif defined (__WINS__) // WINS
+#elif defined(__WINS__) // WINS
 	extern "C" int symbian_snprintf(char *text, size_t maxlen, const char *fmt, ...);
 	extern "C" int symbian_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
 	#define snprintf(buf,len,args...) symbian_snprintf(buf,len,args)

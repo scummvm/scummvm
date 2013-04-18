@@ -203,7 +203,7 @@ Zone::Zone() {
 }
 
 Zone::~Zone() {
-	_vm->_gfx->unregisterLabel(_label);
+	g_vm->_gfx->unregisterLabel(_label);
 	delete _label;
 }
 
@@ -325,7 +325,7 @@ int16 ScriptVar::getValue() {
 	}
 
 	if (_flags & kParaRandom) {
-		return (_vm->_rnd.getRandomNumber(65536) * _value) >> 16;
+		return (g_vm->_rnd.getRandomNumber(65536) * _value) >> 16;
 	}
 
 	error("Parameter is not an r-value");

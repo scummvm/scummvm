@@ -33,11 +33,9 @@
 #include "common/keyboard.h"
 #include "common/list.h"
 #include "backends/keymapper/action.h"
+#include "backends/keymapper/hardware-input.h"
 
 namespace Common {
-
-struct HardwareInput;
-class HardwareInputSet;
 
 /**
  * Hash function for KeyState
@@ -75,6 +73,13 @@ public:
 	 * @return		a pointer to the Action or 0 if no
 	 */
 	Action *getMappedAction(const KeyState& ks) const;
+
+	/**
+	 * Find the Action that a generic input is mapped to
+	 * @param code	the input code that is mapped to the required Action
+	 * @return			a pointer to the Action or 0 if no
+	 */
+	Action *getMappedAction(const HardwareInputCode code) const;
 
 	void setConfigDomain(ConfigManager::Domain *dom);
 
@@ -130,6 +135,7 @@ private:
 	String _name;
 	List<Action *> _actions;
 	HashMap<KeyState, Action *> _keymap;
+	HashMap<HardwareInputCode, Action *> _nonkeymap;
 	ConfigManager::Domain *_configDomain;
 
 };

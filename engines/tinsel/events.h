@@ -24,9 +24,9 @@
 #ifndef TINSEL_EVENTS_H
 #define TINSEL_EVENTS_H
 
-#include "tinsel/dw.h"
-#include "tinsel/coroutine.h"
+#include "common/coroutines.h"
 #include "common/rect.h"
+#include "tinsel/dw.h"
 
 namespace Tinsel {
 

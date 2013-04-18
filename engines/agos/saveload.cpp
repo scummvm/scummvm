@@ -136,15 +136,46 @@ char *AGOSEngine::genSaveName(int slot) {
 	return buf;
 }
 
+#ifdef ENABLE_AGOS2
+void AGOSEngine_Feeble::quickLoadOrSave() {
+	// Quick loading and saving isn't possible in The Feeble Files or Puzzle Pack.
+}
+#endif
+
+// The function uses segments of code from the original game scripts
+// to allow quick loading and saving, but isn't perfect.
+//
+// Unfortuntely this allows loading and saving in locations,
+// which aren't supported, and will not restore correctly:
+// Various locations in Elvira 1/2 and Waxworks where saving
+// was disabled
 void AGOSEngine::quickLoadOrSave() {
-	// Quick load & save is only supported complete version of Simon the Sorcerer 1/2
-	if (getGameType() == GType_PP || getGameType() == GType_FF ||
-		(getFeatures() & GF_DEMO)) {
+	bool success;
+	Common::String buf;
+
+	// Disable loading and saving when it was not possible in the original:
+	// In overhead maps areas in Simon the Sorcerer 2
+	// In the floppy disk demo of Simon the Sorcerer 1
+	// In copy protection, conversations and cut scenes
+	if ((getGameType() == GType_SIMON2 && _boxStarHeight == 200) ||
+		(getGameType() == GType_SIMON1 && (getFeatures() & GF_DEMO)) ||
+		_mouseHideCount || _showPreposition) {
+		buf = Common::String::format("Quick load or save game isn't supported in this location");
+		GUI::MessageDialog dialog(buf, "OK");
+		dialog.runModal();
 		return;
 	}
 
-	bool success;
-	Common::String buf;
+	// Check if Simon is walking, and stop when required
+	if (getGameType() == GType_SIMON1 && getBitFlag(11)) {
+		vcStopAnimation(11, 1122);
+		animate(4, 11, 1122, 0, 0, 2);
+		waitForSync(1122);
+	} else if (getGameType() == GType_SIMON2 && getBitFlag(11)) {
+		vcStopAnimation(11, 232);
+		animate(4, 11, 232, 0, 0, 2);
+		waitForSync(1122);
+	}
 
 	char *filename = genSaveName(_saveLoadSlot);
 	if (_saveLoadType == 2) {
@@ -1393,7 +1424,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 	// The floppy disk versions of Simon the Sorcerer 2 block changing
 	// to scrolling rooms, if the copy protection fails. But the copy
 	// protection flags are never set in the CD version.
-	// Setting this copy protection flag, allows saved games to be shared 
+	// Setting this copy protection flag, allows saved games to be shared
 	// between all versions of Simon the Sorcerer 2.
 	if (getGameType() == GType_SIMON2) {
 		setBitFlag(135, 1);

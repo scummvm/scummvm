@@ -56,6 +56,8 @@ Table of Contents:
  * 7.8 Using compressed audio files (MP3, Ogg Vorbis, Flac)
  * 7.9 Output sample rate
 8.0) Configuration file
+ * 8.1 Recognized configuration keywords
+ * 8.2 Custom game options that can be toggled via the GUI
 9.0) Compiling
 
 
@@ -233,13 +235,18 @@ AGOS Games by Adventuresoft/Horrorsoft:
      The Feeble Files                            [feeble]
 
 GOB Games by Coktel Vision:
+     Bambou le sauveur de la jungle              [bambou]
      Bargon Attack                               [bargon]
+     Fascination                                 [fascination]
+     Geisha                                      [geisha]
      Gobliiins                                   [gob1]
      Gobliins 2                                  [gob2]
      Goblins 3                                   [gob3]
      Lost in Time                                [lostintime]
+     Once Upon A Time: Little Red Riding Hood    [littlered]
      The Bizarre Adventures of Woodruff
          and the Schnibble                       [woodruff]
+     Urban Runner                                [urban]
      Ween: The Prophecy                          [ween]
 
 MADE Games by Activision:
@@ -270,6 +277,7 @@ Other Games:
 SCUMM Games by Humongous Entertainment:
      Backyard Baseball                           [baseball]
      Backyard Baseball 2001                      [baseball2001]
+     Backyard Baseball 2003                      [baseball2003]
      Backyard Football                           [football]
      Big Thinkers First Grade                    [thinker1]
      Big Thinkers Kindergarten                   [thinkerk]
@@ -340,7 +348,6 @@ these at your own risk, and please do not file bug reports about them.
 If you want the latest updates on game compatibility, visit our web site
 and view the compatibility chart.
 
-     Backyard Baseball 2003                      [baseball2003]
      Backyard Football 2002                      [football2002]
      Backyard Soccer                             [soccer]
      Backyard Soccer MLS                         [soccermls]
@@ -1994,6 +2001,9 @@ An example config file looks as follows:
     path=C:\amiga_mi2\
     music_driver=windows
 
+
+8.1) Recognized configuration keywords
+---- ---------------------------------
 The following keywords are recognized:
 
     path               string   The path to where a game's data files are
@@ -2019,7 +2029,6 @@ The following keywords are recognized:
 
     fullscreen         bool     Fullscreen mode
     aspect_ratio       bool     Enable aspect ratio correction
-    disable_dithering  bool     Remove dithering artifacts from EGA games
     gfx_mode           string   Graphics mode (normal, 2x, 3x, 2xsai,
                                 super2xsai, supereagle, advmame2x, advmame3x,
                                 hq2x, hq3x, tv2x, dotmatrix)
@@ -2062,6 +2071,22 @@ The following keywords are recognized:
 
     boot_param         number   Pass this number to the boot script
 
+Sierra games using the AGI engine add the following non-standard keywords:
+
+    originalsaveload   bool     If true, the original save/load screens are
+                                used instead of the enhanced ScummVM ones
+
+Sierra games using the SCI engine add the following non-standard keywords:
+
+    disable_dithering  bool     Remove dithering artifacts from EGA games
+    prefer_digitalsfx  bool     If true, digital sound effects are preferred
+                                instead of synthesized ones
+    originalsaveload   bool     If true, the original save/load screens are
+                                used instead of the enhanced ScummVM ones
+    native_fb01        bool     If true, the music driver for an IBM Music
+                                Feature card or a Yamaha FB-01 FM synth module
+                                is used for MIDI output
+
 Broken Sword II adds the following non-standard keywords:
 
     gfx_details        number   Graphics details setting (0-3)
@@ -2075,6 +2100,11 @@ Flight of the Amazon Queen adds the following non-standard keywords:
     music_mute         bool     If true, music is muted
     sfx_mute           bool     If true, sound effects are muted
 
+Jones in the Fast Lane adds the following non-standard keyword:
+
+    music_mute         bool     If true, CD audio is used, if available,
+                                instead of in-game audio
+
 King's Quest VI Windows adds the following non-standard keyword:
 
     windows_cursors    bool     If true, the original unscaled black and white
@@ -2083,10 +2113,19 @@ King's Quest VI Windows adds the following non-standard keyword:
                                 Windows version, upscaled to match the rest of
                                 the upscaled graphics
 
+Lands of Lore: The Throne of Chaos adds the following non-standard keywords:
+
+    smooth_scrolling   bool     If true, scrolling is smoother when changing
+                                from one screen to another
+    floating_cursors   bool     If true, the cursor changes when it floats to
+                                the edge of the screen to a directional arrow.
+                                The player can then click to walk towards that
+                                direction.
+
 Space Quest IV CD adds the following non-standard keyword:
 
      silver_cursors    bool     If true, an alternate set of silver mouse cursors
-	                            is used instead of the original golden ones
+                                is used instead of the original golden ones
 
 Simon the Sorcerer 1 and 2 add the following non-standard keywords:
 
@@ -2097,9 +2136,27 @@ The Legend of Kyrandia adds the following non-standard keyword:
 
     walkspeed          int      The walk speed (0-4)
 
+The Legend of Kyrandia: Malcolm's Revenge adds the following non-standard
+keywords:
+
+    studio_audience    bool     If true, applause and cheering sounds are heard
+                                whenever Malcolm makes a joke
+    skip_support       bool     If true, the player can skip text and cutscenes
+    helium_mode        bool     If true, people sound like they've inhaled Helium
+
 The 7th Guest adds the following non-standard keyword:
 
     t7g_speed          string   Video playback speed (normal, tweaked, im_an_ios)
+
+
+8.2) Custom game options that can be toggled via the GUI
+---- ---------------------------------------------------
+A lot of the custom game options in the previous section can be toggled via the
+GUI. If a custom option is available for a specific game, a new tab called
+"Engine" will appear when adding or editing the configuration of that game.
+If the custom options are not shown, the games in question will need to be run
+once or readded in the ScummVM launcher's game list. This will update the
+configuration of each entry, allowing the custom options to be shown.
 
 
 9.0) Compiling:

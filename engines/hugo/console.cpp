@@ -96,8 +96,8 @@ bool HugoConsole::Cmd_listObjects(int argc, const char **argv) {
 
 	DebugPrintf("Available objects for this game are:\n");
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
-		if (_vm->_object->_objects[i].genericCmd & TAKE)
-			DebugPrintf("%2d - %s\n", i, _vm->_text->getNoun(_vm->_object->_objects[i].nounIndex, 2));
+		if (_vm->_object->_objects[i]._genericCmd & TAKE)
+			DebugPrintf("%2d - %s\n", i, _vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2));
 	}
 	return true;
 }
@@ -111,7 +111,7 @@ bool HugoConsole::Cmd_getObject(int argc, const char **argv) {
 		return true;
 	}
 
-	if (_vm->_object->_objects[strToInt(argv[1])].genericCmd & TAKE)
+	if (_vm->_object->_objects[strToInt(argv[1])]._genericCmd & TAKE)
 		_vm->_parser->takeObject(&_vm->_object->_objects[strToInt(argv[1])]);
 	else
 		DebugPrintf("Object not available\n");
@@ -129,7 +129,7 @@ bool HugoConsole::Cmd_getAllObjects(int argc, const char **argv) {
 	}
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) {
-		if (_vm->_object->_objects[i].genericCmd & TAKE)
+		if (_vm->_object->_objects[i]._genericCmd & TAKE)
 			_vm->_parser->takeObject(&_vm->_object->_objects[i]);
 	}
 
@@ -145,7 +145,7 @@ bool HugoConsole::Cmd_boundaries(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->getGameStatus().showBoundariesFl = !_vm->getGameStatus().showBoundariesFl;
+	_vm->getGameStatus()._showBoundariesFl = !_vm->getGameStatus()._showBoundariesFl;
 	return false;
 }
 

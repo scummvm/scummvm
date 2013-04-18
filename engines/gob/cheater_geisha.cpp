@@ -27,11 +27,12 @@
 #include "gob/inter.h"
 
 #include "gob/minigames/geisha/diving.h"
+#include "gob/minigames/geisha/penetration.h"
 
 namespace Gob {
 
-Cheater_Geisha::Cheater_Geisha(GobEngine *vm, Geisha::Diving *diving) :
-	Cheater(vm), _diving(diving) {
+Cheater_Geisha::Cheater_Geisha(GobEngine *vm, Geisha::Diving *diving, Geisha::Penetration *penetration) :
+	Cheater(vm), _diving(diving), _penetration(penetration) {
 
 }
 
@@ -42,6 +43,12 @@ bool Cheater_Geisha::cheat(GUI::Debugger &console) {
 	// A cheat to get around the Diving minigame
 	if (_diving->isPlaying()) {
 		_diving->cheatWin();
+		return false;
+	}
+
+	// A cheat to get around the Penetration minigame
+	if (_penetration->isPlaying()) {
+		_penetration->cheatWin();
 		return false;
 	}
 

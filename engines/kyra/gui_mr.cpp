@@ -104,7 +104,6 @@ int KyraEngine_MR::callbackButton3(Button *button) {
 
 void KyraEngine_MR::showMessage(const char *string, uint8 c0, uint8 c1) {
 	_shownMessage = string;
-	_screen->hideMouse();
 
 	restoreCommandLine();
 	_restoreCommandLine = false;
@@ -118,8 +117,6 @@ void KyraEngine_MR::showMessage(const char *string, uint8 c0, uint8 c1) {
 		_screen->updateScreen();
 		setCommandLineRestoreTimer(7);
 	}
-
-	_screen->showMouse();
 }
 
 void KyraEngine_MR::showMessageFromCCode(int string, uint8 c0, int) {
@@ -330,10 +327,8 @@ void KyraEngine_MR::drawMalcolmsMoodText() {
 		_screen->_curPage = 2;
 	}
 
-	_screen->hideMouse();
 	_screen->drawShape(_screen->_curPage, getShapePtr(432), 244, 189, 0, 0);
 	_text->printText(string, x, y+1, 0xFF, 0xF0, 0x00);
-	_screen->showMouse();
 	_screen->_curPage = pageBackUp;
 }
 
@@ -441,7 +436,6 @@ void KyraEngine_MR::redrawInventory(int page) {
 
 	int pageBackUp = _screen->_curPage;
 	_screen->_curPage = page;
-	_screen->hideMouse();
 
 	for (int i = 0; i < 10; ++i) {
 		clearInventorySlot(i, page);
@@ -451,7 +445,6 @@ void KyraEngine_MR::redrawInventory(int page) {
 		}
 	}
 
-	_screen->showMouse();
 	_screen->_curPage = pageBackUp;
 
 	if (page == 0 || page == 1)
@@ -489,14 +482,12 @@ int KyraEngine_MR::buttonInventory(Button *button) {
 		if (slotItem == kItemNone)
 			return 0;
 
-		_screen->hideMouse();
 		clearInventorySlot(slot, 0);
 		snd_playSoundEffect(0x0B, 0xC8);
 		setMouseCursor(slotItem);
 		updateItemCommand(slotItem, (_lang == 1) ? getItemCommandStringPickUp(slotItem) : 0, 0xFF);
 		_itemInHand = slotItem;
 		_mainCharacter.inventory[slot] = kItemNone;
-		_screen->showMouse();
 	} else if (_itemInHand == 27) {
 		if (_chatText)
 			return 0;
@@ -508,21 +499,17 @@ int KyraEngine_MR::buttonInventory(Button *button) {
 
 			snd_playSoundEffect(0x0B, 0xC8);
 
-			_screen->hideMouse();
 			clearInventorySlot(slot, 0);
 			drawInventorySlot(0, _itemInHand, slot);
 			setMouseCursor(slotItem);
 			updateItemCommand(slotItem, (_lang == 1) ? getItemCommandStringPickUp(slotItem) : 0, 0xFF);
 			_mainCharacter.inventory[slot] = _itemInHand;
 			_itemInHand = slotItem;
-			_screen->showMouse();
 		} else {
 			snd_playSoundEffect(0x0C, 0xC8);
-			_screen->hideMouse();
 			drawInventorySlot(0, _itemInHand, slot);
 			_screen->setMouseCursor(0, 0, getShapePtr(0));
 			updateItemCommand(_itemInHand, (_lang == 1) ? getItemCommandStringInv(_itemInHand) : 2, 0xFF);
-			_screen->showMouse();
 			_mainCharacter.inventory[slot] = _itemInHand;
 			_itemInHand = kItemNone;
 		}
@@ -624,22 +611,18 @@ int KyraEngine_MR::buttonShowScore(Button *button) {
 int KyraEngine_MR::buttonJesterStaff(Button *button) {
 	makeCharFacingMouse();
 	if (_itemInHand == 27) {
-		_screen->hideMouse();
 		removeHandItem();
 		snd_playSoundEffect(0x0C, 0xC8);
 		drawJestersStaff(1, 0);
 		updateItemCommand(27, 2, 0xFF);
 		setGameFlag(0x97);
-		_screen->showMouse();
 	} else if (_itemInHand == kItemNone) {
 		if (queryGameFlag(0x97)) {
-			_screen->hideMouse();
 			snd_playSoundEffect(0x0B, 0xC8);
 			setHandItem(27);
 			drawJestersStaff(0, 0);
 			updateItemCommand(27, 0, 0xFF);
 			resetGameFlag(0x97);
-			_screen->showMouse();
 		} else {
 			if (queryGameFlag(0x2F))
 				objectChat((const char *)getTableEntry(_cCodeFile, 20), 0, 204, 20);
@@ -1108,9 +1091,7 @@ int GUI_MR::redrawButtonCallback(Button *button) {
 	if (!_displayMenu)
 		return 0;
 
-	_screen->hideMouse();
 	_screen->drawBox(button->x + 1, button->y + 1, button->x + button->width - 1, button->y + button->height - 1, 0xD0);
-	_screen->showMouse();
 
 	return 0;
 }
@@ -1119,9 +1100,7 @@ int GUI_MR::redrawShadedButtonCallback(Button *button) {
 	if (!_displayMenu)
 		return 0;
 
-	_screen->hideMouse();
 	_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 0xD1, 0xCF);
-	_screen->showMouse();
 
 	return 0;
 }
@@ -1162,9 +1141,7 @@ int GUI_MR::quitGame(Button *caller) {
 int GUI_MR::optionsButton(Button *button) {
 	PauseTimer pause(*_vm->_timer);
 
-	_screen->hideMouse();
 	updateButton(&_vm->_mainButtonData[0]);
-	_screen->showMouse();
 
 	if (!_vm->_inventoryState && button && !_vm->_menuDirectlyToLoad)
 		return 0;
@@ -1179,9 +1156,7 @@ int GUI_MR::optionsButton(Button *button) {
 
 	if (_vm->_mouseState < -1) {
 		_vm->_mouseState = -1;
-		_screen->hideMouse();
 		_screen->setMouseCursor(1, 1, _vm->getShapePtr(0));
-		_screen->showMouse();
 		return 0;
 	}
 

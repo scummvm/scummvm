@@ -65,7 +65,7 @@ void SoundHE::addSoundToQueue(int sound, int heOffset, int heChannel, int heFlag
 	if (_vm->VAR_LAST_SOUND != 0xFF)
 		_vm->VAR(_vm->VAR_LAST_SOUND) = sound;
 
-	if ((_vm->_game.heversion <= 99 && (heFlags & 16)) || (_vm->_game.heversion == 100 && (heFlags & 8))) {
+	if ((_vm->_game.heversion <= 99 && (heFlags & 16)) || (_vm->_game.heversion >= 100 && (heFlags & 8))) {
 		playHESound(sound, heOffset, heChannel, heFlags);
 		return;
 	} else {

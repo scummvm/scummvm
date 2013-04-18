@@ -27,6 +27,8 @@
 // Misc helpers
 //////////////////////////////////////////////////////////////////////////
 
+#define LOW_BYTE(w)           ((unsigned char)(((unsigned long)(w)) & 0xff))
+
 // Misc
 #define getArchive(name) _engine->getResourceManager()->getFileStream(name)
 #define rnd(value) _engine->getRandom().getRandomNumber(value - 1)

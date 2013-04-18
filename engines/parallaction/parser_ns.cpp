@@ -246,7 +246,7 @@ DECLARE_ANIM_PARSER(file)  {
 
 	char vC8[200];
 	strcpy(vC8, _tokens[1]);
-	if (_engineFlags & kEngineTransformedDonna) {
+	if (g_engineFlags & kEngineTransformedDonna) {
 		if (!scumm_stricmp(_tokens[1], "donnap") || !scumm_stricmp(_tokens[1], "donnapa")) {
 			strcat(vC8, "tras");
 		}

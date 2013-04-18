@@ -31,10 +31,8 @@
 #include "lastexpress/game/state.h"
 
 #include "lastexpress/sound/queue.h"
-#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
-#include "lastexpress/helpers.h"
 
 namespace LastExpress {
 
@@ -124,7 +122,7 @@ IMPLEMENT_FUNCTION_S(8, MmeBoutarel, function8)
 			if (!getEntities()->isPlayerPosition(kCarRedSleeping, 2))
 				getData()->entityPosition = kPosition_2088;
 
-			CALLBACK_ACTION();
+			callbackAction();
 		}
 		break;
 
@@ -211,7 +209,7 @@ IMPLEMENT_FUNCTION(9, MmeBoutarel, function9)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMmeBoutarel);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 5:
@@ -220,7 +218,7 @@ IMPLEMENT_FUNCTION(9, MmeBoutarel, function9)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMmeBoutarel);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -246,7 +244,7 @@ IMPLEMENT_FUNCTION(10, MmeBoutarel, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(MmeBoutarel, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -312,7 +310,7 @@ IMPLEMENT_FUNCTION(11, MmeBoutarel, function11)
 			break;
 
 		case 4:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -402,7 +400,7 @@ IMPLEMENT_FUNCTION(13, MmeBoutarel, function13)
 
 	case kActionNone:
 		if (!getSoundQueue()->isBuffered(kEntityMmeBoutarel) && params->param6 != kTimeInvalid) {
-			UPDATE_PARAM_PROC_TIME(params->param1, !getEntities()->isDistanceBetweenEntities(kEntityMmeBoutarel, kEntityPlayer, 2000), params->param6, 0)
+			if (Entity::updateParameterTime((TimeValue)params->param1, !getEntities()->isDistanceBetweenEntities(kEntityMmeBoutarel, kEntityPlayer, 2000), params->param6, 0)) {
 				getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
 				getObjects()->update(kObject51, kEntityPlayer, kObjectLocation1, kCursorNormal, kCursorNormal);
 
@@ -414,22 +412,24 @@ IMPLEMENT_FUNCTION(13, MmeBoutarel, function13)
 				setCallback(1);
 				setup_playSound("MME1037");
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 label_callback_1:
 		if (getProgress().field_24 && params->param7 != kTimeInvalid) {
-			UPDATE_PARAM_PROC_TIME(kTime1093500, (!params->param5 || !getEntities()->isPlayerInCar(kCarRedSleeping)), params->param7, 0)
+			if (Entity::updateParameterTime(kTime1093500, (!params->param5 || !getEntities()->isPlayerInCar(kCarRedSleeping)), params->param7, 0)) {
 				setCallback(2);
 				setup_function11();
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
-		TIME_CHECK(kTime1094400, params->param8, setup_function14);
+		if (Entity::timeCheck(kTime1094400, params->param8, WRAP_SETUP_FUNCTION(MmeBoutarel, setup_function14)))
+			break;
 
 		if (params->param4) {
-			UPDATE_PARAM(CURRENT_PARAM(1, 1), getState()->timeTicks, 75);
+			if (!Entity::updateParameter(CURRENT_PARAM(1, 1), getState()->timeTicks, 75))
+				break;
 
 			params->param3 = 1;
 			params->param4 = 0;
@@ -589,7 +589,8 @@ IMPLEMENT_FUNCTION(15, MmeBoutarel, function15)
 
 label_callback_5:
 		if (params->param2) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 1;
 			params->param2 = 0;
@@ -1018,7 +1019,8 @@ IMPLEMENT_FUNCTION(23, MmeBoutarel, chapter4Handler)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param2, getState()->time, 900);
+			if (!Entity::updateParameter(params->param2, getState()->time, 900))
+				break;
 
 			getObjects()->update(kObjectCompartmentD, kEntityPlayer, kObjectLocation1, kCursorKeepValue, kCursorKeepValue);
 
@@ -1064,10 +1066,12 @@ IMPLEMENT_FUNCTION(24, MmeBoutarel, function24)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTime2470500, params->param4, setup_function25);
+		if (Entity::timeCheck(kTime2470500, params->param4, WRAP_SETUP_FUNCTION(MmeBoutarel, setup_function25)))
+			break;
 
 		if (params->param2) {
-			UPDATE_PARAM(params->param5, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param5, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 1;
 			params->param2 = 0;
@@ -1210,7 +1214,8 @@ IMPLEMENT_FUNCTION(28, MmeBoutarel, function28)
 
 	case kActionNone:
 		if (params->param1) {
-			UPDATE_PARAM(params->param3, getState()->timeTicks, 75);
+			if (!Entity::updateParameter(params->param3, getState()->timeTicks, 75))
+				break;
 
 			params->param1 = 0;
 			params->param2 = 1;

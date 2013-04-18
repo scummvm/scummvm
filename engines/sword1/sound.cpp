@@ -142,7 +142,7 @@ void Sound::checkSpeechFileEndianness() {
 				be_diff_sum += fabs((double)(be_value - prev_be_value));
 				prev_be_value = be_value;
 			}
-			delete [] data;
+			delete[] data;
 		}
 		// Set the big endian flag
 		_bigEndianSpeech = (be_diff_sum < le_diff_sum);

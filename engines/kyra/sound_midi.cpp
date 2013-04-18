@@ -475,8 +475,8 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 		::GUI::MessageDialog dialog(_("You appear to be using a General MIDI device,\n"
 									"but your game only supports Roland MT32 MIDI.\n"
 									"We try to map the Roland MT32 instruments to\n"
-									"General MIDI ones. After all it might happen\n"
-									"that a few tracks will not be correctly played."));
+									"General MIDI ones. It is still possible that\n"
+									"some tracks sound incorrect."));
 		dialog.runModal();
 	}
 }

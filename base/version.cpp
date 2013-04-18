@@ -94,6 +94,10 @@ const char *gScummVMFeatures = ""
 	"SEQ "
 #endif
 
+#ifdef USE_SNDIO
+	"sndio "
+#endif
+
 #ifdef USE_TIMIDITY
 	"TiMidity "
 #endif

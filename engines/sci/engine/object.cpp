@@ -44,15 +44,15 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 		error("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
 		return false;
 	}
-	block[idx].segment = segment; // Perform relocation
+	block[idx].setSegment(segment); // Perform relocation
 	if (getSciVersion() >= SCI_VERSION_1_1 && getSciVersion() <= SCI_VERSION_2_1)
-		block[idx].offset += scriptSize;
+		block[idx].incOffset(scriptSize);
 
 	return true;
 }
 
 void Object::init(byte *buf, reg_t obj_pos, bool initVariables) {
-	byte *data = buf + obj_pos.offset;
+	byte *data = buf + obj_pos.getOffset();
 	_baseObj = data;
 	_pos = obj_pos;
 
@@ -109,16 +109,16 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
 }
 
 bool Object::relocateSci0Sci21(SegmentId segment, int location, size_t scriptSize) {
-	return relocateBlock(_variables, getPos().offset, segment, location, scriptSize);
+	return relocateBlock(_variables, getPos().getOffset(), segment, location, scriptSize);
 }
 
-bool Object::relocateSci3(SegmentId segment, int location, int offset, size_t scriptSize) {
+bool Object::relocateSci3(SegmentId segment, uint32 location, int offset, size_t scriptSize) {
 	assert(_propertyOffsetsSci3);
 
 	for (uint i = 0; i < _variables.size(); ++i) {
 		if (location == _propertyOffsetsSci3[i]) {
-			_variables[i].segment = segment;
-			_variables[i].offset += offset;
+			_variables[i].setSegment(segment);
+			_variables[i].incOffset(offset);
 			return true;
 		}
 	}
@@ -148,21 +148,21 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 }
 
 void Object::initSpecies(SegManager *segMan, reg_t addr) {
-	uint16 speciesOffset = getSpeciesSelector().offset;
+	uint16 speciesOffset = getSpeciesSelector().getOffset();
 
 	if (speciesOffset == 0xffff)		// -1
 		setSpeciesSelector(NULL_REG);	// no species
 	else
-		setSpeciesSelector(segMan->getClassAddress(speciesOffset, SCRIPT_GET_LOCK, addr));
+		setSpeciesSelector(segMan->getClassAddress(speciesOffset, SCRIPT_GET_LOCK, addr.getSegment()));
 }
 
 void Object::initSuperClass(SegManager *segMan, reg_t addr) {
-	uint16 superClassOffset = getSuperClassSelector().offset;
+	uint16 superClassOffset = getSuperClassSelector().getOffset();
 
 	if (superClassOffset == 0xffff)			// -1
 		setSuperClassSelector(NULL_REG);	// no superclass
 	else
-		setSuperClassSelector(segMan->getClassAddress(superClassOffset, SCRIPT_GET_LOCK, addr));
+		setSuperClassSelector(segMan->getClassAddress(superClassOffset, SCRIPT_GET_LOCK, addr.getSegment()));
 }
 
 bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass) {
@@ -187,7 +187,7 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 
 			// The effect is that a number of its method selectors may be
 			// treated as variable selectors, causing unpredictable effects.
-			int objScript = segMan->getScript(_pos.segment)->getScriptNumber();
+			int objScript = segMan->getScript(_pos.getSegment())->getScriptNumber();
 
 			// We have to do a little bit of work to get the name of the object
 			// before any relocations are done.
@@ -196,7 +196,7 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClas
 			if (nameReg.isNull()) {
 				name = "<no name>";
 			} else {
-				nameReg.segment = _pos.segment;
+				nameReg.setSegment(_pos.getSegment());
 				name = segMan->derefString(nameReg);
 				if (!name)
 					name = "<invalid name>";
@@ -286,7 +286,7 @@ void Object::initSelectorsSci3(const byte *buf) {
 	_variables.resize(properties);
 	uint16 *propertyIds = (uint16 *)malloc(sizeof(uint16) * properties);
 //	uint16 *methodOffsets = (uint16 *)malloc(sizeof(uint16) * 2 * methods);
-	uint16 *propertyOffsets = (uint16 *)malloc(sizeof(uint16) * properties);
+	uint32 *propertyOffsets = (uint32 *)malloc(sizeof(uint32) * properties);
 	int propertyCounter = 0;
 	int methodCounter = 0;
 
@@ -314,7 +314,8 @@ void Object::initSelectorsSci3(const byte *buf) {
 					WRITE_SCI11ENDIAN_UINT16(&propertyIds[propertyCounter],
 					                         groupBaseId + bit);
 					_variables[propertyCounter] = make_reg(0, value);
-					propertyOffsets[propertyCounter] = (seeker + bit * 2) - buf;
+					uint32 propertyOffset = (seeker + bit * 2) - buf;
+					propertyOffsets[propertyCounter] = propertyOffset;
 					++propertyCounter;
 				} else if (value != 0xffff) { // Method
 					_baseMethod.push_back(groupBaseId + bit);

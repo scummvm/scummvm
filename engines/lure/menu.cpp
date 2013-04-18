@@ -276,11 +276,11 @@ uint16 PopupMenu::ShowInventory() {
 
 	HotspotDataList::iterator i;
 	for (i = rsc.hotspotData().begin(); i != rsc.hotspotData().end(); ++i) {
-		HotspotData *hotspot = (*i).get();
-		if (hotspot->roomNumber == PLAYER_ID) {
-			idList[itemCtr] = hotspot->hotspotId;
+		HotspotData const &hotspot = **i;
+		if (hotspot.roomNumber == PLAYER_ID) {
+			idList[itemCtr] = hotspot.hotspotId;
 			char *hotspotName = itemNames[itemCtr++] = (char *) malloc(MAX_HOTSPOT_NAME_SIZE);
-			strings.getString(hotspot->nameId, hotspotName);
+			strings.getString(hotspot.nameId, hotspotName);
 		}
 	}
 
@@ -317,52 +317,52 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 
 	// Loop for rooms
 	for (ir = rooms.begin(); ir != rooms.end(); ++ir) {
-		RoomData *roomData = (*ir).get();
+		RoomData const &roomData = **ir;
 		// Pre-condition checks for whether to skip room
-		if ((roomData->hdrFlags != 15) && ((roomData->hdrFlags & fields.hdrFlagMask()) == 0))
+		if ((roomData.hdrFlags != 15) && ((roomData.hdrFlags & fields.hdrFlagMask()) == 0))
 			continue;
-		if (((roomData->flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((roomData->flags & HOTSPOTFLAG_FOUND) == 0))
+		if (((roomData.flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((roomData.flags & HOTSPOTFLAG_FOUND) == 0))
 			continue;
-		if ((roomData->actions & contextBitflag) == 0)
+		if ((roomData.actions & contextBitflag) == 0)
 			continue;
 
 		// Add room to list of entries to display
 		if (numItems == MAX_NUM_DISPLAY_ITEMS) error("Out of space in ask list");
-		entryIds[numItems] = roomData->roomNumber;
-		nameIds[numItems] = roomData->roomNumber;
+		entryIds[numItems] = roomData.roomNumber;
+		nameIds[numItems] = roomData.roomNumber;
 		entryNames[numItems] = (char *) Memory::alloc(MAX_HOTSPOT_NAME_SIZE);
-		strings.getString(roomData->roomNumber, entryNames[numItems]);
+		strings.getString(roomData.roomNumber, entryNames[numItems]);
 		++numItems;
 	}
 
 	// Loop for hotspots
 	for (ih = hotspots.begin(); ih != hotspots.end(); ++ih) {
-		HotspotData *hotspot = (*ih).get();
+		HotspotData const &hotspot = **ih;
 
-		if ((hotspot->headerFlags != 15) &&
-			((hotspot->headerFlags & fields.hdrFlagMask()) == 0))
+		if ((hotspot.headerFlags != 15) &&
+			((hotspot.headerFlags & fields.hdrFlagMask()) == 0))
 			continue;
 
-		if (((hotspot->flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((hotspot->flags & HOTSPOTFLAG_FOUND) == 0))
+		if (((hotspot.flags & HOTSPOTFLAG_MENU_EXCLUSION) != 0) || ((hotspot.flags & HOTSPOTFLAG_FOUND) == 0))
 			// Skip the current hotspot
 			continue;
 
 		// If the hotspot is room specific, skip if the character will not be in the specified room
-		if (((hotspot->flags & HOTSPOTFLAG_ROOM_SPECIFIC) != 0) &&
-			(hotspot->roomNumber != roomNumber))
+		if (((hotspot.flags & HOTSPOTFLAG_ROOM_SPECIFIC) != 0) &&
+			(hotspot.roomNumber != roomNumber))
 			continue;
 
 		// If hotspot does not allow action, then skip it
-		if ((hotspot->actions & contextBitflag) == 0)
+		if ((hotspot.actions & contextBitflag) == 0)
 			continue;
 
 		// If a special hotspot Id, then skip displaying
-		if ((hotspot->nameId == 0x17A) || (hotspot->nameId == 0x147))
+		if ((hotspot.nameId == 0x17A) || (hotspot.nameId == 0x147))
 			continue;
 
 		// Check if the hotspot's name is already used in an already set item
 		itemCtr = 0;
-		while ((itemCtr < numItems) && (nameIds[itemCtr] != hotspot->nameId))
+		while ((itemCtr < numItems) && (nameIds[itemCtr] != hotspot.nameId))
 			++itemCtr;
 		if (itemCtr != numItems)
 			// Item's name is already present - skip hotspot
@@ -370,10 +370,10 @@ uint16 PopupMenu::ShowItems(Action contextAction, uint16 roomNumber) {
 
 		// Add hotspot to list of entries to display
 		if (numItems == MAX_NUM_DISPLAY_ITEMS) error("Out of space in ask list");
-		entryIds[numItems] = hotspot->hotspotId;
-		nameIds[numItems] = hotspot->nameId;
+		entryIds[numItems] = hotspot.hotspotId;
+		nameIds[numItems] = hotspot.nameId;
 		entryNames[numItems] = (char *) Memory::alloc(MAX_HOTSPOT_NAME_SIZE);
-		strings.getString(hotspot->nameId, entryNames[numItems]);
+		strings.getString(hotspot.nameId, entryNames[numItems]);
 		++numItems;
 	}
 

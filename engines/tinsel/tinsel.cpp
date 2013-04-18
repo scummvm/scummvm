@@ -109,8 +109,8 @@ static Scene g_NextScene = { 0, 0, 0 };
 static Scene g_HookScene = { 0, 0, 0 };
 static Scene g_DelayedScene = { 0, 0, 0 };
 
-static PROCESS *g_pMouseProcess = 0;
-static PROCESS *g_pKeyboardProcess = 0;
+static Common::PROCESS *g_pMouseProcess = 0;
+static Common::PROCESS *g_pKeyboardProcess = 0;
 
 static SCNHANDLE g_hCdChangeScene;
 
@@ -324,7 +324,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 
 				if (TinselV2) {
 					// Kill off the button process and fire off the action command
-					g_scheduler->killMatchingProcess(PID_BTN_CLICK, -1);
+					CoroScheduler.killMatchingProcess(PID_BTN_CLICK, -1);
 					PlayerEvent(PLR_ACTION, _ctx->clickPos);
 				} else {
 					// signal left drag start
@@ -368,7 +368,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 				// will activate a single button click
 				if (TinselV2 && ControlIsOn()) {
 					_ctx->clickPos = mousePos;
-					g_scheduler->createProcess(PID_BTN_CLICK, SingleLeftProcess, &_ctx->clickPos, sizeof(Common::Point));
+					CoroScheduler.createProcess(PID_BTN_CLICK, SingleLeftProcess, &_ctx->clickPos, sizeof(Common::Point));
 				}
 			} else
 				_ctx->lastLeftClick -= _vm->_config->_dclickSpeed;
@@ -616,11 +616,11 @@ static void RestoredProcess(CORO_PARAM, const void *param) {
 }
 
 void RestoreProcess(INT_CONTEXT *pic) {
-	g_scheduler->createProcess(PID_TCODE, RestoredProcess, &pic, sizeof(pic));
+	CoroScheduler.createProcess(PID_TCODE, RestoredProcess, &pic, sizeof(pic));
 }
 
 void RestoreMasterProcess(INT_CONTEXT *pic) {
-	g_scheduler->createProcess(PID_MASTER_SCR, RestoredProcess, &pic, sizeof(pic));
+	CoroScheduler.createProcess(PID_MASTER_SCR, RestoredProcess, &pic, sizeof(pic));
 }
 
 // FIXME: CountOut is used by ChangeScene
@@ -878,7 +878,6 @@ TinselEngine::~TinselEngine() {
 	FreeObjectList();
 	FreeGlobalProcesses();
 	FreeGlobals();
-	delete _scheduler;
 
 	delete _config;
 
@@ -905,7 +904,7 @@ Common::Error TinselEngine::run() {
 
 	_console = new Console();
 
-	_scheduler = new Scheduler();
+	CoroScheduler.reset();
 
 	InitSysVars();
 
@@ -1022,7 +1021,7 @@ void TinselEngine::NextGameCycle() {
 	ResetEcount();
 
 	// schedule process
-	_scheduler->schedule();
+	CoroScheduler.schedule();
 
 	if (_bmv->MoviePlaying())
 		_bmv->CopyMovieToScreen();
@@ -1078,11 +1077,11 @@ bool TinselEngine::pollEvent() {
  */
 void TinselEngine::CreateConstProcesses() {
 	// Process to run the master script
-	_scheduler->createProcess(PID_MASTER_SCR, MasterScriptProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_MASTER_SCR, MasterScriptProcess, NULL, 0);
 
 	// Processes to run the cursor and inventory,
-	_scheduler->createProcess(PID_CURSOR, CursorProcess, NULL, 0);
-	_scheduler->createProcess(PID_INVENTORY, InventoryProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_CURSOR, CursorProcess, NULL, 0);
+	CoroScheduler.createProcess(PID_INVENTORY, InventoryProcess, NULL, 0);
 }
 
 /**
@@ -1132,11 +1131,11 @@ void TinselEngine::RestartDrivers() {
 	KillAllObjects();
 
 	// init the process scheduler
-	_scheduler->reset();
+	CoroScheduler.reset();
 
 	// init the event handlers
-	g_pMouseProcess = _scheduler->createProcess(PID_MOUSE, MouseProcess, NULL, 0);
-	g_pKeyboardProcess = _scheduler->createProcess(PID_KEYBOARD, KeyboardProcess, NULL, 0);
+	g_pMouseProcess = CoroScheduler.createProcess(PID_MOUSE, MouseProcess, NULL, 0);
+	g_pKeyboardProcess = CoroScheduler.createProcess(PID_KEYBOARD, KeyboardProcess, NULL, 0);
 
 	// open MIDI files
 	OpenMidiFiles();
@@ -1164,8 +1163,8 @@ void TinselEngine::ChopDrivers() {
 	DeleteMidiBuffer();
 
 	// remove event drivers
-	_scheduler->killProcess(g_pMouseProcess);
-	_scheduler->killProcess(g_pKeyboardProcess);
+	CoroScheduler.killProcess(g_pMouseProcess);
+	CoroScheduler.killProcess(g_pKeyboardProcess);
 }
 
 /**

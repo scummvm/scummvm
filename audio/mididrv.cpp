@@ -240,7 +240,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 				devStr = ConfMan.hasKey("gm_device") ? ConfMan.get("gm_device") : Common::String("null");
 			else
 				devStr = "auto";
-			
+
 			// Default to Null device here, since we also register a default null setting for
 			// the MT32 or GM device in the config manager.
 			hdl = getDeviceHandle(devStr.empty() ? Common::String("null") : devStr);

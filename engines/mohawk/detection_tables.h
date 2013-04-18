@@ -204,24 +204,6 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Myst Masterpiece Edition
-	// English Windows
-	// From clone2727
-	{
-		{
-			"myst",
-			"Masterpiece Edition",
-			AD_ENTRY1("MYST.DAT", "c4cae9f143b5947262e6cb2397e1617e"),
-			Common::EN_ANY,
-			Common::kPlatformMacintosh,
-			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
-		},
-		GType_MYST,
-		GF_ME,
-		0,
-	},
-
-	// Myst Masterpiece Edition
 	// German Windows
 	// From DrMcCoy (Included in "Myst: Die Trilogie")
 	{
@@ -376,7 +358,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO1(GUIO_NOASPECT)
+			GUIO2(GUIO_NOASPECT, GUIO_NOLAUNCHLOAD)
 		},
 		GType_RIVEN,
 		GF_DEMO,

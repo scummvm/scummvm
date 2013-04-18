@@ -42,9 +42,7 @@ void TextDisplayer_HoF::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
 void TextDisplayer_HoF::restoreScreen() {
 	_vm->restorePage3();
 	_vm->drawAnimObjects();
-	_screen->hideMouse();
 	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, 2, 0, Screen::CR_NO_P_CHECK);
-	_screen->showMouse();
 	_vm->flagAnimObjsForRefresh();
 	_vm->refreshAnimObjects(0);
 }
@@ -57,8 +55,6 @@ void TextDisplayer_HoF::printCustomCharacterText(const char *text, int x, int y,
 	y = MAX(0, y - (lineCount * 10));
 	int x1 = 0, x2 = 0;
 	calcWidestLineBounds(x1, x2, w, x);
-
-	_screen->hideMouse();
 
 	_talkCoords.x = x1;
 	_talkCoords.w = w+2;
@@ -78,7 +74,6 @@ void TextDisplayer_HoF::printCustomCharacterText(const char *text, int x, int y,
 	}
 
 	_screen->_curPage = curPageBackUp;
-	_screen->showMouse();
 }
 
 char *TextDisplayer_HoF::preprocessString(const char *str) {
@@ -248,8 +243,6 @@ void KyraEngine_HoF::objectChatInit(const char *str, int object, int vocHigh, in
 	restorePage3();
 	_text->backupTalkTextMessageBkgd(2, 2);
 
-	_screen->hideMouse();
-
 	_chatTextEnabled = textEnabled();
 	if (_chatTextEnabled) {
 		objectChatPrintText(str, object);
@@ -264,8 +257,6 @@ void KyraEngine_HoF::objectChatInit(const char *str, int object, int vocHigh, in
 	} else {
 		_chatVocHigh = _chatVocLow = -1;
 	}
-
-	_screen->showMouse();
 }
 
 void KyraEngine_HoF::objectChatPrintText(const char *str, int object) {

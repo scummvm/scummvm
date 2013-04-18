@@ -160,7 +160,7 @@ void GraphicsManager::mergePlanes() {
 
 void GraphicsManager::updateScreen() {
 	g_system->fillScreen(0);
-	g_system->copyRectToScreen((byte *)_screen.getBasePtr(0, 0), 640 * 2, 0, 0, 640, 480);
+	g_system->copyRectToScreen(_screen.getBasePtr(0, 0), 640 * 2, 0, 0, 640, 480);
 }
 
 } // End of namespace LastExpress

@@ -153,7 +153,7 @@ const int AdLibSoundDriver::_freqTable[] = {
 const int AdLibSoundDriver::_freqTableCount = ARRAYSIZE(_freqTable);
 
 const int AdLibSoundDriver::_operatorsTable[] = {
-	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13,	16, 17, 18, 19, 20, 21
+	0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21
 };
 
 const int AdLibSoundDriver::_operatorsTableCount = ARRAYSIZE(_operatorsTable);
@@ -614,7 +614,7 @@ void AdLibSoundDriverADL::playSample(const byte *data, int size, int channel, in
 }
 
 MidiSoundDriverH32::MidiSoundDriverH32(MidiDriver *output)
-    : _output(output), _callback(0), _mutex() {
+	: _output(output), _callback(0), _mutex() {
 }
 
 MidiSoundDriverH32::~MidiSoundDriverH32() {
@@ -731,13 +731,13 @@ void MidiSoundDriverH32::selectInstrument(int channel, int timbreGroup, int timb
 		0x00, 0x00, 0x00,       // offset
 		0x00, // Timbre group   _ timbreGroup * 64 + timbreNumber should be the
 		0x00, // Timbre number /  MT-32 instrument in case timbreGroup is 0 or 1.
-		0x18, // Key shift (= 0) 
+		0x18, // Key shift (= 0)
 		0x32, // Fine tune (= 0)
 		0x0C, // Bender Range
 		0x03, // Assign Mode
 		0x01, // Reverb Switch (= enabled)
 		0x00, // dummy
-		0x00, // Output level 
+		0x00, // Output level
 		0x07, // Panpot (= balanced)
 		0x00, // dummy
 		0x00, // dummy
@@ -785,13 +785,14 @@ PCSoundFxPlayer::~PCSoundFxPlayer() {
 
 bool PCSoundFxPlayer::load(const char *song) {
 	debug(9, "PCSoundFxPlayer::load('%s')", song);
-	Common::StackLock lock(_mutex);
 
 	/* stop (w/ fade out) the previous song */
 	while (_fadeOutCounter != 0 && _fadeOutCounter < 100) {
 		g_system->delayMillis(50);
 	}
 	_fadeOutCounter = 0;
+
+	Common::StackLock lock(_mutex);
 
 	stop();
 
@@ -997,19 +998,55 @@ void PCSound::stopSound(int channel) {
 }
 
 PaulaSound::PaulaSound(Audio::Mixer *mixer, CineEngine *vm)
-	: Sound(mixer, vm) {
+	: Sound(mixer, vm), _sfxTimer(0), _musicTimer(0), _musicFadeTimer(0) {
 	_moduleStream = 0;
+	// The original is using the following timer frequency:
+	// 0.709379Mhz / 8000 = 88.672375Hz
+	// 1000000 / 88.672375Hz = 11277.46944863us
+	g_system->getTimerManager()->installTimerProc(&PaulaSound::sfxTimerProc, 11277, this, "PaulaSound::sfxTimerProc");
+	// The original is using the following timer frequency:
+	// 0.709379Mhz / 14565 = 48.704359Hz
+	// 1000000 / 48.704359Hz = 20532.04313806us
+	g_system->getTimerManager()->installTimerProc(&PaulaSound::musicTimerProc, 20532, this, "PaulaSound::musicTimerProc");
 }
 
 PaulaSound::~PaulaSound() {
+	Common::StackLock sfxLock(_sfxMutex);
+	g_system->getTimerManager()->removeTimerProc(&PaulaSound::sfxTimerProc);
 	for (int i = 0; i < NUM_CHANNELS; ++i) {
 		stopSound(i);
 	}
+
+	Common::StackLock musicLock(_musicMutex);
+	g_system->getTimerManager()->removeTimerProc(&PaulaSound::musicTimerProc);
 	stopMusic();
 }
 
 void PaulaSound::loadMusic(const char *name) {
 	debugC(5, kCineDebugSound, "PaulaSound::loadMusic('%s')", name);
+	for (int i = 0; i < NUM_CHANNELS; ++i) {
+		stopSound(i);
+	}
+
+	// Fade music out when there is music playing.
+	_musicMutex.lock();
+	if (_mixer->isSoundHandleActive(_moduleHandle)) {
+		// Only start fade out when it is not in progress.
+		if (!_musicFadeTimer) {
+			_musicFadeTimer = 1;
+		}
+
+		_musicMutex.unlock();
+		while (_musicFadeTimer != 64) {
+			g_system->delayMillis(50);
+		}
+	} else {
+		_musicMutex.unlock();
+	}
+
+	Common::StackLock lock(_musicMutex);
+	assert(!_mixer->isSoundHandleActive(_moduleHandle));
+
 	if (_vm->getGameType() == GType_FW) {
 		// look for separate files
 		Common::File f;
@@ -1030,54 +1067,135 @@ void PaulaSound::loadMusic(const char *name) {
 
 void PaulaSound::playMusic() {
 	debugC(5, kCineDebugSound, "PaulaSound::playMusic()");
+	Common::StackLock lock(_musicMutex);
+
 	_mixer->stopHandle(_moduleHandle);
 	if (_moduleStream) {
+		_musicFadeTimer = 0;
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_moduleHandle, _moduleStream);
 	}
 }
 
 void PaulaSound::stopMusic() {
 	debugC(5, kCineDebugSound, "PaulaSound::stopMusic()");
+	Common::StackLock lock(_musicMutex);
+
 	_mixer->stopHandle(_moduleHandle);
 }
 
 void PaulaSound::fadeOutMusic() {
 	debugC(5, kCineDebugSound, "PaulaSound::fadeOutMusic()");
-	// TODO
-	stopMusic();
+	Common::StackLock lock(_musicMutex);
+
+	_musicFadeTimer = 1;
 }
 
 void PaulaSound::playSound(int channel, int frequency, const uint8 *data, int size, int volumeStep, int stepCount, int volume, int repeat) {
-	// TODO: handle volume slides and repeat
 	debugC(5, kCineDebugSound, "PaulaSound::playSound() channel %d size %d", channel, size);
+	Common::StackLock lock(_sfxMutex);
+	assert(frequency > 0);
+
 	stopSound(channel);
-	size = MIN<int>(size - SPL_HDR_SIZE, READ_BE_UINT16(data + 4));
-	// TODO: consider skipping the header in loadSpl directly
 	if (size > 0) {
 		byte *sound = (byte *)malloc(size);
 		if (sound) {
-			memcpy(sound, data + SPL_HDR_SIZE, size);
-			playSoundChannel(channel, frequency, sound, size, volume);
+			// Create the audio stream
+			memcpy(sound, data, size);
+
+			// Clear the first and last 16 bits like in the original.
+			sound[0] = sound[1] = sound[size - 2] = sound[size - 1] = 0;
+
+			Audio::SeekableAudioStream *stream = Audio::makeRawStream(sound, size, PAULA_FREQ / frequency, 0);
+
+			// Initialize the volume control
+			_channelsTable[channel].initialize(volume, volumeStep, stepCount);
+
+			// Start the sfx
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channelsTable[channel].handle,
+			                   Audio::makeLoopingAudioStream(stream, repeat ? 0 : 1),
+			                   -1, volume * Audio::Mixer::kMaxChannelVolume / 63,
+			                   _channelBalance[channel]);
 		}
 	}
 }
 
 void PaulaSound::stopSound(int channel) {
 	debugC(5, kCineDebugSound, "PaulaSound::stopSound() channel %d", channel);
-	_mixer->stopHandle(_channelsTable[channel]);
+	Common::StackLock lock(_sfxMutex);
+
+	_mixer->stopHandle(_channelsTable[channel].handle);
 }
 
-void PaulaSound::update() {
-	// process volume slides and start sound playback
-	// TODO
+void PaulaSound::sfxTimerProc(void *param) {
+	PaulaSound *sound = (PaulaSound *)param;
+	sound->sfxTimerCallback();
 }
 
-void PaulaSound::playSoundChannel(int channel, int frequency, uint8 *data, int size, int volume) {
-	assert(frequency > 0);
-	frequency = PAULA_FREQ / frequency;
-	Audio::AudioStream *stream = Audio::makeRawStream(data, size, frequency, 0);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], stream);
-	_mixer->setChannelVolume(_channelsTable[channel], volume * Audio::Mixer::kMaxChannelVolume / 63);
+void PaulaSound::sfxTimerCallback() {
+	Common::StackLock lock(_sfxMutex);
+
+	if (_sfxTimer < 6) {
+		++_sfxTimer;
+
+		for (int i = 0; i < NUM_CHANNELS; ++i) {
+			// Only process active channels
+			if (!_mixer->isSoundHandleActive(_channelsTable[i].handle)) {
+				continue;
+			}
+
+			if (_channelsTable[i].curStep) {
+				--_channelsTable[i].curStep;
+			} else {
+				_channelsTable[i].curStep = _channelsTable[i].stepCount;
+				const int volume = CLIP(_channelsTable[i].volume + _channelsTable[i].volumeStep, 0, 63);
+				_channelsTable[i].volume = volume;
+				// Unlike the original we stop silent sounds
+				if (volume) {
+					_mixer->setChannelVolume(_channelsTable[i].handle, volume * Audio::Mixer::kMaxChannelVolume / 63);
+				} else {
+					_mixer->stopHandle(_channelsTable[i].handle);
+				}
+			}
+		}
+	} else {
+		_sfxTimer = 0;
+		// Possible TODO: The original only ever started sounds here. This
+		// should not be noticable though. So we do not do it for now.
+	}
 }
+
+void PaulaSound::musicTimerProc(void *param) {
+	PaulaSound *sound = (PaulaSound *)param;
+	sound->musicTimerCallback();
+}
+
+void PaulaSound::musicTimerCallback() {
+	Common::StackLock lock(_musicMutex);
+
+	++_musicTimer;
+	if (_musicTimer == 6) {
+		_musicTimer = 0;
+		if (_musicFadeTimer) {
+			++_musicFadeTimer;
+			if (_musicFadeTimer == 64) {
+				stopMusic();
+			} else {
+				if (_mixer->isSoundHandleActive(_moduleHandle)) {
+					_mixer->setChannelVolume(_moduleHandle, (64 - _musicFadeTimer) * Audio::Mixer::kMaxChannelVolume / 64);
+				}
+			}
+		}
+	}
+}
+
+const int PaulaSound::_channelBalance[NUM_CHANNELS] = {
+	// L/R/R/L This is according to the Hardware Reference Manual.
+	// TODO: It seems the order is swapped for some Amiga models:
+	// http://www.amiga.org/forums/archive/index.php/t-7862.html
+	// Maybe we should consider using R/L/L/R to match Amiga 500?
+	// This also is a bit more drastic to what WineUAE defaults,
+	// which is only 70% of full panning.
+	-127, 127, 127, -127
+};
 
 } // End of namespace Cine

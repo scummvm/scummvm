@@ -307,7 +307,7 @@ DECLARE_COMMAND_OPCODE(testsfx) {
 
 
 DECLARE_COMMAND_OPCODE(ret) {
-	_engineFlags |= kEngineReturn;
+	g_engineFlags |= kEngineReturn;
 }
 
 
@@ -327,7 +327,7 @@ DECLARE_INSTRUCTION_OPCODE(invalid) {
 DECLARE_COMMAND_OPCODE(clear) {
 	if (ctxt._cmd->_flags & kFlagsGlobal) {
 		ctxt._cmd->_flags &= ~kFlagsGlobal;
-		_globalFlags &= ~ctxt._cmd->_flags;
+		g_globalFlags &= ~ctxt._cmd->_flags;
 	} else {
 		_vm->clearLocationFlags(ctxt._cmd->_flags);
 	}
@@ -356,7 +356,7 @@ DECLARE_COMMAND_OPCODE(get) {
 DECLARE_COMMAND_OPCODE(toggle) {
 	if (ctxt._cmd->_flags & kFlagsGlobal) {
 		ctxt._cmd->_flags &= ~kFlagsGlobal;
-		_globalFlags ^= ctxt._cmd->_flags;
+		g_globalFlags ^= ctxt._cmd->_flags;
 	} else {
 		_vm->toggleLocationFlags(ctxt._cmd->_flags);
 	}
@@ -373,7 +373,7 @@ DECLARE_COMMAND_OPCODE(invalid) {
 DECLARE_COMMAND_OPCODE(set) {
 	if (ctxt._cmd->_flags & kFlagsGlobal) {
 		ctxt._cmd->_flags &= ~kFlagsGlobal;
-		_globalFlags |= ctxt._cmd->_flags;
+		g_globalFlags |= ctxt._cmd->_flags;
 	} else {
 		_vm->setLocationFlags(ctxt._cmd->_flags);
 	}

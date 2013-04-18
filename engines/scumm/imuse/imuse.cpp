@@ -164,7 +164,7 @@ bool IMuseInternal::isMT32(int sound) {
 		return true;
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
-		return true;
+		return false;
 
 	case MKTAG('G', 'M', 'D', ' '):
 		return false;
@@ -207,6 +207,45 @@ bool IMuseInternal::isMIDI(int sound) {
 
 	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
 		return true;
+
+	case MKTAG('G', 'M', 'D', ' '):
+	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max
+		return true;
+	}
+
+	// Old style 'RO' has equivalent properties to 'ROL'
+	if (ptr[0] == 'R' && ptr[1] == 'O')
+		return true;
+	// Euphony tracks show as 'SO' and have equivalent properties to 'ADL'
+	// FIXME: Right now we're pretending it's GM.
+	if (ptr[4] == 'S' && ptr[5] == 'O')
+		return true;
+
+	error("Unknown music type: '%c%c%c%c'", (char)tag >> 24, (char)tag >> 16, (char)tag >> 8, (char)tag);
+
+	return false;
+}
+
+bool IMuseInternal::supportsPercussion(int sound) {
+	byte *ptr = g_scumm->_res->_types[rtSound][sound]._address;
+	if (ptr == NULL)
+		return false;
+
+	uint32 tag = READ_BE_UINT32(ptr);
+	switch (tag) {
+	case MKTAG('A', 'D', 'L', ' '):
+	case MKTAG('A', 'S', 'F', 'X'): // Special AD class for old AdLib sound effects
+	case MKTAG('S', 'P', 'K', ' '):
+		return false;
+
+	case MKTAG('A', 'M', 'I', ' '):
+	case MKTAG('R', 'O', 'L', ' '):
+		return true;
+
+	case MKTAG('M', 'A', 'C', ' '): // Occurs in the Mac version of FOA and MI2
+		// This is MIDI, i.e. uses MIDI style program changes, but without a
+		// special percussion channel.
+		return false;
 
 	case MKTAG('G', 'M', 'D', ' '):
 	case MKTAG('M', 'I', 'D', 'I'): // Occurs in Sam & Max

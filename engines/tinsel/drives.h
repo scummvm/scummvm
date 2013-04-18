@@ -24,9 +24,9 @@
 #ifndef TINSEL_DRIVES_H
 #define TINSEL_DRIVES_H
 
+#include "common/coroutines.h"
 #include "common/stream.h"
 #include "tinsel/dw.h"
-#include "tinsel/coroutine.h"
 
 namespace Tinsel {
 

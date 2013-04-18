@@ -537,6 +537,9 @@ protected:
 struct LiveTextWord {
 	Common::Rect bounds;
 	uint16 soundId;
+
+	uint16 itemType;
+	uint16 itemId;
 };
 
 struct LiveTextPhrase {

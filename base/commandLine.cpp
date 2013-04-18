@@ -68,7 +68,7 @@ static const char HELP_STRING[] =
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-saves=TARGET      Display a list of savegames for the game (TARGET) specified\n"
-#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
 	"\n"
@@ -155,7 +155,7 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !(defined(__GP32__) || defined (__SYMBIAN32__) || defined(__DS__))
+#if !(defined(__GP32__) || defined(__SYMBIAN32__) || defined(__DS__))
 	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
 #endif
 	exit(1);
@@ -169,7 +169,6 @@ void registerDefaults() {
 	// Graphics
 	ConfMan.registerDefault("fullscreen", false);
 	ConfMan.registerDefault("aspect_ratio", false);
-	ConfMan.registerDefault("disable_dithering", false);
 	ConfMan.registerDefault("gfx_mode", "normal");
 	ConfMan.registerDefault("render_mode", "default");
 	ConfMan.registerDefault("desired_screen_aspect_ratio", "auto");
@@ -238,6 +237,8 @@ void registerDefaults() {
 	ConfMan.registerDefault("record_temp_file_name", "record.tmp");
 	ConfMan.registerDefault("record_time_file_name", "record.time");
 
+	ConfMan.registerDefault("gui_saveload_chooser", "grid");
+	ConfMan.registerDefault("gui_saveload_last_pos", "0");
 }
 
 //
@@ -277,12 +278,12 @@ void registerDefaults() {
 // Use this for boolean options; this distinguishes between "-x" and "-X",
 // resp. between "--some-option" and "--no-some-option".
 #define DO_OPTION_BOOL(shortCmd, longCmd) \
-	if (isLongCmd ? (!strcmp(s+2, longCmd) || !strcmp(s+2, "no-"longCmd)) : (tolower(s[1]) == shortCmd)) { \
+	if (isLongCmd ? (!strcmp(s+2, longCmd) || !strcmp(s+2, "no-" longCmd)) : (tolower(s[1]) == shortCmd)) { \
 		bool boolValue = (Common::isLower(s[1]) != 0); \
 		s += 2; \
 		if (isLongCmd) { \
 			boolValue = !strcmp(s, longCmd); \
-			s += boolValue ? (sizeof(longCmd) - 1) : (sizeof("no-"longCmd) - 1); \
+			s += boolValue ? (sizeof(longCmd) - 1) : (sizeof("no-" longCmd) - 1); \
 		} \
 		if (*s != '\0') goto unknownOption; \
 		const char *option = boolValue ? "true" : "false"; \
@@ -557,7 +558,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 #endif
 
-#if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 			// Optional console window on Windows (default: enabled)
 			DO_LONG_OPTION_BOOL("console")
 			END_OPTION

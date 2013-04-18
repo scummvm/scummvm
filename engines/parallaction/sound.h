@@ -33,6 +33,7 @@
 #define PATH_LEN 200
 
 class MidiParser;
+class MidiDriver;
 
 namespace Parallaction {
 
@@ -41,6 +42,7 @@ class MidiPlayer;
 class Parallaction_br;
 class MidiPlayer_MSC;
 
+MidiDriver *createAdLibDriver();
 
 class SoundManImpl {
 public:

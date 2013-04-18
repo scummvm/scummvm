@@ -34,7 +34,7 @@
 #include "common/tokenizer.h"
 #include "common/stream.h"
 
-#include "graphics/imagedec.h"
+#include "graphics/decoders/bmp.h"
 
 namespace Common {
 
@@ -266,11 +266,15 @@ bool VirtualKeyboardParser::parserCallback_layout(ParserNode *node) {
 
 	const Graphics::PixelFormat format = g_system->getOverlayFormat();
 
-	_mode->image = Graphics::ImageDecoder::loadFile(*file, format);
-	delete file;
+	{
+		Graphics::BitmapDecoder bmp;
+		if (!bmp.loadStream(*file))
+			return parserError("Error loading bitmap '" + _mode->bitmapName + "'");
 
-	if (!_mode->image)
-		return parserError("Error loading bitmap '" + _mode->bitmapName + "'");
+		_mode->image = bmp.getSurface()->convertTo(format);
+	}
+
+	delete file;
 
 	int r, g, b;
 	if (node->values.contains("transparent_color")) {

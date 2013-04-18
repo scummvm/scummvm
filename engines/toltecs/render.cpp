@@ -114,7 +114,7 @@ void RenderQueue::addMask(SegmapMaskRect &mask) {
 void RenderQueue::update() {
 
 	bool doFullRefresh = _vm->_screen->_fullRefresh;
-	
+
 	_updateUta->clear();
 
 	if (!doFullRefresh) {
@@ -166,7 +166,7 @@ void RenderQueue::update() {
 
 	for (RenderQueueArray::iterator iter = _currQueue->begin(); iter != _currQueue->end(); iter++) {
 		const RenderQueueItem *item = &(*iter);
-		
+
 		if (item->flags == kRefresh || doFullRefresh) {
 
 			switch (item->type) {
@@ -193,14 +193,14 @@ void RenderQueue::update() {
 
 	if (doFullRefresh) {
 		clear();
-		_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen, 640, 0, 0, 640, _vm->_cameraHeight);
+		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen, 640, 0, 0, 640, _vm->_cameraHeight);
 	} else {
 		updateDirtyRects();
 	}
 
 	SWAP(_currQueue, _prevQueue);
 	_currQueue->clear();
-	
+
 }
 
 void RenderQueue::clear() {
@@ -249,16 +249,16 @@ bool RenderQueue::hasItemChanged(const RenderQueueItem &item1, const RenderQueue
 
 	if (item1.type != item2.type)
 		return true;
-		
+
 	if (item1.rect.left != item2.rect.left ||
 		item1.rect.top != item2.rect.top ||
 		item1.rect.right != item2.rect.right ||
 		item1.rect.bottom != item2.rect.bottom)
 		return true;
-		
+
 	if (item1.type == kText && item1.text.color != item2.text.color)
 		return true;
-		
+
 	return false;
 }
 
@@ -268,7 +268,7 @@ void RenderQueue::invalidateItemsByRect(const Common::Rect &rect, const RenderQu
 		if (item != subItem &&
 			subItem->flags == kUnchanged &&
 			rect.intersects(subItem->rect)) {
-			
+
 			subItem->flags = kRefresh;
 			invalidateItemsByRect(subItem->rect, subItem);
 		}
@@ -301,7 +301,7 @@ void RenderQueue::updateDirtyRects() {
 	int n_rects = 0;
 	Common::Rect *rects = _updateUta->getRectangles(&n_rects, 0, 0, 639, _vm->_cameraHeight - 1);
 	for (int i = 0; i < n_rects; i++) {
-		_vm->_system->copyRectToScreen((const byte *)_vm->_screen->_frontScreen + rects[i].left + rects[i].top * 640,
+		_vm->_system->copyRectToScreen(_vm->_screen->_frontScreen + rects[i].left + rects[i].top * 640,
 			640, rects[i].left, rects[i].top, rects[i].width(), rects[i].height());
 	}
 	delete[] rects;

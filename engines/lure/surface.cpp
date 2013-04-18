@@ -1329,8 +1329,8 @@ bool CopyProtectionDialog::show() {
 			++hotspot6;
 
 		// Add wording header and display screen
-		(hotspot2->get())->setFrameNumber(1);
-		(hotspot2->get())->copyTo(&screen.screen());
+		(*hotspot2)->setFrameNumber(1);
+		(*hotspot2)->copyTo(&screen.screen());
 		screen.update();
 		screen.setPalette(&p);
 
@@ -1340,8 +1340,8 @@ bool CopyProtectionDialog::show() {
 		} while (!events.interruptableDelay(100));
 
 		// Change title text to selection
-		(hotspot2->get())->setFrameNumber(0);
-		(hotspot2->get())->copyTo(&screen.screen());
+		(*hotspot2)->setFrameNumber(0);
+		(*hotspot2)->copyTo(&screen.screen());
 		screen.update();
 
 		// Clear any prior try
@@ -1356,18 +1356,18 @@ bool CopyProtectionDialog::show() {
 						HotspotsList::iterator tmpHotspot = _hotspots.begin();
 						for (int i = 0; i < _charIndex + 3; i++)
 							++tmpHotspot;
-						(tmpHotspot->get())->setFrameNumber(10);   // Blank space
-						(tmpHotspot->get())->copyTo(&screen.screen());
+						(*tmpHotspot)->setFrameNumber(10);   // Blank space
+						(*tmpHotspot)->copyTo(&screen.screen());
 
 						screen.update();
-					} else if ((events.event().kbd.keycode >= Common::KEYCODE_0) &&
-								(events.event().kbd.keycode <= Common::KEYCODE_9)) {
+					} else if ((events.event().kbd.ascii >= '0') &&
+							   (events.event().kbd.ascii <= '9')) {
 						HotspotsList::iterator tmpHotspot = _hotspots.begin();
 						for (int i = 0; i < _charIndex + 3; i++)
 							++tmpHotspot;
 						// Number pressed
-						(tmpHotspot->get())->setFrameNumber(events.event().kbd.ascii - '0');
-						(tmpHotspot->get())->copyTo(&screen.screen());
+						(*tmpHotspot)->setFrameNumber(events.event().kbd.ascii - '0');
+						(*tmpHotspot)->copyTo(&screen.screen());
 
 						++_charIndex;
 					}
@@ -1385,11 +1385,11 @@ bool CopyProtectionDialog::show() {
 			return false;
 
 		// At this point, two page numbers have been entered - validate them
-		int page1 = ((hotspot3->get())->frameNumber() * 10) + (hotspot4->get())->frameNumber();
-		int page2 = ((hotspot5->get())->frameNumber() * 10) + (hotspot6->get())->frameNumber();
+		int page1 = ((*hotspot3)->frameNumber() * 10) + (*hotspot4)->frameNumber();
+		int page2 = ((*hotspot5)->frameNumber() * 10) + (*hotspot6)->frameNumber();
 
-		if ((page1 == pageNumbers[(hotspot0->get())->frameNumber()]) &&
-			(page2 == pageNumbers[(hotspot1->get())->frameNumber()]))
+		if ((page1 == pageNumbers[(*hotspot0)->frameNumber()]) &&
+		    (page2 == pageNumbers[(*hotspot1)->frameNumber()]))
 			return true;
 	}
 
@@ -1404,11 +1404,11 @@ void CopyProtectionDialog::chooseCharacters() {
 	int char2 = rnd.getRandomNumber(19);
 
 	HotspotsList::iterator curHotspot = _hotspots.begin();
-	(curHotspot->get())->setFrameNumber(char1);
-	(curHotspot->get())->copyTo(&screen.screen());
+	(*curHotspot)->setFrameNumber(char1);
+	(*curHotspot)->copyTo(&screen.screen());
 	++curHotspot;
-	(curHotspot->get())->setFrameNumber(char2);
-	(curHotspot->get())->copyTo(&screen.screen());
+	(*curHotspot)->setFrameNumber(char2);
+	(*curHotspot)->copyTo(&screen.screen());
 
 	screen.update();
 }

@@ -149,6 +149,7 @@ public:
 	 * @return			mapped events
 	 */
 	List<Event> mapKey(const KeyState& key, bool keyDown);
+	List<Event> mapNonKey(const HardwareInputCode code);
 
 	/**
 	 * @brief Map a key down event.
@@ -168,15 +169,44 @@ public:
 	void setEnabled(bool enabled) { _enabled = enabled; }
 
 	/**
+	 * @brief Activate remapping mode
+	 * While this mode is active, any mappable event will be bound to the action
+	 * provided.
+	 * @param actionToRemap Action that is the target of the remap
+	 */
+	void startRemappingMode(Action *actionToRemap);
+
+	/**
+	 * @brief Force-stop the remapping mode
+	 */
+	void stopRemappingMode() { _remapping = false; }
+
+	/**
+	 * Query whether the keymapper is currently in the remapping mode
+	 */
+	bool isRemapping() const { return _remapping; }
+
+	/**
 	 * Return a HardwareInput pointer for the given key state
 	 */
 	const HardwareInput *findHardwareInput(const KeyState& key);
+
+	/**
+	 * Return a HardwareInput pointer for the given input code
+	 */
+	const HardwareInput *findHardwareInput(const HardwareInputCode code);
 
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }
 	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
 
 private:
+
+	enum IncomingEventType {
+		kIncomingKeyDown,
+		kIncomingKeyUp,
+		kIncomingNonKey
+	};
 
 	void initKeymap(Domain &domain, Keymap *keymap);
 
@@ -188,12 +218,16 @@ private:
 	void pushKeymap(Keymap *newMap, bool transparent, bool global);
 
 	Action *getAction(const KeyState& key);
-	List<Event> executeAction(const Action *act, bool keyDown);
+	List<Event> executeAction(const Action *act, IncomingEventType incomingType = kIncomingNonKey);
+	EventType convertDownToUp(EventType eventType);
+	List<Event> remap(const Event &ev);
 
 	EventManager *_eventMan;
 
 	bool _enabled;
+	bool _remapping;
 
+	Action *_actionToRemap;
 	Stack<MapRecord> _activeMaps;
 	HashMap<KeyState, Action *> _keysDown;
 

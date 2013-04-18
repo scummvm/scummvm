@@ -150,9 +150,7 @@ int KyraEngine_MR::o3_addItemToInventory(EMCState *script) {
 	if (slot >= 0) {
 		_mainCharacter.inventory[slot] = stackPos(0);
 		if (_inventoryState) {
-			_screen->hideMouse();
 			redrawInventory(0);
-			_screen->showMouse();
 		}
 	}
 	return slot;
@@ -330,7 +328,6 @@ int KyraEngine_MR::o3_drawSceneShape(EMCState *script) {
 	int shape = stackPos(0);
 	int flag = (stackPos(1) != 0) ? 1 : 0;
 
-	_screen->hideMouse();
 	restorePage3();
 
 	const int x = _sceneShapeDescs[shape].drawX;
@@ -344,7 +341,6 @@ int KyraEngine_MR::o3_drawSceneShape(EMCState *script) {
 
 	flagAnimObjsForRefresh();
 	refreshAnimObjectsIfNeed();
-	_screen->showMouse();
 	return 0;
 }
 

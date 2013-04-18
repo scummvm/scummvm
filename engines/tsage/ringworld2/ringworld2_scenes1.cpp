@@ -5571,7 +5571,7 @@ void Scene1337::subCF979() {
 		tmpVal = subC26CB(0, i);
 
 		if (tmpVal != -1) {
-			bool flag = false;;
+			bool flag = false;
 			for (int j = 0; j <= 7; j++) {
 				if (_arrunkObj1337[0]._arr2[j]._field34 == _arrunkObj1337[0]._arr1[tmpVal]._field34) {
 					flag = true;
@@ -11068,7 +11068,7 @@ bool Scene1850::Actor5::startAction(CursorType action, Event &event) {
 	case R2_REBREATHER_TANK:
 		if (R2_INVENTORY.getObjectScene(R2_AIRBAG) == 1850) {
 			if (R2_GLOBALS.getFlag(30))
-				return SceneActor::startAction(action, event);;
+				return SceneActor::startAction(action, event);
 
 			R2_GLOBALS._player.disableControl();
 			scene->_sceneMode = 1878;

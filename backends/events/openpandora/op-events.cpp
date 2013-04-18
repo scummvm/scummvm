@@ -44,7 +44,8 @@ enum {
 	/* Touchscreen TapMode */
 	TAPMODE_LEFT        = 0,
 	TAPMODE_RIGHT       = 1,
-	TAPMODE_HOVER       = 2
+	TAPMODE_HOVER       = 2,
+	TAPMODE_HOVER_DPAD  = 3
 };
 
 OPEventSource::OPEventSource()
@@ -62,6 +63,8 @@ bool OPEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 		else if (OP::tapmodeLevel == TAPMODE_RIGHT) /* TAPMODE_RIGHT = Right Click Tap Mode */
 			event.type = Common::EVENT_RBUTTONDOWN;
 		else if (OP::tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
+			event.type = Common::EVENT_MOUSEMOVE;
+		else if (OP::tapmodeLevel == TAPMODE_HOVER_DPAD) /* TAPMODE_HOVER_DPAD = Hover (DPad Clicks) Tap Mode */
 			event.type = Common::EVENT_MOUSEMOVE;
 		else
 			event.type = Common::EVENT_LBUTTONDOWN; /* For normal mice etc. */
@@ -95,6 +98,8 @@ bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 			event.type = Common::EVENT_RBUTTONUP;
 		else if (OP::tapmodeLevel == TAPMODE_HOVER) /* TAPMODE_HOVER = Hover (No Click) Tap Mode */
 			event.type = Common::EVENT_MOUSEMOVE;
+		else if (OP::tapmodeLevel == TAPMODE_HOVER_DPAD) /* TAPMODE_HOVER_DPAD = Hover (DPad Clicks) Tap Mode */
+			event.type = Common::EVENT_MOUSEMOVE;
 		else
 			event.type = Common::EVENT_LBUTTONUP; /* For normal mice etc. */
 	} else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -116,6 +121,30 @@ bool OPEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 */
 
 bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
+
+	if (OP::tapmodeLevel == TAPMODE_HOVER_DPAD) {
+		switch (ev.key.keysym.sym) {
+		case SDLK_LEFT:
+			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
+			processMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+		case SDLK_RIGHT:
+			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_RBUTTONDOWN : Common::EVENT_RBUTTONUP;
+			processMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+#if defined(SDL_BUTTON_MIDDLE)
+		case SDLK_UP:
+			event.type = (ev.type == SDL_KEYDOWN) ? Common::EVENT_MBUTTONDOWN : Common::EVENT_MBUTTONUP;
+			processMouseEvent(event, _km.x, _km.y);
+			return true;
+			break;
+#endif
+		default:
+		  break;
+		}
+	}
 
 	if (ev.type == SDL_KEYDOWN) {
 		switch (ev.key.keysym.sym) {
@@ -141,6 +170,8 @@ bool OPEventSource::remapKey(SDL_Event &ev, Common::Event &event) {
 				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Right Click"));
 			} else if (OP::tapmodeLevel == TAPMODE_HOVER) {
 				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Hover (No Click)"));
+			} else if (OP::tapmodeLevel == TAPMODE_HOVER_DPAD) {
+				g_system->displayMessageOnOSD(_("Touchscreen 'Tap Mode' - Hover (DPad Clicks)"));
 			}
 			break;
 		case SDLK_RSHIFT:

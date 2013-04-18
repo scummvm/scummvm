@@ -32,7 +32,6 @@
 
 #include "lastexpress/sound/queue.h"
 
-#include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
 
 namespace LastExpress {
@@ -114,7 +113,7 @@ IMPLEMENT_FUNCTION_II(8, Francois, updateEntity, CarIndex, EntityPosition)
 
 	case kActionNone:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2)) {
-			CALLBACK_ACTION();
+			callbackAction();
 		} else {
 			if (!getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000)
 			 || !getInventory()->hasItem(kItemFirebird)
@@ -169,7 +168,7 @@ IMPLEMENT_FUNCTION_II(8, Francois, updateEntity, CarIndex, EntityPosition)
 
 	case kActionDefault:
 		if (getEntities()->updateEntity(_entityIndex, (CarIndex)params->param1, (EntityPosition)params->param2))
-			CALLBACK_ACTION();
+			callbackAction();
 		break;
 
 	case kActionCallback:
@@ -225,7 +224,7 @@ IMPLEMENT_FUNCTION(9, Francois, function9)
 
 		case 2:
 			getData()->location = kLocationOutsideCompartment;
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -263,7 +262,7 @@ IMPLEMENT_FUNCTION(10, Francois, function10)
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityFrancois);
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -279,7 +278,7 @@ IMPLEMENT_FUNCTION_I(11, Francois, function11, TimeValue)
 	case kActionNone:
 		if (!getSoundQueue()->isBuffered(kEntityFrancois)) {
 
-			UPDATE_PARAM_PROC(CURRENT_PARAM(1, 1), getState()->timeTicks, params->param6)
+			if (Entity::updateParameter(CURRENT_PARAM(1, 1), getState()->timeTicks, params->param6)) {
 				switch (rnd(7)) {
 				default:
 					break;
@@ -312,7 +311,7 @@ IMPLEMENT_FUNCTION_I(11, Francois, function11, TimeValue)
 
 				params->param6 = 15 * rnd(7);
 				CURRENT_PARAM(1, 1) = 0;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 		if (!getEntities()->hasValidFrame(kEntityFrancois) || !getEntities()->isWalkingOppositeToPlayer(kEntityFrancois))
@@ -442,7 +441,7 @@ label_callback:
 			break;
 
 		case 5:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 
 		case 6:
@@ -465,7 +464,7 @@ label_callback:
 		getData()->field_4A3 = 30;
 		getData()->inventoryItem = kItemNone;
 
-		CALLBACK_ACTION();
+		callbackAction();
 		break;
 
 	case kAction205346192:
@@ -524,7 +523,7 @@ IMPLEMENT_FUNCTION(12, Francois, function12)
 			break;
 
 		case 7:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -609,7 +608,7 @@ IMPLEMENT_FUNCTION(13, Francois, function13)
 			break;
 
 		case 11:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -708,7 +707,7 @@ IMPLEMENT_FUNCTION_IIS(14, Francois, function14, ObjectIndex, EntityPosition)
 			break;
 
 		case 13:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -764,7 +763,7 @@ IMPLEMENT_FUNCTION(15, Francois, function15)
 
 		case 7:
 			if (!getEntities()->isInsideCompartment(kEntityMmeBoutarel, kCarRedSleeping, kPosition_5790)) {
-				CALLBACK_ACTION();
+				callbackAction();
 				break;
 			}
 
@@ -773,7 +772,7 @@ IMPLEMENT_FUNCTION(15, Francois, function15)
 			break;
 
 		case 8:
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -830,7 +829,7 @@ IMPLEMENT_FUNCTION(16, Francois, function16)
 			getData()->entityPosition = kPosition_5790;
 			getData()->location = kLocationInsideCompartment;
 
-			CALLBACK_ACTION();
+			callbackAction();
 			break;
 		}
 		break;
@@ -849,7 +848,7 @@ IMPLEMENT_FUNCTION(17, Francois, chapter1)
 		break;
 
 	case kActionNone:
-		TIME_CHECK(kTimeChapter1, params->param1, setup_chapter1Handler);
+		Entity::timeCheck(kTimeChapter1, params->param1, WRAP_SETUP_FUNCTION(Francois, setup_chapter1Handler));
 		break;
 
 	case kActionDefault:
@@ -867,7 +866,7 @@ IMPLEMENT_FUNCTION(18, Francois, chapter1Handler)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK_1(kTimeParisEpernay, params->param1, 1, setup_function11, kTime1093500);
+		timeCheckCallback(kTimeParisEpernay, params->param1, 1, kTime1093500);
 		break;
 
 	case kActionCallback:
@@ -884,7 +883,7 @@ IMPLEMENT_FUNCTION(19, Francois, function19)
 		break;
 
 	case kActionNone:
-		TIME_CHECK_CALLBACK(kTime1161000, params->param1, 2, setup_function12);
+		Entity::timeCheckCallback(kTime1161000, params->param1, 2, WRAP_SETUP_FUNCTION(Francois, setup_function12));
 		break;
 
 	case kAction101107728:
@@ -979,17 +978,21 @@ IMPLEMENT_FUNCTION(23, Francois, function23)
 		}
 
 label_callback_1:
-		TIME_CHECK_CALLBACK_1(kTime1764000, params->param1, 2, setup_playSound, "Fra2011");
+		if (Entity::timeCheckCallback(kTime1764000, params->param1, 2, "Fra2011", WRAP_SETUP_FUNCTION_S(Francois, setup_playSound)))
+			break;
 
 label_callback_2:
-		TIME_CHECK_CALLBACK(kTime1800000, params->param2, 3, setup_function13);
+		if (Entity::timeCheckCallback(kTime1800000, params->param2, 3, WRAP_SETUP_FUNCTION(Francois, setup_function13)))
+			break;
 
 label_callback_3:
 		if (!getInventory()->hasItem(kItemWhistle) && getInventory()->get(kItemWhistle)->location != kObjectLocation3) {
-			TIME_CHECK_CALLBACK_1(kTime1768500, params->param3, 4, setup_function11, kTime1773000);
+			if (timeCheckCallback(kTime1768500, params->param3, 4, kTime1773000))
+				break;
 
 label_callback_4:
-			TIME_CHECK_CALLBACK_1(kTime1827000, params->param4, 5, setup_function11, kTime1831500);
+			if (timeCheckCallback(kTime1827000, params->param4, 5, kTime1831500))
+				break;
 		}
 
 label_callback_5:
@@ -999,18 +1002,19 @@ label_callback_5:
 		}
 
 		if (params->param5 != kTimeInvalid) {
-			UPDATE_PARAM_PROC_TIME(kTimeEnd, !getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000), params->param5, 75);
+			if (Entity::updateParameterTime(kTimeEnd, !getEntities()->isDistanceBetweenEntities(kEntityFrancois, kEntityPlayer, 2000), params->param5, 75)) {
 				setCallback(6);
 				setup_playSound("Fra2010");
 				break;
-			UPDATE_PARAM_PROC_END
+			}
 		}
 
 label_callback_6:
-		TIME_CHECK_CALLBACK_3(kTime1782000, params->param6, 7, setup_function14, kObjectCompartmentC, kPosition_6470, "c");
+		if (timeCheckCallbackCompartment(kTime1782000, params->param6, 7, kObjectCompartmentC, kPosition_6470, "c"))
+			break;
 
 label_callback_7:
-		TIME_CHECK_CALLBACK_3(kTime1813500, params->param7, 8, setup_function14, kObjectCompartmentF, kPosition_4070, "f");
+		timeCheckCallbackCompartment(kTime1813500, params->param7, 8, kObjectCompartmentF, kPosition_4070, "f");
 		break;
 
 	case kActionCallback:
@@ -1086,32 +1090,41 @@ IMPLEMENT_FUNCTION(25, Francois, chapter3Handler)
 			}
 
 label_callback_2:
-			TIME_CHECK_CALLBACK(kTime2025000, params->param3, 3, setup_function12);
+			if (Entity::timeCheckCallback(kTime2025000, params->param3, 3, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_3:
-			TIME_CHECK_CALLBACK(kTime2052000, params->param4, 4, setup_function12);
+			if (Entity::timeCheckCallback(kTime2052000, params->param4, 4, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_4:
-			TIME_CHECK_CALLBACK(kTime2079000, params->param5, 5, setup_function12);
+			if (Entity::timeCheckCallback(kTime2079000, params->param5, 5, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_5:
-			TIME_CHECK_CALLBACK(kTime2092500, params->param6, 6, setup_function12);
+			if (Entity::timeCheckCallback(kTime2092500, params->param6, 6, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_6:
-			TIME_CHECK_CALLBACK(kTime2173500, params->param7, 7, setup_function12);
+			if (Entity::timeCheckCallback(kTime2173500, params->param7, 7, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_7:
-			TIME_CHECK_CALLBACK(kTime2182500, params->param8, 8, setup_function12);
+			if (Entity::timeCheckCallback(kTime2182500, params->param8, 8, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_8:
-			TIME_CHECK_CALLBACK(kTime2241000, CURRENT_PARAM(1, 1), 9, setup_function12);
+			if (Entity::timeCheckCallback(kTime2241000, CURRENT_PARAM(1, 1), 9, WRAP_SETUP_FUNCTION(Francois, setup_function12)))
+				break;
 
 label_callback_9:
 			if (!getInventory()->hasItem(kItemWhistle) && getInventory()->get(kItemWhistle)->location != kObjectLocation3) {
-				TIME_CHECK_CALLBACK_1(kTime2011500, CURRENT_PARAM(1, 2), 10, setup_function11, kTime2016000);
+				if (timeCheckCallback(kTime2011500, CURRENT_PARAM(1, 2), 10, kTime2016000))
+					break;
 
 label_callback_10:
-				TIME_CHECK_CALLBACK_1(kTime2115000, CURRENT_PARAM(1, 3), 11, setup_function11, kTime2119500);
+				if (timeCheckCallback(kTime2115000, CURRENT_PARAM(1, 3), 11, kTime2119500))
+					break;
 			}
 
 label_callback_11:
@@ -1129,13 +1142,15 @@ label_callback_11:
 				}
 
 label_callback_12:
-				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAM(1, 5), 13, setup_function14, kObjectCompartmentE, kPosition_4840, "e");
+				if (timeCheckCallbackCompartment(kTime2040300, CURRENT_PARAM(1, 5), 13, kObjectCompartmentE, kPosition_4840, "e"))
+					break;
 
 label_callback_13:
-				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAM(1, 6), 14, setup_function14, kObjectCompartmentF, kPosition_4070, "f");
+				if (timeCheckCallbackCompartment(kTime2040300, CURRENT_PARAM(1, 6), 14, kObjectCompartmentF, kPosition_4070, "f"))
+					break;
 
 label_callback_14:
-				TIME_CHECK_CALLBACK_3(kTime2040300, CURRENT_PARAM(1, 7), 15, setup_function14, kObjectCompartmentB, kPosition_7500, "b");
+				timeCheckCallbackCompartment(kTime2040300, CURRENT_PARAM(1, 7), 15, kObjectCompartmentB, kPosition_7500, "b");
 			}
 		}
 		break;
@@ -1290,5 +1305,34 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_NULL_FUNCTION(31, Francois)
+
+
+//////////////////////////////////////////////////////////////////////////
+// Helper functions
+//////////////////////////////////////////////////////////////////////////
+bool Francois::timeCheckCallbackCompartment(TimeValue timeValue, uint &parameter, byte callback, ObjectIndex compartment, EntityPosition position, const char* sequenceSuffix) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		setCallback(callback);
+		setup_function14(compartment, position, sequenceSuffix);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Francois::timeCheckCallback(TimeValue timeValue, uint &parameter, byte callback, TimeValue timeValue2) {
+	if (getState()->time > timeValue && !parameter) {
+		parameter = 1;
+		setCallback(callback);
+		setup_function11(timeValue2);
+
+		return true;
+	}
+
+	return false;
+}
+
 
 } // End of namespace LastExpress

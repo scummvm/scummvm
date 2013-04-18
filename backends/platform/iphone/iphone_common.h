@@ -86,9 +86,17 @@ struct VideoContext {
 	int shakeOffsetY;
 };
 
+struct InternalEvent {
+	InternalEvent() : type(), value1(), value2() {}
+	InternalEvent(InputEvent t, int v1, int v2) : type(t), value1(v1), value2(v2) {}
+
+	InputEvent type;
+	int value1, value2;
+};
+
 // On the ObjC side
 void iPhone_updateScreen();
-bool iPhone_fetchEvent(int *outEvent, int *outX, int *outY);
+bool iPhone_fetchEvent(InternalEvent *event);
 const char *iPhone_getDocumentsDir();
 bool iPhone_isHighResDevice();
 

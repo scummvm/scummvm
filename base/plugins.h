@@ -205,6 +205,10 @@ typedef Common::Array<Plugin *> PluginList;
 template<class PO_t>
 class PluginSubclass : public Plugin {
 public:
+	PO_t &operator*() const {
+		return *(PO_t *)_pluginObject;
+	}
+
 	PO_t *operator->() const {
 		return (PO_t *)_pluginObject;
 	}

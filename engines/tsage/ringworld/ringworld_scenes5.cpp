@@ -1893,7 +1893,7 @@ void Scene4045::postInit(SceneObjectList *OwnerList) {
 	_olloFace.setStrip(4);
 	_olloFace.fixPriority(152);
 
-	if(g_globals->_sceneManager._previousScene == 4050) {
+	if (g_globals->_sceneManager._previousScene == 4050) {
 		g_globals->_soundHandler.play(155);
 		g_globals->_player.setPosition(Common::Point(72, 128));
 		g_globals->_player.enableControl();

@@ -412,7 +412,7 @@ Common::String LuaBindhelper::stackDump(lua_State *L) {
 	oss += "------------------- Stack Dump -------------------\n";
 
 	while (i) {
-		oss += i + ": " + getLuaValueInfo(L, i) + "\n";
+		oss += Common::String::format("%d: ", i) + getLuaValueInfo(L, i) + "\n";
 		i--;
 	}
 

@@ -68,7 +68,7 @@ enum CineSaveGameFormat {
 };
 
 /** Identifier for the temporary Operation Stealth savegame format. */
-static const uint32 TEMP_OS_FORMAT_ID = MKTAG('T','E','M','P');
+static const uint32 TEMP_OS_FORMAT_ID = MKTAG('T', 'E', 'M', 'P');
 
 /** The current version number of Operation Stealth's savegame format. */
 static const uint32 CURRENT_OS_SAVE_VER = 1;

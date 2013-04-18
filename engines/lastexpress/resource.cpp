@@ -31,7 +31,6 @@
 
 #include "common/debug.h"
 #include "common/file.h"
-#include "common/textconsole.h"
 
 namespace LastExpress {
 
@@ -129,13 +128,10 @@ bool ResourceManager::loadArchive(const Common::String &name) {
 
 // Get a stream to file in the archive
 //  - same as createReadStreamForMember except it checks if the file exists and will assert / output a debug message if not
-Common::SeekableReadStream *ResourceManager::getFileStream(const Common::String &name) {
+Common::SeekableReadStream *ResourceManager::getFileStream(const Common::String &name) const {
 
 	// Check if the file exits in the archive
 	if (!hasFile(name)) {
-//#ifdef _DEBUG
-//		error("[ResourceManager::getFileStream] Cannot open file: %s", name.c_str());
-//#endif
 		debugC(2, kLastExpressDebugResource, "Error opening file: %s", name.c_str());
 		return NULL;
 	}

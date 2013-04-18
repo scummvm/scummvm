@@ -25,6 +25,7 @@
 
 #include "common/str.h"
 #include "common/keyboard.h"
+#include "common/events.h"
 
 namespace Common {
 	class SeekableReadStream;
@@ -110,6 +111,8 @@ public:
 	bool checkKey(int16 &key);
 	bool keyPressed();
 
+	uint32 getKeyState() const;
+
 	void getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons);
 	void setMousePos(int16 x, int16 y);
 	void waitMouseUp();
@@ -121,7 +124,7 @@ public:
 	int16 getFrameRate();
 	void setFrameRate(int16 rate);
 	void notifyNewAnim();
-	void waitEndFrame();
+	void waitEndFrame(bool handleInput = true);
 	void setScrollOffset(int16 x = -1, int16 y = -1);
 
 	static void insertStr(const char *str1, char *str2, int16 pos);
@@ -140,6 +143,11 @@ public:
 	/** Read a constant-length string out of a stream. */
 	static Common::String readString(Common::SeekableReadStream &stream, int n);
 
+	/** Convert a character in CP850 encoding to the equivalent lower case character. */
+	static char toCP850Lower(char cp850);
+	/** Convert a character in CP850 encoding to the equivalent upper case character. */
+	static char toCP850Upper(char cp850);
+
 	Util(GobEngine *vm);
 
 protected:
@@ -155,13 +163,19 @@ protected:
 	int16 _frameWaitTime;
 	uint32 _startFrameTime;
 
+	uint32 _keyState;
+
 	GobEngine *_vm;
 
 	bool keyBufferEmpty();
 	void addKeyToBuffer(const Common::KeyState &key);
 	bool getKeyFromBuffer(Common::KeyState &key);
 	int16 translateKey(const Common::KeyState &key);
+	int16 toCP850(uint16 latin1);
 	void checkJoystick();
+
+	void keyDown(const Common::Event &event);
+	void keyUp(const Common::Event &event);
 };
 
 } // End of namespace Gob

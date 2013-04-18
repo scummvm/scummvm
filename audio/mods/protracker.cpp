@@ -61,6 +61,7 @@ private:
 
 	struct {
 		byte sample;
+		byte lastSample;
 		uint16 period;
 		Offset offset;
 
@@ -184,6 +185,7 @@ void ProtrackerStream::updateRow() {
 				_track[track].vibratoPos = 0;
 			}
 			_track[track].sample = note.sample;
+			_track[track].lastSample = note.sample;
 			_track[track].finetune = _module.sample[note.sample - 1].finetune;
 			_track[track].vol = _module.sample[note.sample - 1].vol;
 		}
@@ -194,7 +196,9 @@ void ProtrackerStream::updateRow() {
 					_track[track].period = _module.noteToPeriod(note.note, _track[track].finetune);
 				else
 					_track[track].period = note.period;
+
 				_track[track].offset = Offset(0);
+				_track[track].sample = _track[track].lastSample;
 			}
 		}
 

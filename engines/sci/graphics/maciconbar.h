@@ -61,7 +61,7 @@ private:
 
 	Graphics::Surface *loadPict(ResourceId id);
 	Graphics::Surface *createImage(uint32 iconIndex, bool isSelected);
-	void remapColors(Graphics::Surface *surf, byte *palette);
+	void remapColors(Graphics::Surface *surf, const byte *palette);
 
 	void drawIcon(uint16 index, bool selected);
 	void drawSelectedImage(uint16 index);

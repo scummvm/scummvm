@@ -24,7 +24,6 @@
 #define LASTEXPRESS_MERTENS_H
 
 #include "lastexpress/entities/entity.h"
-#include "lastexpress/entities/entity_intern.h"
 
 namespace LastExpress {
 
@@ -210,6 +209,9 @@ public:
 	DECLARE_FUNCTION(function53)
 
 	DECLARE_NULL_FUNCTION()
+
+private:
+	void loadSceneFromPosition();
 };
 
 } // End of namespace LastExpress

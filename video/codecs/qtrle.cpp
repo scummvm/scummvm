@@ -37,28 +37,25 @@ namespace Video {
 
 QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
 	_bitsPerPixel = bitsPerPixel;
-	_pixelFormat = g_system->getScreenFormat();
 
-	// We need to increase the surface size to a multiple of 4
+	// We need to ensure the width is a multiple of 4
 	uint16 wMod = width % 4;
-	if(wMod != 0)
+	if (wMod != 0)
 		width += 4 - wMod;
 
-	debug(2, "QTRLE corrected width: %d", width);
-
 	_surface = new Graphics::Surface();
-	_surface->create(width, height, _bitsPerPixel <= 8 ? Graphics::PixelFormat::createFormatCLUT8() : _pixelFormat);
+	_surface->create(width, height, getPixelFormat());
 }
 
 #define CHECK_STREAM_PTR(n) \
   if ((stream->pos() + n) > stream->size()) { \
-    warning ("Problem: stream out of bounds (%d >= %d)", stream->pos() + n, stream->size()); \
+    warning("QTRLE Problem: stream out of bounds (%d > %d)", stream->pos() + n, stream->size()); \
     return; \
   }
 
 #define CHECK_PIXEL_PTR(n) \
   if ((int32)pixelPtr + n > _surface->w * _surface->h) { \
-    warning ("Problem: pixel ptr = %d, pixel limit = %d", pixelPtr + n, _surface->w * _surface->h); \
+    warning("QTRLE Problem: pixel ptr = %d, pixel limit = %d", pixelPtr + n, _surface->w * _surface->h); \
     return; \
   } \
 
@@ -132,8 +129,6 @@ void QTRLEDecoder::decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, 
 				for (int8 i = numPixels - 1; i >= 0; i--) {
 					pi[numPixels - 1 - i] = (stream->readByte() >> ((i * bpp) & 0x07)) & ((1 << bpp) - 1);
 
-					// FIXME: Is this right?
-					//stream_ptr += ((i & ((num_pixels>>2)-1)) == 0);
 					if ((i & ((numPixels >> 2) - 1)) == 0)
 						stream->readByte();
 				}
@@ -215,7 +210,7 @@ void QTRLEDecoder::decode8(Common::SeekableReadStream *stream, uint32 rowPtr, ui
 
 void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
-	OverlayColor *rgb = (OverlayColor *)_surface->pixels;
+	uint16 *rgb = (uint16 *)_surface->pixels;
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
@@ -235,25 +230,15 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 				CHECK_PIXEL_PTR(rleCode);
 
-				while (rleCode--) {
-					// Convert from RGB555 to the format specified by the Overlay
-					byte r = 0, g = 0, b = 0;
-					Graphics::colorToRGB<Graphics::ColorMasks<555> >(rgb16, r, g, b);
-					rgb[pixelPtr++] = _pixelFormat.RGBToColor(r, g, b);
-				}
+				while (rleCode--)
+					rgb[pixelPtr++] = rgb16;
 			} else {
 				CHECK_STREAM_PTR(rleCode * 2);
 				CHECK_PIXEL_PTR(rleCode);
 
 				// copy pixels directly to output
-				while (rleCode--) {
-					uint16 rgb16 = stream->readUint16BE();
-
-					// Convert from RGB555 to the format specified by the Overlay
-					byte r = 0, g = 0, b = 0;
-					Graphics::colorToRGB<Graphics::ColorMasks<555> >(rgb16, r, g, b);
-					rgb[pixelPtr++] = _pixelFormat.RGBToColor(r, g, b);
-				}
+				while (rleCode--)
+					rgb[pixelPtr++] = stream->readUint16BE();
 			}
 		}
 
@@ -263,7 +248,7 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 void QTRLEDecoder::decode24(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
-	OverlayColor *rgb = (OverlayColor *)_surface->pixels;
+	uint32 *rgb = (uint32 *)_surface->pixels;
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
@@ -283,11 +268,12 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream *stream, uint32 rowPtr, u
 				byte r = stream->readByte();
 				byte g = stream->readByte();
 				byte b = stream->readByte();
+				uint32 color = _surface->format.RGBToColor(r, g, b);
 
 				CHECK_PIXEL_PTR(rleCode);
 
 				while (rleCode--)
-					rgb[pixelPtr++] = _pixelFormat.RGBToColor(r, g, b);
+					rgb[pixelPtr++] = color;
 			} else {
 				CHECK_STREAM_PTR(rleCode * 3);
 				CHECK_PIXEL_PTR(rleCode);
@@ -297,7 +283,7 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream *stream, uint32 rowPtr, u
 					byte r = stream->readByte();
 					byte g = stream->readByte();
 					byte b = stream->readByte();
-					rgb[pixelPtr++] = _pixelFormat.RGBToColor(r, g, b);
+					rgb[pixelPtr++] = _surface->format.RGBToColor(r, g, b);
 				}
 			}
 		}
@@ -308,7 +294,7 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
-	OverlayColor *rgb = (OverlayColor *)_surface->pixels;
+	uint32 *rgb = (uint32 *)_surface->pixels;
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
@@ -329,11 +315,12 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, u
 				byte r = stream->readByte();
 				byte g = stream->readByte();
 				byte b = stream->readByte();
+				uint32 color = _surface->format.ARGBToColor(a, r, g, b);
 
 				CHECK_PIXEL_PTR(rleCode);
 
 				while (rleCode--)
-					rgb[pixelPtr++] = _pixelFormat.ARGBToColor(a, r, g, b);
+					rgb[pixelPtr++] = color;
 			} else {
 				CHECK_STREAM_PTR(rleCode * 4);
 				CHECK_PIXEL_PTR(rleCode);
@@ -344,7 +331,7 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, u
 					byte r = stream->readByte();
 					byte g = stream->readByte();
 					byte b = stream->readByte();
-					rgb[pixelPtr++] = _pixelFormat.ARGBToColor(a, r, g, b);
+					rgb[pixelPtr++] = _surface->format.ARGBToColor(a, r, g, b);
 				}
 			}
 		}
@@ -354,7 +341,7 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, u
 }
 
 const Graphics::Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
-	uint16 start_line = 0;
+	uint16 startLine = 0;
 	uint16 height = _surface->h;
 
 	// check if this frame is even supposed to change
@@ -369,44 +356,45 @@ const Graphics::Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *s
 
 	// if a header is present, fetch additional decoding parameters
 	if (header & 8) {
-		if(stream->size() < 14)
+		if (stream->size() < 14)
 			return _surface;
-		start_line = stream->readUint16BE();
+
+		startLine = stream->readUint16BE();
 		stream->readUint16BE(); // Unknown
 		height = stream->readUint16BE();
 		stream->readUint16BE(); // Unknown
 	}
 
-	uint32 row_ptr = _surface->w * start_line;
+	uint32 rowPtr = _surface->w * startLine;
 
 	switch (_bitsPerPixel) {
-		case 1:
-		case 33:
-			decode1(stream, row_ptr, height);
-			break;
-		case 2:
-		case 34:
-			decode2_4(stream, row_ptr, height, 2);
-			break;
-		case 4:
-		case 36:
-			decode2_4(stream, row_ptr, height, 4);
-			break;
-		case 8:
-		case 40:
-			decode8(stream, row_ptr, height);
-			break;
-		case 16:
-			decode16(stream, row_ptr, height);
-			break;
-		case 24:
-			decode24(stream, row_ptr, height);
-			break;
-		case 32:
-			decode32(stream, row_ptr, height);
-			break;
-		default:
-			error ("Unsupported bits per pixel %d", _bitsPerPixel);
+	case 1:
+	case 33:
+		decode1(stream, rowPtr, height);
+		break;
+	case 2:
+	case 34:
+		decode2_4(stream, rowPtr, height, 2);
+		break;
+	case 4:
+	case 36:
+		decode2_4(stream, rowPtr, height, 4);
+		break;
+	case 8:
+	case 40:
+		decode8(stream, rowPtr, height);
+		break;
+	case 16:
+		decode16(stream, rowPtr, height);
+		break;
+	case 24:
+		decode24(stream, rowPtr, height);
+		break;
+	case 32:
+		decode32(stream, rowPtr, height);
+		break;
+	default:
+		error("Unsupported QTRLE bits per pixel %d", _bitsPerPixel);
 	}
 
 	return _surface;
@@ -415,6 +403,29 @@ const Graphics::Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *s
 QTRLEDecoder::~QTRLEDecoder() {
 	_surface->free();
 	delete _surface;
+}
+
+Graphics::PixelFormat QTRLEDecoder::getPixelFormat() const {
+	switch (_bitsPerPixel) {
+	case 1:
+	case 33:
+	case 2:
+	case 34:
+	case 4:
+	case 36:
+	case 8:
+	case 40:
+		return Graphics::PixelFormat::createFormatCLUT8();
+	case 16:
+		return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	case 24:
+	case 32:
+		return Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+	default:
+		error("Unsupported QTRLE bits per pixel %d", _bitsPerPixel);
+	}
+
+	return Graphics::PixelFormat();
 }
 
 } // End of namespace Video

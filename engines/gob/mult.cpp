@@ -366,10 +366,11 @@ void Mult::doPalAnim() {
 					palPtr->blue, 0, 0x13);
 
 		palPtr = _vm->_global->_pPaletteDesc->vgaPal;
-		for (_counter = 0; _counter < 16; _counter++, palPtr++)
+		for (_counter = 0; _counter < 16; _counter++, palPtr++) {
 			_vm->_global->_redPalette[_counter] = palPtr->red;
 			_vm->_global->_greenPalette[_counter] = palPtr->green;
 			_vm->_global->_bluePalette[_counter] = palPtr->blue;
+		}
 
 	} else
 		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);

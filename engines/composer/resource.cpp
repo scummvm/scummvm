@@ -240,7 +240,7 @@ bool ComposerArchive::openStream(Common::SeekableReadStream *stream) {
 			res.flags = flags;
 			debug(4, "Id %d, offset %d, size %d, flags %08x", id, offset, size, flags);
 		}
-		
+
 		stream->seek(oldPos);
 	}
 
