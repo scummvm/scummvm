@@ -98,6 +98,16 @@ static void resetstack (lua_State *L, int status) {
 }
 
 
+// Added in ScummVM. Refer to http://www.lua.org/manual/5.1/manual.html
+static const char* luaErrorDescription[] = {
+	"No error",
+	"Coroutine yield",	// not an actual error, see lua_resume
+	"Runtime error",
+	"Syntax error during pre-compilation",	// refer to lua_load
+	"Memory allocation error",
+	"Error while running the error handler function"
+};
+
 void luaD_throw (lua_State *L, int errcode) {
   if (L->errorJmp) {
     L->errorJmp->status = errcode;
