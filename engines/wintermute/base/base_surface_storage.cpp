@@ -122,7 +122,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool
 	}
 
 	BaseSurface *surface;
-	surface = _gameRef->_renderer->createSurface();
+	surface = BaseEngine::getRenderer()->createSurface();
 
 	if (!surface) {
 		return nullptr;
