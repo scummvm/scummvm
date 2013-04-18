@@ -100,7 +100,7 @@ BaseSoundMgr *BaseEngine::getSoundMgr() {
 
 BaseRenderer *BaseEngine::getRenderer() {
 	if (instance()._gameRef) {
-		return _gameRef->_renderer;
+		return instance()._gameRef->_renderer;
 	} else {
 		return nullptr;
 	}

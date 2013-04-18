@@ -64,7 +64,7 @@ public:
 	BaseGame *getGameRef() { return _gameRef; }
 	BaseFileManager *getFileManager() { return _fileManager; }
 	BaseSoundMgr *getSoundMgr();
-	BaseRenderer *getRenderer();
+	static BaseRenderer *getRenderer();
 	static const Timer *getTimer();
 	static const Timer *getLiveTimer();
 	static void LOG(bool res, const char *fmt, ...);
