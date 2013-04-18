@@ -141,7 +141,7 @@ public:
 	}
 };
 
-}	// End of namespace Common
+} // End of namespace Common
 
 /**
  * A custom placement new operator, using an arbitrary MemoryPool.

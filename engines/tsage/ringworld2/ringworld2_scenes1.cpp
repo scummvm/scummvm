@@ -5106,11 +5106,11 @@ void Scene1337::subCDB90(int arg1, Common::Point pt) {
 						displayDialog(_arrunkObj1337[2]._arr1[2]._field34);
 					else if (subC2BF8(&_arrunkObj1337[2]._arr1[3], pt))
 						displayDialog(_arrunkObj1337[2]._arr1[3]._field34);
-					else if ((curReg >= 6) || (curReg <= 9))
+					else if ((curReg >= 6) && (curReg <= 9))
 						actionDisplay(1330, 29, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-					else if ((curReg >= 11) || (curReg <= 14))
+					else if ((curReg >= 11) && (curReg <= 14))
 						actionDisplay(1330, 31, 159, 10, 1, 200, 0, 7, 0, 154, 154);
-					else if ((curReg >= 16) || (curReg <= 19))
+					else if ((curReg >= 16) && (curReg <= 19))
 						actionDisplay(1330, 30, 159, 10, 1, 200, 0, 7, 0, 154, 154);
 					else {
 						switch (curReg) {

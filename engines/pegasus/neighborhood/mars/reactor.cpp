@@ -244,9 +244,9 @@ void ReactorHistory::draw(const Common::Rect &) {
 	static const CoordType kColorTops[5] = {
 		0,
 		kColorHeights[0],
-		kColorHeights[0] + kColorHeights[1],
-		kColorHeights[0] + kColorHeights[1] + kColorHeights[2],
-		kColorHeights[0] + kColorHeights[1] + kColorHeights[2] + kColorHeights[3],
+		(CoordType)(kColorHeights[0] + kColorHeights[1]),
+		(CoordType)(kColorHeights[0] + kColorHeights[1] + kColorHeights[2]),
+		(CoordType)(kColorHeights[0] + kColorHeights[1] + kColorHeights[2] + kColorHeights[3]),
 	};
 
 	if (_colors.isSurfaceValid() && _digits.isSurfaceValid()) {

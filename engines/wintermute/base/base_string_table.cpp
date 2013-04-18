@@ -29,6 +29,7 @@
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_string_table.h"
 #include "common/str.h"
 
@@ -50,7 +51,7 @@ BaseStringTable::~BaseStringTable() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseStringTable::addString(const char *key, const char *val, bool reportDuplicities) {
-	if (key == NULL || val == NULL) {
+	if (key == nullptr || val == nullptr) {
 		return STATUS_FAILED;
 	}
 
@@ -64,7 +65,7 @@ bool BaseStringTable::addString(const char *key, const char *val, bool reportDup
 
 	StringsIter it = _strings.find(finalKey);
 	if (it != _strings.end() && reportDuplicities) {
-		_gameRef->LOG(0, "  Warning: Duplicate definition of string '%s'.", finalKey.c_str());
+		BaseEngine::LOG(0, "  Warning: Duplicate definition of string '%s'.", finalKey.c_str());
 	}
 
 	_strings[finalKey] = val;
@@ -74,13 +75,13 @@ bool BaseStringTable::addString(const char *key, const char *val, bool reportDup
 
 //////////////////////////////////////////////////////////////////////////
 char *BaseStringTable::getKey(const char *str) const {
-	if (str == NULL || str[0] != '/') {
-		return NULL;
+	if (str == nullptr || str[0] != '/') {
+		return nullptr;
 	}
 
 	const char *value = strchr(str + 1, '/');
-	if (value == NULL) {
-		return NULL;
+	if (value == nullptr) {
+		return nullptr;
 	}
 
 	char *key = new char[value - str];
@@ -110,12 +111,12 @@ char *BaseStringTable::getKey(const char *str) const {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseStringTable::expand(char **str) const {
-	if (str == NULL || *str == NULL || *str[0] != '/') {
+	if (str == nullptr || *str == nullptr || *str[0] != '/') {
 		return;
 	}
 
 	char *value = strchr(*str + 1, '/');
-	if (value == NULL) {
+	if (value == nullptr) {
 		return;
 	}
 
@@ -149,12 +150,12 @@ void BaseStringTable::expand(char **str) const {
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseStringTable::expandStatic(const char *string) const {
-	if (string == NULL || string[0] == '\0' || string[0] != '/') {
+	if (string == nullptr || string[0] == '\0' || string[0] != '/') {
 		return string;
 	}
 
 	const char *value = strchr(string + 1, '/');
-	if (value == NULL) {
+	if (value == nullptr) {
 		return string;
 	}
 
@@ -185,7 +186,7 @@ const char *BaseStringTable::expandStatic(const char *string) const {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
-	_gameRef->LOG(0, "Loading string table...");
+	BaseEngine::LOG(0, "Loading string table...");
 
 	if (clearOld) {
 		_strings.clear();
@@ -193,8 +194,8 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 
 	uint32 size;
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &size);
-	if (buffer == NULL) {
-		_gameRef->LOG(0, "BaseStringTable::LoadFile failed for file '%s'", filename);
+	if (buffer == nullptr) {
+		BaseEngine::LOG(0, "BaseStringTable::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -205,7 +206,7 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 		if (_gameRef->_textEncoding != TEXT_UTF8) {
 			_gameRef->_textEncoding = TEXT_UTF8;
 			//_gameRef->_textEncoding = TEXT_ANSI;
-			_gameRef->LOG(0, "  UTF8 file detected, switching to UTF8 text encoding");
+			BaseEngine::LOG(0, "  UTF8 file detected, switching to UTF8 text encoding");
 		}
 	} else {
 		_gameRef->_textEncoding = TEXT_ANSI;
@@ -222,12 +223,12 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 		char *line = new char[realLength + 1];
 		Common::strlcpy(line, (char *)&buffer[pos], realLength + 1);
 		char *value = strchr(line, '\t');
-		if (value == NULL) {
+		if (value == nullptr) {
 			value = strchr(line, ' ');
 		}
 
 		if (line[0] != ';') {
-			if (value != NULL) {
+			if (value != nullptr) {
 				value[0] = '\0';
 				value++;
 				for (uint32 i = 0; i < strlen(value); i++) {
@@ -247,7 +248,7 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 
 	delete[] buffer;
 
-	_gameRef->LOG(0, "  %d strings loaded", _strings.size());
+	BaseEngine::LOG(0, "  %d strings loaded", _strings.size());
 
 	return STATUS_OK;
 }

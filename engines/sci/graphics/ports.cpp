@@ -537,7 +537,7 @@ void GfxPorts::freeWindow(Window *pWnd) {
 	if (!pWnd->hSaved1.isNull())
 		_segMan->freeHunkEntry(pWnd->hSaved1);
 	if (!pWnd->hSaved2.isNull())
-		_segMan->freeHunkEntry(pWnd->hSaved1);
+		_segMan->freeHunkEntry(pWnd->hSaved2);
 	_windowsById[pWnd->id] = NULL;
 	delete pWnd;
 }

@@ -1152,7 +1152,6 @@ ResVersion ResourceManager::detectMapVersion() {
 			}
 			break;
 		} else if (rsrc->getSourceType() == kSourceMacResourceFork) {
-			delete fileStream;
 			return kResVersionSci11Mac;
 		}
 	}

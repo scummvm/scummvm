@@ -2296,7 +2296,7 @@ bool VMDDecoder::renderFrame(Common::Rect &rect) {
 			// Directly uncompress onto the video surface
 			const int offsetX = rect.left * _surface.format.bytesPerPixel;
 			const int offsetY = (_y + rect.top) * _surface.pitch;
-			const int offset  = offsetX - offsetY;
+			const int offset  = offsetX + offsetY;
 
 			if (deLZ77((byte *)_surface.pixels + offset, dataPtr, dataSize,
 			           _surface.w * _surface.h * _surface.format.bytesPerPixel - offset))

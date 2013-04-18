@@ -30,4 +30,4 @@ uint32 keysDownRepeat(void);
 void keysSetRepeat(u8 setDelay, u8 setRepeat);
 uint32 keysUp(void);
 
-}	// End of namespace DS
+} // End of namespace DS

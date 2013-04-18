@@ -43,14 +43,14 @@ IMPLEMENT_PERSISTENT(AdTalkHolder, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkHolder::AdTalkHolder(BaseGame *inGame) : AdObject(inGame) {
-	_sprite = NULL;
+	_sprite = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkHolder::~AdTalkHolder() {
 	delete _sprite;
-	_sprite = NULL;
+	_sprite = nullptr;
 
 	for (uint32 i = 0; i < _talkSprites.size(); i++) {
 		delete _talkSprites[i];
@@ -65,7 +65,7 @@ AdTalkHolder::~AdTalkHolder() {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
-	BaseSprite *ret = NULL;
+	BaseSprite *ret = nullptr;
 
 
 	// forced stance?
@@ -78,7 +78,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 			if (DID_FAIL(res)) {
 				_gameRef->LOG(res, "AdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", getName(), _forcedTalkAnimName);
 				delete _animSprite;
-				_animSprite = NULL;
+				_animSprite = nullptr;
 			} else {
 				return _animSprite;
 			}
@@ -86,7 +86,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 	}
 
 
-	if (stance != NULL) {
+	if (stance != nullptr) {
 		// search special talk stances
 		for (uint32 i = 0; i < _talkSpritesEx.size(); i++) {
 			if (scumm_stricmp(_talkSpritesEx[i]->getName(), stance) == 0) {
@@ -94,7 +94,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 				break;
 			}
 		}
-		if (ret == NULL) {
+		if (ret == nullptr) {
 			// serach generic talk stances
 			for (uint32 i = 0; i < _talkSprites.size(); i++) {
 				if (scumm_stricmp(_talkSprites[i]->getName(), stance) == 0) {
@@ -106,7 +106,7 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 	}
 
 	// not a valid stance? get a random one
-	if (ret == NULL) {
+	if (ret == nullptr) {
 		if (_talkSprites.size() < 1) {
 			ret = _sprite;
 		} else {
@@ -138,12 +138,12 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		}
 
 		delete _sprite;
-		_sprite = NULL;
+		_sprite = nullptr;
 
 		if (val->isNULL()) {
-			_sprite = NULL;
+			_sprite = nullptr;
 			if (setCurrent) {
-				_currentSprite = NULL;
+				_currentSprite = nullptr;
 			}
 			stack->pushBool(true);
 		} else {
@@ -355,7 +355,7 @@ bool AdTalkHolder::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Item")==0){
+	if (strcmp(name, "Item")==0) {
 	    SetItem(value->getString());
 	    return STATUS_OK;
 	}

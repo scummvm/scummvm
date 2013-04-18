@@ -60,7 +60,7 @@ void EoBCoreEngine::useMagicBookOrSymbol(int charIndex, int type) {
 	}
 
 	if (!_updateFlags)
-		_screen->copyRegion(64, 121, 0, 0, 112, 56, 0, _useHiResDithering ? 4 : 10, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(64, 121, 0, 0, 112, 56, 0, 10, Screen::CR_NO_P_CHECK);
 	_updateFlags = 1;
 	gui_setPlayFieldButtons();
 	gui_drawSpellbook();
@@ -179,7 +179,7 @@ void EoBCoreEngine::castSpell(int spell, int weaponSlot) {
 
 	if ((s->flags & 0x100) && (c->effectFlags & 0x40))
 		// remove invisibility effect
-		removeCharacterEffect(10, _openBookChar, 1);
+		removeCharacterEffect(_flags.gameID == GI_EOB1 ? 8 : 10, _openBookChar, 1);
 
 	int ci = _openBookChar;
 	if (ci > 3)
@@ -308,7 +308,7 @@ void EoBCoreEngine::startSpell(int spell) {
 	EoBCharacter *c = &_characters[_activeSpellCharId];
 	snd_playSoundEffect(s->sound);
 
-	if (s->flags & 0xa0)
+	if (s->flags & 0xA0)
 		sparkEffectDefensive(_activeSpellCharId);
 	else if (s->flags & 0x40)
 		sparkEffectDefensive(-1);
@@ -623,7 +623,7 @@ bool EoBCoreEngine::turnUndeadHit(EoBMonsterInPlay *m, int hitChance, int caster
 	assert(_monsterProps[m->type].tuResist > 0);
 	uint8 e = _turnUndeadEffect[_monsterProps[m->type].tuResist * 14 + MIN(casterLevel, 14)];
 
-	if (e == 0xff) {
+	if (e == 0xFF) {
 		calcAndInflictMonsterDamage(m, 0, 0, 500, 0x200, 5, 3);
 	} else if (hitChance < e) {
 		return false;
@@ -711,7 +711,7 @@ Item EoBCoreEngine::createMagicWeaponItem(int flags, int icon, int value, int ty
 void EoBCoreEngine::removeMagicWeaponItem(Item item) {
 	_itemTypes[_items[item].type].armorClass = -30;
 	_items[item].block = -2;
-	_items[item].level = 0xff;
+	_items[item].level = 0xFF;
 }
 
 void EoBCoreEngine::updateWallOfForceTimers() {
@@ -841,7 +841,7 @@ bool EoBCoreEngine::spellCallback_end_magicMissile(void *obj) {
 }
 
 void EoBCoreEngine::spellCallback_start_shockingGrasp() {
-	int t = createMagicWeaponType(0, 0, 0, 0x0f, 1, 8, getMageLevel(_openBookChar), 1);
+	int t = createMagicWeaponType(0, 0, 0, 0x0F, 1, 8, getMageLevel(_openBookChar), 1);
 	Item i = (t != -1) ? createMagicWeaponItem(0x10, 82, 0, t) : -1;
 	if (t == -1 || i == -1) {
 		if (_flags.gameID == GI_EOB2)
@@ -948,7 +948,7 @@ bool EoBCoreEngine::spellCallback_end_lightningBolt(void *obj) {
 }
 
 void EoBCoreEngine::spellCallback_start_vampiricTouch() {
-	int t = createMagicWeaponType(0, 0, 0, 0x0f, getMageLevel(_openBookChar) >> 1, 6, 0, 1);
+	int t = createMagicWeaponType(0, 0, 0, 0x0F, getMageLevel(_openBookChar) >> 1, 6, 0, 1);
 	Item i = (t != -1) ? createMagicWeaponItem(0x18, 83, 0, t) : -1;
 	if (t == -1 || i == -1) {
 		if (_flags.gameID == GI_EOB2)
@@ -989,7 +989,7 @@ bool EoBCoreEngine::spellCallback_end_iceStorm(void *obj) {
 	if (res) {
 		for (int i = 0; i < 4; i++) {
 			uint16 bl = fo->curBlock;
-			fo->curBlock = (fo->curBlock + blockAdv[i]) & 0x3ff;
+			fo->curBlock = (fo->curBlock + blockAdv[i]) & 0x3FF;
 			magicObjectDamageHit(fo, 1, 6, 0, getMageLevel(fo->attackerId));
 			fo->curBlock = bl;
 		}
@@ -1027,7 +1027,7 @@ void EoBCoreEngine::spellCallback_start_coneOfCold() {
 	_preventMonsterFlash = true;
 
 	for (int i = 0; i < 7; i++) {
-		for (const int16 *m = findBlockMonsters((_currentBlock + tbl[i]) & 0x3ff, 4, _currentDirection, 1, 1); *m != -1; m++)
+		for (const int16 *m = findBlockMonsters((_currentBlock + tbl[i]) & 0x3FF, 4, _currentDirection, 1, 1); *m != -1; m++)
 			calcAndInflictMonsterDamage(&_monsters[*m], cl, 4, cl, 0x41, 5, 0);
 	}
 
@@ -1054,7 +1054,7 @@ void EoBCoreEngine::spellCallback_start_wallOfForce() {
 		return;
 	}
 
-	uint32 dur = 0xffffffff;
+	uint32 dur = 0xFFFFFFFF;
 	int s = 0;
 	int i = 0;
 
@@ -1158,7 +1158,7 @@ bool EoBCoreEngine::spellCallback_end_aid(void *obj) {
 }
 
 void EoBCoreEngine::spellCallback_start_flameBlade() {
-	int t = createMagicWeaponType(0, 0, 0, 0x0f, 1, 4, 4, 1);
+	int t = createMagicWeaponType(0, 0, 0, 0x0F, 1, 4, 4, 1);
 	Item i = (t != -1) ? createMagicWeaponItem(0, 84, 0, t) : -1;
 	if (t == -1 || i == -1) {
 		if (_flags.gameID == GI_EOB2)

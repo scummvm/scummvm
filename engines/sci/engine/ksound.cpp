@@ -193,6 +193,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		} else
 #endif
 		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume * 2);
+		break;
 	}
 	case kSciAudioLanguage:
 		// In SCI1.1: tests for digital audio support

@@ -50,7 +50,7 @@ bool VideoPlayer::setDefaults() {
 	_playPosX = _playPosY = 0;
 	_playZoom = 0.0f;
 
-	_filename = NULL;
+	_filename = nullptr;
 
 	_slowRendering = false;
 

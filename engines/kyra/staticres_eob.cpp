@@ -220,44 +220,44 @@ const uint8 EoBCoreEngine::_wallOfForceShapeDefs[] = {
 	0x0C, 0x00, 0x05, 0x10
 };
 
-const int16 EoBCoreEngine::_buttonList1[] = {
+const uint8 EoBCoreEngine::_buttonList1[] = {
 	58, 0, 1, 2, 3, 90, 91, 4, 5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14,  15,  16,
-	80, 81, 17, 18, 19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, -1
+	80, 81, 17, 18, 19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, 255
 };
 
-const int16 EoBCoreEngine::_buttonList2[] = {
+const uint8 EoBCoreEngine::_buttonList2[] = {
 	58, 61, 62, 63, 64, 65, 93, 94, 66, 67, 68, 69, 70, 71, 76, 77, 88, 0, 1, 2, 3,
 	90, 91,  4,  5, 6, 7, 8, 9, 10, 11, 12, 78, 79, 13, 14, 15, 16, 80, 81, 17, 18,
-	19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, -1
+	19, 20, 82, 83, 49, 50, 51, 52, 53, 54, 56, 57, 255
 };
 
-const int16 EoBCoreEngine::_buttonList3[] = {
+const uint8 EoBCoreEngine::_buttonList3[] = {
 	58, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
 	40, 41, 42, 43, 44, 45, 84, 85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49,  50,
-	51, 52, 53, 54, 56, 57, -1
+	51, 52, 53, 54, 56, 57, 255
 };
 
-const int16 EoBCoreEngine::_buttonList4[] = {
-	58, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, -1
+const uint8 EoBCoreEngine::_buttonList4[] = {
+	58, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, 255
 };
 
-const int16 EoBCoreEngine::_buttonList5[] = {
+const uint8 EoBCoreEngine::_buttonList5[] = {
 	58, 61, 62, 63, 64, 65, 93, 66, 67, 68, 69, 70, 71, 88, 21, 22, 23, 24, 25, 26,
 	27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 84,
-	85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, -1
+	85, 46, 47, 48, 60, 59, 92, 4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, 255
 };
 
-const int16 EoBCoreEngine::_buttonList6[] = {
+const uint8 EoBCoreEngine::_buttonList6[] = {
 	58, 61, 62, 63, 64, 65, 93, 66, 67, 68, 69, 70, 71, 88, 46, 47, 48, 60, 59, 92,
-	4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, -1
+	4, 5, 6, 7, 8, 49, 50, 51, 52, 53, 54, 56, 57, 255
 };
 
-const int16 EoBCoreEngine::_buttonList7[] = {
-	17, 18, 19, 20, 82, 83, 55, -1
+const uint8 EoBCoreEngine::_buttonList7[] = {
+	17, 18, 19, 20, 82, 83, 55, 255
 };
 
-const int16 EoBCoreEngine::_buttonList8[] = {
-	72, 73, 74, 75, 86, 87, 89, -1
+const uint8 EoBCoreEngine::_buttonList8[] = {
+	72, 73, 74, 75, 86, 87, 89, 255
 };
 
 const uint8 EoBCoreEngine::_clock2Timers[] = {
@@ -465,13 +465,13 @@ void EoBCoreEngine::initStaticResource() {
 	// EOB I doesn't have load and save menus, because there is only one single
 	// save slot. Instead of emulating this we provide a menu similiar to EOB II.
 
-	static const char *saveLoadStrings[3][4] = {
+	static const char *const saveLoadStrings[3][4] = {
 		{   "Cancel",   "Empty Slot",   "Save Game",    "Load Game"     },
 		{   "Abbr.",    "Leerer Slot",  "Speichern",    "  Laden"       },
 		{   0,          0,              0,              0               }
 	};
 
-	static const char *errorSlotEmptyString[3] = {
+	static const char *const errorSlotEmptyString[3] = {
 		"There is no game\rsaved in that slot!",
 		"Hier ist noch kein\rSpiel gespeichert!",
 		0
@@ -1096,7 +1096,7 @@ void EoBEngine::initStaticResource() {
 		p->dmgModifierEvade = *ps++;
 	}
 
-	static const char *errorSlotNoNameString[3] = {
+	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielstaende mues-\r sen einen Namen\r haben!",
 		0
@@ -1118,10 +1118,10 @@ void EoBEngine::initSpells() {
 		{ 0x0000, 0x000000, 0x00 }, // dummy
 		{ 0x0033, 0x000001, 0x00 }, // armor
 		{ 0x0100, 0x000000, 0x21 }, // burning hands
-		{ 0x004c, 0x000002, 0x00 }, // detect magic
+		{ 0x004C, 0x000002, 0x00 }, // detect magic
 		{ 0x0100, 0x000000, 0x01 }, // magic missile
 		{ 0x0000, 0x000000, 0x00 }, // dummy
-		{ 0x008b, 0x000008, 0x00 }, // shield
+		{ 0x008B, 0x000008, 0x00 }, // shield
 		{ 0x0488, 0x000000, 0x03 }, // shocking grasp
 		{ 0x0021, 0x000040, 0x00 }, // invisibility
 		{ 0x0000, 0x000000, 0x00 }, // dummy
@@ -1141,10 +1141,10 @@ void EoBEngine::initSpells() {
 		{ 0x0000, 0x000000, 0x00 }, // CLOUD KILL
 		{ 0x0100, 0x000000, 0x41 }, // cone of cold
 		{ 0x0100, 0x000000, 0x00 }, // hold monster
-		{ 0x005c, 0x000400, 0x00 }, // bless
+		{ 0x005C, 0x000400, 0x00 }, // bless
 		{ 0x0020, 0x000000, 0x00 }, // cure light wounds
 		{ 0x0100, 0x000000, 0x01 }, // cause light wounds
-		{ 0x004c, 0x000002, 0x00 }, // detect magic
+		{ 0x004C, 0x000002, 0x00 }, // detect magic
 		{ 0x0029, 0x000800, 0x00 }, // prot from evil
 		{ 0x0039, 0x000000, 0x00 }, // aid
 		{ 0x2408, 0x000000, 0x21 }, // flame blade
@@ -1153,7 +1153,7 @@ void EoBEngine::initSpells() {
 		{ 0x0040, 0x000000, 0x00 }, // create food
 		{ 0x1000, 0x000000, 0x00 }, // dispel magic
 		{ 0x0099, 0x004000, 0x00 }, // magical vestment
-		{ 0x004c, 0x008000, 0x00 }, // prayer
+		{ 0x004C, 0x008000, 0x00 }, // prayer
 		{ 0x0040, 0x000000, 0x00 }, // remove paralysis
 		{ 0x0020, 0x000000, 0x00 }, // cure serious
 		{ 0x0100, 0x000000, 0x01 }, // cause serious
@@ -1187,7 +1187,7 @@ void EoBEngine::initSpells() {
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsVGA = {
 	{ 9, 15, 95, 9, 7, { 285, 139 }, { 189, 162 }, { 31, 31 } },
-	{ 135, 130, 132, 133, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180	}
+	{ 135, 130, 132, 133, 133, 17, 23, 20, 184, 177, 180, 184, 177, 180 }
 };
 
 const KyraRpgGUISettings EoBEngine::_guiSettingsEGA = {
@@ -1210,7 +1210,7 @@ void DarkMoonEngine::initStaticResource() {
 		_animIntro[i] = _staticres->loadEoB2SeqData(kEob2IntroAnimData00 + i, temp);
 
 	_shapesIntro = new const DarkMoonShapeDef*[13];
-	memset(_shapesIntro, 0, sizeof(DarkMoonShapeDef*) * 13);
+	memset(_shapesIntro, 0, sizeof(DarkMoonShapeDef *) * 13);
 	_shapesIntro[0] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes00, temp);
 	_shapesIntro[1] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes01, temp);
 	_shapesIntro[4] = _staticres->loadEoB2ShapeData(kEoB2IntroShapes04, temp);
@@ -1225,7 +1225,7 @@ void DarkMoonEngine::initStaticResource() {
 		_animFinale[i] = _staticres->loadEoB2SeqData(kEob2FinaleAnimData00 + i, temp);
 
 	_shapesFinale = new const DarkMoonShapeDef*[13];
-	memset(_shapesFinale, 0, sizeof(DarkMoonShapeDef*) * 13);
+	memset(_shapesFinale, 0, sizeof(DarkMoonShapeDef *) * 13);
 	_shapesFinale[0] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes00, temp);
 	_shapesFinale[3] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes03, temp);
 	_shapesFinale[7] = _staticres->loadEoB2ShapeData(kEoB2FinaleShapes07, temp);
@@ -1249,7 +1249,7 @@ void DarkMoonEngine::initStaticResource() {
 	_wallOfForceDsNumH = _staticres->loadRawData(kEoB2WallOfForceNumH, temp);
 	_wallOfForceShpId = _staticres->loadRawData(kEoB2WallOfForceShpId, temp);
 
-	static const char *errorSlotNoNameString[3] = {
+	static const char *const errorSlotNoNameString[3] = {
 		" You must specify\r a name for your\r save game!",
 		" Spielst[nde m]ssen\r einen Namen haben!",
 		0
@@ -1258,7 +1258,7 @@ void DarkMoonEngine::initStaticResource() {
 	_errorSlotNoNameString = errorSlotNoNameString[(_flags.lang == Common::EN_ANY) ? 0 : ((_flags.lang == Common::DE_DEU) ? 1 : 2)];
 
 	// ScummVM specific
-	static const char *transferStringsScummVM[3][5] = {
+	static const char *const transferStringsScummVM[3][5] = {
 		{
 			"\r We cannot find any EOB save game\r file. Please make sure that the\r save game file with the party\r you wish to transfer is located\r in your ScummVM save game\r directory. If you have set up\r multiple save directories you\r have to copy the EOB save file\r into your EOB II save directory.\r Do you wish to try again?",
 			"Game ID",
@@ -1300,7 +1300,7 @@ void DarkMoonEngine::initSpells() {
 	}
 }
 
-const char *DarkMoonEngine::_palFilesIntroVGA[] = {
+const char *const DarkMoonEngine::_palFilesIntroVGA[] = {
 	"PALETTE1.PAL",
 	"PALETTE3.PAL",
 	"PALETTE2.PAL",
@@ -1308,7 +1308,7 @@ const char *DarkMoonEngine::_palFilesIntroVGA[] = {
 	0
 };
 
-const char *DarkMoonEngine::_palFilesIntroEGA[] = {
+const char *const DarkMoonEngine::_palFilesIntroEGA[] = {
 	"PALETTE0.PAL",
 	"PALETTE3.PAL",
 	"PALETTE2.PAL",
@@ -1316,7 +1316,7 @@ const char *DarkMoonEngine::_palFilesIntroEGA[] = {
 	0
 };
 
-const char *DarkMoonEngine::_palFilesFinaleVGA[] = {
+const char *const DarkMoonEngine::_palFilesFinaleVGA[] = {
 	"FINALE_0.PAL",
 	"FINALE_0.PAL",
 	"FINALE_1.PAL",
@@ -1329,7 +1329,7 @@ const char *DarkMoonEngine::_palFilesFinaleVGA[] = {
 	0
 };
 
-const char *DarkMoonEngine::_palFilesFinaleEGA[] = {
+const char *const DarkMoonEngine::_palFilesFinaleEGA[] = {
 	"FINALE_0.PAL",
 	"FINALE_0.PAL",
 	"FINALE_1.PAL",

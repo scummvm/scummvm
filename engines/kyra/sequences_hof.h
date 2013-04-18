@@ -20,21 +20,55 @@
  *
  */
 
-#ifndef COMMON_MD5_H
-#define COMMON_MD5_H
+#ifndef KYRA_SEQUENCES_HOF_H
+#define KYRA_SEQUENCES_HOF_H
 
-#include "util.h"
+#include "kyra/kyra_v2.h"
 
-typedef struct {
-	uint32 total[2];
-	uint32 state[4];
-	uint8 buffer[64];
-} md5_context;
+namespace Kyra {
 
-void md5_starts(md5_context *ctx);
-void md5_update(md5_context *ctx, const uint8 *input, uint32 length);
-void md5_finish(md5_context *ctx, uint8 digest[16]);
+struct HoFSequence {
+	const char *wsaFile;
+	const char *cpsFile;
+	uint16 flags;
+	uint8 fadeInTransitionType;
+	uint8 fadeOutTransitionType;
+	int16 stringIndex1;
+	int16 stringIndex2;
+	uint16 startFrame;
+	uint16 numFrames;
+	uint16 duration;
+	uint16 xPos;
+	uint16 yPos;
+	uint16 timeout;
+};
 
-bool md5_file(const char *name, uint8 digest[16], uint32 length = 0);
+struct HoFNestedSequence {
+	const char *wsaFile;
+	const FrameControl *wsaControl;
+	uint16 flags;
+	uint16 startframe;
+	uint16 endFrame;
+	uint16 frameDelay;
+	uint16 x;
+	uint16 y;
+	uint16 fadeInTransitionType;
+	uint16 fadeOutTransitionType;
+};
+
+struct HoFSeqData {
+	const HoFSequence *seq;
+	int numSeq;
+	const HoFNestedSequence *nestedSeq;
+	int numNestedSeq;
+};
+
+struct HoFSeqItemAnimData {
+	int16 itemIndex;
+	uint16 y;
+	const uint16 *frames;
+};
+
+} // End of namespace Kyra
 
 #endif

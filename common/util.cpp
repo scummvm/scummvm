@@ -26,6 +26,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_islower
 #define FORBIDDEN_SYMBOL_EXCEPTION_isspace
 #define FORBIDDEN_SYMBOL_EXCEPTION_isupper
+#define FORBIDDEN_SYMBOL_EXCEPTION_isprint
 
 
 #include "common/util.h"
@@ -144,4 +145,8 @@ bool isUpper(int c) {
 	return isupper((byte)c);
 }
 
+bool isPrint(int c) {
+	ENSURE_ASCII_CHAR(c);
+	return isprint((byte)c);
+}
 } // End of namespace Common

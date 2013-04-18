@@ -26,9 +26,10 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
-#include "engines/wintermute/base/base_game.h"
-#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_viewport.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 
 namespace Wintermute {
@@ -38,7 +39,7 @@ IMPLEMENT_PERSISTENT(BaseViewport, false)
 //////////////////////////////////////////////////////////////////////////
 BaseViewport::BaseViewport(BaseGame *inGame) : BaseClass(inGame) {
 	BasePlatform::setRectEmpty(&_rect);
-	_mainObject = NULL;
+	_mainObject = nullptr;
 	_offsetX = _offsetY = 0;
 }
 
@@ -68,8 +69,8 @@ bool BaseViewport::setRect(int left, int top, int right, int bottom, bool noChec
 	if (!noCheck) {
 		left = MAX(left, 0);
 		top = MAX(top, 0);
-		right = MIN(right, _gameRef->_renderer->_width);
-		bottom = MIN(bottom, _gameRef->_renderer->_height);
+		right = MIN(right, BaseEngine::instance().getRenderer()->getWidth());
+		bottom = MIN(bottom, BaseEngine::instance().getRenderer()->getHeight());
 	}
 
 	BasePlatform::setRect(&_rect, left, top, right, bottom);
@@ -86,13 +87,13 @@ Rect32 *BaseViewport::getRect() {
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseViewport::getWidth() {
+int BaseViewport::getWidth() const {
 	return _rect.right - _rect.left;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseViewport::getHeight() {
+int BaseViewport::getHeight() const {
 	return _rect.bottom - _rect.top;
 }
 

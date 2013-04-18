@@ -46,24 +46,24 @@ int StringLengthPix(char *szStr, const FONT *pFont) {
 			if (c & 0x80)
 				c = ((c & ~0x80) << 8) + *++szStr;
 		}
-		hImg = FROM_LE_32(pFont->fontDef[c]);
+		hImg = FROM_32(pFont->fontDef[c]);
 
 		if (hImg) {
 			// there is a IMAGE for this character
 			const IMAGE *pChar = (const IMAGE *)LockMem(hImg);
 
 			// add width of font bitmap
-			strLen += FROM_LE_16(pChar->imgWidth);
+			strLen += FROM_16(pChar->imgWidth);
 		} else
 			// use width of space character
-			strLen += FROM_LE_32(pFont->spaceSize);
+			strLen += FROM_32(pFont->spaceSize);
 
 		// finally add the inter-character spacing
-		strLen += FROM_LE_32(pFont->xSpacing);
+		strLen += FROM_32(pFont->xSpacing);
 	}
 
 	// return length of line in pixels - minus inter-char spacing for last character
-	strLen -= FROM_LE_32(pFont->xSpacing);
+	strLen -= FROM_32(pFont->xSpacing);
 	return (strLen > 0) ? strLen : 0;
 }
 
@@ -125,10 +125,10 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 
 	// get image for capital W
 	assert(pFont->fontDef[(int)'W']);
-	pImg = (const IMAGE *)LockMem(FROM_LE_32(pFont->fontDef[(int)'W']));
+	pImg = (const IMAGE *)LockMem(FROM_32(pFont->fontDef[(int)'W']));
 
 	// get height of capital W for offset to next line
-	yOffset = FROM_LE_16(pImg->imgHeight) & ~C16_FLAG_MASK;
+	yOffset = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK;
 
 	while (*szStr) {
 		// x justify the text according to the mode flags
@@ -140,24 +140,24 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 				if (c & 0x80)
 					c = ((c & ~0x80) << 8) + *++szStr;
 			}
-			hImg = FROM_LE_32(pFont->fontDef[c]);
+			hImg = FROM_32(pFont->fontDef[c]);
 
 			if (hImg == 0) {
 				// no image for this character
 
 				// add font spacing for a space character
-				xJustify += FROM_LE_32(pFont->spaceSize);
+				xJustify += FROM_32(pFont->spaceSize);
 			} else {	// printable character
 
 				int aniX, aniY;		// char image animation offsets
 
 				OBJ_INIT oi;
-				oi.hObjImg  = FROM_LE_32(pFont->fontInit.hObjImg);
-				oi.objFlags = FROM_LE_32(pFont->fontInit.objFlags);
-				oi.objID    = FROM_LE_32(pFont->fontInit.objID);
-				oi.objX     = FROM_LE_32(pFont->fontInit.objX);
-				oi.objY     = FROM_LE_32(pFont->fontInit.objY);
-				oi.objZ     = FROM_LE_32(pFont->fontInit.objZ);
+				oi.hObjImg  = FROM_32(pFont->fontInit.hObjImg);
+				oi.objFlags = FROM_32(pFont->fontInit.objFlags);
+				oi.objID    = FROM_32(pFont->fontInit.objID);
+				oi.objX     = FROM_32(pFont->fontInit.objX);
+				oi.objY     = FROM_32(pFont->fontInit.objY);
+				oi.objZ     = FROM_32(pFont->fontInit.objZ);
 
 				// allocate and init a character object
 				if (pFirst == NULL)
@@ -172,9 +172,9 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 
 				// fill in character object
 				pChar->hImg   = hImg;			// image def
-				pChar->width  = FROM_LE_16(pImg->imgWidth);		// width of chars bitmap
-				pChar->height = FROM_LE_16(pImg->imgHeight) & ~C16_FLAG_MASK;	// height of chars bitmap
-				pChar->hBits  = FROM_LE_32(pImg->hImgBits);		// bitmap
+				pChar->width  = FROM_16(pImg->imgWidth);		// width of chars bitmap
+				pChar->height = FROM_16(pImg->imgHeight) & ~C16_FLAG_MASK;	// height of chars bitmap
+				pChar->hBits  = FROM_32(pImg->hImgBits);		// bitmap
 
 				// check for absolute positioning
 				if (mode & TXT_ABSOLUTE)
@@ -203,8 +203,8 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 					CopyObject(pShad, pChar);
 
 					// add shadow offsets to characters position
-					pShad->xPos += intToFrac(FROM_LE_32(pFont->xShadow));
-					pShad->yPos += intToFrac(FROM_LE_32(pFont->yShadow));
+					pShad->xPos += intToFrac(FROM_32(pFont->xShadow));
+					pShad->yPos += intToFrac(FROM_32(pFont->yShadow));
 
 					// shadow is behind the character
 					pShad->zPos--;
@@ -232,18 +232,18 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 					pChar = pChar->pSlave;
 
 				// add character spacing
-				xJustify += FROM_LE_16(pImg->imgWidth);
+				xJustify += FROM_16(pImg->imgWidth);
 			}
 
 			// finally add the inter-character spacing
-			xJustify += FROM_LE_32(pFont->xSpacing);
+			xJustify += FROM_32(pFont->xSpacing);
 
 			// next character in string
 			++szStr;
 		}
 
 		// adjust the text y position and add the inter-line spacing
-		yPos += yOffset + FROM_LE_32(pFont->ySpacing);
+		yPos += yOffset + FROM_32(pFont->ySpacing);
 
 		// check for newline
 		if (c == LF_CHAR)

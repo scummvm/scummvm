@@ -155,29 +155,46 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 		source++; /* Skip whitespace */
 
 	int16 result = 0;
+	int16 sign = 1;
 
+	if (*source == '-') {
+		sign = -1;
+		source++;
+	}
 	if (*source == '$') {
 		// Hexadecimal input
-		result = (int16)strtol(source + 1, NULL, 16);
+		source++;
+		char c;
+		while ((c = *source++) != 0) {
+			int16 x = 0;
+			if ((c >= '0') && (c <= '9'))
+				x = c - '0';
+			else if ((c >= 'a') && (c <= 'f'))
+				x = c - 'a' + 10;
+			else if ((c >= 'A') && (c <= 'F'))
+				x = c - 'A' + 10;
+			else
+				// Stop if we encounter anything other than a digit (like atoi)
+				break;
+			result *= 16;
+			result += x;
+		}
 	} else {
 		// Decimal input. We can not use strtol/atoi in here, because while
 		// Sierra used atoi, it was a non standard compliant atoi, that didn't
 		// do clipping. In SQ4 we get the door code in here and that's even
 		// larger than uint32!
-		if (*source == '-') {
-			// FIXME: Setting result to -1 does _not_ negate the output.
-			result = -1;
-			source++;
-		}
-		while (*source) {
-			if ((*source < '0') || (*source > '9'))
+		char c;
+		while ((c = *source++) != 0) {
+			if ((c < '0') || (c > '9'))
 				// Stop if we encounter anything other than a digit (like atoi)
 				break;
 			result *= 10;
-			result += *source - 0x30;
-			source++;
+			result += c - '0';
 		}
 	}
+
+	result *= sign;
 
 	return make_reg(0, result);
 }
@@ -489,6 +506,7 @@ reg_t kGetMessage(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	uint func = argv[0].toUint16();
+	uint16 module = (argc >= 2) ? argv[1].toUint16() : 0;
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
@@ -518,19 +536,44 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 6)
 		tuple = MessageTuple(argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(), argv[5].toUint16());
 
+	// WORKAROUND for a script bug in Pepper. When using objects together,
+	// there is code inside script 894 that shows appropriate messages.
+	// In the case of the jar of cabbage (noun 26), the relevant message
+	// shown when using any object with it is missing. This leads to the
+	// script code being triggered, which modifies the jar's noun and
+	// message selectors, and renders it useless. Thus, when using any
+	// object with the jar of cabbage, it's effectively corrupted, and
+	// can't be used on the goat to empty it, therefore the game reaches
+	// an unsolvable state. It's almost impossible to patch the offending
+	// script, as it is used in many cases. But we can prevent the
+	// corruption of the jar here: if the message is found, the offending
+	// code is never reached and the jar is never corrupted. To do this,
+	// we substitute all verbs on the cabbage jar with the default verb,
+	// which shows the "Cannot use this object with the jar" message, and
+	// never triggers the offending script code that corrupts the object.
+	// This only affects the jar of cabbage - any other object, including
+	// the empty jar has a different noun, thus it's unaffected.
+	// Fixes bug #3601090.
+	// NOTE: To fix a corrupted jar object, type "send Glass_Jar message 52"
+	// in the debugger.
+	if (g_sci->getGameId() == GID_PEPPER && func == 0 && argc >= 6 && module == 894 &&
+		tuple.noun == 26 && tuple.cond == 0 && tuple.seq == 1 && 
+		!s->_msgState->getMessage(module, tuple, NULL_REG))
+		tuple.verb = 0;
+
 	switch (func) {
 	case K_MESSAGE_GET:
-		return make_reg(0, s->_msgState->getMessage(argv[1].toUint16(), tuple, (argc == 7 ? argv[6] : NULL_REG)));
+		return make_reg(0, s->_msgState->getMessage(module, tuple, (argc == 7 ? argv[6] : NULL_REG)));
 	case K_MESSAGE_NEXT:
 		return make_reg(0, s->_msgState->nextMessage((argc == 2 ? argv[1] : NULL_REG)));
 	case K_MESSAGE_SIZE:
-		return make_reg(0, s->_msgState->messageSize(argv[1].toUint16(), tuple));
+		return make_reg(0, s->_msgState->messageSize(module, tuple));
 	case K_MESSAGE_REFCOND:
 	case K_MESSAGE_REFVERB:
 	case K_MESSAGE_REFNOUN: {
 		MessageTuple t;
 
-		if (s->_msgState->messageRef(argv[1].toUint16(), tuple, t)) {
+		if (s->_msgState->messageRef(module, tuple, t)) {
 			switch (func) {
 			case K_MESSAGE_REFCOND:
 				return make_reg(0, t.cond);
@@ -545,9 +588,9 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 	}
 	case K_MESSAGE_LASTMESSAGE: {
 		MessageTuple msg;
-		int module;
+		int lastModule;
 
-		s->_msgState->lastQuery(module, msg);
+		s->_msgState->lastQuery(lastModule, msg);
 
 		bool ok = false;
 
@@ -556,7 +599,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 
 			if (buffer) {
 				ok = true;
-				WRITE_LE_UINT16(buffer, module);
+				WRITE_LE_UINT16(buffer, lastModule);
 				WRITE_LE_UINT16(buffer + 2, msg.noun);
 				WRITE_LE_UINT16(buffer + 4, msg.verb);
 				WRITE_LE_UINT16(buffer + 6, msg.cond);
@@ -567,7 +610,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 
 			if (buffer) {
 				ok = true;
-				buffer[0] = make_reg(0, module);
+				buffer[0] = make_reg(0, lastModule);
 				buffer[1] = make_reg(0, msg.noun);
 				buffer[2] = make_reg(0, msg.verb);
 				buffer[3] = make_reg(0, msg.cond);

@@ -28,6 +28,7 @@
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/util.h"
+#include "common/translation.h"
 
 #include "engines/metaengine.h"
 
@@ -49,6 +50,20 @@ static ADGameDescription s_fallbackDesc = {
 	ADGF_UNSTABLE,
 	GUIO0()
 };
+
+static const ADExtraGuiOptionsMap gameGuiOptions[] = {
+	{
+		GAMEOPTION_SHOW_FPS,
+		{
+			_s("Show FPS-counter"),
+			_s("Show the current number of frames per second in the upper left corner"),
+			"show_fps",
+			false
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 static char s_fallbackGameIdBuf[256];
 
 static const char *directoryGlobs[] = {
@@ -58,8 +73,9 @@ static const char *directoryGlobs[] = {
 
 class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
-	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(ADGameDescription), Wintermute::wintermuteGames) {
+	WintermuteMetaEngine() : AdvancedMetaEngine(Wintermute::gameDescriptions, sizeof(ADGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
 		_singleid = "wintermute";
+		_guioptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_SHOW_FPS);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

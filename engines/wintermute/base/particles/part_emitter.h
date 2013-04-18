@@ -43,12 +43,12 @@ public:
 	PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner);
 	virtual ~PartEmitter(void);
 
-	int _fadeOutTime;
+	int32 _fadeOutTime;
 
 	bool start();
 
 	bool update();
-	bool display() { return display(NULL); } // To avoid shadowing the inherited display-function.
+	bool display() { return display(nullptr); } // To avoid shadowing the inherited display-function.
 	bool display(BaseRegion *region);
 
 	bool sortParticlesByZ();
@@ -70,11 +70,11 @@ public:
 
 
 private:
-	int _width;
-	int _height;
+	int32 _width;
+	int32 _height;
 
-	int _angle1;
-	int _angle2;
+	int32 _angle1;
+	int32 _angle2;
 
 	float _rotation1;
 	float _rotation2;
@@ -127,7 +127,7 @@ private:
 	BaseScriptHolder *_owner;
 
 	PartForce *addForceByName(const Common::String &name);
-	int static compareZ(const void *obj1, const void *obj2);
+	bool static compareZ(const PartParticle *p1, const PartParticle *p2);
 	bool initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta);
 	bool updateInternal(uint32 currentTime, uint32 timerDelta);
 	uint32 _lastGenTime;

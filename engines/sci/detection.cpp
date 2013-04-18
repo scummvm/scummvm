@@ -103,6 +103,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"pq4",             "Police Quest IV: Open Season"}, // floppy is SCI2, CD SCI2.1
 	{"qfg4",            "Quest for Glory IV: Shadows of Darkness"},	// floppy is SCI2, CD SCI2.1
 	// === SCI2.1 games ========================================================
+	{"chest",           "Inside the Chest"},	// aka Behind the Developer's Shield
 	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
 	// TODO: Inside The Chest/Behind the Developer's Shield
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
@@ -132,6 +133,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "astrochicken",    GID_ASTROCHICKEN },
 	{ "camelot",         GID_CAMELOT },
 	{ "castlebrain",     GID_CASTLEBRAIN },
+	{ "chest",           GID_CHEST },
 	{ "christmas1988",   GID_CHRISTMAS1988 },
 	{ "christmas1990",   GID_CHRISTMAS1990 },
 	{ "christmas1992",   GID_CHRISTMAS1992 },
@@ -208,6 +210,7 @@ struct OldNewIdTableEntry {
 };
 
 static const OldNewIdTableEntry s_oldNewTable[] = {
+	{ "archive",    "chest",            SCI_VERSION_NONE     },
 	{ "arthur",		"camelot",			SCI_VERSION_NONE     },
 	{ "brain",      "castlebrain",      SCI_VERSION_1_MIDDLE },	// Amiga
 	{ "brain",      "castlebrain",      SCI_VERSION_1_LATE   },
@@ -834,12 +837,16 @@ Common::Error SciEngine::saveGameState(int slot, const Common::String &desc) {
 	return Common::kNoError;
 }
 
+// Before enabling the load option in the ScummVM menu, the main game loop must
+// have run at least once. When the game loop runs, kGameIsRestarting is invoked,
+// thus the speed throttler is initialized. Hopefully fixes bug #3565505.
+
 bool SciEngine::canLoadGameStateCurrently() {
-	return !_gamestate->executionStackBase;
+	return !_gamestate->executionStackBase && (_gamestate->_throttleLastTime > 0 || _gamestate->_throttleTrigger);
 }
 
 bool SciEngine::canSaveGameStateCurrently() {
-	return !_gamestate->executionStackBase;
+	return !_gamestate->executionStackBase && (_gamestate->_throttleLastTime > 0 || _gamestate->_throttleTrigger);
 }
 
 } // End of namespace Sci

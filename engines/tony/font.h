@@ -104,7 +104,6 @@ public:
 	int stringLen(char bChar, char bNext = 0);
 };
 
-
 class RMFontColor : public virtual RMFont {
 private:
 	byte _fontR, _fontG, _fontB;
@@ -114,7 +113,6 @@ public:
 	virtual ~RMFontColor();
 	virtual void setBaseColor(byte r, byte g, byte b);
 };
-
 
 class RMFontWithTables : public virtual RMFont {
 protected:
@@ -135,7 +133,6 @@ public:
 	}
 	virtual ~RMFontWithTables() {}
 };
-
 
 class RMFontDialog : public RMFontColor, public RMFontWithTables {
 public:
@@ -175,16 +172,16 @@ private:
 
 public:
 	enum HorAlign {
-	    HLEFT,
-	    HLEFTPAR,
-	    HCENTER,
-	    HRIGHT
+		HLEFT,
+		HLEFTPAR,
+		HCENTER,
+		HRIGHT
 	};
 
 	enum VerAlign {
-	    VTOP,
-	    VCENTER,
-	    VBOTTOM
+		VTOP,
+		VCENTER,
+		VBOTTOM
 	};
 
 private:
@@ -293,7 +290,6 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
-
 /**
  * Manages the name of a selected item on the screen
  */
@@ -318,7 +314,6 @@ public:
 
 	virtual void removeThis(CORO_PARAM, bool &result);
 };
-
 
 /**
  * Manages the selection of screen items in a box

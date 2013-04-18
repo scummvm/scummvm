@@ -47,7 +47,7 @@
 #include <map>
 
 enum {
-	kKyraDatVersion = 83
+	kKyraDatVersion = 84
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -606,7 +606,7 @@ const ExtractFilename extractFilenames[] = {
 	// LANDS OF LORE
 
 	// Ingame
-	{ kLoLIngamePakFiles, kTypeStringList, false },
+	{ kLoLIngamePakFiles, k2TypeSfxList, false },
 
 	{ kLoLCharacterDefs, kLoLTypeCharData, true },
 	{ kLoLIngameSfxFiles, k2TypeSfxList, false },
@@ -625,7 +625,10 @@ const ExtractFilename extractFilenames[] = {
 	{ kLoLCharDefsKieran, kLoLTypeRaw16, false },
 	{ kLoLCharDefsAkshel, kLoLTypeRaw16, false },
 	{ kLoLExpRequirements, kLoLTypeRaw32, false },
-	{ kLoLMonsterModifiers, kLoLTypeRaw16, false },
+	{ kLoLMonsterModifiers1, kLoLTypeRaw16, false },
+	{ kLoLMonsterModifiers2, kLoLTypeRaw16, false },
+	{ kLoLMonsterModifiers3, kLoLTypeRaw16, false },
+	{ kLoLMonsterModifiers4, kLoLTypeRaw16, false },
 	{ kLoLMonsterShiftOffsets, kTypeRawData, false },
 	{ kLoLMonsterDirFlags, kTypeRawData, false },
 	{ kLoLMonsterScaleY, kTypeRawData, false },
@@ -633,8 +636,8 @@ const ExtractFilename extractFilenames[] = {
 	{ kLoLMonsterScaleWH, kLoLTypeRaw16, false },
 	{ kLoLFlyingObjectShp, kLoLTypeFlightShpData, false },
 	{ kLoLInventoryDesc, kLoLTypeRaw16, false },
-	{ kLoLLevelShpList, kTypeStringList, false },
-	{ kLoLLevelDatList, kTypeStringList, false },
+	{ kLoLLevelShpList, k2TypeSfxList, false },
+	{ kLoLLevelDatList, k2TypeSfxList, false },
 	{ kLoLCompassDefs, kLoLTypeCompassData, false },
 	{ kLoLItemPrices, kLoLTypeRaw16, false },
 	{ kLoLStashSetup, kTypeRawData, false },
@@ -671,14 +674,14 @@ const ExtractFilename extractFilenames[] = {
 	{ kLoLScrollYBottom, k3TypeRaw16to8, false },
 
 	{ kLoLButtonDefs, kLoLTypeButtonDef, false },
-	{ kLoLButtonList1, kLoLTypeRaw16, false },
-	{ kLoLButtonList2, kLoLTypeRaw16, false },
-	{ kLoLButtonList3, kLoLTypeRaw16, false },
-	{ kLoLButtonList4, kLoLTypeRaw16, false },
-	{ kLoLButtonList5, kLoLTypeRaw16, false },
-	{ kLoLButtonList6, kLoLTypeRaw16, false },
-	{ kLoLButtonList7, kLoLTypeRaw16, false },
-	{ kLoLButtonList8, kLoLTypeRaw16, false },
+	{ kLoLButtonList1, k3TypeRaw16to8, false },
+	{ kLoLButtonList2, k3TypeRaw16to8, false },
+	{ kLoLButtonList3, k3TypeRaw16to8, false },
+	{ kLoLButtonList4, k3TypeRaw16to8, false },
+	{ kLoLButtonList5, k3TypeRaw16to8, false },
+	{ kLoLButtonList6, k3TypeRaw16to8, false },
+	{ kLoLButtonList7, k3TypeRaw16to8, false },
+	{ kLoLButtonList8, k3TypeRaw16to8, false },
 
 	{ kLoLLegendData, kTypeRawData, false },
 	{ kLoLMapCursorOvl, kTypeRawData, false },
@@ -2111,8 +2114,14 @@ const char *getIdString(const int id) {
 		return "kLoLCharDefsAkshel";
 	case kLoLExpRequirements:
 		return "kLoLExpRequirements";
-	case kLoLMonsterModifiers:
-		return "kLoLMonsterModifiers";
+	case kLoLMonsterModifiers1:
+		return "kLoLMonsterModifiers1";
+	case kLoLMonsterModifiers2:
+		return "kLoLMonsterModifiers2";
+	case kLoLMonsterModifiers3:
+		return "kLoLMonsterModifiers3";
+	case kLoLMonsterModifiers4:
+		return "kLoLMonsterModifiers4";
 	case kLoLMonsterShiftOffsets:
 		return "kLoLMonsterShiftOffsets";
 	case kLoLMonsterDirFlags:
@@ -2229,6 +2238,8 @@ const char *getIdString(const int id) {
 		return "kLoLLightningDefs";
 	case kLoLFireballCoords:
 		return "kLoLFireballCoords";
+	case kLoLCredits:
+		return "kLoLCredits";
 	case kLoLHistory:
 		return "kLoLHistory";
 	default:

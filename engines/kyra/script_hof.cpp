@@ -253,7 +253,7 @@ int KyraEngine_HoF::o2_displayWsaSequentialFrames(EMCState *script) {
 	uint16 currentFrame = stackPos(3);
 	uint16 lastFrame = stackPos(4);
 	uint16 index = stackPos(5);
-	uint16 copyParam = stackPos(6) | 0xc000;
+	uint16 copyParam = stackPos(6) | 0xC000;
 
 	_screen->hideMouse();
 
@@ -278,7 +278,7 @@ int KyraEngine_HoF::o2_displayWsaSequence(EMCState *script) {
 	const int frameDelay = stackPos(2) * _tickLength;
 	const int index = stackPos(3);
 	const bool doUpdate = (stackPos(4) != 0);
-	const uint16 copyParam = stackPos(5) | 0xc000;
+	const uint16 copyParam = stackPos(5) | 0xC000;
 
 	_screen->hideMouse();
 
@@ -319,8 +319,8 @@ int KyraEngine_HoF::o2_drawShape(EMCState *script) {
 	uint8 *shp = getShapePtr(stackPos(0) + 64);
 	int x = stackPos(1);
 	int y = stackPos(2);
-	uint8 dsFlag = stackPos(3) & 0xff;
-	uint8 modeFlag = stackPos(4) & 0xff;
+	uint8 dsFlag = stackPos(3) & 0xFF;
+	uint8 modeFlag = stackPos(4) & 0xFF;
 
 	if (modeFlag) {
 		_screen->drawShape(2, shp, x, y, 2, dsFlag ? 1 : 0);
@@ -918,7 +918,7 @@ int KyraEngine_HoF::o2_useItemOnMainChar(EMCState *script) {
 	tmpScript.regs[0] = _mainCharacter.sceneId;
 
 	int oldVocH = _vocHigh;
-	_vocHigh = 0x5a;
+	_vocHigh = 0x5A;
 
 	while (_emc->isValid(&tmpScript))
 		_emc->run(&tmpScript);
@@ -955,7 +955,7 @@ int KyraEngine_HoF::o2_pressColorKey(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_pressColorKey(%p) (%d)", (const void *)script, stackPos(0));
 	for (int i = 6; i; i--)
 		_inputColorCode[i] = _inputColorCode[i - 1];
-	_inputColorCode[0] = stackPos(0) & 0xff;
+	_inputColorCode[0] = stackPos(0) & 0xFF;
 	for (int i = 0; i < 7; i++) {
 		if (_presetColorCode[i] != _inputColorCode[6 - i])
 			return _dbgPass;
@@ -1023,8 +1023,8 @@ int KyraEngine_HoF::o2_getColorCodeValue(EMCState *script) {
 
 int KyraEngine_HoF::o2_setColorCodeValue(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setColorCodeValue(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_presetColorCode[stackPos(0)] = stackPos(1) & 0xff;
-	return stackPos(1) & 0xff;
+	_presetColorCode[stackPos(0)] = stackPos(1) & 0xFF;
+	return stackPos(1) & 0xFF;
 }
 
 int KyraEngine_HoF::o2_countItemInstances(EMCState *script) {
@@ -1495,7 +1495,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(o2_setCharacterAnimFrame);
-	// 0x0c
+	// 0x0C
 	Opcode(o2_setCharacterFacingOverwrite);
 	Opcode(o2_trySceneChange);
 	Opcode(o2_moveCharacter);
@@ -1515,7 +1515,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_wsaOpen);
 	Opcode(o2_displayWsaSequentialFrames);
 	Opcode(o2_displayWsaSequence);
-	// 0x1c
+	// 0x1C
 	Opcode(o2_addItemToInventory);
 	Opcode(o2_drawShape);
 	Opcode(o2_addItemToCurScene);
@@ -1536,7 +1536,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o1_setGameFlag);
 	Opcode(o1_setHandItem);
 	Opcode(o1_removeHandItem);
-	// 0x2c
+	// 0x2C
 	Opcode(o1_getMouseState);
 	Opcode(o1_hideMouse);
 	Opcode(o2_addSpecialExit);
@@ -1556,7 +1556,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_setTimerDelay);
 	Opcode(o2_setScaleTableItem);
 	Opcode(o2_setDrawLayerTableItem);
-	// 0x3c
+	// 0x3C
 	Opcode(o2_setCharPalEntry);
 	Opcode(o2_loadZShapes);
 	Opcode(o2_drawSceneShape);
@@ -1576,7 +1576,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_restoreInventoryGfx);
 	Opcode(o2_setSceneAnimPos2);
 	Opcode(o2_update);
-	// 0x4c
+	// 0x4C
 	OpcodeUnImpl();
 	Opcode(o2_fadeScenePal);
 	Opcode(o2_dummy);
@@ -1596,7 +1596,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o1_playSoundEffect);
 	Opcode(o2_setSceneAnimPos);
 	Opcode(o1_blockInWalkableRegion);
-	// 0x5c
+	// 0x5C
 	Opcode(o1_blockOutWalkableRegion);
 	OpcodeUnImpl();
 	Opcode(o2_setCauldronState);
@@ -1616,7 +1616,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	OpcodeUnImpl();
 	Opcode(o2_playFireflyScore);
 	Opcode(o2_waitForConfirmationClick);
-	// 0x6c
+	// 0x6C
 	Opcode(o2_encodeShape);
 	Opcode(o2_defineRoomEntrance);
 	Opcode(o2_runAnimationScript);
@@ -1636,7 +1636,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_defineScene);
 	Opcode(o2_addCauldronStateTableEntry);
 	Opcode(o2_setCountDown);
-	// 0x7c
+	// 0x7C
 	Opcode(o2_getCountDown);
 	Opcode(o2_dummy);
 	Opcode(o2_dummy);
@@ -1656,7 +1656,7 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_removeItemFromScene);
 	Opcode(o2_initObject);
 	Opcode(o2_npcChat);
-	// 0x8c
+	// 0x8C
 	Opcode(o2_deinitObject);
 	Opcode(o2_playTimSequence);
 	Opcode(o2_makeBookOrCauldronAppear);
@@ -1676,27 +1676,27 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	Opcode(o2_customChatFinish);
 	Opcode(o2_setupSceneAnimation);
 	Opcode(o2_stopSceneAnimation);
-	// 0x9c
+	// 0x9C
 	Opcode(o2_disableTimer);
 	Opcode(o2_enableTimer);
 	Opcode(o2_setTimerCountdown);
 	Opcode(o2_processPaletteIndex);
-	// 0xa0
+	// 0xA0
 	Opcode(o2_updateTwoSceneAnims);
 	Opcode(o2_getRainbowRoomData);
 	Opcode(o2_drawSceneShapeEx);
 	Opcode(o2_midiSoundFadeout);
-	// 0xa4
+	// 0xA4
 	Opcode(o2_getSfxDriver);
 	Opcode(o2_getVocSupport);
 	Opcode(o2_getMusicDriver);
 	Opcode(o2_setVocHigh);
-	// 0xa8
+	// 0xA8
 	Opcode(o2_getVocHigh);
 	Opcode(o2_zanthiaChat);
 	Opcode(o2_isVoiceEnabled);
 	Opcode(o2_isVoicePlaying);
-	// 0xac
+	// 0xAC
 	Opcode(o2_stopVoicePlaying);
 	Opcode(o2_getGameLanguage);
 	Opcode(o2_demoFinale);

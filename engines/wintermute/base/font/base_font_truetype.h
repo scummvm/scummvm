@@ -54,15 +54,16 @@ private:
 		int _priority;
 		int _textOffset;
 		bool _marked;
+		uint32 _lastUsed;
 
 		BaseCachedTTFontText() {
 			//_text = L"";
 			_text = "";
 			_width = _maxHeight = _maxLength = -1;
 			_align = TAL_LEFT;
-			_surface = NULL;
-			_priority = -1;
+			_surface = nullptr;
 			_textOffset = 0;
+			_lastUsed = 0;
 			_marked = false;
 		}
 
@@ -99,8 +100,8 @@ public:
 	BaseFontTT(BaseGame *inGame);
 	virtual ~BaseFontTT(void);
 
-	virtual int getTextWidth(byte *text, int maxLength = -1);
-	virtual int getTextHeight(byte *text, int width);
+	virtual int getTextWidth(const byte *text, int maxLength = -1);
+	virtual int getTextHeight(const byte *text, int width);
 	virtual void drawText(const byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1);
 	virtual int getLetterHeight();
 

@@ -277,4 +277,4 @@ SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
 	addTest("SampleRates", &SoundSubsystem::sampleRates, true);
 }
 
-}	// End of namespace Testbed
+} // End of namespace Testbed

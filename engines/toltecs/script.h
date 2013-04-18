@@ -49,7 +49,6 @@ public:
 
 	byte *getSlotData(int slotIndex) const { return _slots[slotIndex].data; }
 
-	VarType getGameVarType(uint variable);
 	int16 getGameVar(uint variable);
 	void setGameVar(uint variable, int16 value);
 

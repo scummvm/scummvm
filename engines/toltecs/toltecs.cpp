@@ -39,6 +39,7 @@
 
 #include "toltecs/toltecs.h"
 #include "toltecs/animation.h"
+#include "toltecs/console.h"
 #include "toltecs/menu.h"
 #include "toltecs/movie.h"
 #include "toltecs/music.h"
@@ -62,6 +63,9 @@ struct GameSettings {
 };
 
 ToltecsEngine::ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	// Assign default values to the config manager, in case settings are missing
+	ConfMan.registerDefault("originalsaveload", "false");
+
 	_rnd = new Common::RandomSource("toltecs");
 }
 
@@ -123,6 +127,7 @@ Common::Error ToltecsEngine::run() {
 	_menuSystem = new MenuSystem(this);
 
 	_sound = new Sound(this);
+	_console = new Console(this);
 
 	_cfgText = ConfMan.getBool("subtitles");
 	_cfgVoices = !ConfMan.getBool("speech_mute");
@@ -176,6 +181,7 @@ Common::Error ToltecsEngine::run() {
 	_music->stopSequence();
 	_sound->stopAll();
 
+	delete _console;
 	delete _arc;
 	delete _res;
 	delete _screen;
@@ -215,7 +221,6 @@ void ToltecsEngine::requestLoadgame(int slotNum) {
 }
 
 void ToltecsEngine::loadScene(uint resIndex) {
-
 	Resource *sceneResource = _res->load(resIndex);
 	byte *scene = sceneResource->data;
 
@@ -250,13 +255,10 @@ void ToltecsEngine::loadScene(uint resIndex) {
 
 	_screen->_fullRefresh = true;
 	_screen->_renderQueue->clear();
-
 }
 
 void ToltecsEngine::updateScreen() {
-
 	_sound->updateSpeech();
-
 	_screen->updateShakeScreen();
 
 	// TODO: Set quit flag
@@ -289,7 +291,6 @@ void ToltecsEngine::updateScreen() {
 		_counter02 = (currUpdateTime - prevUpdateTime) / 13;
 	} while (_counter02 == 0);
 	prevUpdateTime = currUpdateTime;
-
 }
 
 void ToltecsEngine::drawScreen() {
@@ -310,6 +311,7 @@ void ToltecsEngine::drawScreen() {
 		_screen->_guiRefresh = false;
 	}
 
+	_console->onFrame();
 	_system->updateScreen();
 	_system->delayMillis(10);
 
@@ -317,7 +319,6 @@ void ToltecsEngine::drawScreen() {
 }
 
 void ToltecsEngine::updateInput() {
-
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
@@ -326,6 +327,9 @@ void ToltecsEngine::updateInput() {
 			_keyState = event.kbd;
 
 			//debug("key: flags = %02X; keycode = %d", _keyState.flags, _keyState.keycode);
+
+			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d)
+				_console->attach();
 
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_F5:
@@ -349,9 +353,6 @@ void ToltecsEngine::updateInput() {
 			break;
 		case Common::EVENT_KEYUP:
 			_keyState.reset();
-			break;
-		case Common::EVENT_QUIT:
-			quitGame();
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mouseX = event.mouse.x;
@@ -408,9 +409,7 @@ void ToltecsEngine::updateInput() {
 			_mouseWaitForRelease = false;
 			_mouseButton = 0;
 		}
-
 	}
-
 }
 
 void ToltecsEngine::setGuiHeight(int16 guiHeight) {
@@ -478,7 +477,6 @@ void ToltecsEngine::scrollCameraRight(int16 delta) {
 }
 
 void ToltecsEngine::updateCamera() {
-
 	if (_cameraX != _newCameraX) {
 		_cameraX = _newCameraX;
 		_screen->_fullRefresh = true;
@@ -492,12 +490,15 @@ void ToltecsEngine::updateCamera() {
 	}
 
 	//debug(0, "ToltecsEngine::updateCamera() _cameraX = %d; _cameraY = %d", _cameraX, _cameraY);
-
 }
 
 void ToltecsEngine::talk(int16 slotIndex, int16 slotOffset) {
-
 	byte *scanData = _script->getSlotData(slotIndex) + slotOffset;
+
+	// If there's another talk text at the requested slot and it's still
+	// active, don't overwrite it. Fixes bug #3600166.
+	if (_screen->isTalkTextActive(slotIndex))
+		return;
 
 	while (*scanData < 0xF0) {
 		if (*scanData == 0x19) {
@@ -518,19 +519,18 @@ void ToltecsEngine::talk(int16 slotIndex, int16 slotOffset) {
 			debug(0, "ToltecsEngine::talk() playSound(resIndex: %d)", resIndex);
 			_sound->playSpeech(resIndex);
 		}
+
 		if (_doText) {
-			_screen->updateTalkText(slotIndex, slotOffset);
+			_screen->updateTalkText(slotIndex, slotOffset, false);
 		} else {
 			_screen->keepTalkTextItemsAlive();
 		}
 	} else {
-		_screen->updateTalkText(slotIndex, slotOffset);
+		_screen->updateTalkText(slotIndex, slotOffset, true);
 	}
-
 }
 
 void ToltecsEngine::walk(byte *walkData) {
-
 	int16 xdelta, ydelta, v8, v10, v11;
 	int16 xstep, ystep;
 	ScriptWalk walkInfo;
@@ -613,7 +613,6 @@ void ToltecsEngine::walk(byte *walkData) {
 	WRITE_LE_UINT16(walkData + 14, walkInfo.xerror);
 	WRITE_LE_UINT16(walkData + 16, walkInfo.mulValue);
 	WRITE_LE_UINT16(walkData + 18, walkInfo.scaling);
-
 }
 
 int16 ToltecsEngine::findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize,

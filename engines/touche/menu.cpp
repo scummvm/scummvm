@@ -103,7 +103,7 @@ struct MenuData {
 	void addCharToDescription(int slot, char chr) {
 		char *description = saveLoadDescriptionsTable[slot];
 		int descriptionLen = strlen(description);
-		if (descriptionLen < 32 && isprint(static_cast<unsigned char>(chr))) {
+		if (descriptionLen < 32 && Common::isPrint(chr)) {
 			description[descriptionLen] = chr;
 			description[descriptionLen + 1] = 0;
 		}
@@ -260,7 +260,7 @@ void ToucheEngine::redrawMenu(void *menu) {
 	Graphics::drawRect(_offscreenBuffer, kScreenWidth, 106, 118, 340, 164, 0xF9, 0xF7);
 	switch (menuData->mode) {
 	case kMenuSettingsMode:
-		drawVolumeSlideBar(_offscreenBuffer, kScreenWidth, _midiPlayer->getVolume());
+		drawVolumeSlideBar(_offscreenBuffer, kScreenWidth, getMusicVolume());
 		menuData->buttonsTable[5].data = 0;
 		menuData->buttonsTable[6].data = 0;
 		menuData->buttonsTable[7].data = 0;
@@ -307,10 +307,10 @@ void ToucheEngine::handleMenuAction(void *menu, int actionId) {
 		_talkTextMode = kTalkModeVoiceAndText;
 		break;
 	case kActionLowerVolume:
-		_midiPlayer->adjustVolume(-16);
+		adjustMusicVolume(-16);
 		break;
 	case kActionUpperVolume:
-		_midiPlayer->adjustVolume(+16);
+		adjustMusicVolume(+16);
 		break;
 	case kActionScrollUpSaves:
 		--_saveLoadCurrentPage;

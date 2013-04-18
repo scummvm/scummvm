@@ -21,6 +21,7 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -39,26 +40,56 @@
 #include "graphics/thumbnail.h"
 
 #include "teenagent/console.h"
+#include "teenagent/dialog.h"
+#include "teenagent/inventory.h"
 #include "teenagent/music.h"
 #include "teenagent/objects.h"
 #include "teenagent/pack.h"
+#include "teenagent/resources.h"
 #include "teenagent/scene.h"
 #include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
-	: Engine(system), action(kActionNone), _gameDescription(gd),
-	  _rnd("teenagent") {
-	music = new MusicPlayer();
+	: Engine(system), _action(kActionNone), _gameDescription(gd), _rnd("teenagent") {
+	DebugMan.addDebugChannel(kDebugActor, "Actor", "Enable Actor Debug");
+	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Enable Animation Debug");
+	DebugMan.addDebugChannel(kDebugCallbacks, "Callbacks", "Enable Callbacks Debug");
+	DebugMan.addDebugChannel(kDebugDialog, "Dialog", "Enable Dialog Debug");
+	DebugMan.addDebugChannel(kDebugFont, "Font", "Enable Font Debug");
+	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Enable Inventory Debug");
+	DebugMan.addDebugChannel(kDebugMusic, "Music", "Enable Music Debug");
+	DebugMan.addDebugChannel(kDebugObject, "Object", "Enable Object Debug");
+	DebugMan.addDebugChannel(kDebugPack, "Pack", "Enable Pack Debug");
+	DebugMan.addDebugChannel(kDebugScene, "Scene", "Enable Scene Debug");
+	DebugMan.addDebugChannel(kDebugSurface, "Surface", "Enable Surface Debug");
+
+	music = new MusicPlayer(this);
+	dialog = new Dialog(this);
+	res = new Resources();
 
 	console = 0;
 }
 
 TeenAgentEngine::~TeenAgentEngine() {
+	delete dialog;
+	dialog = 0;
+	delete scene;
+	scene = 0;
+	delete inventory;
+	inventory = 0;
 	delete music;
+	music = 0;
+	_mixer->stopAll();
+	_useHotspots.clear();
+	delete res;
+	res = 0;
+
+	CursorMan.popCursor();
 
 	delete console;
+	DebugMan.clearAllDebugChannels();
 }
 
 bool TeenAgentEngine::trySelectedObject() {
@@ -66,66 +97,64 @@ bool TeenAgentEngine::trySelectedObject() {
 	if (inv == NULL)
 		return false;
 
-	Resources *res = Resources::instance();
-	debug(0, "checking active object %u on %u", inv->id, dst_object->id);
+	debugC(0, kDebugObject, "checking active object %u on %u", inv->id, _dstObject->id);
 
 	//mouse time challenge hack:
-	if ((res->dseg.get_byte(0) == 1 && inv->id == 49 && dst_object->id == 5) ||
-	    (res->dseg.get_byte(0) == 2 && inv->id == 29 && dst_object->id == 5)) {
+	if ((res->dseg.get_byte(dsAddr_timedCallbackState) == 1 && inv->id == kInvItemRock && _dstObject->id == 5) ||
+	    (res->dseg.get_byte(dsAddr_timedCallbackState) == 2 && inv->id == kInvItemSuperGlue && _dstObject->id == 5)) {
 		//putting rock into hole or superglue on rock
-		processCallback(0x8d57);
+		fnPutRockInHole();
 		return true;
 	}
 
-	const Common::Array<UseHotspot> &hotspots = use_hotspots[scene->getId() - 1];
+	const Common::Array<UseHotspot> &hotspots = _useHotspots[scene->getId() - 1];
 	for (uint i = 0; i < hotspots.size(); ++i) {
 		const UseHotspot &spot = hotspots[i];
-		if (spot.inventory_id == inv->id && dst_object->id == spot.object_id) {
-			debug(0, "use object on hotspot!");
+		if (spot.inventoryId == inv->id && _dstObject->id == spot.objectId) {
+			debugC(0, kDebugObject, "use object on hotspot!");
 			spot.dump();
-			if (spot.actor_x != 0xffff && spot.actor_y != 0xffff)
-				moveTo(spot.actor_x, spot.actor_y, spot.orientation);
+			if (spot.actorX != 0xffff && spot.actorY != 0xffff)
+				moveTo(spot.actorX, spot.actorY, spot.orientation);
 			if (!processCallback(spot.callback))
-				debug(0, "fixme! display proper description");
+				debugC(0, kDebugObject, "FIXME: display proper description");
 			inventory->resetSelectedObject();
 			return true;
 		}
 	}
 
-	//error
+	// error
 	inventory->resetSelectedObject();
-	displayMessage(0x3457);
+	displayMessage(dsAddr_objErrorMsg); // "That's no good"
 	return true;
 }
 
 void TeenAgentEngine::processObject() {
-	if (dst_object == NULL)
+	if (_dstObject == NULL)
 		return;
 
-	Resources *res = Resources::instance();
-	switch (action) {
+	switch (_action) {
 	case kActionExamine: {
 		if (trySelectedObject())
 			break;
 
-		byte *dcall = res->dseg.ptr(0xb5ce);
+		byte *dcall = res->dseg.ptr(dsAddr_objExamineCallbackTablePtr);
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
-		dcall += 2 * dst_object->id - 2;
+		dcall += 2 * _dstObject->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (callback == 0 || !processCallback(callback))
-			displayMessage(dst_object->description);
+			displayMessage(_dstObject->description);
 	}
 	break;
 	case kActionUse: {
 		if (trySelectedObject())
 			break;
 
-		byte *dcall = res->dseg.ptr(0xb89c);
+		byte *dcall = res->dseg.ptr(dsAddr_objUseCallbackTablePtr);
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
-		dcall += 2 * dst_object->id - 2;
+		dcall += 2 * _dstObject->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (!processCallback(callback))
-			displayMessage(dst_object->description);
+			displayMessage(_dstObject->description);
 	}
 	break;
 
@@ -134,20 +163,19 @@ void TeenAgentEngine::processObject() {
 	}
 }
 
-
 void TeenAgentEngine::use(Object *object) {
 	if (object == NULL || scene->eventRunning())
 		return;
 
-	dst_object = object;
+	_dstObject = object;
 	object->rect.dump();
-	object->actor_rect.dump();
+	object->actorRect.dump();
 
-	action = kActionUse;
-	if (object->actor_rect.valid())
-		scene->moveTo(Common::Point(object->actor_rect.right, object->actor_rect.bottom), object->actor_orientation);
-	else if (object->actor_orientation > 0)
-		scene->setOrientation(object->actor_orientation);
+	_action = kActionUse;
+	if (object->actorRect.valid())
+		scene->moveTo(Common::Point(object->actorRect.right, object->actorRect.bottom), object->actorOrientation);
+	else if (object->actorOrientation > 0)
+		scene->setOrientation(object->actorOrientation);
 }
 
 void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
@@ -155,51 +183,37 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 		return;
 
 	if (object != NULL) {
-		Common::Point dst = object->actor_rect.center();
-		debug(0, "click %d, %d, object %d, %d", point.x, point.y, dst.x, dst.y);
-		action = kActionExamine;
-		if (object->actor_rect.valid())
-			scene->moveTo(dst, object->actor_orientation, true); //validate examine message. Original engine does not let you into walkboxes
-		dst_object = object;
-	} else if (!scene_busy) {
-		//do not reset anything while scene is busy, but allow interrupts while walking.
-		debug(0, "click %d, %d", point.x, point.y);
-		action = kActionNone;
+		Common::Point dst = object->actorRect.center();
+		debugC(0, kDebugObject, "click %d, %d, object %d, %d", point.x, point.y, dst.x, dst.y);
+		_action = kActionExamine;
+		if (object->actorRect.valid())
+			scene->moveTo(dst, object->actorOrientation, true); // validate examine message. Original engine does not let you into walkboxes
+		_dstObject = object;
+	} else if (!_sceneBusy) {
+		// do not reset anything while scene is busy, but allow interrupts while walking.
+		debugC(0, kDebugObject, "click %d, %d", point.x, point.y);
+		_action = kActionNone;
 		scene->moveTo(point, 0, true);
-		dst_object = NULL;
+		_dstObject = NULL;
 	}
 }
 
 void TeenAgentEngine::init() {
-	_mark_delay = 80;
-	_game_delay = 110;
+	_markDelay = 80;
+	_gameDelay = 110;
 
-	Resources *res = Resources::instance();
-	use_hotspots.resize(42);
-	byte *scene_hotspots = res->dseg.ptr(0xbb87);
+	_useHotspots.resize(42);
+	byte *sceneHotspots = res->dseg.ptr(dsAddr_sceneHotspotsPtr);
 	for (byte i = 0; i < 42; ++i) {
-		Common::Array<UseHotspot> & hotspots = use_hotspots[i];
-		byte *hotspots_ptr = res->dseg.ptr(READ_LE_UINT16(scene_hotspots + i * 2));
-		while (*hotspots_ptr) {
+		Common::Array<UseHotspot> & hotspots = _useHotspots[i];
+		byte *hotspotsPtr = res->dseg.ptr(READ_LE_UINT16(sceneHotspots + i * 2));
+		while (*hotspotsPtr) {
 			UseHotspot h;
-			h.load(hotspots_ptr);
-			hotspots_ptr += 9;
+			h.load(hotspotsPtr);
+			hotspotsPtr += 9;
 			hotspots.push_back(h);
 		}
 	}
-}
-
-void TeenAgentEngine::deinit() {
-	_mixer->stopAll();
-	delete scene;
-	scene = NULL;
-	delete inventory;
-	inventory = NULL;
-	//delete music;
-	//music = NULL;
-	use_hotspots.clear();
-	Resources::instance()->deinit();
-	CursorMan.popCursor();
 }
 
 Common::Error TeenAgentEngine::loadGameState(int slot) {
@@ -211,22 +225,19 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	if (!in)
 		return Common::kReadPermissionDenied;
 
-	Resources *res = Resources::instance();
+	assert(res->dseg.size() >= dsAddr_saveState + saveStateSize);
 
-	const uint dataSize = 0x777a;
-	assert(res->dseg.size() >= 0x6478 + dataSize);
-
-	char *data = (char *)malloc(dataSize);
+	char *data = (char *)malloc(saveStateSize);
 	if (!data)
 		error("[TeenAgentEngine::loadGameState] Cannot allocate buffer");
 
 	in->seek(0);
-	if (in->read(data, dataSize) != dataSize) {
+	if (in->read(data, saveStateSize) != saveStateSize) {
 		free(data);
 		return Common::kReadingFailed;
 	}
 
-	memcpy(res->dseg.ptr(0x6478), data, dataSize);
+	memcpy(res->dseg.ptr(dsAddr_saveState), data, saveStateSize);
 
 	free(data);
 
@@ -234,10 +245,10 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	inventory->activate(false);
 	inventory->reload();
 
-	setMusic(Resources::instance()->dseg.get_byte(0xDB90));
+	setMusic(res->dseg.get_byte(dsAddr_currentMusic));
 
-	int id = res->dseg.get_byte(0xB4F3);
-	uint16 x = res->dseg.get_word(0x64AF), y = res->dseg.get_word(0x64B1);
+	int id = res->dseg.get_byte(dsAddr_currentScene);
+	uint16 x = res->dseg.get_word(dsAddr_egoX), y = res->dseg.get_word(dsAddr_egoY);
 	scene->loadObjectData();
 	scene->init(id, Common::Point(x, y));
 	scene->setPalette(4);
@@ -251,22 +262,21 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &des
 	if (!out)
 		return Common::kWritingFailed;
 
-	Resources *res = Resources::instance();
-	res->dseg.set_byte(0xB4F3, scene->getId());
+	res->dseg.set_byte(dsAddr_currentScene, scene->getId());
 	Common::Point pos = scene->getPosition();
-	res->dseg.set_word(0x64AF, pos.x);
-	res->dseg.set_word(0x64B1, pos.y);
+	res->dseg.set_word(dsAddr_egoX, pos.x);
+	res->dseg.set_word(dsAddr_egoY, pos.y);
 
-	assert(res->dseg.size() >= 0x6478 + 0x777a);
-	strncpy((char *)res->dseg.ptr(0x6478), desc.c_str(), 0x16);
-	out->write(res->dseg.ptr(0x6478), 0x777a);
+	assert(res->dseg.size() >= dsAddr_saveState + saveStateSize);
+	// FIXME: Description string is 24 bytes and null based on detection.cpp code, not 22?
+	strncpy((char *)res->dseg.ptr(dsAddr_saveState), desc.c_str(), 22);
+	out->write(res->dseg.ptr(dsAddr_saveState), saveStateSize);
 	if (!Graphics::saveThumbnail(*out))
 		warning("saveThumbnail failed");
 
 	out->finalize();
 	return Common::kNoError;
 }
-
 
 int TeenAgentEngine::skipEvents() const {
 	Common::EventManager *_event = _system->getEventManager();
@@ -295,7 +305,7 @@ bool TeenAgentEngine::showCDLogo() {
 	if (!cdlogo.exists("cdlogo.res") || !cdlogo.open("cdlogo.res"))
 		return true;
 
-	const uint bgSize = 0xfa00;
+	const uint bgSize = kScreenWidth * kScreenHeight;
 	const uint paletteSize = 3 * 256;
 
 	byte *bg = (byte *)malloc(bgSize);
@@ -314,8 +324,8 @@ bool TeenAgentEngine::showCDLogo() {
 	for (uint c = 0; c < paletteSize; ++c)
 		palette[c] *= 4;
 
-	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
-	_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
+	_system->getPaletteManager()->setPalette(palette, 0, 256);
+	_system->copyRectToScreen(bg, kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
 	_system->updateScreen();
 
 	free(bg);
@@ -341,7 +351,7 @@ bool TeenAgentEngine::showLogo() {
 	if (!frame)
 		return true;
 
-	const uint bgSize = 0xfa00;
+	const uint bgSize = kScreenWidth * kScreenHeight;
 	const uint paletteSize = 3 * 256;
 
 	byte *bg = (byte *)malloc(bgSize);
@@ -360,7 +370,7 @@ bool TeenAgentEngine::showLogo() {
 	for (uint c = 0; c < paletteSize; ++c)
 		palette[c] *= 4;
 
-	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
+	_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	free(palette);
 
@@ -374,7 +384,7 @@ bool TeenAgentEngine::showLogo() {
 					return r > 0 ? true : false;
 				}
 			}
-			_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
+			_system->copyRectToScreen(bg, kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
 
 			frame.reset(logo.getStream(i));
 			if (!frame) {
@@ -419,23 +429,23 @@ bool TeenAgentEngine::showMetropolis() {
 			palette[c] *= 4;
 	}
 
-	_system->getPaletteManager()->setPalette(palette, 0, 0x100);
+	_system->getPaletteManager()->setPalette(palette, 0, 256);
 
 	free(palette);
 
 	const uint varia6Size = 21760;
 	const uint varia9Size = 18302;
-	byte *varia_6 = (byte *)malloc(varia6Size);
-	byte *varia_9 = (byte *)malloc(varia9Size);
-	if (!varia_6 || !varia_9) {
-		free(varia_6);
-		free(varia_9);
+	byte *varia6Data = (byte *)malloc(varia6Size);
+	byte *varia9Data = (byte *)malloc(varia9Size);
+	if (!varia6Data || !varia9Data) {
+		free(varia6Data);
+		free(varia9Data);
 
 		error("[TeenAgentEngine::showMetropolis] Cannot allocate buffer");
 	}
 
-	varia.read(6, varia_6, varia6Size);
-	varia.read(9, varia_9, varia9Size);
+	varia.read(6, varia6Data, varia6Size);
+	varia.read(9, varia9Data, varia9Size);
 
 	const uint colorsSize = 56 * 160 * 2;
 	byte *colors = (byte *)malloc(colorsSize);
@@ -449,8 +459,8 @@ bool TeenAgentEngine::showMetropolis() {
 		{
 			int r = skipEvents();
 			if (r != 0) {
-				free(varia_6);
-				free(varia_9);
+				free(varia6Data);
+				free(varia9Data);
 				free(colors);
 				return r > 0 ? true : false;
 			}
@@ -458,7 +468,7 @@ bool TeenAgentEngine::showMetropolis() {
 
 		Graphics::Surface *surface = _system->lockScreen();
 		if (logo_y > 0) {
-			surface->fillRect(Common::Rect(0, 0, 320, logo_y), 0);
+			surface->fillRect(Common::Rect(0, 0, kScreenWidth, logo_y), 0);
 		}
 
 		{
@@ -485,7 +495,7 @@ bool TeenAgentEngine::showMetropolis() {
 		}
 
 		byte *dst = (byte *)surface->getBasePtr(0, 131);
-		byte *src = varia_6;
+		byte *src = varia6Data;
 		for (uint y = 0; y < 68; ++y) {
 			for (uint x = 0; x < 320; ++x) {
 				if (*src++ == 1) {
@@ -497,7 +507,7 @@ bool TeenAgentEngine::showMetropolis() {
 		_system->unlockScreen();
 
 		_system->copyRectToScreen(
-		    varia_9 + (logo_y < 0 ? -logo_y * 320 : 0), 320,
+		    varia9Data + (logo_y < 0 ? -logo_y * 320 : 0), 320,
 		    0, logo_y >= 0 ? logo_y : 0,
 		    320, logo_y >= 0 ? 57 : 57 + logo_y);
 
@@ -509,38 +519,37 @@ bool TeenAgentEngine::showMetropolis() {
 		_system->delayMillis(100);
 	}
 
-	free(varia_6);
-	free(varia_9);
+	free(varia6Data);
+	free(varia9Data);
 	free(colors);
 
 	return true;
 }
 
 Common::Error TeenAgentEngine::run() {
-	Resources *res = Resources::instance();
 	if (!res->loadArchives(_gameDescription))
 		return Common::kUnknownError;
 
 	Common::EventManager *_event = _system->getEventManager();
 
-	initGraphics(320, 200, false);
+	initGraphics(kScreenWidth, kScreenHeight, false);
 	console = new Console(this);
 
-	scene = new Scene(this, _system);
+	scene = new Scene(this);
 	inventory = new Inventory(this);
 
 	init();
 
-	CursorMan.pushCursor(res->dseg.ptr(0x00da), 8, 12, 0, 0, 1);
+	CursorMan.pushCursor(res->dseg.ptr(dsAddr_cursor), 8, 12, 0, 0, 1);
 
 	syncSoundSettings();
 
 	setMusic(1);
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
 
-	int load_slot = Common::ConfigManager::instance().getInt("save_slot");
-	if (load_slot >= 0) {
-		loadGameState(load_slot);
+	int loadSlot = ConfMan.getInt("save_slot");
+	if (loadSlot >= 0) {
+		loadGameState(loadSlot);
 	} else {
 		if (!showCDLogo())
 			return Common::kNoError;
@@ -549,32 +558,30 @@ Common::Error TeenAgentEngine::run() {
 		if (!showMetropolis())
 			return Common::kNoError;
 		scene->intro = true;
-		scene_busy = true;
-		processCallback(0x24c);
+		_sceneBusy = true;
+		fnIntro();
 	}
 
 	CursorMan.showMouse(true);
 
-	uint32 game_timer = 0;
-	uint32 mark_timer = 0;
+	uint32 gameTimer = 0;
+	uint32 markTimer = 0;
 
 	Common::Event event;
 	Common::Point mouse;
 	uint32 timer = _system->getMillis();
 
 	do {
-		Object *current_object = scene->findObject(mouse);
+		Object *currentObject = scene->findObject(mouse);
 
 		while (_event->pollEvent(event)) {
-			if (event.type == Common::EVENT_RTL) {
-				deinit();
+			if (event.type == Common::EVENT_RTL)
 				return Common::kNoError;
-			}
 
-			if ((!scene_busy && inventory->processEvent(event)) || scene->processEvent(event))
+			if ((!_sceneBusy && inventory->processEvent(event)) || scene->processEvent(event))
 				continue;
 
-			//debug(0, "event");
+			debug(5, "event");
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				if ((event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_d) ||
@@ -583,33 +590,33 @@ Common::Error TeenAgentEngine::run() {
 				} else if (event.kbd.hasFlags(0) && event.kbd.keycode == Common::KEYCODE_F5) {
 					openMainMenuDialog();
 				} if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
-					_mark_delay = _mark_delay == 80 ? 40 : 80;
-					debug(0, "mark_delay = %u", _mark_delay);
+					_markDelay = _markDelay == 80 ? 40 : 80;
+					debug(5, "markDelay = %u", _markDelay);
 				}
 				break;
 			case Common::EVENT_LBUTTONDOWN:
 				if (scene->getId() < 0)
 					break;
-				examine(event.mouse, current_object);
+				examine(event.mouse, currentObject);
 				break;
 			case Common::EVENT_RBUTTONDOWN:
-				//if (current_object)
-				//	debug(0, "%d, %s", current_object->id, current_object->name.c_str());
+				if (currentObject)
+					debugC(0, kDebugObject, "%d, %s", currentObject->id, currentObject->name.c_str());
 				if (scene->getId() < 0)
 					break;
 
-				if (current_object == NULL)
+				if (currentObject == NULL)
 					break;
 
-				if (res->dseg.get_byte(0) == 3 && current_object->id == 1) {
-					processCallback(0x5189); //boo!
+				if (res->dseg.get_byte(dsAddr_timedCallbackState) == 3 && currentObject->id == 1) {
+					fnGuardDrinking();
 					break;
 				}
-				if (res->dseg.get_byte(0) == 4 && current_object->id == 5) {
-					processCallback(0x99e0); //getting an anchor
+				if (res->dseg.get_byte(dsAddr_timedCallbackState) == 4 && currentObject->id == 5) {
+					fnGotAnchor();
 					break;
 				}
-				use(current_object);
+				use(currentObject);
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				mouse = event.mouse;
@@ -622,60 +629,60 @@ Common::Error TeenAgentEngine::run() {
 		//game delays: slow 16, normal 11, fast 5, crazy 1
 		//mark delays: 4 * (3 - hero_speed), normal == 1
 		//game delays in 1/100th of seconds
-		uint32 new_timer = _system->getMillis();
-		uint32 delta = new_timer - timer;
-		timer = new_timer;
+		uint32 newTimer = _system->getMillis();
+		uint32 delta = newTimer - timer;
+		timer = newTimer;
 
-		bool tick_game = game_timer <= delta;
-		if (tick_game)
-			game_timer = _game_delay - ((delta - game_timer) % _game_delay);
+		bool tickGame = gameTimer <= delta;
+		if (tickGame)
+			gameTimer = _gameDelay - ((delta - gameTimer) % _gameDelay);
 		else
-			game_timer -= delta;
+			gameTimer -= delta;
 
-		bool tick_mark = mark_timer <= delta;
-		if (tick_mark)
-			mark_timer = _mark_delay - ((delta - mark_timer) % _mark_delay);
+		bool tickMark = markTimer <= delta;
+		if (tickMark)
+			markTimer = _markDelay - ((delta - markTimer) % _markDelay);
 		else
-			mark_timer -= delta;
+			markTimer -= delta;
 
-		if (tick_game || tick_mark) {
-			bool b = scene->render(tick_game, tick_mark, delta);
-			if (!inventory->active() && !b && action != kActionNone) {
+		if (tickGame || tickMark) {
+			bool b = scene->render(tickGame, tickMark, delta);
+			if (!inventory->active() && !b && _action != kActionNone) {
 				processObject();
-				action = kActionNone;
-				dst_object = NULL;
+				_action = kActionNone;
+				_dstObject = NULL;
 			}
-			scene_busy = b;
+			_sceneBusy = b;
 		}
-		_system->showMouse(scene->getMessage().empty() && !scene_busy);
+		_system->showMouse(scene->getMessage().empty() && !_sceneBusy);
 
-		bool busy = inventory->active() || scene_busy;
+		bool busy = inventory->active() || _sceneBusy;
 
 		Graphics::Surface *surface = _system->lockScreen();
 
 		if (!busy) {
-			InventoryObject *selected_object = inventory->selectedObject();
-			if (current_object || selected_object) {
+			InventoryObject *selectedObject = inventory->selectedObject();
+			if (currentObject || selectedObject) {
 				Common::String name;
-				if (selected_object) {
-					name += selected_object->name;
+				if (selectedObject) {
+					name += selectedObject->name;
 					name += " & ";
 				}
-				if (current_object)
-					name += current_object->name;
+				if (currentObject)
+					name += currentObject->name;
 
-				uint w = res->font7.render(NULL, 0, 0, name, 0xd1);
-				res->font7.render(surface, (320 - w) / 2, 180, name, 0xd1, true);
+				uint w = res->font7.render(NULL, 0, 0, name, textColorMark);
+				res->font7.render(surface, (kScreenWidth - w) / 2, 180, name, textColorMark, true);
 #if 0
-				if (current_object) {
-					current_object->rect.render(surface, 0x80);
-					current_object->actor_rect.render(surface, 0x81);
+				if (currentObject) {
+					currentObject->rect.render(surface, 0x80);
+					currentObject->actorRect.render(surface, 0x81);
 				}
 #endif
 			}
 		}
 
-		inventory->render(surface, tick_game ? 1 : 0);
+		inventory->render(surface, tickGame ? 1 : 0);
 
 		_system->unlockScreen();
 
@@ -683,20 +690,19 @@ Common::Error TeenAgentEngine::run() {
 
 		console->onFrame();
 
-		uint32 next_tick = MIN(game_timer, mark_timer);
-		if (next_tick > 0) {
-			_system->delayMillis(next_tick > 40 ? 40 : next_tick);
+		uint32 nextTick = MIN(gameTimer, markTimer);
+		if (nextTick > 0) {
+			_system->delayMillis(nextTick > 40 ? 40 : nextTick);
 		}
 	} while (!shouldQuit());
 
-	deinit();
 	return Common::kNoError;
 }
 
 Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	Common::String message;
 	for (
-	    const char *str = (const char *)Resources::instance()->dseg.ptr(addr);
+	    const char *str = (const char *)res->dseg.ptr(addr);
 	    str[0] != 0 || str[1] != 0;
 	    ++str) {
 		char c = str[0];
@@ -708,12 +714,12 @@ Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	return message;
 }
 
-void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint16 position) {
+void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint16 x, uint16 y) {
 	if (str.empty()) {
 		return;
 	}
 
-	if (color == 0xd1) { //mark's
+	if (color == textColorMark) { // mark's
 		SceneEvent e(SceneEvent::kPlayAnimation);
 		e.animation = 0;
 		e.slot = 0x80;
@@ -725,8 +731,8 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint
 		event.message = str;
 		event.color = color;
 		event.slot = 0;
-		event.dst.x = position % 320;
-		event.dst.y = position / 320;
+		event.dst.x = x;
+		event.dst.y = y;
 		scene->push(event);
 	}
 
@@ -738,46 +744,45 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color, uint
 	}
 }
 
-void TeenAgentEngine::displayMessage(uint16 addr, byte color, uint16 position) {
-	displayMessage(parseMessage(addr), color, position);
+void TeenAgentEngine::displayMessage(uint16 addr, byte color, uint16 x, uint16 y) {
+	displayMessage(parseMessage(addr), color, x, y);
 }
 
-void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 position, uint16 first_frame, uint16 last_frame, byte color) {
+void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, byte color) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
 	event.slot = 0;
 	event.color = color;
-	event.dst.x = position % 320;
-	event.dst.y = position / 320;
-	event.first_frame = first_frame;
-	event.last_frame = last_frame;
+	event.dst.x = x;
+	event.dst.y = y;
+	event.firstFrame = firstFrame;
+	event.lastFrame = lastFrame;
 
 	scene->push(event);
 }
 
-void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 first_frame, uint16 last_frame, byte color) {
+void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 firstFrame, uint16 lastFrame, byte color) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
 	event.slot = slot + 1;
 	event.color = color;
-	event.first_frame = first_frame;
-	event.last_frame = last_frame;
+	event.firstFrame = firstFrame;
+	event.lastFrame = lastFrame;
 
 	scene->push(event);
 }
 
-
 void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 	SceneEvent event(SceneEvent::kCreditsMessage);
 
-	const byte *src = Resources::instance()->dseg.ptr(addr);
+	const byte *src = res->dseg.ptr(addr);
 	event.orientation = *src++;
 	event.color = *src++;
 	event.lan = 8;
 
 	event.dst.y = *src;
 	while (true) {
-		++src; //skip y position
+		++src; // skip y position
 		Common::String line((const char *)src);
 		event.message += line;
 		src += line.size() + 1;
@@ -785,33 +790,33 @@ void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 			break;
 		event.message += "\n";
 	}
-	int w = Resources::instance()->font8.render(NULL, 0, 0, event.message, 0xd1);
-	event.dst.x = (320 - w) / 2;
+	int w = res->font8.render(NULL, 0, 0, event.message, textColorCredits);
+	event.dst.x = (kScreenWidth - w) / 2;
 	event.timer = timer;
 	scene->push(event);
 }
 
 void TeenAgentEngine::displayCredits() {
 	SceneEvent event(SceneEvent::kCredits);
-	event.message = parseMessage(0xe488);
-	event.dst.y = 200;
+	event.message = parseMessage(dsAddr_finalCredits7);
+	event.dst.y = kScreenHeight;
 
 	int lines = 1;
 	for (uint i = 0; i < event.message.size(); ++i)
 		if (event.message[i] == '\n')
 			++lines;
-	event.dst.x = (320 - Resources::instance()->font7.render(NULL, 0, 0, event.message, 0xd1)) / 2;
+	event.dst.x = (kScreenWidth - res->font7.render(NULL, 0, 0, event.message, textColorCredits)) / 2;
 	event.timer = 11 * lines - event.dst.y + 22;
-	//debug(0, "credits = %s", event.message.c_str());
+	debug(2, "credits = %s", event.message.c_str());
 	scene->push(event);
 }
 
-void TeenAgentEngine::displayCutsceneMessage(uint16 addr, uint16 position) {
+void TeenAgentEngine::displayCutsceneMessage(uint16 addr, uint16 x, uint16 y) {
 	SceneEvent event(SceneEvent::kCreditsMessage);
 
 	event.message = parseMessage(addr);
-	event.dst.x = position % 320;
-	event.dst.y = position / 320;
+	event.dst.x = x;
+	event.dst.y = y;
 	event.lan = 7;
 
 	scene->push(event);
@@ -822,7 +827,7 @@ void TeenAgentEngine::moveTo(const Common::Point &dst, byte o, bool warp) {
 }
 
 void TeenAgentEngine::moveTo(Object *obj) {
-	moveTo(obj->actor_rect.right, obj->actor_rect.bottom, obj->actor_orientation);
+	moveTo(obj->actorRect.right, obj->actorRect.bottom, obj->actorOrientation);
 }
 
 void TeenAgentEngine::moveTo(uint16 x, uint16 y, byte o, bool warp) {
@@ -865,7 +870,6 @@ void TeenAgentEngine::playActorAnimation(uint16 id, bool async, bool ignore) {
 		waitAnimation();
 }
 
-
 void TeenAgentEngine::loadScene(byte id, const Common::Point &pos, byte o) {
 	loadScene(id, pos.x, pos.y, o);
 }
@@ -890,21 +894,21 @@ void TeenAgentEngine::enableOn(bool enable) {
 	scene->push(event);
 }
 
-void TeenAgentEngine::setOns(byte id, byte value, byte scene_id) {
+void TeenAgentEngine::setOns(byte id, byte value, byte sceneId) {
 	SceneEvent event(SceneEvent::kSetOn);
 	event.ons = id + 1;
 	event.color = value;
-	event.scene = scene_id;
+	event.scene = sceneId;
 	scene->push(event);
 }
 
-void TeenAgentEngine::setLan(byte id, byte value, byte scene_id) {
+void TeenAgentEngine::setLan(byte id, byte value, byte sceneId) {
 	if (id == 0)
 		error("setting lan 0 is invalid");
 	SceneEvent event(SceneEvent::kSetLan);
 	event.lan = id;
 	event.color = value;
-	event.scene = scene_id;
+	event.scene = sceneId;
 	scene->push(event);
 }
 
@@ -925,35 +929,34 @@ void TeenAgentEngine::reloadLan() {
 	scene->push(event);
 }
 
-
 void TeenAgentEngine::playMusic(byte id) {
 	SceneEvent event(SceneEvent::kPlayMusic);
 	event.music = id;
 	scene->push(event);
 }
 
-void TeenAgentEngine::playSound(byte id, byte skip_frames) {
-	if (skip_frames > 0)
-		--skip_frames;
+void TeenAgentEngine::playSound(byte id, byte skipFrames) {
+	if (skipFrames > 0)
+		--skipFrames;
 	SceneEvent event(SceneEvent::kPlaySound);
 	event.sound = id;
-	event.color = skip_frames;
+	event.color = skipFrames;
 	scene->push(event);
 }
 
-void TeenAgentEngine::enableObject(byte id, byte scene_id) {
+void TeenAgentEngine::enableObject(byte id, byte sceneId) {
 	SceneEvent event(SceneEvent::kEnableObject);
 	event.object = id + 1;
 	event.color = 1;
-	event.scene = scene_id;
+	event.scene = sceneId;
 	scene->push(event);
 }
 
-void TeenAgentEngine::disableObject(byte id, byte scene_id) {
+void TeenAgentEngine::disableObject(byte id, byte sceneId) {
 	SceneEvent event(SceneEvent::kEnableObject);
 	event.object = id + 1;
 	event.color = 0;
-	event.scene = scene_id;
+	event.scene = sceneId;
 	scene->push(event);
 }
 
@@ -1015,7 +1018,6 @@ void TeenAgentEngine::wait(uint16 frames) {
 }
 
 void TeenAgentEngine::playSoundNow(byte id) {
-	Resources *res = Resources::instance();
 	uint size = res->sam_sam.getSize(id);
 	if (size == 0) {
 		warning("skipping invalid sound %u", id);
@@ -1024,28 +1026,26 @@ void TeenAgentEngine::playSoundNow(byte id) {
 
 	byte *data = (byte *)malloc(size);
 	res->sam_sam.read(id, data, size);
-	//debug(0, "playing %u samples...", size);
+	debug(3, "playing %u samples...", size);
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream); //dispose is YES by default
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream); // dispose is YES by default
 }
 
-
 void TeenAgentEngine::setMusic(byte id) {
-	debug(0, "starting music %u", id);
-	Resources *res = Resources::instance();
+	debugC(0, kDebugMusic, "starting music %u", id);
 
-	if (id != 1) //intro music
-		*res->dseg.ptr(0xDB90) = id;
+	if (id != 1) // intro music
+		res->dseg.set_byte(dsAddr_currentMusic, id);
 
 	if (_gameDescription->flags & ADGF_CD) {
 		byte track2cd[] = {7, 2, 0, 9, 3, 6, 8, 10, 4, 5, 11};
 		if (id == 0 || id > 11 || track2cd[id - 1] == 0) {
-			debug(0, "no cd music for id %u", id);
+			debugC(0, kDebugMusic, "no cd music for id %u", id);
 			return;
 		}
 		byte track = track2cd[id - 1];
-		debug(0, "playing cd track %u", track);
+		debugC(0, kDebugMusic, "playing cd track %u", track);
 		_system->getAudioCDManager()->play(track, -1, 0, 0);
 	} else if (music->load(id))
 		music->start();

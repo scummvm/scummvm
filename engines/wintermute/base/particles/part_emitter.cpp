@@ -32,7 +32,8 @@
 #include "engines/wintermute/math/matrix4.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/timer.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
@@ -88,7 +89,7 @@ PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject
 
 	_useRegion = false;
 
-	_emitEvent = NULL;
+	_emitEvent = nullptr;
 	_owner = owner;
 }
 
@@ -112,7 +113,7 @@ PartEmitter::~PartEmitter(void) {
 	_sprites.clear();
 
 	delete[] _emitEvent;
-	_emitEvent = NULL;
+	_emitEvent = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -131,7 +132,7 @@ bool PartEmitter::addSprite(const char *filename) {
 	// check if file exists
 	Common::SeekableReadStream *File = BaseFileManager::getEngineInstance()->openFile(filename);
 	if (!File) {
-		_gameRef->LOG(0, "Sprite '%s' not found", filename);
+		BaseEngine::LOG(0, "Sprite '%s' not found", filename);
 		return STATUS_FAILED;
 	} else {
 		BaseFileManager::getEngineInstance()->closeFile(File);
@@ -252,7 +253,7 @@ bool PartEmitter::update() {
 	if (!_running) {
 		return STATUS_OK;
 	} else {
-		return updateInternal(_gameRef->_timer, _gameRef->_timerDelta);
+		return updateInternal(BaseEngine::getTimer()->getTime(), BaseEngine::getTimer()->getTimeDelta());
 	}
 }
 
@@ -321,11 +322,11 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::display(BaseRegion *region) {
 	if (_sprites.size() <= 1) {
-		_gameRef->_renderer->startSpriteBatch();
+		BaseEngine::getRenderer()->startSpriteBatch();
 	}
 
 	for (uint32 i = 0; i < _particles.size(); i++) {
-		if (region != NULL && _useRegion) {
+		if (region != nullptr && _useRegion) {
 			if (!region->pointInRegion((int)_particles[i]->_pos.x, (int)_particles[i]->_pos.y)) {
 				continue;
 			}
@@ -335,7 +336,7 @@ bool PartEmitter::display(BaseRegion *region) {
 	}
 
 	if (_sprites.size() <= 1) {
-		_gameRef->_renderer->endSpriteBatch();
+		BaseEngine::getRenderer()->endSpriteBatch();
 	}
 
 	return STATUS_OK;
@@ -353,7 +354,7 @@ bool PartEmitter::start() {
 	if (_overheadTime > 0) {
 		uint32 delta = 500;
 		int steps = _overheadTime / delta;
-		uint32 currentTime = _gameRef->_timer - _overheadTime;
+		uint32 currentTime = BaseEngine::getTimer()->getTime() - _overheadTime;
 
 		for (int i = 0; i < steps; i++) {
 			updateInternal(currentTime, delta);
@@ -373,16 +374,13 @@ bool PartEmitter::sortParticlesByZ() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int PartEmitter::compareZ(const void *obj1, const void *obj2) {
-	const PartParticle *p1 = *(const PartParticle *const *)obj1;
-	const PartParticle *p2 = *(const PartParticle *const *)obj2;
-
+bool PartEmitter::compareZ(const PartParticle *p1, const PartParticle *p2) {
 	if (p1->_posZ < p2->_posZ) {
-		return -1;
+		return true;
 	} else if (p1->_posZ > p2->_posZ) {
-		return 1;
+		return false;
 	} else {
-		return 0;
+		return false;
 	}
 }
 
@@ -405,7 +403,7 @@ bool PartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int 
 
 //////////////////////////////////////////////////////////////////////////
 PartForce *PartEmitter::addForceByName(const Common::String &name) {
-	PartForce *force = NULL;
+	PartForce *force = nullptr;
 
 	for (uint32 i = 0; i < _forces.size(); i++) {
 		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
@@ -1136,7 +1134,7 @@ bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EmitEvent") == 0) {
 		delete[] _emitEvent;
-		_emitEvent = NULL;
+		_emitEvent = nullptr;
 		if (!value->isNULL()) {
 			BaseUtils::setString(&_emitEvent, value->getString());
 		}

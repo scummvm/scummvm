@@ -108,9 +108,18 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 	_realWidth = w;
 	_realHeight = h;
 
-	if (w <= _textureWidth && h <= _textureHeight && !_refresh)
-		// Already allocated a sufficiently large buffer
-		return;
+	if (!_refresh) {
+		if (npot_supported && _filter == GL_LINEAR) {
+			// Check if we already allocated a correctly-sized buffer
+			// This is so we don't need to duplicate the last row/column
+			if (w == _textureWidth && h == _textureHeight)
+				return;
+		} else {
+			// Check if we already have a large enough buffer
+			if (w <= _textureWidth && h <= _textureHeight)
+				return;
+		}
+	}
 
 	if (npot_supported) {
 		_textureWidth = w;
@@ -151,12 +160,37 @@ void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLu
 	} else {
 		// Update the texture row by row
 		const byte *src = (const byte *)buf;
+		GLuint curY = y;
+		GLuint height = h;
 		do {
-			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
+			glTexSubImage2D(GL_TEXTURE_2D, 0, x, curY,
 			                w, 1, _glFormat, _glType, src); CHECK_GL_ERROR();
-			++y;
+			curY++;
 			src += pitch;
-		} while (--h);
+		} while (--height);
+	}
+
+	// If we're in linear filter mode, repeat the last row/column if the real dimensions
+	// doesn't match the texture dimensions.
+	if (_filter == GL_LINEAR) {
+		if (_realWidth != _textureWidth && x + w == _realWidth) {
+			const byte *src = (const byte *)buf + (w - 1) * _bytesPerPixel;
+			GLuint curY = y;
+			GLuint height = h;
+
+			do {
+				glTexSubImage2D(GL_TEXTURE_2D, 0, x + w,
+						curY, 1, 1, _glFormat, _glType, src); CHECK_GL_ERROR();
+
+				curY++;
+				src += pitch;
+			} while (--height);
+		}
+
+		if (_realHeight != _textureHeight && y + h == _realHeight) {
+			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y + h,
+					w, 1, _glFormat, _glType, (const byte *)buf + pitch * (h - 1)); CHECK_GL_ERROR();
+		}
 	}
 }
 
@@ -177,10 +211,10 @@ void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 
 	// Calculate the screen rect where the texture will be drawn
 	const GLshort vertices[] = {
-		x,      y,
-		x + w,  y,
-		x,      y + h,
-		x + w,  y + h,
+		x,                y,
+		(GLshort)(x + w), y,
+		x,                (GLshort)(y + h),
+		(GLshort)(x + w), (GLshort)(y + h),
 	};
 	glVertexPointer(2, GL_SHORT, 0, vertices); CHECK_GL_ERROR();
 

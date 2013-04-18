@@ -2,11 +2,26 @@
 # included by the default (main) Makefile.
 #
 
-
 #
 # POSIX specific
 #
 install:
+	$(INSTALL) -d "$(DESTDIR)$(bindir)"
+	$(INSTALL) -c -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
+	$(INSTALL) -d "$(DESTDIR)$(mandir)/man6/"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(mandir)/man6/scummvm.6"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/pixmaps/"
+	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.xpm" "$(DESTDIR)$(datarootdir)/pixmaps/scummvm.xpm"
+	$(INSTALL) -d "$(DESTDIR)$(docdir)"
+	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
+	$(INSTALL) -d "$(DESTDIR)$(datadir)"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
+ifdef DYNAMIC_MODULES
+	$(INSTALL) -d "$(DESTDIR)$(libdir)/scummvm/"
+	$(INSTALL) -c -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/scummvm/"
+endif
+
+install-strip:
 	$(INSTALL) -d "$(DESTDIR)$(bindir)"
 	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
 	$(INSTALL) -d "$(DESTDIR)$(mandir)/man6/"
@@ -71,6 +86,12 @@ endif
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
+	# Binary patch workaround for Iphone 5/IPad 4 "Illegal instruction: 4" toolchain issue (http://code.google.com/p/iphone-gcc-full/issues/detail?id=6)
+	cp scummvm scummvm-iph5
+	sed -i'' 's/\x00\x30\x93\xe4/\x00\x30\x93\xe5/g;s/\x00\x30\xd3\xe4/\x00\x30\xd3\xe5/g;' scummvm-iph5
+	ldid -S scummvm-iph5
+	chmod 755 scummvm-iph5
+	cp scummvm-iph5 $(bundle_name)/ScummVM-iph5
 
 # Location of static libs for the iPhone
 ifneq ($(BACKEND), iphone)
@@ -310,8 +331,10 @@ endif
 # Special target to create an AmigaOS snapshot installation
 aos4dist: $(EXECUTABLE)
 	mkdir -p $(AOS4PATH)
+	mkdir -p $(AOS4PATH)/themes
+	mkdir -p $(AOS4PATH)/extras
 	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)
-	cp icons/scummvm.info $(AOS4PATH)/$(EXECUTABLE).info
+	cp ${srcdir}/icons/scummvm.info $(AOS4PATH)/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
 ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
@@ -339,7 +362,6 @@ endif
 	cp $(srcdir)/dists/ps3/PIC1.PNG ps3pkg/
 	sfo.py -f $(srcdir)/dists/ps3/sfo.xml ps3pkg/PARAM.SFO
 	pkg.py --contentid UP0001-SCUM12000_00-0000000000000000 ps3pkg/ scummvm-ps3.pkg
-	package_finalize scummvm-ps3.pkg
 
 ps3run: $(EXECUTABLE)
 	$(STRIP) $(EXECUTABLE)
@@ -348,4 +370,4 @@ ps3run: $(EXECUTABLE)
 	ps3load $(EXECUTABLE).self
 
 # Mark special targets as phony
-.PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg
+.PHONY: deb bundle osxsnap win32dist install uninstall ps3pkg ps3run

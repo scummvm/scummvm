@@ -848,10 +848,73 @@ const uint16 qfg1vgaPatchFightEvents[] = {
 	PATCH_END
 };
 
+// Script 814 of QFG1VGA is responsible for showing dialogs. However, the death
+// screen message shown when the hero dies in room 64 (ghost room) is too large
+// (254 chars long). Since the window header and main text are both stored in
+// temp space, this is an issue, as the scripts read the window header, then the
+// window text, which erases the window header text because of its length. To
+// fix that, we allocate more temp space and move the pointer used for the
+// window header a little bit, wherever it's used in script 814.
+// Fixes bug #3568431.
+
+// Patch 1: Increase temp space
+const byte qfg1vgaSignatureTempSpace[] = {
+	4,
+	0x3f, 0xba,       // link 0xba
+	0x87, 0x00,       // lap 0
+	0
+};
+
+const uint16 qfg1vgaPatchTempSpace[] = {
+	0x3f, 0xca,       // link 0xca
+	PATCH_END
+};
+
+// Patch 2: Move the pointer used for the window header a little bit
+const byte qfg1vgaSignatureDialogHeader[] = {
+	4,
+	0x5b, 0x04, 0x80,  // lea temp[0x80]
+	0x36,              // push
+	0
+};
+
+const uint16 qfg1vgaPatchDialogHeader[] = {
+	0x5b, 0x04, 0x90,  // lea temp[0x90]
+	PATCH_END
+};
+
+// When clicking on the crusher in room 331, Ego approaches him to talk to him,
+// an action that is handled by moveToCrusher::changeState in script 331. The
+// scripts set Ego to move close to the crusher, but when Ego is running instead
+// of walking, the target coordinates specified by script 331 are never reached,
+// as Ego is making larger steps, and never reaches the required spot. This is an
+// edge case that can occur when Ego is set to run. Normally, when clicking on
+// the crusher, ego is supposed to move close to position 79, 165. We change it
+// to 85, 165, which is not an edge case thus the freeze is avoided.
+// Fixes bug #3585189.
+const byte qfg1vgaSignatureMoveToCrusher[] = {
+	9,
+	0x51, 0x1f,       // class Motion
+	0x36,             // push
+	0x39, 0x4f,       // pushi 4f (79 - x)
+	0x38, 0xa5, 0x00, // pushi 00a5 (165 - y)
+	0x7c,             // pushSelf
+	0
+};
+
+const uint16 qfg1vgaPatchMoveToCrusher[] = {
+	PATCH_ADDTOOFFSET | +3,
+	0x39, 0x55,       // pushi 55 (85 - x)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg1vgaSignatures[] = {
 	{    215, "fight event issue",                           1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
 	{    216, "weapon master event issue",                   1, PATCH_MAGICDWORD(0x6d, 0x76, 0x51, 0x07),    -1, qfg1vgaSignatureFightEvents,       qfg1vgaPatchFightEvents },
+	{    814, "window text temp space",                      1, PATCH_MAGICDWORD(0x3f, 0xba, 0x87, 0x00),     0, qfg1vgaSignatureTempSpace,         qfg1vgaPatchTempSpace },
+	{    814, "dialog header offset",                        3, PATCH_MAGICDWORD(0x5b, 0x04, 0x80, 0x36),     0, qfg1vgaSignatureDialogHeader,      qfg1vgaPatchDialogHeader },
+	{    331, "moving to crusher",                           1, PATCH_MAGICDWORD(0x51, 0x1f, 0x36, 0x39),     0, qfg1vgaSignatureMoveToCrusher,     qfg1vgaPatchMoveToCrusher },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 

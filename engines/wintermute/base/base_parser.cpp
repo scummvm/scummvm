@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 #include "common/util.h"
@@ -51,7 +51,7 @@ BaseParser::BaseParser() {
 
 //////////////////////////////////////////////////////////////////////
 BaseParser::~BaseParser() {
-	if (_whiteSpace != NULL) {
+	if (_whiteSpace != nullptr) {
 		delete[] _whiteSpace;
 	}
 }
@@ -136,7 +136,7 @@ void BaseParser::skipCharacters(char **buf, const char *toSkip) {
 		if (ch == '\n') {
 			_parserLine++;
 		}
-		if (strchr(toSkip, ch) == NULL) {
+		if (strchr(toSkip, ch) == nullptr) {
 			return;
 		}
 		++*buf;                     // skip this character
@@ -250,10 +250,10 @@ Common::String BaseParser::getToken(char **buf) {
 		*t++ = 0;
 	} else if (*b == 0) {
 		*buf = b;
-		return NULL;
+		return nullptr;
 	} else {
 		// Error.
-		return NULL;
+		return nullptr;
 	}
 
 	*buf = b;
@@ -275,7 +275,7 @@ float BaseParser::getTokenFloat(char **buf) {
 
 
 //////////////////////////////////////////////////////////////////////
-int BaseParser::getTokenInt(char **buf) {
+int32 BaseParser::getTokenInt(char **buf) {
 	Common::String token = getToken(buf);
 	const char *t = token.c_str();
 	if (!((*t >= '0' && *t <= '9') || *t == '-')) {
@@ -298,11 +298,11 @@ void BaseParser::skipToken(char **buf, char *tok, char * /*msg*/) {
 
 
 //////////////////////////////////////////////////////////////////////
-int BaseParser::scanStr(const char *in, const char *format, ...) {
+int32 BaseParser::scanStr(const char *in, const char *format, ...) {
 	va_list arg;
 	va_start(arg, format);
 
-	int num = 0;
+	int32 num = 0;
 	in += strspn(in, " \t\n\f");
 
 	while (*format && *in) {

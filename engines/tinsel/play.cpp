@@ -81,9 +81,9 @@ static void PokeInPalette(SCNHANDLE hMulFrame) {
 		pFrame = (const FRAME *)LockMem(hMulFrame);
 
 		// get pointer to image
-		pim = (IMAGE *)LockMem(READ_LE_UINT32(pFrame));	// handle to image
+		pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
 
-		pim->hImgPal = TO_LE_32(BgPal());
+		pim->hImgPal = TO_32(BgPal());
 	}
 }
 
@@ -96,12 +96,12 @@ void PokeInPalette(const MULTI_INIT *pmi) {
 
 	// Could be an empty column
 	if (pmi->hMulFrame) {
-		pFrame = (FRAME *)LockMem(FROM_LE_32(pmi->hMulFrame));
+		pFrame = (FRAME *)LockMem(FROM_32(pmi->hMulFrame));
 
 		// get pointer to image
-		pim = (IMAGE *)LockMem(READ_LE_UINT32(pFrame));	// handle to image
+		pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
 
-		pim->hImgPal = TO_LE_32(BgPal());
+		pim->hImgPal = TO_32(BgPal());
 	}
 }
 
@@ -234,8 +234,8 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 		PMULTI_INIT pmi;		// MULTI_INIT structure
 
 		pReel = GetReel(hFilm, actorCol - 1);
-		pmi = (PMULTI_INIT) LockMem(FROM_LE_32(pReel->mobj));
-		_ctx->reelActor = (int32)FROM_LE_32(pmi->mulID);
+		pmi = (PMULTI_INIT) LockMem(FROM_32(pReel->mobj));
+		_ctx->reelActor = (int32)FROM_32(pmi->mulID);
 	} else
 		_ctx->reelActor = 0;
 
@@ -251,27 +251,27 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 		pFilm = (FILM *)LockMem(hFilm);
 		pReel = &pFilm->reels[column];
 
-		pAni = (ANI_SCRIPT *)LockMem(FROM_LE_32(pReel->script));
+		pAni = (ANI_SCRIPT *)LockMem(FROM_32(pReel->script));
 
 		if (_ctx->speed == -1) {
-			_ctx->speed = (ONE_SECOND/FROM_LE_32(pFilm->frate));
+			_ctx->speed = (ONE_SECOND/FROM_32(pFilm->frate));
 
 			// Restored reel
 			for (;;) {
-				if (FROM_LE_32(pAni[_ctx->frameNumber].op) == ANI_END)
+				if (FROM_32(pAni[_ctx->frameNumber].op) == ANI_END)
 					break;
-				else if (FROM_LE_32(pAni[_ctx->frameNumber].op) == ANI_JUMP) {
+				else if (FROM_32(pAni[_ctx->frameNumber].op) == ANI_JUMP) {
 					_ctx->frameNumber++;
-					_ctx->frameNumber += FROM_LE_32(pAni[_ctx->frameNumber].op);
+					_ctx->frameNumber += FROM_32(pAni[_ctx->frameNumber].op);
 					break;
 				}
 				// Could check for the other stuff here
 				// but they really dont happen
 				// OH YES THEY DO
-				else if (FROM_LE_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTX
-					||	 FROM_LE_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTY) {
+				else if (FROM_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTX
+					||	 FROM_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTY) {
 					_ctx->frameNumber += 2;
-				} else if (FROM_LE_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTXY) {
+				} else if (FROM_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTXY) {
 					_ctx->frameNumber += 3;
 				} else {
 					// ANI_STOP, ANI_HIDE, ANI_HFLIP,
@@ -281,7 +281,7 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 			}
 		}
 
-		switch (FROM_LE_32(pAni[_ctx->frameNumber].op)) {
+		switch (FROM_32(pAni[_ctx->frameNumber].op)) {
 		case ANI_END:
 			// Stop this sample if repeating
 			if (_ctx->sampleNumber && _ctx->bLooped)
@@ -292,9 +292,9 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 		case ANI_JUMP:
 			_ctx->frameNumber++;
 
-			assert((int32)FROM_LE_32(pAni[_ctx->frameNumber].op) < 0);
+			assert((int32)FROM_32(pAni[_ctx->frameNumber].op) < 0);
 
-			_ctx->frameNumber += FROM_LE_32(pAni[_ctx->frameNumber].op);
+			_ctx->frameNumber += FROM_32(pAni[_ctx->frameNumber].op);
 
 			assert(_ctx->frameNumber >= 0);
 			continue;
@@ -329,15 +329,15 @@ static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
 			if (_ctx->sampleNumber)
 				_vm->_sound->stopSpecSample(_ctx->sampleNumber, 0);
 
-			_ctx->sampleNumber = FROM_LE_32(pAni[_ctx->frameNumber++].op);
+			_ctx->sampleNumber = FROM_32(pAni[_ctx->frameNumber++].op);
 			if (_ctx->sampleNumber > 0)
 				_ctx->bLooped = false;
 			else {
 				_ctx->sampleNumber = ~_ctx->sampleNumber;
 				_ctx->bLooped = true;
 			}
-			x = (short)(FROM_LE_32(pAni[_ctx->frameNumber].op) >> 16);
-			y = (short)(FROM_LE_32(pAni[_ctx->frameNumber].op) & 0xffff);
+			x = (short)(FROM_32(pAni[_ctx->frameNumber].op) >> 16);
+			y = (short)(FROM_32(pAni[_ctx->frameNumber].op) & 0xffff);
 
 			if (x == 0)
 				x = -1;
@@ -451,10 +451,10 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 	_ctx->pfreel = &pfilm->reels[ppi->column];
 
 	// Get the MULTI_INIT structure
-	pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(_ctx->pfreel->mobj));
+	pmi = (const MULTI_INIT *)LockMem(FROM_32(_ctx->pfreel->mobj));
 
 	// Save actor's ID
-	_ctx->reelActor = (int32)FROM_LE_32(pmi->mulID);
+	_ctx->reelActor = (int32)FROM_32(pmi->mulID);
 
 	/**** New (experimental? bit 5/1/95 ****/
 	if (!TinselV0 && !actorAlive(_ctx->reelActor))
@@ -488,7 +488,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 		return;
 
 	// Poke in the background palette
-	PokeInPalette(FROM_LE_32(pmi->hMulFrame));
+	PokeInPalette(FROM_32(pmi->hMulFrame));
 
 	// Set up and insert the multi-object
 	_ctx->pPlayObj = MultiInitObject(pmi);
@@ -534,7 +534,7 @@ static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
 	if (ppi->actorid == 0 && !actorAlive(_ctx->reelActor))
 		_ctx->lifeNoMatter = true;
 
-	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj,  FROM_LE_32(_ctx->pfreel->script), ppi->speed);
+	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj,  FROM_32(_ctx->pfreel->script), ppi->speed);
 
 	// If first column, set Z position as per
 	// Otherwise, column 0's + column number
@@ -706,16 +706,16 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 	// Get the reel and MULTI_INIT structure
 	_ctx->pFreel = GetReel(hFilm, column);
-	_ctx->pmi = (MULTI_INIT *)LockMem(FROM_LE_32(_ctx->pFreel->mobj));
+	_ctx->pmi = (MULTI_INIT *)LockMem(FROM_32(_ctx->pFreel->mobj));
 
-	if ((int32)FROM_LE_32(_ctx->pmi->mulID) == -2) {
+	if ((int32)FROM_32(_ctx->pmi->mulID) == -2) {
 		CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, hFilm, column, speed, myescEvent,
-			FROM_LE_32(_ctx->pmi->otherFlags) & OTH_RELATEDACTOR));
+			FROM_32(_ctx->pmi->otherFlags) & OTH_RELATEDACTOR));
 		return;
 	}
 
 	// Save actor's ID
-	_ctx->reelActor = FROM_LE_32(_ctx->pmi->mulID);
+	_ctx->reelActor = FROM_32(_ctx->pmi->mulID);
 
 	UpdateActorEsc(_ctx->reelActor, myescEvent);
 
@@ -759,8 +759,8 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 	// Set ghost bit if wanted
 	if (ActorIsGhost(_ctx->reelActor)) {
-		assert(FROM_LE_32(_ctx->pmi->mulFlags) == DMA_WNZ || FROM_LE_32(_ctx->pmi->mulFlags) == (DMA_WNZ | DMA_GHOST));
-		_ctx->pmi->mulFlags = TO_LE_32(FROM_LE_32(_ctx->pmi->mulFlags) | DMA_GHOST);
+		assert(FROM_32(_ctx->pmi->mulFlags) == DMA_WNZ || FROM_32(_ctx->pmi->mulFlags) == (DMA_WNZ | DMA_GHOST));
+		_ctx->pmi->mulFlags = TO_32(FROM_32(_ctx->pmi->mulFlags) | DMA_GHOST);
 	}
 
 	// Set up and insert the multi-object
@@ -793,10 +793,10 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	/*
 	 * Sort out x and y
 	 */
-	assert( ((FROM_LE_32(_ctx->pmi->otherFlags) & OTH_RELATIVE) && !(FROM_LE_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE))
-		|| ((FROM_LE_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE) && !(FROM_LE_32(_ctx->pmi->otherFlags) & OTH_RELATIVE)) );
+	assert( ((FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE) && !(FROM_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE))
+		|| ((FROM_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE) && !(FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE)) );
 
-	_ctx->bRelative = FROM_LE_32(_ctx->pmi->otherFlags) & OTH_RELATIVE;
+	_ctx->bRelative = FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE;
 
 	if (_ctx->bRelative) {
 		// Use actor's position. If (x, y) specified, move the actor.
@@ -808,7 +808,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 		x = y = 0;		// Use (0,0) if no specified
 
 	// Add embedded co-ords
-	MultiSetAniXY(_ctx->pPlayObj, x + FROM_LE_32(_ctx->pmi->mulX), y + FROM_LE_32(_ctx->pmi->mulY));
+	MultiSetAniXY(_ctx->pPlayObj, x + FROM_32(_ctx->pmi->mulX), y + FROM_32(_ctx->pmi->mulY));
 
 	/*
 	 * Sort out z
@@ -824,10 +824,10 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 
 		// N.B. It HAS been ensured that the first column gets here first
 
-		if ((int32)FROM_LE_32(_ctx->pmi->mulZ) != -1) {
+		if ((int32)FROM_32(_ctx->pmi->mulZ) != -1) {
 			// Z override in script
 
-			baseZfact = FROM_LE_32(_ctx->pmi->mulZ);
+			baseZfact = FROM_32(_ctx->pmi->mulZ);
 			baseZposn = (baseZfact << ZSHIFT) + MultiLowest(_ctx->pPlayObj);
 			if (bTop)
 				baseZposn += Z_TOPPLAY;
@@ -850,7 +850,7 @@ static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHA
 	 * another reel starts up for this actor,
 	 * or the actor gets killed.
 	 */
-	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj, FROM_LE_32(_ctx->pFreel->script), speed);
+	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj, FROM_32(_ctx->pFreel->script), speed);
 
 	if (bRestore || (ActorEsc(_ctx->reelActor) == true &&
 				ActorEev(_ctx->reelActor) != GetEscEvents())) {
@@ -952,10 +952,10 @@ void NewestFilm(SCNHANDLE film, const FREEL *reel) {
 	const MULTI_INIT *pmi;		// MULTI_INIT structure
 
 	// Get the MULTI_INIT structure
-	pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(reel->mobj));
+	pmi = (const MULTI_INIT *)LockMem(FROM_32(reel->mobj));
 
-	if (!TinselV2 || ((int32)FROM_LE_32(pmi->mulID) != -2))
-		SetActorLatestFilm((int32)FROM_LE_32(pmi->mulID), film);
+	if (!TinselV2 || ((int32)FROM_32(pmi->mulID) != -2))
+		SetActorLatestFilm((int32)FROM_32(pmi->mulID), film);
 }
 
 // *******************************************************
@@ -988,7 +988,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 	ppi.y = y;
 	ppi.z = 0;
 	ppi.bRestore = false;
-	ppi.speed = (ONE_SECOND / FROM_LE_32(pFilm->frate));
+	ppi.speed = (ONE_SECOND / FROM_32(pFilm->frate));
 	ppi.actorid = actorid;
 	ppi.splay = splay;
 	ppi.bTop = bTop;
@@ -997,7 +997,7 @@ void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay
 	ppi.myescEvent = myescEvent;
 
 	// Start display process for each reel in the film
-	for (int i = FROM_LE_32(pFilm->numreels) - 1; i >= 0; i--) {
+	for (int i = FROM_32(pFilm->numreels) - 1; i >= 0; i--) {
 		NewestFilm(hFilm, &pFilm->reels[i]);
 
 		ppi.column = i;
@@ -1049,7 +1049,7 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
 	_ctx->ppi.y = y;
 	_ctx->ppi.z = 0;
 	_ctx->ppi.bRestore = false;
-	_ctx->ppi.speed = (ONE_SECOND / FROM_LE_32(pFilm->frate));
+	_ctx->ppi.speed = (ONE_SECOND / FROM_32(pFilm->frate));
 	_ctx->ppi.actorid = actorid;
 	_ctx->ppi.splay = splay;
 	_ctx->ppi.bTop = bTop;
@@ -1059,7 +1059,7 @@ void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool spla
 
 	// Start display process for each secondary reel in the film in Tinsel 1,
 	// or all of them in Tinsel 2
-	for (int i = FROM_LE_32(pFilm->numreels) - 1; i >= (TinselV2 ? 0 : 1); i--) {
+	for (int i = FROM_32(pFilm->numreels) - 1; i >= (TinselV2 ? 0 : 1); i--) {
 		NewestFilm(hFilm, &pFilm->reels[i]);
 
 		_ctx->ppi.column = i;
@@ -1109,7 +1109,7 @@ void RestoreActorReels(SCNHANDLE hFilm, short reelnum, short z, int x, int y) {
 	ppi.x = x;
 	ppi.y = y;
 	ppi.z = z;
-	ppi.speed = (ONE_SECOND / FROM_LE_32(pfilm->frate));
+	ppi.speed = (ONE_SECOND / FROM_32(pfilm->frate));
 	ppi.actorid = 0;
 	ppi.splay = false;
 	ppi.bTop = false;
@@ -1147,15 +1147,15 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 	ppi.x = (short)x;
 	ppi.y = (short)y;
 	ppi.bRestore = true;
-	ppi.speed = (short)(ONE_SECOND/FROM_LE_32(pFilm->frate));
+	ppi.speed = (short)(ONE_SECOND/FROM_32(pFilm->frate));
 	ppi.bTop = false;
 	ppi.myescEvent = 0;
 
 	// Search backwards for now as later column will be the one
-	for (i = (int)FROM_LE_32(pFilm->numreels) - 1; i >= 0; i--) {
+	for (i = (int)FROM_32(pFilm->numreels) - 1; i >= 0; i--) {
 		pFreel = &pFilm->reels[i];
-		pmi = (PMULTI_INIT) LockMem(FROM_LE_32(pFreel->mobj));
-		if ((int32)FROM_LE_32(pmi->mulID) == actor) {
+		pmi = (PMULTI_INIT) LockMem(FROM_32(pFreel->mobj));
+		if ((int32)FROM_32(pmi->mulID) == actor) {
 			ppi.column = (short)i;
 			NewestFilm(hFilm, &pFilm->reels[i]);
 
@@ -1173,8 +1173,8 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 int ExtractActor(SCNHANDLE hFilm) {
 	const FILM *pFilm = (const FILM *)LockMem(hFilm);
 	const FREEL *pReel = &pFilm->reels[0];
-	const MULTI_INIT *pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pReel->mobj));
-	return (int)FROM_LE_32(pmi->mulID);
+	const MULTI_INIT *pmi = (const MULTI_INIT *)LockMem(FROM_32(pReel->mobj));
+	return (int)FROM_32(pmi->mulID);
 }
 
 } // End of namespace Tinsel

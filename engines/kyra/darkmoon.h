@@ -72,21 +72,21 @@ private:
 	void seq_playFinale();
 	void seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *data, int sd, int backupPage, int tempPage, int speed);
 
-	const char * const *_introStrings;
-	const char * const *_cpsFilesIntro;
+	const char *const *_introStrings;
+	const char *const *_cpsFilesIntro;
 	const DarkMoonAnimCommand **_animIntro;
 	const DarkMoonShapeDef **_shapesIntro;
 
-	const char * const *_finaleStrings;
+	const char *const *_finaleStrings;
 	const uint8 *_creditsData;
-	const char * const *_cpsFilesFinale;
+	const char *const *_cpsFilesFinale;
 	const DarkMoonAnimCommand **_animFinale;
 	const DarkMoonShapeDef **_shapesFinale;
 
-	static const char *_palFilesIntroVGA[];
-	static const char *_palFilesIntroEGA[];
-	static const char *_palFilesFinaleVGA[];
-	static const char *_palFilesFinaleEGA[];
+	static const char *const _palFilesIntroVGA[];
+	static const char *const _palFilesIntroEGA[];
+	static const char *const _palFilesFinaleVGA[];
+	static const char *const _palFilesFinaleEGA[];
 
 	// Ingame sequence
 	void seq_nightmare();
@@ -140,7 +140,7 @@ private:
 	static const uint8 _egaDefaultPalette[];
 };
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

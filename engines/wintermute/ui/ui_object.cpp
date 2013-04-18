@@ -43,27 +43,27 @@ IMPLEMENT_PERSISTENT(UIObject, false)
 
 //////////////////////////////////////////////////////////////////////////
 UIObject::UIObject(BaseGame *inGame) : BaseObject(inGame) {
-	_back = NULL;
-	_image = NULL;
-	_font = NULL;
-	_text = NULL;
+	_back = nullptr;
+	_image = nullptr;
+	_font = nullptr;
+	_text = nullptr;
 	_sharedFonts = _sharedImages = false;
 
 	_width = _height = 0;
 
-	_listenerObject = NULL;
-	_listenerParamObject = NULL;
+	_listenerObject = nullptr;
+	_listenerParamObject = nullptr;
 	_listenerParamDWORD = 0;
 
 	_disable = false;
 	_visible = true;
 
 	_type = UI_UNKNOWN;
-	_parent = NULL;
+	_parent = nullptr;
 
 	_parentNotify = false;
 
-	_focusedWidget = NULL;
+	_focusedWidget = nullptr;
 
 	_canFocus = false;
 	_nonIntMouseEvents = true;
@@ -91,7 +91,7 @@ UIObject::~UIObject() {
 		delete[] _text;
 	}
 
-	_focusedWidget = NULL; // ref only
+	_focusedWidget = nullptr; // ref only
 }
 
 
@@ -168,11 +168,11 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			_gameRef->_fontStorage->removeFont(_font);
 		}
 		if (val->isNULL()) {
-			_font = NULL;
+			_font = nullptr;
 			stack->pushBool(true);
 		} else {
 			_font = _gameRef->_fontStorage->addFont(val->getString());
-			stack->pushBool(_font != NULL);
+			stack->pushBool(_font != nullptr);
 		}
 		return STATUS_OK;
 	}
@@ -187,7 +187,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		/* const char *filename = */ val->getString();
 
 		delete _image;
-		_image = NULL;
+		_image = nullptr;
 		if (val->isNULL()) {
 			stack->pushBool(true);
 			return STATUS_OK;
@@ -196,7 +196,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_image = new BaseSprite(_gameRef);
 		if (!_image || DID_FAIL(_image->loadFile(val->getString()))) {
 			delete _image;
-			_image = NULL;
+			_image = nullptr;
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);

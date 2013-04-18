@@ -58,7 +58,7 @@ ScStack::~ScStack() {
 ScValue *ScStack::pop() {
 	if (_sP < 0) {
 		_gameRef->LOG(0, "Fatal: Stack underflow");
-		return NULL;
+		return nullptr;
 	}
 
 	return _values[_sP--];
@@ -97,7 +97,7 @@ ScValue *ScStack::getPushValue() {
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScStack::getTop() {
 	if (_sP < 0 || _sP >= (int32)_values.size()) {
-		return NULL;
+		return nullptr;
 	} else {
 		return _values[_sP];
 	}
@@ -108,7 +108,7 @@ ScValue *ScStack::getTop() {
 ScValue *ScStack::getAt(int index) {
 	index = _sP - index;
 	if (index < 0 || index >= (int32)_values.size()) {
-		return NULL;
+		return nullptr;
 	} else {
 		return _values[index];
 	}
@@ -147,73 +147,36 @@ void ScStack::correctParams(uint32 expectedParams) {
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushNULL() {
-	/*
-	ScValue* val = new ScValue(_gameRef);
-	val->setNULL();
-	Push(val);
-	delete val;
-	*/
 	getPushValue()->setNULL();
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushInt(int val) {
-	/*
-	ScValue* val = new ScValue(_gameRef);
-	val->setInt(Val);
-	Push(val);
-	delete val;
-	*/
 	getPushValue()->setInt(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushFloat(double val) {
-	/*
-	ScValue* val = new ScValue(_gameRef);
-	val->setFloat(Val);
-	Push(val);
-	delete val;
-	*/
 	getPushValue()->setFloat(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushBool(bool val) {
-	/*
-	ScValue* val = new ScValue(_gameRef);
-	val->setBool(Val);
-	Push(val);
-	delete val;
-	*/
 	getPushValue()->setBool(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushString(const char *val) {
-	/*
-	ScValue* val = new ScValue(_gameRef);
-	val->setString(Val);
-	Push(val);
-	delete val;
-	*/
 	getPushValue()->setString(val);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void ScStack::pushNative(BaseScriptable *val, bool persistent) {
-	/*
-	ScValue* val = new ScValue(_gameRef);
-	val->setNative(Val, Persistent);
-	Push(val);
-	delete val;
-	*/
-
 	getPushValue()->setNative(val, persistent);
 }
 

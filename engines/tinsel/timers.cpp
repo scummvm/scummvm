@@ -106,7 +106,7 @@ static TIMER *findTimer(int num) {
  */
 static TIMER *allocateTimer(int num) {
 	assert(num); // zero is not allowed as a timer number
-	assert(!findTimer(num)); // Allocating already existant timer
+	assert(!findTimer(num)); // Allocating already existent timer
 
 	for (int i = 0; i < MAX_TIMERS; i++) {
 		if (!g_timers[i].tno) {

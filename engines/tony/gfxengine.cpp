@@ -35,7 +35,6 @@
 
 namespace Tony {
 
-
 /****************************************************************************\
 *       RMGfxEngine Methods
 \****************************************************************************/
@@ -260,7 +259,6 @@ SKIPCLICKSINISTRO:
 						_inter.clicked(_input.mousePos());
 					}
 				}
-
 
 				// Right Release
 				// *************
@@ -634,7 +632,7 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 	CORO_BEGIN_CONTEXT;
 	Common::InSaveFile *f;
 	byte *state, *statecmp;
-	uint size, sizecmp;
+	uint32 size, sizecmp;
 	char buf[4];
 	RMPoint tp;
 	int loc;

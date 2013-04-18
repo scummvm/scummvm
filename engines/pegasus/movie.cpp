@@ -161,9 +161,10 @@ void Movie::setTime(const TimeValue time, const TimeScale scale) {
 }
 
 void Movie::setRate(const Common::Rational rate) {
-	if (rate != 1 && rate != 0) {
-		warning("Cannot set movie rate");
-		start();
+	if (_video) {
+		_video->setRate(rate);
+
+		TimeBase::setRate(_video->getRate());
 		return;
 	}
 

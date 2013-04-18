@@ -494,8 +494,6 @@ void Vocabulary::debugDecipherSaidBlock(const byte *addr) {
 				case 0xf9:
 					debugN(">");
 					break;
-				case 0xff:
-					break;
 			}
 		}
 	} while (nextItem != 0xff);

@@ -41,27 +41,28 @@ public:
 	BaseSurfaceOSystem(BaseGame *inGame);
 	~BaseSurfaceOSystem();
 
-	bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false);
-	bool create(int width, int height);
+	bool create(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime = -1, bool keepLoaded = false) override;
+	bool create(int width, int height) override;
 
-	bool isTransparentAt(int x, int y);
-	bool isTransparentAtLite(int x, int y);
+	bool isTransparentAt(int x, int y) override;
+	bool isTransparentAtLite(int x, int y) override;
 
-	bool startPixelOp();
-	bool endPixelOp();
+	bool startPixelOp() override;
+	bool endPixelOp() override;
 
 
-	bool displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
-	bool displayTrans(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
-	bool displayTransOffset(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0);
-	bool display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
-	bool displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
-	bool displayTransform(int x, int y, int hotX, int hotY, Rect32 Rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false);
-	virtual bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false);
+	bool displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayTrans(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayTransOffset(int x, int y, Rect32 rect, uint32 alpha = 0xFFFFFFFF, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false, int offsetX = 0, int offsetY = 0) override;
+	bool display(int x, int y, Rect32 rect, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha = 0xFFFFFFFF, bool transparent = false, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool displayTransform(int x, int y, int hotX, int hotY, Rect32 Rect, float zoomX, float zoomY, uint32 alpha, float rotate, TSpriteBlendMode blendMode = BLEND_NORMAL, bool mirrorX = false, bool mirrorY = false) override;
+	bool repeatLastDisplayOp(int offsetX, int offsetY, int numTimesX, int numTimesY) override;
+	virtual bool putSurface(const Graphics::Surface &surface, bool hasAlpha = false) override;
 	/*  static unsigned DLL_CALLCONV ReadProc(void *buffer, unsigned size, unsigned count, fi_handle handle);
 	    static int DLL_CALLCONV SeekProc(fi_handle handle, long offset, int origin);
 	    static long DLL_CALLCONV TellProc(fi_handle handle);*/
-	virtual int getWidth() {
+	virtual int getWidth() override {
 		if (!_loaded) {
 			finishLoad();
 		}
@@ -70,7 +71,7 @@ public:
 		}
 		return _width;
 	}
-	virtual int getHeight() {
+	virtual int getHeight() override {
 		if (!_loaded) {
 			finishLoad();
 		}

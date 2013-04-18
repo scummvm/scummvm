@@ -50,7 +50,7 @@ public:
 	// Returns the size of the resource
 	uint32 getResourceSize(uint resIndex);
 
-	void dump(uint resIndex, const char *prefix = NULL);
+	void dump(uint resIndex);
 
 protected:
 	uint32 *_offsets;

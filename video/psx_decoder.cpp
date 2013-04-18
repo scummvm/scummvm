@@ -151,6 +151,8 @@ static const uint32 s_huffmanACSymbols[AC_CODE_COUNT] = {
 
 PSXStreamDecoder::PSXStreamDecoder(CDSpeed speed, uint32 frameCount) : _speed(speed), _frameCount(frameCount) {
 	_stream = 0;
+	_videoTrack = 0;
+	_audioTrack = 0;
 }
 
 PSXStreamDecoder::~PSXStreamDecoder() {

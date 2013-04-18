@@ -540,8 +540,8 @@ static void SaveFailure(Common::OutSaveFile *f) {
 	if (f) {
 		delete f;
 		_vm->getSaveFileMan()->removeSavefile(g_SaveSceneName);
-		g_SaveSceneName = NULL;	// Invalidate save name
 	}
+	g_SaveSceneName = NULL;	// Invalidate save name
 	GUI::MessageDialog dialog(_("Failed to save game state to file."));
 	dialog.runModal();
 }

@@ -25,6 +25,8 @@ engines/dialogs.cpp
 engines/engine.cpp
 engines/agi/detection.cpp
 engines/agi/saveload.cpp
+engines/drascula/detection.cpp
+engines/drascula/saveload.cpp
 engines/dreamweb/detection.cpp
 engines/sci/detection.cpp
 engines/scumm/dialogs.cpp
@@ -40,6 +42,7 @@ engines/agos/animation.cpp
 engines/gob/inter_playtoons.cpp
 engines/gob/inter_v2.cpp
 engines/gob/inter_v5.cpp
+engines/groovie/detection.cpp
 engines/groovie/script.cpp
 engines/kyra/detection.cpp
 engines/kyra/lol.cpp
@@ -55,7 +58,10 @@ engines/sword2/animation.cpp
 engines/sword2/sword2.cpp
 engines/teenagent/resources.cpp
 engines/tinsel/saveload.cpp
+engines/toltecs/detection.cpp
+engines/toltecs/menu.cpp
 engines/parallaction/saveload.cpp
+engines/pegasus/pegasus.cpp
 
 audio/fmopl.cpp
 audio/mididrv.cpp

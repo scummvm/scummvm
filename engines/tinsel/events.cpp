@@ -389,7 +389,8 @@ void PlayerEvent(PLR_EVENT pEvent, const Common::Point &coOrds) {
 		"PLR_PROV_WALKTO", "PLR_WALKTO", "PLR_LOOK", "PLR_ACTION", "PLR_ESCAPE",
 		"PLR_MENU", "PLR_QUIT", "PLR_PGUP", "PLR_PGDN", "PLR_HOME", "PLR_END",
 		"PLR_DRAG1_START", "PLR_DRAG1_END", "PLR_DRAG2_START", "PLR_DRAG2_END",
-		"PLR_JUMP", "PLR_NOEVENT"};
+		"PLR_JUMP", "PLR_NOEVENT", "PLR_SAVE", "PLR_LOAD", "PLR_WHEEL_UP",
+		"PLR_WHEEL_DOWN"};
 	debugC(DEBUG_BASIC, kTinselDebugActions, "%s - (%d,%d)",
 		actionList[pEvent], coOrds.x, coOrds.y);
 	static uint32 lastRealAction = 0;	// FIXME: Avoid non-const global vars

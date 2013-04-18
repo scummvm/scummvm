@@ -53,10 +53,26 @@ bool SoundAmiga::init() {
 	return _driver != 0 && _tableSfxIntro && _tableSfxGame;
 }
 
+void SoundAmiga::initAudioResourceInfo(int set, void *info) {
+	// See comment below
+}
+
+void SoundAmiga::selectAudioResourceSet(int set) {
+	// It seems that loadSoundFile() is doing what would normally be done in here.
+	// As long as this driver is only required for one single target (Kyra 1 Amiga)
+	// this doesn't matter much.
+}
+
+bool SoundAmiga::hasSoundFile(uint file) const {
+	if (file < 3)
+		return true;
+	return false;
+}
+
 void SoundAmiga::loadSoundFile(uint file) {
 	debugC(5, kDebugLevelSound, "SoundAmiga::loadSoundFile(%d)", file);
 
-	static const char * const tableFilenames[3][2] = {
+	static const char *const tableFilenames[3][2] = {
 		{ "introscr.mx",  "introinst.mx" },
 		{ "kyramusic.mx", 0 },
 		{ "finalescr.mx", "introinst.mx" }

@@ -52,7 +52,6 @@ class RMGfxSourceBuffer16;   //     Source
 class RMGfxWoodyBuffer;      //     Source16+Target
 class RMGfxClearTask;        //     Task
 
-
 /**
  * Graphics buffer
  */
@@ -126,7 +125,6 @@ public:
 	virtual RMGfxPrimitive *duplicate();
 };
 
-
 /**
  * Graphic drawing task
  */
@@ -149,7 +147,6 @@ public:
 	virtual void unregister();
 };
 
-
 /**
  * Graphic drawing with priority
  */
@@ -158,7 +155,6 @@ public:
 	virtual ~RMGfxTaskSetPrior() { }
 	void setPriority(int nPrior);
 };
-
 
 /**
  * Task that cleans the destination buffer
@@ -171,7 +167,6 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	virtual void removeThis(CORO_PARAM, bool &result);
 };
-
 
 /**
  * Task that draws a colored box
@@ -187,7 +182,6 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 	virtual void removeThis(CORO_PARAM, bool &result);
 };
-
 
 /**
  * Buffer source for the design, which is a task. This is an abstract base.
@@ -210,7 +204,6 @@ public:
 	virtual int getBpp() = 0;
 };
 
-
 /**
  * 16-bit color source
  */
@@ -230,7 +223,6 @@ public:
 	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
-
 
 /**
  * Buffer source with palette
@@ -256,7 +248,6 @@ public:
 	int loadPalette(const byte *buf);
 };
 
-
 /**
  * Buffer source with a 256 color palette
  */
@@ -276,7 +267,6 @@ public:
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
 
-
 /**
  * Buffer source with a 256 color palette, and alpha blending
  */
@@ -288,7 +278,6 @@ public:
 	virtual ~RMGfxSourceBuffer8AB();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
-
 
 /**
  * Buffer source with a 256 color palette, RLE compressed
@@ -370,7 +359,6 @@ public:
 	virtual ~RMGfxSourceBuffer8RLEWordAB();
 };
 
-
 /**
  * Buffer source with a 256 color palette, with anti-aliasing
  */
@@ -396,7 +384,6 @@ public:
 	// Draw with anti-aliasing
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
-
 
 class RMGfxSourceBuffer8RLEByteAA : public RMGfxSourceBuffer8RLEByte, public RMGfxSourceBuffer8AA {
 protected:
@@ -426,7 +413,6 @@ public:
 	virtual ~RMGfxSourceBuffer8RLEWordAA();
 };
 
-
 /**
  * Source buffer with 16 colors
  */
@@ -441,7 +427,6 @@ public:
 	int getBpp();
 	virtual void draw(CORO_PARAM, RMGfxTargetBuffer &bigBuf, RMGfxPrimitive *prim);
 };
-
 
 /**
  * Destination buffer which manages its own internal list of tasks
@@ -464,7 +449,7 @@ private:
 	void mergeDirtyRects();
 
 private:
-//	OSystem::MutexRef csModifyingOT;
+	//OSystem::MutexRef csModifyingOT;
 
 protected:
 	OTList *_otlist;
@@ -497,7 +482,6 @@ public:
 	void setTrackDirtyRects(bool v);
 	bool getTrackDirtyRects() const;
 };
-
 
 /**
  * Ring buffer, which is both source and by destination

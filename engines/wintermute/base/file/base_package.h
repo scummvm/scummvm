@@ -41,7 +41,7 @@ public:
 	bool _boundToExe;
 	byte _priority;
 	Common::String _name;
-	int _cd;
+	int32 _cd;
 	BasePackage();
 };
 

@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/base/base_surface_storage.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
@@ -44,7 +45,7 @@ IMPLEMENT_PERSISTENT(BaseSubFrame, false)
 
 //////////////////////////////////////////////////////////////////////////
 BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
-	_surface = NULL;
+	_surface = nullptr;
 	_hotspotX = _hotspotY = 0;
 	_alpha = 0xFFFFFFFF;
 	_transparent = 0xFFFF00FF;
@@ -54,7 +55,7 @@ BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 
 	_editorSelected = false;
 
-	_surfaceFilename = NULL;
+	_surfaceFilename = nullptr;
 	_cKDefault = true;
 	_cKRed = _cKBlue = _cKGreen = 0;
 	_lifeTime = -1;
@@ -73,7 +74,7 @@ BaseSubFrame::~BaseSubFrame() {
 		_gameRef->_surfaceStorage->removeSurface(_surface);
 	}
 	delete[] _surfaceFilename;
-	_surfaceFilename = NULL;
+	_surfaceFilename = nullptr;
 }
 
 
@@ -118,10 +119,10 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	bool custoTrans = false;
 	BasePlatform::setRectEmpty(&rect);
-	char *surfaceFile = NULL;
+	char *surfaceFile = nullptr;
 
 	delete _surface;
-	_surface = NULL;
+	_surface = nullptr;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, &params)) > 0) {
 		switch (cmd) {
@@ -180,11 +181,11 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in SUBFRAME definition");
+		BaseEngine::LOG(0, "Syntax error in SUBFRAME definition");
 		return STATUS_FAILED;
 	}
 
-	if (surfaceFile != NULL) {
+	if (surfaceFile != nullptr) {
 		if (custoTrans) {
 			setSurface(surfaceFile, false, r, g, b, lifeTime, keepLoaded);
 		} else {
@@ -198,9 +199,9 @@ bool BaseSubFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 	}
 
 	/*
-	if (_surface == NULL)
+	if (_surface == nullptr)
 	{
-	    _gameRef->LOG(0, "Error parsing sub-frame. Image not set.");
+	    BaseEngine::LOG(0, "Error parsing sub-frame. Image not set.");
 	    return STATUS_FAILED;
 	}
 	*/
@@ -236,14 +237,14 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 		return STATUS_OK;
 	}
 
-	if (registerOwner != NULL && !_decoration) {
+	if (registerOwner != nullptr && !_decoration) {
 		if (zoomX == 100 && zoomY == 100) {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
+			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
 		} else {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
+			BaseEngine::getRenderer()->addRectToList(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
-	if (_gameRef->_suspendedRendering) {
+	if (_gameRef->getSuspendedRendering()) {
 		return STATUS_OK;
 	}
 
@@ -426,7 +427,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 				_gameRef->_surfaceStorage->removeSurface(_surface);
 			}
 			delete[] _surfaceFilename;
-			_surfaceFilename = NULL;
+			_surfaceFilename = nullptr;
 			stack->pushBool(true);
 		} else {
 			const char *filename = val->getString();
@@ -617,11 +618,11 @@ const char *BaseSubFrame::scToString() {
 bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (_surface) {
 		_gameRef->_surfaceStorage->removeSurface(_surface);
-		_surface = NULL;
+		_surface = nullptr;
 	}
 
 	delete[] _surfaceFilename;
-	_surfaceFilename = NULL;
+	_surfaceFilename = nullptr;
 
 	_surface = _gameRef->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	if (_surface) {
@@ -645,7 +646,7 @@ bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, by
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::setSurfaceSimple() {
 	if (!_surfaceFilename) {
-		_surface = NULL;
+		_surface = nullptr;
 		return STATUS_OK;
 	}
 	_surface = _gameRef->_surfaceStorage->addSurface(_surfaceFilename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);

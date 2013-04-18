@@ -36,10 +36,16 @@ namespace Kyra {
 #pragma mark - Intro
 
 int LoLEngine::processPrologue() {
-	setupPrologueData(true);
-
-	if (!saveFileLoadable(0) || _flags.isDemo)
-		showIntro();
+	// There are two non-interactive demos (one which plays the intro and another one) which plays a number of specific scenes.
+	// We try to identify the latter one by looking for a specific file.
+	_res->loadPakFile("GENERAL.PAK");
+	if (_flags.isDemo && _res->exists("scene1.cps")) {
+		return playDemo();
+	} else {
+		setupPrologueData(true);
+		if (!saveFileLoadable(0) || _flags.isDemo)
+			showIntro();
+	}
 
 	if (_flags.isDemo) {
 		_screen->fadePalette(_screen->getPalette(1), 30, 0);
@@ -66,7 +72,7 @@ int LoLEngine::processPrologue() {
 		// Original version: (260|193) "V CD1.02 D"
 		const int width = _screen->getTextWidth(versionString.c_str());
 		_screen->fprintString("%s", 320 - width, 193, 0x67, 0x00, 0x04, versionString.c_str());
-		_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
+		_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
 
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
 		_screen->updateScreen();
@@ -139,7 +145,12 @@ void LoLEngine::setupPrologueData(bool load) {
 	static const char *const fileListFloppy[] = {
 		"INTRO.PAK", "INTROVOC.PAK", 0
 	};
-	const char *const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
+
+	static const char *const fileListTowns[] = {
+		"INTRO.PAK", "TINTROVO.PAK", 0
+	};
+
+	const char *const *fileList = _flags.isTalkie ? fileListCD : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 
 	char filename[32];
 	for (uint i = 0; fileList[i]; ++i) {
@@ -176,7 +187,7 @@ void LoLEngine::setupPrologueData(bool load) {
 		memset(_selectionAnimTimers, 0, sizeof(_selectionAnimTimers));
 		_screen->getPalette(1).clear();
 
-		_sound->setSoundList(&_soundData[kMusicIntro]);
+		_sound->selectAudioResourceSet(kMusicIntro);
 
 		// We have three sound.dat files, one for the intro, one for the
 		// end sequence and one for ingame, each contained in a different
@@ -197,7 +208,7 @@ void LoLEngine::setupPrologueData(bool load) {
 			return;
 
 		_eventList.clear();
-		_sound->setSoundList(0);
+		_sound->selectAudioResourceSet(kMusicIntro);
 	}
 }
 
@@ -219,7 +230,7 @@ void LoLEngine::showIntro() {
 
 	_screen->loadFont(Screen::FID_8_FNT, "NEW8P.FNT");
 	_screen->loadFont(Screen::FID_INTRO_FNT, "INTRO.FNT");
-	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+	_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 
 	_tim->resetFinishedFlag();
 	_tim->setLangData("LOLINTRO.DIP");
@@ -289,10 +300,10 @@ int LoLEngine::chooseCharacter() {
 
 	_chargenWSA->displayFrame(0, 2, 113, 0, 0, 0, 0);
 
-	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
+	_screen->setFont((_flags.lang == Common::JA_JPN && _flags.use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
 	_screen->_curPage = 2;
 
-	if (_flags.platform == Common::kPlatformPC98) {
+	if (_flags.platform == Common::kPlatformPC98 && _flags.use16ColorMode) {
 		_screen->fillRect(17, 29, 94, 97, 17);
 		_screen->fillRect(68, 167, 310, 199, 17);
 		_screen->drawClippedLine(68, 166, 311, 166, 238);
@@ -304,7 +315,7 @@ int LoLEngine::chooseCharacter() {
 		_screen->_curPage = 2;
 
 		for (int i = 0; i < 4; ++i) {
-			_screen->printText((const char *)_charNamesPC98[i], _charPosXPC98[i], 168, 0xC1, 0x00);
+			_screen->printText(_charNamesJapanese[i], _charPosXPC98[i], 168, 0xC1, 0x00);
 
 			Screen::FontId old = _screen->setFont(Screen::FID_SJIS_FNT);
 			for (int j = 0; j < 3; ++j) {
@@ -318,7 +329,7 @@ int LoLEngine::chooseCharacter() {
 		_screen->printText(_tim->getCTableEntry(53), 72, 184, 0x81, 0x00);
 		_screen->printText(_tim->getCTableEntry(55), 72, 192, 0x81, 0x00);
 	} else {
-		const char *const *previewNames = (_flags.lang == Common::RU_RUS && !_flags.isTalkie) ? _charPreviewNamesRussianFloppy : _charPreviewNamesDefault;
+		const char *const *previewNames = (_flags.lang == Common::RU_RUS && !_flags.isTalkie) ? _charPreviewNamesRussianFloppy : (_flags.lang == Common::JA_JPN ? _charNamesJapanese : _charPreviewNamesDefault);
 		for (int i = 0; i < 4; ++i) {
 			_screen->fprintStringIntro("%s", _charPreviews[i].x + 16, _charPreviews[i].y + 36, 0xC0, 0x00, 0x9C, 0x120, previewNames[i]);
 			_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 48, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[0]);
@@ -710,7 +721,7 @@ void LoLEngine::showStarcraftLogo() {
 	_screen->fadeFromBlack();
 	int inputFlag = 0;
 	for (int i = 0; i < endframe; i++) {
-		inputFlag = checkInput(0) & 0xff;
+		inputFlag = checkInput(0) & 0xFF;
 		if (shouldQuit() || inputFlag)
 			break;
 		ci->displayFrame(i, 2, 32, 80, 0, 0, 0);
@@ -722,7 +733,7 @@ void LoLEngine::showStarcraftLogo() {
 	if (!(shouldQuit() || inputFlag)) {
 		_sound->voicePlay("star2", &_speechHandle);
 		while (_sound->voiceIsPlaying(&_speechHandle) && !(shouldQuit() || inputFlag)) {
-			inputFlag = checkInput(0) & 0xff;
+			inputFlag = checkInput(0) & 0xFF;
 			delay(_tickLength);
 		}
 	}
@@ -1009,7 +1020,11 @@ void LoLEngine::setupEpilogueData(bool load) {
 		"GENERAL.PAK", "INTRO.PAK", "FINALE1.PAK", "FINALE2.PAK", 0
 	};
 
-	const char *const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
+	static const char *const fileListTowns[] = {
+		"GENERAL.PAK", "INTRO.PAK", "FINALE1.PAK", "TFINALE2.PAK", 0
+	};
+
+	const char *const *fileList = _flags.isTalkie ? fileListCD : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 	assert(fileList);
 
 	char filename[32];
@@ -1035,7 +1050,7 @@ void LoLEngine::setupEpilogueData(bool load) {
 	_screen->clearPage(3);
 
 	if (load) {
-		_sound->setSoundList(&_soundData[kMusicFinale]);
+		_sound->selectAudioResourceSet(kMusicFinale);
 
 		// We have three sound.dat files, one for the intro, one for the
 		// end sequence and one for ingame, each contained in a different
@@ -1051,7 +1066,7 @@ void LoLEngine::setupEpilogueData(bool load) {
 			return;
 
 		_eventList.clear();
-		_sound->setSoundList(0);
+		_sound->selectAudioResourceSet(kMusicIntro);
 	}
 }
 

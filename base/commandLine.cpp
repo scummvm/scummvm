@@ -145,7 +145,7 @@ static const char HELP_STRING[] =
 
 static const char *s_appName = "scummvm";
 
-static void usage(const char *s, ...) GCC_PRINTF(1, 2);
+static void NORETURN_PRE usage(const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
 static void usage(const char *s, ...) {
 	char buf[STRINGBUFLEN];
@@ -239,6 +239,28 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("gui_saveload_chooser", "grid");
 	ConfMan.registerDefault("gui_saveload_last_pos", "0");
+
+	ConfMan.registerDefault("gui_browser_show_hidden", false);
+
+#ifdef USE_FLUIDSYNTH
+	// The settings are deliberately stored the same way as in Qsynth. The
+	// FluidSynth music driver is responsible for transforming them into
+	// their appropriate values.
+	ConfMan.registerDefault("fluidsynth_chorus_activate", true);
+	ConfMan.registerDefault("fluidsynth_chorus_nr", 3);
+	ConfMan.registerDefault("fluidsynth_chorus_level", 100);
+	ConfMan.registerDefault("fluidsynth_chorus_speed", 30);
+	ConfMan.registerDefault("fluidsynth_chorus_depth", 80);
+	ConfMan.registerDefault("fluidsynth_chorus_waveform", "sine");
+
+	ConfMan.registerDefault("fluidsynth_reverb_activate", true);
+	ConfMan.registerDefault("fluidsynth_reverb_roomsize", 20);
+	ConfMan.registerDefault("fluidsynth_reverb_damping", 0);
+	ConfMan.registerDefault("fluidsynth_reverb_width", 1);
+	ConfMan.registerDefault("fluidsynth_reverb_level", 90);
+
+	ConfMan.registerDefault("fluidsynth_misc_interpolation", "4th");
+#endif
 }
 
 //
@@ -314,8 +336,11 @@ void registerDefaults() {
 Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv) {
 	const char *s, *s2;
 
+	if (!argv)
+		return Common::String();
+
 	// argv[0] contains the name of the executable.
-	if (argv && argv[0]) {
+	if (argv[0]) {
 		s = strrchr(argv[0], '/');
 		s_appName = s ? (s+1) : argv[0];
 	}
@@ -579,8 +604,7 @@ static void listGames() {
 	       "-------------------- ------------------------------------------------------\n");
 
 	const EnginePlugin::List &plugins = EngineMan.getPlugins();
-	EnginePlugin::List::const_iterator iter = plugins.begin();
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+	for (EnginePlugin::List::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		GameList list = (**iter)->getSupportedGames();
 		for (GameList::iterator v = list.begin(); v != list.end(); ++v) {
 			printf("%-20s %s\n", v->gameid().c_str(), v->description().c_str());

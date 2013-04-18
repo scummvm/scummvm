@@ -129,6 +129,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Castle of Dr. Brain - English DOS 5.25" Floppy VGA 1.1 (from rnjacobs, bug report #3578286)
+	{"castlebrain", "", {
+		{"resource.map", 0, "a1deac2647ad09472c63656bfb950a4d", 2739},
+		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 347071},
+		{"resource.001", 0, "13e81e1839cd7b216d2bb5615c1ca160", 356812},
+		{"resource.002", 0, "583d348c908f89f94f8551d7fe0a2eca", 991752},
+		{"resource.003", 0, "6c3d1bb26ad532c94046bc9ac49b5ff4", 728315},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Castle of Dr. Brain - English DOS Floppy 1.1
 	{"castlebrain", "", {
 		{"resource.map", 0, "f77728304c70017c54793eb6ca648174", 2745},
@@ -161,6 +171,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "735be4e58957180cfc807d5e18fdffcd", 1433302},
 		AD_LISTEND},
 	 	Common::ES_ESP, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+#ifdef ENABLE_SCI32
+	// Inside the Chest / Behind the Developer's Shield
+	// SCI interpreter version 2.000.000
+	{"chest", "", {
+		{"resource.map", 0, "9dd015e79cac4f91e7de805448f39775", 1912},
+		{"resource.000", 0, "e4efcd042f86679dd4e1834bb3a38edb", 3770943},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE, GUIO3(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_FB01_MIDI)	},
+#endif
 
 	// Christmas Card 1988 - English DOS
 	// SCI interpreter version 0.000.294
@@ -268,7 +288,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "08050329aa113a9f14ed99cbfe3536ec", 232942},
 		{"resource.007", 0, "64f342463f6f35ba71b3509ef696ae3f", 267702},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Conquests of Camelot - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.002.030"
@@ -560,6 +580,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "554f65315d851184f6e38211489fdd8f", -1},
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Freddy Pharkas - French DOS Floppy (supplied by misterhands in bug report #3589449)
+	// Executable scanning reports "1.cfs.081"
+	{"freddypharkas", "Floppy", {
+		{"resource.map", 0, "a32674e7fbf7b213b4a066c8037f16b6", 5816},
+		{"resource.000", 0, "fed4808fdb72486908ac7ad0044b14d8", 5233230},
+		{"resource.msg", 0, "4dc478f5c73b57e5d690bdfffdcf1c44", 816518},
+		AD_LISTEND},
+	 	Common::FR_FRA, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Freddy Pharkas - Windows (supplied by abevi in bug report #2612718)
 	// Executable scanning reports "1.cfs.081"
@@ -1493,6 +1522,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::ES_ESP, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 6 - Italian DOS Floppy (supplied by guybrush79 in bug report #3606719)
+	{"kq6", "", {
+		{"resource.map", 0, "48c9fc8e96cbdac078ca7d3df274e29a", 8942},
+		{"resource.000", 0, "d3358ba7306378aed83d02b5c3f11311", 8531908},
+		{"resource.msg", 0, "b7e8220be596fd6a9287eae5a8fd354a", 279886},
+		AD_LISTEND},
+	 	Common::IT_ITA, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// King's Quest 6 - English DOS CD (from the King's Quest Collection)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
 	// SCI interpreter version 1.001.054
@@ -2241,7 +2278,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resmap.000", 0, "4407849fd52fe3efb0c30fba60cd5cd4", 8206},
 		{"ressci.000", 0, "dc37c3055fffbefb494ff22b145d377b", 66964472},
 		AD_LISTEND},
-	 	Common::DE_DEU, Common::kPlatformPC, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::FR_FRA, Common::kPlatformPC, ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Larry 7 - Italian DOS CD (from glorifindel)
 	// SCI interpreter version 3.000.000
@@ -3101,6 +3138,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::DE_DEU, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Quest for Glory 3 - French DOS v1.1 (supplied by misterhands in bug report #3586214)
+	// Executable scanning reports "L.rry.083"
+	{"qfg3", "", {
+		{"resource.map", 0, "19e2bf9b693932b5e2bb59b9f9ab86c9", 5958},
+		{"resource.000", 0, "6178ad2e83e58e4671ca03315f7a6498", 5868000},
+		{"resource.msg", 0, "0fa1047002df904b8d1807bb7bab4fab", 267210},
+		AD_LISTEND},
+	 	Common::FR_FRA, Common::kPlatformPC, 0, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Quest for Glory 3 - Spanish DOS CD (from jvprat)
 	// Executable scanning reports "L.rry.083", VERSION file reports "1.000.000, June 30, 1994"
 	{"qfg3", "", {
@@ -3261,7 +3307,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.msg", 0, "1aeafe2b495de288d002109650b66614", 1364},
 		{"resource.000", 0, "8e10d4f05c1fd9f883384fa38a898489", 377394},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Slater & Charlie Go Camping - English DOS/Windows
 	{"slater", "", {
@@ -3269,7 +3315,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "21f85414124dc23e54544a5536dc35cd", 4044},
 		{"resource.msg", 0, "c44f51fb955eae266fecf360ebcd5ad2", 1132},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 
 	// Slater & Charlie Go Camping - English DOS/Windows (Sierra Originals)
@@ -3278,7 +3324,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "21f85414124dc23e54544a5536dc35cd", 4044},
 		{"resource.msg", 0, "c44f51fb955eae266fecf360ebcd5ad2", 1132},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Slater & Charlie Go Camping - English Macintosh
 	{"slater", "", {
@@ -3608,7 +3654,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "ed90a8e3ccc53af6633ff6ab58392bae", 7054},
 		{"resource.000", 0, "63247e3901ab8963d4eece73747832e0", 5157378},
 		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO5(GUIO_MIDIGM, GAMEOPTION_SQ4_SILVER_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+	 	Common::EN_ANY, Common::kPlatformPC, ADGF_CD, GUIO4(GAMEOPTION_SQ4_SILVER_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
 	// Space Quest 4 - English Windows CD (from the Space Quest Collection)
 	// Executable scanning reports "1.001.064", VERSION file reports "1.0"

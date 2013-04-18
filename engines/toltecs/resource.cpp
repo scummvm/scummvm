@@ -61,16 +61,11 @@ uint32 ArchiveReader::getResourceSize(uint resIndex) {
 	return _offsets[resIndex + 1] - _offsets[resIndex];
 }
 
-void ArchiveReader::dump(uint resIndex, const char *prefix) {
+void ArchiveReader::dump(uint resIndex) {
 	int32 resourceSize = getResourceSize(resIndex);
 	byte *data = new byte[resourceSize];
 
-	Common::String fn;
-
-	if (prefix)
-		fn = Common::String::format("%s_%04X.0", prefix, resIndex);
-	else
-		fn = Common::String::format("%04X.0", resIndex);
+	Common::String fn = Common::String::format("toltecs_res.%03d", resIndex);
 
 	openResource(resIndex);
 	read(data, resourceSize);
@@ -112,11 +107,13 @@ Resource *ResourceCache::load(uint resIndex) {
 	} else {
 		debug(1, "ResourceCache::load(%d) From disk", resIndex);
 
+		int32 curPos = _vm->_arc->pos();
 		Resource *resItem = new Resource();
 		resItem->size = _vm->_arc->openResource(resIndex);
 		resItem->data = new byte[resItem->size];
 		_vm->_arc->read(resItem->data, resItem->size);
 		_vm->_arc->closeResource();
+		_vm->_arc->seek(curPos);
 
 		_cache[resIndex] = resItem;
 

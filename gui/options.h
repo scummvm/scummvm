@@ -32,6 +32,10 @@
 #include "gui/KeysDialog.h"
 #endif
 
+#ifdef USE_FLUIDSYNTH
+#include "gui/fluidsynth-dialog.h"
+#endif
+
 namespace GUI {
 
 class CheckboxWidget;
@@ -207,6 +211,9 @@ public:
 protected:
 #ifdef SMALL_SCREEN_DEVICE
 	KeysDialog *_keysDialog;
+#endif
+#ifdef USE_FLUIDSYNTH
+	FluidSynthSettingsDialog *_fluidSynthSettingsDialog;
 #endif
 	StaticTextWidget *_savePath;
 	ButtonWidget	 *_savePathClearButton;

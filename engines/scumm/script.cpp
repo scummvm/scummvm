@@ -1366,8 +1366,14 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 
 		// Clicks are handled differently in Indy3 mac: param 2 of the
 		// input script is set to 0 for normal clicks, and to 1 for double clicks.
+		// The EGA DOS version of Loom also checks that the second click happens
+		// close enough to the first one, but that seems like overkill.
 		uint32 time = _system->getMillis();
 		args[2] = (time < _lastInputScriptTime + 500);	// 500 ms double click delay
+		_lastInputScriptTime = time;
+	} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformMacintosh) {
+		uint32 time = _system->getMillis();
+		VAR(52) = (time < _lastInputScriptTime + 500);	// 500 ms double click delay
 		_lastInputScriptTime = time;
 	}
 

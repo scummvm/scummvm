@@ -284,6 +284,7 @@ void Console::postEnter() {
 #endif
 
 			VideoState emptyState;
+			emptyState.reset();
 			emptyState.fileName = _videoFile;
 			emptyState.flags = kDoubled;	// always allow the videos to be double sized
 			playVideo(videoDecoder, emptyState);
@@ -2226,6 +2227,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 	DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 			track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
 
+	delete soundRes;
 	return true;
 }
 
@@ -2349,8 +2351,7 @@ bool Console::cmdVMVarlist(int argc, const char **argv) {
 
 	for (int i = 0; i < 4; i++) {
 		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(s->variablesSegment[i], s->variables[i] - s->variablesBase[i])));
-		if (s->variablesMax)
-			DebugPrintf("  total %d", s->variablesMax[i]);
+		DebugPrintf("  total %d", s->variablesMax[i]);
 		DebugPrintf("\n");
 	}
 
@@ -2407,7 +2408,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 			return true;
 		}
 
-		if ((s->variablesMax) && (s->variablesMax[varType] <= varIndex)) {
+		if (s->variablesMax[varType] <= varIndex) {
 			DebugPrintf("Maximum variable number for this type is %d (0x%x)\n", s->variablesMax[varType], s->variablesMax[varType]);
 			return true;
 		}
@@ -2507,6 +2508,7 @@ bool Console::cmdValueType(int argc, const char **argv) {
 		break;
 	case SIG_TYPE_INTEGER:
 		DebugPrintf("Integer");
+		break;
 	case SIG_TYPE_INTEGER | SIG_TYPE_NULL:
 		DebugPrintf("Null");
 		break;
@@ -3633,6 +3635,8 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 	DebugPrintf(" - ?obj -- Looks up an object with the specified name, uses its address. This will abort if\n");
 	DebugPrintf("   the object name is ambiguous; in that case, a list of addresses and indices is provided.\n");
 	DebugPrintf("   ?obj.idx may be used to disambiguate 'obj' by the index 'idx'.\n");
+	DebugPrintf("   Underscores are used as substitute characters for spaces in object names.\n");
+	DebugPrintf("   For example, an object named \"Glass Jar\" can be accessed as \"Glass_Jar\".\n");
 
 	return true;
 }
@@ -3764,6 +3768,8 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 					charsCountObject++;
 				if ((*strLoop >= 'I') && (*strLoop <= 'Z'))
 					charsCountObject++;
+				if (*strLoop == '_')	// underscores are used as substitutes for spaces in object names
+					charsCountObject++;
 			}
 			strLoop++;
 		}
@@ -3836,8 +3842,14 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 				index = strtol(tmp + 1, &endptr, 16);
 				if (*endptr)
 					return -1;
-				// Chop of the index
+				// Chop off the index
 				str_objname = Common::String(str_objname.c_str(), tmp);
+			}
+
+			// Replace all underscores in the name with spaces
+			for (uint i = 0; i < str_objname.size(); i++) {
+				if (str_objname[i] == '_')
+					str_objname.setChar(' ', i);
 			}
 
 			// Now all values are available; iterate over all objects.

@@ -69,7 +69,7 @@ SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
 //////////////////////////////////////////////////////////////////////////
 SXArray::~SXArray() {
 	delete _values;
-	_values = NULL;
+	_values = nullptr;
 }
 
 

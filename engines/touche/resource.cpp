@@ -610,10 +610,7 @@ void ToucheEngine::res_stopSound() {
 
 void ToucheEngine::res_loadMusic(int num) {
 	debugC(9, kDebugResource, "ToucheEngine::res_loadMusic() num=%d", num);
-	uint32 size;
-	const uint32 offs = res_getDataOffset(kResourceTypeMusic, num, &size);
-	_fData.seek(offs);
-	_midiPlayer->play(_fData, size, true);
+	startMusic(num);
 }
 
 void ToucheEngine::res_loadSpeech(int num) {

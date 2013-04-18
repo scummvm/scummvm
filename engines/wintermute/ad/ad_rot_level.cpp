@@ -54,7 +54,7 @@ AdRotLevel::~AdRotLevel() {
 //////////////////////////////////////////////////////////////////////////
 bool AdRotLevel::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdRotLevel::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}

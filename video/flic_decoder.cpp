@@ -152,6 +152,7 @@ Graphics::PixelFormat FlicDecoder::FlicVideoTrack::getPixelFormat() const {
 #define FLI_SETPAL 4
 #define FLI_SS2    7
 #define FLI_BRUN   15
+#define FLI_COPY   16
 #define PSTAMP     18
 #define FRAME_TYPE 0xF1FA
 
@@ -212,6 +213,9 @@ const Graphics::Surface *FlicDecoder::FlicVideoTrack::decodeNextFrame() {
 			case FLI_BRUN:
 				decodeByteRun(data);
 				break;
+			case FLI_COPY:
+				copyFrame(data);
+				break;
 			case PSTAMP:
 				/* PSTAMP - skip for now */
 				break;
@@ -245,6 +249,14 @@ void FlicDecoder::FlicVideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch)
 	}
 
 	clearDirtyRects();
+}
+
+void FlicDecoder::FlicVideoTrack::copyFrame(uint8 *data) {
+	memcpy((byte *)_surface->pixels, data, getWidth() * getHeight());
+
+	// Redraw
+	_dirtyRects.clear();
+	_dirtyRects.push_back(Common::Rect(0, 0, getWidth(), getHeight()));
 }
 
 void FlicDecoder::FlicVideoTrack::decodeByteRun(uint8 *data) {

@@ -36,27 +36,7 @@
 
 namespace Wintermute {
 class BaseSurfaceOSystem;
-class RenderTicket {
-	Graphics::Surface *_surface;
-public:
-	RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRest, bool mirrorX = false, bool mirrorY = false, bool disableAlpha = false);
-	RenderTicket() : _isValid(true), _wantsDraw(false), _drawNum(0) {}
-	~RenderTicket();
-	const Graphics::Surface *getSurface() { return _surface; }
-	Common::Rect _srcRect;
-	Common::Rect _dstRect;
-	uint32 _mirror;
-	bool _hasAlpha;
-
-	bool _isValid;
-	bool _wantsDraw;
-	uint32 _drawNum;
-	uint32 _colorMod;
-
-	BaseSurfaceOSystem *_owner;
-	bool operator==(RenderTicket &a);
-};
-
+class RenderTicket;
 class BaseRenderOSystem : public BaseRenderer {
 public:
 	BaseRenderOSystem(BaseGame *inGame);
@@ -64,17 +44,17 @@ public:
 
 	Common::String getName() const;
 
-	bool initRenderer(int width, int height, bool windowed);
-	bool flip();
+	bool initRenderer(int width, int height, bool windowed) override;
+	bool flip() override;
 	virtual bool indicatorFlip();
-	bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL);
-	Graphics::PixelFormat getPixelFormat() const;
-	void fade(uint16 alpha);
-	void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = NULL);
+	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
+	Graphics::PixelFormat getPixelFormat() const override;
+	void fade(uint16 alpha) override;
+	void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = nullptr) override;
 
-	bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
+	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
 
-	BaseImage *takeScreenshot();
+	BaseImage *takeScreenshot() override;
 
 	void setAlphaMod(byte alpha);
 	void setColorMod(byte r, byte g, byte b);
@@ -82,32 +62,40 @@ public:
 	void invalidateTicketsFromSurface(BaseSurfaceOSystem *surf);
 	void drawFromTicket(RenderTicket *renderTicket);
 
-	bool setViewport(int left, int top, int right, int bottom);
-	bool setViewport(Rect32 *rect) { return BaseRenderer::setViewport(rect); }
-	Rect32 getViewPort();
+	bool setViewport(int left, int top, int right, int bottom) override;
+	bool setViewport(Rect32 *rect) override { return BaseRenderer::setViewport(rect); }
+	Rect32 getViewPort() override;
 	void modTargetRect(Common::Rect *rect);
-	void pointFromScreen(Point32 *point);
+	void pointFromScreen(Point32 *point) ;
 	void pointToScreen(Point32 *point);
 
-	void dumpData(const char *filename);
+	void dumpData(const char *filename) override;
 
-	float getScaleRatioX() const {
+	float getScaleRatioX() const override {
 		return _ratioX;
 	}
-	float getScaleRatioY() const {
+	float getScaleRatioY() const override {
 		return _ratioY;
 	}
-
-	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false);
-	BaseSurface *createSurface();
+	virtual bool startSpriteBatch() override;
+	virtual bool endSpriteBatch() override;
+	void endSaveLoad();
+	void drawSurface(BaseSurfaceOSystem *owner, const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, bool mirrorX, bool mirrorY, bool disableAlpha = false) ;
+	void repeatLastDraw(int offsetX, int offsetY, int numTimesX, int numTimesY);
+	BaseSurface *createSurface() override;
 private:
-	void addDirtyRect(const Common::Rect &rect);
+	void addDirtyRect(const Common::Rect &rect) ;
 	void drawTickets();
-	void drawFromSurface(RenderTicket *ticket, Common::Rect *clipRect);
-	void drawFromSurface(const Graphics::Surface *surf, Common::Rect *srcRect, Common::Rect *dstRect, Common::Rect *clipRect, uint32 mirror);
+	// Non-dirty-rects:
+	void drawFromSurface(RenderTicket *ticket);
+	// Dirty-rects:
+	void drawFromSurface(RenderTicket *ticket, Common::Rect *dstRect, Common::Rect *clipRect);
 	typedef Common::List<RenderTicket *>::iterator RenderQueueIterator;
 	Common::Rect *_dirtyRect;
 	Common::List<RenderTicket *> _renderQueue;
+	RenderQueueIterator _lastAddedTicket;
+	RenderTicket *_previousTicket;
+
 	bool _needsFlip;
 	uint32 _drawNum;
 	Common::Rect _renderRect;
@@ -119,11 +107,15 @@ private:
 	int _borderRight;
 	int _borderBottom;
 
-	static const bool _disableDirtyRects = true;
+	bool _disableDirtyRects;
+	bool _spriteBatch;
+	uint32 _batchNum;
 	float _ratioX;
 	float _ratioY;
 	uint32 _colorMod;
 	uint32 _clearColor;
+
+	bool _skipThisFrame;
 };
 
 } // end of namespace Wintermute

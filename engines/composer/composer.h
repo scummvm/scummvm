@@ -170,7 +170,7 @@ private:
 
 	bool _needsUpdate;
 	Common::Array<Common::Rect> _dirtyRects;
-	Graphics::Surface _surface;
+	Graphics::Surface _screen;
 	Common::List<Sprite> _sprites;
 
 	uint _directoriesToStrip;

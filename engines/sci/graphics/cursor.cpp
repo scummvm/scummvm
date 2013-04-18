@@ -481,7 +481,7 @@ void GfxCursor::kernelMoveCursor(Common::Point pos) {
 	_event->getSciEvent(SCI_EVENT_PEEK);
 }
 
-void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
+void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum) {
 	// Here we try to map the view number onto the cursor. What they did was keep the
 	// kSetCursor calls the same, but perform remapping on the cursors. They also took
 	// it a step further and added a new kPlatform sub-subop that handles remapping
@@ -532,6 +532,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 
 	if (!macCursor->readFromStream(resStream)) {
 		warning("Failed to load Mac cursor %d", viewNum);
+		delete macCursor;
 		return;
 	}
 

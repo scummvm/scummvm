@@ -427,18 +427,23 @@ reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv);
 reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv);
 reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv);
 reg_t kFrameOut(EngineState *s, int argc, reg_t *argv);
+
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv); // kOnMe for SCI2, kIsOnMe for SCI2.1
+reg_t kInPolygon(EngineState *s, int argc, reg_t *argv);
+reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv);
+
 reg_t kListIndexOf(EngineState *s, int argc, reg_t *argv);
 reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv);
 reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv);
 reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv);
-reg_t kInPolygon(EngineState *s, int argc, reg_t *argv);
-reg_t kObjectIntersect(EngineState *s, int argc, reg_t *argv);
+
 reg_t kEditText(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveCatName(EngineState *s, int argc, reg_t *argv);
 reg_t kMakeSaveFileName(EngineState *s, int argc, reg_t *argv);
 reg_t kSetScroll(EngineState *s, int argc, reg_t *argv);
 reg_t kPalCycle(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryUnknown2(EngineState *s, int argc, reg_t *argv);
 
 // SCI2.1 Kernel Functions
 reg_t kText(EngineState *s, int argc, reg_t *argv);
@@ -513,7 +518,6 @@ reg_t kPalVaryDeinit(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVaryChangeTarget(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVaryChangeTicks(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVaryPauseResume(EngineState *s, int argc, reg_t *argv);
-reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv);
 
 reg_t kPaletteSetFromResource(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSetFlag(EngineState *s, int argc, reg_t *argv);

@@ -386,9 +386,9 @@ void GfxPalette::setRemappingPercentGray(byte color, byte percent) {
 
 	// Note: This is not what the original does, but the results are the same visually
 	for (int i = 0; i < 256; i++) {
-		byte rComponent = _sysPalette.colors[i].r * _remappingPercentToSet * 0.30 / 100;
-		byte gComponent = _sysPalette.colors[i].g * _remappingPercentToSet * 0.59 / 100;
-		byte bComponent = _sysPalette.colors[i].b * _remappingPercentToSet * 0.11 / 100;
+		byte rComponent = (byte)(_sysPalette.colors[i].r * _remappingPercentToSet * 0.30 / 100);
+		byte gComponent = (byte)(_sysPalette.colors[i].g * _remappingPercentToSet * 0.59 / 100);
+		byte bComponent = (byte)(_sysPalette.colors[i].b * _remappingPercentToSet * 0.11 / 100);
 		byte luminosity = rComponent + gComponent + bComponent;
 		_remappingByPercent[i] = kernelFindColor(luminosity, luminosity, luminosity);
 	}
@@ -722,11 +722,6 @@ void GfxPalette::kernelRestore(reg_t memoryHandle) {
 }
 
 void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
-	// Sometimes invalid viewIds are asked for, ignore those (e.g. qfg1vga)
-	//if (!_resMan->testResource(ResourceId(kResourceTypeView, resourceId)))
-	//	return;
-	// maybe we took the wrong parameter before, if this causes invalid view again, enable to commented out code again
-
 	GfxView *view = g_sci->_gfxCache->getView(resourceId);
 	Palette *viewPalette = view->getPalette();
 	if (viewPalette) {

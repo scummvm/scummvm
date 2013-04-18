@@ -36,6 +36,19 @@
 
 namespace Tony {
 
+/*
+ * Tony uses a [0,63] volume scale (where 0 is silent and 63 is loudest).
+ * The original game engine linearly mapped this scale into DirectSound's
+ * [-10000, 0] scale (where -10000 is silent), which is a logarithmic scale.
+ *
+ * This means that Tony's scale is logarithmic as well, and must be converted
+ * to the linear scale used by the mixer.
+ */
+static int remapVolume(int volume) {
+	double dsvol = (double)(63 - volume) * -10000.0 / 63.0;
+	return (int)((double)Audio::Mixer::kMaxChannelVolume * pow(10.0, dsvol / 2000.0) + 0.5);
+}
+
 /****************************************************************************\
 *       FPSOUND Methods
 \****************************************************************************/
@@ -62,7 +75,6 @@ bool FPSound::init() {
  * Destroy the object and free the memory
  *
  */
-
 FPSound::~FPSound() {
 }
 
@@ -73,7 +85,6 @@ FPSound::~FPSound() {
  *
  * @returns     True is everything is OK, False otherwise
  */
-
 bool FPSound::createStream(FPStream **streamPtr) {
 	(*streamPtr) = new FPStream(_soundSupported);
 
@@ -87,7 +98,6 @@ bool FPSound::createStream(FPStream **streamPtr) {
  *
  * @returns     True is everything is OK, False otherwise
  */
-
 bool FPSound::createSfx(FPSfx **sfxPtr) {
 	(*sfxPtr) = new FPSfx(_soundSupported);
 
@@ -99,11 +109,13 @@ bool FPSound::createSfx(FPSfx **sfxPtr) {
  *
  * @param volume            Volume to set (0-63)
  */
-
 void FPSound::setMasterVolume(int volume) {
 	if (!_soundSupported)
 		return;
 
+	// WORKAROUND: We don't use remapVolume() here, so that the main option screen exposes
+	// a linear scale to the user. This is an improvement over the original game
+	// where the user had to deal with a logarithmic volume scale.
 	g_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, CLIP<int>(volume, 0, 63) * Audio::Mixer::kMaxChannelVolume / 63);
 }
 
@@ -112,7 +124,6 @@ void FPSound::setMasterVolume(int volume) {
  *
  * @param volumePtr           Variable that will contain the volume (0-63)
  */
-
 void FPSound::getMasterVolume(int *volumePtr) {
 	if (!_soundSupported)
 		return;
@@ -127,7 +138,6 @@ void FPSound::getMasterVolume(int *volumePtr) {
  *                            create it using FPSound::CreateSfx()
  *
  */
-
 FPSfx::FPSfx(bool soundOn) {
 	_soundSupported = soundOn;
 	_fileLoaded = false;
@@ -148,7 +158,6 @@ FPSfx::FPSfx(bool soundOn) {
  *                            currently played, and free the memory it uses.
  *
  */
-
 FPSfx::~FPSfx() {
 	if (!_soundSupported)
 		return;
@@ -173,7 +182,6 @@ FPSfx::~FPSfx() {
  *                         FPSound::CreateStream().
  *                         Object pointers are no longer valid after this call.
  */
-
 void FPSfx::release() {
 	delete this;
 }
@@ -215,7 +223,6 @@ bool FPSfx::loadVoiceFromVDB(Common::File &vdbFP) {
  *
  * @returns                True is everything is OK, False otherwise
  */
-
 bool FPSfx::loadFile(const char *fileName, uint32 codec) {
 	if (!_soundSupported)
 		return true;
@@ -256,7 +263,6 @@ bool FPSfx::loadFile(const char *fileName, uint32 codec) {
  *
  * @returns                True is everything is OK, False otherwise
  */
-
 bool FPSfx::play() {
 	stop(); // sanity check
 
@@ -291,7 +297,6 @@ bool FPSfx::play() {
  *
  * @returns                True is everything is OK, False otherwise
  */
-
 bool FPSfx::stop() {
 	if (_fileLoaded) {
 		g_system->getMixer()->stopHandle(_handle);
@@ -310,7 +315,6 @@ bool FPSfx::stop() {
  *                      playing. Any changes made during the play will have
  *                      no effect until the sfx is stopped then played again.
  */
-
 void FPSfx::setLoop(bool loop) {
 	_loop = loop;
 }
@@ -319,7 +323,6 @@ void FPSfx::setLoop(bool loop) {
  * Pauses a Sfx.
  *
  */
-
 void FPSfx::setPause(bool pause) {
 	if (_fileLoaded) {
 		if (g_system->getMixer()->isSoundHandleActive(_handle) && (pause ^ _paused))
@@ -335,7 +338,6 @@ void FPSfx::setPause(bool pause) {
  * @param volume        Volume to be set (0-63)
  *
  */
-
 void FPSfx::setVolume(int volume) {
 	if (volume > 63)
 		volume = 63;
@@ -364,7 +366,7 @@ void FPSfx::setVolume(int volume) {
 	}
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		g_system->getMixer()->setChannelVolume(_handle, volume * Audio::Mixer::kMaxChannelVolume / 63);
+		g_system->getMixer()->setChannelVolume(_handle, remapVolume(volume));
 }
 
 /**
@@ -373,10 +375,9 @@ void FPSfx::setVolume(int volume) {
  * @param volumePtr     Will contain the current Sfx volume
  *
  */
-
 void FPSfx::getVolume(int *volumePtr) {
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		*volumePtr = g_system->getMixer()->getChannelVolume(_handle) * 63 / Audio::Mixer::kMaxChannelVolume;
+		*volumePtr = _lastVolume;
 	else
 		*volumePtr = 0;
 }
@@ -384,7 +385,6 @@ void FPSfx::getVolume(int *volumePtr) {
 /**
  * Returns true if the underlying sound has ended
  */
-
 bool FPSfx::endOfBuffer() const {
 	return !g_system->getMixer()->isSoundHandleActive(_handle) && (!_rewindableStream || _rewindableStream->endOfData());
 }
@@ -440,7 +440,6 @@ FPStream::FPStream(bool soundOn) {
  *
  * @remarks             It calls CloseFile() if needed.
  */
-
 FPStream::~FPStream() {
 	if (!_soundSupported)
 		return;
@@ -489,6 +488,7 @@ bool FPStream::loadFile(const Common::String &fileName, uint32 codec, int bufSiz
 		// Fallback: try with an extra '0' prefix
 		if (!_file.open("0" + fileName))
 			return false;
+		warning("FPStream::loadFile(): Fallback from %s to %s", fileName.c_str(), _file.getName());
 	}
 
 	// Save the size of the stream
@@ -582,7 +582,6 @@ bool FPStream::play() {
  * @returns             True is everything is OK, False otherwise
  *
  */
-
 bool FPStream::stop() {
 	if (!_soundSupported)
 		return true;
@@ -649,7 +648,6 @@ void FPStream::setPause(bool pause) {
  * @param volume        Volume to be set (0-63)
  *
  */
-
 void FPStream::setVolume(int volume) {
 	if (volume > 63)
 		volume = 63;
@@ -668,7 +666,7 @@ void FPStream::setVolume(int volume) {
 	}
 
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		g_system->getMixer()->setChannelVolume(_handle, volume * Audio::Mixer::kMaxChannelVolume / 63);
+		g_system->getMixer()->setChannelVolume(_handle, remapVolume(volume));
 }
 
 /**
@@ -677,10 +675,9 @@ void FPStream::setVolume(int volume) {
  * @param volumePtr     Variable that will contain the current volume
  *
  */
-
 void FPStream::getVolume(int *volumePtr) {
 	if (g_system->getMixer()->isSoundHandleActive(_handle))
-		*volumePtr = g_system->getMixer()->getChannelVolume(_handle) * 63 / Audio::Mixer::kMaxChannelVolume;
+		*volumePtr = _lastVolume;
 	else
 		*volumePtr = 0;
 }

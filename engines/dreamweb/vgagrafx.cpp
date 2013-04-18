@@ -31,14 +31,16 @@ const uint16 kZoomx = 8;
 const uint16 kZoomy = 132;
 
 void DreamWebEngine::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) {
-	assert(x < 320);
-	assert(y < 200);
+	assert(x < kScreenwidth);
+	assert(y < kScreenheight);
+
 	const uint8 *src = workspace() + x + y * kScreenwidth;
-	if (y + h > 200)
-		h = 200 - y;
-	if (x + w > 320)
-		w = 320 - x;
-	//debug(1, "multiGet %u,%u %ux%u -> segment: %04x->%04x", x, y, w, h, (uint16)ds, (uint16)es);
+
+	if (y + h > kScreenheight)
+		h = kScreenheight - y;
+	if (x + w > kScreenwidth)
+		w = kScreenwidth - x;
+
 	for (unsigned l = 0; l < h; ++l) {
 		const uint8 *src_p = src + kScreenwidth * l;
 		uint8 *dst_p = dst + w * l;
@@ -47,14 +49,16 @@ void DreamWebEngine::multiGet(uint8 *dst, uint16 x, uint16 y, uint8 w, uint8 h) 
 }
 
 void DreamWebEngine::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uint8 h) {
-	assert(x < 320);
-	assert(y < 200);
+	assert(x < kScreenwidth);
+	assert(y < kScreenheight);
+
 	uint8 *dst = workspace() + x + y * kScreenwidth;
-	if (y + h > 200)
-		h = 200 - y;
-	if (x + w > 320)
-		w = 320 - x;
-	//debug(1, "multiPut %ux%u -> segment: %04x->%04x", w, h, (uint16)ds, (uint16)es);
+
+	if (y + h > kScreenheight)
+		h = kScreenheight - y;
+	if (x + w > kScreenwidth)
+		w = kScreenwidth - x;
+
 	for (unsigned l = 0; l < h; ++l) {
 		const uint8 *src_p = src + w * l;
 		uint8 *dst_p = dst + kScreenwidth * l;
@@ -64,12 +68,11 @@ void DreamWebEngine::multiPut(const uint8 *src, uint16 x, uint16 y, uint8 w, uin
 
 void DreamWebEngine::multiDump(uint16 x, uint16 y, uint8 width, uint8 height) {
 	unsigned offset = x + y * kScreenwidth;
-	//debug(1, "multiDump %ux%u(segment: %04x) -> %d,%d(address: %d)", w, h, (uint16)ds, x, y, offset);
 	blit(workspace() + offset, kScreenwidth, x, y, width, height);
 }
 
 void DreamWebEngine::workToScreen() {
-	blit(workspace(), 320, 0, 0, 320, 200);
+	blit(workspace(), kScreenwidth, 0, 0, kScreenwidth, kScreenheight);
 }
 
 void DreamWebEngine::frameOutNm(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, uint16 x, uint16 y) {
@@ -147,7 +150,7 @@ void DreamWebEngine::doShake() {
 
 void DreamWebEngine::setMode() {
 	waitForVSync();
-	initGraphics(320, 200, false);
+	initGraphics(kScreenwidth, kScreenheight, false);
 }
 
 void DreamWebEngine::showPCX(const Common::String &suffix) {
@@ -185,7 +188,7 @@ void DreamWebEngine::showPCX(const Common::String &suffix) {
 void DreamWebEngine::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint16 width, uint16 height, int16 x, int16 y) {
 	// NB : These resilience checks were not in the original engine, but did they result in undefined behaviour
 	// or was something broken during porting to C++?
-	assert(pitch == 320);
+	assert(pitch == kScreenwidth);
 
 	if (x < 0) {
 		assert(width >= -x);
@@ -199,15 +202,16 @@ void DreamWebEngine::frameOutV(uint8 *dst, const uint8 *src, uint16 pitch, uint1
 		src += (-y) * width;
 		y = 0;
 	}
-	if (x >= 320)
+
+	if ((uint16)x >= kScreenwidth)
 		return;
-	if (y >= 200)
+	if ((uint16)y >= kScreenheight)
 		return;
-	if (x + width > 320) {
-		width = 320 - x;
+	if ((uint16)x + width > kScreenwidth) {
+		width = kScreenwidth - x;
 	}
-	if (y + height > 200) {
-		height = 200 - y;
+	if ((uint16)y + height > kScreenheight) {
+		height = kScreenheight - y;
 	}
 
 	uint16 stride = pitch - width;
@@ -246,20 +250,20 @@ void DreamWebEngine::showFrameInternal(const uint8 *pSrc, uint16 x, uint16 y, ui
 			//addToPrintList(x - _mapAdX, y - _mapAdY); // NB: Commented in the original asm
 		}
 		if (effectsFlag & 4) { // flippedX
-			frameOutFx(workspace(), pSrc, 320, width, height, x, y);
+			frameOutFx(workspace(), pSrc, kScreenwidth, width, height, x, y);
 			return;
 		}
 		if (effectsFlag & 2) { // noMask
-			frameOutNm(workspace(), pSrc, 320, width, height, x, y);
+			frameOutNm(workspace(), pSrc, kScreenwidth, width, height, x, y);
 			return;
 		}
 		if (effectsFlag & 32) {
-			frameOutBh(workspace(), pSrc, 320, width, height, x, y);
+			frameOutBh(workspace(), pSrc, kScreenwidth, width, height, x, y);
 			return;
 		}
 	}
 	// "noEffects"
-	frameOutV(workspace(), pSrc, 320, width, height, x, y);
+	frameOutV(workspace(), pSrc, kScreenwidth, width, height, x, y);
 }
 
 void DreamWebEngine::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y, uint16 frameNumber, uint8 effectsFlag, uint8 *width, uint8 *height) {
@@ -285,7 +289,7 @@ void DreamWebEngine::showFrame(const GraphicsFile &frameData, uint16 x, uint16 y
 }
 
 void DreamWebEngine::clearWork() {
-	memset(workspace(), 0, 320*200);
+	memset(workspace(), 0, kScreenwidth*kScreenheight);
 }
 
 void DreamWebEngine::dumpZoom() {
@@ -326,20 +330,20 @@ void DreamWebEngine::zoom() {
 		putUnderZoom();
 		return;
 	}
-	uint16 srcOffset = (_oldPointerY - 9) * 320 + (_oldPointerX - 11);
-	uint16 dstOffset = (kZoomy + 4) * 320 + (kZoomx + 5);
+	uint16 srcOffset = (_oldPointerY - 9) * kScreenwidth + (_oldPointerX - 11);
+	uint16 dstOffset = (kZoomy + 4) * kScreenwidth + (kZoomx + 5);
 	const uint8 *src = workspace() + srcOffset;
 	uint8 *dst = workspace() + dstOffset;
-	for (size_t i = 0; i < 20; ++i) {
-		for (size_t j = 0; j < 23; ++j) {
+	for (uint i = 0; i < 20; ++i) {
+		for (uint j = 0; j < 23; ++j) {
 			uint8 v = src[j];
 			dst[2*j+0] = v;
 			dst[2*j+1] = v;
-			dst[2*j+320] = v;
-			dst[2*j+321] = v;
+			dst[2*j+kScreenwidth] = v;
+			dst[2*j+kScreenwidth+1] = v;
 		}
-		src += 320;
-		dst += 320*2;
+		src += kScreenwidth;
+		dst += kScreenwidth*2;
 	}
 	crosshair();
 	_didZoom = 1;
@@ -375,7 +379,7 @@ void DreamWebEngine::loadPalFromIFF() {
 
 	const uint8 *src = buf + 0x30;
 	uint8 *dst = _mainPal;
-	for (size_t i = 0; i < 256*3; ++i) {
+	for (uint i = 0; i < 256*3; ++i) {
 		uint8 c = src[i] / 4;
 		if (_brightPalette) {
 			if (c) {

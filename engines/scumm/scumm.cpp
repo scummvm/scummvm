@@ -61,7 +61,9 @@
 #include "scumm/player_v2cms.h"
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
+#include "scumm/player_v3m.h"
 #include "scumm/player_v4a.h"
+#include "scumm/player_v5m.h"
 #include "scumm/resource.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm_v0.h"
@@ -1819,6 +1821,12 @@ void ScummEngine::setupMusic(int midi) {
 #endif
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
+	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_LOOM) {
+		_musicEngine = new Player_V3M(this, _mixer);
+		((Player_V3M *)_musicEngine)->init();
+	} else if (_game.platform == Common::kPlatformMacintosh && _game.id == GID_MONKEY) {
+		_musicEngine = new Player_V5M(this, _mixer);
+		((Player_V5M *)_musicEngine)->init();
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
 		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_game.version <= 2) {
@@ -1858,6 +1866,8 @@ void ScummEngine::setupMusic(int midi) {
 			if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS || multi_midi) {
 				adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
 				adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
+				// Try to use OPL3 mode for Sam&Max when possible.
+				adlibMidiDriver->property(MidiDriver::PROP_SCUMM_OPL3, (_game.id == GID_SAMNMAX) ? 1 : 0);
 			} else if (_sound->_musicType == MDT_PCSPK) {
 				adlibMidiDriver = new PcSpkDriver(_mixer);
 			}

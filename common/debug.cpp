@@ -102,7 +102,7 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel) {
 		return (gDebugChannelsEnabled & channel) != 0;
 }
 
-}	// End of namespace Common
+} // End of namespace Common
 
 
 #ifndef DISABLE_TEXT_CONSOLE

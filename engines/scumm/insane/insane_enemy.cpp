@@ -266,6 +266,8 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 					_enHdlVar[EN_ROTT2][0] = 0;
 				else
 					_enHdlVar[EN_ROTT2][0] = 1;
+			} else {
+				_enHdlVar[EN_ROTT2][0] = 1;
 			}
 			_enHdlVar[EN_ROTT2][1] = 0;
 			_enHdlVar[EN_ROTT2][2] = _vm->_rnd.getRandomNumber(probability * 2 - 1);
@@ -310,7 +312,7 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 					retval = 1;
 			}
 			if (_actor[actor2].kicking) {
-				if (weaponMaxRange(actor2) <= dist)
+				if (weaponMaxRange(actor2) >= dist)
 					if (_vm->_rnd.getRandomNumber(probability * 2 - 1) <= 1)
 						retval = 1;
 			}
@@ -369,6 +371,8 @@ int32 Insane::enemy1handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = 320;
 	else if (act1x > 280)
 		_actor[actor1].cursorX = -160;
+	else if (_actor[actor1].defunct)
+		_actor[actor1].cursorX = 0;
 
 	// Shift+V cheat to win the battle
 	if (_vm->getKeyState('V') && !_beenCheated &&
@@ -410,7 +414,9 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 					_enHdlVar[EN_ROTT3][0] = 0;
 				else
 					_enHdlVar[EN_ROTT3][0] = 1;
-			}
+			} else
+				_enHdlVar[EN_ROTT3][0] = 1;
+
 			_enHdlVar[EN_ROTT3][1] = 0;
 			_enHdlVar[EN_ROTT3][2] = _vm->_rnd.getRandomNumber(probability * 2 - 1);
 		}
@@ -453,7 +459,7 @@ int32 Insane::enemy2handler(int32 actor1, int32 actor2, int32 probability) {
 					retval = 1;
 			}
 			if (_actor[actor2].kicking) {
-				if (weaponMaxRange(actor2) >= dist)
+				if (weaponMaxRange(actor2) <= dist)
 					if (_vm->_rnd.getRandomNumber(probability * 2 - 1) <= 1)
 						retval = 1;
 			}
@@ -553,9 +559,12 @@ int32 Insane::enemy3handler(int32 actor1, int32 actor2, int32 probability) {
 
 	if (!_actor[actor1].defunct) {
 		if (_enHdlVar[EN_VULTF1][1] > _enHdlVar[EN_VULTF1][2]) {
-			if ((act1damage - act2damage >= 30) && (_vm->_rnd.getRandomNumber(probability - 1) != 1))
-				_enHdlVar[EN_VULTF1][0] = 0;
-			else
+			if (act1damage - act2damage >= 30) {
+				if (_vm->_rnd.getRandomNumber(probability - 1) != 1)
+					_enHdlVar[EN_VULTF1][0] = 0;
+				else
+					_enHdlVar[EN_VULTF1][0] = 1;
+			} else
 				_enHdlVar[EN_VULTF1][0] = 1;
 
 			_enHdlVar[EN_VULTF1][1] = 0;
@@ -714,7 +723,9 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 					_enHdlVar[EN_VULTM1][0] = 0;
 				else
 					_enHdlVar[EN_VULTM1][0] = 1;
-			}
+			} else
+				_enHdlVar[EN_VULTM1][0] = 1;
+
 			_enHdlVar[EN_VULTM1][1] = 0;
 			_enHdlVar[EN_VULTM1][2] = _vm->_rnd.getRandomNumber(probability * 2 - 1);
 		}
@@ -757,7 +768,7 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 					retval = 1;
 			}
 			if (_actor[actor2].kicking) {
-				if (weaponMaxRange(actor2) >= dist) // that's weird but original is >=
+				if (weaponMaxRange(actor2) >= dist)
 					if (_vm->_rnd.getRandomNumber(probability * 2 - 1) <= 1)
 						retval = 1;
 			}
@@ -792,12 +803,12 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 					case 3:
 						prepareScenePropScene(44, 0, 0);
 						break;
-					case 9:
+					case 9: // Original is 10 here which never happens
 						prepareScenePropScene(45, 0, 0);
 						break;
 					}
 				} else {
-					if (weaponMaxRange(actor2) <= dist) {
+					if (weaponMaxRange(actor2) >= dist) {
 						switch (_vm->_rnd.getRandomNumber(9)) {
 						case 3:
 							if (!_enemyState[EN_VULTM1][3]) {
@@ -805,7 +816,7 @@ int32 Insane::enemy4handler(int32 actor1, int32 actor2, int32 probability) {
 								prepareScenePropScene(42, 0, 0);
 							}
 							break;
-						case 9:
+						case 9: // Original is 10 here which never happens
 							if (!_enemyState[EN_VULTM1][4]) {
 								_enemyState[EN_VULTM1][4] = 1;
 								prepareScenePropScene(43, 0, 0);
@@ -901,12 +912,8 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 					retval = 1;
 		} else {
 			if (weaponMaxRange(actor2) >= dist && _actor[actor2].weapon == INV_CHAINSAW) {
-				if (!_actor[actor2].kicking) {
-					if (_vm->_rnd.getRandomNumber(probability - 1) == 1)
-						retval = 1;
-				} else {
+				if (_actor[actor2].kicking || (_vm->_rnd.getRandomNumber(probability - 1) == 1))
 					retval = 1;
-				}
 			}
 			_actor[actor1].cursorX = 0;
 			if (_enHdlVar[EN_VULTF2][0] >= 100)
@@ -944,7 +951,7 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 						prepareScenePropScene(11, 0, 0);
 						_enemyState[EN_VULTF2][2] = 1;
 						break;
-					case 9:
+					case 9: // Original is 10
 						_enemyState[EN_VULTF2][1] = 1;
 						prepareScenePropScene(10, 0, 0);
 						break;
@@ -969,9 +976,6 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 		}
 	}
 
-	if (_actor[actor1].defunct)
-		_actor[actor1].cursorX = 0;
-
 	if (_actor[actor1].weapon == -1)
 		retval = 2;
 
@@ -981,6 +985,8 @@ int32 Insane::enemy5handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = 320;
 	else if (act1x > 280)
 		_actor[actor1].cursorX = -160;
+	else if (_actor[actor1].defunct)
+		_actor[actor1].cursorX = 0;
 
 	_enHdlVar[EN_VULTF2][2] = _enHdlVar[EN_VULTF2][1];
 	_enHdlVar[EN_VULTF2][0]++;
@@ -1106,9 +1112,13 @@ int32 Insane::enemy6handler(int32 actor1, int32 actor2, int32 probability) {
 		_actor[actor1].cursorX = 320;
 	else if (act1x > 280)
 		_actor[actor1].cursorX = -160;
+	else
+		_actor[actor1].cursorX = 0;
 
 	if (_actor[actor1].weapon == -1)
 		retval = 2;
+
+	_enHdlVar[EN_VULTM2][0]++;
 
 	// Shift+V cheat to win the battle
 	if (_vm->getKeyState('V') && !_beenCheated &&
@@ -1892,6 +1902,7 @@ void Insane::actor12Reaction(int32 buttons) {
 				break;
 			}
 		}
+		_actor[1].kicking = true;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
 		break;
 	case 20:
@@ -1932,6 +1943,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].kicking = false;
 		if (_actor[1].act[2].frame >= 5) {
 			smlayer_setActorFacing(1, 2, 25, 180);
+			smlayer_setActorLayer(1, 2, 5);
 			_actor[1].act[2].state = 65;
 		}
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
@@ -2012,7 +2024,6 @@ void Insane::actor12Reaction(int32 buttons) {
 			} else {
 				smlayer_setActorFacing(1, 2, 20, 180);
 				_actor[1].act[2].state = 28;
-				break;
 			}
 		}
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
@@ -2063,10 +2074,8 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_setActorLayer(1, 2, 5);
 		_actor[1].kicking = false;
 
-		if (!smlayer_actorNeedRedraw(1, 2)) {
+		if (!smlayer_actorNeedRedraw(1, 2))
 			switchEnemyWeapon();
-			_actor[1].act[2].tilt = 0;
-		}
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
 		break;
 	case 36:
@@ -2156,16 +2165,8 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].kicking = false;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
 		break;
+	case 62:
 	case 65:
-		smlayer_setActorLayer(1, 2, 5);
-		if (_actor[1].act[2].animTilt) {
-			smlayer_setActorFacing(1, 2, 25, 180);
-			_actor[1].act[2].animTilt = 0;
-		}
-		_actor[1].weaponClass = 1;
-		_actor[1].kicking = false;
-		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
-		break;
 	case 66:
 		smlayer_setActorLayer(1, 2, 5);
 		if (_actor[1].act[2].animTilt) {
@@ -2322,6 +2323,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_startSfx(100);
 		_actor[1].act[2].state = 90;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
+		smlayer_setActorLayer(1, 2, 26);
 		break;
 	case 90:
 		smlayer_setActorLayer(1, 2, 26);
@@ -2343,6 +2345,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].kicking = false;
 		break;
 	case 92:
+	case 96:
 		smlayer_setActorLayer(1, 2, 5);
 		_actor[1].kicking = false;
 		break;
@@ -2353,6 +2356,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_setActorFacing(1, 2, 18, 180);
 		_actor[1].act[2].state = 94;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
+		smlayer_startSfx(102);
 		break;
 	case 94:
 		smlayer_setActorLayer(1, 2, 4);
@@ -2529,7 +2533,6 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].act[0].room = 0;
 		_actor[1].cursorX = 0;
 		_actor[1].act[2].state = 116;
-		smlayer_startVoice(232);
 		break;
 	case 116:
 		smlayer_setActorLayer(1, 2, 25);

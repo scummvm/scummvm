@@ -27,20 +27,59 @@
 
 namespace TeenAgent {
 
+// Text Color Symbols
+enum {
+	textColorJohnNoty = 0xd0,
+	textColorCampGuard = 0xd0,
+	textColorShockedCaptain = 0xd0,
+	textColorMark = 0xd1,
+	textColorCredits = 0xd1,
+	textColorBankGuard = 0xd7,
+	textColorGrandpa = 0xd8,
+	textColorMansionGuard = 0xd9,
+	textColorMarkEnd = 0xe3,
+	textColorProfessor = 0xe5,
+	textColorOldLady = 0xe5,
+	textColorAnne = 0xe5,
+	textColorWellEcho = 0xe5,
+	textColorSonny = 0xe5,
+	textColorEskimo = 0xe5,
+	textColorRGBBoss = 0xe7,
+	textColorGoldDriver = 0xe7,
+	textColorFortuneTeller = 0xeb,
+	textColorCaptain = 0xec,
+	textColorMike = 0xef,
+	textColorCook = 0xef,
+	textColorBarman = 0xef
+};
+
 class Scene;
+class TeenAgentEngine;
+
 class Dialog {
 public:
-	static uint16 pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
-	static uint16 popMark(Scene *scene, uint16 addr) {
-		return pop(scene, addr, 0, 0, 0xd1, 0xd1, 0, 0);
+	Dialog(TeenAgentEngine *vm) : _vm(vm) { }
+
+	uint16 pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
+
+	uint16 popMark(Scene *scene, uint16 addr) {
+		return pop(scene, addr, 0, 0, textColorMark, textColorMark, 0, 0);
 	}
-	static void show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
-	static void showMono(Scene *scene, uint16 addr, uint16 animation, byte color, byte slot) {
-		show(scene, addr, animation, animation, color, color, slot, slot);
+
+	void show(uint16 dialogNum, Scene *scene, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
+
+	void showMono(uint16 dialogNum, Scene *scene, uint16 animation, byte color, byte slot) {
+		show(dialogNum, scene, animation, animation, color, color, slot, slot);
 	}
-	static void showMark(Scene *scene, uint16 addr) {
-		show(scene, addr, 0, 0, 0xd1, 0xd1, 0, 0);
+
+	void showMark(uint16 dialogNum, Scene *scene) {
+		show(dialogNum, scene, 0, 0, textColorMark, textColorMark, 0, 0);
 	}
+
+private:
+	TeenAgentEngine *_vm;
+
+	void show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2);
 };
 
 } // End of namespace TeenAgent

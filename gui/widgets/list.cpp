@@ -206,6 +206,7 @@ void ListWidget::scrollTo(int item) {
 
 	if (_currentPos != item) {
 		_currentPos = item;
+		checkBounds();
 		scrollBarRecalc();
 	}
 }
@@ -284,7 +285,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 	bool dirty = false;
 	int oldSelectedItem = _selectedItem;
 
-	if (!_editMode && state.keycode <= Common::KEYCODE_z && isprint((unsigned char)state.ascii)) {
+	if (!_editMode && state.keycode <= Common::KEYCODE_z && Common::isPrint(state.ascii)) {
 		// Quick selection mode: Go to first list item starting with this key
 		// (or a substring accumulated from the last couple key presses).
 		// Only works in a useful fashion if the list entries are sorted.
@@ -467,6 +468,7 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	case kSetPositionCmd:
 		if (_currentPos != (int)data) {
 			_currentPos = data;
+			checkBounds();
 			draw();
 
 			// Scrollbar actions cause list focus (which triggers a redraw)
@@ -550,6 +552,13 @@ Common::Rect ListWidget::getEditRect() const {
 	return r;
 }
 
+void ListWidget::checkBounds() {
+	if (_currentPos < 0 || _entriesPerPage > (int)_list.size())
+		_currentPos = 0;
+	else if (_currentPos + _entriesPerPage > (int)_list.size())
+		_currentPos = _list.size() - _entriesPerPage;
+}
+
 void ListWidget::scrollToCurrent() {
 	// Only do something if the current item is not in our view port
 	if (_selectedItem < _currentPos) {
@@ -560,11 +569,7 @@ void ListWidget::scrollToCurrent() {
 		_currentPos = _selectedItem - _entriesPerPage + 1;
 	}
 
-	if (_currentPos < 0 || _entriesPerPage > (int)_list.size())
-		_currentPos = 0;
-	else if (_currentPos + _entriesPerPage > (int)_list.size())
-		_currentPos = _list.size() - _entriesPerPage;
-
+	checkBounds();
 	_scrollBar->_currentPos = _currentPos;
 	_scrollBar->recalc();
 }

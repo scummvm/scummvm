@@ -32,20 +32,8 @@
 namespace Tony {
 
 RMInput::RMInput() {
-	// Setup mouse fields
-	_clampMouse = false;
-	_mousePos.set(0, 0);
-	_leftButton = _rightButton = false;
 	_leftClickMouse = _leftReleaseMouse = false;
 	_rightClickMouse = _rightReleaseMouse = false;
-
-	Common::fill((byte *)&_event, (byte *)&_event + sizeof(Common::Event), 0);
-
-	// Setup keyboard fields
-	Common::fill(&_keyDown[0], &_keyDown[350], 0);
-}
-
-RMInput::~RMInput() {
 }
 
 void RMInput::poll() {
@@ -59,19 +47,15 @@ void RMInput::poll() {
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
-			_mousePos.set(_event.mouse.x, _event.mouse.y);
+			_mousePos = _event.mouse;
 
 			if (_event.type == Common::EVENT_LBUTTONDOWN) {
-				_leftButton = true;
 				_leftClickMouse = true;
 			} else if (_event.type == Common::EVENT_LBUTTONUP) {
-				_leftButton = false;
 				_leftReleaseMouse = true;
 			} else if (_event.type == Common::EVENT_RBUTTONDOWN) {
-				_rightButton = true;
 				_rightClickMouse = true;
 			} else if (_event.type == Common::EVENT_RBUTTONUP) {
-				_rightButton = false;
 				_rightReleaseMouse = true;
 			} else
 				continue;
@@ -87,12 +71,17 @@ void RMInput::poll() {
 				g_vm->_debugger->onFrame();
 			} else {
 				// Flag the given key as being down
-				_keyDown[(int)_event.kbd.keycode] = true;
+				_keyDown.push_back(_event.kbd.keycode);
 			}
 			return;
 
 		case Common::EVENT_KEYUP:
-			_keyDown[(int)_event.kbd.keycode] = false;
+			for (uint i = 0; i < _keyDown.size(); i++) {
+				if (_keyDown[i] == _event.kbd.keycode) {
+					_keyDown.remove_at(i);
+					break;
+				}
+			}
 			return;
 
 		default:
@@ -101,30 +90,27 @@ void RMInput::poll() {
 	}
 }
 
-bool RMInput::mouseLeft() {
-	return _leftButton;
-}
-
-bool RMInput::mouseRight() {
-	return _rightButton;
-}
-
 /**
  * Return true if a key has been pressed
  */
 bool RMInput::getAsyncKeyState(Common::KeyCode kc) {
 	// The act of testing for a particular key automatically clears the state, to prevent
 	// the same key being registered in multiple different frames
-	bool result = _keyDown[(int)kc];
-	_keyDown[(int)kc] = false;
-	return result;
+	for (uint i = 0; i < _keyDown.size(); i++) {
+		if (_keyDown[i] == kc) {
+			_keyDown.remove_at(i);
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
  * Reading of the mouse
  */
 RMPoint RMInput::mousePos() {
-	return _mousePos;
+	RMPoint p(_mousePos.x, _mousePos.y);
+	return p;
 }
 
 /**
@@ -138,20 +124,12 @@ bool RMInput::mouseRightClicked() {
 	return _rightClickMouse;
 }
 
-bool RMInput::mouseBothClicked() {
-	return _leftClickMouse && _rightClickMouse;
-}
-
 bool RMInput::mouseLeftReleased() {
 	return _leftReleaseMouse;
 }
 
 bool RMInput::mouseRightReleased() {
 	return _rightReleaseMouse;
-}
-
-bool RMInput::mouseBothReleased() {
-	return _leftReleaseMouse && _rightReleaseMouse;
 }
 
 } // End of namespace Tony

@@ -333,9 +333,19 @@
 	#define isalpha(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 	#endif
 
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_iscntrl
+	#undef iscntrl
+	#define iscntrl(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
 	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isdigit
 	#undef isdigit
 	#define isdigit(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isgraph
+	#undef isgraph
+	#define isgraph(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 	#endif
 
 	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isnumber
@@ -348,6 +358,16 @@
 	#define islower(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 	#endif
 
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isprint
+	#undef isprint
+	#define isprint(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_ispunct
+	#undef ispunct
+	#define ispunct(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
 	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isspace
 	#undef isspace
 	#define isspace(a)	FORBIDDEN_SYMBOL_REPLACEMENT
@@ -356,6 +376,11 @@
 	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isupper
 	#undef isupper
 	#define isupper(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isxdigit
+	#undef isxdigit
+	#define isxdigit(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 	#endif
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_ctype_h

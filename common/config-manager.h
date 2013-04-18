@@ -175,7 +175,7 @@ private:
 	String			_filename;
 };
 
-}	// End of namespace Common
+} // End of namespace Common
 
 /** Shortcut for accessing the configuration manager. */
 #define ConfMan		Common::ConfigManager::instance()

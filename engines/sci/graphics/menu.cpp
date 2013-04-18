@@ -314,7 +314,7 @@ void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeI
 reg_t GfxMenu::kernelGetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId) {
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
 	if (!itemEntry)
-		error("Tried to getAttribute() on non-existant menu-item %d:%d", menuId, itemId);
+		error("Tried to getAttribute() on non-existent menu-item %d:%d", menuId, itemId);
 	switch (attributeId) {
 	case SCI_MENU_ATTRIBUTE_ENABLED:
 		if (itemEntry->enabled)

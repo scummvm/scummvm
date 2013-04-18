@@ -127,12 +127,54 @@ int MidiDriver_FluidSynth::open() {
 
 	_synth = new_fluid_synth(_settings);
 
-	// In theory, this ought to reduce CPU load... but it doesn't make any
-	// noticeable difference for me, so disable it for now.
+	if (ConfMan.getBool("fluidsynth_chorus_activate")) {
+		fluid_synth_set_chorus_on(_synth, 1);
 
-	// fluid_synth_set_interp_method(_synth, -1, FLUID_INTERP_LINEAR);
-	// fluid_synth_set_reverb_on(_synth, 0);
-	// fluid_synth_set_chorus_on(_synth, 0);
+		int chorusNr = ConfMan.getInt("fluidsynth_chorus_nr");
+		double chorusLevel = (double)ConfMan.getInt("fluidsynth_chorus_level") / 100.0;
+		double chorusSpeed = (double)ConfMan.getInt("fluidsynth_chorus_speed") / 100.0;
+		double chorusDepthMs = (double)ConfMan.getInt("fluidsynth_chorus_depth") / 10.0;
+
+		Common::String chorusWaveForm = ConfMan.get("fluidsynth_chorus_waveform");
+		int chorusType = FLUID_CHORUS_MOD_SINE;
+		if (chorusWaveForm == "sine") {
+			chorusType = FLUID_CHORUS_MOD_SINE;
+		} else {
+			chorusType = FLUID_CHORUS_MOD_TRIANGLE;
+		}
+
+		fluid_synth_set_chorus(_synth, chorusNr, chorusLevel, chorusSpeed, chorusDepthMs, chorusType);
+	} else {
+		fluid_synth_set_chorus_on(_synth, 0);
+	}
+
+	if (ConfMan.getBool("fluidsynth_reverb_activate")) {
+		fluid_synth_set_reverb_on(_synth, 1);
+
+		double reverbRoomSize = (double)ConfMan.getInt("fluidsynth_reverb_roomsize") / 100.0;
+		double reverbDamping = (double)ConfMan.getInt("fluidsynth_reverb_damping") / 100.0;
+		int reverbWidth = ConfMan.getInt("fluidsynth_reverb_width");
+		double reverbLevel = (double)ConfMan.getInt("fluidsynth_reverb_level") / 100.0;
+
+		fluid_synth_set_reverb(_synth, reverbRoomSize, reverbDamping, reverbWidth, reverbLevel);
+	} else {
+		fluid_synth_set_reverb_on(_synth, 0);
+	}
+
+	Common::String interpolation = ConfMan.get("fluidsynth_misc_interpolation");
+	int interpMethod = FLUID_INTERP_4THORDER;
+	
+	if (interpolation == "none") {
+		interpMethod = FLUID_INTERP_NONE;
+	} else if (interpolation == "linear") {
+		interpMethod = FLUID_INTERP_LINEAR;
+	} else if (interpolation == "4th") {
+		interpMethod = FLUID_INTERP_4THORDER;
+	} else if (interpolation == "7th") {
+		interpMethod = FLUID_INTERP_7THORDER;
+	}
+
+	fluid_synth_set_interp_method(_synth, -1, interpMethod);
 
 	const char *soundfont = ConfMan.get("soundfont").c_str();
 

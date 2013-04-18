@@ -134,7 +134,7 @@ void QuickTimeAudioDecoder::init() {
 			_audioTracks.push_back(new QuickTimeAudioTrack(this, _tracks[i]));
 }
 
-Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(Track *track, uint32 format) {
+Common::QuickTimeParser::SampleDesc *QuickTimeAudioDecoder::readSampleDesc(Track *track, uint32 format, uint32 descSize) {
 	if (track->codecType == CODEC_TYPE_AUDIO) {
 		debug(0, "Audio Codec FourCC: \'%s\'", tag2str(format));
 

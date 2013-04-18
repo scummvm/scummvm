@@ -593,8 +593,8 @@ void SliderWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 
 void SliderWidget::handleMouseWheel(int x, int y, int direction) {
 	if (isEnabled() && !_isDragging) {
-		// Increment or decrement one position
-		int newValue = posToValue(valueToPos(_value) - 1 * direction);
+		// Increment or decrement by one
+		int newValue = _value - direction;
 
 		if (newValue < _valueMin)
 			newValue = _valueMin;

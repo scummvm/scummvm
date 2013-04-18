@@ -51,11 +51,26 @@ AdRegion::AdRegion(BaseGame *inGame) : BaseRegion(inGame) {
 AdRegion::~AdRegion() {
 }
 
+uint32 AdRegion::getAlpha() const {
+	return _alpha;
+}
+
+float AdRegion::getZoom() const {
+	return _zoom;
+}
+
+bool AdRegion::isBlocked() const {
+	return _blocked;
+}
+
+bool AdRegion::hasDecoration() const {
+	return _decoration;
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool AdRegion::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}

@@ -37,14 +37,16 @@ enum {
 	kScrollMillisPerPixel = 60
 };
 
-// The following commands can be put at the start of a line (all subject to change):
-//   \C, \L, \R  -- set center/left/right alignment
-//   \c0 - \c4   -- set a custom color:
-//                  0 normal text (green)
-//                  1 highlighted text (light green)
-//                  2 light border (light gray)
-//                  3 dark border (dark gray)
-//                  4 background (black)
+// Every Line should start with a letter followed by a digit. Currently those can be
+// (all subject to change)
+// Letter:
+//   C, L, R     -- set center/left/right alignment
+//   A           -- ASCII text to replace the next (latin1) line
+// Digit:
+//   0 - 2       -- set a custom color:
+//                  0 normal text
+//                  1 highlighted text
+//                  2 disabled text	
 // TODO: Maybe add a tab/indent feature; that is, make it possible to specify
 // an amount by which that line shall be indented (the indent of course would have
 // to be considered while performing any word wrapping, too).
@@ -54,7 +56,7 @@ enum {
 
 static const char *copyright_text[] = {
 "",
-"C0""Copyright (C) 2001-2012 The ScummVM project",
+"C0""Copyright (C) 2001-2013 The ScummVM project",
 "C0""http://www.scummvm.org",
 "",
 "C0""ScummVM is the legal property of its developers, whose names are too numerous to list here. Please refer to the COPYRIGHT file distributed with this binary.",
@@ -110,16 +112,16 @@ AboutDialog::AboutDialog()
 	const EnginePlugin::List &plugins = EngineMan.getPlugins();
 	EnginePlugin::List::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
-	  Common::String str;
-	  str = "C0";
-	  str += (**iter).getName();
-	  addLine(str.c_str());
+		Common::String str;
+		str = "C0";
+		str += (**iter).getName();
+		addLine(str.c_str());
 
-	  str = "C2";
-	  str += (**iter)->getOriginalCopyright();
-	  addLine(str.c_str());
+		str = "C2";
+		str += (**iter)->getOriginalCopyright();
+		addLine(str.c_str());
 
-	  //addLine("");
+		//addLine("");
 	}
 
 	for (i = 0; i < ARRAYSIZE(gpl_text); i++)
@@ -137,9 +139,26 @@ void AboutDialog::addLine(const char *str) {
 	} else {
 		Common::String format(str, 2);
 		str += 2;
-
+		
+		static Common::String asciiStr;
+		if (format[0] == 'A') {
+			bool useAscii = false;
+#ifdef USE_TRANSLATION
+			// We could use TransMan.getCurrentCharset() but rather than compare strings
+			// it is easier to use TransMan.getCharsetMapping() (non null in case of non
+			// ISO-8859-1 mapping)
+			useAscii = (TransMan.getCharsetMapping() != NULL);
+#endif
+			if (useAscii)
+				asciiStr = str;
+			return;
+		}
 		StringArray wrappedLines;
-		g_gui.getFont().wordWrapText(str, _w - 2 * _xOff, wrappedLines);
+		if (!asciiStr.empty()) {
+			g_gui.getFont().wordWrapText(asciiStr, _w - 2 * _xOff, wrappedLines);
+			asciiStr.clear();
+		} else
+			g_gui.getFont().wordWrapText(str, _w - 2 * _xOff, wrappedLines);
 
 		for (StringArray::const_iterator i = wrappedLines.begin(); i != wrappedLines.end(); ++i) {
 			_lines.push_back(format + *i);
@@ -285,7 +304,7 @@ void AboutDialog::reflowLayout() {
 	int maxW = _w - 2*_xOff;
 	_w = 0;
 	for (i = 0; i < ARRAYSIZE(credits); i++) {
-		int tmp = g_gui.getStringWidth(credits[i] + 5);
+		int tmp = g_gui.getStringWidth(credits[i]) + 5;
 		if (_w < tmp && tmp <= maxW) {
 			_w = tmp;
 		}

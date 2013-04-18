@@ -26,6 +26,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/osystem/base_render_osystem.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -35,12 +36,19 @@
 
 namespace Wintermute {
 
-BaseGame *BasePlatform::_gameRef = NULL;
+BaseGame *BasePlatform::_gameRef = nullptr;
+WintermuteEngine *BasePlatform::_engineRef = nullptr;
 
 #define CLASS_NAME "GF_FRAME"
-int BasePlatform::initialize(BaseGame *inGame, int argc, char *argv[]) {
+int BasePlatform::initialize(WintermuteEngine *engineRef, BaseGame *inGame, int argc, char *argv[]) {
 	_gameRef = inGame;
+	_engineRef = engineRef;
 	return true;
+}
+
+void BasePlatform::deinit() {
+	_gameRef = nullptr;
+	_engineRef = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -86,6 +94,11 @@ void BasePlatform::handleEvent(Common::Event *event) {
 		}
 		break;
 	case Common::EVENT_KEYDOWN:
+		if (event->kbd.flags & Common::KBD_CTRL) {
+			if (event->kbd.keycode == Common::KEYCODE_d) {
+				_engineRef->trigDebugger();
+			}
+		}
 		if (_gameRef) {
 			_gameRef->handleKeypress(event);
 		}
@@ -234,7 +247,7 @@ bool BasePlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
-	if (lprcDst == NULL || lprcSrc == NULL) {
+	if (lprcDst == nullptr || lprcSrc == nullptr) {
 		return false;
 	}
 

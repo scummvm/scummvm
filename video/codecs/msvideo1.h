@@ -27,6 +27,12 @@
 
 namespace Video {
 
+/**
+ * Microsoft Video 1 decoder.
+ *
+ * Used in video:
+ *  - AVIDecoder
+ */
 class MSVideo1Decoder : public Codec {
 public:
 	MSVideo1Decoder(uint16 width, uint16 height, byte bitsPerPixel);

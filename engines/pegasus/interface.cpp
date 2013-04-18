@@ -186,6 +186,11 @@ void Interface::validateInventoryPanel() {
 		_inventoryLid.setDisplayOrder(kInventoryLidOrder);
 		_inventoryLid.startDisplaying();
 
+		if (((PegasusEngine *)g_engine)->isDVD()) {
+			_inventoryOpenSound.initFromAIFFFile("Sounds/Items/Inventory Panel Open.aif");
+			_inventoryCloseSound.initFromAIFFFile("Sounds/Items/Inventory Panel Close.aif");
+		}
+
 		_inventoryPushCallBack.initCallBack(&_inventoryPush, kCallBackAtExtremes);
 		_inventoryLidCallBack.initCallBack(&_inventoryLid, kCallBackAtExtremes);
 
@@ -230,6 +235,11 @@ void Interface::validateBiochipPanel() {
 		_biochipLid.moveElementTo(kBiochipLidLeft, kBiochipLidTop);
 		_biochipLid.setDisplayOrder(kBiochipLidOrder);
 		_biochipLid.startDisplaying();
+
+		if (((PegasusEngine *)g_engine)->isDVD()) {
+			_biochipOpenSound.initFromAIFFFile("Sounds/Items/Biochip Panel Open.aif");
+			_biochipCloseSound.initFromAIFFFile("Sounds/Items/Biochip Panel Close.aif");
+		}
 
 		_biochipPushCallBack.initCallBack(&_biochipPush, kCallBackAtExtremes);
 		_biochipLidCallBack.initCallBack(&_biochipLid, kCallBackAtExtremes);
@@ -385,6 +395,11 @@ void Interface::raiseInventoryDrawer(const bool doCallBacks) {
 	_inventoryLid.show();
 	_inventoryPush.show();
 	_inventoryLid.start();
+
+	if (((PegasusEngine *)g_engine)->isDVD()) {
+		_inventoryCloseSound.stopSound();
+		_inventoryOpenSound.playSound();
+	}
 }
 
 void Interface::playEndMessage() {
@@ -446,6 +461,11 @@ void Interface::lowerInventoryDrawer(const bool doCallBacks) {
 		FaderMoveSpec moveSpec;
 		moveSpec.makeTwoKnotFaderSpec(60, 0, 1000, 15, 0);
 		_inventoryPush.startFader(moveSpec);
+
+		if (((PegasusEngine *)g_engine)->isDVD()) {
+			_inventoryOpenSound.stopSound();
+			_inventoryCloseSound.playSound();
+		}
 	}
 }
 
@@ -487,6 +507,11 @@ void Interface::raiseBiochipDrawer(const bool doCallBacks) {
 	_biochipLid.show();
 	_biochipPush.show();
 	_biochipLid.start();
+
+	if (((PegasusEngine *)g_engine)->isDVD()) {
+		_biochipCloseSound.stopSound();
+		_biochipOpenSound.playSound();
+	}
 }
 
 void Interface::biochipLidOpen(const bool doCallBacks) {
@@ -521,6 +546,11 @@ void Interface::lowerBiochipDrawer(const bool doCallBacks) {
 		FaderMoveSpec moveSpec;
 		moveSpec.makeTwoKnotFaderSpec(60, 0, 1000, 9, 0);
 		_biochipPush.startFader(moveSpec);
+
+		if (((PegasusEngine *)g_engine)->isDVD()) {
+			_biochipOpenSound.stopSound();
+			_biochipCloseSound.playSound();
+		}
 	}
 }
 

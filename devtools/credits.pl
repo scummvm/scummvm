@@ -65,6 +65,7 @@ sub html_entities_to_ascii {
 	# &oslash;  -> o
 	# &ouml;    -> o / oe
 	# &auml;    -> a
+	# &euml;    -> e
 	# &uuml;    -> ue
 	# &aring;   -> aa
 	# &amp;     -> &
@@ -82,6 +83,7 @@ sub html_entities_to_ascii {
 	$text =~ s/&aring;/aa/g;
 
 	$text =~ s/&auml;/a/g;
+	$text =~ s/&euml;/e/g;
 	$text =~ s/&uuml;/ue/g;
 	# HACK: Torbj*o*rn but G*oe*ffringmann and R*oe*ver and J*oe*rg
 	$text =~ s/Torbj&ouml;rn/Torbjorn/g;
@@ -108,6 +110,7 @@ sub html_entities_to_cpp {
 	$text =~ s/&aring;/\\345/g;
 
 	$text =~ s/&auml;/\\344/g;
+	$text =~ s/&euml;/\\353/g;
 	$text =~ s/&ouml;/\\366/g;
 	$text =~ s/&uuml;/\\374/g;
 
@@ -133,6 +136,7 @@ sub html_entities_to_rtf {
 
 	# Back to hex numbers
 	$text =~ s/&auml;/\\'8a/g;
+	$text =~ s/&euml;/\\'eb/g;
 	$text =~ s/&ouml;/\\'9a/g;
 	$text =~ s/&uuml;/\\'9f/g;
 
@@ -156,6 +160,7 @@ sub html_entities_to_tex {
 
 	$text =~ s/&auml;/\\"a/g;
 	$text =~ s/&ouml;/\\"o/g;
+	$text =~ s/&euml;/\\"e/g;
 	$text =~ s/&uuml;/\\"u/g;
 
 	$text =~ s/&amp;/\\&/g;
@@ -267,14 +272,22 @@ sub begin_section {
 		print '\f1\b0\fs24 \cf0 \\' . "\n";
 	} elsif ($mode eq "CPP") {
 		if ($section_level eq 0) {
-		  # TODO: Would be nice to have a 'fat' or 'large' mode for
-		  # headlines...
-		  $title = html_entities_to_cpp($title);
-		  print '"C1""'.$title.'",' . "\n";
-		  print '"",' . "\n";
+			# TODO: Would be nice to have a 'fat' or 'large' mode for
+			# headlines...
+			my $ascii_title = html_entities_to_ascii($title);
+			$title = html_entities_to_cpp($title);
+			if ($ascii_title ne $title) {	
+				print '"A1""'.$ascii_title.'",' . "\n";
+			}
+			print '"C1""'.$title.'",' . "\n";
+			print '"",' . "\n";
 		} else {
-		  $title = html_entities_to_cpp($title);
-		  print '"C1""'.$title.'",' . "\n";
+			my $ascii_title = html_entities_to_ascii($title);
+			$title = html_entities_to_cpp($title);
+			if ($ascii_title ne $title) {	
+				print '"A1""'.$ascii_title.'",' . "\n";
+			}
+			print '"C1""'.$title.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {
 		print "  <row><entry namest='start' nameend='job'>";
@@ -392,13 +405,21 @@ sub add_person {
 		}
 	} elsif ($mode eq "CPP") {
 		$name = $nick if $name eq "";
+		my $ascii_name = html_entities_to_ascii($name);
 		$name = html_entities_to_cpp($name);
 
+		if ($ascii_name ne $name) {
+			print '"A0""'.$ascii_name.'",' . "\n";
+		}
 		print '"C0""'.$name.'",' . "\n";
 
 		# Print desc wrapped
 		if (length $desc > 0) {
+			my $ascii_desc = html_entities_to_ascii($desc);
 			$desc = html_entities_to_cpp($desc);
+			if ($ascii_desc ne $desc) {	
+				print '"A2""'.$ascii_desc.'",' . "\n";
+			}
 			print '"C2""'.$desc.'",' . "\n";
 		}
 	} elsif ($mode eq "XML-DOC") {
@@ -574,6 +595,11 @@ begin_credits("Credits");
 				add_person("Jordi Vilalta Prat", "jvprat", "");
 			end_section();
 
+			begin_section("Hopkins");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
+
 			begin_section("Hugo");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Oystein Eftevaag", "vinterstum", "");
@@ -685,6 +711,11 @@ begin_credits("Credits");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Joost Peters", "joostp", "");
+			end_section();
+
+			begin_section("Toltecs");
+				add_person("Benjamin Haisch", "john_doe", "");
+				add_person("Filippos Karapetis", "[md5]", "");
 			end_section();
 
 			begin_section("Tony");
@@ -815,6 +846,7 @@ begin_credits("Credits");
 				add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
 				add_person("Benjamin Haisch", "john_doe", "Heavily improved de-/encoder for DXA videos");
 				add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, AdLib work (retired)");
+				add_person("Dani&euml;l ter Laan", "NoiZe", "Restoring original Drascula tracks, and writing convert_dxa.bat");
 				add_person("Chris Page", "cp88", "Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)");
 				add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
 			end_section();
@@ -940,6 +972,9 @@ begin_credits("Credits");
 				begin_section("Basque");
 					add_person("Mikel Iturbe Urretxa", "", "");
 				end_section();
+				begin_section("Belarusian");
+					add_person("Ivan Lukyanov", "", "");
+				end_section();
 				begin_section("Catalan");
 					add_person("Jordi Vilalta Prat", "jvprat", "");
 				end_section();
@@ -948,6 +983,9 @@ begin_credits("Credits");
 				end_section();
 				begin_section("Danish");
 					add_person("Steffen Nyeland", "", "");
+				end_section();
+				begin_section("Finnish");
+					add_person("Toni Saarela", "catnose", "");
 				end_section();
 				begin_section("French");
 					add_person("Thierry Crozat", "criezy", "");

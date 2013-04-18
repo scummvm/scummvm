@@ -200,15 +200,15 @@ bool Resource::createContexts() {
 
 	//// Detect and add voice files /////////////////////////////////////////////
 	SoundFileInfo voiceFiles[] = {
-		{	GID_ITE,	"voices.rsc",					false	,	(_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0},
-		{	GID_ITE,	"voices.cmp",					true	,	(_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0},
-		{	GID_ITE,	"voicesd.rsc",					false	,	(_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0},
-		{	GID_ITE,	"voicesd.cmp",					true	,	(_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0},
+		{	GID_ITE,	"voices.rsc",					false	,	(uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0)},
+		{	GID_ITE,	"voices.cmp",					true	,	(uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0)},
+		{	GID_ITE,	"voicesd.rsc",					false	,	(uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0)},
+		{	GID_ITE,	"voicesd.cmp",					true	,	(uint16)((_soundFileName[0] == 0) ? GAME_SOUNDFILE : 0)},
 		// The resources in the Wyrmkeep combined Windows/Mac/Linux CD version are little endian, but
 		// the voice file is big endian. If we got such a version with mixed files, mark this voice file
 		// as big endian
-		{	GID_ITE,	"inherit the earth voices",		false	,	_vm->isBigEndian() ? 0 : GAME_SWAPENDIAN},
-		{	GID_ITE,	"inherit the earth voices.cmp",	true	,	_vm->isBigEndian() ? 0 : GAME_SWAPENDIAN},
+		{	GID_ITE,	"inherit the earth voices",		false	,	(uint16)(_vm->isBigEndian() ? 0 : GAME_SWAPENDIAN)},
+		{	GID_ITE,	"inherit the earth voices.cmp",	true	,	(uint16)(_vm->isBigEndian() ? 0 : GAME_SWAPENDIAN)},
 		{	GID_ITE,	"ite voices.bin",				false	,	GAME_MACBINARY},
 #ifdef ENABLE_IHNM
 		{	GID_IHNM,	"voicess.res",					false	,	0},

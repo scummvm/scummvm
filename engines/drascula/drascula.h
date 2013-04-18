@@ -36,6 +36,8 @@
 #include "common/system.h"
 #include "common/util.h"
 
+#include "engines/savestate.h"
+
 #include "audio/mixer.h"
 
 #include "engines/engine.h"
@@ -415,7 +417,7 @@ public:
 	int inventoryObjects[43];
 	char _targetSurface[40][20];
 	int _destX[40], _destY[40], trackCharacter_alkeva[40], roomExits[40];
-	int x1[40], y1[40], x2[40], y2[40];
+	int _objectX1[40], _objectY1[40], _objectX2[40], _objectY2[40];
 	int takeObject, pickedObject;
 	bool _subtitlesDisabled;
 	bool _menuBar, _menuScreen, _hasName;
@@ -453,11 +455,9 @@ public:
 	int term_int;
 	int currentChapter;
 	int loadedDifferentChapter;
-	char saveName[13];
+	int _currentSaveSlot;
 	int _color;
 	int musicStopped;
-	char select[23];
-	int selectionMade;
 	int mouseX;
 	int mouseY;
 	int leftMouseButton;
@@ -494,9 +494,16 @@ public:
 	void selectVerb(int);
 	void updateVolume(Audio::Mixer::SoundType soundType, int prevVolume);
 	void volumeControls();
+
 	bool saveLoadScreen();
+	bool scummVMSaveLoadDialog(bool isSave);
+	Common::String enterName(Common::String &selectedName);
 	void loadSaveNames();
-	void saveSaveNames();
+	void saveGame(int slot, Common::String &desc);
+	bool loadGame(int slot);
+	void checkForOldSaveGames();
+	void convertSaveGame(int slot, Common::String &desc);
+
 	void print_abc(const char *, int, int);
 	void delay(int ms);
 	bool confirmExit();
@@ -550,7 +557,6 @@ public:
 	void updateMusic();
 	int musicStatus();
 	void updateRoom();
-	bool loadGame(const char *);
 	void updateDoor(int);
 	void setPaletteBase(int darkness);
 	void updateVisible();
@@ -568,7 +574,6 @@ public:
 	void showCursor();
 	void hideCursor();
 	bool isCursorVisible();
-	void enterName();
 	bool soundIsActive();
 	void waitFrameSSN();
 	void mixVideo(byte *OldScreen, byte *NewScreen, uint16 oldPitch);
@@ -589,7 +594,6 @@ public:
 	void quadrant_2();
 	void quadrant_3();
 	void quadrant_4();
-	void saveGame(const char *gameName);
 	void increaseFrameNum();
 	int whichObject();
 	bool checkMenuFlags();
@@ -650,63 +654,56 @@ public:
 	bool room_62(int);
 	bool room_102(int);
 
-	void animation_1_1();
-	void animation_2_1();
-	void animation_3_1();
-	void animation_4_1();
-	//
-	void animation_2_2();
-	void animation_4_2();
-	void animation_5_2();
-	void animation_6_2();
-	void animation_7_2();
-	void animation_11_2();
-	void animation_12_2();
-	void animation_13_2();
-	void animation_14_2();
 	void asco();
-	void animation_16_2();
-	void animation_20_2();
-	void animation_23_2();
-	void animation_23_joined();
-	void animation_23_joined2();
-	void animation_24_2();
-	void animation_25_2();
-	void animation_26_2();
-	void animation_27_2();
-	void animation_29_2();
-	void animation_31_2();
-	void animation_32_2();
-	void animation_33_2();
-	void animation_34_2();
-	void animation_35_2();
-	void animation_36_2();
+
+	void animation_1_1();		// Game introduction
+	void animation_2_1();		// John falls in love with BJ, who is then abducted by Drascula
+	void animation_3_1();		// John talks with the bartender to book a room
+	void animation_4_1();		// John talks with the pianist
 	//
-	void animation_2_3();
-	void animation_3_3();
-	void animation_4_3();
-	void animation_5_3();
-	void animation_6_3();
-	void animation_ray();
+	void animation_2_2();		// John enters the chapel via the window 
+	void animation_4_2();		// John talks with the blind man (closeup)
+	void animation_5_2();		// John breaks the chapel window with the pike
+	void animation_6_2();		// The blind man (closeup) thanks John for giving him money and hands him the sickle
+	void animation_7_2();		// John uses the sickle
+	void animation_11_2();		// The drunk man says "they're all dead, thanks *hic*"
+	void animation_12_2();		// Conversation screen - John talks to the pianist after BJ is abducted by Drascula
+	void animation_13_2();		// ???
+	void animation_14_2();		// The glass box falls from the ceiling
+	void animation_16_2();		// The drunk tells us about Von Braun
+	void animation_20_2();		// Von Braun tells John that he needs to have special skills to fight vampires
+	void animation_23_2();		// Von Braun tests John's reactions to scratching noises
+	void animation_24_2();		// Conversation screen - John talks with Von Braun
+	void animation_25_2();		// The glass box is lifted back to the ceiling
+	void animation_26_2();		// John gives the book to the pianist and gets his earplugs in return
+	void animation_27_2();		// Von Braun admits that John is ready to fight vampires and gives him his money back
+	void animation_29_2();		// Von Braun tells John what ingredients he needs for the brew
+	void animation_31_2();		// Von Braun obtains the items needed for the brew from John and creates it
+	void animation_34_2();		// John kicks an object
+	void animation_35_2();		// John jumps into the well
+	void animation_36_2();		// John asks the bartender about the pianist
 	//
-	void animation_1_4();
-	void animation_5_4();
-	void animation_6_4();
-	void animation_7_4();
-	void animation_8_4();
+	void animation_2_3();		// John uses the cross with the Frankenstein-zombie ("yoda") and destroys him
+	void animation_6_3();		// Frankenstein is blocking John's path
 	//
-	void animation_1_5();
-	void animation_5_5();
-	void animation_11_5();
-	void animation_12_5();
-	void animation_13_5();
-	void animation_14_5();
+	void animation_castle();	// Chapter 4 start - Drascula's castle exterior, lightning strikes
+	void animation_1_4();		// Conversation screen - John talks with Igor
+	void animation_5_4();		// John enters Igor's room dressed as Drascula
+	void animation_6_4();		// Igor says that he's going for supper
+	void animation_7_4();		// John removes Drascula's disguise
+	void animation_8_4();		// Secret passage behind bookcase is revealed
 	//
-	void animation_1_6();
-	void animation_5_6();
-	void animation_6_6();
-	void animation_9_6();
-	void animation_19_6();
+	void animation_1_5();		// John finds BJ
+	void animation_5_5();		// ???
+	void animation_12_5();		// Frankenstein comes to life
+	void animation_12_5_frankenstein();
+	void animation_14_5();		// John finds out that an object is empty
+	//
+	void animation_1_6();		// ???
+	void animation_5_6();		// John is tied to the table. Drascula and Igor lower the pendulum
+	void animation_6_6();		// John uses the pendulum to break free
+	void animation_9_6();		// Game ending - John uses the cross on Drascula and reads BJ's letter
+	void animation_19_6();		// Someone pops up from behind a door when trying to open it
 
 	void update_1_pre();
 	void update_2();
@@ -778,7 +775,7 @@ private:
 	RoomUpdate *_roomPreUpdates, *_roomUpdates;
 	RoomTalkAction *_roomActions;
 	TalkSequenceCommand *_talkSequences;
-	char _saveNames[10][23];
+	Common::String _saveNames[10];
 
 	char **loadTexts(Common::File &in);
 	void freeTexts(char **ptr);

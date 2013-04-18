@@ -551,8 +551,12 @@ void Input::setInventoryCursor(ItemName name) {
 	case GType_BRA: {
 		byte *src = _mouseArrow->getData(0);
 		byte *dst = _comboArrow->getData(0);
-		memcpy(dst, src, _comboArrow->getSize(0));
 		// FIXME: destination offseting is not clear
+		Common::Rect srcRect, dstRect;
+		_mouseArrow->getRect(0, srcRect);
+		_comboArrow->getRect(0, dstRect);
+		for (uint y = 0; y < (uint)srcRect.height(); y++)
+			memcpy(dst + y * dstRect.width(), src + y * srcRect.width(), srcRect.width());
 		_vm->_inventoryRenderer->drawItem(name, dst + _mouseComboProps_BR._yOffset * _mouseComboProps_BR._width + _mouseComboProps_BR._xOffset, _mouseComboProps_BR._width);
 		CursorMan.replaceCursor(dst, _mouseComboProps_BR._width, _mouseComboProps_BR._height, 0, 0, 0);
 		break;

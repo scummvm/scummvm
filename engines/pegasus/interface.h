@@ -29,6 +29,7 @@
 #include "pegasus/hotspot.h"
 #include "pegasus/input.h"
 #include "pegasus/notification.h"
+#include "pegasus/sound.h"
 #include "pegasus/surface.h"
 #include "pegasus/transition.h"
 #include "pegasus/items/inventorypicture.h"
@@ -125,6 +126,7 @@ protected:
 	NotificationCallBack _inventoryLidCallBack;
 	InventoryItemsPicture _inventoryPanel;
 	bool _inventoryUp, _inventoryRaised;
+	Sound _inventoryOpenSound, _inventoryCloseSound;
 
 	Push _biochipPush;
 	SpriteSequence _biochipLid;
@@ -132,6 +134,7 @@ protected:
 	NotificationCallBack _biochipLidCallBack;
 	BiochipPicture _biochipPanel;
 	bool _biochipUp, _biochipRaised;
+	Sound _biochipOpenSound, _biochipCloseSound;
 
 	Hotspot _currentItemSpot;
 	Hotspot _currentBiochipSpot;

@@ -28,13 +28,20 @@ class RandomSource;
 
 namespace TeenAgent {
 
+class TeenAgentEngine;
+
 class Actor : public Animation {
-	uint head_index;
-	uint idle_type;
+private:
+	TeenAgentEngine *_vm;
+
+	uint headIndex;
+	uint idleType;
+
 public:
-	Actor();
-	Common::Rect render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, bool head, uint zoom);
-	Common::Rect renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame, uint zoom, Common::RandomSource &rnd);
+	Actor(TeenAgentEngine *vm);
+
+	Common::Rect render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int deltaFrame, bool renderHead, uint zoom);
+	Common::Rect renderIdle(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int deltaFrame, uint zoom, Common::RandomSource &rnd);
 };
 
 } // End of namespace TeenAgent

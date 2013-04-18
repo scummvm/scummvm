@@ -39,14 +39,10 @@ namespace Tinsel {
 |*                      Fader Function Prototypes                       *|
 \*----------------------------------------------------------------------*/
 
-// usefull palette faders - they all need a list of palettes that
-//				should not be faded. This parameter can be
-//				NULL - fade all palettes.
-
-void FadeOutMedium(SCNHANDLE noFadeTable[]);
-void FadeOutFast(SCNHANDLE noFadeTable[]);
-void FadeInMedium(SCNHANDLE noFadeTable[]);
-void FadeInFast(SCNHANDLE noFadeTable[]);
+void FadeOutMedium();
+void FadeOutFast();
+void FadeInMedium();
+void FadeInFast();
 void PokeInTagColor();
 
 } // End of namespace Tinsel

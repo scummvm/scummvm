@@ -33,7 +33,7 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseDynamicBuffer::BaseDynamicBuffer(BaseGame *inGame, uint32 initSize, uint32 growBy) {
-	_buffer = NULL;
+	_buffer = nullptr;
 	_size = 0;
 	_realSize = 0;
 
@@ -56,7 +56,7 @@ void BaseDynamicBuffer::cleanup() {
 	if (_buffer) {
 		free(_buffer);
 	}
-	_buffer = NULL;
+	_buffer = nullptr;
 	_size = 0;
 	_realSize = 0;
 	_offset = 0;
@@ -65,7 +65,7 @@ void BaseDynamicBuffer::cleanup() {
 
 
 //////////////////////////////////////////////////////////////////////////
-uint32 BaseDynamicBuffer::getSize() {
+uint32 BaseDynamicBuffer::getSize() const {
 	return _size;
 }
 
@@ -164,7 +164,7 @@ char *BaseDynamicBuffer::getString() {
 	_offset += len;
 
 	if (!strcmp(ret, "(null)")) {
-		return NULL;
+		return nullptr;
 	} else {
 		return ret;
 	}

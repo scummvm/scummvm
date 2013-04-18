@@ -79,7 +79,7 @@ typedef HashMap<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo> StringMap;
 
 
 
-}	// End of namespace Common
+} // End of namespace Common
 
 
 #endif

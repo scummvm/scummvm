@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/scriptables/script_ext_string.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
 #include "engines/wintermute/utils/string_util.h"
+#include "common/str.h"
 #include "common/tokenizer.h"
 
 namespace Wintermute {
@@ -45,7 +46,7 @@ BaseScriptable *makeSXString(BaseGame *inGame, ScStack *stack) {
 
 //////////////////////////////////////////////////////////////////////////
 SXString::SXString(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
-	_string = NULL;
+	_string = nullptr;
 	_capacity = 0;
 
 	stack->correctParams(1);
@@ -81,7 +82,7 @@ void SXString::setStringVal(const char *val) {
 	if (len >= _capacity) {
 		_capacity = len + 1;
 		delete[] _string;
-		_string = NULL;
+		_string = nullptr;
 		_string = new char[_capacity];
 		memset(_string, 0, _capacity);
 	}
@@ -269,7 +270,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 		char separators[MAX_PATH_LENGTH] = ",";
 		if (!val->isNULL()) {
-			strcpy(separators, val->getString());
+			Common::strlcpy(separators, val->getString(), MAX_PATH_LENGTH);
 		}
 
 		SXArray *array = new SXArray(_gameRef);
@@ -295,30 +296,26 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		Common::Array<WideString> parts;
 
-
-
-		Common::StringTokenizer tokenizer(str, delims);
-		while (!tokenizer.empty()) {
-			Common::String str2 = tokenizer.nextToken();
-			parts.push_back(str2);
+		uint32 start = 0;
+		for(uint32 i = 0; i < str.size() + 1; i++) {
+			char ch = str.c_str()[i];
+			if(ch=='\0' || delims.contains(ch))
+			{
+				char *part = new char[i - start + 1];
+				if(i != start) {
+					Common::strlcpy(part, str.c_str() + start, i - start + 1);
+					part[i - start] = '\0';
+				} else {
+					part[0] = '\0';
+				}
+				val = new ScValue(_gameRef, part);
+				array->push(val);
+				delete[] part;
+				delete val;
+				val = nullptr;
+				start = i + 1;
+			}
 		}
-		// TODO: Clean this up
-		/*do {
-		    pos = StringUtil::IndexOf(Common::String(str.c_str() + start), delims, start);
-		    //pos = str.find_first_of(delims, start);
-		    if (pos == start) {
-		        start = pos + 1;
-		    } else if (pos == str.size()) {
-		        parts.push_back(Common::String(str.c_str() + start));
-		        break;
-		    } else {
-		        parts.push_back(Common::String(str.c_str() + start, pos - start));
-		        start = pos + 1;
-		    }
-		    //start = str.find_first_not_of(delims, start);
-		    start = StringUtil::LastIndexOf(Common::String(str.c_str() + start), delims, start) + 1;
-
-		} while (pos != str.size());*/
 
 		for (Common::Array<WideString>::iterator it = parts.begin(); it != parts.end(); ++it) {
 			WideString &part = (*it);
@@ -331,7 +328,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 			array->push(val);
 			delete val;
-			val = NULL;
+			val = nullptr;
 		}
 
 		stack->pushNative(array, false);
@@ -420,7 +417,7 @@ bool SXString::persist(BasePersistenceManager *persistMgr) {
 			_string = new char[_capacity];
 			persistMgr->getBytes((byte *)_string, _capacity);
 		} else {
-			_string = NULL;
+			_string = nullptr;
 		}
 	}
 

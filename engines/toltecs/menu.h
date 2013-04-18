@@ -84,6 +84,7 @@ public:
 protected:
 
 	struct Item {
+		bool enabled;
 		Common::Rect rect;
 		ItemID id;
 		Common::String caption;
@@ -130,6 +131,9 @@ protected:
 
 	void initMenu(MenuID menuID);
 
+	void enableItem(ItemID id);
+	void disableItem(ItemID id);
+
 	void enterItem(ItemID id);
 	void leaveItem(ItemID id);
 	void clickItem(ItemID id);
@@ -141,7 +145,7 @@ protected:
 	SavegameItem *getSavegameItemByID(ItemID id);
 
 	int loadSavegamesList();
-	void setSavegameCaptions();
+	void setSavegameCaptions(bool scrollToBottom);
 	void scrollSavegames(int delta);
 	void clickSavegameItem(ItemID id);
 	void setCfgText(bool value, bool active);

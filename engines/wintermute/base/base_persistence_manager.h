@@ -87,12 +87,14 @@ public:
 	bool transfer(const char *name, Common::String *val);
 	bool transfer(const char *name, Vector2 *val);
 	bool transfer(const char *name, AnsiStringArray &Val);
-	BasePersistenceManager(const char *savePrefix = NULL, bool deleteSingleton = false);
+	BasePersistenceManager(const char *savePrefix = nullptr, bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);
 
 	uint32 _thumbnailDataSize;
 	byte *_thumbnailData;
+	uint32 _scummVMThumbSize;
+	byte *_scummVMThumbnailData;
 	Common::String getFilenameForSlot(int slot) const;
 private:
 	bool _deleteSingleton;

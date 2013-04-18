@@ -198,6 +198,6 @@ bool findWordCompletions(const char *input) {
 
 }
 
-}	// End of namespace DS
+} // End of namespace DS
 
 #endif

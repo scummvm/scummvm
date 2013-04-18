@@ -546,6 +546,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	a336134914eaab4892d35625aa15ad1d	-1	ru	Windows	HE 99	-	-	George Kormendi
 	b5298a5c15ffbe8b381d51ea4e26d35c	-1	de	All	HE 99	-	-	Joachim Eberhard
 	4f138ac6f9b2ac5a41bc68b2c3296064	-1	fr	Windows	HE 99	-	-	gist974
+	e9271b3d0694c7101f10d675ab7c0133	-1	it	Windows	HE 99	-	-	George Q. Greg
 	78bd5f036ea35a878b74e4f47941f784	-1	ru	Windows	HE 99	-	-	sev
 
 	7c2e76087027eeee9c8f8985f93a1cc5	13584	en	All	-	Demo	-	khalek
@@ -560,6 +561,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	e03ed1474ec14de78359970e0457a820	-1	gb	Windows	HE 99	Demo	-	eriktorbjorn
 	d54622d31255619d207dd245d3f92327	-1	fr	Windows	HE 99	Demo	-	Mevi
 	dcf0119a90451a7d6e0f1920931ba130	-1	fr	Windows	HE 99	Demo	-	Mevi
+	47e041521d35c7a801bb1c010d84da9d	-1	it	Windows	HE 99	Demo	-	Kirben
 
 freddicove	Freddi Fish 5: The Case of the Creature of Coral Cove
 	590e6546aacd0d374b7f3a4f53013ab1	-1	All	All	-	-	-	cyx
@@ -715,6 +717,7 @@ puttrace	Putt-Putt Enters the Race
 	c8575e0b973ff1723aba6cd92c642db2	-1	fr	Windows	HE 99	Demo	-	Mevi
 	3769b56c9a22f5521d74525ee459f88d	13108	de	Windows	HE 99	Demo	-	George Kormendi
 	7c8100e360e8ef05f88069d4cfa0afd1	13108	gb	Windows	HE 99	Demo	-	eriktorbjorn
+	9778341eefc6feb447ca07e7be21791c	-1	it	Windows	HE 99	Demo	-	Kirben
 	6b27dbcd8d5697d5c918eeca0f68ef6a	3901484	All	All	HE CUP	Preview	-	sev
 
 puttmoon	Putt-Putt Goes to the Moon

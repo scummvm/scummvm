@@ -37,10 +37,14 @@ public:
 
 	void playMovie(uint resIndex);
 
+	bool isPlaying() { return _isPlaying; }
+
 protected:
 	ToltecsEngine *_vm;
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioStreamHandle;
+
+	bool _isPlaying;
 
 	uint32 _chunkCount, _frameCount, _lastPrefetchOfs;
 	uint32 _soundChunkFramesLeft, _framesPerSoundChunk;

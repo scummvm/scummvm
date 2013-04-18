@@ -4,6 +4,8 @@
 ** See Copyright Notice in lua.h
 */
 
+// FIXME: Do not directly use iscntrl from ctype.h.
+#define FORBIDDEN_SYMBOL_EXCEPTION_iscntrl
 
 #include "common/util.h"
 

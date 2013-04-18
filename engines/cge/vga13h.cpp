@@ -214,6 +214,7 @@ Sprite *Sprite::expand() {
 
 		for (line = sprf.readLine(); !sprf.eos(); line = sprf.readLine()) {
 			len = line.size();
+			assert(len <= 513);
 			strcpy(tmpStr, line.c_str());
 			lcnt++;
 			if (len == 0 || *tmpStr == '.')

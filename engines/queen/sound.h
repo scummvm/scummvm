@@ -39,7 +39,7 @@ struct SongData {
 	int16 volume;
 	int16 tempo;
 	int16 reverb;
-	int16 override;
+	int16 overrideCmd;
 	int16 ignore;
 };
 

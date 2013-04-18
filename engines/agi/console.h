@@ -49,7 +49,6 @@ private:
 	bool Cmd_SetFlag(int argc, const char **argv);
 	bool Cmd_SetObj(int argc, const char **argv);
 	bool Cmd_RunOpcode(int argc, const char **argv);
-	bool Cmd_Crc(int argc, const char **argv);
 	bool Cmd_Agiver(int argc, const char **argv);
 	bool Cmd_Flags(int argc, const char **argv);
 	bool Cmd_Vars(int argc, const char **argv);
@@ -75,8 +74,7 @@ public:
 private:
 	MickeyEngine *_mickey;
 
-	bool Cmd_CurRoom(int argc, const char **argv);
-	bool Cmd_GotoRoom(int argc, const char **argv);
+	bool Cmd_Room(int argc, const char **argv);
 	bool Cmd_DrawPic(int argc, const char **argv);
 	bool Cmd_DrawObj(int argc, const char **argv);
 };

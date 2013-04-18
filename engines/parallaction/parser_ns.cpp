@@ -292,7 +292,7 @@ void LocationParser_ns::parseAnimation(AnimationList &list, char *name) {
 	AnimationPtr a(new Animation);
 	_zoneProg++;
 
-	strncpy(a->_name, name, ZONENAME_LENGTH);
+	Common::strlcpy(a->_name, name, ZONENAME_LENGTH);
 	a->_flags |= kFlagsIsAnimation;
 
 	list.push_front(AnimationPtr(a));
@@ -1312,7 +1312,7 @@ void LocationParser_ns::parseZone(ZoneList &list, char *name) {
 	ZonePtr z(new Zone);
 	_zoneProg++;
 
-	strncpy(z->_name, name, ZONENAME_LENGTH);
+	Common::strlcpy(z->_name, name, ZONENAME_LENGTH);
 
 	ctxt.z = z;
 

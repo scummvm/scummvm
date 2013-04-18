@@ -52,7 +52,7 @@ protected:
 	bool resumeSFX();
 	bool pauseSFX();
 	bool stopSFX(bool deleteSound = true);
-	bool playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = NULL, uint32 loopStart = 0);
+	bool playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = nullptr, uint32 loopStart = 0);
 	BaseSound *_sFX;
 	TSFXType _sFXType;
 	float _sFXParam1;
@@ -72,7 +72,7 @@ protected:
 	bool _ready;
 	Rect32 _rect;
 	bool _rectSet;
-	int _iD;
+	int32 _iD;
 	char *_soundEvent;
 public:
 	TSpriteBlendMode _blendMode;
@@ -84,7 +84,7 @@ public:
 	virtual bool resetSoundPan();
 	virtual bool updateSounds();
 	bool updateOneSound(BaseSound *sound);
-	int _sFXVolume;
+	int32 _sFXVolume;
 
 	virtual bool handleMouseWheel(int delta);
 	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
@@ -110,8 +110,8 @@ public:
 	bool _movable;
 	bool _zoomable;
 	bool _shadowable;
-	int _posY;
-	int _posX;
+	int32 _posY;
+	int32 _posX;
 	bool _registrable;
 	char *_caption[7];
 	bool _saveState;
@@ -136,10 +136,10 @@ public:
 
 public:
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
 };
 
 } // end of namespace Wintermute

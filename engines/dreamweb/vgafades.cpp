@@ -56,8 +56,8 @@ void DreamWebEngine::fadeDOS() {
 	//processEvents will be called from waitForVSync
 	uint8 *dst = _startPal;
 	getPalette(dst, 0, 64);
-	for (int fade = 0; fade < 64; ++fade) {
-		for (int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
+	for (uint fade = 0; fade < 64; ++fade) {
+		for (uint c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
 			if (dst[c]) {
 				--dst[c];
 			}
@@ -88,7 +88,7 @@ void DreamWebEngine::fadeCalculation() {
 
 	uint8 *startPal = _startPal;
 	const uint8 *endPal = _endPal;
-	for (size_t i = 0; i < 256 * 3; ++i) {
+	for (uint i = 0; i < 256 * 3; ++i) {
 		uint8 s = startPal[i];
 		uint8 e = endPal[i];
 		if (s == e)
@@ -212,7 +212,7 @@ void DreamWebEngine::fadeScreenDownHalf() {
 
 	const uint8 *startPal = _startPal;
 	uint8 *endPal = _endPal;
-	for (int i = 0; i < 256 * 3; ++i) {
+	for (uint i = 0; i < 256 * 3; ++i) {
 		*endPal >>= 1;
 		endPal++;
 	}
@@ -239,7 +239,7 @@ void DreamWebEngine::greyscaleSum() {
 	byte *src = _mainPal;
 	byte *dst = _endPal;
 
-	for (int i = 0; i < 256; ++i) {
+	for (uint i = 0; i < 256; ++i) {
 		const unsigned int r = 20 * *src++;
 		const unsigned int g = 59 * *src++;
 		const unsigned int b = 11 * *src++;

@@ -119,7 +119,7 @@ uint16 SmallHuffmanTree::decodeTree(uint32 prefix, int length) {
 }
 
 uint16 SmallHuffmanTree::getCode(Common::BitStream &bs) {
-	byte peek = bs.peekBits(8);
+	byte peek = bs.peekBits(MIN<uint32>(bs.size() - bs.pos(), 8));
 	uint16 *p = &_tree[_prefixtree[peek]];
 	bs.skip(_prefixlength[peek]);
 
@@ -257,7 +257,7 @@ uint32 BigHuffmanTree::decodeTree(uint32 prefix, int length) {
 }
 
 uint32 BigHuffmanTree::getCode(Common::BitStream &bs) {
-	byte peek = bs.peekBits(8);
+	byte peek = bs.peekBits(MIN<uint32>(bs.size() - bs.pos(), 8));
 	uint32 *p = &_tree[_prefixtree[peek]];
 	bs.skip(_prefixlength[peek]);
 

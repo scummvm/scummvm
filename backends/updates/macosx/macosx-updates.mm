@@ -59,10 +59,14 @@ MacOSXUpdateManager::MacOSXUpdateManager() {
 	[sparkleUpdater setFeedURL:[NSURL URLWithString:feedbackURL]];
 
 	// Get current encoding
-	NSStringEncoding stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)[NSString stringWithCString:(TransMan.getCurrentCharset()).c_str() encoding:NSASCIIStringEncoding]));
+	CFStringRef encStr = CFStringCreateWithCString(NULL, TransMan.getCurrentCharset().c_str(), kCFStringEncodingASCII);
+	CFStringEncoding stringEncoding = CFStringConvertIANACharSetNameToEncoding(encStr);
+	CFRelease(encStr);
 
 	// Add "Check for Updates..." menu item
-	NSMenuItem *updateMenuItem = [applicationMenu insertItemWithTitle:[NSString stringWithCString:_("Check for Updates...") encoding:stringEncoding] action:@selector(checkForUpdates:) keyEquivalent:@"" atIndex:1];
+	CFStringRef title = CFStringCreateWithCString(NULL, _("Check for Updates..."), stringEncoding);
+	NSMenuItem *updateMenuItem = [applicationMenu insertItemWithTitle:(NSString *)title action:@selector(checkForUpdates:) keyEquivalent:@"" atIndex:1];
+	CFRelease(title);
 
 	// Set the target of the new menu item
 	[updateMenuItem setTarget:sparkleUpdater];

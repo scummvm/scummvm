@@ -363,7 +363,7 @@ void IMuseInternal::pause(bool paused) {
 	_paused = paused;
 }
 
-int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
+int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm, bool fixAfterLoad) {
 	Common::StackLock lock(_mutex, "IMuseInternal::save_or_load()");
 	const SaveLoadEntry mainEntries[] = {
 		MKLINE(IMuseInternal, _queue_end, sleUint8, VER(8)),
@@ -440,7 +440,16 @@ int IMuseInternal::save_or_load(Serializer *ser, ScummEngine *scumm) {
 	for (i = 0; i < 8; ++i)
 		ser->saveLoadEntries(0, volumeFaderEntries);
 
-	if (ser->isLoading()) {
+	// Normally, we have to fix up the data structures after loading a
+	// saved game. But there are cases where we don't. For instance, The
+	// Macintosh version of Monkey Island 1 used to convert the Mac0 music
+	// resources to General MIDI and play it through iMUSE as a rough
+	// approximation. Now it has its own player, but old savegame still
+	// have the iMUSE data in them. We have to skip that data, using a
+	// dummy iMUSE object, but since the resource is no longer recognizable
+	// to iMUSE, the fixup fails hard. So yes, this is a bit of a hack.
+
+	if (ser->isLoading() && fixAfterLoad) {
 		// Load all sounds that we need
 		fix_players_after_load(scumm);
 		fix_parts_after_load();
@@ -1732,10 +1741,10 @@ void IMuseInternal::copyGlobalInstrument(byte slot, Instrument *dest) {
 		// In case we have an valid instrument set up, copy it to the part.
 		_global_instruments[slot].copy_to(dest);
 	} else if (_pcSpeaker) {
-		debug(0, "Trying to use non-existant global PC Speaker instrument %d", slot);
+		debug(0, "Trying to use non-existent global PC Speaker instrument %d", slot);
 		dest->pcspk(defaultInstr);
 	} else {
-		debug(0, "Trying to use non-existant global AdLib instrument %d", slot);
+		debug(0, "Trying to use non-existent global AdLib instrument %d", slot);
 		dest->adlib(defaultInstr);
 	}
 }

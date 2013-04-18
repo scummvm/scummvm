@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -20,7 +20,7 @@
 #include "mt32emu.h"
 #include "PartialManager.h"
 
-using namespace MT32Emu;
+namespace MT32Emu {
 
 PartialManager::PartialManager(Synth *useSynth, Part **useParts) {
 	synth = useSynth;
@@ -247,4 +247,6 @@ const Partial *PartialManager::getPartial(unsigned int partialNum) const {
 		return NULL;
 	}
 	return partialTable[partialNum];
+}
+
 }

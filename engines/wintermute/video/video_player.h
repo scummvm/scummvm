@@ -42,7 +42,7 @@ namespace Wintermute {
 class VideoPlayer : public BaseClass {
 public:
 	bool _showSubtitle;
-	int _currentSubtitle;
+	int32 _currentSubtitle;
 	bool loadSubtitles(const char *filename, const char *subtitleFile);
 	bool _slowRendering;
 	bool isPlaying();
@@ -58,7 +58,7 @@ public:
 	bool _playing;
 	bool display();
 	bool update();
-	bool initialize(const char *inFilename, const char *subtitleFile = NULL);
+	bool initialize(const char *inFilename, const char *subtitleFile = nullptr);
 	bool cleanup();
 	VideoPlayer(BaseGame *inGame);
 	virtual ~VideoPlayer();
@@ -76,8 +76,8 @@ public:
 	PGETFRAME _videoPGF;*/
 	uint32 _videoEndTime;
 
-	int _playPosX;
-	int _playPosY;
+	int32 _playPosX;
+	int32 _playPosY;
 	float _playZoom;
 
 	/*  LPBITMAPV4HEADER _targetFormat;

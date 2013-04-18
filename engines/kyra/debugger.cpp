@@ -483,11 +483,12 @@ Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
 
 void Debugger_EoB::initialize() {
 	DCmd_Register("import_savefile",         WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
+	DCmd_Register("save_original",      WRAP_METHOD(Debugger_EoB, cmd_saveOriginal));
 }
 
 bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
 	if (!_vm->_allowImport) {
-		DebugPrintf("This command may only be used from the main menu.\n");
+		DebugPrintf("This command only works from the main menu.\n");
 		return true;
 	}
 
@@ -504,6 +505,56 @@ bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
 		DebugPrintf("Syntax:   import_savefile <dest slot> <source file>\n              (Imports source save game file to dest slot.)\n          import_savefile -1\n              (Imports all original save game files found and puts them into the first available slots.)\n\n");
 	}
 
+	return true;
+}
+
+bool Debugger_EoB::cmd_saveOriginal(int argc, const char **argv) {
+	if (!_vm->_runFlag) {
+		DebugPrintf("This command doesn't work during intro or outro sequences,\nfrom the main menu or from the character generation.\n");
+		return true;
+	}
+
+	Common::String dir = ConfMan.get("savepath");
+	if (dir == "None")
+		dir.clear();
+
+	Common::FSNode nd(dir);
+	if (!nd.isDirectory())
+		return false;
+
+	if (_vm->game() == GI_EOB1) {
+		if (argc == 1) {
+			if (_vm->saveAsOriginalSaveFile()) {
+				Common::FSNode nf = nd.getChild(Common::String::format("EOBDATA.SAV"));
+				if (nf.isReadable())
+					DebugPrintf("Saved to file: %s\n\n", nf.getPath().c_str());
+				else
+					DebugPrintf("Failure.\n");
+			} else {
+				DebugPrintf("Failure.\n");
+			}
+		} else {
+			DebugPrintf("Syntax:   save_original\n          (Saves game in original file format to a file which can be used with the orginal game executable.)\n\n");
+		}
+		return true;
+
+	} else if (argc == 2) {
+		int slot = atoi(argv[1]);
+		if (slot < 0 || slot > 5) {
+			DebugPrintf("Slot must be between (including) 0 and 5.\n");
+		} else if (_vm->saveAsOriginalSaveFile(slot)) {
+			Common::FSNode nf = nd.getChild(Common::String::format("EOBDATA%d.SAV", slot));
+			if (nf.isReadable())
+				DebugPrintf("Saved to file: %s\n\n", nf.getPath().c_str());
+			else
+				DebugPrintf("Failure.\n");
+		} else {
+			DebugPrintf("Failure.\n");
+		}
+		return true;
+	}
+
+	DebugPrintf("Syntax:   save_original <slot>\n          (Saves game in original file format to a file which can be used with the orginal game executable.\n          A save slot between 0 and 5 must be specified.)\n\n");
 	return true;
 }
 

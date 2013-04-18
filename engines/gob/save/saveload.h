@@ -247,9 +247,6 @@ protected:
 
 	static SaveFile _saveFiles[];
 
-	NotesHandler *_notesHandler;
-	TempSpriteHandler *_tempSpriteHandler;
-
 	SaveHandler *getHandler(const char *fileName) const;
 	const char *getDescription(const char *fileName) const;
 
@@ -809,7 +806,6 @@ protected:
 		uint8 _id;
 		int   _slot;
 
-		TempHandler *_tmp;
 		GameHandler *_game;
 	};
 

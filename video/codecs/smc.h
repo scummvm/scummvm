@@ -34,6 +34,12 @@ enum {
 	COLORS_PER_TABLE = 256
 };
 
+/**
+ * Apple SMC decoder.
+ *
+ * Used in video:
+ *  - QuickTimeDecoder
+ */
 class SMCDecoder : public Codec {
 public:
 	SMCDecoder(uint16 width, uint16 height);

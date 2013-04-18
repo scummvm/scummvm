@@ -770,7 +770,10 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 				return NULL_REG;
 		} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
 			// virtualId is low, we assume that scripts expect us to create new slot
-			if (virtualId == s->_lastSaveVirtualId) {
+			if (g_sci->getGameId() == GID_JONES) {
+				// Jones has one save slot only
+				savegameId = 0;
+			} else if (virtualId == s->_lastSaveVirtualId) {
 				// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
 				savegameId = s->_lastSaveNewId;
 			} else {
@@ -848,12 +851,17 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	} else {
 		if (argv[2].isNull())
 			error("kRestoreGame: called with parameter 2 being NULL");
-		// Real call from script, we need to adjust ID
-		if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
-			warning("Savegame ID %d is not allowed", savegameId);
-			return TRUE_REG;
+		if (g_sci->getGameId() == GID_JONES) {
+			// Jones has one save slot only
+			savegameId = 0;
+		} else {
+			// Real call from script, we need to adjust ID
+			if ((savegameId < SAVEGAMEID_OFFICIALRANGE_START) || (savegameId > SAVEGAMEID_OFFICIALRANGE_END)) {
+				warning("Savegame ID %d is not allowed", savegameId);
+				return TRUE_REG;
+			}
+			savegameId -= SAVEGAMEID_OFFICIALRANGE_START;
 		}
-		savegameId -= SAVEGAMEID_OFFICIALRANGE_START;
 	}
 
 	s->r_acc = NULL_REG; // signals success
@@ -922,10 +930,16 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	if (virtualId == 0)
 		return NULL_REG;
 
-	// Find saved-game
-	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
-		error("kCheckSaveGame: called with invalid savegameId");
-	uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+	uint savegameId = 0;
+	if (g_sci->getGameId() == GID_JONES) {
+		// Jones has one save slot only
+	} else {
+		// Find saved game
+		if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
+			error("kCheckSaveGame: called with invalid savegame ID (%d)", virtualId);
+		savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+	}
+
 	int savegameNr = findSavegame(saves, savegameId);
 	if (savegameNr == -1)
 		return NULL_REG;

@@ -28,6 +28,12 @@
 
 namespace Video {
 
+/**
+ * QuickTime Run-Length Encoding decoder.
+ *
+ * Used in video:
+ *  - QuickTimeDecoder
+ */
 class QTRLEDecoder : public Codec {
 public:
 	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);

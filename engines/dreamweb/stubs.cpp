@@ -26,10 +26,6 @@
 
 namespace DreamWeb {
 
-// Keyboard buffer. _bufferIn and _bufferOut are indexes
-// into this, making it a ring buffer
-uint8 g_keyBuffer[16];
-
 const Room g_roomData[] = {
 	// location 0
 	{ "DREAMWEB.R00", // Ryan's apartment
@@ -723,7 +719,6 @@ void DreamWebEngine::dreamweb() {
 		showGun();
 		fadeScreenDown();
 		hangOn(100);
-
 	}
 }
 
@@ -965,7 +960,6 @@ void DreamWebEngine::useTimedText() {
 }
 
 void DreamWebEngine::setupTimedTemp(uint8 textIndex, uint8 voiceIndex, uint8 x, uint8 y, uint16 countToTimed, uint16 timeCount) {
-
 	if (hasSpeech() && voiceIndex != 0) {
 		_speechLoaded = _sound->loadSpeech('T', voiceIndex, 'T', textIndex);
 		if (_speechLoaded)
@@ -1056,7 +1050,7 @@ void DreamWebEngine::lockMon() {
 	// key because calling readkey() drains characters from the input
 	// buffer, we we want the user to be able to type ahead while the text
 	// is being printed.
-	if (_lastHardKey == 57) {
+	if (_lastHardKey == Common::KEYCODE_SPACE) {
 		// Clear the keyboard buffer. Otherwise the space that caused
 		// the pause will be read immediately unpause the game.
 		do {
@@ -1072,7 +1066,7 @@ void DreamWebEngine::lockMon() {
 		}
 		// Forget the last "hard" key, otherwise the space that caused
 		// the unpausing will immediately re-pause the game.
-		_lastHardKey = 0;
+		_lastHardKey = Common::KEYCODE_INVALID;
 		lockLightOff();
 	}
 }
@@ -1148,7 +1142,7 @@ void DreamWebEngine::plotReel(uint16 &reelPointer) {
 		reel += 8;
 	}
 
-	for (size_t i = 0; i < 8; ++i) {
+	for (uint i = 0; i < 8; ++i) {
 		if (reel->frame() != 0xffff)
 			showReelFrame(reel);
 		++reel;
@@ -1247,7 +1241,7 @@ const uint8 *DreamWebEngine::findObName(uint8 type, uint8 index) {
 
 void DreamWebEngine::copyName(uint8 type, uint8 index, uint8 *dst) {
 	const uint8 *src = findObName(type, index);
-	size_t i;
+	uint i;
 	for (i = 0; i < 28; ++i) {
 		char c = src[i];
 		if (c == ':')
@@ -1377,7 +1371,7 @@ void DreamWebEngine::doChange(uint8 index, uint8 value, uint8 type) {
 }
 
 void DreamWebEngine::deleteTaken() {
-	for (size_t i = 0; i < kNumexobjects; ++i) {
+	for (uint i = 0; i < kNumexobjects; ++i) {
 		uint8 location = _exData[i].initialLocation;
 		if (location == _realLocation) {
 			uint8 index = _exData[i].index;
@@ -1388,7 +1382,7 @@ void DreamWebEngine::deleteTaken() {
 
 uint8 DreamWebEngine::getExPos() {
 	DynObject *objects = _exData;
-	for (size_t i = 0; i < kNumexobjects; ++i) {
+	for (uint i = 0; i < kNumexobjects; ++i) {
 		if (objects[i].mapad[0] == 0xff)
 			return i;
 	}
@@ -1543,7 +1537,7 @@ void DreamWebEngine::printMessage2(uint16 x, uint16 y, uint8 index, uint8 maxWid
 
 bool DreamWebEngine::objectMatches(void *object, const char *id) {
 	const char *objId = (const char *)object + 12; // whether it is a DynObject or a SetObject
-	for (size_t i = 0; i < 4; ++i) {
+	for (uint i = 0; i < 4; ++i) {
 		if (id[i] != objId[i] + 'A')
 			return false;
 	}
@@ -2138,7 +2132,6 @@ void DreamWebEngine::workToScreenM() {
 }
 
 void DreamWebEngine::atmospheres() {
-
 	const Atmosphere *a = &g_atmosphereList[0];
 
 	for (; a->_location != 255; ++a) {
@@ -2208,8 +2201,8 @@ void DreamWebEngine::readKey() {
 		return;
 	}
 
-	bufOut = (bufOut + 1) & 15; // The buffer has size 16
-	_currentKey = g_keyBuffer[bufOut];
+	bufOut = (bufOut + 1) % ARRAYSIZE(_keyBuffer);
+	_currentKey = _keyBuffer[bufOut];
 	_bufferOut = bufOut;
 }
 
@@ -2218,36 +2211,6 @@ void DreamWebEngine::newGame() {
 
 	if (_mouseButton == 1)
 		_getBack = 3;
-}
-
-void DreamWebEngine::pickupOb(uint8 command, uint8 pos) {
-	_lastInvPos = pos;
-	_objectType = kFreeObjectType;
-	_itemFrame = command;
-	_command = command;
-	//uint8 dummy;
-	//getAnyAd(&dummy, &dummy);	// was in the original source, seems useless here
-	transferToEx(command);
-}
-
-void DreamWebEngine::initialInv() {
-	if (_realLocation != 24)
-		return;
-
-	pickupOb(11, 5);
-	pickupOb(12, 6);
-	pickupOb(13, 7);
-	pickupOb(14, 8);
-	pickupOb(18, 0);
-	pickupOb(19, 1);
-	pickupOb(20, 9);
-	pickupOb(16, 2);
-	_vars._watchMode = 1;
-	_vars._reelToHold = 0;
-	_vars._endOfHoldReel = 6;
-	_vars._watchSpeed = 1;
-	_vars._speedCount = 1;
-	switchRyanOff();
 }
 
 void DreamWebEngine::walkIntoRoom() {
@@ -2312,13 +2275,6 @@ void DreamWebEngine::makeMainScreen() {
 	workToScreenM();
 	_commandType = 200;
 	_manIsOffScreen = 0;
-}
-
-void DreamWebEngine::openInv() {
-	_invOpen = 1;
-	printMessage(80, 58 - 10, 61, 240, (240 & 1));
-	fillRyan();
-	_commandType = 255;
 }
 
 void DreamWebEngine::obsThatDoThings() {
@@ -2420,10 +2376,6 @@ void DreamWebEngine::errorMessage3() {
 	delPointer();
 }
 
-void DreamWebEngine::reExFromOpen() {
-
-}
-
 void DreamWebEngine::putBackObStuff() {
 	createPanel();
 	showPanel();
@@ -2442,26 +2394,6 @@ void DreamWebEngine::putBackObStuff() {
 
 bool DreamWebEngine::isSetObOnMap(uint8 index) {
 	return (getSetAd(index)->mapad[0] == 0);
-}
-
-void DreamWebEngine::examineInventory() {
-	commandOnlyCond(32, 249);
-
-	if (!(_mouseButton & 1))
-		return;
-
-	createPanel();
-	showPanel();
-	showMan();
-	showExit();
-	examIcon();
-	_pickUp = 0;
-	_invOpen = 2;
-	openInv();
-	workToScreenM();
-}
-
-void DreamWebEngine::middlePanel() {
 }
 
 void DreamWebEngine::underTextLine() {
@@ -2575,7 +2507,6 @@ void DreamWebEngine::madmanRun() {
 		_vars._lastWeapon = 8;
 }
 
-
 void DreamWebEngine::decide() {
 	setMode();
 	loadPalFromIFF();
@@ -2659,38 +2590,11 @@ void DreamWebEngine::showGun() {
 	getRidOfTempText();
 }
 
-void DreamWebEngine::dropError() {
-	_commandType = 255;
-	delPointer();
-	printMessage(76, 21, 56, 240, 240 & 1);
-	workToScreenM();
-	hangOnP(50);
-	showPanel();
-	showMan();
-	examIcon();
-	_commandType = 255;
-	workToScreenM();
-}
-
-void DreamWebEngine::cantDrop() {
-	_commandType = 255;
-	delPointer();
-	printMessage(76, 21, 24, 240, 240 & 1);
-	workToScreenM();
-	hangOnP(50);
-	showPanel();
-	showMan();
-	examIcon();
-	_commandType = 255;
-	workToScreenM();
-}
-
 void DreamWebEngine::getBack1() {
 	if (_pickUp != 0) {
 		blank();
 		return;
 	}
-
 
 	commandOnlyCond(26, 202);
 
@@ -3001,54 +2905,6 @@ void DreamWebEngine::edensFlatReminders() {
 	}
 
 	_vars._progressPoints++;	// got card
-}
-
-void DreamWebEngine::incRyanPage() {
-	commandOnlyCond(31, 222);
-
-	if (_mouseButton == _oldButton || !(_mouseButton & 1))
-		return;
-
-	_vars._ryanPage = (_mouseX - (kInventx + 167)) / 18;
-
-	delPointer();
-	fillRyan();
-	readMouse();
-	showPointer();
-	workToScreen();
-	delPointer();
-
-}
-
-void DreamWebEngine::emergencyPurge() {
-	while (true) {
-		if (_vars._exFramePos + 4000 < kExframeslen) {
-			// Not near frame end
-			if (_vars._exTextPos + 400 < kExtextlen)
-				return;	// notneartextend
-		}
-
-		purgeAnItem();
-	}
-}
-
-void DreamWebEngine::purgeAnItem() {
-	const DynObject *extraObjects = _exData;
-
-	for (size_t i = 0; i < kNumexobjects; ++i) {
-		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255 &&
-			extraObjects[i].initialLocation != _realLocation) {
-			deleteExObject(i);
-			return;
-		}
-	}
-
-	for (size_t i = 0; i < kNumexobjects; ++i) {
-		if (extraObjects[i].mapad[0] && extraObjects[i].objId[0] == 255) {
-			deleteExObject(i);
-			return;
-		}
-	}
 }
 
 } // End of namespace DreamWeb
