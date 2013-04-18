@@ -243,7 +243,7 @@ protected:
 	void runNotifyCommand();
 
 	uint nextFreeString();
-	bool parseCodeSymbol(const Common::String &name, uint &pos, Common::Array<byte> &code);
+	bool parseCodeSymbol(Common::String name, uint &pos, Common::Array<byte> &code, bool useAllAliases);
 
 public:
 	void cmdUnimplemented(const Common::Array<LBValue> &params);

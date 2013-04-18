@@ -1589,12 +1589,32 @@ uint LBCode::nextFreeString() {
 	error("nextFreeString couldn't find a space");
 }
 
+static const char *const functionNameAliases[][2] = {
+	{ "makerect", "getRect" },
+	{ "makepair", "makePt" },
+	{ "getframerect", "getFrameBounds" },
+	{ "dragbegin", "dragBeginFrom" },
+	{ "x", "xpos" },
+	{ "y", "ypos" }
+};
+
 /*
  * Helper function for parseCode:
  * Given a name, appends the appropriate data to the provided code array and
  * returns true if it's a function, or false otherwise.
  */
-bool LBCode::parseCodeSymbol(const Common::String &name, uint &pos, Common::Array<byte> &code) {
+bool LBCode::parseCodeSymbol(Common::String name, uint &pos, Common::Array<byte> &code, bool useAllAliases) {
+	// Check to see if we have one of the older function names
+	// and remap it to the newer function names
+	for (uint i = 0; i < ARRAYSIZE(functionNameAliases); i++) {
+		if (name.equalsIgnoreCase(functionNameAliases[i][0])) {
+			if (name.size() == 1 && !useAllAliases)
+				continue;
+			name = functionNameAliases[i][1];
+			break;
+		}
+	}
+
 	// first, check whether the name matches a known function
 	for (uint i = 0; i < 2; i++) {
 		byte cmdToken;
@@ -1805,7 +1825,7 @@ uint LBCode::parseCode(const Common::String &source) {
 					break;
 				tempString += source[pos++];
 			}
-			wasFunction = parseCodeSymbol(tempString, pos, code);
+			wasFunction = parseCodeSymbol(tempString, pos, code, true);
 			if (!wasFunction)
 				error("while parsing script '%s', encountered explicit function call to unknown function '%s'",
 					source.c_str(), tempString.c_str());
@@ -1840,7 +1860,7 @@ uint LBCode::parseCode(const Common::String &source) {
 				} else if (tempString.equalsIgnoreCase("false")) {
 					code.push_back(kTokenFalse);
 				} else {
-					wasFunction = parseCodeSymbol(tempString, pos, code);
+					wasFunction = parseCodeSymbol(tempString, pos, code, false);
 				}
 			} else {
 				error("while parsing script '%s', couldn't parse '%c'", source.c_str(), token);
