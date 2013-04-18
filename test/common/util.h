@@ -4,15 +4,15 @@
 class UtilTestSuite : public CxxTest::TestSuite {
 public:
 
-	void test_parsebool_good() {
+	// Test the parseBool function
 
-		// Test the parseBool function
+	// 'Regular' cases that must work
+	// (note that the function must be case insensitive):
+
+	void test_parsebool_yesno() {
 
 		bool valasbool;
 		bool success;
-
-		// 'Regular' cases that must work
-		// (note that the function must be case insensitive):
 
 		Common::String string_1 ("Yes");
 		success = Common::parseBool (string_1, valasbool);
@@ -23,6 +23,12 @@ public:
 		success = Common::parseBool (string_2, valasbool);
 		TS_ASSERT_EQUALS(success, 1);
 		TS_ASSERT_EQUALS(valasbool, 0);
+	}
+
+	void test_parsebool_truefalse() {
+
+		bool valasbool;
+		bool success;
 
 		Common::String string_3 ("tRuE");
 		success = Common::parseBool (string_3, valasbool);
@@ -33,6 +39,12 @@ public:
 		success = Common::parseBool (string_4, valasbool);
 		TS_ASSERT_EQUALS(success, 1);
 		TS_ASSERT_EQUALS(valasbool, 0);
+	}
+
+	void test_parsebool_onezero() {
+
+		bool valasbool;
+		bool success;
 
 		Common::String string_5 ("1");
 		success = Common::parseBool (string_5, valasbool);
