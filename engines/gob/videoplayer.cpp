@@ -392,7 +392,7 @@ void VideoPlayer::updateLive(int slot, bool force) {
 			_vm->_vidPlayer->closeVideo(slot);
 			return;
 		} else {
-			video->decoder->seek(0, SEEK_SET, true);
+			video->decoder->seek(0, Common::kSeekSet, true);
 			video->properties.startFrame = -1;
 		}
 	}
@@ -437,18 +437,18 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 					// And we force seeking => Seek
 
 					video->decoder->disableSound();
-					video->decoder->seek(properties.startFrame + 1, SEEK_SET, true);
+					video->decoder->seek(properties.startFrame + 1, Common::kSeekSet, true);
 				}
 
 			} else
 				// No sound => We can safely seek
-				video->decoder->seek(properties.startFrame + 1, SEEK_SET, true);
+				video->decoder->seek(properties.startFrame + 1, Common::kSeekSet, true);
 
 		} else {
 			// Seek to the start => We can safely seek
 
 			video->decoder->disableSound();
-			video->decoder->seek(0, SEEK_SET, true);
+			video->decoder->seek(0, Common::kSeekSet, true);
 			video->decoder->enableSound();
 		}
 
@@ -587,7 +587,7 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 			video.decoder->disableSound();
 
 			// Seek to the last frame. Some scripts depend on that.
-			video.decoder->seek(properties.endFrame + 1, SEEK_SET, true);
+			video.decoder->seek(properties.endFrame + 1, Common::kSeekSet, true);
 
 			properties.canceled = true;
 		}

@@ -94,13 +94,13 @@ int32 Script::getSize() const {
 	return _totSize;
 }
 
-bool Script::seek(int32 offset, int whence) {
+bool Script::seek(int32 offset, Common::SeekWhence whence) {
 	if (!_totData)
 		return false;
 
-	if (whence == SEEK_CUR)
+	if (whence == Common::kSeekCur)
 		offset += pos();
-	else if (whence == SEEK_END)
+	else if (whence == Common::kSeekEnd)
 		offset += _totSize;
 
 	if ((offset < 0) || (((uint32) offset) >= _totSize))
@@ -121,11 +121,11 @@ bool Script::seek(int32 offset, int whence) {
 }
 
 bool Script::skip(int32 offset) {
-	return seek(offset, SEEK_CUR);
+	return seek(offset, Common::kSeekCur);
 }
 
 bool Script::skipBlock() {
-	return seek(peekUint16(2) + 2, SEEK_CUR);
+	return seek(peekUint16(2) + 2, Common::kSeekCur);
 }
 
 int32 Script::getOffset(byte *ptr) const {

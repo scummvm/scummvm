@@ -48,7 +48,7 @@ public:
 	int32 getSize() const;
 
 	// Stream seeking
-	bool seek(int32 offset, int whence = SEEK_SET);
+	bool seek(int32 offset, Common::SeekWhence whence = Common::kSeekSet);
 	bool skip(int32 offset);
 	bool skipBlock();
 
