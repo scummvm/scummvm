@@ -87,7 +87,7 @@ public:
 	float getScaleAt(int y);
 	bool sortScaleLevels();
 	bool sortRotLevels();
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	uint32 getAlphaAt(int x, int y, bool colorCheck = false);
 	bool _paralaxScrolling;
 	void skipTo(int offsetX, int offsetY);
@@ -96,7 +96,7 @@ public:
 	void skipToObject(BaseObject *object);
 	void scrollToObject(BaseObject *object);
 	void scrollTo(int offsetX, int offsetY);
-	virtual bool update();
+	virtual bool update() override;
 	bool _autoScroll;
 	int _targetOffsetTop;
 	int _targetOffsetLeft;
@@ -156,10 +156,10 @@ public:
 	int getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester = nullptr);
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
 
 
 private:

@@ -48,7 +48,7 @@ public:
 	bool _parentNotify;
 	DECLARE_PERSISTENT(UIObject, BaseObject)
 	UIObject *_parent;
-	virtual bool display() { return display(0, 0); }
+	virtual bool display() override { return display(0, 0); }
 	virtual bool display(int offsetX) { return display(offsetX, 0); }
 	virtual bool display(int offsetX, int offsetY);
 	virtual void correctSize();
@@ -71,13 +71,13 @@ public:
 	uint32 _listenerParamDWORD;
 	BaseScriptHolder *_listenerObject;
 	UIObject *_focusedWidget;
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
 };
 
 } // end of namespace Wintermute

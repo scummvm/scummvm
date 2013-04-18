@@ -40,7 +40,7 @@ public:
 	AdRotLevel(BaseGame *inGame);
 	virtual ~AdRotLevel();
 	float getRotation() const { return _rotation; }
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 };

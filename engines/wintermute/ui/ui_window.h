@@ -68,10 +68,10 @@ public:
 	bool enableWidget(const char *name, bool enable = true);
 	Rect32 _titleRect;
 	Rect32 _dragRect;
-	virtual bool display(int offsetX = 0, int offsetY = 0);
+	virtual bool display(int offsetX = 0, int offsetY = 0) override;
 	UIWindow(BaseGame *inGame);
 	virtual ~UIWindow();
-	virtual bool handleKeypress(Common::Event *event, bool printable = false);
+	virtual bool handleKeypress(Common::Event *event, bool printable = false) override;
 	BaseArray<UIObject *> _widgets;
 	TTextAlign _titleAlign;
 	bool loadFile(const char *filename);
@@ -80,12 +80,12 @@ public:
 	BaseFont *_fontInactive;
 	BaseSprite *_imageInactive;
 	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	virtual const char *scToString();
 };
 

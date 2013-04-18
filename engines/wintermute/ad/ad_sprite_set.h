@@ -37,7 +37,7 @@ class BaseSprite;
 class AdSpriteSet : public BaseObject {
 public:
 	bool containsSprite(BaseSprite *sprite);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
 	BaseSprite *getSprite(TDirection direction);
 	DECLARE_PERSISTENT(AdSpriteSet, BaseObject)
 	BaseObject *_owner;

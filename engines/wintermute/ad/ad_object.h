@@ -55,17 +55,17 @@ public:
 
 	bool updateBlockRegion();
 
-	virtual bool getExtendedFlag(const char *flagName);
-	virtual bool resetSoundPan();
-	virtual bool updateSounds();
+	virtual bool getExtendedFlag(const char *flagName) override;
+	virtual bool resetSoundPan() override;
+	virtual bool updateSounds() override;
 	bool reset();
 	DECLARE_PERSISTENT(AdObject, BaseObject)
 	virtual void talk(const char *text, const char *sound = nullptr, uint32 duration = 0, const char *stances = nullptr, TTextAlign align = TAL_CENTER);
-	virtual int getHeight();
+	virtual int getHeight() override;
 
 	bool setFont(const char *filename);
-	virtual bool update();
-	virtual bool display();
+	virtual bool update() override;
+	virtual bool display() override;
 
 	bool _drawn;
 	bool _active;
@@ -79,14 +79,14 @@ public:
 	AdWaypointGroup *_currentWptGroup;
 	AdInventory *getInventory();
 
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
-	virtual bool afterMove();
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+	virtual bool afterMove() override;
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
 	bool updateSpriteAttachments();
 	bool displaySpriteAttachments(bool preDisplay);
 

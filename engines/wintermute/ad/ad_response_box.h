@@ -73,7 +73,7 @@ public:
 
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	UIWindow *getResponseWindow();
 	uint32 getNumResponses() const;

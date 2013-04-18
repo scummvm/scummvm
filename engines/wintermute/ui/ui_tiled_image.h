@@ -41,7 +41,7 @@ public:
 	void correctSize(int *width, int *height);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	bool display(int x, int y, int width, int height);
 	UITiledImage(BaseGame *inGame = nullptr);

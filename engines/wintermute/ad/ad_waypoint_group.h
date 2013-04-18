@@ -38,7 +38,7 @@ public:
 	void cleanup();
 	bool mimic(AdWaypointGroup *wpt, float scale = 100.0f, int x = 0, int y = 0);
 	DECLARE_PERSISTENT(AdWaypointGroup, BaseObject)
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	AdWaypointGroup(BaseGame *inGame);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
