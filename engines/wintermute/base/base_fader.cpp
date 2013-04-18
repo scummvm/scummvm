@@ -71,7 +71,7 @@ bool BaseFader::update() {
 	if (_system) {
 		time = g_system->getMillis() - _startTime;
 	} else {
-		time = _gameRef->_timer - _startTime;
+		time = _gameRef->getTimer()->getTime() - _startTime;
 	}
 
 	if (time >= _duration) {
@@ -129,7 +129,7 @@ bool BaseFader::fadeIn(uint32 sourceColor, uint32 duration, bool system) {
 	if (_system) {
 		_startTime = g_system->getMillis();
 	} else {
-		_startTime = _gameRef->_timer;
+		_startTime = _gameRef->getTimer()->getTime();
 	}
 
 	return STATUS_OK;
@@ -155,7 +155,7 @@ bool BaseFader::fadeOut(uint32 targetColor, uint32 duration, bool system) {
 	if (_system) {
 		_startTime = g_system->getMillis();
 	} else {
-		_startTime = _gameRef->_timer;
+		_startTime = _gameRef->getTimer()->getTime();
 	}
 
 

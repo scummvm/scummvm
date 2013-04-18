@@ -252,7 +252,7 @@ bool PartEmitter::update() {
 	if (!_running) {
 		return STATUS_OK;
 	} else {
-		return updateInternal(_gameRef->_timer, _gameRef->_timerDelta);
+		return updateInternal(_gameRef->getTimer()->getTime(), _gameRef->getTimer()->getTimeDelta());
 	}
 }
 
@@ -353,7 +353,7 @@ bool PartEmitter::start() {
 	if (_overheadTime > 0) {
 		uint32 delta = 500;
 		int steps = _overheadTime / delta;
-		uint32 currentTime = _gameRef->_timer - _overheadTime;
+		uint32 currentTime = _gameRef->getTimer()->getTime() - _overheadTime;
 
 		for (int i = 0; i < steps; i++) {
 			updateInternal(currentTime, delta);

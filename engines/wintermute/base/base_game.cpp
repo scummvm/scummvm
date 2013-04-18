@@ -81,7 +81,7 @@ IMPLEMENT_PERSISTENT(BaseGame, true)
 
 
 //////////////////////////////////////////////////////////////////////
-BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gameId) {
+BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gameId), _timerNormal(), _timerLive() {
 	_shuttingDown = false;
 
 	_state = GAME_RUNNING;
@@ -121,14 +121,6 @@ BaseGame::BaseGame(const Common::String &gameId) : BaseObject(this), _gameId(gam
 
 	_subtitles = true;
 	_videoSubtitles = true;
-
-	_timer = 0;
-	_timerDelta = 0;
-	_timerLast = 0;
-
-	_liveTimer = 0;
-	_liveTimerDelta = 0;
-	_liveTimerLast = 0;
 
 	_sequence = 0;
 
@@ -561,16 +553,12 @@ bool BaseGame::initLoop() {
 	_lastTime  = _currentTime;
 	_fpsTime += _deltaTime;
 
-	_liveTimerDelta = _liveTimer - _liveTimerLast;
-	_liveTimerLast = _liveTimer;
-	_liveTimer += MIN((uint32)1000, _deltaTime);
+	_timerLive.updateTime(_deltaTime, 1000);
 
 	if (_state != GAME_FROZEN) {
-		_timerDelta = _timer - _timerLast;
-		_timerLast = _timer;
-		_timer += MIN((uint32)1000, _deltaTime);
+		_timerNormal.updateTime(_deltaTime, 1000);
 	} else {
-		_timerDelta = 0;
+		_timerNormal.setTimeDelta(0);
 	}
 
 	_framesRendered++;
@@ -1985,7 +1973,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// CurrentTime (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "CurrentTime") {
-		_scValue->setInt((int)_timer);
+		_scValue->setInt((int)getTimer()->getTime());
 		return _scValue;
 	}
 
@@ -3104,13 +3092,8 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_videoFont));
 	persistMgr->transfer(TMEMBER(_videoSubtitles));
 
-	persistMgr->transfer(TMEMBER(_timer));
-	persistMgr->transfer(TMEMBER(_timerDelta));
-	persistMgr->transfer(TMEMBER(_timerLast));
-
-	persistMgr->transfer(TMEMBER(_liveTimer));
-	persistMgr->transfer(TMEMBER(_liveTimerDelta));
-	persistMgr->transfer(TMEMBER(_liveTimerLast));
+	_timerNormal.persist(persistMgr);
+	_timerLive.persist(persistMgr);
 
 	_renderer->persistSaveLoadImages(persistMgr);
 
@@ -3777,7 +3760,7 @@ bool BaseGame::displayDebugInfo() {
 		_systemFont->drawText((byte *)str, 0, 70, _renderer->getWidth(), TAL_RIGHT);
 
 
-		sprintf(str, "Timer: %d", _timer);
+		sprintf(str, "Timer: %d", getTimer()->getTime());
 		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->getWidth(), TAL_RIGHT);
 
 		if (_activeObject != nullptr) {

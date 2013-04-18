@@ -904,7 +904,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	_sentence->setStances(stances);
 	_sentence->_duration = duration;
 	_sentence->_align = Align;
-	_sentence->_startTime = _gameRef->_timer;
+	_sentence->_startTime = _gameRef->getTimer()->getTime();
 	_sentence->_currentStance = -1;
 	_sentence->_font = _font == nullptr ? _gameRef->getSystemFont() : _font;
 	_sentence->_freezable = _freezable;

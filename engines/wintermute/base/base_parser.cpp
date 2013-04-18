@@ -27,8 +27,8 @@
  */
 
 #include "engines/wintermute/base/base_parser.h"
-#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 #include "common/util.h"

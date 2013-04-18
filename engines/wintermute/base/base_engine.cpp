@@ -106,4 +106,20 @@ BaseRenderer *BaseEngine::getRenderer() {
 	}
 }
 
+const Timer *BaseEngine::getTimer() {
+	if (instance()._gameRef) {
+		return instance()._gameRef->getTimer();
+	} else {
+		return nullptr;
+	}
+}
+
+const Timer *BaseEngine::getLiveTimer() {
+	if (instance()._gameRef) {
+		return instance()._gameRef->getLiveTimer();
+	} else {
+		return nullptr;
+	}
+}
+
 } // end of namespace Wintermute

@@ -931,13 +931,13 @@ bool AdScene::traverseNodes(bool doUpdate) {
 
 		if (_autoScroll) {
 			// adjust horizontal scroll
-			if (_gameRef->_timer - _lastTimeH >= _scrollTimeH) {
-				int timesMissed = (_gameRef->_timer - _lastTimeH) / _scrollTimeH;
+			if (_gameRef->getTimer()->getTime() - _lastTimeH >= _scrollTimeH) {
+				int timesMissed = (_gameRef->getTimer()->getTime() - _lastTimeH) / _scrollTimeH;
 				// Cap the amount of catch-up to avoid jittery characters.
 				if (timesMissed > 2) {
 					timesMissed = 2;
 				}
-				_lastTimeH = _gameRef->_timer;
+				_lastTimeH = _gameRef->getTimer()->getTime();
 				if (_offsetLeft < _targetOffsetLeft) {
 					_offsetLeft += _scrollPixelsH * timesMissed;
 					_offsetLeft = MIN(_offsetLeft, _targetOffsetLeft);
@@ -948,13 +948,13 @@ bool AdScene::traverseNodes(bool doUpdate) {
 			}
 
 			// adjust vertical scroll
-			if (_gameRef->_timer - _lastTimeV >= _scrollTimeV) {
-				int timesMissed = (_gameRef->_timer - _lastTimeV) / _scrollTimeV;
+			if (_gameRef->getTimer()->getTime() - _lastTimeV >= _scrollTimeV) {
+				int timesMissed = (_gameRef->getTimer()->getTime() - _lastTimeV) / _scrollTimeV;
 				// Cap the amount of catch-up to avoid jittery characters.
 				if (timesMissed > 2) {
 					timesMissed = 2;
 				}
-				_lastTimeV = _gameRef->_timer;
+				_lastTimeV = _gameRef->getTimer()->getTime();
 				if (_offsetTop < _targetOffsetTop) {
 					_offsetTop += _scrollPixelsV * timesMissed;
 					_offsetTop = MIN(_offsetTop, _targetOffsetTop);

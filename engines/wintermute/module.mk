@@ -87,6 +87,7 @@ MODULE_OBJS := \
 	base/base_viewport.o \
 	base/saveload.o \
 	base/save_thumb_helper.o \
+	base/timer.o \
 	detection.o \
 	graphics/transparent_surface.o \
 	math/math_util.o \

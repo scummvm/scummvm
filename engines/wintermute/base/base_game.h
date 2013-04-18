@@ -30,6 +30,7 @@
 #define WINTERMUTE_BASE_GAME_H
 
 #include "engines/wintermute/base/base_object.h"
+#include "engines/wintermute/base/timer.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/math/rect32.h"
@@ -214,14 +215,13 @@ public:
 	TGameState _state;
 	TGameState _origState;
 	bool _origInteractive;
-	uint32 _timer;
-	uint32 _timerDelta;
-	uint32 _timerLast;
 
-	uint32 _liveTimer;
-	uint32 _liveTimerDelta;
-	uint32 _liveTimerLast;
-
+	const Timer *getTimer() const { return &_timerNormal; }
+	const Timer *getLiveTimer() const { return &_timerLive; }
+private:
+	Timer _timerNormal;
+	Timer _timerLive;
+public:
 	BaseObject *_capturedObject;
 	Point32 _mousePos;
 	bool validObject(BaseObject *object);

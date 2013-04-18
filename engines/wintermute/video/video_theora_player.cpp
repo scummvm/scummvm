@@ -274,7 +274,7 @@ bool VideoTheoraPlayer::stop() {
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::update() {
-	_currentTime = _freezeGame ? _gameRef->_liveTimer : _gameRef->_timer;
+	_currentTime = _freezeGame ? _gameRef->getLiveTimer()->getTime() : _gameRef->getTimer()->getTime();
 
 	if (!isPlaying()) {
 		return STATUS_OK;
