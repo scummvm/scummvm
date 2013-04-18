@@ -162,7 +162,6 @@ public:
 
 class GfxFontBackup {
 private:
-	GfxSurface *_surface;
 	Common::Point _edgeSize;
 	Common::Point _position;
 	GfxColors _colors;

@@ -88,8 +88,6 @@ private:
 
 	QueenEngine *_vm;
 
-	bool _wasFullscren;
-
 	//! Raw .dog file data (without 20 byte header)
 	byte *_fileData;
 

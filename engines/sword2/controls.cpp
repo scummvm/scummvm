@@ -117,8 +117,6 @@ private:
 
 	Glyph _glyph[SIZE_OF_CHAR_SET];
 
-	int _fontId;
-
 public:
 	enum {
 		kAlignLeft,
@@ -142,7 +140,7 @@ public:
 };
 
 FontRendererGui::FontRendererGui(Sword2Engine *vm, int fontId)
-	: _vm(vm), _fontId(fontId) {
+	: _vm(vm) {
 	byte *font = _vm->_resman->openResource(fontId);
 	SpriteInfo sprite;
 
