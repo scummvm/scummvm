@@ -478,7 +478,7 @@ bool BaseFontBitmap::loadBuffer(byte *buffer) {
 			_widths[spaceChar] = spaceWidth;
 		} else {
 			if (_widths[spaceChar] == expandWidth || _widths[spaceChar] == 0) {
-				_widths[spaceChar] = (_widths['m'] + _widths['i']) / 2;
+				_widths[spaceChar] = (_widths[(uint)'m'] + _widths[(uint)'i']) / 2;
 			}
 		}
 	} else {
