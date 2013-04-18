@@ -537,7 +537,6 @@ reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 			offset = f->_in->size() - offset;
 		}
 
-		// FIXME: use SeekWhence in here
 		return make_reg(0, f->_in->seek(offset, whence));
 	} else if (f && f->_out) {
 		error("kFileIOSeek: Unsupported seek operation on a writeable stream (offset: %d, whence: %d)", offset, whence);
