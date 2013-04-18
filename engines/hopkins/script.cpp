@@ -65,8 +65,6 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					mesgId = 639;
 				if (mesgId == 8)
 					mesgId = 637;
-				if (mesgId == 53)
-					mesgId = 644;
 				if (mesgId == 557)
 					mesgId = 636;
 				if (mesgId == 51)
@@ -99,8 +97,6 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 					mesgId = 646;
 				if (mesgId == 604)
 					mesgId = 647;
-				if (mesgId == 51)
-					mesgId = 644;
 				if (mesgId == 607)
 					mesgId = 650;
 				if (mesgId == 605)
