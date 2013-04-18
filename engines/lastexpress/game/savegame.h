@@ -104,7 +104,7 @@ public:
 
 	int32 pos() const { return MemoryWriteStreamDynamic::pos(); }
 	int32 size() const { return MemoryWriteStreamDynamic::size(); }
-	bool seek(int32 offset, int whence = SEEK_SET) { return MemoryWriteStreamDynamic::seek(offset, whence); }
+	bool seek(int32 offset, Common::SeekWhence whence = Common::kSeekSet) { return MemoryWriteStreamDynamic::seek(offset, whence); }
 	bool eos() const { return _eos; }
 	uint32 read(void *dataPtr, uint32 dataSize);
 	uint32 write(const void *dataPtr, uint32 dataSize);

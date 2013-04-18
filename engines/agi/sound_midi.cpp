@@ -228,9 +228,9 @@ static uint32 convertSND2MIDI(byte *snddata, byte **data) {
 		st.writeByte(0x2f);
 		st.writeByte(0x0);
 		ep = st.pos();
-		st.seek(lp, SEEK_SET);
+		st.seek(lp, Common::kSeekSet);
 		st.writeUint32BE((ep - lp) - 4);
-		st.seek(ep, SEEK_SET);
+		st.seek(ep, Common::kSeekSet);
 	}
 
 	*data = st.getData();

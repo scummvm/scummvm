@@ -191,7 +191,7 @@ public:
 
 	virtual int32 pos() const;
 	virtual int32 size() const;
-	bool seek(int32 offs, int whence = SEEK_SET);
+	bool seek(int32 offs, SeekWhence whence = Common::kSeekSet);
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 

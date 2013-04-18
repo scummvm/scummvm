@@ -117,7 +117,7 @@ void AGOSEngine::decompressData(const char *srcName, byte *dst, uint32 offset, u
 		if (in.isOpen() == false)
 			error("decompressData: Can't load %s", srcName);
 
-		in.seek(offset, SEEK_SET);
+		in.seek(offset, Common::kSeekSet);
 		if (srcSize != dstSize) {
 			byte *srcBuffer = (byte *)malloc(srcSize);
 
@@ -149,7 +149,7 @@ void AGOSEngine::loadOffsets(const char *filename, int number, uint32 &file, uin
 		error("loadOffsets: Can't load index file '%s'", filename);
 	}
 
-	in.seek(number * offsSize, SEEK_SET);
+	in.seek(number * offsSize, Common::kSeekSet);
 	offset = in.readUint32LE();
 	dstSize = in.readUint32LE();
 	srcSize = in.readUint32LE();
@@ -605,14 +605,14 @@ void AGOSEngine::openGameFile() {
 	if (_gameOffsetsPtr == NULL)
 		error("openGameFile: Out of memory, game offsets");
 
-	_gameFile->seek(0, SEEK_SET);
+	_gameFile->seek(0, Common::kSeekSet);
 
 	for (uint r = 0; r < size / 4; r++)
 		_gameOffsetsPtr[r] = _gameFile->readUint32LE();
 }
 
 void AGOSEngine::readGameFile(void *dst, uint32 offs, uint32 size) {
-	_gameFile->seek(offs, SEEK_SET);
+	_gameFile->seek(offs, Common::kSeekSet);
 	if (_gameFile->read(dst, size) != size)
 		error("readGameFile: Read failed (%d,%d)", offs, size);
 }

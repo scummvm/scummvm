@@ -190,7 +190,7 @@ MemoryBlock *Disk::getEntry(uint16 id) {
 	uint32 offset = (uint32) _entries[index].offset * 0x20 + _dataOffset;
 
 	MemoryBlock *result = Memory::allocate(size);
-	_fileHandle->seek(offset, SEEK_SET);
+	_fileHandle->seek(offset, Common::kSeekSet);
 	_fileHandle->read(result->data(), size);
 	return result;
 }

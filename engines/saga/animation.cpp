@@ -836,9 +836,9 @@ int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
 			case SAGA_FRAME_START: // Start of frame
 				// skip header
 				if (longData) {
-					readS.seek(13, SEEK_CUR);
+					readS.seek(13, Common::kSeekCur);
 				} else {
-					readS.seek(12, SEEK_CUR);
+					readS.seek(12, Common::kSeekCur);
 				}
 				continue;
 				break;
@@ -866,7 +866,7 @@ int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
 			case SAGA_FRAME_LONG_UNCOMPRESSED_RUN: // (16) 0001 0000
 				// Long Uncompressed Run
 				runcount = readS.readSint16BE();
-				readS.seek(runcount, SEEK_CUR);
+				readS.seek(runcount, Common::kSeekCur);
 				continue;
 				break;
 			case SAGA_FRAME_NOOP: // Does nothing

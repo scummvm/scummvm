@@ -90,7 +90,7 @@ void AnimationPlayer::nextFrame() {
 	}
 
 	_vm->_arc->openResource(_resIndex);
-	_vm->_arc->seek(_nextFrameOffset, SEEK_CUR);
+	_vm->_arc->seek(_nextFrameOffset, Common::kSeekCur);
 	_curFrameSize = _nextFrameSize;
 
 	if (_curFrameSize == 0)

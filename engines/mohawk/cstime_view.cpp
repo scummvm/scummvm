@@ -301,7 +301,7 @@ void CSTimeModule::defaultMoveProc(Feature *feature) {
 			opcode = ourSCRB->readByte();
 			size = ourSCRB->readByte();
 			if (opcode != 0) {
-				ourSCRB->seek(-2, SEEK_CUR);
+				ourSCRB->seek(-2, Common::kSeekCur);
 				done = true;
 				break;
 			}

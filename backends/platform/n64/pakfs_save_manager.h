@@ -36,7 +36,7 @@ private:
 
 	uint32 read(void *buf, uint32 cnt);
 	bool skip(uint32 offset);
-	bool seek(int32 offs, int whence);
+	bool seek(int32 offs, Common::SeekWhence whence);
 
 public:
 	InPAKSave() : fd(NULL) { }

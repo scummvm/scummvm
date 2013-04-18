@@ -150,7 +150,7 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		return NULL;
 	}
 
-	fh->file.seek(pos, SEEK_SET);
+	fh->file.seek(pos, Common::kSeekSet);
 
 	switch (fh->fileType) {
 	case kCLUMode:
@@ -222,7 +222,7 @@ void CLUInputStream::refill() {
 	byte *in = _inbuf;
 	int16 *out = _outbuf;
 
-	_file->seek(_file_pos, SEEK_SET);
+	_file->seek(_file_pos, Common::kSeekSet);
 
 	uint len_left = _file->read(in, MIN((uint32)BUFFER_SIZE, _end_pos - _file->pos()));
 

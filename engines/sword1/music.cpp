@@ -121,7 +121,7 @@ bool MusicHandle::playPSX(uint16 id) {
 	if (!tableFile.open("tunes.tab"))
 		return false;
 
-	tableFile.seek((id - 1) * 8, SEEK_SET);
+	tableFile.seek((id - 1) * 8, Common::kSeekSet);
 	uint32 offset = tableFile.readUint32LE() * 0x800;
 	uint32 size = tableFile.readUint32LE();
 
@@ -130,7 +130,7 @@ bool MusicHandle::playPSX(uint16 id) {
 	// Because of broken tunes.dat/tab in psx demo, also check that tune offset is
 	// not over file size
 	if ((size != 0) && (size != 0xffffffff) && ((int32)(offset + size) <= _file.size())) {
-		_file.seek(offset, SEEK_SET);
+		_file.seek(offset, Common::kSeekSet);
 		_audioSource = Audio::makeXAStream(_file.readStream(size), 11025);
 		fadeUp();
 	} else {

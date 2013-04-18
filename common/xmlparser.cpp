@@ -85,7 +85,7 @@ bool XMLParser::parserError(const String &errStr) {
 	int lineCount = 1;
 	char c = 0;
 
-	_stream->seek(0, SEEK_SET);
+	_stream->seek(0, Common::kSeekSet);
 
 	while (currentPosition--) {
 		c = _stream->readByte();
@@ -101,7 +101,7 @@ bool XMLParser::parserError(const String &errStr) {
 	int keyClosing = 0;
 
 	while (currentPosition-- && keyOpening == 0) {
-		_stream->seek(-2, SEEK_CUR);
+		_stream->seek(-2, Common::kSeekCur);
 		c = _stream->readByte();
 
 		if (c == '<')
@@ -110,7 +110,7 @@ bool XMLParser::parserError(const String &errStr) {
 			keyClosing = currentPosition;
 	}
 
-	_stream->seek(startPosition, SEEK_SET);
+	_stream->seek(startPosition, Common::kSeekSet);
 	currentPosition = startPosition;
 	while (keyClosing == 0 && c && currentPosition++) {
 		c = _stream->readByte();
@@ -122,7 +122,7 @@ bool XMLParser::parserError(const String &errStr) {
 	Common::String errorMessage = Common::String::format("\n  File <%s>, line %d:\n", _fileName.c_str(), lineCount);
 
 	currentPosition = (keyClosing - keyOpening);
-	_stream->seek(keyOpening, SEEK_SET);
+	_stream->seek(keyOpening, Common::kSeekSet);
 
 	while (currentPosition--)
 		errorMessage += (char)_stream->readByte();
@@ -301,7 +301,7 @@ bool XMLParser::parse() {
 		return false;
 
 	// Make sure we are at the start of the stream.
-	_stream->seek(0, SEEK_SET);
+	_stream->seek(0, Common::kSeekSet);
 
 	if (_XMLkeys == 0)
 		buildLayout();
@@ -475,7 +475,7 @@ bool XMLParser::skipComments() {
 		_char = _stream->readByte();
 
 		if (_char != '!') {
-			_stream->seek(-1, SEEK_CUR);
+			_stream->seek(-1, Common::kSeekCur);
 			_char = '<';
 			return false;
 		}

@@ -261,7 +261,7 @@ void Pipe::nextFrame() {
 	if (_offset == (uint)_stream->size())
 		return;
 
-	_stream->seek(_offset, SEEK_SET);
+	_stream->seek(_offset, Common::kSeekSet);
 
 	uint32 tagCount = _stream->readUint32LE();
 	_offset += 4;
@@ -287,7 +287,7 @@ void Pipe::nextFrame() {
 
 			_offset += size;
 		}
-		_stream->seek(_offset, SEEK_SET);
+		_stream->seek(_offset, Common::kSeekSet);
 	}
 }
 
@@ -326,7 +326,7 @@ Common::SeekableReadStream *Pipe::getResource(uint32 tag, uint16 id, bool buffer
 	byte *buffer = (byte *)malloc(size);
 	uint32 offset = 0;
 	for (uint i = 0; i < res.entries.size(); i++) {
-		_stream->seek(res.entries[i].offset, SEEK_SET);
+		_stream->seek(res.entries[i].offset, Common::kSeekSet);
 		_stream->read(buffer + offset, res.entries[i].size);
 		offset += res.entries[i].size;
 	}
@@ -353,7 +353,7 @@ void OldPipe::nextFrame() {
 	if (_currFrame >= _numFrames)
 		return;
 
-	_stream->seek(_offset, SEEK_SET);
+	_stream->seek(_offset, Common::kSeekSet);
 
 	uint32 tag = _stream->readUint32BE();
 	if (tag != ID_FRME)

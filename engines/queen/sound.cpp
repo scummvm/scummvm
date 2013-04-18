@@ -309,7 +309,7 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 	// In order to simplify the code, we don't parse the .sb header but hard-code the
 	// values. Refer to tracker item #1876741 for details on the format/fields.
 	int headerSize;
-	f->seek(2, SEEK_CUR);
+	f->seek(2, Common::kSeekCur);
 	uint16 version = f->readUint16LE();
 	switch (version) {
 	case 104:
@@ -323,7 +323,7 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 		headerSize = SB_HEADER_SIZE_V104;
 		break;
 	}
-	f->seek(headerSize - 4, SEEK_CUR);
+	f->seek(headerSize - 4, Common::kSeekCur);
 	size -= headerSize;
 	uint8 *sound = (uint8 *)malloc(size);
 	if (sound) {

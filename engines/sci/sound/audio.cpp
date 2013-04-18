@@ -327,7 +327,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			Audio::loadWAVFromStream(*waveStream, waveSize, waveRate, waveFlags);
 			*sampleLen = (waveFlags & Audio::FLAG_16BITS ? waveSize >> 1 : waveSize) * 60 / waveRate;
 
-			waveStream->seek(0, SEEK_SET);
+			waveStream->seek(0, Common::kSeekSet);
 			audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
 		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKTAG('F','O','R','M')) {
 			// AIFF detected
@@ -339,7 +339,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			Audio::loadAIFFFromStream(*waveStream, waveSize, waveRate, waveFlags);
 			*sampleLen = (waveFlags & Audio::FLAG_16BITS ? waveSize >> 1 : waveSize) * 60 / waveRate;
 
-			waveStream->seek(0, SEEK_SET);
+			waveStream->seek(0, Common::kSeekSet);
 			audioStream = Audio::makeAIFFStream(waveStream, DisposeAfterUse::YES);
 		} else if (audioRes->size > 14 && READ_BE_UINT16(audioRes->data) == 1 && READ_BE_UINT16(audioRes->data + 2) == 1
 				&& READ_BE_UINT16(audioRes->data + 4) == 5 && READ_BE_UINT32(audioRes->data + 10) == 0x00018051) {

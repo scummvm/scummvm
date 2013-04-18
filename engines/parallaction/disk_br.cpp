@@ -689,7 +689,7 @@ Font* AmigaDisk_br::loadFont(const char* name) {
 	Common::String fontFile;
 	byte ch;
 
-	stream->seek(4, SEEK_SET);
+	stream->seek(4, Common::kSeekSet);
 	while ((ch = stream->readByte()) != 0x2F) fontDir += ch;
 	while ((ch = stream->readByte()) != 0) fontFile += ch;
 	delete stream;

@@ -69,7 +69,7 @@ public:
 	int32 pos() const { return _pos; }
 	int32 size() const { return _size; }
 
-	bool seek(int32 offs, int whence = SEEK_SET);
+	bool seek(int32 offs, SeekWhence whence = kSeekSet);
 };
 
 
@@ -170,7 +170,7 @@ public:
 
 	byte *getData() { return _data; }
 
-	bool seek(int32 offset, int whence = SEEK_SET);
+	bool seek(int32 offset, SeekWhence whence = kSeekSet);
 };
 
 } // End of namespace Common

@@ -268,7 +268,7 @@ private:
 
   uint32 read(void *buf, uint32 cnt);
   bool skip(uint32 offset);
-  bool seek(int32 offs, int whence);
+  bool seek(int32 offs, Common::SeekWhence whence);
 
 public:
   InVMSave()
@@ -385,16 +385,16 @@ bool InVMSave::skip(uint32 offset)
   return true;
 }
 
-bool InVMSave::seek(int32 offs, int whence)
+bool InVMSave::seek(int32 offs, Common::SeekWhence whence)
 {
   switch(whence) {
-  case SEEK_SET:
+  case Common::kSeekSet:
     _pos = offs;
     break;
-  case SEEK_CUR:
+  case Common::kSeekCur:
     _pos += offs;
     break;
-  case SEEK_END:
+  case Common::kSeekEnd:
     _pos = _size + offs;
     break;
   }

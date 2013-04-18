@@ -174,7 +174,7 @@ Common::Error KyraEngine_MR::loadGameState(int slot) {
 	_malcolmsMood = in.readByte();
 
 	if (header.originalSave)
-		in.seek(8, SEEK_CUR);
+		in.seek(8, Common::kSeekCur);
 
 	for (int i = 0; i < 30; ++i)
 		in.read(_conversationState[i], 30);
@@ -201,7 +201,7 @@ Common::Error KyraEngine_MR::loadGameState(int slot) {
 	if (!header.originalSave) {
 		_mainCharacter.walkspeed = in.readByte();
 	} else {
-		in.seek(2, SEEK_CUR);
+		in.seek(2, Common::kSeekCur);
 		_mainCharacter.walkspeed = in.readUint32();
 	}
 	for (int i = 0; i < 10; ++i)

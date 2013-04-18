@@ -670,18 +670,18 @@ void RMGfxEngine::loadState(CORO_PARAM, const Common::String &fn) {
 				// Skip thumbnail size
 				_ctx->f->skip(4);
 
-			_ctx->f->seek(160 * 120 * 2, SEEK_CUR);
+			_ctx->f->seek(160 * 120 * 2, Common::kSeekCur);
 		}
 	}
 
 	if (_ctx->ver >= 0x5) {
 		// Skip the difficulty level
-		_ctx->f->seek(1, SEEK_CUR);
+		_ctx->f->seek(1, Common::kSeekCur);
 	}
 
 	if (_ctx->ver >= 0x4) { // Skip the savegame name, which serves no purpose
 		_ctx->i = _ctx->f->readByte();
-		_ctx->f->seek(_ctx->i, SEEK_CUR);
+		_ctx->f->seek(_ctx->i, Common::kSeekCur);
 	}
 
 	_ctx->loc = _ctx->f->readUint32LE();

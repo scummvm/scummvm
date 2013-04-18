@@ -323,11 +323,19 @@ public:
 
 };
 
+/**
+ * Specifies the origin of a seek operation.
+ *
+ * Use instead of SEEK_SET, SEEK_CUR, and SEEK_END
+ */
+enum SeekWhence {
+	kSeekSet = 0,
+	kSeekCur = 1,
+	kSeekEnd = 2
+};
 
 /**
  * Interface for a seekable & readable data stream.
- *
- * @todo Get rid of SEEK_SET, SEEK_CUR, or SEEK_END, use our own constants
  */
 class SeekableReadStream : virtual public ReadStream {
 public:
@@ -351,8 +359,8 @@ public:
 	/**
 	 * Sets the stream position indicator for the stream. The new position,
 	 * measured in bytes, is obtained by adding offset bytes to the position
-	 * specified by whence. If whence is set to SEEK_SET, SEEK_CUR, or
-	 * SEEK_END, the offset is relative to the start of the file, the current
+	 * specified by whence. If whence is set to kSeekSet, kSeekCur, or
+	 * kSeekEnd, the offset is relative to the start of the file, the current
 	 * position indicator, or end-of-file, respectively. A successful call
 	 * to the seek() method clears the end-of-file indicator for the stream.
 	 *
@@ -360,16 +368,16 @@ public:
 	 * supposed to match those of ISO C fseek().
 	 *
 	 * @param offset	the relative offset in bytes
-	 * @param whence	the seek reference: SEEK_SET, SEEK_CUR, or SEEK_END
+	 * @param whence	the seek reference: kSeekSet, kSeekCur, or kSeekEnd
 	 * @return true on success, false in case of a failure
 	 */
-	virtual bool seek(int32 offset, int whence = SEEK_SET) = 0;
+	virtual bool seek(int32 offset, SeekWhence whence = kSeekSet) = 0;
 
 	/**
 	 * TODO: Get rid of this??? Or keep it and document it
 	 * @return true on success, false in case of a failure
 	 */
-	virtual bool skip(uint32 offset) { return seek(offset, SEEK_CUR); }
+	virtual bool skip(uint32 offset) { return seek(offset, kSeekCur); }
 
 	/**
 	 * Reads at most one less than the number of characters specified

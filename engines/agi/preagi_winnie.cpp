@@ -108,7 +108,7 @@ uint32 WinnieEngine::readRoom(int iRoom, uint8 *buffer, WTP_ROOM_HDR &roomHdr) {
 	uint32 filelen = file.size();
 	if (getPlatform() == Common::kPlatformC64) { // Skip the loading address
 		filelen -= 2;
-		file.seek(2, SEEK_CUR);
+		file.seek(2, Common::kSeekCur);
 	}
 
 	memset(buffer, 0, 4096);
@@ -141,7 +141,7 @@ uint32 WinnieEngine::readObj(int iObj, uint8 *buffer) {
 	uint32 filelen = file.size();
 	if (getPlatform() == Common::kPlatformC64) { // Skip the loading address
 		filelen -= 2;
-		file.seek(2, SEEK_CUR);
+		file.seek(2, Common::kSeekCur);
 	}
 
 	memset(buffer, 0, 2048);

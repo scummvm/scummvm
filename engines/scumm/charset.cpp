@@ -118,7 +118,7 @@ void ScummEngine::loadCJKFont() {
 
 			switch (_language) {
 			case Common::KO_KOR:
-				fp.seek(2, SEEK_CUR);
+				fp.seek(2, Common::kSeekCur);
 				_2byteWidth = fp.readByte();
 				_2byteHeight = fp.readByte();
 				_newLineCharacter = 0xff;

@@ -48,7 +48,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 	if (!fileStream)
 		return;
 
-	fileStream->seek(0, SEEK_SET);
+	fileStream->seek(0, Common::kSeekSet);
 	uint32 compressionType = fileStream->readUint32BE();
 	switch (compressionType) {
 	case MKTAG('M','P','3',' '):
@@ -92,10 +92,10 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	if (riffTag == MKTAG('R','I','F','F')) {
 		_headerSize = 0;
 		size = file->readUint32LE() + 8;
-		file->seek(-8, SEEK_CUR);
+		file->seek(-8, Common::kSeekCur);
 		return loadFromWaveFile(file);
 	}
-	file->seek(-4, SEEK_CUR);
+	file->seek(-4, Common::kSeekCur);
 
 	ResourceType type = _resMan->convertResType(file->readByte());
 	if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
@@ -116,10 +116,10 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 
 		if (_headerSize != 7) { // Size is defined already from the map
 			// Load sample size
-			file->seek(7, SEEK_CUR);
+			file->seek(7, Common::kSeekCur);
 			size = file->readUint32LE();
 			// Adjust offset to point at the header data again
-			file->seek(-11, SEEK_CUR);
+			file->seek(-11, Common::kSeekCur);
 		}
 	}
 
@@ -827,7 +827,7 @@ void WaveResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	if (!fileStream)
 		return;
 
-	fileStream->seek(res->_fileOffset, SEEK_SET);
+	fileStream->seek(res->_fileOffset, Common::kSeekSet);
 	res->loadFromWaveFile(fileStream);
 	if (_resourceFile)
 		delete fileStream;
@@ -865,7 +865,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 
 		if (!compressedOffset)
 			error("could not translate offset to compressed offset in audio volume");
-		fileStream->seek(compressedOffset, SEEK_SET);
+		fileStream->seek(compressedOffset, Common::kSeekSet);
 
 		switch (res->getType()) {
 		case kResourceTypeAudio:
@@ -880,7 +880,7 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 		}
 	} else {
 		// original file, directly seek to given offset and get SCI1/SCI1.1 audio resource
-		fileStream->seek(res->_fileOffset, SEEK_SET);
+		fileStream->seek(res->_fileOffset, Common::kSeekSet);
 	}
 	if (getSciVersion() < SCI_VERSION_1_1)
 		res->loadFromAudioVolumeSCI1(fileStream);

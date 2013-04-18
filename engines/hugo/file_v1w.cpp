@@ -49,7 +49,7 @@ void FileManager_v1w::readOverlay(const int screenNum, ImagePtr image, OvlType o
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	ImagePtr tmpImage = image;                      // temp ptr to overlay file
-	_sceneryArchive1.seek((uint32)screenNum * sizeof(SceneBlock), SEEK_SET);
+	_sceneryArchive1.seek((uint32)screenNum * sizeof(SceneBlock), Common::kSeekSet);
 
 	SceneBlock sceneBlock;                          // Database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
@@ -64,15 +64,15 @@ void FileManager_v1w::readOverlay(const int screenNum, ImagePtr image, OvlType o
 	uint32 i = 0;
 	switch (overlayType) {
 	case kOvlBoundary:
-		_sceneryArchive1.seek(sceneBlock._boundaryOffset, SEEK_SET);
+		_sceneryArchive1.seek(sceneBlock._boundaryOffset, Common::kSeekSet);
 		i = sceneBlock._boundaryLength;
 		break;
 	case kOvlOverlay:
-		_sceneryArchive1.seek(sceneBlock._overlayOffset, SEEK_SET);
+		_sceneryArchive1.seek(sceneBlock._overlayOffset, Common::kSeekSet);
 		i = sceneBlock._overlayLength;
 		break;
 	case kOvlBase:
-		_sceneryArchive1.seek(sceneBlock._baseOffset, SEEK_SET);
+		_sceneryArchive1.seek(sceneBlock._baseOffset, Common::kSeekSet);
 		i = sceneBlock._baseLength;
 		break;
 	default:

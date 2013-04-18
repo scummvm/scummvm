@@ -202,7 +202,7 @@ void VocStream::updateBlockIfNeeded() {
 			if (_curBlock->code != 1 && _curBlock->code != 9)
 				continue;
 
-			_stream->seek(_curBlock->sampleBlock.offset, SEEK_SET);
+			_stream->seek(_curBlock->sampleBlock.offset, Common::kSeekSet);
 
 			// In case of an error we will stop
 			// stream playback.
@@ -292,7 +292,7 @@ bool VocStream::seek(const Timestamp &where) {
 	} else {
 		const uint32 offset = seekSample - curSample;
 
-		_stream->seek(_curBlock->sampleBlock.offset + offset, SEEK_SET);
+		_stream->seek(_curBlock->sampleBlock.offset + offset, Common::kSeekSet);
 
 		// In case of an error we will stop
 		// stream playback.

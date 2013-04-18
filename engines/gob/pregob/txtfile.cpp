@@ -168,7 +168,7 @@ Common::String TXTFile::getStr(Common::SeekableReadStream &txt) {
 			break;
 
 		if ((c != ' ') && (c != '\n') && (c != '\r')) {
-			txt.seek(-1, SEEK_CUR);
+			txt.seek(-1, Common::kSeekCur);
 			break;
 		}
 	}
@@ -207,7 +207,7 @@ int TXTFile::getInt(Common::SeekableReadStream &txt) {
 			break;
 
 		if ((c == '-') || ((c >= '0') && (c <= '9'))) {
-			txt.seek(-1, SEEK_CUR);
+			txt.seek(-1, Common::kSeekCur);
 			break;
 		}
 	}

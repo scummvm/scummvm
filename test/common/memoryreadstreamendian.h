@@ -8,15 +8,15 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c', '\n' };
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), false);
 
-		ms.seek(0, SEEK_SET);
+		ms.seek(0, Common::kSeekSet);
 		TS_ASSERT_EQUALS(ms.pos(), 0);
 		TS_ASSERT(!ms.eos());
 
-		ms.seek(1, SEEK_SET);
+		ms.seek(1, Common::kSeekSet);
 		TS_ASSERT_EQUALS(ms.pos(), 1);
 		TS_ASSERT(!ms.eos());
 
-		ms.seek(5, SEEK_SET);
+		ms.seek(5, Common::kSeekSet);
 		TS_ASSERT_EQUALS(ms.pos(), 5);
 		TS_ASSERT(!ms.eos());
 	}
@@ -25,19 +25,19 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c' };
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), false);
 
-		ms.seek(3, SEEK_CUR);
+		ms.seek(3, Common::kSeekCur);
 		TS_ASSERT_EQUALS(ms.pos(), 3);
 		TS_ASSERT(!ms.eos());
 
-		ms.seek(-1, SEEK_CUR);
+		ms.seek(-1, Common::kSeekCur);
 		TS_ASSERT_EQUALS(ms.pos(), 2);
 		TS_ASSERT(!ms.eos());
 
-		ms.seek(3, SEEK_CUR);
+		ms.seek(3, Common::kSeekCur);
 		TS_ASSERT_EQUALS(ms.pos(), 5);
 		TS_ASSERT(!ms.eos());
 
-		ms.seek(-1, SEEK_CUR);
+		ms.seek(-1, Common::kSeekCur);
 		TS_ASSERT_EQUALS(ms.pos(), 4);
 		TS_ASSERT(!ms.eos());
 	}
@@ -46,15 +46,15 @@ class MemoryReadStreamEndianTestSuite : public CxxTest::TestSuite {
 		byte contents[] = { 'a', 'b', '\n', '\n', 'c' };
 		Common::MemoryReadStreamEndian ms(contents, sizeof(contents), false);
 
-		ms.seek(0, SEEK_END);
+		ms.seek(0, Common::kSeekEnd);
 		TS_ASSERT_EQUALS(ms.pos(), 5);
 		TS_ASSERT(!ms.eos());
 
-		ms.seek(-1, SEEK_END);
+		ms.seek(-1, Common::kSeekEnd);
 		TS_ASSERT_EQUALS(ms.pos(), 4);
 		TS_ASSERT(!ms.eos());
 
-		ms.seek(-5, SEEK_END);
+		ms.seek(-5, Common::kSeekEnd);
 		TS_ASSERT_EQUALS(ms.pos(), 0);
 		TS_ASSERT(!ms.eos());
 	}

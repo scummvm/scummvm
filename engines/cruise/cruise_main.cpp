@@ -103,7 +103,7 @@ void drawBlackSolidBoxSmall() {
 void loadPackedFileToMem(int fileIdx, uint8 *buffer) {
 	changeCursor(CURSOR_DISK);
 
-	_vm->_currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset, SEEK_SET);
+	_vm->_currentVolumeFile.seek(volumePtrToFileDescriptor[fileIdx].offset, Common::kSeekSet);
 	_vm->_currentVolumeFile.read(buffer, volumePtrToFileDescriptor[fileIdx].size);
 }
 

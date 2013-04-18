@@ -607,10 +607,10 @@ void KyraEngine_MR::malcolmSceneStartupChat() {
 	int vocHighBase = 0, vocHighIndex = 0, index1 = 0, index2 = 0;
 	loadDlgHeader(vocHighBase, vocHighIndex, index1, index2);
 
-	_cnvFile->seek(index1*6, SEEK_CUR);
-	_cnvFile->seek(index2*4, SEEK_CUR);
-	_cnvFile->seek(index*2, SEEK_CUR);
-	_cnvFile->seek(_cnvFile->readUint16LE(), SEEK_SET);
+	_cnvFile->seek(index1*6, Common::kSeekCur);
+	_cnvFile->seek(index2*4, Common::kSeekCur);
+	_cnvFile->seek(index*2, Common::kSeekCur);
+	_cnvFile->seek(_cnvFile->readUint16LE(), Common::kSeekSet);
 
 	_isStartupDialog = true;
 	processDialog(vocHighIndex, vocHighBase, 0);
@@ -620,7 +620,7 @@ void KyraEngine_MR::malcolmSceneStartupChat() {
 
 void KyraEngine_MR::updateDlgBuffer() {
 	if (_cnvFile)
-		_cnvFile->seek(0, SEEK_SET);
+		_cnvFile->seek(0, Common::kSeekSet);
 
 	if (_curDlgIndex == _mainCharacter.dlgIndex && _curDlgChapter == _currentChapter && _curDlgLang == _lang)
 		return;
@@ -839,9 +839,9 @@ void KyraEngine_MR::randomSceneChat() {
 		index++;
 	_chatAltFlag = !_chatAltFlag;
 
-	_cnvFile->seek(index1*6, SEEK_CUR);
-	_cnvFile->seek(index*2, SEEK_CUR);
-	_cnvFile->seek(_cnvFile->readUint16LE(), SEEK_SET);
+	_cnvFile->seek(index1*6, Common::kSeekCur);
+	_cnvFile->seek(index*2, Common::kSeekCur);
+	_cnvFile->seek(_cnvFile->readUint16LE(), Common::kSeekSet);
 
 	processDialog(vocHighIndex, vocHighBase, 0);
 }
@@ -876,17 +876,17 @@ void KyraEngine_MR::doDialog(int dlgIndex, int funcNum) {
 	int convState = _conversationState[dlgIndex][vocHighBase];
 	uint32 offset = ((vocHighIndex == 1) ? dlgIndex - 1 : dlgIndex) * 6;
 	if (convState == -1) {
-		_cnvFile->seek(offset, SEEK_CUR);
+		_cnvFile->seek(offset, Common::kSeekCur);
 		_conversationState[dlgIndex][vocHighBase] = 0;
 	} else if (convState == 0 || convState == 2) {
-		_cnvFile->seek(offset+2, SEEK_CUR);
+		_cnvFile->seek(offset+2, Common::kSeekCur);
 		_conversationState[dlgIndex][vocHighBase] = 1;
 	} else {
-		_cnvFile->seek(offset+4, SEEK_CUR);
+		_cnvFile->seek(offset+4, Common::kSeekCur);
 		_conversationState[dlgIndex][vocHighBase] = 2;
 	}
 
-	_cnvFile->seek(_cnvFile->readUint16LE(), SEEK_SET);
+	_cnvFile->seek(_cnvFile->readUint16LE(), Common::kSeekSet);
 
 	processDialog(vocHighIndex, vocHighBase, funcNum);
 }

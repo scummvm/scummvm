@@ -99,7 +99,7 @@ int BundleDirCache::matchFile(const char *filename) {
 		_budleDirCache[freeSlot].bundleTable = (AudioTable *)malloc(_budleDirCache[freeSlot].numFiles * sizeof(AudioTable));
 		assert(_budleDirCache[freeSlot].bundleTable);
 
-		file.seek(offset, SEEK_SET);
+		file.seek(offset, Common::kSeekSet);
 
 		_budleDirCache[freeSlot].indexTable =
 				(IndexNode *)calloc(_budleDirCache[freeSlot].numFiles, sizeof(IndexNode));
@@ -161,7 +161,7 @@ Common::SeekableReadStream *BundleMgr::getFile(const char *filename, int32 &offs
 	BundleDirCache::IndexNode *found = (BundleDirCache::IndexNode *)bsearch(&target, _indexTable, _numFiles,
 			sizeof(BundleDirCache::IndexNode), (int (*)(const void*, const void*))scumm_stricmp);
 	if (found) {
-		_file->seek(_bundleTable[found->index].offset, SEEK_SET);
+		_file->seek(_bundleTable[found->index].offset, Common::kSeekSet);
 		offset = _bundleTable[found->index].offset;
 		size = _bundleTable[found->index].size;
 		return _file;
@@ -216,11 +216,11 @@ void BundleMgr::close() {
 }
 
 bool BundleMgr::loadCompTable(int32 index) {
-	_file->seek(_bundleTable[index].offset, SEEK_SET);
+	_file->seek(_bundleTable[index].offset, Common::kSeekSet);
 	uint32 tag = _file->readUint32BE();
 	_numCompItems = _file->readUint32BE();
 	assert(_numCompItems > 0);
-	_file->seek(8, SEEK_CUR);
+	_file->seek(8, Common::kSeekCur);
 
 	if (tag != MKTAG('C','O','M','P')) {
 		error("BundleMgr::loadCompTable() Compressed sound %d (%s:%d) invalid (%s)", index, _file->getName(), _bundleTable[index].offset, tag2str(tag));
@@ -234,7 +234,7 @@ bool BundleMgr::loadCompTable(int32 index) {
 		_compTable[i].offset = _file->readUint32BE();
 		_compTable[i].size = _file->readUint32BE();
 		_compTable[i].codec = _file->readUint32BE();
-		_file->seek(4, SEEK_CUR);
+		_file->seek(4, Common::kSeekCur);
 		if (_compTable[i].size > maxSize)
 			maxSize = _compTable[i].size;
 	}
@@ -289,7 +289,7 @@ int32 BundleMgr::decompressSampleByIndex(int32 index, int32 offset, int32 size, 
 		if (_lastBlock != i) {
 			// CMI hack: one more zero byte at the end of input buffer
 			_compInputBuff[_compTable[i].size] = 0;
-			_file->seek(_bundleTable[index].offset + _compTable[i].offset, SEEK_SET);
+			_file->seek(_bundleTable[index].offset + _compTable[i].offset, Common::kSeekSet);
 			_file->read(_compInputBuff, _compTable[i].size);
 			_outputSize = BundleCodecs::decompressCodec(_compTable[i].codec, _compInputBuff, _compOutputBuff, _compTable[i].size);
 			if (_outputSize > 0x2000) {

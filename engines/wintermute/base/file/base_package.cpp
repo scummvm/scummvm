@@ -62,7 +62,7 @@ static bool findPackageSignature(Common::SeekableReadStream *f, uint32 *offset) 
 
 	while (bytesRead < fileSize - 16) {
 		uint32 toRead = MIN<unsigned int>((unsigned int)32768, fileSize - bytesRead);
-		f->seek((int32)startPos, SEEK_SET);
+		f->seek((int32)startPos, Common::kSeekSet);
 		uint32 actuallyRead = f->read(buf, toRead);
 		if (actuallyRead != toRead) {
 			return false;
@@ -114,7 +114,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 			delete stream;
 			return;
 		} else {
-			stream->seek(offset, SEEK_SET);
+			stream->seek(offset, Common::kSeekSet);
 			absoluteOffset = offset;
 			boundToExe = true;
 		}
@@ -137,7 +137,7 @@ PackageSet::PackageSet(Common::FSNode file, const Common::String &filename, bool
 		uint32 dirOffset;
 		dirOffset = stream->readUint32LE();
 		dirOffset += absoluteOffset;
-		stream->seek(dirOffset, SEEK_SET);
+		stream->seek(dirOffset, Common::kSeekSet);
 	}
 	assert(hdr._numDirs == 1);
 	for (uint32 i = 0; i < hdr._numDirs; i++) {

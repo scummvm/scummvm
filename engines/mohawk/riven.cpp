@@ -636,7 +636,7 @@ Common::String MohawkEngine_Riven::getName(uint16 nameResource, uint16 nameID) {
 		for (uint16 i = 0; i < fieldCount; i++)
 			nameStream->readUint16BE();	// Skip unknown values
 
-		nameStream->seek(stringOffsets[nameID], SEEK_CUR);
+		nameStream->seek(stringOffsets[nameID], Common::kSeekCur);
 		c = (char)nameStream->readByte();
 
 		while (c) {

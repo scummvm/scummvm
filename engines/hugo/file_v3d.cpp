@@ -50,7 +50,7 @@ FileManager_v3d::~FileManager_v3d() {
 void FileManager_v3d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
-	_sceneryArchive1.seek((uint32) screenIndex * sizeof(SceneBlock), SEEK_SET);
+	_sceneryArchive1.seek((uint32) screenIndex * sizeof(SceneBlock), Common::kSeekSet);
 
 	SceneBlock sceneBlock;                          // Read a database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
@@ -64,11 +64,11 @@ void FileManager_v3d::readBackground(const int screenIndex) {
 
 	Seq *dummySeq;                                  // Image sequence structure for Read_pcx
 	if (screenIndex < 20) {
-		_sceneryArchive1.seek(sceneBlock._sceneOffset, SEEK_SET);
+		_sceneryArchive1.seek(sceneBlock._sceneOffset, Common::kSeekSet);
 		// Read the image into dummy seq and static dib_a
 		dummySeq = readPCX(_sceneryArchive1, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	} else {
-		_sceneryArchive2.seek(sceneBlock._sceneOffset, SEEK_SET);
+		_sceneryArchive2.seek(sceneBlock._sceneOffset, Common::kSeekSet);
 		// Read the image into dummy seq and static dib_a
 		dummySeq = readPCX(_sceneryArchive2, 0, _vm->_screen->getFrontBuffer(), true, _vm->_text->getScreenNames(screenIndex));
 	}
@@ -110,7 +110,7 @@ void FileManager_v3d::readOverlay(const int screenNum, ImagePtr image, OvlType o
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	ImagePtr     tmpImage = image;                  // temp ptr to overlay file
-	_sceneryArchive1.seek((uint32)screenNum * sizeof(SceneBlock), SEEK_SET);
+	_sceneryArchive1.seek((uint32)screenNum * sizeof(SceneBlock), Common::kSeekSet);
 
 	SceneBlock sceneBlock;                          // Database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
@@ -127,15 +127,15 @@ void FileManager_v3d::readOverlay(const int screenNum, ImagePtr image, OvlType o
 	if (screenNum < 20) {
 		switch (overlayType) {
 		case kOvlBoundary:
-			_sceneryArchive1.seek(sceneBlock._boundaryOffset, SEEK_SET);
+			_sceneryArchive1.seek(sceneBlock._boundaryOffset, Common::kSeekSet);
 			i = sceneBlock._boundaryLength;
 			break;
 		case kOvlOverlay:
-			_sceneryArchive1.seek(sceneBlock._overlayOffset, SEEK_SET);
+			_sceneryArchive1.seek(sceneBlock._overlayOffset, Common::kSeekSet);
 			i = sceneBlock._overlayLength;
 			break;
 		case kOvlBase:
-			_sceneryArchive1.seek(sceneBlock._baseOffset, SEEK_SET);
+			_sceneryArchive1.seek(sceneBlock._baseOffset, Common::kSeekSet);
 			i = sceneBlock._baseLength;
 			break;
 		default:
@@ -166,15 +166,15 @@ void FileManager_v3d::readOverlay(const int screenNum, ImagePtr image, OvlType o
 	} else {
 		switch (overlayType) {
 		case kOvlBoundary:
-			_sceneryArchive2.seek(sceneBlock._boundaryOffset, SEEK_SET);
+			_sceneryArchive2.seek(sceneBlock._boundaryOffset, Common::kSeekSet);
 			i = sceneBlock._boundaryLength;
 			break;
 		case kOvlOverlay:
-			_sceneryArchive2.seek(sceneBlock._overlayOffset, SEEK_SET);
+			_sceneryArchive2.seek(sceneBlock._overlayOffset, Common::kSeekSet);
 			i = sceneBlock._overlayLength;
 			break;
 		case kOvlBase:
-			_sceneryArchive2.seek(sceneBlock._baseOffset, SEEK_SET);
+			_sceneryArchive2.seek(sceneBlock._baseOffset, Common::kSeekSet);
 			i = sceneBlock._baseLength;
 			break;
 		default:

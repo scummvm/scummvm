@@ -74,7 +74,7 @@ int AgiLoader_v1::loadDir_DDP(AgiDir *agid, int offset, int max) {
 		agid[i].offset = _EMPTY;
 	}
 
-	fp.seek(offset, SEEK_SET);
+	fp.seek(offset, Common::kSeekSet);
 	for (int i = 0; i <= max; i++) {
 		int b0 = fp.readByte();
 		int b1 = fp.readByte();
@@ -108,7 +108,7 @@ int AgiLoader_v1::loadDir_BC(AgiDir *agid, int offset, int max) {
 		agid[i].offset = _EMPTY;
 	}
 
-	fp.seek(offset, SEEK_SET);
+	fp.seek(offset, Common::kSeekSet);
 	for (int i = 0; i <= max; i++) {
 		int b0 = fp.readByte();
 		int b1 = fp.readByte();
@@ -179,7 +179,7 @@ uint8 *AgiLoader_v1::loadVolRes(struct AgiDir *agid) {
 		fp.open(_filenameDisk0);
 	}
 
-	fp.seek(offset, SEEK_SET);
+	fp.seek(offset, Common::kSeekSet);
 
 	int signature = fp.readUint16BE();
 	if (signature != 0x1234) {
@@ -310,7 +310,7 @@ int AgiLoader_v1::loadObjects(const char *fname) {
 	if (_vm->getGameID() == GID_BC) {
 		Common::File f;
 		f.open(_filenameDisk0);
-		f.seek(BC_OBJECTS, SEEK_SET);
+		f.seek(BC_OBJECTS, Common::kSeekSet);
 		return _vm->loadObjects(f);
 	}
 	return errOK;
@@ -320,7 +320,7 @@ int AgiLoader_v1::loadWords(const char *fname) {
 	if (_vm->getGameID() == GID_BC) {
 		Common::File f;
 		f.open(_filenameDisk0);
-		f.seek(BC_WORDS, SEEK_SET);
+		f.seek(BC_WORDS, Common::kSeekSet);
 		return _vm->loadWords_v1(f);
 	}
 	return errOK;

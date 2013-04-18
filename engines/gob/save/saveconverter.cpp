@@ -346,7 +346,7 @@ int32 SaveConverter::size() const {
 	return _stream->size();
 }
 
-bool SaveConverter::seek(int32 offset, int whence) {
+bool SaveConverter::seek(int32 offset, Common::SeekWhence whence) {
 	if (!_data || !_stream)
 		return false;
 
