@@ -160,7 +160,7 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 				// Reset the eos() flag since we successfully finished a line
 				clearErr();
 			} else if (c != LF) {
-				seek(-1, Common::kSeekCur);
+				seek(-1, kSeekCur);
 			}
 
 			// Treat CR & CR/LF as plain LF
@@ -242,7 +242,7 @@ bool SeekableSubReadStream::seek(int32 offset, SeekWhence whence) {
 
 uint32 SafeSeekableSubReadStream::read(void *dataPtr, uint32 dataSize) {
 	// Make sure the parent stream is at the right position
-	seek(0, Common::kSeekCur);
+	seek(0, kSeekCur);
 
 	return SeekableSubReadStream::read(dataPtr, dataSize);
 }

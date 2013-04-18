@@ -208,13 +208,13 @@ int32 findHeader(SeekableReadStream &stream) {
 	uint16 basic_hdr_size;
 
 	tmp_pos = stream.pos();
-	stream.seek(0L, Common::kSeekEnd);
+	stream.seek(0L, kSeekEnd);
 	end_pos = stream.pos() - 2;
 	if (end_pos >= tmp_pos + HSLIMIT_ARJ)
 		end_pos = tmp_pos + HSLIMIT_ARJ;
 
 	while (tmp_pos < end_pos) {
-		stream.seek(tmp_pos, Common::kSeekSet);
+		stream.seek(tmp_pos, kSeekSet);
 		id = stream.readByte();
 		while (tmp_pos < end_pos) {
 			if (id == HEADER_ID_LO) {
@@ -230,7 +230,7 @@ int32 findHeader(SeekableReadStream &stream) {
 			stream.read(header, basic_hdr_size);
 			crc = CRC32::checksum(header, basic_hdr_size);
 			if (crc == stream.readUint32LE()) {
-				stream.seek(tmp_pos, Common::kSeekSet);
+				stream.seek(tmp_pos, kSeekSet);
 				return tmp_pos;
 			}
 		}
@@ -299,7 +299,7 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 	// Process extended headers, if any
 	uint16 extHeaderSize;
 	while ((extHeaderSize = stream.readUint16LE()) != 0)
-		stream.seek((long)(extHeaderSize + 4), Common::kSeekCur);
+		stream.seek((long)(extHeaderSize + 4), kSeekCur);
 
 	header.pos = stream.pos();
 
@@ -724,14 +724,14 @@ ArjArchive::ArjArchive(const String &filename) : _arjFilename(filename) {
 
 	ArjHeader *header = NULL;
 
-	arjFile.seek(firstHeaderOffset, Common::kSeekSet);
+	arjFile.seek(firstHeaderOffset, kSeekSet);
 	if ((header = readHeader(arjFile)) == NULL)
 		return;
 	delete header;
 
 	while ((header = readHeader(arjFile)) != NULL) {
 		_headers[header->filename] = header;
-		arjFile.seek(header->compSize, Common::kSeekCur);
+		arjFile.seek(header->compSize, kSeekCur);
 	}
 
 	debug(0, "ArjArchive::ArjArchive(%s): Located %d files", filename.c_str(), _headers.size());
@@ -777,7 +777,7 @@ SeekableReadStream *ArjArchive::createReadStreamForMember(const String &name) co
 
 	File archiveFile;
 	archiveFile.open(_arjFilename);
-	archiveFile.seek(hdr->pos, Common::kSeekSet);
+	archiveFile.seek(hdr->pos, kSeekSet);
 
 	// TODO: It would be good if ArjFile could decompress files in a streaming
 	// mode, so it would not need to pre-allocate the entire output.

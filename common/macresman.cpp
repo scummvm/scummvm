@@ -149,12 +149,12 @@ bool MacResManager::open(String filename) {
 		_baseFileName = filename;
 
 		if (isMacBinary(*file)) {
-			file->seek(0, Common::kSeekSet);
+			file->seek(0, kSeekSet);
 			if (loadFromMacBinary(*file))
 				return true;
 		}
 
-		file->seek(0, Common::kSeekSet);
+		file->seek(0, kSeekSet);
 		_stream = file;
 		return true;
 	}
@@ -224,12 +224,12 @@ bool MacResManager::open(FSNode path, String filename) {
 		_baseFileName = filename;
 
 		if (isMacBinary(*stream)) {
-			stream->seek(0, Common::kSeekSet);
+			stream->seek(0, kSeekSet);
 			if (loadFromMacBinary(*stream))
 				return true;
 		}
 
-		stream->seek(0, Common::kSeekSet);
+		stream->seek(0, kSeekSet);
 		_stream = stream;
 		return true;
 	}
