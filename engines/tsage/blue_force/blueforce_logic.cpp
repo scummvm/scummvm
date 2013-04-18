@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "tsage/blue_force/blueforce_logic.h"
 #include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/blue_force/blueforce_scenes0.h"
@@ -42,8 +43,25 @@ namespace TsAGE {
 namespace BlueForce {
 
 void BlueForceGame::start() {
-	// Start the game
-	g_globals->_sceneManager.changeScene(20);
+	int slot = -1;
+
+	// Check for a savegame to load straight from the launcher
+	if (ConfMan.hasKey("save_slot")) {
+		slot = ConfMan.getInt("save_slot");
+		Common::String file = g_vm->generateSaveName(slot);
+		Common::InSaveFile *in = g_vm->_system->getSavefileManager()->openForLoading(file);
+		if (in)
+			delete in;
+		else
+			slot = -1;
+	}
+
+	if (slot >= 0)
+		// Set the savegame slot to load in the main loop
+		g_globals->_sceneHandler->_loadGameSlot = slot;
+	else
+		// Switch to the title screen
+		g_globals->_sceneManager.setNewScene(20);
 }
 
 Scene *BlueForceGame::createScene(int sceneNumber) {
@@ -255,14 +273,16 @@ Scene *BlueForceGame::createScene(int sceneNumber) {
  * Returns true if it is currently okay to restore a game
  */
 bool BlueForceGame::canLoadGameStateCurrently() {
-	return true;
+	// Don't allow a game to be loaded if a dialog is active
+	return g_globals->_gfxManagers.size() == 1;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool BlueForceGame::canSaveGameStateCurrently() {
-	return true;
+	// Don't allow a game to be saved if a dialog is active
+	return g_globals->_gfxManagers.size() == 1;
 }
 
 void BlueForceGame::rightClick() {
@@ -313,6 +333,24 @@ void BlueForceGame::processEvent(Event &event) {
 			break;
 		}
 	}
+}
+
+void BlueForceGame::restart() {
+	g_globals->_scenePalette.clearListeners();
+	g_globals->_soundHandler.stop();
+
+	// Reset the globals
+	g_globals->reset();
+
+	// Clear save/load slots
+	g_globals->_sceneHandler->_saveGameSlot = -1;
+	g_globals->_sceneHandler->_loadGameSlot = -1;
+
+	g_globals->_stripNum = 0;
+	g_globals->_events.setCursor(CURSOR_WALK);
+
+	// Change to the first game scene
+	g_globals->_sceneManager.changeScene(190);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -515,35 +553,6 @@ bool NamedObject::startAction(CursorType action, Event &event) {
 	return handled;
 }
 
-void NamedObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	switch (mode) {
-	case 2:
-		g_globals->_sceneItems.push_front(this);
-		break;
-	case 4:
-		g_globals->_sceneItems.addBefore(item, this);
-		break;
-	case 5:
-		g_globals->_sceneItems.addAfter(item, this);
-		break;
-	default:
-		g_globals->_sceneItems.push_back(this);
-		break;
-	}
-}
-
-void NamedObject::setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum) {
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-}
-
 /*--------------------------------------------------------------------------*/
 
 CountdownObject::CountdownObject(): NamedObject() {
@@ -604,14 +613,14 @@ void FollowerObject::dispatch() {
 	} else if ((_object->_visage != 308) || (_object->_strip != 1)) {
 		show();
 		setStrip(_object->_strip);
-		setPosition(_object->_position, _object->_yDiff);
+		setPosition(Common::Point(_object->_position.x + 1, _object->_position.y), _yDiff);
 	}
 }
 
 void FollowerObject::reposition() {
 	assert(_object);
 	setStrip(_object->_strip);
-	setPosition(_object->_position, _object->_yDiff);
+	setPosition(_object->_position, _yDiff);
 	NamedObject::reposition();
 }
 
@@ -724,7 +733,7 @@ void SceneExt::remove() {
 			_action->_endHandler = NULL;
 		_action->remove();
 	}
-	
+
 	_focusObject = NULL;
 }
 
@@ -755,6 +764,7 @@ void SceneExt::loadScene(int sceneNum) {
 
 	_v51C34.top = 0;
 	_v51C34.bottom = 300;
+	BF_GLOBALS._sceneHandler->_delayTicks = 1;
 }
 
 void SceneExt::checkGun() {
@@ -955,7 +965,7 @@ void SceneHandlerExt::process(Event &event) {
 			return;
 	}
 
-	// If the user clicks the button whislt the introduction is active, prompt for playing the game
+	// If the user clicks the button whilst the introduction is active, prompt for playing the game
 	if ((BF_GLOBALS._dayNumber == 0) && (event.eventType == EVENT_BUTTON_DOWN)) {
 		// Prompt user for whether to start play or watch introduction
 		BF_GLOBALS._player.enableControl();
@@ -1316,7 +1326,7 @@ bool BlueForceInvObjectList::SelectItem(int objectNumber) {
 		AmmoBeltDialog *dlg = new AmmoBeltDialog();
 		dlg->execute();
 		delete dlg;
-	
+
 		return true;
 	}
 
@@ -1355,58 +1365,6 @@ bool NamedHotspot::startAction(CursorType action, Event &event) {
 		return true;
 	default:
 		return SceneHotspot::startAction(action, event);
-	}
-}
-
-void NamedHotspot::setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum) {
-	setBounds(ys, xe, ye, xs);
-	_resNum = resnum;
-	_lookLineNum = lookLineNum;
-	_useLineNum = useLineNum;
-	_talkLineNum = -1;
-	g_globals->_sceneItems.addItems(this, NULL);
-}
-
-void NamedHotspot::setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item) {
-	setBounds(bounds);
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	switch (mode) {
-	case 2:
-		g_globals->_sceneItems.push_front(this);
-		break;
-	case 4:
-		g_globals->_sceneItems.addBefore(item, this);
-		break;
-	case 5:
-		g_globals->_sceneItems.addAfter(item, this);
-		break;
-	default:
-		g_globals->_sceneItems.push_back(this);
-		break;
-	}
-}
-
-void NamedHotspot::setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode) {
-	_sceneRegionId = sceneRegionId;
-	_resNum = resNum;
-	_lookLineNum = lookLineNum;
-	_talkLineNum = talkLineNum;
-	_useLineNum = useLineNum;
-
-	// Handle adding hotspot to scene items list as necessary
-	switch (mode) {
-	case 2:
-		GLOBALS._sceneItems.push_front(this);
-		break;
-	case 3:
-		break;
-	default:
-		GLOBALS._sceneItems.push_back(this);
-		break;
 	}
 }
 
@@ -1450,7 +1408,7 @@ void SceneMessage::signal() {
 }
 
 void SceneMessage::process(Event &event) {
-	if ((event.eventType == EVENT_BUTTON_DOWN) || 
+	if ((event.eventType == EVENT_BUTTON_DOWN) ||
 		((event.eventType == EVENT_KEYPRESS) && (event.kbd.keycode == Common::KEYCODE_RETURN))) {
 		signal();
 	}
@@ -1481,7 +1439,7 @@ void SceneMessage::draw() {
 
 void SceneMessage::clear() {
 	// Fade out the text display
-	static const uint32 black = 0;	
+	static const uint32 black = 0;
 	BF_GLOBALS._scenePalette.fade((const byte *)&black, false, 100);
 
 	// Refresh the background

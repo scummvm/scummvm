@@ -109,6 +109,7 @@ protected:
 
 	struct EditListEntry {
 		uint32 trackDuration;
+		uint32 timeOffset;
 		int32 mediaTime;
 		Rational mediaRate;
 	};
@@ -154,7 +155,7 @@ protected:
 		uint16 height;
 		CodecType codecType;
 
-		Array<SampleDesc*> sampleDescs;
+		Array<SampleDesc *> sampleDescs;
 
 		uint32 editCount;
 		EditListEntry *editList;
@@ -163,6 +164,7 @@ protected:
 
 		uint32 frameCount;
 		uint32 duration;
+		uint32 mediaDuration;
 		uint32 startTime;
 		Rational scaleFactorX;
 		Rational scaleFactorY;
@@ -178,7 +180,7 @@ protected:
 	uint32 _duration;
 	Rational _scaleFactorX;
 	Rational _scaleFactorY;
-	Array<Track*> _tracks;
+	Array<Track *> _tracks;
 	uint32 _beginOffset;
 	MacResManager *_resFork;
 

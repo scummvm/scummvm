@@ -94,7 +94,7 @@ class Scene300: public SceneExt {
 		virtual void signal();
 	};
 private:
-	void setup();
+	void setupInspection();
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2;
 	SequenceManager _sequenceManager3, _sequenceManager4;
@@ -213,9 +213,9 @@ public:
 	int _field1390;
 	int _stripNumber;
 	int _field1398;
-	int _field1B60, _field1B62, _field1B64;
-	int _field1B66, _field1B6C, _field139C;
-	bool _field1B68, _field1B6A;
+	int _invGreenCount, _bookGreenCount, _invGangCount;
+	int _bookGangCount, _field1B6C, _field139C;
+	bool _field1B68, _doorOpened;
 	CursorType _currentCursor;
 
 	Scene315();
@@ -363,7 +363,7 @@ public:
 	ASoundExt _sound1, _sound2;
 	TimerExt _timer1;
 	Timer2 _timer2;
-	int _seqNumber1, _field2652, _field2654;
+	int _seqNumber1, _womanDialogCount, _backupPresent;
 
 	Scene340();
 	virtual void synchronize(Serializer &s);
@@ -621,11 +621,11 @@ class Scene360: public SceneExt {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class BsseballCards: public NamedObject {
+	class BaseballCards: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Object6: public NamedObject {
+	class Harrison: public NamedObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -667,8 +667,8 @@ public:
 	SceneObject _object2;
 	Window _window;
 	Object4 _object4;
-	BsseballCards _baseballCards;
-	Object6 _object6;
+	BaseballCards _baseballCards;
+	Harrison _harrison;
 	Object7 _object7;
 	Item1 _item1;
 	Item2 _item2;
@@ -676,9 +676,7 @@ public:
 	Barometer _barometer;
 	Action1 _action1;
 	ASound _sound1;
-	int _field380;
 
-	Scene360();
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();
@@ -815,7 +813,8 @@ public:
 	SpeakerJake385 _jake385Speaker;
 	NamedHotspot _item1, _item2, _item3, _item4, _item5;
 	Exit _exit;
-	int _talkAction, _jimFlag;
+	int _talkAction;
+	bool _jimFlag;
 
 	Scene385();
 	virtual void synchronize(Serializer &s);

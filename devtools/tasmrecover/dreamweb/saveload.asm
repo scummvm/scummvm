@@ -1,4 +1,4 @@
-;Copyright (c) 1990-2011 by Neil Dodwell
+;Copyright (c) 1990-2012 by Neil Dodwell
 ;Released with permission from Neil Dodwell under GPLv2
 ;See LICENSE file for full license text
 
@@ -1502,7 +1502,6 @@ Loadold	proc	near
 alreadyloadold:	mov	ax,mousebutton
 	and	ax,1
 	jz	noloadold
-	mov ax,0ffffh
 	call	doload
 	cmp	getback,4
 	jz	noloadold

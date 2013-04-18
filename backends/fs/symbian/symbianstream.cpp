@@ -70,22 +70,22 @@ TSymbianFileEntry*	CreateSymbianFileEntry(const char* name, const char* mode) {
 
 		switch (mode[0]) {
 		case 'a':
-			if (fileEntry->_fileHandle.Open(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
-				if (fileEntry->_fileHandle.Create(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
+			if (fileEntry->_fileHandle.Open(static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
+				if (fileEntry->_fileHandle.Create(static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
 					delete fileEntry;
 					fileEntry = NULL;
 				}
 			}
 			break;
 		case 'r':
-			if (fileEntry->_fileHandle.Open(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
+			if (fileEntry->_fileHandle.Open(static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
 				delete fileEntry;
 				fileEntry = NULL;
 			}
 			break;
 
 		case 'w':
-			if (fileEntry->_fileHandle.Replace(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
+			if (fileEntry->_fileHandle.Replace(static_cast<OSystem_SDL_Symbian *>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
 				delete fileEntry;
 				fileEntry = NULL;
 			}
@@ -96,7 +96,7 @@ TSymbianFileEntry*	CreateSymbianFileEntry(const char* name, const char* mode) {
 }
 
 size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry* handle) {
-	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(handle));
+	TSymbianFileEntry* entry = ((TSymbianFileEntry *)(handle));
 	TUint32 totsize = size*numItems;
 	TPtr8 pointer ( (unsigned char*) ptr, totsize);
 
@@ -169,29 +169,29 @@ SymbianStdioStream::SymbianStdioStream(void *handle) : _handle(handle) {
 }
 
 SymbianStdioStream::~SymbianStdioStream() {
-	((TSymbianFileEntry*)(_handle))->_fileHandle.Close();
+	((TSymbianFileEntry *)(_handle))->_fileHandle.Close();
 
-	delete (TSymbianFileEntry*)(_handle);
+	delete (TSymbianFileEntry *)(_handle);
 }
 
 bool SymbianStdioStream::err() const {
-	return ((TSymbianFileEntry*)(_handle))->_lastError != 0;
+	return ((TSymbianFileEntry *)(_handle))->_lastError != 0;
 }
 
 void SymbianStdioStream::clearErr() {
-	((TSymbianFileEntry*)(_handle))->_lastError = 0;
-	((TSymbianFileEntry*)(_handle))->_eofReached = 0;
+	((TSymbianFileEntry *)(_handle))->_lastError = 0;
+	((TSymbianFileEntry *)(_handle))->_eofReached = 0;
 }
 
 bool SymbianStdioStream::eos() const {
-	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(_handle));
+	TSymbianFileEntry* entry = ((TSymbianFileEntry *)(_handle));
 
 	return entry->_eofReached != 0;
 }
 
 int32 SymbianStdioStream::pos() const {
 	TInt pos = 0;
-	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(_handle));
+	TSymbianFileEntry* entry = ((TSymbianFileEntry *)(_handle));
 
 	entry->_lastError = entry->_fileHandle.Seek(ESeekCurrent, pos);
 	if (entry->_lastError == KErrNone && entry->_inputPos != KErrNotFound) {
@@ -204,7 +204,7 @@ int32 SymbianStdioStream::pos() const {
 int32 SymbianStdioStream::size() const {
 
 	TInt length = 0;
-	((TSymbianFileEntry*)(_handle))->_fileHandle.Size(length);
+	((TSymbianFileEntry *)(_handle))->_fileHandle.Size(length);
 
 	return length;
 }
@@ -214,7 +214,7 @@ bool SymbianStdioStream::seek(int32 offs, int whence) {
 
 	TSeek seekMode = ESeekStart;
 	TInt pos = offs;
-	TSymbianFileEntry* entry = ((TSymbianFileEntry*)(_handle));
+	TSymbianFileEntry* entry = ((TSymbianFileEntry *)(_handle));
 
 	switch (whence) {
 	case SEEK_SET:
@@ -246,11 +246,11 @@ uint32 SymbianStdioStream::read(void *ptr, uint32 len) {
 uint32 SymbianStdioStream::write(const void *ptr, uint32 len) {
 	TPtrC8 pointer( (unsigned char*) ptr, len);
 
-	((TSymbianFileEntry*)(_handle))->_inputPos = KErrNotFound;
-	((TSymbianFileEntry*)(_handle))->_lastError = ((TSymbianFileEntry*)(_handle))->_fileHandle.Write(pointer);
-	((TSymbianFileEntry*)(_handle))->_eofReached = EFalse;
+	((TSymbianFileEntry *)(_handle))->_inputPos = KErrNotFound;
+	((TSymbianFileEntry *)(_handle))->_lastError = ((TSymbianFileEntry *)(_handle))->_fileHandle.Write(pointer);
+	((TSymbianFileEntry *)(_handle))->_eofReached = EFalse;
 
-	if (((TSymbianFileEntry*)(_handle))->_lastError == KErrNone) {
+	if (((TSymbianFileEntry *)(_handle))->_lastError == KErrNone) {
 		return len;
 	}
 
@@ -258,7 +258,7 @@ uint32 SymbianStdioStream::write(const void *ptr, uint32 len) {
 }
 
 bool SymbianStdioStream::flush() {
-	((TSymbianFileEntry*)(_handle))->_fileHandle.Flush();
+	((TSymbianFileEntry *)(_handle))->_fileHandle.Flush();
 	return true;
 }
 

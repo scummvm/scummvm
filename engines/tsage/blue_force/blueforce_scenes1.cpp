@@ -243,8 +243,8 @@ void Scene109::Action1::signal() {
 		scene->_drunk.show();
 		scene->_drunk.setAction(&scene->_action3);
 		scene->_object2.show();
-		scene->_object9.show();
-		scene->_object9.setAction(&scene->_action2);
+		scene->_beerSign.show();
+		scene->_beerSign.setAction(&scene->_action2);
 
 		BF_GLOBALS._v501FC = 170;
 		setDelay(60);
@@ -257,27 +257,27 @@ void Scene109::Action1::signal() {
 		break;
 	case 5:
 		// Open briefcase and pass over disk
-		setAction(&scene->_sequenceManager6, this, 105, &scene->_object10, NULL);
+		setAction(&scene->_sequenceManager6, this, 105, &scene->_animationInset, NULL);
 		break;
 	case 6:
 		// Protaginist 2 walk to the bar
-		scene->_object10.remove();
+		scene->_animationInset.remove();
 		setAction(&scene->_sequenceManager6, this, 100, &scene->_protaginist2, NULL);
 		break;
 	case 7:
 		// Two thugs enter and walk to table
-		scene->_object7.setAction(&scene->_sequenceManager7, NULL, 103, &scene->_object7, NULL);
-		scene->_object5.setAction(&scene->_sequenceManager8, this, 102, &scene->_object5, NULL);
+		scene->_cop2.setAction(&scene->_sequenceManager7, NULL, 103, &scene->_cop2, NULL);
+		scene->_cop1.setAction(&scene->_sequenceManager8, this, 102, &scene->_cop1, NULL);
 		scene->_protaginist2.setAction(&scene->_sequenceManager6, NULL, 104, &scene->_protaginist2, &scene->_bartender, NULL);
 		break;
 	case 8:
 		// Protaginist 1 leaves, protaginist 2 stands up
-		setAction(&scene->_sequenceManager8, this, 101, &scene->_object5, &scene->_protaginist1, NULL);
+		setAction(&scene->_sequenceManager8, this, 101, &scene->_cop1, &scene->_protaginist1, NULL);
 		break;
 	case 9:
 		// Shots fired!
 		scene->_protaginist1.setAction(&scene->_sequenceManager5, this, 98, &scene->_protaginist1, NULL);
-		scene->_object7.setAction(&scene->_sequenceManager7, NULL, 99, &scene->_object7, NULL);
+		scene->_cop2.setAction(&scene->_sequenceManager7, NULL, 99, &scene->_cop2, NULL);
 		break;
 	case 10:
 		// End scene
@@ -289,12 +289,12 @@ void Scene109::Action1::signal() {
 
 void Scene109::Action2::signal() {
 	Scene109 *scene = (Scene109 *)BF_GLOBALS._sceneManager._scene;
-	scene->setAction(&scene->_sequenceManager2, this, 3117, &scene->_object9, NULL);
+	setAction(&scene->_sequenceManager2, this, 3117, &scene->_beerSign, NULL);
 }
 
 void Scene109::Action3::signal() {
 	Scene109 *scene = (Scene109 *)BF_GLOBALS._sceneManager._scene;
-	scene->setAction(&scene->_sequenceManager3, this, 108, &scene->_drunk, NULL);
+	setAction(&scene->_sequenceManager3, this, 108, &scene->_drunk, NULL);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -353,21 +353,21 @@ void Scene109::postInit(SceneObjectList *OwnerList) {
 	_object2.setPosition(Common::Point(104, 64));
 	_object2.hide();
 
-	_object9.postInit();
-	_object9.setVisage(115);
-	_object9.setStrip(4);
-	_object9.setFrame(1);
-	_object9.setPosition(Common::Point(262, 29));
-	_object9.hide();
+	_beerSign.postInit();
+	_beerSign.setVisage(115);
+	_beerSign.setStrip(4);
+	_beerSign.setFrame(1);
+	_beerSign.setPosition(Common::Point(262, 29));
+	_beerSign.hide();
 
-	_object5.postInit();
-	_object5.hide();
+	_cop1.postInit();
+	_cop1.hide();
 
-	_object7.postInit();
-	_object7.hide();
+	_cop2.postInit();
+	_cop2.hide();
 
-	_object10.postInit();
-	_object10.hide();
+	_animationInset.postInit();
+	_animationInset.hide();
 
 	BF_GLOBALS._player.disableControl();
 	setAction(&_action1, this);
@@ -430,7 +430,7 @@ void Scene110::Action1::signal() {
 	case 6:
 		// Play "Vroum"
 		scene->_sound.play(31);
-		// The guy starts the engine 
+		// The guy starts the engine
 		scene->_object4.setStrip(3);
 		scene->_object4._frame = 1;
 		scene->_object4.animate(ANIM_MODE_5, NULL);
@@ -837,7 +837,7 @@ void Scene110::postInit(SceneObjectList *OwnerList) {
 	_object10._moveDiff.y = 10;
 	_object10.setPosition(_object9._position);
 	_object10.hide();
-	
+
 	setAction(&_action1);
 }
 /*--------------------------------------------------------------------------
@@ -877,7 +877,7 @@ bool Scene114::Door::startAction(CursorType action, Event &event) {
 		SceneItem::display2(114, 1);
 		return true;
 	case CURSOR_USE:
-		BF_GLOBALS._walkRegions.proc2(2);
+		BF_GLOBALS._walkRegions.enableRegion(2);
 		BF_GLOBALS._player.disableControl();
 		scene->_lyle.fixPriority(-1);
 		scene->_sceneMode = 1140;
@@ -895,8 +895,8 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 	loadScene(110);
 
 	setZoomPercents(85, 80, 105, 100);
-	BF_GLOBALS._walkRegions.proc1(9);
-	BF_GLOBALS._walkRegions.proc1(22);
+	BF_GLOBALS._walkRegions.disableRegion(9);
+	BF_GLOBALS._walkRegions.disableRegion(22);
 
 	_door.postInit();
 	_door.setVisage(110);
@@ -921,7 +921,7 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 	_lyle._moveDiff.x = 2;
 	_lyle._moveDiff.y = 1;
 	_lyle.hide();
-	_lyle.setDetails(114, 2, -1, -1, 1, NULL);
+	_lyle.setDetails(114, 2, -1, -1, 1, (SceneItem *)NULL);
 
 	_vechile.postInit();
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
@@ -943,10 +943,10 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 			_vechile.setStrip(1);
 			_vechile.changeZoom(77);
 		}
-		BF_GLOBALS._walkRegions.proc1(17);
+		BF_GLOBALS._walkRegions.disableRegion(17);
 	}
 	BF_GLOBALS._sceneItems.push_front(&_vechile);
-	BF_GLOBALS._walkRegions.proc1(2);
+	BF_GLOBALS._walkRegions.disableRegion(2);
 
 	if (BF_GLOBALS._sceneManager._previousScene == 115) {
 		BF_GLOBALS._player.setPosition(Common::Point(219, 100));
@@ -962,7 +962,7 @@ void Scene114::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.enableControl();
 	}
 
-	_item1.setDetails(Rect(0, 0, 320, 200), 114, 3, -1, -1, 1, NULL);
+	_item1.setDetails(Rect(0, 0, 320, 200), 114, 3, -1, -1, 1, (SceneItem *)NULL);
 }
 
 void Scene114::signal() {
@@ -985,9 +985,9 @@ void Scene114::signal() {
  * Scene 115 - Inside Tony's bar
  *
  *--------------------------------------------------------------------------*/
-bool Scene115::Object1::startAction(CursorType action, Event &event) {
+bool Scene115::Kate::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 8, SET_WIDTH, 312,
@@ -1001,7 +1001,7 @@ bool Scene115::Object1::startAction(CursorType action, Event &event) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 0;
 			scene->_stripManager.start(1174, scene);
-		} else if (scene->_field31E8 == 0) {
+		} else if (scene->_jukeboxPlaying == 0) {
 			if (BF_GLOBALS.getFlag(fShowedIdToKate)) {
 				BF_GLOBALS._player.disableControl();
 				scene->_sceneMode = 0;
@@ -1014,10 +1014,10 @@ bool Scene115::Object1::startAction(CursorType action, Event &event) {
 			scene->setAction(&scene->_action7);
 		return true;
 	case INV_MUG_SHOT:
-		if (scene->_field31E8 == 0) {
+		if (scene->_jukeboxPlaying == 0) {
 			BF_GLOBALS._player.disableControl();
 			scene->_sceneMode = 0;
-			if (BF_GLOBALS._v4CEAA == 0)
+			if (BF_GLOBALS._tonyDialogCtr == 0)
 				scene->_stripManager.start(1167, scene);
 			else if (BF_GLOBALS.getFlag(fShowedIdToKate))
 				scene->_stripManager.start(1159, scene);
@@ -1035,8 +1035,8 @@ bool Scene115::Object1::startAction(CursorType action, Event &event) {
 					SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
 	case INV_ID:
-		if (scene->_field31E8 == 0) {
-			if (BF_GLOBALS._v4CEAA == 0) {
+		if (scene->_jukeboxPlaying == 0) {
+			if (BF_GLOBALS._tonyDialogCtr == 0) {
 				scene->_sceneMode = 1167;
 				scene->setAction(&scene->_action6);
 			} else if (BF_GLOBALS.getFlag(fShowedIdToKate)) {
@@ -1059,9 +1059,9 @@ bool Scene115::Object1::startAction(CursorType action, Event &event) {
 	}
 }
 
-bool Scene115::Object2::startAction(CursorType action, Event &event) {
+bool Scene115::Tony::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 7, SET_WIDTH, 312,
@@ -1077,25 +1077,25 @@ bool Scene115::Object2::startAction(CursorType action, Event &event) {
 			else if (BF_INVENTORY.getObjectScene(INV_COBB_RAP) == 1) {
 				if (BF_GLOBALS.getFlag(fTalkedToTony))
 					scene->_sceneMode = 1151;
-				else if (BF_GLOBALS._v4CEAA == 0) {
+				else if (BF_GLOBALS._tonyDialogCtr == 0) {
 					scene->_sceneMode = 1150;
 					BF_GLOBALS.setFlag(fTalkedToTony);
 				} else
 					scene->_sceneMode = 1151;
-			} else if (_field15F8 == 0) {
-				_field15F8++;
+			} else if (_talkToTonyCtr2 == 0) {
+				_talkToTonyCtr2++;
 				scene->_sceneMode = 1171;
 			} else
 				scene->_sceneMode = 1172;
 		} else if (BF_GLOBALS.getFlag(onDuty)) {
-			if (scene->_field31EA == 0) {
-				scene->_field31EA = 1;
+			if (scene->_talkToTonyCtr == 0) {
+				scene->_talkToTonyCtr = 1;
 				scene->_sceneMode = 1169;
 			} else
 				scene->_sceneMode = 1170;
-		} else if (scene->_field31EA == 0) {
+		} else if (scene->_talkToTonyCtr == 0) {
 			scene->_sceneMode = 1171;
-			scene->_field31EA = 1;
+			scene->_talkToTonyCtr = 1;
 		} else
 			scene->_sceneMode = 1172;
 
@@ -1111,7 +1111,7 @@ bool Scene115::Object2::startAction(CursorType action, Event &event) {
 	case INV_COBB_RAP:
 		if (BF_GLOBALS.getFlag(onDuty))
 			scene->_sceneMode = 1177;
-		else if (BF_GLOBALS._v4CEAA == 0)
+		else if (BF_GLOBALS._tonyDialogCtr == 0)
 			scene->_sceneMode = 1179;
 		else
 			scene->_sceneMode = 1154;
@@ -1132,16 +1132,16 @@ bool Scene115::Object2::startAction(CursorType action, Event &event) {
 			} else {
 				T2_GLOBALS._uiElements.addScore(30);
 				BF_GLOBALS.setFlag(fTalkedToTony);
-				if (BF_GLOBALS._v4CEAA == 0) {
+				if (BF_GLOBALS._tonyDialogCtr == 0) {
 					scene->_sceneMode = 1150;
 					scene->setAction(&scene->_action9);
 				} else {
-					BF_GLOBALS._v4CEAA = 1;
+					BF_GLOBALS._tonyDialogCtr = 1;
 					scene->setAction(&scene->_action2);
 				}
 			}
-		} else if (_field15F8 == 0) {
-			_field15F8++;
+		} else if (_talkToTonyCtr2 == 0) {
+			_talkToTonyCtr2++;
 			if (BF_GLOBALS.getFlag(onDuty)) {
 				scene->_sceneMode = 1182;
 				scene->setAction(&scene->_action9);
@@ -1164,7 +1164,7 @@ bool Scene115::Object2::startAction(CursorType action, Event &event) {
 
 bool Scene115::Object3::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 9, SET_WIDTH, 312,
@@ -1195,7 +1195,7 @@ bool Scene115::Object3::startAction(CursorType action, Event &event) {
 
 bool Scene115::Object4::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	switch (action) {
 	case CURSOR_LOOK:
 		SceneItem::display(115, 42, SET_WIDTH, 312,
@@ -1215,24 +1215,23 @@ bool Scene115::Object4::startAction(CursorType action, Event &event) {
 	}
 }
 
-void Scene115::Item1::signal() {
+void Scene115::Jukebox::signal() {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
-	if (_field1F8A == 2)
-		_field1F8A = 0;
 
-	if (_field1F8A == 1) {
-		_field1F8A = 2;
+	if (_jokeboxPlayingCtr == 2)
+		_jokeboxPlayingCtr = 0;
+	else if (_jokeboxPlayingCtr == 1) {
+		_jokeboxPlayingCtr = 2;
 		setAction(&_sequenceManager6, this, 118, &scene->_object12, &scene->_object11, NULL);
 	}
 }
 
-bool Scene115::Item1::startAction(CursorType action, Event &event) {
+bool Scene115::Jukebox::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	if (action == CURSOR_USE) {
-		if (_field1F8A == 0) {
-			_field1F8A = 1;
+		if (_jokeboxPlayingCtr == 0) {
+			_jokeboxPlayingCtr = 1;
 			BF_GLOBALS._player.disableControl();
 			scene->setAction(&scene->_action4);
 		} else
@@ -1242,31 +1241,31 @@ bool Scene115::Item1::startAction(CursorType action, Event &event) {
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
 		return true;
-	} else 
+	} else
 		return NamedHotspot::startAction(action, event);
 }
 
-void Scene115::Item1::synchronize(Serializer &s) {
+void Scene115::Jukebox::synchronize(Serializer &s) {
 	NamedHotspot::synchronize(s);
-	s.syncAsSint16LE(_field1F8A);
+	s.syncAsSint16LE(_jokeboxPlayingCtr);
 }
 
-Scene115::Item1::Item1() {
-	_field1F8A = 0;
+Scene115::Jukebox::Jukebox() {
+	_jokeboxPlayingCtr = 0;
 }
 
 void Scene115::EventHandler1::dispatch() {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
 
 	if (BF_GLOBALS._player.getRegionIndex() == 27) {
-		scene->_object1.setAction(&scene->_action5);
+		scene->_kate.setAction(&scene->_action5);
 		scene->removeTimer(this);
 	}
 }
 
 bool Scene115::Item10::startAction(CursorType action, Event &event) {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
-	
+
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
 		scene->_object4.setStrip2(6);
 		Common::Point pt(-20, 122);
@@ -1339,20 +1338,20 @@ void Scene115::Action2::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		BF_GLOBALS._player.disableControl();
-		if (BF_GLOBALS._v4CEAA < 3) {
-			if (scene->_object2._position.x > 67) {
-				scene->_object2.setAction(&scene->_sequenceManager3, NULL, 1118, &scene->_object2, NULL);
-			} else if (scene->_object2._position.x != 67) {
-				scene->_object2.setAction(&scene->_sequenceManager3, NULL, 1119, &scene->_object2, NULL);
+		if (BF_GLOBALS._tonyDialogCtr < 3) {
+			if (scene->_tony._position.x > 67) {
+				scene->_tony.setAction(&scene->_sequenceManager3, NULL, 1118, &scene->_tony, NULL);
+			} else if (scene->_tony._position.x != 67) {
+				scene->_tony.setAction(&scene->_sequenceManager3, NULL, 1119, &scene->_tony, NULL);
 			}
 		}
 		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 1117, &BF_GLOBALS._player);
 		break;
 	case 1:
-		BF_GLOBALS._v4CEAA++;
+		++BF_GLOBALS._tonyDialogCtr;
 		if (BF_GLOBALS.getFlag(onDuty)) {
 			if (BF_GLOBALS.getFlag(fTalkedToTony)) {
-				switch (BF_GLOBALS._v4CEAA) {
+				switch (BF_GLOBALS._tonyDialogCtr) {
 				case 1:
 					T2_GLOBALS._uiElements.addScore(30);
 					scene->_stripManager.start(1181, this);
@@ -1369,7 +1368,7 @@ void Scene115::Action2::signal() {
 			}
 		} else {
 			if (BF_GLOBALS.getFlag(fTalkedToTony)) {
-				switch (BF_GLOBALS._v4CEAA) {
+				switch (BF_GLOBALS._tonyDialogCtr) {
 				case 1:
 					T2_GLOBALS._uiElements.addScore(30);
 					scene->_stripManager.start(1153, this);
@@ -1387,8 +1386,8 @@ void Scene115::Action2::signal() {
 		}
 		break;
 	case 2:
-		if (BF_GLOBALS._v4CEAA == 3)
-			scene->_object2.setAction(&scene->_sequenceManager3, NULL, 3119, &scene->_object2, NULL);
+		if (BF_GLOBALS._tonyDialogCtr == 3)
+			scene->_tony.setAction(&scene->_sequenceManager3, NULL, 3119, &scene->_tony, NULL);
 		BF_GLOBALS._player.enableControl();
 		remove();
 	default:
@@ -1399,7 +1398,7 @@ void Scene115::Action2::signal() {
 void Scene115::Action3::signal() {
 	Scene115 *scene = (Scene115 *)BF_GLOBALS._sceneManager._scene;
 
-	setAction(&scene->_sequenceManager4, this, 3117, &scene->_object7, NULL);
+	setAction(&scene->_sequenceManager4, this, 3117, &scene->_neonSign, NULL);
 }
 
 void Scene115::Action4::signal() {
@@ -1426,7 +1425,7 @@ void Scene115::Action4::signal() {
 		setAction(&scene->_sequenceManager1, this, 117, &scene->_object12, &scene->_object11, NULL);
 		break;
 	case 3:
-		scene->_sound1.play(81, &scene->_item1, 127);
+		scene->_sound1.play(81, &scene->_itemJukebox, 127);
 		BF_GLOBALS._player.enableControl();
 		remove();
 	default:
@@ -1439,10 +1438,11 @@ void Scene115::Action5::signal() {
 
 	switch (_actionIndex++) {
 	case 0:
-		if (scene->_item1._field1F8A == 0) {
-			setAction(&scene->_sequenceManager5, this, 1115, &scene->_object1, NULL);
+		if (scene->_itemJukebox._jokeboxPlayingCtr == 0) {
+			setAction(&scene->_sequenceManager5, this, 1115, &scene->_kate, NULL);
+			scene->_jukeboxPlaying = 1;
 		} else {
-			_actionIndex--;
+			--_actionIndex;
 			setDelay(120);
 		}
 		break;
@@ -1450,15 +1450,15 @@ void Scene115::Action5::signal() {
 		setAction(&scene->_sequenceManager5, this, 117, &scene->_object12, &scene->_object11, NULL);
 		break;
 	case 2:
-		scene->_sound1.play(81, &scene->_item1, 127);
-		scene->_item1._field1F8A = 1;
+		scene->_sound1.play(81, &scene->_itemJukebox, 127);
+		scene->_itemJukebox._jokeboxPlayingCtr = 1;
 		setDelay(3);
 		break;
 	case 3:
-		setAction(&scene->_sequenceManager5, this, 1116, &scene->_object1, NULL);
+		setAction(&scene->_sequenceManager5, this, 1116, &scene->_kate, NULL);
 		break;
 	case 4:
-		scene->_field31E8 = 0;
+		scene->_jukeboxPlaying = 0;
 		remove();
 	default:
 		break;
@@ -1471,22 +1471,22 @@ void Scene115::Action6::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		BF_GLOBALS._player.disableControl();
-		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 2115, &scene->_object1, &BF_GLOBALS._player, NULL);
+		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 2115, &scene->_kate, &BF_GLOBALS._player, NULL);
 		break;
 	case 1:
 		if (scene->_sceneMode == 9999) {
-			setAction(&scene->_sequenceManager1, this, 4115, &scene->_object1, &BF_GLOBALS._player, NULL);
-			_actionIndex--;
+			setAction(&scene->_sequenceManager1, this, 4115, &scene->_kate, &BF_GLOBALS._player, NULL);
+			--_actionIndex;
 			scene->_sceneMode = 1166;
 		} else {
 			scene->_stripManager.start(scene->_sceneMode, this);
 		}
 		break;
 	case 2:
-		scene->_object1.setVisage(131);
-		scene->_object1.setStrip(1);
-		scene->_object1.setFrame(1);
-		scene->_object1.setPosition(Common::Point(122, 97));
+		scene->_kate.setVisage(131);
+		scene->_kate.setStrip(1);
+		scene->_kate.setFrame(1);
+		scene->_kate.setPosition(Common::Point(122, 97));
 		BF_GLOBALS._player.enableControl();
 		remove();
 	default:
@@ -1507,11 +1507,11 @@ void Scene115::Action7::signal() {
 		break;
 	case 1:
 		BF_GLOBALS._player.setStrip(4);
-		if (BF_GLOBALS._v4CEB0 == 0)
+		if (BF_GLOBALS._kateDialogCtr == 0)
 			scene->_stripManager.start(1156, this);
 		else
 			scene->_stripManager.start(1157, this);
-		BF_GLOBALS._v4CEB0++;
+		++BF_GLOBALS._kateDialogCtr;
 		break;
 	case 2:
 		BF_GLOBALS._player.enableControl();
@@ -1528,11 +1528,11 @@ void Scene115::Action8::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		BF_GLOBALS._player.disableControl();
-		setAction(&scene->_sequenceManager1, this, 2115, &scene->_object1, &BF_GLOBALS._player, NULL);
+		setAction(&scene->_sequenceManager1, this, 2115, &scene->_kate, &BF_GLOBALS._player, NULL);
 		break;
 	case 1:
 		T2_GLOBALS._uiElements.addScore(30);
-		setAction(&scene->_sequenceManager1, this, 4115, &scene->_object1, &BF_GLOBALS._player, NULL);
+		setAction(&scene->_sequenceManager1, this, 4115, &scene->_kate, &BF_GLOBALS._player, NULL);
 		break;
 	case 2:
 		scene->_stripManager.start(1160, this);
@@ -1542,15 +1542,15 @@ void Scene115::Action8::signal() {
 		break;
 	case 4:
 		BF_GLOBALS.setFlag(fGivenNapkin);
-		setAction(&scene->_sequenceManager1, this, 2117, &scene->_object1, &BF_GLOBALS._player, &scene->_object13, NULL);
+		setAction(&scene->_sequenceManager1, this, 2117, &scene->_kate, &BF_GLOBALS._player, &scene->_object13, NULL);
 		break;
 	case 5:
 		BF_INVENTORY.setObjectScene(INV_NAPKIN, 1);
 		T2_GLOBALS._uiElements.addScore(10);
-		scene->_object1.setVisage(131);
-		scene->_object1.setStrip(1);
-		scene->_object1.setFrame(1);
-		scene->_object1.setPosition(Common::Point(122, 97));
+		scene->_kate.setVisage(131);
+		scene->_kate.setStrip(1);
+		scene->_kate.setFrame(1);
+		scene->_kate.setPosition(Common::Point(122, 97));
 		BF_GLOBALS._player.enableControl();
 		remove();
 		break;
@@ -1565,17 +1565,17 @@ void Scene115::Action9::signal() {
 	switch (_actionIndex++) {
 	case 0:
 		BF_GLOBALS._player.disableControl();
-		if (scene->_object2._position.x > 67)
-			scene->_object2.setAction(&scene->_sequenceManager3, NULL, 1118, &scene->_object2, NULL);
-		else if (scene->_object2._position.x != 67)
-			scene->_object2.setAction(&scene->_sequenceManager3, NULL, 1119, &scene->_object2, NULL);
+		if (scene->_tony._position.x > 67)
+			scene->_tony.setAction(&scene->_sequenceManager3, NULL, 1118, &scene->_tony, NULL);
+		else if (scene->_tony._position.x != 67)
+			scene->_tony.setAction(&scene->_sequenceManager3, NULL, 1119, &scene->_tony, NULL);
 		BF_GLOBALS._player.setAction(&scene->_sequenceManager1, this, 1117, &BF_GLOBALS._player, NULL);
 		break;
 	case 1:
 		scene->_stripManager.start(scene->_sceneMode, this);
 		break;
 	case 2:
-		scene->_object2.setAction(&scene->_sequenceManager3, this, 3119, &scene->_object2, NULL);
+		scene->_tony.setAction(&scene->_sequenceManager3, this, 3119, &scene->_tony, NULL);
 		break;
 	case 3:
 		BF_GLOBALS._player.enableControl();
@@ -1586,16 +1586,16 @@ void Scene115::Action9::signal() {
 }
 
 Scene115::Scene115() : SceneExt () {
-	_field168A = _field31E8 = _field31EA = 0;
+	_lineNumModifier = _jukeboxPlaying = _talkToTonyCtr = 0;
 }
 
 void Scene115::postInit(SceneObjectList *OwnerList) {
 	SceneExt::postInit();
-	
+
 	BF_GLOBALS._sound1.fadeSound(15);
 	loadScene(115);
 	setZoomPercents(98, 85, 115, 100);
-	_field31E8 = 0;
+	_jukeboxPlaying = 0;
 	_stripManager.addSpeaker(&_gameTextSpeaker);
 	_stripManager.addSpeaker(&_kateSpeaker);
 	_stripManager.addSpeaker(&_tonySpeaker);
@@ -1620,28 +1620,28 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 	_object5.fixPriority(95);
 
 	// Bartender
-	_object2.postInit();
-	_object2.setVisage(132);
-	_object2.setPosition(Common::Point(74, 66));
-	_object2.setStrip(3);
-	_object2.setFrame(1);
-	_object2.fixPriority(95);
-	_object2.animate(ANIM_MODE_2, NULL);
-	_object2._numFrames = 5;
-	_object2._field15F8 = 0;
-	_field31EA = 0;
+	_tony.postInit();
+	_tony.setVisage(132);
+	_tony.setPosition(Common::Point(74, 66));
+	_tony.setStrip(3);
+	_tony.setFrame(1);
+	_tony.fixPriority(95);
+	_tony.animate(ANIM_MODE_2, NULL);
+	_tony._numFrames = 5;
+	_tony._talkToTonyCtr2 = 0;
+	_talkToTonyCtr = 0;
 
 	//Neon sign
-	_object7.postInit();
-	_object7.setVisage(115);
-	_object7.setStrip(4);
-	_object7.setFrame(1);
-	_object7.setPosition(Common::Point(262, 29));
-	_object7.setAction(&_action3);
+	_neonSign.postInit();
+	_neonSign.setVisage(115);
+	_neonSign.setStrip(4);
+	_neonSign.setFrame(1);
+	_neonSign.setPosition(Common::Point(262, 29));
+	_neonSign.setAction(&_action3);
 
 	_object11.postInit();
 	_object11.hide();
-	
+
 	_object12.postInit();
 	_object12.hide();
 
@@ -1665,7 +1665,7 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 		NpcMover *mover = new NpcMover();
 		_object4.addMover(mover, &destPos, NULL);
 		BF_GLOBALS._sceneItems.push_front(&_object4);
-		BF_GLOBALS._walkRegions.proc1(1);
+		BF_GLOBALS._walkRegions.disableRegion(1);
 	} else if (BF_GLOBALS.getFlag(onDuty))
 		BF_GLOBALS._player.setVisage(1341);
 
@@ -1674,7 +1674,7 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 		_object3.setVisage(123);
 		_object3.setPosition(Common::Point(212, 108));
 		_object3.setAction(&_action1);
-		_field168A = 0;
+		_lineNumModifier = 0;
 		BF_GLOBALS._sceneItems.push_front(&_object3);
 
 		_object8.postInit();
@@ -1696,18 +1696,18 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 		_object10.fixPriority(112);
 
 		if (BF_INVENTORY.getObjectScene(INV_COBB_RAP) == 1) {
-			_object1.postInit();
-			_object1.setVisage(131);
-			_object1.setPosition(Common::Point(122, 97));
-			_object1.setStrip(1);
-			_object1.setFrame(1);
-			_object1.changeZoom(100);
-			_object1.fixPriority(95);
-			BF_GLOBALS._sceneItems.push_front(&_object1);
+			_kate.postInit();
+			_kate.setVisage(131);
+			_kate.setPosition(Common::Point(122, 97));
+			_kate.setStrip(1);
+			_kate.setFrame(1);
+			_kate.changeZoom(100);
+			_kate.fixPriority(95);
+			BF_GLOBALS._sceneItems.push_front(&_kate);
 		}
 		addTimer(&_eventHandler1);
 	}
-	BF_GLOBALS._sceneItems.push_front(&_object2);
+	BF_GLOBALS._sceneItems.push_front(&_tony);
 
 	_item11.setDetails(16, 115, 4, 15, 21, 1);
 	_item12.setDetails(20, 115, 5, 15, 21, 1);
@@ -1716,8 +1716,8 @@ void Scene115::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._sceneItems.push_front(&_item14);
 	_item10.setDetails(Rect(0, 147, 30, 167), 115, -1, -1, -1, 1, NULL);
 	// SUB_177B8
-	addTimer(&_item1);
-	_item1.setDetails(Rect(147, 45, 179, 91), 115, 25, 26, 27, 1, NULL);
+	addTimer(&_itemJukebox);
+	_itemJukebox.setDetails(Rect(147, 45, 179, 91), 115, 25, 26, 27, 1, NULL);
 	//
 	_item6.setDetails(Rect(107, 43, 122,  61), 115, 28, 29, 30, 1, NULL);
 	_item7.setDetails(Rect(180, 33, 230,  63), 115, 31, 32, 33, 1, NULL);
@@ -1741,14 +1741,14 @@ void Scene115::signal() {
 		break;
 	case 1:
 		BF_GLOBALS._player.updateAngle(_object3._position);
-		SceneItem::display(115, 38 + _field168A, SET_WIDTH, 312,
+		SceneItem::display(115, 38 + _lineNumModifier, SET_WIDTH, 312,
 				SET_X, GLOBALS._sceneManager._scene->_sceneBounds.left + 4,
 				SET_Y, GLOBALS._sceneManager._scene->_sceneBounds.top + UI_INTERFACE_Y + 2,
 				SET_FONT, 4, SET_BG_COLOR, 1, SET_FG_COLOR, 19, SET_EXT_BGCOLOR, 9,
 				SET_EXT_FGCOLOR, 13, LIST_END);
-		_field168A++;
-		if (_field168A >= 4)
-			_field168A = 0;
+		++_lineNumModifier;
+		if (_lineNumModifier >= 4)
+			_lineNumModifier = 0;
 	// No break on purpose
 	case 0:
 	// No break on purpose
@@ -1777,9 +1777,9 @@ void Scene115::process(Event &event) {
 
 void Scene115::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_field168A);
-	s.syncAsSint16LE(_field31E8);
-	s.syncAsSint16LE(_field31EA);
+	s.syncAsSint16LE(_lineNumModifier);
+	s.syncAsSint16LE(_jukeboxPlaying);
+	s.syncAsSint16LE(_talkToTonyCtr);
 }
 
 /*--------------------------------------------------------------------------
@@ -1817,7 +1817,7 @@ void Scene125::Action1::signal() {
 	case 0:
 	// No break on purpose
 	default:
-		break;		
+		break;
 	}
 }
 
@@ -2054,7 +2054,7 @@ void Scene125::Action3::dispatch() {
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
 
 	Action::dispatch();
-	
+
 	if ((_actionIndex == 9) && (owner->_percent > 70))
 		owner->changeZoom(owner->_percent - 1);
 }
@@ -2095,7 +2095,7 @@ void Scene125::Action4::dispatch() {
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
 
 	Action::dispatch();
-	
+
 	if ((_actionIndex == 4) && (owner->_percent > 80))
 		owner->changeZoom(owner->_percent - 1);
 }
@@ -2134,7 +2134,7 @@ void Scene125::Action6::dispatch() {
 	SceneObject *owner = static_cast<SceneObject *>(this->_owner);
 
 	Action::dispatch();
-	
+
 	if ((_actionIndex == 2) && (owner->_percent < 100))
 		owner->changeZoom(owner->_percent + 1);
 }
@@ -2169,7 +2169,7 @@ void Scene125::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player._moveDiff.x = 6;
 	BF_GLOBALS._player._moveDiff.y = 6;
 	BF_GLOBALS._player.disableControl();
-	
+
 	_object5.postInit();
 	_object5.setVisage(128);
 	_object5.setPosition(Common::Point(150, 117));
@@ -2457,7 +2457,7 @@ void Scene160::Action1::signal() {
 		scene->_kid.setStrip(2);
 		scene->_kid.animate(ANIM_MODE_5, this);
 
-		scene->_kidBody.setPosition(scene->_kid._position); 
+		scene->_kidBody.setPosition(scene->_kid._position);
 		scene->_kidBody.setFrame(1);
 		scene->_kidBody.setStrip(3);
 		break;
@@ -2630,7 +2630,7 @@ void Scene160::Action2::signal() {
 		break;
 	case 25:
 		BF_GLOBALS._sound1.fade(0, 10, 10, true, this);
-// FIXME: Currently, fade() doesn't end properly with this song, 
+// FIXME: Currently, fade() doesn't end properly with this song,
 //        thus never returns here. This hack skips the wait and changes
 //        directly to the next scene
 // Start of hack
@@ -2764,12 +2764,12 @@ bool Scene180::GarageExit::startAction(CursorType action, Event &event) {
 /*--------------------------------------------------------------------------*/
 
 Scene180::Scene180(): SceneExt() {
-	_fieldC56 = 0;
+	_dispatchMode = 0;
 }
 
 void Scene180::synchronize(Serializer &s) {
 	SceneExt::synchronize(s);
-	s.syncAsSint16LE(_fieldC56);
+	s.syncAsSint16LE(_dispatchMode);
 }
 
 void Scene180::postInit(SceneObjectList *OwnerList) {
@@ -2784,7 +2784,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 	_garageExit.setDetails(Rect(243, 93, 275, 122), 180, -1, -1, -1, 1, NULL);
 	_gameTextSpeaker._textPos.y = 180;
 	_stripManager.addSpeaker(&_gameTextSpeaker);
-	_fieldC56 = 0;
+	_dispatchMode = 0;
 	setZoomPercents(121, 60, 125, 70);
 
 	if ((BF_GLOBALS._bookmark == bLyleStoppedBy) && (BF_GLOBALS._dayNumber == 1)) {
@@ -2830,7 +2830,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 		_vechile.setStrip(2);
 		_vechile.setPosition(Common::Point(262, 131));
 		_vechile.setZoom(65);
-		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+		_vechile.setDetails(180, 33, 34, 35, 1, (SceneItem *)NULL);
 
 		_object1.postInit();
 		_object1.setVisage(182);
@@ -2845,7 +2845,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.disableControl();
 
 		_vechile.postInit();
-		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+		_vechile.setDetails(180, 33, 34, 35, 1, (SceneItem *)NULL);
 
 		_object1.postInit();
 
@@ -2874,7 +2874,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 			_vechile._moveDiff = Common::Point(40, 5);
 			_vechile.setPosition(Common::Point(-25, 171));
 
-			_fieldC56 = 1;
+			_dispatchMode = 1;
 
 			BF_GLOBALS._sound1.play(29);
 			_sceneMode = 1;
@@ -2895,15 +2895,15 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 				_vechile.setStrip(3);
 				_vechile._frame = 5;
 				_vechile.changeZoom(75);
-				
-				_fieldC56 = 1;
+
+				_dispatchMode = 1;
 				_vechile._moveDiff.x = 45;
 			} else {
 				_vechile.setVisage(444);
 				_vechile.setStrip(2);
 				_vechile.changeZoom(85);
 
-				_fieldC56 = 3;
+				_dispatchMode = 3;
 				_vechile._moveDiff.x = 30;
 			}
 
@@ -2935,7 +2935,7 @@ void Scene180::postInit(SceneObjectList *OwnerList) {
 void Scene180::signal() {
 	switch (_sceneMode) {
 	case 1:
-		_fieldC56 = 0;
+		_dispatchMode = 0;
 		switch (BF_GLOBALS._bookmark) {
 		case bFlashBackThree:
 			BF_GLOBALS._bookmark = bDroppedOffLyle;
@@ -2953,12 +2953,12 @@ void Scene180::signal() {
 		setAction(&_sequenceManager, this, 1802, &_vechile, &_object1, NULL);
 		break;
 	case 2:
-		_fieldC56 = 0;
+		_dispatchMode = 0;
 		BF_GLOBALS._sound1.fadeOut2(NULL);
 		BF_GLOBALS._sceneManager.changeScene(BF_GLOBALS._driveToScene);
 		break;
 	case 3:
-		_fieldC56 = 0;
+		_dispatchMode = 0;
 		BF_GLOBALS._sound1.stop();
 		_stripManager.start(1800, this);
 		_sceneMode = 4;
@@ -2997,7 +2997,7 @@ void Scene180::signal() {
 		BF_GLOBALS._player.disableControl();
 
 		_vechile.postInit();
-		_vechile.setDetails(180, 33, 34, 35, 1, NULL);
+		_vechile.setDetails(180, 33, 34, 35, 1, (SceneItem *)NULL);
 
 		_object1.postInit();
 		_sceneMode = 1801;
@@ -3040,7 +3040,7 @@ void Scene180::signal() {
 		}
 		break;
 	case 1800:
-		_fieldC56 = 2;
+		_dispatchMode = 2;
 		_vechile._moveDiff.x = 10;
 		_sceneMode = 2;
 		ADD_MOVER(_vechile, -25, 171);
@@ -3079,7 +3079,7 @@ void Scene180::process(Event &event) {
 }
 
 void Scene180::dispatch() {
-	switch (_fieldC56) {
+	switch (_dispatchMode) {
 	case 1:
 		if (_vechile._mover && (_vechile._percent > 50))
 			_vechile.changeZoom(_vechile._percent - 1);
@@ -3123,7 +3123,7 @@ void Scene180::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
-bool Scene190::Object4::startAction(CursorType action, Event &event) {
+bool Scene190::LyleCar::startAction(CursorType action, Event &event) {
 	Scene190 *scene = (Scene190 *)BF_GLOBALS._sceneManager._scene;
 
 	switch (action) {
@@ -3191,14 +3191,14 @@ void Scene190::Action1::signal() {
 	}
 	case 2:
 		scene->_sound.play(82);
-		scene->_object2.animate(ANIM_MODE_5, this);
+		scene->_door.animate(ANIM_MODE_5, this);
 		break;
 	case 3:
 		ADD_MOVER(BF_GLOBALS._player, 180, 86);
 		break;
 	case 4:
 		scene->_sound.play(82);
-		scene->_object2.animate(ANIM_MODE_6, this);
+		scene->_door.animate(ANIM_MODE_6, this);
 		break;
 	case 5:
 		BF_GLOBALS._sound1.fadeOut2(NULL);
@@ -3220,12 +3220,17 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 			(BF_GLOBALS._sceneManager._previousScene == 20)) {
 //		clearScreen();
 	}
-	if (BF_GLOBALS._dayNumber == 0)
+	if (BF_GLOBALS._dayNumber == 0) {
 		// If at start of game, change to first day
 		BF_GLOBALS._dayNumber = 1;
+		// To be checked: Not present in the original
+		g_globals->_sceneManager._previousScene = 100;
+	}
 
+	SceneExt::postInit();
 	// Load the scene data
 	loadScene(190);
+
 	BF_GLOBALS._scenePalette.loadPalette(2);
 
 	_stripManager.addSpeaker(&_speaker);
@@ -3233,18 +3238,20 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 	BF_GLOBALS._player.disableControl();
 
 	// Initialise objects
-	_object2.postInit();
-	_object2.setVisage(190);
-	_object2.setStrip(1);
-	_object2.setPosition(Common::Point(179, 88));
+	_door.postInit();
+	_door.setVisage(190);
+	_door.setStrip(1);
+	_door.setPosition(Common::Point(179, 88));
 
-	_object3.postInit();
-	_object3.setVisage(190);
-	_object3.setStrip(2);
-	_object3.fixPriority(200);
-	_object3.setPosition(Common::Point(170, 31));
-	_object3.animate(ANIM_MODE_7, 0, NULL);
-	_object3.setDetails(190, 8, 26, 19, 1, NULL);
+	_flag.postInit();
+	_flag.setVisage(190);
+	_flag.setStrip(2);
+	_flag.fixPriority(200);
+	_flag.setPosition(Common::Point(170, 31));
+	_flag.animate(ANIM_MODE_7, 0, NULL);
+	_flag.setDetails(190, 8, 26, 19, 1, (SceneItem *)NULL);
+
+	_fieldB52 = true;
 
 	if (BF_GLOBALS.getFlag(fWithLyle)) {
 		BF_GLOBALS._player.setVisage(303);
@@ -3252,11 +3259,11 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		BF_GLOBALS._player.animate(ANIM_MODE_1, NULL);
 		BF_GLOBALS._player._moveDiff = Common::Point(3, 1);
 
-		_object4.postInit();
-		_object4.setVisage(444);
-		_object4.setFrame(2);
-		_object4.setPosition(Common::Point(54, 114));
-		_object4.setDetails(190, -1, -1, -1, 1, NULL);
+		_lyleCar.postInit();
+		_lyleCar.setVisage(444);
+		_lyleCar.setFrame(2);
+		_lyleCar.setPosition(Common::Point(54, 114));
+		_lyleCar.setDetails(190, -1, -1, -1, 1, (SceneItem *)NULL);
 
 		switch (BF_GLOBALS._sceneManager._previousScene) {
 		case 300: {
@@ -3267,7 +3274,7 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		}
 		case 315:
 			_sceneMode = 1901;
-			setAction(&_sequenceManager, this, 1901, &BF_GLOBALS._player, &_object2, NULL);
+			setAction(&_sequenceManager, this, 1901, &BF_GLOBALS._player, &_door, NULL);
 			break;
 		case 50:
 		case 60:
@@ -3301,13 +3308,14 @@ void Scene190::postInit(SceneObjectList *OwnerList) {
 		case 315:
 			BF_GLOBALS._player._moveDiff = Common::Point(3, 1);
 			_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 1900 : 1901;
-			setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, &_object2, NULL);
+			setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, &_door, NULL);
 			break;
 		case 50:
 		case 60:
 		default:
 			BF_GLOBALS.setFlag(onBike);
 			BF_GLOBALS._player.disableControl();
+			// To be checked: Not present in the original
 			T2_GLOBALS._uiElements._active = true;
 			_sceneMode = BF_GLOBALS.getFlag(onDuty) ? 192 : 190;
 			setAction(&_sequenceManager, this, _sceneMode, &BF_GLOBALS._player, NULL);
@@ -3392,6 +3400,11 @@ void Scene190::dispatch() {
 
 		ADD_MOVER(BF_GLOBALS._player, 330, BF_GLOBALS._player._position.y);
 	}
+}
+
+void Scene190::synchronize(Serializer &s) {
+	SceneExt::synchronize(s);
+	s.syncAsSint16LE(_fieldB52);
 }
 
 } // End of namespace BlueForce

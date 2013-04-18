@@ -58,8 +58,8 @@ extern bool draw_keyboard;
  At the beginning the reverse engineers were happy, and did rejoice at
  their task, for the engine before them did shineth and was full of
  promise. But then they did look closer and see'th the aweful truth;
- it's code was assembly and messy (rareth was its comments). And so large
- were it's includes that did at first seem small; queereth also was its
+ its code was assembly and messy (rareth was its comments). And so large
+ were its includes that did at first seem small; queereth also was its
  compact(s). Then they did findeth another version, and this was slightly
  different from the first. Then a third, and this was different again.
  All different, but not really better, for all were not really compatible.
@@ -268,9 +268,9 @@ Common::Error SkyEngine::init() {
 	} else {
 		_systemVars.systemFlags |= SF_ROLAND;
 		if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"))
-			_skyMusic = new MT32Music(MidiDriver::createMidi(dev), _skyDisk);
+			_skyMusic = new MT32Music(MidiDriver::createMidi(dev), _mixer, _skyDisk);
 		else
-			_skyMusic = new GmMusic(MidiDriver::createMidi(dev), _skyDisk);
+			_skyMusic = new GmMusic(MidiDriver::createMidi(dev), _mixer, _skyDisk);
 	}
 
 	if (isCDVersion()) {

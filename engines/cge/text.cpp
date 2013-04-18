@@ -72,7 +72,7 @@ int16 Text::count() {
 		strcpy(tmpStr, line.c_str());
 		if ((s = strtok(tmpStr, " =,;/\t\n")) == NULL)
 			continue;
-		if (!isdigit(*s))
+		if (!Common::isDigit(*s))
 			continue;
 
 		counter++;
@@ -105,7 +105,7 @@ void Text::load() {
 		strcpy(tmpStr, line.c_str());
 		if ((s = strtok(tmpStr, " =,;/\t\n")) == NULL)
 			continue;
-		if (!isdigit(*s))
+		if (!Common::isDigit(*s))
 			continue;
 
 		int r = atoi(s);
@@ -135,6 +135,13 @@ char *Text::getText(int ref) {
 
 void Text::say(const char *text, Sprite *spr) {
 	_vm->killText();
+
+	if (!text)
+		return;
+
+	if (*text == 0)
+		return;
+
 	_vm->_talk = new Talk(_vm, text, kTBRound);
 	if (!_vm->_talk)
 		return;
@@ -175,11 +182,16 @@ void Text::say(const char *text, Sprite *spr) {
 	_vm->_vga->_showQ->insert(speaker, _vm->_vga->_showQ->last());
 }
 
-void CGEEngine::inf(const char *text) {
+void CGEEngine::inf(const char *text, bool wideSpace) {
 	debugC(1, kCGEDebugEngine, "CGEEngine::inf(%s)", text);
+	if (!text)
+		return;
+
+	if (*text == 0)
+		return;
 
 	killText();
-	_talk = new Talk(this, text, kTBRect);
+	_talk = new Talk(this, text, kTBRect, wideSpace);
 	if (!_talk)
 		return;
 

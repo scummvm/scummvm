@@ -159,7 +159,7 @@ static int persistspecialobject(PersistInfo *pi, int defaction)
 	lua_pushvalue(pi->L, -3);
 					/* perms reftbl ... obj mt __persist obj */
 #ifdef PLUTO_PASS_USERDATA_TO_PERSIST
-	lua_pushlightuserdata(pi->L, (void*)pi->writer);
+	lua_pushlightuserdata(pi->L, (void *)pi->writer);
 	lua_pushlightuserdata(pi->L, pi->ud);
 					/* perms reftbl ... obj mt __persist obj ud */
 	lua_call(pi->L, 3, 1);
@@ -663,7 +663,7 @@ static void persist(PersistInfo *pi)
 	}
 	lua_pushvalue(pi->L, -1);
 					/* perms reftbl ... obj obj */
-	lua_pushlightuserdata(pi->L, (void*)(++(pi->counter)));
+	lua_pushlightuserdata(pi->L, (void *)(++(pi->counter)));
 					/* perms reftbl ... obj obj ref */
 	lua_rawset(pi->L, 2);
 					/* perms reftbl ... obj */
@@ -854,7 +854,7 @@ static void registerobject(int ref, UnpersistInfo *upi)
 {
 					/* perms reftbl ... obj */
 	lua_checkstack(upi->L, 2);
-	lua_pushlightuserdata(upi->L, (void*)ref);
+	lua_pushlightuserdata(upi->L, (void *)ref);
 					/* perms reftbl ... obj ref */
 	lua_pushvalue(upi->L, -2);
 					/* perms reftbl ... obj ref obj */
@@ -989,7 +989,7 @@ static void unpersisttable(int ref, UnpersistInfo *upi)
 static UpVal *makeupval(lua_State *L, int stackpos)
 {
 	UpVal *uv = pdep_new(L, UpVal);
-	pdep_link(L, (GCObject*)uv, LUA_TUPVAL);
+	pdep_link(L, (GCObject *)uv, LUA_TUPVAL);
 	uv->tt = LUA_TUPVAL;
 	uv->v = &uv->u.value;
 	uv->u.l.prev = NULL;
@@ -1025,8 +1025,8 @@ static Proto *makefakeproto(lua_State *L, lu_byte nups)
 static void boxupval_start(lua_State *L)
 {
 	LClosure *lcl;
-	lcl = (LClosure*)pdep_newLclosure(L, 1, hvalue(&L->l_gt));
-	pushclosure(L, (Closure*)lcl);
+	lcl = (LClosure *)pdep_newLclosure(L, 1, hvalue(&L->l_gt));
+	pushclosure(L, (Closure *)lcl);
 					/* ... func */
 	lcl->p = makefakeproto(L, 1);
 
@@ -1053,7 +1053,7 @@ static void unboxupval(lua_State *L)
 	LClosure *lcl;
 	UpVal *uv;
 
-	lcl = (LClosure*)clvalue(getobject(L, -1));
+	lcl = (LClosure *)clvalue(getobject(L, -1));
 	uv = lcl->upvals[0];
 	lua_pop(L, 1);
 					/* ... */
@@ -1071,8 +1071,8 @@ static void unpersistfunction(int ref, UnpersistInfo *upi)
 
 	verify(LIF(Z,read)(&upi->zio, &nupvalues, sizeof(lu_byte)) == 0);
 
-	lcl = (LClosure*)pdep_newLclosure(upi->L, nupvalues, hvalue(&upi->L->l_gt));
-	pushclosure(upi->L, (Closure*)lcl);
+	lcl = (LClosure *)pdep_newLclosure(upi->L, nupvalues, hvalue(&upi->L->l_gt));
+	pushclosure(upi->L, (Closure *)lcl);
 
 					/* perms reftbl ... func */
 	/* Put *some* proto in the closure, before the GC can find it */
@@ -1393,9 +1393,9 @@ static void unpersistthread(int ref, UnpersistInfo *upi)
 
 			verify(LIF(Z,read)(&upi->zio, &stackpos, sizeof(size_t)) == 0);
 			uv->v = L2->stack + stackpos;
-			gcunlink(upi->L, (GCObject*)uv);
+			gcunlink(upi->L, (GCObject *)uv);
 			uv->marked = luaC_white(g);
-			*nextslot = (GCObject*)uv;
+			*nextslot = (GCObject *)uv;
 			nextslot = &uv->next;
 			uv->u.l.prev = &G(L2)->uvhead;
 			uv->u.l.next = G(L2)->uvhead.u.l.next;
@@ -1482,7 +1482,7 @@ static int inreftable(lua_State *L, int ref)
 	int res;
 	lua_checkstack(L, 1);
 					/* perms reftbl ... */
-	lua_pushlightuserdata(L, (void*)ref);
+	lua_pushlightuserdata(L, (void *)ref);
 					/* perms reftbl ... ref */
 	lua_gettable(L, 2);
 					/* perms reftbl ... obj? */
@@ -1571,7 +1571,7 @@ static void unpersist(UnpersistInfo *upi)
 			lua_pushnil(upi->L);
 					/* perms reftbl ... nil */
 		} else {
-			lua_pushlightuserdata(upi->L, (void*)ref);
+			lua_pushlightuserdata(upi->L, (void *)ref);
 					/* perms reftbl ... ref */
 			lua_gettable(upi->L, 2);
 					/* perms reftbl ... obj? */

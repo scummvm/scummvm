@@ -1034,7 +1034,7 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 		}
 
 		// Alright, the animation entry looks to be valid so let's start handling it...
-		if (strcmp(currentPartName, name)) {
+		if (strcmp(currentPartName, name) != 0) {
 			closePart();
 			loadPart(name);
 		}

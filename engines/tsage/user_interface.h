@@ -129,7 +129,6 @@ public:
 	Common::Array<int> _itemList;
 	Visage _cursorVisage;
 	UIElement _character;
-	int _characterIndex;
 
 	UIElements();
 	virtual Common::String getClassName() { return "UIElements"; }

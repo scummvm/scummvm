@@ -52,8 +52,8 @@ static const GfxTransitionTranslateEntry oldTransitionIDs[] = {
 	{   3, SCI_TRANSITIONS_STRAIGHT_FROM_LEFT,			false },
 	{   4, SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM,		false },
 	{   5, SCI_TRANSITIONS_STRAIGHT_FROM_TOP,			false },
-	{   6, SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER,		false },
-	{   7, SCI_TRANSITIONS_DIAGONALROLL_TOCENTER,		false },
+	{   6, SCI_TRANSITIONS_DIAGONALROLL_TOCENTER,		false },
+	{   7, SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER,		false },
 	{   8, SCI_TRANSITIONS_BLOCKS,						false },
 	{   9, SCI_TRANSITIONS_VERTICALROLL_TOCENTER,		false },
 	{  10, SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER,		false },
@@ -295,12 +295,12 @@ void GfxTransitions::fadeOut() {
 	int16 stepNr, colorNr;
 	// Sierra did not fade in/out color 255 for sci1.1, but they used it in
 	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
-	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 256 : 255;
+	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
 
 	g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
 
 	for (stepNr = 100; stepNr >= 0; stepNr -= 10) {
-		for (colorNr = 1; colorNr < tillColorNr; colorNr++) {
+		for (colorNr = 1; colorNr <= tillColorNr; colorNr++) {
 			if (_palette->colorIsFromMacClut(colorNr)) {
 				workPalette[colorNr * 3 + 0] = oldPalette[colorNr * 3];
 				workPalette[colorNr * 3 + 1] = oldPalette[colorNr * 3 + 1];
@@ -311,7 +311,7 @@ void GfxTransitions::fadeOut() {
 				workPalette[colorNr * 3 + 2] = oldPalette[colorNr * 3 + 2] * stepNr / 100;
 			}
 		}
-		g_system->getPaletteManager()->setPalette(workPalette + 3, 1, 254);
+		g_system->getPaletteManager()->setPalette(workPalette + 3, 1, tillColorNr);
 		g_sci->getEngineState()->wait(2);
 	}
 }
@@ -322,10 +322,10 @@ void GfxTransitions::fadeIn() {
 	int16 stepNr;
 	// Sierra did not fade in/out color 255 for sci1.1, but they used it in
 	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
-	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 256 : 255;
+	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
 
 	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
-		_palette->kernelSetIntensity(1, tillColorNr, stepNr, true);
+		_palette->kernelSetIntensity(1, tillColorNr + 1, stepNr, true);
 		g_sci->getEngineState()->wait(2);
 	}
 }

@@ -122,6 +122,11 @@ void ComposerEngine::runEvent(uint16 id, int16 param1, int16 param2, int16 param
 }
 
 int16 ComposerEngine::runScript(uint16 id, int16 param1, int16 param2, int16 param3) {
+	if (getGameType() == GType_ComposerV1) {
+		runOldScript(id, param1);
+		return 0;
+	}
+
 	_vars[1] = param1;
 	_vars[2] = param2;
 	_vars[3] = param3;
@@ -155,10 +160,14 @@ void ComposerEngine::setArg(uint16 arg, uint16 type, uint16 val) {
 	default:
 		error("invalid argument type %d (setting arg %d)", type, arg);
 	}
-
 }
 
 void ComposerEngine::runScript(uint16 id) {
+	if (getGameType() == GType_ComposerV1) {
+		runOldScript(id, 0);
+		return;
+	}
+
 	if (!hasResource(ID_SCRP, id)) {
 		debug(1, "ignoring attempt to run script %d, because it doesn't exist", id);
 		return;
@@ -561,25 +570,11 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 		return 0;
 	case kFuncActivateButton:
 		debug(3, "kFuncActivateButton(%d)", param1);
-		for (Common::List<Library>::iterator l = _libraries.begin(); l != _libraries.end(); l++) {
-			for (Common::List<Button>::iterator i = l->_buttons.begin(); i != l->_buttons.end(); i++) {
-				if (i->_id != param1)
-					continue;
-				i->_active = true;
-			}
-		}
-		onMouseMove(_lastMousePos);
+		setButtonActive(param1, true);
 		return 1;
 	case kFuncDeactivateButton:
 		debug(3, "kFuncDeactivateButton(%d)", param1);
-		for (Common::List<Library>::iterator l = _libraries.begin(); l != _libraries.end(); l++) {
-			for (Common::List<Button>::iterator i = l->_buttons.begin(); i != l->_buttons.end(); i++) {
-				if (i->_id != param1)
-					continue;
-				i->_active = false;
-			}
-		}
-		onMouseMove(_lastMousePos);
+		setButtonActive(param1, false);
 		return 1;
 	case kFuncNewPage:
 		debug(3, "kFuncNewPage(%d, %d)", param1, param2);
@@ -724,6 +719,237 @@ int16 ComposerEngine::scriptFuncCall(uint16 id, int16 param1, int16 param2, int1
 	default:
 		error("unknown scriptFuncCall %d(%d, %d, %d)", (uint32)id, param1, param2, param3);
 	}
+}
+
+OldScript::OldScript(uint16 id, Common::SeekableReadStream *stream) : _id(id), _stream(stream) {
+	_size = _stream->readUint32LE();
+	_stream->skip(2);
+	_currDelay = 0;
+	_zorder = 10;
+}
+
+OldScript::~OldScript() {
+	delete _stream;
+}
+
+void ComposerEngine::runOldScript(uint16 id, uint16 wait) {
+	stopOldScript(id);
+
+	Common::SeekableReadStream *stream = getResource(ID_SCRP, id);
+	OldScript *script = new OldScript(id, stream);
+	script->_currDelay = wait;
+	_oldScripts.push_back(script);
+}
+
+void ComposerEngine::stopOldScript(uint16 id) {
+	// FIXME: this could potentially (in the case of buggy script) be called on an in-use script
+
+	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++) {
+		if ((*i)->_id == id) {
+			delete *i;
+			i = _oldScripts.reverse_erase(i);
+		}
+	}
+}
+
+void ComposerEngine::tickOldScripts() {
+	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++) {
+		if (!tickOldScript(*i)) {
+			delete *i;
+			i = _oldScripts.reverse_erase(i);
+		}
+	}
+}
+
+enum {
+	kOldOpNoOp = 0,
+	kOldOpReplaceSprite = 1,
+	kOldOpPlayWav = 2,
+	kOldOpRunScript = 3,
+	kOldOpStopScript = 4,
+	kOldOpActivateButton = 5,
+	kOldOpDeactivateButton = 6,
+	kOldOpDrawSprite = 7,
+	kOldOpRemoveSprite = 8,
+	kOldOpDisableMouseInput = 9,
+	kOldOpEnableMouseInput = 10,
+	kOldOpWait = 11,
+	kOldOpRandWait = 12,
+	kOldOpDrawGlobalSprite = 13,
+	kOldOpRemoveGlobalSprite = 14,
+	kOldOpSetZOrder = 15,
+	kOldOpPlayPipe = 16,
+	kOldOpStopPipe = 17,
+	kOldOpNewScreen = 20,
+	kOldOpRunRandom = 22
+};
+
+bool ComposerEngine::tickOldScript(OldScript *script) {
+	if (script->_currDelay) {
+		script->_currDelay--;
+		return true;
+	}
+
+	bool running = true;
+	bool erasedOldSprite = false;
+	while (running && script->_stream->pos() < (int)script->_size) {
+		uint16 spriteId, scriptId, buttonId, pipeId;
+		Common::Point spritePos;
+
+		script->_stream->skip(0);
+		byte op = script->_stream->readByte();
+		switch (op) {
+		case kOldOpNoOp:
+			debug(3, "kOldOpNoOp()");
+			running = false;
+			break;
+		case kOldOpReplaceSprite:
+			if (!erasedOldSprite) {
+				removeSprite(0, script->_id);
+				erasedOldSprite = true;
+			}
+
+			spriteId = script->_stream->readUint16LE();
+			spritePos.x = script->_stream->readSint16LE();
+			spritePos.y = script->_stream->readSint16LE();
+			debug(3, "kOldOpReplaceSprite(%d, %d, %d)", spriteId, spritePos.x, spritePos.y);
+			addSprite(spriteId, script->_id, script->_zorder, spritePos);
+			break;
+		case kOldOpPlayWav:
+			uint16 wavId, prio;
+			wavId = script->_stream->readUint16LE();
+			prio = script->_stream->readUint16LE();
+			debug(3, "kOldOpPlayWav(%d, %d)", wavId, prio);
+			playWaveForAnim(wavId, prio, false);
+			break;
+		case kOldOpRunScript:
+			scriptId = script->_stream->readUint16LE();
+			debug(3, "kOldOpRunScript(%d)", scriptId);
+			if (scriptId == script->_id) {
+				// reset ourselves
+				removeSprite(0, script->_id);
+				script->_stream->seek(6);
+			} else {
+				runScript(scriptId);
+			}
+			break;
+		case kOldOpStopScript:
+			scriptId = script->_stream->readUint16LE();
+			debug(3, "kOldOpStopScript(%d)", scriptId);
+			removeSprite(0, scriptId);
+			stopOldScript(scriptId);
+			break;
+		case kOldOpActivateButton:
+			buttonId = script->_stream->readUint16LE();
+			debug(3, "kOldOpActivateButton(%d)", buttonId);
+			setButtonActive(buttonId, true);
+			break;
+		case kOldOpDeactivateButton:
+			buttonId = script->_stream->readUint16LE();
+			debug(3, "kOldOpDeactivateButton(%d)", buttonId);
+			setButtonActive(buttonId, false);
+			break;
+		case kOldOpDrawSprite:
+			spriteId = script->_stream->readUint16LE();
+			spritePos.x = script->_stream->readSint16LE();
+			spritePos.y = script->_stream->readSint16LE();
+			debug(3, "kOldOpDrawSprite(%d, %d, %d)", spriteId, spritePos.x, spritePos.y);
+			addSprite(spriteId, script->_id, script->_zorder, spritePos);
+			break;
+		case kOldOpRemoveSprite:
+			spriteId = script->_stream->readUint16LE();
+			debug(3, "kOldOpRemoveSprite(%d)", spriteId);
+			removeSprite(spriteId, script->_id);
+			break;
+		case kOldOpDisableMouseInput:
+			debug(3, "kOldOpDisableMouseInput()");
+			setCursorVisible(false);
+			break;
+		case kOldOpEnableMouseInput:
+			debug(3, "kOldOpEnableMouseInput()");
+			setCursorVisible(true);
+			break;
+		case kOldOpWait:
+			script->_currDelay = script->_stream->readUint16LE();
+			debug(3, "kOldOpWait(%d)", script->_currDelay);
+			break;
+		case kOldOpRandWait:
+			uint16 min, max;
+			min = script->_stream->readUint16LE();
+			max = script->_stream->readUint16LE();
+			debug(3, "kOldOpRandWait(%d, %d)", min, max);
+			script->_currDelay = _rnd->getRandomNumberRng(min, max);
+			break;
+		case kOldOpDrawGlobalSprite:
+			spriteId = script->_stream->readUint16LE();
+			spritePos.x = script->_stream->readSint16LE();
+			spritePos.y = script->_stream->readSint16LE();
+			debug(3, "kOldOpDrawGlobalSprite(%d, %d, %d)", spriteId, spritePos.x, spritePos.y);
+			addSprite(spriteId, 0, script->_zorder, spritePos);
+			break;
+		case kOldOpRemoveGlobalSprite:
+			spriteId = script->_stream->readUint16LE();
+			debug(3, "kOldOpRemoveGlobalSprite(%d)", spriteId);
+			removeSprite(spriteId, 0);
+			break;
+		case kOldOpSetZOrder:
+			script->_zorder = script->_stream->readUint16LE();
+			debug(3, "kOldOpSetZOrder(%d)", script->_zorder);
+			break;
+		case kOldOpPlayPipe:
+			pipeId = script->_stream->readUint16LE();
+			debug(3, "kOldOpPlayPipe(%d)", pipeId);
+			playPipe(pipeId);
+			break;
+		case kOldOpStopPipe:
+			pipeId = script->_stream->readUint16LE();
+			debug(3, "kOldOpStopPipe(%d)", pipeId);
+			// yes, pipeId is ignored here..
+			stopPipes();
+			break;
+		case kOldOpNewScreen:
+			uint16 newScreenId;
+			newScreenId = script->_stream->readUint16LE();
+			debug(3, "kOldOpNewScreen(%d)", newScreenId);
+			if (!newScreenId) {
+				quitGame();
+			} else {
+				_pendingPageChanges.clear();
+				_pendingPageChanges.push_back(PendingPageChange(newScreenId, false));
+			}
+			break;
+		case kOldOpRunRandom:
+			uint16 randomId;
+			randomId = script->_stream->readUint16LE();
+			debug(3, "kOldOpRunRandom(%d)", randomId);
+			if (!_randomEvents.contains(randomId)) {
+				warning("kOldOpRunRandom found no entries for id %d", randomId);
+			} else {
+				uint32 randValue = _rnd->getRandomNumberRng(0, 32767);
+				const Common::Array<RandomEvent> &events = _randomEvents[randomId];
+				uint i = 0;
+				for (i = 0; i < events.size(); i++) {
+					if ((i + 1 == events.size()) || (randValue <= events[i].weight)) {
+						runScript(events[i].scriptId);
+						break;
+					} else {
+						randValue -= events[i].weight;
+					}
+				}
+			}
+			break;
+		default:
+			error("unknown oldScript op %d", op);
+		}
+	}
+
+	if (script->_stream->pos() >= (int)script->_size) {
+		// stop running if we ran out of script
+		removeSprite(0, script->_id);
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace Composer

@@ -130,7 +130,7 @@ int AgiEngine::findWord(const char *word, int *flen) {
 		return -1;
 
 	*flen = 0;
-	Common::Array<AgiWord*> &a = _game.words[c];
+	Common::Array<AgiWord *> &a = _game.words[c];
 	
 	for (int i = 0; i < (int)a.size(); i++) {
 		int wlen = strlen(a[i]->word);

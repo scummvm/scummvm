@@ -28,8 +28,8 @@
  *  - sword1
  */
 
-#ifndef SOUND_AIFF_H
-#define SOUND_AIFF_H
+#ifndef AUDIO_AIFF_H
+#define AUDIO_AIFF_H
 
 #include "common/scummsys.h"
 #include "common/types.h"

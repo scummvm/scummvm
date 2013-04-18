@@ -25,8 +25,8 @@
  *  Copyright (C) 2004  Dag Lem <resid@nimrod.no>
  */
 
-#ifndef __SID_H__
-#define __SID_H__
+#ifndef AUDIO_SOFTSYNTH_SID_H
+#define AUDIO_SOFTSYNTH_SID_H
 
 // Inlining on/off.
 #define RESID_INLINE inline
@@ -55,7 +55,7 @@ class WaveformGenerator {
 public:
 	WaveformGenerator();
 
-	void set_sync_source(WaveformGenerator*);
+	void set_sync_source(WaveformGenerator *);
 
 	void updateClock(cycle_count delta_t);
 	void synchronize();
@@ -272,7 +272,7 @@ class Voice {
 public:
 	Voice();
 
-	void set_sync_source(Voice*);
+	void set_sync_source(Voice *);
 	void reset();
 
 	void writeCONTROL_REG(reg8);
@@ -342,4 +342,4 @@ protected:
 
 }
 
-#endif // not __SID_H__
+#endif // not AUDIO_SOFTSYNTH_SID_H

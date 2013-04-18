@@ -23,7 +23,7 @@
 #ifndef KYRA_GUI_LOK_H
 #define KYRA_GUI_LOK_H
 
-#include "kyra/gui.h"
+#include "kyra/gui_v1.h"
 #include "kyra/screen_lok.h"
 
 namespace Kyra {
@@ -92,7 +92,7 @@ namespace Kyra {
 
 class KyraEngine_LoK;
 
-class GUI_LoK : public GUI {
+class GUI_LoK : public GUI_v1 {
 	friend class KyraEngine_LoK;
 public:
 	GUI_LoK(KyraEngine_LoK *vm, Screen_LoK *screen);

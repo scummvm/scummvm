@@ -245,6 +245,8 @@ void ConsoleDialog::handleTickle() {
 		} else
 			draw();
 	}
+
+	_scrollBar->handleTickle();
 }
 
 void ConsoleDialog::handleMouseWheel(int x, int y, int direction) {

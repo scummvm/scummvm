@@ -200,10 +200,11 @@ int AgiEngine::mainCycle() {
 	// vars in every interpreter cycle.
 	//
 	// We run AGIMOUSE always as a side effect
-	if (getFeatures() & GF_AGIMOUSE || true) {
+	//if (getFeatures() & GF_AGIMOUSE) {
 		_game.vars[28] = _mouse.x / 2;
 		_game.vars[29] = _mouse.y;
-	}
+	//}
+
 	if (key == KEY_PRIORITY) {
 		_sprites->eraseBoth();
 		_debug.priority = !_debug.priority;
@@ -247,44 +248,47 @@ int AgiEngine::mainCycle() {
 	if (kascii)
 		setvar(vKey, kascii);
 
-process_key:
+	bool restartProcessKey;
+	do {
+		restartProcessKey = false;
 
-	switch (_game.inputMode) {
-	case INPUT_NORMAL:
-		if (!handleController(key)) {
-			if (key == 0 || !_game.inputEnabled)
-				break;
-			handleKeys(key);
+		switch (_game.inputMode) {
+		case INPUT_NORMAL:
+			if (!handleController(key)) {
+				if (key == 0 || !_game.inputEnabled)
+					break;
+				handleKeys(key);
 
-			// if ESC pressed, activate menu before
-			// accept.input from the interpreter cycle
-			// sets the input mode to normal again
-			// (closes: #540856)
-			if (key == KEY_ESCAPE) {
-				key = 0;
-				goto process_key;
+				// if ESC pressed, activate menu before
+				// accept.input from the interpreter cycle
+				// sets the input mode to normal again
+				// (closes: #540856)
+				if (key == KEY_ESCAPE) {
+					key = 0;
+					restartProcessKey = true;
+				}
+
+				// commented out to close Sarien bug #438872
+				//if (key)
+				//	_game.keypress = key;
 			}
-
-			// commented out to close Sarien bug #438872
-			//if (key)
-			//	_game.keypress = key;
+			break;
+		case INPUT_GETSTRING:
+			handleController(key);
+			handleGetstring(key);
+			setvar(vKey, 0);	// clear ENTER key
+			break;
+		case INPUT_MENU:
+			_menu->keyhandler(key);
+			_gfx->doUpdate();
+			return false;
+		case INPUT_NONE:
+			handleController(key);
+			if (key)
+				_game.keypress = key;
+			break;
 		}
-		break;
-	case INPUT_GETSTRING:
-		handleController(key);
-		handleGetstring(key);
-		setvar(vKey, 0);	// clear ENTER key
-		break;
-	case INPUT_MENU:
-		_menu->keyhandler(key);
-		_gfx->doUpdate();
-		return false;
-	case INPUT_NONE:
-		handleController(key);
-		if (key)
-			_game.keypress = key;
-		break;
-	}
+	} while (restartProcessKey);
 	_gfx->doUpdate();
 
 	if (_game.msgBoxTicks > 0)
@@ -315,7 +319,7 @@ int AgiEngine::playGame() {
 	_game.lineUserInput = 22;
 
 	// We run AGIMOUSE always as a side effect
-	if (getFeatures() & GF_AGIMOUSE || true)
+	//if (getFeatures() & GF_AGIMOUSE)
 		debug(1, "Using AGI Mouse 1.0 protocol");
 
 	if (getFeatures() & GF_AGIPAL)

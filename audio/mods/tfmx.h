@@ -24,8 +24,8 @@
 #if !defined(ENABLE_SCUMM)
 
 // normal Header Guard
-#elif !defined(SOUND_MODS_TFMX_H)
-#define SOUND_MODS_TFMX_H
+#elif !defined(AUDIO_MODS_TFMX_H)
+#define AUDIO_MODS_TFMX_H
 
 #include "audio/mods/paula.h"
 
@@ -278,4 +278,4 @@ private:
 
 }	// End of namespace Audio
 
-#endif // !defined(SOUND_MODS_TFMX_H)
+#endif // !defined(AUDIO_MODS_TFMX_H)

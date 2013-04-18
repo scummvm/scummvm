@@ -179,10 +179,10 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 		clipHeight = clipInfo.clipRect.bottom - y;
 	}
 
-	source = (byte*)sourceSurface->getBasePtr(0, startY);
-	dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
+	source = (byte *)sourceSurface->getBasePtr(0, startY);
+	dest = (byte *)clipInfo.destSurface->getBasePtr(x, y);
 	if (_vm->getGameID() != GID_RTZ)
-		maskp = (byte*)_maskDrawCtx.destSurface->getBasePtr(x, y);
+		maskp = (byte *)_maskDrawCtx.destSurface->getBasePtr(x, y);
 
 	int32 sourcePitch, linePtrAdd, sourceAdd;
 	byte *linePtr;
@@ -437,15 +437,15 @@ uint16 Screen::placeSprite(uint16 channelIndex, uint16 flexIndex, int16 x, int16
 	PictureResource *flex = _vm->_res->getPicture(flexIndex);
 
 	if (flex) {
-		Graphics::Surface *surf = flex->getPicture();
+		//Graphics::Surface *surf = flex->getPicture();
 
 		int16 state = 1;
-		int16 x1, y1, x2, y2;
+		/*int16 x1, y1, x2, y2;
 
 		x1 = x;
 		y1 = y;
 		x2 = x + surf->w + 1;
-		y2 = y + surf->h + 1;
+		y2 = y + surf->h + 1;*/
 
 		if (_ground == 0)
 			state |= 2;
@@ -485,12 +485,12 @@ uint16 Screen::placeAnim(uint16 channelIndex, uint16 animIndex, int16 x, int16 y
 	if (anim) {
 
 		int16 state = 1;
-		int16 x1, y1, x2, y2;
+		/*int16 x1, y1, x2, y2;
 
 		x1 = x;
 		y1 = y;
 		x2 = x + anim->getWidth();
-		y2 = y + anim->getHeight();
+		y2 = y + anim->getHeight();*/
 
 		if (anim->getFlags() == 1 || _ground == 0)
 			state |= 2;
@@ -543,7 +543,7 @@ uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, i
 	Object *obj = _vm->_dat->getObject(textObjectIndex);
 	const char *text = obj->getString();
 
-	int16 x1, y1, x2, y2;
+	//int16 x1, y1, x2, y2;
 
 	setFont(fontNum);
 
@@ -557,10 +557,10 @@ uint16 Screen::placeText(uint16 channelIndex, uint16 textObjectIndex, int16 x, i
 		y--;
 	}
 
-	x1 = x;
+	/*x1 = x;
 	y1 = y;
 	x2 = x + textWidth;
-	y2 = y + textHeight;
+	y2 = y + textHeight;*/
 
 	if (textWidth > 0 && outlineColor != -1) {
 		x++;
@@ -633,7 +633,7 @@ void Screen::printChar(uint c, int16 x, int16 y, byte color) {
 		return;
 
 	byte p;
-	byte *dest = (byte*)_fontDrawCtx.destSurface->getBasePtr(x, y);
+	byte *dest = (byte *)_fontDrawCtx.destSurface->getBasePtr(x, y);
 
 	for (uint yc = 0; yc < height; yc++) {
 		p = charData[yc];

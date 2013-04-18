@@ -123,7 +123,7 @@ bool DrasculaEngine::saveLoadScreen() {
 				if (mouseX > 115 && mouseY > y + (9 * n) && mouseX < 115 + 175 && mouseY < y + 10 + (9 * n)) {
 					strcpy(select, _saveNames[n]);
 
-					if (strcmp(select, "*"))
+					if (strcmp(select, "*") != 0)
 						selectionMade = 1;
 					else {
 						enterName();

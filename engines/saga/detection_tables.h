@@ -267,7 +267,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_ITE,
 		0,
@@ -293,7 +293,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_ITE,
 		GF_8BIT_UNSIGNED_PCM,
@@ -326,7 +326,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_ITE,
 		GF_8BIT_UNSIGNED_PCM,
@@ -350,7 +350,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_ITE,
 		0,
@@ -382,7 +382,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_ITE,
 		0,
@@ -412,7 +412,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformUnknown,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_ITE,
 		0,
@@ -436,7 +436,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_ITE,
 		GF_EXTRA_ITE_CREDITS,
@@ -460,7 +460,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_ITE,
 		0,
@@ -484,7 +484,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_ITE,
 		0,
@@ -509,7 +509,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_CD,
-			GUIO1(GUIO_NONE)
+			GUIO0()
 		},
 		GID_ITE,
 		0,
@@ -617,7 +617,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
 		0,
@@ -649,7 +649,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
 		0,
@@ -679,7 +679,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
 		0,
@@ -707,7 +707,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
 		0,
@@ -736,7 +736,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
 		0,
@@ -764,7 +764,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
 		0,
@@ -789,7 +789,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_IHNM,
 		0,
@@ -819,7 +819,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_DINO,
 		0,
@@ -849,7 +849,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NONE)
+			GUIO1(GUIO_NOASPECT)
 		},
 		GID_FTA2,
 		0,

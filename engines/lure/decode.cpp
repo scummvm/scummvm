@@ -34,12 +34,18 @@ namespace Lure {
 /* Provides the functionality for decoding screens                          */
 /*--------------------------------------------------------------------------*/
 
+/**
+ * Write a single byte to the output buffer
+ */
 void PictureDecoder::writeByte(MemoryBlock *dest, byte v) {
 	if (outputOffset == dest->size())
 		error("Decoded data exceeded allocated output buffer size");
 	dest->data()[outputOffset++] = v;
 }
 
+/**
+ * Writes out a specified byte a given number of times to the output
+ */
 void PictureDecoder::writeBytes(MemoryBlock *dest, byte v, uint16 numBytes) {
 	if (outputOffset + numBytes > dest->size())
 		error("Decoded data exceeded allocated output buffer size");
@@ -47,6 +53,9 @@ void PictureDecoder::writeBytes(MemoryBlock *dest, byte v, uint16 numBytes) {
 	outputOffset += numBytes;
 }
 
+/**
+ * Gets a byte from the compressed source using the first data pointer
+ */
 byte PictureDecoder::DSSI(bool incr) {
 	if (dataPos > dataIn->size())
 		error("PictureDecoder went beyond end of source data");
@@ -57,6 +66,9 @@ byte PictureDecoder::DSSI(bool incr) {
 	return result;
 }
 
+/**
+ * Gets a byte from the compressed source using the second data pointer
+ */
 byte PictureDecoder::ESBX(bool incr) {
 	if (dataPos2 >= dataIn->size())
 		error("PictureDecoder went beyond end of source data");
@@ -227,56 +239,61 @@ MemoryBlock *PictureDecoder::vgaDecode(MemoryBlock *src, uint32 maxOutputSize) {
 	CH = ESBX();
 	CL = 9;
 
-Loc754:
-	AL = DSSI();
-	writeByte(dest, AL);
-	BP = ((uint16) AL) << 2;
+	// Main decoding loop
+	bool loopFlag = true;
+	while (loopFlag) {
+		AL = DSSI();
+		writeByte(dest, AL);
+		BP = ((uint16) AL) << 2;
 
-Loc755:
-	decrCtr();
-	if (shlCarry()) goto Loc761;
-	decrCtr();
-	if (shlCarry()) goto Loc759;
-	AL = dataIn->data()[BP];
+		// Inner loop
+		for (;;) {
+			decrCtr();
+			if (shlCarry()) {
+				decrCtr();
+				if (shlCarry()) {
+					decrCtr();
+					if (shlCarry())
+						break;
+			
+					AL = dataIn->data()[BP + 3];
+				} else {
+					decrCtr();
+					if (shlCarry())
+						AL = dataIn->data()[BP + 2];
+					else
+						AL = dataIn->data()[BP + 1];
+				}
+			} else {
+				decrCtr();
+				if (shlCarry()) {
+					AL = (byte) (BP >> 2);
+					AH = DSSI();
+					if (AH == 0) {
+						AL = DSSI();
+						if (AL == 0) {
+							// Finally done
+							loopFlag = false;
+							break;
+						} else {
+							// Keep going
+							continue;
+						}
+					} else {
+						// Write out byte sequence
+						writeBytes(dest, AL, AH);
+						continue;
+					}
+				} else {
+					AL = dataIn->data()[BP];
+				}
+			}
 
-Loc758:
-	writeByte(dest, AL);
-	BP = ((uint16) AL) << 2;
-	goto Loc755;
-
-Loc759:
-	AL = (byte) (BP >> 2);
-	AH = DSSI();
-	if (AH == 0) goto Loc768;
-
-	writeBytes(dest, AL, AH);
-	goto Loc755;
-
-Loc761:
-	decrCtr();
-	if (shlCarry()) goto Loc765;
-	decrCtr();
-
-	if (shlCarry()) goto Loc764;
-	AL = dataIn->data()[BP+1];
-	goto Loc758;
-
-Loc764:
-	AL = dataIn->data()[BP+2];
-	goto Loc758;
-
-Loc765:
-	decrCtr();
-	if (shlCarry()) goto Loc767;
-	AL = dataIn->data()[BP+3];
-	goto Loc758;
-
-Loc767:
-	goto Loc754;
-
-Loc768:
-	AL = DSSI();
-	if (AL != 0) goto Loc755;
+			// Write out the next byte
+			writeByte(dest, AL);
+			BP = ((uint16) AL) << 2;
+		}
+	}
 
 	// Resize the output to be the number of outputed bytes and return it
 	if (outputOffset < dest->size()) dest->reallocate(outputOffset);
@@ -355,92 +372,54 @@ uint32 AnimationDecoder::decode_data(MemoryBlock *src, MemoryBlock *dest, uint32
 	currData <<= 4;
 	dx = 1;
 
-	for (;;) {
-		carry = false;
-		rcl(currData, carry);
-		if (--bitCtr == 0) {
-			GET_BYTE;
-			bitCtr = 8;
-		}
-		if (carry) goto loc_1441;
-		tableOffset = BX_VAL(0);
-
-loc_1439:
-		dx ^= 1;
-		if ((dx & 1) != 0) {
-			SET_HI_BYTE(dx, tableOffset << 4);
-			*pDest = dx >> 8;
-		} else {
-			*pDest++ |= tableOffset;
-		}
-		continue;
-
-loc_1441:
-		rcl(currData, carry);
-		if (--bitCtr == 0) {
-			GET_BYTE;
-			bitCtr = 8;
-		}
-		if (!carry) {
+	// Main loop
+	bool loopFlag = true;
+	while (loopFlag) {
+		for (;;) {		
+			carry = false;
 			rcl(currData, carry);
 			if (--bitCtr == 0) {
 				GET_BYTE;
 				bitCtr = 8;
 			}
-
 			if (!carry) {
-				tableOffset = BX_VAL(0x10);
-			} else {
-				tableOffset = BX_VAL(0x20);
+				tableOffset = BX_VAL(0);
+				break;
 			}
-			goto loc_1439;
-		}
 
-		rcl(currData, carry);
-		if (--bitCtr == 0) {
-			GET_BYTE;
-			bitCtr = 8;
-		}
-		if (!carry) {
-			tableOffset = BX_VAL(0x30);
-			goto loc_1439;
-		}
-
-		SET_HI_BYTE(dx, currData >> 12);
-		carry = false;
-		for (int ctr = 0; ctr < 4; ++ctr) {
 			rcl(currData, carry);
 			if (--bitCtr == 0) {
 				GET_BYTE;
 				bitCtr = 8;
 			}
-		}
+			if (!carry) {
+				rcl(currData, carry);
+				if (--bitCtr == 0) {
+					GET_BYTE;
+					bitCtr = 8;
+				}
 
-		byte dxHigh = dx >> 8;
-		if (dxHigh == BX_VAL(0)) {
-			tempReg1 = bitCtr;
-			tempReg2 = dx;
-			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
-
-			SET_LO_BYTE(dx, dx >> 8);
-			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
-			SET_HI_BYTE(bitCtr, dx & 0xff);
-			SET_LO_BYTE(bitCtr, dx >> 8);
-			dx = tempReg2;
-
-			if (bitCtr == 0)
-				// Exit out of infinite loop
+				if (!carry) {
+					tableOffset = BX_VAL(0x10);
+				} else {
+					tableOffset = BX_VAL(0x20);
+				}
 				break;
+			}
 
-		} else if (dxHigh == BX_VAL(0x10)) {
-			tempReg1 = bitCtr;
-			decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
-			bitCtr = dx >> 8;
+			rcl(currData, carry);
+			if (--bitCtr == 0) {
+				GET_BYTE;
+				bitCtr = 8;
+			}
+			if (!carry) {
+				tableOffset = BX_VAL(0x30);
+				break;
+			}
 
-		} else if (dxHigh == BX_VAL(0x20)) {
-			SET_HI_BYTE(dx, currData >> 10);
-
-			for (v = 0; v < 6; ++v) {
+			SET_HI_BYTE(dx, currData >> 12);
+			carry = false;
+			for (int ctr = 0; ctr < 4; ++ctr) {
 				rcl(currData, carry);
 				if (--bitCtr == 0) {
 					GET_BYTE;
@@ -448,48 +427,92 @@ loc_1441:
 				}
 			}
 
-			tempReg1 = bitCtr;
-			bitCtr = dx >> 8;
+			byte dxHigh = dx >> 8;
+			if (dxHigh == BX_VAL(0)) {
+				tempReg1 = bitCtr;
+				tempReg2 = dx;
+				decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
 
-		} else if (dxHigh == BX_VAL(0x30)) {
-			SET_HI_BYTE(dx, currData >> 11);
+				SET_LO_BYTE(dx, dx >> 8);
+				decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
+				SET_HI_BYTE(bitCtr, dx & 0xff);
+				SET_LO_BYTE(bitCtr, dx >> 8);
+				dx = tempReg2;
 
-			for (v = 0; v < 5; ++v) {
-				rcl(currData, carry);
-				if (--bitCtr == 0) {
-					GET_BYTE;
-					bitCtr = 8;
+				if (bitCtr == 0) {
+					// End of decompression
+					loopFlag = false;
+					break;
 				}
+			} else if (dxHigh == BX_VAL(0x10)) {
+				tempReg1 = bitCtr;
+				decode_data_2(src, pSrc, currData, bitCtr, dx, carry);
+				bitCtr = dx >> 8;
+
+			} else if (dxHigh == BX_VAL(0x20)) {
+				SET_HI_BYTE(dx, currData >> 10);
+
+				for (v = 0; v < 6; ++v) {
+					rcl(currData, carry);
+					if (--bitCtr == 0) {
+						GET_BYTE;
+						bitCtr = 8;
+					}
+				}
+
+				tempReg1 = bitCtr;
+				bitCtr = dx >> 8;
+
+			} else if (dxHigh == BX_VAL(0x30)) {
+				SET_HI_BYTE(dx, currData >> 11);
+
+				for (v = 0; v < 5; ++v) {
+					rcl(currData, carry);
+					if (--bitCtr == 0) {
+						GET_BYTE;
+						bitCtr = 8;
+					}
+				}
+
+				tempReg1 = bitCtr;
+				bitCtr = dx >> 8;
+
+			} else {
+				tableOffset = dx >> 8;
+				break;
 			}
 
-			tempReg1 = bitCtr;
-			bitCtr = dx >> 8;
+			if ((dx & 1) == 1) {
+				*pDest++ |= tableOffset;
+				--bitCtr;
+				dx &= 0xfffe;
+			}
 
-		} else {
-			tableOffset = dx >> 8;
-			goto loc_1439;
+			SET_HI_BYTE(dx, tableOffset << 4);
+			tableOffset |= dx >> 8;
+
+			v = bitCtr >> 1;
+			while (v-- > 0) *pDest++ = tableOffset;
+
+			bitCtr &= 1;
+			if (bitCtr != 0) {
+				*pDest = tableOffset & 0xf0;
+				dx |= 1; //dx.l
+			}
+
+			bitCtr = tempReg1;
+			tableOffset &= 0x0f;
 		}
 
-		if ((dx & 1) == 1) {
-			*pDest++ |= tableOffset;
-			--bitCtr;
-			dx &= 0xfffe;
+		if (loopFlag) {
+			dx ^= 1;
+			if ((dx & 1) != 0) {
+				SET_HI_BYTE(dx, tableOffset << 4);
+				*pDest = dx >> 8;
+			} else {
+				*pDest++ |= tableOffset;
+			}
 		}
-
-		SET_HI_BYTE(dx, tableOffset << 4);
-		tableOffset |= dx >> 8;
-
-		v = bitCtr >> 1;
-		while (v-- > 0) *pDest++ = tableOffset;
-
-		bitCtr &= 1;
-		if (bitCtr != 0) {
-			*pDest = tableOffset & 0xf0;
-			dx |= 1; //dx.l
-		}
-
-		bitCtr = tempReg1;
-		tableOffset &= 0x0f;
 	}
 
 	// Return number of bytes written

@@ -41,10 +41,34 @@ protected:
 	bool Cmd_SetFlag(int argc, const char **argv);
 	bool Cmd_GetFlag(int argc, const char **argv);
 	bool Cmd_ClearFlag(int argc, const char **argv);
-	bool Cmd_ListObjects(int argc, const char **argv);
-	bool Cmd_MoveObject(int argc, const char **argv);
 	bool Cmd_Hotspots(int argc, const char **argv);
 	bool Cmd_Sound(int argc, const char **argv);
+	virtual bool Cmd_ListObjects(int argc, const char **argv) = 0;
+	virtual bool Cmd_MoveObject(int argc, const char **argv) = 0;
+};
+
+class DemoDebugger : public Debugger {
+protected:
+	virtual bool Cmd_ListObjects(int argc, const char **argv);
+	virtual bool Cmd_MoveObject(int argc, const char **argv);
+};
+
+class RingworldDebugger : public Debugger {
+protected:
+	virtual bool Cmd_ListObjects(int argc, const char **argv);
+	virtual bool Cmd_MoveObject(int argc, const char **argv);
+};
+
+class BlueForceDebugger : public Debugger {
+protected:
+	virtual bool Cmd_ListObjects(int argc, const char **argv);
+	virtual bool Cmd_MoveObject(int argc, const char **argv);
+};
+
+class Ringworld2Debugger : public Debugger {
+protected:
+	virtual bool Cmd_ListObjects(int argc, const char **argv);
+	virtual bool Cmd_MoveObject(int argc, const char **argv);
 };
 
 } // End of namespace TsAGE

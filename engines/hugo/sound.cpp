@@ -256,7 +256,7 @@ void SoundHandler::checkMusic() {
 }
 
 void SoundHandler::loopPlayer(void *refCon) {
-	((SoundHandler*)refCon)->pcspkr_player();
+	((SoundHandler *)refCon)->pcspkr_player();
 }
 
 /**

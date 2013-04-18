@@ -43,25 +43,30 @@ Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 Sound::~Sound() {
 }
 
-bool Sound::voiceFileIsPresent(const char *file) {
-	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
-		Common::String f = file;
-		f += _supportedCodecs[i].fileext;
-		if (_vm->resource()->getFileSize(f.c_str()) > 0)
-			return true;
-	}
+Sound::kType Sound::getSfxType() const {
+	return getMusicType();
+}
 
+void Sound::setSoundList(const AudioDataStruct *list) {
+	_soundDataList = list;
+}
+
+bool Sound::hasSoundFile(uint file) const {
+	return (fileListEntry(file) != 0);
+}
+
+bool Sound::isPlaying() const {
 	return false;
 }
 
-bool Sound::isVoicePresent(const char *file) {
-	char filenamebuffer[25];
+bool Sound::isVoicePresent(const char *file) const {
+	Common::String filename;
 
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
-		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, _supportedCodecs[i].fileext);
+		filename = file;
+		filename += _supportedCodecs[i].fileext;
 
-		if (_vm->resource()->exists(filenamebuffer))
+		if (_vm->resource()->exists(filename.c_str()))
 			return true;
 	}
 
@@ -80,15 +85,15 @@ int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volum
 	return playTime;
 }
 
-Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) {
-	char filenamebuffer[25];
+Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) const {
+	Common::String filename;
 
 	Audio::SeekableAudioStream *audioStream = 0;
 	for (int i = 0; _supportedCodecs[i].fileext; ++i) {
-		strcpy(filenamebuffer, file);
-		strcat(filenamebuffer, _supportedCodecs[i].fileext);
+		filename = file;
+		filename += _supportedCodecs[i].fileext;
 
-		Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filenamebuffer);
+		Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 		if (!stream)
 			continue;
 
@@ -136,7 +141,7 @@ void Sound::voiceStop(const Audio::SoundHandle *handle) {
 	}
 }
 
-bool Sound::voiceIsPlaying(const Audio::SoundHandle *handle) {
+bool Sound::voiceIsPlaying(const Audio::SoundHandle *handle) const {
 	if (!handle) {
 		for (int h = 0; h < kNumChannelHandles; ++h) {
 			if (_mixer->isSoundHandleActive(_soundChannels[h]))
@@ -149,11 +154,96 @@ bool Sound::voiceIsPlaying(const Audio::SoundHandle *handle) {
 	return false;
 }
 
-bool Sound::allVoiceChannelsPlaying() {
+bool Sound::allVoiceChannelsPlaying() const {
 	for (int i = 0; i < kNumChannelHandles; ++i)
 		if (!_mixer->isSoundHandleActive(_soundChannels[i]))
 			return false;
 	return true;
+}
+
+#pragma mark -
+
+MixedSoundDriver::MixedSoundDriver(KyraEngine_v1 *vm, Audio::Mixer *mixer, Sound *music, Sound *sfx)
+    : Sound(vm, mixer), _music(music), _sfx(sfx) {
+}
+
+MixedSoundDriver::~MixedSoundDriver() {
+	delete _music;
+	delete _sfx;
+}
+
+Sound::kType MixedSoundDriver::getMusicType() const {
+	return _music->getMusicType();
+}
+
+Sound::kType MixedSoundDriver::getSfxType() const {
+	return _sfx->getSfxType();
+}
+
+bool MixedSoundDriver::init() {
+	return (_music->init() && _sfx->init());
+}
+
+void MixedSoundDriver::process() {
+	_music->process();
+	_sfx->process();
+}
+
+void MixedSoundDriver::updateVolumeSettings() {
+	_music->updateVolumeSettings();
+	_sfx->updateVolumeSettings();
+}
+
+void MixedSoundDriver::setSoundList(const AudioDataStruct *list) {
+	_music->setSoundList(list);
+	_sfx->setSoundList(list);
+}
+
+bool MixedSoundDriver::hasSoundFile(uint file) const {
+	return _music->hasSoundFile(file) && _sfx->hasSoundFile(file);
+}
+
+void MixedSoundDriver::loadSoundFile(uint file) {
+	_music->loadSoundFile(file);
+	_sfx->loadSoundFile(file);
+}
+
+void MixedSoundDriver::loadSoundFile(Common::String file) {
+	_music->loadSoundFile(file);
+	_sfx->loadSoundFile(file);
+}
+
+void MixedSoundDriver::loadSfxFile(Common::String file) {
+	_sfx->loadSoundFile(file);
+}
+
+void MixedSoundDriver::playTrack(uint8 track) {
+	_music->playTrack(track);
+}
+
+void MixedSoundDriver::haltTrack() {
+	_music->haltTrack();
+}
+
+bool MixedSoundDriver::isPlaying() const {
+	return _music->isPlaying() | _sfx->isPlaying();
+}
+
+void MixedSoundDriver::playSoundEffect(uint8 track, uint8 volume) {
+	_sfx->playSoundEffect(track, volume);
+}
+
+void MixedSoundDriver::stopAllSoundEffects() {
+	_sfx->stopAllSoundEffects();
+}
+
+void MixedSoundDriver::beginFadeOut() {
+	_music->beginFadeOut();
+}
+
+void MixedSoundDriver::pause(bool paused) {
+	_music->pause(paused);
+	_sfx->pause(paused);
 }
 
 #pragma mark -
@@ -176,7 +266,7 @@ void KyraEngine_v1::snd_playTheme(int file, int track) {
 }
 
 void KyraEngine_v1::snd_playSoundEffect(int track, int volume) {
-	_sound->playSoundEffect(track);
+	_sound->playSoundEffect(track, volume);
 }
 
 void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
@@ -244,16 +334,7 @@ namespace {
 // A simple wrapper to create VOC streams the way like creating MP3, OGG/Vorbis and FLAC streams.
 // Possible TODO: Think of making this complete and moving it to sound/voc.cpp ?
 Audio::SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
-
-#ifdef STREAM_AUDIO_FROM_DISK
 	Audio::SeekableAudioStream *as = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, disposeAfterUse);
-#else
-	Audio::SeekableAudioStream *as = Audio::makeVOCStream(stream, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-
-	if (disposeAfterUse)
-		delete stream;
-#endif
-
 	return as;
 }
 

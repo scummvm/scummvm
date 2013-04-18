@@ -326,7 +326,7 @@ int KyraEngine_LoK::o1_delaySecs(EMCState *script) {
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_delaySecs(%p) (%d)", (const void *)script, stackPos(0));
 		if (stackPos(0) >= 0 && !skipFlag())
-			delay(stackPos(0)*1000, true);
+			delay(stackPos(0) * 1000, true);
 	}
 
 	resetSkipFlag();
@@ -689,7 +689,7 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 		if (specialTime) {
 			uint32 voiceTime = snd_getVoicePlayTime();
 			if (voiceTime) {
-				int displayFrames = ABS(endFrame-startFrame)+1;
+				int displayFrames = ABS(endFrame - startFrame) + 1;
 				displayFrames *= maxTime;
 				assert(displayFrames != 0);
 
@@ -720,14 +720,19 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 	if (maxTime - 1 <= 0)
 		maxTime = 1;
 
-	// Workaround for bug #1498221 "KYRA1: Glitches when meeting Zanthia"
-	// the original didn't do a forced screen update after displaying a wsa frame
-	// while we have to do it, which make brandon disappear for a short moment,
-	// what shouldn't happen. So we're not updating the screen for this special
-	// case too.
-	if (startFrame == 18 && endFrame == 18 && _currentRoom == 45) {
+	// WORKAROUND for bug #1498221 "KYRA1: Glitches when meeting Zanthia".
+	// The original did not do a forced screen update after displaying a WSA
+	// frame while we have to do it, which makes Brandon disappear for a short
+	// moment. That is not supposed to happen. So we're not updating the
+	// screen for this special case.
+	// This is only an issue for the CD version, but since the floppy version
+	// does not use the specified paramaeters like these, it is safe to enable
+	// it for all versions.
+	if (startFrame == 18 && endFrame == 18 && waitTime == 10 && wsaIndex == 0 && _currentRoom == 45) {
 		_movieObjects[wsaIndex]->displayFrame(18, 0, xpos, ypos, 0, 0, 0);
-		delay(waitTime * _tickLength);
+		// We call delayMillis manually here to avoid the screen getting
+		// updated.
+		_system->delayMillis(waitTime * _tickLength);
 		return 0;
 	}
 
@@ -1085,7 +1090,7 @@ int KyraEngine_LoK::o1_sceneAnimationActive(EMCState *script) {
 
 int KyraEngine_LoK::o1_setCharacterMovementDelay(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCharacterMovementDelay(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	_timer->setDelay(stackPos(0)+5, stackPos(1));
+	_timer->setDelay(stackPos(0) + 5, stackPos(1));
 	return 0;
 }
 
@@ -1124,7 +1129,7 @@ int KyraEngine_LoK::o1_findBrightestFireberry(EMCState *script) {
 	// return a glow value of "29" over here, when we are running a CD version.
 	if (_flags.isTalkie) {
 		if (_currentCharacter->sceneId == 133 || _currentCharacter->sceneId == 137 ||
-			_currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173)
+		        _currentCharacter->sceneId == 165 || _currentCharacter->sceneId == 173)
 			return 29;
 	}
 
@@ -1173,7 +1178,7 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 		case -1:
 			// The original seemed to draw some lines on page 2 here, which looks strange...
 			//if (!(_brandonStatusBit & 2))
-			//	warning("Unimplemented case for o1_setFireberryGlowPalette");
+			//  warning("Unimplemented case for o1_setFireberryGlowPalette");
 			palIndex = 9;
 			break;
 
@@ -1190,7 +1195,7 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 			palIndex = 9;
 			break;
 
-		case 28: case 29: default:
+	case 28: case 29: default:
 			palIndex = 6;
 		}
 
@@ -1227,8 +1232,8 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 
 		if (_brandonStatusBit & 2) {
 			if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 &&
-				_currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 &&
-				(_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
+			        _currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 &&
+			        (_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
 				palIndex = 14;
 			}
 		}
@@ -1291,12 +1296,12 @@ int KyraEngine_LoK::o1_drawItemShapeIntoScene(EMCState *script) {
 		flags = 1;
 
 	if (onlyHidPage) {
-		_screen->drawShape(2, _shapes[216+item], x, y, 0, flags);
+		_screen->drawShape(2, _shapes[216 + item], x, y, 0, flags);
 	} else {
 		_screen->hideMouse();
 		_animator->restoreAllObjectBackgrounds();
-		_screen->drawShape(2, _shapes[216+item], x, y, 0, flags);
-		_screen->drawShape(0, _shapes[216+item], x, y, 0, flags);
+		_screen->drawShape(2, _shapes[216 + item], x, y, 0, flags);
+		_screen->drawShape(0, _shapes[216 + item], x, y, 0, flags);
 		_animator->flagAllObjectsForBkgdChange();
 		_animator->preserveAnyChangedBackgrounds();
 		_animator->flagAllObjectsForRefresh();
@@ -1409,7 +1414,7 @@ int KyraEngine_LoK::o1_fillFlaskWithWater(EMCState *script) {
 
 int KyraEngine_LoK::o1_getCharacterMovementDelay(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_getCharacterMovementDelay(%p) (%d)", (const void *)script, stackPos(0));
-	return _timer->getDelay(stackPos(0)+5);
+	return _timer->getDelay(stackPos(0) + 5);
 }
 
 int KyraEngine_LoK::o1_getBirthstoneGem(EMCState *script) {
@@ -1715,13 +1720,13 @@ int KyraEngine_LoK::o1_pauseMusicSeconds(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_pauseMusicSeconds(%p) ()", (const void *)script);
 	// if music disabled
 	//     return
-	delay(stackPos(0)*1000, true);
+	delay(stackPos(0) * 1000, true);
 	return 0;
 }
 
 int KyraEngine_LoK::o1_resetMaskRegion(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_resetMaskRegion(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
-	_screen->fillRect(stackPos(1), stackPos(2), stackPos(1)+stackPos(3), stackPos(2)+stackPos(4), 0, 5);
+	_screen->fillRect(stackPos(1), stackPos(2), stackPos(1) + stackPos(3), stackPos(2) + stackPos(4), 0, 5);
 	return 0;
 }
 

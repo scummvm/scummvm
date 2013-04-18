@@ -139,26 +139,6 @@ enum {
 	GC_INTERVAL = 0x8000
 };
 
-// Opcode formats
-enum opcode_format {
-	Script_Invalid = -1,
-	Script_None = 0,
-	Script_Byte,
-	Script_SByte,
-	Script_Word,
-	Script_SWord,
-	Script_Variable,
-	Script_SVariable,
-	Script_SRelative,
-	Script_Property,
-	Script_Global,
-	Script_Local,
-	Script_Temp,
-	Script_Param,
-	Script_Offset,
-	Script_End
-};
-
 enum sci_opcodes {
 	op_bnot     = 0x00,	// 000
 	op_add      = 0x01,	// 001
@@ -289,8 +269,6 @@ enum sci_opcodes {
 	op_minussti = 0x7e,	// 126
 	op_minusspi = 0x7f	// 127
 };
-
-extern opcode_format g_opcode_formats[128][4];
 
 void script_adjust_opcode_formats();
 

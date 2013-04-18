@@ -26,8 +26,8 @@
  *  - queen
  */
 
-#ifndef SOUND_MODS_RJP1_H
-#define SOUND_MODS_RJP1_H
+#ifndef AUDIO_MODS_RJP1_H
+#define AUDIO_MODS_RJP1_H
 
 namespace Common {
 class SeekableReadStream;

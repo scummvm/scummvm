@@ -31,10 +31,10 @@
 namespace Sky {
 
 void MT32Music::passTimerFunc(void *param) {
-	((MT32Music*)param)->timerCall();
+	((MT32Music *)param)->timerCall();
 }
 
-MT32Music::MT32Music(MidiDriver *pMidiDrv, Disk *pDisk) : MusicBase(pDisk) {
+MT32Music::MT32Music(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pDisk) {
 	_driverFileBase = 60200;
 	_midiDrv = pMidiDrv;
 	int midiRes = _midiDrv->open();

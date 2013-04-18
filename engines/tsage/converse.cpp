@@ -25,6 +25,7 @@
 #include "tsage/tsage.h"
 #include "tsage/globals.h"
 #include "tsage/staticres.h"
+#include "ringworld2/ringworld2_speakers.h"
 
 namespace TsAGE {
 
@@ -32,7 +33,7 @@ namespace TsAGE {
 
 
 SequenceManager::SequenceManager() : Action() {
-	Common::set_to(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
+	Common::fill(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
 	_sequenceData.clear();
 	_fontNum = 0;
 	_sequenceOffset = 0;
@@ -81,7 +82,7 @@ void SequenceManager::remove() {
 	if (g_globals->_sceneObjects->contains(&_sceneText))
 		_sceneText.remove();
 
-	Common::set_to(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
+	Common::fill(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
 	Action::remove();
 }
 
@@ -342,7 +343,7 @@ void SequenceManager::attached(EventHandler *newOwner, EventHandler *endHandler,
 
 	DEALLOCATE(seqData);
 
-	Common::set_to(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
+	Common::fill(&_objectList[0], &_objectList[6], (SceneObject *)NULL);
 	for (int idx = 0; idx < 6; ++idx) {
 		_objectList[idx] = va_arg(va, SceneObject *);
 		if (!_objectList[idx])
@@ -451,7 +452,7 @@ int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
 		while (!g_globals->_events.getEvent(event, EVENT_KEYPRESS | EVENT_BUTTON_DOWN | EVENT_MOUSE_MOVE) &&
 				!g_vm->shouldQuit()) {
 			g_system->delayMillis(10);
-			g_system->updateScreen();
+			GLOBALS._screenSurface.updateScreen();
 		}
 		if (g_vm->shouldQuit())
 			break;
@@ -531,26 +532,52 @@ void ConversationChoiceDialog::draw() {
 /*--------------------------------------------------------------------------*/
 
 void Obj44::load(const byte *dataP) {
-	_id = READ_LE_UINT16(dataP);
-	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
-		_field2[idx] = READ_LE_UINT16(dataP + 2 + idx * 2);
+	Common::MemoryReadStream s(dataP, (g_vm->getGameID() == GType_Ringworld2) ? 126 : 68);
 
-	const byte *listP = dataP + 0x10;
-	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx, listP += 10) {
-		_list[idx]._id = READ_LE_UINT16(listP);
-		_list[idx]._scriptOffset = READ_LE_UINT16(listP + 2);
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		_mode = s.readSint16LE();
+		_lookupValue = s.readSint16LE();
+		_lookupIndex = s.readSint16LE();
+		_field6 = s.readSint16LE();
+		_field8 = s.readSint16LE();
 	}
 
-	_speakerOffset = READ_LE_UINT16(dataP + 0x42);
+	_id = s.readSint16LE();
+	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
+		_callbackId[idx] = s.readSint16LE();
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		_field16 = s.readSint16LE();
+		s.skip(20);
+	} else {
+		s.skip(4);
+	}
+
+	for (int idx = 0; idx < OBJ0A_LIST_SIZE; ++idx) {
+		_list[idx]._id = s.readSint16LE();
+		_list[idx]._scriptOffset = s.readSint16LE();
+		s.skip(6);
+	}
+
+	_speakerOffset = s.readSint16LE();
 }
 
 void Obj44::synchronize(Serializer &s) {
 	s.syncAsSint32LE(_id);
 	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
-		s.syncAsSint32LE(_field2[idx]);
-	for (int idx = 0; idx < OBJ44_LIST_SIZE; ++idx)
+		s.syncAsSint32LE(_callbackId[idx]);
+	for (int idx = 0; idx < OBJ0A_LIST_SIZE; ++idx)
 		_list[idx].synchronize(s);
 	s.syncAsUint32LE(_speakerOffset);
+
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		s.syncAsSint16LE(_mode);
+		s.syncAsSint16LE(_lookupValue);
+		s.syncAsSint16LE(_lookupIndex);
+		s.syncAsSint16LE(_field6);
+		s.syncAsSint16LE(_field8);
+		s.syncAsSint16LE(_field16);
+	}
 }
 
 /*--------------------------------------------------------------------------*/
@@ -579,6 +606,11 @@ void StripManager::start(int stripNum, EventHandler *owner, StripCallback *callb
 
 	assert(owner);
 	owner->setAction(this, owner);
+}
+
+void StripManager::start3(int stripNum, EventHandler *owner, byte *lookupList) {
+	_lookupList = lookupList;
+	start(stripNum, owner, NULL);
 }
 
 void StripManager::reset() {
@@ -614,10 +646,12 @@ void StripManager::load() {
 	// Get the object list
 	byte *obj44List = g_resourceManager->getResource(RES_STRIP, _stripNum, 1);
 	int dataSize = g_vm->_memoryManager.getSize(obj44List);
-	assert((dataSize % 0x44) == 0);
+
+	int obj44Size = (g_vm->getGameID() == GType_Ringworld2) ? 126 : 68;
+	assert((dataSize % obj44Size) == 0);
 
 	byte *dataP = obj44List;
-	for (int idx = 0; idx < (dataSize / 0x44); ++idx, dataP += 0x44) {
+	for (int idx = 0; idx < (dataSize / obj44Size); ++idx, dataP += obj44Size) {
 		Obj44 obj;
 		obj.load(dataP);
 		_obj44List.push_back(obj);
@@ -703,7 +737,12 @@ void StripManager::signal() {
 		return;
 	} else if (_obj44Index == 10000) {
 		// Reached end of strip
+		EventHandler *endHandler = _endHandler;
 		remove();
+
+		 if ((g_vm->getGameID() == GType_Ringworld2) && endHandler)
+			 endHandler->signal();
+
 		return;
 	}
 
@@ -714,17 +753,54 @@ void StripManager::signal() {
 		load();
 
 	Obj44 &obj44 = _obj44List[_obj44Index];
-	_field2E8 = obj44._id;
+
+	if (g_vm->getGameID() != GType_Ringworld2) {
+		_field2E8 = obj44._id;
+	} else {
+		// Return to Ringworld specific handling
+		if (obj44._field6)
+			_field2E8 = obj44._field6;
+
+		switch (obj44._mode) {
+		case 1:
+			++_lookupList[obj44._lookupIndex - 1];
+			break;
+		case 2:
+			--_lookupList[obj44._lookupIndex - 1];
+			break;
+		case 3:
+			_lookupList[obj44._lookupIndex - 1] = obj44._lookupValue;
+			break;
+		default:
+			break;
+		}
+	}
+
 	Common::StringArray choiceList;
 
 	// Build up a list of script entries
 	int idx;
-	for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
-		if (!obj44._list[idx]._id)
-			break;
 
-		// Get the next one
-		choiceList.push_back((const char *)&_script[0] + obj44._list[idx]._scriptOffset);
+	if (g_vm->getGameID() == GType_Ringworld2 && obj44._field16) {
+		// Special loading mode used in Return to Ringworld
+		for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
+			int objIndex = _lookupList[obj44._field16 - 1];
+
+			if (!obj44._list[objIndex]._id)
+				break;
+
+			// Get the next one
+			choiceList.push_back((const char *)&_script[0] + obj44._list[objIndex]._scriptOffset);
+		}
+	} else {
+		// Standard choices loading
+		for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
+			if (!obj44._list[idx]._id)
+				break;
+
+			// Get the next one
+			choiceList.push_back((const char *)&_script[0] + obj44._list[idx]._scriptOffset);
+		}
 	}
 
 	int strIndex = 0;
@@ -754,12 +830,15 @@ void StripManager::signal() {
 
 		if (_callbackObject) {
 			for (idx = 0; idx < OBJ44_LIST_SIZE; ++idx) {
-				if (!obj44._field2[idx])
+				if (!obj44._callbackId[idx])
 					break;
 
-				_callbackObject->stripCallback(obj44._field2[idx]);
+				_callbackObject->stripCallback(obj44._callbackId[idx]);
 			}
 		}
+
+		if ((g_vm->getGameID() == GType_Ringworld2) && (_obj44List.size() > 0))
+			static_cast<Ringworld2::VisualSpeaker *>(_activeSpeaker)->proc15();
 
 		_textShown = true;
 		_activeSpeaker->setText(choiceList[strIndex]);
@@ -811,6 +890,17 @@ Speaker *StripManager::getSpeaker(const char *speakerName) {
 	for (uint idx = 0; idx < _speakerList.size(); ++idx) {
 		if (!strcmp(_speakerList[idx]->_speakerName.c_str(), speakerName))
 			return _speakerList[idx];
+	}
+
+	// TODO: Check if it necessary to make a strcmp first.
+	//
+	// If nothing is found, recheck and ignore the case as
+	// in R2R, some character names aren't in uppercase.
+	if (g_vm->getGameID() == GType_Ringworld2) {
+		for (uint idx = 0; idx < _speakerList.size(); ++idx) {
+			if (!scumm_stricmp(_speakerList[idx]->_speakerName.c_str(), speakerName))
+				return _speakerList[idx];
+		}
 	}
 
 	return NULL;

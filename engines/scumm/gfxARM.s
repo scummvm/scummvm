@@ -59,10 +59,6 @@ _asmDrawStripToScreen:
 	CMP	r1,#4			@ If width<4
 	BLT	end			@    return
 
-	@ Width &= ~4 ? What''s that about then? Width &= ~3 I could have
-	@ understood...
-	BIC	r1,r1,#4
-
 	SUB	r5,r5,r1		@ vsPitch          -= width
 	SUB	r6,r6,r1		@ vmScreenWidth    -= width
 	SUB	r7,r7,r1		@ textSurfacePitch -= width

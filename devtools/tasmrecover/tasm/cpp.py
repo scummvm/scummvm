@@ -33,7 +33,7 @@ def parse_bin(s):
 	return v
 
 class cpp:
-	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = []):
+	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = [], skip_dispatch_call = False, skip_addr_constants = False, header_omit_blacklisted = False, function_name_remapping = { }):
 		self.namespace = namespace
 		fname = namespace.lower() + ".cpp"
 		header = namespace.lower() + ".h"
@@ -60,7 +60,6 @@ class cpp:
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-
 """
 		self.fd = open(fname, "wt")
 		self.hd = open(header, "wt")
@@ -68,9 +67,7 @@ class cpp:
 		self.hd.write("""#ifndef %s
 #define %s
 
-%s
-
-""" %(hid, hid, banner))
+%s""" %(hid, hid, banner))
 		self.context = context
 		self.data_seg = context.binary_data
 		self.procs = context.proc_list
@@ -80,12 +77,15 @@ class cpp:
 		self.blacklist = blacklist
 		self.failed = list(blacklist)
 		self.skip_output = skip_output
+		self.skip_dispatch_call = skip_dispatch_call
+		self.skip_addr_constants = skip_addr_constants
+		self.header_omit_blacklisted = header_omit_blacklisted
+		self.function_name_remapping = function_name_remapping
 		self.translated = []
 		self.proc_addr = []
 		self.used_data_offsets = set()
 		self.methods = []
 		self.fd.write("""%s
-
 #include \"%s\"
 
 namespace %s {
@@ -286,7 +286,10 @@ namespace %s {
 				jump_proc = True
 		
 		if jump_proc:
-			return "{ %s(); return; }" %name
+			if name in self.function_name_remapping:
+				return "{ %s(); return; }" %self.function_name_remapping[name]
+			else:
+				return "{ %s(); return; }" %name
 		else:
 			# TODO: name or self.resolve_label(name) or self.mangle_label(name)??
 			if name in self.proc.retlabels:
@@ -308,7 +311,10 @@ namespace %s {
 		if name == 'ax':
 			self.body += "\t__dispatch_call(%s);\n" %self.expand('ax', 2)
 			return
-		self.body += "\t%s();\n" %name
+		if name in self.function_name_remapping:
+			self.body += "\t%s();\n" %self.function_name_remapping[name]
+		else:
+			self.body += "\t%s();\n" %name
 		self.schedule(name)
 
 	def _ret(self):
@@ -499,7 +505,10 @@ namespace %s {
 			
 			self.proc_addr.append((name, self.proc.offset))
 			self.body = str()
-			self.body += "void %sContext::%s() {\n\tSTACK_CHECK;\n" %(self.namespace, name);
+			if name in self.function_name_remapping:
+				self.body += "void %sContext::%s() {\n\tSTACK_CHECK;\n" %(self.namespace, self.function_name_remapping[name]);
+			else:
+				self.body += "void %sContext::%s() {\n\tSTACK_CHECK;\n" %(self.namespace, name);
 			self.proc.optimize()
 			self.unbounded = []
 			self.proc.visit(self, skip)
@@ -550,8 +559,11 @@ namespace %s {
 		fd = open(fname, "wt")
 		fd.write("namespace %s {\n" %self.namespace)
 		for p in procs:
-			fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" %(self.namespace, p, p))
-		fd.write("} /*namespace %s */\n" %self.namespace)
+			if p in self.function_name_remapping:
+				fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" %(self.namespace, self.function_name_remapping[p], self.function_name_remapping[p]))
+			else:
+				fd.write("void %sContext::%s() {\n\t::error(\"%s\");\n}\n\n" %(self.namespace, p, p))
+		fd.write("} // End of namespace  %s\n" %self.namespace)
 		fd.close()
 
 
@@ -578,7 +590,7 @@ namespace %s {
 
 		self.fd.write("\n")
 		self.fd.write("\n".join(self.translated))
-		self.fd.write("\n\n")
+		self.fd.write("\n")
 		print "%d ok, %d failed of %d, %.02g%% translated" %(done, failed, done + failed, 100.0 * done / (done + failed))
 		print "\n".join(self.failed)
 		data_bin = self.data_seg
@@ -596,26 +608,25 @@ namespace %s {
 			elif (n & 0x3) == 0:
 				comment += " "
 		data_impl += "};\n\tds.assign(src, src + sizeof(src));\n"
+
 		self.hd.write(
 """\n#include "dreamweb/runtime.h"
 
+#include "dreamweb/structs.h"
+#include "dreamweb/dreambase.h"
+
 namespace %s {
-#include "structs.h"
-class %sContext : public Context {
-public:
-	void __start();
-	void __dispatch_call(uint16 addr);
-#include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
-""" 
-%(self.namespace, self.namespace))
+"""
+%(self.namespace))
 
-		for name,addr in self.proc_addr:
-			self.hd.write("\tstatic const uint16 addr_%s = 0x%04x;\n" %(name, addr))
+		if self.skip_addr_constants == False:
+			for name,addr in self.proc_addr:
+				self.hd.write("static const uint16 addr_%s = 0x%04x;\n" %(name, addr))
 
 
 		for name,addr in self.used_data_offsets:
-			self.hd.write("\tstatic const uint16 offset_%s = 0x%04x;\n" %(name, addr))
+			self.hd.write("static const uint16 offset_%s = 0x%04x;\n" %(name, addr))
 
 		offsets = []
 		for k, v in self.context.get_globals().items():
@@ -626,24 +637,46 @@ public:
 		
 		offsets = sorted(offsets, key=lambda t: t[1])
 		for o in offsets:
-			self.hd.write("\tstatic const uint16 k%s = %s;\n" %o)
+			self.hd.write("static const uint16 k%s = %s;\n" %o)
 		self.hd.write("\n")
+
+		self.hd.write(
+"""
+class %sContext : public DreamBase, public Context {
+public:
+	DreamGenContext(DreamWeb::DreamWebEngine *en) : DreamBase(en), Context(this) {}
+
+	void __start();
+"""
+%(self.namespace))
+		if self.skip_dispatch_call == False:
+			self.hd.write(
+"""	void __dispatch_call(uint16 addr);
+""")
+
+
 		for p in set(self.methods):
 			if p in self.blacklist:
-				self.hd.write("\t//void %s();\n" %p)
+				if self.header_omit_blacklisted == False:
+					self.hd.write("\t//void %s();\n" %p)
 			else:
-				self.hd.write("\tvoid %s();\n" %p)
+				if p in self.function_name_remapping:
+					self.hd.write("\tvoid %s();\n" %self.function_name_remapping[p])
+				else:
+					self.hd.write("\tvoid %s();\n" %p)
 
-		self.hd.write("};\n}\n\n#endif\n")
+		self.hd.write("};\n\n} // End of namespace DreamGen\n\n#endif\n")
 		self.hd.close()
 		
-		self.fd.write("\nvoid %sContext::__start() { %s%s(); \n}\n" %(self.namespace, data_impl, start))
+		self.fd.write("void %sContext::__start() { %s\t%s(); \n}\n" %(self.namespace, data_impl, start))
 		
-		self.fd.write("\nvoid %sContext::__dispatch_call(uint16 addr) {\n\tswitch(addr) {\n" %self.namespace)
-		self.proc_addr.sort(cmp = lambda x, y: x[1] - y[1])
-		for name,addr in self.proc_addr:
-			self.fd.write("\t\tcase addr_%s: %s(); break;\n" %(name, name))
-		self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16)ax);")
-		self.fd.write("\n\t}\n}\n\n} /*namespace*/\n")
-
+		if self.skip_dispatch_call == False:
+			self.fd.write("\nvoid %sContext::__dispatch_call(uint16 addr) {\n\tswitch(addr) {\n" %self.namespace)
+			self.proc_addr.sort(cmp = lambda x, y: x[1] - y[1])
+			for name,addr in self.proc_addr:
+				self.fd.write("\t\tcase addr_%s: %s(); break;\n" %(name, name))
+			self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16)ax);")
+			self.fd.write("\n\t}\n}")
+		
+		self.fd.write("\n} // End of namespace DreamGen\n")
 		self.fd.close()

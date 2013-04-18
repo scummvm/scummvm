@@ -89,7 +89,10 @@ public:
 	NamedHotspot _item7;
 	NamedHotspot _item8;
 	NamedHotspot _item9;
-	int _v1D62, _v1D64, _v1D66, _v1D68;
+	int _stickThrowCount;
+	bool _dogLying;
+	bool _watchCrate;
+	bool _throwStick;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

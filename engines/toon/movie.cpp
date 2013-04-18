@@ -83,7 +83,7 @@ Movie::~Movie() {
 void Movie::init() const {
 }
 
-void Movie::play(Common::String video, int32 flags) {
+void Movie::play(const Common::String &video, int32 flags) {
 	debugC(1, kDebugMovie, "play(%s, %d)", video.c_str(), flags);
 	bool isFirstIntroVideo = false;
 	if (video == "209_1M.SMK")

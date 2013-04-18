@@ -209,7 +209,7 @@ int SagaMetaEngine::getMaximumSaveSlot() const { return MAX_SAVES - 1; }
 
 void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
 	Common::String filename = target;
-	filename += Common::String::format(".s%02d", slot);;
+	filename += Common::String::format(".s%02d", slot);
 
 	g_system->getSavefileManager()->removeSavefile(filename);
 }

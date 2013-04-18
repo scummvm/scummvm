@@ -500,6 +500,16 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 				recomposePsxSprite(s);
 			}
 
+			// If the height is not an even value, fix it.
+			// Apparently it's a problem in the data of a few sprites
+			// of the PSX version. This should fix an evident problem
+			// in the foyer at the beginning of the game, where a line
+			// of pixels is missing near the stairs. But it should also
+			// fix a more subtle one in the glease gallery and in quaramonte
+			// police office.
+			if (s->h % 2)
+				s->h++;
+
 			freeSprite = true;
 			byte *tempBuf = (byte *)malloc(s->w * s->h * 2);
 			memset(tempBuf, 0, s->w * s->h * 2);
@@ -762,14 +772,18 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 	src = sprite + rs.top * srcPitch + rs.left;
 	dst = _buffer + _screenWide * rd.top + rd.left;
 
-	if (s->type & RDSPR_BLEND && !Sword2Engine::isPsx()) { // Blending is unavailable in PSX version
+	if (s->type & RDSPR_BLEND) { 
 		// The original code had two different blending cases. One for
 		// s->blend & 0x01 and one for s->blend & 0x02. However, the
 		// only values that actually appear in the cluster files are
 		// 0, 513 and 1025 so the s->blend & 0x02 case was never used.
 		// Which is just as well since that code made no sense to me.
 
-		if (!(_renderCaps & RDBLTFX_SPRITEBLEND)) {
+		// TODO: In PSX version, blending is done through hardware transparency.
+		// The only correct way to simulate this would be using 16-bit mode.
+		// As this is not yet available for this engine, fake transparency is used
+		// as placeholder.
+		if (!(_renderCaps & RDBLTFX_SPRITEBLEND) || Sword2Engine::isPsx()) { 
 			for (i = 0; i < rs.height(); i++) {
 				for (j = 0; j < rs.width(); j++) {
 					if (src[j] && ((i & 1) == (j & 1)))

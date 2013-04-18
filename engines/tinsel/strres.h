@@ -35,7 +35,7 @@ namespace Tinsel {
 #define	MAX_STRRES_SIZE		300000	// maximum size of string resource file
 
 // Set if we're handling 2-byte characters.
-extern bool bMultiByte;
+extern bool g_bMultiByte;
 
 /*----------------------------------------------------------------------*\
 |*				Function Prototypes			*|

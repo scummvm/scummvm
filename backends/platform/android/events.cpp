@@ -211,10 +211,12 @@ static const Common::KeyCode jkeymap[] = {
 };
 
 // floating point. use sparingly
-template <class T>
+template<class T>
 static inline T scalef(T in, float numerator, float denominator) {
 	return static_cast<float>(in) * numerator / denominator;
 }
+
+static const int kQueuedInputEventDelay = 50;
 
 void OSystem_Android::setupKeymapper() {
 #ifdef ENABLE_KEYMAPPER
@@ -222,25 +224,22 @@ void OSystem_Android::setupKeymapper() {
 
 	Keymapper *mapper = getEventManager()->getKeymapper();
 
-	HardwareKeySet *keySet = new HardwareKeySet();
+	HardwareInputSet *inputSet = new HardwareInputSet();
 
-	keySet->addHardwareKey(
-		new HardwareKey("n", KeyState(KEYCODE_n), "n (vk)",
-				kTriggerLeftKeyType,
-				kVirtualKeyboardActionType));
+	keySet->addHardwareInput(
+		new HardwareInput("n", KeyState(KEYCODE_n), "n (vk)"));
 
-	mapper->registerHardwareKeySet(keySet);
+	mapper->registerHardwareInputSet(inputSet);
 
-	Keymap *globalMap = new Keymap("global");
+	Keymap *globalMap = new Keymap(kGlobalKeymapName);
 	Action *act;
 
-	act = new Action(globalMap, "VIRT", "Display keyboard",
-						kVirtualKeyboardActionType);
+	act = new Action(globalMap, "VIRT", "Display keyboard");
 	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
 
 	mapper->addGlobalKeymap(globalMap);
 
-	mapper->pushKeymap("global");
+	mapper->pushKeymap(kGlobalKeymapName);
 #endif
 }
 
@@ -601,13 +600,18 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			lockMutex(_event_queue_lock);
 
+			if (_queuedEventTime)
+				_event_queue.push(_queuedEvent);
+
 			if (!_touchpad_mode)
 				_event_queue.push(e);
 
 			e.type = down;
 			_event_queue.push(e);
+
 			e.type = up;
-			_event_queue.push(e);
+			_queuedEvent = e;
+			_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
 			unlockMutex(_event_queue_lock);
 		}
@@ -702,9 +706,14 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 				lockMutex(_event_queue_lock);
 
+				if (_queuedEventTime)
+					_event_queue.push(_queuedEvent);
+
 				_event_queue.push(e);
+
 				e.type = up;
-				_event_queue.push(e);
+				_queuedEvent = e;
+				_queuedEventTime = getMillis() + kQueuedInputEventDelay;
 
 				unlockMutex(_event_queue_lock);
 				return;
@@ -799,6 +808,13 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	}
 
 	lockMutex(_event_queue_lock);
+
+	if (_queuedEventTime && (getMillis() > _queuedEventTime)) {
+		event = _queuedEvent;
+		_queuedEventTime = 0;
+		unlockMutex(_event_queue_lock);
+		return true;
+	}
 
 	if (_event_queue.empty()) {
 		unlockMutex(_event_queue_lock);

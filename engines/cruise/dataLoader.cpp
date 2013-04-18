@@ -369,13 +369,13 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 
 	destPtr = filesDatabase[fileIndex].subData.ptr;
 
-	memcpy(destPtr, ptr2, loadFileVar1);
-
-	//fontSize = READ_BE_UINT32(ptr2);
-
 	if (destPtr != NULL) {
 		int32 i;
 		uint8 *currentPtr;
+
+		memcpy(destPtr, ptr2, loadFileVar1);
+
+		//fontSize = READ_BE_UINT32(ptr2);
 
 		destPtr = filesDatabase[fileIndex].subData.ptr;
 
@@ -420,7 +420,7 @@ int loadSetEntry(const char *name, uint8 *ptr, int currentEntryIdx, int currentD
 	int sec = 0;
 	uint16 numIdx;
 
-	if (!strcmp((char*)ptr, "SEC")) {
+	if (!strcmp((char *)ptr, "SEC")) {
 		sec = 1;
 	}
 

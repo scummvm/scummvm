@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOUND_SOFTSYNTH_PCSPK_H
-#define SOUND_SOFTSYNTH_PCSPK_H
+#ifndef AUDIO_SOFTSYNTH_PCSPK_H
+#define AUDIO_SOFTSYNTH_PCSPK_H
 
 #include "audio/audiostream.h"
 #include "common/mutex.h"
@@ -81,4 +81,4 @@ protected:
 
 } // End of namespace Audio
 
-#endif // SOUND_SOFTSYNTH_PCSPEAKER_H
+#endif // AUDIO_SOFTSYNTH_PCSPEAKER_H

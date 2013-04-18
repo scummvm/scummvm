@@ -1,4 +1,4 @@
-;Copyright (c) 1990-2011 by Neil Dodwell
+;Copyright (c) 1990-2012 by Neil Dodwell
 ;Released with permission from Neil Dodwell under GPLv2
 ;See LICENSE file for full license text
 
@@ -1129,6 +1129,8 @@ Screenupdate	proc	near
 
 	call	newplace
 	call	mainscreen
+	cmp quitrequested, 0
+	jnz finishearly
 	call	animpointer
 	call	showpointer
 	cmp	watchingtime,0
@@ -5914,7 +5916,7 @@ Fileheader	db	"DREAMWEB DATA FILE "
 	db	"CREATIVE REALITY"
 Filedata	dw	20 dup (0)
 Extradata	db	6 dup (0)
-Headerlen	equ	$-Fileheader
+Headerlen	equ	96   ; $-Fileheader
 
 
 Roomdata	db	"DREAMWEB.R00",0	;Ryan's apartment

@@ -46,7 +46,7 @@ void createThumbnail_2(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 
 	assert(height % 2 == 0);
 	for (int y = 0; y < height; y += 2) {
 		for (int x = 0; x < width; x += 2, dstPtr += 2) {
-			*((uint16*)dstPtr) = quadBlockInterpolate<bitFormat>(src + 2 * x, srcPitch);
+			*((uint16 *)dstPtr) = quadBlockInterpolate<bitFormat>(src + 2 * x, srcPitch);
 		}
 		dstPtr += (dstPitch - 2 * width / 2);
 		src += 2 * srcPitch;
@@ -64,7 +64,7 @@ void createThumbnail_4(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 
 			uint16 downleft = quadBlockInterpolate<bitFormat>(src + srcPitch * 2 + 2 * x, srcPitch);
 			uint16 downright = quadBlockInterpolate<bitFormat>(src + srcPitch * 2 + 2 * (x + 2), srcPitch);
 
-			*((uint16*)dstPtr) = interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat> >(upleft, upright, downleft, downright);
+			*((uint16 *)dstPtr) = interpolate16_1_1_1_1<Graphics::ColorMasks<bitFormat> >(upleft, upright, downleft, downright);
 		}
 		dstPtr += (dstPitch - 2 * width / 4);
 		src += 4 * srcPitch;
@@ -116,9 +116,9 @@ static bool grabScreen565(Graphics::Surface *surf) {
 			byte r = 0, g = 0, b = 0;
 
 			if (screenFormat.bytesPerPixel == 1) {
-				r = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 3];
-				g = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 3 + 1];
-				b = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 3 + 2];
+				r = palette[((uint8 *)screen->pixels)[y * screen->pitch + x] * 3];
+				g = palette[((uint8 *)screen->pixels)[y * screen->pitch + x] * 3 + 1];
+				b = palette[((uint8 *)screen->pixels)[y * screen->pitch + x] * 3 + 2];
 			} else if (screenFormat.bytesPerPixel == 2) {
 				uint16 col = READ_UINT16(screen->getBasePtr(x, y));
 				screenFormat.colorToRGB(col, r, g, b);

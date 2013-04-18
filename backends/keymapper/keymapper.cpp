@@ -54,26 +54,26 @@ Keymap *Keymapper::Domain::getKeymap(const String& name) {
 }
 
 Keymapper::Keymapper(EventManager *evtMgr)
-	: _eventMan(evtMgr), _enabled(true), _hardwareKeys(0) {
+	: _eventMan(evtMgr), _enabled(true), _hardwareInputs(0) {
 	ConfigManager::Domain *confDom = ConfMan.getDomain(ConfigManager::kKeymapperDomain);
 
 	_globalDomain.setConfigDomain(confDom);
 }
 
 Keymapper::~Keymapper() {
-	delete _hardwareKeys;
+	delete _hardwareInputs;
 }
 
-void Keymapper::registerHardwareKeySet(HardwareKeySet *keys) {
-	if (_hardwareKeys)
-		error("Hardware key set already registered");
+void Keymapper::registerHardwareInputSet(HardwareInputSet *inputs) {
+	if (_hardwareInputs)
+		error("Hardware input set already registered");
 
-	if (!keys) {
-		warning("No hardware keys are supplied");
-		return;
+	if (!inputs) {
+		warning("No hardware input were defined, using defaults");
+		inputs = new HardwareInputSet(true);
 	}
 
-	_hardwareKeys = keys;
+	_hardwareInputs = inputs;
 }
 
 void Keymapper::addGlobalKeymap(Keymap *keymap) {
@@ -95,16 +95,15 @@ void Keymapper::addGameKeymap(Keymap *keymap) {
 }
 
 void Keymapper::initKeymap(Domain &domain, Keymap *map) {
-	if (!_hardwareKeys) {
-		warning("No hardware keys were registered yet (%s)", map->getName().c_str());
+	if (!_hardwareInputs) {
+		warning("No hardware inputs were registered yet (%s)", map->getName().c_str());
 		return;
 	}
 
 	map->setConfigDomain(domain.getConfigDomain());
-	map->loadMappings(_hardwareKeys);
+	map->loadMappings(_hardwareInputs);
 
-	if (map->isComplete(_hardwareKeys) == false) {
-		map->automaticMapping(_hardwareKeys);
+	if (map->isComplete(_hardwareInputs) == false) {
 		map->saveMappings();
 		ConfMan.flushToDisk();
 	}
@@ -120,7 +119,7 @@ void Keymapper::cleanupGameKeymaps() {
 	// the game specific (=deleted) ones.
 	Stack<MapRecord> newStack;
 
-	for (int i = 0; i < _activeMaps.size(); i++) {
+	for (Stack<MapRecord>::size_type i = 0; i < _activeMaps.size(); i++) {
 		if (_activeMaps[i].global)
 			newStack.push(_activeMaps[i]);
 	}
@@ -128,63 +127,87 @@ void Keymapper::cleanupGameKeymaps() {
 	_activeMaps = newStack;
 }
 
-Keymap *Keymapper::getKeymap(const String& name, bool &global) {
+Keymap *Keymapper::getKeymap(const String& name, bool *globalReturn) {
 	Keymap *keymap = _gameDomain.getKeymap(name);
-	global = false;
+	bool global = false;
 
 	if (!keymap) {
 		keymap = _globalDomain.getKeymap(name);
 		global = true;
 	}
 
+	if (globalReturn)
+		*globalReturn = global;
+
 	return keymap;
 }
 
-bool Keymapper::pushKeymap(const String& name, bool inherit) {
+bool Keymapper::pushKeymap(const String& name, bool transparent) {
 	bool global;
-	Keymap *newMap = getKeymap(name, global);
+
+	assert(!name.empty());
+	Keymap *newMap = getKeymap(name, &global);
 
 	if (!newMap) {
 		warning("Keymap '%s' not registered", name.c_str());
 		return false;
 	}
 
-	pushKeymap(newMap, inherit, global);
+	pushKeymap(newMap, transparent, global);
 
 	return true;
 }
 
-void Keymapper::pushKeymap(Keymap *newMap, bool inherit, bool global) {
-	MapRecord mr = {newMap, inherit, global};
+void Keymapper::pushKeymap(Keymap *newMap, bool transparent, bool global) {
+	MapRecord mr = {newMap, transparent, global};
 
 	_activeMaps.push(mr);
 }
 
-void Keymapper::popKeymap() {
-	if (!_activeMaps.empty())
-		_activeMaps.pop();
+void Keymapper::popKeymap(const char *name) {
+	if (!_activeMaps.empty()) {
+		if (name) {
+			String topKeymapName = _activeMaps.top().keymap->getName();
+			if (topKeymapName.equals(name))
+				_activeMaps.pop();
+			else
+				warning("An attempt to pop wrong keymap was blocked (expected %s but was %s)", name, topKeymapName.c_str());
+		} else {
+			_activeMaps.pop();
+		}
+	}
+
 }
 
-bool Keymapper::notifyEvent(const Common::Event &ev) {
+List<Event> Keymapper::mapEvent(const Event &ev, EventSource *source) {
+	if (source && !source->allowMapping()) {
+		return DefaultEventMapper::mapEvent(ev, source);
+	}
+
+	List<Event> mappedEvents;
+
 	if (ev.type == Common::EVENT_KEYDOWN)
-		return mapKeyDown(ev.kbd);
+		mappedEvents = mapKeyDown(ev.kbd);
 	else if (ev.type == Common::EVENT_KEYUP)
-		return mapKeyUp(ev.kbd);
+		mappedEvents = mapKeyUp(ev.kbd);
+
+	if (!mappedEvents.empty())
+		return mappedEvents;
 	else
-		return false;
+		return DefaultEventMapper::mapEvent(ev, source);
 }
 
-bool Keymapper::mapKeyDown(const KeyState& key) {
+List<Event> Keymapper::mapKeyDown(const KeyState& key) {
 	return mapKey(key, true);
 }
 
-bool Keymapper::mapKeyUp(const KeyState& key) {
+List<Event> Keymapper::mapKeyUp(const KeyState& key) {
 	return mapKey(key, false);
 }
 
-bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
+List<Event> Keymapper::mapKey(const KeyState& key, bool keyDown) {
 	if (!_enabled || _activeMaps.empty())
-		return false;
+		return List<Event>();
 
 	Action *action = 0;
 
@@ -192,17 +215,17 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 		// Search for key in active keymap stack
 		for (int i = _activeMaps.size() - 1; i >= 0; --i) {
 			MapRecord mr = _activeMaps[i];
-
+			debug(5, "Keymapper::mapKey keymap: %s", mr.keymap->getName().c_str());
 			action = mr.keymap->getMappedAction(key);
 
-			if (action || mr.inherit == false)
+			if (action || !mr.transparent)
 				break;
 		}
 
 		if (action)
 			_keysDown[key] = action;
 	} else {
-		HashMap<KeyState, Action*>::iterator it = _keysDown.find(key);
+		HashMap<KeyState, Action *>::iterator it = _keysDown.find(key);
 
 		if (it != _keysDown.end()) {
 			action = it->_value;
@@ -211,11 +234,9 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 	}
 
 	if (!action)
-		return false;
+		return List<Event>();
 
-	executeAction(action, keyDown);
-
-	return true;
+	return executeAction(action, keyDown);
 }
 
 Action *Keymapper::getAction(const KeyState& key) {
@@ -224,7 +245,8 @@ Action *Keymapper::getAction(const KeyState& key) {
 	return action;
 }
 
-void Keymapper::executeAction(const Action *action, bool keyDown) {
+List<Event> Keymapper::executeAction(const Action *action, bool keyDown) {
+	List<Event> mappedEvents;
 	List<Event>::const_iterator it;
 
 	for (it = action->events.begin(); it != action->events.end(); ++it) {
@@ -255,18 +277,22 @@ void Keymapper::executeAction(const Action *action, bool keyDown) {
 		case EVENT_MBUTTONUP:
 			if (keyDown) evt.type = EVENT_MBUTTONDOWN;
 			break;
+		case EVENT_MAINMENU:
+			if (!keyDown) evt.type = EVENT_MAINMENU;
+			break;
 		default:
 			// don't deliver other events on key up
 			if (!keyDown) continue;
 		}
 
 		evt.mouse = _eventMan->getMousePos();
-		addEvent(evt);
+		mappedEvents.push_back(evt);
 	}
+	return mappedEvents;
 }
 
-const HardwareKey *Keymapper::findHardwareKey(const KeyState& key) {
-	return (_hardwareKeys) ? _hardwareKeys->findHardwareKey(key) : 0;
+const HardwareInput *Keymapper::findHardwareInput(const KeyState& key) {
+	return (_hardwareInputs) ? _hardwareInputs->findHardwareInput(key) : 0;
 }
 
 } // End of namespace Common

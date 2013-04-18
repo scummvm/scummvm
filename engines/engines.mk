@@ -87,6 +87,10 @@ MODULES += engines/kyra
 ifdef ENABLE_LOL
 DEFINES += -DENABLE_LOL
 endif
+
+ifdef ENABLE_EOB
+DEFINES += -DENABLE_EOB
+endif
 endif
 
 ifdef ENABLE_LASTEXPRESS
@@ -97,11 +101,6 @@ endif
 ifdef ENABLE_LURE
 DEFINES += -DENABLE_LURE=$(ENABLE_LURE)
 MODULES += engines/lure
-endif
-
-ifdef ENABLE_M4
-DEFINES += -DENABLE_M4=$(ENABLE_M4)
-MODULES += engines/m4
 endif
 
 ifdef ENABLE_MADE
@@ -196,6 +195,11 @@ endif
 ifdef ENABLE_TINSEL
 DEFINES += -DENABLE_TINSEL=$(ENABLE_TINSEL)
 MODULES += engines/tinsel
+endif
+
+ifdef ENABLE_TOLTECS
+DEFINES += -DENABLE_TOLTECS=$(ENABLE_TOLTECS)
+MODULES += engines/toltecs
 endif
 
 ifdef ENABLE_TOON

@@ -172,6 +172,26 @@ enum {
 	NULL_SELECTOR = -1
 };
 
+// Opcode formats
+enum opcode_format {
+	Script_Invalid = -1,
+	Script_None = 0,
+	Script_Byte,
+	Script_SByte,
+	Script_Word,
+	Script_SWord,
+	Script_Variable,
+	Script_SVariable,
+	Script_SRelative,
+	Script_Property,
+	Script_Global,
+	Script_Local,
+	Script_Temp,
+	Script_Param,
+	Script_Offset,
+	Script_End
+};
+
 
 } // End of namespace Sci
 

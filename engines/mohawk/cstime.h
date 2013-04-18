@@ -25,7 +25,7 @@
 
 #include "mohawk/mohawk.h"
 #include "mohawk/console.h"
-#include "mohawk/graphics.h"
+#include "mohawk/cstime_graphics.h"
 
 #include "common/random.h"
 #include "common/list.h"

@@ -33,8 +33,8 @@
  * - derivative works of the program are allowed.
  */
 
-#ifndef __SCALEBIT_H
-#define __SCALEBIT_H
+#ifndef SCALER_SCALEBIT_H
+#define SCALER_SCALEBIT_H
 
 int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned height);
 void scale(unsigned scale, void* void_dst, unsigned dst_slice, const void* void_src, unsigned src_slice, unsigned pixel, unsigned width, unsigned height);

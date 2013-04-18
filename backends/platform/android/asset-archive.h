@@ -37,9 +37,9 @@ public:
 	AndroidAssetArchive(jobject am);
 	virtual ~AndroidAssetArchive();
 
-	virtual bool hasFile(const Common::String &name);
-	virtual int listMembers(Common::ArchiveMemberList &list);
-	virtual Common::ArchiveMemberPtr getMember(const Common::String &name);
+	virtual bool hasFile(const Common::String &name) const;
+	virtual int listMembers(Common::ArchiveMemberList &list) const;
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 private:

@@ -43,20 +43,6 @@ static const uint8 _zigZagOrder[64] = {
 	53, 60, 61, 54, 47, 55, 62, 63
 };
 
-// IDCT table built with :
-// _idct8x8[x][y] = cos(((2 * x + 1) * y) * (M_PI / 16.0)) * 0.5;
-// _idct8x8[x][y] /= sqrt(2.0) if y == 0
-static const double _idct8x8[8][8] = {
-	{ 0.353553390593274,  0.490392640201615,  0.461939766255643,  0.415734806151273,  0.353553390593274,  0.277785116509801,  0.191341716182545,  0.097545161008064 },
-	{ 0.353553390593274,  0.415734806151273,  0.191341716182545, -0.097545161008064, -0.353553390593274, -0.490392640201615, -0.461939766255643, -0.277785116509801 },
-	{ 0.353553390593274,  0.277785116509801, -0.191341716182545, -0.490392640201615, -0.353553390593274,  0.097545161008064,  0.461939766255643,  0.415734806151273 },
-	{ 0.353553390593274,  0.097545161008064, -0.461939766255643, -0.277785116509801,  0.353553390593274,  0.415734806151273, -0.191341716182545, -0.490392640201615 },
-	{ 0.353553390593274, -0.097545161008064, -0.461939766255643,  0.277785116509801,  0.353553390593274, -0.415734806151273, -0.191341716182545,  0.490392640201615 },
-	{ 0.353553390593274, -0.277785116509801, -0.191341716182545,  0.490392640201615, -0.353553390593273, -0.097545161008064,  0.461939766255643, -0.415734806151273 },
-	{ 0.353553390593274, -0.415734806151273,  0.191341716182545,  0.097545161008064, -0.353553390593274,  0.490392640201615, -0.461939766255643,  0.277785116509801 },
-	{ 0.353553390593274, -0.490392640201615,  0.461939766255643, -0.415734806151273,  0.353553390593273, -0.277785116509801,  0.191341716182545, -0.097545161008064 }
-};
-
 JPEG::JPEG() :
 	_stream(NULL), _w(0), _h(0), _numComp(0), _components(NULL), _numScanComp(0),
 	_scanComp(NULL), _currentComp(NULL) {
@@ -113,6 +99,7 @@ void JPEG::reset() {
 	// Reset member variables
 	_stream = NULL;
 	_w = _h = 0;
+	_restartInterval = 0;
 
 	// Free the components
 	for (int c = 0; c < _numComp; c++)
@@ -208,12 +195,18 @@ bool JPEG::read(Common::SeekableReadStream *stream) {
 		case 0xE0: // JFIF/JFXX segment
 			ok = readJFIF();
 			break;
+		case 0xDD: // Define Restart Interval
+			ok = readDRI();
+			break;
 		case 0xFE: // Comment
 			_stream->seek(_stream->readUint16BE() - 2, SEEK_CUR);
 			break;
 		default: { // Unknown marker
 			uint16 size = _stream->readUint16BE();
-			warning("JPEG: Unknown marker %02X, skipping %d bytes", marker, size - 2);
+
+			if ((marker & 0xE0) != 0xE0)
+				warning("JPEG: Unknown marker %02X, skipping %d bytes", marker, size - 2);
+
 			_stream->seek(size - 2, SEEK_CUR);
 		}
 		}
@@ -224,7 +217,7 @@ bool JPEG::read(Common::SeekableReadStream *stream) {
 bool JPEG::readJFIF() {
 	uint16 length = _stream->readUint16BE();
 	uint32 tag = _stream->readUint32BE();
-	if (tag != MKTAG('J','F','I','F')) {
+	if (tag != MKTAG('J', 'F', 'I', 'F')) {
 		warning("JPEG::readJFIF() tag mismatch");
 		return false;
 	}
@@ -234,8 +227,10 @@ bool JPEG::readJFIF() {
 	}
 	byte majorVersion = _stream->readByte();
 	byte minorVersion = _stream->readByte();
-	if(majorVersion != 1 || minorVersion != 1)
-		warning("JPEG::readJFIF() Non-v1.1 JPEGs may not be handled correctly");
+
+	if (majorVersion != 1 || (minorVersion != 1 && minorVersion != 2))
+		warning("JPEG::readJFIF() Non-v1.1/1.2 JPEGs may not be handled correctly");
+
 	/* byte densityUnits = */ _stream->readByte();
 	/* uint16 xDensity = */ _stream->readUint16BE();
 	/* uint16 yDensity = */ _stream->readUint16BE();
@@ -304,7 +299,7 @@ bool JPEG::readDHT() {
 		// Free the Huffman table
 		delete[] _huff[tableNum].values; _huff[tableNum].values = NULL;
 		delete[] _huff[tableNum].sizes; _huff[tableNum].sizes = NULL;
-		delete[] _huff[tableNum].codes;	_huff[tableNum].codes = NULL;
+		delete[] _huff[tableNum].codes; _huff[tableNum].codes = NULL;
 
 		// Read the number of values for each length
 		uint8 numValues[16];
@@ -445,9 +440,27 @@ bool JPEG::readSOS() {
 	}
 
 	bool ok = true;
-	for (int y = 0; ok && (y < yMCU); y++)
-		for (int x = 0; ok && (x < xMCU); x++)
+	uint16 interval = _restartInterval;
+
+	for (int y = 0; ok && (y < yMCU); y++) {
+		for (int x = 0; ok && (x < xMCU); x++) {
 			ok = readMCU(x, y);
+
+			// If we have a restart interval, we'll need to reset a couple
+			// variables
+			if (_restartInterval != 0) {
+				interval--;
+
+				if (interval == 0) {
+					interval = _restartInterval;
+					_bitsNumber = 0;
+
+					for (byte i = 0; i < _numScanComp; i++)
+						_scanComp[i]->DCpredictor = 0;					
+				}
+			}
+		}
+	}
 
 	// Trim Component surfaces back to image height and width
 	// Note: Code using jpeg must use surface.pitch correctly...
@@ -489,6 +502,21 @@ bool JPEG::readDQT() {
 	return true;
 }
 
+// Marker 0xDD (Define Restart Interval)
+bool JPEG::readDRI() {
+	debug(5, "JPEG: readDRI");
+	uint16 size = _stream->readUint16BE() - 2;
+
+	if (size != 2) {
+		warning("JPEG: Invalid DRI size %d", size);
+		return false;
+	}
+
+	_restartInterval = _stream->readUint16BE();
+	debug(5, "Restart interval: %d", _restartInterval);
+	return true;
+}
+
 bool JPEG::readMCU(uint16 xMCU, uint16 yMCU) {
 	bool ok = true;
 	for (int c = 0; ok && (c < _numComp); c++) {
@@ -504,40 +532,63 @@ bool JPEG::readMCU(uint16 xMCU, uint16 yMCU) {
 	return ok;
 }
 
-void JPEG::idct8x8(float result[64], const int16 dct[64]) {
-	float tmp[64];
+// triple-butterfly-add (and possible rounding)
+#define xadd3(xa, xb, xc, xd, h) \
+	p = xa + xb; \
+	n = xa - xb; \
+	xa = p + xc + h; \
+	xb = n + xd + h; \
+	xc = p - xc + h; \
+	xd = n - xd + h;
+
+// butterfly-mul
+#define xmul(xa, xb, k1, k2, sh) \
+	n = k1 * (xa + xb); \
+	p = xa; \
+	xa = (n + (k2 - k1) * xb) >> sh; \
+	xb = (n - (k2 + k1) * p) >> sh;
+
+// IDCT based on public domain code from http://halicery.com/jpeg/idct.html
+void JPEG::idct1D8x8(int32 src[8], int32 dest[64], int32 ps, int32 half) {
+	int p, n;
+
+	src[0] <<= 9;
+	src[1] <<= 7;
+	src[3] *= 181;
+	src[4] <<= 9;
+	src[5] *= 181;
+	src[7] <<= 7;
+
+	// Even part
+	xmul(src[6], src[2], 277, 669, 0)
+	xadd3(src[0], src[4], src[6], src[2], half)
+
+	// Odd part
+	xadd3(src[1], src[7], src[3], src[5], 0)
+	xmul(src[5], src[3], 251, 50, 6)
+	xmul(src[1], src[7], 213, 142, 6)
+
+	dest[0 * 8] = (src[0] + src[1]) >> ps;
+	dest[1 * 8] = (src[4] + src[5]) >> ps;
+	dest[2 * 8] = (src[2] + src[3]) >> ps;
+	dest[3 * 8] = (src[6] + src[7]) >> ps;
+	dest[4 * 8] = (src[6] - src[7]) >> ps;
+	dest[5 * 8] = (src[2] - src[3]) >> ps;
+	dest[6 * 8] = (src[4] - src[5]) >> ps;
+	dest[7 * 8] = (src[0] - src[1]) >> ps;
+}
+
+void JPEG::idct2D8x8(int32 block[64]) {
+	int32 tmp[64];
 
 	// Apply 1D IDCT to rows
-	for (int y = 0; y < 8; y++) {
-		for (int x = 0; x < 8; x++) {
-			tmp[y + x * 8] = dct[0] * _idct8x8[x][0]
-							+ dct[1] * _idct8x8[x][1]
-							+ dct[2] * _idct8x8[x][2]
-							+ dct[3] * _idct8x8[x][3]
-							+ dct[4] * _idct8x8[x][4]
-							+ dct[5] * _idct8x8[x][5]
-							+ dct[6] * _idct8x8[x][6]
-							+ dct[7] * _idct8x8[x][7];
-		}
-
-		dct += 8;
-	}
+	for (int i = 0; i < 8; i++)
+		idct1D8x8(&block[i * 8], &tmp[i], 9, 1 << 8);
 
 	// Apply 1D IDCT to columns
-	for (int x = 0; x < 8; x++) {
-		const float *u = tmp + x * 8;
-		for (int y = 0; y < 8; y++) {
-			result[y * 8 + x] = u[0] * _idct8x8[y][0]
-								+ u[1] * _idct8x8[y][1]
-								+ u[2] * _idct8x8[y][2]
-								+ u[3] * _idct8x8[y][3]
-								+ u[4] * _idct8x8[y][4]
-								+ u[5] * _idct8x8[y][5]
-								+ u[6] * _idct8x8[y][6]
-								+ u[7] * _idct8x8[y][7];
-		}
-	}
-}
+	for (int i = 0; i < 8; i++)
+		idct1D8x8(&tmp[i * 8], &block[i], 12, 1 << 11);
+ }
 
 bool JPEG::readDataUnit(uint16 x, uint16 y) {
 	// Prepare an empty data array
@@ -553,30 +604,29 @@ bool JPEG::readDataUnit(uint16 x, uint16 y) {
 	readAC(readData);
 
 	// Calculate the DCT coefficients from the input sequence
-	int16 DCT[64];
+	int32 block[64];
 	for (uint8 i = 0; i < 64; i++) {
 		// Dequantize
-		int16 val = readData[i];
+		int32 val = readData[i];
 		int16 quant = _quant[_currentComp->quantTableSelector][i];
 		val *= quant;
 
 		// Store the normalized coefficients, undoing the Zig-Zag
-		DCT[_zigZagOrder[i]] = val;
+		block[_zigZagOrder[i]] = val;
 	}
 
 	// Apply the IDCT
-	float result[64];
-	idct8x8(result, DCT);
+	idct2D8x8(block);
 
 	// Level shift to make the values unsigned
 	for (int i = 0; i < 64; i++) {
-		result[i] = result[i] + 128;
+		block[i] = block[i] + 128;
 
-		if (result[i] < 0)
-			result[i] = 0;
+		if (block[i] < 0)
+			block[i] = 0;
 
-		if (result[i] > 255)
-			result[i] = 255;
+		if (block[i] > 255)
+			block[i] = 255;
 	}
 
 	// Paint the component surface
@@ -594,7 +644,7 @@ bool JPEG::readDataUnit(uint16 x, uint16 y) {
 
 			for (uint8 i = 0; i < 8; i++) {
 				for (uint16 sH = 0; sH < scalingH; sH++) {
-					*ptr = (byte)(result[j * 8 + i]);
+					*ptr = (byte)(block[j * 8 + i]);
 					ptr++;
 				}
 			}
@@ -647,15 +697,15 @@ void JPEG::readAC(int16 *out) {
 
 int16 JPEG::readSignedBits(uint8 numBits) {
 	uint16 ret = 0;
-	if (numBits > 16) error("requested %d bits", numBits); //XXX
+	if (numBits > 16)
+		error("requested %d bits", numBits); //XXX
 
 	// MSB=0 for negatives, 1 for positives
 	for (int i = 0; i < numBits; i++)
 		ret = (ret << 1) + readBit();
 
 	// Extend sign bits (PAG109)
-	if (!(ret >> (numBits - 1)))
-	{
+	if (!(ret >> (numBits - 1))) {
 		uint16 tmp = ((uint16)-1 << numBits) + 1;
 		ret = ret + tmp;
 	}
@@ -709,6 +759,9 @@ uint8 JPEG::readBit() {
 					// DNL marker: Define Number of Lines
 					// TODO: terminate scan
 					warning("DNL marker detected: terminate scan");
+				} else if (byte2 >= 0xD0 && byte2 <= 0xD7) {
+					debug(7, "RST%d marker detected", byte2 & 7);
+					_bitsData = _stream->readByte();
 				} else {
 					warning("Error: marker 0x%02X read in entropy data", byte2);
 				}

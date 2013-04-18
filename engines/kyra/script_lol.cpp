@@ -93,25 +93,6 @@ void LoLEngine::runLevelScriptCustom(int block, int flags, int charNum, int item
 	checkSceneUpdateNeed(block);
 }
 
-bool LoLEngine::checkSceneUpdateNeed(int func) {
-	if (_sceneUpdateRequired)
-		return true;
-
-	for (int i = 0; i < 15; i++) {
-		if (_visibleBlockIndex[i] == func) {
-			_sceneUpdateRequired = true;
-			return true;
-		}
-	}
-
-	if (_currentBlock == func){
-		_sceneUpdateRequired = true;
-		return true;
-	}
-
-	return false;
-}
-
 int LoLEngine::olol_setWallType(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setWallType(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 	if (stackPos(2) != -1) {
@@ -124,7 +105,7 @@ int LoLEngine::olol_setWallType(EMCState *script) {
 
 int LoLEngine::olol_getWallType(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getWallType(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	return _levelBlockProperties[stackPos(0)].walls[stackPos(1) & 3];
+	return (int8)_levelBlockProperties[stackPos(0)].walls[stackPos(1) & 3];
 }
 
 int LoLEngine::olol_drawScene(EMCState *script) {
@@ -286,13 +267,13 @@ int LoLEngine::olol_makeItem(EMCState *script) {
 }
 
 int LoLEngine::olol_placeMoveLevelItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setItemProperty(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_placeMoveLevelItem(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	placeMoveLevelItem(stackPos(0), stackPos(1), stackPos(2), stackPos(3) & 0xff, stackPos(4) & 0xff, stackPos(5));
 	return 1;
 }
 
 int LoLEngine::olol_createLevelItem(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setItemProperty(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_createLevelItem(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	int item = makeItem(stackPos(0), stackPos(1), stackPos(2));
 	if (item == -1)
 		return item;
@@ -305,7 +286,7 @@ int LoLEngine::olol_getItemPara(EMCState *script) {
 	if (!stackPos(0))
 		return 0;
 
-	ItemInPlay *i = &_itemsInPlay[stackPos(0)];
+	LoLItem *i = &_itemsInPlay[stackPos(0)];
 	ItemProperty *p = &_itemProperties[i->itemPropertyIndex];
 
 	switch (stackPos(1)) {
@@ -676,6 +657,8 @@ int LoLEngine::olol_getGlobalVar(EMCState *script) {
 		return _drainMagic;
 	case 13:
 		return getVolume(kVolumeSpeech) - 2;
+	case 14:
+		return _tim->_abortFlag;
 	default:
 		break;
 	}
@@ -794,9 +777,9 @@ int LoLEngine::olol_updateBlockAnimations(EMCState *script) {
 	return 0;
 }
 
-int LoLEngine::olol_mapShapeToBlock(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_mapShapeToBlock(%p) (%d)", (const void *)script, stackPos(0));
-	return assignLevelShapes(stackPos(0));
+int LoLEngine::olol_assignLevelDecorationShape(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_assignLevelDecorationShape(%p) (%d)", (const void *)script, stackPos(0));
+	return assignLevelDecorationShapes(stackPos(0));
 }
 
 int LoLEngine::olol_resetBlockShapeAssignment(EMCState *script) {
@@ -809,7 +792,7 @@ int LoLEngine::olol_resetBlockShapeAssignment(EMCState *script) {
 
 int LoLEngine::olol_copyRegion(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_copyRegion(%p) (%d, %d, %d, %d, %d, %d, %d, %d)",
-		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	       (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	_screen->copyRegion(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), Screen::CR_NO_P_CHECK);
 	if (!stackPos(7))
 		_screen->updateScreen();
@@ -818,7 +801,7 @@ int LoLEngine::olol_copyRegion(EMCState *script) {
 
 int LoLEngine::olol_initMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initMonster(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script,
-		stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10));
 	uint16 x = 0;
 	uint16 y = 0;
 	calcCoordinates(x, y, stackPos(0), stackPos(1), stackPos(2));
@@ -828,11 +811,11 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		return -1;
 
 	for (uint8 i = 0; i < 30; i++) {
-		MonsterInPlay *l = &_monsters[i];
+		LoLMonster *l = &_monsters[i];
 		if (l->hitPoints || l->mode == 13)
 			continue;
 
-		memset(l, 0, sizeof(MonsterInPlay));
+		memset(l, 0, sizeof(LoLMonster));
 		l->id = i;
 		l->x = x;
 		l->y = y;
@@ -842,7 +825,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->direction = l->facing << 1;
 		l->hitPoints = (l->properties->hitPoints * _monsterModifiers[_monsterDifficulty]) >> 8;
 
-		if (_currentLevel == 12 && l->type == 2)
+		if (_currentLevel != 12 || l->type != 2)
 			l->hitPoints = (l->hitPoints * (rollDice(1, 128) + 192)) >> 8;
 
 		l->numDistAttacks = l->properties->numDistAttacks;
@@ -859,7 +842,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->destDirection = l->direction;
 
 		for (int ii = 0; ii < 4; ii++)
-			l->equipmentShapes[ii] = stackPos(7 + ii);
+			l->equipmentShapes[ii] = stackPos(7 + ii) & 0xff;
 
 		checkSceneUpdateNeed(l->block);
 		return i;
@@ -936,14 +919,14 @@ int LoLEngine::olol_dummy0(EMCState *script) {
 
 int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadMonsterProperties(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)",
-		(const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5),
-		stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10), stackPos(11), stackPos(12), stackPos(13),
-		stackPos(14), stackPos(15), stackPos(16), stackPos(17), stackPos(18), stackPos(19), stackPos(20),
-		stackPos(21), stackPos(22), stackPos(23), stackPos(24), stackPos(25), stackPos(26),	stackPos(27),
-		stackPos(28), stackPos(29), stackPos(30), stackPos(31), stackPos(32), stackPos(33), stackPos(34),
-		stackPos(35), stackPos(36), stackPos(37), stackPos(38), stackPos(39), stackPos(40), stackPos(41));
+	       (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5),
+	       stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10), stackPos(11), stackPos(12), stackPos(13),
+	       stackPos(14), stackPos(15), stackPos(16), stackPos(17), stackPos(18), stackPos(19), stackPos(20),
+	       stackPos(21), stackPos(22), stackPos(23), stackPos(24), stackPos(25), stackPos(26), stackPos(27),
+	       stackPos(28), stackPos(29), stackPos(30), stackPos(31), stackPos(32), stackPos(33), stackPos(34),
+	       stackPos(35), stackPos(36), stackPos(37), stackPos(38), stackPos(39), stackPos(40), stackPos(41));
 
-	MonsterProperty *l = &_monsterProperties[stackPos(0)];
+	LoLMonsterProperty *l = &_monsterProperties[stackPos(0)];
 	l->shapeIndex = stackPos(1) & 0xff;
 
 	int shpWidthMax = 0;
@@ -956,14 +939,14 @@ int LoLEngine::olol_loadMonsterProperties(EMCState *script) {
 
 	l->maxWidth = shpWidthMax;
 
-	l->fightingStats[0] = (stackPos(2) << 8) / 100;		// hit chance
-	l->fightingStats[1] = 256;							//
-	l->fightingStats[2] = (stackPos(3) << 8) / 100;		// protection
-	l->fightingStats[3] = stackPos(4);					// evade chance
-	l->fightingStats[4] = (stackPos(5) << 8) / 100;		// speed
-	l->fightingStats[5] = (stackPos(6) << 8) / 100;		//
-	l->fightingStats[6] = (stackPos(7) << 8) / 100;		//
-	l->fightingStats[7] = (stackPos(8) << 8) / 100;		//
+	l->fightingStats[0] = (stackPos(2) << 8) / 100;     // hit chance
+	l->fightingStats[1] = 256;                          //
+	l->fightingStats[2] = (stackPos(3) << 8) / 100;     // protection
+	l->fightingStats[3] = stackPos(4);                  // evade chance
+	l->fightingStats[4] = (stackPos(5) << 8) / 100;     // speed
+	l->fightingStats[5] = (stackPos(6) << 8) / 100;     //
+	l->fightingStats[6] = (stackPos(7) << 8) / 100;     //
+	l->fightingStats[7] = (stackPos(8) << 8) / 100;     //
 	l->fightingStats[8] = 0;
 
 	for (int i = 0; i < 8; i++) {
@@ -1015,7 +998,7 @@ int LoLEngine::olol_inflictDamage(EMCState *script) {
 
 int LoLEngine::olol_moveMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_moveMonster(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
-	MonsterInPlay *m = &_monsters[stackPos(0)];
+	LoLMonster *m = &_monsters[stackPos(0)];
 
 	if (m->mode == 1 || m->mode == 2) {
 		calcCoordinates(m->destX, m->destY, stackPos(1), stackPos(2), stackPos(3));
@@ -1027,10 +1010,9 @@ int LoLEngine::olol_moveMonster(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_dialogueBox(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_dialogueBox(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
-
-	_tim->drawDialogueBox(stackPos(0), getLangString(stackPos(1)), getLangString(stackPos(2)), getLangString(stackPos(3)));
+int LoLEngine::olol_setupDialogueButtons(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setupDialogueButtons(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
+	setupDialogueButtons(stackPos(0), getLangString(stackPos(1)), getLangString(stackPos(2)), getLangString(stackPos(3)));
 	return 1;
 }
 
@@ -1192,7 +1174,7 @@ int LoLEngine::olol_playSoundEffect(EMCState *script) {
 
 int LoLEngine::olol_processDialogue(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_processDialogue(%p)", (const void *)script);
-	return _tim->processDialogue();
+	return processDialogue();
 }
 
 int LoLEngine::olol_stopTimScript(EMCState *script) {
@@ -1211,7 +1193,7 @@ int LoLEngine::olol_changeMonsterStat(EMCState *script) {
 	if (stackPos(0) == -1)
 		return 1;
 
-	MonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	LoLMonster *m = &_monsters[stackPos(0) & 0x7fff];
 
 	int16 d = stackPos(2);
 	uint16 x = 0;
@@ -1252,7 +1234,7 @@ int LoLEngine::olol_getMonsterStat(EMCState *script) {
 	if (stackPos(0) == -1)
 		return 0;
 
-	MonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	LoLMonster *m = &_monsters[stackPos(0) & 0x7fff];
 	int d = stackPos(1);
 
 	switch (d) {
@@ -1383,14 +1365,14 @@ int LoLEngine::olol_countBlockItems(EMCState *script) {
 	return res;
 }
 
-int LoLEngine::olol_characterSkillTest(EMCState *script){
+int LoLEngine::olol_characterSkillTest(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_characterSkillTest(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int skill = stackPos(0);
 	int n = countActiveCharacters();
 	int m = 0;
 	int c = 0;
 
-	for	(int i = 0; i < n; i++) {
+	for (int i = 0; i < n; i++) {
 		int v = _characters[i].skillModifiers[skill] + _characters[i].skillLevels[skill] + 25;
 		if (v > m) {
 			m = v;
@@ -1401,7 +1383,7 @@ int LoLEngine::olol_characterSkillTest(EMCState *script){
 	return (rollDice(1, 100) > m) ? -1 : c;
 }
 
-int LoLEngine::olol_countAllMonsters(EMCState *script){
+int LoLEngine::olol_countAllMonsters(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_countAllMonsters(%p)", (const void *)script);
 	int res = 0;
 
@@ -1413,7 +1395,7 @@ int LoLEngine::olol_countAllMonsters(EMCState *script){
 	return res;
 }
 
-int LoLEngine::olol_playEndSequence(EMCState *script){
+int LoLEngine::olol_playEndSequence(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playEndSequence(%p)", (const void *)script);
 
 	int c = 0;
@@ -1538,12 +1520,12 @@ int LoLEngine::olol_checkInventoryFull(EMCState *script) {
 	return 1;
 }
 
-int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_objectLeavesLevel(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
+int LoLEngine::olol_moveBlockObjects(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_moveBlockObjects(%p) (%d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	int o = _levelBlockProperties[stackPos(0)].assignedObjects;
 	int res = 0;
 	int level = stackPos(2);
-	int block = stackPos(1);
+	int destBlock = stackPos(1);
 	int runScript = stackPos(4);
 	int includeMonsters = stackPos(3);
 	int includeItems = stackPos(5);
@@ -1551,9 +1533,9 @@ int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
 	// WORKAROUND for script bug
 	// Items would vanish when thrown towards the stairs
 	// in white tower level 3.
-	if (_currentLevel == 21 && level == 21 && block == 0x3e0) {
+	if (_currentLevel == 21 && level == 21 && destBlock == 0x3e0) {
 		level = 20;
-		block = 0x0247;
+		destBlock = 0x0247;
 	}
 
 	while (o) {
@@ -1565,7 +1547,7 @@ int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
 
 			l &= 0x7fff;
 
-			MonsterInPlay *m = &_monsters[l];
+			LoLMonster *m = &_monsters[l];
 
 			setMonsterMode(m, 14);
 			checkSceneUpdateNeed(m->block);
@@ -1577,15 +1559,13 @@ int LoLEngine::olol_objectLeavesLevel(EMCState *script) {
 			if (!(_itemsInPlay[l].shpCurFrame_flg & 0x4000) || !includeItems)
 				continue;
 
-			placeMoveLevelItem(l, level, block, _itemsInPlay[l].x & 0xff, _itemsInPlay[l].y & 0xff, _itemsInPlay[l].flyingHeight);
-
-			if (!runScript || level != _currentLevel) {
-				res = 1;
-				continue;
-			}
-
-			runLevelScriptCustom(block, 0x80, -1, l, 0, 0);
+			placeMoveLevelItem(l, level, destBlock, _itemsInPlay[l].x & 0xff, _itemsInPlay[l].y & 0xff, _itemsInPlay[l].flyingHeight);
 			res = 1;
+
+			if (!runScript || level != _currentLevel)
+				continue;
+
+			runLevelScriptCustom(destBlock, 0x80, -1, l, 0, 0);
 		}
 	}
 
@@ -1638,7 +1618,7 @@ int LoLEngine::olol_dummy1(EMCState *script) {
 
 int LoLEngine::olol_suspendMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_suspendMonster(%p) (%d)", (const void *)script, stackPos(0));
-	MonsterInPlay *m = &_monsters[stackPos(0) & 0x7fff];
+	LoLMonster *m = &_monsters[stackPos(0) & 0x7fff];
 	setMonsterMode(m, 14);
 	checkSceneUpdateNeed(m->block);
 	placeMonster(m, 0, 0);
@@ -1705,7 +1685,7 @@ int LoLEngine::olol_countSpecificMonsters(EMCState *script) {
 int LoLEngine::olol_updateBlockAnimations2(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_updateBlockAnimations2(%p) (%d, %d, %d, %d, ...)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int numFrames = stackPos(3);
-	assert (numFrames <= 97);
+	assert(numFrames <= 97);
 	int curFrame = stackPos(2) % numFrames;
 	setWallType(stackPos(0), stackPos(1), stackPos(4 + curFrame));
 	return 0;
@@ -1889,9 +1869,9 @@ int LoLEngine::olol_checkBlockForMonster(EMCState *script) {
 	return -1;
 }
 
-int LoLEngine::olol_transformRegion(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_transformRegion(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
-	transformRegion(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+int LoLEngine::olol_crossFadeRegion(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_crossFadeRegion(%p) (%d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
+	_screen->crossFadeRegion(stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	return 1;
 }
 
@@ -1984,7 +1964,7 @@ int LoLEngine::olol_getAnimationLastPart(EMCState *script) {
 int LoLEngine::olol_assignSpecialGuiShape(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_assignSpecialGuiShape(%p) (%d, %d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4));
 	if (stackPos(0)) {
-		_specialGuiShape = _levelShapes[_levelShapeProperties[_wllShapeMap[stackPos(0)]].shapeIndex[stackPos(1)]];
+		_specialGuiShape = _levelDecorationShapes[_levelDecorationProperties[_wllShapeMap[stackPos(0)]].shapeIndex[stackPos(1)]];
 		_specialGuiShapeX = stackPos(2);
 		_specialGuiShapeY = stackPos(3);
 		_specialGuiShapeMirrorFlag = stackPos(4);
@@ -2012,7 +1992,7 @@ int LoLEngine::olol_findInventoryItem(EMCState *script) {
 		cur = 0;
 		last = 4;
 	}
-	for (;cur < last; cur++) {
+	for (; cur < last; cur++) {
 		if (!(_characters[cur].flags & 1))
 			continue;
 		for (int i = 0; i < 11; i++) {
@@ -2055,18 +2035,17 @@ int LoLEngine::olol_changeItemTypeOrFlag(EMCState *script) {
 	if (stackPos(0) < 1)
 		return 0;
 
-	ItemInPlay *i = &_itemsInPlay[stackPos(0)];
-	int r = stackPos(2) & 0x1fff;
+	LoLItem *i = &_itemsInPlay[stackPos(0)];
+	int16 val = stackPos(2);
 
-	if (stackPos(1) == 4) {
-		i->itemPropertyIndex = r;
-		return r;
-	} else if (stackPos(1) == 15) {
-		i->shpCurFrame_flg = (i->shpCurFrame_flg & 0xe000) | r;
-		return r;
-	}
+	if (stackPos(1) == 4)
+		i->itemPropertyIndex = val;
+	else if (stackPos(1) == 15)
+		i->shpCurFrame_flg = (i->shpCurFrame_flg & 0xe000) | (val & 0x1fff);
+	else
+		val = -1;
 
-	return -1;
+	return val;
 }
 
 int LoLEngine::olol_placeInventoryItemInHand(EMCState *script) {
@@ -2292,10 +2271,10 @@ int LoLEngine::olol_calcNewBlockPosition(EMCState *script) {
 	return calcNewBlockPosition(stackPos(0), stackPos(1));
 }
 
-int LoLEngine::olol_fadeScene(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadeScene(%p)", (const void *)script);
+int LoLEngine::olol_crossFadeScene(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_crossFadeScene(%p)", (const void *)script);
 	gui_drawScene(2);
-	transformRegion(112, 0, 112, 0, 176, 120, 2, 0);
+	_screen->crossFadeRegion(112, 0, 112, 0, 176, 120, 2, 0);
 	updateDrawPage2();
 	return 1;
 }
@@ -2377,7 +2356,7 @@ int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_loadPalette(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_loadPalette(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
-	const char *palFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
+	const char *palFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0] << 1)));
 	_screen->loadPalette(palFile, _screen->getPalette(0));
 	return 1;
 }
@@ -2393,7 +2372,7 @@ int LoLEngine::tlol_setupPaletteFadeEx(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_processWsaFrame(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_processWsaFrame(%p, %p) (%d, %d, %d, %d, %d)",
-		(const void *)tim, (const void *)param, param[0], param[1], param[2], param[3], param[4]);
+	       (const void *)tim, (const void *)param, param[0], param[1], param[2], param[3], param[4]);
 
 	const int animIndex = tim->wsa[param[0]].anim - 1;
 	const int frame = param[1];
@@ -2591,8 +2570,8 @@ int LoLEngine::tlol_stopBackgroundAnimation(const TIM *tim, const uint16 *param)
 
 int LoLEngine::tlol_fadeInScene(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeInScene(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
-	const char *sceneFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
-	const char *overlayFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[1]<<1)));
+	const char *sceneFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0] << 1)));
+	const char *overlayFile = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[1] << 1)));
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
 
@@ -2643,7 +2622,7 @@ int LoLEngine::tlol_unusedResourceFunc(const TIM *tim, const uint16 *param) {
 
 int LoLEngine::tlol_fadeInPalette(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_fadeInPalette(%p, %p) (%d, %d)", (const void *)tim, (const void *)param, param[0], param[1]);
-	const char *bitmap = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0]<<1)));
+	const char *bitmap = (const char *)(tim->text + READ_LE_UINT16(tim->text + (param[0] << 1)));
 
 	Palette pal(_screen->getPalette(0).getNumColors());
 	_screen->loadBitmap(bitmap, 3, 3, &pal);
@@ -2785,7 +2764,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x34
 	Opcode(olol_updateBlockAnimations);
-	Opcode(olol_mapShapeToBlock);
+	Opcode(olol_assignLevelDecorationShape);
 	Opcode(olol_resetBlockShapeAssignment);
 	Opcode(olol_copyRegion);
 
@@ -2809,7 +2788,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x44
 	Opcode(olol_moveMonster);
-	Opcode(olol_dialogueBox);
+	Opcode(olol_setupDialogueButtons);
 	Opcode(olol_giveTakeMoney);
 	Opcode(olol_checkMoney);
 
@@ -2881,7 +2860,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x74
 	Opcode(olol_checkInventoryFull);
-	Opcode(olol_objectLeavesLevel);
+	Opcode(olol_moveBlockObjects);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 
@@ -2934,7 +2913,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_checkBlockForMonster);
 
 	// 0x98
-	Opcode(olol_transformRegion);
+	Opcode(olol_crossFadeRegion);
 	Opcode(olol_calcCoordinatesAddDirectionOffset);
 	Opcode(olol_resetPortraitsAndDisableSysTimer);
 	Opcode(olol_enableSysTimer);
@@ -2982,7 +2961,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_calcNewBlockPosition);
 
 	// 0xB8
-	Opcode(olol_fadeScene);
+	Opcode(olol_crossFadeScene);
 	Opcode(olol_updateDrawPage2);
 	Opcode(olol_setMouseCursor);
 	Opcode(olol_characterSays);

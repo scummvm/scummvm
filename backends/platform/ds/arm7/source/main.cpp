@@ -46,10 +46,10 @@
 
 #include "cartreset_nolibfat.h"
 
-#define TOUCH_CAL_X1 (*(vs16*)0x027FFCD8)
-#define TOUCH_CAL_Y1 (*(vs16*)0x027FFCDA)
-#define TOUCH_CAL_X2 (*(vs16*)0x027FFCDE)
-#define TOUCH_CAL_Y2 (*(vs16*)0x027FFCE0)
+#define TOUCH_CAL_X1 (*(vs16 *)0x027FFCD8)
+#define TOUCH_CAL_Y1 (*(vs16 *)0x027FFCDA)
+#define TOUCH_CAL_X2 (*(vs16 *)0x027FFCDE)
+#define TOUCH_CAL_Y2 (*(vs16 *)0x027FFCE0)
 #define SCREEN_WIDTH    256
 #define SCREEN_HEIGHT   192
 s32 TOUCH_WIDTH  = TOUCH_CAL_X2 - TOUCH_CAL_X1;
@@ -71,10 +71,10 @@ int temp;
 int adpcmBufferNum = 0;
 
 // those are pixel positions of the two points you click when calibrating
-#define TOUCH_CNTRL_X1   (*(vu8*)0x027FFCDC)
-#define TOUCH_CNTRL_Y1   (*(vu8*)0x027FFCDD)
-#define TOUCH_CNTRL_X2   (*(vu8*)0x027FFCE2)
-#define TOUCH_CNTRL_Y2   (*(vu8*)0x027FFCE3)
+#define TOUCH_CNTRL_X1   (*(vu8 *)0x027FFCDC)
+#define TOUCH_CNTRL_Y1   (*(vu8 *)0x027FFCDD)
+#define TOUCH_CNTRL_X2   (*(vu8 *)0x027FFCE2)
+#define TOUCH_CNTRL_Y2   (*(vu8 *)0x027FFCE3)
 
 
 //////////////////////////////////////////////////////////////////////
@@ -330,7 +330,7 @@ void performSleep() {
 
 //  int saveInts = REG_IE;
 //  REG_IE = (1 << 22) | IRQ_VBLANK;		// Lid open
-//  *((u32*) (0x0380FFF8)) = *((u32*) (0x0380FFF8)) | (REG_IE & REG_IF);
+//  *((u32 *) (0x0380FFF8)) = *((u32 *) (0x0380FFF8)) | (REG_IE & REG_IF);
 //  VBLANK_INTR_WAIT_FLAGS = IRQ_VBLANK;
 
 

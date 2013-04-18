@@ -31,8 +31,8 @@
  *  - tinsel
  */
 
-#ifndef SOUND_ADPCM_H
-#define SOUND_ADPCM_H
+#ifndef AUDIO_ADPCM_H
+#define AUDIO_ADPCM_H
 
 #include "common/scummsys.h"
 #include "common/types.h"

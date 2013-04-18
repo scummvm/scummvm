@@ -25,6 +25,7 @@
 #include "tsage/tsage.h"
 #include "tsage/blue_force/blueforce_dialogs.h"
 #include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/ringworld2/ringworld2_logic.h"
 
 namespace TsAGE {
 
@@ -70,12 +71,27 @@ void UIQuestion::process(Event &event) {
 }
 
 void UIQuestion::showDescription(CursorType cursor) {
-	if (cursor == INV_FOREST_RAP) {
-		// Forest rap item has a graphical display
-		showItem(5, 1, 1);
-	} else {
-		// Display object description
-		SceneItem::display2(9001, (int)cursor);
+	switch (g_vm->getGameID()) {
+	case GType_BlueForce:
+		if (cursor == INV_FOREST_RAP) {
+			// Forest rap item has a graphical display
+			showItem(5, 1, 1);
+		} else {
+			// Display object description
+			SceneItem::display2(9001, (int)cursor);
+		}
+		break;
+	case GType_Ringworld2:
+		if ((cursor == R2_COM_SCANNER) || (cursor == R2_COM_SCANNER_2)) {
+			// Show communicator
+			warning("TODO: Communicator");
+		} else {
+			// Show object description
+			SceneItem::display2(3, (int)cursor);
+		}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -96,16 +112,16 @@ void UIQuestion::showItem(int resNum, int rlbNum, int frameNum) {
 	imgRect.center(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
 
 	// Save the area behind where the image will be displayed
-	GfxSurface *savedArea = Surface_getArea(BF_GLOBALS.gfxManager().getSurface(), imgRect);
+	GfxSurface *savedArea = Surface_getArea(GLOBALS.gfxManager().getSurface(), imgRect);
 
 	// Draw the image
-	BF_GLOBALS.gfxManager().copyFrom(objImage, imgRect);
+	GLOBALS.gfxManager().copyFrom(objImage, imgRect);
 
 	// Wait for a press
-	BF_GLOBALS._events.waitForPress();
+	GLOBALS._events.waitForPress();
 
 	// Restore the old area
-	BF_GLOBALS.gfxManager().copyFrom(*savedArea, imgRect);
+	GLOBALS.gfxManager().copyFrom(*savedArea, imgRect);
 	delete savedArea;
 }
 
@@ -183,9 +199,9 @@ void UIInventoryScroll::process(Event &event) {
 		// Draw the button as selected
 		toggle(true);
 
-		event.handled = true;
-		break;
-	case EVENT_BUTTON_UP:
+		// Wait for the mouse to be released
+		BF_GLOBALS._events.waitForPress(EVENT_BUTTON_UP);
+
 		// Restore unselected version
 		toggle(false);
 
@@ -232,8 +248,8 @@ void UICollection::show() {
 void UICollection::erase() {
 	if (_clearScreen) {
 		Rect tempRect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT);
-		BF_GLOBALS._screenSurface.fillRect(tempRect, 0);
-		BF_GLOBALS._sceneManager._scene->_backSurface.fillRect(tempRect, 0);
+		GLOBALS._screenSurface.fillRect(tempRect, 0);
+		GLOBALS._sceneManager._scene->_backSurface.fillRect(tempRect, 0);
 		_clearScreen = false;
 	}
 }
@@ -253,7 +269,7 @@ void UICollection::draw() {
 			_objList[idx]->draw();
 
 		// Draw the resulting UI onto the screen
-		BF_GLOBALS._screenSurface.copyFrom(BF_GLOBALS._sceneManager._scene->_backSurface,
+		GLOBALS._screenSurface.copyFrom(GLOBALS._sceneManager._scene->_backSurface,
 			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT),
 			Rect(0, UI_INTERFACE_Y, SCREEN_WIDTH, SCREEN_HEIGHT));
 
@@ -265,9 +281,11 @@ void UICollection::draw() {
 /*--------------------------------------------------------------------------*/
 
 UIElements::UIElements(): UICollection() {
-	_cursorVisage.setVisage(1, 5);
+	if (g_vm->getGameID() == GType_Ringworld2)
+		_cursorVisage.setVisage(5, 1);
+	else
+		_cursorVisage.setVisage(1, 5);
 	g_saver->addLoadNotifier(&UIElements::loadNotifierProc);
-	_characterIndex = 0;
 }
 
 void UIElements::synchronize(Serializer &s) {
@@ -295,22 +313,21 @@ void UIElements::synchronize(Serializer &s) {
 			s.syncAsSint16LE(itemId);
 		}
 	}
-
-	if (g_vm->getGameID() == GType_Ringworld2)
-		s.syncAsSint16LE(_characterIndex);
 }
 
 void UIElements::process(Event &event) {
-	if (_clearScreen && BF_GLOBALS._player._enabled && (BF_GLOBALS._sceneManager._sceneNumber != 50)) {
+	if (_clearScreen && GLOBALS._player._enabled &&
+			((g_vm->getGameID() != GType_BlueForce) || (GLOBALS._sceneManager._sceneNumber != 50))) {
 		if (_bounds.contains(event.mousePos)) {
 			// Cursor inside UI area
 			if (!_cursorChanged) {
-				if (BF_GLOBALS._events.isInventoryIcon()) {
+				if (GLOBALS._events.isInventoryIcon()) {
 					// Inventory icon being displayed, so leave alone
 				} else {
 					// Change to the inventory use cursor
-					GfxSurface surface = _cursorVisage.getFrame(6);
-					BF_GLOBALS._events.setCursor(surface);
+					int cursorId = (g_vm->getGameID() == GType_Ringworld2) ? 11 : 6;
+					GfxSurface surface = _cursorVisage.getFrame(cursorId);
+					GLOBALS._events.setCursor(surface);
 				}
 				_cursorChanged = true;
 			}
@@ -329,13 +346,13 @@ void UIElements::process(Event &event) {
 
 		} else if (_cursorChanged) {
 			// Cursor outside UI area, so reset as necessary
-			BF_GLOBALS._events.setCursor(BF_GLOBALS._events.getCursor());
+			GLOBALS._events.setCursor(GLOBALS._events.getCursor());
 			_cursorChanged = false;
 /*
-			SceneExt *scene = (SceneExt *)BF_GLOBALS._sceneManager._scene;
+			SceneExt *scene = (SceneExt *)GLOBALS._sceneManager._scene;
 			if (scene->_focusObject) {
 				GfxSurface surface = _cursorVisage.getFrame(7);
-				BF_GLOBALS._events.setCursor(surface);
+				GLOBALS._events.setCursor(surface);
 			}
 */
 		}
@@ -403,9 +420,10 @@ void UIElements::setup(const Common::Point &pt) {
 		// Set up the score
 		_score.postInit();
 		add(&_score);
+		break;
 	case GType_Ringworld2:
 		// Set up the character display
-		_character.setup(1, 5, _characterIndex, 285, 11, 255);
+		_character.setup(1, 5, R2_GLOBALS._player._characterIndex, 285, 11, 255);
 		add(&_character);
 		break;
 	default:
@@ -434,7 +452,16 @@ void UIElements::add(UIElement *obj) {
  * Handles updating the visual inventory in the user interface
  */
 void UIElements::updateInventory() {
-	_score.updateScore();
+	switch (g_vm->getGameID()) {
+	case GType_BlueForce:
+		// Update the score
+		_score.updateScore();
+		break;
+	case GType_Ringworld2:
+		_character.setFrame(R2_GLOBALS._player._characterIndex);
+		break;
+	}
+
 	updateInvList();
 
 	// Enable scroll buttons if the player has more than four items
@@ -459,7 +486,7 @@ void UIElements::updateInventory() {
 	// Loop through the inventory objects
 	SynchronizedList<InvObject *>::iterator i;
 	int objIndex = 0;
-	for (i = BF_INVENTORY._itemList.begin(); i != BF_INVENTORY._itemList.end(); ++i, ++objIndex) {
+	for (i = GLOBALS._inventory->_itemList.begin(); i != GLOBALS._inventory->_itemList.end(); ++i, ++objIndex) {
 		InvObject *obj = *i;
 
 		// Check whether the object is in any of the four inventory slots
@@ -475,6 +502,8 @@ void UIElements::updateInventory() {
 				slot->setVisage(obj->_visage);
 				slot->setStrip(obj->_strip);
 				slot->setFrame(obj->_frame);
+
+				slot->reposition();
 			}
 		}
 	}
@@ -493,7 +522,7 @@ void UIElements::updateInvList() {
 
 	SynchronizedList<InvObject *>::iterator i;
 	int itemIndex = 0;
-	for (i = BF_GLOBALS._inventory->_itemList.begin(); i != BF_GLOBALS._inventory->_itemList.end(); ++i, ++itemIndex) {
+	for (i = GLOBALS._inventory->_itemList.begin(); i != GLOBALS._inventory->_itemList.end(); ++i, ++itemIndex) {
 		InvObject *invObject = *i;
 		if (invObject->inInventory())
 			_itemList.push_back(itemIndex);
@@ -505,7 +534,7 @@ void UIElements::updateInvList() {
  */
 void UIElements::addScore(int amount) {
 	_scoreValue += amount;
-	BF_GLOBALS._sound2.play(0);
+	T2_GLOBALS._inventorySound.play(0);
 	updateInventory();
 }
 

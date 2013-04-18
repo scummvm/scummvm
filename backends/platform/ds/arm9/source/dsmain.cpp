@@ -926,7 +926,7 @@ void displayMode16Bit() {
 	SUB_BG0_Y0 = 0;
 
 	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 4, 0, false, true);
-//	consoleInitDefault((u16*)SCREEN_BASE_BLOCK_SUB(4), (u16*)CHAR_BASE_BLOCK_SUB(0), 16);
+//	consoleInitDefault((u16 *)SCREEN_BASE_BLOCK_SUB(4), (u16 *)CHAR_BASE_BLOCK_SUB(0), 16);
 
 	for (int r = 0; r < 32 * 32; r++) {
 		((u16 *) SCREEN_BASE_BLOCK_SUB(4))[r] = buffer[r];
@@ -2414,7 +2414,7 @@ void initHardware() {
 	BG_PALETTE[255] = RGB15(31,31,31);//by default font will be rendered with color 255
 
 	//consoleInit() is a lot more flexible but this gets you up and running quick
-//	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(0), (u16*)CHAR_BASE_BLOCK(1), 16);
+//	consoleInitDefault((u16 *)SCREEN_BASE_BLOCK(0), (u16 *)CHAR_BASE_BLOCK(1), 16);
 	//consolePrintSet(0, 6);
 
 	//irqs are nice
@@ -2886,7 +2886,7 @@ void dsExceptionHandler() {
 	setExceptionHandler(NULL);
 
 	u32	currentMode = getCPSR() & 0x1f;
-	u32 thumbState = ((*(u32*)0x027FFD90) & 0x20);
+	u32 thumbState = ((*(u32 *)0x027FFD90) & 0x20);
 
 	u32 codeAddress, exceptionAddress = 0;
 

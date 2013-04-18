@@ -92,6 +92,8 @@ public:
 #endif
 
 #ifdef ENABLE_KEYMAPPER
+	 // IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	 // this, please talk to tsoliman and/or LordHoto.
 	virtual Common::Keymapper *getKeymapper() { return _keymapper; }
 #endif
 };

@@ -106,7 +106,7 @@ void loadFNT(const char *fileName) {
 
 	fontFileHandle.read(header, 4);
 
-	if (strcmp((char*)header, "FNT") == 0) {
+	if (strcmp((char *)header, "FNT") == 0) {
 		uint32 fontSize = fontFileHandle.readUint32BE();
 
 		_systemFNT = (uint8 *)mallocAndZero(fontSize);

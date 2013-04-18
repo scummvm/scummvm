@@ -111,7 +111,7 @@ typedef struct {
 
 #if defined(STRICTUNZIP) || defined(STRICTZIPUNZIP)
 /* like the STRICT of WIN32, we define a pointer that cannot be converted
-    from (void*) without cast */
+    from (void *) without cast */
 typedef struct TagunzFile__ { int unused; } unzFile__;
 typedef unzFile__ *unzFile;
 #else
@@ -1062,7 +1062,7 @@ int unzOpenCurrentFile (unzFile file) {
 	if (pfile_in_zip_read_info==NULL)
 		return UNZ_INTERNALERROR;
 
-	pfile_in_zip_read_info->read_buffer=(char*)malloc(UNZ_BUFSIZE);
+	pfile_in_zip_read_info->read_buffer=(char *)malloc(UNZ_BUFSIZE);
 	pfile_in_zip_read_info->offset_local_extrafield = offset_local_extrafield;
 	pfile_in_zip_read_info->size_local_extrafield = size_local_extrafield;
 	pfile_in_zip_read_info->pos_local_extrafield=0;
@@ -1151,7 +1151,7 @@ int unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
 	if (len==0)
 		return 0;
 
-	pfile_in_zip_read_info->stream.next_out = (Bytef*)buf;
+	pfile_in_zip_read_info->stream.next_out = (Bytef *)buf;
 
 	pfile_in_zip_read_info->stream.avail_out = (uInt)len;
 
@@ -1177,7 +1177,7 @@ int unzReadCurrentFile(unzFile file, voidp buf, unsigned len) {
 
 			pfile_in_zip_read_info->rest_read_compressed-=uReadThis;
 
-			pfile_in_zip_read_info->stream.next_in = (Bytef*)pfile_in_zip_read_info->read_buffer;
+			pfile_in_zip_read_info->stream.next_in = (Bytef *)pfile_in_zip_read_info->read_buffer;
 			pfile_in_zip_read_info->stream.avail_in = (uInt)uReadThis;
 		}
 
@@ -1426,9 +1426,9 @@ public:
 
 	~ZipArchive();
 
-	virtual bool hasFile(const String &name);
-	virtual int listMembers(ArchiveMemberList &list);
-	virtual ArchiveMemberPtr getMember(const String &name);
+	virtual bool hasFile(const String &name) const;
+	virtual int listMembers(ArchiveMemberList &list) const;
+	virtual const ArchiveMemberPtr getMember(const String &name) const;
 	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 };
 
@@ -1458,11 +1458,11 @@ ZipArchive::~ZipArchive() {
 	unzClose(_zipFile);
 }
 
-bool ZipArchive::hasFile(const String &name) {
+bool ZipArchive::hasFile(const String &name) const {
 	return (unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
 }
 
-int ZipArchive::listMembers(ArchiveMemberList &list) {
+int ZipArchive::listMembers(ArchiveMemberList &list) const {
 	int matches = 0;
 	int err = unzGoToFirstFile(_zipFile);
 
@@ -1481,7 +1481,7 @@ int ZipArchive::listMembers(ArchiveMemberList &list) {
 	return matches;
 }
 
-ArchiveMemberPtr ZipArchive::getMember(const String &name) {
+const ArchiveMemberPtr ZipArchive::getMember(const String &name) const {
 	if (!hasFile(name))
 		return ArchiveMemberPtr();
 

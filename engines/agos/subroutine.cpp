@@ -266,7 +266,7 @@ Common::SeekableReadStream *AGOSEngine::openTablesFile(const char *filename) {
 }
 
 Common::SeekableReadStream *AGOSEngine::openTablesFile_simon1(const char *filename) {
-	Common::SeekableReadStream *in = _archives.open(filename);
+	Common::SeekableReadStream *in = _archives.createReadStreamForMember(filename);
 	if (!in)
 		error("openTablesFile: Can't open '%s'", filename);
 	return in;
@@ -369,7 +369,7 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subrId) {
 				readSubroutineBlock(in);
 				closeTablesFile(in);
 				if (getGameType() == GType_SIMON2) {
-					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename.c_str() + 6) - 1 + _soundIndexBase]);
+					_sound->loadSfxTable(getFileName(GAME_GMEFILE), _gameOffsetsPtr[atoi(filename.c_str() + 6) - 1 + _soundIndexBase]);
 				} else if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) {
 					filename.setChar('S', 0);
 					filename.setChar('F', 1);
@@ -558,7 +558,6 @@ restart:
 	while ((byte *)sl != (byte *)sub) {
 		_currentLine = sl;
 		if (checkIfToRunSubroutineLine(sl, sub)) {
-			result = 0;
 			_codePtr = (byte *)sl;
 			if (sub->id)
 				_codePtr += 2;

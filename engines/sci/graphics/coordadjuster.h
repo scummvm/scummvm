@@ -96,8 +96,8 @@ private:
 
 	Common::Rect _pictureDisplayArea;
 
-	uint16 scriptsRunningWidth;
-	uint16 scriptsRunningHeight;
+	uint16 _scriptsRunningWidth;
+	uint16 _scriptsRunningHeight;
 };
 #endif
 

@@ -52,7 +52,7 @@ int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 
 	// alloc memory for object list
 	// byte 3 = number of animated objects. this is ignored.. ??
-	if (READ_LE_UINT16(mem) / padsize >= 256) {
+	if (READ_LE_UINT16(mem) / padsize > 256) {
 		// die with no error! AGDS game needs not to die to work!! :(
 		return errOK;
 	}

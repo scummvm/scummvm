@@ -387,8 +387,6 @@ void TownsPC98_MusicChannel::reset() {
 
 	_totalLevel = 0;
 	_algorithm = 0;
-	_flags = CHS_EOT;
-	_algorithm = 0;
 
 	_block = 0;
 	_frequency = 0;

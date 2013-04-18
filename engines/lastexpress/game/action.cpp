@@ -1806,7 +1806,7 @@ CursorStyle Action::getCursor(const SceneHotspot &hotspot) const {
 		if (getProgress().jacket != kJacketGreen)
 			return kCursorNormal;
 
-		if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowDay) || getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1)
+		if ((getEvent(kEventCathLookOutsideWindowDay) || getEvent(kEventCathLookOutsideWindowNight) || getObjects()->get(kObjectCompartment1).location2 == kObjectLocation1)
 			&& getProgress().isTrainRunning
 			&& (object != kObjectOutsideAnnaCompartment || (getEntities()->isInsideCompartment(kEntityRebecca, kCarRedSleeping, kPosition_4840) && getObjects()->get(kObjectOutsideBetweenCompartments).location == 2))
 			&& getInventory()->getSelectedItem() != kItemBriefcase && getInventory()->getSelectedItem() != kItemFirebird)

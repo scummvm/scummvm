@@ -74,7 +74,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::CZ_CZE,
 		Common::kPlatformPC,
 		ADGF_CD,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 	AD_TABLE_END_MARKER,
 };

@@ -76,7 +76,6 @@ public:
 	virtual ~Player_PCE();
 
 	virtual void setMusicVolume(int vol) { _maxvol = vol; }
-	void startMusic(int songResIndex);
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();

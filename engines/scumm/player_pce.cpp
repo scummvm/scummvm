@@ -269,13 +269,13 @@ void PSG_HuC6280::init() {
 	reset();
 
 	// Make waveform frequency table
-	for(i = 0; i < 4096; i++) {
+	for (i = 0; i < 4096; i++) {
 		step = ((_clock / _rate) * 4096) / (i+1);
 		_waveFreqTable[(1 + i) & 0xFFF] = (uint32)step;
 	}
 
 	// Make noise frequency table
-	for(i = 0; i < 32; i++) {
+	for (i = 0; i < 32; i++) {
 		step = ((_clock / _rate) * 32) / (i+1);
 		_noiseFreqTable[i] = (uint32)step;
 	}
@@ -283,7 +283,7 @@ void PSG_HuC6280::init() {
 	// Make volume table
 	// PSG_HuC6280 has 48dB volume range spread over 32 steps
 	step = 48.0 / 32.0;
-	for(i = 0; i < 31; i++) {
+	for (i = 0; i < 31; i++) {
 		_volumeTable[i] = (uint16)level;
 		level /= pow(10.0, step / 20.0);
 	}
@@ -323,7 +323,7 @@ void PSG_HuC6280::write(int offset, byte data) {
 
 	case 0x04: // Channel control (key-on, DDA mode, volume)
 		// 1-to-0 transition of DDA bit resets waveform index
-		if((chan->control & 0x40) && ((data & 0x40) == 0)) {
+		if ((chan->control & 0x40) && ((data & 0x40) == 0)) {
 			chan->index = 0;
 		}
 		chan->control = data;
@@ -383,9 +383,9 @@ void PSG_HuC6280::update(int16* samples, int sampleCnt) {
 	// Clear buffer
 	memset(samples, 0, 2 * sampleCnt * sizeof(int16));
 
-	for(ch = 0; ch < 6; ch++) {
+	for (ch = 0; ch < 6; ch++) {
 		// Only look at enabled channels
-		if(_channel[ch].control & 0x80) {
+		if (_channel[ch].control & 0x80) {
 			int lal = (_channel[ch].balance >> 4) & 0x0F;
 			int ral = (_channel[ch].balance >> 0) & 0x0F;
 			int al  = _channel[ch].control & 0x1F;
@@ -395,25 +395,25 @@ void PSG_HuC6280::update(int16* samples, int sampleCnt) {
 
 			// Calculate volume just as the patent says
 			vll = (0x1F - lal) + (0x1F - al) + (0x1F - lmal);
-			if(vll > 0x1F) vll = 0x1F;
+			if (vll > 0x1F) vll = 0x1F;
 
 			vlr = (0x1F - ral) + (0x1F - al) + (0x1F - rmal);
-			if(vlr > 0x1F) vlr = 0x1F;
+			if (vlr > 0x1F) vlr = 0x1F;
 
 			vll = _volumeTable[vll];
 			vlr = _volumeTable[vlr];
 
 			// Check channel mode
-			if(_channel[ch].control & 0x40) {
+			if (_channel[ch].control & 0x40) {
 				/* DDA mode */
-				for(i = 0; i < sampleCnt; i++) {
+				for (i = 0; i < sampleCnt; i++) {
 					samples[2*i]     += (int16)(vll * (_channel[ch].dda - 16));
 					samples[2*i + 1] += (int16)(vlr * (_channel[ch].dda - 16));
 				}
 			} else {
 				/* Waveform mode */
 				uint32 step = _waveFreqTable[_channel[ch].frequency];
-				for(i = 0; i < sampleCnt; i += 1) {
+				for (i = 0; i < sampleCnt; i += 1) {
 					int offset;
 					int16 data;
 					offset = (_channel[ch].counter >> 12) & 0x1F;

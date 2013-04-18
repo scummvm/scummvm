@@ -330,7 +330,7 @@ void SoundGenSarien::fillAudio(int16 *stream, uint len) {
 	debugC(5, kDebugLevelSound, "(%p, %d)", (void *)stream, len);
 
 	while (len > data_available) {
-		memcpy((uint8 *)stream + p, (uint8*)_sndBuffer + data_offset, data_available);
+		memcpy((uint8 *)stream + p, (uint8 *)_sndBuffer + data_offset, data_available);
 		p += data_available;
 		len -= data_available;
 
@@ -339,7 +339,7 @@ void SoundGenSarien::fillAudio(int16 *stream, uint len) {
 		data_offset = 0;
 	}
 
-	memcpy((uint8 *)stream + p, (uint8*)_sndBuffer + data_offset, len);
+	memcpy((uint8 *)stream + p, (uint8 *)_sndBuffer + data_offset, len);
 	data_offset += len;
 	data_available -= len;
 }

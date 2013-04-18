@@ -105,6 +105,30 @@ struct FSNode {
 };
 
 typedef std::list<FSNode> FileList;
+
+typedef StringList TokenList;
+
+/**
+ * Takes a given input line and creates a list of tokens out of it.
+ *
+ * A token in this context is separated by whitespaces. A special case
+ * are quotation marks though. A string inside quotation marks is treated
+ * as single token, even when it contains whitespaces.
+ *
+ * Thus for example the input:
+ * foo bar "1 2 3 4" ScummVM
+ * will create a list with the following entries:
+ * "foo", "bar", "1 2 3 4", "ScummVM"
+ * As you can see the quotation marks will get *removed* too.
+ *
+ * You can also use this with non-whitespace by passing another separator
+ * character (e.g. ',').
+ *
+ * @param input The text to be tokenized.
+ * @param separator The token separator.
+ * @return A list of tokens.
+ */
+TokenList tokenize(const std::string &input, char separator = ' ');
 } // End of anonymous namespace
 
 enum ProjectType {
@@ -201,6 +225,38 @@ int main(int argc, char *argv[]) {
 				std::cerr << "ERROR: Unsupported version: \"" << msvcVersion << "\" passed to \"--msvc-version\"!\n";
 				return -1;
 			}
+		} else if (!strncmp(argv[i], "--enable-engine=", 16)) {
+			const char *names = &argv[i][16];
+			if (!*names) {
+				std::cerr << "ERROR: Invalid command \"" << argv[i] << "\"\n";
+				return -1;
+			}
+
+			TokenList tokens = tokenize(names, ',');
+			TokenList::const_iterator token = tokens.begin();
+			while (token != tokens.end()) {
+				std::string name = *token++;
+				if (!setEngineBuildState(name, setup.engines, true)) {
+					std::cerr << "ERROR: \"" << name << "\" is not a known engine!\n";
+					return -1;
+				}
+			}
+		} else if (!strncmp(argv[i], "--disable-engine=", 17)) {
+			const char *names = &argv[i][17];
+			if (!*names) {
+				std::cerr << "ERROR: Invalid command \"" << argv[i] << "\"\n";
+				return -1;
+			}
+
+			TokenList tokens = tokenize(names, ',');
+			TokenList::const_iterator token = tokens.begin();
+			while (token != tokens.end()) {
+				std::string name = *token++;
+				if (!setEngineBuildState(name, setup.engines, false)) {
+					std::cerr << "ERROR: \"" << name << "\" is not a known engine!\n";
+					return -1;
+				}
+			}
 		} else if (!strncmp(argv[i], "--enable-", 9)) {
 			const char *name = &argv[i][9];
 			if (!*name) {
@@ -211,12 +267,9 @@ int main(int argc, char *argv[]) {
 			if (!std::strcmp(name, "all-engines")) {
 				for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 					j->enable = true;
-			} else if (!setEngineBuildState(name, setup.engines, true)) {
-				// If none found, we'll try the features list
-				if (!setFeatureBuildState(name, setup.features, true)) {
-					std::cerr << "ERROR: \"" << name << "\" is neither an engine nor a feature!\n";
-					return -1;
-				}
+			} else if (!setFeatureBuildState(name, setup.features, true)) {
+				std::cerr << "ERROR: \"" << name << "\" is not a feature!\n";
+				return -1;
 			}
 		} else if (!strncmp(argv[i], "--disable-", 10)) {
 			const char *name = &argv[i][10];
@@ -228,12 +281,9 @@ int main(int argc, char *argv[]) {
 			if (!std::strcmp(name, "all-engines")) {
 				for (EngineDescList::iterator j = setup.engines.begin(); j != setup.engines.end(); ++j)
 					j->enable = false;
-			} else if (!setEngineBuildState(name, setup.engines, false)) {
-				// If none found, we'll try the features list
-				if (!setFeatureBuildState(name, setup.features, false)) {
-					std::cerr << "ERROR: \"" << name << "\" is neither an engine nor a feature!\n";
-					return -1;
-				}
+			} else if (!setFeatureBuildState(name, setup.features, false)) {
+				std::cerr << "ERROR: \"" << name << "\" is not a feature!\n";
+				return -1;
 			}
 		} else if (!std::strcmp(argv[i], "--file-prefix")) {
 			if (i + 1 >= argc) {
@@ -411,6 +461,12 @@ int main(int argc, char *argv[]) {
 		// 4310 (cast truncates constant value)
 		//   used in some engines
 		//
+		// 4345 (behavior change: an object of POD type constructed with an
+		// initializer of the form () will be default-initialized)
+		//   used in Common::Array(), and it basically means that newer VS
+		//   versions adhere to the standard in this case. Can be safely
+		//   disabled.
+		//
 		// 4351 (new behavior: elements of array 'array' will be default initialized)
 		//   a change in behavior in Visual Studio 2005. We want the new behavior, so it can be disabled
 		//
@@ -460,6 +516,7 @@ int main(int argc, char *argv[]) {
 		globalWarnings.push_back("4244");
 		globalWarnings.push_back("4250");
 		globalWarnings.push_back("4310");
+		globalWarnings.push_back("4345");
 		globalWarnings.push_back("4351");
 		globalWarnings.push_back("4512");
 		globalWarnings.push_back("4702");
@@ -476,10 +533,14 @@ int main(int argc, char *argv[]) {
 
 		projectWarnings["agos"].push_back("4511");
 
+		projectWarnings["dreamweb"].push_back("4355");
+		
 		projectWarnings["lure"].push_back("4189");
 		projectWarnings["lure"].push_back("4355");
 
 		projectWarnings["kyra"].push_back("4355");
+		projectWarnings["kyra"].push_back("4510");
+		projectWarnings["kyra"].push_back("4610");
 
 		projectWarnings["m4"].push_back("4355");
 
@@ -611,26 +672,6 @@ void displayHelp(const char *exe) {
 	cout.setf(std::ios_base::right, std::ios_base::adjustfield);
 }
 
-typedef StringList TokenList;
-
-/**
- * Takes a given input line and creates a list of tokens out of it.
- *
- * A token in this context is separated by whitespaces. A special case
- * are quotation marks though. A string inside quotation marks is treated
- * as single token, even when it contains whitespaces.
- *
- * Thus for example the input:
- * foo bar "1 2 3 4" ScummVM
- * will create a list with the following entries:
- * "foo", "bar", "1 2 3 4", "ScummVM"
- * As you can see the quotation marks will get *removed* too.
- *
- * @param input The text to be tokenized.
- * @return A list of tokens.
- */
-TokenList tokenize(const std::string &input);
-
 /**
  * Try to parse a given line and create an engine definition
  * out of the result.
@@ -760,7 +801,7 @@ bool parseEngine(const std::string &line, EngineDesc &engine) {
 	return true;
 }
 
-TokenList tokenize(const std::string &input) {
+TokenList tokenize(const std::string &input, char separator) {
 	TokenList result;
 
 	std::string::size_type sIdx = input.find_first_not_of(" \t");
@@ -774,12 +815,15 @@ TokenList tokenize(const std::string &input) {
 			++sIdx;
 			nIdx = input.find_first_of('\"', sIdx);
 		} else {
-			nIdx = input.find_first_of(' ', sIdx);
+			nIdx = input.find_first_of(separator, sIdx);
 		}
 
 		if (nIdx != std::string::npos) {
 			result.push_back(input.substr(sIdx, nIdx - sIdx));
-			sIdx = input.find_first_not_of(" \t", nIdx + 1);
+			if (separator == ' ')
+				sIdx = input.find_first_not_of(" \t", nIdx + 1);
+			else
+				sIdx = input.find_first_not_of(separator, nIdx + 1);
 		} else {
 			result.push_back(input.substr(sIdx));
 			break;
@@ -811,6 +855,7 @@ const Feature s_features[] = {
 	{     "taskbar",     "USE_TASKBAR",         "", true, "Taskbar integration support" },
 	{ "translation", "USE_TRANSLATION",         "", true, "Translation support" },
 	{      "vkeybd",   "ENABLE_VKEYBD",         "", false, "Virtual keyboard support"},
+	{   "keymapper","ENABLE_KEYMAPPER",         "", false, "Keymapper support"},
 	{  "langdetect",  "USE_DETECTLANG",         "", true, "System language detection support" } // This feature actually depends on "translation", there
 	                                                                                            // is just no current way of properly detecting this...
 };
@@ -820,7 +865,6 @@ const Tool s_tools[] = {
 	{ "create_hugo",         true},
 	{ "create_kyradat",      true},
 	{ "create_lure",         true},
-	{ "create_mads",         true},
 	{ "create_teenagent",    true},
 	{ "create_toon",         true},
 	{ "create_translations", true},
@@ -1301,6 +1345,8 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 	std::stack<bool> shouldInclude;
 	shouldInclude.push(true);
 
+	StringList filesInVariableList;
+
 	bool hadModule = false;
 	std::string line;
 	for (;;) {
@@ -1354,6 +1400,30 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 					std::getline(moduleMk, line);
 					tokens = tokenize(line);
 					i = tokens.begin();
+				} else if (*i == "$(KYRARPG_COMMON_OBJ)") {
+					// HACK to fix EOB/LOL compilation in the kyra engine:
+					// replace the variable name with the stored files.
+					// This assumes that the file list has already been defined.
+					if (filesInVariableList.size() == 0)
+						error("$(KYRARPG_COMMON_OBJ) found, but the variable hasn't been set before it");
+					// Construct file list and replace the variable
+					for (StringList::iterator j = filesInVariableList.begin(); j != filesInVariableList.end(); ++j) {
+						const std::string filename = *j;
+
+						if (shouldInclude.top()) {
+							// In case we should include a file, we need to make
+							// sure it is not in the exclude list already. If it
+							// is we just drop it from the exclude list.
+							excludeList.remove(filename);
+
+							includeList.push_back(filename);
+						} else if (std::find(includeList.begin(), includeList.end(), filename) == includeList.end()) {
+							// We only add the file to the exclude list in case it
+							// has not yet been added to the include list.
+							excludeList.push_back(filename);
+						}
+					}
+					++i;
 				} else {
 					const std::string filename = moduleDir + "/" + unifyPath(*i);
 
@@ -1369,6 +1439,29 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 						// has not yet been added to the include list.
 						excludeList.push_back(filename);
 					}
+					++i;
+				}
+			}
+		} else if (*i == "KYRARPG_COMMON_OBJ") {
+			// HACK to fix EOB/LOL compilation in the kyra engine: add the
+			// files defined in the KYRARPG_COMMON_OBJ variable in a list
+			if (tokens.size() < 3)
+				error("Malformed KYRARPG_COMMON_OBJ definition in " + moduleMkFile);
+			++i;
+
+			if (*i != ":=" && *i != "+=" && *i != "=")
+				error("Malformed KYRARPG_COMMON_OBJ definition in " + moduleMkFile);
+
+			++i;
+
+			while (i != tokens.end()) {
+				if (*i == "\\") {
+					std::getline(moduleMk, line);
+					tokens = tokenize(line);
+					i = tokens.begin();
+				} else {
+					const std::string filename = moduleDir + "/" + unifyPath(*i);
+					filesInVariableList.push_back(filename);
 					++i;
 				}
 			}

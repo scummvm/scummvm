@@ -33,6 +33,8 @@
 
 namespace Gob {
 
+class Cheater_Geisha;
+
 namespace Geisha {
 	class Diving;
 	class Penetration;
@@ -371,6 +373,8 @@ protected:
 private:
 	Geisha::Diving      *_diving;
 	Geisha::Penetration *_penetration;
+
+	Cheater_Geisha *_cheater;
 };
 
 class Inter_v2 : public Inter_v1 {

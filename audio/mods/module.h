@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_MODS_MODULE_H
-#define SOUND_MODS_MODULE_H
+#ifndef AUDIO_MODS_MODULE_H
+#define AUDIO_MODS_MODULE_H
 
 #include "common/scummsys.h"
 

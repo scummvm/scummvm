@@ -62,11 +62,7 @@ int BrowserDialog::runModal() {
 	NSOpenPanel * panel = [NSOpenPanel openPanel];
 	[panel setCanChooseDirectories:YES];
 	if ([panel runModalForTypes:nil] == NSOKButton) {
-#ifdef __POWERPC__
-		const char *filename = [[panel filename] cString];
-#else
-		const char *filename = [[panel filename] cStringUsingEncoding:NSUTF8StringEncoding];
-#endif
+		const char *filename = [[panel filename] UTF8String];
 		_choice = Common::FSNode(filename);
 		choiceMade = true;
 	}

@@ -62,22 +62,17 @@ private:
 	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
 	uint16 _numExports; /**< Number of entries in the exports table */
 
-	const byte *_synonyms; /**< Synonyms block or 0 if not present*/
+	const byte *_synonyms; /**< Synonyms block or 0 if not present */
 	uint16 _numSynonyms; /**< Number of entries in the synonyms block */
 
 	int _localsOffset;
 	uint16 _localsCount;
 
 	bool _markedAsDeleted;
-
-public:
-	/**
-	 * Table for objects, contains property variables.
-	 * Indexed by the TODO offset.
-	 */
-	ObjMap _objects;
 	SegmentId _localsSegment; /**< The local variable segment */
 	LocalVariables *_localsBlock;
+
+	ObjMap _objects;	/**< Table for objects, contains property variables */
 
 public:
 	int getLocalsOffset() const { return _localsOffset; }
@@ -89,6 +84,11 @@ public:
 	const byte *getBuf(uint offset = 0) const { return _buf + offset; }
 
 	int getScriptNumber() const { return _nr; }
+	SegmentId getLocalsSegment() const { return _localsSegment; }
+	reg_t *getLocalsBegin() { return _localsBlock ? _localsBlock->_locals.begin() : NULL; }
+	void syncLocalsBlock(SegManager *segMan);
+	ObjMap &getObjectMap() { return _objects; }
+	const ObjMap &getObjectMap() const { return _objects; }
 
 public:
 	Script();
@@ -295,6 +295,8 @@ private:
 	 * @param segmentId	The script's segment id
 	 */
 	void initializeObjectsSci3(SegManager *segMan, SegmentId segmentId);
+
+	LocalVariables *allocLocalsSegment(SegManager *segMan);
 };
 
 } // End of namespace Sci

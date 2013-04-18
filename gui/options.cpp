@@ -26,9 +26,12 @@
 #include "gui/options.h"
 #include "gui/widgets/popup.h"
 #include "gui/widgets/tab.h"
+#include "gui/ThemeEval.h"
 
 #include "common/fs.h"
 #include "common/config-manager.h"
+#include "common/gui_options.h"
+#include "common/rendermode.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
@@ -51,8 +54,11 @@ enum {
 	kChooseSoundFontCmd		= 'chsf',
 	kClearSoundFontCmd      = 'clsf',
 	kChooseSaveDirCmd		= 'chos',
+	kSavePathClearCmd		= 'clsp',
 	kChooseThemeDirCmd		= 'chth',
+	kThemePathClearCmd		= 'clth',
 	kChooseExtraDirCmd		= 'chex',
+	kExtraPathClearCmd		= 'clex',
 	kChoosePluginsDirCmd	= 'chpl',
 	kChooseThemeCmd			= 'chtf'
 };
@@ -75,7 +81,7 @@ static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11kH
 static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
-	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
+	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(0) {
 	init();
 }
 
@@ -141,7 +147,7 @@ void OptionsDialog::init() {
 	_oldTheme = g_gui.theme()->getThemeId();
 
 	// Retrieve game GUI options
-	_guioptions = "";
+	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
@@ -155,7 +161,7 @@ void OptionsDialog::open() {
 	setResult(0);
 
 	// Retrieve game GUI options
-	_guioptions = "";
+	_guioptions.clear();
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
@@ -187,23 +193,38 @@ void OptionsDialog::open() {
 			int sel = 0;
 			for (int i = 0; p->code; ++p, ++i) {
 				if (renderMode == p->id)
-					sel = i + 2;
+					sel = p->id;
 			}
-			_renderModePopUp->setSelected(sel);
+			_renderModePopUp->setSelectedTag(sel);
 		}
 
 #ifdef SMALL_SCREEN_DEVICE
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
+		_aspectCheckbox->setState(false);
 		_aspectCheckbox->setEnabled(false);
 #else // !SMALL_SCREEN_DEVICE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
 
 		// Aspect ratio setting
-		_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+		if (_guioptions.contains(GUIO_NOASPECT)) {
+			_aspectCheckbox->setState(false);
+			_aspectCheckbox->setEnabled(false);
+		} else {
+			_aspectCheckbox->setEnabled(true);
+			_aspectCheckbox->setState(ConfMan.getBool("aspect_ratio", _domain));
+		}
 #endif // SMALL_SCREEN_DEVICE
-		_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
+
+		// EGA undithering setting
+		if (_guioptions.contains(GUIO_EGAUNDITHER)  || _domain == Common::ConfigManager::kApplicationDomain) {
+			_disableDitheringCheckbox->setEnabled(true);
+			_disableDitheringCheckbox->setState(ConfMan.getBool("disable_dithering", _domain));
+		} else {
+			_disableDitheringCheckbox->setState(false);
+			_disableDitheringCheckbox->setEnabled(false);
+		}
 	}
 
 	// Audio options
@@ -551,6 +572,12 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		// 'true' because if control is disabled then event do not pass
 		setVolumeSettingsState(true);
 		break;
+	case kSubtitleToggle:
+		// We update the slider settings here, when there are sliders, to
+		// disable the speech volume in case we are in subtitle only mode.
+		if (_musicVolumeSlider)
+			setVolumeSettingsState(true);
+		break;
 	case kSubtitleSpeedChanged:
 		_subSpeedLabel->setValue(_subSpeedSlider->getValue());
 		_subSpeedLabel->draw();
@@ -585,9 +612,15 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_renderModePopUp->setEnabled(enabled);
 #ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
-	_aspectCheckbox->setEnabled(enabled);
+	if (_guioptions.contains(GUIO_NOASPECT))
+		_aspectCheckbox->setEnabled(false);
+	else
+		_aspectCheckbox->setEnabled(enabled);
 #endif
-	_disableDitheringCheckbox->setEnabled(enabled);
+	if (_guioptions.contains(GUIO_EGAUNDITHER) && enabled)
+		_disableDitheringCheckbox->setEnabled(true);
+	else
+		_disableDitheringCheckbox->setEnabled(false);
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -595,11 +628,8 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
 
-	Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
-	char opt[256];
-
-	strncpy(opt, _guioptions.c_str(), 256);
-	bool hasMidiDefined = (strtok(opt, allFlags.c_str()) != NULL);
+	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
 
 	if (_domain != Common::ConfigManager::kApplicationDomain && // global dialog
 		hasMidiDefined && // No flags are specified
@@ -669,6 +699,9 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_sfxVolumeLabel->setEnabled(ena);
 
 	ena = enabled && !_muteCheckbox->getState();
+	// Disable speech volume slider, when we are in subtitle only mode.
+	if (_subToggleGroup)
+		ena = ena && _subToggleGroup->getValue() != kSubtitlesSubs;
 	if (_guioptions.contains(GUIO_NOSPEECH))
 		ena = false;
 
@@ -717,13 +750,18 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 
 	// RenderMode popup
+	const Common::String allFlags = renderType2GUIO((uint32)-1);
+	bool renderingTypeDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
+
 	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", _("Render mode:"), _("Special dithering modes supported by some games"));
 	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", _("Special dithering modes supported by some games"));
 	_renderModePopUp->appendEntry(_("<default>"), Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
 	for (; rm->code; ++rm) {
-		_renderModePopUp->appendEntry(_c(rm->description, context), rm->id);
+		Common::String renderGuiOption = renderType2GUIO(rm->id);
+		if ((_domain == Common::ConfigManager::kApplicationDomain) || (_domain != Common::ConfigManager::kApplicationDomain && !renderingTypeDefined) || (_guioptions.contains(renderGuiOption)))
+			_renderModePopUp->appendEntry(_c(rm->description, context), rm->id);
 	}
 
 	// Fullscreen checkbox
@@ -745,11 +783,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
 	// Populate it
-	Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
-	char opt[256];
-
-	strncpy(opt, _guioptions.c_str(), 256);
-	bool hasMidiDefined = (strtok(opt, allFlags.c_str()) != NULL);
+	const Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	bool hasMidiDefined = (strpbrk(_guioptions.c_str(), allFlags.c_str()) != NULL);
 
 	const MusicPlugin::List p = MusicMan.getPlugins();
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
@@ -831,7 +866,8 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	else
 		_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _c("SoundFont:", "lowres"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"), kChooseSoundFontCmd);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _c("None", "soundfont"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"));
-	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", _("Clear value"), kClearSoundFontCmd);
+
+	_soundFontClearButton = addClearButton(boss, prefix + "mcFontClearButton", kClearSoundFontCmd);
 
 	// Multi midi setting
 	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", _("Mixed AdLib/MIDI mode"), _("Use both MIDI and AdLib sound generation"));
@@ -1004,6 +1040,31 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		ConfMan.removeKey(setting, _domain);
 }
 
+Common::String OptionsDialog::renderType2GUIO(uint32 renderType) {
+	static const struct {
+		Common::RenderMode type;
+		const char *guio;
+	} renderGUIOMapping[] = {
+		{ Common::kRenderHercG,		GUIO_RENDERHERCGREEN },
+		{ Common::kRenderHercA,		GUIO_RENDERHERCAMBER },
+		{ Common::kRenderCGA,		GUIO_RENDERCGA },
+		{ Common::kRenderEGA,		GUIO_RENDEREGA },
+		{ Common::kRenderVGA,		GUIO_RENDERVGA },
+		{ Common::kRenderAmiga,		GUIO_RENDERAMIGA },
+		{ Common::kRenderFMTowns,	GUIO_RENDERFMTOWNS },
+		{ Common::kRenderPC9821,	GUIO_RENDERPC9821 },
+		{ Common::kRenderPC9801,	GUIO_RENDERPC9801 }
+	};
+	Common::String res;
+
+	for (int i = 0; i < ARRAYSIZE(renderGUIOMapping); i++) {
+		if (renderType == renderGUIOMapping[i].type || renderType == (uint32)-1)
+			res += renderGUIOMapping[i].guio;
+	}
+
+	return res;
+}
+
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 	if (_guioptions.contains(GUIO_NOSUBTITLES))
 		return kSubtitlesSpeech; // Speech only
@@ -1061,7 +1122,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	// 3) The MIDI tab
 	//
-	tab->addTab(_("MIDI"));
+	_midiTabId = tab->addTab(_("MIDI"));
 	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
 	//
@@ -1074,9 +1135,9 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	// 5) The Paths tab
 	//
 	if (g_system->getOverlayWidth() > 320)
-		tab->addTab(_("Paths"));
+		_pathsTabId = tab->addTab(_("Paths"));
 	else
-		tab->addTab(_c("Paths", "lowres"));
+		_pathsTabId = tab->addTab(_c("Paths", "lowres"));
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// These two buttons have to be extra wide, or the text will be
@@ -1089,17 +1150,23 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _c("Save Path:", "lowres"), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
 	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar", _("Specifies where your savegames are put"));
 
+	_savePathClearButton = addClearButton(tab, "GlobalOptions_Paths.SavePathClearButton", kSavePathClearCmd);
+
 	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), 0, kChooseThemeDirCmd);
 	else
 		new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _c("Theme Path:", "lowres"), 0, kChooseThemeDirCmd);
 	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _c("None", "path"));
 
+	_themePathClearButton = addClearButton(tab, "GlobalOptions_Paths.ThemePathClearButton", kThemePathClearCmd);
+
 	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
 	else
 		new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
 	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _c("None", "path"), _("Specifies path to additional data used by all games or ScummVM"));
+
+	_extraPathClearButton = addClearButton(tab, "GlobalOptions_Paths.ExtraPathClearButton", kExtraPathClearCmd);
 
 #ifdef DYNAMIC_MODULES
 	if (g_system->getOverlayWidth() > 320)
@@ -1207,7 +1274,7 @@ void GlobalOptionsDialog::open() {
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePath->setLabel(_c("None", "path"));
+		_savePath->setLabel(_("Default"));
 	} else {
 		_savePath->setLabel(savePath);
 	}
@@ -1251,8 +1318,10 @@ void GlobalOptionsDialog::open() {
 void GlobalOptionsDialog::close() {
 	if (getResult()) {
 		Common::String savePath(_savePath->getLabel());
-		if (!savePath.empty() && (savePath != _c("None", "path")))
+		if (!savePath.empty() && (savePath != _("Default")))
 			ConfMan.set("savepath", savePath, _domain);
+		else
+			ConfMan.removeKey("savepath", _domain);
 
 		Common::String themePath(_themePath->getLabel());
 		if (!themePath.empty() && (themePath != _c("None", "path")))
@@ -1360,6 +1429,15 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #endif
+	case kThemePathClearCmd:
+		_themePath->setLabel(_c("None", "path"));
+		break;
+	case kExtraPathClearCmd:
+		_extraPath->setLabel(_c("None", "path"));
+		break;
+	case kSavePathClearCmd:
+		_savePath->setLabel(_("Default"));
+		break;
 	case kChooseSoundFontCmd: {
 		BrowserDialog browser(_("Select SoundFont"), false);
 		if (browser.runModal() > 0) {
@@ -1416,6 +1494,41 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	default:
 		OptionsDialog::handleCommand(sender, cmd, data);
 	}
+}
+
+void GlobalOptionsDialog::reflowLayout() {
+	int activeTab = _tabWidget->getActiveTab();
+
+	if (_midiTabId != -1) {
+		_tabWidget->setActiveTab(_midiTabId);
+
+		_tabWidget->removeWidget(_soundFontClearButton);
+		_soundFontClearButton->setNext(0);
+		delete _soundFontClearButton;
+		_soundFontClearButton = addClearButton(_tabWidget, "GlobalOptions_MIDI.mcFontClearButton", kClearSoundFontCmd);
+	}
+
+	if (_pathsTabId != -1) {
+		_tabWidget->setActiveTab(_pathsTabId);
+
+		_tabWidget->removeWidget(_savePathClearButton);
+		_savePathClearButton->setNext(0);
+		delete _savePathClearButton;
+		_savePathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.SavePathClearButton", kSavePathClearCmd);
+
+		_tabWidget->removeWidget(_themePathClearButton);
+		_themePathClearButton->setNext(0);
+		delete _themePathClearButton;
+		_themePathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ThemePathClearButton", kThemePathClearCmd);
+
+		_tabWidget->removeWidget(_extraPathClearButton);
+		_extraPathClearButton->setNext(0);
+		delete _extraPathClearButton;
+		_extraPathClearButton = addClearButton(_tabWidget, "GlobalOptions_Paths.ExtraPathClearButton", kExtraPathClearCmd);
+	}
+
+	_tabWidget->setActiveTab(activeTab);
+	OptionsDialog::reflowLayout();
 }
 
 } // End of namespace GUI

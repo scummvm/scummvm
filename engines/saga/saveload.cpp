@@ -44,7 +44,7 @@ static SaveFileData emptySlot = {
 
 char* SagaEngine::calcSaveFileName(uint slotNumber) {
 	static char name[MAX_FILE_NAME];
-	sprintf(name, "%s.s%02d", _targetName.c_str(), slotNumber);
+	sprintf(name, "%s.s%02u", _targetName.c_str(), slotNumber);
 	return name;
 }
 

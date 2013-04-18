@@ -61,7 +61,7 @@ static inline GLfixed xdiv(int numerator, int denominator) {
 	return (numerator << 16) / denominator;
 }
 
-template <class T>
+template<class T>
 static T nextHigher2(T k) {
 	if (k == 0)
 		return 1;
@@ -287,7 +287,7 @@ void GLESTexture::fillBuffer(uint32 color) {
 			((color & 0xff) == ((color >> 8) & 0xff)))
 		memset(_pixels, color & 0xff, _surface.pitch * _surface.h);
 	else
-		Common::set_to(_pixels, _pixels + _surface.pitch * _surface.h,
+		Common::fill(_pixels, _pixels + _surface.pitch * _surface.h,
 						(uint16)color);
 
 	setDirty();

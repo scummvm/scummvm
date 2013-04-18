@@ -59,4 +59,24 @@ void GuiObject::reflowLayout() {
 	}
 }
 
+void GuiObject::removeWidget(Widget *del) {
+	if (del == _firstWidget) {
+		Widget *del_next = del->next();
+		del->setNext(0);
+		_firstWidget = del_next;
+		return;
+	}
+
+	Widget *w = _firstWidget;
+	while (w) {
+		if (w->next() == del) {
+			Widget *del_next = del->next();
+			del->setNext(0);
+			w->setNext(del_next);
+			return;
+		}
+		w = w->next();
+	}
+}
+
 } // End of namespace GUI

@@ -66,7 +66,7 @@ bool QuickTimeParser::parseFile(const String &filename) {
 	_foundMOOV = false;
 	_disposeFileHandle = DisposeAfterUse::YES;
 
-	Atom atom = { 0, 0, 0xffffffff };
+	Atom atom = { 0, 0, 0 };
 
 	if (_resFork->hasResFork()) {
 		// Search for a 'moov' resource
@@ -80,14 +80,12 @@ bool QuickTimeParser::parseFile(const String &filename) {
 			if (readDefault(atom) < 0 || !_foundMOOV)
 				return false;
 		}
-		delete _fd;
 
-		atom.type = 0;
-		atom.offset = 0;
-		atom.size = 0xffffffff;
+		delete _fd;
 	}
 
 	_fd = _resFork->getDataFork();
+	atom.size = _fd->size();
 
 	if (readDefault(atom) < 0 || !_foundMOOV)
 		return false;
@@ -135,7 +133,7 @@ void QuickTimeParser::initParseTable() {
 		{ &QuickTimeParser::readDefault, MKTAG('e', 'd', 't', 's') },
 		{ &QuickTimeParser::readELST,    MKTAG('e', 'l', 's', 't') },
 		{ &QuickTimeParser::readHDLR,    MKTAG('h', 'd', 'l', 'r') },
-		{ &QuickTimeParser::readDefault, MKTAG('m', 'd', 'a', 't') },
+		{ &QuickTimeParser::readLeaf,    MKTAG('m', 'd', 'a', 't') },
 		{ &QuickTimeParser::readMDHD,    MKTAG('m', 'd', 'h', 'd') },
 		{ &QuickTimeParser::readDefault, MKTAG('m', 'd', 'i', 'a') },
 		{ &QuickTimeParser::readDefault, MKTAG('m', 'i', 'n', 'f') },
@@ -386,8 +384,7 @@ int QuickTimeParser::readTKHD(Atom atom) {
 
 	/* track->id = */_fd->readUint32BE(); // track id (NOT 0 !)
 	_fd->readUint32BE(); // reserved
-	//track->startTime = 0; // check
-	(version == 1) ? (_fd->readUint32BE(), _fd->readUint32BE()) : _fd->readUint32BE(); // highlevel (considering edits) duration in movie timebase
+	track->duration = (version == 1) ? (_fd->readUint32BE(), _fd->readUint32BE()) : _fd->readUint32BE(); // highlevel (considering edits) duration in movie timebase
 	_fd->readUint32BE(); // reserved
 	_fd->readUint32BE(); // reserved
 
@@ -410,8 +407,8 @@ int QuickTimeParser::readTKHD(Atom atom) {
 	track->scaleFactorY.debugPrint(1, "readTKHD(): scaleFactorY =");
 
 	// these are fixed-point, 16:16
-	// uint32 tkWidth = _fd->readUint32BE() >> 16; // track width
-	// uint32 tkHeight = _fd->readUint32BE() >> 16; // track height
+	//_fd->readUint32BE() >> 16; // track width
+	//_fd->readUint32BE() >> 16; // track height
 
 	return 0;
 }
@@ -428,16 +425,17 @@ int QuickTimeParser::readELST(Atom atom) {
 
 	debug(2, "Track %d edit list count: %d", _tracks.size() - 1, track->editCount);
 
+	uint32 offset = 0;
+
 	for (uint32 i = 0; i < track->editCount; i++){
 		track->editList[i].trackDuration = _fd->readUint32BE();
 		track->editList[i].mediaTime = _fd->readSint32BE();
 		track->editList[i].mediaRate = Rational(_fd->readUint32BE(), 0x10000);
-		debugN(3, "\tDuration = %d, Media Time = %d, ", track->editList[i].trackDuration, track->editList[i].mediaTime);
+		track->editList[i].timeOffset = offset;
+		debugN(3, "\tDuration = %d (Offset = %d), Media Time = %d, ", track->editList[i].trackDuration, offset, track->editList[i].mediaTime);
 		track->editList[i].mediaRate.debugPrint(3, "Media Rate =");
+		offset += track->editList[i].trackDuration;
 	}
-
-	if (track->editCount != 1)
-		warning("Multiple edit list entries. Things may go awry");
 
 	return 0;
 }
@@ -500,7 +498,7 @@ int QuickTimeParser::readMDHD(Atom atom) {
 	}
 
 	track->timeScale = _fd->readUint32BE();
-	track->duration = (version == 1) ? (_fd->readUint32BE(), _fd->readUint32BE()) : _fd->readUint32BE(); // duration
+	track->mediaDuration = (version == 1) ? (_fd->readUint32BE(), _fd->readUint32BE()) : _fd->readUint32BE(); // duration
 
 	_fd->readUint16BE(); // language
 	_fd->readUint16BE(); // quality
@@ -793,6 +791,7 @@ QuickTimeParser::Track::Track() {
 	duration = 0;
 	startTime = 0;
 	objectTypeMP4 = 0;
+	mediaDuration = 0;
 }
 
 QuickTimeParser::Track::~Track() {

@@ -24,7 +24,7 @@
 #define SCI_ENGINE_KERNEL_TABLES_H
 
 #include "sci/engine/workarounds.h"
-#include "sci/engine/vm.h"	// for opcode_formats
+#include "sci/engine/vm_types.h" // for opcode_formats
 
 namespace Sci {
 
@@ -499,6 +499,7 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 	{ MAP_CALL(ObjectIntersect),   SIG_EVERYWHERE,           "oo",                    NULL,            NULL },
+	{ MAP_CALL(EditText),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 
 	// SCI2 unmapped functions - TODO!
 
@@ -522,13 +523,6 @@ static SciKernelMapEntry s_kernelMap[] = {
 	// Creates the name of the save file to save into
 	// TODO: Implement once the original save/load menus are implemented.
 	{ MAP_DUMMY(MakeSaveFileName),    SIG_EVERYWHERE,          "(.*)",                  NULL,            NULL },
-
-	// Used for edit boxes in save/load dialogs. It's a rewritten version of kEditControl,
-	// but it handles events on its own, using an internal loop, instead of using SCI
-	// scripts for event management like kEditControl does. Called by script 64914,
-	// DEdit::hilite().
-	// TODO: Implement once the original save/load menus are implemented.
-	{ MAP_DUMMY(EditText),            SIG_EVERYWHERE,          "o",                     NULL,            NULL },
 
 	// Unused / debug SCI2 unused functions, always mapped to kDummy
 
@@ -615,6 +609,12 @@ static SciKernelMapEntry s_kernelMap[] = {
 	{ MAP_DUMMY(WinDLL),            SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(DeletePic),         SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 	{ MAP_DUMMY(GetSierraProfileString), SIG_EVERYWHERE,      "(.*)",                 NULL,            NULL },
+
+	// Unused / debug functions in the in-between SCI2.1 interpreters
+	{ MAP_DUMMY(PreloadResource),   SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_DUMMY(CheckCDisc),        SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_DUMMY(GetSaveCDisc),      SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+	{ MAP_DUMMY(TestPoly),          SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 
 	// SCI2.1 unmapped functions - TODO!
 
@@ -1116,7 +1116,9 @@ static const char *const sci21_default_knames[] = {
 
 #endif
 
-opcode_format g_opcode_formats[128][4] = {
+// Base set of opcode formats. They're copied and adjusted slightly in
+// script_adjust_opcode_format depending on SCI version.
+static const opcode_format g_base_opcode_formats[128][4] = {
 	/*00*/
 	{Script_None}, {Script_None}, {Script_None}, {Script_None},
 	/*04*/

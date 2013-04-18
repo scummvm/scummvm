@@ -25,6 +25,7 @@
 #include "common/archive.h"
 #include "common/config-file.h"
 #include "common/config-manager.h"
+#include "common/macresman.h"
 #include "common/savefile.h"
 #include "common/str.h"
 
@@ -158,19 +159,41 @@ void ScummEngine_v80he::o80_readConfigFile() {
 			memcpy(section, "BluesTreasureHunt-Disc2\0", 24);
 	}
 
-	Common::ConfigFile ConfFile;
-	if (!strcmp((char *)filename + r, "map.ini"))
-		ConfFile.loadFromFile((const char *)filename + r);
-	else
-		ConfFile.loadFromSaveFile((const char *)filename + r);
+	if (!strcmp((const char *)filename, "map (i)")) {
+		// Mac resource fork config file
+		// (as used by only mustard mac for map data?)
+		Common::MacResManager resFork;
+
+		if (!resFork.open((const char *)filename) || !resFork.hasResFork())
+			error("Could not open '%s'", filename);
+
+		Common::String prefResName = Common::String::format("Pref:%s.%s", (const char *)section, (const char *)option);
+		Common::SeekableReadStream *res = resFork.getResource(prefResName);
+
+		if (res) {
+			// The string is inside the resource as a pascal string
+			byte length = res->readByte();
+			for (byte i = 0; i < length; i++)
+				entry += (char)res->readByte();
+
+			delete res;
+		}
+	} else {
+		// Normal Windows INI files
+		Common::ConfigFile confFile;
+		if (!strcmp((char *)filename + r, "map.ini"))
+			confFile.loadFromFile((const char *)filename + r);
+		else
+			confFile.loadFromSaveFile((const char *)filename + r);
+
+		confFile.getKey((const char *)option, (const char *)section, entry);
+	}
 
 	byte subOp = fetchScriptByte();
 
 	switch (subOp) {
 	case 43: // HE 100
 	case 6: // number
-		ConfFile.getKey((const char *)option, (const char *)section, entry);
-
 		if (!strcmp((char *)option, "Benchmark"))
 			push(2);
 		else
@@ -178,8 +201,6 @@ void ScummEngine_v80he::o80_readConfigFile() {
 		break;
 	case 77: // HE 100
 	case 7: // string
-		ConfFile.getKey((const char *)option, (const char *)section, entry);
-
 		writeVar(0, 0);
 		len = resStrLen((const byte *)entry.c_str());
 		data = defineArray(0, kStringArray, 0, 0, 0, len);

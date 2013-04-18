@@ -68,29 +68,29 @@ public:
 	static void initGLExtensions();
 
 	GLTexture(byte bpp, GLenum internalFormat, GLenum format, GLenum type);
-	virtual ~GLTexture();
+	~GLTexture();
 
 	/**
 	 * Refresh the texture after a context change. The
 	 * process will be completed on next allocBuffer call.
 	 */
-	virtual void refresh();
+	void refresh();
 
 	/**
 	 * Allocates memory needed for the given size.
 	 */
-	virtual void allocBuffer(GLuint width, GLuint height);
+	void allocBuffer(GLuint width, GLuint height);
 
 	/**
 	 * Updates the texture pixels.
 	 */
-	virtual void updateBuffer(const void *buf, int pitch, GLuint x, GLuint y,
+	void updateBuffer(const void *buf, int pitch, GLuint x, GLuint y,
 		GLuint w, GLuint h);
 
 	/**
 	 * Draws the texture to the screen buffer.
 	 */
-	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
+	void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
 	/**
 	 * Get the texture width.
@@ -103,12 +103,17 @@ public:
 	GLuint getHeight() const { return _realHeight; }
 
 	/**
+	 * Get the bytes per pixel.
+	 */
+	uint getBytesPerPixel() const { return _bytesPerPixel; }
+
+	/**
 	 * Set the texture filter.
 	 * @filter the filter type, GL_NEAREST or GL_LINEAR
 	 */
 	void setFilter(GLint filter) { _filter = filter; }
 
-protected:
+private:
 	const byte _bytesPerPixel;
 	const GLenum _internalFormat;
 	const GLenum _glFormat;

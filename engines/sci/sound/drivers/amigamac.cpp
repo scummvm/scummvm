@@ -130,7 +130,7 @@ private:
 	};
 
 	bool _isSci1;
-	bool _isSci1Early;	// KQ1 Amiga, patch 5
+	bool _isSci1Early; // KQ1/MUMG Amiga, patch 5
 	bool _playSwitch;
 	int _masterVolume;
 	int _frequency;
@@ -524,7 +524,7 @@ MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(C
 		instrument->size = seg_size[0];
 		instrument->loop_size = seg_size[1];
 
-		instrument->loop = (int8*)malloc(instrument->loop_size + 1);
+		instrument->loop = (int8 *)malloc(instrument->loop_size + 1);
 		memcpy(instrument->loop, instrument->samples + loop_offset, instrument->loop_size);
 
 		instrument->samples[instrument->size] = instrument->loop[0];
@@ -586,12 +586,12 @@ int MidiDriver_AmigaMac::open() {
 	} else {
 		ResourceManager *resMan = g_sci->getResMan();
 
-		Resource *resource = resMan->findResource(ResourceId(kResourceTypePatch, 7), false);	// Mac
+		Resource *resource = resMan->findResource(ResourceId(kResourceTypePatch, 7), false); // Mac
 		if (!resource)
-			resource = resMan->findResource(ResourceId(kResourceTypePatch, 9), false);	// Amiga
+			resource = resMan->findResource(ResourceId(kResourceTypePatch, 9), false);       // Amiga
 
 		if (!resource) {
-			resource = resMan->findResource(ResourceId(kResourceTypePatch, 5), false);	// KQ1 Amiga
+			resource = resMan->findResource(ResourceId(kResourceTypePatch, 5), false);       // KQ1/MUMG Amiga
 			if (resource)
 				_isSci1Early = true;
 		}
@@ -708,7 +708,7 @@ void MidiDriver_AmigaMac::generateSamples(int16 *data, int len) {
 	if (len == 0)
 		return;
 
-	int16 *buffers = (int16*)malloc(len * 2 * kChannels);
+	int16 *buffers = (int16 *)malloc(len * 2 * kChannels);
 
 	memset(buffers, 0, len * 2 * kChannels);
 
@@ -869,7 +869,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &fil
 			instrument->size = seg_size[0];
 			instrument->loop_size = seg_size[1] - seg_size[0];
 
-			instrument->loop = (int8*)malloc(instrument->loop_size + 1);
+			instrument->loop = (int8 *)malloc(instrument->loop_size + 1);
 			memcpy(instrument->loop, instrument->samples + loop_offset, instrument->loop_size);
 
 			instrument->samples[instrument->size] = instrument->loop[0];
@@ -892,7 +892,7 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) 
 	_bank.size = 128;
 
 	if (_isSci1Early)
-		file.skip(4);	// TODO: What is this offset for?
+		file.readUint32BE(); // Skip size of bank
 
 	Common::Array<uint32> instrumentOffsets;
 	instrumentOffsets.resize(_bank.size);
@@ -910,12 +910,6 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) 
 
 		// Read in the instrument name
 		file.read(_bank.instruments[i].name, 10); // last two bytes are always 0
-
-		// TODO: Finish off support of SCI1 early patches (patch.005 - KQ1 Amiga)
-		if (_isSci1Early) {
-			warning("Music patch 5 isn't supported yet - ignoring instrument %d", i);
-			continue;
-		}
 
 		for (uint32 j = 0; ; j++) {
 			InstrumentSample *sample = new InstrumentSample;
@@ -943,16 +937,30 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) 
 			int16 loop = file.readSint16BE();
 			uint32 nextSamplePos = file.pos();
 
-			file.seek(samplePtr);
+			file.seek(samplePtr + (_isSci1Early ? 4 : 0));
 			file.read(sample->name, 8);
 
-			sample->isUnsigned = file.readUint16BE() == 0;
-			uint16 phase1Offset = file.readUint16BE();
-			uint16 phase1End = file.readUint16BE();
-			uint16 phase2Offset = file.readUint16BE();
-			uint16 phase2End = file.readUint16BE();
-			sample->baseNote = file.readUint16BE();
-			uint32 periodTableOffset = file.readUint32BE();
+			uint16 phase1Offset, phase1End;
+			uint16 phase2Offset, phase2End;
+
+			if (_isSci1Early) {
+				sample->isUnsigned = false;
+				file.readUint32BE(); // skip total sample size
+				phase2Offset = file.readUint16BE();
+				phase2End = file.readUint16BE();
+				sample->baseNote = file.readUint16BE();
+				phase1Offset = file.readUint16BE();
+				phase1End = file.readUint16BE();
+			} else {
+				sample->isUnsigned = file.readUint16BE() == 0;
+				phase1Offset = file.readUint16BE();
+				phase1End = file.readUint16BE();
+				phase2Offset = file.readUint16BE();
+				phase2End = file.readUint16BE();
+				sample->baseNote = file.readUint16BE();
+			}
+
+			uint32 periodTableOffset = _isSci1Early ? 0 : file.readUint32BE();
 			uint32 sampleDataPos = file.pos();
 
 			sample->size = phase1End - phase1Offset + 1;
@@ -974,8 +982,13 @@ bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) 
 
 			_bank.instruments[i].push_back(sample);
 
-			file.seek(periodTableOffset + 0xe0);
-			sample->baseFreq = file.readUint16BE();
+			if (_isSci1Early) {
+				// There's no frequency specified by the sample and is hardcoded like in SCI0
+				sample->baseFreq = 11000;
+			} else {
+				file.seek(periodTableOffset + 0xe0);
+				sample->baseFreq = file.readUint16BE();
+			}
 
 			file.seek(nextSamplePos);
 		}

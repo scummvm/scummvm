@@ -183,7 +183,7 @@ ItemPosition InventoryRenderer::hitTest(const Common::Point &p) const {
 void InventoryRenderer::drawItem(ItemPosition pos, ItemName name) {
 	Common::Rect r;
 	getItemRect(pos, r);
-	byte* d = (byte*)_surf.getBasePtr(r.left, r.top);
+	byte* d = (byte *)_surf.getBasePtr(r.left, r.top);
 	drawItem(name, d, _surf.pitch);
 }
 
@@ -238,7 +238,7 @@ void InventoryRenderer::getItemRect(ItemPosition pos, Common::Rect &r) {
 }
 
 Inventory::Inventory(int maxItems, InventoryItem *verbs) : _numItems(0), _maxItems(maxItems) {
-	_items = (InventoryItem*)calloc(_maxItems, sizeof(InventoryItem));
+	_items = (InventoryItem *)calloc(_maxItems, sizeof(InventoryItem));
 
 	int i = 0;
 	for ( ; verbs[i]._id; i++) {

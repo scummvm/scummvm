@@ -887,7 +887,7 @@ void DOSBitmap::expandEGAPlanes(Graphics::Surface *surface, Common::SeekableRead
 	assert(surface->format.bytesPerPixel == 1);
 
 	// Note that the image is in EGA planar form and not just standard 4bpp
-	// This seems to contradict the PoP specs which seem to do
+	// This seems to contradict the PoP specs which seem to do something else
 
 	byte *dst = (byte *)surface->pixels;
 

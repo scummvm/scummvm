@@ -26,7 +26,6 @@
  *  - agos
  *  - draci
  *  - kyra
- *  - m4
  *  - queen
  *  - saga
  *  - sci
@@ -37,8 +36,8 @@
  *  - tucker
  */
 
-#ifndef SOUND_FLAC_H
-#define SOUND_FLAC_H
+#ifndef AUDIO_FLAC_H
+#define AUDIO_FLAC_H
 
 #include "common/scummsys.h"
 #include "common/types.h"
@@ -68,4 +67,4 @@ SeekableAudioStream *makeFLACStream(
 } // End of namespace Audio
 
 #endif // #ifdef USE_FLAC
-#endif // #ifndef SOUND_FLAC_H
+#endif // #ifndef AUDIO_FLAC_H

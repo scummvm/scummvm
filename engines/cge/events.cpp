@@ -30,6 +30,7 @@
 #include "gui/message.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "engines/advancedDetector.h"
 #include "cge/events.h"
 #include "cge/events.h"
 #include "cge/text.h"
@@ -39,55 +40,8 @@ namespace CGE {
 
 /*----------------- KEYBOARD interface -----------------*/
 
-const uint16 Keyboard::_code[0x60] = {
-	0,               Esc,      '1',         '2',       '3',
-	'4',             '5',      '6',         '7',       '8',
-	'9',             '0',      '-',         '+',       BSp,
-	Tab,             'Q',      'W',         'E',       'R',
-	'T',             'Y',      'U',         'I',       'O',
-	'P',             '[',      ']',         Enter,     0/*Ctrl*/,
-	'A',             'S',      'D',         'F',       'G',
-	'H',             'J',      'K',         'L',       ';',
-	'\'',            '`',      0/*LShift*/, '\\',      'Z',
-	'X',             'C',      'V',         'B',       'N',
-	'M',             ',',      '.',         '/',       0/*RShift*/,
-	'*',             0/*Alt*/, ' ',         0/*Caps*/, F1,
-	F2,              F3,       F4,          F5,        F6,
-	F7,              F8,       F9,          F10,       0/*NumLock*/,
-	0/*ScrollLock*/, Home,     Up,          PgUp,      '-',
-	Left,            Ctr,      Right,       '+',       End,
-	Down,            PgDn,     Ins,         Del,       0 * 0x54,
-	0 * 0x55,        0 * 0x56, F11,         F12,       0 * 0x59,
-	0 * 0x5A,        0 * 0x5B, 0 * 0x5C,    0 * 0x5D,  0 * 0x5E,
-	0 * 0x5F
-};
-
-const uint16 Keyboard::_scummVmCodes[0x60] = {
-	0,					Common::KEYCODE_ESCAPE,	Common::KEYCODE_1,	Common::KEYCODE_2,	Common::KEYCODE_3,
-	Common::KEYCODE_4,	Common::KEYCODE_5,	Common::KEYCODE_6,	Common::KEYCODE_7,	Common::KEYCODE_8,
-	Common::KEYCODE_9,	Common::KEYCODE_0,	Common::KEYCODE_MINUS, Common::KEYCODE_PLUS,	Common::KEYCODE_BACKSPACE,
-	Common::KEYCODE_TAB,	Common::KEYCODE_q,	Common::KEYCODE_w,	Common::KEYCODE_e,	Common::KEYCODE_r,
-	Common::KEYCODE_t,	Common::KEYCODE_y,	Common::KEYCODE_u,	Common::KEYCODE_i,	Common::KEYCODE_o,
-	Common::KEYCODE_p,	Common::KEYCODE_LEFTBRACKET,	Common::KEYCODE_RIGHTBRACKET,	Common::KEYCODE_RETURN,	0/*Ctrl*/,
-	Common::KEYCODE_a,	Common::KEYCODE_s,	Common::KEYCODE_d,	Common::KEYCODE_f,	Common::KEYCODE_g,
-	Common::KEYCODE_h,	Common::KEYCODE_j,	Common::KEYCODE_k,	Common::KEYCODE_l,	Common::KEYCODE_SEMICOLON,
-	Common::KEYCODE_BACKSLASH,	Common::KEYCODE_TILDE,	Common::KEYCODE_LSHIFT,	Common::KEYCODE_BACKSLASH,	Common::KEYCODE_z,
-	Common::KEYCODE_x,	Common::KEYCODE_c,	Common::KEYCODE_v,	Common::KEYCODE_b,	Common::KEYCODE_n,
-	Common::KEYCODE_m,	Common::KEYCODE_COMMA,	Common::KEYCODE_PERIOD,	Common::KEYCODE_SLASH,	Common::KEYCODE_RSHIFT,
-	Common::KEYCODE_KP_MULTIPLY,	0 /*Alt*/,	Common::KEYCODE_SPACE,	Common::KEYCODE_CAPSLOCK,	Common::KEYCODE_F1,
-	Common::KEYCODE_F2,	Common::KEYCODE_F3,	Common::KEYCODE_F4,	Common::KEYCODE_F5,	Common::KEYCODE_F6,
-	Common::KEYCODE_F7,	Common::KEYCODE_F8,	Common::KEYCODE_F9,	Common::KEYCODE_F10,	Common::KEYCODE_NUMLOCK,
-	Common::KEYCODE_SCROLLOCK,	Common::KEYCODE_KP7,	Common::KEYCODE_KP8,	Common::KEYCODE_KP9,	Common::KEYCODE_KP_MINUS,
-	Common::KEYCODE_KP4,	Common::KEYCODE_KP5,	Common::KEYCODE_KP6,	Common::KEYCODE_KP_PLUS,	Common::KEYCODE_KP1,
-	Common::KEYCODE_KP2,	Common::KEYCODE_KP3,	Common::KEYCODE_KP0,	Common::KEYCODE_KP_PERIOD,	0,
-	0,					0,					Common::KEYCODE_F11,	Common::KEYCODE_F12,	0,
-	0,					0,					0,						0,						0,
-	0
-};
-
 Keyboard::Keyboard(CGEEngine *vm) : _client(NULL), _vm(vm) {
-	Common::set_to(&_key[0], &_key[0x60], false);
-	_current = 0;
+	_keyAlt = false;
 }
 
 Keyboard::~Keyboard() {
@@ -98,22 +52,23 @@ Sprite *Keyboard::setClient(Sprite *spr) {
 	return spr;
 }
 
-bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
+bool Keyboard::getKey(Common::Event &event) {
 	Common::KeyCode keycode = event.kbd.keycode;
-	if ((keycode == Common::KEYCODE_LCTRL) || (keycode == Common::KEYCODE_RCTRL)) {
-		cgeCode = kKeyCtrl;
-		return true;
-	}
-	if ((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT)) {
-		cgeCode = kKeyAlt;
-		return true;
-	}
-	if (keycode == Common::KEYCODE_KP_ENTER) {
-		cgeCode = 28;
-		return true;
-	}
-	if (keycode == Common::KEYCODE_F5) {
-		warning("keycode %d", event.kbd.ascii);
+
+	if ((keycode == Common::KEYCODE_LALT) || (keycode == Common::KEYCODE_RALT))
+		_keyAlt = true;
+	else
+		_keyAlt = false;
+
+	switch (keycode) {
+	case Common::KEYCODE_F1:
+		if (event.type == Common::EVENT_KEYUP)
+			return false;
+		// Display ScummVM version and translation strings
+		for (int i = 0; i < 5; i++)
+			_vm->_commandHandler->addCommand(kCmdInf, 1, kShowScummVMVersion + i, NULL);
+		return false;
+	case Common::KEYCODE_F5:
 		if (_vm->canSaveGameStateCurrently()) {
 			const EnginePlugin *plugin = NULL;
 			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
@@ -123,10 +78,12 @@ bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
 			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 			Common::String savegameDescription = dialog->getResultString();
 			delete dialog;
-			_vm->saveGameState(savegameId, savegameDescription);
-		}
+
+			if (savegameId != -1)
+				_vm->saveGameState(savegameId, savegameDescription);
+			}
 		return false;
-	} else if (keycode == Common::KEYCODE_F7) {
+	case Common::KEYCODE_F7:
 		if (_vm->canLoadGameStateCurrently()) {
 			const EnginePlugin *plugin = NULL;
 			EngineMan.findGame(_vm->_gameDescription->gameid, &plugin);
@@ -135,48 +92,51 @@ bool Keyboard::getKey(Common::Event &event, int &cgeCode) {
 			dialog->setSaveMode(false);
 			int16 savegameId = dialog->runModalWithPluginAndTarget(plugin, ConfMan.getActiveDomainName());
 			delete dialog;
-			_vm->loadGameState(savegameId);
+
+			if (savegameId != -1)
+				_vm->loadGameState(savegameId);
 		}
 		return false;
-	}
-
-	// Scan through the ScummVM mapping list
-	for (int idx = 0; idx < 0x60; idx++) {
-		if (_scummVmCodes[idx] == event.kbd.ascii) {
-			cgeCode = idx;
-			return true;
+	case Common::KEYCODE_d:
+		if (event.kbd.flags & Common::KBD_CTRL) {
+		// Start the debugger
+			_vm->getDebugger()->attach();
+			_vm->getDebugger()->onFrame();
+			return false;
 		}
+		break;
+	case Common::KEYCODE_x:
+		if (event.kbd.flags & Common::KBD_ALT) {
+			_vm->quit();
+			return false;
+		}
+		break;
+	case Common::KEYCODE_0:
+	case Common::KEYCODE_1:
+	case Common::KEYCODE_2:
+	case Common::KEYCODE_3:
+	case Common::KEYCODE_4:
+		if (event.kbd.flags & Common::KBD_ALT) {
+			_vm->_commandHandler->addCommand(kCmdLevel, -1, keycode - '0', NULL);
+			return false;
+		}
+	default:
+		break;
 	}
 
-	return false;
+	return true;
 }
 
 void Keyboard::newKeyboard(Common::Event &event) {
-	int keycode;
-	if (!getKey(event, keycode))
+	if (!getKey(event))
 		return;
 
-	if (event.type == Common::EVENT_KEYUP) {
-		// Key release
-		_key[keycode] = false;
-	} else if (event.type == Common::EVENT_KEYDOWN) {
-		// Key press
-		_key[keycode] = true;
-		_current = Keyboard::_code[keycode];
-
-		if (_client) {
-			CGEEvent &evt = _vm->_eventManager->getNextEvent();
-			evt._x = _current;	// Keycode
-			evt._mask = kEventKeyb;	// Event mask
-			evt._spritePtr = _client;	// Sprite pointer
-		}
+	if ((event.type == Common::EVENT_KEYDOWN) && (_client)) {
+		CGEEvent &evt = _vm->_eventManager->getNextEvent();
+		evt._x = event.kbd.keycode;	// Keycode
+		evt._mask = kEventKeyb;	// Event mask
+		evt._spritePtr = _client;	// Sprite pointer
 	}
-}
-
-uint16 Keyboard::lastKey() {
-	uint16 cur = _current;
-	_current = 0;
-	return cur;
 }
 
 /*----------------- MOUSE interface -----------------*/
@@ -272,7 +232,6 @@ void Mouse::newMouse(Common::Event &event) {
 /*----------------- EventManager interface -----------------*/
 
 EventManager::EventManager(CGEEngine *vm) : _vm(vm){
-	_quitFlag = false;
 	_eventQueueHead = 0;
 	_eventQueueTail = 0;
 	memset(&_eventQueue, 0, kEventMax * sizeof(CGEEvent));
@@ -282,10 +241,6 @@ EventManager::EventManager(CGEEngine *vm) : _vm(vm){
 void EventManager::poll() {
 	while (g_system->getEventManager()->pollEvent(_event)) {
 		switch (_event.type) {
-		case Common::EVENT_QUIT:
-			// Signal to quit
-			_quitFlag = true;
-			return;
 		case Common::EVENT_KEYDOWN:
 		case Common::EVENT_KEYUP:
 			// Handle keyboard events

@@ -148,7 +148,7 @@ void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 			case TYPE_VAR_INT32:
 			case TYPE_ARRAY_INT32:
 				sprintf(buf + i, "%d",
-						VAR_OFFSET(_vm->_game->_script->readVarIndex()));
+						(int32)VAR_OFFSET(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_STR:

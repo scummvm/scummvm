@@ -26,25 +26,30 @@
 #include "kyra/timer.h"
 #include "kyra/resource.h"
 #include "kyra/lol.h"
+#include "kyra/eobcommon.h"
 
 #include "common/system.h"
+#include "common/config-manager.h"
+
+#include "gui/message.h"
 
 namespace Kyra {
 
 Debugger::Debugger(KyraEngine_v1 *vm)
-	: ::GUI::Debugger() {
-	_vm = vm;
+	: ::GUI::Debugger(), _vm(vm) {
+}
 
-	DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
-	DCmd_Register("screen_debug_mode",	WRAP_METHOD(Debugger, cmd_setScreenDebug));
-	DCmd_Register("load_palette",		WRAP_METHOD(Debugger, cmd_loadPalette));
-	DCmd_Register("facings",			WRAP_METHOD(Debugger, cmd_showFacings));
-	DCmd_Register("gamespeed",			WRAP_METHOD(Debugger, cmd_gameSpeed));
-	DCmd_Register("flags",				WRAP_METHOD(Debugger, cmd_listFlags));
-	DCmd_Register("toggleflag",			WRAP_METHOD(Debugger, cmd_toggleFlag));
-	DCmd_Register("queryflag",			WRAP_METHOD(Debugger, cmd_queryFlag));
-	DCmd_Register("timers",				WRAP_METHOD(Debugger, cmd_listTimers));
-	DCmd_Register("settimercountdown",	WRAP_METHOD(Debugger, cmd_setTimerCountdown));
+void Debugger::initialize() {
+	DCmd_Register("continue",           WRAP_METHOD(Debugger, Cmd_Exit));
+	DCmd_Register("screen_debug_mode",  WRAP_METHOD(Debugger, cmd_setScreenDebug));
+	DCmd_Register("load_palette",       WRAP_METHOD(Debugger, cmd_loadPalette));
+	DCmd_Register("facings",            WRAP_METHOD(Debugger, cmd_showFacings));
+	DCmd_Register("gamespeed",          WRAP_METHOD(Debugger, cmd_gameSpeed));
+	DCmd_Register("flags",              WRAP_METHOD(Debugger, cmd_listFlags));
+	DCmd_Register("toggleflag",         WRAP_METHOD(Debugger, cmd_toggleFlag));
+	DCmd_Register("queryflag",          WRAP_METHOD(Debugger, cmd_queryFlag));
+	DCmd_Register("timers",             WRAP_METHOD(Debugger, cmd_listTimers));
+	DCmd_Register("settimercountdown",  WRAP_METHOD(Debugger, cmd_setTimerCountdown));
 }
 
 bool Debugger::cmd_setScreenDebug(int argc, const char **argv) {
@@ -134,7 +139,7 @@ bool Debugger::cmd_gameSpeed(int argc, const char **argv) {
 }
 
 bool Debugger::cmd_listFlags(int argc, const char **argv) {
-	for (int i = 0, p = 0; i < (int)sizeof(_vm->_flagsTable)*8; i++, ++p) {
+	for (int i = 0, p = 0; i < (int)sizeof(_vm->_flagsTable) * 8; i++, ++p) {
 		DebugPrintf("(%-3i): %-2i", i, _vm->queryGameFlag(i));
 		if (p == 5) {
 			DebugPrintf("\n");
@@ -196,10 +201,14 @@ bool Debugger::cmd_setTimerCountdown(int argc, const char **argv) {
 
 Debugger_LoK::Debugger_LoK(KyraEngine_LoK *vm)
 	: Debugger(vm), _vm(vm) {
-	DCmd_Register("enter",				WRAP_METHOD(Debugger_LoK, cmd_enterRoom));
-	DCmd_Register("scenes",				WRAP_METHOD(Debugger_LoK, cmd_listScenes));
-	DCmd_Register("give",				WRAP_METHOD(Debugger_LoK, cmd_giveItem));
-	DCmd_Register("birthstones",		WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
+}
+
+void Debugger_LoK::initialize() {
+	DCmd_Register("enter",              WRAP_METHOD(Debugger_LoK, cmd_enterRoom));
+	DCmd_Register("scenes",             WRAP_METHOD(Debugger_LoK, cmd_listScenes));
+	DCmd_Register("give",               WRAP_METHOD(Debugger_LoK, cmd_giveItem));
+	DCmd_Register("birthstones",        WRAP_METHOD(Debugger_LoK, cmd_listBirthstones));
+	Debugger::initialize();
 }
 
 bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
@@ -209,7 +218,7 @@ bool Debugger_LoK::cmd_enterRoom(int argc, const char **argv) {
 
 		// game will crash if entering a non-existent room
 		if (room >= _vm->_roomTableSize) {
-			DebugPrintf("room number must be any value between (including) 0 and %d\n", _vm->_roomTableSize-1);
+			DebugPrintf("room number must be any value between (including) 0 and %d\n", _vm->_roomTableSize - 1);
 			return true;
 		}
 
@@ -281,12 +290,16 @@ bool Debugger_LoK::cmd_listBirthstones(int argc, const char **argv) {
 #pragma mark -
 
 Debugger_v2::Debugger_v2(KyraEngine_v2 *vm) : Debugger(vm), _vm(vm) {
-	DCmd_Register("character_info",		WRAP_METHOD(Debugger_v2, cmd_characterInfo));
-	DCmd_Register("enter",				WRAP_METHOD(Debugger_v2, cmd_enterScene));
-	DCmd_Register("scenes",				WRAP_METHOD(Debugger_v2, cmd_listScenes));
-	DCmd_Register("scene_info",			WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
-	DCmd_Register("scene_to_facing",	WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
-	DCmd_Register("give",				WRAP_METHOD(Debugger_v2, cmd_giveItem));
+}
+
+void Debugger_v2::initialize() {
+	DCmd_Register("character_info",     WRAP_METHOD(Debugger_v2, cmd_characterInfo));
+	DCmd_Register("enter",              WRAP_METHOD(Debugger_v2, cmd_enterScene));
+	DCmd_Register("scenes",             WRAP_METHOD(Debugger_v2, cmd_listScenes));
+	DCmd_Register("scene_info",         WRAP_METHOD(Debugger_v2, cmd_sceneInfo));
+	DCmd_Register("scene_to_facing",    WRAP_METHOD(Debugger_v2, cmd_sceneToFacing));
+	DCmd_Register("give",               WRAP_METHOD(Debugger_v2, cmd_giveItem));
+	Debugger::initialize();
 }
 
 bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
@@ -296,7 +309,7 @@ bool Debugger_v2::cmd_enterScene(int argc, const char **argv) {
 
 		// game will crash if entering a non-existent scene
 		if (scene >= _vm->_sceneListSize) {
-			DebugPrintf("scene number must be any value between (including) 0 and %d\n", _vm->_sceneListSize-1);
+			DebugPrintf("scene number must be any value between (including) 0 and %d\n", _vm->_sceneListSize - 1);
 			return true;
 		}
 
@@ -358,8 +371,8 @@ bool Debugger_v2::cmd_sceneInfo(int argc, const char **argv) {
 		DebugPrintf("This scene has %d special exits.\n", _vm->_specialExitCount);
 		for (int i = 0; i < _vm->_specialExitCount; ++i) {
 			DebugPrintf("SpecialExit%d: facing %d, position (x1/y1/x2/y2): %d/%d/%d/%d\n", i,
-					_vm->_specialExitTable[20+i], _vm->_specialExitTable[0+i], _vm->_specialExitTable[5+i],
-					_vm->_specialExitTable[10+i], _vm->_specialExitTable[15+i]);
+			            _vm->_specialExitTable[20 + i], _vm->_specialExitTable[0 + i], _vm->_specialExitTable[5 + i],
+			            _vm->_specialExitTable[10 + i], _vm->_specialExitTable[15 + i]);
 		}
 	}
 
@@ -433,7 +446,11 @@ bool Debugger_v2::cmd_giveItem(int argc, const char **argv) {
 #pragma mark -
 
 Debugger_HoF::Debugger_HoF(KyraEngine_HoF *vm) : Debugger_v2(vm), _vm(vm) {
-	DCmd_Register("pass_codes",			WRAP_METHOD(Debugger_HoF, cmd_passcodes));
+}
+
+void Debugger_HoF::initialize() {
+	DCmd_Register("pass_codes",         WRAP_METHOD(Debugger_HoF, cmd_passcodes));
+	Debugger_v2::initialize();
 }
 
 bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
@@ -459,5 +476,37 @@ bool Debugger_HoF::cmd_passcodes(int argc, const char **argv) {
 Debugger_LoL::Debugger_LoL(LoLEngine *vm) : Debugger(vm), _vm(vm) {
 }
 #endif // ENABLE_LOL
+
+#ifdef ENABLE_EOB
+Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
+}
+
+void Debugger_EoB::initialize() {
+	DCmd_Register("import_savefile",         WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
+}
+
+bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
+	if (!_vm->_allowImport) {
+		DebugPrintf("This command may only be used from the main menu.\n");
+		return true;
+	}
+
+	if (argc == 3) {
+		int slot = atoi(argv[1]);
+		if (slot < -1 || slot > 989) {
+			DebugPrintf("slot must be between (including) -1 and 989 \n");
+			return true;
+		}
+
+		DebugPrintf(_vm->importOriginalSaveFile(slot, argv[2]) ? "Success.\n" : "Failure.\n");
+		_vm->loadItemDefs();
+	} else {
+		DebugPrintf("Syntax:   import_savefile <dest slot> <source file>\n              (Imports source save game file to dest slot.)\n          import_savefile -1\n              (Imports all original save game files found and puts them into the first available slots.)\n\n");
+	}
+
+	return true;
+}
+
+#endif // ENABLE_EOB
 
 } // End of namespace Kyra

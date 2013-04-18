@@ -1,4 +1,4 @@
-;Copyright (c) 1990-2011 by Neil Dodwell
+;Copyright (c) 1990-2012 by Neil Dodwell
 ;Released with permission from Neil Dodwell under GPLv2
 ;See LICENSE file for full license text
 ;---------------------------------------------------------Inventory printer----
@@ -375,7 +375,7 @@ invlist1:	dw	273,320,157,198,getbackfromob
 	dw	inventx+167,inventx+167+(18*3),inventy-18,inventy-2,incryanpage
 	dw	inventx
 openchangesize: dw	inventx+(4*itempicsize)
-	dw	inventy+100,inventy+100+itempicsize,useopened
+invlist1continued:	dw	inventy+100,inventy+100+itempicsize,useopened
 	dw	inventx,inventx+(5*itempicsize)
 	dw	inventy,inventy+(2*itempicsize),intoinv
 	dw	0,320,0,200,blank

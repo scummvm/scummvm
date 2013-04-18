@@ -54,6 +54,7 @@ private:
 
 	Common::SeekableReadStream *_stream;
 	uint16 _w, _h;
+	uint16 _restartInterval;
 
 	// Image components
 	uint8 _numComp;
@@ -101,6 +102,7 @@ private:
 	bool readDHT();
 	bool readSOS();
 	bool readDQT();
+	bool readDRI();
 
 	// Helper functions
 	bool readMCU(uint16 xMCU, uint16 yMCU);
@@ -116,7 +118,8 @@ private:
 	uint8 _bitsNumber;
 
 	// Inverse Discrete Cosine Transformation
-	void idct8x8(float dst[64], const int16 src[64]);
+	static void idct1D8x8(int32 src[8], int32 dest[64], int32 ps, int32 half);
+	static void idct2D8x8(int32 block[64]);
 };
 
 } // End of Graphics namespace

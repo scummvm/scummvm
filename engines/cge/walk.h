@@ -35,7 +35,6 @@
 namespace CGE {
 
 #define kMapArrSize    (kMapZCnt * kMapXCnt)
-#define kMapTop        80
 #define kMapHig        80
 #define kMapGridX      (kScrWidth / kMapXCnt)
 #define kMapGridZ      (kMapHig / kMapZCnt)

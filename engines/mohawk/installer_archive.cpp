@@ -107,18 +107,18 @@ void InstallerArchive::close() {
 	_map.clear();
 }
 
-bool InstallerArchive::hasFile(const Common::String &name) {
+bool InstallerArchive::hasFile(const Common::String &name) const {
 	return _map.contains(name);
 }
 
-int InstallerArchive::listMembers(Common::ArchiveMemberList &list) {
+int InstallerArchive::listMembers(Common::ArchiveMemberList &list) const {
 	for (FileMap::const_iterator it = _map.begin(); it != _map.end(); it++)
 		list.push_back(getMember(it->_key));
 
 	return _map.size();
 }
 
-Common::ArchiveMemberPtr InstallerArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr InstallerArchive::getMember(const Common::String &name) const {
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 

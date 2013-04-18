@@ -36,14 +36,6 @@ public:
 	Screen_LoL(LoLEngine *vm, OSystem *system);
 	~Screen_LoL();
 
-	bool init();
-
-	void setScreenDim(int dim);
-	const ScreenDim *getScreenDim(int dim);
-	int curDimIndex() const { return _curDimIndex; }
-	void modifyScreenDim(int dim, int x, int y, int w, int h);
-	int screenDimTableCount() const { return _screenDimTableCount; }
-
 	void fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) GCC_PRINTF(2, 8);
 	void fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...) GCC_PRINTF(2, 9);
 
@@ -99,14 +91,9 @@ public:
 private:
 	LoLEngine *_vm;
 
-	const ScreenDim *_screenDimTable;
-	static const int _screenDimTableCount;
-
 	static const ScreenDim _screenDimTable256C[];
 	static const ScreenDim _screenDimTable16C[];
-
-	ScreenDim **_customDimTable;
-	int _curDimIndex;
+	static const int _screenDimTableCount;
 
 	uint8 *_levelOverlays[8];
 

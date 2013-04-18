@@ -30,7 +30,7 @@
 namespace Kyra {
 
 Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
-	: Screen(vm, system) {
+	: Screen(vm, system, _screenDimTable, _screenDimTableCount) {
 	_vm = vm;
 	_unkPtr1 = _unkPtr2 = 0;
 	_bitBlitNum = 0;
@@ -70,16 +70,6 @@ bool Screen_LoK::init() {
 	return true;
 }
 
-void Screen_LoK::setScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	_curDim = &_screenDimTable[dim];
-}
-
-const ScreenDim *Screen_LoK::getScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	return &_screenDimTable[dim];
-}
-
 void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		return;
@@ -90,7 +80,7 @@ void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int 
 	tempPal.copy(getPalette(0));
 	tempPal.copy(_vm->palTable1()[palIndex], 0, size, startIndex);
 
-	fadePalette(tempPal, fadeTime*18);
+	fadePalette(tempPal, fadeTime * 18);
 
 	getPalette(0).copy(tempPal, startIndex, size);
 	setScreenPalette(getPalette(0));
@@ -118,16 +108,16 @@ void Screen_LoK::bitBlitRects() {
 }
 
 void Screen_LoK::savePageToDisk(const char *file, int page) {
-	if (!_saveLoadPage[page/2]) {
-		_saveLoadPage[page/2] = new uint8[SCREEN_W * SCREEN_H];
-		assert(_saveLoadPage[page/2]);
+	if (!_saveLoadPage[page / 2]) {
+		_saveLoadPage[page / 2] = new uint8[SCREEN_W * SCREEN_H];
+		assert(_saveLoadPage[page / 2]);
 	}
-	memcpy(_saveLoadPage[page/2], getPagePtr(page), SCREEN_W * SCREEN_H);
+	memcpy(_saveLoadPage[page / 2], getPagePtr(page), SCREEN_W * SCREEN_H);
 
 	if (_useOverlays) {
-		if (!_saveLoadPageOvl[page/2]) {
-			_saveLoadPageOvl[page/2] = new uint8[SCREEN_OVL_SJIS_SIZE];
-			assert(_saveLoadPageOvl[page/2]);
+		if (!_saveLoadPageOvl[page / 2]) {
+			_saveLoadPageOvl[page / 2] = new uint8[SCREEN_OVL_SJIS_SIZE];
+			assert(_saveLoadPageOvl[page / 2]);
 		}
 
 		uint8 *srcPage = getOverlayPtr(page);
@@ -136,49 +126,49 @@ void Screen_LoK::savePageToDisk(const char *file, int page) {
 			return;
 		}
 
-		memcpy(_saveLoadPageOvl[page/2], srcPage, SCREEN_OVL_SJIS_SIZE);
+		memcpy(_saveLoadPageOvl[page / 2], srcPage, SCREEN_OVL_SJIS_SIZE);
 	}
 }
 
 void Screen_LoK::loadPageFromDisk(const char *file, int page) {
-	if (!_saveLoadPage[page/2]) {
+	if (!_saveLoadPage[page / 2]) {
 		warning("trying to restore page %d, but no backup found", page);
 		return;
 	}
 
-	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page/2]);
-	delete[] _saveLoadPage[page/2];
-	_saveLoadPage[page/2] = 0;
+	copyBlockToPage(page, 0, 0, SCREEN_W, SCREEN_H, _saveLoadPage[page / 2]);
+	delete[] _saveLoadPage[page / 2];
+	_saveLoadPage[page / 2] = 0;
 
-	if (_saveLoadPageOvl[page/2]) {
+	if (_saveLoadPageOvl[page / 2]) {
 		uint8 *dstPage = getOverlayPtr(page);
 		if (!dstPage) {
 			warning("trying to restore unsupported overlay page %d", page);
 			return;
 		}
 
-		memcpy(dstPage, _saveLoadPageOvl[page/2], SCREEN_OVL_SJIS_SIZE);
-		delete[] _saveLoadPageOvl[page/2];
-		_saveLoadPageOvl[page/2] = 0;
+		memcpy(dstPage, _saveLoadPageOvl[page / 2], SCREEN_OVL_SJIS_SIZE);
+		delete[] _saveLoadPageOvl[page / 2];
+		_saveLoadPageOvl[page / 2] = 0;
 	}
 }
 
 void Screen_LoK::queryPageFromDisk(const char *file, int page, uint8 *buffer) {
-	if (!_saveLoadPage[page/2]) {
+	if (!_saveLoadPage[page / 2]) {
 		warning("trying to query page %d, but no backup found", page);
 		return;
 	}
 
-	memcpy(buffer, _saveLoadPage[page/2], SCREEN_W*SCREEN_H);
+	memcpy(buffer, _saveLoadPage[page / 2], SCREEN_W * SCREEN_H);
 }
 
 void Screen_LoK::deletePageFromDisk(int page) {
-	delete[] _saveLoadPage[page/2];
-	_saveLoadPage[page/2] = 0;
+	delete[] _saveLoadPage[page / 2];
+	_saveLoadPage[page / 2] = 0;
 
-	if (_saveLoadPageOvl[page/2]) {
-		delete[] _saveLoadPageOvl[page/2];
-		_saveLoadPageOvl[page/2] = 0;
+	if (_saveLoadPageOvl[page / 2]) {
+		delete[] _saveLoadPageOvl[page / 2];
+		_saveLoadPageOvl[page / 2] = 0;
 	}
 }
 
@@ -204,16 +194,16 @@ void Screen_LoK::copyBackgroundBlock(int x, int page, int flag) {
 	copyRegionToBuffer(_curPage, 8, 8, 8, height, ptr2);
 	for (int i = 0; i < 19; ++i) {
 		int tempX = curX + 1;
-		copyRegionToBuffer(_curPage, tempX<<3, 8, 8, height, ptr1);
-		copyBlockToPage(_curPage, tempX<<3, 8, 8, height, ptr2);
+		copyRegionToBuffer(_curPage, tempX << 3, 8, 8, height, ptr1);
+		copyBlockToPage(_curPage, tempX << 3, 8, 8, height, ptr2);
 		int newXPos = curX + x;
 		if (newXPos > 37)
 			newXPos = newXPos % 38;
 
 		tempX = newXPos + 1;
-		copyRegionToBuffer(_curPage, tempX<<3, 8, 8, height, ptr2);
-		copyBlockToPage(_curPage, tempX<<3, 8, 8, height, ptr1);
-		curX += x*2;
+		copyRegionToBuffer(_curPage, tempX << 3, 8, 8, height, ptr2);
+		copyBlockToPage(_curPage, tempX << 3, 8, 8, height, ptr1);
+		curX += x * 2;
 		if (curX > 37) {
 			curX = curX % 38;
 		}
@@ -241,7 +231,7 @@ int Screen_LoK::getRectSize(int x, int y) {
 	else if (y > 200)
 		y = 200;
 
-	return ((x*y) << 3);
+	return ((x * y) << 3);
 }
 
 void Screen_LoK::postProcessCursor(uint8 *data, int width, int height, int pitch) {
@@ -342,7 +332,7 @@ void Screen_LoK_16::getFadeParams(const Palette &pal, int delay, int &delayInc, 
 
 int Screen_LoK_16::fadePalStep(const Palette &pal, int diff) {
 	error("Screen_LoK_16::fadePalStep called");
-	return 0;	// for compilers that don't support NORETURN
+	return 0;   // for compilers that don't support NORETURN
 }
 
 void Screen_LoK_16::paletteMap(uint8 idx, int r, int g, int b) {

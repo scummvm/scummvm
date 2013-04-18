@@ -152,7 +152,7 @@ RenderedImage::RenderedImage(uint width, uint height, bool &result) :
 	_height(height) {
 
 	_data = new byte[width * height * 4];
-	Common::set_to(_data, &_data[width * height * 4], 0);
+	Common::fill(_data, &_data[width * height * 4], 0);
 
 	_backSurface = Kernel::getInstance()->getGfx()->getSurface();
 
@@ -507,7 +507,7 @@ int *RenderedImage::scaleLine(int size, int srcSize) {
 	int scale = 100 * size / srcSize;
 	assert(scale > 0);
 	int *v = new int[size];
-	Common::set_to(v, &v[size], 0);
+	Common::fill(v, &v[size], 0);
 
 	int distCtr = 0;
 	int *destP = v;

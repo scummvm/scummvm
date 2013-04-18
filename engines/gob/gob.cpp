@@ -147,9 +147,9 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst), _rnd("gob") {
 }
 
 GobEngine::~GobEngine() {
-	delete _console;
-
 	deinitGameParts();
+
+	delete _console;
 }
 
 const char *GobEngine::getLangDesc(int16 language) const {

@@ -95,7 +95,7 @@ static const int16 directions[8][2] = {
 
 IsoMap::IsoMap(SagaEngine *vm) : _vm(vm) {
 	_viewScroll.x = (128 - 8) * 16;
-	_viewScroll.x = (128 - 8) * 16 - 64;
+	_viewScroll.y = (128 - 8) * 16 - 64;
 	_viewDiff = 1;
 }
 
@@ -346,7 +346,7 @@ int16 IsoMap::findMulti(int16 tileIndex, int16 absU, int16 absV, int16 absH) {
 			if (offset + sizeof(int16) > _multiTableData.size() * sizeof(int16)) {
 				error("wrong multiTileEntryData->offset");
 			}
-			tiles = (int16*)((byte*)&_multiTableData.front() + offset);
+			tiles = (int16 *)((byte *)&_multiTableData.front() + offset);
 			tileIndex = *tiles;
 			if (tileIndex >= 256) {
 				warning("something terrible happened");

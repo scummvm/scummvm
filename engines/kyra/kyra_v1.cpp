@@ -42,6 +42,8 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_emc = 0;
 	_debugger = 0;
 
+	_configRenderMode = Common::kRenderDefault;
+
 	if (_flags.platform == Common::kPlatformAmiga)
 		_gameSpeed = 50;
 	else
@@ -85,8 +87,9 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 void KyraEngine_v1::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	if (_sound)
-		_sound->pause(pause);	
-	_timer->pause(pause);
+		_sound->pause(pause);
+	if (_timer)
+		_timer->pause(pause);
 }
 
 Common::Error KyraEngine_v1::init() {
@@ -162,6 +165,9 @@ Common::Error KyraEngine_v1::init() {
 	if (_sound)
 		_sound->updateVolumeSettings();
 
+	if (ConfMan.hasKey("render_mode"))
+		_configRenderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
+
 	_res = new Resource(this);
 	assert(_res);
 	_res->reset();
@@ -183,6 +189,7 @@ Common::Error KyraEngine_v1::init() {
 	assert(_staticres);
 	if (!_staticres->init())
 		error("_staticres->init() failed");
+	assert(screen());
 	if (!screen()->init())
 		error("screen()->init() failed");
 	_timer = new TimerManager(this, _system);
@@ -223,10 +230,10 @@ KyraEngine_v1::~KyraEngine_v1() {
 	delete _debugger;
 }
 
-Common::Point KyraEngine_v1::getMousePos() const {
+Common::Point KyraEngine_v1::getMousePos() {
 	Common::Point mouse = _eventMan->getMousePos();
 
-	if (_flags.useHiResOverlay) {
+	if (_flags.useHiRes) {
 		mouse.x >>= 1;
 		mouse.y >>= 1;
 	}
@@ -235,7 +242,7 @@ Common::Point KyraEngine_v1::getMousePos() const {
 }
 
 void KyraEngine_v1::setMousePos(int x, int y) {
-	if (_flags.useHiResOverlay) {
+	if (_flags.useHiRes) {
 		x <<= 1;
 		y <<= 1;
 	}
@@ -260,7 +267,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode >= Common::KEYCODE_1 && event.kbd.keycode <= Common::KEYCODE_9 &&
-					(event.kbd.hasFlags(Common::KBD_CTRL) || event.kbd.hasFlags(Common::KBD_ALT)) && mainLoop) {
+			        (event.kbd.hasFlags(Common::KBD_CTRL) || event.kbd.hasFlags(Common::KBD_ALT)) && mainLoop) {
 				int saveLoadSlot = 9 - (event.kbd.keycode - Common::KEYCODE_0) + 990;
 
 				if (event.kbd.hasFlags(Common::KBD_CTRL)) {
@@ -283,10 +290,13 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				}
 			} else {
 				KeyMap::const_iterator keycode = _keyMap.find(event.kbd.keycode);
-				if (keycode != _keyMap.end())
+				if (keycode != _keyMap.end()) {
 					keys = keycode->_value;
-				else
+					if (event.kbd.flags & Common::KBD_SHIFT)
+						keys |= 0x100;
+				} else {
 					keys = 0;
+				}
 
 				// When we got an keypress, which we might need to handle,
 				// break the event loop and pass it to GUI code.
@@ -299,7 +309,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		case Common::EVENT_LBUTTONUP: {
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
-			if (_flags.useHiResOverlay) {
+			if (_flags.useHiRes) {
 				_mouseX >>= 1;
 				_mouseY >>= 1;
 			}
@@ -311,7 +321,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 		case Common::EVENT_RBUTTONUP: {
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
-			if (_flags.useHiResOverlay) {
+			if (_flags.useHiRes) {
 				_mouseX >>= 1;
 				_mouseY >>= 1;
 			}
@@ -352,14 +362,14 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 }
 
 void KyraEngine_v1::setupKeyMap() {
-	struct KeyMapEntry {
+	struct KeyCodeMapEntry {
 		Common::KeyCode kcScummVM;
 		int16 kcDOS;
 		int16 kcPC98;
 	};
 
 #define KC(x) Common::KEYCODE_##x
-	static const KeyMapEntry keys[] = {
+	static const KeyCodeMapEntry keys[] = {
 		{ KC(SPACE), 61, 53 },
 		{ KC(RETURN), 43, 29 },
 		{ KC(UP), 96, 68 },
@@ -375,13 +385,58 @@ void KyraEngine_v1::setupKeyMap() {
 		{ KC(KP7), 91, 67 },
 		{ KC(PAGEUP), 101, 69 },
 		{ KC(KP9), 101, 69 },
+		{ KC(END), 93, 0/*unknown*/ },
+		{ KC(KP1), 93, 0/*unknown*/ },
+		{ KC(PAGEDOWN), 103, 0/*unknown*/ },
+		{ KC(KP3), 103, 0/*unknown*/ },
 		{ KC(F1), 112, 99 },
 		{ KC(F2), 113, 100 },
 		{ KC(F3), 114, 101 },
+		{ KC(F4), 115, 102 },
+		{ KC(F5), 116, 103 },
+		{ KC(F6), 117, 104 },
+		{ KC(a), 31, 31 },
+		{ KC(b), 50, 50 },
+		{ KC(c), 48, 48 },
+		{ KC(d), 33, 33 },
+		{ KC(e), 19, 19 },
+		{ KC(f), 34, 34 },
+		{ KC(i), 24, 24 },
+		{ KC(k), 38, 38 },
+		{ KC(m), 52, 52 },
+		{ KC(n), 51, 51 },
 		{ KC(o), 25, 25 },
+		{ KC(p), 26, 26 },
 		{ KC(r), 20, 20 },
+		{ KC(s), 32, 32 },
+		{ KC(w), 18, 18 },
+		{ KC(y), 22, 22 },
+		{ KC(z), 46, 46 },
+		{ KC(1), 2, 0/*unknown*/ },
+		{ KC(2), 3, 0/*unknown*/ },
+		{ KC(3), 4, 0/*unknown*/ },
+		{ KC(4), 5, 0/*unknown*/ },
+		{ KC(5), 6, 0/*unknown*/ },
+		{ KC(6), 7, 0/*unknown*/ },
+		{ KC(7), 8, 0/*unknown*/ },
 		{ KC(SLASH), 55, 55 },
 		{ KC(ESCAPE), 110, 1 },
+		{ KC(MINUS), 12, 0/*unknown*/ },
+		{ KC(KP_MINUS), 105, 0/*unknown*/ },
+		{ KC(PLUS), 13, 0/*unknown*/ },
+		{ KC(KP_PLUS), 106, 0/*unknown*/ },
+
+		// Multiple mappings for the keys to the right of the 'M' key,
+		// since these are different for QWERTZ, QWERTY and AZERTY keyboards.
+		// QWERTZ
+		{ KC(COMMA), 53, 0/*unknown*/ },
+		{ KC(PERIOD), 54, 0/*unknown*/ },
+		// AZERTY
+		{ KC(SEMICOLON), 53, 0/*unknown*/ },
+		{ KC(COLON), 54, 0/*unknown*/ },
+		// QWERTY
+		{ KC(LESS), 53, 0/*unknown*/ },
+		{ KC(GREATER), 54, 0/*unknown*/ }
 	};
 #undef KC
 
@@ -400,10 +455,10 @@ void KyraEngine_v1::updateInput() {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_PERIOD || event.kbd.keycode == Common::KEYCODE_ESCAPE ||
-				event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_RETURN ||
-				event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT ||
-				event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
-					_eventList.push_back(Event(event, true));
+			        event.kbd.keycode == Common::KEYCODE_SPACE || event.kbd.keycode == Common::KEYCODE_RETURN ||
+			        event.kbd.keycode == Common::KEYCODE_UP || event.kbd.keycode == Common::KEYCODE_RIGHT ||
+			        event.kbd.keycode == Common::KEYCODE_DOWN || event.kbd.keycode == Common::KEYCODE_LEFT)
+				_eventList.push_back(Event(event, true));
 			else if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
 				quitGame();
 			else
@@ -534,11 +589,11 @@ void KyraEngine_v1::readSettings() {
 	bool subtitles = ConfMan.getBool("subtitles");
 
 	if (!speechMute && subtitles)
-		_configVoice = 2;	// Voice & Text
+		_configVoice = 2;   // Voice & Text
 	else if (!speechMute && !subtitles)
-		_configVoice = 1;	// Voice only
+		_configVoice = 1;   // Voice only
 	else
-		_configVoice = 0;	// Text only
+		_configVoice = 0;   // Text only
 
 	setWalkspeed(_configWalkspeed);
 }
@@ -553,15 +608,15 @@ void KyraEngine_v1::writeSettings() {
 	ConfMan.setBool("sfx_mute", _configSounds == 0);
 
 	switch (_configVoice) {
-	case 0:		// Text only
+	case 0:     // Text only
 		speechMute = true;
 		subtitles = true;
 		break;
-	case 1:		// Voice only
+	case 1:     // Voice only
 		speechMute = false;
 		subtitles = false;
 		break;
-	default:	// Voice & Text
+	default:    // Voice & Text
 		speechMute = false;
 		subtitles = true;
 	}

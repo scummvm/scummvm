@@ -68,10 +68,10 @@ int SoundGen2GS::readBuffer(int16 *buffer, const int numSamples) {
 	static uint data_available = 0;
 	static uint data_offset = 0;
 	uint n = numSamples << 1;
-	uint8 *p = (uint8*)buffer;
+	uint8 *p = (uint8 *)buffer;
 
 	while (n > data_available) {
-		memcpy(p, (uint8*)_out + data_offset, data_available);
+		memcpy(p, (uint8 *)_out + data_offset, data_available);
 		p += data_available;
 		n -= data_available;
 
@@ -81,7 +81,7 @@ int SoundGen2GS::readBuffer(int16 *buffer, const int numSamples) {
 		data_offset = 0;
 	}
 
-	memcpy(p, (uint8*)_out + data_offset, n);
+	memcpy(p, (uint8 *)_out + data_offset, n);
 	data_offset += n;
 	data_available -= n;
 
@@ -719,7 +719,10 @@ bool SoundGen2GS::loadInstrumentHeaders(Common::String &exePath, const IIgsExeIn
 	}
 
 	// Read the whole executable file into memory
-	Common::SharedPtr<Common::SeekableReadStream> data(file.readStream(file.size()));
+	// CHECKME: Why do we read the file into memory first? It does not seem to be
+	// kept outside of this function. Is the processing of the data too slow
+	// otherwise?
+	Common::ScopedPtr<Common::SeekableReadStream> data(file.readStream(file.size()));
 	file.close();
 
 	// Check that we got enough data to be able to parse the instruments
@@ -769,8 +772,11 @@ bool SoundGen2GS::loadWaveFile(Common::String &wavePath, const IIgsExeInfo &exeI
 	Common::File file;
 
 	// Open the wave file and read it into memory
+	// CHECKME: Why do we read the file into memory first? It does not seem to be
+	// kept outside of this function. Is the processing of the data too slow
+	// otherwise?
 	file.open(wavePath);
-	Common::SharedPtr<Common::SeekableReadStream> uint8Wave(file.readStream(file.size()));
+	Common::ScopedPtr<Common::SeekableReadStream> uint8Wave(file.readStream(file.size()));
 	file.close();
 
 	// Check that we got the whole wave file

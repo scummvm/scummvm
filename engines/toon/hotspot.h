@@ -50,7 +50,7 @@ public:
 	Hotspots(ToonEngine *vm);
 	~Hotspots();
 
-	bool LoadRif(Common::String rifName, Common::String additionalRifName);
+	bool LoadRif(const Common::String &rifName, const Common::String &additionalRifName);
 	int32 Find(int32 x, int32 y);
 	int32 FindBasedOnCorner(int32 x, int32 y);
 	HotspotData *Get(int32 id);

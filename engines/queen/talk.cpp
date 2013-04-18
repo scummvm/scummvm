@@ -96,7 +96,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 	}
 
 	int16 oldLevel = 0;
-	bool personWalking = false;
+	bool personWalking = false; // FIXME: unused
 
 	// Lines 828-846 in talk.c
 	for (i = 1; i <= 4; i++) {
@@ -373,7 +373,6 @@ byte *Talk::loadDialogFile(const char *filename) {
 void Talk::load(const char *filename) {
 	int i;
 	byte *ptr = _fileData = loadDialogFile(filename);
-	bool canQuit;
 
 	// Load talk header
 
@@ -381,9 +380,9 @@ void Talk::load(const char *filename) {
 
 	if (_levelMax < 0) {
 		_levelMax = -_levelMax;
-		canQuit = false;
+		_vm->input()->canQuit(false);
 	} else {
-		canQuit = true;
+		_vm->input()->canQuit(true);
 	}
 
 	_uniqueKey      = (int16)READ_BE_INT16(ptr); ptr += 2;
@@ -658,7 +657,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 	} else if (parameters->animation[0] == 'E') {
 		// Talking head animation
 		return;
-	} else if (!isdigit(static_cast<unsigned char>(parameters->animation[0]))) {
+	} else if (!Common::isDigit(parameters->animation[0])) {
 		debug(6, "Error in speak string animation: '%s'", parameters->animation);
 		return;
 	} else

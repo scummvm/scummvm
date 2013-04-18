@@ -75,10 +75,19 @@ void Player_Towns::saveLoadWithSerializer(Serializer *ser) {
 }
 
 void Player_Towns::restoreAfterLoad() {
+	Common::Array<uint16> restoredSounds;
+
 	for (int i = 1; i < 9; i++) {
 		if (!_pcmCurrentSound[i].index || _pcmCurrentSound[i].index == 0xffff)
 			continue;
 
+		// Don't restart multichannel sounds more than once
+		if (Common::find(restoredSounds.begin(), restoredSounds.end(), _pcmCurrentSound[i].index) != restoredSounds.end())
+			continue;
+
+		if (!_v2)
+			restoredSounds.push_back(_pcmCurrentSound[i].index);
+		
 		uint8 *ptr = _vm->getResourceAddress(rtSound, _pcmCurrentSound[i].index);
 		if (!ptr)
 			continue;

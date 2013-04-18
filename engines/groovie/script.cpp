@@ -373,7 +373,7 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 	    DebugMan.isDebugChannelEnabled(kGroovieDebugAll)) {
 		rect.translate(0, -80);
 		_vm->_graphicsMan->_foreground.frameRect(rect, 250);
-		_vm->_system->copyRectToScreen((byte*)_vm->_graphicsMan->_foreground.getBasePtr(0, 0), _vm->_graphicsMan->_foreground.pitch, 0, 80, 640, 320);
+		_vm->_system->copyRectToScreen((byte *)_vm->_graphicsMan->_foreground.getBasePtr(0, 0), _vm->_graphicsMan->_foreground.pitch, 0, 80, 640, 320);
 		_vm->_system->updateScreen();
 	}
 
@@ -590,9 +590,9 @@ bool Script::playvideofromref(uint32 fileref) {
 
 		if (_videoFile) {
 			_videoRef = fileref;
-			// If teeth cursor, and in main script, mark video prefer low-speed
-			// filename check as sometimes teeth used for puzzle movements (bishops)
-			if (_version == kGroovieT7G && _lastCursor == 7 && _scriptFile == "script.grv")
+			// If teeth or mask cursor, and in main script, mark video prefer low-speed.
+			// Filename check as sometimes teeth used for puzzle movements (bishops)
+			if (_version == kGroovieT7G && (_lastCursor == 7 || _lastCursor == 4) && _scriptFile == "script.grv")
 				_bitflags |= (1 << 15);
 			_vm->_videoPlayer->load(_videoFile, _bitflags);
 		} else {

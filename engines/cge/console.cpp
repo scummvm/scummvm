@@ -26,9 +26,23 @@
 namespace CGE {
 
 CGEConsole::CGEConsole(CGEEngine *vm) : GUI::Debugger(), _vm(vm) {
+	DCmd_Register("Boundaries",    WRAP_METHOD(CGEConsole, Cmd_boundaries));
 }
 
 CGEConsole::~CGEConsole() {
+}
+
+/**
+ * This command shows and hides boundaries
+ */
+bool CGEConsole::Cmd_boundaries(int argc, const char **argv) {
+	if (argc != 1) {
+		DebugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	_vm->_showBoundariesFl = !_vm->_showBoundariesFl;
+	return false;
 }
 
 } // End of namespace CGE

@@ -28,7 +28,7 @@
 /**
  * Null mutex manager
  */
-class NullMutexManager : MutexManager {
+class NullMutexManager : public MutexManager {
 public:
 	virtual OSystem::MutexRef createMutex() { return OSystem::MutexRef(); }
 	virtual void lockMutex(OSystem::MutexRef mutex) {}

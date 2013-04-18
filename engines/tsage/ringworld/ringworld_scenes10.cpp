@@ -20,7 +20,6 @@
  *
  */
 
-#include "graphics/cursorman.h"
 #include "tsage/ringworld/ringworld_scenes10.h"
 #include "tsage/scenes.h"
 #include "tsage/tsage.h"
@@ -709,7 +708,7 @@ void Scene9360::postInit(SceneObjectList *OwnerList) {
  *
  *--------------------------------------------------------------------------*/
 Scene9400::Scene9400() {
-	_field1032 = 0;
+	_hittingAnvil = false;
 }
 
 void Scene9400::SceneHotspot7::doAction(int action) {
@@ -767,12 +766,12 @@ void Scene9400::signal() {
 
 void Scene9400::dispatch() {
 	if ((_object1._animateMode == 2) && (_object1._strip == 1) && (_object1._frame == 4)){
-		if (_field1032 == 0) {
+		if (_hittingAnvil == false) {
 			_soundHandler.play(296);
-			_field1032 = 1;
+			_hittingAnvil = true;
 		}
 	} else {
-		_field1032 = 0;
+		_hittingAnvil = false;
 	}
 	if (_action == 0) {
 		if (g_globals->_player._position.y < 120) {
@@ -826,7 +825,7 @@ void Scene9400::postInit(SceneObjectList *OwnerList) {
 void Scene9400::synchronize(Serializer &s) {
 	Scene::synchronize(s);
 	if (s.getVersion() >= 3)
-		s.syncAsSint16LE(_field1032);
+		s.syncAsSint16LE(_hittingAnvil);
 }
 
 /*--------------------------------------------------------------------------

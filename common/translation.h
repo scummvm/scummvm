@@ -154,6 +154,21 @@ public:
 	String getCurrentCharset() const;
 
 	/**
+	 * Returns a pointer to the current charset mapping. This mapping is a
+	 * codepage encoding -> unicode mapping and always 256 entries long.
+	 *
+	 * The MSB of the individual mapped (i.e. unicode) character states
+	 * whether the character is required for this charset. If it is set, the
+	 * character needs to be present in order to have the text displayed.
+	 * This is used in the font loading code to detect whether the font is
+	 * able of supporting this language.
+	 *
+	 * The return value might be 0 in case it's a default ASCII/ISO-8859-1
+	 * map.
+	 */
+	const uint32 *getCharsetMapping() const { return _charmap; }
+
+	/**
 	 * Returns currently selected translation language
 	 */
 	String getCurrentLanguage() const;
@@ -173,13 +188,13 @@ private:
 	 * then if needed using the Themepath. If found it opens the given File
 	 * to read the translations.dat file.
 	 */
-	bool openTranslationsFile(File&);
+	bool openTranslationsFile(File &);
 
 	/**
 	 * Find the translations.dat file in the given directory node.
 	 * If found it opens the given File to read the translations.dat file.
 	 */
-	bool openTranslationsFile(const FSNode &node, File&, int depth = -1);
+	bool openTranslationsFile(const FSNode &node, File &, int depth = -1);
 
 	/**
 	 * Load the list of languages from the translations.dat file
@@ -200,11 +215,15 @@ private:
 
 	StringArray _langs;
 	StringArray _langNames;
+	StringArray _charmaps;
 
 	StringArray _messageIds;
 	Array<PoMessageEntry> _currentTranslationMessages;
 	String _currentCharset;
 	int _currentLang;
+
+	uint32 _charmapStart;
+	uint32 *_charmap;
 };
 
 } // End of namespace Common

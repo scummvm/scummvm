@@ -1277,7 +1277,7 @@ int GUI_MR::optionsButton(Button *button) {
 }
 
 int GUI_MR::loadMenu(Button *caller) {
-	updateSaveList();
+	updateSaveFileList(_vm->_targetName);
 
 	if (!_vm->_menuDirectlyToLoad) {
 		updateMenuButton(caller);

@@ -52,7 +52,7 @@ Ps2File::Ps2File() {
 	_eof = false;
 	_err = false;
 
-	_cacheBuf = (uint8*)memalign(64, CACHE_SIZE * 2);
+	_cacheBuf = (uint8 *)memalign(64, CACHE_SIZE * 2);
 
 	_cacheOpRunning = 0;
 	_filePos = _physFilePos = _cachePos = 0;
@@ -362,7 +362,7 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 		_eof = true;
 	}
 
-	uint8 *destBuf = (uint8*)dest;
+	uint8 *destBuf = (uint8 *)dest;
 	if ((_filePos < _cachePos) || (_filePos + len > _cachePos + _bytesInCache))
 		cacheReadSync(); // we have to read from CD, sync cache.
 
@@ -413,7 +413,7 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 #ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
 #endif
-	return destBuf - (uint8*)dest;
+	return destBuf - (uint8 *)dest;
 }
 
 uint32 Ps2File::write(const void *src, uint32 len) {
@@ -518,7 +518,7 @@ FILE *ps2_fopen(const char *fname, const char *mode) {
 }
 
 int ps2_fclose(FILE *stream) {
-	Ps2File *file = (Ps2File*)stream;
+	Ps2File *file = (Ps2File *)stream;
 
 	delete file;
 
@@ -528,10 +528,10 @@ int ps2_fclose(FILE *stream) {
 
 size_t ps2_fread(void *buf, size_t r, size_t n, FILE *stream) {
 	assert(r != 0);
-	return ((Ps2File*)stream)->read(buf, r * n) / r;
+	return ((Ps2File *)stream)->read(buf, r * n) / r;
 }
 
 size_t ps2_fwrite(const void *buf, size_t r, size_t n, FILE *stream) {
 	assert(r != 0);
-	return ((Ps2File*)stream)->write(buf, r * n) / r;
+	return ((Ps2File *)stream)->write(buf, r * n) / r;
 }

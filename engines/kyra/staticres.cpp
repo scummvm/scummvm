@@ -38,7 +38,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 78
+#define RESFILE_VERSION 82
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -75,7 +75,9 @@ const IndexTable iGameTable[] = {
 	{ GI_KYRA1, 0 },
 	{ GI_KYRA2, 1 },
 	{ GI_KYRA3, 2 },
-	{ GI_LOL, 3 },
+	{ GI_EOB1, 3 },
+	{ GI_EOB2, 4 },
+	{ GI_LOL, 5 },
 	{ -1, -1 }
 };
 
@@ -245,17 +247,34 @@ bool StaticResource::init() {
 
 		{ k2SeqData, proc(loadHofSequenceData), proc(freeHofSequenceData) },
 		{ k2ShpAnimDataV1, proc(loadShapeAnimData_v1), proc(freeHofShapeAnimDataV1) },
-		{ k2ShpAnimDataV2, proc(loadShapeAnimData_v2), proc(freeHofShapeAnimDataV2) },
+		{ k2ItemAnimDefinition, proc(loadItemAnimDefinition), proc(freeItemAnimDefinition) },
 
 #ifdef ENABLE_LOL
-		{ kLolCharData, proc(loadCharData), proc(freeCharData) },
-		{ kLolSpellData, proc(loadSpellData), proc(freeSpellData) },
-		{ kLolCompassData, proc(loadCompassData), proc(freeCompassData) },
-		{ kLolFlightShpData, proc(loadFlyingObjectData), proc(freeFlyingObjectData) },
-		{ kLolRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
-		{ kLolRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
-		{ kLolButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
-#endif // ENABLE_LOL
+		{ kLoLCharData, proc(loadCharData), proc(freeCharData) },
+		{ kLoLSpellData, proc(loadSpellData), proc(freeSpellData) },
+		{ kLoLCompassData, proc(loadCompassData), proc(freeCompassData) },
+		{ kLoLFlightShpData, proc(loadFlyingObjectData), proc(freeFlyingObjectData) },
+#else
+		{ kLoLCharData, proc(loadDummy), proc(freeDummy) },
+		{ kLoLSpellData, proc(loadDummy), proc(freeDummy) },
+		{ kLoLCompassData, proc(loadDummy), proc(freeDummy) },
+		{ kLoLFlightShpData, proc(loadDummy), proc(freeDummy) },
+#endif
+#if defined(ENABLE_EOB) || defined(ENABLE_LOL)
+		{ kRawDataBe16, proc(loadRawDataBe16), proc(freeRawDataBe16) },
+		{ kRawDataBe32, proc(loadRawDataBe32), proc(freeRawDataBe32) },
+#endif
+#ifdef ENABLE_LOL
+		{ kLoLButtonData, proc(loadButtonDefs), proc(freeButtonDefs) },
+#else
+		{ kLoLButtonData, proc(loadDummy), proc(freeDummy) },
+#endif
+
+#ifdef ENABLE_EOB
+		{ kEoB2SequenceData, proc(loadEoB2SeqData), proc(freeEoB2SeqData) },
+		{ kEoB2ShapeData, proc(loadEoB2ShapeData), proc(freeEoB2ShapeData) },
+		{ kEoBNpcData, proc(loadEoBNpcData), proc(freeEoBNpcData) },
+#endif
 
 		{ 0, 0, 0 }
 	};
@@ -269,7 +288,7 @@ void StaticResource::deinit() {
 	unloadId(-1);
 }
 
-const char * const *StaticResource::loadStrings(int id, int &strings) {
+const char *const *StaticResource::loadStrings(int id, int &strings) {
 	return (const char * const *)getData(id, kStringList, strings);
 }
 
@@ -297,8 +316,8 @@ const ItemAnimData_v1 *StaticResource::loadShapeAnimData_v1(int id, int &entries
 	return (const ItemAnimData_v1 *)getData(id, k2ShpAnimDataV1, entries);
 }
 
-const ItemAnimData_v2 *StaticResource::loadShapeAnimData_v2(int id, int &entries) {
-	return (const ItemAnimData_v2 *)getData(id, k2ShpAnimDataV2, entries);
+const ItemAnimDefinition *StaticResource::loadItemAnimDefinition(int id, int &entries) {
+	return (const ItemAnimDefinition *)getData(id, k2ItemAnimDefinition, entries);
 }
 
 bool StaticResource::prefetchId(int id) {
@@ -403,6 +422,10 @@ const void *StaticResource::getData(int id, int requesttype, int &size) {
 	return 0;
 }
 
+bool StaticResource::loadDummy(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+	return true;
+}
+
 bool StaticResource::loadStringTable(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	uint32 count = stream.readUint32BE();
 	size = count;
@@ -415,7 +438,7 @@ bool StaticResource::loadStringTable(Common::SeekableReadStream &stream, void *&
 		while ((c = (char)stream.readByte()) != 0)
 			string += c;
 
-		output[i] = new char[string.size()+1];
+		output[i] = new char[string.size() + 1];
 		strcpy(output[i], string.c_str());
 	}
 
@@ -479,10 +502,10 @@ bool StaticResource::loadRoomTable(Common::SeekableReadStream &stream, void *&pt
 		loadTo[i].eastExit = stream.readUint16BE();
 		loadTo[i].southExit = stream.readUint16BE();
 		loadTo[i].westExit = stream.readUint16BE();
-		memset(&loadTo[i].itemsTable[0], 0xFF, sizeof(byte)*6);
-		memset(&loadTo[i].itemsTable[6], 0, sizeof(byte)*6);
-		memset(loadTo[i].itemsXPos, 0, sizeof(uint16)*12);
-		memset(loadTo[i].itemsYPos, 0, sizeof(uint8)*12);
+		memset(&loadTo[i].itemsTable[0], 0xFF, sizeof(byte) * 6);
+		memset(&loadTo[i].itemsTable[6], 0, sizeof(byte) * 6);
+		memset(loadTo[i].itemsXPos, 0, sizeof(uint16) * 12);
+		memset(loadTo[i].itemsYPos, 0, sizeof(uint8) * 12);
 		memset(loadTo[i].needInit, 0, sizeof(loadTo[i].needInit));
 	}
 
@@ -587,9 +610,9 @@ bool StaticResource::loadShapeAnimData_v1(Common::SeekableReadStream &stream, vo
 	return true;
 }
 
-bool StaticResource::loadShapeAnimData_v2(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+bool StaticResource::loadItemAnimDefinition(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.readByte();
-	ItemAnimData_v2 *loadTo = new ItemAnimData_v2[size];
+	ItemAnimDefinition *loadTo = new ItemAnimDefinition[size];
 	assert(loadTo);
 
 	for (int i = 0; i < size; i++) {
@@ -605,6 +628,9 @@ bool StaticResource::loadShapeAnimData_v2(Common::SeekableReadStream &stream, vo
 
 	ptr = loadTo;
 	return true;
+}
+
+void StaticResource::freeDummy(void *&ptr, int &size) {
 }
 
 void StaticResource::freeRawData(void *&ptr, int &size) {
@@ -665,7 +691,7 @@ void StaticResource::freeHofSequenceData(void *&ptr, int &size) {
 }
 
 void StaticResource::freeHofShapeAnimDataV1(void *&ptr, int &size) {
-	ItemAnimData_v1 *d= (ItemAnimData_v1 *)ptr;
+	ItemAnimData_v1 *d = (ItemAnimData_v1 *)ptr;
 	for (int i = 0; i < size; i++)
 		delete[] d[i].frames;
 	delete[] d;
@@ -673,8 +699,8 @@ void StaticResource::freeHofShapeAnimDataV1(void *&ptr, int &size) {
 	size = 0;
 }
 
-void StaticResource::freeHofShapeAnimDataV2(void *&ptr, int &size) {
-	ItemAnimData_v2 *d= (ItemAnimData_v2 *)ptr;
+void StaticResource::freeItemAnimDefinition(void *&ptr, int &size) {
+	ItemAnimDefinition *d = (ItemAnimDefinition *)ptr;
 	for (int i = 0; i < size; i++)
 		delete[] d[i].frames;
 	delete[] d;
@@ -774,7 +800,7 @@ void KyraEngine_LoK::initStaticResource() {
 		_roomTable = new Room[_roomTableSize];
 		assert(_roomTable);
 
-		memcpy(_roomTable, tempRoomList, _roomTableSize*sizeof(Room));
+		memcpy(_roomTable, tempRoomList, _roomTableSize * sizeof(Room));
 		tempRoomList = 0;
 
 		_staticres->unloadId(k1RoomList);
@@ -787,7 +813,7 @@ void KyraEngine_LoK::initStaticResource() {
 		_defaultShapeTable = new Shape[_defaultShapeTableSize];
 		assert(_defaultShapeTable);
 
-		memcpy(_defaultShapeTable, tempShapeTable, _defaultShapeTableSize*sizeof(Shape));
+		memcpy(_defaultShapeTable, tempShapeTable, _defaultShapeTableSize * sizeof(Shape));
 		tempShapeTable = 0;
 
 		_staticres->unloadId(k1DefaultShapes);
@@ -848,7 +874,7 @@ void KyraEngine_LoK::loadCharacterShapes() {
 		assert(i < _defaultShapeTableSize);
 		Shape *shape = &_defaultShapeTable[i];
 		if (shape->imageIndex == 0xFF) {
-			_shapes[i+7] = 0;
+			_shapes[i + 7] = 0;
 			continue;
 		}
 		if (shape->imageIndex != curImage) {
@@ -856,7 +882,7 @@ void KyraEngine_LoK::loadCharacterShapes() {
 			_screen->loadBitmap(_characterImageTable[shape->imageIndex], 3, 3, 0);
 			curImage = shape->imageIndex;
 		}
-		_shapes[i+7] = _screen->encodeShape(shape->x<<3, shape->y, shape->w<<3, shape->h, 1);
+		_shapes[i + 7] = _screen->encodeShape(shape->x << 3, shape->y, shape->w << 3, shape->h, 1);
 	}
 	_screen->_curPage = videoPage;
 }
@@ -867,16 +893,16 @@ void KyraEngine_LoK::loadSpecialEffectShapes() {
 
 	int currShape;
 	for (currShape = 173; currShape < 183; currShape++)
-		_shapes[currShape] = _screen->encodeShape((currShape-173) * 24, 0, 24, 24, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape - 173) * 24, 0, 24, 24, 1);
 
 	for (currShape = 183; currShape < 190; currShape++)
-		_shapes[currShape] = _screen->encodeShape((currShape-183) * 24, 24, 24, 24, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape - 183) * 24, 24, 24, 24, 1);
 
 	for (currShape = 190; currShape < 201; currShape++)
-		_shapes[currShape] = _screen->encodeShape((currShape-190) * 24, 48, 24, 24, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape - 190) * 24, 48, 24, 24, 1);
 
 	for (currShape = 201; currShape < 206; currShape++)
-		_shapes[currShape] = _screen->encodeShape((currShape-201) * 16, 106, 16, 16, 1);
+		_shapes[currShape] = _screen->encodeShape((currShape - 201) * 16, 106, 16, 16, 1);
 }
 
 void KyraEngine_LoK::loadItems() {
@@ -891,22 +917,22 @@ void KyraEngine_LoK::loadItems() {
 		_shapes[323 + shape] = _screen->encodeShape((shape - 1) * 32, 0, 32, 17, 0);
 
 	for (shape = 330; shape <= 334; shape++)
-		_shapes[shape] = _screen->encodeShape((shape-330) * 32, 102, 32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape - 330) * 32, 102, 32, 17, 0);
 
 	for (shape = 335; shape <= 339; shape++)
-		_shapes[shape] = _screen->encodeShape((shape-335) * 32, 17,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape - 335) * 32, 17,  32, 17, 0);
 
 	for (shape = 340; shape <= 344; shape++)
-		_shapes[shape] = _screen->encodeShape((shape-340) * 32, 34,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape - 340) * 32, 34,  32, 17, 0);
 
 	for (shape = 345; shape <= 349; shape++)
-		_shapes[shape] = _screen->encodeShape((shape-345) * 32, 51,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape - 345) * 32, 51,  32, 17, 0);
 
 	for (shape = 350; shape <= 354; shape++)
-		_shapes[shape] = _screen->encodeShape((shape-350) * 32, 68,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape - 350) * 32, 68,  32, 17, 0);
 
 	for (shape = 355; shape <= 359; shape++)
-		_shapes[shape] = _screen->encodeShape((shape-355) * 32, 85,  32, 17, 0);
+		_shapes[shape] = _screen->encodeShape((shape - 355) * 32, 85,  32, 17, 0);
 
 
 	_screen->loadBitmap("ITEMS.CPS", 3, 3, 0);
@@ -918,7 +944,7 @@ void KyraEngine_LoK::loadItems() {
 		if (shape != -1)
 			_shapes[216 + i] = _shapes[216 + shape];
 		else
-			_shapes[216 + i] = _screen->encodeShape( (i % 20) * 16, i/20 * 16, 16, 16, 0);
+			_shapes[216 + i] = _screen->encodeShape((i % 20) * 16, i / 20 * 16, 16, 16, 0);
 	}
 
 	_res->loadFileToBuf("_ITEM_HT.DAT", &_itemHtDat, sizeof(_itemHtDat));
@@ -981,7 +1007,7 @@ void KyraEngine_HoF::initStaticResource() {
 	_cdaTrackTableFinale = _staticres->loadRawData(k2SeqplayFinaleCDA, _cdaTrackTableFinaleSize);
 	_ingameTalkObjIndex = (const uint16 *)_staticres->loadRawData(k2IngameTalkObjIndex, _ingameTalkObjIndexSize);
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
-	_itemAnimData = _staticres->loadShapeAnimData_v2(k2IngameShapeAnimData, _itemAnimDataSize);
+	_itemAnimDefinition = _staticres->loadItemAnimDefinition(k2IngameShapeAnimData, _itemAnimDefinitionSize);
 
 	// replace sequence talkie files with localized versions
 	const char *const *seqSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
@@ -997,7 +1023,7 @@ void KyraEngine_HoF::initStaticResource() {
 		if (tlkfiles && len > 1) {
 			for (int ii = 0; ii < tmpSize; ii++) {
 				if (strlen(tlkfiles[ii]) > 1 && !scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
-						strcpy(tmpSndLst[i], tlkfiles[ii]);
+					strcpy(tmpSndLst[i], tlkfiles[ii]);
 			}
 		}
 
@@ -1052,8 +1078,8 @@ void KyraEngine_HoF::initStaticResource() {
 	// setup sequence data
 	_sequences = _staticres->loadHofSequenceData(k2SeqplaySeqData, tmpSize);
 
-	static const SeqProc hofSequenceCallbacks[] = { 0,
-		&KyraEngine_HoF::seq_introWestwood,
+	static const SeqProc hofSequenceCallbacks[] = {
+		0, &KyraEngine_HoF::seq_introWestwood,
 		&KyraEngine_HoF::seq_introTitle, &KyraEngine_HoF::seq_introOverview,
 		&KyraEngine_HoF::seq_introLibrary, &KyraEngine_HoF::seq_introHand,
 		&KyraEngine_HoF::seq_introPoint, &KyraEngine_HoF::seq_introZanfaun,
@@ -1087,26 +1113,27 @@ void KyraEngine_HoF::initStaticResource() {
 	};
 
 #ifdef ENABLE_LOL
-	static const SeqProc kLolDemoSequenceCallbacks[] = {
+	static const SeqProc kLoLDemoSequenceCallbacks[] = {
 		&KyraEngine_HoF::seq_lolDemoScene1, 0, &KyraEngine_HoF::seq_lolDemoScene2, 0,
 		&KyraEngine_HoF::seq_lolDemoScene3, 0, &KyraEngine_HoF::seq_lolDemoScene4, 0,
 		&KyraEngine_HoF::seq_lolDemoScene5, &KyraEngine_HoF::seq_lolDemoText5,
 		&KyraEngine_HoF::seq_lolDemoScene6, 0
 	};
 
-	static const SeqProc kLolDemoNestedSequenceCallbacks[] = { 0 };
+	static const SeqProc kLoLDemoNestedSequenceCallbacks[] = { 0 };
 #endif // ENABLE_LOL
 
 	_callbackS =
 #ifdef ENABLE_LOL
-		_flags.gameID == GI_LOL ? kLolDemoSequenceCallbacks :
+	    _flags.gameID == GI_LOL ? kLoLDemoSequenceCallbacks :
 #endif // ENABLE_LOL
-		((_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks);
+	    ((_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks);
+
 	_callbackN =
 #ifdef ENABLE_LOL
-		_flags.gameID == GI_LOL ? kLolDemoNestedSequenceCallbacks :
+	    _flags.gameID == GI_LOL ? kLoLDemoNestedSequenceCallbacks :
 #endif // ENABLE_LOL
-		((_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks);
+	    ((_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks);
 }
 
 void KyraEngine_MR::initStaticResource() {
@@ -1116,7 +1143,7 @@ void KyraEngine_MR::initStaticResource() {
 	_scoreTable = _staticres->loadRawData(k3ScoreTable, _scoreTableSize);
 	_sfxFileList = _staticres->loadStrings(k3SfxFiles, _sfxFileListSize);
 	_sfxFileMap = _staticres->loadRawData(k3SfxMap, _sfxFileMapSize);
-	_itemAnimData = _staticres->loadShapeAnimData_v2(k3ItemAnimData, tmp);
+	_itemAnimDefinition = _staticres->loadItemAnimDefinition(k3ItemAnimData, tmp);
 	_itemMagicTable = _staticres->loadRawData(k3ItemMagicTable, tmp);
 	_itemStringMap = _staticres->loadRawData(k3ItemStringMap, _itemStringMapSize);
 }
@@ -1158,7 +1185,7 @@ const ScreenDim Screen_HoF::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0x88, 0xC7, 0xCF, 0x00, 0x00 },
 	{ 0x00, 0x08, 0x28, 0xB8, 0xC7, 0xCF, 0x00, 0x00 },
 	{ 0x01, 0x28, 0x26, 0x46, 0xC7, 0xCC, 0x00, 0x00 },
-	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }	// menu, just present for current menu code
+	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }  // menu, just present for current menu code
 };
 
 const int Screen_HoF::_screenDimTableCount = ARRAYSIZE(Screen_HoF::_screenDimTable);
@@ -1227,7 +1254,7 @@ void GUI_LoK::initStaticResource() {
 	_menu[0].item[3].callback = quitPlayingFunctor;
 	_menu[0].item[4].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::resumeGame);
 
-	GUI_V1_MENU(_menu[1], -1, -1, 0x140, 0x38, 248, 249, 250, 0, 254,-1, 8, 0, 2, -1, -1, -1, -1);
+	GUI_V1_MENU(_menu[1], -1, -1, 0x140, 0x38, 248, 249, 250, 0, 254, -1, 8, 0, 2, -1, -1, -1, -1);
 	GUI_V1_MENU_ITEM(_menu[1].item[0], 1, 0, 0, 0, 0x18, 0, 0x1E, 0x48, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	GUI_V1_MENU_ITEM(_menu[1].item[1], 1, 0, 0, 0, 0xD8, 0, 0x1E, 0x48, 0x0F, 252, 253, -1, 255, 248, 249, 250, -1, 0, 0, 0, 0, 0);
 	_menu[1].item[0].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::quitConfirmYes);
@@ -1320,7 +1347,7 @@ void KyraEngine_LoK::setupButtonData() {
 		_buttonData[i].buttonCallback = amuletFunctor;
 
 	for (int i = 1; i < 15; ++i)
-		_buttonDataListPtr[i-1] = &_buttonData[i];
+		_buttonDataListPtr[i - 1] = &_buttonData[i];
 	_buttonDataListPtr[14] = 0;
 }
 
@@ -1391,7 +1418,7 @@ const char *const KyraEngine_HoF::_languageExtension[] = {
 	"ENG",
 	"FRE",
 	"GER",/*,
-	"ITA",		Italian and Spanish were never included
+	"ITA",      Italian and Spanish were never included
 	"SPA"*/
 	"JPN",
 };
@@ -1400,7 +1427,7 @@ const char *const KyraEngine_HoF::_scriptLangExt[] = {
 	"EMC",
 	"FMC",
 	"GMC",/*,
-	"IMC",		Italian and Spanish were never included
+	"IMC",      Italian and Spanish were never included
 	"SMC"*/
 	"JMC"
 };
@@ -1579,7 +1606,7 @@ void KyraEngine_HoF::initInventoryButtonList() {
 	GUI_V2_BUTTON(_inventoryButtons[1], 0x2, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x104, 0x90, 0x3C, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	_inventoryButtons[1].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::cauldronButton);
 
-	GUI_V2_BUTTON(_inventoryButtons[2],	0x5, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x0FA, 0x90, 0x0A, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+	GUI_V2_BUTTON(_inventoryButtons[2], 0x5, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x0FA, 0x90, 0x0A, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	_inventoryButtons[2].buttonCallback = BUTTON_FUNCTOR(KyraEngine_HoF, this, &KyraEngine_HoF::cauldronClearButton);
 
 	GUI_V2_BUTTON(_inventoryButtons[3], 0x3, 0x00, 0, 1, 1, 1, 0x4487, 0, 0x0CE, 0x90, 0x2C, 0x2C, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
@@ -1613,14 +1640,14 @@ void GUI_HoF::initStaticData() {
 	GUI_V2_BUTTON(_scrollDownButton, 0x18, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 
 	for (int i = 0; i < 4; ++i)
-		GUI_V2_BUTTON(_sliderButtons[0][i], 0x18+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+		GUI_V2_BUTTON(_sliderButtons[0][i], 0x18 + i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	for (int i = 0; i < 4; ++i)
-		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1C+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1C + i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 	for (int i = 0; i < 4; ++i)
-		GUI_V2_BUTTON(_sliderButtons[2][i], 0x20+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+		GUI_V2_BUTTON(_sliderButtons[2][i], 0x20 + i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i)
-		GUI_V2_BUTTON(_menuButtons[i], 0x10+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
+		GUI_V2_BUTTON(_menuButtons[i], 0x10 + i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xC7, 0xCF, 0xC7, 0xCF, 0xC7, 0xCF, 0);
 
 	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::clickLoadSlot);
 	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::clickSaveSlot);
@@ -1653,7 +1680,7 @@ void GUI_HoF::initStaticData() {
 		_mainMenu.numberOfItems = 6;
 		_mainMenu.item[6].enabled = false;
 		for (int i = 4; i < 6; ++i)
-			_mainMenu.item[i].callback = _mainMenu.item[i+1].callback;
+			_mainMenu.item[i].callback = _mainMenu.item[i + 1].callback;
 		_mainMenu.item[3].callback = BUTTON_FUNCTOR(GUI_HoF, this, &GUI_HoF::gameOptions);
 		_mainMenu.item[6].callback = Button::Callback();
 		_mainMenu.item[5].y = 0x7F;
@@ -1755,25 +1782,25 @@ void GUI_HoF::initStaticData() {
 }
 
 const uint16 GUI_HoF::_menuStringsTalkie[] = {
-	0x001, 0x002, 0x003, 0x023, 0x004, 0x025, 0x005, 0x006,	// Main Menu String IDs
-	0x025, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000,	// Options Menu String IDs
-	0x007, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000,	// Audio Menu String IDs
-	0x000, 0x014, 0x013, 0x000, 0x000, 0x000, 0x000, 0x000,	// Menu3 Menu String IDs
-	0x008, 0x029, 0x02A, 0x02B, 0x02C, 0x02D, 0x00B, 0x000,	// Load Menu String IDs
-	0x009, 0x029, 0x02A, 0x02B, 0x02C, 0x02D, 0x00B, 0x000,	// Save Menu String IDs
-	0x00C, 0x00D, 0x00B, 0x000, 0x000, 0x000, 0x000, 0x000,	// Menu6 Menu String IDs
-	0x00E, 0x002, 0x005, 0x000, 0x000, 0x000, 0x000, 0x000	// Death Menu String IDs
+	0x001, 0x002, 0x003, 0x023, 0x004, 0x025, 0x005, 0x006, // Main Menu String IDs
+	0x025, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000, // Options Menu String IDs
+	0x007, 0x000, 0x000, 0x000, 0x010, 0x000, 0x000, 0x000, // Audio Menu String IDs
+	0x000, 0x014, 0x013, 0x000, 0x000, 0x000, 0x000, 0x000, // Menu3 Menu String IDs
+	0x008, 0x029, 0x02A, 0x02B, 0x02C, 0x02D, 0x00B, 0x000, // Load Menu String IDs
+	0x009, 0x029, 0x02A, 0x02B, 0x02C, 0x02D, 0x00B, 0x000, // Save Menu String IDs
+	0x00C, 0x00D, 0x00B, 0x000, 0x000, 0x000, 0x000, 0x000, // Menu6 Menu String IDs
+	0x00E, 0x002, 0x005, 0x000, 0x000, 0x000, 0x000, 0x000  // Death Menu String IDs
 };
 
 const uint16 GUI_HoF::_menuStringsOther[] = {
-	0x009, 0x00A, 0x00B, 0x001, 0x00C, 0x00D, 0x00E, 0x000,	// Main Menu String IDs
-	0x00F, 0x02B, 0x02C, 0x02D, 0x02E, 0x018, 0x000, 0x000,	// Options Menu String IDs
-	0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000,	// Dummy
-	0x000, 0x01C, 0x01B, 0x000, 0x000, 0x000, 0x000, 0x000,	// Menu3 Menu String IDs
-	0x010, 0x02F, 0x030, 0x031, 0x032, 0x033, 0x013, 0x000,	// Load Menu String IDs
-	0x011, 0x02F, 0x030, 0x031, 0x032, 0x033, 0x013, 0x000,	// Save Menu String IDs
-	0x014, 0x015, 0x013, 0x3E8, 0x000, 0x000, 0x000, 0x000,	// Menu6 String IDs
-	0x016, 0x00A, 0x00D, 0x000, 0x000, 0x000, 0x000, 0x000	// Death Menu String IDs
+	0x009, 0x00A, 0x00B, 0x001, 0x00C, 0x00D, 0x00E, 0x000, // Main Menu String IDs
+	0x00F, 0x02B, 0x02C, 0x02D, 0x02E, 0x018, 0x000, 0x000, // Options Menu String IDs
+	0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, // Dummy
+	0x000, 0x01C, 0x01B, 0x000, 0x000, 0x000, 0x000, 0x000, // Menu3 Menu String IDs
+	0x010, 0x02F, 0x030, 0x031, 0x032, 0x033, 0x013, 0x000, // Load Menu String IDs
+	0x011, 0x02F, 0x030, 0x031, 0x032, 0x033, 0x013, 0x000, // Save Menu String IDs
+	0x014, 0x015, 0x013, 0x3E8, 0x000, 0x000, 0x000, 0x000, // Menu6 String IDs
+	0x016, 0x00A, 0x00D, 0x000, 0x000, 0x000, 0x000, 0x000  // Death Menu String IDs
 };
 
 const uint16 KyraEngine_HoF::_itemMagicTable[] = {
@@ -1889,20 +1916,20 @@ const char *const KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
 	"TRG"/*,
-	"TRI",		Italian and Spanish were never included, the supported fan translations are using
-	"TRS"		English/French extensions thus overwriting these languages */
+	"TRI",      Italian and Spanish were never included, the supported fan translations are using
+	"TRS"       English/French extensions thus overwriting these languages */
 };
 
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);
 
-const char * const KyraEngine_MR::_mainMenuSpanishFan[] = {
+const char *const KyraEngine_MR::_mainMenuSpanishFan[] = {
 	"Nueva Partida",
 	"Ver Intro",
 	"Restaurar",
 	"Finalizar"
 };
 
-const char * const KyraEngine_MR::_mainMenuItalianFan[] = {
+const char *const KyraEngine_MR::_mainMenuItalianFan[] = {
 	"Nuova Partita",
 	"Introduzione",
 	"Carica una partita",
@@ -1998,13 +2025,13 @@ void KyraEngine_MR::initMainButtonList(bool disable) {
 
 		Button::Callback buttonInventoryFunctor = BUTTON_FUNCTOR(KyraEngine_MR, this, &KyraEngine_MR::buttonInventory);
 		for (int i = 0; i < 5; ++i) {
-			GUI_V2_BUTTON(_mainButtonData[i+4], i+5, 0, 0, 0, 0, 0, 0x1100, 0, 67+i*28, 155, 27, 21, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-			_mainButtonData[i+4].buttonCallback = buttonInventoryFunctor;
+			GUI_V2_BUTTON(_mainButtonData[i + 4], i + 5, 0, 0, 0, 0, 0, 0x1100, 0, 67 + i * 28, 155, 27, 21, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+			_mainButtonData[i + 4].buttonCallback = buttonInventoryFunctor;
 		}
 
 		for (int i = 0; i < 5; ++i) {
-			GUI_V2_BUTTON(_mainButtonData[i+9], i+10, 0, 0, 0, 0, 0, 0x1100, 0, 67+i*28, 177, 27, 21, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
-			_mainButtonData[i+9].buttonCallback = buttonInventoryFunctor;
+			GUI_V2_BUTTON(_mainButtonData[i + 9], i + 10, 0, 0, 0, 0, 0, 0x1100, 0, 67 + i * 28, 177, 27, 21, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+			_mainButtonData[i + 9].buttonCallback = buttonInventoryFunctor;
 		}
 
 		for (int i = 0; i < 14; ++i)
@@ -2026,14 +2053,14 @@ void GUI_MR::initStaticData() {
 	GUI_V2_BUTTON(_scrollDownButton, 23, 0, 0, 4, 4, 4, 0x4487, 0, 0, 0, 0x18, 0x0F, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 
 	for (int i = 0; i < 4; ++i)
-		GUI_V2_BUTTON(_sliderButtons[0][i], 0x18+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		GUI_V2_BUTTON(_sliderButtons[0][i], 0x18 + i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 	for (int i = 0; i < 4; ++i)
-		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1C+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		GUI_V2_BUTTON(_sliderButtons[1][i], 0x1C + i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0x0A, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 	for (int i = 0; i < 4; ++i)
-		GUI_V2_BUTTON(_sliderButtons[2][i], 0x20+i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		GUI_V2_BUTTON(_sliderButtons[2][i], 0x20 + i, 0, 0, 0, 0, 0, 0x2200, 0, 0, 0, 0x6E, 0x0E, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 
 	for (uint i = 0; i < ARRAYSIZE(_menuButtons); ++i)
-		GUI_V2_BUTTON(_menuButtons[i], 0x0F+i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
+		GUI_V2_BUTTON(_menuButtons[i], 0x0F + i, 0, 0, 1, 1, 1, 0x4487, 0, 0, 0, 0, 0, 0xFF, 0xF0, 0xFF, 0xF0, 0xFF, 0xF0, 0);
 
 	Button::Callback clickLoadSlotFunctor = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::clickLoadSlot);
 	Button::Callback clickSaveSlotFunctor = BUTTON_FUNCTOR(GUI_MR, this, &GUI_MR::clickSaveSlot);
@@ -2132,7 +2159,7 @@ void GUI_MR::initStaticData() {
 }
 
 const int8 KyraEngine_MR::_albumWSAX[] = {
-	  0, 77, -50, 99, -61, 82, -58, 85,
+	 0, 77, -50, 99, -61, 82, -58, 85,
 	-64, 80, -63, 88, -63, 88, -64,  0
 };
 

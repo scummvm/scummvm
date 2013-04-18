@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_RATE_H
-#define SOUND_RATE_H
+#ifndef AUDIO_RATE_H
+#define AUDIO_RATE_H
 
 #include "common/scummsys.h"
 

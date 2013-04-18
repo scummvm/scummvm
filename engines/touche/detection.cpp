@@ -45,7 +45,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 	{ // retail version - tracker item #1601818
 		"touche",
@@ -54,7 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 	{ // retail version
 		"touche",
@@ -63,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 	{ // retail version - tracker item #1598643
 		"touche",
@@ -72,7 +72,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 	{ // retail version - tracker item #1681643
 		"touche",
@@ -81,7 +81,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 	{ // fan-made translation (http://www.iagtg.net/) - tracker item #1602360
 		"touche",
@@ -90,7 +90,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 	{ // retail version - tracker item #1800500
 		"touche",
@@ -99,7 +99,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 	{ // demo version
 		"touche",
@@ -108,7 +108,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_DEMO,
-		GUIO1(GUIO_NONE)
+		GUIO0()
 	},
 	AD_TABLE_END_MARKER
 };

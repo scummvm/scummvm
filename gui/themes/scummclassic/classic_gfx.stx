@@ -176,7 +176,7 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'scrollbar_button_idle' cache = 'false'>
+	<drawdata id = 'scrollbar_button_idle' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
@@ -184,26 +184,62 @@
 		<drawstep	func = 'triangle'
 					fg_color = 'green'
 					fill = 'foreground'
-					width = 'auto'
-					height = 'auto'
-					xpos = 'center'
+					width = '10'
+					height = '10'
+					xpos = 'right'
 					ypos = 'center'
+					padding = '0,0,3,0'
 					orientation = 'top'
 		/>
 	</drawdata>
-
-	<drawdata id = 'scrollbar_button_hover' cache = 'false'>
+	
+	<drawdata id = 'scrollbar_button_idle' cache = 'false' resolution = 'y<400'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
 		/>
 		<drawstep	func = 'triangle'
-					fg_color = 'green2'
+					fg_color = 'green'
 					fill = 'foreground'
-					width = 'auto'
-					height = 'auto'
-					xpos = 'center'
+					width = '5'
+					height = '5'
+					xpos = 'right'
 					ypos = 'center'
+					padding = '0,0,2,0'
+					orientation = 'top'
+		/>
+	</drawdata>
+
+	<drawdata id = 'scrollbar_button_hover' cache = 'false' resolution = 'y>399'>
+		<drawstep	func = 'bevelsq'
+					bevel = '2'
+					fill = 'none'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '10'
+					height = '10'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,3,0'
+					orientation = 'top'
+		/>
+	</drawdata>
+	
+	<drawdata id = 'scrollbar_button_hover' cache = 'false' resolution = 'y<400'>
+		<drawstep	func = 'bevelsq'
+					bevel = '2'
+					fill = 'none'
+		/>
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '5'
+					height = '5'
+					xpos = 'right'
+					ypos = 'center'
+					padding = '0,0,2,0'
 					orientation = 'top'
 		/>
 	</drawdata>
@@ -272,20 +308,70 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'popup_idle' cache = 'false'>
+	<!--popup_idle HERE  -->
+	<drawdata id = 'popup_idle' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
 		/>
+		
 		<drawstep	func = 'triangle'
 					fg_color = 'green'
 					fill = 'foreground'
-					width = 'height'
-					height = 'auto'
+					width = '10'
+					height = '5'
 					xpos = 'right'
-					ypos = 'center'
+					ypos = '10'
+					padding = '0, 0, 7, 0'
 					orientation = 'bottom'
 		/>
+		
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '10'
+					height = '5'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 7, 0'
+					orientation = 'top'
+		/>
+		
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+	</drawdata>
+	
+	<drawdata id = 'popup_idle' cache = 'false' resolution = 'y<400'>
+		<drawstep	func = 'bevelsq'
+					bevel = '2'
+					fill = 'none'
+		/>
+		
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '9'
+					padding = '0, 0, 3, 0'
+					orientation = 'bottom'
+		/>
+		
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 3, 0'
+					orientation = 'top'
+		/>
+		
 		<text	font = 'text_default'
 				text_color = 'color_normal'
 				vertical_align = 'center'
@@ -293,19 +379,31 @@
 		/>
 	</drawdata>
 
-	<drawdata id = 'popup_disabled' cache = 'false'>
+	<drawdata id = 'popup_disabled' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
 		/>
 		<drawstep	func = 'triangle'
-					fg_color = 'lightgrey'
+					fg_color = 'green'
 					fill = 'foreground'
-					width = 'height'
-					height = 'auto'
+					width = '10'
+					height = '5'
 					xpos = 'right'
-					ypos = 'center'
+					ypos = '10'
+					padding = '0, 0, 7, 0'
 					orientation = 'bottom'
+		/>
+		
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '10'
+					height = '5'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 7, 0'
+					orientation = 'top'
 		/>
 		<text	font = 'text_default'
 				text_color = 'color_normal_disabled'
@@ -313,23 +411,105 @@
 				horizontal_align = 'left'
 		/>
 	</drawdata>
+	
+	<drawdata id = 'popup_disabled' cache = 'false' resolution = 'y<400'>
+		<drawstep	func = 'bevelsq'
+					bevel = '2'
+					fill = 'none'
+		/>
+		
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '9'
+					padding = '0, 0, 3, 0'
+					orientation = 'bottom'
+		/>
+		
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 3, 0'
+					orientation = 'top'
+		/>
+		
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+	</drawdata>
 
-	<drawdata id = 'popup_hover' cache = 'false'>
+	<drawdata id = 'popup_hover' cache = 'false' resolution = 'y>399'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
 		/>
 		<drawstep	func = 'triangle'
-					fg_color = 'green2'
+					fg_color = 'green'
 					fill = 'foreground'
-					width = 'height'
-					height = 'auto'
+					width = '10'
+					height = '5'
 					xpos = 'right'
-					ypos = 'center'
+					ypos = '10'
+					padding = '0, 0, 7, 0'
 					orientation = 'bottom'
+		/>
+		
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '10'
+					height = '5'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 7, 0'
+					orientation = 'top'
 		/>
 		<text	font = 'text_default'
 				text_color = 'color_normal_hover'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+	</drawdata>
+	
+	<drawdata id = 'popup_hover' cache = 'false' resolution = 'y<400'>
+		<drawstep	func = 'bevelsq'
+					bevel = '2'
+					fill = 'none'
+		/>
+		
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '9'
+					padding = '0, 0, 3, 0'
+					orientation = 'bottom'
+		/>
+		
+		<drawstep	func = 'triangle'
+					fg_color = 'green'
+					fill = 'foreground'
+					width = '7'
+					height = '4'
+					xpos = 'right'
+					ypos = '4'
+					padding = '0, 0, 3, 0'
+					orientation = 'top'
+		/>
+		
+		<text	font = 'text_default'
+				text_color = 'color_normal'
 				vertical_align = 'center'
 				horizontal_align = 'left'
 		/>

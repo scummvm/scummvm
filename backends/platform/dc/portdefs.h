@@ -29,6 +29,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <math.h>
+#include <new>
 #ifndef RONIN_TIMER_ACCESS
 #define Timer ronin_Timer
 #endif

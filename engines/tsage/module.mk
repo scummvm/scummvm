@@ -38,6 +38,10 @@ MODULE_OBJS := \
 	ringworld2/ringworld2_dialogs.o \
 	ringworld2/ringworld2_logic.o \
 	ringworld2/ringworld2_scenes0.o \
+	ringworld2/ringworld2_scenes1.o \
+	ringworld2/ringworld2_scenes2.o \
+	ringworld2/ringworld2_scenes3.o \
+	ringworld2/ringworld2_speakers.o \
 	saveload.o \
 	scenes.o \
 	sound.o \

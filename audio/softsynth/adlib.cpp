@@ -1471,8 +1471,7 @@ void MidiDriver_ADLIB::adlib_setup_channel(int chan, AdLibInstrument *instr, byt
 	adlib_write((byte)chan + 0xC0, instr->feedback);
 }
 
-void MidiDriver_ADLIB::adlib_note_on_ex(int chan, byte note, int mod)
-{
+void MidiDriver_ADLIB::adlib_note_on_ex(int chan, byte note, int mod) {
 	int code;
 	assert(chan >= 0 && chan < 9);
 	code = (note << 7) + mod;

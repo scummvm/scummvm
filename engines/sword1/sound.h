@@ -53,8 +53,15 @@ struct RoomVol {
 	int32 roomNo, leftVol, rightVol;
 };
 
+struct SampleId {
+	byte cluster;
+	byte idStd;
+	byte idWinDemo;
+};
+
 struct FxDef {
-	uint32 sampleId, type, delay;
+	SampleId sampleId;
+	uint32 type, delay;
 	RoomVol roomVolList[MAX_ROOMS_PER_FX];
 };
 
@@ -100,6 +107,7 @@ private:
 	void playSample(QueueElement *elem);
 	void initCowSystem();
 
+	uint32 getSampleId(int32 fxNo);
 	int16 *uncompressSpeech(uint32 index, uint32 cSize, uint32 *size);
 	void calcWaveVolume(int16 *data, uint32 length);
 	bool _waveVolume[WAVE_VOL_TAB_LENGTH];

@@ -88,7 +88,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_currentTalkSections.ENDTim = 0;
 
 	memset(&_invWsa, 0, sizeof(_invWsa));
-	_itemAnimData = 0;
+	_itemAnimDefinition = 0;
 	_demoAnimData = 0;
 	_nextAnimItem = 0;
 
@@ -211,8 +211,8 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 
 		_nextIdleAnim += pausedTime;
 
-		for (int x = 0; x < _itemAnimDataSize; x++)
-			_activeItemAnim[x].nextFrame += pausedTime;
+		for (int x = 0; x < _itemAnimDefinitionSize; x++)
+			_activeItemAnim[x].nextFrameTime += pausedTime;
 
 		_tim->refreshTimersAfterPause(pausedTime);
 	}
@@ -223,11 +223,12 @@ Common::Error KyraEngine_HoF::init() {
 	assert(_screen);
 	_screen->setResolution();
 
+	_debugger = new Debugger_HoF(this);
+	assert(_debugger);
+
 	KyraEngine_v1::init();
 	initStaticResource();
 
-	_debugger = new Debugger_HoF(this);
-	assert(_debugger);
 	_text = new TextDisplayer_HoF(this, _screen);
 	assert(_text);
 	_gui = new GUI_HoF(this);
@@ -285,7 +286,7 @@ Common::Error KyraEngine_HoF::go() {
 		if (_flags.isDemo && !_flags.isTalkie) {
 #ifdef ENABLE_LOL
 			if (_flags.gameID == GI_LOL)
-				seq_playSequences(kSequenceLolDemoScene1, kSequenceLolDemoScene6);
+				seq_playSequences(kSequenceLoLDemoScene1, kSequenceLoLDemoScene6);
 			else
 #endif // ENABLE_LOL
 				seq_playSequences(kSequenceDemoVirgin, kSequenceDemoFisher);
@@ -455,6 +456,9 @@ void KyraEngine_HoF::startup() {
 }
 
 void KyraEngine_HoF::runLoop() {
+	// Initialize debugger since how it should be fully usable
+	_debugger->initialize();
+
 	_screen->updateScreen();
 
 	_runFlag = true;
@@ -1083,7 +1087,7 @@ void KyraEngine_HoF::loadNPCScript() {
 #pragma mark -
 
 void KyraEngine_HoF::resetScaleTable() {
-	Common::set_to(_scaleTable, ARRAYEND(_scaleTable), 0x100);
+	Common::fill(_scaleTable, ARRAYEND(_scaleTable), 0x100);
 }
 
 void KyraEngine_HoF::setScaleTableItem(int item, int data) {
@@ -1473,7 +1477,7 @@ void KyraEngine_HoF::snd_playVoiceFile(int id) {
 	char vocFile[9];
 	assert(id >= 0 && id <= 9999999);
 	sprintf(vocFile, "%07d", id);
-	if (_sound->voiceFileIsPresent(vocFile)) {
+	if (_sound->isVoicePresent(vocFile)) {
 		snd_stopVoice();
 
 		while (!_sound->voicePlay(vocFile, &_speechHandle)) {
@@ -1673,7 +1677,7 @@ void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 }
 
 void KyraEngine_HoF::clearCauldronTable() {
-	Common::set_to(_cauldronTable, ARRAYEND(_cauldronTable), -1);
+	Common::fill(_cauldronTable, ARRAYEND(_cauldronTable), -1);
 }
 
 void KyraEngine_HoF::addFrontCauldronTable(int item) {

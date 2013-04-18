@@ -108,9 +108,11 @@ public:
 	UIElements _uiElements;
 	SelectItemProc _onSelectItem;
 	int _interfaceY;
+	ASoundExt _inventorySound;
 
 	TsAGE2Globals() { _onSelectItem = NULL; }
 	virtual void reset();
+	virtual void synchronize(Serializer &s);
 };
 
 extern Globals *g_globals;
@@ -182,23 +184,22 @@ enum Flag {
 
 class BlueForceGlobals: public TsAGE2Globals {
 public:
-	ASoundExt _sound1, _sound2, _sound3;
+	ASoundExt _sound1, _sound3;
 	StripProxy _stripProxy;
 	int _dayNumber;
-	int _v4CEA4;
-	int _v4CEAA;
+	int _tonyDialogCtr;
 	int _marinaWomanCtr;
-	int _v4CEB0;
+	int _kateDialogCtr;
 	int _v4CEB6;
 	int _safeCombination;
-	int _v4CEC0;
+	int _gateStatus;
 	int _greenDay5TalkCtr;
 	int _v4CEC4;
 	int _v4CEC8;
 	int _v4CECA;
 	int _v4CECC;
-	int8 _v4CECE[18];
-	int _v4CEE0;
+	int8 _breakerBoxStatusArr[18];
+	int _hiddenDoorStatus;
 	int _v4CEE2;
 	int _v4CEE4;
 	int _v4CEE6;
@@ -212,8 +213,8 @@ public:
 	int _v501FC;
 	int _v5020C;
 	int _v50696;
-	uint8 _v5098C;
-	uint8 _v5098D;
+	uint8 _subFlagBitArr1;
+	uint8 _subFlagBitArr2;
 	int _v50CC2;
 	int _v50CC4;
 	int _v50CC6;
@@ -228,8 +229,8 @@ public:
 	bool getHasBullets();
 
 	virtual Common::String getClassName() { return "BFGlobals"; }
-	virtual void synchronize(Serializer &s);
 	virtual void reset();
+	virtual void synchronize(Serializer &s);
 	void set2Flags(int flagNum);
 	bool removeFlag(int flagNum);
 };
@@ -238,11 +239,74 @@ public:
 
 namespace Ringworld2 {
 
+#define SPEECH_TEXT 1
+#define SPEECH_VOICE 2
+
+#define k5A78C 15
+#define k5A78D 16
+#define k5A790 18
+#define k5A791 17
+
 class Ringworld2Globals: public TsAGE2Globals {
 public:
 	ASoundExt _sound1, _sound2, _sound3, _sound4;
+	PlayStream _playStream;
+	StripProxy _stripProxy;
+	bool _v1000Flag;
+	byte _v1000[0x1000];
+	byte _palIndexList[10][256];
+	int _insetUp;
+	int _frameEdgeColour;	// _v421e
+	Rect _v5589E;
+	Rect _v558B6;
+	int _v558C2;
+	int _animationCtr;
+	int _v565E1;
+	int _v565E3;
+	int _v565E5;
+	int _v565E7;
+	int _v565E9;
+	int _v565EB;
+	int _v565F5;
+	int _v565F6;
+	int _v565FA;
+	int _v5657C;
+	byte _v565AE;
+	byte _v56605[14];
+	int _v56613[76];
+	byte _v566A4;
+	byte _v566A5;
+	int _v566A6;
+	byte _v566A3;
+	byte _v566A8;
+	byte _v566A9;
+	byte _v566AA;
+	byte _v566AB[1000];
+	int _v56A93;
+	byte _v56A99;
+	int _scene1925CurrLevel; //_v56A9C
+	int _v56A9E;
+	byte _v56AA0;
+	byte _v56AA1;
+	int _v56AA2;
+	int _v56AA4;
+	byte _v56AA6;
+	byte _v56AA7;
+	byte _v56AA8;
+	int _v56AAB;
+	int _scene180Mode;	// _v575f7
+	int _v57709;
+	int _v5780C;
+	int _v5780E;
+	int _v57810;
+	int _v57C2C;
+	int _speechSubtitles;
+	byte _v565EC[5];
+	byte _v565F1[4];
+	byte _stripManager_lookupList[12];
 
 	virtual void reset();
+	virtual void synchronize(Serializer &s);
 };
 
 } // End of namespace Ringworld2

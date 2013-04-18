@@ -52,12 +52,12 @@ protected:
 	TextBoxStyle _mode;
 	BitmapPtr *_ts;
 	Bitmap *box(uint16 w, uint16 h);
+	bool _wideSpace;
 public:
-	Talk(CGEEngine *vm, const char *text, TextBoxStyle mode);
+	Talk(CGEEngine *vm, const char *text, TextBoxStyle mode, bool wideSpace = false);
 	Talk(CGEEngine *vm);
 
 	virtual void update(const char *text);
-	void putLine(int line, const char *text);
 private:
 	CGEEngine *_vm;
 };

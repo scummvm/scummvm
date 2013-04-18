@@ -359,10 +359,11 @@ void DraciEngine::handleEvents() {
 DraciEngine::~DraciEngine() {
 	// Dispose your resources here
 
-	// If the common library supported STL's scoped_ptr<>, then wrapping
+	// If the common library supported Boost's scoped_ptr<>, then wrapping
 	// all the following pointers and many more would be appropriate.  So
 	// far, there is only SharedPtr, which I feel being an overkill for
 	// easy deallocation.
+	// TODO: We have ScopedPtr nowadays. Maybe should adapt this code then?
 	delete _smallFont;
 	delete _bigFont;
 

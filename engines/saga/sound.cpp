@@ -63,42 +63,11 @@ SndHandle *Sound::getHandle() {
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffer, int volume,
 				sndHandleType handleType, bool loop) {
 
-	Audio::RewindableAudioStream *stream = 0;
-
 	Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ?
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
-	if (!buffer.isCompressed) {
-		stream = Audio::makeRawStream(buffer.buffer, buffer.size, buffer.frequency, buffer.flags);
-	} else {
-		Common::SeekableReadStream *memStream = new Common::MemoryReadStream(buffer.buffer, buffer.size, DisposeAfterUse::YES);
-
-		switch (buffer.soundType) {
-#ifdef USE_MAD
-		case kSoundMP3:
-			stream = Audio::makeMP3Stream(memStream, DisposeAfterUse::YES);
-			break;
-#endif
-#ifdef USE_VORBIS
-		case kSoundOGG:
-			stream = Audio::makeVorbisStream(memStream, DisposeAfterUse::YES);
-			break;
-#endif
-#ifdef USE_FLAC
-		case kSoundFLAC:
-			stream = Audio::makeFLACStream(memStream, DisposeAfterUse::YES);
-			break;
-#endif
-		default:
-			// Unknown compression, ignore sample
-			delete memStream;
-			warning("Unknown compression, ignoring sound");
-			break;
-		}
-	}
-
-	if (stream != NULL)
-		_mixer->playStream(soundType, handle, Audio::makeLoopingAudioStream(stream, loop ? 0 : 1), -1, volume);
+	if (buffer.stream)
+		_mixer->playStream(soundType, handle, Audio::makeLoopingAudioStream(buffer.stream, loop ? 0 : 1), -1, volume);
 }
 
 void Sound::playSound(SoundBuffer &buffer, int volume, bool loop, int resId) {

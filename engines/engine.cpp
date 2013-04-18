@@ -45,6 +45,8 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "gui/debugger.h"
 #include "gui/dialog.h"
 #include "gui/message.h"
@@ -418,12 +420,16 @@ void Engine::openMainMenuDialog() {
 	// (not from inside the menu loop to avoid
 	// mouse cursor glitches and simliar bugs,
 	// e.g. #2822778).
-	// FIXME: For now we just ignore the return
-	// value, which is quite bad since it could
-	// be a fatal loading error, which renders
-	// the engine unusable.
-	if (_saveSlotToLoad >= 0)
-		loadGameState(_saveSlotToLoad);
+	if (_saveSlotToLoad >= 0) {
+		Common::Error status = loadGameState(_saveSlotToLoad);
+		if (status.getCode() != Common::kNoError) {
+			Common::String failMessage = Common::String::format(_("Gamestate load failed (%s)! "
+				  "Please consult the README for basic information, and for "
+				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
+			GUI::MessageDialog dialog(failMessage);
+			dialog.runModal();
+		}
+	}
 
 	syncSoundSettings();
 }
@@ -479,14 +485,30 @@ void Engine::syncSoundSettings() {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
+	// We need to handle the speech mute separately here. This is because the
+	// engine code should be able to rely on all speech sounds muted when the
+	// user specified subtitles only mode, which results in "speech_mute" to
+	// be set to "true". The global mute setting has precedence over the
+	// speech mute setting though.
+	bool speechMute = mute;
+	if (!speechMute)
+		speechMute = ConfMan.getBool("speech_mute");
+
 	_mixer->muteSoundType(Audio::Mixer::kPlainSoundType, mute);
 	_mixer->muteSoundType(Audio::Mixer::kMusicSoundType, mute);
 	_mixer->muteSoundType(Audio::Mixer::kSFXSoundType, mute);
-	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, mute);
+	_mixer->muteSoundType(Audio::Mixer::kSpeechSoundType, speechMute);
+
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, Audio::Mixer::kMaxMixerVolume);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolumeSFX);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, soundVolumeSpeech);
+}
+
+void Engine::deinitKeymap() {
+#ifdef ENABLE_KEYMAPPER
+	_eventMan->getKeymapper()->cleanupGameKeymaps();
+#endif
 }
 
 void Engine::flipMute() {

@@ -21,8 +21,8 @@
  */
 
 #include "mohawk/cursors.h"
-#include "mohawk/graphics.h"
 #include "mohawk/myst.h"
+#include "mohawk/myst_graphics.h"
 #include "mohawk/myst_stacks/demo.h"
 
 #include "common/system.h"

@@ -25,7 +25,8 @@ import lex
 import op
 
 class parser:
-	def __init__(self):
+	def __init__(self, skip_binary_data = []):
+		self.skip_binary_data = skip_binary_data
 		self.strip_path = 0
 		self.__globals = {}
 		self.__offsets = {}
@@ -186,6 +187,7 @@ class parser:
 
 	def parse(self, fname):
 #		print "opening file %s..." %(fname, basedir)
+		skipping_binary_data = False
 		fd = open(fname, 'rb')
 		for line in fd:
 			line = line.strip()
@@ -198,10 +200,15 @@ class parser:
 				line = line[len(m.group(0)):].strip()
 				if self.visible():
 					name = m.group(1)
-					if self.proc is not None:
-						self.proc.add_label(name)
-					print "offset %s -> %d" %(name, len(self.binary_data))
-					self.set_offset(name, (len(self.binary_data), self.proc, len(self.proc.stmts) if self.proc is not None else 0))
+					if not (name.lower() in self.skip_binary_data):
+						if self.proc is not None:
+							self.proc.add_label(name)
+						print "offset %s -> %d" %(name, len(self.binary_data))
+						self.set_offset(name, (len(self.binary_data), self.proc, len(self.proc.stmts) if self.proc is not None else 0))
+						skipping_binary_data = False
+					else:
+						print "skipping binary data for %s" % (name,)
+						skipping_binary_data = True
 			#print line
 
 			cmd = line.split()
@@ -224,9 +231,10 @@ class parser:
 
 			if cmd0 == 'db' or cmd0 == 'dw' or cmd0 == 'dd':
 				arg = line[len(cmd0):].strip()
-				print "%d:1: %s" %(len(self.binary_data), arg) #fixme: COPYPASTE
-				binary_width = {'b': 1, 'w': 2, 'd': 4}[cmd0[1]]
-				self.binary_data += self.compact_data(binary_width, lex.parse_args(arg))
+				if not skipping_binary_data:
+					print "%d:1: %s" %(len(self.binary_data), arg) #fixme: COPYPASTE
+					binary_width = {'b': 1, 'w': 2, 'd': 4}[cmd0[1]]
+					self.binary_data += self.compact_data(binary_width, lex.parse_args(arg))
 				continue
 			elif cmd0 == 'include':
 				self.include(os.path.dirname(fname), cmd[1])
@@ -245,16 +253,25 @@ class parser:
 			if len(cmd) >= 3:
 				cmd1 = cmd[1]
 				if cmd1 == 'equ':
-					v = cmd[2]
-					self.set_global(cmd0, op.const(self.fix_dollar(v)))
+					if not (cmd0.lower() in self.skip_binary_data):
+						v = cmd[2]
+						self.set_global(cmd0, op.const(self.fix_dollar(v)))
+					else:
+						print "skipping binary data for %s" % (cmd0.lower(),)
+						skipping_binary_data = True
 				elif cmd1 == 'db' or cmd1 == 'dw' or cmd1 == 'dd':
-					binary_width = {'b': 1, 'w': 2, 'd': 4}[cmd1[1]]
-					offset = len(self.binary_data)
-					arg = line[len(cmd0):].strip()
-					arg = arg[len(cmd1):].strip()
-					print "%d: %s" %(offset, arg)
-					self.binary_data += self.compact_data(binary_width, lex.parse_args(arg))
-					self.set_global(cmd0.lower(), op.var(binary_width, offset))
+					if not (cmd0.lower() in self.skip_binary_data):
+						binary_width = {'b': 1, 'w': 2, 'd': 4}[cmd1[1]]
+						offset = len(self.binary_data)
+						arg = line[len(cmd0):].strip()
+						arg = arg[len(cmd1):].strip()
+						print "%d: %s" %(offset, arg)
+						self.binary_data += self.compact_data(binary_width, lex.parse_args(arg))
+						self.set_global(cmd0.lower(), op.var(binary_width, offset))
+						skipping_binary_data = False
+					else:
+						print "skipping binary data for %s" % (cmd0.lower(),)
+						skipping_binary_data = True
 					continue
 				elif cmd1 == 'proc':
 					name = cmd0.lower()

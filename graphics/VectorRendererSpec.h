@@ -103,7 +103,7 @@ protected:
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
 	inline void blendPixel(int x, int y, PixelType color, uint8 alpha) {
-		blendPixelPtr((PixelType*)Base::_activeSurface->getBasePtr(x, y), color, alpha);
+		blendPixelPtr((PixelType *)Base::_activeSurface->getBasePtr(x, y), color, alpha);
 	}
 
 	/**
@@ -119,6 +119,24 @@ protected:
 	 * @param alpha Alpha intensity of the pixel (0-255)
 	 */
 	inline void blendPixelPtr(PixelType *ptr, PixelType color, uint8 alpha);
+
+	/**
+	 * Blends a single pixel on the surface in the given pixel pointer, using supplied color
+	 * and Alpha intensity.
+	 * If the destination pixel has 0 alpha, set the color and alpha channels,
+	 * overwriting the destination pixel entirely.
+	 * If the destination pixel has non-zero alpha, blend dest with src.
+	 *
+	 * This is implemented to prevent blendPixel() to calculate the surface pointer on each call.
+	 * Optimized drawing algorithms should call this function when possible.
+	 *
+	 * @see blendPixel
+	 * @param ptr Pointer to the pixel to blend on top of
+	 * @param color Color of the pixel
+	 * @param alpha Alpha intensity of the pixel (0-255)
+	 */
+	inline void blendPixelDestAlphaPtr(PixelType *ptr, PixelType color, uint8 alpha);
+
 
 	/**
 	 * PRIMITIVE DRAWING ALGORITHMS
@@ -172,7 +190,6 @@ protected:
 	 */
 	virtual void drawSquareShadow(int x, int y, int w, int h, int blur);
 	virtual void drawRoundedSquareShadow(int x, int y, int r, int w, int h, int blur);
-	virtual void drawRoundedSquareFakeBevel(int x, int y, int r, int w, int h, int amount);
 
 	/**
 	 * Calculates the color gradient on a given point.
@@ -184,6 +201,9 @@ protected:
 	 * @return Composite color of the gradient at the given "progress" amount.
 	 */
 	inline PixelType calcGradient(uint32 pos, uint32 max);
+
+	void precalcGradient(int h);
+	void gradientFill(PixelType *first, int width, int x, int y);
 
 	/**
 	 * Fills several pixels in a row with a given color and the specified alpha blending.
@@ -199,6 +219,8 @@ protected:
 		while (first != last) blendPixelPtr(first++, color, alpha);
 	}
 
+	void darkenFill(PixelType *first, PixelType *last);
+
 	const PixelFormat _format;
 	const PixelType _redMask, _greenMask, _blueMask, _alphaMask;
 
@@ -207,6 +229,11 @@ protected:
 
 	PixelType _gradientStart; /**< Start color for the fill gradient */
 	PixelType _gradientEnd; /**< End color for the fill gradient */
+
+	int _gradientBytes[3]; /**< Color bytes of the active gradient, used to speed up calculation */
+
+	Common::Array<PixelType> _gradCache;
+	Common::Array<int> _gradIndexes;
 
 	PixelType _bevelColor;
 	PixelType _bitmapAlphaColor;
@@ -270,6 +297,10 @@ protected:
 //		VectorRenderer::applyConvolutionMatrix(VectorRenderer::kConvolutionHardBlur,
 //            Common::Rect(x, y, x + w + blur * 2, y + h + blur * 2));
 	}
+
+	virtual void drawTabAlg(int x, int y, int w, int h, int r,
+	    PixelType color, VectorRenderer::FillMode fill_m,
+	    int baseLeft = 0, int baseRight = 0);
 };
 #endif
 

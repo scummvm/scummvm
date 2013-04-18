@@ -205,15 +205,15 @@ void ObjectHandler_v1d::moveObjects() {
 					if (!obj->vx) {                 // Got 4 directions
 						if (obj->vx != obj->oldvx) {// vx just stopped
 							if (dy > 0)
-								obj->currImagePtr = obj->seqList[DOWN].seqPtr;
+								obj->currImagePtr = obj->seqList[SEQ_DOWN].seqPtr;
 							else
-								obj->currImagePtr = obj->seqList[_UP].seqPtr;
+								obj->currImagePtr = obj->seqList[SEQ_UP].seqPtr;
 						}
 					} else if (obj->vx != obj->oldvx) {
 						if (dx > 0)
-							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+							obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 						else
-							obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+							obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 					}
 				}
 
@@ -239,15 +239,15 @@ void ObjectHandler_v1d::moveObjects() {
 						if (!obj->vx && (obj->seqNumb > 2)) {
 							if (obj->vx != obj->oldvx) { // vx just stopped
 								if (obj->vy > 0)
-									obj->currImagePtr = obj->seqList[DOWN].seqPtr;
+									obj->currImagePtr = obj->seqList[SEQ_DOWN].seqPtr;
 								else
-									obj->currImagePtr = obj->seqList[_UP].seqPtr;
+									obj->currImagePtr = obj->seqList[SEQ_UP].seqPtr;
 							}
 						} else if (obj->vx != obj->oldvx) {
 							if (obj->vx > 0)
-								obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+								obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 							else
-								obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+								obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 						}
 
 						if (obj->vx || obj->vy)

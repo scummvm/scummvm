@@ -23,6 +23,7 @@
 #define GRAPHICS_FONTS_BDF_H
 
 #include "common/system.h"
+#include "common/types.h"
 
 #include "graphics/font.h"
 
@@ -32,42 +33,29 @@ class SeekableReadStream;
 
 namespace Graphics {
 
-typedef uint16 bitmap_t; /* bitmap image unit size*/
-
-struct BBX {
-	int8 w;
-	int8 h;
-	int8 x;
-	int8 y;
+struct BdfBoundingBox {
+	uint8 width, height;
+	int8 xOffset, yOffset;
 };
 
-/* builtin C-based proportional/fixed font structure */
-/* based on The Microwindows Project http://microwindows.org */
-struct BdfFontDesc {
-	const char          *name;                  /* font name */
-	int                 maxwidth;               /* max width in pixels */
-	int                 height;                 /* height in pixels */
-	int                 fbbw, fbbh, fbbx, fbby; /* max bounding box */
-	int                 ascent;                 /* ascent (baseline) height */
-	int                 firstchar;              /* first character in bitmap */
-	int                 size;                   /* font size in glyphs */
-	const bitmap_t      *bits;                  /* 16-bit right-padded bitmap data */
-	const unsigned long *offset;                /* offsets into bitmap data */
-	const unsigned char *width;                 /* character widths or NULL if fixed */
-	const BBX           *bbx;                   /* character bounding box or NULL if fixed */
-	int                 defaultchar;            /* default char (not glyph index) */
-	long                bits_size;              /* # words of bitmap_t bits */
-};
+struct BdfFontData {
+	int maxAdvance;
+	int height;
+	BdfBoundingBox defaultBox;
+	int ascent;
 
-struct BdfFontData;
+	int firstCharacter;
+	int defaultCharacter;
+	int numCharacters;
+
+	const byte *const *bitmaps;
+	const byte *advances;
+	const BdfBoundingBox *boxes;
+};
 
 class BdfFont : public Font {
-protected:
-	BdfFontDesc _desc;
-	BdfFontData *_font;
-
 public:
-	BdfFont(const BdfFontDesc &desc, BdfFontData *font = 0) : _desc(desc), _font(font) {}
+	BdfFont(const BdfFontData &data, DisposeAfterUse::Flag dispose);
 	~BdfFont();
 
 	virtual int getFontHeight() const;
@@ -79,12 +67,17 @@ public:
 	static BdfFont *loadFont(Common::SeekableReadStream &stream);
 	static bool cacheFontData(const BdfFont &font, const Common::String &filename);
 	static BdfFont *loadFromCache(Common::SeekableReadStream &stream);
+private:
+	int mapToIndex(byte ch) const;
+
+	const BdfFontData _data;
+	const DisposeAfterUse::Flag _dispose;
 };
 
 #define DEFINE_FONT(n) \
 	const BdfFont *n = 0;   \
 	void create_##n() { \
-		n = new BdfFont(desc);  \
+		n = new BdfFont(desc, DisposeAfterUse::YES);  \
 	}
 
 #define FORWARD_DECLARE_FONT(n) \

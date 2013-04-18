@@ -29,7 +29,7 @@
 
 static bool isValidDomainName(const Common::String &domName) {
 	const char *p = domName.c_str();
-	while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_'))
+	while (*p && (Common::isAlnum(*p) || *p == '-' || *p == '_'))
 		p++;
 	return *p == 0;
 }
@@ -187,7 +187,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 			// Get the domain name, and check whether it's valid (that
 			// is, verify that it only consists of alphanumerics,
 			// dashes and underscores).
-			while (*p && (isalnum(static_cast<unsigned char>(*p)) || *p == '-' || *p == '_'))
+			while (*p && (isAlnum(*p) || *p == '-' || *p == '_'))
 				p++;
 
 			if (*p == '\0')
@@ -205,7 +205,7 @@ void ConfigManager::loadFromStream(SeekableReadStream &stream) {
 
 			// Skip leading whitespaces
 			const char *t = line.c_str();
-			while (isspace(static_cast<unsigned char>(*t)))
+			while (isSpace(*t))
 				t++;
 
 			// Skip empty lines / lines with only whitespace

@@ -194,7 +194,7 @@ void CommandHandler::runCommand() {
 			break;
 		case kCmdInf:
 			if (_talkEnable) {
-				_vm->inf(_vm->_text->getText(tailCmd->_val));
+				_vm->inf(_vm->_text->getText(tailCmd->_val), true);
 				_vm->_sys->_funDel = kHeroFun0;
 			}
 			break;
@@ -375,6 +375,10 @@ bool CommandHandler::idle() {
 	return (_head == _tail);
 }
 
+void CommandHandler::reset() {
+	_tail = _head;
+}
+
 /**
  * Handles mini-Games logic
  * @param com			Command
@@ -406,7 +410,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 			Stage++;
 			if (hand && Stage > kDressed)
 				++hand;
-			if (i >= 0 || (dup[i] == spr && newRandom(3) == 0)) {
+			if (i >= 0 && (dup[i] == spr && newRandom(3) == 0)) {
 				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[0]);               // Yes
 				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[1]);               // Yes
 				_commandHandler->addCommand(kCmdSeq, -1, 3, dup[2]);               // Yes
@@ -443,7 +447,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 				_commandHandler->addCommand(kCmdSeq, -1, 0, dup[2]);               // Get Away (Her)
 				_commandHandler->addCommand(kCmdSetXY, -1, 182 + kScrWidth * 62, dup[2]);
 				_commandHandler->addCommand(kCmdSetZ, -1, 9, dup[2]);
-				_game = 0;
+				_game = false;
 				return;
 			} else {
 				_commandHandler->addCommand(kCmdSeq, -1, 2, dup[0]);               // reset animation sequence
@@ -489,7 +493,7 @@ void CGEEngine::snGame(Sprite *spr, int num) {
 		_sprK2->step(newRandom(6));
 		_sprK3->step(newRandom(6));
 
-		if (spr->_ref == 1 && _keyboard->_key[kKeyAlt]) {
+		if (spr->_ref == 1 && _keyboard->_keyAlt) {
 			_sprK1->step(5);
 			_sprK2->step(5);
 			_sprK3->step(5);

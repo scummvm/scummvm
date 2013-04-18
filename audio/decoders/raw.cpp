@@ -45,40 +45,18 @@ namespace Audio {
 
 /**
  * This is a stream, which allows for playing raw PCM data from a stream.
- * It also features playback of multiple blocks from a given stream.
  */
 template<bool is16Bit, bool isUnsigned, bool isLE>
 class RawStream : public SeekableAudioStream {
 public:
-	RawStream(int rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream, const RawStreamBlockList &blocks)
-		: _rate(rate), _isStereo(stereo), _playtime(0, rate), _stream(stream, disposeStream), _blocks(blocks), _curBlock(_blocks.begin()), _blockLeft(0), _buffer(0) {
-
-		assert(_blocks.size() > 0);
-
+	RawStream(int rate, bool stereo, DisposeAfterUse::Flag disposeStream, Common::SeekableReadStream *stream)
+		: _rate(rate), _isStereo(stereo), _playtime(0, rate), _stream(stream, disposeStream), _endOfData(false), _buffer(0) {
 		// Setup our buffer for readBuffer
 		_buffer = new byte[kSampleBufferLength * (is16Bit ? 2 : 1)];
 		assert(_buffer);
 
-		// Set current buffer state, playing first block
-		_stream->seek(_curBlock->pos, SEEK_SET);
-
-		// In case of an error we will stop (or rather
-		// not start) stream playback.
-		if (_stream->err()) {
-			_blockLeft = 0;
-			_curBlock = _blocks.end();
-		} else {
-			_blockLeft = _curBlock->len;
-		}
-
-		// Add up length of all blocks in order to caluclate total play time
-		int32 len = 0;
-		for (RawStreamBlockList::const_iterator i = _blocks.begin(); i != _blocks.end(); ++i) {
-			assert(i->len % (_isStereo ? 2 : 1) == 0);
-			len += i->len;
-		}
-
-		_playtime = Timestamp(0, len / (_isStereo ? 2 : 1), rate);
+		// Calculate the total playtime of the stream
+		_playtime = Timestamp(0, _stream->size() / (_isStereo ? 2 : 1) / (is16Bit ? 2 : 1), rate);
 	}
 
 	~RawStream() {
@@ -87,8 +65,8 @@ public:
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
-	bool isStereo() const           { return _isStereo; }
-	bool endOfData() const          { return (_curBlock == _blocks.end()) && (_blockLeft == 0); }
+	bool isStereo() const  { return _isStereo; }
+	bool endOfData() const { return _endOfData; }
 
 	int getRate() const         { return _rate; }
 	Timestamp getLength() const { return _playtime; }
@@ -99,18 +77,9 @@ private:
 	const bool _isStereo;                                      ///< Whether this is an stereo stream
 	Timestamp _playtime;                                       ///< Calculated total play time
 	Common::DisposablePtr<Common::SeekableReadStream> _stream; ///< Stream to read data from
-	const RawStreamBlockList _blocks;                          ///< Audio block list
+	bool _endOfData;                                           ///< Whether the stream end has been reached
 
-	RawStreamBlockList::const_iterator _curBlock;              ///< Current audio block number
-	int32 _blockLeft;                                          ///< How many bytes are still left in the current block
-
-	/**
-	 * Advance one block in the stream in case
-	 * the current one is empty.
-	 */
-	void updateBlockIfNeeded();
-
-	byte *_buffer;                                 ///< Buffer used in readBuffer
+	byte *_buffer;                                             ///< Buffer used in readBuffer
 	enum {
 		/**
 		 * How many samples we can buffer at once.
@@ -169,13 +138,9 @@ int RawStream<is16Bit, isUnsigned, isLE>::fillBuffer(int maxSamples) {
 
 	// We will only read up to maxSamples
 	while (maxSamples > 0 && !endOfData()) {
-		// Calculate how many samples we can safely read
-		// from the current block.
-		const int len = MIN<int>(maxSamples, _blockLeft);
-
 		// Try to read all the sample data and update the
 		// destination pointer.
-		const int bytesRead = _stream->read(dst, len * (is16Bit ? 2 : 1));
+		const int bytesRead = _stream->read(dst, maxSamples * (is16Bit ? 2 : 1));
 		dst += bytesRead;
 
 		// Calculate how many samples we actually read.
@@ -184,87 +149,31 @@ int RawStream<is16Bit, isUnsigned, isLE>::fillBuffer(int maxSamples) {
 		// Update all status variables
 		bufferedSamples += samplesRead;
 		maxSamples -= samplesRead;
-		_blockLeft -= samplesRead;
 
-		// In case of an error we will stop
-		// stream playback.
-		if (_stream->err()) {
-			_blockLeft = 0;
-			_curBlock = _blocks.end();
-		}
-
-		// Advance to the next block in case the current
-		// one is already finished.
-		updateBlockIfNeeded();
+		// We stop stream playback, when we reached the end of the data stream.
+		// We also stop playback when an error occures.
+		if (_stream->pos() == _stream->size() || _stream->err() || _stream->eos())
+			_endOfData = true;
 	}
 
 	return bufferedSamples;
 }
 
 template<bool is16Bit, bool isUnsigned, bool isLE>
-void RawStream<is16Bit, isUnsigned, isLE>::updateBlockIfNeeded() {
-	// Have we now finished this block? If so, read the next block
-	if (_blockLeft == 0 && _curBlock != _blocks.end()) {
-		// Next block
-		++_curBlock;
-
-		// Check whether we reached the end of the stream
-		// yet. In case we did not do this, we will just
-		// setup the next block as new block.
-		if (_curBlock != _blocks.end()) {
-			_stream->seek(_curBlock->pos, SEEK_SET);
-
-			// In case of an error we will stop
-			// stream playback.
-			if (_stream->err()) {
-				_blockLeft = 0;
-				_curBlock = _blocks.end();
-			} else {
-				_blockLeft = _curBlock->len;
-			}
-		}
-	}
-}
-
-template<bool is16Bit, bool isUnsigned, bool isLE>
 bool RawStream<is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
-	_blockLeft = 0;
-	_curBlock = _blocks.end();
+	_endOfData = true;
 
 	if (where > _playtime)
 		return false;
 
 	const uint32 seekSample = convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames();
-	uint32 curSample = 0;
+	_stream->seek(seekSample * (is16Bit ? 2 : 1), SEEK_SET);
 
-	// Search for the disk block in which the specific sample is placed
-	for (_curBlock = _blocks.begin(); _curBlock != _blocks.end(); ++_curBlock) {
-		uint32 nextBlockSample = curSample + _curBlock->len;
+	// In case of an error we will not continue stream playback.
+	if (!_stream->err() && !_stream->eos() && _stream->pos() != _stream->size())
+		_endOfData = false;
 
-		if (nextBlockSample > seekSample)
-			break;
-
-		curSample = nextBlockSample;
-	}
-
-	if (_curBlock == _blocks.end()) {
-		return ((seekSample - curSample) == 0);
-	} else {
-		const uint32 offset = seekSample - curSample;
-
-		_stream->seek(_curBlock->pos + offset * (is16Bit ? 2 : 1), SEEK_SET);
-
-		// In case of an error we will stop
-		// stream playback.
-		if (_stream->err()) {
-			_blockLeft = 0;
-			_curBlock = _blocks.end();
-		} else {
-			_blockLeft = _curBlock->len - offset;
-		}
-
-		return true;
-	}
+	return true;
 }
 
 #pragma mark -
@@ -283,28 +192,21 @@ bool RawStream<is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
 #define MAKE_RAW_STREAM(UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new RawStream<true, UNSIGNED, true>(rate, isStereo, disposeAfterUse, stream, blockList); \
+				return new RawStream<true, UNSIGNED, true>(rate, isStereo, disposeAfterUse, stream); \
 			else  \
-				return new RawStream<true, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream, blockList); \
+				return new RawStream<true, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream); \
 		} else \
-			return new RawStream<false, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream, blockList)
+			return new RawStream<false, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream)
 
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   const RawStreamBlockList &blockList,
-                                   int rate,
-                                   byte flags,
+                                   int rate, byte flags,
                                    DisposeAfterUse::Flag disposeAfterUse) {
 	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Audio::FLAG_UNSIGNED) != 0;
 	const bool isLE       = (flags & Audio::FLAG_LITTLE_ENDIAN) != 0;
 
-	if (blockList.empty()) {
-		warning("Empty block list passed to makeRawStream");
-		if (disposeAfterUse == DisposeAfterUse::YES)
-			delete stream;
-		return 0;
-	}
+	assert(stream->size() % ((is16Bit ? 2 : 1) * (isStereo ? 2 : 1)) == 0);
 
 	if (isUnsigned) {
 		MAKE_RAW_STREAM(true);
@@ -313,38 +215,10 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 	}
 }
 
-SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   int rate, byte flags,
-                                   DisposeAfterUse::Flag disposeAfterUse) {
-	RawStreamBlockList blocks;
-	RawStreamBlock block;
-	block.pos = 0;
-
-	const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
-	const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
-
-	assert(stream->size() % ((is16Bit ? 2 : 1) * (isStereo ? 2 : 1)) == 0);
-
-	block.len = stream->size() / (is16Bit ? 2 : 1);
-	blocks.push_back(block);
-
-	return makeRawStream(stream, blocks, rate, flags, disposeAfterUse);
-}
-
 SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
                                    int rate, byte flags,
                                    DisposeAfterUse::Flag disposeAfterUse) {
 	return makeRawStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, flags, DisposeAfterUse::YES);
-}
-
-SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream, RawStreamBlock *block, int numBlocks,
-                                           int rate, byte flags, DisposeAfterUse::Flag disposeStream) {
-	assert(numBlocks > 0);
-	RawStreamBlockList blocks;
-	for (int i = 0; i < numBlocks; ++i)
-		blocks.push_back(block[i]);
-
-	return makeRawStream(stream, blocks, rate, flags, disposeStream);
 }
 
 } // End of namespace Audio

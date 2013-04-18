@@ -43,7 +43,7 @@ RoomLayer::RoomLayer(uint16 screenId, bool backgroundLayer):
 	int cellIndex = 0;
 
 	// Reset all the cells to unused
-	Common::set_to((uint8 *) _cells, (uint8 *) _cells + GRID_SIZE, 0xff);
+	Common::fill((uint8 *) _cells, (uint8 *) _cells + GRID_SIZE, 0xff);
 
 	// Load up the screen data
 	MemoryBlock *rawData = disk.getEntry(screenId);

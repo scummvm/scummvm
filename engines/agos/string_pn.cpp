@@ -137,7 +137,7 @@ void AGOSEngine_PN::pcf(uint8 ch) {
 		if ((ch != 32) || (_bp + _xofs != 50))
 			_buffer[_bp++] = ch;
 	}
-	if ((ch != 254) && (!isspace(ch)) && (_bp < 60))
+	if ((ch != 254) && (!Common::isSpace(ch)) && (_bp < 60))
 		return;
 	/* We know have a case of needing to print the text */
 	if (_bp + _xofs > 50) {

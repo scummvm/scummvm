@@ -49,9 +49,9 @@ public:
 	Entry getFileEntry(const Common::String &name) const;
 
 	// Common::Archive API implementation
-	bool hasFile(const Common::String &name);
-	int listMembers(Common::ArchiveMemberList &list);
-	Common::ArchiveMemberPtr getMember(const Common::String &name);
+	bool hasFile(const Common::String &name) const;
+	int listMembers(Common::ArchiveMemberList &list) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 private:
 	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
@@ -65,9 +65,9 @@ public:
 	TlkArchive(Common::ArchiveMemberPtr file, uint16 entryCount, const uint32 *fileEntries);
 	~TlkArchive();
 
-	bool hasFile(const Common::String &name);
-	int listMembers(Common::ArchiveMemberList &list);
-	Common::ArchiveMemberPtr getMember(const Common::String &name);
+	bool hasFile(const Common::String &name) const;
+	int listMembers(Common::ArchiveMemberList &list) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 private:
 	Common::ArchiveMemberPtr _file;
@@ -92,9 +92,9 @@ public:
 	CachedArchive(const FileInputList &files);
 	~CachedArchive();
 
-	bool hasFile(const Common::String &name);
-	int listMembers(Common::ArchiveMemberList &list);
-	Common::ArchiveMemberPtr getMember(const Common::String &name);
+	bool hasFile(const Common::String &name) const;
+	int listMembers(Common::ArchiveMemberList &list) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 private:
 	struct Entry {

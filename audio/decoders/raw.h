@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_RAW_H
-#define SOUND_RAW_H
+#ifndef AUDIO_RAW_H
+#define AUDIO_RAW_H
 
 #include "common/scummsys.h"
 #include "common/types.h"
@@ -60,21 +60,6 @@ enum RawFlags {
 	FLAG_STEREO = 1 << 3
 };
 
-
-/**
- * Struct used to define the audio data to be played by a RawStream.
- */
-struct RawStreamBlock {
-	int32 pos;   ///< Position in stream of the block (in bytes of course!)
-	int32 len;   ///< Length of the block (in raw samples, not sample pairs!)
-};
-
-/**
- * List containing all blocks of a raw stream.
- * @see RawStreamBlock
- */
-typedef Common::List<RawStreamBlock> RawStreamBlockList;
-
 /**
  * Creates an audio stream, which plays from the given buffer.
  *
@@ -103,47 +88,6 @@ SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
                                    int rate, byte flags,
                                    DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
-
-/**
- * Creates an audio stream, which plays from the given stream.
- *
- * @param stream Stream object to play from.
- * @param blockList List of blocks to play.
- * @see RawDiskStreamAudioBlock
- * @see RawStreamBlockList
- * @param rate Rate of the sound data.
- * @param flags Audio flags combination.
- * @see RawFlags
- * @param disposeAfterUse Whether to delete the stream after use.
- * @return The new SeekableAudioStream (or 0 on failure).
- */
-SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   const RawStreamBlockList &blockList,
-                                   int rate,
-                                   byte flags,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
-
-/**
- * NOTE:
- * This API is considered deprecated.
- *
- * Creates a audio stream, which plays from given stream.
- *
- * @param stream Stream to play from
- * @param block Pointer to an RawStreamBlock array
- * @see RawStreamBlock
- * @param numBlocks Number of blocks.
- * @param rate The rate
- * @param flags Flags combination.
- * @see RawFlags
- * @param disposeStream Whether the "stream" object should be destroyed after playback.
- * @return The new SeekableAudioStream (or 0 on failure).
- */
-SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream,
-		RawStreamBlock *block, int numBlocks,
-		int rate, byte flags,
-		DisposeAfterUse::Flag disposeStream);
-
 
 } // End of namespace Audio
 

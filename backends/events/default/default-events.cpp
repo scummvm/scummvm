@@ -60,6 +60,8 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	// EventDispatcher will automatically free the keymapper
 	_dispatcher.registerMapper(_keymapper);
 	_remap = false;
+#else
+	_dispatcher.registerMapper(new Common::DefaultEventMapper());
 #endif
 }
 
@@ -100,67 +102,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_currentKeyDown.flags = event.kbd.flags;
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 
-			// Global Main Menu
-			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_F5) {
-				if (g_engine && !g_engine->isPaused()) {
-					Common::Event menuEvent;
-					menuEvent.type = Common::EVENT_MAINMENU;
-
-					// FIXME: GSoC RTL branch passes the F6 key event to the
-					// engine, and also enqueues a EVENT_MAINMENU. For now,
-					// we just drop the key event and return an EVENT_MAINMENU
-					// instead. This way, we don't have to add special cases
-					// to engines (like it was the case for LURE in the RTL branch).
-					//
-					// However, this has other consequences, possibly negative ones.
-					// Like, what happens with key repeat for the trigger key?
-
-					//pushEvent(menuEvent);
-					event = menuEvent;
-
-					// FIXME: Since now we do not push another MAINMENU event onto
-					// our event stack, the GMM would never open, so we have to do
-					// that here. Of course when the engine would handle MAINMENU
-					// as an event now and open up the GMM itself it would open the
-					// menu twice.
-					if (g_engine && !g_engine->isPaused())
-						g_engine->openMainMenuDialog();
-
-					if (_shouldQuit)
-						event.type = Common::EVENT_QUIT;
-					else if (_shouldRTL)
-						event.type = Common::EVENT_RTL;
-				}
-			}
-#ifdef ENABLE_VKEYBD
-			else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.hasFlags(0)) {
-				if (_vk->isDisplaying()) {
-					_vk->close(true);
-				} else {
-					if (g_engine)
-						g_engine->pauseEngine(true);
-					_vk->show();
-					if (g_engine)
-						g_engine->pauseEngine(false);
-					result = false;
-				}
-			}
-#endif
-#ifdef ENABLE_KEYMAPPER
-			else if (event.kbd.keycode == Common::KEYCODE_F8 && event.kbd.hasFlags(0)) {
-				if (!_remap) {
-					_remap = true;
-					Common::RemapDialog _remapDialog;
-					if (g_engine)
-						g_engine->pauseEngine(true);
-					_remapDialog.runModal();
-					if (g_engine)
-						g_engine->pauseEngine(false);
-					_remap = false;
-				}
-			}
-#endif
-			else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+			if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
 				// WORKAROUND: Some engines incorrectly attempt to use the
 				// ascii value instead of the keycode to detect the backspace
 				// key (a non-portable behavior). This fails at least on
@@ -214,7 +156,34 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			else if (_shouldRTL)
 				event.type = Common::EVENT_RTL;
 			break;
-
+#ifdef ENABLE_VKEYBD
+		case Common::EVENT_VIRTUAL_KEYBOARD:
+			if (_vk->isDisplaying()) {
+				_vk->close(true);
+			} else {
+				if (g_engine)
+					g_engine->pauseEngine(true);
+				_vk->show();
+				if (g_engine)
+					g_engine->pauseEngine(false);
+				result = false;
+			}
+			break;
+#endif
+#ifdef ENABLE_KEYMAPPER
+		case Common::EVENT_KEYMAPPER_REMAP:
+			if (!_remap) {
+				_remap = true;
+				Common::RemapDialog _remapDialog;
+				if (g_engine)
+					g_engine->pauseEngine(true);
+				_remapDialog.runModal();
+				if (g_engine)
+					g_engine->pauseEngine(false);
+				_remap = false;
+			}
+			break;
+#endif
 		case Common::EVENT_RTL:
 			if (ConfMan.getBool("confirm_exit")) {
 				if (g_engine)

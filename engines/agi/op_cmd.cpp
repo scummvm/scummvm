@@ -1622,15 +1622,15 @@ void cmdPrintAtV(AgiGame *state, uint8 *p) {
 
 void cmdPushScript(AgiGame *state, uint8 *p) {
 	// We run AGIMOUSE always as a side effect
-	if (getFeatures() & GF_AGIMOUSE || true) {
+	//if (getFeatures() & GF_AGIMOUSE || true) {
 		state->vars[27] = state->_vm->_mouse.button;
 		state->vars[28] = state->_vm->_mouse.x / 2;
 		state->vars[29] = state->_vm->_mouse.y;
-	} else {
+	/*} else {
 		if (getVersion() >= 0x2915) {
 			debug(0, "push.script");
 		}
-	}
+	}*/
 }
 
 void cmdSetPriBase(AgiGame *state, uint8 *p) {
@@ -1702,6 +1702,9 @@ void cmdSetItemView(AgiGame *state, uint8 *p) {
 
 void cmdCallV1(AgiGame *state, uint8 *p) {
 	state->_vm->agiLoadResource(rLOGIC, p0);
+	// FIXME: The following instruction looks incomplete.
+	// Maybe something is meant to be assigned to, or read from,
+	// the logic_list entry?
 	state->logic_list[++state->max_logics];
 	_v[13] = 1;
 }

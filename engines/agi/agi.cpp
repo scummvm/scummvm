@@ -250,19 +250,7 @@ void AgiEngine::processEvents() {
 				// Not a special key, so get the ASCII code for it
 				key = event.kbd.ascii;
 
-				// Function isalpha is defined in <ctype.h> so the following applies to it:
-				//
-				// The C Programming Language Standard states:
-				//   The header <ctype.h> declares several functions useful for classifying
-				//   and mapping characters. In all cases the argument is an int, the value
-				//   of which shall be representable as an unsigned char or shall equal the
-				//   value of the macro EOF. If the argument has any other value, the
-				//   behavior is undefined.
-				//
-				// For a concrete example (e.g. in Microsoft Visual Studio 2003):
-				//   When used with a debug CRT library, isalpha will display a CRT assert
-				//   if passed a parameter that isn't EOF or in the range of 0 through 0xFF.
-				if (key >= 0 && key <= 0xFF && isalpha(key)) {
+				if (Common::isAlpha(key)) {
 					// Key is A-Z.
 					// Map Ctrl-A to 1, Ctrl-B to 2, etc.
 					if (event.kbd.flags & Common::KBD_CTRL) {

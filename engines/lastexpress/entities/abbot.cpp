@@ -841,7 +841,7 @@ IMPLEMENT_FUNCTION(31, Abbot, function31)
 
 	case kActionNone:
 		if (params->param4 != kTimeInvalid && params->param2 < getState()->time) {
-			if (getState()->time < getState()->time) {
+			if (params->param3 < getState()->time) {
 				params->param4 = kTimeInvalid;
 
 				setCallback(1);

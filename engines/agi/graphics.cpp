@@ -1083,7 +1083,7 @@ void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
 
 	// Choose the correct screen to read from. If AGI256 or AGI256-2 is used and we're not trying to show the priority information,
 	// then choose the 256 color screen, otherwise choose the 16 color screen (Which also has the priority information).
-	p += _vm->getFeatures() & (GF_AGI256 | GF_AGI256_2) && !_vm->_debug.priority ? FROM_SBUF16_TO_SBUF256_OFFSET : 0;
+	p += ((_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2)) && !_vm->_debug.priority) ? FROM_SBUF16_TO_SBUF256_OFFSET : 0;
 
 	if (_vm->_renderMode == Common::kRenderCGA) {
 		for (x *= 2; n--; p++, x += 2) {
@@ -1091,7 +1091,7 @@ void GfxMgr::putPixelsA(int x, int y, int n, uint8 *p) {
 			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = (q >> rShift) & 0x0f0f;
 		}
 	} else {
-		const uint16 mask = _vm->getFeatures() & (GF_AGI256 | GF_AGI256_2) && !_vm->_debug.priority ? 0xffff : 0x0f0f;
+		const uint16 mask = ((_vm->getFeatures() & (GF_AGI256 | GF_AGI256_2)) && !_vm->_debug.priority) ? 0xffff : 0x0f0f;
 		for (x *= 2; n--; p++, x += 2) {
 			register uint16 q = ((uint16)*p << 8) | *p;
 			*(uint16 *)&_agiScreen[x + y * GFX_WIDTH] = (q >> rShift) & mask;

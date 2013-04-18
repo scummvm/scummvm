@@ -73,6 +73,15 @@ public:
 	virtual int getCharWidth(byte chr) const = 0;
 
 	/**
+	 * Query the kerning offset between two characters.
+	 *
+	 * @param left  The left character. May be 0.
+	 * @param right The right character. May be 0.
+	 * @return The horizontal displacement.
+	 */
+	virtual int getKerningOffset(byte left, byte right) const;
+
+	/**
 	 * Draw a character at a specific point on a surface.
 	 *
 	 * Note that the point describes the top left edge point of the

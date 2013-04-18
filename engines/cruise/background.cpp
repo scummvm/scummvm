@@ -129,7 +129,7 @@ int loadBackground(const char *name, int idx) {
 		flagSpeed = 0;
 	}
 
-	if (!strcmp((char*)ptr, "PAL")) {
+	if (!strcmp((char *)ptr, "PAL")) {
 		memcpy(palScreen[idx], ptr + 4, 256*3);
 		gfxModuleData_setPal256(palScreen[idx]);
 	} else {

@@ -875,21 +875,21 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		// vm.localvar grew from 25 to 40 script entries and then from
 		// 16 to 32 bit variables (but that wasn't reflect here)... and
 		// THEN from 16 to 25 variables.
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 25, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(8), VER(8)),
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 40, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(9), VER(14)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 25, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(8), VER(8)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 17, 40, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(9), VER(14)),
 
 		// We used to save 25 * 40 = 1000 blocks; but actually, each 'row consisted of 26 entry,
 		// i.e. 26 * 40 = 1040. Thus the last 40 blocks of localvar where not saved at all. To be
 		// able to load this screwed format, we use a trick: We load 26 * 38 = 988 blocks.
 		// Then, we mark the followin 12 blocks (24 bytes) as obsolete.
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 26, 38, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(15), VER(17)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint16, 26, 38, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(15), VER(17)),
 		MK_OBSOLETE_ARRAY(ScummEngine, vm.localvar[39][0], sleUint16, 12, VER(15), VER(17)),
 
 		// This was the first proper multi dimensional version of the localvars, with 32 bit values
-		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint32, 26, 40, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(18), VER(19)),
+		MKARRAY2_OLD(ScummEngine, vm.localvar[0][0], sleUint32, 26, 40, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(18), VER(19)),
 
 		// Then we doubled the script slots again, from 40 to 80
-		MKARRAY2(ScummEngine, vm.localvar[0][0], sleUint32, 26, NUM_SCRIPT_SLOT, (byte*)vm.localvar[1] - (byte*)vm.localvar[0], VER(20)),
+		MKARRAY2(ScummEngine, vm.localvar[0][0], sleUint32, 26, NUM_SCRIPT_SLOT, (byte *)vm.localvar[1] - (byte *)vm.localvar[0], VER(20)),
 
 
 		MKARRAY(ScummEngine, _resourceMapper[0], sleByte, 128, VER(8)),
@@ -1205,12 +1205,19 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	// Save/load local objects
 	//
 	s->saveLoadArrayOf(_objs, _numLocalObjects, sizeof(_objs[0]), objectEntries);
-	if (s->isLoading() && s->getVersion() < VER(13)) {
-		// Since roughly v13 of the save games, the objs storage has changed a bit
-		for (i = _numObjectsInRoom; i < _numLocalObjects; i++) {
-			_objs[i].obj_nr = 0;
+	if (s->isLoading()) {
+		if (s->getVersion() < VER(13)) {
+			// Since roughly v13 of the save games, the objs storage has changed a bit
+			for (i = _numObjectsInRoom; i < _numLocalObjects; i++)
+				_objs[i].obj_nr = 0;
+		} else if (_game.version == 0 && s->getVersion() < VER(91)) {
+			for (i = 0; i < _numLocalObjects; i++) {
+				// Merge object id and type (previously stored in flags)
+				if (_objs[i].obj_nr != 0 && OBJECT_V0_TYPE(_objs[i].obj_nr) == 0 && _objs[i].flags != 0)
+					_objs[i].obj_nr = OBJECT_V0(_objs[i].obj_nr, _objs[i].flags);
+				_objs[i].flags = 0;
+			}
 		}
-
 	}
 
 
@@ -1286,14 +1293,35 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 
 	//
 	// Save/load palette data
-	//
-	if (_16BitPalette && !(_game.platform == Common::kPlatformFMTowns && s->isLoading() && s->getVersion() < VER(82))) {
+	// Don't save 16 bit palette in FM-Towns and PCE games, since it gets regenerated afterwards anyway.
+	if (_16BitPalette && !(_game.platform == Common::kPlatformFMTowns && s->getVersion() < VER(82)) && !((_game.platform == Common::kPlatformFMTowns || _game.platform == Common::kPlatformPCEngine) && s->getVersion() > VER(87))) {
 		s->saveLoadArrayOf(_16BitPalette, 512, sizeof(_16BitPalette[0]), sleUint16);
 	}
 
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	
 	// FM-Towns specific (extra palette data, color cycle data, etc.)
-	if (s->getVersion() >= VER(82)) {
+	// In earlier save game versions (below 87) the FM-Towns specific data would get saved (and loaded) even in non FM-Towns games.
+	// This would cause an unnecessary save file incompatibility between DS (which uses the DISABLE_TOWNS_DUAL_LAYER_MODE setting)
+	// and other ports.
+	// In version 88 and later the save files from FM-Towns targets are compatible between DS and other platforms, too.
+
+#ifdef DISABLE_TOWNS_DUAL_LAYER_MODE
+	byte hasTownsData = 0;
+	if (_game.platform == Common::kPlatformFMTowns && s->getVersion() > VER(87))
+		s->saveLoadArrayOf(&hasTownsData, 1, sizeof(byte), sleByte);
+
+	if (hasTownsData) {
+		// Skip FM-Towns specific data
+		for (int i = 69 * sizeof(uint8) + 44 * sizeof(int16); i; i--)
+			s->loadByte();
+	}
+
+#else
+	byte hasTownsData = ((_game.platform == Common::kPlatformFMTowns && s->getVersion() >= VER(87)) || (s->getVersion() >= VER(82) && s->getVersion() < VER(87))) ? 1 : 0;
+	if (_game.platform == Common::kPlatformFMTowns && s->getVersion() > VER(87))
+		s->saveLoadArrayOf(&hasTownsData, 1, sizeof(byte), sleByte);
+
+	if (hasTownsData) {
 		const SaveLoadEntry townsFields[] = {
 			MKLINE(Common::Rect, left, sleInt16, VER(82)),
 			MKLINE(Common::Rect, top, sleInt16, VER(82)),
@@ -1316,6 +1344,8 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 		s->saveLoadArrayOf(&_curStringRect, 1, sizeof(_curStringRect), townsFields);
 		s->saveLoadArrayOf(_townsCharsetColorMap, 16, sizeof(_townsCharsetColorMap[0]), sleUint8);
 		s->saveLoadEntries(this, townsExtraEntries);
+	} else if (_game.platform == Common::kPlatformFMTowns && s->getVersion() >= VER(82)) {
+		warning("Save file is missing FM-Towns specific graphic data (game was apparently saved on another platform)");
 	}
 #endif
 
@@ -1474,6 +1504,14 @@ void ScummEngine_v0::saveOrLoad(Serializer *s) {
 	const SaveLoadEntry v0Entrys[] = {
 		MKLINE(ScummEngine_v0, _currentMode, sleByte, VER(78)),
 		MKLINE(ScummEngine_v0, _currentLights, sleByte, VER(78)),
+		MKLINE(ScummEngine_v0, _activeVerb, sleByte, VER(92)),
+		MKLINE(ScummEngine_v0, _activeObject, sleUint16, VER(92)),
+		MKLINE(ScummEngine_v0, _activeObject2, sleUint16, VER(92)),
+		MKLINE(ScummEngine_v0, _cmdVerb, sleByte, VER(92)),
+		MKLINE(ScummEngine_v0, _cmdObject, sleUint16, VER(92)),
+		MKLINE(ScummEngine_v0, _cmdObject2, sleUint16, VER(92)),
+		MKLINE(ScummEngine_v0, _walkToObject, sleUint16, VER(92)),
+		MKLINE(ScummEngine_v0, _walkToObjectState, sleByte, VER(92)),
 		MKEND()
 	};
  	s->saveLoadEntries(this, v0Entrys);
@@ -1500,7 +1538,7 @@ void ScummEngine_v5::saveOrLoad(Serializer *s) {
 	ScummEngine::saveOrLoad(s);
 
 	const SaveLoadEntry cursorEntries[] = {
-		MKARRAY2(ScummEngine_v5, _cursorImages[0][0], sleUint16, 16, 4, (byte*)_cursorImages[1] - (byte*)_cursorImages[0], VER(44)),
+		MKARRAY2(ScummEngine_v5, _cursorImages[0][0], sleUint16, 16, 4, (byte *)_cursorImages[1] - (byte *)_cursorImages[0], VER(44)),
 		MKARRAY(ScummEngine_v5, _cursorHotspots[0], sleByte, 8, VER(44)),
 		MKEND()
 	};

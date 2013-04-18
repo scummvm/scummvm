@@ -64,7 +64,6 @@ public:
 
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual void setShakePos(int shakeOffset);
-	virtual bool grabRawScreen(Graphics::Surface *surf);
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 	virtual void updateScreen();

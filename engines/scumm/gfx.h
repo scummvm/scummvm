@@ -375,19 +375,19 @@ public:
 
 class GdiV1 : public Gdi {
 protected:
-	/** Render settings which are specific to the C64 graphic decoders. */
+	/** Render settings which are specific to the v0/v1 graphic decoders. */
 	struct {
 		byte colors[4];
 		byte charMap[2048], objectMap[2048], picMap[4096], colorMap[4096];
 		byte maskMap[4096], maskChar[4096];
-	} _C64;
+	} _V1;
 
 protected:
-	void decodeC64Gfx(const byte *src, byte *dst, int size) const;
+	void decodeV1Gfx(const byte *src, byte *dst, int size) const;
 
-	void drawStripC64Object(byte *dst, int dstPitch, int stripnr, int width, int height);
-	void drawStripC64Background(byte *dst, int dstPitch, int stripnr, int height);
-	void drawStripC64Mask(byte *dst, int stripnr, int width, int height) const;
+	void drawStripV1Object(byte *dst, int dstPitch, int stripnr, int width, int height);
+	void drawStripV1Background(byte *dst, int dstPitch, int stripnr, int height);
+	void drawStripV1Mask(byte *dst, int stripnr, int width, int height) const;
 
 	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
 					int x, int y, const int width, const int height,

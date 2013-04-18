@@ -34,7 +34,7 @@ struct Token {
 	PROCESS		*proc;
 };
 
-static Token tokens[NUMTOKENS];	// FIXME: Avoid non-const global vars
+static Token g_tokens[NUMTOKENS];	// FIXME: Avoid non-const global vars
 
 
 /**
@@ -44,8 +44,8 @@ static void TerminateProcess(PROCESS *tProc) {
 
 	// Release tokens held by the process
 	for (int i = 0; i < NUMTOKENS; i++) {
-		if (tokens[i].proc == tProc) {
-			tokens[i].proc = NULL;
+		if (g_tokens[i].proc == tProc) {
+			g_tokens[i].proc = NULL;
 		}
 	}
 
@@ -59,8 +59,8 @@ static void TerminateProcess(PROCESS *tProc) {
 void GetControlToken() {
 	const int which = TOKEN_CONTROL;
 
-	if (tokens[which].proc == NULL) {
-		tokens[which].proc = g_scheduler->getCurrentProcess();
+	if (g_tokens[which].proc == NULL) {
+		g_tokens[which].proc = g_scheduler->getCurrentProcess();
 	}
 }
 
@@ -69,7 +69,7 @@ void GetControlToken() {
  */
 void FreeControlToken() {
 	// Allow anyone to free TOKEN_CONTROL
-	tokens[TOKEN_CONTROL].proc = NULL;
+	g_tokens[TOKEN_CONTROL].proc = NULL;
 }
 
 
@@ -84,12 +84,12 @@ void FreeControlToken() {
 void GetToken(int which) {
 	assert(TOKEN_LEAD <= which && which < NUMTOKENS);
 
-	if (tokens[which].proc != NULL) {
-		assert(tokens[which].proc != g_scheduler->getCurrentProcess());
-		TerminateProcess(tokens[which].proc);
+	if (g_tokens[which].proc != NULL) {
+		assert(g_tokens[which].proc != g_scheduler->getCurrentProcess());
+		TerminateProcess(g_tokens[which].proc);
 	}
 
-	tokens[which].proc = g_scheduler->getCurrentProcess();
+	g_tokens[which].proc = g_scheduler->getCurrentProcess();
 }
 
 /**
@@ -99,9 +99,9 @@ void GetToken(int which) {
 void FreeToken(int which) {
 	assert(TOKEN_LEAD <= which && which < NUMTOKENS);
 
-	assert(tokens[which].proc == g_scheduler->getCurrentProcess());	// we'd have been killed if some other proc had taken this token
+	assert(g_tokens[which].proc == g_scheduler->getCurrentProcess());	// we'd have been killed if some other proc had taken this token
 
-	tokens[which].proc = NULL;
+	g_tokens[which].proc = NULL;
 }
 
 /**
@@ -111,7 +111,7 @@ bool TestToken(int which) {
 	if (which < 0 || which >= NUMTOKENS)
 		return false;
 
-	return (tokens[which].proc == NULL);
+	return (g_tokens[which].proc == NULL);
 }
 
 /**
@@ -119,7 +119,7 @@ bool TestToken(int which) {
  */
 void FreeAllTokens() {
 	for (int i = 0; i < NUMTOKENS; i++) {
-		tokens[i].proc = NULL;
+		g_tokens[i].proc = NULL;
 	}
 }
 

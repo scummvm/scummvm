@@ -45,7 +45,7 @@ typedef CruiseEngine::MemInfo MemInfo;
 void MemoryList() {
 	if (!_vm->_memList.empty()) {
 		debug("Current list of un-freed memory blocks:");
-		Common::List<MemInfo*>::iterator i;
+		Common::List<MemInfo *>::iterator i;
 		for (i = _vm->_memList.begin(); i != _vm->_memList.end(); ++i) {
 			MemInfo const *const v = *i;
 			debug("%s - %d", v->fname, v->lineNum);
@@ -691,7 +691,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 						if ((filesDatabase[j].subData.resourceType == OBJ_TYPE_POLY) && (filesDatabase[j].subData.ptr)) {
 							int zoom = params.scale;
 
-							int16* dataPtr = (int16*)filesDatabase[j].subData.ptr;
+							int16* dataPtr = (int16 *)filesDatabase[j].subData.ptr;
 
 							if (*dataPtr == 0) {
 								int16 offset;
@@ -723,7 +723,7 @@ int findObject(int mouseX, int mouseY, int *outObjOvl, int *outObjIdx) {
 								y -= newY;
 							}
 
-							if (dataPtr && findPoly((char*)dataPtr, x, y, zoom, mouseX, mouseY)) {
+							if (dataPtr && findPoly((char *)dataPtr, x, y, zoom, mouseX, mouseY)) {
 								*outObjOvl = linkedObjOvl;
 								*outObjIdx = linkedObjIdx;
 
@@ -998,7 +998,7 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 
 					ovlDataStruct *ovl2 = NULL;
 					ovlDataStruct *ovl3 = NULL;
-					ovlDataStruct *ovl4 = NULL;
+					//ovlDataStruct *ovl4 = NULL;
 
 					if (verbeOvl > 0)
 						ovl2 = overlayTable[verbeOvl].ovlData;
@@ -1006,8 +1006,8 @@ bool findRelation(int objOvl, int objIdx, int x, int y) {
 					if (obj1Ovl > 0)
 						ovl3 = overlayTable[obj1Ovl].ovlData;
 
-					if (obj2Ovl > 0)
-						ovl4 = overlayTable[obj2Ovl].ovlData;
+					//if (obj2Ovl > 0)
+					//	ovl4 = overlayTable[obj2Ovl].ovlData;
 
 					if ((ovl3) && (ptrHead->obj1Number >= 0)) {
 						testState = ptrHead->obj1OldState;

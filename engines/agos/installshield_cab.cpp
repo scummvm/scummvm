@@ -60,9 +60,9 @@ public:
 	~InstallShieldCabinet();
 
 	// Common::Archive API implementation
-	bool hasFile(const Common::String &name);
-	int listMembers(Common::ArchiveMemberList &list);
-	Common::ArchiveMemberPtr getMember(const Common::String &name);
+	bool hasFile(const Common::String &name) const;
+	int listMembers(Common::ArchiveMemberList &list) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
 
 private:
@@ -161,19 +161,18 @@ InstallShieldCabinet::InstallShieldCabinet(const Common::String &filename) : _in
 	delete[] fileTableOffsets;
 }
 
-bool InstallShieldCabinet::hasFile(const Common::String &name) {
-	warning("hasFile: Filename %s", name.c_str());
+bool InstallShieldCabinet::hasFile(const Common::String &name) const {
 	return _map.contains(name);
 }
 
-int InstallShieldCabinet::listMembers(Common::ArchiveMemberList &list) {
+int InstallShieldCabinet::listMembers(Common::ArchiveMemberList &list) const {
 	for (FileMap::const_iterator it = _map.begin(); it != _map.end(); it++)
 		list.push_back(getMember(it->_key));
 
 	return _map.size();
 }
 
-Common::ArchiveMemberPtr InstallShieldCabinet::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr InstallShieldCabinet::getMember(const Common::String &name) const {
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 

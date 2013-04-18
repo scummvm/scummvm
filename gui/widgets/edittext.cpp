@@ -26,13 +26,14 @@
 
 namespace GUI {
 
-	EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd)
+EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd)
 	: EditableWidget(boss, x, y - 1, w, h + 2, tooltip, cmd) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG | WIDGET_RETAIN_FOCUS | WIDGET_WANT_TICKLE);
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
 
 	setEditString(text);
+	setFontStyle(ThemeEngine::kFontStyleNormal);
 }
 
 EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip, uint32 cmd, uint32 finishCmd)
@@ -42,6 +43,7 @@ EditTextWidget::EditTextWidget(GuiObject *boss, const String &name, const String
 	_finishCmd = finishCmd;
 
 	setEditString(text);
+	setFontStyle(ThemeEngine::kFontStyleNormal);
 }
 
 void EditTextWidget::setEditString(const String &str) {
@@ -67,10 +69,13 @@ void EditTextWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	int width = 0;
 	uint i;
 
+	uint last = 0;
 	for (i = 0; i < _editString.size(); ++i) {
-		width += g_gui.theme()->getCharWidth(_editString[i], _font);
+		const uint cur = _editString[i];
+		width += g_gui.getCharWidth(cur, _font) + g_gui.getKerningOffset(last, cur, _font);
 		if (width >= x)
 			break;
+		last = cur;
 	}
 	if (setCaretPos(i))
 		draw();

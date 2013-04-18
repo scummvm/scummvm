@@ -179,7 +179,6 @@ Hotspot::Hotspot(): _pathFinder(NULL) {
 	_walkFlag = false;
 	_skipFlag = false;
 	_roomNumber = 0;
-	_destHotspotId = 0;
 	_startX = 0;
 	_startY = 0;
 	_destX = 0;
@@ -2335,9 +2334,11 @@ void Hotspot::saveToStream(Common::WriteStream *stream) {
 void Hotspot::loadFromStream(Common::ReadStream *stream) {
 	if (_data)
 		_data->npcSchedule.loadFromStream(stream);
-	else
+	else {
 		// Dummy read of terminator for empty actions list
-		assert(stream->readByte() == 0xff);
+		byte dummy = stream->readByte();
+		assert(dummy == 0xff);
+	}
 
 	_pathFinder.loadFromStream(stream);
 
@@ -4165,6 +4166,7 @@ PathFinderResult PathFinder::process() {
 	bool altFlag;
 	uint16 *pCurrent;
 	PathFinderResult result = PF_UNFINISHED;
+	bool skipToFinalStep = false;
 
 	if (!_inProgress) {
 		// Following code only done during first call to method
@@ -4187,188 +4189,190 @@ PathFinderResult PathFinder::process() {
 
 			_inProgress = false;
 			result = PF_OK;
-			goto final_step;
-		}
-
-		// Path finding
-
-		_destX >>= 3;
-		_destY >>= 3;
-		_pSrc = &_layer[(_yCurrent + 1) * DECODED_PATHS_WIDTH + 1 + _xCurrent];
-		_pDest = &_layer[(_yDestCurrent + 1) * DECODED_PATHS_WIDTH + 1 + _xDestCurrent];
-
-		// Flag starting/ending cells
-		*_pSrc = 1;
-		_destOccupied = *_pDest != 0;
-		result = _destOccupied ? PF_DEST_OCCUPIED : PF_OK;
-		*_pDest = 0;
-
-		// Set up the current pointer, adjusting away from edges if necessary
-
-		if (_xCurrent >= _xDestCurrent) {
-			_xChangeInc = -1;
-			_xChangeStart = ROOM_PATHS_WIDTH;
+			skipToFinalStep = true;
 		} else {
-			_xChangeInc = 1;
-			_xChangeStart = 1;
-		}
+			// Path finding
 
-		if (_yCurrent >= _yDestCurrent) {
-			_yChangeInc = -1;
-			_yChangeStart = ROOM_PATHS_HEIGHT;
-		} else {
-			_yChangeInc = 1;
-			_yChangeStart = 1;
-		}
-	}
+			_destX >>= 3;
+			_destY >>= 3;
+			_pSrc = &_layer[(_yCurrent + 1) * DECODED_PATHS_WIDTH + 1 + _xCurrent];
+			_pDest = &_layer[(_yDestCurrent + 1) * DECODED_PATHS_WIDTH + 1 + _xDestCurrent];
 
-	// Major loop to populate data
-	_cellPopulated = false;
+			// Flag starting/ending cells
+			*_pSrc = 1;
+			_destOccupied = *_pDest != 0;
+			result = _destOccupied ? PF_DEST_OCCUPIED : PF_OK;
+			*_pDest = 0;
 
-	while (1) {
-		// Loop through to process cells in the given area
-		if (!returnFlag) _yCtr = 0;
-		while (returnFlag || (_yCtr < ROOM_PATHS_HEIGHT)) {
-			if (!returnFlag) _xCtr = 0;
+			// Set up the current pointer, adjusting away from edges if necessary
 
-			while (returnFlag || (_xCtr < ROOM_PATHS_WIDTH)) {
-				if (!returnFlag) {
-					processCell(&_layer[(_yChangeStart + _yCtr * _yChangeInc) * DECODED_PATHS_WIDTH +
-						(_xChangeStart + _xCtr * _xChangeInc)]);
-					if (breakFlag && (_countdownCtr <= 0)) return PF_UNFINISHED;
-				} else {
-					returnFlag = false;
-				}
-				++_xCtr;
-			}
-			++_yCtr;
-		}
-
-		// If the destination cell has been filled in, then break out of loop
-		if (*_pDest != 0) break;
-
-		if (_cellPopulated) {
-			// At least one cell populated, so go repeat loop
-			_cellPopulated = false;
-		} else {
-			result = PF_PART_PATH;
-			scanFlag = true;
-			break;
-		}
-	}
-	_inProgress = false;
-
-	if (scanFlag || _destOccupied) {
-		// Adjust the end point if necessary to stop character walking into occupied area
-
-		// Restore destination's occupied state if necessary
-		if (_destOccupied) {
-			*_pDest = 0xffff;
-			_destOccupied = false;
-		}
-
-		// Scan through lines
-		v = 0xff;
-		pTemp = _pDest;
-		scanLine(_destX, -1, pTemp, v);
-		scanLine(ROOM_PATHS_WIDTH - _destX, 1, pTemp, v);
-		scanLine(_destY, -DECODED_PATHS_WIDTH, pTemp, v);
-		scanLine(ROOM_PATHS_HEIGHT - _destY, DECODED_PATHS_WIDTH, pTemp, v);
-
-		if (pTemp == _pDest) {
-			clear();
-			return PF_NO_WALK;
-		}
-
-		_pDest = pTemp;
-	}
-
-	// ****DEBUG****
-	if (_hotspot->hotspotId() == PLAYER_ID) {
-		for (int ctr = 0; ctr < DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT; ++ctr)
-			Room::getReference().tempLayer[ctr] = _layer[ctr];
-	}
-
-	// Determine the walk path by working backwards from the destination, adding in the
-	// walking steps in reverse order until source is reached
-	int stageCtr;
-	for (stageCtr = 0; stageCtr < 3; ++stageCtr) {
-		// Clear out any previously determined directions
-		clear();
-
-		altFlag = stageCtr == 1;
-		pCurrent = _pDest;
-
-		numSteps = 0;
-		currDirection = NO_DIRECTION;
-		while (1) {
-			v = *pCurrent - 1;
-			if (v == 0) break;
-
-			newDirection = NO_DIRECTION;
-			if (!altFlag && (currDirection != LEFT) && (currDirection != RIGHT)) {
-				// Standard order direction checking
-				if (*(pCurrent - DECODED_PATHS_WIDTH) == v) newDirection = DOWN;
-				else if (*(pCurrent + DECODED_PATHS_WIDTH) == v) newDirection = UP;
-				else if (*(pCurrent + 1) == v) newDirection = LEFT;
-				else if (*(pCurrent - 1) == v) newDirection = RIGHT;
+			if (_xCurrent >= _xDestCurrent) {
+				_xChangeInc = -1;
+				_xChangeStart = ROOM_PATHS_WIDTH;
 			} else {
-				// Alternate order direction checking
-				if (*(pCurrent + 1) == v) newDirection = LEFT;
-				else if (*(pCurrent - 1) == v) newDirection = RIGHT;
-				else if (*(pCurrent - DECODED_PATHS_WIDTH) == v) newDirection = DOWN;
-				else if (*(pCurrent + DECODED_PATHS_WIDTH) == v) newDirection = UP;
-			}
-			if (newDirection == NO_DIRECTION)
-				error("Path finding process failed");
-
-			// Process for the specified direction
-			if (newDirection != currDirection) add(newDirection, 0);
-
-			switch (newDirection) {
-			case UP:
-				pCurrent += DECODED_PATHS_WIDTH;
-				break;
-
-			case DOWN:
-				pCurrent -= DECODED_PATHS_WIDTH;
-				break;
-
-			case LEFT:
-				++pCurrent;
-				break;
-
-			case RIGHT:
-				--pCurrent;
-				break;
-
-			default:
-				break;
+				_xChangeInc = 1;
+				_xChangeStart = 1;
 			}
 
-			++numSteps;
-			top().rawSteps() += 8;
-			currDirection = newDirection;
+			if (_yCurrent >= _yDestCurrent) {
+				_yChangeInc = -1;
+				_yChangeStart = ROOM_PATHS_HEIGHT;
+			} else {
+				_yChangeInc = 1;
+				_yChangeStart = 1;
+			}
+		}
+	}
+
+	if (!skipToFinalStep) {
+		// Major loop to populate data
+		_cellPopulated = false;
+
+		while (1) {
+			// Loop through to process cells in the given area
+			if (!returnFlag) _yCtr = 0;
+			while (returnFlag || (_yCtr < ROOM_PATHS_HEIGHT)) {
+				if (!returnFlag) _xCtr = 0;
+
+				while (returnFlag || (_xCtr < ROOM_PATHS_WIDTH)) {
+					if (!returnFlag) {
+						processCell(&_layer[(_yChangeStart + _yCtr * _yChangeInc) * DECODED_PATHS_WIDTH +
+							(_xChangeStart + _xCtr * _xChangeInc)]);
+						if (breakFlag && (_countdownCtr <= 0)) return PF_UNFINISHED;
+					} else {
+						returnFlag = false;
+					}
+					++_xCtr;
+				}
+				++_yCtr;
+			}
+
+			// If the destination cell has been filled in, then break out of loop
+			if (*_pDest != 0) break;
+
+			if (_cellPopulated) {
+				// At least one cell populated, so go repeat loop
+				_cellPopulated = false;
+			} else {
+				result = PF_PART_PATH;
+				scanFlag = true;
+				break;
+			}
+		}
+		_inProgress = false;
+
+		if (scanFlag || _destOccupied) {
+			// Adjust the end point if necessary to stop character walking into occupied area
+
+			// Restore destination's occupied state if necessary
+			if (_destOccupied) {
+				*_pDest = 0xffff;
+				_destOccupied = false;
+			}
+
+			// Scan through lines
+			v = 0xff;
+			pTemp = _pDest;
+			scanLine(_destX, -1, pTemp, v);
+			scanLine(ROOM_PATHS_WIDTH - _destX, 1, pTemp, v);
+			scanLine(_destY, -DECODED_PATHS_WIDTH, pTemp, v);
+			scanLine(ROOM_PATHS_HEIGHT - _destY, DECODED_PATHS_WIDTH, pTemp, v);
+
+			if (pTemp == _pDest) {
+				clear();
+				return PF_NO_WALK;
+			}
+
+			_pDest = pTemp;
 		}
 
-		if (stageCtr == 0)
-			// Save the number of steps needed
-			savedSteps = numSteps;
-		if ((stageCtr == 1) && (numSteps <= savedSteps))
-			// Less steps were needed, so break out
-			break;
+		// ****DEBUG****
+		if (_hotspot->hotspotId() == PLAYER_ID) {
+			for (int ctr = 0; ctr < DECODED_PATHS_WIDTH * DECODED_PATHS_HEIGHT; ++ctr)
+				Room::getReference().tempLayer[ctr] = _layer[ctr];
+		}
+
+		// Determine the walk path by working backwards from the destination, adding in the
+		// walking steps in reverse order until source is reached
+		int stageCtr;
+		for (stageCtr = 0; stageCtr < 3; ++stageCtr) {
+			// Clear out any previously determined directions
+			clear();
+
+			altFlag = stageCtr == 1;
+			pCurrent = _pDest;
+
+			numSteps = 0;
+			currDirection = NO_DIRECTION;
+			while (1) {
+				v = *pCurrent - 1;
+				if (v == 0) break;
+
+				newDirection = NO_DIRECTION;
+				if (!altFlag && (currDirection != LEFT) && (currDirection != RIGHT)) {
+					// Standard order direction checking
+					if (*(pCurrent - DECODED_PATHS_WIDTH) == v) newDirection = DOWN;
+					else if (*(pCurrent + DECODED_PATHS_WIDTH) == v) newDirection = UP;
+					else if (*(pCurrent + 1) == v) newDirection = LEFT;
+					else if (*(pCurrent - 1) == v) newDirection = RIGHT;
+				} else {
+					// Alternate order direction checking
+					if (*(pCurrent + 1) == v) newDirection = LEFT;
+					else if (*(pCurrent - 1) == v) newDirection = RIGHT;
+					else if (*(pCurrent - DECODED_PATHS_WIDTH) == v) newDirection = DOWN;
+					else if (*(pCurrent + DECODED_PATHS_WIDTH) == v) newDirection = UP;
+				}
+				if (newDirection == NO_DIRECTION)
+					error("Path finding process failed");
+
+				// Process for the specified direction
+				if (newDirection != currDirection) add(newDirection, 0);
+
+				switch (newDirection) {
+				case UP:
+					pCurrent += DECODED_PATHS_WIDTH;
+					break;
+
+				case DOWN:
+					pCurrent -= DECODED_PATHS_WIDTH;
+					break;
+
+				case LEFT:
+					++pCurrent;
+					break;
+
+				case RIGHT:
+					--pCurrent;
+					break;
+
+				default:
+					break;
+				}
+
+				++numSteps;
+				top().rawSteps() += 8;
+				currDirection = newDirection;
+			}
+
+			if (stageCtr == 0)
+				// Save the number of steps needed
+				savedSteps = numSteps;
+			if ((stageCtr == 1) && (numSteps <= savedSteps))
+				// Less steps were needed, so break out
+				break;
+		}
+
+		// Add final movement if necessary
+
+		if (result == PF_OK) {
+			if (_xDestPos < 0)
+				addBack(LEFT, -_xDestPos);
+			else if (_xDestPos > 0)
+				addBack(RIGHT, _xDestPos);
+		}
 	}
 
-	// Add final movement if necessary
-
-	if (result == PF_OK) {
-		if (_xDestPos < 0)
-			addBack(LEFT, -_xDestPos);
-		else if (_xDestPos > 0)
-			addBack(RIGHT, _xDestPos);
-	}
-
-final_step:
+	// Final Step
 	if (_xPos < 0) add(RIGHT, -_xPos);
 	else if (_xPos > 0) add(LEFT, _xPos);
 

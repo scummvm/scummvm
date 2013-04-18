@@ -45,6 +45,7 @@ public:
 	virtual void processEvent(Event &event);
 	virtual bool canSaveGameStateCurrently();
 	virtual bool canLoadGameStateCurrently();
+	virtual void restart();
 };
 
 #define OBJ_ARRAY_SIZE 10
@@ -64,6 +65,9 @@ public:
 
 	void add(EventHandler *obj);
 	void remove(EventHandler *obj);
+	// The following line prevents compiler warnings about hiding the remove()
+	// method from the parent class.
+	virtual void remove() { EventHandler::remove(); }
 };
 
 class Timer: public EventHandler {
@@ -115,16 +119,10 @@ public:
 
 class NamedObject: public SceneObject {
 public:
-	int _resNum;
-	int _lookLineNum, _talkLineNum, _useLineNum;
-
 	virtual Common::String getClassName() { return "NamedObject"; }
 	virtual void synchronize(Serializer &s);
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual bool startAction(CursorType action, Event &event);
-
-	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
-	void setDetails(int resNum, int lookLineNum, int talkLineNum, int useLineNum);
 };
 
 class NamedObjectExt: public NamedObject {
@@ -334,16 +332,11 @@ public:
 
 class NamedHotspot : public SceneHotspot {
 public:
-	int _resNum, _lookLineNum, _useLineNum, _talkLineNum;
 	NamedHotspot();
-
 
 	virtual bool startAction(CursorType action, Event &event);
 	virtual Common::String getClassName() { return "NamedHotspot"; }
 	virtual void synchronize(Serializer &s);
-	virtual void setDetails(int ys, int xs, int ye, int xe, const int resnum, const int lookLineNum, const int useLineNum);
-	virtual void setDetails(const Rect &bounds, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode, SceneItem *item);
-	virtual void setDetails(int sceneRegionId, int resNum, int lookLineNum, int talkLineNum, int useLineNum, int mode);
 };
 
 class NamedHotspotExt : public NamedHotspot {

@@ -123,8 +123,10 @@ void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventP
 		// If the resource is a pipe itself, then load the pipe
 		// and then fish the requested animation out of it.
 		if (type != 1) {
+			_pipeStreams.push_back(stream);
 			newPipe = new Pipe(stream);
 			_pipes.push_front(newPipe);
+			newPipe->nextFrame();
 			stream = newPipe->getResource(ID_ANIM, animId, false);
 		}
 	}
@@ -187,8 +189,10 @@ void ComposerEngine::playWaveForAnim(uint16 id, uint16 priority, bool bufferingO
 		}
 	}
 	Common::SeekableReadStream *stream = NULL;
+	bool fromPipe = true;
 	if (!bufferingOnly && hasResource(ID_WAVE, id)) {
 		stream = getResource(ID_WAVE, id);
+		fromPipe = false;
 	} else {
 		for (Common::List<Pipe *>::iterator k = _pipes.begin(); k != _pipes.end(); k++) {
 			Pipe *pipe = *k;
@@ -200,12 +204,18 @@ void ComposerEngine::playWaveForAnim(uint16 id, uint16 priority, bool bufferingO
 	}
 	if (!stream)
 		return;
-	// FIXME: non-pipe buffers have fixed wav header (data at +44, size at +40)
-	byte *buffer = (byte *)malloc(stream->size());
-	stream->read(buffer, stream->size());
+
+	uint32 size = stream->size();
+	if (!fromPipe) {
+		// non-pipe buffers have fixed wav header (data at +44, size at +40)
+		stream->skip(40);
+		size = stream->readUint32LE();
+	}
+	byte *buffer = (byte *)malloc(size);
+	stream->read(buffer, size);
 	if (!_audioStream)
 		_audioStream = Audio::makeQueuingAudioStream(22050, false);
-	_audioStream->queueBuffer(buffer, stream->size(), DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
+	_audioStream->queueBuffer(buffer, size, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 	_currSoundPriority = priority;
 	delete stream;
 	if (!_mixer->isSoundHandleActive(_soundHandle))
@@ -351,7 +361,48 @@ void ComposerEngine::processAnimFrame() {
 	for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
 		Pipe *pipe = *j;
 		pipe->nextFrame();
+
+		// V1 pipe audio; see OldPipe
+		if (pipe->hasResource(ID_WAVE, 0xffff))
+			playWaveForAnim(0xffff, 0, false);
 	}
+}
+
+void ComposerEngine::playPipe(uint16 id) {
+	stopPipes();
+
+	if (!hasResource(ID_PIPE, id)) {
+		error("couldn't find pipe %d", id);
+	}
+
+	Common::SeekableReadStream *stream = getResource(ID_PIPE, id);
+	OldPipe *pipe = new OldPipe(stream);
+	_pipes.push_front(pipe);
+	//pipe->nextFrame();
+
+	const Common::Array<uint16> *scripts = pipe->getScripts();
+	if (scripts && !scripts->empty())
+		runScript((*scripts)[0], 1, 0, 0);
+}
+
+void ComposerEngine::stopPipes() {
+	for (Common::List<Pipe *>::iterator j = _pipes.begin(); j != _pipes.end(); j++) {
+		const Common::Array<uint16> *scripts = (*j)->getScripts();
+		if (scripts) {
+			for (uint i = 0; i < scripts->size(); i++) {
+				removeSprite((*scripts)[i], 0);
+				stopOldScript((*scripts)[i]);
+			}
+		}
+		delete *j;
+	}
+
+	_pipes.clear();
+
+	// substreams may need to remain valid until the end of a page
+	for (uint i = 0; i < _pipeStreams.size(); i++)
+		delete _pipeStreams[i];
+	_pipeStreams.clear();
 }
 
 bool ComposerEngine::spriteVisible(uint16 id, uint16 animId) {
@@ -375,7 +426,10 @@ Sprite *ComposerEngine::addSprite(uint16 id, uint16 animId, uint16 zorder, const
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
 		if (i->_id != id)
 			continue;
-		if (i->_animId && animId && (i->_animId != animId))
+		if (getGameType() == GType_ComposerV1) {
+			if (i->_animId != animId)
+				continue;
+		} else if (i->_animId && animId && (i->_animId != animId))
 			continue;
 
 		dirtySprite(*i);
@@ -425,7 +479,10 @@ void ComposerEngine::removeSprite(uint16 id, uint16 animId) {
 	for (Common::List<Sprite>::iterator i = _sprites.begin(); i != _sprites.end(); i++) {
 		if (!i->_id || (id && i->_id != id))
 			continue;
-		if (i->_animId && animId && (i->_animId != animId))
+		if (getGameType() == GType_ComposerV1) {
+			if (i->_animId != animId)
+				continue;
+		} else if (i->_animId && animId && (i->_animId != animId))
 			continue;
 		dirtySprite(*i);
 		i->_surface.free();
@@ -499,8 +556,8 @@ void ComposerEngine::loadCTBL(uint16 id, uint fadePercent) {
 	uint16 numEntries = stream->readUint16LE();
 	debug(1, "CTBL: %d entries", numEntries);
 
-	assert(numEntries <= 256);
-	assert(stream->size() == 2 + (numEntries * 3));
+	if ((numEntries > 256) || (stream->size() < 2 + (numEntries * 3)))
+		error("CTBL %d was invalid (%d entries, size %d)", id, numEntries, stream->size());
 
 	byte buffer[256 * 3];
 	stream->read(buffer, numEntries * 3);

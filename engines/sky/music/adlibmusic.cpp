@@ -30,9 +30,8 @@
 
 namespace Sky {
 
-AdLibMusic::AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pDisk) {
+AdLibMusic::AdLibMusic(Audio::Mixer *pMixer, Disk *pDisk) : MusicBase(pMixer, pDisk) {
 	_driverFileBase = 60202;
-	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
 
 	_opl = makeAdLibOPL(_sampleRate);

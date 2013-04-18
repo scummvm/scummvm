@@ -163,8 +163,11 @@ void RightClickDialog::execute() {
 		}
 
 		g_system->delayMillis(10);
-		g_system->updateScreen();
+		GLOBALS._screenSurface.updateScreen();
 	}
+
+	// Deactivate the graphics manager used for the dialog
+	_gfxManager.deactivate();
 
 	// Execute the specified action
 	CursorType cursorNum = CURSOR_NONE;
@@ -187,13 +190,12 @@ void RightClickDialog::execute() {
 		break;
 	case 4:
 		// Options dialog
+		BlueForce::OptionsDialog::show();
 		break;
 	}
 
 	if (cursorNum != CURSOR_NONE)
 		BF_GLOBALS._events.setCursor(cursorNum);
-
-	_gfxManager.deactivate();
 }
 
 /*--------------------------------------------------------------------------*/
@@ -242,7 +244,7 @@ void AmmoBeltDialog::execute() {
 		}
 
 		g_system->delayMillis(10);
-		g_system->updateScreen();
+		GLOBALS._screenSurface.updateScreen();
 	}
 
 	_gfxManager.deactivate();
@@ -342,7 +344,7 @@ void AmmoBeltDialog::draw() {
 
 	// Draw the first clip if necessary
 	if (clip1) {
-		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip1Bullets);
+		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip1Bullets + 1);
 		_clip1Rect.resize(clipSurface, _clip1Rect.left, _clip1Rect.top, 100);
 		g_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip1Rect.left,
 			bounds.top + _clip1Rect.top);
@@ -350,7 +352,7 @@ void AmmoBeltDialog::draw() {
 
 	// Draw the second clip if necessary
 	if (clip2) {
-		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip2Bullets);
+		GfxSurface clipSurface = surfaceFromRes(9, 6, BF_GLOBALS._clip2Bullets + 1);
 		_clip2Rect.resize(clipSurface, _clip2Rect.left, _clip2Rect.top, 100);
 		g_globals->gfxManager().copyFrom(clipSurface, bounds.left + _clip2Rect.left,
 			bounds.top + _clip2Rect.top);
@@ -428,6 +430,88 @@ int RadioConvDialog::show() {
 	return btnIndex;
 }
 
+/*--------------------------------------------------------------------------*/
+
+void OptionsDialog::show() {
+	OptionsDialog *dlg = new OptionsDialog();
+	dlg->draw();
+
+	// Show the dialog
+	GfxButton *btn = dlg->execute();
+
+	// Get which button was pressed
+	int btnIndex = -1;
+	if (btn == &dlg->_btnRestore)
+		btnIndex = 0;
+	else if (btn == &dlg->_btnSave)
+		btnIndex = 1;
+	else if (btn == &dlg->_btnRestart)
+		btnIndex = 2;
+	else if (btn == &dlg->_btnQuit)
+		btnIndex = 3;
+	else if (btn == &dlg->_btnSound)
+		btnIndex = 4;
+
+	// Close the dialog
+	dlg->remove();
+	delete dlg;
+
+	// Execute the given selection
+	if (btnIndex == 0) {
+		// Restore button
+		g_globals->_game->restoreGame();
+	} else if (btnIndex == 1) {
+		// Save button
+		g_globals->_game->saveGame();
+	} else if (btnIndex == 2) {
+		// Restart game
+		g_globals->_game->restartGame();
+	} else if (btnIndex == 3) {
+		// Quit game
+		if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1) {
+			g_vm->quitGame();
+		}
+	} else if (btnIndex == 4) {
+		// Sound dialog
+		SoundDialog::execute();
+	}
+}
+
+OptionsDialog::OptionsDialog() {
+	// Set the element text
+	_gfxMessage.set(OPTIONS_MSG, 140, ALIGN_LEFT);
+	_btnRestore.setText(RESTORE_BTN_STRING);
+	_btnSave.setText(SAVE_BTN_STRING);
+	_btnRestart.setText(RESTART_BTN_STRING);
+	_btnQuit.setText(QUIT_BTN_STRING);
+	_btnSound.setText(SOUND_BTN_STRING);
+	_btnResume.setText(RESUME_BTN_STRING);
+
+	// Set position of the elements
+	_gfxMessage._bounds.moveTo(0, 1);
+	_btnRestore._bounds.moveTo(0, _gfxMessage._bounds.bottom + 1);
+	_btnSave._bounds.moveTo(0, _btnRestore._bounds.bottom + 1);
+	_btnRestart._bounds.moveTo(0, _btnSave._bounds.bottom + 1);
+	_btnQuit._bounds.moveTo(0, _btnRestart._bounds.bottom + 1);
+	_btnSound._bounds.moveTo(0, _btnQuit._bounds.bottom + 1);
+	_btnResume._bounds.moveTo(0, _btnSound._bounds.bottom + 1);
+
+	// Set all the buttons to the widest button
+	GfxButton *btnList[6] = {&_btnRestore, &_btnSave, &_btnRestart, &_btnQuit, &_btnSound, &_btnResume};
+	int16 btnWidth = 0;
+	for (int idx = 0; idx < 6; ++idx)
+		btnWidth = MAX(btnWidth, btnList[idx]->_bounds.width());
+	for (int idx = 0; idx < 6; ++idx)
+		btnList[idx]->_bounds.setWidth(btnWidth);
+
+	// Add the items to the dialog
+	addElements(&_gfxMessage, &_btnRestore, &_btnSave, &_btnRestart, &_btnQuit, &_btnSound, &_btnResume, NULL);
+
+	// Set the dialog size and position
+	frame();
+	_bounds.collapse(-6, -6);
+	setCenter(160, 90);
+}
 
 } // End of namespace BlueForce
 

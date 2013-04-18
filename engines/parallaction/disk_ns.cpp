@@ -73,9 +73,9 @@ public:
 	~NSArchive();
 
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
-	bool hasFile(const Common::String &name);
-	int listMembers(Common::ArchiveMemberList &list);
-	Common::ArchiveMemberPtr getMember(const Common::String &name);
+	bool hasFile(const Common::String &name) const;
+	int listMembers(Common::ArchiveMemberList &list) const;
+	const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
 };
 
 
@@ -137,23 +137,23 @@ Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::S
 	return new Common::SeekableSubReadStream(_stream, offset, endOffset, DisposeAfterUse::NO);
 }
 
-bool NSArchive::hasFile(const Common::String &name) {
+bool NSArchive::hasFile(const Common::String &name) const {
 	if (name.empty())
 		return false;
 	return lookup(name.c_str()) != _numFiles;
 }
 
-int NSArchive::listMembers(Common::ArchiveMemberList &list) {
+int NSArchive::listMembers(Common::ArchiveMemberList &list) const {
 	for (uint32 i = 0; i < _numFiles; i++) {
 		list.push_back(Common::SharedPtr<Common::GenericArchiveMember>(new Common::GenericArchiveMember(_archiveDir[i], this)));
 	}
 	return _numFiles;
 }
 
-Common::ArchiveMemberPtr NSArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr NSArchive::getMember(const Common::String &name) const {
 	uint32 index = lookup(name.c_str());
 
-	char *item = 0;
+	const char *item = 0;
 	if (index < _numFiles) {
 		item = _archiveDir[index];
 	}
@@ -473,7 +473,7 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 	// read bitmap, mask and path data and extract them into the 3 buffers
 	info.bg.create(info.width, info.height, Graphics::PixelFormat::createFormatCLUT8());
 	createMaskAndPathBuffers(info);
-	unpackBackground(stream, (byte*)info.bg.pixels, info._mask->data, info._path->data);
+	unpackBackground(stream, (byte *)info.bg.pixels, info._mask->data, info._path->data);
 
 	delete stream;
 }
@@ -661,10 +661,10 @@ public:
 
 		stream.seek(-4, SEEK_END);
 		uint32 decrlen = stream.readUint32BE() >> 8;
-		byte *dest = (byte*)malloc(decrlen);
+		byte *dest = (byte *)malloc(decrlen);
 
 		uint32 crlen = stream.size() - 4;
-		byte *src = (byte*)malloc(crlen);
+		byte *src = (byte *)malloc(crlen);
 		stream.seek(4, SEEK_SET);
 		stream.read(src, crlen);
 
@@ -757,14 +757,14 @@ void AmigaDisk_ns::unpackFrame(byte *dst, byte *src, uint16 planeSize) {
 */
 void AmigaDisk_ns::patchFrame(byte *dst, byte *dlta, uint16 bytesPerPlane, uint16 height) {
 
-	uint32 *dataIndex = (uint32*)dlta;
-	uint32 *ofslenIndex = (uint32*)dlta + 8;
+	uint32 *dataIndex = (uint32 *)dlta;
+	uint32 *ofslenIndex = (uint32 *)dlta + 8;
 
-	uint16 *base = (uint16*)dlta;
+	uint16 *base = (uint16 *)dlta;
 	uint16 wordsPerLine = bytesPerPlane >> 1;
 
 	for (uint j = 0; j < NUM_PLANES; j++) {
-		uint16 *dst16 = (uint16*)(dst + j * bytesPerPlane * height);
+		uint16 *dst16 = (uint16 *)(dst + j * bytesPerPlane * height);
 
 		uint16 *data = base + READ_BE_UINT32(dataIndex);
 		dataIndex++;
@@ -804,7 +804,7 @@ void AmigaDisk_ns::unpackBitmap(byte *dst, byte *src, uint16 numFrames, uint16 b
 			uint size = READ_BE_UINT32(src + 4);
 
 			if (tempBuffer == 0)
-				tempBuffer = (byte*)malloc(planeSize * NUM_PLANES);
+				tempBuffer = (byte *)malloc(planeSize * NUM_PLANES);
 
 			memcpy(tempBuffer, baseFrame, planeSize * NUM_PLANES);
 

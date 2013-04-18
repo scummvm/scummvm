@@ -32,7 +32,6 @@ class SeekableReadStream;
 
 namespace Graphics {
 class JPEG;
-struct Surface;
 }
 
 namespace Video {

@@ -149,6 +149,8 @@ void TimerManager::setCountdown(uint8 id, int32 countdown) {
 			uint32 curTime = _system->getMillis();
 			timer->lastUpdate = curTime;
 			timer->nextRun = curTime + countdown * _vm->tickLength();
+			if (timer->enabled & 2)
+				timer->pauseStartTime = curTime;
 
 			_nextRun = MIN(_nextRun, timer->nextRun);
 		}
@@ -177,6 +179,8 @@ int32 TimerManager::getDelay(uint8 id) const {
 void TimerManager::setNextRun(uint8 id, uint32 nextRun) {
 	Iterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end()) {
+		if (timer->enabled & 2)
+			timer->pauseStartTime = _system->getMillis();
 		timer->nextRun = nextRun;
 		return;
 	}
@@ -217,7 +221,7 @@ void TimerManager::pauseSingleTimer(uint8 id, bool p) {
 bool TimerManager::isEnabled(uint8 id) const {
 	CIterator timer = Common::find_if(_timers.begin(), _timers.end(), TimerEqual(id));
 	if (timer != _timers.end())
-		return (timer->enabled == 1);
+		return (timer->enabled & 1);
 
 	warning("TimerManager::isEnabled: No timer %d", id);
 	return false;

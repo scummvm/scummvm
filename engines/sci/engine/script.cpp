@@ -492,8 +492,29 @@ SegmentRef Script::dereference(reg_t pointer) {
 	return ret;
 }
 
+LocalVariables *Script::allocLocalsSegment(SegManager *segMan) {
+	if (!getLocalsCount()) { // No locals
+		return NULL;
+	} else {
+		LocalVariables *locals;
+
+		if (_localsSegment) {
+			locals = (LocalVariables *)segMan->getSegment(_localsSegment, SEG_TYPE_LOCALS);
+			if (!locals || locals->getType() != SEG_TYPE_LOCALS || locals->script_id != getScriptNumber())
+				error("Invalid script locals segment while allocating locals");
+		} else
+			locals = (LocalVariables *)segMan->allocSegment(new LocalVariables(), &_localsSegment);
+
+		_localsBlock = locals;
+		locals->script_id = getScriptNumber();
+		locals->_locals.resize(getLocalsCount());
+
+		return locals;
+	}
+}
+
 void Script::initializeLocals(SegManager *segMan) {
-	LocalVariables *locals = segMan->allocLocalsSegment(this);
+	LocalVariables *locals = allocLocalsSegment(segMan);
 	if (locals) {
 		if (getSciVersion() > SCI_VERSION_0_EARLY) {
 			const byte *base = (const byte *)(_buf + getLocalsOffset());
@@ -506,6 +527,10 @@ void Script::initializeLocals(SegManager *segMan) {
 				locals->_locals[i] = NULL_REG;
 		}
 	}
+}
+
+void Script::syncLocalsBlock(SegManager *segMan) {
+	_localsBlock = (_localsSegment == 0) ? NULL : (LocalVariables *)(segMan->getSegment(_localsSegment, SEG_TYPE_LOCALS));
 }
 
 void Script::initializeClasses(SegManager *segMan) {

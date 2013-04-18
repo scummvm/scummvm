@@ -56,11 +56,9 @@ VirtualKeyboard::~VirtualKeyboard() {
 }
 
 void VirtualKeyboard::deleteEvents() {
-	ModeMap::iterator it_m;
-	VKEventMap::iterator it_e;
-	for (it_m = _modes.begin(); it_m != _modes.end(); ++it_m) {
-		VKEventMap *evt = &(it_m->_value.events);
-		for (it_e = evt->begin(); it_e != evt->end(); ++it_e)
+	for (ModeMap::iterator it_m = _modes.begin(); it_m != _modes.end(); ++it_m) {
+		VKEventMap &evt = it_m->_value.events;
+		for (VKEventMap::iterator it_e = evt.begin(); it_e != evt.end(); ++it_e)
 			delete it_e->_value;
 	}
 }
@@ -160,7 +158,7 @@ String VirtualKeyboard::findArea(int16 x, int16 y) {
 	return _currentMode->imageMap.findMapArea(x, y);
 }
 
-void VirtualKeyboard::processAreaClick(const String& area) {
+void VirtualKeyboard::processAreaClick(const String &area) {
 	if (!_currentMode->events.contains(area))
 		return;
 
@@ -169,10 +167,10 @@ void VirtualKeyboard::processAreaClick(const String& area) {
 	switch (evt->type) {
 	case kVKEventKey:
 		// add virtual keypress to queue
-		_keyQueue.insertKey(*(KeyState*)evt->data);
+		_keyQueue.insertKey(*(KeyState *)evt->data);
 		break;
 	case kVKEventModifier:
-		_keyQueue.toggleFlags(*(byte*)(evt->data));
+		_keyQueue.toggleFlags(*(byte *)(evt->data));
 		break;
 	case kVKEventSwitchMode:
 		// switch to new mode
@@ -332,7 +330,7 @@ void VirtualKeyboard::KeyPressQueue::insertKey(KeyState key) {
 void VirtualKeyboard::KeyPressQueue::deleteKey() {
 	if (_keyPos == _keys.begin())
 		return;
-	List<VirtualKeyPress>::iterator it = _keyPos;
+	KeyPressList::iterator it = _keyPos;
 	it--;
 	_strPos -= it->strLen;
 	while ((it->strLen)-- > 0)

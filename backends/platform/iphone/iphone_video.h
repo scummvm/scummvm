@@ -20,48 +20,69 @@
  *
  */
 
-#ifndef _IPHONE_VIDEO__H
-#define _IPHONE_VIDEO__H
+#ifndef BACKENDS_PLATFORM_IPHONE_IPHONE_VIDEO_H
+#define BACKENDS_PLATFORM_IPHONE_IPHONE_VIDEO_H
 
-#import <UIKit/UIKit.h>
-#import <Foundation/Foundation.h>
-#import <QuartzCore/QuartzCore.h>
+#include <UIKit/UIKit.h>
+#include <Foundation/Foundation.h>
+#include <QuartzCore/QuartzCore.h>
 
-#import <OpenGLES/EAGL.h>
-#import <OpenGLES/ES1/gl.h>
-#import <OpenGLES/ES1/glext.h>
+#include <OpenGLES/EAGL.h>
+#include <OpenGLES/ES1/gl.h>
+#include <OpenGLES/ES1/glext.h>
 
-#import "iphone_keyboard.h"
+#include "iphone_keyboard.h"
+#include "iphone_common.h"
 
-@interface iPhoneView : UIView
-{
-	void* _screenSurface;
-	NSMutableArray* _events;
-	SoftKeyboard* _keyboardView;
-	CALayer* _screenLayer;
+@interface iPhoneView : UIView {
+	VideoContext _videoContext;
 
-	int _widthOffset;
-	int _heightOffset;
+	NSMutableArray *_events;
+	SoftKeyboard *_keyboardView;
 
-	EAGLContext* _context;
+	EAGLContext *_context;
 	GLuint _viewRenderbuffer;
 	GLuint _viewFramebuffer;
-	GLint _backingWidth;
-	GLint _backingHeight;
-	GLint _visibleWidth;
-	GLint _visibleHeight;
 	GLuint _screenTexture;
 	GLuint _overlayTexture;
 	GLuint _mouseCursorTexture;
+
+	UIDeviceOrientation _orientation;
+
+	GLint _renderBufferWidth;
+	GLint _renderBufferHeight;
+
+	GLfloat _gameScreenVertCoords[4 * 2];
+	GLfloat _gameScreenTexCoords[4 * 2];
+	CGRect _gameScreenRect;
+
+	GLfloat _overlayVertCoords[4 * 2];
+	GLfloat _overlayTexCoords[4 * 2];
+	CGRect _overlayRect;
+
+	GLfloat _mouseVertCoords[4 * 2];
+	GLfloat _mouseTexCoords[4 * 2];
+	GLint _mouseHotspotX, _mouseHotspotY;
+	GLint _mouseWidth, _mouseHeight;
+	GLfloat _mouseScaleX, _mouseScaleY;
+
+	int _scaledShakeOffsetY;
+
+	UITouch *_firstTouch;
+	UITouch *_secondTouch;
 }
 
 - (id)initWithFrame:(struct CGRect)frame;
 
+- (VideoContext *)getVideoContext;
+
 - (void)drawRect:(CGRect)frame;
 
-- (void *)getSurface;
-
+- (void)createScreenTexture;
 - (void)initSurface;
+- (void)setViewTransformation;
+
+- (void)setGraphicsMode;
 
 - (void)updateSurface;
 - (void)updateMainSurface;
@@ -69,11 +90,13 @@
 - (void)updateMouseSurface;
 - (void)clearColorBuffer;
 
--(void)updateMouseCursor;
+- (void)notifyMouseMove;
+- (void)updateMouseCursorScaling;
+- (void)updateMouseCursor;
 
 - (id)getEvent;
 
-- (void)deviceOrientationChanged:(int)orientation;
+- (void)deviceOrientationChanged:(UIDeviceOrientation)orientation;
 
 - (void)applicationSuspend;
 
@@ -81,6 +104,6 @@
 
 @end
 
+extern iPhoneView *g_iPhoneViewInstance;
 
-
-#endif /* _IPHONE_VIDEO__H */
+#endif

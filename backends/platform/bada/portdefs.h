@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <math.h>
+#include <new>
 
 #define M_PI 3.14159265358979323846
 
@@ -64,9 +65,9 @@ void stderr_vfprintf(void*, const char *format, va_list ap);
 #undef fputs
 #undef fflush
 
-#define stderr (void*)0
-#define stdout (void*)1
-#define stdin	 (void*)2
+#define stderr (void *)0
+#define stdout (void *)1
+#define stdin	 (void *)2
 #define fputs(str, file)
 #define fflush(file)
 #define sscanf simple_sscanf

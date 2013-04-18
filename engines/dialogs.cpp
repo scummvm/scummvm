@@ -227,19 +227,24 @@ void MainMenuDialog::save() {
 		Common::String result(_saveDialog->getResultString());
 		if (result.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
-			Common::String buf;
 			#if defined(USE_SAVEGAME_TIMESTAMP)
 			TimeDate curTime;
 			g_system->getTimeAndDate(curTime);
 			curTime.tm_year += 1900; // fixup year
 			curTime.tm_mon++; // fixup month
-			buf = Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+			result = Common::String::format("%04d.%02d.%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
 			#else
-			buf = Common::String::format("Save %d", slot + 1);
+			result = Common::String::format("Save %d", slot + 1);
 			#endif
-			_engine->saveGameState(slot, buf);
-		} else {
-			_engine->saveGameState(slot, result);
+		}
+
+		Common::Error status = _engine->saveGameState(slot, result);
+		if (status.getCode() != Common::kNoError) {
+			Common::String failMessage = Common::String::format(_("Gamestate save failed (%s)! "
+				  "Please consult the README for basic information, and for "
+				  "instructions on how to obtain further assistance."), status.getDesc().c_str());
+			GUI::MessageDialog dialog(failMessage);
+			dialog.runModal();			
 		}
 
 		close();
@@ -256,7 +261,7 @@ void MainMenuDialog::load() {
 
 	_engine->setGameToLoadSlot(slot);
 
-	if (slot >= 0)		
+	if (slot >= 0)
 		close();
 }
 

@@ -55,6 +55,8 @@ int LoLEngine::processPrologue() {
 
 	preInit();
 
+	Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+
 	int processSelection = -1;
 	while (!shouldQuit() && processSelection == -1) {
 		_screen->loadBitmap("TITLE.CPS", 2, 2, &_screen->getPalette(0));
@@ -62,8 +64,8 @@ int LoLEngine::processPrologue() {
 
 		_screen->setFont(Screen::FID_6_FNT);
 		// Original version: (260|193) "V CD1.02 D"
-		const int width = _screen->getTextWidth(gScummVMVersion);
-		_screen->fprintString("SVM %s", 300 - width, 193, 0x67, 0x00, 0x04, gScummVMVersion);
+		const int width = _screen->getTextWidth(versionString.c_str());
+		_screen->fprintString("%s", 320 - width, 193, 0x67, 0x00, 0x04, versionString.c_str());
 		_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
 
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
@@ -88,25 +90,25 @@ int LoLEngine::processPrologue() {
 			// quit instantly.
 			break;
 
-		case 0:		// New game
+		case 0:     // New game
 			processSelection = 0;
 			break;
 
-		case 1:		// Show intro
+		case 1:     // Show intro
 			showIntro();
 			break;
 
-		case 2: {	// "Lore of the Lands" (only CD version)
+		case 2: {   // "Lore of the Lands" (only CD version)
 			HistoryPlayer history(this);
 			history.play();
-			} break;
+		} break;
 
-		case 3:		// Load game
+		case 3:     // Load game
 			if (_gui->runMenu(_gui->_loadMenu))
 				processSelection = 3;
 			break;
 
-		case 4:		// Quit game
+		case 4:     // Quit game
 		default:
 			quitGame();
 			updateInput();
@@ -127,17 +129,17 @@ int LoLEngine::processPrologue() {
 }
 
 void LoLEngine::setupPrologueData(bool load) {
-	static const char * const fileListCD[] = {
+	static const char *const fileListCD[] = {
 		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
 		"INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
 		"INTRO6.PAK", "INTRO7.PAK", "INTRO8.PAK", "INTRO9.PAK",
 		"HISTORY.PAK", 0
 	};
 
-	static const char * const fileListFloppy[] = {
+	static const char *const fileListFloppy[] = {
 		"INTRO.PAK", "INTROVOC.PAK", 0
 	};
-	const char * const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
+	const char *const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
 
 	char filename[32];
 	for (uint i = 0; fileList[i]; ++i) {
@@ -408,10 +410,10 @@ void LoLEngine::kingSelectionIntro() {
 		index = MAX(index, 4);
 
 		_chargenWSA->displayFrame(_chargenFrameTable[index], 0, 113, 0, 0, 0, 0);
-		_screen->copyRegion(_selectionPosTable[_selectionChar1IdxTable[index]*2+0], _selectionPosTable[_selectionChar1IdxTable[index]*2+1], _charPreviews[0].x, _charPreviews[0].y, 32, 32, 4, 0);
-		_screen->copyRegion(_selectionPosTable[_selectionChar2IdxTable[index]*2+0], _selectionPosTable[_selectionChar2IdxTable[index]*2+1], _charPreviews[1].x, _charPreviews[1].y, 32, 32, 4, 0);
-		_screen->copyRegion(_selectionPosTable[_selectionChar3IdxTable[index]*2+0], _selectionPosTable[_selectionChar3IdxTable[index]*2+1], _charPreviews[2].x, _charPreviews[2].y, 32, 32, 4, 0);
-		_screen->copyRegion(_selectionPosTable[_selectionChar4IdxTable[index]*2+0], _selectionPosTable[_selectionChar4IdxTable[index]*2+1], _charPreviews[3].x, _charPreviews[3].y, 32, 32, 4, 0);
+		_screen->copyRegion(_selectionPosTable[_selectionChar1IdxTable[index] * 2 + 0], _selectionPosTable[_selectionChar1IdxTable[index] * 2 + 1], _charPreviews[0].x, _charPreviews[0].y, 32, 32, 4, 0);
+		_screen->copyRegion(_selectionPosTable[_selectionChar2IdxTable[index] * 2 + 0], _selectionPosTable[_selectionChar2IdxTable[index] * 2 + 1], _charPreviews[1].x, _charPreviews[1].y, 32, 32, 4, 0);
+		_screen->copyRegion(_selectionPosTable[_selectionChar3IdxTable[index] * 2 + 0], _selectionPosTable[_selectionChar3IdxTable[index] * 2 + 1], _charPreviews[2].x, _charPreviews[2].y, 32, 32, 4, 0);
+		_screen->copyRegion(_selectionPosTable[_selectionChar4IdxTable[index] * 2 + 0], _selectionPosTable[_selectionChar4IdxTable[index] * 2 + 1], _charPreviews[3].x, _charPreviews[3].y, 32, 32, 4, 0);
 		_screen->updateScreen();
 
 		uint32 waitEnd = _system->getMillis() + 7 * _tickLength;
@@ -428,7 +430,7 @@ void LoLEngine::kingSelectionIntro() {
 
 	resetSkipFlag();
 
-	_chargenWSA->displayFrame(0x10, 0,113, 0, 0, 0, 0);
+	_chargenWSA->displayFrame(0x10, 0, 113, 0, 0, 0, 0);
 	_screen->updateScreen();
 	_sound->voiceStop(&_speechHandle);
 }
@@ -450,11 +452,11 @@ void LoLEngine::kingSelectionReminder() {
 
 	int index = 0;
 	while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelection == -1 && !shouldQuit() && index < 15) {
-		_chargenWSA->displayFrame(_chargenFrameTable[index+9], 0, 113, 0, 0, 0, 0);
-		_screen->copyRegion(_selectionPosTable[_reminderChar1IdxTable[index]*2+0], _selectionPosTable[_reminderChar1IdxTable[index]*2+1], _charPreviews[0].x, _charPreviews[0].y, 32, 32, 4, 0);
-		_screen->copyRegion(_selectionPosTable[_reminderChar2IdxTable[index]*2+0], _selectionPosTable[_reminderChar2IdxTable[index]*2+1], _charPreviews[1].x, _charPreviews[1].y, 32, 32, 4, 0);
-		_screen->copyRegion(_selectionPosTable[_reminderChar3IdxTable[index]*2+0], _selectionPosTable[_reminderChar3IdxTable[index]*2+1], _charPreviews[2].x, _charPreviews[2].y, 32, 32, 4, 0);
-		_screen->copyRegion(_selectionPosTable[_reminderChar4IdxTable[index]*2+0], _selectionPosTable[_reminderChar4IdxTable[index]*2+1], _charPreviews[3].x, _charPreviews[3].y, 32, 32, 4, 0);
+		_chargenWSA->displayFrame(_chargenFrameTable[index + 9], 0, 113, 0, 0, 0, 0);
+		_screen->copyRegion(_selectionPosTable[_reminderChar1IdxTable[index] * 2 + 0], _selectionPosTable[_reminderChar1IdxTable[index] * 2 + 1], _charPreviews[0].x, _charPreviews[0].y, 32, 32, 4, 0);
+		_screen->copyRegion(_selectionPosTable[_reminderChar2IdxTable[index] * 2 + 0], _selectionPosTable[_reminderChar2IdxTable[index] * 2 + 1], _charPreviews[1].x, _charPreviews[1].y, 32, 32, 4, 0);
+		_screen->copyRegion(_selectionPosTable[_reminderChar3IdxTable[index] * 2 + 0], _selectionPosTable[_reminderChar3IdxTable[index] * 2 + 1], _charPreviews[2].x, _charPreviews[2].y, 32, 32, 4, 0);
+		_screen->copyRegion(_selectionPosTable[_reminderChar4IdxTable[index] * 2 + 0], _selectionPosTable[_reminderChar4IdxTable[index] * 2 + 1], _charPreviews[3].x, _charPreviews[3].y, 32, 32, 4, 0);
 		_screen->updateScreen();
 
 		uint32 waitEnd = _system->getMillis() + 8 * _tickLength;
@@ -524,7 +526,7 @@ void LoLEngine::updateSelectionAnims() {
 			continue;
 
 		const int index = _selectionAnimIndexTable[_selectionAnimFrames[i] + i * 2];
-		_screen->copyRegion(_selectionPosTable[index*2+0], _selectionPosTable[index*2+1], _charPreviews[i].x, _charPreviews[i].y, 32, 32, 4, 0);
+		_screen->copyRegion(_selectionPosTable[index * 2 + 0], _selectionPosTable[index * 2 + 1], _charPreviews[i].x, _charPreviews[i].y, 32, 32, 4, 0);
 
 		int delayTime = 0;
 		if (_selectionAnimFrames[i] == 1)
@@ -581,12 +583,12 @@ int LoLEngine::selectionCharInfo(int character) {
 
 	if (_flags.platform == Common::kPlatformPC98) {
 		for (int i = 0; i < 5; ++i)
-			_screen->printText(_tim->getCTableEntry(idx+i), 60, 128 + i * 8, 0x41, 0x00);
+			_screen->printText(_tim->getCTableEntry(idx + i), 60, 128 + i * 8, 0x41, 0x00);
 
 		_screen->printText(_tim->getCTableEntry(69), 112, 168, 0x01, 0x00);
 	} else {
 		for (int i = 0; i < 5; ++i)
-			_screen->fprintStringIntro("%s", 50, 127 + i * 10, 0x53, 0x00, 0xCF, 0x20, _tim->getCTableEntry(idx+i));
+			_screen->fprintStringIntro("%s", 50, 127 + i * 10, 0x53, 0x00, 0xCF, 0x20, _tim->getCTableEntry(idx + i));
 
 		_screen->fprintStringIntro("%s", 100, 168, 0x32, 0x00, 0xCF, 0x20, _tim->getCTableEntry(69));
 	}
@@ -613,10 +615,10 @@ int LoLEngine::selectionCharInfo(int character) {
 
 	if (_flags.platform == Common::kPlatformPC98) {
 		for (int i = 0; i < 5; ++i)
-			_screen->printText(_tim->getCTableEntry(64+i), 16, 32 + i * 8, 0xC1, 0x00);
+			_screen->printText(_tim->getCTableEntry(64 + i), 16, 32 + i * 8, 0xC1, 0x00);
 	} else {
 		for (int i = 0; i < 5; ++i)
-			_screen->fprintStringIntro("%s", 3, 28 + i * 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(64+i));
+			_screen->fprintStringIntro("%s", 3, 28 + i * 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(64 + i));
 	}
 
 	resetSkipFlag();
@@ -668,7 +670,7 @@ int LoLEngine::getCharSelection() {
 	if (inputFlag == 200) {
 		for (int i = 0; i < 4; ++i) {
 			if (_charPreviews[i].x <= _mouseX && _mouseX <= _charPreviews[i].x + 31 &&
-				_charPreviews[i].y <= _mouseY && _mouseY <= _charPreviews[i].y + 31)
+			        _charPreviews[i].y <= _mouseY && _mouseY <= _charPreviews[i].y + 31)
 				return i;
 		}
 	}
@@ -752,7 +754,7 @@ HistoryPlayer::~HistoryPlayer() {
 
 void HistoryPlayer::play() {
 	int dataSize = 0;
-	const char *data = (const char *)_vm->staticres()->loadRawData(kLolHistory, dataSize);
+	const char *data = (const char *)_vm->staticres()->loadRawData(kLoLHistory, dataSize);
 
 	if (!data)
 		error("Could not load history data");
@@ -788,7 +790,7 @@ void HistoryPlayer::play() {
 
 	for (; voiceFilename[3] <= '9' && !_vm->shouldQuit() && !_vm->skipFlag(); ++voiceFilename[3], voiceFilename[4] = 'a') {
 		while (!_vm->shouldQuit() && !_vm->skipFlag()) {
-			if (!sound->voiceFileIsPresent(voiceFilename))
+			if (!sound->isVoicePresent(voiceFilename))
 				break;
 
 			if (data[part * 15] == voiceFilename[3] && data[part * 15 + 1] == voiceFilename[4]) {
@@ -998,16 +1000,16 @@ void HistoryPlayer::updateFire() {
 // outro
 
 void LoLEngine::setupEpilogueData(bool load) {
-	static const char * const fileListCD[] = {
+	static const char *const fileListCD[] = {
 		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK",
 		"FINALE.PAK", "FINALE1.PAK", "FINALE2.PAK", 0
 	};
 
-	static const char * const fileListFloppy[] = {
+	static const char *const fileListFloppy[] = {
 		"GENERAL.PAK", "INTRO.PAK", "FINALE1.PAK", "FINALE2.PAK", 0
 	};
 
-	const char * const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
+	const char *const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
 	assert(fileList);
 
 	char filename[32];
@@ -1195,14 +1197,14 @@ void LoLEngine::showCredits() {
 
 	if (_flags.platform == Common::kPlatformPC98) {
 		int size = 0;
-		const uint8 *internCredits = _staticres->loadRawData(kLolCredits, size);
+		const uint8 *internCredits = _staticres->loadRawData(kLoLCredits, size);
 		assert(size > 0);
 
 		credits = new char[size];
 		assert(credits);
 
 		memcpy(credits, internCredits, size);
-		_staticres->unloadId(kLolCredits);
+		_staticres->unloadId(kLoLCredits);
 	} else {
 		credits = (char *)_res->fileData("CREDITS.TXT", 0);
 	}
@@ -1446,7 +1448,7 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 		}
 
 		for (int i = 0; i < countStrings; ++i) {
-			CreditsString &s = strings[i+1];
+			CreditsString &s = strings[i + 1];
 			int x = s.x, y = s.y;
 
 			if (y < _screen->_curDim->h) {
@@ -1512,7 +1514,7 @@ void LoLEngine::loadOutroShapes(int file, uint8 **storage) {
 		if (i < 8)
 			storage[i] = _screen->makeShapeCopy(_screen->getCPagePtr(5), i);
 		else
-			storage[i] = _screen->makeShapeCopy(_screen->getCPagePtr(5), i+4);
+			storage[i] = _screen->makeShapeCopy(_screen->getCPagePtr(5), i + 4);
 	}
 }
 

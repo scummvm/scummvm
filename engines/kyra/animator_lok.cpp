@@ -100,7 +100,7 @@ void Animator_LoK::initAnimStateList() {
 	for (int i = 16; i < 28; ++i) {
 		animStates[i].index = i;
 		animStates[i].flags = 0;
-		animStates[i].background = _vm->_shapes[345+i];
+		animStates[i].background = _vm->_shapes[345 + i];
 		animStates[i].rectSize = _screen->getRectSize(3, 24);
 		animStates[i].width = 3;
 		animStates[i].height = 16;
@@ -352,10 +352,10 @@ void Animator_LoK::copyChangedObjectsForward(int refreshFlag) {
 		if (curObject->active) {
 			if (curObject->refreshFlag || refreshFlag) {
 				int xpos = 0, ypos = 0, width = 0, height = 0;
-				xpos = (curObject->x1>>3) - (curObject->width2>>3) - 1;
+				xpos = (curObject->x1 >> 3) - (curObject->width2 >> 3) - 1;
 				ypos = curObject->y1 - curObject->height2;
-				width = curObject->width + (curObject->width2>>3) + 2;
-				height = curObject->height + curObject->height2*2;
+				width = curObject->width + (curObject->width2 >> 3) + 2;
+				height = curObject->height + curObject->height2 * 2;
 
 				if (xpos < 1)
 					xpos = 1;
@@ -412,7 +412,7 @@ void Animator_LoK::animAddGameItem(int index, uint16 sceneId) {
 	animObj->refreshFlag = 1;
 	animObj->bkgdChangeFlag = 1;
 	animObj->drawY = currentRoom->itemsYPos[index];
-	animObj->sceneAnimPtr = _vm->_shapes[216+currentRoom->itemsTable[index]];
+	animObj->sceneAnimPtr = _vm->_shapes[216 + currentRoom->itemsTable[index]];
 	animObj->animFrameNumber = -1;
 	animObj->x1 = currentRoom->itemsXPos[index];
 	animObj->y1 = currentRoom->itemsYPos[index];
@@ -438,8 +438,8 @@ void Animator_LoK::animAddNPC(int character) {
 	animObj->bkgdChangeFlag = 1;
 	animObj->drawY = ch->y1;
 	animObj->sceneAnimPtr = _vm->_shapes[ch->currentAnimFrame];
-	animObj->x1 = animObj->x2 = ch->x1 + _vm->_defaultShapeTable[ch->currentAnimFrame-7].xOffset;
-	animObj->y1 = animObj->y2 = ch->y1 + _vm->_defaultShapeTable[ch->currentAnimFrame-7].yOffset;
+	animObj->x1 = animObj->x2 = ch->x1 + _vm->_defaultShapeTable[ch->currentAnimFrame - 7].xOffset;
+	animObj->y1 = animObj->y2 = ch->y1 + _vm->_defaultShapeTable[ch->currentAnimFrame - 7].yOffset;
 
 	if (ch->facing >= 1 && ch->facing <= 3)
 		animObj->flags |= 1;
@@ -543,13 +543,13 @@ void Animator_LoK::makeBrandonFaceMouse() {
 int16 Animator_LoK::fetchAnimWidth(const uint8 *shape, int16 mult) {
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
-	return (((int16)READ_LE_UINT16((shape+3))) * mult) >> 8;
+	return (((int16)READ_LE_UINT16((shape + 3))) * mult) >> 8;
 }
 
 int16 Animator_LoK::fetchAnimHeight(const uint8 *shape, int16 mult) {
 	if (_vm->gameFlags().useAltShapeHeader)
 		shape += 2;
-	return (int16)(((int8)*(shape+2)) * mult) >> 8;
+	return (int16)(((int8)*(shape + 2)) * mult) >> 8;
 }
 
 void Animator_LoK::setBrandonAnimSeqSize(int width, int height) {
@@ -603,8 +603,8 @@ void Animator_LoK::animRefreshNPC(int character) {
 		}
 	}
 
-	int xOffset = _vm->_defaultShapeTable[ch->currentAnimFrame-7].xOffset;
-	int yOffset = _vm->_defaultShapeTable[ch->currentAnimFrame-7].yOffset;
+	int xOffset = _vm->_defaultShapeTable[ch->currentAnimFrame - 7].xOffset;
+	int yOffset = _vm->_defaultShapeTable[ch->currentAnimFrame - 7].yOffset;
 
 	if (_vm->_scaleMode) {
 		animObj->x1 = ch->x1;

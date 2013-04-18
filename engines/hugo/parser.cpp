@@ -271,7 +271,7 @@ void Parser::keyHandler(Common::Event event) {
 	status_t &gameStatus = _vm->getGameStatus();
 	uint16 nChar = event.kbd.keycode;
 
-	if ((event.kbd.hasFlags(Common::KBD_ALT)) || (event.kbd.hasFlags(Common::KBD_SCRL)))
+	if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_SCRL))
 		return;
 
 	if (event.kbd.hasFlags(Common::KBD_CTRL)) {
@@ -391,8 +391,6 @@ void Parser::command(const char *format, ...) {
 
 	va_list marker;
 	va_start(marker, format);
-//	TODO:
-//	_vm->_line = Common::String::vformat(format, marker);
 	vsprintf(_vm->_line, format, marker);
 	va_end(marker);
 

@@ -66,7 +66,7 @@ enum cycle_t {kCycleInvisible, kCycleAlmostInvisible, kCycleNotCycling, kCycleFo
 /**
  * Enumerate sequence index matching direction of travel
  */
-enum {RIGHT, LEFT, DOWN, _UP};
+enum {SEQ_RIGHT, SEQ_LEFT, SEQ_DOWN, SEQ_UP};
 
 enum font_t {LARGE_ROMAN, MED_ROMAN, NUM_GDI_FONTS, INIT_FONTS, DEL_FONTS};
 

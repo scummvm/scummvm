@@ -105,7 +105,7 @@ template<size_t CHUNK_SIZE, size_t NUM_INTERNAL_CHUNKS = 32>
 class FixedSizeMemoryPool : public MemoryPool {
 private:
 	enum {
-		REAL_CHUNK_SIZE = (CHUNK_SIZE + sizeof(void*) - 1) & (~(sizeof(void*) - 1))
+		REAL_CHUNK_SIZE = (CHUNK_SIZE + sizeof(void *) - 1) & (~(sizeof(void *) - 1))
 	};
 
 	byte	_storage[NUM_INTERNAL_CHUNKS * REAL_CHUNK_SIZE];

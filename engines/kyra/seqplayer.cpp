@@ -375,15 +375,14 @@ void SeqPlayer::s1_copyRegionSpecial() {
 		_screen->copyRegion(152, 56, 152, 56, 48, 48, 2, 0);
 		break;
 	case 4: {
-			_screen->_charWidth = -2;
-			const int x = (Screen::SCREEN_W - _screen->getTextWidth(copyStr)) / 2;
-			const int y = 179;
-			_screen->setTextColorMap(colorMap);
-			if (_vm->gameFlags().platform != Common::kPlatformAmiga)
-				_screen->printText(copyStr, x + 1, y + 1, 0xB, 0xC);
-			_screen->printText(copyStr, x, y, 0xF, 0xC);
-		}
-		break;
+		_screen->_charWidth = -2;
+		const int x = (Screen::SCREEN_W - _screen->getTextWidth(copyStr)) / 2;
+		const int y = 179;
+		_screen->setTextColorMap(colorMap);
+		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+			_screen->printText(copyStr, x + 1, y + 1, 0xB, 0xC);
+		_screen->printText(copyStr, x, y, 0xF, 0xC);
+		} break;
 	case 5:
 		_screen->_curPage = 2;
 		break;
@@ -624,7 +623,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 				if (_vm->gameFlags().lang == Common::JA_JPN)
 					charStr[1] = _vm->seqTextsTable()[_seqDisplayedText][++_seqDisplayedChar];
 				_screen->printText(charStr, _seqDisplayedTextX, 180, 0xF, 0xC);
-				_seqDisplayedTextX += _screen->getCharWidth(charStr[0]);
+				_seqDisplayedTextX += _screen->getCharWidth((uint8)charStr[0]);
 				++_seqDisplayedChar;
 
 				if (_vm->seqTextsTable()[_seqDisplayedText][_seqDisplayedChar] == '\0')

@@ -8,7 +8,6 @@ f 0644 root sys usr/ScummVM/share/pixmaps/scummvm.xpm scummvm.xpm scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/drascula.dat drascula.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/kyra.dat kyra.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/lure.dat lure.dat scummvm.sw.eoe
-f 0644 root sys usr/ScummVM/share/scummvm/m4.dat m4.dat scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/pred.dic pred.dic scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/queen.tbl queen.tbl scummvm.sw.eoe
 f 0644 root sys usr/ScummVM/share/scummvm/scummmodern.zip scummmodern.zip scummvm.sw.eoe

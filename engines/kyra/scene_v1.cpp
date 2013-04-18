@@ -115,7 +115,7 @@ int KyraEngine_v1::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 				delete[] pathTable2;
 				return 0x7D00;
 			}
-			memcpy(&moveTable[lastUsedEntry], pathTable1, temp*sizeof(int));
+			memcpy(&moveTable[lastUsedEntry], pathTable1, temp * sizeof(int));
 			lastUsedEntry += temp;
 		} else {
 			if (lastUsedEntry + tempValue > moveTableSize) {
@@ -123,7 +123,7 @@ int KyraEngine_v1::findWay(int x, int y, int toX, int toY, int *moveTable, int m
 				delete[] pathTable2;
 				return 0x7D00;
 			}
-			memcpy(&moveTable[lastUsedEntry], pathTable2, tempValue*sizeof(int));
+			memcpy(&moveTable[lastUsedEntry], pathTable2, tempValue * sizeof(int));
 			lastUsedEntry += tempValue;
 		}
 		x = curX;
@@ -161,16 +161,16 @@ int KyraEngine_v1::findSubPath(int x, int y, int toX, int toY, int *moveTable, i
 	while (position != end) {
 		int newFacing2 = newFacing;
 		while (true) {
-			changePosTowardsFacing(xpos1, ypos1, facingTable1[start*8 + newFacing2]);
+			changePosTowardsFacing(xpos1, ypos1, facingTable1[start * 8 + newFacing2]);
 			if (!lineIsPassable(xpos1, ypos1)) {
-				if (facingTable1[start*8 + newFacing2] == newFacing)
+				if (facingTable1[start * 8 + newFacing2] == newFacing)
 					return 0x7D00;
-				newFacing2 = facingTable1[start*8 + newFacing2];
+				newFacing2 = facingTable1[start * 8 + newFacing2];
 				xpos1 = x;
 				ypos1 = y;
 				continue;
 			}
-			newFacing = facingTable1[start*8 + newFacing2];
+			newFacing = facingTable1[start * 8 + newFacing2];
 			break;
 		}
 		// debug drawing
@@ -200,7 +200,7 @@ int KyraEngine_v1::findSubPath(int x, int y, int toX, int toY, int *moveTable, i
 		if (xpos1 == xpos2 && ypos1 == ypos2)
 			break;
 
-		newFacing = facingTable3[start*8 + newFacing];
+		newFacing = facingTable3[start * 8 + newFacing];
 	}
 
 	return 0x7D00;
@@ -277,7 +277,7 @@ void KyraEngine_v1::changePosTowardsFacing(int &x, int &y, int facing) {
 }
 
 int KyraEngine_v1::getMoveTableSize(int *moveTable) {
-	int retValue = 0;
+	int tableSize = 0;
 	if (moveTable[0] == 8)
 		return 0;
 
@@ -298,11 +298,11 @@ int KyraEngine_v1::getMoveTableSize(int *moveTable) {
 	int *oldPosition = moveTable;
 	int *tempPosition = moveTable;
 	int *curPosition = moveTable + 1;
-	retValue = 1;
+	tableSize = 1;
 
 	while (*curPosition != 8) {
 		if (*oldPosition == facingTable[*curPosition]) {
-			retValue -= 2;
+			tableSize -= 2;
 			*oldPosition = 9;
 			*curPosition = 9;
 
@@ -313,7 +313,7 @@ int KyraEngine_v1::getMoveTableSize(int *moveTable) {
 			}
 
 			if (tempPosition == moveTable && *tempPosition == 9) {
-				while (*tempPosition != 8 && *tempPosition == 9)
+				while (*tempPosition == 9)
 					++tempPosition;
 
 				if (*tempPosition == 8)
@@ -321,53 +321,40 @@ int KyraEngine_v1::getMoveTableSize(int *moveTable) {
 			}
 
 			oldPosition = tempPosition;
-			curPosition = oldPosition+1;
+			curPosition = oldPosition + 1;
 
-			while (*curPosition != 8 && *curPosition == 9)
+			while (*curPosition == 9)
 				++curPosition;
-
-			continue;
-		}
-
-		if (unkTable[*curPosition+((*oldPosition)*8)] != -1) {
-			--retValue;
-			*oldPosition = unkTable[*curPosition+((*oldPosition)*8)];
+		} else if (unkTable[*curPosition + *oldPosition * 8] != -1) {
+			--tableSize;
+			*oldPosition = unkTable[*curPosition + *oldPosition * 8];
 			*curPosition = 9;
 
 			if (tempPosition != oldPosition) {
 				curPosition = oldPosition;
 				oldPosition = tempPosition;
-				while (true) {
-					if (tempPosition == moveTable)
-						break;
-
+				while (tempPosition != moveTable) {
 					--tempPosition;
 					if (*tempPosition != 9)
 						break;
-
 				}
 			} else {
-				while (true) {
+				do {
 					++curPosition;
-					if (*curPosition != 9)
-						break;
-				}
+				} while (*curPosition == 9);
 			}
-			continue;
-		}
+		} else {
+			tempPosition = oldPosition;
+			oldPosition = curPosition;
+			++tableSize;
 
-		tempPosition = oldPosition;
-		oldPosition = curPosition;
-		++retValue;
-
-		while (true) {
-			++curPosition;
-			if (*curPosition != 9)
-				break;
+			do {
+				++curPosition;
+			} while (*curPosition == 9);
 		}
 	}
 
-	return retValue;
+	return tableSize;
 }
 
 } // End of namespace Kyra

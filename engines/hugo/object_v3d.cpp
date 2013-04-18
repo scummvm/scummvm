@@ -92,24 +92,24 @@ void ObjectHandler_v3d::moveObjects() {
 					if (!obj->vx) {                 // Got 4 directions
 						if (obj->vx != obj->oldvx) { // vx just stopped
 							if (dy >= 0)
-								obj->currImagePtr = obj->seqList[DOWN].seqPtr;
+								obj->currImagePtr = obj->seqList[SEQ_DOWN].seqPtr;
 							else
-								obj->currImagePtr = obj->seqList[_UP].seqPtr;
+								obj->currImagePtr = obj->seqList[SEQ_UP].seqPtr;
 						}
 					} else if (obj->vx != obj->oldvx) {
 						if (dx > 0)
-							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+							obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 						else
-							obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+							obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 					}
 					break;
 				case 3:
 				case 2:
 					if (obj->vx != obj->oldvx) {    // vx just stopped
 						if (dx > 0)                 // Left & right only
-							obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+							obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 						else
-							obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+							obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 					}
 					break;
 				}
@@ -136,15 +136,15 @@ void ObjectHandler_v3d::moveObjects() {
 						if (!obj->vx && (obj->seqNumb >= 4)) {
 							if (obj->vx != obj->oldvx) { // vx just stopped
 								if (obj->vy > 0)
-									obj->currImagePtr = obj->seqList[DOWN].seqPtr;
+									obj->currImagePtr = obj->seqList[SEQ_DOWN].seqPtr;
 								else
-									obj->currImagePtr = obj->seqList[_UP].seqPtr;
+									obj->currImagePtr = obj->seqList[SEQ_UP].seqPtr;
 							}
 						} else if (obj->vx != obj->oldvx) {
 							if (obj->vx > 0)
-								obj->currImagePtr = obj->seqList[RIGHT].seqPtr;
+								obj->currImagePtr = obj->seqList[SEQ_RIGHT].seqPtr;
 							else
-								obj->currImagePtr = obj->seqList[LEFT].seqPtr;
+								obj->currImagePtr = obj->seqList[SEQ_LEFT].seqPtr;
 						}
 					}
 					obj->oldvx = obj->vx;

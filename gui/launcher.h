@@ -31,6 +31,7 @@ class BrowserDialog;
 class CommandSender;
 class ListWidget;
 class ButtonWidget;
+class PicButtonWidget;
 class GraphicsWidget;
 class StaticTextWidget;
 class EditTextWidget;

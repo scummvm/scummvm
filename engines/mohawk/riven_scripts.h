@@ -27,8 +27,6 @@
 #include "common/ptr.h"
 #include "common/textconsole.h"
 
-class MohawkEngine_Riven;
-
 #define DECLARE_OPCODE(x) void x(uint16 op, uint16 argc, uint16 *argv)
 
 namespace Mohawk {
@@ -50,6 +48,7 @@ enum {
 	kStoredOpcodeScript // This is ScummVM-only to denote the script from a storeMovieOpcode() call
 };
 
+class MohawkEngine_Riven;
 class RivenScript;
 
 class RivenScript {
@@ -125,7 +124,7 @@ private:
 	DECLARE_OPCODE(activateMLST);
 };
 
-typedef Common::Array<RivenScript*> RivenScriptList;
+typedef Common::Array<RivenScript *> RivenScriptList;
 
 class RivenScriptManager {
 public:

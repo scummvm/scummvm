@@ -169,8 +169,11 @@ ResourceType ResourceManager::convertResType(byte type) {
 		if (type < ARRAYSIZE(s_resTypeMapSci21)) {
 			// LSL6 hires doesn't have the chunk resource type, to match
 			// the resource types of the lowres version, thus we use the
-			// older resource types here
-			if (g_sci && g_sci->getGameId() == GID_LSL6HIRES)
+			// older resource types here.
+			// PQ4 CD and QFG4 CD are SCI2.1, but use the resource types of the
+			// corresponding SCI2 floppy disk versions.
+			if (g_sci && (g_sci->getGameId() == GID_LSL6HIRES ||
+				g_sci->getGameId() == GID_QFG4 || g_sci->getGameId() == GID_PQ4))
 				return s_resTypeMapSci0[type];
 			else
 				return s_resTypeMapSci21[type];
@@ -606,7 +609,7 @@ int ResourceManager::addAppropriateSources() {
 		if (Common::File::exists("alt.map") && Common::File::exists("resource.alt"))
 			addSource(new VolumeResourceSource("resource.alt", addExternalMap("alt.map", 10), 10));
 #endif
-	} else if (Common::File::exists("Data1")) {
+	} else if (Common::MacResManager::exists("Data1")) {
 		// Mac SCI1.1+ file naming scheme
 		SearchMan.listMatchingMembers(files, "Data?*");
 
@@ -750,12 +753,10 @@ void ResourceManager::addScriptChunkSources() {
 		// to try to get to any scripts in there. The Lighthouse SCI2.1 demo
 		// does exactly this.
 
-		Common::List<ResourceId> *resources = listResources(kResourceTypeScript);
+		Common::List<ResourceId> resources = listResources(kResourceTypeScript);
 
-		if (resources->empty() && testResource(ResourceId(kResourceTypeChunk, 0)))
+		if (resources.empty() && testResource(ResourceId(kResourceTypeChunk, 0)))
 			addResourcesFromChunk(0);
-
-		delete resources;
 	}
 #endif
 }
@@ -1042,13 +1043,13 @@ void ResourceManager::freeOldResources() {
 	}
 }
 
-Common::List<ResourceId> *ResourceManager::listResources(ResourceType type, int mapNumber) {
-	Common::List<ResourceId> *resources = new Common::List<ResourceId>;
+Common::List<ResourceId> ResourceManager::listResources(ResourceType type, int mapNumber) {
+	Common::List<ResourceId> resources;
 
 	ResourceMap::iterator itr = _resMap.begin();
 	while (itr != _resMap.end()) {
 		if ((itr->_value->getType() == type) && ((mapNumber == -1) || (itr->_value->getNumber() == mapNumber)))
-			resources->push_back(itr->_value->_id);
+			resources.push_back(itr->_value->_id);
 		++itr;
 	}
 
@@ -1557,7 +1558,7 @@ void ResourceManager::readResourcePatches() {
 			name = (*x)->getName();
 
 			// SCI1 scheme
-			if (isdigit(static_cast<unsigned char>(name[0]))) {
+			if (Common::isDigit(name[0])) {
 				char *end = 0;
 				resourceNr = strtol(name.c_str(), &end, 10);
 				bAdd = (*end == '.'); // Ensure the next character is the period
@@ -1565,7 +1566,7 @@ void ResourceManager::readResourcePatches() {
 				// SCI0 scheme
 				int resname_len = strlen(szResType);
 				if (scumm_strnicmp(name.c_str(), szResType, resname_len) == 0
-					&& !isalpha(static_cast<unsigned char>(name[resname_len + 1]))) {
+					&& !Common::isAlpha(name[resname_len + 1])) {
 					resourceNr = atoi(name.c_str() + resname_len + 1);
 					bAdd = true;
 				}
@@ -2196,14 +2197,16 @@ void ResourceManager::detectSciVersion() {
 
 	// Handle SCI32 versions here
 	if (_volVersion >= kResVersionSci2) {
-		Common::List<ResourceId> *heaps = listResources(kResourceTypeHeap);
+		Common::List<ResourceId> heaps = listResources(kResourceTypeHeap);
+		bool hasHeapResources = !heaps.empty();
+
 		// SCI2.1/3 and SCI1 Late resource maps are the same, except that
 		// SCI1 Late resource maps have the resource types or'd with
 		// 0x80. We differentiate between SCI2 and SCI2.1/3 based on that.
 		if (_mapVersion == kResVersionSci1Late) {
 			s_sciVersion = SCI_VERSION_2;
 			return;
-		} else if (!heaps->empty()) {
+		} else if (hasHeapResources) {
 			s_sciVersion = SCI_VERSION_2_1;
 			return;
 		} else {

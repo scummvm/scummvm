@@ -33,7 +33,7 @@ static size_t adjustChunkSize(size_t chunkSize) {
 	// You must at least fit the pointer in the node (technically unneeded considering the next rounding statement)
 	chunkSize = MAX(chunkSize, sizeof(void *));
 	// There might be an alignment problem on some platforms when trying to load a void* on a non natural boundary
-	// so we round to the next sizeof(void*)
+	// so we round to the next sizeof(void *)
 	chunkSize = (chunkSize + sizeof(void *) - 1) & (~(sizeof(void *) - 1));
 
 	return chunkSize;

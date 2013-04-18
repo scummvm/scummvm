@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_MIDIPLAYER_H
-#define SOUND_MIDIPLAYER_H
+#ifndef AUDIO_MIDIPLAYER_H
+#define AUDIO_MIDIPLAYER_H
 
 #include "common/scummsys.h"
 #include "common/mutex.h"

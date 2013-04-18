@@ -37,15 +37,17 @@
 
 namespace Sci {
 
-SciMusic::SciMusic(SciVersion soundVersion)
-	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0), _globalReverb(0) {
+SciMusic::SciMusic(SciVersion soundVersion, bool useDigitalSFX)
+	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0), _globalReverb(0), _useDigitalSFX(useDigitalSFX) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
 	_playList.reserve(10);
 
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 16; i++) {
 		_usedChannel[i] = 0;
+		_channelRemap[i] = -1;
+	}
 
 	_queuedCommands.reserve(1000);
 }
@@ -76,6 +78,13 @@ void SciMusic::init() {
 	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY && getSciVersion() <= SCI_VERSION_1_1)
 		deviceFlags |= MDT_CMS;
 
+	if (g_sci->getPlatform() == Common::kPlatformFMTowns) {
+		if (getSciVersion() > SCI_VERSION_1_EARLY)
+			deviceFlags = MDT_TOWNS;
+		else
+			deviceFlags |= MDT_TOWNS;
+	}
+
 	uint32 dev = MidiDriver::detectDevice(deviceFlags);
 	_musicType = MidiDriver::getMusicType(dev);
 
@@ -96,6 +105,9 @@ void SciMusic::init() {
 	case MT_CMS:
 		_pMidiDrv = MidiPlayer_CMS_create(_soundVersion);
 		break;
+	case MT_TOWNS:
+		_pMidiDrv = MidiPlayer_FMTowns_create(_soundVersion);
+		break;
 	default:
 		if (ConfMan.getBool("native_fb01"))
 			_pMidiDrv = MidiPlayer_Fb01_create(_soundVersion);
@@ -109,8 +121,6 @@ void SciMusic::init() {
 	} else {
 		error("Failed to initialize sound driver");
 	}
-
-	_bMultiMidi = ConfMan.getBool("multi_midi");
 
 	// Find out what the first possible channel is (used, when doing channel
 	// remapping).
@@ -273,10 +283,10 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 
 	// If MIDI device is selected but there is no digital track in sound
-	// resource try to use adlib's digital sample if possible. Also, if the
+	// resource try to use Adlib's digital sample if possible. Also, if the
 	// track couldn't be found, load the digital track, as some games depend on
 	// this (e.g. the Longbow demo).
-	if (!track || (_bMultiMidi && track->digitalChannelNr == -1)) {
+	if (!track || (_useDigitalSFX && track->digitalChannelNr == -1)) {
 		SoundResource::Track *digital = pSnd->soundRes->getDigitalTrack();
 		if (digital)
 			track = digital;
@@ -349,6 +359,7 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 	if (!_usedChannel[bestChannel]) {
 		// currently unused, so give it to caller directly
 		_usedChannel[bestChannel] = caller;
+		_channelRemap[bestChannel] = bestChannel;
 		return bestChannel;
 	}
 	// otherwise look for unused channel
@@ -357,6 +368,7 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 			continue;
 		if (!_usedChannel[channelNr]) {
 			_usedChannel[channelNr] = caller;
+			_channelRemap[bestChannel] = channelNr;
 			return channelNr;
 		}
 	}
@@ -369,8 +381,24 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 void SciMusic::freeChannels(MusicEntry *caller) {
 	// Remove used channels
 	for (int i = 0; i < 15; i++) {
-		if (_usedChannel[i] == caller)
+		if (_usedChannel[i] == caller) {
+			if (_channelRemap[i] != -1) {
+				// athrxx: The original handles this differently. It seems to be checking for (and effecting) necessary
+				// remaps / resets etc. more or less all the time. There are several more tables to keep track of everything.
+				// I don't know whether all of that is needed and to which SCI versions it applies, though.
+				// At least it is necessary to release the allocated channels inside the driver. Otherwise these channels
+				// won't be available any more (e.g. after half of the KQ5 FM-Towns intro there will be no more music
+				// since the driver can't pick up any more channels). The channels also have to be reset to
+				// default values, since the original does the same (although in a different manny) and the music will be wrong
+				// otherwise (at least KQ5 FM-Towns).
+
+				sendMidiCommand(0x4000e0 | _channelRemap[i]);	// Reset pitch wheel
+				sendMidiCommand(0x0040b0 | _channelRemap[i]);	// Release pedal
+				sendMidiCommand(0x004bb0 | _channelRemap[i]);	// Release assigned driver channels
+			}
 			_usedChannel[i] = 0;
+			_channelRemap[i] = -1;
+		}
 	}
 	// Also tell midiparser, that he lost ownership
 	caller->pMidiParser->lostChannels();
@@ -446,9 +474,9 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 				// volume of the sound channels that the faded song occupies..
 				// Fixes bug #3266480 and partially fixes bug #3041738.
 				for (uint i = 0; i < playListCount; i++) {
-					// Is another MIDI song being faded? If yes, stop it
+					// Is another MIDI song being faded down? If yes, stop it
 					// immediately instead
-					if (_playList[i]->fadeStep && _playList[i]->pMidiParser) {
+					if (_playList[i]->fadeStep < 0 && _playList[i]->pMidiParser) {
 						_playList[i]->status = kSoundStopped;
 						if (_soundVersion <= SCI_VERSION_0_LATE)
 							_playList[i]->isQueued = false;

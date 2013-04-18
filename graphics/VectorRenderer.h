@@ -55,6 +55,8 @@ struct DrawStep {
 	bool autoWidth, autoHeight;
 	int16 x, y, w, h; /**< width, height and position, if not measured automatically.
 						  negative values mean counting from the opposite direction */
+						  
+	Common::Rect padding;
 
 	enum VectorAlignment {
 		kVectorAlignManual,
@@ -491,7 +493,6 @@ protected:
 	uint32 _dynamicData; /**< Dynamic data from the GUI Theme that modifies the drawing of the current shape */
 
 	int _gradientFactor; /**< Multiplication factor of the active gradient */
-	int _gradientBytes[3]; /**< Color bytes of the active gradient, used to speed up calculation */
 };
 
 } // End of namespace Graphics

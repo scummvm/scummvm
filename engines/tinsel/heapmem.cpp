@@ -58,16 +58,16 @@ static const uint32 MemoryPoolSize[3] = {5 * 1024 * 1024, 5 * 1024 * 1024, 10 * 
 
 
 // list of all memory nodes
-MEM_NODE mnodeList[NUM_MNODES];
+MEM_NODE g_mnodeList[NUM_MNODES];
 
 // pointer to the linked list of free mnodes
-static MEM_NODE *pFreeMemNodes;
+static MEM_NODE *g_pFreeMemNodes;
 
 // list of all fixed memory nodes
-MEM_NODE s_fixedMnodesList[5];
+MEM_NODE g_s_fixedMnodesList[5];
 
 // the mnode heap sentinel
-static MEM_NODE heapSentinel;
+static MEM_NODE g_heapSentinel;
 
 //
 static MEM_NODE *AllocMemNode();
@@ -80,7 +80,7 @@ static void MemoryStats() {
 	int lockedSize = 0;
 	int totalSize = 0;
 
-	const MEM_NODE *pHeap = &heapSentinel;
+	const MEM_NODE *pHeap = &g_heapSentinel;
 	MEM_NODE *pCur;
 
 	for (pCur = pHeap->pNext; pCur != pHeap; pCur = pCur->pNext) {
@@ -104,43 +104,43 @@ static void MemoryStats() {
  */
 void MemoryInit() {
 	// place first node on free list
-	pFreeMemNodes = mnodeList;
+	g_pFreeMemNodes = g_mnodeList;
 
 	// link all other objects after first
-	memset(mnodeList, 0, sizeof(mnodeList));
+	memset(g_mnodeList, 0, sizeof(g_mnodeList));
 	for (int i = 1; i < NUM_MNODES; i++) {
-		mnodeList[i - 1].pNext = mnodeList + i;
+		g_mnodeList[i - 1].pNext = g_mnodeList + i;
 	}
 
 	// null the last mnode
-	mnodeList[NUM_MNODES - 1].pNext = NULL;
+	g_mnodeList[NUM_MNODES - 1].pNext = NULL;
 
 	// clear list of fixed memory nodes
-	memset(s_fixedMnodesList, 0, sizeof(s_fixedMnodesList));
+	memset(g_s_fixedMnodesList, 0, sizeof(g_s_fixedMnodesList));
 
 	// set cyclic links to the sentinel
-	heapSentinel.pPrev = &heapSentinel;
-	heapSentinel.pNext = &heapSentinel;
+	g_heapSentinel.pPrev = &g_heapSentinel;
+	g_heapSentinel.pNext = &g_heapSentinel;
 
 	// flag sentinel as locked
-	heapSentinel.flags = DWM_LOCKED | DWM_SENTINEL;
+	g_heapSentinel.flags = DWM_LOCKED | DWM_SENTINEL;
 
 	// store the current heap size in the sentinel
 	uint32 size = MemoryPoolSize[0];
 	if (TinselVersion == TINSEL_V1) size = MemoryPoolSize[1];
 	else if (TinselVersion == TINSEL_V2) size = MemoryPoolSize[2];
-	heapSentinel.size = size;
+	g_heapSentinel.size = size;
 }
 
 /**
  * Deinitializes the memory manager.
  */
 void MemoryDeinit() {
-	const MEM_NODE *pHeap = &heapSentinel;
+	const MEM_NODE *pHeap = &g_heapSentinel;
 	MEM_NODE *pCur;
 
-	pCur = s_fixedMnodesList;
-	for (int i = 0; i < ARRAYSIZE(s_fixedMnodesList); ++i, ++pCur) {
+	pCur = g_s_fixedMnodesList;
+	for (int i = 0; i < ARRAYSIZE(g_s_fixedMnodesList); ++i, ++pCur) {
 		free(pCur->pBaseAddr);
 		pCur->pBaseAddr = 0;
 	}
@@ -157,13 +157,13 @@ void MemoryDeinit() {
  */
 static MEM_NODE *AllocMemNode() {
 	// get the first free mnode
-	MEM_NODE *pMemNode = pFreeMemNodes;
+	MEM_NODE *pMemNode = g_pFreeMemNodes;
 
 	// make sure a mnode is available
 	assert(pMemNode); // Out of memory nodes
 
 	// the next free mnode
-	pFreeMemNodes = pMemNode->pNext;
+	g_pFreeMemNodes = pMemNode->pNext;
 
 	// wipe out the mnode
 	memset(pMemNode, 0, sizeof(MEM_NODE));
@@ -178,13 +178,13 @@ static MEM_NODE *AllocMemNode() {
  */
 void FreeMemNode(MEM_NODE *pMemNode) {
 	// validate mnode pointer
-	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
+	assert(pMemNode >= g_mnodeList && pMemNode <= g_mnodeList + NUM_MNODES - 1);
 
 	// place free list in mnode next
-	pMemNode->pNext = pFreeMemNodes;
+	pMemNode->pNext = g_pFreeMemNodes;
 
 	// add mnode to top of free list
-	pFreeMemNodes = pMemNode;
+	g_pFreeMemNodes = pMemNode;
 }
 
 
@@ -194,11 +194,11 @@ void FreeMemNode(MEM_NODE *pMemNode) {
  * @return true if any blocks were discarded, false otherwise
  */
 static bool HeapCompact(long size) {
-	const MEM_NODE *pHeap = &heapSentinel;
+	const MEM_NODE *pHeap = &g_heapSentinel;
 	MEM_NODE *pCur, *pOldest;
 	uint32 oldest;		// time of the oldest discardable block
 
-	while (heapSentinel.size < size) {
+	while (g_heapSentinel.size < size) {
 
 		// find the oldest discardable block
 		oldest = DwGetCurrentTime();
@@ -231,11 +231,11 @@ static bool HeapCompact(long size) {
  * @param size			Number of bytes to allocate
  */
 static MEM_NODE *MemoryAlloc(long size) {
-	MEM_NODE *pHeap = &heapSentinel;
+	MEM_NODE *pHeap = &g_heapSentinel;
 
 #ifdef SCUMM_NEED_ALIGNMENT
-	const int alignPadding = sizeof(void*) - 1;
-	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
+	const int alignPadding = sizeof(void *) - 1;
+	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void *), this ensures the addresses that are returned are alignment-safe.
 #endif
 
 	// compact the heap to make up room for 'size' bytes, if necessary
@@ -255,7 +255,7 @@ static MEM_NODE *MemoryAlloc(long size) {
 	assert(pNode->pBaseAddr);
 
 	// Subtract size of new block from total
-	heapSentinel.size -= size;
+	g_heapSentinel.size -= size;
 
 #ifdef DEBUG
 	MemoryStats();
@@ -282,7 +282,7 @@ static MEM_NODE *MemoryAlloc(long size) {
  * by using MemoryReAlloc().
  */
 MEM_NODE *MemoryNoAlloc() {
-	MEM_NODE *pHeap = &heapSentinel;
+	MEM_NODE *pHeap = &g_heapSentinel;
 
 	// chain a discarded node onto the end of the heap
 	MEM_NODE *pNode = AllocMemNode();
@@ -310,13 +310,13 @@ MEM_NODE *MemoryNoAlloc() {
 MEM_NODE *MemoryAllocFixed(long size) {
 
 #ifdef SCUMM_NEED_ALIGNMENT
-	const int alignPadding = sizeof(void*) - 1;
-	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
+	const int alignPadding = sizeof(void *) - 1;
+	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void *), this ensures the addresses that are returned are alignment-safe.
 #endif
 
 	// Search for a free entry in s_fixedMnodesList
-	MEM_NODE *pNode = s_fixedMnodesList;
-	for (int i = 0; i < ARRAYSIZE(s_fixedMnodesList); ++i, ++pNode) {
+	MEM_NODE *pNode = g_s_fixedMnodesList;
+	for (int i = 0; i < ARRAYSIZE(g_s_fixedMnodesList); ++i, ++pNode) {
 		if (!pNode->pBaseAddr) {
 			pNode->pNext = 0;
 			pNode->pPrev = 0;
@@ -326,7 +326,7 @@ MEM_NODE *MemoryAllocFixed(long size) {
 			pNode->flags = DWM_USED;
 
 			// Subtract size of new block from total
-			heapSentinel.size -= size;
+			g_heapSentinel.size -= size;
 
 			return pNode;
 		}
@@ -342,7 +342,7 @@ MEM_NODE *MemoryAllocFixed(long size) {
  */
 void MemoryDiscard(MEM_NODE *pMemNode) {
 	// validate mnode pointer
-	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
+	assert(pMemNode >= g_mnodeList && pMemNode <= g_mnodeList + NUM_MNODES - 1);
 
 	// object must be in use and locked
 	assert((pMemNode->flags & (DWM_USED | DWM_LOCKED)) == DWM_USED);
@@ -351,7 +351,7 @@ void MemoryDiscard(MEM_NODE *pMemNode) {
 	if ((pMemNode->flags & DWM_DISCARDED) == 0) {
 		// free memory
 		free(pMemNode->pBaseAddr);
-		heapSentinel.size += pMemNode->size;
+		g_heapSentinel.size += pMemNode->size;
 
 #ifdef DEBUG
 		MemoryStats();
@@ -416,7 +416,7 @@ void MemoryReAlloc(MEM_NODE *pMemNode, long size) {
 	MEM_NODE *pNew;
 
 	// validate mnode pointer
-	assert(pMemNode >= mnodeList && pMemNode <= mnodeList + NUM_MNODES - 1);
+	assert(pMemNode >= g_mnodeList && pMemNode <= g_mnodeList + NUM_MNODES - 1);
 
 	// align the size to machine boundary requirements
 	size = (size + sizeof(void *) - 1) & ~(sizeof(void *) - 1);

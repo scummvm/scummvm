@@ -178,10 +178,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 		// Alternatively, scan the inventory to see if the object is in there...
 		for (i = 0; i < _numInventory; i++) {
 			if (_inventory[i] == obj) {
-				if (_game.version == 0)
-					assert(WIO_INVENTORY == whereIsObjectInventory(obj));
-				else
-					assert(WIO_INVENTORY == whereIsObject(obj));
+				assert(WIO_INVENTORY == whereIsObject(obj));
 
 				// Found the object! Nuke it from the inventory.
 				_res->nukeResource(rtInventory, i);
@@ -206,6 +203,9 @@ void ScummEngine::clearOwnerOf(int obj) {
 }
 
 bool ScummEngine::getClass(int obj, int cls) const {
+	if (_game.version == 0)
+		return false;
+
 	assertRange(0, obj, _numGlobalObjects - 1, "object");
 	cls &= 0x7F;
 	assertRange(1, cls, 32, "class");
@@ -233,6 +233,9 @@ bool ScummEngine::getClass(int obj, int cls) const {
 }
 
 void ScummEngine::putClass(int obj, int cls, bool set) {
+	if (_game.version == 0)
+		return;
+
 	assertRange(0, obj, _numGlobalObjects - 1, "object");
 	cls &= 0x7F;
 	assertRange(1, cls, 32, "class");
@@ -315,47 +318,38 @@ int ScummEngine::getObjectIndex(int object) const {
 		return -1;
 
 	for (i = (_numLocalObjects-1); i > 0; i--) {
-		if (_game.version == 0 )
-			if( _objs[i].flags != _v0ObjectFlag )
-				continue;
-
 		if (_objs[i].obj_nr == object)
 			return i;
 	}
 	return -1;
 }
 
-int ScummEngine::whereIsObjectInventory(int object) {
-	int res = 0;
-	_v0ObjectInInventory = true;
-	res = whereIsObject(object);
-	_v0ObjectInInventory = false;
-
-	return res;
-}
-
 int ScummEngine::whereIsObject(int object) const {
 	int i;
 
-	if (object >= _numGlobalObjects)
+	// Note: in MM v0 bg objects are greater _numGlobalObjects
+	if (_game.version != 0 && object >= _numGlobalObjects)
 		return WIO_NOT_FOUND;
 
 	if (object < 1)
 		return WIO_NOT_FOUND;
 
-	if ((_objectOwnerTable[object] != OF_OWNER_ROOM && _game.version != 0) || _v0ObjectInInventory) {
+	if ((_game.version != 0 || OBJECT_V0_TYPE(object) == 0) &&
+		 _objectOwnerTable[object] != OF_OWNER_ROOM) 
+	{
 		for (i = 0; i < _numInventory; i++)
 			if (_inventory[i] == object)
 				return WIO_INVENTORY;
 		return WIO_NOT_FOUND;
 	}
 
-	for (i = (_numLocalObjects-1); i > 0; i--)
-		if ((_objs[i].obj_nr == object && !_v0ObjectIndex) || (_v0ObjectIndex && i == object)) {
+	for (i = (_numLocalObjects-1); i > 0; i--) {
+		if (_objs[i].obj_nr == object) {
 			if (_objs[i].fl_object_index)
 				return WIO_FLOBJECT;
 			return WIO_ROOM;
 		}
+	}
 
 	return WIO_NOT_FOUND;
 }
@@ -363,8 +357,8 @@ int ScummEngine::whereIsObject(int object) const {
 int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 	Actor *act;
 
-	if (object < _numActors) {
-		act = derefActorSafe(object, "getObjectOrActorXY");
+	if (objIsActor(object)) {
+		act = derefActorSafe(objToActor(object), "getObjectOrActorXY");
 		if (act && act->isInCurrentRoom()) {
 			x = act->getRealPos().x;
 			y = act->getRealPos().y;
@@ -377,7 +371,7 @@ int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 	case WIO_NOT_FOUND:
 		return -1;
 	case WIO_INVENTORY:
-		if (_objectOwnerTable[object] < _numActors) {
+		if (objIsActor(_objectOwnerTable[object])) {
 			act = derefActor(_objectOwnerTable[object], "getObjectOrActorXY(2)");
 			if (act && act->isInCurrentRoom()) {
 				x = act->getRealPos().x;
@@ -396,7 +390,7 @@ int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
  * Returns X, Y and direction in angles
  */
 void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
-	int idx = (_v0ObjectIndex) ? object : getObjectIndex(object);
+	int idx = getObjectIndex(object);
 	assert(idx >= 0);
 	ObjectData &od = _objs[idx];
 	int state;
@@ -439,8 +433,15 @@ void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
 			y = od.y_pos + (int16)READ_LE_UINT16(&imhd->old.hotspot[state].y);
 		}
 	} else if (_game.version <= 2) {
-		x = od.walk_x >> V12_X_SHIFT;
-		y = od.walk_y >> V12_Y_SHIFT;
+		if (od.actordir) {
+			x = od.walk_x;
+			y = od.walk_y;
+		} else {
+			x = od.x_pos + od.width / 2;
+			y = od.y_pos + od.height / 2;
+		}
+		x = x >> V12_X_SHIFT;
+		y = y >> V12_Y_SHIFT;
 	} else {
 		x = od.walk_x;
 		y = od.walk_y;
@@ -462,11 +463,11 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 	Actor *acta = NULL;
 	Actor *actb = NULL;
 
-	if (a < _numActors)
-		acta = derefActorSafe(a, "getObjActToObjActDist");
+	if (objIsActor(a))
+		acta = derefActorSafe(objToActor(a), "getObjActToObjActDist");
 
-	if (b < _numActors)
-		actb = derefActorSafe(b, "getObjActToObjActDist(2)");
+	if (objIsActor(b))
+		actb = derefActorSafe(objToActor(b), "getObjActToObjActDist(2)");
 
 	if (acta && actb && acta->getRoom() == actb->getRoom() && acta->getRoom() && !acta->isInCurrentRoom())
 		return 0;
@@ -492,14 +493,6 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 	return getDist(x, y, x2, y2);
 }
 
-int ScummEngine_v0::findObjectIndex(int x, int y) {
-	int objIdx;
-	_v0ObjectIndex = true;
-	objIdx = findObject(x, y);
-	_v0ObjectIndex = false;
-	return objIdx;
-}
-
 int ScummEngine::findObject(int x, int y) {
 	int i, b;
 	byte a;
@@ -509,11 +502,9 @@ int ScummEngine::findObject(int x, int y) {
 		if ((_objs[i].obj_nr < 1) || getClass(_objs[i].obj_nr, kObjectClassUntouchable))
 			continue;
 
-		if (_game.version == 0) {
-			if (_objs[i].flags == 0 && _objs[i].state & kObjectStateUntouchable)
-				continue;
-		} else {
-			if (_game.version <= 2 && _objs[i].state & kObjectStateUntouchable)
+		if ((_game.version == 0 && OBJECT_V0_TYPE(_objs[i].obj_nr) == kObjectV0TypeFG) ||
+			(_game.version > 0 && _game.version <= 2)) {
+			if (_objs[i].state & kObjectStateUntouchable)
 				continue;
 		}
 
@@ -529,15 +520,8 @@ int ScummEngine::findObject(int x, int y) {
 				}
 #endif
 				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
-				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y) {
-					// MMC64: Set the object search flag
-					if (_game.version == 0)
-						_v0ObjectFlag = _objs[i].flags;
-					if (_game.version == 0 && _v0ObjectIndex)
-						return i;
-					else
-						return _objs[i].obj_nr;
-				}
+				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
+					return _objs[i].obj_nr;
 				break;
 			}
 		} while ((_objs[b].state & mask) == a);
@@ -824,7 +808,7 @@ void ScummEngine_v3old::resetRoomObjects() {
 	else
 		ptr = room + 29;
 
-	// Default pointer of objects without image, in C64 verison of Maniac Mansion
+	// Default pointer of objects without image, in v0 version of Maniac Mansion
 	int defaultPtr = READ_LE_UINT16(ptr + 2 * _numObjectsInRoom);
 
 	for (i = 0; i < _numObjectsInRoom; i++) {
@@ -843,9 +827,6 @@ void ScummEngine_v3old::resetRoomObjects() {
 		if (_dumpScripts) {
 			char buf[32];
 			sprintf(buf, "roomobj-%d-", _roomResource);
-			if (_game.version == 0)
-				sprintf(buf + 11, "%d-", od->flags);
-
 			dumpResource(buf, od->obj_nr, room + od->OBCDoffset);
 		}
 	}
@@ -911,8 +892,7 @@ void ScummEngine_v0::resetRoomObject(ObjectData *od, const byte *room, const byt
 	const byte *ptr = room + od->OBCDoffset;
 	ptr -= 2;
 
-	od->obj_nr = *(ptr + 6);
-	od->flags = *(ptr + 7);
+	od->obj_nr = OBJECT_V0(*(ptr + 6), *(ptr + 7));
 
 	od->x_pos = *(ptr + 8) * 8;
 	od->y_pos = ((*(ptr + 9)) & 0x7F) * 8;
@@ -1072,8 +1052,8 @@ void ScummEngine::updateObjectStates() {
 	int i;
 	ObjectData *od = &_objs[1];
 	for (i = 1; i < _numLocalObjects; i++, od++) {
-		// V0 MM, Room objects with Flag == 1 are objects with 'no-state' (room specific objects, non-pickup)
-		if (_game.version == 0 && od->flags == 1)
+		// V0 MM, objects with type == 1 are room objects (room specific objects, non-pickup)
+		if (_game.version == 0 && OBJECT_V0_TYPE(od->obj_nr) == kObjectV0TypeBG)
 			continue;
 
 		if (od->obj_nr > 0)
@@ -1163,8 +1143,8 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 	byte *objptr;
 	int i;
 
-	if (obj < _numActors && _game.version >= 1)
-		return derefActor(obj, "getObjOrActorName")->getActorName();
+	if (objIsActor(obj))
+		return derefActor(objToActor(obj), "getObjOrActorName")->getActorName();
 
 	for (i = 0; i < _numNewNames; i++) {
 		if (_newNames[i] == obj) {
@@ -1173,7 +1153,7 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 		}
 	}
 
-	objptr = getOBCDFromObject(obj);
+	objptr = getOBCDFromObject(obj, true);
 	if (objptr == NULL)
 		return NULL;
 
@@ -1200,7 +1180,7 @@ const byte *ScummEngine::getObjOrActorName(int obj) {
 void ScummEngine::setObjectName(int obj) {
 	int i;
 
-	if (obj < _numActors && _game.version != 0)
+	if (objIsActor(obj))
 		error("Can't set actor %d name with new-name-of", obj);
 
 	for (i = 0; i < _numNewNames; i++) {
@@ -1226,12 +1206,9 @@ void ScummEngine::setObjectName(int obj) {
 uint32 ScummEngine::getOBCDOffs(int object) const {
 	int i;
 
-	if ((_objectOwnerTable[object] != OF_OWNER_ROOM && (_game.version != 0))  || _v0ObjectInInventory)
+	if ((_game.version != 0 || OBJECT_V0_TYPE(object) == 0) &&
+		_objectOwnerTable[object] != OF_OWNER_ROOM)
 		return 0;
-
-	// V0 MM Return by Index
-	if (_v0ObjectIndex)
-		return _objs[object].OBCDoffset;
 
 	for (i = (_numLocalObjects-1); i > 0; i--) {
 		if (_objs[i].obj_nr == object) {
@@ -1243,21 +1220,22 @@ uint32 ScummEngine::getOBCDOffs(int object) const {
 	return 0;
 }
 
-byte *ScummEngine::getOBCDFromObject(int obj) {
-	bool useInventory = _v0ObjectInInventory;
+byte *ScummEngine::getOBCDFromObject(int obj, bool v0CheckInventory) {
 	int i;
 	byte *ptr;
 
-	_v0ObjectInInventory = false;
-
-	if ((_objectOwnerTable[obj] != OF_OWNER_ROOM && (_game.version != 0)) || useInventory) {
+	if ((_game.version != 0 || OBJECT_V0_TYPE(obj) == 0) &&
+		_objectOwnerTable[obj] != OF_OWNER_ROOM) 
+	{
+		if (_game.version == 0 && !v0CheckInventory)
+			return 0;
 		for (i = 0; i < _numInventory; i++) {
 			if (_inventory[i] == obj)
 				return getResourceAddress(rtInventory, i);
 		}
 	} else {
 		for (i = (_numLocalObjects-1); i > 0; --i) {
-			if ((_objs[i].obj_nr == obj && !_v0ObjectIndex) || (_v0ObjectIndex && i == obj)) {
+			if (_objs[i].obj_nr == obj) {
 				if (_objs[i].fl_object_index) {
 					assert(_objs[i].OBCDoffset == 8);
 					ptr = getResourceAddress(rtFlObject, _objs[i].fl_object_index);
@@ -1510,11 +1488,37 @@ void ScummEngine::findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint id,
 	}
 }
 
+bool ScummEngine_v0::objIsActor(int obj) {
+	// object IDs < _numActors are used in v0 for objects too (e.g. hamster)
+	return OBJECT_V0_TYPE(obj) == kObjectV0TypeActor;
+}
+
+int ScummEngine_v0::objToActor(int obj) {
+	return OBJECT_V0_ID(obj);
+}
+
+int ScummEngine_v0::actorToObj(int actor) {
+	return OBJECT_V0(actor, kObjectV0TypeActor);
+}
+
+bool ScummEngine::objIsActor(int obj) {
+	return obj < _numActors;
+}
+
+int ScummEngine::objToActor(int obj) {
+	return obj;
+}
+
+int ScummEngine::actorToObj(int actor) {
+	return actor;
+}
+
 int ScummEngine::getObjX(int obj) {
-	if (obj < _numActors) {
-		if (obj < 1)
-			return 0;									/* fix for indy4's map */
-		return derefActor(obj, "getObjX")->getRealPos().x;
+	if (obj < 1)
+		return 0;									/* fix for indy4's map */
+
+	if (objIsActor(obj)) {
+		return derefActor(objToActor(obj), "getObjX")->getRealPos().x;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
@@ -1525,10 +1529,11 @@ int ScummEngine::getObjX(int obj) {
 }
 
 int ScummEngine::getObjY(int obj) {
-	if (obj < _numActors) {
-		if (obj < 1)
-			return 0;									/* fix for indy4's map */
-		return derefActor(obj, "getObjY")->getRealPos().y;
+	if (obj < 1)
+		return 0;									/* fix for indy4's map */
+
+	if (objIsActor(obj)) {
+		return derefActor(objToActor(obj), "getObjY")->getRealPos().y;
 	} else {
 		if (whereIsObject(obj) == WIO_NOT_FOUND)
 			return -1;
@@ -1544,8 +1549,8 @@ int ScummEngine::getObjOldDir(int obj) {
 
 int ScummEngine::getObjNewDir(int obj) {
 	int dir;
-	if (obj < _numActors) {
-		dir = derefActor(obj, "getObjNewDir")->getFacing();
+	if (objIsActor(obj)) {
+		dir = derefActor(objToActor(obj), "getObjNewDir")->getFacing();
 	} else {
 		int x, y;
 		getObjectXYPos(obj, x, y, dir);
@@ -1842,7 +1847,7 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 	if (_dumpScripts) {
 		char buf[32];
 		const byte *ptr = foir.obcd;
-		sprintf(buf, "roomobj-%d-", room);
+		sprintf(buf, "roomobj-%u-", room);
 		ptr = findResource(MKTAG('V','E','R','B'), ptr);
 		dumpResource(buf, object, ptr);
 	}

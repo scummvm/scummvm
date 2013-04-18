@@ -664,6 +664,7 @@ public:
 	void animation_12_2();
 	void animation_13_2();
 	void animation_14_2();
+	void asco();
 	void animation_16_2();
 	void animation_20_2();
 	void animation_23_2();

@@ -77,14 +77,14 @@ HPOLYGON InitExtraBlock(PMOVER ca, PMOVER ta);
 // FIXME: Avoid non-const global vars
 
 #if SLOW_RINCE_DOWN
-static int Interlude = 0;	// For slowing down walking, for testing
-static int BogusVar = 0;	// For slowing down walking, for testing
+static int g_Interlude = 0;	// For slowing down walking, for testing
+static int g_BogusVar = 0;	// For slowing down walking, for testing
 #endif
 
-static int32 DefaultRefer = 0;
-static int lastLeadXdest = 0, lastLeadYdest = 0;
+static int32 g_DefaultRefer = 0;
+static int g_lastLeadXdest = 0, g_lastLeadYdest = 0;
 
-static int hSlowVar = 0;	// used by MoveActor()
+static int g_hSlowVar = 0;	// used by MoveActor()
 
 
 //----------------- FORWARD REFERENCES --------------------
@@ -101,9 +101,9 @@ static void NewCoOrdinates(int fromx, int fromy, int *targetX, int *targetY,
  */
 
 void AddInterlude(int n) {
-	Interlude += n;
-	if (Interlude < 0)
-		Interlude = 0;
+	g_Interlude += n;
+	if (g_Interlude < 0)
+		g_Interlude = 0;
 }
 #endif
 
@@ -251,7 +251,7 @@ static int ClickedOnNothing(int clickX, int clickY, int *ptgtX, int *ptgtY) {
 
 	PlayfieldGetPos(FIELD_WORLD, &Loffset, &Toffset);
 
-	switch (DefaultRefer) {
+	switch (g_DefaultRefer) {
 	case REF_DEFAULT:
 		// Try searching down and up (onscreen).
 		for (i = clickY+1; i < SCREEN_HEIGHT+Toffset; i++)
@@ -1353,15 +1353,15 @@ int SetActorDest(PMOVER pMover, int clickX, int clickY, bool igPath, SCNHANDLE h
 		targetY = clickY;
 
 		if (pMover->actorID == GetLeadId()) {
-			lastLeadXdest = targetX;
-			lastLeadYdest = targetY;
+			g_lastLeadXdest = targetX;
+			g_lastLeadYdest = targetY;
 		}
 	} else {
 		int wodResult = WorkOutDestination(clickX, clickY, &targetX, &targetY);
 
 		if (pMover->actorID == GetLeadId()) {
-			lastLeadXdest = targetX;
-			lastLeadYdest = targetY;
+			g_lastLeadXdest = targetX;
+			g_lastLeadYdest = targetY;
 		}
 
 		if (wodResult == ALL_SORTED) {
@@ -1613,17 +1613,17 @@ void MoveActor(PMOVER pMover) {
 	}
 
 #if SLOW_RINCE_DOWN
-/**/	if (BogusVar++ < Interlude)	// Temporary slow-down-the-action code
+/**/	if (g_BogusVar++ < g_Interlude)	// Temporary slow-down-the-action code
 /**/		return;			//
-/**/	BogusVar = 0;			//
+/**/	g_BogusVar = 0;			//
 #endif
 
 	if (!TinselV2) {
 		// During swalk()s, movement while hidden may be slowed down.
 		if (pMover->bHidden) {
-			if (++hSlowVar < pMover->SlowFactor)
+			if (++g_hSlowVar < pMover->SlowFactor)
 				return;
-			hSlowVar = 0;
+			g_hSlowVar = 0;
 		}
 	}
 
@@ -1705,15 +1705,15 @@ void MoveActor(PMOVER pMover) {
  * Store the default refer type for the current scene.
  */
 void SetDefaultRefer(int32 defRefer) {
-	DefaultRefer = defRefer;
+	g_DefaultRefer = defRefer;
 }
 
 int GetLastLeadXdest() {
-	return lastLeadXdest;
+	return g_lastLeadXdest;
 }
 
 int GetLastLeadYdest() {
-	return lastLeadYdest;
+	return g_lastLeadYdest;
 }
 
 

@@ -49,7 +49,7 @@ public:
 	SequenceManager _sequenceManager;
 	Action1 _action1;
 	ASoundExt _sound1;
-	NamedObject _object1, _object2, _object3;
+	NamedObject _ryan, _object2, _skidMarks;
 	BackgroundSceneObject _object4, _object5;
 	BackgroundSceneObject _object6, _object7, _object8;
 

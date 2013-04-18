@@ -26,8 +26,8 @@
  *  - parallaction
  */
 
-#ifndef SOUND_IFF_H
-#define SOUND_IFF_H
+#ifndef AUDIO_IFF_H
+#define AUDIO_IFF_H
 
 namespace Common {
 class ReadStream;

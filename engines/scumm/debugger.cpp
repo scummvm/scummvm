@@ -292,7 +292,7 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 		if (_vm->_game.features & GF_SMALL_HEADER) {
 			size = file.readUint16LE();
 			file.seek(-2, SEEK_CUR);
-		} else if (_vm->_game.features & GF_SMALL_HEADER) {
+		} else if (_vm->_game.features & GF_SMALL_HEADER) { // FIXME: This never was executed
 			if (_vm->_game.version == 4)
 				file.seek(8, SEEK_CUR);
 			size = file.readUint32LE();
@@ -382,7 +382,8 @@ bool ScummDebugger::Cmd_Actor(int argc, const char **argv) {
 			DebugPrintf("Actor[%d].costume = %d\n", actnum, a->_costume);
 		}
 	} else if (!strcmp(argv[2], "name")) {
-		DebugPrintf("Name of actor %d: %s\n", actnum, _vm->getObjOrActorName(actnum));
+		DebugPrintf("Name of actor %d: %s\n", actnum, 
+			_vm->getObjOrActorName(_vm->actorToObj(actnum)));
 	} else if (!strcmp(argv[2], "condmask")) {
 		if (argc > 3) {
 			a->_heCondMask = value;
@@ -427,9 +428,10 @@ bool ScummDebugger::Cmd_PrintObjects(int argc, const char **argv) {
 		o = &(_vm->_objs[i]);
 		if (o->obj_nr == 0)
 			continue;
+		int classData = (_vm->_game.version != 0 ? _vm->_classData[o->obj_nr] : 0);
 		DebugPrintf("|%4d|%4d|%4d|%5d|%6d|%5d|%2d|$%08x|\n",
 				o->obj_nr, o->x_pos, o->y_pos, o->width, o->height, o->state,
-				o->fl_object_index, _vm->_classData[o->obj_nr]);
+				o->fl_object_index, classData);
 	}
 	DebugPrintf("\n");
 
@@ -446,7 +448,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 	}
 
 	obj = atoi(argv[1]);
-	if (obj >= _vm->_numGlobalObjects) {
+	if (_vm->_game.version != 0 && obj >= _vm->_numGlobalObjects) {
 		DebugPrintf("Object %d is out of range (range: 1 - %d)\n", obj, _vm->_numGlobalObjects);
 		return true;
 	}

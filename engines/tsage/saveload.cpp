@@ -189,6 +189,8 @@ Common::Error Saver::restore(int slot) {
 	// Read in the savegame header
 	tSageSavegameHeader header;
 	readSavegameHeader(saveFile, header);
+	if (header.thumbnail)
+		header.thumbnail->free();
 	delete header.thumbnail;
 
 	serializer.setSaveVersion(header.version);
@@ -290,6 +292,7 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 	::createThumbnail(thumb, (const byte *)s.pixels, SCREEN_WIDTH, SCREEN_HEIGHT, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
 	g_globals->_screenSurface.unlockSurface();
+	thumb->free();
 	delete thumb;
 
 	// Write out the save date/time

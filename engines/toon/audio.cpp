@@ -84,7 +84,7 @@ void AudioManager::removeInstance(AudioStreamInstance *inst) {
 	}
 }
 
-void AudioManager::playMusic(Common::String dir, Common::String music) {
+void AudioManager::playMusic(const Common::String &dir, const Common::String &music) {
 	debugC(1, kDebugAudio, "playMusic(%s, %s)", dir.c_str(), music.c_str());
 
 	// two musics can be played at same time
@@ -199,7 +199,7 @@ void AudioManager::closeAudioPack(int32 id) {
 	_audioPacks[id] = NULL;
 }
 
-bool AudioManager::loadAudioPack(int32 id, Common::String indexFile, Common::String packFile) {
+bool AudioManager::loadAudioPack(int32 id, const Common::String &indexFile, const Common::String &packFile) {
 	debugC(4, kDebugAudio, "loadAudioPack(%d, %s, %s)", id, indexFile.c_str(), packFile.c_str());
 
 	closeAudioPack(id);
@@ -481,7 +481,7 @@ AudioStreamPackage::~AudioStreamPackage() {
 	delete _file;
 }
 
-bool AudioStreamPackage::loadAudioPackage(Common::String indexFile, Common::String streamFile) {
+bool AudioStreamPackage::loadAudioPackage(const Common::String &indexFile, const Common::String &streamFile) {
 	debugC(4, kDebugAudio, "loadAudioPackage(%s, %s)", indexFile.c_str(), streamFile.c_str());
 
 	uint32 size = 0;
@@ -514,7 +514,7 @@ Common::SeekableReadStream *AudioStreamPackage::getStream(int32 id, bool ownMemo
 	int32 size = 0;
 	getInfo(id, &offset, &size);
 	if (ownMemory) {
-		byte *memory = (byte*)malloc(size);
+		byte *memory = (byte *)malloc(size);
 		_file->seek(offset);
 		_file->read(memory, size);
 		return new Common::MemoryReadStream(memory, size, DisposeAfterUse::YES);

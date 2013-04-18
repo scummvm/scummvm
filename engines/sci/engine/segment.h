@@ -370,7 +370,7 @@ public:
 
 #ifdef ENABLE_SCI32
 
-template <typename T>
+template<typename T>
 class SciArray {
 public:
 	SciArray() : _type(-1), _data(NULL), _size(0), _actualSize(0) { }

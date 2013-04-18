@@ -30,48 +30,59 @@ namespace Common {
 /**
  * Extremly simple fixed size stack class.
  */
-template<class T, int MAX_SIZE = 10>
+template<class T, uint MAX_SIZE = 10>
 class FixedStack {
-protected:
-	T	_stack[MAX_SIZE];
-	int	_size;
 public:
+	typedef uint size_type;
+
 	FixedStack<T, MAX_SIZE>() : _size(0) {}
 
 	bool empty() const {
 		return _size <= 0;
 	}
+
 	void clear() {
 		_size = 0;
 	}
+
 	void push(const T &x) {
 		assert(_size < MAX_SIZE);
 		_stack[_size++] = x;
 	}
+
 	const T &top() const {
 		assert(_size > 0);
 		return _stack[_size - 1];
 	}
+
 	T &top() {
 		assert(_size > 0);
 		return _stack[_size - 1];
 	}
+
 	T pop() {
 		T tmp = top();
 		--_size;
 		return tmp;
 	}
-	int size() const {
+
+	size_type size() const {
 		return _size;
 	}
-	T &operator[](int i) {
-		assert(0 <= i && i < MAX_SIZE);
+
+	T &operator[](size_type i) {
+		assert(i < MAX_SIZE);
 		return _stack[i];
 	}
-	const T &operator[](int i) const {
-		assert(0 <= i && i < MAX_SIZE);
+
+	const T &operator[](size_type i) const {
+		assert(i < MAX_SIZE);
 		return _stack[i];
 	}
+
+protected:
+	T         _stack[MAX_SIZE];
+	size_type _size;
 };
 
 
@@ -81,39 +92,49 @@ public:
 template<class T>
 class Stack {
 private:
-	Array<T>	_stack;
+	Array<T> _stack;
 
 public:
+	typedef typename Array<T>::size_type size_type;
+
 	Stack<T>() {}
 	Stack<T>(const Array<T> &stackContent) : _stack(stackContent) {}
 
 	bool empty() const {
 		return _stack.empty();
 	}
+
 	void clear() {
 		_stack.clear();
 	}
+
 	void push(const T &x) {
 		_stack.push_back(x);
 	}
+
 	T &top() {
 		return _stack.back();
 	}
+
 	const T &top() const {
 		return _stack.back();
 	}
+
 	T pop() {
 		T tmp = _stack.back();
 		_stack.pop_back();
 		return tmp;
 	}
-	int size() const {
+
+	size_type size() const {
 		return _stack.size();
 	}
-	T &operator[](int i) {
+
+	T &operator[](size_type i) {
 		return _stack[i];
 	}
-	const T &operator[](int i) const {
+
+	const T &operator[](size_type i) const {
 		return _stack[i];
 	}
 };

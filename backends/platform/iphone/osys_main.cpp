@@ -45,7 +45,9 @@
 
 
 const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
-	{0, 0, 0}
+	{ "linear", "Linear filtering", kGraphicsModeLinear },
+	{ "none", "No filtering", kGraphicsModeNone },
+	{ 0, 0, 0 }
 };
 
 AQCallbackStruct OSystem_IPHONE::s_AudioQueue;
@@ -53,28 +55,28 @@ SoundProc OSystem_IPHONE::s_soundCallback = NULL;
 void *OSystem_IPHONE::s_soundParam = NULL;
 
 OSystem_IPHONE::OSystem_IPHONE() :
-	_mixer(NULL), _offscreen(NULL),
-	_overlayVisible(false), _fullscreen(NULL),
-	_mouseHeight(0), _mouseWidth(0), _mouseBuf(NULL), _lastMouseTap(0), _queuedEventTime(0),
-	_secondaryTapped(false), _lastSecondaryTap(0),
+	_mixer(NULL), _lastMouseTap(0), _queuedEventTime(0),
+	_mouseNeedTextureUpdate(false), _secondaryTapped(false), _lastSecondaryTap(0),
 	_screenOrientation(kScreenOrientationFlippedLandscape), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0),
-	_overlayHeight(0), _overlayWidth(0), _overlayBuffer(0)
-{
-	_queuedInputEvent.type = (Common::EventType)0;
-	_lastDrawnMouseRect = Common::Rect(0, 0, 0, 0);
-
+	_mouseCursorPaletteEnabled(false), _gfxTransactionError(kTransactionSuccess) {
+	_queuedInputEvent.type = Common::EVENT_INVALID;
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();
+	initVideoContext();
 }
 
 OSystem_IPHONE::~OSystem_IPHONE() {
 	AudioQueueDispose(s_AudioQueue.queue, true);
 
 	delete _mixer;
-	delete _offscreen;
-	delete _fullscreen;
+	// Prevent accidental freeing of the screen texture here. This needs to be
+	// checked since we might use the screen texture as framebuffer in the case
+	// of hi-color games for example.
+	if (_framebuffer.pixels == _videoContext->screenTexture.pixels)
+		_framebuffer.free();
+	_mouseBuffer.free();
 }
 
 int OSystem_IPHONE::timerHandler(int t) {
@@ -102,26 +104,55 @@ void OSystem_IPHONE::initBackend() {
 }
 
 bool OSystem_IPHONE::hasFeature(Feature f) {
-	return false;
+	switch (f) {
+	case kFeatureCursorPalette:
+		return true;
+
+	default:
+		return false;
+	}
 }
 
 void OSystem_IPHONE::setFeatureState(Feature f, bool enable) {
+	switch (f) {
+	case kFeatureCursorPalette:
+		if (_mouseCursorPaletteEnabled != enable) {
+			_mouseNeedTextureUpdate = true;
+			_mouseDirty = true;
+			_mouseCursorPaletteEnabled = enable;
+		}
+		break;
+	case kFeatureAspectRatioCorrection:
+		_videoContext->asprectRatioCorrection = enable;
+		break;
+
+	default:
+		break;
+	}
 }
 
 bool OSystem_IPHONE::getFeatureState(Feature f) {
-	return false;
+	switch (f) {
+	case kFeatureCursorPalette:
+		return _mouseCursorPaletteEnabled;
+	case kFeatureAspectRatioCorrection:
+		return _videoContext->asprectRatioCorrection;
+
+	default:
+		return false;
+	}
 }
 
 void OSystem_IPHONE::suspendLoop() {
 	bool done = false;
 	int eventType;
-	float xUnit, yUnit;
+	int x, y;
 	uint32 startTime = getMillis();
 
 	stopSoundsystem();
 
 	while (!done) {
-		if (iPhone_fetchEvent(&eventType, &xUnit, &yUnit))
+		if (iPhone_fetchEvent(&eventType, &x, &y))
 			if ((InputEvent)eventType == kInputApplicationResumed)
 				done = true;
 		usleep(100000);
@@ -226,7 +257,6 @@ Common::String OSystem_IPHONE::getDefaultConfigFileName() {
 #endif
 }
 
-
 void OSystem_IPHONE::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	// Get URL of the Resource directory of the .app bundle
 	CFURLRef fileUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
@@ -272,7 +302,7 @@ void iphone_main(int argc, char *argv[]) {
 	}
 
 #ifdef IPHONE_OFFICIAL
-	chdir( iPhone_getDocumentsDir() );
+	chdir(iPhone_getDocumentsDir());
 #else
 	system("mkdir " SCUMMVM_ROOT_PATH);
 	system("mkdir " SCUMMVM_SAVE_PATH);

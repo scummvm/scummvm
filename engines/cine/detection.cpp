@@ -65,7 +65,7 @@ class CineMetaEngine : public AdvancedMetaEngine {
 public:
 	CineMetaEngine() : AdvancedMetaEngine(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
 		_singleid = "cine";
-		_guioptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
+		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual GameDescriptor findGame(const char *gameid) const {
@@ -141,7 +141,7 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 
 		for (file = filenames.begin(); file != filenames.end(); ++file) {
 			// Jump over savegame files that don't end with a digit (e.g. "fw.3" is ok, "fw.a" is not).
-			if (!isdigit(static_cast<unsigned char>(file->lastChar())))
+			if (!Common::isDigit(file->lastChar()))
 				continue;
 
 			// Obtain the last digit of the filename, since they correspond to the save slot

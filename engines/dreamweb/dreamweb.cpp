@@ -30,21 +30,22 @@
 #include "common/timer.h"
 #include "common/util.h"
 
-#include "audio/mixer.h"
-#include "audio/decoders/raw.h"
+#include "engines/advancedDetector.h"
 
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 
 #include "dreamweb/dreamweb.h"
-#include "dreamweb/dreamgen.h"
 
 namespace DreamWeb {
 
 DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb") {
+	Engine(syst), _gameDescription(gameDesc), _rnd("dreamweb"),
+	_exText(kNumExTexts),
+	_setDesc(kNumSetTexts), _blockDesc(kNumBlockTexts),
+	_roomDesc(kNumRoomTexts), _freeDesc(kNumFreeTexts),
+	_personText(kNumPersonTexts) {
 
-	_context.engine = this;
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
@@ -55,15 +56,173 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_console = 0;
 	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
 	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
-	_outSaveFile = 0;
-	_inSaveFile = 0;
 	_speed = 1;
 	_turbo = false;
 	_oldMouseState = 0;
 	_channel0 = 0;
 	_channel1 = 0;
 
-	_language = gameDesc->desc.language;
+	_datafilePrefix = "DREAMWEB.";
+
+	_openChangeSize = kInventx+(4*kItempicsize);
+	_quitRequested = false;
+
+	_currentSample = 0xff;
+	_channel0Playing = 0;
+	_channel0Repeat = 0;
+	_channel1Playing = 0xff;
+
+	_volume = 0;
+	_volumeTo = 0;
+	_volumeDirection = 0;
+	_volumeCount = 0;
+
+	_speechLoaded = false;
+
+	_backdropBlocks = 0;
+	_reelList = 0;
+
+	_oldSubject._type = 0;
+	_oldSubject._index = 0;
+
+	// misc variables
+	_speechCount = 0;
+	_charShift = 0;
+	_kerning = 0;
+	_brightPalette = false;
+	_roomLoaded = 0;
+	_didZoom = 0;
+	_lineSpacing = 10;
+	_textAddressX = 13;
+	_textAddressY = 182;
+	_textLen = 0;
+	_lastXPos = 0;
+	_itemFrame = 0;
+	_withObject = 0;
+	_withType = 0;
+	_lookCounter = 0;
+	_command = 0;
+	_commandType = 0;
+	_objectType = 0;
+	_getBack = 0;
+	_invOpen = 0;
+	_mainMode = 0;
+	_pickUp = 0;
+	_lastInvPos = 0;
+	_examAgain = 0;
+	_newTextLine = 0;
+	_openedOb = 0;
+	_openedType = 0;
+	_mapAdX = 0;
+	_mapAdY = 0;
+	_mapOffsetX = 104;
+	_mapOffsetY = 38;
+	_mapXStart = 0;
+	_mapYStart = 0;
+	_mapXSize = 0;
+	_mapYSize = 0;
+	_haveDoneObs = 0;
+	_manIsOffScreen = 0;
+	_facing = 0;
+	_leaveDirection = 0;
+	_turnToFace = 0;
+	_turnDirection = 0;
+	_mainTimer = 0;
+	_introCount = 0;
+	_currentKey = 0;
+	_timerCount = 0;
+	_mapX = 0;
+	_mapY = 0;
+	_ryanX = 0;
+	_ryanY = 0;
+	_lastFlag = 0;
+	_destPos = 0;
+	_realLocation = 0;
+	_roomNum = 0;
+	_nowInNewRoom = 0;
+	_resetManXY = 0;
+	_newLocation = 0xFF;
+	_autoLocation = 0xFF;
+	_mouseX = 0;
+	_mouseY = 0;
+	_mouseButton = 0;
+	_oldButton = 0;
+	_oldX = 0;
+	_oldY = 0;
+	_oldPointerX = 0;
+	_oldPointerY = 0;
+	_delHereX = 0;
+	_delHereY = 0;
+	_pointerXS = 32;
+	_pointerYS = 32;
+	_delXS = 0;
+	_delYS = 0;
+	_pointerFrame = 0;
+	_pointerPower = 0;
+	_pointerMode = 0;
+	_pointerSpeed = 0;
+	_pointerCount = 0;
+	_inMapArea = 0;
+	_talkMode = 0;
+	_talkPos = 0;
+	_character = 0;
+	_watchDump = 0;
+	_logoNum = 0;
+	_oldLogoNum = 0;
+	_pressed = 0;
+	_pressPointer = 0;
+	_graphicPress = 0;
+	_pressCount = 0;
+	_lightCount = 0;
+	_folderPage = 0;
+	_diaryPage = 0;
+	_menuCount = 0;
+	_symbolTopX = 0;
+	_symbolTopNum = 0;
+	_symbolTopDir = 0;
+	_symbolBotX = 0;
+	_symbolBotNum = 0;
+	_symbolBotDir = 0;
+	_walkAndExam = 0;
+	_walkExamType = 0;
+	_walkExamNum = 0;
+	_cursLocX = 0;
+	_cursLocY = 0;
+	_curPos = 0;
+	_monAdX = 0;
+	_monAdY = 0;
+	_timeCount = 0;
+	_needToDumpTimed = 0;
+	_loadingOrSave = 0;
+	_saveLoadPage = 0;
+	_currentSlot = 0;
+	_cursorPos = 0;
+	_colourPos = 0;
+	_fadeDirection = 0;
+	_numToFade = 0;
+	_fadeCount = 0;
+	_addToGreen = 0;
+	_addToRed = 0;
+	_addToBlue = 0;
+	_lastSoundReel = 0;
+	_lastHardKey = 0;
+	_bufferIn = 0;
+	_bufferOut = 0;
+	_blinkFrame = 23;
+	_blinkCount = 0;
+	_reAssesChanges = 0;
+	_pointersPath = 0;
+	_mansPath = 0;
+	_pointerFirstPath = 0;
+	_finalDest = 0;
+	_destination = 0;
+	_lineStartX = 0;
+	_lineStartY = 0;
+	_lineEndX = 0;
+	_lineEndY = 0;
+	_linePointer = 0;
+	_lineDirection = 0;
+	_lineLength = 0;
 }
 
 DreamWebEngine::~DreamWebEngine() {
@@ -93,19 +252,18 @@ void DreamWebEngine::waitForVSync() {
 		setVSyncInterrupt(false);
 	}
 
-	_context.doshake();
-	_context.dofade();
+	doShake();
+	doFade();
 	_system->updateScreen();
 }
 
 void DreamWebEngine::quit() {
-	_context.data.byte(DreamGen::DreamGenContext::kQuitrequested) = 1;
-	_context.data.byte(DreamGen::DreamGenContext::kLasthardkey) = 1;
+	_quitRequested = true;
+	_lastHardKey = 1;
 }
 
 void DreamWebEngine::processEvents() {
-	Common::EventManager *event_manager = _system->getEventManager();
-	if (event_manager->shouldQuit()) {
+	if (_eventMan->shouldQuit()) {
 		quit();
 		return;
 	}
@@ -113,7 +271,7 @@ void DreamWebEngine::processEvents() {
 	soundHandler();
 	Common::Event event;
 	int softKey, hardKey;
-	while (event_manager->pollEvent(event)) {
+	while (_eventMan->pollEvent(event)) {
 		switch(event.type) {
 		case Common::EVENT_RTL:
 			quit();
@@ -136,8 +294,8 @@ void DreamWebEngine::processEvents() {
 					break;
 
 				case Common::KEYCODE_c: //skip statue puzzle
-					_context.data.byte(DreamGen::DreamGenContext::kSymbolbotnum) = 3;
-					_context.data.byte(DreamGen::DreamGenContext::kSymboltopnum) = 5;
+					_symbolBotNum = 3;
+					_symbolTopNum = 5;
 					break;
 
 				default:
@@ -167,7 +325,7 @@ void DreamWebEngine::processEvents() {
 				break;
 			}
 
-			_context.data.byte(DreamGen::DreamGenContext::kLasthardkey) = hardKey;
+			_lastHardKey = hardKey;
 
 			// The rest of the keys are converted to ASCII. This
 			// is fairly restrictive, and eventually we may want
@@ -203,18 +361,21 @@ void DreamWebEngine::processEvents() {
 	}
 }
 
-
 Common::Error DreamWebEngine::run() {
 	syncSoundSettings();
 	_console = new DreamWebConsole(this);
 
-	ConfMan.registerDefault("dreamweb_originalsaveload", "true");
+	ConfMan.registerDefault("dreamweb_originalsaveload", "false");
+	ConfMan.registerDefault("bright_palette", true);
+	_hasSpeech = Common::File::exists("speech/r01c0000.raw") && !ConfMan.getBool("speech_mute");
+	_brightPalette = ConfMan.getBool("bright_palette");
 
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
-	_context.__start();
-	_context.data.byte(DreamGen::DreamGenContext::kQuitrequested) = 0;
+	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
+	dreamweb();
+	dreamwebFinalize();
+	_quitRequested = false;
 
-	getTimerManager()->removeTimerProc(vSyncInterrupt);
+	_timer->removeTimerProc(vSyncInterrupt);
 
 	return Common::kNoError;
 }
@@ -222,91 +383,34 @@ Common::Error DreamWebEngine::run() {
 void DreamWebEngine::setSpeed(uint speed) {
 	debug(0, "setting speed %u", speed);
 	_speed = speed;
-	getTimerManager()->removeTimerProc(vSyncInterrupt);
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this, "dreamwebVSync");
+	_timer->removeTimerProc(vSyncInterrupt);
+	_timer->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this, "dreamwebVSync");
 }
 
-void DreamWebEngine::openFile(const Common::String &name) {
-	processEvents();
-	closeFile();
-	if (_file.open(name))
-		return;
-	_inSaveFile = _system->getSavefileManager()->openForLoading(name);
-	if (_inSaveFile)
-		return;
-	error("cannot open file %s", name.c_str());
+Common::String DreamWebEngine::getSavegameFilename(int slot) const {
+	// TODO: Are saves from all versions of Dreamweb compatible with each other?
+	// Then we can can consider keeping the filenames as DREAMWEB.Dnn.
+	// Otherwise, this must be changed to be target dependent.
+	//Common::String filename = _targetName + Common::String::format(".d%02d", savegameId);
+	Common::String filename = Common::String::format("DREAMWEB.D%02d", slot);
+	return filename;
 }
-
-uint32 DreamWebEngine::skipBytes(uint32 bytes) {
-	if (!_file.seek(bytes, SEEK_CUR))
-		error("seek failed");
-	return _file.pos();
-}
-
-uint32 DreamWebEngine::readFromFile(uint8 *dst, unsigned size) {
-	processEvents();
-	if (_file.isOpen())
-		return _file.read(dst, size);
-	if (_inSaveFile)
-		return _inSaveFile->read(dst, size);
-	error("file was not opened (read before open)");
-}
-
-void DreamWebEngine::closeFile() {
-	processEvents();
-	if (_file.isOpen())
-		_file.close();
-	delete _inSaveFile;
-	_inSaveFile = 0;
-	delete _outSaveFile;
-	_outSaveFile = 0;
-}
-
-void DreamWebEngine::openSaveFileForWriting(const Common::String &name) {
-	processEvents();
-	delete _outSaveFile;
-	_outSaveFile = _system->getSavefileManager()->openForSaving(name);
-}
-
-bool DreamWebEngine::openSaveFileForReading(const Common::String &name) {
-	processEvents();
-	delete _inSaveFile;
-	_inSaveFile = _system->getSavefileManager()->openForLoading(name);
-	return _inSaveFile != 0;
-}
-
-uint DreamWebEngine::writeToSaveFile(const uint8 *data, uint size) {
-	processEvents();
-	if (!_outSaveFile)
-		error("save file was not opened for writing");
-	return _outSaveFile->write(data, size);
-}
-
-uint DreamWebEngine::readFromSaveFile(uint8 *data, uint size) {
-	processEvents();
-	if (!_inSaveFile)
-		error("save file was not opened for reading");
-	return _inSaveFile->read(data, size);
-}
-
 
 void DreamWebEngine::keyPressed(uint16 ascii) {
 	debug(2, "key pressed = %04x", ascii);
-	uint8* keybuf = _context.data.ptr(5912, 16); //fixme: some hardcoded offsets are not added as consts
-	uint16 in = (_context.data.word(DreamGen::DreamGenContext::kBufferin) + 1) & 0x0f;
-	uint16 out = _context.data.word(DreamGen::DreamGenContext::kBufferout);
+	uint16 in = (_bufferIn + 1) & 0x0f;
+	uint16 out = _bufferOut;
 	if (in == out) {
 		warning("keyboard buffer is full");
 		return;
 	}
-	_context.data.word(DreamGen::DreamGenContext::kBufferin) = in;
-	keybuf[in] = ascii;
+	_bufferIn = in;
+	DreamWeb::g_keyBuffer[in] = ascii;
 }
 
 void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
 	processEvents();
-	Common::EventManager *eventMan = _system->getEventManager();
-	Common::Point pos = eventMan->getMousePos();
+	Common::Point pos = _eventMan->getMousePos();
 	if (pos.x > 298)
 		pos.x = 298;
 	if (pos.x < 15)
@@ -318,53 +422,25 @@ void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
 	*x = pos.x;
 	*y = pos.y;
 
-	unsigned newState = eventMan->getButtonState();
+	unsigned newState = _eventMan->getButtonState();
 	*state = (newState == _oldMouseState? 0 : newState);
 	_oldMouseState = newState;
 }
 
-void DreamWebEngine::fadeDos() {
-	_context.ds = _context.es = _context.data.word(DreamGen::DreamGenContext::kBuffers);
-	return; //fixme later
-	waitForVSync();
-	//processEvents will be called from vsync
-	uint8 *dst = _context.es.ptr(DreamGen::DreamGenContext::kStartpal, 768);
-	getPalette(dst, 0, 64);
-	for(int fade = 0; fade < 64; ++fade) {
-		for(int c = 0; c < 768; ++c) { //original sources decrement 768 values -> 256 colors
-			if (dst[c]) {
-				--dst[c];
-			}
-		}
-		setPalette(dst, 0, 64);
-		waitForVSync();
-	}
-}
-
-void DreamWebEngine::setPalette() {
-	processEvents();
-	unsigned n = (uint16)_context.cx;
-	uint8 *src = _context.ds.ptr(_context.si, n * 3);
-	setPalette(src, _context.al, n);
-	_context.si += n * 3;
-	_context.cx = 0;
-}
-
 void DreamWebEngine::getPalette(uint8 *data, uint start, uint count) {
 	_system->getPaletteManager()->grabPalette(data, start, count);
-	while(count--)
+	while (count--)
 		*data++ >>= 2;
 }
 
 void DreamWebEngine::setPalette(const uint8 *data, uint start, uint count) {
 	assert(start + count <= 256);
 	uint8 fixed[768];
-	for(uint i = 0; i < count * 3; ++i) {
+	for (uint i = 0; i < count * 3; ++i) {
 		fixed[i] = data[i] << 2;
 	}
 	_system->getPaletteManager()->setPalette(fixed, start, count);
 }
-
 
 void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int h) {
 	if (y + h > 200)
@@ -377,28 +453,23 @@ void DreamWebEngine::blit(const uint8 *src, int pitch, int x, int y, int w, int 
 }
 
 void DreamWebEngine::printUnderMonitor() {
-	_context.es = _context.data.word(DreamGen::DreamGenContext::kWorkspace);
-	_context.di = DreamGen::DreamGenContext::kScreenwidth * 43 + 76;
-	_context.si = _context.di + 8 * DreamGen::DreamGenContext::kScreenwidth;
+	uint8 *dst = workspace() + kScreenwidth * 43 + 76;
 
 	Graphics::Surface *s = _system->lockScreen();
 	if (!s)
 		error("lockScreen failed");
 
-	for(uint y = 0; y < 104; ++y) {
+	for (uint y = 0; y < 104; ++y) {
 		uint8 *src = (uint8 *)s->getBasePtr(76, 43 + 8 + y);
-		uint8 *dst = _context.es.ptr(_context.di, 170);
-		for(uint x = 0; x < 170; ++x) {
+		for (uint x = 0; x < 170; ++x) {
 			if (*src < 231)
 				*dst++ = *src++;
 			else {
 				++dst; ++src;
 			}
 		}
-		_context._add(_context.di, DreamGen::DreamGenContext::kScreenwidth);
-		_context._add(_context.si, DreamGen::DreamGenContext::kScreenwidth);
+		dst += kScreenwidth - 170;
 	}
-	_context.cx = 0;
 	_system->unlockScreen();
 }
 
@@ -406,181 +477,13 @@ void DreamWebEngine::cls() {
 	_system->fillScreen(0);
 }
 
-void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
-	debug(1, "playSound(%u, %u, %u)", channel, id, loops);
-
-	int bank = 0;
-	bool speech = false;
-	Audio::Mixer::SoundType type = channel == 0?
-		Audio::Mixer::kMusicSoundType: Audio::Mixer::kSFXSoundType;
-
-	if (id >= 12) {
-		id -= 12;
-		bank = 1;
-		if (id == 50) {
-			speech = true;
-			type = Audio::Mixer::kSpeechSoundType;
-		}
-	}
-	const SoundData &data = _soundData[bank];
-
-	Audio::SeekableAudioStream *raw;
-	if (!speech) {
-		if (id >= data.samples.size() || data.samples[id].size == 0) {
-			warning("invalid sample #%u played", id);
-			return;
-		}
-
-		const Sample &sample = data.samples[id];
-		uint8 *buffer = (uint8 *)malloc(sample.size);
-		if (!buffer)
-			error("out of memory: cannot allocate memory for sound(%u bytes)", sample.size);
-		memcpy(buffer, data.data.begin() + sample.offset, sample.size);
-
-		raw = Audio::makeRawStream(
-			buffer,
-			sample.size, 22050, Audio::FLAG_UNSIGNED);
-	} else {
-		uint8 *buffer = (uint8 *)malloc(_speechData.size());
-		memcpy(buffer, _speechData.begin(), _speechData.size());
-		if (!buffer)
-			error("out of memory: cannot allocate memory for sound(%u bytes)", _speechData.size());
-		raw = Audio::makeRawStream(
-			buffer,
-			_speechData.size(), 22050, Audio::FLAG_UNSIGNED);
-
-	}
-
-	Audio::AudioStream *stream;
-	if (loops > 1) {
-		stream = new Audio::LoopingAudioStream(raw, loops < 255? loops: 0);
-	} else
-		stream = raw;
-
-	if (_mixer->isSoundHandleActive(_channelHandle[channel]))
-		_mixer->stopHandle(_channelHandle[channel]);
-	_mixer->playStream(type, &_channelHandle[channel], stream);
-}
-
-void DreamWebEngine::stopSound(uint8 channel) {
-	debug(1, "stopSound(%u)", channel);
-	assert(channel == 0 || channel == 1);
-	_mixer->stopHandle(_channelHandle[channel]);
-	if (channel == 0)
-		_channel0 = 0;
-	else
-		_channel1 = 0;
-}
-
-bool DreamWebEngine::loadSpeech(const Common::String &filename) {
-	if (ConfMan.getBool("speech_mute"))
-		return false;
-
-	Common::File file;
-	if (!file.open("speech/" + filename))
-		return false;
-
-	debug(1, "loadSpeech(%s)", filename.c_str());
-
-	uint size = file.size();
-	_speechData.resize(size);
-	file.read(_speechData.begin(), size);
-	file.close();
-	return true;
-}
-
-
-void DreamWebEngine::soundHandler() {
-	_context.data.byte(_context.kSubtitles) = ConfMan.getBool("subtitles");
-	_context.push(_context.ax);
-	_context.volumeadjust();
-	_context.ax = _context.pop();
-
-	uint volume = _context.data.byte(DreamGen::DreamGenContext::kVolume);
-	//.vol file loaded into soundbuf:0x4000
-	//volume table at (volume * 0x100 + 0x3f00)
-	//volume value could be from 1 to 7
-	//1 - 0x10-0xff
-	//2 - 0x1f-0xdf
-	//3 - 0x2f-0xd0
-	//4 - 0x3e-0xc1
-	//5 - 0x4d-0xb2
-	//6 - 0x5d-0xa2
-	//7 - 0x6f-0x91
-	if (volume >= 8)
-		volume = 7;
-	volume = (8 - volume) * Audio::Mixer::kMaxChannelVolume / 8;
-	_mixer->setChannelVolume(_channelHandle[0], volume);
-
-	uint8 ch0 = _context.data.byte(DreamGen::DreamGenContext::kCh0playing);
-	if (ch0 == 255)
-		ch0 = 0;
-	uint8 ch1 = _context.data.byte(DreamGen::DreamGenContext::kCh1playing);
-	if (ch1 == 255)
-		ch1 = 0;
-	uint8 ch0loop = _context.data.byte(DreamGen::DreamGenContext::kCh0repeat);
-
-	if (_channel0 != ch0) {
-		_channel0 = ch0;
-		if (ch0) {
-			playSound(0, ch0, ch0loop);
-		}
-	}
-	if (_channel1 != ch1) {
-		_channel1 = ch1;
-		if (ch1) {
-			playSound(1, ch1, 1);
-		}
-	}
-	if (!_mixer->isSoundHandleActive(_channelHandle[0])) {
-		_context.data.byte(DreamGen::DreamGenContext::kCh0playing) = 255;
-		_channel0 = 0;
-	}
-	if (!_mixer->isSoundHandleActive(_channelHandle[1])) {
-		_context.data.byte(DreamGen::DreamGenContext::kCh1playing) = 255;
-		_channel1 = 0;
-	}
-
-}
-
-void DreamWebEngine::loadSounds(uint bank, const Common::String &filename) {
-	debug(1, "loadSounds(%u, %s)", bank, filename.c_str());
-	Common::File file;
-	if (!file.open(filename)) {
-		warning("cannot open %s", filename.c_str());
-		return;
-	}
-
-	uint8 header[0x60];
-	file.read(header, sizeof(header));
-	uint tablesize = READ_LE_UINT16(header + 0x32);
-	debug(1, "table size = %u", tablesize);
-
-	SoundData &soundData = _soundData[bank];
-	soundData.samples.resize(tablesize / 6);
-	uint total = 0;
-	for(uint i = 0; i < tablesize / 6; ++i) {
-		uint8 entry[6];
-		Sample &sample = soundData.samples[i];
-		file.read(entry, sizeof(entry));
-		sample.offset = entry[0] * 0x4000 + READ_LE_UINT16(entry + 1);
-		sample.size = READ_LE_UINT16(entry + 3) * 0x800;
-		total += sample.size;
-		debug(1, "offset: %08x, size: %u", sample.offset, sample.size);
-	}
-	soundData.data.resize(total);
-	file.read(soundData.data.begin(), total);
-	file.close();
-}
-
 uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	if (c < 128)
 		return c;
 
-	switch(_language) {
+	switch(getLanguage()) {
 	case Common::DE_DEU:
-		switch(c)
-		{
+		switch(c) {
 		case 129:
 			return 'Z' + 3;
 		case 132:
@@ -626,6 +529,10 @@ uint8 DreamWebEngine::modifyChar(uint8 c) const {
 	default:
 		return c;
 	}
+}
+
+bool DreamWebEngine::hasSpeech() {
+	return isCD() && _hasSpeech;
 }
 
 } // End of namespace DreamWeb

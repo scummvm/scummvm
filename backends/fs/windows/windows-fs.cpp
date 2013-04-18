@@ -87,7 +87,7 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 
 char* WindowsFilesystemNode::toAscii(TCHAR *str) {
 #ifndef UNICODE
-	return (char*)str;
+	return (char *)str;
 #else
 	static char asciiString[MAX_PATH];
 	WideCharToMultiByte(CP_ACP, 0, str, _tcslen(str) + 1, asciiString, sizeof(asciiString), NULL, NULL);

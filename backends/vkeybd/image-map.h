@@ -35,18 +35,17 @@ namespace Common {
 struct Polygon;
 
 class ImageMap {
-
 public:
-
 	~ImageMap();
 
-	Polygon *createArea(const String& id);
-	void removeArea(const String& id);
+	Polygon *createArea(const String &id);
+	void removeArea(const String &id);
 	void removeAllAreas();
 	String findMapArea(int16 x, int16 y);
 
 protected:
-	HashMap<String, Polygon *> _areas;
+	typedef HashMap<String, Polygon *> AreaMap;
+	AreaMap _areas;
 };
 
 

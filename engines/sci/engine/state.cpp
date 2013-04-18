@@ -145,12 +145,12 @@ void EngineState::wait(int16 ticks) {
 void EngineState::initGlobals() {
 	Script *script_000 = _segMan->getScript(1);
 
-	if (!script_000->_localsBlock)
+	if (script_000->getLocalsCount() == 0)
 		error("Script 0 has no locals block");
 
-	variablesSegment[VAR_GLOBAL] = script_000->_localsSegment;
-	variablesBase[VAR_GLOBAL] = variables[VAR_GLOBAL] = script_000->_localsBlock->_locals.begin();
-	variablesMax[VAR_GLOBAL] = script_000->_localsBlock->_locals.size();
+	variablesSegment[VAR_GLOBAL] = script_000->getLocalsSegment();
+	variablesBase[VAR_GLOBAL] = variables[VAR_GLOBAL] = script_000->getLocalsBegin();
+	variablesMax[VAR_GLOBAL] = script_000->getLocalsCount();
 }
 
 uint16 EngineState::currentRoomNumber() const {

@@ -235,6 +235,7 @@ int32 EncryptedStream::pos() {
 }
 
 EncryptedStream::~EncryptedStream() {
+	delete _readStream;
 }
 
 } // End of namespace CGE

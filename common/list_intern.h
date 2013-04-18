@@ -35,7 +35,7 @@ namespace ListInternal {
 		NodeBase *_next;
 	};
 
-	template <typename T>
+	template<typename T>
 	struct Node : public NodeBase {
 		T _data;
 

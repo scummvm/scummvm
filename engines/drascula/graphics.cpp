@@ -154,6 +154,7 @@ void DrasculaEngine::showFrame(Common::SeekableReadStream *stream, bool firstFra
 }
 
 void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *src, byte *dest) {
+	debug(1, "DrasculaEngine::copyBackground(xorg:%d, yorg:%d, xdes:%d, ydes:%d width:%d height:%d, src, dest)", xorg, yorg, xdes, ydes, width,height);
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 	/* Unoptimized code
@@ -361,7 +362,7 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 	curWord = strtok(msg, " ");
 	while (curWord != NULL) {
 		// Check if the word and the current line fit on screen
-		if (strlen(tmpMessageLine) > 0)
+		if (tmpMessageLine[0] != '\0')
 			strcat(tmpMessageLine, " ");
 		strcat(tmpMessageLine, curWord);
 		if (textFitsCentered(tmpMessageLine, textX)) {
@@ -643,7 +644,7 @@ void DrasculaEngine::waitFrameSSN() {
 }
 
 bool DrasculaEngine::animate(const char *animationFile, int FPS) {
-	int NFrames = 1;
+	int NFrames;
 	int cnt = 2;
 
 	Common::SeekableReadStream *stream = _archives.open(animationFile);

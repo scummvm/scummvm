@@ -31,7 +31,7 @@ namespace Sky {
 
 class GmMusic : public MusicBase {
 public:
-	GmMusic(MidiDriver *pMidiDrv, Disk *pDisk);
+	GmMusic(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk);
 	~GmMusic();
 	virtual void setVolume(uint16 param);
 private:

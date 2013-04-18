@@ -247,7 +247,7 @@ private:
 	void midiNoteOff(int channel, int note, int velocity);
 	void midiNoteOn(int channel, int note, int velocity);
 	double midiKeyToFreq(int key, double finetune);
-	IIgsInstrumentHeader* getInstrument(uint8 program) { return &_instruments[_progToInst->map(program)]; };
+	IIgsInstrumentHeader* getInstrument(uint8 program) { return &_instruments[_progToInst->map(program)]; }
 	IIgsGenerator* allocateGenerator() { IIgsGenerator* g = &_generators[_nextGen++]; _nextGen %= 16; return g; }
 
 	bool _disableMidi;	///< Disable MIDI if loading instruments fail

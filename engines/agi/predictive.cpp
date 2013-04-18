@@ -96,8 +96,6 @@ void bringWordtoTop(char *str, int wordnum) {
 }
 
 bool AgiEngine::predictiveDialog() {
-	int key = 0, active = -1, lastactive = 0;
-	bool rc = false;
 	uint8 x;
 	int y;
 	int bx[17], by[17];
@@ -105,7 +103,6 @@ bool AgiEngine::predictiveDialog() {
 	char temp[MAXWORDLEN + 1], repeatcount[MAXWORDLEN];
 	AgiBlock tmpwindow;
 	bool navigationwithkeys = false;
-	bool processkey;
 
 	const char *buttonStr[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
 	const char *buttons[] = {
@@ -115,7 +112,7 @@ bool AgiEngine::predictiveDialog() {
 		"(#)next",    "add",
 		"<",
 		"Cancel",  "OK",
-		"Pre", "(0) ", NULL
+		"(*)Pre", "(0) ", NULL
 	};
 	const int colors[] = {
 		15, 0, 15, 0, 15, 0,
@@ -189,8 +186,11 @@ bool AgiEngine::predictiveDialog() {
 	int mode = kModePre;
 
 	bool needRefresh = true;
-
-	while (!shouldQuit()) {
+	int active = -1, lastactive = 0;
+	bool rc = false;
+	bool closeDialog = false;
+	bool enterPredictiveResult = false;
+	while (!closeDialog && !shouldQuit()) {
 		if (needRefresh) {
 			for (int i = 0; buttons[i]; i++) {
 				int color1 = colors[i * 2];
@@ -234,9 +234,10 @@ bool AgiEngine::predictiveDialog() {
 			_gfx->doUpdate();
 		}
 
+		bool processkey = false;
+
 		pollTimer();
-		key = doPollKeyboard();
-		processkey = false;
+		int key = doPollKeyboard();
 		switch (key) {
 		case KEY_ENTER:
 			if (navigationwithkeys) {
@@ -251,7 +252,8 @@ bool AgiEngine::predictiveDialog() {
 			break;
 		case KEY_ESCAPE:
 			rc = false;
-			goto getout;
+			closeDialog = true;
+			break;
 		case BUTTON_LEFT:
 			navigationwithkeys = false;
 			for (int i = 0; buttons[i]; i++) {
@@ -361,7 +363,7 @@ bool AgiEngine::predictiveDialog() {
 			break;
 		}
 
-		if (processkey) {
+		if (processkey && !closeDialog) {
 			if (active >= 0) {
 				needRefresh = true;
 				lastactive = active;
@@ -442,7 +444,8 @@ bool AgiEngine::predictiveDialog() {
 					if (mode == kModePre && _predictiveDictActLine && numMatchingWords > 1 && _wordNumber != 0)
 						bringWordtoTop(_predictiveDictActLine, _wordNumber);
 					rc = true;
-					goto press;
+					enterPredictiveResult = true;
+					closeDialog = true;
 				} else if (active == 14) { // Mode
 					mode++;
 					if (mode > kModeAbc)
@@ -455,18 +458,20 @@ bool AgiEngine::predictiveDialog() {
 					_currentCode.clear();
 					_currentWord.clear();
 					memset(repeatcount, 0, sizeof(repeatcount));
+					_predictiveDictActLine = NULL;
 				} else {
-					goto press;
+					enterPredictiveResult = true;
+					closeDialog = true;
 				}
 			}
 		}
 	}
 
- press:
-	Common::strlcpy(_predictiveResult, prefix.c_str(), sizeof(_predictiveResult));
-	Common::strlcat(_predictiveResult, _currentWord.c_str(), sizeof(_predictiveResult));
+	if (enterPredictiveResult) {
+		Common::strlcpy(_predictiveResult, prefix.c_str(), sizeof(_predictiveResult));
+		Common::strlcat(_predictiveResult, _currentWord.c_str(), sizeof(_predictiveResult));
+	}
 
- getout:
 	// if another window was shown, bring it up again
 	if (!tmpwindow.active)
 		closeWindow();
@@ -561,37 +566,50 @@ bool AgiEngine::matchWord() {
 	if (_currentCode.size() > MAXWORDLEN)
 		return false;
 
-	// Perform a binary search on the dictionary to find the first
-	// entry that has _currentCode as a prefix.
+	// The entries in the dictionary consist of a code, a space, and then
+	// a space-separated list of words matching this code.
+	// To exactly match a code, we therefore match the code plus the trailing
+	// space in the dictionary.
+	Common::String code = _currentCode + " ";
+
+	// Perform a binary search on the dictionary.
 	int hi = _predictiveDictLineCount - 1;
 	int lo = 0;
 	int line = 0;
-	while (lo < hi) {
+	while (lo <= hi) {
 		line = (lo + hi) / 2;
-		int cmpVal = strncmp(_predictiveDictLine[line], _currentCode.c_str(), _currentCode.size());
+		int cmpVal = strncmp(_predictiveDictLine[line], code.c_str(), code.size());
 		if (cmpVal > 0)
 			hi = line - 1;
 		else if (cmpVal < 0)
 			lo = line + 1;
 		else {
-			hi = line;
 			break;
 		}
+	}
+
+	bool partial = hi < lo;
+	if (partial) {
+		// Didn't find an exact match, but 'lo' now points to the first entry
+		// lexicographically greater than the current code, so that will
+		// be the first entry with the current code as a prefix, if it exists.
+		line = lo;
+		_predictiveDictActLine = NULL;
+	} else {
+		_predictiveDictActLine = _predictiveDictLine[line];
 	}
 
 	_currentWord.clear();
 	_wordNumber = 0;
 	if (0 == strncmp(_predictiveDictLine[line], _currentCode.c_str(), _currentCode.size())) {
-		_predictiveDictActLine = _predictiveDictLine[line];
 		char tmp[MAXLINELEN];
-		strncpy(tmp, _predictiveDictActLine, MAXLINELEN);
+		strncpy(tmp, _predictiveDictLine[line], MAXLINELEN);
 		tmp[MAXLINELEN - 1] = 0;
 		char *tok = strtok(tmp, " ");
 		tok = strtok(NULL, " ");
 		_currentWord = Common::String(tok, _currentCode.size());
 		return true;
 	} else {
-		_predictiveDictActLine = NULL;
 		return false;
 	}
 }

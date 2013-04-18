@@ -267,23 +267,6 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 	refreshCursor();
 }
 
-bool OSystem_DS::grabRawScreen(Graphics::Surface *surf) {
-	surf->create(DS::getGameWidth(), DS::getGameHeight(), Graphics::PixelFormat::createFormatCLUT8());
-
-	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
-
-
-	const u16 *image = (const u16 *) DS::get8BitBackBuffer();
-	for (int y = 0; y <  DS::getGameHeight(); y++) {
-		DC_FlushRange(image + (y << 8), DS::getGameWidth());
-		for (int x = 0; x < DS::getGameWidth() >> 1; x++) {
-			*(((u16 *) (surf->pixels)) + y * (DS::getGameWidth() >> 1) + x) = image[(y << 8) + x];
-		}
-	}
-
-	return true;
-}
-
 void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) {
 //	consolePrintf("Grabpalette");
 

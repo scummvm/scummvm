@@ -633,8 +633,8 @@ Intro::Intro(Disk *disk, Screen *screen, MusicBase *music, Sound *sound, Text *t
 	_skyText = text;
 	_mixer = mixer;
 	_system = system;
-	_textBuf = (uint8*)malloc(10000);
-	_saveBuf = (uint8*)malloc(10000);
+	_textBuf = (uint8 *)malloc(10000);
+	_saveBuf = (uint8 *)malloc(10000);
 	_bgBuf = NULL;
 	_relDelay = 0;
 }
@@ -774,7 +774,7 @@ bool Intro::nextPart(uint16 *&data) {
 }
 
 bool Intro::floppyScrollFlirt() {
-	uint8 *scrollScreen = (uint8*)malloc(FRAME_SIZE * 2);
+	uint8 *scrollScreen = (uint8 *)malloc(FRAME_SIZE * 2);
 	memset(scrollScreen, 0, FRAME_SIZE);
 	memcpy(scrollScreen + FRAME_SIZE, _skyScreen->giveCurrent(), FRAME_SIZE);
 	uint8 *scrollPos = scrollScreen + FRAME_SIZE;
@@ -828,8 +828,8 @@ bool Intro::commandFlirt(uint16 *&data) {
 				_skyText->displayText(*data++, _textBuf, true, INTRO_TEXT_WIDTH, 255);
 				break;
 			case IC_SHOW_TEXT:
-				((DataFileHeader*)_textBuf)->s_x = *data++;
-				((DataFileHeader*)_textBuf)->s_y = *data++;
+				((DataFileHeader *)_textBuf)->s_x = *data++;
+				((DataFileHeader *)_textBuf)->s_y = *data++;
 				showTextBuf();
 				break;
 			case IC_REMOVE_TEXT:
@@ -858,10 +858,10 @@ bool Intro::commandFlirt(uint16 *&data) {
 }
 
 void Intro::showTextBuf() {
-	uint16 x = ((DataFileHeader*)_textBuf)->s_x;
-	uint16 y = ((DataFileHeader*)_textBuf)->s_y;
-	uint16 width = ((DataFileHeader*)_textBuf)->s_width;
-	uint16 height = ((DataFileHeader*)_textBuf)->s_height;
+	uint16 x = ((DataFileHeader *)_textBuf)->s_x;
+	uint16 y = ((DataFileHeader *)_textBuf)->s_y;
+	uint16 width = ((DataFileHeader *)_textBuf)->s_width;
+	uint16 height = ((DataFileHeader *)_textBuf)->s_height;
 	uint8 *screenBuf = _skyScreen->giveCurrent() + y * GAME_SCREEN_WIDTH + x;
 	memcpy(_saveBuf, _textBuf, sizeof(DataFileHeader));
 	uint8 *saveBuf = _saveBuf + sizeof(DataFileHeader);
@@ -880,10 +880,10 @@ void Intro::showTextBuf() {
 }
 
 void Intro::restoreScreen() {
-	uint16 x = ((DataFileHeader*)_saveBuf)->s_x;
-	uint16 y = ((DataFileHeader*)_saveBuf)->s_y;
-	uint16 width = ((DataFileHeader*)_saveBuf)->s_width;
-	uint16 height = ((DataFileHeader*)_saveBuf)->s_height;
+	uint16 x = ((DataFileHeader *)_saveBuf)->s_x;
+	uint16 y = ((DataFileHeader *)_saveBuf)->s_y;
+	uint16 width = ((DataFileHeader *)_saveBuf)->s_width;
+	uint16 height = ((DataFileHeader *)_saveBuf)->s_height;
 	uint8 *screenBuf = _skyScreen->giveCurrent() + y * GAME_SCREEN_WIDTH + x;
 	uint8 *saveBuf = _saveBuf + sizeof(DataFileHeader);
 	for (uint16 cnt = 0; cnt < height; cnt++) {

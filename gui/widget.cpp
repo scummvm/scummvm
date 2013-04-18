@@ -23,6 +23,7 @@
 #include "common/system.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "graphics/pixelformat.h"
 #include "gui/widget.h"
 #include "gui/gui-manager.h"
@@ -244,16 +245,16 @@ void StaticTextWidget::setValue(int value) {
 }
 
 void StaticTextWidget::setLabel(const Common::String &label) {
-    if (_label != label) {
-        _label = label;
+	if (_label != label) {
+		_label = label;
 
-        // when changing the label, add the CLEARBG flag
-        // so the widget is completely redrawn, otherwise
-        // the new text is drawn on top of the old one.
-        setFlags(WIDGET_CLEARBG);
-        draw();
-        clearFlags(WIDGET_CLEARBG);
-    }
+		// when changing the label, add the CLEARBG flag
+		// so the widget is completely redrawn, otherwise
+		// the new text is drawn on top of the old one.
+		setFlags(WIDGET_CLEARBG);
+		draw();
+		clearFlags(WIDGET_CLEARBG);
+	}
 }
 
 void StaticTextWidget::setAlign(Graphics::TextAlign align) {
@@ -302,30 +303,46 @@ void ButtonWidget::setLabel(const Common::String &label) {
 	StaticTextWidget::setLabel(cleanupHotkey(label));
 }
 
+ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x, int y, int w, int h) {
+	ButtonWidget *button;
+
+#ifndef DISABLE_FANCY_THEMES
+	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
+		if (!name.empty())
+			button = new PicButtonWidget(boss, name, _("Clear value"), cmd);
+		else
+			button = new PicButtonWidget(boss, x, y, w, h, _("Clear value"), cmd);
+		((PicButtonWidget *)button)->useThemeTransparency(true);
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+	} else
+#endif
+		if (!name.empty())
+			button = new ButtonWidget(boss, name, "C", _("Clear value"), cmd);
+		else
+			button = new ButtonWidget(boss, x, y, w, h, "C", _("Clear value"), cmd);
+
+	return button;
+}
+
 #pragma mark -
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey), _gfx(), _alpha(256), _transparency(false) {
+	: ButtonWidget(boss, x, y, w, h, "", tooltip, cmd, hotkey),
+	  _gfx(), _alpha(256), _transparency(false) {
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, const Common::String &name, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: Widget(boss, name, tooltip), CommandSender(boss),
-	  _cmd(cmd), _gfx(), _alpha(256), _transparency(false) {
+	: ButtonWidget(boss, name, "", tooltip, cmd, hotkey),
+	  _alpha(256), _transparency(false) {
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 PicButtonWidget::~PicButtonWidget() {
 	_gfx.free();
-}
-
-void PicButtonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
-	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h)
-		sendCommand(_cmd, 0);
 }
 
 void PicButtonWidget::setGfx(const Graphics::Surface *gfx) {

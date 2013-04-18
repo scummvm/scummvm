@@ -318,7 +318,7 @@ void Text::repeatedlySplitLongLines(uint maxWidth) {
 }
 
 void Text::splitLinesLongerThan(uint maxWidth) {
-	char *start = const_cast<char*> (_text.c_str());	// hacky
+	char *start = const_cast<char *> (_text.c_str());	// hacky
 	while (1) {
 		char *end = strchr(start, '|');
 		if (end) {

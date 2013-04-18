@@ -110,7 +110,7 @@ bool MacResManager::open(String filename) {
 	String fullPath = ConfMan.get("path") + "/" + filename + "/..namedfork/rsrc";
 	FSNode resFsNode = FSNode(fullPath);
 	if (resFsNode.exists()) {
-		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();;
+		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
 
 		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 			_baseFileName = filename;
@@ -173,7 +173,7 @@ bool MacResManager::open(FSNode path, String filename) {
 	String fullPath = path.getPath() + "/" + filename + "/..namedfork/rsrc";
 	FSNode resFsNode = FSNode(fullPath);
 	if (resFsNode.exists()) {
-		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();;
+		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
 
 		if (macResForkRawStream && loadFromRawFork(*macResForkRawStream)) {
 			_baseFileName = filename;
@@ -235,6 +235,27 @@ bool MacResManager::open(FSNode path, String filename) {
 	}
 
 	// The file doesn't exist
+	return false;
+}
+
+bool MacResManager::exists(const String &filename) {
+	// Try the file name by itself
+	if (Common::File::exists(filename))
+		return true;
+
+	// Try the .rsrc extension
+	if (Common::File::exists(filename + ".rsrc"))
+		return true;
+
+	// Check if we have a MacBinary file
+	Common::File tempFile;
+	if (tempFile.open(filename + ".bin") && isMacBinary(tempFile))
+		return true;
+
+	// Check if we have an AppleDouble file
+	if (tempFile.open("._" + filename) && tempFile.readUint32BE() == 0x00051607)
+		return true;
+
 	return false;
 }
 

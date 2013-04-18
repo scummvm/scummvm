@@ -260,7 +260,7 @@ void Parallaction_ns::stopMovingSarcophagus() {
 
 void Parallaction_ns::_c_moveSarc(void *parm) {
 	if (!_movingSarcophagus) {
-		startMovingSarcophagus(*(ZonePtr*)parm);
+		startMovingSarcophagus(*(ZonePtr *)parm);
 	} else {
 		stopMovingSarcophagus();
 	}
@@ -417,18 +417,18 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	return;
 }
 
-void Parallaction_ns::_c_offSound(void*) {
+void Parallaction_ns::_c_offSound(void *) {
 	_soundManI->stopSfx(0);
 	_soundManI->stopSfx(1);
 	_soundManI->stopSfx(2);
 	_soundManI->stopSfx(3);
 }
 
-void Parallaction_ns::_c_startMusic(void*) {
+void Parallaction_ns::_c_startMusic(void *) {
 	_soundManI->playMusic();
 }
 
-void Parallaction_ns::_c_closeMusic(void*) {
+void Parallaction_ns::_c_closeMusic(void *) {
 	_soundManI->stopMusic();
 }
 
@@ -490,7 +490,7 @@ void Parallaction_ns::_c_moveSheet(void *parm) {
 }
 
 void zeroMask(int x, int y, int color, void *data) {
-	BackgroundInfo *info = (BackgroundInfo*)data;
+	BackgroundInfo *info = (BackgroundInfo *)data;
 
 	uint16 _ax = x + y * info->_mask->w;
 	info->_mask->data[_ax >> 2] &= ~(3 << ((_ax & 3) << 1));
@@ -575,16 +575,16 @@ int16 projectorProgram[] = {
    25, 116, 25, 115, 25, 114, 25, 113, 25, 112, 25, 111, 25, 110, 25, -1, -1
 };
 
-void Parallaction_ns::_c_projector(void*) {
+void Parallaction_ns::_c_projector(void *) {
 	_gfx->setHalfbriteMode(true);
 	_gfx->setProjectorProgram(projectorProgram);
 }
 
-void Parallaction_ns::_c_HBOff(void*) {
+void Parallaction_ns::_c_HBOff(void *) {
 	_gfx->setHalfbriteMode(false);
 }
 
-void Parallaction_ns::_c_HBOn(void*) {
+void Parallaction_ns::_c_HBOn(void *) {
 	_gfx->setHalfbriteMode(true);
 }
 

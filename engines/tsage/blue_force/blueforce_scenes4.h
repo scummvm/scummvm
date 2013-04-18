@@ -133,6 +133,7 @@ class Scene415: public SceneExt {
 	class GunInset: public FocusObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
+		virtual void remove();
 	};
 	class GunAndWig: public NamedObject {
 	public:
@@ -141,6 +142,7 @@ class Scene415: public SceneExt {
 	class BulletsInset: public FocusObject {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
+		virtual void remove();
 	};
 	class DashDrawer: public NamedObject {
 	public:
@@ -166,12 +168,12 @@ public:
 	BulletsInset _bulletsInset;
 	DashDrawer _dashDrawer;
 	TheBullets _theBullets;
-	NamedObject _object6;
+	NamedObject _animatedSeat;
 	NamedHotspot _item1, _steeringWheel, _horn, _dashboard;
 	NamedHotspot _seat, _windowLever, _item7, _seatBelt;
 	Lever _lever;
 	SpeakerJakeRadio _jakeRadioSpeaker;
-	bool _fieldE14, _fieldE16;
+	bool _scoreWigRapFlag, _scoreBulletRapFlag;
 
 	Scene415();
 	virtual void postInit(SceneObjectList *OwnerList = NULL);

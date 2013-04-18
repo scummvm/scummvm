@@ -133,7 +133,7 @@ void SceneManager::fadeInIfNecessary() {
 				percent = 100;
 
 			g_globals->_scenePalette.fade((const byte *)&adjustData, false, percent);
-			g_system->updateScreen();
+			GLOBALS._screenSurface.updateScreen();
 			g_system->delayMillis(10);
 		}
 
@@ -164,7 +164,7 @@ void SceneManager::changeScene(int newSceneNumber) {
 		sceneObj->setObjectWrapper(NULL);
 		sceneObj->animate(ANIM_MODE_NONE, 0);
 
-		sceneObj->_flags &= !OBJFLAG_PANES;
+		sceneObj->_flags &= ~OBJFLAG_PANES;
 	}
 
 	// Blank out the screen
@@ -240,7 +240,7 @@ void SceneManager::listenerSynchronize(Serializer &s) {
 
 	if (s.isLoading()) {
 		changeScene(_sceneNumber);
-		
+
 		if (_nextSceneNumber != -1) {
 			sceneChange();
 			_nextSceneNumber = -1;
@@ -259,7 +259,7 @@ Scene::Scene() : _sceneBounds(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT),
 	_sceneMode = 0;
 	_activeScreenNumber = 0;
 	_oldSceneBounds = Rect(4000, 4000, 4100, 4100);
-	Common::set_to(&_zoomPercents[0], &_zoomPercents[256], 0);
+	Common::fill(&_zoomPercents[0], &_zoomPercents[256], 0);
 }
 
 Scene::~Scene() {
@@ -317,7 +317,7 @@ void Scene::loadSceneData(int sceneNum) {
 	_activeScreenNumber = sceneNum;
 
 	if (g_vm->getGameID() == GType_Ringworld2) {
-		// Most scenes in Ringworld 2 don't have a scene size resource, but rather just have 
+		// Most scenes in Ringworld 2 don't have a scene size resource, but rather just have
 		// a standard 320x200 size. Only read the scene size data for the specific few scenes
 		switch (sceneNum) {
 		case 700:
@@ -363,7 +363,7 @@ void Scene::loadSceneData(int sceneNum) {
 	_priorities.load(sceneNum);
 
 	// Initialize the section enabled list
-	Common::set_to(&_enabledSections[0], &_enabledSections[16 * 16], 0xffff);
+	Common::fill(&_enabledSections[0], &_enabledSections[16 * 16], 0xffff);
 
 	g_globals->_sceneOffset.x = (_sceneBounds.left / 160) * 160;
 	g_globals->_sceneOffset.y = (_sceneBounds.top / 100) * 100;
@@ -456,8 +456,9 @@ void Scene::refreshBackground(int xAmount, int yAmount) {
 								(xSectionSrc + 1) * 160, (ySectionSrc + 1) * 100);
 						Rect destBounds(xSectionDest * 160, ySectionDest * 100,
 								(xSectionDest + 1) * 160, (ySectionDest + 1) * 100);
-						if (g_vm->getGameID() == GType_BlueForce) {
-							// For Blue Force, if the scene has an interface area, exclude it from the copy
+						if (g_vm->getGameID() != GType_Ringworld) {
+							// For Blue Force and Return to Ringworld, if the scene has an interface area,
+							// exclude it from the copy
 							srcBounds.bottom = MIN<int16>(srcBounds.bottom, BF_GLOBALS._interfaceY);
 							destBounds.bottom = MIN<int16>(destBounds.bottom, BF_GLOBALS._interfaceY);
 						}

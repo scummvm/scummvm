@@ -68,7 +68,7 @@ private:
 
 	typedef List<Symbol> CodeList;
 	typedef Array<CodeList> CodeLists;
-	typedef Array<Symbol*> SymbolList;
+	typedef Array<Symbol *> SymbolList;
 
 	/** Lists of codes and their symbols, sorted by code length. */
 	CodeLists _codes;

@@ -21,6 +21,7 @@
  */
 
 #include "engines/game.h"
+#include "common/gui_options.h"
 
 
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {

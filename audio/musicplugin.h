@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOUND_MUSICPLUGIN_H
-#define SOUND_MUSICPLUGIN_H
+#ifndef AUDIO_MUSICPLUGIN_H
+#define AUDIO_MUSICPLUGIN_H
 
 #include "base/plugins.h"
 #include "audio/mididrv.h"

@@ -84,6 +84,7 @@ void writeSavegameHeader(Common::OutSaveFile *out, CruiseSavegameHeader &header)
 	Graphics::Surface *thumb = new Graphics::Surface();
 	::createThumbnail(thumb, globalScreen, 320, 200, workpal);
 	Graphics::saveThumbnail(*out, *thumb);
+	thumb->free();
 	delete thumb;
 }
 
@@ -923,10 +924,10 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 			if (ptr) {
 				ASSERT(0);
-				//*(int16*)(currentcellHead->datas+0x2E) = getSprite(ptr,*(int16*)(currentcellHead->datas+0xE));
+				//*(int16 *)(currentcellHead->datas+0x2E) = getSprite(ptr,*(int16 *)(currentcellHead->datas+0xE));
 			} else {
 				ASSERT(0);
-				//*(int16*)(currentcellHead->datas+0x2E) = 0;
+				//*(int16 *)(currentcellHead->datas+0x2E) = 0;
 			}
 		}
 

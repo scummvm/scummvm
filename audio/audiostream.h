@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_AUDIOSTREAM_H
-#define SOUND_AUDIOSTREAM_H
+#ifndef AUDIO_AUDIOSTREAM_H
+#define AUDIO_AUDIOSTREAM_H
 
 #include "common/ptr.h"
 #include "common/scummsys.h"

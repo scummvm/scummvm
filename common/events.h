@@ -73,8 +73,21 @@ enum EventType {
 	 * An associated enumerated type can accomplish this.
 	 **/
 	EVENT_PREDICTIVE_DIALOG = 12
+
+#ifdef ENABLE_KEYMAPPER
+	,
+	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	// this, please talk to tsoliman and/or LordHoto.
+	EVENT_CUSTOM_BACKEND_ACTION = 18,
+	EVENT_KEYMAPPER_REMAP = 19
+#endif
+#ifdef ENABLE_VKEYBD
+	,
+	EVENT_VIRTUAL_KEYBOARD = 20
+#endif
 };
 
+typedef uint32 CustomEventType;
 /**
  * Data structure for an event. A pointer to an instance of Event
  * can be passed to pollEvent.
@@ -99,7 +112,17 @@ struct Event {
 	 */
 	Point mouse;
 
-	Event() : type(EVENT_INVALID), synthetic(false) {}
+#ifdef ENABLE_KEYMAPPER
+	// IMPORTANT NOTE: This is part of the WIP Keymapper. If you plan to use
+	// this, please talk to tsoliman and/or LordHoto.
+	CustomEventType customType;
+#endif
+
+	Event() : type(EVENT_INVALID), synthetic(false) {
+#ifdef ENABLE_KEYMAPPER
+		customType = 0;
+#endif
+	}
 };
 
 /**
@@ -175,7 +198,7 @@ public:
 	 *
 	 * An observer is supposed to eat the event, with returning true, when
 	 * it wants to prevent other observers from receiving the event.
-	 * An usage example here is the keymapper:
+	 * A usage example here is the keymapper:
 	 * If it processes an Event, it should 'eat' it and create a new
 	 * event, which the EventDispatcher will then catch.
 	 *
@@ -199,10 +222,20 @@ public:
  *
  * An example for this is the Keymapper.
  */
-class EventMapper : public EventSource, public EventObserver {
+class EventMapper {
 public:
-	/** For event mappers resulting events should never be mapped */
-	bool allowMapping() const { return false; }
+	virtual ~EventMapper() {}
+
+	/**
+	 * Map an incoming event to one or more action events
+	 */
+	virtual List<Event> mapEvent(const Event &ev, EventSource *source) = 0;
+};
+
+class DefaultEventMapper : public EventMapper {
+public:
+	// EventMapper interface
+	virtual List<Event> mapEvent(const Event &ev, EventSource *source);
 };
 
 /**

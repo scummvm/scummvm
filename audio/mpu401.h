@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_MPU401_H
-#define SOUND_MPU401_H
+#ifndef AUDIO_MPU401_H
+#define AUDIO_MPU401_H
 
 #include "audio/mididrv.h"
 

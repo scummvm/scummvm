@@ -87,16 +87,15 @@ static const EntityPosition objectsPosition[8] = {kPosition_8200, kPosition_7500
 	                                              kPosition_4840, kPosition_4070,
 	                                              kPosition_3050, kPosition_2740};
 
-static const EntityPosition entityPositions[41] = {
-            kPositionNone,    kPosition_851,  kPosition_1430, kPosition_2110, kPositionNone,
-            kPosition_2410, kPosition_2980, kPosition_3450, kPosition_3760, kPosition_4100,
-            kPosition_4680, kPosition_5140, kPosition_5440, kPosition_5810, kPosition_6410,
-            kPosition_6850, kPosition_7160, kPosition_7510, kPosition_8514, kPositionNone,
-            kPositionNone,    kPositionNone,    kPosition_2086, kPosition_2690, kPositionNone,
-            kPosition_3110, kPosition_3390, kPosition_3890, kPosition_4460, kPosition_4770,
-            kPosition_5090, kPosition_5610, kPosition_6160, kPosition_6460, kPosition_6800,
-            kPosition_7320, kPosition_7870, kPosition_8160, kPosition_8500, kPosition_9020,
-            kPosition_9269};
+static const EntityPosition entityPositions[41] = {kPositionNone,  kPosition_851,  kPosition_1430, kPosition_2110, kPositionNone,
+	                                               kPosition_2410, kPosition_2980, kPosition_3450, kPosition_3760, kPosition_4100,
+	                                               kPosition_4680, kPosition_5140, kPosition_5440, kPosition_5810, kPosition_6410,
+	                                               kPosition_6850, kPosition_7160, kPosition_7510, kPosition_8514, kPositionNone,
+	                                               kPositionNone,  kPositionNone,  kPosition_2086, kPosition_2690, kPositionNone,
+	                                               kPosition_3110, kPosition_3390, kPosition_3890, kPosition_4460, kPosition_4770,
+	                                               kPosition_5090, kPosition_5610, kPosition_6160, kPosition_6460, kPosition_6800,
+	                                               kPosition_7320, kPosition_7870, kPosition_8160, kPosition_8500, kPosition_9020,
+	                                               kPosition_9269};
 
 #define ADD_ENTITY(class) \
 	_entities.push_back(new class(engine));
@@ -105,7 +104,7 @@ static const EntityPosition entityPositions[41] = {
 	sequenceTo = sequenceFrom; \
 	for (int seqIdx = 0; seqIdx < 7; seqIdx++) \
 		sequenceTo.deleteLastChar(); \
-	if (isInsideTrainCar(entityIndex, kCarGreenSleeping) || isInsideTrainCar(entityIndex, kCarGreenSleeping)) { \
+	if (isInsideTrainCar(entityIndex, kCarGreenSleeping) || isInsideTrainCar(entityIndex, kCarRedSleeping)) { \
 		if (data->car < getData(kEntityPlayer)->car || (data->car == getData(kEntityPlayer)->car && data->entityPosition < getData(kEntityPlayer)->entityPosition)) \
 			sequenceTo += "R.SEQ"; \
 		else \
@@ -616,9 +615,9 @@ void Entities::resetSequences(EntityIndex entityIndex) const {
 	getData(entityIndex)->field_4A9 = false;
 	getData(entityIndex)->field_4AA = false;
 
-	strcpy((char*)&getData(entityIndex)->sequenceNameCopy, "");
-	strcpy((char*)&getData(entityIndex)->sequenceName, "");
-	strcpy((char*)&getData(entityIndex)->sequenceName2, "");
+	strcpy((char *)&getData(entityIndex)->sequenceNameCopy, "");
+	strcpy((char *)&getData(entityIndex)->sequenceName, "");
+	strcpy((char *)&getData(entityIndex)->sequenceName2, "");
 
 	getScenes()->resetQueue();
 }

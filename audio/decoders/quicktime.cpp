@@ -87,6 +87,9 @@ void QuickTimeAudioDecoder::init() {
 
 			// Initialize the codec (if necessary)
 			entry->initCodec();
+
+			if (_tracks[_audioTrackIndex]->editCount > 1)
+				warning("Multiple edit list entries in an audio track. Things may go awry");
 		}
 	}
 }
@@ -227,16 +230,23 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	uint32 seekSample = sample;
 
 	if (!isOldDemuxing()) {
-		// We shouldn't have audio samples that are a different duration
-		// That would be quite bad!
-		if (_tracks[_audioTrackIndex]->timeToSampleCount != 1) {
-			warning("Failed seeking");
-			return;
-		}
+		// For MPEG-4 style demuxing, we need to track down the sample based on the time
+		// The old style demuxing doesn't require this because each "sample"'s duration
+		// is just 1
+		uint32 curSample = 0;
+		seekSample = 0;
 
-		// Note that duration is in terms of *one* channel
-		// This eases calculation a bit
-		seekSample /= _tracks[_audioTrackIndex]->timeToSample[0].duration;
+		for (int32 i = 0; i < _tracks[_audioTrackIndex]->timeToSampleCount; i++) {
+			uint32 sampleCount = _tracks[_audioTrackIndex]->timeToSample[i].count * _tracks[_audioTrackIndex]->timeToSample[i].duration;
+
+			if (sample < curSample + sampleCount) {
+				seekSample += (sample - curSample) / _tracks[_audioTrackIndex]->timeToSample[i].duration;
+				break;
+			}
+
+			seekSample += _tracks[_audioTrackIndex]->timeToSample[i].count;
+			curSample += sampleCount;
+		}
 	}
 
 	// Now to track down what chunk it's in
@@ -414,7 +424,9 @@ public:
 	}
 
 	Timestamp getLength() const {
-		return Timestamp(0, _tracks[_audioTrackIndex]->duration, _tracks[_audioTrackIndex]->timeScale);
+		// TODO: Switch to the other one when audio edits are supported
+		//return Timestamp(0, _tracks[_audioTrackIndex]->duration, _timeScale);
+		return Timestamp(0, _tracks[_audioTrackIndex]->mediaDuration, _tracks[_audioTrackIndex]->timeScale);
 	}
 };
 

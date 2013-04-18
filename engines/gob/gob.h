@@ -160,7 +160,6 @@ private:
 	GameType _gameType;
 	int32 _features;
 	Common::Platform _platform;
-	GobConsole *_console;
 
 	uint32 _pauseStart;
 
@@ -193,6 +192,8 @@ public:
 
 	bool _copyProtection;
 	bool _noMusic;
+
+	GobConsole *_console;
 
 	Global *_global;
 	Util *_util;

@@ -18,8 +18,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __SCALE3X_H
-#define __SCALE3X_H
+#ifndef SCALER_SCALE3X_H
+#define SCALER_SCALE3X_H
 
 #if defined(_MSC_VER)
 #define __restrict__

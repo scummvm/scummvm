@@ -22,7 +22,9 @@
 
 #include "common/archive.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/str.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -52,9 +54,10 @@ struct SavegameDesc {
  * arbitrary data files, simply because many of our target platforms do not
  * support this. The only files one can create are savestates. But SCI has an
  * opcode to create and write to seemingly 'arbitrary' files. This is mainly
- * used in LSL3 for LARRY3.DRV (which is a game data file, not a driver) and
- * in LSL5 for MEMORY.DRV (which is again a game data file and contains the
- * game's password).
+ * used in LSL3 for LARRY3.DRV (which is a game data file, not a driver, used
+ * for persisting the results of the "age quiz" across restarts) and in LSL5
+ * for MEMORY.DRV (which is again a game data file and contains the game's
+ * password, XOR encrypted).
  * To implement that opcode, we combine the SaveFileManager with regular file
  * code, similarly to how the SCUMM HE engine does it.
  *
@@ -114,20 +117,6 @@ reg_t file_open(EngineState *s, const Common::String &filename, int mode, bool u
 		// file
 		if (!inFile)
 			inFile = SearchMan.createReadStreamForMember(englishName);
-
-		// Special case for LSL3: It tries to create a new dummy file,
-		// LARRY3.DRV. Apparently, if the file doesn't exist here, it should be
-		// created. The game scripts then go ahead and fill its contents with
-		// data. It seems to be a similar case as the dummy MEMORY.DRV file in
-		// LSL5, but LSL5 creates the file if it can't find it with a separate
-		// call to file_open().
-		if (!inFile && englishName == "LARRY3.DRV") {
-			outFile = saveFileMan->openForSaving(wrappedName);
-			outFile->finalize();
-			delete outFile;
-			outFile = 0;
-			inFile = SearchMan.createReadStreamForMember(wrappedName);
-		}
 
 		if (!inFile)
 			debugC(kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
@@ -835,7 +824,7 @@ reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
 	int size = argv[2].toUint16();
 	char *buf = new char[size];
 	bool success = false;
-	s->_segMan->memcpy((byte*)buf, argv[1], size);
+	s->_segMan->memcpy((byte *)buf, argv[1], size);
 	debugC(kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
 	FileHandle *f = getFileFromHandle(s, handle);
@@ -1060,6 +1049,18 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		exists = !saveFileMan->listSavefiles(wrappedName).empty();
 	}
 
+	// SCI2+ debug mode
+	if (DebugMan.isDebugChannelEnabled(kDebugLevelDebugMode)) {
+		if (!exists && name == "1.scr")		// PQ4
+			exists = true;
+		if (!exists && name == "18.scr")	// QFG4
+			exists = true;
+		if (!exists && name == "99.scr")	// GK1, KQ7
+			exists = true;
+		if (!exists && name == "classes")	// GK2, SQ6, LSL7
+			exists = true;
+	}
+
 	// Special case for non-English versions of LSL5: The English version of
 	// LSL5 calls kFileIO(), case K_FILEIO_OPEN for reading to check if
 	// memory.drv exists (which is where the game's password is stored). If
@@ -1079,6 +1080,14 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 		exists = !outFile->err();	// check whether we managed to create the file.
 		delete outFile;
 	}
+
+	// Special case for KQ6 Mac: The game checks for two video files to see
+	// if they exist before it plays them. Since we support multiple naming
+	// schemes for resource fork files, we also need to support that here in
+	// case someone has a "HalfDome.bin" file, etc. 
+	if (!exists && g_sci->getGameId() == GID_KQ6 && g_sci->getPlatform() == Common::kPlatformMacintosh &&
+			(name == "HalfDome" || name == "Kq6Movie"))
+		exists = Common::MacResManager::exists(name);
 
 	debugC(kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
 	return make_reg(0, exists);

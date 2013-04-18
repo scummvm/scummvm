@@ -22,7 +22,7 @@
 
 #include "sword25/util/lua/scummvm_file.h"
 #include "common/config-manager.h"
-#include "common/util.h"
+#include "common/language.h"
 
 namespace Sword25 {
 

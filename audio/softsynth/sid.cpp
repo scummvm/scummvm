@@ -27,7 +27,7 @@
 
 #ifndef DISABLE_SID
 
-#include "sid.h"
+#include "audio/softsynth/sid.h"
 #include "audio/null.h"
 
 namespace Resid {

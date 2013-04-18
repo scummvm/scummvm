@@ -42,10 +42,6 @@ enum GsInterlace {
 };
 
 
-namespace Graphics {
-struct Surface;
-}
-
 class Gs2dScreen {
 public:
 	Gs2dScreen(uint16 width, uint16 height, TVMode tvMode);
@@ -65,7 +61,6 @@ public:
 	void setPalette(const uint8 *pal, uint8 start, uint16 num);
 	void updateScreen(void);
 	void grabPalette(uint8 *pal, uint8 start, uint16 num);
-	void grabScreen(Graphics::Surface *surf);
 	//- overlay routines
 	void copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint16 y, uint16 w, uint16 h);
 	void grabOverlay(uint16 *buf, uint16 pitch);

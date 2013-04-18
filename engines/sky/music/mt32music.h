@@ -31,7 +31,7 @@ namespace Sky {
 
 class MT32Music : public MusicBase {
 public:
-	MT32Music(MidiDriver *pMidiDrv, Disk *pDisk);
+	MT32Music(MidiDriver *pMidiDrv, Audio::Mixer *pMixer, Disk *pDisk);
 	~MT32Music();
 private:
 	static void passTimerFunc(void *param);

@@ -103,7 +103,7 @@ JavaInputStream::JavaInputStream(JNIEnv *env, jobject is) :
 	MID_mark = env->GetMethodID(cls, "mark", "(I)V");
 	assert(MID_mark);
 	MID_available = env->GetMethodID(cls, "available", "()I");
-	assert(MID_mark);
+	assert(MID_available);
 	MID_close = env->GetMethodID(cls, "close", "()V");
 	assert(MID_close);
 	MID_read = env->GetMethodID(cls, "read", "([BII)I");
@@ -389,7 +389,7 @@ AndroidAssetArchive::~AndroidAssetArchive() {
 	env->DeleteGlobalRef(_am);
 }
 
-bool AndroidAssetArchive::hasFile(const Common::String &name) {
+bool AndroidAssetArchive::hasFile(const Common::String &name) const {
 	JNIEnv *env = JNI::getEnv();
 	jstring path = env->NewStringUTF(name.c_str());
 	jobject result = env->CallObjectMethod(_am, MID_open, path, ACCESS_UNKNOWN);
@@ -409,7 +409,7 @@ bool AndroidAssetArchive::hasFile(const Common::String &name) {
 	return true;
 }
 
-int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) {
+int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) const {
 	JNIEnv *env = JNI::getEnv();
 	Common::List<Common::String> dirlist;
 	dirlist.push_back("");
@@ -466,7 +466,7 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) {
 	return count;
 }
 
-Common::ArchiveMemberPtr AndroidAssetArchive::getMember(const Common::String &name) {
+const Common::ArchiveMemberPtr AndroidAssetArchive::getMember(const Common::String &name) const {
 	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
 }
 

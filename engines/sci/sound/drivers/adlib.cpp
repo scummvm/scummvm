@@ -613,8 +613,6 @@ void MidiDriver_AdLib::setNote(int voice, int note, bool key) {
 
 	_voices[voice].note = note;
 
-	delta = 0;
-
 	n = note % 12;
 
 	if (bend < 8192)

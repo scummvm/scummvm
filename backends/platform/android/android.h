@@ -220,6 +220,8 @@ public:
 
 private:
 	Common::Queue<Common::Event> _event_queue;
+	Common::Event _queuedEvent;
+	uint32 _queuedEventTime;
 	MutexRef _event_queue_lock;
 
 	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt;

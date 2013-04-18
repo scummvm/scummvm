@@ -860,14 +860,14 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 		return true;
 	}
 
-	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeScript);
-	Common::sort(resources->begin(), resources->end());
-	Common::List<ResourceId>::iterator itr = resources->begin();
+	Common::List<ResourceId> resources = _engine->getResMan()->listResources(kResourceTypeScript);
+	Common::sort(resources.begin(), resources.end());
 
-	DebugPrintf("%d SCI1.1-SCI3 scripts found, performing sanity checks...\n", resources->size());
+	DebugPrintf("%d SCI1.1-SCI3 scripts found, performing sanity checks...\n", resources.size());
 
 	Resource *script, *heap;
-	while (itr != resources->end()) {
+	Common::List<ResourceId>::iterator itr;
+	for (itr = resources.begin(); itr != resources.end(); ++itr) {
 		script = _engine->getResMan()->findResource(*itr, false);
 		if (!script)
 			DebugPrintf("Error: script %d couldn't be loaded\n", itr->getNumber());
@@ -885,12 +885,9 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 				DebugPrintf("Error: script %d is larger than 64KB (%d bytes)\n",
 				itr->getNumber(), script->size);
 		}
-
-		++itr;
 	}
 
 	DebugPrintf("SCI1.1-SCI2.1 script check finished\n");
-	delete resources;
 
 	return true;
 }
@@ -914,9 +911,8 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 	MidiParser_SCI *parser = new MidiParser_SCI(doSoundVersion, 0);
 	parser->setMidiDriver(player);
 
-	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeSound);
-	Common::sort(resources->begin(), resources->end());
-	Common::List<ResourceId>::iterator itr = resources->begin();
+	Common::List<ResourceId> resources = _engine->getResMan()->listResources(kResourceTypeSound);
+	Common::sort(resources.begin(), resources.end());
 	int instruments[128];
 	bool instrumentsSongs[128][1000];
 
@@ -928,26 +924,21 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 			instrumentsSongs[i][j] = false;
 
 	if (songNumber == -1) {
-		DebugPrintf("%d sounds found, checking their instrument mappings...\n", resources->size());
+		DebugPrintf("%d sounds found, checking their instrument mappings...\n", resources.size());
 		DebugPrintf("Instruments:\n");
 		DebugPrintf("============\n");
 	}
 
-	SoundResource *sound;
-
-	while (itr != resources->end()) {
-		if (songNumber >= 0 && itr->getNumber() != songNumber) {
-			++itr;
+	Common::List<ResourceId>::iterator itr;
+	for (itr = resources.begin(); itr != resources.end(); ++itr) {
+		if (songNumber >= 0 && itr->getNumber() != songNumber)
 			continue;
-		}
 
-		sound = new SoundResource(itr->getNumber(), _engine->getResMan(), doSoundVersion);
-		int channelFilterMask = sound->getChannelFilterMask(player->getPlayId(), player->hasRhythmChannel());
-		SoundResource::Track *track = sound->getTrackByType(player->getPlayId());
+		SoundResource sound(itr->getNumber(), _engine->getResMan(), doSoundVersion);
+		int channelFilterMask = sound.getChannelFilterMask(player->getPlayId(), player->hasRhythmChannel());
+		SoundResource::Track *track = sound.getTrackByType(player->getPlayId());
 		if (track->digitalChannelNr != -1) {
 			// Skip digitized sound effects
-			delete sound;
-			++itr;
 			continue;
 		}
 
@@ -1027,9 +1018,6 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 		} while (!endOfTrack);
 
 		DebugPrintf("\n");
-
-		delete sound;
-		++itr;
 	}
 
 	delete parser;
@@ -1069,7 +1057,6 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 		DebugPrintf("\n\n");
 	}
 
-	delete resources;
 	return true;
 }
 
@@ -1132,12 +1119,12 @@ bool Console::cmdList(int argc, const char **argv) {
 			number = atoi(argv[2]);
 		}
 
-		Common::List<ResourceId> *resources = _engine->getResMan()->listResources(res, number);
-		Common::sort(resources->begin(), resources->end());
-		Common::List<ResourceId>::iterator itr = resources->begin();
+		Common::List<ResourceId> resources = _engine->getResMan()->listResources(res, number);
+		Common::sort(resources.begin(), resources.end());
 
 		int cnt = 0;
-		while (itr != resources->end()) {
+		Common::List<ResourceId>::iterator itr;
+		for (itr = resources.begin(); itr != resources.end(); ++itr) {
 			if (number == -1) {
 				DebugPrintf("%8i", itr->getNumber());
 				if (++cnt % 10 == 0)
@@ -1149,10 +1136,8 @@ bool Console::cmdList(int argc, const char **argv) {
 				if (++cnt % 4 == 0)
 					DebugPrintf("\n");
 			}
-			++itr;
 		}
 		DebugPrintf("\n");
-		delete resources;
 	}
 
 	return true;
@@ -1448,7 +1433,7 @@ bool Console::cmdSaid(int argc, const char **argv) {
 			_engine->getVocabulary()->dumpParseTree();
 			_engine->getVocabulary()->parserIsValid = true;
 
-			int ret = said((byte*)spec, true);
+			int ret = said((byte *)spec, true);
 			DebugPrintf("kSaid: %s\n", (ret == SAID_NO_MATCH ? "No match" : "Match"));
 		}
 
@@ -1620,7 +1605,7 @@ bool Console::cmdWindowList(int argc, const char **argv) {
 bool Console::cmdSavedBits(int argc, const char **argv) {
 	SegManager *segman = _engine->_gamestate->_segMan;
 	SegmentId id = segman->findSegmentByType(SEG_TYPE_HUNK);
-	HunkTable* hunks = (HunkTable*)segman->getSegmentObj(id);
+	HunkTable* hunks = (HunkTable *)segman->getSegmentObj(id);
 	if (!hunks) {
 		DebugPrintf("No hunk segment found.\n");
 		return true;
@@ -1632,7 +1617,7 @@ bool Console::cmdSavedBits(int argc, const char **argv) {
 		uint16 offset = entries[i].offset;
 		const Hunk& h = hunks->_table[offset];
 		if (strcmp(h.type, "SaveBits()") == 0) {
-			byte* memoryPtr = (byte*)h.mem;
+			byte* memoryPtr = (byte *)h.mem;
 
 			if (memoryPtr) {
 				DebugPrintf("%04x:%04x:", PRINT_REG(entries[i]));
@@ -1686,7 +1671,7 @@ bool Console::cmdShowSavedBits(int argc, const char **argv) {
 
 	SegManager *segman = _engine->_gamestate->_segMan;
 	SegmentId id = segman->findSegmentByType(SEG_TYPE_HUNK);
-	HunkTable* hunks = (HunkTable*)segman->getSegmentObj(id);
+	HunkTable* hunks = (HunkTable *)segman->getSegmentObj(id);
 	if (!hunks) {
 		DebugPrintf("No hunk segment found.\n");
 		return true;
@@ -1876,16 +1861,17 @@ bool Console::segmentInfo(int nr) {
 
 		DebugPrintf("  Synonyms: %4d\n", scr->getSynonymsNr());
 
-		if (scr->_localsBlock)
-			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->_localsBlock->_locals.size(), scr->_localsSegment);
+		if (scr->getLocalsCount() > 0)
+			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->getLocalsCount(), scr->getLocalsSegment());
 		else
 			DebugPrintf("  Locals : none\n");
 
-		DebugPrintf("  Objects: %4d\n", scr->_objects.size());
+		ObjMap objects = scr->getObjectMap();
+		DebugPrintf("  Objects: %4d\n", objects.size());
 
 		ObjMap::iterator it;
-		const ObjMap::iterator end = scr->_objects.end();
-		for (it = scr->_objects.begin(); it != end; ++it) {
+		const ObjMap::iterator end = objects.end();
+		for (it = objects.begin(); it != end; ++it) {
 			DebugPrintf("    ");
 			// Object header
 			const Object *obj = _engine->_gamestate->_segMan->getObject(it->_value.getPos());
@@ -2914,12 +2900,11 @@ bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 }
 
 void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
-	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeScript);
-	Common::sort(resources->begin(), resources->end());
-	Common::List<ResourceId>::iterator itr = resources->begin();
+	Common::List<ResourceId> resources = _engine->getResMan()->listResources(kResourceTypeScript);
+	Common::sort(resources.begin(), resources.end());
 
 	if (showFoundScripts)
-		DebugPrintf("%d scripts found, dissassembling...\n", resources->size());
+		DebugPrintf("%d scripts found, dissassembling...\n", resources.size());
 
 	int scriptSegment;
 	Script *script;
@@ -2927,13 +2912,13 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 	// manager won't be affected by loading and unloading scripts here.
 	SegManager *customSegMan = new SegManager(_engine->getResMan());
 
-	while (itr != resources->end()) {
+	Common::List<ResourceId>::iterator itr;
+	for (itr = resources.begin(); itr != resources.end(); ++itr) {
 		// Ignore specific leftover scripts, which require other non-existing scripts
 		if ((_engine->getGameId() == GID_HOYLE3         && itr->getNumber() == 995) ||
 		    (_engine->getGameId() == GID_KQ5            && itr->getNumber() == 980) ||
 		    (_engine->getGameId() == GID_SLATER         && itr->getNumber() == 947) ||
 			(_engine->getGameId() == GID_MOTHERGOOSE256 && itr->getNumber() == 980)) {
-			itr++;
 			continue;
 		}
 
@@ -2942,9 +2927,10 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 		script = customSegMan->getScript(scriptSegment);
 
 		// Iterate through all the script's objects
+		ObjMap objects = script->getObjectMap();
 		ObjMap::iterator it;
-		const ObjMap::iterator end = script->_objects.end();
-		for (it = script->_objects.begin(); it != end; ++it) {
+		const ObjMap::iterator end = objects.end();
+		for (it = objects.begin(); it != end; ++it) {
 			const Object *obj = customSegMan->getObject(it->_value.getPos());
 			const char *objName = customSegMan->getObjectName(it->_value.getPos());
 
@@ -2976,7 +2962,8 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 					// there is a jump after a ret, we don't stop processing
 					if (opcode == op_bt || opcode == op_bnt || opcode == op_jmp) {
 						uint16 curJmpOffset = offset + (uint16)opparams[0];
-						if (curJmpOffset > maxJmpOffset)
+						// QFG2 has invalid jumps outside the script buffer in script 260
+						if (curJmpOffset > maxJmpOffset && curJmpOffset < script->getScriptSize())
 							maxJmpOffset = curJmpOffset;
 					}
 
@@ -2990,12 +2977,9 @@ void Console::printKernelCallsFound(int kernelFuncNum, bool showFoundScripts) {
 		}	// for (it = script->_objects.begin(); it != end; ++it)
 
 		customSegMan->uninstantiateScript(itr->getNumber());
-		++itr;
 	}
 
 	delete customSegMan;
-
-	delete resources;
 }
 
 bool Console::cmdFindKernelFunctionCall(int argc, const char **argv) {

@@ -446,7 +446,7 @@ bool Debugger::Cmd_ResLook(int argc, const char **argv) {
 		DebugPrintf("<menu icon> %s\n", _vm->_resman->fetchName(res));
 		break;
 	default:
-		DebugPrintf("unrecognised fileType %d\n", type);
+		DebugPrintf("unrecognized fileType %d\n", type);
 		break;
 	}
 

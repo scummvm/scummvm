@@ -30,8 +30,8 @@
  *  - touche
  */
 
-#ifndef SOUND_VOC_H
-#define SOUND_VOC_H
+#ifndef AUDIO_VOC_H
+#define AUDIO_VOC_H
 
 #include "common/scummsys.h"
 #include "common/types.h"
@@ -76,14 +76,6 @@ struct VocBlockHeader {
  * works around that and "unrounds" the sampling rates.
  */
 extern int getSampleRateFromVOCRate(int vocSR);
-
-/**
- * Try to load a VOC from the given stream. Returns a pointer to memory
- * containing the PCM sample data (allocated with malloc). It is the callers
- * responsibility to dellocate that data again later on! Currently this
- * function only supports uncompressed raw PCM data.
- */
-extern byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate);
 
 /**
  * Try to load a VOC from the given seekable stream and create an AudioStream

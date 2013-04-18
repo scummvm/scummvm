@@ -405,13 +405,13 @@ void String::trim() {
 	makeUnique();
 
 	// Trim trailing whitespace
-	while (_size >= 1 && isspace(static_cast<unsigned char>(_str[_size - 1])))
+	while (_size >= 1 && isSpace(_str[_size - 1]))
 		--_size;
 	_str[_size] = 0;
 
 	// Trim leading whitespace
 	char *t = _str;
-	while (isspace((unsigned char)*t))
+	while (isSpace(*t))
 		t++;
 
 	if (t != _str) {
@@ -606,14 +606,14 @@ String operator+(const String &x, char y) {
 }
 
 char *ltrim(char *t) {
-	while (isspace(static_cast<unsigned char>(*t)))
+	while (isSpace(*t))
 		t++;
 	return t;
 }
 
 char *rtrim(char *t) {
 	int l = strlen(t) - 1;
-	while (l >= 0 && isspace(static_cast<unsigned char>(t[l])))
+	while (l >= 0 && isSpace(t[l]))
 		t[l--] = 0;
 	return t;
 }
@@ -793,7 +793,7 @@ size_t strlcpy(char *dst, const char *src, size_t size) {
 	}
 
 	// Move to the terminating zero of the source
-	// string, we need this to determin the length
+	// string, we need this to determine the length
 	// of the source string.
 	while (*src)
 		++src;
@@ -841,7 +841,7 @@ size_t strlcat(char *dst, const char *src, size_t size) {
 	*dst = 0;
 
 	// Move to the terminating zero of the source
-	// string, we need this to determin the length
+	// string, we need this to determine the length
 	// of the source string.
 	while (*src)
 		++src;

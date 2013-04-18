@@ -25,6 +25,7 @@
 
 #include "base/plugins.h"
 #include "common/fs.h"
+#include "common/gui_options.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
@@ -198,17 +199,17 @@ GameList SwordMetaEngine::detectGames(const Common::FSList &fslist) const {
 			psxDemoFilesFound = false;
 
 	if (mainFilesFound && pcFilesFound && demoFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1DemoSettings, GUIO1(GUIO_NOMIDI)));
+		detectedGames.push_back(GameDescriptor(sword1DemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
 	else if (mainFilesFound && pcFilesFound && psxFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1PSXSettings, GUIO1(GUIO_NOMIDI)));
+		detectedGames.push_back(GameDescriptor(sword1PSXSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
 	else if (mainFilesFound && pcFilesFound && psxDemoFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1PSXDemoSettings, GUIO1(GUIO_NOMIDI)));
+		detectedGames.push_back(GameDescriptor(sword1PSXDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
 	else if (mainFilesFound && pcFilesFound && !psxFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1FullSettings, GUIO1(GUIO_NOMIDI)));
+		detectedGames.push_back(GameDescriptor(sword1FullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
 	else if (mainFilesFound && macFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1MacFullSettings, GUIO1(GUIO_NOMIDI)));
+		detectedGames.push_back(GameDescriptor(sword1MacFullSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
 	else if (mainFilesFound && macDemoFilesFound)
-		detectedGames.push_back(GameDescriptor(sword1MacDemoSettings, GUIO1(GUIO_NOMIDI)));
+		detectedGames.push_back(GameDescriptor(sword1MacDemoSettings, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
 
 	return detectedGames;
 }

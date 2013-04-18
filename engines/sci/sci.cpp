@@ -46,7 +46,8 @@
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
-#include "sci/graphics/controls.h"
+#include "sci/graphics/controls16.h"
+#include "sci/graphics/controls32.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
@@ -90,6 +91,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_vocabularyLanguage = 1; // we load english vocabulary on startup
 	_eventMan = 0;
 	_console = 0;
+	_opcode_formats = 0;
 
 	// Set up the engine specific debug levels
 	DebugMan.addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
@@ -113,6 +115,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	DebugMan.addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
 	DebugMan.addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
 	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
+	DebugMan.addDebugChannel(kDebugLevelDebugMode, "DebugMode", "Enable game debug mode at start of game");
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -147,12 +150,13 @@ SciEngine::~SciEngine() {
 	DebugMan.clearAllDebugChannels();
 
 #ifdef ENABLE_SCI32
+	delete _gfxControls32;
 	delete _gfxText32;
 	delete _robotDecoder;
 	delete _gfxFrameout;
 #endif
 	delete _gfxMenu;
-	delete _gfxControls;
+	delete _gfxControls16;
 	delete _gfxText16;
 	delete _gfxAnimate;
 	delete _gfxPaint;
@@ -176,6 +180,9 @@ SciEngine::~SciEngine() {
 	delete _eventMan;
 	delete _gamestate->_segMan;
 	delete _gamestate;
+
+	delete[] _opcode_formats;
+
 	delete _resMan;	// should be deleted last
 	g_sci = 0;
 }
@@ -187,6 +194,7 @@ Common::Error SciEngine::run() {
 	ConfMan.registerDefault("sci_originalsaveload", "false");
 	ConfMan.registerDefault("native_fb01", "false");
 	ConfMan.registerDefault("windows_cursors", "false");	// Windows cursors for KQ6 Windows
+	ConfMan.registerDefault("silver_cursors", "false");	// Silver cursors for SQ4 CD
 
 	_resMan = new ResourceManager();
 	assert(_resMan);
@@ -588,7 +596,7 @@ void SciEngine::initGraphics() {
 	_gfxAnimate = 0;
 	_gfxCache = 0;
 	_gfxCompare = 0;
-	_gfxControls = 0;
+	_gfxControls16 = 0;
 	_gfxCoordAdjuster = 0;
 	_gfxCursor = 0;
 	_gfxMacIconBar = 0;
@@ -600,6 +608,7 @@ void SciEngine::initGraphics() {
 	_gfxText16 = 0;
 	_gfxTransitions = 0;
 #ifdef ENABLE_SCI32
+	_gfxControls32 = 0;
 	_gfxText32 = 0;
 	_robotDecoder = 0;
 	_gfxFrameout = 0;
@@ -622,6 +631,7 @@ void SciEngine::initGraphics() {
 		_gfxPaint32 = new GfxPaint32(_resMan, _gamestate->_segMan, _kernel, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette);
 		_gfxPaint = _gfxPaint32;
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache, _gfxScreen);
+		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxText32);
 		_robotDecoder = new RobotDecoder(g_system->getMixer(), getPlatform() == Common::kPlatformMacintosh);
 		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
 	} else {
@@ -636,7 +646,7 @@ void SciEngine::initGraphics() {
 		_gfxPaint = _gfxPaint16;
 		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette, _gfxCursor, _gfxTransitions);
 		_gfxText16 = new GfxText16(_resMan, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
-		_gfxControls = new GfxControls(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
+		_gfxControls16 = new GfxControls16(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
 		_gfxMenu = new GfxMenu(_eventMan, _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
 
 		_gfxMenu->reset();

@@ -25,20 +25,11 @@
 
 namespace Kyra {
 
-Screen_MR::Screen_MR(KyraEngine_MR *vm, OSystem *system) : Screen_v2(vm, system) {
+Screen_MR::Screen_MR(KyraEngine_MR *vm, OSystem *system)
+    : Screen_v2(vm, system, _screenDimTable, _screenDimTableCount) {
 }
 
 Screen_MR::~Screen_MR() {
-}
-
-void Screen_MR::setScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	_curDim = &_screenDimTable[dim];
-}
-
-const ScreenDim *Screen_MR::getScreenDim(int dim) {
-	assert(dim < _screenDimTableCount);
-	return &_screenDimTable[dim];
 }
 
 int Screen_MR::getLayer(int x, int y) {

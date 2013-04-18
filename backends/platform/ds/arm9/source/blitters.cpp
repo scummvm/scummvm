@@ -222,8 +222,8 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
     u32 d10 = 0x80008000 | (rd1 << 26) | (gd1 << 21) | (bd1 << 16) | (rd0 << 10) | (gd0 << 5) | bd0;
     u32 d32 = 0x80008000 | (rd3 << 26) | (gd3 << 21) | (bd3 << 16) | (rd2 << 10) | (gd2 << 5) | bd2;
 
-    ((u32*)dest)[0] = d10;
-    ((u32*)dest)[1] = d32;
+    ((u32 *)dest)[0] = d10;
+    ((u32 *)dest)[1] = d32;
 }
 #else
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
@@ -290,7 +290,7 @@ static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3
 	gd0 = DIV_BY_5[gd0]; gd1 = DIV_BY_5[gd1];
 	bd0 = DIV_BY_5[bd0]; bd1 = DIV_BY_5[bd1];
     u32 d10 = 0x80008000 | (rd1 << 26) | (gd1 << 21) | (bd1 << 16) | (rd0 << 10) | (gd0 << 5) | bd0;
-    ((u32*)dest)[0] = d10;
+    ((u32 *)dest)[0] = d10;
 
     u32 d2 = 2*s2 + 2*s3 +   s3;
     u32 d3 =   s3 + 4*s4;
@@ -307,7 +307,7 @@ static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3
     bd2 = DIV_BY_5[bd2]; bd3 = DIV_BY_5[bd3];
     u32 d32 = 0x80008000 | (rd3 << 26) | (gd3 << 21) | (bd3 << 16) | (rd2 << 10) | (gd2 << 5) | bd2;
 
-    ((u32*)dest)[1] = d32;
+    ((u32 *)dest)[1] = d32;
 }
 
 // Can't work in place
@@ -377,7 +377,7 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16 *dest, const u8 *src, int destStri
 void Rescale_320x256xPAL8_To_256x256x1555(u16 *dest, const u8 *src, int destStride, int srcStride, const u16 *palette) {
 	u16 fastRam[256];
     for (size_t i = 0; i < 128; ++i)
-        ((u32*)fastRam)[i] = ((const u32*)palette)[i];
+        ((u32 *)fastRam)[i] = ((const u32*)palette)[i];
 
 	for (size_t i = 0; i < 200; ++i) {
 		Rescale_320xPAL8Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride, fastRam);

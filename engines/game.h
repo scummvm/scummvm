@@ -26,7 +26,8 @@
 #include "common/array.h"
 #include "common/hash-str.h"
 #include "common/str.h"
-#include "common/util.h"
+#include "common/language.h"
+#include "common/platform.h"
 
 /**
  * A simple structure used to map gameids (like "monkey", "sword1", ...) to
@@ -65,12 +66,12 @@ enum GameSupportLevel {
 class GameDescriptor : public Common::StringMap {
 public:
 	GameDescriptor();
-	GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions = "");
+	GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions = Common::String());
 	GameDescriptor(const Common::String &gameid,
 	              const Common::String &description,
 	              Common::Language language = Common::UNK_LANG,
 				  Common::Platform platform = Common::kPlatformUnknown,
-				  Common::String guioptions = "",
+				  Common::String guioptions = Common::String(),
 				  GameSupportLevel gsl = kStableGame);
 
 	/**

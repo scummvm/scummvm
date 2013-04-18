@@ -95,18 +95,18 @@ enum NestedSequencesDemo {
 };
 
 #ifdef ENABLE_LOL
-enum SequencesLolDemo {
-	kSequenceLolDemoScene1 = 0,
-	kSequenceLolDemoText1,
-	kSequenceLolDemoScene2,
-	kSequenceLolDemoText2,
-	kSequenceLolDemoScene3,
-	kSequenceLolDemoText3,
-	kSequenceLolDemoScene4,
-	kSequenceLolDemoText4,
-	kSequenceLolDemoScene5,
-	kSequenceLolDemoText5,
-	kSequenceLolDemoScene6
+enum SequencesLoLDemo {
+	kSequenceLoLDemoScene1 = 0,
+	kSequenceLoLDemoText1,
+	kSequenceLoLDemoScene2,
+	kSequenceLoLDemoText2,
+	kSequenceLoLDemoScene3,
+	kSequenceLoLDemoText3,
+	kSequenceLoLDemoScene4,
+	kSequenceLoLDemoText4,
+	kSequenceLoLDemoScene5,
+	kSequenceLoLDemoText5,
+	kSequenceLoLDemoScene6
 };
 #endif // ENABLE_LOL
 
@@ -874,8 +874,8 @@ protected:
 	const char * const *_ingameTimJpStr;
 	int _ingameTimJpStrSize;
 	const HofSeqData *_sequences;
-	const ItemAnimData_v2 *_itemAnimData;
-	int _itemAnimDataSize;
+	const ItemAnimDefinition *_itemAnimDefinition;
+	int _itemAnimDefinitionSize;
 	const ItemAnimData_v1 *_demoAnimData;
 	int _demoAnimSize;
 

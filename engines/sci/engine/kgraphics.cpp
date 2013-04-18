@@ -25,6 +25,7 @@
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
+#include "graphics/palette.h"	// temporary, for the fadeIn()/fadeOut() functions below
 
 #include "gui/message.h"
 
@@ -39,7 +40,7 @@
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
-#include "sci/graphics/controls.h"
+#include "sci/graphics/controls16.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
@@ -49,6 +50,7 @@
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
+#include "sci/graphics/controls32.h"
 #include "sci/graphics/font.h"	// TODO: remove once kBitmap is moved in a separate class
 #include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
@@ -57,11 +59,13 @@
 namespace Sci {
 
 static int16 adjustGraphColor(int16 color) {
-	// WORKAROUND: SCI1 EGA and Amiga games can set invalid colors (above 0 - 15).
-	// Colors above 15 are all white in SCI1 EGA games, which is why this was never
-	// observed. We clip them all to (0, 15) instead, as colors above 15 are used
-	// for the undithering algorithm in EGA games - bug #3048908.
-	if (getSciVersion() >= SCI_VERSION_1_EARLY && g_sci->getResMan()->getViewType() == kViewEga)
+	// WORKAROUND: EGA and Amiga games can set invalid colors (above 0 - 15).
+	// It seems only the lower nibble was used in these games.
+	// bug #3048908, #3486899.
+	// Confirmed in EGA games KQ4(late), QFG1(ega), LB1 that
+	// at least FillBox (only one of the functions using adjustGraphColor)
+	// behaves like this.
+	if (g_sci->getResMan()->getViewType() == kViewEga)
 		return color & 0x0F;	// 0 - 15
 	else
 		return color;
@@ -810,13 +814,13 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	switch (type) {
 	case SCI_CONTROLS_TYPE_BUTTON:
 		debugC(kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y);
-		g_sci->_gfxControls->kernelDrawButton(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
+		g_sci->_gfxControls16->kernelDrawButton(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
 		alignment = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
 		debugC(kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
-		g_sci->_gfxControls->kernelDrawText(rect, controlObject, g_sci->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
+		g_sci->_gfxControls16->kernelDrawText(rect, controlObject, g_sci->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
 		s->r_acc = g_sci->_gfxText16->allocAndFillReferenceRectArray();
 		return;
 
@@ -830,7 +834,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			writeSelectorValue(s->_segMan, controlObject, SELECTOR(cursor), cursorPos);
 		}
 		debugC(kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
-		g_sci->_gfxControls->kernelDrawTextEdit(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
+		g_sci->_gfxControls16->kernelDrawTextEdit(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_ICON:
@@ -847,7 +851,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 				priority = -1;
 		}
 		debugC(kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d", PRINT_REG(controlObject), x, y - 1);
-		g_sci->_gfxControls->kernelDrawIcon(rect, controlObject, viewId, loopNo, celNo, priority, style, hilite);
+		g_sci->_gfxControls16->kernelDrawIcon(rect, controlObject, viewId, loopNo, celNo, priority, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_LIST:
@@ -895,7 +899,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		}
 
 		debugC(kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d", PRINT_REG(controlObject), x, y, SCI_MAX_SAVENAME_LENGTH);
-		g_sci->_gfxControls->kernelDrawList(rect, controlObject, maxChars, listCount, listEntries, fontId, style, upperPos, cursorPos, isAlias, hilite);
+		g_sci->_gfxControls16->kernelDrawList(rect, controlObject, maxChars, listCount, listEntries, fontId, style, upperPos, cursorPos, isAlias, hilite);
 		free(listEntries);
 		delete[] listStrings;
 		return;
@@ -975,7 +979,10 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 		switch (controlType) {
 		case SCI_CONTROLS_TYPE_TEXTEDIT:
 			// Only process textedit controls in here
-			g_sci->_gfxControls->kernelTexteditChange(controlObject, eventObject);
+			g_sci->_gfxControls16->kernelTexteditChange(controlObject, eventObject);
+			break;
+		default:
+			break;
 		}
 	}
 	return s->r_acc;
@@ -1208,7 +1215,8 @@ reg_t kRemapColors(EngineState *s, int argc, reg_t *argv) {
 	switch (operation) {
 	case 0:	{ // Set remapping to base. 0 turns remapping off.
 		int16 base = (argc >= 2) ? argv[1].toSint16() : 0;
-		warning("kRemapColors: Set remapping to base %d", base);
+		if (base != 0)	// 0 is the default behavior when changing rooms in GK1, thus silencing the warning
+			warning("kRemapColors: Set remapping to base %d", base);
 		}
 		break;
 	case 1:	{ // unknown
@@ -1436,6 +1444,46 @@ reg_t kWinHelp(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// Taken from the SCI16 GfxTransitions class
+static void fadeOut() {
+	byte oldPalette[3 * 256], workPalette[3 * 256];
+	int16 stepNr, colorNr;
+	// Sierra did not fade in/out color 255 for sci1.1, but they used it in
+	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
+	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
+
+	g_system->getPaletteManager()->grabPalette(oldPalette, 0, 256);
+
+	for (stepNr = 100; stepNr >= 0; stepNr -= 10) {
+		for (colorNr = 1; colorNr <= tillColorNr; colorNr++) {
+			if (g_sci->_gfxPalette->colorIsFromMacClut(colorNr)) {
+				workPalette[colorNr * 3 + 0] = oldPalette[colorNr * 3];
+				workPalette[colorNr * 3 + 1] = oldPalette[colorNr * 3 + 1];
+				workPalette[colorNr * 3 + 2] = oldPalette[colorNr * 3 + 2];
+			} else {
+				workPalette[colorNr * 3 + 0] = oldPalette[colorNr * 3] * stepNr / 100;
+				workPalette[colorNr * 3 + 1] = oldPalette[colorNr * 3 + 1] * stepNr / 100;
+				workPalette[colorNr * 3 + 2] = oldPalette[colorNr * 3 + 2] * stepNr / 100;
+			}
+		}
+		g_system->getPaletteManager()->setPalette(workPalette + 3, 1, tillColorNr);
+		g_sci->getEngineState()->wait(2);
+	}
+}
+
+// Taken from the SCI16 GfxTransitions class
+static void fadeIn() {
+	int16 stepNr;
+	// Sierra did not fade in/out color 255 for sci1.1, but they used it in
+	//  several pictures (e.g. qfg3 demo/intro), so the fading looked weird
+	int16 tillColorNr = getSciVersion() >= SCI_VERSION_1_1 ? 255 : 254;
+
+	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
+		g_sci->_gfxPalette->kernelSetIntensity(1, tillColorNr + 1, stepNr, true);
+		g_sci->getEngineState()->wait(2);
+	}
+}
+
 /**
  * Used for scene transitions, replacing (but reusing parts of) the old
  * transition code.
@@ -1446,31 +1494,65 @@ reg_t kSetShowStyle(EngineState *s, int argc, reg_t *argv) {
 	// tables inside graphics/transitions.cpp
 	uint16 showStyle = argv[0].toUint16();	// 0 - 15
 	reg_t planeObj = argv[1];	// the affected plane
-	//argv[2]	// seconds that the transition lasts
-	//argv[3]	// back color to be used(?)
-	//int16 priority = argv[4].toSint16();
-	//argv[5]	// boolean, animate or not while the transition lasts
-	//argv[6]	// refFrame
+	uint16 seconds = argv[2].toUint16();	// seconds that the transition lasts
+	uint16 backColor =  argv[3].toUint16();	// target back color(?). When fading out, it's 0x0000. When fading in, it's 0xffff
+	int16 priority = argv[4].toSint16();	// always 0xc8 (200) when fading in/out
+	uint16 animate = argv[5].toUint16();	// boolean, animate or not while the transition lasts
+	uint16 refFrame = argv[6].toUint16();	// refFrame, always 0 when fading in/out
+	int16 divisions;
 
 	// If the game has the pFadeArray selector, another parameter is used here,
 	// before the optional last parameter
-	/*bool hasFadeArray = g_sci->getKernel()->findSelector("pFadeArray") > 0;
+	bool hasFadeArray = g_sci->getKernel()->findSelector("pFadeArray") > 0;
 	if (hasFadeArray) {
 		// argv[7]
-		//int16 unk7 = (argc >= 9) ? argv[8].toSint16() : 0;	// divisions (transition steps?)
+		divisions = (argc >= 9) ? argv[8].toSint16() : -1;	// divisions (transition steps?)
 	} else {
-		//int16 unk7 = (argc >= 8) ? argv[7].toSint16() : 0;	// divisions (transition steps?)
-	}*/
+		divisions = (argc >= 8) ? argv[7].toSint16() : -1;	// divisions (transition steps?)
+	}
 
 	if (showStyle > 15) {
 		warning("kSetShowStyle: Illegal style %d for plane %04x:%04x", showStyle, PRINT_REG(planeObj));
 		return s->r_acc;
 	}
 
+	// TODO: Proper implementation. This is a very basic version. I'm not even
+	// sure if the rest of the styles will work with this mechanism.
+
+	// Check if the passed parameters are the ones we expect
+	if (showStyle == 13 || showStyle == 14) {	// fade out / fade in
+		if (seconds != 1)
+			warning("kSetShowStyle(fade): seconds isn't 1, it's %d", seconds);
+		if (backColor != 0 && backColor != 0xFFFF)
+			warning("kSetShowStyle(fade): backColor isn't 0 or 0xFFFF, it's %d", backColor);
+		if (priority != 200)
+			warning("kSetShowStyle(fade): priority isn't 200, it's %d", priority);
+		if (animate != 0)
+			warning("kSetShowStyle(fade): animate isn't 0, it's %d", animate);
+		if (refFrame != 0)
+			warning("kSetShowStyle(fade): refFrame isn't 0, it's %d", refFrame);
+		if (divisions >= 0 && divisions != 20)
+			warning("kSetShowStyle(fade): divisions isn't 20, it's %d", divisions);
+	}
+
 	// TODO: Check if the plane is in the list of planes to draw
 
-	// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
-	kStub(s, argc, argv);
+	switch (showStyle) {
+	//case 0:	// no transition, perhaps? (like in the previous SCI versions)
+	case 13:	// fade out
+		// TODO: Temporary implementation, which ignores all additional parameters
+		fadeOut();
+		break;
+	case 14:	// fade in
+		// TODO: Temporary implementation, which ignores all additional parameters
+		g_sci->_gfxFrameout->kernelFrameout();	// draw new scene before fading in
+		fadeIn();
+		break;
+	default:
+		// TODO: This is all a stub/skeleton, thus we're invoking kStub() for now
+		kStub(s, argc, argv);
+		break;
+	}
 
 	return s->r_acc;
 }
@@ -1662,8 +1744,8 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 		memset(memoryPtr + BITMAP_HEADER_SIZE, back, width * height);
 		// Save totalWidth, totalHeight
 		// TODO: Save the whole bitmap header, like SSCI does
-		WRITE_LE_UINT16((void *)memoryPtr, width);
-		WRITE_LE_UINT16((void *)(memoryPtr + 2), height);
+		WRITE_LE_UINT16(memoryPtr, width);
+		WRITE_LE_UINT16(memoryPtr + 2, height);
 		return memoryId;
 		}
 		break;
@@ -1689,8 +1771,8 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 
 		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
 		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16((void *)memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16((void *)(memoryPtr + 2));
+		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
+		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
 		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
 		GfxView *view = g_sci->_gfxCache->getView(viewNum);
@@ -1730,8 +1812,8 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 
 		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
 		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16((void *)memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16((void *)(memoryPtr + 2));
+		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
+		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
 		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
 
 		GfxFont *font = g_sci->_gfxCache->getFont(fontId);
@@ -1773,8 +1855,8 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 
 		byte *memoryPtr = s->_segMan->getHunkPointer(hunkId);
 		// Get totalWidth, totalHeight
-		uint16 totalWidth = READ_LE_UINT16((void *)memoryPtr);
-		uint16 totalHeight = READ_LE_UINT16((void *)(memoryPtr + 2));
+		uint16 totalWidth = READ_LE_UINT16(memoryPtr);
+		uint16 totalHeight = READ_LE_UINT16(memoryPtr + 2);
 		uint16 width = MIN<uint16>(totalWidth - x, fillWidth);
 		uint16 height = MIN<uint16>(totalHeight - y, fillHeight);
 		byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
@@ -1790,6 +1872,20 @@ reg_t kBitmap(EngineState *s, int argc, reg_t *argv) {
 	default:
 		kStub(s, argc, argv);
 		break;
+	}
+
+	return s->r_acc;
+}
+
+// Used for edit boxes in save/load dialogs. It's a rewritten version of kEditControl,
+// but it handles events on its own, using an internal loop, instead of using SCI
+// scripts for event management like kEditControl does. Called by script 64914,
+// DEdit::hilite().
+reg_t kEditText(EngineState *s, int argc, reg_t *argv) {
+	reg_t controlObject = argv[0];
+
+	if (!controlObject.isNull()) {
+		g_sci->_gfxControls32->kernelTexteditChange(controlObject);
 	}
 
 	return s->r_acc;

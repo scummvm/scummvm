@@ -402,7 +402,7 @@ protected:
 	    @return Gibt false zurück, falls das Rendern fehlgeschlagen ist.
 	    @remark
 	 */
-	virtual bool doRender() = 0; // { return true; };
+	virtual bool doRender() = 0; // { return true; }
 
 	// RenderObject-Baum Variablen
 	// ---------------------------

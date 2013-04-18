@@ -795,7 +795,7 @@ bool Location::keepAnimation_br(AnimationPtr a) {
 	return keepZone_br(a);
 }
 
-template <class T>
+template<class T>
 void Location::freeList(Common::List<T> &list, bool removeAll, Common::MemFunc1<bool, T, Location> filter) {
 	typedef typename Common::List<T>::iterator iterator;
 	iterator it = list.begin();

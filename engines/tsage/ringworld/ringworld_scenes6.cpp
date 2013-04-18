@@ -1124,7 +1124,7 @@ void Scene5100::postInit(SceneObjectList *OwnerList) {
 		_hotspot4.setVisage(5363);
 		_hotspot4.setPosition(Common::Point(1025, 65));
 		_hotspot4.setStrip(4);
-		_hotspot4.animate(ANIM_MODE_7, 0, NULL);;
+		_hotspot4.animate(ANIM_MODE_7, 0, NULL);
 		g_globals->_sceneItems.push_back(&_hotspot4);
 
 		_hotspot9.postInit();

@@ -24,6 +24,8 @@
 #include "tsage/globals.h"
 #include "tsage/graphics.h"
 #include "tsage/ringworld/ringworld_logic.h"
+#include "tsage/blue_force/blueforce_logic.h"
+#include "tsage/ringworld2/ringworld2_logic.h"
 
 namespace TsAGE {
 
@@ -94,6 +96,10 @@ bool Debugger::Cmd_WalkRegions(int argc, const char **argv) {
 
 	for (uint regionIndex = 0; regionIndex < g_globals->_walkRegions._regionList.size(); ++regionIndex, ++color) {
 		WalkRegion &wr = g_globals->_walkRegions._regionList[regionIndex];
+
+		// Skip the region if it's in the list of explicitly disabled regions
+		if (contains(g_globals->_walkRegions._disabledRegions, (int)regionIndex + 1))
+			continue;
 
 		for (int yp = wr._bounds.top; yp < wr._bounds.bottom; ++yp) {
 			LineSliceSet sliceSet = wr.getLineSlices(yp);
@@ -269,10 +275,88 @@ bool Debugger::Cmd_ClearFlag(int argc, const char **argv) {
 	return true;
 }
 
+/**
+ * Show any active hotspot areas in the scene
+ */
+bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
+	int colIndex = 16;
+	const Rect &sceneBounds = g_globals->_sceneManager._scene->_sceneBounds;
+
+	// Lock the background surface for access
+	Graphics::Surface destSurface = g_globals->_sceneManager._scene->_backSurface.lockSurface();
+
+	// Iterate through the scene items
+	SynchronizedList<SceneItem *>::iterator i;
+	for (i = g_globals->_sceneItems.reverse_begin(); i != g_globals->_sceneItems.end(); --i, ++colIndex) {
+		SceneItem *o = *i;
+
+		// Draw the contents of the hotspot area
+		if (o->_sceneRegionId == 0) {
+			// Scene item doesn't use a region, so fill in the entire area
+			if ((o->_bounds.right > o->_bounds.left) && (o->_bounds.bottom > o->_bounds.top))
+				destSurface.fillRect(Rect(o->_bounds.left - sceneBounds.left, o->_bounds.top - sceneBounds.top,
+					o->_bounds.right - sceneBounds.left - 1, o->_bounds.bottom - sceneBounds.top - 1), colIndex);
+		} else {
+			// Scene uses a region, so get it and use it to fill out only the correct parts
+			SceneRegions::iterator ri = g_globals->_sceneRegions.begin();
+			while ((ri != g_globals->_sceneRegions.end()) && ((*ri)._regionId != o->_sceneRegionId))
+				++ri;
+
+			if (ri != g_globals->_sceneRegions.end()) {
+				// Fill out the areas defined by the region
+				Region &r = *ri;
+
+				for (int y = r._bounds.top; y < r._bounds.bottom; ++y) {
+					LineSliceSet set = r.getLineSlices(y);
+
+					for (uint p = 0; p < set.items.size(); ++p)
+						destSurface.hLine(set.items[p].xs - sceneBounds.left, y - sceneBounds.top,
+							set.items[p].xe - sceneBounds.left - 1, colIndex);
+				}
+			}
+		}
+	}
+
+	// Release the surface
+	g_globals->_sceneManager._scene->_backSurface.unlockSurface();
+
+	// Mark the scene as requiring a full redraw
+	g_globals->_paneRefreshFlag[0] = 2;
+
+	return false;
+}
+
+/**
+ * Play the specified sound
+ */
+bool Debugger::Cmd_Sound(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage: %s <sound number>\n", argv[0]);
+		return true;
+	}
+
+	int soundNum = strToInt(argv[1]);
+	g_globals->_soundHandler.play(soundNum);
+	return false;
+}
+
 /*
  * This command lists the objects available, and their ID
  */
-bool Debugger::Cmd_ListObjects(int argc, const char **argv) {
+bool DemoDebugger::Cmd_ListObjects(int argc, const char **argv) {
+	DebugPrintf("Not available in Demo\n");
+	return true;
+}
+
+bool DemoDebugger::Cmd_MoveObject(int argc, const char **argv) {
+	DebugPrintf("Not available in Demo\n");
+	return true;
+}
+
+/*
+ * This command lists the objects available, and their ID
+ */
+bool RingworldDebugger::Cmd_ListObjects(int argc, const char **argv) {
 	if (argc != 1) {
 		DebugPrintf("Usage: %s\n", argv[0]);
 		return true;
@@ -318,7 +402,7 @@ bool Debugger::Cmd_ListObjects(int argc, const char **argv) {
 /*
  * This command gets an item, or move it to a room
  */
-bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
+bool RingworldDebugger::Cmd_MoveObject(int argc, const char **argv) {
 	// Check for a flag to clear
 	if ((argc < 2) || (argc > 3)){
 		DebugPrintf("Usage: %s <object number> [<scene number>]\n", argv[0]);
@@ -439,69 +523,188 @@ bool Debugger::Cmd_MoveObject(int argc, const char **argv) {
 	return true;
 }
 
-/**
- * Show any active hotspot areas in the scene
+/*
+ * This command lists the objects available, and their ID
  */
-bool Debugger::Cmd_Hotspots(int argc, const char **argv) {
-	int colIndex = 16;
-	const Rect &sceneBounds = g_globals->_sceneManager._scene->_sceneBounds;
-
-	// Lock the background surface for access
-	Graphics::Surface destSurface = g_globals->_sceneManager._scene->_backSurface.lockSurface();
-
-	// Iterate through the scene items
-	SynchronizedList<SceneItem *>::iterator i;
-	for (i = g_globals->_sceneItems.reverse_begin(); i != g_globals->_sceneItems.end(); --i, ++colIndex) {
-		SceneItem *o = *i;
-
-		// Draw the contents of the hotspot area
-		if (o->_sceneRegionId == 0) {
-			// Scene item doesn't use a region, so fill in the entire area
-			if ((o->_bounds.right > o->_bounds.left) && (o->_bounds.bottom > o->_bounds.top))
-				destSurface.fillRect(Rect(o->_bounds.left - sceneBounds.left, o->_bounds.top - sceneBounds.top,
-					o->_bounds.right - sceneBounds.left - 1, o->_bounds.bottom - sceneBounds.top - 1), colIndex);
-		} else {
-			// Scene uses a region, so get it and use it to fill out only the correct parts
-			SceneRegions::iterator ri = g_globals->_sceneRegions.begin();
-			while ((ri != g_globals->_sceneRegions.end()) && ((*ri)._regionId != o->_sceneRegionId))
-				++ri;
-
-			if (ri != g_globals->_sceneRegions.end()) {
-				// Fill out the areas defined by the region
-				Region &r = *ri;
-			
-				for (int y = r._bounds.top; y < r._bounds.bottom; ++y) {
-					LineSliceSet set = r.getLineSlices(y);
-
-					for (uint p = 0; p < set.items.size(); ++p)
-						destSurface.hLine(set.items[p].xs - sceneBounds.left, y - sceneBounds.top,
-							set.items[p].xe - sceneBounds.left - 1, colIndex);
-				}
-			}
-		}
-	}
-
-	// Release the surface
-	g_globals->_sceneManager._scene->_backSurface.unlockSurface();
-
-	// Mark the scene as requiring a full redraw
-	g_globals->_paneRefreshFlag[0] = 2;
-
-	return false;
-}
-
-/**
- * Play the specified sound
- */
-bool Debugger::Cmd_Sound(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Usage: %s <sound number>\n", argv[0]);
+bool BlueForceDebugger::Cmd_ListObjects(int argc, const char **argv) {
+	if (argc != 1) {
+		DebugPrintf("Usage: %s\n", argv[0]);
 		return true;
 	}
 
-	int soundNum = strToInt(argv[1]);
-	g_globals->_soundHandler.play(soundNum);
-	return false;
+	DebugPrintf("Available objects for this game are:\n");
+	DebugPrintf("1  - INV_COLT45\n");
+	DebugPrintf("2  - INV_AMMO_CLIP\n");
+	DebugPrintf("3  - INV_SPARE_CLIP\n");
+	DebugPrintf("4  - INV_HANDCUFFS\n");
+	DebugPrintf("5  - INV_GREENS_GUN\n");
+	DebugPrintf("6  - INV_TICKET_BOOK\n");
+	DebugPrintf("7  - INV_MIRANDA_CARD\n");
+	DebugPrintf("8  - INV_FOREST_RAP\n");
+	DebugPrintf("9  - INV_GREEN_ID\n");
+	DebugPrintf("10 - INV_BASEBALL_CARD\n");
+	DebugPrintf("11 - INV_BOOKING_GREEN\n");
+	DebugPrintf("12 - INV_FLARE\n");
+	DebugPrintf("13 - INV_COBB_RAP\n");
+	DebugPrintf("14 - INV_22_BULLET\n");
+	DebugPrintf("15 - INV_AUTO_RIFLE\n");
+	DebugPrintf("16 - INV_WIG\n");
+	DebugPrintf("17 - INV_FRANKIE_ID\n");
+	DebugPrintf("18 - INV_TYRONE_ID\n");
+	DebugPrintf("19 - INV_22_SNUB\n");
+	DebugPrintf("20 - INV_BOOKING_FRANKIE\n");
+	DebugPrintf("21 - INV_BOOKING_GANG\n");
+	DebugPrintf("22 - INV_FBI_TELETYPE\n");
+	DebugPrintf("23 - INV_DA_NOTE\n");
+	DebugPrintf("24 - INV_PRINT_OUT\n");
+	DebugPrintf("25 - INV_WAREHOUSE_KEYS\n");
+	DebugPrintf("26 - INV_CENTER_PUNCH\n");
+	DebugPrintf("27 - INV_TRANQ_GUN\n");
+	DebugPrintf("28 - INV_HOOK\n");
+	DebugPrintf("29 - INV_RAGS\n");
+	DebugPrintf("30 - INV_JAR\n");
+	DebugPrintf("31 - INV_SCREWDRIVER\n");
+	DebugPrintf("32 - INV_D_FLOPPY\n");
+	DebugPrintf("33 - INV_BLANK_DISK\n");
+	DebugPrintf("34 - INV_STICK\n");
+	DebugPrintf("35 - INV_CRATE1\n");
+	DebugPrintf("36 - INV_CRATE2\n");
+	DebugPrintf("37 - INV_SHOEBOX\n");
+	DebugPrintf("38 - INV_BADGE\n");
+	DebugPrintf("39 - INV_RENTAL_COUPON\n");
+	DebugPrintf("40 - INV_NICKEL\n");
+	DebugPrintf("41 - INV_LYLE_CARD\n");
+	DebugPrintf("42 - INV_CARTER_NOTE\n");
+	DebugPrintf("43 - INV_MUG_SHOT\n");
+	DebugPrintf("44 - INV_CLIPPING\n");
+	DebugPrintf("45 - INV_MICROFILM \n");
+	DebugPrintf("46 - INV_WAVE_KEYS\n");
+	DebugPrintf("47 - INV_RENTAL_KEYS\n");
+	DebugPrintf("48 - INV_NAPKIN\n");
+	DebugPrintf("49 - INV_DMV_PRINTOUT\n");
+	DebugPrintf("50 - INV_FISHING_NET\n");
+	DebugPrintf("51 - INV_ID\n");
+	DebugPrintf("52 - INV_9MM_BULLETS\n");
+	DebugPrintf("53 - INV_SCHEDULE\n");
+	DebugPrintf("54 - INV_GRENADES\n");
+	DebugPrintf("55 - INV_YELLOW_CORD\n");
+	DebugPrintf("56 - INV_HALF_YELLOW_CORD\n");
+	DebugPrintf("57 - INV_BLACK_CORD\n");
+	DebugPrintf("58 - INV_HALF_BLACK_CORD\n");
+	DebugPrintf("59 - INV_WARRANT\n");
+	DebugPrintf("60 - INV_JACKET\n");
+	DebugPrintf("61 - INV_GREENS_KNIFE\n");
+	DebugPrintf("62 - INV_DOG_WHISTLE\n");
+	DebugPrintf("63 - INV_AMMO_BELT\n");
+	DebugPrintf("64 - INV_CARAVAN_KEY\n");
+	return true;
 }
 
+bool BlueForceDebugger::Cmd_MoveObject(int argc, const char **argv) {
+	// Check for a flag to clear
+	if ((argc < 2) || (argc > 3)){
+		DebugPrintf("Usage: %s <object number> [<scene number>]\n", argv[0]);
+		DebugPrintf("If no scene is specified, the object will be added to inventory\n");
+		return true;
+	}
+
+	int objNum = strToInt(argv[1]);
+	int sceneNum = 1;
+	if (argc == 3)
+		sceneNum = strToInt(argv[2]);
+
+	if ((objNum > 0) && (objNum < 65))
+		BF_INVENTORY.setObjectScene(objNum, sceneNum);
+	else
+		DebugPrintf("Invalid object Id %s\n", argv[1]);
+
+	return true;
+}
+
+/*
+ * This command lists the objects available, and their ID
+ */
+bool Ringworld2Debugger::Cmd_ListObjects(int argc, const char **argv) {
+	if (argc != 1) {
+		DebugPrintf("Usage: %s\n", argv[0]);
+		return true;
+	}
+
+	DebugPrintf("Available objects for this game are:\n");
+	DebugPrintf("1  - R2_OPTO_DISK\n");
+	DebugPrintf("2  - R2_2\n");
+	DebugPrintf("3  - R2_NEGATOR_GUN\n");
+	DebugPrintf("4  - R2_STEPPING_DISKS\n");
+	DebugPrintf("5  - R2_5\n");
+	DebugPrintf("6  - R2_6\n");
+	DebugPrintf("7  - R2_7\n");
+	DebugPrintf("8  - R2_8\n");
+	DebugPrintf("9  - R2_9\n");
+	DebugPrintf("10 - R2_10\n");
+	DebugPrintf("11 - R2_11\n");
+	DebugPrintf("12 - R2_12\n");
+	DebugPrintf("13 - R2_13\n");
+	DebugPrintf("14 - R2_14\n");
+	DebugPrintf("15 - R2_15\n");
+	DebugPrintf("16 - R2_16\n");
+	DebugPrintf("17 - R2_17\n");
+	DebugPrintf("18 - R2_18\n");
+	DebugPrintf("19 - R2_19\n");
+	DebugPrintf("20 - R2_20\n");
+	DebugPrintf("21 - R2_21\n");
+	DebugPrintf("22 - R2_22\n");
+	DebugPrintf("23 - R2_23\n");
+	DebugPrintf("24 - R2_24\n");
+	DebugPrintf("25 - R2_25\n");
+	DebugPrintf("26 - R2_26\n");
+	DebugPrintf("27 - R2_27\n");
+	DebugPrintf("28 - R2_28\n");
+	DebugPrintf("29 - R2_29\n");
+	DebugPrintf("30 - R2_30\n");
+	DebugPrintf("31 - R2_31\n");
+	DebugPrintf("32 - R2_32\n");
+	DebugPrintf("33 - R2_33\n");
+	DebugPrintf("34 - R2_34\n");
+	DebugPrintf("35 - R2_35\n");
+	DebugPrintf("36 - R2_36\n");
+	DebugPrintf("37 - R2_37\n");
+	DebugPrintf("38 - R2_38\n");
+	DebugPrintf("39 - R2_39\n");
+	DebugPrintf("40 - R2_40\n");
+	DebugPrintf("41 - R2_41\n");
+	DebugPrintf("42 - R2_42\n");
+	DebugPrintf("43 - R2_43\n");
+	DebugPrintf("44 - R2_44\n");
+	DebugPrintf("45 - R2_45\n");
+	DebugPrintf("46 - R2_46\n");
+	DebugPrintf("47 - R2_47\n");
+	DebugPrintf("48 - R2_48\n");
+	DebugPrintf("49 - R2_49\n");
+	DebugPrintf("50 - R2_50\n");
+	DebugPrintf("51 - R2_51\n");
+	DebugPrintf("52 - R2_52\n");
+
+	return true;
+}
+
+bool Ringworld2Debugger::Cmd_MoveObject(int argc, const char **argv) {
+	// Check for a flag to clear
+	if ((argc < 2) || (argc > 3)){
+		DebugPrintf("Usage: %s <object number> [<scene number>]\n", argv[0]);
+		DebugPrintf("If no scene is specified, the object will be added to inventory\n");
+		return true;
+	}
+
+	int objNum = strToInt(argv[1]);
+	int sceneNum = 1;
+	if (argc == 3)
+		sceneNum = strToInt(argv[2]);
+
+	if ((objNum > 0) && (objNum < 53))
+		R2_INVENTORY.setObjectScene(objNum, sceneNum);
+	else
+		DebugPrintf("Invalid object Id %s\n", argv[1]);
+
+	return true;
+}
 } // End of namespace TsAGE

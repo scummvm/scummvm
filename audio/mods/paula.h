@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SOUND_MODS_PAULA_H
-#define SOUND_MODS_PAULA_H
+#ifndef AUDIO_MODS_PAULA_H
+#define AUDIO_MODS_PAULA_H
 
 #include "audio/audiostream.h"
 #include "common/frac.h"

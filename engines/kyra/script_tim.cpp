@@ -833,18 +833,6 @@ int TIMInterpreter::cmd_stopFuncNow(const uint16 *param) {
 	return 1;
 }
 
-int TIMInterpreter::cmd_stopAllFuncs(const uint16 *param) {
-	while (_currentTim->dlgFunc == -1 && _currentTim->clickedButton == 0 && !_vm->shouldQuit()) {
-		update();
-		_currentTim->clickedButton = processDialogue();
-	}
-
-	for (int i = 0; i < TIM::kCountFuncs; ++i)
-		_currentTim->func[i].ip = 0;
-
-	return -1;
-}
-
 // TODO: Consider moving to another file
 
 #ifdef ENABLE_LOL
@@ -905,12 +893,10 @@ TIMInterpreter_LoL::TIMInterpreter_LoL(LoLEngine *engine, Screen_v2 *screen_v2, 
 
 	_screen = engine->_screen;
 
+	delete _animator;
 	_animator = new TimAnimator(engine, screen_v2, system, true);
 
 	_drawPage2 = 0;
-
-	memset(_dialogueButtonString, 0, 3 * sizeof(const char *));
-	_dialogueButtonPosX = _dialogueButtonPosY = _dialogueNumButtons = _dialogueButtonXoffs = _dialogueHighlightedButton = 0;
 }
 
 int TIMInterpreter_LoL::initAnimStruct(int index, const char *filename, int x, int y, int frameDelay, int, uint16 wsaFlags) {
@@ -978,157 +964,12 @@ void TIMInterpreter_LoL::advanceToOpcode(int opcode) {
 	f->nextTime = _system->getMillis();
 }
 
-void TIMInterpreter_LoL::drawDialogueBox(int numStr, const char *s1, const char *s2, const char *s3) {
-	_screen->setScreenDim(5);
-
-	if (numStr == 1 && _vm->speechEnabled()) {
-		_dialogueNumButtons = 0;
-		_dialogueButtonString[0] = _dialogueButtonString[1] = _dialogueButtonString[2] = 0;
-	} else {
-		_dialogueNumButtons = numStr;
-		_dialogueButtonString[0] = s1;
-		_dialogueButtonString[1] = s2;
-		_dialogueButtonString[2] = s3;
-		_dialogueHighlightedButton = 0;
-
-		const ScreenDim *d = _screen->getScreenDim(5);
-		_dialogueButtonPosY = d->sy + d->h - 9;
-
-		if (numStr == 1) {
-			_dialogueButtonXoffs = 0;
-			_dialogueButtonPosX = d->sx + d->w - 77;
-		} else {
-			_dialogueButtonXoffs = d->w / numStr;
-			_dialogueButtonPosX = d->sx + (_dialogueButtonXoffs >> 1) - 37;
-		}
-
-		drawDialogueButtons();
-	}
-
-	if (!_vm->shouldQuit())
-		_vm->removeInputTop();
-}
-
-void TIMInterpreter_LoL::drawDialogueButtons() {
-	int cp = _screen->setCurPage(0);
-	Screen::FontId of = _screen->setFont(_vm->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
-
-	int x = _dialogueButtonPosX;
-
-	for (int i = 0; i < _dialogueNumButtons; i++) {
-		if (_vm->gameFlags().use16ColorMode) {
-			_vm->gui_drawBox(x, (_dialogueButtonPosY & ~7) - 1, 74, 10, 0xee, 0xcc, -1);
-			_screen->printText(_dialogueButtonString[i], (x + 37 - (_screen->getTextWidth(_dialogueButtonString[i])) / 2) & ~3,
-				(_dialogueButtonPosY + 2) & ~7, _dialogueHighlightedButton == i ? 0xc1 : 0xe1, 0);
-		} else {
-			_vm->gui_drawBox(x, _dialogueButtonPosY, 74, 9, 136, 251, -1);
-			_screen->printText(_dialogueButtonString[i], x + 37 - (_screen->getTextWidth(_dialogueButtonString[i])) / 2,
-				_dialogueButtonPosY + 2, _dialogueHighlightedButton == i ? 144 : 254, 0);
-		}
-
-		x += _dialogueButtonXoffs;
-	}
-	_screen->setFont(of);
-	_screen->setCurPage(cp);
-}
-
-uint16 TIMInterpreter_LoL::processDialogue() {
-	int df = _dialogueHighlightedButton;
-	int res = 0;
-	int x = _dialogueButtonPosX;
-	int y = (_vm->gameFlags().use16ColorMode ? (_dialogueButtonPosY & ~7) - 1 : _dialogueButtonPosY);
-
-	for (int i = 0; i < _dialogueNumButtons; i++) {
-		Common::Point p = _vm->getMousePos();
-		if (_vm->posWithinRect(p.x, p.y, x, y, x + 74, y + 9)) {
-			_dialogueHighlightedButton = i;
-			break;
-		}
-		x += _dialogueButtonXoffs;
-	}
-
-	if (_dialogueNumButtons == 0) {
-		int e = _vm->checkInput(0, false) & 0xFF;
-		_vm->removeInputTop();
-
-		if (e) {
-			_vm->gui_notifyButtonListChanged();
-
-			if (e == 43 || e == 61) {
-				_vm->snd_stopSpeech(true);
-			}
-		}
-
-		if (_vm->snd_updateCharacterSpeech() != 2) {
-				res = 1;
-				if (!_vm->shouldQuit()) {
-					_vm->removeInputTop();
-					_vm->gui_notifyButtonListChanged();
-				}
-		}
-	} else {
-		int e = _vm->checkInput(0, false) & 0xFF;
-		_vm->removeInputTop();
-		if (e)
-			_vm->gui_notifyButtonListChanged();
-
-		if (e == 200 || e == 202) {
-			x = _dialogueButtonPosX;
-
-			for (int i = 0; i < _dialogueNumButtons; i++) {
-				Common::Point p = _vm->getMousePos();
-				if (_vm->posWithinRect(p.x, p.y, x, y, x + 74, y + 9)) {
-					_dialogueHighlightedButton = i;
-					res = _dialogueHighlightedButton + 1;
-					break;
-				}
-				x += _dialogueButtonXoffs;
-			}
-		} else if (e == _vm->_keyMap[Common::KEYCODE_SPACE] || e == _vm->_keyMap[Common::KEYCODE_RETURN]) {
-			_vm->snd_stopSpeech(true);
-			res = _dialogueHighlightedButton + 1;
-		} else if (e == _vm->_keyMap[Common::KEYCODE_LEFT] || e == _vm->_keyMap[Common::KEYCODE_DOWN]) {
-			if (_dialogueNumButtons > 1 && _dialogueHighlightedButton > 0)
-				_dialogueHighlightedButton--;
-		} else if (e == _vm->_keyMap[Common::KEYCODE_RIGHT] || e == _vm->_keyMap[Common::KEYCODE_UP]) {
-			if (_dialogueNumButtons > 1 && _dialogueHighlightedButton < (_dialogueNumButtons - 1))
-				_dialogueHighlightedButton++;
-		}
-	}
-
-	if (df != _dialogueHighlightedButton)
-		drawDialogueButtons();
-
-	_screen->updateScreen();
-
-	if (res == 0)
-		return 0;
-
-	_vm->stopPortraitSpeechAnim();
-
-	if (!_vm->textEnabled() && _vm->_currentControlMode) {
-		_screen->setScreenDim(5);
-		const ScreenDim *d = _screen->getScreenDim(5);
-		_screen->fillRect(d->sx, d->sy + d->h - 9, d->sx + d->w - 1, d->sy + d->h - 1, d->unkA);
-	} else {
-		const ScreenDim *d = _screen->_curDim;
-		if (_vm->gameFlags().use16ColorMode)
-			_screen->fillRect(d->sx, d->sy, d->sx + d->w - 3, d->sy + d->h - 2, d->unkA);
-		else
-			_screen->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 1, d->unkA);
-		_vm->_txt->clearDim(4);
-		_vm->_txt->resetDimTextPositions(4);
-	}
-
-	return res;
-}
-
 void TIMInterpreter_LoL::resetDialogueState(TIM *tim) {
 	if (!tim)
 		return;
 
 	tim->procFunc = 0;
-	tim->procParam = _dialogueNumButtons ? _dialogueNumButtons : 1;
+	tim->procParam = _vm->_dialogueNumButtons ? _vm->_dialogueNumButtons : 1;
 	tim->clickedButton = 0;
 	tim->dlgFunc = -1;
 }
@@ -1168,6 +1009,18 @@ int TIMInterpreter_LoL::execCommand(int cmd, const uint16 *param) {
 	return (this->*_commands[cmd].proc)(param);
 }
 
+int TIMInterpreter_LoL::cmd_stopAllFuncs(const uint16 *param) {
+	while (_currentTim->dlgFunc == -1 && _currentTim->clickedButton == 0 && !_vm->shouldQuit()) {
+		update();
+		_currentTim->clickedButton = _vm->processDialogue();
+	}
+
+	for (int i = 0; i < TIM::kCountFuncs; ++i)
+		_currentTim->func[i].ip = 0;
+
+	return -1;
+}
+
 int TIMInterpreter_LoL::cmd_setLoopIp(const uint16 *param) {
 	if (_vm->speechEnabled()) {
 		if (_vm->snd_updateCharacterSpeech() == 2)
@@ -1201,7 +1054,7 @@ int TIMInterpreter_LoL::cmd_continueLoop(const uint16 *param) {
 }
 
 int TIMInterpreter_LoL::cmd_processDialogue(const uint16 *param) {
-	int res = processDialogue();
+	int res = _vm->processDialogue();
 	if (!res || !_currentTim->procParam)
 		return res;
 
@@ -1238,7 +1091,7 @@ int TIMInterpreter_LoL::cmd_dialogueBox(const uint16 *param) {
 		}
 	}
 
-	drawDialogueBox(cnt, tmpStr[0], tmpStr[1], tmpStr[2]);
+	_vm->setupDialogueButtons(cnt, tmpStr[0], tmpStr[1], tmpStr[2]);
 	_vm->gui_notifyButtonListChanged();
 
 	return -3;

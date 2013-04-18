@@ -27,9 +27,9 @@
 #include "common/textconsole.h"
 
 #include "mohawk/cursors.h"
-#include "mohawk/graphics.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_graphics.h"
 #include "mohawk/myst_scripts.h"
 #include "mohawk/myst_state.h"
 #include "mohawk/dialogs.h"

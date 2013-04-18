@@ -45,7 +45,7 @@ public:
 			_dragStartTime(0), _dragging(false),
 			_curX(0), _curY(0),
 			_screenX(0), _screenY(0),
-			_touchpadMode(false), _autoDragMode(true),
+			_trackpadMode(false), _autoDragMode(true),
 			_doClick(true),
 			_queuedDragTime(0), _queuedEscapeUpTime(0), _queuedSpaceUpTime(0),
 			_queuedRUpTime(0),
@@ -80,8 +80,8 @@ protected:
 	// The drag distance for linear gestures
 	int _swipeDistX, _swipeDistY;
 
-	// Indicates if we're in touchpad mode or tap-to-move mode.
-	bool _touchpadMode;
+	// Indicates if we're in trackpad mode or tap-to-move mode.
+	bool _trackpadMode;
 
 	// Indicates if we're in automatic drag mode.
 	bool _autoDragMode;

@@ -185,6 +185,7 @@ void ResourceManager::processWavePatch(ResourceId resourceId, Common::String nam
 	file.open(name);
 
 	updateResource(resourceId, resSrc, file.size());
+	_sources.push_back(resSrc);
 
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", name.c_str());
 }
@@ -197,7 +198,7 @@ void ResourceManager::readWaveAudioPatches() {
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		Common::String name = (*x)->getName();
 
-		if (isdigit(static_cast<unsigned char>(name[0])))
+		if (Common::isDigit(name[0]))
 			processWavePatch(ResourceId(kResourceTypeAudio, atoi(name.c_str())), name);
 	}
 }
@@ -538,11 +539,10 @@ bool ResourceManager::isGMTrackIncluded() {
 
 	// Read the first song and check if it has a GM track
 	bool result = false;
-	Common::List<ResourceId> *resources = listResources(kResourceTypeSound, -1);
-	Common::sort(resources->begin(), resources->end());
-	Common::List<ResourceId>::iterator itr = resources->begin();
+	Common::List<ResourceId> resources = listResources(kResourceTypeSound, -1);
+	Common::sort(resources.begin(), resources.end());
+	Common::List<ResourceId>::iterator itr = resources.begin();
 	int firstSongId = itr->getNumber();
-	delete resources;
 
 	SoundResource *song1 = new SoundResource(firstSongId, this, soundVersion);
 	if (!song1) {
@@ -892,10 +892,10 @@ void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *
 }
 
 bool ResourceManager::addAudioSources() {
-	Common::List<ResourceId> *resources = listResources(kResourceTypeMap);
-	Common::List<ResourceId>::iterator itr = resources->begin();
+	Common::List<ResourceId> resources = listResources(kResourceTypeMap);
+	Common::List<ResourceId>::iterator itr;
 
-	while (itr != resources->end()) {
+	for (itr = resources.begin(); itr != resources.end(); ++itr) {
 		ResourceSource *src = addSource(new IntMapResourceSource("MAP", itr->getNumber()));
 
 		if ((itr->getNumber() == 65535) && Common::File::exists("RESOURCE.SFX"))
@@ -904,29 +904,30 @@ bool ResourceManager::addAudioSources() {
 			addSource(new AudioVolumeResourceSource(this, "RESOURCE.AUD", src, 0));
 		else
 			return false;
-
-		++itr;
 	}
-
-	delete resources;
 
 	return true;
 }
 
 void ResourceManager::changeAudioDirectory(Common::String path) {
 	// Remove all of the audio map resource sources, as well as the audio resource sources
-	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end();) {
 		ResourceSource *source = *it;
 		ResSourceType sourceType = source->getSourceType();
 
 		// Remove the resource source, if it's an audio map or an audio file
 		if (sourceType == kSourceIntMap || sourceType == kSourceAudioVolume) {
 			// Don't remove 65535.map (the SFX map) or resource.sfx
-			if (source->_volumeNumber == 65535 || source->getLocationName() == "RESOURCE.SFX")
+			if (source->_volumeNumber == 65535 || source->getLocationName() == "RESOURCE.SFX") {
+				++it;
 				continue;
+			}
 
+			// erase() will move the iterator to the next element
 			it = _sources.erase(it);
 			delete source;
+		} else {
+			++it;
 		}
 	}
 
@@ -938,8 +939,9 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 		audioResourceName = Common::String::format("%s/RESOURCE.AUD", path.c_str());
 	}
 
-	Common::List<ResourceId> *resources = listResources(kResourceTypeMap);
-	for (Common::List<ResourceId>::iterator it = resources->begin(); it != resources->end(); ++it) {
+	Common::List<ResourceId> resources = listResources(kResourceTypeMap);
+	Common::List<ResourceId>::iterator it;
+	for (it = resources.begin(); it != resources.end(); ++it) {
 		// Don't readd 65535.map or resource.sfx
 		if ((it->getNumber() == 65535))
 			continue;
@@ -947,8 +949,6 @@ void ResourceManager::changeAudioDirectory(Common::String path) {
 		ResourceSource *src = addSource(new IntMapResourceSource(mapName, it->getNumber()));
 		addSource(new AudioVolumeResourceSource(this, audioResourceName, src, 0));
 	}
-
-	delete resources;
 
 	// Rescan the newly added resources
 	scanNewSources();

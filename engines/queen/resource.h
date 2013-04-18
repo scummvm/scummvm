@@ -25,7 +25,8 @@
 
 #include "common/file.h"
 #include "common/str-array.h"
-#include "common/util.h"
+#include "common/language.h"
+#include "common/platform.h"
 #include "queen/defs.h"
 
 namespace Queen {

@@ -7,7 +7,7 @@ Build-Depends: debhelper (>> 4.0.0), libsdl1.2-dev, libmad0-dev, libasound2-dev,
 Standards-Version: 3.6.1.1
 Package: scummvm
 Depends: ${shlibs:Depends}
-Architecture: i386 armel
+Architecture: armel
 Section: user/games
 Description: interpreter that will play graphic adventure games
  written for LucasArts' SCUMM virtual machine, Sierra's AGI adventures,
@@ -17,6 +17,8 @@ Description: interpreter that will play graphic adventure games
  Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth,
  Westwood's Legend of Kyrandia, and various others.
  This package does not contain any actual games.
+XSBC-Bugtracker: https://sourceforge.net/tracker/?atid=418820&group_id=37116&func=browse
+XB-Maemo-Display-Name: ScummVM
 XBS-Maemo-Icon-26:
   iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAC/VBMVEUICwcH
   CQUKDAgLDQoMDwsOEAwREAUPEQ0QEg8PFQoRExAUEwoVFAwPGAcTFBIRFg0W

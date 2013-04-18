@@ -30,7 +30,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOASPECT)
 	},
 	{
 		"sword25",
@@ -39,7 +39,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::FR_FRA,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOASPECT)
 	},
 	{
 		"sword25",
@@ -48,16 +48,16 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOASPECT)
 	},
 	{
 		"sword25",
 		"",
 		AD_ENTRY1s("lang_hr.b25c", "e881054d1f8ec1e527422fc521c25405", 1273217),
-		Common::HU_HUN,
+		Common::HR_HRV,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOASPECT)
 	},
 	{
 		"sword25",
@@ -66,7 +66,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::IT_ITA,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOASPECT)
 	},
 	{
 		"sword25",
@@ -75,7 +75,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOASPECT)
 	},
 	{
 		"sword25",
@@ -84,7 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PT_BRA,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOASPECT)
 	},
 	{
 		"sword25",
@@ -93,7 +93,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::RU_RUS,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOASPECT)
 	},
 	{
 		"sword25",
@@ -102,7 +102,18 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformUnknown,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOASPECT)
+	},
+	// Hungarian "psylog" version.
+	// Submitted by goodoldgeorg in bug report #3428644.
+	{
+		"sword25",
+		"psylog version",
+		AD_ENTRY1s("lang_hu.b25c", "7de51a3b4926a192549e75b1a7d81667", 1864915),
+		Common::HU_HUN,
+		Common::kPlatformUnknown,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOASPECT)
 	},
 
 	// Extracted version
@@ -116,7 +127,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
 		GF_EXTRACTED | ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GUIO_NOASPECT)
 	},
 	AD_TABLE_END_MARKER
 };

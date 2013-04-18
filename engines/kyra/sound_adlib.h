@@ -62,38 +62,39 @@ public:
 	SoundAdLibPC(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundAdLibPC();
 
-	kType getMusicType() const { return kAdLib; }
+	virtual kType getMusicType() const { return kAdLib; }
 
-	bool init();
-	void process();
+	virtual bool init();
+	virtual void process();
 
-	void loadSoundFile(uint file);
-	void loadSoundFile(Common::String file);
-	void loadSoundFile(const uint8 *soundData, int dataSize) {}
+	virtual void updateVolumeSettings();
 
-	void playTrack(uint8 track);
-	void haltTrack();
-	bool isPlaying() const;
+	virtual void loadSoundFile(uint file);
+	virtual void loadSoundFile(Common::String file);
 
-	void playSoundEffect(uint8 track);
+	virtual void playTrack(uint8 track);
+	virtual void haltTrack();
+	virtual bool isPlaying() const;
 
-	void beginFadeOut();
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff);
+
+	virtual void beginFadeOut();
+
+	virtual int checkTrigger();
+	virtual void resetTrigger();
 private:
 	void internalLoadFile(Common::String file);
 
-	void play(uint8 track);
+	void play(uint8 track, uint8 volume);
 
 	AdLibDriver *_driver;
 
-	bool _v2;
+	int _version;
 	uint8 _trackEntries[500];
 	uint8 *_soundDataPtr;
 	int _sfxPlayingSound;
 
 	Common::String _soundFileLoaded;
-
-	uint8 _sfxPriority;
-	uint8 _sfxFourthByteOfSong;
 
 	int _numSoundTriggers;
 	const int *_soundTriggers;

@@ -57,17 +57,17 @@ public:
 		_numGlyphs = stream.readByte();
 		_height = stream.readUint32BE();
 
-		_widths = (byte*)malloc(_numGlyphs);
+		_widths = (byte *)malloc(_numGlyphs);
 		stream.read(_widths, _numGlyphs);
 
-		_offsets = (uint*)malloc(_numGlyphs * sizeof(uint));
+		_offsets = (uint *)malloc(_numGlyphs * sizeof(uint));
 		_offsets[0] = 0;
 		for (uint i = 1; i < _numGlyphs; i++)
 			_offsets[i] = _offsets[i-1] + _widths[i-1] * _height;
 
 		uint size = _offsets[_numGlyphs-1] + _widths[_numGlyphs-1] * _height;
 
-		_data = (byte*)malloc(size);
+		_data = (byte *)malloc(size);
 		stream.read(_data, size);
 
 	}
@@ -503,25 +503,25 @@ AmigaFont::AmigaFont(Common::SeekableReadStream &stream) {
 	stream.seek(32);	// skips dummy header
 
 	_dataSize = stream.size() - stream.pos();
-	_data = (byte*)malloc(_dataSize);
+	_data = (byte *)malloc(_dataSize);
 	stream.read(_data, _dataSize);
 
-	_font = (AmigaDiskFont*)(_data + 78);
+	_font = (AmigaDiskFont *)(_data + 78);
 	_font->_ySize = FROM_BE_16(_font->_ySize);
 	_font->_xSize = FROM_BE_16(_font->_xSize);
 	_font->_baseline = FROM_BE_16(_font->_baseline);
 	_font->_modulo = FROM_BE_16(_font->_modulo);
 
-	_charLoc = (CharLoc*)(_data + FROM_BE_32(_font->_charLoc));
+	_charLoc = (CharLoc *)(_data + FROM_BE_32(_font->_charLoc));
 	_charData = _data + FROM_BE_32(_font->_charData);
 
 	_charSpace = 0;
 	_charKern = 0;
 
 	if (_font->_charSpace != 0)
-		_charSpace = (uint16*)(_data + FROM_BE_32(_font->_charSpace));
+		_charSpace = (uint16 *)(_data + FROM_BE_32(_font->_charSpace));
 	if (_font->_charKern != 0)
-		_charKern = (uint16*)(_data + FROM_BE_32(_font->_charKern));
+		_charKern = (uint16 *)(_data + FROM_BE_32(_font->_charKern));
 
 }
 

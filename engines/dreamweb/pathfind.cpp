@@ -22,121 +22,128 @@
 
 #include "dreamweb/dreamweb.h"
 
-namespace DreamGen {
+namespace DreamWeb {
 
-void DreamGenContext::turnpathon() {
-	turnpathon(al);
-}
-
-void DreamGenContext::turnpathon(uint8 param) {
-	findormake(param, 0xff, data.byte(kRoomnum) + 100);
-	PathNode *roomsPaths = getroomspaths()->nodes;
+void DreamWebEngine::turnPathOn(uint8 param) {
+	findOrMake(param, 0xff, _roomNum + 100);
+	PathNode *roomsPaths = getRoomsPaths()->nodes;
 	if (param == 0xff)
 		return;
 	roomsPaths[param].on = 0xff;
 }
 
-void DreamGenContext::turnpathoff() {
-	turnpathoff(al);
-}
-
-void DreamGenContext::turnpathoff(uint8 param) {
-	findormake(param, 0x00, data.byte(kRoomnum) + 100);
-	PathNode *roomsPaths = getroomspaths()->nodes;
+void DreamWebEngine::turnPathOff(uint8 param) {
+	findOrMake(param, 0x00, _roomNum + 100);
+	PathNode *roomsPaths = getRoomsPaths()->nodes;
 	if (param == 0xff)
 		return;
 	roomsPaths[param].on = 0x00;
 }
 
-void DreamGenContext::turnanypathon(uint8 param, uint8 room) {
-	findormake(param, 0xff, room + 100);
-	PathNode *paths = (PathNode *)segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
-	paths[param].on = 0xff;
+void DreamWebEngine::turnAnyPathOn(uint8 param, uint8 room) {
+	findOrMake(param, 0xff, room + 100);
+	_pathData[room].nodes[param].on = 0xff;
 }
 
-
-void DreamGenContext::turnanypathon() {
-	turnanypathon(al, ah);
+void DreamWebEngine::turnAnyPathOff(uint8 param, uint8 room) {
+	findOrMake(param, 0x00, room + 100);
+	_pathData[room].nodes[param].on = 0x00;
 }
 
-void DreamGenContext::turnanypathoff(uint8 param, uint8 room) {
-	findormake(param, 0x00, room + 100);
-	PathNode *paths = (PathNode *)segRef(data.word(kReels)).ptr(kPathdata + 144 * room, 0);
-	paths[param].on = 0x00;
+RoomPaths *DreamWebEngine::getRoomsPaths() {
+	return &_pathData[_roomNum];
 }
 
-void DreamGenContext::turnanypathoff() {
-	turnanypathoff(al, ah);
+void DreamWebEngine::faceRightWay() {
+	PathNode *paths = getRoomsPaths()->nodes;
+	uint8 dir = paths[_mansPath].dir;
+	_turnToFace = dir;
+	_leaveDirection = dir;
 }
 
-RoomPaths *DreamGenContext::getroomspaths() {
-	void *result = segRef(data.word(kReels)).ptr(data.byte(kRoomnum) * 144, 144);
-	return (RoomPaths *)result;
+void DreamWebEngine::setWalk() {
+	if (_linePointer != 254) {
+		// Already walking
+		_finalDest = _pointersPath;
+	} else if (_pointersPath == _mansPath) {
+		// Can't walk
+		faceRightWay();
+	} else if (_vars._watchMode == 1) {
+		// Holding reel
+		_vars._destAfterHold = _pointersPath;
+		_vars._watchMode = 2;
+	} else if (_vars._watchMode == 2) {
+		// Can't walk
+	} else {
+		_destination = _pointersPath;
+		_finalDest = _pointersPath;
+		if (_mouseButton != 2 || _commandType == 3) {
+			autoSetWalk();
+		} else {
+			_walkAndExam = 1;
+			_walkExamType = _commandType;
+			_walkExamNum = _command;
+			autoSetWalk();
+		}
+	}
 }
 
-void DreamGenContext::autosetwalk() {
-	al = data.byte(kManspath);
-	if (data.byte(kFinaldest) == al)
+void DreamWebEngine::autoSetWalk() {
+	if (_finalDest == _mansPath)
 		return;
-	const RoomPaths *roomsPaths = getroomspaths();
-	checkdest(roomsPaths);
-	data.word(kLinestartx) = roomsPaths->nodes[data.byte(kManspath)].x - 12;
-	data.word(kLinestarty) = roomsPaths->nodes[data.byte(kManspath)].y - 12;
-	data.word(kLineendx) = roomsPaths->nodes[data.byte(kDestination)].x - 12;
-	data.word(kLineendy) = roomsPaths->nodes[data.byte(kDestination)].y - 12;
+	const RoomPaths *roomsPaths = getRoomsPaths();
+	checkDest(roomsPaths);
+	_lineStartX = roomsPaths->nodes[_mansPath].x - 12;
+	_lineStartY = roomsPaths->nodes[_mansPath].y - 12;
+	_lineEndX = roomsPaths->nodes[_destination].x - 12;
+	_lineEndY = roomsPaths->nodes[_destination].y - 12;
 	bresenhams();
-	if (data.byte(kLinedirection) != 0) {
-		data.byte(kLinepointer) = data.byte(kLinelength) - 1;
-		data.byte(kLinedirection) = 1;
+	if (_lineDirection != 0) {
+		_linePointer = _lineLength - 1;
+		_lineDirection = 1;
 		return;
 	}
-	data.byte(kLinepointer) = 0;
+	_linePointer = 0;
 }
 
-void DreamGenContext::checkdest(const RoomPaths *roomsPaths) {
+void DreamWebEngine::checkDest(const RoomPaths *roomsPaths) {
 	const PathSegment *segments = roomsPaths->segments;
-	ah = data.byte(kManspath) << 4;
-	al = data.byte(kDestination);
-	uint8 destination = data.byte(kDestination);
+	const uint8 tmp = _mansPath << 4;
+	uint8 destination = _destination;
 	for (size_t i = 0; i < 24; ++i) {
-		dh = segments[i].b0 & 0xf0;
-		dl = segments[i].b0 & 0x0f;
-		if (ax == dx) {
-			data.byte(kDestination) = segments[i].b1 & 0x0f;
+		if ((segments[i].b0 & 0xf0) == tmp &&
+		    (segments[i].b0 & 0x0f) == _destination) {
+			_destination = segments[i].b1 & 0x0f;
 			return;
 		}
-		dl = (segments[i].b0 & 0xf0) >> 4;
-		dh = (segments[i].b0 & 0x0f) << 4;
-		if (ax == dx) {
+
+		if (((segments[i].b0 & 0x0f) << 4) == tmp &&
+		    ((segments[i].b0 & 0xf0) >> 4) == _destination) {
 			destination = segments[i].b1 & 0x0f;
 		}
 	}
-	data.byte(kDestination) = destination;
+	_destination = destination;
 }
 
-void DreamGenContext::findxyfrompath() {
-	const PathNode *roomsPaths = getroomspaths()->nodes;
-	data.byte(kRyanx) = roomsPaths[data.byte(kManspath)].x - 12;
-	data.byte(kRyany) = roomsPaths[data.byte(kManspath)].y - 12;
+void DreamWebEngine::findXYFromPath() {
+	const PathNode *roomsPaths = getRoomsPaths()->nodes;
+	_ryanX = roomsPaths[_mansPath].x - 12;
+	_ryanY = roomsPaths[_mansPath].y - 12;
 }
 
-void DreamGenContext::checkifpathison() {
-	flags._z = checkifpathison(al);
-}
-
-bool DreamGenContext::checkifpathison(uint8 index) {
-	RoomPaths *roomsPaths = getroomspaths();
+bool DreamWebEngine::checkIfPathIsOn(uint8 index) {
+	RoomPaths *roomsPaths = getRoomsPaths();
 	uint8 pathOn = roomsPaths->nodes[index].on;
 	return pathOn == 0xff;
 }
 
-void DreamGenContext::bresenhams() {
-	workoutframes();
-	int8 *lineData = (int8 *)data.ptr(kLinedata, 0);
-	int16 startX = (int16)data.word(kLinestartx);
-	int16 startY = (int16)data.word(kLinestarty);
-	int16 endX = (int16)data.word(kLineendx);
-	int16 endY = (int16)data.word(kLineendy);
+void DreamWebEngine::bresenhams() {
+	workoutFrames();
+	Common::Point *lineData = &_lineData[0];
+	int16 startX = (int16)_lineStartX;
+	int16 startY = (int16)_lineStartY;
+	int16 endX = (int16)_lineEndX;
+	int16 endY = (int16)_lineEndY;
 
 	if (endX == startX) {
 		uint16 deltaY;
@@ -144,22 +151,21 @@ void DreamGenContext::bresenhams() {
 		if (endY < startY) {
 			deltaY = startY - endY;
 			y = (int8)endY;
-			data.byte(kLinedirection) = 1;
+			_lineDirection = 1;
 		} else {
 			deltaY = endY - startY;
 			y = (int8)startY;
-			data.byte(kLinedirection) = 0;
+			_lineDirection = 0;
 		}
 		++deltaY;
 		int8 x = (int8)startX;
-		data.byte(kLinelength) = deltaY;
-		do {
-			lineData[0] = x;
-			lineData[1] = y;
-			lineData += 2;
+		_lineLength = deltaY;
+		for (; deltaY; --deltaY) {
+			lineData->x = x;
+			lineData->y = y;
+			++lineData;
 			++y;
-			--deltaY;
-		} while (deltaY);
+		}
 		return;
 	}
 	uint16 deltaX;
@@ -167,14 +173,14 @@ void DreamGenContext::bresenhams() {
 		deltaX = startX - endX;
 		SWAP(startX, endX);
 		SWAP(startY, endY);
-		data.word(kLinestartx) = (uint16)startX;
-		data.word(kLinestarty) = (uint16)startY;
-		data.word(kLineendx) = (uint16)endX;
-		data.word(kLineendy) = (uint16)endY;
-		data.byte(kLinedirection) = 1;
+		_lineStartX = (uint16)startX;
+		_lineStartY = (uint16)startY;
+		_lineEndX = (uint16)endX;
+		_lineEndY = (uint16)endY;
+		_lineDirection = 1;
 	} else {
 		deltaX = endX - startX;
-		data.byte(kLinedirection) = 0;
+		_lineDirection = 0;
 	}
 
 	int16 increment;
@@ -182,14 +188,13 @@ void DreamGenContext::bresenhams() {
 		int8 x = (int8)startX;
 		int8 y = (int8)startY;
 		++deltaX;
-		data.byte(kLinelength) = deltaX;
-		do {
-			lineData[0] = x;
-			lineData[1] = y;
-			lineData += 2;
+		_lineLength = deltaX;
+		for (; deltaX; --deltaX) {
+			lineData->x = x;
+			lineData->y = y;
+			++lineData;
 			++x;
-			--deltaX;
-		} while (deltaX);
+		}
 		return;
 	}
 	uint16 deltaY;
@@ -202,53 +207,144 @@ void DreamGenContext::bresenhams() {
 	}
 
 	uint16 delta1, delta2;
+	byte lineRoutine;
+
 	if (deltaY > deltaX) {
-		data.byte(kLineroutine) = 1;
+		lineRoutine = 1;
 		delta1 = deltaY;
 		delta2 = deltaX;
 	} else {
-		data.byte(kLineroutine) = 0;
+		lineRoutine = 0;
 		delta1 = deltaX;
 		delta2 = deltaY;
 	}
 
-	data.word(kIncrement1) = delta2 * 2;
+	uint16 increment1 = delta2 * 2;
+	uint16 increment2 = delta2 * 2 - delta1 * 2;
 	int16 remainder = delta2 * 2 - delta1;
-	data.word(kIncrement2) = delta2 * 2 - delta1 * 2;
 	++delta1;
 	int8 x = (int8)startX;
 	int8 y = (int8)startY;
-	data.byte(kLinelength) = delta1;
-	if (data.byte(kLineroutine) != 1) {
-		do {
-			lineData[0] = x;
-			lineData[1] = y;
-			lineData += 2;
+	_lineLength = delta1;
+	if (lineRoutine != 1) {
+		for (; delta1; --delta1) {
+			lineData->x = x;
+			lineData->y = y;
+			++lineData;
 			++x;
 			if (remainder < 0) {
-				remainder += data.word(kIncrement1);
+				remainder += increment1;
 			} else {
-				remainder += data.word(kIncrement2);
+				remainder += increment2;
 				y += increment;
 			}
-			--delta1;
-		} while (delta1);
+		}
 	} else {
-		do {
-			lineData[0] = x;
-			lineData[1] = y;
-			lineData += 2;
+		for (; delta1; --delta1) {
+			lineData->x = x;
+			lineData->y = y;
+			++lineData;
 			y += increment;
 			if (remainder < 0) {
-				remainder += data.word(kIncrement1);
+				remainder += increment1;
 			} else {
-				remainder += data.word(kIncrement2);
+				remainder += increment2;
 				++x;
 			}
-			--delta1;
-		} while (delta1);
+		}
 	}
 }
 
-} /*namespace dreamgen */
+void DreamWebEngine::workoutFrames() {
+	byte tmp;
+	int diffx, diffy;
 
+	// We have to use signed arithmetic here because these values can
+	// be slightly negative when walking off-screen
+	int lineStartX = (int16)_lineStartX;
+	int lineStartY = (int16)_lineStartY;
+	int lineEndX = (int16)_lineEndX;
+	int lineEndY = (int16)_lineEndY;
+
+
+	diffx = ABS(lineStartX - lineEndX);
+	diffy = ABS(lineStartY - lineEndY);
+
+	if (diffx < diffy) {
+		tmp = 2;
+		if (diffx >= (diffy >> 1))
+			tmp = 1;
+	} else {
+		// tendstohoriz
+		tmp = 0;
+		if (diffy >= (diffx >> 1))
+			tmp = 1;
+	}
+
+	if (lineStartX >= lineEndX) {
+		// isinleft
+		if (lineStartY < lineEndY) {
+			if (tmp != 1)
+				tmp ^= 2;
+			tmp += 4;
+		} else {
+			// topleft
+			tmp += 6;
+		}
+	} else {
+		// isinright
+		if (lineStartY < lineEndY) {
+			tmp += 2;
+		} else {
+			// botright
+			if (tmp != 1)
+				tmp ^= 2;
+		}
+	}
+
+	_turnToFace = tmp & 7;
+	_turnDirection = 0;
+}
+
+byte DreamWebEngine::findFirstPath(byte x, byte y) {
+	PathNode *paths = _pathData[_roomNum].nodes;
+
+	for (uint8 index = 0; index < 12; index++) {
+		if (paths[index].x1 == 0xff && paths[index].y1 == 0xff)
+			continue; // "nofirst"
+
+		if (x < paths[index].x1 || y < paths[index].y1)
+			continue; // "nofirst"
+
+		if (x >= paths[index].x2 || y >= paths[index].y2)
+			continue; // "nofirst"
+
+		return paths[index].on; // "gotfirst"
+	}
+
+	return 0;
+}
+
+byte DreamWebEngine::findPathOfPoint(byte x, byte y) {
+	PathNode *paths = _pathData[_roomNum].nodes;
+
+	for (uint8 index = 0; index < 12; index++) {
+		if (paths[index].on != 0xff)
+			continue; // "flunkedit"
+
+		if (paths[index].x1 == 0xff && paths[index].y1 == 0xff)
+			continue; // "flunkedit"
+
+		if (x < paths[index].x1 || y < paths[index].y1)
+			continue; // "flunkedit"
+
+		if (x >= paths[index].x2 || y >= paths[index].y2)
+			continue; // "flunkedit"
+
+		return index; // "gotvalidpath"
+	}
+
+	return 0xff;
+}
+
+} // End of namespace DreamWeb

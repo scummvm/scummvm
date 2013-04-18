@@ -253,14 +253,11 @@ SciEvent EventManager::getScummVMEvent() {
 	if ((modifiers & Common::KBD_ALT) && input.character > 0 && input.character < 27)
 		input.character += 96; // 0x01 -> 'a'
 
-	if (getSciVersion() <= SCI_VERSION_1_MIDDLE) {
-		// TODO: find out if altify is also not needed for sci1late+, couldnt find any game that uses those keys
-		// Scancodify if appropriate
-		if (modifiers & Common::KBD_ALT)
-			input.character = altify(input.character);
-		else if ((modifiers & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
-			input.character += 96; // 0x01 -> 'a'
-	}
+	// Scancodify if appropriate
+	if (modifiers & Common::KBD_ALT)
+		input.character = altify(input.character);
+	else if ((modifiers & Common::KBD_CTRL) && input.character > 0 && input.character < 27)
+		input.character += 96; // 0x01 -> 'a'
 
 	// If no actual key was pressed (e.g. if only a modifier key was pressed),
 	// ignore the event

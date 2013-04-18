@@ -432,10 +432,11 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 	//   Skip the next YYYYY pixels (i.e. transparency)
 
 	if (literalPos && isMacSci11ViewData) {
-		// KQ6/Freddy Pharkas use byte lengths, all others use uint16
+		// KQ6/Freddy Pharkas/Slater use byte lengths, all others use uint16
 		// The SCI devs must have realized that a max of 255 pixels wide
 		// was not very good for 320 or 640 width games.
-		bool hasByteLengths = (g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_FREDDYPHARKAS);
+		bool hasByteLengths = (g_sci->getGameId() == GID_KQ6 || g_sci->getGameId() == GID_FREDDYPHARKAS
+				|| g_sci->getGameId() == GID_SLATER);
 
 		// compression for SCI1.1+ Mac
 		while (pixelNr < pixelCount) {

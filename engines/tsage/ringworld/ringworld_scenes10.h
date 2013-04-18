@@ -236,7 +236,7 @@ public:
 	NamedHotspot _hotspot5;
 	NamedHotspot _hotspot6;
 	ASound _soundHandler;
-	int _field1032;
+	bool _hittingAnvil;
 	SceneHotspot7 _hotspot7;
 	SceneHotspot8 _hotspot8;
 

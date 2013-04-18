@@ -480,7 +480,7 @@ void *DLObject::symbol(const char *name) {
 				!strcmp(name, _strtab + s->st_name)) {
 			// We found the symbol
 			debug(2, "elfloader: => 0x%08x", s->st_value);
-			return (void*)s->st_value;
+			return (void *)s->st_value;
 		}
 
 	// We didn't find the symbol

@@ -49,7 +49,7 @@
 
 namespace Tinsel {
 
-extern LANGUAGE sampleLanguage;
+extern LANGUAGE g_sampleLanguage;
 
 //--------------------------- General data ----------------------------------
 
@@ -99,12 +99,12 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 	// move to correct position in the sample file
 	_sampleStream.seek(dwSampleIndex);
 	if (_sampleStream.eos() || _sampleStream.err() || (uint32)_sampleStream.pos() != dwSampleIndex)
-		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 	// read the length of the sample
 	uint32 sampleLen = _sampleStream.readUint32();
 	if (_sampleStream.eos() || _sampleStream.err())
-		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 	if (TinselV1PSX) {
 		// Read the stream and create a XA ADPCM audio stream
@@ -124,7 +124,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 
 		// read all of the sample
 		if (_sampleStream.read(sampleBuf, sampleLen) != sampleLen)
-			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+			error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 		// FIXME: Should set this in a different place ;)
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);
@@ -254,12 +254,12 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 	// move to correct position in the sample file
 	_sampleStream.seek(dwSampleIndex);
 	if (_sampleStream.eos() || _sampleStream.err() || (uint32)_sampleStream.pos() != dwSampleIndex)
-		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 	// read the length of the sample
 	uint32 sampleLen = _sampleStream.readUint32();
 	if (_sampleStream.eos() || _sampleStream.err())
-		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 	if (sampleLen & 0x80000000) {
 		// Has sub samples
@@ -273,11 +273,11 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 			sampleLen = _sampleStream.readUint32();
 			_sampleStream.skip(sampleLen);
 			if (_sampleStream.eos() || _sampleStream.err())
-				error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+				error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 		}
 		sampleLen = _sampleStream.readUint32();
 		if (_sampleStream.eos() || _sampleStream.err())
-			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+			error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 	}
 
 	debugC(DEBUG_DETAILED, kTinselDebugSound, "Playing sound %d.%d, %d bytes at %d (pan %d)", id, sub, sampleLen,
@@ -289,7 +289,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 
 	// read all of the sample
 	if (_sampleStream.read(sampleBuf, sampleLen) != sampleLen)
-		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 	Common::MemoryReadStream *compressedStream =
 		new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
@@ -481,7 +481,7 @@ void SoundManager::openSampleFiles() {
 		return;
 
 	// open sample index file in binary mode
-	if (f.open(_vm->getSampleIndex(sampleLanguage)))	{
+	if (f.open(_vm->getSampleIndex(g_sampleLanguage)))	{
 		// get length of index file
 		f.seek(0, SEEK_END);		// move to end of file
 		_sampleIndexLen = f.pos();	// get file pointer
@@ -502,7 +502,7 @@ void SoundManager::openSampleFiles() {
 		// load data
 		if (f.read(_sampleIndex, _sampleIndexLen) != (uint32)_sampleIndexLen)
 			// file must be corrupt if we get to here
-			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+			error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 		// close the file
 		f.close();
@@ -542,28 +542,28 @@ void SoundManager::openSampleFiles() {
 		_sampleIndex[0] = 0;
 	} else {
 		char buf[50];
-		sprintf(buf, CANNOT_FIND_FILE, _vm->getSampleIndex(sampleLanguage));
+		sprintf(buf, CANNOT_FIND_FILE, _vm->getSampleIndex(g_sampleLanguage));
 		GUI::MessageDialog dialog(buf, "OK");
 		dialog.runModal();
 
-		error(CANNOT_FIND_FILE, _vm->getSampleIndex(sampleLanguage));
+		error(CANNOT_FIND_FILE, _vm->getSampleIndex(g_sampleLanguage));
 	}
 
 	// open sample file in binary mode
-	if (!_sampleStream.open(_vm->getSampleFile(sampleLanguage))) {
+	if (!_sampleStream.open(_vm->getSampleFile(g_sampleLanguage))) {
 		char buf[50];
-		sprintf(buf, CANNOT_FIND_FILE, _vm->getSampleFile(sampleLanguage));
+		sprintf(buf, CANNOT_FIND_FILE, _vm->getSampleFile(g_sampleLanguage));
 		GUI::MessageDialog dialog(buf, "OK");
 		dialog.runModal();
 
-		error(CANNOT_FIND_FILE, _vm->getSampleFile(sampleLanguage));
+		error(CANNOT_FIND_FILE, _vm->getSampleFile(g_sampleLanguage));
 	}
 
 /*
 	// gen length of the largest sample
 	sampleBuffer.size = _sampleStream.readUint32LE();
 	if (_sampleStream.eos() || _sampleStream.err())
-		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
+		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 */
 }
 

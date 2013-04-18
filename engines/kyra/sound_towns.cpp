@@ -125,7 +125,7 @@ void SoundTowns::loadSoundFile(uint file) {
 	_sfxFileData = _vm->resource()->fileData(fileListEntry(file), 0);
 }
 
-void SoundTowns::playSoundEffect(uint8 track) {
+void SoundTowns::playSoundEffect(uint8 track, uint8) {
 	if (!_sfxEnabled || !_sfxFileData)
 		return;
 
@@ -414,14 +414,9 @@ void SoundPC98::playTrack(uint8 track) {
 
 	beginFadeOut();
 
-	char musicfile[13];
-	sprintf(musicfile, fileListEntry(0), track);
-	if (fileListLen() == 1)
-		sprintf(musicfile, fileListEntry(0), track);
-	else
-		strcpy(musicfile, fileListEntry(track));
+	Common::String musicFile = fileListLen() == 1 ? Common::String::format(fileListEntry(0), track) : fileListEntry(track);
 	delete[] _musicTrackData;
-	_musicTrackData = _vm->resource()->fileData(musicfile, 0);
+	_musicTrackData = _vm->resource()->fileData(musicFile.c_str(), 0);
 	if (_musicEnabled)
 		_driver->loadMusicData(_musicTrackData);
 
@@ -446,7 +441,7 @@ void SoundPC98::beginFadeOut() {
 	haltTrack();
 }
 
-void SoundPC98::playSoundEffect(uint8 track) {
+void SoundPC98::playSoundEffect(uint8 track, uint8) {
 	if (!_sfxTrackData)
 		return;
 
@@ -537,17 +532,12 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 
 	beginFadeOut();
 
-	char musicfile[13];
-	if (fileListLen() == 1) {
-		sprintf(musicfile, fileListEntry(0), track);
-	} else {
-		strcpy(musicfile, fileListEntry(track));
-		if (!musicfile[0])
-			return;
-	}
+	Common::String musicFile = fileListLen() == 1 ? Common::String::format(fileListEntry(0), track) : fileListEntry(track);
+	if (musicFile.empty())
+		return;
 	delete[] _musicTrackData;
 
-	_musicTrackData = _vm->resource()->fileData(musicfile, 0);
+	_musicTrackData = _vm->resource()->fileData(musicFile.c_str(), 0);
 	_driver->loadMusicData(_musicTrackData, true);
 
 	if (_musicEnabled == 2 && trackNum != -1) {
@@ -592,11 +582,9 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 			return 0;
 	}
 
-	char filename[13];
-	const char *pattern = _vm->game() == GI_LOL ? patternLOL : patternHOF;
-	sprintf(filename, pattern, file);
+	Common::String fileName = Common::String::format( _vm->game() == GI_LOL ? patternLOL : patternHOF, file);
 
-	uint8 *data = _vm->resource()->fileData(filename, 0);
+	uint8 *data = _vm->resource()->fileData(fileName.c_str(), 0);
 	uint8 *src = data;
 	if (!src)
 		return 0;
@@ -650,7 +638,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 	return 1;
 }
 
-void SoundTownsPC98_v2::playSoundEffect(uint8 track) {
+void SoundTownsPC98_v2::playSoundEffect(uint8 track, uint8) {
 	if (!_useFmSfx || !_sfxTrackData)
 		return;
 

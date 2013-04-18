@@ -39,7 +39,7 @@ XMLParser::~XMLParser() {
 	delete _XMLkeys;
 	delete _stream;
 
-	for (List<XMLKeyLayout*>::iterator i = _layoutList.begin();
+	for (List<XMLKeyLayout *>::iterator i = _layoutList.begin();
 		i != _layoutList.end(); ++i)
 		delete *i;
 
@@ -263,7 +263,7 @@ bool XMLParser::vparseIntegerKey(const char *key, int count, va_list args) {
 	int *num_ptr;
 
 	while (count--) {
-		while (isspace(static_cast<unsigned char>(*key)))
+		while (isSpace(*key))
 			key++;
 
 		num_ptr = va_arg(args, int*);
@@ -271,7 +271,7 @@ bool XMLParser::vparseIntegerKey(const char *key, int count, va_list args) {
 
 		key = parseEnd;
 
-		while (isspace(static_cast<unsigned char>(*key)))
+		while (isSpace(*key))
 			key++;
 
 		if (count && *key++ != ',')
@@ -463,10 +463,10 @@ bool XMLParser::parse() {
 }
 
 bool XMLParser::skipSpaces() {
-	if (!isspace(static_cast<unsigned char>(_char)))
+	if (!isSpace(_char))
 		return false;
 
-	while (_char && isspace(static_cast<unsigned char>(_char)))
+	while (_char && isSpace(_char))
 		_char = _stream->readByte();
 
 	return true;
@@ -516,7 +516,7 @@ bool XMLParser::parseToken() {
 		_char = _stream->readByte();
 	}
 
-	return isspace(static_cast<unsigned char>(_char)) != 0 || _char == '>' || _char == '=' || _char == '/';
+	return isSpace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
 }
 
 } // End of namespace Common

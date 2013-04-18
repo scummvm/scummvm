@@ -69,6 +69,11 @@ public:
 	/** Return the current frame size. */
 	void getFrameSize(int16 &width, int16 &height) const;
 
+	/** Are there coordinates within the animation sprite? */
+	bool isIn(int16 x, int16 y) const;
+	/** Is this object within the animation sprite? */
+	bool isIn(const ANIObject &obj) const;
+
 	/** Set the animation number. */
 	void setAnimation(uint16 animation);
 

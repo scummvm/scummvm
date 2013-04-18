@@ -34,6 +34,7 @@
 #include "gob/game.h"
 #include "gob/draw.h"
 #include "gob/video.h"
+#include "gob/cheater.h"
 #include "gob/save/saveload.h"
 #include "gob/sound/sound.h"
 #include "gob/sound/sounddesc.h"
@@ -53,9 +54,17 @@ Inter_Geisha::Inter_Geisha(GobEngine *vm) : Inter_v1(vm),
 
 	_diving      = new Geisha::Diving(vm);
 	_penetration = new Geisha::Penetration(vm);
+
+	_cheater = new Cheater_Geisha(vm, _diving);
+
+	_vm->_console->registerCheater(_cheater);
 }
 
 Inter_Geisha::~Inter_Geisha() {
+	_vm->_console->unregisterCheater();
+
+	delete _cheater;
+
 	delete _penetration;
 	delete _diving;
 }
@@ -280,7 +289,7 @@ void Inter_Geisha::oGeisha_gameDiving(OpGobParams &params) {
 
 	bool result = _diving->play(playerCount, hasPearlLocation);
 
-	WRITE_VAR_UINT32(resultVar, result ? 1 : 0);
+	WRITE_VAR_UINT32(resultVar, result ? 0 : 1);
 }
 
 void Inter_Geisha::oGeisha_loadTitleMusic(OpGobParams &params) {

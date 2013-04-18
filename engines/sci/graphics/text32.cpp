@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/sci/graphics/text16.cpp $
- * $Id: text16.cpp 55178 2011-01-08 23:16:44Z thebluegr $
- *
  */
 
 #include "common/util.h"
@@ -41,6 +38,10 @@ namespace Sci {
 
 #define BITMAP_HEADER_SIZE 46
 
+#define SCI_TEXT32_ALIGNMENT_RIGHT -1
+#define SCI_TEXT32_ALIGNMENT_CENTER 1
+#define SCI_TEXT32_ALIGNMENT_LEFT	0
+
 GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen)
 	: _segMan(segMan), _cache(fonts), _screen(screen) {
 }
@@ -48,7 +49,7 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts, GfxScreen *screen)
 GfxText32::~GfxText32() {
 }
 
-reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight) {
+reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxHeight, reg_t prevHunk) {
 	reg_t stringObject = readSelector(_segMan, textObject, SELECTOR(text));
 
 	// The object in the text selector of the item can be either a raw string
@@ -58,13 +59,21 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 		stringObject = readSelector(_segMan, stringObject, SELECTOR(data));
 
 	Common::String text = _segMan->getString(stringObject);
-	GfxFont *font = _cache->getFont(readSelectorValue(_segMan, textObject, SELECTOR(font)));
+	// HACK: The character offsets of the up and down arrow buttons are off by one
+	// in GK1, for some unknown reason. Fix them here.
+	if (text.size() == 1 && (text[0] == 29 || text[0] == 30)) {
+		text.setChar(text[0] + 1, 0);
+	}
+	GuiResourceId fontId = readSelectorValue(_segMan, textObject, SELECTOR(font));
+	GfxFont *font = _cache->getFont(fontId);
 	bool dimmed = readSelectorValue(_segMan, textObject, SELECTOR(dimmed));
+	int16 alignment = readSelectorValue(_segMan, textObject, SELECTOR(mode));
 	uint16 foreColor = readSelectorValue(_segMan, textObject, SELECTOR(fore));
+	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
 
-	Common::Rect planeRect = getPlaneRect(textObject);
-	uint16 width = planeRect.width() + 1;
-	uint16 height = planeRect.height() + 1;
+	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(textObject);
+	uint16 width = nsRect.width() + 1;
+	uint16 height = nsRect.height() + 1;
 
 	// Limit rectangle dimensions, if requested
 	if (maxWidth > 0)
@@ -79,24 +88,74 @@ reg_t GfxText32::createTextBitmap(reg_t textObject, uint16 maxWidth, uint16 maxH
 	}
 
 	int entrySize = width * height + BITMAP_HEADER_SIZE;
-	reg_t memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
-	writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
+	reg_t memoryId = NULL_REG;
+	if (prevHunk.isNull()) {
+		memoryId = _segMan->allocateHunkEntry("TextBitmap()", entrySize);
+		writeSelector(_segMan, textObject, SELECTOR(bitmap), memoryId);
+	} else {
+		memoryId = prevHunk;
+	}
 	byte *memoryPtr = _segMan->getHunkPointer(memoryId);
-	memset(memoryPtr, 0, entrySize);
+
+	if (prevHunk.isNull())
+		memset(memoryPtr, 0, BITMAP_HEADER_SIZE);
+
 	byte *bitmap = memoryPtr + BITMAP_HEADER_SIZE;
+	memset(bitmap, backColor, width * height);
+
+	// Save totalWidth, totalHeight
+	WRITE_LE_UINT16(memoryPtr, width);
+	WRITE_LE_UINT16(memoryPtr + 2, height);
 
 	int16 charCount = 0;
 	uint16 curX = 0, curY = 0;
 	const char *txt = text.c_str();
+	int16 textWidth, textHeight, totalHeight = 0, offsetX = 0, offsetY = 0;
+	uint16 start = 0;
 
+	// Calculate total text height
 	while (*txt) {
 		charCount = GetLongest(txt, width, font);
 		if (charCount == 0)
 			break;
 
+		Width(txt, 0, (int16)strlen(txt), fontId, textWidth, textHeight, true);
+
+		totalHeight += textHeight;
+		txt += charCount;
+		while (*txt == ' ')
+			txt++; // skip over breaking spaces
+	}
+
+	txt = text.c_str();
+
+	// Draw text in buffer
+	while (*txt) {
+		charCount = GetLongest(txt, width, font);
+		if (charCount == 0)
+			break;
+		Width(txt, start, charCount, fontId, textWidth, textHeight, true);
+
+		switch (alignment) {
+		case SCI_TEXT32_ALIGNMENT_RIGHT:
+			offsetX = width - textWidth;
+			break;
+		case SCI_TEXT32_ALIGNMENT_CENTER:
+			// Center text both horizontally and vertically
+			offsetX = (width - textWidth) / 2;
+			offsetY = (height - totalHeight) / 2;
+			break;
+		case SCI_TEXT32_ALIGNMENT_LEFT:
+			offsetX = 0;
+			break;
+
+		default:
+			warning("Invalid alignment %d used in TextBox()", alignment);
+		}
+
 		for (int i = 0; i < charCount; i++) {
 			unsigned char curChar = txt[i];
-			font->drawToBuffer(curChar, curY, curX, foreColor, dimmed, bitmap, width, height);
+			font->drawToBuffer(curChar, curY + offsetY, curX + offsetX, foreColor, dimmed, bitmap, width, height);
 			curX += font->getCharWidth(curChar);
 		}
 
@@ -114,11 +173,16 @@ void GfxText32::disposeTextBitmap(reg_t hunkId) {
 	_segMan->freeHunkEntry(hunkId);
 }
 
-void GfxText32::drawTextBitmap(reg_t textObject) {
+void GfxText32::drawTextBitmap(int16 x, int16 y, Common::Rect planeRect, reg_t textObject) {
 	reg_t hunkId = readSelector(_segMan, textObject, SELECTOR(bitmap));
+	uint16 backColor = readSelectorValue(_segMan, textObject, SELECTOR(back));
 	// Sanity check: Check if the hunk is set. If not, either the game scripts
 	// didn't set it, or an old saved game has been loaded, where it wasn't set.
 	if (hunkId.isNull())
+		return;
+
+	// Negative coordinates indicate that text shouldn't be displayed
+	if (x < 0 || y < 0)
 		return;
 
 	byte *memoryPtr = _segMan->getHunkPointer(hunkId);
@@ -129,44 +193,26 @@ void GfxText32::drawTextBitmap(reg_t textObject) {
 	byte *surface = memoryPtr + BITMAP_HEADER_SIZE;
 
 	int curByte = 0;
-	Common::Rect nsRect = g_sci->_gfxCompare->getNSRect(textObject);
-	Common::Rect planeRect = getPlaneRect(textObject);
-	uint16 x = readSelectorValue(_segMan, textObject, SELECTOR(x));
-	uint16 y = readSelectorValue(_segMan, textObject, SELECTOR(y));
+	uint16 skipColor = readSelectorValue(_segMan, textObject, SELECTOR(skip));
 	uint16 textX = planeRect.left + x;
 	uint16 textY = planeRect.top + y;
-	uint16 width = nsRect.width() + 1;
-	uint16 height = nsRect.height() + 1;
+	// Get totalWidth, totalHeight
+	uint16 width = READ_LE_UINT16(memoryPtr);
+	uint16 height = READ_LE_UINT16(memoryPtr + 2);
 
 	// Upscale the coordinates/width if the fonts are already upscaled
 	if (_screen->fontIsUpscaled()) {
 		textX = textX * _screen->getDisplayWidth() / _screen->getWidth();
 		textY = textY * _screen->getDisplayHeight() / _screen->getHeight();
-		width = width * _screen->getDisplayWidth() / _screen->getWidth();
-		height = height * _screen->getDisplayHeight() / _screen->getHeight();
 	}
 
 	for (int curY = 0; curY < height; curY++) {
 		for (int curX = 0; curX < width; curX++) {
 			byte pixel = surface[curByte++];
-			if (pixel)
+			if (pixel != skipColor && pixel != backColor)
 				_screen->putFontPixel(textY, curX + textX, curY, pixel);
 		}
 	}
-}
-
-Common::Rect GfxText32::getPlaneRect(reg_t textObject) {
-	Common::Rect planeRect(0, 0, _screen->getWidth(), _screen->getHeight());
-
-	reg_t planeObject = readSelector(_segMan, textObject, SELECTOR(plane));
-	if (!planeObject.isNull()) {
-		planeRect.top = readSelectorValue(_segMan, planeObject, SELECTOR(top));
-		planeRect.left = readSelectorValue(_segMan, planeObject, SELECTOR(left));
-		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom));
-		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right));
-	}
-
-	return planeRect;
 }
 
 int16 GfxText32::GetLongest(const char *text, int16 maxWidth, GfxFont *font) {
@@ -251,6 +297,10 @@ int16 GfxText32::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 	int16 maxTextWidth = 0, textWidth;
 	int16 totalHeight = 0, textHeight;
 
+	// Adjust maxWidth if we're using an upscaled font
+	if (_screen->fontIsUpscaled())
+		maxWidth = maxWidth * _screen->getDisplayWidth() / _screen->getWidth();
+
 	rect.top = rect.left = 0;
 	GfxFont *font = _cache->getFont(fontId);
 
@@ -277,6 +327,14 @@ int16 GfxText32::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 		rect.bottom = totalHeight;
 		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
 	}
+
+	// Adjust the width/height if we're using an upscaled font
+	// for the scripts
+	if (_screen->fontIsUpscaled()) {
+		rect.right = rect.right * _screen->getWidth() / _screen->getDisplayWidth();
+		rect.bottom = rect.bottom * _screen->getHeight() / _screen->getDisplayHeight();
+	}
+
 	return rect.right;
 }
 

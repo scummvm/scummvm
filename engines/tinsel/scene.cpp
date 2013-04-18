@@ -107,15 +107,15 @@ struct ENTRANCE_STRUC {
 // FIXME: Avoid non-const global vars
 
 #ifdef DEBUG
-static bool ShowPosition = false;	// Set when showpos() has been called
+static bool g_ShowPosition = false;	// Set when showpos() has been called
 #endif
 
-int sceneCtr = 0;
-static int initialMyEscape;
+int g_sceneCtr = 0;
+static int g_initialMyEscape;
 
-static SCNHANDLE SceneHandle = 0;	// Current scene handle - stored in case of Save_Scene()
+static SCNHANDLE g_SceneHandle = 0;	// Current scene handle - stored in case of Save_Scene()
 
-SCENE_STRUC tempStruc;
+SCENE_STRUC g_tempStruc;
 
 struct TP_INIT {
 	SCNHANDLE hTinselCode;		// Code
@@ -128,18 +128,18 @@ const SCENE_STRUC *GetSceneStruc(const byte *pStruc) {
 
 	// Copy appropriate fields into tempStruc, and return a pointer to it
 	const byte *p = pStruc;
-	memset(&tempStruc, 0, sizeof(SCENE_STRUC));
+	memset(&g_tempStruc, 0, sizeof(SCENE_STRUC));
 
-	tempStruc.numEntrance = READ_UINT32(p); p += sizeof(uint32);
-	tempStruc.numPoly = READ_UINT32(p); p += sizeof(uint32);
-	tempStruc.numTaggedActor = READ_UINT32(p); p += sizeof(uint32);
-	tempStruc.defRefer = READ_UINT32(p); p += sizeof(uint32);
-	tempStruc.hSceneScript = READ_UINT32(p); p += sizeof(uint32);
-	tempStruc.hEntrance = READ_UINT32(p); p += sizeof(uint32);
-	tempStruc.hPoly = READ_UINT32(p); p += sizeof(uint32);
-	tempStruc.hTaggedActor = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.numEntrance = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.numPoly = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.numTaggedActor = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.defRefer = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.hSceneScript = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.hEntrance = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.hPoly = READ_UINT32(p); p += sizeof(uint32);
+	g_tempStruc.hTaggedActor = READ_UINT32(p); p += sizeof(uint32);
 
-	return &tempStruc;
+	return &g_tempStruc;
 }
 
 
@@ -157,8 +157,8 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CODE(_ctx);
 
 	// The following myEscape value setting is used for enabling title screen skipping in DW1
-	if (TinselV1 && (sceneCtr == 1)) initialMyEscape = GetEscEvents();
-	_ctx->myEscape = (TinselV1 && (sceneCtr < 4)) ? initialMyEscape : 0;
+	if (TinselV1 && (g_sceneCtr == 1)) g_initialMyEscape = GetEscEvents();
+	_ctx->myEscape = (TinselV1 && (g_sceneCtr < 4)) ? g_initialMyEscape : 0;
 
 	// get the stuff copied to process when it was created
 	_ctx->pInit = (const TP_INIT *)param;
@@ -184,8 +184,8 @@ static void SceneTinselProcess(CORO_PARAM, const void *param) {
 void SendSceneTinselProcess(TINSEL_EVENT event) {
 	SCENE_STRUC	*ss;
 
-	if (SceneHandle != (SCNHANDLE)NULL) {
-		ss = (SCENE_STRUC *) FindChunk(SceneHandle, CHUNK_SCENE);
+	if (g_SceneHandle != (SCNHANDLE)NULL) {
+		ss = (SCENE_STRUC *) FindChunk(g_SceneHandle, CHUNK_SCENE);
 
 		if (ss->hSceneScript) {
 			TP_INIT	init;
@@ -214,9 +214,9 @@ static void LoadScene(SCNHANDLE scene, int entry) {
 	const ENTRANCE_STRUC	*es;
 
 	// Scene handle
-	SceneHandle = scene;		// Save scene handle in case of Save_Scene()
-	LockMem(SceneHandle);		// Make sure scene is loaded
-	LockScene(SceneHandle);		// Prevent current scene from being discarded
+	g_SceneHandle = scene;		// Save scene handle in case of Save_Scene()
+	LockMem(g_SceneHandle);		// Make sure scene is loaded
+	LockScene(g_SceneHandle);		// Prevent current scene from being discarded
 
 	if (TinselV2) {
 		// CdPlay() stuff
@@ -307,9 +307,9 @@ static void LoadScene(SCNHANDLE scene, int entry) {
  * Wrap up the last scene.
  */
 void EndScene() {
-	if (SceneHandle != 0) {
-		UnlockScene(SceneHandle);
-		SceneHandle = 0;
+	if (g_SceneHandle != 0) {
+		UnlockScene(g_SceneHandle);
+		g_SceneHandle = 0;
 	}
 
 	KillInventory();	// Close down any open inventory
@@ -409,7 +409,7 @@ void PrimeScene() {
 	g_scheduler->createProcess(PID_SCROLL, EffectPolyProcess, NULL, 0);
 
 #ifdef DEBUG
-	if (ShowPosition)
+	if (g_ShowPosition)
 		g_scheduler->createProcess(PID_POSITION, CursorPositionProcess, NULL, 0);
 #endif
 
@@ -445,7 +445,7 @@ void StartNewScene(SCNHANDLE scene, int entry) {
  */
 
 void setshowpos() {
-	ShowPosition = true;
+	g_ShowPosition = true;
 }
 #endif
 
@@ -454,7 +454,7 @@ void setshowpos() {
  */
 
 SCNHANDLE GetSceneHandle() {
-	return SceneHandle;
+	return g_SceneHandle;
 }
 
 /**

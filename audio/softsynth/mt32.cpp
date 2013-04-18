@@ -84,42 +84,6 @@ public:
 	int getRate() const { return _outputRate; }
 };
 
-class MT32File : public MT32Emu::File {
-	Common::File _in;
-	Common::DumpFile _out;
-public:
-	bool open(const char *filename, OpenMode mode) {
-		if (mode == OpenMode_read)
-			return _in.open(filename);
-		else
-			return _out.open(filename);
-	}
-	void close() {
-		_in.close();
-		_out.close();
-	}
-	size_t read(void *in, size_t size) {
-		return _in.read(in, size);
-	}
-	bool readBit8u(MT32Emu::Bit8u *in) {
-		byte b = _in.readByte();
-		if (_in.eos())
-			return false;
-		*in = b;
-		return true;
-	}
-	size_t write(const void *in, size_t size) {
-		return _out.write(in, size);
-	}
-	bool writeBit8u(MT32Emu::Bit8u out) {
-		_out.writeByte(out);
-		return !_out.err();
-	}
-	bool isEOF() {
-		return _in.isOpen() && _in.eos();
-	}
-};
-
 static int eatSystemEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = g_system->getEventManager();
@@ -206,9 +170,9 @@ static void drawMessage(int offset, const Common::String &text) {
 	g_system->updateScreen();
 }
 
-static MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Emu::File::OpenMode mode) {
-	MT32File *file = new MT32File();
-	if (!file->open(filename, mode)) {
+static Common::File *MT32_OpenFile(void *userData, const char *filename) {
+	Common::File *file = new Common::File();
+	if (!file->open(filename)) {
 		delete file;
 		return NULL;
 	}
@@ -329,6 +293,11 @@ int MidiDriver_MT32::open() {
 	drawMessage(-1, _s("Initializing MT-32 Emulator"));
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
+
+	double gain = (double)ConfMan.getInt("midi_gain") / 100.0;
+	_synth->setOutputGain(1.0f * gain);
+	_synth->setReverbOutputGain(0.68f * gain);
+
 	_initializing = false;
 
 	if (screenFormat.bytesPerPixel > 1)

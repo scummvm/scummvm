@@ -87,7 +87,7 @@ public:
 	int _driverResID;
 public:
 	SoundDriver();
-	virtual ~SoundDriver() {};
+	virtual ~SoundDriver() {}
 
 	const Common::String &getShortDriverDescription() { return _shortDescription; }
 	const Common::String &getLongDriverDescription() { return _longDescription; }
@@ -169,7 +169,7 @@ class SoundManager : public SaveListener {
 private:
 	SoundDriver *instantiateDriver(int driverNum);
 public:
-	bool __sndmgrReady;
+	bool _sndmgrReady;
 	int _ourSndResVersion, _ourDrvResVersion;
 	SynchronizedList<Sound *> _playList;
 	Common::List<SoundDriver *> _installedDrivers;
@@ -414,6 +414,16 @@ public:
 	virtual void signal();
 };
 
+class PlayStream {
+public:
+	Sound _sound;
+
+	void setFile(const Common::String &filename) {}
+	bool play(int soundNum, EventHandler *endAction) { return false; }
+	void stop() {}
+	void proc1() {}
+	bool isPlaying() const { return false; }
+};
 
 #define ADLIB_CHANNEL_COUNT 9
 

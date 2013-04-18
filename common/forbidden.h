@@ -182,7 +182,8 @@
 #define putchar(a)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
-
+// mingw-w64 uses [set|long]jmp in system headers
+#ifndef __MINGW64__
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #undef setjmp
 #define setjmp(a)	FORBIDDEN_SYMBOL_REPLACEMENT
@@ -192,6 +193,7 @@
 #undef longjmp
 #define longjmp(a,b)	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
+#endif // __MINGW64__
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_system
 #undef system
@@ -314,6 +316,49 @@
 	#endif
 
 #endif // FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
+
+
+//
+// Disable various symbols from ctype.h
+//
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_ctype_h
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isalnum
+	#undef isalnum
+	#define isalnum(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isalpha
+	#undef isalpha
+	#define isalpha(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isdigit
+	#undef isdigit
+	#define isdigit(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isnumber
+	#undef isnumber
+	#define isnumber(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_islower
+	#undef islower
+	#define islower(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isspace
+	#undef isspace
+	#define isspace(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+	#ifndef FORBIDDEN_SYMBOL_EXCEPTION_isupper
+	#undef isupper
+	#define isupper(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+	#endif
+
+#endif // FORBIDDEN_SYMBOL_EXCEPTION_ctype_h
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_mkdir
 #undef mkdir

@@ -96,7 +96,7 @@ public:
 	virtual Common::SeekableReadStream *createReadStream();
 	virtual Common::WriteStream *createWriteStream();
 
-	int getDev() { return 0; };
+	int getDev() { return 0; }
 };
 
 #endif

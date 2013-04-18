@@ -42,8 +42,8 @@ void LoLEngine::loadLevel(int index) {
 	stopPortraitSpeechAnim();
 
 	for (int i = 0; i < 400; i++) {
-		delete[] _levelShapes[i];
-		_levelShapes[i] = 0;
+		delete[] _levelDecorationShapes[i];
+		_levelDecorationShapes[i] = 0;
 	}
 	_emc->unload(&_scriptData);
 
@@ -105,16 +105,16 @@ void LoLEngine::addLevelItems() {
 		if (_itemsInPlay[i].level != _currentLevel)
 			continue;
 
-		assignBlockObject(&_levelBlockProperties[_itemsInPlay[i].block], i);
+		assignBlockItem(&_levelBlockProperties[_itemsInPlay[i].block], i);
 
 		_levelBlockProperties[_itemsInPlay[i].block].direction = 5;
 		_itemsInPlay[i].nextDrawObject = 0;
 	}
 }
 
-void LoLEngine::assignBlockObject(LevelBlockProperty *l, uint16 item) {
+void LoLEngine::assignBlockItem(LevelBlockProperty *l, uint16 item) {
 	uint16 *index = &l->assignedObjects;
-	ItemInPlay *tmp = 0;
+	LoLObject *tmp = 0;
 
 	while (*index & 0x8000) {
 		tmp = findObject(*index);
@@ -122,7 +122,7 @@ void LoLEngine::assignBlockObject(LevelBlockProperty *l, uint16 item) {
 	}
 
 	tmp = findObject(item);
-	tmp->level = -1;
+	((LoLItem *)tmp)->level = -1;
 
 	uint16 ix = *index;
 
@@ -160,7 +160,7 @@ void LoLEngine::loadLevelWallData(int index, bool mapShapes) {
 		if (mapShapes) {
 			int16 sh = (int16) READ_LE_UINT16(d);
 			if (sh > 0)
-				_wllShapeMap[c] = assignLevelShapes(sh);
+				_wllShapeMap[c] = assignLevelDecorationShapes(sh);
 			else
 				_wllShapeMap[c] = *d;
 		}
@@ -169,7 +169,7 @@ void LoLEngine::loadLevelWallData(int index, bool mapShapes) {
 		d += 2;
 		_wllWallFlags[c] = *d;
 		d += 2;
-		_wllBuffer4[c] = *d;
+		_wllAutomapData[c] = *d;
 		d += 2;
 	}
 
@@ -179,7 +179,7 @@ void LoLEngine::loadLevelWallData(int index, bool mapShapes) {
 	_lvlShpFileHandle = 0;
 }
 
-int LoLEngine::assignLevelShapes(int index) {
+int LoLEngine::assignLevelDecorationShapes(int index) {
 	uint16 *p1 = (uint16 *)_tempBuffer5120;
 	uint16 *p2 = (uint16 *)(_tempBuffer5120 + 4000);
 
@@ -187,34 +187,35 @@ int LoLEngine::assignLevelShapes(int index) {
 	if (r)
 		return r;
 
-	uint16 o = _lvlBlockIndex++;
+	uint16 o = _mappedDecorationsCount++;
 
-	memcpy(&_levelShapeProperties[o], &_levelFileData[index], sizeof(LevelShapeProperty));
+	memcpy(&_levelDecorationProperties[o], &_levelDecorationData[index], sizeof(LevelDecorationProperty));
 
 	for (int i = 0; i < 10; i++) {
-		uint16 t = _levelShapeProperties[o].shapeIndex[i];
+		uint16 t = _levelDecorationProperties[o].shapeIndex[i];
 		if (t == 0xffff)
 			continue;
 
 		uint16 pv = p1[t];
 		if (pv) {
-			_levelShapeProperties[o].shapeIndex[i] = pv;
+			_levelDecorationProperties[o].shapeIndex[i] = pv;
 		} else {
-			_levelShapes[_lvlShapeIndex] = getLevelShapes(t);
+			releaseDecorations(_lvlShapeIndex, 1);
+			_levelDecorationShapes[_lvlShapeIndex] = getLevelDecorationShapes(t);
 			p1[t] = _lvlShapeIndex;
-			_levelShapeProperties[o].shapeIndex[i] = _lvlShapeIndex++;
+			_levelDecorationProperties[o].shapeIndex[i] = _lvlShapeIndex++;
 		}
 	}
 
 	p2[index] = o;
-	if (_levelShapeProperties[o].next)
-		_levelShapeProperties[o].next = assignLevelShapes(_levelShapeProperties[o].next);
+	if (_levelDecorationProperties[o].next)
+		_levelDecorationProperties[o].next = assignLevelDecorationShapes(_levelDecorationProperties[o].next);
 
 	return o;
 }
 
-uint8 *LoLEngine::getLevelShapes(int shapeIndex) {
-	if (_lvlShpNum <= shapeIndex)
+uint8 *LoLEngine::getLevelDecorationShapes(int shapeIndex) {
+	if (_decorationCount <= shapeIndex)
 		return 0;
 
 	_lvlShpFileHandle->seek(shapeIndex * 4 + 2, SEEK_SET);
@@ -232,57 +233,10 @@ uint8 *LoLEngine::getLevelShapes(int shapeIndex) {
 	return res;
 }
 
-void LoLEngine::restoreBlockTempData(int index) {
-	memset(_tempBuffer5120, 0, 5120);
-	int l = index - 1;
-
-	memcpy(_monsters, _lvlTempData[l]->monsters, sizeof(MonsterInPlay) * 30);
-	memcpy(_flyingObjects, _lvlTempData[l]->flyingObjects, sizeof(FlyingObject) * 8);
-
-	Common::String filename = Common::String::format("LEVEL%d.CMZ", index);
-
-	_screen->loadBitmap(filename.c_str(), 3, 3, 0);
-	const uint8 *p = _screen->getCPagePtr(2);
-	uint16 len = READ_LE_UINT16(p + 4);
-	p += 6;
-
-	memset(_levelBlockProperties, 0, 1024 * sizeof(LevelBlockProperty));
-
-	uint8 *t = _lvlTempData[l]->wallsXorData;
-	uint8 *t2 = _lvlTempData[l]->flags;
-
-	for (int i = 0; i < 1024; i++) {
-		for (int ii = 0; ii < 4; ii++)
-			_levelBlockProperties[i].walls[ii] = p[i * len + ii] ^ *t++;
-		_levelBlockProperties[i].flags = *t2++;
-	}
-
-	for (int i = 0; i < 30; i++) {
-		if (_monsters[i].block) {
-			_monsters[i].block = 0;
-			_monsters[i].properties = &_monsterProperties[_monsters[i].type];
-			placeMonster(&_monsters[i], _monsters[i].x, _monsters[i].y);
-		}
-	}
-
-	restoreTempDataAdjustMonsterStrength(l);
-}
-
-void LoLEngine::restoreTempDataAdjustMonsterStrength(int index) {
-	if (_lvlTempData[index]->monsterDifficulty == _monsterDifficulty)
-		return;
-
-	uint16 d = (_monsterModifiers[_lvlTempData[index]->monsterDifficulty] << 8) / _monsterModifiers[_monsterDifficulty];
-
-	for (int i = 0; i < 30; i++) {
-		if (_monsters[i].mode >= 14 || _monsters[i].block == 0 || _monsters[i].hitPoints <= 0)
-			continue;
-
-		_monsters[i].hitPoints = (d * _monsters[i].hitPoints) >> 8;
-		if (_monsterDifficulty < _lvlTempData[index]->monsterDifficulty)
-			_monsters[i].hitPoints++;
-		if (_monsters[i].hitPoints == 0)
-			_monsters[i].hitPoints = 1;
+void LoLEngine::releaseDecorations(int first, int num) {
+	for (int i = first; i < (first + num); i++) {
+		delete[] _levelDecorationShapes[i];
+		_levelDecorationShapes[i] = 0;
 	}
 }
 
@@ -299,26 +253,31 @@ void LoLEngine::loadBlockProperties(const char *cmzFile) {
 
 		_levelBlockProperties[i].direction = 5;
 
-		if (_wllBuffer4[_levelBlockProperties[i].walls[0]] == 17) {
+		if (_wllAutomapData[_levelBlockProperties[i].walls[0]] == 17) {
 			_levelBlockProperties[i].flags &= 0xef;
 			_levelBlockProperties[i].flags |= 0x20;
 		}
 	}
 }
 
+const uint8 *LoLEngine::getBlockFileData(int levelIndex) {
+	_screen->loadBitmap(Common::String::format("LEVEL%d.CMZ", levelIndex).c_str(), 15, 15, 0);
+	return _screen->getCPagePtr(14);
+}
+
 void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool flag) {
 	memset(_tempBuffer5120, 0, 5120);
 
 	_lvlShpFileHandle = _res->createReadStream(shpFile);
-	_lvlShpNum = _lvlShpFileHandle->readUint16LE();
+	_decorationCount = _lvlShpFileHandle->readUint16LE();
 
 	Common::SeekableReadStream *s = _res->createReadStream(datFile);
 
-	_levelFileDataSize = s->readUint16LE();
-	delete[] _levelFileData;
-	_levelFileData = new LevelShapeProperty[_levelFileDataSize];
-	for (int i = 0; i < _levelFileDataSize; i++) {
-		LevelShapeProperty * l = &_levelFileData[i];
+	_levelDecorationDataSize = s->readUint16LE();
+	delete[] _levelDecorationData;
+	_levelDecorationData = new LevelDecorationProperty[_levelDecorationDataSize];
+	for (int i = 0; i < _levelDecorationDataSize; i++) {
+		LevelDecorationProperty *l = &_levelDecorationData[i];
 		for (int ii = 0; ii < 10; ii++)
 			l->shapeIndex[ii] = s->readUint16LE();
 		for (int ii = 0; ii < 10; ii++)
@@ -334,7 +293,7 @@ void LoLEngine::loadLevelShpDat(const char *shpFile, const char *datFile, bool f
 	delete s;
 
 	if (!flag) {
-		_lvlBlockIndex = 1;
+		_mappedDecorationsCount = 1;
 		_lvlShapeIndex = 1;
 	}
 }
@@ -399,7 +358,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		memcpy(_vcnShift, v, tlen);
 		v += tlen;
 
-		memcpy(_vcnExpTable, v, 128);
+		memcpy(_vcnColTable, v, 128);
 		v += 128;
 
 		if (_lastOverridePalFilePtr) {
@@ -492,7 +451,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		for (int i = 0; i < 8; i++) {
 			uint8 *pl = _screen->getLevelOverlay(7 - i);
 			for (int ii = 0; ii < 16; ii++)
-				_vcnExpTable[(i << 4) + ii] = pl[(ii << 4) | ii];
+				_vcnColTable[(i << 4) + ii] = pl[(ii << 4) | ii];
 		}
 	}
 
@@ -515,17 +474,17 @@ void LoLEngine::resetItems(int flag) {
 	for (int i = 0; i < 1024; i++) {
 		_levelBlockProperties[i].direction = 5;
 		uint16 id = _levelBlockProperties[i].assignedObjects;
-		MonsterInPlay *r = 0;
+		LoLObject *r = 0;
 
 		while (id & 0x8000) {
-			r = (MonsterInPlay *)findObject(id);
+			r = findObject(id);
 			id = r->nextAssignedObject;
 		}
 
 		if (!id)
 			continue;
 
-		ItemInPlay *it = &_itemsInPlay[id];
+		LoLItem *it = &_itemsInPlay[id];
 		it->level = _currentLevel;
 		it->block = i;
 		if (r)
@@ -537,7 +496,7 @@ void LoLEngine::resetItems(int flag) {
 }
 
 void LoLEngine::disableMonsters() {
-	memset(_monsters, 0, 30 * sizeof(MonsterInPlay));
+	memset(_monsters, 0, 30 * sizeof(LoLMonster));
 	for (int i = 0; i < 30; i++)
 		_monsters[i].mode = 0x10;
 }
@@ -751,11 +710,6 @@ void LoLEngine::moveParty(uint16 direction, int unk1, int unk2, int buttonShape)
 	updateAutoMap(_currentBlock);
 }
 
-uint16 LoLEngine::calcNewBlockPosition(uint16 curBlock, uint16 direction) {
-	static const int16 blockPosTable[] = { -32, 1, 32, -1 };
-	return (curBlock + blockPosTable[direction]) & 0x3ff;
-}
-
 uint16 LoLEngine::calcBlockIndex(uint16 x, uint16 y) {
 	return (((y & 0xff00) >> 3) | (x >> 8)) & 0x3ff;
 }
@@ -827,51 +781,6 @@ void LoLEngine::notifyBlockNotPassable(int scrollFlag) {
 	snd_playSoundEffect(19, -1);
 }
 
-int LoLEngine::clickedWallShape(uint16 block, uint16 direction) {
-	uint8 v = _wllShapeMap[_levelBlockProperties[block].walls[direction]];
-	if (!clickedShape(v))
-		return 0;
-
-	snd_stopSpeech(true);
-	runLevelScript(block, 0x40);
-
-	return 1;
-}
-
-int LoLEngine::clickedLeverOn(uint16 block, uint16 direction) {
-	uint8 v = _wllShapeMap[_levelBlockProperties[block].walls[direction]];
-	if (!clickedShape(v))
-		return 0;
-
-	_levelBlockProperties[block].walls[direction]++;
-	_sceneUpdateRequired = true;
-
-	snd_playSoundEffect(30, -1);
-
-	runLevelScript(block, 0x40);
-
-	return 1;
-}
-
-int LoLEngine::clickedLeverOff(uint16 block, uint16 direction) {
-	uint8 v = _wllShapeMap[_levelBlockProperties[block].walls[direction]];
-	if (!clickedShape(v))
-		return 0;
-
-	_levelBlockProperties[block].walls[direction]--;
-	_sceneUpdateRequired = true;
-
-	snd_playSoundEffect(29, -1);
-
-	runLevelScript(block, 0x40);
-	return 1;
-}
-
-int LoLEngine::clickedWallOnlyScript(uint16 block) {
-	runLevelScript(block, 0x40);
-	return 1;
-}
-
 int LoLEngine::clickedDoorSwitch(uint16 block, uint16 direction) {
 	uint8 v = _wllShapeMap[_levelBlockProperties[block].walls[direction]];
 	if (!clickedShape(v))
@@ -901,119 +810,6 @@ int LoLEngine::clickedNiche(uint16 block, uint16 direction) {
 	setItemPosition(_itemInHand, x, y, 8, 1);
 	setHandItem(0);
 	return 1;
-}
-
-bool LoLEngine::clickedShape(int shapeIndex) {
-	while (shapeIndex) {
-		uint16 s = _levelShapeProperties[shapeIndex].shapeIndex[1];
-
-		if (s == 0xffff) {
-			shapeIndex = _levelShapeProperties[shapeIndex].next;
-			continue;
-		}
-
-		int w = _levelShapes[s][3];
-		int h = _levelShapes[s][2];
-		int x = _levelShapeProperties[shapeIndex].shapeX[1] + 136;
-		int y = _levelShapeProperties[shapeIndex].shapeY[1] + 8;
-
-		if (_levelShapeProperties[shapeIndex].flags & 1)
-			w <<= 1;
-
-		if (posWithinRect(_mouseX, _mouseY, x - 4, y - 4, x + w + 8, y + h + 8))
-			return true;
-
-		shapeIndex = _levelShapeProperties[shapeIndex].next;
-	}
-
-	return false;
-}
-
-void LoLEngine::processDoorSwitch(uint16 block, int openClose) {
-	if ((block == _currentBlock) || (_levelBlockProperties[block].assignedObjects & 0x8000))
-		return;
-
-	if (openClose == 0) {
-		for (int i = 0; i < 3; i++) {
-			if (_openDoorState[i].block != block)
-				continue;
-			openClose = -_openDoorState[i].state;
-			break;
-		}
-	}
-
-	if (openClose == 0)
-		openClose = (_wllWallFlags[_levelBlockProperties[block].walls[_wllWallFlags[_levelBlockProperties[block].walls[0]] & 8 ? 0 : 1]] & 1) ? 1 : -1;
-
-	openCloseDoor(block, openClose);
-}
-
-void LoLEngine::openCloseDoor(uint16 block, int openClose) {
-	int s1 = -1;
-	int s2 = -1;
-
-	int c = (_wllWallFlags[_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
-	int v = _levelBlockProperties[block].walls[c];
-	int flg = (openClose == 1) ? 0x10 : (openClose == -1 ? 0x20 : 0);
-
-	if (_wllWallFlags[v] & flg)
-		return;
-
-	for (int i = 0; i < 3; i++) {
-		if (_openDoorState[i].block == block) {
-			s1 = i;
-			break;
-		} else if (_openDoorState[i].block == 0 && s2 == -1) {
-			s2 = i;
-		}
-	}
-
-	if (s1 != -1 || s2 != -1) {
-		if (s1 == -1)
-			s1 = s2;
-
-		_openDoorState[s1].block = block;
-		_openDoorState[s1].state = openClose;
-		_openDoorState[s1].wall = c;
-
-		flg = (-openClose == 1) ? 0x10 : (-openClose == -1 ? 0x20 : 0);
-
-		if (_wllWallFlags[v] & flg) {
-			_levelBlockProperties[block].walls[c] += openClose;
-			_levelBlockProperties[block].walls[c ^ 2] += openClose;
-
-			int snd = (openClose == -1) ? 32 : 31;
-
-			snd_processEnvironmentalSoundEffect(snd, block);
-			if (!checkSceneUpdateNeed(block))
-				updateEnvironmentalSfx(0);
-		}
-
-		enableTimer(0);
-
-	} else {
-		while (!(flg & _wllWallFlags[v]))
-			v += openClose;
-
-		_levelBlockProperties[block].walls[c] = _levelBlockProperties[block].walls[c ^ 2] = v;
-		checkSceneUpdateNeed(block);
-	}
-}
-
-void LoLEngine::completeDoorOperations() {
-	for (int i = 0; i < 3; i++) {
-		if (!_openDoorState[i].block)
-			continue;
-
-		uint16 b = _openDoorState[i].block;
-
-		do {
-			_levelBlockProperties[b].walls[_openDoorState[i].wall] += _openDoorState[i].state;
-			_levelBlockProperties[b].walls[_openDoorState[i].wall ^ 2] += _openDoorState[i].state;
-		} while	(!(_wllWallFlags[_levelBlockProperties[b].walls[_openDoorState[i].wall]] & 0x30));
-
-		_openDoorState[i].block = 0;
-	}
 }
 
 void LoLEngine::movePartySmoothScrollBlocked(int speed) {
@@ -1447,7 +1243,7 @@ void LoLEngine::setWallType(int block, int wall, int val) {
 	if (wall == -1) {
 		for (int i = 0; i < 4; i++)
 			_levelBlockProperties[block].walls[i] = val;
-		if (_wllBuffer4[val] == 17) {
+		if (_wllAutomapData[val] == 17) {
 			_levelBlockProperties[block].flags &= 0xef;
 			_levelBlockProperties[block].flags |= 0x20;
 		} else {
@@ -1603,334 +1399,20 @@ void LoLEngine::setDefaultButtonState() {
 	_lampStatusSuspended = false;
 }
 
-void LoLEngine::generateBlockDrawingBuffer() {
-	_sceneDrawVarDown = _dscBlockMap[_currentDirection];
-	_sceneDrawVarRight = _dscBlockMap[_currentDirection + 4];
-	_sceneDrawVarLeft = _dscBlockMap[_currentDirection + 8];
-
-	/*******************************************
-	*             _visibleBlocks map           *
-	*                                          *
-	*     |     |     |     |     |     |      *
-	*  00 |  01 |  02 |  03 |  04 |  05 |  06  *
-	* ____|_____|_____|_____|_____|_____|_____ *
-	*     |     |     |     |     |     |      *
-	*     |  07 |  08 |  09 |  10 |  11 |      *
-	*     |_____|_____|_____|_____|_____|      *
-	*           |     |     |     |            *
-	*           |  12 |  13 |  14 |            *
-	*           |_____|_____|_____|            *
-	*                 |     |                  *
-	*              15 |  16 |  17              *
-	*                 | (P) |                  *
-	********************************************/
-
-	memset(_blockDrawingBuffer, 0, 660 * sizeof(uint16));
-
-	_wllProcessFlag = ((_currentBlock >> 5) + (_currentBlock & 0x1f) + _currentDirection) & 1;
-
-	if (_wllProcessFlag) // floor and ceiling
-		generateVmpTileDataFlipped(0, 15, 1, -330, 22, 15);
-	else
-		generateVmpTileData(0, 15, 1, -330, 22, 15);
-
-	assignVisibleBlocks(_currentBlock, _currentDirection);
-
-	uint8 t = _visibleBlocks[0]->walls[_sceneDrawVarRight];
-	if (t)
-		generateVmpTileData(-2, 3, t, 102, 3, 5);
-
-	t = _visibleBlocks[6]->walls[_sceneDrawVarLeft];
-	if (t)
-		generateVmpTileDataFlipped(21, 3, t, 102, 3, 5);
-
-	t = _visibleBlocks[1]->walls[_sceneDrawVarRight];
-	uint8 t2 = _visibleBlocks[2]->walls[_sceneDrawVarDown];
-
-	if (hasWall(t) && !(_wllWallFlags[t2] & 8))
-		generateVmpTileData(2, 3, t, 102, 3, 5);
-	else if (t && (_wllWallFlags[t2] & 8))
-		generateVmpTileData(2, 3, t2, 102, 3, 5);
-
-	t = _visibleBlocks[5]->walls[_sceneDrawVarLeft];
-	t2 = _visibleBlocks[4]->walls[_sceneDrawVarDown];
-
-	if (hasWall(t) && !(_wllWallFlags[t2] & 8))
-		generateVmpTileDataFlipped(17, 3, t, 102, 3, 5);
-	else if (t && (_wllWallFlags[t2] & 8))
-		generateVmpTileDataFlipped(17, 3, t2, 102, 3, 5);
-
-	t = _visibleBlocks[2]->walls[_sceneDrawVarRight];
-	if (t)
-		generateVmpTileData(8, 3, t, 97, 1, 5);
-
-	t = _visibleBlocks[4]->walls[_sceneDrawVarLeft];
-	if (t)
-		generateVmpTileDataFlipped(13, 3, t, 97, 1, 5);
-
-	t = _visibleBlocks[1]->walls[_sceneDrawVarDown];
-	if (hasWall(t))
-		generateVmpTileData(-4, 3, t, 129, 6, 5);
-
-	t = _visibleBlocks[5]->walls[_sceneDrawVarDown];
-	if (hasWall(t))
-		generateVmpTileData(20, 3, t, 129, 6, 5);
-
-	t = _visibleBlocks[2]->walls[_sceneDrawVarDown];
-	if (hasWall(t))
-		generateVmpTileData(2, 3, t, 129, 6, 5);
-
-	t = _visibleBlocks[4]->walls[_sceneDrawVarDown];
-	if (hasWall(t))
-		generateVmpTileData(14, 3, t, 129, 6, 5);
-
-	t = _visibleBlocks[3]->walls[_sceneDrawVarDown];
-	if (t)
-		generateVmpTileData(8, 3, t, 129, 6, 5);
-
-	t = _visibleBlocks[7]->walls[_sceneDrawVarRight];
-	if (t)
-		generateVmpTileData(0, 3, t, 117, 2, 6);
-
-	t = _visibleBlocks[11]->walls[_sceneDrawVarLeft];
-	if (t)
-		generateVmpTileDataFlipped(20, 3, t, 117, 2, 6);
-
-	t = _visibleBlocks[8]->walls[_sceneDrawVarRight];
-	if (t)
-		generateVmpTileData(6, 2, t, 81, 2, 8);
-
-	t = _visibleBlocks[10]->walls[_sceneDrawVarLeft];
-	if (t)
-		generateVmpTileDataFlipped(14, 2, t, 81, 2, 8);
-
-	t = _visibleBlocks[8]->walls[_sceneDrawVarDown];
-	if (hasWall(t))
-		generateVmpTileData(-4, 2, t, 159, 10, 8);
-
-	t = _visibleBlocks[10]->walls[_sceneDrawVarDown];
-	if (hasWall(t))
-		generateVmpTileData(16, 2, t, 159, 10, 8);
-
-	t = _visibleBlocks[9]->walls[_sceneDrawVarDown];
-	if (t)
-		generateVmpTileData(6, 2, t, 159, 10, 8);
-
-	t = _visibleBlocks[12]->walls[_sceneDrawVarRight];
-	if (t)
-		generateVmpTileData(3, 1, t, 45, 3, 12);
-
-	t = _visibleBlocks[14]->walls[_sceneDrawVarLeft];
-	if (t)
-		generateVmpTileDataFlipped(16, 1, t, 45, 3, 12);
-
-	t = _visibleBlocks[12]->walls[_sceneDrawVarDown];
-	if (!(_wllWallFlags[t] & 8))
-		generateVmpTileData(-13, 1, t, 239, 16, 12);
-
-	t = _visibleBlocks[14]->walls[_sceneDrawVarDown];
-	if (!(_wllWallFlags[t] & 8))
-		generateVmpTileData(19, 1, t, 239, 16, 12);
-
-	t = _visibleBlocks[13]->walls[_sceneDrawVarDown];
-	if (t)
-		generateVmpTileData(3, 1, t, 239, 16, 12);
-
-	t = _visibleBlocks[15]->walls[_sceneDrawVarRight];
-	t2 = _visibleBlocks[17]->walls[_sceneDrawVarLeft];
-	if (t)
-		generateVmpTileData(0, 0, t, 0, 3, 15);
-	if (t2)
-		generateVmpTileDataFlipped(19, 0, t2, 0, 3, 15);
-}
-
-void LoLEngine::generateVmpTileData(int16 startBlockX, uint8 startBlockY, uint8 vmpMapIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY) {
-	if (!_wllVmpMap[vmpMapIndex])
-		return;
-
-	uint16 *vmp = &_vmpPtr[(_wllVmpMap[vmpMapIndex] - 1) * 431 + vmpOffset + 330];
-
-	for (int i = 0; i < numBlocksY; i++) {
-		uint16 *bl = &_blockDrawingBuffer[(startBlockY + i) * 22 + startBlockX];
-		for (int ii = 0; ii < numBlocksX; ii++) {
-			if ((startBlockX + ii >= 0) && (startBlockX + ii < 22) && *vmp)
-				*bl = *vmp;
-			bl++;
-			vmp++;
-		}
-	}
-}
-
-void LoLEngine::generateVmpTileDataFlipped(int16 startBlockX, uint8 startBlockY, uint8 vmpMapIndex, int16 vmpOffset, uint8 numBlocksX, uint8 numBlocksY) {
-	if (!_wllVmpMap[vmpMapIndex])
-		return;
-
-	uint16 *vmp = &_vmpPtr[(_wllVmpMap[vmpMapIndex] - 1) * 431 + vmpOffset + 330];
-
-	for (int i = 0; i < numBlocksY; i++) {
-		for (int ii = 0; ii < numBlocksX; ii++) {
-			if ((startBlockX + ii) < 0 || (startBlockX + ii) > 21)
-				continue;
-
-			uint16 v = vmp[i * numBlocksX + (numBlocksX - 1 - ii)];
-			if (!v)
-				continue;
-
-			if (v & 0x4000)
-				v -= 0x4000;
-			else
-				v |= 0x4000;
-
-			_blockDrawingBuffer[(startBlockY + i) * 22 + startBlockX + ii] = v;
-		}
-	}
-}
-
-bool LoLEngine::hasWall(int index) {
-	if (!index || (_wllWallFlags[index] & 8))
-		return false;
-	return true;
-}
-
-void LoLEngine::assignVisibleBlocks(int block, int direction) {
-	for (int i = 0; i < 18; i++) {
-		uint16 t = (block + _dscBlockIndex[direction * 18 + i]) & 0x3ff;
-		_visibleBlockIndex[i] = t;
-
-		_visibleBlocks[i] = &_levelBlockProperties[t];
-		_lvlShapeLeftRight[i] = _lvlShapeLeftRight[18 + i] = -1;
-	}
-}
-
-void LoLEngine::drawVcnBlocks() {
-	uint8 *d = _sceneWindowBuffer;
-	uint16 *bdb = _blockDrawingBuffer;
-
-	for (int y = 0; y < 15; y++) {
-		for (int x = 0; x < 22; x++) {
-			bool horizontalFlip = false;
-			int remainder = 0;
-
-			uint16 vcnOffset = *bdb++;
-
-			if (vcnOffset & 0x8000) {
-				// this renders a wall block over the transparent pixels of a floor/ceiling block
-				remainder = vcnOffset - 0x8000;
-				vcnOffset = 0;
-			}
-
-			if (vcnOffset & 0x4000) {
-				horizontalFlip = true;
-				vcnOffset &= 0x3fff;
-			}
-
-			uint8 *src = 0;
-			if (vcnOffset) {
-				src = &_vcnBlocks[vcnOffset << 5];
-			} else {
-				// floor/ceiling blocks
-				vcnOffset = bdb[329];
-				if (vcnOffset & 0x4000) {
-					horizontalFlip = true;
-					vcnOffset &= 0x3fff;
-				}
-
-				src = (_vcfBlocks ? _vcfBlocks : _vcnBlocks) + (vcnOffset << 5);
-			}
-
-			uint8 shift = _vcnShift ? _vcnShift[vcnOffset] : _blockBrightness;
-
-			if (horizontalFlip) {
-				for (int blockY = 0; blockY < 8; blockY++) {
-					src += 3;
-					for (int blockX = 0; blockX < 4; blockX++) {
-						uint8 t = *src--;
-						*d++ = _vcnExpTable[(t & 0x0f) | shift];
-						*d++ = _vcnExpTable[(t >> 4) | shift];
-					}
-					src += 5;
-					d += 168;
-				}
-			} else {
-				for (int blockY = 0; blockY < 8; blockY++) {
-					for (int blockX = 0; blockX < 4; blockX++) {
-						uint8 t = *src++;
-						*d++ = _vcnExpTable[(t >> 4) | shift];
-						*d++ = _vcnExpTable[(t & 0x0f) | shift];
-					}
-					d += 168;
-				}
-			}
-			d -= 1400;
-
-			if (remainder) {
-				d -= 8;
-				horizontalFlip = false;
-
-				if (remainder & 0x4000) {
-					remainder &= 0x3fff;
-					horizontalFlip = true;
-				}
-
-				shift = _vcnShift ? _vcnShift[remainder] : _blockBrightness;
-				src = &_vcnBlocks[remainder << 5];
-
-				if (horizontalFlip) {
-					for (int blockY = 0; blockY < 8; blockY++) {
-						src += 3;
-						for (int blockX = 0; blockX < 4; blockX++) {
-							uint8 t = *src--;
-							uint8 h = _vcnExpTable[(t & 0x0f) | shift];
-							uint8 l = _vcnExpTable[(t >> 4) | shift];
-							if (h)
-								*d = h;
-							d++;
-							if (l)
-								*d = l;
-							d++;
-						}
-						src += 5;
-						d += 168;
-					}
-				} else {
-					for (int blockY = 0; blockY < 8; blockY++) {
-						for (int blockX = 0; blockX < 4; blockX++) {
-							uint8 t = *src++;
-							uint8 h = _vcnExpTable[(t >> 4) | shift];
-							uint8 l = _vcnExpTable[(t & 0x0f) | shift];
-							if (h)
-								*d = h;
-							d++;
-							if (l)
-								*d = l;
-							d++;
-						}
-						d += 168;
-					}
-				}
-				d -= 1400;
-			}
-		}
-		d += 1232;
-	}
-
-	_screen->copyBlockToPage(_sceneDrawPage1, 112, 0, 176, 120, _sceneWindowBuffer);
-}
-
-void LoLEngine::drawSceneShapes() {
+void LoLEngine::drawSceneShapes(int) {
 	for (int i = 0; i < 18; i++) {
 		uint8 t = _dscTileIndex[i];
 		uint8 s = _visibleBlocks[t]->walls[_sceneDrawVarDown];
 
-		int16 x1 = 0;
-		int16 x2 = 0;
+		_shpDmX1 = 0;
+		_shpDmX2 = 0;
 
 		int16 dimY1 = 0;
 		int16 dimY2 = 0;
 
-		setLevelShapesDim(t, x1, x2, 13);
+		setLevelShapesDim(t, _shpDmX1, _shpDmX2, _sceneShpDim);
 
-		if (x2 <= x1)
+		if (_shpDmX2 <= _shpDmX1)
 			continue;
 
 		drawDecorations(t);
@@ -1954,102 +1436,10 @@ void LoLEngine::drawSceneShapes() {
 		if (v > 80)
 			v = 80;
 
-		scaleLevelShapesDim(t, dimY1, dimY2, 13);
+		setDoorShapeDim(t, dimY1, dimY2, _sceneShpDim);
 		drawDoor(_doorShapes[(s < 23 ? _dscDoorShpIndex[s] : 0)], 0, t, 10, 0, -v, 2);
-		setLevelShapesDim(t, dimY1, dimY2, 13);
+		setLevelShapesDim(t, dimY1, dimY2, _sceneShpDim);
 	}
-}
-
-void LoLEngine::setLevelShapesDim(int index, int16 &x1, int16 &x2, int dim) {
-	if (_lvlShapeLeftRight[index << 1] == -1) {
-		x1 = 0;
-		x2 = 22;
-
-		int16 y1 = 0;
-		int16 y2 = 120;
-
-		int m = index * 18;
-
-		for (int i = 0; i < 18; i++) {
-			uint8 d = _visibleBlocks[i]->walls[_sceneDrawVarDown];
-			uint8 a = _wllWallFlags[d];
-
-			if (a & 8) {
-				int t = _dscDim2[(m + i) << 1];
-
-				if (t > x1) {
-					x1 = t;
-					if (!(a & 0x10))
-						scaleLevelShapesDim(index, y1, y2, -1);
-				}
-
-				t = _dscDim2[((m + i) << 1) + 1];
-
-				if (t < x2) {
-					x2 = t;
-					if (!(a & 0x10))
-						scaleLevelShapesDim(index, y1, y2, -1);
-				}
-			} else {
-				int t = _dscDim1[m + i];
-
-				if (!_wllVmpMap[d] || t == -40)
-					continue;
-
-				if (t == -41) {
-					x1 = 22;
-					x2 = 0;
-					break;
-				}
-
-				if (t > 0 && x2 > t)
-					x2 = t;
-
-				if (t < 0 && x1 < -t)
-					x1 = -t;
-			}
-
-			if (x2 < x1)
-				break;
-		}
-
-		x1 += 14;
-		x2 += 14;
-
-		_lvlShapeTop[index] = y1;
-		_lvlShapeBottom[index] = y2;
-		_lvlShapeLeftRight[index << 1] = x1;
-		_lvlShapeLeftRight[(index << 1) + 1] = x2;
-	} else {
-		x1 = _lvlShapeLeftRight[index << 1];
-		x2 = _lvlShapeLeftRight[(index << 1) + 1];
-	}
-
-	drawLevelModifyScreenDim(dim, x1, 0, x2, 15);
-}
-
-void LoLEngine::scaleLevelShapesDim(int index, int16 &y1, int16 &y2, int dim) {
-	static const int8 dscY1[] = { 0x1E, 0x18, 0x10, 0x00 };
-	static const int8 dscY2[] = { 0x3B, 0x47, 0x56, 0x78 };
-
-	uint8 a = _dscDimMap[index];
-
-	if (dim == -1 && a != 3)
-		a++;
-
-	y1 = dscY1[a];
-	y2 = dscY2[a];
-
-	if (dim == -1)
-		return;
-
-	const ScreenDim *cDim = _screen->getScreenDim(dim);
-
-	_screen->modifyScreenDim(dim, cDim->sx, y1, cDim->w, y2 - y1);
-}
-
-void LoLEngine::drawLevelModifyScreenDim(int dim, int16 x1, int16 y1, int16 x2, int16 y2) {
-	_screen->modifyScreenDim(dim, x1, y1 << 3, x2 - x1, (y2 - y1) << 3);
 }
 
 void LoLEngine::drawDecorations(int index) {
@@ -2066,7 +1456,7 @@ void LoLEngine::drawDecorations(int index) {
 		if (!scaleW || !scaleH)
 			continue;
 
-		uint8 d = (_currentDirection + _dscUnk1[s]) & 3;
+		uint8 d = (_currentDirection + _dscWalls[s]) & 3;
 		int8 l = _wllShapeMap[_visibleBlocks[index]->walls[d]];
 
 		uint8 *shapeData = 0;
@@ -2076,21 +1466,21 @@ void LoLEngine::drawDecorations(int index) {
 		int flags = 0;
 
 		while (l > 0) {
-			if ((_levelShapeProperties[l].flags & 8) && index != 3 && index != 9 && index != 13) {
-				l = _levelShapeProperties[l].next;
+			if ((_levelDecorationProperties[l].flags & 8) && index != 3 && index != 9 && index != 13) {
+				l = _levelDecorationProperties[l].next;
 				continue;
 			}
 
-			if (_dscOvlMap[shpIx] == 1 && ((_levelShapeProperties[l].flags & 2) || ((_levelShapeProperties[l].flags & 4) && _wllProcessFlag)))
+			if (_dscOvlMap[shpIx] == 1 && ((_levelDecorationProperties[l].flags & 2) || ((_levelDecorationProperties[l].flags & 4) && _wllProcessFlag)))
 				ix = -ix;
 
 			int xOffs = 0;
 			int yOffs = 0;
 			uint8 *ovl = 0;
 
-			if (_levelShapeProperties[l].scaleFlag[shpIx] & 1) {
-				xOffs = _levelShapeProperties[l].shapeX[shpIx];
-				yOffs = _levelShapeProperties[l].shapeY[shpIx];
+			if (_levelDecorationProperties[l].scaleFlag[shpIx] & 1) {
+				xOffs = _levelDecorationProperties[l].shapeX[shpIx];
+				yOffs = _levelDecorationProperties[l].shapeY[shpIx];
 				shpIx = _dscOvlMap[shpIx];
 				int ov = ovlIndex;
 				if (_flags.use16ColorMode) {
@@ -2101,7 +1491,7 @@ void LoLEngine::drawDecorations(int index) {
 						ov = 0;
 				}
 				ovl = _screen->getLevelOverlay(ov);
-			} else if (_levelShapeProperties[l].shapeIndex[shpIx] != 0xffff) {
+			} else if (_levelDecorationProperties[l].shapeIndex[shpIx] != 0xffff) {
 				scaleW = scaleH = 0x100;
 				int ov = 7;
 				if (_flags.use16ColorMode) {
@@ -2114,34 +1504,34 @@ void LoLEngine::drawDecorations(int index) {
 				ovl = _screen->getLevelOverlay(ov);
 			}
 
-			if (_levelShapeProperties[l].shapeIndex[shpIx] != 0xffff) {
-				shapeData = _levelShapes[_levelShapeProperties[l].shapeIndex[shpIx]];
+			if (_levelDecorationProperties[l].shapeIndex[shpIx] != 0xffff) {
+				shapeData = _levelDecorationShapes[_levelDecorationProperties[l].shapeIndex[shpIx]];
 				if (shapeData) {
 					if (ix < 0) {
-						x = _dscShapeX[s] + xOffs + ((_levelShapeProperties[l].shapeX[shpIx] * scaleW) >> 8);
+						x = _dscShapeX[s] + xOffs + ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8);
 						if (ix == _dscShapeIndex[s]) {
-							x = _dscShapeX[s] - ((_levelShapeProperties[l].shapeX[shpIx] * scaleW) >> 8) -
-								_screen->getShapeScaledWidth(shapeData, scaleW) - xOffs;
+							x = _dscShapeX[s] - ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8) -
+							     _screen->getShapeScaledWidth(shapeData, scaleW) - xOffs;
 						}
 						flags = 0x105;
 					} else {
-						x = _dscShapeX[s] + xOffs + ((_levelShapeProperties[l].shapeX[shpIx] * scaleW) >> 8);
+						x = _dscShapeX[s] + xOffs + ((_levelDecorationProperties[l].shapeX[shpIx] * scaleW) >> 8);
 						flags = 0x104;
 					}
 
-					y = _dscShapeY[s] + yOffs + ((_levelShapeProperties[l].shapeY[shpIx] * scaleH) >> 8);
-					_screen->drawShape(_sceneDrawPage1, shapeData, x + 112, y, 13, flags, ovl, 1, scaleW, scaleH);
+					y = _dscShapeY[s] + yOffs + ((_levelDecorationProperties[l].shapeY[shpIx] * scaleH) >> 8);
+					_screen->drawShape(_sceneDrawPage1, shapeData, x + 112, y, _sceneShpDim, flags, ovl, 1, scaleW, scaleH);
 
-					if ((_levelShapeProperties[l].flags & 1) && shpIx < 4) {
+					if ((_levelDecorationProperties[l].flags & 1) && shpIx < 4) {
 						//draw shadow
 						x += (_screen->getShapeScaledWidth(shapeData, scaleW));
 						flags ^= 1;
-						_screen->drawShape(_sceneDrawPage1, shapeData, x + 112, y, 13, flags, ovl, 1, scaleW, scaleH);
+						_screen->drawShape(_sceneDrawPage1, shapeData, x + 112, y, _sceneShpDim, flags, ovl, 1, scaleW, scaleH);
 					}
 				}
 			}
 
-			l = _levelShapeProperties[l].next;
+			l = _levelDecorationProperties[l].next;
 			shpIx = (_dscShapeIndex[s] < 0) ? -_dscShapeIndex[s] : _dscShapeIndex[s];
 		}
 	}

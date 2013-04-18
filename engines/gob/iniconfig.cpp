@@ -90,7 +90,7 @@ bool INIConfig::openConfig(const Common::String &file, Config &config) {
 
 bool INIConfig::createConfig(const Common::String &file, Config &config) {
 	config.config  = new Common::ConfigFile();
-	config.created = true;;
+	config.created = true;
 
 	_configs.setVal(file, config);
 

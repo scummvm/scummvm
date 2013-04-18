@@ -251,7 +251,7 @@ void Draw_v1::printTotText(int16 id) {
 			cmd = ptrEnd[17] & 0x7F;
 			if (cmd == 0) {
 				val = READ_LE_UINT16(ptrEnd + 18) * 4;
-				sprintf(buf, "%d", VAR_OFFSET(val));
+				sprintf(buf, "%d", (int32)VAR_OFFSET(val));
 			} else if (cmd == 1) {
 				val = READ_LE_UINT16(ptrEnd + 18) * 4;
 
@@ -259,7 +259,7 @@ void Draw_v1::printTotText(int16 id) {
 			} else {
 				val = READ_LE_UINT16(ptrEnd + 18) * 4;
 
-				sprintf(buf, "%d", VAR_OFFSET(val));
+				sprintf(buf, "%d", (int32)VAR_OFFSET(val));
 				if (buf[0] == '-') {
 					while (strlen(buf) - 1 < (uint32)ptrEnd[17]) {
 						_vm->_util->insertStr("0", buf, 1);

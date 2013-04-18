@@ -1478,7 +1478,7 @@ void Scene4025::Hole::doAction(int action) {
 
 void Scene4025::Peg::synchronize(Serializer &s) {
 	SceneObject::synchronize(s);
-	s.syncAsSint16LE(_field88);
+	s.syncAsSint16LE(_pegId);
 	s.syncAsSint16LE(_armStrip);
 }
 
@@ -1513,35 +1513,35 @@ void Scene4025::postInit(SceneObjectList *OwnerList) {
 	_pegPtr = _pegPtr2 = NULL;
 
 	_peg1.postInit();
-	_peg1._field88 = 1;
+	_peg1._pegId = 1;
 	_peg1.setVisage(4025);
 	_peg1.setStrip(2);
 	_peg1.setFrame(1);
 	_peg1.setPosition(Common::Point(203, 61));
 
 	_peg2.postInit();
-	_peg2._field88 = 4;
+	_peg2._pegId = 4;
 	_peg2.setVisage(4025);
 	_peg2.setStrip(2);
 	_peg2.setFrame(2);
 	_peg2.setPosition(Common::Point(195, 57));
 
 	_peg3.postInit();
-	_peg3._field88 = 0;
+	_peg3._pegId = 0;
 	_peg3.setVisage(4025);
 	_peg3.setStrip(2);
 	_peg3.setFrame(3);
 	_peg3.setPosition(Common::Point(202, 66));
 
 	_peg4.postInit();
-	_peg4._field88 = 3;
+	_peg4._pegId = 3;
 	_peg4.setVisage(4025);
 	_peg4.setStrip(2);
 	_peg4.setFrame(4);
 	_peg4.setPosition(Common::Point(194, 68));
 
 	_peg5.postInit();
-	_peg5._field88 = 2;
+	_peg5._pegId = 2;
 	_peg5.setVisage(4025);
 	_peg5.setStrip(1);
 	_peg5.setFrame(5);
@@ -2173,7 +2173,7 @@ void Scene4050::Action4::signal() {
 	case 5:
 		scene->_hotspot16.setStrip2(4);
 		scene->_hotspot16.setFrame(1);
-		scene->_hotspot16.animate(ANIM_MODE_4, 4, 1, this);;
+		scene->_hotspot16.animate(ANIM_MODE_4, 4, 1, this);
 		break;
 	case 6:
 		scene->_hotspot16.animate(ANIM_MODE_5, NULL);
@@ -2810,7 +2810,7 @@ void Scene4150::Action1::signal() {
 	case 4: {
 		for (int idx = 100; idx >= 0; idx -= 5) {
 			g_globals->_scenePalette.fade(adjustData, false, idx);
-			g_system->updateScreen();
+			GLOBALS._screenSurface.updateScreen();
 			g_system->delayMillis(10);
 		}
 
@@ -2838,7 +2838,7 @@ void Scene4150::Action1::signal() {
 	case 7:
 		for (int idx = 100; idx >= 0; idx -= 5) {
 			g_globals->_scenePalette.fade(adjustData, false, idx);
-			g_system->updateScreen();
+			GLOBALS._screenSurface.updateScreen();
 			g_system->delayMillis(10);
 		}
 
@@ -4311,7 +4311,7 @@ void Scene4301::Action1::signal() {
 		setDelay(20);
 		break;
 	case 21:
-		scene->_field68E = true;
+		scene->_puzzleDone = true;
 		remove();
 		break;
 	}
@@ -4412,7 +4412,7 @@ void Scene4301::postInit(SceneObjectList *OwnerList) {
 	Scene::postInit();
 	setZoomPercents(0, 100, 200, 100);
 
-	_field68E = false;
+	_puzzleDone = false;
 	RING_INVENTORY._stasisBox2._sceneNumber = 1;
 	_hotspot4.setDetails(97, 76, 127, 102, 4300, 5, 6);
 
@@ -4432,8 +4432,8 @@ void Scene4301::postInit(SceneObjectList *OwnerList) {
 void Scene4301::dispatch() {
 	if (_action) {
 		_action->dispatch();
-	} else if (_field68E) {
-		_field68E = 0;
+	} else if (_puzzleDone) {
+		_puzzleDone = false;
 		g_globals->clearFlag(50);
 		g_globals->_sceneManager._fadeMode = FADEMODE_NONE;
 		g_globals->_sceneManager.setNewScene(4300);

@@ -29,7 +29,7 @@
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
-#define CURRENT_SAVE_VERSION 16
+#define CURRENT_SAVE_VERSION 17
 
 #define GF_FLOPPY  (1 <<  0)
 #define GF_TALKIE  (1 <<  1)
@@ -44,22 +44,25 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 	header.flags = 0;
 	header.thumbnail = 0;
 
-	if (type == MKTAG('K','Y','R','A') || type == MKTAG('A','R','Y','K')) { // old Kyra1 header ID
+	if (type == MKTAG('K', 'Y', 'R', 'A') || type == MKTAG('A', 'R', 'Y', 'K')) { // old Kyra1 header ID
 		header.gameID = GI_KYRA1;
 		header.oldHeader = true;
-	} else if (type == MKTAG('H','O','F','S')) { // old Kyra2 header ID
+	} else if (type == MKTAG('H', 'O', 'F', 'S')) { // old Kyra2 header ID
 		header.gameID = GI_KYRA2;
 		header.oldHeader = true;
-	} else if (type == MKTAG('W','W','S','V')) {
+	} else if (type == MKTAG('W', 'W', 'S', 'V')) {
 		header.gameID = in->readByte();
 	} else {
 		// try checking for original save header
-		const int descriptionSize[2] = { 30, 80 };
+		const int descriptionSize[3] = { 30, 80, 60 };
 		char descriptionBuffer[81];
 
 		bool saveOk = false;
 
 		for (uint i = 0; i < ARRAYSIZE(descriptionSize) && !saveOk; ++i) {
+			if (in->size() < descriptionSize[i] + 6)
+				continue;
+
 			in->seek(0, SEEK_SET);
 			in->read(descriptionBuffer, descriptionSize[i]);
 			descriptionBuffer[descriptionSize[i]] = 0;
@@ -68,15 +71,25 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 
 			type = in->readUint32BE();
 			header.version = in->readUint16LE();
-			if (type == MKTAG('M','B','L','3') && header.version == 100) {
+			if (type == MKTAG('M', 'B', 'L', '3') && header.version == 100) {
 				saveOk = true;
 				header.description = descriptionBuffer;
 				header.gameID = GI_KYRA2;
 				break;
-			} else if (type == MKTAG('M','B','L','4') && header.version == 102) {
+			} else if (type == MKTAG('M', 'B', 'L', '4') && header.version == 102) {
 				saveOk = true;
 				header.description = descriptionBuffer;
 				header.gameID = GI_KYRA3;
+				break;
+			} else if (type == MKTAG('C','D','0','4')) {
+				header.version = in->readUint32BE();
+				// We don't check the minor version, since the original doesn't do that either and it isn't required.
+				if (header.version != MKTAG(' ','C','D','1'))
+					continue;
+				saveOk = true;
+				header.description = descriptionBuffer;
+				header.gameID = GI_LOL;
+				in->seek(6, SEEK_CUR);
 				break;
 			}
 		}
@@ -91,7 +104,7 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 	}
 
 	header.version = in->readUint32BE();
-	if (header.version > CURRENT_SAVE_VERSION || (header.oldHeader && header.version > 8) || (type == MKTAG('A','R','Y','K') && header.version > 3))
+	if (header.version > CURRENT_SAVE_VERSION || (header.oldHeader && header.version > 8) || (type == MKTAG('A', 'R', 'Y', 'K') && header.version > 3))
 		return kRSHEInvalidVersion;
 
 	// Versions prior to 9 are using a fixed length description field
@@ -122,7 +135,7 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 	return ((in->err() || in->eos()) ? kRSHEIoError : kRSHENoError);
 }
 
-Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filename, SaveHeader &header) {
+Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filename, SaveHeader &header, bool checkID) {
 	Common::SeekableReadStream *in = 0;
 	if (!(in = _saveFileMan->openForLoading(filename)))
 		return 0;
@@ -142,7 +155,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 
 	if (!header.originalSave) {
 		if (!header.oldHeader) {
-			if (header.gameID != _flags.gameID) {
+			if (header.gameID != _flags.gameID && checkID) {
 				warning("Trying to load game state from other game (save game: %u, running game: %u)", header.gameID, _flags.gameID);
 				delete in;
 				return 0;
@@ -182,10 +195,10 @@ Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, con
 	}
 
 	// Savegame version
-	out->writeUint32BE(MKTAG('W','W','S','V'));
+	out->writeUint32BE(MKTAG('W', 'W', 'S', 'V'));
 	out->writeByte(_flags.gameID);
 	out->writeUint32BE(CURRENT_SAVE_VERSION);
-	out->write(saveName, strlen(saveName)+1);
+	out->write(saveName, strlen(saveName) + 1);
 	if (_flags.isTalkie)
 		out->writeUint32BE(GF_TALKIE);
 	else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)

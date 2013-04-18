@@ -62,9 +62,20 @@ Sound::~Sound() {
 	_mixer->stopAll();
 	for (uint8 cnt = 0; cnt < _endOfQueue; cnt++)
 		if (_fxQueue[cnt].delay == 0)
-			_resMan->resClose(_fxList[_fxQueue[cnt].id].sampleId);
+			_resMan->resClose(getSampleId(_fxQueue[cnt].id));
 	_endOfQueue = 0;
 	closeCowSystem();
+}
+
+uint32 Sound::getSampleId(int32 fxNo) {
+	byte cluster = _fxList[fxNo].sampleId.cluster;
+	byte id;
+	if (SwordEngine::_systemVars.isDemo && SwordEngine::_systemVars.platform == Common::kPlatformWindows) {
+		id = _fxList[fxNo].sampleId.idWinDemo;
+	} else {
+		id = _fxList[fxNo].sampleId.idStd;
+	}
+	return (cluster << 24) | id;
 }
 
 void Sound::checkSpeechFileEndianness() {
@@ -154,14 +165,18 @@ int Sound::addToQueue(int32 fxNo) {
 			warning("Sound queue overflow");
 			return 0;
 		}
-		_resMan->resOpen(_fxList[fxNo].sampleId);
-		_fxQueue[_endOfQueue].id = fxNo;
-		if (_fxList[fxNo].type == FX_SPOT)
-			_fxQueue[_endOfQueue].delay = _fxList[fxNo].delay + 1;
-		else
-			_fxQueue[_endOfQueue].delay = 1;
-		_endOfQueue++;
-		return 1;
+		uint32 sampleId = getSampleId(fxNo);
+		if ((sampleId & 0xFF) != 0xFF) {
+			_resMan->resOpen(sampleId);
+			_fxQueue[_endOfQueue].id = fxNo;
+			if (_fxList[fxNo].type == FX_SPOT)
+				_fxQueue[_endOfQueue].delay = _fxList[fxNo].delay + 1;
+			else
+				_fxQueue[_endOfQueue].delay = 1;
+			_endOfQueue++;
+			return 1;
+		}
+		return 0;
 	}
 	return 0;
 }
@@ -186,7 +201,7 @@ void Sound::engine() {
 				playSample(&_fxQueue[cnt2]);
 		} else {
 			if (!_mixer->isSoundHandleActive(_fxQueue[cnt2].handle)) { // sound finished
-				_resMan->resClose(_fxList[_fxQueue[cnt2].id].sampleId);
+				_resMan->resClose(getSampleId(_fxQueue[cnt2].id));
 				if (cnt2 != _endOfQueue - 1)
 					_fxQueue[cnt2] = _fxQueue[_endOfQueue - 1];
 				_endOfQueue--;
@@ -200,7 +215,7 @@ void Sound::fnStopFx(int32 fxNo) {
 	for (uint8 cnt = 0; cnt < _endOfQueue; cnt++)
 		if (_fxQueue[cnt].id == (uint32)fxNo) {
 			if (!_fxQueue[cnt].delay) // sound was started
-				_resMan->resClose(_fxList[_fxQueue[cnt].id].sampleId);
+				_resMan->resClose(getSampleId(_fxQueue[cnt].id));
 			if (cnt != _endOfQueue - 1)
 				_fxQueue[cnt] = _fxQueue[_endOfQueue - 1];
 			_endOfQueue--;
@@ -243,7 +258,7 @@ void Sound::quitScreen() {
 }
 
 void Sound::playSample(QueueElement *elem) {
-	uint8 *sampleData = (uint8 *)_resMan->fetchRes(_fxList[elem->id].sampleId);
+	uint8 *sampleData = (uint8 *)_resMan->fetchRes(getSampleId(elem->id));
 	for (uint16 cnt = 0; cnt < MAX_ROOMS_PER_FX; cnt++) {
 		if (_fxList[elem->id].roomVolList[cnt].roomNo) {
 			if ((_fxList[elem->id].roomVolList[cnt].roomNo == (int)Logic::_scriptVars[SCREEN]) ||

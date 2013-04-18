@@ -22,8 +22,8 @@
 
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
-#include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_graphics.h"
 #include "mohawk/myst_state.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
@@ -623,7 +623,7 @@ void Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, uint16 argc, uint
 		uint16 selectionPos = position * 1500 / 243;
 
 		VideoHandle handleMovie = _hologramSelection->playMovie();
-		_vm->_video->setVideoBounds(handleMovie, Audio::Timestamp(0, selectionPos, 600), Audio::Timestamp(0, selectionPos, 600));
+		_vm->_video->drawVideoFrame(handleMovie, Audio::Timestamp(0, selectionPos, 600));
 
 		_hologramDisplayPos = position * 1450 / 243 + 350;
 
@@ -631,7 +631,7 @@ void Stoneship::o_hologramSelectionMove(uint16 op, uint16 var, uint16 argc, uint
 		if (_hologramTurnedOn) {
 			_hologramDisplay->setBlocking(false);
 			VideoHandle displayMovie = _hologramDisplay->playMovie();
-			_vm->_video->setVideoBounds(displayMovie, Audio::Timestamp(0, _hologramDisplayPos, 600), Audio::Timestamp(0, _hologramDisplayPos, 600));
+			_vm->_video->drawVideoFrame(displayMovie, Audio::Timestamp(0, _hologramDisplayPos, 600));
 		}
 	}
 }
@@ -655,7 +655,7 @@ void Stoneship::o_compassButton(uint16 op, uint16 var, uint16 argc, uint16 *argv
 		_state.generatorPowerAvailable = 2;
 		_state.lightState = 0;
 		_state.generatorDepletionTime = 0;
-		_state.generatorDepletionTime = 0;
+		_state.generatorDuration = 0;
 
 		_batteryDepleting = false;
 	}

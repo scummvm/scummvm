@@ -355,17 +355,14 @@ void MidiParser_SCI::sendInitCommands() {
 		}
 	}
 
-	// Send a velocity off signal to all channels
-	for (int i = 0; i < 15; ++i) {
-		if (_channelUsed[i])
-			sendToDriver(0xB0 | i, 0x4E, 0);	// Reset velocity
-	}
-
-	// Center the pitch wheels and hold pedal in preparation for the next piece of music
+	// Reset all the parameters of the channels used by this song
 	for (int i = 0; i < 16; ++i) {
 		if (_channelUsed[i]) {
-			sendToDriver(0xE0 | i, 0, 0x40);	// Reset pitch wheel
-			sendToDriver(0xB0 | i, 0x40, 0);	// Reset hold pedal
+			sendToDriver(0xB0 | i, 0x07, 127);	// Reset volume to maximum
+			sendToDriver(0xB0 | i, 0x0A, 64);	// Reset panning to center
+			sendToDriver(0xB0 | i, 0x40, 0);	// Reset hold pedal to none
+			sendToDriver(0xB0 | i, 0x4E, 0);	// Reset velocity to none
+			sendToDriver(0xE0 | i,    0, 64);	// Reset pitch wheel to center
 		}
 	}
 }

@@ -238,8 +238,13 @@ void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty,
 
 int EditableWidget::getCaretOffset() const {
 	int caretpos = 0;
-	for (int i = 0; i < _caretPos; i++)
-		caretpos += g_gui.getCharWidth(_editString[i], _font);
+
+	uint last = 0;
+	for (int i = 0; i < _caretPos; ++i) {
+		const uint cur = _editString[i];
+		caretpos += g_gui.getCharWidth(cur, _font) + g_gui.getKerningOffset(last, cur, _font);
+		last = cur;
+	}
 
 	caretpos -= _editScrollOffset;
 
@@ -270,6 +275,8 @@ void EditableWidget::drawCaret(bool erase) {
 		if ((uint)_caretPos < _editString.size()) {
 			GUI::EditableWidget::String chr(_editString[_caretPos]);
 			int chrWidth = g_gui.getCharWidth(_editString[_caretPos], _font);
+			const uint last = (_caretPos > 0) ? _editString[_caretPos - 1] : 0;
+			x += g_gui.getKerningOffset(last, _editString[_caretPos], _font);
 			g_gui.theme()->drawText(Common::Rect(x, y, x + chrWidth, y + editRect.height() - 2), chr, _state, Graphics::kTextAlignLeft, _inversion, 0, false, _font);
 		}
 	}

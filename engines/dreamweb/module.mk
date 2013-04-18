@@ -5,14 +5,22 @@ MODULE_OBJS := \
 	console.o \
 	detection.o \
 	dreamweb.o \
-	dreamgen.o \
+	keypad.o \
+	monitor.o \
+	newplace.o \
 	object.o \
 	pathfind.o \
+	people.o \
 	print.o \
+	rain.o \
 	saveload.o \
+	sound.o \
 	sprite.o \
 	stubs.o \
+	talk.o \
+	titles.o \
 	use.o \
+	vgafades.o \
 	vgagrafx.o
 
 # This module can be built as a plugin

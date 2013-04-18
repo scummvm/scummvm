@@ -240,7 +240,7 @@ bool SeekableSubReadStream::seek(int32 offset, int whence) {
 	return ret;
 }
 
-uint32 SafeSubReadStream::read(void *dataPtr, uint32 dataSize) {
+uint32 SafeSeekableSubReadStream::read(void *dataPtr, uint32 dataSize) {
 	// Make sure the parent stream is at the right position
 	seek(0, SEEK_CUR);
 

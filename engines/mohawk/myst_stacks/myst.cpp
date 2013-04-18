@@ -22,8 +22,8 @@
 
 #include "mohawk/cursors.h"
 #include "mohawk/myst.h"
-#include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
+#include "mohawk/myst_graphics.h"
 #include "mohawk/myst_state.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
@@ -2138,7 +2138,7 @@ void Myst::rocketSliderMove() {
 }
 
 uint16 Myst::rocketSliderGetSound(uint16 pos) {
-	return (uint16)(9530 + (pos - 216) * 35.0 * 0.01639344262295082);
+	return (uint16)(9530 + (pos - 216) * 35.0 / 61.0);
 }
 
 void Myst::rocketCheckSolution() {
@@ -2978,15 +2978,17 @@ void Myst::clockReset() {
 }
 
 void Myst::clockResetWeight() {
-	// Set video bounds, weight going up
+	_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+
 	if (!(_vm->getFeatures() & GF_ME)) {
-		_clockWeightVideo = _vm->_video->playMovie(_vm->wrapMovieFilename("cl1wlfch", kMystStack) , 124, 0);
+		// Set video bounds, weight going up
 		_vm->_video->setVideoBounds(_clockWeightVideo,
 				Audio::Timestamp(0, 2214 * 2 - _clockWeightPosition, 600),
 				Audio::Timestamp(0, 2214 * 2, 600));
 	} else {
-		//FIXME: Needs QT backwards playing
+		//FIXME: Needs QT backwards playing, for now just display the weight up
 		warning("Weight going back up not implemented");
+		_vm->_video->drawVideoFrame(_clockWeightVideo, Audio::Timestamp(0, 0, 600));
 	}
 
 	// Reset position

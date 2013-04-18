@@ -69,7 +69,8 @@ protected:
 		int16 flags;
 	} _soundQue2[10];
 
-	BaseScummFile *_sfxFile;
+	Common::String _sfxFilename;
+	byte _sfxFileEncByte;
 	SoundMode _soundMode;
 	MP3OffsetTable *_offsetTable;	// For compressed audio
 	int _numSoundEffects;		// For compressed audio
@@ -126,7 +127,7 @@ public:
 	void saveLoadWithSerializer(Serializer *ser);
 
 protected:
-	BaseScummFile *openSfxFile();
+	void setupSfxFile();
 	bool isSfxFinished() const;
 	void processSfxQueues();
 

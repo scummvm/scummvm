@@ -45,7 +45,7 @@ public:
 	virtual ~Movie(void);
 
 	void init() const;
-	void play(Common::String video, int32 flags = 0);
+	void play(const Common::String &video, int32 flags = 0);
 	bool isPlaying() { return _playing; }
 
 protected:

@@ -28,9 +28,10 @@
 namespace Maemo {
 
 enum ModelType {
-	kModelTypeN800 = 1,
-	kModelTypeN810 = 2,
-	kModelTypeN900 = 4,
+	kModelType770 = 1 << 0,
+	kModelTypeN800 = 1 << 1,
+	kModelTypeN810 = 1 << 2,
+	kModelTypeN900 = 1 << 3,
 	kModelTypeInvalid = 0
 };
 
@@ -38,15 +39,13 @@ struct Model {
 	const char *hwId;
 	ModelType modelType;
 	const char *hwAlias;
-	bool hwKeyboard;
+	bool hasHwKeyboard;
+	bool hasMenuKey;
 };
 
-static const Model models[] = {
-	{"RX-34", kModelTypeN800, "N800", false},
-	{"RX-44", kModelTypeN810, "N810", true},
-	{"RX-48", kModelTypeN810, "N810W", true},
-	{"RX-51", kModelTypeN900, "N900", true},
-	{0, kModelTypeInvalid, 0, true}
+enum CustomEventType {
+	kEventClickMode = 1,
+	kEventInvalid = 0
 };
 
 } // namespace Maemo

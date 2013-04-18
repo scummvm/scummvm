@@ -49,7 +49,7 @@ struct TIMER {
 
 //----------------- LOCAL GLOBAL DATA --------------------
 
-static TIMER timers[MAX_TIMERS];	// FIXME: Avoid non-const global vars
+static TIMER g_timers[MAX_TIMERS];	// FIXME: Avoid non-const global vars
 
 
 //--------------------------------------------------------
@@ -72,7 +72,7 @@ uint32 DwGetCurrentTime() {
  */
 
 void RebootTimers() {
-	memset(timers, 0, sizeof(timers));
+	memset(g_timers, 0, sizeof(g_timers));
 }
 
 /**
@@ -80,11 +80,11 @@ void RebootTimers() {
  */
 void syncTimerInfo(Common::Serializer &s) {
 	for (int i = 0; i < MAX_TIMERS; i++) {
-		s.syncAsSint32LE(timers[i].tno);
-		s.syncAsSint32LE(timers[i].ticks);
-		s.syncAsSint32LE(timers[i].secs);
-		s.syncAsSint32LE(timers[i].delta);
-		s.syncAsSint32LE(timers[i].frame);
+		s.syncAsSint32LE(g_timers[i].tno);
+		s.syncAsSint32LE(g_timers[i].ticks);
+		s.syncAsSint32LE(g_timers[i].secs);
+		s.syncAsSint32LE(g_timers[i].delta);
+		s.syncAsSint32LE(g_timers[i].frame);
 	}
 }
 
@@ -95,8 +95,8 @@ void syncTimerInfo(Common::Serializer &s) {
  */
 static TIMER *findTimer(int num) {
 	for (int i = 0; i < MAX_TIMERS; i++) {
-		if (timers[i].tno == num)
-			return &timers[i];
+		if (g_timers[i].tno == num)
+			return &g_timers[i];
 	}
 	return NULL;
 }
@@ -109,9 +109,9 @@ static TIMER *allocateTimer(int num) {
 	assert(!findTimer(num)); // Allocating already existant timer
 
 	for (int i = 0; i < MAX_TIMERS; i++) {
-		if (!timers[i].tno) {
-			timers[i].tno = num;
-			return &timers[i];
+		if (!g_timers[i].tno) {
+			g_timers[i].tno = num;
+			return &g_timers[i];
 		}
 	}
 
@@ -123,23 +123,23 @@ static TIMER *allocateTimer(int num) {
  */
 void FettleTimers() {
 	for (int i = 0; i < MAX_TIMERS; i++) {
-		if (!timers[i].tno)
+		if (!g_timers[i].tno)
 			continue;
 
-		timers[i].ticks += timers[i].delta;	// Update tick value
+		g_timers[i].ticks += g_timers[i].delta;	// Update tick value
 
-		if (timers[i].frame) {
-			if (timers[i].ticks < 0)
-				timers[i].ticks = 0;	// Have reached zero
+		if (g_timers[i].frame) {
+			if (g_timers[i].ticks < 0)
+				g_timers[i].ticks = 0;	// Have reached zero
 		} else {
-			if (timers[i].ticks < 0) {
-				timers[i].ticks = ONE_SECOND;
-				timers[i].secs--;
-				if (timers[i].secs < 0)
-					timers[i].secs = 0;	// Have reached zero
-			} else if (timers[i].ticks == ONE_SECOND) {
-				timers[i].ticks = 0;
-				timers[i].secs++;		// Another second has passed
+			if (g_timers[i].ticks < 0) {
+				g_timers[i].ticks = ONE_SECOND;
+				g_timers[i].secs--;
+				if (g_timers[i].secs < 0)
+					g_timers[i].secs = 0;	// Have reached zero
+			} else if (g_timers[i].ticks == ONE_SECOND) {
+				g_timers[i].ticks = 0;
+				g_timers[i].secs++;		// Another second has passed
 			}
 		}
 	}

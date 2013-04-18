@@ -25,7 +25,7 @@
 #include "tinsel/graphics.h"	// object plotting
 #include "tinsel/handle.h"
 #include "tinsel/sched.h"	// process scheduler defines
-#include "tinsel/strres.h"	// bMultiByte
+#include "tinsel/strres.h"	// g_bMultiByte
 #include "tinsel/text.h"	// text defines
 
 namespace Tinsel {
@@ -42,7 +42,7 @@ int StringLengthPix(char *szStr, const FONT *pFont) {
 
 	// while not end of string or end of line
 	for (strLen = 0; (c = *szStr) != EOS_CHAR && c != LF_CHAR; szStr++) {
-		if (bMultiByte) {
+		if (g_bMultiByte) {
 			if (c & 0x80)
 				c = ((c & ~0x80) << 8) + *++szStr;
 		}
@@ -136,7 +136,7 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 
 		// repeat until end of string or end of line
 		while ((c = *szStr) != EOS_CHAR && c != LF_CHAR) {
-			if (bMultiByte) {
+			if (g_bMultiByte) {
 				if (c & 0x80)
 					c = ((c & ~0x80) << 8) + *++szStr;
 			}
@@ -265,7 +265,7 @@ bool IsCharImage(SCNHANDLE hFont, char c) {
 
 	// Inventory save game name editor needs to be more clever for
 	// multi-byte characters. This bodge will stop it erring.
-	if (bMultiByte && (c2 & 0x80))
+	if (g_bMultiByte && (c2 & 0x80))
 		return false;
 
 	// get font pointer

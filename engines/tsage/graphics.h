@@ -74,12 +74,17 @@ public:
 class GfxSurface {
 private:
 	Graphics::Surface *_customSurface;
-	Graphics::Surface *_screenSurfaceP;
 	int _lockSurfaceCtr;
-	bool _screenSurface;
 
 	bool _disableUpdates;
 	Rect _bounds;
+
+	bool _trackDirtyRects;
+	Common::List<Rect> _dirtyRects;
+
+	void mergeDirtyRects();
+	bool unionRectangle(Common::Rect &destRect, const Rect &src1, const Rect &src2);
+
 public:
 	Common::Point _centroid;
 	int _transColor;
@@ -89,6 +94,8 @@ public:
 	~GfxSurface();
 
 	void setScreenSurface();
+	void updateScreen();
+	void addDirtyRect(const Rect &r);
 	Graphics::Surface lockSurface();
 	void unlockSurface();
 	void synchronize(Serializer &s);
@@ -292,17 +299,11 @@ public:
 		Common::copy(src, src + size, dest);
 	}
 	virtual void set(byte *dest, int size, byte val) {
-		Common::set_to(dest, dest + size, val);
+		Common::fill(dest, dest + size, val);
 	}
-	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL) {
-		_surface.setBounds(_bounds);
-		_surface.copyFrom(src, destBounds, priorityRegion);
-	}
-	void copyFrom(GfxSurface &src, int destX, int destY) {
-		_surface.setBounds(_bounds);
-		_surface.copyFrom(src, destX, destY);
-		g_system->updateScreen();
-	}
+	void copyFrom(GfxSurface &src, Rect destBounds, Region *priorityRegion = NULL);
+	void copyFrom(GfxSurface &src, int destX, int destY);
+
 	GfxSurface &getSurface() {
 		_surface.setBounds(_bounds);
 		return _surface;

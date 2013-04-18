@@ -122,8 +122,8 @@ reg_t disassemble(EngineState *s, reg_t pos, bool printBWTag, bool printBytecode
 #endif
 
 	i = 0;
-	while (g_opcode_formats[opcode][i]) {
-		switch (g_opcode_formats[opcode][i++]) {
+	while (g_sci->_opcode_formats[opcode][i]) {
+		switch (g_sci->_opcode_formats[opcode][i++]) {
 		case Script_Invalid:
 			warning("-Invalid operation-");
 			break;
@@ -296,7 +296,7 @@ bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpTarget) {
 	Script *script_entity = (Script *)mobj;
 
 	const byte *scr = script_entity->getBuf();
-	int scr_size = script_entity->getBufSize();
+	int scr_size = script_entity->getScriptSize();
 
 	if (pos.offset >= scr_size)
 		return false;
@@ -310,7 +310,13 @@ bool isJumpOpcode(EngineState *s, reg_t pos, reg_t& jumpTarget) {
 	case op_bt:
 	case op_bnt:
 	case op_jmp:
-		jumpTarget = pos + bytecount + opparams[0];
+		{
+		reg_t jmpTarget = pos + bytecount + opparams[0];
+		// QFG2 has invalid jumps outside the script buffer in script 260
+		if (jmpTarget.offset >= scr_size)
+			return false;
+		jumpTarget = jmpTarget;
+		}
 		return true;
 	default:
 		return false;
@@ -721,7 +727,7 @@ void logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *ke
 				switch (mobj->getType()) {
 				case SEG_TYPE_HUNK:
 				{
-					HunkTable *ht = (HunkTable*)mobj;
+					HunkTable *ht = (HunkTable *)mobj;
 					int index = argv[parmNr].offset;
 					if (ht->isValidEntry(index)) {
 						// NOTE: This ", deleted" isn't as useful as it could

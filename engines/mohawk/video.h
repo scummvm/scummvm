@@ -104,6 +104,7 @@ public:
 	uint32 getDuration(VideoHandle videoHandle);
 	bool endOfVideo(VideoHandle handle);
 	void setVideoBounds(VideoHandle handle, Audio::Timestamp start, Audio::Timestamp end);
+	void drawVideoFrame(VideoHandle handle, Audio::Timestamp time);
 	void seekToTime(VideoHandle handle, Audio::Timestamp time);
 	void setVideoLooping(VideoHandle handle, bool loop);
 	void waitUntilMovieEnds(VideoHandle videoHandle);

@@ -25,9 +25,10 @@
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "common/events.h"
+#include "common/gui_options.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -145,7 +146,7 @@ GameList Sword2MetaEngine::detectGames(const Common::FSList &fslist) const {
 
 				if (0 == scumm_stricmp(g->detectname, fileName)) {
 					// Match found, add to list of candidates, then abort inner loop.
-					detectedGames.push_back(GameDescriptor(g->gameid, g->description, Common::UNK_LANG, Common::kPlatformUnknown, GUIO1(GUIO_NOMIDI)));
+					detectedGames.push_back(GameDescriptor(g->gameid, g->description, Common::UNK_LANG, Common::kPlatformUnknown, GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)));
 					break;
 				}
 			}
@@ -255,6 +256,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sword2");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "smacks");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "streams"); // PSX video
 
 	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psxdemo"))
 		_features = GF_DEMO;

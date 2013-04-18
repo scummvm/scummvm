@@ -106,7 +106,7 @@ ifdef CXX_UPDATE_DEP_FLAG
 
 %.o: %.m
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
-	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(OBJCFLAGS) -c $(<) -o $*.o
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CPPFLAGS) $(OBJCFLAGS) -c $(<) -o $*.o
 
 # Build rule for assembler files with preprocessing
 %.o: %.S
@@ -153,7 +153,8 @@ endif
 # Get the current version information
 ######################################################################
 
-VERSION = $(shell grep SCUMMVM_VERSION "${srcdir}/base/internal_version.h" | cut -d\" -f2)
+# AmigaOS4's grep has a problem with "./" in pathnames, so use cat piped into grep.
+VERSION = $(shell cat "${srcdir}/base/internal_version.h" | grep SCUMMVM_VERSION | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
 VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
@@ -229,7 +230,7 @@ dist-src: \
 	@#DEB-src?
 
 # Common files
-DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYRIGHT NEWS README)
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.BSD COPYING.LGPL COPYING.FREEFONT COPYRIGHT NEWS README)
 
 # Themes files
 DIST_FILES_THEMES=scummmodern.zip scummclassic.zip
@@ -251,9 +252,6 @@ DIST_FILES_ENGINEDATA+=kyra.dat
 endif
 ifdef ENABLE_LURE
 DIST_FILES_ENGINEDATA+=lure.dat
-endif
-ifdef ENABLE_M4
-DIST_FILES_ENGINEDATA+=m4.dat
 endif
 ifdef ENABLE_QUEEN
 DIST_FILES_ENGINEDATA+=queen.tbl

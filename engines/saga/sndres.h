@@ -52,8 +52,6 @@ public:
 
  private:
 	bool load(ResourceContext *context, uint32 resourceId, SoundBuffer &buffer, bool onlyHeader);
-	bool loadVocSound(byte *soundResource, size_t soundResourceLength, SoundBuffer &buffer);
-	bool loadWavSound(byte *soundResource, size_t soundResourceLength, SoundBuffer &buffer);
 
 	ResourceContext *_sfxContext;
 	ResourceContext *_voiceContext;

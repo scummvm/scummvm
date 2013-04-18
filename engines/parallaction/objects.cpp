@@ -386,11 +386,11 @@ ScriptVar::~ScriptVar() {
 
 
 Table::Table(uint32 size) : _size(size), _used(0), _disposeMemory(true) {
-	_data = (char**)calloc(size, sizeof(char*));
+	_data = (char**)calloc(size, sizeof(char *));
 }
 
 Table::Table(uint32 size, const char **data) : _size(size), _used(size), _disposeMemory(false) {
-	_data = const_cast<char**>(data);
+	_data = const_cast<char **>(data);
 }
 
 Table::~Table() {

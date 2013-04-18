@@ -41,11 +41,11 @@ using namespace TsAGE;
 
 class Scene900: public PalettedScene {
 	/* Items */
-	class Item1: public NamedHotspot {
+	class Exterior: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
-	class Item4: public NamedHotspot {
+	class WestExit: public NamedHotspot {
 	public:
 		virtual bool startAction(CursorType action, Event &event);
 	};
@@ -94,7 +94,7 @@ public:
 	SpeakerGameText _gameTextSpeaker;
 	SpeakerJakeJacket _jakeJacketSpeaker;
 	SpeakerLyleHat _lyleHatSpeaker;
-	Item1 _item1;
+	Exterior _exterior;
 	Gate _gate;
 	Door _door;
 	Dog _dog;
@@ -104,13 +104,13 @@ public:
 	NamedObject _object5;
 	Lyle _lyle;
 	Body _body;
-	Item4 _item4;
+	WestExit _westExit;
 	ASoundExt _sound1;
 	Action1 _action1;
 	Action2 _action2;
 	Action3 _action3;
 	Action4 _action4;
-	int _field1974;
+	int _lyleDialogCtr;
 	int _field1976;
 
 	Scene900();
@@ -170,7 +170,7 @@ class Scene910: public PalettedScene {
 
 	class Object13: public NamedObject {
 	protected:
-		int _field90, _field92;
+		int _state, _mode;
 	public:
 		void setupBreaker(int x, int y, int mode, int8 frameNumber);
 		virtual void synchronize(Serializer &s);
@@ -180,7 +180,7 @@ class Scene910: public PalettedScene {
 
 	class BlackPlug: public Object13 {
 	public:
-		void init(int x, int y, int arg8, int8 argA);
+		void init(int x, int y, int arg8, int8 mode);
 		virtual bool startAction(CursorType action, Event &event);
 		virtual void remove();
 	};
@@ -188,7 +188,7 @@ class Scene910: public PalettedScene {
 	class Object25: public NamedObject {
 		int _field90, _field92;
 	public:
-		void subEBBDC(int x, int y, int arg8, int argA);
+		void setupHiddenSwitch(int x, int y, int arg8, int argA);
 		virtual void synchronize(Serializer &s);
 		virtual bool startAction(CursorType action, Event &event);
 		virtual void remove();
@@ -253,7 +253,7 @@ class Scene910: public PalettedScene {
 		virtual bool startAction(CursorType action, Event &event);
 	};
 
-	int _field2DDA, _field2DD8, _field2DE0, _field2DE2, _field2DE4;
+	int _sceneSubMode, _breakerButtonCtr, _field2DE0, _field2DE2, _field2DE4;
 	Common::Point _destPos;
 public:
 	SequenceManager _sequenceManager1, _sequenceManager2;
@@ -270,7 +270,7 @@ public:
 	Nico _nico;
 	Stuart _stuart;
 	Forbes _forbes;
-	NamedObject _object5,  _vent, _object7;
+	NamedObject _object5,  _vent, _shadow;
 	PowerCord _blackCord, _yellowCord;
 	BreakerBox _breakerBox;
 	FakeWall _fakeWall;
@@ -295,8 +295,8 @@ public:
 	virtual void process(Event &event);
 	virtual void dispatch();
 	virtual void checkGun();
-	void subE82BD();
-	void subE83E1();
+	void openHiddenDoor();
+	void closeHiddenDoor();
 };
 
 class Scene920: public SceneExt {
@@ -378,16 +378,16 @@ class Scene930: public PalettedScene {
 		virtual void signal();
 	};
 
-	void showBootWindow();
-	void subF3C07();
-	void subF3D6F();
+	void showBootInset();
+	void ShowBoxInset();
+	void ShowSoleInset();
 public:
 	SequenceManager _sequenceManager1;
 	Object1 _box;
-	Object2 _object2;
+	Object2 _boxInset;
 	Object3 _boots;
-	Object4 _bootsWindow;
-	Object5 _object5;
+	Object4 _bootsInset;
+	Object5 _soleInset;
 
 	Item1 _item1;
 	NamedHotspot _item2;
@@ -417,8 +417,8 @@ public:
 
 	SpeakerGameText gameTextSpeaker;
 
-	int _v141A;
-	int _v141C;
+	bool _soleOpened;
+	int _bootInsetDisplayed;
 
 	virtual void postInit(SceneObjectList *OwnerList = NULL);
 	virtual void signal();

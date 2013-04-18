@@ -91,10 +91,10 @@ public:
 	virtual ~AmigaOSFilesystemNode();
 
 	virtual bool exists() const;
-	virtual Common::String getDisplayName() const { return _sDisplayName; };
-	virtual Common::String getName() const { return _sDisplayName; };
-	virtual Common::String getPath() const { return _sPath; };
-	virtual bool isDirectory() const { return _bIsDirectory; };
+	virtual Common::String getDisplayName() const { return _sDisplayName; }
+	virtual Common::String getName() const { return _sDisplayName; }
+	virtual Common::String getPath() const { return _sPath; }
+	virtual bool isDirectory() const { return _bIsDirectory; }
 	virtual bool isReadable() const;
 	virtual bool isWritable() const;
 

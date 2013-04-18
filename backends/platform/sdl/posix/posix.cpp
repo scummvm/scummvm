@@ -175,7 +175,7 @@ bool OSystem_POSIX::displayLogFile() {
 	} else if (pid == 0) {
 
 		// Try xdg-open first
-		execlp("xdg-open", "xdg-open", _logFilePath.c_str(), (char*)0);
+		execlp("xdg-open", "xdg-open", _logFilePath.c_str(), (char *)0);
 
 		// If we're here, that clearly failed.
 
@@ -184,7 +184,7 @@ bool OSystem_POSIX::displayLogFile() {
 
 		// Try xterm+less next
 
-		execlp("xterm", "xterm", "-e", "less", _logFilePath.c_str(), (char*)0);
+		execlp("xterm", "xterm", "-e", "less", _logFilePath.c_str(), (char *)0);
 
 		// TODO: If less does not exist we could fall back to 'more'.
 		// However, we'll have to use 'xterm -hold' for that to prevent the

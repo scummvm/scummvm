@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	fonts/consolefont.o \
 	fonts/newfont_big.o \
 	fonts/newfont.o \
+	fonts/ttf.o \
 	fonts/winfont.o \
 	iff.o \
 	imagedec.o \

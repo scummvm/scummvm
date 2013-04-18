@@ -55,6 +55,7 @@ protected:
 	struct ActionWidgets {
 		GUI::StaticTextWidget *actionText;
 		GUI::ButtonWidget *keyButton;
+		GUI::ButtonWidget *clearButton;
 	};
 	struct ActionInfo {
 		Action *action;
@@ -64,6 +65,7 @@ protected:
 
 	void loadKeymap();
 	void refreshKeymap();
+	void clearMapping(uint i);
 	void startRemapping(uint i);
 	void stopRemapping();
 
@@ -80,7 +82,7 @@ protected:
 	//GUI::ContainerWidget *_container;
 	GUI::ScrollBarWidget *_scrollBar;
 
-	uint _colCount, _rowCount;
+	uint _rowCount;
 
 	Array<ActionWidgets> _keymapWidgets;
 	Action *_activeRemapAction;
@@ -88,6 +90,8 @@ protected:
 	static const uint32 kRemapTimeoutDelay = 3000;
 
 	bool _changes;
+
+	bool _topKeymapIsGui;
 
 };
 

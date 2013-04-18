@@ -185,7 +185,7 @@ void flipPoly(int fileId, int16 *dataPtr, int scale, char** newFrame, int X, int
 		Y -= newY;
 	}
 
-	*newFrame = (char*)dataPtr;
+	*newFrame = (char *)dataPtr;
 	*outX = X;
 	*outY = Y;
 	*outScale = scale;
@@ -621,11 +621,9 @@ void buildSegment() {
 
 unsigned char *drawPolyMode1(unsigned char *dataPointer, int linesToDraw) {
 	int index;
-	int16 *pBufferDest;
+	int16 *pBufferDest = polyBuffer4 + nbseg * 2;
 
-	pBufferDest = polyBuffer4 + nbseg * 2;
 	nbseg = linesToDraw;
-	A2ptr = polyBuffer4;
 	index = *(dataPointer++);
 
 	polyXMin = polyXMax = pBufferDest[-2] = pBufferDest[-2 + linesToDraw * 2] = polyBuffer2[index * 2];
@@ -1079,7 +1077,7 @@ void mainDrawPolygons(int fileIndex, cellStruct *plWork, int X, int scale, int Y
 	int sizeTable[4];	// 0 = left, 1 = right, 2 = bottom, 3 = top
 
 	// this function checks if the dataPtr is not 0, else it retrives the data for X, Y, scale and DataPtr again (OLD: mainDrawSub1Sub1)
-	flipPoly(fileIndex, (int16*)dataPtr, scale, &newFrame, X, Y, &newX, &newY, &newScale);
+	flipPoly(fileIndex, (int16 *)dataPtr, scale, &newFrame, X, Y, &newX, &newY, &newScale);
 
 	// this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
 	getPolySize(newX, newY, newScale, sizeTable, (unsigned char*)newFrame);
@@ -1145,7 +1143,7 @@ void mainDrawPolygons(int fileIndex, cellStruct *plWork, int X, int scale, int Y
 	}
 
 	// this function builds the poly model and then calls the draw functions (OLD: mainDrawSub1Sub5)
-	buildPolyModel(newX, newY, newScale, (char*)polygonMask, destBuffer, newFrame);
+	buildPolyModel(newX, newY, newScale, (char *)polygonMask, destBuffer, newFrame);
 }
 
 void drawMessage(const gfxEntryStruct *pGfxPtr, int globalX, int globalY, int width, int newColor, uint8 *ouputPtr) {
@@ -1421,7 +1419,7 @@ void mainDraw(int16 param) {
 	currentObjPtr = cellHead.next;
 
 #ifdef _DEBUG
-	/*	polyOutputBuffer = (char*)bgPtr;
+	/*	polyOutputBuffer = (char *)bgPtr;
 		drawCtp(); */
 #endif
 

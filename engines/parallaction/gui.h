@@ -36,7 +36,7 @@ namespace Parallaction {
 class MenuInputState;
 
 class MenuInputHelper {
-	typedef	Common::HashMap<Common::String, MenuInputState*> StateMap;
+	typedef	Common::HashMap<Common::String, MenuInputState *> StateMap;
 
 	StateMap	_map;
 	MenuInputState	*_state;

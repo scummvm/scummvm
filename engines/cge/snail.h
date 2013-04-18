@@ -45,7 +45,7 @@ enum CommandType {
 	kCmdSetX,   kCmdSetY,   kCmdSetZ,        kCmdTrans,       kCmdPort,
 	kCmdNext,   kCmdNNext,  kCmdTNext,       kCmdRNNext,      kCmdRTNext,
 	kCmdRMNear, kCmdRmTake, kCmdFlag,        kCmdSetRef,      kCmdBackPt,
-	kCmdFlash,  kCmdLight,  kCmdSetHBarrier, kCmdSetVBarrier, kCmdWalk,
+	kCmdFlash,  kCmdLight,  kCmdSetVBarrier, kCmdSetHBarrier, kCmdWalk,
 	kCmdReach,  kCmdCover,  kCmdUncover,     kCmdClear,       kCmdTalk,
 	kCmdMouse,  kCmdSound,  kCmdCount,       kCmdExec,        kCmdStep,
 	kCmdZTrim,  kCmdGhost
@@ -70,6 +70,7 @@ public:
 	void addCallback(CommandType com, int ref, int val, CallbackType cbType);
 	void insertCommand(CommandType com, int ref, int val, void *ptr);
 	bool idle();
+	void reset();
 private:
 	CGEEngine *_vm;
 	bool _turbo;

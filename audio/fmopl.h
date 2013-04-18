@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOUND_FMOPL_H
-#define SOUND_FMOPL_H
+#ifndef AUDIO_FMOPL_H
+#define AUDIO_FMOPL_H
 
 #include "common/scummsys.h"
 

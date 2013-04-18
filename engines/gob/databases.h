@@ -26,7 +26,7 @@
 #include "common/str.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "common/util.h"
+#include "common/language.h"
 
 #include "gob/dbase.h"
 

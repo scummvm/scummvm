@@ -23,7 +23,7 @@
 #ifndef QUEEN_INPUT_H
 #define QUEEN_INPUT_H
 
-#include "common/util.h"
+#include "common/language.h"
 #include "common/rect.h"
 #include "common/events.h"
 #include "queen/defs.h"

@@ -133,9 +133,6 @@ public:
 		#if PLUGIN_ENABLED_STATIC(LURE)
 		LINK_PLUGIN(LURE)
 		#endif
-		#if PLUGIN_ENABLED_STATIC(M4)
-		LINK_PLUGIN(M4)
-		#endif
 		#if PLUGIN_ENABLED_STATIC(MADE)
 		LINK_PLUGIN(MADE)
 		#endif
@@ -177,6 +174,9 @@ public:
 		#endif
 		#if PLUGIN_ENABLED_STATIC(TINSEL)
 		LINK_PLUGIN(TINSEL)
+		#endif
+		#if PLUGIN_ENABLED_STATIC(TOLTECS)
+		LINK_PLUGIN(TOLTECS)
 		#endif
 		#if PLUGIN_ENABLED_STATIC(TOON)
 		LINK_PLUGIN(TOON)
@@ -358,8 +358,6 @@ void PluginManagerUncached::init() {
 	unloadAllPlugins();
 	_allEnginePlugins.clear();
 
-	// Resize our pluginsInMem list to prevent fragmentation
-	_pluginsInMem[PLUGIN_TYPE_ENGINE].resize(2);
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL, false);	// empty the engine plugins
 
 	for (ProviderList::iterator pp = _providers.begin();

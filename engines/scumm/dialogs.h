@@ -187,6 +187,27 @@ public:
 	Common::String mainText;
 };
 
+/**
+ * Difficulty selection dialog for Loom FM-Towns.
+ */
+class LoomTownsDifficultyDialog : public GUI::Dialog {
+public:
+	LoomTownsDifficultyDialog();
+
+	int getSelectedDifficulty() const { return _difficulty; }
+protected:
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+
+private:
+	enum {
+		kStandardCmd = 'STDD',
+		kPracticeCmd = 'PRAD',
+		kExpertCmd = 'EXPD'
+	};
+
+	int _difficulty;
+};
+
 } // End of namespace Scumm
 
 #endif

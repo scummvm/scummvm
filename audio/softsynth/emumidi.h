@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifndef SOUND_SOFTSYNTH_EMUMIDI_H
-#define SOUND_SOFTSYNTH_EMUMIDI_H
+#ifndef AUDIO_SOFTSYNTH_EMUMIDI_H
+#define AUDIO_SOFTSYNTH_EMUMIDI_H
 
 #include "audio/audiostream.h"
 #include "audio/mididrv.h"

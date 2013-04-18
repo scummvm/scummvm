@@ -110,7 +110,7 @@ OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfaad.a
 endif
 
 ifdef USE_ZLIB
-OSX_ZLIB ?= -lz
+OSX_ZLIB ?= $(STATICLIBPATH)/lib/libz.a
 endif
 
 ifdef USE_SPARKLE
@@ -159,13 +159,16 @@ osxsnap: bundle
 	cp $(srcdir)/doc/de/Liesmich ./ScummVM-snapshot/doc/de/Liesmich
 	cp $(srcdir)/doc/de/Schnellstart ./ScummVM-snapshot/doc/de/Schnellstart
 	mkdir ScummVM-snapshot/doc/es
-	cp $(srcdir)/doc/es/"Inicio Rápido" ./ScummVM-snapshot/doc/es
+	cp $(srcdir)/doc/es/InicioRapido ./ScummVM-snapshot/doc/es
 	mkdir ScummVM-snapshot/doc/fr
 	cp $(srcdir)/doc/fr/DemarrageRapide ./ScummVM-snapshot/doc/fr/DemarrageRapide
 	mkdir ScummVM-snapshot/doc/it
 	cp $(srcdir)/doc/it/GuidaRapida ./ScummVM-snapshot/doc/it/GuidaRapida
 	mkdir ScummVM-snapshot/doc/no-nb
-	cp $(srcdir)doc/no-nb/HurtigStart ./ScummVM-snapshot/doc/no-nb/HurtigStart
+	cp $(srcdir)/doc/no-nb/HurtigStart ./ScummVM-snapshot/doc/no-nb/HurtigStart
+	mkdir ScummVM-snapshot/doc/se
+	cp $(srcdir)/doc/se/LasMig ./ScummVM-snapshot/doc/se/LasMig
+	cp $(srcdir)/doc/se/Snabbstart ./ScummVM-snapshot/doc/se/Snabbstart
 	/Developer/Tools/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/cz/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/de/*
@@ -173,6 +176,7 @@ osxsnap: bundle
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/fr/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/it/*
 	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/no-nb/*
+	xattr -w "com.apple.TextEncoding" "utf-8;134217984" ./ScummVM-snapshot/doc/se/*
 	/Developer/Tools/CpMac -r $(bundle_name) ./ScummVM-snapshot/
 	cp $(srcdir)/dists/macosx/DS_Store ./ScummVM-snapshot/.DS_Store
 	cp $(srcdir)/dists/macosx/background.jpg ./ScummVM-snapshot/background.jpg
@@ -202,6 +206,7 @@ win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)/doc/fr
 	mkdir -p $(WIN32PATH)/doc/it
 	mkdir -p $(WIN32PATH)/doc/no-nb
+	mkdir -p $(WIN32PATH)/doc/se
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 ifdef DIST_FILES_ENGINEDATA
@@ -210,30 +215,37 @@ endif
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
+	cp $(srcdir)/COPYING.FREEFONT $(WIN32PATH)/COPYING.FREEFONT.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/NEWS $(WIN32PATH)/NEWS.txt
 	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt
 	cp $(srcdir)/doc/de/Neues $(WIN32PATH)/doc/de/Neues.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt
-	cp $(srcdir)/doc/es/"Inicio Rápido" $(WIN32PATH)/doc/es/"Inicio Rápido".txt
+	cp $(srcdir)/doc/es/InicioRapido $(WIN32PATH)/doc/es/InicioRapido.txt
 	cp $(srcdir)/doc/fr/DemarrageRapide $(WIN32PATH)/doc/fr/DemarrageRapide.txt
 	cp $(srcdir)/doc/it/GuidaRapida $(WIN32PATH)/doc/it/GuidaRapida.txt
 	cp $(srcdir)/doc/no-nb/HurtigStart $(WIN32PATH)/doc/no-nb/HurtigStart.txt
 	cp $(srcdir)/doc/de/Schnellstart $(WIN32PATH)/doc/de/Schnellstart.txt
+	cp $(srcdir)/doc/se/Snabbstart $(WIN32PATH)/doc/se/Snabbstart.txt
 	cp $(srcdir)/README $(WIN32PATH)/README.txt
 	cp $(srcdir)/doc/de/Liesmich $(WIN32PATH)/doc/de/Liesmich.txt
+	cp $(srcdir)/doc/se/LasMig $(WIN32PATH)/doc/se/LasMig.txt
 	cp /usr/local/README-SDL.txt $(WIN32PATH)
 	cp /usr/local/bin/SDL.dll $(WIN32PATH)
 	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
 	cp $(srcdir)/dists/win32/graphics/scummvm-install.ico $(WIN32PATH)/graphics
+	cp $(srcdir)/dists/win32/migration.bat $(WIN32PATH)
+	cp $(srcdir)/dists/win32/migration.txt $(WIN32PATH)
 	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
 	unix2dos $(WIN32PATH)/*.txt
+	unix2dos $(WIN32PATH)/doc/*.txt
 	unix2dos $(WIN32PATH)/doc/cz/*.txt
 	unix2dos $(WIN32PATH)/doc/de/*.txt
 	unix2dos $(WIN32PATH)/doc/es/*.txt
 	unix2dos $(WIN32PATH)/doc/fr/*.txt
 	unix2dos $(WIN32PATH)/doc/it/*.txt
 	unix2dos $(WIN32PATH)/doc/no-nb/*.txt
+	unix2dos $(WIN32PATH)/doc/se/*.txt
 
 # Special target to create a win32 NSIS installer
 win32setup: $(EXECUTABLE)
@@ -241,6 +253,38 @@ win32setup: $(EXECUTABLE)
 	$(STRIP) $(EXECUTABLE) -o $(srcdir)/$(STAGINGPATH)/$(EXECUTABLE)
 	cp /usr/local/bin/SDL.dll $(srcdir)/$(STAGINGPATH)
 	makensis -V2 -Dtop_srcdir="../.." -Dstaging_dir="../../$(STAGINGPATH)" -Darch=$(ARCH) $(srcdir)/dists/win32/scummvm.nsi
+
+
+#
+# Special target to generate project files for various IDEs
+# Mainly Win32-specific
+#
+
+# The release branch is in form 'heads/branch-1-4-1', for this case
+# $CUR_BRANCH will be equal to '1', for the rest cases it will be empty
+CUR_BRANCH := $(shell cd $(srcdir); git describe --all |cut -d '-' -f 4-)
+
+ideprojects: devtools/create_project
+ifeq ($(VER_DIRTY), -dirty)
+	$(error You have uncommitted changes) 
+endif 
+ifeq "$(CUR_BRANCH)" "heads/master"
+	$(error You cannot do it on master) 
+else ifeq "$(CUR_BRANCH)" ""
+	$(error You must be on a release branch) 
+endif
+	@echo Creating Code::Blocks project files...
+	@cd $(srcdir)/dists/codeblocks && ../../devtools/create_project/create_project ../.. --codeblocks >/dev/null && git add -f *.workspace *.cbp
+	@echo Creating MSVC8 project files...
+	@cd $(srcdir)/dists/msvc8 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 8 >/dev/null && git add -f *.sln *.vcproj *.vsprops
+	@echo Creating MSVC9 project files...
+	@cd $(srcdir)/dists/msvc9 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 9 >/dev/null && git add -f *.sln *.vcproj *.vsprops
+	@echo Creating MSVC10 project files...
+	@cd $(srcdir)/dists/msvc10 && ../../devtools/create_project/create_project ../.. --msvc --msvc-version 10 >/dev/null && git add -f *.sln *.vcxproj *.vcxproj.filters *.props
+	@echo
+	@echo All is done.
+	@echo Now run
+	@echo "\tgit commit 'DISTS: Generated Code::Blocks and MSVC project files'"
 
 #
 # AmigaOS specific

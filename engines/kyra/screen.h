@@ -28,6 +28,7 @@
 #include "common/list.h"
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/rendermode.h"
 #include "common/stream.h"
 
 class OSystem;
@@ -137,6 +138,44 @@ private:
 	uint16 *_bitmapOffsets;
 };
 
+#ifdef ENABLE_EOB
+/**
+ * Implementation of the Font interface for old DOS fonts used
+ * in EOB and EOB II.
+ *
+ */
+class OldDOSFont : public Font {
+public:
+	OldDOSFont(Common::RenderMode mode, bool useHiResEGADithering);
+	~OldDOSFont();
+
+	bool load(Common::SeekableReadStream &file);
+	int getHeight() const { return _height; }
+	int getWidth() const { return _width; }
+	int getCharWidth(uint16 c) const;
+	void setColorMap(const uint8 *src) { _colorMap = src; }
+	void drawChar(uint16 c, byte *dst, int pitch) const;
+
+private:
+	void unload();
+
+	uint8 *_data;
+	uint16 *_bitmapOffsets;
+
+	int _width, _height;
+	const uint8 *_colorMap;
+
+	int _numGlyphs;
+
+	Common::RenderMode _renderMode;
+	bool _useHiResEGADithering;
+	bool _useLoResEGA;
+
+	static uint16 *_cgaDitheringTable;
+	static int _numRef;
+};
+#endif // ENABLE_EOB
+
 /**
  * Implementation of the Font interface for AMIGA fonts.
  */
@@ -221,6 +260,21 @@ public:
 	void loadVGAPalette(Common::ReadStream &stream, int startIndex, int colors);
 
 	/**
+	 * Load a EGA palette from the given stream.
+	 */
+	void loadEGAPalette(Common::ReadStream &stream, int startIndex, int colors);
+
+	/**
+	 * Set default CGA palette. We only need the cyan/magenta/grey mode.
+	 */
+	enum CGAIntensity {
+		kIntensityLow = 0,
+		kIntensityHigh = 1
+	};
+
+	void setCGAPalette(int palIndex, CGAIntensity intensity);
+
+	/**
 	 * Load a AMIGA palette from the given stream.
 	 */
 	void loadAmigaPalette(Common::ReadStream &stream, int startIndex, int colors);
@@ -294,9 +348,15 @@ public:
 	 */
 	uint8 *getData() { return _palData; }
 	const uint8 *getData() const { return _palData; }
+
 private:
 	uint8 *_palData;
 	const int _numColors;
+
+	static const uint8 _egaColors[];
+	static const int _egaNumColors;
+	static const uint8 _cgaColors[4][12];
+	static const int _cgaNumColors;
 };
 
 class Screen {
@@ -335,7 +395,7 @@ public:
 		FID_NUM
 	};
 
-	Screen(KyraEngine_v1 *vm, OSystem *system);
+	Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, const int dimTableSize);
 	virtual ~Screen();
 
 	// init
@@ -367,12 +427,12 @@ public:
 	void copyBlockToPage(int pageNum, int x, int y, int w, int h, const uint8 *src);
 
 	void shuffleScreen(int sx, int sy, int w, int h, int srcPage, int dstPage, int ticks, bool transparent);
-	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1, bool xored = false);
+	virtual void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1, bool xored = false);
 
 	void clearPage(int pageNum);
 
-	uint8 getPagePixel(int pageNum, int x, int y);
-	void setPagePixel(int pageNum, int x, int y, uint8 color);
+	virtual uint8 getPagePixel(int pageNum, int x, int y);
+	virtual void setPagePixel(int pageNum, int x, int y, uint8 color);
 
 	const uint8 *getCPagePtr(int pageNum) const;
 	uint8 *getPageRect(int pageNum, int x, int y, int w, int h);
@@ -393,12 +453,12 @@ public:
 	void enableInterfacePalette(bool e);
 	void setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b);
 
-	void getRealPalette(int num, uint8 *dst);
+	virtual void getRealPalette(int num, uint8 *dst);
 	Palette &getPalette(int num);
 	void copyPalette(const int dst, const int src);
 
 	// gui specific (processing on _curPage)
-	void drawLine(bool vertical, int x, int y, int length, int color);
+	virtual void drawLine(bool vertical, int x, int y, int length, int color);
 	void drawClippedLine(int x1, int y1, int x2, int y2, int color);
 	virtual void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2);
 	void drawBox(int x1, int y1, int x2, int y2, int color);
@@ -413,14 +473,17 @@ public:
 	int getCharWidth(uint16 c) const;
 	int getTextWidth(const char *str) const;
 
-	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
+	virtual void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
 
 	virtual void setTextColorMap(const uint8 *cmap) = 0;
 	void setTextColor(const uint8 *cmap, int a, int b);
 
-	virtual void setScreenDim(int dim) = 0;
-	virtual const ScreenDim *getScreenDim(int dim) = 0;
-	virtual int screenDimTableCount() const = 0;
+	const ScreenDim *getScreenDim(int dim) const;
+	void modifyScreenDim(int dim, int x, int y, int w, int h);
+	int screenDimTableCount() const { return _dimTableCount; }
+
+	void setScreenDim(int dim);
+	int curDimIndex() const { return _curDimIndex; }
 
 	const ScreenDim *_curDim;
 
@@ -430,13 +493,13 @@ public:
 	int setNewShapeHeight(uint8 *shape, int height);
 	int resetShapeHeight(uint8 *shape);
 
-	void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
+	virtual void drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...);
 
 	// mouse handling
 	void hideMouse();
 	void showMouse();
 	bool isMouseVisible() const;
-	void setMouseCursor(int x, int y, const byte *shape);
+	virtual void setMouseCursor(int x, int y, const byte *shape);
 
 	// rect handling
 	virtual int getRectSize(int w, int h) = 0;
@@ -446,9 +509,9 @@ public:
 	// misc
 	void loadBitmap(const char *filename, int tempPage, int dstPage, Palette *pal, bool skip=false);
 
-	bool loadPalette(const char *filename, Palette &pal);
+	virtual bool loadPalette(const char *filename, Palette &pal);
 	bool loadPaletteTable(const char *filename, int firstPalette);
-	void loadPalette(const byte *data, Palette &pal, int bytes);
+	virtual void loadPalette(const byte *data, Palette &pal, int bytes);
 
 	void setAnimBlockPtr(int size);
 
@@ -471,6 +534,9 @@ public:
 	FontId _currentFont;
 
 	// decoding functions
+	static void decodeFrame1(const uint8 *src, uint8 *dst, uint32 size);
+	static uint16 decodeEGAGetCode(const uint8 *&pos, uint8 &nib);
+
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
 	static uint decodeFrame4(const uint8 *src, uint8 *dst, uint32 dstSize);
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor = false);
@@ -478,6 +544,9 @@ public:
 
 	static void convertAmigaGfx(uint8 *data, int w, int h, int depth = 5, bool wsa = false, int bytesPerPlane = -1);
 	static void convertAmigaMsc(uint8 *data);
+
+	// RPG specific, this does not belong here
+	void crossFadeRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage);
 
 protected:
 	uint8 *getPagePtr(int pageNum);
@@ -505,11 +574,16 @@ protected:
 
 	uint8 *_pagePtrs[16];
 	uint8 *_sjisOverlayPtrs[SCREEN_OVLS_NUM];
+	uint8 _pageScaleFactor[SCREEN_PAGE_NUM];
+	uint8 _pageMapping[SCREEN_PAGE_NUM];
 
 	bool _useOverlays;
 	bool _useSJIS;
 	bool _use16ColorMode;
+	bool _useHiResEGADithering;
+	bool _useLoResEGA;
 	bool _isAmiga;
+	Common::RenderMode _renderMode;
 
 	uint8 _sjisInvisibleColor;
 
@@ -525,6 +599,12 @@ protected:
 
 	uint8 *_animBlockPtr;
 	int _animBlockSize;
+
+	// dimension handling
+	const ScreenDim * const _dimTable;
+	ScreenDim **_customDimTable;
+	const int _dimTableCount;
+	int _curDimIndex;
 
 	// mouse handling
 	int _mouseLockCount;

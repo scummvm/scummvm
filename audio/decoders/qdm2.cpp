@@ -589,7 +589,7 @@ DECL_FFT(32768,16384,8192)
 DECL_FFT(65536,32768,16384)
 
 void fftCalc(FFTContext *s, FFTComplex *z) {
-	static void (* const fftDispatch[])(FFTComplex*) = {
+	static void (* const fftDispatch[])(FFTComplex *) = {
 		fft4, fft8, fft16, fft32, fft64, fft128, fft256, fft512, fft1024,
 		fft2048, fft4096, fft8192, fft16384, fft32768, fft65536,
 	};
@@ -857,8 +857,8 @@ void rdftCalc(RDFTContext *s, float *data) {
 	if (s->inverse) {
 		data[0] *= k1;
 		data[1] *= k1;
-		fftPermute(&s->fft, (FFTComplex*)data);
-		fftCalc(&s->fft, (FFTComplex*)data);
+		fftPermute(&s->fft, (FFTComplex *)data);
+		fftCalc(&s->fft, (FFTComplex *)data);
 	}
 }
 
@@ -1832,7 +1832,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	_subSampling = _fftOrder - 7;
 	_frequencyRange = 255 / (1 << (2 - _subSampling));
 
-	switch ((_subSampling * 2 + _channels - 1)) {
+	switch (_subSampling * 2 + _channels - 1) {
 		case 0:
 			tmp = 40;
 			break;

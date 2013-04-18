@@ -173,7 +173,7 @@ public:
 	MystGraphics *_gfx;
 	MystGameState *_gameState;
 	MystScriptParser *_scriptParser;
-	Common::Array<MystResource*> _resources;
+	Common::Array<MystResource *> _resources;
 	MystResource *_dragResource;
 	Common::RandomSource *_rnd;
 

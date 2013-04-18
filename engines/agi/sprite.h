@@ -27,7 +27,7 @@ namespace Agi {
 
 
 struct Sprite;
-typedef Common::List<Sprite*> SpriteList;
+typedef Common::List<Sprite *> SpriteList;
 
 class AgiEngine;
 class GfxMgr;

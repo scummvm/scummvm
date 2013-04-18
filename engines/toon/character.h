@@ -74,10 +74,10 @@ public:
 	virtual bool walkTo(int32 newPosX, int32 newPosY);
 	virtual bool getVisible();
 	virtual void setVisible(bool visible);
-	virtual bool loadWalkAnimation(Common::String animName);
-	virtual bool loadIdleAnimation(Common::String animName);
-	virtual bool loadTalkAnimation(Common::String animName);
-	virtual bool loadShadowAnimation(Common::String animName);
+	virtual bool loadWalkAnimation(const Common::String &animName);
+	virtual bool loadIdleAnimation(const Common::String &animName);
+	virtual bool loadTalkAnimation(const Common::String &animName);
+	virtual bool loadShadowAnimation(const Common::String &animName);
 	virtual bool setupPalette();
 	virtual void playStandingAnim();
 	virtual void playWalkAnim(int32 start, int32 end);
@@ -96,7 +96,7 @@ public:
 	virtual void updateTimers(int32 relativeAdd);
 	virtual void setTalking(bool talking) { _isTalking = talking; }
 	virtual bool isTalking() { return _isTalking; }
-	virtual void resetScale() { };
+	virtual void resetScale() {}
 	virtual void plotPath(Graphics::Surface& surface);
 
 	int32 getFacingFromDirection(int32 dx, int32 dy);

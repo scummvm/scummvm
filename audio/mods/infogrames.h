@@ -26,8 +26,8 @@
  *  - gob
  */
 
-#ifndef SOUND_MODS_INFOGRAMES_H
-#define SOUND_MODS_INFOGRAMES_H
+#ifndef AUDIO_MODS_INFOGRAMES_H
+#define AUDIO_MODS_INFOGRAMES_H
 
 #include "audio/mods/paula.h"
 

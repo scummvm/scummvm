@@ -21,8 +21,10 @@
  */
 
 #include "mohawk/livingbooks.h"
+#include "mohawk/livingbooks_lbx.h"
 #include "mohawk/resource.h"
 
+#include "common/events.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -99,12 +101,17 @@ double LBValue::toDouble() const {
 Common::Point LBValue::toPoint() const {
 	switch (type) {
 	case kLBValueString:
-		// FIXME
-		return Common::Point();
+		{
+		Common::Point ret;
+		sscanf(string.c_str(), "%hd , %hd", &ret.x, &ret.y);
+		return ret;
+		}
 	case kLBValueInteger:
 		return Common::Point(integer, integer);
 	case kLBValuePoint:
 		return point;
+	case kLBValueRect:
+		return Common::Point(rect.left, rect.top);
 	default:
 		error("failed to convert to point");
 	}
@@ -113,10 +120,15 @@ Common::Point LBValue::toPoint() const {
 Common::Rect LBValue::toRect() const {
 	switch (type) {
 	case kLBValueString:
-		// FIXME
-		return Common::Rect();
+		{
+		Common::Rect ret;
+		sscanf(string.c_str(), "%hd , %hd , %hd , %hd", &ret.left, &ret.top, &ret.right, &ret.bottom);
+		return ret;
+		}
 	case kLBValueInteger:
 		return Common::Rect(integer, integer, integer, integer);
+	case kLBValuePoint:
+		return Common::Rect(point.x, point.y, point.x, point.y);
 	case kLBValueRect:
 		return rect;
 	case kLBValueItemPtr:
@@ -476,26 +488,84 @@ void LBCode::parseMain() {
 			if (_currToken == kTokenAssign)
 				error("attempted assignment to self");
 			break;
-		} else if (_currToken == kTokenAssign) {
+		}
+		bool indexing = false;
+		Common::Array<LBValue> index;
+		while (_currToken == kTokenListStart) {
+			debugN("[");
+			nextToken();
+			parseStatement();
+			if (_currToken != kTokenListEnd)
+				error("expected list end");
+			debugN("]");
+			nextToken();
+			if (!_stack.size())
+				error("index failed");
+			indexing = true;
+			index.push_back(_stack.pop());
+		}
+		if (_currToken == kTokenAssign) {
 			debugN(" = ");
 			nextToken();
 			parseStatement();
 			if (!_stack.size())
 				error("assignment failed");
-			LBValue *val = &_vm->_variables[varname];
-			*val = _stack.pop();
-			_stack.push(*val);
+			LBValue *val;
+			if (indexing)
+				val = getIndexedVar(varname, index);
+			else
+				val = &_vm->_variables[varname];
+			if (val) {
+				*val = _stack.pop();
+				_stack.push(*val);
+			} else
+				_stack.push(LBValue());
+		} else if (_currToken == kTokenAndEquals) {
+			debugN(" &= ");
+			nextToken();
+			parseStatement();
+			if (!_stack.size())
+				error("assignment failed");
+			LBValue *val;
+			if (indexing)
+				val = getIndexedVar(varname, index);
+			else
+				val = &_vm->_variables[varname];
+			if (val) {
+				if (val->type != kLBValueString)
+					error("operator &= used on non-string");
+				val->string = val->string + _stack.pop().toString();
+				_stack.push(*val);
+			} else
+				_stack.push(LBValue());
 		} else {
-			_stack.push(_vm->_variables[varname]);
+			if (indexing) {
+				LBValue *val = getIndexedVar(varname, index);
+				if (val)
+					_stack.push(*val);
+				else
+					_stack.push(LBValue());
+			} else
+				_stack.push(_vm->_variables[varname]);
 		}
 		// FIXME: pre/postincrement for non-integers
 		if (_currToken == kTokenPlusPlus) {
 			debugN("++");
-			_vm->_variables[varname].integer++;
+			if (indexing) {
+				LBValue *val = getIndexedVar(varname, index);
+				if (val)
+					val->integer++;
+			} else
+				_vm->_variables[varname].integer++;
 			nextToken();
 		} else if (_currToken == kTokenMinusMinus) {
 			debugN("--");
-			_vm->_variables[varname].integer--;
+			if (indexing) {
+				LBValue *val = getIndexedVar(varname, index);
+				if (val)
+					val->integer--;
+			} else
+				_vm->_variables[varname].integer--;
 			nextToken();
 		}
 		}
@@ -567,6 +637,28 @@ void LBCode::parseMain() {
 		nextToken();
 		break;
 
+	case kTokenListStart:
+		debugN("[");
+		nextToken();
+		{
+		Common::SharedPtr<LBList> list = Common::SharedPtr<LBList>(new LBList);
+		while (_currToken != kTokenListEnd) {
+			parseStatement();
+			if (!_stack.size())
+				error("unexpected empty stack during literal list evaluation");
+			list->array.push_back(_stack.pop());
+			if (_currToken == kTokenComma) {
+				debugN(", ");
+				nextToken();
+			} else if (_currToken != kTokenListEnd)
+				error("encountered unexpected token %02x during literal list", _currToken);
+		}
+		debugN("]");
+		nextToken();
+		_stack.push(list);
+		}
+		break;
+
 	case kTokenNot:
 		debugN("!");
 		nextToken();
@@ -607,6 +699,20 @@ void LBCode::parseMain() {
 	}
 }
 
+LBValue *LBCode::getIndexedVar(Common::String varname, const Common::Array<LBValue> &index) {
+	LBValue *var = &_vm->_variables[varname];
+	for (uint i = 0; i < index.size(); i++) {
+		if (var->type != kLBValueList)
+			error("variable '%s' was indexed, but isn't a list after %d indexes", varname.c_str(), i);
+		if (index[i].type != kLBValueInteger)
+			error("index %d wasn't an integer", i);
+		if (index[i].integer < 1 || index[i].integer > (int)var->list->array.size())
+			return NULL;
+		var = &var->list->array[index[i].integer - 1];
+	}
+	return var;
+}
+
 LBItem *LBCode::resolveItem(const LBValue &value) {
 	if (value.type == kLBValueItemPtr)
 		return value.item;
@@ -626,7 +732,7 @@ Common::Array<LBValue> LBCode::readParams() {
 	byte numParams = _data[_currOffset++];
 
 	if (!numParams) {
-		debugN("()\n");
+		debugN("()");
 		nextToken();
 		return params;
 	}
@@ -688,14 +794,14 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "random", &LBCode::cmdRandom },
 	{ "stringLen", &LBCode::cmdStringLen },
 	{ "substring", &LBCode::cmdSubstring },
-	{ "max", 0 },
-	{ "min", 0 },
-	{ "abs", 0 },
+	{ "max", &LBCode::cmdMax },
+	{ "min", &LBCode::cmdMin },
+	{ "abs", &LBCode::cmdAbs },
 	{ "getRect", &LBCode::cmdGetRect }, // also "makeRect"
-	{ "makePt", 0 }, // also "makePair"
+	{ "makePt", &LBCode::cmdMakePoint }, // also "makePair"
 	{ "topLeft", &LBCode::cmdTopLeft },
 	{ "bottomRight", &LBCode::cmdBottomRight },
-	{ "mousePos", 0 },
+	{ "mousePos", &LBCode::cmdMousePos },
 	{ "top", &LBCode::cmdTop },
 	{ "left", &LBCode::cmdLeft },
 	{ "bottom", &LBCode::cmdBottom },
@@ -704,7 +810,7 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "xpos", 0 },
 	{ "ypos", 0 },
 	{ "playFrom", 0 },
-	{ "move", 0 },
+	{ "move", &LBCode::cmdMove },
 	{ 0, 0 },
 	{ 0, 0 },
 	{ "setDragParams", &LBCode::cmdSetDragParams },
@@ -727,26 +833,26 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "getPage", 0 },
 	{ "getWorldRect", 0 },
 	{ "isWorldWrap", 0 },
-	{ "newList", 0 },
+	{ "newList", &LBCode::cmdNewList },
 	{ "deleteList", 0 },
-	{ "add", 0 },
+	{ "add", &LBCode::cmdAdd },
 	{ 0, 0 },
-	{ "addAt", 0 },
+	{ "addAt", &LBCode::cmdAddAt },
 	{ "getAt", 0 },
 	// 0x30
 	{ 0, 0 },
 	{ "getIndex", 0 },
-	{ "setAt", 0 },
-	{ "listLen", 0 },
-	{ "deleteAt", 0 },
-	{ "clearList", 0 },
+	{ "setAt", &LBCode::cmdSetAt },
+	{ "listLen", &LBCode::cmdListLen },
+	{ "deleteAt", &LBCode::cmdDeleteAt },
+	{ "clearList", &LBCode::cmdUnimplemented },
 	{ "setWorld", 0 },
-	{ "setProperty", 0 },
-	{ "getProperty", 0 },
+	{ "setProperty", &LBCode::cmdSetProperty },
+	{ "getProperty", &LBCode::cmdGetProperty },
 	{ "copyList", 0 },
 	{ "invoke", 0 },
-	{ "exec", 0 },
-	{ "return", 0 },
+	{ "exec", &LBCode::cmdExec },
+	{ "return", &LBCode::cmdReturn },
 	{ "sendSync", 0 },
 	{ "moveViewOrigin", 0 },
 	{ "addToGroup", 0 },
@@ -775,8 +881,8 @@ CodeCommandInfo generalCommandInfo[NUM_GENERAL_COMMANDS] = {
 	{ "setDisplay", &LBCode::cmdUnimplemented },
 	{ "getDisplay", 0 },
 	{ 0, 0 },
-	{ "lbxCreate", 0 },
-	{ "lbxFunc", 0 },
+	{ "lbxCreate", &LBCode::cmdLBXCreate },
+	{ "lbxFunc", &LBCode::cmdLBXFunc },
 	{ "waitCursor", 0 },
 	{ "debugBreak", 0 },
 	{ "menuItemEnable", 0 },
@@ -886,6 +992,35 @@ void LBCode::cmdSubstring(const Common::Array<LBValue> &params) {
 	_stack.push(substring);
 }
 
+void LBCode::cmdMax(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to max", params.size());
+
+	// FIXME: fp
+	int a = params[0].toInt();
+	int b = params[1].toInt();
+	_stack.push(MAX(a, b));
+}
+
+void LBCode::cmdMin(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to min", params.size());
+
+	// FIXME: fp
+	int a = params[0].toInt();
+	int b = params[1].toInt();
+	_stack.push(MIN(a, b));
+}
+
+void LBCode::cmdAbs(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to abs", params.size());
+
+	// FIXME: fp
+	int a = params[0].toInt();
+	_stack.push(ABS(a));
+}
+
 void LBCode::cmdGetRect(const Common::Array<LBValue> &params) {
 	if (params.size() < 2) {
 		_stack.push(getRectFromParams(params));
@@ -897,6 +1032,12 @@ void LBCode::cmdGetRect(const Common::Array<LBValue> &params) {
 		_stack.push(Common::Rect(params[0].toInt(), params[1].toInt(), params[2].toInt(), params[3].toInt()));
 	} else
 		error("incorrect number of parameters (%d) to getRect", params.size());
+}
+
+void LBCode::cmdMakePoint(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to makePoint", params.size());
+	_stack.push(Common::Point(params[0].toInt(), params[1].toInt()));
 }
 
 void LBCode::cmdTopLeft(const Common::Array<LBValue> &params) {
@@ -913,6 +1054,14 @@ void LBCode::cmdBottomRight(const Common::Array<LBValue> &params) {
 
 	Common::Rect rect = getRectFromParams(params);
 	_stack.push(Common::Point(rect.bottom, rect.right));
+}
+
+void LBCode::cmdMousePos(const Common::Array<LBValue> &params) {
+	if (params.size() != 0)
+		error("too many parameters (%d) to mousePos", params.size());
+
+	Common::Point pt = _vm->_system->getEventManager()->getMousePos();
+	_stack.push(pt);
 }
 
 void LBCode::cmdTop(const Common::Array<LBValue> &params) {
@@ -947,8 +1096,168 @@ void LBCode::cmdRight(const Common::Array<LBValue> &params) {
 	_stack.push(rect.right);
 }
 
+void LBCode::cmdMove(const Common::Array<LBValue> &params) {
+	if (params.size() != 1 && params.size() != 2)
+		error("incorrect number of parameters (%d) to move", params.size());
+
+	LBItem *target = _currSource;
+	Common::Point pt;
+	if (params.size() == 1) {
+		pt = params[0].toPoint();
+	} else {
+		target = resolveItem(params[0]);
+		if (!target)
+			error("attempted move on invalid item (%s)", params[0].toString().c_str());
+		pt = params[1].toPoint();
+	}
+
+	target->moveBy(pt);
+}
+
 void LBCode::cmdSetDragParams(const Common::Array<LBValue> &params) {
 	warning("ignoring setDragParams");
+}
+
+void LBCode::cmdNewList(const Common::Array<LBValue> &params) {
+	if (params.size() != 0)
+		error("incorrect number of parameters (%d) to newList", params.size());
+
+	_stack.push(Common::SharedPtr<LBList>(new LBList));
+}
+
+void LBCode::cmdAdd(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to add", params.size());
+
+	if (params[0].type != kLBValueList || !params[0].list)
+		error("invalid lbx object passed to add");
+
+	params[0].list->array.push_back(params[1]);
+}
+
+void LBCode::cmdAddAt(const Common::Array<LBValue> &params) {
+	if (params.size() != 3)
+		error("incorrect number of parameters (%d) to addAt", params.size());
+
+	if (params[0].type != kLBValueList || !params[0].list)
+		error("invalid lbx object passed to addAt");
+
+	if (params[1].type != kLBValueInteger || params[1].integer < 1)
+		error("invalid index passed to addAt");
+
+	if ((uint)params[1].integer > params[0].list->array.size())
+		params[0].list->array.resize(params[1].integer);
+	params[0].list->array.insert_at(params[1].integer - 1, params[2]);
+}
+
+void LBCode::cmdSetAt(const Common::Array<LBValue> &params) {
+	if (params.size() != 3)
+		error("incorrect number of parameters (%d) to setAt", params.size());
+
+	if (params[0].type != kLBValueList || !params[0].list)
+		error("invalid lbx object passed to setAt");
+
+	if (params[1].type != kLBValueInteger || params[1].integer < 1)
+		error("invalid index passed to setAt");
+
+	if ((uint)params[1].integer > params[0].list->array.size())
+		params[0].list->array.resize(params[1].integer);
+	params[0].list->array[params[1].integer - 1] =  params[2];
+}
+
+void LBCode::cmdListLen(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to listLen", params.size());
+
+	if (params[0].type != kLBValueList || !params[0].list)
+		error("invalid lbx object passed to lbxFunc");
+
+	_stack.push(params[0].list->array.size());
+}
+
+void LBCode::cmdDeleteAt(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to deleteAt", params.size());
+
+	if (params[0].type != kLBValueList || !params[0].list)
+		error("invalid lbx object passed to deleteAt");
+
+	if (params[1].type != kLBValueInteger)
+		error("invalid index passed to deleteAt");
+	if (params[1].integer < 1 || params[1].integer > (int)params[0].list->array.size())
+		return;
+	params[0].list->array.remove_at(params[1].integer - 1);
+}
+
+void LBCode::cmdSetProperty(const Common::Array<LBValue> &params) {
+	if (params.size() < 2 || params.size() > 3)
+		error("incorrect number of parameters (%d) to setProperty", params.size());
+
+	Common::String name;
+	LBValue val;
+	LBItem *target = _currSource;
+	if (params.size() == 3) {
+		target = resolveItem(params[0]);
+		if (!target)
+			error("attempted setProperty on invalid item (%s)", params[0].toString().c_str());
+		name = params[1].toString();
+		val = params[2];
+	} else {
+		name = params[0].toString();
+		val = params[1];
+	}
+
+	target->_variables[name] = val;
+}
+
+void LBCode::cmdGetProperty(const Common::Array<LBValue> &params) {
+	if (params.size() < 1 || params.size() > 2)
+		error("incorrect number of parameters (%d) to getProperty", params.size());
+
+	Common::String name;
+	LBItem *target = _currSource;
+	if (params.size() == 2) {
+		target = resolveItem(params[0]);
+		if (!target)
+			error("attempted getProperty on invalid item (%s)", params[0].toString().c_str());
+		name = params[1].toString();
+	} else {
+		name = params[0].toString();
+	}
+
+	_stack.push(target->_variables[name]);
+}
+
+void LBCode::cmdExec(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to exec", params.size());
+	if (params[0].type != kLBValueInteger || params[0].integer < 0)
+		error("invalid offset passed to exec");
+	uint offset = (uint)params[0].integer;
+
+	uint32 oldOffset = _currOffset;
+	byte oldToken = _currToken;
+	LBValue val = runCode(_currSource, offset);
+	_currOffset = oldOffset;
+	_currToken = oldToken;
+
+	_stack.push(val);
+	_stack.push(val);
+}
+
+void LBCode::cmdReturn(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to return", params.size());
+
+	if (!_stack.size())
+		error("empty stack on entry to return");
+
+	if (params[0] == _stack.top()) {
+		_stack.pop();
+		_stack.push(params[1]);
+		_currToken = kTokenEndOfFile;
+	} else
+		_stack.push(_stack.top());
 }
 
 void LBCode::cmdSetPlayParams(const Common::Array<LBValue> &params) {
@@ -994,6 +1303,32 @@ void LBCode::cmdSetHitTest(const Common::Array<LBValue> &params) {
 	warning("ignoring setHitTest");
 }
 
+void LBCode::cmdLBXCreate(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to lbxCreate", params.size());
+
+	_stack.push(createLBXObject(_vm, params[0].toInt()));
+}
+
+void LBCode::cmdLBXFunc(const Common::Array<LBValue> &params) {
+	if (params.size() < 2)
+		error("incorrect number of parameters (%d) to lbxFunc", params.size());
+
+	if (params[0].type != kLBValueLBX || !params[0].lbx)
+		error("invalid lbx object passed to lbxFunc");
+
+	Common::SharedPtr<LBXObject> lbx = params[0].lbx;
+	uint callId = params[1].toInt();
+
+	Common::Array<LBValue> callParams;
+	for (uint i = 0; i < params.size() - 2; i++)
+		callParams.push_back(params[i + 2]);
+
+	LBValue result;
+	if (lbx->call(callId, callParams, result))
+		_stack.push(result);
+}
+
 void LBCode::cmdKey(const Common::Array<LBValue> &params) {
 	_stack.push(0); // FIXME
 	warning("ignoring Key");
@@ -1001,7 +1336,7 @@ void LBCode::cmdKey(const Common::Array<LBValue> &params) {
 
 #define NUM_ITEM_COMMANDS 34
 CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
-	{ "clone", 0 },
+	{ "clone", &LBCode::itemClone },
 	{ "destroy", 0 },
 	{ "dragBeginFrom", 0 },
 	{ "dragEnd", 0 },
@@ -1022,14 +1357,14 @@ CodeCommandInfo itemCommandInfo[NUM_ITEM_COMMANDS] = {
 	{ "isMuted", 0 },
 	{ "isPlaying", &LBCode::itemIsPlaying },
 	{ "isVisible", 0 },
-	{ "isLoaded", 0 },
+	{ "isLoaded", &LBCode::itemIsLoaded },
 	{ "isDragging", 0 },
 	{ "load", 0 },
 	{ "moveTo", &LBCode::itemMoveTo },
 	{ "mute", 0 },
 	{ "play", 0 },
 	{ "seek", &LBCode::itemSeek },
-	{ "seekToFrame", 0 },
+	{ "seekToFrame", &LBCode::itemSeekToFrame },
 	{ "setParent", &LBCode::itemSetParent },
 	{ "setZOrder", 0 },
 	{ "setText", 0 },
@@ -1054,14 +1389,50 @@ void LBCode::runItemCommand() {
 	(this->*(info.func))(params);
 }
 
+void LBCode::itemClone(const Common::Array<LBValue> &params) {
+	// TODO: first param can be target?
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to setParent", params.size());
+
+	uint id = params[0].toInt();
+	const Common::String &name = params[1].toString();
+
+	_currSource->clone(id, name);
+}
+
 void LBCode::itemIsPlaying(const Common::Array<LBValue> &params) {
 	// TODO
 	warning("ignoring isPlaying");
 	_stack.push(0);
 }
 
+void LBCode::itemIsLoaded(const Common::Array<LBValue> &params) {
+	if (params.size() != 1)
+		error("incorrect number of parameters (%d) to isLoaded", params.size());
+
+	LBItem *item = resolveItem(params[0]);
+	if (!item || !item->isLoaded())
+		_stack.push(0);
+	else
+		_stack.push(1);
+}
+
 void LBCode::itemMoveTo(const Common::Array<LBValue> &params) {
-	warning("ignoring moveTo");
+	if (params.size() != 1 && params.size() != 2)
+		error("incorrect number of parameters (%d) to moveTo", params.size());
+
+	LBItem *target = _currSource;
+	Common::Point pt;
+	if (params.size() == 1) {
+		pt = params[0].toPoint();
+	} else {
+		target = resolveItem(params[0]);
+		if (!target)
+			error("attempted moveTo on invalid item (%s)", params[0].toString().c_str());
+		pt = params[1].toPoint();
+	}
+
+	target->moveTo(pt);
 }
 
 void LBCode::itemSeek(const Common::Array<LBValue> &params) {
@@ -1071,6 +1442,17 @@ void LBCode::itemSeek(const Common::Array<LBValue> &params) {
 	LBItem *item = resolveItem(params[0]);
 	if (!item)
 		error("attempted seek on invalid item (%s)", params[0].toString().c_str());
+	uint seekTo = params[1].toInt();
+	item->seekToTime(seekTo);
+}
+
+void LBCode::itemSeekToFrame(const Common::Array<LBValue> &params) {
+	if (params.size() != 2)
+		error("incorrect number of parameters (%d) to seekToFrame", params.size());
+
+	LBItem *item = resolveItem(params[0]);
+	if (!item)
+		error("attempted seekToFrame on invalid item (%s)", params[0].toString().c_str());
 	uint seekTo = params[1].toInt();
 	item->seek(seekTo);
 }
@@ -1091,7 +1473,7 @@ void LBCode::runNotifyCommand() {
 		debugN("goto");
 		Common::Array<LBValue> params = readParams();
 		// TODO: type-checking
-		NotifyEvent notifyEvent(kLBNotifyChangePage, 0);
+		NotifyEvent notifyEvent(kLBNotifyChangePage, 1);
 		switch (params.size()) {
 		case 4:
 			notifyEvent.type = kLBNotifyChangeMode; // FIXME: type 8?
@@ -1327,6 +1709,8 @@ uint LBCode::parseCode(const Common::String &source) {
 			break;
 		// open bracket
 		case '(':
+			bool parameterless;
+			parameterless = false;
 			if (wasFunction) {
 				// function call parameters
 				wasFunction = false;
@@ -1342,6 +1726,7 @@ uint LBCode::parseCode(const Common::String &source) {
 						continue;
 					if (source[i] != ')')
 						break;
+					parameterless = true;
 					code[code.size() - 1] = 0;
 					break;
 				}
@@ -1349,14 +1734,20 @@ uint LBCode::parseCode(const Common::String &source) {
 				// brackets around expression
 				counterPositions.push_back(0);
 			}
-			code.push_back(kTokenOpenBracket);
+			if (!parameterless)
+				code.push_back(kTokenOpenBracket);
 			break;
 		// close bracket
 		case ')':
 			if (counterPositions.empty())
 				error("while parsing script '%s', encountered unmatched )", source.c_str());
+
+			// don't push a kTokenCloseBracket for a parameterless function call
+			uint counterPos2;
+			counterPos2 = counterPositions.back();
+			if (!counterPos2 || code[counterPos2])
+				code.push_back(kTokenCloseBracket);
 			counterPositions.pop_back();
-			code.push_back(kTokenCloseBracket);
 			break;
 		// comma (seperating function params)
 		case ',':
@@ -1375,7 +1766,7 @@ uint LBCode::parseCode(const Common::String &source) {
 			{
 			Common::String tempString;
 			while (pos < source.size()) {
-				if (!isalpha(source[pos]) && !isdigit(source[pos]))
+				if (!Common::isAlpha(source[pos]) && !Common::isDigit(source[pos]))
 					break;
 				tempString += source[pos++];
 			}
@@ -1386,7 +1777,7 @@ uint LBCode::parseCode(const Common::String &source) {
 			}
 			break;
 		default:
-			if (isdigit(token)) {
+			if (Common::isDigit(token)) {
 				const char *in = source.c_str() + pos - 1;
 				// FIXME: handle floats?
 				char *endptr;
@@ -1401,15 +1792,21 @@ uint LBCode::parseCode(const Common::String &source) {
 				WRITE_BE_UINT16(tmp, (int16)intValue);
 				code.push_back(tmp[0]);
 				code.push_back(tmp[1]);
-			} else if (isalpha(token)) {
+			} else if (Common::isAlpha(token)) {
 				Common::String tempString;
 				tempString += token;
 				while (pos < source.size()) {
-					if (!isalpha(source[pos]) && !isdigit(source[pos]))
+					if (!Common::isAlpha(source[pos]) && !Common::isDigit(source[pos]))
 						break;
 					tempString += source[pos++];
 				}
-				wasFunction = parseCodeSymbol(tempString, pos, code);
+				if (tempString.equalsIgnoreCase("true")) {
+					code.push_back(kTokenTrue);
+				} else if (tempString.equalsIgnoreCase("false")) {
+					code.push_back(kTokenFalse);
+				} else {
+					wasFunction = parseCodeSymbol(tempString, pos, code);
+				}
 			} else {
 				error("while parsing script '%s', couldn't parse '%c'", source.c_str(), token);
 			}

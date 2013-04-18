@@ -58,7 +58,6 @@ public:
 	virtual void engineInit();
 	virtual void engineDone();
 #endif
-	virtual Common::HardwareKeySet *getHardwareKeySet();
 	virtual void quit();
 	virtual void fatalError();
 

@@ -26,6 +26,7 @@
 
 #include "common/config-manager.h"
 #include "common/textconsole.h"
+#include "common/substream.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -78,6 +79,8 @@ void DrasculaEngine::volumeControls() {
 			;
 
 		if (rightMouseButton == 1) {
+			// Clear this to avoid going straight to the inventory
+			rightMouseButton = 0;
 			delay(100);
 			break;
 		}
@@ -163,29 +166,28 @@ void DrasculaEngine::MusicFadeout() {
 void DrasculaEngine::playFile(const char *fname) {
 	Common::SeekableReadStream *stream = _archives.open(fname);
 	if (stream) {
-		int soundSize = stream->size();
-		byte *soundData = (byte *)malloc(soundSize);
+		int startOffset = 0;
+		int soundSize = stream->size() - startOffset;
 
-		if (!(!strcmp(fname, "3.als") && soundSize == 145166 && _lang != kSpanish)) {
-			stream->seek(32);
-		} else {
+		if (!strcmp(fname, "3.als") && soundSize == 145166 && _lang != kSpanish) {
 			// WORKAROUND: File 3.als with English speech files has a big silence at
 			// its beginning and end. We seek past the silence at the beginning,
 			// and ignore the silence at the end
 			// Fixes bug #2111815 - "DRASCULA: Voice delayed"
-			stream->seek(73959, SEEK_SET);
-			soundSize = 117158 - 73959;
+			startOffset = 73959;
+			soundSize = soundSize - startOffset - 26306;
 		}
 
-		stream->read(soundData, soundSize);
-		delete stream;
+		Common::SeekableReadStream *subStream = new Common::SeekableSubReadStream(
+		    stream, startOffset, startOffset + soundSize, DisposeAfterUse::YES);
+		if (!subStream) {
+			warning("playFile: Out of memory");
+			delete stream;
+			return;
+		}
 
-		_subtitlesDisabled = !ConfMan.getBool("subtitles");
-		if (ConfMan.getBool("speech_mute"))
-			memset(soundData, 0x80, soundSize); // Mute speech but keep the pause
-
-		Audio::AudioStream *sound = Audio::makeRawStream(soundData, soundSize - 64,
-						11025, Audio::FLAG_UNSIGNED);
+		Audio::AudioStream *sound = Audio::makeRawStream(subStream, 11025,
+		                                                 Audio::FLAG_UNSIGNED);
 		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, sound);
 	} else
 		warning("playFile: Could not open %s", fname);

@@ -414,7 +414,7 @@ Common::SeekableReadStream *DataIO::getFile(File &file) {
 		return 0;
 
 	Common::SeekableReadStream *rawData =
-		new Common::SafeSubReadStream(&file.archive->file, file.offset, file.offset + file.size);
+		new Common::SafeSeekableSubReadStream(&file.archive->file, file.offset, file.offset + file.size);
 
 	if (file.compression == 0)
 		return rawData;

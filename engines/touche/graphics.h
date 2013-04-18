@@ -23,7 +23,7 @@
 #ifndef TOUCHE_GRAPHICS_H
 #define TOUCHE_GRAPHICS_H
 
-#include "common/util.h"
+#include "common/language.h"
 
 namespace Touche {
 

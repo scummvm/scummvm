@@ -3110,7 +3110,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(67, 4);
 			playActorAnimation(680);
 			SET_FLAG(0xDBB8, 0);
-		} else if (CHECK_FLAG(0xDBB8, 1)) {
+		} else if (CHECK_FLAG(0xDBB7, 1)) {
 			processCallback(0x6b86);
 		} else if (CHECK_FLAG(0xDBB9, 1)) {
 			processCallback(0x6b86);
@@ -3177,7 +3177,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(67, 5);
 			playActorAnimation(688);
 			SET_FLAG(0xdbbc, 0);
-		} else if (CHECK_FLAG(0xdbbc, 1)) {
+		} else if (CHECK_FLAG(0xdbbb, 1)) {
 			processCallback(0x6b86);
 		} else {
 			playSound(66, 6);
@@ -3221,7 +3221,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x6c83:
-		Dialog::pop(scene, 0xdb2e, 0, 0, 0xd1, 0xef, 0, 1);
+		waitLanAnimationFrame(1, 1);
+		Dialog::pop(scene, 0xdb2e, 0, 727, 0xd1, 0xef, 0, 1);
 		scene->getObject(1)->setName((const char *)res->dseg.ptr(0xaa94));
 		SET_FLAG(0xDBD1, 1);
 		return true;
@@ -3557,8 +3558,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 39);
 		displayAsyncMessage(0x5124, 40388, 9, 35, 0xd0);
 		playActorAnimation(728);
-		//fixme: add 727 animation
-		Dialog::show(scene, 0x3d17, 0, 0, 0xd1, 0xef, 0, 1);
+
+		waitLanAnimationFrame(1, 1);
+		Dialog::show(scene, 0x3d17, 0, 727, 0xd1, 0xef, 0, 1);
 		SET_FLAG(0xDBD2, 1);
 		processCallback(0x9175);
 		return true;
@@ -3572,13 +3574,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			return true;
 		}
 		displayMessage(0x5138);
-		waitLanAnimationFrame(1, 1);
 
+		waitLanAnimationFrame(1, 1);
 		playSound(5, 3);
 		playSound(5, 23);
 		playActorAnimation(729);
-		//fixme: add 727 animation
-		Dialog::show(scene, 0x3d70, 0, 0, 0xd1, 0xef, 0, 1);
+
+		waitLanAnimationFrame(1, 1);
+		Dialog::show(scene, 0x3d70, 0, 727, 0xd1, 0xef, 0, 1);
 		SET_FLAG(0xDBD3, 1);
 		processCallback(0x9175);
 		return true;
@@ -3597,8 +3600,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 3);
 		playSound(5, 25);
 		playActorAnimation(730);
-		//fixme: add 727 animation
-		Dialog::show(scene, 0x3dd6, 0, 0, 0xd1, 0xef, 0, 1);
+
+		waitLanAnimationFrame(1, 1);
+		Dialog::show(scene, 0x3dd6, 0, 727, 0xd1, 0xef, 0, 1);
 		SET_FLAG(0xDBD4, 1);
 		processCallback(0x9175);
 		return true;

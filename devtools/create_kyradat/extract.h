@@ -47,13 +47,17 @@ enum kExtractType {
 	k3TypeRaw16to8,
 	k3TypeShpData,
 
-	kLolTypeRaw16,
-	kLolTypeRaw32,
-	kLolTypeButtonDef,
-	kLolTypeCharData,
-	kLolTypeSpellData,
-	kLolTypeCompassData,
-	kLolTypeFlightShpData
+	kLoLTypeRaw16,
+	kLoLTypeRaw32,
+	kLoLTypeButtonDef,
+	kLoLTypeCharData,
+	kLoLTypeSpellData,
+	kLoLTypeCompassData,
+	kLoLTypeFlightShpData,
+
+	kEoB2TypeSeqData,
+	kEoB2TypeShapeData,
+	kEoBTypeNpcData
 };
 
 struct ExtractInformation {

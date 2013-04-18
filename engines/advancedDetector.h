@@ -26,6 +26,8 @@
 #include "engines/metaengine.h"
 #include "engines/engine.h"
 
+#include "common/gui_options.h" // FIXME: Temporary hack?
+
 namespace Common {
 class Error;
 class FSList;
@@ -101,7 +103,7 @@ typedef Common::Array<const ADGameDescription *> ADGameDescList;
  * terminate a list to be passed to the AdvancedDetector API.
  */
 #define AD_TABLE_END_MARKER	\
-	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS, GUIO1(GUIO_NONE) }
+	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS, GUIO0() }
 
 struct ADFileBasedFallback {
 	/**
@@ -169,7 +171,13 @@ protected:
 	/**
 	 * Name of single gameid (optional).
 	 *
-	 * @todo Properly explain this -- what does it do?
+	 * Used to override gameid.
+	 * This is a recommended setting to prevent global gameid pollution.
+	 * With this option set, the gameid effectively turns into engineid. 
+	 *
+	 * FIXME: This field actually removes a feature (gameid) in order to
+	 * address a more generic problem. We should find a better way to
+	 * disambiguate gameids.
 	 */
 	const char *_singleid;
 

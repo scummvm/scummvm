@@ -57,7 +57,7 @@ public:
 
 
 typedef Common::Functor0<void> Opcode;
-typedef Common::Array<const Opcode*>	OpcodeSet;
+typedef Common::Array<const Opcode *>	OpcodeSet;
 
 
 
@@ -69,8 +69,8 @@ public:
 
 	uint	_lookup;
 
-	Common::Stack<OpcodeSet*>	_opcodes;
-	Common::Stack<Table*>		_statements;
+	Common::Stack<OpcodeSet *>	_opcodes;
+	Common::Stack<Table *>		_statements;
 
 	OpcodeSet	*_currentOpcodes;
 	Table		*_currentStatements;
@@ -199,7 +199,7 @@ protected:
 	void		addCommand();
 
 	void clearSet(OpcodeSet &opcodes) {
-		for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
+		for (Common::Array<const Opcode *>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
 			delete *i;
 		opcodes.clear();
 	}
@@ -357,7 +357,7 @@ protected:
 	virtual void	parseRValue(ScriptVar &var, const char *str);
 
 	void clearSet(OpcodeSet &opcodes) {
-		for (Common::Array<const Opcode*>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
+		for (Common::Array<const Opcode *>::iterator i = opcodes.begin(); i != opcodes.end(); ++i)
 			delete *i;
 		opcodes.clear();
 	}

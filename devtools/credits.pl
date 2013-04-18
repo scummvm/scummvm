@@ -484,7 +484,7 @@ begin_credits("Credits");
 				add_person("Max Horn", "Fingolfin", "(retired)");
 				add_person("Travis Howell", "Kirben", "");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Codecs, iMUSE, Smush, etc.");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Eugene Sandulenko", "sev", "FT INSANE, MM NES, MM C64, game detection, Herc/CGA");
 				add_person("Ludvig Strigeus", "ludde", "(retired)");
 			end_section();
@@ -492,7 +492,7 @@ begin_credits("Credits");
 			begin_section("HE");
 				add_person("Jonathan Gray", "khalek", "(retired)");
 				add_person("Travis Howell", "Kirben", "");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Eugene Sandulenko", "sev", "");
 			end_section();
 
@@ -523,9 +523,13 @@ begin_credits("Credits");
 			begin_section("Cine");
 				add_person("Vincent Hamm", "yaz0r", "(retired)");
 				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Kari Salminen", "Buddha^", "");
 				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+
+			begin_section("Composer");
+				add_person("Alyssa Milburn", "fuzzie", "");
 			end_section();
 
 			begin_section("CruisE");
@@ -546,7 +550,7 @@ begin_credits("Credits");
 			begin_section("DreamWeb");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 				add_person("Bertrand Augereau", "Tramb", "");
-				add_person("Vladimir Menshakov", "whoozle", "");
+				add_person("Vladimir Menshakov", "whoozle", "(retired)");
 			end_section();
 
 			begin_section("Gob");
@@ -572,7 +576,7 @@ begin_credits("Credits");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
 				add_person("Oystein Eftevaag", "vinterstum", "");
 				add_person("Florian Kagerer", "athrxx", "");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Johannes Schickel", "LordHoto", "");
 			end_section();
 
@@ -584,13 +588,6 @@ begin_credits("Credits");
 
 			begin_section("Lure");
 				add_person("Paul Gilbert", "dreammaster", "");
-			end_section();
-
-			begin_section("M4");
-				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-				add_person("Paul Gilbert", "dreammaster", "");
-				add_person("Benjamin Haisch", "john_doe", "");
-				add_person("Filippos Karapetis", "[md5]", "");
 			end_section();
 
 			begin_section("MADE");
@@ -613,12 +610,13 @@ begin_credits("Credits");
 
 			begin_section("Queen");
 				add_person("David Eriksson", "twogood", "(retired)");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 				add_person("Joost Peters", "joostp", "");
 			end_section();
 
 			begin_section("SAGA");
 				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("Daniel Balsom", "DanielFox", "Original engine reimplementation author (retired)");
 				add_person("Filippos Karapetis", "[md5]", "");
 				add_person("Andrew Kurushin", "ajax16384", "");
 				add_person("Eugene Sandulenko", "sev", "");
@@ -664,7 +662,7 @@ begin_credits("Credits");
 
 			begin_section("TeenAgent");
 				add_person("Robert Megone", "sanguine", "Help with callback rewriting");
-				add_person("Vladimir Menshakov", "whoozle", "");
+				add_person("Vladimir Menshakov", "whoozle", "(retired)");
 			end_section();
 
 			begin_section("Tinsel");
@@ -682,7 +680,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("Touch&eacute;");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 			end_section();
 
 			begin_section("TsAGE");
@@ -691,7 +689,7 @@ begin_credits("Credits");
 			end_section();
 
 			begin_section("Tucker");
-				add_person("Gregory Montoir", "cyx", "");
+				add_person("Gregory Montoir", "cyx", "(retired)");
 			end_section();
 
 		end_section();
@@ -1003,6 +1001,7 @@ begin_credits("Credits");
 				add_person("Edward Rudd", "urkle", "Fixes for playing MP3 versions of MI1/Loom audio");
 				add_person("Daniel Schepler", "dschepler", "Final MI1 CD music support, initial Ogg Vorbis support");
 				add_person("Andr&eacute; Souza", "luke_br", "SDL-based OpenGL renderer");
+				add_person("Tom Frost", "TomFrost", "WebOS port contributions");
 			end_persons();
 		end_section();
 
@@ -1061,6 +1060,7 @@ begin_credits("Credits");
 
 	begin_section("Special thanks to");
 		begin_persons();
+			add_person("Daniel Balsom", "DanielFox", "For the original Reinherit (SAGA) code");
 			add_person("Sander Buskens", "", "For his work on the initial reversing of Monkey2");
 			add_person("", "Canadacow", "For the original MT-32 emulator");
 			add_person("Kevin Carnes", "", "For Scumm16, the basis of ScummVM's older gfx codecs");
@@ -1078,6 +1078,8 @@ begin_credits("Credits");
 			add_person("", "Tristan", "For additional work on the original MT-32 emulator");
 			add_person("James Woodcock", "", "Soundtrack enhancements");
 		end_persons();
+
+	add_paragraph("Some icons by Yusuke Kamiyamane");
 
 	add_paragraph(
     "Tony Warriner and everyone at Revolution Software Ltd. for sharing ".

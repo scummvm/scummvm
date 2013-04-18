@@ -32,13 +32,13 @@ namespace Tinsel {
 
 // FIXME: Avoid non-const global vars
 
-char currentCD = '1';
+char g_currentCD = '1';
 
-static bool bChangingCD = false;
-static char nextCD = '\0';
+static bool g_bChangingCD = false;
+static char g_nextCD = '\0';
 
-static uint32 lastTime = 0;
-extern LANGUAGE sampleLanguage;
+static uint32 g_lastTime = 0;
+extern LANGUAGE g_sampleLanguage;
 
 
 void CdCD(CORO_PARAM) {
@@ -47,7 +47,7 @@ void CdCD(CORO_PARAM) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	while (bChangingCD) {
+	while (g_bChangingCD) {
 		if (g_scheduler->getCurrentProcess()) {
 			// FIXME: CdCD gets passed a nullContext in RegisterGlobals() and
 			//        PrimeSceneHopper(), because I didn't know how to get a proper
@@ -66,13 +66,13 @@ void CdCD(CORO_PARAM) {
 
 int GetCurrentCD() {
 	// count from 1
-	return (currentCD - '1' + 1);
+	return (g_currentCD - '1' + 1);
 }
 
 static const uint32 cdFlags[] = { fCd1, fCd2, fCd3, fCd4, fCd5, fCd6, fCd7, fCd8 };
 
 void SetCD(int flags) {
-	if (flags & cdFlags[currentCD - '1'])
+	if (flags & cdFlags[g_currentCD - '1'])
 		return;
 
 	error("SetCD() problem");
@@ -82,7 +82,7 @@ int GetCD(int flags) {
 	int i;
 	char cd = '\0';
 
-	if (flags & cdFlags[currentCD - '1'])
+	if (flags & cdFlags[g_currentCD - '1'])
 		return GetCurrentCD();
 
 	for (i = 0; i < 8; i++) {
@@ -93,19 +93,19 @@ int GetCD(int flags) {
 	}
 	assert(i != 8);
 
-	nextCD = cd;
+	g_nextCD = cd;
 	return cd;
 }
 
 void DoCdChange() {
-	if (bChangingCD && (g_system->getMillis() > (lastTime + 1000))) {
-		lastTime = g_system->getMillis();
+	if (g_bChangingCD && (g_system->getMillis() > (g_lastTime + 1000))) {
+		g_lastTime = g_system->getMillis();
 		_vm->_sound->closeSampleStream();
 
 		// Use the filesize of the sample file to determine, for Discworld 2, which CD it is
 		if (TinselV2) {
 			TinselFile f;
-			if (!f.open(_vm->getSampleFile(sampleLanguage)))
+			if (!f.open(_vm->getSampleFile(g_sampleLanguage)))
 				// No CD present
 				return;
 
@@ -113,28 +113,28 @@ void DoCdChange() {
 
 			f.close();
 
-			if (currentCD != sampleCdNumber)
+			if (g_currentCD != sampleCdNumber)
 				return;
 		}
 
 		_vm->_sound->openSampleFiles();
 		ChangeLanguage(TextLanguage());
-		bChangingCD = false;
+		g_bChangingCD = false;
 	}
 }
 
 void SetNextCD(int cdNumber) {
 	assert(cdNumber == 1 || cdNumber == 2);
 
-	nextCD = (char)(cdNumber + '1' - 1);
+	g_nextCD = (char)(cdNumber + '1' - 1);
 }
 
 bool GotoCD() {
 	// WORKAROUND: Somehow, CdDoChange() is called twice... Hopefully, this guard helps
-	if (currentCD == nextCD)
+	if (g_currentCD == g_nextCD)
 		return false;
 
-	currentCD = nextCD;
+	g_currentCD = g_nextCD;
 
 /*	if (bNoCD)	{
 		strcpy(cdDirectory, hdDirectory);
@@ -142,7 +142,7 @@ bool GotoCD() {
 		strcat(cdDirectory, cdLastBit);
 	}
 */
-	bChangingCD = true;
+	g_bChangingCD = true;
 
 	return true;
 }

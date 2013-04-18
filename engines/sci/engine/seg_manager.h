@@ -463,8 +463,10 @@ private:
 	SegmentId _stringSegId;
 #endif
 
-private:
+public:
 	SegmentObj *allocSegment(SegmentObj *mem, SegmentId *segid);
+
+private:
 	void deallocate(SegmentId seg);
 	void createClassTable();
 
@@ -477,9 +479,6 @@ private:
 	 * 					'seg' is a valid segment
 	 */
 	bool check(SegmentId seg);
-
-public:
-	LocalVariables *allocLocalsSegment(Script *scr);
 };
 
 } // End of namespace Sci

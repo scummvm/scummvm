@@ -187,15 +187,14 @@ void KyraEngine_MR::refreshAnimObjects(int force) {
 void KyraEngine_MR::updateItemAnimations() {
 	bool nextFrame = false;
 
-	if (_itemAnimData[0].itemIndex == -1)
+	if (_itemAnimDefinition[0].itemIndex == -1)
 		return;
 
-	const ItemAnimData_v2 *s = &_itemAnimData[_nextAnimItem];
+	const ItemAnimDefinition *s = &_itemAnimDefinition[_nextAnimItem];
 	ActiveItemAnim *a = &_activeItemAnim[_nextAnimItem];
 	_nextAnimItem = (_nextAnimItem + 1) % 10;
 
-	uint32 ctime = _system->getMillis();
-	if (ctime < a->nextFrame)
+	if (_system->getMillis() < a->nextFrameTime)
 		return;
 
 	uint16 shpIdx = s->frames[a->currentFrame].index + 248;
@@ -230,7 +229,7 @@ void KyraEngine_MR::updateItemAnimations() {
 	}
 
 	if (nextFrame) {
-		a->nextFrame = _system->getMillis() + (s->frames[a->currentFrame].delay * _tickLength);
+		a->nextFrameTime = _system->getMillis() + (s->frames[a->currentFrame].delay * _tickLength);
 		a->currentFrame = (a->currentFrame + 1) % s->numFrames;
 	}
 }
