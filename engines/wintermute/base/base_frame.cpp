@@ -27,8 +27,9 @@
  */
 
 #include "engines/wintermute/base/base_parser.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_frame.h"
-#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound.h"
@@ -264,8 +265,8 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 			}
 			_sound = new BaseSound(_gameRef);
 			if (!_sound || DID_FAIL(_sound->setSound(params, Audio::Mixer::kSFXSoundType, false))) {
-				if (_gameRef->_soundMgr->_soundAvailable) {
-					_gameRef->LOG(0, "Error loading sound '%s'.", params);
+				if (BaseEngine::instance().getSoundMgr()->_soundAvailable) {
+					BaseEngine::LOG(0, "Error loading sound '%s'.", params);
 				}
 				delete _sound;
 				_sound = nullptr;
@@ -294,12 +295,12 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in FRAME definition");
+		BaseEngine::LOG(0, "Syntax error in FRAME definition");
 		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading FRAME definition");
+		BaseEngine::LOG(0, "Error loading FRAME definition");
 		return STATUS_FAILED;
 	}
 
@@ -314,7 +315,7 @@ bool BaseFrame::loadBuffer(byte *buffer, int lifeTime, bool keepLoaded) {
 
 		if (!sub->_surface) {
 			delete sub;
-			_gameRef->LOG(0, "Error loading SUBFRAME");
+			BaseEngine::LOG(0, "Error loading SUBFRAME");
 			return STATUS_FAILED;
 		}
 

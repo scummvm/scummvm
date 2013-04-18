@@ -90,4 +90,12 @@ uint32 BaseEngine::randInt(int from, int to) {
 	return _rnd->getRandomNumberRng(from, to);
 }
 
+BaseSoundMgr *BaseEngine::getSoundMgr() {
+	if (instance()._gameRef) {
+		return _gameRef->_soundMgr;
+	} else {
+		return nullptr;
+	}
+}
+
 } // end of namespace Wintermute

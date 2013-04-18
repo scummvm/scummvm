@@ -39,6 +39,7 @@ namespace Wintermute {
 class BaseFileManager;
 class BaseRegistry;
 class BaseGame;
+class BaseSoundMgr;
 class SystemClassRegistry;
 class BaseEngine : public Common::Singleton<Wintermute::BaseEngine> {
 	void init(Common::Language lang);
@@ -60,6 +61,7 @@ public:
 	SystemClassRegistry *getClassRegistry() { return _classReg; }
 	BaseGame *getGameRef() { return _gameRef; }
 	BaseFileManager *getFileManager() { return _fileManager; }
+	BaseSoundMgr *getSoundMgr();
 	static void LOG(bool res, const char *fmt, ...);
 	const char *getGameId() { return _gameId.c_str(); }
 };
