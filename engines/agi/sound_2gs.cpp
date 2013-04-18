@@ -447,7 +447,7 @@ void SoundGen2GS::setProgramChangeMapping(const IIgsMidiProgramMapping *mapping)
 	_progToInst = mapping;
 }
 
-IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : AgiSound(manager) {
+IIgsMidi::IIgsMidi(uint8 *data, uint32 len, int resnum) : AgiSound() {
 	_data = data; // Save the resource pointer
 	_ptr = _data + 2; // Set current position to just after the header
 	_len = len;  // Save the resource's length
@@ -472,7 +472,7 @@ static bool convertWave(Common::SeekableReadStream &source, int8 *dest, uint len
 	return !(source.eos() || source.err());
 }
 
-IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : AgiSound(manager) {
+IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum) : AgiSound() {
 	Common::MemoryReadStream stream(data, len, DisposeAfterUse::YES);
 
 	// Check that the header was read ok and that it's of the correct type
