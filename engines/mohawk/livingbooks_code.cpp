@@ -519,9 +519,17 @@ void LBCode::parseMain() {
 				*val = _stack.pop();
 				_stack.push(*val);
 			} else
-				_stack.push(LBValue());
-		} else if (_currToken == kTokenAndEquals) {
-			debugN(" &= ");
+				error("assignment failed, no dest");
+//				_stack.push(LBValue());
+		} else if (_currToken == kTokenPlusEquals || _currToken == kTokenMinusEquals || _currToken == kTokenAndEquals) {
+			// FIXME: do +=/-= belong here?
+			byte token = _currToken;
+			if (_currToken == kTokenPlusEquals)
+				debugN(" += ");
+			else if (_currToken == kTokenMinusEquals)
+				debugN(" -= ");
+			else if (_currToken == kTokenAndEquals)
+				debugN(" &= ");
 			nextToken();
 			parseStatement();
 			if (!_stack.size())
@@ -532,9 +540,19 @@ void LBCode::parseMain() {
 			else
 				val = &_vm->_variables[varname];
 			if (val) {
-				if (val->type != kLBValueString)
-					error("operator &= used on non-string");
-				val->string = val->string + _stack.pop().toString();
+				if (token == kTokenAndEquals) {
+					if (val->type != kLBValueString)
+						error("operator &= used on non-string");
+					val->string = val->string + _stack.pop().toString();
+				} else {
+					// FIXME: non-integers
+					if (val->type != kLBValueInteger)
+						error("operator used on non-integer");
+					if (token == kTokenPlusEquals)
+						val->integer = val->integer + _stack.pop().toInt();
+					else
+						val->integer = val->integer - _stack.pop().toInt();
+				}
 				_stack.push(*val);
 			} else
 				_stack.push(LBValue());
@@ -581,6 +599,7 @@ void LBCode::parseMain() {
 			debugN("--");
 		nextToken();
 
+		// FIXME: do we need to handle indexing?
 		if (_currToken != kTokenIdentifier)
 			error("expected identifier");
 		assert(_currValue.type == kLBValueString);
@@ -710,9 +729,7 @@ void LBCode::parseMain() {
 		assert(val.isNumeric());
 		// FIXME
 		if (prefix == kTokenMinus)
-			val.integer--;
-		else
-			val.integer++;
+			val.integer = -val.integer;
 		_stack.push(val);
 	}
 }
