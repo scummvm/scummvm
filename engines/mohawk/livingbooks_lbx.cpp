@@ -48,8 +48,10 @@ LBXDataFile::~LBXDataFile() {
 
 enum {
 	kLBXDataFileOpen = 1,
+	kLBXDataFileAddSection = 3,
 	kLBXDataFileGetSectionList = 4,
 	kLBXDataFileSetCurSection = 5,
+	kLBXDataFileSetKey = 7,
 	kLBXDataFileLoadCurSectionVars = 8,
 	kLBXDataFileDeleteCurSection = 10,
 	kLBXDataFileSectionExists = 14
@@ -62,6 +64,14 @@ bool LBXDataFile::call(uint callId, const Common::Array<LBValue> &params, LBValu
 			error("incorrect number of parameters (%d) to LBXDataFile::open", params.size());
 
 		open(params[0].toString());
+		return false;
+
+	case kLBXDataFileAddSection:
+		if (params.size() != 1)
+			error("incorrect number of parameters (%d) to LBXDataFile::addSection", params.size());
+
+		_dataFile.addSection(params[0].toString());
+		_curSection = params[0].toString();
 		return false;
 
 	case kLBXDataFileGetSectionList:
@@ -79,6 +89,13 @@ bool LBXDataFile::call(uint callId, const Common::Array<LBValue> &params, LBValu
 			error("incorrect number of parameters (%d) to LBXDataFile::setCurSection", params.size());
 
 		_curSection = params[0].toString();
+		return false;
+
+	case kLBXDataFileSetKey:
+		if (params.size() != 2)
+			error("incorrect number of parameters (%d) to LBXDataFile::setKey", params.size());
+
+		_dataFile.setKey(params[0].toString(), _curSection, params[1].toString());
 		return false;
 
 	case kLBXDataFileLoadCurSectionVars:
