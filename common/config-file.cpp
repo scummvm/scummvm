@@ -226,6 +226,15 @@ bool ConfigFile::saveToStream(WriteStream &stream) {
 	return !stream.err();
 }
 
+void ConfigFile::addSection(const String &section) {
+	Section *s = getSection(section);
+	if (s)
+		return;
+
+	Section newSection;
+	newSection.name = section;
+	_sections.push_back(newSection);
+}
 
 void ConfigFile::removeSection(const String &section) {
 	assert(isValidName(section));
