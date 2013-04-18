@@ -315,7 +315,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		if (_lastSpecialColor == 1)
 			_lastSpecialColor = 0x44;
 		else if (_lastSpecialColor == 0x66)
-			_lastSpecialColor = file ? (scumm_stricmp(file, "YVEL2") ? 0xCC : 0x44) : 0x44;
+			_lastSpecialColor = scumm_stricmp(_lastBlockDataFile, "YVEL2") ? 0xCC : 0x44;
 		else if (_lastSpecialColor == 0x6B)
 			_lastSpecialColor = 0xCC;
 		else
