@@ -167,6 +167,7 @@ void Kernel::mapSelectors() {
 #ifdef ENABLE_SCI32
 	FIND_SELECTOR(data);
 	FIND_SELECTOR(picture);
+	FIND_SELECTOR(bitmap);
 	FIND_SELECTOR(plane);
 	FIND_SELECTOR(top);
 	FIND_SELECTOR(left);

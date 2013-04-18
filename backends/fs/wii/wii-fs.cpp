@@ -202,4 +202,3 @@ Common::WriteStream *WiiFilesystemNode::createWriteStream() {
 }
 
 #endif //#if defined(__WII__)
-

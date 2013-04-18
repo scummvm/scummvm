@@ -25,6 +25,7 @@
 
 #include "engines/engine.h"
 
+#include "common/archive.h"
 #include "common/array.h"
 #include "common/error.h"
 #include "common/keyboard.h"
@@ -33,7 +34,6 @@
 #include "common/stack.h"
 #include "common/util.h"
 
-#include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
 
@@ -50,6 +50,16 @@
  * - Simon the Sorcerer 2
  * - Simon the Sorcerer Puzzle Pack
  */
+
+namespace Common {
+class File;
+class SeekableReadStream;
+}
+
+namespace Graphics {
+struct Surface;
+}
+
 namespace AGOS {
 
 uint fileReadItemID(Common::SeekableReadStream *in);
@@ -59,6 +69,8 @@ uint fileReadItemID(Common::SeekableReadStream *in);
 #ifdef ENABLE_AGOS2
 class MoviePlayer;
 #endif
+
+class MidiPlayer;
 
 struct Child;
 struct SubObject;
@@ -175,6 +187,22 @@ class Debugger;
 #	define _OPCODE(ver, x)	{ &ver::x, "" }
 #endif
 
+class ArchiveMan : public Common::SearchSet {
+public:
+	ArchiveMan();
+
+	void enableFallback(bool val) { _fallBack = val; }
+
+#ifdef ENABLE_AGOS2
+	void registerArchive(const Common::String &filename, int priority);
+#endif
+
+	Common::SeekableReadStream *open(const Common::String &filename);
+
+private:
+	bool _fallBack;
+};
+
 class AGOSEngine : public Engine {
 protected:
 	friend class Debugger;
@@ -229,6 +257,7 @@ protected:
 
 	uint8 _numMusic, _numSFX;
 	uint16 _numSpeech;
+	uint16 _numZone;
 
 	uint8 _numBitArray1, _numBitArray2, _numBitArray3, _numItemStore;
 	uint16 _numVars;
@@ -313,7 +342,7 @@ protected:
 	bool _backFlag;
 
 	uint16 _debugMode;
-	uint16 _language;
+	Common::Language _language;
 	bool _copyProtection;
 	bool _pause;
 	bool _dumpScripts;
@@ -548,7 +577,7 @@ protected:
 
 	byte _lettersToPrintBuf[80];
 
-	MidiPlayer _midi;
+	MidiPlayer *_midi;
 	bool _midiEnabled;
 
 	int _vgaTickCounter;
@@ -588,6 +617,8 @@ public:
 	AGOSEngine(OSystem *system, const AGOSGameDescription *gd);
 	virtual ~AGOSEngine();
 
+	ArchiveMan _archives;
+
 	byte *_curSfxFile;
 	uint32 _curSfxFileSize;
 	uint16 _sampleEnd, _sampleWait;
@@ -596,6 +627,10 @@ protected:
 	virtual uint16 to16Wrapper(uint value);
 	virtual uint16 readUint16Wrapper(const void *src);
 	virtual uint32 readUint32Wrapper(const void *src);
+
+#ifdef ENABLE_AGOS2
+	void loadArchives();
+#endif
 
 	int allocGamePcVars(Common::SeekableReadStream *in);
 	void createPlayer();
@@ -781,14 +816,14 @@ protected:
 	void loadTextIntoMem(uint16 stringId);
 
 	uint loadTextFile(const char *filename, byte *dst);
-	Common::File *openTablesFile(const char *filename);
-	void closeTablesFile(Common::File *in);
+	Common::SeekableReadStream *openTablesFile(const char *filename);
+	void closeTablesFile(Common::SeekableReadStream *in);
 
 	uint loadTextFile_simon1(const char *filename, byte *dst);
-	Common::File *openTablesFile_simon1(const char *filename);
+	Common::SeekableReadStream *openTablesFile_simon1(const char *filename);
 
 	uint loadTextFile_gme(const char *filename, byte *dst);
-	Common::File *openTablesFile_gme(const char *filename);
+	Common::SeekableReadStream *openTablesFile_gme(const char *filename);
 
 	void invokeTimeEvent(TimeEvent *te);
 	bool kickoffTimeEvents();

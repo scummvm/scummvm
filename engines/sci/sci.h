@@ -71,6 +71,7 @@ class GfxPalette;
 class GfxPorts;
 class GfxScreen;
 class GfxText16;
+class GfxText32;
 class GfxTransitions;
 
 #ifdef ENABLE_SCI32
@@ -313,6 +314,7 @@ public:
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
 	GfxScreen *_gfxScreen;
 	GfxText16 *_gfxText16;
+	GfxText32 *_gfxText32;
 	GfxTransitions *_gfxTransitions; // transitions between screens for 16-bit gfx
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
 

@@ -72,4 +72,3 @@ const ExtractType *findExtractType(const int type);
 byte getTypeID(int type);
 
 #endif
-

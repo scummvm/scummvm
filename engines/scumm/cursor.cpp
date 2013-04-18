@@ -22,6 +22,9 @@
 #include "common/system.h"
 #include "common/util.h"
 #include "graphics/cursorman.h"
+#ifdef ENABLE_HE
+#include "graphics/wincursor.h"
+#endif
 #include "scumm/bomp.h"
 #include "scumm/charset.h"
 #include "scumm/he/intern_he.h"
@@ -177,12 +180,8 @@ void ScummEngine_v70he::setDefaultCursor() {
 								   0xff, 0xff, 0xff,
 								   0,    0,    0,    };
 
-	if (_bytesPerPixel == 2) {
-		for (i = 0; i < 1024; i++)
-			WRITE_UINT16(_grabbedCursor + i * 2, 5);
-	} else {
-		memset(_grabbedCursor, 5, sizeof(_grabbedCursor));
-	}
+	
+	memset(_grabbedCursor, 5, sizeof(_grabbedCursor));
 
 	_cursor.hotspotX = _cursor.hotspotY = 2;
 	src = default_he_cursor;
@@ -195,16 +194,10 @@ void ScummEngine_v70he::setDefaultCursor() {
 		for (j = 0; j < 32; j++) {
 			switch ((p & (0x3 << 14)) >> 14) {
 				case 1:
-					if (_bytesPerPixel == 2)
-						WRITE_UINT16(_grabbedCursor + 64 * i + j * 2, get16BitColor(palette[4], palette[5], palette[6]));
-					else
-						_grabbedCursor[32 * i + j] = 0xfe;
+					_grabbedCursor[32 * i + j] = 0xfe;
 					break;
 				case 2:
-					if (_bytesPerPixel == 2)
-						WRITE_UINT16(_grabbedCursor + 64 * i + j * 2, get16BitColor(palette[0], palette[1], palette[2]));
-					else
-						_grabbedCursor[32 * i + j] = 0xfd;
+					_grabbedCursor[32 * i + j] = 0xfd;
 					break;
 				default:
 					break;
@@ -216,15 +209,63 @@ void ScummEngine_v70he::setDefaultCursor() {
 		}
 	}
 
+	// Since white color position is not guaranteed
+	// we setup our own palette if supported by backend
+	CursorMan.disableCursorPalette(false);
+	CursorMan.replaceCursorPalette(palette, 0xfd, 3);
+
+	updateCursor();
+}
+
+#ifdef ENABLE_HE
+void ScummEngine_v80he::setDefaultCursor() {
+	// v80+ games use the default Windows cursor instead of the usual
+	// default HE cursor.
+	Graphics::Cursor *cursor = Graphics::makeDefaultWinCursor();
+
+	// Clear the cursor
+	if (_bytesPerPixel == 2) {
+		for (int i = 0; i < 1024; i++)
+			WRITE_UINT16(_grabbedCursor + i * 2, 5);
+	} else {
+		memset(_grabbedCursor, 5, sizeof(_grabbedCursor));
+	}
+
+	_cursor.width = cursor->getWidth();
+	_cursor.height = cursor->getHeight();
+	_cursor.hotspotX = cursor->getHotspotX();
+	_cursor.hotspotY = cursor->getHotspotY();
+
+	const byte *surface = cursor->getSurface();
+	const byte *palette = cursor->getPalette();
+
+	for (uint16 y = 0; y < _cursor.height; y++) {
+		for (uint16 x = 0; x < _cursor.width; x++) {
+			byte pixel = *surface++;
+
+			if (pixel != cursor->getKeyColor()) {
+				pixel -= cursor->getPaletteStartIndex();
+
+				if (_bytesPerPixel == 2)
+					WRITE_UINT16(_grabbedCursor + (y * _cursor.width + x) * 2, get16BitColor(palette[pixel * 3], palette[pixel * 3 + 1], palette[pixel * 3 + 2]));
+				else
+					_grabbedCursor[y * _cursor.width + x] = (pixel == 0) ? 0xfd : 0xfe;
+			}
+		}
+	}
+
 	if (_bytesPerPixel == 1) {
 		// Since white color position is not guaranteed
 		// we setup our own palette if supported by backend
 		CursorMan.disableCursorPalette(false);
-		CursorMan.replaceCursorPalette(palette, 0xfd, 3);
+		CursorMan.replaceCursorPalette(palette, 0xfd, cursor->getPaletteCount());
 	}
+
+	delete cursor;
 
 	updateCursor();
 }
+#endif
 
 void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 	int w, h;
@@ -568,7 +609,16 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 		for (i = 0; i < 1024; i++)
 			WRITE_UINT16(_grabbedCursor + i * 2, 0xFF);
 	} else {
-		color = default_cursor_colors[idx];
+		// Indy4 Amiga uses its own color set for the cursor image.
+		// This is patchwork code to make the cursor flash in correct colors.
+		if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+			static const uint8 indy4AmigaColors[4] = {
+				252, 252, 253, 254
+			};
+			color = indy4AmigaColors[idx];
+		} else {
+			color = default_cursor_colors[idx];
+		}
 		memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 	}
 

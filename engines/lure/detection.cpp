@@ -63,8 +63,6 @@ static const PlainGameDescriptor lureGames[] = {
 
 namespace Lure {
 
-using Common::GUIO_NONE;
-
 static const LureGameDescription gameDescriptions[] = {
 	{
 		{
@@ -74,7 +72,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GF_FLOPPY,
 	},
@@ -87,7 +85,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GF_FLOPPY | GF_EGA,
 	},
@@ -100,7 +98,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GF_FLOPPY,
 	},
@@ -113,7 +111,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GF_FLOPPY | GF_EGA,
 	},
@@ -126,7 +124,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GF_FLOPPY,
 	},
@@ -139,7 +137,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GF_FLOPPY,
 	},
@@ -152,7 +150,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GF_FLOPPY,
 	},
@@ -165,7 +163,7 @@ static const LureGameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GF_FLOPPY,
 	},
@@ -184,7 +182,7 @@ public:
 		// Use kADFlagUseExtraAsHint to distinguish between EGA and VGA versions
 		// of italian Lure when their datafiles sit in the same directory.
 		_flags = kADFlagUseExtraAsHint;
-		_guioptions = Common::GUIO_NOSPEECH;
+		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual const char *getName() const {

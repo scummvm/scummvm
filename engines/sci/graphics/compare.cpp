@@ -147,10 +147,7 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 #endif
 
 	if (lookupSelector(_segMan, objectReference, SELECTOR(nsTop), NULL, NULL) == kSelectorVariable) {
-		writeSelectorValue(_segMan, objectReference, SELECTOR(nsLeft), celRect.left);
-		writeSelectorValue(_segMan, objectReference, SELECTOR(nsRight), celRect.right);
-		writeSelectorValue(_segMan, objectReference, SELECTOR(nsTop), celRect.top);
-		writeSelectorValue(_segMan, objectReference, SELECTOR(nsBottom), celRect.bottom);
+		setNSRect(objectReference, celRect);
 	}
 }
 
@@ -221,10 +218,7 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 			scaleSignal = 0;
 
 		if (scaleSignal & kScaleSignalDoScaling) {
-			celRect.left = readSelectorValue(_segMan, object, SELECTOR(nsLeft));
-			celRect.right = readSelectorValue(_segMan, object, SELECTOR(nsRight));
-			celRect.top = readSelectorValue(_segMan, object, SELECTOR(nsTop));
-			celRect.bottom = readSelectorValue(_segMan, object, SELECTOR(nsBottom));
+			celRect = getNSRect(object);
 		} else {
 			if (tmpView->isSci2Hires())
 				tmpView->adjustToUpscaledCoordinates(y, x);
@@ -245,6 +239,31 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		writeSelectorValue(_segMan, object, SELECTOR(brTop), celRect.top);
 		writeSelectorValue(_segMan, object, SELECTOR(brBottom), celRect.bottom);
 	}
+}
+
+Common::Rect GfxCompare::getNSRect(reg_t object, bool fixRect) {
+	Common::Rect nsRect;
+	nsRect.top = readSelectorValue(_segMan, object, SELECTOR(nsTop));
+	nsRect.left = readSelectorValue(_segMan, object, SELECTOR(nsLeft));
+	nsRect.bottom = readSelectorValue(_segMan, object, SELECTOR(nsBottom));
+	nsRect.right = readSelectorValue(_segMan, object, SELECTOR(nsRight));
+
+	if (fixRect) {
+		// nsRect top/left may be negative, adjust accordingly
+		if (nsRect.top < 0)
+			nsRect.top = 0;
+		if (nsRect.left < 0)
+			nsRect.left = 0;
+	}
+
+	return nsRect;
+}
+
+void GfxCompare::setNSRect(reg_t object, Common::Rect nsRect) {
+	writeSelectorValue(_segMan, object, SELECTOR(nsLeft), nsRect.left);
+	writeSelectorValue(_segMan, object, SELECTOR(nsTop), nsRect.top);
+	writeSelectorValue(_segMan, object, SELECTOR(nsRight), nsRect.right);
+	writeSelectorValue(_segMan, object, SELECTOR(nsBottom), nsRect.bottom);
 }
 
 } // End of namespace Sci

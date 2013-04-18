@@ -259,4 +259,3 @@ extern int handleInput(struct mapledev *pad,
 		       int &mouse_x, int &mouse_y,
 		       byte &shiftFlags, Interactive *inter = NULL);
 extern bool selectGame(char *&, char *&, Common::Language &, Common::Platform &, class Icon &);
-

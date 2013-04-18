@@ -54,7 +54,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		Common::GUIO_NOSPEECH
+		GUIO1(GUIO_NOSPEECH)
 	},
 	{
 		"teenagent",
@@ -74,13 +74,13 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 		Common::CZ_CZE,
 		Common::kPlatformPC,
 		ADGF_CD,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER,
 };
 
 enum {
-	MAX_SAVES = 20
+    MAX_SAVES = 20
 };
 
 class TeenAgentMetaEngine : public AdvancedMetaEngine {
@@ -177,9 +177,8 @@ public:
 		ssd.setDeletableFlag(true);
 
 		//checking for the thumbnail
-		Common::ScopedPtr<Graphics::Surface> thumb(new Graphics::Surface);
-		if (Graphics::loadThumbnail(*in, *thumb))
-			ssd.setThumbnail(thumb.release());
+		if (Graphics::Surface *const thumb = Graphics::loadThumbnail(*in))
+			ssd.setThumbnail(thumb);
 
 		return ssd;
 	}

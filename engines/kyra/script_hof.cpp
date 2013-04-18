@@ -1730,4 +1730,3 @@ void KyraEngine_HoF::setupOpcodeTable() {
 }
 
 } // End of namespace Kyra
-

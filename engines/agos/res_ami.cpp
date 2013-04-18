@@ -26,6 +26,8 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
+#include "common/endian.h"
+
 namespace AGOS {
 
 enum {

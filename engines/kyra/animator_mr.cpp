@@ -445,7 +445,7 @@ void KyraEngine_MR::showIdleAnim() {
 	if (!_nextIdleType && !talkObjectsInCurScene()) {
 		randomSceneChat();
 	} else {
-		static const char *facingTable[] = {
+		static const char *const facingTable[] = {
 			"A", "R", "R", "FR", "FX", "FL", "L", "L"
 		};
 
@@ -459,4 +459,3 @@ void KyraEngine_MR::showIdleAnim() {
 }
 
 } // End of namespace Kyra
-

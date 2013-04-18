@@ -34,7 +34,7 @@ int AgiEngine::allocObjects(int n) {
 }
 
 int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
-	unsigned int i, so, padsize;
+	unsigned int i, so, padsize, spos;
 
 	padsize = _game.gameFlags & ID_AMIGA ? 4 : 3;
 
@@ -64,18 +64,24 @@ int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 		return errNotEnoughMemory;
 
 	// build the object list
-	for (i = 0, so = padsize; i < _game.numObjects; i++, so += padsize) {
+	spos = getVersion() >= 0x2000 ? padsize : 0;
+	for (i = 0, so = spos; i < _game.numObjects; i++, so += padsize) {
 		int offset;
 
-		(_objects + i)->location = *(mem + so + 2);
-		offset = READ_LE_UINT16(mem + so) + padsize;
+		_objects[i].location = *(mem + so + 2);
+		offset = READ_LE_UINT16(mem + so) + spos;
 
 		if ((uint) offset < flen) {
-			(_objects + i)->name = (char *)strdup((const char *)mem + offset);
+			_objects[i].name = (char *)strdup((const char *)mem + offset);
 		} else {
 			warning("object %i name beyond object filesize (%04x > %04x)", i, offset, flen);
-			(_objects + i)->name = strdup("");
+			_objects[i].name = strdup("");
 		}
+
+		// Don't show the invalid "?" object in ego's inventory in the fanmade
+		// game Beyond the Titanic 2 (bug #3116541).
+		if (!strcmp(_objects[i].name, "?") && _objects[i].location == EGO_OWNED)
+			_objects[i].location = 0;
 	}
 	debug(0, "Reading objects: %d objects read.", _game.numObjects);
 
@@ -84,20 +90,33 @@ int AgiEngine::decodeObjects(uint8 *mem, uint32 flen) {
 
 int AgiEngine::loadObjects(const char *fname) {
 	Common::File fp;
-	uint32 flen;
-	uint8 *mem;
-
-	_objects = NULL;
-	_game.numObjects = 0;
 
 	debugC(5, kDebugLevelResources, "(Loading objects '%s')", fname);
 
 	if (!fp.open(fname))
 		return errBadFileOpen;
 
-	fp.seek(0, SEEK_END);
-	flen = fp.pos();
-	fp.seek(0, SEEK_SET);
+	return readObjects(fp, fp.size());
+}
+
+/**
+ * Loads an object file that is in the common VOL resource format. Expects
+ * the file pointer to point to the last field in header, ie. file length.
+ * This is used at least by the V1 booter games.
+ */
+int AgiEngine::loadObjects(Common::File &fp) {
+	int flen = fp.readUint16LE();
+	return readObjects(fp, flen);
+}
+
+/**
+ * Read and decode objects, and store them in the internal structure.
+ *
+ * @param  fp    File pointer
+ * @param  flen  File length
+ */
+int AgiEngine::readObjects(Common::File &fp, int flen) {
+	uint8 *mem;
 
 	if ((mem = (uint8 *)calloc(1, flen + 32)) == NULL) {
 		fp.close();

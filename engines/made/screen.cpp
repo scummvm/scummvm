@@ -20,12 +20,16 @@
  *
  */
 
-#include "made/made.h"
 #include "made/screen.h"
-#include "made/resource.h"
+#include "made/made.h"
+#include "made/screenfx.h"
 #include "made/database.h"
 
+#include "common/system.h"
+
+#include "graphics/surface.h"
 #include "graphics/palette.h"
+#include "graphics/cursorman.h"
 
 namespace Made {
 

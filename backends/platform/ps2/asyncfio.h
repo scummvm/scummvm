@@ -50,4 +50,3 @@ private:
 	volatile int * volatile _runningOp;
 	volatile int _ioSlots[MAX_HANDLES];
 };
-

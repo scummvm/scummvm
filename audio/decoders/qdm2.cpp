@@ -28,10 +28,13 @@
 #ifdef AUDIO_QDM2_H
 
 #include "audio/audiostream.h"
+#include "audio/decoders/codec.h"
 #include "audio/decoders/qdm2data.h"
+#include "audio/decoders/raw.h"
 
 #include "common/array.h"
 #include "common/debug.h"
+#include "common/math.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
@@ -150,19 +153,14 @@ struct RDFTContext {
 	FFTContext fft;
 };
 
-class QDM2Stream : public AudioStream {
+class QDM2Stream : public Codec {
 public:
-	QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData);
+	QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData);
 	~QDM2Stream();
 
-	bool isStereo() const { return _channels == 2; }
-	bool endOfData() const { return _stream->pos() >= _stream->size() && _outputSamples.size() == 0 && _subPacket == 0; }
-	int getRate() const { return _sampleRate; }
-	int readBuffer(int16 *buffer, const int numSamples);
+	AudioStream *decodeFrame(Common::SeekableReadStream &stream);
 
 private:
-	Common::SeekableReadStream *_stream;
-
 	// Parameters from codec header, do not change during playback
 	uint8 _channels;
 	uint16 _sampleRate;
@@ -204,7 +202,6 @@ private:
 	// I/O data
 	uint8 *_compressedData;
 	float _outputBuffer[1024];
-	Common::Array<int16> _outputSamples;
 
 	// Synthesis filter
 	int16 ff_mpa_synth_window[512];
@@ -285,28 +282,13 @@ private:
 	void qdm2_fft_tone_synthesizer(uint8 sub_packet);
 	void qdm2_calculate_fft(int channel);
 	void qdm2_synthesis_filter(uint8 index);
-	int qdm2_decodeFrame(Common::SeekableReadStream *in);
+	bool qdm2_decodeFrame(Common::SeekableReadStream &in, QueuingAudioStream *audioStream);
 };
 
 // Fix compilation for non C99-compliant compilers, like MSVC
 #ifndef int64_t
 typedef signed long long int int64_t;
 #endif
-
-// Integer log2 function. This is much faster than invoking
-// double precision C99 log2 math functions or equivalent, since
-// this is only used to determine maximum number of bits needed
-// i.e. only non-fractional part is needed. Also, the double
-// version is incorrect for exact cases due to floating point
-// rounding errors.
-static inline int scummvm_log2(int n) {
-	int ret = -1;
-	while(n != 0) {
-		n /= 2;
-		ret++;
-	}
-	return ret;
-}
 
 #define QDM2_LIST_ADD(list, size, packet) \
 	do { \
@@ -1711,7 +1693,7 @@ void QDM2Stream::initVlc(void) {
 	}
 }
 
-QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData) {
+QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData) {
 	uint32 tmp;
 	int32 tmp_s;
 	int tmp_val;
@@ -1719,7 +1701,6 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 
 	debug(1, "QDM2Stream::QDM2Stream() Call");
 
-	_stream = stream;
 	_compressedData = NULL;
 	_subPacket = 0;
 	_superBlockStart = 0;
@@ -1841,11 +1822,11 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 			warning("QDM2Stream::QDM2Stream() u4 field not 0");
 	}
 
-	_fftOrder = scummvm_log2(_frameSize) + 1;
+	_fftOrder = Common::intLog2(_frameSize) + 1;
 	_fftFrameSize = 2 * _frameSize; // complex has two floats
 
 	// something like max decodable tones
-	_groupOrder = scummvm_log2(_blockSize) + 1;
+	_groupOrder = Common::intLog2(_blockSize) + 1;
 	_sFrameSize = _blockSize / 16; // 16 iterations per super block
 
 	_subSampling = _fftOrder - 7;
@@ -1906,11 +1887,13 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 	initNoiseSamples();
 
 	_compressedData = new uint8[_packetSize];
+
+	if (disposeExtraData == DisposeAfterUse::YES)
+		delete extraData;
 }
 
 QDM2Stream::~QDM2Stream() {
 	delete[] _compressedData;
-	delete _stream;
 }
 
 static int qdm2_get_vlc(GetBitContext *gb, VLC *vlc, int flag, int depth) {
@@ -3158,30 +3141,30 @@ void QDM2Stream::qdm2_synthesis_filter(uint8 index)
 			_outputBuffer[_channels * i + ch] += (float)(samples[_channels * sub_sampling * i + ch] >> (sizeof(int16)*8-16));
 }
 
-int QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream *in) {
-	debug(1, "QDM2Stream::qdm2_decodeFrame in->pos(): %d in->size(): %d", in->pos(), in->size());
+bool QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream &in, QueuingAudioStream *audioStream) {
+	debug(1, "QDM2Stream::qdm2_decodeFrame in.pos(): %d in.size(): %d", in.pos(), in.size());
 	int ch, i;
 	const int frame_size = (_sFrameSize * _channels);
 
 	// If we're in any packet but the first, seek back to the first
 	if (_subPacket == 0)
-		_superBlockStart = in->pos();
+		_superBlockStart = in.pos();
 	else
-		in->seek(_superBlockStart);
+		in.seek(_superBlockStart);
 
 	// select input buffer
-	if (in->eos() || in->pos() >= in->size()) {
+	if (in.eos() || in.pos() >= in.size()) {
 		debug(1, "QDM2Stream::qdm2_decodeFrame End of Input Stream");
-		return 0;
+		return false;
 	}
 
-	if ((in->size() - in->pos()) < _packetSize) {
-		debug(1, "QDM2Stream::qdm2_decodeFrame Insufficient Packet Data in Input Stream Found: %d Need: %d", in->size() - in->pos(), _packetSize);
-		return 0;
+	if ((in.size() - in.pos()) < _packetSize) {
+		debug(1, "QDM2Stream::qdm2_decodeFrame Insufficient Packet Data in Input Stream Found: %d Need: %d", in.size() - in.pos(), _packetSize);
+		return false;
 	}
 
-	if (!in->eos()) {
-		in->read(_compressedData, _packetSize);
+	if (!in.eos()) {
+		in.read(_compressedData, _packetSize);
 		debug(1, "QDM2Stream::qdm2_decodeFrame constructed input data");
 	}
 
@@ -3190,7 +3173,7 @@ int QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream *in) {
 	memset(&_outputBuffer[frame_size], 0, frame_size * sizeof(float));
 	debug(1, "QDM2Stream::qdm2_decodeFrame cleared outputBuffer");
 
-	if (!in->eos()) {
+	if (!in.eos()) {
 		// decode block of QDM2 compressed data
 		debug(1, "QDM2Stream::qdm2_decodeFrame decode block of QDM2 compressed data");
 		if (_subPacket == 0) {
@@ -3218,7 +3201,7 @@ int QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream *in) {
 
 			if (!_hasErrors && _subPacketListC[0].packet != NULL) {
 				error("QDM2 : has errors, and C list is not empty");
-				return 0;
+				return false;
 			}
 		}
 
@@ -3236,6 +3219,12 @@ int QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream *in) {
 		debug(1, "QDM2Stream::qdm2_decodeFrame clip and convert output float[] to 16bit signed samples");
 	}
 
+	if (frame_size == 0)
+		return false;
+
+	// Prepare a buffer for queuing
+	uint16 *outputBuffer = (uint16 *)malloc(frame_size * 2);
+
 	for (i = 0; i < frame_size; i++) {
 		int value = (int)_outputBuffer[i];
 
@@ -3244,34 +3233,35 @@ int QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream *in) {
 		else if (value < -SOFTCLIP_THRESHOLD)
 			value = (value < -HARDCLIP_THRESHOLD) ? -32767 : -_softclipTable[-value - SOFTCLIP_THRESHOLD];
 
-		_outputSamples.push_back(value);
-	}
-	return frame_size;
-}
-
-int QDM2Stream::readBuffer(int16 *buffer, const int numSamples) {
-	debug(1, "QDM2Stream::readBuffer numSamples: %d", numSamples);
-	int32 decodedSamples = _outputSamples.size();
-	int32 i;
-
-	while (decodedSamples < numSamples) {
-		i = qdm2_decodeFrame(_stream);
-		if (i == 0)
-			break; // Out Of Decode Frames...
-		decodedSamples += i;
+		outputBuffer[i] = value;
 	}
 
-	if (decodedSamples > numSamples)
-		decodedSamples = numSamples;
+	// Queue the translated buffer to our stream
+	byte flags = FLAG_16BITS;
 
-	for (i = 0; i < decodedSamples; i++)
-		buffer[i] = _outputSamples.remove_at(0);
+	if (_channels == 2)
+		flags |= FLAG_STEREO;
 
-	return decodedSamples;
+#ifdef SCUMM_LITTLE_ENDIAN
+	flags |= FLAG_LITTLE_ENDIAN;
+#endif
+
+	audioStream->queueBuffer((byte *)outputBuffer, frame_size * 2, DisposeAfterUse::YES, flags);
+
+	return true;
 }
 
-AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData) {
-	return new QDM2Stream(stream, extraData);
+AudioStream *QDM2Stream::decodeFrame(Common::SeekableReadStream &stream) {
+	QueuingAudioStream *audioStream = makeQueuingAudioStream(_sampleRate, _channels == 2);
+
+	while (qdm2_decodeFrame(stream, audioStream))
+		;
+
+	return audioStream;
+}
+
+Codec *makeQDM2Decoder(Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData) {
+	return new QDM2Stream(extraData, disposeExtraData);
 }
 
 } // End of namespace Audio

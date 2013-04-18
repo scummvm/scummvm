@@ -32,8 +32,8 @@
 
 namespace Sky {
 
-static const char *dataFilename = "sky.dsk";
-static const char *dinnerFilename = "sky.dnr";
+static const char *const dataFilename = "sky.dsk";
+static const char *const dinnerFilename = "sky.dnr";
 
 Disk::Disk() {
 	_dataDiskHandle = new Common::File();

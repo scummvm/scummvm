@@ -24,6 +24,17 @@
 #include "graphics/surface.h"
 #include "common/textconsole.h"
 
+SaveStateDescriptor::SaveStateDescriptor()
+	// FIXME: default to 0 (first slot) or to -1 (invalid slot) ?
+	: _slot(-1), _description(), _isDeletable(true), _isWriteProtected(false),
+	  _saveDate(), _saveTime(), _playTime(), _thumbnail() {
+}
+
+SaveStateDescriptor::SaveStateDescriptor(int s, const Common::String &d)
+	: _slot(s), _description(d), _isDeletable(true), _isWriteProtected(false),
+	  _saveDate(), _saveTime(), _playTime(), _thumbnail() {
+}
+
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
 	if (_thumbnail.get() == t)
 		return;
@@ -31,46 +42,19 @@ void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
 	_thumbnail = Common::SharedPtr<Graphics::Surface>(t, Graphics::SharedPtrSurfaceDeleter());
 }
 
-bool SaveStateDescriptor::getBool(const Common::String &key) const {
-	if (contains(key)) {
-		const Common::String value = getVal(key);
-		bool valueAsBool;
-		if (Common::parseBool(value, valueAsBool))
-			return valueAsBool;
-		error("SaveStateDescriptor: %s '%s' has unknown value '%s' for boolean '%s'",
-				save_slot().c_str(), description().c_str(), value.c_str(), key.c_str());
-	}
-	return false;
-}
-
-void SaveStateDescriptor::setDeletableFlag(bool state) {
-	setVal("is_deletable", state ? "true" : "false");
-}
-
-void SaveStateDescriptor::setWriteProtectedFlag(bool state) {
-	setVal("is_write_protected", state ? "true" : "false");
-}
-
 void SaveStateDescriptor::setSaveDate(int year, int month, int day) {
-	Common::String buffer;
-	buffer = Common::String::format("%.2d.%.2d.%.4d", day, month, year);
-	setVal("save_date", buffer);
+	_saveDate = Common::String::format("%.2d.%.2d.%.4d", day, month, year);
 }
 
 void SaveStateDescriptor::setSaveTime(int hour, int min) {
-	Common::String buffer;
-	buffer = Common::String::format("%.2d:%.2d", hour, min);
-	setVal("save_time", buffer);
+	_saveTime = Common::String::format("%.2d:%.2d", hour, min);
 }
 
 void SaveStateDescriptor::setPlayTime(int hours, int minutes) {
-	Common::String buffer;
-	buffer = Common::String::format("%.2d:%.2d", hours, minutes);
-	setVal("play_time", buffer);
+	_playTime = Common::String::format("%.2d:%.2d", hours, minutes);
 }
 
 void SaveStateDescriptor::setPlayTime(uint32 msecs) {
 	uint minutes = msecs / 60000;
 	setPlayTime(minutes / 60, minutes % 60);
 }
-

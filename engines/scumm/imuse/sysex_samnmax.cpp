@@ -53,8 +53,7 @@ void sysexHandler_SamNMax(Player *player, const byte *msg, uint16 len) {
 		// something magical is supposed to happen....
 		for (a = 0; a < ARRAYSIZE(se->_snm_triggers); ++a) {
 			if (se->_snm_triggers[a].sound == player->_id &&
-			    se->_snm_triggers[a].id == *p)
-			{
+			        se->_snm_triggers[a].id == *p) {
 				se->_snm_triggers[a].sound = se->_snm_triggers[a].id = 0;
 				se->doCommand(8, se->_snm_triggers[a].command);
 				break;

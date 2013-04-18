@@ -40,19 +40,21 @@ unsigned int timer = 0;
 
 gfxEntryStruct* linkedMsgList = NULL;
 
+typedef CruiseEngine::MemInfo MemInfo;
+
 void MemoryList() {
 	if (!_vm->_memList.empty()) {
 		debug("Current list of un-freed memory blocks:");
-		Common::List<byte *>::iterator i;
+		Common::List<MemInfo*>::iterator i;
 		for (i = _vm->_memList.begin(); i != _vm->_memList.end(); ++i) {
-			byte *v = *i;
-			debug("%s - %d", (const char *)(v - 68), *((int32 *)(v - 72)));
+			MemInfo const *const v = *i;
+			debug("%s - %d", v->fname, v->lineNum);
 		}
 	}
 }
 
 void *MemoryAlloc(uint32 size, bool clearFlag, int32 lineNum, const char *fname) {
-	byte *result;
+	void *result;
 
 	if (gDebugLevel > 0) {
 		// Find the point after the final slash
@@ -61,17 +63,17 @@ void *MemoryAlloc(uint32 size, bool clearFlag, int32 lineNum, const char *fname)
 			--fnameP;
 
 		// Create the new memory block and add it to the memory list
-		byte *v = (byte *)malloc(size + 64 + 8);
-		*((int32 *) v) = lineNum;
-		strncpy((char *)v + 4, fnameP, 63);
-		*((char *)v + 4 + 63) = '\0';
-		*((uint32 *) (v + 68)) = 0x41424344;
+		MemInfo *const v = (MemInfo *)malloc(sizeof(MemInfo) + size);
+		v->lineNum = lineNum;
+		strncpy(v->fname, fnameP, sizeof(v->fname));
+		v->fname[ARRAYSIZE(v->fname) - 1] = '\0';
+		v->magic = MemInfo::cookie;
 
 		// Add the block to the memory list
-		result = v + 64 + 8;
-		_vm->_memList.push_back(result);
+		_vm->_memList.push_back(v);
+		result = v + 1;
 	} else
-		result = (byte *)malloc(size);
+		result = malloc(size);
 
 	if (clearFlag)
 		memset(result, 0, size);
@@ -84,11 +86,11 @@ void MemoryFree(void *v) {
 		return;
 
 	if (gDebugLevel > 0) {
-		byte *p = (byte *)v;
-		assert(*((uint32 *) (p - 4)) == 0x41424344);
+		MemInfo *const p = (MemInfo *)v - 1;
+		assert(p->magic == MemInfo::cookie);
 
 		_vm->_memList.remove(p);
-		free(p - 8 - 64);
+		free(p);
 	} else
 		free(v);
 }
@@ -902,18 +904,8 @@ bool createDialog(int objOvl, int objIdx, int x, int y) {
 						if (!obj2Ovl)  obj2Ovl = j;
 
 						char verbe_name[80];
-						char obj1_name[80];
-						char obj2_name[80];
-						char r_verbe_name[80];
-						char r_obj1_name[80];
-						char r_obj2_name[80];
 
 						verbe_name[0]	= 0;
-						obj1_name[0]	= 0;
-						obj2_name[0]	= 0;
-						r_verbe_name[0] = 0;
-						r_obj1_name[0]	= 0;
-						r_obj2_name[0]	= 0;
 
 						ovlDataStruct *ovl2 = NULL;
 						ovlDataStruct *ovl3 = NULL;
@@ -1812,6 +1804,8 @@ void CruiseEngine::mainLoop() {
 			bool skipEvents = false;
 
 			do {
+				g_system->updateScreen();
+
 				g_system->delayMillis(10);
 				currentTick = g_system->getMillis();
 

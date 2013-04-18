@@ -59,4 +59,3 @@ public class EditableSurfaceView extends SurfaceView {
 		return new MyInputConnection();
 	}
 }
-

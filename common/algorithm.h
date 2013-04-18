@@ -226,12 +226,12 @@ void sort(T first, T last, StrictWeakOrdering comp) {
  */
 template<typename T>
 void sort(T *first, T *last) {
-	sort(first, last, Common::Less<T>());
+	sort(first, last, Less<T>());
 }
 
 template<class T>
 void sort(T first, T last) {
-	sort(first, last, Common::Less<typename T::ValueType>());
+	sort(first, last, Less<typename T::ValueType>());
 }
 
 // MSVC is complaining about the minus operator being applied to an unsigned type
@@ -269,4 +269,3 @@ T gcd(T a, T b) {
 
 } // End of namespace Common
 #endif
-

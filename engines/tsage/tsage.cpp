@@ -30,13 +30,13 @@
 #include "tsage/resources.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
 
-TSageEngine *_vm = NULL;
+TSageEngine *g_vm = NULL;
 
 TSageEngine::TSageEngine(OSystem *system, const tSageGameDescription *gameDesc) : Engine(system),
 		_gameDescription(gameDesc) {
-	_vm = this;
+	g_vm = this;
 	DebugMan.addDebugChannel(kRingDebugScripts, "scripts", "Scripts debugging");
 	_debugger = new Debugger();
 }
@@ -61,45 +61,64 @@ bool TSageEngine::hasFeature(EngineFeature f) const {
 }
 
 void TSageEngine::initialize() {
-	_saver = new Saver();
+	g_saver = new Saver();
 
 	// Set up the resource manager
-	_resourceManager = new ResourceManager();
-	if (_vm->getFeatures() & GF_DEMO) {
+	g_resourceManager = new ResourceManager();
+	if (g_vm->getFeatures() & GF_DEMO) {
 		// Add the single library file associated with the demo
-		_resourceManager->addLib(getPrimaryFilename());
-	} else if (_vm->getGameID() == GType_Ringworld) {
-		_resourceManager->addLib("RING.RLB");
-		_resourceManager->addLib("TSAGE.RLB");
-	} else if (_vm->getGameID() == GType_BlueForce) {
-		_resourceManager->addLib("BLUE.RLB");
-		if (_vm->getFeatures() & GF_FLOPPY) {
-			_resourceManager->addLib("FILES.RLB");
-			_resourceManager->addLib("TSAGE.RLB");
+		g_resourceManager->addLib(getPrimaryFilename());
+		g_globals = new Globals();
+
+	} else if (g_vm->getGameID() == GType_Ringworld) {
+		g_resourceManager->addLib("RING.RLB");
+		g_resourceManager->addLib("TSAGE.RLB");
+		g_globals = new Globals();
+
+	} else if (g_vm->getGameID() == GType_BlueForce) {
+		g_resourceManager->addLib("BLUE.RLB");
+		if (g_vm->getFeatures() & GF_FLOPPY) {
+			g_resourceManager->addLib("FILES.RLB");
+			g_resourceManager->addLib("TSAGE.RLB");
 		}
+		g_globals = new BlueForce::BlueForceGlobals();
+		
+		// Setup the user interface
+		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y - 2));
+
+		// Reset all global variables
+		BF_GLOBALS.reset();
+	} else if (g_vm->getGameID() == GType_Ringworld2) {
+		g_resourceManager->addLib("R2RW.RLB");
+		g_globals = new Ringworld2::Ringworld2Globals();
+
+		// Setup the user interface
+		T2_GLOBALS._uiElements.setup(Common::Point(0, UI_INTERFACE_Y - 2));
+
+		// Reset all global variables
+		R2_GLOBALS.reset();
 	}
 
-	_globals = new Globals();
-	_globals->gfxManager().setDefaults();
+	g_globals->gfxManager().setDefaults();
 
 	// Setup sound settings
 	syncSoundSettings();
 }
 
 void TSageEngine::deinitialize() {
-	delete _globals;
-	delete _resourceManager;
-	delete _saver;
-	_resourceManager = NULL;
-	_saver = NULL;
+	delete g_globals;
+	delete g_resourceManager;
+	delete g_saver;
+	g_resourceManager = NULL;
+	g_saver = NULL;
 }
 
 Common::Error TSageEngine::run() {
 	// Basic initialisation
 	initialize();
 
-	_globals->_sceneHandler.registerHandler();
-	_globals->_game->execute();
+	g_globals->_sceneHandler->registerHandler();
+	g_globals->_game->execute();
 
 	deinitialize();
 	return Common::kNoError;
@@ -109,28 +128,28 @@ Common::Error TSageEngine::run() {
  * Returns true if it is currently okay to restore a game
  */
 bool TSageEngine::canLoadGameStateCurrently() {
-	return (_globals->getFlag(50) == 0);
+	return (g_globals != NULL) && (g_globals->_game != NULL) && g_globals->_game->canLoadGameStateCurrently();
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool TSageEngine::canSaveGameStateCurrently() {
-	return (_globals->getFlag(50) == 0);
+	return (g_globals != NULL) && (g_globals->_game != NULL) && g_globals->_game->canSaveGameStateCurrently();
 }
 
 /**
  * Load the savegame at the specified slot index
  */
 Common::Error TSageEngine::loadGameState(int slot) {
-	return _saver->restore(slot);
+	return g_saver->restore(slot);
 }
 
 /**
  * Save the game to the given slot index, and with the given name
  */
 Common::Error TSageEngine::saveGameState(int slot, const Common::String &desc) {
-	return _saver->save(slot, desc);
+	return g_saver->save(slot, desc);
 }
 
 /**
@@ -144,7 +163,11 @@ Common::String TSageEngine::generateSaveName(int slot) {
 void TSageEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	_globals->_soundManager.syncSounds();
+	g_globals->_soundManager.syncSounds();
 }
 
-} // End of namespace tSage
+bool TSageEngine::shouldQuit() {
+	return getEventManager()->shouldQuit() || getEventManager()->shouldRTL();
+}
+
+} // End of namespace TsAGE

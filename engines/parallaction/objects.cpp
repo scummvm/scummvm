@@ -220,7 +220,11 @@ bool Zone::hitRect(int x, int y) const {
 	if (_right < _left || _bottom < _top) {
 		return false;
 	}
-	return Common::Rect(_left, _top, _right, _bottom).contains(x, y);
+
+	Common::Rect r(_left, _top, _right + 1, _bottom + 1);
+	r.grow(-1);
+
+	return r.contains(x, y);
 }
 
 Dialogue::Dialogue() {

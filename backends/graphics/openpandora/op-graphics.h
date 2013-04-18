@@ -24,7 +24,7 @@
 #define BACKENDS_GRAPHICS_OP_H
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
-#include "graphics/scaler/aspect.h"	// for aspect2Real
+#include "graphics/scaler/aspect.h" // for aspect2Real
 #include "graphics/scaler/downscaler.h"
 
 enum {

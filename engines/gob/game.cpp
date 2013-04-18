@@ -492,9 +492,6 @@ void Game::prepareStart() {
 	_vm->_draw->_noInvalidated = true;
 	_vm->_draw->_applyPal = false;
 	_vm->_draw->_paletteCleared = false;
-	_vm->_draw->_cursorWidth = 16;
-	_vm->_draw->_cursorHeight = 16;
-	_vm->_draw->_transparentCursor = 1;
 
 	for (int i = 0; i < 40; i++) {
 		_vm->_draw->_cursorAnimLow[i] = -1;
@@ -586,7 +583,11 @@ void Game::playTot(int16 function) {
 				WRITE_VAR(13, _vm->_global->_useMouse);
 				WRITE_VAR(14, _vm->_global->_soundFlags);
 				WRITE_VAR(15, _vm->_global->_fakeVideoMode);
-				WRITE_VAR(16, _vm->_global->_language);
+
+				if (_vm->getGameType() == kGameTypeGeisha)
+					WRITE_VAR(57, _vm->_global->_language);
+				else
+					WRITE_VAR(16, _vm->_global->_language);
 
 				// WORKAROUND: Inca2 seems to depend on that variable to be cleared
 				if (_vm->getGameType() == kGameTypeInca2)

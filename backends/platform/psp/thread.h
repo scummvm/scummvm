@@ -105,5 +105,3 @@ enum StackSizes {
 };
 
 #endif /* PSP_THREADS_H */
-
-

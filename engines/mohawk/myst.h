@@ -167,6 +167,7 @@ public:
 	bool _needsUpdate;
 	bool _needsPageDrop;
 	bool _needsShowMap;
+	bool _needsShowDemoMenu;
 
 	MystView _view;
 	MystGraphics *_gfx;

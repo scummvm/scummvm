@@ -457,6 +457,15 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 			Common::strlcpy(s, header.description.c_str(), 80);
 			Util::convertISOToDOS(s);
 
+			// Trim long GMM save descriptions to fit our save slots
+			_screen->_charWidth = -2;
+			int fC = _screen->getTextWidth(s);
+			while (s[0] && fC > 240) {
+				s[strlen(s) - 1]  = 0;
+				fC = _screen->getTextWidth(s);
+			}
+			_screen->_charWidth = 0;
+
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
 			menu.item[i].enabled = true;
 			delete in;
@@ -878,4 +887,3 @@ int GUI_v2::choiceNo(Button *caller) {
 }
 
 } // End of namespace Kyra
-

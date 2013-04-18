@@ -39,7 +39,7 @@ my @subs_files = qw(
 	dists/macosx/Info.plist
 	dists/iphone/Info.plist
 	dists/irix/scummvm.spec
-	dists/nsis/scummvm.nsi
+	dists/win32/scummvm.nsi
 	dists/wii/meta.xml
 	dists/android/AndroidManifest.xml
 	dists/android/plugin-manifest.xml

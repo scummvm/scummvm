@@ -41,6 +41,15 @@ class WriteStream;
  */
 bool uncompress(byte *dst, unsigned long *dstLen, const byte *src, unsigned long srcLen);
 
+/**
+ * Wrapper around zlib's inflate functions. This function will call the
+ * necessary inflate functions to uncompress data compressed with deflate
+ * but *not* with the standard zlib header.
+ *
+ * @return true on success (Z_OK or Z_STREAM_END), false otherwise
+ */
+bool inflateZlibHeaderless(byte *dst, uint dstLen, const byte *src, uint srcLen);
+
 #endif
 
 /**

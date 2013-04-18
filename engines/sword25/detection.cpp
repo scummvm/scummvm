@@ -44,7 +44,7 @@ static const char *directoryGlobs[] = {
 class Sword25MetaEngine : public AdvancedMetaEngine {
 public:
 	Sword25MetaEngine() : AdvancedMetaEngine(Sword25::gameDescriptions, sizeof(ADGameDescription), sword25Game) {
-		_guioptions = Common::GUIO_NOMIDI;
+		_guioptions = GUIO1(GUIO_NOMIDI);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}
@@ -99,4 +99,3 @@ SaveStateList Sword25MetaEngine::listSaves(const char *target) const {
 #else
 	REGISTER_PLUGIN_STATIC(SWORD25, PLUGIN_TYPE_ENGINE, Sword25MetaEngine);
 #endif
-

@@ -20,31 +20,23 @@
  *
  */
 
-#include "common/events.h"
-#include "common/keyboard.h"
-#include "common/config-manager.h"
-#include "common/stream.h"
+#include "made/made.h"
+#include "made/console.h"
+#include "made/pmvplayer.h"
+#include "made/resource.h"
+#include "made/screen.h"
+#include "made/database.h"
+#include "made/script.h"
+#include "made/music.h"
 
-#include "graphics/cursorman.h"
+#include "common/config-manager.h"
+#include "common/events.h"
+#include "common/system.h"
+#include "common/error.h"
 
 #include "engines/util.h"
 
 #include "backends/audiocd/audiocd.h"
-
-#include "base/plugins.h"
-#include "base/version.h"
-
-#include "audio/mixer.h"
-
-#include "made/made.h"
-#include "made/database.h"
-#include "made/pmvplayer.h"
-#include "made/resource.h"
-#include "made/screen.h"
-#include "made/script.h"
-#include "made/sound.h"
-#include "made/music.h"
-#include "made/redreader.h"
 
 namespace Made {
 
@@ -141,6 +133,10 @@ void MadeEngine::syncSoundSettings() {
 
 int16 MadeEngine::getTicks() {
 	return g_system->getMillis() * 30 / 1000;
+}
+
+GUI::Debugger *MadeEngine::getDebugger() {
+	return _console;
 }
 
 int16 MadeEngine::getTimer(int16 timerNum) {

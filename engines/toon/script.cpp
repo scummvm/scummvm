@@ -502,4 +502,3 @@ void EMCInterpreter::loadState(EMCState *script, Common::ReadStream *stream) {
 }
 
 } // End of namespace Toon
-

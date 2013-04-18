@@ -716,9 +716,6 @@ void SoundMidiPC::beginFadeOut() {
 }
 
 void SoundMidiPC::pause(bool paused) {
-	// Stop all mixer related sounds
-	Sound::pause(paused);
-
 	Common::StackLock lock(_mutex);
 
 	if (paused) {
@@ -790,4 +787,3 @@ Common::String SoundMidiPC::getFileName(const Common::String &str) {
 }
 
 } // End of namespace Kyra
-

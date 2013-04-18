@@ -176,6 +176,10 @@ void QuickTimeDecoder::seekToFrame(uint32 frame) {
 
 		// Restart the audio
 		startAudio();
+
+		// Pause the audio again if we're still paused
+		if (isPaused() && _audStream)
+			g_system->getMixer()->pauseHandle(_audHandle, true);
 	}
 }
 
@@ -479,23 +483,18 @@ Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket(uint32 &descId)
 	int32 totalSampleCount = 0;
 	int32 sampleInChunk = 0;
 	int32 actualChunk = -1;
+	uint32 sampleToChunkIndex = 0;
 
 	for (uint32 i = 0; i < _tracks[_videoTrackIndex]->chunkCount; i++) {
-		int32 sampleToChunkIndex = -1;
+		if (sampleToChunkIndex < _tracks[_videoTrackIndex]->sampleToChunkCount && i >= _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex].first)
+			sampleToChunkIndex++;
 
-		for (uint32 j = 0; j < _tracks[_videoTrackIndex]->sampleToChunkCount; j++)
-			if (i >= _tracks[_videoTrackIndex]->sampleToChunk[j].first)
-				sampleToChunkIndex = j;
-
-		if (sampleToChunkIndex < 0)
-			error("This chunk (%d) is imaginary", sampleToChunkIndex);
-
-		totalSampleCount += _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex].count;
+		totalSampleCount += _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex - 1].count;
 
 		if (totalSampleCount > getCurFrame()) {
 			actualChunk = i;
-			descId = _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex].id;
-			sampleInChunk = _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex].count - totalSampleCount + getCurFrame();
+			descId = _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex - 1].id;
+			sampleInChunk = _tracks[_videoTrackIndex]->sampleToChunk[sampleToChunkIndex - 1].count - totalSampleCount + getCurFrame();
 			break;
 		}
 	}

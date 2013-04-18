@@ -38,9 +38,9 @@ protected:
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
 
-	void writeReferences(std::ofstream &output);
+	void writeReferences(const BuildSetup &setup, std::ofstream &output);
 
-	void outputGlobalPropFile(std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
+	void outputGlobalPropFile(const BuildSetup &setup, std::ofstream &properties, int bits, const StringList &defines, const std::string &prefix, bool runBuildEvents);
 
 	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32, bool enableAnalysis);
 
@@ -49,7 +49,7 @@ protected:
 	int getVisualStudioVersion();
 
 	void outputConfiguration(std::ostream &project, const BuildSetup &setup, const std::string &libraries, const std::string &config, const std::string &platform, const std::string &props, const bool isWin32);
-	void outputConfiguration(std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props);
+	void outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const std::string &platform, const std::string &props);
 	void outputBuildEvents(std::ostream &project, const BuildSetup &setup, const bool isWin32);
 };
 

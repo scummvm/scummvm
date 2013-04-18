@@ -223,7 +223,7 @@ ScriptFunc::ScriptFunc(ToonEngine *vm) {
 }
 
 ScriptFunc::~ScriptFunc(void) {
-	while(!_opcodes.empty()) {
+	while (!_opcodes.empty()) {
 		const OpcodeV2 *temp = _opcodes.back();
 		_opcodes.pop_back();
 		delete temp;
@@ -655,13 +655,15 @@ int32 ScriptFunc::sys_Cmd_Set_Flux_Facing_Point(EMCState *state) {
 	int32 fx = stackPos(0);
 	int32 fy = stackPos(1);
 	_vm->getFlux()->setFacing(_vm->getFlux()->getFacingFromDirection(fx - _vm->getFlux()->getX(), fy - _vm->getFlux()->getY()));
-	_vm->getFlux()->playStandingAnim();
+	if (_vm->getFlux()->getFlag() == 0)  // don't reset the animation unless Flux is in idle mode
+		_vm->getFlux()->playStandingAnim();
 	return 1;
 }
 
 int32 ScriptFunc::sys_Cmd_Set_Flux_Facing(EMCState *state) {
 	_vm->getFlux()->forceFacing(stackPos(0));
-	_vm->getFlux()->playStandingAnim();
+	if (_vm->getFlux()->getFlag() == 0) // don't reset the animation unless Flux is in idle mode
+		_vm->getFlux()->playStandingAnim();
 	return 0;
 }
 
@@ -990,7 +992,7 @@ int32 ScriptFunc::sys_Cmd_Set_Scene_Animation_Active_Flag(EMCState *state) {
 	if (sceneAnim->_active) {
 		sceneAnim->_animInstance->setVisible(activeFlag > 0);
 
-		if(activeFlag) {
+		if (activeFlag) {
 			_vm->getAnimationManager()->addInstance(sceneAnim->_animInstance);
 		}
 	}

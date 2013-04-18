@@ -43,4 +43,3 @@ Plugin *PSPPluginProvider::createPlugin(const Common::FSNode &node) const {
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PSP__)
-

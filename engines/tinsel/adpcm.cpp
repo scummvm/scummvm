@@ -61,7 +61,7 @@ void Tinsel_ADPCMStream::readBufferTinselHeader() {
 int16 Tinsel_ADPCMStream::decodeTinsel(int16 code, double eVal) {
 	double sample;
 
-	sample = (double) code;
+	sample = (double)code;
 	sample *= eVal * _status.predictor;
 	sample += (_status.d0 * _status.K0) + (_status.d1 * _status.K1);
 

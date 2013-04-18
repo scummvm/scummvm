@@ -29,11 +29,11 @@
 #include "common/savefile.h"
 #include "common/serializer.h"
 
-namespace tSage {
+namespace TsAGE {
 
 typedef void (*SaveNotifierFn)(bool postFlag);
 
-#define TSAGE_SAVEGAME_VERSION 5
+#define TSAGE_SAVEGAME_VERSION 7
 
 class SavedObject;
 
@@ -77,6 +77,7 @@ public:
 		Common::Serializer::Version maxVersion = kLastVersion);
 	void validate(int v, Common::Serializer::Version minVersion = 0,
 		Common::Serializer::Version maxVersion = kLastVersion);
+	void syncAsDouble(double &v);
 };
 
 /*--------------------------------------------------------------------------*/
@@ -136,6 +137,18 @@ public:
 				s.syncPointer((SavedObject **)&*i);
 			}
 		}
+	}
+
+	void addBefore(T existingItem, T newItem) {
+		typename SynchronizedList<T>::iterator i = this->begin();
+		while ((i != this->end()) && (*i != existingItem)) ++i;
+		this->insert(i, newItem);
+	}
+	void addAfter(T existingItem, T newItem) {
+		typename SynchronizedList<T>::iterator i = this->begin();
+		while ((i != this->end()) && (*i != existingItem)) ++i;
+		if (i != this->end()) ++i;
+		this->insert(i, newItem);
 	}
 };
 
@@ -219,8 +232,8 @@ public:
 	void listObjects();
 };
 
-extern Saver *_saver;
+extern Saver *g_saver;
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

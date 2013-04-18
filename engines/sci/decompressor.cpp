@@ -181,16 +181,27 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 	init(src, dest, nPacked, nUnpacked);
 
 	uint16 token; // The last received value
-
-	uint16 tokenlist[4096]; // pointers to dest[]
-	uint16 tokenlengthlist[4096]; // char length of each token
 	uint16 tokenlastlength = 0;
+
+	uint16 *tokenlist = (uint16 *)malloc(4096 * sizeof(uint16)); // pointers to dest[]
+	uint16* tokenlengthlist = (uint16 *)malloc(4096 * sizeof(uint16)); // char length of each token
+	if (!tokenlist || !tokenlengthlist) {
+		free(tokenlist);
+		free(tokenlengthlist);
+
+		error("[DecompressorLZW::unpackLZW] Cannot allocate token memory buffers");
+	}
 
 	while (!isFinished()) {
 		token = getBitsLSB(_numbits);
 
-		if (token == 0x101)
+		if (token == 0x101) {
+			free(tokenlist);
+			free(tokenlengthlist);
+
 			return 0; // terminator
+		}
+
 		if (token == 0x100) { // reset command
 			_numbits = 9;
 			_endtoken = 0x1FF;
@@ -199,6 +210,10 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 			if (token > 0xff) {
 				if (token >= _curtoken) {
 					warning("unpackLZW: Bad token %x", token);
+
+					free(tokenlist);
+					free(tokenlengthlist);
+
 					return SCI_ERROR_DECOMPRESSION_ERROR;
 				}
 				tokenlastlength = tokenlengthlist[token] + 1;
@@ -231,6 +246,9 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 		}
 	}
 
+	free(tokenlist);
+	free(tokenlengthlist);
+
 	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 
@@ -238,12 +256,20 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
                                 uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 
-	byte stak[0x1014];
+	byte *stak = (byte *)malloc(0x1014);
+	unsigned int tokensSize = 0x1004 * sizeof(Tokenlist);
+	Tokenlist *tokens = (Tokenlist *)malloc(tokensSize);
+	if (!stak || !tokens) {
+		free(stak);
+		free(tokens);
+
+		error("[DecompressorLZW::unpackLZW1] Cannot allocate decompression buffers");
+	}
+
+	memset(tokens, 0, tokensSize);
+
 	byte lastchar = 0;
 	uint16 stakptr = 0, lastbits = 0;
-	Tokenlist tokens[0x1004];
-	memset(tokens, 0, sizeof(tokens));
-
 
 	byte decryptstart = 0;
 	uint16 bitstring;
@@ -310,6 +336,10 @@ int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPac
 			break;
 		}
 	}
+
+	free(stak);
+	free(tokens);
+
 	return _dwWrote == _szUnpacked ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 

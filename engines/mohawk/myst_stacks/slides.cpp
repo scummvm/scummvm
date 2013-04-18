@@ -20,6 +20,7 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
@@ -35,6 +36,7 @@ namespace MystStacks {
 
 Slides::Slides(MohawkEngine_Myst *vm) : MystScriptParser(vm) {
 	setupOpcodes();
+	_vm->_cursor->hideCursor();
 }
 
 Slides::~Slides() {
@@ -59,23 +61,28 @@ void Slides::disablePersistentScripts() {
 void Slides::runPersistentScripts() {
 	if (_cardSwapEnabled) {
 		// Used on Cards...
-		if (_vm->_system->getMillis() - _lastCardTime >= 2 * 1000)
-			_vm->changeToCard(_nextCardID, true);
+		if (_vm->_system->getMillis() > _nextCardTime) {
+			_vm->_gfx->fadeToBlack();
+			_vm->changeToCard(_nextCardID, false);
+			_vm->_gfx->fadeFromBlack();
+		}
 	}
 }
 
 void Slides::o_returnToMenu(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	_vm->changeToStack(kDemoStack, 2001, 0, 0);
+	debugC(kDebugScript, "Opcode %d: Return to menu", op);
+
+	// Go to the information screens of the menu
+	_vm->changeToStack(kDemoStack, 2002, 0, 0);
 }
 
 void Slides::o_setCardSwap(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Cards...
-	if (argc == 1) {
-		_nextCardID = argv[0];
-		_lastCardTime = _vm->_system->getMillis();
-		_cardSwapEnabled = true;
-	} else
-		unknown(op, var, argc, argv);
+	_nextCardID = argv[0];
+
+	debugC(kDebugScript, "Opcode %d: Set next card %d", op, _nextCardID);
+
+	_nextCardTime = _vm->_system->getMillis() + 5000;
+	_cardSwapEnabled = true;
 }
 
 } // End of namespace MystStacks

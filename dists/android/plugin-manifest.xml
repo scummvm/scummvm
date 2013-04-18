@@ -3,8 +3,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.inodes.gus.scummvm.plugin.@PLUGIN_NAME@"
 		android:versionCode="@PLUGIN_VERSION_CODE@"
-		android:versionName="1.4.0git"
-		android:installLocation="preferExternal">
+		android:versionName="1.5.0git"
+		android:installLocation="preferExternal"
+		android:sharedUserId="org.inodes.gus.scummvm">
 
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="8" />
 
@@ -32,4 +33,3 @@
 	<uses-configuration android:reqTouchScreen="stylus"
 			android:reqKeyboardType="qwerty"/>
 </manifest>
-

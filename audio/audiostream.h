@@ -23,6 +23,7 @@
 #ifndef SOUND_AUDIOSTREAM_H
 #define SOUND_AUDIOSTREAM_H
 
+#include "common/ptr.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/types.h"
@@ -114,7 +115,6 @@ public:
 	 * @param disposeAfterUse Destroy the stream after the LoopingAudioStream has finished playback.
 	 */
 	LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
-	~LoopingAudioStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool endOfData() const;
@@ -129,8 +129,7 @@ public:
 	 */
 	uint getCompleteIterations() const { return _completeIterations; }
 private:
-	RewindableAudioStream *_parent;
-	DisposeAfterUse::Flag _disposeAfterUse;
+	Common::DisposablePtr<RewindableAudioStream> _parent;
 
 	uint _loops;
 	uint _completeIterations;
@@ -246,7 +245,6 @@ public:
 	                      const Timestamp loopStart,
 	                      const Timestamp loopEnd,
 	                      DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
-	~SubLoopingAudioStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool endOfData() const { return _done; }
@@ -254,8 +252,7 @@ public:
 	bool isStereo() const { return _parent->isStereo(); }
 	int getRate() const { return _parent->getRate(); }
 private:
-	SeekableAudioStream *_parent;
-	DisposeAfterUse::Flag _disposeAfterUse;
+	Common::DisposablePtr<SeekableAudioStream> _parent;
 
 	uint _loops;
 	Timestamp _pos;
@@ -283,7 +280,6 @@ public:
 	 * @param disposeAfterUse Whether the parent stream object should be destroyed on destruction of the SubSeekableAudioStream.
 	 */
 	SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
-	~SubSeekableAudioStream();
 
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -297,8 +293,7 @@ public:
 
 	Timestamp getLength() const { return _length; }
 private:
-	SeekableAudioStream *_parent;
-	DisposeAfterUse::Flag _disposeAfterUse;
+	Common::DisposablePtr<SeekableAudioStream> _parent;
 
 	const Timestamp _start;
 	const Timestamp _length;

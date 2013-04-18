@@ -148,5 +148,3 @@ void Ps2Pad::readPad(uint16 *pbuttons, int16 *joyh, int16 *joyv) {
 		*pbuttons = 0;
 	}
 }
-
-

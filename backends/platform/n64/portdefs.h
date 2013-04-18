@@ -49,4 +49,3 @@ typedef signed int int32;
 #define SCUMMVM_DONT_DEFINE_TYPES
 
 #endif
-

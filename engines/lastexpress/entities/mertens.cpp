@@ -30,7 +30,9 @@
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/state.h"
-#include "lastexpress/game/sound.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -289,7 +291,7 @@ IMPLEMENT_FUNCTION_S(8, Mertens, playSound16)
 		break;
 
 	case kActionDefault:
-		getSound()->playSound(kEntityMertens, (char *)&params->seq1, SoundManager::kFlagDefault);
+		getSound()->playSound(kEntityMertens, (char *)&params->seq1, kFlagDefault);
 		break;
 
 	case kActionCallback:
@@ -503,7 +505,7 @@ IMPLEMENT_FUNCTION_I(12, Mertens, bonsoir, EntityIndex)
 	if (savepoint.action == kActionDefault)
 		return;
 
-	if (getSound()->isBuffered(kEntityMertens)) {
+	if (getSoundQueue()->isBuffered(kEntityMertens)) {
 		CALLBACK_ACTION();
 		return;
 	}
@@ -589,7 +591,7 @@ IMPLEMENT_FUNCTION_II(13, Mertens, function13, bool, bool)
 		if (params->param2)
 			params->param3 = 1;
 
-		if (!getSound()->isBuffered(kEntityMertens)) {
+		if (!getSoundQueue()->isBuffered(kEntityMertens)) {
 
 		}
 
@@ -896,7 +898,7 @@ IMPLEMENT_FUNCTION(17, Mertens, function17)
 		} else {
 			// Got the passenger list, Mertens is looking for it before sitting
 			ENTITY_PARAM(0, 2) = 1;
-			getSound()->playSound(kEntityMertens, "CON1058", SoundManager::kFlagInvalid, 75);
+			getSound()->playSound(kEntityMertens, "CON1058", kFlagInvalid, 75);
 			getEntities()->drawSequenceRight(kEntityMertens, "601D");
 		}
 
@@ -984,7 +986,7 @@ IMPLEMENT_FUNCTION(18, Mertens, function18)
 			getEntities()->drawSequenceRight(kEntityMertens, "601A");
 		} else {
 			ENTITY_PARAM(0, 2) = 1;
-			getSound()->playSound(kEntityMertens, "CON1058", SoundManager::kFlagInvalid, 75);
+			getSound()->playSound(kEntityMertens, "CON1058", kFlagInvalid, 75);
 			getEntities()->drawSequenceRight(kEntityMertens, "601D");
 		}
 
@@ -1188,7 +1190,7 @@ IMPLEMENT_FUNCTION(22, Mertens, function22)
 			break;
 
 		case 5:
-			if (!getSound()->isBuffered(kEntityMertens))
+			if (!getSoundQueue()->isBuffered(kEntityMertens))
 				getSound()->playSound(kEntityMertens, "MAH1170I");
 
 			setCallback(6);
@@ -1198,8 +1200,8 @@ IMPLEMENT_FUNCTION(22, Mertens, function22)
 		case 6:
 			getData()->location = kLocationInsideCompartment;
 			getEntities()->clearSequences(kEntityMertens);
-			if (!getSound()->isBuffered(kEntityMertens))
-				getSound()->playSound(kEntityMertens, "MAH1172", SoundManager::kFlagInvalid, 225);
+			if (!getSoundQueue()->isBuffered(kEntityMertens))
+				getSound()->playSound(kEntityMertens, "MAH1172", kFlagInvalid, 225);
 
 			setCallback(7);
 			setup_function21(kObjectCompartment4, kObject20);
@@ -2300,7 +2302,7 @@ IMPLEMENT_FUNCTION_I(31, Mertens, function31, MertensActionType)
 			break;
 
 		case 1:
-			if (getSound()->isBuffered(kEntityMertens)) {
+			if (getSoundQueue()->isBuffered(kEntityMertens)) {
 				getEntities()->drawSequenceLeft(kEntityMertens, "601J");
 			} else {
 				setCallback(2);
@@ -3017,7 +3019,7 @@ IMPLEMENT_FUNCTION(42, Mertens, function42)
 
 				if (getState()->time <= kTime1188000) {
 					if ((!getEntities()->isPlayerInCar(kCarGreenSleeping) && !getEntities()->isPlayerInCar(kCarRedSleeping))
-					  || getSound()->isBuffered("REB1205")
+					  || getSoundQueue()->isBuffered("REB1205")
 					  || !getEntities()->isInsideCompartment(kEntityMmeBoutarel, kCarRedSleeping, kPosition_5790)
 					  || !params->param4) {
 						params->param4 = (uint)getState()->time;
@@ -3138,7 +3140,7 @@ label_callback_18:
 		}
 
 label_callback_19:
-		if (ENTITY_PARAM(0, 1) && !getSound()->isBuffered(kEntityMertens)) {
+		if (ENTITY_PARAM(0, 1) && !getSoundQueue()->isBuffered(kEntityMertens)) {
 			if (getProgress().field_18 != 4)
 				getSound()->playSound(kEntityMertens, "CON1505");
 		}

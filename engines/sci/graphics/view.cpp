@@ -172,6 +172,20 @@ void GfxView::initData(GuiResourceId resourceId) {
 				cel->displaceX = (signed char)celData[4];
 				cel->displaceY = celData[5];
 				cel->clearKey = celData[6];
+
+				// HACK: Fix Ego's odd displacement in the QFG3 demo, scene 740.
+				// For some reason, ego jumps above the rope, so we fix his rope
+				// hanging view by displacing it down by 40 pixels. Fixes bug
+				// #3035693.
+				// FIXME: Remove this once we figure out why Ego jumps so high.
+				// Likely culprits include kInitBresen, kDoBresen and kCantBeHere.
+				// The scripts have the y offset that hero reaches (11) hardcoded,
+				// so it might be collision detection. However, since this requires
+				// extensive work to fix properly for very little gain, this hack
+				// here will suffice until the actual issue is found.
+				if (g_sci->getGameId() == GID_QFG3 && g_sci->isDemo() && resourceId == 39)
+					cel->displaceY = 98;
+
 				if (isEGA) {
 					cel->offsetEGA = celOffset + 7;
 					cel->offsetRLE = 0;
@@ -471,7 +485,8 @@ void unpackCelData(byte *inBuffer, byte *celBitmap, byte clearColor, int pixelCo
 			curByte = *rlePtr++;
 			if (curByte & 0xC0) { // fill with color
 				runLength = curByte >> 6;
-				memset(outPtr + pixelNr,    curByte & 0x3F, MIN<uint16>(runLength, pixelCount - pixelNr));
+				curByte = curByte & 0x3F;
+				memset(outPtr + pixelNr,           curByte, MIN<uint16>(runLength, pixelCount - pixelNr));
 			} else { // skip the next pixels (transparency)
 				runLength = curByte & 0x3F;
 			}
@@ -834,6 +849,15 @@ void GfxView::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
 
 void GfxView::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
 	_screen->adjustBackUpscaledCoordinates(y, x, _sci2ScaleRes);
+}
+
+byte GfxView::getColorAtCoordinate(int16 loopNo, int16 celNo, int16 x, int16 y) {
+	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
+	const byte *bitmap = getBitmap(loopNo, celNo);
+	const int16 celWidth = celInfo->width;
+
+	bitmap += (celWidth * y);
+	return bitmap[x];
 }
 
 } // End of namespace Sci

@@ -43,30 +43,30 @@ class Dialog;
 
 struct SceneEvent {
 	enum Type {
-		kNone,					//0
-		kMessage,
-		kWalk,
-		kPlayAnimation,
-		kPlayActorAnimation,	//4
-		kPauseAnimation,
-		kClearAnimations,
-		kLoadScene,
-		kSetOn,					//8
-		kSetLan,
-		kPlayMusic,
-		kPlaySound,
-		kEnableObject,			//12
-		kHideActor,
-		kWaitForAnimation,
-		kWaitLanAnimationFrame,
-		kCreditsMessage,		//16
-		kCredits,
-		kTimer,
-		kEffect,
-		kFade,
-		kWait,
-		kSetFlag,
-		kQuit
+	    kNone,                  //0
+	    kMessage,
+	    kWalk,
+	    kPlayAnimation,
+	    kPlayActorAnimation,    //4
+	    kPauseAnimation,
+	    kClearAnimations,
+	    kLoadScene,
+	    kSetOn,                 //8
+	    kSetLan,
+	    kPlayMusic,
+	    kPlaySound,
+	    kEnableObject,          //12
+	    kHideActor,
+	    kWaitForAnimation,
+	    kWaitLanAnimationFrame,
+	    kCreditsMessage,        //16
+	    kCredits,
+	    kTimer,
+	    kEffect,
+	    kFade,
+	    kWait,
+	    kSetFlag,
+	    kQuit
 	} type;
 
 	Common::String message;
@@ -93,8 +93,8 @@ struct SceneEvent {
 	byte object;
 
 	SceneEvent(Type type_) :
-			type(type_), message(), color(0xd1), slot(0), animation(0), timer(0), orientation(0), dst(),
-			scene(0), ons(0), lan(0), music(0), sound(0), object(0) {}
+		type(type_), message(), color(0xd1), slot(0), animation(0), timer(0), orientation(0), dst(),
+		scene(0), ons(0), lan(0), music(0), sound(0), object(0) {}
 
 	void clear() {
 		type = kNone;
@@ -119,8 +119,8 @@ struct SceneEvent {
 
 	void dump() const {
 		debug(0, "event[%d]: \"%s\"[%02x], slot: %d, animation: %u, timer: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u",
-			(int)type, message.c_str(), color, slot, animation, timer, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
-		);
+		      (int)type, message.c_str(), color, slot, animation, timer, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
+		     );
 	}
 };
 
@@ -144,7 +144,7 @@ public:
 	void setOrientation(uint8 o) { orientation = o; }
 	void push(const SceneEvent &event);
 	byte peekFlagEvent(uint16 addr) const;
-	SceneEvent::Type last_event_type() const { return !events.empty()? events.back().type: SceneEvent::kNone; }
+	SceneEvent::Type last_event_type() const { return !events.empty() ? events.back().type : SceneEvent::kNone; }
 
 	bool processEvent(const Common::Event &event);
 
@@ -160,9 +160,9 @@ public:
 	Object *findObject(const Common::Point &point);
 
 	void loadObjectData();
-	Animation * getAnimation(byte slot);
-	inline Animation * getActorAnimation() { return &actor_animation; }
-	inline const Common::String& getMessage() const { return message; }
+	Animation *getAnimation(byte slot);
+	inline Animation *getActorAnimation() { return &actor_animation; }
+	inline const Common::String &getMessage() const { return message; }
 	void setPalette(unsigned mul);
 	int lookupZoom(uint y) const;
 
@@ -219,7 +219,7 @@ private:
 	uint message_timer;
 	byte message_first_frame;
 	byte message_last_frame;
-	Animation * message_animation;
+	Animation *message_animation;
 
 	typedef Common::List<SceneEvent> EventList;
 	EventList events;
@@ -240,17 +240,17 @@ private:
 
 	struct DebugFeatures {
 		enum {
-			kShowBack,
-			kShowLan,
-			kShowOns,
-			kShowOn,
-			kHidePath,
-			kMax
+		    kShowBack,
+		    kShowLan,
+		    kShowOns,
+		    kShowOn,
+		    kHidePath,
+		    kMax
 		};
 		bool feature[kMax];
 
 		DebugFeatures() {
-			for(uint i = 0; i < kMax; ++i) {
+			for (uint i = 0; i < kMax; ++i) {
 				feature[i] = true;
 			}
 		}

@@ -98,4 +98,3 @@ void updateStrings(byte gameId, byte version, Common::Platform platform,
 #undef ADD_BIND
 #undef ADD_TEXT
 #undef ADD_LINE
-

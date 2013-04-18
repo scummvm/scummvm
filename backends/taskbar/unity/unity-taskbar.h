@@ -8,31 +8,29 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  *
  */
 
 #ifndef BACKEND_UNITY_TASKBAR_H
 #define BACKEND_UNITY_TASKBAR_H
 
-#if defined(UNIX) && defined(USE_TASKBAR) && defined(USE_TASKBAR_UNITY)
+#if defined(POSIX) && defined(USE_TASKBAR) && defined(USE_TASKBAR_UNITY)
 
 #include "common/events.h"
 #include "common/str.h"
 #include "common/taskbar.h"
 
-#include <unity.h>
+typedef struct _GMainLoop GMainLoop;
+typedef struct _UnityLauncherEntry UnityLauncherEntry;
 
 class UnityTaskbarManager : public Common::TaskbarManager, public Common::EventSource {
 public:

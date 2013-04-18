@@ -36,33 +36,36 @@ MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, St
 }
 
 void MSVCProvider::createWorkspace(const BuildSetup &setup) {
-	UUIDMap::const_iterator svmUUID = _uuidMap.find(PROJECT_NAME);
+	UUIDMap::const_iterator svmUUID = _uuidMap.find(setup.projectName);
 	if (svmUUID == _uuidMap.end())
-		error("No UUID for \"" PROJECT_NAME "\" project created");
+		error("No UUID for \"" + setup.projectName + "\" project created");
 
 	const std::string svmProjectUUID = svmUUID->second;
 	assert(!svmProjectUUID.empty());
 
 	std::string solutionUUID = createUUID();
 
-	std::ofstream solution((setup.outputDir + '/' + PROJECT_NAME ".sln").c_str());
+	std::ofstream solution((setup.outputDir + '/' + setup.projectName + ".sln").c_str());
 	if (!solution)
-		error("Could not open \"" + setup.outputDir + '/' + PROJECT_NAME ".sln\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectName + ".sln\" for writing");
 
 	solution << "Microsoft Visual Studio Solution File, Format Version " << _version + 1 << ".00\n";
 	solution << "# Visual Studio " << getVisualStudioVersion() << "\n";
 
-	solution << "Project(\"{" << solutionUUID << "}\") = \"" << PROJECT_NAME << "\", \"" << PROJECT_NAME << getProjectExtension() << "\", \"{" << svmProjectUUID << "}\"\n";
+	// Write main project
+	if (!setup.devTools) {
+		solution << "Project(\"{" << solutionUUID << "}\") = \"" << setup.projectName << "\", \"" << setup.projectName << getProjectExtension() << "\", \"{" << svmProjectUUID << "}\"\n";
 
-	// Project dependencies are moved to vcxproj files in Visual Studio 2010
-	if (_version < 10)
-		writeReferences(solution);
+		// Project dependencies are moved to vcxproj files in Visual Studio 2010
+		if (_version < 10)
+			writeReferences(setup, solution);
 
-	solution << "EndProject\n";
+		solution << "EndProject\n";
+	}
 
 	// Note we assume that the UUID map only includes UUIDs for enabled engines!
 	for (UUIDMap::const_iterator i = _uuidMap.begin(); i != _uuidMap.end(); ++i) {
-		if (i->first == PROJECT_NAME)
+		if (i->first == setup.projectName)
 			continue;
 
 		solution << "Project(\"{" << solutionUUID << "}\") = \"" << i->first << "\", \"" << i->first << getProjectExtension() << "\", \"{" << i->second << "}\"\n"
@@ -117,16 +120,16 @@ void MSVCProvider::createOtherBuildFiles(const BuildSetup &setup) {
 }
 
 void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
-	std::ofstream properties((setup.outputDir + '/' + PROJECT_DESCRIPTION "_Global" + getPropertiesExtension()).c_str());
+	std::ofstream properties((setup.outputDir + '/' + setup.projectDescription + "_Global" + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + PROJECT_DESCRIPTION "_Global" + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global" + getPropertiesExtension() + "\" for writing");
 
-	outputGlobalPropFile(properties, 32, setup.defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
+	outputGlobalPropFile(setup, properties, 32, setup.defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 	properties.close();
 
-	properties.open((setup.outputDir + '/' + PROJECT_DESCRIPTION "_Global64" + getPropertiesExtension()).c_str());
+	properties.open((setup.outputDir + '/' + setup.projectDescription + "_Global64" + getPropertiesExtension()).c_str());
 	if (!properties)
-		error("Could not open \"" + setup.outputDir + '/' + PROJECT_DESCRIPTION "_Global64" + getPropertiesExtension() + "\" for writing");
+		error("Could not open \"" + setup.outputDir + '/' + setup.projectDescription + "_Global64" + getPropertiesExtension() + "\" for writing");
 
 	// HACK: We must disable the "nasm" feature for x64. To achieve that we must duplicate the feature list and
 	// recreate a define list.
@@ -140,7 +143,7 @@ void MSVCProvider::createGlobalProp(const BuildSetup &setup) {
 	x64Defines.push_back("WIN32");
 	x64Defines.push_back("SDL_BACKEND");
 
-	outputGlobalPropFile(properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
+	outputGlobalPropFile(setup, properties, 64, x64Defines, convertPathToWin(setup.filePrefix), setup.runBuildEvents);
 }
 
 std::string MSVCProvider::getPreBuildEvent() const {

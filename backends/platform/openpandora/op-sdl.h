@@ -34,7 +34,7 @@
 //#define MIXER_DOUBLE_BUFFERING 1
 
 #ifndef PATH_MAX
-	#define PATH_MAX 255
+#define PATH_MAX 255
 #endif
 
 class OSystem_OP : public OSystem_POSIX {

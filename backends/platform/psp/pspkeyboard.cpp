@@ -298,7 +298,7 @@ bool PSPKeyboard::load() {
 			goto ERROR;
 		}
 
-		PngLoader image(file, _buffers[i], _palettes[i]);
+		PngLoader image(*file, _buffers[i], _palettes[i]);
 
 		if (image.allocate() != PngLoader::OK) {
 			PSP_ERROR("Failed to allocate memory for keyboard image %s\n", _guiStrings[i]);

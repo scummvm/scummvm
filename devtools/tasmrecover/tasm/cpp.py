@@ -1,3 +1,24 @@
+# ScummVM - Graphic Adventure Engine
+#
+# ScummVM is the legal property of its developers, whose names
+# are too numerous to list here. Please refer to the COPYRIGHT
+# file distributed with this source distribution.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+
 import op, traceback, re, proc
 from copy import copy
 proc_module = proc
@@ -12,11 +33,35 @@ def parse_bin(s):
 	return v
 
 class cpp:
-	def __init__(self, context, namespace, skip_first = 0, blacklist = []):
+	def __init__(self, context, namespace, skip_first = 0, blacklist = [], skip_output = []):
 		self.namespace = namespace
 		fname = namespace.lower() + ".cpp"
 		header = namespace.lower() + ".h"
-		banner = "/* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */"
+		banner = """/* PLEASE DO NOT MODIFY THIS FILE. ALL CHANGES WILL BE LOST! LOOK FOR README FOR DETAILS */
+
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+"""
 		self.fd = open(fname, "wt")
 		self.hd = open(header, "wt")
 		hid = "TASMRECOVER_%s_STUBS_H__" %namespace.upper()
@@ -34,8 +79,10 @@ class cpp:
 		self.proc_done = []
 		self.blacklist = blacklist
 		self.failed = list(blacklist)
+		self.skip_output = skip_output
 		self.translated = []
 		self.proc_addr = []
+		self.used_data_offsets = set()
 		self.methods = []
 		self.fd.write("""%s
 
@@ -53,11 +100,13 @@ namespace %s {
 		if self.indirection == -1:
 			try:
 				offset,p,p = self.context.get_offset(name)
-				print "OFFSET = %d" %offset
-				self.indirection = 0
-				return str(offset)
 			except:
 				pass
+			else:
+				print "OFFSET = %d" %offset
+				self.indirection = 0
+				self.used_data_offsets.add((name,offset))
+				return "offset_%s" % (name,)
 		
 		g = self.context.get_global(name)
 		if isinstance(g, op.const):
@@ -466,7 +515,9 @@ namespace %s {
 						self.resolve_label(s.label)
 			
 			#adding statements
+			#BIG FIXME: this is quite ugly to handle code analysis from the code generation. rewrite me!
 			for label, proc, offset in self.unbounded:
+				self.body += "\treturn;\n" #we need to return before calling code from the other proc
 				self.body += "/*continuing to unbounded code: %s from %s:%d-%d*/\n" %(label, proc.name, offset, len(proc.stmts))
 				start = len(self.proc.stmts)
 				self.proc.add_label(label)
@@ -480,7 +531,8 @@ namespace %s {
 				self.proc.optimize(keep_labels=[label])
 				self.proc.visit(self, start)
 			self.body += "}\n";
-			self.translated.insert(0, self.body)
+			if name not in self.skip_output:
+				self.translated.insert(0, self.body)
 			self.proc = None
 			if self.temps_count > 0:
 				raise Exception("temps count == %d at the exit of proc" %self.temps_count);
@@ -532,24 +584,39 @@ namespace %s {
 		data_bin = self.data_seg
 		data_impl = "\n\tstatic const uint8 src[] = {\n\t\t"
 		n = 0
+		comment = str()
 		for v in data_bin:
 			data_impl += "0x%02x, " %v
 			n += 1
+
+			comment += chr(v) if (v >= 0x20 and v < 0x7f and v != ord('\\')) else "."
 			if (n & 0xf) == 0:
-				data_impl += "\n\t\t"
+				data_impl += "\n\t\t//0x%04x: %s\n\t\t" %(n - 16, comment)
+				comment = str()
+			elif (n & 0x3) == 0:
+				comment += " "
 		data_impl += "};\n\tds.assign(src, src + sizeof(src));\n"
 		self.hd.write(
 """\n#include "dreamweb/runtime.h"
 
 namespace %s {
-
+#include "structs.h"
 class %sContext : public Context {
 public:
 	void __start();
 	void __dispatch_call(uint16 addr);
+#include "stubs.h" // Allow hand-reversed functions to have a signature different than void f()
 
 """ 
 %(self.namespace, self.namespace))
+
+		for name,addr in self.proc_addr:
+			self.hd.write("\tstatic const uint16 addr_%s = 0x%04x;\n" %(name, addr))
+
+
+		for name,addr in self.used_data_offsets:
+			self.hd.write("\tstatic const uint16 offset_%s = 0x%04x;\n" %(name, addr))
+
 		offsets = []
 		for k, v in self.context.get_globals().items():
 			if isinstance(v, op.var):
@@ -559,10 +626,13 @@ public:
 		
 		offsets = sorted(offsets, key=lambda t: t[1])
 		for o in offsets:
-			self.hd.write("\tconst static uint16 k%s = %s;\n" %o)
+			self.hd.write("\tstatic const uint16 k%s = %s;\n" %o)
 		self.hd.write("\n")
 		for p in set(self.methods):
-			self.hd.write("\tvoid %s();\n" %p)
+			if p in self.blacklist:
+				self.hd.write("\t//void %s();\n" %p)
+			else:
+				self.hd.write("\tvoid %s();\n" %p)
 
 		self.hd.write("};\n}\n\n#endif\n")
 		self.hd.close()
@@ -572,7 +642,7 @@ public:
 		self.fd.write("\nvoid %sContext::__dispatch_call(uint16 addr) {\n\tswitch(addr) {\n" %self.namespace)
 		self.proc_addr.sort(cmp = lambda x, y: x[1] - y[1])
 		for name,addr in self.proc_addr:
-			self.fd.write("\t\tcase 0x%04x: %s(); break;\n" %(addr, name))
+			self.fd.write("\t\tcase addr_%s: %s(); break;\n" %(name, name))
 		self.fd.write("\t\tdefault: ::error(\"invalid call to %04x dispatched\", (uint16)ax);")
 		self.fd.write("\n\t}\n}\n\n} /*namespace*/\n")
 

@@ -79,9 +79,6 @@ bool PalAnim::fadeStep(int16 oper) {
 	byte newGreen;
 	byte newBlue;
 
-	if (_vm->_global->_colorCount != 256)
-		error("PalAnim::fadeStep(): Only 256 color mode is supported");
-
 	if (oper == 0) {
 		if (_vm->_global->_setAllPalette) {
 			if (_vm->_global->_inVM != 0)
@@ -133,12 +130,6 @@ void PalAnim::fade(Video::PalDesc *palDesc, int16 fadeV, int16 allColors) {
 		return;
 
 	_fadeValue = (fadeV < 0) ? -fadeV : 2;
-
-	if (_vm->_global->_colorCount < 256) {
-		if (palDesc)
-			_vm->_video->setFullPalette(palDesc);
-		return;
-	}
 
 	if (!_vm->_global->_setAllPalette) {
 		if (!palDesc) {

@@ -308,4 +308,3 @@ namespace CxxTest
 }
 
 #endif // __cxxtest__RealDescriptions_cpp__
-

@@ -55,4 +55,3 @@ I_UsbSetDevicePrivateData
 I_UsbTransfer
 I_UsbRegisterDriver
 usbd_IMPORTS_end
-

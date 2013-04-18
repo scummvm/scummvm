@@ -42,6 +42,7 @@
 #include "audio/mixer_intern.h"
 #include "audio/fmopl.h"
 
+#include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 
 #include "gui/Actions.h"
@@ -69,6 +70,50 @@
 
 #ifdef __GNUC__
 extern "C" _CRTIMP FILE *__cdecl   _wfreopen(const wchar_t *, const wchar_t *, FILE *);
+#endif
+
+#ifdef WRAP_MALLOC
+
+extern "C" void *__real_malloc(size_t size);
+extern "C" void __real_free(void *ptr);
+
+extern "C" void *__wrap_malloc(size_t size) {
+/*
+	void *ptr = __real_malloc(size);
+	printf("malloc(%d) = %p\n", size, ptr);
+	return ptr;
+*/
+	if (size < 64 * 1024) {
+		void *ptr = __real_malloc(size+4);
+//		printf("malloc(%d) = %p\n", size, ptr);
+		if (ptr != NULL) {
+			*((HANDLE*)ptr) = 0;
+			return 4+(char*)ptr;
+		}
+		return NULL;
+	}
+	HANDLE H = CreateFileMapping((HANDLE)INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, size+4, 0);
+	void *ptr = MapViewOfFile(H, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	*((HANDLE*)ptr) = H;
+	return 4+(char*)ptr;
+}
+
+extern "C" void __wrap_free(void *ptr) {
+/*
+	__real_free(ptr);
+	printf("free(%p)\n", ptr);
+*/
+	if (ptr != NULL) {
+		HANDLE H = *(HANDLE*)((char *)ptr-4);
+		if (H == 0) {
+			__real_free((char*)ptr-4);
+			return;
+		}
+		UnmapViewOfFile((char *)ptr-4);
+		CloseHandle(H);
+	}
+}
+
 #endif
 
 using namespace CEGUI;
@@ -353,9 +398,9 @@ void drawError(char *error) {
 }
 
 // ********************************************************************************************
-static DefaultTimerManager *_int_timer = NULL;
 static Uint32 timer_handler_wrapper(Uint32 interval) {
-	_int_timer->handler();
+	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
+	tm->handler();
 	return interval;
 }
 
@@ -379,21 +424,7 @@ void OSystem_WINCE3::initBackend() {
 
 	((WINCESdlEventSource *)_eventSource)->init((WINCESdlGraphicsManager *)_graphicsManager);
 
-
-	// FIXME: This timer manager is *not accesible* from the outside.
-	// Instead the timer manager setup by OSystem_SDL is visible on the outside.
-	// Since the WinCE backend actually seems to work, my guess is that
-	// SDL_AddTimer works after all and the following code is redundant.
-	// However it may be, this must be resolved one way or another.
-
-	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
-	// We work around this by using the SetTimer function, since we only use
-	// one timer in scummvm (for the time being)
-	_int_timer = new DefaultTimerManager();
-	//_timerID = NULL;  // OSystem_SDL will call removetimer with this, it's ok
-	SDL_SetTimer(10, &timer_handler_wrapper);
-
-	// Chain init
+	// Call parent implementation of this method
 	OSystem_SDL::initBackend();
 
 	// Initialize global key mapping
@@ -403,9 +434,6 @@ void OSystem_WINCE3::initBackend() {
 		warning("Setting default action mappings");
 		GUI_Actions::Instance()->saveMapping(); // write defaults
 	}
-
-	// Call parent implementation of this method
-	//OSystem_SDL::initBackend();
 
 	_inited = true;
 }
@@ -553,6 +581,24 @@ void OSystem_WINCE3::initSDL() {
 
 		_initedSDL = true;
 	}
+}
+
+void OSystem_WINCE3::init() {
+	// Create SdlMutexManager instance as the TimerManager relies on the
+	// MutexManager being already initialized
+	if (_mutexManager == 0)
+		_mutexManager = new SdlMutexManager();
+
+	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
+	// We work around this by using the SetTimer function, since we only use
+	// one timer in scummvm (for the time being)
+	if (_timerManager == 0) {
+		_timerManager = new DefaultTimerManager();
+		SDL_SetTimer(10, &timer_handler_wrapper);
+	}
+
+	// Call parent implementation of this method
+	OSystem_SDL::init();
 }
 
 void OSystem_WINCE3::quit() {

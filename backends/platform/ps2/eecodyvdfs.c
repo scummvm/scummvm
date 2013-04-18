@@ -63,5 +63,3 @@ int driveStandby(void) {
 		driveStopped = 0;
 	return *(int *)sbuff;
 }
-
-

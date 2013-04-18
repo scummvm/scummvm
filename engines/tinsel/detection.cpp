@@ -322,9 +322,21 @@ int TinselMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 void TinselMetaEngine::removeSaveState(const char *target, int slot) const {
 	Tinsel::setNeedLoad();
-	Tinsel::getList(g_system->getSavefileManager(), target);
+	// Same issue here as with loadGameState(): we need the physical savegame
+	// slot. Refer to bug #3387551.
+	int listSlot = -1;
+	const int numStates = Tinsel::getList(g_system->getSavefileManager(), target);
+	for (int i = 0; i < numStates; ++i) {
+		const char *fileName = Tinsel::ListEntry(i, Tinsel::LE_NAME);
+		const int saveSlot = atoi(fileName + strlen(fileName) - 3);
 
-	g_system->getSavefileManager()->removeSavefile(Tinsel::ListEntry(slot, Tinsel::LE_NAME));
+		if (saveSlot == slot) {
+			listSlot = i;
+			break;
+		}
+	}
+
+	g_system->getSavefileManager()->removeSavefile(Tinsel::ListEntry(listSlot, Tinsel::LE_NAME));
 	Tinsel::setNeedLoad();
 	Tinsel::getList(g_system->getSavefileManager(), target);
 }

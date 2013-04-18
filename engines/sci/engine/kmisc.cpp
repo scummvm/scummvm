@@ -54,8 +54,33 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 
 	uint32 neededSleep = 30;
 
-	// WORKAROUNDS:
+	// WORKAROUNDS for scripts that are polling too quickly in scenes that
+	// are not animating much
 	switch (g_sci->getGameId()) {
+	case GID_CASTLEBRAIN:
+		// In Castle of Dr. Brain, memory color matching puzzle in the first
+		// room (room 100), the game scripts constantly poll the state of each
+		// stone when the user clicks on one. Since the scene is not animating
+		// much, this results in activating and deactivating each stone very
+		// quickly (together with its associated tone sound), depending on how
+		// low it is in the animate list. This worked somewhat in older PCs, but
+		// not in modern computers. We throttle the scene in order to allow the
+		// stones to display, otherwise the game scripts reset them too soon.
+		// Fixes bug #3127824.
+		if (s->currentRoomNumber() == 100) {
+			s->_throttleTrigger = true;
+			neededSleep = 60;
+		}
+		break;
+	case GID_ICEMAN:
+		// In ICEMAN the submarine control room is not animating much, so it
+		// runs way too fast. We calm it down even more, otherwise fighting
+		// against other submarines is almost impossible.
+		if (s->currentRoomNumber() == 27) {
+			s->_throttleTrigger = true;
+			neededSleep = 60;
+		}
+		break;
 	case GID_LSL3:
 		// LSL3 calculates a machinespeed variable during game startup
 		// (right after the filthy questions). This one would go through w/o
@@ -65,21 +90,12 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 		if (s->currentRoomNumber() == 290)
 			s->_throttleTrigger = true;
 		break;
-	case GID_ICEMAN:
-		// In ICEMAN the submarine control room is not animating much, so it runs way too fast
-		//  we calm it down even more otherwise especially fighting against other submarines
-		//  is almost impossible
-		if (s->currentRoomNumber() == 27) {
-			s->_throttleTrigger = true;
-			neededSleep = 60;
-		}
-		break;
 	case GID_SQ4:
 		// In SQ4 (floppy and CD) the sequel police appear way too quickly in
 		// the Skate-o-rama rooms, resulting in all sorts of timer issues, like
 		// #3109139 (which occurs because a police officer instantly teleports
 		// just before Roger exits and shoots him). We throttle these scenes a
-		// bit more, in order to prevent timer bugs related to the sequel police
+		// bit more, in order to prevent timer bugs related to the sequel police.
 		if (s->currentRoomNumber() == 405 || s->currentRoomNumber() == 406 ||
 			s->currentRoomNumber() == 410 || s->currentRoomNumber() == 411) {
 			s->_throttleTrigger = true;

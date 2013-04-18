@@ -405,7 +405,7 @@ void String::trim() {
 	makeUnique();
 
 	// Trim trailing whitespace
-	while (_size >= 1 && isspace(_str[_size - 1]))
+	while (_size >= 1 && isspace(static_cast<unsigned char>(_str[_size - 1])))
 		--_size;
 	_str[_size] = 0;
 
@@ -606,14 +606,14 @@ String operator+(const String &x, char y) {
 }
 
 char *ltrim(char *t) {
-	while (isspace(*t))
+	while (isspace(static_cast<unsigned char>(*t)))
 		t++;
 	return t;
 }
 
 char *rtrim(char *t) {
 	int l = strlen(t) - 1;
-	while (l >= 0 && isspace(t[l]))
+	while (l >= 0 && isspace(static_cast<unsigned char>(t[l])))
 		t[l--] = 0;
 	return t;
 }

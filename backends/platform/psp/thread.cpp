@@ -228,4 +228,3 @@ void PspCondition::wait(PspMutex &externalMutex) {
 
         externalMutex.lock();		// must lock external mutex here for continuation
 }
-

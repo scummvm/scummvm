@@ -137,6 +137,12 @@ struct Feature {
 };
 typedef std::list<Feature> FeatureList;
 
+struct Tool {
+	const char *name;        ///< Name of the tools
+	bool enable;             ///< Whether the tools is enabled or not
+};
+typedef std::list<Tool> ToolList;
+
 /**
  * Creates a list of all features available for MSVC.
  *
@@ -179,6 +185,9 @@ bool setFeatureBuildState(const std::string &name, FeatureList &features, bool e
  * It also contains the path to the project source root.
  */
 struct BuildSetup {
+	std::string projectName;         ///< Project name
+	std::string projectDescription;  ///< Project description
+
 	std::string srcDir;     ///< Path to the sources.
 	std::string filePrefix; ///< Prefix for the relative path arguments in the project files.
 	std::string outputDir;  ///< Path where to put the MSVC project files.
@@ -189,10 +198,12 @@ struct BuildSetup {
 	StringList defines;   ///< List of all defines for the build.
 	StringList libraries; ///< List of all external libraries required for the build.
 
+	bool devTools;         ///< Generate project files for the tools
 	bool runBuildEvents;   ///< Run build events as part of the build (generate revision number and copy engine/theme data & needed files to the build folder
 	bool createInstaller;  ///< Create NSIS installer after the build
 
 	BuildSetup() {
+		devTools        = false;
 		runBuildEvents  = false;
 		createInstaller = false;
 	}
@@ -360,7 +371,7 @@ protected:
 	 *
 	 * @param output File stream to write to.
 	 */
-	virtual void writeReferences(std::ofstream &) {};
+	virtual void writeReferences(const BuildSetup &, std::ofstream &) {};
 
 	/**
 	 * Get the file extension for project files
@@ -400,6 +411,14 @@ protected:
 	 * @return A map, which includes UUIDs for all enabled engines.
 	 */
 	UUIDMap createUUIDMap(const BuildSetup &setup) const;
+
+	/**
+	 * Creates an UUID for every enabled tool of the
+	 * passed build description.
+	 *
+	 * @return A map, which includes UUIDs for all enabled engines.
+	 */
+	UUIDMap createToolsUUIDMap() const;
 
 	/**
 	 * Creates an UUID and returns it in string representation.

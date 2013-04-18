@@ -25,8 +25,6 @@
 
 #include "sci/graphics/paint.h"
 
-#include "common/hashmap.h"
-
 namespace Sci {
 
 class GfxPorts;

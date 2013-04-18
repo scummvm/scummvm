@@ -383,7 +383,7 @@ int32 RncDecoder::unpackM1(const void *input, uint16 inputSize, void *output) {
 				uint16 b;
 				if (_inputByteLeft <= 2)
 					b = 0;
-				else if(_inputByteLeft == 3)
+				else if (_inputByteLeft == 3)
 					b = *(_srcPtr + 2);
 				else
 					b = READ_LE_UINT16(_srcPtr + 2);

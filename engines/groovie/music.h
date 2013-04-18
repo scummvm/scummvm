@@ -25,8 +25,6 @@
 
 #include "common/array.h"
 #include "common/mutex.h"
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
 
 class MidiParser;
 

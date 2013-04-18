@@ -71,6 +71,60 @@ protected:
 	virtual const char *getDescription(const char *fileName) const;
 };
 
+/** Save/Load class for Geisha. */
+class SaveLoad_Geisha : public SaveLoad {
+public:
+	SaveLoad_Geisha(GobEngine *vm, const char *targetName);
+	virtual ~SaveLoad_Geisha();
+
+	SaveMode getSaveMode(const char *fileName) const;
+
+protected:
+	static const uint32 kSlotCount =  7;
+	static const uint32 kSlotSize  = 44;
+
+	static const uint32 kSaveFileSize = kSlotCount * kSlotSize;
+
+	struct SaveFile {
+		const char *sourceName;
+		SaveMode mode;
+		SaveHandler *handler;
+		const char *description;
+	};
+
+	/** Handles the save slots. */
+	class GameHandler : public SaveHandler {
+	public:
+		GameHandler(GobEngine *vm, const Common::String &target);
+		~GameHandler();
+
+		int32 getSize();
+		bool load(int16 dataVar, int32 size, int32 offset);
+		bool save(int16 dataVar, int32 size, int32 offset);
+
+	private:
+		/** Slot file construction. */
+		class File : public SlotFileIndexed {
+		public:
+			File(GobEngine *vm, const Common::String &base);
+			~File();
+
+			int getSlot(int32 offset) const;
+			int getSlotRemainder(int32 offset) const;
+		};
+
+		File _file;
+	};
+
+	static SaveFile _saveFiles[];
+
+	SaveHandler *getHandler(const char *fileName) const;
+	const char *getDescription(const char *fileName) const;
+
+	const SaveFile *getSaveFile(const char *fileName) const;
+	SaveFile *getSaveFile(const char *fileName);
+};
+
 /** Save/Load class for Gobliins 2, Ween: The Prophecy and Bargon Attack. */
 class SaveLoad_v2 : public SaveLoad {
 public:

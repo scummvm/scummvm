@@ -105,7 +105,9 @@ static const byte imxOtherTable[6][64] = {
 
 void releaseImcTables() {
 	free(_destImcTable);
+	_destImcTable = NULL;
 	free(_destImcTable2);
+	_destImcTable2 = NULL;
 }
 
 void initializeImcTables() {

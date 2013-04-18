@@ -21,7 +21,6 @@
  */
 
 #include "common/str.h"
-#include "graphics/dither.h"
 
 #include "gob/gob.h"
 #include "gob/inter.h"

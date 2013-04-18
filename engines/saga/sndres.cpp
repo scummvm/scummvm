@@ -262,17 +262,18 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 			buffer.flags |= Audio::FLAG_UNSIGNED;
 			buffer.flags &= ~Audio::FLAG_16BITS;
 		} else {
-			// Voice files in newer ITE demo versions are OKI ADPCM (VOX) encoded
-			if (!uncompressedSound && !scumm_stricmp(context->fileName(), "voicesd.rsc"))
+			// Voice files in newer ITE demo versions are OKI ADPCM (VOX) encoded.
+			// These are LE in all the Windows and Mac demos
+			if (!uncompressedSound && !scumm_stricmp(context->fileName(), "voicesd.rsc")) {
 				resourceType = kSoundVOX;
+				buffer.flags |= Audio::FLAG_LITTLE_ENDIAN;
+			}
 		}
 	}
 	buffer.buffer = NULL;
 
 	// Check for LE sounds
 	if (!context->isBigEndian())
-		buffer.flags |= Audio::FLAG_LITTLE_ENDIAN;
-	if ((context->fileType() & GAME_VOICEFILE) && (_vm->getFeatures() & GF_LE_VOICES))
 		buffer.flags |= Audio::FLAG_LITTLE_ENDIAN;
 
 	// Older Mac versions of ITE were Macbinary packed

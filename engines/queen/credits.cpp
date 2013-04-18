@@ -141,4 +141,3 @@ void Credits::update() {
 
 
 } // End of namespace Queen
-

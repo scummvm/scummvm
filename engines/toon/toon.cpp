@@ -191,11 +191,11 @@ void ToonEngine::parseInput() {
 				_audioManager->stopCurrentVoice();
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F5 && !hasModifier) {
-				if(canSaveGameStateCurrently())
+				if (canSaveGameStateCurrently())
 					saveGame(-1, Common::String());
 			}
 			if (event.kbd.keycode == Common::KEYCODE_F6 && !hasModifier) {
-				if(canLoadGameStateCurrently())
+				if (canLoadGameStateCurrently())
 					loadGame(-1);
 			}
 			if (event.kbd.ascii == 't' && !hasModifier) {
@@ -509,7 +509,7 @@ void ToonEngine::copyToVirtualScreen(bool updateScreen) {
 			Common::Rect rect = _oldDirtyRects[i];
 			rect.translate(-state()->_currentScrollValue, 0);
 			offX = 0;
-			if(rect.right <= 0)
+			if (rect.right <= 0)
 				continue;
 			if (rect.left < 0) {
 				offX = -rect.left;
@@ -614,7 +614,7 @@ struct MainMenuEntry {
 
 bool ToonEngine::showMainmenu(bool &loadedGame) {
 	Picture *mainmenuPicture = new Picture(this);
-	mainmenuPicture->loadPicture("TITLESCR.CPS", true);
+	mainmenuPicture->loadPicture("TITLESCR.CPS");
 	mainmenuPicture->setupPalette();
 	flushPalette(false);
 
@@ -663,7 +663,7 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 
 		while (!clickRelease) {
 
-			if(_dirtyAll) {
+			if (_dirtyAll) {
 				mainmenuPicture->draw(*_mainSurface, 0, 0, 0, 0);
 				addDirtyRect(0, 0, TOON_SCREEN_WIDTH, TOON_SCREEN_HEIGHT);
 			} else {
@@ -688,6 +688,11 @@ bool ToonEngine::showMainmenu(bool &loadedGame) {
 						frameNr = 1;
 					entries[entryNr].animation->drawFrame(*_mainSurface, frameNr, 0, 0);
 				}
+			}
+
+			if (_needPaletteFlush) {
+				flushPalette(false);
+				_needPaletteFlush = false;
 			}
 
 			parseInput();
@@ -931,7 +936,7 @@ ToonEngine::~ToonEngine() {
 	delete _animationManager;
 	delete _moviePlayer;
 
-	if(_mainSurface) {
+	if (_mainSurface) {
 		_mainSurface->free();
 		delete _mainSurface;
 	}
@@ -1498,7 +1503,7 @@ void ToonEngine::clickEvent() {
 			if (leftButton)
 				createMouseItem(104);
 			else
-				characterTalk(518);
+				characterTalk(1104);
 		}
 	}
 	if (_currentHotspotItem == -4) {
@@ -1547,7 +1552,7 @@ void ToonEngine::clickEvent() {
 					return;
 				}
 			} else {
-				if (!_drew->walkTo(_mouseX, _mouseY)) {
+				if (!_drew->walkTo(_mouseX + _gameState->_currentScrollValue, _mouseY)) {
 					// walk was canceled ?
 					return;
 				}
@@ -2600,7 +2605,7 @@ int32 ToonEngine::showInventory() {
 	delete _inventoryPicture;
 	_inventoryPicture = new Picture(this);
 	fadeOut(5);
-	_inventoryPicture->loadPicture("SACK128.CPS", true);
+	_inventoryPicture->loadPicture("SACK128.CPS");
 	_inventoryPicture->setupPalette();
 	dirtyAllScreen();
 
@@ -2695,7 +2700,7 @@ int32 ToonEngine::showInventory() {
 		}
 
 		renderInventory();
-
+		_system->delayMillis(10);
 	}
 
 	_gameState->_currentScrollValue = oldScrollValue;
@@ -2786,7 +2791,7 @@ void ToonEngine::showCutaway(Common::String cutawayPicture) {
 	if (cutawayPicture == "") {
 		cutawayPicture = Common::String(_gameState->_locations[_gameState->_currentScene]._cutaway) + ".CPS";
 	}
-	_currentCutaway->loadPicture(cutawayPicture, false);
+	_currentCutaway->loadPicture(cutawayPicture);
 	_currentCutaway->setupPalette();
 	_oldScrollValue = _gameState->_currentScrollValue;
 	_gameState->_currentScrollValue = 0;
@@ -3418,7 +3423,7 @@ void ToonEngine::viewInventoryItem(Common::String str, int32 lineId, int32 itemD
 	fadeOut(5);
 
 	Picture *pic = new Picture(this);
-	pic->loadPicture(str, false);
+	pic->loadPicture(str);
 	pic->setupPalette();
 	dirtyAllScreen();
 	flushPalette();
@@ -4672,7 +4677,7 @@ void ToonEngine::makeLineWalkable(int32 x, int32 y, int32 x2, int32 y2) {
 }
 
 void ToonEngine::playRoomMusic() {
-	if(_gameState->_inConversation) {
+	if (_gameState->_inConversation) {
 		const char* music = getSpecialConversationMusic(_gameState->_currentConversationId);
 		if (music) {
 			_audioManager->playMusic(_gameState->_locations[_gameState->_currentScene]._name, music);

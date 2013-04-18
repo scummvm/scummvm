@@ -31,8 +31,6 @@
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
 
-#include "audio/mixer.h"
-
 namespace Mohawk {
 
 MohawkEngine::MohawkEngine(OSystem *syst, const MohawkGameDescription *gamedesc) : Engine(syst), _gameDescription(gamedesc) {

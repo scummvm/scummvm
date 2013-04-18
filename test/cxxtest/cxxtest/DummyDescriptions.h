@@ -73,4 +73,3 @@ namespace CxxTest
 }
 
 #endif // __cxxtest__DummyDescriptions_h__
-

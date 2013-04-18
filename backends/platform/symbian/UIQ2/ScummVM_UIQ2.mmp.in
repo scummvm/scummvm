@@ -106,4 +106,3 @@ LIBRARY qikctl.lib bafl.lib
 START WINS
 WIN32_LIBRARY	lldiv.obj llmul.obj llshl.obj
 END
-

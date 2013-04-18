@@ -258,7 +258,7 @@ void AGOSEngine_PN::hitBox9(HitArea *ha) {
 	iconPage();
 }
 
-static const char *messageList[9] = {
+static const char *const messageList[9] = {
 	"North\r",
 	"East\r",
 	"South\r",

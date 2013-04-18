@@ -37,4 +37,3 @@ rm -rf $RPM_BUILD_ROOT
 %attr(-, root, root) /usr/include/cxxtest
 %attr(-, root, root) /usr/bin/cxxtestgen.pl
 %attr(-, root, root) /usr/bin/cxxtestgen.py
-

@@ -133,4 +133,3 @@
 		VARIABLE(kInterfaceVisible)
 	};
 #undef VARIABLE
-

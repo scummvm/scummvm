@@ -83,4 +83,3 @@ RomfsStream *RomfsStream::makeFromPath(const Common::String &path, bool writeMod
 }
 
 #endif /* __N64__ */
-

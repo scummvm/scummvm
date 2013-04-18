@@ -566,5 +566,3 @@ void InputHandler::setButtonsForImageViewer() {
 	_nub.getPad().getButton(ButtonPad::BTN_RIGHT, UNSHIFTED).setPspEvent(PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_RIGHT,
 		PSP_EVENT_IMAGE_VIEWER, ImageViewer::EVENT_MOVE_STOP);
 }
-
-

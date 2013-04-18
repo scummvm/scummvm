@@ -73,7 +73,7 @@ protected:
 };
 
 class MoviePlayerDXA : public MoviePlayer, Video::DXADecoder {
-	static const char *_sequenceList[90];
+	static const char *const _sequenceList[90];
 	uint8 _sequenceNum;
 public:
 	MoviePlayerDXA(AGOSEngine_Feeble *vm, const char *name);

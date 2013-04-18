@@ -1127,8 +1127,6 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				}
 				num += (_game.version == 8) ? 4 : 2;
 			}
-		} else if (_game.id == GID_DIG && (chr == 1 || chr == 2 || chr == 3 || chr == 8)) {
-			// Skip these characters
 		} else {
 			if ((chr != '@') || (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
 				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
@@ -1141,6 +1139,14 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		// Check for a buffer overflow
 		if (dst >= end)
 			error("convertMessageToString: buffer overflow");
+	}
+
+	// WORKAROUND: Russian The Dig pads messages with 03. No idea why
+	// it does not work as is with our rendering code, thus fixing it
+	// with a workaround.
+	if (_game.id == GID_DIG) {
+		while (*(dst - 1) == 0x03)
+			dst--;
 	}
 	*dst = 0;
 
@@ -1383,10 +1389,10 @@ void ScummEngine_v7::loadLanguageBundle() {
 			} else if (*ptr == '#') {
 				// Number of subtags following a given basetag. We don't need that
 				// information so we just skip it
-			} else if (isdigit(*ptr)) {
+			} else if (isdigit(static_cast<unsigned char>(*ptr))) {
 				int idx = 0;
 				// A number (up to three digits)...
-				while (isdigit(*ptr)) {
+				while (isdigit(static_cast<unsigned char>(*ptr))) {
 					idx = idx * 10 + (*ptr - '0');
 					ptr++;
 				}
@@ -1424,12 +1430,12 @@ void ScummEngine_v7::loadLanguageBundle() {
 		for (i = 0; i < _languageIndexSize; i++) {
 			// First 8 chars in the line give the string ID / 'tag'
 			int j;
-			for (j = 0; j < 8 && !isspace(*ptr); j++, ptr++)
+			for (j = 0; j < 8 && !isspace(static_cast<unsigned char>(*ptr)); j++, ptr++)
 				_languageIndex[i].tag[j] = toupper(*ptr);
 			_languageIndex[i].tag[j] = 0;
 
 			// After that follows a single space which we skip
-			assert(isspace(*ptr));
+			assert(isspace(static_cast<unsigned char>(*ptr)));
 			ptr++;
 
 			// Then comes the translated string: we record an offset to that.

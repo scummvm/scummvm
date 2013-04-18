@@ -98,6 +98,8 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 
 	_malcolmFrame = 0;
 	_malcolmTimer1 = _malcolmTimer2 = 0;
+
+	_soundFiles = 0;
 }
 
 KyraEngine_LoK::~KyraEngine_LoK() {
@@ -120,6 +122,8 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 	delete _sprites;
 	delete _animator;
 	delete _seq;
+
+	delete[] _soundFiles;
 
 	delete[] _characterList;
 
@@ -819,14 +823,6 @@ void KyraEngine_LoK::updateMousePointer(bool forceUpdate) {
 		shape = 6;
 		newX = 4;
 		newY = 4;
-	}
-
-	if (_updateHandItemCursor) {
-		// This works around an issue which would occur when setHandItem(_itemInHand)
-		// was called from inside loadGameState(). When loading via GMM the
-		// mouse cursor would not be set correctly.
-		_updateHandItemCursor = false;
-		setHandItem(_itemInHand);
 	}
 
 	if ((newMouseState && _mouseState != newMouseState) || (newMouseState && forceUpdate)) {

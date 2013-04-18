@@ -1458,11 +1458,11 @@ ZipArchive::~ZipArchive() {
 	unzClose(_zipFile);
 }
 
-bool ZipArchive::hasFile(const Common::String &name) {
+bool ZipArchive::hasFile(const String &name) {
 	return (unzLocateFile(_zipFile, name.c_str(), 2) == UNZ_OK);
 }
 
-int ZipArchive::listMembers(Common::ArchiveMemberList &list) {
+int ZipArchive::listMembers(ArchiveMemberList &list) {
 	int matches = 0;
 	int err = unzGoToFirstFile(_zipFile);
 
@@ -1488,7 +1488,7 @@ ArchiveMemberPtr ZipArchive::getMember(const String &name) {
 	return ArchiveMemberPtr(new GenericArchiveMember(name, this));
 }
 
-Common::SeekableReadStream *ZipArchive::createReadStreamForMember(const Common::String &name) const {
+SeekableReadStream *ZipArchive::createReadStreamForMember(const String &name) const {
 	if (unzLocateFile(_zipFile, name.c_str(), 2) != UNZ_OK)
 		return 0;
 
@@ -1512,7 +1512,7 @@ Common::SeekableReadStream *ZipArchive::createReadStreamForMember(const Common::
 		return 0;
 	}
 
-	return new Common::MemoryReadStream(buffer, fileInfo.uncompressed_size, DisposeAfterUse::YES);
+	return new MemoryReadStream(buffer, fileInfo.uncompressed_size, DisposeAfterUse::YES);
 
 	// FIXME: instead of reading all into a memory stream, we could
 	// instead create a new ZipStream class. But then we have to be

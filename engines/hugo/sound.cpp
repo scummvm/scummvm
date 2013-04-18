@@ -123,11 +123,11 @@ SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
 	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 						_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
-	DOSSongPtr = 0;
-	curPriority = 0;
-	pcspkrTimer = 0;
-	pcspkrOctave = 3;
-	pcspkrNoteDuration = 2;
+	_DOSSongPtr = 0;
+	_curPriority = 0;
+	_pcspkrTimer = 0;
+	_pcspkrOctave = 3;
+	_pcspkrNoteDuration = 2;
 }
 
 SoundHandler::~SoundHandler() {
@@ -207,7 +207,7 @@ void SoundHandler::playSound(int16 sound, const byte priority) {
 		return;
 
 	syncVolume();
-	curPriority = priority;
+	_curPriority = priority;
 
 	// Get sound data
 	if ((sound_p = _vm->_file->getSound(sound, &size)) == 0)
@@ -269,94 +269,112 @@ void SoundHandler::pcspkr_player() {
 	static const uint16 pcspkrSharps[8] = {1279, 1171, 2150, 1916, 1755, 1611, 1435}; // The sharps, A# to B#
 	static const uint16 pcspkrFlats[8] =  {1435, 1279, 2342, 2150, 1916, 1755, 1611}; // The flats, Ab to Bb
 
-	_vm->getTimerManager()->removeTimerProc(&loopPlayer);
-	_vm->getTimerManager()->installTimerProc(&loopPlayer, 1000000 / 9, this);
-
-	uint16 count;                                   // Value to set timer chip to for note
-	bool   cmd_note;
-
+	// Does the user not want any sound?
 	if (!_vm->_config.soundFl || !_vm->_mixer->isReady())
-		return;                                     // Poo!  User doesn't want sound!
-
-	if (!DOSSongPtr)
 		return;
 
-	if (!*DOSSongPtr)                               // Song has finished
+	// Is there no song?
+	if (!_DOSSongPtr)
 		return;
 
-	if (!--pcspkrTimer) {                           // timer zero, stop note
+	// Did we reach the end of the song?
+	if (!*_DOSSongPtr)
+		return;
+
+	// Update the timer.
+	_pcspkrTimer--;
+
+	// Check the timer state..
+	if (!_pcspkrTimer) {
+		// A note just finished, stop the sound (if any) and return.
 		_speakerStream->stop();
 		return;
-	} else if (pcspkrTimer >= 0) {                  // Note still going
+	} else if (_pcspkrTimer > 0) {
+		// A (rest or normal) note is still playing, return.
 		return;
 	}
 
-	// Time to play next note
+	// The timer is <0, time to play the next note.
+	bool cmdNote = true;
 	do {
-		cmd_note = true;
-		switch (*DOSSongPtr) {
-		case 'O':                                   // Switch to new octave 1..7
-			DOSSongPtr++;
-			pcspkrOctave = *DOSSongPtr - '0';
-			if ((pcspkrOctave < 0) || (pcspkrOctave > 7))
+		switch (*_DOSSongPtr) {
+		case 'O':
+			// Switch to new octave 0..7
+			_DOSSongPtr++;
+			_pcspkrOctave = *_DOSSongPtr - '0';
+			if ((_pcspkrOctave < 0) || (_pcspkrOctave > 7))
 				error("pcspkr_player() - Bad octave");
-			DOSSongPtr++;
+			_DOSSongPtr++;
 			break;
-		case 'L':                                   // Switch to new duration (in ticks)
-			DOSSongPtr++;
-			pcspkrNoteDuration = *DOSSongPtr - '0';
-			if (pcspkrNoteDuration < 0)
+		case 'L':
+			// Switch to new duration (in ticks)
+			_DOSSongPtr++;
+			_pcspkrNoteDuration = *_DOSSongPtr - '0';
+			if (_pcspkrNoteDuration < 0)
 				error("pcspkr_player() - Bad duration");
-			pcspkrNoteDuration--;
-			DOSSongPtr++;
+			_pcspkrNoteDuration--;
+			_DOSSongPtr++;
 			break;
 		case '<':
-		case '^':                                   // Move up an octave
-			pcspkrOctave++;
-			DOSSongPtr++;
+		case '^':
+			// Move up an octave
+			_DOSSongPtr++;
+			_pcspkrOctave++;
 			break;
 		case '>':
-		case 'v':                                   // Move down an octave
-			pcspkrOctave--;
-			DOSSongPtr++;
+		case 'v':
+			// Move down an octave
+			_DOSSongPtr++;
+			_pcspkrOctave--;
 			break;
 		default:
-			cmd_note = false;
+			// Not a command, probably a note; so we should stop
+			// processing commands and move onward now.
+			cmdNote = false;
 			break;
 		}
-	} while (cmd_note);
+	} while (cmdNote);
 
-	switch (*DOSSongPtr) {
-	case 'A':                                       // The notes.
+	switch (*_DOSSongPtr) {
+	case 'A':
 	case 'B':
 	case 'C':
 	case 'D':
 	case 'E':
 	case 'F':
 	case 'G':
-		count = pcspkrNotes[*DOSSongPtr - 'A'];
-		switch (DOSSongPtr[1]) {                    // Check for sharp or flat (#, -)
+		// Play a note.
+
+		// First, what frequency does this note get played at?
+		// We must check for sharp or flat (#, -).
+		uint16 count;
+		switch (_DOSSongPtr[1]) {
 		case '#':
-			count = pcspkrSharps[*DOSSongPtr++ - 'A'];
+			count = pcspkrSharps[*_DOSSongPtr++ - 'A'];
 			break;
 		case 'b':
-			count = pcspkrFlats[*DOSSongPtr++ - 'A'];
+			count = pcspkrFlats[*_DOSSongPtr++ - 'A'];
 			break;
 		default:
+			count = pcspkrNotes[*_DOSSongPtr - 'A'];
 			break;
 		}
-		if (pcspkrOctave > 3)                       // Adjust for octave
-			count /= (1 << (pcspkrOctave - 3));
-		else if (pcspkrOctave < 3)
-			count *= (1 << (3 - pcspkrOctave));
-		_speakerStream->play(Audio::PCSpeaker::kWaveFormSaw, kHugoCNT / count, (int32) ((1 + pcspkrNoteDuration) * _vm->_normalTPS) * 8);
-		pcspkrTimer = pcspkrNoteDuration;
-		DOSSongPtr++;
+		// Adjust for the octave if needed.
+		if (_pcspkrOctave > 3)
+			count /= (1 << (_pcspkrOctave - 3));
+		else if (_pcspkrOctave < 3)
+			count *= (1 << (3 - _pcspkrOctave));
+
+		// Start a note playing (we will stop it when the timer expires).
+		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, kHugoCNT / count, -1);
+		_pcspkrTimer = _pcspkrNoteDuration;
+		_DOSSongPtr++;
 		break;
-	case '.':                                       // A rest note
+	case '.':
+		// Play a 'rest note' by being silent for a bit.
 		_speakerStream->stop();
-		pcspkrTimer = pcspkrNoteDuration;
-		DOSSongPtr++;
+		_pcspkrTimer = _pcspkrNoteDuration;
+		_DOSSongPtr++;
 		break;
 	default:
 		warning("pcspkr_player() - Unhandled note");
@@ -367,12 +385,12 @@ void SoundHandler::loadIntroSong(Common::ReadStream &in) {
 	for (int varnt = 0; varnt < _vm->_numVariant; varnt++) {
 		uint16 numBuf = in.readUint16BE();
 		if (varnt == _vm->_gameVariant)
-			DOSIntroSong = _vm->_text->getTextData(numBuf);
+			_DOSIntroSong = _vm->_text->getTextData(numBuf);
 	}
 }
 
 void SoundHandler::initPcspkrPlayer() {
-	_vm->getTimerManager()->installTimerProc(&loopPlayer, 1000000 / 9, this);
+	_vm->getTimerManager()->installTimerProc(&loopPlayer, 1000000 / _vm->_normalTPS, this, "hugoSoundLoop");
 }
 
 } // End of namespace Hugo

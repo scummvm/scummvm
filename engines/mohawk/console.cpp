@@ -117,7 +117,7 @@ static const char *mystStackNames[12] = {
 static const uint16 default_start_card[12] = {
 	3137,
 	10000,
-	2001, // TODO: Should be 2000?
+	2000,
 	5038,
 	2, // TODO: Should be 1?
 	1,
@@ -700,14 +700,25 @@ bool LivingBooksConsole::Cmd_DrawImage(int argc, const char **argv) {
 }
 
 bool LivingBooksConsole::Cmd_ChangePage(int argc, const char **argv) {
-	if (argc == 1) {
-		DebugPrintf("Usage: changePage <page> [<mode>]\n");
+	if (argc < 2 || argc > 3) {
+		DebugPrintf("Usage: changePage <page>[.<subpage>] [<mode>]\n");
 		return true;
 	}
 
-	if (_vm->tryLoadPageStart(argc == 2 ? _vm->getCurMode() : (LBMode)atoi(argv[2]), atoi(argv[1])))
-		return false;
-	DebugPrintf("no such page %d\n", atoi(argv[1]));
+	int page, subpage = 0;
+	if (sscanf(argv[1], "%d.%d", &page, &subpage) == 0) {
+		DebugPrintf("Usage: changePage <page>[.<subpage>] [<mode>]\n");
+		return true;
+	}
+	LBMode mode = argc == 2 ? _vm->getCurMode() : (LBMode)atoi(argv[2]);
+	if (subpage == 0) {
+		if (_vm->tryLoadPageStart(mode, page))
+			return false;
+	} else {
+		if (_vm->loadPage(mode, page, subpage))
+			return false;
+	}
+	DebugPrintf("no such page %d.%d\n", page, subpage);
 	return true;
 }
 

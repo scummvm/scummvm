@@ -215,6 +215,11 @@ class ArrayTestSuite : public CxxTest::TestSuite
 
 		Common::Array<int> array2(array1);
 
+		// Alter the original array
+		array1[0] = 7;
+		array1[1] = -5;
+		array1[2] = 2;
+
 		TS_ASSERT_EQUALS(array2[0], -3);
 		TS_ASSERT_EQUALS(array2[1], 5);
 		TS_ASSERT_EQUALS(array2[2], 9);

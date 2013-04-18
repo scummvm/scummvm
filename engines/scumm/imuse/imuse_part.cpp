@@ -193,14 +193,18 @@ void Part::set_onoff(bool on) {
 	}
 }
 
-void Part::set_instrument(byte * data) {
-	_instrument.adlib(data);
+void Part::set_instrument(byte *data) {
+	if (_se->_pcSpeaker)
+		_instrument.pcspk(data);
+	else
+		_instrument.adlib(data);
+
 	if (clearToTransmit())
 		_instrument.send(_mc);
 }
 
 void Part::load_global_instrument(byte slot) {
-	_player->_se->copyGlobalAdLibInstrument(slot, &_instrument);
+	_player->_se->copyGlobalInstrument(slot, &_instrument);
 	if (clearToTransmit())
 		_instrument.send(_mc);
 }
@@ -234,7 +238,7 @@ void Part::noteOn(byte note, byte velocity) {
 		// should be implemented as a class static var. As it is, using
 		// a function level static var in most cases is arcane and evil.
 		static byte prev_vol_eff = 128;
-		if (_vol_eff != prev_vol_eff){
+		if (_vol_eff != prev_vol_eff) {
 			mc->volume(_vol_eff);
 			prev_vol_eff = _vol_eff;
 		}

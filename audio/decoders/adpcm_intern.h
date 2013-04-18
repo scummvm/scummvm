@@ -33,6 +33,7 @@
 
 #include "audio/audiostream.h"
 #include "common/endian.h"
+#include "common/ptr.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 
@@ -41,8 +42,7 @@ namespace Audio {
 
 class ADPCMStream : public RewindableAudioStream {
 protected:
-	Common::SeekableReadStream *_stream;
-	const DisposeAfterUse::Flag _disposeAfterUse;
+	Common::DisposablePtr<Common::SeekableReadStream> _stream;
 	const int32 _startpos;
 	const int32 _endpos;
 	const int _channels;
@@ -62,7 +62,6 @@ protected:
 
 public:
 	ADPCMStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, uint32 size, int rate, int channels, uint32 blockAlign);
-	~ADPCMStream();
 
 	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos); }
 	virtual bool isStereo() const	{ return _channels == 2; }

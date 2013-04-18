@@ -225,4 +225,3 @@ void KyraEngine_v2::pathfinderFinializePath(int *moveTable, int tableLen, int x,
 }
 
 } // End of namespace Kyra
-

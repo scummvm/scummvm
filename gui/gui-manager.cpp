@@ -39,7 +39,9 @@
 
 #include "graphics/cursorman.h"
 
+namespace Common {
 DECLARE_SINGLETON(GUI::GuiManager);
+}
 
 namespace GUI {
 

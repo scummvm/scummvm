@@ -33,7 +33,7 @@
 
 namespace Agi {
 
-SoundGen2GS::SoundGen2GS(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer) {
+SoundGen2GS::SoundGen2GS(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer) {
 	// Allocate memory for the wavetable
 	_wavetable = new int8[SIERRASTANDARD_SIZE];
 

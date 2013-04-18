@@ -20,18 +20,19 @@
  *
  */
 
-#include "mohawk/sound.h"
-
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "common/textconsole.h"
 
+#include "audio/midiparser.h"
 #include "audio/musicplugin.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+
+#include "mohawk/sound.h"
 
 namespace Mohawk {
 
@@ -84,7 +85,7 @@ Audio::AudioStream *Sound::makeAudioStream(uint16 id, CueList *cueList) {
 		if (_vm->getFeatures() & GF_ME)
 			audStream = Audio::makeWAVStream(_vm->getResource(ID_MSND, convertMystID(id)), DisposeAfterUse::YES);
 		else
-			audStream = makeMohawkWaveStream(_vm->getResource(ID_MSND, id));
+			audStream = makeMohawkWaveStream(_vm->getResource(ID_MSND, id), cueList);
 		break;
 	case GType_ZOOMBINI:
 		audStream = makeMohawkWaveStream(_vm->getResource(ID_SND, id));
@@ -140,6 +141,19 @@ Audio::SoundHandle *Sound::replaceSoundMyst(uint16 id, byte volume, bool loop) {
 				&& _vm->_mixer->isSoundHandleActive(_handles[i].handle)
 				&& name.equals(_vm->getResourceName(ID_MSND, convertMystID(_handles[i].id))))
 			return &_handles[i].handle;
+
+	// The original engine also forces looping for those sounds
+	switch (id) {
+	case 2205:
+	case 2207:
+	case 5378:
+	case 7220:
+	case 9119: 	// Elevator engine sound in mechanical age is looping.
+	case 9120:
+	case 9327:
+		loop = true;
+		break;
+	}
 
 	stopSound();
 	return playSound(id, volume, loop);

@@ -30,9 +30,9 @@
 #include "tsage/dialogs.h"
 #include "tsage/staticres.h"
 #include "tsage/globals.h"
-#include "tsage/ringworld_logic.h"
+#include "tsage/ringworld/ringworld_logic.h"
 
-namespace tSage {
+namespace TsAGE {
 
 /*--------------------------------------------------------------------------*/
 
@@ -64,16 +64,16 @@ MessageDialog::MessageDialog(const Common::String &message, const Common::String
 	setDefaults();
 
 	// Set the dialog's center
-	setCenter(_globals->_dialogCenter.x, _globals->_dialogCenter.y);
+	setCenter(g_globals->_dialogCenter.x, g_globals->_dialogCenter.y);
 }
 
 int MessageDialog::show(const Common::String &message, const Common::String &btn1Message, const Common::String &btn2Message) {
 	// Ensure that the cursor is the arrow
-	_globals->_events.setCursor(CURSOR_ARROW);
+	g_globals->_events.setCursor(CURSOR_ARROW);
 
 	int result = show2(message, btn1Message, btn2Message);
 
-	_globals->_events.setCursorFromFlag();
+	g_globals->_events.setCursorFromFlag();
 	return result;
 }
 
@@ -109,186 +109,6 @@ ConfigDialog::ConfigDialog() : GUI::OptionsDialog("", "GlobalConfig") {
 
 /*--------------------------------------------------------------------------*/
 
-#define BUTTON_WIDTH 28
-#define BUTTON_HEIGHT 29
-
-RightClickButton::RightClickButton(int buttonIndex, int xp, int yp) : GfxButton() {
-	_buttonIndex = buttonIndex;
-	this->_bounds.left = xp;
-	this->_bounds.top = yp;
-	this->_bounds.setWidth(BUTTON_WIDTH);
-	this->_bounds.setHeight(BUTTON_HEIGHT);
-	_savedButton = NULL;
-}
-
-void RightClickButton::highlight() {
-	if (_savedButton) {
-		// Button was previously highlighted, so de-highlight by restoring saved area
-		_globals->gfxManager().copyFrom(*_savedButton, _bounds.left, _bounds.top);
-		delete _savedButton;
-		_savedButton = NULL;
-	} else {
-		// Highlight button by getting the needed highlighted image resource
-		_savedButton = Surface_getArea(_globals->gfxManager().getSurface(), _bounds);
-
-		uint size;
-		byte *imgData = _resourceManager->getSubResource(7, 2, _buttonIndex, &size);
-
-		GfxSurface btnSelected = surfaceFromRes(imgData);
-		_globals->gfxManager().copyFrom(btnSelected, _bounds.left, _bounds.top);
-
-		DEALLOCATE(imgData);
-	}
-}
-
-/*--------------------------------------------------------------------------*/
-
-/**
- * This dialog implements the right-click dialog
- */
-RightClickDialog::RightClickDialog() : GfxDialog(),
-		_walkButton(1, 48, 12), _lookButton(2, 31, 29), _useButton(3, 65, 29),
-		_talkButton(4, 14, 47), _inventoryButton(5, 48, 47), _optionsButton(6, 83, 47) {
-	Rect rectArea, dialogRect;
-
-	// Set the palette and change the cursor
-	_gfxManager.setDialogPalette();
-	_globals->_events.setCursor(CURSOR_ARROW);
-
-	// Get the dialog image
-	_surface = surfaceFromRes(7, 1, 1);
-
-	// Set the dialog position
-	dialogRect.resize(_surface, 0, 0, 100);
-	dialogRect.center(_globals->_events._mousePos.x, _globals->_events._mousePos.y);
-
-	// Ensure the dialog will be entirely on-screen
-	Rect screenRect = _globals->gfxManager()._bounds;
-	screenRect.collapse(4, 4);
-	dialogRect.contain(screenRect);
-
-	_bounds = dialogRect;
-	_gfxManager._bounds = _bounds;
-
-	_highlightedButton = NULL;
-	_selectedAction = -1;
-}
-
-RightClickDialog::~RightClickDialog() {
-}
-
-RightClickButton *RightClickDialog::findButton(const Common::Point &pt) {
-	RightClickButton *btnList[] = {  &_walkButton, &_lookButton, &_useButton, &_talkButton, &_inventoryButton, &_optionsButton };
-
-	for (int i = 0; i < 6; ++i) {
-		btnList[i]->_owner = this;
-
-		if (btnList[i]->_bounds.contains(pt))
-			return btnList[i];
-	}
-
-	return NULL;
-}
-
-void RightClickDialog::draw() {
-	// Save the covered background area
-	_savedArea = Surface_getArea(_globals->_gfxManagerInstance.getSurface(), _bounds);
-
-	// Draw the dialog image
-	_globals->gfxManager().copyFrom(_surface, _bounds.left, _bounds.top);
-}
-
-bool RightClickDialog::process(Event &event) {
-	switch (event.eventType) {
-	case EVENT_MOUSE_MOVE: {
-		// Check whether a button is highlighted
-		RightClickButton *btn = findButton(event.mousePos);
-
-		if (btn != _highlightedButton) {
-			// De-highlight any previously selected button
-			if (_highlightedButton) {
-				_highlightedButton->highlight();
-				_highlightedButton = NULL;
-			}
-			if (btn) {
-				// Highlight the new button
-				btn->highlight();
-				_highlightedButton = btn;
-			}
-		}
-		event.handled = true;
-		return true;
-	}
-
-	case EVENT_BUTTON_DOWN:
-		// If a button is highlighted, then flag the selected button index
-		if (_highlightedButton)
-			_selectedAction = _highlightedButton->_buttonIndex;
-		else
-			_selectedAction = _lookButton._buttonIndex;
-		event.handled = true;
-		return true;
-
-	default:
-		break;
-	}
-
-	return false;
-}
-
-void RightClickDialog::execute() {
-	// Draw the dialog
-	draw();
-
-	// Dialog event handler loop
-	_gfxManager.activate();
-
-	while (!_vm->getEventManager()->shouldQuit() && (_selectedAction == -1)) {
-		Event evt;
-		while (_globals->_events.getEvent(evt, EVENT_MOUSE_MOVE | EVENT_BUTTON_DOWN)) {
-			evt.mousePos.x -= _bounds.left;
-			evt.mousePos.y -= _bounds.top;
-
-			process(evt);
-		}
-
-		g_system->delayMillis(10);
-		g_system->updateScreen();
-	}
-
-	// Execute the specified action
-	switch (_selectedAction) {
-	case 1:
-		// Look action
-		_globals->_events.setCursor(CURSOR_LOOK);
-		break;
-	case 2:
-		// Walk action
-		_globals->_events.setCursor(CURSOR_WALK);
-		break;
-	case 3:
-		// Use cursor
-		_globals->_events.setCursor(CURSOR_USE);
-		break;
-	case 4:
-		// Talk cursor
-		_globals->_events.setCursor(CURSOR_TALK);
-		break;
-	case 5:
-		// Inventory dialog
-		InventoryDialog::show();
-		break;
-	case 6:
-		// Dialog options
-		OptionsDialog::show();
-		break;
-	}
-
-	_gfxManager.deactivate();
-}
-
-/*--------------------------------------------------------------------------*/
-
 void ModalDialog::draw() {
 	// Set the palette for use in the dialog
 	setPalette();
@@ -296,7 +116,7 @@ void ModalDialog::draw() {
 	// Make a backup copy of the area the dialog will occupy
 	Rect tempRect = _bounds;
 	tempRect.collapse(-10, -10);
-	_savedArea = Surface_getArea(_globals->_gfxManagerInstance.getSurface(), tempRect);
+	_savedArea = Surface_getArea(g_globals->_gfxManagerInstance.getSurface(), tempRect);
 
 	_gfxManager.activate();
 
@@ -318,7 +138,7 @@ void ModalDialog::drawFrame() {
 	_bounds.collapse(-10, -10);
 
 	// Fill the dialog area
-	_globals->gfxManager().fillRect(origRect, 54);
+	g_globals->gfxManager().fillRect(origRect, 54);
 
 	// Draw top line
 	GfxSurface surface = surfaceFromRes(8, 1, 7);
@@ -465,14 +285,14 @@ void InventoryDialog::execute() {
 	bool lookFlag = false;
 	_gfxManager.activate();
 
-	while (!_vm->getEventManager()->shouldQuit()) {
+	while (!g_vm->shouldQuit()) {
 		// Get events
 		Event event;
-		while (!_globals->_events.getEvent(event) && !_vm->getEventManager()->shouldQuit()) {
+		while (!g_globals->_events.getEvent(event) && !g_vm->shouldQuit()) {
 			g_system->delayMillis(10);
 			g_system->updateScreen();
 		}
-		if (_vm->getEventManager()->shouldQuit())
+		if (g_vm->shouldQuit())
 			break;
 
 		hiliteObj = NULL;
@@ -499,18 +319,18 @@ void InventoryDialog::execute() {
 		if (hiliteObj == &_btnOk) {
 			// Ok button clicked
 			if (lookFlag)
-				_globals->_events.setCursor(CURSOR_WALK);
+				g_globals->_events.setCursor(CURSOR_WALK);
 			break;
 		} else if (hiliteObj == &_btnLook) {
 			// Look button clicked
 			if (_btnLook._message == LOOK_BTN_STRING) {
 				_btnLook._message = PICK_BTN_STRING;
 				lookFlag = 1;
-				_globals->_events.setCursor(CURSOR_LOOK);
+				g_globals->_events.setCursor(CURSOR_LOOK);
 			} else {
 				_btnLook._message = LOOK_BTN_STRING;
 				lookFlag = 0;
-				_globals->_events.setCursor(CURSOR_WALK);
+				g_globals->_events.setCursor(CURSOR_WALK);
 			}
 
 			hiliteObj->draw();
@@ -518,7 +338,7 @@ void InventoryDialog::execute() {
 			// Inventory item selected
 			InvObject *invObject = static_cast<GfxInvImage *>(hiliteObj)->_invObject;
 			if (lookFlag) {
-				_globals->_screenSurface.displayText(invObject->_description);
+				g_globals->_screenSurface.displayText(invObject->_description);
 			} else {
 				RING_INVENTORY._selectedItem = invObject;
 				invObject->setCursor();
@@ -540,19 +360,20 @@ void OptionsDialog::show() {
 	if (btn == &dlg->_btnQuit) {
 		// Quit game
 		if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1) {
-			_vm->quitGame();
+			g_vm->quitGame();
 		}
 	} else if (btn == &dlg->_btnRestart) {
 		// Restart game
-		_globals->_game->restartGame();
+		g_globals->_game->restartGame();
 	} else if (btn == &dlg->_btnSound) {
 		// Sound dialog
+		SoundDialog::execute();
 	} else if (btn == &dlg->_btnSave) {
 		// Save button
-		_globals->_game->saveGame();
+		g_globals->_game->saveGame();
 	} else if (btn == &dlg->_btnRestore) {
 		// Restore button
-		_globals->_game->restoreGame();
+		g_globals->_game->restoreGame();
 	}
 
 	dlg->remove();
@@ -594,5 +415,14 @@ OptionsDialog::OptionsDialog() {
 	setCenter(160, 100);
 }
 
+/*--------------------------------------------------------------------------*/
 
-} // End of namespace tSage
+void SoundDialog::execute() {
+	ConfigDialog *dlg = new ConfigDialog();
+	dlg->runModal();
+	delete dlg;
+	g_globals->_soundManager.syncSounds();
+	g_globals->_events.setCursorFromFlag();
+}
+
+} // End of namespace TsAGE

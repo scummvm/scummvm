@@ -520,4 +520,3 @@ void Insane::iactScene21(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 }
 
 }
-

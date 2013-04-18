@@ -26,7 +26,7 @@
 // of this file. The following "#if" ensures that.
 #if !defined(POSIX) && \
     !defined(WIN32) && \
-    !defined(__MAEMO__) && \
+    !defined(MAEMO) && \
     !defined(__SYMBIAN32__) && \
     !defined(_WIN32_WCE) && \
     !defined(__amigaos4__) && \
@@ -34,6 +34,7 @@
     !defined(CAANOO) && \
     !defined(LINUXMOTO) && \
     !defined(SAMSUNGTV) && \
+    !defined(PLAYSTATION3) && \
     !defined(OPENPANDORA)
 
 #include "backends/platform/sdl/sdl.h"

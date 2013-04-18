@@ -64,4 +64,3 @@ private:
 };
 
 #endif //__DMAPIPE_H__
-

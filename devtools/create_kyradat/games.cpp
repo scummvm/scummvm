@@ -44,6 +44,7 @@ const Game kyra1Games[] = {
 	{ kKyra1, { FR_FRA, -1, -1 }, kPlatformPC, kNoSpecial, { "aa9d6d78d8b199deaf48efeca6d19af2", 0 } },
 	{ kKyra1, { IT_ITA, -1, -1 }, kPlatformPC, kNoSpecial, { "5d7550306b369a3492f9f3402702477c", 0 } },
 	{ kKyra1, { ES_ESP, -1, -1 }, kPlatformPC, kNoSpecial, { "9ff130d2558bcd674d4074849d93c362", 0 } },
+	{ kKyra1, { RU_RUS, -1, -1 }, kPlatformPC, kOldFloppy, { "3b4719e1f8a4d67813b7ada29774aead", 0 } },
 
 	// Talkie
 	{ kKyra1, { EN_ANY, -1, -1 }, kPlatformPC, kTalkieVersion, { "1ebc18f3e7fbb72474a55cb0fa089ed4", 0 } },
@@ -71,6 +72,7 @@ const Game kyra2Games[] = {
 	{ kKyra2, { FR_FRA, -1, -1 }, kPlatformPC, kNoSpecial, { "df31cc9e37e1cf68df2fdc75ddf2d87b", "fc2c6782778e6c6d5a553d1cb73c98ad" } },
 	{ kKyra2, { DE_DEU, -1, -1 }, kPlatformPC, kNoSpecial, { "0ca4f9a1438264a4c63c3218e064ed3b", "0d9b0eb7b0ad889ec942d74d80dde1bf" } },
 	{ kKyra2, { IT_ITA, -1, -1 }, kPlatformPC, kNoSpecial, { "178d3ab913f61bfba21d2fb196405e8c", "3a61ed6b7c00ddae383a0361799e2ba6" } },
+	{ kKyra2, { RU_RUS, -1, -1 }, kPlatformPC, kNoSpecial, { "fd6a388c01de9a578e24e3bbeacd8012", "3a61ed6b7c00ddae383a0361799e2ba6" } },
 
 	// talkie games
 	{ kKyra2, { EN_ANY, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "85bbc1cc6c4cef6ad31fc6ee79518efb", "e20d0d2e500f01e399ec588247a7e213" } },
@@ -98,8 +100,9 @@ const Game lolGames[] = {
 	// DOS demo
 	{ kLol, { EN_ANY, -1, -1 }, kPlatformPC, kDemoVersion, { "30bb5af87d38adb47d3e6ce06b1cb042", 0 } },
 
-	// DOS floppy (no language specifc strings)
+	// DOS floppy (no language specifc strings except character presets)
 	{ kLol, { EN_ANY, -1, -1 }, kPlatformPC, kNoSpecial, { "0cc764a204f7ba8cefe1a5f14c479619", 0 } },
+	{ kLol, { RU_RUS, -1, -1 }, kPlatformPC, kNoSpecial, { "80a9f9bf243bc6ed36d98584fc6988c4", 0 } },
 	{ kLol, { DE_DEU, -1, -1 }, kPlatformPC, kNoSpecial, { "6b843869772c1b779e1386be868c15dd", 0 } },
 
 	// PC98 (no language specifc strings)
@@ -108,6 +111,7 @@ const Game lolGames[] = {
 	// DOS CD (multi language version, with no language specific strings)
 	{ kLol, { EN_ANY, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "263998ec600afca1cc7b935c473df670" } },
 	{ kLol, { IT_ITA, FR_FRA, DE_DEU }, kPlatformPC, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "f2af366e00f79dbf832fa19701d71ed9" } }, // Italian fan translation
+	{ kLol, { EN_ANY, FR_FRA, RU_RUS }, kPlatformPC, kTalkieVersion, { "9d1778314de80598c0b0d032e2a1a1cf", "5b33478718968676343803911dd5e3e4" } }, // Russian fan translation
 	GAME_DUMMY_ENTRY
 };
 
@@ -208,6 +212,93 @@ const int kyra1FloppyNeed[] = {
 	k1NewGameString,
 	k1ConfigStrings,
 	k1AudioTracks,
+	k1AudioTracks2,
+	k1AudioTracksIntro,
+	-1
+};
+
+const int kyra1FloppyOldNeed[] = {
+	k1KallakWritingSeq,
+	k1MalcolmTreeSeq,
+	k1WestwoodLogoSeq,
+	k1KyrandiaLogoSeq,
+	k1KallakMalcolmSeq,
+	k1ForestSeq,
+	k1IntroCPSStrings,
+	k1IntroCOLStrings,
+	k1IntroWSAStrings,
+	k1IntroStrings,
+	k1RoomList,
+	k1RoomFilenames,
+	k1CharacterImageFilenames,
+	k1DefaultShapes,
+	k1ItemNames,
+	k1TakenStrings,
+	k1PlacedStrings,
+	k1DroppedStrings,
+	k1AmuleteAnimSeq,
+	k1SpecialPalette1,
+	k1SpecialPalette2,
+	k1SpecialPalette3,
+	k1SpecialPalette4,
+	k1SpecialPalette5,
+	k1SpecialPalette6,
+	k1SpecialPalette7,
+	k1SpecialPalette8,
+	k1SpecialPalette9,
+	k1SpecialPalette10,
+	k1SpecialPalette11,
+	k1SpecialPalette12,
+	k1SpecialPalette13,
+	k1SpecialPalette14,
+	k1SpecialPalette15,
+	k1SpecialPalette16,
+	k1SpecialPalette17,
+	k1SpecialPalette18,
+	k1SpecialPalette19,
+	k1SpecialPalette20,
+	k1SpecialPalette21,
+	k1SpecialPalette22,
+	k1SpecialPalette23,
+	k1SpecialPalette24,
+	k1SpecialPalette25,
+	k1SpecialPalette26,
+	k1SpecialPalette27,
+	k1SpecialPalette28,
+	k1SpecialPalette29,
+	k1SpecialPalette30,
+	k1SpecialPalette31,
+	k1SpecialPalette32,
+	k1PutDownString,
+	k1WaitAmuletString,
+	k1BlackJewelString,
+	k1HealingTipString,
+	k1PoisonGoneString,
+	k1Healing1Shapes,
+	k1Healing2Shapes,
+	k1ThePoisonStrings,
+	k1FluteStrings,
+	k1PoisonDeathShapes,
+	k1FluteShapes,
+	k1Winter1Shapes,
+	k1Winter2Shapes,
+	k1Winter3Shapes,
+	k1DrinkShapes,
+	k1WispShapes,
+	k1MagicAnimShapes,
+	k1BranStoneShapes,
+	k1WispJewelStrings,
+	k1MagicJewelStrings,
+	k1FlaskFullString,
+	k1FullFlaskString,
+	k1OutroReunionSeq,
+	k1OutroHomeString,
+	k1VeryCleverString,
+	k1GUIStrings,
+	k1NewGameString,
+	k1ConfigStrings,
+	k1AudioTracks,
+	k1AudioTracks2,
 	k1AudioTracksIntro,
 	-1
 };
@@ -295,6 +386,7 @@ const int kyra1CDNeed[] = {
 	k1NewGameString,
 	k1ConfigStrings,
 	k1AudioTracks,
+	k1AudioTracks2,
 	k1AudioTracksIntro,
 	-1
 };
@@ -938,6 +1030,7 @@ struct GameNeed {
 
 const GameNeed gameNeedTable[] = {
 	{ kKyra1, kPlatformPC, kNoSpecial, kyra1FloppyNeed },
+	{ kKyra1, kPlatformPC, kOldFloppy, kyra1FloppyOldNeed },
 	{ kKyra1, kPlatformAmiga, kNoSpecial, kyra1AmigaNeed },
 
 	{ kKyra1, kPlatformPC, kTalkieVersion, kyra1CDNeed },
@@ -984,4 +1077,3 @@ const int *getNeedList(const Game *g) {
 
 	return 0;
 }
-

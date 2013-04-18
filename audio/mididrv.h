@@ -146,7 +146,7 @@ public:
 		kDeviceId
 	};
 
-	static uint32 musicType2GUIO(uint32 musicType);
+	static Common::String musicType2GUIO(uint32 musicType);
 
 	/** Create music driver matching the given device handle, or NULL if there is no match. */
 	static MidiDriver *createMidi(DeviceHandle handle);

@@ -21,23 +21,25 @@
  */
 
 #include "common/savefile.h"
+#include "common/mutex.h"
 #include "graphics/palette.h"
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 #include "tsage/globals.h"
 #include "tsage/saveload.h"
+#include "tsage/sound.h"
 #include "tsage/tsage.h"
 
-namespace tSage {
+namespace TsAGE {
 
-Saver *_saver;
+Saver *g_saver;
 
 SavedObject::SavedObject() {
-	_saver->addObject(this);
+	g_saver->addObject(this);
 }
 
 SavedObject::~SavedObject() {
-	_saver->removeObject(this);
+	g_saver->removeObject(this);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -50,7 +52,7 @@ Saver::Saver() {
 Saver::~Saver() {
 	// Internal validation that no saved object is still present
 	int totalLost = 0;
-	for (SynchronizedList<SavedObject *>::iterator i = _saver->_objList.begin(); i != _saver->_objList.end(); ++i) {
+	for (SynchronizedList<SavedObject *>::iterator i = g_saver->_objList.begin(); i != g_saver->_objList.end(); ++i) {
 		SavedObject *so = *i;
 		if (so)
 			++totalLost;
@@ -70,7 +72,7 @@ void Serializer::syncPointer(SavedObject **ptr, Common::Serializer::Version minV
 	if (isSaving()) {
 		// Get the object index for the given pointer and write it out
 		if (*ptr) {
-			idx = _saver->blockIndexOf(*ptr);
+			idx = g_saver->blockIndexOf(*ptr);
 			assert(idx > 0);
 		}
 		syncAsUint32LE(idx);
@@ -80,7 +82,7 @@ void Serializer::syncPointer(SavedObject **ptr, Common::Serializer::Version minV
 		*ptr = NULL;
 		if (idx > 0)
 			// For non-zero (null) pointers, create a record for later resolving it to an address
-			_saver->addSavedObjectPtr(ptr, idx);
+			g_saver->addSavedObjectPtr(ptr, idx);
 	}
 }
 
@@ -101,10 +103,24 @@ void Serializer::validate(int v, Common::Serializer::Version minVersion,
 		error("Savegame is corrupt");
 }
 
+#define DOUBLE_PRECISION 1000000000
+
+void Serializer::syncAsDouble(double &v) {
+	int32 num = (int32)(v);
+	uint32 fraction = (uint32)((v - (int32)v) * DOUBLE_PRECISION);
+
+	syncAsSint32LE(num);
+	syncAsUint32LE(fraction);
+
+	if (isLoading())
+		v = num + (double)fraction / DOUBLE_PRECISION;
+}
+
 /*--------------------------------------------------------------------------*/
 
 Common::Error Saver::save(int slot, const Common::String &saveName) {
 	assert(!getMacroRestoreFlag());
+	Common::StackLock slock1(g_globals->_soundManager._serverDisabledMutex);
 
 	// Signal any objects registered for notification
 	_saveNotifiers.notify(false);
@@ -113,8 +129,12 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 	_macroSaveFlag = true;
 	_saveSlot = slot;
 
+	// Try and create the save file
+	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(g_vm->generateSaveName(slot));
+	if (!saveFile)
+		return Common::kCreatingFileFailed;
+
 	// Set up the serializer
-	Common::OutSaveFile *saveFile = g_system->getSavefileManager()->openForSaving(_vm->generateSaveName(slot));
 	Serializer serializer(NULL, saveFile);
 	serializer.setSaveVersion(TSAGE_SAVEGAME_VERSION);
 
@@ -149,6 +169,7 @@ Common::Error Saver::save(int slot, const Common::String &saveName) {
 
 Common::Error Saver::restore(int slot) {
 	assert(!getMacroRestoreFlag());
+	Common::StackLock slock1(g_globals->_soundManager._serverDisabledMutex);
 
 	// Signal any objects registered for notification
 	_loadNotifiers.notify(false);
@@ -159,7 +180,10 @@ Common::Error Saver::restore(int slot) {
 	_unresolvedPtrs.clear();
 
 	// Set up the serializer
-	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(_vm->generateSaveName(slot));
+	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(g_vm->generateSaveName(slot));
+	if (!saveFile)
+		return Common::kReadingFailed;
+
 	Serializer serializer(saveFile, NULL);
 
 	// Read in the savegame header
@@ -205,7 +229,7 @@ Common::Error Saver::restore(int slot) {
 
 	// Final post-restore notifications
 	_macroRestoreFlag = false;
-	_loadNotifiers.notify(false);
+	_loadNotifiers.notify(true);
 
 	return Common::kNoError;
 }
@@ -232,12 +256,9 @@ bool Saver::readSavegameHeader(Common::InSaveFile *in, tSageSavegameHeader &head
 	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = new Graphics::Surface();
-	if (!Graphics::loadThumbnail(*in, *header.thumbnail)) {
-		delete header.thumbnail;
-		header.thumbnail = NULL;
+	header.thumbnail = Graphics::loadThumbnail(*in);
+	if (!header.thumbnail)
 		return false;
-	}
 
 	// Read in save date/time
 	header.saveYear = in->readSint16LE();
@@ -265,10 +286,10 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 
 	// Create a thumbnail and save it
 	Graphics::Surface *thumb = new Graphics::Surface();
-	Graphics::Surface s = _globals->_screenSurface.lockSurface();
+	Graphics::Surface s = g_globals->_screenSurface.lockSurface();
 	::createThumbnail(thumb, (const byte *)s.pixels, SCREEN_WIDTH, SCREEN_HEIGHT, thumbPalette);
 	Graphics::saveThumbnail(*out, *thumb);
-	_globals->_screenSurface.unlockSurface();
+	g_globals->_screenSurface.unlockSurface();
 	delete thumb;
 
 	// Write out the save date/time
@@ -279,7 +300,7 @@ void Saver::writeSavegameHeader(Common::OutSaveFile *out, tSageSavegameHeader &h
 	out->writeSint16LE(td.tm_mday);
 	out->writeSint16LE(td.tm_hour);
 	out->writeSint16LE(td.tm_min);
-	out->writeUint32LE(_globals->_events.getFrameNumber());
+	out->writeUint32LE(g_globals->_events.getFrameNumber());
 }
 
 /**
@@ -321,7 +342,7 @@ void Saver::removeObject(SavedObject *obj) {
  * Returns true if any savegames exist
  */
 bool Saver::savegamesExist() const {
-	Common::String slot1Name = _vm->generateSaveName(1);
+	Common::String slot1Name = g_vm->generateSaveName(1);
 
 	Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(slot1Name);
 	bool result = saveFile != NULL;
@@ -396,4 +417,4 @@ void Saver::resolveLoadPointers() {
 		error("Could not resolve savegame block pointers");
 }
 
-} // End of namespace tSage
+} // End of namespace TsAGE

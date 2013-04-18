@@ -35,8 +35,6 @@ static const PlainGameDescriptor draciGames[] = {
 
 namespace Draci {
 
-using Common::GUIO_NONE;
-
 const ADGameDescription gameDescriptions[] = {
 	{
 		"draci",
@@ -45,7 +43,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 
 	{
@@ -55,7 +53,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::CZ_CZE,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 
 	{
@@ -65,7 +63,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 
 	{
@@ -75,7 +73,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 
 	AD_TABLE_END_MARKER
@@ -155,30 +153,33 @@ void DraciMetaEngine::removeSaveState(const char *target, int slot) const {
 SaveStateDescriptor DraciMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
 		Draci::DraciEngine::getSavegameFile(slot));
-	assert(f);
+	
+	if (f) {
+		Draci::DraciSavegameHeader header;
+		Draci::readSavegameHeader(f, header);
+		delete f;
 
-	Draci::DraciSavegameHeader header;
-	Draci::readSavegameHeader(f, header);
-	delete f;
+		// Create the return descriptor
+		SaveStateDescriptor desc(slot, header.saveName);
+		desc.setDeletableFlag(true);
+		desc.setWriteProtectedFlag(false);
+		desc.setThumbnail(header.thumbnail);
 
-	// Create the return descriptor
-	SaveStateDescriptor desc(slot, header.saveName);
-	desc.setDeletableFlag(true);
-	desc.setWriteProtectedFlag(false);
-	desc.setThumbnail(header.thumbnail);
+		int day = (header.date >> 24) & 0xFF;
+		int month = (header.date >> 16) & 0xFF;
+		int year = header.date & 0xFFFF;
+		desc.setSaveDate(year, month, day);
 
-	int day = (header.date >> 24) & 0xFF;
-	int month = (header.date >> 16) & 0xFF;
-	int year = header.date & 0xFFFF;
-	desc.setSaveDate(year, month, day);
+		int hour = (header.time >> 8) & 0xFF;
+		int minutes = header.time & 0xFF;
+		desc.setSaveTime(hour, minutes);
 
-	int hour = (header.time >> 8) & 0xFF;
-	int minutes = header.time & 0xFF;
-	desc.setSaveTime(hour, minutes);
+		desc.setPlayTime(header.playtime * 1000);
 
-	desc.setPlayTime(header.playtime * 1000);
+		return desc;
+	}
 
-	return desc;
+	return SaveStateDescriptor();
 }
 
 bool DraciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

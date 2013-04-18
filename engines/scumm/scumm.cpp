@@ -71,6 +71,7 @@
 #include "scumm/he/cup_player_he.h"
 #include "scumm/util.h"
 #include "scumm/verbs.h"
+#include "scumm/imuse/pcspk.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -283,11 +284,13 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_16BitPalette = NULL;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	_townsScreen = 0;
+#ifdef USE_RGB_COLOR
 	_cjkFont = 0;
-	_cjkChar = 0;
+#endif
 #endif
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
+	_verbPalette = NULL;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
 	memset(_darkenPalette, 0, sizeof(_darkenPalette));
 	memset(_HEV7ActorPalette, 0, sizeof(_HEV7ActorPalette));
@@ -297,7 +300,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_haveActorSpeechMsg = false;
 	_useTalkAnims = false;
 	_defaultTalkDelay = 0;
-	_musicType = MDT_NONE;
 	_saveSound = 0;
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 	memset(_scaleSlots, 0, sizeof(_scaleSlots));
@@ -609,6 +611,7 @@ ScummEngine::~ScummEngine() {
 	_textSurface.free();
 
 	free(_shadowPalette);
+	free(_verbPalette);
 
 	free(_palManipPalette);
 	free(_palManipIntermediatePal);
@@ -633,7 +636,9 @@ ScummEngine::~ScummEngine() {
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	delete _townsScreen;
+#ifdef USE_RGB_COLOR
 	delete _cjkFont;
+#endif
 #endif
 
 	delete _debugger;
@@ -1350,13 +1355,23 @@ void ScummEngine::setupCharsetRenderer() {
 			_charset = new CharsetRendererPCE(this);
 		else
 #endif
+		if (_game.platform == Common::kPlatformFMTowns)
+			_charset = new CharsetRendererTownsV3(this);
+		else
 			_charset = new CharsetRendererV3(this);
 #ifdef ENABLE_SCUMM_7_8
 	} else if (_game.version == 8) {
 		_charset = new CharsetRendererNut(this);
 #endif
 	} else {
-		_charset = new CharsetRendererClassic(this);
+#ifdef USE_RGB_COLOR
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns)
+			_charset = new CharsetRendererTownsClassic(this);
+		else
+#endif
+#endif
+			_charset = new CharsetRendererClassic(this);
 	}
 }
 
@@ -1394,6 +1409,10 @@ void ScummEngine::resetScumm() {
 		)
 		_16BitPalette = (uint16 *)calloc(512, sizeof(uint16));
 #endif
+
+	// Indy4 Amiga needs another palette map for the verb area.
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4 && !_verbPalette)
+		_verbPalette = (uint8 *)calloc(256, 1);
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns) {
@@ -1655,43 +1674,8 @@ void ScummEngine_v90he::resetScumm() {
 	_sprite->resetTables(0);
 	memset(&_wizParams, 0, sizeof(_wizParams));
 
-	if (_game.heversion >= 98) {
-		switch (_game.id) {
-		case GID_PUTTRACE:
-			_logicHE = new LogicHErace(this);
-			break;
-
-		case GID_FUNSHOP:
-			_logicHE = new LogicHEfunshop(this);
-			break;
-
-		case GID_FOOTBALL:
-			_logicHE = new LogicHEfootball(this);
-			break;
-
-		case GID_SOCCER:
-		case GID_SOCCERMLS:
-		case GID_SOCCER2004:
-			_logicHE = new LogicHEsoccer(this);
-			break;
-
-		case GID_BASEBALL2001:
-			_logicHE = new LogicHEbaseball2001(this);
-			break;
-
-		case GID_BASKETBALL:
-			_logicHE = new LogicHEbasketball(this);
-			break;
-
-		case GID_MOONBASE:
-			_logicHE = new LogicHEmoonbase(this);
-			break;
-
-		default:
-			_logicHE = new LogicHE(this);
-			break;
-		}
-	}
+	if (_game.heversion >= 98)
+		_logicHE = LogicHE::makeLogicHE(this);
 }
 
 void ScummEngine_v99he::resetScumm() {
@@ -1732,40 +1716,36 @@ void ScummEngine::setupMusic(int midi) {
 
 	switch (MidiDriver::getMusicType(dev)) {
 	case MT_NULL:
-		_musicType = MDT_NONE;
+		_sound->_musicType = MDT_NONE;
 		break;
 	case MT_PCSPK:
-		_musicType = MDT_PCSPK;
+		_sound->_musicType = MDT_PCSPK;
 		break;
 	case MT_PCJR:
-		_musicType = MDT_PCJR;
+		_sound->_musicType = MDT_PCJR;
 		break;
-	//case MT_CMS:
-#if 1
-		_musicType = MDT_ADLIB;
-#else
-		_musicType = MDT_CMS; // Still has number of bugs, disable by default
-#endif
+	case MT_CMS:
+		_sound->_musicType = MDT_CMS;
 		break;
 	case MT_TOWNS:
-		_musicType = MDT_TOWNS;
+		_sound->_musicType = MDT_TOWNS;
 		break;
 	case MT_ADLIB:
-		_musicType = MDT_ADLIB;
+		_sound->_musicType = MDT_ADLIB;
 		break;
 	case MT_C64:
-		_musicType = MDT_C64;
+		_sound->_musicType = MDT_C64;
 		break;
 	case MT_APPLEIIGS:
-		_musicType = MDT_APPLEIIGS;
+		_sound->_musicType = MDT_APPLEIIGS;
 		break;
 	default:
-		_musicType = MDT_MIDI;
+		_sound->_musicType = MDT_MIDI;
 		break;
 	}
 
 	if ((_game.id == GID_MONKEY_EGA || (_game.id == GID_LOOM && _game.version == 3))
-	   &&  (_game.platform == Common::kPlatformPC) && _musicType == MDT_MIDI) {
+	   &&  (_game.platform == Common::kPlatformPC) && _sound->_musicType == MDT_MIDI) {
 		Common::String fileName;
 		bool missingFile = false;
 		if (_game.id == GID_LOOM) {
@@ -1795,7 +1775,7 @@ void ScummEngine::setupMusic(int midi) {
 					"but %s is missing. Using AdLib instead."), fileName.c_str()),
 				_("OK"));
 			dialog.runModal();
-			_musicType = MDT_ADLIB;
+			_sound->_musicType = MDT_ADLIB;
 		}
 	}
 
@@ -1809,9 +1789,9 @@ void ScummEngine::setupMusic(int midi) {
 	 * automatically when samples need to be generated */
 	if (!_mixer->isReady()) {
 		warning("Sound mixer initialization failed");
-		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK || _musicType == MDT_PCJR || _musicType == MDT_CMS) {
+		if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR || _sound->_musicType == MDT_CMS) {
 			dev = 0;
-			_musicType = MDT_NONE;
+			_sound->_musicType = MDT_NONE;
 			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
 		}
 	}
@@ -1843,9 +1823,9 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_game.version <= 2) {
 		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
-	} else if ((_musicType == MDT_PCSPK || _musicType == MDT_PCJR) && (_game.version > 2 && _game.version <= 4)) {
+	} else if ((_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR) && (_game.version > 2 && _game.version <= 4)) {
 		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
-	} else if (_musicType == MDT_CMS) {
+	} else if (_sound->_musicType == MDT_CMS) {
 		_musicEngine = new Player_V2CMS(this, _mixer);
 	} else if (_game.platform == Common::kPlatform3DO && _game.heversion <= 62) {
 		// 3DO versions use digital music and sound samples.
@@ -1857,14 +1837,16 @@ void ScummEngine::setupMusic(int midi) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;
 
-		if (_musicType != MDT_ADLIB && _musicType != MDT_TOWNS)
+		if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK)
 			nativeMidiDriver = MidiDriver::createMidi(dev);
 		if (nativeMidiDriver != NULL && _native_mt32)
 			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-		bool multi_midi = ConfMan.getBool("multi_midi") && _musicType != MDT_NONE && (midi & MDT_ADLIB);
-		if (_musicType == MDT_ADLIB || _musicType == MDT_TOWNS || multi_midi) {
-			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
+		bool multi_midi = ConfMan.getBool("multi_midi") && _sound->_musicType != MDT_NONE && _sound->_musicType != MDT_PCSPK && (midi & MDT_ADLIB);
+		if (_sound->_musicType == MDT_ADLIB || _sound->_musicType == MDT_TOWNS || multi_midi) {
+			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
+		} else if (_sound->_musicType == MDT_PCSPK) {
+			adlibMidiDriver = new PcSpkDriver(_mixer);
 		}
 
 		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
@@ -1893,6 +1875,8 @@ void ScummEngine::setupMusic(int midi) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
+			if (_sound->_musicType == MDT_PCSPK)
+				_imuse->property(IMuse::PROP_PC_SPEAKER, 1);
 		}
 	}
 }

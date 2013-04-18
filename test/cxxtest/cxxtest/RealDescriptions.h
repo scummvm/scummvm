@@ -220,4 +220,3 @@ namespace CxxTest
 }
 
 #endif // __cxxtest__RealDescriptions_h__
-

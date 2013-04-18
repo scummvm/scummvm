@@ -20,9 +20,9 @@
  *
  */
 
-#include "common/timer.h"
 #include "common/util.h"
 #include "common/system.h"
+#include "common/timer.h"
 #include "graphics/surface.h"
 #include "engines/util.h"
 
@@ -338,7 +338,7 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 void GfxScreen::putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color) {
 	byte *displayPtr = _displayScreen + y * _displayWidth * 2 + x * 2;
 	// we don't use outline, so color 0 is actually not used
-	commonFont->drawChar(displayPtr, chr, _displayWidth, 1, color, 0);
+	commonFont->drawChar(displayPtr, chr, _displayWidth, 1, color, 0, -1, -1);
 }
 
 byte GfxScreen::getVisual(int x, int y) {

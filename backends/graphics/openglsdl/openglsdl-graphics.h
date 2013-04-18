@@ -27,15 +27,17 @@
 #if defined(ARRAYSIZE) && !defined(_WINDOWS_)
 #undef ARRAYSIZE
 #endif
-
+#include "backends/graphics/sdl/sdl-graphics.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
+
+#include "common/events.h"
 
 /**
  * SDL OpenGL graphics manager
  */
-class OpenGLSdlGraphicsManager : public OpenGLGraphicsManager {
+class OpenGLSdlGraphicsManager : public OpenGLGraphicsManager, public SdlGraphicsManager, public Common::EventObserver {
 public:
-	OpenGLSdlGraphicsManager();
+	OpenGLSdlGraphicsManager(SdlEventSource *eventSource);
 	virtual ~OpenGLSdlGraphicsManager();
 
 	virtual bool hasFeature(OSystem::Feature f);
@@ -45,9 +47,16 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 
+	virtual void initEventObserver();
 	virtual bool notifyEvent(const Common::Event &event);
 
 	virtual void updateScreen();
+
+	// SdlGraphicsManager interface
+	virtual void notifyVideoExpose();
+	virtual void notifyResize(const uint width, const uint height);
+	virtual void transformMouseCoordinates(Common::Point &point);
+	virtual void notifyMousePos(Common::Point mouse);
 
 protected:
 	virtual void internUpdateScreen();

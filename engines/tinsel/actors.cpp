@@ -314,10 +314,19 @@ static void ActorRestoredProcess(CORO_PARAM, const void *param) {
 
 	// get the stuff copied to process when it was created
 	const RATP_INIT *r = (const RATP_INIT *)param;
+	bool isSavegame = r->pic->resumeState == RES_SAVEGAME;
 
 	CORO_BEGIN_CODE(_ctx);
 
 	_ctx->pic = RestoreInterpretContext(r->pic);
+	
+	// The newly added check here specially sets the process to RES_NOT when loading a savegame. 
+	// This is needed particularly for the Psychiatrist scene in Discworld 1 - otherwise Rincewind
+	// can't go upstairs without leaving the building and returning.  If this patch causes problems
+	// in other scenes, an added check for the hCode == 1174490602 could be added.
+	if (isSavegame && TinselV1)
+		_ctx->pic->resumeState = RES_NOT;
+
 	CORO_INVOKE_1(Interpret, _ctx->pic);
 
 	// If it gets here, actor's code has run to completion
@@ -326,8 +335,10 @@ static void ActorRestoredProcess(CORO_PARAM, const void *param) {
 	CORO_END_CODE;
 }
 
-void RestoreActorProcess(int id, INT_CONTEXT *pic) {
+void RestoreActorProcess(int id, INT_CONTEXT *pic, bool savegameFlag) {
 	RATP_INIT r = { pic, id };
+	if (savegameFlag)
+		pic->resumeState = RES_SAVEGAME;
 
 	g_scheduler->createProcess(PID_TCODE, ActorRestoredProcess, &r, sizeof(r));
 }

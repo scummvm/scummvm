@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://svn.scummvm.org:4444/svn/dreamweb/dreamweb.h $
- * $Id: dreamweb.h 77 2011-05-18 14:26:43Z digitall $
- *
  */
 
 #ifndef DREAMWEB_H
@@ -37,7 +34,9 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
+
 #include "dreamweb/dreamgen.h"
 #include "dreamweb/console.h"
 
@@ -49,7 +48,9 @@ enum {
 	kDebugSaveLoad = (1 << 1)
 };
 
-struct DreamWebGameDescription;
+struct DreamWebGameDescription {
+	ADGameDescription desc;
+};
 
 class DreamWebEngine : public Engine {
 private:
@@ -81,7 +82,7 @@ public:
 	uint32 skipBytes(uint32 bytes);
 	void closeFile();
 
-	void mouseCall(); //fill mouse pos and button state
+	void mouseCall(uint16 *x, uint16 *y, uint16 *state); //fill mouse pos and button state
 	void processEvents();
 	void setPalette();
 	void fadeDos();
@@ -107,6 +108,11 @@ public:
 
 	void enableSavingOrLoading(bool enable = true) { _enableSavingOrLoading = enable; }
 
+	Common::Language getLanguage() const { return _language; }
+	uint8 modifyChar(uint8 c) const;
+
+	void stopSound(uint8 channel);
+
 private:
 	void keyPressed(uint16 ascii);
 	void setSpeed(uint speed);
@@ -123,8 +129,8 @@ private:
 	uint _speed;
 	bool _turbo;
 	uint _oldMouseState;
-	int _loadSavefile;
 	bool _enableSavingOrLoading;
+	Common::Language _language;
 
 	struct Sample {
 		uint offset;

@@ -49,4 +49,3 @@ wiiloaddist: wiidist
 	$(DEVKITPPC)/bin/wiiload wiidist/scummvm.zip
 
 .PHONY: wiiclean wiiload geckoupload wiigdb wiidebug wiidist wiiloaddist
-

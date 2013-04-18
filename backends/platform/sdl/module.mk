@@ -14,7 +14,8 @@ endif
 ifdef MACOSX
 MODULE_OBJS += \
 	macosx/macosx-main.o \
-	macosx/macosx.o
+	macosx/macosx.o \
+	macosx/appmenu_osx.o
 endif
 
 ifdef WIN32
@@ -27,6 +28,12 @@ ifdef AMIGAOS
 MODULE_OBJS += \
 	amigaos/amigaos-main.o \
 	amigaos/amigaos.o
+endif
+
+ifdef PLAYSTATION3
+MODULE_OBJS += \
+	ps3/ps3-main.o \
+	ps3/ps3.o
 endif
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.

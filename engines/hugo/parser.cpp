@@ -235,7 +235,7 @@ void Parser::charHandler() {
 			if (_cmdLineIndex >= kMaxLineSize) {
 				//MessageBeep(MB_ICONASTERISK);
 				warning("STUB: MessageBeep() - Command line too long");
-			} else if (isprint(c)) {
+			} else if (isprint(static_cast<unsigned char>(c))) {
 				_cmdLine[_cmdLineIndex++] = c;
 				_cmdLine[_cmdLineIndex] = '\0';
 			}
@@ -449,7 +449,7 @@ const char *Parser::findVerb() const {
  */
 void Parser::showDosInventory() const {
 	debugC(1, kDebugParser, "showDosInventory()");
-	static const char *blanks = "                                        ";
+	static const char *const blanks = "                                        ";
 	uint16 index = 0, len1 = 0, len2 = 0;
 
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Find widths of 2 columns

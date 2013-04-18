@@ -24,13 +24,13 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
-#include "common/system.h"
 
 #include "engines/util.h"
 
 #include "agos/debugger.h"
 #include "agos/intern.h"
 #include "agos/agos.h"
+#include "agos/midi.h"
 
 #include "backends/audiocd/audiocd.h"
 
@@ -41,18 +41,51 @@
 namespace AGOS {
 
 static const GameSpecificSettings simon1_settings = {
+	"",                                     // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
 	"EFFECTS",                              // effects_filename
 	"SIMON",                                // speech_filename
 };
 
 static const GameSpecificSettings simon2_settings = {
+	"",                                     // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
 	"",                                     // effects_filename
 	"SIMON2",                               // speech_filename
 };
 
-static const GameSpecificSettings puzzlepack_settings = {
+static const GameSpecificSettings dimp_settings = {
+	"Gdimp",                                // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
 	"",                                     // effects_filename
-	"MUSIC",                               // speech_filename
+	"MUSIC",                                // speech_filename
+};
+
+static const GameSpecificSettings jumble_settings = {
+	"Gjumble",                              // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
+	"",                                     // effects_filename
+	"MUSIC",                                // speech_filename
+};
+
+static const GameSpecificSettings puzzle_settings = {
+	"Gpuzzle",                              // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
+	"",                                     // effects_filename
+	"MUSIC",                                // speech_filename
+};
+
+static const GameSpecificSettings swampy_settings = {
+	"Gswampy",                              // base_filename
+	"",                                     // restore_filename
+	"",                                     // tbl_filename
+	"",                                     // effects_filename
+	"MUSIC",                                // speech_filename
 };
 
 #ifdef ENABLE_AGOS2
@@ -132,6 +165,7 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	_numMusic = 0;
 	_numSFX = 0;
 	_numSpeech = 0;
+	_numZone = 0;
 
 	_numBitArray1 = 0;
 	_numBitArray2 = 0;
@@ -541,16 +575,18 @@ Common::Error AGOSEngine::init() {
 
 	initGraphics(_screenWidth, _screenHeight, getGameType() == GType_FF || getGameType() == GType_PP);
 
+	_midi = new MidiPlayer();
+
 	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
 		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
 		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
 		(getPlatform() == Common::kPlatformPC)) {
 
-		int ret = _midi.open(getGameType());
+		int ret = _midi->open(getGameType());
 		if (ret)
 			warning("MIDI Player init failed: \"%s\"", MidiDriver::getErrorName(ret));
 
-		_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
+		_midi->setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
 
 		_midiEnabled = true;
 	}
@@ -597,14 +633,14 @@ Common::Error AGOSEngine::init() {
 	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1) {
 		_musicPaused = true;
 		if (_midiEnabled) {
-			_midi.pause(_musicPaused);
+			_midi->pause(_musicPaused);
 		}
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 0);
 	}
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
 		if (getGameId() == GID_SIMON1DOS)
-			_midi._enable_sfx = !_midi._enable_sfx;
+			_midi->_enable_sfx = !_midi->_enable_sfx;
 		else {
 			_effectsPaused = !_effectsPaused;
 			_sound->effectsPause(_effectsPaused);
@@ -640,14 +676,12 @@ Common::Error AGOSEngine::init() {
 
 	// TODO: Use special debug levels instead of the following hack.
 	_debugMode = (gDebugLevel >= 0);
-	if (gDebugLevel == 2)
-		_dumpOpcodes = true;
-	if (gDebugLevel == 3)
-		_dumpVgaOpcodes = true;
-	if (gDebugLevel == 4)
-		_dumpScripts = true;
-	if (gDebugLevel == 5)
-		_dumpVgaScripts = true;
+	switch (gDebugLevel) {
+	case 2: _dumpOpcodes    = true; break;
+	case 3: _dumpVgaOpcodes = true; break;
+	case 4: _dumpScripts    = true; break;
+	case 5: _dumpVgaScripts = true; break;
+	}
 
 	return Common::kNoError;
 }
@@ -678,7 +712,15 @@ static const uint16 initialVideoWindows_PN[20] = {
 
 #ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::setupGame() {
-	gss = &puzzlepack_settings;
+	if (getGameId() == GID_DIMP) {
+		gss = &dimp_settings;
+	} else if (getGameId() == GID_JUMBLE) {
+		gss = &jumble_settings;
+	} else if (getGameId() == GID_PUZZLE) {
+		gss = &puzzle_settings;
+	} else if (getGameId() == GID_SWAMPY) {
+		gss = &swampy_settings;
+	}
 	_numVideoOpcodes = 85;
 	_vgaMemSize = 7500000;
 	_itemMemSize = 20000;
@@ -690,6 +732,8 @@ void AGOSEngine_PuzzlePack::setupGame() {
 	_numItemStore = 10;
 	_numTextBoxes = 40;
 	_numVars = 2048;
+
+	_numZone = 450;
 
 	AGOSEngine::setupGame();
 }
@@ -708,7 +752,7 @@ void AGOSEngine_Simon2::setupGame() {
 	_itemMemSize = 20000;
 	_tableMemSize = 100000;
 	// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
-	if (getGameType() == GType_SIMON2 && _midi.hasNativeMT32())
+	if (getGameType() == GType_SIMON2 && _midi->hasNativeMT32())
 		_musicIndexBase = (1128 + 612) / 4;
 	else
 		_musicIndexBase = 1128 / 4;
@@ -725,6 +769,7 @@ void AGOSEngine_Simon2::setupGame() {
 	_numMusic = 93;
 	_numSFX = 222;
 	_numSpeech = 11997;
+	_numZone = 140;
 
 	AGOSEngine::setupGame();
 }
@@ -751,6 +796,7 @@ void AGOSEngine_Simon1::setupGame() {
 	_numMusic = 34;
 	_numSFX = 127;
 	_numSpeech = 3623;
+	_numZone = 164;
 
 	AGOSEngine::setupGame();
 }
@@ -771,6 +817,7 @@ void AGOSEngine_Waxworks::setupGame() {
 	_numVars = 255;
 
 	_numMusic = 26;
+	_numZone = 155;
 
 	AGOSEngine::setupGame();
 }
@@ -790,6 +837,7 @@ void AGOSEngine_Elvira2::setupGame() {
 	_numVars = 255;
 
 	_numMusic = 9;
+	_numZone = 99;
 
 	AGOSEngine::setupGame();
 }
@@ -806,6 +854,7 @@ void AGOSEngine_Elvira1::setupGame() {
 	_numVars = 512;
 
 	_numMusic = 14;
+	_numZone = 74;
 
 	AGOSEngine::setupGame();
 }
@@ -818,6 +867,8 @@ void AGOSEngine_PN::setupGame() {
 	_vgaBaseDelay = 1;
 	_vgaPeriod = 50;
 	_numVars = 256;
+
+	_numZone = 26;
 
 	AGOSEngine::setupGame();
 }
@@ -911,6 +962,8 @@ AGOSEngine::~AGOSEngine() {
 		_window6BackScn->free();
 	delete _window6BackScn;
 
+	delete _midi;
+
 	free(_firstTimeStruct);
 	free(_pendingDeleteTimeEvent);
 
@@ -938,12 +991,12 @@ void AGOSEngine::pauseEngineIntern(bool pauseIt) {
 		_keyPressed.reset();
 		_pause = true;
 
-		_midi.pause(true);
+		_midi->pause(true);
 		_mixer->pauseAll(true);
 	} else {
 		_pause = false;
 
-		_midi.pause(_musicPaused);
+		_midi->pause(_musicPaused);
 		_mixer->pauseAll(false);
 	}
 }
@@ -961,6 +1014,10 @@ void AGOSEngine::pause() {
 }
 
 Common::Error AGOSEngine::go() {
+#ifdef ENABLE_AGOS2
+	loadArchives();
+#endif
+
 	loadGamePcFile();
 
 	addTimeEvent(0, 1);
@@ -1027,7 +1084,7 @@ void AGOSEngine::syncSoundSettings() {
 	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
 
 	if (_midiEnabled)
-		_midi.setVolume((mute ? 0 : soundVolumeMusic), (mute ? 0 : soundVolumeSFX));
+		_midi->setVolume((mute ? 0 : soundVolumeMusic), (mute ? 0 : soundVolumeSFX));
 }
 
 } // End of namespace AGOS

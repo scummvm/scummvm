@@ -571,4 +571,3 @@ void Codec37Decoder::decode(byte *dst, const byte *src) {
 }
 
 } // End of namespace Scumm
-

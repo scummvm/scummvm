@@ -36,8 +36,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -216,7 +218,7 @@ IMPLEMENT_FUNCTION(11, Kronos, function11)
 	case kActionDefault:
 		getData()->entityPosition = kPosition_7000;
 
-		if (!getSound()->isBuffered(kEntityKronos))
+		if (!getSoundQueue()->isBuffered(kEntityKronos))
 			getSound()->playSound(kEntityKronos, "KRO1001");
 		break;
 	}
@@ -457,7 +459,7 @@ IMPLEMENT_FUNCTION(19, Kronos, function19)
 
 		case 2:
 			getAction()->playAnimation(kEventConcertStart);
-			getSound()->setupEntry(SoundManager::kSoundType7, kEntityKronos);
+			getSoundQueue()->setupEntry(kSoundType7, kEntityKronos);
 			getScenes()->loadSceneFromPosition(kCarKronos, 83);
 
 			RESET_ENTITY_STATE(kEntityRebecca, Rebecca, setup_function39);
@@ -480,7 +482,7 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 		break;
 
 	case kActionNone:
-		params->param5 = getSound()->getEntryTime(kEntityKronos)* 2;
+		params->param5 = getSoundQueue()->getEntryTime(kEntityKronos)* 2;
 
 		if (params->param6 < ARRAYSIZE(concertData) && params->param5 > concertData[params->param6].time) {
 
@@ -560,8 +562,8 @@ IMPLEMENT_FUNCTION(20, Kronos, function20)
 			case 3:
 				getAction()->playAnimation(kEventCathFallingAsleep);
 
-				while (getSound()->isBuffered("1919.LNK"))
-					getSound()->updateQueue();
+				while (getSoundQueue()->isBuffered("1919.LNK"))
+					getSoundQueue()->updateQueue();
 
 				getAction()->playAnimation(kEventCathWakingUp);
 				getScenes()->processScene();
@@ -746,7 +748,7 @@ IMPLEMENT_FUNCTION(22, Kronos, function22)
 
 	case kActionKnock:
 	case kActionOpenDoor:
-		if (!getSound()->isBuffered(savepoint.action == kActionKnock ? "LIB012" : "LIB013", true))
+		if (!getSoundQueue()->isBuffered(savepoint.action == kActionKnock ? "LIB012" : "LIB013", true))
 			getSound()->playSound(kEntityPlayer, savepoint.action == kActionKnock ? "LIB012" : "LIB013");
 
 		if (getEvent(kEventConcertLeaveWithBriefcase))

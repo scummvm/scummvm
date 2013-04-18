@@ -37,7 +37,7 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 		debug(0, "switched to idle animation %u", idle_type);
 	}
 
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	byte *frames_idle;
 	do {
 		frames_idle = res->dseg.ptr(res->dseg.get_word(0x6540 + idle_type * 2)) + index;
@@ -47,7 +47,7 @@ Common::Rect Actor::renderIdle(Graphics::Surface *surface, const Common::Point &
 			debug(0, "switched to idle animation %u[loop]", idle_type);
 			index = 3; //put 4th frame (base 1) if idle animation loops
 		}
-	} while(*frames_idle == 0);
+	} while (*frames_idle == 0);
 
 	bool mirror = orientation == kActorLeft;
 	Surface *s = frames + *frames_idle - 1;

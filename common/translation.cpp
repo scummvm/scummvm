@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#ifdef WIN32
+#if defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
@@ -37,9 +37,9 @@
 
 #ifdef USE_TRANSLATION
 
-DECLARE_SINGLETON(Common::TranslationManager);
-
 namespace Common {
+
+DECLARE_SINGLETON(TranslationManager);
 
 bool operator<(const TLanguage &l, const TLanguage &r) {
 	return strcmp(l.name, r.name) < 0;
@@ -223,7 +223,11 @@ String TranslationManager::getLangById(int id) const {
 }
 
 bool TranslationManager::openTranslationsFile(File& inFile) {
-	// First try to open it using the SearchMan.
+	// First look in the Themepath if we can find the file.
+	if (ConfMan.hasKey("themepath") && openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile))
+		return true;
+
+	// Then try to open it using the SearchMan.
 	ArchiveMemberList fileList;
 	SearchMan.listMatchingMembers(fileList, "translations.dat");
 	for (ArchiveMemberList::iterator it = fileList.begin(); it != fileList.end(); ++it) {
@@ -234,10 +238,6 @@ bool TranslationManager::openTranslationsFile(File& inFile) {
 			inFile.close();
 		}
 	}
-
-	// Then look in the Themepath if we can find the file.
-	if (ConfMan.hasKey("themepath"))
-		return openTranslationsFile(FSNode(ConfMan.get("themepath")), inFile);
 
 	return false;
 }

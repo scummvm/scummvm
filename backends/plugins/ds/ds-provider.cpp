@@ -43,4 +43,3 @@ Plugin *DSPluginProvider::createPlugin(const Common::FSNode &node) const {
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(__DS__)
-

@@ -19,11 +19,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "graphics/font.h"
 #include "graphics/fontman.h"
+#include "graphics/font.h"
+#include "graphics/fonts/bdf.h"
+
 #include "common/translation.h"
 
+namespace Common {
 DECLARE_SINGLETON(Graphics::FontManager);
+}
 
 namespace Graphics {
 
@@ -72,6 +76,26 @@ bool FontManager::assignFontToName(const Common::String &name, const Font *font)
 	Common::String lowercaseName = name;
 	lowercaseName.toLowercase();
 	_fontMap[lowercaseName] = font;
+	return true;
+}
+
+bool FontManager::setFont(FontUsage usage, const Font *font) {
+	switch (usage) {
+	case kConsoleFont:
+		delete g_consolefont;
+		g_consolefont = (const BdfFont *)font;
+		break;
+	case kGUIFont:
+		delete g_sysfont;
+		g_sysfont = (const BdfFont *)font;
+		break;
+	case kBigGUIFont:
+		delete g_sysfont_big;
+		g_sysfont_big = (const BdfFont *)font;
+		break;
+	default:
+		return false;
+	}
 	return true;
 }
 

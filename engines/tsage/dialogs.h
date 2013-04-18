@@ -30,7 +30,7 @@
 #include "common/rect.h"
 #include "common/system.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class MessageDialog : public GfxDialog {
 public:
@@ -47,35 +47,6 @@ public:
 class ConfigDialog : public GUI::OptionsDialog {
 public:
 	ConfigDialog();
-};
-
-class RightClickButton : public GfxButton {
-private:
-	GfxSurface *_savedButton;
-public:
-	int _buttonIndex;
-
-	RightClickButton(int buttonIndex, int xp, int yp);
-	~RightClickButton() { delete _savedButton; }
-
-	virtual void highlight();
-};
-
-class RightClickDialog : public GfxDialog {
-private:
-	GfxSurface _surface;
-	RightClickButton *_highlightedButton;
-	int _selectedAction;
-	RightClickButton _walkButton, _lookButton, _useButton, _talkButton, _inventoryButton, _optionsButton;
-
-	RightClickButton *findButton(const Common::Point &pt);
-public:
-	RightClickDialog();
-	~RightClickDialog();
-
-	virtual void draw();
-	virtual bool process(Event &event);
-	void execute();
 };
 
 /*--------------------------------------------------------------------------*/
@@ -128,6 +99,13 @@ public:
 	static void show();
 };
 
-} // End of namespace tSage
+/*--------------------------------------------------------------------------*/
+
+class SoundDialog {
+public:
+	static void execute();
+};
+
+} // End of namespace TsAGE
 
 #endif

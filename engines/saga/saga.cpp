@@ -72,9 +72,8 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	_readingSpeed = 0;
 
 	_copyProtection = false;
-	_gf_wyrmkeep = false;
 	_musicWasPlaying = false;
-
+	_hasITESceneSubstitutes = false;
 
 	_sndRes = NULL;
 	_sound = NULL;
@@ -211,9 +210,9 @@ Common::Error SagaEngine::run() {
 	_subtitlesEnabled = ConfMan.getBool("subtitles");
 	_readingSpeed = getTalkspeed();
 	_copyProtection = ConfMan.getBool("copy_protection");
-	_gf_wyrmkeep = false;
 	_musicWasPlaying = false;
 	_isIHNMDemo = Common::File::exists("music.res");
+	_hasITESceneSubstitutes = Common::File::exists("boarhall.bbm");
 
 	if (_readingSpeed > 3)
 		_readingSpeed = 0;

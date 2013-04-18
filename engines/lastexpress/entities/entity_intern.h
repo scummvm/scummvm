@@ -96,7 +96,7 @@ void class::setup_##name() { \
 #define EXPOSE_PARAMS(type) \
 	type *params = (type*)_data->getCurrentParameters(); \
 	if (!params) \
-		error("Trying to call an entity function with invalid parameters!"); \
+		error("[EXPOSE_PARAMS] Trying to call an entity function with invalid parameters"); \
 
 
 // function signature without setup (we keep the index for consistency but never use it)
@@ -413,7 +413,7 @@ void class::setup_##name() { \
 //////////////////////////////////////////////////////////////////////////
 #define CALLBACK_ACTION() { \
 	if (getData()->currentCall == 0) \
-		error("CALLBACK_ACTION: currentCall is already 0, cannot proceed!"); \
+		error("[CALLBACK_ACTION] currentCall is already 0, cannot proceed"); \
 	getData()->currentCall--; \
 	getSavePoints()->setCallback(_entityIndex, _callbacks[_data->getCurrentCallback()]); \
 	getSavePoints()->call(_entityIndex, _entityIndex, kActionCallback); \

@@ -989,7 +989,7 @@ private:
 	Audio::SoundHandle _musicHandle;
 
 	static const SoundSequenceDataList _soundSeqDataList[];
-	static const char *_audioFileNamesTable[];
+	static const char *const _audioFileNamesTable[];
 };
 
 } // namespace Tucker

@@ -763,7 +763,7 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 	MemoryBlock *data = res.messagesData();
 	Hotspot *hotspot;
 	uint8 *msgData = (uint8 *) data->data();
-	uint16 v2, idVal;
+	uint16 idVal;
 	messageId &= 0x7fff;
 
 	// Skip through header to find table for given character
@@ -781,7 +781,6 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 
 	// Scan through secondary list
 	uint16 *v = (uint16 *) (msgData + READ_LE_UINT16(msgData + idx + sizeof(uint16)));
-	v2 = 0;
 	while ((idVal = READ_LE_UINT16(v)) != 0xffff) {
 		++v;
 		if (READ_LE_UINT16(v) == messageId) break;
@@ -1673,6 +1672,12 @@ void Hotspot::doTalkTo(HotspotData *hotspot) {
 
 	faceHotspot(hotspot);
 	endAction();
+
+	// WORKAROUND: Fix crash when talking when an ask conversation is active
+	if (_data->talkDestCharacterId != 0) {
+		// Don't allow the talk to start
+		return;
+	}
 
 	uint16 sequenceOffset = res.getHotspotAction(hotspot->actionsOffset, TALK_TO);
 	if (sequenceOffset >= 0x8000) {

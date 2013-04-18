@@ -576,6 +576,15 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header))) {
 			Common::strlcpy(_savegameNames[i], header.description.c_str(), ARRAYSIZE(_savegameNames[0]));
 
+			// Trim long GMM save descriptions to fit our save slots
+			_screen->_charWidth = -2;
+			int fC = _screen->getTextWidth(_savegameNames[i]);
+			while (_savegameNames[i][0] && (fC > 240 )) {
+				_savegameNames[i][strlen(_savegameNames[i]) - 1] = 0;
+				fC = _screen->getTextWidth(_savegameNames[i]);
+			}
+			_screen->_charWidth = 0;
+
 			Util::convertISOToDOS(_savegameNames[i]);
 
 			menu.item[i].itemString = _savegameNames[i];
@@ -693,12 +702,15 @@ void GUI_LoK::updateSavegameString() {
 
 	if (_keyPressed.keycode) {
 		length = strlen(_savegameName);
+		_screen->_charWidth = -2;
+		int width = _screen->getTextWidth(_savegameName) + 7;
+		_screen->_charWidth = 0;
 
 		char inputKey = _keyPressed.ascii;
 		Util::convertISOToDOS(inputKey);
 
 		if ((uint8)inputKey > 31 && (uint8)inputKey < (_vm->gameFlags().lang == Common::JA_JPN ? 128 : 226)) {
-			if (length < ARRAYSIZE(_savegameName)-1) {
+			if ((length < ARRAYSIZE(_savegameName)-1) && (width <= 240)) {
 				_savegameName[length] = inputKey;
 				_savegameName[length+1] = 0;
 				redrawTextfield();
@@ -1125,4 +1137,3 @@ void KyraEngine_LoK::drawAmulet() {
 }
 
 } // End of namespace Kyra
-

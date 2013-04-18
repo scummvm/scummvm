@@ -1,5 +1,27 @@
-#ifndef ENGINES_DREAMGEN_RUNTIME_H__
-#define ENGINES_DREAMGEN_RUNTIME_H__
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef DREAMGEN_RUNTIME_H__
+#define DREAMGEN_RUNTIME_H__
 
 #include <assert.h>
 #include "common/scummsys.h"
@@ -111,7 +133,7 @@ struct Segment {
 		return WordRef(data, index);
 	}
 
-	inline uint8* ptr(unsigned index, unsigned size) {
+	inline uint8 *ptr(unsigned index, unsigned size) {
 		assert(index + size <= data.size());
 		return data.begin() + index;
 	}
@@ -164,7 +186,7 @@ public:
 		_segment->assign(b, e);
 	}
 
-	inline uint8* ptr(unsigned index, unsigned size) {
+	inline uint8 *ptr(unsigned index, unsigned size) {
 		assert(_segment != 0);
 		return _segment->ptr(index, size);
 	}
@@ -263,6 +285,12 @@ public:
 		assert(i != _segments.end());
 		_segments.erase(i);
 		_freeSegments.push_back(id);
+	}
+
+	SegmentRef segRef(uint16 seg) {
+		SegmentRef result(this);
+		result = seg;
+		return result;
 	}
 
 	inline void _cmp(uint8 a, uint8 b) {
@@ -464,11 +492,9 @@ public:
 
 	inline void _movsb(uint size, bool clear_cx = false) {
 		assert(size != 0xffff);
-		uint8 *dst = es.ptr(di, size);
-		uint8 *src = ds.ptr(si, size);
-		memcpy(dst, src, size);
-		di += size;
-		si += size;
+		//fixme: add overlap and segment boundary check and rewrite
+		while (size--)
+			_movsb();
 		if (clear_cx)
 			cx = 0;
 	}
@@ -505,7 +531,7 @@ public:
 		assert(size != 0xffff);
 		uint8 *dst = es.ptr(di, size * 2);
 		di += 2 * size;
-		while(size--) {
+		while (size--) {
 			*dst++ = al;
 			*dst++ = ah;
 		}
@@ -560,4 +586,3 @@ public:
 }
 
 #endif
-

@@ -28,6 +28,7 @@
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 #include "common/stream.h"
+#include "common/array.h"
 
 #include "graphics/surface.h"
 
@@ -559,12 +560,3 @@ protected:
 
 
 #endif
-
-
-
-
-
-
-
-
-

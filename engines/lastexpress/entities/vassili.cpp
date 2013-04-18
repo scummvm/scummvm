@@ -32,8 +32,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -268,7 +270,7 @@ IMPLEMENT_FUNCTION(8, Vassili, function8)
 		getSavePoints()->push(kEntityVassili, kEntityAnna, kAction226031488);
 		getSavePoints()->push(kEntityVassili, kEntityVerges, kAction226031488);
 		getSavePoints()->push(kEntityVassili, kEntityCoudert, kAction226031488);
-		getSound()->playSound(kEntityVassili, "VAS1027", SoundManager::kFlagDefault);
+		getSound()->playSound(kEntityVassili, "VAS1027", kFlagDefault);
 		break;
 	}
 IMPLEMENT_FUNCTION_END
@@ -295,12 +297,12 @@ IMPLEMENT_FUNCTION(9, Vassili, function9)
 		|| getEntities()->isPlayerPosition(kCarRedSleeping, 41)) {
 
 			if (savepoint.action == kActionDrawScene)
-				getSound()->processEntry(kEntityVassili);
+				getSoundQueue()->processEntry(kEntityVassili);
 
 			setup_seizure();
 		} else {
 			if (savepoint.action == kActionDefault)
-				getSound()->playSound(kEntityVassili, "VAS1028", SoundManager::kFlagDefault);
+				getSound()->playSound(kEntityVassili, "VAS1028", kFlagDefault);
 		}
 		break;
 	}

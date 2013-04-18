@@ -53,4 +53,3 @@ class PalAnim {
 } // End of namespace Saga
 
 #endif
-

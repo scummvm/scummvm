@@ -471,7 +471,7 @@ uint16 SkyCompact::giveDataListLen(uint16 listNum) {
 		return _dataListLen[listNum];
 }
 
-const char *SkyCompact::_typeNames[NUM_CPT_TYPES] = {
+const char *const SkyCompact::_typeNames[NUM_CPT_TYPES] = {
 	"null",
 	"COMPACT",
 	"TURNTABLE",

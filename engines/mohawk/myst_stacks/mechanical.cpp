@@ -102,6 +102,7 @@ void Mechanical::setupOpcodes() {
 
 void Mechanical::disablePersistentScripts() {
 	_fortressSimulationRunning = false;
+	_elevatorRotationLeverMoving = false;
 	_elevatorGoingMiddle = false;
 	_birdSinging = false;
 	_fortressRotationRunning = false;
@@ -126,10 +127,10 @@ void Mechanical::runPersistentScripts() {
 
 uint16 Mechanical::getVar(uint16 var) {
 	switch(var) {
-	case 0: // Sirrus's Secret Panel State
-		return _state.sirrusPanelState;
-	case 1: // Achenar's Secret Panel State
+	case 0: // Achenar's Secret Panel State
 		return _state.achenarPanelState;
+	case 1: // Sirrus's Secret Panel State
+		return _state.sirrusPanelState;
 	case 2: // Achenar's Secret Room Crate Lid Open and Blue Page Present
 		if (_state.achenarCrateOpened) {
 			if (_globals.bluePagesInBook & 4 || _globals.heldPage == 3)
@@ -195,16 +196,21 @@ uint16 Mechanical::getVar(uint16 var) {
 
 void Mechanical::toggleVar(uint16 var) {
 	switch(var) {
-	case 0: // Sirrus's Secret Panel State
-		_state.sirrusPanelState ^= 1;
-	case 1: // Achenar's Secret Panel State
+	case 0: // Achenar's Secret Panel State
 		_state.achenarPanelState ^= 1;
+		break;
+	case 1: // Sirrus's Secret Panel State
+		_state.sirrusPanelState ^= 1;
+		break;
 	case 3: // Achenar's Secret Room Crate State
 		_state.achenarCrateOpened ^= 1;
+		break;
 	case 4: // Myst Book Room Staircase State
 		_mystStaircaseState ^= 1;
+		break;
 	case 10: // Fortress Staircase State
 		_state.staircaseState ^= 1;
+		break;
 	case 16: // Code Lock Shape #1 - Left
 	case 17: // Code Lock Shape #2
 	case 18: // Code Lock Shape #3
@@ -242,6 +248,7 @@ bool Mechanical::setVarValue(uint16 var, uint16 value) {
 	switch (var) {
 	case 13:
 		_elevatorPosition = value;
+		break;
 	case 14: // Elevator going down when at top
 		_elevatorGoingDown = value;
 		break;
@@ -724,6 +731,7 @@ void Mechanical::birdSing_run() {
 	uint32 time = _vm->_system->getMillis();
 	if (_birdSingEndTime < time) {
 		_bird->pauseMovie(true);
+		_vm->_sound->stopSound();
 		_birdSinging = false;
 	}
 }

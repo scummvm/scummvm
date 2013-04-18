@@ -401,9 +401,9 @@ bool AGOSEngine::loadRoomItems(uint16 room) {
 		filename[i] = 0;
 		p++;
 
-		for (;;) {
-			_roomsListPtr = p;
+		_roomsListPtr = p;
 
+		for (;;) {
 			minNum = READ_BE_UINT16(p); p += 2;
 			if (minNum == 0)
 				break;

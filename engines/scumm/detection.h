@@ -89,7 +89,7 @@ struct GameSettings {
 	/**
 	 * Game GUI options. Used to enable/disable certain GUI widgets
 	 */
-	uint32 guioptions;
+	const char *guioptions;
 };
 
 enum FilenameGenMethod {

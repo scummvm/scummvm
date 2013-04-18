@@ -1879,11 +1879,11 @@ Usecashcard	proc	near
 	call	showman
 
 	mov	di,114
-	if	foreign
-	mov	bx,120-3
-	else
 	mov	bx,120
-	endif
+	cmp	foreignrelease, 0
+	jz $1
+	mov	bx,120-3
+$1:
 	mov	ds,tempgraphics
 	mov	al,39
 	mov	ah,0
@@ -3189,9 +3189,10 @@ notinlouiss:	ret
 Getundertimed	proc	near
 
 	mov	al,timedy
-	if	foreign
+	cmp	foreignrelease, 0
+	jz $1
 	sub	al,3
-	endif
+$1:
 	mov	ah,0
 	mov	bx,ax
 	mov	al,timedx
@@ -3212,9 +3213,10 @@ Getundertimed	proc	near
 Putundertimed	proc	near
 
 	mov	al,timedy
-	if	foreign
+	cmp	foreignrelease, 0
+	jz $1
 	sub	al,3
-	endif
+$1:
 	mov	ah,0
 	mov	bx,ax
 	mov	al,timedx
@@ -3239,9 +3241,10 @@ Dumptimedtext	proc	near
 	cmp	needtodumptimed,1
 	jnz	nodumptimed
 	mov	al,timedy
-	if	foreign
+	cmp	foreignrelease, 0
+	jz $1
 	sub	al,3
-	endif
+$1:
 	mov	ah,0
 	mov	bx,ax
 	mov	al,timedx
@@ -3293,18 +3296,34 @@ Setuptimedtemp	proc	near
 	if	cd
 	cmp	ah,0
 	jz	notloadspeech3
+	push ax
+	push bx
+	push cx
+	push dx
 	mov	dl,"T"
 	mov	dh,ah
-               	mov	cl,"T"
+	mov	cl,"T"
 	mov	ah,0
 	call	loadspeech
 	cmp	speechloaded,1
-	jnz	notloadspeech3
+	jnz	$1
 	mov	al,50+12
 	call	playchannel1
+$1:
+	pop dx
+	pop cx
+	pop bx
+	pop ax
+
+	cmp	speechloaded,1
+	jnz	notloadspeech3 ; failed to load speech
+	cmp	subtitles, 1
+	jz	notloadspeech3
 	ret
+
 notloadspeech3:
-	endif
+	endif	;if cd
+
 	cmp	timecount,0
 	jnz	cantsetup2
 	mov	timedy,bh
@@ -3796,14 +3815,3 @@ nowinch:	call	showfirstuse
 	ret
 
 	endp
-
-
-
-
-
-
-
-
-
-
-

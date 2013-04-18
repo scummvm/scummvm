@@ -41,8 +41,9 @@
 #include "audio/decoders/flac.h"
 #include "audio/decoders/mp3.h"
 #include "audio/decoders/raw.h"
-#include "audio/decoders/vag.h"
 #include "audio/decoders/vorbis.h"
+#include "audio/decoders/xa.h"
+
 
 #include "gui/message.h"
 
@@ -106,8 +107,8 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
 	if (TinselV1PSX) {
-		// Read the stream and create a VAG Audio stream
-		Audio::AudioStream *vagStream = Audio::makeVagStream(_sampleStream.readStream(sampleLen), 44100);
+		// Read the stream and create a XA ADPCM audio stream
+		Audio::AudioStream *xaStream = Audio::makeXAStream(_sampleStream.readStream(sampleLen), 44100);
 
 		// FIXME: Should set this in a different place ;)
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, _vm->_config->_soundVolume);
@@ -115,7 +116,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
 		// Play the audio stream
-		_vm->_mixer->playStream(type, &curChan.handle, vagStream);
+		_vm->_mixer->playStream(type, &curChan.handle, xaStream);
 	} else {
 		// allocate a buffer
 		byte *sampleBuf = (byte *)malloc(sampleLen);

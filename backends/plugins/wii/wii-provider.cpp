@@ -43,4 +43,3 @@ Plugin *WiiPluginProvider::createPlugin(const Common::FSNode &node) const {
 }
 
 #endif // defined(DYNAMIC_MODULES) && defined(__WII__)
-

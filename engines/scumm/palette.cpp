@@ -372,6 +372,143 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 	setDirtyColors(firstIndex, numcolor - 1);
 }
 
+void ScummEngine::setAmigaPaletteFromPtr(const byte *ptr) {
+	memcpy(_currentPalette, ptr, 768);
+
+	for (int i = 0; i < 32; ++i) {
+		_shadowPalette[i] = i;
+		_colorUsedByCycle[i] = 0;
+	}
+
+	amigaPaletteFindFirstUsedColor();
+
+	for (int i = 0; i < 64; ++i) {
+		_amigaPalette[i * 3 + 0] = _currentPalette[(i + 16) * 3 + 0] >> 4;
+		_amigaPalette[i * 3 + 1] = _currentPalette[(i + 16) * 3 + 1] >> 4;
+		_amigaPalette[i * 3 + 2] = _currentPalette[(i + 16) * 3 + 2] >> 4;
+	}
+
+	for (int i = 0; i < 256; ++i) {
+		if (i < 16 || i >= _amigaFirstUsedColor) {
+			mapRoomPalette(i);
+			mapVerbPalette(i);
+		} else {
+			int idx = (i - 16) & 31;
+			// We adjust our verb palette map from [0, 31] to [32, 63], since unlike
+			// the original we set up the verb palette at colors [32, 63].
+			// The original instead used two different palettes for the verb virtual
+			// screen and all the rest.
+			if (idx != 17) {
+				_roomPalette[i] = idx;
+				_verbPalette[i] = idx + 32;
+			} else {
+				// In all my tests it seems the colors 0 and 32 in
+				// _amigaPalette are in fact black. Thus 17 is probably black.
+				// For the room map the color 17 is 33 (17+16), for the verb
+				// map it is 65 (17+32).
+				_roomPalette[i] = 0;
+				_verbPalette[i] = 32;
+			}
+		}
+	}
+
+	setDirtyColors(0, 255);
+}
+
+void ScummEngine::amigaPaletteFindFirstUsedColor() {
+	for (_amigaFirstUsedColor = 80; _amigaFirstUsedColor < 256; ++_amigaFirstUsedColor) {
+		// We look for the first used color here. If all color components are
+		// >= 252 the color seems to be unused. Check remapPaletteColor for
+		// the same behavior.
+		if (_currentPalette[_amigaFirstUsedColor * 3 + 0] <= 251
+		    || _currentPalette[_amigaFirstUsedColor * 3 + 1] <= 251
+		    || _currentPalette[_amigaFirstUsedColor * 3 + 2] <= 251)
+			break;
+	}
+}
+
+void ScummEngine::mapRoomPalette(int idx) {
+	// For Color 33 (which is in fact 17+16) see the special case in
+	// setAmigaPaletteFromPtr.
+	if (idx >= 16 && idx < 48 && idx != 33)
+		_roomPalette[idx] = idx - 16;
+	else
+		_roomPalette[idx] = remapRoomPaletteColor(_currentPalette[idx * 3 + 0] >> 4,
+		                                          _currentPalette[idx * 3 + 1] >> 4,
+		                                          _currentPalette[idx * 3 + 2] >> 4);
+}
+
+static const uint8 amigaWeightTable[16] = {
+	  0,   1,   4,   9,  16,  25,  36,  49,
+	 64,  81, 100, 121, 144, 169, 196, 225
+};
+
+int ScummEngine::remapRoomPaletteColor(int r, int g, int b) {
+	int idx = 0;
+	uint16 minValue = 0xFFFF;
+
+	const byte *pal = _amigaPalette;
+	const byte *cycle = _colorUsedByCycle;
+
+	for (int i = 0; i < 32; ++i) {
+		if (!*cycle++ && i != 17) {
+			int rD = ABS<int>(*pal++ - r);
+			int gD = ABS<int>(*pal++ - g);
+			int bD = ABS<int>(*pal++ - b);
+
+			const uint16 weight = amigaWeightTable[rD] + amigaWeightTable[gD] + amigaWeightTable[bD];
+			if (weight < minValue) {
+				minValue = weight;
+				idx = i;
+			}
+		} else {
+			pal += 3;
+		}
+	}
+
+	return idx;
+}
+
+void ScummEngine::mapVerbPalette(int idx) {
+	// We adjust our verb palette map from [0, 31] to [32, 63], since unlike
+	// the original we set up the verb palette at colors [32, 63].
+	// The original instead used two different palettes for the verb virtual
+	// screen and all the rest.
+	// For Color 65 (which is in fact 17+32) see the special case in
+	// setAmigaPaletteFromPtr.
+	if (idx >= 48 && idx < 80 && idx != 65)
+		_verbPalette[idx] = idx - 16;
+	else
+		_verbPalette[idx] = remapVerbPaletteColor(_currentPalette[idx * 3 + 0] >> 4,
+		                                          _currentPalette[idx * 3 + 1] >> 4,
+		                                          _currentPalette[idx * 3 + 2] >> 4) + 32;
+}
+
+int ScummEngine::remapVerbPaletteColor(int r, int g, int b) {
+	int idx = 0;
+	uint16 minValue = 0xFFFF;
+
+	const byte *pal = _amigaPalette + 32 * 3;
+
+	for (int i = 0; i < 32; ++i) {
+		if (i != 17) {
+			int rD = ABS<int>(*pal++ - r);
+			int gD = ABS<int>(*pal++ - g);
+			int bD = ABS<int>(*pal++ - b);
+
+			const uint16 weight = amigaWeightTable[rD] + amigaWeightTable[gD] + amigaWeightTable[bD];
+			if (weight < minValue) {
+				minValue = weight;
+				idx = i;
+			}
+		} else {
+			pal += 3;
+		}
+	}
+
+	return idx;
+}
+
 void ScummEngine::setDirtyColors(int min, int max) {
 	if (_palDirtyMin > min)
 		_palDirtyMin = min;
@@ -419,9 +556,24 @@ void ScummEngine::initCycl(const byte *ptr) {
 			cycl->start = *ptr++;
 			cycl->end = *ptr++;
 
+			if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+				cycl->start = CLIP(cycl->start - 16, 0, 31);
+				cycl->end = CLIP(cycl->end - 16, 0, 31);
+			}
+
 			for (int i = cycl->start; i <= cycl->end; ++i) {
 				_colorUsedByCycle[i] = 1;
 			}
+		}
+	}
+
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+		for (int i = 0; i < 256; ++i) {
+			if (i >= 16 && i < _amigaFirstUsedColor)
+				continue;
+
+			if (_colorUsedByCycle[_roomPalette[i]])
+				mapRoomPalette(i);
 		}
 	}
 }
@@ -432,11 +584,25 @@ void ScummEngine::stopCycle(int i) {
 	assertRange(0, i, 16, "stopCycle: cycle");
 	if (i != 0) {
 		_colorCycle[i - 1].delay = 0;
+		if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+			cycl = &_colorCycle[i - 1];
+			for (int j = cycl->start; j <= cycl->end && j < 32; ++j) {
+				_shadowPalette[j] = j;
+				_colorUsedByCycle[j] = 0;
+			}
+		}
 		return;
 	}
 
-	for (i = 0, cycl = _colorCycle; i < 16; i++, cycl++)
+	for (i = 0, cycl = _colorCycle; i < 16; i++, cycl++) {
 		cycl->delay = 0;
+		if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+			for (int j = cycl->start; j <= cycl->end && j < 32; ++j) {
+				_shadowPalette[j] = j;
+				_colorUsedByCycle[j] = 0;
+			}
+		}
+	}
 }
 
 /**
@@ -512,14 +678,18 @@ void ScummEngine::cyclePalette() {
 			setDirtyColors(cycl->start, cycl->end);
 			moveMemInPalRes(cycl->start, cycl->end, cycl->flags & 2);
 
-			doCyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
+			if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+				doCyclePalette(_shadowPalette, cycl->start, cycl->end, 1, !(cycl->flags & 2));
+			} else {
+				doCyclePalette(_currentPalette, cycl->start, cycl->end, 3, !(cycl->flags & 2));
 
-			if (_shadowPalette) {
-				if (_game.version >= 7) {
-					for (j = 0; j < NUM_SHADOW_PALETTE; j++)
+				if (_shadowPalette) {
+					if (_game.version >= 7) {
+						for (j = 0; j < NUM_SHADOW_PALETTE; j++)
 						doCycleIndirectPalette(_shadowPalette + j * 256, cycl->start, cycl->end, !(cycl->flags & 2));
-				} else {
-					doCycleIndirectPalette(_shadowPalette, cycl->start, cycl->end, !(cycl->flags & 2));
+					} else {
+						doCycleIndirectPalette(_shadowPalette, cycl->start, cycl->end, !(cycl->flags & 2));
+					}
 				}
 			}
 		}
@@ -543,6 +713,12 @@ void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
 	if (_game.platform == Common::kPlatformFMTowns && !(_townsPaletteFlags & 1))
 		return;
 #endif
+
+	// This function is actually a nullsub in Indy4 Amiga.
+	// It might very well be a nullsub in other Amiga games, but for now I
+	// limit this to Indy4 Amiga, since that is the only game I can check.
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4)
+		return;
 
 	byte *string1 = getStringAddress(resID);
 	byte *string2 = getStringAddress(resID + 1);
@@ -670,6 +846,12 @@ static inline uint colorWeight(int red, int green, int blue) {
 }
 
 void ScummEngine::setShadowPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor, int start, int end) {
+	// This function is actually a nullsub in Indy4 Amiga.
+	// It might very well be a nullsub in other Amiga games, but for now I
+	// limit this to Indy4 Amiga, since that is the only game I can check.
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4)
+		return;
+
 	const byte *basepal = getPalettePtr(_curPalIndex, _roomResource);
 	const byte *compareptr;
 	const byte *pal = basepal + start * 3;
@@ -721,62 +903,106 @@ void ScummEngine::setShadowPalette(int redScale, int greenScale, int blueScale, 
 }
 
 void ScummEngine::darkenPalette(int redScale, int greenScale, int blueScale, int startColor, int endColor) {
-	int max;
-	if (_game.version >= 5 && _game.version <= 6 && _game.heversion <= 60) {
-		max = 252;
-	} else {
-		max = 255;
-	}
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+		startColor = CLIP(startColor, 0, 255);
 
-	if (startColor <= endColor) {
-		const byte *cptr;
-		const byte *palptr;
-		int color, idx, j;
+		//bool remappedVerbColors = false;
+		bool remappedRoomColors = false;
+		bool cycleFlag = (blueScale >= 250 && greenScale >= 250 && redScale >= 250);
 
-		if (_game.heversion >= 90 || _game.version == 8) {
-			palptr = _darkenPalette;
-		} else {
-			palptr = getPalettePtr(_curPalIndex, _roomResource);
-		}
-		for (j = startColor; j <= endColor; j++) {
-			idx = (_game.heversion == 70) ? _HEV7ActorPalette[j] : j;
-			cptr = palptr + idx * 3;
+		const byte *palptr = getPalettePtr(_curPalIndex, _roomResource) + startColor * 3;
 
-			if (_game.heversion == 70)
-				setDirtyColors(idx, idx);
-
-			// Original FOA Amiga version skips these colors
-			// Fixes bug #1206994: "FOA AMIGA: Black cursor and text in Dig Site"
-			if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
-				if (j < 16) {
-					cptr += 3;
-					continue;
-				}
+		for (int i = startColor; i <= endColor; ++i) {
+			if (i > 16 && i < 48) {
+				if (cycleFlag)
+					_colorUsedByCycle[i - 16] &= ~2;
+				else
+					_colorUsedByCycle[i - 16] |=  2;
 			}
 
-			color = *cptr++;
-			color = color * redScale / 0xFF;
-			if (color > max)
-				color = max;
-			_currentPalette[idx * 3 + 0] = color;
-
-			color = *cptr++;
-			color = color * greenScale / 0xFF;
-			if (color > max)
-				color = max;
-			_currentPalette[idx * 3 + 1] = color;
-
-			color = *cptr++;
-			color = color * blueScale / 0xFF;
-			if (color > max)
-				color = max;
-			_currentPalette[idx * 3 + 2] = color;
-
-			if (_game.features & GF_16BIT_COLOR)
-				_16BitPalette[idx] = get16BitColor(_currentPalette[idx * 3 + 0], _currentPalette[idx * 3 + 1], _currentPalette[idx * 3 + 2]);
+			_currentPalette[i * 3 + 0] = (*palptr++ * redScale) >> 8;
+			_currentPalette[i * 3 + 1] = (*palptr++ * greenScale) >> 8;
+			_currentPalette[i * 3 + 2] = (*palptr++ * blueScale) >> 8;
 		}
-		if (_game.heversion != 70)
-			setDirtyColors(startColor, endColor);
+
+		for (int i = startColor; i <= endColor; ++i) {
+			// Colors 33 (17+16) and 65 (17+32) will never get changed. For
+			// more information about these check setAmigaPaletteFromPtr.
+			if (i >= 16 && i < 48 && i != 33) {
+				remappedRoomColors = true;
+				_amigaPalette[(i - 16) * 3 + 0] = _currentPalette[i * 3 + 0] >> 4;
+				_amigaPalette[(i - 16) * 3 + 1] = _currentPalette[i * 3 + 1] >> 4;
+				_amigaPalette[(i - 16) * 3 + 2] = _currentPalette[i * 3 + 2] >> 4;
+			} else if (i >= 48 && i < 80 && i != 65) {
+				//remappedVerbColors = true;
+				_amigaPalette[(i - 16) * 3 + 0] = _currentPalette[i * 3 + 0] >> 4;
+				_amigaPalette[(i - 16) * 3 + 1] = _currentPalette[i * 3 + 1] >> 4;
+				_amigaPalette[(i - 16) * 3 + 2] = _currentPalette[i * 3 + 2] >> 4;
+			}
+		}
+
+		for (int i = 0; i < 256; ++i) {
+			if (i >= 16 && i < _amigaFirstUsedColor)
+				continue;
+
+			bool inRange = (startColor <= i && i <= endColor);
+			int idx = _roomPalette[i] + 16;
+			bool mappedInRange = (startColor <= idx && idx <= endColor);
+
+			if (inRange != mappedInRange || (remappedRoomColors && cycleFlag))
+				mapRoomPalette(i);
+		}
+
+		setDirtyColors(startColor, endColor);
+	} else {
+		int max;
+		if (_game.version >= 5 && _game.version <= 6 && _game.heversion <= 60) {
+			max = 252;
+		} else {
+			max = 255;
+		}
+
+		if (startColor <= endColor) {
+			const byte *cptr;
+			const byte *palptr;
+			int color, idx, j;
+
+			if (_game.heversion >= 90 || _game.version == 8) {
+				palptr = _darkenPalette;
+			} else {
+				palptr = getPalettePtr(_curPalIndex, _roomResource);
+			}
+			for (j = startColor; j <= endColor; j++) {
+				idx = (_game.heversion == 70) ? _HEV7ActorPalette[j] : j;
+				cptr = palptr + idx * 3;
+
+				if (_game.heversion == 70)
+					setDirtyColors(idx, idx);
+
+				color = *cptr++;
+				color = color * redScale / 0xFF;
+				if (color > max)
+					color = max;
+				_currentPalette[idx * 3 + 0] = color;
+
+				color = *cptr++;
+				color = color * greenScale / 0xFF;
+				if (color > max)
+					color = max;
+				_currentPalette[idx * 3 + 1] = color;
+
+				color = *cptr++;
+				color = color * blueScale / 0xFF;
+				if (color > max)
+					color = max;
+				_currentPalette[idx * 3 + 2] = color;
+
+				if (_game.features & GF_16BIT_COLOR)
+					_16BitPalette[idx] = get16BitColor(_currentPalette[idx * 3 + 0], _currentPalette[idx * 3 + 1], _currentPalette[idx * 3 + 2]);
+			}
+			if (_game.heversion != 70)
+				setDirtyColors(startColor, endColor);
+		}
 	}
 }
 
@@ -995,6 +1221,41 @@ void ScummEngine::setPalColor(int idx, int r, int g, int b) {
 		_darkenPalette[idx * 3 + 2] = b;
 	}
 
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+		// Colors 33 (17+16) and 65 (17+32) will never get changed. For
+		// more information about these check setAmigaPaletteFromPtr.
+		if (idx < 16 || idx >= _amigaFirstUsedColor) {
+			mapRoomPalette(idx);
+			mapVerbPalette(idx);
+		} else if (idx >= 16 && idx < 48 && idx != 33) {
+			_amigaPalette[(idx - 16) * 3 + 0] = _currentPalette[idx * 3 + 0] >> 4;
+			_amigaPalette[(idx - 16) * 3 + 1] = _currentPalette[idx * 3 + 1] >> 4;
+			_amigaPalette[(idx - 16) * 3 + 2] = _currentPalette[idx * 3 + 2] >> 4;
+
+			for (int i = 0; i < 256; ++i) {
+				if (i >= 16 && i < _amigaFirstUsedColor)
+					continue;
+
+				if (idx - 16 == _roomPalette[i])
+					mapRoomPalette(i);
+			}
+		} else if (idx >= 48 && idx < 80 && idx != 65) {
+			_amigaPalette[(idx - 16) * 3 + 0] = _currentPalette[idx * 3 + 0] >> 4;
+			_amigaPalette[(idx - 16) * 3 + 1] = _currentPalette[idx * 3 + 1] >> 4;
+			_amigaPalette[(idx - 16) * 3 + 2] = _currentPalette[idx * 3 + 2] >> 4;
+
+			for (int i = 0; i < 256; ++i) {
+				if (i >= 16 && i < _amigaFirstUsedColor)
+					continue;
+
+				// We do - 16 instead of - 48 like the original, since our
+				// verb palette map is using [32, 63] instead of [0, 31].
+				if (idx - 16 == _verbPalette[i])
+					mapVerbPalette(i);
+			}
+		}
+	}
+
 	if (_game.features & GF_16BIT_COLOR)
 		_16BitPalette[idx] = get16BitColor(r, g, b);
 
@@ -1014,6 +1275,8 @@ void ScummEngine::setCurrentPalette(int palindex) {
 		towns_setPaletteFromPtr(pals);
 #endif
 #endif
+	} else if (_game.id == GID_INDY4 && _game.platform == Common::kPlatformAmiga) {
+		setAmigaPaletteFromPtr(pals);
 	} else {
 		setPaletteFromPtr(pals);
 	}
@@ -1069,42 +1332,74 @@ void ScummEngine::updatePalette() {
 	if (_palDirtyMax == -1)
 		return;
 
-	bool noir_mode = (_game.id == GID_SAMNMAX && readVar(0x8000));
-	int first = _palDirtyMin;
-	int num = _palDirtyMax - first + 1;
-	int i;
-
 	byte palette_colors[3 * 256];
 	byte *p = palette_colors;
+	int first;
+	int num;
 
-	for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
-		byte *data;
+	if (_game.platform == Common::kPlatformAmiga && _game.id == GID_INDY4) {
+		// Indy4 Amiga has a special palette handling scheme
+		first = 0;
+		num = 64;
 
-		if (_game.features & GF_SMALL_HEADER && _game.version > 2)
-			data = _currentPalette + _shadowPalette[i] * 3;
-		else
-			data = _currentPalette + i * 3;
+		for (int i = 0; i < 64; ++i) {
+			byte *data;
 
-		// Sam & Max film noir mode. Convert the colors to grayscale
-		// before uploading them to the backend.
+			if (i < 32)
+				data = _amigaPalette + _shadowPalette[i] * 3;
+			else
+				data = _amigaPalette + i * 3;
 
-		if (noir_mode) {
-			int r, g, b;
-			byte brightness;
+			*p++ = data[0] * 255 / 15;
+			*p++ = data[1] * 255 / 15;
+			*p++ = data[2] * 255 / 15;
+		}
 
-			r = data[0];
-			g = data[1];
-			b = data[2];
+		// Setup colors for the mouse cursor
+		// Color values taken from Indy4 DOS
+		static const uint8 mouseCursorPalette[] = {
+			255, 255, 255,
+			171, 171, 171,
+			 87,  87,  87
+		};
 
-			brightness = (byte)((0.299 * r + 0.587 * g + 0.114 * b) + 0.5);
+		_system->getPaletteManager()->setPalette(mouseCursorPalette, 252, 3);
+	} else {
+		bool noir_mode = (_game.id == GID_SAMNMAX && readVar(0x8000));
+		int i;
 
-			*p++ = brightness;
-			*p++ = brightness;
-			*p++ = brightness;
-		} else {
-			*p++ = data[0];
-			*p++ = data[1];
-			*p++ = data[2];
+		first = _palDirtyMin;
+		num = _palDirtyMax - first + 1;
+
+		for (i = _palDirtyMin; i <= _palDirtyMax; i++) {
+			byte *data;
+
+			if (_game.features & GF_SMALL_HEADER && _game.version > 2)
+				data = _currentPalette + _shadowPalette[i] * 3;
+			else
+				data = _currentPalette + i * 3;
+
+			// Sam & Max film noir mode. Convert the colors to grayscale
+			// before uploading them to the backend.
+
+			if (noir_mode) {
+				int r, g, b;
+				byte brightness;
+
+				r = data[0];
+				g = data[1];
+				b = data[2];
+
+				brightness = (byte)((0.299 * r + 0.587 * g + 0.114 * b) + 0.5);
+
+				*p++ = brightness;
+				*p++ = brightness;
+				*p++ = brightness;
+			} else {
+				*p++ = data[0];
+				*p++ = data[1];
+				*p++ = data[2];
+			}
 		}
 	}
 
@@ -1115,7 +1410,7 @@ void ScummEngine::updatePalette() {
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_game.platform == Common::kPlatformFMTowns) {
 		p = palette_colors;
-		for (i = first; i < first + num; ++i) {
+		for (int i = first; i < first + num; ++i) {
 			_16BitPalette[i] = get16BitColor(p[0], p[1], p[2]);
 			p += 3;
 		}

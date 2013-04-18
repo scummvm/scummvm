@@ -42,6 +42,14 @@ reg_t kStrCat(EngineState *s, int argc, reg_t *argv) {
 	Common::String s1 = s->_segMan->getString(argv[0]);
 	Common::String s2 = s->_segMan->getString(argv[1]);
 
+	// The Japanese version of PQ2 splits the two strings here
+	// (check bug #3396887).
+	if (g_sci->getGameId() == GID_PQ2 &&
+		g_sci->getLanguage() == Common::JA_JPN) {
+		s1 = g_sci->strSplit(s1.c_str(), NULL);
+		s2 = g_sci->strSplit(s2.c_str(), NULL);
+	}
+
 	s1 += s2;
 	s->_segMan->strcpy(argv[0], s1.c_str());
 	return argv[0];
@@ -193,8 +201,8 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	char xfer;
 	int i;
 	int startarg;
-	int str_leng = 0; /* Used for stuff like "%13s" */
-	int unsigned_var = 0;
+	int strLength = 0; /* Used for stuff like "%13s" */
+	bool unsignedVar = false;
 
 	if (position.segment)
 		startarg = 2;
@@ -228,7 +236,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				mode = 0;
 			} else {
 				mode = 1;
-				str_leng = 0;
+				strLength = 0;
 			}
 		} else if (mode == 1) { /* xfer != '%' */
 			char fillchar = ' ';
@@ -238,32 +246,32 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 			/* int writelength; -- unused atm */
 
-			if (xfer && (isdigit(xfer) || xfer == '-' || xfer == '=')) {
+			if (xfer && (isdigit(static_cast<unsigned char>(xfer)) || xfer == '-' || xfer == '=')) {
 				char *destp;
 
 				if (xfer == '0')
 					fillchar = '0';
 				else if (xfer == '=')
 					align = ALIGN_CENTER;
-				else if (isdigit(xfer) || (xfer == '-'))
+				else if (isdigit(static_cast<unsigned char>(xfer)) || (xfer == '-'))
 					source--; // Go to start of length argument
 
-				str_leng = strtol(source, &destp, 10);
+				strLength = strtol(source, &destp, 10);
 
 				if (destp > source)
 					source = destp;
 
-				if (str_leng < 0) {
+				if (strLength < 0) {
 					align = ALIGN_LEFT;
-					str_leng = -str_leng;
+					strLength = -strLength;
 				} else if (align != ALIGN_CENTER)
 					align = ALIGN_RIGHT;
 
 				xfer = *source++;
 			} else
-				str_leng = 0;
+				strLength = 0;
 
-			assert((target - targetbuf) + str_leng + 1 <= maxsize);
+			assert((target - targetbuf) + strLength + 1 <= maxsize);
 
 			switch (xfer) {
 			case 's': { /* Copy string */
@@ -278,7 +286,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				Common::String tempsource = g_sci->getKernel()->lookupText(reg,
 				                                  arguments[paramindex + 1]);
 				int slen = strlen(tempsource.c_str());
-				int extralen = str_leng - slen;
+				int extralen = strLength - slen;
 				assert((target - targetbuf) + extralen <= maxsize);
 				if (extralen < 0)
 					extralen = 0;
@@ -334,18 +342,25 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 			case 'c': { /* insert character */
 				assert((target - targetbuf) + 2 <= maxsize);
 				if (align >= 0)
-					while (str_leng-- > 1)
+					while (strLength-- > 1)
 						*target++ = ' '; /* Format into the text */
-
-				*target++ = arguments[paramindex++];
+				char argchar = arguments[paramindex++];
+				if (argchar)
+					*target++ = argchar;
 				mode = 0;
 			}
 			break;
 
 			case 'x':
 			case 'u':
-				unsigned_var = 1;
+				unsignedVar = true;
 			case 'd': { /* Copy decimal */
+				// In the new SCI2 kString function, %d is used for unsigned
+				// integers. An example is script 962 in Shivers - it uses %d
+				// to create file names.
+				if (getSciVersion() >= SCI_VERSION_2)
+					unsignedVar = true;
+
 				/* int templen; -- unused atm */
 				const char *format_string = "%d";
 
@@ -353,14 +368,14 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 					format_string = "%x";
 
 				int val = arguments[paramindex];
-				if (!unsigned_var)
+				if (!unsignedVar)
 					val = (int16)arguments[paramindex];
 
 				target += sprintf(target, format_string, val);
 				paramindex++;
 				assert((target - targetbuf) <= maxsize);
 
-				unsigned_var = 0;
+				unsignedVar = false;
 
 				mode = 0;
 			}
@@ -375,7 +390,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 			if (align) {
 				int written = target - writestart;
-				int padding = str_leng - written;
+				int padding = strLength - written;
 
 				if (padding > 0) {
 					if (align > 0) {
@@ -730,6 +745,10 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	case 8: { // Dup
 		const char *rawString = 0;
 		uint32 size = 0;
+		reg_t stringHandle;
+		// We allocate the new string first because if the StringTable needs to
+		// grow, our rawString pointer will be invalidated
+		SciString *dupString = s->_segMan->allocateString(&stringHandle);
 
 		if (argv[1].segment == s->_segMan->getStringSegmentId()) {
 			SciString *string = s->_segMan->lookupString(argv[1]);
@@ -741,8 +760,6 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 			size = string.size() + 1;
 		}
 
-		reg_t stringHandle;
-		SciString *dupString = s->_segMan->allocateString(&stringHandle);
 		dupString->setSize(size);
 
 		for (uint32 i = 0; i < size; i++)

@@ -2,4 +2,3 @@
 
 HOME=`pwd`
 $HOME/scummvm.elf
-

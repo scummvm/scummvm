@@ -11,4 +11,4 @@ mkdir saves
 mkdir runtime
 cd runtime
 
-../bin/scummvm --fullscreen --gfx-mode=2x --config=../scummvm.config 
+../bin/scummvm --fullscreen  --gfx-mode=2x --config=../scummvm.config  --themepath=../data

@@ -257,7 +257,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	int t = _credits;
 	_credits = 0;
 	giveCredits(t, 0);
-	setDelayedCursorUpdate();
+	setHandItem(_itemInHand);
 	loadLevel(_currentLevel);
 	gui_drawPlayField();
 	timerSpecialCharacterUpdate(0);
@@ -472,4 +472,3 @@ Graphics::Surface *LoLEngine::generateSaveThumbnail() const {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

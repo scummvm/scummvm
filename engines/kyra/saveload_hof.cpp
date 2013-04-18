@@ -306,7 +306,7 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 	_mainCharacter.facing = 4;
 
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
-	setDelayedCursorUpdate();
+	setHandItem(_itemInHand);
 
 	if (_lastMusicCommand >= 0 && !_unkSceneScreenFlag1)
 		snd_playWanderScoreViaMap(_lastMusicCommand, 1);
@@ -329,4 +329,3 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 }
 
 } // End of namespace Kyra
-

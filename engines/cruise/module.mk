@@ -40,4 +40,3 @@ endif
 
 # Include common rules
 include $(srcdir)/rules.mk
-

@@ -673,4 +673,3 @@ void SoundTownsPC98_v2::updateVolumeSettings() {
 } // End of namespace Kyra
 
 #undef EUPHONY_FADEOUT_TICKS
-

@@ -40,15 +40,14 @@
 #include "scumm/detection.h"
 #include "scumm/script.h"
 
-#include "audio/mididrv.h"
-
 #ifdef __DS__
 /* This disables the dual layer mode which is used in FM-Towns versions
  * of SCUMM games and which emulates the behavior of the original code.
  * The only purpose is code size reduction for certain backends.
- * SCUMM 3 (FM-Towns) games will run in normal (DOS VGA) mode, which should
- * work just fine in most situations. Some glitches might occur. SCUMM 5 games
- * will not work without dual layer (and 16 bit color) support.
+ * SCUMM 3 (FM-Towns) games will run in English in normal (DOS VGA) mode,
+ * which should work just fine in most situations. Some glitches might
+ * occur. Japanese mode and SCUMM 5 FM-Towns games will not work without
+ * dual layer (and 16 bit color) support.
  */
 #define DISABLE_TOWNS_DUAL_LAYER_MODE
 #endif
@@ -234,7 +233,8 @@ enum ScummGameId {
 	GID_PUTTMOON,
 	GID_FUNPACK,
 	GID_FREDDI3,
-	GID_BIRTHDAY,
+	GID_BIRTHDAYRED,
+	GID_BIRTHDAYYELLOW,
 	GID_TREASUREHUNT,
 	GID_PUTTRACE,
 	GID_FUNSHOP,	// Used for all three funshops
@@ -345,6 +345,7 @@ class ResourceManager;
 class ScummEngine : public Engine {
 	friend class ScummDebugger;
 	friend class CharsetRenderer;
+	friend class CharsetRendererTownsClassic;
 	friend class ResourceManager;
 
 public:
@@ -969,6 +970,7 @@ protected:
 	void setCurrentPalette(int pal);
 	void setRoomPalette(int pal, int room);
 	void setPCEPaletteFromPtr(const byte *ptr);
+	void setAmigaPaletteFromPtr(const byte *ptr);
 	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
 
 	virtual void setPalColor(int index, int r, int g, int b);
@@ -1064,6 +1066,9 @@ public:
 	uint16 _hePaletteSlot;
 	uint16 *_16BitPalette;
 
+	// Indy4 Amiga specific
+	byte *_verbPalette;
+
 protected:
 	int _shadowPaletteSize;
 	byte _currentPalette[3 * 256];
@@ -1082,8 +1087,16 @@ protected:
 	int _saveSound;
 	bool _native_mt32;
 	bool _enable_gs;
-	MidiDriverFlags _musicType;
 	bool _copyProtection;
+
+	// Indy4 Amiga specific
+	uint16 _amigaFirstUsedColor;
+	byte _amigaPalette[3 * 64];
+	void amigaPaletteFindFirstUsedColor();
+	void mapRoomPalette(int idx);
+	int remapRoomPaletteColor(int r, int g, int b);
+	void mapVerbPalette(int idx);
+	int remapVerbPaletteColor(int r, int g, int b);
 
 public:
 	uint16 _extraBoxFlags[65];
@@ -1326,14 +1339,17 @@ public:
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;
 
+#ifdef USE_RGB_COLOR
+	// FM-Towns / PC-Engine specific
+	Graphics::FontSJIS *_cjkFont;
+#endif
+
 	// FM-Towns specific
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 public:
 	bool towns_isRectInStringBox(int x1, int y1, int x2, int y2);
 	byte _townsPaletteFlags;
-	byte _townsCharsetColorMap[16];
-	Graphics::FontSJIS *_cjkFont;
-	uint16 _cjkChar;
+	byte _townsCharsetColorMap[16];	
 
 protected:
 	void towns_drawStripToScreen(VirtScreen *vs, int dstX, int dstY, int srcX, int srcY, int w, int h);

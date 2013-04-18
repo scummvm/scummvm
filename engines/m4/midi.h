@@ -57,4 +57,3 @@ protected:
 } // End of namespace M4
 
 #endif
-

@@ -544,4 +544,3 @@ const SoundDigital::AudioCodecs SoundDigital::_supportedCodecs[] = {
 
 
 } // End of namespace Kyra
-

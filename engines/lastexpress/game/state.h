@@ -325,7 +325,7 @@ public:
 
 			switch (index) {
 			default:
-				error("GameProgress::isEqual: invalid index value (was: %d, max:127)", index);
+				error("[GameProgress::getValueName] Invalid index value (was: %d, max:127)", index);
 				break;
 
 			EXPOSE_VALUE(0, field_0);

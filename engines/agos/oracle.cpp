@@ -25,7 +25,6 @@
 #ifdef ENABLE_AGOS2
 
 #include "common/savefile.h"
-#include "common/system.h"
 
 #include "graphics/surface.h"
 

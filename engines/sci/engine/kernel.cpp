@@ -488,8 +488,15 @@ bool Kernel::signatureMatch(const uint16 *sig, int argc, const reg_t *argv) {
 		if ((type & SIG_IS_INVALID) && (!(curSig & SIG_IS_INVALID)))
 			return false; // pointer is invalid and signature doesn't allow that?
 
-		if (!((type & ~SIG_IS_INVALID) & curSig))
-			return false; // type mismatch
+		if (!((type & ~SIG_IS_INVALID) & curSig)) {
+			if ((type & ~SIG_IS_INVALID) == SIG_TYPE_ERROR && (curSig & SIG_IS_INVALID)) {
+				// Type is unknown (error - usually because of a deallocated object or
+				// stale pointer) and the signature allows invalid pointers. In this case,
+				// ignore the invalid pointer.
+			} else {
+				return false; // type mismatch
+			}
+		}
 
 		if (!(curSig & SIG_MORE_MAY_FOLLOW)) {
 			sig++;
@@ -821,7 +828,8 @@ void Kernel::setDefaultKernelNames(GameFeatures *features) {
 enum {
 	kKernelEntriesSci2 = 0x8b,
 	kKernelEntriesGk2Demo = 0xa0,
-	kKernelEntriesSci21 = 0x9d
+	kKernelEntriesSci21 = 0x9d,
+	kKernelEntriesSci3 = 0xa1
 };
 
 void Kernel::setKernelNamesSci2() {
@@ -849,8 +857,11 @@ void Kernel::setKernelNamesSci21(GameFeatures *features) {
 		// OnMe is IsOnMe here, but they should be compatible
 		_kernelNames[0x23] = "Robot"; // Graph in SCI2
 		_kernelNames[0x2e] = "Priority"; // DisposeTextBitmap in SCI2
-	} else
+	} else if (getSciVersion() != SCI_VERSION_3) {
 		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci21);
+	} else if (getSciVersion() == SCI_VERSION_3) {
+		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci3);
+	}
 }
 
 #endif

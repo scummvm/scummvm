@@ -24,8 +24,6 @@
 
 #ifdef ENABLE_AGOS2
 
-#include "common/system.h"
-
 #include "agos/agos.h"
 
 namespace AGOS {

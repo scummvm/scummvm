@@ -29,9 +29,13 @@
 
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
+#include "backends/platform/sdl/macosx/appmenu_osx.h"
+#include "backends/updates/macosx/macosx-updates.h"
 
 #include "common/archive.h"
+#include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/translation.h"
 
 #include "ApplicationServices/ApplicationServices.h"	// for LSOpenFSRef
 #include "CoreFoundation/CoreFoundation.h"	// for CF* stuff
@@ -50,6 +54,20 @@ void OSystem_MacOSX::initBackend() {
 		// Setup and start mixer
 		_mixerManager->init();
 	}
+
+#ifdef USE_TRANSLATION
+	// We need to initialize the translataion manager here for the following
+	// call to replaceApplicationMenuItems() work correctly
+	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
+#endif // USE_TRANSLATION
+
+	// Replace the SDL generated menu items with our own translated ones on Mac OS X
+	replaceApplicationMenuItems();
+
+#ifdef USE_SPARKLE
+	// Initialize updates manager
+	_updateManager = new MacOSXUpdateManager();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();
@@ -98,6 +116,53 @@ bool OSystem_MacOSX::displayLogFile() {
 	}
 
 	return err != noErr;
+}
+
+Common::String OSystem_MacOSX::getSystemLanguage() const {
+#if defined(USE_DETECTLANG) && defined(USE_TRANSLATION)
+	CFArrayRef availableLocalizations = CFBundleCopyBundleLocalizations(CFBundleGetMainBundle());
+	if (availableLocalizations) {
+		CFArrayRef preferredLocalizations = CFBundleCopyPreferredLocalizationsFromArray(availableLocalizations);
+		CFRelease(availableLocalizations);
+		if (preferredLocalizations) {
+			CFIndex localizationsSize = CFArrayGetCount(preferredLocalizations);
+			// Since we have a list of sorted preferred localization, I would like here to
+			// check that they are supported by the TranslationManager and take the first
+			// one that is supported. The listed localizations are taken from the Bundle
+			// plist file, so they should all be supported, unless the plist file is not
+			// synchronized with the translations.dat file. So this is not really a big
+			// issue. And because getSystemLanguage() is called from the constructor of
+			// TranslationManager (therefore before the instance pointer is set), calling
+			// TransMan here results in an infinite loop and creation of a lot of TransMan
+			// instances.
+			/*
+			for (CFIndex i = 0 ; i < localizationsSize ; ++i) {
+				CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(preferredLocalizations, i);
+				char buffer[10];
+				CFStringGetCString(language, buffer, 50, kCFStringEncodingASCII);
+				int32 languageId = TransMan.findMatchingLanguage(buffer);
+				if (languageId != -1) {
+					CFRelease(preferredLocalizations);
+					return TransMan.getLangById(languageId);
+				}
+			}
+			*/
+			if (localizationsSize > 0) {
+				CFStringRef language = (CFStringRef)CFArrayGetValueAtIndex(preferredLocalizations, 0);
+				char buffer[10];
+				CFStringGetCString(language, buffer, 50, kCFStringEncodingASCII);
+				CFRelease(preferredLocalizations);
+				return buffer;
+			}
+			CFRelease(preferredLocalizations);
+		}
+		
+	}
+	// Falback to POSIX implementation
+	return OSystem_POSIX::getSystemLanguage();
+#else // USE_DETECTLANG
+	return OSystem_POSIX::getSystemLanguage();
+#endif // USE_DETECTLANG
 }
 
 #endif

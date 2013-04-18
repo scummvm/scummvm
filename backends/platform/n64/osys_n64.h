@@ -212,4 +212,3 @@ public:
 };
 
 #endif /* __OSYS_N64_H__ */
-

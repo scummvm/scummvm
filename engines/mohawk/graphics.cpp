@@ -672,6 +672,52 @@ void MystGraphics::simulatePreviousDrawDelay(const Common::Rect &dest) {
 	_nextAllowedDrawTime = time + _constantDrawDelay + dest.height() * dest.width() / _proportionalDrawDelay;
 }
 
+void MystGraphics::copyBackBufferToScreenWithSaturation(int16 saturation) {
+	Graphics::Surface *screen = _vm->_system->lockScreen();
+
+	for (uint16 y = 0; y < _viewport.height(); y++)
+		for (uint16 x = 0; x < _viewport.width(); x++) {
+			uint32 color;
+			uint8 r, g, b;
+
+			if (_pixelFormat.bytesPerPixel == 2)
+				color = *(const uint16 *)_backBuffer->getBasePtr(x, y);
+			else
+				color = *(const uint32 *)_backBuffer->getBasePtr(x, y);
+
+			_pixelFormat.colorToRGB(color, r, g, b);
+
+			r = CLIP<int16>((int16)r - saturation, 0, 255);
+			g = CLIP<int16>((int16)g - saturation, 0, 255);
+			b = CLIP<int16>((int16)b - saturation, 0, 255);
+
+			color = _pixelFormat.RGBToColor(r, g, b);
+
+			if (_pixelFormat.bytesPerPixel == 2) {
+				uint16 *dst = (uint16 *)screen->getBasePtr(x, y);
+				*dst = color;
+			} else {
+				uint32 *dst = (uint32 *)screen->getBasePtr(x, y);
+				*dst = color;
+			}
+		}
+
+	_vm->_system->unlockScreen();
+	_vm->_system->updateScreen();
+}
+
+void MystGraphics::fadeToBlack() {
+	for (int16 i = 0; i < 256; i += 32) {
+		copyBackBufferToScreenWithSaturation(i);
+	}
+}
+
+void MystGraphics::fadeFromBlack() {
+	for (int16 i = 256; i >= 0; i -= 32) {
+		copyBackBufferToScreenWithSaturation(i);
+	}
+}
+
 #endif // ENABLE_MYST
 
 #ifdef ENABLE_RIVEN
@@ -913,7 +959,8 @@ void RivenGraphics::clearMainScreen() {
 }
 
 void RivenGraphics::fadeToBlack() {
-	// Self-explanatory
+	// The transition speed is forced to best here
+	setTransitionSpeed(kRivenTransitionSpeedBest);
 	scheduleTransition(16);
 	clearMainScreen();
 	runScheduledTransition();

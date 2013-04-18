@@ -25,10 +25,10 @@
 namespace TeenAgent {
 
 Console::Console(TeenAgentEngine *engine) : _engine(engine) {
-	DCmd_Register("enable_object",	WRAP_METHOD(Console, enableObject));
-	DCmd_Register("disable_object",	WRAP_METHOD(Console, enableObject));
-	DCmd_Register("set_ons",		WRAP_METHOD(Console, setOns));
-	DCmd_Register("set_music",		WRAP_METHOD(Console, setMusic));
+	DCmd_Register("enable_object",  WRAP_METHOD(Console, enableObject));
+	DCmd_Register("disable_object", WRAP_METHOD(Console, enableObject));
+	DCmd_Register("set_ons",        WRAP_METHOD(Console, setOns));
+	DCmd_Register("set_music",      WRAP_METHOD(Console, setMusic));
 }
 
 bool Console::enableObject(int argc, const char **argv) {

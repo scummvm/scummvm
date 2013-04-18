@@ -30,7 +30,7 @@
 
 namespace Queen {
 
-const char *Input::_commandKeys[] = {
+const char *const Input::_commandKeys[] = {
 	"ocmglptu", // English
 	"osbgpnre", // German
 	"ofdnepau", // French

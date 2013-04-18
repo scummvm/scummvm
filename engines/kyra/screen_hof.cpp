@@ -146,4 +146,3 @@ void Screen_HoF::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int 
 }
 
 } // End of namespace Kyra
-

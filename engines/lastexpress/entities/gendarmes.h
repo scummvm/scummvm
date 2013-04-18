@@ -26,7 +26,7 @@
 #include "lastexpress/entities/entity.h"
 #include "lastexpress/entities/entity_intern.h"
 
-#include "lastexpress/game/sound.h"
+#include "lastexpress/sound/sound.h"
 
 namespace LastExpress {
 
@@ -88,7 +88,7 @@ public:
 	DECLARE_FUNCTION(chapter5)
 
 private:
-	void arrest(const SavePoint &savepoint, bool playSound = false, SoundManager::FlagType flag = SoundManager::kFlagInvalid, bool checkCallback = false, bool shouldUpdateEntity = false);
+	void arrest(const SavePoint &savepoint, bool playSound = false, SoundFlag flag = kFlagInvalid, bool checkCallback = false, bool shouldUpdateEntity = false);
 };
 
 } // End of namespace LastExpress

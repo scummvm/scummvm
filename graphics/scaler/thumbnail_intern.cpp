@@ -236,4 +236,3 @@ bool createThumbnail(Graphics::Surface *surf, const uint8 *pixels, int w, int h,
 
 	return createThumbnail(*surf, screen);
 }
-

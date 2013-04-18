@@ -268,4 +268,3 @@ SymbianStdioStream *SymbianStdioStream::makeFromPath(const Common::String &path,
 		return new SymbianStdioStream(handle);
 	return 0;
 }
-

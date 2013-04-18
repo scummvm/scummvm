@@ -158,7 +158,7 @@ protected:
 	static const RetailGameVersion *detectGameVersionFromSize(uint32 size);
 
 	//! resource table filename (queen.tbl)
-	static const char *_tableFilename;
+	static const char *const _tableFilename;
 
 	//! known FOTAQ versions
 	static const RetailGameVersion _gameVersions[];

@@ -81,7 +81,7 @@ void XMLParser::close() {
 	_stream = 0;
 }
 
-bool XMLParser::parserError(const Common::String &errStr) {
+bool XMLParser::parserError(const String &errStr) {
 	_state = kParserError;
 
 	const int startPosition = _stream->pos();
@@ -263,7 +263,7 @@ bool XMLParser::vparseIntegerKey(const char *key, int count, va_list args) {
 	int *num_ptr;
 
 	while (count--) {
-		while (isspace(*key))
+		while (isspace(static_cast<unsigned char>(*key)))
 			key++;
 
 		num_ptr = va_arg(args, int*);
@@ -271,7 +271,7 @@ bool XMLParser::vparseIntegerKey(const char *key, int count, va_list args) {
 
 		key = parseEnd;
 
-		while (isspace(*key))
+		while (isspace(static_cast<unsigned char>(*key)))
 			key++;
 
 		if (count && *key++ != ',')
@@ -463,10 +463,10 @@ bool XMLParser::parse() {
 }
 
 bool XMLParser::skipSpaces() {
-	if (!isspace(_char))
+	if (!isspace(static_cast<unsigned char>(_char)))
 		return false;
 
-	while (_char && isspace(_char))
+	while (_char && isspace(static_cast<unsigned char>(_char)))
 		_char = _stream->readByte();
 
 	return true;
@@ -516,7 +516,7 @@ bool XMLParser::parseToken() {
 		_char = _stream->readByte();
 	}
 
-	return isspace(_char) != 0 || _char == '>' || _char == '=' || _char == '/';
+	return isspace(static_cast<unsigned char>(_char)) != 0 || _char == '>' || _char == '=' || _char == '/';
 }
 
 } // End of namespace Common

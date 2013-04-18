@@ -148,4 +148,3 @@ void mipsBacktrace(uint32 levels, void **addresses) {
 		}
 	}
 }
-

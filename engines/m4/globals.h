@@ -297,6 +297,8 @@ public:
 	void loadMadsObjects();
 	uint32 getObjectsSize() { return _madsObjects.size(); }
 	MadsObject *getObject(uint32 index) { return _madsObjects[index].get(); }
+	int getObjectIndex(uint16 descId);
+	int getObjectFolder(uint32 folderId) { warning("TODO: getObjectFolder"); return -1; } 
 
 	void addVisitedScene(int sceneNumber);
 	bool isSceneVisited(int sceneNumber);

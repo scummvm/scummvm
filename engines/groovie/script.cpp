@@ -20,6 +20,9 @@
  *
  */
 
+#include "audio/mididrv.h"
+#include "audio/mixer.h"
+
 #include "groovie/script.h"
 #include "groovie/cell.h"
 #include "groovie/cursor.h"
@@ -1350,15 +1353,15 @@ void Script::o_checkvalidsaves() {
 	uint count = 0;
 	SaveStateList::iterator it = list.begin();
 	while (it != list.end()) {
-		int8 slot = it->getVal("save_slot").lastChar() - '0';
+		int8 slot = it->getSaveSlot();
 		if (SaveLoad::isSlotValid(slot)) {
-			debugScript(2, true, "  Found valid savegame: %s", it->getVal("description").c_str());
+			debugScript(2, true, "  Found valid savegame: %s", it->getDescription().c_str());
 
 			// Mark this slot as used
 			setVariable(slot, 1);
 
 			// Cache this slot's description
-			_saveNames[slot] = it->getVal("description");
+			_saveNames[slot] = it->getDescription();
 			count++;
 		}
 		it++;

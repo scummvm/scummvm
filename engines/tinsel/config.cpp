@@ -76,6 +76,9 @@ void Config::writeToDisk() {
 		case TXT_ITALIAN:
 			lang = Common::IT_ITA;
 			break;
+		case TXT_US:
+			lang = Common::EN_USA;
+			break;
 		default:
 			lang = Common::EN_ANY;
 		}
@@ -131,6 +134,9 @@ void Config::readFromDisk() {
 		break;
 	case Common::IT_ITA:
 		_language = TXT_ITALIAN;
+		break;
+	case Common::EN_USA:
+		_language = TXT_US;
 		break;
 	default:
 		_language = TXT_ENGLISH;

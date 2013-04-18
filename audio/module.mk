@@ -23,10 +23,10 @@ MODULE_OBJS := \
 	decoders/qdm2.o \
 	decoders/quicktime.o \
 	decoders/raw.o \
-	decoders/vag.o \
 	decoders/voc.o \
 	decoders/vorbis.o \
 	decoders/wave.o \
+	decoders/xa.o \
 	mods/infogrames.o \
 	mods/maxtrax.o \
 	mods/module.o \

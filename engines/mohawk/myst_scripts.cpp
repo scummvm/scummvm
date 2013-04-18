@@ -436,89 +436,77 @@ void MystScriptParser::o_changeCardDirectional(uint16 op, uint16 var, uint16 arg
 // but with the current cardId stored.
 // Opcode 18 then "pops" this stored CardId and returns to that card.
 
-// TODO: The purpose of the optional argv[1] on Opcode 17 and argv[0]
-// on Opcode 18 which are always 4, 5 or 6 is unknown.
-
 void MystScriptParser::o_changeCardPush(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+	debugC(kDebugScript, "Opcode %d: Jump to Card Id, Storing Current Card Id", op);
 
-	if (argc == 2) {
-		debugC(kDebugScript, "Opcode %d: Jump to Card Id, Storing Current Card Id", op);
+	_savedCardId = _vm->getCurCard();
+	uint16 cardId = argv[0];
 
-		uint16 cardId = argv[0];
-		debugC(kDebugScript, "\tJump to CardId: %d", cardId);
+	// argv[1] is not used in the original engine
 
-		uint16 u0 = argv[1]; // TODO
-		debugC(kDebugScript, "\tu0: %d", u0);
+	debugC(kDebugScript, "\tCurrent CardId: %d", _savedCardId);
+	debugC(kDebugScript, "\tJump to CardId: %d", cardId);
 
-		_savedCardId = _vm->getCurCard();
-
-		debugC(kDebugScript, "\tCurrent CardId: %d", _savedCardId);
-
-		_vm->changeToCard(cardId, true);
-	} else
-		unknown(op, var, argc, argv);
+	_vm->changeToCard(cardId, true);
 }
 
 void MystScriptParser::o_changeCardPop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+	debugC(kDebugScript, "Opcode %d: Return To Stored Card Id", op);
+	debugC(kDebugScript, "\tCardId: %d", _savedCardId);
 
-	if (argc == 1) {
-		debugC(kDebugScript, "Opcode %d: Return To Stored Card Id", op);
-		debugC(kDebugScript, "\tCardId: %d", _savedCardId);
+	// argv[0] is not used in the original engine
 
-		uint16 u0 = argv[0];
-		debugC(kDebugScript, "\tu0: %d", u0);
-
-		_vm->changeToCard(_savedCardId, true);
-	} else
-		unknown(op, var, argc, argv);
+	_vm->changeToCard(_savedCardId, true);
 }
 
 void MystScriptParser::o_enableAreas(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+	debugC(kDebugScript, "Opcode %d: Enable Hotspots", op);
 
-	if (argc > 0) {
-		debugC(kDebugScript, "Opcode %d: Enable Hotspots", op);
+	uint16 count = argv[0];
 
-		uint16 count = argv[0];
+	if (argc == count + 1) {
+		for (uint16 i = 0; i < count; i++) {
+			debugC(kDebugScript, "Enable hotspot index %d", argv[i + 1]);
 
-		if (argc != count + 1)
-			unknown(op, var, argc, argv);
-		else {
-			for (uint16 i = 0; i < count; i++) {
-				debugC(kDebugScript, "Enable hotspot index %d", argv[i + 1]);
-				_vm->setResourceEnabled(argv[i + 1], true);
-			}
+			MystResource *resource = 0;
+			if (argv[i + 1] == 0xFFFF)
+				resource = _invokingResource;
+			else
+				resource = _vm->_resources[argv[i + 1]];
+
+			if (resource)
+				resource->setEnabled(true);
+			else
+				warning("Unknown Resource in enableAreas script Opcode");
 		}
-	} else
-		unknown(op, var, argc, argv);
+	} else {
+		error("Invalid arguments for opcode %d", op);
+	}
 }
 
 void MystScriptParser::o_disableAreas(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+	debugC(kDebugScript, "Opcode %d: Disable Hotspots", op);
 
-	if (argc > 0) {
-		debugC(kDebugScript, "Opcode %d: Disable Hotspots", op);
+	uint16 count = argv[0];
 
-		uint16 count = argv[0];
+	if (argc == count + 1) {
+		for (uint16 i = 0; i < count; i++) {
+			debugC(kDebugScript, "Disable hotspot index %d", argv[i + 1]);
 
-		if (argc != count + 1)
-			unknown(op, var, argc, argv);
-		else {
-			for (uint16 i = 0; i < count; i++) {
-				debugC(kDebugScript, "Disable hotspot index %d", argv[i + 1]);
-				if (argv[i + 1] == 0xFFFF) {
-					if (_invokingResource != NULL)
-						_invokingResource->setEnabled(false);
-					else
-						warning("Unknown Resource in disableHotspots script Opcode");
-				} else
-					_vm->setResourceEnabled(argv[i + 1], false);
-			}
+			MystResource *resource = 0;
+			if (argv[i + 1] == 0xFFFF)
+				resource = _invokingResource;
+			else
+				resource = _vm->_resources[argv[i + 1]];
+
+			if (resource)
+				resource->setEnabled(false);
+			else
+				warning("Unknown Resource in disableAreas script Opcode");
 		}
-	} else
-		unknown(op, var, argc, argv);
+	} else {
+		error("Invalid arguments for opcode %d", op);
+	}
 }
 
 void MystScriptParser::o_directionalUpdate(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -528,43 +516,37 @@ void MystScriptParser::o_directionalUpdate(uint16 op, uint16 var, uint16 argc, u
 }
 
 void MystScriptParser::o_toggleAreasActivation(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	if (argc > 0) {
-		debugC(kDebugScript, "Opcode %d: Toggle areas activation", op);
+	debugC(kDebugScript, "Opcode %d: Toggle areas activation", op);
 
-		uint16 count = argv[0];
+	uint16 count = argv[0];
 
-		if (argc != count + 1)
-			unknown(op, var, argc, argv);
-		else {
-			for (uint16 i = 0; i < count; i++) {
-				debugC(kDebugScript, "Enable/Disable hotspot index %d", argv[i + 1]);
+	if (argc == count + 1) {
+		for (uint16 i = 0; i < count; i++) {
+			debugC(kDebugScript, "Enable/Disable hotspot index %d", argv[i + 1]);
 
-				MystResource *resource = 0;
-				if (argv[i + 1] == 0xFFFF)
-					resource = _invokingResource;
-				else
-					resource = _vm->_resources[argv[i + 1]];
+			MystResource *resource = 0;
+			if (argv[i + 1] == 0xFFFF)
+				resource = _invokingResource;
+			else
+				resource = _vm->_resources[argv[i + 1]];
 
-				if (resource)
-					resource->setEnabled(!resource->isEnabled());
-			}
+			if (resource)
+				resource->setEnabled(!resource->isEnabled());
+			else
+				warning("Unknown Resource in toggleAreasActivation script Opcode");
 		}
-	} else
-		unknown(op, var, argc, argv);
+	} else {
+		error("Invalid arguments for opcode %d", op);
+	}
 }
 
 void MystScriptParser::o_playSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+	uint16 soundId = argv[0];
 
-	if (argc == 1) {
-		uint16 soundId = argv[0];
+	debugC(kDebugScript, "Opcode %d: playSound", op);
+	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
-		debugC(kDebugScript, "Opcode %d: playSound", op);
-		debugC(kDebugScript, "\tsoundId: %d", soundId);
-
-		_vm->_sound->replaceSoundMyst(soundId);
-	} else
-		unknown(op, var, argc, argv);
+	_vm->_sound->replaceSoundMyst(soundId);
 }
 
 void MystScriptParser::o_stopSoundBackground(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -578,6 +560,7 @@ void MystScriptParser::o_playSoundBlocking(uint16 op, uint16 var, uint16 argc, u
 	debugC(kDebugScript, "Opcode %d: playSoundBlocking", op);
 	debugC(kDebugScript, "\tsoundId: %d", soundId);
 
+	_vm->_sound->stopSound();
 	_vm->_sound->playSoundBlocking(soundId);
 }
 
@@ -590,7 +573,6 @@ void MystScriptParser::o_copyBackBufferToScreen(uint16 op, uint16 var, uint16 ar
 		// Used in Mechanical Card 6267 (Code Lock)
 		rect = _invokingResource->getRect();
 	} else {
-		// Used in ... TODO: Fill in.
 		rect = Common::Rect(argv[0], argv[1], argv[2], argv[3]);
 	}
 
@@ -645,8 +627,6 @@ void MystScriptParser::o_copyImageToBackBuffer(uint16 op, uint16 var, uint16 arg
 //       by Channelwood Card 3280 (Tank Valve) and water flow sound behavior in pipe
 //       on cards leading from shed...
 void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
 	int16 *soundList = NULL;
 	uint16 *soundListVolume = NULL;
 
@@ -709,7 +689,7 @@ void MystScriptParser::o_changeBackgroundSound(uint16 op, uint16 var, uint16 arg
 			warning("Unknown sound control value in opcode %d", op);
 		}
 	} else
-		unknown(op, var, argc, argv);
+		warning("Unknown arg count in opcode %d", op);
 
 	delete[] soundList;
 	soundList = NULL;
@@ -783,25 +763,19 @@ void MystScriptParser::o_changeCard(uint16 op, uint16 var, uint16 argc, uint16 *
 }
 
 void MystScriptParser::o_drawImageChangeCard(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 3) {
 		debugC(kDebugScript, "Opcode %d: Draw Full Screen Image, Delay then Change Card", op);
 
 		uint16 imageId = argv[0];
 		uint16 cardId = argv[1];
-		uint16 delay = argv[2]; // TODO: Not sure about argv[2] being delay..
+		// argv[2] is not used in the original engine
 
 		debugC(kDebugScript, "\timageId: %d", imageId);
 		debugC(kDebugScript, "\tcardId: %d", cardId);
-		debugC(kDebugScript, "\tdelay: %d", delay);
 
 		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
 		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(delay * 100);
+
 		_vm->changeToCard(cardId, true);
-	} else
-		unknown(op, var, argc, argv);
 }
 
 void MystScriptParser::o_changeMainCursor(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -916,7 +890,8 @@ void MystScriptParser::o_soundWaitStop(uint16 op, uint16 var, uint16 argc, uint1
 	// Used when Button is pushed...
 	debugC(kDebugScript, "Opcode %d: Wait for foreground sound to finish", op);
 
-	// TODO: Implement
+	while (_vm->_sound->isPlaying())
+		_vm->_system->delayMillis(10);
 }
 
 void MystScriptParser::o_quit(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

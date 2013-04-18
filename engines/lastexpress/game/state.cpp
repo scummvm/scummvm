@@ -57,7 +57,7 @@ bool State::isNightTime() const {
 
 void State::getHourMinutes(uint32 time, uint8 *hours, uint8 *minutes) {
 	if (hours == NULL || minutes == NULL)
-		error("State::getHourMinutes: invalid parameters passed!");
+		error("[State::getHourMinutes] Invalid parameters passed");
 
 	*hours = (uint8)((time % 1296000) / 54000);
 	*minutes =  (uint8)((time % 54000) / 900);

@@ -38,7 +38,7 @@
 
 namespace Sword1 {
 
-static const char *sequenceList[20] = {
+static const char *const sequenceList[20] = {
 	"ferrari",  // 0  CD2   ferrari running down fitz in sc19
 	"ladder",   // 1  CD2   george walking down ladder to dig sc24->sc$
 	"steps",    // 2  CD2   george walking down steps sc23->sc24
@@ -114,7 +114,7 @@ bool MoviePlayer::load(uint32 id) {
 				int startFrame = strtoul(ptr, const_cast<char **>(&ptr), 10);
 				int endFrame = strtoul(ptr, const_cast<char **>(&ptr), 10);
 
-				while (*ptr && isspace(*ptr))
+				while (*ptr && isspace(static_cast<unsigned char>(*ptr)))
 					ptr++;
 
 				if (startFrame > endFrame) {

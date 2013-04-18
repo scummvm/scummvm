@@ -40,7 +40,7 @@ MemMan::~MemMan() {
 
 void MemMan::alloc(MemHandle *bsMem, uint32 pSize, uint16 pCond) {
 	_alloced += pSize;
-	bsMem->data = (void*)malloc(pSize);
+	bsMem->data = (void *)malloc(pSize);
 	if (!bsMem->data)
 		error("MemMan::alloc(): Can't alloc %d bytes of memory.", pSize);
 	bsMem->cond = pCond;

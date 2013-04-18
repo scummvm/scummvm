@@ -39,7 +39,6 @@ public:
 	virtual void send(MidiChannel *mc) = 0;
 	virtual void copy_to(Instrument *dest) = 0;
 	virtual bool is_valid() = 0;
-	virtual operator int() { return 255; }
 };
 
 class Instrument {
@@ -52,10 +51,11 @@ public:
 		itNone = 0,
 		itProgram = 1,
 		itAdLib = 2,
-		itRoland = 3
+		itRoland = 3,
+		itPcSpk = 4
 	};
 
-	Instrument() : _type (0), _instrument (0) { }
+	Instrument() : _type(0), _instrument(0) { }
 	~Instrument() { delete _instrument; }
 	static void nativeMT32(bool native);
 	static const byte _gmRhythmMap[35];
@@ -71,6 +71,7 @@ public:
 	void program(byte program, bool mt32);
 	void adlib(const byte *instrument);
 	void roland(const byte *instrument);
+	void pcspk(const byte *instrument);
 
 	byte getType() { return _type; }
 	bool isValid() { return (_instrument ? _instrument->is_valid() : false); }

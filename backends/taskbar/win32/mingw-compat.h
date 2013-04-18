@@ -8,23 +8,20 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
- *
  */
 
 // TODO: Remove header when the latest changes to the Windows SDK have been integrated into MingW
-//       For reference, the interface definitions here are imported the SDK headers and from the 
+//       For reference, the interface definitions here are imported the SDK headers and from the
 //       EcWin7 project (https://code.google.com/p/dukto/)
 
 #ifndef BACKEND_WIN32_TASKBAR_MINGW_H
@@ -42,7 +39,13 @@
 #include <commctrl.h>
 #include <initguid.h>
 #include <shlwapi.h>
+#include <shlguid.h>
 #define CMIC_MASK_ASYNCOK SEE_MASK_ASYNCOK
+
+extern const GUID CLSID_ShellLink;
+
+// Shard enumeration value
+#define SHARD_LINK 0x00000006
 
 // Taskbar GUID definitions
 DEFINE_GUID(CLSID_TaskbarList,0x56fdf344,0xfd6d,0x11d0,0x95,0x8a,0x0,0x60,0x97,0xc9,0xa0,0x90);
@@ -67,6 +70,9 @@ DECLARE_INTERFACE_(IPropertyStore, IUnknown) {
 	STDMETHOD (GetValue) (REFPROPERTYKEY key, PROPVARIANT *pv) PURE;
 	STDMETHOD (SetValue) (REFPROPERTYKEY key, REFPROPVARIANT propvar) PURE;
 	STDMETHOD (Commit) (void) PURE;
+	
+private:
+	~IPropertyStore();
 };
 typedef IPropertyStore *LPIPropertyStore;
 
@@ -131,6 +137,9 @@ DECLARE_INTERFACE_(ITaskbarList3, IUnknown) {
 	STDMETHOD (SetOverlayIcon) (THIS_ HWND hwnd, HICON hIcon, LPCWSTR pszDescription) PURE;
 	STDMETHOD (SetThumbnailTooltip) (THIS_ HWND hwnd, LPCWSTR pszTip) PURE;
 	STDMETHOD (SetThumbnailClip) (THIS_ HWND hwnd, RECT *prcClip) PURE;
+	
+private:
+	~ITaskbarList3();
 };
 
 typedef ITaskbarList3 *LPITaskbarList3;

@@ -26,8 +26,10 @@
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -101,7 +103,7 @@ IMPLEMENT_FUNCTION(3, Cooks, function3)
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 46)) {
 			getEntities()->drawSequenceLeft(kEntityCooks, "308D");
 
-			if (!getSound()->isBuffered(kEntityCooks)) {
+			if (!getSoundQueue()->isBuffered(kEntityCooks)) {
 				if (params->param1) {
 					if (!getEntities()->hasValidFrame(kEntityCooks)) {
 						getSound()->playSound(kEntityCooks, "LIB015");
@@ -187,7 +189,7 @@ IMPLEMENT_FUNCTION(4, Cooks, function4)
 		if (getEntities()->isPlayerPosition(kCarRestaurant, 80)) {
 			getEntities()->drawSequenceLeft(kEntityCooks, "308D");
 
-			if (!getSound()->isBuffered(kEntityCooks)) {
+			if (!getSoundQueue()->isBuffered(kEntityCooks)) {
 				if (params->param1) {
 					if (!getEntities()->hasValidFrame(kEntityCooks)) {
 						getSound()->playSound(kEntityCooks, "LIB015");

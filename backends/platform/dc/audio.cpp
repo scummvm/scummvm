@@ -74,5 +74,3 @@ void OSystem_Dreamcast::checkSound()
   if ((fillpos += n) >= curr_ring_buffer_samples)
     fillpos = 0;
 }
-
-

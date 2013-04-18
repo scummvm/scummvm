@@ -8,18 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  *
  */
 
@@ -30,6 +27,7 @@
 #include "common/textconsole.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/codec.h"
 #include "audio/decoders/quicktime.h"
 #include "audio/decoders/quicktime_intern.h"
 
@@ -86,6 +84,9 @@ void QuickTimeAudioDecoder::init() {
 			// Make sure the bits per sample transfers to the sample size
 			if (entry->getCodecTag() == MKTAG('r', 'a', 'w', ' ') || entry->getCodecTag() == MKTAG('t', 'w', 'o', 's'))
 				_tracks[_audioTrackIndex]->sampleSize = (entry->_bitsPerSample / 8) * entry->_channels;
+
+			// Initialize the codec (if necessary)
+			entry->initCodec();
 		}
 	}
 }
@@ -217,6 +218,9 @@ void QuickTimeAudioDecoder::setAudioStreamPos(const Timestamp &where) {
 	Audio::QuickTimeAudioDecoder::AudioSampleDesc *entry = (Audio::QuickTimeAudioDecoder::AudioSampleDesc *)_tracks[_audioTrackIndex]->sampleDescs[0];
 	_audStream = Audio::makeQueuingAudioStream(entry->_sampleRate, entry->_channels == 2);
 
+	// Reinitialize the codec
+	entry->initCodec();
+
 	// First, we need to track down what audio sample we need
 	Audio::Timestamp curAudioTime = where.convertToFramerate(_tracks[_audioTrackIndex]->timeScale);
 	uint32 sample = curAudioTime.totalNumberOfFrames();
@@ -266,6 +270,11 @@ QuickTimeAudioDecoder::AudioSampleDesc::AudioSampleDesc(Common::QuickTimeParser:
 	_samplesPerFrame = 0;
 	_bytesPerFrame = 0;
 	_bitsPerSample = 0;
+	_codec = 0;
+}
+
+QuickTimeAudioDecoder::AudioSampleDesc::~AudioSampleDesc() {
+	delete _codec;
 }
 
 bool QuickTimeAudioDecoder::AudioSampleDesc::isAudioCodecSupported() const {
@@ -313,7 +322,12 @@ AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::S
 	if (!stream)
 		return 0;
 
-	if (_codecTag == MKTAG('t', 'w', 'o', 's') || _codecTag == MKTAG('r', 'a', 'w', ' ')) {
+	if (_codec) {
+		// If we've loaded a codec, make sure we use first
+		AudioStream *audioStream = _codec->decodeFrame(*stream);
+		delete stream;
+		return audioStream;
+	} else if (_codecTag == MKTAG('t', 'w', 'o', 's') || _codecTag == MKTAG('r', 'a', 'w', ' ')) {
 		// Fortunately, most of the audio used in Myst videos is raw...
 		uint16 flags = 0;
 		if (_codecTag == MKTAG('r', 'a', 'w', ' '))
@@ -330,22 +344,30 @@ AudioStream *QuickTimeAudioDecoder::AudioSampleDesc::createAudioStream(Common::S
 	} else if (_codecTag == MKTAG('i', 'm', 'a', '4')) {
 		// Riven uses this codec (as do some Myst ME videos)
 		return makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), kADPCMApple, _sampleRate, _channels, 34);
-	} else if (_codecTag == MKTAG('m', 'p', '4', 'a')) {
-		// The 7th Guest iOS uses an MPEG-4 codec
-#ifdef USE_FAAD
-		if (_parentTrack->objectTypeMP4 == 0x40)
-			return makeAACStream(stream, DisposeAfterUse::YES, _parentTrack->extraData);
-#endif
-#ifdef AUDIO_QDM2_H
-	} else if (_codecTag == MKTAG('Q', 'D', 'M', '2')) {
-		// Myst ME uses this codec for many videos
-		return makeQDM2Stream(stream, _parentTrack->extraData);
-#endif
 	}
 
 	error("Unsupported audio codec");
-
 	return NULL;
+}
+
+void QuickTimeAudioDecoder::AudioSampleDesc::initCodec() {
+	delete _codec; _codec = 0;
+
+	switch (_codecTag) {
+	case MKTAG('Q', 'D', 'M', '2'):
+#ifdef AUDIO_QDM2_H
+		_codec = makeQDM2Decoder(_parentTrack->extraData);
+#endif
+		break;
+	case MKTAG('m', 'p', '4', 'a'):
+#ifdef USE_FAAD
+		if (_parentTrack->objectTypeMP4 == 0x40)
+			_codec = makeAACDecoder(_parentTrack->extraData);
+#endif
+		break;
+	default:
+		break;
+	}
 }
 
 /**

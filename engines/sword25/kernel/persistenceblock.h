@@ -64,48 +64,6 @@ protected:
 		BLOCK_MARKER
 	};
 
-	// -----------------------------------------------------------------------------
-	// Endianess Conversions
-	// -----------------------------------------------------------------------------
-	//
-	// Everything is stored in Little Endian
-	// Big Endian Systems will need to be byte swapped during both saving and reading of saved values
-	//
-
-	template<typename T>
-	static T convertEndianessFromSystemToStorage(T value) {
-		if (isBigEndian())
-			reverseByteOrder(&value);
-		return value;
-	}
-
-	template<typename T>
-	static T convertEndianessFromStorageToSystem(T value) {
-		if (isBigEndian())
-			reverseByteOrder(&value);
-		return value;
-	}
-
-private:
-	static bool isBigEndian() {
-		uint dummy = 1;
-		byte *dummyPtr = reinterpret_cast<byte *>(&dummy);
-		return dummyPtr[0] == 0;
-	}
-
-	template<typename T>
-	static void swap(T &one, T &two) {
-		T temp = one;
-		one = two;
-		two = temp;
-	}
-
-	static void reverseByteOrder(void *ptr) {
-		// Reverses the byte order of the 32-bit word pointed to by Ptr
-		byte *charPtr = static_cast<byte *>(ptr);
-		swap(charPtr[0], charPtr[3]);
-		swap(charPtr[1], charPtr[2]);
-	}
 };
 
 #define CTASSERT(ex) typedef char ctassert_type[(ex) ? 1 : -1]

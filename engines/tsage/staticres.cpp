@@ -22,7 +22,7 @@
 
 #include "tsage/staticres.h"
 
-namespace tSage {
+namespace TsAGE {
 
 const byte CURSOR_ARROW_DATA[] = {
 	15, 0, 15, 0, 0, 0, 0, 0, 9, 0,
@@ -72,13 +72,8 @@ const char *DEFAULT_SCENE_HOTSPOT = "That accomplishes nothing.";
 const char *SAVE_ERROR_MSG = "Error occurred saving game. Please do not try to restore this game!";
 const char *SAVING_NOT_ALLOWED_MSG = "Saving is not allowed at this time.";
 const char *RESTORING_NOT_ALLOWED_MSG = "Restoring is not allowed at this time.";
-const char *RESTART_CONFIRM_MSG = "Do you want to restart your game?";
-const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
 const char *INV_EMPTY_MSG = "You have nothing in your possesion.";
 
-const char *HELP_MSG = "Ringworld\rRevenge of the Patriarch\x14\rScummVM Version\r\r\
-\x01 Keyboard shortcuts...\rF2 - Sound options\rF3 - Quit\r\
-F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
 const char *QUIT_CONFIRM_MSG = "Do you want to quit playing this game?";
 const char *RESTART_MSG = "Do you want to restart this game?";
 const char *GAME_PAUSED_MSG = "Game is paused.";
@@ -93,9 +88,19 @@ const char *SOUND_BTN_STRING = "Sound";
 const char *RESUME_BTN_STRING = " Resume \rplay";
 const char *LOOK_BTN_STRING = "Look";
 const char *PICK_BTN_STRING = "Pick";
+
+
+namespace Ringworld {
+
+// Dialog resources
+const char *HELP_MSG = "Ringworld\rRevenge of the Patriarch\x14\rScummVM Version\r\r\
+\x01 Keyboard shortcuts...\rF2 - Sound options\rF3 - Quit\r\
+F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
+const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
 const char *START_PLAY_BTN_STRING = " Start Play ";
 const char *INTRODUCTION_BTN_STRING = "Introduction";
 
+// Scene specific resources
 const char *EXIT_MSG = "   EXIT   ";
 const char *SCENE6100_CAREFUL = "Be careful! The probe cannot handle too much of that.";
 const char *SCENE6100_TOUGHER = "Hey! This is tougher than it looks!";
@@ -118,4 +123,61 @@ const char *EXIT_BTN_STRING = "Exit";
 const char *DEMO_BTN_STRING = "Demo";
 const char *DEMO_RESUME_BTN_STRING = "Resume";
 
-} // End of namespace tSage
+} // End of namespace Ringworld
+
+namespace BlueForce {
+
+// Dialog resources
+const char *HELP_MSG = "Blue Force\x14\rScummVM Version\r\r\
+Keyboard shortcuts...\rF2 - Sound options\rF3 - Quit\r\
+F4 - Restart\rF5 - Save game\rF7 - Restore Game\rF10 - Pause game";
+const char *WATCH_INTRO_MSG = "Do you wish to watch the introduction?";
+const char *START_PLAY_BTN_STRING = " Play ";
+const char *INTRODUCTION_BTN_STRING = " Watch ";
+
+// Blue Force general messages
+const char *BF_NAME = "Blue Force";
+const char *BF_COPYRIGHT = " Copyright, 1993 Tsunami Media, Inc.";
+const char *BF_ALL_RIGHTS_RESERVED = "All Rights Reserved";
+const char *BF_19840518 = "May 18, 1984";
+const char *BF_19840515 = "May 15, 1984";
+const char *BF_3_DAYS = "Three days later";
+const char *BF_11_YEARS = "Eleven years later.";
+const char *BF_NEXT_DAY = "The Next Day";
+const char *BF_ACADEMY = "Here we are at the Academy";
+
+// Scene 50 hotspots
+const char *GRANDMA_FRANNIE = "Grandma Frannie";
+const char *MARINA = "Marina";
+const char *POLICE_DEPARTMENT = "Police Department";
+const char *TONYS_BAR = "Tony's Bar";
+const char *CHILD_PROTECTIVE_SERVICES = "Child Protective Services";
+const char *ALLEY_CAT = "Alley Cat";
+const char *CITY_HALL_JAIL = "City Hall & Jail";
+const char *JAMISON_RYAN = "Jamison & Ryan";
+const char *BIKINI_HUT = "Bikini Hut";
+
+// Scene 60 radio messages
+const char *RADIO_BTN_LIST[8] = { "10-2 ", "10-4 ", "10-13", "10-15", "10-27", "10-35", "10-97", "10-98" };
+
+// Scene 570 computer messageS
+const char *SCENE570_PASSWORD = "PASSWORD -> ";
+const char *SCENE570_C_DRIVE = "C:\\";
+const char *SCENE570_RING = "RING";
+const char *SCENE570_PROTO = "PROTO";
+const char *SCENE570_WACKY = "WACKY";
+const char *SCENE570_COBB = "COBB";
+const char *SCENE570_LETTER = "LETTER";
+const char *SCENE570_RINGEXE = "RINGEXE";
+const char *SCENE570_RINGDATA = "RINGDATA";
+const char *SCENE570_PROTOEXE = "PROTOEXE";
+const char *SCENE570_PROTODATA = "PROTODATA";
+const char *SCENE570_WACKYEXE = "WACKYEXE";
+const char *SCENE570_WACKYDATA = "WACKYDATA";
+
+// Scene 180 messages
+const char *THE_NEXT_DAY = "The Next Day";
+
+} // End of namespace BlueForce
+
+} // End of namespace TsAGE

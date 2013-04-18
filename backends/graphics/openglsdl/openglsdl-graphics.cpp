@@ -30,8 +30,9 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
+OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource)
 	:
+	SdlGraphicsManager(eventSource),
 	_hwscreen(0),
 	_screenResized(false),
 	_activeFullscreenMode(-2),
@@ -71,6 +72,14 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
+	// Unregister the event observer
+	if (g_system->getEventManager()->getEventDispatcher() != NULL)
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+}
+
+void OpenGLSdlGraphicsManager::initEventObserver() {
+	// Register the graphics manager as a event observer
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 10, false);
 }
 
 bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
@@ -304,14 +313,17 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		_videoMode.overlayWidth = _videoMode.hardwareWidth = _videoMode.screenWidth * scaleFactor;
 		_videoMode.overlayHeight = _videoMode.hardwareHeight = _videoMode.screenHeight * scaleFactor;
 
-		int screenAspectRatio = _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
-		int desiredAspectRatio = getAspectRatio();
-
-		// Do not downscale dimensions, only enlarge them if needed
-		if (screenAspectRatio > desiredAspectRatio)
-			_videoMode.hardwareHeight = (_videoMode.overlayWidth * 10000  + 5000) / desiredAspectRatio;
-		else if (screenAspectRatio < desiredAspectRatio)
-			_videoMode.hardwareWidth = (_videoMode.overlayHeight * desiredAspectRatio + 5000) / 10000;
+		// The only modes where we need to adapt the aspect ratio are 320x200
+		// and 640x400. That is since our aspect ratio correction in fact is
+		// only used to ensure that the original pixel size aspect for these
+		// modes is used.
+		// (Non-square pixels on old monitors vs square pixel on new ones).
+		if (_videoMode.aspectRatioCorrection
+		    && ((_videoMode.screenWidth == 320 && _videoMode.screenHeight == 200)
+		    || (_videoMode.screenWidth == 640 && _videoMode.screenHeight == 400)))
+			_videoMode.overlayHeight = _videoMode.hardwareHeight = 240 * scaleFactor;
+		else
+			_videoMode.overlayHeight = _videoMode.hardwareHeight = _videoMode.screenHeight * scaleFactor;
 	}
 
 	_screenResized = false;
@@ -448,6 +460,10 @@ void OpenGLSdlGraphicsManager::toggleFullScreen(int loop) {
 			_activeFullscreenMode = -2;
 			setFullscreenMode(!isFullscreen);
 		}
+
+		// HACK: We need to force a refresh here, since we change the
+		// fullscreen mode.
+		_transactionDetails.needRefresh = true;
 	endGFXTransaction();
 
 	// Ignore resize events for the next 10 frames
@@ -609,50 +625,54 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			}
 		}
 		break;
+
 	case Common::EVENT_KEYUP:
 		return isHotkey(event);
-	// HACK: Handle special SDL event
-	// The new screen size is saved on the mouse event as part of HACK,
-	// there is no common resize event.
-	case OSystem_SDL::kSdlEventResize:
-		// Do not resize if ignoring resize events.
-		if (!_ignoreResizeFrames && !getFullscreenMode()) {
-			bool scaleChanged = false;
-			beginGFXTransaction();
-				_videoMode.hardwareWidth = event.mouse.x;
-				_videoMode.hardwareHeight = event.mouse.y;
-
-				if (_videoMode.mode != OpenGL::GFX_ORIGINAL) {
-					_screenResized = true;
-					calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
-				}
-
-				int scale = MIN(_videoMode.hardwareWidth / _videoMode.screenWidth,
-				                _videoMode.hardwareHeight / _videoMode.screenHeight);
-
-				if (getScale() != scale) {
-					scaleChanged = true;
-					setScale(MAX(MIN(scale, 3), 1));
-				}
-
-				if (_videoMode.mode == OpenGL::GFX_ORIGINAL) {
-					calculateDisplaySize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
-				}
-
-				_transactionDetails.sizeChanged = true;
-			endGFXTransaction();
-#ifdef USE_OSD
-			if (scaleChanged)
-				displayScaleChangedMsg();
-#endif
-		}
-		return true;
 
 	default:
 		break;
 	}
 
-	return OpenGLGraphicsManager::notifyEvent(event);
+	return false;
+}
+
+void OpenGLSdlGraphicsManager::notifyVideoExpose() {
+}
+
+void OpenGLSdlGraphicsManager::notifyResize(const uint width, const uint height) {
+	// Do not resize if ignoring resize events.
+	if (!_ignoreResizeFrames && !getFullscreenMode()) {
+		bool scaleChanged = false;
+		beginGFXTransaction();
+			_videoMode.hardwareWidth = width;
+			_videoMode.hardwareHeight = height;
+
+			_screenResized = true;
+
+			int scale = MIN(_videoMode.hardwareWidth / _videoMode.screenWidth,
+			                _videoMode.hardwareHeight / _videoMode.screenHeight);
+
+			if (getScale() != scale) {
+				scaleChanged = true;
+				setScale(MAX(MIN(scale, 3), 1));
+			}
+
+			_transactionDetails.sizeChanged = true;
+		endGFXTransaction();
+#ifdef USE_OSD
+		if (scaleChanged)
+			displayScaleChangedMsg();
+#endif
+	}
+}
+
+void OpenGLSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+	adjustMousePosition(point.x, point.y);
+}
+ 
+void OpenGLSdlGraphicsManager::notifyMousePos(Common::Point mouse) {
+	_cursorState.x = mouse.x;
+	_cursorState.y = mouse.y;
 }
 
 #endif

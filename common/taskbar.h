@@ -18,8 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
  */
 
 #ifndef COMMON_TASKBAR_MANAGER_H
@@ -124,6 +122,18 @@ public:
 	 */
 	virtual void addRecent(const String &name, const String &description) {}
 
+	/**
+	 * Notifies the user an error occured through the taskbar icon
+	 *
+	 * This will for example show the taskbar icon as red (using progress of 100% and an error state)
+	 * on Windows, and set the launcher icon in the urgent state on Unity
+	 */
+	virtual void notifyError() {}
+
+	/**
+	 * Clears the error notification
+	 */
+	virtual void clearError() {}
 };
 
 }	// End of namespace Common

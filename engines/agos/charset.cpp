@@ -20,8 +20,7 @@
  *
  */
 
-
-
+#include "common/endian.h"
 #include "common/system.h"
 
 #include "agos/agos.h"
@@ -655,4 +654,3 @@ void AGOSEngine::windowScroll(WindowBlock *window) {
 	_videoLockOut &= ~0x8000;
 }
 } // End of namespace AGOS
-

@@ -872,7 +872,7 @@ static const Sfx fx_orifice_swallow_drip = {
 	}
 };
 
-static const Sfx *musicList[] = {
+static const Sfx *const musicList[] = {
 	&fx_press_bang, // 256 banging of the press
 	&fx_press_hiss, // 257 hissing press
 	&fx_wind_howl, // 258 howling wind

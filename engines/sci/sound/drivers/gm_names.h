@@ -30,7 +30,7 @@ namespace Sci {
 // is defined
 #ifndef REDUCE_MEMORY_USAGE
 
-static const char *GmInstrumentNames[] = {
+static const char *const GmInstrumentNames[] = {
 	/*000*/  "Acoustic Grand Piano",
 	/*001*/  "Bright Acoustic Piano",
 	/*002*/  "Electric Grand Piano",
@@ -162,7 +162,7 @@ static const char *GmInstrumentNames[] = {
 };
 
 // The GM Percussion map is downwards compatible to the MT32 map, which is used in SCI
-static const char *GmPercussionNames[] = {
+static const char *const GmPercussionNames[] = {
 	/*00*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*10*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	/*20*/  0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

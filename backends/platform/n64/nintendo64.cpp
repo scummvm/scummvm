@@ -31,4 +31,3 @@ int main(void) {
 	g_system->quit();       // TODO: Consider removing / replacing this!
 	return res;
 }
-

@@ -813,4 +813,3 @@ overlayState_t Screen_v1w::findOvl(seq_t *seq_p, image_pt dst_p, uint16 y) {
 }
 
 } // End of namespace Hugo
-

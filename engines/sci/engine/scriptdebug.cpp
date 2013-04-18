@@ -31,6 +31,8 @@
 
 namespace Sci {
 
+//#define VM_DEBUG_SEND
+
 // This table is only used for debugging. Don't include it for devices
 // with not enough available memory (e.g. phones), where REDUCE_MEMORY_USAGE
 // is defined
@@ -618,12 +620,13 @@ void debugSelectorCall(reg_t send_obj, Selector selector, int argc, StackPtr arg
 
 #ifdef VM_DEBUG_SEND
 		debugN("Send to %04x:%04x (%s), selector %04x (%s):", PRINT_REG(send_obj),
-			s->_segMan->getObjectName(send_obj), selector,
+			segMan->getObjectName(send_obj), selector,
 			g_sci->getKernel()->getSelectorName(selector).c_str());
 #endif // VM_DEBUG_SEND
 
 	switch (selectorType) {
 	case kSelectorNone:
+		debugN("\n");
 		break;
 	case kSelectorVariable:
 #ifdef VM_DEBUG_SEND

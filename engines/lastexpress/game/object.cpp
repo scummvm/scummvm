@@ -39,7 +39,7 @@ Objects::Objects(LastExpressEngine *engine) : _engine(engine) {}
 
 const Objects::Object Objects::get(ObjectIndex index) const {
 	if (index >= kObjectMax)
-		error("Objects::get - internal error: invalid object index (%d)", index);
+		error("[Objects::get] Invalid object index (%d)", index);
 
 	return _objects[index];
 }

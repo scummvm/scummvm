@@ -659,7 +659,7 @@ private:
 
 	// resource specific
 private:
-	static const char *_languageExtension[];
+	static const char *const _languageExtension[];
 	static const int _languageExtensionSize;
 
 	int loadLanguageFile(const char *file, uint8 *&buffer);
@@ -668,4 +668,3 @@ private:
 } // End of namespace Kyra
 
 #endif
-

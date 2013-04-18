@@ -508,14 +508,3 @@ MemoryCard_IsInserted:
 @----------------end MemoryCard_IsInserted---------------
 
     .END
-
-
-
-
-
-
-
-
-
-
-

@@ -544,4 +544,3 @@ int KyraEngine_MR::getItemCommandStringInv(uint16 item) {
 }
 
 } // End of namespace Kyra
-

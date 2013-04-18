@@ -40,7 +40,7 @@ static const ADGameDescription testbedDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		Common::GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	AD_TABLE_END_MARKER
 };

@@ -35,4 +35,3 @@ public:
 #endif // BACKENDS_PLUGINS_PSP_PROVIDER_H
 
 #endif // defined(DYNAMIC_MODULES) && defined(__PSP__)
-

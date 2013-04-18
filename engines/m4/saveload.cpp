@@ -96,7 +96,8 @@ SaveGameList *SaveLoad::getSaves() {
 				result->push_back(Common::String());
 			} else {
 				// Skip over byte offset
-				assert(saveFile->readUint32LE() < 0x100);
+				uint32 offset = saveFile->readUint32LE();
+				assert(offset < 0x100);
 
 				// Read in savegame name
 				saveFile->read(&saveName[0], MAX_SAVEGAME_NAME);

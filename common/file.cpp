@@ -72,7 +72,7 @@ bool File::open(const FSNode &node) {
 	return open(stream, node.getPath());
 }
 
-bool File::open(SeekableReadStream *stream, const Common::String &name) {
+bool File::open(SeekableReadStream *stream, const String &name) {
 	assert(!_handle);
 
 	if (stream) {

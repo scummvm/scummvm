@@ -143,7 +143,7 @@ void FileManager_v3d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 			break;
 		}
 		if (i == 0) {
-			memset(image, 0, sizeof(image));
+			memset(image, 0, kOvlSize);
 			return;
 		}
 
@@ -182,7 +182,7 @@ void FileManager_v3d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 			break;
 		}
 		if (i == 0) {
-			memset(image, 0, sizeof(image));
+			memset(image, 0, kOvlSize);
 			return;
 		}
 
@@ -205,4 +205,3 @@ void FileManager_v3d::readOverlay(const int screenNum, image_pt image, ovl_t ove
 	}
 }
 } // End of namespace Hugo
-

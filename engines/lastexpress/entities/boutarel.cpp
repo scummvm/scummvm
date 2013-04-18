@@ -29,8 +29,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/scenes.h"
 #include "lastexpress/game/savepoint.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -214,7 +216,7 @@ IMPLEMENT_FUNCTION_I(11, Boutarel, function11, bool)
 				break;
 
 			case kChapter1:
-				getSound()->playSound(kEntityBoutarel, "MRB1075", SoundManager::kFlagInvalid, 60);
+				getSound()->playSound(kEntityBoutarel, "MRB1075", kFlagInvalid, 60);
 				break;
 
 			case kChapter3:
@@ -941,7 +943,7 @@ IMPLEMENT_FUNCTION(29, Boutarel, function29)
 
 		if (getEntities()->isInRestaurant(kEntityAnna)
 		 && getEntities()->isInRestaurant(kEntityAugust)
-		 && !getSound()->isBuffered(kEntityBoutarel)
+		 && !getSoundQueue()->isBuffered(kEntityBoutarel)
 		 && params->param3 != kTimeInvalid) {
 
 			if (getState()->time <= kTime1998000)

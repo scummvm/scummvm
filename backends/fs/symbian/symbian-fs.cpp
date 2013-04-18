@@ -231,5 +231,3 @@ Common::WriteStream *SymbianFilesystemNode::createWriteStream() {
 	return SymbianStdioStream::makeFromPath(getPath(), true);
 }
 #endif //#if defined (__SYMBIAN32__)
-
-

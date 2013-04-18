@@ -135,7 +135,7 @@ struct ImTrigger {
 	int sound;
 	byte id;
 	uint16 expire;
-	int command [8];
+	int command[8];
 	ImTrigger() { memset(this, 0, sizeof(ImTrigger)); }
 };
 
@@ -153,12 +153,12 @@ struct CommandQueue {
 //////////////////////////////////////////////////
 
 class Player : public MidiDriver_BASE {
-/*
- * External SysEx handler functions shall each be defined in
- * a separate file. This header file shall be included at the
- * top of the file immediately following this special #define:
- * #define SYSEX_CALLBACK_FUNCTION nameOfHandlerFunction
- */
+	/*
+	 * External SysEx handler functions shall each be defined in
+	 * a separate file. This header file shall be included at the
+	 * top of the file immediately following this special #define:
+	 * #define SYSEX_CALLBACK_FUNCTION nameOfHandlerFunction
+	 */
 #ifdef SYSEX_CALLBACK_FUNCTION
 	friend void SYSEX_CALLBACK_FUNCTION(Player *, const byte *, uint16);
 #endif
@@ -244,7 +244,7 @@ public:
 	void clear();
 	void clearLoop();
 	void fixAfterLoad();
-	Part * getActivePart(uint8 part);
+	Part *getActivePart(uint8 part);
 	uint getBeatIndex();
 	int8 getDetune() const { return _detune; }
 	byte getEffectiveVolume() const { return _vol_eff; }
@@ -252,7 +252,7 @@ public:
 	MidiDriver *getMidiDriver() const { return _midi; }
 	int getParam(int param, byte chan);
 	int8 getPan() const { return _pan; }
-	Part * getPart(uint8 part);
+	Part *getPart(uint8 part);
 	byte getPriority() const { return _priority; }
 	uint getTicksPerBeat() const { return TICKS_PER_BEAT; }
 	int8 getTranspose() const { return _transpose; }
@@ -342,6 +342,7 @@ struct Part : public Serializable {
 	void off();
 	void set_instrument(uint b);
 	void set_instrument(byte *data);
+	void set_instrument_pcspk(byte *data);
 	void load_global_instrument(byte b);
 
 	void set_transpose(int8 transpose);
@@ -375,12 +376,12 @@ class IMuseInternal : public IMuse {
 	friend class Player;
 	friend struct Part;
 
-/*
- * External SysEx handler functions shall each be defined in
- * a separate file. This header file shall be included at the
- * top of the file immediately following this special #define:
- * #define SYSEX_CALLBACK_FUNCTION nameOfHandlerFunction
- */
+	/*
+	 * External SysEx handler functions shall each be defined in
+	 * a separate file. This header file shall be included at the
+	 * top of the file immediately following this special #define:
+	 * #define SYSEX_CALLBACK_FUNCTION nameOfHandlerFunction
+	 */
 #ifdef SYSEX_CALLBACK_FUNCTION
 	friend void SYSEX_CALLBACK_FUNCTION(Player *, const byte *, uint16);
 #endif
@@ -433,7 +434,8 @@ protected:
 	Player _players[8];
 	Part _parts[32];
 
-	Instrument _global_adlib_instruments[32];
+	bool _pcSpeaker;
+	Instrument _global_instruments[32];
 	CommandQueue _cmd_queue[64];
 	DeferredCommand _deferredCommands[4];
 
@@ -449,8 +451,8 @@ protected:
 	enum ChunkType {
 		kMThd = 1,
 		kFORM = 2,
-		kMDhd = 4,	// Used in MI2 and INDY4. Contain certain start parameters (priority, volume, etc. ) for the player.
-		kMDpg = 8	// These chunks exist in DOTT and SAMNMAX. They don't get processed, however.
+		kMDhd = 4,  // Used in MI2 and INDY4. Contain certain start parameters (priority, volume, etc. ) for the player.
+		kMDpg = 8   // These chunks exist in DOTT and SAMNMAX. They don't get processed, however.
 	};
 
 	byte *findStartOfSound(int sound, int ct = (kMThd | kFORM));
@@ -498,8 +500,8 @@ protected:
 	int setImuseMasterVolume(uint vol);
 
 	void reallocateMidiChannels(MidiDriver *midi);
-	void setGlobalAdLibInstrument(byte slot, byte *data);
-	void copyGlobalAdLibInstrument(byte slot, Instrument *dest);
+	void setGlobalInstrument(byte slot, byte *data);
+	void copyGlobalInstrument(byte slot, Instrument *dest);
 	bool isNativeMT32() { return _native_mt32; }
 
 protected:

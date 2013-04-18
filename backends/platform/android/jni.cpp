@@ -22,8 +22,9 @@
 
 #if defined(__ANDROID__)
 
-// Allow use of stuff in <time.h>
+// Allow use of stuff in <time.h> and abort()
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
+#define FORBIDDEN_SYMBOL_EXCEPTION_abort
 
 // Disable printf override in common/forbidden.h to avoid
 // clashes with log.h from the Android SDK.
@@ -618,4 +619,3 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 }
 
 #endif
-

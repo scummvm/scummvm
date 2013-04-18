@@ -188,7 +188,7 @@ static void trydecpoint (LexState *ls, SemInfo *seminfo) {
   sprintf(buf, "%.1f", 1.0);
   ls->decpoint = '.';
   for (i = 0; buf[i]; i++) {
-    if (!isspace(buf[i]) && !isdigit(buf[i])) {
+    if (!isspace(static_cast<unsigned char>(buf[i])) && !isdigit(static_cast<unsigned char>(buf[i]))) {
       ls->decpoint = buf[i];
       break;
     }
@@ -472,4 +472,3 @@ void luaX_lookahead (LexState *ls) {
   lua_assert(ls->lookahead.token == TK_EOS);
   ls->lookahead.token = llex(ls, &ls->lookahead.seminfo);
 }
-

@@ -22,8 +22,6 @@
 
 namespace Agi {
 
-using Common::GUIO_NONE;
-
 #define GAME_LVFPN(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp) { \
 		{ \
 			id, \
@@ -32,12 +30,12 @@ using Common::GUIO_NONE;
 			lang, \
 			platform, \
 			ADGF_NO_FLAGS,					\
-			GUIO_NONE	\
+			GUIO1(GUIO_NONE)			\
 		}, \
 		gid, \
 		interp, \
 		features, \
-		ver, \
+		ver \
 	}
 
 #define GAME_LVFPNF(id,name,fname,md5,size,lang,ver,features,gid,platform,interp) { \
@@ -48,14 +46,15 @@ using Common::GUIO_NONE;
 			lang, \
 			platform, \
 			ADGF_USEEXTRAASTITLE,					\
-			GUIO_NONE	\
+			GUIO1(GUIO_NONE)					\
 		}, \
 		gid, \
 		interp, \
 		features, \
-		ver, \
+		ver \
 	}
 
+#define BOOTER2(id,extra,fname,md5,size,ver,gid) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V2)
 #define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V2)
 #define GAME3(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V3)
 
@@ -118,6 +117,69 @@ static const AGIGameDescription gameDescriptions[] = {
 	// AGI Demo for Kings Quest III and Space Quest I
 	GAME("agidemo", "Demo Kings Quest III and Space Quest I", "502e6bf96827b6c4d3e67c9cdccd1033", 0x2272, GID_AGIDEMO),
 
+	{
+		// Black Cauldron (PC 3.5" booter) 1.1J [AGI 1.12]
+		{
+			"bc",
+			"Booter 1.1J",
+			{
+				{ "bc-d1.img", BooterDisk1, "1d29a82b41c9c7491e2b68d16864bd11", 368640},
+				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GID_BC,
+		GType_V1,
+		0,
+		0x1120
+	},
+
+	{
+		// Black Cauldron (PC 3.5" booter) 1.1K [AGI 1.12]
+		{
+			"bc",
+			"Booter 1.1K",
+			{
+				{ "bc-d1.img", BooterDisk1, "98a51d3a372baa9df288b6c0f0232567", 368640},
+				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GID_BC,
+		GType_V1,
+		0,
+		0x1120
+	},
+
+	{
+		// Black Cauldron (PC 3.5" booter) 1.1M [AGI 1.12]
+		{
+			"bc",
+			"Booter 1.1M",
+			{
+				{ "bc-d1.img", BooterDisk1, "edc0e5befbe5e44bb109cdf9137ee12d", 368640},
+				{ "bc-d2.img", BooterDisk2, "5568f7a52e787305656246f95e2aa375", 368640},
+				{ NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		GID_BC,
+		GType_V1,
+		0,
+		0x1120
+	},
+
 	// Black Cauldron (Amiga) 2.00 6/14/87
 	GAME_P("bc", "2.00 1987-06-14", "7b01694af21213b4727bb94476f64eb5", 0x2440, GID_BC, Common::kPlatformAmiga),
 
@@ -143,9 +205,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Black Cauldron (CoCo3 360k) [AGI 2.072]
 	GAME_PS("bc", "updated", "c4e1937f74e8100cd0152b904434d8b4", 357, 0x2440, GID_BC, Common::kPlatformCoCo3),
 
-// TODO
-// These aren't supposed to work now as they require unsupported agi engine 2.01
-#if 0
+	// Donald Duck's Playground (PC Booter) 1.0Q
+	BOOTER2("ddp", "Booter 1.0Q", "ddp.img", "f323f10abf8140ffb2668b09af2e7b87", 368640, 0x2001, GID_DDP),
+
 	// Donald Duck's Playground (Amiga) 1.0C
 	// Menus not tested
 	GAME_P("ddp", "1.0C 1987-04-27", "550971d196f65190a5c760d2479406ef", 0x2272, GID_DDP, Common::kPlatformAmiga),
@@ -157,7 +219,6 @@ static const AGIGameDescription gameDescriptions[] = {
 	// reported by Filippos (thebluegr) in bugreport #1654500
 	// Menus not tested
 	GAME_PS("ddp", "1.0C 1986-06-09", "550971d196f65190a5c760d2479406ef", 132, 0x2272, GID_DDP, Common::kPlatformPC),
-#endif
 
 	// Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89	# 2.316
 	GAME3_PS("goldrush", "1.01 1989-01-13 aka 2.05 1989-03-09", "dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAmiga),
@@ -191,12 +252,12 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GID_GOLDRUSH,
 		GType_V3,
 		GF_MACGOLDRUSH,
-		0x3149,
+		0x3149
 	},
 
 
@@ -236,8 +297,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 2 (IIgs) 2.0A 6/16/88 (CE)
 	GAME_P("kq2", "2.0A 1988-06-16 (CE)", "5203c8b95250a2ecfee93ddb99414753", 0x2917, GID_KQ2, Common::kPlatformApple2GS),
 
-	// King's Quest 2 (Amiga) 2.0J (Broken)
-	GAME_P("kq2", "2.0J 1987-01-29 [OBJECT decrypted]", "b866f0fab2fad91433a637a828cfa410", 0x2440, GID_KQ2, Common::kPlatformAmiga),
+	// King's Quest 2 (Amiga) 2.0J
+	GAME_P("kq2", "2.0J 1987-01-29", "b866f0fab2fad91433a637a828cfa410", 0x2440, GID_KQ2, Common::kPlatformAmiga),
 
 	// King's Quest 2 (Mac) 2.0R
 	GAME_P("kq2", "2.0R 1988-03-23", "cbdb0083317c8e7cfb7ac35da4bc7fdc", 0x2440, GID_KQ2, Common::kPlatformMacintosh),
@@ -509,12 +570,12 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GID_SQ2,
 		GType_V2,
 		0,
-		0x2936,
+		0x2936
 	},
 
 
@@ -645,39 +706,11 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Go West, Young Hippie", "ff31484ea465441cb5f3a0f8e956b716"),
 	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
 
-	{
-		// Groza
-		{
-			"agi-fanmade",
-			"Groza (russian) [AGDS sample]",
-			AD_ENTRY1("logdir", "421da3a18004122a966d64ab6bd86d2e"),
-			Common::RU_RUS,
-			Common::kPlatformPC,
-			ADGF_USEEXTRAASTITLE,
-			GUIO_NONE
-		},
-		GID_FANMADE,
-		GType_V2,
-		GF_AGDS,
-		0x2440,
-	},
+	GAME_LVFPNF("agi-fanmade", "Groza (russian) [AGDS sample]", "logdir", "421da3a18004122a966d64ab6bd86d2e", -1, 
+		Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformPC,GType_V2),
 
-	{
-		// Get Outta SQ
-		{
-			"agi-fanmade",
-			"Get Outta Space Quest",
-			AD_ENTRY1("logdir", "aaea5b4a348acb669d13b0e6f22d4dc9"),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_USEEXTRAASTITLE,
-			GUIO_NONE
-		},
-		GID_GETOUTTASQ,
-		GType_V2,
-		0,
-		0x2440,
-	},
+	GAME_LVFPNF("agi-fanmade", "Get Outta Space Quest", "logdir", "aaea5b4a348acb669d13b0e6f22d4dc9", -1, 
+		Common::EN_ANY, 0x2440, GF_FANMADE, GID_GETOUTTASQ, Common::kPlatformPC,GType_V2),
 
 	FANMADE_F("Half-Death - Terror At White-Mesa", "b62c05d0ace878261392073f57ae788c", GF_AGIMOUSE),
 	FANMADE("Hank's Quest (v1.0 English) - Victim of Society", "64c15b3d0483d17888129100dc5af213"),
@@ -826,12 +859,12 @@ static const AGIGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_USEEXTRAASTITLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GID_FANMADE,
 		GType_V3,
 		GF_FANMADE,
-		0x3149,
+		0x3149
 	},
 	FANMADE_SVP("V - The Graphical Adventure", "1646eaade74f137a9041eb427a389969", 768, 0x2440, Common::kPlatformCoCo3),
 
@@ -854,12 +887,12 @@ static AGIGameDescription g_fallbackDesc = {
 		Common::UNK_LANG,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
-		GUIO_NONE
+		GUIO1(GUIO_NONE)
 	},
 	GID_FANMADE,
 	GType_V2,
 	GF_FANMADE,
-	0x2917,
+	0x2917
 };
 
 } // End of namespace Agi

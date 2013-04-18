@@ -60,14 +60,20 @@ endif
 # derive from the SDL backend, and they all need the following files.
 ifdef SDL_BACKEND
 MODULE_OBJS += \
-	audiocd/sdl/sdl-audiocd.o \
 	events/sdl/sdl-events.o \
+	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
 	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
 	timer/sdl/sdl-timer.o
+	
+# SDL 1.3 removed audio CD support
+ifndef USE_SDL13
+MODULE_OBJS += \
+	audiocd/sdl/sdl-audiocd.o
+endif
 endif
 
 ifdef POSIX
@@ -82,7 +88,8 @@ endif
 ifdef MACOSX
 MODULE_OBJS += \
 	midi/coreaudio.o \
-	midi/coremidi.o
+	midi/coremidi.o \
+	updates/macosx/macosx-updates.o
 endif
 
 ifdef WIN32
@@ -99,6 +106,20 @@ MODULE_OBJS += \
 	fs/amigaos4/amigaos4-fs.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
 	midi/camd.o
+endif
+
+ifdef PLAYSTATION3
+MODULE_OBJS += \
+	fs/posix/posix-fs.o \
+	fs/posix/posix-fs-factory.o \
+	fs/ps3/ps3-fs-factory.o \
+	events/ps3sdl/ps3sdl-events.o \
+	mixer/sdl13/sdl13-mixer.o
+endif
+
+ifeq ($(BACKEND),bada)
+MODULE_OBJS += \
+	timer/bada/timer.o
 endif
 
 ifeq ($(BACKEND),ds)
@@ -124,6 +145,11 @@ ifeq ($(BACKEND),linuxmoto)
 MODULE_OBJS += \
 	events/linuxmotosdl/linuxmotosdl-events.o \
 	graphics/linuxmotosdl/linuxmotosdl-graphics.o
+endif
+
+ifeq ($(BACKEND),maemo)
+MODULE_OBJS += \
+	events/maemosdl/maemosdl-events.o
 endif
 
 ifeq ($(BACKEND),n64)

@@ -147,7 +147,7 @@ void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPa
 	for (FSList::const_iterator i = subDirs.begin(); i != subDirs.end(); ++i) {
 		String name = i->getName();
 
-		if (Common::matchString(name.c_str(), pattern.c_str(), ignoreCase)) {
+		if (matchString(name.c_str(), pattern.c_str(), ignoreCase)) {
 			matchIter = multipleMatches.find(name);
 			if (matchIter == multipleMatches.end()) {
 				multipleMatches[name] = true;
@@ -285,7 +285,6 @@ void SearchManager::clear() {
 	addDirectory(".", ".", -2);
 }
 
+DECLARE_SINGLETON(SearchManager);
+
 } // namespace Common
-
-DECLARE_SINGLETON(Common::SearchManager);
-

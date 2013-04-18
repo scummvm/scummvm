@@ -388,4 +388,3 @@ void Screen_v2::checkedPageUpdate(int srcPage, int dstPage) {
 }
 
 } // End of namespace Kyra
-

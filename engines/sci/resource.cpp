@@ -93,7 +93,7 @@ const char *getSciVersionDesc(SciVersion version) {
 
 //#define SCI_VERBOSE_RESMAN 1
 
-static const char *sci_error_types[] = {
+static const char *const sci_error_types[] = {
 	"No error",
 	"I/O error",
 	"Resource is empty (size 0)",
@@ -107,7 +107,7 @@ static const char *sci_error_types[] = {
 	"SCI version is unsupported"
 };
 
-static const char *s_resourceTypeNames[] = {
+static const char *const s_resourceTypeNames[] = {
 	"view", "pic", "script", "text", "sound",
 	"memory", "vocab", "font", "cursor",
 	"patch", "bitmap", "palette", "cdaudio",
@@ -120,7 +120,7 @@ static const char *s_resourceTypeNames[] = {
 // Resource type suffixes. Note that the
 // suffic of SCI3 scripts has been changed from
 // scr to csc
-static const char *s_resourceTypeSuffixes[] = {
+static const char *const s_resourceTypeSuffixes[] = {
 	"v56", "p56", "scr", "tex", "snd",
 	   "", "voc", "fon", "cur", "pat",
 	"bit", "pal", "cda", "aud", "syn",
@@ -1158,8 +1158,10 @@ ResVersion ResourceManager::detectMapVersion() {
 		}
 	}
 
-	if (!fileStream)
-		error("Failed to open resource map file");
+	if (!fileStream) {
+		warning("Failed to open resource map file");
+		return kResVersionUnknown;
+	}
 
 	// detection
 	// SCI0 and SCI01 maps have last 6 bytes set to FF
@@ -1259,7 +1261,7 @@ ResVersion ResourceManager::detectVolVersion() {
 	}
 
 	if (!fileStream) {
-		error("Failed to open volume file - if you got resource.p01/resource.p02/etc. files, merge them together into resource.000");
+		warning("Failed to open volume file - if you got resource.p01/resource.p02/etc. files, merge them together into resource.000");
 		// resource.p01/resource.p02/etc. may be there when directly copying the files from the original floppies
 		// the sierra installer would merge those together (perhaps we could do this as well?)
 		// possible TODO
@@ -1555,7 +1557,7 @@ void ResourceManager::readResourcePatches() {
 			name = (*x)->getName();
 
 			// SCI1 scheme
-			if (isdigit(name[0])) {
+			if (isdigit(static_cast<unsigned char>(name[0]))) {
 				char *end = 0;
 				resourceNr = strtol(name.c_str(), &end, 10);
 				bAdd = (*end == '.'); // Ensure the next character is the period
@@ -1563,7 +1565,7 @@ void ResourceManager::readResourcePatches() {
 				// SCI0 scheme
 				int resname_len = strlen(szResType);
 				if (scumm_strnicmp(name.c_str(), szResType, resname_len) == 0
-					&& !isalpha(name[resname_len + 1])) {
+					&& !isalpha(static_cast<unsigned char>(name[resname_len + 1]))) {
 					resourceNr = atoi(name.c_str() + resname_len + 1);
 					bAdd = true;
 				}
@@ -1721,15 +1723,19 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			if (!resource) {
 				addResource(resId, source, fileOffset);
 			} else {
-				// if resource is already present, change it to new content
-				//  this is needed at least for pharkas/german. This version
-				//  contains several duplicate resources INSIDE the resource
-				//  data files like fonts, views, scripts, etc. And if we use
-				//  the first entries, half of the game will be english and
-				//  umlauts will also be missing :P
-				resource->_source = source;
-				resource->_fileOffset = fileOffset;
-				resource->size = 0;
+				// If the resource is already present in a volume, change it to
+				// the new content (but only in a volume, so as not to overwrite
+				// external patches - refer to bug #3366295).
+				// This is needed at least for the German version of Pharkas.
+				// That version contains several duplicate resources INSIDE the
+				// resource data files like fonts, views, scripts, etc. Thus,
+				// if we use the first entries in the resource file, half of the
+				// game will be English and umlauts will also be missing :P
+				if (resource->_source->getSourceType() == kSourceVolume) {
+					resource->_source = source;
+					resource->_fileOffset = fileOffset;
+					resource->size = 0;
+				}
 			}
 		}
 	}
@@ -2175,15 +2181,16 @@ void ResourceManager::detectSciVersion() {
 	}
 
 	if (_volVersion == kResVersionSci11Mac) {
-		// SCI32 doesn't have the resource.cfg file, so we can figure out
-		// which of the games are SCI1.1. Note that there are no Mac SCI2 games.
-		// Yes, that means that GK1 Mac is SCI2.1 and not SCI2.
+		Resource *res = testResource(ResourceId(kResourceTypeScript, 64920));
+		// Distinguish between SCI1.1 and SCI32 games here. SCI32 games will
+		// always include script 64920 (the Array class). Note that there are
+		// no Mac SCI2 games. Yes, that means that GK1 Mac is SCI2.1 and not SCI2.
 
 		// TODO: Decide between SCI2.1 and SCI3
-		if (Common::File::exists("resource.cfg"))
-			s_sciVersion = SCI_VERSION_1_1;
-		else
+		if (res)
 			s_sciVersion = SCI_VERSION_2_1;
+		else
+			s_sciVersion = SCI_VERSION_1_1;
 		return;
 	}
 
@@ -2348,7 +2355,7 @@ bool ResourceManager::detectFontExtended() {
 }
 
 // detects, if SCI1.1 game uses palette merging or copying - this is supposed to only get used on SCI1.1 games
-bool ResourceManager::detectForPaletteMergingForSci11() {
+bool ResourceManager::detectPaletteMergingSci11() {
 	// Load palette 999 (default palette)
 	Resource *res = findResource(ResourceId(kResourceTypePalette, 999), false);
 

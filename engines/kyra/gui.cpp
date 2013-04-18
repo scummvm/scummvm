@@ -375,7 +375,7 @@ void GUI::updateSaveList(bool excludeQuickSaves) {
 		s1 = (*i)[i->size()-3];
 		s2 = (*i)[i->size()-2];
 		s3 = (*i)[i->size()-1];
-		if (!isdigit(s1) || !isdigit(s2) || !isdigit(s3))
+		if (!isdigit(static_cast<unsigned char>(s1)) || !isdigit(static_cast<unsigned char>(s2)) || !isdigit(static_cast<unsigned char>(s3)))
 			continue;
 		s1 -= '0';
 		s2 -= '0';
@@ -415,7 +415,7 @@ void GUI::checkTextfieldInput() {
 
 	bool running = true;
 	int keys = 0;
-	while (_vm->_eventMan->pollEvent(event) && running) {
+	while (running && _vm->_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_q && event.kbd.hasFlags(Common::KBD_CTRL))
@@ -671,4 +671,3 @@ void MainMenu::printString(const char *format, int x, int y, int col1, int col2,
 }
 
 } // End of namespace Kyra
-

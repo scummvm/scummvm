@@ -57,4 +57,3 @@ Audio::AudioStream *makeShortenStream(Common::ReadStream &stream);
 #endif
 
 #endif // engine and dynamic plugins guard
-

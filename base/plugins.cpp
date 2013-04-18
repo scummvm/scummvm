@@ -94,8 +94,14 @@ public:
 		#if PLUGIN_ENABLED_STATIC(AGOS)
 		LINK_PLUGIN(AGOS)
 		#endif
+		#if PLUGIN_ENABLED_STATIC(CGE)
+		LINK_PLUGIN(CGE)
+		#endif
 		#if PLUGIN_ENABLED_STATIC(CINE)
 		LINK_PLUGIN(CINE)
+		#endif
+		#if PLUGIN_ENABLED_STATIC(COMPOSER)
+		LINK_PLUGIN(COMPOSER)
 		#endif
 		#if PLUGIN_ENABLED_STATIC(CRUISE)
 		LINK_PLUGIN(CRUISE)
@@ -543,7 +549,9 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 
 #include "engines/metaengine.h"
 
+namespace Common {
 DECLARE_SINGLETON(EngineManager);
+}
 
 /**
  * This function works for both cached and uncached PluginManagers.
@@ -634,7 +642,9 @@ const EnginePlugin::List &EngineManager::getPlugins() const {
 
 #include "audio/musicplugin.h"
 
+namespace Common {
 DECLARE_SINGLETON(MusicManager);
+}
 
 const MusicPlugin::List &MusicManager::getPlugins() const {
 	return (const MusicPlugin::List &)PluginManager::instance().getPlugins(PLUGIN_TYPE_MUSIC);

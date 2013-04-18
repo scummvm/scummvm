@@ -488,4 +488,3 @@ GLESFakePalette5551Texture::~GLESFakePalette5551Texture() {
 }
 
 #endif
-

@@ -146,11 +146,11 @@ page 376) */
  *  Client code must *not* deallocate _stream when done.
  */
 struct IFFChunk {
-	Common::IFF_ID			_type;
-	uint32					_size;
-	Common::ReadStream		*_stream;
+	IFF_ID      _type;
+	uint32      _size;
+	ReadStream *_stream;
 
-	IFFChunk(Common::IFF_ID type, uint32 size, Common::ReadStream *stream) : _type(type), _size(size), _stream(stream) {
+	IFFChunk(IFF_ID type, uint32 size, ReadStream *stream) : _type(type), _size(size), _stream(stream) {
 		assert(_stream);
 	}
 };
@@ -163,17 +163,17 @@ class IFFParser {
 	/**
 	 *  This private class implements IFF chunk navigation.
 	 */
-	class IFFChunkNav : public Common::ReadStream {
+	class IFFChunkNav : public ReadStream {
 	protected:
-		Common::ReadStream *_input;
+		ReadStream *_input;
 		uint32 _bytesRead;
 	public:
-		Common::IFF_ID id;
+		IFF_ID id;
 		uint32 size;
 
 		IFFChunkNav() : _input(0) {
 		}
-		void setInputStream(Common::ReadStream *input) {
+		void setInputStream(ReadStream *input) {
 			_input = input;
 			size = _bytesRead = 0;
 		}
@@ -199,7 +199,7 @@ class IFFParser {
 				readByte();
 			}
 		}
-		// Common::ReadStream implementation
+		// ReadStream implementation
 		bool eos() const { return _input->eos(); }
 		bool err() const { return _input->err(); }
 		void clearErr() { _input->clearErr(); }
@@ -215,21 +215,21 @@ protected:
 	IFFChunkNav _chunk; 	///< The current chunk.
 
 	uint32 _formSize;
-	Common::IFF_ID _formType;
+	IFF_ID _formType;
 
-	Common::ReadStream *_stream;
+	ReadStream *_stream;
 	bool _disposeStream;
 
-	void setInputStream(Common::ReadStream *stream);
+	void setInputStream(ReadStream *stream);
 
 public:
-	IFFParser(Common::ReadStream *stream, bool disposeStream = false);
+	IFFParser(ReadStream *stream, bool disposeStream = false);
 	~IFFParser();
 
 	/**
 	 * Callback type for the parser.
 	 */
-	typedef Common::Functor1< IFFChunk&, bool > IFFCallback;
+	typedef Functor1< IFFChunk&, bool > IFFCallback;
 
 	/**
 	 * Parse the IFF container, invoking the callback on each chunk encountered.

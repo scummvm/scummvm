@@ -650,7 +650,7 @@ private:
 public:
 #ifdef ACTOR_DEBUG
 #ifndef SAGA_DEBUG
-	you must also define SAGA_DEBUG
+	#error You must also define SAGA_DEBUG
 #endif
 //path debug - use with care
 	struct DebugPoint {

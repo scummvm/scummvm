@@ -439,4 +439,3 @@ bool OSystem_N64::pollEvent(Common::Event &event) {
 
 	return false;
 }
-

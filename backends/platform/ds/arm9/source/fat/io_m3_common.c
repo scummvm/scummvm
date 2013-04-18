@@ -57,4 +57,3 @@ void _M3_changeMode (u32 mode) {
 		_M3_readHalfword (0x08000188);
 	}
 }
-

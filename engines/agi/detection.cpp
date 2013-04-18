@@ -28,6 +28,7 @@
 #include "engines/advancedDetector.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/md5.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
 #include "graphics/thumbnail.h"
@@ -35,6 +36,9 @@
 
 #include "agi/agi.h"
 #include "agi/preagi.h"
+#include "agi/preagi_mickey.h"
+#include "agi/preagi_troll.h"
+#include "agi/preagi_winnie.h"
 #include "agi/wagparser.h"
 
 
@@ -93,6 +97,14 @@ void AgiBase::initVersion() {
 	_gameVersion = _gameDescription->version;
 }
 
+const char *AgiBase::getDiskName(uint16 id) {
+	for (int i = 0; _gameDescription->desc.filesDescriptions[i].fileName != NULL; i++)
+		if (_gameDescription->desc.filesDescriptions[i].fileType == id)
+			return _gameDescription->desc.filesDescriptions[i].fileName;
+
+	return "";
+}
+
 }
 
 static const PlainGameDescriptor agiGames[] = {
@@ -138,7 +150,7 @@ class AgiMetaEngine : public AdvancedMetaEngine {
 public:
 	AgiMetaEngine() : AdvancedMetaEngine(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
 		_singleid = "agi";
-		_guioptions = Common::GUIO_NOSPEECH;
+		_guioptions = GUIO1(GUIO_NOSPEECH);
 	}
 
 	virtual const char *getName() const {
@@ -182,8 +194,19 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 
 	switch (gd->gameType) {
 	case Agi::GType_PreAGI:
-		*engine = new Agi::PreAgiEngine(syst, gd);
+		switch (gd->gameID) {
+		case GID_MICKEY:
+			*engine = new Agi::MickeyEngine(syst, gd);
+			break;
+		case GID_TROLL:
+			*engine = new Agi::TrollEngine(syst, gd);
+			break;
+		case GID_WINNIE:
+			*engine = new Agi::WinnieEngine(syst, gd);
+			break;
+		}
 		break;
+	case Agi::GType_V1:
 	case Agi::GType_V2:
 	case Agi::GType_V3:
 		*engine = new Agi::AgiEngine(syst, gd);
@@ -253,17 +276,14 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 		SaveStateDescriptor desc(slot, name);
 
+		// Do not allow save slot 0 (used for auto-saving) to be deleted or
+		// overwritten.
 		desc.setDeletableFlag(slot != 0);
 		desc.setWriteProtectedFlag(slot == 0);
 
 		char saveVersion = in->readByte();
 		if (saveVersion >= 4) {
-			Graphics::Surface *thumbnail = new Graphics::Surface();
-			assert(thumbnail);
-			if (!Graphics::loadThumbnail(*in, *thumbnail)) {
-				delete thumbnail;
-				thumbnail = 0;
-			}
+			Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*in);
 
 			desc.setThumbnail(thumbnail);
 
@@ -288,9 +308,12 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 		delete in;
 
 		return desc;
+	} else {
+		SaveStateDescriptor emptySave;
+		// Do not allow save slot 0 (used for auto-saving) to be overwritten.
+		emptySave.setWriteProtectedFlag(slot == 0);
+		return emptySave;
 	}
-
-	return SaveStateDescriptor();
 }
 
 const ADGameDescription *AgiMetaEngine::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
@@ -482,7 +505,9 @@ int AgiEngine::agiDetectGame() {
 
 	assert(_gameDescription != NULL);
 
-	if (getVersion() <= 0x2999) {
+	if (getVersion() <= 0x2001) {
+		_loader = new AgiLoader_v1(this);
+	} else if (getVersion() <= 0x2999) {
 		_loader = new AgiLoader_v2(this);
 	} else {
 		_loader = new AgiLoader_v3(this);

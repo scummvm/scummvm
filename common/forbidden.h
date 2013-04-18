@@ -29,7 +29,7 @@
  * infrastructure code do not make use of certain "forbidden" APIs, such
  * as fopen(), setjmp(), etc.
  * This is achieved by re-#defining various symbols to a "garbage"
- * string which then trigers a compiler error.
+ * string which then triggers a compiler error.
  *
  * Backend files may #define FORBIDDEN_SYMBOL_ALLOW_ALL if they
  * have to access functions like fopen, fread etc.
@@ -201,6 +201,11 @@
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_exit
 #undef exit
 #define exit(a)	FORBIDDEN_SYMBOL_REPLACEMENT
+#endif
+
+#ifndef FORBIDDEN_SYMBOL_EXCEPTION_abort
+#undef abort
+#define abort()	FORBIDDEN_SYMBOL_REPLACEMENT
 #endif
 
 #ifndef FORBIDDEN_SYMBOL_EXCEPTION_getenv

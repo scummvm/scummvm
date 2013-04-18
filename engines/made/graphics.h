@@ -23,10 +23,11 @@
 #ifndef MADE_GRAPHICS_H
 #define MADE_GRAPHICS_H
 
-#include "common/util.h"
-#include "common/file.h"
-#include "common/stream.h"
-#include "graphics/surface.h"
+#include "common/scummsys.h"
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Made {
 

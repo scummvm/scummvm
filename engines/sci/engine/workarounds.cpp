@@ -77,6 +77,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_HOYLE4,        700,   700,  1,         "BridgeHand", "calcQTS",        -1,    3, { WORKAROUND_FAKE,   0 } }, // sometimes when placing a bid in bridge
 	{ GID_HOYLE4,        300,   300,  0,                   "", "export 2",   0x1d4d,    0, { WORKAROUND_FAKE,   0 } }, // after passing around cards in hearts
 	{ GID_HOYLE4,        400,   400,  1,            "GinHand", "calcRuns",       -1,    4, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Gin Rummy (e.g. when knocking and placing a card) - bug #3292334
+	{ GID_HOYLE4,        500,    17,  1,          "Character", "say",            -1,  504, { WORKAROUND_FAKE,   0 } }, // sometimes while playing Cribbage (e.g. when the opponent says "Last Card") - bug #3292327
 	{ GID_ISLANDBRAIN,   100,   937,  0,            "IconBar", "dispatchEvent",  -1,   58, { WORKAROUND_FAKE,   0 } }, // when using ENTER at the startup menu - bug #3045225
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",           -1,    3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",         -1,    0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
@@ -123,6 +124,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // see above
 	{ GID_PEPPER,         -1,   894,  0,            "Package", "doVerb",         -1,    3, { WORKAROUND_FAKE,   0 } }, // using the hand on the book in the inventory - bug #3040012
 	{ GID_PEPPER,        150,   928,  0,           "Narrator", "startText",      -1,    0, { WORKAROUND_FAKE,   0 } }, // happens during the non-interactive demo of Pepper
+	{ GID_PQ4,            -1,    25,  0,         "iconToggle", "select",         -1,    1, { WORKAROUND_FAKE,   0 } }, // when toggling the icon bar to auto-hide or not
 	{ GID_PQSWAT,         -1, 64950,  0,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Using the menu in the beginning
 	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",        0xbd0,    0, { WORKAROUND_FAKE,   0 } }, // hq1: going to the brigands hideout
 	{ GID_QFG1,           -1,   210,  0,          "Encounter", "init",        0xbe4,    0, { WORKAROUND_FAKE,   0 } }, // qfg1: going to the brigands hideout
@@ -153,6 +155,9 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SHIVERS,        -1,   952,  0,       "SoundManager", "stop",           -1,    2, { WORKAROUND_FAKE,   0 } }, // Just after Sierra logo
 	{ GID_SHIVERS,        -1, 64950,  0,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // When clicking on the locked door at the beginning
 	{ GID_SHIVERS,        -1, 64950,  0,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // When clicking on the gargoyle eye at the beginning
+	{ GID_SHIVERS,     20311, 64964,  0,              "DPath", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // Just after door puzzle is solved and the metal balls start to roll
+	{ GID_SHIVERS,     29260, 29260,  0,             "spMars", "handleEvent",    -1,    4, { WORKAROUND_FAKE,   0 } }, // When clicking mars after seeing fortune to align earth etc...
+	{ GID_SHIVERS,     29260, 29260,  0,            "spVenus", "handleEvent",    -1,    4, { WORKAROUND_FAKE,   0 } }, // When clicking venus after seeing fortune to align earth etc...
 	{ GID_SQ1,           103,   103,  0,               "hand", "internalEvent",  -1,   -1, { WORKAROUND_FAKE,   0 } }, // Spanish (and maybe early versions?) only: when moving cursor over input pad, temps 1 and 2
 	{ GID_SQ1,            -1,   703,  0,                   "", "export 1",       -1,    0, { WORKAROUND_FAKE,   0 } }, // sub that's called from several objects while on sarien battle cruiser
 	{ GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState", 0x18a,    0, { WORKAROUND_FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
@@ -211,10 +216,6 @@ const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4ae,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id
 	{ GID_PQ2,            23,    23,  0,         "rm23Script", "elements",    0x4c1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the 2nd page of pate's file - 0x75 as id (another pq2 version, bug #3043904)
 	{ GID_QFG1,           11,    11,  0,             "battle", "<noname90>",     -1,    0, { WORKAROUND_IGNORE,    0 } }, // DEMO: When entering battle, 0x75 as id
-	{ GID_QFG3,           -1,    47,  0,          "barterWin", "open",       0x1426,    0, { WORKAROUND_IGNORE,    0 } }, // sometimes when talking with a vendor that can be bartered with, the wrong local variable is checked and the variable contents are wrong - bug #3292251
-	{ GID_QFG3,           -1,    47,  0,         "barterIcon", "show",       0x135c,    0, { WORKAROUND_IGNORE,    0 } }, // sometimes when talking with a vendor that can be bartered with, the wrong local variable is checked and the variable contents are wrong - bug #3292251
-	{ GID_SQ1,            -1,   700,  0,       "arcadaRegion", "doit",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // restoring in some rooms of the arcada (right at the start)
-	{ GID_SQ1,            44,    44,  0,           "spinDone", "changeState",0x13b0,    0, { WORKAROUND_IGNORE,    0 } }, // restoring a game at the slot machine in Ulence Flats (bug #3308087)
 	{ GID_SQ4,           397,     0,  0,                   "", "export 12",      -1,    0, { WORKAROUND_IGNORE,    0 } }, // FLOPPY: when going into the computer store (bug #3044044)
 	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    0, { WORKAROUND_IGNORE,    0 } }, // CD: clicking on catalog in roboter sale - a parameter is an object
 	{ GID_SQ4,           391,   391,  0,         "choosePlug", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // CD: ordering connector in roboter sale - a parameter is an object
@@ -283,7 +284,6 @@ const SciWorkaroundEntry kGraphSaveBox_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
 	{ GID_LSL6,           -1,    86,  0,             "LL6Inv", "hide",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens during the game, gets called with 1 extra parameter
-	{ GID_SQ5,           850,   850,  0,                 NULL, "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens while playing Battle Cruiser (invalid segment) - bug #3056811
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -387,7 +387,7 @@ const SciWorkaroundEntry kStrLen_workarounds[] = {
 const SciWorkaroundEntry kUnLoad_workarounds[] = {
 	{ GID_ECOQUEST,      380,    61,  0,              "gotIt", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // CD version: after talking to the dolphin the first time, a 3rd parameter is passed by accident
 	{ GID_ECOQUEST,      380,    69,  0,   "lookAtBlackBoard", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // German version, when closing the blackboard closeup in the dolphin room, a 3rd parameter is passed by accident - bug #3098353
-	{ GID_LAURABOW2,      -1,     1,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #3034902
+	{ GID_LAURABOW2,      -1,    -1,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #3034902
 	{ GID_LSL6,          130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
 	{ GID_LSL6,          740,   740,  0,        "showCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during ending, 4 additional parameters are passed by accident
 	{ GID_LSL6HIRES,     130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident

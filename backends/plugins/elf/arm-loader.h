@@ -38,4 +38,3 @@ protected:
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(ARM_TARGET) */
 
 #endif /* BACKENDS_PLUGINS_ARM_LOADER_H */
-

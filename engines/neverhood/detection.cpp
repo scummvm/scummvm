@@ -64,9 +64,6 @@ static const PlainGameDescriptor neverhoodGames[] = {
 
 namespace Neverhood {
 
-using Common::GUIO_NONE;
-using Common::GUIO_NOSPEECH;
-
 static const NeverhoodGameDescription gameDescriptions[] = {
 
 	{
@@ -79,7 +76,7 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		0,
 		0,

@@ -1299,4 +1299,3 @@ void KyraEngine_LoK::setupSceneResource(int sceneId) {
 }
 
 } // End of namespace Kyra
-

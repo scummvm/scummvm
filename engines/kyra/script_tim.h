@@ -317,4 +317,3 @@ private:
 } // End of namespace Kyra
 
 #endif
-

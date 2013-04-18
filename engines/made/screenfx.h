@@ -23,16 +23,23 @@
 #ifndef MADE_SCREENFX_H
 #define MADE_SCREENFX_H
 
-#include "common/endian.h"
-#include "common/util.h"
-#include "common/rect.h"
+#include "common/scummsys.h"
 
-#include "graphics/surface.h"
-
-#include "made/made.h"
-#include "made/screen.h"
+namespace Graphics {
+struct Surface;
+}
 
 namespace Made {
+
+class Screen;
+
+struct BlendedPaletteStatus {
+	bool _active;
+	byte *_palette, *_newPalette;
+	int _colorCount;
+	int16 _value, _maxValue, _incr;
+	int cnt;
+};
 
 class ScreenEffects {
 public:
@@ -47,8 +54,12 @@ private:
 	static const byte vfxOffsIndexTable[8];
 	const byte *vfxOffsTablePtr;
 	int16 vfxX1, vfxY1, vfxWidth, vfxHeight;
+	BlendedPaletteStatus _blendedPaletteStatus;
+
 	void setPalette(byte *palette);
 	void setBlendedPalette(byte *palette, byte *newPalette, int colorCount, int16 value, int16 maxValue);
+	void startBlendedPalette(byte *palette, byte *newPalette, int colorCount, int16 maxValue);
+	void stepBlendedPalette();
 	void copyFxRect(Graphics::Surface *surface, int16 x1, int16 y1, int16 x2, int16 y2);
 
 	void vfx00(Graphics::Surface *surface, byte *palette, byte *newPalette, int colorCount);

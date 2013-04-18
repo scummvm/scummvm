@@ -77,7 +77,7 @@ bool Animation::load(Common::SeekableReadStream *stream, int flag) {
 
 	// Check if there is enough data
 	if (_stream->size() - _stream->pos() < (signed)(numChunks * sizeof(Chunk))) {
-		debugC(2, kLastExpressDebugGraphics, "NIS file seems to be corrupted!");
+		debugC(2, kLastExpressDebugGraphics, "NIS file seems to be corrupted");
 		return false;
 	}
 
@@ -101,10 +101,10 @@ bool Animation::load(Common::SeekableReadStream *stream, int flag) {
 
 bool Animation::process() {
 	if (!_currentChunk)
-		error("Animation::process - internal error: the current chunk iterator is invalid!");
+		error("[Animation::process] Current chunk iterator is invalid");
 
 	if (_stream == NULL || _chunks.size() == 0)
-		error("Trying to show an animation before loading data");
+		error("[Animation::process] Trying to show an animation before loading data");
 
 	// TODO: - subtract the time paused by the GUI
 	//       - Re-implement to be closer to the original engine
@@ -191,7 +191,7 @@ bool Animation::process() {
 			break;
 
 		default:
-			error("  UNKNOWN chunk type=%x frame=%d size=%d", _currentChunk->type, _currentChunk->frame, _currentChunk->size);
+			error("[Animation::process] UNKNOWN chunk type=%x frame=%d size=%d", _currentChunk->type, _currentChunk->frame, _currentChunk->size);
 			break;
 		}
 		_currentChunk++;
@@ -206,7 +206,7 @@ bool Animation::hasEnded() {
 
 Common::Rect Animation::draw(Graphics::Surface *surface) {
 	if (!_overlay)
-		error("Animation::draw - internal error: the current overlay animation frame is invalid!");
+		error("[Animation::draw] Current overlay animation frame is invalid");
 
 	// Paint the background
 	if (_backgroundCurrent == 1 && _background1)
@@ -242,7 +242,7 @@ AnimFrame *Animation::processChunkFrame(Common::SeekableReadStream *in, const Ch
 
 void Animation::processChunkAudio(Common::SeekableReadStream *in, const Chunk &c) {
 	if (!_audio)
-		error("Animation::processChunkAudio - internal error: the audio stream is invalid!");
+		error("[Animation::processChunkAudio] Audio stream is invalid");
 
 	// Skip the Snd header, to queue just the audio blocks
 	uint32 size = c.size;

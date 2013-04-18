@@ -42,18 +42,14 @@ public:
 	virtual void startSound(int sound);
 	virtual void stopSound(int sound);
 	virtual void stopAllSounds();
-//	virtual int  getMusicTimer();
+	virtual int  getMusicTimer();
 	virtual int  getSoundStatus(int sound) const;
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
+	virtual int readBuffer(int16 *buffer, const int numSamples);
+	virtual bool isStereo() const { return true; }
 
-protected:
-
-#include "common/pack-start.h"	// START STRUCT PACKING
+private:
 	struct Voice {
 		byte attack;
 		byte decay;
@@ -63,7 +59,7 @@ protected:
 		int16 vibrato;
 		int16 vibrato2;
 		int16 noise;
-	} PACKED_STRUCT;
+	};
 
 	struct Voice2 {
 		byte *amplitudeOutput;
@@ -72,12 +68,12 @@ protected:
 
 		uint8 channel;
 		int8 sustainLevel;
-		int8 attackRate;
+		uint8 attackRate;
 		uint8 maxAmpl;
-		int8 decayRate;
-		int8 sustainRate;
-		int8 releaseRate;
-		int8 releaseTime;
+		uint8 decayRate;
+		uint8 sustainRate;
+		uint8 releaseRate;
+		uint8 releaseTime;
 		int8 vibratoRate;
 		int8 vibratoDepth;
 
@@ -90,10 +86,17 @@ protected:
 		int8 unkRate;
 		int8 unkCount;
 
-		int nextProcessState;
-		int8 curVolume;
-		int8 curOctave;
-		int8 curFreq;
+		enum EnvelopeState {
+			kEnvelopeAttack,
+			kEnvelopeDecay,
+			kEnvelopeSustain,
+			kEnvelopeRelease
+		};
+
+		EnvelopeState nextProcessState;
+		uint8 curVolume;
+		uint8 curOctave;
+		uint8 curFreq;
 
 		int8 octaveAdd;
 
@@ -101,21 +104,20 @@ protected:
 		Voice2 *nextVoice;
 
 		byte chanNumber;
-	} PACKED_STRUCT;
+	};
 
 	struct MusicChip {
 		byte ampl[4];
 		byte freq[4];
 		byte octave[2];
-	} PACKED_STRUCT;
-#include "common/pack-end.h"	// END STRUCT PACKING
+	};
 
 	Voice _cmsVoicesBase[16];
 	Voice2 _cmsVoices[8];
 	MusicChip _cmsChips[2];
 
-	int8 _tempo;
-	int8 _tempoSum;
+	uint8 _tempo;
+	uint8 _tempoSum;
 	byte _looping;
 	byte _octaveMask;
 	int16 _midiDelay;
@@ -126,11 +128,13 @@ protected:
 
 	int _loadedMidiSong;
 
+	byte _sfxFreq[4], _sfxAmpl[4], _sfxOctave[2];
+
 	byte _lastMidiCommand;
 	uint _outputTableReady;
-	byte _clkFrequenz;
-	byte _restart;
-	byte _curSno;
+	byte _voiceTimer;
+
+	int _musicTimer, _musicTimerTicks;
 
 	void loadMidiData(byte *data, int sound);
 	void play();
@@ -147,15 +151,25 @@ protected:
 	void clearNote(byte *&data);
 	void offAllChannels();
 	void playVoice();
-	void processMidiData(uint ticks);
+	void processMidiData();
 
 	Voice2 *getFreeVoice();
 	Voice2 *getPlayVoice(byte param);
 
-	// from Player_V2
-protected:
-	CMSEmulator *_cmsEmu;
+	struct MidiNote {
+		byte frequency;
+		byte baseOctave;
+	};
 
+	static const MidiNote _midiNotes[132];
+	static const byte _attackRate[16];
+	static const byte _decayRate[16];
+	static const byte _sustainRate[16];
+	static const byte _releaseRate[16];
+	static const byte _volumeTable[16];
+	static const byte _cmsInitData[26];
+
+	CMSEmulator *_cmsEmu;
 };
 
 } // End of namespace Scumm

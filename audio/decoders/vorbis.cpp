@@ -29,6 +29,7 @@
 
 #ifdef USE_VORBIS
 
+#include "common/ptr.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
@@ -42,6 +43,7 @@
 #include <tremor/ivorbisfile.h>
 #endif
 #else
+#define OV_EXCLUDE_STATIC_CALLBACKS
 #include <vorbis/vorbisfile.h>
 #endif
 
@@ -88,8 +90,7 @@ static ov_callbacks g_stream_wrap = {
 
 class VorbisStream : public SeekableAudioStream {
 protected:
-	Common::SeekableReadStream *_inStream;
-	DisposeAfterUse::Flag _disposeAfterUse;
+	Common::DisposablePtr<Common::SeekableReadStream> _inStream;
 
 	bool _isStereo;
 	int _rate;
@@ -120,10 +121,9 @@ protected:
 };
 
 VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag dispose) :
-	_inStream(inStream),
-	_disposeAfterUse(dispose),
+	_inStream(inStream, dispose),
 	_length(0, 1000),
-	_bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
+	_bufferEnd(ARRAYEND(_buffer)) {
 
 	int res = ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap);
 	if (res < 0) {
@@ -149,8 +149,6 @@ VorbisStream::VorbisStream(Common::SeekableReadStream *inStream, DisposeAfterUse
 
 VorbisStream::~VorbisStream() {
 	ov_clear(&_ovFile);
-	if (_disposeAfterUse == DisposeAfterUse::YES)
-		delete _inStream;
 }
 
 int VorbisStream::readBuffer(int16 *buffer, const int numSamples) {

@@ -826,4 +826,3 @@ void OSystem_Android::disableCursorPalette() {
 }
 
 #endif
-

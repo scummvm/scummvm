@@ -62,12 +62,9 @@ bool readSavegameHeader(Common::InSaveFile *in, CruiseSavegameHeader &header) {
 	while ((ch = (char)in->readByte()) != '\0') header.saveName += ch;
 
 	// Get the thumbnail
-	header.thumbnail = new Graphics::Surface();
-	if (!Graphics::loadThumbnail(*in, *header.thumbnail)) {
-		delete header.thumbnail;
-		header.thumbnail = NULL;
+	header.thumbnail = Graphics::loadThumbnail(*in);
+	if (!header.thumbnail)
 		return false;
-	}
 
 	return true;
 }

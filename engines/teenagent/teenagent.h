@@ -122,7 +122,7 @@ public:
 	Scene *scene;
 	Inventory *inventory;
 	MusicPlayer *music;
-	Console * console;
+	Console *console;
 
 	void setMusic(byte id);
 

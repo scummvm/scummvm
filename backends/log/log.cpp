@@ -102,4 +102,3 @@ void Log::printTimeStamp() {
 
 } // End of namespace Log
 } // End of namespace Backends
-

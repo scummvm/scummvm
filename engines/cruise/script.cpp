@@ -231,9 +231,7 @@ int32 opcodeType2() {
 		int type = getByteFromScript();
 		int overlay = getByteFromScript();
 
-		int firstOffset;
-		int offset;
-		firstOffset = offset = getShortFromScript();
+		int offset = getShortFromScript();
 		offset += index;
 
 		int typ7 = type & 7;

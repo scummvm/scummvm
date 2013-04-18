@@ -59,11 +59,11 @@
     </Link>
     <PostBuildEvent>
       <Command>@echo off
-xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc10\
-xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc9\
-xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc8\
-xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\
-xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\iphone\</Command>
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc10\"
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc9\"
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc8\"
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\codeblocks\"
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -84,10 +84,12 @@ xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\iphone\</Command>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc10\
-xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc9\
-xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\msvc8\
-xcopy /Y $(TargetPath) $(SolutionDir)\..\..\..\dists\codeblocks\</Command>
+      <Command>@echo off
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc10\"
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc9\"
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\msvc8\"
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\codeblocks\"
+xcopy /Y "$(TargetPath)" "$(SolutionDir)\..\..\..\dists\iphone\"</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>

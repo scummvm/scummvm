@@ -657,4 +657,3 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 
 
 } // End of namespace Kyra
-

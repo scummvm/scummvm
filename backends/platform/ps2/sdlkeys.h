@@ -260,5 +260,3 @@ enum SdlKeyCodes {
 };
 
 #endif
-
-

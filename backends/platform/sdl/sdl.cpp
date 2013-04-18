@@ -35,13 +35,21 @@
 #include "common/textconsole.h"
 
 #include "backends/saves/default/default-saves.h"
+
+// Audio CD support was removed with SDL 1.3
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+#include "backends/audiocd/default/default-audiocd.h"
+#else
 #include "backends/audiocd/sdl/sdl-audiocd.h"
+#endif
+
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
 #ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#include "graphics/cursorman.h"
 #endif
 
 #include "icons/scummvm.xpm"
@@ -167,7 +175,7 @@ void OSystem_SDL::initBackend() {
 
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
 			if (use_opengl) {
-				_graphicsManager = new OpenGLSdlGraphicsManager();
+				_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource);
 				graphicsManagerType = 1;
 			}
 		}
@@ -188,8 +196,15 @@ void OSystem_SDL::initBackend() {
 		_mixerManager->init();
 	}
 
-	if (_audiocdManager == 0)
+	if (_audiocdManager == 0) {
+		// Audio CD support was removed with SDL 1.3
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+		_audiocdManager = new DefaultAudioCDManager();
+#else
 		_audiocdManager = new SdlAudioCDManager();
+#endif
+
+	}
 
 	// Setup a custom program icon.
 	setupIcon();
@@ -413,6 +428,7 @@ void OSystem_SDL::setupIcon() {
 	for (i = 0; i < ncols; i++) {
 		unsigned char code;
 		char color[32];
+		memset(color, 0, sizeof(color));
 		unsigned int col;
 		if (sscanf(scummvm_icon[1 + i], "%c c %s", &code, color) != 2) {
 			warning("Wrong format of scummvm_icon[%d] (%s)", 1 + i, scummvm_icon[1 + i]);
@@ -457,7 +473,8 @@ uint32 OSystem_SDL::getMillis() {
 }
 
 void OSystem_SDL::delayMillis(uint msecs) {
-	SDL_Delay(msecs);
+	if (!g_eventRec.processDelayMillis(msecs))
+		SDL_Delay(msecs);
 }
 
 void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
@@ -508,6 +525,22 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		i = _sdlModesCount;
 	}
 
+	// Very hacky way to set up the old graphics manager state, in case we
+	// switch from SDL->OpenGL or OpenGL->SDL.
+	//
+	// This is a probably temporary workaround to fix bugs like #3368143
+	// "SDL/OpenGL: Crash when switching renderer backend".
+	const int screenWidth = _graphicsManager->getWidth();
+	const int screenHeight = _graphicsManager->getHeight();
+	const bool arState = _graphicsManager->getFeatureState(kFeatureAspectRatioCorrection);
+	const bool fullscreen = _graphicsManager->getFeatureState(kFeatureFullscreenMode);
+	const bool cursorPalette = _graphicsManager->getFeatureState(kFeatureCursorPalette);
+#ifdef USE_RGB_COLOR
+	const Graphics::PixelFormat pixelFormat = _graphicsManager->getScreenFormat();
+#endif
+
+	bool switchedManager = false;
+
 	// Loop through modes
 	while (srcMode->name) {
 		if (i == mode) {
@@ -519,16 +552,55 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 				_graphicsManager = new SurfaceSdlGraphicsManager(_eventSource);
 				((SurfaceSdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
+
+				switchedManager = true;
 			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
 				debug(1, "switching to OpenGL graphics");
 				delete _graphicsManager;
-				_graphicsManager = new OpenGLSdlGraphicsManager();
+				_graphicsManager = new OpenGLSdlGraphicsManager(_eventSource);
 				((OpenGLSdlGraphicsManager *)_graphicsManager)->initEventObserver();
 				_graphicsManager->beginGFXTransaction();
+
+				switchedManager = true;
 			}
 
 			_graphicsMode = mode;
-			return _graphicsManager->setGraphicsMode(srcMode->id);
+
+			if (switchedManager) {
+#ifdef USE_RGB_COLOR
+				_graphicsManager->initSize(screenWidth, screenHeight, &pixelFormat);
+#else
+				_graphicsManager->initSize(screenWidth, screenHeight, 0);
+#endif
+				_graphicsManager->setFeatureState(kFeatureAspectRatioCorrection, arState);
+				_graphicsManager->setFeatureState(kFeatureFullscreenMode, fullscreen);
+				_graphicsManager->setFeatureState(kFeatureCursorPalette, cursorPalette);
+
+				// Worst part about this right now, tell the cursor manager to
+				// resetup the cursor + cursor palette if necessarily
+
+				// First we need to try to setup the old state on the new manager...
+				if (_graphicsManager->endGFXTransaction() != kTransactionSuccess) {
+					// Oh my god if this failed the client code might just explode.
+					return false;
+				}
+
+				// Next setup the cursor again
+				CursorMan.pushCursor(0, 0, 0, 0, 0, 0);
+				CursorMan.popCursor();
+
+				// Next setup cursor palette if needed
+				if (cursorPalette) {
+					CursorMan.pushCursorPalette(0, 0, 0);
+					CursorMan.popCursorPalette();
+				}
+
+				_graphicsManager->beginGFXTransaction();
+				// Oh my god if this failed the client code might just explode.
+				return _graphicsManager->setGraphicsMode(srcMode->id);
+			} else {
+				return _graphicsManager->setGraphicsMode(srcMode->id);
+			}
 		}
 
 		i++;

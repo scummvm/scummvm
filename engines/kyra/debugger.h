@@ -106,4 +106,3 @@ protected:
 } // End of namespace Kyra
 
 #endif
-

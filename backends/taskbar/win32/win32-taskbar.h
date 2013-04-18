@@ -8,18 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  *
  */
 
@@ -41,10 +38,17 @@ public:
 	virtual void setOverlayIcon(const Common::String &name, const Common::String &description);
 	virtual void setProgressValue(int completed, int total);
 	virtual void setProgressState(TaskbarProgressState state);
+	virtual void setCount(int count);
 	virtual void addRecent(const Common::String &name, const Common::String &description);
+	virtual void notifyError();
+	virtual void clearError();
 
 private:
 	ITaskbarList3 *_taskbar;
+
+	// Count handling
+	HICON _icon;
+	int   _count;
 
 	/**
 	 * 	Get the path to an icon for the game

@@ -39,7 +39,7 @@
 #include "audio/decoders/vorbis.h"
 #include "audio/decoders/flac.h"
 #include "audio/decoders/wave.h"
-#include "audio/decoders/vag.h"
+#include "audio/decoders/xa.h"
 #include "audio/rate.h"
 
 #include "sword2/sword2.h"
@@ -267,7 +267,7 @@ Audio::AudioStream *makePSXCLUStream(Common::File *file, int size) {
 
 	byte *buffer = (byte *)malloc(size);
 	file->read(buffer, size);
-	return Audio::makeVagStream(new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES));
+	return Audio::makeXAStream(new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES), 11025);
 }
 
 // ----------------------------------------------------------------------------

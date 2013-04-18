@@ -92,4 +92,3 @@ protected:
 #endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
 #endif /* BACKENDS_PLUGINS_ELF_PROVIDER_H */
-

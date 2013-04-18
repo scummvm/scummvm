@@ -77,7 +77,7 @@ enum MohawkGameFeatures {
 struct MohawkGameDescription;
 class Sound;
 class PauseDialog;
-class MohawkArchive;
+class Archive;
 class CursorManager;
 
 class MohawkEngine : public ::Engine {
@@ -123,7 +123,7 @@ private:
 
 protected:
 	// An array holding the main Mohawk archives require by the games
-	Common::Array<MohawkArchive *> _mhk;
+	Common::Array<Archive *> _mhk;
 };
 
 } // End of namespace Mohawk

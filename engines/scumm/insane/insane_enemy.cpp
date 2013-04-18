@@ -2779,4 +2779,3 @@ int32 Insane::actionEnemy() {
 }
 
 }
-

@@ -37,6 +37,15 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 
 	_music = new SciMusic(_soundVersion);
 	_music->init();
+	// Check if the user wants synthesized or digital sound effects in SCI1.1
+	// or later games
+	_bMultiMidi = ConfMan.getBool("multi_midi");
+	// In SCI2 and later games, this check should always be true - there was
+	// always only one version of each sound effect or digital music track
+	// (e.g. the menu music in GK1 - there is a sound effect with the same
+	// resource number, but it's totally unrelated to the menu music).
+	if (getSciVersion() >= SCI_VERSION_2)
+		_bMultiMidi = true;
 }
 
 SoundCommandParser::~SoundCommandParser() {
@@ -49,11 +58,54 @@ reg_t SoundCommandParser::kDoSoundInit(int argc, reg_t *argv, reg_t acc) {
 	return acc;
 }
 
-void SoundCommandParser::processInitSound(reg_t obj) {
-	int resourceId = readSelectorValue(_segMan, obj, SELECTOR(number));
+int SoundCommandParser::getSoundResourceId(reg_t obj) {
+	int resourceId = obj.segment ? readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
 	// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
-	if (g_sci && g_sci->_features->useAltWinGMSound())
-		resourceId += 1000;
+	if (g_sci && g_sci->_features->useAltWinGMSound()) {
+		// Check if the alternate MIDI song actually exists...
+		// There are cases where it just doesn't exist (e.g. SQ4, room 530 -
+		// bug #3392767). In these cases, use the DOS tracks instead.
+		if (resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, resourceId + 1000)))
+			resourceId += 1000;
+	}
+
+	return resourceId;
+}
+
+void SoundCommandParser::initSoundResource(MusicEntry *newSound) {
+	if (newSound->resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, newSound->resourceId)))
+		newSound->soundRes = new SoundResource(newSound->resourceId, _resMan, _soundVersion);
+	else
+		newSound->soundRes = 0;
+
+	// In SCI1.1 games, sound effects are started from here. If we can find
+	// a relevant audio resource, play it, otherwise switch to synthesized
+	// effects. If the resource exists, play it using map 65535 (sound
+	// effects map)
+	bool checkAudioResource = getSciVersion() >= SCI_VERSION_1_1;
+	// Hoyle 4 has garbled audio resources in place of the sound resources.
+	// The demo of GK1 has no alternate sound effects.
+	if ((g_sci->getGameId() == GID_HOYLE4) || 
+		(g_sci->getGameId() == GID_GK1 && g_sci->isDemo()))
+		checkAudioResource = false;
+
+	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, newSound->resourceId))) {
+		// Found a relevant audio resource, create an audio stream if there is
+		// no associated sound resource, or if both resources exist and the
+		// user wants the digital version.
+		if (_bMultiMidi || !newSound->soundRes) {
+			int sampleLen;
+			newSound->pStreamAud = _audio->getAudioStream(newSound->resourceId, 65535, &sampleLen);
+			newSound->soundType = Audio::Mixer::kSpeechSoundType;
+		}
+	}
+
+	if (!newSound->pStreamAud && newSound->soundRes)
+		_music->soundInitSnd(newSound);
+}
+
+void SoundCommandParser::processInitSound(reg_t obj) {
+	int resourceId = getSoundResourceId(obj);
 
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
@@ -62,11 +114,6 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 
 	MusicEntry *newSound = new MusicEntry();
 	newSound->resourceId = resourceId;
-	if (resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, resourceId)))
-		newSound->soundRes = new SoundResource(resourceId, _resMan, _soundVersion);
-	else
-		newSound->soundRes = 0;
-
 	newSound->soundObj = obj;
 	newSound->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
 	newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(pri)) & 0xFF;
@@ -77,25 +124,7 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	debugC(kDebugLevelSound, "kDoSound(init): %04x:%04x number %d, loop %d, prio %d, vol %d", PRINT_REG(obj),
 			resourceId,	newSound->loop, newSound->priority, newSound->volume);
 
-	// In SCI1.1 games, sound effects are started from here. If we can find
-	// a relevant audio resource, play it, otherwise switch to synthesized
-	// effects. If the resource exists, play it using map 65535 (sound
-	// effects map)
-	bool checkAudioResource = getSciVersion() >= SCI_VERSION_1_1;
-	if (g_sci->getGameId() == GID_HOYLE4)
-		checkAudioResource = false; // hoyle 4 has garbled audio resources in place of the sound resources
-	// if we play those, we will only make the user deaf and break speakers. Sierra SCI doesn't play anything
-	// on soundblaster. FIXME: check, why this is
-
-	if (checkAudioResource && _resMan->testResource(ResourceId(kResourceTypeAudio, resourceId))) {
-		// Found a relevant audio resource, play it
-		int sampleLen;
-		newSound->pStreamAud = _audio->getAudioStream(resourceId, 65535, &sampleLen);
-		newSound->soundType = Audio::Mixer::kSpeechSoundType;
-	} else {
-		if (newSound->soundRes)
-			_music->soundInitSnd(newSound);
-	}
+	initSoundResource(newSound);
 
 	_music->pushBackSlot(newSound);
 
@@ -105,8 +134,6 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 			writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundInitialized);
 		else
 			writeSelector(_segMan, obj, SELECTOR(nodePtr), obj);
-
-		writeSelector(_segMan, obj, SELECTOR(handle), obj);
 	}
 }
 
@@ -119,14 +146,17 @@ reg_t SoundCommandParser::kDoSoundPlay(int argc, reg_t *argv, reg_t acc) {
 void SoundCommandParser::processPlaySound(reg_t obj) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("kDoSound(play): Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return;
+		warning("kDoSound(play): Slot not found (%04x:%04x), initializing it manually", PRINT_REG(obj));
+		// The sound hasn't been initialized for some reason, so initialize it
+		// here. Happens in KQ6, room 460, when giving the creature (child) to
+		// the bookworm. Fixes bugs #3413301 and #3421098.
+		processInitSound(obj);
+		musicSlot = _music->getSlot(obj);
+		if (!musicSlot)
+			error("Failed to initialize uninitialized sound slot");
 	}
 
-	int resourceId = obj.segment ? readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
-	// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
-	if (g_sci && g_sci->_features->useAltWinGMSound())
-		resourceId += 1000;
+	int resourceId = getSoundResourceId(obj);
 
 	if (musicSlot->resourceId != resourceId) { // another sound loaded into struct
 		processDisposeSound(obj);
@@ -149,6 +179,9 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 
 	musicSlot->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
 	musicSlot->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
+	// Reset hold when starting a new song. kDoSoundSetHold is always called after
+	// kDoSoundPlay to set it properly, if needed. Fixes bug #3413589.
+	musicSlot->hold = -1;
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
 
@@ -618,13 +651,10 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 	}
 
 	if (value == -1) {
-		uint16 resourceNr = musicSlot->resourceId;
-		// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
-		if (g_sci && g_sci->_features->useAltWinGMSound())
-			resourceNr += 1000;
+		uint16 resourceId = musicSlot->resourceId;
 
 		// Set priority from the song data
-		Resource *song = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), 0);
+		Resource *song = _resMan->findResource(ResourceId(kResourceTypeSound, resourceId), 0);
 		if (song->data[0] == 0xf0)
 			_music->soundSetPriority(musicSlot, song->data[1]);
 		else

@@ -38,4 +38,3 @@ protected:
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(PPC_TARGET) */
 
 #endif /* BACKENDS_PLUGINS_PPC_LOADER_H */
-

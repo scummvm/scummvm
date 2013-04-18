@@ -246,4 +246,3 @@ typedef struct {
 #endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER)
 
 #endif /* BACKENDS_ELF_H */
-

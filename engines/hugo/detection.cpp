@@ -63,7 +63,7 @@ static const HugoGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		kGameTypeHugo1
 	},
@@ -75,7 +75,7 @@ static const HugoGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			GF_PACKED,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		kGameTypeHugo1
 	},
@@ -87,7 +87,7 @@ static const HugoGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			GF_PACKED,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		kGameTypeHugo2
 	},
@@ -99,7 +99,7 @@ static const HugoGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			GF_PACKED,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		kGameTypeHugo2
 	},
@@ -111,7 +111,7 @@ static const HugoGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			GF_PACKED,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		kGameTypeHugo3
 	},
@@ -123,7 +123,7 @@ static const HugoGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			GF_PACKED,
-			Common::GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		kGameTypeHugo3
 	},
@@ -241,12 +241,7 @@ SaveStateDescriptor HugoMetaEngine::querySaveMetaInfos(const char *target, int s
 
 		SaveStateDescriptor desc(slot, saveName);
 
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		assert(thumbnail);
-		if (!Graphics::loadThumbnail(*file, *thumbnail)) {
-			delete thumbnail;
-			thumbnail = 0;
-		}
+		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*file);
 		desc.setThumbnail(thumbnail);
 
 		desc.setDeletableFlag(true);

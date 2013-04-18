@@ -2239,5 +2239,3 @@ sub scene101_actions
 @2f6ba:
 	RET
 end
-
-

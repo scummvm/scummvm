@@ -40,7 +40,7 @@
 
 namespace Gob {
 
-const char *Init::_fontNames[] = { "jeulet1.let", "jeulet2.let", "jeucar1.let", "jeumath.let" };
+const char *const Init::_fontNames[] = { "jeulet1.let", "jeulet2.let", "jeucar1.let", "jeumath.let" };
 
 Init::Init(GobEngine *vm) : _vm(vm) {
 	_palDesc = 0;

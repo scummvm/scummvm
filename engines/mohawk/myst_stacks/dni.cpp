@@ -106,7 +106,7 @@ void Dni::o_handPage(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
 	if (_globals.ending == 1 && _vm->_video->getElapsedTime(atrus) > (uint)Audio::Timestamp(0, 6801, 600).msecs()) {
 		_globals.ending = 2;
 		_globals.heldPage = 0;
-		_vm->_cursor->setCursor(kDefaultMystCursor);
+		_vm->setMainCursor(kDefaultMystCursor);
 
 		// Play movie end (atrus leaving)
 		_vm->_video->setVideoBounds(atrus, Audio::Timestamp(0, 14813, 600), Audio::Timestamp(0xFFFFFFFF));

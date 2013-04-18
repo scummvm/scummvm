@@ -658,7 +658,7 @@ void Talk::stringAnimation(const SpeechParameters *parameters, int startFrame, i
 	} else if (parameters->animation[0] == 'E') {
 		// Talking head animation
 		return;
-	} else if (!isdigit(parameters->animation[0])) {
+	} else if (!isdigit(static_cast<unsigned char>(parameters->animation[0]))) {
 		debug(6, "Error in speak string animation: '%s'", parameters->animation);
 		return;
 	} else

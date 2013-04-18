@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://svn.scummvm.org:4444/svn/dreamweb/dreamweb.cpp $
- * $Id: dreamweb.cpp 79 2011-06-05 08:26:54Z eriktorbjorn $
- *
  */
 
 #include "common/config-manager.h"
@@ -65,6 +62,8 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_oldMouseState = 0;
 	_channel0 = 0;
 	_channel1 = 0;
+
+	_language = gameDesc->desc.language;
 }
 
 DreamWebEngine::~DreamWebEngine() {
@@ -109,14 +108,6 @@ void DreamWebEngine::processEvents() {
 	if (event_manager->shouldQuit()) {
 		quit();
 		return;
-	}
-
-	if (_enableSavingOrLoading && _loadSavefile >= 0 && _loadSavefile <= 6) {
-		debug(1, "loading save state %d", _loadSavefile);
-		_context.data.byte(_context.kCurrentslot) = _loadSavefile;
-		_loadSavefile = -1;
-		_context.loadposition();
-		_context.data.byte(_context.kGetback) = 1;
 	}
 
 	soundHandler();
@@ -214,13 +205,12 @@ void DreamWebEngine::processEvents() {
 
 
 Common::Error DreamWebEngine::run() {
+	syncSoundSettings();
 	_console = new DreamWebConsole(this);
 
-	_loadSavefile = Common::ConfigManager::instance().getInt("save_slot");
+	ConfMan.registerDefault("dreamweb_originalsaveload", "true");
 
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this);
-	//http://martin.hinner.info/vga/timing.html
-
+	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70, this, "dreamwebVSync");
 	_context.__start();
 	_context.data.byte(DreamGen::DreamGenContext::kQuitrequested) = 0;
 
@@ -233,7 +223,7 @@ void DreamWebEngine::setSpeed(uint speed) {
 	debug(0, "setting speed %u", speed);
 	_speed = speed;
 	getTimerManager()->removeTimerProc(vSyncInterrupt);
-	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this);
+	getTimerManager()->installTimerProc(vSyncInterrupt, 1000000 / 70 / speed, this, "dreamwebVSync");
 }
 
 void DreamWebEngine::openFile(const Common::String &name) {
@@ -313,7 +303,7 @@ void DreamWebEngine::keyPressed(uint16 ascii) {
 	keybuf[in] = ascii;
 }
 
-void DreamWebEngine::mouseCall() {
+void DreamWebEngine::mouseCall(uint16 *x, uint16 *y, uint16 *state) {
 	processEvents();
 	Common::EventManager *eventMan = _system->getEventManager();
 	Common::Point pos = eventMan->getMousePos();
@@ -325,13 +315,12 @@ void DreamWebEngine::mouseCall() {
 		pos.y = 15;
 	if (pos.y > 184)
 		pos.y = 184;
-	_context.cx = pos.x;
-	_context.dx = pos.y;
+	*x = pos.x;
+	*y = pos.y;
 
-	unsigned state = eventMan->getButtonState();
-	_context.bx = state == _oldMouseState? 0: state;
-	_oldMouseState = state;
-	_context.flags._c = false;
+	unsigned newState = eventMan->getButtonState();
+	*state = (newState == _oldMouseState? 0 : newState);
+	_oldMouseState = newState;
 }
 
 void DreamWebEngine::fadeDos() {
@@ -419,17 +408,21 @@ void DreamWebEngine::cls() {
 
 void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	debug(1, "playSound(%u, %u, %u)", channel, id, loops);
-	const SoundData &data = _soundData[id >= 12? 1: 0];
 
-	Audio::Mixer::SoundType type;
-	bool speech = id == 62; //actually 50
+	int bank = 0;
+	bool speech = false;
+	Audio::Mixer::SoundType type = channel == 0?
+		Audio::Mixer::kMusicSoundType: Audio::Mixer::kSFXSoundType;
+
 	if (id >= 12) {
 		id -= 12;
-		type = Audio::Mixer::kSFXSoundType;
-	} else if (speech)
-		type = Audio::Mixer::kSpeechSoundType;
-	else
-		type = Audio::Mixer::kMusicSoundType;
+		bank = 1;
+		if (id == 50) {
+			speech = true;
+			type = Audio::Mixer::kSpeechSoundType;
+		}
+	}
+	const SoundData &data = _soundData[bank];
 
 	Audio::SeekableAudioStream *raw;
 	if (!speech) {
@@ -469,7 +462,20 @@ void DreamWebEngine::playSound(uint8 channel, uint8 id, uint8 loops) {
 	_mixer->playStream(type, &_channelHandle[channel], stream);
 }
 
+void DreamWebEngine::stopSound(uint8 channel) {
+	debug(1, "stopSound(%u)", channel);
+	assert(channel == 0 || channel == 1);
+	_mixer->stopHandle(_channelHandle[channel]);
+	if (channel == 0)
+		_channel0 = 0;
+	else
+		_channel1 = 0;
+}
+
 bool DreamWebEngine::loadSpeech(const Common::String &filename) {
+	if (ConfMan.getBool("speech_mute"))
+		return false;
+
 	Common::File file;
 	if (!file.open("speech/" + filename))
 		return false;
@@ -485,6 +491,7 @@ bool DreamWebEngine::loadSpeech(const Common::String &filename) {
 
 
 void DreamWebEngine::soundHandler() {
+	_context.data.byte(_context.kSubtitles) = ConfMan.getBool("subtitles");
 	_context.push(_context.ax);
 	_context.volumeadjust();
 	_context.ax = _context.pop();
@@ -566,7 +573,59 @@ void DreamWebEngine::loadSounds(uint bank, const Common::String &filename) {
 	file.close();
 }
 
+uint8 DreamWebEngine::modifyChar(uint8 c) const {
+	if (c < 128)
+		return c;
+
+	switch(_language) {
+	case Common::DE_DEU:
+		switch(c)
+		{
+		case 129:
+			return 'Z' + 3;
+		case 132:
+			return 'Z' + 1;
+		case 142:
+			return 'Z' + 4;
+		case 154:
+			return 'Z' + 6;
+		case 225:
+			return 'A' - 1;
+		case 153:
+			return 'Z' + 5;
+		case 148:
+			return 'Z' + 2;
+		default:
+			return c;
+		}
+	case Common::ES_ESP:
+		switch(c) {
+		case 160:
+			return 'Z' + 1;
+		case 130:
+			return 'Z' + 2;
+		case 161:
+			return 'Z' + 3;
+		case 162:
+			return 'Z' + 4;
+		case 163:
+			return 'Z' + 5;
+		case 164:
+			return 'Z' + 6;
+		case 165:
+			return ',' - 1;
+		case 168:
+			return 'A' - 1;
+		case 173:
+			return 'A' - 4;
+		case 129:
+			return 'A' - 5;
+		default:
+			return c;
+		}
+	default:
+		return c;
+	}
+}
 
 } // End of namespace DreamWeb
-
-

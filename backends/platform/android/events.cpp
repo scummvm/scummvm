@@ -820,4 +820,3 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 }
 
 #endif
-

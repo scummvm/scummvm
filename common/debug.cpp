@@ -23,15 +23,16 @@
 #include "common/debug-channels.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/algorithm.h"
 
 #include <stdarg.h>	// For va_list etc.
 
 // TODO: Move gDebugLevel into namespace Common.
 int gDebugLevel = -1;
 
-DECLARE_SINGLETON(Common::DebugManager);
-
 namespace Common {
+
+DECLARE_SINGLETON(DebugManager);
 
 namespace {
 

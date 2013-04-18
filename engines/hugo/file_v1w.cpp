@@ -80,11 +80,10 @@ void FileManager_v1w::readOverlay(const int screenNum, image_pt image, ovl_t ove
 		break;
 	}
 	if (i == 0) {
-		memset(image, 0, sizeof(image));
+		memset(image, 0, kOvlSize);
 		return;
 	}
 	_sceneryArchive1.read(tmpImage, kOvlSize);
 }
 
 } // End of namespace Hugo
-

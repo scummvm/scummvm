@@ -13,4 +13,3 @@ int main()
 
 // The CxxTest "world"
 <CxxTest world>
-

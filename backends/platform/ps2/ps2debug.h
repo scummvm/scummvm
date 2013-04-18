@@ -28,4 +28,3 @@
 void sioprintf(const char *zFormat, ...);
 
 #endif // __PS2DEBUG_H__
-

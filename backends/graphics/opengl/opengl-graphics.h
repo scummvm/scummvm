@@ -26,7 +26,8 @@
 #include "backends/graphics/opengl/gltexture.h"
 #include "backends/graphics/graphics.h"
 #include "common/array.h"
-#include "common/events.h"
+#include "common/rect.h"
+#include "graphics/font.h"
 #include "graphics/pixelformat.h"
 
 // Uncomment this to enable the 'on screen display' code.
@@ -50,12 +51,10 @@ enum {
  * the buffers swap, and implement loadGFXMode for handling the window/context if
  * needed. If USE_RGB_COLOR is enabled, getSupportedFormats must be implemented.
  */
-class OpenGLGraphicsManager : public GraphicsManager, public Common::EventObserver {
+class OpenGLGraphicsManager : public GraphicsManager {
 public:
 	OpenGLGraphicsManager();
 	virtual ~OpenGLGraphicsManager();
-
-	virtual void initEventObserver();
 
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
@@ -109,10 +108,6 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 
 	virtual void displayMessageOnOSD(const char *msg);
-
-	// Override from Common::EventObserver
-	bool notifyEvent(const Common::Event &event);
-
 protected:
 	/**
 	 * Setup OpenGL settings
@@ -220,10 +215,7 @@ protected:
 	virtual void calculateDisplaySize(int &width, int &height);
 	virtual void refreshDisplaySize();
 
-	/**
-	 * Returns the current target aspect ratio x 10000
-	 */
-	virtual uint getAspectRatio();
+	uint getAspectRatio() const;
 
 	bool _formatBGR;
 
@@ -323,6 +315,11 @@ protected:
 	 * The OSD contents.
 	 */
 	Common::Array<Common::String> _osdLines;
+
+  /**
+   * Returns the font used for on screen display
+   */
+  virtual const Graphics::Font *getFontOSD();
 
 	/**
 	 * Update the OSD texture / surface.

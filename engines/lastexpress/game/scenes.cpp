@@ -31,8 +31,10 @@
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/graphics.h"
 #include "lastexpress/helpers.h"
@@ -79,12 +81,12 @@ void SceneManager::loadSceneDataFile(ArchiveIndex archive) {
 	case kArchiveCd2:
 	case kArchiveCd3:
 		if (!_sceneLoader->load(getArchive(Common::String::format("CD%iTRAIN.DAT", archive))))
-			error("SceneManager::loadSceneDataFile: cannot load data file CD%iTRAIN.DAT", archive);
+			error("[SceneManager::loadSceneDataFile] Cannot load data file CD%iTRAIN.DAT", archive);
 		break;
 
 	default:
 	case kArchiveAll:
-		error("SceneManager::loadSceneDataFile: Invalid archive index (must be [1-3], was %d", archive);
+		error("[SceneManager::loadSceneDataFile] Invalid archive index (must be [1-3], was %d", archive);
 		break;
 	}
 }
@@ -462,7 +464,7 @@ bool SceneManager::checkPosition(SceneIndex index, CheckPositionType type) const
 
 	switch (type) {
 	default:
-		error("SceneManager::checkPosition: Invalid position type: %d", type);
+		error("[SceneManager::checkPosition] Invalid position type: %d", type);
 
 	case kCheckPositionLookingUp:
 		return isInSleepingCar && (position >= 1 && position <= 19);
@@ -1057,9 +1059,9 @@ void SceneManager::preProcessScene(SceneIndex *index) {
 
 	// Sound processing
 	Scene *newScene = getScenes()->get(*index);
-	if (getSound()->isBuffered(kEntityTables4)) {
+	if (getSoundQueue()->isBuffered(kEntityTables4)) {
 		if (newScene->type != Scene::kTypeReadText || newScene->param1)
-			getSound()->processEntry(kEntityTables4);
+			getSoundQueue()->processEntry(kEntityTables4);
 	}
 
 	// Cleanup beetle sequences
@@ -1089,8 +1091,8 @@ void SceneManager::postProcessScene() {
 				if (getFlags()->mouseRightClick)
 					break;
 
-				getSound()->updateQueue();
-				getSound()->updateSubtitles();
+				getSoundQueue()->updateQueue();
+				getSoundQueue()->updateSubtitles();
 			}
 		}
 
@@ -1132,7 +1134,7 @@ void SceneManager::postProcessScene() {
 			}
 
 			if (progress)
-				getSound()->excuseMe((progress == 1) ? entities[0] : entities[rnd(progress)], kEntityPlayer, SoundManager::kFlagDefault);
+				getSound()->excuseMe((progress == 1) ? entities[0] : entities[rnd(progress)], kEntityPlayer, kFlagDefault);
 		}
 
 		if (hotspot->scene)
@@ -1157,8 +1159,8 @@ void SceneManager::postProcessScene() {
 		if (getState()->time >= kTimeCityGalanta || getProgress().field_18 == 4)
 			break;
 
-		getSound()->processEntry(SoundManager::kSoundType7);
-		getSound()->playSound(kEntityTrain, "LIB050", SoundManager::kFlagDefault);
+		getSoundQueue()->processEntry(kSoundType7);
+		getSound()->playSound(kEntityTrain, "LIB050", kFlagDefault);
 
 		switch (getProgress().chapter) {
 		default:

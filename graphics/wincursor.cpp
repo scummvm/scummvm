@@ -308,4 +308,61 @@ WinCursorGroup *WinCursorGroup::createCursorGroup(Common::PEResources &exe, cons
 	return group;
 }
 
+/**
+ * The default Windows cursor
+ */
+class DefaultWinCursor : public Cursor {
+public:
+	DefaultWinCursor() {}
+	~DefaultWinCursor() {}
+
+	uint16 getWidth() const { return 12; }
+	uint16 getHeight() const { return 20; }
+	uint16 getHotspotX() const { return 0; }
+	uint16 getHotspotY() const { return 0; }
+	byte getKeyColor() const { return 0; }
+
+	const byte *getSurface() const {
+		static const byte defaultCursor[] = {
+			1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+			1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
+			1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
+			1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
+			1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
+			1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
+			1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
+			1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
+			1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1,
+			1, 2, 2, 2, 1, 2, 2, 1, 0, 0, 0, 0,
+			1, 2, 2, 1, 1, 2, 2, 1, 0, 0, 0, 0,
+			1, 2, 1, 0, 1, 1, 2, 2, 1, 0, 0, 0,
+			1, 1, 0, 0, 0, 1, 2, 2, 1, 0, 0, 0,
+			1, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+			0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+			0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0,
+			0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0
+		};
+
+		return defaultCursor;
+	}
+
+	const byte *getPalette() const {
+		static const byte bwPalette[] = {
+			0x00, 0x00, 0x00,	// Black
+			0xFF, 0xFF, 0xFF	// White
+		};
+
+		return bwPalette;
+	}
+	byte getPaletteStartIndex() const { return 1; }
+	uint16 getPaletteCount() const { return 2; }
+};
+
+Cursor *makeDefaultWinCursor() {
+	return new DefaultWinCursor();
+}
+
 } // End of namespace Graphics

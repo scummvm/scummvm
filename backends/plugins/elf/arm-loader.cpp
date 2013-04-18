@@ -127,4 +127,3 @@ bool ARMDLObject::relocateRels(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 }
 
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(ARM_TARGET) */
-

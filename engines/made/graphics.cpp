@@ -20,11 +20,14 @@
  *
  */
 
-#include "common/debug.h"
+#include "made/graphics.h"
+
 #include "common/endian.h"
 #include "common/textconsole.h"
+#include "common/debug.h"
+#include "common/util.h"
 
-#include "made/graphics.h"
+#include "graphics/surface.h"
 
 namespace Made {
 

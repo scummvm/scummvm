@@ -366,6 +366,3 @@ void Resource::initializeLoaders() {
 }
 
 } // End of namespace Kyra
-
-
-

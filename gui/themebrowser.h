@@ -54,4 +54,3 @@ private:
 } // End of namespace GUI
 
 #endif
-

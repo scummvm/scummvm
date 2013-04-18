@@ -57,4 +57,3 @@ keymap_global_MENU=ESCAPE
 keymap_global_SKLI=ASTERISK
 keymap_gui_VIRT=TAB
 keymap_gui_REMP=CLEAR
-

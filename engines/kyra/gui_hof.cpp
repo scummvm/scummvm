@@ -1195,4 +1195,3 @@ int GUI_HoF::loadMenu(Button *caller) {
 }
 
 } // End of namespace Kyra
-

@@ -317,7 +317,7 @@ void intro_v3d::introInit() {
 	_vm->_file->readBackground(22); // display screen MAP_3d
 	_vm->_screen->displayBackground();
 	introTicks = 0;
-	_vm->_sound->DOSSongPtr = _vm->_sound->DOSIntroSong;
+	_vm->_sound->_DOSSongPtr = _vm->_sound->_DOSIntroSong;
 }
 
 /**

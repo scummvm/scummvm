@@ -30,7 +30,7 @@ namespace Common {
 
 class DecompressorDCL {
 public:
-	bool unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+	bool unpack(ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
 protected:
 	/**
@@ -41,7 +41,7 @@ protected:
 	 * @param nUnpacket	size of unpacked data
 	 * @return 0 on success, non-zero on error
 	 */
-	void init(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
+	void init(ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked);
 
 	/**
 	 * Get a number of bits from _src stream, starting with the least
@@ -73,12 +73,11 @@ protected:
 	uint32 _szUnpacked;	///< size of the decompressed data
 	uint32 _dwRead;		///< number of bytes read from _src
 	uint32 _dwWrote;	///< number of bytes written to _dest
-	Common::ReadStream *_src;
+	ReadStream *_src;
 	byte *_dest;
 };
 
-void DecompressorDCL::init(Common::ReadStream *src, byte *dest, uint32 nPacked,
-                        uint32 nUnpacked) {
+void DecompressorDCL::init(ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	_src = src;
 	_dest = dest;
 	_szPacked = nPacked;
@@ -333,7 +332,7 @@ int DecompressorDCL::huffman_lookup(const int *tree) {
 #define DCL_BINARY_MODE 0
 #define DCL_ASCII_MODE 1
 
-bool DecompressorDCL::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
+bool DecompressorDCL::unpack(ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 
 	int value;

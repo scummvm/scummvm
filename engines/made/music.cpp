@@ -24,11 +24,10 @@
 
 // MIDI and digital music class
 
-#include "audio/audiostream.h"
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
-
 #include "made/music.h"
+#include "made/resource.h"
+
+#include "audio/midiparser.h"
 
 namespace Made {
 

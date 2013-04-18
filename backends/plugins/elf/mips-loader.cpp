@@ -337,4 +337,3 @@ void MIPSDLObject::freeShortsSegment() {
 }
 
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET) */
-

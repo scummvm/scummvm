@@ -383,6 +383,8 @@ protected:
 	void drawLine(int x1, int y1, int x, int unk1, int unk2, int type, int id);
 	void drawPixel(int x, int y, int flags);
 
+	virtual void setDefaultCursor();
+
 	/* HE version 80 script opcodes */
 	void o80_createSound();
 	void o80_getFileSize();
@@ -456,6 +458,7 @@ protected:
 	virtual void saveOrLoad(Serializer *s);
 
 	virtual void readMAXS(int blockSize);
+	void setResourceOffHeap(int typeId, int resId, int val);
 
 	virtual void processActors();
 

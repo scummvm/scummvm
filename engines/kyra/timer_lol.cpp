@@ -255,4 +255,3 @@ void LoLEngine::timerFadeMessageText(int timerNum) {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

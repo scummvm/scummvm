@@ -28,54 +28,69 @@ namespace Toon {
 
 PathFindingHeap::PathFindingHeap() {
 	_count = 0;
-	_alloc = 0;
+	_size = 0;
 	_data = NULL;
 }
 
 PathFindingHeap::~PathFindingHeap() {
-	delete[] _data;
+	free(_data);
 }
 
-int32 PathFindingHeap::init(int32 size) {
+void PathFindingHeap::init(int32 size) {
 	debugC(1, kDebugPath, "init(%d)", size);
+	_size = size;
 
-	delete[] _data;
-	_data = new HeapDataGrid[size * 2];
-	memset(_data, 0, sizeof(HeapDataGrid) * size * 2);
+	free(_data);
+	_data = (HeapDataGrid *)malloc(sizeof(HeapDataGrid) * _size);
+	memset(_data, 0, sizeof(HeapDataGrid) * _size);
 	_count = 0;
-	_alloc = size;
-	return size;
 }
 
-int32 PathFindingHeap::unload() {
-	delete[] _data;
+void PathFindingHeap::unload() {
+	_count = 0;
+	_size = 0;
+	free(_data);
 	_data = NULL;
-	return 0;
 }
 
-int32 PathFindingHeap::clear() {
-	//debugC(1, kDebugPath, "clear()");
+void PathFindingHeap::clear() {
+	debugC(1, kDebugPath, "clear()");
 
 	_count = 0;
-	memset(_data, 0, sizeof(HeapDataGrid) * _alloc * 2);
-	return 1;
+	memset(_data, 0, sizeof(HeapDataGrid) * _size);
 }
 
-int32 PathFindingHeap::push(int32 x, int32 y, int32 weight) {
-	//debugC(6, kDebugPath, "push(%d, %d, %d)", x, y, weight);
+void PathFindingHeap::push(int32 x, int32 y, int32 weight) {
+	debugC(2, kDebugPath, "push(%d, %d, %d)", x, y, weight);
 
-	_count++;
+	if (_count == _size) {
+		// Increase size by 50%
+		int newSize = _size + (_size >> 1) + 1;
+		HeapDataGrid *newData;
+
+		newData = (HeapDataGrid *)realloc(_data, sizeof(HeapDataGrid) * newSize);
+		if (newData == NULL) {
+			warning("Aborting attempt to push onto PathFindingHeap at maximum size: %d", _count);
+			return;
+		}
+
+		memset(newData + _size, 0, sizeof(HeapDataGrid) * (newSize - _size));
+		_data = newData;
+		_size = newSize;
+	}
+
 	_data[_count]._x = x;
 	_data[_count]._y = y;
 	_data[_count]._weight = weight;
+	_count++;
 
-	int32 lMax = _count;
+	int32 lMax = _count-1;
 	int32 lT = 0;
 
 	while (1) {
-		lT = lMax / 2;
-		if (lT < 1)
+		if (lMax <= 0)
 			break;
+		lT = (lMax-1) / 2;
 
 		if (_data[lT]._weight > _data[lMax]._weight) {
 			HeapDataGrid temp;
@@ -87,31 +102,31 @@ int32 PathFindingHeap::push(int32 x, int32 y, int32 weight) {
 			break;
 		}
 	}
-	return 1;
 }
 
-int32 PathFindingHeap::pop(int32 *x, int32 *y, int32 *weight) {
-	//debugC(6, kDebugPath, "pop(x, y, weight)");
+void PathFindingHeap::pop(int32 *x, int32 *y, int32 *weight) {
+	debugC(2, kDebugPath, "pop(x, y, weight)");
 
+	if (!_count) {
+		warning("Attempt to pop empty PathFindingHeap!");
+		return;
+	}
+
+	*x = _data[0]._x;
+	*y = _data[0]._y;
+	*weight = _data[0]._weight;
+
+	_data[0] = _data[--_count];
 	if (!_count)
-		return 0;
+		return;
 
-	*x = _data[1]._x;
-	*y = _data[1]._y;
-	*weight = _data[1]._weight;
-
-	_data[1] = _data[_count];
-	_count--;
-	if (!_count)
-		return 0;
-
-	int32 lMin = 1;
-	int32 lT = 1;
+	int32 lMin = 0;
+	int32 lT = 0;
 
 	while (1) {
-		lT = lMin << 1;
-		if (lT <= _count) {
-			if (lT < _count) {
+		lT = (lMin << 1) + 1;
+		if (lT < _count) {
+			if (lT < _count-1) {
 				if (_data[lT + 1]._weight < _data[lT]._weight)
 					lT++;
 			}
@@ -129,7 +144,6 @@ int32 PathFindingHeap::pop(int32 *x, int32 *y, int32 *weight) {
 			break;
 		}
 	}
-	return 0;
 }
 
 PathFinding::PathFinding(ToonEngine *vm) : _vm(vm) {
@@ -164,7 +178,7 @@ bool PathFinding::isLikelyWalkable(int32 x, int32 y) {
 }
 
 bool PathFinding::isWalkable(int32 x, int32 y) {
-	//debugC(6, kDebugPath, "isWalkable(%d, %d)", x, y);
+	debugC(2, kDebugPath, "isWalkable(%d, %d)", x, y);
 
 	bool maskWalk = (_currentMask->getData(x, y) & 0x1f) > 0;
 
@@ -299,7 +313,7 @@ int32 PathFinding::findPath(int32 x, int32 y, int32 destx, int32 desty) {
 	_heap->push(curX, curY, abs(destx - x) + abs(desty - y));
 	int wei = 0;
 
-	while (_heap->_count) {
+	while (_heap->getCount()) {
 		wei = 0;
 		_heap->pop(&curX, &curY, &curWeight);
 		int curNode = curX + curY * _width;
@@ -342,8 +356,15 @@ next:
 	curX = destx;
 	curY = desty;
 
-	int32 retPathX[4096];
-	int32 retPathY[4096];
+	int32 *retPathX = (int32 *)malloc(4096 * sizeof(int32));
+	int32 *retPathY = (int32 *)malloc(4096 * sizeof(int32));
+	if (!retPathX || !retPathY) {
+		free(retPathX);
+		free(retPathY);
+
+		error("[PathFinding::findPath] Cannot allocate pathfinding buffers");
+	}
+
 	int32 numpath = 0;
 
 	retPathX[numpath] = curX;
@@ -377,8 +398,12 @@ next:
 			}
 		}
 
-		if (bestX < 0 || bestY < 0)
+		if (bestX < 0 || bestY < 0) {
+			free(retPathX);
+			free(retPathY);
+
 			return 0;
+		}
 
 		retPathX[numpath] = bestX;
 		retPathY[numpath] = bestY;
@@ -389,12 +414,19 @@ next:
 
 			memcpy(_tempPathX, retPathX, sizeof(int32) * numpath);
 			memcpy(_tempPathY, retPathY, sizeof(int32) * numpath);
+
+			free(retPathX);
+			free(retPathY);
+
 			return true;
 		}
 
 		curX = bestX;
 		curY = bestY;
 	}
+
+	free(retPathX);
+	free(retPathY);
 
 	return false;
 }
@@ -406,11 +438,7 @@ void PathFinding::init(Picture *mask) {
 	_height = mask->getHeight();
 	_currentMask = mask;
 	_heap->unload();
-	// In order to reduce memory fragmentation on small devices, we use the maximum
-	// possible size here which is TOON_BACKBUFFER_WIDTH. Even though this is
-	// 1280 as opposed to the possible 640, it actually helps memory allocation on
-	// those devices.
-	_heap->init(TOON_BACKBUFFER_WIDTH * _height);	// should really be _width
+	_heap->init(500);
 	delete[] _gridTemp;
 	_gridTemp = new int32[_width*_height];
 }

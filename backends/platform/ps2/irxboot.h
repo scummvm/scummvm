@@ -84,4 +84,3 @@ struct IrxReference {
 int loadIrxModules(int device, const char *irxPath, IrxReference **modules);
 
 #endif // __IRXBOOT_H__
-

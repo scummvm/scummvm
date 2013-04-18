@@ -43,7 +43,7 @@ protected:
 	void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
 	                            const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix);
 
-	void writeReferences(std::ofstream &output);
+	void writeReferences(const BuildSetup &setup, std::ofstream &output);
 
 	const char *getProjectExtension();
 

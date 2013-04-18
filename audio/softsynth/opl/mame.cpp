@@ -725,6 +725,8 @@ static int OPLOpenTable(void) {
 
 
 	ENV_CURVE = (int *)malloc(sizeof(int) * (2*EG_ENT+1));
+	if (!ENV_CURVE)
+		error("[OPLOpenTable] Cannot allocate memory");
 
 	/* envelope counter -> envelope output table */
 	for (i=0; i < EG_ENT; i++) {
@@ -1243,4 +1245,3 @@ FM_OPL *makeAdLibOPL(int rate) {
 
 } // End of namespace MAME
 } // End of namespace OPL
-

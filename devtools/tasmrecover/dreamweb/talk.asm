@@ -28,6 +28,8 @@ waittalk:	call	delpointer
 	mov	getback,0
 	mov	bx,offset cs:talklist
 	call	checkcoords
+	cmp quitrequested, 0
+	jnz finishtalk
 	cmp	getback,0
 	jz	waittalk
 finishtalk:	mov	bx,persondata
@@ -490,6 +492,8 @@ hangloopq:	push	cx bx
 	pop	bx cx
 	cmp	getback,1
 	jz	quitconv
+	cmp quitrequested, 0
+	jnz quitconv
 	cmp	speechloaded,1
 	jnz	notspeaking
             	cmp	ch1playing,255
@@ -559,21 +563,3 @@ doredes:	call	delpointer
 	ret
 
 	endp
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

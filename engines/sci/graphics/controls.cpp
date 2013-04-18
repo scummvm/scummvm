@@ -30,6 +30,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/graphics/compare.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/font.h"
@@ -230,8 +231,8 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 	if (textChanged) {
 		GuiResourceId oldFontId = _text16->GetFontId();
 		GuiResourceId fontId = readSelectorValue(_segMan, controlObject, SELECTOR(font));
-		rect = Common::Rect(readSelectorValue(_segMan, controlObject, SELECTOR(nsLeft)), readSelectorValue(_segMan, controlObject, SELECTOR(nsTop)),
-							  readSelectorValue(_segMan, controlObject, SELECTOR(nsRight)), readSelectorValue(_segMan, controlObject, SELECTOR(nsBottom)));
+		rect = g_sci->_gfxCompare->getNSRect(controlObject);
+
 		_text16->SetFont(fontId);
 		if (textAddChar) {
 

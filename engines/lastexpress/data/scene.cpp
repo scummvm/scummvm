@@ -187,10 +187,10 @@ bool Scene::checkHotSpot(const Common::Point &coord, SceneHotspot **hotspot) {
 
 SceneHotspot *Scene::getHotspot(uint index) {
 	if (_hotspots.empty())
-		error("Scene::getHotspot: scene does not have any hotspots!");
+		error("[Scene::getHotspot] Scene does not have any hotspots");
 
 	if (index >= _hotspots.size())
-		error("Scene::getHotspot: invalid index (was: %d, max: %d)", index, _hotspots.size() - 1);
+		error("[Scene::getHotspot] Invalid index (was: %d, max: %d)", index, _hotspots.size() - 1);
 
 	return _hotspots[index];
 }
@@ -202,7 +202,7 @@ Common::Rect Scene::draw(Graphics::Surface *surface) {
 	Common::String sceneName(_name);
 	sceneName.trim();
 	if (sceneName.empty())
-		error("Scene::draw: This scene is not a valid drawing scene!");
+		error("[Scene::draw] This scene is not a valid drawing scene");
 
 	// Load background
 	Background *background = ((LastExpressEngine *)g_engine)->getResourceManager()->loadBackground(sceneName);
@@ -260,7 +260,7 @@ bool SceneLoader::load(Common::SeekableReadStream *stream) {
 	// Read the default scene to get the total number of scenes
 	Scene *header = Scene::load(_stream);
 	if (!header)
-		error("SceneLoader::load: Invalid data file!");
+		error("[SceneLoader::load] Invalid data file");
 
 	debugC(2, kLastExpressDebugScenes, "   found %d entries", header->entityPosition); /* Header entityPosition is the scene count */
 

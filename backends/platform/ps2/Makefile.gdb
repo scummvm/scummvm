@@ -102,4 +102,3 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(LD) $^ $(LDFLAGS) -o $@
-

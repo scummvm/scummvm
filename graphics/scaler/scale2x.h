@@ -66,4 +66,3 @@ extern "C" void scale2x_32_arm(scale2x_uint32* dst0, scale2x_uint32* dst1, const
 #endif
 
 #endif
-

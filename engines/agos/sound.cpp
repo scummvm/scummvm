@@ -22,6 +22,7 @@
 
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/ptr.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -43,11 +44,10 @@ namespace AGOS {
 
 class BaseSound : Common::NonCopyable {
 protected:
-	Common::File *_file;
+	Common::DisposablePtr<Common::File> _file;
 	uint32 *_offsets;
 	Audio::Mixer *_mixer;
 	bool _freeOffsets;
-	DisposeAfterUse::Flag _disposeFile;
 
 public:
 	BaseSound(Audio::Mixer *mixer, Common::File *file, uint32 base, bool bigEndian, DisposeAfterUse::Flag disposeFileAfterUse = DisposeAfterUse::YES);
@@ -62,7 +62,7 @@ public:
 };
 
 BaseSound::BaseSound(Audio::Mixer *mixer, Common::File *file, uint32 base, bool bigEndian, DisposeAfterUse::Flag disposeFileAfterUse)
-	: _mixer(mixer), _file(file), _disposeFile(disposeFileAfterUse) {
+	: _mixer(mixer), _file(file, disposeFileAfterUse) {
 
 	uint res = 0;
 	uint32 size;
@@ -96,7 +96,7 @@ BaseSound::BaseSound(Audio::Mixer *mixer, Common::File *file, uint32 base, bool 
 }
 
 BaseSound::BaseSound(Audio::Mixer *mixer, Common::File *file, uint32 *offsets, DisposeAfterUse::Flag disposeFileAfterUse)
-	: _mixer(mixer), _file(file), _disposeFile(disposeFileAfterUse) {
+	: _mixer(mixer), _file(file, disposeFileAfterUse) {
 
 	_offsets = offsets;
 	_freeOffsets = false;
@@ -105,8 +105,6 @@ BaseSound::BaseSound(Audio::Mixer *mixer, Common::File *file, uint32 *offsets, D
 BaseSound::~BaseSound() {
 	if (_freeOffsets)
 		free(_offsets);
-	if (_disposeFile == DisposeAfterUse::YES)
-		delete _file;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -234,7 +232,7 @@ Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
 		return NULL;
 
 	_file->seek(_offsets[sound], SEEK_SET);
-	return Audio::makeWAVStream(_file, DisposeAfterUse::NO);
+	return Audio::makeWAVStream(_file.get(), DisposeAfterUse::NO);
 }
 
 void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
@@ -257,7 +255,7 @@ public:
 Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
 	assert(_offsets);
 	_file->seek(_offsets[sound], SEEK_SET);
-	return Audio::makeVOCStream(_file, _flags);
+	return Audio::makeVOCStream(_file.get(), _flags);
 }
 
 void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {

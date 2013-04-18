@@ -43,21 +43,21 @@ struct SkyVersion {
 	int dataDiskSize;
 	const char *extraDesc;
 	int version;
-	uint32 guioptions;
+	const char *guioptions;
 };
 
 // TODO: Would be nice if Disk::determineGameVersion() used this table, too.
 static const SkyVersion skyVersions[] = {
-	{  232, -1, "floppy demo", 272, Common::GUIO_NOSPEECH }, // German
-	{  243, -1, "pc gamer demo", 109, Common::GUIO_NOSPEECH },
-	{  247, -1, "floppy demo", 267, Common::GUIO_NOSPEECH }, // English
-	{ 1404, -1, "floppy", 288, Common::GUIO_NOSPEECH },
-	{ 1413, -1, "floppy", 303, Common::GUIO_NOSPEECH },
-	{ 1445, 8830435, "floppy", 348, Common::GUIO_NOSPEECH },
-	{ 1445, -1, "floppy", 331, Common::GUIO_NOSPEECH },
-	{ 1711, -1, "cd demo", 365, Common::GUIO_NONE },
-	{ 5099, -1, "cd", 368, Common::GUIO_NONE },
-	{ 5097, -1, "cd", 372, Common::GUIO_NONE },
+	{  232, -1, "floppy demo", 272, GUIO1(GUIO_NOSPEECH) }, // German
+	{  243, -1, "pc gamer demo", 109, GUIO1(GUIO_NOSPEECH) },
+	{  247, -1, "floppy demo", 267, GUIO1(GUIO_NOSPEECH) }, // English
+	{ 1404, -1, "floppy", 288, GUIO1(GUIO_NOSPEECH) },
+	{ 1413, -1, "floppy", 303, GUIO1(GUIO_NOSPEECH) },
+	{ 1445, 8830435, "floppy", 348, GUIO1(GUIO_NOSPEECH) },
+	{ 1445, -1, "floppy", 331, GUIO1(GUIO_NOSPEECH) },
+	{ 1711, -1, "cd demo", 365, GUIO1(GUIO_NONE) },
+	{ 5099, -1, "cd", 368, GUIO1(GUIO_NONE) },
+	{ 5097, -1, "cd", 372, GUIO1(GUIO_NONE) },
 	{ 0, 0, 0, 0, 0 }
 };
 
@@ -206,7 +206,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		// Extract the extension
 		Common::String ext = file->c_str() + file->size() - 3;
 		ext.toUppercase();
-		if (isdigit(ext[0]) && isdigit(ext[1]) && isdigit(ext[2])){
+		if (isdigit(static_cast<unsigned char>(ext[0])) && isdigit(static_cast<unsigned char>(ext[1])) && isdigit(static_cast<unsigned char>(ext[2]))){
 			int slotNum = atoi(ext.c_str());
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {

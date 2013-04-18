@@ -20,15 +20,13 @@
  *
  */
 
-#include "common/endian.h"
-#include "common/util.h"
-
-#include "made/made.h"
 #include "made/script.h"
-#include "made/database.h"
 #include "made/scriptfuncs.h"
+#include "made/made.h"
+#include "made/database.h"
 #include "made/screen.h"
 
+#include "common/util.h"
 
 namespace Made {
 

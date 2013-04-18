@@ -26,8 +26,10 @@
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -49,7 +51,7 @@ Tables::Tables(LastExpressEngine *engine, EntityIndex id) : Entity(engine, id) {
 IMPLEMENT_FUNCTION(1, Tables, chapter1)
 	if (savepoint.action == kActionDefault) {
 		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", SoundManager::kFlagLoop, kEntityTables2);
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kFlagLoop, kEntityTables2);
 
 		setup_draw();
 	}
@@ -59,7 +61,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION(2, Tables, chapter2)
 	if (savepoint.action == kActionDefault) {
 		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", SoundManager::kFlagLoop, kEntityTables2);
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kFlagLoop, kEntityTables2);
 
 		setup_draw();
 	}
@@ -69,7 +71,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION(3, Tables, chapter3)
 	if (savepoint.action == kActionDefault) {
 		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", SoundManager::kFlagLoop, kEntityTables2);
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kFlagLoop, kEntityTables2);
 
 		setup_draw();
 	}
@@ -79,7 +81,7 @@ IMPLEMENT_FUNCTION_END
 IMPLEMENT_FUNCTION(4, Tables, chapter4)
 	if (savepoint.action == kActionDefault) {
 		if (_id == kEntityTables2)
-			getSound()->playSoundWithSubtitles("LOOP8A.SND", SoundManager::kFlagLoop, kEntityTables2);
+			getSound()->playSoundWithSubtitles("LOOP8A.SND", kFlagLoop, kEntityTables2);
 
 		setup_draw();
 	}
@@ -88,8 +90,8 @@ IMPLEMENT_FUNCTION_END
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION(5, Tables, chapter5)
 	if (savepoint.action == kActionDefault) {
-		if (_id == kEntityTables2 && getSound()->isBuffered(kEntityTables2))
-			getSound()->processEntry(kEntityTables2);
+		if (_id == kEntityTables2 && getSoundQueue()->isBuffered(kEntityTables2))
+			getSoundQueue()->processEntry(kEntityTables2);
 
 		setup_draw();
 	}
@@ -113,21 +115,21 @@ IMPLEMENT_FUNCTION(6, Tables, draw)
 		case kChapter1:
 			if (getState()->time > kTime1165500 && !params->param1) {
 				params->param1 = 1;
-				getSound()->processEntry(kEntityTables2);
+				getSoundQueue()->processEntry(kEntityTables2);
 			}
 			break;
 
 		case kChapter3:
 			if (getState()->time > kTime2052000 && !params->param2) {
 				params->param2 = 1;
-				getSound()->processEntry(kEntityTables2);
+				getSoundQueue()->processEntry(kEntityTables2);
 			}
 			break;
 
 		case kChapter4:
 			if (getState()->time > kTime2488500 && !params->param3) {
 				params->param3 = 1;
-				getSound()->processEntry(kEntityTables2);
+				getSoundQueue()->processEntry(kEntityTables2);
 			}
 			break;
 

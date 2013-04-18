@@ -813,4 +813,3 @@ MidiPlayer *MidiPlayer_CMS_create(SciVersion version) {
 }
 
 } // End of namespace SCI
-

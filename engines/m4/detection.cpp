@@ -65,9 +65,6 @@ const char *MadsM4Engine::getGameFile(int fileType) {
 	return NULL;
 }
 
-using Common::GUIO_NONE;
-using Common::GUIO_NOSPEECH;
-
 static const M4GameDescription gameDescriptions[] = {
 	{
 		{
@@ -80,7 +77,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Burger,
 		kFeaturesCD
@@ -96,7 +93,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Burger,
 		kFeaturesCD
@@ -112,7 +109,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Burger,
 		kFeaturesCD
@@ -128,7 +125,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Burger,
 		kFeaturesDemo
@@ -144,7 +141,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Burger,
 		kFeaturesDemo
@@ -160,7 +157,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -176,7 +173,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -192,7 +189,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -208,7 +205,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -224,7 +221,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::ES_ESP,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Riddle,
 		kFeaturesCD
@@ -240,7 +237,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Riddle,
 		kFeaturesDemo
@@ -256,7 +253,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_RexNebular,
 		kFeaturesNone
@@ -272,7 +269,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_RexNebular,
 		kFeaturesDemo
@@ -288,7 +285,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_DragonSphere,
 		kFeaturesNone
@@ -305,7 +302,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_DragonSphere,
 		kFeaturesCD
@@ -321,7 +318,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_DragonSphere,
 		kFeaturesDemo
@@ -337,7 +334,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_Phantom,
 		kFeaturesNone
@@ -353,7 +350,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Phantom,
 		kFeaturesCD
@@ -369,7 +366,7 @@ static const M4GameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO_NONE
+			GUIO1(GUIO_NONE)
 		},
 		GType_Phantom,
 		kFeaturesDemo
@@ -388,7 +385,7 @@ class M4MetaEngine : public AdvancedMetaEngine {
 public:
 	M4MetaEngine() : AdvancedMetaEngine(M4::gameDescriptions, sizeof(M4::M4GameDescription), m4Games) {
 		_singleid = "m4";
-		_guioptions = Common::GUIO_NOMIDI;
+		_guioptions = GUIO1(GUIO_NOMIDI);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;
 	}

@@ -28,8 +28,10 @@
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -91,7 +93,7 @@ IMPLEMENT_FUNCTION(6, Max, chapter12_handler)
 	case kActionNone:
 		UPDATE_PARAM(params->param2, getState()->time, params->param1);
 
-		if (!getSound()->isBuffered(kEntityMax))
+		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max1122");
 
 		params->param1 = 255 * (4 * rnd(20) + 40);
@@ -108,7 +110,7 @@ IMPLEMENT_FUNCTION(6, Max, chapter12_handler)
 		break;
 
 	case kAction158007856:
-		if (!getSound()->isBuffered(kEntityMax)) {
+		if (!getSoundQueue()->isBuffered(kEntityMax)) {
 			getSound()->playSound(kEntityMax, "Max1122");
 			params->param1 = 255 * (4 * rnd(20) + 40);
 		}
@@ -125,7 +127,7 @@ IMPLEMENT_FUNCTION(7, Max, function7)
 	case kActionNone:
 		UPDATE_PARAM(params->param2, getState()->time, params->param1)
 
-		if (!getSound()->isBuffered(kEntityMax))
+		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max1122");
 
 		params->param1 = 255 * (4 * rnd(20) + 40);
@@ -137,8 +139,8 @@ IMPLEMENT_FUNCTION(7, Max, function7)
 		getObjects()->update(kObjectCompartmentF, kEntityMax, kObjectLocation1, kCursorNormal, kCursorNormal);
 		getObjects()->update(kObject53, kEntityMax, kObjectLocation1, kCursorNormal, kCursorNormal);
 
-		if (getSound()->isBuffered(kEntityMax))
-			getSound()->processEntry(kEntityMax);
+		if (getSoundQueue()->isBuffered(kEntityMax))
+			getSoundQueue()->processEntry(kEntityMax);
 
 		setCallback((savepoint.action == kActionKnock) ? 1 : 2);
 		setup_playSound((savepoint.action == kActionKnock) ? "LIB012" : "LIB013");
@@ -156,7 +158,7 @@ IMPLEMENT_FUNCTION(7, Max, function7)
 		break;
 
 	case kActionDrawScene:
-		if (!getSound()->isBuffered(kEntityMax)) {
+		if (!getSoundQueue()->isBuffered(kEntityMax)) {
 			if (getEntities()->isPlayerPosition(kCarRedSleeping, 56) || getEntities()->isPlayerPosition(kCarRedSleeping, 78))
 				getSound()->playSound(kEntityMax, "Max1120");
 		}
@@ -197,7 +199,7 @@ IMPLEMENT_FUNCTION(7, Max, function7)
 		break;
 
 	case kAction158007856:
-		if (!getSound()->isBuffered(kEntityMax)) {
+		if (!getSoundQueue()->isBuffered(kEntityMax)) {
 			getSound()->playSound(kEntityMax, "Max1122");
 			params->param1 = 255 * (4 * rnd(20) + 40);
 		}
@@ -214,7 +216,7 @@ IMPLEMENT_FUNCTION(8, Max, chapter4Handler)
 	case kActionNone:
 		UPDATE_PARAM(params->param3, getState()->time, params->param2);
 
-		if (!getSound()->isBuffered(kEntityMax))
+		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max3101");
 
 		params->param2 = 255 * (4 * rnd(20) + 40);
@@ -228,8 +230,8 @@ IMPLEMENT_FUNCTION(8, Max, chapter4Handler)
 			break;
 		}
 
-		if (getSound()->isBuffered(kEntityMax))
-			getSound()->processEntry(kEntityMax);
+		if (getSoundQueue()->isBuffered(kEntityMax))
+			getSoundQueue()->processEntry(kEntityMax);
 
 		getAction()->playAnimation(kEventCathMaxLickHand);
 		getScenes()->processScene();
@@ -247,7 +249,7 @@ IMPLEMENT_FUNCTION(8, Max, chapter4Handler)
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarBaggage;
 
-		if (!getSound()->isBuffered(kEntityMax))
+		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max3101");
 		break;
 
@@ -255,8 +257,8 @@ IMPLEMENT_FUNCTION(8, Max, chapter4Handler)
 		if (getCallback() != 1)
 			break;
 
-		if (getSound()->isBuffered(kEntityMax))
-			getSound()->processEntry(kEntityMax);
+		if (getSoundQueue()->isBuffered(kEntityMax))
+			getSoundQueue()->processEntry(kEntityMax);
 
 		getSound()->playSound(kEntityPlayer, "LIB026");
 		getAction()->playAnimation(kEventCathMaxFree);
@@ -392,7 +394,7 @@ IMPLEMENT_FUNCTION(13, Max, chapter3Handler)
 
 		UPDATE_PARAM(params->param3, getState()->time, params->param1);
 
-		if (!getSound()->isBuffered(kEntityMax))
+		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max1122");
 
 		params->param1 = 255 * (4 * rnd(20) + 40);
@@ -424,7 +426,7 @@ IMPLEMENT_FUNCTION(13, Max, chapter3Handler)
 		if (params->param2)
 			break;
 
-		if (!getSound()->isBuffered(kEntityMax)) {
+		if (!getSoundQueue()->isBuffered(kEntityMax)) {
 			getSound()->playSound(kEntityMax, "Max1122");
 			params->param1 = 255 * (4 * rnd(20) + 40);
 		}
@@ -464,7 +466,7 @@ IMPLEMENT_FUNCTION(14, Max, freeFromCage)
 		getData()->location = kLocationInsideCompartment;
 		getData()->car = kCarBaggage;
 
-		if (!getSound()->isBuffered(kEntityMax))
+		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max1122");
 		break;
 
@@ -476,17 +478,17 @@ IMPLEMENT_FUNCTION(14, Max, freeFromCage)
 			break;
 
 		case 1:
-			if (getSound()->isBuffered(kEntityMax))
-				getSound()->removeFromQueue(kEntityMax);
+			if (getSoundQueue()->isBuffered(kEntityMax))
+				getSoundQueue()->removeFromQueue(kEntityMax);
 
 			getAction()->playAnimation(kEventCathMaxCage);
-			getSound()->setupEntry(SoundManager::kSoundType7, kEntityMax);
+			getSoundQueue()->setupEntry(kSoundType7, kEntityMax);
 			getScenes()->processScene();
 			break;
 
 		case 2:
-			if (getSound()->isBuffered(kEntityMax))
-				getSound()->processEntry(kEntityMax);
+			if (getSoundQueue()->isBuffered(kEntityMax))
+				getSoundQueue()->processEntry(kEntityMax);
 
 			getSound()->playSound(kEntityPlayer, "LIB026");
 			getAction()->playAnimation(kEventCathMaxFree);
@@ -523,7 +525,7 @@ IMPLEMENT_FUNCTION(15, Max, function15)
 		getData()->location = kLocationOutsideCompartment;
 		getData()->car = kCarRedSleeping;
 
-		if (!getSound()->isBuffered(kEntityMax))
+		if (!getSoundQueue()->isBuffered(kEntityMax))
 			getSound()->playSound(kEntityMax, "Max3010");
 
 		setCallback(1);

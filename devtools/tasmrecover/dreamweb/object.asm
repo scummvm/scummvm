@@ -336,11 +336,16 @@ waitexam:	;call	delpointer
 	jz	notuseinv
 	mov	bx,offset cs:withlist1
 notuseinv:	call	checkcoords
+
+	cmp     quitrequested, 0
+	jnz	stopwaiting
+
 	cmp	examagain,0
 	jz	norex
 	jmp	examineagain
 norex:	cmp	getback,0
 	jz	waitexam
+stopwaiting:
 
 	mov	pickup,0
 	cmp	watchingtime,0
@@ -670,11 +675,13 @@ Describeob	proc	near
 
 	mov	di,33
 	mov	bx,92
-	if	foreign
+
+	cmp	foreignrelease, 0
+	jz notsetd
 	cmp	objecttype,1
 	jnz	notsetd
 	mov	bx,82
-notsetd:	endif
+notsetd:
 	mov	dl,241
 	mov	ah,16
 	mov	charshift,91+91
@@ -682,11 +689,12 @@ notsetd:	endif
 	mov	charshift,0
 	mov	di,36
 	mov	bx,104
-	if	foreign
+	cmp	foreignrelease, 0
+	jz notsetd2
 	cmp	objecttype,1
 	jnz	notsetd2
 	mov	bx,94
-notsetd2:	endif
+notsetd2:
 	mov	dl,241
 	mov	ah,0
 	call	printdirect
@@ -2583,10 +2591,8 @@ findlenextext:	mov	cl,[es:si]
 	sub	bx,extext
 	push	bx ax
 	sub	cx,bx
-	cmp cx, 0xffff;		BIG FIXME! Find out why this is happening
-	jz $1
 	rep	movsb
-$1:	pop	bx
+	pop	bx
 	sub	extextpos,bx
 	
 	pop	si
@@ -2602,8 +2608,3 @@ beforethistext:	mov	[es:di],ax
 	ret
 
 	endp
-
-
-
-
-

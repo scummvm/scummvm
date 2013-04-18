@@ -61,6 +61,7 @@
 #include "sci/graphics/transitions.h"
 
 #ifdef ENABLE_SCI32
+#include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/video/robot_decoder.h"
 #endif
@@ -146,6 +147,7 @@ SciEngine::~SciEngine() {
 	DebugMan.clearAllDebugChannels();
 
 #ifdef ENABLE_SCI32
+	delete _gfxText32;
 	delete _robotDecoder;
 	delete _gfxFrameout;
 #endif
@@ -598,6 +600,7 @@ void SciEngine::initGraphics() {
 	_gfxText16 = 0;
 	_gfxTransitions = 0;
 #ifdef ENABLE_SCI32
+	_gfxText32 = 0;
 	_robotDecoder = 0;
 	_gfxFrameout = 0;
 	_gfxPaint32 = 0;
@@ -606,16 +609,7 @@ void SciEngine::initGraphics() {
 	if (hasMacIconBar())
 		_gfxMacIconBar = new GfxMacIconBar();
 
-	bool paletteMerging = true;
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		// there are some games that use inbetween SCI1.1 interpreter, so we have to detect if it's merging or copying
-		if (getSciVersion() == SCI_VERSION_1_1)
-			paletteMerging = _resMan->detectForPaletteMergingForSci11();
-		else
-			paletteMerging = false;
-	}
-
-	_gfxPalette = new GfxPalette(_resMan, _gfxScreen, paletteMerging);
+	_gfxPalette = new GfxPalette(_resMan, _gfxScreen);
 	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette);
 	_gfxCursor = new GfxCursor(_resMan, _gfxPalette, _gfxScreen);
 
@@ -627,6 +621,7 @@ void SciEngine::initGraphics() {
 		_gfxCompare = new GfxCompare(_gamestate->_segMan, _kernel, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxPaint32 = new GfxPaint32(_resMan, _gamestate->_segMan, _kernel, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette);
 		_gfxPaint = _gfxPaint32;
+		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache, _gfxScreen);
 		_robotDecoder = new RobotDecoder(g_system->getMixer(), getPlatform() == Common::kPlatformMacintosh);
 		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
 	} else {
@@ -870,6 +865,7 @@ void SciEngine::syncIngameAudioOptions() {
 			// Is it a game that supports simultaneous speech and subtitles?
 			if (getGameId() == GID_SQ4
 				|| getGameId() == GID_FREDDYPHARKAS
+				|| getGameId() == GID_ECOQUEST
 				// TODO: The following need script patches for simultaneous speech and subtitles
 				//|| getGameId() == GID_KQ6
 				//|| getGameId() == GID_LAURABOW2

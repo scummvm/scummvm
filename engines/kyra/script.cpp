@@ -443,4 +443,3 @@ void EMCInterpreter::op_setRetAndJmp(EMCState *script) {
 	}
 }
 } // End of namespace Kyra
-

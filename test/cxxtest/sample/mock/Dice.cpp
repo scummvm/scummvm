@@ -10,5 +10,3 @@ unsigned Dice::roll()
 {
     return (T::rand() % 6) + 1;
 }
-
-

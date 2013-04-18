@@ -47,7 +47,8 @@ enum {
 	RF_USAGE = 0x7F,
 	RF_USAGE_MAX = RF_USAGE,
 
-	RS_MODIFIED = 0x10
+	RS_MODIFIED = 0x10,
+	RF_OFFHEAP = 0x40
 };
 
 
@@ -993,18 +994,42 @@ void ResourceManager::setModified(ResType type, ResId idx) {
 	_types[type][idx].setModified();
 }
 
+void ResourceManager::setOffHeap(ResType type, ResId idx) {
+	if (!validateResource("setOffHeap", type, idx))
+		return;
+	_types[type][idx].setOffHeap();
+}
+
+void ResourceManager::setOnHeap(ResType type, ResId idx) {
+	if (!validateResource("setOnHeap", type, idx))
+		return;
+	_types[type][idx].setOnHeap();
+}
+
 bool ResourceManager::isModified(ResType type, ResId idx) const {
 	if (!validateResource("isModified", type, idx))
 		return false;
 	return _types[type][idx].isModified();
 }
 
+bool ResourceManager::Resource::isModified() const {
+	return (_status & RS_MODIFIED) != 0;
+}
+
+bool ResourceManager::Resource::isOffHeap() const {
+	return (_status & RF_OFFHEAP) != 0;
+}
+
 void ResourceManager::Resource::setModified() {
 	_status |= RS_MODIFIED;
 }
 
-bool ResourceManager::Resource::isModified() const {
-	return (_status & RS_MODIFIED) != 0;
+void ResourceManager::Resource::setOffHeap() {
+	_status |= RF_OFFHEAP;
+}
+
+void ResourceManager::Resource::setOnHeap() {
+	_status &= ~RF_OFFHEAP;
 }
 
 void ResourceManager::expireResources(uint32 size) {
@@ -1035,7 +1060,7 @@ void ResourceManager::expireResources(uint32 size) {
 				while (idx-- > 0) {
 					Resource &tmp = _types[type][idx];
 					byte counter = tmp.getResourceCounter();
-					if (!tmp.isLocked() && counter >= best_counter && tmp._address && !_vm->isResourceInUse(type, idx)) {
+					if (!tmp.isLocked() && counter >= best_counter && tmp._address && !_vm->isResourceInUse(type, idx) && !tmp.isOffHeap()) {
 						best_counter = counter;
 						best_type = type;
 						best_res = idx;

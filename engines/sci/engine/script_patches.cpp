@@ -855,26 +855,8 @@ const uint16 qfg3PatchImportDialog[] = {
 	PATCH_END
 };
 
-// Script 23 in QFG3 has a typo/bug which makes it loop endlessly and
-// read garbage. Fixes bug #3040722.
-const byte qfg3DialogCrash[] = {
-	5,
-	0x34, 0xe7, 0x03,  // ldi 3e7 (999)
-	0x22,              // lt?
-	0x33,              // jmp [back] ---> BUG! Infinite loop
-	0
-};
-
-const uint16 qfg3PatchDialogCrash[] = {
-	0x34, 0xe7, 0x03,  // ldi 3e7 (999)
-	0x22,              // lt?
-	0x31,              // bnt [back]
-	PATCH_END
-};
-
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature qfg3Signatures[] = {
-	{     23, "dialog crash",                                   1, PATCH_MAGICDWORD(0xe7, 0x03, 0x22, 0x33),  -1,           qfg3DialogCrash,          qfg3PatchDialogCrash },
 	{    944, "import dialog continuous calls",                 1, PATCH_MAGICDWORD(0x2a, 0x31, 0x0b, 0x7a),  -1, qfg3SignatureImportDialog,         qfg3PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };

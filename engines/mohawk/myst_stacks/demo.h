@@ -46,15 +46,19 @@ public:
 private:
 	void setupOpcodes();
 
-	DECLARE_OPCODE(opcode_100);
-	DECLARE_OPCODE(opcode_101);
-	DECLARE_OPCODE(opcode_102);
+	DECLARE_OPCODE(o_stopIntro);
+	DECLARE_OPCODE(o_fadeFromBlack);
+	DECLARE_OPCODE(o_fadeToBlack);
 
-	DECLARE_OPCODE(opcode_201);
+	DECLARE_OPCODE(o_returnToMenu_init);
 
 	DECLARE_OPCODE(opcode_300);
 
-	bool _enabled201;
+	bool _returnToMenuRunning;
+	uint16 _returnToMenuStep; // 42
+	uint32 _returnToMenuNextTime; // 6
+
+	void returnToMenu_run();
 };
 
 } // End of namespace MystStacks

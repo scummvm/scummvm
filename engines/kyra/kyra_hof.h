@@ -566,8 +566,8 @@ protected:
 	// -
 
 	char _internStringBuf[200];
-	static const char *_languageExtension[];
-	static const char *_scriptLangExt[];
+	static const char *const _languageExtension[];
+	static const char *const _scriptLangExt[];
 
 	// character
 	bool _useCharPal;
@@ -925,4 +925,3 @@ protected:
 } // End of namespace Kyra
 
 #endif
-

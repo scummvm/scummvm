@@ -45,4 +45,3 @@
 extern void _M3_changeMode (u32 mode);
 
 #endif // IO_M3_COMMON_H
-

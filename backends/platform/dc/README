@@ -23,4 +23,3 @@ should get a scrambled binary SCUMMVM.BIN and some plugins *.PLG.
 
 For serial/IP upload, remove the "DYNAMIC_MODULES" line and just run `make',
 to get a static binary with the name `scummvm.elf'.
-

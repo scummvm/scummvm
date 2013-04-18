@@ -665,12 +665,11 @@ int ConsoleDialog::printFormat(int dummy, const char *format, ...) {
 }
 
 int ConsoleDialog::vprintFormat(int dummy, const char *format, va_list argptr) {
-	char	buf[2048];
+	Common::String buf = Common::String::vformat(format, argptr);
 
-	int count = vsnprintf(buf, sizeof(buf), format, argptr);
-	buf[sizeof(buf)-1] = 0;	// ensure termination
-	print(buf);
-	return count;
+	print(buf.c_str());
+
+	return buf.size();
 }
 
 void ConsoleDialog::printChar(int c) {

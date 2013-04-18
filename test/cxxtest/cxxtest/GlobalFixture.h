@@ -27,4 +27,3 @@ namespace CxxTest
 }
 
 #endif // __cxxtest__GlobalFixture_h__
-

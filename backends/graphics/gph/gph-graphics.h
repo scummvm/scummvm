@@ -24,7 +24,7 @@
 #define BACKENDS_GRAPHICS_GPH_H
 
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
-#include "graphics/scaler/aspect.h"	// for aspect2Real
+#include "graphics/scaler/aspect.h" // for aspect2Real
 #include "graphics/scaler/downscaler.h"
 
 enum {
@@ -56,7 +56,7 @@ public:
 	SurfaceSdlGraphicsManager::MousePos *getMouseCurState();
 	SurfaceSdlGraphicsManager::VideoState *getVideoMode();
 
-	virtual void adjustMouseEvent(const Common::Event &event);
+	virtual void transformMouseCoordinates(Common::Point &point);
 };
 
 #endif /* BACKENDS_GRAPHICS_GPH_H */

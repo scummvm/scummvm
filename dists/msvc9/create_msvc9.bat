@@ -8,6 +8,8 @@ if "%~1"=="/stable" goto stable
 if "%~1"=="/STABLE" goto stable
 if "%~1"=="/all"    goto all
 if "%~1"=="/ALL"    goto all
+if "%~1"=="/tools"  goto tools
+if "%~1"=="/TOOLS"  goto tools
 if "%~1"=="/clean"  goto clean_check
 if "%~1"=="/CLEAN"  goto clean_check
 if "%~1"=="/help"   goto command_help
@@ -23,6 +25,7 @@ echo.
 echo Valid command parameters are:
 echo   stable   Generated stable engines project files
 echo   all      Generate all engines project files
+echo   tools    Generate project files for the devtools
 echo   clean    Clean generated project files
 echo   help     Show help message
 goto done
@@ -60,6 +63,13 @@ echo.
 create_project ..\.. --msvc --msvc-version 9
 goto done
 
+:tools
+echo.
+echo Creating tools project files
+echo.
+create_project ..\.. --tools --msvc --msvc-version 9
+goto done
+
 :clean_check
 echo.
 set cleananswer=N
@@ -77,6 +87,7 @@ del /Q *.vcproj* > NUL 2>&1
 del /Q *.vsprops > NUL 2>&1
 del /Q *.sln* > NUL 2>&1
 del /Q scummvm* > NUL 2>&1
+del /Q devtools* > NUL 2>&1
 goto done
 
 :done

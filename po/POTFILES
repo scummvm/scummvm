@@ -63,6 +63,7 @@ backends/keymapper/remap-dialog.cpp
 backends/midi/windows.cpp
 backends/platform/ds/arm9/source/dsoptions.cpp
 backends/platform/iphone/osys_events.cpp
+backends/platform/sdl/macosx/appmenu_osx.mm
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
@@ -77,3 +78,6 @@ backends/platform/wince/wince-sdl.cpp
 backends/events/default/default-events.cpp
 backends/events/gph/gph-events.cpp
 backends/events/openpandora/op-events.cpp
+backends/updates/macosx/macosx-updates.mm
+backends/platform/bada/form.cpp
+backends/events/maemosdl/maemosdl-events.cpp

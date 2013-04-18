@@ -62,7 +62,9 @@ const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 
 // Class VramAllocator -----------------------------------
 
+namespace Common {
 DECLARE_SINGLETON(VramAllocator);
+}
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
 //#define __PSP_DEBUG_PRINT__
@@ -477,4 +479,3 @@ Common::List<Graphics::PixelFormat> DisplayManager::getSupportedPixelFormats() c
 
 	return list;
 }
-

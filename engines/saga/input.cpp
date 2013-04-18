@@ -158,4 +158,3 @@ Point SagaEngine::mousePos() const {
 }
 
 } // End of namespace Saga
-

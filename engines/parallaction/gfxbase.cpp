@@ -55,16 +55,13 @@ const char *GfxObj::getName() const {
 	return _name;
 }
 
-
 uint GfxObj::getNum() {
 	return _frames->getNum();
 }
 
-
 void GfxObj::getRect(uint f, Common::Rect &r) {
 	_frames->getRect(f, r);
 }
-
 
 byte *GfxObj::getData(uint f) {
 	return _frames->getData(f);
@@ -76,7 +73,6 @@ uint GfxObj::getRawSize(uint f) {
 uint GfxObj::getSize(uint f) {
 	return _frames->getSize(f);
 }
-
 
 void GfxObj::setFlags(uint32 flags) {
 	_flags |= flags;
@@ -108,6 +104,7 @@ void Gfx::resetSceneDrawList() {
 }
 
 GfxObj* Gfx::loadAnim(const char *name) {
+	debugC(1, kDebugGraphics, "Gfx::loadAnim(\"%s\")", name);
 	Frames* frames = _disk->loadFrames(name);
 	assert(frames);
 
@@ -146,7 +143,6 @@ GfxObj* Gfx::loadDoor(const char *name) {
 	return obj;
 }
 
-
 void Gfx::freeLocationObjects() {
 	freeDialogueObjects();
 	freeLabels();
@@ -157,6 +153,7 @@ void Gfx::freeCharacterObjects() {
 }
 
 void BackgroundInfo::loadGfxObjMask(const char *name, GfxObj *obj) {
+	debugC(1, kDebugGraphics, "BackgroundInfo::loadGfxObjMask(\"%s\")", name);
 	Common::Rect rect;
 	obj->getRect(0, rect);
 
@@ -180,6 +177,7 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 	if (!obj) {
 		return;
 	}
+	debugC(1, kDebugGraphics, "Gfx::showGfxObj(\"%s\", visible:%d)", obj->getName(), visible ? 1 : 0);
 
 	if (visible) {
 		obj->setFlags(kGfxObjVisible);
@@ -188,26 +186,26 @@ void Gfx::showGfxObj(GfxObj* obj, bool visible) {
 	}
 
 	if (obj->_hasMask) {
+		debugC(1, kDebugGraphics, "\tHas Mask");
 		_backgroundInfo->toggleMaskPatch(obj->_maskId, obj->x, obj->y, visible);
 	}
 	if (obj->_hasPath) {
+		debugC(1, kDebugGraphics, "\tHas Path");
 		_backgroundInfo->togglePathPatch(obj->_pathId, obj->x, obj->y, visible);
 	}
 }
-
-
 
 bool compareZ(const GfxObj* a1, const GfxObj* a2) {
 	return (a1->z == a2->z) ? (a1->_prog < a2->_prog) : (a1->z < a2->z);
 }
 
 void Gfx::sortScene() {
+	debugC(3, kDebugGraphics, "Gfx::sortScene()");
 	GfxObjArray::iterator first = _sceneObjects.begin();
 	GfxObjArray::iterator last = _sceneObjects.end();
 
 	Common::sort(first, last, compareZ);
 }
-
 
 void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf) {
 	if (!obj->isVisible()) {
@@ -236,16 +234,13 @@ void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf) {
 
 }
 
-
 void Gfx::drawText(Font *font, Graphics::Surface* surf, uint16 x, uint16 y, const char *text, byte color) {
 	byte *dst = (byte*)surf->getBasePtr(x, y);
 	font->setColor(color);
 	font->drawString(dst, surf->w, text);
 }
 
-
 void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
-
 	byte *d = _unpackedBitmap;
 	uint pixelsLeftInLine = r.width();
 
@@ -273,7 +268,6 @@ void Gfx::unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surf
 	blt(r, _unpackedBitmap, surf, z, scale, transparentColor);
 }
 
-
 void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
 	if (scale == 100) {
 		// use optimized path
@@ -300,7 +294,6 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 	Common::Rect clipper(surf->w, surf->h);
 	dstRect.clip(clipper);
 	if (!dstRect.isValidRect()) return;
-
 
 	// clipped source rectangle
 	Common::Rect srcRect;
@@ -448,10 +441,8 @@ void Gfx::bltNoMaskNoScale(const Common::Rect& r, byte *data, Graphics::Surface 
 	}
 }
 
-
 void Gfx::blt(const Common::Rect& r, byte *data, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor) {
 	bltMaskScale(r, data, surf, z, scale, transparentColor);
 }
-
 
 } // namespace Parallaction

@@ -62,7 +62,7 @@ void FileManager_v1d::readOverlay(const int screenNum, image_pt image, const ovl
 	Common::String buf = Common::String(_vm->_text->getScreenNames(screenNum)) + Common::String(ovl_ext[overlayType]);
 
 	if (!Common::File::exists(buf)) {
-		memset(image, 0, sizeof(image));
+		memset(image, 0, kOvlSize);
 		warning("File not found: %s", buf.c_str());
 		return;
 	}
@@ -128,4 +128,3 @@ void FileManager_v1d::instructions() const {
 }
 
 } // End of namespace Hugo
-

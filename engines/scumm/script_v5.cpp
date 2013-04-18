@@ -1799,12 +1799,20 @@ void ScummEngine_v5::o5_roomOps() {
 
 	case 13:	// SO_SAVE_STRING
 		{
-			// This subopcode is used in Indy 4 to save the IQ points data.
-			// No other game uses it. We use this to replace the given filename by
-			// one based on the targetname ("TARGET.iq").
-			// This way, the iq data of each Indy 4 variant a user might have stays
-			// separate. Moreover, the filename now clearly reflects to which target
-			// it belongs (as it should).
+			// This subopcode is used in Indy 4 to save the IQ points
+			// data. No other LucasArts game uses it. We use this fact
+			// to substitute a filename based on the targetname
+			// ("TARGET.iq").
+			//
+			// This way, the iq data of each Indy 4 variant stays
+			// separate. Moreover, the filename now clearly reflects to
+			// which target it belongs (as it should).
+			//
+			// In addition, the Monkey Island fan patch (which adds
+			// speech support and more things to MI 1 and 2) uses
+			// this opcode to generate a "monkey.cfg" file containing.
+			// some user controllable settings.
+			// Once more we use a custom filename ("TARGET.cfg").
 			Common::String filename;
 			char chr;
 
@@ -1814,6 +1822,8 @@ void ScummEngine_v5::o5_roomOps() {
 
 			if (_game.id == GID_INDY4) {
 				filename = _targetName + ".iq";
+			} else if (_game.id == GID_MONKEY || _game.id == GID_MONKEY2) {
+				filename = _targetName + ".cfg";
 			} else {
 				error("SO_SAVE_STRING: Unsupported filename %s", filename.c_str());
 			}
@@ -1841,6 +1851,8 @@ void ScummEngine_v5::o5_roomOps() {
 
 			if (_game.id == GID_INDY4) {
 				filename = _targetName + ".iq";
+			} else if (_game.id == GID_MONKEY || _game.id == GID_MONKEY2) {
+				filename = _targetName + ".cfg";
 			} else {
 				error("SO_LOAD_STRING: Unsupported filename %s", filename.c_str());
 			}
@@ -2094,6 +2106,20 @@ void ScummEngine_v5::o5_startScript() {
 	// instead of the actual script, causing invalid opcode cases
 	if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns && script == 171)
 		return;
+
+	// WORKAROUND bug #3306145 (also occurs in original): Some old versions of
+	// Indy3 sometimes fail to allocate IQ points correctly. To quote:
+	// "In the Amiga version you get the 15 points for puzzle 30 if you give the
+	// book or KO the guy. The PC version correctly gives 10 points for puzzle
+	// 29 for KO and 15 for puzzle 30 when giving the book."
+	// This workaround is meant to address that.
+	if (_game.id == GID_INDY3 && vm.slot[_currentScript].number == 106 && script == 125 && VAR(115) != 2) {
+		// If Var[115] != 2, then:
+		// Correct: startScript(125,[29,10]);
+		// Wrong : startScript(125,[30,15]);
+		data[0] = 29;
+		data[1] = 10;
+	}
 
 	// Method used by original games to skip copy protection scheme
 	if (!_copyProtection) {

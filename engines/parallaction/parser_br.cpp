@@ -524,14 +524,14 @@ DECLARE_COMMAND_PARSER(location)  {
 	ctxt.cmd->_startPos.x = -1000;
 	ctxt.cmd->_startPos2.x = -1000;
 	if (_tokens[ctxt.nextToken][0] != '\0') {
-		if (isdigit(_tokens[ctxt.nextToken][0]) || _tokens[ctxt.nextToken][0] == '-') {
+		if (isdigit(static_cast<unsigned char>(_tokens[ctxt.nextToken][0])) || _tokens[ctxt.nextToken][0] == '-') {
 			ctxt.cmd->_startPos.x = atoi(_tokens[ctxt.nextToken]);
 			ctxt.nextToken++;
 			ctxt.cmd->_startPos.y = atoi(_tokens[ctxt.nextToken]);
 			ctxt.nextToken++;
 		}
 
-		if (isdigit(_tokens[ctxt.nextToken][0]) || _tokens[ctxt.nextToken][0] == '-') {
+		if (isdigit(static_cast<unsigned char>(_tokens[ctxt.nextToken][0])) || _tokens[ctxt.nextToken][0] == '-') {
 			ctxt.cmd->_startPos2.x = atoi(_tokens[ctxt.nextToken]);
 			ctxt.nextToken++;
 			ctxt.cmd->_startPos2.y = atoi(_tokens[ctxt.nextToken]);
@@ -677,7 +677,7 @@ DECLARE_COMMAND_PARSER(text)  {
 
 	createCommand(_parser->_lookup);
 
-	if (isdigit(_tokens[1][1])) {
+	if (isdigit(static_cast<unsigned char>(_tokens[1][1]))) {
 		ctxt.cmd->_zeta0 = atoi(_tokens[1]);
 		ctxt.nextToken++;
 	} else {
@@ -714,7 +714,7 @@ DECLARE_COMMAND_PARSER(unary)  {
 DECLARE_ZONE_PARSER(limits)  {
 	debugC(7, kDebugParser, "ZONE_PARSER(limits) ");
 
-	if (isalpha(_tokens[1][1])) {
+	if (isalpha(static_cast<unsigned char>(_tokens[1][1]))) {
 		ctxt.z->_flags |= kFlagsAnimLinked;
 		ctxt.z->_linkedName = _tokens[1];
 	} else {
@@ -1003,7 +1003,7 @@ DECLARE_INSTRUCTION_PARSER(text)  {
 
 	int _si = 1;
 
-	if (isdigit(_tokens[1][1])) {
+	if (isdigit(static_cast<unsigned char>(_tokens[1][1]))) {
 		ctxt.inst->_y = atoi(_tokens[1]);
 		_si = 2;
 	} else {
@@ -1066,7 +1066,7 @@ DECLARE_INSTRUCTION_PARSER(endif)  {
 
 void ProgramParser_br::parseRValue(ScriptVar &v, const char *str) {
 
-	if (isdigit(str[0]) || str[0] == '-') {
+	if (isdigit(static_cast<unsigned char>(str[0])) || str[0] == '-') {
 		v.setImmediate(atoi(str));
 		return;
 	}

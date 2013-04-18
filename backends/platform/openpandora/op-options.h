@@ -32,7 +32,7 @@ namespace OP {
 
 extern int tapmodeLevel;
 
-extern void	ToggleTapMode();
+extern void ToggleTapMode();
 
 } /* namespace OP */
 

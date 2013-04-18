@@ -32,11 +32,11 @@
 
 namespace Gob {
 
-DataIO::File::File() : size(0), offset(0), packed(false), archive(0) {
+DataIO::File::File() : size(0), offset(0), compression(0), archive(0) {
 }
 
-DataIO::File::File(const Common::String &n, uint32 s, uint32 o, bool p, Archive &a) :
-	name(n), size(s), offset(o), packed(p), archive(&a) {
+DataIO::File::File(const Common::String &n, uint32 s, uint32 o, uint8 c, Archive &a) :
+	name(n), size(s), offset(o), compression(c), archive(&a) {
 }
 
 
@@ -71,26 +71,92 @@ void DataIO::getArchiveInfo(Common::Array<ArchiveInfo> &info) const {
 	}
 }
 
-byte *DataIO::unpack(const byte *src, uint32 srcSize, int32 &size) {
-	size = READ_LE_UINT32(src);
+uint32 DataIO::getSizeChunks(Common::SeekableReadStream &src) {
+	uint32 size = 0;
 
-	byte *data = new byte[size];
+	uint32 chunkSize = 2, realSize;
+	while (chunkSize != 0xFFFF) {
+		src.skip(chunkSize - 2);
 
-	Common::MemoryReadStream srcStream(src + 4, srcSize - 4);
-	unpack(srcStream, data, size);
+		chunkSize = src.readUint16LE();
+		realSize  = src.readUint16LE();
+
+		assert(chunkSize >= 4);
+
+		size += realSize;
+	}
+
+	assert(!src.eos());
+
+	src.seek(0);
+
+	return size;
+}
+
+byte *DataIO::unpack(Common::SeekableReadStream &src, int32 &size, uint8 compression, bool useMalloc) {
+	assert((compression == 1) || (compression == 2));
+
+	if      (compression == 1)
+		size = src.readUint32LE();
+	else if (compression == 2)
+		size = getSizeChunks(src);
+
+	assert(size > 0);
+
+	byte *data = 0;
+	if (useMalloc)
+		data = (byte *) malloc(size);
+	else
+		data = new byte[size];
+
+	if      (compression == 1)
+		unpackChunk(src, data, size);
+	else if (compression == 2)
+		unpackChunks(src, data, size);
+
 	return data;
 }
 
-Common::SeekableReadStream *DataIO::unpack(Common::SeekableReadStream &src) {
-	uint32 size = src.readUint32LE();
+byte *DataIO::unpack(const byte *src, uint32 srcSize, int32 &size, uint8 compression) {
+	Common::MemoryReadStream srcStream(src, srcSize);
 
-	byte *data = (byte *) malloc(size);
+	return unpack(srcStream, size, compression, false);
+}
 
-	unpack(src, data, size);
+Common::SeekableReadStream *DataIO::unpack(Common::SeekableReadStream &src, uint8 compression) {
+	int32 size;
+
+	byte *data = unpack(src, size, compression, true);
+	if (!data)
+		return 0;
+
 	return new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
 }
 
-void DataIO::unpack(Common::SeekableReadStream &src, byte *dest, uint32 size) {
+void DataIO::unpackChunks(Common::SeekableReadStream &src, byte *dest, uint32 size) {
+	uint32 chunkSize = 0, realSize;
+	while (chunkSize != 0xFFFF) {
+		uint32 pos = src.pos();
+
+		chunkSize = src.readUint16LE();
+		realSize  = src.readUint16LE();
+
+		assert(chunkSize >= 4);
+		assert(size >= realSize);
+
+		src.skip(2);
+
+		unpackChunk(src, dest, realSize);
+
+		if (chunkSize != 0xFFFF)
+			src.seek(pos + chunkSize + 2);
+
+		size -= realSize;
+		dest += realSize;
+	}
+}
+
+void DataIO::unpackChunk(Common::SeekableReadStream &src, byte *dest, uint32 size) {
 	byte *tmpBuf = new byte[4114];
 	assert(tmpBuf);
 
@@ -194,9 +260,9 @@ DataIO::Archive *DataIO::openArchive(const Common::String &name) {
 		archive->file.read(fileName, 13);
 		fileName[13] = '\0';
 
-		file.size   = archive->file.readUint32LE();
-		file.offset = archive->file.readUint32LE();
-		file.packed = archive->file.readByte() != 0;
+		file.size        = archive->file.readUint32LE();
+		file.offset      = archive->file.readUint32LE();
+		file.compression = archive->file.readByte() != 0;
 
 		// Replacing cyrillic characters
 		Util::replaceChar(fileName, (char) 0x85, 'E');
@@ -209,8 +275,8 @@ DataIO::Archive *DataIO::openArchive(const Common::String &name) {
 
 		// Geisha use 0ot files, which are compressed TOT files without the packed byte set.
 		if (file.name.hasSuffix(".0OT")) {
-			file.name.setChar(file.name.size() - 3, 'T');
-			file.packed = true;
+			file.name.setChar('T', file.name.size() - 3);
+			file.compression = 2;
 		}
 
 		file.archive = archive;
@@ -254,7 +320,7 @@ int32 DataIO::fileSize(const Common::String &name) {
 	// Try to find the file in the archives
 	File *file = findFile(name);
 	if (file) {
-		if (!file->packed)
+		if (file->compression == 0)
 			return file->size;
 
 		// Sanity checks
@@ -264,6 +330,10 @@ int32 DataIO::fileSize(const Common::String &name) {
 
 		// Read the full, unpacked size
 		file->archive->file.seek(file->offset);
+
+		if (file->compression == 2)
+			file->archive->file.skip(4);
+
 		return file->archive->file.readUint32LE();
 	}
 
@@ -346,10 +416,10 @@ Common::SeekableReadStream *DataIO::getFile(File &file) {
 	Common::SeekableReadStream *rawData =
 		new Common::SafeSubReadStream(&file.archive->file, file.offset, file.offset + file.size);
 
-	if (!file.packed)
+	if (file.compression == 0)
 		return rawData;
 
-	Common::SeekableReadStream *unpackedData = unpack(*rawData);
+	Common::SeekableReadStream *unpackedData = unpack(*rawData, file.compression);
 
 	delete rawData;
 
@@ -374,10 +444,10 @@ byte *DataIO::getFile(File &file, int32 &size) {
 		return 0;
 	}
 
-	if (!file.packed)
+	if (file.compression == 0)
 		return rawData;
 
-	byte *unpackedData = unpack(rawData, file.size, size);
+	byte *unpackedData = unpack(rawData, file.size, size, file.compression);
 
 	delete[] rawData;
 

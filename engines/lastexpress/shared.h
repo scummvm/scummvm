@@ -28,6 +28,86 @@
 namespace LastExpress {
 
 //////////////////////////////////////////////////////////////////////////
+// Sound
+//////////////////////////////////////////////////////////////////////////
+
+enum SoundType {
+	kSoundTypeNone = 0,
+	kSoundType1,
+	kSoundType2,
+	kSoundType3,
+	kSoundType4,
+	kSoundType5,
+	kSoundType6,
+	kSoundType7,
+	kSoundType8,
+	kSoundType9,
+	kSoundType10,
+	kSoundType11,
+	kSoundType12,
+	kSoundType13,
+	kSoundType14,
+	kSoundType15,
+	kSoundType16
+};
+
+enum SoundFlag {
+	kFlagInvalid     = -1,
+	kFlagNone        = 0x0,
+	kFlag2           = 0x2,
+	kFlag3           = 0x3,
+	kFlag4           = 0x4,
+	kFlag5           = 0x5,
+	kFlag6           = 0x6,
+	kFlag7           = 0x7,
+	kFlag8           = 0x8,
+	kFlag9           = 0x9,
+	kFlag10          = 0xA,
+	kFlag11          = 0xB,
+	kFlag12          = 0xC,
+	kFlag13          = 0xD,
+	kFlag14          = 0xE,
+	kFlag15          = 0xF,
+	kFlagDefault     = 0x10,
+
+	kFlagType1_2     = 0x1000000,
+	kFlagLoopedSound = 0x1001001,
+	kFlagSteam       = 0x1001007,
+	kFlagType13      = 0x3000000,
+	kFlagMenuClock   = 0x3080010,
+	kFlagType7       = 0x4000000,
+	kFlagType11      = 0x5000000,
+	kFlagMusic       = 0x5000010,
+	kFlagType3       = 0x6000000,
+	kFlagLoop        = 0x6001008,
+	kFlagType9       = 0x7000000
+};
+
+enum SoundState {
+	kSoundStateNone = 0,
+	kSoundState1    = 1,
+	kSoundState2    = 2
+};
+
+enum SoundStatus {
+	kSoundStatusClear0         = 0x10,
+	kSoundStatusFilter         = 0x1F,
+	kSoundStatus_20            = 0x20,
+	kSoundStatus_40            = 0x40,
+	kSoundStatusCached         = 0x80,
+	kSoundStatus_180           = 0x180,
+	kSoundStatusClosed         = 0x200,
+	kSoundStatus_400           = 0x400,
+	kSoundStatusClear4         = 0x800,
+	kSoundStatus_8000          = 0x8000,
+	kSoundStatus_20000         = 0x20000,
+	kSoundStatus_100000        = 0x100000,
+	kSoundStatus_20000000      = 0x20000000,
+	kSoundStatus_40000000      = 0x40000000,
+	kSoundStatusClearAll       = 0xFFFFFFE0
+};
+
+//////////////////////////////////////////////////////////////////////////
 // Time values
 //////////////////////////////////////////////////////////////////////////
 

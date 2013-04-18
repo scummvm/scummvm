@@ -830,4 +830,3 @@ void TextDisplayer_LoL::clearCurDim() {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

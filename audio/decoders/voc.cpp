@@ -47,7 +47,7 @@ int getSampleRateFromVOCRate(int vocSR) {
 	}
 }
 
-static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate, int &loops, int &begin_loop, int &end_loop) {
+byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate) {
 	VocFileHeader fileHeader;
 
 	debug(2, "loadVOCFromStream");
@@ -84,8 +84,6 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 	int len;
 	byte *ret_sound = 0;
 	size = 0;
-	begin_loop = 0;
-	end_loop = 0;
 
 	while ((code = stream.readByte())) {
 		len = stream.readByte();
@@ -118,14 +116,16 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 			debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
 			if (packing == 0) {
 				if (size) {
-					ret_sound = (byte *)realloc(ret_sound, size + len);
+					byte *tmp = (byte *)realloc(ret_sound, size + len);
+					if (!tmp)
+						error("Cannot reallocate memory for VOC Data Block");
+
+					ret_sound = tmp;
 				} else {
 					ret_sound = (byte *)malloc(len);
 				}
 				stream.read(ret_sound + size, len);
 				size += len;
-				begin_loop = size;
-				end_loop = size;
 			} else {
 				warning("VOC file packing %d unsupported", packing);
 			}
@@ -140,7 +140,7 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 			break;
 		case 6:	// begin of loop
 			assert(len == 2);
-			loops = stream.readUint16LE();
+			stream.readUint16LE();
 			break;
 		case 7:	// end of loop
 			assert(len == 0);
@@ -169,15 +169,9 @@ static byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate,
 	return ret_sound;
 }
 
-byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate) {
-	int loops, begin_loop, end_loop;
-	return loadVOCFromStream(stream, size, rate, loops, begin_loop, end_loop);
-}
-
-
 #ifdef STREAM_AUDIO_FROM_DISK
 
-int parseVOCFormat(Common::SeekableReadStream& stream, RawStreamBlock* block, int &rate, int &loops, int &begin_loop, int &end_loop) {
+int parseVOCFormat(Common::SeekableReadStream& stream, RawStreamBlock* block, int &rate) {
 	VocFileHeader fileHeader;
 	int currentBlock = 0;
 	int size = 0;
@@ -215,8 +209,6 @@ int parseVOCFormat(Common::SeekableReadStream& stream, RawStreamBlock* block, in
 
 	int len;
 	size = 0;
-	begin_loop = 0;
-	end_loop = 0;
 
 	while ((code = stream.readByte())) {
 		len = stream.readByte();
@@ -257,8 +249,6 @@ int parseVOCFormat(Common::SeekableReadStream& stream, RawStreamBlock* block, in
 				stream.seek(len, SEEK_CUR);
 
 				size += len;
-				begin_loop = size;
-				end_loop = size;
 			} else {
 				warning("VOC file packing %d unsupported", packing);
 			}
@@ -273,7 +263,7 @@ int parseVOCFormat(Common::SeekableReadStream& stream, RawStreamBlock* block, in
 			break;
 		case 6:	// begin of loop
 			assert(len == 2);
-			loops = stream.readUint16LE();
+			stream.readUint16LE();
 			break;
 		case 7:	// end of loop
 			assert(len == 0);
@@ -296,33 +286,13 @@ int parseVOCFormat(Common::SeekableReadStream& stream, RawStreamBlock* block, in
 	return currentBlock;
 }
 
-AudioStream *makeVOCDiskStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {
-	const int MAX_AUDIO_BLOCKS = 256;
-
-	RawStreamBlock *block = new RawStreamBlock[MAX_AUDIO_BLOCKS];
-	int rate, loops, begin_loop, end_loop;
-
-	int numBlocks = parseVOCFormat(*stream, block, rate, loops, begin_loop, end_loop);
-
-	AudioStream *audioStream = 0;
-
-	// Create an audiostream from the data. Note the numBlocks may be 0,
-	// e.g. when invalid data is encountered. See bug #2890038.
-	if (numBlocks)
-		audioStream = makeRawDiskStream_OLD(stream, block, numBlocks, rate, flags, disposeAfterUse/*, begin_loop, end_loop*/);
-
-	delete[] block;
-
-	return audioStream;
-}
-
 SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {
 	const int MAX_AUDIO_BLOCKS = 256;
 
 	RawStreamBlock *block = new RawStreamBlock[MAX_AUDIO_BLOCKS];
-	int rate, loops, begin_loop, end_loop;
+	int rate;
 
-	int numBlocks = parseVOCFormat(*stream, block, rate, loops, begin_loop, end_loop);
+	int numBlocks = parseVOCFormat(*stream, block, rate);
 
 	SeekableAudioStream *audioStream = 0;
 
@@ -337,47 +307,6 @@ SeekableAudioStream *makeVOCDiskStreamNoLoop(Common::SeekableReadStream *stream,
 }
 
 #endif
-
-
-AudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, uint loopStart, uint loopEnd, DisposeAfterUse::Flag disposeAfterUse) {
-#ifdef STREAM_AUDIO_FROM_DISK
-	return makeVOCDiskStream(stream, flags, disposeAfterUse);
-#else
-	int size, rate;
-
-	byte *data = loadVOCFromStream(*stream, size, rate);
-
-	if (!data) {
-		if (disposeAfterUse == DisposeAfterUse::YES)
-			delete stream;
-		return 0;
-	}
-
-	SeekableAudioStream *s = Audio::makeRawStream(data, size, rate, flags);
-
-	if (loopStart != loopEnd) {
-		const bool isStereo   = (flags & Audio::FLAG_STEREO) != 0;
-		const bool is16Bit    = (flags & Audio::FLAG_16BITS) != 0;
-
-		if (loopEnd == 0)
-			loopEnd = size;
-		assert(loopStart <= loopEnd);
-		assert(loopEnd <= (uint)size);
-
-		// Verify the buffer sizes are sane
-		if (is16Bit && isStereo)
-			assert((loopStart & 3) == 0 && (loopEnd & 3) == 0);
-		else if (is16Bit || isStereo)
-			assert((loopStart & 1) == 0 && (loopEnd & 1) == 0);
-
-		const uint32 extRate = s->getRate() * (is16Bit ? 2 : 1) * (isStereo ? 2 : 1);
-
-		return new SubLoopingAudioStream(s, 0, Timestamp(0, loopStart, extRate), Timestamp(0, loopEnd, extRate));
-	} else {
-		return s;
-	}
-#endif
-}
 
 SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {
 #ifdef STREAM_AUDIO_FROM_DISK

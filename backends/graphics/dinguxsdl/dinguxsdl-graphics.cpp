@@ -122,7 +122,7 @@ void DINGUXSdlGraphicsManager::initSize(uint w, uint h) {
 	if (w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		_sdlEventSource->toggleMouseGrab();
+		_eventSource->toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;
@@ -427,6 +427,7 @@ void DINGUXSdlGraphicsManager::hideOverlay() {
 }
 
 bool DINGUXSdlGraphicsManager::loadGFXMode() {
+	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
 
 	// Forcefully disable aspect ratio correction for games
 	// which starts with a native 240px height resolution.
@@ -435,7 +436,6 @@ bool DINGUXSdlGraphicsManager::loadGFXMode() {
 		_videoMode.aspectRatioCorrection = false;
 	}
 
-	debug("Game ScreenMode = %d*%d", _videoMode.screenWidth, _videoMode.screenHeight);
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
 		setGraphicsMode(GFX_HALF);
@@ -473,9 +473,13 @@ bool DINGUXSdlGraphicsManager::hasFeature(OSystem::Feature f) {
 
 void DINGUXSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 	switch (f) {
-		case OSystem::kFeatureAspectRatioCorrection:
+	case OSystem::kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
 		break;
+	case OSystem::kFeatureCursorPalette:
+		_cursorPaletteDisabled = !enable;
+		blitCursor();
+		break;	
 	default:
 		break;
 	}
@@ -485,8 +489,10 @@ bool DINGUXSdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	assert(_transactionMode == kTransactionNone);
 
 	switch (f) {
-		case OSystem::kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
+	case OSystem::kFeatureAspectRatioCorrection:
+			return _videoMode.aspectRatioCorrection;
+	case OSystem::kFeatureCursorPalette:
+		return !_cursorPaletteDisabled;
 	default:
 		return false;
 	}
@@ -510,21 +516,16 @@ void DINGUXSdlGraphicsManager::warpMouse(int x, int y) {
 	SurfaceSdlGraphicsManager::warpMouse(x, y);
 }
 
-void DINGUXSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
-	if (!event.synthetic) {
-		Common::Event newEvent(event);
-		newEvent.synthetic = true;
-		if (!_overlayVisible) {
-			if (_videoMode.mode == GFX_HALF) {
-				newEvent.mouse.x *= 2;
-				newEvent.mouse.y *= 2;
-			}
-			newEvent.mouse.x /= _videoMode.scaleFactor;
-			newEvent.mouse.y /= _videoMode.scaleFactor;
-			if (_videoMode.aspectRatioCorrection)
-				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
+void DINGUXSdlGraphicsManager::transformMouseCoordinates(Common::Point &point) {
+	if (!_overlayVisible) {
+		if (_videoMode.mode == GFX_HALF) {
+			point.x *= 2;
+			point.y *= 2;
 		}
-		g_system->getEventManager()->pushEvent(newEvent);
+		point.x /= _videoMode.scaleFactor;
+		point.y /= _videoMode.scaleFactor;
+		if (_videoMode.aspectRatioCorrection)
+			point.y = aspect2Real(point.y);
 	}
 }
 

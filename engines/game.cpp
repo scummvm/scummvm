@@ -38,29 +38,29 @@ GameDescriptor::GameDescriptor() {
 	setVal("description", "");
 }
 
-GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, uint32 guioptions) {
+GameDescriptor::GameDescriptor(const PlainGameDescriptor &pgd, Common::String guioptions) {
 	setVal("gameid", pgd.gameid);
 	setVal("description", pgd.description);
 
-	if (guioptions != 0)
+	if (!guioptions.empty())
 		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
 }
 
-GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, uint32 guioptions, GameSupportLevel gsl) {
+GameDescriptor::GameDescriptor(const Common::String &g, const Common::String &d, Common::Language l, Common::Platform p, Common::String guioptions, GameSupportLevel gsl) {
 	setVal("gameid", g);
 	setVal("description", d);
 	if (l != Common::UNK_LANG)
 		setVal("language", Common::getLanguageCode(l));
 	if (p != Common::kPlatformUnknown)
 		setVal("platform", Common::getPlatformCode(p));
-	if (guioptions != 0)
+	if (!guioptions.empty())
 		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
 
 	setSupportLevel(gsl);
 }
 
-void GameDescriptor::setGUIOptions(uint32 guioptions) {
-	if (guioptions != 0)
+void GameDescriptor::setGUIOptions(Common::String guioptions) {
+	if (!guioptions.empty())
 		setVal("guioptions", Common::getGameGUIOptionsDescription(guioptions));
 	else
 		erase("guioptions");

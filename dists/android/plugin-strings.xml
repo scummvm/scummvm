@@ -4,4 +4,3 @@
 	<string name="app_name">ScummVM plugin: "@PLUGIN_NAME@"</string>
 	<string name="app_desc">Game engine for: @PLUGIN_DESC@</string>
 </resources>
-

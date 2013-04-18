@@ -31,7 +31,7 @@
 #include "tsage/tsage.h"
 #include "tsage/globals.h"
 
-namespace tSage {
+namespace TsAGE {
 
 EventsClass::EventsClass() {
 	_currentCursor = CURSOR_NONE;
@@ -39,7 +39,8 @@ EventsClass::EventsClass() {
 	_frameNumber = 0;
 	_priorFrameTime = 0;
 	_prevDelayFrame = 0;
-	_saver->addListener(this);
+	g_saver->addListener(this);
+	g_saver->addLoadNotifier(&EventsClass::loadNotifierProc);
 }
 
 bool EventsClass::pollEvent() {
@@ -78,7 +79,7 @@ bool EventsClass::pollEvent() {
 
 void EventsClass::waitForPress(int eventMask) {
 	Event evt;
-	while (!_vm->getEventManager()->shouldQuit() && !getEvent(evt, eventMask))
+	while (!g_vm->shouldQuit() && !getEvent(evt, eventMask))
 		g_system->delayMillis(10);
 }
 
@@ -86,7 +87,7 @@ void EventsClass::waitForPress(int eventMask) {
  * Standard event retrieval, which only returns keyboard and mouse clicks
  */
 bool EventsClass::getEvent(Event &evt, int eventMask) {
-	while (pollEvent() && !_vm->getEventManager()->shouldQuit()) {
+	while (pollEvent() && !g_vm->shouldQuit()) {
 		evt.handled = false;
 		evt.eventType = EVENT_NONE;
 		evt.mousePos = _event.mouse;
@@ -142,41 +143,74 @@ void EventsClass::setCursor(CursorType cursorType) {
 		return;
 
 	_lastCursor = cursorType;
-	_globals->clearFlag(122);
+	g_globals->clearFlag(122);
 	CursorMan.showMouse(true);
 
 	const byte *cursor;
 	bool delFlag = true;
 	uint size;
+	bool questionEnabled = false;
 
 	switch (cursorType) {
 	case CURSOR_NONE:
 		// No cursor
-		_globals->setFlag(122);
+		g_globals->setFlag(122);
 
-		if (_vm->getFeatures() & GF_DEMO) {
+		if ((g_vm->getFeatures() & GF_DEMO) || (g_vm->getGameID() != GType_Ringworld))  {
 			CursorMan.showMouse(false);
 			return;
 		}
-		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
+		cursor = g_resourceManager->getSubResource(4, 1, 6, &size);
 		break;
 
 	case CURSOR_LOOK:
 		// Look cursor
-		cursor = _resourceManager->getSubResource(4, 1, 5, &size);
+		if (g_vm->getGameID() == GType_BlueForce) {
+			cursor = g_resourceManager->getSubResource(1, 5, 3, &size);
+		} else if (g_vm->getGameID() == GType_Ringworld2) {
+			cursor = g_resourceManager->getSubResource(5, 1, 5, &size);
+		} else {
+			cursor = g_resourceManager->getSubResource(4, 1, 5, &size);
+		}
 		_currentCursor = CURSOR_LOOK;
 		break;
 
 	case CURSOR_USE:
 		// Use cursor
-		cursor = _resourceManager->getSubResource(4, 1, 4, &size);
+		if (g_vm->getGameID() == GType_BlueForce) {
+			cursor = g_resourceManager->getSubResource(1, 5, 2, &size);
+		} else if (g_vm->getGameID() == GType_Ringworld2) {
+			cursor = g_resourceManager->getSubResource(5, 1, 4, &size);
+		} else {
+			cursor = g_resourceManager->getSubResource(4, 1, 4, &size);
+		}
 		_currentCursor = CURSOR_USE;
 		break;
 
 	case CURSOR_TALK:
 		// Talk cursor
-		cursor = _resourceManager->getSubResource(4, 1, 3, &size);
+		if (g_vm->getGameID() == GType_BlueForce) {
+			cursor = g_resourceManager->getSubResource(1, 5, 4, &size);
+		} else if (g_vm->getGameID() == GType_Ringworld2) {
+			cursor = g_resourceManager->getSubResource(5, 1, 6, &size);
+		} else {
+			cursor = g_resourceManager->getSubResource(4, 1, 3, &size);
+		}
 		_currentCursor = CURSOR_TALK;
+		break;
+
+	case CURSOR_EXIT:
+		// Exit cursor (Blue Force)
+		assert(g_vm->getGameID() == GType_BlueForce);
+		cursor = g_resourceManager->getSubResource(1, 5, 7, &size);
+		_currentCursor = CURSOR_EXIT;
+		break;
+
+	case CURSOR_PRINTER:
+		// Printer cursor (Blue Force)
+		assert(g_vm->getGameID() == GType_BlueForce);
+		cursor = g_resourceManager->getSubResource(1, 7, 6, &size);
+		_currentCursor = CURSOR_PRINTER;
 		break;
 
 	case CURSOR_ARROW:
@@ -187,10 +221,22 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	case CURSOR_WALK:
 	default:
-		// Walk cursor
-		cursor = CURSOR_WALK_DATA;
-		_currentCursor = CURSOR_WALK;
-		delFlag = false;
+		if (g_vm->getGameID() == GType_BlueForce) {
+			if (cursorType == CURSOR_WALK) {
+				cursor = g_resourceManager->getSubResource(1, 5, 1, &size);
+			} else {
+				// Inventory icon
+				cursor = g_resourceManager->getSubResource(10, ((int)cursorType - 1) / 20 + 1,
+					((int)cursorType - 1) % 20 + 1, &size);
+				questionEnabled = true;
+			}
+			_currentCursor = cursorType;
+		} else {
+			// For Ringworld, always treat as the walk cursor
+			cursor = CURSOR_WALK_DATA;
+			_currentCursor = CURSOR_WALK;
+			delFlag = false;
+		}
 		break;
 	}
 
@@ -204,6 +250,10 @@ void EventsClass::setCursor(CursorType cursorType) {
 
 	if (delFlag)
 		DEALLOCATE(cursor);
+
+	// For Blue Force, enable the question button when an inventory icon is selected
+	if (g_vm->getGameID() == GType_BlueForce)
+		T2_GLOBALS._uiElements._question.setEnabled(questionEnabled);
 }
 
 void EventsClass::pushCursor(CursorType cursorType) {
@@ -214,22 +264,22 @@ void EventsClass::pushCursor(CursorType cursorType) {
 	switch (cursorType) {
 	case CURSOR_NONE:
 		// No cursor
-		cursor = _resourceManager->getSubResource(4, 1, 6, &size);
+		cursor = g_resourceManager->getSubResource(4, 1, 6, &size);
 		break;
 
 	case CURSOR_LOOK:
 		// Look cursor
-		cursor = _resourceManager->getSubResource(4, 1, 5, &size);
+		cursor = g_resourceManager->getSubResource(4, 1, 5, &size);
 		break;
 
 	case CURSOR_USE:
 		// Use cursor
-		cursor = _resourceManager->getSubResource(4, 1, 4, &size);
+		cursor = g_resourceManager->getSubResource(4, 1, 4, &size);
 		break;
 
 	case CURSOR_TALK:
 		// Talk cursor
-		cursor = _resourceManager->getSubResource(4, 1, 3, &size);
+		cursor = g_resourceManager->getSubResource(4, 1, 3, &size);
 		break;
 
 	case CURSOR_ARROW:
@@ -269,6 +319,17 @@ void EventsClass::setCursor(Graphics::Surface &cursor, int transColor, const Com
 	_currentCursor = cursorId;
 }
 
+void EventsClass::setCursor(GfxSurface &cursor) {
+	// TODO: Find proper parameters for this form in Blue Force
+	Graphics::Surface s = cursor.lockSurface();
+
+	const byte *cursorData = (const byte *)s.getBasePtr(0, 0);
+	CursorMan.replaceCursor(cursorData, cursor.getBounds().width(), cursor.getBounds().height(),
+		cursor._centroid.x, cursor._centroid.y, cursor._transColor);
+
+	_lastCursor = CURSOR_NONE;
+}
+
 void EventsClass::setCursorFromFlag() {
 	setCursor(isCursorVisible() ? _currentCursor : CURSOR_NONE);
 }
@@ -277,12 +338,14 @@ void EventsClass::showCursor() {
 	setCursor(_currentCursor);
 }
 
-void EventsClass::hideCursor() {
+CursorType EventsClass::hideCursor() {
+	CursorType oldCursor = _currentCursor;
 	setCursor(CURSOR_NONE);
+	return oldCursor;
 }
 
 bool EventsClass::isCursorVisible() const {
-	return !_globals->getFlag(122);
+	return !g_globals->getFlag(122);
 }
 
 /**
@@ -315,4 +378,13 @@ void EventsClass::listenerSynchronize(Serializer &s) {
 	}
 }
 
-} // end of namespace tSage
+void EventsClass::loadNotifierProc(bool postFlag) {
+	if (postFlag) {
+		if (g_globals->_events._lastCursor == CURSOR_NONE)
+			g_globals->_events._lastCursor = g_globals->_events._currentCursor;
+		else
+			g_globals->_events._lastCursor = CURSOR_NONE;
+	}
+}
+
+} // end of namespace TsAGE

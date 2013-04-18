@@ -22,8 +22,7 @@
 
 // Item script opcodes for Simon1/Simon2
 
-
-
+#include "common/endian.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 

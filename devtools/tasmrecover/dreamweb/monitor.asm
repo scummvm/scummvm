@@ -1425,10 +1425,11 @@ Printcurs	proc	near
 	mov	bx,curslocy
 	mov	cl,6
 	mov	ch,8
-	if	foreign
+	cmp	foreignrelease, 0
+	jz $1
 	sub	bx,3
 	mov	ch,11
-	endif
+$1:
 	mov	ds,buffers
 	mov	si,textunder
 	push	di bx
@@ -1449,11 +1450,11 @@ Printcurs	proc	near
 flashcurs:	pop	di bx
 	sub	di,6
 	mov	cl,12
-	if	foreign
-	mov	ch,11
-	else
 	mov	ch,8
-	endif
+	cmp	foreignrelease, 0
+	jz $2
+	mov	ch,11
+$2:
 	call	multidump
 
 	pop	es bx dx ds di si
@@ -1473,10 +1474,11 @@ Delcurs 	proc	near
 	mov	bx,curslocy
 	mov	cl,6
 	mov	ch,8
-	if	foreign
+	cmp	foreignrelease, 0
+	jz $1
 	sub	bx,3
 	mov	ch,11
-	endif
+$1:
 	push	di bx cx
 	mov	ds,buffers
 	mov	si,textunder
@@ -1488,8 +1490,3 @@ finishcurdel:
 	ret
 
 	endp
-
-
-
-
-

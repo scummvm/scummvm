@@ -43,19 +43,23 @@ OutputPersistenceBlock::OutputPersistenceBlock() {
 
 void OutputPersistenceBlock::write(signed int value) {
 	writeMarker(SINT_MARKER);
-	value = convertEndianessFromSystemToStorage(value);
+	value = TO_LE_32(value);
 	rawWrite(&value, sizeof(value));
 }
 
 void OutputPersistenceBlock::write(uint value) {
 	writeMarker(UINT_MARKER);
-	value = convertEndianessFromSystemToStorage(value);
+	value = TO_LE_32(value);
 	rawWrite(&value, sizeof(value));
 }
 
 void OutputPersistenceBlock::write(float value) {
 	writeMarker(FLOAT_MARKER);
-	value = convertEndianessFromSystemToStorage(value);
+	uint32 tmp[1];
+
+	((float *)tmp)[0] = value;
+	tmp[0] = TO_LE_32(tmp[0]);
+
 	rawWrite(&value, sizeof(value));
 }
 
@@ -63,7 +67,7 @@ void OutputPersistenceBlock::write(bool value) {
 	writeMarker(BOOL_MARKER);
 
 	uint uintBool = value ? 1 : 0;
-	uintBool = convertEndianessFromSystemToStorage(uintBool);
+	uintBool = TO_LE_32(uintBool);
 	rawWrite(&uintBool, sizeof(uintBool));
 }
 

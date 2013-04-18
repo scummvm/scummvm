@@ -26,7 +26,6 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "common/random.h"
-#include "audio/mididrv.h"
 
 #include "engines/engine.h"
 

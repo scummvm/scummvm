@@ -111,4 +111,3 @@ private:
 #endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET)
 
 #endif /* SHORTS_SEGMENT_MANAGER_H */
-

@@ -444,657 +444,684 @@ sub add_paragraph {
 #
 
 begin_credits("Credits");
-  begin_section("ScummVM Team");
-    begin_section("Project Leaders");
-	  begin_persons();
-		add_person("Eugene Sandulenko", "sev", "");
-	  end_persons();
-    end_section();
+	begin_section("ScummVM Team");
+		begin_section("Project Leader");
+			begin_persons();
+				add_person("Eugene Sandulenko", "sev", "");
+			end_persons();
+		end_section();
 
-    begin_section("Retired Project Leaders");
-	  begin_persons();
-		add_person("James Brown", "ender", "");
-		add_person("Vincent Hamm", "yaz0r", "ScummVM co-founder, Original Cruise/CinE author");
-		add_person("Max Horn", "Fingolfin", "");
-		add_person("Ludvig Strigeus", "ludde", "Original ScummVM and SimonVM author");
-	  end_persons();
-    end_section();
+		begin_section("PR Office");
+			begin_persons();
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "Public Relations Officer, Project Administrator");
+				add_person("Eugene Sandulenko", "sev", "Project Leader");
+			end_persons();
+		end_section();
 
-    begin_section("Engine Teams");
-	  begin_section("SCUMM");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("James Brown", "ender", "(retired)");
-		  add_person("Jonathan Gray", "khalek", "(retired)");
-		  add_person("Vincent Hamm", "yaz0r", "(retired)");
-		  add_person("Max Horn", "Fingolfin", "(retired)");
-		  add_person("Travis Howell", "Kirben", "(retired)");
-		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Codecs, iMUSE, Smush, etc.");
-		  add_person("Gregory Montoir", "cyx", "");
-		  add_person("Eugene Sandulenko", "sev", "FT INSANE, MM NES, MM C64, game detection, Herc/CGA");
-		  add_person("Ludvig Strigeus", "ludde", "(retired)");
-	  end_section();
+		begin_section("Core Team");
+			begin_persons();
+				add_person("Willem Jan Palenstijn", "wjp", "");
+				add_person("Eugene Sandulenko", "sev", "");
+				add_person("Johannes Schickel", "LordHoto", "");
+			end_persons();
+		end_section();
 
-	  begin_section("HE");
-		  add_person("Jonathan Gray", "khalek", "(retired)");
-		  add_person("Travis Howell", "Kirben", "(retired)");
-		  add_person("Gregory Montoir", "cyx", "");
-		  add_person("Eugene Sandulenko", "sev", "");
-	  end_section();
+		begin_section("Retired Project Leaders");
+			begin_persons();
+				add_person("James Brown", "ender", "");
+				add_person("Vincent Hamm", "yaz0r", "ScummVM co-founder, Original Cruise/CinE author");
+				add_person("Max Horn", "Fingolfin", "");
+				add_person("Ludvig Strigeus", "ludde", "Original ScummVM and SimonVM author");
+			end_persons();
+		end_section();
 
-	  begin_section("AGI");
-		  add_person("Stuart George", "darkfiber", "");
-		  add_person("Matthew Hoops", "clone2727", "");
-		  add_person("Filippos Karapetis", "[md5]", "");
-		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
-		  add_person("Walter van Niftrik", "waltervn", "");
-		  add_person("Kari Salminen", "Buddha^", "");
-		  add_person("Eugene Sandulenko", "sev", "");
-		  add_person("David Symonds", "dsymonds", "(retired)");
-	  end_section();
+		begin_section("Engine Teams");
+			begin_section("SCUMM");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("James Brown", "ender", "(retired)");
+				add_person("Jonathan Gray", "khalek", "(retired)");
+				add_person("Vincent Hamm", "yaz0r", "(retired)");
+				add_person("Max Horn", "Fingolfin", "(retired)");
+				add_person("Travis Howell", "Kirben", "");
+				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Codecs, iMUSE, Smush, etc.");
+				add_person("Gregory Montoir", "cyx", "");
+				add_person("Eugene Sandulenko", "sev", "FT INSANE, MM NES, MM C64, game detection, Herc/CGA");
+				add_person("Ludvig Strigeus", "ludde", "(retired)");
+			end_section();
 
-	  begin_section("AGOS");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Paul Gilbert", "dreammaster", "");
-		  add_person("Travis Howell", "Kirben", "(retired)");
-		  add_person("Oliver Kiehl", "olki", "(retired)");
-		  add_person("Ludvig Strigeus", "ludde", "(retired)");
-	  end_section();
+			begin_section("HE");
+				add_person("Jonathan Gray", "khalek", "(retired)");
+				add_person("Travis Howell", "Kirben", "");
+				add_person("Gregory Montoir", "cyx", "");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
 
-	  begin_section("Cine");
-		  add_person("Vincent Hamm", "yaz0r", "(retired)");
-		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
-		  add_person("Gregory Montoir", "cyx", "");
-		  add_person("Kari Salminen", "Buddha^", "");
-		  add_person("Eugene Sandulenko", "sev", "");
-	  end_section();
+			begin_section("AGI");
+				add_person("Stuart George", "darkfiber", "");
+				add_person("Matthew Hoops", "clone2727", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+				add_person("Walter van Niftrik", "waltervn", "(retired)");
+				add_person("Kari Salminen", "Buddha^", "");
+				add_person("Eugene Sandulenko", "sev", "");
+				add_person("David Symonds", "dsymonds", "(retired)");
+			end_section();
 
-	  begin_section("CruisE");
-		  add_person("Paul Gilbert", "dreammaster", "");
-		  add_person("Vincent Hamm", "yaz0r", "(retired)");
-	  end_section();
+			begin_section("AGOS");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Travis Howell", "Kirben", "");
+				add_person("Oliver Kiehl", "olki", "(retired)");
+				add_person("Ludvig Strigeus", "ludde", "(retired)");
+			end_section();
 
-	  begin_section("Draci");
-		  add_person("Denis Kasak", "dkasak13", "");
-		  add_person("Robert &Scaron;palek", "spalek", "");
-	  end_section();
+			begin_section("CGE");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
 
-	  begin_section("Drascula");
-		  add_person("Filippos Karapetis", "[md5]", "");
-		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
-	  end_section();
+			begin_section("Cine");
+				add_person("Vincent Hamm", "yaz0r", "(retired)");
+				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+				add_person("Gregory Montoir", "cyx", "");
+				add_person("Kari Salminen", "Buddha^", "");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
 
-	  begin_section("DreamWeb");
-		  add_person("Vladimir Menshakov", "whoozle", "");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-	  end_section();
+			begin_section("CruisE");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Vincent Hamm", "yaz0r", "(retired)");
+			end_section();
 
-	  begin_section("Gob");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
-		  add_person("Sven Hesse", "DrMcCoy", "");
-		  add_person("Eugene Sandulenko", "sev", "");
-	  end_section();
+			begin_section("Draci");
+				add_person("Denis Kasak", "dkasak13", "");
+				add_person("Robert &Scaron;palek", "spalek", "");
+			end_section();
 
-	  begin_section("Groovie");
-		  add_person("Henry Bush", "spookypeanut", "");
-		  add_person("Scott Thomas", "ST", "");
-		  add_person("Jordi Vilalta Prat", "jvprat", "");
-	  end_section();
+			begin_section("Drascula");
+				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+			end_section();
 
-	  begin_section("Hugo");
-		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
-		  add_person("Oystein Eftevaag", "vinterstum", "");
-		  add_person("Eugene Sandulenko", "sev", "");
-	  end_section();
+			begin_section("DreamWeb");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("Bertrand Augereau", "Tramb", "");
+				add_person("Vladimir Menshakov", "whoozle", "");
+			end_section();
 
-	  begin_section("Kyra");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
-		  add_person("Oystein Eftevaag", "vinterstum", "");
-		  add_person("Florian Kagerer", "athrxx", "");
-		  add_person("Gregory Montoir", "cyx", "");
-		  add_person("Johannes Schickel", "LordHoto", "");
-	  end_section();
+			begin_section("Gob");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Sven Hesse", "DrMcCoy", "");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
 
-	begin_section("Lastexpress");
-			add_person("Matthew Hoops", "clone2727", "");
-			add_person("Jordi Vilalta Prat", "jvprat", "");
-			add_person("Julien Templier", "littleboy", "");			
+			begin_section("Groovie");
+				add_person("Henry Bush", "spookypeanut", "");
+				add_person("Scott Thomas", "ST", "");
+				add_person("Jordi Vilalta Prat", "jvprat", "");
+			end_section();
+
+			begin_section("Hugo");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Oystein Eftevaag", "vinterstum", "");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+
+			begin_section("Kyra");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "VQA Player");
+				add_person("Oystein Eftevaag", "vinterstum", "");
+				add_person("Florian Kagerer", "athrxx", "");
+				add_person("Gregory Montoir", "cyx", "");
+				add_person("Johannes Schickel", "LordHoto", "");
+			end_section();
+
+			begin_section("Lastexpress");
+				add_person("Matthew Hoops", "clone2727", "");
+				add_person("Jordi Vilalta Prat", "jvprat", "");
+				add_person("Julien Templier", "littleboy", "");
+			end_section();
+
+			begin_section("Lure");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
+
+			begin_section("M4");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Benjamin Haisch", "john_doe", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+			end_section();
+
+			begin_section("MADE");
+				add_person("Benjamin Haisch", "john_doe", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+			end_section();
+
+			begin_section("Mohawk");
+				add_person("Bastien Bouclet", "bgk", "");
+				add_person("Matthew Hoops", "clone2727", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Alyssa Milburn", "fuzzie", "");
+				add_person("Eugene Sandulenko", "sev", "");
+				add_person("David Turner", "digitall", "");
+			end_section();
+
+			begin_section("Parallaction");
+				add_person("", "peres", "");
+			end_section();
+
+			begin_section("Queen");
+				add_person("David Eriksson", "twogood", "(retired)");
+				add_person("Gregory Montoir", "cyx", "");
+				add_person("Joost Peters", "joostp", "");
+			end_section();
+
+			begin_section("SAGA");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Andrew Kurushin", "ajax16384", "");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+
+			begin_section("SCI");
+				add_person("Greg Frieger", "_FRG_", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Max Horn", "Fingolfin", "(retired)");
+				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Martin Kiewitz", "m_kiewitz", "");
+				add_person("Walter van Niftrik", "waltervn", "(retired)");
+				add_person("Willem Jan Palenstijn", "wjp", "");
+				add_person("Jordi Vilalta Prat", "jvprat", "");
+				add_person("Lars Skovlund", "lskovlun", "");
+			end_section();
+
+			begin_section("Sky");
+				add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
+				add_person("Oliver Kiehl", "olki", "(retired)");
+				add_person("Joost Peters", "joostp", "");
+			end_section();
+
+			begin_section("Sword1");
+				add_person("Fabio Battaglia", "Hkz", "PSX version support");
+				add_person("Thierry Crozat", "criezy", "Mac version support");
+				add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
+			end_section();
+
+			begin_section("Sword2");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("Fabio Battaglia", "Hkz", "PSX version support");
+				add_person("Jonathan Gray", "khalek", "(retired)");
+			end_section();
+
+			begin_section("Sword25");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Max Horn", "Fingolfin", "(retired)");
+				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Eugene Sandulenko", "sev", "");
+			end_section();
+
+			begin_section("TeenAgent");
+				add_person("Robert Megone", "sanguine", "Help with callback rewriting");
+				add_person("Vladimir Menshakov", "whoozle", "");
+			end_section();
+
+			begin_section("Tinsel");
+				add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+				add_person("Fabio Battaglia", "Hkz", "PSX version support");
+				add_person("Paul Gilbert", "dreammaster", "");
+				add_person("Sven Hesse", "DrMcCoy", "");
+				add_person("Max Horn", "Fingolfin", "(retired)");
+				add_person("Filippos Karapetis", "[md5]", "");
+				add_person("Joost Peters", "joostp", "");
+			end_section();
+
+			begin_section("Toon");
+				add_person("Sylvain Dupont", "SylvainTV", "");
+			end_section();
+
+			begin_section("Touch&eacute;");
+				add_person("Gregory Montoir", "cyx", "");
+			end_section();
+
+			begin_section("TsAGE");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Paul Gilbert", "dreammaster", "");
+			end_section();
+
+			begin_section("Tucker");
+				add_person("Gregory Montoir", "cyx", "");
+			end_section();
+
+		end_section();
+
+
+		begin_section("Backend Teams");
+			begin_section("Android");
+				add_person("Andre Heider", "dhewg", "");
+				add_person("Angus Lees", "Gus", "");
+			end_section();
+
+			begin_section("BADA");
+				add_person("Chris Warren-Smith", "", "");
+			end_section();
+
+			begin_section("Dreamcast");
+				add_person("Marcus Comstedt", "", "");
+			end_section();
+
+			begin_section("GPH Devices (GP2X, GP2XWiz &amp; Caanoo)");
+				add_person("John Willis", "DJWillis", "");
+			end_section();
+
+			begin_section("iPhone");
+				add_person("Oystein Eftevaag", "vinterstum", "");
+			end_section();
+
+			begin_section("LinuxMoto");
+				add_person("Lubomyr Lisen", "", "");
+			end_section();
+
+			begin_section("Maemo");
+				add_person("Frantisek Dufka", "fanoush", "(retired)");
+				add_person("Tarek Soliman", "tsoliman", "");
+			end_section();
+
+			begin_section("Nintendo 64");
+				add_person("Fabio Battaglia", "Hkz", "");
+			end_section();
+
+			begin_section("Nintendo DS");
+				add_person("Bertrand Augereau", "Tramb", "HQ software scaler");
+				add_person("Neil Millstone", "agent-q", "");
+			end_section();
+
+			begin_section("OpenPandora");
+				add_person("John Willis", "DJWillis", "");
+			end_section();
+
+			begin_section("PocketPC / WinCE");
+				add_person("Nicolas Bacca", "arisme", "(retired)");
+				add_person("Ismail Khatib", "CeRiAl", "");
+				add_person("Kostas Nakos", "Jubanka", "(retired)");
+			end_section();
+
+			begin_section("PlayStation 2");
+				add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
+				add_person("Max Lingua", "sunmax", "");
+			end_section();
+
+			begin_section("PSP (PlayStation Portable)");
+				add_person("Yotam Barnoy", "bluddy", "");
+				add_person("Joost Peters", "joostp", "");
+			end_section();
+
+			begin_section("SDL (Win/Linux/OS X/etc.)");
+				add_person("Max Horn", "Fingolfin", "(retired)");
+				add_person("Eugene Sandulenko", "sev", "Asm routines, GFX layers");
+			end_section();
+
+			begin_section("SymbianOS");
+				add_person("Jurgen Braam", "SumthinWicked", "");
+				add_person("Lars Persson", "AnotherGuest", "");
+			end_section();
+
+			begin_section("WebOS");
+				add_person("Klaus Reimer", "kayahr", "");
+			end_section();
+
+			begin_section("Wii");
+				add_person("Andre Heider", "dhewg", "");
+			end_section();
+
+		end_section();
+
+		begin_section("Other subsystems");
+			begin_section("Infrastructure");
+				add_person("Max Horn", "Fingolfin", "Backend &amp; Engine APIs, file API, sound mixer, audiostreams, data structures, etc. (retired)");
+				add_person("Eugene Sandulenko", "sev", "");
+				add_person("Johannes Schickel", "LordHoto", "");
+			end_section();
+
+			begin_section("GUI");
+				add_person("Vicent Marti", "tanoku", "");
+				add_person("Eugene Sandulenko", "sev", "");
+				add_person("Johannes Schickel", "LordHoto", "");
+			end_section();
+
+			begin_section("Miscellaneous");
+				add_person("David Corrales-Lopez", "david_corrales", "Filesystem access improvements (GSoC 2007 task) (retired)");
+				add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
+				add_person("Benjamin Haisch", "john_doe", "Heavily improved de-/encoder for DXA videos");
+				add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, AdLib work (retired)");
+				add_person("Chris Page", "cp88", "Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)");
+				add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
+			end_section();
+		end_section();
+
+		begin_section("Website (code)");
+			begin_persons();
+				add_person("Fredrik Wendel", "", "(retired)");
+			end_persons();
+		end_section();
+
+		begin_section("Website (maintenance)");
+			begin_persons();
+				add_person("James Brown", "Ender", "IRC Logs maintainer");
+				add_person("Thierry Crozat", "criezy", "Wiki maintainer");
+				add_person("Andre Heider", "dhewg", "Buildbot maintainer");
+				add_person("Joost Peters", "JoostP", "Doxygen Project Documentation maintainer");
+				add_person("Jordi Vilalta Prat", "jvprat", "Wiki maintainer");
+				add_person("Eugene Sandulenko", "sev", "Forum, IRC channel, Screen Shots and Mailing list maintainer");
+				add_person("John Willis", "DJWillis", "");
+			end_persons();
+		end_section();
+
+		begin_section("Website (content)");
+			add_paragraph("All active team members");
+		end_section();
+
+		begin_section("Documentation");
+			begin_persons();
+				add_person("Thierry Crozat", "criezy", "Numerous contributions to documentation");
+				add_person("Joachim Eberhard", "joachimeberhard", "Numerous contributions to documentation (retired)");
+				add_person("Matthew Hoops", "clone2727", "Wiki editor");
+			end_persons();
+		end_section();
+
+		begin_section("Retired Team Members");
+			begin_persons();
+				add_person("Chris Apers", "chrilith ", "Former PalmOS porter");
+				add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
+				add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
+				add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
+				add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
+				add_person("Peter Moraliyski", "ph0x", "Port: GP32");
+				add_person("Jeremy Newman", "laxdragon", "Former webmaster");
+				add_person("Lionel Ulmer", "bbrox", "Port: X11");
+				add_person("Won Star", "wonst719", "Former GP32 porter");
+			end_persons();
+		end_section();
 	end_section();
 
-	  begin_section("Lure");
-		  add_person("Paul Gilbert", "dreammaster", "");
-	  end_section();
 
-	  begin_section("M4");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Paul Gilbert", "dreammaster", "");
-		  add_person("Benjamin Haisch", "john_doe", "");
-		  add_person("Filippos Karapetis", "[md5]", "");
-	  end_section();
+	begin_section("Other contributions");
 
-	  begin_section("MADE");
-		  add_person("Benjamin Haisch", "john_doe", "");
-		  add_person("Filippos Karapetis", "[md5]", "");
-	  end_section();
+		begin_section("Packages");
+			begin_section("AmigaOS 4");
+				add_person("Hans-J&ouml;rg Frieden", "", "(retired)");
+				add_person("Hubert Maier", "Raziel_AOne", "");
+				add_person("Juha Niemim&auml;ki", "", "(retired)");
+			end_section();
 
-	  begin_section("Mohawk");
-		  add_person("Bastien Bouclet", "bgk", "");
-		  add_person("Matthew Hoops", "clone2727", "");
-		  add_person("Filippos Karapetis", "[md5]", "");
-		  add_person("Alyssa Milburn", "fuzzie", "");
-		  add_person("Eugene Sandulenko", "sev", "");
-		  add_person("David Turner", "digitall", "");
-	  end_section();
+			begin_section("Atari/FreeMiNT");
+				add_person("Keith Scroggins", "KeithS", "");
+			end_section();
 
-	  begin_section("Parallaction");
-		  add_person("", "peres", "");
-	  end_section();
+			begin_section("BeOS");
+				add_person("Stefan Parviainen", "", "");
+				add_person("Luc Schrijvers", "Begasus", "");
+			end_section();
 
-	  begin_section("Queen");
-		  add_person("David Eriksson", "twogood", "(retired)");
-		  add_person("Gregory Montoir", "cyx", "");
-		  add_person("Joost Peters", "joostp", "");
-	  end_section();
+			begin_section("Debian GNU/Linux");
+				add_person("Tore Anderson", "tore", "(retired)");
+				add_person("David Weinehall", "tao", "");
+			end_section();
 
-	  begin_section("SAGA");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Filippos Karapetis", "[md5]", "");
-		  add_person("Andrew Kurushin", "ajax16384", "");
-		  add_person("Eugene Sandulenko", "sev", "");
-	  end_section();
+			begin_section("Fedora / RedHat");
+				add_person("Willem Jan Palenstijn", "wjp", "");
+			end_section();
 
-	  begin_section("SCI");
-		  add_person("Greg Frieger", "_FRG_", "");
-		  add_person("Paul Gilbert", "dreammaster", "");
-		  add_person("Max Horn", "Fingolfin", "(retired)");
-		  add_person("Filippos Karapetis", "[md5]", "");
-		  add_person("Martin Kiewitz", "m_kiewitz", "");
-		  add_person("Walter van Niftrik", "waltervn", "");
-		  add_person("Willem Jan Palenstijn", "wjp", "");
-		  add_person("Jordi Vilalta Prat", "jvprat", "");
-		  add_person("Lars Skovlund", "lskovlun", "");
-	  end_section();
+			begin_section("Mac OS X");
+				add_person("Max Horn", "Fingolfin", "(retired)");
+				add_person("Oystein Eftevaag", "vinterstum", "");
+			end_section();
 
-	  begin_section("Sky");
-		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
-		  add_person("Oliver Kiehl", "olki", "(retired)");
-		  add_person("Joost Peters", "joostp", "");
-	  end_section();
+			begin_section("Mandriva");
+				add_person("Dominik Scherer", "", "(retired)");
+			end_section();
 
-	  begin_section("Sword1");
-		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
-		  add_person("Thierry Crozat", "criezy", "Mac version support");
-		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
-	  end_section();
+			begin_section("MorphOS");
+				add_person("Fabien Coeurjoly", "fab1", "");
+				add_person("R&uuml;diger Hanke", "", "(retired)");
+			end_section();
 
-	  begin_section("Sword2");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
-		  add_person("Jonathan Gray", "khalek", "(retired)");
-	  end_section();
+			begin_section("OS/2");
+				add_person("Paul Smedley", "Creeping", "");
+			end_section();
 
-	  begin_section("Sword25");
-		  add_person("Eugene Sandulenko", "sev", "");
-		  add_person("Filippos Karapetis", "[md5]", "");
-		  add_person("Max Horn", "Fingolfin", "(retired)");
-		  add_person("Paul Gilbert", "dreammaster", "");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-	  end_section();
+			begin_section("SlackWare");
+				add_person("Robert Kelsen", "", "");
+			end_section();
 
-	  begin_section("TeenAgent");
-		  add_person("Robert Megone", "sanguine", "Help with callback rewriting");
-		  add_person("Vladimir Menshakov", "whoozle", "");
-	  end_section();
+			begin_section("Solaris x86");
+				add_person("Laurent Blume", "laurent", "");
+			end_section();
 
+			begin_section("Solaris SPARC");
+				add_person("Markus Strangl", "WooShell", "");
+			end_section();
 
-	  begin_section("Tinsel");
-		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
-		  add_person("Paul Gilbert", "dreammaster", "");
-		  add_person("Sven Hesse", "DrMcCoy", "");
-		  add_person("Max Horn", "Fingolfin", "(retired)");
-		  add_person("Filippos Karapetis", "[md5]", "");
-		  add_person("Joost Peters", "joostp", "");
-	  end_section();
+			begin_section("Win32");
+				add_person("Travis Howell", "Kirben", "");
+			end_section();
 
-	  begin_section("Toon");
-	  	add_person("Sylvain Dupont", "SylvainTV", "");
-	  end_section();
+			begin_section("Win64");
+				add_person("Chris Gray", "Psychoid", "(retired)");
+				add_person("Johannes Schickel", "LordHoto", "");
+			end_section();
+		end_section();
 
-	  begin_section("Touch&eacute;");
-		  add_person("Gregory Montoir", "cyx", "");
-	  end_section();
+		begin_section("Translations");
+				begin_persons();
+					add_person("Thierry Crozat", "criezy", "Translation Lead");
+				end_persons();
+				begin_section("Catalan");
+					add_person("Jordi Vilalta Prat", "jvprat", "");
+				end_section();
+				begin_section("Czech");
+					add_person("Zbyn&igrave;k Schwarz", "", "");
+				end_section();
+				begin_section("Danish");
+					add_person("Steffen Nyeland", "", "");
+				end_section();
+				begin_section("French");
+					add_person("Thierry Crozat", "criezy", "");
+				end_section();
+				begin_section("German");
+					add_person("Simon Sawatzki", "SimSaw", "");
+					add_person("Lothar Serra Mari", "Lothar93", "");
+				end_section();
+				begin_section("Hungarian");
+					add_person("Alex Bevilacqua", "", "");
+					add_person("George Kormendi", "GoodOldGeorg", "");
+				end_section();
+				begin_section("Italian");
+					add_person("Matteo Angelino", "Maff", "");
+				end_section();
+				begin_section("Norwegian (Bokm&aring;l)");
+					add_person("Einar Johan T. S&oslash;m&aring;en", "", "");
+				end_section();
+				begin_section("Norwegian (Nynorsk)");
+					add_person("Einar Johan T. S&oslash;m&aring;en", "", "");
+				end_section();
+				begin_section("Polish");
+					add_person("GrajPoPolsku.pl Team", "", "");
+				end_section();
+				begin_section("Brazilian Portuguese");
+					add_person("ScummBR Team", "", "");
+				end_section();
+				begin_section("Russian");
+					add_person("Eugene Sandulenko", "sev", "");
+				end_section();
+				begin_section("Spanish");
+					add_person("Tom&aacute;s Maidagan", "", "");
+					add_person("Jordi Vilalta Prat", "jvprat", "");
+				end_section();
+				begin_section("Swedish");
+					add_person("Hampus Flink", "", "");
+				end_section();
+				begin_section("Ukrainian");
+					add_person("Lubomyr Lisen", "", "");
+				end_section();
+		end_section();
 
-	  begin_section("TsAGE");
-		  add_person("Paul Gilbert", "dreammaster", "");
-		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
-	  end_section();
+		begin_section("Websites (design)");
+			begin_persons();
+				add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
+				add_person("William Claydon", "billwashere", "Skins for doxygen, buildbot and wiki");
+				add_person("Yaroslav Fedevych", "jafd", "HTML/CSS for the website");
+				add_person("Jean Marc Gimenez", "", "ScummVM logo");
+				add_person("David Jensen", "Tyst", "SVG logo conversion");
+				add_person("", "Raina", "ScummVM forum buttons");
+			end_persons();
+		end_section();
 
-	  begin_section("Tucker");
-		  add_person("Gregory Montoir", "cyx", "");
-	  end_section();
+		begin_section("Code contributions");
+			begin_persons();
+				add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI; BASS GUI fixes");
+				add_person("Stuart Caie", "", "Decoders for Amiga and AtariST data files (AGOS engine)");
+				add_person("Paolo Costabel", "", "PSP port contributions");
+				add_person("Martin Doucha", "next_ghost", "CinE engine objectification");
+				add_person("Thomas Fach-Pedersen", "madmoose", "ProTracker module player, Smacker video decoder");
+				add_person("Tobias Gunkel", "hennymcc", "Sound support for C64 version of MM/Zak, Loom PCE support");
+				add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
+				add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
+				add_person("Jeroen Janssen", "japj", "Numerous readability and bugfix patches");
+				add_person("Andreas Karlsson", "Sprawl", "Initial port for SymbianOS");
+				add_person("Claudio Matsuoka", "", "Daily Linux builds");
+				add_person("Thomas Mayer", "", "PSP port contributions");
+				add_person("Sean Murray", "lightcast", "ScummVM tools GUI application (GSoC 2007 task)");
+				add_person("", "n0p", "Windows CE port aspect ratio correction scaler and right click input method");
+				add_person("Mikesch Nepomuk", "mnepomuk", "MI1 VGA floppy patches");
+				add_person("Nicolas Noble", "pixels", "Config file and ALSA support");
+				add_person("Tim Phillips", "realmz", "Initial MI1 CD music support");
+				add_person("", "Quietust", "Sound support for Amiga SCUMM V2/V3 games, MM NES support");
+				add_person("Robert Crossfield", "segra", "Improved support for Apple II/C64 versions of MM");
+				add_person("Andreas R&ouml;ver", "", "Broken Sword I &amp; II MPEG2 cutscene support");
+				add_person("Edward Rudd", "urkle", "Fixes for playing MP3 versions of MI1/Loom audio");
+				add_person("Daniel Schepler", "dschepler", "Final MI1 CD music support, initial Ogg Vorbis support");
+				add_person("Andr&eacute; Souza", "luke_br", "SDL-based OpenGL renderer");
+			end_persons();
+		end_section();
 
-    end_section();
+		begin_section("FreeSCI Contributors");
+			begin_persons();
+				add_person("Francois-R Boyer", "", "MT-32 information and mapping code");
+				add_person("Rainer Canavan", "", "IRIX MIDI driver and bug fixes");
+				add_person("Xiaojun Chen", "", "");
+				add_person("Paul David Doherty", "", "Game version information");
+				add_person("Vyacheslav Dikonov", "", "Config script improvements");
+				add_person("Ruediger Hanke", "", "Port to the MorphOS platform");
+				add_person("Matt Hargett", "", "Clean-ups, bugfixes, Hardcore QA, Win32");
+				add_person("Max Horn", "", "SetJump implementation");
+				add_person("Ravi I.", "", "SCI0 sound resource specification");
+				add_person("Emmanuel Jeandel", "", "Bugfixes and bug reports");
+				add_person("Dmitry Jemerov", "", "Port to the Win32 platform, numerous bugfixes");
+				add_person("Chris Kehler", "", "Makefile enhancements");
+				add_person("Christopher T. Lansdown", "", "Original CVS maintainer, Alpha compatibility fixes");
+				add_person("Sergey Lapin", "", "Port of Carl's type 2 decompression code");
+				add_person("Rickard Lind", "", "MT-32->GM MIDI mapping magic, sound research");
+				add_person("Hubert Maier", "", "AmigaOS 4 port");
+				add_person("Johannes Manhave", "", "Document format translation");
+				add_person("Claudio Matsuoka", "", "CVS snapshots, daily builds, BeOS and cygwin ports");
+				add_person("Dark Minister", "", "SCI research (bytecode and parser)");
+				add_person("Carl Muckenhoupt", "", "Sources to the SCI resource viewer tools that started it all");
+				add_person("Anders Baden Nielsen", "", "PPC testing");
+				add_person("Walter van Niftrik", "", "Ports to the Dreamcast and GP32 platforms");
+				add_person("Rune Orsval", "", "Configuration file editor");
+				add_person("Solomon Peachy", "", "SDL ports and much of the sound subsystem");
+				add_person("Robey Pointer", "", "Bug tracking system hosting");
+				add_person("Magnus Reftel", "", "Heap implementation, Python class viewer, bugfixes");
+				add_person("Christoph Reichenbach", "", "UN*X code, VM/Graphics/Sound/other infrastructure");
+				add_person("George Reid", "", "FreeBSD package management");
+				add_person("Lars Skovlund", "", "Project maintenance, most documentation, bugfixes, SCI1 support");
+				add_person("Rink Springer", "", "Port to the DOS platform, several bug fixes");
+				add_person("Rainer De Temple", "", "SCI research");
+				add_person("Sean Terrell", "", "");
+				add_person("Hugues Valois", "", "Game selection menu");
+				add_person("Jordi Vilalta", "", "Numerous code and website clean-up patches");
+				add_person("Petr Vyhnak", "", "The DCL-INFLATE algorithm, many Win32 improvements");
+				add_person("Bas Zoetekouw", "", "Man pages, debian package management, CVS maintenance");
+			end_persons();
+			add_paragraph("Special thanks to Prof. Dr. Gary Nutt ".
+                    "for allowing the FreeSCI VM extension as a ".
+                    "course project in his Advanced OS course.");
+			add_paragraph("Special thanks to Bob Heitman and Corey Cole for their support of FreeSCI.");
+		end_section();
 
+		add_paragraph("And to all the contributors, users, and beta testers we've missed. Thanks!");
 
-    begin_section("Backend Teams");
-	  begin_section("Android");
-		  add_person("Andre Heider", "dhewg", "");
-		  add_person("Angus Lees", "Gus", "");
-	  end_section();
-
-	  begin_section("Dreamcast");
-		  add_person("Marcus Comstedt", "", "");
-	  end_section();
-
-	  begin_section("GPH Devices (GP2X, GP2XWiz &amp; Caanoo)");
-		  add_person("John Willis", "DJWillis", "");
-	  end_section();
-
-	  begin_section("iPhone");
-		  add_person("Oystein Eftevaag", "vinterstum", "");
-	  end_section();
-
-	  begin_section("LinuxMoto");
-		  add_person("Lubomyr Lisen", "", "");
-	  end_section();
-
-	  begin_section("Maemo");
-		  add_person("Frantisek Dufka", "fanoush", "");
-	  end_section();
-
-	  begin_section("Nintendo 64");
-		  add_person("Fabio Battaglia", "Hkz", "");
-	  end_section();
-
-	  begin_section("Nintendo DS");
-		  add_person("Neil Millstone", "agent-q", "");
-	  end_section();
-
-	  begin_section("OpenPandora");
-		  add_person("John Willis", "DJWillis", "");
-	  end_section();
-	  
-	  begin_section("PocketPC / WinCE");
-		add_person("Nicolas Bacca", "arisme", "(retired)");
-		add_person("Ismail Khatib", "CeRiAl", "");
-		add_person("Kostas Nakos", "Jubanka", "(retired)");
-	  end_section();
-
-	  begin_section("PlayStation 2");
-		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
-		  add_person("Max Lingua", "sunmax", "");
-	  end_section();
-
-	  begin_section("PSP (PlayStation Portable)");
-		  add_person("Joost Peters", "joostp", "");
-		  add_person("Yotam Barnoy", "bluddy", "");
-	  end_section();
-
-	  begin_section("SDL (Win/Linux/OS X/etc.)");
-		  add_person("Max Horn", "Fingolfin", "(retired)");
-		  add_person("Eugene Sandulenko", "sev", "Asm routines, GFX layers");
-	  end_section();
-
-	  begin_section("SymbianOS");
-		  add_person("Jurgen Braam", "SumthinWicked", "");
-		  add_person("Lars Persson", "AnotherGuest", "");
-	  end_section();
-
-	  begin_section("WebOS");
-		  add_person("Klaus Reimer", "kayahr", "");
-	  end_section();
-
-	  begin_section("Wii");
-		  add_person("Andre Heider", "dhewg", "");
-	  end_section();
-
-    end_section();
-
-    begin_section("Other subsystems");
-	  begin_section("Infrastructure");
-		  add_person("Max Horn", "Fingolfin", "Backend &amp; Engine APIs, file API, sound mixer, audiostreams, data structures, etc. (retired)");
-		  add_person("Eugene Sandulenko", "sev", "");
-		  add_person("Johannes Schickel", "LordHoto", "");
-	  end_section();
-
-	  begin_section("GUI");
-		  add_person("Vicent Marti", "tanoku", "");
-		  add_person("Eugene Sandulenko", "sev", "");
-		  add_person("Johannes Schickel", "LordHoto", "");
-	  end_section();
-
-	  begin_section("Miscellaneous");
-		add_person("David Corrales-Lopez", "david_corrales", "Filesystem access improvements (GSoC 2007 task) (retired)");
-		add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
-		add_person("Benjamin Haisch", "john_doe", "Heavily improved de-/encoder for DXA videos");
-		add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, AdLib work (retired)");
-		add_person("Chris Page", "cp88", "Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)");
-		add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
-	  end_section();
-    end_section();
-
-    begin_section("Website (code)");
-	  begin_persons();
-		add_person("Fredrik Wendel", "", "(retired)");
-	  end_persons();
-    end_section();
-    
-    begin_section("Website (maintenance)");
-	  begin_persons();
-	    add_person("James Brown", "Ender", "IRC Logs maintainer");
-		add_person("Thierry Crozat", "criezy", "Wiki maintainer");
-		add_person("Andre Heider", "dhewg", "Buildbot maintainer");
-		add_person("Joost Peters", "JoostP", "Doxygen Project Documentation maintainer");
-		add_person("Jordi Vilalta Prat", "jvprat", "Wiki maintainer");
-		add_person("Eugene Sandulenko", "sev", "Forum, IRC channel, Screen Shots and Mailing list maintainer");
-		add_person("John Willis", "DJWillis", "");
-	  end_persons();
-    end_section();
-
-    begin_section("Website (content)");
-	  add_paragraph("All active team members");
-    end_section();
-
-    begin_section("Documentation");
-	  begin_persons();
-		add_person("Thierry Crozat", "criezy", "Numerous contributions to documentation");
-		add_person("Joachim Eberhard", "joachimeberhard", "Numerous contributions to documentation (retired)");
-		add_person("Matthew Hoops", "clone2727", "Wiki editor");
-	  end_persons();
-    end_section();
-
-    begin_section("Retired Team Members");
-	  begin_persons();
-		  add_person("Chris Apers", "chrilith ", "Former PalmOS porter");
-		  add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
-		  add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
-		  add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
-		  add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
-		  add_person("Peter Moraliyski", "ph0x", "Port: GP32");
-		  add_person("Jeremy Newman", "laxdragon", "Former webmaster");
-		  add_person("Lionel Ulmer", "bbrox", "Port: X11");
-		  add_person("Won Star", "wonst719", "Former GP32 porter");
-	  end_persons();
-    end_section();
-  end_section();
-
-
-  begin_section("Other contributions");
-
-	begin_section("Packages");
-	  begin_section("AmigaOS 4");
-		  add_person("Hans-J&ouml;rg Frieden", "", "(retired)");
-		  add_person("Hubert Maier", "Raziel_AOne", "");
-		  add_person("Juha Niemim&auml;ki", "", "(retired)");
-	  end_section();
-
-	  begin_section("Atari/FreeMiNT");
-		  add_person("Keith Scroggins", "KeithS", "");
-	  end_section();
-
-	  begin_section("BeOS");
-		  add_person("Stefan Parviainen", "", "");
-		  add_person("Luc Schrijvers", "Begasus", "");
-	  end_section();
-
-	  begin_section("Debian GNU/Linux");
-		  add_person("Tore Anderson", "tore", "(retired)");
-		  add_person("David Weinehall", "tao", "");
-	  end_section();
-
-	  begin_section("Fedora / RedHat");
-		  add_person("Willem Jan Palenstijn", "wjp", "");
-	  end_section();
-
-	  begin_section("Mac OS X");
-		  add_person("Max Horn", "Fingolfin", "(retired)");
-		  add_person("Oystein Eftevaag", "vinterstum", "");
-	  end_section();
-
-	  begin_section("Mandriva");
-		  add_person("Dominik Scherer", "", "(retired)");
-	  end_section();
-
-	  begin_section("MorphOS");
-		  add_person("Fabien Coeurjoly", "fab1", "");
-		  add_person("R&uuml;diger Hanke", "", "(retired)");
-	  end_section();
-
-	  begin_section("OS/2");
-		  add_person("Paul Smedley", "Creeping", "");
-	  end_section();
-
-	  begin_section("SlackWare");
-		  add_person("Robert Kelsen", "", "");
-	  end_section();
-
-	  begin_section("Solaris x86");
-		  add_person("Laurent Blume", "laurent", "");
-	  end_section();
-
-	  begin_section("Solaris SPARC");
-		  add_person("Markus Strangl", "WooShell", "");
-	  end_section();
-
-	  begin_section("Win32");
-		  add_person("Travis Howell", "Kirben", "(retired)");
-	  end_section();
-
-	  begin_section("Win64");
-		  add_person("Chris Gray", "Psychoid", "(retired)");
-		  add_person("Johannes Schickel", "LordHoto", "");
-	  end_section();
 	end_section();
 
-	begin_section("Translations");
+
+	# HACK!
+	$max_name_width = 16;
+
+	begin_section("Special thanks to");
 		begin_persons();
-			add_person("Thierry Crozat", "criezy", "Translation Lead");
+			add_person("Sander Buskens", "", "For his work on the initial reversing of Monkey2");
+			add_person("", "Canadacow", "For the original MT-32 emulator");
+			add_person("Kevin Carnes", "", "For Scumm16, the basis of ScummVM's older gfx codecs");
+			add_person("Curt Coder", "", "For the original TrollVM (preAGI) code");
+			add_person("Patrick Combet", "Dorian Gray", "For the original Gobliiins ADL player");
+			add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
+			add_person("Henrik Engqvist", "qvist", "For generously providing hosting for our buildbot, SVN repository, planet and doxygen sites as well as tons of HD space");
+			add_person("DOSBox Team", "", "For their awesome OPL2 and OPL3 emulator");
+			add_person("Till Kresslein", "Krest", "For design of modern ScummVM GUI");
+			add_person("", "Jezar", "For his freeverb filter implementation");
+			add_person("Jim Leiterman", "", "Various info on his FM-TOWNS/Marty SCUMM ports");
+			add_person("", "lloyd", "For deep tech details about C64 Zak &amp; MM");
+			add_person("Sarien Team", "", "Original AGI engine code");
+			add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
+			add_person("", "Tristan", "For additional work on the original MT-32 emulator");
+			add_person("James Woodcock", "", "Soundtrack enhancements");
 		end_persons();
-		begin_section("Catalan");
-			add_person("Jordi Vilalta Prat", "jvprat", "");
-		end_section();
-		begin_section("Czech");
-			add_person("Zbyn&igrave;k Schwarz", "", "");
-		end_section();
-		begin_section("Danish");
-			add_person("Steffen Nyeland", "", "");
-		end_section();
-		begin_section("French");
-			add_person("Thierry Crozat", "criezy", "");
-		end_section();
-		begin_section("German");
-			add_person("Simon Sawatzki", "SimSaw", "");
-			add_person("Lothar Serra Mari", "Lothar93", "");
-		end_section();
-		begin_section("Hungarian");
-			add_person("Alex Bevilacqua", "", "");
-			add_person("George Kormendi", "GoodOldGeorg", "");
-		end_section();
-		begin_section("Italian");
-			add_person("Matteo Angelino", "Maff", "");
-		end_section();
-		begin_section("Norwegian (Bokm&aring;l)");
-			add_person("Einar Johan T. S&oslash;m&aring;en", "", "");
-		end_section();
-		begin_section("Norwegian (Nynorsk)");
-			add_person("Einar Johan T. S&oslash;m&aring;en", "", "");
-		end_section();
-		begin_section("Polish");
-			add_person("GrajPoPolsku.pl Team", "", "");
-		end_section();
-		begin_section("Brazilian Portuguese");
-			add_person("ScummBR Team", "", "");
-		end_section();
-		begin_section("Russian");
-			add_person("Eugene Sandulenko", "sev", "");
-		end_section();
-		begin_section("Spanish");
-			add_person("Tom&aacute;s Maidagan", "", "");
-		end_section();
-		begin_section("Swedish");
-			add_person("Hampus Flink", "", "");
-		end_section();
-		begin_section("Ukrainian");
-			add_person("Lubomyr Lisen", "", "");
-		end_section();
+
+	add_paragraph(
+    "Tony Warriner and everyone at Revolution Software Ltd. for sharing ".
+    "with us the source of some of their brilliant games, allowing us to ".
+    "release Beneath a Steel Sky as freeware... and generally being ".
+    "supportive above and beyond the call of duty.");
+
+	add_paragraph(
+    "John Passfield and Steve Stamatiadis for sharing the source of their ".
+    "classic title, Flight of the Amazon Queen and also being incredibly ".
+    "supportive.");
+
+	add_paragraph(
+    "Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source ".
+    "of their famous title Inherit the Earth and always prompt replies to ".
+    "our questions.");
+
+	add_paragraph(
+    "Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at ".
+    "LucasFilm/LucasArts who made SCUMM the insane mess to reimplement ".
+    "that it is today. Feel free to drop us a line and tell us what you ".
+    "think, guys!");
+
+	add_paragraph(
+    "Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for ".
+    "sharing the source code of some of their games with us.");
+
+	add_paragraph(
+    "John Young, Colin Smythe and especially Terry Pratchett himself for ".
+    "sharing the source code of Discworld I &amp; II with us.");
+
+	add_paragraph(
+    "Emilio de Paz Arag&oacute;n from Alcachofa Soft for sharing the source code ".
+    "of Drascula: The Vampire Strikes Back with us and his generosity with ".
+    "freewaring the game.");
+
+	add_paragraph(
+    "David P. Gray from Gray Design Associates for sharing the source code ".
+    "of the Hugo trilogy.");
+
+	add_paragraph(
+    "Broken Sword 2.5 team for providing sources of their engine and their great ".
+    "support.");
+
 	end_section();
-
-	begin_section("Websites (design)");
-	  begin_persons();
-		  add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
-		  add_person("Yaroslav Fedevych", "jafd", "HTML/CSS for the website");
-		  add_person("David Jensen", "Tyst", "SVG logo conversion");
-		  add_person("Jean Marc Gimenez", "", "ScummVM logo");
-		  add_person("", "Raina", "ScummVM forum buttons");
-		  add_person("William Claydon", "billwashere", "Skins for doxygen, buildbot and wiki");
-	  end_persons();
-	end_section();
-
-	begin_section("Code contributions");
-	  begin_persons();
-		  add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI; BASS GUI fixes");
-		  add_person("Stuart Caie", "", "Decoders for Amiga and AtariST data files (AGOS engine)");
-		  add_person("Paolo Costabel", "", "PSP port contributions");
-		  add_person("Martin Doucha", "next_ghost", "CinE engine objectification");
-		  add_person("Thomas Fach-Pedersen", "madmoose", "ProTracker module player, Smacker video decoder");
-		  add_person("Tobias Gunkel", "hennymcc", "Sound support for C64 version of MM/Zak, Loom PCE support");
-		  add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
-		  add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
-		  add_person("Jeroen Janssen", "japj", "Numerous readability and bugfix patches");
-		  add_person("Andreas Karlsson", "Sprawl", "Initial port for SymbianOS");
-		  add_person("Claudio Matsuoka", "", "Daily Linux builds");
-		  add_person("Thomas Mayer", "", "PSP port contributions");
-		  add_person("Sean Murray", "lightcast", "ScummVM tools GUI application (GSoC 2007 task)");
-		  add_person("", "n0p", "Windows CE port aspect ratio correction scaler and right click input method");
-		  add_person("Mikesch Nepomuk", "mnepomuk", "MI1 VGA floppy patches");
-		  add_person("Nicolas Noble", "pixels", "Config file and ALSA support");
-		  add_person("Tim Phillips", "realmz", "Initial MI1 CD music support");
-		  add_person("", "Quietust", "Sound support for Amiga SCUMM V2/V3 games, MM NES support");
-		  add_person("", "segra", "Improved support for Apple II/C64 versions of MM");
-		  add_person("Andreas R&ouml;ver", "", "Broken Sword I &amp; II MPEG2 cutscene support");
-		  add_person("Edward Rudd", "urkle", "Fixes for playing MP3 versions of MI1/Loom audio");
-		  add_person("Daniel Schepler", "dschepler", "Final MI1 CD music support, initial Ogg Vorbis support");
-		  add_person("Andr&eacute; Souza", "luke_br", "SDL-based OpenGL renderer");
-	  end_persons();
-	end_section();
-
-	begin_section("FreeSCI Contributors");
-	  begin_persons();
-		add_person("Anders Baden Nielsen", "", "PPC testing");
-		add_person("Bas Zoetekouw", "", "Man pages, debian package management, CVS maintenance");
-		add_person("Carl Muckenhoupt", "", "Sources to the SCI resource viewer tools that started it all");
-		add_person("Chris Kehler", "", "Makefile enhancements");
-		add_person("Christoph Reichenbach", "", "UN*X code, VM/Graphics/Sound/other infrastructure");
-		add_person("Christopher T. Lansdown", "", "Original CVS maintainer, Alpha compatibility fixes");
-		add_person("Claudio Matsuoka", "", "CVS snapshots, daily builds, BeOS and cygwin ports");
-		add_person("Dark Minister", "", "SCI research (bytecode and parser)");
-		add_person("Dmitry Jemerov", "", "Port to the Win32 platform, numerous bugfixes");
-		add_person("Emmanuel Jeandel", "", "Bugfixes and bug reports");
-		add_person("Francois-R Boyer", "", "MT-32 information and mapping code");
-		add_person("George Reid", "", "FreeBSD package management");
-		add_person("Hubert Maier", "", "AmigaOS 4 port");
-		add_person("Hugues Valois", "", "Game selection menu");
-		add_person("Johannes Manhave", "", "Document format translation");
-		add_person("Jordi Vilalta", "", "Numerous code and website clean-up patches");
-		add_person("Lars Skovlund", "", "Project maintenance, most documentation, bugfixes, SCI1 support");
-		add_person("Magnus Reftel", "", "Heap implementation, Python class viewer, bugfixes");
-		add_person("Matt Hargett", "", "Clean-ups, bugfixes, Hardcore QA, Win32");
-		add_person("Max Horn", "", "SetJump implementation");
-		add_person("Paul David Doherty", "", "Game version information");
-		add_person("Petr Vyhnak", "", "The DCL-INFLATE algorithm, many Win32 improvements");
-		add_person("Rainer Canavan", "", "IRIX MIDI driver and bug fixes");
-		add_person("Rainer De Temple", "", "SCI research");
-		add_person("Ravi I.", "", "SCI0 sound resource specification");
-		add_person("Ruediger Hanke", "", "Port to the MorphOS platform");
-		add_person("Rune Orsval", "", "Configuration file editor");
-		add_person("Rickard Lind", "", "MT-32->GM MIDI mapping magic, sound research");
-		add_person("Rink Springer", "", "Port to the DOS platform, several bug fixes");
-		add_person("Robey Pointer", "", "Bug tracking system hosting");
-		add_person("Sergey Lapin", "", "Port of Carl's type 2 decompression code");
-		add_person("Solomon Peachy", "", "SDL ports and much of the sound subsystem");
-		add_person("Vyacheslav Dikonov", "", "Config script improvements");
-		add_person("Walter van Niftrik", "", "Ports to the Dreamcast and GP32 platforms");
-		add_person("Xiaojun Chen", "", "");
-		add_person("Sean Terrell", "", "");
-	  end_persons();
-	  add_paragraph("Special thanks to Prof. Dr. Gary Nutt ".
-	                "for allowing the FreeSCI VM extension as a ".
-	                "course project in his Advanced OS course.");
-	  add_paragraph("Special thanks to Bob Heitman and Corey Cole for their support of FreeSCI.");
-	end_section();
-
-    add_paragraph("And to all the contributors, users, and beta testers we've missed. Thanks!");
-
-  end_section();
-
-
-  # HACK!
-  $max_name_width = 16;
-
-  begin_section("Special thanks to");
-    begin_persons();
-	  add_person("Sander Buskens", "", "For his work on the initial reversing of Monkey2");
-	  add_person("", "Canadacow", "For the original MT-32 emulator");
-	  add_person("Kevin Carnes", "", "For Scumm16, the basis of ScummVM's older gfx codecs");
-	  add_person("Curt Coder", "", "For the original TrollVM (preAGI) code");
-	  add_person("Patrick Combet", "Dorian Gray", "For the original Gobliiins ADL player");
-	  add_person("Ivan Dubrov", "", "For contributing the initial version of the Gobliiins engine");
-	  add_person("Henrik Engqvist", "qvist", "For generously providing hosting for our buildbot, SVN repository, planet and doxygen sites as well as tons of HD space");
-	  add_person("DOSBox Team", "", "For their awesome OPL2 and OPL3 emulator");
-	  add_person("Till Kresslein", "Krest", "For design of modern ScummVM GUI");
-	  add_person("", "Jezar", "For his freeverb filter implementation");
-	  add_person("Jim Leiterman", "", "Various info on his FM-TOWNS/Marty SCUMM ports");
-	  add_person("", "lloyd", "For deep tech details about C64 Zak &amp; MM");
-	  add_person("Sarien Team", "", "Original AGI engine code");
-	  add_person("Jimmi Th&oslash;gersen", "", "For ScummRev, and much obscure code/documentation");
-	  add_person("", "Tristan", "For additional work on the original MT-32 emulator");
-	  add_person("James Woodcock", "", "Soundtrack enhancements");
-    end_persons();
-
-  add_paragraph(
-  "Tony Warriner and everyone at Revolution Software Ltd. for sharing ".
-  "with us the source of some of their brilliant games, allowing us to ".
-  "release Beneath a Steel Sky as freeware... and generally being ".
-  "supportive above and beyond the call of duty.");
-
-  add_paragraph(
-  "John Passfield and Steve Stamatiadis for sharing the source of their ".
-  "classic title, Flight of the Amazon Queen and also being incredibly ".
-  "supportive.");
-
-  add_paragraph(
-  "Joe Pearce from The Wyrmkeep Entertainment Co. for sharing the source ".
-  "of their famous title Inherit the Earth and always prompt replies to ".
-  "our questions.");
-
-  add_paragraph(
-  "Aric Wilmunder, Ron Gilbert, David Fox, Vince Lee, and all those at ".
-  "LucasFilm/LucasArts who made SCUMM the insane mess to reimplement ".
-  "that it is today. Feel free to drop us a line and tell us what you ".
-  "think, guys!");
-
-  add_paragraph(
-  "Alan Bridgman, Simon Woodroffe and everyone at Adventure Soft for ".
-  "sharing the source code of some of their games with us.");
-
-  add_paragraph(
-  "John Young, Colin Smythe and especially Terry Pratchett himself for ".
-  "sharing the source code of Discworld I &amp; II with us.");
-
-  add_paragraph(
-  "Emilio de Paz Arag&oacute;n from Alcachofa Soft for sharing the source code ".
-  "of Drascula: The Vampire Strikes Back with us and his generosity with ".
-  "freewaring the game.");
-
-  add_paragraph(
-  "David P. Gray from Gray Design Associates for sharing the source code ".
-  "of the Hugo trilogy.");
-
-  add_paragraph(
-  "Broken Sword 2.5 team for providing sources of their engine and their great ".
-  "support.");
-
-  end_section();
 
 end_credits();

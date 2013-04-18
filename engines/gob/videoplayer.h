@@ -167,7 +167,7 @@ private:
 
 	static const int kVideoSlotCount = 32;
 
-	static const char *_extensions[];
+	static const char *const _extensions[];
 
 	GobEngine *_vm;
 

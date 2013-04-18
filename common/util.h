@@ -58,6 +58,11 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
  */
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
+/**
+ * Compute a pointer to one past the last element of an array.
+ */
+#define ARRAYEND(x) ((x) + ARRAYSIZE((x)))
+
 
 /**
  * @def SCUMMVM_CURRENT_FUNCTION
@@ -72,6 +77,32 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #else
 #  define SCUMMVM_CURRENT_FUNCTION "<unknown>"
 #endif
+
+#define GUIO_NONE			"\000"
+#define GUIO_NOSUBTITLES	"\001"
+#define GUIO_NOMUSIC		"\002"
+#define GUIO_NOSPEECH		"\003"
+#define GUIO_NOSFX			"\003"
+#define GUIO_NOMIDI			"\004"
+#define GUIO_NOLAUNCHLOAD	"\005"
+
+#define GUIO_MIDIPCSPK		"\006"
+#define GUIO_MIDICMS		"\007"
+#define GUIO_MIDIPCJR		"\010"
+#define GUIO_MIDIADLIB		"\011"
+#define GUIO_MIDIC64        "\012"
+#define GUIO_MIDIAMIGA      "\013"
+#define GUIO_MIDIAPPLEIIGS  "\014"
+#define GUIO_MIDITOWNS		"\015"
+#define GUIO_MIDIPC98		"\016"
+#define GUIO_MIDIMT32		"\017"
+#define GUIO_MIDIGM			"\020"
+
+#define GUIO1(a) (a)
+#define GUIO2(a,b) (a b)
+#define GUIO3(a,b,c) (a b c)
+#define GUIO4(a,b,c,d) (a b c d)
+#define GUIO5(a,b,c,d,e) (a b c d e)
 
 namespace Common {
 
@@ -96,7 +127,7 @@ extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int start
  * @param[out] valAsBool	the parsing result
  * @return 	true if the string parsed correctly, false if an error occurred.
  */
-bool parseBool(const Common::String &val, bool &valAsBool);
+bool parseBool(const String &val, bool &valAsBool);
 
 /**
  * List of game language.
@@ -129,9 +160,9 @@ enum Language {
 
 struct LanguageDescription {
 	const char *code;
-	//const char *unixLocale;
+	const char *unixLocale;
 	const char *description;
-	Common::Language id;
+	Language id;
 };
 
 extern const LanguageDescription g_languages[];
@@ -139,12 +170,10 @@ extern const LanguageDescription g_languages[];
 
 /** Convert a string containing a language name into a Language enum value. */
 extern Language parseLanguage(const String &str);
+extern Language parseLanguageFromLocale(const char *locale);
 extern const char *getLanguageCode(Language id);
+extern const char *getLanguageLocale(Language id);
 extern const char *getLanguageDescription(Language id);
-
-// locale <-> Language conversion is disabled, since it is not used currently
-/*extern const char *getLanguageLocale(Language id);
-extern Language parseLanguageFromLocale(const char *locale);*/
 
 /**
  * List of game platforms. Specifying a platform for a target can be used to
@@ -182,7 +211,7 @@ struct PlatformDescription {
 	const char *code2;
 	const char *abbrev;
 	const char *description;
-	Common::Platform id;
+	Platform id;
 };
 
 extern const PlatformDescription g_platforms[];
@@ -211,7 +240,7 @@ enum RenderMode {
 struct RenderModeDescription {
 	const char *code;
 	const char *description;
-	Common::RenderMode id;
+	RenderMode id;
 };
 
 extern const RenderModeDescription g_renderModes[];
@@ -221,32 +250,10 @@ extern RenderMode parseRenderMode(const String &str);
 extern const char *getRenderModeCode(RenderMode id);
 extern const char *getRenderModeDescription(RenderMode id);
 
-enum GameGUIOption {
-	GUIO_NONE		= 0,
-	GUIO_NOSUBTITLES	= (1 << 0),
-	GUIO_NOMUSIC		= (1 << 1),
-	GUIO_NOSPEECH		= (1 << 2),
-	GUIO_NOSFX			= (1 << 3),
-	GUIO_NOMIDI			= (1 << 4),
-	GUIO_NOLAUNCHLOAD	= (1 << 5),
-
-	GUIO_MIDIPCSPK		= (1 << 6),
-	GUIO_MIDICMS		= (1 << 7),
-	GUIO_MIDIPCJR		= (1 << 8),
-	GUIO_MIDIADLIB		= (1 << 9),
-	GUIO_MIDIC64        = (1 << 10),
-	GUIO_MIDIAMIGA      = (1 << 11),
-	GUIO_MIDIAPPLEIIGS  = (1 << 12),
-	GUIO_MIDITOWNS		= (1 << 13),
-	GUIO_MIDIPC98		= (1 << 14),
-	GUIO_MIDIMT32		= (1 << 15),
-	GUIO_MIDIGM			= (1 << 16)
-};
-
-bool checkGameGUIOption(GameGUIOption option, const String &str);
+bool checkGameGUIOption(const String &option, const String &str);
 bool checkGameGUIOptionLanguage(Language lang, const String &str);
-uint32 parseGameGUIOptions(const String &str);
-const String getGameGUIOptionsDescription(uint32 options);
+String parseGameGUIOptions(const String &str);
+const String getGameGUIOptionsDescription(const String &options);
 const String getGameGUIOptionsDescriptionLanguage(Language lang);
 
 /**
@@ -254,7 +261,7 @@ const String getGameGUIOptionsDescriptionLanguage(Language lang);
  * domain, when they differ to the ones passed as
  * parameter.
  */
-void updateGameGUIOptions(const uint32 options, const String &langOption);
+void updateGameGUIOptions(const String &options, const String &langOption);
 
 }	// End of namespace Common
 

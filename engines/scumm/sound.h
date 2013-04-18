@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "audio/audiostream.h"
+#include "audio/mididrv.h"
 #include "audio/mixer.h"
 #include "scumm/saveload.h"
 
@@ -89,6 +90,8 @@ public:
 	bool _soundsPaused;
 	byte _sfxMode;
 	uint _lastSound;
+
+	MidiDriverFlags _musicType;
 
 public:
 	Sound(ScummEngine *parent, Audio::Mixer *mixer);

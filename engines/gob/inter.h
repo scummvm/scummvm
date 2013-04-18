@@ -33,6 +33,11 @@
 
 namespace Gob {
 
+namespace Geisha {
+	class Diving;
+	class Penetration;
+}
+
 // This is to help devices with small memory (PDA, smartphones, ...)
 // to save a bit of memory used by opcode names in the Gob engine.
 #ifndef REDUCE_MEMORY_USAGE
@@ -334,6 +339,40 @@ protected:
 	void manipulateMap(int16 xPos, int16 yPos, int16 item);
 };
 
+class Inter_Geisha : public Inter_v1 {
+public:
+	Inter_Geisha(GobEngine *vm);
+	virtual ~Inter_Geisha();
+
+protected:
+	virtual void setupOpcodesDraw();
+	virtual void setupOpcodesFunc();
+	virtual void setupOpcodesGob();
+
+	void oGeisha_loadCursor(OpFuncParams &params);
+	void oGeisha_loadTot(OpFuncParams &params);
+	void oGeisha_goblinFunc(OpFuncParams &params);
+	void oGeisha_loadSound(OpFuncParams &params);
+	void oGeisha_checkData(OpFuncParams &params);
+	void oGeisha_readData(OpFuncParams &params);
+	void oGeisha_writeData(OpFuncParams &params);
+
+	void oGeisha_gamePenetration(OpGobParams &params);
+	void oGeisha_gameDiving(OpGobParams &params);
+	void oGeisha_loadTitleMusic(OpGobParams &params);
+	void oGeisha_playMusic(OpGobParams &params);
+	void oGeisha_stopMusic(OpGobParams &params);
+
+	void oGeisha_caress1(OpGobParams &params);
+	void oGeisha_caress2(OpGobParams &params);
+
+	int16 loadSound(int16 slot);
+
+private:
+	Geisha::Diving      *_diving;
+	Geisha::Penetration *_penetration;
+};
+
 class Inter_v2 : public Inter_v1 {
 public:
 	Inter_v2(GobEngine *vm);
@@ -477,9 +516,14 @@ protected:
 	virtual void setupOpcodesGob();
 
 	void o3_getTotTextItemPart(OpFuncParams &params);
+	void o3_speakerOn(OpFuncParams &params);
+	void o3_speakerOff(OpFuncParams &params);
 	void o3_copySprite(OpFuncParams &params);
 
 	void o3_wobble(OpGobParams &params);
+
+private:
+	bool _ignoreSpeakerOff;
 };
 
 class Inter_Inca2 : public Inter_v3 {

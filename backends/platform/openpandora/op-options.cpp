@@ -31,9 +31,9 @@ namespace OP {
 
 enum {
 	/* Touchscreen TapMode */
-	TAPMODE_LEFT		= 0,
-	TAPMODE_RIGHT		= 1,
-	TAPMODE_HOVER		= 2
+	TAPMODE_LEFT        = 0,
+	TAPMODE_RIGHT       = 1,
+	TAPMODE_HOVER       = 2
 };
 
 int tapmodeLevel = TAPMODE_LEFT;
@@ -47,7 +47,7 @@ void ToggleTapMode() {
 		tapmodeLevel = TAPMODE_LEFT;
 	} else {
 		tapmodeLevel = TAPMODE_LEFT;
-    }
+	}
 }
 
 } /* namespace OP */

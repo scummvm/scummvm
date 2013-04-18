@@ -23,12 +23,12 @@
 #ifndef MADE_SCRIPTFUNCS_H
 #define MADE_SCRIPTFUNCS_H
 
-#include "common/util.h"
-#include "common/file.h"
-#include "common/func.h"
-#include "common/stream.h"
-
 #include "made/resource.h"
+
+#include "audio/mixer.h"
+
+#include "common/debug.h"
+#include "common/system.h"
 
 namespace Audio {
 class PCSpeaker;

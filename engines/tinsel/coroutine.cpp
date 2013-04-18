@@ -80,4 +80,3 @@ CoroBaseContext::~CoroBaseContext() {
 }
 
 } // End of namespace Tinsel
-

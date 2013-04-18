@@ -31,9 +31,6 @@
 #include "common/random.h"
 #include "common/util.h"
 
-#include "audio/mididrv.h"
-#include "audio/mixer.h"
-
 #include "engines/engine.h"
 #include "tinsel/debugger.h"
 #include "tinsel/graphics.h"
@@ -53,6 +50,7 @@ namespace Tinsel {
 
 class BMVPlayer;
 class Config;
+class MidiDriver;
 class MidiMusicPlayer;
 class PCMMusicPlayer;
 class Scheduler;
@@ -158,9 +156,9 @@ class TinselEngine : public Engine {
 	Console *_console;
 	Scheduler *_scheduler;
 
-	static const char *_sampleIndices[][3];
-	static const char *_sampleFiles[][3];
-	static const char *_textFiles[][3];
+	static const char *const _sampleIndices[][3];
+	static const char *const _sampleFiles[][3];
+	static const char *const _textFiles[][3];
 
 protected:
 

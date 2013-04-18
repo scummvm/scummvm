@@ -141,7 +141,7 @@ void OptionsDialog::init() {
 	_oldTheme = g_gui.theme()->getThemeId();
 
 	// Retrieve game GUI options
-	_guioptions = 0;
+	_guioptions = "";
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
@@ -155,7 +155,7 @@ void OptionsDialog::open() {
 	setResult(0);
 
 	// Retrieve game GUI options
-	_guioptions = 0;
+	_guioptions = "";
 	if (ConfMan.hasKey("guioptions", _domain)) {
 		_guioptionsString = ConfMan.get("guioptions", _domain);
 		_guioptions = parseGameGUIOptions(_guioptionsString);
@@ -595,11 +595,15 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
 
-	uint32 allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	char opt[256];
+
+	strncpy(opt, _guioptions.c_str(), 256);
+	bool hasMidiDefined = (strtok(opt, allFlags.c_str()) != NULL);
 
 	if (_domain != Common::ConfigManager::kApplicationDomain && // global dialog
-			(_guioptions & allFlags) && // No flags are specified
-				!(_guioptions & Common::GUIO_MIDIADLIB)) {
+		hasMidiDefined && // No flags are specified
+		!(_guioptions.contains(GUIO_MIDIADLIB))) {
 		_oplPopUpDesc->setEnabled(false);
 		_oplPopUp->setEnabled(false);
 	} else {
@@ -611,7 +615,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 }
 
 void OptionsDialog::setMIDISettingsState(bool enabled) {
-	if (_guioptions & Common::GUIO_NOMIDI)
+	if (_guioptions.contains(GUIO_NOMIDI))
 		enabled = false;
 
 	_gmDevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
@@ -649,7 +653,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_enableVolumeSettings = enabled;
 
 	ena = enabled && !_muteCheckbox->getState();
-	if (_guioptions & Common::GUIO_NOMUSIC)
+	if (_guioptions.contains(GUIO_NOMUSIC))
 		ena = false;
 
 	_musicVolumeDesc->setEnabled(ena);
@@ -657,7 +661,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_musicVolumeLabel->setEnabled(ena);
 
 	ena = enabled && !_muteCheckbox->getState();
-	if (_guioptions & Common::GUIO_NOSFX)
+	if (_guioptions.contains(GUIO_NOSFX))
 		ena = false;
 
 	_sfxVolumeDesc->setEnabled(ena);
@@ -665,7 +669,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_sfxVolumeLabel->setEnabled(ena);
 
 	ena = enabled && !_muteCheckbox->getState();
-	if (_guioptions & Common::GUIO_NOSPEECH)
+	if (_guioptions.contains(GUIO_NOSPEECH))
 		ena = false;
 
 	_speechVolumeDesc->setEnabled(ena);
@@ -680,14 +684,14 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	_enableSubtitleSettings = enabled;
 
 	ena = enabled;
-	if ((_guioptions & Common::GUIO_NOSUBTITLES) || (_guioptions & Common::GUIO_NOSPEECH))
+	if ((_guioptions.contains(GUIO_NOSUBTITLES)) || (_guioptions.contains(GUIO_NOSPEECH)))
 		ena = false;
 
 	_subToggleGroup->setEnabled(ena);
 	_subToggleDesc->setEnabled(ena);
 
 	ena = enabled;
-	if (_guioptions & Common::GUIO_NOSUBTITLES)
+	if (_guioptions.contains(GUIO_NOSUBTITLES))
 		ena = false;
 
 	_subSpeedDesc->setEnabled(ena);
@@ -741,22 +745,26 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
 	// Populate it
-	uint32 allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	Common::String allFlags = MidiDriver::musicType2GUIO((uint32)-1);
+	char opt[256];
+
+	strncpy(opt, _guioptions.c_str(), 256);
+	bool hasMidiDefined = (strtok(opt, allFlags.c_str()) != NULL);
 
 	const MusicPlugin::List p = MusicMan.getPlugins();
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
-			const uint32 deviceGuiOption = MidiDriver::musicType2GUIO(d->getMusicType());
+			Common::String deviceGuiOption = MidiDriver::musicType2GUIO(d->getMusicType());
 
 			if ((_domain == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS  // global dialog - skip useless FM-Towns, C64, Amiga, AppleIIGS options there
 				 && d->getMusicType() != MT_C64 && d->getMusicType() != MT_AMIGA && d->getMusicType() != MT_APPLEIIGS && d->getMusicType() != MT_PC98)
-				|| (_domain != Common::ConfigManager::kApplicationDomain && !(_guioptions & allFlags)) // No flags are specified
-				|| (_guioptions & deviceGuiOption) // flag is present
+				|| (_domain != Common::ConfigManager::kApplicationDomain && !hasMidiDefined) // No flags are specified
+				|| (_guioptions.contains(deviceGuiOption)) // flag is present
 				// HACK/FIXME: For now we have to show GM devices, even when the game only has GUIO_MIDIMT32 set,
 				// else we would not show for example external devices connected via ALSA, since they are always
 				// marked as General MIDI device.
-				|| (deviceGuiOption == Common::GUIO_MIDIGM && (_guioptions & Common::GUIO_MIDIMT32))
+				|| (deviceGuiOption.contains(GUIO_MIDIGM) && (_guioptions.contains(GUIO_MIDIMT32)))
 				|| d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
 				_midiPopUp->appendEntry(d->getCompleteName(), d->getHandle());
 		}
@@ -997,9 +1005,9 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 }
 
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
-	if (_guioptions & Common::GUIO_NOSUBTITLES)
+	if (_guioptions.contains(GUIO_NOSUBTITLES))
 		return kSubtitlesSpeech; // Speech only
-	if (_guioptions & Common::GUIO_NOSPEECH)
+	if (_guioptions.contains(GUIO_NOSPEECH))
 		return kSubtitlesSubs; // Subtitles only
 
 	if (!subtitles && !speech_mute) // Speech only

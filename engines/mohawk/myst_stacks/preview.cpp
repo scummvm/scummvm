@@ -20,6 +20,7 @@
  *
  */
 
+#include "mohawk/cursors.h"
 #include "mohawk/myst.h"
 #include "mohawk/graphics.h"
 #include "mohawk/myst_areas.h"
@@ -35,6 +36,7 @@ namespace MystStacks {
 
 Preview::Preview(MohawkEngine_Myst *vm) : Myst(vm) {
 	setupOpcodes();
+	_vm->_cursor->hideCursor();
 }
 
 Preview::~Preview() {
@@ -52,86 +54,191 @@ Preview::~Preview() {
 
 void Preview::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OVERRIDE_OPCODE(196, opcode_196);
-	OVERRIDE_OPCODE(197, opcode_197);
-	OVERRIDE_OPCODE(198, opcode_198);
-	OVERRIDE_OPCODE(199, opcode_199);
+	OVERRIDE_OPCODE(196, o_fadeToBlack);
+	OVERRIDE_OPCODE(197, o_fadeFromBlack);
+	OVERRIDE_OPCODE(198, o_stayHere);
+	OVERRIDE_OPCODE(199, o_speechStop);
 
 	// "Init" Opcodes
-	OPCODE(298, opcode_298);
-	OPCODE(299, opcode_299);
+	OPCODE(298, o_speech_init);
+	OPCODE(299, o_library_init);
 }
 
 #undef OPCODE
 #undef OVERRIDE_OPCODE
 
-void Preview::opcode_196(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used on Card ...
-	// TODO: Finish Implementation...
-	// Voice Over and Card Advance?
+void Preview::disablePersistentScripts() {
+	Myst::disablePersistentScripts();
 }
 
-void Preview::opcode_197(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Preview::runPersistentScripts() {
+	Myst::runPersistentScripts();
 
-	// Used on Card ...
-	// TODO: Finish Implementation...
-	// Voice Over and Card Advance?
+	if (_speechRunning)
+		speech_run();
 }
 
-// TODO: Merge with Opcode 42?
-void Preview::opcode_198(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	if (argc == 0) {
-		// Nuh-uh! No leaving the library in the demo!
-		GUI::MessageDialog dialog("You can't leave the library in the demo.");
-		dialog.runModal();
-	} else
-		unknown(op, var, argc, argv);
+void Preview::o_fadeToBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Fade to black", op);
+	_vm->_gfx->fadeToBlack();
 }
 
-void Preview::opcode_199(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Preview::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Fade from black", op);
 
-	// Used on Card ...
-	// TODO: Finish Implementation...
-	// Voice Over and Card Advance?
+	// FIXME: This glitches when enabled. The backbuffer is drawn to screen,
+	// and then the fading occurs, causing the background to appear for one frame.
+	// _vm->_gfx->fadeFromBlack();
 }
 
-void Preview::opcode_298(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Preview::o_stayHere(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Stay here dialog", op);
 
-	// Used for Card 3000 (Closed Myst Book)
-	// TODO: Fill in logic.
-	// Start Voice Over... which controls book opening
-	_vm->_sound->replaceSoundMyst(3001);
+	// Nuh-uh! No leaving the library in the demo!
+	GUI::MessageDialog dialog("You can't leave the library in the demo.");
+	dialog.runModal();
+}
 
-	// then link to Myst - Trigger of Hotspot? then opcode 199/196/197 for voice over continue?
-	// TODO: Sync Voice and Actions to Original
-	// TODO: Flash Library Red
-	// TODO: Move to run process based delay to prevent
-	//       blocking...
-	_vm->_system->updateScreen();
-	_vm->_system->delayMillis(20 * 1000);
+void Preview::o_speechStop(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Speech stop", op);
 
-	for (uint16 imageId = 3001; imageId <= 3012; imageId++) {
-		_vm->_gfx->copyImageToScreen(imageId, Common::Rect(0, 0, 544, 333));
-		_vm->_system->updateScreen();
-		_vm->_system->delayMillis(5 * 1000);
+	_vm->_sound->stopSound(3001);
+	_speechRunning = false;
+	_globals.currentAge = 2;
+}
+
+void Preview::speechUpdateCue() {
+	// This is a callback in the original, handling audio events.
+	if (!_vm->_sound->isPlaying(3001)) {
+		return;
+	}
+
+	uint samples = _vm->_sound->getNumSamplesPlayed(3001);
+	for (int16 i = 0; i < _cueList.pointCount; i++) {
+		if (_cueList.points[i].sampleFrame > samples)
+			return;
+		if (i > _currentCue - 1) {
+			_currentCue++;
+			debugC(kDebugScript, "Sneak speech advanced to cue %d", _currentCue);
+		}
 	}
 }
 
-void Preview::opcode_299(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Preview::speech_run() {
+	uint32 time = _vm->_system->getMillis();
+
+	// Update current speech sound cue
+	speechUpdateCue();
+
+	switch (_speechStep) {
+	case 0: // Start Voice Over... which controls book opening
+		_currentCue = 0;
+		_vm->_sound->playSound(3001, Audio::Mixer::kMaxChannelVolume, false, &_cueList);
+
+		_speechStep++;
+		break;
+	case 1: // Open book
+		if (_currentCue >= 1) {
+			_vm->changeToCard(3001, true);
+
+			_speechStep++;
+		}
+		break;
+	case 2: // Go to Myst
+		if (_currentCue >= 2) {
+			_vm->_gfx->fadeToBlack();
+			_vm->changeToCard(3002, false);
+			_vm->_gfx->fadeFromBlack();
+
+			_speechStep++;
+		}
+		break;
+	case 3: // Start blinking the library
+		if (_currentCue >= 3) {
+			_libraryState = 1;
+			_speechNextTime = 0;
+			_speechStep++;
+		}
+		break;
+	case 4: // Library blinking, zoom in library
+		if (_currentCue >= 4) {
+			_library->drawConditionalDataToScreen(0);
+
+			_vm->changeToCard(3003, true);
+
+			_speechNextTime = time + 2000;
+			_speechStep++;
+		} else {
+			if (time < _speechNextTime)
+				break;
+
+			_library->drawConditionalDataToScreen(_libraryState);
+			_libraryState = (_libraryState + 1) % 2;
+			_speechNextTime = time + 500;
+		}
+		break;
+	case 5: // Go to library near view
+		if (time < _speechNextTime)
+			break;
+
+		_vm->changeToCard(3004, true);
+		_speechNextTime = time + 2000;
+		_speechStep++;
+		break;
+	case 6: // Fade to courtyard
+		if (time < _speechNextTime)
+			break;
+
+		_vm->_gfx->fadeToBlack();
+		_vm->changeToCard(3005, false);
+		_vm->_gfx->fadeFromBlack();
+		_speechNextTime = time + 1000;
+		_speechStep++;
+		break;
+	case 7: // Walk to library
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 12:
+	case 13:
+		if (time < _speechNextTime)
+			break;
+
+		_vm->changeToCard(3006 + _speechStep - 7, true);
+		_speechNextTime = time + 2000;
+		_speechStep++;
+		break;
+	case 14: // Go to playable library card
+		if (time < _speechNextTime)
+			break;
+
+		_vm->changeToCard(4329, true);
+
+		_speechRunning = false;
+		_globals.currentAge = 2;
+
+		_vm->_cursor->showCursor();
+		break;
+	default:
+		warning("Unknown speech step");
+		break;
+	}
+}
+
+void Preview::o_speech_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Speech init", op);
+
+	// Used for Card 3000 (Closed Myst Book)
+	_speechStep = 0;
+	_speechRunning = true;
+}
+
+void Preview::o_library_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Library init", op);
 
 	// Used for Card 3002 (Myst Island Overview)
-	// TODO: Fill in logic.
-	// Zoom into Island?
-	// On this card is a Type 8 controlled by Var 0, which
-	// can change the Myst Library to Red..
+	_library = static_cast<MystResourceType8 *>(_invokingResource);
 }
 
 } // End of namespace MystStacks

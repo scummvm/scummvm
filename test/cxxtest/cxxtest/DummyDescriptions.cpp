@@ -46,4 +46,3 @@ namespace CxxTest
     bool DummyWorldDescription::setUp() { return true;}
     bool DummyWorldDescription::tearDown() { return true;}
 }
-

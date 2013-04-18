@@ -1246,4 +1246,3 @@ int TIMInterpreter_LoL::cmd_dialogueBox(const uint16 *param) {
 #endif // ENABLE_LOL
 
 } // End of namespace Kyra
-

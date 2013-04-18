@@ -78,5 +78,3 @@ char *luaZ_openspace (lua_State *L, Mbuffer *buff, size_t n) {
   }
   return buff->buffer;
 }
-
-

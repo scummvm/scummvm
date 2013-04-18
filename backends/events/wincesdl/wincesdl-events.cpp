@@ -43,7 +43,7 @@ void WINCESdlEventSource::init(WINCESdlGraphicsManager *graphicsMan) {
 	_graphicsMan = graphicsMan;
 }
 
-void WINCESdlEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
+void WINCESdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 
@@ -153,7 +153,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 
 		case SDL_MOUSEMOTION:
 			event.type = Common::EVENT_MOUSEMOVE;
-			fillMouseEvent(event, ev.motion.x, ev.motion.y);
+			processMouseEvent(event, ev.motion.x, ev.motion.y);
 			_graphicsMan->setMousePos(event.mouse.x, event.mouse.y);
 
 			return true;
@@ -165,7 +165,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				event.type = Common::EVENT_RBUTTONDOWN;
 			else
 				break;
-			fillMouseEvent(event, ev.button.x, ev.button.y);
+			processMouseEvent(event, ev.button.x, ev.button.y);
 
 
 			if (event.mouse.x > _tapX)
@@ -183,7 +183,8 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				if (_tapTime) {     // second tap
 					if (_closeClick && (GetTickCount() - _tapTime < 1000)) {
 						if (event.mouse.y <= 20 &&
-						        _graphicsMan->_panelInitialized) {
+						        _graphicsMan->_panelInitialized &&
+						        !_graphicsMan->_noDoubleTapPT) {
 							// top of screen (show panel)
 							_graphicsMan->swap_panel_visibility();
 						} else if (!_graphicsMan->_noDoubleTapRMB) {
@@ -240,7 +241,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 				_rbutton = false;
 			}
 
-			fillMouseEvent(event, ev.button.x, ev.button.y);
+			processMouseEvent(event, ev.button.x, ev.button.y);
 
 			if (freeLookActive && !_closeClick) {
 				_tapX = event.mouse.x;
@@ -260,8 +261,7 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 			return true;
 
 		case SDL_VIDEOEXPOSE:
-			// HACK: Send a fake event, handled by SdlGraphicsManager
-			event.type = (Common::EventType)OSystem_SDL::kSdlEventExpose;
+			_graphicsMan->notifyVideoExpose();
 			break;
 
 		case SDL_QUIT:
@@ -278,9 +278,8 @@ bool WINCESdlEventSource::pollEvent(Common::Event &event) {
 			if (ev.active.state & SDL_APPINPUTFOCUS) {
 				_graphicsMan->_hasfocus = ev.active.gain;
 				SDL_PauseAudio(!_graphicsMan->_hasfocus);
-				if (_graphicsMan->_hasfocus) {
-					event.type = (Common::EventType)OSystem_SDL::kSdlEventExpose;
-				}
+				if (_graphicsMan->_hasfocus)
+					_graphicsMan->notifyVideoExpose();
 			}
 			break;
 		}

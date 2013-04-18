@@ -23,6 +23,7 @@
 
 
 #include "agos/agos.h"
+#include "agos/midi.h"
 
 #include "common/textconsole.h"
 
@@ -342,11 +343,11 @@ void AGOSEngine_Simon2::os2_playTune() {
 	// effectively preloaded so there's no latency when
 	// starting playback).
 
-	_midi.setLoop(loop != 0);
+	_midi->setLoop(loop != 0);
 	if (_lastMusicPlayed != music)
 		_nextMusicToPlay = music;
 	else
-		_midi.startTrack(track);
+		_midi->startTrack(track);
 }
 
 void AGOSEngine_Simon2::os2_screenTextPObj() {

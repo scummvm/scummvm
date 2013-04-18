@@ -32,6 +32,7 @@ namespace Sci {
 class Console;
 class SciMusic;
 class SoundCommandParser;
+class MusicEntry;
 //typedef void (SoundCommandParser::*SoundCommand)(reg_t obj, int16 value);
 
 //struct MusicEntryCommand {
@@ -64,6 +65,7 @@ public:
 
 	void processPlaySound(reg_t obj);
 	void processStopSound(reg_t obj, bool sampleFinishedPlaying);
+	void initSoundResource(MusicEntry *newSound);
 
 	MusicType getMusicType() const;
 
@@ -109,10 +111,12 @@ private:
 	SciMusic *_music;
 	AudioPlayer *_audio;
 	SciVersion _soundVersion;
+	bool _bMultiMidi;
 
 	void processInitSound(reg_t obj);
 	void processDisposeSound(reg_t obj);
 	void processUpdateCues(reg_t obj);
+	int getSoundResourceId(reg_t obj);
 };
 
 } // End of namespace Sci

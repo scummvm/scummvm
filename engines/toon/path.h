@@ -38,17 +38,18 @@ public:
 	PathFindingHeap();
 	~PathFindingHeap();
 
-	int32 _alloc;
-	int32 _count;
-
-	int32 push(int32 x, int32 y, int32 weight);
-	int32 pop(int32 *x, int32 *y, int32 *weight);
-	int32 init(int32 size);
-	int32 clear();
-	int32 unload();
+	void push(int32 x, int32 y, int32 weight);
+	void pop(int32 *x, int32 *y, int32 *weight);
+	void init(int32 size);
+	void clear();
+	void unload();
+	int32 getCount() { return _count; }
 
 private:
 	HeapDataGrid *_data;
+
+	int32 _size;
+	int32 _count;
 };
 
 class PathFinding {

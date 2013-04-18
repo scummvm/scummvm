@@ -45,6 +45,9 @@ class String;
 #if defined(USE_TASKBAR)
 class TaskbarManager;
 #endif
+#if defined(USE_UPDATES)
+class UpdateManager;
+#endif
 class TimerManager;
 class SeekableReadStream;
 class WriteStream;
@@ -154,11 +157,20 @@ protected:
 
 #if defined(USE_TASKBAR)
 	/**
-	 * No default value is provided for _savefileManager by OSystem.
+	 * No default value is provided for _taskbarManager by OSystem.
 	 *
-	 * @note _savefileManager is deleted by the OSystem destructor.
+	 * @note _taskbarManager is deleted by the OSystem destructor.
 	 */
 	Common::TaskbarManager *_taskbarManager;
+#endif
+
+#if defined(USE_UPDATES)
+	/**
+	 * No default value is provided for _updateManager by OSystem.
+	 *
+	 * @note _updateManager is deleted by the OSystem destructor.
+	 */
+	Common::UpdateManager *_updateManager;
 #endif
 
 	/**
@@ -391,6 +403,11 @@ public:
 	 * factor 2x, too, just like the game graphics. But if it has a
 	 * cursorTargetScale of 2, then it shouldn't be scaled again by
 	 * the game graphics scaler.
+	 *
+	 * On a note for OSystem users here. We do not require our graphics
+	 * to be thread safe and in fact most/all backends using OpenGL are
+	 * not. So do *not* try to call any of these functions from a timer
+	 * and/or audio callback (like readBuffer of AudioStreams).
 	 */
 	//@{
 
@@ -1068,6 +1085,18 @@ public:
 	 */
 	virtual Common::TaskbarManager *getTaskbarManager() {
 		return _taskbarManager;
+	}
+#endif
+
+#if defined(USE_UPDATES)
+	/**
+	 * Returns the UpdateManager, used to handle auto-updating,
+	 * and updating of ScummVM in general.
+	 *
+	 * @return the UpdateManager for the current architecture
+	 */
+	virtual Common::UpdateManager *getUpdateManager() {
+		return _updateManager;
 	}
 #endif
 

@@ -58,8 +58,8 @@ public:
 	Common::SeekableReadStream *getFile(const Common::String &name);
 	byte *getFile(const Common::String &name, int32 &size);
 
-	static byte *unpack(const byte *src, uint32 srcSize, int32 &size);
-	static Common::SeekableReadStream *unpack(Common::SeekableReadStream &src);
+	static byte *unpack(const byte *src, uint32 srcSize, int32 &size, uint8 compression = 1);
+	static Common::SeekableReadStream *unpack(Common::SeekableReadStream &src, uint8 compression = 1);
 
 private:
 	static const int kMaxArchives = 8;
@@ -70,12 +70,12 @@ private:
 		Common::String name;
 		uint32 size;
 		uint32 offset;
-		bool   packed;
+		uint8  compression;
 
 		Archive *archive;
 
 		File();
-		File(const Common::String &n, uint32 s, uint32 o, bool p, Archive &a);
+		File(const Common::String &n, uint32 s, uint32 o, uint8 c, Archive &a);
 	};
 
 	typedef Common::HashMap<Common::String, File, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
@@ -99,7 +99,12 @@ private:
 	Common::SeekableReadStream *getFile(File &file);
 	byte *getFile(File &file, int32 &size);
 
-	static void unpack(Common::SeekableReadStream &src, byte *dest, uint32 size);
+	static byte *unpack(Common::SeekableReadStream &src, int32 &size, uint8 compression, bool useMalloc);
+
+	static uint32 getSizeChunks(Common::SeekableReadStream &src);
+
+	static void unpackChunks(Common::SeekableReadStream &src, byte *dest, uint32 size);
+	static void unpackChunk (Common::SeekableReadStream &src, byte *dest, uint32 size);
 };
 
 } // End of namespace Gob

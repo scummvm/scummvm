@@ -649,4 +649,3 @@ void Animator_LoK::setCharactersHeight() {
 }
 
 } // End of namespace Kyra
-

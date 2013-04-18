@@ -9,4 +9,3 @@ typedef void FILE;
 #endif
 FILE *wce_fopen(const char *fname, const char *fmode);
 #define fopen wce_fopen
-

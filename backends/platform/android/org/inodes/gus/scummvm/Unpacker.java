@@ -44,6 +44,9 @@ public class Unpacker extends Activity {
 	private AsyncTask<String, Integer, Void> mUnpacker;
 	private final static int REQUEST_MARKET = 1;
 
+	// Android 3.1+ only
+	public static final int FLAG_INCLUDE_STOPPED_PACKAGES = 32;
+
 	private static class UnpackJob {
 		public ZipFile zipfile;
 		public Set<String> paths;
@@ -273,6 +276,9 @@ public class Unpacker extends Activity {
 								  unpack_libs);
 
 		Intent intent = new Intent(ScummVMApplication.ACTION_PLUGIN_QUERY);
+		// Android 3.1 defaults to FLAG_EXCLUDE_STOPPED_PACKAGES, and since
+		// none of our plugins will ever be running, that is not helpful
+		intent.setFlags(FLAG_INCLUDE_STOPPED_PACKAGES);
 		sendOrderedBroadcast(intent, Manifest.permission.SCUMMVM_PLUGIN,
 							 new PluginBroadcastReciever(),
 							 null, RESULT_OK, null, extras);
@@ -370,4 +376,3 @@ public class Unpacker extends Activity {
 		}
 	}
 }
-

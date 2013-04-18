@@ -30,9 +30,9 @@
 #define TOON_DAT_VER_MAJ 0  // 1 byte
 #define TOON_DAT_VER_MIN 3  // 1 byte
 
-// Number of Variante of the game. For the moment, it's the same
-// than the number of languages
-#define NUM_VARIANTE   5
+// Number of variants of the game. For the moment, it's the same
+// as the number of languages
+#define NUM_VARIANTS   5
 
 typedef unsigned char  uint8;
 typedef unsigned char  byte;

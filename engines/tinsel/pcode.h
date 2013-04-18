@@ -37,7 +37,7 @@ namespace Tinsel {
 struct INV_OBJECT;
 
 enum RESUME_STATE {
-	RES_NOT, RES_1, RES_2
+	RES_NOT, RES_1, RES_2, RES_SAVEGAME
 };
 
 enum {

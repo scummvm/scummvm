@@ -398,4 +398,3 @@ LUALIB_API int luaopen_debug (lua_State *L) {
   luaL_register(L, LUA_DBLIBNAME, dblib);
   return 1;
 }
-

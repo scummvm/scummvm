@@ -25,10 +25,9 @@
 
 #include "backends/platform/sdl/sdl-sys.h"
 
-// #include "backends/platform/gph/gph-options.h"
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 #include "backends/platform/gph/gph-hw.h"
-#include "backends/platform/gph/gph-sdl.h"
+#include "backends/platform/gph/gph.h"
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -51,7 +50,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <time.h>	// for getTimeAndDate()
+#include <time.h>   // for getTimeAndDate()
 
 /* Dump console info to files. */
 #define DUMP_STDOUT
@@ -104,49 +103,50 @@ void OSystem_GPH::initBackend() {
 
 	_savefileManager = new DefaultSaveFileManager(savePath);
 
-	#ifdef DUMP_STDOUT
-		// The GP2X Wiz has a serial console on the breakout board but most users do not use this so we
-		// output all our STDOUT and STDERR to files for debug purposes.
-		char STDOUT_FILE[PATH_MAX+1];
-		char STDERR_FILE[PATH_MAX+1];
+#ifdef DUMP_STDOUT
+	// The GPH devices have a serial console on the breakout board
+	// but most users do not use this so we output all our STDOUT
+	// and STDERR to files for debug purposes.
+	char STDOUT_FILE[PATH_MAX+1];
+	char STDERR_FILE[PATH_MAX+1];
 
-		strcpy(STDOUT_FILE, workDirName);
-		strcpy(STDERR_FILE, workDirName);
-		strcat(STDOUT_FILE, "/scummvm.stdout.txt");
-		strcat(STDERR_FILE, "/scummvm.stderr.txt");
+	strcpy(STDOUT_FILE, workDirName);
+	strcpy(STDERR_FILE, workDirName);
+	strcat(STDOUT_FILE, "/scummvm.stdout.txt");
+	strcat(STDERR_FILE, "/scummvm.stderr.txt");
 
-		// Flush the output in case anything is queued
-		fclose(stdout);
-		fclose(stderr);
+	// Flush the output in case anything is queued
+	fclose(stdout);
+	fclose(stderr);
 
-		// Redirect standard input and standard output
-		FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
-		if (newfp == NULL) {
-		#if !defined(stdout)
-			stdout = fopen(STDOUT_FILE, "w");
-		#else
-			newfp = fopen(STDOUT_FILE, "w");
-			if (newfp) {
-				*stdout = *newfp;
-			}
-		#endif
+	// Redirect standard input and standard output
+	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
+	if (newfp == NULL) {
+#if !defined(stdout)
+		stdout = fopen(STDOUT_FILE, "w");
+#else
+		newfp = fopen(STDOUT_FILE, "w");
+		if (newfp) {
+			*stdout = *newfp;
 		}
+#endif
+	}
 
-		newfp = freopen(STDERR_FILE, "w", stderr);
-		if (newfp == NULL) {
-		#if !defined(stderr)
-			stderr = fopen(STDERR_FILE, "w");
-		#else
-			newfp = fopen(STDERR_FILE, "w");
-			if (newfp) {
-				*stderr = *newfp;
-			}
-		#endif
+	newfp = freopen(STDERR_FILE, "w", stderr);
+	if (newfp == NULL) {
+#if !defined(stderr)
+		stderr = fopen(STDERR_FILE, "w");
+#else
+		newfp = fopen(STDERR_FILE, "w");
+		if (newfp) {
+			*stderr = *newfp;
 		}
+#endif
+	}
 
-		setbuf(stderr, NULL);
-		printf("%s\n", "Debug: STDOUT and STDERR redirected to text files.");
-	#endif /* DUMP_STDOUT */
+	setbuf(stderr, NULL);
+	printf("%s\n", "Debug: STDOUT and STDERR redirected to text files.");
+#endif /* DUMP_STDOUT */
 
 	/* Initialize any GP2X Wiz specific stuff we may want (Batt Status, scaler etc.) */
 	WIZ_HW::deviceInit();
@@ -168,9 +168,6 @@ void OSystem_GPH::initBackend() {
 
 	/* Make sure SDL knows that we have a joystick we want to use. */
 	ConfMan.setInt("joystick_num", 0);
-
-	/* Now setup any device specific user options (Left handed mode, that sort of thing). */
-	// GPH::setOptions();
 
 	/* Pass to POSIX method to do the heavy lifting */
 	OSystem_POSIX::initBackend();
@@ -217,11 +214,11 @@ void OSystem_GPH::quit() {
 
 	WIZ_HW::deviceDeinit();
 
-	#ifdef DUMP_STDOUT
-		printf("%s\n", "Debug: STDOUT and STDERR text files closed.");
-		fclose(stdout);
-		fclose(stderr);
-	#endif /* DUMP_STDOUT */
+#ifdef DUMP_STDOUT
+	printf("%s\n", "Debug: STDOUT and STDERR text files closed.");
+	fclose(stdout);
+	fclose(stderr);
+#endif /* DUMP_STDOUT */
 
 	OSystem_POSIX::quit();
 }

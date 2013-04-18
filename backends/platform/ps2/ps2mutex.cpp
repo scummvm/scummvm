@@ -97,4 +97,3 @@ void OSystem_PS2::deleteMutex(MutexRef mutex) {
 	sysMutex->sema = -1;
 	SignalSema(_mutexSema);
 }
-

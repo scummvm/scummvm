@@ -545,8 +545,6 @@ void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
 void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	// Sync song lib data. When loading, the actual song lib will be initialized
 	// afterwards in gamestate_restore()
-	Common::StackLock lock(_mutex);
-
 	int songcount = 0;
 	byte masterVolume = soundGetMasterVolume();
 	byte reverb = _pMidiDrv->getReverb();
@@ -576,9 +574,12 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 		songcount = _playList.size();
 	s.syncAsUint32LE(songcount);
 
-	if (s.isLoading()) {
+	if (s.isLoading())
 		clearPlayList();
 
+	Common::StackLock lock(_mutex);
+
+	if (s.isLoading()) {
 		for (int i = 0; i < songcount; i++) {
 			MusicEntry *curSong = new MusicEntry();
 			curSong->saveLoadWithSerializer(s);
@@ -626,12 +627,8 @@ void SoundCommandParser::reconstructPlayList() {
 
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
-		if ((*i)->resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, (*i)->resourceId))) {
-			(*i)->soundRes = new SoundResource((*i)->resourceId, _resMan, _soundVersion);
-			_music->soundInitSnd(*i);
-		} else {
-			(*i)->soundRes = 0;
-		}
+		initSoundResource(*i);
+
 		if ((*i)->status == kSoundPlaying) {
 			// Sync the sound object's selectors related to playing with the stored
 			// ones in the playlist, as they may have been invalidated when loading.

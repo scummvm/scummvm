@@ -380,6 +380,15 @@ void MadsGlobals::loadMadsObjects() {
 	_vm->res()->toss("objects.dat");
 }
 
+int MadsGlobals::getObjectIndex(uint16 descId) {
+	for (uint i = 0; i < _madsObjects.size(); ++i) {
+		if (_madsObjects[i].get()->_descId == descId)
+			return i;
+	}
+
+	return -1;
+}
+
 int MadsGlobals::messageIndexOf(uint32 messageId) {
 	for (uint i = 0; i < _madsMessages.size(); ++i)
 	{

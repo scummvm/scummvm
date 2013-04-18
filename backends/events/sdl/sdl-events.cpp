@@ -50,7 +50,7 @@
 #define JOY_BUT_F5 5
 
 SdlEventSource::SdlEventSource()
-    : _scrollLock(false), _joystick(0), _lastScreenID(0), EventSource() {
+    : EventSource(), _scrollLock(false), _joystick(0), _lastScreenID(0), _graphicsManager(0) {
 	// Reset mouse state
 	memset(&_km, 0, sizeof(_km));
 
@@ -91,9 +91,14 @@ int SdlEventSource::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	return key;
 }
 
-void SdlEventSource::fillMouseEvent(Common::Event &event, int x, int y) {
+void SdlEventSource::processMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
+
+	if (_graphicsManager) {
+		_graphicsManager->notifyMousePos(Common::Point(x, y));
+		_graphicsManager->transformMouseCoordinates(event.mouse);
+	}
 
 	// Update the "keyboard mouse" coords
 	_km.x = x;
@@ -194,6 +199,149 @@ void SdlEventSource::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 		event.kbd.flags |= Common::KBD_CAPS;
 }
 
+Common::KeyCode SdlEventSource::SDLToOSystemKeycode(const SDLKey key) {
+	switch (key) {
+	case SDLK_BACKSPACE: return Common::KEYCODE_BACKSPACE;
+	case SDLK_TAB: return Common::KEYCODE_TAB;
+	case SDLK_CLEAR: return Common::KEYCODE_CLEAR;
+	case SDLK_RETURN: return Common::KEYCODE_RETURN;
+	case SDLK_PAUSE: return Common::KEYCODE_PAUSE;
+	case SDLK_ESCAPE: return Common::KEYCODE_ESCAPE;
+	case SDLK_SPACE: return Common::KEYCODE_SPACE;
+	case SDLK_EXCLAIM: return Common::KEYCODE_EXCLAIM;
+	case SDLK_QUOTEDBL: return Common::KEYCODE_QUOTEDBL;
+	case SDLK_HASH: return Common::KEYCODE_HASH;
+	case SDLK_DOLLAR: return Common::KEYCODE_DOLLAR;
+	case SDLK_AMPERSAND: return Common::KEYCODE_AMPERSAND;
+	case SDLK_QUOTE: return Common::KEYCODE_QUOTE;
+	case SDLK_LEFTPAREN: return Common::KEYCODE_LEFTPAREN;
+	case SDLK_RIGHTPAREN: return Common::KEYCODE_RIGHTPAREN;
+	case SDLK_ASTERISK: return Common::KEYCODE_ASTERISK;
+	case SDLK_PLUS: return Common::KEYCODE_PLUS;
+	case SDLK_COMMA: return Common::KEYCODE_COMMA;
+	case SDLK_MINUS: return Common::KEYCODE_MINUS;
+	case SDLK_PERIOD: return Common::KEYCODE_PERIOD;
+	case SDLK_SLASH: return Common::KEYCODE_SLASH;
+	case SDLK_0: return Common::KEYCODE_0;
+	case SDLK_1: return Common::KEYCODE_1;
+	case SDLK_2: return Common::KEYCODE_2;
+	case SDLK_3: return Common::KEYCODE_3;
+	case SDLK_4: return Common::KEYCODE_4;
+	case SDLK_5: return Common::KEYCODE_5;
+	case SDLK_6: return Common::KEYCODE_6;
+	case SDLK_7: return Common::KEYCODE_7;
+	case SDLK_8: return Common::KEYCODE_8;
+	case SDLK_9: return Common::KEYCODE_9;
+	case SDLK_COLON: return Common::KEYCODE_COLON;
+	case SDLK_SEMICOLON: return Common::KEYCODE_SEMICOLON;
+	case SDLK_LESS: return Common::KEYCODE_LESS;
+	case SDLK_EQUALS: return Common::KEYCODE_EQUALS;
+	case SDLK_GREATER: return Common::KEYCODE_GREATER;
+	case SDLK_QUESTION: return Common::KEYCODE_QUESTION;
+	case SDLK_AT: return Common::KEYCODE_AT;
+	case SDLK_LEFTBRACKET: return Common::KEYCODE_LEFTBRACKET;
+	case SDLK_BACKSLASH: return Common::KEYCODE_BACKSLASH;
+	case SDLK_RIGHTBRACKET: return Common::KEYCODE_RIGHTBRACKET;
+	case SDLK_CARET: return Common::KEYCODE_CARET;
+	case SDLK_UNDERSCORE: return Common::KEYCODE_UNDERSCORE;
+	case SDLK_BACKQUOTE: return Common::KEYCODE_BACKQUOTE;
+	case SDLK_a: return Common::KEYCODE_a;
+	case SDLK_b: return Common::KEYCODE_b;
+	case SDLK_c: return Common::KEYCODE_c;
+	case SDLK_d: return Common::KEYCODE_d;
+	case SDLK_e: return Common::KEYCODE_e;
+	case SDLK_f: return Common::KEYCODE_f;
+	case SDLK_g: return Common::KEYCODE_g;
+	case SDLK_h: return Common::KEYCODE_h;
+	case SDLK_i: return Common::KEYCODE_i;
+	case SDLK_j: return Common::KEYCODE_j;
+	case SDLK_k: return Common::KEYCODE_k;
+	case SDLK_l: return Common::KEYCODE_l;
+	case SDLK_m: return Common::KEYCODE_m;
+	case SDLK_n: return Common::KEYCODE_n;
+	case SDLK_o: return Common::KEYCODE_o;
+	case SDLK_p: return Common::KEYCODE_p;
+	case SDLK_q: return Common::KEYCODE_q;
+	case SDLK_r: return Common::KEYCODE_r;
+	case SDLK_s: return Common::KEYCODE_s;
+	case SDLK_t: return Common::KEYCODE_t;
+	case SDLK_u: return Common::KEYCODE_u;
+	case SDLK_v: return Common::KEYCODE_v;
+	case SDLK_w: return Common::KEYCODE_w;
+	case SDLK_x: return Common::KEYCODE_x;
+	case SDLK_y: return Common::KEYCODE_y;
+	case SDLK_z: return Common::KEYCODE_z;
+	case SDLK_DELETE: return Common::KEYCODE_DELETE;
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+	case SDL_SCANCODE_TO_KEYCODE(SDL_SCANCODE_GRAVE): return Common::KEYCODE_TILDE;
+#else
+	case SDLK_WORLD_16: return Common::KEYCODE_TILDE;
+#endif
+	case SDLK_KP0: return Common::KEYCODE_KP0;
+	case SDLK_KP1: return Common::KEYCODE_KP1;
+	case SDLK_KP2: return Common::KEYCODE_KP2;
+	case SDLK_KP3: return Common::KEYCODE_KP3;
+	case SDLK_KP4: return Common::KEYCODE_KP4;
+	case SDLK_KP5: return Common::KEYCODE_KP5;
+	case SDLK_KP6: return Common::KEYCODE_KP6;
+	case SDLK_KP7: return Common::KEYCODE_KP7;
+	case SDLK_KP8: return Common::KEYCODE_KP8;
+	case SDLK_KP9: return Common::KEYCODE_KP9;
+	case SDLK_KP_PERIOD: return Common::KEYCODE_KP_PERIOD;
+	case SDLK_KP_DIVIDE: return Common::KEYCODE_KP_DIVIDE;
+	case SDLK_KP_MULTIPLY: return Common::KEYCODE_KP_MULTIPLY;
+	case SDLK_KP_MINUS: return Common::KEYCODE_KP_MINUS;
+	case SDLK_KP_PLUS: return Common::KEYCODE_KP_PLUS;
+	case SDLK_KP_ENTER: return Common::KEYCODE_KP_ENTER;
+	case SDLK_KP_EQUALS: return Common::KEYCODE_KP_EQUALS;
+	case SDLK_UP: return Common::KEYCODE_UP;
+	case SDLK_DOWN: return Common::KEYCODE_DOWN;
+	case SDLK_RIGHT: return Common::KEYCODE_RIGHT;
+	case SDLK_LEFT: return Common::KEYCODE_LEFT;
+	case SDLK_INSERT: return Common::KEYCODE_INSERT;
+	case SDLK_HOME: return Common::KEYCODE_HOME;
+	case SDLK_END: return Common::KEYCODE_END;
+	case SDLK_PAGEUP: return Common::KEYCODE_PAGEUP;
+	case SDLK_PAGEDOWN: return Common::KEYCODE_PAGEDOWN;
+	case SDLK_F1: return Common::KEYCODE_F1;
+	case SDLK_F2: return Common::KEYCODE_F2;
+	case SDLK_F3: return Common::KEYCODE_F3;
+	case SDLK_F4: return Common::KEYCODE_F4;
+	case SDLK_F5: return Common::KEYCODE_F5;
+	case SDLK_F6: return Common::KEYCODE_F6;
+	case SDLK_F7: return Common::KEYCODE_F7;
+	case SDLK_F8: return Common::KEYCODE_F8;
+	case SDLK_F9: return Common::KEYCODE_F9;
+	case SDLK_F10: return Common::KEYCODE_F10;
+	case SDLK_F11: return Common::KEYCODE_F11;
+	case SDLK_F12: return Common::KEYCODE_F12;
+	case SDLK_F13: return Common::KEYCODE_F13;
+	case SDLK_F14: return Common::KEYCODE_F14;
+	case SDLK_F15: return Common::KEYCODE_F15;
+	case SDLK_NUMLOCK: return Common::KEYCODE_NUMLOCK;
+	case SDLK_CAPSLOCK: return Common::KEYCODE_CAPSLOCK;
+	case SDLK_SCROLLOCK: return Common::KEYCODE_SCROLLOCK;
+	case SDLK_RSHIFT: return Common::KEYCODE_RSHIFT;
+	case SDLK_LSHIFT: return Common::KEYCODE_LSHIFT;
+	case SDLK_RCTRL: return Common::KEYCODE_RCTRL;
+	case SDLK_LCTRL: return Common::KEYCODE_LCTRL;
+	case SDLK_RALT: return Common::KEYCODE_RALT;
+	case SDLK_LALT: return Common::KEYCODE_LALT;
+	case SDLK_LSUPER: return Common::KEYCODE_LSUPER;
+	case SDLK_RSUPER: return Common::KEYCODE_RSUPER;
+	case SDLK_MODE: return Common::KEYCODE_MODE;
+	case SDLK_COMPOSE: return Common::KEYCODE_COMPOSE;
+	case SDLK_HELP: return Common::KEYCODE_HELP;
+	case SDLK_PRINT: return Common::KEYCODE_PRINT;
+	case SDLK_SYSREQ: return Common::KEYCODE_SYSREQ;
+	case SDLK_BREAK: return Common::KEYCODE_BREAK;
+	case SDLK_MENU: return Common::KEYCODE_MENU;
+	case SDLK_POWER: return Common::KEYCODE_POWER;
+	case SDLK_UNDO: return Common::KEYCODE_UNDO;
+	default: return Common::KEYCODE_INVALID;
+	}
+}
+
 bool SdlEventSource::pollEvent(Common::Event &event) {
 	handleKbdMouse();
 
@@ -206,7 +354,6 @@ bool SdlEventSource::pollEvent(Common::Event &event) {
 	}
 
 	SDL_Event ev;
-	ev.type = SDL_NOEVENT;
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
 		if (dispatchSDLEvent(ev, event))
@@ -235,16 +382,14 @@ bool SdlEventSource::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleJoyAxisMotion(ev, event);
 
 	case SDL_VIDEOEXPOSE:
-		// HACK: Send a fake event, handled by SdlGraphicsManager
-		event.type = (Common::EventType)OSystem_SDL::kSdlEventExpose;
-		return true;
+		if (_graphicsManager)
+			_graphicsManager->notifyVideoExpose();
+		return false;
 
 	case SDL_VIDEORESIZE:
-		// HACK: Send a fake event, handled by OpenGLSdlGraphicsManager
-		event.type = (Common::EventType)OSystem_SDL::kSdlEventResize;
-		event.mouse.x = ev.resize.w;
-		event.mouse.y = ev.resize.h;
-		return true;
+		if (_graphicsManager)
+			_graphicsManager->notifyResize(ev.resize.w, ev.resize.h);
+		return false;
 
 	case SDL_QUIT:
 		event.type = Common::EVENT_QUIT;
@@ -291,6 +436,14 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		event.type = Common::EVENT_QUIT;
 		return true;
 	}
+
+	#ifdef WIN32
+	// On Windows, also use the default Alt-F4 quit combination
+	if ((ev.key.keysym.mod & KMOD_ALT) && ev.key.keysym.sym == SDLK_F4) {
+		event.type = Common::EVENT_QUIT;
+		return true;
+	}
+	#endif
 #endif
 
 	// Ctrl-u toggles mute
@@ -303,8 +456,8 @@ bool SdlEventSource::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		return true;
 
 	event.type = Common::EVENT_KEYDOWN;
-	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+	event.kbd.keycode = SDLToOSystemKeycode(ev.key.keysym.sym);
+	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, (Uint16)ev.key.keysym.unicode);
 
 	return true;
 }
@@ -347,8 +500,8 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	// continue normally
 
 	event.type = Common::EVENT_KEYUP;
-	event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-	event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
+	event.kbd.keycode = SDLToOSystemKeycode(ev.key.keysym.sym);
+	event.kbd.ascii = mapKey(ev.key.keysym.sym, (SDLMod)ev.key.keysym.mod, (Uint16)ev.key.keysym.unicode);
 
 	// Ctrl-Alt-<key> will change the GFX mode
 	SDLModToOSystemKeyFlags(mod, event);
@@ -362,7 +515,7 @@ bool SdlEventSource::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 
 bool SdlEventSource::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
-	fillMouseEvent(event, ev.motion.x, ev.motion.y);
+	processMouseEvent(event, ev.motion.x, ev.motion.y);
 
 	return true;
 }
@@ -385,7 +538,7 @@ bool SdlEventSource::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) 
 	else
 		return false;
 
-	fillMouseEvent(event, ev.button.x, ev.button.y);
+	processMouseEvent(event, ev.button.x, ev.button.y);
 
 	return true;
 }
@@ -401,7 +554,7 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 #endif
 	else
 		return false;
-	fillMouseEvent(event, ev.button.x, ev.button.y);
+	processMouseEvent(event, ev.button.x, ev.button.y);
 
 	return true;
 }
@@ -409,28 +562,28 @@ bool SdlEventSource::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONDOWN;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 	} else {
 		event.type = Common::EVENT_KEYDOWN;
 		switch (ev.jbutton.button) {
 		case JOY_BUT_ESCAPE:
 			event.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_PERIOD:
 			event.kbd.keycode = Common::KEYCODE_PERIOD;
-			event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_PERIOD, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_SPACE:
 			event.kbd.keycode = Common::KEYCODE_SPACE;
-			event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_F5:
 			event.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		}
 	}
@@ -440,28 +593,28 @@ bool SdlEventSource::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 bool SdlEventSource::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 	} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
 		event.type = Common::EVENT_RBUTTONUP;
-		fillMouseEvent(event, _km.x, _km.y);
+		processMouseEvent(event, _km.x, _km.y);
 	} else {
 		event.type = Common::EVENT_KEYUP;
 		switch (ev.jbutton.button) {
 		case JOY_BUT_ESCAPE:
 			event.kbd.keycode = Common::KEYCODE_ESCAPE;
-			event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_ESCAPE, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_PERIOD:
 			event.kbd.keycode = Common::KEYCODE_PERIOD;
-			event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_PERIOD, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_SPACE:
 			event.kbd.keycode = Common::KEYCODE_SPACE;
-			event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_SPACE, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		case JOY_BUT_F5:
 			event.kbd.keycode = Common::KEYCODE_F5;
-			event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
+			event.kbd.ascii = mapKey(SDLK_F5, (SDLMod)ev.key.keysym.mod, 0);
 			break;
 		}
 	}
@@ -511,7 +664,7 @@ bool SdlEventSource::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 #endif
 	}
 
-	fillMouseEvent(event, _km.x, _km.y);
+	processMouseEvent(event, _km.x, _km.y);
 
 	return true;
 }

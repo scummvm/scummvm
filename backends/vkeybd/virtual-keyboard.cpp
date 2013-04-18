@@ -417,4 +417,3 @@ bool VirtualKeyboard::KeyPressQueue::hasStringChanged() {
 } // End of namespace Common
 
 #endif // #ifdef ENABLE_VKEYBD
-

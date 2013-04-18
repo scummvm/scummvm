@@ -86,9 +86,9 @@ public:
 		return numSamples;
 	}
 */
-	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
+	virtual bool isStereo() const { return true; }
+	virtual bool endOfData() const { return false; }
+	virtual int getRate() const { return _sampleRate; }
 
 protected:
 	enum {

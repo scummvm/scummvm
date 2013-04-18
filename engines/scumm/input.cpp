@@ -324,7 +324,17 @@ void ScummEngine::processInput() {
 		VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
 		VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
 
-		if (_game.version >= 7) {
+		if (_game.heversion >= 72) {
+			// HE72 introduced a flag for whether or not this is a click
+			// or the player is continuing to hold the button down.
+			// 0x80 signifies that the button is continuing to be held down
+			// Backyard Soccer needs this in order to function
+			if (VAR(VAR_LEFTBTN_HOLD) && !(_leftBtnPressed & msClicked))
+				VAR(VAR_LEFTBTN_HOLD) |= 0x80;
+
+			if (VAR(VAR_RIGHTBTN_HOLD) && !(_rightBtnPressed & msClicked))
+				VAR(VAR_RIGHTBTN_HOLD) |= 0x80;
+		} else if (_game.version >= 7) {
 			VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed & msClicked) != 0;
 			VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed & msClicked) != 0;
 		}

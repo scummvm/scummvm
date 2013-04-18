@@ -68,7 +68,7 @@ void AGOSEngine_PN::uncomstr(char *c, uint32 x) {
 	*c = 0;
 }
 
-static const char *objectNames[30] = {
+static const char *const objectNames[30] = {
 	"\0",
 	"Take \0",
 	"Inventory\r",

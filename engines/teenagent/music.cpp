@@ -137,7 +137,7 @@ void MusicPlayer::interrupt() {
 				continue;
 			}
 
-			setChannelData(chn, (const int8*)_samples[sample].data, NULL, _samples[sample].size, 0);
+			setChannelData(chn, (const int8 *)_samples[sample].data, NULL, _samples[sample].size, 0);
 			setChannelPeriod(chn, noteToPeriod[((note >> 4) & 0x0F) - 1][(note & 0x0F)]);
 		}
 	}

@@ -754,4 +754,3 @@ bool getLocalMouseCoords(CGPoint *point) {
 }
 
 @end
-

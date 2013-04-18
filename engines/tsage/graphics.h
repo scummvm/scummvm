@@ -30,7 +30,7 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class GfxSurface;
 class Region;
@@ -177,7 +177,7 @@ public:
 	uint16 _fontNumber;
 	GfxColors _colors;
 	GfxColors _fontColors;
-	byte _unkColor1, _unkColor2, _unkColor3;
+	byte _color1, _color2, _color3;
 	uint16 _keycode;
 public:
 	GfxElement();
@@ -343,6 +343,6 @@ GfxSurface *Surface_getArea(GfxSurface &src, const Rect &bounds);
 GfxSurface surfaceFromRes(const byte *imgData);
 GfxSurface surfaceFromRes(int resNum, int rlbNum, int subNum);
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

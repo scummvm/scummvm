@@ -35,4 +35,3 @@ extern void sysexHandler_SamNMax(Player *, const byte *, uint16);
 } // End of namespace Scumm
 
 #endif
-

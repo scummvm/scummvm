@@ -33,8 +33,9 @@
 #include "lastexpress/game/state.h"
 #include "lastexpress/game/savegame.h"
 #include "lastexpress/game/savepoint.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/helpers.h"
 #include "lastexpress/lastexpress.h"
@@ -104,24 +105,24 @@ void EntityData::EntityCallData::saveLoadWithSerializer(Common::Serializer &s) {
 //////////////////////////////////////////////////////////////////////////
 EntityData::EntityParameters *EntityData::getParameters(uint callback, byte index) const {
 	if (callback >= 9)
-		error("EntityData::getParameters: invalid callback value (was: %d, max: 9)", callback);
+		error("[EntityData::getParameters] Invalid callback value (was: %d, max: 9)", callback);
 
 	if (index >= 4)
-		error("EntityData::getParameters: invalid index value (was: %d, max: 4)", index);
+		error("[EntityData::getParameters] Invalid index value (was: %d, max: 4)", index);
 
 	return _parameters[callback].parameters[index];
 }
 
 int EntityData::getCallback(uint callback) const {
 	if (callback >= 16)
-		error("EntityData::getParameters: invalid callback value (was: %d, max: 16)", callback);
+		error("[EntityData::getCallback] Invalid callback value (was: %d, max: 16)", callback);
 
 	return _data.callbacks[callback];
 }
 
 void EntityData::setCallback(uint callback, byte index) {
 	if (callback >= 16)
-		error("EntityData::getParameters: invalid callback value (was: %d, max: 16)", callback);
+		error("[EntityData::setCallback] Invalid callback value (was: %d, max: 16)", callback);
 
 	_data.callbacks[callback] = index;
 }
@@ -136,7 +137,7 @@ void EntityData::updateParameters(uint32 index) const {
 	else if (index < 32)
 		getParameters(8, 3)->update(index - 24);
 	else
-		error("EntityData::updateParameters: invalid param index to update (was:%d, max:32)!", index);
+		error("[EntityData::updateParameters] Invalid param index to update (was:%d, max:32)", index);
 }
 
 void EntityData::saveLoadWithSerializer(Common::Serializer &s) {
@@ -255,7 +256,7 @@ void Entity::savegame(const SavePoint &savepoint) {
 	}
 }
 
-void Entity::playSound(const SavePoint &savepoint, bool resetItem, SoundManager::FlagType flag) {
+void Entity::playSound(const SavePoint &savepoint, bool resetItem, SoundFlag flag) {
 	EXPOSE_PARAMS(EntityData::EntityParametersSIIS)
 
 	switch (savepoint.action) {

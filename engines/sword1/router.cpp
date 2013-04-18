@@ -33,25 +33,25 @@
 namespace Sword1 {
 
 /****************************************************************************
- *    JROUTER.C				polygon router with modular walks
- *							using a tree of modules
- *							21 july 94
+ *    JROUTER.C             polygon router with modular walks
+ *                          using a tree of modules
+ *                          21 july 94
  *    3  november 94
- *    System currently works by scanning grid data and coming up with a	ROUTE
+ *    System currently works by scanning grid data and coming up with a ROUTE
  *    as a series of way points(nodes), the smoothest eight directional PATH
- *		through these nodes is then found, and a WALK created to fit the PATH.
+ *      through these nodes is then found, and a WALK created to fit the PATH.
  *
- *		Two funtions are called by the user, RouteFinder creates a route as a
- *		module list, HardWalk creates an animation list from the module list.
- *		The split is only provided to allow the possibility of turning the
- *		autorouter over two game cycles.
+ *      Two funtions are called by the user, RouteFinder creates a route as a
+ *      module list, HardWalk creates an animation list from the module list.
+ *      The split is only provided to allow the possibility of turning the
+ *      autorouter over two game cycles.
  ****************************************************************************
  *
  *    Routine timings on osborne 486
  *
- *		Read floor resource (file already loaded)	 112 pixels
+ *      Read floor resource (file already loaded)    112 pixels
  *
- *		Read mega resource (file already loaded)	 112 pixels
+ *      Read mega resource (file already loaded)     112 pixels
  *
  *
  *
@@ -59,16 +59,16 @@ namespace Sword1 {
  *
  *    Modified 12 Oct 95
  *
- *		Target Points within 1 pixel of a line are ignored ???
+ *      Target Points within 1 pixel of a line are ignored ???
  *
- *		Modules split into  Points within 1 pixel of a line are ignored ???
+ *      Modules split into  Points within 1 pixel of a line are ignored ???
  *
  ****************************************************************************/
 
-#define		NO_DIRECTIONS					8
-#define		SLOW_IN								3
-#define		SLOW_OUT							7
-#define		ROUTE_END_FLAG				255
+#define NO_DIRECTIONS    8
+#define SLOW_IN          3
+#define SLOW_OUT         7
+#define ROUTE_END_FLAG 255
 
 Router::Router(ObjectMan *pObjMan, ResMan *pResMan) {
 	_objMan = pObjMan;
@@ -85,9 +85,9 @@ Router::Router(ObjectMan *pObjMan, ResMan *pResMan) {
 
 int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 dir) {
 	/*********************************************************************
-	 * RouteFinder.C		polygon router with modular walks
-	 *						21 august 94
-	 *						3  november 94
+	 * RouteFinder.C        polygon router with modular walks
+	 *                      21 august 94
+	 *                      3  november 94
 	 * routeFinder creates a list of modules that enables HardWalk to
 	 * create an animation list.
 	 *
@@ -99,11 +99,11 @@ int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 
 	 *
 	 * 30 november 94 return values modified
 	 *
-	 * return	0 = failed to find a route
+	 * return   0 = failed to find a route
 	 *
-	 *			1 = found a route
+	 *          1 = found a route
 	 *
-	 *			2 = mega already at target
+	 *          2 = mega already at target
 	 *
 	 *********************************************************************/
 
@@ -117,7 +117,7 @@ int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 
 
 	walkAnim = megaObject->o_route;
 
-	_framesPerStep = _nWalkFrames/2;
+	_framesPerStep = _nWalkFrames / 2;
 	_framesPerChar = _nWalkFrames * NO_DIRECTIONS;
 
 	// offset pointers added Oct 30 95 JPS
@@ -145,12 +145,12 @@ int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 
 		slowOutFrames = 0;
 	}
 
-// **************************************************************************
-// All route data now loaded start finding a route
-// **************************************************************************
-// **************************************************************************
-// check if we can get a route through the floor		changed 12 Oct95 JPS
-// **************************************************************************
+	// **************************************************************************
+	// All route data now loaded start finding a route
+	// **************************************************************************
+	// **************************************************************************
+	// check if we can get a route through the floor        changed 12 Oct95 JPS
+	// **************************************************************************
 
 	routeFlag = getRoute();
 
@@ -220,26 +220,26 @@ int32 Router::routeFinder(int32 id, Object *megaObject, int32 x, int32 y, int32 
 		break;
 	}
 
-	return routeFlag;	// send back null route
+	return routeFlag;   // send back null route
 }
 
 int32 Router::getRoute() {
 	/*********************************************************************
-	 * GetRoute.C				extract a path from walk grid
-	 *							12 october 94
+	 * GetRoute.C               extract a path from walk grid
+	 *                          12 october 94
 	 *
 	 * GetRoute currently works by scanning grid data and coming up with
 	 * a ROUTE as a series of way points(nodes).
 	 *
 	 * static routeData _route[O_ROUTE_SIZE];
 	 *
-	 * return	0 = failed to find a route
+	 * return   0 = failed to find a route
 	 *
-	 *		1 = found a route
+	 *      1 = found a route
 	 *
-	 *		2 = mega already at target
+	 *      2 = mega already at target
 	 *
-	 *		3 = failed to find a route because target was on a line
+	 *      3 = failed to find a route because target was on a line
 	 *
 	 *********************************************************************/
 
@@ -459,7 +459,7 @@ void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) 
 
 	// set up sd0-ss2 to reflect possible movement in each direction
 
-	if (dirS == 0 || dirS == 4) {	// vert and diag
+	if (dirS == 0 || dirS == 4) {   // vert and diag
 		ddx = ldx;
 		ddy = (ldx * _diagonaly) / _diagonalx;
 		dsy = ldy - ddy;
@@ -492,7 +492,7 @@ void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) 
 	}
 
 	switch (best) {
-	case 0:		// halfsquare, diagonal, halfsquare
+	case 0:     // halfsquare, diagonal, halfsquare
 		_smoothPath[k].x = x + dsx / 2;
 		_smoothPath[k].y = y + dsy / 2;
 		_smoothPath[k].dir = dirS;
@@ -512,7 +512,7 @@ void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) 
 		k++;
 
 		break;
-	case 1:		// square, diagonal
+	case 1:     // square, diagonal
 		_smoothPath[k].x = x + dsx;
 		_smoothPath[k].y = y + dsy;
 		_smoothPath[k].dir = dirS;
@@ -526,7 +526,7 @@ void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) 
 		k++;
 
 		break;
-	case 2:		// diagonal square
+	case 2:     // diagonal square
 		_smoothPath[k].x = x + ddx;
 		_smoothPath[k].y = y + ddy;
 		_smoothPath[k].dir = dirD;
@@ -540,7 +540,7 @@ void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) 
 		k++;
 
 		break;
-	default:	// halfdiagonal, square, halfdiagonal
+	default:    // halfdiagonal, square, halfdiagonal
 		_smoothPath[k].x = x + ddx / 2;
 		_smoothPath[k].y = y + ddy / 2;
 		_smoothPath[k].dir = dirD;
@@ -627,17 +627,17 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	 * fits the smoothPath and uses foot slipping to fit whole steps into
 	 * the route
 	 *
-	 *	Parameters:	georgeg, mouseg
-	 *	Returns:	rout
+	 *  Parameters: georgeg, mouseg
+	 *  Returns:    rout
 	 *
 	 * produce a module list from the line data
 	 *********************************************************************/
 
 	int32 p;
-	int32	lastDir;
-	int32	lastRealDir;
-	int32	currentDir;
-	int32	turnDir;
+	int32 lastDir;
+	int32 lastRealDir;
+	int32 currentDir;
+	int32 turnDir;
 	int32 scale;
 	int32 step;
 	int32 module;
@@ -677,7 +677,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	// START THE WALK WITH THE FIRST STANDFRAME THIS MAY CAUSE A DELAY
 	// BUT IT STOPS THE PLAYER MOVING FOR COLLISIONS ARE DETECTED
 	//****************************************************************************
-	module =	_framesPerChar + lastDir;
+	module = _framesPerChar + lastDir;
 	walkAnim[stepCount].frame = module;
 	walkAnim[stepCount].step = 0;
 	walkAnim[stepCount].dir = lastDir;
@@ -694,7 +694,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// get the direction to turn
 		turnDir = currentDir - lastDir;
 		if (turnDir < 0)
-				turnDir += NO_DIRECTIONS;
+			turnDir += NO_DIRECTIONS;
 
 		if (turnDir > 4)
 			turnDir = -1;
@@ -704,10 +704,10 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// rotate to new walk direction
 		// for george and nico put in a head turn at the start
 		if ((megaId == GEORGE) || (megaId == NICO)) {
-			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
-				module =	turnFramesLeft + lastDir;
+			if (turnDir < 0) {  // new frames for turn frames   29oct95jps
+				module = turnFramesLeft + lastDir;
 			} else {
-				module =	turnFramesRight + lastDir;
+				module = turnFramesRight + lastDir;
 			}
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -720,14 +720,14 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// rotate till were facing new dir then go back 45 degrees
 		while (lastDir != currentDir) {
 			lastDir += turnDir;
-			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
+			if (turnDir < 0) {  // new frames for turn frames   29oct95jps
 				if (lastDir < 0)
-						lastDir += NO_DIRECTIONS;
-				module =	turnFramesLeft + lastDir;
+					lastDir += NO_DIRECTIONS;
+				module = turnFramesLeft + lastDir;
 			} else {
 				if (lastDir > 7)
-						lastDir -= NO_DIRECTIONS;
-				module =	turnFramesRight + lastDir;
+					lastDir -= NO_DIRECTIONS;
+				module = turnFramesRight + lastDir;
 			}
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -760,17 +760,17 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 			lastDir = currentDir;
 			lastCount = stepCount;
 		}
-		//calculate	average amount to lose in each step on the way to the next _node
+		//calculate average amount to lose in each step on the way to the next _node
 		currentDir = _modularPath[p].dir;
 		if (currentDir < NO_DIRECTIONS) {
-			module =	currentDir * _framesPerStep * 2 + _slidyWalkAnimatorState * _framesPerStep;
+			module = currentDir * _framesPerStep * 2 + _slidyWalkAnimatorState * _framesPerStep;
 			_slidyWalkAnimatorState = !_slidyWalkAnimatorState;
 			moduleEnd = module + _framesPerStep;
 			step = 0;
 			scale = (_scaleA * moduleY + _scaleB);
 			do {
-				module16X += _dx[module]*scale;
-				module16Y += _dy[module]*scale;
+				module16X += _dx[module] * scale;
+				module16Y += _dy[module] * scale;
 				moduleX = module16X >> 16;
 				moduleY = module16Y >> 16;
 				walkAnim[stepCount].frame = module;
@@ -781,53 +781,53 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 				stepCount += 1;
 				step += 1;
 				module += 1;
-			} while ( module < moduleEnd);
+			} while (module < moduleEnd);
 			stepX = _modX[_modularPath[p].dir];
 			stepY = _modY[_modularPath[p].dir];
-			errorX = _modularPath[p].x -	moduleX;
+			errorX = _modularPath[p].x - moduleX;
 			errorX = errorX * stepX;
-			errorY = _modularPath[p].y -	moduleY;
+			errorY = _modularPath[p].y - moduleY;
 			errorY = errorY * stepY;
 			if ((errorX < 0) || (errorY < 0)) {
-				_modularPath[p].num = 0;	// the end of the path
+				_modularPath[p].num = 0;    // the end of the path
 				// okay those last steps took us past our target but do we want to scoot or moonwalk
 				frames = stepCount - lastCount;
-				errorX = _modularPath[p].x - walkAnim[stepCount-1].x;
-				errorY = _modularPath[p].y - walkAnim[stepCount-1].y;
+				errorX = _modularPath[p].x - walkAnim[stepCount - 1].x;
+				errorY = _modularPath[p].y - walkAnim[stepCount - 1].y;
 
 				if (frames > _framesPerStep) {
-					lastErrorX = _modularPath[p].x - walkAnim[stepCount-7].x;
-					lastErrorY = _modularPath[p].y - walkAnim[stepCount-7].y;
-					if (stepX==0) {
-						if (3*ABS(lastErrorY) < ABS(errorY)) { //the last stop was closest
+					lastErrorX = _modularPath[p].x - walkAnim[stepCount - 7].x;
+					lastErrorY = _modularPath[p].y - walkAnim[stepCount - 7].y;
+					if (stepX == 0) {
+						if (3 * ABS(lastErrorY) < ABS(errorY)) { //the last stop was closest
 							stepCount -= _framesPerStep;
 							_slidyWalkAnimatorState = !_slidyWalkAnimatorState;
 						}
 					} else {
-						if (3*ABS(lastErrorX) < ABS(errorX)) { //the last stop was closest
+						if (3 * ABS(lastErrorX) < ABS(errorX)) { //the last stop was closest
 							stepCount -= _framesPerStep;
 							_slidyWalkAnimatorState = !_slidyWalkAnimatorState;
 						}
 					}
 				}
-				errorX = _modularPath[p].x - walkAnim[stepCount-1].x;
-				errorY = _modularPath[p].y - walkAnim[stepCount-1].y;
+				errorX = _modularPath[p].x - walkAnim[stepCount - 1].x;
+				errorY = _modularPath[p].y - walkAnim[stepCount - 1].y;
 				// okay we've reached the end but we still have an error
 				if (errorX != 0) {
 					frameCount = 0;
 					frames = stepCount - lastCount;
 					do {
 						frameCount += 1;
-						walkAnim[lastCount + frameCount - 1].x +=	errorX*frameCount/frames;
-					} while (frameCount<frames);
+						walkAnim[lastCount + frameCount - 1].x += errorX * frameCount / frames;
+					} while (frameCount < frames);
 				}
 				if (errorY != 0) {
 					frameCount = 0;
 					frames = stepCount - lastCount;
 					do {
 						frameCount += 1;
-						walkAnim[lastCount + frameCount-1].y +=	errorY*frameCount/frames;
-					} while (frameCount<frames);
+						walkAnim[lastCount + frameCount - 1].y += errorY * frameCount / frames;
+					} while (frameCount < frames);
 				}
 				// Now is the time to put in the turn frames for the last turn
 				if (frames < _framesPerStep)
@@ -858,8 +858,8 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 				// all turns checked
 
 				lastCount = stepCount;
-				moduleX = walkAnim[stepCount-1].x;
-				moduleY =	walkAnim[stepCount-1].y;
+				moduleX = walkAnim[stepCount - 1].x;
+				moduleY = walkAnim[stepCount - 1].y;
 				module16X = moduleX << 16;
 				module16Y = moduleY << 16;
 			}
@@ -879,9 +879,9 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	// We've done the walk now put in any turns at the end
 
 
-	if (_targetDir == NO_DIRECTIONS) {	// stand in the last direction
-		module =	standFrames + lastRealDir;
-		_targetDir =	lastRealDir;
+	if (_targetDir == NO_DIRECTIONS) {  // stand in the last direction
+		module = standFrames + lastRealDir;
+		_targetDir = lastRealDir;
 		walkAnim[stepCount].frame = module;
 		walkAnim[stepCount].step = 0;
 		walkAnim[stepCount].dir = lastRealDir;
@@ -891,7 +891,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	}
 	if (_targetDir == 9) {
 		if (stepCount == 0) {
-			module =	_framesPerChar + lastRealDir;
+			module = _framesPerChar + lastRealDir;
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
 			walkAnim[stepCount].dir = lastRealDir;
@@ -913,10 +913,10 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// rotate to target direction
 		// for george and nico put in a head turn at the start
 		if ((megaId == GEORGE) || (megaId == NICO)) {
-			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
-				module =	turnFramesLeft + lastDir;
+			if (turnDir < 0) {  // new frames for turn frames   29oct95jps
+				module = turnFramesLeft + lastDir;
 			} else {
-				module =	turnFramesRight + lastDir;
+				module = turnFramesRight + lastDir;
 			}
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -929,14 +929,14 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// rotate if we need to
 		while (lastRealDir != _targetDir) {
 			lastRealDir += turnDir;
-			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
+			if (turnDir < 0) {  // new frames for turn frames   29oct95jps
 				if (lastRealDir < 0)
-						lastRealDir += NO_DIRECTIONS;
-				module =	turnFramesLeft + lastRealDir;
+					lastRealDir += NO_DIRECTIONS;
+				module = turnFramesLeft + lastRealDir;
 			} else {
 				if (lastRealDir > 7)
-						lastRealDir -= NO_DIRECTIONS;
-				module =	turnFramesRight + lastRealDir;
+					lastRealDir -= NO_DIRECTIONS;
+				module = turnFramesRight + lastRealDir;
 			}
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -945,10 +945,10 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 			walkAnim[stepCount].y = moduleY;
 			stepCount += 1;
 		}
-		module =	standFrames + lastRealDir;
-		walkAnim[stepCount-1].frame = module;
+		module = standFrames + lastRealDir;
+		walkAnim[stepCount - 1].frame = module;
 	} else { // just stand at the end
-		module =	standFrames + lastRealDir;
+		module = standFrames + lastRealDir;
 		walkAnim[stepCount].frame = module;
 		walkAnim[stepCount].step = 0;
 		walkAnim[stepCount].dir = lastRealDir;
@@ -962,7 +962,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	walkAnim[stepCount].frame = 512;
 	stepCount += 1;
 	walkAnim[stepCount].frame = 512;
-//	Tdebug("RouteFinder RouteSize is %d", stepCount);
+	//Tdebug("RouteFinder RouteSize is %d", stepCount);
 	return;
 }
 
@@ -1071,7 +1071,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	// start at the begining for a change
 	lastDir = _modularPath[0].dir;
 	currentDir = _modularPath[1].dir;
-	module =	_framesPerChar + lastDir;
+	module =    _framesPerChar + lastDir;
 	moduleX = _startX;
 	moduleY = _startY;
 	module16X = moduleX << 16;
@@ -1100,7 +1100,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 		// get the direction to turn
 		turnDir = currentDir - lastDir;
 		if (turnDir < 0)
-				turnDir += NO_DIRECTIONS;
+			turnDir += NO_DIRECTIONS;
 
 		if (turnDir > 4)
 			turnDir = -1;
@@ -1110,10 +1110,10 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 		// rotate to new walk direction
 		// for george and nico put in a head turn at the start
 		if ((megaId == GEORGE) || (megaId == NICO)) {
-			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
-				module =	turnFramesLeft + lastDir;
+			if (turnDir < 0) {  // new frames for turn frames   29oct95jps
+				module = turnFramesLeft + lastDir;
 			} else {
-				module =	turnFramesRight + lastDir;
+				module = turnFramesRight + lastDir;
 			}
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -1126,14 +1126,14 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 		// rotate till were facing new dir then go back 45 degrees
 		while (lastDir != currentDir) {
 			lastDir += turnDir;
-			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
+			if (turnDir < 0) {  // new frames for turn frames   29oct95jps
 				if (lastDir < 0)
 					lastDir += NO_DIRECTIONS;
-				module =	turnFramesLeft + lastDir;
+				module = turnFramesLeft + lastDir;
 			} else {
 				if (lastDir > 7)
 					lastDir -= NO_DIRECTIONS;
-				module =	turnFramesRight + lastDir;
+				module = turnFramesRight + lastDir;
 			}
 			walkAnim[stepCount].frame = module;
 			walkAnim[stepCount].step = 0;
@@ -1213,19 +1213,19 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 
 	int32 p;
 
-	 for (p = 1; _modularPath[p].dir < NO_DIRECTIONS; ++p) {
+	for (p = 1; _modularPath[p].dir < NO_DIRECTIONS; ++p) {
 		while (_modularPath[p].num > 0) {
 			currentDir = _modularPath[p].dir;
 			if (currentDir < NO_DIRECTIONS) {
 
-				module =	currentDir * _framesPerStep * 2 + left * _framesPerStep;
+				module = currentDir * _framesPerStep * 2 + left * _framesPerStep;
 				left = !left;
 				moduleEnd = module + _framesPerStep;
 				step = 0;
 				scale = (_scaleA * moduleY + _scaleB);
 				do {
-					module16X += _dx[module]*scale;
-					module16Y += _dy[module]*scale;
+					module16X += _dx[module] * scale;
+					module16Y += _dy[module] * scale;
 					moduleX = module16X >> 16;
 					moduleY = module16Y >> 16;
 					walkAnim[stepCount].frame = module;
@@ -1236,22 +1236,22 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 					stepCount += 1;
 					module += 1;
 					step += 1;
-				} while ( module < moduleEnd);
-				errorX = _modularPath[p].x -	moduleX;
+				} while (module < moduleEnd);
+				errorX = _modularPath[p].x - moduleX;
 				errorX = errorX * _modX[_modularPath[p].dir];
-				errorY = _modularPath[p].y -	moduleY;
+				errorY = _modularPath[p].y - moduleY;
 				errorY = errorY * _modY[_modularPath[p].dir];
 				if ((errorX < 0) || (errorY < 0)) {
 					_modularPath[p].num = 0;
 					stepCount -= _framesPerStep;
 					left = !left;
 					// Okay this is the end of a section
-					moduleX = walkAnim[stepCount-1].x;
-					moduleY =	walkAnim[stepCount-1].y;
+					moduleX = walkAnim[stepCount - 1].x;
+					moduleY = walkAnim[stepCount - 1].y;
 					module16X = moduleX << 16;
 					module16Y = moduleY << 16;
-					_modularPath[p].x =moduleX;
-					_modularPath[p].y =moduleY;
+					_modularPath[p].x = moduleX;
+					_modularPath[p].y = moduleY;
 					// Now is the time to put in the turn frames for the last turn
 					if ((stepCount - lastCount) < _framesPerStep) { // no step taken
 						currentDir = 99;// this ensures that we don't put in turn frames for this walk or the next
@@ -1350,10 +1350,10 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 			stepCount += 1;
 		}
 	}
-	module =	_framesPerChar + _modularPath[p-1].dir;
+	module = _framesPerChar + _modularPath[p - 1].dir;
 	walkAnim[stepCount].frame = module;
 	walkAnim[stepCount].step = 0;
-	walkAnim[stepCount].dir = _modularPath[p-1].dir;
+	walkAnim[stepCount].dir = _modularPath[p - 1].dir;
 	walkAnim[stepCount].x = moduleX;
 	walkAnim[stepCount].y = moduleY;
 	stepCount += 1;
@@ -1395,7 +1395,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 
 bool Router::scan(int32 level) {
 	/*********************************************************************
-	 * Called successively from routeFinder	until no more changes take
+	 * Called successively from routeFinder until no more changes take
 	 * place in the grid array, ie he best path has been found
 	 *
 	 * Scans through every point in the node array and checks if there is
@@ -1447,7 +1447,7 @@ bool Router::scan(int32 level) {
 }
 
 
-int32 Router::newCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2) {
+int32 Router::newCheck(int32 status, int32 x1, int32 y1, int32 x2, int32 y2) {
 	/*********************************************************************
 	 * newCheck routine checks if the route between two points can be
 	 * achieved without crossing any of the bars in the Bars array.
@@ -1531,7 +1531,7 @@ int32 Router::newCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2) {
 				step2 = check(x1 + ldx / 2, y1, x1 + ldx / 2 + dlx, y2);
 				if (step2 != 0) {
 					step3 = check(x1 + ldx / 2 + dlx, y2, x2, y2);
-					if (step3 != 0)	{
+					if (step3 != 0) {
 						steps = step1 + step2 + step3;
 						options |= 1;
 					}
@@ -1565,8 +1565,8 @@ int32 Router::newCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2) {
 		ldx = 0;
 
 		// options are square, diagonal a code 1 route
-		step1 = check(x1 ,y1, x1, y1 + ldy);
-		if (step1 != 0)	{
+		step1 = check(x1 , y1, x1, y1 + ldy);
+		if (step1 != 0) {
 			step2 = check(x1, y1 + ldy, x2, y2);
 			if (step2 != 0) {
 				steps = step1 + step2;
@@ -1608,7 +1608,7 @@ int32 Router::newCheck(int32 status, int32 x1 , int32 y1 , int32 x2 ,int32 y2) {
 				step2 = check(x1 + dlx / 2, y1 + dly / 2, x1 + dlx / 2, y1 + ldy + dly / 2);
 				if (step2 != 0) {
 					step3 = check(x1 + dlx / 2, y1 + ldy + dly / 2, x2, y2);
-					if (step3 != 0)	{
+					if (step3 != 0) {
 						steps = step1 + step2 + step3;
 						options |= 8;
 					}
@@ -1659,7 +1659,7 @@ bool Router::lineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 	int32 dirx = x2 - x1;
 	int32 diry = y2 - y1;
 
-	int32 co = (y1 * dirx) - (x1 * diry);		// new line equation
+	int32 co = (y1 * dirx) - (x1 * diry);       // new line equation
 
 	for (int i = 0; i < _nBars && linesCrossed; i++) {
 		// skip if not on module
@@ -1668,7 +1668,7 @@ bool Router::lineCheck(int32 x1, int32 y1, int32 x2, int32 y2) {
 			// but all this arithmetic we must have loads of time
 
 			// slope it he slope between the two lines
-			int32 slope = (_bars[i].dx * diry) - (_bars[i].dy *dirx);
+			int32 slope = (_bars[i].dx * diry) - (_bars[i].dy * dirx);
 			// assuming parallel lines don't cross
 			if (slope != 0) {
 				// calculate x intercept and check its on both
@@ -1818,50 +1818,50 @@ int32 Router::checkTarget(int32 x, int32 y) {
 // ****************************************************************************
 
 int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir) {
-	WalkGridHeader	floorHeader;
-	int32	i;
-	uint8  *fPolygrid;
-	uint8  *fMegaWalkData;
+	WalkGridHeader floorHeader;
+	int32 i;
+	uint8 *fPolygrid;
+	uint8 *fMegaWalkData;
 
-	int32	floorId;
-	int32		walkGridResourceId;
+	int32 floorId;
+	int32 walkGridResourceId;
 	Object *floorObject;
 
-	int32  cnt;
+	int32 cnt;
 	uint32 cntu;
 
 	// load in floor grid for current mega
 
 	floorId = megaObject->o_place;
 
-	//floorObject = (object *) Lock_object(floorId);
+	//floorObject = (object *)Lock_object(floorId);
 	floorObject = _objMan->fetchObject(floorId);
 	walkGridResourceId = floorObject->o_resource;
 	//Unlock_object(floorId);
 
-	//ResOpen(walkGridResourceId);			// mouse wiggle
-	//fPolygrid = ResLock(walkGridResourceId);			// mouse wiggle
-	fPolygrid = (uint8*)_resMan->openFetchRes(walkGridResourceId);
+	//ResOpen(walkGridResourceId);          // mouse wiggle
+	//fPolygrid = ResLock(walkGridResourceId);          // mouse wiggle
+	fPolygrid = (uint8 *)_resMan->openFetchRes(walkGridResourceId);
 
 
 	fPolygrid += sizeof(Header);
-	memcpy(&floorHeader,fPolygrid,sizeof(WalkGridHeader));
+	memcpy(&floorHeader, fPolygrid, sizeof(WalkGridHeader));
 	fPolygrid += sizeof(WalkGridHeader);
 	_nBars = _resMan->getUint32(floorHeader.numBars);
 
 	if (_nBars >= O_GRID_SIZE) {
-		#ifdef DEBUG												//check for id > number in file,
+#ifdef DEBUG //check for id > number in file,
 		error("RouteFinder Error too many _bars %d", _nBars);
-		#endif
+#endif
 		_nBars = 0;
 	}
 
-	_nNodes = _resMan->getUint32(floorHeader.numNodes)+1;	//array starts at 0	begins at a start _node has nnodes nodes and a target _node
+	_nNodes = _resMan->getUint32(floorHeader.numNodes) + 1; //array starts at 0 begins at a start _node has nnodes nodes and a target _node
 
 	if (_nNodes >= O_GRID_SIZE) {
-		#ifdef DEBUG												//check for id > number in file,
-			error("RouteFinder Error too many nodes %d", _nNodes);
-		#endif
+#ifdef DEBUG //check for id > number in file,
+		error("RouteFinder Error too many nodes %d", _nNodes);
+#endif
 		_nNodes = 0;
 	}
 
@@ -1883,37 +1883,37 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 
 	/*j = 1;// leave _node 0 for start _node
 	do {
-		memmove(&_node[j].x,fPolygrid,2*sizeof(int16));
-		fPolygrid += 2*sizeof(int16);
-		j ++;
+	    memmove(&_node[j].x,fPolygrid,2*sizeof(int16));
+	    fPolygrid += 2*sizeof(int16);
+	    j ++;
 	} while (j < _nNodes);//array starts at 0*/
 	for (cnt = 1; cnt < _nNodes; cnt++) {
 		_node[cnt].x = _resMan->readUint16(fPolygrid); fPolygrid += 2;
 		_node[cnt].y = _resMan->readUint16(fPolygrid); fPolygrid += 2;
 	}
 
-	//ResUnlock(walkGridResourceId);			// mouse wiggle
-	//ResClose(walkGridResourceId);			// mouse wiggle
+	//ResUnlock(walkGridResourceId);            // mouse wiggle
+	//ResClose(walkGridResourceId);         // mouse wiggle
 	_resMan->resClose(walkGridResourceId);
 
 
 	// floor grid loaded
 
-// copy the mega structure into the local variables for use in all subroutines
+	// copy the mega structure into the local variables for use in all subroutines
 
 	_startX = megaObject->o_xcoord;
 	_startY = megaObject->o_ycoord;
 	_startDir = megaObject->o_dir;
 	_targetX = x;
-	_targetY= y;
+	_targetY = y;
 	_targetDir = dir;
 
 	_scaleA = megaObject->o_scale_a;
 	_scaleB = megaObject->o_scale_b;
 
-	//ResOpen(megaObject->o_mega_resource);			// mouse wiggle
-	//fMegaWalkData = ResLock(megaObject->o_mega_resource);			// mouse wiggle
-	fMegaWalkData = (uint8*)_resMan->openFetchRes(megaObject->o_mega_resource);
+	//ResOpen(megaObject->o_mega_resource);         // mouse wiggle
+	//fMegaWalkData = ResLock(megaObject->o_mega_resource);         // mouse wiggle
+	fMegaWalkData = (uint8 *)_resMan->openFetchRes(megaObject->o_mega_resource);
 	// Apparently this resource is in little endian in both the Mac and the PC version
 
 	_nWalkFrames = fMegaWalkData[0];
@@ -1945,28 +1945,28 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 	memmove(&_modY[0],fMegaWalkData,NO_DIRECTIONS*sizeof(int32));
 	fMegaWalkData += NO_DIRECTIONS*sizeof(int32);*/
 
-	//ResUnlock(megaObject->o_mega_resource);			// mouse wiggle
-	//ResClose(megaObject->o_mega_resource);			// mouse wiggle
+	//ResUnlock(megaObject->o_mega_resource);           // mouse wiggle
+	//ResClose(megaObject->o_mega_resource);            // mouse wiggle
 	_resMan->resClose(megaObject->o_mega_resource);
 
 	_diagonalx =  _modX[3]; //36
 	_diagonaly =  _modY[3]; //8
 
-// mega data ready
+	// mega data ready
 
-// finish setting grid by putting mega _node at begining
-// and target _node at end	and reset current values
+	// finish setting grid by putting mega _node at begining
+	// and target _node at end  and reset current values
 	_node[0].x = _startX;
 	_node[0].y = _startY;
 	_node[0].level = 1;
 	_node[0].prev = 0;
 	_node[0].dist = 0;
-	i=1;
+	i = 1;
 	do {
 		_node[i].level = 0;
 		_node[i].prev = 0;
 		_node[i].dist = 9999;
-		i=i+1;
+		i = i + 1;
 	} while (i < _nNodes);
 	_node[_nNodes].x = _targetX;
 	_node[_nNodes].y = _targetY;
@@ -2088,12 +2088,12 @@ void Router::extractRoute() {
 #define DIAGONALY 8
 int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY) {
 	int tar_dir;
-//setting up
-	int deltaX = destX-startX;
-	int deltaY = destY-startY;
+	//setting up
+	int deltaX = destX - startX;
+	int deltaY = destY - startY;
 	int signX = (deltaX > 0);
 	int signY = (deltaY > 0);
-	int	slope;
+	int slope;
 
 	if ((ABS(deltaY) * DIAGONALX) < (ABS(deltaX) * DIAGONALY / 2))
 		slope = 0;// its flat
@@ -2103,22 +2103,22 @@ int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY) {
 		slope = 1;// its diagonal
 
 	if (slope == 0) { //flat
-		if (signX == 1)	// going right
+		if (signX == 1) // going right
 			tar_dir = 2;
 		else
 			tar_dir = 6;
 	} else if (slope == 2) { //vertical
-		if (signY == 1)	// going down
+		if (signY == 1) // going down
 			tar_dir = 4;
 		else
 			tar_dir = 0;
 	} else if (signX == 1) { //right diagonal
-		if (signY == 1)	// going down
+		if (signY == 1) // going down
 			tar_dir = 3;
 		else
 			tar_dir = 1;
 	} else { //left diagonal
-		if (signY == 1)	// going down
+		if (signY == 1) // going down
 			tar_dir = 5;
 		else
 			tar_dir = 7;

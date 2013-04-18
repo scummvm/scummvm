@@ -84,6 +84,8 @@ extern void syncPolyInfo(Common::Serializer &s);
 
 extern int sceneCtr;
 
+extern bool ASceneIsSaved;
+
 //----------------- LOCAL DEFINES --------------------
 
 struct SaveGameHeader {
@@ -154,8 +156,15 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 	syncTime(s, hdr.dateTime);
 
 	int tmp = hdr.size - s.bytesSynced();
+
+	// NOTE: We can't use SAVEGAME_ID here when attempting to remove a saved game from the launcher,
+	// as there is no TinselEngine initialized then. This means that we can't check if this is a DW1
+	// or DW2 savegame in this case, but it doesn't really matter, as the saved game is about to be
+	// deleted anyway. Refer to bug #3387551.
+	bool correctID = _vm ? (hdr.id == SAVEGAME_ID) : (hdr.id == DW1_SAVEGAME_ID || hdr.id == DW2_SAVEGAME_ID);
+
 	// Perform sanity check
-	if (tmp < 0 || hdr.id != SAVEGAME_ID || hdr.ver > CURRENT_VER || hdr.size > 1024)
+	if (tmp < 0 || !correctID || hdr.ver > CURRENT_VER || hdr.size > 1024)
 		return false;
 	// Skip over any extra bytes
 	s.skip(tmp);
@@ -431,6 +440,11 @@ static void DoSync(Common::Serializer &s) {
 		SAVED_DATA *sdPtr = SaveSceneSsData;
 		for (int i = 0; i < *SaveSceneSsCount; ++i, ++sdPtr)
 			syncSavedData(s, *sdPtr);
+
+		// Flag that there is a saved scene to return to. Note that in this context 'saved scene'
+		// is a stored scene to return to from another scene, such as from the Summoning Book close-up
+		// in Discworld 1 to whatever scene Rincewind was in prior to that
+		ASceneIsSaved = true;
 	}
 
 	if (!TinselV2)

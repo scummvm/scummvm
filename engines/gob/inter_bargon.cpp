@@ -120,7 +120,7 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 	SurfacePtr surface;
 	SoundDesc samples[4];
 	int16 comp[5] = { 0, 1, 2, 3, -1 };
-	static const char *sndFiles[] = {"1INTROII.snd", "2INTROII.snd", "1INTRO3.snd", "2INTRO3.snd"};
+	static const char *const sndFiles[] = {"1INTROII.snd", "2INTROII.snd", "1INTRO3.snd", "2INTRO3.snd"};
 
 	surface = _vm->_video->initSurfDesc(320, 200);
 	_vm->_video->drawPackedSprite("2ille.ims", *surface);
@@ -169,8 +169,8 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 	SoundDesc samples[2];
 	int16 comp[3] = { 0, 1, -1 };
 	byte *palettes[4];
-	static const char *sndFiles[] = {"1INTROIV.snd", "2INTROIV.snd"};
-	static const char *palFiles[] = {"2ou2.clt", "2ou3.clt", "2ou4.clt", "2ou5.clt"};
+	static const char *const sndFiles[] = {"1INTROIV.snd", "2INTROIV.snd"};
+	static const char *const palFiles[] = {"2ou2.clt", "2ou3.clt", "2ou4.clt", "2ou5.clt"};
 
 	int32 size;
 

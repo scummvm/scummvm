@@ -440,7 +440,6 @@ void buildSegment() {
 
 		// is segment on screen ?
 		if (!((tempAX > 199) || (tempDX < 0))) {
-			int dx = Y1;
 			int cx = X2 - X1;
 			if (cx == 0) {
 				// vertical line
@@ -473,7 +472,6 @@ void buildSegment() {
 			} else {
 				if (cx < 0) {
 					cx = -cx;
-					dx = Y2;
 
 					SWAP(X1, X2);
 					SWAP(Y1, Y2);
@@ -1490,9 +1488,6 @@ void mainDraw(int16 param) {
 								if (currentObjPtr->animLoop > 0)
 									currentObjPtr->animLoop--;
 							} else {
-								int16 data2;
-								data2 = currentObjPtr->animStart;
-
 								change = false;
 								currentObjPtr->animStep = 0;
 
@@ -1512,9 +1507,6 @@ void mainDraw(int16 param) {
 								if (currentObjPtr->animLoop > 0)
 									currentObjPtr->animLoop--;
 							} else {
-								int16 data2;
-								data2 = currentObjPtr->animStart;
-
 								change = false;
 								currentObjPtr->animStep = 0;
 

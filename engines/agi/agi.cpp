@@ -362,9 +362,15 @@ int AgiEngine::agiInit() {
 
 	initPriTable();
 
-	// clear string buffer
-	for (i = 0; i < MAX_STRINGS; i++)
-		_game.strings[i][0] = 0;
+	// Clear the string buffer on startup, but not when the game restarts, as
+	// some scripts expect that the game strings remain unaffected after a
+	// restart. An example is script 98 in SQ2, which is not invoked on restart
+	// to ask Ego's name again. The name is supposed to be maintained in string 1.
+	// Fixes bug #3292784.
+	if (!_restartGame) {
+		for (i = 0; i < MAX_STRINGS; i++)
+			_game.strings[i][0] = 0;
+	}
 
 	// setup emulation
 
@@ -504,6 +510,7 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 	_noSaveLoadAllowed = false;
 
 	_rnd = new Common::RandomSource("agi");
+	_sound = 0;
 
 	initFeatures();
 	initVersion();
@@ -511,6 +518,26 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 
 AgiBase::~AgiBase() {
 	delete _rnd;
+
+	if (_sound) {
+		_sound->deinitSound();
+		delete _sound;
+	}
+}
+
+void AgiBase::initRenderMode() {
+	_renderMode = Common::kRenderEGA;
+
+	if (ConfMan.hasKey("platform")) {
+		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform"));
+		_renderMode = (platform == Common::kPlatformAmiga) ? Common::kRenderAmiga : Common::kRenderEGA;
+	}
+
+	if (ConfMan.hasKey("render_mode")) {
+		Common::RenderMode tmpMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
+		if (tmpMode != Common::kRenderDefault)
+			_renderMode = tmpMode;
+	}
 }
 
 AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBase(syst, gameDesc) {
@@ -535,6 +562,8 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	memset(&_game, 0, sizeof(struct AgiGame));
 	memset(&_debug, 0, sizeof(struct AgiDebug));
 	memset(&_mouse, 0, sizeof(struct Mouse));
+
+	_game._vm = this;
 
 	_game.clockEnabled = false;
 	_game.state = STATE_INIT;
@@ -564,14 +593,10 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_predictiveDictLineCount = 0;
 	_firstSlot = 0;
 
-	// NOTE: On game reload the keys do not get set again,
-	// thus it is incorrect to reset it in agiInit(). Fixes bug #2823762
-	_game.lastController = 0;
-	for (int i = 0; i < MAX_DIRS; i++)
-		_game.controllerOccured[i] = false;
+	resetControllers();
 
 	setupOpcodes();
-	_curLogic = NULL;
+	_game._curLogic = NULL;
 	_timerHack = 0;
 }
 
@@ -610,23 +635,7 @@ void AgiEngine::initialize() {
 		}
 	}
 
-	if (ConfMan.hasKey("render_mode")) {
-		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode").c_str());
-	} else if (ConfMan.hasKey("platform")) {
-		switch (Common::parsePlatform(ConfMan.get("platform"))) {
-		case Common::kPlatformAmiga:
-			_renderMode = Common::kRenderAmiga;
-			break;
-		case Common::kPlatformPC:
-			_renderMode = Common::kRenderEGA;
-			break;
-		default:
-			_renderMode = Common::kRenderEGA;
-			break;
-		}
-	} else {
-		_renderMode = Common::kRenderDefault;
-	}
+	initRenderMode();
 
 	_buttonStyle = AgiButtonStyle(_renderMode);
 	_defaultButtonStyle = AgiButtonStyle();
@@ -680,8 +689,6 @@ AgiEngine::~AgiEngine() {
 
 	agiDeinit();
 	delete _loader;
-	_sound->deinitSound();
-	delete _sound;
 	_gfx->deinitVideo();
 	delete _sprites;
 	delete _picture;

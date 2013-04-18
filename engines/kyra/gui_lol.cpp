@@ -395,8 +395,8 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	} else {
 		gui_drawLiveMagicBar(33, 32, _characters[charNum].magicPointsCur, 0, _characters[charNum].magicPointsMax, 5, 32, 162, 1, 0);
 		gui_drawLiveMagicBar(39, 32, _characters[charNum].hitPointsCur, 0, _characters[charNum].hitPointsMax, 5, 32, 154, 1, 1);
-		_screen->printText(getLangString(0x4253), 33, 1, 160, 0);
-		_screen->printText(getLangString(0x4254), 39, 1, 152, 0);
+		_screen->printText((_flags.platform == Common::kPlatformPC && !_flags.isTalkie) ? "M" : getLangString(0x4253), 33, 1, 160, 0);
+		_screen->printText((_flags.platform == Common::kPlatformPC && !_flags.isTalkie) ? "H" : getLangString(0x4254), 39, 1, 152, 0);
 	}
 
 	int spellLevels = 0;
@@ -2572,9 +2572,19 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 		slotOffs = 1;
 	}
 
+	int saveSlotMaxLen = ((_screen->getScreenDim(8))->w << 3)  - _screen->getCharWidth('W');	
+			
 	for (int i = startSlot; i < num && _savegameOffset + i - slotOffs < _savegameListSize; ++i) {
 		if (_savegameList[_saveSlots[i + _savegameOffset - slotOffs]]) {
 			Common::strlcpy(s, _savegameList[_saveSlots[i + _savegameOffset - slotOffs]], 80);
+
+			// Trim long GMM save descriptions to fit our save slots
+			int fC = _screen->getTextWidth(s);
+			while (s[0] && fC >= saveSlotMaxLen) {
+				s[strlen(s) - 1]  = 0;
+				fC = _screen->getTextWidth(s);
+			}
+
 			menu.item[i].itemString = s;
 			s += (strlen(s) + 1);
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset - slotOffs];
@@ -2997,4 +3007,3 @@ const char *GUI_LoL::getMenuItemLabel(const MenuItem &menuItem) {
 } // End of namespace Kyra
 
 #endif // ENABLE_LOL
-

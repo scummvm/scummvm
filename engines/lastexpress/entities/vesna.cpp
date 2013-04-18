@@ -22,15 +22,17 @@
 
 #include "lastexpress/entities/vesna.h"
 
+#include "lastexpress/fight/fight.h"
+
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
-#include "lastexpress/game/fight.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -1082,7 +1084,7 @@ IMPLEMENT_FUNCTION(30, Vesna, function30)
 	case kActionNone:
 		if (!params->param1) {
 			UPDATE_PARAM_PROC(params->param3, getState()->timeTicks, 120)
-				getSound()->playSound(kEntityVesna, "Ves50001", SoundManager::kFlagDefault);
+				getSound()->playSound(kEntityVesna, "Ves50001", kFlagDefault);
 				params->param1 = 1;
 			UPDATE_PARAM_PROC_END
 		}
@@ -1145,7 +1147,7 @@ IMPLEMENT_FUNCTION(30, Vesna, function30)
 			setCallback(2);
 			setup_savegame(kSavegameTypeEvent, kEventCathVesnaTrainTopKilled);
 		} else {
-			getSound()->playSound(kEntityVesna, "Ves5001", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityVesna, "Ves5001", kFlagDefault);
 			params->param1 = 1;
 		}
 		break;

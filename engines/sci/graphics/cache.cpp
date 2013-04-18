@@ -102,4 +102,8 @@ int16 GfxCache::kernelViewGetCelCount(GuiResourceId viewId, int16 loopNo) {
 	return getView(viewId)->getCelCount(loopNo);
 }
 
+byte GfxCache::kernelViewGetColorAtCoordinate(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 x, int16 y) {
+	return getView(viewId)->getColorAtCoordinate(loopNo, celNo, x, y);
+}
+
 } // End of namespace Sci

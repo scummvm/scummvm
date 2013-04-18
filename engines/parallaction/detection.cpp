@@ -53,9 +53,6 @@ static const PlainGameDescriptor parallactionGames[] = {
 
 namespace Parallaction {
 
-using Common::GUIO_NONE;
-using Common::GUIO_NOSPEECH;
-
 static const PARALLACTIONGameDescription gameDescriptions[] = {
 	{
 		{
@@ -75,7 +72,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_Nippon,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
@@ -99,7 +96,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_Nippon,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_MULT,
@@ -117,7 +114,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_Nippon,
 		GF_LANG_EN | GF_DEMO,
@@ -140,7 +137,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_Nippon,
 		GF_LANG_IT,
@@ -158,7 +155,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_BRA,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
@@ -175,7 +172,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_BRA,
 		GF_LANG_EN | GF_DEMO,
@@ -192,7 +189,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_BRA,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
@@ -209,7 +206,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_BRA,
 		GF_LANG_EN | GF_DEMO,
@@ -223,7 +220,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 class ParallactionMetaEngine : public AdvancedMetaEngine {
 public:
 	ParallactionMetaEngine() : AdvancedMetaEngine(Parallaction::gameDescriptions, sizeof(Parallaction::PARALLACTIONGameDescription), parallactionGames) {
-		_guioptions = Common::GUIO_NOLAUNCHLOAD;
+		_guioptions = GUIO1(GUIO_NOLAUNCHLOAD);
 	}
 
 	virtual const char *getName() const {

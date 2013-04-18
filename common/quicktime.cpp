@@ -8,18 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  *
  */
 
@@ -51,7 +48,7 @@ QuickTimeParser::QuickTimeParser() {
 	_fd = 0;
 	_scaleFactorX = 1;
 	_scaleFactorY = 1;
-	_resFork = new Common::MacResManager();
+	_resFork = new MacResManager();
 	_disposeFileHandle = DisposeAfterUse::YES;
 
 	initParseTable();
@@ -62,7 +59,7 @@ QuickTimeParser::~QuickTimeParser() {
 	delete _resFork;
 }
 
-bool QuickTimeParser::parseFile(const Common::String &filename) {
+bool QuickTimeParser::parseFile(const String &filename) {
 	if (!_resFork->open(filename) || !_resFork->hasDataFork())
 		return false;
 
@@ -73,7 +70,7 @@ bool QuickTimeParser::parseFile(const Common::String &filename) {
 
 	if (_resFork->hasResFork()) {
 		// Search for a 'moov' resource
-		Common::MacResIDArray idArray = _resFork->getResIDArray(MKTAG('m', 'o', 'o', 'v'));
+		MacResIDArray idArray = _resFork->getResIDArray(MKTAG('m', 'o', 'o', 'v'));
 
 		if (!idArray.empty())
 			_fd = _resFork->getResource(MKTAG('m', 'o', 'o', 'v'), idArray[0]);
@@ -99,7 +96,7 @@ bool QuickTimeParser::parseFile(const Common::String &filename) {
 	return true;
 }
 
-bool QuickTimeParser::parseStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
+bool QuickTimeParser::parseStream(SeekableReadStream *stream, DisposeAfterUse::Flag disposeFileHandle) {
 	_fd = stream;
 	_foundMOOV = false;
 	_disposeFileHandle = disposeFileHandle;
@@ -277,7 +274,7 @@ int QuickTimeParser::readCMOV(Atom atom) {
 
 	// Uncompress the data
 	unsigned long dstLen = uncompressedSize;
-	if (!Common::uncompress(uncompressedData, &dstLen, compressedData, compressedSize)) {
+	if (!uncompress(uncompressedData, &dstLen, compressedData, compressedSize)) {
 		warning ("Could not uncompress cmov chunk");
 		free(compressedData);
 		free(uncompressedData);
@@ -285,8 +282,8 @@ int QuickTimeParser::readCMOV(Atom atom) {
 	}
 
 	// Load data into a new MemoryReadStream and assign _fd to be that
-	Common::SeekableReadStream *oldStream = _fd;
-	_fd = new Common::MemoryReadStream(uncompressedData, uncompressedSize, DisposeAfterUse::YES);
+	SeekableReadStream *oldStream = _fd;
+	_fd = new MemoryReadStream(uncompressedData, uncompressedSize, DisposeAfterUse::YES);
 
 	// Read the contents of the uncompressed data
 	Atom a = { MKTAG('m', 'o', 'o', 'v'), 0, uncompressedSize };
@@ -336,8 +333,8 @@ int QuickTimeParser::readMVHD(Atom atom) {
 	uint32 yMod = _fd->readUint32BE();
 	_fd->skip(16);
 
-	_scaleFactorX = Common::Rational(0x10000, xMod);
-	_scaleFactorY = Common::Rational(0x10000, yMod);
+	_scaleFactorX = Rational(0x10000, xMod);
+	_scaleFactorY = Rational(0x10000, yMod);
 
 	_scaleFactorX.debugPrint(1, "readMVHD(): scaleFactorX =");
 	_scaleFactorY.debugPrint(1, "readMVHD(): scaleFactorY =");
@@ -406,8 +403,8 @@ int QuickTimeParser::readTKHD(Atom atom) {
 	uint32 yMod = _fd->readUint32BE();
 	_fd->skip(16);
 
-	track->scaleFactorX = Common::Rational(0x10000, xMod);
-	track->scaleFactorY = Common::Rational(0x10000, yMod);
+	track->scaleFactorX = Rational(0x10000, xMod);
+	track->scaleFactorY = Rational(0x10000, yMod);
 
 	track->scaleFactorX.debugPrint(1, "readTKHD(): scaleFactorX =");
 	track->scaleFactorY.debugPrint(1, "readTKHD(): scaleFactorY =");
@@ -434,7 +431,7 @@ int QuickTimeParser::readELST(Atom atom) {
 	for (uint32 i = 0; i < track->editCount; i++){
 		track->editList[i].trackDuration = _fd->readUint32BE();
 		track->editList[i].mediaTime = _fd->readSint32BE();
-		track->editList[i].mediaRate = Common::Rational(_fd->readUint32BE(), 0x10000);
+		track->editList[i].mediaRate = Rational(_fd->readUint32BE(), 0x10000);
 		debugN(3, "\tDuration = %d, Media Time = %d, ", track->editList[i].trackDuration, track->editList[i].mediaTime);
 		track->editList[i].mediaRate.debugPrint(3, "Media Rate =");
 	}
@@ -698,7 +695,7 @@ enum {
 	kMP4DecSpecificDescTag = 5
 };
 
-static int readMP4DescLength(Common::SeekableReadStream *stream) {
+static int readMP4DescLength(SeekableReadStream *stream) {
 	int length = 0;
 	int count = 4;
 
@@ -713,7 +710,7 @@ static int readMP4DescLength(Common::SeekableReadStream *stream) {
 	return length;
 }
 
-static void readMP4Desc(Common::SeekableReadStream *stream, byte &tag, int &length) {
+static void readMP4Desc(SeekableReadStream *stream, byte &tag, int &length) {
 	tag = stream->readByte();
 	length = readMP4DescLength(stream);
 }

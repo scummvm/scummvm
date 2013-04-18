@@ -107,6 +107,9 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_cursorHotspotXVar = -1;
 	_cursorHotspotYVar = -1;
 
+	_cursorHotspotX = -1;
+	_cursorHotspotY = -1;
+
 	_cursorAnim = 0;
 	for (int i = 0; i < 40; i++) {
 		_cursorAnimLow[i] = 0;

@@ -25,7 +25,6 @@
 #include "common/str.h"
 
 namespace Common {
-class SeekableReadStream;
 template<class T> class Array;
 }
 
@@ -113,68 +112,6 @@ public:
 	 */
 	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines) const;
 };
-
-typedef uint16 bitmap_t; /* bitmap image unit size*/
-
-struct BBX {
-	int8 w;
-	int8 h;
-	int8 x;
-	int8 y;
-};
-
-/* builtin C-based proportional/fixed font structure */
-/* based on The Microwindows Project http://microwindows.org */
-struct FontDesc {
-	const char *	name;		/* font name*/
-	int		maxwidth;	/* max width in pixels*/
-	int		height;		/* height in pixels*/
-	int	fbbw, fbbh, fbbx, fbby;	/* max bounding box */
-	int		ascent;		/* ascent (baseline) height*/
-	int		firstchar;	/* first character in bitmap*/
-	int		size;		/* font size in glyphs*/
-	const bitmap_t*	bits;		/* 16-bit right-padded bitmap data*/
-	const unsigned long* offset;	/* offsets into bitmap data*/
-	const unsigned char* width;	/* character widths or NULL if fixed*/
-	const BBX* bbx;			/* character bounding box or NULL if fixed */
-	int		defaultchar;	/* default char (not glyph index)*/
-	long	bits_size;	/* # words of bitmap_t bits*/
-};
-
-struct NewFontData;
-
-class NewFont : public Font {
-protected:
-	FontDesc _desc;
-	NewFontData *_font;
-
-public:
-	NewFont(const FontDesc &desc, NewFontData *font = 0) : _desc(desc), _font(font) {}
-	~NewFont();
-
-	virtual int getFontHeight() const { return _desc.height; }
-	virtual int getMaxCharWidth() const { return _desc.maxwidth; }
-
-	virtual int getCharWidth(byte chr) const;
-	virtual void drawChar(Surface *dst, byte chr, int x, int y, uint32 color) const;
-
-	static NewFont *loadFont(Common::SeekableReadStream &stream);
-	static bool cacheFontData(const NewFont &font, const Common::String &filename);
-	static NewFont *loadFromCache(Common::SeekableReadStream &stream);
-};
-
-#define DEFINE_FONT(n) \
-		const NewFont *n = 0;	\
-		void create_##n() {	\
-			n = new NewFont(desc);	\
-		}
-
-#define FORWARD_DECLARE_FONT(n) \
-		extern const NewFont *n; \
-		extern void create_##n()
-
-#define INIT_FONT(n) \
-		create_##n()
 
 } // End of namespace Graphics
 

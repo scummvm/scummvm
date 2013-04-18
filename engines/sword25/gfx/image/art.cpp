@@ -151,6 +151,8 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 	n_segs_max = 16;
 	svp = (ArtSVP *)malloc(sizeof(ArtSVP) +
 	                          (n_segs_max - 1) * sizeof(ArtSVPSeg));
+	if (!svp)
+		error("[art_svp_from_vpath] Cannot allocate memory");
 
 	dir = 0;
 	n_points = 0;
@@ -167,9 +169,14 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 			if (points != NULL && n_points >= 2) {
 				if (n_segs == n_segs_max) {
 					n_segs_max <<= 1;
-					svp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
-					                            (n_segs_max - 1) *
-					                            sizeof(ArtSVPSeg));
+					ArtSVP *tmp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
+					                                    (n_segs_max - 1) *
+					                                    sizeof(ArtSVPSeg));
+
+					if (!tmp)
+						error("Cannot reallocate memory in art_svp_from_vpath()");
+
+					svp = tmp;
 				}
 				svp->segs[n_segs].n_points = n_points;
 				svp->segs[n_segs].dir = (dir > 0);
@@ -204,9 +211,14 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 				y = points[n_points - 1].y;
 				if (n_segs == n_segs_max) {
 					n_segs_max <<= 1;
-					svp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
-					                            (n_segs_max - 1) *
-					                            sizeof(ArtSVPSeg));
+					ArtSVP *tmp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
+					                                     (n_segs_max - 1) *
+					                                     sizeof(ArtSVPSeg));
+
+					if (!tmp)
+						error("Cannot reallocate memory in art_svp_from_vpath()");
+
+					svp = tmp;
 				}
 				svp->segs[n_segs].n_points = n_points;
 				svp->segs[n_segs].dir = (dir > 0);
@@ -246,9 +258,14 @@ ArtSVP *art_svp_from_vpath(ArtVpath *vpath) {
 		if (n_points >= 2) {
 			if (n_segs == n_segs_max) {
 				n_segs_max <<= 1;
-				svp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
-				                            (n_segs_max - 1) *
-				                            sizeof(ArtSVPSeg));
+				ArtSVP *tmp = (ArtSVP *)realloc(svp, sizeof(ArtSVP) +
+				                                     (n_segs_max - 1) *
+				                                      sizeof(ArtSVPSeg));
+
+				if (!tmp)
+					error("Cannot reallocate memory in art_svp_from_vpath()");
+
+				svp = tmp;
 			}
 			svp->segs[n_segs].n_points = n_points;
 			svp->segs[n_segs].dir = (dir > 0);
@@ -1026,6 +1043,8 @@ struct _ArtPriPoint {
 
 static ArtPriQ *art_pri_new(void) {
 	ArtPriQ *result = art_new(ArtPriQ, 1);
+	if (!result)
+		error("[art_pri_new] Cannot allocate memory");
 
 	result->n_items = 0;
 	result->n_items_max = 16;
@@ -1157,8 +1176,13 @@ static int art_svp_writer_rewind_add_segment(ArtSvpWriter *self, int wind_left,
 		                            (swr->n_segs_max - 1) *
 		                            sizeof(ArtSVPSeg));
 		swr->svp = svp;
-		swr->n_points_max = art_renew(swr->n_points_max, int,
-		                              swr->n_segs_max);
+		int *tmp = art_renew(swr->n_points_max, int,
+		                                        swr->n_segs_max);
+
+		if (!tmp)
+			error("Cannot reallocate memory in art_svp_writer_rewind_add_segment()");
+
+		swr->n_points_max = tmp;
 	}
 	seg = &svp->segs[seg_num];
 	seg->n_points = 1;
@@ -1169,6 +1193,9 @@ static int art_svp_writer_rewind_add_segment(ArtSvpWriter *self, int wind_left,
 	seg->bbox.x1 = x;
 	seg->bbox.y1 = y;
 	seg->points = art_new(ArtPoint, init_n_points_max);
+	if (!seg->points)
+		error("[art_svp_writer_rewind_add_segment] Cannot allocate memory");
+
 	seg->points[0].x = x;
 	seg->points[0].y = y;
 	return seg_num;
@@ -1213,6 +1240,8 @@ ArtSVP *art_svp_writer_rewind_reap(ArtSvpWriter *self) {
 
 ArtSvpWriter *art_svp_writer_rewind_new(ArtWindRule rule) {
 	ArtSvpWriterRewind *result = art_new(ArtSvpWriterRewind, 1);
+	if (!result)
+		error("[art_svp_writer_rewind_new] Cannot allocate memory");
 
 	result->super.add_segment = art_svp_writer_rewind_add_segment;
 	result->super.add_point = art_svp_writer_rewind_add_point;
@@ -1222,6 +1251,9 @@ ArtSvpWriter *art_svp_writer_rewind_new(ArtWindRule rule) {
 	result->n_segs_max = 16;
 	result->svp = (ArtSVP *)malloc(sizeof(ArtSVP) +
 	                                  (result->n_segs_max - 1) * sizeof(ArtSVPSeg));
+	if (!result->svp)
+		error("[art_svp_writer_rewind_new] Cannot allocate memory");
+
 	result->svp->n_segs = 0;
 	result->n_points_max = art_new(int, result->n_segs_max);
 
@@ -1392,6 +1424,9 @@ static void art_svp_intersect_push_pt(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 	seg->y1 = y;
 
 	pri_pt = art_new(ArtPriPoint, 1);
+	if (!pri_pt)
+		error("[art_svp_intersect_push_pt] Cannot allocate memory");
+
 	pri_pt->x = x;
 	pri_pt->y = y;
 	pri_pt->user_data = seg;
@@ -1855,6 +1890,8 @@ static void art_svp_intersect_horiz(ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 		return;
 
 	hs = art_new(ArtActiveSeg, 1);
+	if (!hs)
+		error("[art_svp_intersect_horiz] Cannot allocate memory");
 
 	hs->flags = ART_ACTIVE_FLAGS_DEL | (seg->flags & ART_ACTIVE_FLAGS_OUT);
 	if (seg->flags & ART_ACTIVE_FLAGS_OUT) {
@@ -1993,10 +2030,11 @@ static void art_svp_intersect_add_seg(ArtIntersectCtx *ctx, const ArtSVPSeg *in_
 	ArtActiveSeg *seg = art_new(ArtActiveSeg, 1);
 	ArtActiveSeg *test;
 	double x0, y0;
-	ArtActiveSeg *beg_range;
 	ArtActiveSeg *last = NULL;
 	ArtActiveSeg *left, *right;
 	ArtPriPoint *pri_pt = art_new(ArtPriPoint, 1);
+	if (!pri_pt)
+		error("[art_svp_intersect_add_seg] Cannot allocate memory");
 
 	seg->flags = 0;
 	seg->in_seg = in_seg;
@@ -2019,7 +2057,6 @@ static void art_svp_intersect_add_seg(ArtIntersectCtx *ctx, const ArtSVPSeg *in_
 
 	x0 = in_seg->points[0].x;
 	y0 = in_seg->points[0].y;
-	beg_range = NULL;
 	for (test = ctx->active_head; test != NULL; test = test->right) {
 		double d;
 		int test_bneg = test->flags & ART_ACTIVE_FLAGS_BNEG;
@@ -2166,6 +2203,9 @@ void art_svp_intersector(const ArtSVP *in, ArtSvpWriter *out) {
 		return;
 
 	ctx = art_new(ArtIntersectCtx, 1);
+	if (!ctx)
+		error("[art_svp_intersector] Cannot allocate memory");
+
 	ctx->in = in;
 	ctx->out = out;
 	pq = art_pri_new();
@@ -2178,6 +2218,9 @@ void art_svp_intersector(const ArtSVP *in, ArtSvpWriter *out) {
 
 	ctx->in_curs = 0;
 	first_point = art_new(ArtPriPoint, 1);
+	if (!first_point)
+		error("[art_svp_intersector] Cannot allocate memory");
+
 	first_point->x = in->segs[0].points[0].x;
 	first_point->y = in->segs[0].points[0].y;
 	first_point->user_data = NULL;
@@ -2319,6 +2362,8 @@ static void art_svp_render_delete_active(int *active_segs, int j, int n_active_s
 ArtSVPRenderAAIter *art_svp_render_aa_iter(const ArtSVP *svp,
                        int x0, int y0, int x1, int y1) {
 	ArtSVPRenderAAIter *iter = art_new(ArtSVPRenderAAIter, 1);
+	if (!iter)
+		error("[art_svp_render_aa_iter] Cannot allocate memory");
 
 	iter->svp = svp;
 	iter->y = y0;

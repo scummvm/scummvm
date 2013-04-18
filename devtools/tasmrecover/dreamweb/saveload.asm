@@ -1502,6 +1502,7 @@ Loadold	proc	near
 alreadyloadold:	mov	ax,mousebutton
 	and	ax,1
 	jz	noloadold
+	mov ax,0ffffh
 	call	doload
 	cmp	getback,4
 	jz	noloadold
@@ -1513,7 +1514,3 @@ alreadyloadold:	mov	ax,mousebutton
 noloadold:	ret
 
 	endp
-
-
-
-

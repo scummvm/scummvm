@@ -29,7 +29,6 @@
 #include "common/random.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
-#include "audio/mididrv.h"
 
 #include "saga/gfx.h"
 
@@ -137,16 +136,12 @@ enum GameFileTypes {
 };
 
 enum GameFeatures {
-	GF_WYRMKEEP          = 1 << 0,
-	GF_ITE_FLOPPY        = 1 << 1,
-	GF_SCENE_SUBSTITUTES = 1 << 2,
+	GF_ITE_FLOPPY        = 1 << 0,
 #if 0
-	GF_OLD_ITE_DOS       = 1 << 3, 	// Currently unused
+	GF_OLD_ITE_DOS       = 1 << 1, 	// Currently unused
 #endif
-	GF_MONO_MUSIC        = 1 << 4,
-	GF_EXTRA_ITE_CREDITS = 1 << 5,
-	GF_LE_VOICES         = 1 << 6,
-	GF_8BIT_UNSIGNED_PCM = 1 << 7
+	GF_EXTRA_ITE_CREDITS = 1 << 2,
+	GF_8BIT_UNSIGNED_PCM = 1 << 3
 };
 
 enum VerbTypeIds {
@@ -532,9 +527,9 @@ public:
 	int _readingSpeed;
 
 	bool _copyProtection;
-	bool _gf_wyrmkeep;
 	bool _musicWasPlaying;
 	bool _isIHNMDemo;
+	bool _hasITESceneSubstitutes;
 
 	SndRes *_sndRes;
 	Sound *_sound;

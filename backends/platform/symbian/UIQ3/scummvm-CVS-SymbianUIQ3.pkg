@@ -32,7 +32,7 @@
 :"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM UIQ3"},(0xA0000657),1,30,0
+#{"ScummVM UIQ3"},(0xA0000657),1,40,0
 
 ; ProductID for UIQ 3.0
 ; Product/platform version UID, Major, Minor, Build, Product ID
@@ -44,6 +44,7 @@
 "\epoc32\Data\Z\resource\apps\scummvm_loc.rsc"-	"!:\resource\apps\scummvm_loc.rsc"
 "\epoc32\data\Z\resource\APPS\scummvm.MBM"-	"!:\resource\apps\scummvm.MBM"
 "\epoc32\data\z\private\10003a3f\apps\scummvm_reg.rsc"-"!:\private\10003a3f\import\apps\scummvm_reg.rsc"
+
 "..\..\..\..\dists\pred.dic"-"c:\shared\scummvm\pred.dic"
 
 ; Scummvm Documentation
@@ -57,12 +58,15 @@
 ; Common datafiles needed for some games
 "..\..\..\..\dists\engine-data\kyra.dat"-"c:\shared\scummvm\kyra.dat"
 "..\..\..\..\dists\engine-data\sky.cpt"-"c:\shared\scummvm\sky.cpt"
+"..\..\..\..\dists\engine-data\hugo.dat"-"c:\shared\scummvm\hugo.dat"
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\shared\scummvm\lure.dat"
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\shared\scummvm\drascula.dat"
 "..\..\..\..\dists\engine-data\m4.dat"-"c:\shared\scummvm\m4.dat"
 "..\..\..\..\dists\engine-data\teenagent.dat"-"c:\shared\scummvm\teenagent.dat"
+"..\..\..\..\dists\engine-data\toon.dat"-"c:\shared\scummvm\toon.dat"
 "..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\shared\scummvm\vkeybd_default.zip"
 "..\..\..\..\gui\themes\translations.dat"-"c:\shared\scummvm\translations.dat"
+"..\..\..\..\gui\themes\scummmodern.zip"-"c:\shared\scummvm\scummmodern.zip"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\shared\scummvm\scummvm.ini",FILENULL

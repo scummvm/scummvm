@@ -82,6 +82,13 @@ private:
 	 */
 	int32 _engineStartTime;
 
+	/**
+	 * Save slot selected via global main menu.
+	 * This slot will be loaded after main menu execution (not from inside
+	 * the menu loop, to avoid bugs like #2822778).
+	 */
+	int _saveSlotToLoad;
+
 public:
 
 
@@ -184,6 +191,15 @@ public:
 	 * @return returns kNoError on success, else an error code.
 	 */
 	virtual Common::Error loadGameState(int slot);
+
+	/**
+	 * Sets the game slot for a savegame to be loaded after global
+	 * main menu execution. This is to avoid loading a savegame from
+	 * inside the menu loop which causes bugs like #2822778.
+	 *
+	 * @param slot	the slot from which a savestate should be loaded.
+	 */
+	void setGameToLoadSlot(int slot);
 
 	/**
 	 * Indicates whether a game state can be loaded.

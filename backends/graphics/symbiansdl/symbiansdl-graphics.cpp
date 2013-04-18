@@ -77,4 +77,3 @@ void SymbianSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable)
 }
 
 #endif
-

@@ -340,4 +340,3 @@ void scale(unsigned scale, void* void_dst, unsigned dst_slice, const void* void_
 		break;
 	}
 }
-

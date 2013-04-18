@@ -778,7 +778,7 @@ static const GameSettings tinselSettings[] = {
 
 // For the languages, refer to the LANGUAGE enum in dw.h
 
-const char *TinselEngine::_sampleIndices[][3] = {
+const char *const TinselEngine::_sampleIndices[][3] = {
 	{ "english.idx", "english1.idx", "english2.idx" },	// English
 	{ "french.idx", "french1.idx", "french2.idx" },		// French
 	{ "german.idx", "german1.idx", "german2.idx" },		// German
@@ -789,7 +789,7 @@ const char *TinselEngine::_sampleIndices[][3] = {
 	{ "english.idx", "english1.idx", "english2.idx" },	// Japanese (FIXME: not sure if this is correct)
 	{ "us.idx", "us1.idx", "us2.idx" }					// US English
 };
-const char *TinselEngine::_sampleFiles[][3] = {
+const char *const TinselEngine::_sampleFiles[][3] = {
 	{ "english.smp", "english1.smp", "english2.smp" },	// English
 	{ "french.smp", "french1.smp", "french2.smp" },		// French
 	{ "german.smp", "german1.smp", "german2.smp" },		// German
@@ -800,7 +800,7 @@ const char *TinselEngine::_sampleFiles[][3] = {
 	{ "english.smp", "english1.smp", "english2.smp" },	// Japanese (FIXME: not sure if this is correct)
 	{ "us.smp", "us1.smp", "us2.smp" },					// US English
 };
-const char *TinselEngine::_textFiles[][3] = {
+const char *const TinselEngine::_textFiles[][3] = {
 	{ "english.txt", "english1.txt", "english2.txt" },	// English
 	{ "french.txt", "french1.txt", "french2.txt" },		// French
 	{ "german.txt", "german1.txt", "german2.txt" },		// German

@@ -52,7 +52,7 @@ private:
 
 	bool _cardSwapEnabled;
 	uint16 _nextCardID;
-	uint32 _lastCardTime;
+	uint32 _nextCardTime;
 };
 
 } // End of namespace MystStacks

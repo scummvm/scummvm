@@ -10,4 +10,3 @@ REMAINDER=`echo $BASESIZE - $REMAINDER  | bc`
 CARTSIZE=`echo $CARTSIZE + $REMAINDER  | bc`
 
 ucon64 -q --n64 --v64 --chk --padn=$CARTSIZE  $1
-

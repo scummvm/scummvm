@@ -88,12 +88,12 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(5, Gendarmes, arrestPlaysound16)
-	arrest(savepoint, true, SoundManager::kFlagDefault);
+	arrest(savepoint, true, kFlagDefault);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_I(6, Gendarmes, arrestCallback, uint32)
-	arrest(savepoint, true, SoundManager::kFlagInvalid, true);
+	arrest(savepoint, true, kFlagInvalid, true);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_II(8, Gendarmes, arrestUpdateEntity, CarIndex, EntityPosition)
-	arrest(savepoint, true, SoundManager::kFlagInvalid, false, true);
+	arrest(savepoint, true, kFlagInvalid, false, true);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -221,7 +221,7 @@ IMPLEMENT_FUNCTION_IISS(9, Gendarmes, function9, CarIndex, EntityPosition)
 				strcpy(arrestSound, "POL1043");
 				strcat(arrestSound, (char *)&params->seq2);
 
-				getSound()->playSound(kEntityGendarmes, arrestSound, SoundManager::kFlagInvalid, 30);
+				getSound()->playSound(kEntityGendarmes, arrestSound, kFlagInvalid, 30);
 			}
 
 			getData()->location = kLocationInsideCompartment;
@@ -264,7 +264,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 		if (params->param6 == 0 || getState()->timeTicks > (uint32)params->param6) {
 			params->param6 = kTimeInvalid;
 
-			getSound()->playSound(kEntityGendarmes, "POL1046A", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityGendarmes, "POL1046A", kFlagDefault);
 		}
 
 		UPDATE_PARAM(params->param7, getState()->timeTicks, 300);
@@ -276,7 +276,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 			if (getEntities()->isOutsideAlexeiWindow())
 				getScenes()->loadSceneFromPosition(kCarGreenSleeping, 49);
 
-			getSound()->playSound(kEntityGendarmes, "LIB017", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityGendarmes, "LIB017", kFlagDefault);
 
 			setCallback(getProgress().jacket == kJacketBlood ? 3 : 4);
 			setup_savegame(kSavegameTypeEvent, getProgress().jacket == kJacketBlood ? kEventMertensBloodJacket : kEventGendarmesArrestation);
@@ -312,7 +312,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 			break;
 
 		case 2:
-			getSound()->playSound(kEntityGendarmes, "LIB014", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityGendarmes, "LIB014", kFlagDefault);
 			getAction()->playAnimation(kEventGendarmesArrestation);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverPolice1, true);
 			break;
@@ -338,7 +338,7 @@ IMPLEMENT_FUNCTION_III(10, Gendarmes, function10, CarIndex, EntityPosition, Obje
 			break;
 
 		case 6:
-			getSound()->playSound(kEntityGendarmes, "LIB014", SoundManager::kFlagDefault);
+			getSound()->playSound(kEntityGendarmes, "LIB014", kFlagDefault);
 			getAction()->playAnimation(kEventGendarmesArrestation);
 			getLogic()->gameOver(kSavegameTypeIndex, 1, kSceneGameOverPolice1, true);
 			break;
@@ -544,7 +544,7 @@ IMPLEMENT_FUNCTION_END
 //////////////////////////////////////////////////////////////////////////
 // Private functions
 //////////////////////////////////////////////////////////////////////////
-void Gendarmes::arrest(const SavePoint &savepoint, bool shouldPlaySound, SoundManager::FlagType flag, bool checkCallback, bool shouldUpdateEntity) {
+void Gendarmes::arrest(const SavePoint &savepoint, bool shouldPlaySound, SoundFlag flag, bool checkCallback, bool shouldUpdateEntity) {
 	switch (savepoint.action) {
 	default:
 		break;

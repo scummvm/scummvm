@@ -41,4 +41,3 @@ RESOURCE TBUF16 { buf=""; }
 RESOURCE EIK_APP_INFO
 	{
 	}
-

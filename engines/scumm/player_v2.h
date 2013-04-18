@@ -46,10 +46,7 @@ public:
 	virtual int  getSoundStatus(int sound) const;
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _sampleRate; }
+	virtual int readBuffer(int16 *buffer, const int numSamples);
 
 protected:
 	unsigned int _update_step;

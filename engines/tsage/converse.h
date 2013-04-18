@@ -27,31 +27,36 @@
 #include "tsage/dialogs.h"
 #include "tsage/sound.h"
 
-namespace tSage {
+namespace TsAGE {
 
 class StripCallback : public Action {
 public:
 	virtual void stripCallback(int v) = 0;
 };
 
+typedef void (*SequenceCallback)(int v1, int v2);
+
 class SequenceManager : public Action {
 private:
 	void setup();
 	uint16 getNextValue();
 	void setMessage(int resNum, int lineNum, int color, const Common::Point &pt, int width);
+	void setMessage(int resNum, int lineNum, int fontNum, int color1, int color2, int color3,
+		const Common::Point &pt, int width);
 	SequenceManager *globalManager();
 public:
 	SceneText _sceneText;
 	int _resNum;
 	uint _sequenceOffset;
 	bool _keepActive;
-	int _field24;
+	int _fontNum;
 	int _field26;
 	Common::Array<byte> _sequenceData;
 	int _objectIndex;
 	SceneObject *_sceneObject;
 	SceneObject *_objectList[6];
 	ASound _soundHandler;
+	SequenceCallback _onCallback;
 public:
 	SequenceManager();
 
@@ -185,6 +190,8 @@ public:
 	virtual void synchronize(Serializer &s);
 };
 
+typedef void (*StripProc)();
+
 class StripManager : public Action {
 private:
 	void reset();
@@ -206,6 +213,8 @@ public:
 	int _field2E8;
 	Common::Array<Obj44> _obj44List;
 	Common::Array<byte> _script;
+	StripProc _onBegin;
+	StripProc _onEnd;
 public:
 	StripManager();
 	virtual ~StripManager();
@@ -222,6 +231,6 @@ public:
 	void addSpeaker(Speaker *speaker);
 };
 
-} // End of namespace tSage
+} // End of namespace TsAGE
 
 #endif

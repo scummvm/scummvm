@@ -8,18 +8,15 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- *
- * $URL$
- * $Id$
  *
  */
 
@@ -28,74 +25,34 @@
 #ifdef USE_FAAD
 
 #include "common/debug.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
 #include "audio/audiostream.h"
+#include "audio/decoders/codec.h"
+#include "audio/decoders/raw.h"
 
 #include <neaacdec.h>
 
 namespace Audio {
 
-class AACStream : public AudioStream {
+class AACDecoder : public Codec {
 public:
-	AACStream(Common::SeekableReadStream *stream,
-	          DisposeAfterUse::Flag disposeStream,
-	          Common::SeekableReadStream *extraData,
+	AACDecoder(Common::SeekableReadStream *extraData,
 	          DisposeAfterUse::Flag disposeExtraData);
-	~AACStream();
+	~AACDecoder();
 
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool endOfData() const { return _inBufferPos >= _inBufferSize && !_remainingSamples; }
-	bool isStereo() const { return _channels == 2; }
-	int getRate() const { return _rate; }
+	AudioStream *decodeFrame(Common::SeekableReadStream &stream);
 
 private:
 	NeAACDecHandle _handle;
 	byte _channels;
 	unsigned long _rate;
-
-	byte *_inBuffer;
-	uint32 _inBufferSize;
-	uint32 _inBufferPos;
-
-	int16 *_remainingSamples;
-	uint32 _remainingSamplesSize;
-	uint32 _remainingSamplesPos;
-
-	void init(Common::SeekableReadStream *extraData);
 };
 
-AACStream::AACStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeStream,
-		Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData) {
-
-	_remainingSamples = 0;
-	_inBufferPos = 0;
-
-	init(extraData);
-
-	// Copy all the data to a pointer so it can be passed through
-	// (At least MPEG-4 chunks shouldn't be large)
-	_inBufferSize = stream->size();
-	_inBuffer = new byte[_inBufferSize];
-	stream->read(_inBuffer, _inBufferSize);
-
-	if (disposeStream == DisposeAfterUse::YES)
-		delete stream;
-
-	if (disposeExtraData == DisposeAfterUse::YES)
-		delete extraData;
-}
-
-AACStream::~AACStream() {
-	NeAACDecClose(_handle);
-	delete[] _inBuffer;
-	delete[] _remainingSamples;
-}
-
-void AACStream::init(Common::SeekableReadStream *extraData) {
+AACDecoder::AACDecoder(Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData) {
 	// Open the library
 	_handle = NeAACDecOpen();
 
@@ -117,59 +74,55 @@ void AACStream::init(Common::SeekableReadStream *extraData) {
 
 	if (err < 0)
 		error("Could not initialize AAC decoder: %s", NeAACDecGetErrorMessage(err));
+
+	if (disposeExtraData == DisposeAfterUse::YES)
+		delete extraData;
 }
 
-int AACStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samples = 0;
+AACDecoder::~AACDecoder() {
+	NeAACDecClose(_handle);
+}
 
-	assert((numSamples % _channels) == 0);
+AudioStream *AACDecoder::decodeFrame(Common::SeekableReadStream &stream) {
+	// read everything into a buffer
+	uint32 inBufferPos = 0;
+	uint32 inBufferSize = stream.size();
+	byte *inBuffer = new byte[inBufferSize];
+	stream.read(inBuffer, inBufferSize);
 
-	// Dip into our remaining samples pool if it's available
-	if (_remainingSamples) {
-		samples = MIN<int>(numSamples, _remainingSamplesSize - _remainingSamplesPos);
-
-		memcpy(buffer, _remainingSamples + _remainingSamplesPos, samples * 2);
-		_remainingSamplesPos += samples;
-
-		if (_remainingSamplesPos == _remainingSamplesSize) {
-			delete[] _remainingSamples;
-			_remainingSamples = 0;
-		}
-	}
+	QueuingAudioStream *audioStream = makeQueuingAudioStream(_rate, _channels == 2);
 
 	// Decode until we have enough samples (or there's no more left)
-	while (samples < numSamples && !endOfData()) {
+	while (inBufferPos < inBufferSize) {
 		NeAACDecFrameInfo frameInfo;
-		uint16 *decodedSamples = (uint16 *)NeAACDecDecode(_handle, &frameInfo, _inBuffer + _inBufferPos, _inBufferSize - _inBufferPos);
+		void *decodedSamples = NeAACDecDecode(_handle, &frameInfo, inBuffer + inBufferPos, inBufferSize - inBufferPos);
 
 		if (frameInfo.error != 0)
 			error("Failed to decode AAC frame: %s", NeAACDecGetErrorMessage(frameInfo.error));
 
-		int decodedSampleSize = frameInfo.samples;
-		int copySamples = (decodedSampleSize > (numSamples - samples)) ? (numSamples - samples) : decodedSampleSize;
+		byte *buffer = (byte *)malloc(frameInfo.samples * 2);
+		memcpy(buffer, decodedSamples, frameInfo.samples * 2);
 
-		memcpy(buffer + samples, decodedSamples, copySamples * 2);
-		samples += copySamples;
+		byte flags = FLAG_16BITS;
 
-		// Copy leftover samples for use in a later readBuffer() call
-		if (copySamples != decodedSampleSize) {
-			_remainingSamplesSize = decodedSampleSize - copySamples;
-			_remainingSamples = new int16[_remainingSamplesSize];
-			_remainingSamplesPos = 0;
-			memcpy(_remainingSamples, decodedSamples + copySamples, _remainingSamplesSize * 2);
-		}
+		if (_channels == 2)
+			flags |= FLAG_STEREO;
 
-		_inBufferPos += frameInfo.bytesconsumed;
+#ifdef SCUMM_LITTLE_ENDIAN
+		flags |= FLAG_LITTLE_ENDIAN;
+#endif
+
+		audioStream->queueBuffer(buffer, frameInfo.samples * 2, DisposeAfterUse::YES, flags);
+
+		inBufferPos += frameInfo.bytesconsumed;
 	}
 
-	return samples;
+	return audioStream;
 }
 
 // Factory function
-AudioStream *makeAACStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeStream,
-		Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData) {
-
-	return new AACStream(stream, disposeStream, extraData, disposeExtraData);
+Codec *makeAACDecoder(Common::SeekableReadStream *extraData, DisposeAfterUse::Flag disposeExtraData) {
+	return new AACDecoder(extraData, disposeExtraData);
 }
 
 } // End of namespace Audio

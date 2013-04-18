@@ -69,6 +69,7 @@ void MacResManager::close() {
 	delete[] _resLists; _resLists = 0;
 	delete[] _resTypes; _resTypes = 0;
 	delete _stream; _stream = 0;
+	_resMap.numTypes = 0;
 }
 
 bool MacResManager::hasDataFork() const {

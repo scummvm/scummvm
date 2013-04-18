@@ -217,7 +217,7 @@ void MohawkEngine_CSTime::nextScene() {
 
 void MohawkEngine_CSTime::loadResourceFile(Common::String name) {
 	MohawkArchive *archive = new MohawkArchive();
-	if (!archive->open(name + ".mhk"))
+	if (!archive->openFile(name + ".mhk"))
 		error("failed to open %s.mhk", name.c_str());
 	_mhk.push_back(archive);
 }

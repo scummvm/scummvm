@@ -41,7 +41,6 @@ namespace Sci {
 const reg_t NULL_REG = {0, 0};
 const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
 const reg_t TRUE_REG = {0, 1};
-//#define VM_DEBUG_SEND
 // Enable the define below to have the VM abort on cases where a conditional
 // statement is followed by an unconditional jump (which will most likely lead
 // to an infinite loop). Aids in detecting script bugs such as #3040722.
@@ -233,11 +232,10 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 
 	if (!temp) {
 #ifdef ENABLE_SCI32
-		// HACK: Temporarily switch to a warning in SCI32 games until we can figure out why Torin has
-		// an invalid exported function.
-		if (getSciVersion() >= SCI_VERSION_2)
-			warning("Request for invalid exported function 0x%x of script %d", pubfunct, script);
-		else
+		if (g_sci->getGameId() == GID_TORIN && script == 64036) {
+			// Script 64036 in Torin's Passage is empty and contains an invalid
+			// (empty) export
+		} else
 #endif
 			error("Request for invalid exported function 0x%x of script %d", pubfunct, script);
 		return NULL;
@@ -462,7 +460,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 	extOpcode = src[offset++]; // Get "extended" opcode (lower bit has special meaning)
 	const byte opcode = extOpcode >> 1;	// get the actual opcode
 
-	memset(opparams, 0, sizeof(opparams));
+	memset(opparams, 0, 4*sizeof(int16));
 
 	for (int i = 0; g_opcode_formats[opcode][i]; ++i) {
 		//debugN("Opcode: 0x%x, Opnumber: 0x%x, temp: %d\n", opcode, opcode, temp);

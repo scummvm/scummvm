@@ -44,8 +44,8 @@ void Draw_v1::initScreen() {
 	_backSurface  = _vm->_video->initSurfDesc(320, 200);
 	_frontSurface = _vm->_global->_primarySurfDesc;
 
-	_cursorSprites = _vm->_video->initSurfDesc(32, 16, 2);
-	_scummvmCursor = _vm->_video->initSurfDesc(16, 16, SCUMMVM_CURSOR);
+	_cursorSprites = _vm->_video->initSurfDesc(_cursorWidth * 2, _cursorHeight, 2);
+	_scummvmCursor = _vm->_video->initSurfDesc(_cursorWidth    , _cursorHeight, SCUMMVM_CURSOR);
 }
 
 void Draw_v1::closeScreen() {
@@ -112,6 +112,9 @@ void Draw_v1::animateCursor(int16 cursor) {
 		if (_cursorHotspotXVar != -1) {
 			newX -= hotspotX = (uint16) VAR(_cursorIndex + _cursorHotspotXVar);
 			newY -= hotspotY = (uint16) VAR(_cursorIndex + _cursorHotspotYVar);
+		} else if (_cursorHotspotX != -1) {
+			newX -= hotspotX = _cursorHotspotX;
+			newY -= hotspotY = _cursorHotspotY;
 		}
 
 		_scummvmCursor->clear();

@@ -281,7 +281,7 @@ Common::Error MohawkEngine_Myst::run() {
 	// Load Help System (Masterpiece Edition Only)
 	if (getFeatures() & GF_ME) {
 		MohawkArchive *mhk = new MohawkArchive();
-		if (!mhk->open("help.dat"))
+		if (!mhk->openFile("help.dat"))
 			error("Could not load help.dat");
 		_mhk.push_back(mhk);
 	}
@@ -343,6 +343,7 @@ Common::Error MohawkEngine_Myst::run() {
 				case Common::KEYCODE_F5:
 					_needsPageDrop = false;
 					_needsShowMap = false;
+					_needsShowDemoMenu = false;
 
 					runDialog(*_optionsDialog);
 
@@ -354,6 +355,11 @@ Common::Error MohawkEngine_Myst::run() {
 					if (_needsShowMap) {
 						_scriptParser->showMap();
 						_needsShowMap = false;
+					}
+
+					if (_needsShowDemoMenu) {
+						changeToStack(kDemoStack, 2002, 0, 0);
+						_needsShowDemoMenu = false;
 					}
 					break;
 				default:
@@ -441,6 +447,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		_scriptParser = new MystStacks::Credits(this);
 		break;
 	case kDemoStack:
+		_gameState->_globals.currentAge = 0;
 		_scriptParser = new MystStacks::Demo(this);
 		break;
 	case kDniStack:
@@ -469,6 +476,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		_scriptParser = new MystStacks::Selenitic(this);
 		break;
 	case kDemoSlidesStack:
+		_gameState->_globals.currentAge = 1;
 		_scriptParser = new MystStacks::Slides(this);
 		break;
 	case kStoneshipStack:
@@ -488,7 +496,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 		_mhk[0] = new MohawkArchive();
 	}
 
-	if (!_mhk[0]->open(mystFiles[_curStack]))
+	if (!_mhk[0]->openFile(mystFiles[_curStack]))
 		error("Could not open %s", mystFiles[_curStack]);
 
 	if (getPlatform() == Common::kPlatformMacintosh)
@@ -645,7 +653,11 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 	for (uint16 i = 0; i < _resources.size(); i++)
 		_resources[i]->handleCardChange();
 
-	// TODO: Handle Script Resources
+	// The demo resets the cursor at each card change except when in the library
+	if (getFeatures() & GF_DEMO
+			&& _gameState->_globals.currentAge != 2) {
+		_cursor->setDefaultCursor();
+	}
 
 	// Make sure the screen is updated
 	if (updateScreen) {

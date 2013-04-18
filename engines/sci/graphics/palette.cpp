@@ -37,7 +37,7 @@
 
 namespace Sci {
 
-GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMerging)
+GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	: _resMan(resMan), _screen(screen) {
 	int16 color;
 
@@ -65,7 +65,14 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 	// the real merging done in earlier games. If we use the copying over, we
 	// will get issues because some views have marked all colors as being used
 	// and those will overwrite the current palette in that case
-	_useMerging = useMerging;
+	if (getSciVersion() < SCI_VERSION_1_1)
+		_useMerging = true;
+	else if (getSciVersion() == SCI_VERSION_1_1)
+		// there are some games that use inbetween SCI1.1 interpreter, so we have
+		// to detect if the current game is merging or copying
+		_useMerging = _resMan->detectPaletteMergingSci11();
+	else	// SCI32
+		_useMerging = false;
 
 	palVaryInit();
 
@@ -114,7 +121,7 @@ bool GfxPalette::isMerging() {
 void GfxPalette::setDefault() {
 	if (_resMan->getViewType() == kViewEga)
 		setEGA();
-	else if (_resMan->getViewType() == kViewAmiga)
+	else if (_resMan->getViewType() == kViewAmiga || _resMan->getViewType() == kViewAmiga64)
 		setAmiga();
 	else
 		kernelSetFromResource(999, true);
@@ -206,6 +213,14 @@ bool GfxPalette::setAmiga() {
 			_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
 			_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
 			_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
+
+			if (_totalScreenColors == 64) {
+				// Set the associated color from the Amiga halfbrite colors
+				_sysPalette.colors[curColor + 32].used = 1;
+				_sysPalette.colors[curColor + 32].r = _sysPalette.colors[curColor].r >> 1;
+				_sysPalette.colors[curColor + 32].g = _sysPalette.colors[curColor].g >> 1;
+				_sysPalette.colors[curColor + 32].b = _sysPalette.colors[curColor].b >> 1;
+			}
 		}
 
 		// Directly set the palette, because setOnScreen() wont do a thing for amiga
@@ -226,6 +241,13 @@ void GfxPalette::modifyAmigaPalette(byte *data) {
 		_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
 		_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
 		_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
+
+		if (_totalScreenColors == 64) {
+			// Set the associated color from the Amiga halfbrite colors
+			_sysPalette.colors[curColor + 32].r = _sysPalette.colors[curColor].r >> 1;
+			_sysPalette.colors[curColor + 32].g = _sysPalette.colors[curColor].g >> 1;
+			_sysPalette.colors[curColor + 32].b = _sysPalette.colors[curColor].b >> 1;
+		}
 	}
 
 	copySysPaletteToScreen();
@@ -312,7 +334,9 @@ bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
 
 	for (int i = 1; i < 255; i++) {
 		if (newPalette->colors[i].used) {
-			if ((newPalette->colors[i].r != destPalette->colors[i].r) || (newPalette->colors[i].g != destPalette->colors[i].g) || (newPalette->colors[i].b != destPalette->colors[i].b)) {
+			if ((newPalette->colors[i].r != destPalette->colors[i].r) ||
+				(newPalette->colors[i].g != destPalette->colors[i].g) ||
+				(newPalette->colors[i].b != destPalette->colors[i].b)) {
 				destPalette->colors[i].r = newPalette->colors[i].r;
 				destPalette->colors[i].g = newPalette->colors[i].g;
 				destPalette->colors[i].b = newPalette->colors[i].b;
@@ -339,7 +363,9 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 		// forced palette merging or dest color is not used yet
 		if (force || (!_sysPalette.colors[i].used)) {
 			_sysPalette.colors[i].used = newPalette->colors[i].used;
-			if ((newPalette->colors[i].r != _sysPalette.colors[i].r) || (newPalette->colors[i].g != _sysPalette.colors[i].g) || (newPalette->colors[i].b != _sysPalette.colors[i].b)) {
+			if ((newPalette->colors[i].r != _sysPalette.colors[i].r) ||
+				(newPalette->colors[i].g != _sysPalette.colors[i].g) ||
+				(newPalette->colors[i].b != _sysPalette.colors[i].b)) {
 				_sysPalette.colors[i].r = newPalette->colors[i].r;
 				_sysPalette.colors[i].g = newPalette->colors[i].g;
 				_sysPalette.colors[i].b = newPalette->colors[i].b;
@@ -352,7 +378,9 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 		// is the same color already at the same position? -> match it directly w/o lookup
 		//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
 		//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
-		if ((_sysPalette.colors[i].r == newPalette->colors[i].r) && (_sysPalette.colors[i].g == newPalette->colors[i].g) && (_sysPalette.colors[i].b == newPalette->colors[i].b)) {
+		if ((_sysPalette.colors[i].r == newPalette->colors[i].r) &&
+			(_sysPalette.colors[i].g == newPalette->colors[i].g) &&
+			(_sysPalette.colors[i].b == newPalette->colors[i].b)) {
 			newPalette->mapping[i] = i;
 			continue;
 		}
@@ -683,7 +711,7 @@ bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
 void GfxPalette::palVaryInstallTimer() {
 	int16 ticks = _palVaryTicks > 0 ? _palVaryTicks : 1;
 	// Call signal increase every [ticks]
-	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
+	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this, "sciPalette");
 }
 
 void GfxPalette::palVaryRemoveTimer() {

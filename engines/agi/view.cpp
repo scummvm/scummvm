@@ -47,7 +47,7 @@ void AgiEngine::lSetCel(VtEntry *v, int n) {
 	// in the KQ4 introduction
 	// It seems there's either a bug with KQ4's logic script 120 (the intro script)
 	// or flag 64 is not set correctly, which causes the erroneous behavior from the actors
-	if (getGameID() == GID_KQ4 && !(v->flags & UPDATE) && (v->currentView == 172))
+	if (getGameID() == GID_KQ4 && !(v->flags & fUpdate) && (v->currentView == 172))
 		return;
 
 	currentVc = &currentVl->cel[n];
@@ -78,8 +78,8 @@ void AgiEngine::lSetLoop(VtEntry *v, int n) {
 void AgiEngine::updateView(VtEntry *v) {
 	int cel, lastCel;
 
-	if (v->flags & DONTUPDATE) {
-		v->flags &= ~DONTUPDATE;
+	if (v->flags & fDontupdate) {
+		v->flags &= ~fDontupdate;
 		return;
 	}
 
@@ -87,32 +87,32 @@ void AgiEngine::updateView(VtEntry *v) {
 	lastCel = v->numCels - 1;
 
 	switch (v->cycle) {
-	case CYCLE_NORMAL:
+	case kCycleNormal:
 		if (++cel > lastCel)
 			cel = 0;
 		break;
-	case CYCLE_END_OF_LOOP:
+	case kCycleEndOfLoop:
 		if (cel < lastCel) {
 			debugC(5, kDebugLevelResources, "cel %d (last = %d)", cel + 1, lastCel);
 			if (++cel != lastCel)
 				break;
 		}
 		setflag(v->parm1, true);
-		v->flags &= ~CYCLING;
+		v->flags &= ~fCycling;
 		v->direction = 0;
-		v->cycle = CYCLE_NORMAL;
+		v->cycle = kCycleNormal;
 		break;
-	case CYCLE_REV_LOOP:
+	case kCycleRevLoop:
 		if (cel) {
 			if (--cel)
 				break;
 		}
 		setflag(v->parm1, true);
-		v->flags &= ~CYCLING;
+		v->flags &= ~fCycling;
 		v->direction = 0;
-		v->cycle = CYCLE_NORMAL;
+		v->cycle = kCycleNormal;
 		break;
-	case CYCLE_REVERSE:
+	case kCycleReverse:
 		if (cel == 0) {
 			cel = lastCel;
 		} else {
@@ -259,17 +259,22 @@ void AgiEngine::setCel(VtEntry *v, int n) {
  */
 void AgiEngine::clipViewCoordinates(VtEntry *v) {
 	if (v->xPos + v->xSize > _WIDTH) {
-		v->flags |= UPDATE_POS;
+		v->flags |= fUpdatePos;
 		v->xPos = _WIDTH - v->xSize;
 	}
 	if (v->yPos - v->ySize + 1 < 0) {
-		v->flags |= UPDATE_POS;
+		v->flags |= fUpdatePos;
 		v->yPos = v->ySize - 1;
 	}
-	if (v->yPos <= _game.horizon && (~v->flags & IGNORE_HORIZON)) {
-		v->flags |= UPDATE_POS;
+	if (v->yPos <= _game.horizon && (~v->flags & fIgnoreHorizon)) {
+		v->flags |= fUpdatePos;
 		v->yPos = _game.horizon + 1;
 	}
+
+	if (getVersion() < 0x2000) {
+		v->flags |= fDontupdate;
+	}
+
 }
 
 /**
@@ -294,6 +299,12 @@ void AgiEngine::setView(VtEntry *v, int n) {
 	v->currentView = n;
 	v->numLoops = v->viewData->numLoops;
 	v->viewReplaced = true;
+
+	if (getVersion() < 0x2000) {
+		v->stepSize = v->viewData->rdata[0];
+		v->cycleTime = v->viewData->rdata[1];
+		v->cycleTimeCount = 0;
+	}
 	setLoop(v, v->currentLoop >= v->numLoops ? 0 : v->currentLoop);
 }
 
@@ -302,10 +313,10 @@ void AgiEngine::setView(VtEntry *v, int n) {
  * @param v pointer to view table entry
  */
 void AgiEngine::startUpdate(VtEntry *v) {
-	if (~v->flags & UPDATE) {
+	if (~v->flags & fUpdate) {
 		_sprites->eraseBoth();
 
-		v->flags |= UPDATE;
+		v->flags |= fUpdate;
 		_sprites->blitBoth();
 		_sprites->commitBoth();
 	}
@@ -316,10 +327,10 @@ void AgiEngine::startUpdate(VtEntry *v) {
  * @param v pointer to view table entry
  */
 void AgiEngine::stopUpdate(VtEntry *v) {
-	if (v->flags & UPDATE) {
+	if (v->flags & fUpdate) {
 		_sprites->eraseBoth();
 
-		v->flags &= ~UPDATE;
+		v->flags &= ~fUpdate;
 		_sprites->blitBoth();
 		_sprites->commitBoth();
 	}
@@ -346,14 +357,14 @@ void AgiEngine::updateViewtable() {
 
 	i = 0;
 	for (v = _game.viewTable; v < &_game.viewTable[MAX_VIEWTABLE]; v++) {
-		if ((v->flags & (ANIMATED | UPDATE | DRAWN)) != (ANIMATED | UPDATE | DRAWN)) {
+		if ((v->flags & (fAnimated | fUpdate | fDrawn)) != (fAnimated | fUpdate | fDrawn)) {
 			continue;
 		}
 
 		i++;
 
 		loop = 4;
-		if (~v->flags & FIX_LOOP) {
+		if (~v->flags & fFixLoop) {
 			switch (v->numLoops) {
 			case 2:
 			case 3:
@@ -378,7 +389,7 @@ void AgiEngine::updateViewtable() {
 			}
 		}
 
-		if (~v->flags & CYCLING)
+		if (~v->flags & fCycling)
 			continue;
 
 		if (v->cycleTimeCount == 0)
@@ -395,7 +406,7 @@ void AgiEngine::updateViewtable() {
 		updatePosition();
 		_sprites->blitUpdSprites();
 		_sprites->commitUpdSprites();
-		_game.viewTable[0].flags &= ~(ON_WATER | ON_LAND);
+		_game.viewTable[0].flags &= ~(fOnWater | fOnLand);
 	}
 }
 

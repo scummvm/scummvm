@@ -100,7 +100,7 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 	//  cX -> sets textColor to _textColors[X-1]
 	curCode = textCode[0];
 	curCodeParm = textCode[1];
-	if (isdigit(curCodeParm)) {
+	if (isdigit(static_cast<unsigned char>(curCodeParm))) {
 		curCodeParm -= '0';
 	} else {
 		curCodeParm = -1;

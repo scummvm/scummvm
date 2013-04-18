@@ -20,16 +20,20 @@
  *
  */
 
+#include "mohawk/cursors.h"
+#include "mohawk/graphics.h"
 #include "mohawk/myst.h"
 #include "mohawk/myst_stacks/demo.h"
 
-#include "gui/message.h"
+#include "common/system.h"
 
 namespace Mohawk {
 namespace MystStacks {
 
 Demo::Demo(MohawkEngine_Myst *vm) : Intro(vm) {
 	setupOpcodes();
+
+	_returnToMenuStep = 0;
 }
 
 Demo::~Demo() {
@@ -47,15 +51,12 @@ Demo::~Demo() {
 
 void Demo::setupOpcodes() {
 	// "Stack-Specific" Opcodes
-	OVERRIDE_OPCODE(100, opcode_100);
-	OPCODE(101, opcode_101);
-	OPCODE(102, opcode_102);
+	OVERRIDE_OPCODE(100, o_stopIntro);
+	OPCODE(101, o_fadeFromBlack);
+	OPCODE(102, o_fadeToBlack);
 
 	// "Init" Opcodes
-	OVERRIDE_OPCODE(201, opcode_201);
-
-	// "Exit" Opcodes
-	OVERRIDE_OPCODE(300, opcode_300);
+	OVERRIDE_OPCODE(201, o_returnToMenu_init);
 }
 
 #undef OPCODE
@@ -64,61 +65,69 @@ void Demo::setupOpcodes() {
 void Demo::disablePersistentScripts() {
 	Intro::disablePersistentScripts();
 
-	_enabled201 = false;
+	_returnToMenuRunning = false;
 }
 
 void Demo::runPersistentScripts() {
 	Intro::runPersistentScripts();
 
-	if (_enabled201) {
-		// Used on Card 2001, 2002 and 2003
-
-		// TODO: Fill in Function...
+	if (_returnToMenuRunning) {
+		returnToMenu_run();
 	}
 }
 
-void Demo::opcode_100(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// TODO: Fill in Function...
+void Demo::o_stopIntro(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Unk", op);
+	// The original also seems to stop the movies. Not needed with this engine.
+	_vm->_gfx->fadeToBlack();
 }
 
-void Demo::opcode_101(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Demo::o_fadeFromBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Fade from black", op);
 
-	// Used on Card 2000, 2002 and 2003
-	// Triggered by Click
-	if (argc == 0) {
-		// TODO: Fill in Logic.. Fade in?
-	} else
-		unknown(op, var, argc, argv);
+	// FIXME: This glitches when enabled. The backbuffer is drawn to screen,
+	// and then the fading occurs, causing the background to appear for one frame.
+	// _vm->_gfx->fadeFromBlack();
 }
 
-void Demo::opcode_102(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
-
-	// Used on Card 2002 and 2003
-	// Triggered by Click
-	if (argc == 0) {
-		// TODO: Fill in Logic.. Fade out?
-	} else
-		unknown(op, var, argc, argv);
+void Demo::o_fadeToBlack(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Fade to black", op);
+	_vm->_gfx->fadeToBlack();
 }
 
-void Demo::opcode_201(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	varUnusedCheck(op, var);
+void Demo::returnToMenu_run() {
+	uint32 time = _vm->_system->getMillis();
+
+	if (time < _returnToMenuNextTime)
+		return;
+
+	switch (_returnToMenuStep){
+	case 0:
+		_vm->_gfx->fadeToBlack();
+		_vm->changeToCard(2003, false);
+		_vm->_gfx->fadeFromBlack();
+
+		_returnToMenuStep++;
+		break;
+	case 1:
+		_vm->_gfx->fadeToBlack();
+		_vm->changeToCard(2001, false);
+		_vm->_gfx->fadeFromBlack();
+		_vm->_cursor->showCursor();
+
+		_returnToMenuStep++;
+		break;
+	default:
+		break;
+	}
+}
+
+void Demo::o_returnToMenu_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
+	debugC(kDebugScript, "Opcode %d: Return to menu init", op);
 
 	// Used on Card 2001, 2002 and 2003
-	if (argc == 0)
-		_enabled201 = true;
-	else
-		unknown(op, var, argc, argv);
-}
-
-
-void Demo::opcode_300(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
-	// Used on Card 2000
-	varUnusedCheck(op, var);
-
-	// TODO: Fill in Function...
+	_returnToMenuNextTime = _vm->_system->getMillis() + 5000;
+	_returnToMenuRunning = true;
 }
 
 } // End of namespace MystStacks

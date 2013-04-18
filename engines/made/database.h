@@ -23,17 +23,17 @@
 #ifndef MADE_DATABASE_H
 #define MADE_DATABASE_H
 
-#include "common/array.h"
 #include "common/hashmap.h"
-#include "common/util.h"
-#include "common/file.h"
-#include "common/stream.h"
-#include "common/str.h"
 
-#include "made/made.h"
-#include "made/redreader.h"
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+class String;
+}
 
 namespace Made {
+
+class MadeEngine;
 
 class Object {
 public:

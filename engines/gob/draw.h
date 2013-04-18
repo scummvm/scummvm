@@ -133,6 +133,9 @@ public:
 	int32 _cursorHotspotXVar;
 	int32 _cursorHotspotYVar;
 
+	int32 _cursorHotspotX;
+	int32 _cursorHotspotY;
+
 	SurfacePtr _cursorSprites;
 	SurfacePtr _cursorSpritesBack;
 	SurfacePtr _scummvmCursor;

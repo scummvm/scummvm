@@ -254,7 +254,7 @@ public:
 	virtual void clear();
 
 private:
-	friend class Common::Singleton<SingletonBaseType>;
+	friend class Singleton<SingletonBaseType>;
 	SearchManager();
 };
 

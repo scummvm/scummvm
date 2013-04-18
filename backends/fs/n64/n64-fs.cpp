@@ -161,4 +161,3 @@ Common::WriteStream *N64FilesystemNode::createWriteStream() {
 }
 
 #endif //#ifdef __N64__
-

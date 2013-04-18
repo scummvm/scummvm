@@ -1506,4 +1506,3 @@ void Insane::postCaseMore(byte *renderBitmap, int32 codecparam, int32 setupsan12
 }
 
 }
-

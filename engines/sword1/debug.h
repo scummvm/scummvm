@@ -39,4 +39,3 @@ private:
 } // End of namespace Sword1
 
 #endif // BSDEBUG_H
-

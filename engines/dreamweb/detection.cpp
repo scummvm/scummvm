@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://svn.scummvm.org:4444/svn/dreamweb/detection.cpp $
- * $Id: detection.cpp 3 2010-09-16 19:32:18Z megath $
- *
  */
 
 #include "base/plugins.h"
@@ -29,16 +26,6 @@
 #include "common/system.h"
 
 #include "dreamweb/dreamweb.h"
-
-#include "engines/advancedDetector.h"
-
-namespace DreamWeb {
-
-struct DreamWebGameDescription {
-	ADGameDescription desc;
-};
-
-} // End of namespace DreamWeb
 
 static const PlainGameDescriptor dreamWebGames[] = {
 	{ "dreamweb", "DreamWeb" },
@@ -53,7 +40,7 @@ public:
 	AdvancedMetaEngine(DreamWeb::gameDescriptions,
 	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames) {
 		_singleid = "dreamweb";
-		_guioptions = Common::GUIO_NOMIDI;
+		_guioptions = GUIO1(GUIO_NOMIDI);
 	}
 
 	virtual const char *getName() const {
@@ -74,8 +61,8 @@ public:
 bool DreamWebMetaEngine::hasFeature(MetaEngineFeature f) const {
 	switch(f) {
 	case kSupportsListSaves:
-	//case kSupportsLoadingDuringStartup:
-	//case kSupportsDeleteSave:
+	case kSupportsLoadingDuringStartup:
+	case kSupportsDeleteSave:
 		return true;
 	default:
 		return false;
@@ -86,6 +73,8 @@ bool DreamWeb::DreamWebEngine::hasFeature(EngineFeature f) const {
 	switch(f) {
 	case kSupportsRTL:
 		return true;
+	case kSupportsSubtitleOptions:
+		return _gameDescription->desc.flags & ADGF_CD;
 	default:
 		return false;
 	}
@@ -116,14 +105,15 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 		stream->read(name, sizeof(name) - 1);
 		delete stream;
 
-		SaveStateDescriptor sd(i, name);
+		int slotNum = atoi(file.c_str() + file.size() - 2);
+		SaveStateDescriptor sd(slotNum, name);
 		saveList.push_back(sd);
 	}
 
 	return saveList;
 }
 
-int DreamWebMetaEngine::getMaximumSaveSlot() const { return 6; }
+int DreamWebMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 void DreamWebMetaEngine::removeSaveState(const char *target, int slot) const {
 }

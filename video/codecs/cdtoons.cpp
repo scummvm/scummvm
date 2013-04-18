@@ -24,6 +24,7 @@
 #include "common/rect.h"
 #include "common/stream.h"
 #include "common/textconsole.h"
+#include "common/array.h"
 
 namespace Video {
 

@@ -179,6 +179,18 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	if (_useOriginalKQ6WinCursors)
 		viewNum += 2000;		// Windows cursors
 
+	if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+		// HACK: Ignore cursor views for Phantasmagoria 2. They've got
+		// differences from other SCI32 views, thus we skip them for
+		// now, otherwise our view decoding code will crash.
+		// The view code will crash with *any* view in P2, but this hack
+		// allows the game to start and show the menu.
+		// TODO: Remove once the view code is updated to handle
+		// Phantasmagoria 2 views.
+		warning("TODO: Cursor views for Phantasmagoria 2");
+		return;
+	}
+
 	if (!_cachedCursors.contains(viewNum))
 		_cachedCursors[viewNum] = new GfxView(_resMan, _screen, _palette, viewNum);
 
@@ -227,8 +239,10 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 //    Game,            newPosition, validRect
 static const SciCursorSetPositionWorkarounds setPositionWorkarounds[] = {
 	{ GID_ISLANDBRAIN, 84, 109,     46, 76, 174, 243 }, // island of dr. brain / game menu
+	{ GID_ISLANDBRAIN,143, 135,     57, 102, 163, 218 },// island of dr. brain / pause menu within copy protection
 	{ GID_LSL5,        23, 171,     0, 0, 26, 320 },    // larry 5 / skip forward helper
 	{ GID_QFG1VGA,     64, 174,     40, 37, 74, 284 },  // Quest For Glory 1 VGA / run/walk/sleep sub-menu
+	{ GID_QFG3,        70, 170,     40, 61, 81, 258 },  // Quest For Glory 3 / run/walk/sleep sub-menu
 	{ (SciGameId)0,    -1, -1,     -1, -1, -1, -1 }
 };
 

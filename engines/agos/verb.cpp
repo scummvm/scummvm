@@ -22,7 +22,6 @@
 
 // Verb and hitarea handling
 
-
 #include "common/system.h"
 
 #include "graphics/surface.h"

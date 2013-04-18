@@ -27,7 +27,7 @@
 
 namespace Sword1 {
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h"  // START STRUCT PACKING
 
 struct BarData {
 	int16 x1;
@@ -38,9 +38,9 @@ struct BarData {
 	int16 ymin;
 	int16 xmax;
 	int16 ymax;
-	int16 dx;	// x2 - x1
-	int16 dy;	// y2 - y1
-	int32 co;	// co = (y1*dx) - (x1*dy) from an equation for a line y*dx = x*dy + co
+	int16 dx;   // x2 - x1
+	int16 dy;   // y2 - y1
+	int32 co;   // co = (y1*dx) - (x1*dy) from an equation for a line y*dx = x*dy + co
 } PACKED_STRUCT;
 
 struct NodeData {
@@ -51,13 +51,13 @@ struct NodeData {
 	int16 dist;
 } PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h"    // END STRUCT PACKING
 
 struct FloorData {
-	int32		nbars;
-	BarData		*bars;
-	int32		nnodes;
-	NodeData	*node;
+	int32       nbars;
+	BarData     *bars;
+	int32       nnodes;
+	NodeData    *node;
 };
 
 struct RouteData {
@@ -115,24 +115,24 @@ private:
 
 	int32 megaId;
 
-	RouteData	_route[O_ROUTE_SIZE];
-	PathData	_smoothPath[O_ROUTE_SIZE];
-	PathData	_modularPath[O_ROUTE_SIZE];
-	int32		_routeLength;
+	RouteData   _route[O_ROUTE_SIZE];
+	PathData    _smoothPath[O_ROUTE_SIZE];
+	PathData    _modularPath[O_ROUTE_SIZE];
+	int32       _routeLength;
 
-	int32		_framesPerStep, _framesPerChar;
-	uint8		_nWalkFrames, _nTurnFrames;
-	int32		_dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
-	int32		_dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
-	int32		_modX[NO_DIRECTIONS];
-	int32		_modY[NO_DIRECTIONS];
-	int32		_diagonalx, _diagonaly;
-	int32		standFrames;
-	int32		turnFramesLeft, turnFramesRight;
-	int32		walkFramesLeft, walkFramesRight; // left/right walking turn
-	int32		slowInFrames, slowOutFrames;
+	int32       _framesPerStep, _framesPerChar;
+	uint8       _nWalkFrames, _nTurnFrames;
+	int32       _dx[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+	int32       _dy[NO_DIRECTIONS + MAX_FRAMES_PER_CHAR];
+	int32       _modX[NO_DIRECTIONS];
+	int32       _modY[NO_DIRECTIONS];
+	int32       _diagonalx, _diagonaly;
+	int32       standFrames;
+	int32       turnFramesLeft, turnFramesRight;
+	int32       walkFramesLeft, walkFramesRight; // left/right walking turn
+	int32       slowInFrames, slowOutFrames;
 
-	bool		_slidyWalkAnimatorState;
+	bool        _slidyWalkAnimatorState;
 
 	int32 LoadWalkResources(Object *mega, int32 x, int32 y, int32 dir);
 	int32 getRoute();

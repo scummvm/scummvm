@@ -26,27 +26,42 @@
 #include "scumm/he/intern_he.h"
 
 #include "audio/audiostream.h"
+#include "video/smk_decoder.h"
+
+#ifdef USE_BINK
+#include "video/bink_decoder.h"
+#endif
 
 namespace Scumm {
 
-MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer)
-	: SmackerDecoder(mixer), _vm(vm), _mixer(mixer) {
+MoviePlayer::MoviePlayer(ScummEngine_v90he *vm, Audio::Mixer *mixer) : _vm(vm) {
+#ifdef USE_BINK
+	if (_vm->_game.heversion >= 100 && (_vm->_game.features & GF_16BIT_COLOR))
+		_video = new Video::BinkDecoder();
+	else
+#endif
+		_video = new Video::SmackerDecoder(mixer);
 
 	_flags = 0;
 	_wizResNum = 0;
 }
 
+MoviePlayer::~MoviePlayer() {
+	delete _video;
+}
+
 int MoviePlayer::getImageNum() {
-	if (!isVideoLoaded())
+	if (!_video->isVideoLoaded())
 		return 0;
+
 	return _wizResNum;
 }
 
 int MoviePlayer::load(const char *filename, int flags, int image) {
-	if (isVideoLoaded())
-		close();
+	if (_video->isVideoLoaded())
+		_video->close();
 
-	if (!loadFile(filename)) {
+	if (!_video->loadFile(filename)) {
 		warning("Failed to load video file %s", filename);
 		return -1;
 	}
@@ -54,7 +69,7 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 	debug(1, "Playing video %s", filename);
 
 	if (flags & 2)
-		_vm->_wiz->createWizEmptyImage(image, 0, 0, getWidth(), getHeight());
+		_vm->_wiz->createWizEmptyImage(image, 0, 0, _video->getWidth(), _video->getHeight());
 
 	_flags = flags;
 	_wizResNum = image;
@@ -62,34 +77,59 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 }
 
 void MoviePlayer::copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch) {
-	uint h = getHeight();
-	uint w = getWidth();
+	uint h = _video->getHeight();
+	uint w = _video->getWidth();
 
-	const Graphics::Surface *surface = decodeNextFrame();
+	const Graphics::Surface *surface = _video->decodeNextFrame();
+
+	if (!surface)
+		return;
+
 	byte *src = (byte *)surface->pixels;
 
-	if (hasDirtyPalette())
-		_vm->setPaletteFromPtr(getPalette(), 256);
+	if (_video->hasDirtyPalette())
+		_vm->setPaletteFromPtr(_video->getPalette(), 256);
 
 	if (_vm->_game.features & GF_16BIT_COLOR) {
-		dst += y * pitch + x * 2;
-		do {
-			for (uint i = 0; i < w; i++) {
-				uint16 color = READ_LE_UINT16(_vm->_hePalettes + _vm->_hePaletteSlot + 768 + src[i] * 2);
-				switch (dstType) {
-				case kDstScreen:
-					WRITE_UINT16(dst + i * 2, color);
-					break;
-				case kDstResource:
-					WRITE_LE_UINT16(dst + i * 2, color);
-					break;
-				default:
-					error("copyFrameToBuffer: Unknown dstType %d", dstType);
+		if (surface->format.bytesPerPixel == 1) {
+			dst += y * pitch + x * 2;
+			do {
+				for (uint i = 0; i < w; i++) {
+					uint16 color = READ_LE_UINT16(_vm->_hePalettes + _vm->_hePaletteSlot + 768 + src[i] * 2);
+					switch (dstType) {
+					case kDstScreen:
+						WRITE_UINT16(dst + i * 2, color);
+						break;
+					case kDstResource:
+						WRITE_LE_UINT16(dst + i * 2, color);
+						break;
+					default:
+						error("copyFrameToBuffer: Unknown dstType %d", dstType);
+					}
 				}
-			}
-			dst += pitch;
-			src += w;
-		} while (--h);
+				dst += pitch;
+				src += w;
+			} while (--h);
+		} else {
+			dst += y * pitch + x * 2;
+			do {
+				for (uint i = 0; i < w; i++) {
+					uint16 color = *((uint16 *)src + i);
+					switch (dstType) {
+					case kDstScreen:
+						WRITE_UINT16(dst + i * 2, color);
+						break;
+					case kDstResource:
+						WRITE_LE_UINT16(dst + i * 2, color);
+						break;
+					default:
+						error("copyFrameToBuffer: Unknown dstType %d", dstType);
+					}
+				}
+				dst += pitch;
+				src += surface->pitch;
+			} while (--h);
+		}
 	} else {
 		dst += y * pitch + x;
 		do {
@@ -101,7 +141,7 @@ void MoviePlayer::copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint
 }
 
 void MoviePlayer::handleNextFrame() {
-	if (!isVideoLoaded())
+	if (!_video->isVideoLoaded())
 		return;
 
 	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
@@ -115,17 +155,37 @@ void MoviePlayer::handleNextFrame() {
 	} else if (_flags & 1) {
 		copyFrameToBuffer(pvs->getBackPixels(0, 0), kDstScreen, 0, 0, pvs->pitch);
 
-		Common::Rect imageRect(getWidth(), getHeight());
+		Common::Rect imageRect(_video->getWidth(), _video->getHeight());
 		_vm->restoreBackgroundHE(imageRect);
 	} else {
 		copyFrameToBuffer(pvs->getPixels(0, 0), kDstScreen, 0, 0, pvs->pitch);
 
-		Common::Rect imageRect(getWidth(), getHeight());
+		Common::Rect imageRect(_video->getWidth(), _video->getHeight());
 		_vm->markRectAsDirty(kMainVirtScreen, imageRect);
 	}
 
-	if (endOfVideo())
-		close();
+	if (_video->endOfVideo())
+		_video->close();
+}
+
+void MoviePlayer::close() {
+	_video->close();
+}
+
+int MoviePlayer::getWidth() const {
+	return _video->getWidth();
+}
+
+int MoviePlayer::getHeight() const {
+	return _video->getHeight();
+}
+
+int MoviePlayer::getFrameCount() const {
+	return _video->getFrameCount();
+}
+
+int MoviePlayer::getCurFrame() const {
+	return _video->endOfVideo() ? -1 : _video->getCurFrame() + 1;
 }
 
 } // End of namespace Scumm

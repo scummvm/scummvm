@@ -156,7 +156,7 @@ public:
 	/**
 	* Stops all audio playback when paused. Continues after end of pause.
 	*/
-	virtual void pause(bool paused);
+	virtual void pause(bool paused) {}
 
 	void enableMusic(int enable) { _musicEnabled = enable; }
 	int musicEnabled() const { return _musicEnabled; }

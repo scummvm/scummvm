@@ -128,4 +128,3 @@ void KyraEngine_v2::processAnimationScript(int allowSkip, int resetChar) {
 }
 
 } // End of namespace Kyra
-

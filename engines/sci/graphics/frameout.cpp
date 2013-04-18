@@ -37,12 +37,14 @@
 #include "sci/engine/vm.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
+#include "sci/graphics/compare.h"
 #include "sci/graphics/font.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
+#include "sci/graphics/text32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/video/robot_decoder.h"
 
@@ -89,6 +91,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 	newPlane.priority = readSelectorValue(_segMan, object, SELECTOR(priority));
 	newPlane.lastPriority = 0xFFFF; // hidden
 	newPlane.planeOffsetX = 0;
+	newPlane.planeOffsetY = 0;
 	newPlane.pictureId = 0xFFFF;
 	newPlane.planePictureMirrored = false;
 	newPlane.planeBack = 0;
@@ -131,9 +134,14 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			} else {
 				it->planeOffsetX = 0;
 			}
-
-			if (it->planeRect.top < 0)
+			
+			if (it->planeRect.top < 0) {
+				it->planeOffsetY = -it->planeRect.top;
 				it->planeRect.top = 0;
+			} else {
+				it->planeOffsetY = 0;
+			}
+
 			// We get bad plane-bottom in sq6
 			if (it->planeRect.right > _screen->getWidth())
 				it->planeRect.right = _screen->getWidth();
@@ -169,10 +177,6 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 	error("kUpdatePlane called on plane that wasn't added before");
 }
 
-void GfxFrameout::kernelRepaintPlane(reg_t object) {
-	// TODO
-}
-
 void GfxFrameout::kernelDeletePlane(reg_t object) {
 	deletePlanePictures(object);
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
@@ -197,12 +201,13 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 	}
 }
 
-void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX) {
+void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX, uint16 startY) {
 	PlanePictureEntry newPicture;
 	newPicture.object = object;
 	newPicture.pictureId = pictureId;
 	newPicture.picture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, pictureId, false);
 	newPicture.startX = startX;
+	newPicture.startY = startY;
 	newPicture.pictureCels = 0;
 	_planePictures.push_back(newPicture);
 }
@@ -237,36 +242,45 @@ void GfxFrameout::kernelUpdateScreenItem(reg_t object) {
 	if (!_segMan->isObject(object))
 		return;
 
-	for (FrameoutList::iterator listIterator = _screenItems.begin(); listIterator != _screenItems.end(); listIterator++) {
-		FrameoutEntry *itemEntry = *listIterator;
-
-		if (itemEntry->object == object) {
-			itemEntry->viewId = readSelectorValue(_segMan, object, SELECTOR(view));
-			itemEntry->loopNo = readSelectorValue(_segMan, object, SELECTOR(loop));
-			itemEntry->celNo = readSelectorValue(_segMan, object, SELECTOR(cel));
-			itemEntry->x = readSelectorValue(_segMan, object, SELECTOR(x));
-			itemEntry->y = readSelectorValue(_segMan, object, SELECTOR(y));
-			itemEntry->z = readSelectorValue(_segMan, object, SELECTOR(z));
-			itemEntry->priority = readSelectorValue(_segMan, object, SELECTOR(priority));
-			if (readSelectorValue(_segMan, object, SELECTOR(fixPriority)) == 0)
-				itemEntry->priority = itemEntry->y;
-
-			itemEntry->signal = readSelectorValue(_segMan, object, SELECTOR(signal));
-			itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
-			itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
-			return;
-		}
+	FrameoutEntry *itemEntry = findScreenItem(object);
+	if (!itemEntry) {
+		warning("kernelUpdateScreenItem: invalid object %04x:%04x", PRINT_REG(object));
+		return;
 	}
+
+	itemEntry->viewId = readSelectorValue(_segMan, object, SELECTOR(view));
+	itemEntry->loopNo = readSelectorValue(_segMan, object, SELECTOR(loop));
+	itemEntry->celNo = readSelectorValue(_segMan, object, SELECTOR(cel));
+	itemEntry->x = readSelectorValue(_segMan, object, SELECTOR(x));
+	itemEntry->y = readSelectorValue(_segMan, object, SELECTOR(y));
+	itemEntry->z = readSelectorValue(_segMan, object, SELECTOR(z));
+	itemEntry->priority = readSelectorValue(_segMan, object, SELECTOR(priority));
+	if (readSelectorValue(_segMan, object, SELECTOR(fixPriority)) == 0)
+		itemEntry->priority = itemEntry->y;
+
+	itemEntry->signal = readSelectorValue(_segMan, object, SELECTOR(signal));
+	itemEntry->scaleX = readSelectorValue(_segMan, object, SELECTOR(scaleX));
+	itemEntry->scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
 }
 
 void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
+	FrameoutEntry *itemEntry = findScreenItem(object);
+	if (!itemEntry) {
+		warning("kernelDeleteScreenItem: invalid object %04x:%04x", PRINT_REG(object));
+		return;
+	}
+
+	_screenItems.remove(itemEntry);
+}
+
+FrameoutEntry *GfxFrameout::findScreenItem(reg_t object) {
 	for (FrameoutList::iterator listIterator = _screenItems.begin(); listIterator != _screenItems.end(); listIterator++) {
 		FrameoutEntry *itemEntry = *listIterator;
-		if (itemEntry->object == object) {
-			_screenItems.remove(itemEntry);
-			return;
-		}
+		if (itemEntry->object == object)
+			return itemEntry;
 	}
+
+	return NULL;
 }
 
 int16 GfxFrameout::kernelGetHighPlanePri() {
@@ -274,9 +288,8 @@ int16 GfxFrameout::kernelGetHighPlanePri() {
 	return readSelectorValue(g_sci->getEngineState()->_segMan, _planes.back().object, SELECTOR(priority));
 }
 
-// TODO: No idea yet how to implement this
-void GfxFrameout::kernelAddPicAt(reg_t planeObj, int16 forWidth, GuiResourceId pictureId) {
-	addPlanePicture(planeObj, pictureId, forWidth);
+void GfxFrameout::kernelAddPicAt(reg_t planeObj, GuiResourceId pictureId, int16 pictureX, int16 pictureY) {
+	addPlanePicture(planeObj, pictureId, pictureX, pictureY);
 }
 
 bool sortHelper(const FrameoutEntry* entry1, const FrameoutEntry* entry2) {
@@ -314,44 +327,6 @@ void GfxFrameout::sortPlanes() {
 
 	// Sort the rest of them
 	Common::sort(_planes.begin(), _planes.end(), planeSortHelper);
-}
-
-static int16 GetLongest(const char *text, int16 maxWidth, GfxFont *font) {
-	uint16 curChar = 0;
-	int16 maxChars = 0, curCharCount = 0;
-	uint16 width = 0;
-
-	while (width <= maxWidth) {
-		curChar = (*(const byte *)text++);
-
-		switch (curChar) {
-		// We need to add 0xD, 0xA and 0xD 0xA to curCharCount and then exit
-		//  which means, we split text like
-		//  'Mature, experienced software analyst available.' 0xD 0xA
-		//  'Bug installation a proven speciality. "No version too clean."' (normal game text, this is from lsl2)
-		//   and 0xA '-------' 0xA (which is the official sierra subtitle separator)
-		//  Sierra did it the same way.
-		case 0xD:
-			// Check, if 0xA is following, if so include it as well
-			if ((*(const unsigned char *)text) == 0xA)
-				curCharCount++;
-			// it's meant to pass through here
-		case 0xA:
-			curCharCount++;
-			// and it's also meant to pass through here
-		case 0:
-			return curCharCount;
-		case ' ':
-			maxChars = curCharCount; // return count up to (but not including) breaking space
-			break;
-		}
-		if (width + font->getCharWidth(curChar) > maxWidth)
-			break;
-		width += font->getCharWidth(curChar);
-		curCharCount++;
-	}
-
-	return maxChars;
 }
 
 void GfxFrameout::kernelFrameout() {
@@ -405,7 +380,10 @@ void GfxFrameout::kernelFrameout() {
 			continue;
 		}
 
-		if (it->planeBack)
+		// There is a race condition lurking in SQ6, which causes the game to hang in the intro, when teleporting to Polysorbate LX.
+		// Since I first wrote the patch, the race has stopped occurring for me though.
+		// I'll leave this for investigation later, when someone can reproduce.
+		if (it->pictureId == 0xffff)
 			_paint32->fillRect(it->planeRect, it->planeBack);
 
 		GuiResourceId planeMainPictureId = it->pictureId;
@@ -440,6 +418,7 @@ void GfxFrameout::kernelFrameout() {
 					picEntry->y = planePicture->getSci32celY(pictureCelNr);
 					picEntry->x = planePicture->getSci32celX(pictureCelNr);
 					picEntry->picStartX = pictureIt->startX;
+					picEntry->picStartY = pictureIt->startY;
 
 					picEntry->priority = planePicture->getSci32celPriority(pictureCelNr);
 
@@ -462,8 +441,9 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / scriptsRunningHeight);
 				itemEntry->x = ((itemEntry->x * _screen->getWidth()) / scriptsRunningWidth);
 				itemEntry->picStartX = ((itemEntry->picStartX * _screen->getWidth()) / scriptsRunningWidth);
+				itemEntry->picStartY = ((itemEntry->picStartY * _screen->getHeight()) / scriptsRunningHeight);
 
-				// Out of view
+				// Out of view horizontally (sanity checks)
 				int16 pictureCelStartX = itemEntry->picStartX + itemEntry->x;
 				int16 pictureCelEndX = pictureCelStartX + itemEntry->picture->getSci32celWidth(itemEntry->celNo);
 				int16 planeStartX = it->planeOffsetX;
@@ -471,6 +451,16 @@ void GfxFrameout::kernelFrameout() {
 				if (pictureCelEndX < planeStartX)
 					continue;
 				if (pictureCelStartX > planeEndX)
+					continue;
+
+				// Out of view vertically (sanity checks)
+				int16 pictureCelStartY = itemEntry->picStartY + itemEntry->y;
+				int16 pictureCelEndY = pictureCelStartY + itemEntry->picture->getSci32celHeight(itemEntry->celNo);
+				int16 planeStartY = it->planeOffsetY;
+				int16 planeEndY = planeStartY + it->planeRect.height();
+				if (pictureCelEndY < planeStartY)
+					continue;
+				if (pictureCelStartY > planeEndY)
 					continue;
 
 				int16 pictureOffsetX = it->planeOffsetX;
@@ -484,14 +474,24 @@ void GfxFrameout::kernelFrameout() {
 					}
 				}
 
-				itemEntry->picture->drawSci32Vga(itemEntry->celNo, pictureX, itemEntry->y, pictureOffsetX, it->planePictureMirrored);
+				int16 pictureOffsetY = it->planeOffsetY;
+				int16 pictureY = itemEntry->y;
+				if ((it->planeOffsetY) || (itemEntry->picStartY)) {
+					if (it->planeOffsetY <= itemEntry->picStartY) {
+						pictureY += itemEntry->picStartY - it->planeOffsetY;
+						pictureOffsetY = 0;
+					} else {
+						pictureOffsetY = it->planeOffsetY - itemEntry->picStartY;
+					}
+				}
+
+				itemEntry->picture->drawSci32Vga(itemEntry->celNo, pictureX, itemEntry->y, pictureOffsetX, pictureOffsetY, it->planePictureMirrored);
 //				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
 
 			} else if (itemEntry->viewId != 0xFFFF) {
 				GfxView *view = _cache->getView(itemEntry->viewId);
 
 //				warning("view %s %04x:%04x", _segMan->getObjectName(itemEntry->object), PRINT_REG(itemEntry->object));
-
 
 				if (view->isSci2Hires()) {
 					int16 dummyX = 0;
@@ -505,6 +505,7 @@ void GfxFrameout::kernelFrameout() {
 
 				// Adjust according to current scroll position
 				itemEntry->x -= it->planeOffsetX;
+				itemEntry->y -= it->planeOffsetY;
 
 				uint16 useInsetRect = readSelectorValue(_segMan, itemEntry->object, SELECTOR(useInsetRect));
 				if (useInsetRect) {
@@ -527,7 +528,7 @@ void GfxFrameout::kernelFrameout() {
 
 					Common::Rect nsRect = itemEntry->celRect;
 					// Translate back to actual coordinate within scrollable plane
-					nsRect.translate(it->planeOffsetX, 0);
+					nsRect.translate(it->planeOffsetX, it->planeOffsetY);
 
 					if (view->isSci2Hires()) {
 						view->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
@@ -539,10 +540,14 @@ void GfxFrameout::kernelFrameout() {
 						nsRect.right = (nsRect.right * scriptsRunningWidth) / _screen->getWidth();
 					}
 
-					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsLeft), nsRect.left);
-					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsTop), nsRect.top);
-					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsRight), nsRect.right);
-					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsBottom), nsRect.bottom);
+					if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+						// HACK: Some (?) objects in Phantasmagoria 2 have no NS rect. Skip them for now.
+						// TODO: Remove once we figure out how Phantasmagoria 2 draws objects on screen.
+						if (lookupSelector(_segMan, itemEntry->object, SELECTOR(nsLeft), NULL, NULL) != kSelectorVariable)
+							continue;
+					}
+
+					g_sci->_gfxCompare->setNSRect(itemEntry->object, nsRect);
 				}
 
 				int16 screenHeight = _screen->getHeight();
@@ -578,62 +583,8 @@ void GfxFrameout::kernelFrameout() {
 				}
 			} else {
 				// Most likely a text entry
-				// This draws text the "SCI0-SCI11" way. In SCI2, text is prerendered in kCreateTextBitmap
-				// TODO: rewrite this the "SCI2" way (i.e. implement the text buffer to draw inside kCreateTextBitmap)
 				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
-					reg_t stringObject = readSelector(_segMan, itemEntry->object, SELECTOR(text));
-
-					// The object in the text selector of the item can be either a raw string
-					// or a Str object. In the latter case, we need to access the object's data
-					// selector to get the raw string.
-					if (_segMan->isHeapObject(stringObject))
-						stringObject = readSelector(_segMan, stringObject, SELECTOR(data));
-
-					Common::String text = _segMan->getString(stringObject);
-					GfxFont *font = _cache->getFont(readSelectorValue(_segMan, itemEntry->object, SELECTOR(font)));
-					bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
-					uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));
-
-					itemEntry->y = ((itemEntry->y * _screen->getHeight()) / scriptsRunningHeight);
-					itemEntry->x = ((itemEntry->x * _screen->getWidth()) / scriptsRunningWidth);
-
-					uint16 startX = itemEntry->x + it->planeRect.left;
-					uint16 curY = itemEntry->y + it->planeRect.top;
-					const char *txt = text.c_str();
-					// HACK. The plane sometimes doesn't contain the correct width. This
-					// hack breaks the dialog options when speaking with Grace, but it's
-					// the best we got up to now. This happens because of the unimplemented
-					// kTextWidth function in SCI32.
-					// TODO: Remove this once kTextWidth has been implemented.
-					uint16 w = it->planeRect.width() >= 20 ? it->planeRect.width() : _screen->getWidth() - 10;
-					int16 charCount;
-
-					// Upscale the coordinates/width if the fonts are already upscaled
-					if (_screen->fontIsUpscaled()) {
-						startX = startX * _screen->getDisplayWidth() / _screen->getWidth();
-						curY = curY * _screen->getDisplayHeight() / _screen->getHeight();
-						w  = w * _screen->getDisplayWidth() / _screen->getWidth();
-					}
-
-					while (*txt) {
-						charCount = GetLongest(txt, w, font);
-						if (charCount == 0)
-							break;
-
-						uint16 curX = startX;
-
-						for (int i = 0; i < charCount; i++) {
-							unsigned char curChar = txt[i];
-							font->draw(curChar, curY, curX, foreColor, dimmed);
-							curX += font->getCharWidth(curChar);
-						}
-
-						curY += font->getHeight();
-						txt += charCount;
-						while (*txt == ' ')
-							txt++; // skip over breaking spaces
-					}
-
+					g_sci->_gfxText32->drawTextBitmap(itemEntry->object);
 				}
 			}
 		}

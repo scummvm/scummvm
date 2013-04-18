@@ -236,4 +236,3 @@ $(ndsdir)/arm7/arm7.bin: $(ndsdir)/arm7/arm7.elf
 #
 # Fingolfin used
 # CXX=arm-eabi-g++ CC=arm-eabi-gcc ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork' --disable-shared --disable-debugging LDFLAGS=$DEVKITPRO/libnds/lib/libnds9.a
-

@@ -459,5 +459,3 @@ int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 }
 
 } // End of namespace Kyra
-
-

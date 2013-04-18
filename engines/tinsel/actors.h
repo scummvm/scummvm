@@ -156,7 +156,7 @@ struct Z_POSITIONS {
 	int		z;
 };
 
-void RestoreActorProcess(int id, INT_CONTEXT *pic);
+void RestoreActorProcess(int id, INT_CONTEXT *pic, bool savegameFlag);
 
 int SaveActors(PSAVED_ACTOR sActorInfo);
 void RestoreActors(int numActors, PSAVED_ACTOR sActorInfo);

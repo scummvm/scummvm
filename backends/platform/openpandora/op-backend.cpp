@@ -49,7 +49,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <time.h>	// for getTimeAndDate()
+#include <time.h>   // for getTimeAndDate()
 
 /* Dump console info to files. */
 #define DUMP_STDOUT
@@ -97,7 +97,7 @@ void OSystem_OP::initBackend() {
 //	if (_mixer == 0) {
 //		_mixerManager = new DoubleBufferSDLMixerManager();
 
-		// Setup and start mixer
+	// Setup and start mixer
 //		_mixerManager->init();
 //	}
 
@@ -123,49 +123,49 @@ void OSystem_OP::initBackend() {
 
 	_savefileManager = new DefaultSaveFileManager(savePath);
 
-	#ifdef DUMP_STDOUT
-		// The OpenPandora has a serial console on the EXT connection but most users do not use this so we
-		// output all our STDOUT and STDERR to files for debug purposes.
-		char STDOUT_FILE[PATH_MAX+1];
-		char STDERR_FILE[PATH_MAX+1];
+#ifdef DUMP_STDOUT
+	// The OpenPandora has a serial console on the EXT connection but most users do not use this so we
+	// output all our STDOUT and STDERR to files for debug purposes.
+	char STDOUT_FILE[PATH_MAX+1];
+	char STDERR_FILE[PATH_MAX+1];
 
-		strcpy(STDOUT_FILE, workDirName);
-		strcpy(STDERR_FILE, workDirName);
-		strcat(STDOUT_FILE, "/scummvm.stdout.txt");
-		strcat(STDERR_FILE, "/scummvm.stderr.txt");
+	strcpy(STDOUT_FILE, workDirName);
+	strcpy(STDERR_FILE, workDirName);
+	strcat(STDOUT_FILE, "/scummvm.stdout.txt");
+	strcat(STDERR_FILE, "/scummvm.stderr.txt");
 
-		// Flush the output in case anything is queued
-		fclose(stdout);
-		fclose(stderr);
+	// Flush the output in case anything is queued
+	fclose(stdout);
+	fclose(stderr);
 
-		// Redirect standard input and standard output
-		FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
-		if (newfp == NULL) {
-		#if !defined(stdout)
-			stdout = fopen(STDOUT_FILE, "w");
-		#else
-			newfp = fopen(STDOUT_FILE, "w");
-			if (newfp) {
-				*stdout = *newfp;
-			}
-		#endif
+	// Redirect standard input and standard output
+	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
+	if (newfp == NULL) {
+#if !defined(stdout)
+		stdout = fopen(STDOUT_FILE, "w");
+#else
+		newfp = fopen(STDOUT_FILE, "w");
+		if (newfp) {
+			*stdout = *newfp;
 		}
+#endif
+	}
 
-		newfp = freopen(STDERR_FILE, "w", stderr);
-		if (newfp == NULL) {
-		#if !defined(stderr)
-			stderr = fopen(STDERR_FILE, "w");
-		#else
-			newfp = fopen(STDERR_FILE, "w");
-			if (newfp) {
-				*stderr = *newfp;
-			}
-		#endif
+	newfp = freopen(STDERR_FILE, "w", stderr);
+	if (newfp == NULL) {
+#if !defined(stderr)
+		stderr = fopen(STDERR_FILE, "w");
+#else
+		newfp = fopen(STDERR_FILE, "w");
+		if (newfp) {
+			*stderr = *newfp;
 		}
+#endif
+	}
 
-		setbuf(stderr, NULL);
-		printf("%s\n", "Debug: STDOUT and STDERR redirected to text files.");
-	#endif /* DUMP_STDOUT */
+	setbuf(stderr, NULL);
+	printf("%s\n", "Debug: STDOUT and STDERR redirected to text files.");
+#endif /* DUMP_STDOUT */
 
 	/* Trigger autosave every 4 minutes. */
 	ConfMan.registerDefault("autosave_period", 4 * 60);
@@ -187,7 +187,7 @@ void OSystem_OP::initBackend() {
 	_inited = true;
 }
 
-	// enable joystick
+// enable joystick
 //	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
 //		printf("Using joystick: %s\n", SDL_JoystickName(0));
 //		_joystick = SDL_JoystickOpen(joystick_num);
@@ -195,13 +195,13 @@ void OSystem_OP::initBackend() {
 //
 //	setupMixer();
 
-	// Note: We could implement a custom SDLTimerManager by using
-	// SDL_AddTimer. That might yield better timer resolution, but it would
-	// also change the semantics of a timer: Right now, ScummVM timers
-	// *never* run in parallel, due to the way they are implemented. If we
-	// switched to SDL_AddTimer, each timer might run in a separate thread.
-	// However, not all our code is prepared for that, so we can't just
-	// switch. Still, it's a potential future change to keep in mind.
+// Note: We could implement a custom SDLTimerManager by using
+// SDL_AddTimer. That might yield better timer resolution, but it would
+// also change the semantics of a timer: Right now, ScummVM timers
+// *never* run in parallel, due to the way they are implemented. If we
+// switched to SDL_AddTimer, each timer might run in a separate thread.
+// However, not all our code is prepared for that, so we can't just
+// switch. Still, it's a potential future change to keep in mind.
 //	_timer = new DefaultTimerManager();
 //	_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 
@@ -217,9 +217,9 @@ void OSystem_OP::initSDL() {
 		if (SDL_Init(sdlFlags) == -1)
 			error("Could not initialize SDL: %s", SDL_GetError());
 
-    	uint8_t hiddenCursorData = 0;
+		uint8_t hiddenCursorData = 0;
 
-    	hiddenCursor = SDL_CreateCursor(&hiddenCursorData, &hiddenCursorData, 8, 1, 0, 0);
+		hiddenCursor = SDL_CreateCursor(&hiddenCursorData, &hiddenCursorData, 8, 1, 0, 0);
 
 		/* On the OpenPandora we need to work around an SDL assumption that
 		   returns relative mouse coordinates when you get to the screen
@@ -277,11 +277,11 @@ void OSystem_OP::quit() {
 
 	SDL_FreeCursor(hiddenCursor);
 
-	#ifdef DUMP_STDOUT
-		printf("%s\n", "Debug: STDOUT and STDERR text files closed.");
-		fclose(stdout);
-		fclose(stderr);
-	#endif /* DUMP_STDOUT */
+#ifdef DUMP_STDOUT
+	printf("%s\n", "Debug: STDOUT and STDERR text files closed.");
+	fclose(stdout);
+	fclose(stderr);
+#endif /* DUMP_STDOUT */
 
 	OSystem_POSIX::quit();
 }

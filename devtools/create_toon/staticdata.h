@@ -318,4 +318,3 @@ const char *exitLine_RU = "Hope you enjoyed playing ToonStruck!!";
 const char* exitLine_SP = "\255\255Esperamos que te diviertas jugando a ToonStruck!!";
 
 #endif
-

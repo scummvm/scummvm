@@ -76,5 +76,3 @@ bool EventsBuffer::simulateMouseRightClick(int x, int y, bool pushed) {
 	return (SDL_PushEvent(&ev) == 0);
 }
 }
-
-

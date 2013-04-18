@@ -252,7 +252,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	else
 		_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _c("Override global MIDI settings", "lowres"), 0, kCmdGlobalMIDIOverride);
 
-	if (_guioptions & Common::GUIO_NOMIDI)
+	if (_guioptions.contains(GUIO_NOMIDI))
 		_globalMIDIOverride->setEnabled(false);
 
 	addMIDIControls(tab, "GameOptions_MIDI.");
@@ -267,7 +267,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	else
 		_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _c("Override global MT-32 settings", "lowres"), 0, kCmdGlobalMT32Override);
 
-	//if (_guioptions & Common::GUIO_NOMIDI)
+	//if (_guioptions.contains(GUIO_NOMIDI))
 	//	_globalMT32Override->setEnabled(false);
 
 	addMT32Controls(tab, "GameOptions_MT32.");
@@ -1038,7 +1038,7 @@ void LauncherDialog::updateButtons() {
 	bool en = enable;
 
 	if (item >= 0)
-		en = !(Common::checkGameGUIOption(Common::GUIO_NOLAUNCHLOAD, ConfMan.get("guioptions", _domains[item])));
+		en = !(Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, ConfMan.get("guioptions", _domains[item])));
 
 	if (en != _loadButton->isEnabled()) {
 		_loadButton->setEnabled(en);
@@ -1052,7 +1052,7 @@ void LauncherDialog::updateButtons() {
 
 	const char *newAddButtonLabel = massAdd
 		? (lowRes ? _c("Mass Add...", "lowres") : _("Mass Add..."))
-		: (lowRes ? _c("Add Game...", "lowres") : _("Add Game..."));
+		: (lowRes ? _c("~A~dd Game...", "lowres") : _("~A~dd Game..."));
 
 	if (_addButton->getLabel() != newAddButtonLabel)
 		_addButton->setLabel(newAddButtonLabel);

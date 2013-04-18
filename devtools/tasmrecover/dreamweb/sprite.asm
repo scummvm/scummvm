@@ -4226,7 +4226,7 @@ botofdoor2:	sub	ah,ch
 opendoor2:	cmp	throughdoor,1
 	jz	mustbeopen
 	cmp	lockstatus,1
-	jz	shutdoor
+	jz	shutdoor2
 mustbeopen:	mov	cl,[es:bx+19]
               	cmp	cl,1
 	jnz	notdoorsound4
@@ -4785,12 +4785,12 @@ Reconstruct	proc	near
 	call	drawfloor
 	call	spriteupdate
 	call	printsprites
-	if	foreign
+	cmp	foreignrelease, 0
+	jz notfudge
 	cmp	reallocation,20
 	jnz	notfudge
 	call	undertextline
 notfudge:
-	endif
 	mov	havedoneobs,0
 noneedtorecon:	ret
 
@@ -5017,17 +5017,3 @@ dumpevery2:	mov	ax,[es:bx]
 finishevery2:	ret
 
 	endp
-
-
-
-
-
-
-
-
-
-
-
-
-
-

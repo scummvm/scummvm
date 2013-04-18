@@ -24,16 +24,19 @@
 
 #include "lastexpress/entities/vesna.h"
 
+#include "lastexpress/fight/fight.h"
+
 #include "lastexpress/game/action.h"
 #include "lastexpress/game/entities.h"
-#include "lastexpress/game/fight.h"
 #include "lastexpress/game/inventory.h"
 #include "lastexpress/game/logic.h"
 #include "lastexpress/game/object.h"
 #include "lastexpress/game/savepoint.h"
 #include "lastexpress/game/scenes.h"
-#include "lastexpress/game/sound.h"
 #include "lastexpress/game/state.h"
+
+#include "lastexpress/sound/queue.h"
+#include "lastexpress/sound/sound.h"
 
 #include "lastexpress/lastexpress.h"
 #include "lastexpress/helpers.h"
@@ -110,7 +113,7 @@ IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
 IMPLEMENT_FUNCTION_S(7, Milos, playSound16)
-	Entity::playSound(savepoint, false, SoundManager::kFlagDefault);
+	Entity::playSound(savepoint, false, kFlagDefault);
 IMPLEMENT_FUNCTION_END
 
 //////////////////////////////////////////////////////////////////////////
@@ -1576,8 +1579,8 @@ IMPLEMENT_FUNCTION(29, Milos, chapter4Handler)
 		break;
 
 	case kAction221683008:
-		if (getSound()->isBuffered(kEntityMilos))
-			getSound()->processEntry(kEntityMilos);
+		if (getSoundQueue()->isBuffered(kEntityMilos))
+			getSoundQueue()->processEntry(kEntityMilos);
 
 		params->param1 = 1;
 		getSavePoints()->push(kEntityMilos, kEntityCoudert, kAction123199584);
@@ -1719,15 +1722,15 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 			break;
 
 		case 2:
-			if (getSound()->isBuffered("MUS050"))
-				getSound()->processEntry("MUS050");
+			if (getSoundQueue()->isBuffered("MUS050"))
+				getSoundQueue()->processEntry("MUS050");
 
-			if (getSound()->isBuffered("ARRIVE"))
-				getSound()->removeFromQueue("ARRIVE");
+			if (getSoundQueue()->isBuffered("ARRIVE"))
+				getSoundQueue()->removeFromQueue("ARRIVE");
 
-			getSound()->processEntries();
+			getSoundQueue()->processEntries();
 			getAction()->playAnimation(isNight() ? kEventLocomotiveMilosNight : kEventLocomotiveMilosDay);
-			getSound()->setupEntry(SoundManager::kSoundType7, kEntityMilos);
+			getSoundQueue()->setupEntry(kSoundType7, kEntityMilos);
 			getScenes()->loadSceneFromPosition(kCarCoalTender, 1);
 			break;
 
@@ -1739,7 +1742,7 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 		case 4:
 			getAction()->playAnimation(kEventLocomotiveRestartTrain);
 			getAction()->playAnimation(kEventLocomotiveOldBridge);
-			getSound()->resetState();
+			getSoundQueue()->resetState();
 			getState()->time = kTime2983500;
 
 			setCallback(5);
@@ -1782,7 +1785,7 @@ IMPLEMENT_FUNCTION(34, Milos, chapter5Handler)
 			setup_savegame(kSavegameTypeEvent, kEventLocomotiveAnnaStopsTrain);
 		}
 
-		getSound()->processEntry(kEntityMilos);
+		getSoundQueue()->processEntry(kEntityMilos);
 		if (getState()->time < kTimeTrainStopped2)
 			getState()->time = kTimeTrainStopped2;
 

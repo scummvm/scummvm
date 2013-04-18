@@ -691,6 +691,16 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 2: { // At (return value at an index)
 		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		if (g_sci->getGameId() == GID_PHANTASMAGORIA2) {
+			// HACK: Phantasmagoria 2 keeps trying to access past the end of an
+			// array when it starts. I'm assuming it's trying to see where the
+			// array ends, or tries to resize it. Adjust the array size
+			// accordingly, and return NULL for now.
+			if (array->getSize() == argv[2].toUint16()) {
+				array->setSize(argv[2].toUint16());
+				return NULL_REG;
+			}
+		}
 		return array->getValue(argv[2].toUint16());
 	}
 	case 3: { // Atput (put value at an index)

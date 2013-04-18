@@ -176,4 +176,3 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length);
 FM_OPL *makeAdLibOPL(int rate);
 
 #endif
-

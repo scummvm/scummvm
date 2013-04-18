@@ -42,7 +42,7 @@ namespace Common {
  * management scheme. There, only elements that 'live' are actually constructed
  * (i.e., have their constructor called), and objects that are removed are
  * immediately destructed (have their destructor called).
- * With Common::Array, this is not the case; instead, it simply uses new[] and
+ * With Array, this is not the case; instead, it simply uses new[] and
  * delete[] to allocate whole blocks of objects, possibly more than are
  * currently 'alive'. This simplifies memory management, but may have
  * undesirable side effects when one wants to use an Array of complex
@@ -274,7 +274,7 @@ protected:
 		if (capacity) {
 			_storage = new T[capacity];
 			if (!_storage)
-				::error("Common::Array: failure to allocate %d bytes", capacity);
+				::error("Common::Array: failure to allocate %u bytes", capacity * (uint)sizeof(T));
 		} else {
 			_storage = 0;
 		}

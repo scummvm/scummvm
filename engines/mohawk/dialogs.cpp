@@ -81,14 +81,17 @@ enum {
 	kTransCmd = 'TRAN',
 	kWaterCmd = 'WATR',
 	kDropCmd = 'DROP',
-	kMapCmd = 'SMAP'
+	kMapCmd = 'SMAP',
+	kMenuCmd = 'MENU'
 };
 
 #ifdef ENABLE_MYST
 
 MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
+	// I18N: Option for fast scene switching
 	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
 	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
+	// I18N: Drop book page
 	_dropPageButton = new GUI::ButtonWidget(this, 15, 60, 100, 25, _("~D~rop Page"), 0, kDropCmd);
 
 	// Myst ME only has maps
@@ -96,6 +99,12 @@ MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog
 		_showMapButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("~S~how Map"), 0, kMapCmd);
 	else
 		_showMapButton = 0;
+
+	// Myst demo only has a menu
+	if (_vm->getFeatures() & GF_DEMO)
+		_returnToMenuButton = new GUI::ButtonWidget(this, 15, 95, 100, 25, _("~M~ain Menu"), 0, kMenuCmd);
+	else
+		_returnToMenuButton = 0;
 
 	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
 	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
@@ -112,6 +121,15 @@ void MystOptionsDialog::open() {
 	if (_showMapButton)
 		_showMapButton->setEnabled(_vm->_scriptParser &&
 				_vm->_scriptParser->getMap());
+
+	// Return to menu button is not enabled on the menu
+	if (_returnToMenuButton)
+		_returnToMenuButton->setEnabled(_vm->_scriptParser &&
+				_vm->getCurStack() != kDemoStack);
+
+	// Zip mode is disabled in the demo
+	if (_vm->getFeatures() & GF_DEMO)
+		_zipModeCheckbox->setEnabled(false);
 
 	_zipModeCheckbox->setState(_vm->_gameState->_globals.zipMode);
 	_transitionsCheckbox->setState(_vm->_gameState->_globals.transitions);
@@ -131,6 +149,10 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 		break;
 	case kMapCmd:
 		_vm->_needsShowMap = true;
+		close();
+	break;
+	case kMenuCmd:
+		_vm->_needsShowDemoMenu = true;
 		close();
 	break;
 	case GUI::kCloseCmd:

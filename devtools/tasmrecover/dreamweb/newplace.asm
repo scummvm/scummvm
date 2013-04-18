@@ -158,13 +158,14 @@ alreadyinfo:	mov	ax,mousebutton
 	mov	di,60
 	mov	bx,72+55
 	call	showframe
-	if	foreign
+	cmp	foreignrelease, 0
+	jz $1
 	mov	al,4
 	mov	ah,0
 	mov	di,60
 	mov	bx,72+55+21
 	call	showframe
-	endif
+$1:
 	pop	bx
 
 	mov	bh,0
@@ -175,11 +176,11 @@ alreadyinfo:	mov	ax,mousebutton
 	call	findnextcolon
 
 	mov	di,63
-	if	foreign
-	mov	bx,84+4
-	else
 	mov	bx,84
-	endif
+	cmp	foreignrelease, 0
+	jz $2
+	mov	bx,84+4
+$2:
 	mov	dl,191
 	mov	al,0
 	mov	ah,0
@@ -576,8 +577,3 @@ Readcitypic	proc	near
 	ret
 
 	endp
-
-
-
-
-

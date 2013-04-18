@@ -181,6 +181,7 @@ public:
 	~LBCode();
 
 	LBValue runCode(LBItem *src, uint32 offset);
+	uint parseCode(const Common::String &source);
 
 protected:
 	MohawkEngine_LivingBooks *_vm;
@@ -206,6 +207,7 @@ protected:
 	void parseArithmetic2();
 	void parseMain();
 
+	LBItem *resolveItem(const LBValue &value);
 	Common::Array<LBValue> readParams();
 	Common::Rect getRectFromParams(const Common::Array<LBValue> &params);
 
@@ -213,8 +215,15 @@ protected:
 	void runItemCommand();
 	void runNotifyCommand();
 
+	uint nextFreeString();
+	bool parseCodeSymbol(const Common::String &name, uint &pos, Common::Array<byte> &code);
+
 public:
 	void cmdUnimplemented(const Common::Array<LBValue> &params);
+	void cmdEval(const Common::Array<LBValue> &params);
+	void cmdRandom(const Common::Array<LBValue> &params);
+	void cmdStringLen(const Common::Array<LBValue> &params);
+	void cmdSubstring(const Common::Array<LBValue> &params);
 	void cmdGetRect(const Common::Array<LBValue> &params);
 	void cmdTopLeft(const Common::Array<LBValue> &params);
 	void cmdBottomRight(const Common::Array<LBValue> &params);
@@ -228,9 +237,10 @@ public:
 	void cmdSetHitTest(const Common::Array<LBValue> &params);
 	void cmdKey(const Common::Array<LBValue> &params);
 
-	void itemSetParent(const Common::Array<LBValue> &params);
-	void itemMoveTo(const Common::Array<LBValue> &params);
 	void itemIsPlaying(const Common::Array<LBValue> &params);
+	void itemMoveTo(const Common::Array<LBValue> &params);
+	void itemSeek(const Common::Array<LBValue> &params);
+	void itemSetParent(const Common::Array<LBValue> &params);
 };
 
 } // End of namespace Mohawk

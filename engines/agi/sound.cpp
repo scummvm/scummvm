@@ -41,6 +41,10 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, S
 		return NULL;
 	uint16 type = READ_LE_UINT16(data);
 
+	// For V1 sound resources
+	if (type != AGI_SOUND_SAMPLE && (type & 0xFF) == 0x01)
+		return new PCjrSound(data, len, resnum, manager);
+
 	switch (type) { // Create a sound object based on the type
 	case AGI_SOUND_SAMPLE:
 		return new IIgsSample(data, len, resnum, manager);
@@ -62,6 +66,11 @@ PCjrSound::PCjrSound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 	_data = data; // Save the resource pointer
 	_len  = len;  // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type
+
+	// Detect V1 sound resources
+	if ((_type & 0xFF) == 0x01)
+		_type = AGI_SOUND_4CHN;
+
 	_isValid = (_type == AGI_SOUND_4CHN) && (_data != NULL) && (_len >= 2);
 
 	if (!_isValid) // Check for errors
@@ -127,7 +136,12 @@ void SoundMgr::startSound(int resnum, int flag) {
 
 	// Reset the flag
 	_endflag = flag;
-	_vm->setflag(_endflag, false);
+
+	if (_vm->getVersion() < 0x2000) {
+		_vm->_game.vars[_endflag] = 0;
+	} else {
+		_vm->setflag(_endflag, false);
+	}
 }
 
 void SoundMgr::stopSound() {
@@ -142,8 +156,13 @@ void SoundMgr::stopSound() {
 
 	// This is probably not needed most of the time, but there also should
 	// not be any harm doing it, so do it anyway.
-	if (_endflag != -1)
-		_vm->setflag(_endflag, true);
+	if (_endflag != -1) {
+		if (_vm->getVersion() < 0x2000) {
+			_vm->_game.vars[_endflag] = 1;
+		} else {
+			_vm->setflag(_endflag, true);
+		}
+	}
 
 	_endflag = -1;
 }
@@ -168,7 +187,7 @@ void SoundMgr::soundIsFinished() {
 	_endflag = -1;
 }
 
-SoundMgr::SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer) {
+SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) {
 	_vm = agi;
 	_endflag = -1;
 	_playingSound = -1;

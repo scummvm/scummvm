@@ -685,11 +685,8 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 	int16 paramY;
 	uint16 button;
 	int16 var_A;
-	int16 di;
 	uint16 j;
 	int16 mouseX, mouseY;
-	int16 var_16;
-	int16 var_14;
 	int16 currentSelection, oldSelection;
 	int16 var_4;
 	SelectionMenu *menu;
@@ -723,16 +720,11 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 
 	currentSelection = 0;
 
-	di = currentSelection * 9 + Y + 4;
-
 	menu->setSelection(currentSelection);
 	renderer->drawFrame();
 
 	manageEvents();
 	getMouseData(mouseUpdateStatus, &button, (uint16 *)&mouseX, (uint16 *)&mouseY);
-
-	var_16 = mouseX;
-	var_14 = mouseY;
 
 	menuVar = 0;
 
@@ -776,8 +768,6 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 			if (needMouseSave) {
 				hideMouse();
 			}
-
-			di = currentSelection * 9 + Y + 4;
 
 			menu->setSelection(currentSelection);
 			renderer->drawFrame();

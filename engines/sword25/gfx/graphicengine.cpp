@@ -156,7 +156,7 @@ RenderObjectPtr<Panel> GraphicEngine::getMainPanel() {
 }
 
 void GraphicEngine::setVsync(bool vsync) {
-	warning("STUB: SetVsync(%d)", vsync);
+	// ScummVM has no concept of VSync
 }
 
 bool GraphicEngine::getVsync() const {

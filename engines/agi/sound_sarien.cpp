@@ -65,7 +65,7 @@ static const int16 waveformMac[WAVEFORM_SIZE] = {
 	-175, -172, -165, -159, -137, -114, -67, -19
 };
 
-SoundGenSarien::SoundGenSarien(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _chn() {
+SoundGenSarien::SoundGenSarien(AgiBase *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _chn() {
 	_sndBuffer = (int16 *)calloc(2, BUFFER_SIZE);
 
 	memset(_sndBuffer, 0, BUFFER_SIZE << 1);

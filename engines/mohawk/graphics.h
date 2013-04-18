@@ -129,11 +129,14 @@ public:
 	void drawRect(Common::Rect rect, RectState state);
 	void drawLine(const Common::Point &p1, const Common::Point &p2, uint32 color);
 	void enableDrawingTimeSimulation(bool enable);
+	void fadeToBlack();
+	void fadeFromBlack();
 
 protected:
 	MohawkSurface *decodeImage(uint16 id);
 	MohawkEngine *getVM() { return (MohawkEngine *)_vm; }
 	void simulatePreviousDrawDelay(const Common::Rect &dest);
+	void copyBackBufferToScreenWithSaturation(int16 saturation);
 
 private:
 	MohawkEngine_Myst *_vm;
@@ -194,6 +197,7 @@ public:
 	void scheduleTransition(uint16 id, Common::Rect rect = Common::Rect(0, 0, 608, 392));
 	void runScheduledTransition();
 	void fadeToBlack();
+	void setTransitionSpeed(uint32 speed) { _transitionSpeed = speed; }
 
 	// Inventory
 	void showInventory();
@@ -229,6 +233,7 @@ private:
 	// Transitions
 	int16 _scheduledTransition;
 	Common::Rect _transitionRect;
+	uint32 _transitionSpeed;
 
 	// Inventory
 	void clearInventoryArea();

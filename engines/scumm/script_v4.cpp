@@ -68,6 +68,18 @@ void ScummEngine_v4::o4_ifState() {
 	int a = getVarOrDirectWord(PARAM_1);
 	int b = getVarOrDirectByte(PARAM_2);
 
+	// WORKAROUND bug #3306145 (also occurs in original): Some old versions of
+	// Indy3 sometimes fail to allocate IQ points correctly. To quote:
+	// "About the points error leaving Castle Brunwald: It seems to "reversed"!
+	// When you get caught, free yourself and escape, you get 25 IQ points even
+	// though you're not supposed to. However if you escape WITHOUT getting
+	// caught, you get 0 IQ points (supposed to get 25 IQ points)."
+	// This workaround is meant to address that.
+	if (_game.id == GID_INDY3 && a == 367 &&
+	    vm.slot[_currentScript].number == 363 && _currentRoom == 25) {
+		b = 0;
+	}
+
 	jumpRelative(getState(a) == b);
 }
 

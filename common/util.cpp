@@ -82,7 +82,7 @@ void hexdump(const byte *data, int len, int bytesPerLine, int startOffset) {
 #pragma mark -
 
 
-bool parseBool(const Common::String &val, bool &valAsBool) {
+bool parseBool(const String &val, bool &valAsBool) {
 	if (val.equalsIgnoreCase("true") ||
 		val.equalsIgnoreCase("yes") ||
 		val.equals("1")) {
@@ -104,29 +104,29 @@ bool parseBool(const Common::String &val, bool &valAsBool) {
 
 
 const LanguageDescription g_languages[] = {
-	{ "zh-cn"/*, "zh_CN"*/, "Chinese (China)", ZH_CNA },
-	{    "zh"/*, "zh_TW"*/, "Chinese (Taiwan)", ZH_TWN },
-	{    "cz"/*, "cs_CZ"*/, "Czech", CZ_CZE },
-	{    "nl"/*, "nl_NL"*/, "Dutch", NL_NLD },
-	{    "en"/*,    "en"*/, "English", EN_ANY }, // Generic English (when only one game version exist)
-	{    "gb"/*, "en_GB"*/, "English (GB)", EN_GRB },
-	{    "us"/*, "en_US"*/, "English (US)", EN_USA },
-	{    "fr"/*, "fr_FR"*/, "French", FR_FRA },
-	{    "de"/*, "de_DE"*/, "German", DE_DEU },
-	{    "gr"/*, "el_GR"*/, "Greek", GR_GRE },
-	{    "he"/*, "he_IL"*/, "Hebrew", HE_ISR },
-	{    "hb"/*, "he_IL"*/, "Hebrew", HE_ISR }, // Deprecated
-	{    "hu"/*, "hu_HU"*/, "Hungarian", HU_HUN },
-	{    "it"/*, "it_IT"*/, "Italian", IT_ITA },
-	{    "jp"/*, "ja_JP"*/, "Japanese", JA_JPN },
-	{    "kr"/*, "ko_KR"*/, "Korean", KO_KOR },
-	{    "nb"/*, "nb_NO"*/, "Norwegian Bokm\xE5l", NB_NOR }, // TODO Someone should verify the unix locale
-	{    "pl"/*, "pl_PL"*/, "Polish", PL_POL },
-	{    "br"/*, "pt_BR"*/, "Portuguese", PT_BRA },
-	{    "ru"/*, "ru_RU"*/, "Russian", RU_RUS },
-	{    "es"/*, "es_ES"*/, "Spanish", ES_ESP },
-	{    "se"/*, "sv_SE"*/, "Swedish", SE_SWE },
-	{       0/*,       0*/, 0, UNK_LANG }
+	{ "zh-cn", "zh_CN", "Chinese (China)", ZH_CNA },
+	{    "zh", "zh_TW", "Chinese (Taiwan)", ZH_TWN },
+	{    "cz", "cs_CZ", "Czech", CZ_CZE },
+	{    "nl", "nl_NL", "Dutch", NL_NLD },
+	{    "en",    "en", "English", EN_ANY }, // Generic English (when only one game version exist)
+	{    "gb", "en_GB", "English (GB)", EN_GRB },
+	{    "us", "en_US", "English (US)", EN_USA },
+	{    "fr", "fr_FR", "French", FR_FRA },
+	{    "de", "de_DE", "German", DE_DEU },
+	{    "gr", "el_GR", "Greek", GR_GRE },
+	{    "he", "he_IL", "Hebrew", HE_ISR },
+	{    "hb", "he_IL", "Hebrew", HE_ISR }, // Deprecated
+	{    "hu", "hu_HU", "Hungarian", HU_HUN },
+	{    "it", "it_IT", "Italian", IT_ITA },
+	{    "jp", "ja_JP", "Japanese", JA_JPN },
+	{    "kr", "ko_KR", "Korean", KO_KOR },
+	{    "nb", "nb_NO", "Norwegian Bokm\xE5l", NB_NOR }, // TODO Someone should verify the unix locale
+	{    "pl", "pl_PL", "Polish", PL_POL },
+	{    "br", "pt_BR", "Portuguese", PT_BRA },
+	{    "ru", "ru_RU", "Russian", RU_RUS },
+	{    "es", "es_ES", "Spanish", ES_ESP },
+	{    "se", "sv_SE", "Swedish", SE_SWE },
+	{       0,       0, 0, UNK_LANG }
 };
 
 Language parseLanguage(const String &str) {
@@ -142,7 +142,7 @@ Language parseLanguage(const String &str) {
 	return UNK_LANG;
 }
 
-/*Language parseLanguageFromLocale(const char *locale) {
+Language parseLanguageFromLocale(const char *locale) {
 	if (!locale || !*locale)
 		return UNK_LANG;
 
@@ -153,7 +153,7 @@ Language parseLanguage(const String &str) {
 	}
 
 	return UNK_LANG;
-}*/
+}
 
 const char *getLanguageCode(Language id) {
 	const LanguageDescription *l = g_languages;
@@ -164,14 +164,14 @@ const char *getLanguageCode(Language id) {
 	return 0;
 }
 
-/*const char *getLanguageLocale(Language id) {
+const char *getLanguageLocale(Language id) {
 	const LanguageDescription *l = g_languages;
 	for (; l->code; ++l) {
 		if (l->id == id)
 			return l->unixLocale;
 	}
 	return 0;
-}*/
+}
 
 const char *getLanguageDescription(Language id) {
 	const LanguageDescription *l = g_languages;
@@ -271,6 +271,7 @@ const char *getPlatformDescription(Platform id) {
 
 
 const RenderModeDescription g_renderModes[] = {
+	// I18N: Hercules is graphics card name
 	{ "hercGreen", _s("Hercules Green"), kRenderHercG },
 	{ "hercAmber", _s("Hercules Amber"), kRenderHercA },
 	{ "cga", "CGA", kRenderCGA },
@@ -314,7 +315,7 @@ const char *getRenderModeDescription(RenderMode id) {
 }
 
 const struct GameOpt {
-	uint32 option;
+	const char *option;
 	const char *desc;
 } g_gameOptions[] = {
 	{ GUIO_NOSUBTITLES,  "sndNoSubs" },
@@ -340,9 +341,9 @@ const struct GameOpt {
 	{ GUIO_NONE, 0 }
 };
 
-bool checkGameGUIOption(GameGUIOption option, const String &str) {
+bool checkGameGUIOption(const String &option, const String &str) {
 	for (int i = 0; g_gameOptions[i].desc; i++) {
-		if (g_gameOptions[i].option & option) {
+		if (option.contains(g_gameOptions[i].option)) {
 			if (str.contains(g_gameOptions[i].desc))
 				return true;
 			else
@@ -369,21 +370,21 @@ const String getGameGUIOptionsDescriptionLanguage(Language lang) {
 	return String(String("lang_") + getLanguageDescription(lang));
 }
 
-uint32 parseGameGUIOptions(const String &str) {
-	uint32 res = 0;
+String parseGameGUIOptions(const String &str) {
+	Common::String res;
 
 	for (int i = 0; g_gameOptions[i].desc; i++)
 		if (str.contains(g_gameOptions[i].desc))
-			res |= g_gameOptions[i].option;
+			res += g_gameOptions[i].option;
 
 	return res;
 }
 
-const String getGameGUIOptionsDescription(uint32 options) {
+const String getGameGUIOptionsDescription(const String &options) {
 	String res = "";
 
 	for (int i = 0; g_gameOptions[i].desc; i++)
-		if (options & g_gameOptions[i].option)
+		if (options.contains(g_gameOptions[i].option[0]))
 			res += String(g_gameOptions[i].desc) + " ";
 
 	res.trim();
@@ -391,10 +392,10 @@ const String getGameGUIOptionsDescription(uint32 options) {
 	return res;
 }
 
-void updateGameGUIOptions(const uint32 options, const String &langOption) {
+void updateGameGUIOptions(const String &options, const String &langOption) {
 	const String newOptionString = getGameGUIOptionsDescription(options) + " " + langOption;
 
-	if ((options && !ConfMan.hasKey("guioptions")) ||
+	if ((!options.empty() && !ConfMan.hasKey("guioptions")) ||
 	    (ConfMan.hasKey("guioptions") && ConfMan.get("guioptions") != newOptionString)) {
 		ConfMan.set("guioptions", newOptionString);
 		ConfMan.flushToDisk();
@@ -402,4 +403,3 @@ void updateGameGUIOptions(const uint32 options, const String &langOption) {
 }
 
 } // End of namespace Common
-

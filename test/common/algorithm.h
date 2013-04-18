@@ -38,30 +38,30 @@ public:
 		const int arraySorted[] = { 1, 2, 3, 3, 4, 5 };
 		const int arrayUnsorted[] = { 5, 3, 1, 2, 4, 3 };
 
-		TS_ASSERT_EQUALS(checkSort(arraySorted, arraySorted + ARRAYSIZE(arraySorted), Common::Less<int>()), true);
-		TS_ASSERT_EQUALS(checkSort(arraySorted, arraySorted + ARRAYSIZE(arraySorted), Common::Greater<int>()), false);
+		TS_ASSERT_EQUALS(checkSort(arraySorted, ARRAYEND(arraySorted), Common::Less<int>()), true);
+		TS_ASSERT_EQUALS(checkSort(arraySorted, ARRAYEND(arraySorted), Common::Greater<int>()), false);
 
-		TS_ASSERT_EQUALS(checkSort(arrayUnsorted, arrayUnsorted + ARRAYSIZE(arrayUnsorted), Common::Less<int>()), false);
-		TS_ASSERT_EQUALS(checkSort(arrayUnsorted, arrayUnsorted + ARRAYSIZE(arrayUnsorted), Common::Greater<int>()), false);
+		TS_ASSERT_EQUALS(checkSort(arrayUnsorted, ARRAYEND(arrayUnsorted), Common::Less<int>()), false);
+		TS_ASSERT_EQUALS(checkSort(arrayUnsorted, ARRAYEND(arrayUnsorted), Common::Greater<int>()), false);
 	}
 
 	void test_pod_sort() {
 		{
 			int array[] = { 63, 11, 31, 72, 1, 48, 32, 69, 38, 31 };
-			Common::sort(array, array + ARRAYSIZE(array));
-			TS_ASSERT_EQUALS(checkSort(array, array + ARRAYSIZE(array), Common::Less<int>()), true);
+			Common::sort(array, ARRAYEND(array));
+			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
 
 			// already sorted
-			Common::sort(array, array + ARRAYSIZE(array));
-			TS_ASSERT_EQUALS(checkSort(array, array + ARRAYSIZE(array), Common::Less<int>()), true);
+			Common::sort(array, ARRAYEND(array));
+			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
 		}
 		{
 			int array[] = { 90, 80, 70, 60, 50, 40, 30, 20, 10 };
-			Common::sort(array, array + ARRAYSIZE(array));
-			TS_ASSERT_EQUALS(checkSort(array, array + ARRAYSIZE(array), Common::Less<int>()), true);
+			Common::sort(array, ARRAYEND(array));
+			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Less<int>()), true);
 
-			Common::sort(array, array + ARRAYSIZE(array), Common::Greater<int>());
-			TS_ASSERT_EQUALS(checkSort(array, array + ARRAYSIZE(array), Common::Greater<int>()), true);
+			Common::sort(array, ARRAYEND(array), Common::Greater<int>());
+			TS_ASSERT_EQUALS(checkSort(array, ARRAYEND(array), Common::Greater<int>()), true);
 		}
 	}
 
@@ -80,4 +80,3 @@ public:
 		TS_ASSERT_EQUALS(checkSort(list.begin(), list.end(), Common::Less<Item>()), true);
 	}
 };
-

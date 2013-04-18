@@ -102,7 +102,7 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 	// Fill the SaveStateDescriptor if it was provided
 	if (descriptor) {
 		// Initialize the SaveStateDescriptor
-		descriptor->setVal("save_slot", Common::String('0' + slot));
+		descriptor->setSaveSlot(slot);
 		descriptor->setDeletableFlag(true);
 		descriptor->setWriteProtectedFlag(false);
 
@@ -132,7 +132,7 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 				description += c;
 			}
 		}
-		descriptor->setVal("description", description);
+		descriptor->setDescription(description);
 	}
 
 	// Return a substream, skipping the metadata

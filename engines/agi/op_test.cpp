@@ -23,18 +23,180 @@
 
 #include "agi/agi.h"
 #include "agi/opcodes.h"
+#include "common/endian.h"
 
 namespace Agi {
 
-#define ip (_game.logics[lognum].cIP)
-#define code (_game.logics[lognum].data)
+#define ip (state->_curLogic->cIP)
+#define code (state->_curLogic->data)
+
+#define getvar(a) state->_vm->getvar(a)
+#define getflag(a) state->_vm->getflag(a)
 
 #define testEqual(v1, v2)		(getvar(v1) == (v2))
 #define testLess(v1, v2)		(getvar(v1) < (v2))
 #define testGreater(v1, v2)	(getvar(v1) > (v2))
 #define testIsSet(flag)		(getflag(flag))
-#define testHas(obj)			(objectGetLocation(obj) == EGO_OWNED)
-#define testObjInRoom(obj, v)	(objectGetLocation(obj) == getvar(v))
+#define testHas(obj)			(state->_vm->objectGetLocation(obj) == EGO_OWNED)
+#define testHasV1(obj)			(state->_vm->objectGetLocation(obj) == EGO_OWNED_V1)
+#define testObjInRoom(obj, v)	(state->_vm->objectGetLocation(obj) == getvar(v))
+
+void condEqual(AgiGame *state, uint8 *p) {
+	if (p[0] == 11)
+		state->_vm->_timerHack++;
+	state->testResult = testEqual(p[0], p[1]);
+}
+
+void condEqualV(AgiGame *state, uint8 *p) {
+	if (p[0] == 11 || p[1] == 11)
+		state->_vm->_timerHack++;
+	state->testResult = testEqual(p[0], getvar(p[1]));
+}
+
+void condLess(AgiGame *state, uint8 *p) {
+	if (p[0] == 11)
+		state->_vm->_timerHack++;
+	state->testResult = testLess(p[0], p[1]);
+}
+
+void condLessV(AgiGame *state, uint8 *p) {
+	if (p[0] == 11 || p[1] == 11)
+		state->_vm->_timerHack++;
+	state->testResult = testLess(p[0], getvar(p[1]));
+}
+
+void condGreater(AgiGame *state, uint8 *p) {
+	if (p[0] == 11)
+		state->_vm->_timerHack++;
+	state->testResult = testGreater(p[0], p[1]);
+}
+
+void condGreaterV(AgiGame *state, uint8 *p) {
+	if (p[0] == 11 || p[1] == 11)
+		state->_vm->_timerHack++;
+	state->testResult = testGreater(p[0], getvar(p[1]));
+}
+
+void condIsSet(AgiGame *state, uint8 *p) {
+	state->testResult = testIsSet(p[0]);
+}
+
+void condIsSetV(AgiGame *state, uint8 *p) {
+	state->testResult = testIsSet(getvar(p[1]));
+}
+
+void condIsSetV1(AgiGame *state, uint8 *p) {
+	state->testResult = getvar(p[0]) > 0;
+}
+
+void condHas(AgiGame *state, uint8 *p) {
+	state->testResult = testHas(p[0]);
+}
+
+void condHasV1(AgiGame *state, uint8 *p) {
+	state->testResult = testHasV1(p[0]);
+}
+
+void condObjInRoom(AgiGame *state, uint8 *p) {
+	state->testResult = testObjInRoom(p[0], p[1]);
+}
+
+void condPosn(AgiGame *state, uint8 *p) {
+	state->testResult = state->_vm->testPosn(p[0], p[1], p[2], p[3], p[4]);
+}
+
+void condController(AgiGame *state, uint8 *p) {
+	state->testResult = state->_vm->testController(p[0]);
+}
+
+void condHaveKey(AgiGame *state, uint8 *p) {
+	state->testResult = state->_vm->testKeypressed();
+}
+
+void condSaid(AgiGame *state, uint8 *p) {
+	int ec = state->_vm->testSaid(p[0], p + 1);
+	state->testResult = ec;
+}
+
+void condSaid1(AgiGame *state, uint8 *p) {
+	state->testResult = false;
+
+	if (!getflag(fEnteredCli))
+		return;
+
+	int id0 = READ_LE_UINT16(p);
+
+	if ((id0 == 1 || id0 == state->egoWords[0].id))
+		state->testResult = true;
+}
+
+void condSaid2(AgiGame *state, uint8 *p) {
+	state->testResult = false;
+
+	if (!getflag(fEnteredCli))
+		return;
+
+	int id0 = READ_LE_UINT16(p);
+	int id1 = READ_LE_UINT16(p + 2);
+
+	if ((id0 == 1 || id0 == state->egoWords[0].id) &&
+		(id1 == 1 || id1 == state->egoWords[1].id))
+		state->testResult = true;
+}
+
+void condSaid3(AgiGame *state, uint8 *p) {
+	state->testResult = false;
+
+	if (!getflag(fEnteredCli))
+		return;
+
+	int id0 = READ_LE_UINT16(p);
+	int id1 = READ_LE_UINT16(p + 2);
+	int id2 = READ_LE_UINT16(p + 4);
+
+	if ((id0 == 1 || id0 == state->egoWords[0].id) &&
+		(id1 == 1 || id1 == state->egoWords[1].id) &&
+		(id2 == 1 || id2 == state->egoWords[2].id))
+		state->testResult = true;
+}
+
+void condBit(AgiGame *state, uint8 *p) {
+	state->testResult = (getvar(p[1]) >> p[0]) & 1;
+}
+
+void condCompareStrings(AgiGame *state, uint8 *p) {
+	debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", state->strings[p[0]], state->strings[p[1]]);
+	state->testResult = state->_vm->testCompareStrings(p[0], p[1]);
+}
+
+void condObjInBox(AgiGame *state, uint8 *p) {
+	state->testResult = state->_vm->testObjInBox(p[0], p[1], p[2], p[3], p[4]);
+}
+
+void condCenterPosn(AgiGame *state, uint8 *p) {
+	state->testResult = state->_vm->testObjCenter(p[0], p[1], p[2], p[3], p[4]);
+}
+
+void condRightPosn(AgiGame *state, uint8 *p) {
+	state->testResult = state->_vm->testObjRight(p[0], p[1], p[2], p[3], p[4]);
+}
+
+void condUnknown13(AgiGame *state, uint8 *p) {
+	// My current theory is that this command checks whether the ego is currently moving
+	// and that that movement has been caused using the mouse and not using the keyboard.
+	// I base this theory on the game's behavior on an Amiga emulator, not on disassembly.
+	// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
+	// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
+	// TODO: Check this command's implementation using disassembly just to be sure.
+	int ec = state->viewTable[0].flags & fAdjEgoXY;
+	debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", ec ? "true" : "false");
+	state->testResult = ec;
+}
+
+void condUnknown(AgiGame *state, uint8 *p) {
+	warning("Skipping unknown test command %2X", *(code + ip - 1));
+	state->testResult = false;
+}
 
 uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 	char ms1[MAX_STRINGLEN];
@@ -147,6 +309,7 @@ uint8 AgiEngine::testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 
 // When player has entered something, it is parsed elsewhere
 uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
+	AgiGame *state = &_game;
 	int c, n = _game.numEgoWords;
 	int z = 0;
 
@@ -202,210 +365,110 @@ uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
 }
 
 int AgiEngine::testIfCode(int lognum) {
-	int ec = true;
-	int retval = true;
-	uint8 op = 0;
-	uint8 notTest = false;
-	uint8 orTest = false;
-	uint16 lastIp = ip;
-	uint8 p[16] = { 0 };
-	bool end_test = false;
+	AgiGame *state = &_game;
+	uint8 op;
+	uint8 p[16];
 
-	while (retval && !(shouldQuit() || _restartGame) && !end_test) {
+	int notMode = false;
+	int orMode = false;
+	int endTest = false;
+	int result = true;
+
+	while (!(shouldQuit() || _restartGame) && !endTest) {
 		if (_debug.enabled && (_debug.logic0 || lognum))
 			debugConsole(lognum, lTEST_MODE, NULL);
 
-		lastIp = ip;
 		op = *(code + ip++);
 		memmove(p, (code + ip), 16);
 
 		switch (op) {
-		case 0xFF:	// END IF, TEST true
-			end_test = true;
-			break;
+		case 0xFC:
+			if (orMode) {
+				// We have reached the end of an OR expression without
+				// a single test command evaluating as true. Thus the OR
+				// expression evalutes as false which means the whole
+				// expression evaluates as false. So skip until the
+				// ending 0xFF and return.
+				skipInstructionsUntil(0xFF);
+				result = false;
+				endTest = true;
+			} else {
+				orMode = true;
+			}
+			continue;
 		case 0xFD:
-			notTest = !notTest;
+			notMode = true;
 			continue;
-		case 0xFC:	// OR
-			// if or_test is ON and we hit 0xFC, end of OR, then
-			// or is STILL false so break.
-			if (orTest) {
-				ec = false;
-				retval = false;
-				end_test = true;
-			}
-
-			orTest = true;
-			continue;
-
 		case 0x00:
-			// return true?
-			end_test = true;
-			break;
-		case 0x01:
-			ec = testEqual(p[0], p[1]);
-			if (p[0] == 11)
-				_timerHack++;
-			break;
-		case 0x02:
-			ec = testEqual(p[0], getvar(p[1]));
-			if (p[0] == 11 || p[1] == 11)
-				_timerHack++;
-			break;
-		case 0x03:
-			ec = testLess(p[0], p[1]);
-			if (p[0] == 11)
-				_timerHack++;
-			break;
-		case 0x04:
-			ec = testLess(p[0], getvar(p[1]));
-			if (p[0] == 11 || p[1] == 11)
-				_timerHack++;
-			break;
-		case 0x05:
-			ec = testGreater(p[0], p[1]);
-			if (p[0] == 11)
-				_timerHack++;
-			break;
-		case 0x06:
-			ec = testGreater(p[0], getvar(p[1]));
-			if (p[0] == 11 || p[1] == 11)
-				_timerHack++;
-			break;
-		case 0x07:
-			ec = testIsSet(p[0]);
-			break;
-		case 0x08:
-			ec = testIsSet(getvar(p[0]));
-			break;
-		case 0x09:
-			ec = testHas(p[0]);
-			break;
-		case 0x0A:
-			ec = testObjInRoom(p[0], p[1]);
-			break;
-		case 0x0B:
-			ec = testPosn(p[0], p[1], p[2], p[3], p[4]);
-			break;
-		case 0x0C:
-			ec = testController(p[0]);
-			break;
-		case 0x0D:
-			ec = testKeypressed();
-			break;
-		case 0x0E:
-			ec = testSaid(p[0], (uint8 *) code + (ip + 1));
-			ip = lastIp;
-			ip++;	// skip opcode
-			ip += p[0] * 2;	// skip num_words * 2
-			ip++;	// skip num_words opcode
-			break;
-		case 0x0F:
-			debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", _game.strings[p[0]], _game.strings[p[1]]);
-			ec = testCompareStrings(p[0], p[1]);
-			break;
-		case 0x10:
-			ec = testObjInBox(p[0], p[1], p[2], p[3], p[4]);
-			break;
-		case 0x11:
-			ec = testObjCenter(p[0], p[1], p[2], p[3], p[4]);
-			break;
-		case 0x12:
-			ec = testObjRight(p[0], p[1], p[2], p[3], p[4]);
-			break;
-		case 0x13: // Unknown test command 19
-			// My current theory is that this command checks whether the ego is currently moving
-			// and that that movement has been caused using the mouse and not using the keyboard.
-			// I base this theory on the game's behavior on an Amiga emulator, not on disassembly.
-			// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
-			// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
-			// TODO: Check this command's implementation using disassembly just to be sure.
-			ec = _game.viewTable[0].flags & ADJ_EGO_XY;
-			debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", ec ? "true" : "false");
-			break;
+		case 0xFF:
+			endTest = true;
+			continue;
+		
 		default:
-			ec = false;
-			end_test = true;
-		}
+			// Evaluate the command and skip the rest of the instruction
+			_agiCondCommands[op](state, p);
+			skipInstruction(op);
 
-		if (!end_test) {
-			if (op <= 0x12)
-				ip += logicNamesTest[op].numArgs;
+			// NOT mode is enabled only for one instruction
+			if (notMode)
+				state->testResult = !state->testResult;
+			notMode = false;
 
-			// exchange ec value
-			if (notTest)
-				ec = !ec;
-
-			// not is only enabled for 1 test command
-			notTest = false;
-
-			if (orTest && ec) {
-				// a true inside an OR statement passes
-				// ENTIRE statement scan for end of OR
-
-				// CM: test for opcode < 0xfc changed from 'op' to
-				//     '*(code+ip)', to avoid problem with the 0xfd (NOT)
-				//     opcode byte. Changed a bad ip += ... ip++ construct.
-				//     This should fix the crash with Larry's logic.0 code:
-				//
-				//     if ((isset(4) ||
-				//          !isset(2) ||
-				//          v30 == 2 ||
-				//          v30 == 1)) {
-				//       goto Label1;
-				//     }
-				//
-				//     The bytecode is:
-				//     ff fc 07 04 fd 07 02 01 1e 02 01 1e 01 fc ff
-
-				// find end of OR
-				while (*(code + ip) != 0xFC) {
-					if (*(code + ip) == 0x0E) {	// said
-						ip++;
-
-						// cover count + ^words
-						ip += 1 + ((*(code + ip)) * 2);
-						continue;
-					}
-
-					if (*(code + ip) < 0xFC)
-						ip += logicNamesTest[*(code + ip)].numArgs;
-					ip++;
+			if (orMode) {
+				if (state->testResult) {
+					// We are in OR mode and the last test command evaluated
+					// as true, thus the whole OR expression evaluates as
+					// true. So skip the rest of the OR expression and
+					// continue normally.
+					skipInstructionsUntil(0xFC);
+					orMode = false;
+					continue;
 				}
-				ip++;
-
-				orTest = false;
-				retval = true;
 			} else {
-				retval = orTest ? retval || ec : retval && ec;
+				result &= state->testResult;
+				if (!result) {
+					// Since we are in AND mode and the last test command
+					// evaluated as false, the whole expression also evaluates
+					// as false. So skip until the ending 0xFF and return.
+					skipInstructionsUntil(0xFF);
+					endTest = true;
+					continue;
+				}
 			}
+			break;
 		}
 	}
 
-	// if false, scan for end of IP?
-	if (retval)
+	// Skip the following IF block if the condition evaluates as false
+	if (result)
 		ip += 2;
-	else {
-		ip = lastIp;
-		while (*(code + ip) != 0xff) {
-			if (*(code + ip) == 0x0e) {
-				ip++;
-				ip += (*(code + ip)) * 2 + 1;
-			} else if (*(code + ip) < 0xfc) {
-				ip += logicNamesTest[*(code + ip)].numArgs;
-				ip++;
-			} else {
-				ip++;
-			}
-		}
-		ip++;		// skip over 0xFF
+	else
 		ip += READ_LE_UINT16(code + ip) + 2;
-	}
 
 	if (_debug.enabled && (_debug.logic0 || lognum))
-		debugConsole(lognum, 0xFF, retval ? "=true" : "=false");
+		debugConsole(lognum, 0xFF, result ? "=true" : "=false");
 
-	return retval;
+	return result;
+}
+
+void AgiEngine::skipInstruction(byte op) {
+	AgiGame *state = &_game;
+	if (op >= 0xFC)
+		return;
+	if (op == 0x0E && state->_vm->getVersion() >= 0x2000) // said
+		ip += *(code + ip) * 2 + 1;
+	else
+		ip += logicNamesTest[op].argumentsLength();
+}
+
+void AgiEngine::skipInstructionsUntil(byte v) {
+	AgiGame *state = &_game;
+	while (1) {
+		byte op = *(code + ip++);
+		if (op == v)
+			return;
+		skipInstruction(op);
+	}
 }
 
 } // End of namespace Agi

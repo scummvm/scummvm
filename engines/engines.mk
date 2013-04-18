@@ -26,9 +26,19 @@ DEFINES += -DENABLE_AGOS2
 endif
 endif
 
+ifdef ENABLE_CGE
+DEFINES += -DENABLE_CGE=$(ENABLE_CGE)
+MODULES += engines/cge
+endif
+
 ifdef ENABLE_CINE
 DEFINES += -DENABLE_CINE=$(ENABLE_CINE)
 MODULES += engines/cine
+endif
+
+ifdef ENABLE_COMPOSER
+DEFINES += -DENABLE_COMPOSER=$(ENABLE_COMPOSER)
+MODULES += engines/composer
 endif
 
 ifdef ENABLE_CRUISE
@@ -207,4 +217,3 @@ ifdef ENABLE_TUCKER
 DEFINES += -DENABLE_TUCKER=$(ENABLE_TUCKER)
 MODULES += engines/tucker
 endif
-

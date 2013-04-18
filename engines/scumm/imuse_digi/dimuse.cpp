@@ -58,7 +58,7 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps)
 		memset(_track[l], 0, sizeof(Track));
 		_track[l]->trackId = l;
 	}
-	_vm->getTimerManager()->installTimerProc(timer_handler, 1000000 / _callbackFps, this);
+	_vm->getTimerManager()->installTimerProc(timer_handler, 1000000 / _callbackFps, this, "IMuseDigital");
 
 	_audioNames = NULL;
 	_numAudioNames = 0;

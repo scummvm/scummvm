@@ -20,8 +20,8 @@
  *
  */
 
-
 #include "common/system.h"
+#include "common/localization.h"
 
 #include "graphics/palette.h"
 
@@ -308,34 +308,9 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 	// 135: pause game
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
-	// If all else fails, use English as fallback.
-	Common::KeyCode keyYes = Common::KEYCODE_y;
-	Common::KeyCode keyNo = Common::KEYCODE_n;
+	Common::KeyCode keyYes, keyNo;
 
-	switch (_language) {
-	case Common::RU_RUS:
-		break;
-	case Common::PL_POL:
-		keyYes = Common::KEYCODE_t;
-		break;
-	case Common::HE_ISR:
-		keyYes = Common::KEYCODE_f;
-		break;
-	case Common::ES_ESP:
-		keyYes = Common::KEYCODE_s;
-		break;
-	case Common::IT_ITA:
-		keyYes = Common::KEYCODE_s;
-		break;
-	case Common::FR_FRA:
-		keyYes = Common::KEYCODE_o;
-		break;
-	case Common::DE_DEU:
-		keyYes = Common::KEYCODE_j;
-		break;
-	default:
-		break;
-	}
+	Common::getLanguageYesNo(_language, keyYes, keyNo);
 
 	while (!shouldQuit()) {
 		delay(1);

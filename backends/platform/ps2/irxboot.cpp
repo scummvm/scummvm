@@ -210,4 +210,3 @@ int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {
 		sioprintf("%s\n", resModules[i].path);
 	return curModule - resModules;
 }
-

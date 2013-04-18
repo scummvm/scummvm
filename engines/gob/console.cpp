@@ -29,6 +29,7 @@ namespace Gob {
 
 GobConsole::GobConsole(GobEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("varSize",      WRAP_METHOD(GobConsole, cmd_varSize));
+	DCmd_Register("dumpVars",     WRAP_METHOD(GobConsole, cmd_dumpVars));
 	DCmd_Register("var8",         WRAP_METHOD(GobConsole, cmd_var8));
 	DCmd_Register("var16",        WRAP_METHOD(GobConsole, cmd_var16));
 	DCmd_Register("var32",        WRAP_METHOD(GobConsole, cmd_var32));
@@ -41,6 +42,23 @@ GobConsole::~GobConsole() {
 
 bool GobConsole::cmd_varSize(int argc, const char **argv) {
 	DebugPrintf("Size of the variable space: %d bytes\n", _vm->_inter->_variables->getSize());
+	return true;
+}
+
+bool GobConsole::cmd_dumpVars(int argc, const char **argv) {
+	if (!_vm->_inter->_variables)
+		return true;
+
+	Common::DumpFile file;
+
+	if (!file.open("variables.dmp"))
+		return true;
+
+	file.write(_vm->_inter->_variables->getAddressOff8(0), _vm->_inter->_variables->getSize());
+
+	file.flush();
+	file.close();
+
 	return true;
 }
 

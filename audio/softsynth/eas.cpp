@@ -480,4 +480,3 @@ Common::Error EASMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver
 //#endif
 
 #endif
-

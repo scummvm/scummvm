@@ -1,18 +1,79 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.4.0 (????-??-??)
+1.5.0 (????-??-??)
  SDL ports:
    - Added support for OpenGL (GSoC Task).
 
-1.3.1 (????-??-??)
+1.4.0 (2011-11-11)
+ New Games:
+   - Added support for Lands of Lore: The Throne of Chaos.
+   - Added support for Blue's Birthday Adventure.
+   - Added support for Ringworld: Revenge Of The Patriarch.
+   - Added support for the Amiga version of Conquests of the Longbow.
+
+ New Ports:
+   - Added PlayStation 3 port.
+
+ AGI:
+   - Implemented sound support for the DOS version of Winnie the Pooh in the
+     Hundred Acre Wood.
+
+ AGOS:
+   - Implemented support for loading data directly from InstallShield
+     cabinets in The Feeble Files and Simon the Sorcerer's Puzzle Pack.
+   - Fixed loading and saving in the PC version of Waxworks.
+   - Fixed music in the PC versions of Elvira 1/2 and Waxworks.
+
+ Groovie:
+   - Added support for the iOS version of The 7th Guest.
+
+ Lure:
+   - Fixed crash when trying to talk and ask something at the same time.
+
+ SCI:
+   - Added better handling of digital vs. synthesized sound effects. If the
+     "Mixed Adlib / MIDI mode" checkbox is checked, the engine will prefer
+     digital sound effects, otherwise their synthesized counterparts will be
+     preferred instead, if both versions of the same effect exist.
+
+ SCUMM:
+   - Implemented PC Speaker support for SCUMM v5 games.
+   - Fixed priority bug in iMuse. As a result the AdLib music should sound
+     better, since important notes are not interrupted anymore.
+   - Implemented CMS support for Loom, The Secret of Monkey Island and
+     Indiana Jones and the Last Crusade.
+   - Improved palette handling for the Amiga version of Indiana Jones and the
+     Fate of Atlantis.
+
+ Tinsel:
+   - Fixed deleting saved games from the list of saved games (from the launcher
+     and the in-game ScummVM menu).
+   - The US version of Discworld II now shows the correct title screen and
+     language flag.
+
+1.3.1 (2011-07-12)
  General:
    - Improved audio device detection and fallback.
      There should be no more silent errors due to invalid audio devices.
      Instead ScummVM should pick up a suitable alternative device.
 
+ Mohawk:
+   - Added detection entries for more variants of some Living Books
+     games.
+
  Tinsel:
    - Fixed a regression that made Discworld uncompletable.
+
+ SAGA:
+   - Fixed a regression in Inherit the Earth's dragon walk code which
+     was causing crashes there.
+   - Fixed a regression causing various crashes in I Have No Mouth and
+     I Must Scream.
+
+ SCI:
+   - Added detection entries for some Macintosh game versions.
+   - Audio settings are now stored correctly for the CD version of EcoQuest 1.
 
  SCUMM:
    - Fixed graphics bug in FM-TOWNS versions of games on ARM devices

@@ -32,5 +32,3 @@ private:
 };
 
 #endif //__KmpSearch__
-
-

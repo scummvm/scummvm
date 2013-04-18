@@ -20,11 +20,9 @@
  *
  */
 
-#include "common/endian.h"
-#include "common/list.h"
-#include "common/util.h"
-
 #include "made/sound.h"
+
+#include "common/endian.h"
 
 namespace Made {
 
