@@ -36,8 +36,8 @@ public:
 	bool _closeUp;
 	DECLARE_PERSISTENT(AdLayer, BaseObject)
 	bool _active;
-	int _height;
-	int _width;
+	int32 _height;
+	int32 _width;
 	bool _main;
 	AdLayer(BaseGame *inGame);
 	virtual ~AdLayer();

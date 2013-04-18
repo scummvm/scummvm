@@ -50,10 +50,10 @@ public:
 	virtual ScValue *scGetProperty(const Common::String &name);
 	virtual bool scSetProperty(const char *name, ScValue *value);
 private:
-	int _editorSelectedPoint;
+	int32 _editorSelectedPoint;
 	float _lastMimicScale;
-	int _lastMimicX;
-	int _lastMimicY;
+	int32 _lastMimicX;
+	int32 _lastMimicY;
 };
 
 } // end of namespace Wintermute

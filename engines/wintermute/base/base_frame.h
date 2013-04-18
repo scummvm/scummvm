@@ -47,8 +47,8 @@ public:
 
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
-	int _moveY;
-	int _moveX;
+	int32 _moveY;
+	int32 _moveX;
 	uint32 _delay;
 	BaseArray<BaseSubFrame *> _subframes;
 	bool draw(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, bool allFrames = false, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);

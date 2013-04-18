@@ -78,13 +78,13 @@ public:
 	UIWindow *getResponseWindow();
 	uint32 getNumResponses() const;
 private:
-	int _spacing;
-	int _scrollOffset;
+	int32 _spacing;
+	int32 _scrollOffset;
 	BaseFont *_fontHover;
 	BaseFont *_font;
 	bool _horizontal;
 	Rect32 _responseArea;
-	int _verticalAlign;
+	int32 _verticalAlign;
 	TTextAlign _align;
 	BaseArray<UIButton *> _respButtons;
 	BaseArray<const AdResponse *> _responses;

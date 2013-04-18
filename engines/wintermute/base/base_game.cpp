@@ -3001,7 +3001,7 @@ bool BaseGame::saveGame(int slot, const char *desc, bool quickSave) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::loadGame(int slot) {
+bool BaseGame::loadGame(uint32 slot) {
 	//_gameRef->LOG(0, "Load start %d", BaseUtils::GetUsedMemMB());
 
 	_loading = false;
@@ -3223,7 +3223,7 @@ void BaseGame::handleKeyRelease(Common::Event *event) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::handleMouseWheel(int delta) {
+bool BaseGame::handleMouseWheel(int32 delta) {
 	bool handled = false;
 	if (_focusedWindow) {
 		handled = _gameRef->_focusedWindow->handleMouseWheel(delta);
@@ -3879,7 +3879,7 @@ void BaseGame::autoSaveOnExit() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseGame::addMem(int bytes) {
+void BaseGame::addMem(int32 bytes) {
 	_usedMem += bytes;
 }
 

@@ -100,7 +100,7 @@ private:
 	double _pFStepY;
 	double _pFX;
 	double _pFY;
-	int _pFCount;
+	int32 _pFCount;
 };
 
 } // end of namespace Wintermute

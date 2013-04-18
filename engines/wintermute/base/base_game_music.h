@@ -64,8 +64,8 @@ private:
 	bool _musicCrossfadeSwap;
 	uint32 _musicCrossfadeStartTime;
 	uint32 _musicCrossfadeLength;
-	int _musicCrossfadeChannel1;
-	int _musicCrossfadeChannel2;
+	int32 _musicCrossfadeChannel1;
+	int32 _musicCrossfadeChannel2;
 };
 
 } // end of namespace Wintermute

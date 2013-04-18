@@ -446,7 +446,7 @@ typedef struct {
 } dPoint;
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRegion::ptInPolygon(int x, int y) {
+bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 	if (_points.size() < 3) {
 		return false;
 	}

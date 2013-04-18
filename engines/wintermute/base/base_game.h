@@ -108,16 +108,16 @@ public:
 	void DEBUG_DumpClassRegistry();
 	bool setWaitCursor(const char *filename);
 
-	int getSaveThumbWidth() const { return _thumbnailWidth; }
-	int getSaveThumbHeight() const { return _thumbnailHeight; }
+	uint32 getSaveThumbWidth() const { return _thumbnailWidth; }
+	uint32 getSaveThumbHeight() const { return _thumbnailHeight; }
 
 	bool _editorMode;
 	void getOffset(int *offsetX, int *offsetY) const;
-	void setOffset(int offsetX, int offsetY);
+	void setOffset(int32 offsetX, int32 offsetY);
 	int getSequence();
 
-	int _offsetY;
-	int _offsetX;
+	int32 _offsetY;
+	int32 _offsetX;
 	float _offsetPercentX;
 	float _offsetPercentY;
 
@@ -155,11 +155,11 @@ public:
 
 	bool _debugDebugMode;
 
-	int _sequence;
+	int32 _sequence;
 	virtual bool loadFile(const char *filename);
 	virtual bool loadBuffer(byte *buffer, bool complete = true);
 
-	int _viewportSP;
+	int32 _viewportSP;
 
 	bool _suppressScriptErrors;
 	bool _mouseLeftDown; // TODO: Hide
@@ -179,11 +179,11 @@ public:
 	bool _smartCache; // RO
 	bool _subtitles; // RO
 
-	int _scheduledLoadSlot;
+	int32 _scheduledLoadSlot;
 
 	bool getIsLoading() const { return _loading; }
 
-	virtual bool handleMouseWheel(int delta);
+	virtual bool handleMouseWheel(int32 delta);
 	bool _quitting;
 	virtual bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const;
 
@@ -204,9 +204,9 @@ public:
 	bool displayWindows(bool inGame = false);
 	bool _useD3D;
 	virtual bool cleanup();
-	bool loadGame(int slot);
+	bool loadGame(uint32 slot);
 	bool loadGame(const char *filename);
-	bool saveGame(int slot, const char *desc, bool quickSave = false);
+	bool saveGame(int32 slot, const char *desc, bool quickSave = false);
 	virtual bool showCursor();
 
 	BaseObject *_activeObject;
@@ -235,7 +235,7 @@ public:
 	virtual bool displayContentSimple();
 	bool _forceNonStreamedSounds;
 	void resetMousePos();
-	int _subtitlesSpeed;
+	int32 _subtitlesSpeed;
 	void setInteractive(bool state);
 	virtual bool windowLoadHook(UIWindow *win, char **buf, char **params);
 	virtual bool windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name);
@@ -248,7 +248,7 @@ public:
 	bool drawCursor(BaseSprite *Cursor);
 
 	SaveThumbHelper *_cachedThumbnail;
-	void addMem(int bytes);
+	void addMem(int32 bytes);
 	bool _touchInterface;
 	bool _constrainedMemory;
 protected:
@@ -256,13 +256,13 @@ protected:
 	BaseFont *_videoFont;
 
 	BaseSprite *_loadingIcon;
-	int _loadingIconX;
-	int _loadingIconY;
-	int _loadingIconPersistent;
+	int32 _loadingIconX;
+	int32 _loadingIconY;
+	int32 _loadingIconPersistent;
 
 	BaseFader *_fader;
 
-	int _freezeLevel;
+	int32 _freezeLevel;
 	VideoPlayer *_videoPlayer;
 	VideoTheoraPlayer *_theoraPlayer;
 private:
@@ -278,7 +278,7 @@ private:
 	
 	BaseGameSettings *_settings;
 
-	int _soundBufferSizeSec;
+	int32 _soundBufferSizeSec;
 
 	virtual bool invalidateDeviceObjects();
 	virtual bool restoreDeviceObjects();
@@ -305,8 +305,8 @@ private:
 
 	bool _personalizedSave;
 
-	int _thumbnailWidth;
-	int _thumbnailHeight;
+	uint32 _thumbnailWidth;
+	uint32 _thumbnailHeight;
 
 	void setWindowTitle();
 
@@ -334,13 +334,13 @@ private:
 			time = 0;
 		}
 
-		int posX;
-		int posY;
+		int32 posX;
+		int32 posY;
 		uint32 time;
 	};
 
 	LastClickInfo _lastClick[2];
-	bool isDoubleClick(int buttonIndex);
+	bool isDoubleClick(int32 buttonIndex);
 	uint32 _usedMem;
 
 
@@ -348,7 +348,7 @@ private:
 protected:
 	// WME Lite specific
 	bool _autoSaveOnExit;
-	int _autoSaveSlot;
+	uint32 _autoSaveSlot;
 	bool _cursorHidden;
 
 public:

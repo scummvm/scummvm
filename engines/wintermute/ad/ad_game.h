@@ -86,10 +86,10 @@ public:
 	AdSceneState *getSceneState(const char *filename, bool saving);
 	BaseViewport *_sceneViewport;
 
-	int _texItemLifeTime;
-	int _texWalkLifeTime;
-	int _texStandLifeTime;
-	int _texTalkLifeTime;
+	int32 _texItemLifeTime;
+	int32 _texWalkLifeTime;
+	int32 _texStandLifeTime;
+	int32 _texTalkLifeTime;
 
 	TTalkSkipButton _talkSkipButton;
 

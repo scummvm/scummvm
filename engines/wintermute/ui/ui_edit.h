@@ -38,20 +38,20 @@ class BaseFont;
 class UIEdit : public UIObject {
 public:
 	DECLARE_PERSISTENT(UIEdit, UIObject)
-	int _maxLength;
+	int32 _maxLength;
 	int insertChars(int pos, const byte *chars, int num);
 	int deleteChars(int start, int end);
 	bool _cursorVisible;
 	uint32 _lastBlinkTime;
 	virtual bool display(int offsetX, int offsetY);
 	virtual bool handleKeypress(Common::Event *event, bool printable = false);
-	int _scrollOffset;
-	int _frameWidth;
+	int32 _scrollOffset;
+	int32 _frameWidth;
 	uint32 _cursorBlinkRate;
 	void setCursorChar(const char *character);
 	char *_cursorChar;
-	int _selEnd;
-	int _selStart;
+	int32 _selEnd;
+	int32 _selStart;
 	BaseFont *_fontSelected;
 	UIEdit(BaseGame *inGame);
 	virtual ~UIEdit();

@@ -99,22 +99,22 @@ public:
 	bool resetStream();
 
 	// video properties
-	int _posX;
-	int _posY;
+	int32 _posX;
+	int32 _posY;
 	
 	bool _dontDropFrames;
 private:
-	int _state;
+	int32 _state;
 	uint32 _startTime;
 
-	int _savedState;
+	int32 _savedState;
 	uint32 _savedPos;
 
 	// video properties
 	TVideoPlayback _playbackType;
 	bool _looping;
 	float _playZoom;
-	int _volume;
+	int32 _volume;
 
 	bool _freezeGame;
 	uint32 _currentTime;

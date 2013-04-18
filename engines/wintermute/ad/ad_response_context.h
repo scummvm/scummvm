@@ -38,7 +38,7 @@ class AdResponseContext : public BaseClass {
 public:
 	void setContext(const char *context);
 	const char *getContext() const { return _context; }
-	int _id;
+	int32 _id;
 
 	DECLARE_PERSISTENT(AdResponseContext, BaseClass)
 	AdResponseContext(BaseGame *inGame);

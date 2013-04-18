@@ -45,8 +45,8 @@ public:
 	DECLARE_PERSISTENT(BaseSprite, BaseScriptHolder)
 
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
-	int _moveY;
-	int _moveX;
+	int32 _moveY;
+	int32 _moveX;
 	bool display(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
 	bool getCurrentFrame(float zoomX = 100, float zoomY = 100);
 	void reset();
@@ -74,9 +74,9 @@ private:
 	bool _changed;
 	bool _editorAllFrames;
 	char *_editorBgFile;
-	int _editorBgOffsetX;
-	int _editorBgOffsetY;
-	int _editorBgAlpha;
+	int32 _editorBgOffsetX;
+	int32 _editorBgOffsetY;
+	int32 _editorBgAlpha;
 	bool _editorMuted;
 	bool _finished;
 	bool _continuous;

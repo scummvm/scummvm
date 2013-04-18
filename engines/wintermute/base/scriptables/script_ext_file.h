@@ -49,7 +49,7 @@ public:
 private:
 	Common::SeekableReadStream *_readFile;
 	Common::WriteStream *_writeFile;
-	int _mode; // 0..none, 1..read, 2..write, 3..append
+	int32 _mode; // 0..none, 1..read, 2..write, 3..append
 	bool _textMode;
 	void close();
 	void cleanup();

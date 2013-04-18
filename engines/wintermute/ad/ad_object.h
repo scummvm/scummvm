@@ -109,13 +109,13 @@ protected:
 	bool getScale(float *scaleX, float *scaleY);
 private:
 	bool _partFollowParent;
-	int _partOffsetX;
-	int _partOffsetY;
+	int32 _partOffsetX;
+	int32 _partOffsetY;
 	bool _subtitlesModRelative;
 	bool _subtitlesModXCenter;
-	int _subtitlesModX;
-	int _subtitlesModY;
-	int _subtitlesWidth;
+	int32 _subtitlesModX;
+	int32 _subtitlesModY;
+	int32 _subtitlesWidth;
 	AdRegion *_currentRegions[MAX_NUM_REGIONS];
 	BaseArray<AdObject *> _attachmentsPre;
 	BaseArray<AdObject *> _attachmentsPost;

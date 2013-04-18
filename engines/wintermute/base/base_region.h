@@ -39,10 +39,10 @@ public:
 	void cleanup();
 	bool mimic(BaseRegion *region, float scale = 100.0f, int x = 0, int y = 0);
 	bool getBoundingRect(Rect32 *rect);
-	bool ptInPolygon(int x, int y);
+	bool ptInPolygon(int32 x, int32 y);
 	DECLARE_PERSISTENT(BaseRegion, BaseObject)
 	bool _active;
-	int _editorSelectedPoint;
+	int32 _editorSelectedPoint;
 	BaseRegion(BaseGame *inGame);
 	virtual ~BaseRegion();
 	bool pointInRegion(int x, int y);
@@ -61,8 +61,8 @@ public:
 	virtual const char *scToString();
 private:
 	float _lastMimicScale;
-	int _lastMimicX;
-	int _lastMimicY;
+	int32 _lastMimicX;
+	int32 _lastMimicY;
 };
 
 } // end of namespace Wintermute

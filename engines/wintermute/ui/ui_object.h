@@ -62,8 +62,8 @@ public:
 	bool _disable;
 	UIObject(BaseGame *inGame = nullptr);
 	virtual ~UIObject();
-	int _width;
-	int _height;
+	int32 _width;
+	int32 _height;
 	TUIObjectType _type;
 	BaseSprite *_image;
 	void setListener(BaseScriptHolder *object, BaseScriptHolder *listenerObject, uint32 listenerParam);

@@ -63,7 +63,7 @@ public:
 	virtual void scSetBool(bool val);
 	virtual int scCompare(BaseScriptable *val);
 	virtual void scDebuggerDesc(char *buf, int bufSize);
-	int _refCount;
+	int32 _refCount;
 	ScValue *_scValue;
 	ScValue *_scProp;
 };

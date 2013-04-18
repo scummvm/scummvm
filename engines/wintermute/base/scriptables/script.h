@@ -113,7 +113,7 @@ public:
 		char *dll_name;
 		TCallType call_type;
 		TExternalType returns;
-		int nu_params;
+		int32 nu_params;
 		TExternalType *params;
 	} TExternalFunction;
 
@@ -124,7 +124,7 @@ public:
 	ScStack *_stack;
 	ScValue *_globals;
 	ScEngine *_engine;
-	int _currentLine;
+	int32 _currentLine;
 	bool executeInstruction();
 	char *getString();
 	uint32 getDWORD();

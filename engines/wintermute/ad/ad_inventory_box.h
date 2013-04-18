@@ -43,8 +43,8 @@ public:
 	bool _visible;
 	virtual bool display();
 	UIButton *_closeButton;
-	int _spacing;
-	int _scrollOffset;
+	int32 _spacing;
+	int32 _scrollOffset;
 	Rect32 _itemsArea;
 	bool listen(BaseScriptHolder *param1, uint32 param2);
 	UIWindow *_window;
@@ -55,9 +55,9 @@ public:
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 private:
 	bool _exclusive;
-	int _scrollBy;
-	int _itemHeight;
-	int _itemWidth;
+	int32 _scrollBy;
+	int32 _itemHeight;
+	int32 _itemWidth;
 };
 
 } // end of namespace Wintermute

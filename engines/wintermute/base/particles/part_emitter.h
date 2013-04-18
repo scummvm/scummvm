@@ -43,7 +43,7 @@ public:
 	PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner);
 	virtual ~PartEmitter(void);
 
-	int _fadeOutTime;
+	int32 _fadeOutTime;
 
 	bool start();
 
@@ -70,11 +70,11 @@ public:
 
 
 private:
-	int _width;
-	int _height;
+	int32 _width;
+	int32 _height;
 
-	int _angle1;
-	int _angle2;
+	int32 _angle1;
+	int32 _angle2;
 
 	float _rotation1;
 	float _rotation2;

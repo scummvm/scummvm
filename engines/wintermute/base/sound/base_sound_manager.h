@@ -49,7 +49,7 @@ public:
 	byte getVolumePercent(Audio::Mixer::SoundType type);
 	bool setVolumePercent(Audio::Mixer::SoundType type, byte percent);
 	bool setVolume(Audio::Mixer::SoundType type, int volume);
-	int _volumeMaster;
+	int32 _volumeMaster;
 	bool removeSound(BaseSoundBuffer *sound);
 	BaseSoundBuffer *addSound(const Common::String &filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
 	bool addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType);
@@ -60,7 +60,7 @@ public:
 	Common::Array<BaseSoundBuffer *> _sounds;
 	void saveSettings();
 private:
-	int _volumeMasterPercent; // Necessary to avoid round-offs.
+	int32 _volumeMasterPercent; // Necessary to avoid round-offs.
 	bool setMasterVolume(byte percent);
 };
 

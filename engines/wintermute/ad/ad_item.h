@@ -57,9 +57,9 @@ public:
 	virtual const char *scToString();
 private:
 	bool _displayAmount;
-	int _amount;
-	int _amountOffsetX;
-	int _amountOffsetY;
+	int32 _amount;
+	int32 _amountOffsetX;
+	int32 _amountOffsetY;
 	TTextAlign _amountAlign;
 	char *_amountString;
 };

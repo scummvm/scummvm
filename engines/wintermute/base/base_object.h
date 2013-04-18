@@ -72,7 +72,7 @@ protected:
 	bool _ready;
 	Rect32 _rect;
 	bool _rectSet;
-	int _iD;
+	int32 _iD;
 	char *_soundEvent;
 public:
 	TSpriteBlendMode _blendMode;
@@ -84,7 +84,7 @@ public:
 	virtual bool resetSoundPan();
 	virtual bool updateSounds();
 	bool updateOneSound(BaseSound *sound);
-	int _sFXVolume;
+	int32 _sFXVolume;
 
 	virtual bool handleMouseWheel(int delta);
 	virtual bool handleMouse(TMouseEvent event, TMouseButton button);

@@ -169,7 +169,7 @@ public:
 
 	bool isReady() const { return _ready; }
 	bool isWindowed() const { return _windowed; }
-	int getBPP() const { return _bPP; }
+	int32 getBPP() const { return _bPP; }
 
 	uint32 _window;
 	uint32 _forceAlphaColor;
@@ -188,33 +188,33 @@ public:
 
 	bool displayIndicator();
 
-	int getWidth() const { return _width; }
-	int getHeight() const { return _height; }
+	int32 getWidth() const { return _width; }
+	int32 getHeight() const { return _height; }
 protected:
-	int _height;
-	int _width;
+	int32 _height;
+	int32 _width;
 
 	bool _windowed;
-	int _bPP;
+	int32 _bPP;
 
 	Common::String _loadImageName;
 	Common::String _saveImageName;
-	int _saveImageX;
-	int _saveImageY;
-	int _loadImageX;
-	int _loadImageY;
+	int32 _saveImageX;
+	int32 _saveImageY;
+	int32 _loadImageX;
+	int32 _loadImageY;
 	BaseSurface *_saveLoadImage;
 	bool _hasDrawnSaveLoadImage;
 
-	int _indicatorWidthDrawn;
+	int32 _indicatorWidthDrawn;
 	uint32 _indicatorColor;
-	int _indicatorX;
-	int _indicatorY;
-	int _indicatorWidth;
-	int _indicatorHeight;
+	int32 _indicatorX;
+	int32 _indicatorY;
+	int32 _indicatorWidth;
+	int32 _indicatorHeight;
 	bool _loadInProgress;
 	bool _indicatorDisplay;
-	int _indicatorProgress;
+	int32 _indicatorProgress;
 
 	uint32 _clipperWindow;
 
