@@ -245,6 +245,8 @@ Common::Error MohawkEngine_LivingBooks::run() {
 				case Common::KEYCODE_ESCAPE:
 					if (_curMode == kLBIntroMode)
 						tryLoadPageStart(kLBControlMode, 1);
+					else
+						_video->stopVideos();
 					break;
 
 				case Common::KEYCODE_LEFT:
@@ -3775,7 +3777,7 @@ LBMovieItem::~LBMovieItem() {
 void LBMovieItem::update() {
 	if (_playing) {
 		VideoHandle videoHandle = _vm->_video->findVideoHandle(_resourceId);
-		if (_vm->_video->endOfVideo(videoHandle))
+		if (videoHandle == NULL_VID_HANDLE || _vm->_video->endOfVideo(videoHandle))
 			done(true);
 	}
 
@@ -3785,6 +3787,7 @@ void LBMovieItem::update() {
 bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
 		if ((_loaded && _enabled && _globalEnabled) || _phase == kLBPhaseNone) {
+			debug("toggled video for phase %d", _phase);
 			_vm->_video->playMovie(_resourceId, _rect.left, _rect.top);
 
 			return true;
