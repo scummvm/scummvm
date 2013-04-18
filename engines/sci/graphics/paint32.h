@@ -34,7 +34,7 @@ class GfxPorts;
  */
 class GfxPaint32 : public GfxPaint {
 public:
-	GfxPaint32(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette *palette);
+	GfxPaint32(ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette);
 	~GfxPaint32();
 
 	void fillRect(Common::Rect rect, byte color);
@@ -44,10 +44,7 @@ public:
 
 private:
 	ResourceManager *_resMan;
-	SegManager *_segMan;
-	Kernel *_kernel;
 	GfxCoordAdjuster *_coordAdjuster;
-	GfxCache *_cache;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 };
