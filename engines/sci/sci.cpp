@@ -627,11 +627,11 @@ void SciEngine::initGraphics() {
 		// SCI32 graphic objects creation
 		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
-		_gfxCompare = new GfxCompare(_gamestate->_segMan, _kernel, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxPaint32 = new GfxPaint32(_resMan, _gamestate->_segMan, _kernel, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette);
+		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxPaint32 = new GfxPaint32(_resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette);
 		_gfxPaint = _gfxPaint32;
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache, _gfxScreen);
-		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxText32);
+		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
 		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
 	} else {
@@ -640,24 +640,24 @@ void SciEngine::initGraphics() {
 		_gfxPorts = new GfxPorts(_gamestate->_segMan, _gfxScreen);
 		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
-		_gfxCompare = new GfxCompare(_gamestate->_segMan, _kernel, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette);
-		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _kernel, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
+		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
 		_gfxPaint = _gfxPaint16;
 		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette, _gfxCursor, _gfxTransitions);
-		_gfxText16 = new GfxText16(_resMan, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
+		_gfxText16 = new GfxText16(_gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
 		_gfxControls16 = new GfxControls16(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
 		_gfxMenu = new GfxMenu(_eventMan, _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
 
 		_gfxMenu->reset();
+
+		_gfxPorts->init(_features->usesOldGfxFunctions(), _gfxPaint16, _gfxText16);
+		_gfxPaint16->init(_gfxAnimate, _gfxText16);
+
 #ifdef ENABLE_SCI32
 	}
 #endif
 
-	if (_gfxPorts) {
-		_gfxPorts->init(_features->usesOldGfxFunctions(), _gfxPaint16, _gfxText16);
-		_gfxPaint16->init(_gfxAnimate, _gfxText16);
-	}
 	// Set default (EGA, amiga or resource 999) palette
 	_gfxPalette->setDefault();
 }

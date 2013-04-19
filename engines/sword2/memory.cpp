@@ -52,7 +52,7 @@
 
 namespace Sword2 {
 
-MemoryManager::MemoryManager(Sword2Engine *vm) : _vm(vm) {
+MemoryManager::MemoryManager() {
 	// The id stack contains all the possible ids for the memory blocks.
 	// We use this to ensure that no two blocks ever have the same id.
 

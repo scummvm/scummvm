@@ -26,6 +26,7 @@
 namespace Draci {
 
 DraciConsole::DraciConsole(DraciEngine *vm) : GUI::Debugger(), _vm(vm) {
+	assert(_vm);
 }
 
 DraciConsole::~DraciConsole() {

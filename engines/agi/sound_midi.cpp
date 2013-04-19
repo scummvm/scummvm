@@ -59,7 +59,7 @@ namespace Agi {
 
 static uint32 convertSND2MIDI(byte *snddata, byte **data);
 
-MIDISound::MIDISound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : AgiSound(manager) {
+MIDISound::MIDISound(uint8 *data, uint32 len, int resnum) : AgiSound() {
 	_data = data; // Save the resource pointer
 	_len  = len;  // Save the resource's length
 	_type = READ_LE_UINT16(data); // Read sound resource's type

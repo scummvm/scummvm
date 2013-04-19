@@ -40,8 +40,6 @@ struct MemBlock {
 
 class MemoryManager {
 private:
-	Sword2Engine *_vm;
-
 	MemBlock *_memBlocks;
 	MemBlock **_memBlockIndex;
 	int16 _numBlocks;
@@ -56,7 +54,7 @@ private:
 	int16 findInsertionPointInIndex(byte *ptr);
 
 public:
-	MemoryManager(Sword2Engine *vm);
+	MemoryManager();
 	~MemoryManager();
 
 	int16 getNumBlocks() { return _numBlocks; }

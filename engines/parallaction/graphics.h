@@ -289,8 +289,6 @@ class GfxObj {
 	char *_name;
 	Frames *_frames;
 
-	bool _keep;
-
 public:
 	int16 x, y;
 

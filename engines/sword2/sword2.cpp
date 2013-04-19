@@ -450,7 +450,7 @@ Common::Error Sword2Engine::run() {
 
 	_debugger = new Debugger(this);
 
-	_memory = new MemoryManager(this);
+	_memory = new MemoryManager();
 	_resman = new ResourceManager(this);
 
 	if (!_resman->init())

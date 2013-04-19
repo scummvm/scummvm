@@ -55,7 +55,6 @@ private:
 
 	Video::VideoDecoder *_video;
 
-	char baseName[40];
 	uint32 _flags;
 	uint32 _wizResNum;
 };

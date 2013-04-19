@@ -40,7 +40,7 @@ class GfxFont;
  */
 class GfxText16 {
 public:
-	GfxText16(ResourceManager *_resMan, GfxCache *fonts, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen);
+	GfxText16(GfxCache *fonts, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen);
 	~GfxText16();
 
 	GuiResourceId GetFontId();
@@ -75,7 +75,6 @@ private:
 	void init();
 	bool SwitchToFont900OnSjis(const char *text);
 
-	ResourceManager *_resMan;
 	GfxCache *_cache;
 	GfxPorts *_ports;
 	GfxPaint16 *_paint16;
