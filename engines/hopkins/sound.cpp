@@ -634,8 +634,6 @@ void SoundManager::removeSample(int soundIndex) {
 		stopVoice(1);
 	if (checkVoiceStatus(2))
 		stopVoice(2);
-	if (checkVoiceStatus(3))
-		stopVoice(3);
 	removeWavSample(soundIndex);
 	_sound[soundIndex]._active = false;
 }
@@ -703,7 +701,6 @@ void SoundManager::playSample(int wavIndex, int voiceMode) {
 
 	switch (voiceMode) {
 	case 5:
-	case 8:
 	// Case added to identify the former PLAY_SAMPLE2 calls
 	case 9:
 		if (checkVoiceStatus(1))
@@ -714,11 +711,6 @@ void SoundManager::playSample(int wavIndex, int voiceMode) {
 		if (checkVoiceStatus(2))
 			stopVoice(1);
 		playWavSample(2, wavIndex);
-		break;
-	case 7:
-		if (checkVoiceStatus(3))
-			stopVoice(1);
-		playWavSample(3, wavIndex);
 		break;
 	default:
 		break;
