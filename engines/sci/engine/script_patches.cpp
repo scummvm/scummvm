@@ -23,6 +23,7 @@
 #include "sci/sci.h"
 #include "sci/engine/script.h"
 #include "sci/engine/state.h"
+#include "sci/engine/features.h"
 
 #include "common/util.h"
 
@@ -590,10 +591,45 @@ const uint16 kq5PatchWitchCageInit[] = {
 	PATCH_END
 };
 
+
+// In the final battle, the DOS version uses signals in the music to handle
+// timing, while in the Windows version another method is used and the GM
+// tracks do not contain these signals.
+// The original kq5 interpreter used global 400 to distinguish between
+// Windows (1) and DOS (0) versions.
+// We replace the 4 relevant checks for global 400 by a fixed true when
+// we use these GM tracks.
+//
+// Instead, we could have set global 400, but this has the possibly unwanted
+// side effects of switching to black&white cursors (which also needs complex
+// changes to GameFeatures::detectsetCursorType() ) and breaking savegame
+// compatibilty between the DOS and Windows CD versions of KQ5.
+// TODO: Investigate these side effects more closely.
+const byte kq5SignatureWinGMSignals[] = {
+	9,
+	0x80, 0x90, 0x01, // lag 0x190
+	0x18,             // not
+	0x30, 0x1b, 0x00, // bnt +0x001B
+	0x89, 0x57,       // lsg 0x57
+	0
+};
+
+const uint16 kq5PatchWinGMSignals[] = {
+	0x34, 0x01, 0x00, // ldi 0x0001
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                 adjust
 const SciScriptSignature kq5Signatures[] = {
 	{      0, "CD: harpy volume change",                     1, PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
 	{    200, "CD: witch cage init",                         1, PATCH_MAGICDWORD(0x7a, 0x00, 0xc8, 0x00),   -10, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+const SciScriptSignature kq5WinGMSignatures[] = {
+	{      0, "CD: harpy volume change",                     1, PATCH_MAGICDWORD(0x80, 0x91, 0x01, 0x18),     0, kq5SignatureCdHarpyVolume, kq5PatchCdHarpyVolume },
+	{    200, "CD: witch cage init",                         1, PATCH_MAGICDWORD(0x7a, 0x00, 0xc8, 0x00),   -10, kq5SignatureWitchCageInit, kq5PatchWitchCageInit },
+	{    124, "Win: GM Music signal checks",                 4, PATCH_MAGICDWORD(0x80, 0x90, 0x01, 0x18),     0, kq5SignatureWinGMSignals, kq5PatchWinGMSignals },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1317,7 +1353,11 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uin
 		signatureTable = gk1Signatures;
 		break;
 	case GID_KQ5:
-		signatureTable = kq5Signatures;
+		// See the explanation in the kq5SignatureWinGMSignals comment
+		if (g_sci->_features->useAltWinGMSound())
+			signatureTable = kq5WinGMSignatures;
+		else
+			signatureTable = kq5Signatures;
 		break;
 	case GID_KQ6:
 		signatureTable = kq6Signatures;
