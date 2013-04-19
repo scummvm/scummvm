@@ -61,9 +61,23 @@ static size_t read_stream_wrap(void *ptr, size_t size, size_t nmemb, void *datas
 	return result / size;
 }
 
-static int seek_stream_wrap(void *datasource, ogg_int64_t offset, int whence) {
+static int seek_stream_wrap(void *datasource, ogg_int64_t offset, int origin) {
+	Seek::Whence whence;
+	switch (origin) {
+	case SEEK_SET:
+		whence = Seek::SET;
+		break;
+	case SEEK_CUR:
+		whence = Seek::CUR;
+		break;
+	case SEEK_END:
+		whence = Seek::END;
+		break;
+	default:
+		error("Invalid seek whence in Vorbis stream (%d)", origin);
+	}
 	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)datasource;
-	stream->seek((int32)offset, (Seek::Whence)whence);
+	stream->seek((int32)offset, whence);
 	return stream->pos();
 }
 
