@@ -1,15 +1,15 @@
 #include <cxxtest/TestSuite.h>
 #include "common/util.h"
 
+/**
+ * Test suite for the functions in common/util.h
+ */
 class UtilTestSuite : public CxxTest::TestSuite {
-public:
-
-	// Test the parseBool function
-
-	// 'Regular' cases that must work
-	// (note that the function must be case insensitive):
-
+	public:
 	void test_parsebool_yesno() {
+
+		// First test for the parseBool function.
+		// These are the mixed case yes/no cases that must work
 
 		bool valasbool;
 		bool success;
@@ -27,6 +27,9 @@ public:
 
 	void test_parsebool_truefalse() {
 
+		// First test for the parseBool function.
+		// These are the mixed case true/false cases that must work
+
 		bool valasbool;
 		bool success;
 
@@ -42,6 +45,12 @@ public:
 	}
 
 	void test_parsebool_onezero() {
+
+		// Third test for the parseBool function.
+		// These are the 1/0 cases that must work.
+		// Note that while 'a-z'+0x20 must work just fine,
+		// '0-1'+0x20 should NOT; this is addressed in
+		// parsebool_bad
 
 		bool valasbool;
 		bool success;
@@ -79,6 +88,20 @@ public:
 		success = Common::parseBool (string_3, valasbool);
 		TS_ASSERT_EQUALS(success, 0);
 
+		// While 'a-z'+0x20 must work just fine,
+		// '0-1'+0x20 should NOT. '2' is not good either.
+
+		Common::String string_4 ("\x50");
+		success = Common::parseBool (string_4, valasbool);
+		TS_ASSERT_EQUALS(success, 0);
+
+		Common::String string_5 ("\x51");
+		success = Common::parseBool (string_5, valasbool);
+		TS_ASSERT_EQUALS(success, 0);
+
+		Common::String string_6 ("2");
+		success = Common::parseBool (string_6, valasbool);
+		TS_ASSERT_EQUALS(success, 0);
 	}
 
 	void test_is_al_num() {
@@ -189,8 +212,10 @@ public:
 	void test_is_space() {
 		// isSpace should return true iff the character is some kind of whitespace
 		// or tab character
-		for (int c=0; c<255; c++) {
-			 if (c==' ' || c=='\t' || c=='\r' || c=='\n' || c=='\v' || c=='\f') {
+		for (int c = 0; c < 255; c++) {
+			 if (c == ' '  || c == '\t' ||
+				 c == '\r' || c == '\n' ||
+				 c == '\v' || c == '\f') {
 				 TS_ASSERT_EQUALS(Common::isSpace(c), 1);
 			 } else {
 				 TS_ASSERT_EQUALS(Common::isSpace(c), 0);
@@ -201,8 +226,8 @@ public:
 	void test_is_print() {
 		// isPrint should return true iff the input is a printable ascii char.
 		// That is to say, 0x20 to 0x7E.
-		for (int c=0; c<255; c++) {
-			 if (c>=0x20 && c<=0x7E) {
+		for (int c = 0; c < 255; c++) {
+			 if (c >= 0x20 && c <= 0x7E) {
 				 TS_ASSERT_EQUALS(Common::isPrint(c), 1);
 			 } else {
 				 TS_ASSERT_EQUALS(Common::isPrint(c), 0);
