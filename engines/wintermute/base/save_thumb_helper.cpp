@@ -35,7 +35,7 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-SaveThumbHelper::SaveThumbHelper(const BaseGame *inGame) {
+SaveThumbHelper::SaveThumbHelper(BaseGame *inGame) : _gameRef(inGame) {
 	_thumbnail = nullptr;
 	_scummVMThumb = nullptr;
 }
