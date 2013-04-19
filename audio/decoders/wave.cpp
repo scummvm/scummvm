@@ -139,7 +139,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	int offset = fmtLength - 16;
 
 	do {
-		stream.seek(offset, Common::kSeekCur);
+		stream.seek(offset, Seek::CUR);
 		if (stream.pos() >= initialPos + wavLength + 8) {
 			warning("getWavInfo: Can't find 'data' chunk");
 			return false;

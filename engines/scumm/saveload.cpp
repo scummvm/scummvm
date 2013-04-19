@@ -271,7 +271,7 @@ bool ScummEngine_v4::savePreparedSavegame(int slot, char *desc) {
 
 	// copy savegame from memory-stream to file
 	if (success) {
-		_savePreparedSavegame->seek(0, Common::kSeekSet);
+		_savePreparedSavegame->seek(0, Seek::SET);
 		byte buffer[1024];
 		while ((nread = _savePreparedSavegame->read(buffer, sizeof(buffer)))) {
 			nwritten = out->write(buffer, nread);

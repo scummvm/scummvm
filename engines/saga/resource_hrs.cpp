@@ -54,7 +54,7 @@ bool ResourceContext_HRS::loadResV2(uint32 contextSize) {
 	const uint32 resourceSize = 4 + 4 + 4;	// id, size, offset
 
 	debug(3, "Context %s =====", _fileName);
-	_file.seek(0, Common::kSeekSet);
+	_file.seek(0, Seek::SET);
 
 	readElement(_file, origin);
 
@@ -64,7 +64,7 @@ bool ResourceContext_HRS::loadResV2(uint32 contextSize) {
 	}
 
 	// Read offset of first entry
-	_file.seek(origin.offset - sizeof(uint32), Common::kSeekSet);
+	_file.seek(origin.offset - sizeof(uint32), Seek::SET);
 	firstEntryOffset = _file.readUint32LE();
 
 	// Allocate buffers for table, categories and data
@@ -79,7 +79,7 @@ bool ResourceContext_HRS::loadResV2(uint32 contextSize) {
 		readElement(_file, _categories[i]);
 	}
 
-	_file.seek(firstEntryOffset, Common::kSeekSet);
+	_file.seek(firstEntryOffset, Seek::SET);
 
 	// Read table entries
 	count = tableSize / resourceSize;

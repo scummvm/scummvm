@@ -376,7 +376,7 @@ bool Sequence::load(Common::SeekableReadStream *stream, byte field30) {
 	for (uint i = 0; i < numframes; i++) {
 
 		// Move stream to start of frame
-		_stream->seek((int32)(_sequenceHeaderSize + i * _sequenceFrameSize), Common::kSeekSet);
+		_stream->seek((int32)(_sequenceHeaderSize + i * _sequenceFrameSize), Seek::SET);
 		if (_stream->eos())
 			error("[Sequence::load] Couldn't seek to the current frame data");
 

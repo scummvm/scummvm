@@ -237,7 +237,7 @@ uint32 Sword2Engine::restoreFromBuffer(byte *buffer, uint32 size) {
 		return SR_ERR_INCOMPATIBLE;
 	}
 
-	readS.seek(SAVE_DESCRIPTION_LEN, Common::kSeekCur);
+	readS.seek(SAVE_DESCRIPTION_LEN, Seek::CUR);
 
 	// Check savegame against length of current global variables resource
 	// This would most probably be trapped by the checksum test anyway,

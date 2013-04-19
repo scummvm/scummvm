@@ -43,13 +43,13 @@ void ScummFile::setSubfileRange(int32 start, int32 len) {
 	assert(start + len <= fileSize);
 	_subFileStart = start;
 	_subFileLen = len;
-	seek(0, Common::kSeekSet);
+	seek(0, Seek::SET);
 }
 
 void ScummFile::resetSubfile() {
 	_subFileStart = 0;
 	_subFileLen = 0;
-	seek(0, Common::kSeekSet);
+	seek(0, Seek::SET);
 }
 
 bool ScummFile::open(const Common::String &filename) {
@@ -94,7 +94,7 @@ bool ScummFile::openSubFile(const Common::String &filename) {
 	// Scan through the files
 	for (i = 0; i < file_record_len; i += 0x28) {
 		// read a file record
-		seek(file_record_off + i, Common::kSeekSet);
+		seek(file_record_off + i, Seek::SET);
 		file_off = readUint32BE();
 		file_len = readUint32BE();
 		read(file_name, 0x20);
@@ -131,22 +131,22 @@ int32 ScummFile::size() const {
 	return _subFileLen ? _subFileLen : File::size();
 }
 
-bool ScummFile::seek(int32 offs, Common::SeekWhence whence) {
+bool ScummFile::seek(int32 offs, Seek::Whence whence) {
 	if (_subFileLen) {
 		// Constrain the seek to the subfile
 		switch (whence) {
-		case Common::kSeekEnd:
+		case Seek::END:
 			offs = _subFileStart + _subFileLen + offs;
 			break;
-		case Common::kSeekSet:
+		case Seek::SET:
 			offs += _subFileStart;
 			break;
-		case Common::kSeekCur:
+		case Seek::CUR:
 			offs += File::pos();
 			break;
 		}
 		assert((int32)_subFileStart <= offs && offs <= (int32)(_subFileStart + _subFileLen));
-		whence = Common::kSeekSet;
+		whence = Seek::SET;
 	}
 	bool ret = File::seek(offs, whence);
 	if (ret)

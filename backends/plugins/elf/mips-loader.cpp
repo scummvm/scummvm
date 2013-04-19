@@ -41,7 +41,7 @@ bool MIPSDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment)
 	}
 
 	// Read in our relocation table
-	if (!_file->seek(offset, Common::kSeekSet) || _file->read(rel, size) != size) {
+	if (!_file->seek(offset, Seek::SET) || _file->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;
@@ -312,7 +312,7 @@ bool MIPSDLObject::loadSegment(Elf32_Phdr *phdr) {
 	debug(2, "elfloader: Reading the segment into memory");
 
 	// Read the segment into memory
-	if (!_file->seek(phdr->p_offset, Common::kSeekSet) ||
+	if (!_file->seek(phdr->p_offset, Seek::SET) ||
 			_file->read(baseAddress, phdr->p_filesz) != phdr->p_filesz) {
 		warning("elfloader: Segment load failed.");
 		return false;

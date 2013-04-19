@@ -137,7 +137,7 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 	Common::SeekableSubReadStream *sub = new Common::SeekableSubReadStream(savefile, metaDataSize, savefile->size(), DisposeAfterUse::YES);
 
 	// Move to the beginning of the substream
-	sub->seek(0, Common::kSeekSet);
+	sub->seek(0, Seek::SET);
 
 	return sub;
 }

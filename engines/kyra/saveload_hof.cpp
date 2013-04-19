@@ -199,7 +199,7 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 	_cauldronUseCount = in.readSint16();
 
 	if (header.originalSave)
-		in.seek(6, Common::kSeekCur);
+		in.seek(6, Seek::CUR);
 
 	_mainCharacter.sceneId = in.readUint16();
 	_mainCharacter.dlgIndex = in.readSint16();
@@ -208,7 +208,7 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 	_mainCharacter.animFrame = in.readUint16();
 
 	if (header.version <= 10 || header.originalSave)
-		in.seek(3, Common::kSeekCur);
+		in.seek(3, Seek::CUR);
 
 	for (int i = 0; i < 20; ++i)
 		_mainCharacter.inventory[i] = in.readUint16();

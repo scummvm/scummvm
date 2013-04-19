@@ -82,7 +82,7 @@ public:
 	/** Replace the current video stream with this identical one. */
 	virtual bool reloadStream(Common::SeekableReadStream *stream) = 0;
 
-	virtual bool seek(int32 frame, Common::SeekWhence whence = Common::kSeekSet, bool restart = false) = 0;
+	virtual bool seek(int32 frame, Seek::Whence whence = Seek::SET, bool restart = false) = 0;
 
 	/** Draw directly onto the specified video memory. */
 	void setSurfaceMemory(void *mem, uint16 width, uint16 height, uint8 bpp);
@@ -242,7 +242,7 @@ protected:
 	Audio::QueuingAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
-	bool evaluateSeekFrame(int32 &frame, Common::SeekWhence whence) const;
+	bool evaluateSeekFrame(int32 &frame, Seek::Whence whence) const;
 
 	// Surface management
 	bool hasSurface();
@@ -277,7 +277,7 @@ public:
 
 	bool reloadStream(Common::SeekableReadStream *stream);
 
-	bool seek(int32 frame, Common::SeekWhence whence = Common::kSeekSet, bool restart = false);
+	bool seek(int32 frame, Seek::Whence whence = Seek::SET, bool restart = false);
 
 	bool loadStream(Common::SeekableReadStream *stream);
 	void close();
@@ -307,7 +307,7 @@ public:
 
 	bool reloadStream(Common::SeekableReadStream *stream);
 
-	bool seek(int32 frame, Common::SeekWhence whence = Common::kSeekSet, bool restart = false);
+	bool seek(int32 frame, Seek::Whence whence = Seek::SET, bool restart = false);
 
 	void setXY(uint16 x, uint16 y);
 
@@ -399,7 +399,7 @@ public:
 
 	bool reloadStream(Common::SeekableReadStream *stream);
 
-	bool seek(int32 frame, Common::SeekWhence whence = Common::kSeekSet, bool restart = false);
+	bool seek(int32 frame, Seek::Whence whence = Seek::SET, bool restart = false);
 
 	void setXY(uint16 x, uint16 y);
 

@@ -75,7 +75,7 @@ bool Infogrames::Instruments::load(Common::SeekableReadStream &ins) {
 				(offset[i] < (ins.pos() + 4)) ||
 				(offsetRepeat[i] < (ins.pos() + 4))) {
 			// Definitely no real entry anymore
-			ins.seek(-8, Common::kSeekCur);
+			ins.seek(-8, Seek::CUR);
 			break;
 		}
 

@@ -99,7 +99,7 @@ void Mult_v2::loadMult(int16 resId) {
 		_multData->animLoaded[i] = false;
 	}
 
-	for (int i = 0; i < staticCount; i++, data.seek(14, Common::kSeekCur)) {
+	for (int i = 0; i < staticCount; i++, data.seek(14, Seek::CUR)) {
 		_multData->staticIndices[i] = _vm->_scenery->loadStatic(1);
 
 		if (_multData->staticIndices[i] >= 100) {
@@ -108,7 +108,7 @@ void Mult_v2::loadMult(int16 resId) {
 		}
 	}
 
-	for (int i = 0; i < animCount; i++, data.seek(14, Common::kSeekCur)) {
+	for (int i = 0; i < animCount; i++, data.seek(14, Seek::CUR)) {
 		_multData->animIndices[i] = _vm->_scenery->loadAnim(1);
 
 		if (_multData->animIndices[i] >= 100) {
@@ -184,7 +184,7 @@ void Mult_v2::loadMult(int16 resId) {
 		_multData->textKeys[i].frame = data.readSint16LE();
 		_multData->textKeys[i].cmd = data.readSint16LE();
 		if (!hasImds)
-			data.seek(24, Common::kSeekCur);
+			data.seek(24, Seek::CUR);
 	}
 
 	_multData->sndKeysCount = data.readSint16LE();
@@ -199,9 +199,9 @@ void Mult_v2::loadMult(int16 resId) {
 		_multData->sndKeys[i].repCount = data.readSint16LE();
 		_multData->sndKeys[i].soundIndex = -1;
 		_multData->sndKeys[i].resId = -1;
-		data.seek(2, Common::kSeekCur);
+		data.seek(2, Seek::CUR);
 		if (!hasImds)
-			data.seek(24, Common::kSeekCur);
+			data.seek(24, Seek::CUR);
 
 		switch (_multData->sndKeys[i].cmd) {
 		case 1:
@@ -283,7 +283,7 @@ void Mult_v2::loadImds(Common::SeekableReadStream &data) {
 	}
 
 	_vm->_game->_script->skip(size * 14);
-	data.seek(2, Common::kSeekCur);
+	data.seek(2, Seek::CUR);
 	for (int i = 0; i < 4; i++) {
 		_multData->imdKeysCount[i] = data.readSint16LE();
 		_multData->imdKeys[i] = new Mult_ImdKey[_multData->imdKeysCount[i]];

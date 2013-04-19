@@ -55,7 +55,7 @@ private:
 	void cleanup();
 	uint32 getPos();
 	uint32 getLength();
-	bool setPos(uint32 pos, Common::SeekWhence whence = Common::kSeekSet);
+	bool setPos(uint32 pos, Seek::Whence whence = Seek::SET);
 	char *_filename;
 	Common::WriteStream *openForWrite(const Common::String &filename, bool binary);
 	Common::WriteStream *openForAppend(const Common::String &filename, bool binary);

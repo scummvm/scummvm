@@ -205,7 +205,7 @@ void GraphicsManager::loadScreen(const Common::String &file) {
 		if (!f.open(file))
 			error("loadScreen - %s", file.c_str());
 
-		f.seek(0, Common::kSeekEnd);
+		f.seek(0, Seek::END);
 		f.close();
 		flag = false;
 	}

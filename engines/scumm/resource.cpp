@@ -166,9 +166,9 @@ void ScummEngine::deleteRoomOffsets() {
 /** Read room offsets */
 void ScummEngine::readRoomsOffsets() {
 	if (_game.features & GF_SMALL_HEADER) {
-		_fileHandle->seek(12, Common::kSeekSet);	// Directly searching for the room offset block would be more generic...
+		_fileHandle->seek(12, Seek::SET);	// Directly searching for the room offset block would be more generic...
 	} else {
-		_fileHandle->seek(16, Common::kSeekSet);
+		_fileHandle->seek(16, Seek::SET);
 	}
 
 	int num = _fileHandle->readByte();
@@ -279,9 +279,9 @@ void ScummEngine::readIndexFile() {
 				itemsize -= 2;
 				break;
 			}
-			_fileHandle->seek(itemsize - 8, Common::kSeekCur);
+			_fileHandle->seek(itemsize - 8, Seek::CUR);
 		}
-		_fileHandle->seek(0, Common::kSeekSet);
+		_fileHandle->seek(0, Seek::SET);
 	}
 
 	if (checkTryMedia(_fileHandle)) {
@@ -337,7 +337,7 @@ bool checkTryMedia(BaseScummFile *handle) {
 	if (matched)
 		return true;
 
-	handle->seek(0, Common::kSeekSet);
+	handle->seek(0, Seek::SET);
 
 	return false;
 }
@@ -382,7 +382,7 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 
 	case MKTAG('D','L','F','L'):
 		i = _fileHandle->readUint16LE();
-		_fileHandle->seek(-2, Common::kSeekCur);
+		_fileHandle->seek(-2, Seek::CUR);
 		_heV7RoomOffsets = (byte *)calloc(2 + (i * 4), 1);
 		_fileHandle->read(_heV7RoomOffsets, (2 + (i * 4)) );
 		break;
@@ -395,11 +395,11 @@ void ScummEngine_v70he::readIndexBlock(uint32 blocktype, uint32 itemsize) {
 
 	case MKTAG('S','V','E','R'):
 		// Index version number
-		_fileHandle->seek(itemsize - 8, Common::kSeekCur);
+		_fileHandle->seek(itemsize - 8, Seek::CUR);
 		break;
 
 	case MKTAG('I','N','I','B'):
-		_fileHandle->seek(itemsize - 8, Common::kSeekCur);
+		_fileHandle->seek(itemsize - 8, Seek::CUR);
 		debug(2, "INIB index block not yet handled, skipping");
 		break;
 
@@ -644,21 +644,21 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 
 	openRoom(roomNr);
 
-	_fileHandle->seek(fileOffs + _fileOffset, Common::kSeekSet);
+	_fileHandle->seek(fileOffs + _fileOffset, Seek::SET);
 
 	if (_game.features & GF_OLD_BUNDLE) {
 		if ((_game.version == 3) && !(_game.platform == Common::kPlatformAmiga) && (type == rtSound)) {
 			return readSoundResourceSmallHeader(idx);
 		} else {
 			size = _fileHandle->readUint16LE();
-			_fileHandle->seek(-2, Common::kSeekCur);
+			_fileHandle->seek(-2, Seek::CUR);
 		}
 	} else if (_game.features & GF_SMALL_HEADER) {
 		if (_game.version == 4)
-			_fileHandle->seek(8, Common::kSeekCur);
+			_fileHandle->seek(8, Seek::CUR);
 		size = _fileHandle->readUint32LE();
 		tag = _fileHandle->readUint16LE();
-		_fileHandle->seek(-6, Common::kSeekCur);
+		_fileHandle->seek(-6, Seek::CUR);
 		if ((type == rtSound) && !(_game.platform == Common::kPlatformAmiga) && !(_game.platform == Common::kPlatformFMTowns)) {
 			return readSoundResourceSmallHeader(idx);
 		}
@@ -684,7 +684,7 @@ int ScummEngine::loadResource(ResType type, ResId idx) {
 		}
 
 		size = _fileHandle->readUint32BE();
-		_fileHandle->seek(-8, Common::kSeekCur);
+		_fileHandle->seek(-8, Seek::CUR);
 	}
 	_fileHandle->read(_res->createResource(type, idx, size), size);
 
@@ -1165,8 +1165,8 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::readMAXS(int blockSize) {
-	_fileHandle->seek(50, Common::kSeekCur);         // Skip over SCUMM engine version
-	_fileHandle->seek(50, Common::kSeekCur);         // Skip over data file version
+	_fileHandle->seek(50, Seek::CUR);         // Skip over SCUMM engine version
+	_fileHandle->seek(50, Seek::CUR);         // Skip over data file version
 	_numVariables = _fileHandle->readUint32LE();     // 1500
 	_numBitVariables = _fileHandle->readUint32LE();  // 2048
 	_fileHandle->readUint32LE();                     // 40
@@ -1193,8 +1193,8 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 }
 
 void ScummEngine_v7::readMAXS(int blockSize) {
-	_fileHandle->seek(50, Common::kSeekCur);         // Skip over SCUMM engine version
-	_fileHandle->seek(50, Common::kSeekCur);         // Skip over data file version
+	_fileHandle->seek(50, Seek::CUR);         // Skip over SCUMM engine version
+	_fileHandle->seek(50, Seek::CUR);         // Skip over data file version
 	_numVariables = _fileHandle->readUint16LE();
 	_numBitVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();

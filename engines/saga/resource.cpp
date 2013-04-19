@@ -68,7 +68,7 @@ bool ResourceContext::loadResV1(uint32 contextOffset, uint32 contextSize) {
 	// Load resource table
 	tableBuffer.resize(RSC_TABLEENTRY_SIZE * count);
 
-	_file.seek(resourceTableOffset + contextOffset, Common::kSeekSet);
+	_file.seek(resourceTableOffset + contextOffset, Seek::SET);
 
 	result = (_file.read(tableBuffer.getBuffer(), tableBuffer.size()) == tableBuffer.size());
 	if (result) {
@@ -319,7 +319,7 @@ void Resource::loadResource(ResourceContext *context, uint32 resourceId, ByteArr
 	resourceBuffer.resize(resourceData->size);
 
 
-	file->seek((long)resourceOffset, Common::kSeekSet);
+	file->seek((long)resourceOffset, Seek::SET);
 
 	if (file->read(resourceBuffer.getBuffer(), resourceBuffer.size()) != resourceBuffer.size()) {
 		error("Resource::loadResource() failed to read");

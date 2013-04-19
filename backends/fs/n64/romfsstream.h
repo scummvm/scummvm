@@ -52,7 +52,7 @@ public:
 
 	virtual int32 pos() const;
 	virtual int32 size() const;
-	virtual bool seek(int32 offs, SeekWhence whence = Common::kSeekSet);
+	virtual bool seek(int32 offs, Seek::Whence whence = Seek::SET);
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 

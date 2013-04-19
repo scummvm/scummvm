@@ -212,7 +212,7 @@ void MoviePlayer::fetchAudioChunks() {
 	uint prefetchChunkCount = 0;
 
 	if (_lastPrefetchOfs != 0)
-		_vm->_arc->seek(_lastPrefetchOfs, Common::kSeekSet);
+		_vm->_arc->seek(_lastPrefetchOfs, Seek::SET);
 
 	while (chunkCount-- && prefetchChunkCount < _framesPerSoundChunk / 2) {
 		byte chunkType = _vm->_arc->readByte();
@@ -225,13 +225,13 @@ void MoviePlayer::fetchAudioChunks() {
 			prefetchChunkCount++;
 			_soundChunkFramesLeft += _framesPerSoundChunk;
 		} else {
-			_vm->_arc->seek(chunkSize, Common::kSeekCur);
+			_vm->_arc->seek(chunkSize, Seek::CUR);
 		}
 	}
 
 	_lastPrefetchOfs = _vm->_arc->pos();
 
-	_vm->_arc->seek(startOfs, Common::kSeekSet);
+	_vm->_arc->seek(startOfs, Seek::SET);
 }
 
 void MoviePlayer::unpackPalette(byte *source, byte *dest, int elemCount, int elemSize) {

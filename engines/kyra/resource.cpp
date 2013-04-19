@@ -170,12 +170,12 @@ bool Resource::loadFileList(const Common::String &filedata) {
 	uint32 filenameOffset = 0;
 	while ((filenameOffset = f->readUint32LE()) != 0) {
 		uint32 offset = f->pos();
-		f->seek(filenameOffset, Common::kSeekSet);
+		f->seek(filenameOffset, Seek::SET);
 
 		uint8 buffer[13];
 		f->read(buffer, sizeof(buffer) - 1);
 		buffer[12] = 0;
-		f->seek(offset + 16, Common::kSeekSet);
+		f->seek(offset + 16, Seek::SET);
 
 		Common::String filename = Common::String((char *)buffer);
 		filename.toUppercase();
@@ -326,11 +326,11 @@ Common::Archive *Resource::loadArchive(const Common::String &name, Common::Archi
 	for (LoaderList::const_iterator i = _loaders.begin(); i != _loaders.end(); ++i) {
 		if ((*i)->checkFilename(name)) {
 			if ((*i)->isLoadable(name, *stream)) {
-				stream->seek(0, Common::kSeekSet);
+				stream->seek(0, Seek::SET);
 				archive = (*i)->load(member, *stream);
 				break;
 			} else {
-				stream->seek(0, Common::kSeekSet);
+				stream->seek(0, Seek::SET);
 			}
 		}
 	}

@@ -71,7 +71,7 @@ int AgiLoader_v3::loadDir(struct AgiDir *agid, Common::File *fp,
 	uint8 *mem;
 	unsigned int i;
 
-	fp->seek(offs, Common::kSeekSet);
+	fp->seek(offs, Seek::SET);
 	if ((mem = (uint8 *)malloc(len + 32)) != NULL) {
 		fp->read(mem, len);
 
@@ -124,7 +124,7 @@ int AgiLoader_v3::init() {
 	}
 	// build offset table for v3 directory format
 	fp.read(&xd, 8);
-	fp.seek(0, Common::kSeekEnd);
+	fp.seek(0, Seek::END);
 
 	for (i = 0; i < 4; i++)
 		agiVol3[i].sddr = READ_LE_UINT16((uint8 *) & xd[i]);
@@ -137,7 +137,7 @@ int AgiLoader_v3::init() {
 	if (agiVol3[3].len > 256 * 3)
 		agiVol3[3].len = 256 * 3;
 
-	fp.seek(0, Common::kSeekSet);
+	fp.seek(0, Seek::SET);
 
 	// read in directory files
 	ec = loadDir(_vm->_game.dirLogic, &fp, agiVol3[0].sddr, agiVol3[0].len);
@@ -208,7 +208,7 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 	path = Common::String(_vm->_game.name) + x;
 
 	if (agid->offset != _EMPTY && fp.open(path)) {
-		fp.seek(agid->offset, Common::kSeekSet);
+		fp.seek(agid->offset, Seek::SET);
 		fp.read(&x, 7);
 
 		if (READ_BE_UINT16((uint8 *) x) != 0x1234) {

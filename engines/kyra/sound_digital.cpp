@@ -171,11 +171,11 @@ AUDStream::AUDStream(Common::SeekableReadStream *stream) : _stream(stream), _end
 		uint16 outSize = _stream->readUint16LE();
 
 		_length = _length.addFrames(outSize);
-		stream->seek(size + 4, Common::kSeekCur);
+		stream->seek(size + 4, Seek::CUR);
 		i += size + 8;
 	}
 
-	stream->seek(_streamStart, Common::kSeekSet);
+	stream->seek(_streamStart, Seek::SET);
 
 	if (type == 1 && !flags)
 		_endOfData = false;
@@ -369,7 +369,7 @@ bool AUDStream::seek(const Audio::Timestamp &where) {
 		uint16 outSize = _stream->readUint16LE();
 
 		if (curSample + outSize > seekSample) {
-			_stream->seek(-4, Common::kSeekCur);
+			_stream->seek(-4, Seek::CUR);
 
 			uint32 samples = seekSample - curSample;
 			int16 *temp = new int16[samples];
@@ -382,7 +382,7 @@ bool AUDStream::seek(const Audio::Timestamp &where) {
 		} else {
 			curSample += outSize;
 			_processedSize += 8 + size;
-			_stream->seek(size + 4, Common::kSeekCur);
+			_stream->seek(size + 4, Seek::CUR);
 		}
 	}
 

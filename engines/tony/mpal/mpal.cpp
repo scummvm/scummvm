@@ -1447,7 +1447,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 		return false;
 
 	// Seek to the end of the file to read overall information
-	GLOBALS._hMpr.seek(-12, Common::kSeekEnd);
+	GLOBALS._hMpr.seek(-12, Seek::END);
 
 	uint32 dwSizeComp = GLOBALS._hMpr.readUint32LE();
 	if (GLOBALS._hMpr.err())
@@ -1465,7 +1465,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 		return false;
 
 	// Move to the start of the resources header
-	GLOBALS._hMpr.seek(-(12 + (int)dwSizeComp), Common::kSeekEnd);
+	GLOBALS._hMpr.seek(-(12 + (int)dwSizeComp), Seek::END);
 
 	GLOBALS._lpResources = (uint32 *)globalAlloc(GMEM_FIXED | GMEM_ZEROINIT, GLOBALS._nResources * 8);
 	if (GLOBALS._lpResources == NULL)
@@ -1488,7 +1488,7 @@ bool mpalInit(const char *lpszMpcFileName, const char *lpszMprFileName,
 	globalDestroy(cmpbuf);
 
 	// Reset back to the start of the file, leaving it open
-	GLOBALS._hMpr.seek(0, Common::kSeekSet);
+	GLOBALS._hMpr.seek(0, Seek::SET);
 
 	// There is no action or dialog running by default
 	GLOBALS._bExecutingAction = false;

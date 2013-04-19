@@ -76,7 +76,7 @@ public:
 	virtual int32 pos() const { return _pos - _begin; }
 	virtual int32 size() const { return _end - _begin; }
 
-	virtual bool seek(int32 offset, SeekWhence whence = kSeekSet);
+	virtual bool seek(int32 offset, Seek::Whence whence = Seek::SET);
 };
 
 /**

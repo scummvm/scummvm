@@ -68,7 +68,7 @@ SceneHotspot *SceneHotspot::load(Common::SeekableReadStream *stream) {
 
 		SceneCoord *sceneCoord = new SceneCoord;
 
-		stream->seek(offset, Common::kSeekSet);
+		stream->seek(offset, Seek::SET);
 
 		sceneCoord->field_0 = stream->readSint32LE();
 		sceneCoord->field_4 = stream->readSint32LE();
@@ -153,7 +153,7 @@ void Scene::loadHotspots(Common::SeekableReadStream *stream) {
 
 	// Read all hotspots
 	if (_hotspot != 0) {
-		stream->seek((int32)_hotspot, Common::kSeekSet);
+		stream->seek((int32)_hotspot, Seek::SET);
 		SceneHotspot *hotspot = SceneHotspot::load(stream);
 		while (hotspot) {
 			_hotspots.push_back(hotspot);
@@ -161,7 +161,7 @@ void Scene::loadHotspots(Common::SeekableReadStream *stream) {
 			if (hotspot->next == 0)
 				break;
 
-			stream->seek((int32)hotspot->next, Common::kSeekSet);
+			stream->seek((int32)hotspot->next, Seek::SET);
 			hotspot = SceneHotspot::load(stream);
 		}
 	}

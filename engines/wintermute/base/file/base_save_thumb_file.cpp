@@ -122,7 +122,7 @@ bool BaseSaveThumbFile::read(void *buffer, uint32 size) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSaveThumbFile::seek(uint32 pos, Common::SeekWhence whence) {
+bool BaseSaveThumbFile::seek(uint32 pos, Seek::Whence whence) {
 	if (!_data) {
 		return STATUS_FAILED;
 	}
@@ -130,13 +130,13 @@ bool BaseSaveThumbFile::seek(uint32 pos, Common::SeekWhence whence) {
 	uint32 newPos = 0;
 
 	switch (whence) {
-	case Common::kSeekSet:
+	case Seek::SET:
 		newPos = pos;
 		break;
-	case Common::kSeekEnd:
+	case Seek::END:
 		newPos = _size + pos;
 		break;
-	case Common::kSeekCur:
+	case Seek::CUR:
 		newPos = _pos + pos;
 		break;
 	}

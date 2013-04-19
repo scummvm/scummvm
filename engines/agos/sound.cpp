@@ -72,7 +72,7 @@ BaseSound::BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32
 	if (!file.open(_filename))
 		error("BaseSound: Could not open file \"%s\"", filename.c_str());
 
-	file.seek(base + sizeof(uint32), Common::kSeekSet);
+	file.seek(base + sizeof(uint32), Seek::SET);
 	if (bigEndian)
 		size = file.readUint32BE();
 	else
@@ -87,7 +87,7 @@ BaseSound::BaseSound(Audio::Mixer *mixer, const Common::String &filename, uint32
 	_offsets = (uint32 *)malloc(size + sizeof(uint32));
 	_freeOffsets = true;
 
-	file.seek(base, Common::kSeekSet);
+	file.seek(base, Seek::SET);
 
 	for (uint i = 0; i < res; i++) {
 		if (bigEndian)
@@ -298,7 +298,7 @@ Audio::AudioStream *RawSound::makeAudioStream(uint sound) {
 		return NULL;
 	}
 
-	file->seek(_offsets[sound], Common::kSeekSet);
+	file->seek(_offsets[sound], Seek::SET);
 	uint size = file->readUint32BE();
 	return Audio::makeRawStream(new Common::SeekableSubReadStream(file, _offsets[sound] + 4, _offsets[sound] + 4 + size, DisposeAfterUse::YES), 22050, _flags, DisposeAfterUse::YES);
 }

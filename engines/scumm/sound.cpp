@@ -578,7 +578,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		}
 
 		file->setEnc(_sfxFileEncByte);
-		file->seek(offset, Common::kSeekSet);
+		file->seek(offset, Seek::SET);
 
 		assert(num + 1 < (int)ARRAYSIZE(_mouthSyncTimes));
 		for (i = 0; i < num; i++)
@@ -1090,7 +1090,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 	case MKTAG('M','I','D','I'):
 	case MKTAG('i','M','U','S'):
 		if (_sound->_musicType != MDT_PCSPK && _sound->_musicType != MDT_PCJR) {
-			_fileHandle->seek(-8, Common::kSeekCur);
+			_fileHandle->seek(-8, Seek::CUR);
 			_fileHandle->read(_res->createResource(rtSound, idx, total_size + 8), total_size + 8);
 			return 1;
 		}
@@ -1167,11 +1167,11 @@ int ScummEngine::readSoundResource(ResId idx) {
 				best_offs = _fileHandle->pos();
 			}
 
-			_fileHandle->seek(size - 8, Common::kSeekCur);
+			_fileHandle->seek(size - 8, Seek::CUR);
 		}
 
 		if (best_pri != -1) {
-			_fileHandle->seek(best_offs - 8, Common::kSeekSet);
+			_fileHandle->seek(best_offs - 8, Seek::SET);
 			ptr = _res->createResource(rtSound, idx, best_size);
 			_fileHandle->read(ptr, best_size);
 			//dumpResource("sound-", idx, ptr);
@@ -1179,7 +1179,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 		}
 		break;
 	case MKTAG('M','a','c','0'):
-		_fileHandle->seek(-12, Common::kSeekCur);
+		_fileHandle->seek(-12, Seek::CUR);
 		total_size = _fileHandle->readUint32BE() - 8;
 		ptr = _res->createResource(rtSound, idx, total_size);
 		_fileHandle->read(ptr, total_size);
@@ -1192,7 +1192,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 	case MKTAG('D','I','G','I'):
 	case MKTAG('C','r','e','a'):
 	case 0x460e200d:	// WORKAROUND bug # 1311447
-		_fileHandle->seek(-12, Common::kSeekCur);
+		_fileHandle->seek(-12, Seek::CUR);
 		total_size = _fileHandle->readUint32BE();
 		ptr = _res->createResource(rtSound, idx, total_size);
 		_fileHandle->read(ptr, total_size - 8);
@@ -1201,7 +1201,7 @@ int ScummEngine::readSoundResource(ResId idx) {
 
 	case MKTAG('H','S','H','D'):
 		// HE sound type without SOUN header
-		_fileHandle->seek(-16, Common::kSeekCur);
+		_fileHandle->seek(-16, Seek::CUR);
 		total_size = max_total_size + 8;
 		ptr = _res->createResource(rtSound, idx, total_size);
 		_fileHandle->read(ptr, total_size);
@@ -1217,11 +1217,11 @@ int ScummEngine::readSoundResource(ResId idx) {
 		debugC(DEBUG_SOUND, "Found base tag FMUS in sound %d, size %d", idx, total_size);
 		debugC(DEBUG_SOUND, "It was at position %d", _fileHandle->pos());
 
-		_fileHandle->seek(4, Common::kSeekCur);
+		_fileHandle->seek(4, Seek::CUR);
 		// HSHD size
 		tmpsize = _fileHandle->readUint32BE();
 		// skip to size part of the SDAT block
-		_fileHandle->seek(tmpsize - 4, Common::kSeekCur);
+		_fileHandle->seek(tmpsize - 4, Seek::CUR);
 		// SDAT size
 		tmpsize = _fileHandle->readUint32BE();
 
@@ -1238,10 +1238,10 @@ int ScummEngine::readSoundResource(ResId idx) {
 			_res->_types[rtSound][idx]._roomoffs = RES_INVALID_OFFSET;
 			return 0;
 		}
-		dmuFile.seek(4, Common::kSeekSet);
+		dmuFile.seek(4, Seek::SET);
 		total_size = dmuFile.readUint32BE();
 		debugC(DEBUG_SOUND, "dmu file size %d", total_size);
-		dmuFile.seek(-8, Common::kSeekCur);
+		dmuFile.seek(-8, Seek::CUR);
 		dmuFile.read(_res->createResource(rtSound, idx, total_size), total_size);
 		dmuFile.close();
 		}
@@ -1249,9 +1249,9 @@ int ScummEngine::readSoundResource(ResId idx) {
 
 	default:
 		if (SWAP_BYTES_32(basetag) == max_total_size) {
-			_fileHandle->seek(-12, Common::kSeekCur);
+			_fileHandle->seek(-12, Seek::CUR);
 			total_size = _fileHandle->readUint32BE();
-			_fileHandle->seek(-8, Common::kSeekCur);
+			_fileHandle->seek(-8, Seek::CUR);
 			ptr = _res->createResource(rtSound, idx, total_size);
 			_fileHandle->read(ptr, total_size);
 			//dumpResource("sound-", idx, ptr);
@@ -1823,7 +1823,7 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 		ro_size = _fileHandle->readUint16LE();
 
 		src_ptr = (byte *) calloc(ro_size - 4, 1);
-		_fileHandle->seek(ro_offs + 4, Common::kSeekSet);
+		_fileHandle->seek(ro_offs + 4, Seek::SET);
 		_fileHandle->read(src_ptr, ro_size -4);
 
 		ptr = _res->createResource(rtSound, idx, ro_size + 2);
@@ -1834,13 +1834,13 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 	} else if (_game.features & GF_OLD_BUNDLE) {
 		wa_offs = _fileHandle->pos();
 		wa_size = _fileHandle->readUint16LE();
-		_fileHandle->seek(wa_size - 2, Common::kSeekCur);
+		_fileHandle->seek(wa_size - 2, Seek::CUR);
 
 		if (!(_game.platform == Common::kPlatformAtariST || _game.platform == Common::kPlatformMacintosh)) {
 			ad_offs = _fileHandle->pos();
 			ad_size = _fileHandle->readUint16LE();
 		}
-		_fileHandle->seek(4, Common::kSeekCur);
+		_fileHandle->seek(4, Seek::CUR);
 		total_size = wa_size + ad_size;
 	} else {
 		total_size = size = _fileHandle->readUint32LE();
@@ -1875,17 +1875,17 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 						pos += 6;
 					}
 				}
-				_fileHandle->seek(size - 6, Common::kSeekCur);
+				_fileHandle->seek(size - 6, Seek::CUR);
 			}
 		}
 	}
 
 	if ((_sound->_musicType == MDT_PCSPK || _sound->_musicType == MDT_PCJR) && wa_offs != 0) {
 		if (_game.features & GF_OLD_BUNDLE) {
-			_fileHandle->seek(wa_offs, Common::kSeekSet);
+			_fileHandle->seek(wa_offs, Seek::SET);
 			_fileHandle->read(_res->createResource(rtSound, idx, wa_size), wa_size);
 		} else {
-			_fileHandle->seek(wa_offs - 6, Common::kSeekSet);
+			_fileHandle->seek(wa_offs - 6, Seek::SET);
 			_fileHandle->read(_res->createResource(rtSound, idx, wa_size + 6), wa_size + 6);
 		}
 		return 1;
@@ -1894,30 +1894,30 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 			bool hasAdLibMusicTrack = false;
 
 			if (ad_offs) {
-				_fileHandle->seek(ad_offs + 4 + 2, Common::kSeekSet);
+				_fileHandle->seek(ad_offs + 4 + 2, Seek::SET);
 				hasAdLibMusicTrack = (_fileHandle->readByte() == 0x80);
 			}
 
 			if (hasAdLibMusicTrack) {
-				_fileHandle->seek(ad_offs, Common::kSeekSet);
+				_fileHandle->seek(ad_offs, Seek::SET);
 				_fileHandle->read(_res->createResource(rtSound, idx, ad_size), ad_size);
 			} else {
-				_fileHandle->seek(wa_offs, Common::kSeekSet);
+				_fileHandle->seek(wa_offs, Seek::SET);
 				_fileHandle->read(_res->createResource(rtSound, idx, wa_size), wa_size);
 			}
 		} else {
 			bool hasAdLibMusicTrack = false;
 
 			if (ad_offs) {
-				_fileHandle->seek(ad_offs + 2, Common::kSeekSet);
+				_fileHandle->seek(ad_offs + 2, Seek::SET);
 				hasAdLibMusicTrack = (_fileHandle->readByte() == 0x80);
 			}
 
 			if (hasAdLibMusicTrack) {
-				_fileHandle->seek(ad_offs - 4, Common::kSeekSet);
+				_fileHandle->seek(ad_offs - 4, Seek::SET);
 				_fileHandle->read(_res->createResource(rtSound, idx, ad_size + 4), ad_size + 4);
 			} else {
-				_fileHandle->seek(wa_offs - 6, Common::kSeekSet);
+				_fileHandle->seek(wa_offs - 6, Seek::SET);
 				_fileHandle->read(_res->createResource(rtSound, idx, wa_size + 6), wa_size + 6);
 			}
 		}
@@ -1933,10 +1933,10 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 		byte *ptr;
 		if (_game.features & GF_OLD_BUNDLE) {
 			ad_size -= 4;
-			_fileHandle->seek(ad_offs + 4, Common::kSeekSet);
+			_fileHandle->seek(ad_offs + 4, Seek::SET);
 		} else {
 			ad_size -= 6;
-			_fileHandle->seek(ad_offs, Common::kSeekSet);
+			_fileHandle->seek(ad_offs, Seek::SET);
 		}
 		ptr = (byte *) calloc(ad_size, 1);
 		_fileHandle->read(ptr, ad_size);
@@ -1944,7 +1944,7 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 		free(ptr);
 		return 1;
 	} else if (ro_offs != 0) {
-		_fileHandle->seek(ro_offs - 2, Common::kSeekSet);
+		_fileHandle->seek(ro_offs - 2, Seek::SET);
 		_fileHandle->read(_res->createResource(rtSound, idx, ro_size - 4), ro_size - 4);
 		return 1;
 	}

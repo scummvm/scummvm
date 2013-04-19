@@ -202,7 +202,7 @@ int32 TinselFile::size() const {
 	return _stream->size();
 }
 
-bool TinselFile::seek(int32 offset, Common::SeekWhence whence) {
+bool TinselFile::seek(int32 offset, Seek::Whence whence) {
 	assert(_stream);
 	return _stream->seek(offset, whence);
 }

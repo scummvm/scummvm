@@ -107,7 +107,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	bool isCompressed = (header == 0x1F8B ||
 				     ((header & 0x0F00) == 0x0800 &&
 				      header % 31 == 0));
-	dat->seek(-2, Common::kSeekCur);
+	dat->seek(-2, Seek::CUR);
 
 	if (isCompressed) {
 		// teenagent.dat is compressed, but zlib hasn't been compiled in

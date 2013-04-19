@@ -241,7 +241,7 @@ void MP3Stream::initStream() {
 	mad_synth_init(&_synth);
 
 	// Reset the stream data
-	_inStream->seek(0, Common::kSeekSet);
+	_inStream->seek(0, Seek::SET);
 	_totalTime = mad_timer_zero;
 	_posInFrame = 0;
 

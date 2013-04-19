@@ -151,20 +151,20 @@ bool PspIoStream::physicalSeekFromCur(int32 offset) {
 	return true;
 }
 
-bool PspIoStream::seek(int32 offs, Common::SeekWhence whence) {
+bool PspIoStream::seek(int32 offs, Seek::Whence whence) {
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT_FUNC("offset[0x%x], whence[%d], _pos[0x%x], _physPos[0x%x]\n", offs, whence, _pos, _physicalPos);
 	_eos = false;
 
 	int32 posToSearchFor;
 	switch (whence) {
-	case Common::kSeekSet:
+	case Seek::SET:
 		posToSearchFor = 0;
 		break;
-	case Common::kSeekCur:
+	case Seek::CUR:
 		posToSearchFor = _pos;
 		break;
-	case Common::kSeekEnd:
+	case Seek::END:
 		posToSearchFor = _fileSize;
 		break;
 	}

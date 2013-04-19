@@ -167,7 +167,7 @@ bool RawStream<is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
 		return false;
 
 	const uint32 seekSample = convertTimeToStreamPos(where, getRate(), isStereo()).totalNumberOfFrames();
-	_stream->seek(seekSample * (is16Bit ? 2 : 1), Common::kSeekSet);
+	_stream->seek(seekSample * (is16Bit ? 2 : 1), Seek::SET);
 
 	// In case of an error we will not continue stream playback.
 	if (!_stream->err() && !_stream->eos() && _stream->pos() != _stream->size())

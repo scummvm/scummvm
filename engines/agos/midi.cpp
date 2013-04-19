@@ -372,7 +372,7 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 	byte header[4];
 	in->read(header, 4);
 	bool isGMF = !memcmp(header, "GMF\x1", 4);
-	in->seek(startpos, Common::kSeekSet);
+	in->seek(startpos, Seek::SET);
 
 	uint32 size = in->size() - in->pos();
 	if (isGMF) {
@@ -381,14 +381,14 @@ void MidiPlayer::loadSMF(Common::File *in, int song, bool sfx) {
 			// but each one is referenced by a pointer at the
 			// beginning of the file. Those pointers can be used
 			// to determine file size.
-			in->seek(0, Common::kSeekSet);
+			in->seek(0, Seek::SET);
 			uint16 value = in->readUint16LE() >> 2; // Number of resources
 			if (song != value - 1) {
-				in->seek(song * 2 + 2, Common::kSeekSet);
+				in->seek(song * 2 + 2, Seek::SET);
 				value = in->readUint16LE();
 				size = value - startpos;
 			}
-			in->seek(startpos, Common::kSeekSet);
+			in->seek(startpos, Seek::SET);
 		} else if (size >= 64000) {
 			// For GMF resources not in separate
 			// files, we're going to have to use
@@ -482,20 +482,20 @@ void MidiPlayer::loadMultipleSMF(Common::File *in, bool sfx) {
 			warning("Expected MThd but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
 			return;
 		}
-		in->seek(in->readUint32BE(), Common::kSeekCur);
+		in->seek(in->readUint32BE(), Seek::CUR);
 
 		// Now skip all the MTrk blocks
 		while (true) {
 			in->read(buf, 4);
 			if (memcmp(buf, "MTrk", 4) != 0)
 				break;
-			in->seek(in->readUint32BE(), Common::kSeekCur);
+			in->seek(in->readUint32BE(), Seek::CUR);
 		}
 
 		uint32 pos2 = in->pos() - 4;
 		uint32 size = pos2 - pos;
 		p->songs[i] = (byte *)calloc(size, 1);
-		in->seek(pos, Common::kSeekSet);
+		in->seek(pos, Seek::SET);
 		in->read(p->songs[i], size);
 		p->song_sizes[i] = size;
 	}
@@ -528,7 +528,7 @@ void MidiPlayer::loadXMIDI(Common::File *in, bool sfx) {
 			error("Could not find 'CAT ' tag to determine resource size");
 		}
 		size += 4 + in->readUint32BE();
-		in->seek(pos, Common::kSeekSet);
+		in->seek(pos, Seek::SET);
 		p->data = (byte *)calloc(size, 1);
 		in->read(p->data, size);
 	} else {

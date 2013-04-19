@@ -24,6 +24,19 @@
 
 #include "common/scummsys.h"
 
+/**
+ * Specifies the origin of a seek operation.
+ *
+ * Use instead of SEEK_SET, SEEK_CUR, and SEEK_END
+ */
+namespace Seek {
+	enum Whence {
+		SET,
+		CUR,
+		END
+	};
+}
+
 namespace DisposeAfterUse {
 	enum Flag { NO, YES };
 }

@@ -291,17 +291,17 @@ bool ScummDebugger::Cmd_ImportRes(int argc, const char** argv) {
 		}
 		if (_vm->_game.features & GF_SMALL_HEADER) {
 			size = file.readUint16LE();
-			file.seek(-2, Common::kSeekCur);
+			file.seek(-2, Seek::CUR);
 		} else if (_vm->_game.features & GF_SMALL_HEADER) { // FIXME: This never was executed
 			if (_vm->_game.version == 4)
-				file.seek(8, Common::kSeekCur);
+				file.seek(8, Seek::CUR);
 			size = file.readUint32LE();
 			file.readUint16LE();
-			file.seek(-6, Common::kSeekCur);
+			file.seek(-6, Seek::CUR);
 		} else {
 			file.readUint32BE();
 			size = file.readUint32BE();
-			file.seek(-8, Common::kSeekCur);
+			file.seek(-8, Seek::CUR);
 		}
 
 		file.read(_vm->_res->createResource(rtScript, resnum, size), size);

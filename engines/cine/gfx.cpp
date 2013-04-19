@@ -889,7 +889,7 @@ void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle, int version
 
 	// Jump over the backup 256 color palette.
 	// FIXME: Load the backup 256 color palette and use it properly.
-	fHandle.seek(kHighPalNumBytes, Common::kSeekCur);
+	fHandle.seek(kHighPalNumBytes, Seek::CUR);
 
 	_changePal = 1;
 }

@@ -96,7 +96,7 @@ void ImuseDigiSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps, i
 void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::SeekableReadStream *file, SoundDesc *sound, int32 offset, int32 size) {
 	int l;
 
-	file->seek(offset, Common::kSeekSet);
+	file->seek(offset, Seek::SET);
 	uint32 tag = file->readUint32BE();
 	assert(tag == MKTAG('R','M','A','P'));
 	int32 version = file->readUint32BE();

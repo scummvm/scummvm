@@ -69,7 +69,7 @@ public:
 		return _len;
 	}
 
-	virtual bool seek(int32 offset, Common::SeekWhence whence = Common::kSeekSet);
+	virtual bool seek(int32 offset, Seek::Whence whence = Seek::SET);
 
 private:
 	void close(JNIEnv *env);
@@ -167,18 +167,18 @@ uint32 JavaInputStream::read(void *dataPtr, uint32 dataSize) {
 	return ret;
 }
 
-bool JavaInputStream::seek(int32 offset, Common::SeekWhence whence) {
+bool JavaInputStream::seek(int32 offset, Seek::Whence whence) {
 	JNIEnv *env = JNI::getEnv();
 	uint32 newpos;
 
 	switch (whence) {
-	case Common::kSeekSet:
+	case Seek::SET:
 		newpos = offset;
 		break;
-	case Common::kSeekCur:
+	case Seek::CUR:
 		newpos = _pos + offset;
 		break;
-	case Common::kSeekEnd:
+	case Seek::END:
 		newpos = _len + offset;
 		break;
 	default:
@@ -265,7 +265,7 @@ public:
 		return _declared_len;
 	}
 
-	virtual bool seek(int32 offset, Common::SeekWhence whence = Common::kSeekSet);
+	virtual bool seek(int32 offset, Seek::Whence whence = Seek::SET);
 
 private:
 	void close(JNIEnv *env);
@@ -344,14 +344,14 @@ uint32 AssetFdReadStream::read(void *dataPtr, uint32 dataSize) {
 	return ret;
 }
 
-bool AssetFdReadStream::seek(int32 offset, Common::SeekWhence whence) {
-	if (whence == Common::kSeekSet) {
+bool AssetFdReadStream::seek(int32 offset, Seek::Whence whence) {
+	if (whence == Seek::SET) {
 		if (_declared_len != UNKNOWN_LENGTH && offset > _declared_len)
 			offset = _declared_len;
 
 		offset += _start_off;
-	} else if (whence == Common::kSeekEnd && _declared_len != UNKNOWN_LENGTH) {
-		whence = Common::kSeekSet;
+	} else if (whence == Seek::END && _declared_len != UNKNOWN_LENGTH) {
+		whence = Seek::SET;
 		offset = _start_off + _declared_len + offset;
 	}
 

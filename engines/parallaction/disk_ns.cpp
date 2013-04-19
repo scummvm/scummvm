@@ -663,18 +663,18 @@ public:
 
 		uint32 signature = stream.readUint32BE();
 		if (getCrunchType(signature) == 0) {
-			stream.seek(0, Common::kSeekSet);
+			stream.seek(0, Seek::SET);
 			_stream = &stream;
 			return;
 		}
 
-		stream.seek(-4, Common::kSeekEnd);
+		stream.seek(-4, Seek::END);
 		uint32 decrlen = stream.readUint32BE() >> 8;
 		byte *dest = (byte *)malloc(decrlen);
 
 		uint32 crlen = stream.size() - 4;
 		byte *src = (byte *)malloc(crlen);
-		stream.seek(4, Common::kSeekSet);
+		stream.seek(4, Seek::SET);
 		stream.read(src, crlen);
 
 		ppDecrunchBuffer(src, dest, crlen-8, decrlen);
@@ -700,7 +700,7 @@ public:
 		return _stream->eos();
 	}
 
-	bool seek(int32 offs, Common::SeekWhence whence = Common::kSeekSet) {
+	bool seek(int32 offs, Seek::Whence whence = Seek::SET) {
 		return _stream->seek(offs, whence);
 	}
 

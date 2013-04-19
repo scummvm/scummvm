@@ -957,7 +957,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 	if ((res->offset == 0) && (res->length == 0))
 		return 0;	/* there are 8 scripts that are zero bytes long, so we should skip them */
 
-	File::seek(res->offset, Common::kSeekSet);
+	File::seek(res->offset, Seek::SET);
 
 	switch (type) {
 	case NES_GLOBDATA:
@@ -997,7 +997,7 @@ uint16 ScummNESFile::extractResource(Common::WriteStream *output, const Resource
 		if (len != res->length)
 			error("extract_resource - length mismatch while extracting room/script resource (was %04X, should be %04X)", len, res->length);
 
-		File::seek(-2, Common::kSeekCur);
+		File::seek(-2, Seek::CUR);
 
 		for (i = 0; i < len; i++)
 			reslen += write_byte(output, fileReadByte());

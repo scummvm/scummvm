@@ -185,7 +185,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		error(CANNOT_FIND_FILE, MIDI_FILE);
 
 	// move to correct position in the file
-	midiStream.seek(dwFileOffset, Common::kSeekSet);
+	midiStream.seek(dwFileOffset, Seek::SET);
 
 	if (TinselV1Mac) {
 		// The Macintosh version of DW1 uses raw PCM for music
@@ -974,7 +974,7 @@ void dumpMusic() {
 		else
 			outFileSize = midiFile.size() - midiOffsets[i] - 4;
 
-		midiFile.seek(midiOffsets[i] + 4, Common::kSeekSet);
+		midiFile.seek(midiOffsets[i] + 4, Seek::SET);
 
 		assert(outFileSize < 20000);
 		midiFile.read(buffer, outFileSize);

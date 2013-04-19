@@ -324,7 +324,7 @@ bool Resource::loadFromPatchFile() {
 		return false;
 	}
 	// Skip resourceid and header size byte
-	file.seek(2, Common::kSeekSet);
+	file.seek(2, Seek::SET);
 	return loadPatch(&file);
 }
 
@@ -568,7 +568,7 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	if (!fileStream)
 		return;
 
-	fileStream->seek(res->_fileOffset, Common::kSeekSet);
+	fileStream->seek(res->_fileOffset, Seek::SET);
 
 	int error = res->decompress(resMan->getVolVersion(), fileStream);
 	if (error) {
@@ -1163,11 +1163,11 @@ ResVersion ResourceManager::detectMapVersion() {
 
 	// detection
 	// SCI0 and SCI01 maps have last 6 bytes set to FF
-	fileStream->seek(-4, Common::kSeekEnd);
+	fileStream->seek(-4, Seek::END);
 	uint32 uEnd = fileStream->readUint32LE();
 	if (uEnd == 0xFFFFFFFF) {
 		// check if the last 7 bytes are all ff, indicating a KQ5 FM-Towns map
-		fileStream->seek(-7, Common::kSeekEnd);
+		fileStream->seek(-7, Seek::END);
 		fileStream->read(buff, 3);
 		if (buff[0] == 0xff && buff[1] == 0xff && buff[2] == 0xff) {
 			delete fileStream;
@@ -1175,7 +1175,7 @@ ResVersion ResourceManager::detectMapVersion() {
 		}
 
 		// check if 0 or 01 - try to read resources in SCI0 format and see if exists
-		fileStream->seek(0, Common::kSeekSet);
+		fileStream->seek(0, Seek::SET);
 		while (fileStream->read(buff, 6) == 6 && !(buff[0] == 0xFF && buff[1] == 0xFF && buff[2] == 0xFF)) {
 			if (findVolume(rsrc, (buff[5] & 0xFC) >> 2) == NULL) {
 				delete fileStream;
@@ -1193,7 +1193,7 @@ ResVersion ResourceManager::detectMapVersion() {
 	uint16 lastDirectoryOffset = 0;
 	uint16 directorySize = 0;
 	ResVersion mapDetected = kResVersionUnknown;
-	fileStream->seek(0, Common::kSeekSet);
+	fileStream->seek(0, Seek::SET);
 
 	while (!fileStream->eos()) {
 		directoryType = fileStream->readByte();
@@ -1337,11 +1337,11 @@ ResVersion ResourceManager::detectVolVersion() {
 		}
 
 		if (curVersion < kResVersionSci11)
-			fileStream->seek(dwPacked - 4, Common::kSeekCur);
+			fileStream->seek(dwPacked - 4, Seek::CUR);
 		else if (curVersion == kResVersionSci11)
-			fileStream->seek(sci11Align && ((9 + dwPacked) % 2) ? dwPacked + 1 : dwPacked, Common::kSeekCur);
+			fileStream->seek(sci11Align && ((9 + dwPacked) % 2) ? dwPacked + 1 : dwPacked, Seek::CUR);
 		else if (curVersion >= kResVersionSci2)
-			fileStream->seek(dwPacked, Common::kSeekCur);
+			fileStream->seek(dwPacked, Seek::CUR);
 	}
 
 	delete fileStream;
@@ -1594,7 +1594,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 		fileStream = file;
 	}
 
-	fileStream->seek(0, Common::kSeekSet);
+	fileStream->seek(0, Seek::SET);
 
 	byte bMask = (_mapVersion >= kResVersionSci1Middle) ? 0xF0 : 0xFC;
 	byte bShift = (_mapVersion >= kResVersionSci1Middle) ? 28 : 26;
@@ -2030,7 +2030,7 @@ ResourceCompression ResourceManager::getViewCompression() {
 
 		if (!fileStream)
 			continue;
-		fileStream->seek(res->_fileOffset, Common::kSeekSet);
+		fileStream->seek(res->_fileOffset, Seek::SET);
 
 		uint32 szPacked;
 		ResourceCompression compression;

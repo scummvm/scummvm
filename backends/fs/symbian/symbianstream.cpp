@@ -209,7 +209,7 @@ int32 SymbianStdioStream::size() const {
 	return length;
 }
 
-bool SymbianStdioStream::seek(int32 offs, Common::SeekWhence whence) {
+bool SymbianStdioStream::seek(int32 offs, Seek::Whence whence) {
 	assert(_handle);
 
 	TSeek seekMode = ESeekStart;
@@ -217,16 +217,16 @@ bool SymbianStdioStream::seek(int32 offs, Common::SeekWhence whence) {
 	TSymbianFileEntry* entry = ((TSymbianFileEntry *)(_handle));
 
 	switch (whence) {
-	case Common::kSeekSet:
+	case Seek::SET:
 		seekMode = ESeekStart;
 		break;
-	case Common::kSeekCur:
+	case Seek::CUR:
 		seekMode = ESeekCurrent;
 		if (entry->_inputPos != KErrNotFound) {
 			pos += (entry->_inputPos - entry->_inputBufferLen);
 		}
 		break;
-	case Common::kSeekEnd:
+	case Seek::END:
 		seekMode = ESeekEnd;
 		break;
 

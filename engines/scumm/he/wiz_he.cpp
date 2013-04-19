@@ -2378,7 +2378,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 				uint32 id = f->readUint32BE();
 				if (id == MKTAG('A','W','I','Z') || id == MKTAG('M','U','L','T')) {
 					uint32 size = f->readUint32BE();
-					f->seek(0, Common::kSeekSet);
+					f->seek(0, Seek::SET);
 					byte *p = _vm->_res->createResource(rtImage, params->img.resNum, size);
 					if (f->read(p, size) != size) {
 						_vm->_res->nukeResource(rtImage, params->img.resNum);

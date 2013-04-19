@@ -76,7 +76,7 @@ public:
 
 	int32 pos() const;
 	int32 size() const;
-	bool seek(int32 offset, Common::SeekWhence whence = Common::kSeekSet);
+	bool seek(int32 offset, Seek::Whence whence = Seek::SET);
 };
 
 

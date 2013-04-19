@@ -309,7 +309,7 @@ bool FontTowns::loadData() {
 		return false;
 
 	data->read(_fontData16x16, kFont16x16Chars * 32);
-	data->seek(251904, Common::kSeekSet);
+	data->seek(251904, Seek::SET);
 	data->read(_fontData8x16, kFont8x16Chars * 16);
 
 	bool retValue = !data->err();

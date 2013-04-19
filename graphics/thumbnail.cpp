@@ -91,7 +91,7 @@ bool checkThumbnailHeader(Common::SeekableReadStream &in) {
 
 	bool hasHeader = loadHeader(in, header, false);
 
-	in.seek(position, Common::kSeekSet);
+	in.seek(position, Seek::SET);
 
 	return hasHeader;
 }
@@ -101,11 +101,11 @@ bool skipThumbnail(Common::SeekableReadStream &in) {
 	ThumbnailHeader header;
 
 	if (!loadHeader(in, header, false)) {
-		in.seek(position, Common::kSeekSet);
+		in.seek(position, Seek::SET);
 		return false;
 	}
 
-	in.seek(header.size - (in.pos() - position), Common::kSeekCur);
+	in.seek(header.size - (in.pos() - position), Seek::CUR);
 	return true;
 }
 

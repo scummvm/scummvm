@@ -390,11 +390,11 @@ void MoviePlayerDXA::readSoundData(Common::SeekableReadStream *stream) {
 				error("Can't read offset file 'audio.wav'");
 			}
 
-			in.seek(_sequenceNum * 8, Common::kSeekSet);
+			in.seek(_sequenceNum * 8, Seek::SET);
 			uint32 offset = in.readUint32LE();
 			size = in.readUint32LE();
 
-			in.seek(offset, Common::kSeekSet);
+			in.seek(offset, Seek::SET);
 			_bgSoundStream = Audio::makeWAVStream(in.readStream(size), DisposeAfterUse::YES);
 			in.close();
 		} else {

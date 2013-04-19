@@ -731,7 +731,7 @@ uint32 SXFile::getPos() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool SXFile::setPos(uint32 pos, Common::SeekWhence whence) {
+bool SXFile::setPos(uint32 pos, Seek::Whence whence) {
 	if (_mode == 1 && _readFile) {
 		return _readFile->seek(pos, whence);
 	} else if ((_mode == 2 || _mode == 3) && _writeFile) {

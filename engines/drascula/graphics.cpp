@@ -102,7 +102,7 @@ void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int color
 	dataSize = stream->size() - 128 - (256 * 3);
 	pcxData = (byte *)malloc(dataSize);
 
-	stream->seek(128, Common::kSeekSet);
+	stream->seek(128, Seek::SET);
 	stream->read(pcxData, dataSize);
 
 	decodeRLE(pcxData, targetSurface);

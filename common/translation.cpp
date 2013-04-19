@@ -374,7 +374,7 @@ void TranslationManager::loadLanguageDat(int index) {
 	skipSize += 2 * (nbTranslations - index);
 
 	// Seek to start of block we want to read
-	in.seek(skipSize, kSeekCur);
+	in.seek(skipSize, Seek::CUR);
 
 	// Read number of translated messages
 	int nbMessages = in.readUint16BE();
@@ -420,7 +420,7 @@ void TranslationManager::loadLanguageDat(int index) {
 		if (!_charmap)
 			_charmap = new uint32[256];
 
-		in.seek(_charmapStart + charmapNum * 256 * 4, kSeekSet);
+		in.seek(_charmapStart + charmapNum * 256 * 4, Seek::SET);
 		for (int i = 0; i < 256; ++i)
 			_charmap[i] = in.readUint32BE();
 	}

@@ -78,7 +78,7 @@ void FileManager_v2d::closeDatabaseFiles() {
 void FileManager_v2d::readBackground(const int screenIndex) {
 	debugC(1, kDebugFile, "readBackground(%d)", screenIndex);
 
-	_sceneryArchive1.seek((uint32) screenIndex * sizeof(SceneBlock), Common::kSeekSet);
+	_sceneryArchive1.seek((uint32) screenIndex * sizeof(SceneBlock), Seek::SET);
 
 	SceneBlock sceneBlock;                          // Read a database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
@@ -90,7 +90,7 @@ void FileManager_v2d::readBackground(const int screenIndex) {
 	sceneBlock._baseOffset = _sceneryArchive1.readUint32LE();
 	sceneBlock._baseLength = _sceneryArchive1.readUint32LE();
 
-	_sceneryArchive1.seek(sceneBlock._sceneOffset, Common::kSeekSet);
+	_sceneryArchive1.seek(sceneBlock._sceneOffset, Seek::SET);
 
 	// Read the image into dummy seq and static dib_a
 	Seq *dummySeq;                                  // Image sequence structure for Read_pcx
@@ -105,7 +105,7 @@ void FileManager_v2d::readOverlay(const int screenNum, ImagePtr image, OvlType o
 	debugC(1, kDebugFile, "readOverlay(%d, ...)", screenNum);
 
 	ImagePtr tmpImage = image;                      // temp ptr to overlay file
-	_sceneryArchive1.seek((uint32)screenNum * sizeof(SceneBlock), Common::kSeekSet);
+	_sceneryArchive1.seek((uint32)screenNum * sizeof(SceneBlock), Seek::SET);
 
 	SceneBlock sceneBlock;                          // Database header entry
 	sceneBlock._sceneOffset = _sceneryArchive1.readUint32LE();
@@ -120,15 +120,15 @@ void FileManager_v2d::readOverlay(const int screenNum, ImagePtr image, OvlType o
 	uint32 i = 0;
 	switch (overlayType) {
 	case kOvlBoundary:
-		_sceneryArchive1.seek(sceneBlock._boundaryOffset, Common::kSeekSet);
+		_sceneryArchive1.seek(sceneBlock._boundaryOffset, Seek::SET);
 		i = sceneBlock._boundaryLength;
 		break;
 	case kOvlOverlay:
-		_sceneryArchive1.seek(sceneBlock._overlayOffset, Common::kSeekSet);
+		_sceneryArchive1.seek(sceneBlock._overlayOffset, Seek::SET);
 		i = sceneBlock._overlayLength;
 		break;
 	case kOvlBase:
-		_sceneryArchive1.seek(sceneBlock._baseOffset, Common::kSeekSet);
+		_sceneryArchive1.seek(sceneBlock._baseOffset, Seek::SET);
 		i = sceneBlock._baseLength;
 		break;
 	default:
@@ -165,7 +165,7 @@ const char *FileManager_v2d::fetchString(const int index) {
 	debugC(1, kDebugFile, "fetchString(%d)", index);
 
 	// Get offset to string[index] (and next for length calculation)
-	_stringArchive.seek((uint32)index * sizeof(uint32), Common::kSeekSet);
+	_stringArchive.seek((uint32)index * sizeof(uint32), Seek::SET);
 
 	uint32 off1 = _stringArchive.readUint32LE();
 	uint32 off2 = _stringArchive.readUint32LE();
@@ -177,7 +177,7 @@ const char *FileManager_v2d::fetchString(const int index) {
 		error("Fetched string too long!");
 
 	// Position to string and read it into gen purpose _textBoxBuffer
-	_stringArchive.seek(off1, Common::kSeekSet);
+	_stringArchive.seek(off1, Seek::SET);
 	if (_stringArchive.read(_fetchStringBuf, (uint16)(off2 - off1)) == 0)
 		error("An error has occurred: fetchString");
 

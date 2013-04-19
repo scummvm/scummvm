@@ -34,7 +34,7 @@ uint32 InFRAMSave::read(void *buf, uint32 cnt) {
 	return framfs_read(buf, 1, cnt, fd);
 }
 
-bool InFRAMSave::seek(int32 offs, Common::SeekWhence whence) {
+bool InFRAMSave::seek(int32 offs, Seek::Whence whence) {
 	framfs_seek(fd, offs, whence);
 
 	return true;

@@ -146,7 +146,7 @@ Common::Error RivenSaveLoad::loadGame(Common::String filename) {
 
 	for (uint32 i = 0; i < namesCount && !names->eos(); i++) {
 		names->seek(curNamesPos);
-		names->seek(stringOffsets[i], Common::kSeekCur);
+		names->seek(stringOffsets[i], Seek::CUR);
 
 		Common::String name;
 		char c = (char)names->readByte();

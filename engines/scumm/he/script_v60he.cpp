@@ -899,13 +899,13 @@ void ScummEngine_v60he::o60_seekFilePos() {
 	assert(_hInFileTable[slot]);
 	switch (mode) {
 	case 1:
-		_hInFileTable[slot]->seek(offset, Common::kSeekSet);
+		_hInFileTable[slot]->seek(offset, Seek::SET);
 		break;
 	case 2:
-		_hInFileTable[slot]->seek(offset, Common::kSeekCur);
+		_hInFileTable[slot]->seek(offset, Seek::CUR);
 		break;
 	case 3:
-		_hInFileTable[slot]->seek(offset, Common::kSeekEnd);
+		_hInFileTable[slot]->seek(offset, Seek::END);
 		break;
 	default:
 		error("o60_seekFilePos: default case %d", mode);

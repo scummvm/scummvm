@@ -604,7 +604,7 @@ bool PspUnitTests::testFileSystem() {
 	}
 
 	// seek to beginning
-	if (!rdStream->seek(0, Common::kSeekSet)) {
+	if (!rdStream->seek(0, Seek::SET)) {
 		PSP_ERROR("couldn't seek to the beginning after writing the file\n");
 		return false;
 	}
@@ -688,7 +688,7 @@ bool PspUnitTests::testFileSystem() {
 	PSP_INFO_PRINT("trying to read end...\n");
 
 	// seek to end
-	if (!rdStream->seek(0, Common::kSeekEnd)) {
+	if (!rdStream->seek(0, Seek::END)) {
 		PSP_ERROR("couldn't seek to end for append\n");
 		return false;
 	};

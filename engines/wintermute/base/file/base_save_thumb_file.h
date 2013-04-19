@@ -39,7 +39,7 @@ class BaseSaveThumbFile : public BaseFile {
 public:
 	BaseSaveThumbFile();
 	virtual ~BaseSaveThumbFile();
-	virtual bool seek(uint32 pos, Common::SeekWhence whence = Common::kSeekSet);
+	virtual bool seek(uint32 pos, Seek::Whence whence = Seek::SET);
 	virtual bool read(void *buffer, uint32 size);
 	virtual bool close();
 	virtual bool open(const Common::String &filename);

@@ -1259,15 +1259,15 @@ uint8 *KyraEngine_MR::getTableEntry(uint8 *buffer, int id) {
 }
 
 void KyraEngine_MR::getTableEntry(Common::SeekableReadStream *stream, int id, char *dst) {
-	stream->seek(0, Common::kSeekSet);
+	stream->seek(0, Seek::SET);
 	uint16 tableEntries = stream->readUint16LE();
 
 	int num = 0;
 	while (id != stream->readUint16LE())
 		++num;
 
-	stream->seek(2+tableEntries*2+num*2, Common::kSeekSet);
-	stream->seek(stream->readUint16LE(), Common::kSeekSet);
+	stream->seek(2+tableEntries*2+num*2, Seek::SET);
+	stream->seek(stream->readUint16LE(), Seek::SET);
 	char c = 0;
 	while ((c = stream->readByte()) != 0)
 		*dst++ = c;

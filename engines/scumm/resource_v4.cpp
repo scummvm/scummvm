@@ -90,10 +90,10 @@ void ScummEngine_v4::readIndexFile() {
 				itemsize += 32;
 			break;
 		}
-		_fileHandle->seek(itemsize - 8, Common::kSeekCur);
+		_fileHandle->seek(itemsize - 8, Seek::CUR);
 	}
 
-	_fileHandle->seek(0, Common::kSeekSet);
+	_fileHandle->seek(0, Seek::SET);
 
 	readMAXS(0);
 	allocateArrays();
@@ -223,7 +223,7 @@ void ScummEngine_v4::readGlobalObjects() {
 
 	// FIXME: Indy3 FM-TOWNS has 32 extra bytes of unknown meaning
 	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformFMTowns)
-		_fileHandle->seek(32, Common::kSeekCur);
+		_fileHandle->seek(32, Seek::CUR);
 }
 
 

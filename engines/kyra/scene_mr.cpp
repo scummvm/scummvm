@@ -352,7 +352,7 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	_res->exists(filename, true);
 	Common::SeekableReadStream *stream = _res->createReadStream(filename);
 	assert(stream);
-	stream->seek(2, Common::kSeekCur);
+	stream->seek(2, Seek::CUR);
 
 	byte scaleTable[15];
 	stream->read(scaleTable, 15);

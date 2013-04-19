@@ -1117,7 +1117,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *extraData, DisposeAfterUse::F
 	// atoms needed to correctly set up the decoder.
 
 	// Rewind extraData stream from any previous calls
-	extraData->seek(0, Common::kSeekSet);
+	extraData->seek(0, Seek::SET);
 
 	// First, the frma atom
 	uint32 frmaSize = extraData->readUint32BE();

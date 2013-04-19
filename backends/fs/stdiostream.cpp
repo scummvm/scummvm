@@ -60,7 +60,7 @@ int32 StdioStream::size() const {
 	return length;
 }
 
-bool StdioStream::seek(int32 offs, Common::SeekWhence whence) {
+bool StdioStream::seek(int32 offs, Seek::Whence whence) {
 	return fseek((FILE *)_handle, offs, (int)whence) == 0;
 }
 

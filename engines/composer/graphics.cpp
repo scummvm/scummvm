@@ -79,7 +79,7 @@ Animation::~Animation() {
 }
 
 void Animation::seekToCurrPos() {
-	_stream->seek(_offset, Common::kSeekSet);
+	_stream->seek(_offset, Seek::SET);
 }
 
 void ComposerEngine::playAnimation(uint16 animId, int16 x, int16 y, int16 eventParam) {

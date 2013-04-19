@@ -3491,7 +3491,7 @@ bool AMIGAFont::load(Common::SeekableReadStream &file) {
 		return false;
 
 	for (int i = 0; i < ARRAYSIZE(_chars); ++i) {
-		file.seek(offsets[i], Common::kSeekSet);
+		file.seek(offsets[i], Seek::SET);
 
 		_chars[i].yOffset = file.readByte();
 		_chars[i].xOffset = file.readByte();

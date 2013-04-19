@@ -83,7 +83,7 @@ uint32 SavegameStream::readUncompressed(void *dataPtr, uint32 dataSize) {
 	}
 	memcpy(dataPtr, getData() + pos(), dataSize);
 
-	seek(dataSize, Common::kSeekCur);
+	seek(dataSize, Seek::CUR);
 
 	return dataSize;
 }
@@ -144,7 +144,7 @@ uint32 SavegameStream::process() {
 	case kStatusReading:
 		_status = kStatusReady;
 		if (_bufferOffset != -1 && _bufferOffset != 256) {
-			seek(_bufferOffset - 256, Common::kSeekCur);
+			seek(_bufferOffset - 256, Seek::CUR);
 			_bufferOffset = -1;
 		}
 		break;
@@ -430,7 +430,7 @@ uint32 SaveLoad::init(GameId id, bool resetHeaders) {
 
 			_gameHeaders.push_back(entry);
 
-			_savegame->seek(entry->offset, Common::kSeekCur);
+			_savegame->seek(entry->offset, Seek::CUR);
 		}
 	}
 
@@ -805,7 +805,7 @@ void SaveLoad::readEntry(SavegameType *type, EntityIndex *entity, uint32 *val, b
 	// Skip padding
 	uint32 offset = (uint32)_savegame->pos() - originalPosition;
 	if (offset & 0xF) {
-		_savegame->seek((~offset & 0xF) + 1, Common::kSeekSet);
+		_savegame->seek((~offset & 0xF) + 1, Seek::SET);
 	}
 }
 

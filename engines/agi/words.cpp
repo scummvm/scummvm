@@ -44,7 +44,7 @@ int AgiEngine::loadWords_v1(Common::File &f) {
 
 	// Loop through alphabet, as words in the dictionary file are sorted by
 	// first character
-	f.seek(f.pos() + 26 * 2, Common::kSeekSet);
+	f.seek(f.pos() + 26 * 2, Seek::SET);
 	do {
 		// Read next word
 		for (k = 0; k < (int)sizeof(str) - 1; k++) {
@@ -78,11 +78,11 @@ int AgiEngine::loadWords(const char *fname) {
 	// Loop through alphabet, as words in the dictionary file are sorted by
 	// first character
 	for (int i = 0; i < 26; i++) {
-		fp.seek(i * 2, Common::kSeekSet);
+		fp.seek(i * 2, Seek::SET);
 		int offset = fp.readUint16BE();
 		if (offset == 0)
 			continue;
-		fp.seek(offset, Common::kSeekSet);
+		fp.seek(offset, Seek::SET);
 		int k = fp.readByte();
 		while (!fp.eos() && !fp.err()) {
 			// Read next word

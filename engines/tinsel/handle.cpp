@@ -127,7 +127,7 @@ void SetupHandleTable() {
 				// The pointer should always be NULL. We don't
 				// need to read that from the file.
 				g_handleTable[i]._node = NULL;
-				f.seek(4, Common::kSeekCur);
+				f.seek(4, Seek::CUR);
 				// For Discworld 2, read in the flags2 field
 				g_handleTable[i].flags2 = t2Flag ? f.readUint32() : 0;
 			}
@@ -213,13 +213,13 @@ void LoadCDGraphData(MEMHANDLE *pH) {
 
 	// Move to correct place in file and load the required data
 	assert(g_cdGraphStream);
-	g_cdGraphStream->seek(g_cdBaseHandle & OFFSETMASK, Common::kSeekSet);
+	g_cdGraphStream->seek(g_cdBaseHandle & OFFSETMASK, Seek::SET);
 	bytes = g_cdGraphStream->read(addr, (g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK);
 
 	// New code to try and handle CD read failures 24/2/97
 	while (bytes != ((g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK) && retries++ < MAX_READ_RETRIES)	{
 		// Try again
-		g_cdGraphStream->seek(g_cdBaseHandle & OFFSETMASK, Common::kSeekSet);
+		g_cdGraphStream->seek(g_cdBaseHandle & OFFSETMASK, Seek::SET);
 		bytes = g_cdGraphStream->read(addr, (g_cdTopHandle - g_cdBaseHandle) & OFFSETMASK);
 	}
 

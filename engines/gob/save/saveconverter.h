@@ -66,7 +66,7 @@ public:
 	// SeekableReadStream
 	virtual int32 pos() const;
 	virtual int32 size() const;
-	virtual bool seek(int32 offset, Common::SeekWhence whence = Common::kSeekSet);
+	virtual bool seek(int32 offset, Seek::Whence whence = Seek::SET);
 
 protected:
 	GobEngine *_vm;

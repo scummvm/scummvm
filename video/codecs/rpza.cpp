@@ -106,7 +106,7 @@ const Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *st
 				opcode = 0x20;
 				numBlocks = 1;
 			}
-			stream->seek(-1, Common::kSeekCur);
+			stream->seek(-1, Seek::CUR);
 		}
 
 		switch (opcode & 0xe0) {

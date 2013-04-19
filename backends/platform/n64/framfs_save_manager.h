@@ -36,7 +36,7 @@ private:
 
 	uint32 read(void *buf, uint32 cnt);
 	bool skip(uint32 offset);
-	bool seek(int32 offs, Common::SeekWhence whence);
+	bool seek(int32 offs, Seek::Whence whence);
 
 public:
 	InFRAMSave() : fd(NULL) { }

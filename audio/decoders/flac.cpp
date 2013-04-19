@@ -626,7 +626,7 @@ inline ::FLAC__StreamDecoderWriteStatus FLACStream::callbackWrite(const ::FLAC__
 }
 
 inline ::FLAC__SeekableStreamDecoderSeekStatus FLACStream::callbackSeek(FLAC__uint64 absoluteByteOffset) {
-	_inStream->seek(absoluteByteOffset, Common::kSeekSet);
+	_inStream->seek(absoluteByteOffset, Seek::SET);
 	const bool result = (absoluteByteOffset == (FLAC__uint64)_inStream->pos());
 
 #ifdef LEGACY_FLAC

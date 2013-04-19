@@ -161,7 +161,7 @@ GrvCursorMan_t7g::GrvCursorMan_t7g(OSystem *system, Common::MacResManager *macRe
 	}
 
 	// Load the palettes
-	robgjd->seek(-0x60 * NUM_PALS, Common::kSeekEnd);
+	robgjd->seek(-0x60 * NUM_PALS, Seek::END);
 	for (uint palnum = 0; palnum < NUM_PALS; palnum++) {
 		_palettes.push_back(loadPalette(*robgjd));
 	}

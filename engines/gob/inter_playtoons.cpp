@@ -293,7 +293,7 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	}
 
 	if (offset < 0)
-		stream->seek(offset + 1, Common::kSeekEnd);
+		stream->seek(offset + 1, Seek::END);
 	else
 		stream->seek(offset);
 

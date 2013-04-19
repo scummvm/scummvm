@@ -87,7 +87,7 @@ static byte *readSavegameThumbnail(const Common::String &filename, uint &fileSiz
 	// Check if the thumbnail is in our own format, or a PNG file.
 	uint32 header = file->readUint32BE();
 	isPNG = (header != MKTAG('S','C','R','N'));
-	file->seek(-4, Common::kSeekCur);
+	file->seek(-4, Seek::CUR);
 
 	pFileData = new byte[fileSize];
 	file->read(pFileData, fileSize);

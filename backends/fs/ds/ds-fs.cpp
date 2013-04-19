@@ -428,7 +428,7 @@ int32 DSFileStream::size() const {
 	return length;
 }
 
-bool DSFileStream::seek(int32 offs, SeekWhence whence) {
+bool DSFileStream::seek(int32 offs, Seek::Whence whence) {
 	return std_fseek((FILE *)_handle, offs, (int)whence) == 0;
 }
 

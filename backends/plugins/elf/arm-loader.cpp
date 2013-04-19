@@ -38,7 +38,7 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 	}
 
 	// Read in our relocation table
-	if (!_file->seek(offset, Common::kSeekSet) || _file->read(rel, size) != size) {
+	if (!_file->seek(offset, Seek::SET) || _file->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;

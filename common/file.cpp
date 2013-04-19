@@ -131,7 +131,7 @@ int32 File::size() const {
 	return _handle->size();
 }
 
-bool File::seek(int32 offs, SeekWhence whence) {
+bool File::seek(int32 offs, Seek::Whence whence) {
 	assert(_handle);
 	return _handle->seek(offs, whence);
 }
