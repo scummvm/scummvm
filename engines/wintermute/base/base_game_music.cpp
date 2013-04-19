@@ -214,7 +214,7 @@ bool BaseGameMusic::updateMusicCrossfade() {
 
 bool BaseGameMusic::persistChannels(BasePersistenceManager *persistMgr) {
 	for (int i = 0; i < NUM_MUSIC_CHANNELS; i++) {
-		persistMgr->transfer(TMEMBER(_music[i]));
+		persistMgr->transferPtr(TMEMBER_PTR(_music[i]));
 		persistMgr->transfer(TMEMBER(_musicStartTime[i]));
 	}
 	return true;

@@ -934,7 +934,7 @@ bool UIEdit::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_cursorBlinkRate));
 	persistMgr->transfer(TMEMBER(_cursorChar));
-	persistMgr->transfer(TMEMBER(_fontSelected));
+	persistMgr->transferPtr(TMEMBER_PTR(_fontSelected));
 	persistMgr->transfer(TMEMBER(_frameWidth));
 	persistMgr->transfer(TMEMBER(_maxLength));
 	persistMgr->transfer(TMEMBER(_scrollOffset));

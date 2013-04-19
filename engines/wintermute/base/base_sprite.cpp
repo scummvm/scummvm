@@ -539,7 +539,7 @@ bool BaseSprite::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_looping));
 	persistMgr->transfer(TMEMBER(_moveX));
 	persistMgr->transfer(TMEMBER(_moveY));
-	persistMgr->transfer(TMEMBER(_owner));
+	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 	persistMgr->transfer(TMEMBER(_precise));
 	persistMgr->transfer(TMEMBER(_streamed));
 	persistMgr->transfer(TMEMBER(_streamedKeepLoaded));

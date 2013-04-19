@@ -955,10 +955,10 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	for (int i = 0; i < 7; i++) {
 		persistMgr->transfer(TMEMBER(_caption[i]));
 	}
-	persistMgr->transfer(TMEMBER(_activeCursor));
+	persistMgr->transferPtr(TMEMBER_PTR(_activeCursor));
 	persistMgr->transfer(TMEMBER(_alphaColor));
 	persistMgr->transfer(TMEMBER(_autoSoundPanning));
-	persistMgr->transfer(TMEMBER(_cursor));
+	persistMgr->transferPtr(TMEMBER_PTR(_cursor));
 	persistMgr->transfer(TMEMBER(_sharedCursors));
 	persistMgr->transfer(TMEMBER(_editorAlwaysRegister));
 	persistMgr->transfer(TMEMBER(_editorOnly));
@@ -971,7 +971,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_relativeScale));
 	persistMgr->transfer(TMEMBER(_rotatable));
 	persistMgr->transfer(TMEMBER(_scale));
-	persistMgr->transfer(TMEMBER(_sFX));
+	persistMgr->transferPtr(TMEMBER_PTR(_sFX));
 	persistMgr->transfer(TMEMBER(_sFXStart));
 	persistMgr->transfer(TMEMBER(_sFXVolume));
 	persistMgr->transfer(TMEMBER(_ready));

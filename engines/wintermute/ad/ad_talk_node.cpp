@@ -195,9 +195,9 @@ bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_startTime));
 	persistMgr->transfer(TMEMBER(_endTime));
 	persistMgr->transfer(TMEMBER(_playToEnd));
-	persistMgr->transfer(TMEMBER(_sprite));
+	persistMgr->transferPtr(TMEMBER_PTR(_sprite));
 	persistMgr->transfer(TMEMBER(_spriteFilename));
-	persistMgr->transfer(TMEMBER(_spriteSet));
+	persistMgr->transferPtr(TMEMBER_PTR(_spriteSet));
 	persistMgr->transfer(TMEMBER(_spriteSetFilename));
 
 	return STATUS_OK;

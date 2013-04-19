@@ -1093,7 +1093,7 @@ bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_item));
-	persistMgr->transfer(TMEMBER(_region));
+	persistMgr->transferPtr(TMEMBER_PTR(_region));
 	//persistMgr->transfer(TMEMBER(_sprite));
 	persistMgr->transfer(TMEMBER_INT(_subtype));
 	_talkSprites.persist(persistMgr);
@@ -1103,7 +1103,7 @@ bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_walkToY));
 	persistMgr->transfer(TMEMBER_INT(_walkToDir));
 
-	persistMgr->transfer(TMEMBER(_theora));
+	persistMgr->transferPtr(TMEMBER_PTR(_theora));
 
 	return STATUS_OK;
 }

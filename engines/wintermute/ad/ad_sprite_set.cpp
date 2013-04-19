@@ -249,9 +249,9 @@ bool AdSpriteSet::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_owner));
+	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
-		persistMgr->transfer("", &_sprites[i]);
+		persistMgr->transferPtr("", &_sprites[i]);
 	}
 
 	return STATUS_OK;

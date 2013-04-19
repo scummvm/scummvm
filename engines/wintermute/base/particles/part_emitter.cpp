@@ -1212,7 +1212,7 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER_INT(_batchesGenerated));
 
 	persistMgr->transfer(TMEMBER(_emitEvent));
-	persistMgr->transfer(TMEMBER(_owner));
+	persistMgr->transferPtr(TMEMBER_PTR(_owner));
 
 
 	_sprites.persist(persistMgr);

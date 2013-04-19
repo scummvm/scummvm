@@ -420,7 +420,7 @@ bool BaseFrame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_killSound));
 	persistMgr->transfer(TMEMBER(_moveX));
 	persistMgr->transfer(TMEMBER(_moveY));
-	persistMgr->transfer(TMEMBER(_sound));
+	persistMgr->transferPtr(TMEMBER_PTR(_sound));
 	_subframes.persist(persistMgr);
 
 	return STATUS_OK;

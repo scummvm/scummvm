@@ -621,17 +621,17 @@ bool UIObject::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_back));
+	persistMgr->transferPtr(TMEMBER_PTR(_back));
 	persistMgr->transfer(TMEMBER(_canFocus));
 	persistMgr->transfer(TMEMBER(_disable));
-	persistMgr->transfer(TMEMBER(_focusedWidget));
-	persistMgr->transfer(TMEMBER(_font));
+	persistMgr->transferPtr(TMEMBER_PTR(_focusedWidget));
+	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transfer(TMEMBER(_height));
-	persistMgr->transfer(TMEMBER(_image));
-	persistMgr->transfer(TMEMBER(_listenerObject));
-	persistMgr->transfer(TMEMBER(_listenerParamObject));
+	persistMgr->transferPtr(TMEMBER_PTR(_image));
+	persistMgr->transferPtr(TMEMBER_PTR(_listenerObject));
+	persistMgr->transferPtr(TMEMBER_PTR(_listenerParamObject));
 	persistMgr->transfer(TMEMBER(_listenerParamDWORD));
-	persistMgr->transfer(TMEMBER(_parent));
+	persistMgr->transferPtr(TMEMBER_PTR(_parent));
 	persistMgr->transfer(TMEMBER(_parentNotify));
 	persistMgr->transfer(TMEMBER(_sharedFonts));
 	persistMgr->transfer(TMEMBER(_sharedImages));

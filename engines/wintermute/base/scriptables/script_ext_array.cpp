@@ -215,7 +215,7 @@ bool SXArray::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_length));
-	persistMgr->transfer(TMEMBER(_values));
+	persistMgr->transferPtr(TMEMBER_PTR(_values));
 
 	return STATUS_OK;
 }

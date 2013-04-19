@@ -1243,7 +1243,7 @@ void ScScript::runtimeError(const char *fmt, ...) {
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::persist(BasePersistenceManager *persistMgr) {
 
-	persistMgr->transfer(TMEMBER(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
 	// buffer
 	if (persistMgr->getIsSaving()) {
@@ -1268,33 +1268,33 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 		}
 	}
 
-	persistMgr->transfer(TMEMBER(_callStack));
+	persistMgr->transferPtr(TMEMBER_PTR(_callStack));
 	persistMgr->transfer(TMEMBER(_currentLine));
-	persistMgr->transfer(TMEMBER(_engine));
+	persistMgr->transferPtr(TMEMBER_PTR(_engine));
 	persistMgr->transfer(TMEMBER(_filename));
 	persistMgr->transfer(TMEMBER(_freezable));
-	persistMgr->transfer(TMEMBER(_globals));
+	persistMgr->transferPtr(TMEMBER_PTR(_globals));
 	persistMgr->transfer(TMEMBER(_iP));
-	persistMgr->transfer(TMEMBER(_scopeStack));
-	persistMgr->transfer(TMEMBER(_stack));
+	persistMgr->transferPtr(TMEMBER_PTR(_scopeStack));
+	persistMgr->transferPtr(TMEMBER_PTR(_stack));
 	persistMgr->transfer(TMEMBER_INT(_state));
-	persistMgr->transfer(TMEMBER(_operand));
+	persistMgr->transferPtr(TMEMBER_PTR(_operand));
 	persistMgr->transfer(TMEMBER_INT(_origState));
-	persistMgr->transfer(TMEMBER(_owner));
-	persistMgr->transfer(TMEMBER(_reg1));
+	persistMgr->transferPtr(TMEMBER_PTR(_owner));
+	persistMgr->transferPtr(TMEMBER_PTR(_reg1));
 	persistMgr->transfer(TMEMBER(_thread));
 	persistMgr->transfer(TMEMBER(_threadEvent));
-	persistMgr->transfer(TMEMBER(_thisStack));
+	persistMgr->transferPtr(TMEMBER_PTR(_thisStack));
 	persistMgr->transfer(TMEMBER(_timeSlice));
-	persistMgr->transfer(TMEMBER(_waitObject));
-	persistMgr->transfer(TMEMBER(_waitScript));
+	persistMgr->transferPtr(TMEMBER_PTR(_waitObject));
+	persistMgr->transferPtr(TMEMBER_PTR(_waitScript));
 	persistMgr->transfer(TMEMBER(_waitTime));
 	persistMgr->transfer(TMEMBER(_waitFrozen));
 
 	persistMgr->transfer(TMEMBER(_methodThread));
 	persistMgr->transfer(TMEMBER(_methodThread));
 	persistMgr->transfer(TMEMBER(_unbreakable));
-	persistMgr->transfer(TMEMBER(_parentScript));
+	persistMgr->transferPtr(TMEMBER_PTR(_parentScript));
 
 	if (!persistMgr->getIsSaving()) {
 		_tracingMode = false;

@@ -3055,18 +3055,18 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_activeObject));
-	persistMgr->transfer(TMEMBER(_capturedObject));
-	persistMgr->transfer(TMEMBER(_cursorNoninteractive));
+	persistMgr->transferPtr(TMEMBER_PTR(_activeObject));
+	persistMgr->transferPtr(TMEMBER_PTR(_capturedObject));
+	persistMgr->transferPtr(TMEMBER_PTR(_cursorNoninteractive));
 	persistMgr->transfer(TMEMBER(_editorMode));
-	persistMgr->transfer(TMEMBER(_fader));
+	persistMgr->transferPtr(TMEMBER_PTR(_fader));
 	persistMgr->transfer(TMEMBER(_freezeLevel));
-	persistMgr->transfer(TMEMBER(_focusedWindow));
-	persistMgr->transfer(TMEMBER(_fontStorage));
+	persistMgr->transferPtr(TMEMBER_PTR(_focusedWindow));
+	persistMgr->transferPtr(TMEMBER_PTR(_fontStorage));
 	persistMgr->transfer(TMEMBER(_interactive));
-	persistMgr->transfer(TMEMBER(_keyboardState));
+	persistMgr->transferPtr(TMEMBER_PTR(_keyboardState));
 	persistMgr->transfer(TMEMBER(_lastTime));
-	persistMgr->transfer(TMEMBER(_mainObject));
+	persistMgr->transferPtr(TMEMBER_PTR(_mainObject));
 	_musicSystem->persistChannels(persistMgr);
 	_musicSystem->persistCrossfadeSettings(persistMgr);
 
@@ -3082,14 +3082,14 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 
 	_regObjects.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_scEngine));
+	persistMgr->transferPtr(TMEMBER_PTR(_scEngine));
 	//persistMgr->transfer(TMEMBER(_soundMgr));
 	persistMgr->transfer(TMEMBER_INT(_state));
 	//persistMgr->transfer(TMEMBER(_surfaceStorage));
 	persistMgr->transfer(TMEMBER(_subtitles));
 	persistMgr->transfer(TMEMBER(_subtitlesSpeed));
-	persistMgr->transfer(TMEMBER(_systemFont));
-	persistMgr->transfer(TMEMBER(_videoFont));
+	persistMgr->transferPtr(TMEMBER_PTR(_systemFont));
+	persistMgr->transferPtr(TMEMBER_PTR(_videoFont));
 	persistMgr->transfer(TMEMBER(_videoSubtitles));
 
 	_timerNormal.persist(persistMgr);

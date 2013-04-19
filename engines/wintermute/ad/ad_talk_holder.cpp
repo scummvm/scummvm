@@ -392,7 +392,7 @@ bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool AdTalkHolder::persist(BasePersistenceManager *persistMgr) {
 	AdObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_sprite));
+	persistMgr->transferPtr(TMEMBER_PTR(_sprite));
 	_talkSprites.persist(persistMgr);
 	_talkSpritesEx.persist(persistMgr);
 

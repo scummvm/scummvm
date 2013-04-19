@@ -72,8 +72,8 @@ bool AdSceneNode::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_entity));
-	persistMgr->transfer(TMEMBER(_region));
+	persistMgr->transferPtr(TMEMBER_PTR(_entity));
+	persistMgr->transferPtr(TMEMBER_PTR(_region));
 	persistMgr->transfer(TMEMBER_INT(_type));
 
 	return STATUS_OK;

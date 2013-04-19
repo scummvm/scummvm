@@ -784,9 +784,9 @@ bool AdItem::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_cursorCombined));
-	persistMgr->transfer(TMEMBER(_cursorHover));
-	persistMgr->transfer(TMEMBER(_cursorNormal));
-	persistMgr->transfer(TMEMBER(_spriteHover));
+	persistMgr->transferPtr(TMEMBER_PTR(_cursorHover));
+	persistMgr->transferPtr(TMEMBER_PTR(_cursorNormal));
+	persistMgr->transferPtr(TMEMBER_PTR(_spriteHover));
 	persistMgr->transfer(TMEMBER(_inInventory));
 	persistMgr->transfer(TMEMBER(_displayAmount));
 	persistMgr->transfer(TMEMBER(_amount));

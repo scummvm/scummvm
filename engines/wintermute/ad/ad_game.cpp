@@ -1413,32 +1413,32 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 	_dlgPendingBranches.persist(persistMgr);
 
 	_inventories.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_inventoryBox));
+	persistMgr->transferPtr(TMEMBER_PTR(_inventoryBox));
 
 	_objects.persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_prevSceneName));
 	persistMgr->transfer(TMEMBER(_prevSceneFilename));
 
-	persistMgr->transfer(TMEMBER(_responseBox));
+	persistMgr->transferPtr(TMEMBER_PTR(_responseBox));
 	_responsesBranch.persist(persistMgr);
 	_responsesGame.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_scene));
+	persistMgr->transferPtr(TMEMBER_PTR(_scene));
 	_sceneStates.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_scheduledFadeIn));
 	persistMgr->transfer(TMEMBER(_scheduledScene));
-	persistMgr->transfer(TMEMBER(_selectedItem));
+	persistMgr->transferPtr(TMEMBER_PTR(_selectedItem));
 	persistMgr->transfer(TMEMBER_INT(_talkSkipButton));
 
 	_sentences.persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_sceneViewport));
+	persistMgr->transferPtr(TMEMBER_PTR(_sceneViewport));
 	persistMgr->transfer(TMEMBER_INT(_stateEx));
 	persistMgr->transfer(TMEMBER(_initialScene));
 	persistMgr->transfer(TMEMBER(_debugStartupScene));
 
-	persistMgr->transfer(TMEMBER(_invObject));
-	persistMgr->transfer(TMEMBER(_inventoryOwner));
+	persistMgr->transferPtr(TMEMBER_PTR(_invObject));
+	persistMgr->transferPtr(TMEMBER_PTR(_inventoryOwner));
 	persistMgr->transfer(TMEMBER(_tempDisableSaveState));
 	_items.persist(persistMgr);
 

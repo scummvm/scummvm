@@ -1320,23 +1320,23 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	AdTalkHolder::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER_INT(_dir));
-	persistMgr->transfer(TMEMBER(_path));
+	persistMgr->transferPtr(TMEMBER_PTR(_path));
 	persistMgr->transfer(TMEMBER(_pFCount));
 	persistMgr->transfer(TMEMBER(_pFStepX));
 	persistMgr->transfer(TMEMBER(_pFStepY));
 	persistMgr->transfer(TMEMBER(_pFX));
 	persistMgr->transfer(TMEMBER(_pFY));
-	persistMgr->transfer(TMEMBER(_standSprite));
+	persistMgr->transferPtr(TMEMBER_PTR(_standSprite));
 	_talkSprites.persist(persistMgr);
 	_talkSpritesEx.persist(persistMgr);
 	persistMgr->transfer(TMEMBER_INT(_targetDir));
 	persistMgr->transfer(TMEMBER_INT(_afterWalkDir));
-	persistMgr->transfer(TMEMBER(_targetPoint));
-	persistMgr->transfer(TMEMBER(_turnLeftSprite));
-	persistMgr->transfer(TMEMBER(_turnRightSprite));
-	persistMgr->transfer(TMEMBER(_walkSprite));
+	persistMgr->transferPtr(TMEMBER_PTR(_targetPoint));
+	persistMgr->transferPtr(TMEMBER_PTR(_turnLeftSprite));
+	persistMgr->transferPtr(TMEMBER_PTR(_turnRightSprite));
+	persistMgr->transferPtr(TMEMBER_PTR(_walkSprite));
 
-	persistMgr->transfer(TMEMBER(_animSprite2));
+	persistMgr->transferPtr(TMEMBER_PTR(_animSprite2));
 	persistMgr->transfer(TMEMBER(_talkAnimName));
 	persistMgr->transfer(TMEMBER(_idleAnimName));
 	persistMgr->transfer(TMEMBER(_walkAnimName));

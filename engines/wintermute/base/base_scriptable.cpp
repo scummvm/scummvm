@@ -152,10 +152,10 @@ void BaseScriptable::scSetBool(bool val) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptable::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 	persistMgr->transfer(TMEMBER(_refCount));
-	persistMgr->transfer(TMEMBER(_scProp));
-	persistMgr->transfer(TMEMBER(_scValue));
+	persistMgr->transferPtr(TMEMBER_PTR(_scProp));
+	persistMgr->transferPtr(TMEMBER_PTR(_scValue));
 
 	return STATUS_OK;
 }

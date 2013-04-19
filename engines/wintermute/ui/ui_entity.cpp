@@ -359,7 +359,7 @@ bool UIEntity::persist(BasePersistenceManager *persistMgr) {
 
 	UIObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_entity));
+	persistMgr->transferPtr(TMEMBER_PTR(_entity));
 	return STATUS_OK;
 }
 

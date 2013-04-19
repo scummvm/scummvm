@@ -573,8 +573,8 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_font));
-	persistMgr->transfer(TMEMBER(_fontHover));
+	persistMgr->transferPtr(TMEMBER_PTR(_font));
+	persistMgr->transferPtr(TMEMBER_PTR(_fontHover));
 	persistMgr->transfer(TMEMBER(_horizontal));
 	persistMgr->transfer(TMEMBER(_lastResponseText));
 	persistMgr->transfer(TMEMBER(_lastResponseTextOrig));
@@ -582,10 +582,10 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_responseArea));
 	_responses.persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_scrollOffset));
-	persistMgr->transfer(TMEMBER(_shieldWindow));
+	persistMgr->transferPtr(TMEMBER_PTR(_shieldWindow));
 	persistMgr->transfer(TMEMBER(_spacing));
-	persistMgr->transfer(TMEMBER(_waitingScript));
-	persistMgr->transfer(TMEMBER(_window));
+	persistMgr->transferPtr(TMEMBER_PTR(_waitingScript));
+	persistMgr->transferPtr(TMEMBER_PTR(_window));
 
 	persistMgr->transfer(TMEMBER_INT(_verticalAlign));
 	persistMgr->transfer(TMEMBER_INT(_align));

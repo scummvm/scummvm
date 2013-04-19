@@ -131,14 +131,14 @@ bool AdResponse::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_icon));
-	persistMgr->transfer(TMEMBER(_iconHover));
-	persistMgr->transfer(TMEMBER(_iconPressed));
+	persistMgr->transferPtr(TMEMBER_PTR(_icon));
+	persistMgr->transferPtr(TMEMBER_PTR(_iconHover));
+	persistMgr->transferPtr(TMEMBER_PTR(_iconPressed));
 	persistMgr->transfer(TMEMBER(_iD));
 	persistMgr->transfer(TMEMBER(_text));
 	persistMgr->transfer(TMEMBER(_textOrig));
 	persistMgr->transfer(TMEMBER_INT(_responseType));
-	persistMgr->transfer(TMEMBER(_font));
+	persistMgr->transferPtr(TMEMBER_PTR(_font));
 
 	return STATUS_OK;
 }

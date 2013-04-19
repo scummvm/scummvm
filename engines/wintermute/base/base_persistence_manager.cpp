@@ -848,7 +848,8 @@ bool BasePersistenceManager::transfer(const char *name, Vector2 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // generic pointer
-bool BasePersistenceManager::transfer(const char *name, void *val) {
+
+bool BasePersistenceManager::transferPtr(const char *name, void *val) {
 	int classID = -1, instanceID = -1;
 
 	if (_saving) {
@@ -868,7 +869,6 @@ bool BasePersistenceManager::transfer(const char *name, void *val) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePersistenceManager::checkVersion(byte verMajor, byte verMinor, byte verBuild) {

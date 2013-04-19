@@ -1031,39 +1031,39 @@ bool AdObject::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_active));
-	persistMgr->transfer(TMEMBER(_blockRegion));
-	persistMgr->transfer(TMEMBER(_currentBlockRegion));
-	persistMgr->transfer(TMEMBER(_currentWptGroup));
-	persistMgr->transfer(TMEMBER(_currentSprite));
+	persistMgr->transferPtr(TMEMBER_PTR(_blockRegion));
+	persistMgr->transferPtr(TMEMBER_PTR(_currentBlockRegion));
+	persistMgr->transferPtr(TMEMBER_PTR(_currentWptGroup));
+	persistMgr->transferPtr(TMEMBER_PTR(_currentSprite));
 	persistMgr->transfer(TMEMBER(_drawn));
-	persistMgr->transfer(TMEMBER(_font));
+	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transfer(TMEMBER(_ignoreItems));
 	persistMgr->transfer(TMEMBER_INT(_nextState));
-	persistMgr->transfer(TMEMBER(_sentence));
+	persistMgr->transferPtr(TMEMBER_PTR(_sentence));
 	persistMgr->transfer(TMEMBER_INT(_state));
-	persistMgr->transfer(TMEMBER(_animSprite));
+	persistMgr->transferPtr(TMEMBER_PTR(_animSprite));
 	persistMgr->transfer(TMEMBER(_sceneIndependent));
 	persistMgr->transfer(TMEMBER(_forcedTalkAnimName));
 	persistMgr->transfer(TMEMBER(_forcedTalkAnimUsed));
-	persistMgr->transfer(TMEMBER(_tempSprite2));
+	persistMgr->transferPtr(TMEMBER_PTR(_tempSprite2));
 	persistMgr->transfer(TMEMBER_INT(_type));
-	persistMgr->transfer(TMEMBER(_wptGroup));
-	persistMgr->transfer(TMEMBER(_stickRegion));
+	persistMgr->transferPtr(TMEMBER_PTR(_wptGroup));
+	persistMgr->transferPtr(TMEMBER_PTR(_stickRegion));
 	persistMgr->transfer(TMEMBER(_subtitlesModRelative));
 	persistMgr->transfer(TMEMBER(_subtitlesModX));
 	persistMgr->transfer(TMEMBER(_subtitlesModY));
 	persistMgr->transfer(TMEMBER(_subtitlesModXCenter));
 	persistMgr->transfer(TMEMBER(_subtitlesWidth));
-	persistMgr->transfer(TMEMBER(_inventory));
-	persistMgr->transfer(TMEMBER(_partEmitter));
+	persistMgr->transferPtr(TMEMBER_PTR(_inventory));
+	persistMgr->transferPtr(TMEMBER_PTR(_partEmitter));
 
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
-		persistMgr->transfer(TMEMBER(_currentRegions[i]));
+		persistMgr->transferPtr(TMEMBER_PTR(_currentRegions[i]));
 	}
 
 	_attachmentsPre.persist(persistMgr);
 	_attachmentsPost.persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_registerAlias));
+	persistMgr->transferPtr(TMEMBER_PTR(_registerAlias));
 
 	persistMgr->transfer(TMEMBER(_partFollowParent));
 	persistMgr->transfer(TMEMBER(_partOffsetX));

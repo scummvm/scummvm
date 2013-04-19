@@ -247,20 +247,20 @@ bool AdSentence::finish() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 
-	persistMgr->transfer(TMEMBER(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
 	persistMgr->transfer(TMEMBER_INT(_align));
 	persistMgr->transfer(TMEMBER(_currentStance));
-	persistMgr->transfer(TMEMBER(_currentSprite));
+	persistMgr->transferPtr(TMEMBER_PTR(_currentSprite));
 	persistMgr->transfer(TMEMBER(_currentSkelAnim));
 	persistMgr->transfer(TMEMBER(_duration));
-	persistMgr->transfer(TMEMBER(_font));
+	persistMgr->transferPtr(TMEMBER_PTR(_font));
 	persistMgr->transfer(TMEMBER(_pos));
-	persistMgr->transfer(TMEMBER(_sound));
+	persistMgr->transferPtr(TMEMBER_PTR(_sound));
 	persistMgr->transfer(TMEMBER(_soundStarted));
 	persistMgr->transfer(TMEMBER(_stances));
 	persistMgr->transfer(TMEMBER(_startTime));
-	persistMgr->transfer(TMEMBER(_talkDef));
+	persistMgr->transferPtr(TMEMBER_PTR(_talkDef));
 	persistMgr->transfer(TMEMBER(_tempStance));
 	persistMgr->transfer(TMEMBER(_text));
 	persistMgr->transfer(TMEMBER(_width));

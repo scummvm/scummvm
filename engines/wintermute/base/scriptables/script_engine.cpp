@@ -484,9 +484,9 @@ bool ScEngine::persist(BasePersistenceManager *persistMgr) {
 		cleanup();
 	}
 
-	persistMgr->transfer(TMEMBER(_gameRef));
-	persistMgr->transfer(TMEMBER(_currentScript));
-	persistMgr->transfer(TMEMBER(_globals));
+	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_currentScript));
+	persistMgr->transferPtr(TMEMBER_PTR(_globals));
 	_scripts.persist(persistMgr);
 
 	return STATUS_OK;

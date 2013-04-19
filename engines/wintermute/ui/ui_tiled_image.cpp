@@ -377,7 +377,7 @@ bool UITiledImage::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_downLeft));
 	persistMgr->transfer(TMEMBER(_downMiddle));
 	persistMgr->transfer(TMEMBER(_downRight));
-	persistMgr->transfer(TMEMBER(_image));
+	persistMgr->transferPtr(TMEMBER_PTR(_image));
 	persistMgr->transfer(TMEMBER(_middleLeft));
 	persistMgr->transfer(TMEMBER(_middleMiddle));
 	persistMgr->transfer(TMEMBER(_middleRight));

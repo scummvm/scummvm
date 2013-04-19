@@ -371,7 +371,7 @@ bool AdInventoryBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool AdInventoryBox::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_closeButton));
+	persistMgr->transferPtr(TMEMBER_PTR(_closeButton));
 	persistMgr->transfer(TMEMBER(_hideSelected));
 	persistMgr->transfer(TMEMBER(_itemHeight));
 	persistMgr->transfer(TMEMBER(_itemsArea));
@@ -380,7 +380,7 @@ bool AdInventoryBox::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_scrollOffset));
 	persistMgr->transfer(TMEMBER(_spacing));
 	persistMgr->transfer(TMEMBER(_visible));
-	persistMgr->transfer(TMEMBER(_window));
+	persistMgr->transferPtr(TMEMBER_PTR(_window));
 	persistMgr->transfer(TMEMBER(_exclusive));
 
 	return STATUS_OK;

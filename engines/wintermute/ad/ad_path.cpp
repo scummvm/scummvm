@@ -108,7 +108,7 @@ bool AdPath::setReady(bool ready) {
 //////////////////////////////////////////////////////////////////////////
 bool AdPath::persist(BasePersistenceManager *persistMgr) {
 
-	persistMgr->transfer(TMEMBER(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_currIndex));
 	_points.persist(persistMgr);

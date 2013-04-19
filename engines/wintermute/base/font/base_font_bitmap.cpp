@@ -498,10 +498,10 @@ bool BaseFontBitmap::persist(BasePersistenceManager *persistMgr) {
 	BaseFont::persist(persistMgr);
 	persistMgr->transfer(TMEMBER(_numColumns));
 
-	persistMgr->transfer(TMEMBER(_subframe));
+	persistMgr->transferPtr(TMEMBER_PTR(_subframe));
 	persistMgr->transfer(TMEMBER(_tileHeight));
 	persistMgr->transfer(TMEMBER(_tileWidth));
-	persistMgr->transfer(TMEMBER(_sprite));
+	persistMgr->transferPtr(TMEMBER_PTR(_sprite));
 	persistMgr->transfer(TMEMBER(_widthsFrame));
 
 	if (persistMgr->getIsSaving()) {

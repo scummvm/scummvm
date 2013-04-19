@@ -82,6 +82,7 @@ namespace Wintermute {
 	}\
 
 #define TMEMBER(memberName) #memberName, &memberName
+#define TMEMBER_PTR(memberName) #memberName, &memberName
 #define TMEMBER_INT(memberName) #memberName, (int*)&memberName
 
 } // end of namespace Wintermute
