@@ -456,10 +456,8 @@ void SoundManager::checkSounds() {
 void SoundManager::checkVoiceActivity() {
 	// Check the status of each voice.
 	bool hasActiveVoice = false;
-	for (int i = 0; i < VOICE_COUNT; ++i) {
-		checkVoiceStatus(i);
-		hasActiveVoice |= _voice[i]._status;
-	}
+	for (int i = 0; i < VOICE_COUNT; ++i)
+		hasActiveVoice |= checkVoiceStatus(i);
 
 	if (!hasActiveVoice && _soundFl) {
 		_soundFl = false;
