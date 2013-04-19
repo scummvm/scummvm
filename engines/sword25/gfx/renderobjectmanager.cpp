@@ -97,12 +97,11 @@ bool RenderObjectManager::render() {
 
 	// Die Render-Methode der Wurzel aufrufen. Dadurch wird das rekursive Rendern der Baumelemente angestoßen.
 
-	uint32 renderDuration = g_system->getMillis();
-	
 	_currQueue->clear();
-	_rootPtr->collectRenderQueue(_currQueue);
+	_rootPtr->preRender(_currQueue);
 
 	_uta->clear();
+
 	// Add rectangles of objects which don't exist in this frame any more
     for (RenderObjectQueue::iterator it = _prevQueue->begin(); it != _prevQueue->end(); ++it)
     	if (!_currQueue->exists(*it))
@@ -111,7 +110,7 @@ bool RenderObjectManager::render() {
     for (RenderObjectQueue::iterator it = _currQueue->begin(); it != _currQueue->end(); ++it)
     	if (!_prevQueue->exists(*it))
     		_uta->addRect((*it)._bbox);
-	
+
 	RectangleList *updateRects = _uta->getRectangles();
 	Common::Array<int> updateRectsMinZ;
 	
@@ -147,9 +146,6 @@ bool RenderObjectManager::render() {
 	delete updateRects;
 	
 	SWAP(_currQueue, _prevQueue);
-	
-	renderDuration = g_system->getMillis() - renderDuration;
-	//debug("renderDuration: %3.5f", renderDuration / 1000.0f);
 	
 	return true;
 }

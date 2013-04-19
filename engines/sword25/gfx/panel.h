@@ -51,8 +51,10 @@ public:
 		return _color;
 	}
 	void setColor(uint color) {
-		_color = color;
-		forceRefresh();
+		if (_color != color) {
+			_color = color;
+			forceRefresh();
+		}
 	}
 
 	virtual bool persist(OutputPersistenceBlock &writer);

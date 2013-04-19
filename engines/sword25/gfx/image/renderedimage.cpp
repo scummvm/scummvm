@@ -145,7 +145,10 @@ RenderedImage::RenderedImage(const Common::String &filename, bool &result) :
 
 	_doCleanup = true;
 
+#if defined(SCUMM_LITTLE_ENDIAN)
+	// Makes sense for LE only at the moment
 	checkForTransparency();
+#endif
 
 	return;
 }
@@ -295,20 +298,20 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 		int drawX = posX, drawY = posY;
 		int drawWidth = img->w;
 		int drawHeight = img->h;
-	
+
 		// Handle clipping
-		if (drawY < clipRect.top) {
-			skipTop = clipRect.top - drawY;
-			drawHeight = MAX(0, (int)drawHeight - (clipRect.top - drawY));
-			drawY = clipRect.top;
-		}
-	
 		if (drawX < clipRect.left) {
 			skipLeft = clipRect.left - drawX;
-			drawWidth = MAX(0, (int)drawWidth - skipLeft);
+			drawWidth -= skipLeft;
 			drawX = clipRect.left;
 		}
 		
+		if (drawY < clipRect.top) {
+			skipTop = clipRect.top - drawY;
+			drawHeight -= skipTop;
+			drawY = clipRect.top;
+		}
+
 		if (drawX + drawWidth >= clipRect.right)
 			drawWidth = clipRect.right - drawX;
 	
@@ -358,16 +361,16 @@ bool RenderedImage::blit(int posX, int posY, int flipping, Common::Rect *pPartRe
 						int a = (pix >> 24) & 0xff;
 						in += inStep;
 						
+						if (ca != 255) {
+							a = a * ca >> 8;
+						}
+
 						if (a == 0) {
 							// Full transparency
 							out += 4;
 							continue;
 						}
 						
-						if (ca != 255) {
-							a = a * ca >> 8;
-						}
-		
 						int b = (pix >> 0) & 0xff;
 						int g = (pix >> 8) & 0xff;
 						int r = (pix >> 16) & 0xff;

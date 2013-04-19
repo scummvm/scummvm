@@ -91,9 +91,11 @@ bool Text::setFont(const Common::String &font) {
 }
 
 void Text::setText(const Common::String &text) {
-	_text = text;
-	updateFormat();
-	forceRefresh();
+	if (_text != text) {
+		_text = text;
+		updateFormat();
+		forceRefresh();
+	}
 }
 
 void Text::setColor(uint modulationColor) {

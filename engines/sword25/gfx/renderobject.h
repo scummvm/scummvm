@@ -213,6 +213,9 @@ public:
 
 	// Interface
 	// ---------
+
+	void preRender(RenderObjectQueue *renderQueue);
+
 	/**
 	    @brief Rendert des Objekt und alle seine Unterobjekte.
 	    @return Gibt false zurück, falls beim Rendern ein Fehler aufgetreten ist.
@@ -221,8 +224,6 @@ public:
 	            Diese Methode darf nur von BS_RenderObjectManager aufgerufen werden.
 	*/
 	bool render(RectangleList *updateRects, const Common::Array<int> &updateRectsMinZ);
-
-	void collectRenderQueue(RenderObjectQueue *renderQueue);
 
 	/**
 	    @brief Bereitet das Objekt und alle seine Unterobjekte auf einen Rendervorgang vor.

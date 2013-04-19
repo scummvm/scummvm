@@ -110,19 +110,32 @@ RenderObject::~RenderObject() {
 	RenderObjectRegistry::instance().deregisterObject(this);
 }
 
-bool RenderObject::render(RectangleList *updateRects, const Common::Array<int> &updateRectsMinZ) {
+void RenderObject::preRender(RenderObjectQueue *renderQueue) {
 	// Objektänderungen validieren
 	validateObject();
 
-	// Falls das Objekt nicht sichtbar ist, muss gar nichts gezeichnet werden
 	if (!_visible)
-		return true;
+		return;
 
 	// Falls notwendig, wird die Renderreihenfolge der Kinderobjekte aktualisiert.
 	if (_childChanged) {
 		sortRenderObjects();
 		_childChanged = false;
 	}
+
+	renderQueue->add(this);
+
+	RENDEROBJECT_ITER it = _children.begin();
+	for (; it != _children.end(); ++it)
+		(*it)->preRender(renderQueue);
+
+}
+
+bool RenderObject::render(RectangleList *updateRects, const Common::Array<int> &updateRectsMinZ) {
+
+	// Falls das Objekt nicht sichtbar ist, muss gar nichts gezeichnet werden
+	if (!_visible)
+		return true;
 
 	// Objekt zeichnen.
 	bool needRender = false;
@@ -143,19 +156,6 @@ bool RenderObject::render(RectangleList *updateRects, const Common::Array<int> &
 			return false;
 
 	return true;
-}
-
-void RenderObject::collectRenderQueue(RenderObjectQueue *renderQueue) {
-
-	if (!_visible)
-		return;
-
-	renderQueue->add(this);
-
-	RENDEROBJECT_ITER it = _children.begin();
-	for (; it != _children.end(); ++it)
-		(*it)->collectRenderQueue(renderQueue);
-
 }
 
 void RenderObject::validateObject() {
