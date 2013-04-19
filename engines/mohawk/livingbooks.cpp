@@ -1358,8 +1358,9 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 			if (!loadPage((LBMode)event.newMode, event.newPage, event.newSubpage)) {
 				if (event.newPage != 0 || !loadPage((LBMode)event.newMode, _curPage, event.newSubpage))
 					if (event.newSubpage != 0 || !loadPage((LBMode)event.newMode, event.newPage, 1))
-						error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
-							event.newMode, event.newPage, event.newSubpage);
+						if (event.newSubpage != 1 || !loadPage((LBMode)event.newMode, event.newPage, 0))
+							error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
+								event.newMode, event.newPage, event.newSubpage);
 			}
 			break;
 		case 3:
