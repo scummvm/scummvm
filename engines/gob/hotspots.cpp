@@ -1995,6 +1995,7 @@ bool Hotspots::leaveNthPlain(uint16 n, uint16 startIndex, int16 timeVal, const u
 		// Call the leave and time it
 		startTime = _vm->_util->getTimeKey();
 		call(spot.funcLeave);
+		_vm->_inter->animPalette();
 		callTime = _vm->_util->getTimeKey() - startTime;
 
 		// Remove the time it took from the time we have available
