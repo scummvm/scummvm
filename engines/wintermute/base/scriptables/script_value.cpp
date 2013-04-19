@@ -799,7 +799,7 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_valInt));
 	persistMgr->transferPtr(TMEMBER_PTR(_valNative));
 
-	int size;
+	int32 size;
 	const char *str;
 	if (persistMgr->getIsSaving()) {
 		size = _valObject.size();

@@ -1252,7 +1252,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 			persistMgr->putBytes(_buffer, _bufferSize);
 		} else {
 			// don't save idle/finished scripts
-			int bufferSize = 0;
+			int32 bufferSize = 0;
 			persistMgr->transfer(TMEMBER(bufferSize));
 		}
 	} else {

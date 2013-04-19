@@ -46,13 +46,13 @@ private:
 	class BaseCachedTTFontText {
 	public:
 		WideString _text;
-		int _width;
+		int32 _width;
 		TTextAlign _align;
-		int _maxHeight;
-		int _maxLength;
+		int32 _maxHeight;
+		int32 _maxLength;
 		BaseSurface *_surface;
-		int _priority;
-		int _textOffset;
+		int32 _priority;
+		int32 _textOffset;
 		bool _marked;
 		uint32 _lastUsed;
 
@@ -90,8 +90,8 @@ public:
 			return STATUS_OK;
 		}
 
-		int _offsetX;
-		int _offsetY;
+		int32 _offsetX;
+		int32 _offsetY;
 		uint32 _color;
 	};
 
@@ -140,7 +140,7 @@ public:
 	bool _isItalic;
 	bool _isUnderline;
 	bool _isStriked;
-	int _fontHeight;
+	int32 _fontHeight;
 	char *_fontFile;
 
 	BaseArray<BaseTTFontLayer *> _layers;
