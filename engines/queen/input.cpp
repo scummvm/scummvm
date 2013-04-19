@@ -50,12 +50,12 @@ const Verb Input::_verbKeys[] = {
 	VERB_USE
 };
 
-Input::Input(Common::Language language, OSystem *system, QueenEngine *vm) :
+Input::Input(Common::Language language, OSystem *system) :
 	_system(system), _eventMan(system->getEventManager()), _fastMode(false),
 	_keyVerb(VERB_NONE), _cutawayRunning(false), _canQuit(false),
 	_cutawayQuit(false), _dialogueRunning(false), _talkQuit(false),
 	_quickSave(false), _quickLoad(false), _debugger(false), _inKey(Common::KEYCODE_INVALID),
-	_mouseButton(0), _idleTime(0) , _vm(vm) {
+	_mouseButton(0), _idleTime(0) {
 
 	switch (language) {
 	case Common::EN_ANY:

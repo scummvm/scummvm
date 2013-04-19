@@ -1134,7 +1134,7 @@ bool WinnieEngine::playSound(ENUM_WTP_SOUND iSound) {
 	file.read(data, size);
 	file.close();
 
-	_game.sounds[0] = AgiSound::createFromRawResource(data, size, 0, *_sound, _soundemu);
+	_game.sounds[0] = AgiSound::createFromRawResource(data, size, 0, _soundemu);
 	_sound->startSound(0, 0);
 
 	bool cursorShowing = CursorMan.showMouse(false);

@@ -36,8 +36,8 @@
 
 namespace Sci {
 
-GfxText16::GfxText16(ResourceManager *resMan, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen)
-	: _resMan(resMan), _cache(cache), _ports(ports), _paint16(paint16), _screen(screen) {
+GfxText16::GfxText16(GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen)
+	: _cache(cache), _ports(ports), _paint16(paint16), _screen(screen) {
 	init();
 }
 

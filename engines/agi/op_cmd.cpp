@@ -1705,7 +1705,9 @@ void cmdCallV1(AgiGame *state, uint8 *p) {
 	// FIXME: The following instruction looks incomplete.
 	// Maybe something is meant to be assigned to, or read from,
 	// the logic_list entry?
-	state->logic_list[++state->max_logics];
+//	state->logic_list[++state->max_logics];
+	// For now, just do the increment, to silence a clang warning
+	++state->max_logics;
 	_v[13] = 1;
 }
 

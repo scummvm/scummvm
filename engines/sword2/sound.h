@@ -142,7 +142,6 @@ private:
 	bool _looping;
 	int32 _fading;
 	int32 _fadeSamples;
-	bool _paused;
 
 	void refill();
 

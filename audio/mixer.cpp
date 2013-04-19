@@ -171,9 +171,9 @@ private:
 #pragma mark --- Mixer ---
 #pragma mark -
 
-
+// TODO: parameter "system" is unused
 MixerImpl::MixerImpl(OSystem *system, uint sampleRate)
-	: _syst(system), _mutex(), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
+	: _mutex(), _sampleRate(sampleRate), _mixerReady(false), _handleSeed(0), _soundTypeSettings() {
 
 	assert(sampleRate > 0);
 

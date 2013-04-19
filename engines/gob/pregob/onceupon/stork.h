@@ -79,8 +79,6 @@ private:
 	};
 
 
-	GobEngine *_vm;
-
 	Surface   *_frame;
 	ANIObject *_bundle;
 

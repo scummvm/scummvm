@@ -54,7 +54,6 @@ private:
 		NUM_CHANNELS = 16
 	};
 
-	OSystem *_syst;
 	Common::Mutex _mutex;
 
 	const uint _sampleRate;

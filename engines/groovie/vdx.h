@@ -62,11 +62,11 @@ private:
 	bool _flagEight;
 	bool _flagNine;
 
-	bool _flagSkipStill;
+	//bool _flagSkipStill;
 	bool _flagSkipPalette;
 	bool _flagFirstFrame;
-	bool _flagTransparent;
-	bool _flagUpdateStill;
+	//bool _flagTransparent;
+	//bool _flagUpdateStill;
 
 	void getStill(Common::ReadStream *in);
 	void getDelta(Common::ReadStream *in);
