@@ -675,42 +675,39 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 	int frameNumber;
 	Common::File f;
 
-	for (;;) {
-		if (_vm->shouldQuit())
-			return;
+	if (_vm->shouldQuit())
+		return;
 
-		_vm->_events->_mouseFl = false;
-		screenP = _vm->_graphicsMan->_backBuffer;
+	_vm->_events->_mouseFl = false;
+	screenP = _vm->_graphicsMan->_backBuffer;
 
-		if (!f.open(file))
-			error("File not found - %s", file.c_str());
+	if (!f.open(file))
+		error("File not found - %s", file.c_str());
 
-		f.skip(6);
-		f.read(_vm->_graphicsMan->_palette, 800);
-		f.skip(4);
-		size_t nbytes = f.readUint32LE();
-		f.skip(14);
-		f.read(screenP, nbytes);
+	f.skip(6);
+	f.read(_vm->_graphicsMan->_palette, 800);
+	f.skip(4);
+	size_t nbytes = f.readUint32LE();
+	f.skip(14);
+	f.read(screenP, nbytes);
 
-		if (skipSeqFl) {
-			_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
-		} else {
-			_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
-			_vm->_graphicsMan->display8BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
+	if (skipSeqFl) {
+		_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
+	} else {
+		_vm->_graphicsMan->setPaletteVGA256(_vm->_graphicsMan->_palette);
+		_vm->_graphicsMan->display8BitRect(screenP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0);
 
-			_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-			_vm->_graphicsMan->updateScreen();
-		}
-		_vm->_events->_rateCounter = 0;
-		_vm->_events->_escKeyFl = false;
-		_vm->_soundMan->loadAnimSound();
-		if (_vm->_globals->_eventMode == EVENTMODE_IGNORE) {
-			do {
-				_vm->_events->refreshEvents();
-				_vm->_soundMan->checkSoundEnd();
-			} while (!_vm->shouldQuit() && !_vm->_events->_escKeyFl && _vm->_events->_rateCounter < rate1);
-		}
-		break;
+		_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		_vm->_graphicsMan->updateScreen();
+	}
+	_vm->_events->_rateCounter = 0;
+	_vm->_events->_escKeyFl = false;
+	_vm->_soundMan->loadAnimSound();
+	if (_vm->_globals->_eventMode == EVENTMODE_IGNORE) {
+		do {
+			_vm->_events->refreshEvents();
+			_vm->_soundMan->checkSoundEnd();
+		} while (!_vm->shouldQuit() && !_vm->_events->_escKeyFl && _vm->_events->_rateCounter < rate1);
 	}
 
 	if (!_vm->_events->_escKeyFl) {
