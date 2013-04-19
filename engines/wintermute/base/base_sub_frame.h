@@ -56,8 +56,8 @@ public:
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	const char* getSurfaceFilename();
 
-	int _hotspotX;
-	int _hotspotY;
+	int32 _hotspotX;
+	int32 _hotspotY;
 	uint32 _alpha;
 	// These two setters and getters are rather usefull, as they allow _rect to be lazily defined
 	// Thus we don't need to load the actual graphics before the rect is actually needed.

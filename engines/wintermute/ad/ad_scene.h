@@ -98,14 +98,14 @@ public:
 	void scrollTo(int offsetX, int offsetY);
 	virtual bool update() override;
 	bool _autoScroll;
-	int _targetOffsetTop;
-	int _targetOffsetLeft;
+	int32 _targetOffsetTop;
+	int32 _targetOffsetLeft;
 
-	int _scrollPixelsV;
+	int32 _scrollPixelsV;
 	uint32 _scrollTimeV;
 	uint32 _lastTimeV;
 
-	int _scrollPixelsH;
+	int32 _scrollPixelsH;
 	uint32 _scrollTimeH;
 	uint32 _lastTimeH;
 
@@ -171,8 +171,8 @@ private:
 	BaseObject *_pfRequester;
 	BaseArray<AdPathPoint *> _pfPath;
 
-	int _offsetTop;
-	int _offsetLeft;
+	int32 _offsetTop;
+	int32 _offsetLeft;
 
 };
 

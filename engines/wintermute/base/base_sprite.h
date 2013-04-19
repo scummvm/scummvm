@@ -56,7 +56,7 @@ public:
 	bool loadFile(const Common::String &filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool draw(int x, int y, BaseObject *Register = nullptr, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF);
 	bool _looping;
-	int _currentFrame;
+	int32 _currentFrame;
 	bool addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Rect32 *rect = nullptr);
 	BaseSprite(BaseGame *inGame, BaseObject *owner = nullptr);
 	virtual ~BaseSprite();
