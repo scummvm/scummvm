@@ -518,7 +518,20 @@ reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
 reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
 	uint16 handle = argv[0].toUint16();
 	uint16 offset = ABS<int16>(argv[1].toSint16());	// can be negative
-	Seek::Whence whence = (Seek::Whence)argv[2].toUint16();
+	Seek::Whence whence;
+	switch (argv[2].toUint16()) {
+	case 0:
+		whence = Seek::SET;
+		break;
+	case 1:
+		whence = Seek::CUR;
+		break;
+	case 2:
+		whence = Seek::END;
+		break;
+	default:
+		error("kFileIOSeek: Bad whence in seek operation");
+	}
 	debugC(kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
 
 #ifdef ENABLE_SCI32
