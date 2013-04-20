@@ -2440,21 +2440,22 @@ int LinesManager::testLine(int paramX, int paramY, int *testValue, int *foundLin
 	for (int idx = _lastLine + 1; idx < _linesNumb + 1; idx++) {
 		lineData = _lineItem[idx]._lineData;
 		lineDataEndIdx = _lineItem[idx]._lineDataEndIdx;
-		if (lineData) {
-			if (lineData[0] == paramX && lineData[1] == paramY) {
-				*testValue = 1;
-				int posX = lineData[2 * (lineDataEndIdx - 1)];
-				int posY = lineData[2 * (lineDataEndIdx - 1) + 1];
-				if (_lineItem[idx]._directionRouteInc == DIR_DOWN || _lineItem[idx]._directionRouteInc == DIR_UP)
-					posY += 2;
-				if (_lineItem[idx]._directionRouteInc == DIR_RIGHT || _lineItem[idx]._directionRouteDec == DIR_LEFT)
-					posX += 2;
-				if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _lastLine))
-					error("Error in test line");
-				*foundLineIdx = collLineIdx;
-				*foundDataIdx = collDataIdx;
-				return idx;
-			}
+		if (!lineData)
+			continue;
+
+		if (lineData[0] == paramX && lineData[1] == paramY) {
+			*testValue = 1;
+			int posX = lineData[2 * (lineDataEndIdx - 1)];
+			int posY = lineData[2 * (lineDataEndIdx - 1) + 1];
+			if (_lineItem[idx]._directionRouteInc == DIR_DOWN || _lineItem[idx]._directionRouteInc == DIR_UP)
+				posY += 2;
+			if (_lineItem[idx]._directionRouteInc == DIR_RIGHT || _lineItem[idx]._directionRouteDec == DIR_LEFT)
+				posX += 2;
+			if (!checkCollisionLine(posX, posY, &collDataIdx, &collLineIdx, 0, _lastLine))
+				error("Error in test line");
+			*foundLineIdx = collLineIdx;
+			*foundDataIdx = collDataIdx;
+			return idx;
 		}
 
 		if (lineDataEndIdx > 0) {
