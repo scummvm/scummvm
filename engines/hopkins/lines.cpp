@@ -2790,8 +2790,7 @@ void LinesManager::resetLines() {
 
 // Remove Line
 void LinesManager::removeLine(int idx) {
-	if (idx > MAX_LINES)
-		error("Attempting to add a line obstacle > MAX_LIGNE.");
+	assert (idx <= MAX_LINES);
 	_lineItem[idx]._lineData = (int16 *)_vm->_globals->freeMemory((byte *)_lineItem[idx]._lineData);
 }
 
