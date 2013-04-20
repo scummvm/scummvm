@@ -237,12 +237,29 @@ bool SXDate::scSetProperty(const char *name, ScValue *value) {
 bool SXDate::persist(BasePersistenceManager *persistMgr) {
 
 	BaseScriptable::persist(persistMgr);
-	persistMgr->transfer(TMEMBER(_tm.tm_year));
-	persistMgr->transfer(TMEMBER(_tm.tm_mon));
-	persistMgr->transfer(TMEMBER(_tm.tm_mday));
-	persistMgr->transfer(TMEMBER(_tm.tm_hour));
-	persistMgr->transfer(TMEMBER(_tm.tm_min));
-	persistMgr->transfer(TMEMBER(_tm.tm_sec));
+	int32 year = _tm.tm_year;
+	int32 mon = _tm.tm_mon;
+	int32 mday = _tm.tm_mday;
+	int32 hour = _tm.tm_hour;
+	int32 min = _tm.tm_min;
+	int32 sec = _tm.tm_sec;
+	persistMgr->transfer(TMEMBER(year));
+	persistMgr->transfer(TMEMBER(mon));
+	persistMgr->transfer(TMEMBER(mday));
+	persistMgr->transfer(TMEMBER(hour));
+	persistMgr->transfer(TMEMBER(min));
+	persistMgr->transfer(TMEMBER(sec));
+	if (persistMgr->checkVersion(1, 2, 1)) {
+		int32 wday = _tm.tm_wday;
+		persistMgr->transfer(TMEMBER(wday));
+		_tm.tm_wday = wday;
+	}
+	_tm.tm_year = year;
+	_tm.tm_mon = mon;
+	_tm.tm_mday = mday;
+	_tm.tm_hour = hour;
+	_tm.tm_min = min;
+	_tm.tm_sec = sec;
 	return STATUS_OK;
 }
 
