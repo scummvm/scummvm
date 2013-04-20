@@ -338,6 +338,14 @@ void EoBEngine::replaceMonster(int unit, uint16 block, int pos, int dir, int typ
 	}
 }
 
+bool EoBEngine::killMonsterExtra(EoBMonsterInPlay *m) {
+	if (m->type == 21) {
+		_playFinale = true;
+		_runFlag = false;
+	}
+	return true;
+}
+
 void EoBEngine::updateScriptTimersExtra() {
 	int cnt = 0;
 	for (int i = 1; i < 30; i++) {

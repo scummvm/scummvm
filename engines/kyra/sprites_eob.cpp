@@ -213,18 +213,9 @@ void EoBCoreEngine::killMonster(EoBMonsterInPlay *m, bool giveExperience) {
 	if (killMonsterExtra(m)) {
 		placeMonster(m, 0, -1);
 
-		if ((_flags.gameID == GI_EOB1) && (m->type == 21)) {
-			_playFinale = true;
-			_runFlag = false;
-		}
-
 		if (m->mode == 8)
 			updateAttackingMonsterFlags();
 	}
-}
-
-bool EoBCoreEngine::killMonsterExtra(EoBMonsterInPlay *) {
-	return true;
 }
 
 int EoBCoreEngine::countSpecificMonsters(int type) {

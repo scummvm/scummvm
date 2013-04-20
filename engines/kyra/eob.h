@@ -74,6 +74,7 @@ private:
 
 	// Monsters
 	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
+	bool killMonsterExtra(EoBMonsterInPlay *m);
 	void updateScriptTimersExtra();
 
 	// Level
