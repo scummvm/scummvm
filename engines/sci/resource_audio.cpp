@@ -75,6 +75,10 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, co
 		delete fileStream;
 }
 
+AudioVolumeResourceSource::~AudioVolumeResourceSource() {
+	delete[] _audioCompressionOffsetMapping;
+}
+
 bool Resource::loadFromWaveFile(Common::SeekableReadStream *file) {
 	data = new byte[size];
 
