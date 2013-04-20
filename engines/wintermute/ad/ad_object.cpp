@@ -941,7 +941,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 
 	// set duration by text length
 	if (_sentence->_duration <= 0) {// TODO: Avoid longs.
-		_sentence->_duration = MAX((size_t)1000, _gameRef->_subtitlesSpeed * strlen(_sentence->_text));
+		_sentence->_duration = MAX<int32>((size_t)1000, _gameRef->_subtitlesSpeed * strlen(_sentence->_text));
 	}
 
 
