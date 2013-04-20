@@ -1561,6 +1561,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 		case DIR_DOWN_RIGHT:
 			curY += 2;
 			curX += 2;
+			break;
 		case DIR_DOWN:
 			curY += 2;
 			break;
