@@ -482,8 +482,9 @@ Debugger_EoB::Debugger_EoB(EoBCoreEngine *vm) : Debugger(vm), _vm(vm) {
 }
 
 void Debugger_EoB::initialize() {
-	DCmd_Register("import_savefile",         WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
-	DCmd_Register("save_original",      WRAP_METHOD(Debugger_EoB, cmd_saveOriginal));
+	DCmd_Register("import_savefile", WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
+	DCmd_Register("save_original", WRAP_METHOD(Debugger_EoB, cmd_saveOriginal));
+	DCmd_Register("list_monsters", WRAP_METHOD(Debugger_EoB, cmd_listMonsters));
 }
 
 bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
@@ -555,6 +556,20 @@ bool Debugger_EoB::cmd_saveOriginal(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Syntax:   save_original <slot>\n          (Saves game in original file format to a file which can be used with the orginal game executable.\n          A save slot between 0 and 5 must be specified.)\n\n");
+	return true;
+}
+
+bool Debugger_EoB::cmd_listMonsters(int, const char **) {
+	DebugPrintf("\nCurrent level: %d\n----------------------\n\n", _vm->_currentLevel);
+	DebugPrintf("Id        Type      Unit      Block     Position  Direction Sub Level Mode      Dst.block HP        Flags\n--------------------------------------------------------------------------------------------------------------\n");
+
+	for (int i = 0; i < 30; i++) {
+		EoBMonsterInPlay *m = &_vm->_monsters[i];
+		DebugPrintf("%.02d        %.02d        %.02d        0x%.04x    %d         %d         %d         %.02d        0x%.04x    %.03d/%.03d   0x%.02x\n", i, m->type, m->unit, m->block, m->pos, m->dir, m->sub, m->mode, m->dest, m->hitPointsCur, m->hitPointsMax, m->flags);
+	}
+
+	DebugPrintf("\n");
+
 	return true;
 }
 

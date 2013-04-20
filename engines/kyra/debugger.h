@@ -121,6 +121,7 @@ protected:
 
 	bool cmd_importSaveFile(int argc, const char **argv);
 	bool cmd_saveOriginal(int argc, const char **argv);
+	bool cmd_listMonsters(int argc, const char **argv);
 };
 #endif // ENABLE_EOB
 
