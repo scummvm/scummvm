@@ -208,7 +208,7 @@ void LinesManager::addZoneLine(int idx, int fromX, int fromY, int destX, int des
 		_bobZoneFl[bobZoneIdx] = true;
 		_bobZone[bobZoneIdx] = fromY;
 	} else {
-		assert (idx <= MAX_LINES);
+		assert (idx < MAX_LINES);
 		_zoneLine[idx]._zoneData = (int16 *)_vm->_globals->freeMemory((byte *)_zoneLine[idx]._zoneData);
 
 		int distX = abs(fromX - destX);
@@ -2778,7 +2778,7 @@ void LinesManager::clearAllZones() {
  * Remove Zone Line
  */
 void LinesManager::removeZoneLine(int idx) {
-	assert (idx <= MAX_LINES);
+	assert (idx < MAX_LINES);
 	_zoneLine[idx]._zoneData = (int16 *)_vm->_globals->freeMemory((byte *)_zoneLine[idx]._zoneData);
 }
 
@@ -2792,7 +2792,7 @@ void LinesManager::resetLines() {
 
 // Remove Line
 void LinesManager::removeLine(int idx) {
-	assert (idx <= MAX_LINES);
+	assert (idx < MAX_LINES);
 	_lineItem[idx]._lineData = (int16 *)_vm->_globals->freeMemory((byte *)_lineItem[idx]._lineData);
 }
 
