@@ -36,8 +36,7 @@ uint32 InPAKSave::read(void *buf, uint32 cnt) {
 }
 
 bool InPAKSave::seek(int32 offs, Seek::Whence whence) {
-	int origin = whence == SEEK_END ? Seek::END : (whence == SEEK_CUR ? Seek::CUR : Seek::SET);
-	pakfs_seek(fd, offs, whenceInt);
+	pakfs_seek(fd, offs, whence);
 
 	return true;
 }

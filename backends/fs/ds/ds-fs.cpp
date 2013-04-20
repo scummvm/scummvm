@@ -429,8 +429,7 @@ int32 DSFileStream::size() const {
 }
 
 bool DSFileStream::seek(int32 offs, Seek::Whence whence) {
-	int origin = whence == SEEK_END ? Seek::END : (whence == SEEK_CUR ? Seek::CUR : Seek::SET);
-	return std_fseek((FILE *)_handle, offs, origin) == 0;
+	return std_fseek((FILE *)_handle, offs, (int)whence) == 0;
 }
 
 uint32 DSFileStream::read(void *ptr, uint32 len) {

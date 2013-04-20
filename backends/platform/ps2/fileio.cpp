@@ -453,19 +453,7 @@ PS2FileStream::~PS2FileStream() {
 }
 
 bool PS2FileStream::seek(int32 offs, Seek::Whence whence) {
-	int whenceInt;
-	switch (whence) {
-	case Seek::SET:
-		whenceInt = SEEK_SET;
-		break;
-	case Seek::CUR:
-		whenceInt = SEEK_CUR;
-		break;
-	case Seek::END:
-		whenceInt = SEEK_END;
-		break;
-	}
-	return _handle->seek(offs, whenceInt) == 0;
+	return _handle->seek(offs, (int)whence) == 0;
 }
 
 int32 PS2FileStream::pos() const {

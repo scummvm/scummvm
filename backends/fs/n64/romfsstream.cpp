@@ -59,8 +59,7 @@ int32 RomfsStream::size() const {
 }
 
 bool RomfsStream::seek(int32 offs, Seek::Whence whence) {
-	int origin = whence == SEEK_END ? Seek::END : (whence == SEEK_CUR ? Seek::CUR : Seek::SET);
-	return romfs_seek((ROMFILE *)_handle, offs, origin) >= 0;
+	return romfs_seek((ROMFILE *)_handle, offs, (int)whence) >= 0;
 }
 
 uint32 RomfsStream::read(void *ptr, uint32 len) {

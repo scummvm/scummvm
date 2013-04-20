@@ -345,18 +345,17 @@ uint32 AssetFdReadStream::read(void *dataPtr, uint32 dataSize) {
 }
 
 bool AssetFdReadStream::seek(int32 offset, Seek::Whence whence) {
-	int origin = whence == SEEK_END ? Seek::END : (whence == SEEK_CUR ? Seek::CUR : Seek::SET);
-	if (origin == SEEK_SET) {
+	if (whence == Seek::SET) {
 		if (_declared_len != UNKNOWN_LENGTH && offset > _declared_len)
 			offset = _declared_len;
 
 		offset += _start_off;
-	} else if (origin == SEEK_END && _declared_len != UNKNOWN_LENGTH) {
-		origin = SEEK_SET;
+	} else if (whence == Seek::END && _declared_len != UNKNOWN_LENGTH) {
+		whence = Seek::SET;
 		offset = _start_off + _declared_len + offset;
 	}
 
-	int ret = lseek(_fd, offset, origin);
+	int ret = lseek(_fd, offset, (int)whence);
 
 	if (ret == -1)
 		return false;
