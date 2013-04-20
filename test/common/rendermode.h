@@ -63,7 +63,7 @@ class RenderModeTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(Common::getRenderModeCode(Common::kRenderDefault), null_p);
 	}
 
-	void test_render_2_guio () {
+	void test_render_2_guio() {
 		/*
 		 * Verify that a rendermode is taken and the corresponding
 		 * GUIO_xxxxx is returned.

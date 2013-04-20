@@ -5,18 +5,27 @@
 
 class HuffmanTestSuite : public CxxTest::TestSuite
 {
+	/*
+	 * A test suite for the Huffman decoder.
+	 * The encoding used comes from the example on the Wikipedia page
+	 * for Huffman.
+	 * It could be improved by generating one at runtime.
+	 */
+
 	public:
 	void test_get_with_full_symbols() {
 
 		/*
-		 * Testing the Huffman decoder.
+		 * The class can be initialized with or without providing
+		 * a max_length and a symbol table.
+		 * We test with a table.
 		 *
 		 * Encoding (arbitrary, for testing purpouses):
-		 * A=010
-		 * B=011
-		 * C=11
-		 * D=00
-		 * E=10
+		 * 0xA=010
+		 * 0xB=011
+		 * 0xC=11
+		 * 0xD=00
+		 * 0xE=10
 		 */
 
 		uint32 codeCount = 5;
@@ -25,7 +34,7 @@ class HuffmanTestSuite : public CxxTest::TestSuite
 		const uint32 codes[]  = {0x2, 0x3, 0x3, 0x0, 0x2};
 		const uint32 symbols[]  = {0xA, 0xB, 0xC, 0xD, 0xE};
 
-		Common::Huffman h (maxLength, codeCount, codes, lengths, symbols);
+		Common::Huffman h(maxLength, codeCount, codes, lengths, symbols);
 
 		byte input[] = {0x4F, 0x20};
 		// Provided input...
@@ -53,8 +62,8 @@ class HuffmanTestSuite : public CxxTest::TestSuite
 	void test_get_without_symbols() {
 
 		/*
-		 * This is basically the same as above, but
-		 * I pass minimal arguments.
+		 * This is basically the same as test_get_with_full_symbols, but
+		 * I only pass the minimal required arguments.
 		 * Specifically, I avoid passing the symbols table, so that
 		 * array indices are used instead.
 		 *
@@ -71,7 +80,7 @@ class HuffmanTestSuite : public CxxTest::TestSuite
 		const uint8 lengths[] = {3,3,2,2,2};
 		const uint32 codes[]  = {0x2, 0x3, 0x3, 0x0, 0x2};
 
-		Common::Huffman h (0, codeCount, codes, lengths, 0);
+		Common::Huffman h(0, codeCount, codes, lengths, 0);
 
 		byte input[] = {0x4F, 0x20};
 		uint32 expected[] = {0, 1, 2, 3, 4, 3 ,3};
@@ -91,16 +100,23 @@ class HuffmanTestSuite : public CxxTest::TestSuite
 	void test_get_after_set_symbols() {
 
 		/*
-		 * Another variation of the above.
+		 * Another variation of test_get_with_full_symbols.
 		 * I use the setSymbols method to define, a posteriori,
-		 * an alphabet to be used in place of array indices
+		 * an alphabet to be used in place of array indices.
+		 * The encoding is, at first,
+		 * 0=010
+		 * 1=011
+		 * 2=11
+		 * 3=00
+		 * 4=10
+		 * (=array indices).
 		 */
 
 		uint32 codeCount = 5;
 		const uint8 lengths[] = {3,3,2,2,2};
 		const uint32 codes[]  = {0x2, 0x3, 0x3, 0x0, 0x2};
 
-		Common::Huffman h (0, codeCount, codes, lengths, 0);
+		Common::Huffman h(0, codeCount, codes, lengths, 0);
 
 		const uint32 symbols[]  = {0xA, 0xB, 0xC, 0xD, 0xE};
 		h.setSymbols(symbols);
