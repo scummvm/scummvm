@@ -64,7 +64,7 @@ template <typename TYPE>
 class BaseArray : public BaseArrayBase<TYPE> {
 	public:
 	bool persist(BasePersistenceManager *persistMgr) {
-		int j;
+		int32 j;
 		if (persistMgr->getIsSaving()) {
 			j = Common::Array<TYPE>::size();
 			persistMgr->transfer("ArraySize", &j);
@@ -90,7 +90,7 @@ template <>
 class BaseArray<char *> : public BaseArrayBase<char *> {
 	public:
 	bool persist(BasePersistenceManager *persistMgr) {
-		int j;
+		int32 j;
 		if (persistMgr->getIsSaving()) {
 			j = Common::Array<char *>::size();
 			persistMgr->transfer("ArraySize", &j);
@@ -116,7 +116,7 @@ template <>
 class BaseArray<const char *> : public BaseArrayBase<const char *> {
 public:
 	bool persist(BasePersistenceManager *persistMgr) {
-		int j;
+		int32 j;
 		if (persistMgr->getIsSaving()) {
 			j = Common::Array<const char *>::size();
 			persistMgr->transfer("ArraySize", &j);
