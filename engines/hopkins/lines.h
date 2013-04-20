@@ -40,6 +40,8 @@ struct LigneZoneItem {
 
 #define INVALID_LINE_VALUE 1300
 
+#define MAX_LINES 400
+
 struct RouteItem;
 
 struct LigneItem {
@@ -111,7 +113,7 @@ private:
 	int _pathFindingMaxDepth;
 	SmoothItem _smoothRoute[4000];
 	Directions _smoothMoveDirection;
-	LigneZoneItem _zoneLine[401];
+	LigneZoneItem _zoneLine[MAX_LINES+1];
 	SegmentItem _segment[101];
 	SquareZoneItem _squareZone[101];
 	int _currentSegmentId;
@@ -134,7 +136,7 @@ private:
 	RouteItem *_testRoute0;
 	RouteItem *_testRoute1;
 	int16 *_lineBuf;
-	LigneItem _lineItem[400];
+	LigneItem _lineItem[MAX_LINES];
 	RouteItem _bestRoute[8001];
 	int _zoneSkipCount;
 	int _oldMouseZoneId;

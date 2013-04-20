@@ -252,7 +252,7 @@ void LinesManager::addZoneLine(int idx, int fromX, int fromY, int destX, int des
  * Add Line
  */
 void LinesManager::addLine(int lineIdx, Directions direction, int fromX, int fromY, int destX, int destY) {
-	assert (lineIdx <= MAX_LINES);
+	assert (lineIdx < MAX_LINES);
 
 	if (_linesNumb < lineIdx)
 		_linesNumb = lineIdx;
