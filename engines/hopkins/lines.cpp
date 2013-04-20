@@ -33,10 +33,11 @@ namespace Hopkins {
 LinesManager::LinesManager(HopkinsEngine *vm) {
 	_vm = vm;
 
-	for (int i = 0; i < MAX_LINES; ++i) {
+	for (int i = 0; i < MAX_LINES + 1; ++i)
 		Common::fill((byte *)&_zoneLine[i], (byte *)&_zoneLine[i] + sizeof(LigneZoneItem), 0);
+
+	for (int i = 0; i < MAX_LINES; ++i)
 		Common::fill((byte *)&_lineItem[i], (byte *)&_lineItem[i] + sizeof(LigneItem), 0);
-	}
 
 	for (int i = 0; i < 4000; ++i)
 		Common::fill((byte *)&_smoothRoute[i], (byte *)&_smoothRoute[i] + sizeof(SmoothItem), 0);
@@ -208,7 +209,7 @@ void LinesManager::addZoneLine(int idx, int fromX, int fromY, int destX, int des
 		_bobZoneFl[bobZoneIdx] = true;
 		_bobZone[bobZoneIdx] = fromY;
 	} else {
-		assert (idx < MAX_LINES);
+		assert (idx < MAX_LINES + 1);
 		_zoneLine[idx]._zoneData = (int16 *)_vm->_globals->freeMemory((byte *)_zoneLine[idx]._zoneData);
 
 		int distX = abs(fromX - destX);
@@ -2695,7 +2696,7 @@ void LinesManager::initSquareZones() {
 		curZone->_maxZoneLineIdx = 0;
 	}
 
-	for (int idx = 0; idx < MAX_LINES; ++idx) {
+	for (int idx = 0; idx < MAX_LINES + 1; ++idx) {
 		int16 *dataP = _zoneLine[idx]._zoneData;
 		if (dataP == NULL)
 			continue;
@@ -2778,7 +2779,7 @@ void LinesManager::clearAllZones() {
  * Remove Zone Line
  */
 void LinesManager::removeZoneLine(int idx) {
-	assert (idx < MAX_LINES);
+	assert (idx < MAX_LINES + 1);
 	_zoneLine[idx]._zoneData = (int16 *)_vm->_globals->freeMemory((byte *)_zoneLine[idx]._zoneData);
 }
 
