@@ -358,7 +358,7 @@ bool UITiledImage::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void UITiledImage::correctSize(int *width, int *height) {
+void UITiledImage::correctSize(int32 *width, int32 *height) {
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
 	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
 

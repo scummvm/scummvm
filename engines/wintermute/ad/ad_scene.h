@@ -71,7 +71,7 @@ public:
 	bool getViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr);
 	BaseViewport *_viewport;
 	BaseFader *_fader;
-	int _pfPointsNum;
+	int32 _pfPointsNum;
 	void pfPointsAdd(int x, int y, int distance);
 	void pfPointsStart();
 	bool _initialized;

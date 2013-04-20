@@ -38,7 +38,7 @@ class BaseSubFrame;
 class UITiledImage : public BaseObject {
 public:
 	DECLARE_PERSISTENT(UITiledImage, BaseObject)
-	void correctSize(int *width, int *height);
+	void correctSize(int32 *width, int32 *height);
 	bool loadFile(const char *filename);
 	bool loadBuffer(byte *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;

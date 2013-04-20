@@ -602,7 +602,7 @@ int BaseGame::getSequence() {
 
 
 //////////////////////////////////////////////////////////////////////////
-void BaseGame::setOffset(int offsetX, int offsetY) {
+void BaseGame::setOffset(int32 offsetX, int32 offsetY) {
 	_offsetX = offsetX;
 	_offsetY = offsetY;
 }
@@ -2995,7 +2995,7 @@ bool BaseGame::showCursor() {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::saveGame(int slot, const char *desc, bool quickSave) {
+bool BaseGame::saveGame(int32 slot, const char *desc, bool quickSave) {
 	return SaveLoad::saveGame(slot, desc, quickSave, _gameRef);
 }
 
@@ -3840,7 +3840,7 @@ bool BaseGame::isRightDoubleClick() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::isDoubleClick(int buttonIndex) {
+bool BaseGame::isDoubleClick(int32 buttonIndex) {
 	uint32 maxDoubleCLickTime = 500;
 	int maxMoveX = 4;
 	int maxMoveY = 4;
