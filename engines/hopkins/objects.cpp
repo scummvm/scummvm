@@ -3087,6 +3087,7 @@ void ObjectsManager::setBobAnimDataIdx(int idx, int animIdx) {
  * Set Hopkins animation
  */
 void ObjectsManager::setBobAnimation(int idx) {
+	assert (idx < 36);
 	BobItem *bob = &_bob[idx];
 	if (!bob->_disabledAnimationFl)
 		return;
@@ -3102,6 +3103,7 @@ void ObjectsManager::setBobAnimation(int idx) {
  * Stop Hopkins animation
  */
 void ObjectsManager::stopBobAnimation(int idx) {
+	assert (idx < 36);
 	_bob[idx]._disabledAnimationFl = true;
 }
 
