@@ -73,7 +73,7 @@ ScValue::ScValue(BaseGame *inGame, bool val) : BaseClass(inGame) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue::ScValue(BaseGame *inGame, int val) : BaseClass(inGame) {
+ScValue::ScValue(BaseGame *inGame, int32 val) : BaseClass(inGame) {
 	_type = VAL_INT;
 	_valInt = val;
 
@@ -951,7 +951,7 @@ int ScValue::compareStrict(ScValue *val1, ScValue *val2) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::setProperty(const char *propName, int value) {
+bool ScValue::setProperty(const char *propName, int32 value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;
