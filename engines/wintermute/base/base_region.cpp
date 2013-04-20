@@ -493,7 +493,7 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.size() == 0) {
 		BasePlatform::setRectEmpty(rect);
 	} else {
-		int minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
+		int32 minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
 
 		for (uint32 i = 0; i < _points.size(); i++) {
 			minX = MIN(minX, _points[i]->x);

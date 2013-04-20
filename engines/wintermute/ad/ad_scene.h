@@ -67,16 +67,16 @@ public:
 	bool pointInViewport(int x, int y);
 	int getOffsetTop();
 	int getOffsetLeft();
-	bool getViewportSize(int *width = nullptr, int *height = nullptr);
-	bool getViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr);
+	bool getViewportSize(int32 *width = nullptr, int32 *height = nullptr);
+	bool getViewportOffset(int32 *offsetX = nullptr, int32 *offsetY = nullptr);
 	BaseViewport *_viewport;
 	BaseFader *_fader;
 	int32 _pfPointsNum;
 	void pfPointsAdd(int x, int y, int distance);
 	void pfPointsStart();
 	bool _initialized;
-	bool correctTargetPoint(int startX, int startY, int *x, int *y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
-	bool correctTargetPoint2(int startX, int startY, int *targetX, int *targetY, bool checkFreeObjects, BaseObject *requester);
+	bool correctTargetPoint(int32 startX, int32 startY, int32 *x, int32 *y, bool checkFreeObjects = false, BaseObject *requester = nullptr);
+	bool correctTargetPoint2(int32 startX, int32 startY, int32 *targetX, int32 *targetY, bool checkFreeObjects, BaseObject *requester);
 	DECLARE_PERSISTENT(AdScene, BaseObject)
 	bool displayRegionContent(AdRegion *region = nullptr, bool display3DOnly = false);
 	bool displayRegionContentOld(AdRegion *region = nullptr);

@@ -533,7 +533,7 @@ TimeDate BasePersistenceManager::getTimeDate() {
 }
 
 void BasePersistenceManager::putFloat(float val) {
-	int32 exponent = 0;
+	int exponent = 0;
 	float significand = frexp(val, &exponent);
 	Common::String str = Common::String::format("FS%f", significand);
 	_saveStream->writeUint32LE(str.size());
@@ -556,7 +556,7 @@ float BasePersistenceManager::getFloat() {
 }
 
 void BasePersistenceManager::putDouble(double val) {
-	int32 exponent = 0;
+	int exponent = 0;
 	double significand = frexp(val, &exponent);
 	Common::String str = Common::String::format("DS%f", significand);
 	_saveStream->writeUint32LE(str.size());

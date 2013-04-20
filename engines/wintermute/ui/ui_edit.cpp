@@ -481,7 +481,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SelStart") == 0) {
 		_selStart = value->getInt();
-		_selStart = MAX(_selStart, 0);
+		_selStart = MAX<int32>(_selStart, 0);
 		_selStart = (int)MIN((size_t)_selStart, strlen(_text));
 		return STATUS_OK;
 	}
@@ -491,7 +491,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SelEnd") == 0) {
 		_selEnd = value->getInt();
-		_selEnd = MAX(_selEnd, 0);
+		_selEnd = MAX<int32>(_selEnd, 0);
 		_selEnd = (int)MIN((size_t)_selEnd, strlen(_text));
 		return STATUS_OK;
 	}
@@ -600,8 +600,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 
 	bool focused = isFocused();
 
-	_selStart = MAX(_selStart, 0);
-	_selEnd   = MAX(_selEnd, 0);
+	_selStart = MAX<int32>(_selStart, 0);
+	_selEnd   = MAX<int32>(_selEnd, 0);
 
 	_selStart = (int)MIN((size_t)_selStart, strlen(_text));
 	_selEnd   = (int)MIN((size_t)_selEnd,   strlen(_text));
@@ -609,11 +609,11 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
 	int cursorWidth = font->getTextWidth((byte *)_cursorChar);
 
-	int s1, s2;
+	int32 s1, s2;
 	bool curFirst;
 	// modify scroll offset
 	if (_selStart >= _selEnd) {
-		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX(0, _selEnd - _scrollOffset)) > _width - cursorWidth - 2 * _frameWidth) {
+		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX<int32>(0, _selEnd - _scrollOffset)) > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
 			if (_scrollOffset >= (int)strlen(_text)) {
 				break;
@@ -626,8 +626,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		s2 = _selStart;
 		curFirst = true;
 	} else {
-		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX(0, _selStart - _scrollOffset)) +
-		        sfont->getTextWidth((byte *)(_text + MAX(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
+		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX<int32>(0, _selStart - _scrollOffset)) +
+		        sfont->getTextWidth((byte *)(_text + MAX<int32>(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
 
 		        > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
@@ -766,7 +766,7 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 				deleteChars(_selStart, _selEnd);
 			}
 			if (_selEnd >= _selStart) {
-				_selEnd -= MAX(1, _selEnd - _selStart);
+				_selEnd -= MAX<int32>(1, _selEnd - _selStart);
 			}
 			_selStart = _selEnd;
 

@@ -864,14 +864,14 @@ int AdObject::getHeight() {
 		return 0;
 	} else {
 		BaseFrame *frame = _currentSprite->_frames[_currentSprite->_currentFrame];
-		int ret = 0;
+		int32 ret = 0;
 		for (uint32 i = 0; i < frame->_subframes.size(); i++) {
 			ret = MAX(ret, frame->_subframes[i]->_hotspotY);
 		}
 
 		if (_zoomable) {
 			float zoom = ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY);
-			ret = (int)(ret * zoom / 100);
+			ret = (int32)(ret * zoom / 100);
 		}
 		return ret;
 	}
@@ -945,7 +945,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	}
 
 
-	int x, y, width, height;
+	int32 x, y, width, height;
 
 	x = _posX;
 	y = _posY;
@@ -981,8 +981,8 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	}
 
 
-	x = MIN(MAX(0, x), _gameRef->_renderer->getWidth() - width);
-	y = MIN(MAX(0, y), _gameRef->_renderer->getHeight() - height);
+	x = MIN(MAX<int32>(0, x), _gameRef->_renderer->getWidth() - width);
+	y = MIN(MAX<int32>(0, y), _gameRef->_renderer->getHeight() - height);
 
 	_sentence->_width = width;
 

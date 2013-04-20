@@ -65,10 +65,10 @@ bool BaseViewport::persist(BasePersistenceManager *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseViewport::setRect(int left, int top, int right, int bottom, bool noCheck) {
+bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck) {
 	if (!noCheck) {
-		left = MAX(left, 0);
-		top = MAX(top, 0);
+		left = MAX<int32>(left, 0);
+		top = MAX<int32>(top, 0);
 		right = MIN(right, BaseEngine::instance().getRenderer()->getWidth());
 		bottom = MIN(bottom, BaseEngine::instance().getRenderer()->getHeight());
 	}

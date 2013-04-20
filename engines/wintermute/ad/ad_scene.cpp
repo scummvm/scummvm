@@ -976,14 +976,14 @@ bool AdScene::traverseNodes(bool doUpdate) {
 
 
 	//////////////////////////////////////////////////////////////////////////
-	int viewportWidth, viewportHeight;
+	int32 viewportWidth, viewportHeight;
 	getViewportSize(&viewportWidth, &viewportHeight);
 
-	int viewportX, viewportY;
+	int32 viewportX, viewportY;
 	getViewportOffset(&viewportX, &viewportY);
 
-	int scrollableX = _width  - viewportWidth;
-	int scrollableY = _height - viewportHeight;
+	int32 scrollableX = _width  - viewportWidth;
+	int32 scrollableY = _height - viewportHeight;
 
 	double widthRatio  = scrollableX <= 0 ? 0 : ((double)(_offsetLeft) / (double)scrollableX);
 	double heightRatio = scrollableY <= 0 ? 0 : ((double)(_offsetTop)  / (double)scrollableY);
@@ -1272,16 +1272,16 @@ bool AdScene::update() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdScene::scrollTo(int offsetX, int offsetY) {
-	int viewportWidth, viewportHeight;
+	int32 viewportWidth, viewportHeight;
 	getViewportSize(&viewportWidth, &viewportHeight);
 
-	int origOffsetLeft = _targetOffsetLeft;
-	int origOffsetTop = _targetOffsetTop;
+	int32 origOffsetLeft = _targetOffsetLeft;
+	int32 origOffsetTop = _targetOffsetTop;
 
-	_targetOffsetLeft = MAX(0, offsetX - viewportWidth / 2);
+	_targetOffsetLeft = MAX<int32>(0, offsetX - viewportWidth / 2);
 	_targetOffsetLeft = MIN(_targetOffsetLeft, _width - viewportWidth);
 
-	_targetOffsetTop = MAX(0, offsetY - viewportHeight / 2);
+	_targetOffsetTop = MAX<int32>(0, offsetY - viewportHeight / 2);
 	_targetOffsetTop = MIN(_targetOffsetTop, _height - viewportHeight);
 
 
@@ -1317,13 +1317,13 @@ void AdScene::skipToObject(BaseObject *object) {
 
 //////////////////////////////////////////////////////////////////////////
 void AdScene::skipTo(int offsetX, int offsetY) {
-	int viewportWidth, viewportHeight;
+	int32 viewportWidth, viewportHeight;
 	getViewportSize(&viewportWidth, &viewportHeight);
 
-	_offsetLeft = MAX(0, offsetX - viewportWidth / 2);
+	_offsetLeft = MAX<int32>(0, offsetX - viewportWidth / 2);
 	_offsetLeft = MIN(_offsetLeft, _width - viewportWidth);
 
-	_offsetTop = MAX(0, offsetY - viewportHeight / 2);
+	_offsetTop = MAX<int32>(0, offsetY - viewportHeight / 2);
 	_offsetTop = MIN(_offsetTop, _height - viewportHeight);
 
 	_targetOffsetLeft = _offsetLeft;
@@ -1866,7 +1866,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	// MouseX (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "MouseX") {
-		int viewportX;
+		int32 viewportX;
 		getViewportOffset(&viewportX);
 
 		_scValue->setInt(_gameRef->_mousePos.x + _offsetLeft - viewportX);
@@ -1877,7 +1877,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	// MouseY (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "MouseY") {
-		int viewportY;
+		int32 viewportY;
 		getViewportOffset(nullptr, &viewportY);
 
 		_scValue->setInt(_gameRef->_mousePos.y + _offsetTop - viewportY);
@@ -2057,10 +2057,10 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "OffsetX") == 0) {
 		_offsetLeft = value->getInt();
 
-		int viewportWidth, viewportHeight;
+		int32 viewportWidth, viewportHeight;
 		getViewportSize(&viewportWidth, &viewportHeight);
 
-		_offsetLeft = MAX(0, _offsetLeft - viewportWidth / 2);
+		_offsetLeft = MAX<int32>(0, _offsetLeft - viewportWidth / 2);
 		_offsetLeft = MIN(_offsetLeft, _width - viewportWidth);
 		_targetOffsetLeft = _offsetLeft;
 
@@ -2073,10 +2073,10 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "OffsetY") == 0) {
 		_offsetTop = value->getInt();
 
-		int viewportWidth, viewportHeight;
+		int32 viewportWidth, viewportHeight;
 		getViewportSize(&viewportWidth, &viewportHeight);
 
-		_offsetTop = MAX(0, _offsetTop - viewportHeight / 2);
+		_offsetTop = MAX<int32>(0, _offsetTop - viewportHeight / 2);
 		_offsetTop = MIN(_offsetTop, _height - viewportHeight);
 		_targetOffsetTop = _offsetTop;
 
@@ -2361,10 +2361,10 @@ bool AdScene::afterLoad() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::correctTargetPoint2(int startX, int startY, int *targetX, int *targetY, bool checkFreeObjects, BaseObject *requester) {
+bool AdScene::correctTargetPoint2(int32 startX, int32 startY, int32 *targetX, int32 *targetY, bool checkFreeObjects, BaseObject *requester) {
 	double xStep, yStep, x, y;
-	int xLength, yLength, xCount, yCount;
-	int x1, y1, x2, y2;
+	int32 xLength, yLength, xCount, yCount;
+	int32 x1, y1, x2, y2;
 
 	x1 = *targetX;
 	y1 = *targetY;
@@ -2407,9 +2407,9 @@ bool AdScene::correctTargetPoint2(int startX, int startY, int *targetX, int *tar
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::correctTargetPoint(int startX, int startY, int *argX, int *argY, bool checkFreeObjects, BaseObject *requester) {
-	int x = *argX;
-	int y = *argY;
+bool AdScene::correctTargetPoint(int32 startX, int32 startY, int32 *argX, int32 *argY, bool checkFreeObjects, BaseObject *requester) {
+	int32 x = *argX;
+	int32 y = *argY;
 
 	if (isWalkableAt(x, y, checkFreeObjects, requester) || !_mainLayer) {
 		return STATUS_OK;
@@ -2522,7 +2522,7 @@ void AdScene::pfPointsAdd(int x, int y, int distance) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::getViewportOffset(int *offsetX, int *offsetY) {
+bool AdScene::getViewportOffset(int32 *offsetX, int32 *offsetY) {
 	AdGame *adGame = (AdGame *)_gameRef;
 	if (_viewport && !_gameRef->_editorMode) {
 		if (offsetX) {
@@ -2551,7 +2551,7 @@ bool AdScene::getViewportOffset(int *offsetX, int *offsetY) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool AdScene::getViewportSize(int *width, int *height) {
+bool AdScene::getViewportSize(int32 *width, int32 *height) {
 	AdGame *adGame = (AdGame *)_gameRef;
 	if (_viewport && !_gameRef->_editorMode) {
 		if (width) {
@@ -2581,7 +2581,7 @@ bool AdScene::getViewportSize(int *width, int *height) {
 
 //////////////////////////////////////////////////////////////////////////
 int AdScene::getOffsetLeft() {
-	int viewportX;
+	int32 viewportX;
 	getViewportOffset(&viewportX);
 
 	return _offsetLeft - viewportX;
@@ -2590,7 +2590,7 @@ int AdScene::getOffsetLeft() {
 
 //////////////////////////////////////////////////////////////////////////
 int AdScene::getOffsetTop() {
-	int viewportY;
+	int32 viewportY;
 	getViewportOffset(nullptr, &viewportY);
 
 	return _offsetTop - viewportY;
@@ -2599,7 +2599,7 @@ int AdScene::getOffsetTop() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::pointInViewport(int x, int y) {
-	int left, top, width, height;
+	int32 left, top, width, height;
 
 	getViewportOffset(&left, &top);
 	getViewportSize(&width, &height);

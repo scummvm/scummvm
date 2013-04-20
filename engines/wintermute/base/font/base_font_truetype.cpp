@@ -509,7 +509,7 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 
 
 	// persist layers
-	int numLayers;
+	int32 numLayers;
 	if (persistMgr->getIsSaving()) {
 		numLayers = _layers.size();
 		persistMgr->transfer(TMEMBER(numLayers));

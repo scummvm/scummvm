@@ -204,8 +204,8 @@ bool AdSentence::display() {
 	}
 
 	if (_gameRef->_subtitles) {
-		int x = _pos.x;
-		int y = _pos.y;
+		int32 x = _pos.x;
+		int32 y = _pos.y;
 
 		if (!_fixedPos) {
 			x = x - ((AdGame *)_gameRef)->_scene->getOffsetLeft();
@@ -213,9 +213,9 @@ bool AdSentence::display() {
 		}
 
 
-		x = MAX(x, 0);
+		x = MAX<int32>(x, 0);
 		x = MIN(x, _gameRef->_renderer->getWidth() - _width);
-		y = MAX(y, 0);
+		y = MAX<int32>(y, 0);
 
 		_font->drawText((byte *)_text, x, y, _width, _align);
 	}

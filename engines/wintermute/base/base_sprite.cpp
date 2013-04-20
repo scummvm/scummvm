@@ -298,8 +298,8 @@ bool BaseSprite::loadBuffer(byte *buffer, bool complete, int lifeTime, TSpriteCa
 
 		case TOKEN_EDITOR_BG_ALPHA:
 			parser.scanStr((char *)params, "%d", &_editorBgAlpha);
-			_editorBgAlpha = MIN(_editorBgAlpha, 255);
-			_editorBgAlpha = MAX(_editorBgAlpha, 0);
+			_editorBgAlpha = MIN<int32>(_editorBgAlpha, 255);
+			_editorBgAlpha = MAX<int32>(_editorBgAlpha, 0);
 			break;
 
 		case TOKEN_FRAME: {

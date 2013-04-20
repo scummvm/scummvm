@@ -1090,11 +1090,11 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SetMousePos") == 0) {
 		stack->correctParams(2);
-		int x = stack->pop()->getInt();
-		int y = stack->pop()->getInt();
-		x = MAX(x, 0);
+		int32 x = stack->pop()->getInt();
+		int32 y = stack->pop()->getInt();
+		x = MAX<int32>(x, 0);
 		x = MIN(x, _renderer->getWidth());
-		y = MAX(y, 0);
+		y = MAX<int32>(y, 0);
 		y = MIN(y, _renderer->getHeight());
 		Point32 p;
 		p.x = x + _renderer->_drawOffsetX;
@@ -2486,7 +2486,7 @@ bool BaseGame::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SoundBufferSize") == 0) {
 		_soundBufferSizeSec = value->getInt();
-		_soundBufferSizeSec = MAX(3, _soundBufferSizeSec);
+		_soundBufferSizeSec = MAX<int32>(3, _soundBufferSizeSec);
 		return STATUS_OK;
 	}
 

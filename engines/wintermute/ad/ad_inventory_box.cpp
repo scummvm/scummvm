@@ -84,7 +84,7 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 			_visible = false;
 		} else if (scumm_stricmp(obj->getName(), "prev") == 0) {
 			_scrollOffset -= _scrollBy;
-			_scrollOffset = MAX(_scrollOffset, 0);
+			_scrollOffset = MAX<int32>(_scrollOffset, 0);
 		} else if (scumm_stricmp(obj->getName(), "next") == 0) {
 			_scrollOffset += _scrollBy;
 		} else {
