@@ -31,9 +31,9 @@
  */
 namespace Seek {
 	enum Whence {
-		SET,
-		CUR,
-		END
+		SET = SEEK_SET,
+		CUR = SEEK_CUR,
+		END = SEEK_END
 	};
 }
 
