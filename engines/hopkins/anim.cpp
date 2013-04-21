@@ -757,7 +757,7 @@ void AnimationManager::playSequence2(const Common::String &file, uint32 rate1, u
 		f.seek(6);
 		f.read(_vm->_graphicsMan->_palette, 800);
 		f.skip(4);
-		size_t nbytes = f.readUint32LE();
+		nbytes = f.readUint32LE();
 		f.skip(14);
 		f.read(screenP, nbytes);
 
