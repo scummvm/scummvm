@@ -41,12 +41,13 @@ ObjectsManager::ObjectsManager(HopkinsEngine *vm) {
 	for (int i = 0; i < 6; ++i)
 		Common::fill((byte *)&_sprite[i], (byte *)&_sprite[i] + sizeof(SpriteItem), 0);
 
-	for (int i = 0; i < 36; ++i)
+	for (int i = 0; i < 36; ++i) {
 		Common::fill((byte *)&_bob[i], (byte *)&_bob[i] + sizeof(BobItem), 0);
+		Common::fill((byte *)&_lockedAnims[i], (byte *)&_lockedAnims[i] + sizeof(LockAnimItem), 0);
+	}
 
 	for (int i = 0; i < 30; ++i) {
 		Common::fill((byte *)&_vBob[i], (byte *)&_vBob[i] + sizeof(VBobItem), 0);
-		Common::fill((byte *)&_lockedAnims[i], (byte *)&_lockedAnims[i] + sizeof(LockAnimItem), 0);
 	}
 
 	for (int i = 0; i < 300; ++i)

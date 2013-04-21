@@ -1012,7 +1012,7 @@ void GraphicsManager::endDisplayBob() {
 			_vm->_objectsMan->resetBob(idx);
 	}
 
-	for (int idx = 1; idx <= 29; ++idx) {
+	for (int idx = 1; idx < 36; ++idx) {
 		_vm->_objectsMan->_lockedAnims[idx]._enableFl = false;
 	}
 

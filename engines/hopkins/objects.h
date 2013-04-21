@@ -239,7 +239,7 @@ public:
 	byte *_headSprites;
 	SpriteItem _sprite[6];
 	BobItem _bob[36];
-	LockAnimItem _lockedAnims[30];
+	LockAnimItem _lockedAnims[36];
 	bool _charactersEnabledFl;
 	bool _refreshBobMode10Fl;
 
