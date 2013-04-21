@@ -576,7 +576,7 @@ SmushDecoder::SmushAudioTrack::SmushAudioTrack(bool isVima, int freq, int channe
 }
 
 SmushDecoder::SmushAudioTrack::~SmushAudioTrack() {
-
+	delete _queueStream;
 }
 
 void SmushDecoder::SmushAudioTrack::init() {
