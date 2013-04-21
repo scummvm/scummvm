@@ -122,7 +122,7 @@ public:
 	void draw() const;
 	void getBoundingBox(int *x1, int *y1, int *x2, int *y2) const;
 	void update();
-	Mesh() : _numFaces(0) { }
+	Mesh();
 	~Mesh();
 
 	char _name[32];
