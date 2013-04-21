@@ -1334,7 +1334,6 @@ void WinnieEngine::init() {
 	}
 
 	_sound = new SoundMgr(this, _mixer);
-	_sound->initSound();
 	setflag(fSoundOn, true); // enable sound
 
 	memset(&_gameStateWinnie, 0, sizeof(_gameStateWinnie));

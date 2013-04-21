@@ -167,16 +167,6 @@ void SoundMgr::stopSound() {
 	_endflag = -1;
 }
 
-int SoundMgr::initSound() {
-	return -1;
-}
-
-void SoundMgr::deinitSound() {
-	stopSound();
-
-	delete _soundGen;
-}
-
 void SoundMgr::soundIsFinished() {
 	if (_endflag != -1)
 		_vm->setflag(_endflag, true);
@@ -219,6 +209,9 @@ void SoundMgr::setVolume(uint8 volume) {
 }
 
 SoundMgr::~SoundMgr() {
+	stopSound();
+
+	delete _soundGen;
 }
 
 } // End of namespace Agi

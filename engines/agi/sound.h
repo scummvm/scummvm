@@ -139,8 +139,6 @@ public:
 
 	void unloadSound(int);
 	void playSound();
-	int initSound();
-	void deinitSound();
 	void startSound(int, int);
 	void stopSound();
 

@@ -513,10 +513,7 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 AgiBase::~AgiBase() {
 	delete _rnd;
 
-	if (_sound) {
-		_sound->deinitSound();
-		delete _sound;
-	}
+	delete _sound;
 }
 
 void AgiBase::initRenderMode() {
@@ -650,7 +647,6 @@ void AgiEngine::initialize() {
 	_game.sbuf     = _game.sbuf16c; // Make sbuf point to the 16 color (+control line & priority info) AGI screen by default
 
 	_gfx->initVideo();
-	_sound->initSound();
 
 	_lastSaveTime = 0;
 
