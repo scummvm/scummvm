@@ -345,7 +345,7 @@ void GrimEngine::savegameCallback() {
 void GrimEngine::handleDebugLoadResource() {
 	void *resource = NULL;
 	int c, i = 0;
-	char buf[512];
+	char buf[513];
 
 	// Tool for debugging the loading of a particular resource without
 	// having to actually make it all the way to it in the game
