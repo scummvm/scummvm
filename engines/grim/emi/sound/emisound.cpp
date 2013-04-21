@@ -138,7 +138,11 @@ void EMISound::setMusicState(int stateId) {
 	}
 	if (stateId == 0)
 		return;
-	if (_musicTable != NULL && _musicTable[stateId]._id != stateId) {
+	if (_musicTable == NULL) {
+		warning("No music table loaded");
+		return;
+	}
+	if (_musicTable[stateId]._id != stateId) {
 		warning("Attempted to play track #%d, not found in music table!", stateId);
 		return;
 	}
