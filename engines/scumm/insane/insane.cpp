@@ -466,7 +466,7 @@ void Insane::init_enemyStruct(int n, int32 handler, int32 initializer,
 	_enemy[n].isEmpty = isEmpty;
 	_enemy[n].weapon = weapon;
 	_enemy[n].sound = sound;
-	strncpy(_enemy[n].filename, filename, 20);
+	Common::strlcpy(_enemy[n].filename, filename, 20);
 	_enemy[n].costume4 = costume4;
 	_enemy[n].costume6 = costume6;
 	_enemy[n].costume5 = costume5;
