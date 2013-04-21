@@ -529,6 +529,9 @@ Common::String Menu::getAgeLabel(GameState *gameState) {
 	// Look for the age name
 	const DirectorySubEntry *desc = _vm->getFileDescription("AGES", 1000, 0, DirectorySubEntry::kTextMetadata);
 
+	if (!desc)
+		error("Unable to load age descriptions.");
+
 	Common::String label = desc->getTextData(_vm->_db->getAgeLabelId(age));
 	label.toUppercase();
 
