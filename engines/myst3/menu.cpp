@@ -154,6 +154,9 @@ Dialog::Dialog(Myst3Engine *vm, uint id):
 	const DirectorySubEntry *movieDesc = _vm->getFileDescription("DLOG", id, 0, DirectorySubEntry::kDialogMovie);
 	const DirectorySubEntry *countDesc = _vm->getFileDescription("DLGI", id, 0, DirectorySubEntry::kNumMetadata);
 
+	if (!buttonsDesc || !movieDesc || !countDesc)
+		error("Unable to load dialog %d", id);
+
 	// Retrieve button count
 	_buttonCount = countDesc->getMiscData(0);
 	assert(_buttonCount <= 3);
