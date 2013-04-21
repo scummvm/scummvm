@@ -70,7 +70,7 @@ public:
 		void loadBinary(Common::SeekableReadStream *data, Material *materials[]);
 		void loadText(TextSplitter *ts, Material *materials[]);
 		void changeMaterials(Material *materials[]);
-		Geoset() : _numMeshes(0) { }
+		Geoset() : _numMeshes(0), _meshes(NULL) { }
 		~Geoset();
 
 		int _numMeshes;
