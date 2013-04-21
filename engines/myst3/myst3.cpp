@@ -1335,8 +1335,9 @@ SunSpot Myst3Engine::computeSunspotsIntensity(float pitch, float heading) {
 			result.radius = distance;
 			result.color = s->color;
 			result.intensity = s->intensity;
+			result.variableIntensity = s->variableIntensity;
 
-			if (s->variableIntensity) {
+			if (result.variableIntensity) {
 				result.radius = value * distance / 100;
 			}
 		}
