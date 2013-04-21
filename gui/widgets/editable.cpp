@@ -24,7 +24,7 @@
 #include "gui/widgets/editable.h"
 #include "gui/gui-manager.h"
 #include "graphics/font.h"
-
+#include "gui/error.h"
 namespace GUI {
 
 EditableWidget::EditableWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
@@ -41,7 +41,8 @@ void EditableWidget::init() {
 	_caretVisible = false;
 	_caretTime = 0;
 	_caretPos = 0;
-
+	_minLength = 2;
+	_maxLength = 11;
 	_caretInverse = false;
 
 	_editScrollOffset = 0;
@@ -119,8 +120,13 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 	case Common::KEYCODE_RETURN:
 	case Common::KEYCODE_KP_ENTER:
 		// confirm edit and exit editmode
-		endEditMode();
-		dirty = true;
+		if ((int)_editString.size() >= _minLength) {
+			endEditMode();
+			dirty = true;
+		}
+		else {
+			displayErrorDialog("At least 2 characters");
+		}
 		break;
 
 	case Common::KEYCODE_ESCAPE:
@@ -225,14 +231,19 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 }
 
 void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty, bool &forcecaret, bool &handled) {
-	if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
-		_caretPos++;
-		dirty = true;
-		forcecaret = true;
+	if ((int)_editString.size() < _maxLength ) {
+		if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
+			_caretPos++;
+			dirty = true;
+			forcecaret = true;
 
-		sendCommand(_cmd, 0);
-	} else {
-		handled = false;
+			sendCommand(_cmd, 0);
+		} else {
+			handled = false;
+		}
+	}
+	else {
+		displayErrorDialog("At most 11 characters");
 	}
 }
 

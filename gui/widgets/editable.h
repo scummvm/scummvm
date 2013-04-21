@@ -45,7 +45,8 @@ protected:
 	String		_editString;
 
 	uint32		_cmd;
-
+	int 		_minLength;
+	int		_maxLength;
 	bool		_caretVisible;
 	uint32		_caretTime;
 	int			_caretPos;
