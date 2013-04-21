@@ -691,7 +691,8 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 			return false;
 	}
 
-	Common::parseBool(node->values["center"], center);
+	if (!Common::parseBool(node->values["center"], center))
+		return false;
 
 	if (node->values["type"] == "vertical")
 		_theme->getEvaluator()->addLayout(GUI::ThemeLayout::kLayoutVertical, spacing, center);
