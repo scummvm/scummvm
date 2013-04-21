@@ -285,6 +285,7 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_boxData2 = new Math::Vector3d();
 	_numTexSets = 0;
 	_setType = 0;
+	_boneNames = NULL;
 
 	loadMesh(data);
 }
@@ -302,6 +303,7 @@ EMIModel::~EMIModel() {
 	delete[] _boneInfos;
 	delete[] _vertexBone;
 	delete[] _vertexBoneInfo;
+	delete[] _boneNames;
 	delete _sphereData;
 	delete _boxData;
 	delete _boxData2;
