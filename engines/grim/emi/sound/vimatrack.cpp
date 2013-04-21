@@ -134,7 +134,9 @@ int32 VimaTrack::getDataFromRegion(SoundDesc *sound, int region, byte **buf, int
 }
 void VimaTrack::playTrack() {
 	//Common::StackLock lock(_mutex);
-	assert(_stream);
+	if (!_stream) {
+		error("Stream not loaded");
+	}
 	byte *data = NULL;
 	int32 result = 0;
 	
