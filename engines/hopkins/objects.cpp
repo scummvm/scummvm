@@ -3441,6 +3441,7 @@ void ObjectsManager::disableVerb(int idx, int a2) {
 	case 13:
 	case 22:
 		curZone->_verbFl8 = 0;
+		break;
 	case 14:
 	case 21:
 	case 25:
