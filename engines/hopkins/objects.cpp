@@ -987,7 +987,7 @@ void ObjectsManager::computeSprite(int idx) {
 // Before Sort
 void ObjectsManager::beforeSort(SortMode sortMode, int index, int priority) {
 	++_sortedDisplayCount;
-	assert (_sortedDisplayCount <= 48);
+	assert(_sortedDisplayCount <= 48);
 
 	_sortedDisplay[_sortedDisplayCount]._sortMode = sortMode;
 	_sortedDisplay[_sortedDisplayCount]._index = index;
@@ -1228,7 +1228,7 @@ void ObjectsManager::displayVBob() {
  * Get Sprite X coordinate
  */
 int ObjectsManager::getSpriteX(int idx) {
-	assert (idx  <= MAX_SPRITE);
+	assert(idx  <= MAX_SPRITE);
 	return _sprite[idx]._spritePos.x;
 }
 
@@ -1236,7 +1236,7 @@ int ObjectsManager::getSpriteX(int idx) {
  * Get Sprite Y coordinate
  */
 int ObjectsManager::getSpriteY(int idx) {
-	assert (idx  <= MAX_SPRITE);
+	assert(idx  <= MAX_SPRITE);
 	return _sprite[idx]._spritePos.y;
 }
 
@@ -1260,12 +1260,12 @@ void ObjectsManager::clearSprite() {
 }
 
 void ObjectsManager::animateSprite(int idx) {
-	assert (idx  <= MAX_SPRITE);
+	assert(idx  <= MAX_SPRITE);
 	_sprite[idx]._animationType = 1;
 }
 
 void ObjectsManager::addStaticSprite(const byte *spriteData, Common::Point pos, int idx, int spriteIndex, int zoomFactor, bool flipFl, int deltaX, int deltaY) {
-	assert (idx  <= MAX_SPRITE);
+	assert(idx  <= MAX_SPRITE);
 
 	SpriteItem *spr = &_sprite[idx];
 	spr->_spriteData = spriteData;
@@ -1298,7 +1298,7 @@ void ObjectsManager::removeSprite(int idx) {
  * Set Sprite X coordinate
  */
 void ObjectsManager::setSpriteX(int idx, int xp) {
-	assert (idx  <= MAX_SPRITE);
+	assert(idx  <= MAX_SPRITE);
 	_sprite[idx]._spritePos.x = xp;
 }
 
@@ -1306,7 +1306,7 @@ void ObjectsManager::setSpriteX(int idx, int xp) {
  * Set Sprite Y coordinate
  */
 void ObjectsManager::setSpriteY(int idx, int yp) {
-	assert (idx  <= MAX_SPRITE);
+	assert(idx  <= MAX_SPRITE);
 	_sprite[idx]._spritePos.y = yp;
 }
 
@@ -1314,19 +1314,19 @@ void ObjectsManager::setSpriteY(int idx, int yp) {
  * Set Sprite Index
  */
 void ObjectsManager::setSpriteIndex(int idx, int spriteIndex) {
-	assert (idx  <= MAX_SPRITE);
+	assert(idx  <= MAX_SPRITE);
 	_sprite[idx]._spriteIndex = spriteIndex;
 }
 
 // Set Sprite Size
 void ObjectsManager::setSpriteZoom(int idx, int zoomFactor) {
-	assert (idx  <= MAX_SPRITE);
+	assert(idx  <= MAX_SPRITE);
 	if (!_sprite[idx]._rleFl)
 		_sprite[idx]._zoomFactor = zoomFactor;
 }
 
 void ObjectsManager::setFlipSprite(int idx, bool flipFl) {
-	assert (idx  <= MAX_SPRITE);
+	assert(idx  <= MAX_SPRITE);
 	if (!_sprite[idx]._rleFl)
 		_sprite[idx]._flipFl = flipFl;
 }
@@ -3087,7 +3087,7 @@ void ObjectsManager::setBobAnimDataIdx(int idx, int animIdx) {
  * Set Hopkins animation
  */
 void ObjectsManager::setBobAnimation(int idx) {
-	assert (idx < 36);
+	assert(idx < 36);
 	BobItem *bob = &_bob[idx];
 	if (!bob->_disabledAnimationFl)
 		return;
@@ -3103,7 +3103,7 @@ void ObjectsManager::setBobAnimation(int idx) {
  * Stop Hopkins animation
  */
 void ObjectsManager::stopBobAnimation(int idx) {
-	assert (idx < 36);
+	assert(idx < 36);
 	_bob[idx]._disabledAnimationFl = true;
 }
 
