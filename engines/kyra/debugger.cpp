@@ -485,6 +485,9 @@ void Debugger_EoB::initialize() {
 	DCmd_Register("import_savefile", WRAP_METHOD(Debugger_EoB, cmd_importSaveFile));
 	DCmd_Register("save_original", WRAP_METHOD(Debugger_EoB, cmd_saveOriginal));
 	DCmd_Register("list_monsters", WRAP_METHOD(Debugger_EoB, cmd_listMonsters));
+	DCmd_Register("show_position", WRAP_METHOD(Debugger_EoB, cmd_showPosition));
+	DCmd_Register("set_position", WRAP_METHOD(Debugger_EoB, cmd_setPosition));
+
 }
 
 bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
@@ -570,6 +573,48 @@ bool Debugger_EoB::cmd_listMonsters(int, const char **) {
 
 	DebugPrintf("\n");
 
+	return true;
+}
+
+bool Debugger_EoB::cmd_showPosition(int, const char **) {
+	DebugPrintf("\nCurrent level:      %d\nCurrent Sub Level:  %d\nCurrent block:      %d\nCurrent direction:  %d\n\n", _vm->_currentLevel, _vm->_currentSub, _vm->_currentBlock, _vm->_currentDirection);
+	return true;
+}
+
+bool Debugger_EoB::cmd_setPosition(int argc, const char **argv) {
+	if (argc == 4) {
+		_vm->_currentBlock = atoi(argv[3]);
+		int sub = atoi(argv[2]);
+		int level = atoi(argv[1]);
+
+		int maxLevel = (_vm->game() == GI_EOB1) ? 12 : 16;
+		if (level < 1 || level > maxLevel) {
+			DebugPrintf("<level> must be a value from 1 to %d.\n\n", maxLevel);
+			return true;
+		}
+
+		if (level != _vm->_currentLevel || sub != _vm->_currentSub) {
+			_vm->completeDoorOperations();
+			_vm->generateTempData();
+			_vm->txt()->removePageBreakFlag();
+			_vm->screen()->setScreenDim(7);
+
+			_vm->loadLevel(level, sub);
+
+			if (_vm->_dialogueField)
+				_vm->restoreAfterDialogueSequence();
+		}
+
+		_vm->moveParty(_vm->_currentBlock);
+
+		_vm->_sceneUpdateRequired = true;
+		_vm->gui_drawAllCharPortraitsWithStats();
+		DebugPrintf("Success.\n\n");
+
+	} else {
+		DebugPrintf("Syntax:   set_position <level>, <sub level>, <block>\n");
+		DebugPrintf("          (Warning: The sub level and block position parameters will not be checked. Invalid parameters may cause problems.)\n\n");
+	}
 	return true;
 }
 
