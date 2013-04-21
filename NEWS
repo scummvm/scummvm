@@ -77,6 +77,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Handle double-clicking in the Macintosh version of Loom.
    - Major bugfixes in INSANE (the Full Throttle bike fights).
 
+ TOUCHE:
+   - Added support for Enhanced Music by James Woodcock
+     (http://www.jameswoodcock.co.uk/category/scummvm-music-enhancement-project/).
+
+
 1.5.0 (2012-07-27)
  New Games:
    - Added support for Backyard Baseball 2003.
