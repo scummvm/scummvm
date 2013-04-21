@@ -310,16 +310,16 @@ private:
 
 	StateData _data;
 
-	struct Description {
-		Description() {}
-		Description(uint16 v, const char *n, bool u) : var(v), name(n), unknown(u) {}
+	struct VarDescription {
+		VarDescription() : var(0), name(0), unknown(0) {}
+		VarDescription(uint16 v, const char *n, bool u) : var(v), name(n), unknown(u) {}
 
 		uint16 var;
 		const char *name;
 		bool unknown;
 	};
 
-	Common::HashMap<uint16, Description> _descriptions;
+	Common::HashMap<uint16, VarDescription> _varDescriptions;
 
 	void checkRange(uint16 var);
 

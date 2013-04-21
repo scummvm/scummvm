@@ -77,7 +77,7 @@ GameState::StateData::StateData() {
 GameState::GameState(Myst3Engine *vm):
 	_vm(vm) {
 
-#define VAR(var, x, unk) _descriptions.setVal(var, Description(var, #x, unk));
+#define VAR(var, x, unk) _varDescriptions.setVal(var, VarDescription(var, #x, unk));
 
 	VAR(14, CursorTransparency, false)
 
@@ -432,8 +432,8 @@ int32 GameState::getVar(uint16 var) {
 void GameState::setVar(uint16 var, int32 value) {
 	checkRange(var);
 
-	if (_descriptions.contains(var)) {
-		const Description &d = _descriptions.getVal(var);
+	if (_varDescriptions.contains(var)) {
+		const VarDescription &d = _varDescriptions.getVal(var);
 		if (d.unknown)
 			warning("A script is writing to the unimplemented engine-mapped var %d (%s)", var, d.name);
 	}
@@ -486,22 +486,22 @@ int32 GameState::valueOrVarValue(int16 value) {
 }
 
 int32 GameState::engineGet(uint16 var) {
-	if (!_descriptions.contains(var))
+	if (!_varDescriptions.contains(var))
 		error("The engine is trying to access an undescribed var (%d)", var);
 
 	return _data.vars[var];
 }
 
 void GameState::engineSet(uint16 var, int32 value) {
-	if (!_descriptions.contains(var))
+	if (!_varDescriptions.contains(var))
 		error("The engine is trying to access an undescribed var (%d)", var);
 
 	_data.vars[var] = value;
 }
 
 const Common::String GameState::describeVar(uint16 var) {
-	if (_descriptions.contains(var)) {
-		const Description &d = _descriptions.getVal(var);
+	if (_varDescriptions.contains(var)) {
+		const VarDescription &d = _varDescriptions.getVal(var);
 
 		return Common::String::format("v%s", d.name);
 	} else {
