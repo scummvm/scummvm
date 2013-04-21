@@ -75,8 +75,10 @@ bool Node::dumpFaceMask(uint16 index, int face, DirectorySubEntry::ResourceType 
 
 	const DirectorySubEntry *maskDesc = _vm->getFileDescription(0, index, face, type);
 
-	if (!maskDesc)
+	if (!maskDesc) {
+		delete[] mask;
 		return false;
+	}
 
 	Common::MemoryReadStream *maskStream = maskDesc->getData();
 
