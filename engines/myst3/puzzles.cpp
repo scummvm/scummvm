@@ -1276,7 +1276,7 @@ void Puzzles::symbolCodesInit(uint16 var, uint16 posX, uint16 posY) {
 			break;
 		}
 
-	if (!node)
+	if (!code)
 		error("Unable to find puzzle data for node %d", node);
 
 	int32 value = _vm->_state->getVar(var);
