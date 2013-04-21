@@ -59,7 +59,7 @@ public:
 	uint32 _flags;
 	EMIModel *_parent;
 	
-	EMIMeshFace() : _numFaces(0), _hasTexture(0), _texID(0), _flags(0), _indexes(NULL), _parent(NULL) { }
+	EMIMeshFace() : _faceLength(0), _numFaces(0), _hasTexture(0), _texID(0), _flags(0), _indexes(NULL), _parent(NULL) { }
 	~EMIMeshFace();
 	void loadFace(Common::SeekableReadStream *data);
 	void setParent(EMIModel *m) { _parent = m; }
