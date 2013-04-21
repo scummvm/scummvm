@@ -392,6 +392,7 @@ Bitmap::Bitmap(const Graphics::PixelBuffer &buf, int w, int h, const char *fname
 
 Bitmap::Bitmap() {
 	_data = new BitmapData();
+	_currImage = 0;
 }
 
 Bitmap *Bitmap::create(const Common::String &filename) {
