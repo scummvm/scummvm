@@ -98,7 +98,7 @@ void WagProperty::setDefaults() {
 }
 
 void WagProperty::deleteData() {
-	delete _propData;
+	delete[] _propData;
 	_propData = NULL;
 }
 
