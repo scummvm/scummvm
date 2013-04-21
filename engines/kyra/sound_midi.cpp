@@ -323,7 +323,7 @@ void MidiOutput::setSourceVolume(int source, int volume, bool apply) {
 		for (int i = 0; i < 16; ++i) {
 			// Controller 0 in the state table should always be '7' aka
 			// volume control
-			byte realVol = (_channels[i].controllers[0].value * volume) >> 8;
+			byte realVol = (_sources[source].controllers[i][0].value * volume) >> 8;
 			sendIntern(0xB0, i, 0x07, realVol);
 		}
 	}
