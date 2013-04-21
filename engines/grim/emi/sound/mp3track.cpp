@@ -50,6 +50,12 @@ void MP3Track::parseRIFFHeader(Common::SeekableReadStream *data) {
 
 MP3Track::MP3Track(Audio::Mixer::SoundType soundType) {
 	_soundType = soundType;
+	_headerSize = 0;
+	_regionLength = 0;
+	_freq = 0;
+	_bits = 0,
+	_channels = 0;
+	_endFlag = false;
 }
 
 MP3Track::~MP3Track() {
