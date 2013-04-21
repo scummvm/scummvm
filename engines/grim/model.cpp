@@ -397,7 +397,6 @@ void MeshFace::draw(float *vertices, float *vertNormals, float *textureVerts) co
  * @class Mesh
  */
 Mesh::Mesh() :	_numFaces(0),
-				_name(""),
 				_radius(0.0f),
 				_shadow(0),
 				_geometryMode(0),
@@ -410,6 +409,7 @@ Mesh::Mesh() :	_numFaces(0),
 				_vertNormals(NULL),
 				_numTextureVerts(0),
 				_textureVerts(NULL) {
+	_name[0] = '\0';
 					
 }
 
