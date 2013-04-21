@@ -230,7 +230,7 @@ TGLint tgluProject(TGLfloat objx, TGLfloat objy, TGLfloat objz, const TGLfloat m
 	return TGL_TRUE;
 }
 
-GfxTinyGL::GfxTinyGL() {
+GfxTinyGL::GfxTinyGL() : _smushWidth(0), _smushHeight(0) {
 	g_driver = this;
 	_zb = NULL;
 	_storedDisplay = NULL;
