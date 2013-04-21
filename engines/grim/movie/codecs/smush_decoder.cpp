@@ -58,6 +58,7 @@ SmushDecoder::SmushDecoder() {
 
 	_videoTrack = NULL;
 	_audioTrack = NULL;
+	_videoPause = false;
 }
 
 SmushDecoder::~SmushDecoder() {
@@ -457,6 +458,12 @@ SmushDecoder::SmushVideoTrack::SmushVideoTrack(int width, int height, int fps, i
 	_x = 0;
 	_y = 0;
 	setMsPerFrame(fps);
+	_curFrame = 0;
+	for (int i = 0; i < 0x300; i++) {
+		_pal[i] = 0;
+		_deltaPal[i] = 0;
+	}
+	_frameStart = 0;
 }
 
 SmushDecoder::SmushVideoTrack::~SmushVideoTrack() {
@@ -573,6 +580,7 @@ SmushDecoder::SmushAudioTrack::SmushAudioTrack(bool isVima, int freq, int channe
 	_channels = channels;
 	_freq = freq;
 	_queueStream = Audio::makeQueuingAudioStream(_freq, (_channels == 2));
+	_IACTpos = 0;
 }
 
 SmushDecoder::SmushAudioTrack::~SmushAudioTrack() {
