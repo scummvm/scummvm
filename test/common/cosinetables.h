@@ -51,7 +51,7 @@ class CosineTableTestSuite : public CxxTest::TestSuite
 			int half_entries = entries / 2;
 			Common::CosineTable ct(p);
 			float *table = const_cast <float*> (ct.getTable());
-			for (int i = 1; i < half_entries; i++){
+			for (int i = 1; i < half_entries; i++) {
 				TS_ASSERT(table[i] == table[entries - i]);
 			}
 		}

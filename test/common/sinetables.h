@@ -48,7 +48,7 @@ class SineTableTestSuite : public CxxTest::TestSuite
 			int half_entries = entries / 2;
 			Common::SineTable st(p);
 			float *table = const_cast <float*> (st.getTable());
-			for (int i = 1; i < half_entries; i++){
+			for (int i = 1; i < half_entries; i++) {
 				TS_ASSERT(table[i] == table[entries - i]);
 			}
 		}
