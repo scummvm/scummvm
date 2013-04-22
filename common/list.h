@@ -41,6 +41,8 @@ protected:
 public:
 	typedef ListInternal::Iterator<t_T>		iterator;
 	typedef ListInternal::ConstIterator<t_T>	const_iterator;
+    typedef ListInternal::ReverseIterator<t_T> reverse_iterator;
+	typedef ListInternal::ConstReverseIterator<t_T> const_reverse_iterator;
 
 	typedef t_T value_type;
 	typedef uint size_type;
@@ -206,12 +208,12 @@ public:
 	}
 
 
-	iterator		begin() {
+	iterator	    begin() {
 		return iterator(_anchor._next);
 	}
 
-	iterator		reverse_begin() {
-		return iterator(_anchor._prev);
+	reverse_iterator		reverse_begin() {
+		return reverse_iterator(iterator(_anchor._prev));
 	}
 
 	iterator		end() {
@@ -222,8 +224,8 @@ public:
 		return const_iterator(_anchor._next);
 	}
 
-	const_iterator	reverse_begin() const {
-		return const_iterator(_anchor._prev);
+	const_reverse_iterator	reverse_begin() const {
+		return const_reverse_iterator(const_iterator(_anchor._prev));
 	}
 
 	const_iterator	end() const {

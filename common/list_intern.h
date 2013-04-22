@@ -152,6 +152,132 @@ namespace ListInternal {
 		}
 	};
 
+	// Assumes it's a reverse of the Iterator class.
+	// Further templating could be added if Iterator is ever derived from
+    template<typename T>
+    struct ReverseIterator {
+        typedef ReverseIterator<T>	Self;
+        typedef Node<T> *	NodePtr;
+        typedef T &			ValueRef;
+        typedef T *			ValuePtr;
+        typedef T			ValueType;
+
+        Iterator<T> *_iter;
+
+        // Constructor and Copy
+        ReverseIterator() : _iter(0) {}
+        explicit ReverseIterator(Iterator<T>* iter) : _iter(iter) {}
+
+        // Prefix inc
+        Self &operator++() {
+            if (_iter && _iter->_node)
+                _iter->_node = _iter->_node->_prev;
+            return *this;
+        }
+        // Postfix inc
+        Self operator++(int) {
+            Self tmp(_iter);
+            ++(*this);
+            return tmp;
+        }
+        // Prefix dec
+        Self &operator--() {
+            if (_iter && _iter->_node)
+                _iter->_node = _iter->_node->_next;
+            return *this;
+        }
+        // Postfix dec
+        Self operator--(int) {
+            Self tmp(_iter);
+            --(*this);
+            return tmp;
+        }
+        ValueRef operator*() const {
+            assert(_iter && _iter->_node);
+            return static_cast<NodePtr>(_iter->_node)->_data;
+        }
+        ValuePtr operator->() const {
+            return &(operator*());
+        }
+
+        bool operator==(const Self &x) const {
+            if (_iter)
+                return _iter->_node == x->_iter->_node;
+
+            return false;
+        }
+
+        bool operator!=(const Self &x) const {
+            if (_iter)
+                return _iter->_node != x->_iter->_node;
+
+            return false;
+        }
+    };
+
+	// Assumes it's a reverse of the ConstIterator class.
+	// Further templating could be added if ConstIterator is ever derived from
+    template<typename T>
+    struct ConstReverseIterator {
+        typedef ConstReverseIterator<T>	Self;
+        typedef const Node<T> *	NodePtr;
+        typedef const T &			ValueRef;
+        typedef const T *		ValuePtr;
+        typedef const T			ValueType;
+
+        const Iterator<T> *_iter;
+
+        // Constructor and Copy
+        ConstReverseIterator() : _iter(0) {}
+        explicit ConstReverseIterator(Iterator<T>* iter) : _iter(iter) {}
+		ConstReverseIterator(const ConstReverseIterator<T> &x) : _node(x._iter) {}
+
+        // Prefix inc
+        Self &operator++() {
+            if (_iter && _iter->_node)
+                _iter->_node = _iter->_node->_prev;
+            return *this;
+        }
+        // Postfix inc
+        Self operator++(int) {
+            Self tmp(_iter);
+            ++(*this);
+            return tmp;
+        }
+        // Prefix dec
+        Self &operator--() {
+            if (_iter && _iter->_node)
+                _iter->_node = _iter->_node->_next;
+            return *this;
+        }
+        // Postfix dec
+        Self operator--(int) {
+            Self tmp(_iter);
+            --(*this);
+            return tmp;
+        }
+        ValueRef operator*() const {
+            assert(_iter && _iter->_node);
+            return static_cast<NodePtr>(_iter->_node)->_data;
+        }
+        ValuePtr operator->() const {
+            return &(operator*());
+        }
+
+        bool operator==(const Self &x) const {
+            if (_iter)
+                return _iter->_node == x->_iter->_node;
+
+            return false;
+        }
+
+        bool operator!=(const Self &x) const {
+            if (_iter)
+                return _iter->_node != x->_iter->_node;
+
+            return false;
+        }
+    };
 
 	template<typename T>
 	bool operator==(const Iterator<T>& a, const ConstIterator<T>& b) {
