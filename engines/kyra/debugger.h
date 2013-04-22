@@ -124,6 +124,8 @@ protected:
 	bool cmd_listMonsters(int argc, const char **argv);
 	bool cmd_showPosition(int argc, const char **argv);
 	bool cmd_setPosition(int argc, const char **argv);
+	bool cmd_openDoor(int argc, const char **argv);
+	bool cmd_closeDoor(int argc, const char **argv);
 };
 #endif // ENABLE_EOB
 
