@@ -162,7 +162,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("data.dcp", "ebd0915d9a12df5224be22f53bb23eb6", 7278306),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	// Chivalry is Not Dead (Version from deirdrakai.com)
@@ -172,7 +172,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("data.dcp", "ae6d91b9517f4d2851a8ad94c96951c8", 7278302),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	// Dead City (English)
