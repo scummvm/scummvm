@@ -563,9 +563,9 @@ void KyraRpgEngine::openCloseDoor(int block, int openClose) {
 
 	int c = (_wllWallFlags[_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
 	int v = _levelBlockProperties[block].walls[c];
-	int flg = (openClose == 1) ? 0x10 : (openClose == -1 ? 0x20 : 0);
+	int flg = (_flags.gameID == GI_EOB1) ? 1 : ((openClose == 1) ? 0x10 : (openClose == -1 ? 0x20 : 0));
 
-	if (_wllWallFlags[v] & flg)
+	if ((_flags.gameID == GI_EOB1 && openClose == -1 && !(_wllWallFlags[v] & flg)) || (!(_flags.gameID == GI_EOB1 && openClose == -1) && (_wllWallFlags[v] & flg)))
 		return;
 
 	for (int i = 0; i < 3; i++) {
