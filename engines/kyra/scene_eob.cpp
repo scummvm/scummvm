@@ -86,6 +86,10 @@ void EoBCoreEngine::loadLevel(int level, int sub) {
 		pos += 2;
 	}
 
+	// WORKAROUND for bug #3596547 (EOB1: Door Buttons Don't Work)
+	if (_flags.gameID == GI_EOB1 && level == 7 && _levelBlockProperties[0x035C].assignedObjects == 0x0E89)
+		_levelBlockProperties[0x035C].assignedObjects = 0x0E8D;
+
 	loadVcnData(gfxFile.c_str(), (_flags.gameID == GI_EOB1) ? _cgaMappingLevel[_cgaLevelMappingIndex[level - 1]] : 0);
 	_screen->loadEoBBitmap("INVENT", _cgaMappingInv, 5, 3, 2);
 	delayUntil(end);
