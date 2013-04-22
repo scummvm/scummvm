@@ -218,10 +218,10 @@ int LogicHEfootball::nextPoint(int32 *args) {
 	if (res >= (double)args[6]) {
 		var8 = (double)args[6] * var8 / res;
 		var10 = (double)args[6] * var10 / res;
-		res = (double)args[6] * var6 / res;
+		var6 = (double)args[6] * var6 / res;
 	}
 
-	writeScummVar(108, (int32)res);
+	writeScummVar(108, (int32)var6);
 	writeScummVar(109, (int32)var10);
 	writeScummVar(110, (int32)var8);
 
