@@ -1,12 +1,11 @@
 #include <cxxtest/TestSuite.h>
 #include "common/cosinetables.h"
 
-class CosineTableTestSuite : public CxxTest::TestSuite
-{
-	/*
-	 * Some test cases for the CosineTable class.
-	 * This is SineTable's twin, so there is some duplication.
-	 */
+/**
+* Some test cases for the CosineTable class.
+* This is SineTable's twin, so there is some duplication.
+*/
+class CosineTableTestSuite : public CxxTest::TestSuite {
 
 	static const int kMinBitPrecision = 4;
 	static const int kMaxBitPrecision = 16;

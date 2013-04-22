@@ -1,12 +1,11 @@
 #include <cxxtest/TestSuite.h>
 #include "common/util.h"
 
+/**
+ * Test suite for the functions in common/util.h
+ */
 class UtilTestSuite : public CxxTest::TestSuite {
-
-	/*
-	 * Test suite for the functions in common/util.
-	 */
-public:
+	public:
 	void test_parsebool_yesno() {
 
 		// First test for the parseBool function.

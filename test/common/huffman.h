@@ -3,15 +3,13 @@
 #include "common/bitstream.h"
 #include "common/memstream.h"
 
-class HuffmanTestSuite : public CxxTest::TestSuite
-{
-	/*
-	 * A test suite for the Huffman decoder.
-	 * The encoding used comes from the example on the Wikipedia page
-	 * for Huffman.
-	 * It could be improved by generating one at runtime.
-	 */
-
+/**
+* A test suite for the Huffman decoder in common/huffman.h
+* The encoding used comes from the example on the Wikipedia page
+* for Huffman.
+* TODO: It could be improved by generating one at runtime.
+*/
+class HuffmanTestSuite : public CxxTest::TestSuite {
 	public:
 	void test_get_with_full_symbols() {
 

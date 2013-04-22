@@ -3,8 +3,7 @@
 #include "common/gui_options.h"
 #include "common/str.h"
 
-class RenderModeTestSuite : public CxxTest::TestSuite
-{
+class RenderModeTestSuite : public CxxTest::TestSuite {
 	public:
 	void test_parse_render_mode_good() {
 		/*

@@ -1,11 +1,13 @@
 #include <cxxtest/TestSuite.h>
 #include "common/hash-str.h"
 
-class HashStrTestSuite : public CxxTest::TestSuite
-{
-	/*
-	 * Test suite for hashstr.
-	 */
+/**
+ * Test suite for common/hash-str.h
+ * We test a number of case sensitive/insensitive hash and compare functions
+ * using example strings and known hashes, trying to tackle
+ * as much edge cases as possible.
+ */
+class HashStrTestSuite : public CxxTest::TestSuite {
 
 	public:
 	void test_case_sensitive_string_equal_to() {
