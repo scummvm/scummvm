@@ -88,12 +88,9 @@ int MidiDriver_SEQ::open() {
 
 	device = ::open((device_name), O_RDWR, 0);
 
-	if ((device_name == NULL) || (device < 0)) {
-		if (device_name == NULL)
-			warning("Opening /dev/null (no music will be heard)");
-		else
-			warning("Cannot open rawmidi device %s - using /dev/null (no music will be heard)",
-							device_name);
+	if (device < 0) {
+		warning("Cannot open rawmidi device %s - using /dev/null (no music will be heard)",
+					device_name);
 		device = (::open(("/dev/null"), O_RDWR, 0));
 		if (device < 0)
 			error("Cannot open /dev/null to dump midi output");
