@@ -578,7 +578,7 @@ bool Debugger_EoB::cmd_listMonsters(int, const char **) {
 }
 
 bool Debugger_EoB::cmd_showPosition(int, const char **) {
-	DebugPrintf("\nCurrent level:      %d\nCurrent Sub Level:  %d\nCurrent block:      %d\nCurrent direction:  %d\n\n", _vm->_currentLevel, _vm->_currentSub, _vm->_currentBlock, _vm->_currentDirection);
+	DebugPrintf("\nCurrent level:      %d\nCurrent Sub Level:  %d\nCurrent block:      %d (0x%.04x)\nNext block:         %d (0x%.04x)\nCurrent direction:  %d\n\n", _vm->_currentLevel, _vm->_currentSub, _vm->_currentBlock, _vm->_currentBlock, _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection), _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection), _vm->_currentDirection);
 	return true;
 }
 
@@ -639,7 +639,6 @@ bool Debugger_EoB::cmd_closeDoor(int, const char **) {
 	uint16 block = _vm->calcNewBlockPosition(_vm->_currentBlock, _vm->_currentDirection);
 	int c = (_vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
 	int v = _vm->_levelBlockProperties[block].walls[c];
-	int flg = (_vm->_flags.gameID == GI_EOB1) ? 1 : 0x10;
 	if ((_vm->_flags.gameID == GI_EOB1 && !(_vm->_wllWallFlags[v] & 1)) || (_vm->_flags.gameID == GI_EOB2 && (_vm->_wllWallFlags[v] & 0x20))) {
 		DebugPrintf("Couldn't close any door. Make sure you're facing the door you wish to open and standing right in front of it.\n\n");
 	} else {
