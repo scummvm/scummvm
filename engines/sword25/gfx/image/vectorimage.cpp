@@ -190,6 +190,7 @@ Common::Rect CalculateBoundingBox(const VectorImageElement &vectorImageElement) 
 		ArtVpath *vec = art_bez_path_to_vec(bez, 0.5);
 
 		if (vec[0].code == ART_END) {
+			free(vec);
 			continue;
 		} else {
 			x0 = x1 = vec[0].x;
