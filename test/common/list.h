@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 
-#include "common/list.h"
+#include <common/list.h>
 
 class ListTestSuite : public CxxTest::TestSuite
 {
@@ -206,7 +206,8 @@ class ListTestSuite : public CxxTest::TestSuite
 
 	void test_reverse() {
 		Common::List<int> container;
-		Common::List<int>::iterator iter;
+		Common::List<int>::reverse_iterator iter;
+		Common::List<int>::iterator iter2;
 
 		// Fill the container with some random data
 		container.push_back(17);
@@ -218,28 +219,28 @@ class ListTestSuite : public CxxTest::TestSuite
 
 
 		TS_ASSERT_EQUALS(*iter, -11);
-		--iter;
+		++iter;
 		TS_ASSERT_DIFFERS(iter, container.end());
 
 		TS_ASSERT_EQUALS(*iter, 33);
-		--iter;
+		++iter;
 		TS_ASSERT_DIFFERS(iter, container.end());
 
 		TS_ASSERT_EQUALS(*iter, 17);
-		--iter;
+		++iter;
 		TS_ASSERT_EQUALS(iter, container.end());
 
-		iter = container.reverse_begin();
+		iter2 = container.reverse_begin();
 
-		iter = container.reverse_erase(iter);
-		TS_ASSERT_DIFFERS(iter, container.end());
-		TS_ASSERT_EQUALS(*iter, 33);
+		iter = container.reverse_erase(iter2);
+		TS_ASSERT_DIFFERS(iter2, container.end());
+		TS_ASSERT_EQUALS(*iter2, 33);
 
-		iter = container.reverse_erase(iter);
-		TS_ASSERT_DIFFERS(iter, container.end());
-		TS_ASSERT_EQUALS(*iter, 17);
+		iter2 = container.reverse_erase(iter2);
+		TS_ASSERT_DIFFERS(iter2, container.end());
+		TS_ASSERT_EQUALS(*iter2, 17);
 
-		iter = container.reverse_erase(iter);
+		iter2 = container.reverse_erase(iter2);
 		TS_ASSERT_EQUALS(iter, container.end());
 
 		TS_ASSERT_EQUALS(container.begin(), container.end());
