@@ -14,13 +14,13 @@ class UtilTestSuite : public CxxTest::TestSuite {
 		bool valasbool;
 		bool success;
 
-		Common::String string_1 ("Yes");
-		success = Common::parseBool (string_1, valasbool);
+		Common::String string_1("Yes");
+		success = Common::parseBool(string_1, valasbool);
 		TS_ASSERT_EQUALS(success, 1);
 		TS_ASSERT_EQUALS(valasbool, 1);
 
-		Common::String string_2 ("nO");
-		success = Common::parseBool (string_2, valasbool);
+		Common::String string_2("nO");
+		success = Common::parseBool(string_2, valasbool);
 		TS_ASSERT_EQUALS(success, 1);
 		TS_ASSERT_EQUALS(valasbool, 0);
 	}
@@ -33,13 +33,13 @@ class UtilTestSuite : public CxxTest::TestSuite {
 		bool valasbool;
 		bool success;
 
-		Common::String string_3 ("tRuE");
-		success = Common::parseBool (string_3, valasbool);
+		Common::String string_3("tRuE");
+		success = Common::parseBool(string_3, valasbool);
 		TS_ASSERT_EQUALS(success, 1);
 		TS_ASSERT_EQUALS(valasbool, 1);
 
-		Common::String string_4 ("fAlSe");
-		success = Common::parseBool (string_4, valasbool);
+		Common::String string_4("fAlSe");
+		success = Common::parseBool(string_4, valasbool);
 		TS_ASSERT_EQUALS(success, 1);
 		TS_ASSERT_EQUALS(valasbool, 0);
 	}
@@ -56,12 +56,12 @@ class UtilTestSuite : public CxxTest::TestSuite {
 		bool success;
 
 		Common::String string_5 ("1");
-		success = Common::parseBool (string_5, valasbool);
+		success = Common::parseBool(string_5, valasbool);
 		TS_ASSERT_EQUALS(success, 1);
 		TS_ASSERT_EQUALS(valasbool, 1);
 
-		Common::String string_6 ("0");
-		success = Common::parseBool (string_6, valasbool);
+		Common::String string_6("0");
+		success = Common::parseBool(string_6, valasbool);
 		TS_ASSERT_EQUALS(success, 1);
 		TS_ASSERT_EQUALS(valasbool, 0);
 
@@ -74,33 +74,33 @@ class UtilTestSuite : public CxxTest::TestSuite {
 
 		// Bad cases that should not return success #1:
 		// Random string
-		Common::String string_1 ("u_f1ght_l1k3_a_c0w");
-		success = Common::parseBool (string_1, valasbool);
+		Common::String string_1("u_f1ght_l1k3_a_c0w");
+		success = Common::parseBool(string_1, valasbool);
 		TS_ASSERT_EQUALS(success, 0);
 
 		// Bad cases that should not return success #2, #3:
 		// The function should NOT accept trailing whitespaces:
-		Common::String string_2 (" yes");
-		success = Common::parseBool (string_2, valasbool);
+		Common::String string_2(" yes");
+		success = Common::parseBool(string_2, valasbool);
 		TS_ASSERT_EQUALS(success, 0);
 
-		Common::String string_3 ("yes ");
-		success = Common::parseBool (string_3, valasbool);
+		Common::String string_3("yes ");
+		success = Common::parseBool(string_3, valasbool);
 		TS_ASSERT_EQUALS(success, 0);
 
 		// While 'a-z'+0x20 must work just fine,
 		// '0-1'+0x20 should NOT. '2' is not good either.
 
-		Common::String string_4 ("\x50");
-		success = Common::parseBool (string_4, valasbool);
+		Common::String string_4("\x50");
+		success = Common::parseBool(string_4, valasbool);
 		TS_ASSERT_EQUALS(success, 0);
 
-		Common::String string_5 ("\x51");
-		success = Common::parseBool (string_5, valasbool);
+		Common::String string_5("\x51");
+		success = Common::parseBool(string_5, valasbool);
 		TS_ASSERT_EQUALS(success, 0);
 
-		Common::String string_6 ("2");
-		success = Common::parseBool (string_6, valasbool);
+		Common::String string_6("2");
+		success = Common::parseBool(string_6, valasbool);
 		TS_ASSERT_EQUALS(success, 0);
 	}
 
