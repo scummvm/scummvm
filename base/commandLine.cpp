@@ -332,6 +332,10 @@ void registerDefaults() {
 		continue; \
 	}
 
+// End an option handler
+#define END_COMMAND \
+	}
+
 
 Common::String parseCommandLine(Common::StringMap &settings, int argc, const char * const *argv) {
 	const char *s, *s2;
@@ -366,27 +370,27 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			bool isLongCmd = (s[0] == '-' && s[1] == '-');
 
 			DO_COMMAND('h', "help")
-			END_OPTION
+			END_COMMAND
 
 			DO_COMMAND('v', "version")
-			END_OPTION
+			END_COMMAND
 
 			DO_COMMAND('t', "list-targets")
-			END_OPTION
+			END_COMMAND
 
 			DO_COMMAND('z', "list-games")
-			END_OPTION
+			END_COMMAND
 
 #ifdef DETECTOR_TESTING_HACK
 			// HACK FIXME TODO: This command is intentionally *not* documented!
 			DO_LONG_COMMAND("test-detector")
-			END_OPTION
+			END_COMMAND
 #endif
 
 #ifdef UPGRADE_ALL_TARGETS_HACK
 			// HACK FIXME TODO: This command is intentionally *not* documented!
 			DO_LONG_COMMAND("upgrade-targets")
-			END_OPTION
+			END_COMMAND
 #endif
 
 			DO_LONG_OPTION("list-saves")
@@ -412,7 +416,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_COMMAND("list-audio-devices")
-			END_OPTION
+			END_COMMAND
 
 			DO_LONG_OPTION_INT("output-rate")
 			END_OPTION
@@ -542,7 +546,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_COMMAND("list-themes")
-			END_OPTION
+			END_COMMAND
 
 			DO_LONG_OPTION("target-md5")
 			END_OPTION
