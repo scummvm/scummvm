@@ -322,6 +322,8 @@ void BaseRenderOSystem::drawSurface(BaseSurfaceOSystem *owner, const Graphics::S
 	} else {
 		ticket->_wantsDraw = true;
 		_renderQueue.push_back(ticket);
+		_previousTicket = ticket;
+		drawFromSurface(ticket);
 	}
 }
 
