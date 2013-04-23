@@ -768,6 +768,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 		l->flags = new uint16[1024];
 		memset(l->flags, 0, 1024 * sizeof(uint16));
 		EoBMonsterInPlay *lm = new EoBMonsterInPlay[30];
+		memset(lm, 0, 30 * sizeof(EoBMonsterInPlay));
 		l->monsters = lm;
 		EoBFlyingObject *lf = new EoBFlyingObject[_numFlyingObjects];
 		memset(lf, 0, _numFlyingObjects * sizeof(EoBFlyingObject));
@@ -826,7 +827,7 @@ Common::String EoBCoreEngine::readOriginalSaveFile(Common::String &file) {
 				m->sub = in.readByte();
 			}
 
-			_levelBlockProperties[m->block].flags++;
+			l->flags[m->block]++;
 		}
 
 		if (_flags.gameID == GI_EOB1)
