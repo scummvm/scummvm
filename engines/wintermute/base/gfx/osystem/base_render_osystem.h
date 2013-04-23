@@ -108,6 +108,7 @@ private:
 	int _borderBottom;
 
 	bool _disableDirtyRects;
+	uint32 _tempDisableDirtyRects;
 	bool _spriteBatch;
 	uint32 _batchNum;
 	float _ratioX;
