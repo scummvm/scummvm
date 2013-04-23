@@ -26,8 +26,8 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		const Common::String spaced("test ");
 		const Common::String doublespaced("test  ");
 		const Common::String tabbed("test\t");
-		const Common::String plus128("t\xE5est");
-		// 'e'+128 = 0xE5
+		const Common::String plus128("t\345est");
+		// 'e'+128 = 0xE5 = 0o345
 
 		Common::CaseSensitiveString_EqualTo css_et;
 		TS_ASSERT_EQUALS(css_et(lower, mixed), false);
@@ -56,7 +56,7 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		const Common::String mixedspaced("tESt ");
 		const Common::String doublespaced("test  ");
 		const Common::String tabbed("test\t");
-		const Common::String plus128("t\xE5est");
+		const Common::String plus128("t\345est");
 
 		Common::IgnoreCase_EqualTo ic_et;
 		TS_ASSERT_EQUALS(ic_et(lower, mixed), true);
@@ -78,47 +78,38 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		// Here we compute string hashes for different
 		// strings and see that the functor is case sensitive
 		// and does not ignore spaces.
-		// The hashes come from Python's hash() function.
 
 		const Common::String lower("test");
-		const uint lower_hash = 1308370872;
 		const Common::String lower1("test");
 		const Common::String mixed("tESt");
-		const uint mixed_hash = -1217273608;
 		const Common::String spaced("test ");
-		const uint spaced_hash = -1086267887;
 		const Common::String mixedspaced("tESt ");
 		const Common::String doublespaced("test  ");
 		const Common::String tabbed("test\t");
-		const uint tabbed_hash = -1086267848;
 
 		Common::CaseSensitiveString_Hash css_h;
-		TS_ASSERT_EQUALS(css_h(lower), lower_hash);
-		TS_ASSERT_EQUALS(css_h(mixed), mixed_hash);
-		TS_ASSERT_EQUALS(css_h(spaced), spaced_hash);
-		TS_ASSERT_EQUALS(css_h(tabbed), tabbed_hash);
+		TS_ASSERT_EQUALS(css_h(lower), css_h(lower1));
+		TS_ASSERT_DIFFERS(css_h(mixed), css_h(lower));
+		TS_ASSERT_DIFFERS(css_h(spaced), css_h(lower));
+		TS_ASSERT_DIFFERS(css_h(tabbed), css_h(spaced));
 		TS_ASSERT_DIFFERS(css_h(spaced), css_h(doublespaced));
 	}
 
 	void test_ignore_case_hash() {
 		// Same as test_case_sensitive_string_hash, but case insensitive.
 		const Common::String lower("test");
-		const uint lower_hash = 1308370872;
 		const Common::String lower1("test");
 		const Common::String mixed("tESt");
 		const Common::String spaced("test ");
-		const uint spaced_hash = -1086267887;
 		const Common::String mixedspaced("tESt ");
 		const Common::String doublespaced("test  ");
 		const Common::String tabbed("test\t");
-		const uint tabbed_hash = -1086267848;
 
 		Common::IgnoreCase_Hash ic_h;
-		TS_ASSERT_EQUALS(ic_h(lower), lower_hash);
-		TS_ASSERT_EQUALS(ic_h(mixed), lower_hash);
-		TS_ASSERT_EQUALS(ic_h(spaced), spaced_hash);
-		TS_ASSERT_EQUALS(ic_h(tabbed), tabbed_hash);
-		TS_ASSERT_EQUALS(ic_h(mixedspaced), spaced_hash);
+		TS_ASSERT_EQUALS(ic_h(lower), ic_h(lower1));
+		TS_ASSERT_EQUALS(ic_h(mixed), ic_h(lower));
+		TS_ASSERT_EQUALS(ic_h(spaced), ic_h(mixedspaced));
+		TS_ASSERT_DIFFERS(ic_h(tabbed), ic_h(lower));
 		TS_ASSERT_DIFFERS(ic_h(spaced), ic_h(doublespaced));
 	}
 
@@ -127,26 +118,20 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		// We run the same tests with Hash<String>,
 		// a template specialization of Hash, also a functor.
 		// It is supposed to be case sensitive.
-		// Again, hashes come from Python's hash().
 
 		const Common::String lower("test");
-		const uint lower_hash = 1308370872;
 		const Common::String lower1("test");
 		const Common::String mixed("tESt");
-		const uint mixed_hash = -1217273608;
 		const Common::String spaced("test ");
-		const uint spaced_hash = -1086267887;
 		const Common::String mixedspaced("tESt ");
 		const Common::String doublespaced("test  ");
 		const Common::String tabbed("test\t");
-		const uint tabbed_hash = -1086267848;
 
 		Common::Hash<Common::String> h;
-		TS_ASSERT_EQUALS(h(lower), lower_hash);
 		TS_ASSERT_EQUALS(h(lower), h(lower1));
-		TS_ASSERT_EQUALS(h(mixed), mixed_hash);
-		TS_ASSERT_EQUALS(h(spaced), spaced_hash);
-		TS_ASSERT_EQUALS(h(tabbed), tabbed_hash);
+		TS_ASSERT_DIFFERS(h(mixed), h(lower));
+		TS_ASSERT_DIFFERS(h(spaced), h(lower));
+		TS_ASSERT_DIFFERS(h(tabbed), h(spaced));
 		TS_ASSERT_DIFFERS(h(spaced), h(doublespaced));
 	}
 
@@ -158,25 +143,21 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		// It is supposed to be case sensitive.
 
 		char lower[] = "test";
-		const uint lower_hash = 1308370872; // CPython told me so
 		char lower1[] = "test";
 		char mixed[] = "tESt";
-		const uint mixed_hash = -1217273608;
 		char spaced[] = "test ";
-		const uint spaced_hash = -1086267887;
 		char mixedspaced[] = "tESt ";
 		char doublespaced[] = "test  ";
 		char tabbed[] = "test\t";
-		const uint tabbed_hash = -1086267848;
 
 		Common::Hash<const char*> h;
-		TS_ASSERT_EQUALS(h(lower), lower_hash);
 		TS_ASSERT_EQUALS(h(lower), h(lower1));
-		TS_ASSERT_EQUALS(h(mixed), mixed_hash);
-		TS_ASSERT_EQUALS(h(spaced), spaced_hash);
+		TS_ASSERT_DIFFERS(h(mixed), h(lower));
+		TS_ASSERT_DIFFERS(h(spaced), h(lower));
 		TS_ASSERT_DIFFERS(h(spaced), h(mixedspaced));
-		TS_ASSERT_EQUALS(h(tabbed), tabbed_hash);
+		TS_ASSERT_DIFFERS(h(tabbed), h(spaced));
 		TS_ASSERT_DIFFERS(h(spaced), h(doublespaced));
+
 	}
 
 
