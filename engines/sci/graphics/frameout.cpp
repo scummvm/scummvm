@@ -747,7 +747,8 @@ void GfxFrameout::kernelFrameout() {
 					// TODO: We can only process symmetrical scaling for now (i.e. same value for scaleX/scaleY)
 					if ((itemEntry->scaleSignal & kScaleSignalDoScaling32) && 
 					   !(itemEntry->scaleSignal & kScaleSignalDisableGlobalScaling32) &&
-					    (itemEntry->scaleX == itemEntry->scaleY))
+					    (itemEntry->scaleX == itemEntry->scaleY) &&
+						itemEntry->scaleX != 128)
 						applyGlobalScaling(itemEntry, it->planeRect, view->getHeight(itemEntry->loopNo, itemEntry->celNo));
 
 					if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
