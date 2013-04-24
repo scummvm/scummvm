@@ -40,10 +40,8 @@ void DrasculaEngine::checkForOldSaveGames() {
 	Common::InSaveFile *indexFile = _saveFileMan->openForLoading(indexFileName);
 
 	// Check for the existence of an old index file
-	if (!indexFile) {
-		delete indexFile;
+	if (!indexFile)
 		return;
-	}
 
 	GUI::MessageDialog dialog0(
 	    _("ScummVM found that you have old savefiles for Drascula that should be converted.\n"
