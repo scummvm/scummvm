@@ -110,7 +110,7 @@ public:
 	 */
 	reverse_iterator erase(reverse_iterator pos) {
 		assert(pos != reverse_end());
-		return reverse_iterator(&iterator(erase(pos._node)._prev));
+		return reverse_iterator(erase(pos._node)._prev);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public:
 	 */
 	reverse_iterator reverse_erase(reverse_iterator pos) {
 		assert(pos != reverse_end());
-		return reverse_iterator(&iterator(erase(pos._node)._next));
+		return reverse_iterator(erase(pos._node)._next);
 	}
 
 	/**
@@ -260,7 +260,7 @@ public:
 	}
 
 	reverse_iterator reverse_begin() {
-		return reverse_iterator(&iterator(_anchor._prev));
+		return reverse_iterator(_anchor._prev);
 	}
 
 	iterator end() {
@@ -268,7 +268,7 @@ public:
 	}
 
 	reverse_iterator reverse_end() {
-		return reverse_iterator(&iterator(_anchor));
+		return reverse_iterator(&_anchor);
 	}
 
 	const_iterator begin() const {
@@ -276,7 +276,7 @@ public:
 	}
 
 	const_reverse_iterator reverse_begin() const {
-		return const_reverse_iterator(&const_iterator(_anchor._prev));
+		return const_reverse_iterator(_anchor._prev);
 	}
 
 	const_iterator end() const {
@@ -284,7 +284,7 @@ public:
 	}
 
 	const_reverse_iterator reverse_end() const {
-		return const_reverse_iterator(const_iterator(const_cast<NodeBase *>(&_anchor)));
+		return const_reverse_iterator(const_cast<NodeBase *>(&_anchor));
 	}
 
 protected:

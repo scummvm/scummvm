@@ -104,6 +104,7 @@ namespace ListInternal {
 		typedef const Node<T> *	NodePtr;
 		typedef const T &		ValueRef;
 		typedef const T *		ValuePtr;
+		typedef const T			ValueType;
 
 		const NodeBase *_node;
 
@@ -162,54 +163,55 @@ namespace ListInternal {
 		typedef T *			ValuePtr;
 		typedef T			ValueType;
 
-		Iterator<T> *_iter;
+		NodeBase *_node;
 
 		// Constructor and Copy
-		ReverseIterator() : _iter(0) {}
-		explicit ReverseIterator(Iterator<T>* iter) : _iter(iter) {}
+		ReverseIterator() : _node(0) {}
+		explicit ReverseIterator(NodeBase* node) : _node(node) {}
+		explicit ReverseIterator(Iterator<T>& iter) : _node(iter._node) {}
 
 		// Prefix inc
 		Self &operator++() {
-			if (_iter && _iter->_node)
-				_iter->_node = _iter->_node->_prev;
+			if (_node)
+				_node = _node->_prev;
 			return *this;
 		}
 		// Postfix inc
 		Self operator++(int) {
-			Self tmp(_iter);
+			Self tmp(_node);
 			++(*this);
 			return tmp;
 		}
 		// Prefix dec
 		Self &operator--() {
-			if (_iter && _iter->_node)
-				_iter->_node = _iter->_node->_next;
+			if (_node)
+				_node = _node->_next;
 			return *this;
 		}
 		// Postfix dec
 		Self operator--(int) {
-			Self tmp(_iter);
+			Self tmp(_node);
 			--(*this);
 			return tmp;
 		}
 		ValueRef operator*() const {
-			assert(_iter && _iter->_node);
-			return static_cast<NodePtr>(_iter->_node)->_data;
+			assert(_node);
+			return static_cast<NodePtr>(_node)->_data;
 		}
 		ValuePtr operator->() const {
 			return &(operator*());
 		}
 
 		bool operator==(const Self &x) const {
-			if (_iter)
-				return _iter->_node == x->_iter->_node;
+			if (_node)
+				return _node == x._node;
 
 			return false;
 		}
 
 		bool operator!=(const Self &x) const {
-			if (_iter)
-				return _iter->_node != x->_iter->_node;
+			if (_node)
+				return _node != x._node;
 
 			return false;
 		}
@@ -225,56 +227,56 @@ namespace ListInternal {
 		typedef const T *				ValuePtr;
 		typedef const T					ValueType;
 
-		const Iterator<T> *_iter;
+		const NodeBase *_node;
 
 		// Constructor and Copy
-		ConstReverseIterator() : _iter(0) {}
-		explicit ConstReverseIterator(Iterator<T>* iter) : _iter(iter) {}
-		ConstReverseIterator(const ConstReverseIterator<T> &x) : _iter(x._iter) {}
+		ConstReverseIterator() : _node(0) {}
+		explicit ConstReverseIterator(NodeBase *node) : _node(node) {}
+		explicit ConstReverseIterator(ConstIterator<T>& iter) : _node(iter._node) {}
+		ConstReverseIterator(const ConstReverseIterator<T> &x) : _node(x._node) {}
 
 		// Prefix inc
 		Self &operator++() {
-			if (_iter && _iter->_node)
-				_iter->_node = _iter->_node->_prev;
+			if (_node)
+				_node = _node->_prev;
 			return *this;
 		}
 		// Postfix inc
 		Self operator++(int) {
-			Self tmp(_iter);
+			Self tmp(_node);
 			++(*this);
-			7 = 6;
 			return tmp;
 		}
 		// Prefix dec
 		Self &operator--() {
-			if (_iter && _iter->_node)
-				_iter->_node = _iter->_node->_next;
+			if (_node)
+				_node = _node->_next;
 			return *this;
 		}
 		// Postfix dec
 		Self operator--(int) {
-			Self tmp(_iter);
+			Self tmp(_node);
 			--(*this);
 			return tmp;
 		}
 		ValueRef operator*() const {
-			assert(_iter && _iter->_node);
-			return static_cast<NodePtr>(_iter->_node)->_data;
+			assert(_node);
+			return static_cast<NodePtr>(_node)->_data;
 		}
 		ValuePtr operator->() const {
 			return &(operator*());
 		}
 
 		bool operator==(const Self &x) const {
-			if (_iter)
-				return _iter->_node == x->_iter->_node;
+			if (_node)
+				return _node == x._node;
 
 			return false;
 		}
 
 		bool operator!=(const Self &x) const {
-			if (_iter)
-				return _iter->_node != x->_iter->_node;
+			if (_node)
+				return _node != x._node;
 
 			return false;
 		}
@@ -305,12 +307,12 @@ namespace ListInternal {
 	// ReverseIterator vs. ConstReverseIterator
 	template<typename T>
 	bool operator==(const ReverseIterator<T>& a, const ConstReverseIterator<T>& b) {
-		return a._iter->_node == b._iter->_node;
+		return a._node == b._node;
 	}
 
 	template<typename T>
 	bool operator!=(const ReverseIterator<T>& a, const ConstReverseIterator<T>& b) {
-		return a._iter->_node != b._iter->_node;
+		return a._node != b._node;
 	}
 
 	// == and != are commutative
@@ -327,12 +329,12 @@ namespace ListInternal {
 	// Iterator vs. ReverseIterator
 	template<typename T>
 	bool operator==(Iterator<T>& a, ReverseIterator<T>& b) {
-		return a._node == b._iter->_node;
+		return a._node == b._node;
 	}
 
 	template<typename T>
 	bool operator!=(Iterator<T>& a, ReverseIterator<T>& b) {
-		return a._node != b._iter->_node;
+		return a._node != b._node;
 	}
 
 	// == and != are commutative
@@ -349,34 +351,34 @@ namespace ListInternal {
 	// ReverseIterator vs ConstIterator
 	template<typename T>
 	bool operator==(const ReverseIterator<T>& a, const ConstIterator<T>& b) {
-		return a._iter->_node == b._node;
+		return a._node == b._node;
 	}
 
 	template<typename T>
 	bool operator!=(const ReverseIterator<T>& a, const ConstIterator<T>& b) {
-		return a._iter->_node != b._node;
+		return a._node != b._node;
 	}
 
 	// == and != are commutative
 	template<typename T>
 	bool operator==(const ConstIterator<T>& a, const ReverseIterator<T>& b) {
-		return a._iter->_node == b._node;
+		return a._node == b._node;
 	}
 
 	template<typename T>
 	bool operator!=(const ConstIterator<T>& a, const ReverseIterator<T>& b) {
-		return a._iter->_node != b._node;
+		return a._node != b._node;
 	}
 
 	// Iterator vs. ConstReverseIterator
 	template<typename T>
 	bool operator==(const Iterator<T>& a, const ConstReverseIterator<T>& b) {
-		return a._node == b._iter->_node;
+		return a._node == b._node;
 	}
 
 	template<typename T>
 	bool operator!=(const Iterator<T>& a, const ConstReverseIterator<T>& b) {
-		return a._node != b._iter->_node;
+		return a._node != b._node;
 	}
 }
 
