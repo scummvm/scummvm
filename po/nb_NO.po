@@ -57,10 +57,10 @@ msgstr "Gå tilbake"
 #: gui/launcher.cpp:345 gui/massadd.cpp:94 gui/options.cpp:1238
 #: gui/saveload-dialog.cpp:215 gui/saveload-dialog.cpp:275
 #: gui/saveload-dialog.cpp:545 gui/saveload-dialog.cpp:919
-#: gui/themebrowser.cpp:54 engines/engine.cpp:447
-#: engines/drascula/saveload.cpp:51 engines/scumm/dialogs.cpp:190
-#: engines/sword1/control.cpp:865 engines/parallaction/saveload.cpp:274
-#: backends/platform/wii/options.cpp:48
+#: gui/themebrowser.cpp:54 gui/fluidsynth-dialog.cpp:151
+#: engines/engine.cpp:447 engines/drascula/saveload.cpp:51
+#: engines/scumm/dialogs.cpp:190 engines/sword1/control.cpp:865
+#: engines/parallaction/saveload.cpp:274 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:215
 msgid "Cancel"
@@ -103,7 +103,8 @@ msgstr "Koble"
 
 #: gui/KeysDialog.cpp:42 gui/launcher.cpp:346 gui/launcher.cpp:1001
 #: gui/launcher.cpp:1005 gui/massadd.cpp:91 gui/options.cpp:1239
-#: gui/saveload-dialog.cpp:920 engines/engine.cpp:366 engines/engine.cpp:377
+#: gui/saveload-dialog.cpp:920 gui/fluidsynth-dialog.cpp:152
+#: engines/engine.cpp:366 engines/engine.cpp:377
 #: engines/drascula/saveload.cpp:51 engines/scumm/dialogs.cpp:192
 #: engines/scumm/scumm.cpp:1778 engines/agos/animation.cpp:558
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
@@ -473,7 +474,7 @@ msgstr ""
 "Vil du virkelig kjøre flerspill-finneren? Dette kan potensielt legge til et "
 "stort antall spill."
 
-#: gui/launcher.cpp:789 gui/launcher.cpp:937
+#: gui/launcher.cpp:789 gui/launcher.cpp:937 gui/fluidsynth-dialog.cpp:216
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -481,7 +482,7 @@ msgstr ""
 msgid "Yes"
 msgstr "Ja"
 
-#: gui/launcher.cpp:789 gui/launcher.cpp:937
+#: gui/launcher.cpp:789 gui/launcher.cpp:937 gui/fluidsynth-dialog.cpp:216
 #: backends/events/symbiansdl/symbiansdl-events.cpp:184
 #: backends/platform/wince/CEActionsPocket.cpp:326
 #: backends/platform/wince/CEActionsSmartphone.cpp:287
@@ -868,7 +869,7 @@ msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Pluginsti:"
 
-#: gui/options.cpp:1169
+#: gui/options.cpp:1169 gui/fluidsynth-dialog.cpp:137
 msgid "Misc"
 msgstr "Div"
 
@@ -1039,6 +1040,95 @@ msgstr "Antialiased (16bpp)"
 #: gui/widget.cpp:322 gui/widget.cpp:324 gui/widget.cpp:330 gui/widget.cpp:332
 msgid "Clear value"
 msgstr "Tøm verdi"
+
+#: gui/fluidsynth-dialog.cpp:67
+#, fuzzy
+msgid "Reverb"
+msgstr "Aldri"
+
+#: gui/fluidsynth-dialog.cpp:69 gui/fluidsynth-dialog.cpp:101
+#, fuzzy
+msgid "Active"
+msgstr " (Aktiv)"
+
+#: gui/fluidsynth-dialog.cpp:71
+msgid "Room:"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:78
+msgid "Damp:"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:85
+msgid "Width:"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:92 gui/fluidsynth-dialog.cpp:110
+msgid "Level:"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:99
+msgid "Chorus"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:103
+msgid "N:"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:117
+#, fuzzy
+msgid "Speed:"
+msgstr "Tale"
+
+#: gui/fluidsynth-dialog.cpp:124
+msgid "Depth:"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:131
+msgid "Type:"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:134
+msgid "Sine"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:135
+msgid "Triangle"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:139
+msgid "Interpolation:"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:142
+msgid "None (fastest)"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:143
+msgid "Linear"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:144
+msgid "Fourth-order"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:145
+msgid "Seventh-order"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:149
+msgid "Reset"
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:149
+msgid "Reset all FluidSynth settings to their default values."
+msgstr ""
+
+#: gui/fluidsynth-dialog.cpp:216
+#, fuzzy
+msgid ""
+"Do you really want to reset all FluidSynth settings to their default values?"
+msgstr "Vil du virkelig returnere til oppstarteren?"
 
 #: base/main.cpp:210
 #, c-format
