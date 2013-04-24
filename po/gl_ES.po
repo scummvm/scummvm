@@ -1,16 +1,16 @@
-# LANGUAGE translation for ScummVM.
+# Galician translation for ScummVM.
 # Copyright (C) 2010-2013 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Santiago G. Sanz <s.sanz@uvigo.es>, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2013-04-24 13:35+0100\n"
-"PO-Revision-Date: 2012-08-15 13:33+0100\n"
+"PO-Revision-Date: 2013-04-24 15:41+0100\n"
 "Last-Translator: Santiago G. Sanz <s.sanz@uvigo.es>\n"
-"Language-Team: \n"
+"Language-Team: Santiago G. Sanz <s.sanz@uvigo.es>\n"
 "Language: Galego\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -30,13 +30,12 @@ msgid "Available engines:"
 msgstr "Motores dispoñibles:"
 
 #: gui/browser.cpp:67
-#, fuzzy
 msgid "Show hidden files"
-msgstr "Mostrar/ocultar consola"
+msgstr "Mostrar ficheiros ocultos"
 
 #: gui/browser.cpp:67
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Mostra os ficheiros marcados co atributo Oculto."
 
 #: gui/browser.cpp:71
 msgid "Go up"
@@ -721,7 +720,7 @@ msgstr "Ganancia de MIDI:"
 
 #: gui/options.cpp:873
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "Configuración de FluidSynth"
 
 #: gui/options.cpp:880
 msgid "MT-32 Device:"
@@ -750,9 +749,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 (sen emulación de GM)"
 
 #: gui/options.cpp:890
-#, fuzzy
 msgid "Roland GS Mode (disable GM mapping)"
-msgstr "Roland MT-32 verdadeiro (sen emulación de GM)"
+msgstr "Modo Roland GS (desactivar mapeamento GM)"
 
 #: gui/options.cpp:890
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
@@ -1040,93 +1038,92 @@ msgid "Clear value"
 msgstr "Limpar valor"
 
 #: gui/fluidsynth-dialog.cpp:67
-#, fuzzy
 msgid "Reverb"
-msgstr "Nunca"
+msgstr "Reverberación"
 
 #: gui/fluidsynth-dialog.cpp:69 gui/fluidsynth-dialog.cpp:101
-#, fuzzy
 msgid "Active"
-msgstr " (Activa)"
+msgstr "Activa"
 
 #: gui/fluidsynth-dialog.cpp:71
 msgid "Room:"
-msgstr ""
+msgstr "Sala:"
 
 #: gui/fluidsynth-dialog.cpp:78
 msgid "Damp:"
-msgstr ""
+msgstr "Humidade:"
 
 #: gui/fluidsynth-dialog.cpp:85
 msgid "Width:"
-msgstr ""
+msgstr "Largo:"
 
 #: gui/fluidsynth-dialog.cpp:92 gui/fluidsynth-dialog.cpp:110
 msgid "Level:"
-msgstr ""
+msgstr "Nivel:"
 
 #: gui/fluidsynth-dialog.cpp:99
 msgid "Chorus"
-msgstr ""
+msgstr "Refrán"
 
 #: gui/fluidsynth-dialog.cpp:103
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:117
-#, fuzzy
 msgid "Speed:"
-msgstr "Voz"
+msgstr "Velocidade:"
 
 #: gui/fluidsynth-dialog.cpp:124
 msgid "Depth:"
-msgstr ""
+msgstr "Profundidade:"
 
 #: gui/fluidsynth-dialog.cpp:131
 msgid "Type:"
-msgstr ""
+msgstr "Tipo:"
 
 #: gui/fluidsynth-dialog.cpp:134
 msgid "Sine"
-msgstr ""
+msgstr "Seno"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Triangle"
-msgstr ""
+msgstr "Triángulo"
 
 #: gui/fluidsynth-dialog.cpp:139
 msgid "Interpolation:"
-msgstr ""
+msgstr "Interpolación:"
 
 #: gui/fluidsynth-dialog.cpp:142
 msgid "None (fastest)"
-msgstr ""
+msgstr "Ningunha (máis rápido)"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "Linear"
-msgstr ""
+msgstr "Lineal"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Fourth-order"
-msgstr ""
+msgstr "Cuarta orde"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Seventh-order"
-msgstr ""
+msgstr "Séptima orde"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset"
-msgstr ""
+msgstr "Restablecer"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset all FluidSynth settings to their default values."
 msgstr ""
+"Restablece a configuración de FluidSynth aos seus valores predefinidos."
 
 #: gui/fluidsynth-dialog.cpp:216
-#, fuzzy
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Seguro que queres volver ao Iniciador?"
+msgstr ""
+"Seguro que queres restablecer a configuración de FluidSynth aos seus valores "
+"predefinidos?"
 
 #: base/main.cpp:210
 #, c-format
@@ -1413,7 +1410,6 @@ msgid "Restore"
 msgstr "Restaurar"
 
 #: engines/drascula/saveload.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
@@ -1423,8 +1419,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM atopou ficheiros de gardado vellos de Broken Sword 1 que deberían "
-"ser convertidos.\n"
+"ScummVM atopou ficheiros de gardado vellos de Drascula que deberían ser "
+"convertidos.\n"
 "O formato vello xa non é compatible, de xeito que non poderás cargar as "
 "partidas se non os convertes.\n"
 "\n"
@@ -2241,13 +2237,12 @@ msgid "Failed to delete file."
 msgstr "Erro ao eliminar o ficheiro."
 
 #: engines/groovie/detection.cpp:312
-#, fuzzy
 msgid "Fast movie speed"
-msgstr "Modo rápido"
+msgstr "Velocidade de vídeo rápida"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Reproducir vídeos a máis velocidade"
 
 #: engines/groovie/script.cpp:420
 msgid "Failed to save game"
@@ -2545,44 +2540,43 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:679
 msgid "Invalid save file name"
-msgstr ""
+msgstr "Nome de ficheiro non válido"
 
 #: engines/pegasus/pegasus.cpp:2445
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Arriba/Ampliar/Avanzar/Abrir portas"
 
 #: engines/pegasus/pegasus.cpp:2446
-#, fuzzy
 msgid "Down/Zoom Out"
-msgstr "Ampliar"
+msgstr "Abaixo/Reducir"
 
 #: engines/pegasus/pegasus.cpp:2449
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "Mostrar/Ocultar bandexa de inventario"
 
 #: engines/pegasus/pegasus.cpp:2450
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Mostrar/Ocultar bandexa de biochip"
 
 #: engines/pegasus/pegasus.cpp:2451
 msgid "Action/Select"
-msgstr ""
+msgstr "Acción/Seleccionar"
 
 #: engines/pegasus/pegasus.cpp:2452
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "Activar/Desactivar pantalla de datos"
 
 #: engines/pegasus/pegasus.cpp:2453
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "Mostrar/Ocultar pantalla de información"
 
 #: engines/pegasus/pegasus.cpp:2454
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "Mostrar/Ocultar menú de pausa"
 
 #: engines/pegasus/pegasus.cpp:2455
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
@@ -3221,7 +3215,7 @@ msgstr "Modo pantalla táctil: premer botón secundario"
 #: backends/events/gph/gph-events.cpp:433
 #: backends/events/openpandora/op-events.cpp:172
 msgid "Touchscreen 'Tap Mode' - Hover (No Click)"
-msgstr "Modo pantalla táctil: apuntar co rato"
+msgstr "Modo pantalla táctil: apuntar co rato (sen premer)"
 
 #: backends/events/gph/gph-events.cpp:410
 msgid "Maximum Volume"
@@ -3240,9 +3234,8 @@ msgid "Decreasing Volume"
 msgstr "Baixando volume"
 
 #: backends/events/openpandora/op-events.cpp:174
-#, fuzzy
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Modo pantalla táctil: apuntar co rato"
+msgstr "Modo pantalla táctil: apuntar co rato (premer na cruceta)"
 
 #: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
