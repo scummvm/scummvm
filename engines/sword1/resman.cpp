@@ -228,7 +228,9 @@ Header *ResMan::lockScript(uint32 scrID) {
 	openScriptResourceLittleEndian(scrID);
 #endif
 	MemHandle *handle = resHandle(scrID);
-	return handle != NULL ? (Header *)handle->data : NULL;
+	if (!handle)
+		error("Script resource handle %d not found", scrID);
+	return (Header *)handle->data;
 }
 
 void ResMan::unlockScript(uint32 scrID) {
