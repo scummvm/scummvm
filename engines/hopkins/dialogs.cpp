@@ -422,6 +422,7 @@ void DialogsManager::showInventory() {
 			if (cursorId != 1 && cursorId != 2 && cursorId != 3 && cursorId != 16) {
 				if (mouseButton == 2) {
 					_vm->_objectsMan->nextObjectIcon(newInventoryItem);
+					cursorId = _vm->_events->_mouseCursorId;
 					if (cursorId != 23)
 						_vm->_events->changeMouseCursor(cursorId);
 				}
