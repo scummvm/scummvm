@@ -1950,6 +1950,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Larry 3 - English DOS (supplied by kervala in bug report #3611488)
+	{"lsl3", "", {
+		{"resource.map", 0, "534d8946f10bc71a71b5bf89a84c31be", 5916},
+		{"resource.001", 0, "f18441027154292836b973c655fa3175", 456265},
+		{"resource.002", 0, "f18441027154292836b973c655fa3175", 577059},
+		{"resource.003", 0, "f18441027154292836b973c655fa3175", 506817},
+		{"resource.004", 0, "f18441027154292836b973c655fa3175", 513337},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Larry 3 - English DOS Non-Interactive Demo
 	// SCI interpreter version 0.000.530
 	{"lsl3", "Demo", {
