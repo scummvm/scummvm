@@ -696,6 +696,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::DE_DEU, Common::kPlatformPC, ADGF_UNSTABLE, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Gabriel Knight - French DOS Floppy (supplied my kervala in bug report #3611487)
+	// SCI interpreter version 2.000.000
+	{"gk1", "", {
+		{"resource.map", 0, "236e36cc847cdeafdd5e5fa8cba916ed", 10801},
+		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13033072},
+		AD_LISTEND},
+	 	Common::FR_FRA, Common::kPlatformPC, ADGF_UNSTABLE, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Gabriel Knight - English DOS CD (from jvprat)
 	// Executable scanning reports "2.000.000", VERSION file reports "01.100.000"
 	{"gk1", "CD", {
