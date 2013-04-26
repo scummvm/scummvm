@@ -1727,7 +1727,7 @@ int FWScript::o1_loadMusic() {
 	debugC(5, kCineDebugScript, "Line: %d: loadMusic(%s)", _line, param);
 	g_sound->loadMusic(param);
 
-	strncpy(currentDatName, param, 30);
+	Common::strlcpy(currentDatName, param, 30);
 	musicIsPlaying = 0;
 
 	return 0;
