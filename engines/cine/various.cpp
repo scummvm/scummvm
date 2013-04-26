@@ -427,7 +427,7 @@ void CineEngine::makeSystemMenu() {
 				if (!makeTextEntryMenu(otherMessages[6], saveName, 20, 120))
 					break;
 
-				strncpy(currentSaveName[selectedSave], saveName, 20);
+				Common::strlcpy(currentSaveName[selectedSave], saveName, 20);
 
 				sprintf(saveFileName, "%s.%1d", _targetName.c_str(), selectedSave);
 
