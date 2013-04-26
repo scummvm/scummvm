@@ -1259,6 +1259,10 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	uint8 textLen = _textLen;
 
 	const uint8 *string = (const uint8 *)_commandText.getString(command);
+	// Fix spelling in command 3 FR: "Aller ver" => "Aller vers"
+	const char *command3Fr = "Aller vers";
+	if (command == 3 && getLanguage() == Common::FR_FRA)
+		string = (const uint8 *)command3Fr;
 	printDirect(string, _textAddressX, _textAddressY, textLen, (bool)(textLen & 1));
 
 	copyName(type, index, commandLine);
