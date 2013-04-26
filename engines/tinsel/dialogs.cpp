@@ -3655,10 +3655,10 @@ extern void HideConversation(bool bHide) {
 	if (g_InventoryState == ACTIVE_INV && g_ino == INV_CONV) {
 		if (bHide) {
 			// Move all the window and icons off-screen
-			for (i = 0; g_objArray[i] && i < MAX_WCOMP; i++) {
+			for (i = 0; i < MAX_WCOMP && g_objArray[i]; i++) {
 				MultiAdjustXY(g_objArray[i], 2 * SCREEN_WIDTH, 0);
 			}
-			for (i = 0; g_iconArray[i] && i < MAX_ICONS; i++) {
+			for (i = 0; i < MAX_ICONS && g_iconArray[i]; i++) {
 				MultiAdjustXY(g_iconArray[i], 2 * SCREEN_WIDTH, 0);
 			}
 
