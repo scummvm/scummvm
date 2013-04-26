@@ -153,7 +153,6 @@ Common::Error ToltecsEngine::run() {
 	_palette->loadAddPalette(9, 224);
 	_palette->setDeltaPalette(_palette->getMainPalette(), 7, 0, 31, 224);
 	_screen->finishTalkTextItems();
-	_screen->clearSprites();
 	_menuSystem->run();
 	/*
 	while (1) {
@@ -280,7 +279,6 @@ void ToltecsEngine::updateScreen() {
 		_flag01 = 1;
 		_counter02 = 1;
 	} else {
-		_screen->clearSprites();
 		_flag01 = 0;
 	}
 
@@ -424,8 +422,6 @@ void ToltecsEngine::setGuiHeight(int16 guiHeight) {
 
 void ToltecsEngine::setCamera(int16 x, int16 y) {
 	_screen->finishTalkTextItems();
-
-	_screen->clearSprites();
 
 	_cameraX = x;
 	_newCameraX = x;
@@ -646,7 +642,6 @@ void ToltecsEngine::showMenu(MenuID menuId) {
 	_palette->loadAddPalette(9, 224);
 	_palette->setDeltaPalette(_palette->getMainPalette(), 7, 0, 31, 224);
 	_screen->finishTalkTextItems();
-	_screen->clearSprites();
 	CursorMan.showMouse(true);
 	_menuSystem->run(menuId);
 	_keyState.reset();

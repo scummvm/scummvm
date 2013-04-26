@@ -251,10 +251,6 @@ void Screen::addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, i
 	}
 }
 
-void Screen::clearSprites() {
-
-}
-
 void Screen::blastSprite(int16 x, int16 y, int16 fragmentId, int16 resIndex, uint16 flags) {
 	DrawRequest drawRequest;
 	SpriteDrawItem sprite;

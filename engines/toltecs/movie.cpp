@@ -67,7 +67,6 @@ void MoviePlayer::playMovie(uint resIndex) {
 	memset(moviePalette, 0, sizeof(moviePalette));
 
 	_vm->_screen->finishTalkTextItems();
-	_vm->_screen->clearSprites();
 
 	_vm->_arc->openResource(resIndex);
 

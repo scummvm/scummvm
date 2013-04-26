@@ -167,7 +167,6 @@ public:
 	// Sprite list
 	void addStaticSprite(byte *spriteItem);
 	void addAnimatedSprite(int16 x, int16 y, int16 fragmentId, byte *data, int16 *spriteArray, bool loop, int mode);
-	void clearSprites();
 
 	// Sprite drawing
 	void drawSprite(const SpriteDrawItem &sprite);
