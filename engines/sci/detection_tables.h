@@ -696,6 +696,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::DE_DEU, Common::kPlatformPC, ADGF_UNSTABLE, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Gabriel Knight - French DOS Floppy (supplied my kervala in bug report #3611487)
+	// SCI interpreter version 2.000.000
+	{"gk1", "", {
+		{"resource.map", 0, "236e36cc847cdeafdd5e5fa8cba916ed", 10801},
+		{"resource.000", 0, "091cf08910780feabc56f8551b09cb36", 13033072},
+		AD_LISTEND},
+	 	Common::FR_FRA, Common::kPlatformPC, ADGF_UNSTABLE, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 	// Gabriel Knight - English DOS CD (from jvprat)
 	// Executable scanning reports "2.000.000", VERSION file reports "01.100.000"
 	{"gk1", "CD", {
@@ -1911,17 +1919,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO4(GUIO_NOSPEECH, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
-	// Larry 3 - English DOS
-	// SCI interpreter version 0.000.572
-	{"lsl3", "", {
-		{"resource.map", 0, "0b6bd3e039682830a51c5755c06591db", 5916},
-		{"resource.001", 0, "f18441027154292836b973c655fa3175", 456722},
-		{"resource.002", 0, "f18441027154292836b973c655fa3175", 578024},
-		{"resource.003", 0, "f18441027154292836b973c655fa3175", 506807},
-		{"resource.004", 0, "f18441027154292836b973c655fa3175", 513651},
-		AD_LISTEND},
-	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
-
 	// Larry 3 - English DOS (supplied by ssburnout in bug report #3049193)
 	// 1.021 8x5.25" (label: Int#5.15.90)
 	{"lsl3", "", {
@@ -1947,6 +1944,27 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "f18441027154292836b973c655fa3175", 302946},
 		{"resource.006", 0, "f18441027154292836b973c655fa3175", 282465},
 		{"resource.007", 0, "f18441027154292836b973c655fa3175", 257174},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Larry 3 - English DOS
+	// SCI interpreter version 0.000.572
+	{"lsl3", "", {
+		{"resource.map", 0, "0b6bd3e039682830a51c5755c06591db", 5916},
+		{"resource.001", 0, "f18441027154292836b973c655fa3175", 456722},
+		{"resource.002", 0, "f18441027154292836b973c655fa3175", 578024},
+		{"resource.003", 0, "f18441027154292836b973c655fa3175", 506807},
+		{"resource.004", 0, "f18441027154292836b973c655fa3175", 513651},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
+	// Larry 3 - English DOS (supplied by kervala in bug report #3611488)
+	{"lsl3", "", {
+		{"resource.map", 0, "534d8946f10bc71a71b5bf89a84c31be", 5916},
+		{"resource.001", 0, "f18441027154292836b973c655fa3175", 456265},
+		{"resource.002", 0, "f18441027154292836b973c655fa3175", 577059},
+		{"resource.003", 0, "f18441027154292836b973c655fa3175", 506817},
+		{"resource.004", 0, "f18441027154292836b973c655fa3175", 513337},
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformPC, 0, GUIO5(GUIO_NOSPEECH, GAMEOPTION_EGA_UNDITHER, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 

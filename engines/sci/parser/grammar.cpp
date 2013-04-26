@@ -386,8 +386,10 @@ ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 
 	for (uint i = 1; i < _parserBranches.size(); i++) { // branch rule 0 is treated specially
 		ParseRule *rule = _vbuild_rule(&_parserBranches[i]);
-		if (!rule)
+		if (!rule) {
+			freeRuleList(ntlist);
 			return NULL;
+		}
 		ntlist = _vocab_add_rule(ntlist, rule);
 	}
 

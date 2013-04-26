@@ -78,8 +78,10 @@ bool Animation::loadAnimation(const Common::String &file) {
 		delete[] _frames;
 		_frames = new AnimationFrame[_numFrames];
 		for (int32 e = 0; e < _numFrames; e++) {
-			if (READ_LE_UINT32(data) != 0x12345678)
+			if (READ_LE_UINT32(data) != 0x12345678) {
+				delete[] finalBuffer;
 				return false;
+			}
 
 			int32 oldRef = READ_LE_UINT32(data + 4);
 			uint32 compressedSize = READ_LE_UINT32(data + 8);
