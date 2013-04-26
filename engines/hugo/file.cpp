@@ -59,6 +59,11 @@ static const int s_bootCypherLen = sizeof(s_bootCypher) - 1;
 FileManager::FileManager(HugoEngine *vm) : _vm(vm) {
 	_hasReadHeader = false;
 	_firstUIFFl = true;
+
+	_UIFHeader->_size = 0;
+	_UIFHeader->_offset = 0;
+	_soundHdr->_size = 0;
+	_soundHdr->_offset = 0;
 }
 
 FileManager::~FileManager() {
