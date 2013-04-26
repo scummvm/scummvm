@@ -167,7 +167,6 @@ public:
 	Common::Platform getPlatform() const;
 	uint16 getVersion() const;
 	bool getIsDemo() const;
-	bool shouldQuit() const;
 
 	int getRandomNumber(int maxNumber);
 	Common::String generateSaveName(int slotNumber);

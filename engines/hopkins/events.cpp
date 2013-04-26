@@ -237,7 +237,7 @@ void EventsManager::checkForNextFrameCounter() {
 void EventsManager::delay(int totalMilli) {
 	uint32 delayEnd = g_system->getMillis() + totalMilli;
 
-	while (!g_system->getEventManager()->shouldQuit() && g_system->getMillis() < delayEnd) {
+	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
 		g_system->delayMillis(10);
 	}
 }

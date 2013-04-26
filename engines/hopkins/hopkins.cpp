@@ -1534,10 +1534,6 @@ bool HopkinsEngine::runFull() {
 	return true;
 }
 
-bool HopkinsEngine::shouldQuit() const {
-	return g_system->getEventManager()->shouldQuit();
-}
-
 int HopkinsEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
@@ -1889,7 +1885,10 @@ void HopkinsEngine::bombExplosion() {
 }
 
 void HopkinsEngine::restoreSystem() {
-	quitGame();
+	// If the game isn't alerady trying to quit, flag that quitting is needed
+	if (!shouldQuit())
+		quitGame();
+
 	_events->refreshEvents();
 }
 

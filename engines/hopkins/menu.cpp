@@ -50,11 +50,11 @@ int MenuManager::menu() {
 	signed int result;
 	int frameIndex[] = { 0, 0, 0, 0, 0 };
 
-	if (g_system->getEventManager()->shouldQuit())
+	if (_vm->shouldQuit())
 		return -1;
 
 	result = 0;
-	while (!g_system->getEventManager()->shouldQuit()) {
+	while (!_vm->shouldQuit()) {
 		_vm->_objectsMan->_forestFl = false;
 		_vm->_events->_breakoutFl = false;
 		_vm->_globals->_disableInventFl = true;
@@ -97,7 +97,7 @@ int MenuManager::menu() {
 		// Loop to make menu selection
 		bool selectionMade = false;
 		do {
-			if (g_system->getEventManager()->shouldQuit())
+			if (_vm->shouldQuit())
 				return -1;
 
 			menuIndex = MENU_NONE;
