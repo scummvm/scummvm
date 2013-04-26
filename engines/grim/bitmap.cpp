@@ -73,8 +73,6 @@ BitmapData::BitmapData(const Common::String &fname) {
 	_texIds = NULL;
 	_hasTransparency = 0;
 
-	_refCount = 0;
-
 	_texc = NULL;
 
 	_verts = NULL;
