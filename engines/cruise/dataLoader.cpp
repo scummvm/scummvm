@@ -283,6 +283,7 @@ int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numId
 
 		for (i = 0; i < numIdx; i++) {
 			if ((startIdx + i) > numMaxEntriesInSet) {
+				MemFree(ptr);
 				return 0;	// exit if limit is reached
 			}
 			loadSetEntry(name, ptr, startIdx + i, currentEntryIdx + i);
