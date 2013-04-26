@@ -1199,6 +1199,8 @@ void CGEEngine::snFlash(bool on) {
 			}
 			_vga->setColors(pal, 64);
 		}
+
+		free(pal);
 	} else
 		_vga->setColors(_vga->_sysPal, 64);
 	_dark = false;
