@@ -265,6 +265,8 @@ int loadFile(const char* name, int idx, int destIdx) {
 		error("Unknown fileType in loadFile");
 	}
 
+	MemFree(ptr);
+
 	return -1;
 }
 
