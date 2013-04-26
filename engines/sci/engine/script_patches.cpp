@@ -364,10 +364,42 @@ const uint16 freddypharkasPatchLadderEvent[] = {
 	PATCH_END
 };
 
+// In the Macintosh version of Freddy Pharkas, kRespondsTo is broken for
+// property selectors. They hacked the script to work around the issue,
+// so we revert the script back to using the values of the DOS script.
+const byte freddypharkasSignatureMacInventory[] = {
+	10,
+	0x39, 0x23,       // pushi 23
+	0x39, 0x74,       // pushi 74
+	0x78,             // push1
+	0x38, 0x01, 0x74, // pushi 0174
+	0x85, 0x15,       // lat 15
+	0
+};
+
+const uint16 freddypharkasPatchMacInventory[] = {
+	0x39, 0x02,       // pushi 02 (now matches the DOS version)
+	0x39, 0x74,       // pushi 74
+	0x78,             // push1
+	0x38, 0x01, 0x74, // pushi 0174
+	0x85, 0x15,       // lat 15
+	0x4a, 0x06,       // send 06
+	0x31, 0x08,       // bnt 08
+	0x38, 0x01, 0x74, // pushi 0174
+	0x76,             // push0
+	0x85, 0x15,       // lat 15
+	0x4a, 0x04,       // send 04
+	0x02,             // add
+	0xa5, 0x12,       // sat 12
+	0x39, 0x04,       // pushi 04 (now matches the DOS version)
+	PATCH_END
+};
+
 //    script, description,                                      magic DWORD,                                  adjust
 const SciScriptSignature freddypharkasSignatures[] = {
 	{      0, "CD: score early disposal",                    1, PATCH_MAGICDWORD(0x39, 0x0d, 0x43, 0x75),    -3, freddypharkasSignatureScoreDisposal, freddypharkasPatchScoreDisposal },
-	{    235, "CD: canister pickup hang",                   3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),     -4, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
+	{     15, "Mac: broken inventory",                       1, PATCH_MAGICDWORD(0x39, 0x23, 0x39, 0x74),     0, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
+	{    235, "CD: canister pickup hang",                    3, PATCH_MAGICDWORD(0x39, 0x07, 0x39, 0x08),    -4, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
 	{    320, "ladder event issue",                          2, PATCH_MAGICDWORD(0x6d, 0x76, 0x38, 0xf5),    -1, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
