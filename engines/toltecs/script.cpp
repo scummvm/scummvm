@@ -265,7 +265,7 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		_subCode = _code;
 		byte length = readByte();
 		if (length == 0) {
-			warning("Possible script bug detected - opcode length is 0 when calling script function");
+			warning("Opcode length is 0 when calling script function");
 			return;
 		}
 		debug(2, "length = %d", length);
@@ -484,7 +484,9 @@ void ScriptInterpreter::execOpcode(byte opcode) {
 		_code++;
 		break;
 	default:
-		error("Invalid opcode %d", opcode);
+		// Most likely a script bug. Throw a warning and ignore it.
+		// The original ignores invalid opcodes as well - bug #3604025.
+		warning("Invalid opcode %d", opcode);
 	}
 
 }
