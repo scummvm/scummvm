@@ -104,6 +104,15 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 	}
 }
 
+SndRes::~SndRes() {
+#ifdef ENABLE_IHNM
+	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
+		// Delete the dummy voice context. See setVoiceBank()
+		delete _voiceContext;
+	}
+#endif
+}
+
 void SndRes::setVoiceBank(int serial) {
 	Common::File *file;
 	if (_voiceSerial == serial)
