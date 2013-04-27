@@ -316,7 +316,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		return errBadFileOpen;
 	}
 
-	strncpy(_game.id, loadId, 8);
+	Common::strlcpy(_game.id, loadId, 8);
 
 	if (saveVersion >= 5) {
 		char md5[32 + 1];
