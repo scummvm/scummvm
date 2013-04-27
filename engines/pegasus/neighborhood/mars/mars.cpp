@@ -2470,6 +2470,7 @@ void Mars::doCanyonChase() {
 	playSpotSoundSync(kShuttleCockpitIn, kShuttleCockpitOut);
 
 	_centerShuttleMovie.setTime(kShuttleCenterCheckTime);
+	_centerShuttleMovie.redrawMovieWorld();
 	playSpotSoundSync(kShuttleOnboardIn, kShuttleOnboardOut);
 
 	_shuttleEnergyMeter.initShuttleEnergyMeter();
