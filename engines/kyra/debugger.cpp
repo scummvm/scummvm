@@ -695,10 +695,6 @@ bool Debugger_EoB::cmd_clearFlag(int argc, const char **argv) {
 	return true;
 }
 
-bool cmd_listFlags(int argc, const char **argv);
-	bool cmd_setFlags(int argc, const char **argv);
-	bool cmd_clearFlags(int argc, const char **argv);
-
 #endif // ENABLE_EOB
 
 } // End of namespace Kyra
