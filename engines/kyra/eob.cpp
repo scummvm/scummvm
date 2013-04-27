@@ -178,13 +178,14 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 	case 1:
 		if (!checkScriptFlags(0x10000)) {
 			if (checkScriptFlags(0x8000)) {
-				a = 1;
+				a = 13;
 			} else {
 				setScriptFlags(0x8000);
 				r = DLG2(3, 3);
+				a = 4;
 			}
 			if (!r)
-				r = DLG2(a ? 13 : 4, 4);
+				r = DLG2(a, 4);
 
 			if (!r) {
 				for (a = 0; a < 6; a++)
@@ -214,8 +215,8 @@ void EoBEngine::runNpcDialogue(int npcIndex) {
 
 		if (!checkScriptFlags(0x100000)) {
 			if (deletePartyItems(6, -1)) {
-				//_npcSequenceSub = 0;
-				//drawNpcScene(npcIndex);
+				_npcSequenceSub = 0;
+				drawNpcScene(npcIndex);
 				TXT(28);
 				createItemOnCurrentBlock(32);
 				setScriptFlags(0x100000);
