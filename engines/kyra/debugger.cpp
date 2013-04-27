@@ -489,6 +489,9 @@ void Debugger_EoB::initialize() {
 	DCmd_Register("set_position", WRAP_METHOD(Debugger_EoB, cmd_setPosition));
 	DCmd_Register("open_door", WRAP_METHOD(Debugger_EoB, cmd_openDoor));
 	DCmd_Register("close_door", WRAP_METHOD(Debugger_EoB, cmd_closeDoor));
+	DCmd_Register("list_flags", WRAP_METHOD(Debugger_EoB, cmd_listFlags));
+	DCmd_Register("set_flag", WRAP_METHOD(Debugger_EoB, cmd_setFlag));
+	DCmd_Register("clear_flag", WRAP_METHOD(Debugger_EoB, cmd_clearFlag));
 }
 
 bool Debugger_EoB::cmd_importSaveFile(int argc, const char **argv) {
@@ -640,13 +643,61 @@ bool Debugger_EoB::cmd_closeDoor(int, const char **) {
 	int c = (_vm->_wllWallFlags[_vm->_levelBlockProperties[block].walls[0]] & 8) ? 0 : 1;
 	int v = _vm->_levelBlockProperties[block].walls[c];
 	if ((_vm->_flags.gameID == GI_EOB1 && !(_vm->_wllWallFlags[v] & 1)) || (_vm->_flags.gameID == GI_EOB2 && (_vm->_wllWallFlags[v] & 0x20))) {
-		DebugPrintf("Couldn't close any door. Make sure you're facing the door you wish to open and standing right in front of it.\n\n");
+		DebugPrintf("Couldn't close any door. Make sure you're facing the door you wish to close and standing right in front of it.\n\n");
 	} else {
 		_vm->closeDoor(block);
 		DebugPrintf("Trying to close door at block %d.\n\n", block);
 	}
 	return true;
 }
+
+bool Debugger_EoB::cmd_listFlags(int, const char **) {
+	DebugPrintf("Flag           Status\n----------------------\n\n");
+	for (int i = 0; i < 32; i++) {
+		uint32 flag = 1 << i;
+		DebugPrintf("%.2d             %s\n", i, _vm->checkScriptFlags(flag) ? "TRUE" : "FALSE");
+	}
+	DebugPrintf("\n");
+	return true;
+}
+
+bool Debugger_EoB::cmd_setFlag(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Syntax:   set_flag <flag>\n\n");
+		return true;
+	}
+
+	int flag = atoi(argv[1]);
+	if (flag < 0 || flag > 31) {
+		DebugPrintf("<flag> must be a value from 0 to 31.\n\n");
+	} else {
+		_vm->setScriptFlags(1 << flag);
+		DebugPrintf("Flag '%.2d' has been set.\n\n", flag);
+	}
+
+	return true;
+}
+
+bool Debugger_EoB::cmd_clearFlag(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Syntax:   clear_flag <flag>\n\n");
+		return true;
+	}
+
+	int flag = atoi(argv[1]);
+	if (flag < 0 || flag > 31) {
+		DebugPrintf("<flag> must be a value from 0 to 31.\n\n");
+	} else {
+		_vm->clearScriptFlags(1 << flag);
+		DebugPrintf("Flag '%.2d' has been cleared.\n\n", flag);
+	}
+
+	return true;
+}
+
+bool cmd_listFlags(int argc, const char **argv);
+	bool cmd_setFlags(int argc, const char **argv);
+	bool cmd_clearFlags(int argc, const char **argv);
 
 #endif // ENABLE_EOB
 

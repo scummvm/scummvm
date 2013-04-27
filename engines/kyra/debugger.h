@@ -126,6 +126,9 @@ protected:
 	bool cmd_setPosition(int argc, const char **argv);
 	bool cmd_openDoor(int argc, const char **argv);
 	bool cmd_closeDoor(int argc, const char **argv);
+	bool cmd_listFlags(int argc, const char **argv);
+	bool cmd_setFlag(int argc, const char **argv);
+	bool cmd_clearFlag(int argc, const char **argv);
 };
 #endif // ENABLE_EOB
 
