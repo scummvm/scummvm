@@ -678,7 +678,7 @@ int AgiEngine::selectSlot() {
 			switch (key) {
 			case KEY_ENTER:
 				rc = active;
-				strncpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
+				Common::strlcpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
 				debugC(8, kDebugLevelMain | kDebugLevelInput, "Button pressed: %d", rc);
 				exitSelectSlot = true;
 				break;
