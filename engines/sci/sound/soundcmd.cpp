@@ -383,7 +383,7 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 		if (musicSlot->fadeTo == musicSlot->volume)
 			return acc;
 
-		// sometimes we get objects in that position, fix it up (ffs. workarounds)
+		// Sometimes we get objects in that position, so fix the value (refer to workarounds.cpp)
 		if (!argv[1].getSegment())
 			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
 		else

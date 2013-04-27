@@ -678,7 +678,7 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 		// We need to save intensity of the _sysPalette at least for kq6 when entering the dark cave (room 390)
 		//  from room 340. scripts will set intensity to 60 for this room and restore them when leaving.
 		//  Sierra SCI is also doing this (although obviously not for SCI0->SCI01 games, still it doesn't hurt
-		//  to save it everywhere). ffs. bug #3072868
+		//  to save it everywhere). Refer to bug #3072868
 		s.syncBytes(_sysPalette.intensity, 256);
 	}
 	if (s.getVersion() >= 24) {

@@ -528,7 +528,7 @@ void GfxAnimate::addToPicDrawCels() {
 			it->priority = _ports->kernelCoordinateToPriority(it->y);
 
 		if (!view->isScaleable()) {
-			// Laura Bow 2 specific - ffs. fill()
+			// Laura Bow 2 specific - Check fill() below
 			it->scaleSignal = 0;
 			it->scaleY = it->scaleX = 128;
 		}

@@ -278,7 +278,7 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 }
 
 // this list contains all mandatory set cursor changes, that need special handling
-//  ffs. GfxCursor::setPosition (below)
+//  refer to GfxCursor::setPosition (below)
 //    Game,            newPosition, validRect
 static const SciCursorSetPositionWorkarounds setPositionWorkarounds[] = {
 	{ GID_ISLANDBRAIN, 84, 109,     46, 76, 174, 243 }, // island of dr. brain / game menu

@@ -63,7 +63,7 @@ struct SciScriptSignature {
 //  boundaries of room 660. Normally a textbox is supposed to get on screen
 //  but the call is wrong, so not only do we get an error message the script
 //  is also hanging because the cue won't get sent out
-//  This also happens in sierra sci - ffs. bug #3038387
+//  This also happens in sierra sci - refer to bug #3038387
 const byte ecoquest1SignatureStayAndHelp[] = {
 	40,
 	0x3f, 0x01,        // link 01
@@ -129,7 +129,7 @@ const SciScriptSignature ecoquest1Signatures[] = {
 //  ecorder. This is done by reusing temp-space, that was filled on state 1.
 //  this worked in sierra sci just by accident. In our sci, the temp space
 //  is resetted every time, which means the previous text isn't available
-//  anymore. We have to patch the code because of that ffs. bug #3035386
+//  anymore. We have to patch the code because of that - bug #3035386
 const byte ecoquest2SignatureEcorder[] = {
 	35,
 	0x31, 0x22,        // bnt [next state]
@@ -1102,7 +1102,7 @@ const SciScriptSignature qfg3Signatures[] = {
 //   adds it to nest::x. The problem is that the script also checks if x exceeds
 //   we never reach that of course, so the pterodactyl-flight will go endlessly
 //   we could either calculate property count differently somehow fixing this
-//   but I think just patching it out is cleaner (ffs. bug #3037938)
+//   but I think just patching it out is cleaner (bug #3037938)
 const byte sq4FloppySignatureEndlessFlight[] = {
 	8,
 	0x39, 0x04,       // pushi 04 (selector x)
@@ -1113,7 +1113,7 @@ const byte sq4FloppySignatureEndlessFlight[] = {
 	0
 };
 
-// Similar to the above, for the German version (ffs. bug #3110215)
+// Similar to the above, for the German version (bug #3110215)
 const byte sq4FloppySignatureEndlessFlightGerman[] = {
 	8,
 	0x39, 0x04,       // pushi 04 (selector x)
