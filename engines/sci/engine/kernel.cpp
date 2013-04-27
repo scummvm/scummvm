@@ -132,7 +132,7 @@ void Kernel::loadSelectorNames() {
 		return;
 	}
 
-	int count = isBE ? READ_BE_UINT16(r->data) : READ_LE_UINT16(r->data) + 1; // Counter is slightly off
+	int count = (isBE ? READ_BE_UINT16(r->data) : READ_LE_UINT16(r->data)) + 1; // Counter is slightly off
 
 	for (int i = 0; i < count; i++) {
 		int offset = isBE ? READ_BE_UINT16(r->data + 2 + i * 2) : READ_LE_UINT16(r->data + 2 + i * 2);
