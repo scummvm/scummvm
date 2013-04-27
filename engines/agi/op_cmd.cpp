@@ -1219,7 +1219,7 @@ void cmdWander(AgiGame *state, uint8 *p) {
 
 void cmdSetGameID(AgiGame *state, uint8 *p) {
 	if (state->_curLogic->texts && (p0 - 1) <= state->_curLogic->numTexts)
-		strncpy(state->id, state->_curLogic->texts[p0 - 1], 8);
+		Common::strlcpy(state->id, state->_curLogic->texts[p0 - 1], 8);
 	else
 		state->id[0] = 0;
 
