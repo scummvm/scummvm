@@ -1548,12 +1548,16 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		if (rScreen.intersects(clip)) {
 			rScreen.clip(clip);
 		} else {
+			free(dst);
+
 			return 0;
 		}
 	} else if (_rectOverrideEnabled) {
 		if (rScreen.intersects(_rectOverride)) {
 			rScreen.clip(_rectOverride);
 		} else {
+			free(dst);
+
 			return 0;
 		}
 	}
