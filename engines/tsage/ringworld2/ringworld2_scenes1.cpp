@@ -1062,9 +1062,10 @@ void Scene1200::Area1::process(Event &event) {
 	CursorType cursor = R2_GLOBALS._events.getCursor();
 
 	if (_actor2._bounds.contains(event.mousePos.x + g_globals->gfxManager()._bounds.left , event.mousePos.y)) {
-		if (cursor == _cursorNum)
+		if (cursor == _cursorNum) {
 			warning("TODO: _cursorState = ???");
 			R2_GLOBALS._events.setCursor(_savedCursorNum); //, _cursorState);
+		}
 	} else if (event.mousePos.y < 168) {
 		if (cursor != _cursorNum) {
 			_savedCursorNum = cursor;
