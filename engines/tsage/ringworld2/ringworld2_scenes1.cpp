@@ -8234,9 +8234,10 @@ void Scene1550::subA2B2F() {
 			R2_GLOBALS._sceneManager._fadeMode = FADEMODE_IMMEDIATE;
 
 			if (varA == 0) {
-				if (_field417 != 1550)
+				if (_field417 != 1550) {
 					g_globals->_scenePalette.loadPalette(1550);
 					R2_GLOBALS._sceneManager._hasPalette = true;
+				}
 			} else {
 				g_globals->_scenePalette.loadPalette(varA);
 				R2_GLOBALS._sceneManager._hasPalette = true;
