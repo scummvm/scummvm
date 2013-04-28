@@ -1030,6 +1030,8 @@ bool Actor::getSpriteParams(CommonObjectData *commonObjectData, int &frameNumber
 	} else if (validObjId(commonObjectData->_id)) {
 		spriteList = &_vm->_sprite->_mainSprites;
 		frameNumber = commonObjectData->_spriteListResourceId;
+	} else {
+		return false;
 	}
 
 	if (spriteList->empty()) {
