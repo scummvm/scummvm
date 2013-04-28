@@ -2420,7 +2420,7 @@ bool Interface::converseAddText(const char *text, int strId, int replyId, byte r
 
 	assert(strlen(text) < CONVERSE_MAX_WORK_STRING);
 
-	strncpy(_converseWorkString, text, CONVERSE_MAX_WORK_STRING);
+	Common::strlcpy(_converseWorkString, text, CONVERSE_MAX_WORK_STRING);
 
 	while (1) {
 		len = strlen(_converseWorkString);
