@@ -87,10 +87,11 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		g_sci->getVocabulary()->parser_event = NULL_REG; // Invalidate parser event
 
 	if (s->_cursorWorkaroundActive) {
-		// ffs: GfxCursor::setPosition()
-		// we check, if actual cursor position is inside given rect
-		//  if that's the case, we switch ourself off. Otherwise
-		//  we simulate the original set position to the scripts
+		// We check if the actual cursor position is inside specific rectangles
+		// where the cursor itself should be moved to. If this is the case, we
+		// set the mouse cursor's position to be within the rectangle in
+		// question. Check GfxCursor::setPosition(), for a more detailed
+		// explanation and a list of cursor position workarounds.
 		if (s->_cursorWorkaroundRect.contains(mousePos.x, mousePos.y)) {
 			s->_cursorWorkaroundActive = false;
 		} else {
