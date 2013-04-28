@@ -697,6 +697,10 @@ void ComputerManager::displayBricks() {
 	}
 
 	displayScore();
+
+	// Refresh the entire screen
+	_vm->_graphicsMan->addRefreshRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	_vm->_graphicsMan->updateScreen();
 }
 
 /**
