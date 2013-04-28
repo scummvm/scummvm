@@ -723,8 +723,9 @@ IMPLEMENT_FUNCTION_II(19, Kahina, function19, CarIndex, EntityPosition)
 		break;
 
 	case kActionNone:
-		if (getEvent(kEventAnnaBaggageArgument))
+		if (getEvent(kEventAnnaBaggageArgument)) {
 			RESET_ENTITY_STATE(kEntityKahina, Kahina, setup_function22);
+		}
 
 		if (getEntities()->updateEntity(kEntityKahina, (CarIndex)params->param1, (EntityPosition)params->param2))
 			callbackAction();
