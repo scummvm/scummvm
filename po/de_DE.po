@@ -1,17 +1,17 @@
 # German translation for ScummVM.
 # Copyright (C) 2010-2013 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari <Lothar@Windowsbase.de>, 2012.
+# Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2013-04-24 13:35+0100\n"
-"PO-Revision-Date: 2012-07-14 22:49+0100\n"
+"PO-Revision-Date: 2013-04-24 22:01+0100\n"
 "Last-Translator: Simon Sawatzki <SimSaw@gmx.de>\n"
-"Language-Team: Simon Sawatzki <SimSaw@gmx.de> (Lead), Lothar Serra Mari "
-"(Contributor)\n"
+"Language-Team: Simon Sawatzki <SimSaw@gmx.de>, Lothar Serra Mari "
+"(retired)\n"
 "Language: Deutsch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -32,13 +32,12 @@ msgid "Available engines:"
 msgstr "Verfügbare Spiele-Engines:"
 
 #: gui/browser.cpp:67
-#, fuzzy
 msgid "Show hidden files"
-msgstr "Konsole zeigen/verbergen"
+msgstr "Versteckte Dateien anzeigen"
 
 #: gui/browser.cpp:67
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Dateien mit Versteckt-Attribut anzeigen"
 
 #: gui/browser.cpp:71
 msgid "Go up"
@@ -731,7 +730,7 @@ msgstr "MIDI-Lautstärke:"
 
 #: gui/options.cpp:873
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "FluidSynth-Einstellungen"
 
 #: gui/options.cpp:880
 msgid "MT-32 Device:"
@@ -761,9 +760,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Echte Roland-MT-32-Emulation (kein GM)"
 
 #: gui/options.cpp:890
-#, fuzzy
 msgid "Roland GS Mode (disable GM mapping)"
-msgstr "Echte Roland-MT-32-Emulation (GM-Emulation deaktiviert)"
+msgstr "Roland-GS-Modus (GM-Zuweisung deaktiviert)"
 
 #: gui/options.cpp:890
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
@@ -957,11 +955,11 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:166
 msgid "List view"
-msgstr ""
+msgstr "Listenansicht"
 
 #: gui/saveload-dialog.cpp:167
 msgid "Grid view"
-msgstr ""
+msgstr "Rasteransicht"
 
 #: gui/saveload-dialog.cpp:210 gui/saveload-dialog.cpp:358
 msgid "No date saved"
@@ -1001,31 +999,28 @@ msgstr "Unbenannt"
 
 #: gui/saveload-dialog.cpp:546
 msgid "Next"
-msgstr ""
+msgstr "Vor"
 
 #: gui/saveload-dialog.cpp:549
 msgid "Prev"
-msgstr ""
+msgstr "Zurück"
 
 #: gui/saveload-dialog.cpp:736
-#, fuzzy
 msgid "New Save"
-msgstr "Speichern"
+msgstr "Neuer Spielstand"
 
 #: gui/saveload-dialog.cpp:736
-#, fuzzy
 msgid "Create a new save game"
-msgstr "Konnte Spielstand nicht speichern."
+msgstr "Erstellt einen neuen Spielstand."
 
 #: gui/saveload-dialog.cpp:865
-#, fuzzy
 msgid "Name: "
-msgstr "Name:"
+msgstr "Name: "
 
 #: gui/saveload-dialog.cpp:937
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "Geben Sie eine Beschreibung für Speicherplatz %d ein:"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -1061,93 +1056,89 @@ msgid "Clear value"
 msgstr "Wert löschen"
 
 #: gui/fluidsynth-dialog.cpp:67
-#, fuzzy
 msgid "Reverb"
-msgstr "Niemals"
+msgstr "Hall"
 
 #: gui/fluidsynth-dialog.cpp:69 gui/fluidsynth-dialog.cpp:101
-#, fuzzy
 msgid "Active"
-msgstr " (Aktiv)"
+msgstr "Aktiv"
 
 #: gui/fluidsynth-dialog.cpp:71
 msgid "Room:"
-msgstr ""
+msgstr "Raum:"
 
 #: gui/fluidsynth-dialog.cpp:78
 msgid "Damp:"
-msgstr ""
+msgstr "Dämpfung:"
 
 #: gui/fluidsynth-dialog.cpp:85
 msgid "Width:"
-msgstr ""
+msgstr "Radius:"
 
 #: gui/fluidsynth-dialog.cpp:92 gui/fluidsynth-dialog.cpp:110
 msgid "Level:"
-msgstr ""
+msgstr "Intensität:"
 
 #: gui/fluidsynth-dialog.cpp:99
 msgid "Chorus"
-msgstr ""
+msgstr "Chor"
 
 #: gui/fluidsynth-dialog.cpp:103
 msgid "N:"
-msgstr ""
+msgstr "Stimmen:"
 
 #: gui/fluidsynth-dialog.cpp:117
-#, fuzzy
 msgid "Speed:"
-msgstr "Sprache"
+msgstr "Rate:"
 
 #: gui/fluidsynth-dialog.cpp:124
 msgid "Depth:"
-msgstr ""
+msgstr "Trennzeit:"
 
 #: gui/fluidsynth-dialog.cpp:131
 msgid "Type:"
-msgstr ""
+msgstr "Typ:"
 
 #: gui/fluidsynth-dialog.cpp:134
 msgid "Sine"
-msgstr ""
+msgstr "Sinus"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Triangle"
-msgstr ""
+msgstr "Dreieck"
 
 #: gui/fluidsynth-dialog.cpp:139
 msgid "Interpolation:"
-msgstr ""
+msgstr "Interpolation:"
 
 #: gui/fluidsynth-dialog.cpp:142
 msgid "None (fastest)"
-msgstr ""
+msgstr "Keine (am schnellsten)"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "Linear"
-msgstr ""
+msgstr "Linear"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Fourth-order"
-msgstr ""
+msgstr "Vierstufig"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Seventh-order"
-msgstr ""
+msgstr "Siebenstufig"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset"
-msgstr ""
+msgstr "Rücksetzen"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "Setzt alle FluidSynth-Einstellungen auf ihre Standard-Werte zurück."
 
 #: gui/fluidsynth-dialog.cpp:216
-#, fuzzy
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Möchten Sie wirklich zur Spieleliste zurückkehren?"
+msgstr "Möchten Sie wirklich alle FluidSynth-Einstellungen auf ihre Standard-Werte zurücksetzen?"
 
 #: base/main.cpp:210
 #, c-format
@@ -1441,7 +1432,6 @@ msgid "Restore"
 msgstr "Laden"
 
 #: engines/drascula/saveload.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
@@ -1451,7 +1441,7 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM hat erkannt, dass Sie alte Spielstände von Baphomets Fluch 1 haben, "
+"ScummVM hat erkannt, dass Sie alte Spielstände von Drascula haben, "
 "die umgewandelt werden sollten.\n"
 "Das alte Speicherformat wird nicht mehr unterstützt, also können Sie diese "
 "Spielstände unkonvertiert nicht laden.\n"
@@ -1763,7 +1753,7 @@ msgstr "Sehr schneller Modus (*)"
 
 #: engines/scumm/help.cpp:99
 msgid "Toggle mouse capture"
-msgstr "Mauseingrenzung in Fenster an/aus"
+msgstr "Mauseingrenzung in Fenster EIN/AUS"
 
 #: engines/scumm/help.cpp:100
 msgid "Switch between graphics filters"
@@ -1775,7 +1765,7 @@ msgstr "Größenverhätlnis höher/niedriger"
 
 #: engines/scumm/help.cpp:102
 msgid "Toggle aspect-ratio correction"
-msgstr "Seitenverhältnis anpassen: an/aus"
+msgstr "Seitenverhältnis anpassen: EIN/AUS"
 
 #: engines/scumm/help.cpp:107
 msgid "* Note that using ctrl-f and"
@@ -2271,13 +2261,12 @@ msgid "Failed to delete file."
 msgstr "Konnte Datei nicht löschen."
 
 #: engines/groovie/detection.cpp:312
-#, fuzzy
 msgid "Fast movie speed"
-msgstr "Schneller Modus"
+msgstr "Schnelles Film-Tempo"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Spielt Filme mit erhöhter Geschwindigkeit ab."
 
 #: engines/groovie/script.cpp:420
 msgid "Failed to save game"
@@ -2407,12 +2396,11 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59
 msgid "Alternative intro"
-msgstr ""
+msgstr "Alternativer Vorspann"
 
 #: engines/queen/queen.cpp:60
-#, fuzzy
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Verwendet den Vorspann der Diskettenversion (nur bei CD-Version)."
+msgstr "Verwendet einen alternativen Vorspann (nur bei CD-Version)."
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2519,12 +2507,16 @@ msgstr "Zeigt Objektbeschriftungen bei Mausberührung an."
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
 msgstr ""
+"Ihnen fehlt die Datei teenagent.dat. Laden Sie sich diese von der "
+"ScummVM-Website unter http://www.scummvm.org herunter."
 
 #: engines/teenagent/resources.cpp:115
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"Die Datei teenagent.dat ist gepackt und zlib zum Entpacken wurde in dieser "
+"ausführbaren Datei nicht miteingebunden. Bitte entpacken Sie die Datei."
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2578,44 +2570,43 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:679
 msgid "Invalid save file name"
-msgstr ""
+msgstr "Ungültiger Spielstandname"
 
 #: engines/pegasus/pegasus.cpp:2445
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Hoch/Hineinzoomen/Nach vorn/Türen öffnen"
 
 #: engines/pegasus/pegasus.cpp:2446
-#, fuzzy
 msgid "Down/Zoom Out"
-msgstr "Herauszoomen"
+msgstr "Runter/Hinauszoomen"
 
 #: engines/pegasus/pegasus.cpp:2449
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "Inventarleiste anzeigen/verbergen"
 
 #: engines/pegasus/pegasus.cpp:2450
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Biochip-Leiste anzeigen/verbergen"
 
 #: engines/pegasus/pegasus.cpp:2451
 msgid "Action/Select"
-msgstr ""
+msgstr "Aktion/Auswählen"
 
 #: engines/pegasus/pegasus.cpp:2452
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "Mittige Datenanzeige wechseln"
 
 #: engines/pegasus/pegasus.cpp:2453
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "Info-Bildschirm anzeigen/verbergen"
 
 #: engines/pegasus/pegasus.cpp:2454
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "Pause-Menü anzeigen/verbergen"
 
 #: engines/pegasus/pegasus.cpp:2455
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
@@ -3275,9 +3266,8 @@ msgid "Decreasing Volume"
 msgstr "Lautstärke niedriger"
 
 #: backends/events/openpandora/op-events.cpp:174
-#, fuzzy
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Berührungsbildschirm-Tipp-Modus - schweben (kein Klick)"
+msgstr "Berührungsbildschirm-Tipp-Modus - schweben (DPad-Klicks)"
 
 #: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
@@ -3317,20 +3307,6 @@ msgstr "Klicken deaktiviert"
 
 #~ msgid "Enable Roland GS Mode"
 #~ msgstr "Roland-GS-Modus"
-
-#~ msgid "Hercules Green"
-#~ msgstr "Hercules-Grün"
-
-#~ msgid "Hercules Amber"
-#~ msgstr "Hercules-Bernsteingelb"
-
-#~ msgctxt "lowres"
-#~ msgid "Hercules Green"
-#~ msgstr "Hercules-Grün"
-
-#~ msgctxt "lowres"
-#~ msgid "Hercules Amber"
-#~ msgstr "Hercules-Gelb"
 
 #~ msgid "Save game failed!"
 #~ msgstr "Konnte Spielstand nicht speichern!"
