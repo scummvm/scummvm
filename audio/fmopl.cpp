@@ -137,7 +137,7 @@ OPL *Config::create(DriverId driver, OplType type) {
 			return new MAME::OPL();
 		else
 			warning("MAME OPL emulator only supports OPL2 emulation");
-			return 0;
+		return 0;
 
 #ifndef DISABLE_DOSBOX_OPL
 	case kDOSBox:
