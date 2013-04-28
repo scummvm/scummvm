@@ -585,6 +585,17 @@ void Kernel::mapFunctions() {
 			continue;
 		}
 
+#ifdef ENABLE_SCI32
+		// HACK: Phantasmagoria Mac uses a modified kDoSound (which *nothing*
+		// else seems to use)!
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh && g_sci->getGameId() == GID_PHANTASMAGORIA && kernelName == "DoSound") {
+			_kernelFuncs[id].function = kDoSoundPhantasmagoriaMac;
+			_kernelFuncs[id].signature = parseKernelSignature("DoSoundPhantasmagoriaMac", "i.*");
+			_kernelFuncs[id].name = "DoSoundPhantasmagoriaMac";
+			continue;
+		}
+#endif
+
 		// If the name is known, look it up in s_kernelMap. This table
 		// maps kernel func names to actual function (pointers).
 		SciKernelMapEntry *kernelMap = s_kernelMap;

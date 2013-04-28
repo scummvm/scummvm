@@ -309,6 +309,33 @@ reg_t kSetLanguage(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kDoSoundPhantasmagoriaMac(EngineState *s, int argc, reg_t *argv) {
+	// Phantasmagoria Mac (and seemingly no other game (!)) uses this
+	// cutdown version of kDoSound.
+
+	switch (argv[0].toUint16()) {
+	case 0:
+		return g_sci->_soundCmd->kDoSoundMasterVolume(argc - 1, argv + 1, s->r_acc);
+	case 2:
+		return g_sci->_soundCmd->kDoSoundInit(argc - 1, argv + 1, s->r_acc);
+	case 3:
+		return g_sci->_soundCmd->kDoSoundDispose(argc - 1, argv + 1, s->r_acc);
+	case 4:
+		return g_sci->_soundCmd->kDoSoundPlay(argc - 1, argv + 1, s->r_acc);
+	case 5:
+		return g_sci->_soundCmd->kDoSoundStop(argc - 1, argv + 1, s->r_acc);
+	case 8:
+		return g_sci->_soundCmd->kDoSoundSetVolume(argc - 1, argv + 1, s->r_acc);
+	case 9:
+		return g_sci->_soundCmd->kDoSoundSetLoop(argc - 1, argv + 1, s->r_acc);
+	case 10:
+		return g_sci->_soundCmd->kDoSoundUpdateCues(argc - 1, argv + 1, s->r_acc);
+	}
+
+	error("Unknown kDoSound Phantasmagoria Mac subop %d", argv[0].toUint16());
+	return s->r_acc;
+}
+
 #endif
 
 } // End of namespace Sci
