@@ -723,7 +723,7 @@ void Interface::setStatusText(const char *text, int statusColor) {
 	if (_vm->_render->getFlags() & RF_MAP || _vm->_interface->getMode() == kPanelPlacard)
 		return;
 
-	strncpy(_statusText, text, STATUS_TEXT_LEN);
+	Common::strlcpy(_statusText, text, STATUS_TEXT_LEN);
 	_statusOnceColor = statusColor;
 	drawStatusBar();
 }
