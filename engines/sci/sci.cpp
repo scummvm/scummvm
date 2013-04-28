@@ -455,10 +455,19 @@ static byte patchGameRestoreSaveSci21[] = {
 static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, byte id) {
 	Script *script = segMan->getScript(methodAddress.getSegment());
 	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
-	if (getSciVersion() <= SCI_VERSION_1_1)
+
+	if (getSciVersion() <= SCI_VERSION_1_1) {
 		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
-	else	// SCI2+
+	} else {	// SCI2+
 		memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
+
+		if (g_sci->isBE()) {
+			// LE -> BE
+			patchPtr[9] = 0x00;
+			patchPtr[10] = 0x06;
+		}
+	}
+
 	patchPtr[8] = id;
 }
 
@@ -466,8 +475,16 @@ static void patchGameSaveRestoreCodeSci21(SegManager *segMan, reg_t methodAddres
 	Script *script = segMan->getScript(methodAddress.getSegment());
 	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
 	memcpy(patchPtr, patchGameRestoreSaveSci21, sizeof(patchGameRestoreSaveSci21));
+
 	if (doRestore)
 		patchPtr[2] = 0x78;	// push1
+
+	if (g_sci->isBE()) {
+		// LE -> BE
+		patchPtr[10] = 0x00;
+		patchPtr[11] = 0x08;
+	}
+
 	patchPtr[9] = id;
 }
 
