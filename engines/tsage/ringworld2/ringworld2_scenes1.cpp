@@ -14560,9 +14560,10 @@ void Scene1950::signal() {
 	case 1964:
 	// No break on purpose
 	case 1965:
-		if (!R2_GLOBALS.getFlag(37))
+		if (!R2_GLOBALS.getFlag(37)) {
 			SceneItem::display(1950, 26, 0, 280, 1, 160, 9, 1, 2, 20, 7, 7, -999);
 			R2_GLOBALS._player.enableControl();
+		}
 		break;
 	case 1966:
 		_actor4.remove();
