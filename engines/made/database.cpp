@@ -694,7 +694,7 @@ int16 GameDatabaseV3::savegame(const char *filename, const char *description, in
 		warning("Can't create file '%s', game not saved", filename);
 		return 6;
 	}
-	strncpy(desc, description, 64);
+	Common::strlcpy(desc, description, 64);
 	out->writeUint32BE(MKTAG('S','G','A','M'));
 	out->writeUint32LE(size);
 	out->writeUint16LE(version);
