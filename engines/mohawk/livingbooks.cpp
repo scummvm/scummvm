@@ -589,8 +589,8 @@ void MohawkEngine_LivingBooks::updatePage() {
 				_items.remove_at(i);
 				i--;
 				_orderedItems.remove(delayedEvent.item);
-				delete delayedEvent.item;
 				_page->itemDestroyed(delayedEvent.item);
+				delete delayedEvent.item;
 				if (_focus == delayedEvent.item)
 					_focus = NULL;
 				break;
