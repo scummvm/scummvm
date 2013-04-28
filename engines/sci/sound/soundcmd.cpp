@@ -737,7 +737,7 @@ void SoundCommandParser::updateSci0Cues() {
 	}
 
 	if (noOnePlaying && pWaitingForPlay) {
-		// If there is a queued entry, play it now ffs: SciMusic::soundPlay()
+		// If there is a queued entry, play it now - check SciMusic::soundPlay()
 		pWaitingForPlay->isQueued = false;
 		_music->soundPlay(pWaitingForPlay);
 	}
