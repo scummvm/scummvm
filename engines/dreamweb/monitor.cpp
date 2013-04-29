@@ -148,7 +148,7 @@ bool DreamWebEngine::execCommand() {
 	
 	static const char *const comlistDE[] = {
 		"ENDE",
-		"HILFE",
+		"HILF",
 		"LISTE",
 		"LIES",
 		"ZUGRIFF",
@@ -163,6 +163,16 @@ bool DreamWebEngine::execCommand() {
 		"LEGGI",
 		"REGISTRA",
 		"CHIAVI",
+		NULL
+	};
+	
+	static const char *const comlistES[] = {
+		"SALIR",
+		"AYUDA",
+		"LISTA",
+		"LEER",
+		"IDENTIFICARSE",
+		"CLAVES",
 		NULL
 	};
 
@@ -186,6 +196,8 @@ bool DreamWebEngine::execCommand() {
 			cmd = findCommand(comlistIT);
 			break;
 		case Common::ES_ESP:
+			cmd = findCommand(comlistES);
+			break;
 		default:
 			break;
 		}
