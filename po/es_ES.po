@@ -8,13 +8,14 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2013-04-24 13:35+0100\n"
-"PO-Revision-Date: 2012-07-08 18:19+0100\n"
+"PO-Revision-Date: 2013-04-28 16:31+0100\n"
 "Last-Translator: Tomás Maidagan\n"
 "Language-Team: \n"
 "Language: Espanol\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: gui/about.cpp:93
 #, c-format
@@ -30,13 +31,12 @@ msgid "Available engines:"
 msgstr "Motores disponibles:"
 
 #: gui/browser.cpp:67
-#, fuzzy
 msgid "Show hidden files"
-msgstr "Mostrar / Ocultar consola"
+msgstr "Mostrar archivos ocultos"
 
 #: gui/browser.cpp:67
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Muestra los archivos marcados como ocultos"
 
 #: gui/browser.cpp:71
 msgid "Go up"
@@ -89,7 +89,7 @@ msgstr "Asignar teclas"
 
 #: gui/gui-manager.cpp:129 base/main.cpp:308
 msgid "Toggle FullScreen"
-msgstr "Activar pantalla completa"
+msgstr "Activar/Desactivar pantalla completa"
 
 #: gui/KeysDialog.h:36 gui/KeysDialog.cpp:145
 msgid "Choose an action to map"
@@ -119,7 +119,7 @@ msgstr "Aceptar"
 
 #: gui/KeysDialog.cpp:49
 msgid "Select an action and click 'Map'"
-msgstr "Selecciona una acción y pulsa \"Asignar\""
+msgstr "Selecciona una acción y pulsa 'Asignar'"
 
 #: gui/KeysDialog.cpp:80 gui/KeysDialog.cpp:102 gui/KeysDialog.cpp:141
 #, c-format
@@ -727,7 +727,7 @@ msgstr "Ganancia MIDI:"
 
 #: gui/options.cpp:873
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "Opciones de FluidSynth"
 
 #: gui/options.cpp:880
 msgid "MT-32 Device:"
@@ -757,9 +757,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 real (sin emulación GM)"
 
 #: gui/options.cpp:890
-#, fuzzy
 msgid "Roland GS Mode (disable GM mapping)"
-msgstr "Roland MT-32 auténtica (desactivar emulación GM)"
+msgstr "Modo Roland GS (desactivar conversión GM)"
 
 #: gui/options.cpp:890
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
@@ -946,11 +945,11 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:166
 msgid "List view"
-msgstr ""
+msgstr "Modo lista"
 
 #: gui/saveload-dialog.cpp:167
 msgid "Grid view"
-msgstr ""
+msgstr "Modo mosaico"
 
 #: gui/saveload-dialog.cpp:210 gui/saveload-dialog.cpp:358
 msgid "No date saved"
@@ -990,31 +989,28 @@ msgstr "Partida sin nombre"
 
 #: gui/saveload-dialog.cpp:546
 msgid "Next"
-msgstr ""
+msgstr "Siguiente"
 
 #: gui/saveload-dialog.cpp:549
 msgid "Prev"
-msgstr ""
+msgstr "Anterior"
 
 #: gui/saveload-dialog.cpp:736
-#, fuzzy
 msgid "New Save"
 msgstr "Guardar"
 
 #: gui/saveload-dialog.cpp:736
-#, fuzzy
 msgid "Create a new save game"
-msgstr "Fallo al guardar la partida"
+msgstr "Guarda una nueva partida"
 
 #: gui/saveload-dialog.cpp:865
-#, fuzzy
 msgid "Name: "
 msgstr "Nombre:"
 
 #: gui/saveload-dialog.cpp:937
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "Introduce una descripción para la ranura %d:"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -1050,93 +1046,91 @@ msgid "Clear value"
 msgstr "Eliminar valor"
 
 #: gui/fluidsynth-dialog.cpp:67
-#, fuzzy
 msgid "Reverb"
-msgstr "Nunca"
+msgstr "Reverberación"
 
 #: gui/fluidsynth-dialog.cpp:69 gui/fluidsynth-dialog.cpp:101
-#, fuzzy
 msgid "Active"
-msgstr "(Activa)"
+msgstr "Activa"
 
 #: gui/fluidsynth-dialog.cpp:71
 msgid "Room:"
-msgstr ""
+msgstr "Sala:"
 
 #: gui/fluidsynth-dialog.cpp:78
 msgid "Damp:"
-msgstr ""
+msgstr "Atenuación:"
 
 #: gui/fluidsynth-dialog.cpp:85
 msgid "Width:"
-msgstr ""
+msgstr "Amplitud"
 
 #: gui/fluidsynth-dialog.cpp:92 gui/fluidsynth-dialog.cpp:110
 msgid "Level:"
-msgstr ""
+msgstr "Nivel:"
 
 #: gui/fluidsynth-dialog.cpp:99
 msgid "Chorus"
-msgstr ""
+msgstr "Coro"
 
 #: gui/fluidsynth-dialog.cpp:103
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:117
-#, fuzzy
 msgid "Speed:"
-msgstr "Voces"
+msgstr "Velocidad:"
 
 #: gui/fluidsynth-dialog.cpp:124
 msgid "Depth:"
-msgstr ""
+msgstr "Profundidad:"
 
 #: gui/fluidsynth-dialog.cpp:131
 msgid "Type:"
-msgstr ""
+msgstr "Tipo"
 
 #: gui/fluidsynth-dialog.cpp:134
 msgid "Sine"
-msgstr ""
+msgstr "Seno"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Triangle"
-msgstr ""
+msgstr "Triángulo"
 
 #: gui/fluidsynth-dialog.cpp:139
 msgid "Interpolation:"
-msgstr ""
+msgstr "Interpolación:"
 
 #: gui/fluidsynth-dialog.cpp:142
 msgid "None (fastest)"
-msgstr ""
+msgstr "Ninguna (la más rápida)"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "Linear"
-msgstr ""
+msgstr "Lineal"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Fourth-order"
-msgstr ""
+msgstr "Cuarto grado"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Seventh-order"
-msgstr ""
+msgstr "Séptimo grado"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset"
-msgstr ""
+msgstr "Reiniciar"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "Vuelve a los valores por defecto de las opciones de FluidSynth"
 
 #: gui/fluidsynth-dialog.cpp:216
-#, fuzzy
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "¿Seguro que quieres volver al Lanzador?"
+msgstr ""
+"¿Seguro que quieres volver a los valores por defecto de las opciones de "
+"FluidSynth?"
 
 #: base/main.cpp:210
 #, c-format
@@ -1425,7 +1419,6 @@ msgid "Restore"
 msgstr "Cargar"
 
 #: engines/drascula/saveload.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
@@ -1435,8 +1428,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM ha detectado que tienes partidas guardadas antiguas de Broken Sword "
-"1, que deben ser actualizadas.\n"
+"ScummVM ha detectado que tienes partidas guardadas antiguas de Drascula, que "
+"deben ser actualizadas.\n"
 "El formato antiguo ya no es compatible, así que no podrás cargar tus "
 "partidos si no las actualizas.\n"
 "\n"
@@ -1697,7 +1690,7 @@ msgstr "Enter"
 
 #: engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
-msgstr "Activar pantalla completa"
+msgstr "Activar/Desactivar pantalla completa"
 
 #: engines/scumm/help.cpp:87
 msgid "Music volume up / down"
@@ -1745,7 +1738,7 @@ msgstr "Ejecutar en modo muy rápido (*)"
 
 #: engines/scumm/help.cpp:99
 msgid "Toggle mouse capture"
-msgstr "Captura de ratón"
+msgstr "Activar/Desactivar captura de ratón"
 
 #: engines/scumm/help.cpp:100
 msgid "Switch between graphics filters"
@@ -1757,7 +1750,7 @@ msgstr "Aumentar / Disminuir factor de escalado"
 
 #: engines/scumm/help.cpp:102
 msgid "Toggle aspect-ratio correction"
-msgstr "Corrección de aspecto"
+msgstr "Activar/Desactivar corrección de aspecto"
 
 #: engines/scumm/help.cpp:107
 msgid "* Note that using ctrl-f and"
@@ -2251,13 +2244,12 @@ msgid "Failed to delete file."
 msgstr "Fallo al borrar el archivo."
 
 #: engines/groovie/detection.cpp:312
-#, fuzzy
 msgid "Fast movie speed"
-msgstr "Modo rápido"
+msgstr "Velocidad rápida de vídeos"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Reproducir vídeos a mayor velocidad"
 
 #: engines/groovie/script.cpp:420
 msgid "Failed to save game"
@@ -2385,13 +2377,12 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59
 msgid "Alternative intro"
-msgstr ""
+msgstr "Introducción alternativa"
 
 #: engines/queen/queen.cpp:60
-#, fuzzy
 msgid "Use an alternative game intro (CD version only)"
 msgstr ""
-"Usa la introducción de la versión en disquete (solo para la versión CD)"
+"Usa una introducción alternativa para el juego (solo para la versión CD)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2495,12 +2486,16 @@ msgstr "Muestra las etiquetas de los objetos al pasar el ratón"
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
 msgstr ""
+"No se encuentra el archivo 'teenagent.dat'. Descárgalo de la página de "
+"ScummVM"
 
 #: engines/teenagent/resources.cpp:115
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"El archivo teenagent.dat está comprimido y este ejecutable no incluye zlib. "
+"Por favor, descomprímelo"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2554,44 +2549,43 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:679
 msgid "Invalid save file name"
-msgstr ""
+msgstr "Nombre no válido para la partida"
 
 #: engines/pegasus/pegasus.cpp:2445
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Arriba/Zoom/Avanzar/Abrir puertas"
 
 #: engines/pegasus/pegasus.cpp:2446
-#, fuzzy
 msgid "Down/Zoom Out"
-msgstr "Aumentar zoom"
+msgstr "Abajo/Reducir zoom"
 
 #: engines/pegasus/pegasus.cpp:2449
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "Mostrar/Ocultar inventario"
 
 #: engines/pegasus/pegasus.cpp:2450
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Mostrar/Ocultar biochip"
 
 #: engines/pegasus/pegasus.cpp:2451
 msgid "Action/Select"
-msgstr ""
+msgstr "Acción/Seleccionar"
 
 #: engines/pegasus/pegasus.cpp:2452
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "Activar/Desactivar pantalla de datos"
 
 #: engines/pegasus/pegasus.cpp:2453
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "Mostrar/Ocultar pantalla de información"
 
 #: engines/pegasus/pegasus.cpp:2454
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "Mostrar/Ocultar menú de pausa"
 
 #: engines/pegasus/pegasus.cpp:2455
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
@@ -2892,7 +2886,7 @@ msgstr "Modo de filtro activo: lineal"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:564
 msgid "Active filter mode: Nearest"
-msgstr "Modo de filtro activo: el más cercano"
+msgstr "Modo de filtro activo: más cercano"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:38
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
@@ -3250,9 +3244,8 @@ msgid "Decreasing Volume"
 msgstr "Bajando el volumen"
 
 #: backends/events/openpandora/op-events.cpp:174
-#, fuzzy
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "'Modo toque' de pantalla táctil - Flotante (sin clic)"
+msgstr "'Modo toque' de pantalla táctil - Flotante (clic de cruceta)"
 
 #: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
