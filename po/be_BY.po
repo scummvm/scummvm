@@ -1,14 +1,14 @@
 # Belarusian translation for ScummVM.
 # Copyright (C) 2010-2013 ScummVM Team
 # This file is distributed under the same license as the ScummVM package.
-# Ivan Lukyanov <greencis@mail.ru>, 2012.
+# Ivan Lukyanov <greencis@mail.ru>, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2013-04-24 13:35+0100\n"
-"PO-Revision-Date: 2012-12-12 22:02+0300\n"
+"PO-Revision-Date: 2013-04-28 18:53+0300\n"
 "Last-Translator: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language-Team: Ivan Lukyanov <greencis@mail.ru>\n"
 "Language: Belarusian\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: gui/about.cpp:93
 #, c-format
@@ -33,13 +33,12 @@ msgid "Available engines:"
 msgstr "Даступныя рухавічкі:"
 
 #: gui/browser.cpp:67
-#, fuzzy
 msgid "Show hidden files"
-msgstr "Паказаць / Прыбраць кансоль"
+msgstr "Паказваць схаваныя файлы"
 
 #: gui/browser.cpp:67
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Паказваць файлы са схаваным атрыбутам"
 
 #: gui/browser.cpp:71
 msgid "Go up"
@@ -327,7 +326,7 @@ msgstr "Паказвае шлях да захаванняў гульні"
 #: gui/launcher.cpp:335 gui/options.cpp:1135
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr "Шлях зах:"
+msgstr "Шлях зах.:"
 
 #: gui/launcher.cpp:354 gui/launcher.cpp:453 gui/launcher.cpp:511
 #: gui/launcher.cpp:565 gui/options.cpp:1144 gui/options.cpp:1152
@@ -525,7 +524,7 @@ msgstr "Шмат гульняў..."
 
 #: gui/massadd.cpp:78 gui/massadd.cpp:81
 msgid "... progress ..."
-msgstr "... шукаю ..."
+msgstr "...шукаю..."
 
 #: gui/massadd.cpp:258
 msgid "Scan complete!"
@@ -539,12 +538,12 @@ msgstr "Знойдзена %d новых гульняў, прапушчана %d раней дададзеных гульняў."
 #: gui/massadd.cpp:265
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr "Прагледжана %d дырэкторый ..."
+msgstr "Прагледжана %d дырэкторый..."
 
 #: gui/massadd.cpp:268
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr "Знойдзена %d новых гульняў, прапушчана %d раней дададзеных гульняў ..."
+msgstr "Знойдзена %d новых гульняў, прапушчана %d раней дададзеных гульняў..."
 
 #: gui/options.cpp:84
 msgid "Never"
@@ -725,7 +724,7 @@ msgstr "Узмацненне MIDI:"
 
 #: gui/options.cpp:873
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "Налады FluidSynth"
 
 #: gui/options.cpp:880
 msgid "MT-32 Device:"
@@ -752,12 +751,11 @@ msgstr ""
 #: gui/options.cpp:887
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
-msgstr "Сапраўдны Roland MT-32 (забараніць GM)"
+msgstr "Сапраўдны Roland MT-32 (без GM)"
 
 #: gui/options.cpp:890
-#, fuzzy
 msgid "Roland GS Mode (disable GM mapping)"
-msgstr "Сапраўдны Roland MT-32 (забараніць эмуляцыю GM)"
+msgstr "Рэжым Roland GS (забараніць раскладку GM)"
 
 #: gui/options.cpp:890
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
@@ -1048,93 +1046,89 @@ msgid "Clear value"
 msgstr "Ачысціць значэнне"
 
 #: gui/fluidsynth-dialog.cpp:67
-#, fuzzy
 msgid "Reverb"
-msgstr "Ніколі"
+msgstr "Рэверберацыя"
 
 #: gui/fluidsynth-dialog.cpp:69 gui/fluidsynth-dialog.cpp:101
-#, fuzzy
 msgid "Active"
-msgstr " (Актыўная)"
+msgstr "(Актыўная)"
 
 #: gui/fluidsynth-dialog.cpp:71
 msgid "Room:"
-msgstr ""
+msgstr "Пакой:"
 
 #: gui/fluidsynth-dialog.cpp:78
 msgid "Damp:"
-msgstr ""
+msgstr "Дэмпфаванне:"
 
 #: gui/fluidsynth-dialog.cpp:85
 msgid "Width:"
-msgstr ""
+msgstr "Даўжыня:"
 
 #: gui/fluidsynth-dialog.cpp:92 gui/fluidsynth-dialog.cpp:110
 msgid "Level:"
-msgstr ""
+msgstr "Узровень:"
 
 #: gui/fluidsynth-dialog.cpp:99
 msgid "Chorus"
-msgstr ""
+msgstr "Хор"
 
 #: gui/fluidsynth-dialog.cpp:103
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:117
-#, fuzzy
 msgid "Speed:"
-msgstr "Агучка"
+msgstr "Хуткасць:"
 
 #: gui/fluidsynth-dialog.cpp:124
 msgid "Depth:"
-msgstr ""
+msgstr "Глыбіня:"
 
 #: gui/fluidsynth-dialog.cpp:131
 msgid "Type:"
-msgstr ""
+msgstr "Тып:"
 
 #: gui/fluidsynth-dialog.cpp:134
 msgid "Sine"
-msgstr ""
+msgstr "Сінус"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Triangle"
-msgstr ""
+msgstr "Трохкутнік"
 
 #: gui/fluidsynth-dialog.cpp:139
 msgid "Interpolation:"
-msgstr ""
+msgstr "Інтэрпаляцыя:"
 
 #: gui/fluidsynth-dialog.cpp:142
 msgid "None (fastest)"
-msgstr ""
+msgstr "Няма (хутчэйшае)"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "Linear"
-msgstr ""
+msgstr "Лінейная"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Fourth-order"
-msgstr ""
+msgstr "Чацвёртага парадка"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Seventh-order"
-msgstr ""
+msgstr "Сёмага парадка"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset"
-msgstr ""
+msgstr "Скінуць"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "Скінуць налады FluidSynth па змаўчанні."
 
 #: gui/fluidsynth-dialog.cpp:216
-#, fuzzy
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Вы сапраўды жадаеце вярнуцца ў галоўнае меню?"
+msgstr "Вы сапраўды жадаеце скінуць налады FluidSynth па змаўчанні?"
 
 #: base/main.cpp:210
 #, c-format
@@ -1252,11 +1246,11 @@ msgstr "Працяг~н~уць"
 
 #: engines/dialogs.cpp:86
 msgid "~L~oad"
-msgstr "~З~агрузіць"
+msgstr "За~г~рузіць"
 
 #: engines/dialogs.cpp:90
 msgid "~S~ave"
-msgstr "~З~апісаць"
+msgstr "За~п~ісаць"
 
 #: engines/dialogs.cpp:94
 msgid "~O~ptions"
@@ -1268,16 +1262,16 @@ msgstr "~Д~апамога"
 
 #: engines/dialogs.cpp:101
 msgid "~A~bout"
-msgstr "Пра пра~г~раму"
+msgstr "~П~ра праграму"
 
 #: engines/dialogs.cpp:104 engines/dialogs.cpp:180
 msgid "~R~eturn to Launcher"
-msgstr "~В~ыйсці ў галоўнае меню"
+msgstr "~Г~алоўнае меню"
 
 #: engines/dialogs.cpp:106 engines/dialogs.cpp:182
 msgctxt "lowres"
 msgid "~R~eturn to Launcher"
-msgstr "~У~ галоўнае меню"
+msgstr "~Г~алоўнае меню"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
 #: engines/drascula/saveload.cpp:338 engines/cruise/menu.cpp:212
@@ -1305,8 +1299,8 @@ msgid ""
 "further assistance."
 msgstr ""
 "Прабачце, але гэты рухавічок пакуль не падае дапамогі ў гульні. Калі ласка, "
-"звярніцеся ў файл README за базавай інфармацыяй, а таксама інструкцыямі пра "
-"тое, як атрымаць далейшую дапамогу."
+"звярніцеся да файла README за базавай інфармацыяй, а таксама інструкцыямі "
+"пра тое, як атрымаць далейшую дапамогу."
 
 #: engines/dialogs.cpp:228
 #, c-format
@@ -1314,8 +1308,8 @@ msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
 msgstr ""
-"Не атрымалася захаваць гульню (%s)! Калі ласка, звярніцеся ў файл README за "
-"базавай інфармацыяй, а таксама інструкцыямі пра тое, як атрымаць далейшую "
+"Не атрымалася захаваць гульню (%s)! Калі ласка, звярніцеся да файла README "
+"за базавай інфармацыяй, а таксама інструкцыямі пра тое, як атрымаць далейшую "
 "дапамогу."
 
 #: engines/dialogs.cpp:301 engines/mohawk/dialogs.cpp:109
@@ -1426,7 +1420,6 @@ msgid "Restore"
 msgstr "Узнавіць"
 
 #: engines/drascula/saveload.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
@@ -1436,7 +1429,7 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM выявіў у вас захаванні гульні Broken Sword 1 у старым фармаце.\n"
+"ScummVM выявіў у вас захаванні гульні Drascula у старым фармаце.\n"
 "Стары фармат больш не падтрымліваецца, і, каб загрузіць захаванні, яны "
 "павінны быць пераведзены ў новы фармат.\n"
 "\n"
@@ -1764,11 +1757,11 @@ msgstr "Пераключэнне карэкцыі суадносін бакоў"
 
 #: engines/scumm/help.cpp:107
 msgid "* Note that using ctrl-f and"
-msgstr "* Выкарыстанне ctrl-f і"
+msgstr "* Выкарыстанне Ctrl-F і"
 
 #: engines/scumm/help.cpp:108
 msgid "  ctrl-g are not recommended"
-msgstr "  ctrl-g не рэкамендуецца,"
+msgstr "  Ctrl-G не рэкамендуецца,"
 
 #: engines/scumm/help.cpp:109
 msgid "  since they may cause crashes"
@@ -1776,7 +1769,7 @@ msgstr "  бо яны могуць прывесці да"
 
 #: engines/scumm/help.cpp:110
 msgid "  or incorrect game behavior."
-msgstr "  няправільнай работы гульні."
+msgstr "  няслушнай работы гульні."
 
 #: engines/scumm/help.cpp:114
 msgid "Spinning drafts on the keyboard:"
@@ -2254,13 +2247,12 @@ msgid "Failed to delete file."
 msgstr "Не атрымалася выдаліць файл."
 
 #: engines/groovie/detection.cpp:312
-#, fuzzy
 msgid "Fast movie speed"
-msgstr "Хуткі рэжым"
+msgstr "Хуткі рэжым відэа"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Прайграваць відэа на павялічанай хуткасці"
 
 #: engines/groovie/script.cpp:420
 msgid "Failed to save game"
@@ -2556,44 +2548,43 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:679
 msgid "Invalid save file name"
-msgstr ""
+msgstr "Няправільнае імя файла захавання"
 
 #: engines/pegasus/pegasus.cpp:2445
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Уверх/Маштаб+/Наперад/Адчыніць дзверы"
 
 #: engines/pegasus/pegasus.cpp:2446
-#, fuzzy
 msgid "Down/Zoom Out"
-msgstr "Павял. маштаб"
+msgstr "Уніз/Паменш. маштаб"
 
 #: engines/pegasus/pegasus.cpp:2449
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "Паказаць/схаваць інвентар"
 
 #: engines/pegasus/pegasus.cpp:2450
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Паказаць/схаваць біячып"
 
 #: engines/pegasus/pegasus.cpp:2451
 msgid "Action/Select"
-msgstr ""
+msgstr "Дзеянне/Абраць"
 
 #: engines/pegasus/pegasus.cpp:2452
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "Пераключыць"
 
 #: engines/pegasus/pegasus.cpp:2453
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "Паказаць/схаваць інфармацыю"
 
 #: engines/pegasus/pegasus.cpp:2454
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "Паказаць/схаваць меню паўзы"
 
 #: engines/pegasus/pegasus.cpp:2455
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
@@ -3251,9 +3242,8 @@ msgid "Decreasing Volume"
 msgstr "Памяншэнне гучнасці"
 
 #: backends/events/openpandora/op-events.cpp:174
-#, fuzzy
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Рэжым 'дотыкаў' тачскрына - Пралёт (без кліку)"
+msgstr "Рэжым 'дотыкаў' тачскрына - Пралёт (клікі па DPad)"
 
 #: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
