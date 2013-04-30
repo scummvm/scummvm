@@ -422,7 +422,7 @@ int MidiDriver_CMS::findVoiceBasic(int channel) {
 	}
 
 	if (voice == -1) {
-		if (oldestVoice != -1) {
+		if (oldestVoice >= 0) {
 			voiceOff(oldestVoice);
 			voice = oldestVoice;
 		} else {
