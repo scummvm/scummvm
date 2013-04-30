@@ -46,6 +46,7 @@ GfxMenu::GfxMenu(EventManager *event, SegManager *segMan, GfxPorts *ports, GfxPa
 	_menuSaveHandle = NULL_REG;
 	_barSaveHandle = NULL_REG;
 	_oldPort = NULL;
+	_mouseOldState = false;
 
 	reset();
 }
