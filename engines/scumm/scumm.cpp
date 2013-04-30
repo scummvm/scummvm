@@ -2124,7 +2124,7 @@ load_game:
 
 		// HACK as in game save stuff isn't supported currently
 		if (_game.id == GID_LOOM) {
-			int args[16];
+			int args[NUM_SCRIPT_LOCALS];
 			uint var;
 			memset(args, 0, sizeof(args));
 			args[0] = 2;
@@ -2512,7 +2512,7 @@ void ScummEngine::restart() {
 }
 
 void ScummEngine::runBootscript() {
-	int args[16];
+	int args[NUM_SCRIPT_LOCALS];
 	memset(args, 0, sizeof(args));
 	args[0] = _bootParam;
 	if (_game.id == GID_MANIAC && (_game.features & GF_DEMO))

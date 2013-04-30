@@ -138,10 +138,10 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 void ScummEngine::initializeLocals(int slot, int *vars) {
 	int i;
 	if (!vars) {
-		for (i = 0; i < 25; i++)
+		for (i = 0; i < NUM_SCRIPT_LOCALS; i++)
 			vm.localvar[slot][i] = 0;
 	} else {
-		for (i = 0; i < 25; i++)
+		for (i = 0; i < NUM_SCRIPT_LOCALS; i++)
 			vm.localvar[slot][i] = vars[i];
 	}
 }
@@ -755,7 +755,7 @@ void ScummEngine::stopObjectCode() {
 }
 
 void ScummEngine::runInventoryScript(int i) {
-	int args[24];
+	int args[NUM_SCRIPT_LOCALS];
 	memset(args, 0, sizeof(args));
 	args[0] = i;
 	if (VAR(VAR_INVENTORY_SCRIPT)) {
@@ -1060,7 +1060,7 @@ void ScummEngine::doSentence(int verb, int objectA, int objectB) {
 
 void ScummEngine::checkAndRunSentenceScript() {
 	int i;
-	int localParamList[24];
+	int localParamList[NUM_SCRIPT_LOCALS];
 	const ScriptSlot *ss;
 	int sentenceScript;
 
@@ -1308,7 +1308,7 @@ void ScummEngine_v0::runSentenceScript() {
 }
 
 void ScummEngine_v2::runInputScript(int clickArea, int val, int mode) {
-	int args[24];
+	int args[NUM_SCRIPT_LOCALS];
 	int verbScript;
 
 	verbScript = 4;
@@ -1332,7 +1332,7 @@ void ScummEngine_v2::runInputScript(int clickArea, int val, int mode) {
 }
 
 void ScummEngine::runInputScript(int clickArea, int val, int mode) {
-	int args[24];
+	int args[NUM_SCRIPT_LOCALS];
 	int verbScript;
 
 	verbScript = VAR(VAR_VERB_SCRIPT);
@@ -1490,7 +1490,7 @@ void ScummEngine::beginCutscene(int *args) {
 
 void ScummEngine::endCutscene() {
 	ScriptSlot *ss = &vm.slot[_currentScript];
-	int args[16];
+	int args[NUM_SCRIPT_LOCALS];
 
 	if (ss->cutsceneOverride > 0)	// Only terminate if active
 		ss->cutsceneOverride--;
