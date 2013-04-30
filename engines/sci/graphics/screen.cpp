@@ -115,6 +115,8 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	_controlScreen = (byte *)calloc(_pixels, 1);
 	_displayScreen = (byte *)calloc(_displayPixels, 1);
 
+	memset(&_ditheredPicColors, 0, sizeof(_ditheredPicColors));
+
 	// Sets display screen to be actually displayed
 	_activeScreen = _displayScreen;
 
