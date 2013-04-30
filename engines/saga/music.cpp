@@ -176,6 +176,10 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 		}
 	}
 
+	_trackNumber = 0;
+	_targetVolume = 0;
+	_currentVolumePercent = 0;
+
 	_digitalMusic = false;
 }
 
