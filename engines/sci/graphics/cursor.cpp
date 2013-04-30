@@ -69,6 +69,10 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 		_useSilverSQ4CDCursors = ConfMan.getBool("silver_cursors");
 	else
 		_useSilverSQ4CDCursors = false;
+
+	// _coordAdjuster and _event will be initialized later on
+	_coordAdjuster = NULL;
+	_event = NULL;
 }
 
 GfxCursor::~GfxCursor() {
