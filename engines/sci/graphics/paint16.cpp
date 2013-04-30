@@ -42,7 +42,13 @@
 namespace Sci {
 
 GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio)
-	: _resMan(resMan), _segMan(segMan), _cache(cache), _ports(ports), _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette), _transitions(transitions), _audio(audio) {
+	: _resMan(resMan), _segMan(segMan), _cache(cache), _ports(ports),
+	  _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette),
+	  _transitions(transitions), _audio(audio), _EGAdrawingVisualize(false) {
+
+	// _animate and _text16 will be initialized later on
+	_animate = NULL;
+	_text16 = NULL;
 }
 
 GfxPaint16::~GfxPaint16() {
@@ -51,8 +57,6 @@ GfxPaint16::~GfxPaint16() {
 void GfxPaint16::init(GfxAnimate *animate, GfxText16 *text16) {
 	_animate = animate;
 	_text16 = text16;
-
-	_EGAdrawingVisualize = false;
 }
 
 void GfxPaint16::debugSetEGAdrawingVisualize(bool state) {
