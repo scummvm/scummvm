@@ -36,6 +36,9 @@ SegManager::SegManager(ResourceManager *resMan) {
 	_nodesSegId = 0;
 	_hunksSegId = 0;
 
+	_saveDirPtr = NULL_REG;
+	_parserPtr = NULL_REG;
+
 #ifdef ENABLE_SCI32
 	_arraysSegId = 0;
 	_stringSegId = 0;
