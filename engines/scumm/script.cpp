@@ -755,13 +755,13 @@ void ScummEngine::stopObjectCode() {
 }
 
 void ScummEngine::runInventoryScript(int i) {
-	int args[NUM_SCRIPT_LOCALS];
-	memset(args, 0, sizeof(args));
-	args[0] = i;
 	if (VAR(VAR_INVENTORY_SCRIPT)) {
 		if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
 			inventoryScriptIndy3Mac();
 		} else {
+			int args[NUM_SCRIPT_LOCALS];
+			memset(args, 0, sizeof(args));
+			args[0] = i;
 			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
 		}
 	}
