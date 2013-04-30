@@ -56,7 +56,7 @@ public:
 
 protected:
 	MessageReader(const byte *data, uint size, uint headerSize, uint recordSize)
-		: _data(data), _size(size), _headerSize(headerSize), _recordSize(recordSize) { }
+		: _data(data), _size(size), _headerSize(headerSize), _recordSize(recordSize), _messageCount(0) { }
 
 	const byte *_data;
 	const uint _size;
