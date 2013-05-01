@@ -155,6 +155,22 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		},
 	},
 	{
+		// Hopkins FBI Win95 EN, provided by greencis in bug #3612406
+		{
+			"hopkins",
+				0,
+			{
+				{"hopkins.exe", 0, "020690049fa1dfcd63a18fdafb139a0e", 421386},
+				{"RES_VAN.RES", 0, "f1693ac0b0859c8ecd8cb30ff43cf55f", 38296346},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+	{
 		// Hopkins FBI Linux, provided by Strangerke
 		{
 			"hopkins",
