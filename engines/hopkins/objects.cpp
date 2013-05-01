@@ -2934,7 +2934,7 @@ void ObjectsManager::doActionDiagRight(int idx) {
 		showSpecialActionAnimation(_gestureBuf, "17,16,15,-1,", 8);
 		break;
 	case 7:
-		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,19,20-1,", 8, false);
+		showSpecialActionAnimationWithFlip(_gestureBuf, "15,16,17,18,19,20,-1,", 8, false);
 		break;
 	case 8:
 		showSpecialActionAnimation(_gestureBuf, "19,18,17,16,15,-1,", 8);
