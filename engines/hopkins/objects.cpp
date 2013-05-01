@@ -2676,7 +2676,7 @@ void ObjectsManager::handleSpecialGames() {
 		_vm->_soundMan->_specialSoundNum = 198;
 		_charactersEnabledFl = true;
 		_vm->_animMan->unsetClearAnimFlag();
-		_vm->_animMan->playAnim("otage.ANM", 1, 24, 500, true);
+		_vm->_animMan->playAnim("OTAGE.ANM", "OTAGE.ANM", 1, 24, 500, true);
 		_vm->_soundMan->_specialSoundNum = 0;
 		_vm->_graphicsMan->displayScreen(false);
 
@@ -3713,7 +3713,7 @@ void ObjectsManager::handleForest(int screenId, int minX, int maxX, int minY, in
 		}
 		if (_vm->_globals->_saveData->_data[savegameIdx] == 3) {
 			_vm->_graphicsMan->_fadingFl = true;
-			_vm->_animMan->playAnim("CREVE2.ANM", 100, 24, 500);
+			_vm->_animMan->playAnim("CREVE2.ANM", "CREVE2.ANM", 100, 24, 500);
 			_vm->_globals->_exitId = 150;
 			_vm->_graphicsMan->_noFadingFl = true;
 			hideBob(1);

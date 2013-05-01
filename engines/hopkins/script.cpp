@@ -587,7 +587,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			if (!_vm->_globals->_censorshipFl) {
 				_vm->_soundMan->_specialSoundNum = 16;
 				_vm->_graphicsMan->_fadingFl = true;
-				_vm->_animMan->playAnim("EGORGE.ANM", 50, 28, 500);
+				_vm->_animMan->playAnim("EGORGE.ANM", "EGORGE.ANM", 50, 28, 500);
 				_vm->_soundMan->_specialSoundNum = 0;
 			}
 			_vm->_animMan->loadAnim("ASCEN");
@@ -728,7 +728,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_animMan->playSequence("grenade.SEQ", 1, 32, 100, false, false);
 			_vm->_soundMan->_specialSoundNum = 0;
 			_vm->_graphicsMan->_fadingFl = true;
-			_vm->_animMan->playAnim("CREVE17.ANM", 24, 24, 200);
+			_vm->_animMan->playAnim("CREVE17.ANM", "CREVE17.ANM", 24, 24, 200);
 			_vm->_soundMan->removeSample(1);
 			_vm->_soundMan->removeSample(2);
 			_vm->_soundMan->removeSample(3);
@@ -2332,7 +2332,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			if (!_vm->getIsDemo()) {
 				_vm->_graphicsMan->_fadingFl = true;
 				_vm->_graphicsMan->_fadeDefaultSpeed = 1;
-				_vm->_animMan->playAnim("BOMBE1A.ANM", 100, 18, 100);
+				_vm->_animMan->playAnim("BOMBE1A.ANM", "BOMBE1.ANM", 100, 18, 100);
 			}
 			_vm->_graphicsMan->loadImage("BOMBEB");
 			_vm->_graphicsMan->setColorPercentage(252, 100, 100, 100);
@@ -2358,7 +2358,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_objectsMan->setAndPlayAnim(3, 0, 16, true);
 			_vm->_soundMan->_specialSoundNum = 199;
 			_vm->_graphicsMan->_fadingFl = true;
-			_vm->_animMan->playAnim("BOMBE2A.ANM", 50, 14, 500);
+			_vm->_animMan->playAnim("BOMBE2A.ANM", "BOMBE2.ANM", 50, 14, 500);
 			_vm->_soundMan->_specialSoundNum = 0;
 			memset(_vm->_graphicsMan->_frontBuffer, 0, 614400);
 			_vm->_graphicsMan->_noFadingFl = true;
@@ -2369,7 +2369,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_graphicsMan->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
 			_vm->_objectsMan->setAndPlayAnim(1, 0, 16, true);
 			_vm->_soundMan->_specialSoundNum = 199;
-			_vm->_animMan->playAnim("BOMBE2A.ANM", 50, 14, 500);
+			_vm->_animMan->playAnim("BOMBE2A.ANM", "BOMBE2.ANM", 50, 14, 500);
 			_vm->_soundMan->_specialSoundNum = 0;
 			_vm->_graphicsMan->_noFadingFl = true;
 			memset(_vm->_graphicsMan->_frontBuffer, 0, 614400);
@@ -2382,7 +2382,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_graphicsMan->fadeOutShort();
 			_vm->_soundMan->_specialSoundNum = 199;
 			_vm->_graphicsMan->_fadingFl = true;
-			_vm->_animMan->playAnim("BOMBE2A.ANM", 50, 14, 500);
+			_vm->_animMan->playAnim("BOMBE2A.ANM", "BOMBE2.ANM", 50, 14, 500);
 			_vm->_soundMan->_specialSoundNum = 0;
 			_vm->_graphicsMan->_noFadingFl = true;
 			memset(_vm->_graphicsMan->_frontBuffer, 0, 614400);
@@ -2393,7 +2393,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_graphicsMan->fastDisplay(_vm->_globals->_levelSpriteBuf, 513, 163, 7, false);
 			_vm->_objectsMan->setAndPlayAnim(6, 0, 16, true);
 			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
-				_vm->_animMan->playAnim("BOMBE3A.ANM", 50, 14, 500);
+				_vm->_animMan->playAnim("BOMBE3A.ANM", "BOMBE3.ANM", 50, 14, 500);
 				memset(_vm->_graphicsMan->_frontBuffer, 0, 614400);
 			}
 			_vm->_globals->_exitId = 6;

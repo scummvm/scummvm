@@ -55,7 +55,7 @@ void AnimationManager::clearAll() {
  * @param rate2			Delay amount between animation frames
  * @param rate3			Delay amount after animation finishes
  */
-void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl) {
+void AnimationManager::playAnim(const Common::String &hiresName, const Common::String &lowresName, uint32 rate1, uint32 rate2, uint32 rate3, bool skipSeqFl) {
 	Common::File f;
 
 	if (_vm->shouldQuit())
@@ -65,16 +65,10 @@ void AnimationManager::playAnim(const Common::String &filename, uint32 rate1, ui
 
 	byte *screenP = _vm->_graphicsMan->_backBuffer;
 
-	Common::String tmpStr;
-	// The Windows 95 demo only contains the interlaced version of the BOMBE1 and BOMBE2 videos
-	if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getIsDemo() && filename == "BOMBE1A.ANM")
-		tmpStr = "BOMBE1.ANM";
-	else if (_vm->getPlatform() == Common::kPlatformWindows && _vm->getIsDemo() && filename == "BOMBE2A.ANM")
-		tmpStr = "BOMBE2.ANM";
-	else
-		tmpStr = filename;
-	if (!f.open(tmpStr))
-		error("File not found - %s", tmpStr.c_str());
+	if (!f.open(hiresName)) {
+		if (!f.open(lowresName))
+			error("Files not found: %s - %s", hiresName.c_str(), lowresName.c_str());
+	}
 
 	f.skip(6);
 	f.read(_vm->_graphicsMan->_palette, 800);

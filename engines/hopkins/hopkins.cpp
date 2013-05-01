@@ -230,9 +230,9 @@ bool HopkinsEngine::runWin95Demo() {
 				_graphicsMan->clearScreen();
 				_graphicsMan->clearPalette();
 				if (!_globals->_censorshipFl)
-					_animMan->playAnim("BANQUE.ANM", 200, 28, 200);
+					_animMan->playAnim("BANQUE.ANM", "BANKUK.ANM", 200, 28, 200);
 				else
-					_animMan->playAnim("BANKUK.ANM", 200, 28, 200);
+					_animMan->playAnim("BANQUE.ANM", "BANKUK.ANM", 200, 28, 200);
 				_soundMan->_specialSoundNum = 0;
 				_soundMan->removeSample(1);
 				_soundMan->removeSample(2);
@@ -394,7 +394,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_eventMode = EVENTMODE_ALT; // CHECKME!
 			_graphicsMan->clearScreen();
 			_graphicsMan->clearPalette();
-			_animMan->playAnim("JOUR1A.anm", 12, 12, 2000);
+			_animMan->playAnim("JOUR1A.ANM", "JOUR1A.ANM", 12, 12, 2000);
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
@@ -417,7 +417,7 @@ bool HopkinsEngine::runWin95Demo() {
 			_globals->_eventMode = EVENTMODE_ALT; // CHECKME!
 			_graphicsMan->clearScreen();
 			_graphicsMan->clearPalette();
-			_animMan->playAnim("JOUR4A.anm", 12, 12, 2000);
+			_animMan->playAnim("JOUR4A.ANM", "JOUR4A.ANM", 12, 12, 2000);
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
@@ -529,9 +529,9 @@ bool HopkinsEngine::runLinuxDemo() {
 				_graphicsMan->_fadingFl = true;
 
 				if (!_globals->_censorshipFl)
-					_animMan->playAnim("BANQUE.ANM", 200, 28, 200);
+					_animMan->playAnim("BANQUE.ANM", "BANKUK.ANM", 200, 28, 200);
 				else
-					_animMan->playAnim("BANKUK.ANM", 200, 28, 200);
+					_animMan->playAnim("BANKUK.ANM", "BANQUE.ANM", 200, 28, 200);
 				_soundMan->_specialSoundNum = 0;
 				_soundMan->removeSample(1);
 				_soundMan->removeSample(2);
@@ -705,7 +705,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsMan->clearScreen();
 			_graphicsMan->clearPalette();
 			_graphicsMan->_fadingFl = true;
-			_animMan->playAnim("JOUR1A.anm", 12, 12, 2000);
+			_animMan->playAnim("JOUR1A.ANM", "JOUR1A.ANM", 12, 12, 2000);
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
@@ -717,7 +717,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsMan->clearScreen();
 			_graphicsMan->clearPalette();
 			_graphicsMan->_fadingFl = true;
-			_animMan->playAnim("JOUR3A.anm", 12, 12, 2000);
+			_animMan->playAnim("JOUR3A.ANM", "JOUR3A.ANM", 12, 12, 2000);
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
@@ -729,7 +729,7 @@ bool HopkinsEngine::runLinuxDemo() {
 			_graphicsMan->clearScreen();
 			_graphicsMan->clearPalette();
 			_graphicsMan->_fadingFl = true;
-			_animMan->playAnim("JOUR4A.anm", 12, 12, 2000);
+			_animMan->playAnim("JOUR4A.ANM", "JOUR4A.ANM", 12, 12, 2000);
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
@@ -790,9 +790,9 @@ bool HopkinsEngine::runFull() {
 				_globals->_speed = 2;
 				_globals->_eventMode = EVENTMODE_IGNORE;
 				_graphicsMan->_fadingFl = true;
-				_animMan->playAnim("MP.ANM", 10, 16, 200);
+				_animMan->playAnim("MP.ANM", "MP.ANM", 10, 16, 200);
 		} else {
-			_animMan->playAnim("MP.ANM", 10, 16, 200);
+			_animMan->playAnim("MP.ANM", "MP.ANM", 10, 16, 200);
 			_graphicsMan->fadeOutLong();
 		}
 	}
@@ -870,11 +870,11 @@ bool HopkinsEngine::runFull() {
 						_graphicsMan->_fadingFl = true;
 
 					if (!_globals->_censorshipFl)
-						_animMan->playAnim("BANQUE.ANM", 200, 28, 200);
+						_animMan->playAnim("BANQUE.ANM", "BANKUK.ANM", 200, 28, 200);
 					else
-						_animMan->playAnim("BANKUK.ANM", 200, 28, 200);
+						_animMan->playAnim("BANKUK.ANM", "BANQUE.ANM", 200, 28, 200);
 				} else {
-					_animMan->playAnim("BANQUE.ANM", 200, 28, 200);
+					_animMan->playAnim("BANQUE.ANM", "BANKUK.ANM", 200, 28, 200);
 				}
 
 				_soundMan->_specialSoundNum = 0;
@@ -1002,14 +1002,14 @@ bool HopkinsEngine::runFull() {
 				if (getPlatform() == Common::kPlatformLinux) {
 					_soundMan->playSound(29);
 					_graphicsMan->_fadingFl = true;
-					_animMan->playAnim("PURG1A.ANM", 12, 18, 50);
+					_animMan->playAnim("PURG1A.ANM", "PURG1.ANM", 12, 18, 50);
 				} else if (getPlatform() == Common::kPlatformWindows) {
 					_soundMan->playSound(29);
-					_animMan->playAnim("PURG1A.ANM", 12, 18, 50);
+					_animMan->playAnim("PURG1A.ANM", "PURG1.ANM", 12, 18, 50);
 					_graphicsMan->fadeOutShort();
 				} else {
 					_soundMan->playSound(6);
-					_animMan->playAnim("PURG1A.ANM", 12, 18, 50);
+					_animMan->playAnim("PURG1A.ANM", "PURG1.ANM", 12, 18, 50);
 					_graphicsMan->fadeOutShort();
 				}
 				_globals->_eventMode = EVENTMODE_DEFAULT;
@@ -1046,7 +1046,7 @@ bool HopkinsEngine::runFull() {
 				_soundMan->playSound(6);
 				if (getPlatform() == Common::kPlatformLinux)
 					_graphicsMan->_fadingFl = true;
-				_animMan->playAnim("PURG2A.ANM", 12, 18, 50);
+				_animMan->playAnim("PURG2A.ANM", "PURG2.ANM", 12, 18, 50);
 				if (getPlatform() != Common::kPlatformLinux)
 					_graphicsMan->fadeOutShort();
 				_globals->_eventMode = EVENTMODE_DEFAULT;
@@ -1408,7 +1408,7 @@ bool HopkinsEngine::runFull() {
 				_graphicsMan->clearScreen();
 				_graphicsMan->clearPalette();
 				_soundMan->playSound(6);
-				_animMan->playAnim("PURG1A.ANM", 12, 18, 50);
+				_animMan->playAnim("PURG1A.ANM", "PURG1.ANM", 12, 18, 50);
 				_graphicsMan->fadeOutShort();
 				_globals->_eventMode = EVENTMODE_DEFAULT;
 			}
@@ -1480,7 +1480,7 @@ bool HopkinsEngine::runFull() {
 			_graphicsMan->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
 				_graphicsMan->_fadingFl = true;
-			_animMan->playAnim("JOUR1A.ANM", 12, 12, 2000);
+			_animMan->playAnim("JOUR1A.ANM", "JOUR1A.ANM", 12, 12, 2000);
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
@@ -1492,7 +1492,7 @@ bool HopkinsEngine::runFull() {
 			_graphicsMan->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
 				_graphicsMan->_fadingFl = true;
-			_animMan->playAnim("JOUR3A.ANM", 12, 12, 2000);
+			_animMan->playAnim("JOUR3A.ANM", "JOUR3A.ANM", 12, 12, 2000);
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
@@ -1504,7 +1504,7 @@ bool HopkinsEngine::runFull() {
 			_graphicsMan->clearPalette();
 			if (getPlatform() == Common::kPlatformLinux)
 				_graphicsMan->_fadingFl = true;
-			_animMan->playAnim("JOUR4A.ANM", 12, 12, 2000);
+			_animMan->playAnim("JOUR4A.ANM", "JOUR4A.ANM", 12, 12, 2000);
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_globals->_exitId = 300;
 			break;
@@ -1595,18 +1595,18 @@ void HopkinsEngine::playIntro() {
 	_events->refreshScreenAndEvents();
 	_soundMan->playSound(16);
 	_animMan->setClearAnimFlag();
-	_animMan->playAnim("J1.anm", 12, 12, 50);
+	_animMan->playAnim("J1.ANM", "J1.ANM", 12, 12, 50);
 	if (shouldQuit() || _events->_escKeyFl)
 		return;
 
 	_soundMan->mixVoice(1, 3);
-	_animMan->playAnim("J2.anm", 12, 12, 50);
+	_animMan->playAnim("J2.ANM", "J2.ANM", 12, 12, 50);
 
 	if (shouldQuit() || _events->_escKeyFl)
 		return;
 
 	_soundMan->mixVoice(2, 3);
-	_animMan->playAnim("J3.anm", 12, 12, 50);
+	_animMan->playAnim("J3.ANM", "J3.ANM", 12, 12, 50);
 
 	if (shouldQuit() || _events->_escKeyFl)
 		return;
@@ -1690,7 +1690,7 @@ void HopkinsEngine::playIntro() {
 
 	_soundMan->_specialSoundNum = 5;
 	_graphicsMan->_fadingFl = true;
-	_animMan->playAnim("ELEC.ANM", 10, 26, 200);
+	_animMan->playAnim("ELEC.ANM", "ELEC.ANM", 10, 26, 200);
 	_soundMan->_specialSoundNum = 0;
 
 	if (shouldQuit() || _events->_escKeyFl)
@@ -1777,22 +1777,22 @@ void HopkinsEngine::playIntro() {
 			_soundMan->playSound(3);
 			_soundMan->_specialSoundNum = 1;
 			_animMan->setClearAnimFlag();
-			_animMan->playAnim("INTRO1.anm", 10, 24, 18);
+			_animMan->playAnim("INTRO1.ANM", "INTRO1.ANM", 10, 24, 18);
 			_soundMan->_specialSoundNum = 0;
 			if (shouldQuit() || _events->_escKeyFl)
 				return;
 
-			_animMan->playAnim("INTRO2.anm", 10, 24, 18);
+			_animMan->playAnim("INTRO2.ANM", "INTRO2.ANM", 10, 24, 18);
 			if (shouldQuit() || _events->_escKeyFl)
 				return;
 
-			_animMan->playAnim("INTRO3.anm", 10, 24, 200);
+			_animMan->playAnim("INTRO3.ANM", "INTRO3.ANM", 10, 24, 200);
 			if (shouldQuit() || _events->_escKeyFl)
 				return;
 
 			_graphicsMan->_fadingFl = true;
 			_animMan->unsetClearAnimFlag();
-			_animMan->playAnim("J4.anm", 12, 12, 1000);
+			_animMan->playAnim("J4.ANM", "J4.ANM", 12, 12, 1000);
 			break;
 		}
 	}
@@ -1851,7 +1851,7 @@ void HopkinsEngine::bombExplosion() {
 	_globals->_eventMode = EVENTMODE_IGNORE;
 	_soundMan->_specialSoundNum = 199;
 	_graphicsMan->_fadingFl = true;
-	_animMan->playAnim("BOMBE2A.ANM", 50, 14, 500);
+	_animMan->playAnim("BOMBE2A.ANM", "BOMBE2.ANM", 50, 14, 500);
 	_soundMan->_specialSoundNum = 0;
 	_graphicsMan->loadImage("IM15");
 	_animMan->loadAnim("ANIM15");
@@ -1961,31 +1961,31 @@ void HopkinsEngine::playSubmarineCutscene() {
 	_graphicsMan->clearPalette();
 	_soundMan->playSound(25);
 	_animMan->setClearAnimFlag();
-	_animMan->playAnim("base00a.anm", 10, 18, 18);
+	_animMan->playAnim("BASE00A.ANM", "BASE00.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("base05a.anm", 10, 18, 18);
+		_animMan->playAnim("BASE05A.ANM", "BASE05.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("base10a.anm", 10, 18, 18);
+		_animMan->playAnim("BASE10A.ANM", "BASE10.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("base20a.anm", 10, 18, 18);
+		_animMan->playAnim("BASE20A.ANM", "BASE20.ANM", 10, 18, 18);
 	// CHECKME: The original code was doing the opposite test, which was a bug.
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("base30a.anm", 10, 18, 18);
+		_animMan->playAnim("BASE30A.ANM", "BASE30.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("base40a.anm", 10, 18, 18);
+		_animMan->playAnim("BASE40A.ANM", "BASE40.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("base50a.anm", 10, 18, 18);
+		_animMan->playAnim("BASE50A.ANM", "BASE50.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("OC00a.anm", 10, 18, 18);
+		_animMan->playAnim("OC00A.ANM", "OC00.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("OC05a.anm", 10, 18, 18);
+		_animMan->playAnim("OC05A.ANM", "OC05.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("OC10a.anm", 10, 18, 18);
+		_animMan->playAnim("OC10A.ANM", "OC10.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("OC20a.anm", 10, 18, 18);
+		_animMan->playAnim("OC20A.ANM", "OC20.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl) {
 		_graphicsMan->_fadingFl = true;
-		_animMan->playAnim("OC30a.anm", 10, 18, 18);
+		_animMan->playAnim("OC30A.ANM", "OC30.ANM", 10, 18, 18);
 	}
 
 	_events->_escKeyFl = false;
@@ -2107,7 +2107,7 @@ void HopkinsEngine::playEnding() {
 		_soundMan->_specialSoundNum = 200;
 		_soundMan->_skipRefreshFl = true;
 		_graphicsMan->_fadingFl = true;
-		_animMan->playAnim("BERM.ANM", 100, 24, 300);
+		_animMan->playAnim("BERM.ANM", "BERM.ANM", 100, 24, 300);
 		_graphicsMan->endDisplayBob();
 		_soundMan->removeSample(1);
 		_graphicsMan->loadImage("PLAN3");
@@ -2124,15 +2124,15 @@ void HopkinsEngine::playEnding() {
 		_globals->_eventMode = EVENTMODE_IGNORE;
 		_soundMan->_specialSoundNum = 0;
 		_graphicsMan->_fadingFl = true;
-		_animMan->playAnim("JOUR2A.anm", 12, 12, 1000);
+		_animMan->playAnim("JOUR2A.anm", "JOUR2A.anm", 12, 12, 1000);
 		_soundMan->playSound(11);
 		_graphicsMan->clearScreen();
 		_graphicsMan->clearPalette();
-		_animMan->playAnim("FF1a.anm", 18, 18, 9);
-		_animMan->playAnim("FF1a.anm", 9, 18, 9);
-		_animMan->playAnim("FF1a.anm", 9, 18, 18);
-		_animMan->playAnim("FF1a.anm", 9, 18, 9);
-		_animMan->playAnim("FF2a.anm", 24, 24, 100);
+		_animMan->playAnim("FF1a.anm", "FF1a.anm", 18, 18, 9);
+		_animMan->playAnim("FF1a.anm", "FF1a.anm", 9, 18, 9);
+		_animMan->playAnim("FF1a.anm", "FF1a.anm", 9, 18, 18);
+		_animMan->playAnim("FF1a.anm", "FF1a.anm", 9, 18, 9);
+		_animMan->playAnim("FF2a.anm", "FF2a.anm", 24, 24, 100);
 		displayCredits();
 		_globals->_eventMode = EVENTMODE_DEFAULT;
 		_globals->_exitId = 300;
@@ -2166,7 +2166,7 @@ void HopkinsEngine::playEnding() {
 		_soundMan->_specialSoundNum = 0;
 		_dialog->enableInvent();
 		_globals->_disableInventFl = false;
-		_animMan->playAnim("JOUR4A.anm", 12, 12, 1000);
+		_animMan->playAnim("JOUR4A.ANM", "JOUR4A.ANM", 12, 12, 1000);
 		_globals->_eventMode = EVENTMODE_DEFAULT;
 		_globals->_exitId = 300;
 	}
@@ -2182,36 +2182,36 @@ void HopkinsEngine::playPlaneCutscene() {
 	_graphicsMan->clearPalette();
 
 	_animMan->unsetClearAnimFlag();
-	_animMan->playAnim("aerop00a.anm", 10, 18, 18);
+	_animMan->playAnim("AEROP00A.ANM", "AEROP00.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("serop10a.anm", 10, 18, 18);
+		_animMan->playAnim("SEROP10A.ANM", "SEROP10A.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("aerop20a.anm", 10, 18, 18);
+		_animMan->playAnim("AEROP20A.ANM", "AEROP20.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("aerop30a.anm", 10, 18, 18);
+		_animMan->playAnim("AEROP30A.ANM", "AEROP30.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("aerop40a.anm", 10, 18, 18);
+		_animMan->playAnim("AEROP40A.ANM", "AEROP40.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("aerop50a.anm", 10, 18, 18);
+		_animMan->playAnim("AEROP50A.ANM", "AEROP50.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("aerop60a.anm", 10, 18, 18);
+		_animMan->playAnim("AEROP60A.ANM", "AEROP60.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("aerop70a.anm", 10, 18, 18);
+		_animMan->playAnim("AEROP70A.ANM", "AEROP70.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("trans00a.anm", 10, 18, 18);
+		_animMan->playAnim("TRANS00A.ANM", "TRANS00.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("trans10a.anm", 10, 18, 18);
+		_animMan->playAnim("TRANS10A.ANM", "TRANS10.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("trans15a.anm", 10, 18, 18);
+		_animMan->playAnim("TRANS15A.ANM", "TRANS15.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("trans20a.anm", 10, 18, 18);
+		_animMan->playAnim("TRANS20A.ANM", "TRANS20.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("trans30a.anm", 10, 18, 18);
+		_animMan->playAnim("TRANS30A.ANM", "TRANS30.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl)
-		_animMan->playAnim("trans40a.anm", 10, 18, 18);
+		_animMan->playAnim("TRANS40A.ANM", "TRANS40.ANM", 10, 18, 18);
 	if (!_events->_escKeyFl) {
 		_graphicsMan->_fadingFl = true;
-		_animMan->playAnim("PARA00a.anm", 9, 9, 9);
+		_animMan->playAnim("PARA00A.ANM", "PARA00.ANM", 9, 9, 9);
 	}
 
 	_events->_escKeyFl = false;
