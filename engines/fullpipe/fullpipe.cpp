@@ -22,11 +22,13 @@
 
 #include "base/plugins.h"
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 
 #include "engines/util.h"
 
 #include "fullpipe/fullpipe.h"
+#include "fullpipe/ngiarchive.h"
 
 namespace Fullpipe {
 
@@ -52,6 +54,8 @@ Common::Error FullpipeEngine::run() {
 	initGraphics(800, 600, true);
 
 	_isSaveAllowed = false;
+
+	Common::Archive *arch = makeNGIArchive("3896.nl");
 
 	return Common::kNoError;
 }
