@@ -48,6 +48,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 	int vbobFrameIndex = 0;
 
 	uint32 signature24 = READ_BE_UINT24(&dataP[2]);
+	warning("%c%c%c", dataP[2], dataP[3], dataP[4]);
 	switch (signature24) {
 	case MKTAG24('T', 'X', 'T'): {
 		vbobFrameIndex = dataP[6];
@@ -198,6 +199,12 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 		break;
 	case MKTAG24('S', 'T', 'P'):
 			if (!_vm->_objectsMan->_disableFl) {
+				// HACK: This piece of code is a replacement to the missing STE opcode when entering the FBI lab.
+				if (_vm->_globals->_curRoomNum == 10) {
+					_vm->_globals->_prevScreenId = _vm->_globals->_screenId;
+					_vm->_globals->_saveData->_data[svLastPrevScreenId] = _vm->_globals->_screenId;
+					_vm->_globals->_screenId = _vm->_globals->_saveData->_data[svLastScreenId] = 10;
+				}
 				_vm->_objectsMan->_twoCharactersFl = false;
 				_vm->_objectsMan->_characterPos.x = READ_LE_INT16(dataP + 6);
 				_vm->_objectsMan->_characterPos.y = READ_LE_INT16(dataP + 8);
