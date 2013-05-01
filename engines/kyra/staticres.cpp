@@ -818,7 +818,7 @@ void KyraEngine_LoK::initStaticResource() {
 		for (int i = 0; i < soundFilesSize; i++)
 			soundFiles[i] = (i < size1) ? soundfiles1[i] : soundfiles2[i - size1];
 	}
-	const char *const *soundFilesIntro = _staticres->loadStrings(k1AudioTracksIntro, temp);
+	const char *const *soundFilesIntro = _staticres->loadStrings(k1AudioTracksIntro, soundFilesIntroSize);
 	const int32 *cdaTable = (const int32 *)_staticres->loadRawData(k1TownsCDATable, cdaTableSize);
 
 	// FIXME: It seems Kyra1 MAC CD includes AdLib and MIDI music and sfx, thus we enable
