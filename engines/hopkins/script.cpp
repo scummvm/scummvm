@@ -48,7 +48,6 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 	int vbobFrameIndex = 0;
 
 	uint32 signature24 = READ_BE_UINT24(&dataP[2]);
-	warning("%c%c%c", dataP[2], dataP[3], dataP[4]);
 	switch (signature24) {
 	case MKTAG24('T', 'X', 'T'): {
 		vbobFrameIndex = dataP[6];
@@ -198,70 +197,70 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 		opcodeType = 1;
 		break;
 	case MKTAG24('S', 'T', 'P'):
-			if (!_vm->_objectsMan->_disableFl) {
-				// HACK: This piece of code is a replacement to the missing STE opcode when entering the FBI lab.
-				if (_vm->_globals->_curRoomNum == 10) {
-					_vm->_globals->_prevScreenId = _vm->_globals->_screenId;
-					_vm->_globals->_saveData->_data[svLastPrevScreenId] = _vm->_globals->_screenId;
-					_vm->_globals->_screenId = _vm->_globals->_saveData->_data[svLastScreenId] = 10;
-				}
-				_vm->_objectsMan->_twoCharactersFl = false;
-				_vm->_objectsMan->_characterPos.x = READ_LE_INT16(dataP + 6);
-				_vm->_objectsMan->_characterPos.y = READ_LE_INT16(dataP + 8);
-				_vm->_objectsMan->_startSpriteIndex = dataP[5];
-				if (_vm->_objectsMan->_changeHeadFl) {
-					if (_vm->_globals->_saveData->_data[svField354] == 1
-							&& _vm->_globals->_saveData->_cloneHopkins._pos.x && _vm->_globals->_saveData->_cloneHopkins._pos.y
-							&& _vm->_globals->_saveData->_cloneHopkins._startSpriteIndex && _vm->_globals->_saveData->_cloneHopkins._location) {
+		if (!_vm->_objectsMan->_disableFl) {
+			// HACK: This piece of code is a replacement to the missing STE opcode when entering the FBI lab.
+			if (_vm->_globals->_curRoomNum == 10) {
+				_vm->_globals->_prevScreenId = _vm->_globals->_screenId;
+				_vm->_globals->_saveData->_data[svLastPrevScreenId] = _vm->_globals->_screenId;
+				_vm->_globals->_screenId = _vm->_globals->_saveData->_data[svLastScreenId] = 10;
+			}
+			_vm->_objectsMan->_twoCharactersFl = false;
+			_vm->_objectsMan->_characterPos.x = READ_LE_INT16(dataP + 6);
+			_vm->_objectsMan->_characterPos.y = READ_LE_INT16(dataP + 8);
+			_vm->_objectsMan->_startSpriteIndex = dataP[5];
+			if (_vm->_objectsMan->_changeHeadFl) {
+				if (_vm->_globals->_saveData->_data[svField354] == 1
+						&& _vm->_globals->_saveData->_cloneHopkins._pos.x && _vm->_globals->_saveData->_cloneHopkins._pos.y
+						&& _vm->_globals->_saveData->_cloneHopkins._startSpriteIndex && _vm->_globals->_saveData->_cloneHopkins._location) {
 
-						_vm->_objectsMan->_characterPos = _vm->_globals->_saveData->_cloneHopkins._pos;
-						_vm->_objectsMan->_startSpriteIndex = _vm->_globals->_saveData->_cloneHopkins._startSpriteIndex;
-					}
-					if (_vm->_globals->_saveData->_data[svField356] == 1
-							&& _vm->_globals->_saveData->_samantha._pos.x && _vm->_globals->_saveData->_samantha._pos.y
-							&& _vm->_globals->_saveData->_samantha._startSpriteIndex && _vm->_globals->_saveData->_samantha._location) {
-						_vm->_objectsMan->_characterPos = _vm->_globals->_saveData->_samantha._pos;
-						_vm->_objectsMan->_startSpriteIndex = _vm->_globals->_saveData->_samantha._startSpriteIndex;
-					}
-					if (_vm->_globals->_saveData->_data[svField357] == 1
-							&& _vm->_globals->_saveData->_realHopkins._pos.x && _vm->_globals->_saveData->_realHopkins._pos.y
-							&& _vm->_globals->_saveData->_realHopkins._startSpriteIndex && _vm->_globals->_saveData->_realHopkins._location) {
-						_vm->_objectsMan->_characterPos = _vm->_globals->_saveData->_realHopkins._pos;
-						_vm->_objectsMan->_startSpriteIndex = _vm->_globals->_saveData->_realHopkins._startSpriteIndex;
-					}
+					_vm->_objectsMan->_characterPos = _vm->_globals->_saveData->_cloneHopkins._pos;
+					_vm->_objectsMan->_startSpriteIndex = _vm->_globals->_saveData->_cloneHopkins._startSpriteIndex;
 				}
 				if (_vm->_globals->_saveData->_data[svField356] == 1
-						&& _vm->_globals->_saveData->_realHopkins._location == _vm->_globals->_screenId) {
-					_vm->_objectsMan->addStaticSprite(
-					    _vm->_objectsMan->_headSprites,
-					    _vm->_globals->_saveData->_realHopkins._pos,
-					    1,
-					    2,
-					    _vm->_globals->_saveData->_realHopkins._zoomFactor,
-					    false,
-					    34,
-					    190);
-					_vm->_objectsMan->animateSprite(1);
-					_vm->_objectsMan->_twoCharactersFl = true;
+						&& _vm->_globals->_saveData->_samantha._pos.x && _vm->_globals->_saveData->_samantha._pos.y
+						&& _vm->_globals->_saveData->_samantha._startSpriteIndex && _vm->_globals->_saveData->_samantha._location) {
+					_vm->_objectsMan->_characterPos = _vm->_globals->_saveData->_samantha._pos;
+					_vm->_objectsMan->_startSpriteIndex = _vm->_globals->_saveData->_samantha._startSpriteIndex;
 				}
 				if (_vm->_globals->_saveData->_data[svField357] == 1
-				        && _vm->_globals->_saveData->_data[svField355] == 1
-				        && _vm->_globals->_saveData->_samantha._location == _vm->_globals->_screenId) {
-					_vm->_objectsMan->addStaticSprite(
-					    _vm->_objectsMan->_headSprites,
-					    _vm->_globals->_saveData->_samantha._pos,
-					    1,
-					    3,
-					    _vm->_globals->_saveData->_samantha._zoomFactor,
-					    false,
-					    20,
-					    127);
-					_vm->_objectsMan->animateSprite(1);
-					_vm->_objectsMan->_twoCharactersFl = true;
+						&& _vm->_globals->_saveData->_realHopkins._pos.x && _vm->_globals->_saveData->_realHopkins._pos.y
+						&& _vm->_globals->_saveData->_realHopkins._startSpriteIndex && _vm->_globals->_saveData->_realHopkins._location) {
+					_vm->_objectsMan->_characterPos = _vm->_globals->_saveData->_realHopkins._pos;
+					_vm->_objectsMan->_startSpriteIndex = _vm->_globals->_saveData->_realHopkins._startSpriteIndex;
 				}
 			}
-			opcodeType = 1;
-			_vm->_objectsMan->_changeHeadFl = false;
+			if (_vm->_globals->_saveData->_data[svField356] == 1
+					&& _vm->_globals->_saveData->_realHopkins._location == _vm->_globals->_screenId) {
+				_vm->_objectsMan->addStaticSprite(
+				    _vm->_objectsMan->_headSprites,
+				    _vm->_globals->_saveData->_realHopkins._pos,
+				    1,
+				    2,
+				    _vm->_globals->_saveData->_realHopkins._zoomFactor,
+				    false,
+				    34,
+				    190);
+				_vm->_objectsMan->animateSprite(1);
+				_vm->_objectsMan->_twoCharactersFl = true;
+			}
+			if (_vm->_globals->_saveData->_data[svField357] == 1
+			        && _vm->_globals->_saveData->_data[svField355] == 1
+			        && _vm->_globals->_saveData->_samantha._location == _vm->_globals->_screenId) {
+				_vm->_objectsMan->addStaticSprite(
+				    _vm->_objectsMan->_headSprites,
+				    _vm->_globals->_saveData->_samantha._pos,
+				    1,
+				    3,
+				    _vm->_globals->_saveData->_samantha._zoomFactor,
+				    false,
+				    20,
+				    127);
+				_vm->_objectsMan->animateSprite(1);
+				_vm->_objectsMan->_twoCharactersFl = true;
+			}
+		}
+		opcodeType = 1;
+		_vm->_objectsMan->_changeHeadFl = false;
 		break;
 	case MKTAG24('S', 'T', 'E'):
 		if (!_vm->_objectsMan->_disableFl) {
