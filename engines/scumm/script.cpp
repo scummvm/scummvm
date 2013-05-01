@@ -49,6 +49,8 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 	if (!recursive)
 		stopScript(script);
 
+	uint16 number = (_currentScript != 0xFF) ? vm.slot[_currentScript].number : 0;
+
 	if (script < _numGlobalScripts) {
 		// Call getResourceAddress to ensure the resource is loaded & its usage count reset
 		/*scriptPtr =*/ getResourceAddress(rtScript, script);
@@ -56,7 +58,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		scriptType = WIO_GLOBAL;
 
 		debugC(DEBUG_SCRIPTS, "runScript(Global-%d) from %d-%d", script,
-				       vm.slot[_currentScript].number, _roomResource);
+				       number, _roomResource);
 	} else {
 		scriptOffs = _localScriptOffsets[script - _numGlobalScripts];
 		if (scriptOffs == 0)
@@ -64,7 +66,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		scriptType = WIO_LOCAL;
 
 		debugC(DEBUG_SCRIPTS, "runScript(%d) from %d-%d", script,
-				       vm.slot[_currentScript].number, _roomResource);
+				       number, _roomResource);
 	}
 
 	if (cycle == 0)
