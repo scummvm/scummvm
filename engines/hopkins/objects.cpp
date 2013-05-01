@@ -2890,7 +2890,7 @@ void ObjectsManager::doActionRight(int idx) {
 		showSpecialActionAnimationWithFlip(_gestureBuf, "23,24,25,-1,", 8, false);
 		break;
 	case 6:
-		showSpecialActionAnimation(_gestureBuf, "24,,23,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "24,23,-1,", 8);
 		break;
 	case 7:
 		showSpecialActionAnimationWithFlip(_gestureBuf, "23,24,25,26,27,-1,", 8, false);
@@ -3036,7 +3036,7 @@ void ObjectsManager::doActionLeft(int idx) {
 		showSpecialActionAnimationWithFlip(_gestureBuf, "23,24,25,-1,", 8, true);
 		break;
 	case 6:
-		showSpecialActionAnimation(_gestureBuf, "24,,23,-1,", 8);
+		showSpecialActionAnimation(_gestureBuf, "24,23,-1,", 8);
 		break;
 	case 7:
 		showSpecialActionAnimationWithFlip(_gestureBuf, "23,24,25,26,27,-1,", 8, true);
