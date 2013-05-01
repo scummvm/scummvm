@@ -630,7 +630,7 @@ void ScummEngine_v5::o5_breakHere() {
 }
 
 void ScummEngine_v5::o5_chainScript() {
-	int vars[NUM_SCRIPT_LOCALS];
+	int vars[NUM_SCRIPT_LOCAL];
 	int script;
 	int cur;
 
@@ -663,7 +663,7 @@ void ScummEngine_v5::o5_chainScript() {
 
 void ScummEngine_v5::o5_cursorCommand() {
 	int i, j, k;
-	int table[NUM_SCRIPT_LOCALS];
+	int table[NUM_SCRIPT_LOCAL];
 	switch ((_opcode = fetchScriptByte()) & 0x1F) {
 	case 1:			// SO_CURSOR_ON
 		_cursor.state = 1;
@@ -736,7 +736,7 @@ void ScummEngine_v5::o5_cursorCommand() {
 }
 
 void ScummEngine_v5::o5_cutscene() {
-	int args[NUM_SCRIPT_LOCALS];
+	int args[NUM_SCRIPT_LOCAL];
 	getWordVararg(args);
 	beginCutscene(args);
 }
@@ -2083,14 +2083,14 @@ void ScummEngine_v5::o5_isSoundRunning() {
 }
 
 void ScummEngine_v5::o5_soundKludge() {
-	int items[NUM_SCRIPT_LOCALS];
+	int items[NUM_SCRIPT_LOCAL];
 	int num = getWordVararg(items);
 	_sound->soundKludge(items, num);
 }
 
 void ScummEngine_v5::o5_startObject() {
 	int obj, script;
-	int data[NUM_SCRIPT_LOCALS];
+	int data[NUM_SCRIPT_LOCAL];
 
 	obj = getVarOrDirectWord(PARAM_1);
 	script = getVarOrDirectByte(PARAM_2);
@@ -2101,7 +2101,7 @@ void ScummEngine_v5::o5_startObject() {
 
 void ScummEngine_v5::o5_startScript() {
 	int op, script;
-	int data[NUM_SCRIPT_LOCALS];
+	int data[NUM_SCRIPT_LOCAL];
 
 	op = _opcode;
 	script = getVarOrDirectByte(PARAM_1);
@@ -2556,7 +2556,7 @@ void ScummEngine_v5::o5_walkActorToObject() {
 int ScummEngine_v5::getWordVararg(int *ptr) {
 	int i;
 
-	for (i = 0; i < NUM_SCRIPT_LOCALS; i++)
+	for (i = 0; i < NUM_SCRIPT_LOCAL; i++)
 		ptr[i] = 0;
 
 	i = 0;

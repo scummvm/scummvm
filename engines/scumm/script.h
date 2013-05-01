@@ -74,7 +74,7 @@ struct OpcodeEntry : Common::NonCopyable {
  */
 enum {
 	NUM_SCRIPT_SLOT = 80,
-	NUM_SCRIPT_LOCALS = 25
+	NUM_SCRIPT_LOCAL = 25
 };
 
 /* Script status type (slot.status) */
@@ -125,7 +125,7 @@ struct VirtualMachineState {
 	byte cutSceneStackPointer;
 	ScriptSlot slot[NUM_SCRIPT_SLOT];
 	// Why does localvar have space for one extra local variable?
-	int32 localvar[NUM_SCRIPT_SLOT][NUM_SCRIPT_LOCALS + 1];
+	int32 localvar[NUM_SCRIPT_SLOT][NUM_SCRIPT_LOCAL + 1];
 
 	NestedScript nest[kMaxScriptNesting];
 	byte numNestedScripts;
