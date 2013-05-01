@@ -1398,10 +1398,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkMan->startAnimatedCharacterDialogue("tourist1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
-			if (_vm->_fileIO->fileExists("T421A.ANM"))
-				_vm->_animMan->playAnim2("T421A.ANM", 100, 14, 500);
-			else
-				_vm->_animMan->playAnim2("T421.ANM", 100, 14, 500);
+				_vm->_animMan->playAnim2("T421A.ANM", "T421.ANM", 100, 14, 500);
 			_vm->_events->refreshScreenAndEvents();
 			_vm->_events->refreshScreenAndEvents();
 			_vm->_events->refreshScreenAndEvents();
@@ -2403,7 +2400,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			// Display bomb plan
 			if (!_vm->getIsDemo()) {
 				memcpy(_vm->_graphicsMan->_oldPalette, _vm->_graphicsMan->_palette, 769);
-				_vm->_animMan->playAnim2("PLAN.ANM", 50, 10, 800);
+				_vm->_animMan->playAnim2("PLAN.ANM", "PLAN.ANM", 50, 10, 800);
 			}
 			_vm->_graphicsMan->resetDirtyRects();
 			break;

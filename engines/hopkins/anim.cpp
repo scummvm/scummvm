@@ -196,7 +196,7 @@ void AnimationManager::playAnim(const Common::String &hiresName, const Common::S
 /**
  * Play Animation, type 2
  */
-void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, uint32 rate2, uint32 rate3) {
+void AnimationManager::playAnim2(const Common::String &hiresName, const Common::String &lowresName, uint32 rate1, uint32 rate2, uint32 rate3) {
 	int oldScrollPosX = 0;
 	byte *screenP = NULL;
 	Common::File f;
@@ -215,8 +215,10 @@ void AnimationManager::playAnim2(const Common::String &filename, uint32 rate1, u
 			_vm->_graphicsMan->_scrollOffset = 0;
 
 		screenP = _vm->_graphicsMan->_backBuffer;
-		if (!f.open(filename))
-			error("Error opening file - %s", filename.c_str());
+		if (!f.open(hiresName)) {
+			if (!f.open(lowresName))
+				error("Error opening files: %s - %s", hiresName.c_str(), lowresName.c_str());
+		}
 
 		f.skip(6);
 		f.read(_vm->_graphicsMan->_palette, 800);

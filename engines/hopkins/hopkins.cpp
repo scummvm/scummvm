@@ -2141,7 +2141,7 @@ void HopkinsEngine::playEnding() {
 	} else {
 		_soundMan->_specialSoundNum = 200;
 		_soundMan->_skipRefreshFl = true;
-		_animMan->playAnim2("BERM.ANM", 100, 24, 300);
+		_animMan->playAnim2("BERM.ANM", "BERM.ANM", 100, 24, 300);
 		_objectsMan->stopBobAnimation(7);
 		_objectsMan->setBobAnimation(8);
 		_globals->_introSpeechOffFl = true;
