@@ -1398,7 +1398,10 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkMan->startAnimatedCharacterDialogue("tourist1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
-			_vm->_animMan->playAnim2("T421.ANM", 100, 14, 500);
+			if (_vm->_fileIO->fileExists("T421A.ANM"))
+				_vm->_animMan->playAnim2("T421A.ANM", 100, 14, 500);
+			else
+				_vm->_animMan->playAnim2("T421.ANM", 100, 14, 500);
 			_vm->_events->refreshScreenAndEvents();
 			_vm->_events->refreshScreenAndEvents();
 			_vm->_events->refreshScreenAndEvents();
