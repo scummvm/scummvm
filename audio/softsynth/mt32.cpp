@@ -156,6 +156,12 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 	// rely on Mixer to convert.
 	_outputRate = 32000; //_mixer->getOutputRate();
 	_initializing = false;
+
+	// Initialized in open()
+	_controlROM = NULL;
+	_pcmROM = NULL;
+	_controlFile = NULL;
+	_pcmFile = NULL;
 }
 
 MidiDriver_MT32::~MidiDriver_MT32() {
