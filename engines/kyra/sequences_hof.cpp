@@ -1774,7 +1774,7 @@ int SeqPlayer_HOF::cbHOF_title(WSAMovie_v2 *wsaObj, int x, int y, int frm) {
 		_result = _menu->handle(11) + 1;
 		_updateAnimations = false;
 
-		if (_result == 1) {
+		if (_result == 1 || _result == 3) {
 			_curScene = _lastScene;
 			_preventLooping = true;
 		}
