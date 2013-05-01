@@ -375,7 +375,7 @@ OBJECT *InitObject(const OBJ_INIT *pInitTbl) {
 
 		if (pImg->hImgPal) {
 			// allocate a palette for this object
-			pPalQ = AllocPalette(FROM_LE_32(pImg->hImgPal));
+			pPalQ = AllocPalette(FROM_32(pImg->hImgPal));
 
 			// make sure palette allocated
 			assert(pPalQ != NULL);
@@ -494,7 +494,7 @@ OBJECT *RectangleObject(SCNHANDLE hPal, int color, int width, int height) {
 	OBJECT *pRect = InitObject(&rectObj);
 
 	// allocate a palette for this object
-	pPalQ = AllocPalette(FROM_32(hPal));
+	pPalQ = AllocPalette(hPal);
 
 	// make sure palette allocated
 	assert(pPalQ != NULL);
