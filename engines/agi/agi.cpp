@@ -585,6 +585,21 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	setupOpcodes();
 	_game._curLogic = NULL;
 	_timerHack = 0;
+
+	_lastSaveTime = 0;
+	_lastTick = 0;
+
+	memset(_keyQueue, 0, sizeof(_keyQueue));
+	memset(_predictiveResult, 0, sizeof(_predictiveResult));
+
+	_sprites = NULL;
+	_picture = NULL;
+	_loader = NULL;
+	_console = NULL;
+
+	_egoHoldKey = false;
+	
+	
 }
 
 void AgiEngine::initialize() {
