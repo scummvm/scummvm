@@ -47,7 +47,7 @@ void Init_v2::initVideo() {
 
 	_vm->_global->_colorCount = 16;
 	if (!_vm->isEGA() &&
-	   ((_vm->getPlatform() == Common::kPlatformPC) ||
+	   ((_vm->getPlatform() == Common::kPlatformDOS) ||
 	     (_vm->getPlatform() == Common::kPlatformMacintosh) ||
 	     (_vm->getPlatform() == Common::kPlatformWindows)) &&
 	    ((_vm->_global->_videoMode == 0x13) ||

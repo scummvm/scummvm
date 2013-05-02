@@ -53,7 +53,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{NULL, 0, NULL, 0}
 		},
 		Common::EN_ANY,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOSPEECH)
 	},
@@ -73,7 +73,7 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{NULL, 0, NULL, 0}
 		},
 		Common::CZ_CZE,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_CD,
 		GUIO0()
 	},

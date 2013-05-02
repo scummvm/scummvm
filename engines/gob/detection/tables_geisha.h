@@ -33,7 +33,7 @@
 		"",
 		AD_ENTRY1s("disk1.stk", "6eebbb98ad90cd3c44549fc2ab30f632", 212153),
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -47,7 +47,7 @@
 		"",
 		AD_ENTRY1s("disk1.stk", "6eebbb98ad90cd3c44549fc2ab30f632", 212153),
 		DE_DEU,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -61,7 +61,7 @@
 		"",
 		AD_ENTRY1s("disk1.stk", "0c4c16090921664f50baefdfd24d7f5d", 211889),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -75,7 +75,7 @@
 		"",
 		AD_ENTRY1s("disk1.stk", "49107ac897e7c00af6c4ecd78a74a710", 212169),
 		ES_ESP,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -89,7 +89,7 @@
 		"",
 		AD_ENTRY1s("disk1.stk", "49107ac897e7c00af6c4ecd78a74a710", 212169),
 		IT_ITA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -103,7 +103,7 @@
 		"",
 		AD_ENTRY1s("disk1.stk", "49107ac897e7c00af6c4ecd78a74a710", 212164),
 		ES_ESP,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -117,7 +117,7 @@
 		"",
 		AD_ENTRY1s("disk1.stk", "f4d4d9d20f7ad1f879fc417d47faba89", 336732),
 		UNK_LANG,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},

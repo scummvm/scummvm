@@ -1750,7 +1750,7 @@ bool SeqPlayer_HOF::countDownRunning() {
 #define CASE_ALT(dosCase, towns98Case)\
 	case dosCase:\
 	case towns98Case:\
-		if (!((_callbackCurrentFrame == towns98Case && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == dosCase && _vm->gameFlags().platform == Common::kPlatformPC)))\
+		if (!((_callbackCurrentFrame == towns98Case && (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)) || (_callbackCurrentFrame == dosCase && _vm->gameFlags().platform == Common::kPlatformDOS)))\
 			break;
 
 int SeqPlayer_HOF::cbHOF_westwood(WSAMovie_v2 *wsaObj, int x, int y, int frm) {

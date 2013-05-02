@@ -101,7 +101,7 @@ void Logic::readQueenJas() {
 	}
 	_roomData[_numRooms + 1] = _numObjects;
 
-	if ((_vm->resource()->isDemo() && _vm->resource()->getPlatform() == Common::kPlatformPC) ||
+	if ((_vm->resource()->isDemo() && _vm->resource()->getPlatform() == Common::kPlatformDOS) ||
 		(_vm->resource()->isInterview() && _vm->resource()->getPlatform() == Common::kPlatformAmiga)) {
 		_sfxName = NULL;
 	} else {
@@ -2088,7 +2088,7 @@ bool LogicDemo::changeToSpecialRoom() {
 void LogicDemo::setupSpecialMoveTable() {
 	_specialMoves[4] = &LogicDemo::asmMakeJoeUseUnderwear;
 	_specialMoves[14] = &LogicDemo::asmEndDemo;
-	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+	if (_vm->resource()->getPlatform() == Common::kPlatformDOS) {
 		_specialMoves[5]  = &LogicDemo::asmSwitchToDressPalette;
 	}
 }
@@ -2185,7 +2185,7 @@ void LogicGame::setupSpecialMoveTable() {
 	_specialMoves[31] = &LogicGame::asmWaitForCarPosition;
 	_specialMoves[33] = &LogicGame::asmAttemptPuzzle;
 	_specialMoves[34] = &LogicGame::asmScrollTitle;
-	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+	if (_vm->resource()->getPlatform() == Common::kPlatformDOS) {
 		_specialMoves[5]  = &LogicGame::asmSwitchToDressPalette;
 		_specialMoves[6]  = &LogicGame::asmSwitchToNormalPalette;
 		_specialMoves[13] = &LogicGame::asmShrinkRobot;

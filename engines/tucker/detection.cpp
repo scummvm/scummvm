@@ -41,7 +41,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		"",
 		AD_ENTRY1s("infobar.txt", "f1e42a95972643462b9c3c2ea79d6683", 543),
 		Common::FR_FRA,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		Tucker::kGameFlagNoSubtitles,
 		GUIO0()
 	},
@@ -50,7 +50,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		"",
 		AD_ENTRY1s("infobar.txt", "9c1ddeafc5283b90d1a284bd0924831c", 462),
 		Common::EN_ANY,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
 		GUIO0()
 	},
@@ -59,7 +59,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		"",
 		AD_ENTRY1s("infobar.txt", "1b3ea79d8528ea3c7df83dd0ed345e37", 525),
 		Common::ES_ESP,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
 		GUIO0()
 	},
@@ -68,7 +68,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		"",
 		AD_ENTRY1s("infobrgr.txt", "4df9eb65722418d1a1723508115b146c", 552),
 		Common::DE_DEU,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
 		GUIO0()
 	},
@@ -77,7 +77,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		"",
 		AD_ENTRY1s("infobar.txt", "5f85285bbc23ce57cbc164021ee1f23c", 525),
 		Common::PL_POL,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		0,
 		GUIO0()
 	},
@@ -86,7 +86,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		"",
 		AD_ENTRY1s("infobar.txt", "e548994877ff31ca304f6352ce022a8e", 497),
 		Common::CZ_CZE,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		Tucker::kGameFlagEncodedData,
 		GUIO0()
 	},
@@ -95,7 +95,7 @@ static const ADGameDescription tuckerGameDescriptions[] = {
 		"Demo",
 		AD_ENTRY1s("infobar.txt", "010b055de42097b140d5bcb6e95a5c7c", 203),
 		Common::EN_ANY,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_DEMO | Tucker::kGameFlagDemo,
 		GUIO0()
 	},
@@ -107,7 +107,7 @@ static const ADGameDescription tuckerDemoGameDescription = {
 	"Non-Interactive Demo",
 	AD_ENTRY1(0, 0),
 	Common::EN_ANY,
-	Common::kPlatformPC,
+	Common::kPlatformDOS,
 	ADGF_DEMO | Tucker::kGameFlagDemo | Tucker::kGameFlagIntroOnly,
 	GUIO0()
 };

@@ -1244,7 +1244,7 @@ void Insane::ouchSoundEnemy() {
 
 	_actor[1].act[3].state = 52;
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 		smlayer_startVoice(55);
 		return;
 	}
@@ -1671,7 +1671,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].weaponClass = 1;
 		_actor[1].act[2].state = 3;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
-		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)))
+		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)))
 			smlayer_startSfx(63);
 		break;
 	case 3:
@@ -1679,7 +1679,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].weaponClass = 1;
 		if (_actor[1].act[2].frame >= 6) {
 			tmp = calcBenDamage(1, 1);
-			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 				if (tmp == 1)
 					smlayer_startSfx(50);
 			} else if (tmp == 1)
@@ -1851,7 +1851,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_setActorFacing(1, 2, 19, 180);
 		_actor[1].act[2].state = 19;
 		_actor[1].act[2].tilt = calcTilt(_actor[1].tilt);
-		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
+		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
 			smlayer_startSfx(69);
 			 if (!_actor[1].field_54) {
 				tmp = _vm->_rnd.getRandomNumber(4);
@@ -1916,7 +1916,7 @@ void Insane::actor12Reaction(int32 buttons) {
 			case INV_2X4:
 			case INV_BOOT:
 				tmp = calcBenDamage(1, 1);
-				if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+				if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 					if (tmp == 1)
 						smlayer_startSfx(52);
 					else if (tmp == 1000)
@@ -2034,7 +2034,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		_actor[1].kicking = true;
 		if (_actor[1].act[2].frame >= 3) {
 			tmp = calcBenDamage(1, 1);
-			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 				if (tmp == 1)
 					smlayer_startSfx(57);
 			} else if (tmp == 1)
@@ -2088,7 +2088,7 @@ void Insane::actor12Reaction(int32 buttons) {
 		smlayer_setActorLayer(1, 2, 25);
 		_actor[1].act[2].state = 37;
 
-		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
+		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
 			smlayer_startSfx(96);
 			switch (_currEnemy) {
 			case EN_ROTT1:

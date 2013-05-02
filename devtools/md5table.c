@@ -79,7 +79,7 @@ static const StringMap platformMap[] = {
 	{ "Amiga",		"kPlatformAmiga" },
 	{ "Atari",		"kPlatformAtariST" },
 	{ "C64",		"kPlatformC64" },
-	{ "DOS",		"kPlatformPC" },
+	{ "DOS",		"kPlatformDOS" },
 	{ "FM-TOWNS",		"kPlatformFMTowns" },
 	{ "iOS",		"kPlatformIOS" },
 	{ "Mac",		"kPlatformMacintosh" },

@@ -314,7 +314,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
 	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psx") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psxdemo"))
 		Sword2Engine::_platform = Common::kPlatformPSX;
 	else
-		Sword2Engine::_platform = Common::kPlatformPC;
+		Sword2Engine::_platform = Common::kPlatformWindows;
 
 	_bootParam = ConfMan.getInt("boot_param");
 	_saveSlot = ConfMan.getInt("save_slot");

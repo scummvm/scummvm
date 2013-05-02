@@ -535,7 +535,7 @@ Common::Error LoLEngine::go() {
 		_sound->loadSoundFile("sound.dat");
 
 	_sound->selectAudioResourceSet(kMusicIngame);
-	if (_flags.platform != Common::kPlatformPC)
+	if (_flags.platform != Common::kPlatformDOS)
 		_sound->loadSoundFile(0);
 
 	_tim = new TIMInterpreter_LoL(this, _screen, _system);

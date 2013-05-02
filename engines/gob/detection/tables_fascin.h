@@ -33,7 +33,7 @@
 		"VGA",
 		AD_ENTRY1s("disk0.stk", "c14330d052fe4da5a441ac9d81bc5891", 1061955),
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -47,7 +47,7 @@
 		"VGA",
 		AD_ENTRY1s("disk0.stk", "e8ab4f200a2304849f462dc901705599", 183337),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -64,7 +64,7 @@
 		"VGA 3 disks edition",
 		AD_ENTRY1s("disk0.stk", "ab3dfdce43917bc806812959d692fc8f", 1061929),
 		IT_ITA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -78,7 +78,7 @@
 		"VGA 3 disks edition",
 		AD_ENTRY1s("disk0.stk", "a50a8495e1b2d67699fb562cb98fc3e2", 1064387),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -92,7 +92,7 @@
 		"Hebrew edition (censored)",
 		AD_ENTRY1s("intro.stk", "d6e45ce548598727e2b5587a99718eba", 1055909),
 		HE_ISR,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -106,7 +106,7 @@
 		"VGA 3 disks edition",
 		AD_ENTRY1s("disk0.stk", "3a24e60a035250189643c86a9ceafb97", 1062480),
 		DE_DEU,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -123,7 +123,7 @@
 		"CD Version (Censored)",
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
@@ -137,7 +137,7 @@
 		"CD Version (Censored)",
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
@@ -151,7 +151,7 @@
 		"CD Version (Censored)",
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		DE_DEU,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
@@ -165,7 +165,7 @@
 		"CD Version (Censored)",
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		IT_ITA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOSUBTITLES)
 	},
@@ -179,7 +179,7 @@
 		"CD Version (Censored)",
 		AD_ENTRY1s("intro.stk", "9c61e9c22077f72921f07153e37ccf01", 545953),
 		ES_ESP,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO1(GUIO_NOSUBTITLES)
 	},

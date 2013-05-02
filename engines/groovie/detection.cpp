@@ -54,7 +54,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"t7g", "",
 			AD_ENTRY1s("script.grv", "d1b8033b40aa67c076039881eccce90d", 16659),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_NO_FLAGS,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS,
 			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
@@ -108,7 +108,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 				{ "intro.gjd", 0, NULL, 31711554},
 				{ NULL, 0, NULL, 0}
 			},
-			Common::RU_RUS, Common::kPlatformPC, ADGF_NO_FLAGS,
+			Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS,
 			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_T7G_FAST_MOVIE_SPEED)
 		},
 		kGroovieT7G, 0
@@ -134,7 +134,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"11h", "",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieV2, 1
@@ -175,7 +175,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"11h", "Demo",
 			AD_ENTRY1s("disk.1", "aacb32ce07e0df2894bd83a3dee40c12", 70),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO | ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO5(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT)
 		},
 		kGroovieV2, 1
@@ -186,7 +186,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"11h", "Making Of",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
 		kGroovieV2, 2
@@ -227,7 +227,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"clandestiny", "Trailer",
 			AD_ENTRY1s("disk.1", "5c0428cd3659fc7bbcd0aa16485ed5da", 227),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO3(GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)
 		},
 		kGroovieV2, 3
@@ -268,7 +268,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"clandestiny", "",
 			AD_ENTRY1s("disk.1", "f79fc1515174540fef6a34132efc4c53", 76),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieV2, 1
@@ -279,7 +279,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"unclehenry", "",
 			AD_ENTRY1s("disk.1", "0e1b1d3cecc4fc7efa62a968844d1f7a", 72),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieV2, 1
@@ -290,7 +290,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		{
 			"tlc", "",
 			AD_ENTRY1s("disk.1", "32a1afa68478f1f9d2b25eeea427f2e3", 84),
-			Common::EN_ANY, Common::kPlatformPC, ADGF_UNSTABLE,
+			Common::EN_ANY, Common::kPlatformDOS, ADGF_UNSTABLE,
 			GUIO2(GUIO_NOMIDI, GUIO_NOASPECT)
 		},
 		kGroovieV2, 1

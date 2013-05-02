@@ -748,7 +748,7 @@ byte getLanguageID(int lang) {
 }
 
 const TypeTable platformTable[] = {
-	{ kPlatformPC, 0 },
+	{ kPlatformDOS, 0 },
 	{ kPlatformAmiga, 1 },
 	{ kPlatformFMTowns, 2 },
 	{ kPlatformPC98, 3 },

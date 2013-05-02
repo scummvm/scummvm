@@ -430,7 +430,7 @@ void KyraEngine_HoF::updateDlgBuffer() {
 	Common::String filename = Common::String::format("CH%.02d-S%.02d.DL", _currentChapter, _npcTalkDlgIndex);
 
 	const char *suffix = _flags.isTalkie ? suffixTalkie : suffixTowns;
-	if (_flags.platform != Common::kPlatformPC || _flags.isTalkie)
+	if (_flags.platform != Common::kPlatformDOS || _flags.isTalkie)
 		filename += suffix[_lang];
 	else
 		filename += 'G';

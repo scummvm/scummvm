@@ -198,7 +198,7 @@ void registerDefaults() {
 
 	// Game specific
 	ConfMan.registerDefault("path", "");
-	ConfMan.registerDefault("platform", Common::kPlatformPC);
+	ConfMan.registerDefault("platform", Common::kPlatformDOS);
 	ConfMan.registerDefault("language", "en");
 	ConfMan.registerDefault("subtitles", false);
 	ConfMan.registerDefault("boot_param", 0);

@@ -84,7 +84,7 @@ Common::Error CineEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200, false);
 
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformDOS) {
 		g_sound = new PCSound(_mixer, this);
 	} else {
 		// Paula chipset for Amiga and Atari versions

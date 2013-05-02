@@ -373,8 +373,8 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	} else {
 		gui_drawLiveMagicBar(33, 32, _characters[charNum].magicPointsCur, 0, _characters[charNum].magicPointsMax, 5, 32, 162, 1, 0);
 		gui_drawLiveMagicBar(39, 32, _characters[charNum].hitPointsCur, 0, _characters[charNum].hitPointsMax, 5, 32, 154, 1, 1);
-		_screen->printText((_flags.platform == Common::kPlatformPC && !_flags.isTalkie) ? "M" : getLangString(0x4253), 33, 1, 160, 0);
-		_screen->printText((_flags.platform == Common::kPlatformPC && !_flags.isTalkie) ? "H" : getLangString(0x4254), 39, 1, 152, 0);
+		_screen->printText((_flags.platform == Common::kPlatformDOS && !_flags.isTalkie) ? "M" : getLangString(0x4253), 33, 1, 160, 0);
+		_screen->printText((_flags.platform == Common::kPlatformDOS && !_flags.isTalkie) ? "H" : getLangString(0x4254), 39, 1, 152, 0);
 	}
 
 	int spellLevels = 0;

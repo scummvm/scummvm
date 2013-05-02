@@ -439,7 +439,7 @@ void Parallaction_ns::_c_closeMusic(void *) {
 void Parallaction_ns::_c_startIntro(void *parm) {
 	_rightHandAnim = _location.findAnimation("righthand");
 
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformDOS) {
 		_soundManI->setMusicFile("intro");
 		_soundManI->playMusic();
 	}

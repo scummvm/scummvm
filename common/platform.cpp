@@ -31,7 +31,7 @@ const PlatformDescription g_platforms[] = {
 	{ "amiga", "ami", "amiga", "Amiga", kPlatformAmiga },
 	{ "atari", "atari-st", "st", "Atari ST", kPlatformAtariST },
 	{ "c64", "c64", "c64", "Commodore 64", kPlatformC64 },
-	{ "pc", "dos", "ibm", "DOS", kPlatformPC },
+	{ "pc", "dos", "ibm", "DOS", kPlatformDOS },
 	{ "pc98", "pc98", "pc98", "PC-98", kPlatformPC98 },
 	{ "wii", "wii", "wii", "Nintendo Wii", kPlatformWii },
 	{ "coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3 },

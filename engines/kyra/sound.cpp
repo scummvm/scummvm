@@ -288,7 +288,7 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 	//	XXX
 	//}
 
-	if (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformMacintosh) {
+	if (_flags.platform == Common::kPlatformDOS || _flags.platform == Common::kPlatformMacintosh) {
 		assert(command*2+1 < _trackMapSize);
 		if (_curMusicTheme != _trackMap[command*2]) {
 			if (_trackMap[command*2] != -1 && _trackMap[command*2] != -2)

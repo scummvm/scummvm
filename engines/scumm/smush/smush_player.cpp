@@ -920,7 +920,7 @@ void SmushPlayer::handleAnimHeader(int32 subSize, Common::SeekableReadStream &b)
 
 void SmushPlayer::setupAnim(const char *file) {
 	if (_insanity) {
-		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)))
+		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)))
 			readString("mineroad.trs");
 	} else
 		readString(file);
@@ -933,7 +933,7 @@ SmushFont *SmushPlayer::getFont(int font) {
 		return _sf[font];
 
 	if (_vm->_game.id == GID_FT) {
-		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
+		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
 			const char *ft_fonts[] = {
 				"scummfnt.nut",
 				"techfnt.nut",

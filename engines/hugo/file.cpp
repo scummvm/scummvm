@@ -496,7 +496,7 @@ void FileManager::readBootFile() {
 			memset(_vm->_boot._distrib, '\0', sizeof(_vm->_boot._distrib));
 			_vm->_boot._registered = kRegFreeware;
 			return;
-		} else if (_vm->getPlatform() == Common::kPlatformPC) {
+		} else if (_vm->getPlatform() == Common::kPlatformDOS) {
 			warning("readBootFile - Skipping as H2 and H3 Dos may be shareware");
 			memset(_vm->_boot._distrib, '\0', sizeof(_vm->_boot._distrib));
 			_vm->_boot._registered = kRegShareware;

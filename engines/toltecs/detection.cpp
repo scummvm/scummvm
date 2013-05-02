@@ -66,7 +66,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("WESTERN", "05472037e9cfde146e953c434e74f0f4", 337643527),
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -79,7 +79,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("WESTERN", "ba1742d3193b68ceb9434e2ab7a09a9b", 391462783),
 			Common::RU_RUS,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -92,7 +92,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("WESTERN", "1a3292bad8e0bb5701800c73531dd75e", 345176617),
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -105,7 +105,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("WESTERN", "4fb845635cbdac732453fe23be350df9", 327269545),
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -118,7 +118,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("WESTERN", "479f468beccc1b0ce5873ec523d1380e", 308391018),
 			Common::ES_ESP,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -132,7 +132,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("WESTERN", "69a5572e75409d8c6230b787faa353af", 337647960),
 			Common::HU_HUN,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -145,7 +145,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("WESTERN", "53a0abd1c0bc5cad8ba18f0e56877705", 46241833),
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
@@ -158,7 +158,7 @@ static const ToltecsGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("WESTERN", "1c85e82712d24f1d5c1ea2a66ddd75c2", 47730038),
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},

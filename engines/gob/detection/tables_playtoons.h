@@ -37,7 +37,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -55,7 +55,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -73,7 +73,7 @@
 			{0, 0, 0, 0}
 		},
 		DE_DEU,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -91,7 +91,7 @@
 			{0, 0, 0, 0}
 		},
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -114,7 +114,7 @@
 			{0, 0, 0, 0}
 		},
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -132,7 +132,7 @@
 			{0, 0, 0, 0}
 		},
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -154,7 +154,7 @@
 			{0, 0, 0, 0}
 		},
 		IT_ITA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -175,7 +175,7 @@
 			{0, 0, 0, 0}
 		},
 		ES_ESP,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -196,7 +196,7 @@
 			{0, 0, 0, 0}
 		},
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -214,7 +214,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -232,7 +232,7 @@
 			{0, 0, 0, 0}
 		},
 		DE_DEU,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -250,7 +250,7 @@
 			{0, 0, 0, 0}
 		},
 		IT_ITA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -268,7 +268,7 @@
 			{0, 0, 0, 0}
 		},
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -289,7 +289,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -307,7 +307,7 @@
 			{0, 0, 0, 0}
 		},
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -325,7 +325,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -343,7 +343,7 @@
 			{0, 0, 0, 0}
 		},
 		DE_DEU,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -361,7 +361,7 @@
 			{0, 0, 0, 0}
 		},
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -382,7 +382,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -400,7 +400,7 @@
 			{0, 0, 0, 0}
 		},
 		EN_ANY,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -421,7 +421,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -442,7 +442,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -463,7 +463,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -484,7 +484,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -505,7 +505,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},

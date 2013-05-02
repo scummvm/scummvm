@@ -746,7 +746,7 @@ Gfx::Gfx(Parallaction* vm) :
 	_unpackedBitmap = new byte[MAXIMUM_UNPACKED_BITMAP_SIZE];
 	assert(_unpackedBitmap);
 
-	if ((_gameType == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
+	if ((_gameType == GType_BRA) && (_vm->getPlatform() == Common::kPlatformDOS)) {
 	// this loads the backup palette needed by the PC version of BRA (see setBackground()).
 		BackgroundInfo	paletteInfo;
 		_disk->loadSlide(paletteInfo, "pointer");
@@ -834,7 +834,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 		// The PC version of BRA needs the entries 20-31 of the palette to be constant, but
 		// the background resource files are screwed up. The right colors come from an unused
 		// bitmap (pointer.bmp). Nothing is known about the Amiga version so far.
-		if ((_gameType == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
+		if ((_gameType == GType_BRA) && (_vm->getPlatform() == Common::kPlatformDOS)) {
 			int r, g, b;
 			for (uint i = 16; i < 32; i++) {
 				_backupPal.getEntry(i, r, g, b);

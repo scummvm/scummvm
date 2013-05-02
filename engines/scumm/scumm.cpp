@@ -1747,7 +1747,7 @@ void ScummEngine::setupMusic(int midi) {
 	}
 
 	if ((_game.id == GID_MONKEY_EGA || (_game.id == GID_LOOM && _game.version == 3))
-	   &&  (_game.platform == Common::kPlatformPC) && _sound->_musicType == MDT_MIDI) {
+	   &&  (_game.platform == Common::kPlatformDOS) && _sound->_musicType == MDT_MIDI) {
 		Common::String fileName;
 		bool missingFile = false;
 		if (_game.id == GID_LOOM) {

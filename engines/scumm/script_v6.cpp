@@ -2510,7 +2510,7 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 					_disableFadeInEffect = true;
 				}
 			} else if (_game.id == GID_FT && !_skipVideo) {
-				const int insaneVarNum = ((_game.features & GF_DEMO) && (_game.platform == Common::kPlatformPC))
+				const int insaneVarNum = ((_game.features & GF_DEMO) && (_game.platform == Common::kPlatformDOS))
 					? 232 : 233;
 
 				_insane->setSmushParams(_smushFrameRate);

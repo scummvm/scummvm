@@ -2130,7 +2130,7 @@ void ScummEngine_v5::o5_startScript() {
 	// Method used by original games to skip copy protection scheme
 	if (!_copyProtection) {
 		// Copy protection was disabled in LucasArts Classic Adventures (PC Disk)
-		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPC && _game.version == 3 && _currentRoom == 69 && script == 201)
+		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformDOS && _game.version == 3 && _currentRoom == 69 && script == 201)
 			script = 205;
 		// Copy protection was disabled in KIXX XL release (Amiga Disk) and
 		// in LucasArts Classic Adventures (PC Disk)

@@ -105,7 +105,7 @@ char *AGOSEngine_Simon1::genSaveName(int slot) {
 char *AGOSEngine_Waxworks::genSaveName(int slot) {
 	static char buf[20];
 
-	if (getPlatform() == Common::kPlatformPC)
+	if (getPlatform() == Common::kPlatformDOS)
 		sprintf(buf, "waxworks-pc.%.3d", slot);
 	else
 		sprintf(buf, "waxworks.%.3d", slot);
@@ -116,7 +116,7 @@ char *AGOSEngine_Waxworks::genSaveName(int slot) {
 char *AGOSEngine_Elvira2::genSaveName(int slot) {
 	static char buf[20];
 
-	if (getPlatform() == Common::kPlatformPC)
+	if (getPlatform() == Common::kPlatformDOS)
 		sprintf(buf, "elvira2-pc.%.3d", slot);
 	else
 		sprintf(buf, "elvira2.%.3d", slot);
@@ -1264,7 +1264,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 		addTimeEvent(timeout, subroutine_id);
 	}
 
-	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformPC) {
+	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformDOS) {
 		for (uint s = 0; s < _numRoomStates; s++) {
 			_roomStates[s].state = f->readUint16BE();
 			_roomStates[s].classFlags = f->readUint16BE();
@@ -1385,7 +1385,7 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 		if (getGameType() == GType_WW && getPlatform() == Common::kPlatformAmiga) {
 			_itemStore[i] = derefItem(f->readUint16BE() / 16);
 		} else if (getGameType() == GType_ELVIRA2) {
-			if (getPlatform() == Common::kPlatformPC) {
+			if (getPlatform() == Common::kPlatformDOS) {
 				_itemStore[i] = derefItem(readItemID(f));
 			} else {
 				_itemStore[i] = derefItem(f->readUint16BE() / 18);
@@ -1475,7 +1475,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		f->writeUint16BE(te->subroutine_id);
 	}
 
-	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformPC) {
+	if (getGameType() == GType_WW && getPlatform() == Common::kPlatformDOS) {
 		if (_roomsListPtr) {
 			byte *p = _roomsListPtr;
 			for (;;) {
@@ -1564,7 +1564,7 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 		if (getGameType() == GType_WW && getPlatform() == Common::kPlatformAmiga) {
 			f->writeUint16BE(itemPtrToID(_itemStore[i]) * 16);
 		} else if (getGameType() == GType_ELVIRA2) {
-			if (getPlatform() == Common::kPlatformPC) {
+			if (getPlatform() == Common::kPlatformDOS) {
 				writeItemID(f, itemPtrToID(_itemStore[i]));
 			} else {
 				f->writeUint16BE(itemPtrToID(_itemStore[i]) * 18);

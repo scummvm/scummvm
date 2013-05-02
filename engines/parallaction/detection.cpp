@@ -70,7 +70,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::UNK_LANG,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
@@ -153,7 +153,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::UNK_LANG,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
@@ -170,7 +170,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::UNK_LANG,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_DEMO,
 			GUIO1(GUIO_NOSPEECH)
 		},

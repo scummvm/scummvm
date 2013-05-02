@@ -1868,7 +1868,7 @@ int FWScript::o1_playSampleSwapped() {
 	// since the only stereo output it supports should be the Roland MT-32.
 	// So it probably does the same as o1_playSample here. Checking this will
 	// be a good idea never the less.
-	if (g_cine->getPlatform() == Common::kPlatformPC) {
+	if (g_cine->getPlatform() == Common::kPlatformDOS) {
 		return o1_playSample();
 	}
 

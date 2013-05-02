@@ -452,7 +452,7 @@ static ADGameDescription s_fallbackDesc = {
 	"",
 	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 	Common::UNK_LANG,
-	Common::kPlatformPC,
+	Common::kPlatformDOS,
 	ADGF_NO_FLAGS,
 	GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)
 };
@@ -514,7 +514,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const FileMap &allFiles, 
 	s_fallbackDesc.extra = "";
 	s_fallbackDesc.language = Common::EN_ANY;
 	s_fallbackDesc.flags = ADGF_NO_FLAGS;
-	s_fallbackDesc.platform = Common::kPlatformPC;	// default to PC platform
+	s_fallbackDesc.platform = Common::kPlatformDOS;	// default to PC platform
 	s_fallbackDesc.gameid = "sci";
 	s_fallbackDesc.guioptions = GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI);
 

@@ -54,7 +54,7 @@ Insane::Insane(ScummEngine_v7 *scumm) {
 
 	initvars();
 
-	if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
+	if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
 		readFileToMem("roadrash.rip", &_smush_roadrashRip);
 		readFileToMem("roadrsh2.rip", &_smush_roadrsh2Rip);
 		readFileToMem("roadrsh3.rip", &_smush_roadrsh3Rip);
@@ -173,7 +173,7 @@ void Insane::initvars() {
 		_iactBits[i] = 0;
 
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 		init_enemyStruct(EN_ROTT1, EN_ROTT1, 0, 0, 60, 0, INV_MACE, 63, "endcrshr.san",
 						 25, 15, 16, 26, 13, 3);
 	} else {
@@ -356,7 +356,7 @@ void Insane::initvars() {
 	init_scenePropStruct(138, 57, 0, 59, 134, 0xFF, 0xFF, 0xFF, 0, 30, 0);
 
 	_actor[0].damage = 0;
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 		_actor[0].maxdamage = 60;
 	else
 		_actor[0].maxdamage = 80;
@@ -632,7 +632,7 @@ void Insane::putActors() {
 
 void Insane::readState() { // PATCH
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 		_actor[0].inventory[INV_CHAIN] = 0;
 		_actor[0].inventory[INV_CHAINSAW] = 0;
 		_actor[0].inventory[INV_MACE] = 0;
@@ -801,7 +801,7 @@ void Insane::prepareScenePropScene(int32 scenePropNum, bool arg_4, bool arg_8) {
 
 	debugC(DEBUG_INSANE, "Insane::prepareScenePropScene(%d, %d, %d)", scenePropNum, arg_4, arg_8);
 
-	if (((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) || !loadScenePropSounds(idx))
+	if (((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) || !loadScenePropSounds(idx))
 			return;
 
 	_actor[0].defunct = arg_4;
@@ -898,7 +898,7 @@ int32 Insane::weaponDamage(int32 actornum) {
 }
 
 void Insane::reinitActors() {
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 		smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_setActorCostume(0, 0, readArray(13));
 		smlayer_setActorCostume(0, 1, readArray(12));
@@ -966,7 +966,7 @@ void Insane::escapeKeyHandler() {
 	debugC(DEBUG_INSANE, "scene: %d", _currSceneId);
 	switch (_currSceneId) {
 	case 1:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 		} else {
 			queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
@@ -979,7 +979,7 @@ void Insane::escapeKeyHandler() {
 		break;
 	case 2:
 		flu = &_fluConf[14 + _iactSceneId2];
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			queueSceneSwitch(4, 0, "tovista.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
@@ -1033,7 +1033,7 @@ void Insane::escapeKeyHandler() {
 		break;
 	case 8:
 		flu = &_fluConf[7 + _iactSceneId2];
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
@@ -1041,7 +1041,7 @@ void Insane::escapeKeyHandler() {
 		break;
 	case 7:
 		flu = &_fluConf[0 + _iactSceneId2];
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
@@ -1060,7 +1060,7 @@ void Insane::escapeKeyHandler() {
 		queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame1, 1300);
 		break;
 	case 13:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0, _continueFrame, 1300);
@@ -1195,7 +1195,7 @@ void Insane::smlayer_setActorLayer(int actornum, int actnum, int layer) {
 }
 
 void Insane::smlayer_setFluPalette(byte *pal, int shut_flag) {
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 		return;
 
 	//	  if (shut_flag)
@@ -1311,7 +1311,7 @@ void Insane::procSKIP(int32 subSize, Common::SeekableReadStream &b) {
 	int16 par1, par2;
 	_player->_skipNext = false;
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 		assert(subSize >= 2);
 		par1 = b.readUint16LE();
 		par2 = 0;

@@ -35,7 +35,7 @@ class String;
  * game in question.
  */
 enum Platform {
-	kPlatformPC,
+	kPlatformDOS,
 	kPlatformAmiga,
 	kPlatformAtariST,
 	kPlatformMacintosh,

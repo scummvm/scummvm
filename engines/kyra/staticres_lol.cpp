@@ -215,7 +215,7 @@ void StaticResource::freeButtonDefs(void *&ptr, int &size) {
 
 void LoLEngine::initStaticResource() {
 	// assign music resource data.
-	if (_flags.platform == Common::kPlatformPC) {
+	if (_flags.platform == Common::kPlatformDOS) {
 		if (_flags.isDemo) {
 			static const char *const file[] = { "LOREDEMO" };
 			SoundResourceInfo_PC resInfoDemo(file, ARRAYSIZE(file));

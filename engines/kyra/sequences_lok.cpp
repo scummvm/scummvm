@@ -250,7 +250,7 @@ bool KyraEngine_LoK::seq_introStory() {
 	if (!textEnabled() && speechEnabled() && _flags.lang != Common::IT_ITA)
 		return false;
 
-	if (((_flags.lang == Common::EN_ANY || _flags.lang == Common::RU_RUS) && !_flags.isTalkie && _flags.platform == Common::kPlatformPC) || _flags.platform == Common::kPlatformAmiga)
+	if (((_flags.lang == Common::EN_ANY || _flags.lang == Common::RU_RUS) && !_flags.isTalkie && _flags.platform == Common::kPlatformDOS) || _flags.platform == Common::kPlatformAmiga)
 		_screen->loadBitmap("TEXT.CPS", 3, 3, &_screen->getPalette(0));
 	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN)
 		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, &_screen->getPalette(0));

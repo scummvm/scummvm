@@ -33,7 +33,7 @@
 		"EGA",
 		AD_ENTRY1("intro.stk", "c65e9cc8ba23a38456242e1f2b1caad4"),
 		UNK_LANG,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -47,7 +47,7 @@
 		"EGA",
 		AD_ENTRY1("intro.stk", "f9233283a0be2464248d83e14b95f09c"),
 		RU_RUS,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -64,7 +64,7 @@
 		"VGA",
 		AD_ENTRY1("intro.stk", "26a9118c0770fa5ac93a9626761600b2"),
 		UNK_LANG,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -78,7 +78,7 @@
 		"VGA",
 		AD_ENTRY1s("intro.stk", "e157cb59c6d330ca70d12ab0ef1dd12b", 288972),
 		EN_GRB,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -95,7 +95,7 @@
 		"Polish",
 		AD_ENTRY1s("intro.stk", "97d2443948b2e367cf567fe7e101f5f2", 4049267),
 		UNK_LANG,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -109,7 +109,7 @@
 		"v1.000",
 		AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 		EN_USA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -123,7 +123,7 @@
 		"v1.000",
 		AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 		DE_DEU,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -137,7 +137,7 @@
 		"v1.000",
 		AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -151,7 +151,7 @@
 		"v1.000",
 		AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 		IT_ITA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -165,7 +165,7 @@
 		"v1.000",
 		AD_ENTRY1("intro.stk", "2fbf4b5b82bbaee87eb45d4404c28998"),
 		ES_ESP,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -179,7 +179,7 @@
 		"v1.02",
 		AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 		EN_USA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -193,7 +193,7 @@
 		"v1.02",
 		AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 		DE_DEU,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -207,7 +207,7 @@
 		"v1.02",
 		AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -221,7 +221,7 @@
 		"v1.02",
 		AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 		IT_ITA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -235,7 +235,7 @@
 		"v1.02",
 		AD_ENTRY1("intro.stk", "8bd873137b6831c896ee8ad217a6a398"),
 		ES_ESP,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -249,7 +249,7 @@
 		"v1.02",
 		AD_ENTRY1s("intro.stk", "40d4a53818f4fce3f5997d02c3fafe73", 4049248),
 		HU_HUN,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -263,7 +263,7 @@
 		"v1.02",
 		AD_ENTRY1s("intro.stk", "40d4a53818f4fce3f5997d02c3fafe73", 4049248),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -277,7 +277,7 @@
 		"v1.02",
 		AD_ENTRY1s("intro.stk", "40d4a53818f4fce3f5997d02c3fafe73", 4049248),
 		ES_ESP,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -291,7 +291,7 @@
 		"v1.02",
 		AD_ENTRY1s("intro.stk", "40d4a53818f4fce3f5997d02c3fafe73", 4049248),
 		IT_ITA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -662,7 +662,7 @@
 		"Interactive Demo",
 		AD_ENTRY1("intro.stk", "e72bd1e3828c7dec4c8a3e58c48bdfdb"),
 		UNK_LANG,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -676,7 +676,7 @@
 		"Interactive Demo",
 		AD_ENTRY1s("intro.stk", "a796096280d5efd48cf8e7dfbe426eb5", 193595),
 		UNK_LANG,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -690,7 +690,7 @@
 		"Interactive Demo",
 		AD_ENTRY1s("intro.stk", "35a098571af9a03c04e2303aec7c9249", 116582),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},

@@ -244,7 +244,7 @@ Common::Error KyraEngine_HoF::go() {
 		// load just the pak files needed for ingame
 		_staticres->loadStaticResourceFile();
 
-		if (_flags.platform == Common::kPlatformPC && _flags.isTalkie) {
+		if (_flags.platform == Common::kPlatformDOS && _flags.isTalkie) {
 			if (!_res->loadFileList("FILEDATA.FDT"))
 				error("couldn't load 'FILEDATA.FDT'");
 		} else {
@@ -990,7 +990,7 @@ void KyraEngine_HoF::loadNPCScript() {
 
 	char filename[] = "_NPC.EMC";
 
-	if (_flags.platform != Common::kPlatformPC || _flags.isTalkie) {
+	if (_flags.platform != Common::kPlatformDOS || _flags.isTalkie) {
 		switch (_lang) {
 		case 0:
 			filename[5] = 'E';
@@ -1449,7 +1449,7 @@ void KyraEngine_HoF::snd_playSoundEffect(int track, int volume) {
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 	if (vocIndex != -1) {
 		_sound->voicePlay(_ingameSoundList[vocIndex], 0, 255, 255, true);
-	} else if (_flags.platform == Common::kPlatformPC) {
+	} else if (_flags.platform == Common::kPlatformDOS) {
 		if (_sound->getSfxType() == Sound::kMidiMT32)
 			track = track < _mt32SfxMapSize ? _mt32SfxMap[track] - 1 : -1;
 		else if (_sound->getSfxType() == Sound::kMidiGM)

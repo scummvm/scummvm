@@ -167,7 +167,7 @@ void Display::palSet(const uint8 *pal, int start, int end, bool updateScreen) {
 }
 
 void Display::palSetJoeDress() {
-	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+	if (_vm->resource()->getPlatform() == Common::kPlatformDOS) {
 		memcpy(_pal.room + 144 * 3, _palJoeDress, 16 * 3);
 		memcpy(_pal.screen + 144 * 3, _palJoeDress, 16 * 3);
 		palSet(_pal.screen, 144, 159, true);
@@ -175,7 +175,7 @@ void Display::palSetJoeDress() {
 }
 
 void Display::palSetJoeNormal() {
-	if (_vm->resource()->getPlatform() == Common::kPlatformPC) {
+	if (_vm->resource()->getPlatform() == Common::kPlatformDOS) {
 		memcpy(_pal.room + 144 * 3, _palJoeClothes, 16 * 3);
 		memcpy(_pal.screen + 144 * 3, _palJoeClothes, 16 * 3);
 		palSet(_pal.screen, 144, 159, true);

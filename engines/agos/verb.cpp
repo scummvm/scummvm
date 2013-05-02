@@ -1004,7 +1004,7 @@ void AGOSEngine::invertBox(HitArea *ha, byte a, byte b, byte c, byte d) {
 					src[i] = color;
 				}
 			} else if (getGameType() == GType_PN) {
-				if (getPlatform() == Common::kPlatformPC) {
+				if (getPlatform() == Common::kPlatformDOS) {
 					if (color != 15) {
 						color ^= 7;
 						src[i] = color;

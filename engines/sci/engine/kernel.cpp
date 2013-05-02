@@ -536,7 +536,7 @@ void Kernel::mapFunctions() {
 	SciVersion myVersion = getSciVersion();
 
 	switch (g_sci->getPlatform()) {
-	case Common::kPlatformPC:
+	case Common::kPlatformDOS:
 	case Common::kPlatformFMTowns:
 		platformMask = SIGFOR_DOS;
 		break;

@@ -478,7 +478,7 @@ void Input::initCursors() {
 		break;
 
 	case GType_BRA:
-		if (_vm->getPlatform() == Common::kPlatformPC) {
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
 			_dinoCursor = _vm->_disk->loadPointer("pointer1");
 			_dougCursor = _vm->_disk->loadPointer("pointer2");
 			_donnaCursor = _vm->_disk->loadPointer("pointer3");

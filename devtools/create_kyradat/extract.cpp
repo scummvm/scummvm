@@ -177,7 +177,7 @@ bool extractStrings(PAKFile &out, const ExtractInformation *info, const byte *da
 			patch = 2;
 		else if (id == k2SeqplayStrings)
 			patch = 3;
-	} else if (info->platform == kPlatformPC) {
+	} else if (info->platform == kPlatformDOS) {
 		if (id == k2IngamePakFiles)
 			patch = 4;
 
@@ -601,7 +601,7 @@ bool extractHofSeqData(PAKFile &out, const ExtractInformation *info, const byte 
 			int v = extractHofSeqData_isSequence(ptr, info, endOffs - ptr);
 
 			if (cycle == 0 && v == 1) {
-				if ((info->platform == kPlatformPC && info->special == kNoSpecial && *ptr == 5) || (info->special == kDemoVersion && (ptr - data == 312))) {
+				if ((info->platform == kPlatformDOS && info->special == kNoSpecial && *ptr == 5) || (info->special == kDemoVersion && (ptr - data == 312))) {
 					// patch for floppy version: skips invalid ferb sequence
 					// patch for demo: skips invalid title sequence
 					ptr += 54;

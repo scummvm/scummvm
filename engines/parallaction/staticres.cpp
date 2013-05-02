@@ -396,7 +396,7 @@ void Parallaction_ns::initResources() {
 	_localFlagNames = new FixedTable(NUM_LOCATIONS, 1);
 	_localFlagNames->addData("visited");
 
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformDOS) {
 		_callables = _dosCallables;
 	} else {
 		_callables = _amigaCallables;
@@ -412,7 +412,7 @@ void Parallaction_br::initResources() {
 	_localFlagNames->addData("visited");
 	_localFlagNames->addData("testtrue");
 
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformDOS) {
 		_callables = _dosCallables;
 	} else {
 		_callables = _amigaCallables;

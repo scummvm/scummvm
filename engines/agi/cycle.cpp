@@ -412,7 +412,7 @@ int AgiEngine::runGame() {
 			else
 				setvar(vSoundgen, kAgiSoundTandy);
 			break;
-		case Common::kPlatformPC:
+		case Common::kPlatformDOS:
 		default:
 			setvar(vComputer, kAgiComputerPC);
 			setvar(vSoundgen, kAgiSoundPC);
