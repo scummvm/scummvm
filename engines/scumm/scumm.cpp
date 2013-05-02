@@ -52,6 +52,7 @@
 #include "scumm/he/logic_he.h"
 #include "scumm/he/sound_he.h"
 #include "scumm/object.h"
+#include "scumm/player_ad.h"
 #include "scumm/player_nes.h"
 #include "scumm/player_sid.h"
 #include "scumm/player_pce.h"
@@ -1841,6 +1842,15 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = _townsPlayer = new Player_Towns_v1(this, _mixer);
 		if (!_townsPlayer->init())
 			error("Failed to initialize FM-Towns audio driver");
+	} else if (_game.platform == Common::kPlatformDOS && (_sound->_musicType == MDT_ADLIB) && (_game.id == GID_LOOM || _game.id == GID_INDY3)) {
+		// For Indy3 DOS and Loom DOS we use an implementation of the original
+		// AD player when AdLib is selected. This fixes sound effects in those
+		// games (see for example bug #2027877 "INDY3: Non-Looping Sound
+		// Effects"). The player itself is also used in Monkey Island DOS
+		// EGA/VGA. However, we support multi MIDI for that game and we cannot
+		// support this with the Player_AD code at the moment. The reason here
+		// is that multi MIDI is supported internally by our iMuse output.
+		_musicEngine = new Player_AD(this, _mixer);
 	} else if (_game.version >= 3 && _game.heversion <= 62) {
 		MidiDriver *nativeMidiDriver = 0;
 		MidiDriver *adlibMidiDriver = 0;

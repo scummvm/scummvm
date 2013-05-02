@@ -1930,7 +1930,6 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 		//   8 bytes MTrk header
 		//   7 bytes MIDI tempo sysex
 		//     + some default instruments
-		byte *ptr;
 		if (_game.features & GF_OLD_BUNDLE) {
 			ad_size -= 4;
 			_fileHandle->seek(ad_offs + 4, SEEK_SET);
@@ -1938,10 +1937,17 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 			ad_size -= 6;
 			_fileHandle->seek(ad_offs, SEEK_SET);
 		}
-		ptr = (byte *) calloc(ad_size, 1);
-		_fileHandle->read(ptr, ad_size);
-		convertADResource(_res, _game, idx, ptr, ad_size);
-		free(ptr);
+		// For games using AD except Indy3 and Loom we are using our iMuse
+		// implementation. See output initialization in
+		// ScummEngine::setupMusic for more information.
+		if (_game.id != GID_INDY3 && _game.id != GID_LOOM) {
+			byte *ptr = (byte *)calloc(ad_size, 1);
+			_fileHandle->read(ptr, ad_size);
+			convertADResource(_res, _game, idx, ptr, ad_size);
+			free(ptr);
+		} else {
+			_fileHandle->read(_res->createResource(rtSound, idx, ad_size), ad_size);
+		}
 		return 1;
 	} else if (ro_offs != 0) {
 		_fileHandle->seek(ro_offs - 2, SEEK_SET);
