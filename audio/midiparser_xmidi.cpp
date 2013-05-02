@@ -48,7 +48,7 @@ protected:
 	void parseNextEvent(EventInfo &info);
 
 public:
-	MidiParser_XMIDI(XMidiCallbackProc proc, void *data) : _callbackProc(proc), _callbackData(data) {}
+	MidiParser_XMIDI(XMidiCallbackProc proc, void *data) : _callbackProc(proc), _callbackData(data), _loopCount(-1) {}
 	~MidiParser_XMIDI() { }
 
 	bool loadMusic(byte *data, uint32 size);
