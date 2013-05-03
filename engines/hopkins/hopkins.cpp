@@ -1595,22 +1595,25 @@ void HopkinsEngine::playIntro() {
 	_events->refreshScreenAndEvents();
 	_soundMan->playSound(16);
 	_animMan->setClearAnimFlag();
+
 	_animMan->playAnim("J1.ANM", "J1.ANM", 12, 12, 50);
 	if (shouldQuit() || _events->_escKeyFl)
 		return;
-
+	_events->mouseOff();
 	_soundMan->mixVoice(1, 3);
 	_animMan->playAnim("J2.ANM", "J2.ANM", 12, 12, 50);
 
 	if (shouldQuit() || _events->_escKeyFl)
 		return;
 
+	_events->mouseOff();
 	_soundMan->mixVoice(2, 3);
 	_animMan->playAnim("J3.ANM", "J3.ANM", 12, 12, 50);
 
 	if (shouldQuit() || _events->_escKeyFl)
 		return;
 
+	_events->mouseOff();
 	_soundMan->mixVoice(3, 3);
 	_graphicsMan->clearScreen();
 	_graphicsMan->clearPalette();
