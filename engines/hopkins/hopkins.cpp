@@ -2373,7 +2373,12 @@ void HopkinsEngine::loadCredits() {
 	}
 
 	if (!_fileIO->fileExists(filename)) {
-		_globals->_creditsLineNumb = 0;
+		_globals->_creditsLineNumb = 1;
+		_globals->_creditsItem[0]._color = '1';
+		_globals->_creditsItem[0]._actvFl = true;
+		_globals->_creditsItem[0]._linePosY = _globals->_creditsPosY;
+		strcpy((char *)_globals->_creditsItem[0]._line, "The End");
+		_globals->_creditsItem[0]._lineSize = 7;
 		return;
 	}
 
