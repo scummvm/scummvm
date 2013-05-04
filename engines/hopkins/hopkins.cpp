@@ -797,6 +797,8 @@ bool HopkinsEngine::runFull() {
 		}
 	}
 
+	_events->mouseOff();
+
 	if (!_events->_escKeyFl && _startGameSlot == -1) {
 		playIntro();
 		if (shouldQuit())
