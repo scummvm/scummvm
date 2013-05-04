@@ -2131,11 +2131,11 @@ void HopkinsEngine::playEnding() {
 		_soundMan->playSound(11);
 		_graphicsMan->clearScreen();
 		_graphicsMan->clearPalette();
-		_animMan->playAnim("FF1a.anm", "FF1a.anm", 18, 18, 9);
-		_animMan->playAnim("FF1a.anm", "FF1a.anm", 9, 18, 9);
-		_animMan->playAnim("FF1a.anm", "FF1a.anm", 9, 18, 18);
-		_animMan->playAnim("FF1a.anm", "FF1a.anm", 9, 18, 9);
-		_animMan->playAnim("FF2a.anm", "FF2a.anm", 24, 24, 100);
+		_animMan->playAnim("FF1a.anm", "FF1.anm", 18, 18, 9);
+		_animMan->playAnim("FF1a.anm", "FF1.anm", 9, 18, 9);
+		_animMan->playAnim("FF1a.anm", "FF1.anm", 9, 18, 18);
+		_animMan->playAnim("FF1a.anm", "FF1.anm", 9, 18, 9);
+		_animMan->playAnim("FF2a.anm", "FF2.anm", 24, 24, 100);
 		_events->mouseOff();
 		displayCredits();
 		_globals->_eventMode = EVENTMODE_DEFAULT;
