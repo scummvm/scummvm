@@ -2356,20 +2356,28 @@ void HopkinsEngine::loadCredits() {
 	_globals->_creditsPosY = 440;
 	_globals->_creditsStep = 45;
 	byte *bufPtr;
+	Common::String filename;
 	switch (_globals->_language) {
 	case LANG_EN:
-		bufPtr = _fileIO->loadFile("CREAN.TXT");
+		filename = "CREAN.TXT";
 		break;
 	case LANG_FR:
-		bufPtr = _fileIO->loadFile("CREFR.TXT");
+		filename = "CREFR.TXT";
 		break;
 	case LANG_SP:
-		bufPtr = _fileIO->loadFile("CREES.TXT");
+		filename = "CREES.TXT";
 		break;
 	default:
 		error("Unhandled language");
 		break;
 	}
+
+	if (!_fileIO->fileExists(filename)) {
+		_globals->_creditsLineNumb = 0;
+		return;
+	}
+
+	bufPtr = _fileIO->loadFile(filename);
 
 	byte *curPtr = bufPtr;
 	int idxLines = 0;
