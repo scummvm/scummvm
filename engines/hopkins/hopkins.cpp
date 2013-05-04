@@ -2136,6 +2136,7 @@ void HopkinsEngine::playEnding() {
 		_animMan->playAnim("FF1a.anm", "FF1a.anm", 9, 18, 18);
 		_animMan->playAnim("FF1a.anm", "FF1a.anm", 9, 18, 9);
 		_animMan->playAnim("FF2a.anm", "FF2a.anm", 24, 24, 100);
+		_events->mouseOff();
 		displayCredits();
 		_globals->_eventMode = EVENTMODE_DEFAULT;
 		_globals->_exitId = 300;
