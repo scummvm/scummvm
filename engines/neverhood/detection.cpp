@@ -235,4 +235,3 @@ SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, 
 #else
 	REGISTER_PLUGIN_STATIC(NEVERHOOD, PLUGIN_TYPE_ENGINE, NeverhoodMetaEngine);
 #endif
-

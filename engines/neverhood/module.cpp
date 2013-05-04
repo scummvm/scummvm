@@ -23,8 +23,8 @@
 #include "neverhood/module.h"
 #include "neverhood/navigationscene.h"
 #include "neverhood/smackerscene.h"
-#include "neverhood/module1000.h"
-#include "neverhood/module1500.h"
+#include "neverhood/modules/module1000.h"
+#include "neverhood/modules/module1500.h"
 
 namespace Neverhood {
 
