@@ -161,7 +161,7 @@ bool DreamWebEngine::execCommand() {
 		"AIUTO",
 		"ELENCA",
 		"LEGGI",
-		"REGISTRA",
+		"ACCEDI",
 		"CHIAVI",
 		NULL
 	};
@@ -222,7 +222,7 @@ bool DreamWebEngine::execCommand() {
 				monPrint("G\232LTIGE BEFEHLE SIND ENDE, HILFE, LISTE, LIES, ZUGRIFF, DATEN");
 				break;
 			case Common::IT_ITA:
-				monPrint("I COMANDI VALIDI SONO ESCI, AIUTO, ELENCA, LEGGI, REGISTRA, CHIAVI");
+				monPrint("I COMANDI VALIDI SONO ESCI, AIUTO, ELENCA, LEGGI, ACCEDI, CHIAVI");
 				break;
 			case Common::ES_ESP:
 			default:
