@@ -2443,13 +2443,14 @@ void HopkinsEngine::displayCredits() {
 	_globals->_eventMode = EVENTMODE_CREDITS;
 	_globals->_creditsStartX = _globals->_creditsEndX = _globals->_creditsStartY = _globals->_creditsEndY = -1;
 	int soundId = 28;
+
 	do {
 		for (int i = 0; i < _globals->_creditsLineNumb; ++i) {
 			if (_globals->_creditsItem[i]._actvFl) {
 				int nextY = _globals->_creditsPosY + i * _globals->_creditsStep;
 				_globals->_creditsItem[i]._linePosY = nextY;
 
-				if ((nextY - 21  >= 0) && (nextY - 21 <= 418)) {
+				if ((nextY >= 51) && (nextY <= 460)) {
 					int col = 0;
 					switch (_globals->_creditsItem[i]._color) {
 					case '1':
@@ -2474,7 +2475,7 @@ void HopkinsEngine::displayCredits() {
 		--_globals->_creditsPosY;
 		if (_globals->_creditsStartX != -1 || _globals->_creditsEndX != -1 || _globals->_creditsStartY != -1 || _globals->_creditsEndY != -1) {
 			_events->refreshScreenAndEvents();
-			_graphicsMan->copySurface(_graphicsMan->_backBuffer, 60, 50, 520, 380, _graphicsMan->_frontBuffer, 60, 50);
+			_graphicsMan->copySurface(_graphicsMan->_backBuffer, 60, 50, 520, 430, _graphicsMan->_frontBuffer, 60, 50);
 		} else {
 			_events->refreshScreenAndEvents();
 		}

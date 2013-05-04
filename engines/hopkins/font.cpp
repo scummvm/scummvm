@@ -433,6 +433,7 @@ void FontManager::displayText(int xp, int yp, const Common::String &message, int
 		if (currentChar > 31) {
 			int characterIndex = currentChar - 32;
 			_vm->_graphicsMan->displayFont(_vm->_graphicsMan->_frontBuffer, _font, xp, yp, characterIndex, col);
+			_vm->_graphicsMan->addDirtyRect(xp, yp, xp + _vm->_objectsMan->getWidth(_font, characterIndex) + 1, yp + _vm->_objectsMan->getHeight(_font, characterIndex) + 1);
 			xp += _vm->_objectsMan->getWidth(_font, characterIndex);
 		}
 	}
