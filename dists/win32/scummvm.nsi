@@ -72,7 +72,7 @@ Name ScummVM
 # General Symbol Definitions
 #########################################################################################
 !define REGKEY      "Software\$(^Name)\$(^Name)"
-!define VERSION     "1.6.0git"
+!define VERSION     "1.7.0git"
 !define COMPANY     "ScummVM Team"
 !define URL         "http://scummvm.org/"
 !define DESCRIPTION "ScummVM Installer. Look! A three headed monkey (TM)!"
@@ -92,7 +92,7 @@ XPStyle  on
 #TargetMinimalOS 5.0    ; Minimal version of windows for installer: Windows 2000 or more recent
                         ; (will build unicode installer with NSIS 2.50+)
 
-VIProductVersion 1.6.0.0
+VIProductVersion 1.7.0.0
 VIAddVersionKey  ProductName      $(^Name)
 VIAddVersionKey  ProductVersion  "${VERSION}"
 VIAddVersionKey  CompanyName     "${COMPANY}"

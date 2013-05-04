@@ -4,7 +4,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.scummvm.scummvm"
 		android:versionCode="@ANDROID_VERSIONCODE@"
-		android:versionName="1.6.0git"
+		android:versionName="1.7.0git"
 		android:installLocation="preferExternal"
 		android:sharedUserId="org.scummvm.scummvm">
 
