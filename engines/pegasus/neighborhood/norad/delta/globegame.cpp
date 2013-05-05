@@ -621,6 +621,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 			_monitorMovie.stop();
 			_monitorMovie.setSegment(0, _monitorMovie.getDuration());
 			_monitorMovie.setTime(kSplash2End * scale - 1);
+			_monitorMovie.redrawMovieWorld();
 			_monitorMovie.setFlags(0);
 
 			_owner->requestDelay(1, 2, kFilterNoInput, 0);
@@ -643,6 +644,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 			_monitorMovie.stop();
 			_monitorMovie.setSegment(0, _monitorMovie.getDuration());
 			_monitorMovie.setTime(kNewLaunchSiloTime * scale);
+			_monitorMovie.redrawMovieWorld();
 			_owner->requestSpotSound(kNewLaunchSiloIn, kNewLaunchSiloOut, kFilterNoInput,
 					kSpotSoundCompletedFlag);
 			_gameState = kPlayingNewSilo1;
