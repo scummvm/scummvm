@@ -171,7 +171,7 @@ ifeq ($(origin VER_REV), undefined)
 # Are there uncommitted changes? (describe --dirty is only available since 1.6.6)
 VER_DIRTY := $(shell cd $(srcdir); git update-index --refresh --unmerged 1>/dev/null 2>&1; git diff-index --quiet HEAD || echo "-dirty")
 # Get the working copy base revision
-VER_REV := $(shell cd $(srcdir); git describe --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
+VER_REV := $(shell cd $(srcdir); git describe --long --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
 endif
 else
 GITROOT := git://github.com/scummvm/scummvm.git
