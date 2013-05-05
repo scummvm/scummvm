@@ -119,7 +119,7 @@ void ResourceMan::purgeResources() {
 	for (Common::HashMap<uint32, ResourceData*>::iterator it = _data.begin(); it != _data.end(); ++it) {
 		ResourceData *resourceData = (*it)._value;
 		if (resourceData->dataRefCount == 0) {
-			delete resourceData->data;
+			delete[] resourceData->data;
 			resourceData->data = NULL;
 		}
 	}

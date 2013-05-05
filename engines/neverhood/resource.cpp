@@ -63,7 +63,6 @@ bool SpriteResource::load(uint32 fileHash, bool doLoadPosition) {
 
 void SpriteResource::unload() {
 	_vm->_res->unloadResource(_resourceHandle);
-	delete[] _pixels;
 	_pixels = NULL;
 	_rle = false;
 }
