@@ -1960,7 +1960,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_animMan->playSequence("SECRET2.SEQ", 1, 12, 100, false, true);
 			_vm->_soundMan->_specialSoundNum = 0;
 			_vm->_graphicsMan->_noFadingFl = true;
-			_vm->_graphicsMan->fadeOutLong();
+			_vm->_graphicsMan->fadeOutShort();
 
 			for (int i = 1; i <= 39; i++) {
 				if (_vm->shouldQuit())
