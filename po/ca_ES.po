@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2013-04-24 13:35+0100\n"
-"PO-Revision-Date: 2012-08-26 20:32+0100\n"
+"PO-Revision-Date: 2013-05-05 14:16+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@jvprat.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
 "Language: Catalan\n"
@@ -30,13 +30,12 @@ msgid "Available engines:"
 msgstr "Motors disponibles:"
 
 #: gui/browser.cpp:67
-#, fuzzy
 msgid "Show hidden files"
-msgstr "Mostra / Oculta la consola"
+msgstr "Mostra els fitxers ocults"
 
 #: gui/browser.cpp:67
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Mostra els fitxers marcats amb l'atribut d'ocultació"
 
 #: gui/browser.cpp:71
 msgid "Go up"
@@ -56,7 +55,7 @@ msgstr "Amunt"
 #: gui/saveload-dialog.cpp:215 gui/saveload-dialog.cpp:275
 #: gui/saveload-dialog.cpp:545 gui/saveload-dialog.cpp:919
 #: gui/themebrowser.cpp:54 gui/fluidsynth-dialog.cpp:151
-#: engines/engine.cpp:447 engines/drascula/saveload.cpp:51
+#: engines/engine.cpp:447 engines/drascula/saveload.cpp:49
 #: engines/scumm/dialogs.cpp:190 engines/sword1/control.cpp:865
 #: engines/parallaction/saveload.cpp:274 backends/platform/wii/options.cpp:48
 #: backends/events/default/default-events.cpp:193
@@ -103,7 +102,7 @@ msgstr "Assigna"
 #: gui/launcher.cpp:1005 gui/massadd.cpp:91 gui/options.cpp:1239
 #: gui/saveload-dialog.cpp:920 gui/fluidsynth-dialog.cpp:152
 #: engines/engine.cpp:366 engines/engine.cpp:377
-#: engines/drascula/saveload.cpp:51 engines/scumm/dialogs.cpp:192
+#: engines/drascula/saveload.cpp:49 engines/scumm/dialogs.cpp:192
 #: engines/scumm/scumm.cpp:1778 engines/agos/animation.cpp:558
 #: engines/groovie/script.cpp:420 engines/sky/compact.cpp:131
 #: engines/sky/compact.cpp:141 engines/sword1/animation.cpp:519
@@ -727,7 +726,7 @@ msgstr "Guany MIDI:"
 
 #: gui/options.cpp:873
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "Configuració de FluidSynth"
 
 #: gui/options.cpp:880
 msgid "MT-32 Device:"
@@ -757,9 +756,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Roland MT-32 real (sense emulació GM)"
 
 #: gui/options.cpp:890
-#, fuzzy
 msgid "Roland GS Mode (disable GM mapping)"
-msgstr "Roland MT-32 real (desactiva l'emulació GM)"
+msgstr "Mode Roland GS (desactiva el mapeig GM)"
 
 #: gui/options.cpp:890
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
@@ -1052,93 +1050,91 @@ msgid "Clear value"
 msgstr "Neteja el valor"
 
 #: gui/fluidsynth-dialog.cpp:67
-#, fuzzy
 msgid "Reverb"
-msgstr "Mai"
+msgstr "Reverberació"
 
 #: gui/fluidsynth-dialog.cpp:69 gui/fluidsynth-dialog.cpp:101
-#, fuzzy
 msgid "Active"
-msgstr " (Actiu)"
+msgstr "Actiu"
 
 #: gui/fluidsynth-dialog.cpp:71
 msgid "Room:"
-msgstr ""
+msgstr "Habitació:"
 
 #: gui/fluidsynth-dialog.cpp:78
 msgid "Damp:"
-msgstr ""
+msgstr "Humitat:"
 
 #: gui/fluidsynth-dialog.cpp:85
 msgid "Width:"
-msgstr ""
+msgstr "Amplitud:"
 
 #: gui/fluidsynth-dialog.cpp:92 gui/fluidsynth-dialog.cpp:110
 msgid "Level:"
-msgstr ""
+msgstr "Nivell:"
 
 #: gui/fluidsynth-dialog.cpp:99
 msgid "Chorus"
-msgstr ""
+msgstr "Cor"
 
 #: gui/fluidsynth-dialog.cpp:103
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:117
-#, fuzzy
 msgid "Speed:"
-msgstr "Veus"
+msgstr "Velocitat:"
 
 #: gui/fluidsynth-dialog.cpp:124
 msgid "Depth:"
-msgstr ""
+msgstr "Profunditat:"
 
 #: gui/fluidsynth-dialog.cpp:131
 msgid "Type:"
-msgstr ""
+msgstr "Tipus:"
 
 #: gui/fluidsynth-dialog.cpp:134
 msgid "Sine"
-msgstr ""
+msgstr "Sinus"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Triangle"
-msgstr ""
+msgstr "Triangle"
 
 #: gui/fluidsynth-dialog.cpp:139
 msgid "Interpolation:"
-msgstr ""
+msgstr "Interpolació:"
 
 #: gui/fluidsynth-dialog.cpp:142
 msgid "None (fastest)"
-msgstr ""
+msgstr "Cap (el més ràpid)"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "Linear"
-msgstr ""
+msgstr "Lineal"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Fourth-order"
-msgstr ""
+msgstr "Quart ordre"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Seventh-order"
-msgstr ""
+msgstr "Setè ordre"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset"
-msgstr ""
+msgstr "Reset"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "Retorna tots els ajustos de FluidSynth als seus valors per defecte."
 
 #: gui/fluidsynth-dialog.cpp:216
-#, fuzzy
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Realment voleu tornar al Llançador?"
+msgstr ""
+"Realment voleu retorna tots els ajustos de FluidSynth als seus valors per "
+"defecte?"
 
 #: base/main.cpp:210
 #, c-format
@@ -1284,14 +1280,14 @@ msgid "~R~eturn to Launcher"
 msgstr "~R~etorna al Llançador"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
-#: engines/drascula/saveload.cpp:338 engines/cruise/menu.cpp:212
+#: engines/drascula/saveload.cpp:336 engines/cruise/menu.cpp:212
 #: engines/sci/engine/kfile.cpp:742 engines/toltecs/menu.cpp:284
 #: engines/pegasus/pegasus.cpp:373
 msgid "Save game:"
 msgstr "Desa la partida:"
 
 #: engines/dialogs.cpp:115 engines/agi/saveload.cpp:803
-#: engines/drascula/saveload.cpp:338 engines/scumm/dialogs.cpp:187
+#: engines/drascula/saveload.cpp:336 engines/scumm/dialogs.cpp:187
 #: engines/cruise/menu.cpp:212 engines/sci/engine/kfile.cpp:742
 #: engines/toltecs/menu.cpp:284 engines/pegasus/pegasus.cpp:373
 #: backends/platform/symbian/src/SymbianActions.cpp:44
@@ -1414,18 +1410,17 @@ msgid "Use the original save/load screens, instead of the ScummVM ones"
 msgstr ""
 "Utilitza les pantalles originals de desat/càrrega, en lloc de les de ScummVM"
 
-#: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:351
+#: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/sci/engine/kfile.cpp:841 engines/toltecs/menu.cpp:259
 msgid "Restore game:"
 msgstr "Recupera la partida:"
 
-#: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:351
+#: engines/agi/saveload.cpp:816 engines/drascula/saveload.cpp:349
 #: engines/sci/engine/kfile.cpp:841 engines/toltecs/menu.cpp:259
 msgid "Restore"
 msgstr "Restaura"
 
-#: engines/drascula/saveload.cpp:49
-#, fuzzy
+#: engines/drascula/saveload.cpp:47
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
@@ -1435,8 +1430,8 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"El ScummVM ha trobat que teniu partides desades antigues de Broken Sword 1 "
-"que s'haurien de convertir.\n"
+"El ScummVM ha trobat que teniu partides desades antigues de Drascula que "
+"s'haurien de convertir.\n"
 "El format de les partides desades antigues no està suportat, per la qual "
 "cosa no podreu carregar aquestes partides si no les convertiu.\n"
 "\n"
@@ -2254,13 +2249,12 @@ msgid "Failed to delete file."
 msgstr "No s'ha pogut esborrar el fitxer."
 
 #: engines/groovie/detection.cpp:312
-#, fuzzy
 msgid "Fast movie speed"
-msgstr "Mode ràpid"
+msgstr "Velocitat ràpida de les pel·lícules"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Reprodueix les pel·lícules a major velocitat"
 
 #: engines/groovie/script.cpp:420
 msgid "Failed to save game"
@@ -2558,44 +2552,43 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:679
 msgid "Invalid save file name"
-msgstr ""
+msgstr "Nom de partida desada incorrecte"
 
 #: engines/pegasus/pegasus.cpp:2445
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Amunt/Amplia el zoom/Mou endavant/Obre les portes"
 
 #: engines/pegasus/pegasus.cpp:2446
-#, fuzzy
 msgid "Down/Zoom Out"
-msgstr "Amplia"
+msgstr "Avall/Allunya el zoom"
 
 #: engines/pegasus/pegasus.cpp:2449
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "Mostra/Oculta la safata d'inventari"
 
 #: engines/pegasus/pegasus.cpp:2450
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Mostra/Oculta la safata del Biochip"
 
 #: engines/pegasus/pegasus.cpp:2451
 msgid "Action/Select"
-msgstr ""
+msgstr "Acció/Selecció"
 
 #: engines/pegasus/pegasus.cpp:2452
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "Conmuta la visualització de dades central"
 
 #: engines/pegasus/pegasus.cpp:2453
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "Mostra/Oculta la pantalla d'informació"
 
 #: engines/pegasus/pegasus.cpp:2454
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "Mostra/Oculta el menú de pausa"
 
 #: engines/pegasus/pegasus.cpp:2455
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
@@ -2650,7 +2643,7 @@ msgstr ""
 msgid "No music"
 msgstr "Sense música"
 
-#: audio/mods/paula.cpp:189
+#: audio/mods/paula.cpp:196
 msgid "Amiga Audio Emulator"
 msgstr "Emulador d'àudio Amiga"
 
@@ -2666,11 +2659,11 @@ msgstr "Emulador d'Apple II GS (NO IMPLEMENTAT)"
 msgid "C64 Audio Emulator"
 msgstr "Emulador d'àudio C64"
 
-#: audio/softsynth/mt32.cpp:205
+#: audio/softsynth/mt32.cpp:211
 msgid "Initializing MT-32 Emulator"
 msgstr "Iniciant l'Emulador de MT-32"
 
-#: audio/softsynth/mt32.cpp:431
+#: audio/softsynth/mt32.cpp:437
 msgid "MT-32 Emulator"
 msgstr "Emulador de MT-32"
 
@@ -3253,9 +3246,8 @@ msgid "Decreasing Volume"
 msgstr "Baixant el volum"
 
 #: backends/events/openpandora/op-events.cpp:174
-#, fuzzy
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "'Mode Toc' de pantalla tàctil - Flotant (sense clic)"
+msgstr "'Mode Toc' de pantalla tàctil - Flotant (Clics de DPad)"
 
 #: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
