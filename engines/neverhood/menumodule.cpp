@@ -253,7 +253,7 @@ void MenuModule::handleDeleteGameMenuAction(bool doDelete) {
 
 void MenuModule::loadSavegameList() {
 
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::SaveFileManager *saveFileMan = _vm->_system->getSavefileManager();
 	Neverhood::NeverhoodEngine::SaveHeader header;
 	Common::String pattern = _vm->getTargetName();
 	pattern += ".???";
@@ -606,22 +606,28 @@ void TextEditWidget::initialize() {
 		_parentScene, _baseObjectPriority + 1, _baseSurfacePriority + 1,
 		(const byte*)_entryString.c_str(), _entryString.size(), _surface, _x, _y, _fontSurface);
 	_textLabelWidget->initialize();
-	cursorSpriteResource.load(_cursorFileHash, true);
-	_cursorSurface = new BaseSurface(_vm, 0, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
-	_cursorSurface->drawSpriteResourceEx(cursorSpriteResource, false, false, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
-	_cursorSurface->setVisible(!_readOnly);
+	if (_cursorFileHash != 0) {
+		cursorSpriteResource.load(_cursorFileHash, true);
+		_cursorSurface = new BaseSurface(_vm, 0, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
+		_cursorSurface->drawSpriteResourceEx(cursorSpriteResource, false, false, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
+		_cursorSurface->setVisible(!_readOnly);
+	}
 	refresh();
 }
 
 void TextEditWidget::enterWidget() {
-	if (!_readOnly)
+	if (!_readOnly) {
 		_cursorSurface->setVisible(true);
+		_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	}
 	refresh();
 }
 
 void TextEditWidget::exitWidget() {
-	if (!_readOnly)
+	if (!_readOnly) {
 		_cursorSurface->setVisible(false);
+		_vm->_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	}
 	refresh();
 }
 
@@ -709,7 +715,8 @@ void TextEditWidget::handleKeyDown(Common::KeyCode keyCode) {
 void TextEditWidget::refresh() {
 	refreshPosition();
 	updateString();
-	drawCursor();
+	if (_cursorFileHash != 0)
+		drawCursor();
 }
 
 void TextEditWidget::update() {
@@ -750,7 +757,9 @@ void SavegameListBox::onClick() {
 	mousePos.y -= _y + _rect.y1;
 	if (mousePos.x >= 0 && mousePos.x <= _rect.x2 - _rect.x1 &&
 		mousePos.y >= 0 && mousePos.y <= _rect.y2 - _rect.y1) {
-		int newIndex = _firstVisibleItem + mousePos.y / _fontSurface->getCharHeight();
+		// We add 1 to the char height to ensure that the correct entry is chosen if the
+		// user clicks at the bottom the text entry
+		int newIndex = _firstVisibleItem + mousePos.y / (_fontSurface->getCharHeight() + 1);
 		if (newIndex <= _lastVisibleItem) {
 			_currIndex = newIndex;
 			refresh();
@@ -769,7 +778,7 @@ void SavegameListBox::initialize() {
 	_surface->setVisible(true);
 	buildItems();
 	_firstVisibleItem = 0;
-	_lastVisibleItem = MIN(_maxVisibleItemsCount, (int)_textLabelItems.size());
+	_lastVisibleItem = MIN(_maxVisibleItemsCount, (int)_textLabelItems.size()) - 1;
 	refresh();
 }
 
@@ -789,7 +798,7 @@ void SavegameListBox::buildItems() {
 void SavegameListBox::drawItems() {
 	for (int i = 0; i < (int)_textLabelItems.size(); ++i) {
 		TextLabelWidget *label = _textLabelItems[i];		
-		if (i >= _firstVisibleItem && i < _lastVisibleItem) {
+		if (i >= _firstVisibleItem && i <= _lastVisibleItem) {
 			label->setY(_rect.y1 + (i - _firstVisibleItem) * _fontSurface->getCharHeight());
 			label->updateBounds();
 			label->drawString(_maxStringLength);
