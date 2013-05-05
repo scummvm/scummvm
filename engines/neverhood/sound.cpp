@@ -185,7 +185,7 @@ SoundItem::SoundItem(NeverhoodEngine *vm, uint32 groupNameHash, uint32 soundFile
 	bool playOnceAfterCountdown, int16 initialCountdown, bool playLooping, int16 currCountdown)
 	: _vm(vm), _soundResource(NULL), _groupNameHash(groupNameHash), _fileHash(soundFileHash),
 	_playOnceAfterRandomCountdown(false), _minCountdown(0), _maxCountdown(0),
-	_playOnceAfterCountdown(_playOnceAfterCountdown), _initialCountdown(initialCountdown),
+	_playOnceAfterCountdown(playOnceAfterCountdown), _initialCountdown(initialCountdown),
 	_playLooping(false), _currCountdown(currCountdown) {
 	
 	_soundResource = new SoundResource(vm);
@@ -607,7 +607,7 @@ bool AudioResourceManSoundItem::isPlaying() {
 
 AudioResourceManMusicItem::AudioResourceManMusicItem(NeverhoodEngine *vm, uint32 fileHash)
 	: _vm(vm), _fileHash(fileHash), _terminate(false), _canRestart(false),
-	_volume(100), _panning(50),	_start(false), _isFadingIn(false), _isFadingOut(false) {
+	_volume(100), _panning(50),	_start(false), _isFadingIn(false), _isFadingOut(false), _isPlaying(false) {
 
 }
 

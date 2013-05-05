@@ -25,7 +25,8 @@
 namespace Neverhood {
 
 Scene::Scene(NeverhoodEngine *vm, Module *parentModule)
-	: Entity(vm, 0), _parentModule(parentModule), _dataResource(vm), _hitRects(NULL) {
+	: Entity(vm, 0), _parentModule(parentModule), _dataResource(vm), _hitRects(NULL),
+	_mouseCursorWasVisible(true) {
 	
 	_isKlaymenBusy = false;
 	_doConvertMessages = false;
