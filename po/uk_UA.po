@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2013-04-24 13:35+0100\n"
-"PO-Revision-Date: 2012-06-29 20:19+0200\n"
-"Last-Translator: lubomyr <lubomyr31@gmail.com>\n"
+"PO-Revision-Date: 2013-05-05 23:26+0200\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian\n"
 "Language: Ukrainian\n"
 "MIME-Version: 1.0\n"
@@ -32,13 +32,12 @@ msgid "Available engines:"
 msgstr "Доступні движки:"
 
 #: gui/browser.cpp:67
-#, fuzzy
 msgid "Show hidden files"
-msgstr "Показати / cховати консоль"
+msgstr "Показати cховані файлі"
 
 #: gui/browser.cpp:67
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Показує файли які помічено як сховані"
 
 #: gui/browser.cpp:71
 msgid "Go up"
@@ -724,7 +723,7 @@ msgstr "Посилення MIDI:"
 
 #: gui/options.cpp:873
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "Налаштування FluidSynth"
 
 #: gui/options.cpp:880
 msgid "MT-32 Device:"
@@ -754,9 +753,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Справжній Roland MT-32 (вимкнути емуляцию GM)"
 
 #: gui/options.cpp:890
-#, fuzzy
 msgid "Roland GS Mode (disable GM mapping)"
-msgstr "Справжній Roland MT-32 (вимкнути емуляцию GM)"
+msgstr "Режим Roland GS (вимкнути маплення GM)"
 
 #: gui/options.cpp:890
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
@@ -1046,93 +1044,89 @@ msgid "Clear value"
 msgstr "Очистити значення"
 
 #: gui/fluidsynth-dialog.cpp:67
-#, fuzzy
 msgid "Reverb"
-msgstr "Ніколи"
+msgstr "Реверберація"
 
 #: gui/fluidsynth-dialog.cpp:69 gui/fluidsynth-dialog.cpp:101
-#, fuzzy
 msgid "Active"
-msgstr " (Активна)"
+msgstr "Активне"
 
 #: gui/fluidsynth-dialog.cpp:71
 msgid "Room:"
-msgstr ""
+msgstr "Кімната:"
 
 #: gui/fluidsynth-dialog.cpp:78
 msgid "Damp:"
-msgstr ""
+msgstr "Вологість:"
 
 #: gui/fluidsynth-dialog.cpp:85
 msgid "Width:"
-msgstr ""
+msgstr "Ширина:"
 
 #: gui/fluidsynth-dialog.cpp:92 gui/fluidsynth-dialog.cpp:110
 msgid "Level:"
-msgstr ""
+msgstr "Рівень:"
 
 #: gui/fluidsynth-dialog.cpp:99
 msgid "Chorus"
-msgstr ""
+msgstr "Хор"
 
 #: gui/fluidsynth-dialog.cpp:103
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:117
-#, fuzzy
 msgid "Speed:"
-msgstr "Озвучка"
+msgstr "Швидкість:"
 
 #: gui/fluidsynth-dialog.cpp:124
 msgid "Depth:"
-msgstr ""
+msgstr "Глибина:"
 
 #: gui/fluidsynth-dialog.cpp:131
 msgid "Type:"
-msgstr ""
+msgstr "Тип:"
 
 #: gui/fluidsynth-dialog.cpp:134
 msgid "Sine"
-msgstr ""
+msgstr "Синусоїда"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Triangle"
-msgstr ""
+msgstr "Трикутник"
 
 #: gui/fluidsynth-dialog.cpp:139
 msgid "Interpolation:"
-msgstr ""
+msgstr "Інтерполяція:"
 
 #: gui/fluidsynth-dialog.cpp:142
 msgid "None (fastest)"
-msgstr ""
+msgstr "Нема (найшвидше)"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "Linear"
-msgstr ""
+msgstr "Лінійна"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Fourth-order"
-msgstr ""
+msgstr "Четвертого порядку"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Seventh-order"
-msgstr ""
+msgstr "Сьомого порядку
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset"
-msgstr ""
+msgstr "Скинути"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "Скинути всі налаштування FluidSynth до їх значень за замовченням"
 
 #: gui/fluidsynth-dialog.cpp:216
-#, fuzzy
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Ви дійсно хочете повернутися до головного меню?"
+msgstr "Ви дійсно хочете скинути всі налаштування FluidSynth до їх значень за замовченням?"
 
 #: base/main.cpp:210
 #, c-format
@@ -1419,7 +1413,6 @@ msgid "Restore"
 msgstr "Відновити"
 
 #: engines/drascula/saveload.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
@@ -1429,7 +1422,7 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM знайшов, що Ви маєте старі збереження ігор для Broken Sword 1.\n"
+"ScummVM знайшов, що Ви маєте старі збереження ігор для Drascula.\n"
 "Збереження у старому форматі не підтримуються, і Ви не зможете їх "
 "завантажити, якщо не переведете у новий формат.\n"
 "\n"
@@ -2244,13 +2237,12 @@ msgid "Failed to delete file."
 msgstr "Не вдалося видалити файл."
 
 #: engines/groovie/detection.cpp:312
-#, fuzzy
 msgid "Fast movie speed"
-msgstr "Швидкий режим"
+msgstr "Режим швидкого відео"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Програвати відео з підвищенною швидкістю"
 
 #: engines/groovie/script.cpp:420
 msgid "Failed to save game"
@@ -2542,48 +2534,47 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:679
 msgid "Invalid save file name"
-msgstr ""
+msgstr "Неправильна назва файлу збереження"
 
 #: engines/pegasus/pegasus.cpp:2445
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Догори/Зменшити масштаб/Вперед/Відчинити двері"
 
 #: engines/pegasus/pegasus.cpp:2446
-#, fuzzy
 msgid "Down/Zoom Out"
-msgstr "Збіл. масштаб"
+msgstr "Донизу/Збіл. масштаб"
 
 #: engines/pegasus/pegasus.cpp:2449
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "Показати/Сховати інвентар"
 
 #: engines/pegasus/pegasus.cpp:2450
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Показати/Сховати біочіп"
 
 #: engines/pegasus/pegasus.cpp:2451
 msgid "Action/Select"
-msgstr ""
+msgstr "Дія/Вибір"
 
 #: engines/pegasus/pegasus.cpp:2452
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "Перемкнути показування в центрі екрану"
 
 #: engines/pegasus/pegasus.cpp:2453
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "Показати/Сховати інфоекран"
 
 #: engines/pegasus/pegasus.cpp:2454
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "Показувати/Сховати меню паузи"
 
 #: engines/pegasus/pegasus.cpp:2455
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
-msgstr "Емулятор MAME OPL:"
+msgstr "Емулятор MAME OPL"
 
 #: audio/fmopl.cpp:51
 msgid "DOSBox OPL emulator"
@@ -3237,9 +3228,8 @@ msgid "Decreasing Volume"
 msgstr "Пониження гучності"
 
 #: backends/events/openpandora/op-events.cpp:174
-#, fuzzy
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Режим дотику у тачскріні - Проліт (без кліку)"
+msgstr "Режим дотику у тачскріні - Проліт (клік DPad)"
 
 #: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
