@@ -46,6 +46,8 @@
 
 namespace Sword25 {
 
+class RectangleList;
+
 class Image {
 public:
 	virtual ~Image() {}
@@ -129,7 +131,8 @@ public:
 	                  int flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
-	                  int width = -1, int height = -1) = 0;
+	                  int width = -1, int height = -1,
+					  RectangleList *updateRects = 0) = 0;
 
 	/**
 	    @brief fills a rectangular section of the image with a color.
@@ -202,6 +205,8 @@ public:
 	    @brief Returns true, if the content of the BS_Image is allowed to be replaced by call of SetContent().
 	*/
 	virtual bool isSetContentAllowed() const = 0;
+	
+	virtual bool isSolid() const { return false; }
 
 	//@}
 };

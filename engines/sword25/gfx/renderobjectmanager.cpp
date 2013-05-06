@@ -41,17 +41,37 @@
 #include "sword25/gfx/timedrenderobject.h"
 #include "sword25/gfx/rootrenderobject.h"
 
+#include "common/system.h"
+
 namespace Sword25 {
+
+void RenderObjectQueue::add(RenderObject *renderObject) {
+	push_back(RenderObjectQueueItem(renderObject, renderObject->getBbox(), renderObject->getVersion()));
+}
+
+bool RenderObjectQueue::exists(const RenderObjectQueueItem &renderObjectQueueItem) {
+	for (RenderObjectQueue::iterator it = begin(); it != end(); ++it)
+		if ((*it)._renderObject == renderObjectQueueItem._renderObject &&
+			(*it)._version == renderObjectQueueItem._version)
+			return true;
+	return false;
+}
 
 RenderObjectManager::RenderObjectManager(int width, int height, int framebufferCount) :
 	_frameStarted(false) {
 	// Wurzel des BS_RenderObject-Baumes erzeugen.
 	_rootPtr = (new RootRenderObject(this, width, height))->getHandle();
+	_uta = new MicroTileArray(width, height);
+	_currQueue = new RenderObjectQueue();
+	_prevQueue = new RenderObjectQueue();
 }
 
 RenderObjectManager::~RenderObjectManager() {
 	// Die Wurzel des Baumes löschen, damit werden alle BS_RenderObjects mitgelöscht.
 	_rootPtr.erase();
+	delete _uta;
+	delete _currQueue;
+	delete _prevQueue;
 }
 
 void RenderObjectManager::startFrame() {
@@ -76,7 +96,58 @@ bool RenderObjectManager::render() {
 	_frameStarted = false;
 
 	// Die Render-Methode der Wurzel aufrufen. Dadurch wird das rekursive Rendern der Baumelemente angestoßen.
-	return _rootPtr->render();
+
+	_currQueue->clear();
+	_rootPtr->preRender(_currQueue);
+
+	_uta->clear();
+
+	// Add rectangles of objects which don't exist in this frame any more
+    for (RenderObjectQueue::iterator it = _prevQueue->begin(); it != _prevQueue->end(); ++it)
+    	if (!_currQueue->exists(*it))
+    		_uta->addRect((*it)._bbox);
+    // Add rectangles of objects which are different from the previous frame
+    for (RenderObjectQueue::iterator it = _currQueue->begin(); it != _currQueue->end(); ++it)
+    	if (!_prevQueue->exists(*it))
+    		_uta->addRect((*it)._bbox);
+
+	RectangleList *updateRects = _uta->getRectangles();
+	Common::Array<int> updateRectsMinZ;
+	
+	updateRectsMinZ.reserve(updateRects->size());
+
+	// Calculate the minimum drawing Z value of each update rectangle
+	// Solid bitmaps with a Z order less than the value calculated here would be overdrawn again and
+	// so don't need to be drawn in the first place which speeds things up a bit.
+	for (RectangleList::iterator rectIt = updateRects->begin(); rectIt != updateRects->end(); ++rectIt) {
+		int minZ = 0;
+		for (RenderObjectQueue::iterator it = _currQueue->reverse_begin(); it != _currQueue->end(); --it) {
+			if ((*it)._renderObject->isVisible() && (*it)._renderObject->isSolid() &&
+				(*it)._renderObject->getBbox().contains(*rectIt)) {
+				minZ = (*it)._renderObject->getAbsoluteZ();
+				break;
+			}
+		}
+		updateRectsMinZ.push_back(minZ);
+	}
+
+	if (_rootPtr->render(updateRects, updateRectsMinZ)) {
+		// Copy updated rectangles to the video screen
+		Graphics::Surface *backSurface = Kernel::getInstance()->getGfx()->getSurface();
+		for (RectangleList::iterator rectIt = updateRects->begin(); rectIt != updateRects->end(); ++rectIt) {
+			const int x = (*rectIt).left;
+			const int y = (*rectIt).top;
+			const int width = (*rectIt).width();
+			const int height = (*rectIt).height();
+			g_system->copyRectToScreen(backSurface->getBasePtr(x, y), backSurface->pitch, x, y, width, height);
+		}
+	}
+
+	delete updateRects;
+	
+	SWAP(_currQueue, _prevQueue);
+	
+	return true;
 }
 
 void RenderObjectManager::attatchTimedRenderObject(RenderObjectPtr<TimedRenderObject> renderObjectPtr) {

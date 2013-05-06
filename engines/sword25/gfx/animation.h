@@ -151,7 +151,7 @@ public:
 	void setCallbacks();
 
 protected:
-	virtual bool doRender();
+	virtual bool doRender(RectangleList *updateRects);
 
 private:
 	enum Direction {

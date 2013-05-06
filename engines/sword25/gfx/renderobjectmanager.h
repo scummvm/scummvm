@@ -47,11 +47,28 @@
 #include "sword25/gfx/renderobjectptr.h"
 #include "sword25/kernel/persistable.h"
 
+#include "sword25/gfx/microtiles.h"
+
 namespace Sword25 {
 
 class Kernel;
 class RenderObject;
 class TimedRenderObject;
+class RenderObjectManager;
+
+struct RenderObjectQueueItem {
+	RenderObject *_renderObject;
+	Common::Rect _bbox;
+	int _version;
+	RenderObjectQueueItem(RenderObject *renderObject, const Common::Rect &bbox, int version)
+		: _renderObject(renderObject), _bbox(bbox), _version(version) {}
+};
+
+class RenderObjectQueue : public Common::List<RenderObjectQueueItem> {
+public:
+	void add(RenderObject *renderObject);
+	bool exists(const RenderObjectQueueItem &renderObjectQueueItem);
+};
 
 /**
     @brief Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
@@ -113,6 +130,9 @@ private:
 	bool _frameStarted;
 	typedef Common::Array<RenderObjectPtr<TimedRenderObject> > RenderObjectList;
 	RenderObjectList _timedRenderObjects;
+
+	MicroTileArray *_uta;
+	RenderObjectQueue *_currQueue, *_prevQueue;
 
 	// RenderObject-Tree Variablen
 	// ---------------------------

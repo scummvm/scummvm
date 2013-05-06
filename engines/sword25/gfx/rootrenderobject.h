@@ -59,7 +59,7 @@ private:
 	}
 
 protected:
-	virtual bool doRender() {
+	virtual bool doRender(RectangleList *updateRects) {
 		return true;
 	}
 };

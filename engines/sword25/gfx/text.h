@@ -136,7 +136,7 @@ public:
 	virtual bool  unpersist(InputPersistenceBlock &reader);
 
 protected:
-	virtual bool doRender();
+	virtual bool doRender(RectangleList *updateRects);
 
 private:
 	Text(RenderObjectPtr<RenderObject> parentPtr);

@@ -65,7 +65,7 @@ public:
 	virtual bool unpersist(InputPersistenceBlock &reader);
 
 protected:
-	virtual bool doRender();
+	virtual bool doRender(RectangleList *updateRects);
 
 private:
 	Common::String _resourceFilename;

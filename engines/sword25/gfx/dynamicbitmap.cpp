@@ -53,9 +53,12 @@ DynamicBitmap::DynamicBitmap(InputPersistenceBlock &reader, RenderObjectPtr<Rend
 bool DynamicBitmap::createRenderedImage(uint width, uint height) {
 	bool result = false;
 	_image.reset(new RenderedImage(width, height, result));
-
+	
 	_originalWidth = _width = width;
 	_originalHeight = _height = height;
+
+	_image->setIsTransparent(false);
+	_isSolid = true;
 
 	return result;
 }
@@ -70,11 +73,11 @@ uint DynamicBitmap::getPixel(int x, int y) const {
 	return _image->getPixel(x, y);
 }
 
-bool DynamicBitmap::doRender() {
+bool DynamicBitmap::doRender(RectangleList *updateRects) {
 	// Get the frame buffer object
 	GraphicEngine *pGfx = Kernel::getInstance()->getGfx();
 	assert(pGfx);
-
+	
 	// Draw the bitmap
 	bool result;
 	if (_scaleFactorX == 1.0f && _scaleFactorY == 1.0f) {
@@ -85,7 +88,8 @@ bool DynamicBitmap::doRender() {
 		result = _image->blit(_absoluteX, _absoluteY,
 		                       (_flipV ? BitmapResource::FLIP_V : 0) |
 		                       (_flipH ? BitmapResource::FLIP_H : 0),
-		                       0, _modulationColor, -1, -1);
+		                       0, _modulationColor, -1, -1,
+							   updateRects);
 #else
 		// WIP: A bit faster code
 
@@ -103,13 +107,15 @@ bool DynamicBitmap::doRender() {
 		result = _image->blit(_absoluteX, _absoluteY,
 		                       (_flipV ? BitmapResource::FLIP_V : 0) |
 		                       (_flipH ? BitmapResource::FLIP_H : 0),
-		                       0, _modulationColor, _width, _height);
+		                       0, _modulationColor, _width, _height,
+							   updateRects);
 	}
 
 	return result;
 }
 
 bool DynamicBitmap::setContent(const byte *pixeldata, uint size, uint offset, uint stride) {
+	++_version; // Update version to display the new video image
 	return _image->setContent(pixeldata, size, offset, stride);
 }
 
