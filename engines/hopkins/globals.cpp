@@ -185,8 +185,6 @@ void Globals::clearAll() {
 }
 
 void Globals::loadCharacterData() {
-	assert(_characterType >= CHARACTER_HOPKINS && _characterType <= CHARACTER_SAMANTHA);
-
 	const int *srcList[] = { HOPKINS_PERSO_0, HOPKINS_PERSO_1, HOPKINS_PERSO_2 };
 	const int *srcP = srcList[_characterType];
 
