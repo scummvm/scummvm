@@ -2481,11 +2481,11 @@ int LinesManager::testLine(int paramX, int paramY, int *testValue, int *foundLin
 
 int LinesManager::computeYSteps(int idx) {
 	int zoomPct = _vm->_globals->_spriteSize[idx];
-	if (_vm->_globals->_characterType == 1) {
+	if (_vm->_globals->_characterType == CHARACTER_HOPKINS_CLONE) {
 		if (zoomPct < 0)
 			zoomPct = -zoomPct;
 		zoomPct = 20 * (5 * zoomPct - 100) / -80;
-	} else if (_vm->_globals->_characterType == 2) {
+	} else if (_vm->_globals->_characterType == CHARACTER_SAMANTHA) {
 		if (zoomPct < 0)
 			zoomPct = -zoomPct;
 		zoomPct = 20 * (5 * zoomPct - 165) / -67;

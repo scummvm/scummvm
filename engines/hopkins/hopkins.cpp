@@ -172,7 +172,7 @@ bool HopkinsEngine::runWin95Demo() {
 		_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
 	}
 
-	_globals->_characterType = 0;
+	_globals->_characterType = CHARACTER_HOPKINS;
 	_objectsMan->_mapCarPosX = _objectsMan->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
 	_globals->_exitId = 0;
@@ -453,7 +453,7 @@ bool HopkinsEngine::runLinuxDemo() {
 
 	_globals->_eventMode = EVENTMODE_DEFAULT;
 	_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
-	_globals->_characterType = 0;
+	_globals->_characterType = CHARACTER_HOPKINS;
 	_objectsMan->_mapCarPosX = _objectsMan->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
 	_globals->_exitId = 0;
@@ -813,7 +813,7 @@ bool HopkinsEngine::runFull() {
 	}
 	_globals->_eventMode = EVENTMODE_DEFAULT;
 	_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
-	_globals->_characterType = 0;
+	_globals->_characterType = CHARACTER_HOPKINS;
 	_objectsMan->_mapCarPosX = _objectsMan->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
 
@@ -1525,7 +1525,7 @@ bool HopkinsEngine::runFull() {
 			//_globals->_exitId = WBASE();	// Handles the 3D Doom level (Windows)
 			_soundMan->stopSound();
 			_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
-			_globals->_characterType = 0;
+			_globals->_characterType = CHARACTER_HOPKINS;
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			_graphicsMan->_lineNbr = SCREEN_WIDTH;
 			break;
@@ -2177,7 +2177,7 @@ void HopkinsEngine::playEnding() {
 		_globals->_exitId = 300;
 	}
 	_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
-	_globals->_characterType = 0;
+	_globals->_characterType = CHARACTER_HOPKINS;
 	_globals->_eventMode = EVENTMODE_DEFAULT;
 }
 
@@ -2819,7 +2819,7 @@ void HopkinsEngine::handleOceanMaze(int16 curExitId, Common::String backgroundFi
 	_objectsMan->removeSprite(0);
 	_objectsMan->clearScreen();
 	_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
-	_globals->_characterType = 0;
+	_globals->_characterType = CHARACTER_HOPKINS;
 }
 
 void HopkinsEngine::syncSoundSettings() {
