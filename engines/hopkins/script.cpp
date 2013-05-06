@@ -955,7 +955,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 		case 56:
 			_vm->_globals->_characterSpriteBuf = _vm->_fileIO->loadFile("HOPFEM.SPR");
-			_vm->_globals->_characterType = 1;
+			_vm->_globals->_characterType = CHARACTER_HOPKINS_CLONE;
 			_vm->_globals->_saveData->_data[svAlternateSpriteFl] = 1;
 			_vm->_globals->loadCharacterData();
 			_vm->_objectsMan->_sprite[0]._deltaX = 28;
@@ -965,7 +965,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 
 		case 57:
 			_vm->_globals->_characterSpriteBuf = _vm->_fileIO->loadFile("PERSO.SPR");
-			_vm->_globals->_characterType = 0;
+			_vm->_globals->_characterType = CHARACTER_HOPKINS;
 			_vm->_globals->_saveData->_data[svAlternateSpriteFl] = 0;
 			_vm->_globals->loadCharacterData();
 			_vm->_objectsMan->_sprite[0]._deltaX = 34;

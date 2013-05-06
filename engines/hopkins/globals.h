@@ -172,7 +172,7 @@ public:
 	int _characterMaxPosY;
 	int _baseMapColor;
 	int _spriteSize[500];
-	int _characterType;
+	PlayerCharacter _characterType;
 	uint _speed;
 	byte *_answerBuffer;
 	Savegame *_saveData;
