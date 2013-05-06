@@ -212,7 +212,8 @@ public:
 	                  int flipping = FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
-	                  int width = -1, int height = -1);
+	                  int width = -1, int height = -1,
+					  RectangleList *updateRects = 0);
 
 	class SWFBitStream;
 

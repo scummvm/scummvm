@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	gfx/fontresource.o \
 	gfx/graphicengine.o \
 	gfx/graphicengine_script.o \
+	gfx/microtiles.o \
 	gfx/panel.o \
 	gfx/renderobject.o \
 	gfx/renderobjectmanager.o \

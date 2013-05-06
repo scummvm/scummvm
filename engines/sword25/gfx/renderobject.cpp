@@ -48,6 +48,8 @@
 
 namespace Sword25 {
 
+int RenderObject::_nextGlobalVersion = 0;
+
 RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, uint handle) :
 	_managerPtr(0),
 	_parentPtr(parentPtr),
@@ -65,7 +67,9 @@ RenderObject::RenderObject(RenderObjectPtr<RenderObject> parentPtr, TYPES type, 
 	_type(type),
 	_initSuccess(false),
 	_refreshForced(true),
-	_handle(0) {
+	_handle(0),
+	_version(++_nextGlobalVersion),
+	_isSolid(false) {
 
 	// Renderobject registrieren, abhängig vom Handle-Parameter entweder mit beliebigem oder vorgegebenen Handle.
 	if (handle == 0)
@@ -106,13 +110,12 @@ RenderObject::~RenderObject() {
 	RenderObjectRegistry::instance().deregisterObject(this);
 }
 
-bool RenderObject::render() {
+void RenderObject::preRender(RenderObjectQueue *renderQueue) {
 	// Objektänderungen validieren
 	validateObject();
 
-	// Falls das Objekt nicht sichtbar ist, muss gar nichts gezeichnet werden
 	if (!_visible)
-		return true;
+		return;
 
 	// Falls notwendig, wird die Renderreihenfolge der Kinderobjekte aktualisiert.
 	if (_childChanged) {
@@ -120,13 +123,36 @@ bool RenderObject::render() {
 		_childChanged = false;
 	}
 
+	renderQueue->add(this);
+
+	RENDEROBJECT_ITER it = _children.begin();
+	for (; it != _children.end(); ++it)
+		(*it)->preRender(renderQueue);
+
+}
+
+bool RenderObject::render(RectangleList *updateRects, const Common::Array<int> &updateRectsMinZ) {
+
+	// Falls das Objekt nicht sichtbar ist, muss gar nichts gezeichnet werden
+	if (!_visible)
+		return true;
+
 	// Objekt zeichnen.
-	doRender();
+	bool needRender = false;
+	int index = 0;
+
+	// Only draw if the bounding box intersects any update rectangle and
+	// the object is in front of the minimum Z value.
+	for (RectangleList::iterator rectIt = updateRects->begin(); !needRender && rectIt != updateRects->end(); ++rectIt, ++index)
+		needRender = (_bbox.contains(*rectIt) || _bbox.intersects(*rectIt)) && getAbsoluteZ() >= updateRectsMinZ[index];
+
+	if (needRender)
+		doRender(updateRects);
 
 	// Dann müssen die Kinder gezeichnet werden
 	RENDEROBJECT_ITER it = _children.begin();
 	for (; it != _children.end(); ++it)
-		if (!(*it)->render())
+		if (!(*it)->render(updateRects, updateRectsMinZ))
 			return false;
 
 	return true;
@@ -157,6 +183,8 @@ bool RenderObject::updateObjectState() {
 
 		// Die Bounding-Box neu berechnen und Update-Regions registrieren.
 		updateBoxes();
+		
+		++_version;
 
 		// Änderungen Validieren
 		validateObject();
@@ -191,9 +219,10 @@ Common::Rect RenderObject::calcBoundingBox() const {
 	return bbox;
 }
 
-void RenderObject::calcAbsolutePos(int &x, int &y) const {
+void RenderObject::calcAbsolutePos(int &x, int &y, int &z) const {
 	x = calcAbsoluteX();
 	y = calcAbsoluteY();
+	z = calcAbsoluteZ();
 }
 
 int RenderObject::calcAbsoluteX() const {
@@ -208,6 +237,13 @@ int RenderObject::calcAbsoluteY() const {
 		return _parentPtr->getAbsoluteY() + _y;
 	else
 		return _y;
+}
+
+int RenderObject::calcAbsoluteZ() const {
+	if (_parentPtr.isValid())
+		return _parentPtr->getAbsoluteZ() + _z;
+	else
+		return _z;
 }
 
 void RenderObject::deleteAllChildren() {
@@ -253,7 +289,7 @@ void RenderObject::sortRenderObjects() {
 }
 
 void RenderObject::updateAbsolutePos() {
-	calcAbsolutePos(_absoluteX, _absoluteY);
+	calcAbsolutePos(_absoluteX, _absoluteY, _absoluteZ);
 
 	RENDEROBJECT_ITER it = _children.begin();
 	for (; it != _children.end(); ++it)
@@ -285,8 +321,10 @@ void RenderObject::setY(int y) {
 void RenderObject::setZ(int z) {
 	if (z < 0)
 		error("Tried to set a negative Z value (%d).", z);
-	else
+	else {
 		_z = z;
+		updateAbsolutePos();
+	}
 }
 
 void RenderObject::setVisible(bool visible) {

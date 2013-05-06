@@ -58,7 +58,8 @@ public:
 	                  int flipping = Image::FLIP_NONE,
 	                  Common::Rect *pPartRect = NULL,
 	                  uint color = BS_ARGB(255, 255, 255, 255),
-	                  int width = -1, int height = -1);
+	                  int width = -1, int height = -1,
+					  RectangleList *updateRects = 0);
 	virtual bool fill(const Common::Rect *fillRectPtr, uint color);
 	virtual bool setContent(const byte *pixeldata, uint size, uint offset, uint stride);
 	virtual uint getPixel(int x, int y);

@@ -36,6 +36,8 @@
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/image/image.h"
 
+#include "sword25/gfx/renderobjectmanager.h"
+
 namespace Sword25 {
 
 Panel::Panel(RenderObjectPtr<RenderObject> parentPtr, int width, int height, uint color) :
@@ -67,7 +69,7 @@ Panel::Panel(InputPersistenceBlock &reader, RenderObjectPtr<RenderObject> parent
 Panel::~Panel() {
 }
 
-bool Panel::doRender() {
+bool Panel::doRender(RectangleList *updateRects) {
 	// Falls der Alphawert 0 ist, ist das Panel komplett durchsichtig und es muss nichts gezeichnet werden.
 	if (_color >> 24 == 0)
 		return true;
@@ -75,7 +77,15 @@ bool Panel::doRender() {
 	GraphicEngine *gfxPtr = Kernel::getInstance()->getGfx();
 	assert(gfxPtr);
 
-	return gfxPtr->fill(&_bbox, _color);
+	for (RectangleList::iterator it = updateRects->begin(); it != updateRects->end(); ++it) {
+		const Common::Rect &clipRect = *it;
+		if (_bbox.intersects(clipRect)) {
+			Common::Rect intersectionRect = _bbox.findIntersectingRect(clipRect);
+			gfxPtr->fill(&intersectionRect, _color);
+		}
+	}
+	
+	return true;
 }
 
 bool Panel::persist(OutputPersistenceBlock &writer) {

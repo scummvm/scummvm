@@ -603,7 +603,8 @@ bool VectorImage::blit(int posX, int posY,
                        int flipping,
                        Common::Rect *pPartRect,
                        uint color,
-                       int width, int height) {
+                       int width, int height,
+					   RectangleList *updateRects) {
 	static VectorImage *oldThis = 0;
 	static int              oldWidth = -2;
 	static int              oldHeight = -2;
@@ -624,7 +625,7 @@ bool VectorImage::blit(int posX, int posY,
 	RenderedImage *rend = new RenderedImage();
 
 	rend->replaceContent(_pixelData, width, height);
-	rend->blit(posX, posY, flipping, pPartRect, color, width, height);
+	rend->blit(posX, posY, flipping, pPartRect, color, width, height, updateRects);
 
 	delete rend;
 
