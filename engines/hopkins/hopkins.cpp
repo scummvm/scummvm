@@ -804,6 +804,7 @@ bool HopkinsEngine::runFull() {
 		if (shouldQuit())
 			return false;
 	}
+
 	if (getPlatform() != Common::kPlatformLinux && _startGameSlot == -1) {
 		_graphicsMan->fadeOutShort();
 		_graphicsMan->loadImage("H2");
@@ -819,8 +820,11 @@ bool HopkinsEngine::runFull() {
 
 	_globals->_exitId = 0;
 
-	if (_startGameSlot != -1)
+
+	if (_startGameSlot != -1) {
+		_soundMan->playSound(28);
 		_saveLoad->loadGame(_startGameSlot);
+	}
 
 	for (;;) {
 		if (_globals->_exitId == 300)
