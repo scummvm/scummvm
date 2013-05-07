@@ -38,6 +38,7 @@ AGOSEngine_Feeble::AGOSEngine_Feeble(OSystem *system, const AGOSGameDescription 
 	_interactiveVideo = 0;
 	_moviePlayer = 0;
 	_vgaCurSpritePriority = 0;
+	_mouseToggle = false;
 }
 
 AGOSEngine_Feeble::~AGOSEngine_Feeble() {
