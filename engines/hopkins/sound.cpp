@@ -467,7 +467,6 @@ void SoundManager::checkVoiceActivity() {
 
 bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 	int fileNumber;
-	int oldMusicVol;
 	bool breakFlag;
 	Common::String prefix;
 	Common::String filename;
@@ -573,7 +572,7 @@ bool SoundManager::mixVoice(int voiceId, int voiceMode, bool dispTxtFl) {
 			}
 		}
 	}
-	oldMusicVol = _musicVolume;
+	int oldMusicVol = _musicVolume;
 	if (!loadVoice(filename, catPos, catLen, _sWav[20])) {
 		// This case only concerns the English Win95 demo
 		// If it's not possible to load the voice, we force the active flag
