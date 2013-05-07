@@ -307,6 +307,10 @@ void SaveLoadManager::convertThumb16To8(Graphics::Surface *thumb16, Graphics::Su
 			byte r, g, b;
 			pixelFormat16.colorToRGB(*lineSrcP++, r, g, b);
 
+			// Do like in the original and show thumbnail as a grayscale picture
+			int lum = (r * 21 + g * 72 + b * 7) / 100;
+			r = g = b = lum;
+
 			// Scan the palette for the closest match
 			int difference = 99999, foundIndex = 0;
 			for (int palIndex = 0; palIndex < PALETTE_SIZE; ++palIndex) {
