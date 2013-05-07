@@ -640,6 +640,7 @@ void DialogsManager::showSaveGame() {
 		// Since the original GUI doesn't support save names, use a default name
 		Common::String saveName = Common::String::format("Save #%d", slotNumber);
 
+		_vm->_events->refreshScreenAndEvents();
 		// Save the game
 		_vm->_saveLoad->saveGame(slotNumber, saveName);
 	}
