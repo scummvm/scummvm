@@ -960,6 +960,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_globals->loadCharacterData();
 			_vm->_objectsMan->_sprite[0]._deltaX = 28;
 			_vm->_objectsMan->_sprite[0]._deltaY = 155;
+			_vm->_objectsMan->_sprite[0]._spriteData = _vm->_globals->_characterSpriteBuf;
 			_vm->_objectsMan->computeAndSetSpriteSize();
 			break;
 
@@ -970,6 +971,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_globals->loadCharacterData();
 			_vm->_objectsMan->_sprite[0]._deltaX = 34;
 			_vm->_objectsMan->_sprite[0]._deltaY = 190;
+			_vm->_objectsMan->_sprite[0]._spriteData = _vm->_globals->_characterSpriteBuf;
 			_vm->_objectsMan->computeAndSetSpriteSize();
 			break;
 
