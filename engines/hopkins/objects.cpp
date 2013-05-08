@@ -2186,7 +2186,7 @@ void ObjectsManager::changeCharacterHead(PlayerCharacter oldCharacter, PlayerCha
 		loc->_pos.y = getSpriteY(0);
 		loc->_startSpriteIndex = 64;
 		loc->_location = _vm->_globals->_screenId;
-		loc->_zoomFactor = _sprite[0]._animationType;
+		loc->_zoomFactor = _sprite[0]._zoomFactor;
 
 		removeSprite(1);
 		addStaticSprite(_headSprites, loc->_pos, 1, 3, loc->_zoomFactor, false, 20, 127);
