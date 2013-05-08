@@ -1113,7 +1113,7 @@ msgstr "Четвертого порядку"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Seventh-order"
-msgstr "Сьомого порядку
+msgstr "Сьомого порядку"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset"
