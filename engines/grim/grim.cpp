@@ -692,10 +692,19 @@ void GrimEngine::mainLoop() {
 				_refreshDrawNeeded = true;
 		}
 
+		if (_mode != PauseMode) {
+			// Draw the display scene before doing the luaUpdate.
+			// This give a large performance boost as OpenGL stores commands
+			// in a queue on the gpu to be rendered later. When doFlip is
+			// called the cpu must wait for the gpu to finish its queue.
+			// Now, it will queue all the OpenGL commands and draw them on the
+			// GPU while the CPU is busy updating the game world.
+			updateDisplayScene();
+		}
+
 		luaUpdate();
 
 		if (_mode != PauseMode) {
-			updateDisplayScene();
 			doFlip();
 		}
 
