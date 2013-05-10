@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2013-04-24 13:35+0100\n"
-"PO-Revision-Date: 2013-05-05 23:27+0200\n"
+"PO-Revision-Date: 2013-05-08 22:24+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
 "Language: Russian\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n"
 "%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: gui/about.cpp:93
 #, c-format
@@ -25,7 +26,7 @@ msgstr "(собран %s)"
 
 #: gui/about.cpp:100
 msgid "Features compiled in:"
-msgstr "Включенные в билд опции:"
+msgstr "Включённые в билд опции:"
 
 #: gui/about.cpp:109
 msgid "Available engines:"
@@ -153,7 +154,7 @@ msgid ""
 "Short game identifier used for referring to savegames and running the game "
 "from the command line"
 msgstr ""
-"Короткий идентификатор, используемый для имен сохранений игр и для запуска "
+"Короткий идентификатор, используемый для имён сохранений игр и для запуска "
 "из командной строки"
 
 #: gui/launcher.cpp:193
@@ -912,7 +913,7 @@ msgstr "Язык графического интерфейса ScummVM"
 
 #: gui/options.cpp:1365
 msgid "You have to restart ScummVM before your changes will take effect."
-msgstr "Вы должны перезапустить ScummVM чтобы применить изменения."
+msgstr "Вы должны перезапустить ScummVM, чтобы применить изменения."
 
 #: gui/options.cpp:1378
 msgid "Select directory for savegames"
@@ -1111,7 +1112,7 @@ msgstr "Линейная"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Fourth-order"
-msgstr "Четветрого порядка"
+msgstr "Четвертого порядка"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Seventh-order"
@@ -1128,7 +1129,9 @@ msgstr "Сбросить все установки FluidSynth в значения по умолчанию"
 #: gui/fluidsynth-dialog.cpp:216
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Вы действительно хотите сбросить все установки FluidSynth в значения по умолчанию?"
+msgstr ""
+"Вы действительно хотите сбросить все установки FluidSynth в значения по "
+"умолчанию?"
 
 #: base/main.cpp:210
 #, c-format
@@ -1387,9 +1390,9 @@ msgid ""
 "ScummVM. As such, it is likely to be unstable, and any saves you make might "
 "not work in future versions of ScummVM."
 msgstr ""
-"ПРЕДУПРЕЖДЕНИЕ: Игра, которую вы собираетесь запустить ещё не поддерживается "
-"ScummVM полностью. Она скорее всего не будет работать стабильно, и "
-"сохранения игр могут не работать в будущих версиях ScummVM."
+"ПРЕДУПРЕЖДЕНИЕ: Игра, которую вы собираетесь запустить, ещё не "
+"поддерживается ScummVM полностью. Она, скорее всего, не будет работать "
+"стабильно, и сохранения игр могут не работать в будущих версиях ScummVM."
 
 #: engines/engine.cpp:447
 msgid "Start anyway"
@@ -1431,7 +1434,7 @@ msgid ""
 "time you start the game.\n"
 msgstr ""
 "ScummVM обнаружил у вас сохранения игры Drascula в старом формате.\n"
-"Старый формат больше не поддерживается, и чтобы загрузить сохранения, они "
+"Старый формат больше не поддерживается, и, чтобы загрузить сохранения, они "
 "должны быть переведены в новый формат.\n"
 "\n"
 "Нажмите ОК, чтобы перевести их в новый формат сейчас, в противном случае это "
@@ -1471,7 +1474,7 @@ msgid ""
 "Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI "
 "output"
 msgstr ""
-"Использвовать звуковую картку IBM Music Feature или модуль синтеза Yamaha "
+"Использовать звуковую карту IBM Music Feature или модуль синтеза Yamaha "
 "FB-01 FM для MIDI"
 
 #: engines/sci/detection.cpp:414
@@ -1497,18 +1500,18 @@ msgstr ""
 
 #: engines/sci/detection.cpp:436
 msgid "Use silver cursors"
-msgstr "Использовать серебрянные курсоры"
+msgstr "Использовать серебряные курсоры"
 
 #: engines/sci/detection.cpp:437
 msgid ""
 "Use the alternate set of silver cursors, instead of the normal golden ones"
 msgstr ""
-"Использовать альтернативный набор серебрянных курсоров вместо обычных золотых"
+"Использовать альтернативный набор серебряных курсоров вместо обычных золотых"
 
 #: engines/scumm/dialogs.cpp:175
 #, c-format
 msgid "Insert Disk %c and Press Button to Continue."
-msgstr "Вставьте диск %c и нажмите клавишу чтобы продолжить."
+msgstr "Вставьте диск %c и нажмите клавишу, чтобы продолжить."
 
 #: engines/scumm/dialogs.cpp:176
 #, c-format
@@ -1522,7 +1525,7 @@ msgstr "Ошибка чтения диска %c, (%c%d) Нажмите клавишу."
 
 #: engines/scumm/dialogs.cpp:178
 msgid "Game Paused.  Press SPACE to Continue."
-msgstr "Игра остановлена.  Нажмите пробел чтобы продолжить."
+msgstr "Игра остановлена.  Нажмите пробел, чтобы продолжить."
 
 #. I18N: You may specify 'Yes' symbol at the end of the line, like this:
 #. "Moechten Sie wirklich neu starten?  (J/N)J"
@@ -1719,7 +1722,7 @@ msgstr "Эмуляция правой клавиши мыши"
 
 #: engines/scumm/help.cpp:93
 msgid "Special keyboard commands:"
-msgstr "Специальнве клавиатурные команды:"
+msgstr "Специальные клавиатурные команды:"
 
 #: engines/scumm/help.cpp:94
 msgid "Show / Hide console"
@@ -1763,7 +1766,7 @@ msgstr "* Использование ctrl-f и"
 
 #: engines/scumm/help.cpp:108
 msgid "  ctrl-g are not recommended"
-msgstr "  ctrl-g не рекомендуется"
+msgstr "  ctrl-g не рекомендуется,"
 
 #: engines/scumm/help.cpp:109
 msgid "  since they may cause crashes"
@@ -2254,7 +2257,7 @@ msgstr "Режим ускоренного видео"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr "Воспроизводит видеорелики с увеличнной скоростью"
+msgstr "Воспроизводит видеоролики с увеличенной скоростью"
 
 #: engines/groovie/script.cpp:420
 msgid "Failed to save game"
@@ -2273,7 +2276,7 @@ msgstr "Включить звуки аудитории в студии"
 #. I18N: This option allows the user to skip text and cutscenes.
 #: engines/kyra/detection.cpp:73
 msgid "Skip support"
-msgstr "Поддрежка пропусков"
+msgstr "Поддержка пропусков"
 
 #: engines/kyra/detection.cpp:74
 msgid "Allow text and cutscenes to be skipped"
@@ -2443,7 +2446,7 @@ msgid ""
 "time you start the game.\n"
 msgstr ""
 "ScummVM обнаружил у вас сохранения игры Сломанный Меч в старом формате.\n"
-"Старый формат больше не поддерживается, и чтобы загрузить сохранения, они "
+"Старый формат больше не поддерживается, и, чтобы загрузить сохранения, они "
 "должны быть переведены в новый формат.\n"
 "\n"
 "Нажмите ОК, чтобы перевести их в новый формат сейчас, в противном случае это "
@@ -2483,7 +2486,7 @@ msgstr "Показывать названия объектов"
 
 #: engines/sword2/sword2.cpp:80
 msgid "Show labels for objects on mouse hover"
-msgstr "Показывает названия объектов пр инаведении курсора мыши"
+msgstr "Показывает названия объектов при наведении курсора мыши"
 
 #: engines/teenagent/resources.cpp:94
 msgid ""
@@ -2496,7 +2499,7 @@ msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
-"Файл teenagent.dat сжат, но zlib не включено в эту программу. Пожалуйста,"
+"Файл teenagent.dat сжат, но zlib не включено в эту программу. Пожалуйста, "
 "распакуйте его"
 
 #: engines/parallaction/saveload.cpp:133
@@ -2602,7 +2605,7 @@ msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Выбранное звуковое устройство '%s' не было найдено (возможно оно выключено "
+"Выбранное звуковое устройство '%s' не было найдено (возможно, оно выключено "
 "или не подключено)."
 
 #: audio/mididrv.cpp:209 audio/mididrv.cpp:221 audio/mididrv.cpp:257
@@ -2625,7 +2628,7 @@ msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
 msgstr ""
-"Предпочтительное звуковое устройство '%s' не было найдено (возможно оно "
+"Предпочтительное звуковое устройство '%s' не было найдено (возможно, оно "
 "выключено или не подключено)."
 
 #: audio/mididrv.cpp:272
@@ -2775,7 +2778,7 @@ msgstr "Запретить выключение"
 
 #: backends/platform/iphone/osys_events.cpp:300
 msgid "Mouse-click-and-drag mode enabled."
-msgstr "Режим мыши нажать-и-тянуть включен."
+msgstr "Режим мыши нажать-и-тянуть включён."
 
 #: backends/platform/iphone/osys_events.cpp:302
 msgid "Mouse-click-and-drag mode disabled."
@@ -2783,7 +2786,7 @@ msgstr "Режим мыши нажать-и-тянуть выключен."
 
 #: backends/platform/iphone/osys_events.cpp:313
 msgid "Touchpad mode enabled."
-msgstr "Режим тачпада включен."
+msgstr "Режим тачпада включён."
 
 #: backends/platform/iphone/osys_events.cpp:315
 msgid "Touchpad mode disabled."
@@ -3192,8 +3195,8 @@ msgstr "Назначить действие Уменьшить Масштаб (необязательно)"
 msgid ""
 "Don't forget to map a key to 'Hide Toolbar' action to see the whole inventory"
 msgstr ""
-"Не забудьте назначить клавишу для действия 'Hide Toolbar' чтобы увидеть весь "
-"инвентарь в игре"
+"Не забудьте назначить клавишу для действия 'Hide Toolbar', чтобы увидеть "
+"весь инвентарь в игре"
 
 #: backends/events/default/default-events.cpp:193
 msgid "Do you really want to return to the Launcher?"
