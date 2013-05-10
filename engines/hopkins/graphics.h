@@ -118,6 +118,7 @@ public:
 	Common::Array<Common::Rect> _dirtyRects;
 	Common::Array<Common::Rect> _refreshRects;
 	bool _showDirtyRects;
+	bool _showZones;
 
 	byte *_palettePixels;
 public:
@@ -135,6 +136,8 @@ public:
 	void addRectToArray(Common::Array<Common::Rect> &rects, const Common::Rect &newRect);
 	void displayDirtyRects();
 	void displayRefreshRects();
+	void displayZones();
+	void displayDebugRect(Graphics::Surface *surface, const Common::Rect &srcRect);
 	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void loadImage(const Common::String &file);
 	void loadVgaImage(const Common::String &file);

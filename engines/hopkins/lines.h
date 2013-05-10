@@ -115,7 +115,6 @@ private:
 	Directions _smoothMoveDirection;
 	LigneZoneItem _zoneLine[MAX_LINES+1];
 	SegmentItem _segment[101];
-	SquareZoneItem _squareZone[101];
 	int _currentSegmentId;
 	int _maxLineIdx;
 	int _lastLine;
@@ -168,6 +167,7 @@ public:
 	int _bobZone[105];
 	bool _bobZoneFl[105];
 	ZoneItem _zone[106];
+	SquareZoneItem _squareZone[101];
 
 	LinesManager(HopkinsEngine *vm);
 	~LinesManager();
