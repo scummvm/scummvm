@@ -259,7 +259,12 @@ uint8 AgiEngine::testKeypressed() {
 		InputMode mode = _game.inputMode;
 
 		_game.inputMode = INPUT_NONE;
-		mainCycle();
+		// Only check for events here, without updating the game cycle,
+		// otherwise the animations in some games are drawn too quickly
+		// like, for example, Manannan's lightnings in the intro of KQ3
+		// and the bullets opened in the logo of PQ1, during its intro.
+		// Fixes bug #3600733
+		mainCycle(true);
 		_game.inputMode = mode;
 	}
 

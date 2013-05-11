@@ -942,7 +942,7 @@ public:
 	void setvar(int, int);
 	void decrypt(uint8 *mem, int len);
 	void releaseSprites();
-	int mainCycle();
+	int mainCycle(bool onlyCheckForEvents = false);
 	int viewPictures();
 	int runGame();
 	void inventory();
