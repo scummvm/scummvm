@@ -158,13 +158,29 @@ static const HopkinsGameDescription gameDescriptions[] = {
 		// Hopkins FBI Win95 EN, provided by greencis in bug #3612406
 		{
 			"hopkins",
-				0,
+			0,
 			{
 				{"hopkins.exe", 0, "020690049fa1dfcd63a18fdafb139a0e", 421386},
 				{"RES_VAN.RES", 0, "f1693ac0b0859c8ecd8cb30ff43cf55f", 38296346},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+	},
+	{
+		// Hopkins FBI Win95 RU, provided by greencis in bug #3613068
+		{
+			"hopkins",
+			0,
+			{
+				{"hopkins.exe", 0, "3043fef0bd3bfeba8252647cd090ce09", 419281},
+				{"res_van.res", 0, "bf17c710e184a25a6c8e9d1d9503c38e", 32197685},
+				AD_LISTEND
+			},
+			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
