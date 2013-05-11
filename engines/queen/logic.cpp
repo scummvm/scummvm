@@ -1798,7 +1798,7 @@ void Logic::asmScaleBlimp() {
 	int16 x = bob->x;
 	int16 y = bob->y;
 	bob->scale = 100;
-	while (bob->x > 150) {
+	while (bob->x > 150 && !_vm->shouldQuit()) {
 		bob->x = x * 256 / z + 150;
 		bob->y = y * 256 / z + 112;
 		if (_vm->resource()->getPlatform() != Common::kPlatformAmiga) {
