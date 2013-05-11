@@ -318,8 +318,6 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 			int minutes = saveTime & 0xFF;
 
 			desc.setSaveTime(hour, minutes);
-
-			// TODO: played time
 		}
 
 
