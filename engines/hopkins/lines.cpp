@@ -2220,10 +2220,11 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 				realSpeedX = _vm->_graphicsMan->zoomIn(realSpeedX, spriteSize);
 				realSpeedY = _vm->_graphicsMan->zoomIn(realSpeedY, spriteSize);
 			}
+			int oldY = curY;
 			for (int i = 0; i < realSpeedX; i++) {
 				--curX;
 				_smoothRoute[smoothIdx]._posX = curX;
-				if (curY != curY + realSpeedY)
+				if (curY != oldY + realSpeedY)
 					curY++;
 				_smoothRoute[smoothIdx]._posY = curY;
 				smoothIdx++;
@@ -2254,10 +2255,11 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 				realSpeedX = _vm->_graphicsMan->zoomIn(realSpeedX, spriteSize);
 				realSpeedY = _vm->_graphicsMan->zoomIn(realSpeedY, spriteSize);
 			}
+			int oldY = curY;
 			for (int i = 0; i < realSpeedX; i++) {
 				++curX;
 				_smoothRoute[smoothIdx]._posX = curX;
-				if (curY != curY + realSpeedY)
+				if (curY != oldY + realSpeedY)
 					curY++;
 				_smoothRoute[smoothIdx]._posY = curY;
 				smoothIdx++;
