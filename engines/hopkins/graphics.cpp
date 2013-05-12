@@ -74,6 +74,7 @@ GraphicsManager::GraphicsManager(HopkinsEngine *vm) {
 	_width = 0;
 	_specialWidth = 0;
 	_showZones = false;
+	_showLines = false;
 
 	Common::fill(&_paletteBuffer[0], &_paletteBuffer[PALETTE_SIZE * 2], 0);
 	Common::fill(&_colorTable[0], &_colorTable[PALETTE_EXT_BLOCK_SIZE], 0);
@@ -672,6 +673,9 @@ void GraphicsManager::updateScreen() {
 	if (_showZones)
 		displayZones();
 
+	if (_showLines)
+		displayLines();
+
 	// Update the screen
 	g_system->updateScreen();
 }
@@ -1191,6 +1195,31 @@ void GraphicsManager::displayZones() {
 
 	g_system->unlockScreen();
 }
+
+/**
+ * Display any zones for the current room
+ */
+void GraphicsManager::displayLines() {
+	Graphics::Surface *screenSurface = g_system->lockScreen();
+
+	uint16* pixels = (uint16*)screenSurface->pixels;
+
+	for (int lineIndex = 0; lineIndex < _vm->_linesMan->_linesNumb; lineIndex++) {	
+		int i = 0;
+		do {
+			int x = _vm->_linesMan->_lineItem[lineIndex]._lineData[i] - _scrollPosX;
+			int y = _vm->_linesMan->_lineItem[lineIndex]._lineData[i+1];
+			if (x >= 0 && x < SCREEN_WIDTH && y >= 0 && y < SCREEN_HEIGHT) {
+				pixels[ y * screenSurface->w + x ] = 0xffff;
+			}
+			i += 2;
+		}
+		while(_vm->_linesMan->_lineItem[lineIndex]._lineData[i] != -1);
+	}
+
+	g_system->unlockScreen();
+}
+
 
 void GraphicsManager::displayDebugRect(Graphics::Surface *surface, const Common::Rect &srcRect, uint32 color) {
 	Common::Rect r = srcRect;

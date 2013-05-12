@@ -35,6 +35,7 @@ Debugger::Debugger(HopkinsEngine *vm) : GUI::Debugger() {
 	DCmd_Register("teleport", WRAP_METHOD(Debugger, cmd_Teleport));
 	DCmd_Register("show_room", WRAP_METHOD(Debugger, cmd_ShowCurrentRoom));
 	DCmd_Register("zones", WRAP_METHOD(Debugger, cmd_Zones));
+	DCmd_Register("lines", WRAP_METHOD(Debugger, cmd_Lines));
 }
 
 // Turns dirty rects on or off
@@ -74,5 +75,16 @@ if (argc != 2) {
 		return false;
 	}
 }
+
+bool Debugger::cmd_Lines(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("%s: [on | off]\n", argv[0]);
+		return true;
+	} else {
+		_vm->_graphicsMan->_showLines = !strcmp(argv[1], "on");
+		return false;
+	}
+}
+
 
 } // End of namespace Hopkins
