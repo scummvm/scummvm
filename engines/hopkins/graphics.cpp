@@ -1176,7 +1176,7 @@ void GraphicsManager::displayZones() {
 				_vm->_objectsMan->_bob[bobId]._oldX + _vm->_objectsMan->_bob[bobId]._oldWidth,
 				_vm->_objectsMan->_bob[bobId]._oldY + _vm->_objectsMan->_bob[bobId]._oldHeight);
 				
-			displayDebugRect(screenSurface, r);
+			displayDebugRect(screenSurface, r, 0xff0000);
 		}
 	}
 
@@ -1185,14 +1185,14 @@ void GraphicsManager::displayZones() {
 			Common::Rect r(_vm->_linesMan->_squareZone[squareZoneId]._left, _vm->_linesMan->_squareZone[squareZoneId]._top,
 				_vm->_linesMan->_squareZone[squareZoneId]._right, _vm->_linesMan->_squareZone[squareZoneId]._bottom);
 
-			displayDebugRect(screenSurface, r);
+			displayDebugRect(screenSurface, r, 0x00ff00);
 		}
 	}
 
 	g_system->unlockScreen();
 }
 
-void GraphicsManager::displayDebugRect(Graphics::Surface *surface, const Common::Rect &srcRect) {
+void GraphicsManager::displayDebugRect(Graphics::Surface *surface, const Common::Rect &srcRect, uint32 color) {
 	Common::Rect r = srcRect;
 
 	// Move for scrolling offset and adjust to crop on-screen
@@ -1204,7 +1204,7 @@ void GraphicsManager::displayDebugRect(Graphics::Surface *surface, const Common:
 				
 	// If there's an on-screen portion, display it
 	if (r.isValidRect())
-		surface->frameRect(r, 0xffffff);
+		surface->frameRect(r, color);
 }
 
 /**

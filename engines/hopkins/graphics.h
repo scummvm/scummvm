@@ -137,7 +137,7 @@ public:
 	void displayDirtyRects();
 	void displayRefreshRects();
 	void displayZones();
-	void displayDebugRect(Graphics::Surface *surface, const Common::Rect &srcRect);
+	void displayDebugRect(Graphics::Surface *surface, const Common::Rect &srcRect, uint32 color = 0xffffff);
 	void copySurface(const byte *surface, int x1, int y1, int width, int height, byte *destSurface, int destX, int destY);
 	void loadImage(const Common::String &file);
 	void loadVgaImage(const Common::String &file);
