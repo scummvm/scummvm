@@ -64,6 +64,10 @@ void GlobeTracker::setTrackParameters(const Hotspot *trackSpot, GlobeTrackDirect
 
 		_globeMovie->setSegment(start, start + kDurationPerRow);
 
+		// Clip new time so we don't go past the end of the segment
+		if (newTime >= start + kDurationPerRow)
+			newTime = start + kDurationPerRow - 1;
+
 		if (newTime != time) {
 			_globeMovie->setTime(newTime);
 			_globeMovie->redrawMovieWorld();
@@ -83,6 +87,10 @@ void GlobeTracker::setTrackParameters(const Hotspot *trackSpot, GlobeTrackDirect
 		}
 
 		_globeMovie->setSegment(start, start + kDurationPerRow);
+
+		// Clip new time so we don't go past the end of the segment
+		if (newTime >= start + kDurationPerRow)
+			newTime = start + kDurationPerRow - 1;
 
 		if (newTime != time) {
 			_globeMovie->setTime(newTime);
