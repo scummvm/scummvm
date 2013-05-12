@@ -59,20 +59,16 @@
  */
 namespace Hopkins {
 
-enum {
-	kHopkinsDebugAnimations = 1 << 0,
-	kHopkinsDebugActions = 1 << 1,
-	kHopkinsDebugSound = 1 << 2,
-	kHopkinsDebugMusic = 1 << 3,
-	kHopkinsDebugScripts = 1 << 4
-};
-
 #define DEBUG_BASIC 1
 #define DEBUG_INTERMEDIATE 2
 #define DEBUG_DETAILED 3
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
+
+enum HopkinsDebugChannels {
+	kDebugPath      = 1 <<  0
+};
 
 /**
  * A wrapper macro used around three character constants, like 'END', to
