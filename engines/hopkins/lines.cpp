@@ -99,6 +99,7 @@ LinesManager::~LinesManager() {
 }
 
 int LigneItem::appendToRouteInc(int from, int to, RouteItem *route, int index) {
+	debugC(5, kDebugPath, "appendToRouteInc(%d, %d, route, %d)", from, to, index);
 	if (to == -1)
 		to = _lineDataEndIdx;
 
@@ -106,7 +107,9 @@ int LigneItem::appendToRouteInc(int from, int to, RouteItem *route, int index) {
 		route[index++].set(_lineData[2*i], _lineData[2*i+1], _directionRouteInc);
 	return index;
 }
+
 int LigneItem::appendToRouteDec(int from, int to, RouteItem *route, int index) {
+	debugC(5, kDebugPath, "appendToRouteDecc(%d, %d, route, %d)", from, to, index);
 	if (from == -1)
 		from = _lineDataEndIdx - 1;
 
@@ -119,6 +122,7 @@ int LigneItem::appendToRouteDec(int from, int to, RouteItem *route, int index) {
  * Load lines
  */
 void LinesManager::loadLines(const Common::String &file) {
+	debugC(5, kDebugPath, "loadLines(%s)", file.c_str());
 	resetLines();
 	_linesNumb = 0;
 	_lastLine = 0;
@@ -140,6 +144,7 @@ void LinesManager::loadLines(const Common::String &file) {
  * Returns the ID of the hotspot under mouse
  */
 int LinesManager::checkInventoryHotspots(int posX, int posY) {
+	debugC(5, kDebugPath, "checkInventoryHotspots(%d, %d)", posX, posY);
 	int hotspotId = 0;
 	if (posY >= 120 && posY <= 153)
 		hotspotId = checkInventoryHotspotsRow(posX, 1, false);
@@ -166,6 +171,7 @@ int LinesManager::checkInventoryHotspots(int posX, int posY) {
  * Returns the hotspot Id under the mouse, if any.
  */
 int LinesManager::checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastRow) {
+	debugC(5, kDebugPath, "checkInventoryHotspotsRow(%d, %d, %d)", posX, minZoneNum, lastRow ? 1 : 0);
 	int result = minZoneNum;
 
 	if (posX >= _vm->_graphicsMan->_scrollOffset + 158 && posX < _vm->_graphicsMan->_scrollOffset + 208)
@@ -203,6 +209,7 @@ int LinesManager::checkInventoryHotspotsRow(int posX, int minZoneNum, bool lastR
  * Add Zone Line
  */
 void LinesManager::addZoneLine(int idx, int fromX, int fromY, int destX, int destY, int bobZoneIdx) {
+	debugC(5, kDebugPath, "addZoneLine(%d, %d, %d, %d, %d, %d)", idx, fromX, fromY, destX, destY, bobZoneIdx);
 	int16 *zoneData;
 
 	if (fromX == fromY && fromY == destX && fromY == destY) {
@@ -253,6 +260,7 @@ void LinesManager::addZoneLine(int idx, int fromX, int fromY, int destX, int des
  * Add Line
  */
 void LinesManager::addLine(int lineIdx, Directions direction, int fromX, int fromY, int destX, int destY) {
+	debugC(5, kDebugPath, "addLine(%d, %d, %d, %d, %d, %d)", lineIdx, direction, fromX, fromY, destX, destY);
 	assert(lineIdx < MAX_LINES);
 
 	if (_linesNumb < lineIdx)
@@ -367,6 +375,7 @@ void LinesManager::addLine(int lineIdx, Directions direction, int fromX, int fro
  * Check collision line
  */
 bool LinesManager::checkCollisionLine(int xp, int yp, int *foundDataIdx, int *foundLineIdx, int startLineIdx, int endLineIdx) {
+	debugC(5, kDebugPath, "checkCollisionLine(%d, %d, foundDataIdx, foundLineIdx, %d, %d)", xp, yp, startLineIdx ,endLineIdx);
 	int16 *lineData;
 
 	int left = xp + 4;
@@ -426,6 +435,7 @@ bool LinesManager::checkCollisionLine(int xp, int yp, int *foundDataIdx, int *fo
  * Init route
  */
 void LinesManager::initRoute() {
+	debugC(5, kDebugPath, "initRoute()");
 	int lineX = _lineItem[0]._lineData[0];
 	int lineY = _lineItem[0]._lineData[1];
 
@@ -462,6 +472,7 @@ void LinesManager::initRoute() {
 
 // Avoid obstacle
 int LinesManager::avoidObstacle(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route) {
+	debugC(5, kDebugPath, "avoidObstacle(%d, %d, %d, %d, %d, route)", lineIdx, lineDataIdx, routeIdx, destLineIdx, destLineDataIdx);
 	int curLineIdx = lineIdx;
 	int curLineDataIdx = lineDataIdx;
 	int curRouteIdx = routeIdx;
@@ -493,6 +504,7 @@ int LinesManager::avoidObstacle(int lineIdx, int lineDataIdx, int routeIdx, int 
 
 // Avoid Obstacle, taking into account start/End lind Idx
 int LinesManager::avoidObstacleOnSegment(int lineIdx, int lineDataIdx, int routeIdx, int destLineIdx, int destLineDataIdx, RouteItem *route, int startLineIdx, int endLineIdx) {
+	debugC(5, kDebugPath, "avoidObstacleOnSegment(%d, %d, %d, %d, %d, route, %d, %d)", lineIdx, lineDataIdx, routeIdx, destLineIdx, destLineDataIdx, startLineIdx, endLineIdx);
 	int curLineIdx = lineIdx;
 	int curLineDataIdx = lineDataIdx;
 	int curRouteIdx = routeIdx;
@@ -535,6 +547,7 @@ int LinesManager::avoidObstacleOnSegment(int lineIdx, int lineDataIdx, int route
 }
 
 bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, int routeIdx) {
+	debugC(5, kDebugPath, "MIRACLE(%d, %d, %d, %d, %d)", fromX, fromY, lineIdx, destLineIdx, routeIdx);
 	int newLinesDataIdx = 0;
 	int newLinesIdx = 0;
 	int lineIdxLeft = 0;
@@ -776,6 +789,7 @@ bool LinesManager::MIRACLE(int fromX, int fromY, int lineIdx, int destLineIdx, i
 }
 
 int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY, int destX, int destY, int routerIdx, RouteItem *route) {
+	debugC(5, kDebugPath, "computeRouteIdx(%d, %d, %d, %d, %d, %d, %d)", lineIdx, dataIdx, fromX, fromY, destX, destY, routerIdx);
 	int result = routerIdx;
 	++_pathFindingMaxDepth;
 	if (_pathFindingMaxDepth > 10) {
@@ -1076,6 +1090,7 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 
 // Find Route from a point to the other
 RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
+	debugC(5, kDebugPath, "findRoute(%d, %d, %d, %d)", fromX, fromY, destX, destY);
 	int foundLineIdx;
 	int foundDataIdx;
 	int curLineY = 0;
@@ -1503,6 +1518,7 @@ RouteItem *LinesManager::findRoute(int fromX, int fromY, int destX, int destY) {
 }
 
 void LinesManager::useRoute0(int idx, int curRouteIdx) {
+	debugC(5, kDebugPath, "useRoute0(%d, %d)", idx, curRouteIdx);
 	if (idx) {
 		int i = 0;
 		do {
@@ -1514,6 +1530,7 @@ void LinesManager::useRoute0(int idx, int curRouteIdx) {
 }
 
 void LinesManager::useRoute1(int idx, int curRouteIdx) {
+	debugC(5, kDebugPath, "useRoute1(%d, %d)", idx, curRouteIdx);
 	if (idx) {
 		int i = 0;
 		do {
@@ -1525,6 +1542,7 @@ void LinesManager::useRoute1(int idx, int curRouteIdx) {
 }
 
 void LinesManager::useRoute2(int idx, int curRouteIdx) {
+	debugC(5, kDebugPath, "useRoute2(%d, %d)", idx, curRouteIdx);
 	if (idx) {
 		int i = 0;
 		do {
@@ -1536,6 +1554,7 @@ void LinesManager::useRoute2(int idx, int curRouteIdx) {
 }
 
 int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int startLineIdx, int endLineIdx, int routeIdx) {
+	debugC(5, kDebugPath, "characterRoute(%d, %d, %d, %d, %d, %d, %d)", fromX, fromY, destX, destY, startLineIdx, endLineIdx, routeIdx);
 	int collDataIdxRoute2 = 0;
 	bool colResult = false;
 
@@ -1987,6 +2006,7 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 }
 
 RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
+	debugC(5, kDebugPath, "cityMapCarRoute(%d, %d, %d, %d)", x1, y1, x2, y2);
 	RouteItem *result;
 	int arrDelta[10];
 	int arrDataIdx[10];
@@ -2165,6 +2185,7 @@ RouteItem *LinesManager::cityMapCarRoute(int x1, int y1, int x2, int y2) {
 }
 
 bool LinesManager::checkSmoothMove(int fromX, int fromY, int destX, int destY) {
+	debugC(5, kDebugPath, "checkSmoothMove(%d, %d, %d, %d)", fromX, fromY, destX, destY);
 	int distX = abs(fromX - destX) + 1;
 	int distY = abs(fromY - destY) + 1;
 	if (distX > distY)
@@ -2203,6 +2224,7 @@ bool LinesManager::checkSmoothMove(int fromX, int fromY, int destX, int destY) {
 }
 
 bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
+	debugC(5, kDebugPath, "makeSmoothMove(%d, %d, %d, %d)", fromX, fromY, destX, destY);
 	int curX = fromX;
 	int curY = fromY;
 	if (fromX > destX && destY > fromY) {
@@ -2335,6 +2357,7 @@ bool LinesManager::makeSmoothMove(int fromX, int fromY, int destX, int destY) {
 }
 
 bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int paramStartLineIdx, int paramEndLineIdx) {
+	debugC(5, kDebugPath, "PLAN_TEST(%d, %d, %d, %d, %d)", paramX, paramY, superRouteIdx, paramStartLineIdx, paramEndLineIdx);
 	int sideTestUp;
 	int sideTestDown;
 	int sideTestLeft;
@@ -2435,6 +2458,7 @@ bool LinesManager::PLAN_TEST(int paramX, int paramY, int superRouteIdx, int para
 
 // Test line
 int LinesManager::testLine(int paramX, int paramY, int *testValue, int *foundLineIdx, int *foundDataIdx) {
+	debugC(5, kDebugPath, "testLine(%d, %d, testValue, foundLineIdx, foundDataIdx)", paramX, paramY);
 	int16 *lineData;
 	int lineDataEndIdx;
 	int collLineIdx;
@@ -2482,6 +2506,7 @@ int LinesManager::testLine(int paramX, int paramY, int *testValue, int *foundLin
 }
 
 int LinesManager::computeYSteps(int idx) {
+	debugC(5, kDebugPath, "computeYSteps(%d)", idx);
 	int zoomPct = _vm->_globals->_spriteSize[idx];
 	if (_vm->_globals->_characterType == CHARACTER_HOPKINS_CLONE) {
 		if (zoomPct < 0)
@@ -2503,6 +2528,7 @@ int LinesManager::computeYSteps(int idx) {
 }
 
 void LinesManager::optimizeRoute(RouteItem *route) {
+	debugC(5, kDebugPath, "optimizeRoute(route)");
 	if (route[0]._x == -1 && route[0]._y == -1)
 		return;
 
@@ -2549,6 +2575,7 @@ void LinesManager::optimizeRoute(RouteItem *route) {
 }
 
 int LinesManager::getMouseZone() {
+	debugC(9, kDebugPath, "getMouseZone()");
 	int result;
 
 	int xp = _vm->_events->_mousePos.x + _vm->_events->_mouseOffset.x;
@@ -2637,6 +2664,7 @@ int LinesManager::getMouseZone() {
 }
 
 int LinesManager::checkCollision(int xp, int yp) {
+	debugC(7, kDebugPath, "checkCollision(%d, %d)", xp, yp);
 	if (_currentSegmentId <= 0)
 		return -1;
 
@@ -2686,6 +2714,7 @@ int LinesManager::checkCollision(int xp, int yp) {
 
 // Square Zone
 void LinesManager::initSquareZones() {
+	debugC(5, kDebugPath, "initSquareZones()");
 	for (int idx = 0; idx < 100; ++idx) {
 		SquareZoneItem *curZone = &_squareZone[idx];
 		curZone->_enabledFl = false;
@@ -2728,6 +2757,7 @@ void LinesManager::initSquareZones() {
 }
 
 void LinesManager::clearAll() {
+	debugC(5, kDebugPath, "clearAll()");
 	for (int idx = 0; idx < 105; ++idx) {
 		_zone[idx]._destX = 0;
 		_zone[idx]._destY = 0;
@@ -2773,6 +2803,7 @@ void LinesManager::clearAll() {
  * Clear all zones and reset nextLine
  */
 void LinesManager::clearAllZones() {
+	debugC(5, kDebugPath, "clearAllZones()");
 	for (int idx = 0; idx < MAX_LINES; ++idx)
 		removeZoneLine(idx);
 }
@@ -2781,37 +2812,37 @@ void LinesManager::clearAllZones() {
  * Remove Zone Line
  */
 void LinesManager::removeZoneLine(int idx) {
+	debugC(5, kDebugPath, "removeZoneLine(%d)", idx);
 	assert(idx < MAX_LINES + 1);
 	_zoneLine[idx]._zoneData = (int16 *)_vm->_globals->freeMemory((byte *)_zoneLine[idx]._zoneData);
 }
 
 void LinesManager::resetLines() {
+	debugC(5, kDebugPath, "resetLines()");
 	for (int idx = 0; idx < MAX_LINES; ++idx) {
-		removeLine(idx);
+		_lineItem[idx]._lineData = (int16 *)_vm->_globals->freeMemory((byte *)_lineItem[idx]._lineData);
 		_lineItem[idx]._lineDataEndIdx = 0;
 		_lineItem[idx]._lineData = NULL;
 	}
 }
 
-// Remove Line
-void LinesManager::removeLine(int idx) {
-	assert(idx < MAX_LINES);
-	_lineItem[idx]._lineData = (int16 *)_vm->_globals->freeMemory((byte *)_lineItem[idx]._lineData);
-}
-
 void LinesManager::setMaxLineIdx(int idx) {
+	debugC(5, kDebugPath, "setMaxLineIdx(%d)", idx);
 	_maxLineIdx = idx;
 }
 
 void LinesManager::resetLastLine() {
+	debugC(5, kDebugPath, "resetLastLine()");
 	_lastLine = 0;
 }
 
 void LinesManager::resetLinesNumb() {
+	debugC(5, kDebugPath, "resetLinesNumb()");
 	_linesNumb = 0;
 }
 
 void LinesManager::enableZone(int idx) {
+	debugC(5, kDebugPath, "enableZone(%d)", idx);
 	if (_bobZone[idx]) {
 		_bobZoneFl[idx] = true;
 	} else {
@@ -2820,6 +2851,7 @@ void LinesManager::enableZone(int idx) {
 }
 
 void LinesManager::disableZone(int idx) {
+	debugC(5, kDebugPath, "disableZone(%d)", idx);
 	if (_bobZone[idx]) {
 		_bobZoneFl[idx] = false;
 	} else {
@@ -2828,6 +2860,7 @@ void LinesManager::disableZone(int idx) {
 }
 
 void LinesManager::checkZone() {
+	debugC(9, kDebugPath, "checkZone()");
 	int mouseX = _vm->_events->getMouseX();
 	int mouseY = _vm->_events->getMouseY();
 	int oldMouseY = mouseY;
