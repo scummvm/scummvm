@@ -8,17 +8,16 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2013-04-24 13:35+0100\n"
-"PO-Revision-Date: 2012-07-08 18:03+0100\n"
+"PO-Revision-Date: 2013-05-13 21:30+0100\n"
 "Last-Translator: Hampus Flink <hampus.flink@gmail.com>\n"
 "Language-Team: \n"
 "Language: Svenska\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"X-Poedit-Language: Swedish\n"
-"X-Poedit-Country: SWEDEN\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: gui/about.cpp:93
 #, c-format
@@ -34,13 +33,12 @@ msgid "Available engines:"
 msgstr "Tillgängliga motorer"
 
 #: gui/browser.cpp:67
-#, fuzzy
 msgid "Show hidden files"
-msgstr "Visa / göm konsol"
+msgstr "Visa gömda filer"
 
 #: gui/browser.cpp:67
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Visa dolda filer"
 
 #: gui/browser.cpp:71
 msgid "Go up"
@@ -537,7 +535,7 @@ msgstr "Scanning färdig!"
 #: gui/massadd.cpp:261
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr "Upptäckte %n nya spel. Ignorerade %d tidigare tillagda spel."
+msgstr "Upptäckte %d nya spel. Ignorerade %d tidigare tillagda spel."
 
 #: gui/massadd.cpp:265
 #, c-format
@@ -726,7 +724,7 @@ msgstr "MIDI gain:"
 
 #: gui/options.cpp:873
 msgid "FluidSynth Settings"
-msgstr ""
+msgstr "FluidSynth inställningar"
 
 #: gui/options.cpp:880
 msgid "MT-32 Device:"
@@ -755,9 +753,8 @@ msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Äkta Roland MT-32 (ingen GM-emulation)"
 
 #: gui/options.cpp:890
-#, fuzzy
 msgid "Roland GS Mode (disable GM mapping)"
-msgstr "Äkta Roland MT-32 (inaktivera GM-emulation)"
+msgstr "Roland GS-läge (avaktivera GM-mapping)"
 
 #: gui/options.cpp:890
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
@@ -946,11 +943,11 @@ msgstr ""
 
 #: gui/saveload-dialog.cpp:166
 msgid "List view"
-msgstr ""
+msgstr "Visa som lista"
 
 #: gui/saveload-dialog.cpp:167
 msgid "Grid view"
-msgstr ""
+msgstr "Visa som rutnät"
 
 #: gui/saveload-dialog.cpp:210 gui/saveload-dialog.cpp:358
 msgid "No date saved"
@@ -990,31 +987,28 @@ msgstr "Namnlös spardata"
 
 #: gui/saveload-dialog.cpp:546
 msgid "Next"
-msgstr ""
+msgstr "Nästa"
 
 #: gui/saveload-dialog.cpp:549
 msgid "Prev"
-msgstr ""
+msgstr "Bakåt"
 
 #: gui/saveload-dialog.cpp:736
-#, fuzzy
 msgid "New Save"
-msgstr "Spara"
+msgstr "Ny sparning"
 
 #: gui/saveload-dialog.cpp:736
-#, fuzzy
 msgid "Create a new save game"
-msgstr "Kunde inte spara spelet."
+msgstr "Skapa ett nytt sparat spel"
 
 #: gui/saveload-dialog.cpp:865
-#, fuzzy
 msgid "Name: "
 msgstr "Namn:"
 
 #: gui/saveload-dialog.cpp:937
 #, c-format
 msgid "Enter a description for slot %d:"
-msgstr ""
+msgstr "Ange en beskrivning för position %d:"
 
 #: gui/themebrowser.cpp:44
 msgid "Select a Theme"
@@ -1050,93 +1044,92 @@ msgid "Clear value"
 msgstr "Töm sökfältet"
 
 #: gui/fluidsynth-dialog.cpp:67
-#, fuzzy
 msgid "Reverb"
-msgstr "Aldrig"
+msgstr "Reverb"
 
 #: gui/fluidsynth-dialog.cpp:69 gui/fluidsynth-dialog.cpp:101
-#, fuzzy
 msgid "Active"
-msgstr "(Aktiv)"
+msgstr "Aktiv"
 
 #: gui/fluidsynth-dialog.cpp:71
 msgid "Room:"
-msgstr ""
+msgstr "Rum:"
 
 #: gui/fluidsynth-dialog.cpp:78
 msgid "Damp:"
-msgstr ""
+msgstr "Dämpa:"
 
 #: gui/fluidsynth-dialog.cpp:85
 msgid "Width:"
-msgstr ""
+msgstr "Bredd:"
 
 #: gui/fluidsynth-dialog.cpp:92 gui/fluidsynth-dialog.cpp:110
 msgid "Level:"
-msgstr ""
+msgstr "Nivå:"
 
 #: gui/fluidsynth-dialog.cpp:99
 msgid "Chorus"
-msgstr ""
+msgstr "Chorus"
 
 #: gui/fluidsynth-dialog.cpp:103
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:117
-#, fuzzy
 msgid "Speed:"
-msgstr "Tal"
+msgstr "Hastighet:"
 
 #: gui/fluidsynth-dialog.cpp:124
 msgid "Depth:"
-msgstr ""
+msgstr "Djup:"
 
 #: gui/fluidsynth-dialog.cpp:131
 msgid "Type:"
-msgstr ""
+msgstr "Typ:"
 
 #: gui/fluidsynth-dialog.cpp:134
 msgid "Sine"
-msgstr ""
+msgstr "Sinus"
 
 #: gui/fluidsynth-dialog.cpp:135
 msgid "Triangle"
-msgstr ""
+msgstr "Triangel"
 
 #: gui/fluidsynth-dialog.cpp:139
 msgid "Interpolation:"
-msgstr ""
+msgstr "Interpolering:"
 
 #: gui/fluidsynth-dialog.cpp:142
 msgid "None (fastest)"
-msgstr ""
+msgstr "Ingen (snabbast)"
 
 #: gui/fluidsynth-dialog.cpp:143
 msgid "Linear"
-msgstr ""
+msgstr "Linjär"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "Fourth-order"
-msgstr ""
+msgstr "Fjärde ordningen"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Seventh-order"
-msgstr ""
+msgstr "Sjunde ordningen"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset"
-msgstr ""
+msgstr "Återställ"
 
 #: gui/fluidsynth-dialog.cpp:149
 msgid "Reset all FluidSynth settings to their default values."
 msgstr ""
+"Återställ alla FluidSynth-inställningar till deras ursprungliga värden."
 
 #: gui/fluidsynth-dialog.cpp:216
-#, fuzzy
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
-msgstr "Vill du verkligen återgå till launchern?"
+msgstr ""
+"Vill du verkligen återställa alla FluidSynth-inställningar till deras "
+"ursprungliga värden?"
 
 #: base/main.cpp:210
 #, c-format
@@ -1315,7 +1308,9 @@ msgstr ""
 msgid ""
 "Gamestate save failed (%s)! Please consult the README for basic information, "
 "and for instructions on how to obtain further assistance."
-msgstr "Spar"
+msgstr ""
+"Kunde inte spara data (%s)! Var god läs README-filen för grundläggande "
+"information och instruktioner för hur du kan få mer hjälp."
 
 #: engines/dialogs.cpp:301 engines/mohawk/dialogs.cpp:109
 #: engines/mohawk/dialogs.cpp:170
@@ -1421,7 +1416,6 @@ msgid "Restore"
 msgstr "Återställ"
 
 #: engines/drascula/saveload.cpp:49
-#, fuzzy
 msgid ""
 "ScummVM found that you have old savefiles for Drascula that should be "
 "converted.\n"
@@ -1431,12 +1425,12 @@ msgid ""
 "Press OK to convert them now, otherwise you will be asked again the next "
 "time you start the game.\n"
 msgstr ""
-"ScummVM upptäckte att du har gamla spardata för Broken Sword 1 som borde "
+"ScummVM upptäckte att du har gamla spardata för Drascula som borde "
 "konverteras.\n"
 "Det gamla spardataformatet stöds inte längre, så du kommer inte kunna ladda "
 "dina data om du inte konverterar dem.\n"
 "\n"
-"Tryck \"OK\" för att konvertera dem nu, annars kommer du tillfrågas igen "
+"Tryck på OK för att konvertera dem nu, annars kommer du tillfrågas igen "
 "nästa gång du startar spelet.\n"
 
 #: engines/dreamweb/detection.cpp:57
@@ -2247,13 +2241,12 @@ msgid "Failed to delete file."
 msgstr "Kunde inte radera filen."
 
 #: engines/groovie/detection.cpp:312
-#, fuzzy
 msgid "Fast movie speed"
-msgstr "Snabbläge"
+msgstr "Snabb filmhastighet"
 
 #: engines/groovie/detection.cpp:313
 msgid "Play movies at an increased speed"
-msgstr ""
+msgstr "Spela filmer i högre hastighet"
 
 #: engines/groovie/script.cpp:420
 msgid "Failed to save game"
@@ -2381,12 +2374,11 @@ msgstr ""
 
 #: engines/queen/queen.cpp:59
 msgid "Alternative intro"
-msgstr ""
+msgstr "Alternativt intro"
 
 #: engines/queen/queen.cpp:60
-#, fuzzy
 msgid "Use an alternative game intro (CD version only)"
-msgstr "Använd diskettversionens intro (endast CD-version)"
+msgstr "Använd alternativt spelintro (endast CD-version)"
 
 #: engines/sky/compact.cpp:130
 msgid ""
@@ -2485,13 +2477,15 @@ msgstr "Visar etiketter för objekten som musen pekar på"
 #: engines/teenagent/resources.cpp:94
 msgid ""
 "You're missing the 'teenagent.dat' file. Get it from the ScummVM website"
-msgstr ""
+msgstr "Du har inte 'teenagent.dat'-filen. Hämta den från ScummVM:s webbsida"
 
 #: engines/teenagent/resources.cpp:115
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
 msgstr ""
+"Teenagent.dat-filen är komprimerad och zlib har inte inkluderats i det här "
+"programmet. Var god  dekomprimera den"
 
 #: engines/parallaction/saveload.cpp:133
 #, c-format
@@ -2545,44 +2539,43 @@ msgstr ""
 
 #: engines/pegasus/pegasus.cpp:679
 msgid "Invalid save file name"
-msgstr ""
+msgstr "Ogiltigt namn på sparfil"
 
 #: engines/pegasus/pegasus.cpp:2445
 msgid "Up/Zoom In/Move Forward/Open Doors"
-msgstr ""
+msgstr "Upp/Zooma in/Gå framåt/Öppna dörrar"
 
 #: engines/pegasus/pegasus.cpp:2446
-#, fuzzy
 msgid "Down/Zoom Out"
-msgstr "Zooma upp"
+msgstr "Ned/Zooma ut"
 
 #: engines/pegasus/pegasus.cpp:2449
 msgid "Display/Hide Inventory Tray"
-msgstr ""
+msgstr "Visa/dölj inventarium"
 
 #: engines/pegasus/pegasus.cpp:2450
 msgid "Display/Hide Biochip Tray"
-msgstr ""
+msgstr "Visa/dölj biochip"
 
 #: engines/pegasus/pegasus.cpp:2451
 msgid "Action/Select"
-msgstr ""
+msgstr "Handling/Välj"
 
 #: engines/pegasus/pegasus.cpp:2452
 msgid "Toggle Center Data Display"
-msgstr ""
+msgstr "Aktivera centrerad dataskärm"
 
 #: engines/pegasus/pegasus.cpp:2453
 msgid "Display/Hide Info Screen"
-msgstr ""
+msgstr "Visa/dölj informationsskärm"
 
 #: engines/pegasus/pegasus.cpp:2454
 msgid "Display/Hide Pause Menu"
-msgstr ""
+msgstr "Visa/dölj pausmeny"
 
 #: engines/pegasus/pegasus.cpp:2455
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #: audio/fmopl.cpp:49
 msgid "MAME OPL emulator"
@@ -3241,9 +3234,8 @@ msgid "Decreasing Volume"
 msgstr "Sänka volymen"
 
 #: backends/events/openpandora/op-events.cpp:174
-#, fuzzy
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
-msgstr "Touchscreen \"Tap-läge\" - Hover (utan klick)"
+msgstr "Touchscreen 'Tap-läge' - Hover (DPad klick)"
 
 #: backends/updates/macosx/macosx-updates.mm:67
 msgid "Check for Updates..."
