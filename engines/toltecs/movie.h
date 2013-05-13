@@ -46,8 +46,8 @@ protected:
 
 	bool _isPlaying;
 
-	uint32 _chunkCount, _frameCount, _lastPrefetchOfs;
-	uint32 _soundChunkFramesLeft, _framesPerSoundChunk;
+	uint32 _framesPerSoundChunk;
+	int32 _lastPrefetchOfs, _endPos;
 
 	void unpackPalette(byte *source, byte *dest, int elemCount, int elemSize);
 	void unpackRle(byte *source, byte *dest);

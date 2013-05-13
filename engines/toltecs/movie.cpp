@@ -45,7 +45,7 @@ enum ChunkTypes {
 	kChunkStopSubtitles = 8
 };
 
-MoviePlayer::MoviePlayer(ToltecsEngine *vm) : _vm(vm), _isPlaying(false) {
+MoviePlayer::MoviePlayer(ToltecsEngine *vm) : _vm(vm), _isPlaying(false), _lastPrefetchOfs(0), _framesPerSoundChunk(0), _endPos(0) {
 }
 
 MoviePlayer::~MoviePlayer() {
@@ -69,9 +69,10 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_screen->finishTalkTextItems();
 
 	_vm->_arc->openResource(resIndex);
+	_endPos = _vm->_arc->pos() + _vm->_arc->getResourceSize(resIndex);
 
-	_frameCount = _vm->_arc->readUint32LE();
-	_chunkCount = _vm->_arc->readUint32LE();
+	/*_frameCount = */_vm->_arc->readUint32LE();
+	uint32 chunkCount = _vm->_arc->readUint32LE();
 
 	// TODO: Figure out rest of the header
 	_vm->_arc->readUint32LE();
@@ -90,7 +91,6 @@ void MoviePlayer::playMovie(uint resIndex) {
 
 	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
 
-	_soundChunkFramesLeft = 0;
 	_lastPrefetchOfs = 0;
 
 	fetchAudioChunks();
@@ -99,8 +99,9 @@ void MoviePlayer::playMovie(uint resIndex) {
 	uint32 chunkBufferSize = 0;
 	uint32 frame = 0;
 	bool abortMovie = false;
+	uint32 soundChunkFramesLeft = 0;
 
-	while (_chunkCount-- && !abortMovie) {
+	while (chunkCount-- && !abortMovie) {
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
 
@@ -110,6 +111,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 		// fetchAudioChunks()
 		if (chunkType == kChunkAudio) {
 			_vm->_arc->skip(chunkSize);
+			soundChunkFramesLeft += _framesPerSoundChunk;
 		} else {
 			// Only reallocate the chunk buffer if the new chunk is bigger
 			if (chunkSize > chunkBufferSize) {
@@ -127,8 +129,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 			unpackRle(chunkBuffer, _vm->_screen->_backScreen);
 			_vm->_screen->_fullRefresh = true;
 
-			_soundChunkFramesLeft--;
-			if (_soundChunkFramesLeft <= _framesPerSoundChunk) {
+			if (soundChunkFramesLeft-- <= _framesPerSoundChunk) {
 				fetchAudioChunks();
 			}
 
@@ -207,13 +208,12 @@ void MoviePlayer::playMovie(uint resIndex) {
 
 void MoviePlayer::fetchAudioChunks() {
 	uint32 startOfs = _vm->_arc->pos();
-	uint32 chunkCount = _chunkCount;
 	uint prefetchChunkCount = 0;
 
 	if (_lastPrefetchOfs != 0)
 		_vm->_arc->seek(_lastPrefetchOfs, SEEK_SET);
 
-	while (chunkCount-- && prefetchChunkCount < _framesPerSoundChunk / 2) {
+	while (prefetchChunkCount < _framesPerSoundChunk / 2 && _vm->_arc->pos() < _endPos) {
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
 		if (chunkType == kChunkAudio) {
@@ -222,7 +222,6 @@ void MoviePlayer::fetchAudioChunks() {
 			_audioStream->queueBuffer(chunkBuffer, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 			chunkBuffer = NULL;
 			prefetchChunkCount++;
-			_soundChunkFramesLeft += _framesPerSoundChunk;
 		} else {
 			_vm->_arc->seek(chunkSize, SEEK_CUR);
 		}
