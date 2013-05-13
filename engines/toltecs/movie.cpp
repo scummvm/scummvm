@@ -129,7 +129,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 			unpackRle(chunkBuffer, _vm->_screen->_backScreen);
 			_vm->_screen->_fullRefresh = true;
 
-			if (soundChunkFramesLeft-- <= _framesPerSoundChunk) {
+			if (--soundChunkFramesLeft <= _framesPerSoundChunk) {
 				fetchAudioChunks();
 			}
 
