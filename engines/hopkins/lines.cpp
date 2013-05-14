@@ -2596,6 +2596,11 @@ int LinesManager::getMouseZone() {
 							_zone[bobZoneId]._destY = _vm->_objectsMan->_bob[bobId]._oldHeight + _vm->_objectsMan->_bob[bobId]._oldY + 6;
 							_zone[bobZoneId]._spriteIndex = -1;
 						}
+
+						// WORKAROUND: Avoid allowing hotspots that should remain non-interactive
+						if (bobZoneId == 24 && _vm->_globals->_curRoomNum == 14)
+							continue;
+
 						return bobZoneId;
 					}
 			}
@@ -2891,6 +2896,10 @@ void LinesManager::checkZone() {
 		int zoneId;
 		if (_oldMouseX != mouseX || _oldMouseY != oldMouseY) {
 			zoneId = getMouseZone();
+
+			// WORKAROUND: Incorrect hotspot zones in the guard's control room
+			if (_vm->_globals->_curRoomNum == 71 && (zoneId == 14 || zoneId == 12 || zoneId == 17))
+				zoneId = _oldMouseZoneId;
 		} else {
 			zoneId = _oldMouseZoneId;
 		}
