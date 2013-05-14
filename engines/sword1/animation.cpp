@@ -98,7 +98,7 @@ static const char *const sequenceListPSX[20] = {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, ResMan *resMan, OSystem *system, Video::VideoDecoder *decoder, DecoderType decoderType)
-	: _vm(vm), _textMan(textMan), _resMan(resMan), _system(system) {
+	: _vm(vm), _textMan(textMan), _resMan(resMan), _system(system), _textX(0), _textY(0), _textWidth(0), _textHeight(0), _textColor(1) {
 	_decoderType = decoderType;
 	_decoder = decoder;
 
