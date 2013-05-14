@@ -121,10 +121,8 @@ bool DrasculaEngine::confirmExit() {
 
 void DrasculaEngine::showMenu() {
 	int h, n, x;
-	char textIcon[13];
 	byte *srcSurface = (currentChapter == 6) ? tableSurface : frontSurface;
 	x = whichObject();
-	strcpy(textIcon, iconName[x]);
 
 	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
 		h = inventoryObjects[n];
@@ -138,7 +136,7 @@ void DrasculaEngine::showMenu() {
 	}
 
 	if (x < 7)
-		print_abc(textIcon, _itemLocations[x].x - 2, _itemLocations[x].y - 7);
+		print_abc(iconName[x], _itemLocations[x].x - 2, _itemLocations[x].y - 7);
 }
 
 void DrasculaEngine::clearMenu() {
