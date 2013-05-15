@@ -1988,8 +1988,8 @@ int LinesManager::characterRoute(int fromX, int fromY, int destX, int destY, int
 				_newRouteIdx = curRouteIdx;
 				return 2;
 			}
-			// CHECKME: Checking essai0[0]._x might make more sense here?
-			if (_testRoute1[0]._x != -1 && foundLineIdx > collLineIdxRoute0 && collLineIdxRoute1 >= collLineIdxRoute0 && collLineIdxRoute2 >= collLineIdxRoute0 && endLineIdx <= collLineIdxRoute0) {
+
+			if (_testRoute0[0]._x != -1 && foundLineIdx > collLineIdxRoute0 && collLineIdxRoute1 >= collLineIdxRoute0 && collLineIdxRoute2 >= collLineIdxRoute0 && endLineIdx <= collLineIdxRoute0) {
 				_newLineIdx = collLineIdxRoute0;
 				_newLineDataIdx = collDataIdxRoute0;
 				int i = 0;
