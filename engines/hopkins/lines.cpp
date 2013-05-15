@@ -945,46 +945,43 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 	if (destX >= minLineX && destX <= maxLineX && destY >= minLineY && destY <= maxLineY) {
 		int curY = destY;
 		int linesIdxUp = -1;
+		bool loopCond = false;
 		for (;;) {
 			--curY;
-			if (!checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
-				break;
-
-			linesIdxUp = foundLineIdx;
-			if (!curY || minLineY > curY)
+			if (loopCond = checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+				linesIdxUp = foundLineIdx;
+			if (!curY || minLineY > curY || loopCond)
 				break;
 		}
 		curY = destY;
 		int lineIdxDown = -1;
+		loopCond = false;
 		for (;;) {
 			++curY;
-			if (!checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
-				break;
-
-			lineIdxDown = foundLineIdx;
-			if (_vm->_globals->_characterMaxPosY <= curY || maxLineY <= curY)
+			if (loopCond = checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+				lineIdxDown = foundLineIdx;
+			if (_vm->_globals->_characterMaxPosY <= curY || maxLineY <= curY || loopCond)
 				break;
 		}
 		int curX = destX;
 		int lineIdxRight = -1;
+		loopCond = false;
 		for (;;) {
 			++curX;
-			if (!checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
-				break;
+			if (loopCond = checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+				lineIdxRight = foundLineIdx;
 
-			lineIdxRight = foundLineIdx;
-
-			if (_vm->_graphicsMan->_maxX <= curX || maxLineX <= curX)
+			if (_vm->_graphicsMan->_maxX <= curX || maxLineX <= curX || loopCond)
 				break;
 		}
 		curX = destX;
 		int lineIdxLeft = -1;
+		loopCond = false;
 		for(;;) {
 			--curX;
-			if (!checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
-				break;
-			lineIdxLeft = foundLineIdx;
-			if (curX <= 0 || minLineX >= curX)
+			if (loopCond = checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+				lineIdxLeft = foundLineIdx;
+			if (curX <= 0 || minLineX >= curX || loopCond)
 				break;
 		}
 		if (lineIdxRight != -1 && lineIdxLeft != -1 && linesIdxUp != -1 && lineIdxDown != -1) {
