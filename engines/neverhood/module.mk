@@ -50,7 +50,7 @@ MODULE_OBJS = \
 	staticdata.o
 
 # This module can be built as a plugin
-ifdef BUILD_PLUGINS
+ifeq ($(ENABLE_NEVERHOOD), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
 
