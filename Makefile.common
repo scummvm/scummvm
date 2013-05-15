@@ -78,7 +78,7 @@ endif
 $(EXECUTABLE): $(OBJS)
 	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
-distclean: clean
+distclean: clean clean-devtools
 	$(RM) config.h config.mk config.log
 
 clean:
