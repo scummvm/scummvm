@@ -28,6 +28,7 @@ add_engine mohawk "Mohawk" yes "cstime myst riven" "Living Books"
 add_engine cstime "Where in Time is Carmen Sandiego?" no
 add_engine riven "Riven: The Sequel to Myst" no "" "" "16bit"
 add_engine myst "Myst" no "" "" "16bit"
+add_engine neverhood "Neverhood" no
 add_engine parallaction "Parallaction" yes
 add_engine pegasus "The Journeyman Project: Pegasus Prime" yes "" "" "16bit"
 add_engine queen "Flight of the Amazon Queen" yes
