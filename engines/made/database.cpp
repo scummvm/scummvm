@@ -665,15 +665,16 @@ bool GameDatabaseV3::getSavegameDescription(const char *filename, Common::String
 	}
 
 	int32 size = in->readUint32LE();
-	if (size != in->size() - 64) {
-		warning("Unexpected save game size. Expected %d, size is %d (file size - 64)", size, in->size() - 64);
+	int16 saveVersion = in->readUint16LE();
+
+	if (saveVersion != version) {
+		warning("Save game %s was saved with a different version of the game. Game version is %d, save version is %d", filename, version, saveVersion);
 		delete in;
 		return false;
 	}
 
-	int16 saveVersion = in->readUint16LE();
-	if (saveVersion != version) {
-		warning("Save game %s was saved with a different version of the game. Game version is %d, save version is %d", filename, version, saveVersion);
+	if (size != in->size() - 64) {
+		warning("Unexpected save game size. Expected %d, size is %d (file size - 64)", size, in->size() - 64);
 		delete in;
 		return false;
 	}
@@ -722,15 +723,16 @@ int16 GameDatabaseV3::loadgame(const char *filename, int16 version) {
 	}
 
 	uint32 size = in->readUint32LE();
-	if (size != expectedSize) {
-		warning("Unexpected save game size. Expected %d, size is %d", expectedSize, size);
+	int16 saveVersion = in->readUint16LE();
+
+	if (saveVersion != version) {
+		warning("Save game %s was saved with a different version of the game. Game version is %d, save version is %d", filename, version, saveVersion);
 		delete in;
 		return 1;
 	}
 
-	int16 saveVersion = in->readUint16LE();
-	if (saveVersion != version) {
-		warning("Save game %s was saved with a different version of the game. Game version is %d, save version is %d", filename, version, saveVersion);
+	if (size != expectedSize) {
+		warning("Unexpected save game size. Expected %d, size is %d", expectedSize, size);
 		delete in;
 		return 1;
 	}
