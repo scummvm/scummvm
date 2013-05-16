@@ -945,7 +945,7 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 	if (destX >= minLineX && destX <= maxLineX && destY >= minLineY && destY <= maxLineY) {
 		int curY = destY;
 		int linesIdxUp = -1;
-		bool loopCond = false;
+		loopCond = false;
 		for (;;) {
 			--curY;
 			if (loopCond = checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
