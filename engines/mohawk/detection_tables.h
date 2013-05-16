@@ -1374,7 +1374,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_LIVINGBOOKSV1,
-		0,
+		GF_LB_10,
 		0
 	},
 
