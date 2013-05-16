@@ -461,7 +461,9 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) con
 					member_list.push_back(getMember(thispath));
 					++count;
 				} else {
-					dirlist.push_back(thispath);
+					// AssetManager is ridiculously slow and we don't care
+					// about subdirectories at the moment, so ignore them.
+					// dirlist.push_back(thispath);
 				}
 			}
 
