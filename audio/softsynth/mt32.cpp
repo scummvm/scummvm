@@ -147,10 +147,6 @@ MidiDriver_MT32::MidiDriver_MT32(Audio::Mixer *mixer) : MidiDriver_Emulated(mixe
 	}
 	_reportHandler = NULL;
 	_synth = NULL;
-	// A higher baseFreq reduces the length used in generateSamples(),
-	// and means that the timer callback will be called more often.
-	// That results in more accurate timing.
-	_baseFreq = 10000;
 	// Unfortunately bugs in the emulator cause inaccurate tuning
 	// at rates other than 32KHz, thus we produce data at 32KHz and
 	// rely on Mixer to convert.
