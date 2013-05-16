@@ -138,9 +138,10 @@ _build_hq_scalers=yes
 _enable_prof=no
 _global_constructors=no
 _bink=yes
-# Default vkeybd/keymapper options
+# Default vkeybd/keymapper/eventrec options
 _vkeybd=no
 _keymapper=no
+_eventrec=auto
 # GUI translation options
 _translation=yes
 # Default platform settings
@@ -1036,6 +1037,8 @@ for ac_option in $@; do
 	--disable-vkeybd)         _vkeybd=no      ;;
 	--enable-keymapper)       _keymapper=yes  ;;
 	--disable-keymapper)      _keymapper=no   ;;
+	--enable-eventrecorder)   _eventrec=yes  ;;
+	--disable-eventrecorder)  _eventrec=no   ;;
 	--enable-text-console)    _text_console=yes ;;
 	--disable-text-console)   _text_console=no ;;
 	--with-fluidsynth-prefix=*)
@@ -2882,6 +2885,20 @@ case $_backend in
 esac
 
 #
+# Enable Event Recorder only for backends that support it
+#
+case $_backend in
+	sdl)
+		if test "$_eventrec" = auto ; then
+			_eventrec=yes
+		fi
+		;;
+	*)
+		_eventrec=no
+		;;
+esac
+
+#
 # Disable savegame timestamp support for backends which don't have a reliable real time clock
 #
 case $_backend in
@@ -3797,10 +3814,12 @@ fi
 define_in_config_if_yes $_nasm 'USE_NASM'
 
 #
-# Enable vkeybd / keymapper
+# Enable vkeybd / keymapper / event recorder
 #
 define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
 define_in_config_if_yes $_keymapper 'ENABLE_KEYMAPPER'
+define_in_config_if_yes $_eventrec 'ENABLE_EVENTRECORDER'
+add_line_to_config_mk_if_yes $_eventrec "ENABLE_EVENTRECORDER = 1"
 
 # Check whether to build translation support
 #
@@ -3946,7 +3965,11 @@ if test "$_vkeybd" = yes ; then
 fi
 
 if test "$_keymapper" = yes ; then
-	echo ", keymapper"
+	echo_n ", keymapper"
+fi
+
+if test "$_eventrec" = yes ; then
+	echo ", event recorder"
 else
 	echo
 fi

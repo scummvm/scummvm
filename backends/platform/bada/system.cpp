@@ -373,7 +373,7 @@ bool BadaSystem::pollEvent(Common::Event &event) {
 	return _appForm->pollEvent(event);
 }
 
-uint32 BadaSystem::getMillis() {
+uint32 BadaSystem::getMillis(bool skipRecord) {
 	long long result, ticks = 0;
 	SystemTime::GetTicks(ticks);
 	result = ticks - _epoch;

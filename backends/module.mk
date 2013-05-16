@@ -70,7 +70,7 @@ MODULE_OBJS += \
 	mutex/sdl/sdl-mutex.o \
 	plugins/sdl/sdl-provider.o \
 	timer/sdl/sdl-timer.o
-	
+
 # SDL 1.3 removed audio CD support
 ifndef USE_SDL13
 MODULE_OBJS += \
@@ -212,6 +212,12 @@ MODULE_OBJS += \
 	fs/wii/wii-fs.o \
 	fs/wii/wii-fs-factory.o \
 	plugins/wii/wii-provider.o
+endif
+
+ifdef ENABLE_EVENTRECORDER
+MODULE_OBJS += \
+	mixer/nullmixer/nullsdl-mixer.o \
+	saves/recorder/recorder-saves.o
 endif
 
 # Include common rules

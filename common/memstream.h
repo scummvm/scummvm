@@ -89,8 +89,9 @@ public:
  */
 class MemoryWriteStream : public WriteStream {
 private:
-	byte *_ptr;
 	const uint32 _bufSize;
+protected:
+	byte *_ptr;
 	uint32 _pos;
 	bool _err;
 public:
@@ -115,6 +116,40 @@ public:
 	virtual bool err() const { return _err; }
 	virtual void clearErr() { _err = false; }
 };
+
+/**
+ * MemoryWriteStream subclass with ability to set stream position indicator.
+ */
+class SeekableMemoryWriteStream : public MemoryWriteStream {
+private:
+	byte *_ptrOrig;
+public:
+	SeekableMemoryWriteStream(byte *buf, uint32 len) : MemoryWriteStream(buf, len), _ptrOrig(buf) {}
+	uint32 seek(uint32 offset, int whence = SEEK_SET) {
+		switch (whence) {
+		case SEEK_END:
+			// SEEK_END works just like SEEK_SET, only 'reversed',
+			// i.e. from the end.
+			offset = size() + offset;
+			// Fall through
+		case SEEK_SET:
+			_ptr = _ptrOrig + offset;
+			_pos = offset;
+			break;
+		case SEEK_CUR:
+			_ptr += offset;
+			_pos += offset;
+			break;
+		}
+		// Post-Condition
+		if (_pos > size()) {
+			_pos = size();
+			_ptr = _ptrOrig + _pos;
+		}
+		return _pos;
+	}
+};
+
 
 /**
  * A sort of hybrid between MemoryWriteStream and Array classes. A stream
