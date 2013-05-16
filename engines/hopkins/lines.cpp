@@ -945,45 +945,45 @@ int LinesManager::computeRouteIdx(int lineIdx, int dataIdx, int fromX, int fromY
 	if (destX >= minLineX && destX <= maxLineX && destY >= minLineY && destY <= maxLineY) {
 		int curY = destY;
 		int linesIdxUp = -1;
-		loopCond = false;
-		for (;;) {
+		do {
 			--curY;
-			if (loopCond = checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+			if (checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx)) {
 				linesIdxUp = foundLineIdx;
-			if (!curY || minLineY > curY || loopCond)
 				break;
-		}
+			}
+		} while (curY && curY >= minLineY);
+
 		curY = destY;
 		int lineIdxDown = -1;
-		loopCond = false;
-		for (;;) {
+		do {
 			++curY;
-			if (loopCond = checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+			if (checkCollisionLine(destX, curY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx)) {
 				lineIdxDown = foundLineIdx;
-			if (_vm->_globals->_characterMaxPosY <= curY || maxLineY <= curY || loopCond)
 				break;
-		}
+			}
+		} while (curY < _vm->_globals->_characterMaxPosY && curY < maxLineY);
+
 		int curX = destX;
 		int lineIdxRight = -1;
-		loopCond = false;
-		for (;;) {
+		do {
 			++curX;
-			if (loopCond = checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+			if (checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx)) {
 				lineIdxRight = foundLineIdx;
-
-			if (_vm->_graphicsMan->_maxX <= curX || maxLineX <= curX || loopCond)
 				break;
-		}
+			}
+		} while (curX < _vm->_graphicsMan->_maxX && curX < maxLineX);
+
 		curX = destX;
 		int lineIdxLeft = -1;
 		loopCond = false;
-		for(;;) {
+		do {
 			--curX;
-			if (loopCond = checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx))
+			if (checkCollisionLine(curX, destY, &foundDataIdx, &foundLineIdx, startLineIdx, endLineIdx)) {
 				lineIdxLeft = foundLineIdx;
-			if (curX <= 0 || minLineX >= curX || loopCond)
 				break;
-		}
+			}
+		} while (curX > 0 && curX > minLineX);
+
 		if (lineIdxRight != -1 && lineIdxLeft != -1 && linesIdxUp != -1 && lineIdxDown != -1) {
 			route[routerIdx].invalidate();
 			return -1;
