@@ -104,6 +104,40 @@ static const NeverhoodGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{
+		// Neverhood Russian version. Dyadyushka Risech
+		{
+			"neverhood",
+			"DR",
+			AD_ENTRY1s("hd.blb", "787951bf094aad9962291e69a707bdde", 4248635),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
+	{
+		// Neverhood Russian version. Fargus
+		{
+			"neverhood",
+			"Fargus",
+			AD_ENTRY1s("hd.blb", "c87c69db423f560d3708e9de78751a7f", 4425816),
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
+		},
+		0,
+		0,
+		0,
+		0,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 

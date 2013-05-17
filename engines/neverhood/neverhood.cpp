@@ -59,6 +59,10 @@ NeverhoodEngine::~NeverhoodEngine() {
 Common::Error NeverhoodEngine::run() {
 	initGraphics(640, 480, true);
 
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
+
 	_isSaveAllowed = false;
 
 	_mouseX = 0;
