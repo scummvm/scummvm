@@ -30,6 +30,7 @@
 
 static const PlainGameDescriptor CGEGames[] = {
 	{ "soltys", "Soltys" },
+	{ "sfinx", "Sfinx" },
 	{ 0, 0 }
 };
 
@@ -87,6 +88,16 @@ static const ADGameDescription gameDescriptions[] = {
 		{
 			{"vol.cat", 0, "20fdce799adb618100ef9ee2362be875", 50176},
 			{"vol.dat", 0, "0e43331c846094d77f5dd201827e0a3b", 8439339},
+			AD_LISTEND
+		},
+		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
+	},
+	{
+		// Polish version, provided by Strangerke
+		"sfinx", "Sfinx Freeware",
+		{
+			{"vol.cat", 0, "21197b287d397c53261b6616bf0dd880", 129024},
+			{"vol.dat", 0, "de14291869a8eb7c2732ab783c7542ef", 34180844},	
 			AD_LISTEND
 		},
 		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO0()
