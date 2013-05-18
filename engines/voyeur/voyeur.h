@@ -23,6 +23,7 @@
 #ifndef VOYEUR_VOYEUR_H
 #define VOYEUR_VOYEUR_H
 
+#include "voyeur/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
@@ -58,7 +59,9 @@ class VoyeurEngine : public Engine {
 private:
 	const VoyeurGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+	EventManager _eventManager;
 
+	void ESP_Init();
 protected:
 	// Engine APIs
 	virtual Common::Error run();

@@ -71,13 +71,20 @@ Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc) 
 }
 
 Common::Error VoyeurEngine::run() {
-	
+	ESP_Init();
 
 	return Common::kNoError;
 }
 
 int VoyeurEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
+}
+
+void VoyeurEngine::ESP_Init() {
+	_eventManager.setVm(this);
+
+	_eventManager.resetMouse();
+
 }
 
 } // End of namespace Voyeur

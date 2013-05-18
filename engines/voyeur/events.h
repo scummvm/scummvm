@@ -20,26 +20,26 @@
  *
  */
 
+#ifndef VOYEUR_EVENTS_H
+#define VOYEUR_EVENTS_H
+
+#include "common/scummsys.h"
+#include "common/events.h"
+
 namespace Voyeur {
 
-static const VoyeurGameDescription gameDescriptions[] = {
-	{
-		// Voyeur DOS English
-		{
-			"voyeur",
-			0,
-			{
-				{"a1100100.rl2", 0, "b44630677618d034970ca0a13c1c1237", 336361},
-				AD_LISTEND
-			},
-			Common::EN_ANY,
-			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NONE)
-		},
-	},
+class VoyeurEngine;
 
-	{ AD_TABLE_END_MARKER }
+class EventManager {
+private:
+	VoyeurEngine *_vm;
+public:
+	EventManager() {}
+	void setVm(VoyeurEngine *vm) { _vm = vm; }
+
+	void resetMouse();
 };
 
 } // End of namespace Voyeur
+
+#endif /* VOYEUR_VOYEUR_H */
