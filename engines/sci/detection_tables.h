@@ -663,6 +663,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// Gabriel Knight - English DOS CD Demo (from DrMcCoy)
+	// SCI interpreter version 1.001.092
+	{"gk1", "CD Demo", {
+		{"resource.map", 0, "8cad2a256f41463030cbb7ea1bfb2857", 2490},
+		{"resource.000", 0, "eb3ed7477ca4110813fe1fcf35928561", 1718450},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO3(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 #ifdef ENABLE_SCI32
 	// Gabriel Knight - English DOS Floppy
 	// SCI interpreter version 2.000.000
