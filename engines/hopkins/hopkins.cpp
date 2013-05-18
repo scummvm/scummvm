@@ -88,14 +88,15 @@ Common::String HopkinsEngine::generateSaveName(int slot) {
  * Returns true if it is currently okay to restore a game
  */
 bool HopkinsEngine::canLoadGameStateCurrently() {
-	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl;
+	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl && _globals->_curRoomNum != 0;
 }
 
 /**
  * Returns true if it is currently okay to save the game
  */
 bool HopkinsEngine::canSaveGameStateCurrently() {
-	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl;
+	return !_globals->_exitId && !_globals->_cityMapEnabledFl && _events->_mouseFl 
+		&& _globals->_curRoomNum != 0 && !isUnderwaterSubScene();
 }
 
 /**
@@ -2880,6 +2881,10 @@ bool HopkinsEngine::displayAdultDisclaimer() {
 		_graphicsMan->_maxY = SCREEN_HEIGHT - 20;
 		return true;
 	}
+}
+
+bool HopkinsEngine::isUnderwaterSubScene() {
+	return (_globals->_curRoomNum >= 77) && (_globals->_curRoomNum <= 89);
 }
 
 } // End of namespace Hopkins
