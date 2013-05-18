@@ -1586,7 +1586,7 @@ void Scene2206::klaymenInFrontSpikes() {
 }
 
 void Scene2206::klaymenBehindSpikes() {
-	if (!getGlobalVar(V_LIGHTS_ON)) {
+	if (getGlobalVar(V_LIGHTS_ON)) {
 		_palette->addBasePalette(0xB103B604, 0, 65, 0);
 		_palette->startFadeToPalette(12);
 	}
