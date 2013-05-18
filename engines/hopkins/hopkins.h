@@ -97,6 +97,7 @@ private:
 	void playUnderwaterBaseCutscene();
 	void playPlaneCutscene();
 	void playEnding();
+	bool isUnderwaterSubScene();
 
 	/**
 	 * Displays the map screen in the underground base.
