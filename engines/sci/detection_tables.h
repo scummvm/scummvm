@@ -1623,6 +1623,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 	 	Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
 
+	// King's Quest 7 - English Windows Demo (from DrMcCoy)
+	// SCI interpreter version 2.100.002
+	{"kq7", "Demo", {
+		{"resource.map", 0, "38e627a37a975aea40cc72b0518b0709", 18412},
+		{"resource.000", 0, "bad61d50aaa64298fa57a7c6ccd3bccf", 84020382},
+		AD_LISTEND},
+	 	Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO5(GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FB01_MIDI)	},
+
 #endif // ENABLE_SCI32
 
 	// Laura Bow - English Amiga
