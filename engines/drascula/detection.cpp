@@ -92,6 +92,26 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Drascula English version (Debian repacked files - bug #3612236)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "5c4432a7f9352260143c53e925745181", 31909218},
+				// HACK: List packet.001 twice to ensure this detector entry
+				// is ranked just as high as the others (which each have two
+				// detection files).
+				{"packet.001", 0, "5c4432a7f9352260143c53e925745181", 31909218},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			GF_PACKED,
+			GUIO0()
+		},
+	},
+
+	{
 		// Drascula French version (original packed files)
 		{
 			"drascula",
@@ -126,6 +146,23 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Drascula French version (Debian repacked files - bug #3612236)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "5c4432a7f9352260143c53e925745181", 31909218},
+				{"packet.002", 1, "fa6d0ad818c3740802f948b9d58b292e", 109989},
+				{NULL, 0, NULL, 0}
+			},
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			GF_PACKED,
+			GUIO0()
+		},
+	},
+
+	{
 		// Drascula German version (original packed files)
 		{
 			"drascula",
@@ -133,6 +170,23 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
 				{"packet.003", 1, "e8f4dc6091037329bab4ddb1cba35807", 719728},
+				{NULL, 0, NULL, 0}
+			},
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			GF_PACKED,
+			GUIO0()
+		},
+	},
+
+	{
+		// Drascula German version (Debian repacked files - bug #3612236)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "5c4432a7f9352260143c53e925745181", 31909218},
+				{"packet.003", 1, "91810ba140e13068309877e96870b97d", 109614},
 				{NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
@@ -173,6 +227,23 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Drascula Italian version (ScummVM repacked files)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "5c4432a7f9352260143c53e925745181", 31909218},
+				{"packet.005", 1, "3d303929f35059924cccbd72bea75ce8", 15491442},
+				{NULL, 0, NULL, 0}
+			},
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			GF_PACKED,
+			GUIO0()
+		},
+	},
+
+	{
 		// Drascula Spanish version (original packed version)
 		{
 			"drascula",
@@ -193,6 +264,23 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
 				{"packet.004", 1, "a289d3cf80d50f25ec569b653248437e", 17205838},
+				{NULL, 0, NULL, 0}
+			},
+			Common::ES_ESP,
+			Common::kPlatformDOS,
+			GF_PACKED,
+			GUIO0()
+		},
+	},
+
+	{
+		// Drascula Spanish version (Debian repacked files - bug #3612236)
+		{
+			"drascula",
+			0,
+			{
+				{"packet.001", 0, "5c4432a7f9352260143c53e925745181", 31909218},
+				{"packet.004", 1, "cec3d3654873e2f6f024ac31eec02a12", 16480118},
 				{NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
