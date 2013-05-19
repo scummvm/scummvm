@@ -188,6 +188,19 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Drascula French version (updated - bug #3612236)
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "1f9fbded768bee061cc22bc5bdeab540", 611),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	{
 		// Drascula Italian version (original packed version)
 		{
 			"drascula",
@@ -199,12 +212,26 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			GUIO0()
 		},
 	},
+
 	{
 		// Drascula Italian version
 		{
 			"drascula",
 			0,
 			AD_ENTRY1s("14.ald", "02b49a18328d0bf2efe6ba658c9c7a1d", 2098),
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	{
+		// Drascula Italian version (updated - bug #3612236)
+		{
+			"drascula",
+			0,
+			AD_ENTRY1s("14.ald", "ccaee939bb3b344c048f28f9205710d1", 2925),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
