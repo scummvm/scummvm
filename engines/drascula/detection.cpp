@@ -227,7 +227,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Drascula Italian version (Debian repacked files - bug #3612236)
+		// Drascula Italian version (ScummVM repacked files)
 		{
 			"drascula",
 			0,
