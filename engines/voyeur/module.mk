@@ -2,6 +2,9 @@ MODULE := engines/voyeur
 
 MODULE_OBJS := \
 	detection.o \
+	events.o \
+	files.o \
+	graphics.o \
 	voyeur.o
 
 # This module can be built as a plugin

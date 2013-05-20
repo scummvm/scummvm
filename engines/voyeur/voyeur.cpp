@@ -32,9 +32,11 @@ VoyeurEngine *g_vm;
 VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc) : Engine(syst),
 		_gameDescription(gameDesc), _randomSource("Voyeur") {
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
+	_bVoyBoltFile = NULL;
 }
 
 VoyeurEngine::~VoyeurEngine() {
+	delete _bVoyBoltFile;
 }
 
 Common::String VoyeurEngine::generateSaveName(int slot) {
@@ -73,17 +75,29 @@ Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc) 
 Common::Error VoyeurEngine::run() {
 	ESP_Init();
 
+	globalInitBolt();
+	_eventManager.resetMouse();
+
+	//doHeadTitle();
+
 	return Common::kNoError;
 }
+
 
 int VoyeurEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
-void VoyeurEngine::ESP_Init() {
+void VoyeurEngine::initialiseManagers() {
 	_eventManager.setVm(this);
+}
 
-	_eventManager.resetMouse();
+void VoyeurEngine::ESP_Init() {
+}
+
+void VoyeurEngine::globalInitBolt() {
+	_filesManager.openBOLTLib("buoy.blt", _bVoyBoltFile);
+
 
 }
 

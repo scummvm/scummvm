@@ -24,6 +24,8 @@
 #define VOYEUR_VOYEUR_H
 
 #include "voyeur/events.h"
+#include "voyeur/files.h"
+#include "voyeur/graphics.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
@@ -60,8 +62,14 @@ private:
 	const VoyeurGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 	EventManager _eventManager;
+	FilesManager _filesManager;
+	GraphicsManager _graphicsManager;
+
+	BoltFile *_bVoyBoltFile;
 
 	void ESP_Init();
+	void initialiseManagers();
+	void globalInitBolt();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
