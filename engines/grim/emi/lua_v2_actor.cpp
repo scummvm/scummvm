@@ -867,4 +867,20 @@ void Lua_V2::WalkActorToAvoiding() {
 	actor->walkTo(destVec);
 }
 
+void Lua_V2::EnableActorPuck() {
+	lua_Object actorObj = lua_getparam(1);
+
+	if (!lua_isuserdata(actorObj) || lua_tag(actorObj) != MKTAG('A','C','T','R'))
+		return;
+
+	Actor *actor = getactor(actorObj);
+	if (!actor)
+		return;
+
+	bool enable = getbool(2);
+
+	// FIXME: Implement.
+	warning("Lua_V2::EnableActorPuck: stub, actor: %s enable: %s", actor->getName().c_str(), enable ? "TRUE" : "FALSE");
+}
+
 } // end of namespace Grim

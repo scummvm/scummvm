@@ -430,7 +430,6 @@ static void stubError(const char *funcName) {
 // STUB_FUNC2(Lua_V2::ThumbnailFromFile)
 
 // Monkey specific LUA_OPCODEs
-STUB_FUNC2(Lua_V2::EnableActorPuck)
 STUB_FUNC2(Lua_V2::CompleteChore)
 STUB_FUNC2(Lua_V2::GetSoundVolume)
 STUB_FUNC2(Lua_V2::SetSoundVolume)
