@@ -108,10 +108,9 @@ void Lua_V2::UnloadActor() {
 	if (!actor)
 		return;
 
-	// This should be safe.
-	delete actor;
 	g_grim->invalidateActiveActorsList();
 	g_grim->immediatelyRemoveActor(actor);
+	delete actor;
 }
 
 void Lua_V2::SetActorWalkRate() {
