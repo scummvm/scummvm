@@ -102,6 +102,8 @@ void Skeleton::setAnim(AnimationEmi *anim) {
 	
 	for(int i = 0; i < _anim->_numBones; i++) {
 		int index = findJointIndex(_anim->_bones[i]._boneName, _numJoints);
+		if (index == -1)
+			continue;
 		if (_anim->_bones[i]._operation == 3) {
 			_joints[index]._animIndex[0] = i;
 		} else {
@@ -215,10 +217,14 @@ bool Skeleton::hasJoint(const Common::String & name) const {
 }
 
 Joint * Skeleton::getJointNamed(const Common::String & name) const {
+	int idx = findJointIndex(name, _numJoints);
 	if (name.empty()) {
 		return & _joints[0];
+	} else if (idx == -1) {
+		warning("Skeleton has no joint named '%s'!", name.c_str());
+		return & _joints[0];
 	} else {
-		return & _joints[findJointIndex(name, _numJoints)];
+		return & _joints[idx];
 	}
 }
 
