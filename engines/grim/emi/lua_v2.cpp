@@ -292,10 +292,10 @@ void Lua_V2::RenderModeUser() {
 }
 
 void Lua_V2::GetCameraPosition() {
-	warning("Lua_V2::GetCameraPosition: implement opcode, just returns 0, 0, 0");
-	lua_pushnumber(0);
-	lua_pushnumber(0);
-	lua_pushnumber(0);
+	Set::Setup *setup = g_grim->getCurrSet()->getCurrSetup();
+	lua_pushnumber(setup->_pos.x());
+	lua_pushnumber(setup->_pos.y());
+	lua_pushnumber(setup->_pos.z());
 }
 
 void Lua_V2::GetCameraYaw() {
