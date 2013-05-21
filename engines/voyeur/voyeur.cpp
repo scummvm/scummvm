@@ -96,8 +96,10 @@ void VoyeurEngine::ESP_Init() {
 }
 
 void VoyeurEngine::globalInitBolt() {
-	_filesManager.openBOLTLib("buoy.blt", _bVoyBoltFile);
-
+	_filesManager.openBoltLib("bvoy.blt", _bVoyBoltFile);
+	_bVoyBoltFile->getBoltGroup(0x10000);
+	_bVoyBoltFile->getBoltGroup(0x10100);
+	_fontPtr = _bVoyBoltFile->memberAddr(0x101);
 
 }
 

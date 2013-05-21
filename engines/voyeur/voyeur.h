@@ -66,6 +66,7 @@ private:
 	GraphicsManager _graphicsManager;
 
 	BoltFile *_bVoyBoltFile;
+	byte *_fontPtr;
 
 	void ESP_Init();
 	void initialiseManagers();

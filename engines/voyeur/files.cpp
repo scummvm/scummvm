@@ -28,7 +28,7 @@ FilesManager::FilesManager() {
 	_decompressSize = 0x7000;
 }
 
-bool FilesManager::openBOLTLib(const Common::String &filename, BoltFile *&boltFile) {
+bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFile) {
 	if (boltFile != NULL) {
 		_curLibPtr = boltFile;
 		return true;
@@ -46,11 +46,14 @@ bool FilesManager::openBOLTLib(const Common::String &filename, BoltFile *&boltFi
 
 BoltFile *BoltFile::_curLibPtr = NULL;
 BoltGroup *BoltFile::_curGroupPtr = NULL;
+BoltEntry *BoltFile::_curMemberPtr = NULL;
 byte *BoltFile::_curMemInfoPtr = NULL;
 int BoltFile::_fromGroupFlag = 0;
+byte BoltFile::_xorMask = 0;
+bool BoltFile::_encrypt = false;
 
 BoltFile::BoltFile() {
-	if (!_curFd.open("buoy.blt"))
+	if (!_curFd.open("bvoy.blt"))
 		error("Could not open buoy.blt");
 	_curFilePosition = 0;
 
@@ -63,7 +66,7 @@ BoltFile::BoltFile() {
 
 	int totalGroups = header[11] ? header[11] : 0x100;
 	for (int i = 0; i < totalGroups; ++i)
-		_groups.push_back(BoltGroup(_curFd.readStream(_curFd.size())));
+		_groups.push_back(BoltGroup(_curFd)));
 }
 
 BoltFile::~BoltFile() {
@@ -104,6 +107,40 @@ bool BoltFile::getBoltGroup(uint32 id) {
 	return true;
 }
 
+byte *BoltFile::memberAddr(uint32 id) {
+	BoltGroup &group = _groups[id >> 8];
+	if (!group._loaded)
+		return NULL;
+
+	return group._entries[id & 0xff]._data;
+}
+
+byte *BoltFile::getBoltMember(uint32 id) {
+	_curLibPtr = this;
+
+	// Get the group, and load it's entry list if not already loaded
+	_curGroupPtr = &_groups[(id >> 8) & 0xff << 4];
+	if (!_curGroupPtr->_loaded)
+		_curGroupPtr->load();
+
+	// Get the entry
+	_curMemberPtr = &_curGroupPtr->_entries[id & 0xff];
+	if (_curMemberPtr->_field1)
+		initMem(_curMemberPtr->_field1);
+
+	// Return the data for the entry if it's already been loaded
+	if (_curMemberPtr->_data)
+		return _curMemberPtr->_data;
+
+	_xorMask = _curMemberPtr->_xorMask;
+	_encrypt = (_curMemberPtr->_mode & 0x10) != 0;
+
+	if (_curGroupPtr->_loaded) {
+
+	}
+	//TODO
+}
+
 /*------------------------------------------------------------------------*/
 
 BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
@@ -114,7 +151,7 @@ BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
 	_file->read(&buffer[0], BOLT_GROUP_SIZE);
 	_loaded = false;
 	_callInitGro = buffer[1] != 0;
-	_count = buffer[3];
+	_count = buffer[3] ? buffer[3] : 256;	// TODO: Added this in. Check it's okay
 	_fileOffset = READ_LE_UINT32(&buffer[8]);
 }
 
@@ -128,16 +165,30 @@ void BoltGroup::load() {
 	int count = _count ? _count : 256;
 	for (int i = 0; i < count; ++i)
 		_entries.push_back(BoltEntry(_file));
+
+	_loaded = true;
 }
 
 /*------------------------------------------------------------------------*/
 
 BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
-	
+	_data = NULL;
+
+	byte buffer[16];
+	_file->read(&buffer[0], 16);
+	_mode = buffer[0];
+	_field1 = buffer[1];
+	_field3 = buffer[3];
+	_xorMask = buffer[4] & 0xff;	// TODO: Is this right??
+	_size = READ_LE_UINT32(&buffer[4]);
+	_fileOffset = READ_LE_UINT32(&buffer[8]); 
+}
+
+BoltEntry::~BoltEntry() {
+	delete[] _data;
 }
 
 void BoltEntry::load() {
-
 }
 
 } // End of namespace Voyeur

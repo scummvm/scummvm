@@ -37,27 +37,32 @@ class BoltFile {
 private:
 	static BoltFile *_curLibPtr;
 	static BoltGroup *_curGroupPtr;
+	static BoltEntry *_curMemberPtr;
 	static byte *_curMemInfoPtr;
 	static int _fromGroupFlag;
+	static byte _xorMask;
+	static bool _encrypt;
 private:
 	Common::File _curFd;
 	int _curFilePosition;
 	Common::Array<BoltGroup> _groups;
 private:
-	bool getBoltGroup(uint32 id);
 	void resolveAll() {}
-	byte *getBoltMember(uint32 id) { return NULL; }
-public:
-	BoltFile();
-	~BoltFile();
+	byte *getBoltMember(uint32 id);
 
 	// Methods copied into bolt virtual table
 	void initType() {}
 	void termType() {}
-	void initMem() {}
+	void initMem(int id) {}
 	void termMem() {}
 	void initGro() {}
 	void termGro() {}
+public:
+	BoltFile();
+	~BoltFile();
+
+	bool getBoltGroup(uint32 id);
+	byte *memberAddr(uint32 id);
 };
 
 class BoltGroup {
@@ -81,9 +86,16 @@ class BoltEntry {
 private:
 	Common::SeekableReadStream *_file;
 public:
+	byte _mode;
+	byte _field1;
+	byte _field3;
 	int _fileOffset;
+	byte _xorMask;
+	int _size;
+	byte *_data;
 public:
 	BoltEntry(Common::SeekableReadStream *f);
+	virtual ~BoltEntry();
 
 	void load();
 };
@@ -96,8 +108,7 @@ public:
 public:
 	FilesManager();
 
-	bool openBOLTLib(const Common::String &filename, BoltFile *&boltFile);
-
+	bool openBoltLib(const Common::String &filename, BoltFile *&boltFile);
 };
 
 } // End of namespace Voyeur
