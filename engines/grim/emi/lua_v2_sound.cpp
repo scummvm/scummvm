@@ -206,6 +206,20 @@ void Lua_V2::ImFlushStack() {
 	g_sound->flushStack();
 }
 
+static Common::String addSoundSuffix(const char *fname) {
+	Common::String filename = fname;
+	if (g_grim->getGameFlags() != ADGF_DEMO) {
+		if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+			filename += ".scx";
+		} else {
+			if (!filename.hasSuffix(".aif") && !filename.hasSuffix(".AIF")) {
+				filename += ".aif";
+			}
+		}
+	}
+	return filename;
+}
+
 
 void Lua_V2::LoadSound() {
 	lua_Object strObj = lua_getparam(1);
@@ -215,8 +229,7 @@ void Lua_V2::LoadSound() {
 
 	const char *str = lua_getstring(strObj);
 
-	Common::String filename = str;
-	filename += ".aif";
+	Common::String filename = addSoundSuffix(str);
 
 	PoolSound *sound = new PoolSound(filename);
 	lua_pushusertag(sound->getId(), MKTAG('A', 'I', 'F', 'F'));
@@ -275,19 +288,9 @@ void Lua_V2::PlaySound() {
 		return;
 
 	const char *str = lua_getstring(strObj);
-	Common::String filename = str;
+	Common::String filename = addSoundSuffix(str);
 
 	SoundTrack *track;
-
-	if (g_grim->getGameFlags() != ADGF_DEMO) {
-		if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-			filename += ".scx";
-		} else {
-			if (!filename.hasSuffix(".aif")) {
-				filename += ".aif";
-			}
-		}
-	}
 
 	Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
 	if (!stream) {
