@@ -719,7 +719,7 @@ void AsScene1002DoorSpy::stDoorSpyBoxingGlove() {
 }
 
 SsCommonPressButton::SsCommonPressButton(NeverhoodEngine *vm, Scene *parentScene, uint32 fileHash1, uint32 fileHash2, int surfacePriority, uint32 soundFileHash) 
-	: StaticSprite(vm, 1100), _parentScene(parentScene), _status(0) {
+	: StaticSprite(vm, 1100), _parentScene(parentScene), _status(0), _countdown(0) {
 
 	_soundFileHash = soundFileHash != 0 ? soundFileHash : 0x44141000;
 	_fileHashes[0] = fileHash1;
