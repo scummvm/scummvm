@@ -66,7 +66,7 @@ BoltFile::BoltFile() {
 
 	int totalGroups = header[11] ? header[11] : 0x100;
 	for (int i = 0; i < totalGroups; ++i)
-		_groups.push_back(BoltGroup(_curFd)));
+		_groups.push_back(BoltGroup(&_curFd));
 }
 
 BoltFile::~BoltFile() {
@@ -90,16 +90,14 @@ bool BoltFile::getBoltGroup(uint32 id) {
 	if (_curGroupPtr->_callInitGro)
 		initGro();
 
-	if ((id >> 16) == 0) {
-		if (!_curGroupPtr->_loaded) {
-			_curGroupPtr->load();
-		} else {
-			id &= 0xff00;
-			for (int idx = 0; idx < count; ++idx, ++id) {
-				byte *member = getBoltMember(id);
-				assert(member);
-			}
+	if ((id >> 16) != 0) {
+		id &= 0xff00;
+		for (int idx = 0; idx < count; ++idx, ++id) {
+			byte *member = getBoltMember(id);
+			assert(member);
 		}
+	} else if (!_curGroupPtr->_loaded) {
+		_curGroupPtr->load();
 	}
 
 	resolveAll();
@@ -139,6 +137,8 @@ byte *BoltFile::getBoltMember(uint32 id) {
 
 	}
 	//TODO
+
+	return NULL;
 }
 
 /*------------------------------------------------------------------------*/
@@ -158,12 +158,8 @@ BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
 void BoltGroup::load() {
 	_file->seek(_fileOffset);
 
-	byte header[4];
-	_file->read(&header[0], 4);
-
 	// Read the entries
-	int count = _count ? _count : 256;
-	for (int i = 0; i < count; ++i)
+	for (int i = 0; i < _count; ++i)
 		_entries.push_back(BoltEntry(_file));
 
 	_loaded = true;
