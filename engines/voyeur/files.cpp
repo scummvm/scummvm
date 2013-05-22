@@ -59,7 +59,7 @@ int BoltFile::_bufSize = 0;
 byte *BoltFile::_bufP = NULL;
 byte *BoltFile::_bufStart = NULL;
 byte *BoltFile::_bufPos = NULL;
-byte BoltFile::_decompressBuf[512];
+byte BoltFile::_decompressBuf[DECOMPRESS_SIZE];
 int BoltFile::_historyIndex;
 byte BoltFile::_historyBuffer[0x200];
 int BoltFile::_runLength;
@@ -278,11 +278,11 @@ void BoltFile::nextBlock() {
 	if (_curFilePosition != _bufferEnd)
 		_curFd.seek(_bufferEnd);
 
-	_bufferBegin = _curFilePosition;
+	_bufferBegin = _bufferEnd;
 	int bytesRead = _curFd.read(_bufStart, _bufSize);
 
 	_bufferEnd = _curFilePosition = _bufferBegin + bytesRead;
-	_bytesLeft -= bytesRead;
+	_bytesLeft = bytesRead - 1;
 	_bufPos = _bufStart;
 }
 

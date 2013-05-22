@@ -32,7 +32,7 @@ namespace Voyeur {
 class VoyeurEngine;
 class BoltGroup;
 class BoltEntry;
-#define DECOMPRESS_SIZE 512
+#define DECOMPRESS_SIZE 0x7000
 
 class BoltFile {
 private:
