@@ -105,6 +105,7 @@ int LipSync::getAnim(int pos) {
 	return -1;
 }
 
+// TODO: Figure out which one is 0x0000, use 0 for now.
 const LipSync::PhonemeAnim LipSync::_animTable[] = {
 	{0x005F, 0}, {0x0251, 1}, {0x0061, 1}, {0x00E6, 1}, {0x028C, 8},
 	{0x0254, 1}, {0x0259, 1}, {0x0062, 6}, {0x02A7, 2}, {0x0064, 2},
@@ -115,7 +116,7 @@ const LipSync::PhonemeAnim LipSync::_animTable[] = {
 	{0x0070, 6}, {0x0072, 2}, {0x027B, 2}, {0x0279, 2}, {0x0073, 2},
 	{0x0283, 2}, {0x0074, 2}, {0x027E, 2}, {0x03B8, 5}, {0x028A, 9},
 	{0x0075, 9}, {0x0076, 4}, {0x0077, 9}, {0x006A, 8}, {0x007A, 2},
-	{0x0292, 2}, {0x002E, 2}
+	{0x0292, 2}, {0x002E, 2}, {0x0000, 0}
 };
 
 const int LipSync::_animTableSize = sizeof(LipSync::_animTable) / sizeof(LipSync::_animTable[0]);
