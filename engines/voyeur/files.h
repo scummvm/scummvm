@@ -32,6 +32,7 @@ namespace Voyeur {
 class VoyeurEngine;
 class BoltGroup;
 class BoltEntry;
+#define DECOMPRESS_SIZE 512
 
 class BoltFile {
 private:
@@ -42,16 +43,36 @@ private:
 	static int _fromGroupFlag;
 	static byte _xorMask;
 	static bool _encrypt;
+	// TODO: Move decompression statics and methods into BoltEntry
+	static int _curFilePosition;
+	static int _bufferEnd;
+	static int _bufferBegin;
+	static int _bytesLeft;
+	static int _bufSize;
+	static byte *_bufP;
+	static byte *_bufStart;
+	static byte *_bufPos;
+	static byte _decompressBuf[DECOMPRESS_SIZE];
+	static int _historyIndex;
+	static byte _historyBuffer[0x200];
+	static int _runLength;
+	static int _decompState;
+	static int _runType;
+	static int _runValue;
+	static int _runOffset;
 private:
 	Common::File _curFd;
-	int _curFilePosition;
 	Common::Array<BoltGroup> _groups;
+
+	// Decompression
+	byte *decompress(byte *buf, int size, int mode);
+	void nextBlock();
 private:
 	void resolveAll() {}
 	byte *getBoltMember(uint32 id);
 
 	// Methods copied into bolt virtual table
-	void initType() {}
+	void initType();
 	void termType() {}
 	void initMem(int id) {}
 	void termMem() {}
@@ -69,11 +90,11 @@ class BoltGroup {
 private:
 	Common::SeekableReadStream *_file;
 public:
-	bool _loaded;
+	byte _loaded;
+	bool _processed;
 	bool _callInitGro;
 	int _count;
 	int _fileOffset;
-	byte *_groupPtr;
 	Common::Array<BoltEntry> _entries;
 public:
 	BoltGroup(Common::SeekableReadStream *f); 

@@ -51,6 +51,22 @@ byte *BoltFile::_curMemInfoPtr = NULL;
 int BoltFile::_fromGroupFlag = 0;
 byte BoltFile::_xorMask = 0;
 bool BoltFile::_encrypt = false;
+int BoltFile::_curFilePosition = 0;
+int BoltFile::_bufferEnd = 0;
+int BoltFile::_bufferBegin = 0;
+int BoltFile::_bytesLeft = 0;
+int BoltFile::_bufSize = 0;
+byte *BoltFile::_bufP = NULL;
+byte *BoltFile::_bufStart = NULL;
+byte *BoltFile::_bufPos = NULL;
+byte BoltFile::_decompressBuf[512];
+int BoltFile::_historyIndex;
+byte BoltFile::_historyBuffer[0x200];
+int BoltFile::_runLength;
+int BoltFile::_decompState;
+int BoltFile::_runType;
+int BoltFile::_runValue;
+int BoltFile::_runOffset;
 
 BoltFile::BoltFile() {
 	if (!_curFd.open("bvoy.blt"))
@@ -79,11 +95,8 @@ bool BoltFile::getBoltGroup(uint32 id) {
 	_curGroupPtr = &_groups[(id >> 8) & 0xff];
 	int count = _curGroupPtr->_count ? _curGroupPtr->_count : 256;
 
-	if (_curGroupPtr->_groupPtr) {
-		// Group already loaded
-		_curMemInfoPtr = _curGroupPtr->_groupPtr;
-	} else {
-		// Load the group
+	if (!_curGroupPtr->_loaded) {
+		// Load the group index
 		_curGroupPtr->load();
 	}
 
@@ -96,7 +109,8 @@ bool BoltFile::getBoltGroup(uint32 id) {
 			byte *member = getBoltMember(id);
 			assert(member);
 		}
-	} else if (!_curGroupPtr->_loaded) {
+	} else if (!_curGroupPtr->_processed) {
+		_curGroupPtr->_processed = true;
 		_curGroupPtr->load();
 	}
 
@@ -133,12 +147,143 @@ byte *BoltFile::getBoltMember(uint32 id) {
 	_xorMask = _curMemberPtr->_xorMask;
 	_encrypt = (_curMemberPtr->_mode & 0x10) != 0;
 
-	if (_curGroupPtr->_loaded) {
+	if (_curGroupPtr->_processed) {
+		// TODO: Figure out weird access type. Uncompressed read perhaps?
+		//int fileDiff = _curGroupPtr->_fileOffset - _curMemberPtr->_fileOffset;
 
+	} else {
+		_bufStart = _decompressBuf;
+		_bufSize = DECOMPRESS_SIZE;
+
+		if (_curMemberPtr->_fileOffset < _bufferBegin || _curMemberPtr->_fileOffset >= _bufferEnd) {
+			_bytesLeft = 0;
+			_bufPos = _bufStart;
+			_bufferBegin = -1;
+			_bufferEnd = _curMemberPtr->_fileOffset;
+		} else {
+			_bufPos = _curMemberPtr->_fileOffset + _bufferBegin + _bufStart;
+			_bufSize = ((_bufPos - _bufStart) << 16) >> 16; // TODO: Validate this
+			_bytesLeft = _bufSize;
+		}
+
+		_decompState = 0;
+		_historyIndex = 0;
+		initType();
 	}
 	//TODO
 
 	return NULL;
+}
+
+void BoltFile::initType() {
+	_curMemberPtr->_data = decompress(0, _curMemberPtr->_size, _curMemberPtr->_mode);
+}
+
+#define NEXT_BYTE if (--_bytesLeft <= 0) nextBlock()
+
+byte *BoltFile::decompress(byte *buf, int size, int mode) {
+	if (buf)
+		buf = new byte[size];
+	byte *bufP = buf;
+
+	if (mode & 8) {
+		_decompState = 1;
+		_runType = 0;
+		_runLength = size;
+	}
+
+	while (size > 0) {
+		if (!_decompState) {
+			NEXT_BYTE;
+			byte nextByte = *_bufPos++;
+
+			switch (nextByte & 0xC0) {
+			case 0:
+				_runType = 0;
+				_runLength = 30 - (nextByte & 0x1f) + 1;
+				break;
+			case 0x40:
+				_runType = 1;
+				_runLength = 35 - (nextByte & 0x1f);
+				NEXT_BYTE;
+				_runOffset = *_bufPos++ + ((nextByte & 0x20) << 3);
+				break;
+			case 0x80:
+				_runType = 1;
+				_runLength = (nextByte & 0x20) ? ((32 - (nextByte & 0x1f)) << 2) + 2 :
+					(32 - (nextByte & 0x1f)) << 2;
+				NEXT_BYTE;
+				_runOffset = *_bufPos++ << 1;
+				break;
+			default:
+				_runType = 2;
+
+				if (nextByte & 0x20) {
+					_runLength = 0;
+				} else {
+					NEXT_BYTE;
+					_runLength = ((32 - (nextByte & 0x1f)) + (*_bufPos++ << 5)) << 2;
+					NEXT_BYTE;
+					_bufPos++;
+					NEXT_BYTE;
+					_runValue = *_bufPos++;
+				}
+				break;
+			}
+
+			_runOffset = _historyIndex - _runOffset;
+		}
+
+		int runOffset = _runOffset & 0x1ff;
+		int len;
+		if (_runLength <= size) {
+			len = _runLength;
+			_decompState = 0;
+		} else {
+			_decompState = 1;
+			_runLength = len = size;
+			if (_runType == 1)
+				_runOffset += len;
+		}
+
+		// Handle the run lengths
+		switch (_runType) {
+		case 0:
+			while (len-- > 0) {
+				NEXT_BYTE;
+				_historyBuffer[_historyIndex] = *_bufPos++;
+				_historyIndex = (_historyIndex + 1) & 0x1ff;
+			}
+			break;
+		case 1:
+			while (len-- > 0) {
+				_historyBuffer[_historyIndex] = _historyBuffer[runOffset];
+				*bufP++ = _historyBuffer[runOffset];
+				_historyIndex = (_historyIndex + 1) & 0x1ff;
+			}
+			break;
+		default:
+			while (len-- > 0) {
+				_historyBuffer[_historyIndex] = _runValue;
+				_historyIndex = (_historyIndex + 1) & 0x1ff;
+			}
+			break;
+		}
+	}
+
+	return buf;
+}
+
+void BoltFile::nextBlock() {
+	if (_curFilePosition != _bufferEnd)
+		_curFd.seek(_bufferEnd);
+
+	_bufferBegin = _curFilePosition;
+	int bytesRead = _curFd.read(_bufStart, _bufSize);
+
+	_bufferEnd = _curFilePosition = _bufferBegin + bytesRead;
+	_bytesLeft -= bytesRead;
+	_bufPos = _bufStart;
 }
 
 /*------------------------------------------------------------------------*/
@@ -146,10 +291,10 @@ byte *BoltFile::getBoltMember(uint32 id) {
 BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
 	byte buffer[BOLT_GROUP_SIZE];
 
-	_groupPtr = NULL;
+	_loaded = false;
 
 	_file->read(&buffer[0], BOLT_GROUP_SIZE);
-	_loaded = false;
+	_processed = buffer[0] != 0;
 	_callInitGro = buffer[1] != 0;
 	_count = buffer[3] ? buffer[3] : 256;	// TODO: Added this in. Check it's okay
 	_fileOffset = READ_LE_UINT32(&buffer[8]);
