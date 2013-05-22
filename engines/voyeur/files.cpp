@@ -92,7 +92,6 @@ bool BoltFile::getBoltGroup(uint32 id) {
 	++_fromGroupFlag;
 	_curLibPtr = this;
 	_curGroupPtr = &_groups[(id >> 8) & 0xff];
-	int count = _curGroupPtr->_count ? _curGroupPtr->_count : 256;
 
 	if (!_curGroupPtr->_loaded) {
 		// Load the group index
@@ -104,7 +103,7 @@ bool BoltFile::getBoltGroup(uint32 id) {
 
 	if ((id >> 16) != 0) {
 		id &= 0xff00;
-		for (int idx = 0; idx < count; ++idx, ++id) {
+		for (int idx = 0; idx < _curGroupPtr->_count; ++idx, ++id) {
 			byte *member = getBoltMember(id);
 			assert(member);
 		}
@@ -130,7 +129,7 @@ byte *BoltFile::getBoltMember(uint32 id) {
 	_curLibPtr = this;
 
 	// Get the group, and load it's entry list if not already loaded
-	_curGroupPtr = &_groups[(id >> 8) & 0xff << 4];
+	_curGroupPtr = &_groups[(id >> 8) & 0xff];
 	if (!_curGroupPtr->_loaded)
 		_curGroupPtr->load();
 
