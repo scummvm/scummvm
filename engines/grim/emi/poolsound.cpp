@@ -27,31 +27,49 @@
 
 namespace Grim {
 
-	PoolSound::PoolSound() {
-		track = NULL;
+	PoolSound::PoolSound() : _filename(""), _track(NULL) {
 	}
 
-	PoolSound::PoolSound(const Common::String &filename) {
+	PoolSound::PoolSound(const Common::String &filename) : _filename(""), _track(NULL) {
 		openFile(filename);
 	}
 
 	// Called when the engine restarts or Lua code calls FreeSound
 	PoolSound::~PoolSound() {
-		delete track;
+		if (!_track)
+			return;
+		_track->stop();
+		delete _track;
+	}
+
+	void PoolSound::play(bool looping) {
+		if (!_track)
+			return;
+		_track->setLooping(looping);
+		_track->play();
+	}
+
+	void PoolSound::stop() {
+		if (!_track)
+			return;
+		_track->stop();
 	}
 
 	void PoolSound::openFile(const Common::String &filename) {
-		track = new AIFFTrack(Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
 		Common::SeekableReadStream *stream = g_resourceloader->openNewStreamFile(filename, true);
-		if (!stream)
+		if (!stream) {
+			warning("Could not open PoolSound file %s", filename.c_str());
 			return;
-		track->openSound(filename, stream);
+		}
+		_filename = filename;
+		_track = new AIFFTrack(Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
+		_track->openSound(filename, stream);
 	}
 
 	void PoolSound::saveState(SaveGame *state) {
-		if (track && track->isStreamOpen()) {
+		if (_track && _track->isStreamOpen()) {
 			state->writeBool(true);
-			state->writeString(track->getSoundName());
+			state->writeString(_filename);
 		} else {
 			state->writeBool(false);
 		}

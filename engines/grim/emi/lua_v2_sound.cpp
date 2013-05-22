@@ -240,10 +240,8 @@ void Lua_V2::FreeSound() {
 	if (!lua_isuserdata(idObj) || lua_tag(idObj) != MKTAG('A', 'I', 'F', 'F'))
 		return;
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
-	if (sound) {
-		sound->track->stop();
+	if (sound)
 		delete sound;
-	}
 }
 
 void Lua_V2::PlayLoadedSound() {
@@ -259,8 +257,8 @@ void Lua_V2::PlayLoadedSound() {
 	bool looping = !lua_isnil(bool1Obj);
 
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
-	sound->track->setLooping(looping);
-	sound->track->play();
+	if (sound)
+		sound->play(looping);
 }
 
 void Lua_V2::PlayLoadedSoundFrom() {
@@ -274,9 +272,8 @@ void Lua_V2::StopSound() {
 		return;
 
 	PoolSound *sound = PoolSound::getPool().getObject(lua_getuserdata(idObj));
-	if (sound) {
-		sound->track->stop();
-	}
+	if (sound)
+		sound->stop();
 }
 
 void Lua_V2::PlaySound() {
