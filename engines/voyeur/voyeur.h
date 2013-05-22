@@ -57,6 +57,73 @@ enum VoyeurDebugChannels {
 
 struct VoyeurGameDescription;
 
+class Event {
+public:
+	int _hours;
+	int _minutes;
+	int _seconds;
+	int _type;
+	int _data1;
+	int _data2;
+	int _data3;
+	int _data4;
+};
+
+class SVoy {
+public:
+	int _delaySecs;
+	int _RTANum;
+	int _RTVNum;
+	int _switchBGNum;
+	int _group;
+	int _resolvePtr;
+	int _seconds;
+	int _minutes;
+	int _hours;
+	int _morning;
+	int _timeChangeFlag;
+	int _totalSeconds;
+	int _gameSeconds;
+	int _vCursorOn[160];
+	int _vCursorOff[160];
+	int _aCursorOn[60];
+	int _aCursorOff[60];
+	int _eCursorOn[60];
+	int _eCursorOff[60];
+	int _timeStart;
+	int _duration;
+	int _vidStart;
+	int _doApt;
+	int _function;
+	int _anim;
+	int _level;
+	int _levelDone;
+	int _flags;
+	int _evGroup;
+	byte *_evPicPtrs[6];
+	byte *_evCmPtrs[6];
+	int _audioTime;
+	int _phones[5];
+	int _numPhonesUsed;
+	int _evidence[20];
+	int _computerNum;
+	int _computerBut;
+	int _computerOn;
+	int _computerOff;
+	int _dead;
+	int _deadTime;
+	int _eventCnt;
+	Event _eventTable[1000];
+	int _curICF0;
+	int _curICF1;
+	int _fadeICF0;
+	int _fadeICF1;
+	int _fadeFunc;
+	int _lastInplay;
+	int _incriminate;
+	int _policeEvent;
+};
+
 class VoyeurEngine : public Engine {
 private:
 	const VoyeurGameDescription *_gameDescription;
@@ -67,6 +134,7 @@ private:
 
 	BoltFile *_bVoyBoltFile;
 	byte *_fontPtr;
+	SVoy _voy;
 
 	void ESP_Init();
 	void initialiseManagers();

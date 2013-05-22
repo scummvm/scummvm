@@ -30,7 +30,11 @@ namespace Voyeur {
 
 class GraphicsManager {
 public:
-	GraphicsManager() {}
+	bool _palFlag;
+public:
+	GraphicsManager();
+
+	void addFadeInt() { } // TODO;
 };
 
 } // End of namespace Voyeur

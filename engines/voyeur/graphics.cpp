@@ -24,4 +24,8 @@
 
 namespace Voyeur {
 
+GraphicsManager::GraphicsManager() {
+	_palFlag = false;
+}
+
 } // End of namespace Voyeur

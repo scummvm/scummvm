@@ -101,6 +101,18 @@ void VoyeurEngine::globalInitBolt() {
 	_bVoyBoltFile->getBoltGroup(0x10100);
 	_fontPtr = _bVoyBoltFile->memberAddr(0x101);
 
+	// Setup default flags
+	Common::fill((byte *)&_voy, (byte *)&_voy + sizeof(SVoy), 0);
+	_voy._eCursorOff[0x74 / 2] = 1;
+	_voy._eCursorOff[0x68 / 2] = 0;
+	_voy._eventTable[0x3e6]._data3 = 63;
+	_voy._eventTable[0x3e6]._data4 = 63;
+	_voy._evidence[19] = 0;
+	_voy._evidence[17] = 0;
+	_voy._evidence[18] = 9999;
+	
+	_voy._curICF0 = _graphicsManager._palFlag ? 0xFFFFA5E0 : 0x5F90;
+	_graphicsManager.addFadeInt();
 }
 
 } // End of namespace Voyeur
