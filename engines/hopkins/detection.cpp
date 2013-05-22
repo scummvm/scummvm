@@ -67,6 +67,7 @@ static const PlainGameDescriptor hopkinsGames[] = {
 
 const static char *directoryGlobs[] = {
 	"voice",
+	"link",
 	0
 };
 
