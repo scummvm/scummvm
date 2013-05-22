@@ -49,7 +49,6 @@ private:
 	static int _bufferBegin;
 	static int _bytesLeft;
 	static int _bufSize;
-	static byte *_bufP;
 	static byte *_bufStart;
 	static byte *_bufPos;
 	static byte _decompressBuf[DECOMPRESS_SIZE];

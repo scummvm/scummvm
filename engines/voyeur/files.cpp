@@ -56,7 +56,6 @@ int BoltFile::_bufferEnd = 0;
 int BoltFile::_bufferBegin = 0;
 int BoltFile::_bytesLeft = 0;
 int BoltFile::_bufSize = 0;
-byte *BoltFile::_bufP = NULL;
 byte *BoltFile::_bufStart = NULL;
 byte *BoltFile::_bufPos = NULL;
 byte BoltFile::_decompressBuf[DECOMPRESS_SIZE];
@@ -165,14 +164,13 @@ byte *BoltFile::getBoltMember(uint32 id) {
 			_bufSize = ((_bufPos - _bufStart) << 16) >> 16; // TODO: Validate this
 			_bytesLeft = _bufSize;
 		}
-
-		_decompState = 0;
-		_historyIndex = 0;
-		initType();
 	}
-	//TODO
 
-	return NULL;
+	_decompState = 0;
+	_historyIndex = 0;
+	initType();
+
+	return _curMemberPtr->_data;
 }
 
 void BoltFile::initType() {
@@ -182,7 +180,7 @@ void BoltFile::initType() {
 #define NEXT_BYTE if (--_bytesLeft <= 0) nextBlock()
 
 byte *BoltFile::decompress(byte *buf, int size, int mode) {
-	if (buf)
+	if (!buf)
 		buf = new byte[size];
 	byte *bufP = buf;
 
@@ -246,6 +244,9 @@ byte *BoltFile::decompress(byte *buf, int size, int mode) {
 				_runOffset += len;
 		}
 
+		// Reduce the remaining size
+		size -= len;
+
 		// Handle the run lengths
 		switch (_runType) {
 		case 0:
@@ -265,6 +266,7 @@ byte *BoltFile::decompress(byte *buf, int size, int mode) {
 		default:
 			while (len-- > 0) {
 				_historyBuffer[_historyIndex] = _runValue;
+				*bufP++ = _runValue;
 				_historyIndex = (_historyIndex + 1) & 0x1ff;
 			}
 			break;
