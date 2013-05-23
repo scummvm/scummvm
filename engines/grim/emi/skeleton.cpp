@@ -113,7 +113,7 @@ void Skeleton::setAnim(AnimationEmi *anim) {
 	resetAnim();
 }
 
-int Skeleton::findJointIndex(const Common::String & name, int max) const {
+int Skeleton::findJointIndex(const Common::String &name, int max) const {
 	if (_numJoints > 0) {
 		for(int i = 0; i < max; i++) {
 			if(!_joints[i]._name.compareToIgnoreCase(name)) {
@@ -212,11 +212,11 @@ void Skeleton::animate(float delta) {
 	} // end for
 }
 
-bool Skeleton::hasJoint(const Common::String & name) const {
+bool Skeleton::hasJoint(const Common::String &name) const {
 	return name.empty() || findJointIndex(name, _numJoints) >= 0;
 }
 
-Joint * Skeleton::getJointNamed(const Common::String & name) const {
+Joint *Skeleton::getJointNamed(const Common::String &name) const {
 	int idx = findJointIndex(name, _numJoints);
 	if (name.empty()) {
 		return & _joints[0];
