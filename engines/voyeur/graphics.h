@@ -24,19 +24,51 @@
 #define VOYEUR_GRAPHICS_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "graphics/surface.h"
 
 namespace Voyeur {
 
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 200
+#define PALETTE_COUNT 256
+#define PALETTE_SIZE (256 * 3)
+
+typedef void (*IntFuncPtr)();
+
+class IntNode {
+public:
+	IntNode *_nextNode;
+	IntFuncPtr _intFunc;
+	uint32 _curTime;
+	uint32 _timeReset;
+	uint32 _flags;
+public:
+	IntNode();
+};
+
 class GraphicsManager {
+private:
+	static void fadeIntFunc();
+	static void vDoFadeInt();
+	static void vDoCycleInt();
+	void addIntNode(IntNode *node);
 public:
 	bool _palFlag;
+	IntNode _fadeIntNode;
+	IntNode _cycleIntNode;
+	IntNode _evintnode;
+	IntNode _mainintnode;
+	byte _VGAColors[PALETTE_SIZE];
+	Common::Array<byte *> _colorChain;
 public:
 	GraphicsManager();
+	void sInitGraphics();
 
-	void addFadeInt() { } // TODO;
+	void addFadeInt();
+	void vInitColor();
 };
 
 } // End of namespace Voyeur
 
-#endif /* VOYEUR_VOYEUR_H */
+#endif /* VOYEUR_GRAPHICS_H */

@@ -3,6 +3,7 @@ MODULE := engines/voyeur
 MODULE_OBJS := \
 	detection.o \
 	events.o \
+	game.o \
 	files.o \
 	graphics.o \
 	voyeur.o

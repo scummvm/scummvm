@@ -133,4 +133,4 @@ public:
 
 } // End of namespace Voyeur
 
-#endif /* VOYEUR_VOYEUR_H */
+#endif /* VOYEUR_FILES_H */

@@ -21,6 +21,7 @@
  */
 
 #include "voyeur/voyeur.h"
+#include "voyeur/graphics.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -74,8 +75,8 @@ Common::Error VoyeurEngine::saveGameState(int slot, const Common::String &desc) 
 
 Common::Error VoyeurEngine::run() {
 	ESP_Init();
-
 	globalInitBolt();
+
 	_eventManager.resetMouse();
 
 	//doHeadTitle();
@@ -96,6 +97,8 @@ void VoyeurEngine::ESP_Init() {
 }
 
 void VoyeurEngine::globalInitBolt() {
+	initBolt();
+
 	_filesManager.openBoltLib("bvoy.blt", _bVoyBoltFile);
 	_bVoyBoltFile->getBoltGroup(0x10000);
 	_bVoyBoltFile->getBoltGroup(0x10100);
@@ -113,6 +116,20 @@ void VoyeurEngine::globalInitBolt() {
 	
 	_voy._curICF0 = _graphicsManager._palFlag ? 0xFFFFA5E0 : 0x5F90;
 	_graphicsManager.addFadeInt();
+}
+
+void VoyeurEngine::initBolt() {
+	vInitInterrupts();
+	_graphicsManager.sInitGraphics();
+	_graphicsManager.vInitColor();
+	initInput();
+}
+
+void VoyeurEngine::vInitInterrupts() {
+	_intPtr._colors = &_graphicsManager._VGAColors[0];
+}
+
+void VoyeurEngine::initInput() {
 }
 
 } // End of namespace Voyeur

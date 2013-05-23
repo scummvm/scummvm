@@ -20,25 +20,12 @@
  *
  */
 
-#ifndef VOYEUR_EVENTS_H
-#define VOYEUR_EVENTS_H
-
-#include "common/scummsys.h"
+#include "voyeur/game.h"
 
 namespace Voyeur {
 
-class VoyeurEngine;
+void IntData::audioInit() {
 
-class EventManager {
-private:
-	VoyeurEngine *_vm;
-public:
-	EventManager() {}
-	void setVm(VoyeurEngine *vm) { _vm = vm; }
-
-	void resetMouse();
-};
+}
 
 } // End of namespace Voyeur
-
-#endif /* VOYEUR_EVENTS_H */

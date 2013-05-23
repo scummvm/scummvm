@@ -21,11 +21,58 @@
  */
 
 #include "voyeur/graphics.h"
+#include "engines/util.h"
+#include "graphics/surface.h"
 
 namespace Voyeur {
 
 GraphicsManager::GraphicsManager() {
 	_palFlag = false;
+}
+
+void GraphicsManager::sInitGraphics() {
+	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, false);
+}
+
+void GraphicsManager::addFadeInt() {
+	_fadeIntNode._intFunc = fadeIntFunc;
+	_fadeIntNode._flags = 0;
+	_fadeIntNode._curTime = 0;
+	_fadeIntNode._timeReset = 1;
+	
+	addIntNode(&_fadeIntNode);
+}
+
+void GraphicsManager::vInitColor() {
+	_fadeIntNode._intFunc = vDoFadeInt;
+	_cycleIntNode._intFunc = vDoCycleInt;
+
+}
+
+void GraphicsManager::addIntNode(IntNode *node) {
+	
+}
+
+void GraphicsManager::fadeIntFunc() {
+
+}
+
+void GraphicsManager::vDoFadeInt() {
+	
+}
+
+void GraphicsManager::vDoCycleInt() {
+
+}
+
+/*------------------------------------------------------------------------*/
+
+IntNode::IntNode() {
+	_nextNode = NULL;
+	_intFunc = NULL;
+	_curTime = 0;
+	_timeReset = 0;
+	_flags = 0;
 }
 
 } // End of namespace Voyeur
