@@ -140,6 +140,7 @@ private:
 	bool _show_mouse;
 	bool _use_mouse_palette;
 
+	bool _virtcontrols_on;
 	int _virt_arrowkeys_pressed;
 
 	int _graphicsMode;

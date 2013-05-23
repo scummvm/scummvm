@@ -312,6 +312,7 @@ public:
 
 		//ResidualVM specific
 		kFeatureOpenGL,
+		kFeatureVirtControls,
 
 		/**
 		 * The presence of this feature indicates whether the displayLogFile()

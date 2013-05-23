@@ -748,7 +748,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			return;
 		}
 
-		if (_show_mouse) {
+		if (!_virtcontrols_on) {
 			e.type = Common::EVENT_MOUSEMOVE;
 
 			if (_touchpad_mode) {
@@ -881,7 +881,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		switch (arg2) {
 		case JACTION_DOWN:
 		case JACTION_MULTIPLE:
-			if (!_show_mouse) {
+			if (_virtcontrols_on) {
 				checkVirtArrowKeys(arg1, arg2, arg3, arg4, arg5, arg6);
 			}
 			return;
@@ -894,7 +894,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			if (arg1 > _fingersDown)
 				_fingersDown = arg1;
 
-			if (!_show_mouse) {
+			if (_virtcontrols_on) {
 				checkVirtArrowKeys(arg1, arg2, arg3, arg4, arg5, arg6);
 			}
 
