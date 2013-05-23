@@ -27,14 +27,13 @@
  */
 
 #include "engines/wintermute/base/base_quick_msg.h"
-#include "engines/wintermute/base/base_game.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-BaseQuickMsg::BaseQuickMsg(BaseGame *inGame, const char *text) {
+BaseQuickMsg::BaseQuickMsg(uint32 startTime, const char *text) {
 	_text = text;
-	_startTime = _gameRef->_currentTime;
+	_startTime = startTime;
 }
 
 
@@ -46,6 +45,11 @@ BaseQuickMsg::~BaseQuickMsg() {
 //////////////////////////////////////////////////////////////////////////
 const char *BaseQuickMsg::getText() const {
 	return _text.c_str();
+}
+
+//////////////////////////////////////////////////////////////////////////
+uint32 BaseQuickMsg::getStartTime() const {
+	return _startTime;
 }
 
 } // end of namespace Wintermute

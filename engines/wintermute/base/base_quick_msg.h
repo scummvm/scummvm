@@ -32,16 +32,16 @@
 #include "common/str.h"
 
 namespace Wintermute {
-class BaseGame;
+
 class BaseQuickMsg {
 public:
 	const char *getText() const;
-	uint32 _startTime;
-	BaseQuickMsg(BaseGame *inGame, const char *text);
+	uint32 getStartTime() const;
+	BaseQuickMsg(uint32 startTime, const char *text);
 	virtual ~BaseQuickMsg();
 private:
-	BaseGame *_gameRef;
 	Common::String _text;
+	uint32 _startTime;
 };
 
 } // end of namespace Wintermute
