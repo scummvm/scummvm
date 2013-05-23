@@ -34,10 +34,9 @@
 namespace Graphics {
 
 namespace BuiltinShaders {
-	extern const char *boxVertex;
-	extern const char *boxFragment;
-	extern const char *compatVertex;
-	extern const char *compatFragment;
+	extern const char *boxVertex, *boxFragment;
+	extern const char *compatVertex, *compatFragment;
+	extern const char *controlVertex, *controlFragment;
 }
 
 struct VertexAttrib {

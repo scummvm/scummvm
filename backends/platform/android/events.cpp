@@ -235,6 +235,25 @@ static Common::KeyCode determineKey(int dX, int dY) {
 	return Common::KEYCODE_INVALID;
 }
 
+OSystem_Android::CardinalSwipe::CardinalSwipe(int dX, int dY) {
+	if (abs(dX) > abs(dY)) {
+		if (dX > 0) {
+			distance = dX;
+			direction = kDirectionRight;
+		} else {
+			distance = abs(dX);
+			direction = kDirectionLeft;
+		}
+	} else {
+		if (dY > 0) {
+			distance = dY;
+			direction = kDirectionDown;
+		} else {
+			distance = abs(dY);
+			direction = kDirectionUp;
+		}
+	}
+}
 
 static const int kQueuedInputEventDelay = 50;
 
@@ -328,28 +347,7 @@ void OSystem_Android::updateEventScale() {
 	_eventScaleX = 100 * 640 / tex->width();
 }
 
-int OSystem_Android::_virt_numControls = 6;
-OSystem_Android::VirtControl OSystem_Android::_virtcontrols[] = {
-		{-2, 1, false, Common::KEYCODE_u, false},
-		{-3, 1, false, Common::KEYCODE_p, false},
-		{-1, 5, false, Common::KEYCODE_i, false},
-		{-1, 0, false, Common::KEYCODE_PAGEDOWN, false},
-		{-1, 1, false, Common::KEYCODE_KP_ENTER, false},
-		{-1, 2, false, Common::KEYCODE_PAGEUP, false},
-};
-
-
 uint16 OSystem_Android::getTouchArea(int x, int y) {
-	int scaledX = _virt_numDivisions * x / _egl_surface_width;
-	int scaledY = _virt_numDivisions * (_egl_surface_height - y) / _egl_surface_height;
-	for (uint16 i = 0; i < _virt_numControls; ++i) {
-		int testX = _virtcontrols[i].x < 0
-		          ? (_virtcontrols[i].x + _virt_numDivisions)
-		          : _virtcontrols[i].x;
-		if (scaledX == testX && scaledY == _virtcontrols[i].y)
-			return i;
-	}
-
 	float xPercent = float(x) / _egl_surface_width;
 
 	if (xPercent < 0.3)
@@ -707,8 +705,6 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			if (idx == kTouchAreaCenter) {
 				e.kbd.keycode = Common::KEYCODE_RETURN;
 				e.kbd.ascii = Common::ASCII_RETURN;
-			} else {
-				e.kbd.keycode = _virtcontrols[idx].keyCode;
 			}
 
 			lockMutex(_event_queue_lock);
@@ -813,9 +809,6 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 					_pointers[arg1].startX = _pointers[arg1].currentX = arg3;
 					_pointers[arg1].startY = _pointers[arg1].currentY = arg4;
 				}
-
-				if (touchArea == kTouchAreaJoystick)
-					LOGW("Started joystick move at (%d,%d)", arg3, arg4);
 			}
 			return;
 
@@ -839,7 +832,6 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 						_joystickPressing = newPressing;
 					}
-					LOGW("Joystick moved to (%d,%d)", arg3, arg4);
 				}
 			}
 			return;
@@ -880,34 +872,36 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 				unlockMutex(_event_queue_lock);
 			} else {
-				_pointers[arg1].active = false;
 				int dX = _pointers[arg1].currentX - _pointers[arg1].startX;
 				int dY = _pointers[arg1].currentY - _pointers[arg1].startY;
+				struct CardinalSwipe cs(dX, dY);
 
 				switch (_pointers[arg1].function) {
 				case kTouchAreaCenter: {
 					pointerFor(kTouchAreaCenter) = -1;
-					if (abs(dX) < 100 && abs(dY) < 100) {
-						sendKey(Common::KEYCODE_u);
-					} else if (abs(dX) > abs(dY)) {
-						if (dX > 0) {
-							sendKey(Common::KEYCODE_RIGHT);
-						} else {
-							sendKey(Common::KEYCODE_LEFT);
-						}
-					} else {
-						if (dY > 0) {
-							sendKey(Common::KEYCODE_DOWN);
-						} else {
-							sendKey(Common::KEYCODE_UP);
-						}
+					if (cs.distance < 100) {
+						sendKey(Common::KEYCODE_RETURN);
+						break;
+					}
+					switch (cs.direction) {
+					case CardinalSwipe::kDirectionLeft:
+						sendKey(Common::KEYCODE_LEFT);
+						break;
+					case CardinalSwipe::kDirectionUp:
+						sendKey(Common::KEYCODE_UP);
+						break;
+					case CardinalSwipe::kDirectionRight:
+						sendKey(Common::KEYCODE_RIGHT);
+						break;
+					case CardinalSwipe::kDirectionDown:
+						sendKey(Common::KEYCODE_DOWN);
+						break;
 					}
 					break;
 				}
 
 				case kTouchAreaJoystick:
 					pointerFor(kTouchAreaJoystick) = -1;
-					LOGW("Joystick move ended at (%d,%d)", arg3, arg4);
 					if (_joystickPressing != Common::KEYCODE_INVALID) {
 						lockMutex(_event_queue_lock);
 						e.kbd.keycode = _joystickPressing;
@@ -919,13 +913,15 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 				case kTouchAreaRight:
 					pointerFor(kTouchAreaRight) = -1;
-					if (abs(dX) > 50 || abs(dY) < 100) {
+					if (   cs.direction == CardinalSwipe::kDirectionLeft
+					    || cs.direction == CardinalSwipe::kDirectionRight
+					    || cs.distance < 100) {
 						sendKey(Common::KEYCODE_i);
 					} else {
-						if (dY > 0) {
-							sendKey(Common::KEYCODE_PAGEDOWN);
-						} else {
+						if (cs.direction == CardinalSwipe::kDirectionUp) {
 							sendKey(Common::KEYCODE_PAGEUP);
+						} else {
+							sendKey(Common::KEYCODE_PAGEDOWN);
 						}
 					}
 					break;
@@ -934,6 +930,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				default:
 					break;
 				}
+				_pointers[arg1].active = false;
 				_pointers[arg1].function = kTouchAreaNone;
 			}
 			return;

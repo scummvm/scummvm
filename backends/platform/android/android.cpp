@@ -150,7 +150,9 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_touchpad_scale(66),
 	_dpad_scale(4),
 	_fingersDown(0),
-	_trackball_scale(2) {
+	_trackball_scale(2),
+	_joystickPressing(Common::KEYCODE_INVALID),
+	_arrows_texture(0) {
 
 	_fsFactory = new POSIXFilesystemFactory();
 
@@ -180,8 +182,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 
 	for (int i = 0; i < 4; ++i)
 		_activePointers[i] = -1;
-
-	_joystickPressing = Common::KEYCODE_INVALID;
 }
 
 OSystem_Android::~OSystem_Android() {
@@ -193,6 +193,11 @@ OSystem_Android::~OSystem_Android() {
 	_fsFactory = 0;
 	delete _timerManager;
 	_timerManager = 0;
+
+	if (_arrows_texture) {
+		delete _arrows_texture;
+		_arrows_texture = 0;
+	}
 
 	deleteMutex(_event_queue_lock);
 }

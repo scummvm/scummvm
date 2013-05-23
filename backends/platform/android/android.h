@@ -252,17 +252,9 @@ private:
 		kTouchAreaCenter = 0xfffe,
 		kTouchAreaRight = 0xfffd,
 		kTouchAreaNone = 0xfffc,
-
 	};
 
 	uint16 getTouchArea(int x, int y);
-
-	struct VirtControl {
-		int x, y;
-		bool sticky;
-		Common::KeyCode keyCode;
-		bool active;
-	};
 
 	struct Pointer {
 		uint16 startX, startY;
@@ -271,16 +263,27 @@ private:
 		bool active;
 	};
 
+	struct CardinalSwipe {
+		CardinalSwipe(int dX, int dY);
+		uint16 distance;
+		enum Direction {
+			kDirectionLeft,
+			kDirectionUp,
+			kDirectionRight,
+			kDirectionDown
+		} direction;
+	};
+
 	enum { kNumPointers = 5 };
-	static int _virt_numControls;
-	static VirtControl _virtcontrols[];
-	int _virt_numDivisions;
 	Pointer _pointers[kNumPointers];
 	int _activePointers[4];
 	Common::KeyCode _joystickPressing;
 	int &pointerFor(TouchArea ta);
+	const Common::Rect clipFor(const CardinalSwipe &cs);
+
 	void initVirtControls();
 	void drawVirtControls();
+	GLESTexture *_arrows_texture;
 
 protected:
 	// PaletteManager API

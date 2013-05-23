@@ -97,7 +97,7 @@ void GLESBaseTexture::initGL() {
 	}
 
 	const char* attributes[] = { "position", "texcoord", NULL };
-	g_box_shader = Graphics::Shader::fromStrings("box", Graphics::BuiltinShaders::boxVertex, Graphics::BuiltinShaders::boxFragment, attributes);
+	g_box_shader = Graphics::Shader::fromStrings("control", Graphics::BuiltinShaders::controlVertex, Graphics::BuiltinShaders::controlFragment, attributes);
 	g_verticesVBO = Graphics::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
 	g_box_shader->enableVertexAttribute("position", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	g_box_shader->enableVertexAttribute("texcoord", g_verticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
@@ -186,7 +186,7 @@ void GLESBaseTexture::allocBuffer(GLuint w, GLuint h) {
 	initSize();
 }
 
-void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
+void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, const Common::Rect &clip) {
 //	LOGD("*** Texture %p: Drawing %dx%d rect to (%d,%d)", this, w, h, x, y);
 
 	assert(g_box_shader);
@@ -197,13 +197,14 @@ void GLESBaseTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	const GLfloat offsetY    = float(y) / float(JNI::egl_surface_height);
 	const GLfloat sizeW      = float(w) / float(JNI::egl_surface_width);
 	const GLfloat sizeH      = float(h) / float(JNI::egl_surface_height);
-	const GLfloat tex_width  = float(_surface.w) / float(_texture_width);
-	const GLfloat tex_height = float(_surface.h) / float(_texture_height);
+	Math::Vector4d clipV = Math::Vector4d(clip.left, clip.top, clip.right, clip.bottom);
+	clipV.x() /= _texture_width; clipV.y() /= _texture_height;
+	clipV.z() /= _texture_width; clipV.w() /= _texture_height;
 //	LOGD("*** Drawing at (%f,%f) , size %f x %f", float(x) / float(_surface.w), float(y) / float(_surface.h),  tex_width, tex_height);
 
 	g_box_shader->setUniform("offsetXY", Math::Vector2d(offsetX, offsetY));
 	g_box_shader->setUniform("sizeWH", Math::Vector2d(sizeW, sizeH));
-	g_box_shader->setUniform("texcrop", Math::Vector2d(tex_width, tex_height));
+	g_box_shader->setUniform("clip", clipV);
 	g_box_shader->setUniform("flipY", !_is_game_texture);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -281,7 +282,7 @@ void GLESTexture::fillBuffer(uint32 color) {
 	setDirty();
 }
 
-void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
+void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, const Common::Rect &clip) {
 	if (_all_dirty) {
 		_dirty_rect.top = 0;
 		_dirty_rect.left = 0;
@@ -323,7 +324,7 @@ void GLESTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 								dwidth, dheight, _glFormat, _glType, _tex));
 	}
 
-	GLESBaseTexture::drawTexture(x, y, w, h);
+	GLESBaseTexture::drawTexture(x, y, w, h, clip);
 }
 
 GLES4444Texture::GLES4444Texture() :
@@ -331,6 +332,13 @@ GLES4444Texture::GLES4444Texture() :
 }
 
 GLES4444Texture::~GLES4444Texture() {
+}
+
+GLES8888Texture::GLES8888Texture() :
+	GLESTexture(GL_RGBA, GL_UNSIGNED_BYTE, pixelFormat()) {
+}
+
+GLES8888Texture::~GLES8888Texture() {
 }
 
 GLES5551Texture::GLES5551Texture() :
@@ -419,8 +427,7 @@ void GLESFakePaletteTexture::updateBuffer(GLuint x, GLuint y, GLuint w,
 	} while (--h);
 }
 
-void GLESFakePaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w,
-										GLshort h) {
+void GLESFakePaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h, const Common::Rect &clip) {
 	if (_all_dirty) {
 		_dirty_rect.top = 0;
 		_dirty_rect.left = 0;
@@ -452,7 +459,7 @@ void GLESFakePaletteTexture::drawTexture(GLshort x, GLshort y, GLshort w,
 								dwidth, dheight, _glFormat, _glType, _buf));
 	}
 
-	GLESBaseTexture::drawTexture(x, y, w, h);
+	GLESBaseTexture::drawTexture(x, y, w, h, clip);
 }
 
 const Graphics::PixelFormat &GLESFakePaletteTexture::getPixelFormat() const {

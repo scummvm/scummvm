@@ -41,6 +41,7 @@
 
 #include "common/endian.h"
 #include "graphics/conversion.h"
+#include "graphics/decoders/tga.h"
 #include "graphics/opengles2/shader.h"
 
 #include "backends/platform/android/android.h"
@@ -569,57 +570,82 @@ void OSystem_Android::updateScreen() {
 
 }
 
-static Graphics::Shader *_virtcontrols_shader = NULL;
-static const char *_virtVertex =
-		"#version 100\n"
-		"attribute vec2 position;\n"
-		"uniform vec2 offsetXY;\n"
-		"uniform vec2 sizeWH;\n"
-		"void main() {\n"
-			"vec2 pos = offsetXY + position * sizeWH;\n"
-			"pos.x = pos.x * 2.0 - 1.0;\n"
-			"pos.y = pos.y * 2.0 - 1.0;\n"
-			"gl_Position = vec4(pos, 0.0, 1.0);\n"
-		"}\n";
+static GLES8888Texture *loadBuiltinTexture(const char *filename) {
+	Common::ArchiveMemberPtr member = SearchMan.getMember(filename);
+	Common::SeekableReadStream *str = member->createReadStream();
+	Graphics::TGADecoder dec;
+	dec.loadStream(*str);
+	void *pixels = dec.getSurface()->pixels;
 
-static const char *_virtFragment =
-		"#version 100\n"
-		"precision mediump float;\n"
-		"uniform bool active;\n"
-		"void main() {\n"
-			"gl_FragColor = vec4(1.0, 1.0, 1.0, active ? 0.8 : 0.3);\n"
-		"}\n";
+	GLES8888Texture *ret = new GLES8888Texture();
+	uint16 w = dec.getSurface()->w;
+	uint16 h = dec.getSurface()->h;
+	uint16 pitch = dec.getSurface()->pitch;
+	ret->allocBuffer(w, h);
+	ret->updateBuffer(0, 0, w, h, pixels, pitch);
+
+	delete str;
+	return ret;
+}
 
 void OSystem_Android::initVirtControls() {
-	if (_virtcontrols_shader)
-		return;
+	if (!_arrows_texture)
+		_arrows_texture = loadBuiltinTexture("arrows.tga");
+}
 
-	const char* attributes[] = { "position", NULL };
-	_virtcontrols_shader = Graphics::Shader::fromStrings("key", _virtVertex, _virtFragment, attributes);
-	_virtcontrols_shader->enableVertexAttribute("position", g_verticesVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
-	_virt_numDivisions = _egl_surface_width > 800 ? 12 : 8;
+const Common::Rect OSystem_Android::clipFor(const CardinalSwipe &cs) {
+	switch (cs.direction) {
+	case CardinalSwipe::kDirectionLeft:
+		return Common::Rect(0, 128, 128, 256);
+	case CardinalSwipe::kDirectionUp:
+		return Common::Rect(0, 0, 128, 128);
+	case CardinalSwipe::kDirectionRight:
+		return Common::Rect(128, 128, 256, 256);
+	case CardinalSwipe::kDirectionDown:
+		return Common::Rect(128, 0, 256, 128);
+	default: // unreachable
+		return Common::Rect(0, 0, 1, 1);
+	}
 }
 
 void OSystem_Android::drawVirtControls() {
 	if (_show_overlay)
 		return;
-	_virtcontrols_shader->use();
-	float div = 1.0 / _virt_numDivisions;
-	float divX = div;
-	float divY = div;
-	_virtcontrols_shader->setUniform("sizeWH", 0.9 * Math::Vector2d(divX, divY));
 
-	glEnable(GL_BLEND);
+	int joyPtr = pointerFor(kTouchAreaJoystick);
+	if (joyPtr != -1) {
+		Pointer &joy = _pointers[joyPtr];
+		CardinalSwipe cs(joy.currentX - joy.startX, joy.currentY - joy.startY);
 
-	for (int control = 0; control < _virt_numControls; ++control) {
-		float offsetX = (_virtcontrols[control].x + 0.1) * divX;
-		float offsetY = (_virtcontrols[control].y + 0.1) * divY;
-		if (offsetX < 0)
-			offsetX += 1.0;
+		if (cs.distance >= 50) {
+			Common::Rect clip = clipFor(cs);
+			_arrows_texture->drawTexture(2 * _egl_surface_width / 10, _egl_surface_height / 2, 64, 64, clip);
+		}
+	}
 
-		_virtcontrols_shader->setUniform("offsetXY", Math::Vector2d(offsetX, offsetY));
-		_virtcontrols_shader->setUniform("active", _virtcontrols[control].active);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	int centerPtr = pointerFor(kTouchAreaCenter);
+	if (centerPtr != -1) {
+		Pointer &center = _pointers[centerPtr];
+		CardinalSwipe cs(center.currentX - center.startX, center.currentY - center.startY);
+
+		if (cs.distance >= 100) {
+			Common::Rect clip = clipFor(cs);
+			_arrows_texture->drawTexture(_egl_surface_width / 2, _egl_surface_height / 2, 64, 64, clip);
+		}
+	}
+
+	int rightPtr = pointerFor(kTouchAreaRight);
+	if (rightPtr != -1) {
+		Pointer &right = _pointers[rightPtr];
+		CardinalSwipe cs(right.currentX - right.startX, right.currentY - right.startY);
+
+		if (cs.distance >= 100) {
+			if (   cs.direction == CardinalSwipe::kDirectionDown
+			    || cs.direction == CardinalSwipe::kDirectionUp) {
+				Common::Rect clip = clipFor(cs);
+				_arrows_texture->drawTexture( 8 * _egl_surface_width / 10, _egl_surface_height / 2, 64, 64, clip);
+			}
+		}
 	}
 }
 
