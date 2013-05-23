@@ -2,6 +2,7 @@ package org.residualvm.residualvm;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.content.Context;
 import android.view.KeyEvent;
@@ -30,11 +31,15 @@ public class ResidualVMEvents implements
 	public static final int JE_LONG = 10;
 	public static final int JE_FLING = 11;
 	public static final int JE_QUIT = 0x1000;
+	
+	private final int REL_SWIPE_MIN_DISTANCE;
+	private final int REL_SWIPE_THRESHOLD_VELOCITY;
 
 	final protected Context _context;
 	final protected ResidualVM _residualvm;
 	final protected GestureDetector _gd;
 	final protected int _longPress;
+	final protected int _width;
 
 	public ResidualVMEvents(Context context, ResidualVM residualvm) {
 		_context = context;
@@ -45,6 +50,11 @@ public class ResidualVMEvents implements
 		//_gd.setIsLongpressEnabled(false);
 
 		_longPress = ViewConfiguration.getLongPressTimeout();
+		
+		DisplayMetrics dm = context.getResources().getDisplayMetrics();
+		REL_SWIPE_MIN_DISTANCE       = (int)(120 * dm.densityDpi / 160.0f);
+		REL_SWIPE_THRESHOLD_VELOCITY = (int)(100 * dm.densityDpi / 160.0f);
+		_width = dm.widthPixels;
 	}
 
 	final public void sendQuitEvent() {
@@ -73,6 +83,7 @@ public class ResidualVMEvents implements
 			}
 		}
 	};
+
 
 	// OnKeyListener
 	final public boolean onKey(View v, int keyCode, KeyEvent e) {
@@ -162,26 +173,33 @@ public class ResidualVMEvents implements
 	}
 
 	final public boolean onTouchEvent(MotionEvent e) {
-		final int action = e.getAction();
+		
+		_gd.onTouchEvent(e);
+		
+		final int action = e.getActionMasked();
 
-		// constants from APIv5:
-		// (action & ACTION_POINTER_INDEX_MASK) >> ACTION_POINTER_INDEX_SHIFT
-		final int pointer = (action & 0xff00) >> 8;
-		
-		final int x0 = (int)e.getX();
-		final int y0 = (int)e.getY();
-		final int x1 = (e.getPointerCount() > 1 ? (int)e.getX(1) : -1);
-		final int y1 = (e.getPointerCount() > 1 ? (int)e.getY(1) : -1);
-		
-		if (pointer > 0) {
-			_residualvm.pushEvent(JE_MULTI, pointer, action & 0xff, // ACTION_MASK
-					x0, y0, x1, y1);
+		// ACTION_MOVE always returns the first pointer as the "active" one.
+		if (action == MotionEvent.ACTION_MOVE) {
+			for (int idx = 0; idx < e.getPointerCount(); ++idx) {
+				final int pointer = e.getPointerId(idx);
+				
+				final int x = (int)e.getX(idx);
+				final int y = (int)e.getY(idx);
+				
+				_residualvm.pushEvent(JE_TOUCH, pointer, action, x, y, 0, 0);	
+			}
 		} else {
-			_residualvm.pushEvent(JE_TOUCH, pointer, action & 0xff, // ACTION_MASK
-					x0, y0, x1, y1);
+			final int idx = e.getActionIndex();
+			final int pointer = e.getPointerId(idx);
+			
+			final int x = (int)e.getX(idx);
+			final int y = (int)e.getY(idx);
+			
+			_residualvm.pushEvent(JE_TOUCH, pointer, action, x, y, 0, 0);	
 		}
-
-		return _gd.onTouchEvent(e);
+		
+		
+		return true;
 	}
 
 	// OnGestureListener
@@ -192,9 +210,16 @@ public class ResidualVMEvents implements
 
 	final public boolean onFling(MotionEvent e1, MotionEvent e2,
 									float velocityX, float velocityY) {
-		_residualvm.pushEvent(JE_FLING, (int)e1.getX(), (int)e1.getY(),
-							(int)e2.getX(), (int)e2.getY(), 0, 0);
-		return true;
+		return false;
+//		if (e1.getX() < 0.4 * _width
+//			|| Math.abs(e1.getX() - e2.getX()) < REL_SWIPE_MIN_DISTANCE
+//			|| velocityX < REL_SWIPE_THRESHOLD_VELOCITY
+//		    || Math.abs(e1.getY() - e2.getY()) < REL_SWIPE_MIN_DISTANCE
+//			|| velocityY < REL_SWIPE_THRESHOLD_VELOCITY)
+//		  return false;
+//		
+//		_residualvm.pushEvent(JE_FLING, (int)e1.getX(), (int)e1.getY(),
+//							(int)e2.getX(), (int)e2.getY(), 0, 0);
 	}
 
 	final public void onLongPress(MotionEvent e) {

@@ -170,6 +170,18 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 
 	if (_htc_fail)
 		LOGI("Enabling HTC workaround");
+
+	for (int p = 0; p < kNumPointers; ++p) {
+		Pointer &pp = _pointers[p];
+		pp.currentX = pp.currentY = pp.startX = pp.startY = 0;
+		pp.active = false;
+		pp.function = kTouchAreaNone;
+	}
+
+	for (int i = 0; i < 4; ++i)
+		_activePointers[i] = -1;
+
+	_joystickPressing = Common::KEYCODE_INVALID;
 }
 
 OSystem_Android::~OSystem_Android() {

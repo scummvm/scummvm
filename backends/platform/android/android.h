@@ -243,13 +243,44 @@ private:
 
 	void clipMouse(Common::Point &p);
 	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true);
+	void sendKey(Common::KeyCode keycode);
 	void updateEventScale();
 	void disableCursorPalette();
 
-	void updateVirtArrowKeys(int keys);
-	int getTouchArea(int x, int y);
-	int checkVirtArrowKeys(int action, int x, int y);
-	void checkVirtArrowKeys(int pointer, int action, int x0, int y0, int x1, int y1);
+	enum TouchArea{
+		kTouchAreaJoystick = 0xffff,
+		kTouchAreaCenter = 0xfffe,
+		kTouchAreaRight = 0xfffd,
+		kTouchAreaNone = 0xfffc,
+
+	};
+
+	uint16 getTouchArea(int x, int y);
+
+	struct VirtControl {
+		int x, y;
+		bool sticky;
+		Common::KeyCode keyCode;
+		bool active;
+	};
+
+	struct Pointer {
+		uint16 startX, startY;
+		uint16 currentX, currentY;
+		TouchArea function;
+		bool active;
+	};
+
+	enum { kNumPointers = 5 };
+	static int _virt_numControls;
+	static VirtControl _virtcontrols[];
+	int _virt_numDivisions;
+	Pointer _pointers[kNumPointers];
+	int _activePointers[4];
+	Common::KeyCode _joystickPressing;
+	int &pointerFor(TouchArea ta);
+	void initVirtControls();
+	void drawVirtControls();
 
 protected:
 	// PaletteManager API
@@ -316,6 +347,8 @@ public:
 	}
 	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d, bool isGame);
 };
+
+extern GLuint g_verticesVBO;
 
 #endif
 #endif

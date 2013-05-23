@@ -41,6 +41,7 @@
 
 #include "common/endian.h"
 #include "graphics/conversion.h"
+#include "graphics/opengles2/shader.h"
 
 #include "backends/platform/android/android.h"
 #include "backends/platform/android/jni.h"
@@ -434,6 +435,8 @@ Graphics::PixelBuffer OSystem_Android::setupScreen(int screenW, int screenH, boo
 	_opengl = accel3d;
 	initViewport();
 
+	initVirtControls();
+
 	if (_opengl) {
 		// resize game texture
 		initSize(screenW, screenH, 0);
@@ -502,6 +505,7 @@ void OSystem_Android::updateScreen() {
 
 		if (true || _focus_rect.isEmpty()) {
 			_game_texture->drawTextureRect();
+			drawVirtControls();
 		} else {
 // TODO what is this and do we have engines using it?
 #if 0
@@ -563,6 +567,60 @@ void OSystem_Android::updateScreen() {
 	if (!JNI::swapBuffers())
 		LOGW("swapBuffers failed: 0x%x", glGetError());
 
+}
+
+static Graphics::Shader *_virtcontrols_shader = NULL;
+static const char *_virtVertex =
+		"#version 100\n"
+		"attribute vec2 position;\n"
+		"uniform vec2 offsetXY;\n"
+		"uniform vec2 sizeWH;\n"
+		"void main() {\n"
+			"vec2 pos = offsetXY + position * sizeWH;\n"
+			"pos.x = pos.x * 2.0 - 1.0;\n"
+			"pos.y = pos.y * 2.0 - 1.0;\n"
+			"gl_Position = vec4(pos, 0.0, 1.0);\n"
+		"}\n";
+
+static const char *_virtFragment =
+		"#version 100\n"
+		"precision mediump float;\n"
+		"uniform bool active;\n"
+		"void main() {\n"
+			"gl_FragColor = vec4(1.0, 1.0, 1.0, active ? 0.8 : 0.3);\n"
+		"}\n";
+
+void OSystem_Android::initVirtControls() {
+	if (_virtcontrols_shader)
+		return;
+
+	const char* attributes[] = { "position", NULL };
+	_virtcontrols_shader = Graphics::Shader::fromStrings("key", _virtVertex, _virtFragment, attributes);
+	_virtcontrols_shader->enableVertexAttribute("position", g_verticesVBO, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
+	_virt_numDivisions = _egl_surface_width > 800 ? 12 : 8;
+}
+
+void OSystem_Android::drawVirtControls() {
+	if (_show_overlay)
+		return;
+	_virtcontrols_shader->use();
+	float div = 1.0 / _virt_numDivisions;
+	float divX = div;
+	float divY = div;
+	_virtcontrols_shader->setUniform("sizeWH", 0.9 * Math::Vector2d(divX, divY));
+
+	glEnable(GL_BLEND);
+
+	for (int control = 0; control < _virt_numControls; ++control) {
+		float offsetX = (_virtcontrols[control].x + 0.1) * divX;
+		float offsetY = (_virtcontrols[control].y + 0.1) * divY;
+		if (offsetX < 0)
+			offsetX += 1.0;
+
+		_virtcontrols_shader->setUniform("offsetXY", Math::Vector2d(offsetX, offsetY));
+		_virtcontrols_shader->setUniform("active", _virtcontrols[control].active);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	}
 }
 
 Graphics::Surface *OSystem_Android::lockScreen() {
