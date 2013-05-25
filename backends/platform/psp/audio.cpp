@@ -100,8 +100,6 @@ void PspAudio::threadFunction() {
 				PSP_DEBUG_PRINT("audio thread unpaused\n");
 		}
 
-		PSP_DEBUG_PRINT("remaining samples[%d]\n", _remainingSamples);
-
 		PSP_DEBUG_PRINT("filling buffer[%d]\n", _bufferToFill);
 		_callback(_userData, _buffers[_bufferToFill], _bufferSize); // ask mixer to fill in data
 		nextBuffer(_bufferToFill);
