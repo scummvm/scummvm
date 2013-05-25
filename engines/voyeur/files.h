@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/file.h"
+#include "common/rect.h"
 #include "common/str.h"
 
 namespace Voyeur {
@@ -33,38 +34,48 @@ class VoyeurEngine;
 class BoltFile;
 class BoltGroup;
 class BoltEntry;
+class PictureResource;
 #define DECOMPRESS_SIZE 0x7000
 
 typedef void (BoltFile::*BoltMethodPtr)();
 
+class BoltFilesState {
+public:
+	BoltFile *_curLibPtr;
+	BoltGroup *_curGroupPtr;
+	BoltEntry *_curMemberPtr;
+	byte *_curMemInfoPtr;
+	int _fromGroupFlag;
+	byte _xorMask;
+	bool _encrypt;
+	int _curFilePosition;
+	int _bufferEnd;
+	int _bufferBegin;
+	int _bytesLeft;
+	int _bufSize;
+	byte *_bufStart;
+	byte *_bufPos;
+	byte _decompressBuf[DECOMPRESS_SIZE];
+	int _historyIndex;
+	byte _historyBuffer[0x200];
+	int _runLength;
+	int _decompState;
+	int _runType;
+	int _runValue;
+	int _runOffset;
+	Common::File _curFd;
+public:
+	BoltFilesState();
+
+	byte *decompress(byte *buf, int size, int mode);
+	void nextBlock();
+};
+
 class BoltFile {
 private:
-	static BoltFile *_curLibPtr;
-	static BoltGroup *_curGroupPtr;
-	static BoltEntry *_curMemberPtr;
-	static byte *_curMemInfoPtr;
-	static int _fromGroupFlag;
-	static byte _xorMask;
-	static bool _encrypt;
-	// TODO: Move decompression statics and methods into BoltEntry
-	static int _curFilePosition;
-	static int _bufferEnd;
-	static int _bufferBegin;
-	static int _bytesLeft;
-	static int _bufSize;
-	static byte *_bufStart;
-	static byte *_bufPos;
-	static byte _decompressBuf[DECOMPRESS_SIZE];
-	static int _historyIndex;
-	static byte _historyBuffer[0x200];
-	static int _runLength;
-	static int _decompState;
-	static int _runType;
-	static int _runValue;
-	static int _runOffset;
 	static const BoltMethodPtr _fnInitType[25];
 private:
-	Common::File _curFd;
+	BoltFilesState &_state;
 	Common::Array<BoltGroup> _groups;
 
 	// initType method table
@@ -76,10 +87,6 @@ private:
 	void initViewPortList();
 	void initFontInfo();
 	void initSoundMap();
-
-	// Decompression
-	byte *decompress(byte *buf, int size, int mode);
-	void nextBlock();
 private:
 	void resolveAll() {}
 	byte *getBoltMember(uint32 id);
@@ -91,7 +98,7 @@ private:
 	void initGro() {}
 	void termGro() {}
 public:
-	BoltFile();
+	BoltFile(BoltFilesState &state);
 	~BoltFile();
 
 	bool getBoltGroup(uint32 id);
@@ -126,6 +133,8 @@ public:
 	byte _xorMask;
 	int _size;
 	byte *_data;
+
+	PictureResource *_picResource;
 public:
 	BoltEntry(Common::SeekableReadStream *f);
 	virtual ~BoltEntry();
@@ -137,11 +146,30 @@ class FilesManager {
 private:
 	int _decompressSize;
 public:
+	BoltFilesState _boltFilesState;
 	BoltFile *_curLibPtr;
 public:
 	FilesManager();
 
 	bool openBoltLib(const Common::String &filename, BoltFile *&boltFile);
+};
+
+class PictureResource {
+	uint16 _flags;
+	byte _select;
+	byte _pick;
+	byte _onOff;
+	byte _depth;
+	Common::Point _offset;
+	int _width;
+	int _height;
+	uint32 _maskData;
+	uint16 _planeSize;
+
+	byte *_imgData;
+public:
+	PictureResource(BoltFilesState &state, const byte *src);
+	virtual ~PictureResource();
 };
 
 } // End of namespace Voyeur

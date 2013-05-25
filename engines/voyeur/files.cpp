@@ -24,170 +24,36 @@
 
 namespace Voyeur {
 
-FilesManager::FilesManager() {
-	_decompressSize = 0x7000;
-}
-
-bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFile) {
-	if (boltFile != NULL) {
-		_curLibPtr = boltFile;
-		return true;
-	}
-
-	// TODO: Specific library classes for buoy.blt versus stampblt.blt 
-	// Create the bolt file interface object and load the index
-	boltFile = _curLibPtr = new BoltFile();
-	return true;
-}
-
-/*------------------------------------------------------------------------*/
-
 #define BOLT_GROUP_SIZE 16
 
-BoltFile *BoltFile::_curLibPtr = NULL;
-BoltGroup *BoltFile::_curGroupPtr = NULL;
-BoltEntry *BoltFile::_curMemberPtr = NULL;
-byte *BoltFile::_curMemInfoPtr = NULL;
-int BoltFile::_fromGroupFlag = 0;
-byte BoltFile::_xorMask = 0;
-bool BoltFile::_encrypt = false;
-int BoltFile::_curFilePosition = 0;
-int BoltFile::_bufferEnd = 0;
-int BoltFile::_bufferBegin = 0;
-int BoltFile::_bytesLeft = 0;
-int BoltFile::_bufSize = 0;
-byte *BoltFile::_bufStart = NULL;
-byte *BoltFile::_bufPos = NULL;
-byte BoltFile::_decompressBuf[DECOMPRESS_SIZE];
-int BoltFile::_historyIndex;
-byte BoltFile::_historyBuffer[0x200];
-int BoltFile::_runLength;
-int BoltFile::_decompState;
-int BoltFile::_runType;
-int BoltFile::_runValue;
-int BoltFile::_runOffset;
-
-const BoltMethodPtr BoltFile::_fnInitType[25] = {
-	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
-	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
-	&BoltFile::sInitPic, &BoltFile::initDefault, &BoltFile::vInitCMap, &BoltFile::vInitCycl,
-	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initViewPort,
-	&BoltFile::initViewPortList, &BoltFile::initDefault, &BoltFile::initFontInfo,
-	&BoltFile::initSoundMap, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
-	&BoltFile::initDefault, &BoltFile::initDefault
-};
-
-BoltFile::BoltFile() {
-	if (!_curFd.open("bvoy.blt"))
-		error("Could not open buoy.blt");
+BoltFilesState::BoltFilesState() {
+	_curLibPtr = NULL;
+	_curGroupPtr = NULL;
+	_curMemberPtr = NULL;
+	_curMemInfoPtr = NULL;
+	_fromGroupFlag = 0;
+	_xorMask = 0;
+	_encrypt = false;
 	_curFilePosition = 0;
-
-	// Read in the file header
-	byte header[16];
-	_curFd.read(&header[0], 16);
-
-	if (strncmp((const char *)&header[0], "BOLT", 4) != 0)
-		error("Tried to load non-bolt file");
-
-	int totalGroups = header[11] ? header[11] : 0x100;
-	for (int i = 0; i < totalGroups; ++i)
-		_groups.push_back(BoltGroup(&_curFd));
-}
-
-BoltFile::~BoltFile() {
-	_curFd.close();
-}
-
-bool BoltFile::getBoltGroup(uint32 id) {
-	++_fromGroupFlag;
-	_curLibPtr = this;
-	_curGroupPtr = &_groups[(id >> 8) & 0xff];
-
-	if (!_curGroupPtr->_loaded) {
-		// Load the group index
-		_curGroupPtr->load();
-	}
-
-	if (_curGroupPtr->_callInitGro)
-		initGro();
-
-	if ((id >> 16) != 0) {
-		id &= 0xff00;
-		for (int idx = 0; idx < _curGroupPtr->_count; ++idx, ++id) {
-			byte *member = getBoltMember(id);
-			assert(member);
-		}
-	} else if (!_curGroupPtr->_processed) {
-		_curGroupPtr->_processed = true;
-		_curGroupPtr->load();
-	}
-
-	resolveAll();
-	--_fromGroupFlag;
-	return true;
-}
-
-byte *BoltFile::memberAddr(uint32 id) {
-	BoltGroup &group = _groups[id >> 8];
-	if (!group._loaded)
-		return NULL;
-
-	return group._entries[id & 0xff]._data;
-}
-
-byte *BoltFile::getBoltMember(uint32 id) {
-	_curLibPtr = this;
-
-	// Get the group, and load it's entry list if not already loaded
-	_curGroupPtr = &_groups[(id >> 8) & 0xff];
-	if (!_curGroupPtr->_loaded)
-		_curGroupPtr->load();
-
-	// Get the entry
-	_curMemberPtr = &_curGroupPtr->_entries[id & 0xff];
-	if (_curMemberPtr->_field1)
-		initMem(_curMemberPtr->_field1);
-
-	// Return the data for the entry if it's already been loaded
-	if (_curMemberPtr->_data)
-		return _curMemberPtr->_data;
-
-	_xorMask = _curMemberPtr->_xorMask;
-	_encrypt = (_curMemberPtr->_mode & 0x10) != 0;
-
-	if (_curGroupPtr->_processed) {
-		// TODO: Figure out weird access type. Uncompressed read perhaps?
-		//int fileDiff = _curGroupPtr->_fileOffset - _curMemberPtr->_fileOffset;
-
-	} else {
-		_bufStart = _decompressBuf;
-		_bufSize = DECOMPRESS_SIZE;
-
-		if (_curMemberPtr->_fileOffset < _bufferBegin || _curMemberPtr->_fileOffset >= _bufferEnd) {
-			_bytesLeft = 0;
-			_bufPos = _bufStart;
-			_bufferBegin = -1;
-			_bufferEnd = _curMemberPtr->_fileOffset;
-		} else {
-			_bufPos = _curMemberPtr->_fileOffset + _bufferBegin + _bufStart;
-			_bufSize = ((_bufPos - _bufStart) << 16) >> 16; // TODO: Validate this
-			_bytesLeft = _bufSize;
-		}
-	}
-
-	_decompState = 0;
+	_bufferEnd = 0;
+	_bufferBegin = 0;
+	_bytesLeft = 0;
+	_bufSize = 0;
+	_bufStart = NULL;
+	_bufPos = NULL;
 	_historyIndex = 0;
+	_runLength = 0;
+	_decompState = 0;
+	_runType = 0;
+	_runValue = 0;
+	_runOffset = 0;
 
-	// Initialise the resource
-	assert(_curMemberPtr->_initMethod < 25);
-	(this->*_fnInitType[_curMemberPtr->_initMethod])();
-
-	return _curMemberPtr->_data;
+	Common::fill(&_historyBuffer[0], &_historyBuffer[0x200], 0);
 }
 
 #define NEXT_BYTE if (--_bytesLeft <= 0) nextBlock()
 
-byte *BoltFile::decompress(byte *buf, int size, int mode) {
+byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 	if (!buf)
 		buf = new byte[size];
 	byte *bufP = buf;
@@ -284,7 +150,9 @@ byte *BoltFile::decompress(byte *buf, int size, int mode) {
 	return buf;
 }
 
-void BoltFile::nextBlock() {
+#undef NEXT_BYTE
+
+void BoltFilesState::nextBlock() {
 	if (_curFilePosition != _bufferEnd)
 		_curFd.seek(_bufferEnd);
 
@@ -296,12 +164,153 @@ void BoltFile::nextBlock() {
 	_bufPos = _bufStart;
 }
 
+/*------------------------------------------------------------------------*/
+
+FilesManager::FilesManager() {
+	_decompressSize = 0x7000;
+}
+
+bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFile) {
+	if (boltFile != NULL) {
+		_boltFilesState._curLibPtr = boltFile;
+		return true;
+	}
+
+	// TODO: Specific library classes for buoy.blt versus stampblt.blt 
+	// Create the bolt file interface object and load the index
+	boltFile = _boltFilesState._curLibPtr = new BoltFile(_boltFilesState);
+	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+const BoltMethodPtr BoltFile::_fnInitType[25] = {
+	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
+	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
+	&BoltFile::sInitPic, &BoltFile::initDefault, &BoltFile::vInitCMap, &BoltFile::vInitCycl,
+	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initViewPort,
+	&BoltFile::initViewPortList, &BoltFile::initDefault, &BoltFile::initFontInfo,
+	&BoltFile::initSoundMap, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
+	&BoltFile::initDefault, &BoltFile::initDefault
+};
+
+BoltFile::BoltFile(BoltFilesState &state): _state(state) {
+	if (!_state._curFd.open("bvoy.blt"))
+		error("Could not open buoy.blt");
+	_state._curFilePosition = 0;
+
+	// Read in the file header
+	byte header[16];
+	_state._curFd.read(&header[0], 16);
+
+	if (strncmp((const char *)&header[0], "BOLT", 4) != 0)
+		error("Tried to load non-bolt file");
+
+	int totalGroups = header[11] ? header[11] : 0x100;
+	for (int i = 0; i < totalGroups; ++i)
+		_groups.push_back(BoltGroup(&_state._curFd));
+}
+
+BoltFile::~BoltFile() {
+	_state._curFd.close();
+}
+
+bool BoltFile::getBoltGroup(uint32 id) {
+	++_state._fromGroupFlag;
+	_state._curLibPtr = this;
+	_state._curGroupPtr = &_groups[(id >> 8) & 0xff];
+
+	if (!_state._curGroupPtr->_loaded) {
+		// Load the group index
+		_state._curGroupPtr->load();
+	}
+
+	if (_state._curGroupPtr->_callInitGro)
+		initGro();
+
+	if ((id >> 16) != 0) {
+		id &= 0xff00;
+		for (int idx = 0; idx < _state._curGroupPtr->_count; ++idx, ++id) {
+			byte *member = getBoltMember(id);
+			assert(member);
+		}
+	} else if (!_state._curGroupPtr->_processed) {
+		_state._curGroupPtr->_processed = true;
+		_state._curGroupPtr->load();
+	}
+
+	resolveAll();
+	--_state._fromGroupFlag;
+	return true;
+}
+
+byte *BoltFile::memberAddr(uint32 id) {
+	BoltGroup &group = _groups[id >> 8];
+	if (!group._loaded)
+		return NULL;
+
+	return group._entries[id & 0xff]._data;
+}
+
+byte *BoltFile::getBoltMember(uint32 id) {
+	_state._curLibPtr = this;
+
+	// Get the group, and load it's entry list if not already loaded
+	_state._curGroupPtr = &_groups[(id >> 8) & 0xff];
+	if (!_state._curGroupPtr->_loaded)
+		_state._curGroupPtr->load();
+
+	// Get the entry
+	_state._curMemberPtr = &_state._curGroupPtr->_entries[id & 0xff];
+	if (_state._curMemberPtr->_field1)
+		initMem(_state._curMemberPtr->_field1);
+
+	// Return the data for the entry if it's already been loaded
+	if (_state._curMemberPtr->_data)
+		return _state._curMemberPtr->_data;
+
+	_state._xorMask = _state._curMemberPtr->_xorMask;
+	_state._encrypt = (_state._curMemberPtr->_mode & 0x10) != 0;
+
+	if (_state._curGroupPtr->_processed) {
+		// TODO: Figure out weird access type. Uncompressed read perhaps?
+		//int fileDiff = _state._curGroupPtr->_fileOffset - _state._curMemberPtr->_fileOffset;
+
+	} else {
+		_state._bufStart = _state._decompressBuf;
+		_state._bufSize = DECOMPRESS_SIZE;
+
+		if (_state._curMemberPtr->_fileOffset < _state._bufferBegin || _state._curMemberPtr->_fileOffset >= _state._bufferEnd) {
+			_state._bytesLeft = 0;
+			_state._bufPos = _state._bufStart;
+			_state._bufferBegin = -1;
+			_state._bufferEnd = _state._curMemberPtr->_fileOffset;
+		} else {
+			_state._bufPos = _state._curMemberPtr->_fileOffset + _state._bufferBegin + _state._bufStart;
+			_state._bufSize = ((_state._bufPos - _state._bufStart) << 16) >> 16; // TODO: Validate this
+			_state._bytesLeft = _state._bufSize;
+		}
+	}
+
+	_state._decompState = 0;
+	_state._historyIndex = 0;
+
+	// Initialise the resource
+	assert(_state._curMemberPtr->_initMethod < 25);
+	(this->*_fnInitType[_state._curMemberPtr->_initMethod])();
+
+	return _state._curMemberPtr->_data;
+}
+
 void BoltFile::initDefault() {
-	_curMemberPtr->_data = decompress(0, _curMemberPtr->_size, _curMemberPtr->_mode);	
+	_state._curMemberPtr->_data = _state.decompress(0, _state._curMemberPtr->_size, 
+		_state._curMemberPtr->_mode);	
 }
 
 void BoltFile::sInitPic() {
-	error("TODO: sInitPic not implemented");
+	// Read in the header data
+	_state._curMemberPtr->_data = _state.decompress(0, 24, _state._curMemberPtr->_mode);
+
 }
 
 void BoltFile::vInitCMap() {
@@ -356,6 +365,7 @@ void BoltGroup::load() {
 
 BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 	_data = NULL;
+	_picResource = NULL;
 
 	byte buffer[16];
 	_file->read(&buffer[0], 16);
@@ -369,9 +379,32 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 
 BoltEntry::~BoltEntry() {
 	delete[] _data;
+	delete _picResource;
 }
 
 void BoltEntry::load() {
+	// TODO: Currently, all entry loading and decompression is done in BoltFile::memberAddr.
+	// Ideally, a lot of the code should be moved here
+}
+
+/*------------------------------------------------------------------------*/
+
+PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
+	_flags = READ_LE_UINT16(src);
+	_select = src[2];
+	_pick = src[3];
+	_onOff = src[4];
+	_depth = src[5];
+	_offset = Common::Point(READ_LE_UINT16(&src[6]), READ_LE_UINT16(&src[8]));
+	_width = READ_LE_UINT16(&src[10]);
+	_height = READ_LE_UINT16(&src[12]);
+	_maskData = READ_LE_UINT32(&src[14]);
+
+	_imgData = NULL;
+}
+
+PictureResource::~PictureResource() {
+	delete _imgData;
 }
 
 } // End of namespace Voyeur
