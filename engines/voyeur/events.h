@@ -24,19 +24,28 @@
 #define VOYEUR_EVENTS_H
 
 #include "common/scummsys.h"
+#include "voyeur/game.h"
 
 namespace Voyeur {
 
 class VoyeurEngine;
 
-class EventManager {
+class EventsManager {
 private:
 	VoyeurEngine *_vm;
+
+	static void mainVoyeurIntFunc();
 public:
-	EventManager() {}
+	IntNode _fadeIntNode;
+	IntNode _cycleIntNode;
+	IntNode _evintnode;
+	IntNode _mainIntNode;
+public:
+	EventsManager() {}
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
 
 	void resetMouse();
+	void startMainClockInt();
 };
 
 } // End of namespace Voyeur

@@ -21,10 +21,22 @@
  */
 
 #include "voyeur/events.h"
+#include "voyeur/voyeur.h"
 
 namespace Voyeur {
 
-void EventManager::resetMouse() {
+void EventsManager::resetMouse() {
+	// No implementation
+}
+
+void EventsManager::startMainClockInt() {
+	_mainIntNode._intFunc = mainVoyeurIntFunc;
+	_mainIntNode._flags = 0;
+	_mainIntNode._curTime = 0;
+	_mainIntNode._timeReset = _vm->_graphicsManager._palFlag ? 50 : 60;
+}
+
+void EventsManager::mainVoyeurIntFunc() {
 
 }
 

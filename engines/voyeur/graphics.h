@@ -36,22 +36,29 @@ namespace Voyeur {
 #define PALETTE_SIZE (256 * 3)
 
 class VoyeurEngine;
+class GraphicsManager;
+
+typedef void (GraphicsManager::*GraphicMethodPtr)(); 
 
 class GraphicsManager {
 public:
 	VoyeurEngine *_vm;
 	bool _palFlag;
-	IntNode _fadeIntNode;
-	IntNode _cycleIntNode;
-	IntNode _evintnode;
-	IntNode _mainintnode;
 	byte _VGAColors[PALETTE_SIZE];
 	Common::Array<byte *> _colorChain;
+	byte *_backgroundPage;
 private:
 	static void fadeIntFunc();
 	static void vDoFadeInt();
 	static void vDoCycleInt();
+
+	void setupMCGASaveRect();
+	void restoreMCGASaveRect();
+	void addRectOptSaveRect();
+
 	void addIntNode(IntNode *node);
+	void setupViewPort(GraphicMethodPtr setupFn, GraphicMethodPtr addRectFn, 
+		GraphicMethodPtr restoreFn);
 public:
 	GraphicsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
@@ -59,6 +66,7 @@ public:
 
 	void vInitColor();
 	void addFadeInt();
+	void setupViewPort();
 };
 
 } // End of namespace Voyeur

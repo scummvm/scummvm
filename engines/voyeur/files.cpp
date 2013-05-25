@@ -67,6 +67,16 @@ int BoltFile::_runType;
 int BoltFile::_runValue;
 int BoltFile::_runOffset;
 
+const BoltMethodPtr BoltFile::_fnInitType[25] = {
+	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
+	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
+	&BoltFile::sInitPic, &BoltFile::initDefault, &BoltFile::vInitCMap, &BoltFile::vInitCycl,
+	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initViewPort,
+	&BoltFile::initViewPortList, &BoltFile::initDefault, &BoltFile::initFontInfo,
+	&BoltFile::initSoundMap, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
+	&BoltFile::initDefault, &BoltFile::initDefault
+};
+
 BoltFile::BoltFile() {
 	if (!_curFd.open("bvoy.blt"))
 		error("Could not open buoy.blt");
@@ -167,13 +177,12 @@ byte *BoltFile::getBoltMember(uint32 id) {
 
 	_decompState = 0;
 	_historyIndex = 0;
-	initType();
+
+	// Initialise the resource
+	assert(_curMemberPtr->_initMethod < 25);
+	(this->*_fnInitType[_curMemberPtr->_initMethod])();
 
 	return _curMemberPtr->_data;
-}
-
-void BoltFile::initType() {
-	_curMemberPtr->_data = decompress(0, _curMemberPtr->_size, _curMemberPtr->_mode);
 }
 
 #define NEXT_BYTE if (--_bytesLeft <= 0) nextBlock()
@@ -287,6 +296,38 @@ void BoltFile::nextBlock() {
 	_bufPos = _bufStart;
 }
 
+void BoltFile::initDefault() {
+	_curMemberPtr->_data = decompress(0, _curMemberPtr->_size, _curMemberPtr->_mode);	
+}
+
+void BoltFile::sInitPic() {
+	error("TODO: sInitPic not implemented");
+}
+
+void BoltFile::vInitCMap() {
+	error("TODO: vInitCMap not implemented");
+}
+
+void BoltFile::vInitCycl() {
+	error("TODO: vInitCycl not implemented");
+}
+
+void BoltFile::initViewPort() {
+	error("TODO: initViewPort not implemented");
+}
+
+void BoltFile::initViewPortList() {
+	error("TODO: initViewPortList not implemented");
+}
+
+void BoltFile::initFontInfo() {
+	error("TODO: initFontInfo not implemented");
+}
+
+void BoltFile::initSoundMap() {
+	error("TODO: initSoundMap not implemented");
+}
+
 /*------------------------------------------------------------------------*/
 
 BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
@@ -320,7 +361,7 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 	_file->read(&buffer[0], 16);
 	_mode = buffer[0];
 	_field1 = buffer[1];
-	_field3 = buffer[3];
+	_initMethod = buffer[3];
 	_xorMask = buffer[4] & 0xff;	// TODO: Is this right??
 	_size = READ_LE_UINT32(&buffer[4]);
 	_fileOffset = READ_LE_UINT32(&buffer[8]); 

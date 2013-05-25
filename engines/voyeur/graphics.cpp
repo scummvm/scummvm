@@ -37,17 +37,18 @@ void GraphicsManager::sInitGraphics() {
 }
 
 void GraphicsManager::addFadeInt() {
-	_fadeIntNode._intFunc = fadeIntFunc;
-	_fadeIntNode._flags = 0;
-	_fadeIntNode._curTime = 0;
-	_fadeIntNode._timeReset = 1;
+	IntNode &node = _vm->_eventsManager._fadeIntNode;
+	node._intFunc = fadeIntFunc;
+	node._flags = 0;
+	node._curTime = 0;
+	node._timeReset = 1;
 
-	_vm->_intPtr.addIntNode(&_fadeIntNode);
+	_vm->_intPtr.addIntNode(&node);
 }
 
 void GraphicsManager::vInitColor() {
-	_fadeIntNode._intFunc = vDoFadeInt;
-	_cycleIntNode._intFunc = vDoCycleInt;
+	_vm->_eventsManager._fadeIntNode._intFunc = vDoFadeInt;
+	_vm->_eventsManager._cycleIntNode._intFunc = vDoCycleInt;
 	// TODO: more
 }
 
@@ -60,6 +61,28 @@ void GraphicsManager::vDoFadeInt() {
 }
 
 void GraphicsManager::vDoCycleInt() {
+
+}
+
+void GraphicsManager::setupViewPort() {
+	setupViewPort(&GraphicsManager::setupMCGASaveRect, &GraphicsManager::addRectOptSaveRect, 
+		&GraphicsManager::restoreMCGASaveRect);
+}
+
+void GraphicsManager::setupViewPort(GraphicMethodPtr setupFn, 
+		GraphicMethodPtr addRectFn, GraphicMethodPtr restoreFn) {
+
+}
+
+void GraphicsManager::setupMCGASaveRect() {
+	
+}
+
+void GraphicsManager::restoreMCGASaveRect() {
+
+}
+
+void GraphicsManager::addRectOptSaveRect() {
 
 }
 

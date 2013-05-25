@@ -30,9 +30,12 @@
 namespace Voyeur {
 
 class VoyeurEngine;
+class BoltFile;
 class BoltGroup;
 class BoltEntry;
 #define DECOMPRESS_SIZE 0x7000
+
+typedef void (BoltFile::*BoltMethodPtr)();
 
 class BoltFile {
 private:
@@ -59,9 +62,20 @@ private:
 	static int _runType;
 	static int _runValue;
 	static int _runOffset;
+	static const BoltMethodPtr _fnInitType[25];
 private:
 	Common::File _curFd;
 	Common::Array<BoltGroup> _groups;
+
+	// initType method table
+	void initDefault();
+	void sInitPic();
+	void vInitCMap();
+	void vInitCycl();
+	void initViewPort();
+	void initViewPortList();
+	void initFontInfo();
+	void initSoundMap();
 
 	// Decompression
 	byte *decompress(byte *buf, int size, int mode);
@@ -70,8 +84,7 @@ private:
 	void resolveAll() {}
 	byte *getBoltMember(uint32 id);
 
-	// Methods copied into bolt virtual table
-	void initType();
+	void initType() {}
 	void termType() {}
 	void initMem(int id) {}
 	void termMem() {}
@@ -108,7 +121,7 @@ private:
 public:
 	byte _mode;
 	byte _field1;
-	byte _field3;
+	byte _initMethod;
 	int _fileOffset;
 	byte _xorMask;
 	int _size;

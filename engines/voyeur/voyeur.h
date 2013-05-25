@@ -62,11 +62,8 @@ class VoyeurEngine : public Engine {
 private:
 	const VoyeurGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
-	EventManager _eventManager;
-	FilesManager _filesManager;
-	GraphicsManager _graphicsManager;
 
-	BoltFile *_bVoyBoltFile;
+	BoltFile *_bVoy;
 	byte *_fontPtr;
 	SVoy _voy;
 	Common::Array<int> _resolves;
@@ -83,6 +80,9 @@ protected:
 	virtual bool hasFeature(EngineFeature f) const;
 public:
 	IntData _intPtr;
+	EventsManager _eventsManager;
+	FilesManager _filesManager;
+	GraphicsManager _graphicsManager;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();
@@ -100,6 +100,8 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
+
+	void doHeadTitle();
 };
 
 } // End of namespace Voyeur
