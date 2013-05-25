@@ -168,23 +168,23 @@ bool HopkinsEngine::runWin95Demo() {
 	if (_events->_rateCounter > 700)
 		_globals->_speed = 3;
 
-	if (_startGameSlot == -1) {
+	if (_startGameSlot == -1)
 		_graphicsMan->fadeOutLong();
-		_globals->_eventMode = EVENTMODE_IGNORE;
-		_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
-	}
+
+	_globals->_eventMode = EVENTMODE_IGNORE;
+	_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
 
 	_globals->_characterType = CHARACTER_HOPKINS;
 	_objectsMan->_mapCarPosX = _objectsMan->_mapCarPosY = 0;
 	memset(_globals->_saveData, 0, 2000);
 	_globals->_exitId = 0;
 
-	if (_startGameSlot != -1)
-		_saveLoad->loadGame(_startGameSlot);
-
 	if (getLanguage() != Common::PL_POL)
 		if (!displayAdultDisclaimer())
 			return Common::kNoError;
+
+	if (_startGameSlot != -1)
+		_saveLoad->loadGame(_startGameSlot);
 
 	for (;;) {
 		if (_globals->_exitId == 300)
