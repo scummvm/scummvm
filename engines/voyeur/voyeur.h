@@ -70,7 +70,6 @@ private:
 	byte *_fontPtr;
 	SVoy _voy;
 	Common::Array<int> _resolves;
-	IntData _intPtr;
 
 	void ESP_Init();
 	void initialiseManagers();
@@ -82,7 +81,8 @@ protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
-
+public:
+	IntData _intPtr;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();

@@ -21,6 +21,8 @@
  */
 
 #include "voyeur/graphics.h"
+#include "voyeur/game.h"
+#include "voyeur/voyeur.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
 
@@ -39,18 +41,14 @@ void GraphicsManager::addFadeInt() {
 	_fadeIntNode._flags = 0;
 	_fadeIntNode._curTime = 0;
 	_fadeIntNode._timeReset = 1;
-	
-	addIntNode(&_fadeIntNode);
+
+	_vm->_intPtr.addIntNode(&_fadeIntNode);
 }
 
 void GraphicsManager::vInitColor() {
 	_fadeIntNode._intFunc = vDoFadeInt;
 	_cycleIntNode._intFunc = vDoCycleInt;
-
-}
-
-void GraphicsManager::addIntNode(IntNode *node) {
-	
+	// TODO: more
 }
 
 void GraphicsManager::fadeIntFunc() {
@@ -63,16 +61,6 @@ void GraphicsManager::vDoFadeInt() {
 
 void GraphicsManager::vDoCycleInt() {
 
-}
-
-/*------------------------------------------------------------------------*/
-
-IntNode::IntNode() {
-	_nextNode = NULL;
-	_intFunc = NULL;
-	_curTime = 0;
-	_timeReset = 0;
-	_flags = 0;
 }
 
 } // End of namespace Voyeur

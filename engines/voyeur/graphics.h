@@ -23,6 +23,7 @@
 #ifndef VOYEUR_GRAPHICS_H
 #define VOYEUR_GRAPHICS_H
 
+#include "voyeur/game.h"
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "graphics/surface.h"
@@ -34,26 +35,11 @@ namespace Voyeur {
 #define PALETTE_COUNT 256
 #define PALETTE_SIZE (256 * 3)
 
-typedef void (*IntFuncPtr)();
-
-class IntNode {
-public:
-	IntNode *_nextNode;
-	IntFuncPtr _intFunc;
-	uint32 _curTime;
-	uint32 _timeReset;
-	uint32 _flags;
-public:
-	IntNode();
-};
+class VoyeurEngine;
 
 class GraphicsManager {
-private:
-	static void fadeIntFunc();
-	static void vDoFadeInt();
-	static void vDoCycleInt();
-	void addIntNode(IntNode *node);
 public:
+	VoyeurEngine *_vm;
 	bool _palFlag;
 	IntNode _fadeIntNode;
 	IntNode _cycleIntNode;
@@ -61,12 +47,18 @@ public:
 	IntNode _mainintnode;
 	byte _VGAColors[PALETTE_SIZE];
 	Common::Array<byte *> _colorChain;
+private:
+	static void fadeIntFunc();
+	static void vDoFadeInt();
+	static void vDoCycleInt();
+	void addIntNode(IntNode *node);
 public:
 	GraphicsManager();
+	void setVm(VoyeurEngine *vm) { _vm = vm; }
 	void sInitGraphics();
 
-	void addFadeInt();
 	void vInitColor();
+	void addFadeInt();
 };
 
 } // End of namespace Voyeur

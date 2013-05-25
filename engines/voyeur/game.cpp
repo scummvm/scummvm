@@ -28,4 +28,17 @@ void IntData::audioInit() {
 
 }
 
+void IntData::addIntNode(IntNode *node) {
+	_intNodes.push_back(node);
+}
+
+/*------------------------------------------------------------------------*/
+
+IntNode::IntNode() {
+	_intFunc = NULL;
+	_curTime = 0;
+	_timeReset = 0;
+	_flags = 0;
+}
+
 } // End of namespace Voyeur
