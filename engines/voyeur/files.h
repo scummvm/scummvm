@@ -35,9 +35,19 @@ class BoltFile;
 class BoltGroup;
 class BoltEntry;
 class PictureResource;
+class ViewPortResource;
+
 #define DECOMPRESS_SIZE 0x7000
 
 typedef void (BoltFile::*BoltMethodPtr)();
+
+class ResolveEntry {
+public:
+	uint32 _id;
+	byte **_p;
+
+	ResolveEntry(uint32 id, byte **p) { _id = id; _p = p; }
+};
 
 class BoltFilesState {
 public:
@@ -65,6 +75,7 @@ public:
 	int _runValue;
 	int _runOffset;
 	Common::File *_curFd;
+	Common::Array<ResolveEntry> _resolves;
 
 	byte *_boltPageFrame;
 	int _sImageShift;
@@ -98,21 +109,25 @@ private:
 	void initFontInfo();
 	void initSoundMap();
 private:
-	void resolveAll() {}
+	void resolveAll();
 	byte *getBoltMember(uint32 id);
 
-	void initType() {}
-	void termType() {}
-	void initMem(int id) {}
-	void termMem() {}
-	void initGro() {}
-	void termGro() {}
+	void termType() {}	// TODO
+	void initMem(int id) {}	// TODO
+	void termMem() {}	// TODO
+	void initGro() {}	// TODO
+	void termGro() {}	// TODO
 public:
 	BoltFile(BoltFilesState &state);
 	~BoltFile();
 
 	bool getBoltGroup(uint32 id);
 	byte *memberAddr(uint32 id);
+	byte *memberAddrOffset(uint32 id);
+	void resolveIt(uint32 id, byte **p);
+	void resolveFunction(uint32 id, BoltMethodPtr *fn);
+
+	void addRectNoSaveBack() {}	// TODO
 };
 
 class BoltGroup {
@@ -145,6 +160,7 @@ public:
 	byte *_data;
 
 	PictureResource *_picResource;
+	ViewPortResource *_viewPortResource;
 public:
 	BoltEntry(Common::SeekableReadStream *f);
 	virtual ~BoltEntry();
@@ -181,6 +197,27 @@ class PictureResource {
 public:
 	PictureResource(BoltFilesState &state, const byte *src);
 	virtual ~PictureResource();
+};
+
+class ViewPortResource {
+public:
+	byte *_field2;
+	byte *_field20;
+	byte *_field24;
+	byte *_field28;
+	byte *_field2C;
+	byte *_field30;
+	byte *_field34;
+	byte *_field38;
+	byte *_field3C;
+	byte *_field7A;
+	BoltMethodPtr _fn1;
+	BoltMethodPtr _fn2;
+	BoltMethodPtr _fn3;
+	BoltMethodPtr _fn4;
+public:
+	ViewPortResource(BoltFilesState &state, const byte *src);
+	virtual ~ViewPortResource() {}
 };
 
 } // End of namespace Voyeur

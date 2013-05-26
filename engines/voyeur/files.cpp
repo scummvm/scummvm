@@ -259,6 +259,49 @@ byte *BoltFile::memberAddr(uint32 id) {
 	return group._entries[id & 0xff]._data;
 }
 
+byte *BoltFile::memberAddrOffset(uint32 id) {
+	BoltGroup &group = _groups[(id >> 24) << 4];
+	if (!group._loaded)
+		return NULL;
+
+	return group._entries[(id >> 16) & 0xff]._data + (id & 0xffff);
+}
+
+/**
+ * Resolves an Id to an offset within a loaded resource
+ */
+void BoltFile::resolveIt(uint32 id, byte **p) {
+	if ((int32)id == -1) {
+		*p = NULL;
+	} else {
+		byte *ptr = memberAddrOffset(id);
+		if (ptr) {
+			*p = ptr;
+		} else {
+			*p = NULL;
+			assert(_state._resolves.size() < 1000);
+			_state._resolves.push_back(ResolveEntry(id, p));
+		}
+	}
+}
+
+void BoltFile::resolveFunction(uint32 id, BoltMethodPtr *fn) {
+	if ((int32)id == -1) {
+		*fn = NULL;
+	} else {
+		error("Function fnTermGro array not supported");
+	}
+}
+
+/**
+ * Resolve any data references to within resources that weren't
+ * previously loaded, but are now
+ */
+void BoltFile::resolveAll() {
+	for (uint idx = 0; idx < _state._resolves.size(); ++idx)
+		*_state._resolves[idx]._p = memberAddrOffset(_state._resolves[idx]._id);
+}
+
 byte *BoltFile::getBoltMember(uint32 id) {
 	_state._curLibPtr = this;
 
@@ -330,7 +373,9 @@ void BoltFile::vInitCycl() {
 }
 
 void BoltFile::initViewPort() {
-	error("TODO: initViewPort not implemented");
+	initDefault();
+	_state._curMemberPtr->_viewPortResource = new ViewPortResource(
+		_state, _state._curMemberPtr->_data);
 }
 
 void BoltFile::initViewPortList() {
@@ -374,6 +419,7 @@ void BoltGroup::load() {
 BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 	_data = NULL;
 	_picResource = NULL;
+	_viewPortResource = NULL;
 
 	byte buffer[16];
 	_file->read(&buffer[0], 16);
@@ -388,6 +434,7 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 BoltEntry::~BoltEntry() {
 	delete[] _data;
 	delete _picResource;
+	delete _viewPortResource;
 }
 
 void BoltEntry::load() {
@@ -483,6 +530,29 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 
 PictureResource::~PictureResource() {
 	delete _imgData;
+}
+
+/*------------------------------------------------------------------------*/
+
+ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src) {
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 2), &_field2);
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x20), &_field20);
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x24), &_field24);
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x28), &_field28);
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x2c), &_field2C);
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x30), &_field30);
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x34), &_field34);
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x38), &_field38);
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x3C), &_field3C);
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x7A), &_field7A);
+
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x7E), &_fn1);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x82), &_fn2);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x86), &_fn3);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x8A), &_fn4);
+
+	if (!_fn4 && _fn3)
+		_fn3 = &BoltFile::addRectNoSaveBack;
 }
 
 } // End of namespace Voyeur
