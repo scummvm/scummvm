@@ -30,6 +30,7 @@
 #include "common/algorithm.h"
 #include "common/translation.h"
 
+#include <AppKit/NSNibDeclarations.h>
 #include <AppKit/NSOpenPanel.h>
 #include <AppKit/NSButton.h>
 #include <Foundation/NSString.h>
