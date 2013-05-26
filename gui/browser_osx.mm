@@ -36,7 +36,7 @@
 #include <Foundation/NSString.h>
 #include <Foundation/NSURL.h>
 
-@interface ShowHiddenFilesControler : NSObject {
+@interface ShowHiddenFilesController : NSObject {
 	NSOpenPanel* _panel;
 }
 
@@ -47,7 +47,7 @@
 
 @end
 
-@implementation ShowHiddenFilesControler
+@implementation ShowHiddenFilesController
 
 - (id) init {
 	self = [super init];
@@ -130,26 +130,26 @@ int BrowserDialog::runModal() {
 	[panel setTitle:(NSString *)_titleRef];
 	[panel setPrompt:(NSString *)_chooseRef];
 
-	NSButton *shoHiddenFilesButton = 0;
-	ShowHiddenFilesControler *shoHiddenFilesControler = 0;
+	NSButton *showHiddenFilesButton = 0;
+	ShowHiddenFilesController *showHiddenFilesController = 0;
 	if ([panel respondsToSelector:@selector(setShowsHiddenFiles:)]) {
-		shoHiddenFilesButton = [[NSButton alloc] init];
-		[shoHiddenFilesButton setButtonType:NSSwitchButton];
-		[shoHiddenFilesButton setTitle:(NSString *)_hiddenFilesRef];
-		[shoHiddenFilesButton sizeToFit];
+		showHiddenFilesButton = [[NSButton alloc] init];
+		[showHiddenFilesButton setButtonType:NSSwitchButton];
+		[showHiddenFilesButton setTitle:(NSString *)_hiddenFilesRef];
+		[showHiddenFilesButton sizeToFit];
 		if (ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain)) {
-			[shoHiddenFilesButton setState:NSOnState];
+			[showHiddenFilesButton setState:NSOnState];
 			[panel setShowsHiddenFiles: YES];
 		} else {
-			[shoHiddenFilesButton setState:NSOffState];
+			[showHiddenFilesButton setState:NSOffState];
 			[panel setShowsHiddenFiles: NO];
 		}
-		[panel setAccessoryView:shoHiddenFilesButton];
+		[panel setAccessoryView:showHiddenFilesButton];
 
-		shoHiddenFilesControler = [[ShowHiddenFilesControler alloc] init];
-		[shoHiddenFilesControler setOpenPanel:panel];
-		[shoHiddenFilesButton setTarget:shoHiddenFilesControler];
-		[shoHiddenFilesButton setAction:@selector(showHiddenFiles:)];
+		showHiddenFilesController = [[ShowHiddenFilesController alloc] init];
+		[showHiddenFilesController setOpenPanel:panel];
+		[showHiddenFilesButton setTarget:showHiddenFilesController];
+		[showHiddenFilesButton setAction:@selector(showHiddenFiles:)];
 	}
 
 	if ([panel runModal] == NSOKButton) {
@@ -161,8 +161,8 @@ int BrowserDialog::runModal() {
 		}
 	}
 
-	[shoHiddenFilesButton release];
-	[shoHiddenFilesControler release];
+	[showHiddenFilesButton release];
+	[showHiddenFilesController release];
 
 	// If we were in fullscreen mode, switch back
 	if (wasFullscreen) {
