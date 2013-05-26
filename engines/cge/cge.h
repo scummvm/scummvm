@@ -81,7 +81,8 @@ class Talk;
 #define kSayTheEnd  41
 
 enum GameType {
-	kGameTypeSoltys  = 0,
+	kGameTypeNone = 0,
+	kGameTypeSoltys,
 	kGameTypeSfinx
 };
 

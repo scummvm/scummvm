@@ -128,7 +128,8 @@ static const CgeGameDescription gameDescriptions[] = {
 		},
 		kGameTypeSfinx
 	},
-	AD_TABLE_END_MARKER
+
+	{AD_TABLE_END_MARKER, kGameTypeNone}
 };
 
 static const ADFileBasedFallback fileBasedFallback[] = {
