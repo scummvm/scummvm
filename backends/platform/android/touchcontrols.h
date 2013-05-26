@@ -62,7 +62,7 @@ private:
 	enum { kNumPointers = 5 };
 	Pointer _pointers[kNumPointers];
 	int _activePointers[4];
-	Common::KeyCode _joystickPressing;
+	Common::KeyCode _joystickPressing, _centerPressing, _rightPressing;
 	int &pointerFor(TouchArea ta);
 	GLESTexture *_arrows_texture;
 

@@ -31,47 +31,27 @@
 #include "backends/platform/android/texture.h"
 #include "backends/platform/android/touchcontrols.h"
 
-struct CardinalSwipe {
-	CardinalSwipe(int dX, int dY);
-	uint16 distance;
-	enum Direction {
-		kDirectionLeft,
-		kDirectionUp,
-		kDirectionRight,
-		kDirectionDown
-	} direction;
-};
-
-CardinalSwipe::CardinalSwipe(int dX, int dY) {
-	if (abs(dX) > abs(dY)) {
-		if (dX > 0) {
-			distance = dX;
-			direction = kDirectionRight;
-		} else {
-			distance = abs(dX);
-			direction = kDirectionLeft;
-		}
-	} else {
-		if (dY > 0) {
-			distance = dY;
-			direction = kDirectionDown;
-		} else {
-			distance = abs(dY);
-			direction = kDirectionUp;
-		}
-	}
-}
-
-static Common::Rect clipFor(const CardinalSwipe &cs) {
-	switch (cs.direction) {
-	case CardinalSwipe::kDirectionLeft:
-		return Common::Rect(0, 128, 128, 256);
-	case CardinalSwipe::kDirectionUp:
+static Common::Rect clipFor(const Common::KeyCode &cs) {
+	switch (cs) {
+	case Common::KEYCODE_UP:
+	case Common::KEYCODE_PAGEUP:
 		return Common::Rect(0, 0, 128, 128);
-	case CardinalSwipe::kDirectionRight:
-		return Common::Rect(128, 128, 256, 256);
-	case CardinalSwipe::kDirectionDown:
+	case Common::KEYCODE_RIGHT:
 		return Common::Rect(128, 0, 256, 128);
+	case Common::KEYCODE_DOWN:
+	case Common::KEYCODE_PAGEDOWN:
+		return Common::Rect(256, 0, 384, 128);
+	case Common::KEYCODE_LEFT:
+		return Common::Rect(384, 0, 512, 128);
+	case Common::KEYCODE_i:
+		return Common::Rect(0, 128, 128, 256);
+	case Common::KEYCODE_p:
+		return Common::Rect(128, 128, 256, 256);
+	case Common::KEYCODE_u:
+		return Common::Rect(256, 128, 384, 256);
+	case Common::KEYCODE_e:
+	case Common::KEYCODE_l:
+		return Common::Rect(384, 128, 512, 256);
 	default: // unreachable
 		return Common::Rect(0, 0, 1, 1);
 	}
@@ -80,6 +60,8 @@ static Common::Rect clipFor(const CardinalSwipe &cs) {
 TouchControls::TouchControls() :
 	_arrows_texture(NULL),
 	_joystickPressing(Common::KEYCODE_INVALID),
+	_centerPressing(Common::KEYCODE_INVALID),
+	_rightPressing(Common::KEYCODE_INVALID),
 	_key_receiver(NULL),
 	_screen_width(0),
 	_screen_height(0) {
@@ -113,9 +95,9 @@ uint16 TouchControls::getTouchArea(int x, int y) {
 		return kTouchAreaRight;
 }
 
-static Common::KeyCode determineKey(int dX, int dY) {
+static Common::KeyCode determineKey(int dX, int dY, Common::KeyCode def = Common::KEYCODE_INVALID) {
 	if (dX * dX + dY * dY < 50 * 50)
-		return Common::KEYCODE_INVALID;
+		return def;
 
 	if (dY > abs(dX))
 		return Common::KEYCODE_DOWN;
@@ -154,41 +136,23 @@ void TouchControls::init(KeyReceiver *kr, int width, int height) {
 	_key_receiver = kr;
 }
 
+const uint _numRightKeycodes = 4;
+const Common::KeyCode _rightKeycodes[] = { Common::KEYCODE_i, Common::KEYCODE_p, Common::KEYCODE_u, Common::KEYCODE_e };
+
 void TouchControls::draw() {
-	int joyPtr = pointerFor(kTouchAreaJoystick);
-	if (joyPtr != -1) {
-		Pointer &joy = _pointers[joyPtr];
-		CardinalSwipe cs(joy.currentX - joy.startX, joy.currentY - joy.startY);
-
-		if (cs.distance >= 50) {
-			Common::Rect clip = clipFor(cs);
-			_arrows_texture->drawTexture(2 * _screen_width / 10, _screen_height / 2, 64, 64, clip);
-		}
+	if (_joystickPressing != Common::KEYCODE_INVALID) {
+		Common::Rect clip = clipFor(_joystickPressing);
+		_arrows_texture->drawTexture(2 * _screen_width / 10, _screen_height / 2, 64, 64, clip);
 	}
 
-	int centerPtr = pointerFor(kTouchAreaCenter);
-	if (centerPtr != -1) {
-		Pointer &center = _pointers[centerPtr];
-		CardinalSwipe cs(center.currentX - center.startX, center.currentY - center.startY);
-
-		if (cs.distance >= 100) {
-			Common::Rect clip = clipFor(cs);
-			_arrows_texture->drawTexture(_screen_width / 2, _screen_height / 2, 64, 64, clip);
-		}
+	if (_centerPressing != Common::KEYCODE_INVALID) {
+		Common::Rect clip = clipFor(_centerPressing);
+		_arrows_texture->drawTexture(_screen_width / 2, _screen_height / 2, 64, 64, clip);
 	}
 
-	int rightPtr = pointerFor(kTouchAreaRight);
-	if (rightPtr != -1) {
-		Pointer &right = _pointers[rightPtr];
-		CardinalSwipe cs(right.currentX - right.startX, right.currentY - right.startY);
-
-		if (cs.distance >= 100) {
-			if (   cs.direction == CardinalSwipe::kDirectionDown
-			    || cs.direction == CardinalSwipe::kDirectionUp) {
-				Common::Rect clip = clipFor(cs);
-				_arrows_texture->drawTexture( 8 * _screen_width / 10, _screen_height / 2, 64, 64, clip);
-			}
-		}
+	if (_rightPressing != Common::KEYCODE_INVALID) {
+		Common::Rect clip = clipFor(_rightPressing);
+		_arrows_texture->drawTexture( 8 * _screen_width / 10, _screen_height / 2, 64, 64, clip);
 	}
 }
 
@@ -207,74 +171,79 @@ void TouchControls::update(int ptr, int action, int x, int y) {
 			_pointers[ptr].function = touchArea;
 			_pointers[ptr].startX = _pointers[ptr].currentX = x;
 			_pointers[ptr].startY = _pointers[ptr].currentY = y;
+			// fall through to move case to initialize _{joy,center,right}Pressing
+		} else {
+			return;
 		}
-		return;
 
-	case JACTION_MOVE:
+	case JACTION_MOVE: {
 		_pointers[ptr].currentX = x;
 		_pointers[ptr].currentY = y;
-		if (_pointers[ptr].function == kTouchAreaJoystick) {
-			int dX = x - _pointers[ptr].startX;
-			int dY = y - _pointers[ptr].startY;
+		int dX = x - _pointers[ptr].startX;
+		int dY = y - _pointers[ptr].startY;
+
+		switch (_pointers[ptr].function) {
+		case kTouchAreaJoystick: {
 			Common::KeyCode newPressing = determineKey(dX, dY);
 			if (newPressing != _joystickPressing) {
 				_key_receiver->keyPress(_joystickPressing, KeyReceiver::UP);
 				_key_receiver->keyPress(newPressing, KeyReceiver::DOWN);
 				_joystickPressing = newPressing;
 			}
+			return;
+		}
+
+		case kTouchAreaCenter:
+			_centerPressing = determineKey(dX, dY, Common::KEYCODE_RETURN);
+			return;
+
+		case kTouchAreaRight:
+			_rightPressing = determineKey(dX, dY, Common::KEYCODE_i);
+			switch (_rightPressing) {
+			case Common::KEYCODE_LEFT:
+			case Common::KEYCODE_RIGHT:
+				_rightPressing = _rightKeycodes[abs(dX / 100) % _numRightKeycodes];
+				break;
+
+			case Common::KEYCODE_UP:
+				_rightPressing = Common::KEYCODE_PAGEUP;
+				break;
+
+			case Common::KEYCODE_DOWN:
+				_rightPressing = Common::KEYCODE_PAGEDOWN;
+				break;
+
+			default:
+				break;
+			}
+
+		default:
+			return;
 		}
 		return;
+	}
 
 	case JACTION_UP:
 	case JACTION_POINTER_UP: {
-		int dX = _pointers[ptr].currentX - _pointers[ptr].startX;
-		int dY = _pointers[ptr].currentY - _pointers[ptr].startY;
-		struct CardinalSwipe cs(dX, dY);
-
 		switch (_pointers[ptr].function) {
-		case kTouchAreaCenter: {
-			pointerFor(kTouchAreaCenter) = -1;
-			if (cs.distance < 100) {
-				_key_receiver->keyPress(Common::KEYCODE_RETURN);
-				break;
-			}
-			switch (cs.direction) {
-			case CardinalSwipe::kDirectionLeft:
-				_key_receiver->keyPress(Common::KEYCODE_LEFT);
-				break;
-			case CardinalSwipe::kDirectionUp:
-				_key_receiver->keyPress(Common::KEYCODE_UP);
-				break;
-			case CardinalSwipe::kDirectionRight:
-				_key_receiver->keyPress(Common::KEYCODE_RIGHT);
-				break;
-			case CardinalSwipe::kDirectionDown:
-				_key_receiver->keyPress(Common::KEYCODE_DOWN);
-				break;
-			}
-			break;
-		}
-
 		case kTouchAreaJoystick:
 			pointerFor(kTouchAreaJoystick) = -1;
 			if (_joystickPressing != Common::KEYCODE_INVALID) {
 				_key_receiver->keyPress(_joystickPressing, KeyReceiver::UP);
+				_joystickPressing = Common::KEYCODE_INVALID;
 			}
+			break;
+
+		case kTouchAreaCenter:
+			pointerFor(kTouchAreaCenter) = -1;
+			_key_receiver->keyPress(_centerPressing);
+			_centerPressing = Common::KEYCODE_INVALID;
 			break;
 
 		case kTouchAreaRight:
 			pointerFor(kTouchAreaRight) = -1;
-			if (   cs.direction == CardinalSwipe::kDirectionLeft
-			    || cs.direction == CardinalSwipe::kDirectionRight
-			    || cs.distance < 100) {
-				_key_receiver->keyPress(Common::KEYCODE_i);
-			} else {
-				if (cs.direction == CardinalSwipe::kDirectionUp) {
-					_key_receiver->keyPress(Common::KEYCODE_PAGEUP);
-				} else {
-					_key_receiver->keyPress(Common::KEYCODE_PAGEDOWN);
-				}
-			}
+			_key_receiver->keyPress(_rightPressing);
+			_rightPressing = Common::KEYCODE_INVALID;
 			break;
 
 		case kTouchAreaNone:
