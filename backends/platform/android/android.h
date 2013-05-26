@@ -35,7 +35,9 @@
 #include "backends/plugins/posix/posix-provider.h"
 #include "backends/fs/posix/posix-fs-factory.h"
 
+#include "backends/platform/android/events.h"
 #include "backends/platform/android/texture.h"
+#include "backends/platform/android/touchcontrols.h"
 
 #include <pthread.h>
 
@@ -104,7 +106,7 @@ protected:
 };
 #endif
 
-class OSystem_Android : public EventsBaseBackend, public PaletteManager {
+class OSystem_Android : public EventsBaseBackend, public PaletteManager, public KeyReceiver {
 private:
 	// passed from the dark side
 	int _audio_sample_rate;
@@ -141,7 +143,6 @@ private:
 	bool _use_mouse_palette;
 
 	bool _virtcontrols_on;
-	int _virt_arrowkeys_pressed;
 
 	int _graphicsMode;
 	bool _fullscreen;
@@ -225,6 +226,7 @@ public:
 
 public:
 	void pushEvent(int type, int arg1, int arg2, int arg3, int arg4, int arg5, int arg6);
+	void keyPress(const Common::KeyCode keycode, const KeyReceiver::KeyPressType type);
 
 private:
 	Common::Queue<Common::Event> _event_queue;
@@ -243,47 +245,12 @@ private:
 
 	void clipMouse(Common::Point &p);
 	void scaleMouse(Common::Point &p, int x, int y, bool deductDrawRect = true);
-	void sendKey(Common::KeyCode keycode);
 	void updateEventScale();
 	void disableCursorPalette();
 
-	enum TouchArea{
-		kTouchAreaJoystick = 0xffff,
-		kTouchAreaCenter = 0xfffe,
-		kTouchAreaRight = 0xfffd,
-		kTouchAreaNone = 0xfffc,
-	};
+	TouchControls _touchControls;
 
-	uint16 getTouchArea(int x, int y);
-
-	struct Pointer {
-		uint16 startX, startY;
-		uint16 currentX, currentY;
-		TouchArea function;
-		bool active;
-	};
-
-	struct CardinalSwipe {
-		CardinalSwipe(int dX, int dY);
-		uint16 distance;
-		enum Direction {
-			kDirectionLeft,
-			kDirectionUp,
-			kDirectionRight,
-			kDirectionDown
-		} direction;
-	};
-
-	enum { kNumPointers = 5 };
-	Pointer _pointers[kNumPointers];
-	int _activePointers[4];
-	Common::KeyCode _joystickPressing;
-	int &pointerFor(TouchArea ta);
-	const Common::Rect clipFor(const CardinalSwipe &cs);
-
-	void initVirtControls();
 	void drawVirtControls();
-	GLESTexture *_arrows_texture;
 
 protected:
 	// PaletteManager API
@@ -350,8 +317,6 @@ public:
 	}
 	Graphics::PixelBuffer setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d, bool isGame);
 };
-
-extern GLuint g_verticesVBO;
 
 #endif
 #endif

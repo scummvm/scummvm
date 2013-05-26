@@ -133,7 +133,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_ar_correction(true),
 	_show_mouse(false),
 	_show_overlay(false),
-	_virt_arrowkeys_pressed(false),
 	_virtcontrols_on(false),
 	_enable_zoning(false),
 	_mixer(0),
@@ -150,9 +149,8 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_touchpad_scale(66),
 	_dpad_scale(4),
 	_fingersDown(0),
-	_trackball_scale(2),
-	_joystickPressing(Common::KEYCODE_INVALID),
-	_arrows_texture(0) {
+	_trackball_scale(2)
+	{
 
 	_fsFactory = new POSIXFilesystemFactory();
 
@@ -172,16 +170,6 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 
 	if (_htc_fail)
 		LOGI("Enabling HTC workaround");
-
-	for (int p = 0; p < kNumPointers; ++p) {
-		Pointer &pp = _pointers[p];
-		pp.currentX = pp.currentY = pp.startX = pp.startY = 0;
-		pp.active = false;
-		pp.function = kTouchAreaNone;
-	}
-
-	for (int i = 0; i < 4; ++i)
-		_activePointers[i] = -1;
 }
 
 OSystem_Android::~OSystem_Android() {
@@ -193,11 +181,6 @@ OSystem_Android::~OSystem_Android() {
 	_fsFactory = 0;
 	delete _timerManager;
 	_timerManager = 0;
-
-	if (_arrows_texture) {
-		delete _arrows_texture;
-		_arrows_texture = 0;
-	}
 
 	deleteMutex(_event_queue_lock);
 }
