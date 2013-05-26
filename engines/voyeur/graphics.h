@@ -47,6 +47,8 @@ public:
 	byte _VGAColors[PALETTE_SIZE];
 	Common::Array<byte *> _colorChain;
 	byte *_backgroundPage;
+	int _SVGAPage;
+	int _SVGAMode;
 private:
 	static void fadeIntFunc();
 	static void vDoFadeInt();

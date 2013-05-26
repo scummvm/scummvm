@@ -94,6 +94,7 @@ int VoyeurEngine::getRandomNumber(int maxNumber) {
 
 void VoyeurEngine::initialiseManagers() {
 	_eventsManager.setVm(this);
+	_filesManager.setVm(this);
 	_graphicsManager.setVm(this);
 }
 

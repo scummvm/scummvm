@@ -30,6 +30,8 @@ namespace Voyeur {
 
 GraphicsManager::GraphicsManager() {
 	_palFlag = false;
+	_SVGAPage = 0;
+	_SVGAMode = 0;
 }
 
 void GraphicsManager::sInitGraphics() {

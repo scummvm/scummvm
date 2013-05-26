@@ -41,6 +41,7 @@ typedef void (BoltFile::*BoltMethodPtr)();
 
 class BoltFilesState {
 public:
+	VoyeurEngine *_vm;
 	BoltFile *_curLibPtr;
 	BoltGroup *_curGroupPtr;
 	BoltEntry *_curMemberPtr;
@@ -63,12 +64,20 @@ public:
 	int _runType;
 	int _runValue;
 	int _runOffset;
-	Common::File _curFd;
+	Common::File *_curFd;
+
+	byte *_boltPageFrame;
+	int _sImageShift;
+	bool _SVGAReset;
 public:
 	BoltFilesState();
 
 	byte *decompress(byte *buf, int size, int mode);
 	void nextBlock();
+
+	void EMSGetFrameAddr(byte **pageFrame) {} // TODO: Maybe?
+	bool EMSAllocatePages(uint *planeSize) { return false; } // TODO: Maybe?
+	void EMSMapPageHandle(int planeSize, int idx1, int idx2) {} // TODO: Maybe?
 };
 
 class BoltFile {
@@ -77,6 +86,7 @@ private:
 private:
 	BoltFilesState &_state;
 	Common::Array<BoltGroup> _groups;
+	Common::File _file;
 
 	// initType method table
 	void initDefault();
@@ -150,6 +160,7 @@ public:
 	BoltFile *_curLibPtr;
 public:
 	FilesManager();
+	void setVm(VoyeurEngine *vm) { _boltFilesState._vm = vm; }
 
 	bool openBoltLib(const Common::String &filename, BoltFile *&boltFile);
 };
@@ -164,7 +175,7 @@ class PictureResource {
 	int _width;
 	int _height;
 	uint32 _maskData;
-	uint16 _planeSize;
+	uint _planeSize;
 
 	byte *_imgData;
 public:

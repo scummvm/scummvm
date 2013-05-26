@@ -21,6 +21,8 @@
  */
 
 #include "voyeur/files.h"
+#include "voyeur/graphics.h"
+#include "voyeur/voyeur.h"
 
 namespace Voyeur {
 
@@ -47,8 +49,9 @@ BoltFilesState::BoltFilesState() {
 	_runType = 0;
 	_runValue = 0;
 	_runOffset = 0;
-
 	Common::fill(&_historyBuffer[0], &_historyBuffer[0x200], 0);
+	_curFd = NULL;
+	_boltPageFrame = NULL;
 }
 
 #define NEXT_BYTE if (--_bytesLeft <= 0) nextBlock()
@@ -126,7 +129,9 @@ byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 		case 0:
 			while (len-- > 0) {
 				NEXT_BYTE;
-				_historyBuffer[_historyIndex] = *_bufPos++;
+				byte v = *_bufPos++;
+				_historyBuffer[_historyIndex] = v;
+				*bufP++ = v;
 				_historyIndex = (_historyIndex + 1) & 0x1ff;
 			}
 			break;
@@ -135,6 +140,7 @@ byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 				_historyBuffer[_historyIndex] = _historyBuffer[runOffset];
 				*bufP++ = _historyBuffer[runOffset];
 				_historyIndex = (_historyIndex + 1) & 0x1ff;
+				runOffset = (runOffset + 1) & 0x1ff;
 			}
 			break;
 		default:
@@ -154,10 +160,10 @@ byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 
 void BoltFilesState::nextBlock() {
 	if (_curFilePosition != _bufferEnd)
-		_curFd.seek(_bufferEnd);
+		_curFd->seek(_bufferEnd);
 
 	_bufferBegin = _bufferEnd;
-	int bytesRead = _curFd.read(_bufStart, _bufSize);
+	int bytesRead = _curFd->read(_bufStart, _bufSize);
 
 	_bufferEnd = _curFilePosition = _bufferBegin + bytesRead;
 	_bytesLeft = bytesRead - 1;
@@ -195,24 +201,25 @@ const BoltMethodPtr BoltFile::_fnInitType[25] = {
 };
 
 BoltFile::BoltFile(BoltFilesState &state): _state(state) {
-	if (!_state._curFd.open("bvoy.blt"))
+	_state._curFd = &_file;
+	if (!_file.open("bvoy.blt"))
 		error("Could not open buoy.blt");
 	_state._curFilePosition = 0;
 
 	// Read in the file header
 	byte header[16];
-	_state._curFd.read(&header[0], 16);
+	_file.read(&header[0], 16);
 
 	if (strncmp((const char *)&header[0], "BOLT", 4) != 0)
 		error("Tried to load non-bolt file");
 
 	int totalGroups = header[11] ? header[11] : 0x100;
 	for (int i = 0; i < totalGroups; ++i)
-		_groups.push_back(BoltGroup(&_state._curFd));
+		_groups.push_back(BoltGroup(_state._curFd));
 }
 
 BoltFile::~BoltFile() {
-	_state._curFd.close();
+	_state._curFd->close();
 }
 
 bool BoltFile::getBoltGroup(uint32 id) {
@@ -280,15 +287,15 @@ byte *BoltFile::getBoltMember(uint32 id) {
 		_state._bufStart = _state._decompressBuf;
 		_state._bufSize = DECOMPRESS_SIZE;
 
-		if (_state._curMemberPtr->_fileOffset < _state._bufferBegin || _state._curMemberPtr->_fileOffset >= _state._bufferEnd) {
+		if ((_state._curFd != &_file) || (_state._curMemberPtr->_fileOffset < _state._bufferBegin)
+				|| (_state._curMemberPtr->_fileOffset >= _state._bufferEnd)) {
 			_state._bytesLeft = 0;
 			_state._bufPos = _state._bufStart;
 			_state._bufferBegin = -1;
 			_state._bufferEnd = _state._curMemberPtr->_fileOffset;
 		} else {
-			_state._bufPos = _state._curMemberPtr->_fileOffset + _state._bufferBegin + _state._bufStart;
-			_state._bufSize = ((_state._bufPos - _state._bufStart) << 16) >> 16; // TODO: Validate this
-			_state._bytesLeft = _state._bufSize;
+			_state._bufPos = _state._curMemberPtr->_fileOffset - _state._bufferBegin + _state._bufStart;
+			_state._bytesLeft = _state._bufSize - (_state._bufPos - _state._bufStart);
 		}
 	}
 
@@ -309,8 +316,9 @@ void BoltFile::initDefault() {
 
 void BoltFile::sInitPic() {
 	// Read in the header data
-	_state._curMemberPtr->_data = _state.decompress(0, 24, _state._curMemberPtr->_mode);
-
+	_state._curMemberPtr->_data = _state.decompress(NULL, 24, _state._curMemberPtr->_mode);
+	_state._curMemberPtr->_picResource = new PictureResource(_state, 
+		_state._curMemberPtr->_data);
 }
 
 void BoltFile::vInitCMap() {
@@ -401,6 +409,76 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 	_maskData = READ_LE_UINT32(&src[14]);
 
 	_imgData = NULL;
+
+	int nbytes = _width * _height;
+	if (_flags & 0x20) {
+		warning("TODO: sInitPic flags&0x20");
+	} else if (_flags & 8) {
+		int mode = 0;
+		if (_width == 320) {
+			mode = 147;
+			state._sImageShift = 2;
+			state._SVGAReset = false;
+		} else {
+			state._SVGAReset = true;
+			if (_width == 640) {
+				if (_height == 400) {
+					mode = 220;
+					state._sImageShift = 3;
+				} else {
+					mode = 221;
+					state._sImageShift = 3;
+				}
+			} else if (_width == 800) {
+				mode = 222;
+				state._sImageShift = 3;
+			} else if (_width == 1024) {
+				mode = 226;
+				state._sImageShift = 3;
+			}
+		}
+
+		if (mode != state._vm->_graphicsManager._SVGAMode) {
+			state._vm->_graphicsManager._SVGAMode = mode;
+			// TODO: If necessary, simulate SVGA mode change
+		}
+
+//		byte *imgData = _imgData;
+		if (_flags & 0x10) {
+			// TODO: Figure out what it's doing. Looks like a direct clearing
+			// of the screen directly
+		} else {
+			// TODO: Figure out direct screen loading
+		}
+	} else {
+		if (_flags & 0x1000) {
+			if (!(_flags & 0x10))
+				nbytes = state._curMemberPtr->_size - 24;
+
+			int mask = (nbytes + 0x3FFF) >> 14;
+			_imgData = NULL;
+
+			if (state._boltPageFrame == 0)
+				state.EMSGetFrameAddr(&state._boltPageFrame);
+			if (state._boltPageFrame != 0) {
+				if (!state.EMSAllocatePages(&_planeSize)) {
+					_maskData = mask;
+
+					for (int idx = 0; idx < mask; ++idx)
+						state.EMSMapPageHandle(_planeSize, idx, idx);
+					
+					state.decompress(state._boltPageFrame, nbytes, state._curMemberPtr->_mode);
+					return;
+				}
+			}
+		}
+
+		if (_flags & 0x10) {
+			_imgData = new byte[nbytes];
+		} else {
+			_imgData = state.decompress(NULL, nbytes, state._curMemberPtr->_mode);			
+		}
+	}
 }
 
 PictureResource::~PictureResource() {
