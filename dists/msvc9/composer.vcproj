@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="composer"
+	ProjectGUID="{946344EC-3EBE-423B-9D9F-FAE9D06B9C47}"
+	RootNamespace="composer"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\composer\composer.cpp" />
+		<File RelativePath="..\..\engines\composer\composer.h" />
+		<File RelativePath="..\..\engines\composer\detection.cpp" />
+		<File RelativePath="..\..\engines\composer\graphics.cpp" />
+		<File RelativePath="..\..\engines\composer\graphics.h" />
+		<File RelativePath="..\..\engines\composer\module.mk" />
+		<File RelativePath="..\..\engines\composer\resource.cpp" />
+		<File RelativePath="..\..\engines\composer\resource.h" />
+		<File RelativePath="..\..\engines\composer\scripting.cpp" />
+	</Files>
+</VisualStudioProject>

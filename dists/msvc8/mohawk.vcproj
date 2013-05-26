@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="mohawk"
+	ProjectGUID="{A7F62297-0679-40EF-BF3A-DE31F2A322C8}"
+	RootNamespace="mohawk"
+	Keyword="Win32Proj"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Analysis|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Analysis64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\mohawk\bitmap.cpp" />
+		<File RelativePath="..\..\engines\mohawk\bitmap.h" />
+		<File RelativePath="..\..\engines\mohawk\console.cpp" />
+		<File RelativePath="..\..\engines\mohawk\console.h" />
+		<File RelativePath="..\..\engines\mohawk\cursors.cpp" />
+		<File RelativePath="..\..\engines\mohawk\cursors.h" />
+		<File RelativePath="..\..\engines\mohawk\detection.cpp" />
+		<File RelativePath="..\..\engines\mohawk\detection_tables.h" />
+		<File RelativePath="..\..\engines\mohawk\dialogs.cpp" />
+		<File RelativePath="..\..\engines\mohawk\dialogs.h" />
+		<File RelativePath="..\..\engines\mohawk\graphics.cpp" />
+		<File RelativePath="..\..\engines\mohawk\graphics.h" />
+		<File RelativePath="..\..\engines\mohawk\installer_archive.cpp" />
+		<File RelativePath="..\..\engines\mohawk\installer_archive.h" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks.cpp" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks.h" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_code.cpp" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_code.h" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_graphics.cpp" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_graphics.h" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_lbx.cpp" />
+		<File RelativePath="..\..\engines\mohawk\livingbooks_lbx.h" />
+		<File RelativePath="..\..\engines\mohawk\module.mk" />
+		<File RelativePath="..\..\engines\mohawk\mohawk.cpp" />
+		<File RelativePath="..\..\engines\mohawk\mohawk.h" />
+		<File RelativePath="..\..\engines\mohawk\resource.cpp" />
+		<File RelativePath="..\..\engines\mohawk\resource.h" />
+		<File RelativePath="..\..\engines\mohawk\sound.cpp" />
+		<File RelativePath="..\..\engines\mohawk\sound.h" />
+		<File RelativePath="..\..\engines\mohawk\video.cpp" />
+		<File RelativePath="..\..\engines\mohawk\video.h" />
+		<File RelativePath="..\..\engines\mohawk\view.cpp" />
+		<File RelativePath="..\..\engines\mohawk\view.h" />
+	</Files>
+</VisualStudioProject>

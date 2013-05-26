@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+		<_PropertySheetDisplayName>ScummVM_Global</_PropertySheetDisplayName>
+		<ExecutablePath>$(SCUMMVM_LIBS)\bin;$(ExecutablePath)</ExecutablePath>
+		<LibraryPath>$(SCUMMVM_LIBS)\lib\x86;$(LibraryPath)</LibraryPath>
+		<IncludePath>$(SCUMMVM_LIBS)\include;$(IncludePath)</IncludePath>
+		<OutDir>$(Configuration)32\</OutDir>
+		<IntDir>$(Configuration)32/$(ProjectName)\</IntDir>
+	</PropertyGroup>
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<DisableLanguageExtensions>true</DisableLanguageExtensions>
+			<DisableSpecificWarnings>4068;4100;4103;4127;4244;4250;4310;4345;4351;4512;4702;4706;4800;4996;6204;6211;6385;6386;;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+			<AdditionalIncludeDirectories>$(SCUMMVM_LIBS)\include;..\..;..\..\engines;$(TargetDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+			<PreprocessorDefinitions>USE_ZLIB;USE_MAD;USE_VORBIS;USE_FLAC;USE_PNG;USE_THEORADEC;USE_FREETYPE2;USE_BINK;USE_SCALERS;USE_HQ_SCALERS;USE_RGB_COLOR;USE_MT32EMU;USE_NASM;USE_OPENGL;USE_TASKBAR;USE_TRANSLATION;USE_DETECTLANG;ENABLE_SCUMM;ENABLE_SCUMM_7_8;ENABLE_HE;ENABLE_AGI;ENABLE_AGOS;ENABLE_AGOS2;ENABLE_CGE;ENABLE_CINE;ENABLE_COMPOSER;ENABLE_CRUISE;ENABLE_DRACI;ENABLE_DRASCULA;ENABLE_DREAMWEB;ENABLE_GOB;ENABLE_GROOVIE;ENABLE_HOPKINS;ENABLE_HUGO;ENABLE_KYRA;ENABLE_LOL;ENABLE_EOB;ENABLE_LURE;ENABLE_MADE;ENABLE_MOHAWK;ENABLE_PARALLACTION;ENABLE_PEGASUS;ENABLE_QUEEN;ENABLE_SAGA;ENABLE_IHNM;ENABLE_SCI;ENABLE_SKY;ENABLE_SWORD1;ENABLE_SWORD2;ENABLE_TEENAGENT;ENABLE_TINSEL;ENABLE_TOLTECS;ENABLE_TOON;ENABLE_TOUCHE;ENABLE_TONY;ENABLE_TSAGE;ENABLE_TUCKER;WIN32;SDL_BACKEND;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<ExceptionHandling></ExceptionHandling>
+			<RuntimeTypeInfo>false</RuntimeTypeInfo>
+			<WarningLevel>Level4</WarningLevel>
+			<TreatWarningAsError>false</TreatWarningAsError>
+			<CompileAs>Default</CompileAs>
+		</ClCompile>
+		<Link>
+			<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+			<SubSystem>Console</SubSystem>
+			<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>
+		</Link>
+		<ResourceCompile>
+			<AdditionalIncludeDirectories>..\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+		</ResourceCompile>
+	</ItemDefinitionGroup>
+</Project>
