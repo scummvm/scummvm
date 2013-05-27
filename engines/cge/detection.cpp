@@ -141,7 +141,7 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 
 class CGEMetaEngine : public AdvancedMetaEngine {
 public:
-	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames) {
+	CGEMetaEngine() : AdvancedMetaEngine(CGE::gameDescriptions, sizeof(CGE::CgeGameDescription), CGEGames) {
 		_singleid = "soltys";
 	}
 
