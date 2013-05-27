@@ -50,6 +50,7 @@ protected:
 	bool _leaveSceneAfter;
 	const byte *_itemsTypes;
 	void update();
+	void openSmacker(uint32 fileHash, bool keepLastFrame);
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
 	void createMouseCursor();
 	void handleNavigation(const NPoint &mousePos);

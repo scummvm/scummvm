@@ -69,7 +69,7 @@ int NavigationScene::getNavigationAreaType() {
 void NavigationScene::update() {
 	if (_smackerFileHash != 0) {
 		showMouse(false);
-		_smackerPlayer->open(_smackerFileHash, false);
+		openSmacker(_smackerFileHash, false);
 		_vm->_screen->clear();
 		_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 		_smackerDone = false;
@@ -92,13 +92,20 @@ void NavigationScene::update() {
 			_vm->_soundMan->setTwoSoundsPlayFlag(false);
 			_vm->_soundMan->setSoundThreePlayFlag(false);
 			_smackerDone = false;
-			_smackerPlayer->open(navigationItem.fileHash, true);
+			openSmacker(navigationItem.fileHash, true);
 			_vm->_screen->clear();
 			_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 			sendMessage(_parentModule, 0x100A, _navigationIndex);
 		}
 	} 
 	Scene::update();
+}
+
+void NavigationScene::openSmacker(uint32 fileHash, bool keepLastFrame) {
+	// The old Smacker surface is deleted when a new Smacker is opened.
+	removeSurface(_smackerPlayer->getSurface());
+	_smackerPlayer->open(fileHash, keepLastFrame);
+	addSurface(_smackerPlayer->getSurface());
 }
 
 uint32 NavigationScene::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
