@@ -49,6 +49,7 @@ public:
 	byte *_backgroundPage;
 	int _SVGAPage;
 	int _SVGAMode;
+	byte **_vPort;
 private:
 	static void fadeIntFunc();
 	static void vDoFadeInt();

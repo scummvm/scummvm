@@ -379,7 +379,9 @@ void BoltFile::initViewPort() {
 }
 
 void BoltFile::initViewPortList() {
-	error("TODO: initViewPortList not implemented");
+	initDefault();
+	_state._curMemberPtr->_viewPortListResource = new ViewPortListResource(
+		_state, _state._curMemberPtr->_data);
 }
 
 void BoltFile::initFontInfo() {
@@ -435,6 +437,7 @@ BoltEntry::~BoltEntry() {
 	delete[] _data;
 	delete _picResource;
 	delete _viewPortResource;
+	delete _viewPortListResource;
 }
 
 void BoltEntry::load() {
@@ -553,6 +556,22 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src) {
 
 	if (!_fn4 && _fn3)
 		_fn3 = &BoltFile::addRectNoSaveBack;
+}
+
+/*------------------------------------------------------------------------*/
+
+ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *src) {
+	uint32 *idP = (uint32 *)&src[0];
+	uint count = READ_LE_UINT32(idP++);
+
+	for (uint i = 0; i < count; ++i, ++idP) {
+		uint32 id = READ_LE_UINT32(idP);
+		_entries.push_back(NULL);
+		state._curLibPtr->resolveIt(id, &_entries[_entries.size() - 1]);
+	}
+
+	state._vm->_graphicsManager._vPort = &_entries[0];
+	state._curLibPtr->resolveIt(READ_LE_UINT32(&src[4]), &_field4);
 }
 
 } // End of namespace Voyeur
