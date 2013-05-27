@@ -90,7 +90,7 @@ Common::Error NeverhoodEngine::run() {
 		_res->addArchive("t.blb");
 	}
 
-	CursorMan.showMouse(true);
+	CursorMan.showMouse(false);
 
 	_soundMan = new SoundMan(this);
 	_audioResourceMan = new AudioResourceMan(this);
