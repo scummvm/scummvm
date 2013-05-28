@@ -683,7 +683,7 @@ static const uint32 kSsScene2202PuzzleCubeFileHashes2[] = {
 SsScene2202PuzzleCube::SsScene2202PuzzleCube(NeverhoodEngine *vm, Scene *parentScene, int16 cubePosition, int16 cubeSymbol)
 	: StaticSprite(vm, 900), _parentScene(parentScene), _cubeSymbol(cubeSymbol), _cubePosition(cubePosition), _isMoving(false) {
 
-	int surfacePriority;	
+	int surfacePriority;
 
 	SetUpdateHandler(&SsScene2202PuzzleCube::update);
 	SetMessageHandler(&SsScene2202PuzzleCube::handleMessage);
@@ -693,6 +693,7 @@ SsScene2202PuzzleCube::SsScene2202PuzzleCube(NeverhoodEngine *vm, Scene *parentS
 		surfacePriority = 300;
 	else
 		surfacePriority = 500;
+	debug(1, "TODO: Unused SurfacePriority: %d", surfacePriority);
 	loadSprite(kSsScene2202PuzzleCubeFileHashes2[_cubeSymbol], kSLFCenteredDrawOffset | kSLFSetPosition | kSLFDefCollisionBoundsOffset, 0,
 		kSsScene2202PuzzleCubePoints[_cubePosition].x, kSsScene2202PuzzleCubePoints[_cubePosition].y);
 	loadSound(0, 0x40958621);
