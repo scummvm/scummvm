@@ -37,6 +37,9 @@ class BoltEntry;
 class PictureResource;
 class ViewPortResource;
 class ViewPortListResource;
+class FontResource;
+class CMapResource;
+class VInitCyclResource;
 
 #define DECOMPRESS_SIZE 0x7000
 
@@ -163,6 +166,9 @@ public:
 	PictureResource *_picResource;
 	ViewPortResource *_viewPortResource;
 	ViewPortListResource *_viewPortListResource;
+	FontResource *_fontResource;
+	CMapResource *_cMapResource;
+	VInitCyclResource *_vInitCyclResource;
 public:
 	BoltEntry(Common::SeekableReadStream *f);
 	virtual ~BoltEntry();
@@ -229,6 +235,32 @@ public:
 
 	ViewPortListResource(BoltFilesState &state, const byte *src);
 	virtual ~ViewPortListResource() {}
+};
+
+class FontResource {
+public:
+	byte *_fieldC;
+
+	FontResource(BoltFilesState &state, const byte *src);
+	virtual ~FontResource() {}
+};
+
+class CMapResource {
+public:
+	int _start;
+	int _end;
+	byte *_palette;
+public:
+	CMapResource(BoltFilesState &state, const byte *src);
+	virtual ~CMapResource();
+};
+
+class VInitCyclResource {
+public:
+	byte *_ptr[4];
+public:
+	VInitCyclResource(BoltFilesState &state, const byte *src);
+	virtual ~VInitCyclResource() {}
 };
 
 } // End of namespace Voyeur

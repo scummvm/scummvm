@@ -40,12 +40,14 @@ public:
 	IntNode _cycleIntNode;
 	IntNode _evintnode;
 	IntNode _mainIntNode;
+	int _cycleStatus;
 public:
-	EventsManager() {}
+	EventsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
 
 	void resetMouse();
 	void startMainClockInt();
+	void vStopCycle();
 };
 
 } // End of namespace Voyeur

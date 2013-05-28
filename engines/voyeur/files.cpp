@@ -365,11 +365,16 @@ void BoltFile::sInitPic() {
 }
 
 void BoltFile::vInitCMap() {
-	error("TODO: vInitCMap not implemented");
+	initDefault();
+	_state._curMemberPtr->_cMapResource = new CMapResource(
+		_state, _state._curMemberPtr->_data);
 }
 
 void BoltFile::vInitCycl() {
-	error("TODO: vInitCycl not implemented");
+	initDefault();
+	_state._vm->_eventsManager.vStopCycle();
+	_state._curMemberPtr->_vInitCyclResource = new VInitCyclResource(
+		_state, _state._curMemberPtr->_data);
 }
 
 void BoltFile::initViewPort() {
@@ -385,11 +390,13 @@ void BoltFile::initViewPortList() {
 }
 
 void BoltFile::initFontInfo() {
-	error("TODO: initFontInfo not implemented");
+	initDefault();
+	_state._curMemberPtr->_fontResource = new FontResource(
+		_state, _state._curMemberPtr->_data);
 }
 
 void BoltFile::initSoundMap() {
-	error("TODO: initSoundMap not implemented");
+	initDefault();
 }
 
 /*------------------------------------------------------------------------*/
@@ -422,6 +429,10 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 	_data = NULL;
 	_picResource = NULL;
 	_viewPortResource = NULL;
+	_viewPortListResource = NULL;
+	_fontResource = NULL;
+	_cMapResource = NULL;
+	_vInitCyclResource = NULL;
 
 	byte buffer[16];
 	_file->read(&buffer[0], 16);
@@ -438,6 +449,9 @@ BoltEntry::~BoltEntry() {
 	delete _picResource;
 	delete _viewPortResource;
 	delete _viewPortListResource;
+	delete _fontResource;
+	delete _cMapResource;
+	delete _vInitCyclResource;
 }
 
 void BoltEntry::load() {
@@ -561,8 +575,9 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src) {
 /*------------------------------------------------------------------------*/
 
 ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *src) {
-	uint32 *idP = (uint32 *)&src[0];
-	uint count = READ_LE_UINT32(idP++);
+	uint count = READ_LE_UINT16(src);
+
+	uint32 *idP = (uint32 *)&src[8];
 
 	for (uint i = 0; i < count; ++i, ++idP) {
 		uint32 id = READ_LE_UINT32(idP);
@@ -572,6 +587,35 @@ ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *sr
 
 	state._vm->_graphicsManager._vPort = &_entries[0];
 	state._curLibPtr->resolveIt(READ_LE_UINT32(&src[4]), &_field4);
+}
+
+/*------------------------------------------------------------------------*/
+
+FontResource::FontResource(BoltFilesState &state, const byte *src) {
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0xC), &_fieldC);
+}
+
+/*------------------------------------------------------------------------*/
+
+CMapResource::CMapResource(BoltFilesState &state, const byte *src) {
+	_start = READ_LE_UINT16(src + 2);
+	_end = READ_LE_UINT16(src + 4);
+	
+	int count = _end - _start;
+	_palette = new byte[count * 3];
+	Common::copy(src + 6, src + 6 + 3 * count, _palette);
+}
+
+CMapResource::~CMapResource() {
+	delete[] _palette;
+}
+
+/*------------------------------------------------------------------------*/
+
+VInitCyclResource::VInitCyclResource(BoltFilesState &state, const byte *src) {
+	for (int i = 0; i < 4; ++i) {
+		state._curLibPtr->resolveIt(READ_LE_UINT32(src + 8 + i * 4), &_ptr[i]);
+	}
 }
 
 } // End of namespace Voyeur

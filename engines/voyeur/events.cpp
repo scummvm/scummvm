@@ -25,6 +25,10 @@
 
 namespace Voyeur {
 
+EventsManager::EventsManager() {
+	_cycleStatus = 0;
+}
+
 void EventsManager::resetMouse() {
 	// No implementation
 }
@@ -38,6 +42,11 @@ void EventsManager::startMainClockInt() {
 
 void EventsManager::mainVoyeurIntFunc() {
 
+}
+
+void EventsManager::vStopCycle() {
+	_cycleIntNode._flags = 1;
+	_cycleStatus &= 2;
 }
 
 } // End of namespace Voyeur
