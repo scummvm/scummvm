@@ -402,14 +402,27 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 151:
-			_soundMan->playSound(28);
-			_globals->_eventMode = EVENTMODE_ALT; // CHECKME!
-			_graphicsMan->clearScreen();
-			_graphicsMan->clearPalette();
-			_graphicsMan->loadImage("njour3a");
-			_graphicsMan->fadeInLong();
-			_events->delay(5000);
-			_graphicsMan->fadeOutLong();
+			if (_fileIO->fileExists("JOUR3A.ANM")) {
+				// The Polish demo uses the animation file than the complete versions
+				_soundMan->playSound(16);
+				_globals->_eventMode = EVENTMODE_IGNORE;
+
+				_graphicsMan->clearScreen();
+				_graphicsMan->clearPalette();
+				_graphicsMan->_fadingFl = true;
+				_animMan->playAnim("JOUR3A.ANM", "JOUR3A.ANM", 12, 12, 2000);
+			} else {
+				// The other demos only display a nag screen
+				_soundMan->playSound(28);
+				_globals->_eventMode = EVENTMODE_ALT; // CHECKME!
+				_graphicsMan->clearScreen();
+				_graphicsMan->clearPalette();
+				_graphicsMan->loadImage("njour3a");
+				_graphicsMan->fadeInLong();
+				_events->delay(5000);
+				_graphicsMan->fadeOutLong();
+			}
+
 			_globals->_exitId = 300;
 			_globals->_eventMode = EVENTMODE_DEFAULT;
 			break;
