@@ -126,13 +126,15 @@ public:
 	~BoltFile();
 
 	bool getBoltGroup(uint32 id);
-	BoltEntry &getBoltEntry(uint32 id);
 	byte *memberAddr(uint32 id);
 	byte *memberAddrOffset(uint32 id);
 	void resolveIt(uint32 id, byte **p);
 	void resolveFunction(uint32 id, BoltMethodPtr *fn);
 
 	void addRectNoSaveBack() {}	// TODO
+
+	BoltEntry &getBoltEntry(uint32 id);
+	PictureResource *getPictureResouce(uint32 id);
 };
 
 class BoltGroup {
@@ -220,18 +222,18 @@ private:
 	void addRectOptSaveRect();
 private:
 	void setupViewPort(int v, ViewPortMethodPtr setupFn, ViewPortMethodPtr addRectFn, 
-		ViewPortMethodPtr restoreFn, byte *page);
+		ViewPortMethodPtr restoreFn, PictureResource *page);
 public:
-	byte *_field2;
+	ViewPortResource *_next;
 	int _fieldC;
 	int _fieldE;
 	int _field10;
 	int _field12;
 	int _field18;
-	byte *_field20;
+	PictureResource *_picResource;
 	byte *_field24;
-	byte *_field28;
-	byte *_field2C;
+	PictureResource *_picResource2;
+	PictureResource *_picResource3;
 	byte *_field30;
 	byte *_field34;
 	byte *_field38;

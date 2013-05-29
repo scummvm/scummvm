@@ -252,13 +252,20 @@ bool BoltFile::getBoltGroup(uint32 id) {
 }
 
 BoltEntry &BoltFile::getBoltEntry(uint32 id) {
-	BoltGroup &group = _groups[id >> 8];
-	assert(!group._loaded);
+	BoltGroup &group = _groups[id >> 24];
+	assert(group._loaded);
 
-	BoltEntry &entry = group._entries[id & 0xff];
+	BoltEntry &entry = group._entries[(id >> 16) & 0xff];
 	assert(!entry.hasResource() || (id & 0xffff) == 0);
 
 	return entry;
+}
+
+PictureResource *BoltFile::getPictureResouce(uint32 id) {
+	if ((int32)id == -1)
+		return NULL;
+
+	return getBoltEntry(id)._picResource;
 }
 
 byte *BoltFile::memberAddr(uint32 id) {
@@ -275,7 +282,7 @@ byte *BoltFile::memberAddr(uint32 id) {
 }
 
 byte *BoltFile::memberAddrOffset(uint32 id) {
-	BoltGroup &group = _groups[(id >> 24) << 4];
+	BoltGroup &group = _groups[id >> 24];
 	if (!group._loaded)
 		return NULL;
 
@@ -581,17 +588,18 @@ PictureResource::~PictureResource() {
 
 ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 		_state(state) {
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 2), &_field2);
+	_next = state._curLibPtr->getBoltEntry(READ_LE_UINT32(src + 2))._viewPortResource;
 	_fieldC = READ_LE_UINT16(src + 0xC);
 	_fieldE = READ_LE_UINT16(src + 0xE);
 	_field10 = READ_LE_UINT16(src + 0x10);
 	_field12 = READ_LE_UINT16(src + 0x12);
 	_field18 = READ_LE_UINT16(src + 0x18);
 
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x20), &_field20);
+	_picResource = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x20));
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x24), &_field24);
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x28), &_field28);
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x2c), &_field2C);
+	_picResource2 = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x28));
+	_picResource3 = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x2C));
+
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x30), &_field30);
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x34), &_field34);
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x38), &_field38);
@@ -614,8 +622,9 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 }
 
 void ViewPortResource::setupViewPort(int v, ViewPortMethodPtr setupFn, 
-		ViewPortMethodPtr addRectFn, ViewPortMethodPtr restoreFn, byte *page) {
-	byte *fld20 = _field20;
+		ViewPortMethodPtr addRectFn, ViewPortMethodPtr restoreFn, 
+		PictureResource *page) {
+	PictureResource *pic = _picResource;
 	// TODO: More stuff
 }
 

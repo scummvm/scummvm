@@ -47,7 +47,7 @@ public:
 	bool _palFlag;
 	byte _VGAColors[PALETTE_SIZE];
 	Common::Array<byte *> _colorChain;
-	byte *_backgroundPage;
+	PictureResource *_backgroundPage;
 	int _SVGAPage;
 	int _SVGAMode;
 	ViewPortResource *_vPort;
