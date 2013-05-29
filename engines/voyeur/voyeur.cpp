@@ -143,7 +143,8 @@ void VoyeurEngine::doHeadTitle() {
 	_eventsManager.startMainClockInt();
 	if (_bVoy->getBoltGroup(0x10500)) {
 		_graphicsManager._backgroundPage = _bVoy->memberAddr(0x502);
-//		_graphicsManager._vPort.setupViewPort();
+		_graphicsManager._vPort->setupViewPort();
+		
 	}
 }
 

@@ -251,12 +251,27 @@ bool BoltFile::getBoltGroup(uint32 id) {
 	return true;
 }
 
+BoltEntry &BoltFile::getBoltEntry(uint32 id) {
+	BoltGroup &group = _groups[id >> 8];
+	assert(!group._loaded);
+
+	BoltEntry &entry = group._entries[id & 0xff];
+	assert(!entry.hasResource() || (id & 0xffff) == 0);
+
+	return entry;
+}
+
 byte *BoltFile::memberAddr(uint32 id) {
 	BoltGroup &group = _groups[id >> 8];
 	if (!group._loaded)
 		return NULL;
 
-	return group._entries[id & 0xff]._data;
+	// If an entry already has a processed representation, we shouldn't
+	// still be accessing the raw data
+	BoltEntry &entry = group._entries[id & 0xff];
+	assert(!entry.hasResource());
+
+	return entry._data;
 }
 
 byte *BoltFile::memberAddrOffset(uint32 id) {
@@ -264,7 +279,12 @@ byte *BoltFile::memberAddrOffset(uint32 id) {
 	if (!group._loaded)
 		return NULL;
 
-	return group._entries[(id >> 16) & 0xff]._data + (id & 0xffff);
+	// If an entry already has a processed representation, we shouldn't
+	// still be accessing the raw data
+	BoltEntry &entry = group._entries[(id >> 16) & 0xff];
+	assert(!entry.hasResource());
+
+	return entry._data + (id & 0xffff);
 }
 
 /**
@@ -459,6 +479,14 @@ void BoltEntry::load() {
 	// Ideally, a lot of the code should be moved here
 }
 
+/**
+ * Returns true if the given bolt entry has an attached resource
+ */
+bool BoltEntry::hasResource() const {
+	return _picResource || _viewPortResource || _viewPortListResource
+		|| _fontResource || _cMapResource || _vInitCyclResource;
+}
+
 /*------------------------------------------------------------------------*/
 
 PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
@@ -551,8 +579,15 @@ PictureResource::~PictureResource() {
 
 /*------------------------------------------------------------------------*/
 
-ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src) {
+ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
+		_state(state) {
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 2), &_field2);
+	_fieldC = READ_LE_UINT16(src + 0xC);
+	_fieldE = READ_LE_UINT16(src + 0xE);
+	_field10 = READ_LE_UINT16(src + 0x10);
+	_field12 = READ_LE_UINT16(src + 0x12);
+	_field18 = READ_LE_UINT16(src + 0x18);
+
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x20), &_field20);
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x24), &_field24);
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x28), &_field28);
@@ -561,6 +596,12 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src) {
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x34), &_field34);
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x38), &_field38);
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x3C), &_field3C);
+
+	_field46 = READ_LE_UINT16(src + 0x46);
+	_field48 = READ_LE_UINT16(src + 0x48);
+	_field4A = READ_LE_UINT16(src + 0x4A);
+	_field4C = READ_LE_UINT16(src + 0x4C);
+
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x7A), &_field7A);
 
 	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x7E), &_fn1);
@@ -572,6 +613,30 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src) {
 		_fn3 = &BoltFile::addRectNoSaveBack;
 }
 
+void ViewPortResource::setupViewPort(int v, ViewPortMethodPtr setupFn, 
+		ViewPortMethodPtr addRectFn, ViewPortMethodPtr restoreFn, byte *page) {
+	byte *fld20 = _field20;
+	// TODO: More stuff
+}
+
+void ViewPortResource::setupMCGASaveRect() {
+	
+}
+
+void ViewPortResource::restoreMCGASaveRect() {
+
+}
+
+void ViewPortResource::addRectOptSaveRect() {
+
+}
+
+void ViewPortResource::setupViewPort() {
+	setupViewPort(0, &ViewPortResource::setupMCGASaveRect, 
+		&ViewPortResource::addRectOptSaveRect, &ViewPortResource::restoreMCGASaveRect,
+		_state._vm->_graphicsManager._backgroundPage);
+}
+
 /*------------------------------------------------------------------------*/
 
 ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *src) {
@@ -581,12 +646,13 @@ ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *sr
 
 	for (uint i = 0; i < count; ++i, ++idP) {
 		uint32 id = READ_LE_UINT32(idP);
-		_entries.push_back(NULL);
-		state._curLibPtr->resolveIt(id, &_entries[_entries.size() - 1]);
+		BoltEntry &entry = state._curLibPtr->getBoltEntry(id);
+
+		assert(entry._viewPortResource);
+		_entries.push_back(entry._viewPortResource);
 	}
 
-	state._vm->_graphicsManager._vPort = &_entries[0];
-	state._curLibPtr->resolveIt(READ_LE_UINT32(&src[4]), &_field4);
+	state._vm->_graphicsManager._vPort = _entries[0];
 }
 
 /*------------------------------------------------------------------------*/

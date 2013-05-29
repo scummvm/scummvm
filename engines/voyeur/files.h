@@ -126,6 +126,7 @@ public:
 	~BoltFile();
 
 	bool getBoltGroup(uint32 id);
+	BoltEntry &getBoltEntry(uint32 id);
 	byte *memberAddr(uint32 id);
 	byte *memberAddrOffset(uint32 id);
 	void resolveIt(uint32 id, byte **p);
@@ -174,6 +175,7 @@ public:
 	virtual ~BoltEntry();
 
 	void load();
+	bool hasResource() const;
 };
 
 class FilesManager {
@@ -207,9 +209,25 @@ public:
 	virtual ~PictureResource();
 };
 
+typedef void (ViewPortResource::*ViewPortMethodPtr)();
+
 class ViewPortResource {
+private:
+	BoltFilesState &_state;
+
+	void setupMCGASaveRect();
+	void restoreMCGASaveRect();
+	void addRectOptSaveRect();
+private:
+	void setupViewPort(int v, ViewPortMethodPtr setupFn, ViewPortMethodPtr addRectFn, 
+		ViewPortMethodPtr restoreFn, byte *page);
 public:
 	byte *_field2;
+	int _fieldC;
+	int _fieldE;
+	int _field10;
+	int _field12;
+	int _field18;
 	byte *_field20;
 	byte *_field24;
 	byte *_field28;
@@ -218,6 +236,10 @@ public:
 	byte *_field34;
 	byte *_field38;
 	byte *_field3C;
+	int _field46;
+	int _field48;
+	int _field4A;
+	int _field4C;
 	byte *_field7A;
 	BoltMethodPtr _fn1;
 	BoltMethodPtr _fn2;
@@ -226,12 +248,14 @@ public:
 public:
 	ViewPortResource(BoltFilesState &state, const byte *src);
 	virtual ~ViewPortResource() {}
+
+	void setupViewPort();
 };
 
 class ViewPortListResource {
 public:
 	byte *_field4;
-	Common::Array<byte *> _entries;
+	Common::Array<ViewPortResource *> _entries;
 
 	ViewPortListResource(BoltFilesState &state, const byte *src);
 	virtual ~ViewPortListResource() {}

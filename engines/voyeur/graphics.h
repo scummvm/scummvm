@@ -23,6 +23,7 @@
 #ifndef VOYEUR_GRAPHICS_H
 #define VOYEUR_GRAPHICS_H
 
+#include "voyeur/files.h"
 #include "voyeur/game.h"
 #include "common/scummsys.h"
 #include "common/array.h"
@@ -49,19 +50,13 @@ public:
 	byte *_backgroundPage;
 	int _SVGAPage;
 	int _SVGAMode;
-	byte **_vPort;
+	ViewPortResource *_vPort;
 private:
 	static void fadeIntFunc();
 	static void vDoFadeInt();
 	static void vDoCycleInt();
 
-	void setupMCGASaveRect();
-	void restoreMCGASaveRect();
-	void addRectOptSaveRect();
-
 	void addIntNode(IntNode *node);
-	void setupViewPort(GraphicMethodPtr setupFn, GraphicMethodPtr addRectFn, 
-		GraphicMethodPtr restoreFn);
 public:
 	GraphicsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
@@ -69,7 +64,6 @@ public:
 
 	void vInitColor();
 	void addFadeInt();
-	void setupViewPort();
 };
 
 } // End of namespace Voyeur

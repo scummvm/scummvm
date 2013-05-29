@@ -66,26 +66,4 @@ void GraphicsManager::vDoCycleInt() {
 
 }
 
-void GraphicsManager::setupViewPort() {
-	setupViewPort(&GraphicsManager::setupMCGASaveRect, &GraphicsManager::addRectOptSaveRect, 
-		&GraphicsManager::restoreMCGASaveRect);
-}
-
-void GraphicsManager::setupViewPort(GraphicMethodPtr setupFn, 
-		GraphicMethodPtr addRectFn, GraphicMethodPtr restoreFn) {
-
-}
-
-void GraphicsManager::setupMCGASaveRect() {
-	
-}
-
-void GraphicsManager::restoreMCGASaveRect() {
-
-}
-
-void GraphicsManager::addRectOptSaveRect() {
-
-}
-
 } // End of namespace Voyeur
