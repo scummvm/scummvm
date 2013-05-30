@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "common/rect.h"
 #include "common/str.h"
+#include "voyeur/graphics.h"
 
 namespace Voyeur {
 
@@ -129,9 +130,7 @@ public:
 	byte *memberAddr(uint32 id);
 	byte *memberAddrOffset(uint32 id);
 	void resolveIt(uint32 id, byte **p);
-	void resolveFunction(uint32 id, BoltMethodPtr *fn);
-
-	void addRectNoSaveBack() {}	// TODO
+	void resolveFunction(uint32 id, GraphicMethodPtr *fn);
 
 	BoltEntry &getBoltEntry(uint32 id);
 	PictureResource *getPictureResouce(uint32 id);
@@ -194,14 +193,13 @@ public:
 };
 
 class PictureResource {
+public:
 	uint16 _flags;
 	byte _select;
 	byte _pick;
 	byte _onOff;
 	byte _depth;
-	Common::Point _offset;
-	int _width;
-	int _height;
+	Common::Rect _bounds;
 	uint32 _maskData;
 	uint _planeSize;
 
@@ -216,37 +214,27 @@ typedef void (ViewPortResource::*ViewPortMethodPtr)();
 class ViewPortResource {
 private:
 	BoltFilesState &_state;
-
-	void setupMCGASaveRect();
-	void restoreMCGASaveRect();
-	void addRectOptSaveRect();
 private:
-	void setupViewPort(int v, ViewPortMethodPtr setupFn, ViewPortMethodPtr addRectFn, 
-		ViewPortMethodPtr restoreFn, PictureResource *page);
+	void setupViewPort(PictureResource *page, Common::Rect *clipRect, ViewPortSetupPtr setupFn,
+		ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn);
 public:
 	ViewPortResource *_next;
-	int _fieldC;
-	int _fieldE;
-	int _field10;
-	int _field12;
+	Common::Rect _bounds;
 	int _field18;
 	PictureResource *_picResource;
-	byte *_field24;
+	PictureResource *_activePage;
 	PictureResource *_picResource2;
 	PictureResource *_picResource3;
 	byte *_field30;
 	byte *_field34;
 	byte *_field38;
 	byte *_field3C;
-	int _field46;
-	int _field48;
-	int _field4A;
-	int _field4C;
+	Common::Rect _clipRect;
 	byte *_field7A;
-	BoltMethodPtr _fn1;
-	BoltMethodPtr _fn2;
-	BoltMethodPtr _fn3;
-	BoltMethodPtr _fn4;
+	GraphicMethodPtr _fn1;
+	ViewPortSetupPtr _setupFn;
+	ViewPortAddPtr _addFn;
+	ViewPortRestorePtr _restoreFn;
 public:
 	ViewPortResource(BoltFilesState &state, const byte *src);
 	virtual ~ViewPortResource() {}

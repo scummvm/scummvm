@@ -312,7 +312,7 @@ void BoltFile::resolveIt(uint32 id, byte **p) {
 	}
 }
 
-void BoltFile::resolveFunction(uint32 id, BoltMethodPtr *fn) {
+void BoltFile::resolveFunction(uint32 id, GraphicMethodPtr *fn) {
 	if ((int32)id == -1) {
 		*fn = NULL;
 	} else {
@@ -502,36 +502,38 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 	_pick = src[3];
 	_onOff = src[4];
 	_depth = src[5];
-	_offset = Common::Point(READ_LE_UINT16(&src[6]), READ_LE_UINT16(&src[8]));
-	_width = READ_LE_UINT16(&src[10]);
-	_height = READ_LE_UINT16(&src[12]);
+
+	int xs = READ_LE_UINT16(&src[6]);
+	int ys = READ_LE_UINT16(&src[8]);
+	_bounds = Common::Rect(xs, ys, xs + READ_LE_UINT16(&src[10]),
+		ys + READ_LE_UINT16(&src[12]));
 	_maskData = READ_LE_UINT32(&src[14]);
 
 	_imgData = NULL;
 
-	int nbytes = _width * _height;
+	int nbytes = _bounds.width() * _bounds.height();
 	if (_flags & 0x20) {
-		warning("TODO: sInitPic flags&0x20");
+		error("TODO: sInitPic flags&0x20");
 	} else if (_flags & 8) {
 		int mode = 0;
-		if (_width == 320) {
+		if (_bounds.width() == 320) {
 			mode = 147;
 			state._sImageShift = 2;
 			state._SVGAReset = false;
 		} else {
 			state._SVGAReset = true;
-			if (_width == 640) {
-				if (_height == 400) {
+			if (_bounds.width() == 640) {
+				if (_bounds.height() == 400) {
 					mode = 220;
 					state._sImageShift = 3;
 				} else {
 					mode = 221;
 					state._sImageShift = 3;
 				}
-			} else if (_width == 800) {
+			} else if (_bounds.width() == 800) {
 				mode = 222;
 				state._sImageShift = 3;
-			} else if (_width == 1024) {
+			} else if (_bounds.width() == 1024) {
 				mode = 226;
 				state._sImageShift = 3;
 			}
@@ -542,6 +544,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 			// TODO: If necessary, simulate SVGA mode change
 		}
 
+		error("TODO: Implement extra picture resource modes");
 //		byte *imgData = _imgData;
 		if (_flags & 0x10) {
 			// TODO: Figure out what it's doing. Looks like a direct clearing
@@ -589,14 +592,15 @@ PictureResource::~PictureResource() {
 ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 		_state(state) {
 	_next = state._curLibPtr->getBoltEntry(READ_LE_UINT32(src + 2))._viewPortResource;
-	_fieldC = READ_LE_UINT16(src + 0xC);
-	_fieldE = READ_LE_UINT16(src + 0xE);
-	_field10 = READ_LE_UINT16(src + 0x10);
-	_field12 = READ_LE_UINT16(src + 0x12);
+
+	int xs = READ_LE_UINT16(src + 0xC);
+	int ys = READ_LE_UINT16(src + 0xE);
+	_bounds = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 0x10), 
+		ys + READ_LE_UINT16(src + 0x12));
 	_field18 = READ_LE_UINT16(src + 0x18);
 
 	_picResource = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x20));
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x24), &_field24);
+	_activePage = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x24));
 	_picResource2 = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x28));
 	_picResource3 = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x2C));
 
@@ -605,45 +609,89 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x38), &_field38);
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x3C), &_field3C);
 
-	_field46 = READ_LE_UINT16(src + 0x46);
-	_field48 = READ_LE_UINT16(src + 0x48);
-	_field4A = READ_LE_UINT16(src + 0x4A);
-	_field4C = READ_LE_UINT16(src + 0x4C);
+	xs = READ_LE_UINT16(src + 0x46);
+	ys = READ_LE_UINT16(src + 0x48);
+	_clipRect = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 0x4A),
+		ys + READ_LE_UINT16(src + 0x4C));
 
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x7A), &_field7A);
 
-	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x7E), &_fn1);
-	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x82), &_fn2);
-	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x86), &_fn3);
-	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x8A), &_fn4);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x7E), (GraphicMethodPtr *)&_fn1);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x82), (GraphicMethodPtr *)&_setupFn);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x86), (GraphicMethodPtr *)&_addFn);
+	state._curLibPtr->resolveFunction(READ_LE_UINT32(src + 0x8A), (GraphicMethodPtr *)&_restoreFn);
 
-	if (!_fn4 && _fn3)
-		_fn3 = &BoltFile::addRectNoSaveBack;
+	if (!_restoreFn && _addFn)
+		_addFn = &GraphicsManager::addRectNoSaveBack;
 }
 
-void ViewPortResource::setupViewPort(int v, ViewPortMethodPtr setupFn, 
-		ViewPortMethodPtr addRectFn, ViewPortMethodPtr restoreFn, 
-		PictureResource *page) {
+void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRect,
+		ViewPortSetupPtr setupFn, ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn) {
 	PictureResource *pic = _picResource;
-	// TODO: More stuff
-}
+	Common::Rect r(_bounds.left + pic->_bounds.left, _bounds.top + pic->_bounds.top,
+		_bounds.right, _bounds.bottom);
+	int xDiff, yDiff;
 
-void ViewPortResource::setupMCGASaveRect() {
-	
-}
+	if (page) {
+		// Clip based on the passed picture resource
+		xDiff = page->_bounds.left - r.left;
+		yDiff = page->_bounds.top - r.top;
 
-void ViewPortResource::restoreMCGASaveRect() {
+		if (xDiff > 0) {
+			r.left = page->_bounds.left;
+			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0);
+		}
+		if (yDiff > 0) {
+			r.top = page->_bounds.top;
+			r.setHeight(yDiff <= r.height() ? r.height() - yDiff : 0);
+		}
 
-}
+		xDiff = page->_bounds.left + page->_bounds.width();
+		yDiff = page->_bounds.top + page->_bounds.height();
 
-void ViewPortResource::addRectOptSaveRect() {
+		if (xDiff > 0)
+			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0); 
+		if (yDiff > 0)
+			r.setHeight(yDiff <= r.height() ? r.height() - yDiff : 0);
+	}
 
+	if (clipRect) {
+		// Clip based on the passed clip rectangles
+		xDiff = clipRect->left - r.left;
+		yDiff = clipRect->top - r.top;
+
+		if (xDiff > 0) {
+			r.left = clipRect->left;
+			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0);
+		}
+		if (yDiff > 0) {
+			r.top = clipRect->top;
+			r.setHeight(yDiff <= r.height() ? r.height() - yDiff : 0);
+		}
+		//dx=clipRec->left, cx=clipRect.y
+		xDiff = r.right - clipRect->right;
+		yDiff = r.right - clipRect->right;
+
+		if (xDiff > 0)
+			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0);
+		if (yDiff > 0)
+			r.setHeight(yDiff <= r.height() ? r.height() - yDiff : 0);
+	}
+
+	_activePage = page;
+	_field18 = 0;
+	_setupFn = setupFn;
+	_addFn = addFn;
+	_restoreFn = restoreFn;
+
+	if (setupFn)
+		(_state._vm->_graphicsManager.*setupFn)(this);
 }
 
 void ViewPortResource::setupViewPort() {
-	setupViewPort(0, &ViewPortResource::setupMCGASaveRect, 
-		&ViewPortResource::addRectOptSaveRect, &ViewPortResource::restoreMCGASaveRect,
-		_state._vm->_graphicsManager._backgroundPage);
+	setupViewPort(_state._vm->_graphicsManager._backgroundPage, NULL,
+		&GraphicsManager::setupMCGASaveRect, &GraphicsManager::addRectOptSaveRect,
+		&GraphicsManager::restoreMCGASaveRect);
 }
 
 /*------------------------------------------------------------------------*/

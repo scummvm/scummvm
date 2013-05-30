@@ -23,7 +23,7 @@
 #ifndef VOYEUR_GRAPHICS_H
 #define VOYEUR_GRAPHICS_H
 
-#include "voyeur/files.h"
+//#include "voyeur/files.h"
 #include "voyeur/game.h"
 #include "common/scummsys.h"
 #include "common/array.h"
@@ -38,8 +38,13 @@ namespace Voyeur {
 
 class VoyeurEngine;
 class GraphicsManager;
+class PictureResource;
+class ViewPortResource;
 
 typedef void (GraphicsManager::*GraphicMethodPtr)(); 
+typedef void (GraphicsManager::*ViewPortSetupPtr)(ViewPortResource *);
+typedef void (GraphicsManager::*ViewPortAddPtr)(ViewPortResource *, void *v2, void *v3);
+typedef void (GraphicsManager::*ViewPortRestorePtr)(ViewPortResource *);
 
 class GraphicsManager {
 public:
@@ -64,6 +69,11 @@ public:
 
 	void vInitColor();
 	void addFadeInt();
+
+	void setupMCGASaveRect(ViewPortResource *viewPort);
+	void addRectOptSaveRect(ViewPortResource *viewPort, void *v2, void *v3);	
+	void restoreMCGASaveRect(ViewPortResource *viewPort);
+	void addRectNoSaveBack(ViewPortResource *viewPort, void *v2, void *v3);
 };
 
 } // End of namespace Voyeur
