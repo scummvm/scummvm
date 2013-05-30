@@ -29,9 +29,11 @@
 namespace Voyeur {
 
 GraphicsManager::GraphicsManager() {
-	_palFlag = false;
 	_SVGAPage = 0;
 	_SVGAMode = 0;
+	_palFlag = false;
+	_MCGAMode = false;
+	_clipPtr = NULL;
 }
 
 void GraphicsManager::sInitGraphics() {
@@ -67,7 +69,19 @@ void GraphicsManager::vDoCycleInt() {
 }
 
 void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
+	_MCGAMode = true;
 
+	if (viewPort->_activePage) {
+		viewPort->_activePage->_flags |= 1;
+		Common::Rect *clipRect = _clipPtr;
+		_clipPtr = &viewPort->_clipRect;
+
+		sDrawPic(viewPort->_activePage, viewPort->_picResource, viewPort, NULL);
+
+		_clipPtr = clipRect;
+	}
+
+	viewPort->_field42 = -1;
 }
 
 void GraphicsManager::addRectOptSaveRect(ViewPortResource *viewPort, void *v2, void *v3) {
@@ -79,6 +93,10 @@ void GraphicsManager::restoreMCGASaveRect(ViewPortResource *viewPort) {
 }
 
 void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, void *v2, void *v3) {
+
+}
+
+void GraphicsManager::sDrawPic(PictureResource *pic, PictureResource *pic2, ViewPortResource *viewPort, void *v3) {
 
 }
 

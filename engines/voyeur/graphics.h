@@ -56,6 +56,8 @@ public:
 	int _SVGAPage;
 	int _SVGAMode;
 	ViewPortResource *_vPort;
+	bool _MCGAMode;
+	Common::Rect *_clipPtr;
 private:
 	static void fadeIntFunc();
 	static void vDoFadeInt();
@@ -74,6 +76,8 @@ public:
 	void addRectOptSaveRect(ViewPortResource *viewPort, void *v2, void *v3);	
 	void restoreMCGASaveRect(ViewPortResource *viewPort);
 	void addRectNoSaveBack(ViewPortResource *viewPort, void *v2, void *v3);
+
+	void sDrawPic(PictureResource *pic, PictureResource *pic2, ViewPortResource *viewPort, void *v3);
 };
 
 } // End of namespace Voyeur

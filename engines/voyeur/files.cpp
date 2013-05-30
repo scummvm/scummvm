@@ -542,9 +542,9 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 		if (mode != state._vm->_graphicsManager._SVGAMode) {
 			state._vm->_graphicsManager._SVGAMode = mode;
 			// TODO: If necessary, simulate SVGA mode change
+			warning("TODO: May need to implement SVGA stub code");
 		}
 
-		error("TODO: Implement extra picture resource modes");
 //		byte *imgData = _imgData;
 		if (_flags & 0x10) {
 			// TODO: Figure out what it's doing. Looks like a direct clearing
@@ -591,6 +591,7 @@ PictureResource::~PictureResource() {
 
 ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 		_state(state) {
+	_flags = READ_LE_UINT16(src);
 	_next = state._curLibPtr->getBoltEntry(READ_LE_UINT32(src + 2))._viewPortResource;
 
 	int xs = READ_LE_UINT16(src + 0xC);
@@ -609,6 +610,7 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x38), &_field38);
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x3C), &_field3C);
 
+	_field42 = (int16)READ_LE_UINT16(src + 0x42);
 	xs = READ_LE_UINT16(src + 0x46);
 	ys = READ_LE_UINT16(src + 0x48);
 	_clipRect = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 0x4A),
@@ -628,8 +630,8 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRect,
 		ViewPortSetupPtr setupFn, ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn) {
 	PictureResource *pic = _picResource;
-	Common::Rect r(_bounds.left + pic->_bounds.left, _bounds.top + pic->_bounds.top,
-		_bounds.right, _bounds.bottom);
+	Common::Rect r = _bounds;
+	r.translate(pic->_bounds.left, pic->_bounds.top);
 	int xDiff, yDiff;
 
 	if (page) {
@@ -638,16 +640,18 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRe
 		yDiff = page->_bounds.top - r.top;
 
 		if (xDiff > 0) {
+			int width = r.width();
 			r.left = page->_bounds.left;
-			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0);
+			r.setWidth(xDiff <= width ? width - xDiff : 0);
 		}
 		if (yDiff > 0) {
+			int height = r.height();
 			r.top = page->_bounds.top;
-			r.setHeight(yDiff <= r.height() ? r.height() - yDiff : 0);
+			r.setHeight(yDiff <= height ? height - yDiff : 0);
 		}
 
-		xDiff = page->_bounds.left + page->_bounds.width();
-		yDiff = page->_bounds.top + page->_bounds.height();
+		xDiff = r.right - page->_bounds.right;
+		yDiff = r.bottom - page->_bounds.bottom;
 
 		if (xDiff > 0)
 			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0); 
@@ -661,14 +665,16 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRe
 		yDiff = clipRect->top - r.top;
 
 		if (xDiff > 0) {
+			int width = r.width();
 			r.left = clipRect->left;
-			r.setWidth(xDiff <= r.width() ? r.width() - xDiff : 0);
+			r.setWidth(xDiff <= width ? width - xDiff : 0);
 		}
 		if (yDiff > 0) {
+			int height = r.height();
 			r.top = clipRect->top;
-			r.setHeight(yDiff <= r.height() ? r.height() - yDiff : 0);
+			r.setHeight(yDiff <= height ? height - yDiff : 0);
 		}
-		//dx=clipRec->left, cx=clipRect.y
+		
 		xDiff = r.right - clipRect->right;
 		yDiff = r.right - clipRect->right;
 

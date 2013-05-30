@@ -218,6 +218,7 @@ private:
 	void setupViewPort(PictureResource *page, Common::Rect *clipRect, ViewPortSetupPtr setupFn,
 		ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn);
 public:
+	int _flags;
 	ViewPortResource *_next;
 	Common::Rect _bounds;
 	int _field18;
@@ -229,6 +230,7 @@ public:
 	byte *_field34;
 	byte *_field38;
 	byte *_field3C;
+	int16 _field42;
 	Common::Rect _clipRect;
 	byte *_field7A;
 	GraphicMethodPtr _fn1;
