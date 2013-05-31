@@ -48,8 +48,13 @@ static const ExtraGuiOption queenExtraGuiOption = {
 
 class QueenMetaEngine : public MetaEngine {
 public:
-	virtual const char *getName() const;
-	virtual const char *getOriginalCopyright() const;
+	virtual const char *getName() const {
+		return "Queen";
+	}
+
+	virtual const char *getOriginalCopyright() const {
+		return "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis";
+	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual GameList getSupportedGames() const;
@@ -57,19 +62,11 @@ public:
 	virtual GameDescriptor findGame(const char *gameid) const;
 	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
-	virtual int getMaximumSaveSlot() const;
+	virtual int getMaximumSaveSlot() const { return 99; }
 	virtual void removeSaveState(const char *target, int slot) const;
 
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
 };
-
-const char *QueenMetaEngine::getName() const {
-	return "Queen";
-}
-
-const char *QueenMetaEngine::getOriginalCopyright() const {
-	return "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis";
-}
 
 bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
@@ -78,21 +75,11 @@ bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsDeleteSave);
 }
 
-bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsSubtitleOptions);
-}
-
 GameList QueenMetaEngine::getSupportedGames() const {
 	GameList games;
 	games.push_back(queenGameDescriptor);
 	return games;
 }
-
-int QueenMetaEngine::getMaximumSaveSlot() const { return 99; }
 
 const ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	Common::String guiOptions;

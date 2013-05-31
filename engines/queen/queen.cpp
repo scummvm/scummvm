@@ -315,6 +315,14 @@ GUI::Debugger *QueenEngine::getDebugger() {
 	return _debugger;
 }
 
+bool Queen::QueenEngine::hasFeature(EngineFeature f) const {
+	return
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsSubtitleOptions);
+}
+
 Common::Error QueenEngine::run() {
 	initGraphics(GAME_SCREEN_WIDTH, GAME_SCREEN_HEIGHT, false);
 
