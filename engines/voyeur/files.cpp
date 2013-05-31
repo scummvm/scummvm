@@ -510,6 +510,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 	_maskData = READ_LE_UINT32(&src[14]);
 
 	_imgData = NULL;
+	_secondPicture = NULL;
 
 	int nbytes = _bounds.width() * _bounds.height();
 	if (_flags & 0x20) {
@@ -683,9 +684,10 @@ void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRe
 		if (yDiff > 0)
 			r.setHeight(yDiff <= r.height() ? r.height() - yDiff : 0);
 	}
-
+// clip = (0x20, 0x14, width: 0x140, height: 0C8h
 	_activePage = page;
 	_field18 = 0;
+	_clipRect = r;
 	_setupFn = setupFn;
 	_addFn = addFn;
 	_restoreFn = restoreFn;

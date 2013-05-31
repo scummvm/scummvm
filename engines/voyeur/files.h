@@ -204,6 +204,13 @@ public:
 	uint _planeSize;
 
 	byte *_imgData;
+
+	// TODO: Investigate further just why/how pictuers are chained
+	PictureResource *_secondPicture;
+	// TODO: Figure out if the following data is part of all pictures, or if
+	// only for certain types (when flags & 0x8000 != 0)
+	Common::Rect _bounds2;
+	Field86MethodPtr _field86;
 public:
 	PictureResource(BoltFilesState &state, const byte *src);
 	virtual ~PictureResource();

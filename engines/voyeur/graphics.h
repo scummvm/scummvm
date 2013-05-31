@@ -45,6 +45,7 @@ typedef void (GraphicsManager::*GraphicMethodPtr)();
 typedef void (GraphicsManager::*ViewPortSetupPtr)(ViewPortResource *);
 typedef void (GraphicsManager::*ViewPortAddPtr)(ViewPortResource *, void *v2, void *v3);
 typedef void (GraphicsManager::*ViewPortRestorePtr)(ViewPortResource *);
+typedef void (GraphicsManager::*Field86MethodPtr)(void *pic, int y, Common::Rect &bounds);
 
 class GraphicsManager {
 public:
@@ -55,9 +56,12 @@ public:
 	PictureResource *_backgroundPage;
 	int _SVGAPage;
 	int _SVGAMode;
+	int _SVGAReset;
 	ViewPortResource *_vPort;
 	bool _MCGAMode;
+	bool _saveBack;
 	Common::Rect *_clipPtr;
+	int _screenOffset;
 private:
 	static void fadeIntFunc();
 	static void vDoFadeInt();
@@ -77,7 +81,8 @@ public:
 	void restoreMCGASaveRect(ViewPortResource *viewPort);
 	void addRectNoSaveBack(ViewPortResource *viewPort, void *v2, void *v3);
 
-	void sDrawPic(PictureResource *pic, PictureResource *pic2, ViewPortResource *viewPort, void *v3);
+	void EMSMapPageHandle(int v1, int v2, int v3);
+	void sDrawPic(PictureResource *srcPic, PictureResource *destPic, const Common::Point &offset, void *v3);
 };
 
 } // End of namespace Voyeur
