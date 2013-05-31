@@ -60,14 +60,18 @@ protected:
 // TODO: Disable heavy debug stuff in release mode
 
 #define SetUpdateHandler(handler)												\
-	_updateHandlerCb = static_cast <void (Entity::*)(void)> (handler);			\
-	debug(5, "SetUpdateHandler(" #handler ")");									\
-	_updateHandlerCbName = #handler
+	do {																		\
+		_updateHandlerCb = static_cast <void (Entity::*)(void)> (handler);		\
+		debug(5, "SetUpdateHandler(" #handler ")");								\
+		_updateHandlerCbName = #handler;										\
+	} while (0)
 
 #define SetMessageHandler(handler)												\
-	_messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler);	\
-	debug(5, "SetMessageHandler(" #handler ")");								\
-	_messageHandlerCbName = #handler
+	do {																		\
+		_messageHandlerCb = static_cast <uint32 (Entity::*)(int messageNum, const MessageParam &param, Entity *sender)> (handler);	\
+		debug(5, "SetMessageHandler(" #handler ")");							\
+		_messageHandlerCbName = #handler;										\
+	} while (0)
 
 const uint kMaxSoundResources = 16;
 

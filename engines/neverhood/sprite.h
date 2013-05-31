@@ -30,9 +30,24 @@
 
 namespace Neverhood {
 
-#define SetSpriteUpdate(callback) _spriteUpdateCb = static_cast <void (Sprite::*)(void)> (callback); debug(2, "SetSpriteUpdate(" #callback ")"); _spriteUpdateCbName = #callback
-#define SetFilterX(callback) _filterXCb = static_cast <int16 (Sprite::*)(int16)> (callback); debug(2, "SetFilterX(" #callback ")")
-#define SetFilterY(callback) _filterYCb = static_cast <int16 (Sprite::*)(int16)> (callback); debug(2, "SetFilterY(" #callback ")")
+#define SetSpriteUpdate(callback)											\
+	do {																	\
+		_spriteUpdateCb = static_cast <void (Sprite::*)(void)> (callback);	\
+		debug(2, "SetSpriteUpdate(" #callback ")");							\
+		_spriteUpdateCbName = #callback;									\
+	} while (0)
+
+#define SetFilterX(callback)												\
+	do {																	\
+		_filterXCb = static_cast <int16 (Sprite::*)(int16)> (callback);		\
+		debug(2, "SetFilterX(" #callback ")");								\
+	} while (0)
+
+#define SetFilterY(callback)												\
+	do {																	\
+		_filterYCb = static_cast <int16 (Sprite::*)(int16)> (callback);		\
+		debug(2, "SetFilterY(" #callback ")");								\
+	} while (0)
 
 const int16 kDefPosition = -32768;
 
@@ -113,7 +128,11 @@ protected:
 
 #define AnimationCallback(callback) static_cast <void (AnimatedSprite::*)()> (callback)
 #define GotoState(callback) gotoState(static_cast <void (AnimatedSprite::*)()> (callback))
-#define NextState(callback) _nextStateCb = static_cast <void (AnimatedSprite::*)(void)> (callback); debug(2, "NextState(" #callback ")"); _nextStateCbName = #callback
+#define NextState(callback)															\
+	do {																			\
+		_nextStateCb = static_cast <void (AnimatedSprite::*)(void)> (callback);		\
+		debug(2, "NextState(" #callback ")"); _nextStateCbName = #callback;			\
+	} while (0)
 #define FinalizeState(callback) setFinalizeState(static_cast <void (AnimatedSprite::*)()> (callback));
 
 const int STICK_LAST_FRAME = -2;
