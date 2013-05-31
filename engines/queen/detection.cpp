@@ -22,8 +22,7 @@
 
 #include "base/plugins.h"
 
-//#include "engines/advancedDetector.h"
-#include "engines/metaengine.h"
+#include "engines/advancedDetector.h"
 
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -35,8 +34,17 @@
 #include "queen/queen.h"
 #include "queen/resource.h"
 
-static const PlainGameDescriptor queenGameDescriptor = {
-	"queen", "Flight of the Amazon Queen"
+namespace Queen {
+
+struct QueenGameDescription {
+	ADGameDescription desc;
+};
+
+} // End of namespace Queen
+
+static const PlainGameDescriptor queenGames[] = {
+	{"queen", "Flight of the Amazon Queen"},
+	{0, 0}
 };
 
 static const ExtraGuiOption queenExtraGuiOption = {
@@ -46,8 +54,32 @@ static const ExtraGuiOption queenExtraGuiOption = {
 	false
 };
 
-class QueenMetaEngine : public MetaEngine {
+namespace Queen {
+
+static const QueenGameDescription gameDescriptions[] = {
+	{
+		{
+			"queen",
+			"",
+			AD_ENTRY1s("FIXME", "FIXME", 0),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	{ AD_TABLE_END_MARKER }
+};
+
+} // End of namespace Queen
+
+class QueenMetaEngine : public AdvancedMetaEngine {
 public:
+	QueenMetaEngine() : AdvancedMetaEngine(Queen::gameDescriptions, sizeof(Queen::QueenGameDescription), queenGames) {
+		_singleid = "queen";
+	}
+
 	virtual const char *getName() const {
 		return "Queen";
 	}
@@ -57,15 +89,13 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
-	virtual GameList getSupportedGames() const;
+	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const;
-	virtual GameDescriptor findGame(const char *gameid) const;
-	virtual GameList detectGames(const Common::FSList &fslist) const;
 	virtual SaveStateList listSaves(const char *target) const;
 	virtual int getMaximumSaveSlot() const { return 99; }
 	virtual void removeSaveState(const char *target, int slot) const;
 
-	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const;
+	//const ADGameDescription *fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const;
 };
 
 bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -73,12 +103,6 @@ bool QueenMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave);
-}
-
-GameList QueenMetaEngine::getSupportedGames() const {
-	GameList games;
-	games.push_back(queenGameDescriptor);
-	return games;
 }
 
 const ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &target) const {
@@ -100,13 +124,7 @@ const ExtraGuiOptions QueenMetaEngine::getExtraGuiOptions(const Common::String &
 	return options;
 }
 
-GameDescriptor QueenMetaEngine::findGame(const char *gameid) const {
-	if (0 == scumm_stricmp(gameid, queenGameDescriptor.gameid)) {
-		return queenGameDescriptor;
-	}
-	return GameDescriptor();
-}
-
+/* FIXME - Migrate this code (Use as falllback):
 GameList QueenMetaEngine::detectGames(const Common::FSList &fslist) const {
 	GameList detectedGames;
 
@@ -142,6 +160,7 @@ GameList QueenMetaEngine::detectGames(const Common::FSList &fslist) const {
 	}
 	return detectedGames;
 }
+*/
 
 SaveStateList QueenMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
@@ -179,10 +198,13 @@ void QueenMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-Common::Error QueenMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	assert(engine);
-	*engine = new Queen::QueenEngine(syst);
-	return Common::kNoError;
+bool QueenMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	const Queen::QueenGameDescription *gd = (const Queen::QueenGameDescription *)desc;
+
+	if (gd)
+		*engine = new Queen::QueenEngine(syst); //FIXME , gd);
+
+	return (gd != 0);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(QUEEN)
