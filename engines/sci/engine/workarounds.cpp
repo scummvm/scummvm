@@ -249,6 +249,7 @@ const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 	{ GID_KQ6,           105,   989,  0,        "globalSound", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // floppy: during intro, parameter 4 is an object
 	{ GID_KQ6,           460,   989,  0,       "globalSound2", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // after pulling the black widow's web on the isle of wonder, parameter 4 is an object - bug #3034567
 	{ GID_QFG4,           -1, 64989,  0,           "longSong", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // CD version: many places, parameter 4 is an object (longSong)
+	{ GID_SQ5,           800,   989,  0,          "sq5Music1", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when cutting the wrong part of Goliath with the laser - bug #3614145
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
