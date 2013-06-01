@@ -37,6 +37,8 @@ GraphicsManager::GraphicsManager() {
 	_MCGAMode = false;
 	_saveBack = false;
 	_clipPtr = NULL;
+	_viewPortListPtr = NULL;
+	_vPort = NULL;
 }
 
 void GraphicsManager::sInitGraphics() {
@@ -87,19 +89,19 @@ void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
 	viewPort->_field42 = -1;
 }
 
-void GraphicsManager::addRectOptSaveRect(ViewPortResource *viewPort, void *v2, void *v3) {
-
+void GraphicsManager::addRectOptSaveRect(ViewPortResource *viewPort, int y, Common::Rect *bounds) {
+	// TODO
 }
 
 void GraphicsManager::restoreMCGASaveRect(ViewPortResource *viewPort) {
+	// TODO
+}
+
+void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, int y, Common::Rect *bounds) {
 
 }
 
-void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, void *v2, void *v3) {
-
-}
-
-void GraphicsManager::sDrawPic(PictureResource *srcPic, PictureResource *destPic, 
+void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
 		const Common::Point &offset, void *v3) {
 	int var4C = 0;
 	int width1, width2;
@@ -108,7 +110,7 @@ void GraphicsManager::sDrawPic(PictureResource *srcPic, PictureResource *destPic
 	int srcOffset;
 	int screenOffset;
 	int flags1, flags2;
-	PictureResource *saveddestPic = NULL;
+	ViewPortResource *destViewPort = NULL;
 	Common::Rect newBounds;
 	Common::Rect backBounds;
 	int var24;
@@ -119,14 +121,17 @@ void GraphicsManager::sDrawPic(PictureResource *srcPic, PictureResource *destPic
 	byte *imgData1, *imgData2;
 	byte *srcP, *destP;
 
-	if (srcPic->_flags & 0x8000) {
-		srcPic = srcPic->_secondPicture;
-		warning("TODO: Particularly validate 'extended' pictures");
+	// Get the picture parameters, or deference viewport pointers to get their pictures
+	PictureResource *srcPic = (PictureResource *)srcDisplay;
+	PictureResource *destPic = (PictureResource *)destDisplay;
+
+	if (srcDisplay->_flags & 0x8000) {
+		// A viewport was passed, not a picture
+		srcPic = ((ViewPortResource *)srcDisplay)->_picResource;
 	}
-	if (destPic->_flags & 0x8000) {
-		saveddestPic = destPic;
-		destPic = destPic->_secondPicture;
-		warning("TODO: Particularly validate 'extended' pictures");
+	if (destDisplay->_flags & 0x8000) {
+		destViewPort = (ViewPortResource *)destDisplay;
+		destPic = destViewPort->_picResource;
 	}
 
 	Common::Point ofs = Common::Point(offset.x + srcPic->_bounds.left - destPic->_bounds.left, 
@@ -142,10 +147,11 @@ void GraphicsManager::sDrawPic(PictureResource *srcPic, PictureResource *destPic
 			int xs = _clipPtr->left - srcPic->_bounds.left;
 			int ys = _clipPtr->top - srcPic->_bounds.top;
 			newBounds = Common::Rect(xs, ys, xs + _clipPtr->width(), ys + _clipPtr->height());
-		} else if (saveddestPic) {
-			int xs = saveddestPic->_bounds2.left - destPic->_bounds.left;
-			int ys = saveddestPic->_bounds2.top - destPic->_bounds.top;
-			newBounds = Common::Rect(xs, ys, xs + destPic->_bounds2.width(), ys + destPic->_bounds2.height());
+		} else if (destViewPort) {
+			int xs = destViewPort->_clipRect.left - destPic->_bounds.left;
+			int ys = destViewPort->_clipRect.top - destPic->_bounds.top;
+			newBounds = Common::Rect(xs, ys, xs + destViewPort->_clipRect.width(),
+				ys + destViewPort->_clipRect.height());
 		} else {
 			newBounds = Common::Rect(0, 0, destPic->_bounds.width(), destPic->_bounds.height());
 		}
@@ -196,18 +202,18 @@ void GraphicsManager::sDrawPic(PictureResource *srcPic, PictureResource *destPic
 	widthDiff = width1 - width2;
 	widthDiff2 = destPic->_bounds.width() - width2;
 
-	if (saveddestPic) {
+	if (destViewPort) {
 		error("TODO: Examine further when it's actually used");
 		if (!_saveBack || ((srcPic->_flags & 0x800) != 0)) {
 			// TODO
-		} else if (!saveddestPic->_field86) {
+		} else if (!destViewPort->_addFn) {
 			// TODO
 		} else {
 			int xs = ofs.x + destPic->_bounds.left;
 			int ys = ofs.y + destPic->_bounds.top;
 			backBounds = Common::Rect(xs, ys, xs + width2, ys + height1);
 
-			(this->*saveddestPic->_field86)(saveddestPic, saveddestPic->_bounds.top, backBounds);
+			(this->*destViewPort->_addFn)(destViewPort, destViewPort->_bounds.top, &backBounds);
 		}
 	}
 
@@ -271,6 +277,14 @@ void GraphicsManager::sDrawPic(PictureResource *srcPic, PictureResource *destPic
 
 void GraphicsManager::EMSMapPageHandle(int v1, int v2, int v3) {
 	// TODO
+}
+
+void GraphicsManager::flipPage() {
+
+}
+
+void GraphicsManager::sWaitFlip() {
+
 }
 
 } // End of namespace Voyeur

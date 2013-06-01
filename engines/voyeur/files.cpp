@@ -412,8 +412,13 @@ void BoltFile::initViewPort() {
 
 void BoltFile::initViewPortList() {
 	initDefault();
-	_state._curMemberPtr->_viewPortListResource = new ViewPortListResource(
+
+	ViewPortListResource *res;
+	_state._curMemberPtr->_viewPortListResource = res = new ViewPortListResource(
 		_state, _state._curMemberPtr->_data);
+
+	_state._vm->_graphicsManager._viewPortListPtr = &res->_entries;
+	_state._vm->_graphicsManager._vPort = &res->_entries[0];
 }
 
 void BoltFile::initFontInfo() {
@@ -510,7 +515,6 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 	_maskData = READ_LE_UINT32(&src[14]);
 
 	_imgData = NULL;
-	_secondPicture = NULL;
 
 	int nbytes = _bounds.width() * _bounds.height();
 	if (_flags & 0x20) {
@@ -716,8 +720,6 @@ ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *sr
 		assert(entry._viewPortResource);
 		_entries.push_back(entry._viewPortResource);
 	}
-
-	state._vm->_graphicsManager._vPort = _entries[0];
 }
 
 /*------------------------------------------------------------------------*/

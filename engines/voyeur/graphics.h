@@ -38,14 +38,14 @@ namespace Voyeur {
 
 class VoyeurEngine;
 class GraphicsManager;
+class DisplayResource;
 class PictureResource;
 class ViewPortResource;
 
 typedef void (GraphicsManager::*GraphicMethodPtr)(); 
 typedef void (GraphicsManager::*ViewPortSetupPtr)(ViewPortResource *);
-typedef void (GraphicsManager::*ViewPortAddPtr)(ViewPortResource *, void *v2, void *v3);
+typedef void (GraphicsManager::*ViewPortAddPtr)(ViewPortResource *, int y, Common::Rect *bounds);
 typedef void (GraphicsManager::*ViewPortRestorePtr)(ViewPortResource *);
-typedef void (GraphicsManager::*Field86MethodPtr)(void *pic, int y, Common::Rect &bounds);
 
 class GraphicsManager {
 public:
@@ -57,7 +57,8 @@ public:
 	int _SVGAPage;
 	int _SVGAMode;
 	int _SVGAReset;
-	ViewPortResource *_vPort;
+	Common::Array<ViewPortResource *> *_viewPortListPtr;
+	ViewPortResource **_vPort;
 	bool _MCGAMode;
 	bool _saveBack;
 	Common::Rect *_clipPtr;
@@ -77,12 +78,14 @@ public:
 	void addFadeInt();
 
 	void setupMCGASaveRect(ViewPortResource *viewPort);
-	void addRectOptSaveRect(ViewPortResource *viewPort, void *v2, void *v3);	
+	void addRectOptSaveRect(ViewPortResource *viewPort, int y, Common::Rect *bounds);	
 	void restoreMCGASaveRect(ViewPortResource *viewPort);
-	void addRectNoSaveBack(ViewPortResource *viewPort, void *v2, void *v3);
+	void addRectNoSaveBack(ViewPortResource *viewPort, int y, Common::Rect *bounds);
 
 	void EMSMapPageHandle(int v1, int v2, int v3);
-	void sDrawPic(PictureResource *srcPic, PictureResource *destPic, const Common::Point &offset, void *v3);
+	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &offset, void *v3);
+	void flipPage();
+	void sWaitFlip();
 };
 
 } // End of namespace Voyeur
