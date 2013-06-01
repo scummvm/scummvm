@@ -26,6 +26,8 @@ namespace Voyeur {
 
 IntData::IntData() {
 	_field9 = false;
+	_flipWait = false;
+	_field2A = 0;
 }
 
 void IntData::audioInit() {

@@ -65,7 +65,7 @@ void EventsManager::sWaitFlip() {
 				(_vm->_graphicsManager.*viewPort._restoreFn)(&viewPort);
 
 			_vm->_graphicsManager._clipPtr = clipPtr;
-			viewPort._field40[viewPort._pageIndex] = 0;
+			viewPort._rectListCount[viewPort._pageIndex] = 0;
 			viewPort._flags &= 0xFFBF;
 		}
 	}

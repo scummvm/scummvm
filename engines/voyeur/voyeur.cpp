@@ -138,7 +138,7 @@ void VoyeurEngine::initInput() {
 }
 
 void VoyeurEngine::doHeadTitle() {
-	char dest[144];
+//	char dest[144];
 
 	_eventsManager.startMainClockInt();
 	if (_bVoy->getBoltGroup(0x10500)) {

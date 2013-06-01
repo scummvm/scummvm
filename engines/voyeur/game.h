@@ -112,6 +112,8 @@ public:
 class IntData {
 public:
 	bool _field9;
+	bool _flipWait;
+	int _field2A;
 	byte *_colors;
 	Common::List<IntNode *> _intNodes;
 public:

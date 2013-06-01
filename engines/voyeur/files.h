@@ -232,10 +232,8 @@ public:
 	PictureResource *_activePage;
 	PictureResource *_pages[2];
 	byte *_field30;
-	byte *_field34;
-	byte *_field38;
-	byte *_field3C;
-	int16 _field40[3];
+	Common::Array<Common::Rect> *_rectListPtr[3];
+	int _rectListCount[3];
 	Common::Rect _clipRect;
 	byte *_field7A;
 	GraphicMethodPtr _fn1;
@@ -244,7 +242,7 @@ public:
 	ViewPortRestorePtr _restoreFn;
 public:
 	ViewPortResource(BoltFilesState &state, const byte *src);
-	virtual ~ViewPortResource() {}
+	virtual ~ViewPortResource();
 
 	void setupViewPort();
 };

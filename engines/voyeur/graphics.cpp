@@ -34,6 +34,7 @@ GraphicsManager::GraphicsManager() {
 	_SVGAReset = 0;
 	_screenOffset = 0;
 	_planeSelect = 0;
+	_sImageShift = 3;
 	_palFlag = false;
 	_MCGAMode = false;
 	_saveBack = false;
@@ -87,18 +88,34 @@ void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
 		_clipPtr = clipRect;
 	}
 
-	viewPort->_field40[1] = -1;
+	viewPort->_rectListCount[1] = -1;
 }
 
-void GraphicsManager::addRectOptSaveRect(ViewPortResource *viewPort, int y, Common::Rect *bounds) {
+void GraphicsManager::addRectOptSaveRect(ViewPortResource *viewPort, int idx, const Common::Rect &bounds) {
 	// TODO
 }
 
 void GraphicsManager::restoreMCGASaveRect(ViewPortResource *viewPort) {
-	// TODO
+	if (viewPort->_rectListCount[0] != -1) {
+		for (int i = 0; i < viewPort->_rectListCount[0]; ++i) {
+			addRectOptSaveRect(viewPort, 1, (*viewPort->_rectListPtr[0])[i]);
+		}
+	} else {
+		viewPort->_rectListCount[1] = -1;
+	}
+
+	restoreBack(*viewPort->_rectListPtr[1], viewPort->_rectListCount[1], viewPort->_pages[0],
+		viewPort->_pages[1]);
+	
+	int count = viewPort->_rectListCount[0];
+	restoreBack(*viewPort->_rectListPtr[0], viewPort->_rectListCount[0], 
+		viewPort->_activePage, viewPort->_currentPic);
+
+	SWAP(viewPort->_rectListPtr[0], viewPort->_rectListPtr[1]);
+	viewPort->_rectListCount[1] = count;
 }
 
-void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, int y, Common::Rect *bounds) {
+void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, int idx, const Common::Rect &bounds) {
 	// TODO: more
 }
 
@@ -214,7 +231,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			int ys = ofs.y + destPic->_bounds.top;
 			backBounds = Common::Rect(xs, ys, xs + width2, ys + height1);
 
-			(this->*destViewPort->_addFn)(destViewPort, destViewPort->_bounds.top, &backBounds);
+			(this->*destViewPort->_addFn)(destViewPort, destViewPort->_bounds.top, backBounds);
 		}
 	}
 
@@ -276,8 +293,15 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	}
 }
 
+/**
+ * Queues the given picture for display
+ */
 void GraphicsManager::sDisplayPic(PictureResource *pic) {
-	// TODO
+	if (pic->_flags & 8) {
+		_vm->_eventsManager._intPtr._field2A = READ_LE_UINT32(pic->_imgData) >> _sImageShift;
+	}
+
+	_vm->_eventsManager._intPtr._flipWait = true;
 }
 
 void GraphicsManager::EMSMapPageHandle(int v1, int v2, int v3) {
@@ -311,6 +335,11 @@ void GraphicsManager::flipPage() {
 			viewPort._flags = (viewPort._flags & 0xFFF7) | 0x40;
 		}
 	}
+}
+
+void GraphicsManager::restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
+		PictureResource *srcPic, PictureResource *destPic) {
+	//TODO
 }
 
 } // End of namespace Voyeur

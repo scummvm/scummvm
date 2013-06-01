@@ -614,12 +614,21 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	_pages[1] = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x2C));
 
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x30), &_field30);
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x34), &_field34);
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x38), &_field38);
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x3C), &_field3C);
 
-	for (int i = 0; i < 3; ++i)
-		_field40[i] = (int16)READ_LE_UINT16(src + 0x40 + 2 * i);
+	// Get the rect list
+	for (int i = 0; i < 3; ++i) {
+		_rectListCount[i] = (int16)READ_LE_UINT16(src + 0x40 + 2 * i);
+
+		int16 *rectList = (int16 *)state._curLibPtr->memberAddrOffset(READ_LE_UINT32(src + 0x34 + i * 4));
+		_rectListPtr[i] = new Common::Array<Common::Rect>();
+
+		for (int i = 0; i < _rectListCount[0]; ++i) {
+			int xs = FROM_LE_16(rectList[0]);
+			int ys = FROM_LE_16(rectList[1]);
+			_rectListPtr[i]->push_back(Common::Rect(xs, ys, xs + FROM_LE_16(rectList[2]),
+				ys + FROM_LE_16(rectList[3])));
+		}
+	}
 
 	xs = READ_LE_UINT16(src + 0x46);
 	ys = READ_LE_UINT16(src + 0x48);
@@ -635,6 +644,11 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 
 	if (!_restoreFn && _addFn)
 		_addFn = &GraphicsManager::addRectNoSaveBack;
+}
+
+ViewPortResource::~ViewPortResource() {
+	for (int i = 0; i < 3; ++i)
+		delete _rectListPtr[i];
 }
 
 void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRect,

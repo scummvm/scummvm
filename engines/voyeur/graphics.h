@@ -44,7 +44,7 @@ class ViewPortResource;
 
 typedef void (GraphicsManager::*GraphicMethodPtr)(); 
 typedef void (GraphicsManager::*ViewPortSetupPtr)(ViewPortResource *);
-typedef void (GraphicsManager::*ViewPortAddPtr)(ViewPortResource *, int y, Common::Rect *bounds);
+typedef void (GraphicsManager::*ViewPortAddPtr)(ViewPortResource *, int idx, const Common::Rect &bounds);
 typedef void (GraphicsManager::*ViewPortRestorePtr)(ViewPortResource *);
 
 class GraphicsManager {
@@ -64,12 +64,15 @@ public:
 	Common::Rect *_clipPtr;
 	int _screenOffset;
 	uint _planeSelect;
+	int _sImageShift;
 private:
 	static void fadeIntFunc();
 	static void vDoFadeInt();
 	static void vDoCycleInt();
 
 	void addIntNode(IntNode *node);
+	void restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
+		PictureResource *srcPic, PictureResource *destPic);
 public:
 	GraphicsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
@@ -79,9 +82,9 @@ public:
 	void addFadeInt();
 
 	void setupMCGASaveRect(ViewPortResource *viewPort);
-	void addRectOptSaveRect(ViewPortResource *viewPort, int y, Common::Rect *bounds);	
+	void addRectOptSaveRect(ViewPortResource *viewPort, int idx, const Common::Rect &bounds);	
 	void restoreMCGASaveRect(ViewPortResource *viewPort);
-	void addRectNoSaveBack(ViewPortResource *viewPort, int y, Common::Rect *bounds);
+	void addRectNoSaveBack(ViewPortResource *viewPort, int idx, const Common::Rect &bounds);
 
 	void EMSMapPageHandle(int v1, int v2, int v3);
 	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &offset, void *v3);
