@@ -533,6 +533,7 @@ int Events::handleOneShot(Event *event) {
 		default:
 			break;
 		}
+		break;
 #ifdef ENABLE_IHNM
 	case kCutawayEvent:
 		switch (event->op) {
@@ -545,6 +546,7 @@ int Events::handleOneShot(Event *event) {
 		default:
 			break;
 		}
+		break;
 #endif
 	case kActorEvent:
 		switch (event->op) {
@@ -554,6 +556,7 @@ int Events::handleOneShot(Event *event) {
 		default:
 			break;
 		}
+		break;
 	default:
 		break;
 	}
