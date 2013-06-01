@@ -47,6 +47,7 @@ MenuRecord::MenuRecord(const MenuRecordBounds *bounds, int numParams, ...) {
 	va_start(params, numParams);
 	for (int index = 0; index < _numEntries; ++index)
 		_entries[index] = va_arg(params, const char *);
+	va_end(params);
 
 	// Store position data
 	_hsxstart = bounds->left; _hsxend = bounds->right;
