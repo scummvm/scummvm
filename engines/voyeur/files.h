@@ -232,8 +232,13 @@ public:
 	PictureResource *_activePage;
 	PictureResource *_pages[2];
 	byte *_field30;
+
+	// Rect lists and counts. Note that _rectListCount values of '-1' seem to have
+	// special significance, which is why I'm not making them redundant in favour 
+	// of the arrays' .size() method
 	Common::Array<Common::Rect> *_rectListPtr[3];
 	int _rectListCount[3];
+
 	Common::Rect _clipRect;
 	byte *_field7A;
 	GraphicMethodPtr _fn1;

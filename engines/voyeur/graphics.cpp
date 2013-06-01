@@ -83,7 +83,7 @@ void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
 		Common::Rect *clipRect = _clipPtr;
 		_clipPtr = &viewPort->_clipRect;
 
-		sDrawPic(viewPort->_activePage, viewPort->_currentPic, Common::Point(), NULL);
+		sDrawPic(viewPort->_activePage, viewPort->_currentPic, Common::Point());
 
 		_clipPtr = clipRect;
 	}
@@ -120,7 +120,7 @@ void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, int idx, con
 }
 
 void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
-		const Common::Point &offset, void *v3) {
+		const Common::Point &offset) {
 	int var4C = 0;
 	int width1, width2;
 	int widthDiff, widthDiff2;
@@ -339,7 +339,19 @@ void GraphicsManager::flipPage() {
 
 void GraphicsManager::restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
 		PictureResource *srcPic, PictureResource *destPic) {
-	//TODO
+	bool saveBack = _saveBack;
+	_saveBack = false;
+
+	if (rectListCount == -1) {
+		sDrawPic(srcPic, destPic, Common::Point());
+	} else {
+		for (int i = rectListCount; i >= 0; --i) {
+			_clipPtr = &rectList[i];
+			sDrawPic(srcPic, destPic, Common::Point());
+		}
+	}
+
+	_saveBack = saveBack;
 }
 
 } // End of namespace Voyeur

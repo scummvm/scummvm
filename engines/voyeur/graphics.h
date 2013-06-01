@@ -87,7 +87,7 @@ public:
 	void addRectNoSaveBack(ViewPortResource *viewPort, int idx, const Common::Rect &bounds);
 
 	void EMSMapPageHandle(int v1, int v2, int v3);
-	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &offset, void *v3);
+	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &offset);
 	void sDisplayPic(PictureResource *pic);
 	void flipPage();
 };
