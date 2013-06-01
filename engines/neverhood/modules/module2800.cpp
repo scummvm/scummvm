@@ -1929,8 +1929,6 @@ Scene2806::Scene2806(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	Sprite *tempSprite;
 
-	which = 3;
-
 	SetMessageHandler(&Scene2806::handleMessage);
 	SetUpdateHandler(&Scene2806::update);
 	
