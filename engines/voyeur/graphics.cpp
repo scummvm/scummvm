@@ -45,6 +45,12 @@ GraphicsManager::GraphicsManager() {
 
 void GraphicsManager::sInitGraphics() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, false);
+	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT,
+		Graphics::PixelFormat::createFormatCLUT8());
+}
+
+GraphicsManager::~GraphicsManager() {
+	_screenSurface.free();
 }
 
 void GraphicsManager::addFadeInt() {
@@ -92,7 +98,25 @@ void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
 }
 
 void GraphicsManager::addRectOptSaveRect(ViewPortResource *viewPort, int idx, const Common::Rect &bounds) {
-	// TODO
+	int count1, count2;
+	int idx1, varE, var24;
+
+	if (viewPort->_rectListCount[idx] == -1)
+		return;
+
+	viewPort->_rectListPtr[idx]->push_back(bounds);
+	count1 = count2 = viewPort->_rectListCount[idx];
+	varE = var24 = 0;
+
+	if (count1 > 0) {
+		for (idx1 = 0; idx1 < count1; ++idx1) {
+			// TODO: In progress
+
+			Common::Array<Common::Rect> &rectList = *viewPort->_rectListPtr[idx];
+		}
+
+		viewPort->_rectListCount[idx] = idx1;
+	}
 }
 
 void GraphicsManager::restoreMCGASaveRect(ViewPortResource *viewPort) {
@@ -269,15 +293,42 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			srcP = imgData1 + srcOffset;
 
 			if (flags2 & 8) {
-				error("TODO: sDrawPic");
+				// loc_258D8
+				destP = imgData2 + screenOffset;
+
+				if (flags1 & 2) {
+					// loc_258F5
+				} else {
+					// loc_25D40
+					if (flags1 & 0x100) {
+						// loc_25D4A
+					} else {
+						// loc_2606D
+						destP = (byte *)_screenSurface.pixels;
+
+						for (int yp = 0; yp < height1; ++yp) {
+							Common::copy(srcP, srcP + width2, destP);
+							destP += width2 + widthDiff2;
+							srcP += width2 + widthDiff;
+						}
+					}
+				}
 			} else {
 				destP = imgData2 + screenOffset;
 
+				// loc_2615E
 				if (flags1 & 2) {
 					error("TODO: sDrawPic");
 				} else {
 					if (flags1 & 0x100) {
-						error("TODO: sDrawPic");
+						srcP = imgData1;
+
+						if (isClipped) {
+							// loc_26424
+
+						} else {
+							// loc_26543
+						}
 					} else {
 						for (int yp = 0; yp < height1; ++yp) {
 							Common::copy(srcP, srcP + width2, destP);

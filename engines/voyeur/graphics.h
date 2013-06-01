@@ -65,6 +65,7 @@ public:
 	int _screenOffset;
 	uint _planeSelect;
 	int _sImageShift;
+	Graphics::Surface _screenSurface;
 private:
 	static void fadeIntFunc();
 	static void vDoFadeInt();
@@ -75,6 +76,7 @@ private:
 		PictureResource *srcPic, PictureResource *destPic);
 public:
 	GraphicsManager();
+	~GraphicsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
 	void sInitGraphics();
 
