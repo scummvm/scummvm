@@ -33,6 +33,7 @@ GraphicsManager::GraphicsManager() {
 	_SVGAMode = 0;
 	_SVGAReset = 0;
 	_screenOffset = 0;
+	_planeSelect = 0;
 	_palFlag = false;
 	_MCGAMode = false;
 	_saveBack = false;
@@ -81,7 +82,7 @@ void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
 		Common::Rect *clipRect = _clipPtr;
 		_clipPtr = &viewPort->_clipRect;
 
-		sDrawPic(viewPort->_activePage, viewPort->_picResource, Common::Point(), NULL);
+		sDrawPic(viewPort->_activePage, viewPort->_currentPic, Common::Point(), NULL);
 
 		_clipPtr = clipRect;
 	}
@@ -127,11 +128,11 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 	if (srcDisplay->_flags & 0x8000) {
 		// A viewport was passed, not a picture
-		srcPic = ((ViewPortResource *)srcDisplay)->_picResource;
+		srcPic = ((ViewPortResource *)srcDisplay)->_currentPic;
 	}
 	if (destDisplay->_flags & 0x8000) {
 		destViewPort = (ViewPortResource *)destDisplay;
-		destPic = destViewPort->_picResource;
+		destPic = destViewPort->_currentPic;
 	}
 
 	Common::Point ofs = Common::Point(offset.x + srcPic->_bounds.left - destPic->_bounds.left, 
@@ -275,12 +276,41 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	}
 }
 
+void GraphicsManager::sDisplayPic(PictureResource *pic) {
+	// TODO
+}
+
 void GraphicsManager::EMSMapPageHandle(int v1, int v2, int v3) {
 	// TODO
 }
 
 void GraphicsManager::flipPage() {
+	Common::Array<ViewPortResource *> &viewPorts = *_viewPortListPtr;
+	bool flipFlag = false;
 
+	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
+		if (viewPorts[idx]->_flags & 0x20) {
+			if ((viewPorts[idx]->_flags & 9) == 9) {
+				if (_planeSelect == idx)
+					sDisplayPic(viewPorts[idx]->_currentPic);
+				flipFlag = true;
+			}
+		}
+
+		if (flipFlag) {
+			ViewPortResource &viewPort = *viewPorts[idx];
+
+			viewPort._lastPage = viewPort._pageIndex;
+			++viewPort._pageIndex;
+
+			if (viewPort._pageIndex >= viewPort._pageCount)
+				viewPort._pageIndex = 0;
+
+			assert(viewPort._pageIndex < 2);
+			viewPort._currentPic = viewPort._pages[viewPort._pageIndex];
+			viewPort._flags = (viewPort._flags & 0xFFF7) | 0x40;
+		}
+	}
 }
 
 void GraphicsManager::sWaitFlip() {

@@ -598,17 +598,20 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 		_state(state) {
 	_flags = READ_LE_UINT16(src);
 	_next = state._curLibPtr->getBoltEntry(READ_LE_UINT32(src + 2))._viewPortResource;
+	_pageCount = READ_LE_UINT16(src + 6);
+	_pageIndex = READ_LE_UINT16(src + 8);
+	_lastPage = READ_LE_UINT16(src + 10);
 
-	int xs = READ_LE_UINT16(src + 0xC);
-	int ys = READ_LE_UINT16(src + 0xE);
-	_bounds = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 0x10), 
-		ys + READ_LE_UINT16(src + 0x12));
+	int xs = READ_LE_UINT16(src + 12);
+	int ys = READ_LE_UINT16(src + 14);
+	_bounds = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 16), 
+		ys + READ_LE_UINT16(src + 18));
 	_field18 = READ_LE_UINT16(src + 0x18);
 
-	_picResource = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x20));
+	_currentPic = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x20));
 	_activePage = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x24));
-	_picResource2 = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x28));
-	_picResource3 = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x2C));
+	_pages[0] = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x28));
+	_pages[1] = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x2C));
 
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x30), &_field30);
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x34), &_field34);
@@ -634,7 +637,7 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 
 void ViewPortResource::setupViewPort(PictureResource *page, Common::Rect *clipRect,
 		ViewPortSetupPtr setupFn, ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn) {
-	PictureResource *pic = _picResource;
+	PictureResource *pic = _currentPic;
 	Common::Rect r = _bounds;
 	r.translate(pic->_bounds.left, pic->_bounds.top);
 	int xDiff, yDiff;

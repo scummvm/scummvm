@@ -223,12 +223,14 @@ private:
 		ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn);
 public:
 	ViewPortResource *_next;
+	int _pageCount;
+	int _pageIndex;
+	int _lastPage;
 	Common::Rect _bounds;
 	int _field18;
-	PictureResource *_picResource;
+	PictureResource *_currentPic;
 	PictureResource *_activePage;
-	PictureResource *_picResource2;
-	PictureResource *_picResource3;
+	PictureResource *_pages[2];
 	byte *_field30;
 	byte *_field34;
 	byte *_field38;

@@ -63,6 +63,7 @@ public:
 	bool _saveBack;
 	Common::Rect *_clipPtr;
 	int _screenOffset;
+	uint _planeSelect;
 private:
 	static void fadeIntFunc();
 	static void vDoFadeInt();
@@ -84,6 +85,7 @@ public:
 
 	void EMSMapPageHandle(int v1, int v2, int v3);
 	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &offset, void *v3);
+	void sDisplayPic(PictureResource *pic);
 	void flipPage();
 	void sWaitFlip();
 };
