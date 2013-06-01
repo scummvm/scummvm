@@ -43,6 +43,8 @@ namespace Fullpipe {
 enum FullpipeGameFeatures {
 };
 
+class CGameLoader;
+
 class FullpipeEngine : public ::Engine {
 protected:
 
@@ -65,6 +67,9 @@ public:
 	uint16 _buttonState;
 
     void updateEvents();
+
+	CGameLoader *g_gameLoader;
+	bool loadGam(char *fname);
 
 public:
 
