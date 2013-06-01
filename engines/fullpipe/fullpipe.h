@@ -69,7 +69,11 @@ public:
     void updateEvents();
 
 	CGameLoader *g_gameLoader;
-	bool loadGam(char *fname);
+	bool loadGam(const char *fname);
+
+	int _gameProjectVersion;
+	int _gameProjectValue;
+	int _scrollSpeed;
 
 public:
 

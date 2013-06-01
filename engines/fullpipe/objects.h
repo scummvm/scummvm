@@ -64,15 +64,21 @@ class CPtrList {
 };
 
 class SceneTagList {
-  CPtrList list;
+	CPtrList list;
+
+ public:
+	SceneTagList(Common::File &file);
 };
 
 class GameProject {
-	CObject obj;
-	int field_4;
-	char *headerFilename;
-	SceneTagList *sceneTagList;
-	void *field_10;
+	CObject _obj;
+	int _field_4;
+	char *_headerFilename;
+	SceneTagList *_sceneTagList;
+	int _field_10;
+
+ public:
+	GameProject(Common::File &file);
 };
 
 class CInteractionController {
@@ -154,59 +160,60 @@ class CGameVar {
 
 class CGameLoader {
  public:
-	bool loadFile(char *fname);
+	bool loadFile(const char *fname);
+	~CGameLoader();
 
  private:
-	CObject obj;
-	GameProject *gameProject;
-	CInteractionController *interactionController;
-	int field_C;
-	int field_10;
-	int field_14;
-	int field_18;
-	int field_1C;
-	int field_20;
-	int field_24;
-	int field_28;
-	int field_2C;
-	CInputController inputController;
-	int inventory;
-	int field_7C;
-	int field_80;
-	int field_84;
-	int field_88;
-	int field_8C;
-	int field_90;
-	int field_94;
-	int field_98;
-	int field_9C;
-	int field_A0;
-	int field_A4;
-	int field_A8;
-	int field_AC;
-	int field_B0;
-	int field_B4;
-	int field_B8;
-	int field_BC;
-	int field_C0;
-	int field_C4;
-	int field_C8;
-	int field_CC;
-	int field_D0;
-	int field_D4;
-	Sc2Array sc2array;
-	void *sceneSwitcher;
-	void *preloadCallback;
-	void *readSavegameCallback;
-	int16 field_F8;
-	int16 field_FA;
-	CObArray preloadItems;
+	CObject _obj;
+	GameProject *_gameProject;
+	CInteractionController *_interactionController;
+	int _field_C;
+	int _field_10;
+	int _field_14;
+	int _field_18;
+	int _field_1C;
+	int _field_20;
+	int _field_24;
+	int _field_28;
+	int _field_2C;
+	CInputController _inputController;
+	int _inventory;
+	int _field_7C;
+	int _field_80;
+	int _field_84;
+	int _field_88;
+	int _field_8C;
+	int _field_90;
+	int _field_94;
+	int _field_98;
+	int _field_9C;
+	int _field_A0;
+	int _field_A4;
+	int _field_A8;
+	int _field_AC;
+	int _field_B0;
+	int _field_B4;
+	int _field_B8;
+	int _field_BC;
+	int _field_C0;
+	int _field_C4;
+	int _field_C8;
+	int _field_CC;
+	int _field_D0;
+	int _field_D4;
+	Sc2Array _sc2array;
+	void *_sceneSwitcher;
+	void *_preloadCallback;
+	void *_readSavegameCallback;
+	int16 _field_F8;
+	int16 _field_FA;
+	CObArray _preloadItems;
 	CGameVar *gameVar;
-	char *gameName;
-	ExCommand exCommand;
-	int updateCounter;
-	int preloadId1;
-	int preloadId2;
+	char *_gameName;
+	ExCommand _exCommand;
+	int _updateCounter;
+	int _preloadId1;
+	int _preloadId2;
 };
 
 } // End of namespace Fullpipe

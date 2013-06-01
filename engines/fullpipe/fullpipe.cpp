@@ -55,6 +55,8 @@ Common::Error FullpipeEngine::run() {
 
 	_isSaveAllowed = false;
 
+	loadGam("fullpipe.gam");
+
 	Common::Archive *arch = makeNGIArchive("3896.nl");
 
 	return Common::kNoError;
