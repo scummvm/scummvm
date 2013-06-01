@@ -36,6 +36,7 @@ private:
 
 	static void mainVoyeurIntFunc();
 public:
+	IntData _intPtr;
 	IntNode _fadeIntNode;
 	IntNode _cycleIntNode;
 	IntNode _evintnode;
@@ -48,6 +49,7 @@ public:
 	void resetMouse();
 	void startMainClockInt();
 	void vStopCycle();
+	void sWaitFlip();
 };
 
 } // End of namespace Voyeur

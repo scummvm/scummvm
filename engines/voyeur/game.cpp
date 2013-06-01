@@ -24,6 +24,10 @@
 
 namespace Voyeur {
 
+IntData::IntData() {
+	_field9 = false;
+}
+
 void IntData::audioInit() {
 
 }

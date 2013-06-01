@@ -87,7 +87,6 @@ public:
 	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &offset, void *v3);
 	void sDisplayPic(PictureResource *pic);
 	void flipPage();
-	void sWaitFlip();
 };
 
 } // End of namespace Voyeur

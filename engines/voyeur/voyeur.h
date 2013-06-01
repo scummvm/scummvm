@@ -79,7 +79,6 @@ protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 public:
-	IntData _intPtr;
 	EventsManager _eventsManager;
 	FilesManager _filesManager;
 	GraphicsManager _graphicsManager;

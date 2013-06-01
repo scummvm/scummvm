@@ -49,4 +49,26 @@ void EventsManager::vStopCycle() {
 	_cycleStatus &= 2;
 }
 
+void EventsManager::sWaitFlip() {
+	// TODO: See if this needs a proper wait loop with event polling
+	//while (_intPtr._field39) ;
+
+	Common::Array<ViewPortResource *> &viewPorts = *_vm->_graphicsManager._viewPortListPtr;
+	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
+		ViewPortResource &viewPort = *viewPorts[idx];
+
+		if (_vm->_graphicsManager._saveBack && (viewPort._flags & 0x40)) {
+			Common::Rect *clipPtr = _vm->_graphicsManager._clipPtr;
+			_vm->_graphicsManager._clipPtr = &viewPort._clipRect;
+
+			if (viewPort._restoreFn)
+				(_vm->_graphicsManager.*viewPort._restoreFn)(&viewPort);
+
+			_vm->_graphicsManager._clipPtr = clipPtr;
+			viewPort._field40[viewPort._pageIndex] = 0;
+			viewPort._flags &= 0xFFBF;
+		}
+	}
+}
+
 } // End of namespace Voyeur

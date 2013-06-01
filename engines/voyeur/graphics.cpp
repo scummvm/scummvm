@@ -53,7 +53,7 @@ void GraphicsManager::addFadeInt() {
 	node._curTime = 0;
 	node._timeReset = 1;
 
-	_vm->_intPtr.addIntNode(&node);
+	_vm->_eventsManager._intPtr.addIntNode(&node);
 }
 
 void GraphicsManager::vInitColor() {
@@ -63,15 +63,15 @@ void GraphicsManager::vInitColor() {
 }
 
 void GraphicsManager::fadeIntFunc() {
-
+	// TODO: more
 }
 
 void GraphicsManager::vDoFadeInt() {
-	
+	// TODO: more
 }
 
 void GraphicsManager::vDoCycleInt() {
-
+	// TODO: more
 }
 
 void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
@@ -87,7 +87,7 @@ void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
 		_clipPtr = clipRect;
 	}
 
-	viewPort->_field42 = -1;
+	viewPort->_field40[1] = -1;
 }
 
 void GraphicsManager::addRectOptSaveRect(ViewPortResource *viewPort, int y, Common::Rect *bounds) {
@@ -99,7 +99,7 @@ void GraphicsManager::restoreMCGASaveRect(ViewPortResource *viewPort) {
 }
 
 void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, int y, Common::Rect *bounds) {
-
+	// TODO: more
 }
 
 void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
@@ -311,10 +311,6 @@ void GraphicsManager::flipPage() {
 			viewPort._flags = (viewPort._flags & 0xFFF7) | 0x40;
 		}
 	}
-}
-
-void GraphicsManager::sWaitFlip() {
-
 }
 
 } // End of namespace Voyeur

@@ -111,9 +111,12 @@ public:
 
 class IntData {
 public:
+	bool _field9;
 	byte *_colors;
 	Common::List<IntNode *> _intNodes;
 public:
+	IntData();
+
 	void audioInit();
 	void addIntNode(IntNode *node);
 

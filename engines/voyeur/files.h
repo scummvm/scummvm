@@ -235,7 +235,7 @@ public:
 	byte *_field34;
 	byte *_field38;
 	byte *_field3C;
-	int16 _field42;
+	int16 _field40[3];
 	Common::Rect _clipRect;
 	byte *_field7A;
 	GraphicMethodPtr _fn1;

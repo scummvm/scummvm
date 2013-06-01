@@ -131,7 +131,7 @@ void VoyeurEngine::initBolt() {
 }
 
 void VoyeurEngine::vInitInterrupts() {
-	_intPtr._colors = &_graphicsManager._VGAColors[0];
+	_eventsManager._intPtr._colors = &_graphicsManager._VGAColors[0];
 }
 
 void VoyeurEngine::initInput() {
@@ -147,7 +147,7 @@ void VoyeurEngine::doHeadTitle() {
 		(*_graphicsManager._vPort)->_flags |= 8;
 
 		_graphicsManager.flipPage();
-		_graphicsManager.sWaitFlip();
+		_eventsManager.sWaitFlip();
 
 		// TODO: 
 	}

@@ -618,7 +618,9 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x38), &_field38);
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x3C), &_field3C);
 
-	_field42 = (int16)READ_LE_UINT16(src + 0x42);
+	for (int i = 0; i < 3; ++i)
+		_field40[i] = (int16)READ_LE_UINT16(src + 0x40 + 2 * i);
+
 	xs = READ_LE_UINT16(src + 0x46);
 	ys = READ_LE_UINT16(src + 0x48);
 	_clipRect = Common::Rect(xs, ys, xs + READ_LE_UINT16(src + 0x4A),
