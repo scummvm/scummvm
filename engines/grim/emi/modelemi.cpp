@@ -172,11 +172,9 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 
 	if (hasBones == 1) {
 		_numBones = data->readUint32LE();
-		_bones = new Bone[_numBones];
 		_boneNames = new Common::String[_numBones];
 		for(int i = 0;i < _numBones; i++) {
-			_bones[i]._boneName = readLAString(data);
-			_boneNames[i] = _bones[i]._boneName;
+			_boneNames[i] = readLAString(data);
 		}
 
 		_numBoneInfos =  data->readUint32LE();
@@ -274,7 +272,6 @@ EMIModel::EMIModel(const Common::String &filename, Common::SeekableReadStream *d
 	_texNames = NULL;
 	_mats = NULL;
 	_numBones = 0;
-	_bones = NULL;
 	_boneInfos = NULL;
 	_numBoneInfos = 0;
 	_vertexBoneInfo = NULL;
@@ -299,7 +296,6 @@ EMIModel::~EMIModel() {
 	delete[] _faces;
 	delete[] _texNames;
 	delete[] _mats;
-	delete[] _bones;
 	delete[] _boneInfos;
 	delete[] _vertexBone;
 	delete[] _vertexBoneInfo;

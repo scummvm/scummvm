@@ -87,7 +87,6 @@ public:
 	Skeleton *_skeleton;
 	
 	int _numBones;
-	Bone *_bones;
 	
 	// Bone-stuff:
 	int _numBoneInfos;
