@@ -166,6 +166,71 @@ const char *voice001[] = {
 };
 
 
+// EMI retail
+
+const char *emi_artAll[] = {
+	"8c7db9dab564854f2c4bab0571104780", // english patched
+};
+const char *emi_artJam[] = {
+	"e5ff286dbf7b23d1ad41dd8defe48291", // english patched
+};
+const char *emi_artLuc[] = {
+	"1fcaef5755e6f6c3c30c89536022bd72", // english patched
+};
+const char *emi_artMel[] = {
+	"66144e92a0742fdc9cc6c4f892c53e84", // english patched
+};
+const char *emi_artMon[] = {
+	"3510567bda8a4e8c5aee4c3b3bb1f98e", // english patched
+};
+const char *emi_lip[] = {
+	"57eceeae6b82028243ede6c97c334c57", // english patched
+};
+const char *emi_local[] = {
+	"c3b694d941c05264e8c37dc2be75ca1c", // english patched
+};
+const char *emi_patch[] = {
+	"067100a100b3ca9283b796480aa39b52", // english patched
+};
+const char *emi_sfx[] = {
+	"a5d2ded26255518b82030466c2368168", // english patched
+};
+const char *emi_voiceAll[] = {
+	"18d3996c7de4d460b4cd4ee5897a90ae", // english patched
+};
+const char *emi_voiceJam[] = {
+	"2318a4680a89b93f1f71b09e66c65c86", // english patched
+};
+const char *emi_voiceLuc[] = {
+	"d5e4842e421bdb891e6cbf88741e9119", // english patched
+};
+const char *emi_voiceMel[] = {
+	"b8b19fc4a9438f51a99f7cf3cad9c419", // english patched
+};
+const char *emi_voiceMon[] = {
+	"9327a6bea951b28bac31bdb52007dc41", // english patched
+};
+
+
+// EMI demo
+
+const char *emid_i9n[] = {
+	"d913504ec3a2fe52ee02a20a154a2b17", // english patched
+};
+const char *emid_lip[] = {
+	"0a145aa7acc1a68a738c7a6f27d23283", // english patched
+};
+const char *emid_MagDemo[] = {
+	"0a7f0e72d3fab641f0d7b0efbaa15cdc", // english patched
+};
+const char *emid_tile[] = {
+	"23fdff61743c5621963ca04e8ca43000", // english patched
+};
+const char *emid_voice[] = {
+	"7f9867d48b5e0af5cb3fbd8d79741f5d", // english patched
+};
+
+
 bool MD5Check::_initted = false;
 Common::Array<MD5Check::MD5Sum> *MD5Check::_files = NULL;
 int MD5Check::_iterator = -1;
@@ -211,6 +276,29 @@ void MD5Check::init() {
 			if (g_grim->getGameLanguage() != Common::EN_ANY) {
 				MD5SUM("local.lab", local)
 			}
+		}
+	} else {
+		if (g_grim->getGameFlags() & ADGF_DEMO) {
+			MD5SUM("i9n.lab", emid_i9n)
+			MD5SUM("lip.lab", emid_lip)
+			MD5SUM("MagDemo.lab", emid_MagDemo)
+			MD5SUM("tile.lab", emid_tile)
+			MD5SUM("voice.lab", emid_voice)
+		} else {
+			MD5SUM("artAll.m4b", emi_artAll)
+			MD5SUM("artJam.m4b", emi_artJam)
+			MD5SUM("artLuc.m4b", emi_artLuc)
+			MD5SUM("artMel.m4b", emi_artMel)
+			MD5SUM("artMon.m4b", emi_artMon)
+			MD5SUM("lip.m4b", emi_lip)
+			MD5SUM("local.m4b", emi_local)
+			MD5SUM("patch.m4b", emi_patch)
+			MD5SUM("sfx.m4b", emi_sfx)
+			MD5SUM("voiceAll.m4b", emi_voiceAll)
+			MD5SUM("voiceJam.m4b", emi_voiceJam)
+			MD5SUM("voiceLuc.m4b", emi_voiceLuc)
+			MD5SUM("voiceMel.m4b", emi_voiceMel)
+			MD5SUM("voiceMon.m4b", emi_voiceMon)
 		}
 	}
 
