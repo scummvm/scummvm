@@ -573,6 +573,7 @@ void OSystem_Android::drawVirtControls() {
 	if (_show_overlay)
 		return;
 
+	glEnable(GL_BLEND);
 	_touchControls.draw();
 }
 
