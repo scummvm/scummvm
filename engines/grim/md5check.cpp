@@ -167,14 +167,15 @@ const char *voice001[] = {
 
 
 bool MD5Check::_initted = false;
-Common::List<MD5Check::MD5Sum> *MD5Check::_files = NULL;
+Common::Array<MD5Check::MD5Sum> *MD5Check::_files = NULL;
+int MD5Check::_iterator = -1;
 
 void MD5Check::init() {
 	if (_initted) {
 		return;
 	}
 	_initted = true;
-	_files = new Common::List<MD5Sum>();
+	_files = new Common::Array<MD5Sum>();
 
 	#define MD5SUM(filename, sums) _files->push_back(MD5Sum(filename, sums, sizeof(sums) / sizeof(const char *)));
 
@@ -232,32 +233,55 @@ bool MD5Check::checkMD5(const MD5Sum &sums, const char *md5) {
 }
 
 bool MD5Check::checkFiles() {
-	init();
-
+	startCheckFiles();
 	bool ok = true;
-	for (Common::List<MD5Sum>::iterator i = _files->begin(); i != _files->end(); ++i) {
-		const MD5Sum &sum = *i;;
-
-		Common::File file;
-		if (file.open(sum.filename)) {
-			Common::String md5 = Common::computeStreamMD5AsString(file);
-			if (!checkMD5(sum, md5.c_str())) {
-				warning("'%s' may be corrupted. MD5: '%s'", sum.filename, md5.c_str());
-				GUI::displayErrorDialog(Common::String::format("The game data file %s may be corrupted.\nIf you are sure it is "
-				"not please provide the ResidualVM team the following code, along with the file name, the language and a "
-				"description of your game version (i.e. dvd-box or jewelcase):\n%s", sum.filename, md5.c_str()).c_str());
-				ok = false;
-			}
-		} else {
-			warning("Could not open %s for checking", sum.filename);
-			GUI::displayErrorDialog(Common::String::format("Coul not open the file %s for checking.\nIt may be missing or "
-			"you may not have the rights to open it.\nGo to http://wiki.residualvm.org/index.php/Datafiles to see a list "
-			"of the needed files.", sum.filename).c_str());
-			ok = false;
-		}
+	while (_iterator != -1) {
+		ok = advanceCheck() && ok;
 	}
 
 	return ok;
+}
+
+void MD5Check::startCheckFiles() {
+	init();
+	_iterator = 0;
+}
+
+bool MD5Check::advanceCheck(int *pos, int *total) {
+	if (_iterator < 0) {
+		return false;
+	}
+
+	const MD5Sum &sum = (*_files)[_iterator++];
+	if (pos) {
+		*pos = _iterator;
+	}
+	if (total) {
+		*total = _files->size();
+	}
+	if (_iterator == _files->size()) {
+		_iterator = -1;
+	}
+
+	Common::File file;
+	if (file.open(sum.filename)) {
+		Common::String md5 = Common::computeStreamMD5AsString(file);
+		if (!checkMD5(sum, md5.c_str())) {
+			warning("'%s' may be corrupted. MD5: '%s'", sum.filename, md5.c_str());
+			GUI::displayErrorDialog(Common::String::format("The game data file %s may be corrupted.\nIf you are sure it is "
+			"not please provide the ResidualVM team the following code, along with the file name, the language and a "
+			"description of your game version (i.e. dvd-box or jewelcase):\n%s", sum.filename, md5.c_str()).c_str());
+			return false;
+		}
+	} else {
+		warning("Could not open %s for checking", sum.filename);
+		GUI::displayErrorDialog(Common::String::format("Could not open the file %s for checking.\nIt may be missing or "
+		"you may not have the rights to open it.\nGo to http://wiki.residualvm.org/index.php/Datafiles to see a list "
+		"of the needed files.", sum.filename).c_str());
+		return false;
+	}
+
+	return true;
 }
 
 }
