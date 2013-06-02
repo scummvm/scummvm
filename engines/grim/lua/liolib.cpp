@@ -232,7 +232,7 @@ static void io_writeto() {
 		LuaFile *current;
 		Common::WriteStream *outFile = NULL;
 		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-		outFile = saveFileMan->openForSaving(s);
+		outFile = saveFileMan->openForSaving(s, false);
 		if (!outFile) {
 			pushresult(0);
 			return;
