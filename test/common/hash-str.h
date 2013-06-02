@@ -150,7 +150,7 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		char doublespaced[] = "test  ";
 		char tabbed[] = "test\t";
 
-		Common::Hash<const char*> h;
+		Common::Hash<const char *> h;
 		TS_ASSERT_EQUALS(h(lower), h(lower1));
 		TS_ASSERT_DIFFERS(h(mixed), h(lower));
 		TS_ASSERT_DIFFERS(h(spaced), h(lower));
