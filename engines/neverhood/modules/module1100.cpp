@@ -465,7 +465,7 @@ uint32 Scene1105::handleMessage(int messageNum, const MessageParam &param, Entit
 					_backgroundIndex = 15;
 					SetUpdateHandler(&Scene1105::upClosePanel);
 				} else
-					_isPanelOpen = true;
+					_isClosePanelDone = true;
 				_leaveResult = 0;
 			}
 		}
