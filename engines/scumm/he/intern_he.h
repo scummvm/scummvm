@@ -628,7 +628,6 @@ public:
 
 	void parseEvents();
 
-	bool _quit;
 	OSystem *_syst;
 
 	GameSettings _game;
