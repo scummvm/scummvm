@@ -521,13 +521,14 @@ static LpItem getItemData(uint32 nOrdItem) {
 		dat += dim;
 	}
 
-	// Check if we've got to the end of the file
 	int i = READ_LE_UINT16(dat);
-	if (i != 0xABCD)
-		return NULL;
 
 	globalUnlock(hDat);
 	globalFree(hDat);
+
+	// Check if we've got to the end of the file
+	if (i != 0xABCD)
+		return NULL;
 
 	return ret;
 }
