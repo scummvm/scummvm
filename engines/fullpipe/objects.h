@@ -47,24 +47,23 @@ class CObArray {
 	int m_nGrowBy;
 };
 
-class CNode {
-	int pNext;
-	CNode *pPrev;
-	void *data;
+class SceneTag {
+	CObject _obj;
+	int _field_4;
+	char *_tag;
+	int _scene;
+	int16 _sceneId;
+	int16 _field_12;
+
+ public:
+	SceneTag(CFile &file);
+	~SceneTag();
 };
 
-class CPtrList {
-	CObject obj;
-	CNode *m_pNodeHead;
-	int m_pNodeTail;
-	int m_nCount;
-	int m_pNodeFree;
-	int m_pBlocks;
-	int m_nBlockSize;
-};
+typedef Common::List<SceneTag> SceneTagList_;
 
 class SceneTagList {
-	CPtrList list;
+	SceneTagList_ list;
 
  public:
 	SceneTagList(CFile &file);

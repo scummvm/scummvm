@@ -23,6 +23,7 @@
 #include "fullpipe/fullpipe.h"
 
 #include "common/file.h"
+#include "common/list.h"
 
 #include "fullpipe/utils.h"
 #include "fullpipe/objects.h"
@@ -90,6 +91,29 @@ GameProject::~GameProject() {
 }
 
 SceneTagList::SceneTagList(CFile &file) {
+	int numEntries = file.readUint16LE();
+
+	debug(0, "numEntries: %d", numEntries);
+
+	for (int i = 0; i < numEntries; i++) {
+		SceneTag *t = new SceneTag(file);
+		list.push_back(*t);
+	}
+}
+
+SceneTag::SceneTag(CFile &file) {
+	_field_4 = 0;
+	_scene = 0;
+
+	_sceneId = file.readUint16LE();
+
+	_tag = file.readPascalString();
+
+	debug(0, "sceneId: %d  tag: %s", _sceneId, _tag);
+}
+
+SceneTag::~SceneTag() {
+	free(_tag);
 }
 
 } // End of namespace Fullpipe
