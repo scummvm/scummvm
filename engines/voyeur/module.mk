@@ -1,6 +1,7 @@
 MODULE := engines/voyeur
 
 MODULE_OBJS := \
+	debugger.o \
 	detection.o \
 	events.o \
 	game.o \

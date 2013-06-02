@@ -27,6 +27,9 @@ namespace Voyeur {
 
 EventsManager::EventsManager() {
 	_cycleStatus = 0;
+	_mouseButton = 0;
+	_priorFrameTime = g_system->getMillis();
+	Common::fill(&_keyState[0], &_keyState[256], false);
 }
 
 void EventsManager::resetMouse() {
@@ -67,6 +70,59 @@ void EventsManager::sWaitFlip() {
 			_vm->_graphicsManager._clipPtr = clipPtr;
 			viewPort._rectListCount[viewPort._pageIndex] = 0;
 			viewPort._flags &= 0xFFBF;
+		}
+	}
+}
+
+void EventsManager::checkForNextFrameCounter() {
+	// Check for next game frame
+	uint32 milli = g_system->getMillis();
+	if ((milli - _priorFrameTime) >= GAME_FRAME_TIME) {
+		++_gameCounter;
+		_priorFrameTime = milli;
+
+		// Signal the ScummVM debugger
+		_vm->_debugger.onFrame();
+	}
+}
+
+void EventsManager::delay(int totalMilli) {
+	uint32 delayEnd = g_system->getMillis() + totalMilli;
+
+	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
+		g_system->delayMillis(10);
+	}
+}
+
+void EventsManager::pollEvents() {
+	checkForNextFrameCounter();
+
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		// Handle keypress
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
+			return;
+
+		case Common::EVENT_KEYDOWN:
+			_keyState[(byte)toupper(event.kbd.ascii)] = true;
+			return;
+		case Common::EVENT_KEYUP:
+			_keyState[(byte)toupper(event.kbd.ascii)] = false;
+			return;
+		case Common::EVENT_LBUTTONDOWN:
+			_mouseButton = 1;
+			return;
+		case Common::EVENT_RBUTTONDOWN:
+			_mouseButton = 2;
+			return;
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
+			_mouseButton = 0;
+			return;
+		default:
+ 			break;
 		}
 	}
 }

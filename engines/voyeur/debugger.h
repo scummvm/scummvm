@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -20,51 +20,26 @@
  *
  */
 
-#ifndef VOYEUR_EVENTS_H
-#define VOYEUR_EVENTS_H
+#ifndef VOYEUR_DEBUGGER_H
+#define VOYEUR_DEBUGGER_H
 
 #include "common/scummsys.h"
-#include "voyeur/game.h"
+#include "gui/debugger.h"
 
 namespace Voyeur {
 
 class VoyeurEngine;
 
-#define GAME_FRAME_RATE 50
-#define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
-
-class EventsManager {
+class Debugger : public GUI::Debugger {
 private:
 	VoyeurEngine *_vm;
-	uint32 _priorFrameTime;
-	uint32 _gameCounter;
-	bool _keyState[256];
-	int _mouseButton;
-
-	static void mainVoyeurIntFunc();
-private:
-	void checkForNextFrameCounter();
 
 public:
-	IntData _intPtr;
-	IntNode _fadeIntNode;
-	IntNode _cycleIntNode;
-	IntNode _evintnode;
-	IntNode _mainIntNode;
-	int _cycleStatus;
-public:
-	EventsManager();
+	Debugger();
+	virtual ~Debugger() {}
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
-
-	void resetMouse();
-	void startMainClockInt();
-	void vStopCycle();
-	void sWaitFlip();
-
-	void delay(int totalMilli);
-	void pollEvents();
 };
 
 } // End of namespace Voyeur
 
-#endif /* VOYEUR_EVENTS_H */
+#endif

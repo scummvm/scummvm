@@ -23,6 +23,7 @@
 #ifndef VOYEUR_VOYEUR_H
 #define VOYEUR_VOYEUR_H
 
+#include "voyeur/debugger.h"
 #include "voyeur/events.h"
 #include "voyeur/files.h"
 #include "voyeur/game.h"
@@ -79,6 +80,7 @@ protected:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 public:
+	Debugger _debugger;
 	EventsManager _eventsManager;
 	FilesManager _filesManager;
 	GraphicsManager _graphicsManager;
