@@ -166,7 +166,7 @@ const char *voice001[] = {
 };
 
 
-// EMI retail
+// EMI retail PC version
 
 const char *emi_artAll[] = {
 	"8c7db9dab564854f2c4bab0571104780", // english patched
@@ -211,6 +211,55 @@ const char *emi_voiceMon[] = {
 	"9327a6bea951b28bac31bdb52007dc41", // english patched
 };
 
+// EMI retail PS2 version
+
+const char *emiPS2_artAll[] = {
+	"7bed6dd54ea6509b708e93017c14df8d", // english
+};
+const char *emiPS2_artJam[] = {
+	"199c713bbfc22ae941502ffd60ea794d", // english
+};
+const char *emiPS2_artLuc[] = {
+	"7add9758294c2118621e900940e66838", // english
+};
+const char *emiPS2_artMel[] = {
+	"514f1a684022831c178a18d13a16b6ad", // english
+};
+const char *emiPS2_artMon[] = {
+	"db945bd9d5fa990447bbabf6a1e00e5b", // english
+};
+const char *emiPS2_lip[] = {
+	"57eceeae6b82028243ede6c97c334c57", // english
+};
+const char *emiPS2_local[] = {
+	"da26ad3a739f2fa341988901ce8dfa49", // english
+};
+/*
+const char *emiPS2_music1[] = {
+	"a44753d9aaed016e6c7b398b55c97d3d", // english
+};
+const char *emiPS2_music2[] = {
+	"204cb3d451e4bf71ae5432ab33ca3a49", // english
+};
+*/
+const char *emiPS2_sfx[] = {
+	"877e90e1329182caaf27d2ce4d3c9c42", // english
+};
+const char *emiPS2_voiceAll[] = {
+	"194a1e545a348df0fe488012bc703338", // english
+};
+const char *emiPS2_voiceJam[] = {
+	"686b45178a4b2fdb5bee2097739feea9", // english
+};
+const char *emiPS2_voiceLuc[] = {
+	"c5e8e0ce9986385b6c1f31b68768be47", // english
+};
+const char *emiPS2_voiceMel[] = {
+	"54663fc82520f1f02d7f3d9b29894540", // english
+};
+const char *emiPS2_voiceMon[] = {
+	"b4a938b9c116e9370e992c8edfb00c35", // english
+};
 
 // EMI demo
 
@@ -284,6 +333,20 @@ void MD5Check::init() {
 			MD5SUM("MagDemo.lab", emid_MagDemo)
 			MD5SUM("tile.lab", emid_tile)
 			MD5SUM("voice.lab", emid_voice)
+		} else if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+			MD5SUM("artAll.m4b", emiPS2_artAll)
+			MD5SUM("artJam.m4b", emiPS2_artJam)
+			MD5SUM("artLuc.m4b", emiPS2_artLuc)
+			MD5SUM("artMel.m4b", emiPS2_artMel)
+			MD5SUM("artMon.m4b", emiPS2_artMon)
+			MD5SUM("lip.m4b", emiPS2_lip)
+			MD5SUM("local.m4b", emiPS2_local)
+			MD5SUM("sfx.m4b", emiPS2_sfx)
+			MD5SUM("voiceAll.m4b", emiPS2_voiceAll)
+			MD5SUM("voiceJam.m4b", emiPS2_voiceJam)
+			MD5SUM("voiceLuc.m4b", emiPS2_voiceLuc)
+			MD5SUM("voiceMel.m4b", emiPS2_voiceMel)
+			MD5SUM("voiceMon.m4b", emiPS2_voiceMon)
 		} else {
 			MD5SUM("artAll.m4b", emi_artAll)
 			MD5SUM("artJam.m4b", emi_artJam)
