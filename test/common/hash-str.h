@@ -113,7 +113,7 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_DIFFERS(ic_h(spaced), ic_h(doublespaced));
 	}
 
-	void test_cpp_string_hash ()
+	void test_cpp_string_hash()
 	{
 		// We run the same tests with Hash<String>,
 		// a template specialization of Hash, also a functor.
@@ -135,7 +135,7 @@ class HashStrTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT_DIFFERS(h(spaced), h(doublespaced));
 	}
 
-	void test_c_style_string_hash ()
+	void test_c_style_string_hash()
 	{
 		// Same as test_cpp_string_hash but with Hash<const char*>,
 		// a template specialization of Hash, also a functor,
