@@ -616,17 +616,24 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x30), &_field30);
 
 	// Get the rect list
-	for (int i = 0; i < 3; ++i) {
-		_rectListCount[i] = (int16)READ_LE_UINT16(src + 0x40 + 2 * i);
+	for (int listIndex = 0; listIndex < 3; ++listIndex) {
+		_rectListCount[listIndex] = (int16)READ_LE_UINT16(src + 0x40 + 2 * listIndex);
+		uint32 id = READ_LE_UINT32(src + 0x34 + listIndex * 4);
 
-		int16 *rectList = (int16 *)state._curLibPtr->memberAddrOffset(READ_LE_UINT32(src + 0x34 + i * 4));
-		_rectListPtr[i] = new Common::Array<Common::Rect>();
+		if (id == -1) {
+			_rectListPtr[listIndex] = NULL;
+		} else {
+			_rectListPtr[listIndex] = new Common::Array<Common::Rect>();
 
-		for (int i = 0; i < _rectListCount[0]; ++i) {
-			int xs = FROM_LE_16(rectList[0]);
-			int ys = FROM_LE_16(rectList[1]);
-			_rectListPtr[i]->push_back(Common::Rect(xs, ys, xs + FROM_LE_16(rectList[2]),
-				ys + FROM_LE_16(rectList[3])));
+			if (_rectListCount[listIndex] > 0) {
+				int16 *rectList = (int16 *)state._curLibPtr->memberAddrOffset(id);
+				for (int i = 0; i < _rectListCount[listIndex]; ++i) {
+					int xs = FROM_LE_16(rectList[0]);
+					int ys = FROM_LE_16(rectList[1]);
+					_rectListPtr[i]->push_back(Common::Rect(xs, ys, xs + FROM_LE_16(rectList[2]),
+						ys + FROM_LE_16(rectList[3])));
+				}
+			}
 		}
 	}
 
