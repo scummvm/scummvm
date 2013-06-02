@@ -360,7 +360,7 @@ void OSystem_Android::initBackend() {
 
 	_main_thread = pthread_self();
 
-	ConfMan.registerDefault("fullscreen", true);
+	ConfMan.set("fullscreen", "true");
 	ConfMan.registerDefault("aspect_ratio", true);
 
 	ConfMan.setInt("autosave_period", 0);
