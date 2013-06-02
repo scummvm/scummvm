@@ -24,6 +24,7 @@
 
 #include "common/file.h"
 
+#include "fullpipe/utils.h"
 #include "fullpipe/objects.h"
 
 namespace Fullpipe {
@@ -40,17 +41,12 @@ bool FullpipeEngine::loadGam(const char *fname) {
 }
 
 bool CGameLoader::loadFile(const char *fname) {
-	Common::File file;
+	CFile file;
 
 	if (!file.open(fname))
 		return false;
 
-	char *tmp;
-	int len = file.readByte();
-	tmp = (char *)calloc(len + 1, 1);
-	file.read(tmp, len);
-
-	_gameName = tmp;
+	_gameName = file.readPascalString();
 
 	_gameProject = new GameProject(file);
 
@@ -61,7 +57,7 @@ CGameLoader::~CGameLoader() {
 	free(_gameName);
 }
 
-GameProject::GameProject(Common::File &file) {
+GameProject::GameProject(CFile &file) {
 	_field_4 = 0;
 	_headerFilename = 0;
 	_field_10 = 12;
@@ -71,12 +67,7 @@ GameProject::GameProject(Common::File &file) {
 	int _gameProjectValue = file.readUint16LE();
 	int _scrollSpeed = file.readUint32LE();
 
-	char *tmp;
-	int len = file.readByte();
-	tmp = (char *)calloc(len + 1, 1);
-	file.read(tmp, len);
-	
-	_headerFilename = tmp;
+	_headerFilename = file.readPascalString();
 
 	_sceneTagList = new SceneTagList(file);
 
@@ -94,7 +85,11 @@ GameProject::GameProject(Common::File &file) {
 	}
 }
 
-SceneTagList::SceneTagList(Common::File &file) {
+GameProject::~GameProject() {
+	free(_headerFilename);
+}
+
+SceneTagList::SceneTagList(CFile &file) {
 }
 
 } // End of namespace Fullpipe

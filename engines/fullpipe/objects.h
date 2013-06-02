@@ -67,7 +67,7 @@ class SceneTagList {
 	CPtrList list;
 
  public:
-	SceneTagList(Common::File &file);
+	SceneTagList(CFile &file);
 };
 
 class GameProject {
@@ -78,7 +78,8 @@ class GameProject {
 	int _field_10;
 
  public:
-	GameProject(Common::File &file);
+	GameProject(CFile &file);
+	~GameProject();
 };
 
 class CInteractionController {
