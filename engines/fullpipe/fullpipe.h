@@ -45,6 +45,11 @@ enum FullpipeGameFeatures {
 
 class CGameLoader;
 
+extern int g_gameProjectVersion;
+extern int g_gameProjectValue;
+extern int g_scrollSpeed;
+
+
 class FullpipeEngine : public ::Engine {
 protected:
 

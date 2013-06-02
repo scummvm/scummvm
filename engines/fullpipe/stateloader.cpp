@@ -48,14 +48,23 @@ bool CGameLoader::loadFile(const char *fname) {
 		return false;
 
 	_gameName = file.readPascalString();
+	debug(0, "_gameName: %s", _gameName);
 
 	_gameProject = new GameProject(file);
+
+	if (g_gameProjectVersion < 12) {
+		error("Old gameProjectVersion: %d", g_gameProjectVersion);
+	}
+
+	_gameName = file.readPascalString();
+	debug(0, "_gameName: %s", _gameName);
 
 	return true;
 }
 
 CGameLoader::~CGameLoader() {
 	free(_gameName);
+	delete _gameProject;
 }
 
 GameProject::GameProject(CFile &file) {
@@ -63,24 +72,23 @@ GameProject::GameProject(CFile &file) {
 	_headerFilename = 0;
 	_field_10 = 12;
 
-	// FIXME
-	int _gameProjectVersion = file.readUint32LE();
-	int _gameProjectValue = file.readUint16LE();
-	int _scrollSpeed = file.readUint32LE();
+	g_gameProjectVersion = file.readUint32LE();
+	g_gameProjectValue = file.readUint16LE();
+	g_scrollSpeed = file.readUint32LE();
 
 	_headerFilename = file.readPascalString();
 
-	_sceneTagList = new SceneTagList(file);
-
-	debug(0, "_gameProjectVersion = %d", _gameProjectVersion);
-	debug(0, "_gameProjectValue = %d", _gameProjectValue);
-	debug(0, "_scrollSpeed = %d", _scrollSpeed);
+	debug(0, "_gameProjectVersion = %d", g_gameProjectVersion);
+	debug(0, "_gameProjectValue = %d", g_gameProjectValue);
+	debug(0, "_scrollSpeed = %d", g_scrollSpeed);
 	debug(0, "_headerFilename = %s", _headerFilename);
 
-	if (_gameProjectVersion >= 3)
+	_sceneTagList = new SceneTagList(file);
+
+	if (g_gameProjectVersion >= 3)
 		_field_4 = file.readUint32LE();
 
-	if (_gameProjectVersion >= 5) {
+	if (g_gameProjectVersion >= 5) {
 		file.readUint32LE();
 		file.readUint32LE();
 	}
