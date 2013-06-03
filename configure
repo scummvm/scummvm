@@ -3819,7 +3819,6 @@ define_in_config_if_yes $_nasm 'USE_NASM'
 define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
 define_in_config_if_yes $_keymapper 'ENABLE_KEYMAPPER'
 define_in_config_if_yes $_eventrec 'ENABLE_EVENTRECORDER'
-add_line_to_config_mk_if_yes $_eventrec "ENABLE_EVENTRECORDER = 1"
 
 # Check whether to build translation support
 #
