@@ -151,6 +151,7 @@ void VoyeurEngine::doHeadTitle() {
 		_eventsManager.sWaitFlip();
 
 		// TODO: 
+		_eventsManager.delay(1000);
 	}
 }
 

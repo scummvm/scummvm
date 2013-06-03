@@ -37,7 +37,7 @@ GraphicsManager::GraphicsManager() {
 	_sImageShift = 3;
 	_palFlag = false;
 	_MCGAMode = false;
-	_saveBack = false;
+	_saveBack = true;
 	_clipPtr = NULL;
 	_viewPortListPtr = NULL;
 	_vPort = NULL;
@@ -396,7 +396,7 @@ void GraphicsManager::restoreBack(Common::Array<Common::Rect> &rectList, int rec
 	if (rectListCount == -1) {
 		sDrawPic(srcPic, destPic, Common::Point());
 	} else {
-		for (int i = rectListCount; i >= 0; --i) {
+		for (int i = rectListCount - 1; i >= 0; --i) {
 			_clipPtr = &rectList[i];
 			sDrawPic(srcPic, destPic, Common::Point());
 		}

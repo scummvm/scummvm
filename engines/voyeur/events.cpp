@@ -81,6 +81,11 @@ void EventsManager::checkForNextFrameCounter() {
 		++_gameCounter;
 		_priorFrameTime = milli;
 
+		// Display the frame
+		g_system->copyRectToScreen((byte *)_vm->_graphicsManager._screenSurface.pixels, 
+			SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		g_system->updateScreen();
+
 		// Signal the ScummVM debugger
 		_vm->_debugger.onFrame();
 	}
@@ -91,6 +96,8 @@ void EventsManager::delay(int totalMilli) {
 
 	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
 		g_system->delayMillis(10);
+
+		pollEvents();
 	}
 }
 
