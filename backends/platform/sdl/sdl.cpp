@@ -501,6 +501,10 @@ SdlMixerManager *OSystem_SDL::getMixerManager() {
 	return g_eventRec.getMixerManager();
 }
 
+Common::TimerManager *OSystem_SDL::getTimerManager() {
+	return g_eventRec.getTimerManager();
+}
+
 #ifdef USE_OPENGL
 
 const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
@@ -654,10 +658,6 @@ void OSystem_SDL::setupGraphicsModes() {
 		mode->id = i++;
 		mode++;
 	}
-}
-
-Common::TimerManager *OSystem_SDL::getTimerManager() {
-	return g_eventRec.getTimerManager();
 }
 
 #endif
