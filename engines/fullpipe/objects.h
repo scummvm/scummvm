@@ -39,12 +39,44 @@ class CObList {
 	int m_nBlockSize;
 };
 
+class MemoryObject {
+  CObject obj;
+  int filename;
+  int field_8;
+  int field_C;
+  int field_10;
+  char field_14;
+  char field_15;
+  char field_16;
+  char field_17;
+  int data;
+  int dataSize;
+  int flags;
+  int libHandle;
+};
+
 class CObArray {
 	CObject obj;
 	int m_pData;
 	int m_nSize;
 	int m_nMaxSize;
 	int m_nGrowBy;
+};
+
+struct CNode {
+  CNode *pNext;
+  CNode *pPrev;
+  void *data;
+};
+
+class CPtrList {
+  CObject obj;
+  CNode *m_pNodeHead;
+  int m_pNodeTail;
+  int m_nCount;
+  int m_pNodeFree;
+  int m_pBlocks;
+  int m_nBlockSize;
 };
 
 class SceneTag {
@@ -63,7 +95,7 @@ class SceneTag {
 typedef Common::List<SceneTag> SceneTagList_;
 
 class SceneTagList {
-	SceneTagList_ list;
+	SceneTagList_ _list;
 
  public:
 	SceneTagList(CFile &file);
@@ -158,6 +190,131 @@ class CGameVar {
 	int varType;
 };
 
+class InventoryPoolItem {
+ public:
+	int16 _id;
+	int16 _pictureObjectNormalId;
+	int16 _pictureObjectId1;
+	int16 _pictureObjectMouseInsideId;
+	int16 _pictureObjectId3;
+	int16 _field_A;
+	int _field_C;
+	int _obj;
+	int _flags;
+};
+
+typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
+
+class CInventory {
+	CObject _obj;
+	int16 _sceneId;
+	int16 _field_6;
+	InventoryPoolItems _itemsPool;
+
+ public:
+	CInventory() { _sceneId = 0; }
+	bool load(CFile &file);
+};
+
+struct InventoryItem {
+	int16 itemId;
+	int16 count;
+};
+
+typedef Common::Array<InventoryItem> InventoryItems;
+
+class InventoryIcon {
+	int pictureObjectNormal;
+	int pictureObjectMouseInside;
+	int pictureObject3;
+	int x1;
+	int y1;
+	int x2;
+	int y2;
+	int16 inventoryItemId;
+	int16 field_1E;
+	int isSelected;
+	int isMouseInside;
+};
+
+typedef Common::Array<InventoryIcon> InventoryIcons;
+
+class Background {
+	CPtrList list;
+	int stringObj;
+	int x;
+	int y;
+	int16 messageQueueId;
+	int colorMemoryObj;
+	int bigPictureArray1Count;
+	int bigPictureArray2Count;
+	int bigPictureArray;
+};
+
+class ShadowsItemArray {
+	CObArray objs;
+};
+
+class Shadows {
+	CObject obj;
+	int sceneId;
+	int staticAniObjectId;
+	int movementId;
+	ShadowsItemArray items;
+};
+
+class Scene {
+	Background bg;
+	CPtrList staticANIObjectList1;
+	CPtrList staticANIObjectList2;
+	CPtrList messageQueueList;
+	CPtrList faObjectList;
+	Shadows *shadows;
+	int soundList;
+	int16 sceneId;
+	int stringObj;
+	int field_BC;
+	int libHandle;
+};
+
+class Picture {
+	MemoryObject obj;
+	Common::Rect rect;
+	int convertedBitmap;
+	int x;
+	int y;
+	int field_44;
+	int width;
+	int height;
+	int bitmap;
+	int field_54;
+	int memoryObject2;
+	int alpha;
+	int paletteData;
+};
+
+class BigPicture {
+	Picture pic;
+};
+
+class CInventory2 {
+	CInventory _inventory;
+	InventoryItems _inventoryItems;
+	InventoryIcons _inventoryIcons;
+	int _selectedId;
+	int _field_48;
+	int _isInventoryOut;
+	int _isLocked;
+	int _topOffset;
+	Scene *_sceneObj;
+	BigPicture *_picture;
+
+ public:
+	CInventory2();
+	bool load(CFile &file);
+	bool read(CFile &file);
+};
+
 class CGameLoader {
  public:
 	bool loadFile(const char *fname);
@@ -177,30 +334,7 @@ class CGameLoader {
 	int _field_28;
 	int _field_2C;
 	CInputController _inputController;
-	int _inventory;
-	int _field_7C;
-	int _field_80;
-	int _field_84;
-	int _field_88;
-	int _field_8C;
-	int _field_90;
-	int _field_94;
-	int _field_98;
-	int _field_9C;
-	int _field_A0;
-	int _field_A4;
-	int _field_A8;
-	int _field_AC;
-	int _field_B0;
-	int _field_B4;
-	int _field_B8;
-	int _field_BC;
-	int _field_C0;
-	int _field_C4;
-	int _field_C8;
-	int _field_CC;
-	int _field_D0;
-	int _field_D4;
+	CInventory2 _inventory;
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
 	void *_preloadCallback;
