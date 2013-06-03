@@ -55,7 +55,7 @@ class UtilTestSuite : public CxxTest::TestSuite {
 		bool valasbool;
 		bool success;
 
-		Common::String string_5 ("1");
+		Common::String string_5("1");
 		success = Common::parseBool(string_5, valasbool);
 		TS_ASSERT_EQUALS(success, 1);
 		TS_ASSERT_EQUALS(valasbool, 1);

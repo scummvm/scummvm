@@ -30,7 +30,7 @@ class CosineTableTestSuite : public CxxTest::TestSuite {
 
 		for (int p = kMinBitPrecision; p <= kMaxBitPrecision; p++) {
 			Common::CosineTable ct(p);
-			float *table = const_cast<float*>(ct.getTable());
+			float *table = const_cast<float *>(ct.getTable());
 			TS_ASSERT(table[0] == 1);
 		}
 	}
@@ -49,7 +49,7 @@ class CosineTableTestSuite : public CxxTest::TestSuite {
 			// After this, entries = 2^^(p-1)
 			int half_entries = entries / 2;
 			Common::CosineTable ct(p);
-			float *table = const_cast<float*>(ct.getTable());
+			float *table = const_cast<float *>(ct.getTable());
 			for (int i = 1; i < half_entries; i++) {
 				TS_ASSERT(table[i] == table[entries - i]);
 			}
