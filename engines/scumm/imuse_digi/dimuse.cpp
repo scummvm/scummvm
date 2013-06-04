@@ -275,9 +275,12 @@ void IMuseDigital::callback() {
 						feedSize &= ~1;
 					if (channels == 2)
 						feedSize &= ~3;
-				} else {
+				} else if (bits == 8) {
 					if (channels == 2)
 						feedSize &= ~1;
+				} else {
+					warning("IMuseDigita::callback: Unexpected sample width, %d bits", bits);
+					continue;
 				}
 
 				if (feedSize == 0)
