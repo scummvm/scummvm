@@ -25,7 +25,7 @@
 
 namespace Fullpipe {
 
-class CFile : public Common::File {
+class MfcArchive : public Common::File {
 	public:
 	char *readPascalString() {
 		char *tmp;

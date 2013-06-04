@@ -43,7 +43,7 @@ bool FullpipeEngine::loadGam(const char *fname) {
 }
 
 bool CGameLoader::loadFile(const char *fname) {
-	CFile file;
+	MfcArchive file;
 
 	if (!file.open(fname))
 		return false;
@@ -72,7 +72,7 @@ CGameLoader::~CGameLoader() {
 	delete _gameProject;
 }
 
-GameProject::GameProject(CFile &file) {
+GameProject::GameProject(MfcArchive &file) {
 	_field_4 = 0;
 	_headerFilename = 0;
 	_field_10 = 12;
@@ -103,7 +103,7 @@ GameProject::~GameProject() {
 	free(_headerFilename);
 }
 
-SceneTagList::SceneTagList(CFile &file) {
+SceneTagList::SceneTagList(MfcArchive &file) {
 	int numEntries = file.readUint16LE();
 
 	debug(0, "numEntries: %d", numEntries);
@@ -114,7 +114,7 @@ SceneTagList::SceneTagList(CFile &file) {
 	}
 }
 
-SceneTag::SceneTag(CFile &file) {
+SceneTag::SceneTag(MfcArchive &file) {
 	_field_4 = 0;
 	_scene = 0;
 
@@ -129,7 +129,7 @@ SceneTag::~SceneTag() {
 	free(_tag);
 }
 
-bool CInventory::load(CFile &file) {
+bool CInventory::load(MfcArchive &file) {
 	_sceneId = file.readUint16LE();
 	int numInvs = file.readUint32LE();
 
@@ -161,11 +161,11 @@ CInventory2::CInventory2() {
 	_topOffset = -65;
 }
 
-bool CInventory2::load(CFile &file) {
+bool CInventory2::load(MfcArchive &file) {
 	return _inventory.load(file);
 }
 
-bool CInventory2::read(CFile &file) { // CInventory2_SerializePartially
+bool CInventory2::read(MfcArchive &file) { // CInventory2_SerializePartially
 	int numInvs = file.readUint32LE();
 
 	debug(0, "numInvs: %d", numInvs);

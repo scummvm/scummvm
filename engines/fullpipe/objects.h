@@ -88,7 +88,7 @@ class SceneTag {
 	int16 _field_12;
 
  public:
-	SceneTag(CFile &file);
+	SceneTag(MfcArchive &file);
 	~SceneTag();
 };
 
@@ -98,7 +98,7 @@ class SceneTagList {
 	SceneTagList_ _list;
 
  public:
-	SceneTagList(CFile &file);
+	SceneTagList(MfcArchive &file);
 };
 
 class GameProject {
@@ -109,7 +109,7 @@ class GameProject {
 	int _field_10;
 
  public:
-	GameProject(CFile &file);
+	GameProject(MfcArchive &file);
 	~GameProject();
 };
 
@@ -213,7 +213,7 @@ class CInventory {
 
  public:
 	CInventory() { _sceneId = 0; }
-	bool load(CFile &file);
+	bool load(MfcArchive &file);
 };
 
 struct InventoryItem {
@@ -311,8 +311,8 @@ class CInventory2 {
 
  public:
 	CInventory2();
-	bool load(CFile &file);
-	bool read(CFile &file);
+	bool load(MfcArchive &file);
+	bool read(MfcArchive &file);
 };
 
 class CGameLoader {
