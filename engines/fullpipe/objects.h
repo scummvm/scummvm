@@ -113,12 +113,35 @@ class GameProject {
 	~GameProject();
 };
 
+class CInteraction {
+  CObject obj;
+  int16 objectId1;
+  int16 objectId2;
+  int16 objectId3;
+  int16 staticsId1;
+  int16 staticsId2;
+  int16 field_E;
+  int objectState1;
+  int objectState2;
+  int xOffs;
+  int yOffs;
+  int messageQueue;
+  int sceneId;
+  int field_28;
+  int flags;
+  int stringObj;
+};
+
+typedef Common::List<CInteraction> CInteractions;
+
 class CInteractionController {
-	CObject obj;
-	CObList interactions;
-	int16 field_20;
-	char gap_22[2];
-	int flag24;
+	CObject _obj;
+	CInteractions _interactions;
+	int16 _field_20;
+	int _flag24;
+
+ public:
+	CInteractionController() : _field_20(0), _flag24(1) {}
 };
 
 class CInputControllerItemArray {
