@@ -192,7 +192,7 @@ bool BaseFileManager::registerPackages() {
 	Common::FSList files;
 	for (Common::FSList::iterator it = _packagePaths.begin(); it != _packagePaths.end(); ++it) {
 		debugC(kWintermuteDebugFileAccess, "Should register folder: %s %s", (*it).getPath().c_str(), (*it).getName().c_str());
-		if ((*it).getChildren(files, Common::FSNode::kListFilesOnly)) {
+		if (!(*it).getChildren(files, Common::FSNode::kListFilesOnly)) {
 			warning("getChildren() failed for path: %s", (*it).getDisplayName().c_str());
 		}
 		for (Common::FSList::iterator fileIt = files.begin(); fileIt != files.end(); ++fileIt) {
