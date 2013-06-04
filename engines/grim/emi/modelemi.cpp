@@ -69,16 +69,17 @@ void EMIMeshFace::loadFace(Common::SeekableReadStream *data) {
 	int x = 0, y = 0, z = 0;
 	_indexes = new Vector3int[_faceLength];
 	int j = 0;
-	int readsize;
-	if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
-		readsize = 4;
-	} else {
-		readsize = 2;
-	}
 	for (uint32 i = 0; i < _faceLength; i ++) {
-		data->read((char *)&x, readsize);
-		data->read((char *)&y, readsize);
-		data->read((char *)&z, readsize);
+		// FIXME: Are these ever going to be < 0 ?
+		if (g_grim->getGamePlatform() == Common::kPlatformPS2) {
+			x = data->readSint32LE();
+			y = data->readSint32LE();
+			z = data->readSint32LE();
+		} else {
+			x = data->readSint16LE();
+			y = data->readSint16LE();
+			z = data->readSint16LE();
+		}
 		_indexes[j++].setVal(x,y,z);
 	}
 }

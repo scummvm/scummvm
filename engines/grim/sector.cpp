@@ -158,7 +158,9 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 	_numVertices = data->readUint32LE();
 	_vertices = new Math::Vector3d[_numVertices + 1];
 	for(int i = 0; i < _numVertices; i++) {
-		data->read(_vertices[i].getData(), 12);
+		char v3[4 * 3];
+		data->read(v3, 4 * 3);
+		_vertices[i] = Math::Vector3d::get_vector3d(v3);
 	}
 
 	// Repeat the last vertex for convenience
@@ -186,7 +188,9 @@ void Sector::loadBinary(Common::SeekableReadStream *data) {
 	int skip = data->readUint32LE();
 	data->seek(skip * 4, SEEK_CUR);
 
-	data->read(&_height, 4);
+	char f[4];
+	data->read(f, 4);
+	_height = get_float(f);
 }
 
 void Sector::setVisible(bool vis) {

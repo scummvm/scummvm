@@ -353,15 +353,18 @@ void Set::Setup::loadBinary(Common::SeekableReadStream *data) {
 	_bkgndZBm = NULL;
 	_bkgndBm = Bitmap::create(fileName);
 
+	char v[4 * 4];
+	data->read(v, 4 * 3);
+	_pos = Math::Vector3d::get_vector3d(v);
 
-	data->read(_pos.getData(), 12);
+	data->read(v, 4 * 3);
+	_interest = Math::Vector3d::get_vector3d(v);
 
-	data->read(_interest.getData(), 12);
-
-	data->read(&_roll, 4);
-	data->read(&_fov, 4);
-	data->read(&_nclip, 4);
-	data->read(&_fclip, 4);
+	data->read(v, 4 * 4);
+	_roll  = get_float(v);
+	_fov   = get_float(v + 4);
+	_nclip = get_float(v + 8);
+	_fclip = get_float(v + 12);
 
 	delete[] fileName;
 }
