@@ -184,7 +184,7 @@ public:
 	uint32 getFlags() const;
 	Common::Platform getPlatform() const;
 	bool getIsADGFDemo() const;
-	bool isCD() const;
+	bool isV1CD() const;
 
 	const char *getSampleIndex(LANGUAGE lang);
 	const char *getSampleFile(LANGUAGE lang);
