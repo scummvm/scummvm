@@ -1642,8 +1642,8 @@ void HopkinsEngine::playIntro() {
 	_graphicsMan->setColorPercentage(253, 100, 100, 100);
 	_graphicsMan->setColorPercentage(251, 100, 100, 100);
 	_graphicsMan->setColorPercentage(254, 0, 0, 0);
-	for (int i = 0; i <= 4; i++)
-		_events->refreshScreenAndEvents();
+
+	_events->delay(500);
 
 	_globals->_eventMode = EVENTMODE_IGNORE;
 	_graphicsMan->fadeInLong();
