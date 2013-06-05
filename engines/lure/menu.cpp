@@ -459,7 +459,7 @@ Action PopupMenu::Show(int numEntries, Action *actions) {
 		strList[index] = stringList.getString(*actionPtr++);
 	uint16 result = Show(numEntries, strList);
 
-	delete strList;
+	Memory::dealloc(strList);
 	if (result == 0xffff) return NONE;
 	else return actions[result];
 }
