@@ -156,12 +156,7 @@ bool HopkinsEngine::runWin95Demo() {
 	_events->_rateCounter = 0;
 	_globals->_eventMode = EVENTMODE_IGNORE;
 	_globals->_speed = 1;
-
-	for (int i = 1; i < 50; i++) {
-		_graphicsMan->copySurface(_graphicsMan->_backBuffer, 0, 0, 640, 440, _graphicsMan->_frontBuffer, 0, 0);
-		_events->refreshScreenAndEvents();
-	}
-
+	_events->delay(500);
 	_globals->_eventMode = EVENTMODE_DEFAULT;
 	if (_events->_rateCounter > 475)
 		_globals->_speed = 2;
