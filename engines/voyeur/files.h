@@ -127,6 +127,7 @@ public:
 	~BoltFile();
 
 	bool getBoltGroup(uint32 id);
+	void freeBoltGroup(uint32 id);
 	byte *memberAddr(uint32 id);
 	byte *memberAddrOffset(uint32 id);
 	void resolveIt(uint32 id, byte **p);
@@ -134,6 +135,7 @@ public:
 
 	BoltEntry &getBoltEntry(uint32 id);
 	PictureResource *getPictureResouce(uint32 id);
+	CMapResource *getCMapResource(uint32 id);
 };
 
 class BoltGroup {
@@ -143,6 +145,7 @@ public:
 	byte _loaded;
 	bool _processed;
 	bool _callInitGro;
+	int _termGroIndex;
 	int _count;
 	int _fileOffset;
 	Common::Array<BoltEntry> _entries;
@@ -254,7 +257,7 @@ public:
 
 class ViewPortListResource {
 public:
-	byte *_field4;
+	byte *_palette;
 	Common::Array<ViewPortResource *> _entries;
 
 	ViewPortListResource(BoltFilesState &state, const byte *src);
@@ -270,13 +273,19 @@ public:
 };
 
 class CMapResource {
+private:
+	VoyeurEngine *_vm;
 public:
+	int _steps;
+	int _fadeStatus;
 	int _start;
 	int _end;
-	byte *_palette;
+	byte *_entries;
 public:
 	CMapResource(BoltFilesState &state, const byte *src);
 	virtual ~CMapResource();
+
+	void startFade();
 };
 
 class VInitCyclResource {

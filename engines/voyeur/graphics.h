@@ -41,6 +41,7 @@ class GraphicsManager;
 class DisplayResource;
 class PictureResource;
 class ViewPortResource;
+class ViewPortListResource;
 
 typedef void (GraphicsManager::*GraphicMethodPtr)(); 
 typedef void (GraphicsManager::*ViewPortSetupPtr)(ViewPortResource *);
@@ -57,7 +58,7 @@ public:
 	int _SVGAPage;
 	int _SVGAMode;
 	int _SVGAReset;
-	Common::Array<ViewPortResource *> *_viewPortListPtr;
+	ViewPortListResource *_viewPortListPtr;
 	ViewPortResource **_vPort;
 	bool _MCGAMode;
 	bool _saveBack;
@@ -66,6 +67,7 @@ public:
 	uint _planeSelect;
 	int _sImageShift;
 	Graphics::Surface _screenSurface;
+	int _fadeStatus;
 private:
 	static void fadeIntFunc();
 	static void vDoFadeInt();
@@ -92,6 +94,8 @@ public:
 	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &offset);
 	void sDisplayPic(PictureResource *pic);
 	void flipPage();
+	void clearPalette();
+	void screenReset();
 };
 
 } // End of namespace Voyeur

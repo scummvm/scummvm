@@ -27,7 +27,12 @@ namespace Voyeur {
 IntData::IntData() {
 	_field9 = false;
 	_flipWait = false;
+	_hasPalette = false;
+	_field3B = 0;
 	_field2A = 0;
+	_palStartIndex = 0;
+	_palEndIndex = 0;
+	_palette = NULL;
 }
 
 void IntData::audioInit() {

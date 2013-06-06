@@ -132,7 +132,7 @@ void VoyeurEngine::initBolt() {
 }
 
 void VoyeurEngine::vInitInterrupts() {
-	_eventsManager._intPtr._colors = &_graphicsManager._VGAColors[0];
+	_eventsManager._intPtr._palette = &_graphicsManager._VGAColors[0];
 }
 
 void VoyeurEngine::initInput() {
@@ -142,6 +142,8 @@ void VoyeurEngine::doHeadTitle() {
 //	char dest[144];
 
 	_eventsManager.startMainClockInt();
+
+	// Show starting screen
 	if (_bVoy->getBoltGroup(0x10500)) {
 		_graphicsManager._backgroundPage = _bVoy->getBoltEntry(0x5020000)._picResource;
 		(*_graphicsManager._vPort)->setupViewPort();
@@ -150,8 +152,36 @@ void VoyeurEngine::doHeadTitle() {
 		_graphicsManager.flipPage();
 		_eventsManager.sWaitFlip();
 
-		// TODO: 
-		_eventsManager.delay(1000);
+		// Fade in the screen
+		CMapResource *cMap = _bVoy->getCMapResource(0x5010000);
+		assert(cMap);
+		cMap->_steps = 60;
+		cMap->startFade();
+
+		_eventsManager.delay(150);
+		if (shouldQuit())
+			return;
+		/* Commented out until fade in is working
+		// Fade out the screen
+		cMap->_steps = 30;
+		cMap->startFade();
+		if (shouldQuit())
+			return;
+
+		(*_graphicsManager._vPort)->_flags |= 8;
+		_graphicsManager.flipPage();
+		_eventsManager.sWaitFlip();
+
+		while (!shouldQuit() && (_graphicsManager._fadeStatus & 1))
+			_eventsManager.delay(1);
+
+		_graphicsManager.screenReset();
+		_bVoy->freeBoltGroup(0x10500);
+		_graphicsManager.screenReset();
+
+		if (shouldQuit())
+			return;
+		*/
 	}
 }
 

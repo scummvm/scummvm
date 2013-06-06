@@ -114,7 +114,12 @@ public:
 	bool _field9;
 	bool _flipWait;
 	int _field2A;
-	byte *_colors;
+	bool _hasPalette;
+	int _field38;
+	int _field3B;
+	int _palStartIndex;
+	int _palEndIndex;
+	byte *_palette;
 	Common::List<IntNode *> _intNodes;
 public:
 	IntData();

@@ -29,6 +29,7 @@
 namespace Voyeur {
 
 class VoyeurEngine;
+class CMapResource;
 
 #define GAME_FRAME_RATE 50
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
@@ -44,14 +45,17 @@ private:
 	static void mainVoyeurIntFunc();
 private:
 	void checkForNextFrameCounter();
-
+	void videoTimer();
 public:
-	IntData _intPtr;
+	IntData _audioStruc;
+	IntData &_intPtr;
 	IntNode _fadeIntNode;
 	IntNode _cycleIntNode;
 	IntNode _evintnode;
 	IntNode _mainIntNode;
 	int _cycleStatus;
+	int _fadeFirstCol, _fadeLastCol;
+	int _fadeCount;
 public:
 	EventsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
@@ -61,8 +65,9 @@ public:
 	void vStopCycle();
 	void sWaitFlip();
 
-	void delay(int totalMilli);
+	void delay(int cycles);
 	void pollEvents();
+	void startFade(CMapResource *cMap);
 };
 
 } // End of namespace Voyeur

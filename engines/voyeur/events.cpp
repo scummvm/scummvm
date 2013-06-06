@@ -22,10 +22,11 @@
 
 #include "voyeur/events.h"
 #include "voyeur/voyeur.h"
+#include "graphics/palette.h"
 
 namespace Voyeur {
 
-EventsManager::EventsManager() {
+EventsManager::EventsManager(): _intPtr(_audioStruc) {
 	_cycleStatus = 0;
 	_mouseButton = 0;
 	_priorFrameTime = g_system->getMillis();
@@ -56,7 +57,7 @@ void EventsManager::sWaitFlip() {
 	// TODO: See if this needs a proper wait loop with event polling
 	//while (_intPtr._field39) ;
 
-	Common::Array<ViewPortResource *> &viewPorts = *_vm->_graphicsManager._viewPortListPtr;
+	Common::Array<ViewPortResource *> &viewPorts = _vm->_graphicsManager._viewPortListPtr->_entries;
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
 		ViewPortResource &viewPort = *viewPorts[idx];
 
@@ -81,6 +82,9 @@ void EventsManager::checkForNextFrameCounter() {
 		++_gameCounter;
 		_priorFrameTime = milli;
 
+		// Run the timer-based updates
+		videoTimer();
+
 		// Display the frame
 		g_system->copyRectToScreen((byte *)_vm->_graphicsManager._screenSurface.pixels, 
 			SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -91,7 +95,18 @@ void EventsManager::checkForNextFrameCounter() {
 	}
 }
 
-void EventsManager::delay(int totalMilli) {
+void EventsManager::videoTimer() {
+	if (_audioStruc._hasPalette) {
+		_audioStruc._hasPalette = false;
+
+		g_system->getPaletteManager()->setPalette(_audioStruc._palette,
+			_audioStruc._palStartIndex, 
+			_audioStruc._palEndIndex - _audioStruc._palStartIndex + 1);
+	}
+}
+
+void EventsManager::delay(int cycles) {
+	uint32 totalMilli = cycles * 1000 / GAME_FRAME_RATE;
 	uint32 delayEnd = g_system->getMillis() + totalMilli;
 
 	while (!_vm->shouldQuit() && g_system->getMillis() < delayEnd) {
@@ -132,6 +147,70 @@ void EventsManager::pollEvents() {
  			break;
 		}
 	}
+}
+
+void EventsManager::startFade(CMapResource *cMap) {
+	_fadeIntNode._flags |= 1;
+	if (_cycleStatus & 1)
+		_cycleIntNode._flags |= 1;
+
+	_fadeFirstCol = cMap->_start;
+	_fadeLastCol = cMap->_end;
+	_fadeCount = cMap->_steps + 1;
+
+	if (cMap->_steps > 0) {
+		_vm->_graphicsManager._fadeStatus = cMap->_fadeStatus;
+		uint16 *destP = (uint16 *)(_vm->_graphicsManager._viewPortListPtr->_palette +
+			(_fadeFirstCol * 16));
+		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
+		int mapIndex = 0;
+
+		for (int idx = _fadeFirstCol; idx <= _fadeLastCol; ++idx) {
+			destP[0] = vgaP[0] << 8;
+			uint32 rComp = (uint16)((cMap->_entries[mapIndex * 3] << 8) - destP[0]) | 0x80;
+			destP[3] = rComp / cMap->_steps;
+
+			destP[1] = vgaP[1] << 8;
+			uint32 gComp = (uint16)((cMap->_entries[mapIndex * 3 + 1] << 8) - destP[1]) | 0x80;
+			destP[4] = gComp / cMap->_steps;
+
+			destP[2] = vgaP[2] << 8;
+			uint32 bComp = (uint16)((cMap->_entries[mapIndex * 3 + 2] << 8) - destP[2]) | 0x80;
+			destP[5] = bComp / cMap->_steps;
+			destP[6] = bComp % cMap->_steps;
+
+			destP += 8;
+
+			if (!(cMap->_fadeStatus & 1))
+				++mapIndex;
+		}
+
+		if (cMap->_fadeStatus & 2)
+			_intPtr._field3B = 1;
+		_fadeIntNode._flags &= ~1;
+	} else {
+		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
+		int mapIndex = 0;
+
+		for (int idx = _fadeFirstCol; idx <= _fadeLastCol; ++idx, vgaP += 3) {
+			Common::copy(&cMap->_entries[mapIndex], &cMap->_entries[mapIndex + 3], vgaP);
+
+			if (!(cMap->_fadeStatus & 1))
+				mapIndex += 3;
+		}
+
+		if (_intPtr._palStartIndex > _fadeFirstCol)
+			_intPtr._palStartIndex = _fadeFirstCol;
+		if (_intPtr._palEndIndex < _fadeLastCol)
+			_intPtr._palEndIndex = _fadeLastCol;
+
+		_intPtr._hasPalette = true;
+		if (!(cMap->_fadeStatus & 2))
+			_intPtr._field38 = 1;
+	}
+
+	if (_cycleStatus & 1)
+		_cycleIntNode._flags &= ~1;
 }
 
 } // End of namespace Voyeur

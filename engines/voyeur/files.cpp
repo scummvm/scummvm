@@ -251,6 +251,10 @@ bool BoltFile::getBoltGroup(uint32 id) {
 	return true;
 }
 
+void BoltFile::freeBoltGroup(uint32 id) {
+	warning("TODO: freeBoltGroup");
+}
+
 BoltEntry &BoltFile::getBoltEntry(uint32 id) {
 	BoltGroup &group = _groups[id >> 24];
 	assert(group._loaded);
@@ -266,6 +270,13 @@ PictureResource *BoltFile::getPictureResouce(uint32 id) {
 		return NULL;
 
 	return getBoltEntry(id)._picResource;
+}
+
+CMapResource *BoltFile::getCMapResource(uint32 id) {
+		if ((int32)id == -1)
+		return NULL;
+
+	return getBoltEntry(id)._cMapResource;
 }
 
 byte *BoltFile::memberAddr(uint32 id) {
@@ -417,7 +428,7 @@ void BoltFile::initViewPortList() {
 	_state._curMemberPtr->_viewPortListResource = res = new ViewPortListResource(
 		_state, _state._curMemberPtr->_data);
 
-	_state._vm->_graphicsManager._viewPortListPtr = &res->_entries;
+	_state._vm->_graphicsManager._viewPortListPtr = res;
 	_state._vm->_graphicsManager._vPort = &res->_entries[0];
 }
 
@@ -441,6 +452,7 @@ BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
 	_file->read(&buffer[0], BOLT_GROUP_SIZE);
 	_processed = buffer[0] != 0;
 	_callInitGro = buffer[1] != 0;
+	_termGroIndex = buffer[2];
 	_count = buffer[3] ? buffer[3] : 256;	// TODO: Added this in. Check it's okay
 	_fileOffset = READ_LE_UINT32(&buffer[8]);
 }
@@ -546,8 +558,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 
 		if (mode != state._vm->_graphicsManager._SVGAMode) {
 			state._vm->_graphicsManager._SVGAMode = mode;
-			// TODO: If necessary, simulate SVGA mode change
-			warning("TODO: May need to implement SVGA stub code");
+			state._vm->_graphicsManager.clearPalette();			
 		}
 
 //		byte *imgData = _imgData;
@@ -746,6 +757,8 @@ ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *sr
 		assert(entry._viewPortResource);
 		_entries.push_back(entry._viewPortResource);
 	}
+
+	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 4), &_palette);
 }
 
 /*------------------------------------------------------------------------*/
@@ -756,17 +769,22 @@ FontResource::FontResource(BoltFilesState &state, const byte *src) {
 
 /*------------------------------------------------------------------------*/
 
-CMapResource::CMapResource(BoltFilesState &state, const byte *src) {
+CMapResource::CMapResource(BoltFilesState &state, const byte *src): _vm(state._vm) {
+	_steps = READ_LE_UINT16(src);
 	_start = READ_LE_UINT16(src + 2);
 	_end = READ_LE_UINT16(src + 4);
 	
 	int count = _end - _start;
-	_palette = new byte[count * 3];
-	Common::copy(src + 6, src + 6 + 3 * count, _palette);
+	_entries = new byte[count * 3];
+	Common::copy(src + 6, src + 6 + 3 * count, _entries);
 }
 
 CMapResource::~CMapResource() {
-	delete[] _palette;
+	delete[] _entries;
+}
+
+void CMapResource::startFade() {
+	_vm->_eventsManager.startFade(this);
 }
 
 /*------------------------------------------------------------------------*/

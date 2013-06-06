@@ -24,6 +24,7 @@
 #include "voyeur/game.h"
 #include "voyeur/voyeur.h"
 #include "engines/util.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 
 namespace Voyeur {
@@ -47,6 +48,8 @@ void GraphicsManager::sInitGraphics() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 	_screenSurface.create(SCREEN_WIDTH, SCREEN_HEIGHT,
 		Graphics::PixelFormat::createFormatCLUT8());
+
+	clearPalette();
 }
 
 GraphicsManager::~GraphicsManager() {
@@ -360,7 +363,7 @@ void GraphicsManager::EMSMapPageHandle(int v1, int v2, int v3) {
 }
 
 void GraphicsManager::flipPage() {
-	Common::Array<ViewPortResource *> &viewPorts = *_viewPortListPtr;
+	Common::Array<ViewPortResource *> &viewPorts = _viewPortListPtr->_entries;
 	bool flipFlag = false;
 
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
@@ -403,6 +406,16 @@ void GraphicsManager::restoreBack(Common::Array<Common::Rect> &rectList, int rec
 	}
 
 	_saveBack = saveBack;
+}
+
+void GraphicsManager::clearPalette() {
+	byte palette[768];
+	Common::fill(&palette[0], &palette[768], 0);
+	g_system->getPaletteManager()->setPalette(&palette[0], 0, 256);
+}
+
+void GraphicsManager::screenReset() {
+	// TODO
 }
 
 } // End of namespace Voyeur
