@@ -26,21 +26,15 @@
 namespace Fullpipe {
 
 class CObject {
-	int vmt;
+ public:
+	virtual bool load(MfcArchive &in) { return true; }
+	virtual ~CObject() {}
 };
 
-class CObList {
-	int vmt;
-	int m_pNodeHead;
-	int m_pNodeTail;
-	int m_nCount;
-	int m_pNodeFree;
-	int m_pBlocks;
-	int m_nBlockSize;
-};
+typedef Common::List<CObject> CObList;
 
 class MemoryObject {
-  CObject obj;
+	//CObject obj;
   int filename;
   int field_8;
   int field_C;
@@ -56,7 +50,7 @@ class MemoryObject {
 };
 
 class CObArray {
-	CObject obj;
+	//CObject obj;
 	int m_pData;
 	int m_nSize;
 	int m_nMaxSize;
@@ -70,7 +64,7 @@ struct CNode {
 };
 
 class CPtrList {
-  CObject obj;
+	//CObject obj;
   CNode *m_pNodeHead;
   int m_pNodeTail;
   int m_nCount;
@@ -79,8 +73,7 @@ class CPtrList {
   int m_nBlockSize;
 };
 
-class SceneTag {
-	CObject _obj;
+class SceneTag : CObject {
 	int _field_4;
 	char *_tag;
 	int _scene;
@@ -88,33 +81,35 @@ class SceneTag {
 	int16 _field_12;
 
  public:
-	SceneTag(MfcArchive &file);
+	SceneTag();
 	~SceneTag();
+
+	virtual bool load(MfcArchive &file);
 };
 
 typedef Common::List<SceneTag> SceneTagList_;
 
-class SceneTagList {
+class SceneTagList : CObject {
 	SceneTagList_ _list;
 
  public:
-	SceneTagList(MfcArchive &file);
+	virtual bool load(MfcArchive &file);
 };
 
-class GameProject {
-	CObject _obj;
+class GameProject : CObject {
 	int _field_4;
 	char *_headerFilename;
 	SceneTagList *_sceneTagList;
 	int _field_10;
 
  public:
-	GameProject(MfcArchive &file);
+	GameProject();
 	~GameProject();
+	virtual bool load(MfcArchive &file);
 };
 
 class CInteraction {
-  CObject obj;
+	//CObject obj;
   int16 objectId1;
   int16 objectId2;
   int16 objectId3;
@@ -132,11 +127,9 @@ class CInteraction {
   int stringObj;
 };
 
-typedef Common::List<CInteraction> CInteractions;
-
 class CInteractionController {
-	CObject _obj;
-	CInteractions _interactions;
+	//CObject _obj;
+	CObList _interactions;
 	int16 _field_20;
 	int _flag24;
 
@@ -149,7 +142,7 @@ class CInputControllerItemArray {
 };
 
 class CInputController {
-	CObject obj;
+	//CObject obj;
 	int flag;
 	int flags;
 	int cursorHandle;
@@ -176,7 +169,7 @@ union VarValue {
 };
 
 class Message {
-	CObject obj;
+	//CObject obj;
 	int messageKind;
 	int16 parentId;
 	char gap_A[2];
@@ -202,7 +195,7 @@ class ExCommand {
 };
 
 class CGameVar {
-	CObject obj;
+	//CObject obj;
 	CGameVar *nextVarObj;
 	CGameVar *prevVarObj;
 	CGameVar *parentVarObj;
@@ -228,15 +221,14 @@ class InventoryPoolItem {
 
 typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
 
-class CInventory {
-	CObject _obj;
+class CInventory : CObject {
 	int16 _sceneId;
 	int16 _field_6;
 	InventoryPoolItems _itemsPool;
 
  public:
 	CInventory() { _sceneId = 0; }
-	bool load(MfcArchive &file);
+	virtual bool load(MfcArchive &file);
 };
 
 struct InventoryItem {
@@ -279,7 +271,7 @@ class ShadowsItemArray {
 };
 
 class Shadows {
-	CObject obj;
+	//CObject obj;
 	int sceneId;
 	int staticAniObjectId;
 	int movementId;
@@ -320,7 +312,7 @@ class BigPicture {
 	Picture pic;
 };
 
-class CInventory2 {
+class CInventory2 : CObject {
 	CInventory _inventory;
 	InventoryItems _inventoryItems;
 	InventoryIcons _inventoryIcons;
@@ -334,8 +326,8 @@ class CInventory2 {
 
  public:
 	CInventory2();
-	bool load(MfcArchive &file);
-	bool read(MfcArchive &file);
+	bool loadPartial(MfcArchive &file);
+	virtual bool load(MfcArchive &file);
 };
 
 class CGameLoader {
@@ -344,7 +336,7 @@ class CGameLoader {
 	~CGameLoader();
 
  private:
-	CObject _obj;
+	//CObject _obj;
 	GameProject *_gameProject;
 	CInteractionController *_interactionController;
 	int _field_C;

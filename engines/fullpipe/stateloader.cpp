@@ -51,7 +51,9 @@ bool CGameLoader::loadFile(const char *fname) {
 	_gameName = file.readPascalString();
 	debug(0, "_gameName: %s", _gameName);
 
-	_gameProject = new GameProject(file);
+	_gameProject = new GameProject();
+
+	_gameProject->load(file);
 
 	if (g_gameProjectVersion < 12) {
 		error("Old gameProjectVersion: %d", g_gameProjectVersion);
@@ -72,11 +74,13 @@ CGameLoader::~CGameLoader() {
 	delete _gameProject;
 }
 
-GameProject::GameProject(MfcArchive &file) {
+GameProject::GameProject() {
 	_field_4 = 0;
 	_headerFilename = 0;
 	_field_10 = 12;
+}
 
+bool GameProject::load(MfcArchive &file) {
 	g_gameProjectVersion = file.readUint32LE();
 	g_gameProjectValue = file.readUint16LE();
 	g_scrollSpeed = file.readUint32LE();
@@ -88,7 +92,9 @@ GameProject::GameProject(MfcArchive &file) {
 	debug(0, "_scrollSpeed = %d", g_scrollSpeed);
 	debug(0, "_headerFilename = %s", _headerFilename);
 
-	_sceneTagList = new SceneTagList(file);
+	_sceneTagList = new SceneTagList();
+
+	_sceneTagList->load(file);
 
 	if (g_gameProjectVersion >= 3)
 		_field_4 = file.readUint32LE();
@@ -97,32 +103,41 @@ GameProject::GameProject(MfcArchive &file) {
 		file.readUint32LE();
 		file.readUint32LE();
 	}
+
+	return true;
 }
 
 GameProject::~GameProject() {
 	free(_headerFilename);
 }
 
-SceneTagList::SceneTagList(MfcArchive &file) {
+bool SceneTagList::load(MfcArchive &file) {
 	int numEntries = file.readUint16LE();
 
 	debug(0, "numEntries: %d", numEntries);
 
 	for (int i = 0; i < numEntries; i++) {
-		SceneTag *t = new SceneTag(file);
+		SceneTag *t = new SceneTag();
+		t->load(file);
 		_list.push_back(*t);
 	}
+
+	return true;
 }
 
-SceneTag::SceneTag(MfcArchive &file) {
+SceneTag::SceneTag() {
 	_field_4 = 0;
 	_scene = 0;
+}
 
+bool SceneTag::load(MfcArchive &file) {
 	_sceneId = file.readUint16LE();
 
 	_tag = file.readPascalString();
 
 	debug(0, "sceneId: %d  tag: %s", _sceneId, _tag);
+
+	return true;
 }
 
 SceneTag::~SceneTag() {
@@ -165,7 +180,7 @@ bool CInventory2::load(MfcArchive &file) {
 	return _inventory.load(file);
 }
 
-bool CInventory2::read(MfcArchive &file) { // CInventory2_SerializePartially
+bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartially
 	int numInvs = file.readUint32LE();
 
 	debug(0, "numInvs: %d", numInvs);
