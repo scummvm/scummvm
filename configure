@@ -2915,7 +2915,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -3071,7 +3071,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
 
-	linux*)
+	linux* | gnu* | k*bsd*-gnu*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
 		CXXFLAGS="$CXXFLAGS -fPIC"
