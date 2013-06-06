@@ -770,7 +770,8 @@ FontResource::FontResource(BoltFilesState &state, const byte *src) {
 /*------------------------------------------------------------------------*/
 
 CMapResource::CMapResource(BoltFilesState &state, const byte *src): _vm(state._vm) {
-	_steps = READ_LE_UINT16(src);
+	_steps = src[0];
+	_fadeStatus = src[1];
 	_start = READ_LE_UINT16(src + 2);
 	_end = READ_LE_UINT16(src + 4);
 	

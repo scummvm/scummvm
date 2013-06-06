@@ -152,10 +152,10 @@ void VoyeurEngine::doHeadTitle() {
 		_graphicsManager.flipPage();
 		_eventsManager.sWaitFlip();
 
-		// Fade in the screen
-		CMapResource *cMap = _bVoy->getCMapResource(0x5010000);
+		// Immediate fade in to show the initial screen
+		CMapResource *cMap = _bVoy->getCMapResource(0x5030000);
 		assert(cMap);
-		cMap->_steps = 60;
+		cMap->_steps = 0;
 		cMap->startFade();
 
 		_eventsManager.delay(150);
