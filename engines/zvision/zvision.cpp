@@ -35,17 +35,11 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc) : Engine
  
 	// However this is the place to specify all default directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets/asylum");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets/castle");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets/conserv");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets/endgame");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets/global");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets/global/venus");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets/global2");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets/global3");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets/monast");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "zassets/temple");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data1");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data2");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data3");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "znemmx");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "znemscr");
  
 	// Here is the right place to set up the engine specific debug channels
 	//DebugMan.addDebugChannel(kZVisionDebugExample, "example", "this is just an example for a engine specific debug channel");
@@ -160,10 +154,18 @@ Common::Error ZVision::run() {
 	// This test will show up if --debugflags=example or --debugflags=example2 or both of them and -d3 are specified on the commandline
 	//debugC(3, kZVisionDebugExample | kZVisionDebugExample2, "Example debug call two");
 
+	Common::File file;
+
+	if (file.open("ADLIB.MDI")) {
+		file.close();
+	}
+
+
+
 #if 1
 	// Video test
 	Video::VideoDecoder *videoDecoder = new ZorkAVIDecoder();
-	if (videoDecoder && videoDecoder->loadFile(/*"TD9EAZ1C.AVI"*/"T000A11C.AVI")) {
+	if (videoDecoder && videoDecoder->loadFile("ZASSETS/TEMPLE/T000A11C.AVI")) {
 		Common::List<Graphics::PixelFormat> formats;
 		formats.push_back(videoDecoder->getPixelFormat());
 		initGraphics(640, 480, true, formats);
@@ -176,29 +178,33 @@ Common::Error ZVision::run() {
 
 #if 1
 	// Image test
-	f.open("CB8EB11C.TGA");
+	if (f.open("zassets/castle/CB8EB11C.TGA")) {
+		Graphics::TGADecoder tga;
+		if (!tga.loadStream(f))
+			error("Error while reading TGA image");
+		f.close();
 
-	Graphics::TGADecoder tga;
-	if (!tga.loadStream(f))
-		error("Error while reading TGA image");
-	f.close();
+		const Graphics::Surface *tgaSurface = tga.getSurface();
 
-	const Graphics::Surface *tgaSurface = tga.getSurface();
+		Graphics::Surface *screen = g_system->lockScreen();
+		for (uint16 y = 0; y < tgaSurface->h; y++)
+			memcpy(screen->getBasePtr(0, y), tgaSurface->getBasePtr(0, y), tgaSurface->pitch);
+		g_system->unlockScreen();
 
-	Graphics::Surface *screen = g_system->lockScreen();
-	for (uint16 y = 0; y < tgaSurface->h; y++)
-		memcpy(screen->getBasePtr(0, y), tgaSurface->getBasePtr(0, y), tgaSurface->pitch);
-	g_system->unlockScreen();
+		tga.destroy();
+	}
 
-	tga.destroy();
+	
 #endif
 
 #if 1
 	// Sound test
-	f.open("C000H9TC.RAW");
-	Audio::SeekableAudioStream *audioStream = makeRawZorkStream(&f, 22050, DisposeAfterUse::YES);
-	Audio::SoundHandle handle;
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &handle, audioStream);
+	if (f.open("zassets/castle/C000H9TC.RAW")) {
+		Audio::SeekableAudioStream *audioStream = makeRawZorkStream(&f, 22050, DisposeAfterUse::YES);
+		Audio::SoundHandle handle;
+		g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &handle, audioStream);
+	}
+	
 #endif
 
 	// Main loop

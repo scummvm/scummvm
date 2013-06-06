@@ -68,7 +68,7 @@ static const ZVisionGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("CSCR.ZFS", "88226e51a205d2e50c67a5237f3bd5f2", 2397741),
 			Common::EN_ANY,
-			Common::kPlatformWindows,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
@@ -78,6 +78,11 @@ static const ZVisionGameDescription gameDescriptions[] = {
 };
 
 } // End of namespace ZVision
+
+static const char *directoryGlobs[] = {
+	"znemscr",
+	0
+};
 
 static const ExtraGuiOption ZVisionExtraGuiOption = {
 	_s("Use original save/load screens"),
@@ -89,6 +94,8 @@ static const ExtraGuiOption ZVisionExtraGuiOption = {
 class ZVisionMetaEngine : public AdvancedMetaEngine {
 public:
 	ZVisionMetaEngine() : AdvancedMetaEngine(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), zVisionGames) {
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 		_singleid = "zvision";
 	}
 
