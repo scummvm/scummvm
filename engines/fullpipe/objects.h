@@ -31,22 +31,25 @@ class CObject {
 	virtual ~CObject() {}
 };
 
-typedef Common::List<CObject> CObList;
+class CObList : Common::List<CObject>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
+};
 
 class MemoryObject {
 	//CObject obj;
-  int filename;
-  int field_8;
-  int field_C;
-  int field_10;
-  char field_14;
-  char field_15;
-  char field_16;
-  char field_17;
-  int data;
-  int dataSize;
-  int flags;
-  int libHandle;
+	int filename;
+	int field_8;
+	int field_C;
+	int field_10;
+	char field_14;
+	char field_15;
+	char field_16;
+	char field_17;
+	int data;
+	int dataSize;
+	int flags;
+	int libHandle;
 };
 
 class CObArray {
@@ -58,9 +61,9 @@ class CObArray {
 };
 
 struct CNode {
-  CNode *pNext;
-  CNode *pPrev;
-  void *data;
+	CNode *pNext;
+	CNode *pPrev;
+	void *data;
 };
 
 class CPtrList {
@@ -73,7 +76,7 @@ class CPtrList {
   int m_nBlockSize;
 };
 
-class SceneTag : CObject {
+class SceneTag : public CObject {
 	int _field_4;
 	char *_tag;
 	int _scene;
@@ -89,14 +92,14 @@ class SceneTag : CObject {
 
 typedef Common::List<SceneTag> SceneTagList_;
 
-class SceneTagList : CObject {
+class SceneTagList : public CObject {
 	SceneTagList_ _list;
 
  public:
 	virtual bool load(MfcArchive &file);
 };
 
-class GameProject : CObject {
+class GameProject : public CObject {
 	int _field_4;
 	char *_headerFilename;
 	SceneTagList *_sceneTagList;
@@ -127,14 +130,15 @@ class CInteraction {
   int stringObj;
 };
 
-class CInteractionController {
-	//CObject _obj;
+class CInteractionController : public CObject {
 	CObList _interactions;
 	int16 _field_20;
 	int _flag24;
 
  public:
 	CInteractionController() : _field_20(0), _flag24(1) {}
+
+	virtual bool load(MfcArchive &file);
 };
 
 class CInputControllerItemArray {
@@ -143,19 +147,22 @@ class CInputControllerItemArray {
 
 class CInputController {
 	//CObject obj;
-	int flag;
-	int flags;
-	int cursorHandle;
-	int hCursor;
-	int field_14;
-	int cursorId;
-	int cursorIndex;
-	CInputControllerItemArray cursorsArray;
-	int cursorDrawX;
-	int cursorDrawY;
-	int cursorDrawWidth;
-	int cursorDrawHeight;
-	int cursorItemPicture;
+	int _flag;
+	int _flags;
+	int _cursorHandle;
+	int _hCursor;
+	int _field_14;
+	int _cursorId;
+	int _cursorIndex;
+	CInputControllerItemArray _cursorsArray;
+	int _cursorDrawX;
+	int _cursorDrawY;
+	int _cursorDrawWidth;
+	int _cursorDrawHeight;
+	int _cursorItemPicture;
+
+ public:
+	CInputController();
 };
 
 class Sc2Array {
@@ -221,7 +228,7 @@ class InventoryPoolItem {
 
 typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
 
-class CInventory : CObject {
+class CInventory : public CObject {
 	int16 _sceneId;
 	int16 _field_6;
 	InventoryPoolItems _itemsPool;
@@ -312,7 +319,7 @@ class BigPicture {
 	Picture pic;
 };
 
-class CInventory2 : CObject {
+class CInventory2 : public CObject {
 	CInventory _inventory;
 	InventoryItems _inventoryItems;
 	InventoryIcons _inventoryIcons;
@@ -332,8 +339,11 @@ class CInventory2 : CObject {
 
 class CGameLoader {
  public:
+	CGameLoader();
+	virtual ~CGameLoader();
+
 	bool loadFile(const char *fname);
-	~CGameLoader();
+	virtual bool load(MfcArchive &file);
 
  private:
 	//CObject _obj;
@@ -357,7 +367,7 @@ class CGameLoader {
 	int16 _field_F8;
 	int16 _field_FA;
 	CObArray _preloadItems;
-	CGameVar *gameVar;
+	CGameVar *_gameVar;
 	char *_gameName;
 	ExCommand _exCommand;
 	int _updateCounter;

@@ -20,20 +20,39 @@
  *
  */
 
-#ifndef FULLPIPE_UTILS_H
-#define FULLPIPE_UTILS_H
+#include "fullpipe/fullpipe.h"
+
+#include "common/file.h"
+
+#include "fullpipe/utils.h"
+#include "fullpipe/objects.h"
 
 namespace Fullpipe {
 
-class CObject;
+char *MfcArchive::readPascalString() {
+	char *tmp;
+	int len = readByte();
+	tmp = (char *)calloc(len + 1, 1);
+	read(tmp, len);
 
-class MfcArchive : public Common::File {
-	public:
-		char *readPascalString();
-		int readCount();
-		CObject *parseClass();
-};
+	return tmp;
+}
+
+int MfcArchive::readCount() {
+	int count = readUint16LE();
+
+	if (count == 0xffff)
+		count = readUint32LE();
+
+	return count;
+}
+
+CObject *MfcArchive::parseClass() {
+	CObject *res;
+
+	res = new CInventory2();
+
+	return res;
+}
 
 } // End of namespace Fullpipe
-
-#endif /* FULLPIPE_UTILS_H */

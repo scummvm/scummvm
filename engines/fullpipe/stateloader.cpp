@@ -42,12 +42,50 @@ bool FullpipeEngine::loadGam(const char *fname) {
 	return true;
 }
 
+CGameLoader::CGameLoader() {
+	_interactionController = new CInteractionController();
+
+	// g_gameLoader = this;  // FIXME
+
+	_gameProject = 0;
+	//_gameName = "untitled";
+
+	//addMessageHandler2(CGameLoader_messageHandler1, 0, 0);
+	//insertMessageHandler(CGameLoader_messageHandler2, 0, 128);
+	//insertMessageHandler(CGameLoader_messageHandler3, 0, 1);
+
+	_field_FA = 0;
+	_field_F8 = 0;
+	_sceneSwitcher = 0;
+	_preloadCallback = 0;
+	_readSavegameCallback = 0;
+	_gameVar = 0;
+	_preloadId1 = 0;
+	_preloadId2 = 0;
+	_updateCounter = 0;
+
+	//g_x = 0;
+	//g_y = 0;
+	//dword_478480 = 0;
+	//g_objectId2 = 0;
+	//g_id = 0;
+}
+
+CGameLoader::~CGameLoader() {
+	free(_gameName);
+	delete _gameProject;
+}
+
 bool CGameLoader::loadFile(const char *fname) {
 	MfcArchive file;
 
 	if (!file.open(fname))
 		return false;
 
+	return load(file);
+}
+
+bool CGameLoader::load(MfcArchive &file) {
 	_gameName = file.readPascalString();
 	debug(0, "_gameName: %s", _gameName);
 
@@ -66,12 +104,9 @@ bool CGameLoader::loadFile(const char *fname) {
 
 	debug(0, "%x", file.pos());
 
-	return true;
-}
+	_interactionController->load(file);
 
-CGameLoader::~CGameLoader() {
-	free(_gameName);
-	delete _gameProject;
+	return true;
 }
 
 GameProject::GameProject() {
@@ -193,6 +228,27 @@ bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartia
 	}
 
 	return true;
+}
+
+bool CInteractionController::load(MfcArchive &file) {
+	return _interactions.load(file);
+}
+
+bool CObList::load(MfcArchive &file) {
+	int count = file.readCount();
+
+	for (int i = 0; i < count; i++) {
+		CObject *t = file.parseClass();
+		t->load(file);
+
+		push_back(*t);
+	}
+
+	return true;
+}
+
+CInputController::CInputController() {
+	// TODO
 }
 
 } // End of namespace Fullpipe
