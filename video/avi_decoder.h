@@ -225,7 +225,7 @@ private:
 
 	void runHandle(uint32 tag);
 	void handleList();
-	void handleStreamHeader();
+	virtual void handleStreamHeader();
 };
 
 } // End of namespace Video
