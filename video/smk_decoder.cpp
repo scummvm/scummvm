@@ -821,8 +821,9 @@ void SmackerDecoder::SmackerAudioTrack::queueCompressedBuffer(byte *buffer, uint
 		// (the exact opposite to the base values)
 		if (!is16Bits) {
 			for (int k = 0; k < (isStereo ? 2 : 1); k++) {
-				bases[k] += (int8) ((int16) audioTrees[k]->getCode(audioBS));
-				*curPointer++ = CLIP<int>(bases[k], 0, 255) ^ 0x80;
+				int8 delta = (int8) ((int16) audioTrees[k]->getCode(audioBS));
+				bases[k] = (bases[k] + delta) & 0xFF;
+				*curPointer++ = bases[k] ^ 0x80;
 				curPos++;
 			}
 		} else {
