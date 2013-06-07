@@ -251,4 +251,40 @@ CInputController::CInputController() {
 	// TODO
 }
 
+CInteraction::CInteraction() {
+	_objectId1 = 0;
+	_objectId2 = 0;
+	_staticsId1 = 0;
+	_objectId3 = 0;
+	_objectState2 = 0;
+	_objectState1 = 0;
+	_messageQueue = 0;
+	_flags = 0;
+	_yOffs = 0;
+	_xOffs = 0;
+	_staticsId2 = 0;
+	_field_28 = 0;
+	_sceneId = -1;
+}
+
+bool CInteraction::load(MfcArchive &file) {
+	_objectId1 = file.readUint16LE();
+	_objectId2 = file.readUint16LE();
+	_staticsId1 = file.readUint16LE();
+	_staticsId2 = file.readUint16LE();
+	_objectId3 = file.readUint16LE();
+	_objectState2 = file.readUint32LE();
+	_objectState1 = file.readUint32LE();
+	_xOffs = file.readUint32LE();
+	_yOffs = file.readUint32LE();
+	_sceneId = file.readUint32LE();
+	_flags = file.readUint32LE();
+	_stringObj = file.readPascalString();
+
+	// messageQueue
+
+	return true;
+}
+
+
 } // End of namespace Fullpipe

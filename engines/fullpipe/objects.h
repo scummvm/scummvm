@@ -111,23 +111,26 @@ class GameProject : public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-class CInteraction {
-	//CObject obj;
-  int16 objectId1;
-  int16 objectId2;
-  int16 objectId3;
-  int16 staticsId1;
-  int16 staticsId2;
-  int16 field_E;
-  int objectState1;
-  int objectState2;
-  int xOffs;
-  int yOffs;
-  int messageQueue;
-  int sceneId;
-  int field_28;
-  int flags;
-  int stringObj;
+class CInteraction : public CObject {
+  int16 _objectId1;
+  int16 _objectId2;
+  int16 _objectId3;
+  int16 _staticsId1;
+  int16 _staticsId2;
+  int16 _field_E;
+  int _objectState1;
+  int _objectState2;
+  int _xOffs;
+  int _yOffs;
+  int _messageQueue;
+  int _sceneId;
+  int _field_28;
+  int _flags;
+  char *_stringObj;
+
+ public:
+	CInteraction();
+	virtual bool load(MfcArchive &file);
 };
 
 class CInteractionController : public CObject {

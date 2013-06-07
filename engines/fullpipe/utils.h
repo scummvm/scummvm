@@ -23,15 +23,27 @@
 #ifndef FULLPIPE_UTILS_H
 #define FULLPIPE_UTILS_H
 
+#include "common/hash-str.h"
+#include "common/array.h"
+
 namespace Fullpipe {
 
 class CObject;
 
+typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ClassMap;
+
 class MfcArchive : public Common::File {
-	public:
-		char *readPascalString();
-		int readCount();
-		CObject *parseClass();
+	ClassMap _classMap;
+	Common::Array<int> _objectMap;
+
+	int _lastIndex;
+
+ public:
+	MfcArchive();
+
+	char *readPascalString();
+	int readCount();
+	CObject *parseClass();
 };
 
 } // End of namespace Fullpipe

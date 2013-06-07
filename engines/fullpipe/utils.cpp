@@ -47,12 +47,61 @@ int MfcArchive::readCount() {
 	return count;
 }
 
+enum {
+	kCInteraction = 0
+};
+
+const struct {
+	const char *name;
+	int id;
+} classMap[] = {
+	{ "CInteraction", kCInteraction },
+	{ 0, 0 }
+};
+
+MfcArchive::MfcArchive() {
+	for (int i; classMap[i].name; i++) {
+		_classMap[classMap[i].name] = classMap[i].id;
+	}
+
+	_lastIndex = 1;
+}
+
 CObject *MfcArchive::parseClass() {
-	CObject *res;
+	char *name;
+	int objectId;
 
-	res = new CInventory2();
+	uint obTag = readUint16LE();
 
-	return res;
+	if (obTag == 0xffff) {
+		int schema = readUint16LE();
+
+		name = readPascalString();
+
+		if (!_classMap.contains(name)) {
+			error("Unknown class in MfcArchive: %s", name);
+		}
+
+		_objectMap[_lastIndex] = objectId = _classMap[name];
+		_lastIndex++;
+	} else {
+		obTag &= ~0x8000;
+
+		if (_objectMap.size() < obTag) {
+			error("Object index too big: %d", obTag);
+		}
+
+		objectId = _objectMap[obTag];
+	}
+
+	switch (objectId) {
+	case kCInteraction:
+		return new CInteraction();
+	default:
+		error("Unknown objectId: %d", objectId);
+	}
+
+	return 0;
 }
 
 } // End of namespace Fullpipe
