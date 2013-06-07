@@ -66,7 +66,6 @@ public:
 protected:
 	 void readNextPacket();
 
-private:
 	struct BitmapInfoHeader {
 		uint32 size;
 		uint32 width;
@@ -175,7 +174,6 @@ private:
 	protected:
 		Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
 
-	private:
 		AVIStreamHeader _vidsHeader;
 		BitmapInfoHeader _bmInfo;
 		byte _palette[3 * 256];
@@ -192,13 +190,12 @@ private:
 		AVIAudioTrack(const AVIStreamHeader &streamHeader, const PCMWaveFormat &waveFormat, Audio::Mixer::SoundType soundType);
 		~AVIAudioTrack();
 
-		void queueSound(Common::SeekableReadStream *stream);
+		virtual void queueSound(Common::SeekableReadStream *stream);
 		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
 
 	protected:
 		Audio::AudioStream *getAudioStream() const;
 
-	private:
 		// Audio Codecs
 		enum {
 			kWaveFormatNone = 0,
@@ -226,6 +223,9 @@ private:
 	void runHandle(uint32 tag);
 	void handleList();
 	void handleStreamHeader();
+
+	public:
+		virtual AVIAudioTrack *createAudioTrack(AVIStreamHeader sHeader, PCMWaveFormat wvInfo);
 };
 
 } // End of namespace Video
