@@ -57,8 +57,10 @@ BoltFilesState::BoltFilesState() {
 #define NEXT_BYTE if (--_bytesLeft <= 0) nextBlock()
 
 byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
-	if (!buf)
+	if (!buf) {
 		buf = new byte[size];
+		Common::fill(buf, buf + size, 0);
+	}
 	byte *bufP = buf;
 
 	if (mode & 8) {
@@ -116,7 +118,8 @@ byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 			_decompState = 0;
 		} else {
 			_decompState = 1;
-			_runLength = len = size;
+			len = size;
+			_runLength -= size;
 			if (_runType == 1)
 				_runOffset += len;
 		}
@@ -593,6 +596,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 
 		if (_flags & 0x10) {
 			_imgData = new byte[nbytes];
+			Common::fill(_imgData, _imgData + nbytes, 0);
 		} else {
 			_imgData = state.decompress(NULL, nbytes, state._curMemberPtr->_mode);			
 		}

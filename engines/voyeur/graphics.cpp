@@ -154,7 +154,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	int height1;
 	int srcOffset;
 	int screenOffset;
-	int flags1, flags2;
+	int srcFlags, destFlags;
 	ViewPortResource *destViewPort = NULL;
 	Common::Rect newBounds;
 	Common::Rect backBounds;
@@ -163,7 +163,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	int var52;
 	int var20, var22;
 	int var26;
-	byte *imgData1, *imgData2;
+	byte *srcImgData, *destImgData;
 	byte *srcP, *destP;
 
 	// Get the picture parameters, or deference viewport pointers to get their pictures
@@ -184,10 +184,10 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	width1 = width2 = srcPic->_bounds.width();
 	height1 = srcPic->_bounds.height();
 	srcOffset = 0;
-	flags1 = srcPic->_flags;
-	flags2 = destPic->_flags;
+	srcFlags = srcPic->_flags;
+	destFlags = destPic->_flags;
 
-	if (flags1 & 1) {
+	if (srcFlags & 1) {
 		if (_clipPtr) {
 			int xs = _clipPtr->left - srcPic->_bounds.left;
 			int ys = _clipPtr->top - srcPic->_bounds.top;
@@ -262,8 +262,8 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		}
 	}
 
-	if (flags1 & 0x1000) {
-		imgData1 = srcPic->_imgData + (var4C << 14) + _screenOffset;
+	if (srcFlags & 0x1000) {
+		srcImgData = srcPic->_imgData + (var4C << 14) + _screenOffset;
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
 			if (var4C < 4) {
 				EMSMapPageHandle(srcPic->_planeSize, srcPic->_imgData[idx], var4C);
@@ -271,10 +271,10 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			}
 		}
 	} else {
-		imgData1 = srcPic->_imgData;
+		srcImgData = srcPic->_imgData;
 	}
-	if (flags2 & 0x1000) {
-		imgData2 = destPic->_imgData + (var4C << 14) + _screenOffset;
+	if (destFlags & 0x1000) {
+		destImgData = destPic->_imgData + (var4C << 14) + _screenOffset;
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
 			if (var4C < 4) {
 				EMSMapPageHandle(destPic->_planeSize, destPic->_imgData[idx], var4C);
@@ -282,7 +282,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			}
 		}		
 	} else {
-		imgData2 = destPic->_imgData;
+		destImgData = destPic->_imgData;
 	}
 
 	_SVGAPage = _SVGAReset;
@@ -290,24 +290,24 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		return;
 
 	if (srcPic->_pick == 0xff) {
-		if (flags1 & 8) {
+		if (srcFlags & 8) {
 			error("TODO: sDrawPic");
 		} else {
-			srcP = imgData1 + srcOffset;
+			srcP = srcImgData + srcOffset;
 
-			if (flags2 & 8) {
+			if (destFlags & 8) {
 				// loc_258D8
-				destP = imgData2 + screenOffset;
+				destP = destImgData + screenOffset;
 
-				if (flags1 & 2) {
-					// loc_258F5
+				if (srcFlags & 2) {
+					// loc_258F5f
 				} else {
 					// loc_25D40
-					if (flags1 & 0x100) {
+					if (srcFlags & 0x100) {
 						// loc_25D4A
 					} else {
 						// loc_2606D
-						destP = (byte *)_screenSurface.pixels;
+						destP = (byte *)_screenSurface.pixels + screenOffset;
 
 						for (int yp = 0; yp < height1; ++yp) {
 							Common::copy(srcP, srcP + width2, destP);
@@ -317,14 +317,14 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 					}
 				}
 			} else {
-				destP = imgData2 + screenOffset;
+				destP = destImgData + screenOffset;
 
 				// loc_2615E
-				if (flags1 & 2) {
+				if (srcFlags & 2) {
 					error("TODO: sDrawPic");
 				} else {
-					if (flags1 & 0x100) {
-						srcP = imgData1;
+					if (srcFlags & 0x100) {
+						srcP = srcImgData;
 
 						if (isClipped) {
 							// loc_26424
