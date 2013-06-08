@@ -24,6 +24,7 @@
 #define VOYEUR_EVENTS_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 #include "voyeur/game.h"
 
 namespace Voyeur {
@@ -40,11 +41,12 @@ typedef void (EventsManager::*EventMethodPtr)();
 class IntNode {
 public:
 	EventMethodPtr _intFunc;
-	uint32 _curTime;
-	uint32 _timeReset;
+	uint16 _curTime;
+	uint16 _timeReset;
 	uint32 _flags;
 public:
 	IntNode();
+	IntNode(uint16 curTime, uint16 timeReset, uint16 flags);
 };
 
 class EventsManager {
@@ -59,14 +61,16 @@ private:
 	void mainVoyeurIntFunc();
 private:
 	void checkForNextFrameCounter();
+	void voyeurTimer();
 	void videoTimer();
 	void vDoFadeInt();
 	void vDoCycleInt();
 	void fadeIntFunc();
 public:
-	IntData _audioStruc;
+	IntData _gameData;
 	IntData &_intPtr;
 	IntNode _fadeIntNode;
+	IntNode _fade2IntNode;
 	IntNode _cycleIntNode;
 	IntNode _evintnode;
 	IntNode _mainIntNode;

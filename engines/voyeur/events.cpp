@@ -33,9 +33,17 @@ IntNode::IntNode() {
 	_flags = 0;
 }
 
+IntNode::IntNode(uint16 curTime, uint16 timeReset, uint16 flags) {
+	_intFunc = NULL;
+	_curTime = curTime;
+	_timeReset = timeReset;
+	_flags = flags;
+}
+
 /*------------------------------------------------------------------------*/
 
-EventsManager::EventsManager(): _intPtr(_audioStruc) {
+EventsManager::EventsManager(): _intPtr(_gameData),
+		_fadeIntNode(0, 0, 3), _cycleIntNode(0, 0, 3) {
 	_cycleStatus = 0;
 	_mouseButton = 0;
 	_fadeStatus = 0;
@@ -65,7 +73,7 @@ void EventsManager::vStopCycle() {
 
 void EventsManager::sWaitFlip() {
 	// TODO: See if this needs a proper wait loop with event polling
-	//while (_intPtr._field39) ;
+	//while (_intPtr.field39) ;
 
 	Common::Array<ViewPortResource *> &viewPorts = _vm->_graphicsManager._viewPortListPtr->_entries;
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
@@ -93,7 +101,7 @@ void EventsManager::checkForNextFrameCounter() {
 		_priorFrameTime = milli;
 
 		// Run the timer-based updates
-		videoTimer();
+		voyeurTimer();
 
 		// Display the frame
 		g_system->copyRectToScreen((byte *)_vm->_graphicsManager._screenSurface.pixels, 
@@ -105,13 +113,51 @@ void EventsManager::checkForNextFrameCounter() {
 	}
 }
 
-void EventsManager::videoTimer() {
-	if (_audioStruc._hasPalette) {
-		_audioStruc._hasPalette = false;
+void EventsManager::voyeurTimer() {
+	_gameData.field22 += _gameData.field24;
+	_gameData.field1A += _gameData.field1E;
+	// _gameData.field1C += _gameData._timerFn; *** WHY INC field by a function pointer?!
 
-		g_system->getPaletteManager()->setPalette(_audioStruc._palette,
-			_audioStruc._palStartIndex, 
-			_audioStruc._palEndIndex - _audioStruc._palStartIndex + 1);
+	_gameData.field16 = 0;
+	_gameData.field3D = 1;
+
+	if (--_gameData.field26 <= 0) {
+		if (_gameData._flipWait) {
+			_gameData.field38 = 1;
+			_gameData._flipWait = false;
+			_gameData.field3B = 0;
+		}
+
+		_gameData.field26 >>= 8;
+	}
+
+	videoTimer();
+
+	// Iterate through the list of registered nodes
+	Common::List<IntNode *>::iterator i;
+	for (i = _intNodes.begin(); i != _intNodes.end(); ++i) {
+		IntNode &node = **i;
+
+		if (node._flags & 1)
+			continue;
+		if (!(node._flags & 2)) {
+			if (--node._curTime != 0)
+				continue;
+
+			node._curTime = node._timeReset;
+		}
+
+		(this->*node._intFunc)();
+	}
+}
+
+void EventsManager::videoTimer() {
+	if (_gameData._hasPalette) {
+		_gameData._hasPalette = false;
+
+		g_system->getPaletteManager()->setPalette(_gameData._palette,
+			_gameData._palStartIndex, 
+			_gameData._palEndIndex - _gameData._palStartIndex + 1);
 	}
 }
 
@@ -193,7 +239,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 		}
 
 		if (cMap->_fadeStatus & 2)
-			_intPtr._field3B = 1;
+			_intPtr.field3B = 1;
 		_fadeIntNode._flags &= ~1;
 	} else {
 		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
@@ -213,7 +259,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 
 		_intPtr._hasPalette = true;
 		if (!(cMap->_fadeStatus & 2))
-			_intPtr._field38 = 1;
+			_intPtr.field38 = 1;
 	}
 
 	if (_cycleStatus & 1)
@@ -225,7 +271,7 @@ void EventsManager::addIntNode(IntNode *node) {
 }
 
 void EventsManager::addFadeInt() {
-	IntNode &node = _fadeIntNode;
+	IntNode &node = _fade2IntNode;
 	node._intFunc = &EventsManager::fadeIntFunc;
 	node._flags = 0;
 	node._curTime = 0;
@@ -235,7 +281,7 @@ void EventsManager::addFadeInt() {
 }
 
 void EventsManager::vDoFadeInt() {
-	if (_intPtr._field3B & 1)
+	if (_intPtr.field3B & 1)
 		return;
 	if (--_fadeCount == 0) {
 		_fadeIntNode._flags |= 1;
@@ -262,7 +308,7 @@ void EventsManager::vDoFadeInt() {
 		_intPtr._palEndIndex = _fadeLastCol;
 
 	_intPtr._hasPalette = true;
-	_intPtr._field38 = 1;
+	_intPtr.field38 = 1;
 }
 
 void EventsManager::vDoCycleInt() {
@@ -277,7 +323,9 @@ void EventsManager::fadeIntFunc() {
 void EventsManager::vInitColor() {
 	_fadeIntNode._intFunc = &EventsManager::vDoFadeInt;
 	_cycleIntNode._intFunc = &EventsManager::vDoCycleInt;
-	// TODO: more
+
+	addIntNode(&_fadeIntNode);
+	addIntNode(&_cycleIntNode);
 }
 
 } // End of namespace Voyeur

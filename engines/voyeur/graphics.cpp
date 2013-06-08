@@ -324,7 +324,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
  */
 void GraphicsManager::sDisplayPic(PictureResource *pic) {
 	if (pic->_flags & 8) {
-		_vm->_eventsManager._intPtr._field2A = READ_LE_UINT32(pic->_imgData) >> _sImageShift;
+		_vm->_eventsManager._intPtr.field2A = READ_LE_UINT32(pic->_imgData) >> _sImageShift;
 	}
 
 	_vm->_eventsManager._intPtr._flipWait = true;

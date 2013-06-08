@@ -101,10 +101,17 @@ class IntData {
 public:
 	bool _field9;
 	bool _flipWait;
-	int _field2A;
+	int field16;
+	int field1A;
+	int field1E;
+	int field22;
+	int field24;
+	int field26;
+	int field2A;
 	bool _hasPalette;
-	int _field38;
-	int _field3B;
+	int field38;
+	int field3B;
+	int field3D;
 	int _palStartIndex;
 	int _palEndIndex;
 	byte *_palette;
