@@ -61,6 +61,45 @@ ZVision::~ZVision() {
 	DebugMan.clearAllDebugChannels();
 }
 
+// Taken from SCI
+void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight, byte bytesPerPixel) {
+	assert(bytesPerPixel == 1 || bytesPerPixel == 2);
+	const int newWidth = srcWidth * 2;
+	const int pitch = newWidth * bytesPerPixel;
+	const byte *srcPtr = src;
+
+	if (bytesPerPixel == 1) {
+		for (int y = 0; y < srcHeight; y++) {
+			for (int x = 0; x < srcWidth; x++) {
+				const byte color = *srcPtr++;
+				dst[0] = color;
+				dst[1] = color;
+				dst[newWidth] = color;
+				dst[newWidth + 1] = color;
+				dst += 2;
+			}
+			dst += newWidth;
+		}
+	} else if (bytesPerPixel == 2) {
+		for (int y = 0; y < srcHeight; y++) {
+			for (int x = 0; x < srcWidth; x++) {
+				const byte color = *srcPtr++;
+				const byte color2 = *srcPtr++;
+				dst[0] = color;
+				dst[1] = color2;
+				dst[2] = color;
+				dst[3] = color2;
+				dst[pitch] = color;
+				dst[pitch + 1] = color2;
+				dst[pitch + 2] = color;
+				dst[pitch + 3] = color2;
+				dst += 4;
+			}
+			dst += pitch;
+		}
+	}
+}
+
 void playVideo(Video::VideoDecoder *videoDecoder /*, VideoState videoState*/) {
 	if (!videoDecoder)
 		return;
@@ -75,32 +114,19 @@ void playVideo(Video::VideoDecoder *videoDecoder /*, VideoState videoState*/) {
 	uint16 screenWidth = 640;//g_sci->_gfxScreen->getDisplayWidth();
 	uint16 screenHeight = 480;//g_sci->_gfxScreen->getDisplayHeight();
 
-	//videoState.fileName.toLowercase();
+	bool zoom2x = true;
 
-	/*if (screenWidth == 640 && width <= 320 && height <= 240 && ((videoState.flags & kDoubled))) {
+	if (zoom2x) {
 		width *= 2;
 		height *= 2;
 		pitch *= 2;
 		scaleBuffer = new byte[width * height * bytesPerPixel];
-	}*/
+	}
 
 	uint16 x, y;
 
-	// Sanity check...
-	/*if (videoState.x > 0 && videoState.y > 0 && isVMD) {
-		x = videoState.x;
-		y = videoState.y;
-
-		if (x + width > screenWidth || y + height > screenHeight) {
-			// Happens in the Lighthouse demo
-			warning("VMD video won't fit on screen, centering it instead");
-			x = (screenWidth - width) / 2;
-			y = (screenHeight - height) / 2;
-		}
-	} else {*/
-		x = (screenWidth - width) / 2;
-		y = (screenHeight - height) / 2;
-	//}
+	x = (screenWidth - width) / 2;
+	y = (screenHeight - height) / 2;
 
 	bool skipVideo = false;
 
@@ -110,8 +136,7 @@ void playVideo(Video::VideoDecoder *videoDecoder /*, VideoState videoState*/) {
 
 			if (frame) {
 				if (scaleBuffer) {
-					// TODO: Perhaps reuse the relevant function from SCI?
-					//g_sci->_gfxScreen->scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
+					scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight(), bytesPerPixel);
 					g_system->copyRectToScreen(scaleBuffer, pitch, x, y, width, height);
 				} else {
 					g_system->copyRectToScreen(frame->pixels, frame->pitch, x, y, width, height);
@@ -178,6 +203,9 @@ Common::Error ZVision::run() {
 
 #if 1
 	// Image test
+	
+	initGraphics(640, 480, true, &format);
+	
 	if (f.open("zassets/castle/CB8EB11C.TGA")) {
 		Graphics::TGADecoder tga;
 		if (!tga.loadStream(f))

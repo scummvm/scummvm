@@ -45,7 +45,7 @@ private:
 		void queueSound(Common::SeekableReadStream *stream);
 	};
 
-	void handleStreamHeader();
+	Video::AVIDecoder::AVIAudioTrack *createAudioTrack(Video::AVIDecoder::AVIStreamHeader sHeader, Video::AVIDecoder::PCMWaveFormat wvInfo);
 
 	private:
 		// Audio Codecs
