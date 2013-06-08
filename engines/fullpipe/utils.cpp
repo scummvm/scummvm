@@ -54,14 +54,18 @@ int MfcArchive::readCount() {
 }
 
 enum {
-	kCInteraction = 0
+	kCInteraction = 0,
+	kMessageQueue = 1,
+	kExCommand = 2
 };
 
 const struct {
 	const char *name;
 	int id;
 } classMap[] = {
-	{ "CInteraction", kCInteraction },
+	{ "CInteraction",	kCInteraction },
+	{ "MessageQueue",	kMessageQueue },
+	{ "ExCommand",		kExCommand },
 	{ 0, 0 }
 };
 
@@ -79,7 +83,7 @@ CObject *MfcArchive::parseClass() {
 
 	uint obTag = readUint16LE();
 
-	debug(0, "parseClass::obTag = %d", obTag);
+	debug(0, "parseClass::obTag = %d (%04x)", obTag, obTag);
 
 	if (obTag == 0xffff) {
 		int schema = readUint16LE();
@@ -87,6 +91,7 @@ CObject *MfcArchive::parseClass() {
 		debug(0, "parseClass::schema = %d", schema);
 
 		name = readPascalString(true);
+		debug(0, "parseClass::class <%s>", name);
 
 		if (!_classMap.contains(name)) {
 			error("Unknown class in MfcArchive: <%s>", name);
@@ -94,14 +99,18 @@ CObject *MfcArchive::parseClass() {
 
 		objectId = _classMap[name];
 		_objectMap.push_back(objectId);
+
+		debug(0, "tag: %d", _objectMap.size());
 	} else {
 		obTag &= ~0x8000;
 
+		debug(0, "parseClass::obTag <%d>", obTag);
+
 		if (_objectMap.size() < obTag) {
-			error("Object index too big: %d", obTag);
+			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
 		}
 
-		objectId = _objectMap[obTag];
+		objectId = _objectMap[obTag - 1];
 	}
 	
 	debug(0, "objectId: %d", objectId);
@@ -109,6 +118,10 @@ CObject *MfcArchive::parseClass() {
 	switch (objectId) {
 	case kCInteraction:
 		return new CInteraction();
+	case kMessageQueue:
+		return new MessageQueue();
+	case kExCommand:
+		return new ExCommand();
 	default:
 		error("Unknown objectId: %d", objectId);
 	}

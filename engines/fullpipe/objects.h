@@ -66,15 +66,7 @@ struct CNode {
 	void *data;
 };
 
-class CPtrList {
-	//CObject obj;
-  CNode *m_pNodeHead;
-  int m_pNodeTail;
-  int m_nCount;
-  int m_pNodeFree;
-  int m_pBlocks;
-  int m_nBlockSize;
-};
+typedef Common::Array<void *> CPtrList;
 
 class SceneTag : public CObject {
 	int _field_4;
@@ -112,36 +104,40 @@ class GameProject : public CObject {
 };
 
 class MessageQueue : public CObject {
-  int _id;
-  int _flags;
-  char *_stringObj;
-  int16 _dataId;
-  int16 _field_12;
-  int _field_14;
-  CPtrList _exCommands;
-  int _counter;
-  int _field_38;
-  int _isFinished;
-  int _parId;
-  int _flag1;
+	int _id;
+	int _flags;
+	char *_stringObj;
+	int16 _dataId;
+	int16 _field_12;
+	int _field_14;
+	CPtrList _exCommands;
+	int _counter;
+	int _field_38;
+	int _isFinished;
+	int _parId;
+	int _flag1;
+
+ public:
+	MessageQueue();
+	virtual bool load(MfcArchive &file);
 };
 
 class CInteraction : public CObject {
-  int16 _objectId1;
-  int16 _objectId2;
-  int16 _objectId3;
-  int16 _staticsId1;
-  int16 _staticsId2;
-  int16 _field_E;
-  int _objectState1;
-  int _objectState2;
-  int _xOffs;
-  int _yOffs;
-  MessageQueue *_messageQueue;
-  int _sceneId;
-  int _field_28;
-  int _flags;
-  char *_stringObj;
+	int16 _objectId1;
+	int16 _objectId2;
+	int16 _objectId3;
+	int16 _staticsId1;
+	int16 _staticsId2;
+	int16 _field_E;
+	int _objectState1;
+	int _objectState2;
+	int _xOffs;
+	int _yOffs;
+	MessageQueue *_messageQueue;
+	int _sceneId;
+	int _field_28;
+	int _flags;
+	char *_stringObj;
 
  public:
 	CInteraction();
@@ -188,35 +184,42 @@ class Sc2Array {
 };
 
 union VarValue {
-  int floatValue;
-  int intValue;
-  int stringValue;
+	int floatValue;
+	int intValue;
+	int stringValue;
 };
 
 class Message {
-	//CObject obj;
-	int messageKind;
-	int16 parentId;
-	char gap_A[2];
-	int x;
-	int y;
-	int field_14;
-	int sceneClickX;
-	int sceneClickY;
-	int field_20;
-	int field_24;
-	int param28;
-	int field_2C;
-	int field_30;
-	int field_34;
+ public:
+	int _messageKind;
+	int16 _parentId;
+	int _x;
+	int _y;
+	int _field_14;
+	int _sceneClickX;
+	int _sceneClickY;
+	int _field_20;
+	int _field_24;
+	int _param28;
+	int _field_2C;
+	int _field_30;
+	int _field_34;
+
+ public:
+	Message();
 };
 
-class ExCommand {
-	Message msg;
-	int messageNum;
-	int field_3C;
-	int flags;
-	int parId;
+class ExCommand : public CObject {
+	Message _msg;
+	int _messageNum;
+	int _field_3C;
+	int _flags;
+	int _parId;
+
+ public:
+	ExCommand();
+
+	virtual bool load(MfcArchive &file);
 };
 
 class CGameVar {
@@ -396,4 +399,3 @@ class CGameLoader {
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_OBJECTS_H */
-

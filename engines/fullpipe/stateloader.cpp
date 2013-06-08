@@ -116,6 +116,10 @@ GameProject::GameProject() {
 }
 
 bool GameProject::load(MfcArchive &file) {
+	_field_4 = 0;
+	_headerFilename = 0;
+	_field_10 = 12;
+
 	g_gameProjectVersion = file.readUint32LE();
 	g_gameProjectValue = file.readUint16LE();
 	g_scrollSpeed = file.readUint32LE();
@@ -166,6 +170,9 @@ SceneTag::SceneTag() {
 }
 
 bool SceneTag::load(MfcArchive &file) {
+	_field_4 = 0;
+	_scene = 0;
+
 	_sceneId = file.readUint16LE();
 
 	_tag = file.readPascalString();
@@ -287,8 +294,94 @@ bool CInteraction::load(MfcArchive &file) {
 
 	// messageQueue
 	_messageQueue = (MessageQueue *)file.parseClass();
+	_messageQueue->load(file);
+
 	return true;
 }
 
+MessageQueue::MessageQueue() {
+	_field_14 = 0;
+	_parId = 0;
+	_dataId = 0;
+	_id = 0;
+	_isFinished = 0;
+	_flags = 0;
+}
+
+bool MessageQueue::load(MfcArchive &file) {
+	_dataId = file.readUint16LE();
+
+	int count = file.readUint16LE();
+
+	_stringObj = file.readPascalString();
+	debug(0, "MessageQueue::count = %d", count);
+	debug(0, "MessageQueue::_stringObj = %s", _stringObj);
+
+	for (int i = 0; i < count; i++) {
+		CObject *tmp = file.parseClass();
+		tmp->load(file);
+
+		_exCommands.push_back(tmp);
+	}
+
+	_id = -1;
+	_field_14 = 0;
+	_parId = 0;
+	_isFinished = 0;
+
+	return true;
+}
+
+ExCommand::ExCommand() {
+	_field_3C = 1;
+	_messageNum = 0;
+	_flags = 0;
+	_parId = 0;
+}
+
+bool ExCommand::load(MfcArchive &file) {
+	debug(0, "ExCommand::load");
+
+	_msg._parentId = file.readUint16LE();
+	_msg._messageKind = file.readUint32LE();
+	_msg._x = file.readUint32LE();
+	_msg._y = file.readUint32LE();
+	_msg._field_14 = file.readUint32LE();
+	_msg._sceneClickX = file.readUint32LE();
+	_msg._sceneClickY = file.readUint32LE();
+	_msg._field_20 = file.readUint32LE();
+	_msg._field_24 = file.readUint32LE();
+	_msg._param28 = file.readUint32LE();
+	_msg._field_2C = file.readUint32LE();
+	_msg._field_30 = file.readUint32LE();
+	_msg._field_34 = file.readUint32LE();
+
+	_messageNum = file.readUint32LE();
+
+	_field_3C = 0;
+
+	if (g_gameProjectVersion >= 12) {
+		_flags = file.readUint32LE();
+		_parId = file.readUint32LE();
+	}
+
+	return true;
+}
+
+Message::Message() {
+	_messageKind = 0;
+	_parentId = 0;
+	_x = 0;
+	_y = 0;
+	_field_14 = 0;
+	_sceneClickX = 0;
+	_sceneClickY = 0;
+	_field_20 = 0;
+	_field_24 = 0;
+	_param28 = 0;
+	_field_2C = 0;
+	_field_30 = 0;
+	_field_34 = 0;
+}
 
 } // End of namespace Fullpipe
