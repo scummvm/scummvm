@@ -54,7 +54,7 @@ BoltFilesState::BoltFilesState() {
 	_boltPageFrame = NULL;
 }
 
-#define NEXT_BYTE if (--_bytesLeft <= 0) nextBlock()
+#define NEXT_BYTE if (--_bytesLeft < 0) nextBlock()
 
 byte *BoltFilesState::decompress(byte *buf, int size, int mode) {
 	if (!buf) {
