@@ -543,6 +543,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 	_bounds = Common::Rect(xs, ys, xs + READ_LE_UINT16(&src[10]),
 		ys + READ_LE_UINT16(&src[12]));
 	_maskData = READ_LE_UINT32(&src[14]);
+	_planeSize = READ_LE_UINT16(&src[22]);
 
 	_imgData = NULL;
 
@@ -616,6 +617,17 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 			_imgData = state.decompress(NULL, nbytes, state._curMemberPtr->_mode);			
 		}
 	}
+}
+
+PictureResource::PictureResource() {
+	_select = 0;
+	_pick = 0;
+	_onOff = 0;
+	_depth = 0;
+	_maskData = 0;
+	_planeSize = 0;
+
+	_imgData = NULL;
 }
 
 PictureResource::~PictureResource() {

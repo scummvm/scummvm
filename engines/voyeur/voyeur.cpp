@@ -179,7 +179,6 @@ void VoyeurEngine::doHeadTitle() {
 
 		_graphicsManager.screenReset();
 		_bVoy->freeBoltGroup(0x10500);
-		_graphicsManager.screenReset();
 
 		if (shouldQuit())
 			return;

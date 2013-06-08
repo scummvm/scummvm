@@ -220,11 +220,24 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	widthDiff2 = destPic->_bounds.width() - width2;
 
 	if (destViewPort) {
-		error("TODO: Examine further when it's actually used");
 		if (!_saveBack || ((srcPic->_flags & 0x800) != 0)) {
-			// TODO
+			backBounds.left = destPic->_bounds.left + offset.x;
+			backBounds.top = destPic->_bounds.top + offset.y;
+			backBounds.setWidth(width2);
+			backBounds.setHeight(height1);
+			addRectOptSaveRect(destViewPort, 1, backBounds);
+
 		} else if (!destViewPort->_addFn) {
-			// TODO
+			if (destViewPort->_rectListCount[destViewPort->_pageIndex] < -1) {
+				Common::Rect r;
+				r.left = destPic->_bounds.left + offset.x;
+				r.top = destPic->_bounds.top + offset.y;
+				r.setWidth(width2);
+				r.setHeight(height1);
+
+				(*destViewPort->_rectListPtr[destViewPort->_pageIndex]).push_back(r);
+				++destViewPort->_rectListCount[destViewPort->_pageIndex];
+			}
 		} else {
 			int xs = ofs.x + destPic->_bounds.left;
 			int ys = ofs.y + destPic->_bounds.top;
@@ -315,8 +328,46 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			}
 		}
 	} else {
-		error("TODO: sDrawPic");
+		// loc_26666
+		if (srcPic->_pick == 0) {
+			// loc_2727A
+			int onOff = srcPic->_onOff;
+			int onOff2 = onOff | (onOff << 8);
+
+			if (srcFlags & 2) {
+				if (srcFlags & 8) {
+
+				} else {
+
+				}
+			} else {
+				// TODO
+
+			}
+
+		} else {
+			// loc_26673
+			// TODO
+		}
 	}
+}
+
+void GraphicsManager::fillPic(DisplayResource *display, byte onOff) {
+	PictureResource *pic;
+	if (display->_flags & 0x8000) {
+		pic = ((ViewPortResource *)display)->_currentPic;
+	} else {
+		pic = (PictureResource *)display;
+	}
+
+	PictureResource picResource;
+	picResource._flags = 0;
+	picResource._select = 0xff;
+	picResource._pick = 0;
+	picResource._onOff = onOff;
+	picResource._bounds = pic->_bounds;
+
+	sDrawPic(&picResource, display, Common::Point());
 }
 
 /**
@@ -386,8 +437,40 @@ void GraphicsManager::clearPalette() {
 	g_system->getPaletteManager()->setPalette(&palette[0], 0, 256);
 }
 
+void GraphicsManager::resetPalette() {
+	for (int i = 0; i < 256; ++i)
+		setColor(i, 0, 0, 0);
+
+	_vm->_eventsManager._intPtr.field38 = 1;
+	_vm->_eventsManager._intPtr._hasPalette = true;
+}
+
+void GraphicsManager::setColor(int idx, int r, int g, int b) {
+	byte *vgaP = &_VGAColors[idx * 3];
+	vgaP[0] = r >> 2;
+	vgaP[1] = g >> 2;
+	vgaP[2] = b >> 2;
+
+	_vm->_eventsManager._intPtr._palStartIndex = MIN(_vm->_eventsManager._intPtr._palStartIndex, idx);
+	_vm->_eventsManager._intPtr._palEndIndex = MAX(_vm->_eventsManager._intPtr._palEndIndex, idx);
+}
+
 void GraphicsManager::screenReset() {
-	// TODO
+	resetPalette();
+	(*_vPort)->setupViewPort();
+	fillPic(*_vPort, 0);
+	
+	// Flag the following viewport
+	uint i = 0;
+	while (i < _viewPortListPtr->_entries.size() && _viewPortListPtr->_entries[i] != *_vPort)
+		++i;
+	assert(i < (_viewPortListPtr->_entries.size() - 1));
+
+	_viewPortListPtr->_entries[i + 1]->_flags |= 8;
+
+	// Flip
+	flipPage();
+	_vm->_eventsManager.sWaitFlip();
 }
 
 } // End of namespace Voyeur

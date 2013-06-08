@@ -86,9 +86,12 @@ public:
 
 	void EMSMapPageHandle(int v1, int v2, int v3);
 	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &offset);
+	void GraphicsManager::fillPic(DisplayResource *display, byte onOff);
 	void sDisplayPic(PictureResource *pic);
 	void flipPage();
 	void clearPalette();
+	void resetPalette();
+	void setColor(int idx, int r, int g, int b);
 	void screenReset();
 };
 

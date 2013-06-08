@@ -215,6 +215,7 @@ public:
 	byte *_imgData;
 public:
 	PictureResource(BoltFilesState &state, const byte *src);
+	PictureResource();
 	virtual ~PictureResource();
 };
 
