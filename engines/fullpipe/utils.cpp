@@ -29,9 +29,15 @@
 
 namespace Fullpipe {
 
-char *MfcArchive::readPascalString() {
+char *MfcArchive::readPascalString(bool twoByte) {
 	char *tmp;
-	int len = readByte();
+	int len;
+
+	if (twoByte)
+		len = readUint16LE();
+	else
+		len = readByte();
+
 	tmp = (char *)calloc(len + 1, 1);
 	read(tmp, len);
 
@@ -73,17 +79,21 @@ CObject *MfcArchive::parseClass() {
 
 	uint obTag = readUint16LE();
 
+	debug(0, "parseClass::obTag = %d", obTag);
+
 	if (obTag == 0xffff) {
 		int schema = readUint16LE();
 
-		name = readPascalString();
+		debug(0, "parseClass::schema = %d", schema);
+
+		name = readPascalString(true);
 
 		if (!_classMap.contains(name)) {
-			error("Unknown class in MfcArchive: %s", name);
+			error("Unknown class in MfcArchive: <%s>", name);
 		}
 
-		_objectMap[_lastIndex] = objectId = _classMap[name];
-		_lastIndex++;
+		objectId = _classMap[name];
+		_objectMap.push_back(objectId);
 	} else {
 		obTag &= ~0x8000;
 
@@ -93,6 +103,8 @@ CObject *MfcArchive::parseClass() {
 
 		objectId = _objectMap[obTag];
 	}
+	
+	debug(0, "objectId: %d", objectId);
 
 	switch (objectId) {
 	case kCInteraction:

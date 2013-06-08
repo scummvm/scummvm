@@ -111,6 +111,21 @@ class GameProject : public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
+class MessageQueue : public CObject {
+  int _id;
+  int _flags;
+  char *_stringObj;
+  int16 _dataId;
+  int16 _field_12;
+  int _field_14;
+  CPtrList _exCommands;
+  int _counter;
+  int _field_38;
+  int _isFinished;
+  int _parId;
+  int _flag1;
+};
+
 class CInteraction : public CObject {
   int16 _objectId1;
   int16 _objectId2;
@@ -122,7 +137,7 @@ class CInteraction : public CObject {
   int _objectState2;
   int _xOffs;
   int _yOffs;
-  int _messageQueue;
+  MessageQueue *_messageQueue;
   int _sceneId;
   int _field_28;
   int _flags;

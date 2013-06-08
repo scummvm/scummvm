@@ -237,6 +237,8 @@ bool CInteractionController::load(MfcArchive &file) {
 bool CObList::load(MfcArchive &file) {
 	int count = file.readCount();
 
+	debug(0, "CObList::count: %d", count);
+
 	for (int i = 0; i < count; i++) {
 		CObject *t = file.parseClass();
 		t->load(file);
@@ -281,8 +283,10 @@ bool CInteraction::load(MfcArchive &file) {
 	_flags = file.readUint32LE();
 	_stringObj = file.readPascalString();
 
-	// messageQueue
+	debug(0, "CInteraction::_stringObj = %s", _stringObj);
 
+	// messageQueue
+	_messageQueue = (MessageQueue *)file.parseClass();
 	return true;
 }
 

@@ -41,7 +41,7 @@ class MfcArchive : public Common::File {
  public:
 	MfcArchive();
 
-	char *readPascalString();
+	char *readPascalString(bool twoByte = false);
 	int readCount();
 	CObject *parseClass();
 };
