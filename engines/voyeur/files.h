@@ -255,9 +255,19 @@ public:
 	void setupViewPort();
 };
 
+class ViewPortPalEntry  {
+public:
+	uint16 _rEntry, _gEntry, _bEntry;
+	uint16 field6, field8, fieldA;
+	uint16 fieldC;
+	uint16 fieldE;
+public:
+	ViewPortPalEntry(const byte *src);
+};
+
 class ViewPortListResource {
 public:
-	byte *_palette;
+	Common::Array<ViewPortPalEntry> _palette;
 	Common::Array<ViewPortResource *> _entries;
 
 	ViewPortListResource(BoltFilesState &state, const byte *src);

@@ -752,8 +752,13 @@ void ViewPortResource::setupViewPort() {
 ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *src) {
 	uint count = READ_LE_UINT16(src);
 
-	uint32 *idP = (uint32 *)&src[8];
+	// Load palette map
+	byte *palData = state._curLibPtr->memberAddr(READ_LE_UINT32(src + 4));
+	for (uint i = 0; i < 256; ++i, palData += 16)
+		_palette.push_back(ViewPortPalEntry(palData));
 
+	// Load view port pointer list
+	uint32 *idP = (uint32 *)&src[8];
 	for (uint i = 0; i < count; ++i, ++idP) {
 		uint32 id = READ_LE_UINT32(idP);
 		BoltEntry &entry = state._curLibPtr->getBoltEntry(id);
@@ -761,9 +766,22 @@ ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *sr
 		assert(entry._viewPortResource);
 		_entries.push_back(entry._viewPortResource);
 	}
-
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 4), &_palette);
 }
+
+/*------------------------------------------------------------------------*/
+
+ViewPortPalEntry::ViewPortPalEntry(const byte *src) {
+	uint16 *v = (uint16 *)src;
+	_rEntry = READ_LE_UINT16(v++);
+	_gEntry = READ_LE_UINT16(v++);
+	_bEntry = READ_LE_UINT16(v++);
+	field6 = READ_LE_UINT16(v++);
+	field8 = READ_LE_UINT16(v++);
+	fieldA = READ_LE_UINT16(v++);
+	fieldC = READ_LE_UINT16(v++);
+	fieldE = READ_LE_UINT16(v++);
+}
+
 
 /*------------------------------------------------------------------------*/
 

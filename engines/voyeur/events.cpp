@@ -160,26 +160,23 @@ void EventsManager::startFade(CMapResource *cMap) {
 
 	if (cMap->_steps > 0) {
 		_vm->_graphicsManager._fadeStatus = cMap->_fadeStatus | 1;
-		uint16 *destP = (uint16 *)(_vm->_graphicsManager._viewPortListPtr->_palette +
-			(_fadeFirstCol * 16));
 		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
 		int mapIndex = 0;
 
 		for (int idx = _fadeFirstCol; idx <= _fadeLastCol; ++idx) {
-			destP[0] = vgaP[0] << 8;
-			uint32 rComp = (uint16)((cMap->_entries[mapIndex * 3] << 8) - destP[0]) | 0x80;
-			destP[3] = rComp / cMap->_steps;
+			ViewPortPalEntry &palEntry = _vm->_graphicsManager._viewPortListPtr->_palette[idx];
+			palEntry._rEntry = vgaP[0] << 8;
+			uint32 rComp = (uint16)((cMap->_entries[mapIndex * 3] << 8) - palEntry._rEntry) | 0x80;
+			palEntry.field6 = rComp / cMap->_steps;
 
-			destP[1] = vgaP[1] << 8;
-			uint32 gComp = (uint16)((cMap->_entries[mapIndex * 3 + 1] << 8) - destP[1]) | 0x80;
-			destP[4] = gComp / cMap->_steps;
+			palEntry._gEntry = vgaP[1] << 8;
+			uint32 gComp = (uint16)((cMap->_entries[mapIndex * 3 + 1] << 8) - palEntry._gEntry) | 0x80;
+			palEntry.field8 = gComp / cMap->_steps;
 
-			destP[2] = vgaP[2] << 8;
-			uint32 bComp = (uint16)((cMap->_entries[mapIndex * 3 + 2] << 8) - destP[2]) | 0x80;
-			destP[5] = bComp / cMap->_steps;
-			destP[6] = bComp % cMap->_steps;
-
-			destP += 8;
+			palEntry._bEntry = vgaP[2] << 8;
+			uint32 bComp = (uint16)((cMap->_entries[mapIndex * 3 + 2] << 8) -palEntry._bEntry) | 0x80;
+			palEntry.fieldA = bComp / cMap->_steps;
+			palEntry.fieldC = bComp % cMap->_steps;
 
 			if (!(cMap->_fadeStatus & 1))
 				++mapIndex;
