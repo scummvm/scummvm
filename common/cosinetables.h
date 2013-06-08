@@ -36,7 +36,14 @@ public:
 	~CosineTable();
 
 	/**
-	 * Get pointer to table
+	 * Get pointer to table.
+	 *
+	 * This table contains 2^bitPrecision/2 entries.
+	 * The layout of this table is as follows:
+	 * - Entries 0 up to (excluding) 2^bitPrecision/4:
+	 *           cos(0) till (excluding) cos(1/2*pi)
+	 * - Entries 2^bitPrecision/4 up to (excluding) 2^bitPrecision/2:
+	 *           cos(3/2*pi) till (excluding) cos(2*pi)
 	 */
 	const float *getTable() { return _table; }
 
