@@ -77,7 +77,7 @@ void GraphicsManager::fadeIntFunc() {
 }
 
 void GraphicsManager::vDoFadeInt() {
-	// TODO: more
+	
 }
 
 void GraphicsManager::vDoCycleInt() {

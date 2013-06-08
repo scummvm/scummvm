@@ -152,17 +152,19 @@ void VoyeurEngine::doHeadTitle() {
 		_graphicsManager.flipPage();
 		_eventsManager.sWaitFlip();
 
-		// Immediate fade in to show the initial screen
+		// Immediate palette load to show the initial screen
 		CMapResource *cMap = _bVoy->getCMapResource(0x5030000);
 		assert(cMap);
 		cMap->_steps = 0;
 		cMap->startFade();
 
+		// Wait briefly
 		_eventsManager.delay(150);
 		if (shouldQuit())
 			return;
-		/* Commented out until fade in is working
+
 		// Fade out the screen
+		cMap = _bVoy->getCMapResource(0x5040000);
 		cMap->_steps = 30;
 		cMap->startFade();
 		if (shouldQuit())
@@ -181,7 +183,6 @@ void VoyeurEngine::doHeadTitle() {
 
 		if (shouldQuit())
 			return;
-		*/
 	}
 }
 

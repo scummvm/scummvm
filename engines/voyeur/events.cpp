@@ -159,7 +159,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 	_fadeCount = cMap->_steps + 1;
 
 	if (cMap->_steps > 0) {
-		_vm->_graphicsManager._fadeStatus = cMap->_fadeStatus;
+		_vm->_graphicsManager._fadeStatus = cMap->_fadeStatus | 1;
 		uint16 *destP = (uint16 *)(_vm->_graphicsManager._viewPortListPtr->_palette +
 			(_fadeFirstCol * 16));
 		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
