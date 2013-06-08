@@ -255,7 +255,11 @@ bool BoltFile::getBoltGroup(uint32 id) {
 }
 
 void BoltFile::freeBoltGroup(uint32 id) {
-	warning("TODO: freeBoltGroup");
+	_state._curLibPtr = this;
+	_state._curGroupPtr = &_groups[(id >> 8) & 0xff];
+
+	// Unload the group
+	_state._curGroupPtr->unload();
 }
 
 BoltEntry &BoltFile::getBoltEntry(uint32 id) {
@@ -460,6 +464,9 @@ BoltGroup::BoltGroup(Common::SeekableReadStream *f): _file(f) {
 	_fileOffset = READ_LE_UINT32(&buffer[8]);
 }
 
+BoltGroup::~BoltGroup() {
+}
+
 void BoltGroup::load() {
 	_file->seek(_fileOffset);
 
@@ -468,6 +475,14 @@ void BoltGroup::load() {
 		_entries.push_back(BoltEntry(_file));
 
 	_loaded = true;
+}
+
+void BoltGroup::unload() {
+	if (!_loaded)
+		return;
+
+	_entries.clear();
+	_loaded = false;
 }
 
 /*------------------------------------------------------------------------*/

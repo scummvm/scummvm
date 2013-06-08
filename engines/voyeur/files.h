@@ -151,8 +151,10 @@ public:
 	Common::Array<BoltEntry> _entries;
 public:
 	BoltGroup(Common::SeekableReadStream *f); 
+	virtual ~BoltGroup();
 
 	void load();
+	void unload();
 };
 
 
