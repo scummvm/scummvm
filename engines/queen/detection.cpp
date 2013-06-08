@@ -57,12 +57,188 @@ static const ExtraGuiOption queenExtraGuiOption = {
 namespace Queen {
 
 static const QueenGameDescription gameDescriptions[] = {
+	// Amiga Demo - English
 	{
 		{
 			"queen",
-			"",
-			AD_ENTRY1s("FIXME", "FIXME", 0),
+			"Demo",
+			AD_ENTRY1s("queen.1", "f7a1a37ac93bf763b1569231237cb4d8", 563335),
 			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_DEMO,
+			GUIO0()
+		},
+	},
+
+	// Amiga Interview Demo - English
+	{
+		{
+			"queen",
+			"Interview",
+			AD_ENTRY1s("queen.1", "f5d42a18d8f5689480413871410663d7", 597032),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_DEMO,
+			GUIO0()
+		},
+	},
+
+	// DOS Demo - English
+	{
+		{
+			"queen",
+			"Demo",
+			AD_ENTRY1s("queen.1", "f39334d8133840aa3bcbd733c12937cf", 3732177),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO0()
+		},
+	},
+
+	// DOS Interview Demo - English
+	{
+		{
+			"queen",
+			"Interview",
+			AD_ENTRY1s("queen.1", "30b3291f37665bf24d9482b183cb2f67", 1915913),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO0()
+		},
+	},
+
+	// PCGAMES DOS Demo - English
+	{
+		{
+			"queen",
+			"Demo",
+			AD_ENTRY1s("queen.1", "f39334d8133840aa3bcbd733c12937cf", 3724538),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO0()
+		},
+	},
+
+	// DOS Floppy - English
+	{
+		{
+			"queen",
+			"Floppy",
+			AD_ENTRY1s("queen.1", "f5e827645d3c887be3bdf4729d847756", 22677657),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// DOS CD - English
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1", "b6302bccf70463de3d5faf0f0628f742", 190787021),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// TODO: Need Entry for Uncompressed French Release.
+
+	// TODO: Need Entry for Uncompressed German Release.
+
+	// TODO: Need Entry for Uncompressed Hebrew Release.
+
+	// DOS CD - Italian
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1", "b6302bccf70463de3d5faf0f0628f742", 190795582),
+			Common::IT_ITA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// DOS CD - English (Compressed Freeware Release v1.0)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", "a0749bb8b72e537ead1a63a3dde1443d", 54108887),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// DOS CD - English (Compressed Freeware Release v1.1)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", "21fd690b372f8a6289f6f33bc986276c", 51222412),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// DOS CD - French (Compressed Freeware Release v1.0)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", "67e3020f8a35e1df7b1c753b5aaa71e1", 97382620),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// DOS CD - German (Compressed Freeware Release v1.0)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", "28f78dbec7e20f603a10c2f8ea889a5c", 108738717),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// DOS CD - Hebrew (Compressed Freeware Release v1.0)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", "4d52d8780613ef27a2b779caecb20a21", 99391805),
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+
+	// DOS CD - Italian (Compressed Freeware Release v1.0)
+	{
+		{
+			"queen",
+			"Talkie",
+			AD_ENTRY1s("queen.1c", "2f72b715ed753cf905a37cdcc7ea611e", 98327801),
+			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
