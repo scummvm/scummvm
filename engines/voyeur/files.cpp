@@ -775,11 +775,10 @@ ViewPortPalEntry::ViewPortPalEntry(const byte *src) {
 	_rEntry = READ_LE_UINT16(v++);
 	_gEntry = READ_LE_UINT16(v++);
 	_bEntry = READ_LE_UINT16(v++);
-	field6 = READ_LE_UINT16(v++);
-	field8 = READ_LE_UINT16(v++);
-	fieldA = READ_LE_UINT16(v++);
-	fieldC = READ_LE_UINT16(v++);
-	fieldE = READ_LE_UINT16(v++);
+	_rChange = READ_LE_UINT16(v++);
+	_gChange = READ_LE_UINT16(v++);
+	_bChange = READ_LE_UINT16(v++);
+	_palIndex = READ_LE_UINT16(v++);
 }
 
 

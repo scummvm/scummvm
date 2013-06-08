@@ -97,18 +97,6 @@ public:
 	int _policeEvent;
 };
 
-typedef void (*IntFuncPtr)();
-
-class IntNode {
-public:
-	IntFuncPtr _intFunc;
-	uint32 _curTime;
-	uint32 _timeReset;
-	uint32 _flags;
-public:
-	IntNode();
-};
-
 class IntData {
 public:
 	bool _field9;
@@ -120,13 +108,10 @@ public:
 	int _palStartIndex;
 	int _palEndIndex;
 	byte *_palette;
-	Common::List<IntNode *> _intNodes;
 public:
 	IntData();
 
 	void audioInit();
-	void addIntNode(IntNode *node);
-
 };
 
 } // End of namespace Voyeur

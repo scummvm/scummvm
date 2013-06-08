@@ -29,10 +29,23 @@
 namespace Voyeur {
 
 class VoyeurEngine;
+class EventsManager;
 class CMapResource;
 
 #define GAME_FRAME_RATE 50
 #define GAME_FRAME_TIME (1000 / GAME_FRAME_RATE)
+
+typedef void (EventsManager::*EventMethodPtr)();
+ 
+class IntNode {
+public:
+	EventMethodPtr _intFunc;
+	uint32 _curTime;
+	uint32 _timeReset;
+	uint32 _flags;
+public:
+	IntNode();
+};
 
 class EventsManager {
 private:
@@ -41,11 +54,15 @@ private:
 	uint32 _gameCounter;
 	bool _keyState[256];
 	int _mouseButton;
+	Common::List<IntNode *> _intNodes;
 
-	static void mainVoyeurIntFunc();
+	void mainVoyeurIntFunc();
 private:
 	void checkForNextFrameCounter();
 	void videoTimer();
+	void vDoFadeInt();
+	void vDoCycleInt();
+	void fadeIntFunc();
 public:
 	IntData _audioStruc;
 	IntData &_intPtr;
@@ -56,6 +73,8 @@ public:
 	int _cycleStatus;
 	int _fadeFirstCol, _fadeLastCol;
 	int _fadeCount;
+	int _fadeStatus;
+
 public:
 	EventsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
@@ -64,10 +83,13 @@ public:
 	void startMainClockInt();
 	void vStopCycle();
 	void sWaitFlip();
+	void vInitColor();
 
 	void delay(int cycles);
 	void pollEvents();
 	void startFade(CMapResource *cMap);
+	void addIntNode(IntNode *node);
+	void addFadeInt();
 };
 
 } // End of namespace Voyeur

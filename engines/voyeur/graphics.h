@@ -67,13 +67,10 @@ public:
 	uint _planeSelect;
 	int _sImageShift;
 	Graphics::Surface _screenSurface;
-	int _fadeStatus;
 private:
 	static void fadeIntFunc();
-	static void vDoFadeInt();
 	static void vDoCycleInt();
 
-	void addIntNode(IntNode *node);
 	void restoreBack(Common::Array<Common::Rect> &rectList, int rectListCount,
 		PictureResource *srcPic, PictureResource *destPic);
 public:
@@ -81,9 +78,6 @@ public:
 	~GraphicsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
 	void sInitGraphics();
-
-	void vInitColor();
-	void addFadeInt();
 
 	void setupMCGASaveRect(ViewPortResource *viewPort);
 	void addRectOptSaveRect(ViewPortResource *viewPort, int idx, const Common::Rect &bounds);	

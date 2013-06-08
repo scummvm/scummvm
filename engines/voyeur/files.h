@@ -258,9 +258,8 @@ public:
 class ViewPortPalEntry  {
 public:
 	uint16 _rEntry, _gEntry, _bEntry;
-	uint16 field6, field8, fieldA;
-	uint16 fieldC;
-	uint16 fieldE;
+	uint16 _rChange, _gChange, _bChange;
+	uint16 _palIndex;
 public:
 	ViewPortPalEntry(const byte *src);
 };

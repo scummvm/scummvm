@@ -56,34 +56,6 @@ GraphicsManager::~GraphicsManager() {
 	_screenSurface.free();
 }
 
-void GraphicsManager::addFadeInt() {
-	IntNode &node = _vm->_eventsManager._fadeIntNode;
-	node._intFunc = fadeIntFunc;
-	node._flags = 0;
-	node._curTime = 0;
-	node._timeReset = 1;
-
-	_vm->_eventsManager._intPtr.addIntNode(&node);
-}
-
-void GraphicsManager::vInitColor() {
-	_vm->_eventsManager._fadeIntNode._intFunc = vDoFadeInt;
-	_vm->_eventsManager._cycleIntNode._intFunc = vDoCycleInt;
-	// TODO: more
-}
-
-void GraphicsManager::fadeIntFunc() {
-	// TODO: more
-}
-
-void GraphicsManager::vDoFadeInt() {
-	
-}
-
-void GraphicsManager::vDoCycleInt() {
-	// TODO: more
-}
-
 void GraphicsManager::setupMCGASaveRect(ViewPortResource *viewPort) {
 	_MCGAMode = true;
 

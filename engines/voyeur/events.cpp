@@ -26,9 +26,19 @@
 
 namespace Voyeur {
 
+IntNode::IntNode() {
+	_intFunc = NULL;
+	_curTime = 0;
+	_timeReset = 0;
+	_flags = 0;
+}
+
+/*------------------------------------------------------------------------*/
+
 EventsManager::EventsManager(): _intPtr(_audioStruc) {
 	_cycleStatus = 0;
 	_mouseButton = 0;
+	_fadeStatus = 0;
 	_priorFrameTime = g_system->getMillis();
 	Common::fill(&_keyState[0], &_keyState[256], false);
 }
@@ -38,14 +48,14 @@ void EventsManager::resetMouse() {
 }
 
 void EventsManager::startMainClockInt() {
-	_mainIntNode._intFunc = mainVoyeurIntFunc;
+	_mainIntNode._intFunc = &EventsManager::mainVoyeurIntFunc;
 	_mainIntNode._flags = 0;
 	_mainIntNode._curTime = 0;
 	_mainIntNode._timeReset = _vm->_graphicsManager._palFlag ? 50 : 60;
 }
 
 void EventsManager::mainVoyeurIntFunc() {
-
+	// TODO
 }
 
 void EventsManager::vStopCycle() {
@@ -159,7 +169,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 	_fadeCount = cMap->_steps + 1;
 
 	if (cMap->_steps > 0) {
-		_vm->_graphicsManager._fadeStatus = cMap->_fadeStatus | 1;
+		_fadeStatus = cMap->_fadeStatus |= 1;
 		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
 		int mapIndex = 0;
 
@@ -167,16 +177,16 @@ void EventsManager::startFade(CMapResource *cMap) {
 			ViewPortPalEntry &palEntry = _vm->_graphicsManager._viewPortListPtr->_palette[idx];
 			palEntry._rEntry = vgaP[0] << 8;
 			uint32 rComp = (uint16)((cMap->_entries[mapIndex * 3] << 8) - palEntry._rEntry) | 0x80;
-			palEntry.field6 = rComp / cMap->_steps;
+			palEntry._rChange = rComp / cMap->_steps;
 
 			palEntry._gEntry = vgaP[1] << 8;
 			uint32 gComp = (uint16)((cMap->_entries[mapIndex * 3 + 1] << 8) - palEntry._gEntry) | 0x80;
-			palEntry.field8 = gComp / cMap->_steps;
+			palEntry._gChange = gComp / cMap->_steps;
 
 			palEntry._bEntry = vgaP[2] << 8;
 			uint32 bComp = (uint16)((cMap->_entries[mapIndex * 3 + 2] << 8) -palEntry._bEntry) | 0x80;
-			palEntry.fieldA = bComp / cMap->_steps;
-			palEntry.fieldC = bComp % cMap->_steps;
+			palEntry._bChange = bComp / cMap->_steps;
+			palEntry._palIndex = bComp % cMap->_steps;
 
 			if (!(cMap->_fadeStatus & 1))
 				++mapIndex;
@@ -208,6 +218,66 @@ void EventsManager::startFade(CMapResource *cMap) {
 
 	if (_cycleStatus & 1)
 		_cycleIntNode._flags &= ~1;
+}
+
+void EventsManager::addIntNode(IntNode *node) {
+	_intNodes.push_back(node);
+}
+
+void EventsManager::addFadeInt() {
+	IntNode &node = _fadeIntNode;
+	node._intFunc = &EventsManager::fadeIntFunc;
+	node._flags = 0;
+	node._curTime = 0;
+	node._timeReset = 1;
+
+	addIntNode(&node);
+}
+
+void EventsManager::vDoFadeInt() {
+	if (_intPtr._field3B & 1)
+		return;
+	if (--_fadeCount == 0) {
+		_fadeIntNode._flags |= 1;
+		_fadeStatus &= ~1;
+	}
+
+
+	for (int i = _fadeFirstCol; i <= _fadeLastCol; ++i) {
+		ViewPortPalEntry &palEntry = _vm->_graphicsManager._viewPortListPtr->_palette[i];
+		byte *vgaP = &_vm->_graphicsManager._VGAColors[palEntry._palIndex * 3];
+
+		palEntry._rEntry += palEntry._rChange;
+		palEntry._gEntry += palEntry._gChange;
+		palEntry._bEntry += palEntry._bChange;
+
+		vgaP[0] = palEntry._rEntry >> 8;
+		vgaP[1] = palEntry._gEntry >> 8;
+		vgaP[2] = palEntry._bEntry >> 8;
+	}
+
+	if (_intPtr._palStartIndex > _fadeFirstCol)
+		_intPtr._palStartIndex = _fadeFirstCol;
+	if (_intPtr._palEndIndex < _fadeLastCol)
+		_intPtr._palEndIndex = _fadeLastCol;
+
+	_intPtr._hasPalette = true;
+	_intPtr._field38 = 1;
+}
+
+void EventsManager::vDoCycleInt() {
+	// TODO: more
+}
+
+
+void EventsManager::fadeIntFunc() {
+	// TODO: more
+}
+
+void EventsManager::vInitColor() {
+	_fadeIntNode._intFunc = &EventsManager::vDoFadeInt;
+	_cycleIntNode._intFunc = &EventsManager::vDoCycleInt;
+	// TODO: more
 }
 
 } // End of namespace Voyeur

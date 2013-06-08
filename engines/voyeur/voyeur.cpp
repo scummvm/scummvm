@@ -121,13 +121,13 @@ void VoyeurEngine::globalInitBolt() {
 	_voy._evidence[18] = 9999;
 	
 	_voy._curICF0 = _graphicsManager._palFlag ? 0xFFFFA5E0 : 0x5F90; 
-	_graphicsManager.addFadeInt();
+	_eventsManager.addFadeInt();
 }
 
 void VoyeurEngine::initBolt() {
 	vInitInterrupts();
 	_graphicsManager.sInitGraphics();
-	_graphicsManager.vInitColor();
+	_eventsManager.vInitColor();
 	initInput();
 }
 
@@ -174,7 +174,7 @@ void VoyeurEngine::doHeadTitle() {
 		_graphicsManager.flipPage();
 		_eventsManager.sWaitFlip();
 
-		while (!shouldQuit() && (_graphicsManager._fadeStatus & 1))
+		while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
 			_eventsManager.delay(1);
 
 		_graphicsManager.screenReset();
