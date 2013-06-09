@@ -48,6 +48,7 @@ class Screen;
 class SoundMan;
 class AudioResourceMan;
 class StaticData;
+class Console;
 struct NPoint;
 
 struct GameState {
@@ -86,7 +87,8 @@ public:
 	ResourceMan *_res;
 	GameModule *_gameModule;
 	StaticData *_staticData;
-	
+	Console *_console;
+
 	SoundMan *_soundMan;
 	AudioResourceMan *_audioResourceMan;
 
