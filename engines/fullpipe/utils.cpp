@@ -103,10 +103,14 @@ CObject *MfcArchive::parseClass() {
 
 		objectId = _classMap[name];
 		_objectMap.push_back(objectId);
-		_objectMap.push_back(objectId); // Gross HACK
+		debug(0, "tag: %d (%x)", _objectMap.size() - 1, objectId);
 
-		debug(0, "tag: %d", _objectMap.size() - 1);
+		objectId = _classMap[name];
 	} else {
+		if ((obTag & 0x8000) == 0) {
+			error("Wrong object index format: %d  at 0x%08x", obTag, pos() - 2);
+		}
+
 		obTag &= ~0x8000;
 
 		debug(0, "parseClass::obTag <%d>", obTag);
@@ -118,6 +122,8 @@ CObject *MfcArchive::parseClass() {
 		objectId = _objectMap[obTag];
 	}
 	
+	_objectMap.push_back(objectId);
+
 	debug(0, "objectId: %d", objectId);
 
 	switch (objectId) {
