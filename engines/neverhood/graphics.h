@@ -83,7 +83,7 @@ class MouseCursorResource;
 
 class BaseSurface {
 public:
-	BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height);
+	BaseSurface(NeverhoodEngine *vm, int priority, int16 width, int16 height, Common::String name);
 	virtual ~BaseSurface();
 	virtual void draw();
 	void clear();
@@ -104,10 +104,12 @@ public:
 	void setVisible(bool value) { _visible = value; }
 	void setTransparent(bool value) { _transparent = value; }
 	Graphics::Surface *getSurface() { return _surface; }
+	const Common::String getName() const { return _name; }
 protected:
 	NeverhoodEngine *_vm;
 	int _priority;
 	bool _visible;
+	Common::String _name;
 	Graphics::Surface *_surface;
 	NDrawRect _drawRect;
 	NDrawRect _sysRect;

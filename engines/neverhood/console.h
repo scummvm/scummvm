@@ -38,6 +38,7 @@ private:
 	NeverhoodEngine *_vm;
 
 	bool Cmd_Room(int argc, const char **argv);
+	bool Cmd_Surfaces(int argc, const char **argv);
 };
 
 } // End of namespace Neverhood

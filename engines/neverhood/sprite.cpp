@@ -83,7 +83,7 @@ void Sprite::loadDataResource(uint32 fileHash) {
 }
 
 void Sprite::createSurface(int surfacePriority, int16 width, int16 height) {
-	_surface = new BaseSurface(_vm, surfacePriority, width, height);
+	_surface = new BaseSurface(_vm, surfacePriority, width, height, "sprite");
 }
 
 int16 Sprite::defFilterY(int16 y) {
@@ -398,7 +398,7 @@ void AnimatedSprite::updateFrameInfo() {
 
 void AnimatedSprite::createSurface1(uint32 fileHash, int surfacePriority) {
 	NDimensions dimensions = _animResource.loadSpriteDimensions(fileHash);
-	_surface = new BaseSurface(_vm, surfacePriority, dimensions.width, dimensions.height);
+	_surface = new BaseSurface(_vm, surfacePriority, dimensions.width, dimensions.height, "animated sprite");
 }
 
 void AnimatedSprite::createShadowSurface1(BaseSurface *shadowSurface, uint32 fileHash, int surfacePriority) {

@@ -608,7 +608,7 @@ void TextEditWidget::initialize() {
 	_textLabelWidget->initialize();
 	if (_cursorFileHash != 0) {
 		cursorSpriteResource.load(_cursorFileHash, true);
-		_cursorSurface = new BaseSurface(_vm, 0, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
+		_cursorSurface = new BaseSurface(_vm, 0, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height, "cursor");
 		_cursorSurface->drawSpriteResourceEx(cursorSpriteResource, false, false, cursorSpriteResource.getDimensions().width, cursorSpriteResource.getDimensions().height);
 		_cursorSurface->setVisible(!_readOnly);
 	}
