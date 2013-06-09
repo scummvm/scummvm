@@ -396,6 +396,16 @@ class CGameLoader {
 	int _preloadId2;
 };
 
+class CObjstateCommand : public CObject {
+	ExCommand _cmd;
+	char *_stringObj;
+	int _value;
+
+ public:
+	CObjstateCommand();
+	virtual bool load(MfcArchive &file);
+};
+
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_OBJECTS_H */

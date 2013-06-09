@@ -384,4 +384,18 @@ Message::Message() {
 	_field_34 = 0;
 }
 
+CObjstateCommand::CObjstateCommand() {
+	_value = 0;
+}
+
+bool CObjstateCommand::load(MfcArchive &file) {
+	_cmd.load(file);
+
+	_value = file.readUint32LE();
+
+	_stringObj = file.readPascalString();
+
+	return true;
+}
+
 } // End of namespace Fullpipe

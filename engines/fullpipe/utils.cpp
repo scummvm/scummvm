@@ -56,7 +56,8 @@ int MfcArchive::readCount() {
 enum {
 	kCInteraction = 0,
 	kMessageQueue = 1,
-	kExCommand = 2
+	kExCommand = 2,
+	kCObjstateCommand = 3
 };
 
 const struct {
@@ -66,6 +67,7 @@ const struct {
 	{ "CInteraction",	kCInteraction },
 	{ "MessageQueue",	kMessageQueue },
 	{ "ExCommand",		kExCommand },
+	{ "CObjstateCommand", kCObjstateCommand },
 	{ 0, 0 }
 };
 
@@ -125,6 +127,8 @@ CObject *MfcArchive::parseClass() {
 		return new MessageQueue();
 	case kExCommand:
 		return new ExCommand();
+	case kCObjstateCommand:
+		return new CObjstateCommand();
 	default:
 		error("Unknown objectId: %d", objectId);
 	}
