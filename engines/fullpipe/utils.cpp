@@ -41,6 +41,8 @@ char *MfcArchive::readPascalString(bool twoByte) {
 	tmp = (char *)calloc(len + 1, 1);
 	read(tmp, len);
 
+	debug(0, "readPascalString: %d <%s>", len, tmp);
+
 	return tmp;
 }
 
@@ -54,10 +56,11 @@ int MfcArchive::readCount() {
 }
 
 enum {
-	kCInteraction = 0,
-	kMessageQueue = 1,
-	kExCommand = 2,
-	kCObjstateCommand = 3
+	kNullObject = 0,
+	kCInteraction = 1,
+	kMessageQueue = 2,
+	kExCommand = 3,
+	kCObjstateCommand = 4
 };
 
 const struct {
@@ -88,7 +91,7 @@ MfcArchive::MfcArchive() {
 
 	_lastIndex = 1;
 
-	_objectMap.push_back(0);
+	_objectMap.push_back(kNullObject);
 }
 
 CObject *MfcArchive::parseClass() {
@@ -116,10 +119,9 @@ CObject *MfcArchive::parseClass() {
 		debug(0, "tag: %d (%x)", _objectMap.size() - 1, objectId);
 
 		objectId = _classMap[name];
+	} else if ((obTag & 0x8000) == 0) {
+		objectId = _objectMap[obTag];
 	} else {
-		if ((obTag & 0x8000) == 0) {
-			error("Wrong object index format: %d  at 0x%08x", obTag, pos() - 2);
-		}
 
 		obTag &= ~0x8000;
 
@@ -145,6 +147,9 @@ CObject *MfcArchive::parseClass() {
 		return new ExCommand();
 	case kCObjstateCommand:
 		return new CObjstateCommand();
+	case kNullObject:
+		warning("parseClass: NULL object  at 0x%08x", pos() - 2);
+		return 0;
 	default:
 		error("Unknown objectId: %d", objectId);
 	}

@@ -290,11 +290,11 @@ bool CInteraction::load(MfcArchive &file) {
 	_flags = file.readUint32LE();
 	_stringObj = file.readPascalString();
 
-	debug(0, "CInteraction::_stringObj = %s", _stringObj);
-
 	// messageQueue
 	_messageQueue = (MessageQueue *)file.parseClass();
-	_messageQueue->load(file);
+
+	if (_messageQueue)
+		_messageQueue->load(file);
 
 	return true;
 }
@@ -315,7 +315,6 @@ bool MessageQueue::load(MfcArchive &file) {
 
 	_stringObj = file.readPascalString();
 	debug(0, "MessageQueue::count = %d", count);
-	debug(0, "MessageQueue::_stringObj = %s", _stringObj);
 
 	for (int i = 0; i < count; i++) {
 		CObject *tmp = file.parseClass();
