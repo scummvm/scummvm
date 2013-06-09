@@ -71,8 +71,18 @@ const struct {
 	{ 0, 0 }
 };
 
+static const char *lookupObjectId(int id) {
+	for (int i = 0; classMap[i].name; i++) {
+		if (classMap[i].id == id)
+			return classMap[i].name;
+	}
+
+	return "";
+}
+
+
 MfcArchive::MfcArchive() {
-	for (int i; classMap[i].name; i++) {
+	for (int i = 0; classMap[i].name; i++) {
 		_classMap[classMap[i].name] = classMap[i].id;
 	}
 
@@ -87,7 +97,7 @@ CObject *MfcArchive::parseClass() {
 
 	uint obTag = readUint16LE();
 
-	debug(0, "parseClass::obTag = %d (%04x)", obTag, obTag);
+	debug(0, "parseClass::obTag = %d (%04x)  at 0x%08x", obTag, obTag, pos() - 2);
 
 	if (obTag == 0xffff) {
 		int schema = readUint16LE();
@@ -113,11 +123,11 @@ CObject *MfcArchive::parseClass() {
 
 		obTag &= ~0x8000;
 
-		debug(0, "parseClass::obTag <%d>", obTag);
-
 		if (_objectMap.size() < obTag) {
 			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
 		}
+
+		debug(0, "parseClass::obTag <%s>", lookupObjectId(_objectMap[obTag]));
 
 		objectId = _objectMap[obTag];
 	}
