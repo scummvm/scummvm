@@ -75,6 +75,8 @@ MfcArchive::MfcArchive() {
 	}
 
 	_lastIndex = 1;
+
+	_objectMap.push_back(0);
 }
 
 CObject *MfcArchive::parseClass() {
@@ -100,7 +102,7 @@ CObject *MfcArchive::parseClass() {
 		objectId = _classMap[name];
 		_objectMap.push_back(objectId);
 
-		debug(0, "tag: %d", _objectMap.size());
+		debug(0, "tag: %d", _objectMap.size() - 1);
 	} else {
 		obTag &= ~0x8000;
 
@@ -110,7 +112,7 @@ CObject *MfcArchive::parseClass() {
 			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
 		}
 
-		objectId = _objectMap[obTag - 1];
+		objectId = _objectMap[obTag];
 	}
 	
 	debug(0, "objectId: %d", objectId);
