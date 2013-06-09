@@ -60,7 +60,8 @@ enum {
 	kCInteraction = 1,
 	kMessageQueue = 2,
 	kExCommand = 3,
-	kCObjstateCommand = 4
+	kCObjstateCommand = 4,
+	kCGameVar = 5
 };
 
 const struct {
@@ -71,6 +72,7 @@ const struct {
 	{ "MessageQueue",	kMessageQueue },
 	{ "ExCommand",		kExCommand },
 	{ "CObjstateCommand", kCObjstateCommand },
+	{ "CGameVar",		kCGameVar },
 	{ 0, 0 }
 };
 
@@ -92,6 +94,15 @@ MfcArchive::MfcArchive() {
 	_lastIndex = 1;
 
 	_objectMap.push_back(kNullObject);
+}
+
+CObject *MfcArchive::readClass() {
+	CObject *res = parseClass();
+
+	if (res)
+		res->load(*this);
+
+	return res;
 }
 
 CObject *MfcArchive::parseClass() {
@@ -139,6 +150,9 @@ CObject *MfcArchive::parseClass() {
 	debug(0, "objectId: %d", objectId);
 
 	switch (objectId) {
+	case kNullObject:
+		warning("parseClass: NULL object  at 0x%08x", pos() - 2);
+		return 0;
 	case kCInteraction:
 		return new CInteraction();
 	case kMessageQueue:
@@ -147,9 +161,8 @@ CObject *MfcArchive::parseClass() {
 		return new ExCommand();
 	case kCObjstateCommand:
 		return new CObjstateCommand();
-	case kNullObject:
-		warning("parseClass: NULL object  at 0x%08x", pos() - 2);
-		return 0;
+	case kCGameVar:
+		return new CGameVar();
 	default:
 		error("Unknown objectId: %d", objectId);
 	}

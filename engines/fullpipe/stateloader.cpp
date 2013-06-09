@@ -102,9 +102,18 @@ bool CGameLoader::load(MfcArchive &file) {
 
 	_inventory.load(file);
 
-	debug(0, "%x", file.pos());
-
 	_interactionController->load(file);
+
+	debug(0, "count: %d", _gameProject->_sceneTagList->size());
+
+	// TODO: Load Sc2
+
+	_preloadItems.load(file);
+
+	_field_FA = file.readUint16LE();
+	_field_F8 = file.readUint16LE();
+
+	_gameVar = (CGameVar *)file.readClass();
 
 	return true;
 }
@@ -158,7 +167,7 @@ bool SceneTagList::load(MfcArchive &file) {
 	for (int i = 0; i < numEntries; i++) {
 		SceneTag *t = new SceneTag();
 		t->load(file);
-		_list.push_back(*t);
+		push_back(*t);
 	}
 
 	return true;
@@ -247,8 +256,7 @@ bool CObList::load(MfcArchive &file) {
 	debug(0, "CObList::count: %d", count);
 
 	for (int i = 0; i < count; i++) {
-		CObject *t = file.parseClass();
-		t->load(file);
+		CObject *t = file.readClass();
 
 		push_back(*t);
 	}
@@ -290,11 +298,7 @@ bool CInteraction::load(MfcArchive &file) {
 	_flags = file.readUint32LE();
 	_stringObj = file.readPascalString();
 
-	// messageQueue
-	_messageQueue = (MessageQueue *)file.parseClass();
-
-	if (_messageQueue)
-		_messageQueue->load(file);
+	_messageQueue = (MessageQueue *)file.readClass();
 
 	return true;
 }
@@ -317,8 +321,7 @@ bool MessageQueue::load(MfcArchive &file) {
 	debug(0, "MessageQueue::count = %d", count);
 
 	for (int i = 0; i < count; i++) {
-		CObject *tmp = file.parseClass();
-		tmp->load(file);
+		CObject *tmp = file.readClass();
 
 		_exCommands.push_back(tmp);
 	}
@@ -393,6 +396,83 @@ bool CObjstateCommand::load(MfcArchive &file) {
 	_value = file.readUint32LE();
 
 	_stringObj = file.readPascalString();
+
+	return true;
+}
+
+bool CObArray::load(MfcArchive &file) {
+	int count = file.readCount();
+
+	debug(0, "CObArray::count: %d", count);
+
+	resize(count);
+
+	for (int i = 0; i < count; i++) {
+		CObject *t = file.readClass();
+
+		push_back(*t);
+	}
+
+	return true;
+}
+
+bool PreloadItems::load(MfcArchive &file) {
+	int count = file.readCount();
+
+	debug(0, "CObArray::count: %d", count);
+
+	resize(count);
+
+	for (int i = 0; i < count; i++) {
+		PreloadItem *t = new PreloadItem();
+		t->preloadId1 = file.readUint32LE();
+		t->preloadId2 = file.readUint32LE();
+		t->sceneId = file.readUint32LE();
+		t->field_C = file.readUint32LE();
+
+		push_back(*t);
+	}
+
+	return true;
+}
+
+CGameVar::CGameVar() {
+	_subVars = 0;
+	_parentVarObj = 0;
+	_nextVarObj = 0;
+	_prevVarObj = 0;
+	_field_14 = 0;
+	_varType = 0;
+	_value.floatValue = 0;
+}
+
+bool CGameVar::load(MfcArchive &file) {
+	_stringObj = file.readPascalString();
+	_varType = file.readUint32LE();
+	debug(0, "CGameVar: %d", _varType);
+
+	switch (_varType) {
+	case 0:
+		_value.intValue = file.readUint32LE();
+		debug(0, "--> %d", _value.intValue);
+		break;
+	case 1:
+		_value.intValue = file.readUint32LE(); // FIXME
+		debug(0, "--> %f", _value.floatValue);
+		break;
+	case 2:
+		_value.stringValue = file.readPascalString();
+		debug(0, "--> %s", _value.stringValue);
+		break;
+	default:
+		error("Unknown var type");
+	}
+
+	_parentVarObj = (CGameVar *)file.readClass();
+	_prevVarObj = (CGameVar *)file.readClass();
+	_nextVarObj = (CGameVar *)file.readClass();
+	_field_14 = (CGameVar *)file.readClass();
+	_subVars = (CGameVar *)file.readClass();
 
 	return true;
 }

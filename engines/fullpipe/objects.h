@@ -31,7 +31,7 @@ class CObject {
 	virtual ~CObject() {}
 };
 
-class CObList : Common::List<CObject>, public CObject {
+class CObList : public Common::List<CObject>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
@@ -52,12 +52,9 @@ class MemoryObject {
 	int libHandle;
 };
 
-class CObArray {
-	//CObject obj;
-	int m_pData;
-	int m_nSize;
-	int m_nMaxSize;
-	int m_nGrowBy;
+class CObArray : public Common::Array<CObject>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
 };
 
 struct CNode {
@@ -82,16 +79,13 @@ class SceneTag : public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-typedef Common::List<SceneTag> SceneTagList_;
-
-class SceneTagList : public CObject {
-	SceneTagList_ _list;
-
+class SceneTagList : public Common::List<SceneTag>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
 };
 
 class GameProject : public CObject {
+ public:
 	int _field_4;
 	char *_headerFilename;
 	SceneTagList *_sceneTagList;
@@ -180,13 +174,13 @@ class CInputController {
 };
 
 class Sc2Array {
-	CObArray objs;
+	CObArray _objs;
 };
 
 union VarValue {
-	int floatValue;
+	float floatValue;
 	int intValue;
-	int stringValue;
+	char *stringValue;
 };
 
 class Message {
@@ -222,16 +216,19 @@ class ExCommand : public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-class CGameVar {
-	//CObject obj;
-	CGameVar *nextVarObj;
-	CGameVar *prevVarObj;
-	CGameVar *parentVarObj;
-	CGameVar *subVars;
-	int field_14;
-	char *stringObj;
-	VarValue value;
-	int varType;
+ class CGameVar : public CObject {
+	CGameVar *_nextVarObj;
+	CGameVar *_prevVarObj;
+	CGameVar *_parentVarObj;
+	CGameVar *_subVars;
+	CGameVar *_field_14;
+	char *_stringObj;
+	VarValue _value;
+	int _varType;
+
+ public:
+	CGameVar();
+	virtual bool load(MfcArchive &file);
 };
 
 class InventoryPoolItem {
@@ -358,6 +355,18 @@ class CInventory2 : public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
+struct PreloadItem {
+	int preloadId1;
+	int preloadId2;
+	int sceneId;
+	int field_C;
+};
+
+class PreloadItems : public Common::Array<PreloadItem>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
 class CGameLoader {
  public:
 	CGameLoader();
@@ -387,7 +396,7 @@ class CGameLoader {
 	void *_readSavegameCallback;
 	int16 _field_F8;
 	int16 _field_FA;
-	CObArray _preloadItems;
+	PreloadItems _preloadItems;
 	CGameVar *_gameVar;
 	char *_gameName;
 	ExCommand _exCommand;

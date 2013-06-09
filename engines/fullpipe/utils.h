@@ -44,6 +44,7 @@ class MfcArchive : public Common::File {
 	char *readPascalString(bool twoByte = false);
 	int readCount();
 	CObject *parseClass();
+	CObject *readClass();
 };
 
 } // End of namespace Fullpipe
