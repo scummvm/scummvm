@@ -2142,17 +2142,17 @@ Scene2208::Scene2208(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	_fontSurface = FontSurface::createFontSurface(_vm, 0x0800090C);
 
-	_backgroundSurface = new BaseSurface(_vm, 0, 640, 480);
+	_backgroundSurface = new BaseSurface(_vm, 0, 640, 480, "background");
 	spriteResource.load(0x08100289, true);
 	_backgroundSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
 
-	_topBackgroundSurface = new BaseSurface(_vm, 0, 640, 192);
+	_topBackgroundSurface = new BaseSurface(_vm, 0, 640, 192, "top background");
 	spriteResource.load(!getGlobalVar(V_COLUMN_BACK_NAME)
 		? kScene2208FileHashes1[getGlobalVar(V_CLICKED_COLUMN_INDEX) % 6]
 		: getGlobalVar(V_COLUMN_BACK_NAME), true);
 	_topBackgroundSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
 
-	_bottomBackgroundSurface = new BaseSurface(_vm, 0, 640, 192);
+	_bottomBackgroundSurface = new BaseSurface(_vm, 0, 640, 192, "bottom background");
 	spriteResource.load(kScene2208FileHashes2[getGlobalVar(V_CLICKED_COLUMN_INDEX) % 6], true);
 	_bottomBackgroundSurface->drawSpriteResourceEx(spriteResource, false, false, 0, 0);
 	

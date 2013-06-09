@@ -45,7 +45,7 @@ Background::~Background() {
 }
 
 void Background::createSurface(int surfacePriority, int16 width, int16 height) {
-	_surface = new BaseSurface(_vm, surfacePriority, width, height);
+	_surface = new BaseSurface(_vm, surfacePriority, width, height, "background");
 	_surface->setTransparent(false);
 	_spriteResource.getPosition().x = width;
 	_spriteResource.getPosition().y = height;

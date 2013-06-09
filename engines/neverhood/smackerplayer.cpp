@@ -31,7 +31,7 @@ namespace Neverhood {
 // SmackerSurface
 
 SmackerSurface::SmackerSurface(NeverhoodEngine *vm)
-	: BaseSurface(vm, 0, 0, 0), _smackerFrame(NULL) {
+	: BaseSurface(vm, 0, 0, 0, "smacker"), _smackerFrame(NULL) {
 }
 
 void SmackerSurface::draw() {

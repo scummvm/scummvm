@@ -37,6 +37,8 @@
 
 namespace Neverhood {
 
+class Console;
+
 class Scene : public Entity {
 public:
 	Scene(NeverhoodEngine *vm, Module *parentModule);
@@ -46,6 +48,7 @@ public:
 	bool removeEntity(Entity *entity);
 	void addSurface(BaseSurface *surface);
 	bool removeSurface(BaseSurface *surface);
+	void printSurfaces(Console *con);
 	Sprite *addSprite(Sprite *sprite);
 	void removeSprite(Sprite *sprite);
 	void setSurfacePriority(BaseSurface *surface, int priority);

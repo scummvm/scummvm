@@ -24,11 +24,13 @@
 #include "gui/debugger.h"
 #include "neverhood/neverhood.h"
 #include "neverhood/gamemodule.h"
+#include "neverhood/scene.h"
 
 namespace Neverhood {
 
 Console::Console(NeverhoodEngine *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("room",			WRAP_METHOD(Console, Cmd_Room));
+	DCmd_Register("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
 }
 
 Console::~Console() {
@@ -52,6 +54,13 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 		_vm->_gameModule->createModule(module, -1);
 	}
 
+	return true;
+}
+
+bool Console::Cmd_Surfaces(int argc, const char **argv) {
+	if (_vm->_gameModule->_childObject) {
+		((Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject)->printSurfaces(this);
+	}
 	return true;
 }
 
