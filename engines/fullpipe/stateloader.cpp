@@ -449,20 +449,19 @@ CGameVar::CGameVar() {
 bool CGameVar::load(MfcArchive &file) {
 	_stringObj = file.readPascalString();
 	_varType = file.readUint32LE();
-	debug(0, "CGameVar: %d", _varType);
 
 	switch (_varType) {
 	case 0:
 		_value.intValue = file.readUint32LE();
-		debug(0, "--> %d", _value.intValue);
+		debug(0, "d --> %d", _value.intValue);
 		break;
 	case 1:
 		_value.intValue = file.readUint32LE(); // FIXME
-		debug(0, "--> %f", _value.floatValue);
+		debug(0, "f --> %f", _value.floatValue);
 		break;
 	case 2:
 		_value.stringValue = file.readPascalString();
-		debug(0, "--> %s", _value.stringValue);
+		debug(0, "s --> %s", _value.stringValue);
 		break;
 	default:
 		error("Unknown var type");

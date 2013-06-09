@@ -127,7 +127,7 @@ CObject *MfcArchive::parseClass() {
 
 		objectId = _classMap[name];
 		_objectMap.push_back(objectId);
-		debug(0, "tag: %d (%x)", _objectMap.size() - 1, objectId);
+		debug(0, "tag: %d 0x%x (%x)", _objectMap.size() - 1, _objectMap.size() - 1, objectId);
 
 		objectId = _classMap[name];
 	} else if ((obTag & 0x8000) == 0) {
@@ -145,7 +145,8 @@ CObject *MfcArchive::parseClass() {
 		objectId = _objectMap[obTag];
 	}
 	
-	_objectMap.push_back(objectId);
+	if (objectId)
+		_objectMap.push_back(objectId);
 
 	debug(0, "objectId: %d", objectId);
 
