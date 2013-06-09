@@ -101,6 +101,7 @@ CObject *MfcArchive::parseClass() {
 
 		objectId = _classMap[name];
 		_objectMap.push_back(objectId);
+		_objectMap.push_back(objectId); // Gross HACK
 
 		debug(0, "tag: %d", _objectMap.size() - 1);
 	} else {
