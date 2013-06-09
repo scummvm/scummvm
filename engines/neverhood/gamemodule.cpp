@@ -440,6 +440,10 @@ void GameModule::checkRequests() {
 void GameModule::createModule(int moduleNum, int which) {
 	debug("GameModule::createModule(%d, %d)", moduleNum, which);
 	_moduleNum = moduleNum;
+
+	if (_childObject)
+		delete _childObject;
+
 	switch (_moduleNum) {
 	case 1000:
 		setGlobalVar(V_MODULE_NAME, 0x03294419);
