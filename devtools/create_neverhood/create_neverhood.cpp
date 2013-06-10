@@ -32,9 +32,15 @@
 
 #include <vector>
 #include "create_neverhood.h"
+#include "md5.h"
 #include "tables.h"
 
 const int DAT_VERSION = 0;
+
+// The MD5 hash of the nhc.exe used to extract the tables from
+const uint8 kNhcExeMd5[16] = {
+	0x37, 0xD6, 0x54, 0xA2, 0xA7, 0xBB, 0xB0, 0x1F,
+	0x8C, 0x41, 0x9A, 0xB8, 0x49, 0xFF, 0x29, 0xD4};
 
 uint32 dataSize;
 byte *data;
@@ -48,12 +54,33 @@ class NavigationList;
 
 void addMessageList(uint32 messageListCount, uint32 messageListOffset);
 
-void loadExe(const char *filename) {
+bool loadExe(const char *filename) {
 	FILE *exe = fopen(filename, "rb");
+	if (!exe) {
+		printf("Could not open nhc.exe for reading! Quitting...\n");
+		return false;
+	}
 	dataSize = fileSize(exe);
 	data = new byte[dataSize];
 	fread(data, dataSize, 1, exe);
 	fclose(exe);
+	return true;
+}
+
+bool validateMd5() {
+	uint8 digest[16];
+	
+	md5_buffer(data, dataSize, digest);
+	
+	printf("MD5 of nhc.exe is %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\n",
+		digest[0], digest[1], digest[2], digest[3], digest[4], digest[5], digest[6], digest[7], 
+		digest[8], digest[9], digest[10], digest[11], digest[12], digest[13], digest[14], digest[15]);
+	
+	if (memcmp(kNhcExeMd5, digest, 16)) {
+		printf("MD5 hash of nhc.exe doesn't match the expected value! Quitting...\n");
+		return false;
+	}
+	return true;
 }
 
 byte *getData(uint32 offset) {
@@ -506,9 +533,11 @@ void addMessageList(uint32 messageListCount, uint32 messageListOffset) {
 
 int main(int argc, char *argv[]) {
 
-	FILE *datFile;
+	if (!loadExe("nhc.exe") ||
+		!validateMd5())
+		return 1;
 
-	loadExe("nhc.exe");
+	FILE *datFile;
 
 	hitRectLists.loadListVector(hitRectListOffsets);
 	rectLists.loadListVector(rectListOffsets);
@@ -516,7 +545,7 @@ int main(int argc, char *argv[]) {
 	navigationLists.loadListVector(navigationListOffsets);
 	sceneInfo140Items.loadVector(sceneInfo140Offsets);
 	sceneInfo2700Items.loadVector(sceneInfo2700Offsets);
-	    
+
 	datFile = fopen("neverhood.dat", "wb");
 
 	writeUint32LE(datFile, 0x11223344); // Some magic
