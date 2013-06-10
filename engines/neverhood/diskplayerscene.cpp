@@ -473,8 +473,15 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 	return 0;
 }
 
+void DiskplayerScene::openSmacker(uint32 fileHash, bool keepLastFrame) {
+	// The old Smacker surface is deleted when a new Smacker is opened.
+	removeSurface(_diskSmackerPlayer->getSurface());
+	_diskSmackerPlayer->open(fileHash, keepLastFrame);
+	addSurface(_diskSmackerPlayer->getSurface());
+}
+
 void DiskplayerScene::stop() {
-	_diskSmackerPlayer->open(0x08288103, true);
+	openSmacker(0x08288103, true);
 	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
 	_ssPlayButton->release();
@@ -483,7 +490,7 @@ void DiskplayerScene::stop() {
 }
 
 void DiskplayerScene::tuneIn() {
-	_diskSmackerPlayer->open(0x900001C1, false);
+	openSmacker(0x900001C1, false);
 	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
 	_ssPlayButton->release();
@@ -492,7 +499,7 @@ void DiskplayerScene::tuneIn() {
 }
 
 void DiskplayerScene::playDisk() {
-	_diskSmackerPlayer->open(kDiskplayerSmackerFileHashes[_diskIndex], false);
+	openSmacker(kDiskplayerSmackerFileHashes[_diskIndex], false);
 	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
 	_updateStatus = kUSPlaying;
@@ -500,7 +507,7 @@ void DiskplayerScene::playDisk() {
 }
 
 void DiskplayerScene::playStatic() {
-	_diskSmackerPlayer->open(0x90000101, false);
+	openSmacker(0x90000101, false);
 	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
 	_ssPlayButton->release();
