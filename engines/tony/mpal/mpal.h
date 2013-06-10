@@ -417,7 +417,7 @@ MpalHandle mpalQueryHANDLE(uint16 wQueryType, ...);
  * @remarks		This is the specialised version of the original single mpalQuery
  * method that needs to run within a co-routine context.
  */
-void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet, ...);
+void mpalQueryCORO(CORO_PARAM, uint16 wQueryType, uint32 *dwRet);
 
 /**
  * Execute a script. The script runs on multitasking by a thread.
