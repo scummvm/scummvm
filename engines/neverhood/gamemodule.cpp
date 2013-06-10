@@ -438,7 +438,7 @@ void GameModule::checkRequests() {
 }
 
 void GameModule::createModule(int moduleNum, int which) {
-	debug("GameModule::createModule(%d, %d)", moduleNum, which);
+	debug(1, "GameModule::createModule(%d, %d)", moduleNum, which);
 	_moduleNum = moduleNum;
 
 	delete _childObject;
@@ -542,7 +542,7 @@ void GameModule::createModule(int moduleNum, int which) {
 }
 
 void GameModule::createModuleByHash(uint32 nameHash) {
-	debug("GameModule::createModuleByHash(%08X)", nameHash);
+	debug(1, "GameModule::createModuleByHash(%08X)", nameHash);
 	switch (nameHash) {
 	case 0x03294419:
 		createModule(1000, -1);
@@ -687,7 +687,7 @@ void GameModule::updateModule() {
 			createModule(2300, 1);
 			break;
 		case 2300:
-		debug("module 23000 _moduleResult : %d", _moduleResult);
+		debug(1, "module 23000 _moduleResult : %d", _moduleResult);
 			if (_moduleResult == 2)
 				createModule(1200, 0);
 			else if (_moduleResult == 0)

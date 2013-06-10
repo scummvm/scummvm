@@ -64,7 +64,7 @@ Module1100::~Module1100() {
 void Module1100::createScene(int sceneNum, int which) {
 	static const uint32 kSmackerFileHashList06[] = {0x10880805, 0x1088081D, 0};
 	static const uint32 kSmackerFileHashList07[] = {0x00290321, 0x01881000, 0};
-	debug("Module1100::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module1100::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:

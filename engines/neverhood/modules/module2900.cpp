@@ -42,7 +42,7 @@ Module2900::Module2900(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 void Module2900::createScene(int sceneNum, int which) {
-	debug("Module2900::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module2900::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:

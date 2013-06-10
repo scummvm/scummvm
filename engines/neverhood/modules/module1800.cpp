@@ -61,7 +61,7 @@ Module1800::~Module1800() {
 void Module1800::createScene(int sceneNum, int which) {
 	static const byte kNavigationTypes00[] = {1, 0, 2, 0};
 	static const byte kNavigationTypes01[] = {5};
-	debug("Module1800::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module1800::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:
