@@ -35,7 +35,7 @@ Module1500::Module1500(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 void Module1500::createScene(int sceneNum, int which) {
-	debug("Module1500::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module1500::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:

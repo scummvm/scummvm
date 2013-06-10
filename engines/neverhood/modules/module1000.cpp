@@ -48,7 +48,7 @@ Module1000::~Module1000() {
 }
 
 void Module1000::createScene(int sceneNum, int which) {
-	debug("Module1000::createScene(%d, %d)", sceneNum, which);
+	debug(1, "Module1000::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
 	case 0:
