@@ -38,6 +38,7 @@ class MfcArchive : public Common::File {
 	Common::Array<int> _objectIdMap;
 
 	int _lastIndex;
+	int _level;
 
  public:
 	MfcArchive();
@@ -46,6 +47,10 @@ class MfcArchive : public Common::File {
 	int readCount();
 	CObject *parseClass(bool *isCopyReturned);
 	CObject *readClass();
+
+	void incLevel() { _level++; }
+	void decLevel() { _level--; }
+	int getLevel() { return _level; }
 };
 
 } // End of namespace Fullpipe

@@ -87,7 +87,7 @@ bool CGameLoader::loadFile(const char *fname) {
 
 bool CGameLoader::load(MfcArchive &file) {
 	_gameName = file.readPascalString();
-	debug(0, "_gameName: %s", _gameName);
+	debug(6, "_gameName: %s", _gameName);
 
 	_gameProject = new GameProject();
 
@@ -98,13 +98,13 @@ bool CGameLoader::load(MfcArchive &file) {
 	}
 
 	_gameName = file.readPascalString();
-	debug(0, "_gameName: %s", _gameName);
+	debug(6, "_gameName: %s", _gameName);
 
 	_inventory.load(file);
 
 	_interactionController->load(file);
 
-	debug(0, "count: %d", _gameProject->_sceneTagList->size());
+	debug(6, "sceneTag count: %d", _gameProject->_sceneTagList->size());
 
 	// TODO: Load Sc2
 
@@ -135,10 +135,10 @@ bool GameProject::load(MfcArchive &file) {
 
 	_headerFilename = file.readPascalString();
 
-	debug(0, "_gameProjectVersion = %d", g_gameProjectVersion);
-	debug(0, "_gameProjectValue = %d", g_gameProjectValue);
-	debug(0, "_scrollSpeed = %d", g_scrollSpeed);
-	debug(0, "_headerFilename = %s", _headerFilename);
+	debug(1, "_gameProjectVersion = %d", g_gameProjectVersion);
+	debug(1, "_gameProjectValue = %d", g_gameProjectValue);
+	debug(1, "_scrollSpeed = %d", g_scrollSpeed);
+	debug(1, "_headerFilename = %s", _headerFilename);
 
 	_sceneTagList = new SceneTagList();
 
@@ -162,8 +162,6 @@ GameProject::~GameProject() {
 bool SceneTagList::load(MfcArchive &file) {
 	int numEntries = file.readUint16LE();
 
-	debug(0, "numEntries: %d", numEntries);
-
 	for (int i = 0; i < numEntries; i++) {
 		SceneTag *t = new SceneTag();
 		t->load(file);
@@ -186,7 +184,7 @@ bool SceneTag::load(MfcArchive &file) {
 
 	_tag = file.readPascalString();
 
-	debug(0, "sceneId: %d  tag: %s", _sceneId, _tag);
+	debug(6, "sceneId: %d  tag: %s", _sceneId, _tag);
 
 	return true;
 }
@@ -198,8 +196,6 @@ SceneTag::~SceneTag() {
 bool CInventory::load(MfcArchive &file) {
 	_sceneId = file.readUint16LE();
 	int numInvs = file.readUint32LE();
-
-	debug(0, "numInvs: %d %x", numInvs, numInvs);
 
 	for (int i = 0; i < numInvs; i++) {
 		InventoryPoolItem *t = new InventoryPoolItem();
@@ -234,8 +230,6 @@ bool CInventory2::load(MfcArchive &file) {
 bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartially
 	int numInvs = file.readUint32LE();
 
-	debug(0, "numInvs: %d", numInvs);
-
 	for (int i = 0; i < numInvs; i++) {
 		InventoryItem *t = new InventoryItem();
 		t->itemId = file.readUint16LE();
@@ -252,8 +246,6 @@ bool CInteractionController::load(MfcArchive &file) {
 
 bool CObList::load(MfcArchive &file) {
 	int count = file.readCount();
-
-	debug(0, "CObList::count: %d", count);
 
 	for (int i = 0; i < count; i++) {
 		CObject *t = file.readClass();
@@ -318,7 +310,6 @@ bool MessageQueue::load(MfcArchive &file) {
 	int count = file.readUint16LE();
 
 	_stringObj = file.readPascalString();
-	debug(0, "MessageQueue::count = %d", count);
 
 	for (int i = 0; i < count; i++) {
 		CObject *tmp = file.readClass();
@@ -342,8 +333,6 @@ ExCommand::ExCommand() {
 }
 
 bool ExCommand::load(MfcArchive &file) {
-	debug(0, "ExCommand::load");
-
 	_msg._parentId = file.readUint16LE();
 	_msg._messageKind = file.readUint32LE();
 	_msg._x = file.readUint32LE();
@@ -403,8 +392,6 @@ bool CObjstateCommand::load(MfcArchive &file) {
 bool CObArray::load(MfcArchive &file) {
 	int count = file.readCount();
 
-	debug(0, "CObArray::count: %d", count);
-
 	resize(count);
 
 	for (int i = 0; i < count; i++) {
@@ -418,8 +405,6 @@ bool CObArray::load(MfcArchive &file) {
 
 bool PreloadItems::load(MfcArchive &file) {
 	int count = file.readCount();
-
-	debug(0, "CObArray::count: %d", count);
 
 	resize(count);
 
@@ -450,28 +435,36 @@ bool CGameVar::load(MfcArchive &file) {
 	_stringObj = file.readPascalString();
 	_varType = file.readUint32LE();
 
+	debugN(6, "[%03d] ", file.getLevel());
+	for (int i = 0; i < file.getLevel(); i++)
+		debugN(6, " ");
+
+	debugN(6, "<%s>: ", _stringObj);
+
 	switch (_varType) {
 	case 0:
 		_value.intValue = file.readUint32LE();
-		debug(0, "d --> %d", _value.intValue);
+		debug(6, "d --> %d", _value.intValue);
 		break;
 	case 1:
 		_value.intValue = file.readUint32LE(); // FIXME
-		debug(0, "f --> %f", _value.floatValue);
+		debug(6, "f --> %f", _value.floatValue);
 		break;
 	case 2:
 		_value.stringValue = file.readPascalString();
-		debug(0, "s --> %s", _value.stringValue);
+		debug(6, "s --> %s", _value.stringValue);
 		break;
 	default:
 		error("Unknown var type: %d (0x%x)", _varType, _varType);
 	}
 
+	file.incLevel();
 	_parentVarObj = (CGameVar *)file.readClass();
 	_prevVarObj = (CGameVar *)file.readClass();
 	_nextVarObj = (CGameVar *)file.readClass();
 	_field_14 = (CGameVar *)file.readClass();
 	_subVars = (CGameVar *)file.readClass();
+	file.decLevel();
 
 	return true;
 }

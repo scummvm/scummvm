@@ -112,6 +112,7 @@ MfcArchive::MfcArchive() {
 	}
 
 	_lastIndex = 1;
+	_level = 0;
 
 	_objectMap.push_back(0);
 	_objectIdMap.push_back(kNullObject);
