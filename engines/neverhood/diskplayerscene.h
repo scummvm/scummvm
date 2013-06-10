@@ -99,6 +99,7 @@ protected:
 	bool _dropKey;
 	void update();
 	uint32 handleMessage(int messageNum, const MessageParam &param, Entity *sender);
+	void openSmacker(uint32 fileHash, bool keepLastFrame);
 	void stop();
 	void tuneIn();
 	void playDisk();
