@@ -34,7 +34,8 @@ typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::Ig
 
 class MfcArchive : public Common::File {
 	ClassMap _classMap;
-	Common::Array<int> _objectMap;
+	Common::Array<CObject *> _objectMap;
+	Common::Array<int> _objectIdMap;
 
 	int _lastIndex;
 
@@ -43,7 +44,7 @@ class MfcArchive : public Common::File {
 
 	char *readPascalString(bool twoByte = false);
 	int readCount();
-	CObject *parseClass();
+	CObject *parseClass(bool *isCopyReturned);
 	CObject *readClass();
 };
 

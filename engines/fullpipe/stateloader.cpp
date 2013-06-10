@@ -464,7 +464,7 @@ bool CGameVar::load(MfcArchive &file) {
 		debug(0, "s --> %s", _value.stringValue);
 		break;
 	default:
-		error("Unknown var type");
+		error("Unknown var type: %d (0x%x)", _varType, _varType);
 	}
 
 	_parentVarObj = (CGameVar *)file.readClass();

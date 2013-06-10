@@ -41,7 +41,7 @@ char *MfcArchive::readPascalString(bool twoByte) {
 	tmp = (char *)calloc(len + 1, 1);
 	read(tmp, len);
 
-	debug(0, "readPascalString: %d <%s>", len, tmp);
+	debug(9, "readPascalString: %d <%s>", len, tmp);
 
 	return tmp;
 }
@@ -85,74 +85,9 @@ static const char *lookupObjectId(int id) {
 	return "";
 }
 
-
-MfcArchive::MfcArchive() {
-	for (int i = 0; classMap[i].name; i++) {
-		_classMap[classMap[i].name] = classMap[i].id;
-	}
-
-	_lastIndex = 1;
-
-	_objectMap.push_back(kNullObject);
-}
-
-CObject *MfcArchive::readClass() {
-	CObject *res = parseClass();
-
-	if (res)
-		res->load(*this);
-
-	return res;
-}
-
-CObject *MfcArchive::parseClass() {
-	char *name;
-	int objectId;
-
-	uint obTag = readUint16LE();
-
-	debug(0, "parseClass::obTag = %d (%04x)  at 0x%08x", obTag, obTag, pos() - 2);
-
-	if (obTag == 0xffff) {
-		int schema = readUint16LE();
-
-		debug(0, "parseClass::schema = %d", schema);
-
-		name = readPascalString(true);
-		debug(0, "parseClass::class <%s>", name);
-
-		if (!_classMap.contains(name)) {
-			error("Unknown class in MfcArchive: <%s>", name);
-		}
-
-		objectId = _classMap[name];
-		_objectMap.push_back(objectId);
-		debug(0, "tag: %d 0x%x (%x)", _objectMap.size() - 1, _objectMap.size() - 1, objectId);
-
-		objectId = _classMap[name];
-	} else if ((obTag & 0x8000) == 0) {
-		objectId = _objectMap[obTag];
-	} else {
-
-		obTag &= ~0x8000;
-
-		if (_objectMap.size() < obTag) {
-			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
-		}
-
-		debug(0, "parseClass::obTag <%s>", lookupObjectId(_objectMap[obTag]));
-
-		objectId = _objectMap[obTag];
-	}
-	
-	if (objectId)
-		_objectMap.push_back(objectId);
-
-	debug(0, "objectId: %d", objectId);
-
+static CObject *createObject(int objectId) {
 	switch (objectId) {
 	case kNullObject:
-		warning("parseClass: NULL object  at 0x%08x", pos() - 2);
 		return 0;
 	case kCInteraction:
 		return new CInteraction();
@@ -169,6 +104,89 @@ CObject *MfcArchive::parseClass() {
 	}
 
 	return 0;
+}
+
+MfcArchive::MfcArchive() {
+	for (int i = 0; classMap[i].name; i++) {
+		_classMap[classMap[i].name] = classMap[i].id;
+	}
+
+	_lastIndex = 1;
+
+	_objectMap.push_back(0);
+	_objectIdMap.push_back(kNullObject);
+}
+
+CObject *MfcArchive::readClass() {
+	bool isCopyReturned;
+	CObject *res = parseClass(&isCopyReturned);
+
+	if (res && !isCopyReturned)
+		res->load(*this);
+
+	return res;
+}
+
+CObject *MfcArchive::parseClass(bool *isCopyReturned) {
+	char *name;
+	int objectId = 0;
+	CObject *res = 0;
+
+	uint obTag = readUint16LE();
+
+	debug(7, "parseClass::obTag = %d (%04x)  at 0x%08x", obTag, obTag, pos() - 2);
+
+	if (obTag == 0xffff) {
+		int schema = readUint16LE();
+
+		debug(7, "parseClass::schema = %d", schema);
+
+		name = readPascalString(true);
+		debug(7, "parseClass::class <%s>", name);
+
+		if (!_classMap.contains(name)) {
+			error("Unknown class in MfcArchive: <%s>", name);
+		}
+
+		objectId = _classMap[name];
+
+		debug(7, "tag: %d 0x%x (%x)", _objectMap.size() - 1, _objectMap.size() - 1, objectId);
+
+		res = createObject(objectId);
+		_objectMap.push_back(res);
+		_objectIdMap.push_back(objectId);
+
+		_objectMap.push_back(res); // Basically a hack, but behavior is all correct
+		_objectIdMap.push_back(objectId);
+
+		*isCopyReturned = false;
+	} else if ((obTag & 0x8000) == 0) {
+		if (_objectMap.size() < obTag) {
+			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
+		}
+		res = _objectMap[obTag];
+
+		*isCopyReturned = true;
+	} else {
+
+		obTag &= ~0x8000;
+
+		if (_objectMap.size() < obTag) {
+			error("Object index too big: %d  at 0x%08x", obTag, pos() - 2);
+		}
+
+		debug(7, "parseClass::obTag <%s>", lookupObjectId(_objectIdMap[obTag]));
+
+		objectId = _objectIdMap[obTag];
+
+		res = createObject(objectId);
+		_objectMap.push_back(res);
+		_objectIdMap.push_back(objectId);
+
+		*isCopyReturned = false;
+	}
+
+	return res;
 }
 
 } // End of namespace Fullpipe
