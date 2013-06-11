@@ -51,6 +51,18 @@ void SmackerSurface::setSmackerFrame(const Graphics::Surface *smackerFrame) {
 	_smackerFrame = smackerFrame;
 }
 
+void SmackerSurface::unsetSmackerFrame() {
+	_drawRect.x = 0;
+	_drawRect.y = 0;
+	_drawRect.width = 0;
+	_drawRect.height = 0;
+	_sysRect.x = 0;
+	_sysRect.y = 0;
+	_sysRect.width = 0;
+	_sysRect.height = 0;
+	_smackerFrame = NULL;
+}
+
 // SmackerDoubleSurface
 
 SmackerDoubleSurface::SmackerDoubleSurface(NeverhoodEngine *vm)
@@ -61,6 +73,8 @@ void SmackerDoubleSurface::draw() {
 	if (_smackerFrame && _visible && _drawRect.width > 0 && _drawRect.height > 0)
 		_vm->_screen->drawDoubleSurface2(_smackerFrame, _drawRect);
 }
+
+// NeverhoodSmackerDecoder
 
 void NeverhoodSmackerDecoder::forceSeekToFrame(uint frame) {
 	if (!isVideoLoaded())
@@ -92,11 +106,20 @@ SmackerPlayer::SmackerPlayer(NeverhoodEngine *vm, Scene *scene, uint32 fileHash,
 	_drawX(-1), _drawY(-1) {
 
 	SetUpdateHandler(&SmackerPlayer::update);
+
+	if (_doubleSurface) {
+		_smackerSurface = new SmackerDoubleSurface(_vm);
+	} else {
+		_smackerSurface = new SmackerSurface(_vm);
+	}
+
 	open(fileHash, flag);
 }
 
 SmackerPlayer::~SmackerPlayer() {
 	close();
+	delete _smackerSurface;
+	_smackerSurface = NULL;
 }
 
 void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
@@ -106,12 +129,6 @@ void SmackerPlayer::open(uint32 fileHash, bool keepLastFrame) {
 	_keepLastFrame = keepLastFrame;
 
 	close();
-
-	if (_doubleSurface) {
-		_smackerSurface = new SmackerDoubleSurface(_vm);
-	} else {
-		_smackerSurface = new SmackerSurface(_vm);
-	}
 
 	_smackerFirst = true;
 
@@ -134,11 +151,10 @@ void SmackerPlayer::close() {
 	delete _smackerDecoder;
 	delete _palette;
 	// NOTE The SmackerDecoder deletes the _stream
-	delete _smackerSurface;
 	_smackerDecoder = NULL;
 	_palette = NULL;
 	_stream = NULL;
-	_smackerSurface = NULL;
+	_smackerSurface->unsetSmackerFrame();
 }
 
 void SmackerPlayer::gotoFrame(int frameNumber) {
@@ -200,6 +216,10 @@ void SmackerPlayer::update() {
 }
 
 void SmackerPlayer::updateFrame() {
+
+	if (!_smackerDecoder || !_smackerSurface)
+		return;
+
 	const Graphics::Surface *smackerFrame = _smackerDecoder->decodeNextFrame();
 
 	if (_smackerFirst) {

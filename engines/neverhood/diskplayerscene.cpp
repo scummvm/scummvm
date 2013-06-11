@@ -354,9 +354,7 @@ DiskplayerScene::DiskplayerScene(NeverhoodEngine *vm, Module *parentModule, int 
 	insertPuzzleMouse(0x000408A8, 20, 620);
 	showMouse(false);
 
-	_diskSmackerPlayer = new SmackerPlayer(_vm, this, 0x08288103, false, true);
-	addEntity(_diskSmackerPlayer);
-	addSurface(_diskSmackerPlayer->getSurface());
+	_diskSmackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, 0x08288103, false, true));
 	_diskSmackerPlayer->setDrawPos(154, 86);
 	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 
@@ -474,10 +472,7 @@ uint32 DiskplayerScene::handleMessage(int messageNum, const MessageParam &param,
 }
 
 void DiskplayerScene::openSmacker(uint32 fileHash, bool keepLastFrame) {
-	// The old Smacker surface is deleted when a new Smacker is opened.
-	removeSurface(_diskSmackerPlayer->getSurface());
 	_diskSmackerPlayer->open(fileHash, keepLastFrame);
-	addSurface(_diskSmackerPlayer->getSurface());
 	_vm->_screen->setSmackerDecoder(_diskSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
 }
