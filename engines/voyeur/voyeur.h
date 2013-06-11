@@ -75,6 +75,10 @@ private:
 	void initBolt();
 	void vInitInterrupts();
 	void initInput();
+
+	void doHeadTitle();
+	void showConversionScreen();
+	bool doLock();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -101,8 +105,6 @@ public:
 	virtual bool canSaveGameStateCurrently();
 	virtual Common::Error loadGameState(int slot);
 	virtual Common::Error saveGameState(int slot, const Common::String &desc);
-
-	void doHeadTitle();
 };
 
 } // End of namespace Voyeur

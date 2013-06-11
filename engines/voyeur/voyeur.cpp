@@ -144,45 +144,70 @@ void VoyeurEngine::doHeadTitle() {
 	_eventsManager.startMainClockInt();
 
 	// Show starting screen
-	if (_bVoy->getBoltGroup(0x10500)) {
-		_graphicsManager._backgroundPage = _bVoy->getBoltEntry(0x5020000)._picResource;
-		(*_graphicsManager._vPort)->setupViewPort();
-		(*_graphicsManager._vPort)->_flags |= 8;
+	if (_bVoy->getBoltGroup(0x10500))
+		showConversionScreen();
+	if (shouldQuit())
+		return;
 
-		_graphicsManager.flipPage();
-		_eventsManager.sWaitFlip();
+	doLock();
 
-		// Immediate palette load to show the initial screen
-		CMapResource *cMap = _bVoy->getCMapResource(0x5030000);
-		assert(cMap);
-		cMap->_steps = 0;
-		cMap->startFade();
+	// TODO
+}
 
-		// Wait briefly
-		_eventsManager.delay(150);
-		if (shouldQuit())
-			return;
+void VoyeurEngine::showConversionScreen() {
+	_graphicsManager._backgroundPage = _bVoy->getBoltEntry(0x5020000)._picResource;
+	(*_graphicsManager._vPort)->setupViewPort();
+	(*_graphicsManager._vPort)->_flags |= 8;
 
-		// Fade out the screen
-		cMap = _bVoy->getCMapResource(0x5040000);
-		cMap->_steps = 30;
-		cMap->startFade();
-		if (shouldQuit())
-			return;
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
 
-		(*_graphicsManager._vPort)->_flags |= 8;
-		_graphicsManager.flipPage();
-		_eventsManager.sWaitFlip();
+	// Immediate palette load to show the initial screen
+	CMapResource *cMap = _bVoy->getCMapResource(0x5030000);
+	assert(cMap);
+	cMap->_steps = 0;
+	cMap->startFade();
 
-		while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
-			_eventsManager.delay(1);
+	// Wait briefly
+	_eventsManager.delay(150);
+	if (shouldQuit())
+		return;
 
-		_graphicsManager.screenReset();
-		_bVoy->freeBoltGroup(0x10500);
+	// Fade out the screen
+	cMap = _bVoy->getCMapResource(0x5040000);
+	cMap->_steps = 30;
+	cMap->startFade();
+	if (shouldQuit())
+		return;
 
-		if (shouldQuit())
-			return;
+	(*_graphicsManager._vPort)->_flags |= 8;
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
+
+	while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
+		_eventsManager.delay(1);
+
+	_graphicsManager.screenReset();
+	_bVoy->freeBoltGroup(0x10500);
+}
+
+bool VoyeurEngine::doLock() {
+	int var12 = 0;
+	int var14 = 0;
+	int di = 1;
+	int wrongSize;
+	byte *buttonVoc = _filesManager.fload("button.voc");
+	byte *wrongVoc = _filesManager.fload("wrong.voc", &wrongSize);
+	bool result = false;
+
+	if (_bVoy->getBoltGroup(0x10700)) {
+
 	}
+
+	delete[] buttonVoc;
+	delete[] wrongVoc;
+
+	return result;
 }
 
 } // End of namespace Voyeur

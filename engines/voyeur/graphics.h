@@ -42,6 +42,28 @@ class DisplayResource;
 class PictureResource;
 class ViewPortResource;
 class ViewPortListResource;
+class FontResource;
+
+class FontInfo {
+public:
+	FontResource *_curFont;
+	byte _picFlags;
+	byte _picSelect;
+	byte _picPick;
+	byte _picOnOff;
+	byte _fontFlags;
+	byte _justify;
+	int _fontSaveBack;
+	Common::Point _pos;
+	int _justifyWidth;
+	int _justifyHeight;
+	Common::Point _shadow;
+	int _foreColor;
+	int _backColor;
+	int _shadowColor;
+public:
+	FontInfo();
+};
 
 typedef void (GraphicsManager::*GraphicMethodPtr)(); 
 typedef void (GraphicsManager::*ViewPortSetupPtr)(ViewPortResource *);

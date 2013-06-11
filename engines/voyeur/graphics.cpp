@@ -29,6 +29,23 @@
 
 namespace Voyeur {
 
+FontInfo::FontInfo() {
+	_curFont = NULL;
+	_picFlags = 3;
+	_picSelect = 0xff;
+	_picPick = 0xff;
+	_picOnOff = 0;
+	_fontFlags = 0;
+	_justify = 0;
+	_fontSaveBack = 0;
+	_justifyWidth = 1;
+	_justifyHeight = 1;
+	_shadow = Common::Point(1, 1);
+	_foreColor = 1;
+	_backColor = 0;
+	_shadowColor = 0;
+}
+
 GraphicsManager::GraphicsManager() {
 	_SVGAPage = 0;
 	_SVGAMode = 0;

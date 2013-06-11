@@ -191,6 +191,25 @@ bool FilesManager::openBoltLib(const Common::String &filename, BoltFile *&boltFi
 	return true;
 }
 
+byte *FilesManager::fload(const Common::String &filename, int *size) {
+	Common::File f;
+	int filesize;
+	byte *data = NULL;
+
+	if (f.open(filename)) {
+		// Read in the file
+		filesize = f.size();
+		data = new byte[filesize];
+		f.read(data, filesize);
+	} else {
+		filesize = 0;
+	}
+
+	if (size)
+		*size = filesize;
+	return data;
+}
+
 /*------------------------------------------------------------------------*/
 
 const BoltMethodPtr BoltFile::_fnInitType[25] = {

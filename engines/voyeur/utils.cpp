@@ -20,34 +20,12 @@
  *
  */
 
-#include "voyeur/game.h"
-#include "voyeur/voyeur.h"
+#include "voyeur/utils.h"
 
 namespace Voyeur {
 
-IntData::IntData() {
-	_field9 = false;
-	_flipWait = false;
-	_hasPalette = false;
-	field16 = 0;
-	field1A = 0;
-	field1E = 0;
-	field22 = 0;
-	field24 = 0;
-	field26 = 0;
-	field2A = 0;
-	field38 = 0;
-	field3B = 0;
-	field3D = 0;
-	_palStartIndex = 0;
-	_palEndIndex = 0;
-	_palette = NULL;
-}
-
-void IntData::audioInit() {
+void LockClass::getSysData() {
 
 }
-
-/*------------------------------------------------------------------------*/
 
 } // End of namespace Voyeur

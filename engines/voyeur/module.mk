@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	game.o \
 	files.o \
 	graphics.o \
+	utils.o \
 	voyeur.o
 
 # This module can be built as a plugin
