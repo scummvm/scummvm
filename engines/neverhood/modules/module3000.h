@@ -128,11 +128,12 @@ protected:
 class Scene3009 : public Scene {
 public:
 	Scene3009(NeverhoodEngine *vm, Module *parentModule, int which);
+	virtual ~Scene3009();
 	bool isTurning();
 protected:
 	int _lockSymbolsPart1Countdown;
 	int _lockSymbolsPart2Countdown;
-	SmackerPlayer *_smackerPlayer;
+	SmackerPlayer *_cannonSmackerPlayer;
 	Sprite *_ssFireCannonButton;
 	SsScene3009SymbolEdges *_ssSymbolEdges[2];
 	SsScene3009TargetLine *_ssTargetLines[2];
@@ -149,6 +150,7 @@ protected:
 	void playActionVideo();
 	bool isSymbolsPart1Solved();
 	bool isSymbolsPart2Solved();
+	void openSmacker(uint32 fileHash, bool keepLastFrame);
 };
 
 // Scene3010

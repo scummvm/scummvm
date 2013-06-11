@@ -786,8 +786,8 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 		}
 	}
 
-	_smackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009CannonScopeVideos[_cannonTargetStatus], false, _keepVideo));
-	_smackerPlayer->setDrawPos(89, 37);
+	_cannonSmackerPlayer = addSmackerPlayer(new SmackerPlayer(_vm, this, kScene3009CannonScopeVideos[_cannonTargetStatus], false, _keepVideo));
+	_cannonSmackerPlayer->setDrawPos(89, 37);
 	_palette->usePalette(); // Use it again since the SmackerPlayer overrides the usage
 
 	insertStaticSprite(0x8540252C, 400);
@@ -817,32 +817,43 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 
 }
 
+Scene3009::~Scene3009() {
+	removeSurface(_cannonSmackerPlayer->getSurface());
+	// FIXME: Deleting the player crashes the game when leaving the cannon scene!
+	//delete _cannonSmackerPlayer;
+}
+
+void Scene3009::openSmacker(uint32 fileHash, bool keepLastFrame) {
+	// The old Smacker surface is deleted when a new Smacker is opened.
+	removeSurface(_cannonSmackerPlayer->getSurface());
+	_cannonSmackerPlayer->open(fileHash, keepLastFrame);
+	addSurface(_cannonSmackerPlayer->getSurface());
+	//_vm->_screen->setSmackerDecoder(_cannonSmackerPlayer->getSmackerDecoder());
+	_palette->usePalette();
+}
+
 void Scene3009::update() {
 	Scene::update();
 	
-	if (!_keepVideo && _smackerPlayer->isDone() && _cannonTargetStatus <= kCTSCount) {
+	if (!_keepVideo && _cannonSmackerPlayer->isDone() && _cannonTargetStatus <= kCTSCount) {
 		switch (_cannonTargetStatus) {
 		case kCTSNull:
 		case kCTSLowerCannon:
-			_smackerPlayer->open(0x340A0049, true);
-			_palette->usePalette();
+			openSmacker(0x340A0049, true);
 			_keepVideo = true;
 			break;
 		case kCTSRightRobotNoTarget:
-			_smackerPlayer->open(0x0082080D, true);
-			_palette->usePalette();
+			openSmacker(0x0082080D, true);
 			_keepVideo = true;
 			_isTurning = false;
 			break;
 		case kCTSRightRobotIsTarget:
-			_smackerPlayer->open(0x0282080D, true);
-			_palette->usePalette();
+			openSmacker(0x0282080D, true);
 			_keepVideo = true;
 			_isTurning = false;
 			break;
 		case kCTSRightNoRobot:
-			_smackerPlayer->open(0x0882080D, true);
-			_palette->usePalette();
+			openSmacker(0x0882080D, true);
 			_keepVideo = true;
 			_isTurning = false;
 			break;
@@ -851,12 +862,11 @@ void Scene3009::update() {
 		case kCTSLeftNoRobot:
 			if (_moveCannonLeftFirst) {
 				if (_cannonTargetStatus == kCTSLeftRobotNoTarget)
-					_smackerPlayer->open(0x110A000F, false);
+					openSmacker(0x110A000F, false);
 				else if (_cannonTargetStatus == kCTSLeftRobotIsTarget)				
-					_smackerPlayer->open(0x500B004F, false);
+					openSmacker(0x500B004F, false);
 				else if (_cannonTargetStatus == kCTSLeftNoRobot)				
-					_smackerPlayer->open(0x100B010E, false);
-				_palette->usePalette();
+					openSmacker(0x100B010E, false);
 				_moveCannonLeftFirst = false;
 				_asHorizontalIndicator->stMoveLeft();
 			} else {
@@ -955,15 +965,14 @@ uint32 Scene3009::handleMessage(int messageNum, const MessageParam &param, Entit
 				// Cannon is at the right position
 				if (!getGlobalVar(V_ROBOT_TARGET)) {
 					_cannonTargetStatus = kCTSLeftRobotNoTarget;
-					_smackerPlayer->open(0x108A000F, false);
+					openSmacker(0x108A000F, false);
 				} else if (!getGlobalVar(V_ROBOT_HIT)) {
 					_cannonTargetStatus = kCTSLeftRobotIsTarget;
-					_smackerPlayer->open(0x500B002F, false);
+					openSmacker(0x500B002F, false);
 				} else {
 					_cannonTargetStatus = kCTSLeftNoRobot;
-					_smackerPlayer->open(0x100B008E, false);
+					openSmacker(0x100B008E, false);
 				}
-				_palette->usePalette();
 				_moveCannonLeftFirst = true;
 				_isTurning = true;
 				_keepVideo = false;
