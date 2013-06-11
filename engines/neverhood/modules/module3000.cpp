@@ -818,16 +818,10 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 }
 
 Scene3009::~Scene3009() {
-	removeSurface(_cannonSmackerPlayer->getSurface());
-	// FIXME: Deleting the player crashes the game when leaving the cannon scene!
-	//delete _cannonSmackerPlayer;
 }
 
 void Scene3009::openSmacker(uint32 fileHash, bool keepLastFrame) {
-	// The old Smacker surface is deleted when a new Smacker is opened.
-	removeSurface(_cannonSmackerPlayer->getSurface());
 	_cannonSmackerPlayer->open(fileHash, keepLastFrame);
-	addSurface(_cannonSmackerPlayer->getSurface());
 	//_vm->_screen->setSmackerDecoder(_cannonSmackerPlayer->getSmackerDecoder());
 	_palette->usePalette();
 }
