@@ -47,11 +47,11 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 		DebugPrintf("Use room <module> <scene> to change rooms\n");
 		DebugPrintf("Modules are incremental by 100, from 1000 to 3000\n");
 	} else {
-		int module = atoi(argv[1]);
-		int scene  = atoi(argv[2]);
+		int newModule = atoi(argv[1]);
+		int newScene  = atoi(argv[2]);
 
-		_vm->gameState().sceneNum = scene;
-		_vm->_gameModule->createModule(module, -1);
+		_vm->gameState().sceneNum = newScene;
+		_vm->_gameModule->createModule(newModule, -1);
 	}
 
 	return true;
