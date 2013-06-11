@@ -625,13 +625,6 @@ void Scene1105::upClosePanel() {
 }
 
 void Scene1105::update() {
-
-	// DEBUG: Show the correct code
-	debug("(%d, %d) (%d, %d) (%d, %d)", 
-		getSubVar(VA_GOOD_DICE_NUMBERS, 0), getSubVar(VA_CURR_DICE_NUMBERS, 0),
-		getSubVar(VA_GOOD_DICE_NUMBERS, 1), getSubVar(VA_CURR_DICE_NUMBERS, 1),
-		getSubVar(VA_GOOD_DICE_NUMBERS, 2), getSubVar(VA_CURR_DICE_NUMBERS, 2));
-
 	Scene::update();
 	if (_countdown != 0 && (--_countdown == 0))
 		createObjects();
