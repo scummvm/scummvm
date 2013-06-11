@@ -164,7 +164,7 @@ bool HopkinsEngine::runWin95Demo() {
 		_globals->_speed = 3;
 
 	if (_startGameSlot == -1)
-		_graphicsMan->fadeOutLong();
+		_graphicsMan->fadeOutShort();
 
 	_globals->_eventMode = EVENTMODE_IGNORE;
 	_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
