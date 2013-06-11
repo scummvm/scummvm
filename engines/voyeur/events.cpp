@@ -215,25 +215,25 @@ void EventsManager::startFade(CMapResource *cMap) {
 	_fadeCount = cMap->_steps + 1;
 
 	if (cMap->_steps > 0) {
-		_fadeStatus = cMap->_fadeStatus |= 1;
+		_fadeStatus = cMap->_fadeStatus | 1;
 		byte *vgaP = &_vm->_graphicsManager._VGAColors[_fadeFirstCol * 3];
 		int mapIndex = 0;
 
-		for (int idx = _fadeFirstCol; idx <= _fadeLastCol; ++idx) {
+		for (int idx = _fadeFirstCol; idx <= _fadeLastCol; ++idx, vgaP += 3) {
 			ViewPortPalEntry &palEntry = _vm->_graphicsManager._viewPortListPtr->_palette[idx];
 			palEntry._rEntry = vgaP[0] << 8;
-			uint32 rComp = (uint16)((cMap->_entries[mapIndex * 3] << 8) - palEntry._rEntry) | 0x80;
-			palEntry._rChange = rComp / cMap->_steps;
+			int rDiff = (cMap->_entries[mapIndex * 3] << 8) - palEntry._rEntry;
+			palEntry._rChange = rDiff / cMap->_steps;
 
 			palEntry._gEntry = vgaP[1] << 8;
-			uint32 gComp = (uint16)((cMap->_entries[mapIndex * 3 + 1] << 8) - palEntry._gEntry) | 0x80;
-			palEntry._gChange = gComp / cMap->_steps;
+			int gDiff = (cMap->_entries[mapIndex * 3 + 1] << 8) - palEntry._gEntry;
+			palEntry._gChange = gDiff / cMap->_steps;
 
 			palEntry._bEntry = vgaP[2] << 8;
-			uint32 bComp = (uint16)((cMap->_entries[mapIndex * 3 + 2] << 8) -palEntry._bEntry) | 0x80;
-			palEntry._bChange = bComp / cMap->_steps;
-			palEntry._palIndex = bComp % cMap->_steps;
-
+			int bDiff = (cMap->_entries[mapIndex * 3 + 2] << 8) - palEntry._bEntry;
+			palEntry._bChange = bDiff / cMap->_steps;
+			
+			palEntry._palIndex = idx;
 			if (!(cMap->_fadeStatus & 1))
 				++mapIndex;
 		}
