@@ -807,14 +807,6 @@ Scene3009::Scene3009(NeverhoodEngine *vm, Module *parentModule, int which)
 
 	SetMessageHandler(&Scene3009::handleMessage);
 	SetUpdateHandler(&Scene3009::update);
-
-	// DEBUG Enable to set the correct code
-#if 0	
-	for (int i = 0; i < 6; i++)
-		setSubVar(VA_CURR_CANNON_SYMBOLS, i, _correctSymbols[i]);
-	sendMessage(this, 0x2003, 0);
-#endif   
-
 }
 
 Scene3009::~Scene3009() {
@@ -1226,13 +1218,6 @@ Scene3010::Scene3010(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Scene(vm, parentModule), _countdown(0), _doorUnlocked(false), _checkUnlocked(false) {
 	
 	int initCountdown = 0;
-
-	// DEBUG Enable to activate all buttons
-#if 0	
-	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[0], 1);
-	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[1], 1);
-	setSubVar(VA_LOCKS_DISABLED, kScene3010ButtonNameHashes[2], 1);
-#endif	
 
 	setBackground(0x80802626);
 	setPalette(0x80802626);

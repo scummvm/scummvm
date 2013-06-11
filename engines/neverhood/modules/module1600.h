@@ -26,6 +26,7 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/module.h"
 #include "neverhood/scene.h"
+#include "neverhood/console.h"
 #include "neverhood/modules/module3000.h"
 
 namespace Neverhood {
@@ -162,6 +163,7 @@ protected:
 };
 
 class Scene1609 : public Scene {
+	friend class Console;
 public:
 	Scene1609(NeverhoodEngine *vm, Module *parentModule);
 protected:

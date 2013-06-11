@@ -194,21 +194,6 @@ void GameModule::initMemoryPuzzle() {
 				tileSymbolIndex = 0;
 		}
 		setSubVar(VA_IS_PUZZLE_INIT, 0xC8606803, 1);
-
-		// DEBUG Enable to autosolve all tiles and leave only two matching tiles open
-#if 0		
-		for (int i = 0; i < 48; i++)
-			setSubVar(VA_IS_TILE_MATCH, i, 1);
-		int debugIndex = 0;
-		setSubVar(VA_IS_TILE_MATCH, debugIndex, 0);
-		for (int i = 0; i < 48; i++) {
-			if (i != debugIndex && getSubVar(VA_TILE_SYMBOLS, i) == getSubVar(VA_TILE_SYMBOLS, debugIndex)) {
-				setSubVar(VA_IS_TILE_MATCH, i, 0);
-				break;
-			}
-		}
-#endif		
-
 	}
 }
 

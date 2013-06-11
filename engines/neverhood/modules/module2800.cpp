@@ -2443,18 +2443,6 @@ uint32 Scene2808::handleMessage(int messageNum, const MessageParam &param, Entit
 }
 
 void Scene2808::update() {
-
-	// DEBUG>>> Show correct values
-	#if 1
-	debug("---------------");
-	if (_testTubeSetNum == 0)
-		debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2));
-	else
-		debug("%03d %03d %03d", getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1), getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2));
-	debug("%03d %03d %03d", _asTestTubes[0]->getFillLevel(), _asTestTubes[1]->getFillLevel(), _asTestTubes[2]->getFillLevel());
-	#endif
-	// DEBUG<<<
-	
 	Scene::update();
 	if (_countdown != 0 && (--_countdown) == 0) {
 		leaveScene(_leaveResult);
