@@ -300,4 +300,67 @@ const Array<WinResourceID> NEResources::getIDList(const WinResourceID &type) con
 	return idArray;
 }
 
+NEResources::VersionInfo NEResources::getVersionInfo() {
+	VersionInfo info;
+	Common::ScopedPtr<Common::SeekableReadStream> stream(getResource(kNEVersion, 1));
+
+	if (!stream)
+		return info;
+
+	stream->readUint16LE(); // resource size
+
+	// Value size check
+	if (stream->readUint16LE() != 0x34)
+		return info;
+
+	char versionInfoString[16];
+	stream->read(versionInfoString, sizeof(versionInfoString));
+
+	if (memcmp(versionInfoString, "VS_VERSION_INFO", sizeof(versionInfoString) - 1) != 0)
+		return info;
+
+	// Signature check
+	if (stream->readUint32LE() != 0xFEEF04BD)
+		return info;
+
+	stream->readUint32LE(); // struct version
+
+	// The versions are stored a bit weird
+	info.fileVersion[1] = stream->readUint16LE();
+	info.fileVersion[0] = stream->readUint16LE();
+	info.fileVersion[3] = stream->readUint16LE();
+	info.fileVersion[2] = stream->readUint16LE();
+	info.productVersion[1] = stream->readUint16LE();
+	info.productVersion[0] = stream->readUint16LE();
+	info.productVersion[3] = stream->readUint16LE();
+	info.productVersion[2] = stream->readUint16LE();
+	
+	info.fileFlagsMask = stream->readUint32LE();
+	info.fileFlags = stream->readUint32LE();
+	info.fileOS = stream->readUint32LE();
+	info.fileType = stream->readUint32LE();
+	info.fileSubtype = stream->readUint32LE();
+	info.fileDate[0] = stream->readUint32LE();
+	info.fileDate[1] = stream->readUint32LE();
+
+	// TODO: Think about reading StringFileInfo and Translation parts
+
+	return info;
+}
+
+NEResources::VersionInfo::VersionInfo() {
+	fileVersion[0] = fileVersion[1] = fileVersion[2] = fileVersion[3] = 0;
+	productVersion[0] = productVersion[1] = productVersion[2] = productVersion[3] = 0;
+	fileFlagsMask = 0;
+	fileFlags = 0;
+	fileOS = 0;
+	fileType = 0;
+	fileSubtype = 0;
+	fileDate[0] = fileDate[1] = 0;
+}
+
+bool NEResources::VersionInfo::isValid() const {
+	return fileOS != 0;
+}
+
 } // End of namespace Common

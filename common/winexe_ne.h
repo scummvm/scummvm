@@ -86,6 +86,26 @@ public:
 	/** Return a stream to the specified resource (or 0 if non-existent). */
 	SeekableReadStream *getResource(const WinResourceID &type, const WinResourceID &id);
 
+	/** The structure of the version resource inside an NE EXE */
+	struct VersionInfo {
+		VersionInfo();
+
+		/** Is the version field valid? */
+		bool isValid() const;
+
+		uint16 fileVersion[4];
+		uint16 productVersion[4];
+		uint32 fileFlagsMask;
+		uint32 fileFlags;
+		uint32 fileOS;
+		uint32 fileType;
+		uint32 fileSubtype;
+		uint32 fileDate[2];		
+	};
+
+	/** Return the version of the EXE */
+	VersionInfo getVersionInfo();
+
 private:
 	/** A resource. */
 	struct Resource {
