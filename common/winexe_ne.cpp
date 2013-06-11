@@ -348,6 +348,27 @@ NEResources::VersionInfo NEResources::getVersionInfo() {
 	return info;
 }
 
+String NEResources::loadString(uint32 stringID) {
+	// This is how the resource ID is calculated
+	String string;
+	SeekableReadStream *stream = getResource(kNEString, (stringID >> 4) + 1);
+
+	if (!stream)
+		return string;
+
+	// Skip over strings we don't care about
+	uint32 startString = stringID & ~0xF;
+
+	for (uint32 i = startString; i < stringID; i++)
+		stream->skip(stream->readByte());
+
+	byte size = stream->readByte();
+	while (size--)
+		string += (char)stream->readByte();
+
+	return string;
+}
+
 NEResources::VersionInfo::VersionInfo() {
 	fileVersion[0] = fileVersion[1] = fileVersion[2] = fileVersion[3] = 0;
 	productVersion[0] = productVersion[1] = productVersion[2] = productVersion[3] = 0;

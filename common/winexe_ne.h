@@ -106,6 +106,9 @@ public:
 	/** Return the version of the EXE */
 	VersionInfo getVersionInfo();
 
+	/** Get a string from a string resource. */
+	String loadString(uint32 stringID);
+
 private:
 	/** A resource. */
 	struct Resource {
