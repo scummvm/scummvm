@@ -164,7 +164,7 @@ bool HopkinsEngine::runWin95Demo() {
 		_globals->_speed = 3;
 
 	if (_startGameSlot == -1)
-		_graphicsMan->fadeOutLong();
+		_graphicsMan->fadeOutShort();
 
 	_globals->_eventMode = EVENTMODE_IGNORE;
 	_globals->_characterSpriteBuf = _fileIO->loadFile("PERSO.SPR");
@@ -793,14 +793,14 @@ bool HopkinsEngine::runFull() {
 
 	if (_startGameSlot == -1) {
 		if (getPlatform() == Common::kPlatformLinux) {
-				_graphicsMan->loadImage("H2");
-				_graphicsMan->fadeInLong();
-				_events->delay(500);
-				_graphicsMan->fadeOutLong();
-				_globals->_speed = 2;
-				_globals->_eventMode = EVENTMODE_IGNORE;
-				_graphicsMan->_fadingFl = true;
-				_animMan->playAnim("MP.ANM", "MP.ANM", 10, 16, 200);
+			_graphicsMan->loadImage("H2");
+			_graphicsMan->fadeInLong();
+			_events->delay(500);
+			_graphicsMan->fadeOutLong();
+			_globals->_speed = 2;
+			_globals->_eventMode = EVENTMODE_IGNORE;
+			_graphicsMan->_fadingFl = true;
+			_animMan->playAnim("MP.ANM", "MP.ANM", 10, 16, 200);
 		} else {
 			_animMan->playAnim("MP.ANM", "MP.ANM", 10, 16, 200);
 			_graphicsMan->fadeOutLong();
