@@ -272,6 +272,7 @@ class ViewPortListResource {
 public:
 	Common::Array<ViewPortPalEntry> _palette;
 	Common::Array<ViewPortResource *> _entries;
+	int _palIndex;
 
 	ViewPortListResource(BoltFilesState &state, const byte *src);
 	virtual ~ViewPortListResource() {}

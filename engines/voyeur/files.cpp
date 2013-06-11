@@ -797,6 +797,7 @@ void ViewPortResource::setupViewPort() {
 
 ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *src) {
 	uint count = READ_LE_UINT16(src);
+	_palIndex = READ_LE_UINT16(src + 2);
 
 	// Load palette map
 	byte *palData = state._curLibPtr->memberAddr(READ_LE_UINT32(src + 4));
@@ -845,6 +846,12 @@ CMapResource::CMapResource(BoltFilesState &state, const byte *src): _vm(state._v
 	int count = _end - _start;
 	_entries = new byte[count * 3];
 	Common::copy(src + 6, src + 6 + 3 * count, _entries);
+
+	int palIndex = state._vm->_graphicsManager._viewPortListPtr->_palIndex;
+	if (_end > palIndex)
+		_end = palIndex;
+	if (_start > palIndex)
+		_start = palIndex;
 }
 
 CMapResource::~CMapResource() {
