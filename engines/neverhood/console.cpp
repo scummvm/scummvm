@@ -82,8 +82,8 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 	}
 
 	Common::String cheatName = argv[1];
-	int module = _vm->_gameModule->getCurrentModuleNum();
-	int scene = _vm->gameState().sceneNum;
+	int moduleNum = _vm->_gameModule->getCurrentModuleNum();
+	int sceneNum = _vm->gameState().sceneNum;
 
 	if (cheatName == "buttons") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
@@ -134,7 +134,7 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 
 		DebugPrintf("The radio has been enabled\n");
 	} else if (cheatName == "symbols") {
-		if (module == 1600 && scene == 8) {
+		if (moduleNum == 1600 && sceneNum == 8) {
 			Scene1609 *scene = ((Scene1609 *)((Module1600 *)_vm->_gameModule->_childObject)->_childObject);
 
 			for (int index = 0; index < 12; index++) {
