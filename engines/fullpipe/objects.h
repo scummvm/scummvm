@@ -29,6 +29,8 @@ class CObject {
  public:
 	virtual bool load(MfcArchive &in) { return true; }
 	virtual ~CObject() {}
+
+	bool loadFile(const char *fname);
 };
 
 class CObList : public Common::List<CObject>, public CObject {
@@ -66,6 +68,7 @@ struct CNode {
 typedef Common::Array<void *> CPtrList;
 
 class SceneTag : public CObject {
+ public:
 	int _field_4;
 	char *_tag;
 	int _scene;
@@ -173,8 +176,26 @@ class CInputController {
 	CInputController();
 };
 
-class Sc2Array {
-	CObArray _objs;
+class Sc2 : public CObject {
+	int16 _sceneId;
+	int16 _field_2;
+	//Scene *_scene;
+	//CMotionController *_motionController;
+	int _data1;
+	int _count1;
+	int _defPicAniInfos;
+	int _defPicAniInfosCount;
+	int _picAniInfos;
+	int _picAniInfosCount;
+	int _isLoaded;
+	int _entranceData;
+	int _entranceDataCount;
+
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
+class Sc2Array : public Common::Array<Sc2> {
 };
 
 union VarValue {
@@ -367,12 +388,11 @@ class PreloadItems : public Common::Array<PreloadItem>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-class CGameLoader {
+class CGameLoader : public CObject {
  public:
 	CGameLoader();
 	virtual ~CGameLoader();
 
-	bool loadFile(const char *fname);
 	virtual bool load(MfcArchive &file);
 
  private:

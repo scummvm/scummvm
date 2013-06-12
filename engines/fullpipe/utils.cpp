@@ -56,12 +56,12 @@ int MfcArchive::readCount() {
 }
 
 enum {
-	kNullObject = 0,
-	kCInteraction = 1,
-	kMessageQueue = 2,
-	kExCommand = 3,
-	kCObjstateCommand = 4,
-	kCGameVar = 5
+	kNullObject,
+	kCInteraction,
+	kMessageQueue,
+	kExCommand,
+	kCObjstateCommand,
+	kCGameVar
 };
 
 const struct {

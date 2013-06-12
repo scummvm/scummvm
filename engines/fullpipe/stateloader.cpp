@@ -76,7 +76,7 @@ CGameLoader::~CGameLoader() {
 	delete _gameProject;
 }
 
-bool CGameLoader::loadFile(const char *fname) {
+bool CObject::loadFile(const char *fname) {
 	MfcArchive file;
 
 	if (!file.open(fname))
@@ -106,7 +106,18 @@ bool CGameLoader::load(MfcArchive &file) {
 
 	debug(6, "sceneTag count: %d", _gameProject->_sceneTagList->size());
 
-	// TODO: Load Sc2
+	_sc2array.resize(_gameProject->_sceneTagList->size());
+
+	int i = 0;
+	for (SceneTagList::const_iterator it = _gameProject->_sceneTagList->begin(); it != _gameProject->_sceneTagList->end(); ++it, i++) {
+		char tmp[12];
+
+		snprintf(tmp, 11, "%04d.sc2", it->_sceneId);
+
+		debug(0, "sc: %d", it->_sceneId);
+
+		_sc2array[i].loadFile((const char *)tmp);
+	}
 
 	_preloadItems.load(file);
 
@@ -465,6 +476,12 @@ bool CGameVar::load(MfcArchive &file) {
 	_field_14 = (CGameVar *)file.readClass();
 	_subVars = (CGameVar *)file.readClass();
 	file.decLevel();
+
+	return true;
+}
+
+bool Sc2::load(MfcArchive &file) {
+	_sceneId = file.readUint16LE();
 
 	return true;
 }
