@@ -434,7 +434,7 @@ void Klaymen::stopWalking() {
 }
 
 void Klaymen::startIdleAnimation(uint32 fileHash, AnimationCb callback) {
-	debug("startIdleAnimation(%08X)", fileHash);
+	debug(1, "startIdleAnimation(%08X)", fileHash);
 	NextState(callback);
 	SetUpdateHandler(&Klaymen::upIdleAnimation);
 }
