@@ -40,6 +40,7 @@ private:
 	bool Cmd_Room(int argc, const char **argv);
 	bool Cmd_Surfaces(int argc, const char **argv);
 	bool Cmd_Cheat(int argc, const char **argv);
+	bool Cmd_Dumpvars(int argc, const char **argv);
 };
 
 } // End of namespace Neverhood

@@ -30,9 +30,10 @@
 namespace Neverhood {
 
 Console::Console(NeverhoodEngine *vm) : GUI::Debugger(), _vm(vm) {
+	DCmd_Register("cheat",			WRAP_METHOD(Console, Cmd_Cheat));
+	DCmd_Register("dumpvars",		WRAP_METHOD(Console, Cmd_Dumpvars));
 	DCmd_Register("room",			WRAP_METHOD(Console, Cmd_Room));
 	DCmd_Register("surfaces",		WRAP_METHOD(Console, Cmd_Surfaces));
-	DCmd_Register("cheat",			WRAP_METHOD(Console, Cmd_Cheat));
 }
 
 Console::~Console() {
@@ -75,8 +76,8 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 		DebugPrintf("  cannon  - sets the correct cannon combination in module 3000, scene 8\n");
 		DebugPrintf("  dice    - shows the correct dice combination in the teddy bear puzzle, module 1100, scene 6\n");
 		DebugPrintf("  memory  - solves the memory puzzle, module 1400, scene 4\n");
-		DebugPrintf("  radio   - enables the radio, module 3000, scene 9 - same as pulling the rightmost cord in the flytrap room\n");
 		DebugPrintf("  music   - shows the correct index in the radio music puzzle, module 2800, scene 1\n");
+		DebugPrintf("  radio   - enables the radio, module 3000, scene 9 - same as pulling the rightmost cord in the flytrap room\n");
 		DebugPrintf("  symbols - solves the symbols puzzle, module 1600, scene 8. Only available in that room\n");
 		DebugPrintf("  tubes   - shows the correct test tube combination in module 2800, scenes 7 and 10, can be used anywhere\n");		
 		return true;
@@ -158,6 +159,12 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 		DebugPrintf("Tube set 1: %d %d %d\n", scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 0), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 1), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_1, 2));
 		DebugPrintf("Tube set 2: %d %d %d\n", scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 0), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 1), scene->getSubVar(VA_GOOD_TEST_TUBES_LEVEL_2, 2));
 	}
+
+	return true;
+}
+
+bool Console::Cmd_Dumpvars(int argc, const char **argv) {
+	_vm->_gameVars->dumpVars(this);
 
 	return true;
 }
