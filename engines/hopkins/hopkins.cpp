@@ -235,7 +235,7 @@ bool HopkinsEngine::runWin95Demo() {
 				_soundMan->removeSample(2);
 				_soundMan->removeSample(3);
 				_soundMan->removeSample(4);
-				_graphicsMan->fadeOutLong();
+				_graphicsMan->fadeOutShort();
 				_globals->_saveData->_data[svBankAttackAnimPlayedFl] = 1;
 			}
 			_linesMan->setMaxLineIdx(5);
