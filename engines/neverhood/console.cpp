@@ -147,6 +147,7 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 
 			scene->_changeCurrentSymbol = false;
 			scene->_symbolPosition = 11;
+			scene->_countdown1 = 36;
 
 			DebugPrintf("Puzzle solved\n");
 		} else {
