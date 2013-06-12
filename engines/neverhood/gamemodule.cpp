@@ -411,6 +411,8 @@ void GameModule::checkRequests() {
 	}
 	if (_restoreGameRequested) {
 		_restoreGameRequested = false;
+		_vm->_audioResourceMan->stopAllSounds();
+		_vm->_soundMan->stopAllSounds();
 		delete _childObject;
 		delete _prevChildObject;
 		_childObject = NULL;
