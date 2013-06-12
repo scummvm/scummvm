@@ -76,6 +76,7 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 		DebugPrintf("  dice    - shows the correct dice combination in the teddy bear puzzle, module 1100, scene 6\n");
 		DebugPrintf("  memory  - solves the memory puzzle, module 1400, scene 4\n");
 		DebugPrintf("  radio   - enables the radio, module 3000, scene 9 - same as pulling the rightmost cord in the flytrap room\n");
+		DebugPrintf("  music   - shows the correct index in the radio music puzzle, module 2800, scene 1\n");
 		DebugPrintf("  symbols - solves the symbols puzzle, module 1600, scene 8. Only available in that room\n");
 		DebugPrintf("  tubes   - shows the correct test tube combination in module 2800, scenes 7 and 10, can be used anywhere\n");		
 		return true;
@@ -128,6 +129,9 @@ bool Console::Cmd_Cheat(int argc, const char **argv) {
 		}
 
 		DebugPrintf("Puzzle solved\n");
+	} else if (cheatName == "music") {
+		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
+		DebugPrintf("Good music index: %d, current radio music index: %d\n", scene->getGlobalVar(V_CURR_RADIO_MUSIC_INDEX), scene->getGlobalVar(V_GOOD_RADIO_MUSIC_INDEX));
 	} else if (cheatName == "radio") {
 		Scene *scene = (Scene *)((GameModule *)_vm->_gameModule->_childObject)->_childObject;
 		scene->setGlobalVar(V_RADIO_ENABLED, 1);
