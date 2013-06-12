@@ -21,6 +21,7 @@
 #include "engines/util.h"
  
 #include "zvision/zvision.h"
+#include "zvision/zfsArchive.h"
 #include "zvision/zork_avi_decoder.h"
 #include "zvision/zork_raw.h"
 
@@ -160,6 +161,17 @@ void playVideo(Video::VideoDecoder *videoDecoder /*, VideoState videoState*/) {
 }
 
 Common::Error ZVision::run() {
+	// Register the files within the zfs archive files with the SearchMan
+	Common::ArchiveMemberList list;
+	SearchMan.listMatchingMembers(list, "*.zfs");
+
+	for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
+		Common::String name = (*iter)->getName();
+		ZfsArchive *archive = new ZfsArchive(name, (*iter)->createReadStream());
+
+		SearchMan.add(name, archive);
+	}
+
 	//Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);	// ARGB8888
 	Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);	// RGB555
 	initGraphics(640, 480, true, &format);
