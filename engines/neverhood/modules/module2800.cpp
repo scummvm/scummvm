@@ -616,10 +616,6 @@ void Scene2802::update() {
 	if (prevTuneStatus != _currTuneStatus)
 		changeTuneStatus(prevTuneStatus, _currTuneStatus);
 		
-	//DEBUG>>>
-	//debug("_currRadioMusicIndex = %d; V_GOOD_RADIO_MUSIC_INDEX = %d", _currRadioMusicIndex, getGlobalVar(V_GOOD_RADIO_MUSIC_INDEX));
-	//DEBUG<<<
-
 	if (getGlobalVar(V_RADIO_MOVE_DISH_VIDEO) && prevTuneStatus != _currTuneStatus && _currRadioMusicIndex != 0) {
 		setGlobalVar(V_RADIO_MOVE_DISH_VIDEO, 0);
 		leaveScene(1);
