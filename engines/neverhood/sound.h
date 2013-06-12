@@ -129,6 +129,8 @@ public:
 	SoundMan(NeverhoodEngine *vm);
 	~SoundMan();
 
+	void stopAllSounds();
+
 	// Music
 	void addMusic(uint32 groupNameHash, uint32 musicFileHash);
 	void deleteMusic(uint32 musicFileHash);
@@ -262,6 +264,8 @@ public:
 	AudioResourceMan(NeverhoodEngine *vm);
 	~AudioResourceMan();
 	
+	void stopAllSounds();
+
 	int16 addSound(uint32 fileHash);
 	void removeSound(int16 soundIndex);
 

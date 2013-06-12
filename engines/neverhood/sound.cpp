@@ -254,10 +254,26 @@ SoundMan::SoundMan(NeverhoodEngine *vm)
 }
 
 SoundMan::~SoundMan() {
-	for (uint i = 0; i < _soundItems.size(); ++i)
-		delete _soundItems[i];
-	for (uint i = 0; i < _musicItems.size(); ++i)
-		delete _musicItems[i];
+	stopAllSounds();
+}
+
+void SoundMan::stopAllSounds() {
+	for (uint i = 0; i < _soundItems.size(); ++i) {
+		if (_soundItems[i]) {
+			_soundItems[i]->stopSound();
+			delete _soundItems[i];
+			_soundItems[i] = NULL;
+		}
+	}
+	for (uint i = 0; i < _musicItems.size(); ++i) {
+		if (_musicItems[i]) {
+			_musicItems[i]->stopMusic(0, 0);
+			delete _musicItems[i];
+			_musicItems[i] = NULL;
+		}
+	}
+
+	_soundIndex1 = _soundIndex2 = _soundIndex3 = -1;
 }
 
 void SoundMan::addMusic(uint32 groupNameHash, uint32 musicFileHash) {
@@ -708,11 +724,25 @@ AudioResourceMan::AudioResourceMan(NeverhoodEngine *vm)
 	: _vm(vm) {
 }
 
+void AudioResourceMan::stopAllSounds() {
+	for (uint i = 0; i < _soundItems.size(); ++i) {
+		if (_soundItems[i]) {
+			_soundItems[i]->stopSound();
+			delete _soundItems[i];
+			_soundItems[i] = NULL;
+		}
+	}
+	for (uint i = 0; i < _musicItems.size(); ++i) {
+		if (_musicItems[i]) {
+			_musicItems[i]->stopMusic(0);
+			delete _musicItems[i];
+			_musicItems[i] = NULL;
+		}
+	}
+}
+
 AudioResourceMan::~AudioResourceMan() {
-	for (uint i = 0; i < _soundItems.size(); ++i)
-		delete _soundItems[i];
-	for (uint i = 0; i < _musicItems.size(); ++i)
-		delete _musicItems[i];
+	stopAllSounds();
 }
 
 int16 AudioResourceMan::addSound(uint32 fileHash) {
