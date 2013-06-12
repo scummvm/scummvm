@@ -31,8 +31,6 @@ namespace Neverhood {
 Module2200::Module2200(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	debug("Create Module2200(%d)", which);
-
 	_vm->_soundMan->addMusic(0x11391412, 0x601C908C); 
 
 	if (which < 0)

@@ -27,8 +27,6 @@ namespace Neverhood {
 Module1000::Module1000(NeverhoodEngine *vm, Module *parentModule, int which)
 	: Module(vm, parentModule) {
 	
-	debug("Create Module1000(%d)", which);
-
 	_musicFileHash = getGlobalVar(V_ENTRANCE_OPEN) ? 0x81106480 : 0x00103144;		
 
 	_vm->_soundMan->addMusic(0x03294419, 0x061880C6);
