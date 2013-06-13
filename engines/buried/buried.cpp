@@ -26,16 +26,40 @@
 #include "common/textconsole.h"
 
 #include "buried/buried.h"
+#include "buried/database.h"
 
 namespace Buried {
 
 BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	_mainEXE = 0;
+	_library = 0;
 }
 
 BuriedEngine::~BuriedEngine() {
+	delete _mainEXE;
+	delete _library;
 }
 
 Common::Error BuriedEngine::run() {
+	if (isWin95()) {
+		error("TODO: Win95 version");
+	} else if (isCompressed()) {
+		_mainEXE = new DatabaseNECompressed();
+		_library = new DatabaseNECompressed();
+	} else {
+		_mainEXE = new DatabaseNE();
+
+		// Demo only uses the main EXE
+		if (!isDemo())
+			_library = new DatabaseNE();
+	}
+
+	if (!_mainEXE->load(getEXEName()))
+		error("Failed to load main EXE '%s'", getEXEName().c_str());
+
+	if (_library && !_library->load(getLibraryName()))
+		error("Failed to load library DLL '%s'", getLibraryName().c_str());
+
 	return Common::kNoError;
 }
 
