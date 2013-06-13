@@ -32,10 +32,10 @@ namespace ZVision {
 struct ZfsHeader {
 	uint32 magic;
 	uint32 unknown1;
-	uint32 unknown2;
+	uint32 maxNameLength;
 	uint32 filesPerBlock;
 	uint32 fileCount;
-	uint32 xorKey;
+	byte xorKey[4];
 	uint32 fileSectionOffset;
 };
 
@@ -85,10 +85,34 @@ public:
 
 private:
 	const Common::String _fileName;
+	ZfsHeader _header;
 	ZfsEntryHeaderMap _entryHeaders;
 
+	/**
+	 * Parses the zfs file into file entry headers that can be used later
+	 * to get the entry data.
+	 *
+	 * @param stream	The contents of the zfs file
+	 */
 	void readHeaders(Common::SeekableReadStream *stream);
+
+	/**
+	 * Entry names are contained within a 16 byte block. This reads the block
+	 * and converts it the name to a Common::String
+	 *
+	 * @param stream	The zfs file stream
+	 * @return			The entry file name
+	 */
 	Common::String readEntryName(Common::SeekableReadStream *stream) const;
+
+	/**
+	 * ZFS file entries can be encrypted using XOR encoding. This method
+	 * decodes the buffer in place using the supplied xorKey.
+	 *
+	 * @param buffer	The data to decode
+	 * @param length	Length of buffer
+	 */
+	void unXor(byte *buffer, int length, const byte *xorKey) const;
 };
 
 } // End of namespace Common

@@ -55,16 +55,17 @@ ZfsArchive::~ZfsArchive() {
 }
 
 void ZfsArchive::readHeaders(Common::SeekableReadStream *stream) {
-	ZfsHeader header;
-
 	// Don't do a straight struct cast since we can't guarantee endianness
-	header.magic = stream->readUint32LE();
-	header.unknown1 = stream->readUint32LE();
-	header.unknown2 = stream->readUint32LE();
-	header.filesPerBlock = stream->readUint32LE();
-	header.fileCount = stream->readUint32LE();
-	header.xorKey = stream->readUint32LE();
-	header.fileSectionOffset = stream->readUint32LE();
+	_header.magic = stream->readUint32LE();
+	_header.unknown1 = stream->readUint32LE();
+	_header.maxNameLength = stream->readUint32LE();
+	_header.filesPerBlock = stream->readUint32LE();
+	_header.fileCount = stream->readUint32LE();
+	_header.xorKey[0] = stream->readByte();
+	_header.xorKey[1] = stream->readByte();
+	_header.xorKey[2] = stream->readByte();
+	_header.xorKey[3] = stream->readByte();
+	_header.fileSectionOffset = stream->readUint32LE();
 
 	uint32 nextOffset;
 
@@ -73,7 +74,7 @@ void ZfsArchive::readHeaders(Common::SeekableReadStream *stream) {
 		nextOffset = stream->readUint32LE();
 
 		// Read in each entry header
-		for (int i = 0; i < header.filesPerBlock; i++) {
+		for (int i = 0; i < _header.filesPerBlock; i++) {
 			ZfsEntryHeader entryHeader;
 			
 			entryHeader.name = readEntryName(stream);
@@ -135,8 +136,16 @@ Common::SeekableReadStream *ZfsArchive::createReadStreamForMember(const Common::
 
 	byte* buffer = new byte[entryHeader->size];
 	zfsArchive.read(buffer, entryHeader->size);
+	// Decrypt the data in place
+	if (_header.xorKey != 0)
+		unXor(buffer, entryHeader->size, _header.xorKey);
 
 	return new Common::MemoryReadStream(buffer, entryHeader->size, DisposeAfterUse::YES);
+}
+
+void ZfsArchive::unXor(byte *buffer, int length, const byte *xorKey) const {
+	for (uint32 i = 0; i < length; i++)
+		buffer[i] ^= xorKey[i % 4];
 }
 
 } // End namespace ZVision
