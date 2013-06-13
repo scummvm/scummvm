@@ -295,6 +295,8 @@ PictureResource *BoltFile::getPictureResource(uint32 id) {
 	if ((int32)id == -1)
 		return NULL;
 
+	if (id & 0xffff)
+		id <<= 16;
 	return getBoltEntry(id)._picResource;
 }
 

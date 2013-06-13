@@ -214,6 +214,7 @@ bool VoyeurEngine::doLock() {
 
 		Common::String password = lock._password;
 		srcPic = _bVoy->getPictureResource(0x702);
+		assert(srcPic);
 
 		// Get the mappings of keys on the keypad
 		keyData = _bVoy->memberAddr(0x705);

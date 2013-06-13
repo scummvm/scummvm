@@ -344,7 +344,31 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 				// loc_2615E
 				if (srcFlags & 2) {
-					error("TODO: sDrawPic");
+					srcP = srcImgData + srcOffset;
+
+					if (destFlags & 8) {
+						error("TODO: sDrawPic");
+					} else {
+						// loc_25773
+						// Copy from screen to surface with transparency
+						destP = destImgData + screenOffset;
+						srcP = (byte *)_screenSurface.pixels + srcOffset;
+
+						if (srcFlags & 2) {
+							for (int yp = 0; yp < height1; ++yp) {
+								for (int xp = 0; xp < width2; ++xp, ++destP) {
+									byte srcPixel = *srcP++;
+									if (srcPixel)
+										*destP = srcPixel;
+								}
+
+								destP += widthDiff2;
+								srcP += widthDiff; 
+							}
+						} else {
+							error("TODO: sDrawPic");
+						}
+					}
 				} else {
 					if (srcFlags & 0x100) {
 						srcP = srcImgData;
