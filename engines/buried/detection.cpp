@@ -35,6 +35,12 @@ struct BuriedGameDescription {
 	ADGameDescription desc;
 };
 
+enum {
+	GF_TRUECOLOR  = (1 << 1),
+	GF_WIN95      = (1 << 2),
+	GF_COMPRESSED = (1 << 3)
+};
+
 bool BuriedEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL);
@@ -42,6 +48,26 @@ bool BuriedEngine::hasFeature(EngineFeature f) const {
 
 bool BuriedEngine::isDemo() const {
 	return (_gameDescription->desc.flags & ADGF_DEMO) != 0;
+}
+
+bool BuriedEngine::isTrueColor() const {
+	return (_gameDescription->desc.flags & GF_TRUECOLOR) != 0;
+}
+
+bool BuriedEngine::isWin95() const {
+	return (_gameDescription->desc.flags & GF_WIN95) != 0;
+}
+
+bool BuriedEngine::isCompressed() const {
+	return (_gameDescription->desc.flags & GF_COMPRESSED) != 0;
+}
+
+Common::String BuriedEngine::getEXEName() const {
+	return _gameDescription->desc.filesDescriptions[0].fileName;
+}
+
+Common::String BuriedEngine::getLibraryName() const {
+	return _gameDescription->desc.filesDescriptions[1].fileName;
 }
 
 } // End of namespace Buried
@@ -60,10 +86,14 @@ static const BuriedGameDescription gameDescriptions[] = {
 		{
 			"buried",
 			"8BPP",
-			AD_ENTRY1("BIT816.EX_", "166b44e53350c19bb25ef93d2c2b8f79"),
+			{
+				{ "BIT816.EX_",  0, "166b44e53350c19bb25ef93d2c2b8f79", 364490 },
+				{ "BIT8LIB.DL_", 0, "8a345993f60f6bed7c17fa9e7f2bc37d", 908854 },
+				{ 0, 0, 0, 0 },
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			GF_COMPRESSED,
 			GUIO0()
 		},
 	},
@@ -73,10 +103,14 @@ static const BuriedGameDescription gameDescriptions[] = {
 		{
 			"buried",
 			"24BPP",
-			AD_ENTRY1("BIT2416.EX_", "a9ac76610ba614b59235a7d5e00e4a62"),
+			{
+				{ "BIT2416.EX_",  0, "a9ac76610ba614b59235a7d5e00e4a62", 361816 },
+				{ "BIT24LIB.DL_", 0, "00e6eedbcef824988fbb01a87ca8f7fd", 2269314 },
+				{ 0, 0, 0, 0 },
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			GF_COMPRESSED | GF_TRUECOLOR,
 			GUIO0()
 		},
 	},
@@ -89,7 +123,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 			AD_ENTRY1("BIT816.EXE", "a5bca831dac0903a304c29c320f881c5"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DEMO,
 			GUIO0()
 		},
 	},
@@ -102,7 +136,7 @@ static const BuriedGameDescription gameDescriptions[] = {
 			AD_ENTRY1("BIT2416.EXE", "9857e2d2b7a63b1304058dabc5098249"),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DEMO | GF_TRUECOLOR,
 			GUIO0()
 		},
 	},
