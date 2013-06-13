@@ -45,6 +45,11 @@ public:
 	// Detection related functions
 	const BuriedGameDescription *_gameDescription;
 	bool isDemo() const;
+	bool isTrueColor() const;
+	bool isWin95() const;
+	bool isCompressed() const;
+	Common::String getEXEName() const;
+	Common::String getLibraryName() const;
 
 	bool hasFeature(EngineFeature f) const;
 };
