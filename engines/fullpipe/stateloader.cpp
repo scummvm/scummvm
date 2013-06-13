@@ -480,8 +480,34 @@ bool CGameVar::load(MfcArchive &file) {
 	return true;
 }
 
+Sc2::Sc2() {
+	_sceneId = 0;
+	_field_2 = 0;
+	//_scene = 0;
+	_motionController = 0;
+	_data1 = 0;
+	_count1 = 0;
+	_defPicAniInfos = 0;
+	_defPicAniInfosCount = 0;
+	_picAniInfos = 0;
+	_picAniInfosCount = 0;
+	_isLoaded = 0;
+	_entranceData = 0;
+	_entranceDataCount = 0;
+}
+
 bool Sc2::load(MfcArchive &file) {
 	_sceneId = file.readUint16LE();
+
+	file.readClass();
+	_motionController->load(file);
+
+	return true;
+}
+
+
+bool CMotionController::load(MfcArchive &file) {
+	// Is originally empty
 
 	return true;
 }

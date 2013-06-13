@@ -176,11 +176,20 @@ class CInputController {
 	CInputController();
 };
 
+class CMotionController : public CObject {
+	int _field_4;
+	int _isEnabled;
+
+ public:
+	CMotionController() : _isEnabled(1) {}
+	virtual bool load(MfcArchive &file);
+};
+
 class Sc2 : public CObject {
 	int16 _sceneId;
 	int16 _field_2;
 	//Scene *_scene;
-	//CMotionController *_motionController;
+	CMotionController *_motionController;
 	int _data1;
 	int _count1;
 	int _defPicAniInfos;
@@ -192,6 +201,7 @@ class Sc2 : public CObject {
 	int _entranceDataCount;
 
  public:
+	Sc2();
 	virtual bool load(MfcArchive &file);
 };
 
@@ -396,7 +406,6 @@ class CGameLoader : public CObject {
 	virtual bool load(MfcArchive &file);
 
  private:
-	//CObject _obj;
 	GameProject *_gameProject;
 	CInteractionController *_interactionController;
 	int _field_C;
