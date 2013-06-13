@@ -2,6 +2,7 @@ MODULE := engines/buried
 
 MODULE_OBJS = \
 	buried.o \
+	database.o \
 	detection.o \
 	window.o
 
