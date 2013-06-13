@@ -291,7 +291,7 @@ BoltEntry &BoltFile::getBoltEntry(uint32 id) {
 	return entry;
 }
 
-PictureResource *BoltFile::getPictureResouce(uint32 id) {
+PictureResource *BoltFile::getPictureResource(uint32 id) {
 	if ((int32)id == -1)
 		return NULL;
 
@@ -669,10 +669,10 @@ ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 		ys + READ_LE_UINT16(src + 18));
 	_field18 = READ_LE_UINT16(src + 0x18);
 
-	_currentPic = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x20));
-	_activePage = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x24));
-	_pages[0] = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x28));
-	_pages[1] = state._curLibPtr->getPictureResouce(READ_LE_UINT32(src + 0x2C));
+	_currentPic = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x20));
+	_activePage = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x24));
+	_pages[0] = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x28));
+	_pages[1] = state._curLibPtr->getPictureResource(READ_LE_UINT32(src + 0x2C));
 
 	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0x30), &_field30);
 
@@ -791,6 +791,10 @@ void ViewPortResource::setupViewPort() {
 	setupViewPort(_state._vm->_graphicsManager._backgroundPage, NULL,
 		&GraphicsManager::setupMCGASaveRect, &GraphicsManager::addRectOptSaveRect,
 		&GraphicsManager::restoreMCGASaveRect);
+}
+
+void ViewPortResource::drawText(const Common::String &msg) {
+	// TODO
 }
 
 /*------------------------------------------------------------------------*/

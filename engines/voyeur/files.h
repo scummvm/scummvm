@@ -134,7 +134,7 @@ public:
 	void resolveFunction(uint32 id, GraphicMethodPtr *fn);
 
 	BoltEntry &getBoltEntry(uint32 id);
-	PictureResource *getPictureResouce(uint32 id);
+	PictureResource *getPictureResource(uint32 id);
 	CMapResource *getCMapResource(uint32 id);
 };
 
@@ -257,6 +257,7 @@ public:
 	virtual ~ViewPortResource();
 
 	void setupViewPort();
+	void drawText(const Common::String &msg);
 };
 
 class ViewPortPalEntry  {

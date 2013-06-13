@@ -199,6 +199,9 @@ void EventsManager::pollEvents() {
 		case Common::EVENT_RBUTTONUP:
 			_mouseButton = 0;
 			return;
+		case Common::EVENT_MOUSEMOVE:
+			_mousePos = event.mouse;
+			break;
 		default:
  			break;
 		}
@@ -326,6 +329,10 @@ void EventsManager::vInitColor() {
 
 	addIntNode(&_fadeIntNode);
 	addIntNode(&_cycleIntNode);
+}
+
+void EventsManager::setCursorTo(int idx, int mode) {
+	// TODO
 }
 
 } // End of namespace Voyeur

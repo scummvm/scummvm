@@ -20,36 +20,28 @@
  *
  */
 
-#include "voyeur/utils.h"
-#include "common/savefile.h"
+#include "voyeur/sound.h"
 
 namespace Voyeur {
 
-LockTime::LockTime() { 
-	field0 = field1 = field2 = field3 = 0; 
+SoundManager::SoundManager() {
 }
 
-void LockClass::getSysDate() {
-
+void SoundManager::playVOCMap(byte *voc, int vocSize) {
+	// TODO
 }
 
-void LockClass::getThePassword() {
-	field0 = 26;
-	_password = "3333";
-	fieldE = field16;
-	field12 = field1A;
-	fieldC = -1;
-
-	// TODO: Original loaded 'VOYEUR.DAT' here to get most recent game's password.
-	// We'll want to transform this to proper savegames in ScummVM
+bool SoundManager::vocMapStatus() {
+	// TODO
+	return false;
 }
 
-void LockClass::saveThePassword() {
-	//TODO
+void SoundManager::continueVocMap() {
+	// TODO
 }
 
-Common::String LockClass::getDateString() {
-	return Common::String();
+void SoundManager::abortVOCMap() {
+	// TODO
 }
 
 } // End of namespace Voyeur

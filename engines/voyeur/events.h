@@ -57,6 +57,7 @@ private:
 	bool _keyState[256];
 	int _mouseButton;
 	Common::List<IntNode *> _intNodes;
+	Common::Point _mousePos;
 
 	void mainVoyeurIntFunc();
 private:
@@ -78,7 +79,6 @@ public:
 	int _fadeFirstCol, _fadeLastCol;
 	int _fadeCount;
 	int _fadeStatus;
-
 public:
 	EventsManager();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
@@ -94,6 +94,9 @@ public:
 	void startFade(CMapResource *cMap);
 	void addIntNode(IntNode *node);
 	void addFadeInt();
+
+	void setCursorTo(int idx, int mode);
+	Common::Point getMousePos() { return _mousePos; }
 };
 
 } // End of namespace Voyeur

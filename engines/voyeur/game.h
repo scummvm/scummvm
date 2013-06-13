@@ -38,8 +38,7 @@ public:
 	int _type;
 	int _data1;
 	int _data2;
-	int _data3;
-	int _data4;
+	byte *_data;
 };
 
 class SVoy {

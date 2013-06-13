@@ -24,12 +24,34 @@
 #define VOYEUR_UTILS_H
 
 #include "common/scummsys.h"
+#include "common/str.h"
 
 namespace Voyeur {
 
+class LockTime {
+public:
+	int field0;
+	int field1;
+	int field2;
+	int field3;
+
+	LockTime();
+};
+
 class LockClass {
 public:
-	void getSysData();
+	int field0;
+	Common::String _password;
+	int fieldC;
+	LockTime fieldE;
+	int field12;
+	LockTime field16;
+	int field1A;
+public:
+	void getSysDate();
+	void getThePassword();
+	void saveThePassword();
+	Common::String getDateString();
 };
 
 } // End of namespace Voyeur

@@ -46,7 +46,28 @@ FontInfo::FontInfo() {
 	_shadowColor = 0;
 }
 
-GraphicsManager::GraphicsManager() {
+FontInfo::FontInfo(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags, 
+		byte justify, int fontSaveBack, const Common::Point &pos, int justifyWidth, int justifyHeight,
+		const Common::Point &shadow, int foreColor, int backColor, int shadowColor) {
+	_curFont = NULL;
+	_picSelect = picSelect;
+	_picPick = picPick;
+	_picOnOff = picOnOff;
+	_fontFlags = fontFlags;
+	_justify = justify;
+	_fontSaveBack = fontSaveBack;
+	_pos = pos;
+	_justifyWidth = justifyWidth;
+	_justifyHeight = justifyHeight;
+	_shadow = shadow;
+	_foreColor = foreColor;
+	_backColor = backColor;
+	_shadowColor = shadowColor;
+}
+
+GraphicsManager::GraphicsManager():
+		_defaultFontInfo(3, 0xff, 0xff, 0, 0, 0, 0, Common::Point(), 1, 1, Common::Point(1, 1), 1, 0, 0),
+		_fontPtr(&_defaultFontInfo) {
 	_SVGAPage = 0;
 	_SVGAMode = 0;
 	_SVGAReset = 0;

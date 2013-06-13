@@ -43,6 +43,7 @@ class PictureResource;
 class ViewPortResource;
 class ViewPortListResource;
 class FontResource;
+class CMapResource;
 
 class FontInfo {
 public:
@@ -63,6 +64,9 @@ public:
 	int _shadowColor;
 public:
 	FontInfo();
+	FontInfo(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags, byte justify,
+		int fontSaveBack, const Common::Point &pos, int justifyWidth, int justifyHeight,
+		const Common::Point &shadow, int foreColor, int backColor, int shadowColor);
 };
 
 typedef void (GraphicsManager::*GraphicMethodPtr)(); 
@@ -89,6 +93,9 @@ public:
 	uint _planeSelect;
 	int _sImageShift;
 	Graphics::Surface _screenSurface;
+	CMapResource *_backColors;
+	FontInfo *_fontPtr;
+	FontInfo _defaultFontInfo;
 private:
 	static void fadeIntFunc();
 	static void vDoCycleInt();
@@ -108,7 +115,7 @@ public:
 
 	void EMSMapPageHandle(int v1, int v2, int v3);
 	void sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay, const Common::Point &offset);
-	void GraphicsManager::fillPic(DisplayResource *display, byte onOff);
+	void fillPic(DisplayResource *display, byte onOff = 0);
 	void sDisplayPic(PictureResource *pic);
 	void flipPage();
 	void clearPalette();

@@ -20,36 +20,28 @@
  *
  */
 
-#include "voyeur/utils.h"
-#include "common/savefile.h"
+#ifndef VOYEUR_SOUND_H
+#define VOYEUR_SOUND_H
+
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "voyeur/files.h"
 
 namespace Voyeur {
 
-LockTime::LockTime() { 
-	field0 = field1 = field2 = field3 = 0; 
-}
+class SoundManager {
+private:
+	VoyeurEngine *_vm;
+public:
+	SoundManager();
+	void setVm(VoyeurEngine *vm) { _vm = vm; }
 
-void LockClass::getSysDate() {
-
-}
-
-void LockClass::getThePassword() {
-	field0 = 26;
-	_password = "3333";
-	fieldE = field16;
-	field12 = field1A;
-	fieldC = -1;
-
-	// TODO: Original loaded 'VOYEUR.DAT' here to get most recent game's password.
-	// We'll want to transform this to proper savegames in ScummVM
-}
-
-void LockClass::saveThePassword() {
-	//TODO
-}
-
-Common::String LockClass::getDateString() {
-	return Common::String();
-}
+	void playVOCMap(byte *voc, int vocSize);
+	bool vocMapStatus();
+	void continueVocMap();
+	void abortVOCMap();
+};
 
 } // End of namespace Voyeur
+
+#endif /* VOYEUR_SOUND_H */

@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	game.o \
 	files.o \
 	graphics.o \
+	sound.o \
 	utils.o \
 	voyeur.o
 

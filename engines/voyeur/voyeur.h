@@ -28,6 +28,7 @@
 #include "voyeur/files.h"
 #include "voyeur/game.h"
 #include "voyeur/graphics.h"
+#include "voyeur/sound.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
@@ -88,6 +89,7 @@ public:
 	EventsManager _eventsManager;
 	FilesManager _filesManager;
 	GraphicsManager _graphicsManager;
+	SoundManager _soundManager;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();
