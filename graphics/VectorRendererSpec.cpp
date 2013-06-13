@@ -646,24 +646,90 @@ darkenFill(PixelType *ptr, PixelType *end) {
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area,
-			Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool ellipsis) {
+			Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool ellipsis, const Common::Rect &textDrawableArea) {
 
 	int offset = area.top;
 
 	if (font->getFontHeight() < area.height()) {
 		switch (alignV) {
-			case GUI::ThemeEngine::kTextAlignVCenter:
-				offset = area.top + ((area.height() - font->getFontHeight()) >> 1);
-				break;
-			case GUI::ThemeEngine::kTextAlignVBottom:
-				offset = area.bottom - font->getFontHeight();
-				break;
-			default:
-				break;
+		case GUI::ThemeEngine::kTextAlignVCenter:
+			offset = area.top + ((area.height() - font->getFontHeight()) >> 1);
+			break;
+		case GUI::ThemeEngine::kTextAlignVBottom:
+			offset = area.bottom - font->getFontHeight();
+			break;
+		default:
+			break;
 		}
 	}
 
-	font->drawString(_activeSurface, text, area.left, offset, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
+	if (textDrawableArea.isEmpty()) {
+		font->drawString(_activeSurface, text, area.left, offset, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
+		// warning("there is no text drawable area. Please set this area for clipping");
+		return;
+	}
+
+	int textWidth = font->getStringWidth(text);
+
+	int emptySpace = 0;
+
+	switch (alignH) {
+	case Graphics::kTextAlignLeft:
+		// Let emptyspace = 0
+		break;
+	case Graphics::kTextAlignCenter:
+		emptySpace = (area.width() - textWidth) / 2;
+		break;
+	case Graphics::kTextAlignRight:
+		emptySpace =  area.right - textWidth;
+		break;
+	case Graphics::kTextAlignInvalid:
+		//   warning("VectorRendererSpec<PixelType>::drawString(...) invalid text align");
+		//   return;
+	default:
+		break;
+	}
+
+	// if text drawable area don't have any text for clipping
+	if ((textDrawableArea.right < (area.left + emptySpace)) || (textDrawableArea.left > (area.right - emptySpace)))
+		return;
+
+	Surface backSurface;
+	backSurface.create(area.width(), font->getFontHeight() + 4, _activeSurface->format);
+
+	byte *activeSurfacePtr = (byte *)_activeSurface->getBasePtr(area.left, area.top);
+	byte *backSurfacePtr = (byte *)backSurface.getBasePtr(0, 0);
+
+	// copy background...
+	for (int i = 0; i < backSurface.h; i++) {
+		memcpy(backSurfacePtr, activeSurfacePtr, backSurface.w * backSurface.format.bytesPerPixel);
+
+		activeSurfacePtr += _activeSurface->pitch;
+		backSurfacePtr   += backSurface.pitch;
+	}
+
+	font->drawString(&backSurface, text, 0, 0, area.width() - deltax, _fgColor, alignH, deltax, ellipsis);
+
+	int fromX   = ((area.left + emptySpace) < textDrawableArea.left) ? textDrawableArea.left : area.left + emptySpace;
+	int toX    = ((area.right - emptySpace) > textDrawableArea.right) ? textDrawableArea.right : area.right - emptySpace;
+  
+	int bytesX   = toX - fromX;
+
+	int fromY  = (area.top < textDrawableArea.top) ? textDrawableArea.top : area.top;
+	int toY   = (textDrawableArea.bottom < area.bottom) ? textDrawableArea.bottom : area.bottom;
+
+	// copy text from backSurface to activeSurface
+	activeSurfacePtr = (byte *)_activeSurface->getBasePtr(fromX, fromY);
+	backSurfacePtr   = (byte *)backSurface.getBasePtr(fromX - area.left, fromY - area.top);
+
+	for (int i = fromY; i < toY; i++) {
+		memcpy(activeSurfacePtr, backSurfacePtr, bytesX * backSurface.format.bytesPerPixel);
+
+		activeSurfacePtr += _activeSurface->pitch;
+		backSurfacePtr    += backSurface.pitch;
+	}
+
+	backSurface.free();
 }
 
 /** LINES **/
