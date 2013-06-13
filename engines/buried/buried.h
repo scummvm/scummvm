@@ -33,6 +33,7 @@ class OSystem;
 namespace Buried {
 
 struct BuriedGameDescription;
+class Database;
 
 class BuriedEngine : public ::Engine {
 protected:
@@ -52,6 +53,9 @@ public:
 	Common::String getLibraryName() const;
 
 	bool hasFeature(EngineFeature f) const;
+
+private:
+	Database *_mainEXE, *_library;
 };
 
 } // End of namespace Buried
