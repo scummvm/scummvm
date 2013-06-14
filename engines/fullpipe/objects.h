@@ -185,6 +185,18 @@ class CMotionController : public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
+class CMctlCompoundArray : public Common::Array<CObject>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
+class CMctlCompound : public CMotionController {
+	CMctlCompoundArray motionControllers;
+
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
 class Sc2 : public CObject {
 	int16 _sceneId;
 	int16 _field_2;

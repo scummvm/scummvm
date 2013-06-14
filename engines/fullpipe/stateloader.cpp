@@ -499,15 +499,31 @@ Sc2::Sc2() {
 bool Sc2::load(MfcArchive &file) {
 	_sceneId = file.readUint16LE();
 
-	file.readClass();
-	_motionController->load(file);
+	_motionController = (CMotionController *)file.readClass();
 
 	return true;
 }
 
 
 bool CMotionController::load(MfcArchive &file) {
-	// Is originally empty
+	// Is originally empty	file.readClass();
+
+
+	return true;
+}
+
+bool CMctlCompound::load(MfcArchive &file) {
+	int count = file.readUint32LE();
+
+	debug(0, "CMctlCompund::count = %d", count);
+
+	return true;
+}
+
+bool CMctlCompoundArray::load(MfcArchive &file) {
+	int count = file.readUint32LE();
+
+	debug(0, "CMctlCompundArray::count = %d", count);
 
 	return true;
 }
