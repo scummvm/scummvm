@@ -1904,10 +1904,7 @@ void HopkinsEngine::bombExplosion() {
 }
 
 void HopkinsEngine::restoreSystem() {
-	// If the game isn't alerady trying to quit, flag that quitting is needed
-	if (!shouldQuit())
-		quitGame();
-
+	quitGame();
 	_events->refreshEvents();
 }
 
