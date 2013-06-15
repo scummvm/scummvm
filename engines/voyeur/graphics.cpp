@@ -36,7 +36,7 @@ FontInfo::FontInfo() {
 	_picPick = 0xff;
 	_picOnOff = 0;
 	_fontFlags = 0;
-	_justify = 0;
+	_justify = ALIGN_LEFT;
 	_fontSaveBack = 0;
 	_justifyWidth = 1;
 	_justifyHeight = 1;
@@ -47,7 +47,7 @@ FontInfo::FontInfo() {
 }
 
 FontInfo::FontInfo(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags, 
-		byte justify, int fontSaveBack, const Common::Point &pos, int justifyWidth, int justifyHeight,
+		FontJustify justify, int fontSaveBack, const Common::Point &pos, int justifyWidth, int justifyHeight,
 		const Common::Point &shadow, int foreColor, int backColor, int shadowColor) {
 	_curFont = NULL;
 	_picSelect = picSelect;
@@ -65,9 +65,20 @@ FontInfo::FontInfo(byte picFlags, byte picSelect, byte picPick, byte picOnOff, b
 	_shadowColor = shadowColor;
 }
 
+/*------------------------------------------------------------------------*/
+
+DrawInfo::DrawInfo(int penColor, const Common::Point &pos, int flags) {
+	_penColor = penColor;
+	_pos = pos;
+	_flags = flags;
+}
+
+/*------------------------------------------------------------------------*/
+
 GraphicsManager::GraphicsManager():
-		_defaultFontInfo(3, 0xff, 0xff, 0, 0, 0, 0, Common::Point(), 1, 1, Common::Point(1, 1), 1, 0, 0),
-		_fontPtr(&_defaultFontInfo) {
+		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1, 
+			Common::Point(1, 1), 1, 0, 0), _defaultDrawInfo(1, Common::Point(), 0),
+		_fontPtr(&_defaultFontInfo), _drawPtr(&_defaultDrawInfo) {
 	_SVGAPage = 0;
 	_SVGAMode = 0;
 	_SVGAReset = 0;
@@ -77,6 +88,7 @@ GraphicsManager::GraphicsManager():
 	_palFlag = false;
 	_MCGAMode = false;
 	_saveBack = true;
+	_drawTextPermFlag = false;
 	_clipPtr = NULL;
 	_viewPortListPtr = NULL;
 	_vPort = NULL;
@@ -350,11 +362,11 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 						error("TODO: sDrawPic");
 					} else {
 						// loc_25773
-						// Copy from screen to surface with transparency
 						destP = destImgData + screenOffset;
 						srcP = (byte *)_screenSurface.pixels + srcOffset;
 
 						if (srcFlags & 2) {
+							// Copy from screen to surface with transparency
 							for (int yp = 0; yp < height1; ++yp) {
 								for (int xp = 0; xp < width2; ++xp, ++destP) {
 									byte srcPixel = *srcP++;
@@ -366,7 +378,16 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 								srcP += widthDiff; 
 							}
 						} else {
-							error("TODO: sDrawPic");
+							// Copy from screen surface without transparency
+							for (int yp = 0; yp < height1; ++yp) {
+								for (int xp = 0; xp < width2; ++xp, ++destP) {
+									byte srcPixel = *srcP++;
+									*destP = srcPixel;
+								}
+
+								destP += widthDiff2;
+								srcP += widthDiff; 
+							}
 						}
 					}
 				} else {

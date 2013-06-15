@@ -795,8 +795,220 @@ void ViewPortResource::setupViewPort() {
 		&GraphicsManager::restoreMCGASaveRect);
 }
 
-void ViewPortResource::drawText(const Common::String &msg) {
+int ViewPortResource::drawText(const Common::String &msg) {
+	GraphicsManager &gfxManager = _state._vm->_graphicsManager;
+	FontInfo &fontInfo = *gfxManager._fontPtr;
+	FontResource &fontData = *fontInfo._curFont;
+	int xShadows[9] = { 0, 1, 1, 1, 0, -1, -1, -1, 0 };
+	int yShadows[9] = { 0, 1, 0, -1, -1, -1, 0, 1, 1 };
+
+	Common::Rect *clipPtr = gfxManager._clipPtr;
+	if (!(fontInfo._picFlags & 1))
+		gfxManager._clipPtr = NULL;
+
+	int minChar = fontData._minChar;
+	int padding = fontData._padding;
+	int fontHeight = fontData._fontHeight;
+	int totalChars = fontData._maxChar - fontData._minChar;
+	int msgWidth = 0;
+	int xp = 0, yp = 0;
+
+	Common::Point pos = fontInfo._pos;
+
+	_fontChar._flags = fontInfo._picFlags | 2;
+	_fontChar._select = fontInfo._picSelect;
+	_fontChar._bounds.setHeight(fontHeight);
+
+	if (gfxManager._drawTextPermFlag || (fontInfo._fontFlags & 1) || fontInfo._justify ||
+			(gfxManager._saveBack && fontInfo._fontSaveBack && (_flags & 0x8000))) {
+		msgWidth = textWidth(msg);
+		yp = pos.y;
+		xp = pos.x;
+
+		switch (fontInfo._justify) {
+		case 1:
+			xp = pos.x + (fontInfo._justifyWidth / 2) - (msgWidth / 2);
+			break;
+		case 2:
+			xp = pos.x + fontInfo._justifyWidth - msgWidth;
+			break;
+		default:
+			break;
+		}
+
+		if (!(fontInfo._fontFlags & 3)) {
+			_fontRect.left = xp;
+			_fontRect.top = yp;
+			_fontRect.setWidth(msgWidth);
+			_fontRect.setHeight(fontHeight);
+		} else {
+			_fontRect.left = pos.x;
+			_fontRect.top = pos.y;
+			_fontRect.setWidth(fontInfo._justifyWidth);
+			_fontRect.setHeight(fontInfo._justifyHeight);
+		}
+
+		pos.x = xp;
+		pos.y = yp;
+
+		if (fontInfo._fontFlags & 4) {
+			if (fontInfo._shadow.x <= 0) {
+				_fontRect.left += fontInfo._shadow.x;
+				_fontRect.right -= fontInfo._shadow.x * 2;
+			} else {
+				_fontRect.right += fontInfo._shadow.x;
+			}
+
+			if (fontInfo._shadow.y <= 0) {
+				_fontRect.top += fontInfo._shadow.y;
+				_fontRect.bottom -= fontInfo._shadow.y * 2;
+			} else {
+				_fontRect.bottom += fontInfo._shadow.y;
+			}
+		} else if (fontInfo._fontFlags & 8) {
+			if (fontInfo._shadow.x <= 0) {
+				_fontRect.left += fontInfo._shadow.x;
+				_fontRect.right -= fontInfo._shadow.x * 3;
+			} else {
+				_fontRect.right += fontInfo._shadow.x * 3;
+				_fontRect.left -= fontInfo._shadow.x;
+			}
+
+			if (fontInfo._shadow.y <= 0) {
+				_fontRect.top += fontInfo._shadow.y;
+				_fontRect.bottom -= fontInfo._shadow.y * 3;
+			} else {
+				_fontRect.bottom += fontInfo._shadow.y * 3;
+				_fontRect.top -= fontInfo._shadow.y;
+			}
+		}
+	} 
+
+	if (gfxManager._saveBack && fontInfo._fontSaveBack && (_flags & 0x8000)) {
+		addSaveRect(_pageIndex, _fontRect);
+	}
+
+	if (fontInfo._fontFlags & 1) {
+		gfxManager._drawPtr->_pos = Common::Point(_fontRect.left, _fontRect.top);
+		gfxManager._drawPtr->_penColor = fontInfo._backColor;
+		sFillBox(_fontRect.width());
+	}
+
+	bool saveBack = gfxManager._saveBack;
+	gfxManager._saveBack = false;
+
+	int count = 0;
+	if (!(fontInfo._fontFlags & 4))
+		count = 1;
+	else if (fontInfo._fontFlags & 8)
+		count = 8;
+
+	for (int i = 0; i < count; ++i) {
+		xp = pos.x;
+		yp = pos.y;
+
+		switch (xShadows[i]) {
+		case -1:
+			xp -= fontInfo._shadow.x;
+			break;
+		case 1:
+			xp += fontInfo._shadow.x;
+			break;
+		default:
+			break;
+		}
+
+		switch (yShadows[i]) {
+		case -1:
+			yp -= fontInfo._shadow.y;
+			break;
+		case 1:
+			yp += fontInfo._shadow.y;
+			break;
+		default:
+			break;
+		}
+
+		if (i == 0) {
+			_fontChar._pick = 0;
+			_fontChar._onOff = fontInfo._shadowColor;
+		} else if (fontData.field2 == 1 || (fontInfo._fontFlags & 0x10)) {
+			_fontChar._pick = 0;
+			_fontChar._onOff = fontInfo._foreColor;
+		} else {
+			_fontChar._pick = fontInfo._picPick;
+			_fontChar._onOff = fontInfo._picOnOff;
+			_fontChar._depth = fontData.field2;
+		}
+
+		// Loop to draw each character in turn
+		msgWidth = -padding;
+		const char *msgP = msg.c_str();
+		char ch;
+
+		while ((ch = *msgP++) != '\0') {
+			int charValue = (int)ch - minChar;
+			if (charValue >= totalChars || fontData._charWidth[charValue] == 0)
+				charValue = fontData._maxChar - minChar;
+
+			int charWidth = fontData._charWidth[charValue];
+			_fontChar._bounds.setWidth(charWidth);
+
+			uint16 offset = READ_LE_UINT16(fontData._data1 + charValue * 2);
+			_fontChar._imgData = fontData._data2 + offset * 2;
+
+			gfxManager.sDrawPic(&_fontChar, this, Common::Point(xp, yp));
+			
+			xp += charWidth + padding;
+			msgWidth += charWidth + padding;
+		}
+	}
+
+	msgWidth = MAX(msgWidth, 0);
+	if (fontInfo._justify == ALIGN_LEFT)
+		fontInfo._pos.x = xp;
+
+	gfxManager._saveBack = saveBack;
+	gfxManager._clipPtr = clipPtr;
+
+	return msgWidth;
+}
+
+int ViewPortResource::textWidth(const Common::String &msg) {
+	if (msg.size() == 0)
+		return 0;
+
+	const char *msgP = msg.c_str();
+	FontResource &fontData = *_state._vm->_graphicsManager._fontPtr->_curFont;
+	int minChar = fontData._minChar;
+	int maxChar = fontData._maxChar;
+	int padding = fontData._padding;
+	int totalWidth = -padding;
+	char ch;
+
+	// Loop through the characters
+	while ((ch = *msgP++) != '\0') {
+		int charValue = (int)ch;
+		if (charValue < minChar || charValue > maxChar)
+			charValue = maxChar;
+
+		if (!fontData._charWidth[charValue - minChar])
+			charValue = maxChar;
+
+		totalWidth += fontData._charWidth[charValue - minChar] + padding;
+	}
+
+	if (totalWidth < 0)
+		totalWidth = 0;
+	return totalWidth;
+}
+
+void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
 	// TODO
+}
+
+void ViewPortResource::sFillBox(int width) {
+
 }
 
 /*------------------------------------------------------------------------*/
@@ -837,8 +1049,25 @@ ViewPortPalEntry::ViewPortPalEntry(const byte *src) {
 
 /*------------------------------------------------------------------------*/
 
-FontResource::FontResource(BoltFilesState &state, const byte *src) {
-	state._curLibPtr->resolveIt(READ_LE_UINT32(src + 0xC), &_fieldC);
+FontResource::FontResource(BoltFilesState &state, byte *src) {
+	_minChar = src[0];
+	_maxChar = src[1];
+	field2 = src[2];
+	_padding = src[3];
+	_fontHeight = src[5];
+	field6 = src[6];
+
+	int totalChars = _maxChar - _minChar + 1;
+	_charWidth = new int[totalChars];
+	for (int i = 0; i < totalChars; ++i)
+		_charWidth[i] = READ_LE_UINT16(src + 8 + 2 * i);
+
+	_data1 = src + 8 + totalChars * 2;
+	_data2 = _data1 + totalChars * 2;
+}
+
+FontResource::~FontResource() {
+	delete[] _charWidth;
 }
 
 /*------------------------------------------------------------------------*/

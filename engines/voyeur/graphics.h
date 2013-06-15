@@ -45,6 +45,8 @@ class ViewPortListResource;
 class FontResource;
 class CMapResource;
 
+enum FontJustify { ALIGN_LEFT = 0, ALIGN_CENTRE = 1, ALIGN_RIGHT = 2 };
+
 class FontInfo {
 public:
 	FontResource *_curFont;
@@ -53,7 +55,7 @@ public:
 	byte _picPick;
 	byte _picOnOff;
 	byte _fontFlags;
-	byte _justify;
+	FontJustify _justify;
 	int _fontSaveBack;
 	Common::Point _pos;
 	int _justifyWidth;
@@ -64,9 +66,19 @@ public:
 	int _shadowColor;
 public:
 	FontInfo();
-	FontInfo(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags, byte justify,
-		int fontSaveBack, const Common::Point &pos, int justifyWidth, int justifyHeight,
-		const Common::Point &shadow, int foreColor, int backColor, int shadowColor);
+	FontInfo(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags, 
+		FontJustify justify, int fontSaveBack, const Common::Point &pos, int justifyWidth, 
+		int justifyHeight, const Common::Point &shadow, int foreColor, int backColor, 
+		int shadowColor);
+};
+
+class DrawInfo {
+public:
+	int _penColor;
+	Common::Point _pos;
+	int _flags;
+public:
+	DrawInfo(int penColor, const Common::Point &pos, int flags);
 };
 
 typedef void (GraphicsManager::*GraphicMethodPtr)(); 
@@ -96,6 +108,9 @@ public:
 	CMapResource *_backColors;
 	FontInfo *_fontPtr;
 	FontInfo _defaultFontInfo;
+	DrawInfo *_drawPtr;
+	DrawInfo _defaultDrawInfo;
+	bool _drawTextPermFlag;
 private:
 	static void fadeIntFunc();
 	static void vDoCycleInt();

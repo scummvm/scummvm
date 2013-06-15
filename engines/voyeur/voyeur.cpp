@@ -257,7 +257,7 @@ bool VoyeurEngine::doLock() {
 
 			// Display the last play time
 			_graphicsManager._fontPtr->_pos = Common::Point(0, 97);
-			_graphicsManager._fontPtr->_justify = 1;
+			_graphicsManager._fontPtr->_justify = ALIGN_CENTRE;
 			_graphicsManager._fontPtr->_justifyWidth = 384;
 			_graphicsManager._fontPtr->_justifyHeight = 97;
 
@@ -277,7 +277,7 @@ bool VoyeurEngine::doLock() {
 						int x1 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 1) << 1));
 						int x2 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 3) << 1));
 						int y1 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 2) << 1));
-						int y2 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 2) << 1));
+						int y2 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 4) << 1));
 
 						if (mousePos.x >= x1 && mousePos.x <= x2 && mousePos.y >= y1 && mousePos.y <= y2) {
 							key = keyIndex;

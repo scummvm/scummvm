@@ -252,12 +252,17 @@ public:
 	ViewPortSetupPtr _setupFn;
 	ViewPortAddPtr _addFn;
 	ViewPortRestorePtr _restoreFn;
+	PictureResource _fontChar;
+	Common::Rect _fontRect;
 public:
 	ViewPortResource(BoltFilesState &state, const byte *src);
 	virtual ~ViewPortResource();
 
 	void setupViewPort();
-	void drawText(const Common::String &msg);
+	int drawText(const Common::String &msg);
+	int textWidth(const Common::String &msg);
+	void addSaveRect(int pageIndex, const Common::Rect &r);
+	void sFillBox(int width);
 };
 
 class ViewPortPalEntry  {
@@ -281,10 +286,17 @@ public:
 
 class FontResource {
 public:
-	byte *_fieldC;
+	int _minChar, _maxChar;
+	int field2;
+	int _padding;
+	int _fontHeight;
+	int field6;
+	int *_charWidth;
+	byte *_data1;
+	byte *_data2;
 
-	FontResource(BoltFilesState &state, const byte *src);
-	virtual ~FontResource() {}
+	FontResource(BoltFilesState &state, byte *src);
+	virtual ~FontResource();
 };
 
 class CMapResource {
