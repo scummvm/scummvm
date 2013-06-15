@@ -24,6 +24,7 @@
  */
 
 #include "common/winexe_ne.h"
+#include "graphics/wincursor.h"
 
 #include "buried/database.h"
 
@@ -75,6 +76,10 @@ Common::String DatabaseNE::loadString(uint32 stringID) {
 
 Common::SeekableReadStream *DatabaseNE::getBitmapStream(uint32 bitmapID) {
 	return _exe->getResource(Common::kNEBitmap, bitmapID);
+}
+
+Graphics::WinCursorGroup *DatabaseNE::getCursorGroup(uint32 cursorGroupID) {
+	return Graphics::WinCursorGroup::createCursorGroup(*_exe, cursorGroupID);
 }
 
 bool DatabaseNECompressed::load(const Common::String &fileName) {

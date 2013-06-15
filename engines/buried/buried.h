@@ -59,9 +59,10 @@ public:
 	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
 
 	GraphicsManager *_gfx;
+	Database *_mainEXE;
 
 private:
-	Database *_mainEXE, *_library;
+	Database *_library;
 };
 
 } // End of namespace Buried

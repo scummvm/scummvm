@@ -24,15 +24,22 @@
 #ifdef MACOSX
 #include "common/macresman.h"
 #endif
+#include "graphics/cursorman.h"
+#include "graphics/wincursor.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
 
 #include "buried/buried.h"
+#include "buried/database.h"
 #include "buried/graphics.h"
 
 namespace Buried {
 
 GraphicsManager::GraphicsManager(BuriedEngine *vm) : _vm(vm) {
+	_curCursor = kCursorNone;
+
+	setCursor(kCursorArrow);
+	CursorMan.showMouse(true);
 }
 
 GraphicsManager::~GraphicsManager() {
@@ -135,6 +142,43 @@ Graphics::Font *GraphicsManager::createFont(int size) const {
 	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 0, Graphics::kTTFRenderModeMonochrome, 0);
 	delete stream;
 	return font;
+}
+
+Cursor GraphicsManager::setCursor(Cursor newCursor) {
+	Cursor oldCursor = _curCursor;
+	Graphics::Cursor *cursor = 0;
+	Graphics::WinCursorGroup *cursorGroup = 0;
+
+	if (newCursor == kCursorArrow) {
+		cursor = Graphics::makeDefaultWinCursor();
+	} else if (newCursor == kCursorWait) {
+		warning("STUB: setCursor(kCursorWait)");
+		return kCursorNone;
+	} else {
+		cursorGroup = _vm->_mainEXE->getCursorGroup(newCursor);
+
+		if (!cursorGroup)
+			return kCursorNone;
+
+		cursor = cursorGroup->cursors[0].cursor;
+	}
+
+	if (!cursor)
+		error("Failed to find cursor %d", newCursor);
+
+	// TODO: Fallback mode for platforms without cursor palettes in 8bpp mode?
+
+	CursorMan.replaceCursor(cursor->getSurface(), cursor->getWidth(), cursor->getHeight(),
+			cursor->getHotspotX(), cursor->getHotspotY(), cursor->getKeyColor());
+	CursorMan.replaceCursorPalette(cursor->getPalette(), cursor->getPaletteStartIndex(), cursor->getPaletteCount());
+
+	if (cursorGroup)
+		delete cursorGroup;
+	else
+		delete cursor;
+
+	_curCursor = newCursor;
+	return oldCursor;
 }
 
 } // End of namespace Buried
