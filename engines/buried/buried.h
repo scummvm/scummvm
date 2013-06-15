@@ -30,6 +30,10 @@
 
 class OSystem;
 
+namespace Graphics {
+class Font;
+}
+
 namespace Buried {
 
 struct BuriedGameDescription;
@@ -53,6 +57,8 @@ public:
 	Common::String getLibraryName() const;
 
 	bool hasFeature(EngineFeature f) const;
+
+	Graphics::Font *createFont(int size) const;
 
 private:
 	Database *_mainEXE, *_library;
