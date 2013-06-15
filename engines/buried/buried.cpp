@@ -28,6 +28,7 @@
 #endif
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "engines/util.h"
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
 
@@ -47,6 +48,20 @@ BuriedEngine::~BuriedEngine() {
 }
 
 Common::Error BuriedEngine::run() {
+	if (isTrueColor()) {
+#ifndef USE_RGB_COLOR
+		// Can't play 24bpp version without support
+		return Common::kUnsupportedColorMode;
+#else
+		initGraphics(640, 480, true, 0);
+
+		if (_system->getScreenFormat().bytesPerPixel == 1)
+			return Common::kUnsupportedColorMode;
+#endif
+	} else {
+		initGraphics(640, 480, true);
+	}
+
 	if (isWin95()) {
 		error("TODO: Win95 version");
 	} else if (isCompressed()) {
