@@ -4,6 +4,7 @@ MODULE_OBJS = \
 	buried.o \
 	database.o \
 	detection.o \
+	graphics.o \
 	window.o
 
 

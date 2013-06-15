@@ -20,48 +20,29 @@
  *
  */
 
-#ifndef BURIED_BURIED_H
-#define BURIED_BURIED_H
+#ifndef BURIED_GRAPHICS_H
+#define BURIED_GRAPHICS_H
 
 #include "common/scummsys.h"
-#include "common/array.h"
 
-#include "engines/engine.h"
-
-class OSystem;
+namespace Graphics {
+class Font;
+}
 
 namespace Buried {
 
-struct BuriedGameDescription;
-class Database;
-class GraphicsManager;
+class BuriedEngine;
 
-class BuriedEngine : public ::Engine {
-protected:
-	Common::Error run();
-
+class GraphicsManager {
 public:
-	BuriedEngine(OSystem *syst, const BuriedGameDescription *gamedesc);
-	virtual ~BuriedEngine();
+	GraphicsManager(BuriedEngine *vm);
+	~GraphicsManager();
 
-	// Detection related functions
-	const BuriedGameDescription *_gameDescription;
-	bool isDemo() const;
-	bool isTrueColor() const;
-	bool isWin95() const;
-	bool isCompressed() const;
-	Common::String getEXEName() const;
-	Common::String getLibraryName() const;
-
-	bool hasFeature(EngineFeature f) const;
-
-	Common::String getFilePath(uint32 stringID);
-	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
-
-	GraphicsManager *_gfx;
+	byte *getDefaultPalette() const;
+	Graphics::Font *createFont(int size) const;
 
 private:
-	Database *_mainEXE, *_library;
+	BuriedEngine *_vm;
 };
 
 } // End of namespace Buried

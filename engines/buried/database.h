@@ -43,6 +43,7 @@ public:
 	virtual void close() = 0;
 
 	virtual Common::String loadString(uint32 stringID) = 0;
+	virtual Common::SeekableReadStream *getBitmapStream(uint32 bitmapID) = 0;
 };
 
 /**
@@ -57,6 +58,7 @@ public:
 	void close();
 
 	Common::String loadString(uint32 stringID);
+	Common::SeekableReadStream *getBitmapStream(uint32 bitmapID);
 
 protected:
 	Common::NEResources *_exe;

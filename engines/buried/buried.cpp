@@ -4,6 +4,9 @@
  * are too numerous to list here. Please refer to the COPYRIGHT
  * file distributed with this source distribution.
  *
+ * Additional copyright for this file:
+ * Copyright (C) 1995 Presto Studios, Inc.
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -22,27 +25,24 @@
 
 #include "common/scummsys.h"
 #include "common/error.h"
-#include "common/fs.h"
-#ifdef MACOSX
-#include "common/macresman.h"
-#endif
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
-#include "graphics/font.h"
-#include "graphics/fonts/ttf.h"
 
 #include "buried/buried.h"
 #include "buried/database.h"
+#include "buried/graphics.h"
 
 namespace Buried {
 
 BuriedEngine::BuriedEngine(OSystem *syst, const BuriedGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
+	_gfx = 0;
 	_mainEXE = 0;
 	_library = 0;
 }
 
 BuriedEngine::~BuriedEngine() {
+	delete _gfx;
 	delete _mainEXE;
 	delete _library;
 }
@@ -81,67 +81,9 @@ Common::Error BuriedEngine::run() {
 	if (_library && !_library->load(getLibraryName()))
 		error("Failed to load library DLL '%s'", getLibraryName().c_str());
 
+	_gfx = new GraphicsManager(this);
+
 	return Common::kNoError;
-}
-
-Graphics::Font *BuriedEngine::createFont(int size) const {
-	Common::SeekableReadStream *stream = 0;
-
-	// HACK: Try to load the system font
-	// TODO: MS Gothic for the Japanese version (please buy for clone2727)
-	// Arial for everything else (???)
-#if defined(WIN32)
-	Common::FSNode fontPath("C:/WINDOWS/Fonts/arial.ttf");
-
-	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
-		stream = fontPath.createReadStream();
-
-	if (!stream) {
-		Common::FSNode win2kFontPath("C:/WINNT/Fonts/arial.ttf");
-
-		if (win2kFontPath.exists() && !win2kFontPath.isDirectory() && win2kFontPath.isReadable())
-			stream = win2kFontPath.createReadStream();
-	}
-#elif defined(MACOSX)
-	// Attempt to load the font from the Arial.ttf font first
-	Common::FSNode fontPath("/Library/Fonts/Arial.ttf");
-
-	if (fontPath.exists() && !fontPath.isDirectory() && fontPath.isReadable())
-		stream = fontPath.createReadStream();
-
-	if (!stream) {
-		// Try the suitcase on the system
-		Common::FSNode fontDirectory("/Library/Fonts");
-		Common::MacResManager resFork;
-
-		// DOUBLE HACK WARNING: Just assume it's 0x1000
-		// (it should always be this, the first font, but parsing the FOND would be better)
-		if (fontDirectory.exists() && fontDirectory.isDirectory() && resFork.open(fontPath, "Arial") && resFork.hasResFork())
-			stream = resFork.getResource(MKTAG('s', 'f', 'n', 't'), 0x1000);
-
-		// ...and one last try
-		if (!stream) {
-			Common::FSNode msFontDirectory("/Library/Fonts/Microsoft");
-			if (fontDirectory.exists() && fontDirectory.isDirectory() && resFork.open(fontPath, "Arial") && resFork.hasResFork())
-				stream = resFork.getResource(MKTAG('s', 'f', 'n', 't'), 0x1000);
-		}
-	}
-#endif
-
-	if (!stream) {
-		// TODO: Try to load an equivalent font from the theme
-		return 0;
-	}
-
-	// TODO: Make the monochrome mode optional
-	// Win3.1 obviously only had raster fonts, but BIT Win3.1 will render
-	// with the TrueType font on Win7/Win8 (at least)
-	// TODO: The mapping is code page 1252, but it should be 1:1 to Unicode
-	// for the characters we need.
-	// TODO: shift-jis (code page 932) for the Japanese version (again, buy for clone2727)
-	Graphics::Font *font = Graphics::loadTTFFont(*stream, size, 0, Graphics::kTTFRenderModeMonochrome, 0);
-	delete stream;
-	return font;
 }
 
 Common::String BuriedEngine::getFilePath(uint32 stringID) {
@@ -166,6 +108,15 @@ Common::String BuriedEngine::getFilePath(uint32 stringID) {
 	}
 
 	return output;
+}
+
+Common::SeekableReadStream *BuriedEngine::getBitmapStream(uint32 bitmapID) {
+	// The demo's bitmaps are in the main EXE
+	if (isDemo())
+		return _mainEXE->getBitmapStream(bitmapID);
+
+	// The rest in the database library
+	return _library->getBitmapStream(bitmapID);
 }
 
 } // End of namespace Buried

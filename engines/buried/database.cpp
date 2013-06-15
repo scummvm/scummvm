@@ -73,6 +73,10 @@ Common::String DatabaseNE::loadString(uint32 stringID) {
 	return result;
 }
 
+Common::SeekableReadStream *DatabaseNE::getBitmapStream(uint32 bitmapID) {
+	return _exe->getResource(Common::kNEBitmap, bitmapID);
+}
+
 bool DatabaseNECompressed::load(const Common::String &fileName) {
 	return _exe->loadFromCompressedEXE(fileName);
 }
