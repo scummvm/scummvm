@@ -536,6 +536,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			break;
 
 		case 12:
+			// Bank - negotiations between Hopkins and one of the killers
 			_vm->_fontMan->hideText(9);
 			_vm->_events->refreshScreenAndEvents();
 			_vm->_events->refreshScreenAndEvents();
@@ -543,6 +544,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			break;
 
 		case 13:
+			// Bank - after negotiations, Hopkins enters the bank
 			_vm->_events->_mouseButton = _vm->_events->_curMouseButton;
 			_vm->_globals->_disableInventFl = true;
 			_vm->_graphicsMan->fadeOutLong();
@@ -553,9 +555,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_graphicsMan->endDisplayBob();
 			_vm->_objectsMan->clearScreen();
 
-			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo()) {
-				_vm->_graphicsMan->fadeOutLong();
-			} else {
+			if ((_vm->getPlatform() != Common::kPlatformWindows) || !_vm->getIsDemo()) {
 				_vm->_soundMan->playSoundFile("SOUND17.WAV");
 				_vm->_graphicsMan->_fadingFl = true;
 				_vm->_animMan->playSequence2("HELICO.SEQ", 10, 4, 10);
