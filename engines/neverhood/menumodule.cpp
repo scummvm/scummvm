@@ -821,7 +821,7 @@ void SavegameListBox::scrollUp() {
 }
 
 void SavegameListBox::scrollDown() {
-	if (_lastVisibleItem < (int)_textLabelItems.size()) {
+	if (_lastVisibleItem < (int)_textLabelItems.size() - 1) {
 		++_firstVisibleItem;
 		++_lastVisibleItem;
 		refresh();
@@ -838,7 +838,7 @@ void SavegameListBox::pageUp() {
 }
 
 void SavegameListBox::pageDown() {
-	int amount = MIN((int)_textLabelItems.size() - _lastVisibleItem, _maxVisibleItemsCount);
+	int amount = MIN((int)_textLabelItems.size() - _lastVisibleItem - 1, _maxVisibleItemsCount);
 	if (amount > 0) {
 		_firstVisibleItem += amount;
 		_lastVisibleItem += amount;
