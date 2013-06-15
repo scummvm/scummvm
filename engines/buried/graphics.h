@@ -33,6 +33,32 @@ namespace Buried {
 
 class BuriedEngine;
 
+enum Cursor {
+	kCursorNone            =     0,
+
+	// Windows cursors
+	kCursorArrow           = 32512,
+	kCursorWait            = 32514,
+
+	// Buried in Time Cursors
+	kCursorEmptyArrow      =   100,
+	kCursorFinger          =   101,
+	kCursorMagnifyingGlass =   102,
+	kCursorOpenHand        =   103,
+	kCursorClosedHand      =   104,
+	kCursorPutDown         =   105,
+	kCursorNextPage        =   106,
+	kCursorPrevPage        =   107,
+	kCursorMoveUp          =   108,
+	kCursorMoveDown        =   109,
+	kCursorLocateCursorA   =   110,
+	kCursorLocateCursorB   =   111,
+	kCursorArrowUp         =   112,
+	kCursorArrowLeft       =   113,
+	kCursorArrowDown       =   114,
+	kCursorArrowRight      =   115
+};
+
 class GraphicsManager {
 public:
 	GraphicsManager(BuriedEngine *vm);
@@ -40,9 +66,11 @@ public:
 
 	byte *getDefaultPalette() const;
 	Graphics::Font *createFont(int size) const;
+	Cursor setCursor(Cursor newCursor);
 
 private:
 	BuriedEngine *_vm;
+	Cursor _curCursor;
 };
 
 } // End of namespace Buried
