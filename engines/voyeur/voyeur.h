@@ -66,9 +66,9 @@ private:
 	Common::RandomSource _randomSource;
 
 	BoltFile *_bVoy;
-	byte *_fontPtr;
 	SVoy _voy;
 	Common::Array<int> _resolves;
+	FontInfoResource _defaultFontInfo;
 
 	void ESP_Init();
 	void initialiseManagers();

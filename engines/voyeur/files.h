@@ -112,6 +112,7 @@ private:
 	void initViewPort();
 	void initViewPortList();
 	void initFontInfo();
+	void initFont();
 	void initSoundMap();
 private:
 	void resolveAll();
@@ -133,7 +134,8 @@ public:
 	void resolveIt(uint32 id, byte **p);
 	void resolveFunction(uint32 id, GraphicMethodPtr *fn);
 
-	BoltEntry &getBoltEntry(uint32 id);
+	BoltEntry &boltEntry(uint16 id); 
+	BoltEntry &getBoltEntryFromLong(uint32 id);
 	PictureResource *getPictureResource(uint32 id);
 	CMapResource *getCMapResource(uint32 id);
 };
@@ -174,6 +176,7 @@ public:
 	ViewPortResource *_viewPortResource;
 	ViewPortListResource *_viewPortListResource;
 	FontResource *_fontResource;
+	FontInfoResource *_fontInfoResource;
 	CMapResource *_cMapResource;
 	VInitCyclResource *_vInitCyclResource;
 public:
@@ -297,6 +300,34 @@ public:
 
 	FontResource(BoltFilesState &state, byte *src);
 	virtual ~FontResource();
+};
+
+enum FontJustify { ALIGN_LEFT = 0, ALIGN_CENTRE = 1, ALIGN_RIGHT = 2 };
+
+class FontInfoResource {
+public:
+	FontResource *_curFont;
+	byte _picFlags;
+	byte _picSelect;
+	byte _picPick;
+	byte _picOnOff;
+	byte _fontFlags;
+	FontJustify _justify;
+	int _fontSaveBack;
+	Common::Point _pos;
+	int _justifyWidth;
+	int _justifyHeight;
+	Common::Point _shadow;
+	int _foreColor;
+	int _backColor;
+	int _shadowColor;
+public:
+	FontInfoResource(BoltFilesState &state, const byte *src);
+	FontInfoResource();
+	FontInfoResource(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags, 
+		FontJustify justify, int fontSaveBack, const Common::Point &pos, int justifyWidth, 
+		int justifyHeight, const Common::Point &shadow, int foreColor, int backColor, 
+		int shadowColor);
 };
 
 class CMapResource {

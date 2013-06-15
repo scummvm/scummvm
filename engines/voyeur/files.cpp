@@ -217,7 +217,7 @@ const BoltMethodPtr BoltFile::_fnInitType[25] = {
 	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
 	&BoltFile::sInitPic, &BoltFile::initDefault, &BoltFile::vInitCMap, &BoltFile::vInitCycl,
 	&BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initViewPort,
-	&BoltFile::initViewPortList, &BoltFile::initDefault, &BoltFile::initFontInfo,
+	&BoltFile::initViewPortList, &BoltFile::initFont, &BoltFile::initFontInfo,
 	&BoltFile::initSoundMap, &BoltFile::initDefault, &BoltFile::initDefault, &BoltFile::initDefault,
 	&BoltFile::initDefault, &BoltFile::initDefault
 };
@@ -281,12 +281,22 @@ void BoltFile::freeBoltGroup(uint32 id) {
 	_state._curGroupPtr->unload();
 }
 
-BoltEntry &BoltFile::getBoltEntry(uint32 id) {
+BoltEntry &BoltFile::getBoltEntryFromLong(uint32 id) {
 	BoltGroup &group = _groups[id >> 24];
 	assert(group._loaded);
 
 	BoltEntry &entry = group._entries[(id >> 16) & 0xff];
 	assert(!entry.hasResource() || (id & 0xffff) == 0);
+
+	return entry;
+}
+
+BoltEntry &BoltFile::boltEntry(uint16 id) {
+	BoltGroup &group = _groups[id >> 8];
+	assert(group._loaded);
+
+	BoltEntry &entry = group._entries[id & 0xff];
+	assert(entry.hasResource());
 
 	return entry;
 }
@@ -297,14 +307,16 @@ PictureResource *BoltFile::getPictureResource(uint32 id) {
 
 	if (id & 0xffff)
 		id <<= 16;
-	return getBoltEntry(id)._picResource;
+	return getBoltEntryFromLong(id)._picResource;
 }
 
 CMapResource *BoltFile::getCMapResource(uint32 id) {
 		if ((int32)id == -1)
 		return NULL;
 
-	return getBoltEntry(id)._cMapResource;
+	if (id & 0xffff)
+		id <<= 16;
+	return getBoltEntryFromLong(id)._cMapResource;
 }
 
 byte *BoltFile::memberAddr(uint32 id) {
@@ -462,8 +474,13 @@ void BoltFile::initViewPortList() {
 
 void BoltFile::initFontInfo() {
 	initDefault();
-	_state._curMemberPtr->_fontResource = new FontResource(
+	_state._curMemberPtr->_fontInfoResource = new FontInfoResource(
 		_state, _state._curMemberPtr->_data);
+}
+
+void BoltFile::initFont() {
+	initDefault();
+	_state._curMemberPtr->_fontResource = new FontResource(_state, _state._curMemberPtr->_data);
 }
 
 void BoltFile::initSoundMap() {
@@ -514,6 +531,7 @@ BoltEntry::BoltEntry(Common::SeekableReadStream *f): _file(f) {
 	_viewPortResource = NULL;
 	_viewPortListResource = NULL;
 	_fontResource = NULL;
+	_fontInfoResource = NULL;
 	_cMapResource = NULL;
 	_vInitCyclResource = NULL;
 
@@ -533,6 +551,7 @@ BoltEntry::~BoltEntry() {
 	delete _viewPortResource;
 	delete _viewPortListResource;
 	delete _fontResource;
+	delete _fontInfoResource;
 	delete _cMapResource;
 	delete _vInitCyclResource;
 }
@@ -547,7 +566,7 @@ void BoltEntry::load() {
  */
 bool BoltEntry::hasResource() const {
 	return _picResource || _viewPortResource || _viewPortListResource
-		|| _fontResource || _cMapResource || _vInitCyclResource;
+		|| _fontResource || _fontInfoResource || _cMapResource || _vInitCyclResource;
 }
 
 /*------------------------------------------------------------------------*/
@@ -660,7 +679,7 @@ PictureResource::~PictureResource() {
 ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 		_state(state) {
 	_flags = READ_LE_UINT16(src);
-	_next = state._curLibPtr->getBoltEntry(READ_LE_UINT32(src + 2))._viewPortResource;
+	_next = state._curLibPtr->getBoltEntryFromLong(READ_LE_UINT32(src + 2))._viewPortResource;
 	_pageCount = READ_LE_UINT16(src + 6);
 	_pageIndex = READ_LE_UINT16(src + 8);
 	_lastPage = READ_LE_UINT16(src + 10);
@@ -797,7 +816,9 @@ void ViewPortResource::setupViewPort() {
 
 int ViewPortResource::drawText(const Common::String &msg) {
 	GraphicsManager &gfxManager = _state._vm->_graphicsManager;
-	FontInfo &fontInfo = *gfxManager._fontPtr;
+	assert(gfxManager._fontPtr);
+	assert(gfxManager._fontPtr->_curFont);
+	FontInfoResource &fontInfo = *gfxManager._fontPtr;
 	FontResource &fontData = *fontInfo._curFont;
 	int xShadows[9] = { 0, 1, 1, 1, 0, -1, -1, -1, 0 };
 	int yShadows[9] = { 0, 1, 0, -1, -1, -1, 0, 1, 1 };
@@ -1026,7 +1047,7 @@ ViewPortListResource::ViewPortListResource(BoltFilesState &state, const byte *sr
 	uint32 *idP = (uint32 *)&src[8];
 	for (uint i = 0; i < count; ++i, ++idP) {
 		uint32 id = READ_LE_UINT32(idP);
-		BoltEntry &entry = state._curLibPtr->getBoltEntry(id);
+		BoltEntry &entry = state._curLibPtr->getBoltEntryFromLong(id);
 
 		assert(entry._viewPortResource);
 		_entries.push_back(entry._viewPortResource);
@@ -1068,6 +1089,66 @@ FontResource::FontResource(BoltFilesState &state, byte *src) {
 
 FontResource::~FontResource() {
 	delete[] _charWidth;
+}
+
+/*------------------------------------------------------------------------*/
+
+FontInfoResource::FontInfoResource(BoltFilesState &state, const byte *src) {
+	_curFont = NULL;
+	_picFlags = src[4];
+	_picSelect = src[5];
+	_picPick = src[6];
+	_picOnOff = src[7];
+	_fontFlags = src[8];
+	_justify = (FontJustify)src[9];
+	_fontSaveBack = READ_LE_UINT16(src + 10);
+	_pos.x = (int16)READ_LE_UINT16(src + 12);
+	_pos.y = (int16)READ_LE_UINT16(src + 14);
+	_justifyWidth = READ_LE_UINT16(src + 16);
+	_justifyHeight = READ_LE_UINT16(src + 18);
+	_shadow.x = READ_LE_UINT16(src + 20);
+	_shadow.y = READ_LE_UINT16(src + 22);
+	_foreColor = READ_LE_UINT16(src + 24);
+	_backColor = READ_LE_UINT16(src + 26);
+	_shadowColor = READ_LE_UINT16(src + 28);
+}
+
+FontInfoResource::FontInfoResource() {
+	_curFont = NULL;
+	_picFlags = 3;
+	_picSelect = 0xff;
+	_picPick = 0xff;
+	_picOnOff = 0;
+	_fontFlags = 0;
+	_justify = ALIGN_LEFT;
+	_fontSaveBack = 0;
+	_justifyWidth = 1;
+	_justifyHeight = 1;
+	_shadow = Common::Point(1, 1);
+	_foreColor = 1;
+	_backColor = 0;
+	_shadowColor = 0;
+}
+
+FontInfoResource::FontInfoResource(byte picFlags, byte picSelect, byte picPick, byte picOnOff, 
+		byte fontFlags, FontJustify justify, int fontSaveBack, const Common::Point &pos, 
+		int justifyWidth, int justifyHeight, const Common::Point &shadow, int foreColor, 
+		int backColor, int shadowColor) {
+	_curFont = NULL;
+	_picFlags = picFlags;
+	_picSelect = picSelect;
+	_picPick = picPick;
+	_picOnOff = picOnOff;
+	_fontFlags = fontFlags;
+	_justify = justify;
+	_fontSaveBack = fontSaveBack;
+	_pos = pos;
+	_justifyWidth = justifyWidth;
+	_justifyHeight = justifyHeight;
+	_shadow = shadow;
+	_foreColor = foreColor;
+	_backColor = backColor;
+	_shadowColor = shadowColor;
 }
 
 /*------------------------------------------------------------------------*/

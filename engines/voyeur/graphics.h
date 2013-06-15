@@ -43,34 +43,8 @@ class PictureResource;
 class ViewPortResource;
 class ViewPortListResource;
 class FontResource;
+class FontInfoResource;
 class CMapResource;
-
-enum FontJustify { ALIGN_LEFT = 0, ALIGN_CENTRE = 1, ALIGN_RIGHT = 2 };
-
-class FontInfo {
-public:
-	FontResource *_curFont;
-	byte _picFlags;
-	byte _picSelect;
-	byte _picPick;
-	byte _picOnOff;
-	byte _fontFlags;
-	FontJustify _justify;
-	int _fontSaveBack;
-	Common::Point _pos;
-	int _justifyWidth;
-	int _justifyHeight;
-	Common::Point _shadow;
-	int _foreColor;
-	int _backColor;
-	int _shadowColor;
-public:
-	FontInfo();
-	FontInfo(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags, 
-		FontJustify justify, int fontSaveBack, const Common::Point &pos, int justifyWidth, 
-		int justifyHeight, const Common::Point &shadow, int foreColor, int backColor, 
-		int shadowColor);
-};
 
 class DrawInfo {
 public:
@@ -106,8 +80,7 @@ public:
 	int _sImageShift;
 	Graphics::Surface _screenSurface;
 	CMapResource *_backColors;
-	FontInfo *_fontPtr;
-	FontInfo _defaultFontInfo;
+	FontInfoResource *_fontPtr;
 	DrawInfo *_drawPtr;
 	DrawInfo _defaultDrawInfo;
 	bool _drawTextPermFlag;

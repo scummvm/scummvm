@@ -32,7 +32,9 @@ namespace Voyeur {
 VoyeurEngine *g_vm;
 
 VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("Voyeur") {
+		_gameDescription(gameDesc), _randomSource("Voyeur"),
+		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1, 
+			Common::Point(1, 1), 1, 0, 0) {
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	_bVoy = NULL;
 
@@ -99,6 +101,7 @@ void VoyeurEngine::initialiseManagers() {
 	_filesManager.setVm(this);
 	_graphicsManager.setVm(this);
 	_soundManager.setVm(this);
+
 }
 
 void VoyeurEngine::ESP_Init() {
@@ -110,7 +113,10 @@ void VoyeurEngine::globalInitBolt() {
 	_filesManager.openBoltLib("bvoy.blt", _bVoy);
 	_bVoy->getBoltGroup(0x10000);
 	_bVoy->getBoltGroup(0x10100);
-	_fontPtr = _bVoy->memberAddr(0x101);
+
+	_graphicsManager._fontPtr = &_defaultFontInfo;
+	_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x101)._fontResource;
+	assert(_graphicsManager._fontPtr->_curFont);
 
 	// Setup default flags
 	Common::fill((byte *)&_voy, (byte *)&_voy + sizeof(SVoy), 0);
@@ -156,7 +162,7 @@ void VoyeurEngine::doHeadTitle() {
 }
 
 void VoyeurEngine::showConversionScreen() {
-	_graphicsManager._backgroundPage = _bVoy->getBoltEntry(0x5020000)._picResource;
+	_graphicsManager._backgroundPage = _bVoy->boltEntry(0x502)._picResource;
 	(*_graphicsManager._vPort)->setupViewPort();
 	(*_graphicsManager._vPort)->_flags |= 8;
 
@@ -164,7 +170,7 @@ void VoyeurEngine::showConversionScreen() {
 	_eventsManager.sWaitFlip();
 
 	// Immediate palette load to show the initial screen
-	CMapResource *cMap = _bVoy->getCMapResource(0x5030000);
+	CMapResource *cMap = _bVoy->getCMapResource(0x503);
 	assert(cMap);
 	cMap->_steps = 0;
 	cMap->startFade();
@@ -238,10 +244,10 @@ bool VoyeurEngine::doLock() {
 		_graphicsManager.setColor(3, 0x0A, 0xA0, 0x0A);
 		_graphicsManager.setColor(4, 0x0E, 0xE0, 0x0E);
 		
-		_eventsManager._intPtr.field38 = 1;
+		_eventsManager._intPtr. field38 = 1;
 		_eventsManager._intPtr._hasPalette = true;
 
-		_graphicsManager._fontPtr->_curFont = _bVoy->getBoltEntry(0x708)._fontResource;
+		_graphicsManager._fontPtr->_curFont = _bVoy->boltEntry(0x708)._fontResource;
 		_graphicsManager._fontPtr->_fontSaveBack = 0;
 		_graphicsManager._fontPtr->_fontFlags = 0;
 

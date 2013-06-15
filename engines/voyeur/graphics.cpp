@@ -29,42 +29,6 @@
 
 namespace Voyeur {
 
-FontInfo::FontInfo() {
-	_curFont = NULL;
-	_picFlags = 3;
-	_picSelect = 0xff;
-	_picPick = 0xff;
-	_picOnOff = 0;
-	_fontFlags = 0;
-	_justify = ALIGN_LEFT;
-	_fontSaveBack = 0;
-	_justifyWidth = 1;
-	_justifyHeight = 1;
-	_shadow = Common::Point(1, 1);
-	_foreColor = 1;
-	_backColor = 0;
-	_shadowColor = 0;
-}
-
-FontInfo::FontInfo(byte picFlags, byte picSelect, byte picPick, byte picOnOff, byte fontFlags, 
-		FontJustify justify, int fontSaveBack, const Common::Point &pos, int justifyWidth, int justifyHeight,
-		const Common::Point &shadow, int foreColor, int backColor, int shadowColor) {
-	_curFont = NULL;
-	_picSelect = picSelect;
-	_picPick = picPick;
-	_picOnOff = picOnOff;
-	_fontFlags = fontFlags;
-	_justify = justify;
-	_fontSaveBack = fontSaveBack;
-	_pos = pos;
-	_justifyWidth = justifyWidth;
-	_justifyHeight = justifyHeight;
-	_shadow = shadow;
-	_foreColor = foreColor;
-	_backColor = backColor;
-	_shadowColor = shadowColor;
-}
-
 /*------------------------------------------------------------------------*/
 
 DrawInfo::DrawInfo(int penColor, const Common::Point &pos, int flags) {
@@ -76,9 +40,8 @@ DrawInfo::DrawInfo(int penColor, const Common::Point &pos, int flags) {
 /*------------------------------------------------------------------------*/
 
 GraphicsManager::GraphicsManager():
-		_defaultFontInfo(3, 0xff, 0xff, 0, 0, ALIGN_LEFT, 0, Common::Point(), 1, 1, 
-			Common::Point(1, 1), 1, 0, 0), _defaultDrawInfo(1, Common::Point(), 0),
-		_fontPtr(&_defaultFontInfo), _drawPtr(&_defaultDrawInfo) {
+		_defaultDrawInfo(1, Common::Point(), 0),
+			_drawPtr(&_defaultDrawInfo) {
 	_SVGAPage = 0;
 	_SVGAMode = 0;
 	_SVGAReset = 0;
@@ -92,6 +55,7 @@ GraphicsManager::GraphicsManager():
 	_clipPtr = NULL;
 	_viewPortListPtr = NULL;
 	_vPort = NULL;
+	_fontPtr = NULL;
 }
 
 void GraphicsManager::sInitGraphics() {
