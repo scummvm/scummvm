@@ -144,4 +144,28 @@ Graphics::Font *BuriedEngine::createFont(int size) const {
 	return font;
 }
 
+Common::String BuriedEngine::getFilePath(uint32 stringID) {
+	Common::String path = _mainEXE->loadString(stringID);
+	Common::String output;
+
+	if (path.empty())
+		return output;
+
+	uint i = 0;
+
+	// The non-demo paths have CD info followed by a backspace
+	// We ignore this
+	if (!isDemo())
+		i += 2;
+
+	for (; i < path.size(); i++) {
+		if (path[i] == '\\')
+			output += '/';
+		else
+			output += path[i];
+	}
+
+	return output;
+}
+
 } // End of namespace Buried

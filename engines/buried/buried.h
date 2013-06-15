@@ -60,6 +60,8 @@ public:
 
 	Graphics::Font *createFont(int size) const;
 
+	Common::String getFilePath(uint32 stringID);
+
 private:
 	Database *_mainEXE, *_library;
 };
