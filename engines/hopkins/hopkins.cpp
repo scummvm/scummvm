@@ -201,12 +201,15 @@ bool HopkinsEngine::runWin95Demo() {
 
 		switch (_globals->_exitId) {
 		case 1:
+			// Handles room: Apartment
 			_linesMan->setMaxLineIdx(40);
 			_globals->_characterMaxPosY = 435;
 			_objectsMan->sceneControl2("IM01", "IM01", "ANIM01", "IM01", 2, true);
 			break;
 
 		case 3:
+			// - Displays bank attack when leaving the apartment
+			// - Handles room: bottom of the apartment
 			if (!_globals->_saveData->_data[svBankAttackAnimPlayedFl]) {
 				_soundMan->playSound(3);
 				if (getPlatform() == Common::kPlatformOS2 || getPlatform() == Common::kPlatformBeOS)
@@ -244,12 +247,14 @@ bool HopkinsEngine::runWin95Demo() {
 			break;
 
 		case 4:
+			// Handle room: City map
 			_globals->_disableInventFl = true;
 			_objectsMan->handleCityMap();
 			_globals->_disableInventFl = false;
 			break;
 
 		case 5:
+			// Handle room: Outside the bank
 			_linesMan->setMaxLineIdx(5);
 			_globals->_characterMaxPosY = 455;
 
