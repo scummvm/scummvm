@@ -214,10 +214,12 @@ class CMctlCompound : public CMotionController {
 	virtual bool load(MfcArchive &file);
 };
 
-class Unk2 {
-  //CObject CObject;
-  int items;
-  int count;
+class Unk2 : public CObject {
+  int _items;
+  int _count;
+
+ public:
+	Unk2() : _items(0), _count(0) {}
 };
 
 class CMovGraph : public CMotionController {
@@ -228,6 +230,10 @@ class CMovGraph : public CMotionController {
   int _itemsCount;
   int (*_callback1)(int, int, int);
   Unk2 _unk2;
+
+ public:
+	CMovGraph();
+	virtual bool load(MfcArchive &file);
 };
 
 class ShadowsItemArray : public Common::Array<CObject>, public CObject {

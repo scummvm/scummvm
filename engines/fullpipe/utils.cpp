@@ -62,7 +62,8 @@ enum {
 	kExCommand,
 	kCObjstateCommand,
 	kCGameVar,
-	kCMctlCompound
+	kCMctlCompound,
+	kCMovGraph
 };
 
 const struct {
@@ -75,6 +76,7 @@ const struct {
 	{ "CObjstateCommand", kCObjstateCommand },
 	{ "CGameVar",		kCGameVar },
 	{ "CMctlCompound",	kCMctlCompound },
+	{ "CMovGraph",		kCMovGraph },
 	{ 0, 0 }
 };
 
@@ -103,6 +105,8 @@ static CObject *createObject(int objectId) {
 		return new CGameVar();
 	case kCMctlCompound:
 		return new CMctlCompound();
+	case kCMovGraph:
+		return new CMovGraph();
 	default:
 		error("Unknown objectId: %d", objectId);
 	}

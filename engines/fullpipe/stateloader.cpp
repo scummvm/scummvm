@@ -534,4 +534,19 @@ bool CMctlCompoundArray::load(MfcArchive &file) {
 	return true;
 }
 
+CMovGraph::CMovGraph() {
+  _itemsCount = 0;
+  _items = 0;
+  //_callback1 = CMovGraphCallback1;  // TODO
+  _field_44 = 0;
+  // insertMessageHandler(CMovGraph_messageHandler, getMessageHandlersCount() - 1, 129);
+}
+
+bool CMovGraph::load(MfcArchive &file) {
+  _links.load(file);
+  _nodes.load(file);
+
+  return true;
+}
+
 } // End of namespace Fullpipe
