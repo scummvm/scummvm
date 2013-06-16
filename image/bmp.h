@@ -20,6 +20,15 @@
  *
  */
 
+/**
+ * @file
+ * Image decoder used in engines:
+ *  - buried
+ *  - hugo
+ *  - mohawk
+ *  - wintermute
+ */
+
 #ifndef IMAGE_BMP_H
 #define IMAGE_BMP_H
 
@@ -37,7 +46,7 @@ struct Surface;
 }
 
 namespace Image {
-	
+
 /**
  * @defgroup image_bmp BMP decoder
  * @ingroup image
@@ -51,7 +60,7 @@ namespace Image {
  *  - Wintermute
  * @{
  */
- 
+
 class Codec;
 
 class BitmapDecoder : public ImageDecoder {
