@@ -59,6 +59,11 @@ class CObArray : public Common::Array<CObject>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
+class CDWordArray : public Common::Array<int32>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
 struct CNode {
 	CNode *pNext;
 	CNode *pPrev;

@@ -504,4 +504,20 @@ bool Sc2::load(MfcArchive &file) {
 	return true;
 }
 
+bool CDWordArray::load(MfcArchive &file) {
+	int count = file.readCount();
+
+	debug(0, "CDWordArray::count: %d", count);
+
+	resize(count);
+
+	for (int i = 0; i < count; i++) {
+		int32 t = file.readUint32LE();
+
+		push_back(t);
+	}
+
+	return true;
+}
+
 } // End of namespace Fullpipe

@@ -45,6 +45,7 @@ class MfcArchive : public Common::File {
 
 	char *readPascalString(bool twoByte = false);
 	int readCount();
+	double readDouble();
 	CObject *parseClass(bool *isCopyReturned);
 	CObject *readClass();
 

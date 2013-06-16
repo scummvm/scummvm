@@ -56,6 +56,23 @@ int MfcArchive::readCount() {
 	return count;
 }
 
+double MfcArchive::readDouble() {
+  // FIXME: This is utterly cruel and unportable
+
+  union {
+    struct {
+      int32 a;
+      int32 b;
+    } i;
+    double d;
+  } tmp;
+
+  tmp.i.a = readUint32LE();
+  tmp.i.b = readUint32LE();
+    
+  return tmp.d;
+}
+
 enum {
 	kNullObject,
 	kCInteraction,
@@ -64,7 +81,9 @@ enum {
 	kCObjstateCommand,
 	kCGameVar,
 	kCMctlCompound,
-	kCMovGraph
+	kCMovGraph,
+	kCMovGraphLink,
+	kCMovGraphNode
 };
 
 const struct {
@@ -78,6 +97,8 @@ const struct {
 	{ "CGameVar",		kCGameVar },
 	{ "CMctlCompound",	kCMctlCompound },
 	{ "CMovGraph",		kCMovGraph },
+	{ "CMovGraphLink",	kCMovGraphLink },
+	{ "CMovGraphNode",	kCMovGraphNode },
 	{ 0, 0 }
 };
 
@@ -108,6 +129,10 @@ static CObject *createObject(int objectId) {
 		return new CMctlCompound();
 	case kCMovGraph:
 		return new CMovGraph();
+	case kCMovGraphLink:
+		return new CMovGraphLink();
+	case kCMovGraphNode:
+		return new CMovGraphNode();
 	default:
 		error("Unknown objectId: %d", objectId);
 	}

@@ -71,26 +71,39 @@ class Unk2 : public CObject {
 	Unk2() : _items(0), _count(0) {}
 };
 
+class CMovGraphNode : public CObject {
+  int _x;
+  int _y;
+  int _distance;
+  int16 _field_10;
+  int16 _field_12;
+  int _field_14;
+
+  public:
+	CMovGraphNode() : _x(0), _y(0), _distance(0), _field_10(0), _field_14(0) {}
+	virtual bool load(MfcArchive &file);
+};
+
+class CMovGraphReact : public CObject {
+    // Empty
+};
+
 class CMovGraphLink : public CObject {
-  int movGraphNode1;
-  int movGraphNode2;
-  int dwordArray1;
-  int field_10;
-  int field_14;
-  int field_18;
-  int field_1C;
-  int dwordArray2;
-  int field_24;
-  int field_28;
-  int field_2C;
-  int field_30;
-  int flags;
-  int field_38;
-  int field_3C;
-  double distance;
-  double angle;
-  int movGraphReact;
-  int name;
+  CMovGraphNode *_movGraphNode1;
+  CMovGraphNode *_movGraphNode2;
+  CDWordArray _dwordArray1;
+  CDWordArray _dwordArray2;
+  int _flags;
+  int _field_38;
+  int _field_3C;
+  double _distance;
+  double _angle;
+  CMovGraphReact *_movGraphReact;
+  char *_name;
+
+  public:
+	CMovGraphLink();
+	virtual bool load(MfcArchive &file);
 };
 
 class CMovGraph : public CMotionController {

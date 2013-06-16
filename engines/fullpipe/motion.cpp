@@ -76,4 +76,44 @@ bool CMovGraph::load(MfcArchive &file) {
   return true;
 }
 
+CMovGraphLink::CMovGraphLink() {
+  _distance = 0;
+  _angle = 0;
+  _flags = 0x10000000;
+  _movGraphNode2 = 0;
+  _movGraphNode1 = 0;
+  _field_3C = 0;
+  _field_38 = 0;
+  _movGraphReact = 0;
+}
+
+bool CMovGraphLink::load(MfcArchive &file) {
+  _dwordArray1.load(file);
+  _dwordArray2.load(file);
+
+  _flags = file.readUint32LE();
+
+  _movGraphNode1 = (CMovGraphNode *)file.readClass();
+  _movGraphNode2 = (CMovGraphNode *)file.readClass();
+
+  _distance = file.readDouble();
+  _angle = file.readDouble();
+
+  debug(0, "distance: %g, angle: %g", _distance, _angle);
+
+  _movGraphReact = (CMovGraphReact *)file.readClass();
+  _name = file.readPascalString();
+
+  return true;
+}
+
+bool CMovGraphNode::load(MfcArchive &file) {
+  _field_14 = file.readUint32LE();
+  _x = file.readUint32LE();
+  _y = file.readUint32LE();
+  _distance = file.readUint32LE();
+
+  return true;
+}
+
 } // End of namespace Fullpipe
