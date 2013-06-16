@@ -504,49 +504,4 @@ bool Sc2::load(MfcArchive &file) {
 	return true;
 }
 
-
-bool CMotionController::load(MfcArchive &file) {
-	// Is originally empty	file.readClass();
-
-
-	return true;
-}
-
-bool CMctlCompound::load(MfcArchive &file) {
-	int count = file.readUint32LE();
-
-	debug(0, "CMctlCompund::count = %d", count);
-
-	for (int i = 0; i < count; i++) {
-	  CMctlCompoundArrayItem *obj = (CMctlCompoundArrayItem *)file.readClass();
-
-	  _motionControllers.push_back(*obj);
-	}
-
-	return true;
-}
-
-bool CMctlCompoundArray::load(MfcArchive &file) {
-	int count = file.readUint32LE();
-
-	debug(0, "CMctlCompundArray::count = %d", count);
-
-	return true;
-}
-
-CMovGraph::CMovGraph() {
-  _itemsCount = 0;
-  _items = 0;
-  //_callback1 = CMovGraphCallback1;  // TODO
-  _field_44 = 0;
-  // insertMessageHandler(CMovGraph_messageHandler, getMessageHandlersCount() - 1, 129);
-}
-
-bool CMovGraph::load(MfcArchive &file) {
-  _links.load(file);
-  _nodes.load(file);
-
-  return true;
-}
-
 } // End of namespace Fullpipe

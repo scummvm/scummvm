@@ -26,6 +26,7 @@
 
 #include "fullpipe/utils.h"
 #include "fullpipe/objects.h"
+#include "fullpipe/motion.h"
 
 namespace Fullpipe {
 

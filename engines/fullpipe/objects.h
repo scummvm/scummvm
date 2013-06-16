@@ -176,66 +176,6 @@ class CInputController {
 	CInputController();
 };
 
-class CMotionController : public CObject {
-	int _field_4;
-	int _isEnabled;
-
- public:
-	CMotionController() : _isEnabled(1) {}
-	virtual bool load(MfcArchive &file);
-};
-
-class CMctlCompoundArray : public Common::Array<CObject>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
-
-class CMctlConnectionPointsArray : public Common::Array<CObject>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
-
-class CMctlCompoundArrayItem : public CObject {
-  int _motionControllerObj;
-  int _movGraphReactObj;
-  CMctlConnectionPointsArray _connectionPoints;
-  int _field_20;
-  int _field_24;
-  int _field_28;
-
- public:
-	CMctlCompoundArrayItem() : _movGraphReactObj(0), _motionControllerObj(0) {}
-};
-
-class CMctlCompound : public CMotionController {
-	CMctlCompoundArray _motionControllers;
-
- public:
-	virtual bool load(MfcArchive &file);
-};
-
-class Unk2 : public CObject {
-  int _items;
-  int _count;
-
- public:
-	Unk2() : _items(0), _count(0) {}
-};
-
-class CMovGraph : public CMotionController {
-  CObList _nodes;
-  CObList _links;
-  int _field_44;
-  int _items;
-  int _itemsCount;
-  int (*_callback1)(int, int, int);
-  Unk2 _unk2;
-
- public:
-	CMovGraph();
-	virtual bool load(MfcArchive &file);
-};
-
 class ShadowsItemArray : public Common::Array<CObject>, public CObject {
  public:
 	virtual bool load(MfcArchive &file);
@@ -274,6 +214,8 @@ class Scene {
 	int field_BC;
 	int libHandle;
 };
+
+class CMotionController;
 
 class Sc2 : public CObject {
 	int16 _sceneId;
