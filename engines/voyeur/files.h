@@ -219,6 +219,8 @@ public:
 	byte *_imgData;
 public:
 	PictureResource(BoltFilesState &state, const byte *src);
+	PictureResource(int flags, int select, int pick, int onOff, int depth, 
+		const Common::Rect &bounds, int maskData, byte *imgData, int planeSize);
 	PictureResource();
 	virtual ~PictureResource();
 };

@@ -670,6 +670,20 @@ PictureResource::PictureResource() {
 	_imgData = NULL;
 }
 
+PictureResource::PictureResource(int flags, int select, int pick, int onOff, 
+		int depth,  const Common::Rect &bounds, int maskData, byte *imgData,
+		int planeSize) {
+	_flags = flags;
+	_select = select;
+	_pick = pick;
+	_onOff = onOff;
+	_depth = depth;
+	_bounds = bounds;
+	_maskData = maskData;
+	_imgData = imgData;
+	_planeSize = planeSize;
+}
+
 PictureResource::~PictureResource() {
 	delete _imgData;
 }
@@ -677,7 +691,7 @@ PictureResource::~PictureResource() {
 /*------------------------------------------------------------------------*/
 
 ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
-		_state(state) {
+		_fontChar(0, 0xff, 0xff, 0, 0, Common::Rect(), 0, NULL, 0), _state(state) {
 	_flags = READ_LE_UINT16(src);
 	_next = state._curLibPtr->getBoltEntryFromLong(READ_LE_UINT32(src + 2))._viewPortResource;
 	_pageCount = READ_LE_UINT16(src + 6);
@@ -919,12 +933,12 @@ int ViewPortResource::drawText(const Common::String &msg) {
 	gfxManager._saveBack = false;
 
 	int count = 0;
-	if (!(fontInfo._fontFlags & 4))
+	if (fontInfo._fontFlags & 4)
 		count = 1;
 	else if (fontInfo._fontFlags & 8)
 		count = 8;
 
-	for (int i = 0; i < count; ++i) {
+	for (int i = count; i >= 0; --i) {
 		xp = pos.x;
 		yp = pos.y;
 
@@ -950,7 +964,7 @@ int ViewPortResource::drawText(const Common::String &msg) {
 			break;
 		}
 
-		if (i == 0) {
+		if (i != 0) {
 			_fontChar._pick = 0;
 			_fontChar._onOff = fontInfo._shadowColor;
 		} else if (fontData.field2 == 1 || (fontInfo._fontFlags & 0x10)) {
@@ -969,7 +983,7 @@ int ViewPortResource::drawText(const Common::String &msg) {
 
 		while ((ch = *msgP++) != '\0') {
 			int charValue = (int)ch - minChar;
-			if (charValue >= totalChars || fontData._charWidth[charValue] == 0)
+			if (charValue < 0 || charValue >= totalChars || fontData._charWidth[charValue] == 0)
 				charValue = fontData._maxChar - minChar;
 
 			int charWidth = fontData._charWidth[charValue];

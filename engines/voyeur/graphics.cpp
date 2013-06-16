@@ -93,19 +93,9 @@ void GraphicsManager::addRectOptSaveRect(ViewPortResource *viewPort, int idx, co
 	if (viewPort->_rectListCount[idx] == -1)
 		return;
 
+	// TODO: Lots of code in original, which I suspect may be overlapping rect merging
 	viewPort->_rectListPtr[idx]->push_back(bounds);
-	count1 = count2 = viewPort->_rectListCount[idx];
-	varE = var24 = 0;
-
-	if (count1 > 0) {
-		for (idx1 = 0; idx1 < count1; ++idx1) {
-			// TODO: In progress
-
-			Common::Array<Common::Rect> &rectList = *viewPort->_rectListPtr[idx];
-		}
-
-		viewPort->_rectListCount[idx] = idx1;
-	}
+	++viewPort->_rectListCount[idx];
 }
 
 void GraphicsManager::restoreMCGASaveRect(ViewPortResource *viewPort) {
@@ -148,9 +138,11 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	bool isClipped = false;
 	int var52;
 	int var20, var22;
-	int var26;
+	int var26, var2C;
+
 	byte *srcImgData, *destImgData;
 	byte *srcP, *destP;
+	byte byteVal, byteVal2;
 
 	// Get the picture parameters, or deference viewport pointers to get their pictures
 	PictureResource *srcPic = (PictureResource *)srcDisplay;
@@ -292,6 +284,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		if (srcFlags & 8) {
 			error("TODO: sDrawPic");
 		} else {
+			// loc_258B8
 			srcP = srcImgData + srcOffset;
 
 			if (destFlags & 8) {
@@ -316,42 +309,93 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 					}
 				}
 			} else {
+				// loc_2615E
 				destP = destImgData + screenOffset;
 
-				// loc_2615E
 				if (srcFlags & 2) {
-					srcP = srcImgData + srcOffset;
+					// loc_2617e
+					if (srcFlags & 0x100) {
+						// loc_26188
+						srcP = srcImgData;
+						if (isClipped) {
+							// loc_26199
+error("TODO: var22/var24/var2C not initialised before use?");
+							if (var22 < 0) {
+								var22 = -var22;
+							} else {
+								var22 = 0;
+							}
+							var26 = var22 + width2;
+							if (var24 < 0) {
+								var24 = -var24;
+							} else {
+								var24 = 0;
+							}
 
-					if (destFlags & 8) {
-						error("TODO: sDrawPic");
-					} else {
-						// loc_25773
-						destP = destImgData + screenOffset;
-						srcP = (byte *)_screenSurface.pixels + srcOffset;
-
-						if (srcFlags & 2) {
-							// Copy from screen to surface with transparency
+							width2 = srcPic->_bounds.width();
+							height1 = var24 + height1;
+							byteVal = 0;
+							
 							for (int yp = 0; yp < height1; ++yp) {
-								for (int xp = 0; xp < width2; ++xp, ++destP) {
-									byte srcPixel = *srcP++;
-									if (srcPixel)
-										*destP = srcPixel;
+								for (int xp = 0; xp < width2; ++xp) {
+									if (byteVal2 <= 0) {
+										byteVal = *srcP++;
+										if (byteVal & 0x80) {
+											byteVal &= 0x7f;
+											byteVal2 = *srcP++;
+											if (!byteVal2)
+												byteVal2 = width2;
+										}
+									}
+
+									if (yp >= var24 && xp >= var22 && xp < var26) {
+										if (byteVal > 0)
+											*destP = byteVal;
+										++destP;
+									}
 								}
 
-								destP += widthDiff2;
-								srcP += widthDiff; 
+								if (yp >= var24)
+									destP += widthDiff2;
 							}
 						} else {
-							// Copy from screen surface without transparency
+							// loc_262BE
+							byteVal = 0;
 							for (int yp = 0; yp < height1; ++yp) {
-								for (int xp = 0; xp < width2; ++xp, ++destP) {
-									byte srcPixel = *srcP++;
-									*destP = srcPixel;
+								for (int xp = 0; xp < width2; ++xp) {
+									byteVal2 = 0;
+									if (!byteVal2) {
+										byteVal = *++srcP;
+										if (byteVal & 0x80) {
+											byteVal &= 0x7f;
+											byteVal2 = *srcP++;
+
+											if (!byteVal2)
+												byteVal2 = width2;
+										}
+									}
+
+									if (byteVal > 0)
+										*destP = byteVal;
+
+									++destP;
+									--byteVal2;
 								}
 
 								destP += widthDiff2;
-								srcP += widthDiff; 
 							}
+						}
+					} else {
+						// loc_2637F
+						// Copy with transparency
+						for (int yp = 0; yp < height1; ++yp) {
+							for (int xp = 0; xp < width2; ++xp, ++srcP, ++destP) {
+								if (*srcP != 0)
+									*destP = *srcP;
+							}
+
+							destP += widthDiff2;
+							srcP += widthDiff;
 						}
 					}
 				} else {
