@@ -59,6 +59,8 @@ Scene::Scene(NeverhoodEngine *vm, Module *parentModule)
 
 Scene::~Scene() {
 
+	_vm->_screen->setSmackerDecoder(NULL);
+
 	if (_palette) {
 		removeEntity(_palette);
 		delete _palette;

@@ -1711,6 +1711,7 @@ Scene1317::Scene1317(NeverhoodEngine *vm, Module *parentModule)
 void Scene1317::update() {
 	if (_smackerFileHash) {
 		_smackerPlayer->open(_smackerFileHash, _keepLastSmackerFrame);
+		_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 		_smackerFileHash = 0;
 	}
 	Scene::update();
@@ -1733,6 +1734,7 @@ void Scene1317::upChooseKing() {
 			
 	if (_smackerFileHash) {
 		_smackerPlayer->open(_smackerFileHash, _keepLastSmackerFrame);
+		_vm->_screen->setSmackerDecoder(_smackerPlayer->getSmackerDecoder());
 		_smackerFileHash = 0;
 	}
 
