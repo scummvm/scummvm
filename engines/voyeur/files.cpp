@@ -457,8 +457,14 @@ void BoltFile::vInitCycl() {
 
 void BoltFile::initViewPort() {
 	initDefault();
-	_state._curMemberPtr->_viewPortResource = new ViewPortResource(
-		_state, _state._curMemberPtr->_data);
+
+	ViewPortResource *viewPort;
+	byte *src = _state._curMemberPtr->_data;
+	_state._curMemberPtr->_viewPortResource = viewPort = new ViewPortResource(_state, src);
+
+	// This is done post-constructor, since viewports can be self referential, so
+	// we ned the _viewPortResource field to have been set before resolving the pointer
+	viewPort->_parent = getBoltEntryFromLong(READ_LE_UINT32(src + 2))._viewPortResource;
 }
 
 void BoltFile::initViewPortList() {
@@ -693,7 +699,7 @@ PictureResource::~PictureResource() {
 ViewPortResource::ViewPortResource(BoltFilesState &state, const byte *src):
 		_fontChar(0, 0xff, 0xff, 0, 0, Common::Rect(), 0, NULL, 0), _state(state) {
 	_flags = READ_LE_UINT16(src);
-	_next = state._curLibPtr->getBoltEntryFromLong(READ_LE_UINT32(src + 2))._viewPortResource;
+	_parent = NULL;
 	_pageCount = READ_LE_UINT16(src + 6);
 	_pageIndex = READ_LE_UINT16(src + 8);
 	_lastPage = READ_LE_UINT16(src + 10);

@@ -234,7 +234,7 @@ private:
 	void setupViewPort(PictureResource *page, Common::Rect *clipRect, ViewPortSetupPtr setupFn,
 		ViewPortAddPtr addFn, ViewPortRestorePtr restoreFn);
 public:
-	ViewPortResource *_next;
+	ViewPortResource *_parent;
 	int _pageCount;
 	int _pageIndex;
 	int _lastPage;

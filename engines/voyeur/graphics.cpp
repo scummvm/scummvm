@@ -549,15 +549,8 @@ void GraphicsManager::setColor(int idx, int r, int g, int b) {
 void GraphicsManager::screenReset() {
 	resetPalette();
 	(*_vPort)->setupViewPort();
-	fillPic(*_vPort, 0);
-	
-	// Flag the following viewport
-	uint i = 0;
-	while (i < _viewPortListPtr->_entries.size() && _viewPortListPtr->_entries[i] != *_vPort)
-		++i;
-	assert(i < (_viewPortListPtr->_entries.size() - 1));
-
-	_viewPortListPtr->_entries[i + 1]->_flags |= 8;
+	fillPic(*_vPort, 0);	
+	(*_vPort)->_parent->_flags |= 8;
 
 	// Flip
 	flipPage();

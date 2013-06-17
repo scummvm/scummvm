@@ -72,8 +72,10 @@ void EventsManager::vStopCycle() {
 }
 
 void EventsManager::sWaitFlip() {
-	// TODO: See if this needs a proper wait loop with event polling
-	//while (_intPtr.field39) ;
+	while (_gameData._flipWait && !_vm->shouldQuit()) {
+		pollEvents();
+		g_system->delayMillis(10);
+	}
 
 	Common::Array<ViewPortResource *> &viewPorts = _vm->_graphicsManager._viewPortListPtr->_entries;
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
@@ -88,6 +90,7 @@ void EventsManager::sWaitFlip() {
 
 			_vm->_graphicsManager._clipPtr = clipPtr;
 			viewPort._rectListCount[viewPort._pageIndex] = 0;
+			viewPort._rectListPtr[viewPort._pageIndex]->clear();
 			viewPort._flags &= 0xFFBF;
 		}
 	}
