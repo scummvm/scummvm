@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/math/vector2.h"
-#include <math.h>
+#include "common/scummsys.h"
 
 namespace Wintermute {
 
