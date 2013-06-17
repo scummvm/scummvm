@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+namespace Avalanche {
+
 struct sezheader {
              array<1,2,char> initials;     /* should be "TT" */
              word gamecode;
@@ -68,3 +70,6 @@ int main(int argc, const char* argv[])
  close(sez);
 return EXIT_SUCCESS;
 }
+
+
+} // End of namespace Avalanche.

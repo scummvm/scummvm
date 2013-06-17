@@ -30,6 +30,8 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
  /* This is a stand-alone program. */
 
 /* 0, black, remains 0.
@@ -618,3 +620,5 @@ int main(int argc, const char* argv[])
  graphmode(3);
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

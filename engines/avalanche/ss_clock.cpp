@@ -30,6 +30,7 @@
 #include "graph.h"
 /*#include "Drivers.h"*/
 
+namespace Avalanche {
 
 const integer width = 88;
 const integer height = 8; /* width & height of string returned by "time" */
@@ -106,3 +107,5 @@ int main(int argc, const char* argv[])
  output << "Have fun!" << NL;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

@@ -42,6 +42,7 @@
 #include "gyro.h"
 /*#include "Dos.h"*/
 
+namespace Avalanche {
 
 /*                                                                              */
 /*       EGA Graphic Primitive for Turbo Pascal 3.01A, Version 01FEB86.         */
@@ -161,4 +162,4 @@ void trippancy()
  budge();
 }
 
-
+} // End of namespace Avalanche.

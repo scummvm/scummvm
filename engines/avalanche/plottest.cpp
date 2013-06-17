@@ -27,6 +27,8 @@
 
 #include "graph.h"
 
+namespace Avalanche {
+
 integer gd,gm; byte fv;
 matrix<1,35,0,39,byte> a;
 array<0,3,0,4,1,35,byte> b;
@@ -64,3 +66,5 @@ int main(int argc, const char* argv[])
   }
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

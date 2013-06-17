@@ -27,6 +27,8 @@
 
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 typedef matrix<'\0','\377',0,15,byte> fonttype;
 
 fonttype font1;
@@ -47,3 +49,5 @@ int main(int argc, const char* argv[])
  assign(f,"v:avitalic.fnt"); rewrite(f); f << font1; close(f);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

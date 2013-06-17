@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+namespace Avalanche {
+
 const char months[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
 const string ednaid = string("TT")+'\261'+'\36'+'\1'+'\113'+'\261'+'\231'+'\261';
 
@@ -107,3 +109,5 @@ int main(int argc, const char* argv[])
  output << "Number of saves: " << dna256[6] << NL;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

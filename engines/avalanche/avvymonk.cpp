@@ -27,6 +27,8 @@
 
 #include "graph.h"
 
+namespace Avalanche {
+
 integer gd,gm;
 byte z;
 array<1,4,pointer> a;
@@ -94,3 +96,5 @@ int main(int argc, const char* argv[])
  savesc();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

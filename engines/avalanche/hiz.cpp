@@ -32,6 +32,7 @@
 /*#include "Dos.h"*/
 /*#include "Tsru.h"*/
 
+namespace Avalanche {
 
     /* program's signature */
 const varying_string<20> tsr_tmark = "FISH FISH FISH!!!";
@@ -309,3 +310,5 @@ int main(int argc, const char* argv[])
  keep(0);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

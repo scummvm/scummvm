@@ -29,6 +29,7 @@
 /*#include "Crt.h"*/
 /*#include "Dos.h"*/
 
+namespace Avalanche {
 
 const array<false,true,varying_string<7> > names = {{"Avalot","Dogfood"}};
 
@@ -403,3 +404,5 @@ int main(int argc, const char* argv[])
  endofgame(); /* Winning sequence is A1, B3, B1, C1, C1, btw. */
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

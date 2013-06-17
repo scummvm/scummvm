@@ -45,6 +45,8 @@
 /*$L v:MOD-obj.OBJ*/ 	        /* Link in Object file */
 /*$F+*/ 				/* force calls to be 'far'*/
 
+namespace Avalanche {
+
 extern void modvolume(integer v1,integer v2,integer v3,integer v4);  /*Can do while playing*/
 extern void moddevice(integer& device); 
 extern void modsetup(integer& status,integer device,integer mixspeed,integer pro,integer loop,string& stri); 
@@ -74,4 +76,4 @@ void sb_link()     /* At the moment, this does nothing. */
 {;
 }
 
-
+} // End of namespace Avalanche.

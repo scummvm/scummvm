@@ -28,6 +28,8 @@
 /*#include "Dos.h"*/
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 searchrec s;
 string x,y;
 longint hash_time,s_time;
@@ -93,3 +95,5 @@ int main(int argc, const char* argv[])
  }
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

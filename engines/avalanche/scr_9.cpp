@@ -27,6 +27,8 @@
 
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 text t;
 string x;
 byte fv;
@@ -43,3 +45,5 @@ int main(int argc, const char* argv[])
  gotoxy(1,23); clreol;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

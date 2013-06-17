@@ -28,6 +28,7 @@
 /* Get 'em back! */
 #include "graph.h"
 
+namespace Avalanche {
 
 const integer picsize = 966;
 const integer number_of_objects = 17;
@@ -87,3 +88,5 @@ int main(int argc, const char* argv[])
  close(f); freemem(p,picsize);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

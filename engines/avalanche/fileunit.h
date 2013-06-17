@@ -28,7 +28,10 @@
 #ifndef __fileunit_h__
 #define __fileunit_h__
 
+namespace Avalanche {
 
 string do_filer();        /* Result is filename, or "" if cancelled. */
+
+} // End of namespace Avalanche.
 
 #endif

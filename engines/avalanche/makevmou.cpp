@@ -30,6 +30,7 @@
 /*#include "Crt.h"*/
 
 /*$R+*/
+namespace Avalanche {
 
 struct mp { /* mouse-pointer */
       matrix<0,1,0,15,word> mask;
@@ -292,3 +293,5 @@ int main(int argc, const char* argv[])
  show_off_mouse;*/
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

@@ -29,6 +29,8 @@
 /*#include "Crt.h"*/
 /*#include "Tommys.h"*/
 
+namespace Avalanche {
+
 typedef matrix<'\0','\377',0,15,byte> fonttype;
 
 fonttype font;
@@ -334,3 +336,5 @@ int main(int argc, const char* argv[])
  closegraph();
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

@@ -29,6 +29,7 @@
 /*#include "Tommys.h"*/
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 enum flavourtype {ch_ega,ch_bgi, last_flavourtype};
 
@@ -258,3 +259,5 @@ int main(int argc, const char* argv[])
  close_chunk();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

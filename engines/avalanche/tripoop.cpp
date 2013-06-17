@@ -29,6 +29,7 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const integer up = 0;
 const integer right = 1;
@@ -313,3 +314,5 @@ int main(int argc, const char* argv[])
  }
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

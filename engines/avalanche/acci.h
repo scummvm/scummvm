@@ -28,6 +28,7 @@
 #ifndef __acci_h__
 #define __acci_h__
 
+namespace Avalanche {
 
 /* verb codes */
 const char vb_exam = '\1'; const char vb_open = '\2'; const char vb_pause = '\3'; const char vb_get = '\4'; const char vb_drop = '\5';
@@ -246,5 +247,7 @@ void opendoor();
 void do_that();
 void verbopt(char n, string& answer, char& anskey);
 void have_a_drink();
+
+} // End of namespace Avalanche.
 
 #endif

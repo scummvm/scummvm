@@ -27,6 +27,7 @@
 
 #include "graph.h"
 
+namespace Avalanche {
 
 typedef matrix<'\0','\377',0,15,byte> fonttype;
 
@@ -42,3 +43,5 @@ int main(int argc, const char* argv[])
  for( gd=0; gd <= 15; gd ++) mem[0xa000*gd*80]=f['A'][gd];
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

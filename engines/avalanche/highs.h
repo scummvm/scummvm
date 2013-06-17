@@ -28,9 +28,12 @@
 #ifndef __highs_h__
 #define __highs_h__
 
+namespace Avalanche {
 
   void show_highs();
 
   void store_high(string who);
+
+} // End of namespace Avalanche.
 
 #endif

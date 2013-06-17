@@ -29,6 +29,8 @@
 /*#include "Tommys.h"*/
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 integer gd,gm;
 word s; pointer p;
 file<byte> f;
@@ -134,3 +136,5 @@ int main(int argc, const char* argv[])
  close(f);
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

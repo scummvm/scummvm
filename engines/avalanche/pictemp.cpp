@@ -27,6 +27,7 @@
 
 #include "graph.h"
 
+namespace Avalanche {
 
 const integer picsize = 966;
 
@@ -87,3 +88,5 @@ int main(int argc, const char* argv[])
  save();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

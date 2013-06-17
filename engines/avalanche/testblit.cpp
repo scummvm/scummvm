@@ -27,6 +27,7 @@
 
 #include "graph.h"
 
+namespace Avalanche {
 
 const integer ttp = 81920;
 const integer borland = xorput;
@@ -71,3 +72,5 @@ int main(int argc, const char* argv[])
  mblit();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

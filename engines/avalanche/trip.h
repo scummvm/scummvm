@@ -28,6 +28,7 @@
 #ifndef __trip_h__
 #define __trip_h__
 
+namespace Avalanche {
 
  void loadtrip();
 
@@ -40,5 +41,7 @@
  void tripkey(char dir);
 
  void trippancy();
+
+} // End of namespace Avalanche.
 
 #endif

@@ -30,6 +30,7 @@
 /*#include "Joystick.h"*/
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 struct joysetup {
             word xmid,ymid,xmin,ymin,xmax,ymax;
@@ -120,3 +121,5 @@ int main(int argc, const char* argv[])
  rewrite(jf); jf << js; close(jf);     /* write it all out to disk. */
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

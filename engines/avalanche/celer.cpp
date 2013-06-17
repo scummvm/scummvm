@@ -34,7 +34,6 @@
 
 #define __celer_implementation__
 
-
 #include "celer.h"
 
 
@@ -43,6 +42,7 @@
 #include "lucerna.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 untyped_file f; /* Private variable- not accessible from elsewhere. */
 
@@ -495,3 +495,5 @@ static unit_celer_initialize celer_constructor;
 unit_celer_initialize::unit_celer_initialize() {
  num_chunks=0;
 }
+
+} // End of namespace Avalanche.

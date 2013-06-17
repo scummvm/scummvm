@@ -28,7 +28,6 @@
 #ifndef __nimunit_h__
 #define __nimunit_h__
 
-
 #include "gyro.h"
   #include "Graph.h"
   /*#include "Crt.h"*/
@@ -38,8 +37,10 @@
 #include "logger.h"
 #include "celer.h"
 
+namespace Avalanche {
 
   void play_nim();
 
+} // End of namespace Avalanche.
 
 #endif

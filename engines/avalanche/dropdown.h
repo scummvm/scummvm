@@ -28,6 +28,7 @@
 #ifndef __dropdown_h__
 #define __dropdown_h__
 
+namespace Avalanche {
 
 typedef void(*proc)();
 
@@ -117,5 +118,7 @@ EXTERN varying_string<5> people;
 
   void standard_bar();
   /*procedure map_bar;*/
+
+} // End of namespace Avalanche.
 
 #endif

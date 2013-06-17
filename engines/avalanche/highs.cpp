@@ -41,6 +41,7 @@
 /*#include "Gyro.h"*/
 /*#include "Scrolls.h"*/
 
+namespace Avalanche {
 
 typedef array<1,12,struct A1 {
                                  varying_string<30> name;
@@ -139,3 +140,5 @@ static unit_highs_initialize highs_constructor;
 unit_highs_initialize::unit_highs_initialize() {;
  get_highs();
 }
+
+} // End of namespace Avalanche.

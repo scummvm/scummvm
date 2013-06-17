@@ -31,6 +31,7 @@
 
 /*#include "Gyro.h"*/
 
+namespace Avalanche {
 
 struct sezheader {
              array<1,2,char> initials;     /* should be "TT" */
@@ -65,5 +66,6 @@ void sez_setup();
 
 void getchain(longint number);
 
+} // End of namespace Avalanche.
 
 #endif

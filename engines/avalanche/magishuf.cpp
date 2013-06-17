@@ -28,6 +28,7 @@
 /*#include "Dos.h"*/
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const word nextcode = 17717;
 
@@ -82,3 +83,5 @@ int main(int argc, const char* argv[])
  } while (!keypressed());
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

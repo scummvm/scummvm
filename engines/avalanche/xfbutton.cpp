@@ -27,6 +27,8 @@
 
 #include "graph.h"
 
+namespace Avalanche {
+
 integer x,y;
 untyped_file f,out;
 
@@ -84,3 +86,5 @@ int main(int argc, const char* argv[])
  close(out);
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

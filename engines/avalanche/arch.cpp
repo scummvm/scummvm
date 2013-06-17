@@ -41,6 +41,7 @@
 /*#include "Dos.h"*/
 #include "scrolls.h"
 
+namespace Avalanche {
 
 struct ednahead { /* Edna header */
           /* This header starts at byte offset 177 in the .ASG file. */
@@ -144,4 +145,4 @@ void save(string name)
  close(f);
 }
 
-
+} // End of namespace Avalanche.

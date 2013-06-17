@@ -50,6 +50,7 @@
 #include "visa.h"
 #include "timeout.h"
 
+namespace Avalanche {
 
 const integer roman = 0;
 const integer italic = 1;
@@ -804,3 +805,5 @@ unit_scrolls_initialize::unit_scrolls_initialize() {
  loadfont();
  resetscrolldriver();
 }
+
+} // End of namespace Avalanche.

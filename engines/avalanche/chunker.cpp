@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+namespace Avalanche {
+
 enum flavourtype {ch_ega,ch_bgi, last_flavourtype};
 
 struct chunkblocktype {
@@ -107,3 +109,5 @@ int main(int argc, const char* argv[])
    close(f);
    return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

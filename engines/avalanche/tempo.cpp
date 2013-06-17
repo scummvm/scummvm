@@ -27,6 +27,7 @@
 
 #include "graph.h"
 
+namespace Avalanche {
 
 enum flavourtype {ch_ega,ch_bgi,ch_natural,ch_two,ch_one, last_flavourtype};
 
@@ -99,3 +100,5 @@ int main(int argc, const char* argv[])
  choose();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

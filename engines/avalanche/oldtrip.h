@@ -32,6 +32,7 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const integer maxgetset = 10;
 
@@ -118,5 +119,6 @@ EXTERN array<1,numtr,triptype> tr;
 #undef EXTERN
 #define EXTERN extern
 
+} // End of namespace Avalanche.
 
 #endif

@@ -28,6 +28,8 @@
 /*#include "Dos.h"*/
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 byte fv;
 boolean test;
 
@@ -60,3 +62,5 @@ int main(int argc, const char* argv[])
  output << "Have fun!" << NL;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

@@ -31,7 +31,10 @@
 
 #include "gyro.h"
 
+namespace Avalanche {
 
 void save(string name);
+
+} // End of namespace Avalanche.
 
 #endif

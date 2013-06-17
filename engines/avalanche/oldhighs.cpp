@@ -28,6 +28,7 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 struct scoretype {
              varying_string<39> name;
@@ -271,3 +272,5 @@ int main(int argc, const char* argv[])
  newscore(/*177*/0);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

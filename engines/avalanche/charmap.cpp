@@ -27,6 +27,8 @@
 
 /*#include "Dos.h"*/
 
+namespace Avalanche {
+
 struct infotype {
             matrix<128,255,1,8,byte> chars;
             string data;
@@ -52,3 +54,5 @@ int main(int argc, const char* argv[])
  } }
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

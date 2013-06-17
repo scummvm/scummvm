@@ -27,6 +27,7 @@
 
 #include "graph.h"
 
+namespace Avalanche {
 
 void load()
 {
@@ -117,3 +118,5 @@ int main(int argc, const char* argv[])
  dump_to_file(26,88,78,147,"gameover.avd");
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

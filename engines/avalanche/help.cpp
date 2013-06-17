@@ -29,6 +29,8 @@
 /*#include "Rodent.h"*/
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 typedef graphcursmasktype cursor;
 const char vernum[] = "v1ù00";
 const char copyright[] = "1992";
@@ -247,3 +249,5 @@ int main(int argc, const char* argv[])
  } while (!lmo);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

@@ -27,6 +27,8 @@
 
 #include "graph.h"
 
+namespace Avalanche {
+
 integer gd,gm;
 int main(int argc, const char* argv[])
 {pio_initialize(argc, argv);
@@ -75,3 +77,5 @@ int main(int argc, const char* argv[])
  end;*/
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

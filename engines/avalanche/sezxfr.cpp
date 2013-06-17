@@ -27,6 +27,9 @@
 
 /*#include "Crt.h"*/
  /*$V-*/
+
+namespace Avalanche {
+
 text t;
 string x;
 matrix<1,100,1,2,string> data;
@@ -117,3 +120,5 @@ int main(int argc, const char* argv[])
  /* Done! */
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

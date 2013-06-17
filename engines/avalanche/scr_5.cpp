@@ -27,6 +27,7 @@
 
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const varying_string<4> codes = " ﬂ‹€";
 
@@ -115,3 +116,5 @@ int main(int argc, const char* argv[])
  save();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

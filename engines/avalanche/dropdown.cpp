@@ -48,6 +48,8 @@
 #include "enid.h"
 #include "basher.h"
 
+namespace Avalanche {
+
 /*$V-*/
 const integer indent = 5;
 const integer spacing = 10;
@@ -824,4 +826,4 @@ void menu_link()
  }
 }
 
-
+} // End of namespace Avalanche.

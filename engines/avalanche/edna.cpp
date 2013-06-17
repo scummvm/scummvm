@@ -30,6 +30,7 @@
 /*#include "Dos.h"*/
 /*#include "Tommys.h"*/
 
+namespace Avalanche {
 
 struct ednahead { /* Edna header */
           /* This header starts at byte offset 177 in the .ASG file. */
@@ -360,3 +361,5 @@ int main(int argc, const char* argv[])
   load_file();
   return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

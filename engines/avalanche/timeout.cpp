@@ -47,6 +47,7 @@
 #include "Acci.h"
 #include "enid.h"
 
+namespace Avalanche {
 
 byte fv;
 
@@ -617,3 +618,5 @@ static unit_timeout_initialize timeout_constructor;
 unit_timeout_initialize::unit_timeout_initialize() {
  fillchar(times,sizeof(times),'\0');
 }
+
+} // End of namespace Avalanche.

@@ -30,6 +30,8 @@
 
 /*$R+*/
 
+namespace Avalanche {
+
 struct adxtype {
            varying_string<12> name; /* name of character */
            varying_string<16> comment; /* comment */
@@ -157,3 +159,5 @@ int main(int argc, const char* argv[])
  close(inf);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

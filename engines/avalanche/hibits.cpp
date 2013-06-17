@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+namespace Avalanche {
+
 file<char> inf,outf;
 char x;
 string q;
@@ -49,3 +51,5 @@ int main(int argc, const char* argv[])
  close(inf); close(outf);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

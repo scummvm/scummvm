@@ -29,6 +29,7 @@
 /*#include "Binu.h"*/
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
        /* ...gogogoch */struct cursor {
                           matrix<0,1,0,15,word> mask;
@@ -102,3 +103,5 @@ int main(int argc, const char* argv[])
  display();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

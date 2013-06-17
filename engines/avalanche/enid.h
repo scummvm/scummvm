@@ -31,6 +31,7 @@
 
 #include "gyro.h"
 
+namespace Avalanche {
 
 void edna_save(string name);
 
@@ -45,5 +46,7 @@ void avvy_background();
 void back_to_bootstrap(byte what);
 
 boolean there_was_a_problem();
+
+} // End of namespace Avalanche.
 
 #endif

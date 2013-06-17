@@ -31,6 +31,8 @@
 
 /*$V-,R+*/
 
+namespace Avalanche {
+
 const integer pattern = 12; /* Pattern for transparencies. */
 const fillpatterntype grey50 = {{0xaa, 0x55, 0xaa,
  0x55, 0xaa, 0x55, 0xaa, 0x55}};
@@ -877,3 +879,5 @@ int main(int argc, const char* argv[])
  } while (!false);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

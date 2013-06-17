@@ -32,6 +32,7 @@
 
 /*#include "SBVoice.h"*/
 
+namespace Avalanche {
 
 int main(int argc, const char* argv[])
 {
@@ -46,3 +47,5 @@ if (paramcount>0)  {
     output << "Usage: DEMO [d:\\path\\]filename.voc" << NL;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

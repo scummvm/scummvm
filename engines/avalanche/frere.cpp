@@ -27,6 +27,7 @@
 
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 typedef array<1,31,byte> tunetype;
 
@@ -124,3 +125,5 @@ int main(int argc, const char* argv[])
  output << "*** PROGRAM STOPPED! ***" << NL;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

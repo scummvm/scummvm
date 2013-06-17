@@ -28,6 +28,7 @@
 #ifndef __cadburys_h__
 #define __cadburys_h__
 
+namespace Avalanche {
 
 const integer arraysize = 12000;
 
@@ -64,5 +65,7 @@ EXTERN untyped_file f;
 
 void grab(integer x1,integer y1,integer x2,integer y2,integer realx,integer realy, flavourtype flav,
  boolean mem,boolean nat);
+
+} // End of namespace Avalanche.
 
 #endif

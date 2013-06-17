@@ -28,6 +28,7 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const string crlf = string('\15')+'\12'; const char eof_ = '\32';
 const array<1,177,char> trip5head = 
@@ -194,3 +195,5 @@ int main(int argc, const char* argv[])
  close(out);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

@@ -32,6 +32,7 @@
 #include "gyro.h"
 #include "joystick.h"
 
+namespace Avalanche {
 
 const boolean aboutscroll = false; /* Is this the about box? */
 
@@ -56,5 +57,7 @@ string lsd();
 void okay();    /* Says "Okay!" */
 
 void musical_scroll();
+
+} // End of namespace Avalanche.
 
 #endif

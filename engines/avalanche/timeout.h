@@ -32,6 +32,7 @@
 #include "gyro.h"
 #include "celer.h"
 
+namespace Avalanche {
 
 /* reason_ now runs between 1 and 28. */
 
@@ -252,5 +253,7 @@ void lose_timer(byte which);
  void spludwick_leaves_cauldron();
 
  void give_lute_to_geida();
+
+ } // End of namespace Avalanche.
 
 #endif

@@ -28,6 +28,8 @@
 /* Phew! */
 #include "graph.h"
 
+namespace Avalanche {
+
 /*$S-*/
 integer gd,gm;
 untyped_file f;
@@ -85,3 +87,5 @@ int main(int argc, const char* argv[])
  close(t);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

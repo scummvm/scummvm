@@ -27,6 +27,7 @@
 
 #include "graph.h"
 
+namespace Avalanche {
 
 typedef matrix<1,24,0,1,pointer> adxtype;
 
@@ -86,3 +87,5 @@ int main(int argc, const char* argv[])
  } while (!false);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

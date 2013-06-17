@@ -28,6 +28,7 @@
 #ifndef __sequence_h__
 #define __sequence_h__
 
+namespace Avalanche {
 
 const integer now_flip = 177;
 
@@ -55,5 +56,7 @@ void start_to_close();
 void start_to_open();
 
 void call_sequencer();
+
+} // End of namespace Avalanche.
 
 #endif

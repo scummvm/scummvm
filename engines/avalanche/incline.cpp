@@ -40,6 +40,7 @@
 #include "gyro.h"
 #include "logger.h"
 
+namespace Avalanche {
 
 byte fv;
 char t;
@@ -195,3 +196,5 @@ unit_incline_initialize::unit_incline_initialize() {
 
  check_slope_line();
 }
+
+} // End of namespace Avalanche.

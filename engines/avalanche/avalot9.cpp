@@ -51,6 +51,8 @@
 /*#include "Visa.h"*/
 
 
+namespace Avalanche {
+
 void setup()
 {
  integer gd,gm;
@@ -137,3 +139,5 @@ int main(int argc, const char* argv[])
 }
 
 /*  typein; commanded; last:=current; */
+
+} // End of namespace Avalanche.

@@ -30,6 +30,8 @@
 
 /*$R+*/
 
+namespace Avalanche {
+
 const varying_string<9> used = "DNPQSTUXZ";
 
 const varying_string<12> header = string("Avalot Sez:")+'\32';
@@ -200,3 +202,5 @@ int main(int argc, const char* argv[])
  write_out(); 
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

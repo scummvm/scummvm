@@ -45,6 +45,7 @@
 #include "trip5.h"
 #include "scrolls.h"
 
+namespace Avalanche {
 
 void dplot(integer x,integer y, string z)
 {;
@@ -251,4 +252,4 @@ void winning_pic()
  major_redraw();
 }
 
-
+} // End of namespace Avalanche.

@@ -33,6 +33,7 @@
 /*#include "Dos.h"*/
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const char numobjs = '\22'; /* always preface with a # */
 const integer maxobjs = 12;  /* carry limit */
@@ -725,5 +726,7 @@ EXTERN word cxmin,cxmax,cymin,cymax; EXTERN boolean use_joy_a;
  void super_on();
 
  boolean mouse_near_text();
+
+ } // End of namespace Avalanche.
 
 #endif

@@ -39,6 +39,7 @@
 
 /*#include "Gyro.h"*/
 
+namespace Avalanche {
 
 const array<1,12,varying_string<6> > months = 
  {{"Jan*","Feb*","March","April","May","June","July","August",
@@ -167,3 +168,5 @@ int main(int argc, const char* argv[])
  }
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

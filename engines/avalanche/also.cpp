@@ -31,6 +31,8 @@
 
 /*$R+,V-*/
 
+namespace Avalanche {
+
 typedef matrix<0,255,0,15,byte> fonttype;
 
 class fieldtype {
@@ -1050,3 +1052,5 @@ int main(int argc, const char* argv[])
  alsomenu();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

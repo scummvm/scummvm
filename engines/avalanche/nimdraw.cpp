@@ -27,6 +27,7 @@
 
 #include "graph.h"
 
+namespace Avalanche {
 
 const string header = string("Datafile for Avalot, copyright (c) 1992.")+'\32';
 
@@ -116,3 +117,5 @@ int main(int argc, const char* argv[])
  close(f);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

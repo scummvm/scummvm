@@ -27,6 +27,7 @@
 
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 char block;
 word point;
@@ -106,3 +107,5 @@ int main(int argc, const char* argv[])
  } while (!false);
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

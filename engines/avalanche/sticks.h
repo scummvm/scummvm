@@ -34,7 +34,11 @@
 /*#include "Gyro.h"*/
      /* for solidarity */
 
+namespace Avalanche {
+
 byte joyway();
 void joykeys();
 
 #endif
+
+} // End of namespace Avalanche.

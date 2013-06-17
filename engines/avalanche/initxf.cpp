@@ -27,6 +27,8 @@
 
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 struct inirex {
           varying_string<12> a;
           word num;
@@ -54,3 +56,5 @@ int main(int argc, const char* argv[])
  output << NL;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

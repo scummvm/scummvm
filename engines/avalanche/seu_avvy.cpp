@@ -28,6 +28,7 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 struct adxtype {
            varying_string<12> name; /* name of character */
@@ -112,3 +113,5 @@ int main(int argc, const char* argv[])
  close(outfile);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

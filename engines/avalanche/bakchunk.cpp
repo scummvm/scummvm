@@ -29,6 +29,8 @@
 /*#include "Celer.h"*/
 /*#include "Lucerna.h"*/
 
+namespace Avalanche {
+
 integer gd,gm;
 int main(int argc, const char* argv[])
 {
@@ -50,3 +52,5 @@ int main(int argc, const char* argv[])
  input >> NL;
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

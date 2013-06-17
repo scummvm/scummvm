@@ -29,6 +29,8 @@
 /*#include "Crt.h"*/
 /*#include "Ansi.h"*/
 
+namespace Avalanche {
+
 integer gd,gm;
 untyped_file f;
 array<1,16000,byte> aa;
@@ -207,3 +209,5 @@ int main(int argc, const char* argv[])
  normal;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

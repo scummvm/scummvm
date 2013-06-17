@@ -29,6 +29,8 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 const integer xm = 511; const integer ym = 184;
 integer gd,gm;
 word oh,om,/*os,*/h,m,s,s1; char r;
@@ -82,3 +84,5 @@ int main(int argc, const char* argv[])
  } while (!false);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

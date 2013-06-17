@@ -43,6 +43,7 @@
 /*#include "Celer.h"*/
 /*#include "Trip5.h"*/
 
+namespace Avalanche {
 
 void then_show(byte what)
 {
@@ -115,3 +116,4 @@ void call_sequencer()
  start_to_close(); /* Make sure this proc gets called again. */
 }
 
+} // End of namespace Avalanche.

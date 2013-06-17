@@ -30,6 +30,8 @@
 
 /*$R+*/
 
+namespace Avalanche {
+
 const array<1,5,shortint> adjustment = {{7,0,7,7,7}};
 
 const array<0,3,byte> plane_to_use = {{2,2,2,3}};
@@ -435,3 +437,5 @@ int main(int argc, const char* argv[])
  closegraph();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

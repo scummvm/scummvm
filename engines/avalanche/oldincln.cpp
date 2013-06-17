@@ -40,6 +40,7 @@
 #include "gyro.h"
 #include "logger.h"
 
+namespace Avalanche {
 
 const integer bug_twonames = 255;
 const integer bug_pandl = 254;
@@ -272,3 +273,5 @@ unit_incline_initialize::unit_incline_initialize() {;
  for( fv=4; fv <= paramcount; fv ++)
   parse(paramstr(fv));
 }
+
+} // End of namespace Avalanche.

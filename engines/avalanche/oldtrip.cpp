@@ -42,6 +42,7 @@
 /*#include "Gyro.h"*/
 /*#include "Dropdown.h"*/
 
+namespace Avalanche {
 
 void copier(integer x1,integer y1,integer x2,integer y2,integer x3,integer y3,integer x4,integer y4);
 
@@ -471,3 +472,4 @@ boolean neardoor_result;
 return neardoor_result;
 }
 
+} // End of namespace Avalanche.

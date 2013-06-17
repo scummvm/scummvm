@@ -32,7 +32,10 @@
 #include "graph.h"
 /*#include "Gyro.h"*/
 
+namespace Avalanche {
 
 void boot_help();
+
+} // End of namespace Avalanche.
 
 #endif

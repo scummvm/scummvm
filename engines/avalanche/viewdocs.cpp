@@ -30,6 +30,7 @@
 /*#include "crt.h"*/
 /*#include "tommys.h"*/
 
+namespace Avalanche {
 
 typedef array<0,49999,byte> bigtextarray;
 struct chaptertype {
@@ -545,3 +546,5 @@ int main(int argc, const char* argv[])
  endit();
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

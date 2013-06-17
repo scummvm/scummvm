@@ -27,6 +27,8 @@
 
 #include "graph.h"
 
+namespace Avalanche {
+
 integer gd,gm;
 pointer p; word s;
 
@@ -59,3 +61,5 @@ int main(int argc, const char* argv[])
  putimage(fx1+100,fy1,p,0); freemem(p,s);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

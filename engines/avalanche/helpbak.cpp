@@ -41,6 +41,7 @@
 /*#include "Crt.h"*/
 /*#include "Lucerna.h"*/
 
+namespace Avalanche {
 
 struct buttontype {
              char trigger;
@@ -184,3 +185,4 @@ void boot_help()
  dawn;
 }
 
+} // End of namespace Avalanche.

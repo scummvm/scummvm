@@ -27,6 +27,8 @@
 
 #include "graph.h"
 
+namespace Avalanche {
+
 integer gd,gm;
 
 void load()     /* Load2, actually */
@@ -70,3 +72,5 @@ int main(int argc, const char* argv[])
  save();
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

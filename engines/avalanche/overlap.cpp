@@ -28,6 +28,8 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 integer gd,gm;
 
 void flash(integer x1,integer y1,integer x2,integer y2)
@@ -75,3 +77,5 @@ int main(int argc, const char* argv[])
  test(100,50,200,100,150, 50,250,100);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

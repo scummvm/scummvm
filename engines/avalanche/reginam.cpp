@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+namespace Avalanche {
+
 const array<1,36,char> letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 varying_string<30> name;
 varying_string<5> number;
@@ -113,3 +115,5 @@ int main(int argc, const char* argv[])
  output << "Or, negated, = " << name << NL;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

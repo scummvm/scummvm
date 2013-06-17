@@ -31,6 +31,7 @@
 /*#include "Rodent.h"*/
 
 /*$V-*/
+namespace Avalanche {
 
 const char more[] = " (more) ";
 const string up = string('-')+'\30'+more+'\30';
@@ -280,5 +281,4 @@ int main(int argc, const char* argv[])
 return EXIT_SUCCESS;
 }
 
-
-
+} // End of namespace Avalanche.

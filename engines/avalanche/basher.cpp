@@ -54,6 +54,7 @@
 #include "Sticks.h"
 #include "enid.h"
 
+namespace Avalanche {
 
 boolean entering_filename;
 byte left_margin;
@@ -408,3 +409,5 @@ unit_basher_initialize::unit_basher_initialize() {
  #endif
 
 }
+
+} // End of namespace Avalanche.

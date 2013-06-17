@@ -27,6 +27,8 @@
 
 /*#include "Dos.h"*/
 
+namespace Avalanche {
+
 const array<1,22,char> signature = string("*AVALOT* v1.00 ±tt± ")+'\3'+'\0';
 pointer getint1f;
 array<1,22,char> x;
@@ -39,3 +41,5 @@ int main(int argc, const char* argv[])
   output << "Signature found." << NL; else output << "Signature NOT found!" << NL;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

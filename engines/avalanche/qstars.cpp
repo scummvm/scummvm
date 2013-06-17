@@ -31,6 +31,8 @@
 /*#include "Rodent.h"*/
 /*#include "Tommys.h"*/
 
+namespace Avalanche {
+
 integer gd,gm;
 
 typedef matrix<'\0','\377',0,15,byte> fonttype;
@@ -260,3 +262,5 @@ int main(int argc, const char* argv[])
  bigo2go();
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

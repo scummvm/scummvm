@@ -28,6 +28,7 @@
 /*$S-*/
 #include "graph.h"
 
+namespace Avalanche {
 
 typedef array<1,50000,byte> buffertype;
 
@@ -546,4 +547,4 @@ delete buffer;
 return EXIT_SUCCESS;
 }
 
-
+} // End of namespace Avalanche.

@@ -47,6 +47,7 @@
 /*#include "Sequence.h"*/
 /*#include "Enid.h"*/
 
+namespace Avalanche {
 
 void loadtrip()
 {
@@ -1911,3 +1912,5 @@ static unit_trip5_initialize trip5_constructor;
 unit_trip5_initialize::unit_trip5_initialize() {
  getsetclear(); mustexclaim=false;
 }
+
+} // End of namespace Avalanche.

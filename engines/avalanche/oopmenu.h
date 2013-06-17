@@ -28,6 +28,7 @@
 #ifndef __oopmenu_h__
 #define __oopmenu_h__
 
+namespace Avalanche {
 
 typedef void(*proc)();
 
@@ -105,5 +106,7 @@ EXTERN string kbuffer;
 
 
   void parsekey(char r,char re);
+
+} // End of namespace Avalanche.
 
 #endif

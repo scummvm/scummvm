@@ -54,6 +54,7 @@
 #include "basher.h"
 #include "sequence.h"
 
+namespace Avalanche {
 
 /*$V-*/ /*$S-*/
 boolean fxhidden; array<0,3,palettetype> fxpal;
@@ -1512,3 +1513,5 @@ unit_lucerna_initialize::unit_lucerna_initialize() {
  fxhidden=false; oh=17717; om=17717;
  if (atbios)  atkey="f1"; else atkey="alt-";
 }
+
+} // End of namespace Avalanche.

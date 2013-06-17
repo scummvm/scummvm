@@ -29,6 +29,7 @@
 /*#include "Crt.h"*/
 #include "graph.h"
 
+namespace Avalanche {
 
 const char marker = '\33';
 const char game[] = "Avalot";
@@ -428,3 +429,5 @@ int main(int argc, const char* argv[])
  general();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

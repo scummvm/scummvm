@@ -33,6 +33,8 @@
 
 /*$V-*/
 
+namespace Avalanche {
+
 struct windowtype {
               integer x1,y1,x2,y2;
               varying_string<20> title;
@@ -813,3 +815,5 @@ int main(int argc, const char* argv[])
  input >> NL;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

@@ -28,6 +28,8 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 integer gd,gm;
 longint tskellern /*absolute $0:244*/; /* Over int $61 */
 
@@ -79,3 +81,5 @@ int main(int argc, const char* argv[])
  }
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

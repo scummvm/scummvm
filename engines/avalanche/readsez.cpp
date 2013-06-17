@@ -25,6 +25,8 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+namespace Avalanche {
+
 struct markertype {
               word length;
               longint offset;
@@ -101,3 +103,5 @@ int main(int argc, const char* argv[])
  close(f);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

@@ -28,6 +28,7 @@
 /*#include "Crt.h"*/
 /*#include "Tommys.h"*/
 
+namespace Avalanche {
 
 const integer max_pages = 34;
 
@@ -108,3 +109,5 @@ int main(int argc, const char* argv[])
  close(o);
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

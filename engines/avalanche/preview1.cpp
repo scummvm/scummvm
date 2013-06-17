@@ -28,6 +28,7 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 array<0,3,palettetype> fxpal;
 
@@ -144,3 +145,5 @@ int main(int argc, const char* argv[])
  closegraph();
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

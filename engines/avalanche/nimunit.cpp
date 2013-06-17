@@ -37,6 +37,7 @@
 
 #include "nimunit.h"
 
+namespace Avalanche {
 
 const array<false,true,varying_string<7> > names = {{"Avalot","Dogfood"}};
 
@@ -466,3 +467,5 @@ void play_nim()     /* Plays the game. Only procedure in this unit to
 }
 
      /* No init part. */
+
+} // End of namespace Avalanche.

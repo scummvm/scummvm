@@ -33,6 +33,8 @@
 /*                                                                          */
 /*--------------------------------------------------------------------------*/
 
+namespace Avalanche {
+
 const integer maxbuff = 8192    /* Buffer size for input and output files */;
 const integer maxtab = 4095     /* Table size - 1 ==> 2**10-1 ==> 12 bits */;
 const integer no_prev = 0x7fff  /* Special code for no previous character */;
@@ -476,3 +478,5 @@ int main(int argc, const char* argv[])
 
    return EXIT_SUCCESS;
 }     /* PibCompr */
+
+} // End of namespace Avalanche.

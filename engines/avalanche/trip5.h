@@ -34,6 +34,8 @@
 /*#include "Gyro.h"*/
 /*#include "Sticks.h"*/
 
+namespace Avalanche {
+
 
 const integer maxgetset = 35;
 
@@ -198,5 +200,6 @@ EXTERN boolean mustexclaim; EXTERN word saywhat;
 #undef EXTERN
 #define EXTERN extern
 
+} // End of namespace Avalanche.
 
 #endif

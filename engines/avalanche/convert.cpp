@@ -27,6 +27,8 @@
 
 #include "graph.h"
 
+namespace Avalanche {
+
 integer gd,gm;
 string fn1,fn2;
 varying_string<30> desc;
@@ -101,3 +103,5 @@ int main(int argc, const char* argv[])
  closegraph();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

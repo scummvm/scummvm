@@ -38,6 +38,7 @@
 /*#include "Dos.h"*/
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 boolean isenh()
 {
@@ -109,3 +110,5 @@ unit_enhanced_initialize::unit_enhanced_initialize() {;
  /* determine bios type */
  atbios=isenh();
 }
+
+} // End of namespace Avalanche.

@@ -28,6 +28,7 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const word nextcode = 17717;
 
@@ -56,3 +57,5 @@ int main(int argc, const char* argv[])
 /* close(magic);*/
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

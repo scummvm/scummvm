@@ -33,6 +33,7 @@
 #include "incline.h"
 #include "gyro.h"
 
+namespace Avalanche {
 
 enum flavourtype {ch_ega,ch_bgi, last_flavourtype};
 
@@ -76,5 +77,7 @@ EXTERN array<1,40,pointer> memory;
    void show_one(byte which);
 
    void show_one_at(byte which, integer xxx,integer yyy);
+
+} // End of namespace Avalanche.
 
 #endif

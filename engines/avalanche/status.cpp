@@ -27,6 +27,8 @@
 
 #include "graph.h"
 
+namespace Avalanche {
+
 integer gd,gm;
 
 void data(integer y, string a,string b)
@@ -56,3 +58,5 @@ int main(int argc, const char* argv[])
  data(187,"Display","VGA");
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

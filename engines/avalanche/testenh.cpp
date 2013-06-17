@@ -27,6 +27,8 @@
 
 /*#include "Enhanced.h"*/
 
+namespace Avalanche {
+
 int main(int argc, const char* argv[])
 {pio_initialize(argc, argv);
 ;
@@ -40,3 +42,5 @@ int main(int argc, const char* argv[])
  } while (!(inchar=='\33'));
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

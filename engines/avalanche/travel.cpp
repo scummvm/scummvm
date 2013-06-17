@@ -28,6 +28,8 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 integer gd,gm;
 
 void zoomout(integer x,integer y)
@@ -86,3 +88,5 @@ int main(int argc, const char* argv[])
  zoomin(320,85);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

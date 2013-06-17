@@ -42,6 +42,7 @@
 /*#include "Lucerna.h"*/
 /*#include "Pingo.h"*/
 
+namespace Avalanche {
 
 struct buttontype {
              char trigger;
@@ -305,3 +306,4 @@ void boot_help()
  setactivepage(1-cp);
 }
 
+} // End of namespace Avalanche.

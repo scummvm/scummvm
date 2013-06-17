@@ -47,6 +47,7 @@
 #include "dropdown.h"
 #include "basher.h"
 
+namespace Avalanche {
 
 const array<'\1',numobjs,varying_string<15> > things = 
  {{"Wine","Money-bag","Bodkin","Potion","Chastity belt",
@@ -554,4 +555,4 @@ void super_on()
  if (super_was_virtual)  on_virtual(); else on();
 }
 
-
+} // End of namespace Avalanche.

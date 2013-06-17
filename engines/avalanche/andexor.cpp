@@ -28,6 +28,8 @@
 /* Trippancy IV - original file */
 #include "graph.h"
 
+namespace Avalanche {
+
 const integer taboo = cyan;
 
 struct adxtype {
@@ -145,3 +147,5 @@ int main(int argc, const char* argv[])
  closegraph();
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

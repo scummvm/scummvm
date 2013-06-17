@@ -28,6 +28,8 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 typedef matrix<'\0','\377',0,15,byte> fonttype;
 
 integer gd,gm;
@@ -69,3 +71,5 @@ int main(int argc, const char* argv[])
  } while (!false);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

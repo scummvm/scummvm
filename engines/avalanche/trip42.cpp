@@ -42,6 +42,7 @@
 /*#include "Dropdown.h"*/
 /*#include "Access.h"*/
 
+namespace Avalanche {
 
 /*procedure copier(x1,y1,x2,y2,x3,y3,x4,y4:integer);
 
@@ -473,3 +474,5 @@ static unit_trip42_initialize trip42_constructor;
 unit_trip42_initialize::unit_trip42_initialize() {;
  getsetclear();
 }
+
+} // End of namespace Avalanche.

@@ -28,6 +28,7 @@
 #ifndef __lucerna_h__
 #define __lucerna_h__
 
+namespace Avalanche {
 
 #include "gyro.h"
 
@@ -99,5 +100,7 @@
  void sprite_run();
 
  void fix_flashers();
+
+ } // End of namespace Avalanche.
 
 #endif

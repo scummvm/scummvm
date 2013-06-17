@@ -37,6 +37,7 @@
 
 #include "sticks.h"
 
+namespace Avalanche {
 
 enum lmc {l,m,r, last_lmc}; /* Left, middle & right */
 
@@ -113,3 +114,5 @@ void joykeys()
 }
 
      /* No init code. */
+
+} // End of namespace Avalanche.

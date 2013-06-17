@@ -43,6 +43,7 @@
 /*#include "Crt.h"*/
 #include "lucerna.h"
 
+namespace Avalanche {
 
 typedef array<1,3840,char> scrtype;
 
@@ -142,3 +143,5 @@ unit_closing_initialize::unit_closing_initialize() {;
  exitsave=exitproc;
  exitproc=&bug_handler;
 }
+
+} // End of namespace Avalanche.

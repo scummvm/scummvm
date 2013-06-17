@@ -33,7 +33,7 @@
 
 #include "graph.h"
 
-
+namespace Avalanche {
 
 void mgrab(integer x1,integer y1,integer x2,integer y2, word size)
 {
@@ -131,4 +131,4 @@ void grab(integer x1,integer y1,integer x2,integer y2,integer realx,integer real
 /* rectangle(x1,y1,x2,y2);*/
 }
 
-
+} // End of namespace Avalanche.

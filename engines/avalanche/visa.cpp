@@ -44,6 +44,7 @@
 /*#include "Trip5.h"*/
 /*#include "Lucerna.h"*/
 
+namespace Avalanche {
 
 const boolean bubbling = false;
 const boolean report_dixi_errors = true;
@@ -286,4 +287,4 @@ void talkto(byte whom)
  }
 }
 
-
+} // End of namespace Avalanche.

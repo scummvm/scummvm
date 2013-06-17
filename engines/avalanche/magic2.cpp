@@ -27,6 +27,7 @@
 
 #include "graph.h"
 
+namespace Avalanche {
 
 const longint pagetop = 81920;
 const word nextcode = 17717;
@@ -59,3 +60,5 @@ int main(int argc, const char* argv[])
  close(magic); close(out);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

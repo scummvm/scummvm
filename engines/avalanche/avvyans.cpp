@@ -28,6 +28,8 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
+
 integer gd,gm;
 untyped_file f;
 array<1,16000,byte> aa;
@@ -106,3 +108,5 @@ int main(int argc, const char* argv[])
   input >> NL;
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

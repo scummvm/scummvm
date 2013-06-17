@@ -28,6 +28,7 @@
 #ifndef __pingo_h__
 #define __pingo_h__
 
+namespace Avalanche {
 
 void bosskey();
 
@@ -42,5 +43,7 @@ void wobble();
 void zonk();
 
 void winning_pic();
+
+} // End of namespace Avalanche.
 
 #endif

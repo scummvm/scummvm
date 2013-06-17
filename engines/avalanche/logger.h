@@ -28,6 +28,7 @@
 #ifndef __logger_h__
 #define __logger_h__
 
+namespace Avalanche {
 
 void log_setup(string name, boolean printing);
 
@@ -56,5 +57,7 @@ void log_newroom(string where);
 void log_aside(string what);
 
 void log_score(word credit,word now);
+
+} // End of namespace Avalanche.
 
 #endif

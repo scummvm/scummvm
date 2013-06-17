@@ -28,6 +28,7 @@
 #ifndef __joystick_h__
 #define __joystick_h__
 
+namespace Avalanche {
 
 void readjoya(word& xaxis, word& yaxis);
 /* Reads the X and Y coordinates of Joystick A. */
@@ -45,5 +46,7 @@ boolean buttonb2();
 
 boolean joystickpresent();
 /* This function indicates whether a joystick is installed. */
+
+} // End of namespace Avalanche.
 
 #endif

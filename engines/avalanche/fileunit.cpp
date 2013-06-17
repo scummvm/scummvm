@@ -41,6 +41,8 @@
 
 /*$V-*/
 
+namespace Avalanche {
+
 struct windowtype {
               integer x1,y1,x2,y2;
               varying_string<20> title;
@@ -1140,4 +1142,4 @@ string do_filer()
  return do_filer_result;
 }
 
-
+} // End of namespace Avalanche.

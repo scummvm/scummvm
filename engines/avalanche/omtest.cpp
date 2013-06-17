@@ -31,6 +31,8 @@
 /*#include "Crt.h"*/
 /*#include "Enhanced.h"*/
 
+namespace Avalanche {
+
 varying_string<5> st;
 byte fv;
 
@@ -199,3 +201,5 @@ int main(int argc, const char* argv[])
  } while (!false);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

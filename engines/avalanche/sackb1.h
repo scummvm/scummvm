@@ -31,11 +31,14 @@
 
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 void sb_start(string md);
 
 void sb_stop();
 
 void sb_link();    /* At the moment, this does nothing. */
+
+} // End of namespace Avalanche.
 
 #endif

@@ -29,6 +29,7 @@
 /*#include "Tommys.h"*/
 #include "joystick.h"
 
+namespace Avalanche {
 
 const integer selected = 0x60; /* Background for selected lines of text. */
 
@@ -1290,3 +1291,5 @@ int main(int argc, const char* argv[])
  clear_up();
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

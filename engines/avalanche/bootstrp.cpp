@@ -30,6 +30,8 @@
 
 /*$M 8192,0,$6000, S-*/
 
+namespace Avalanche {
+
 enum elm {normal, musical, elmpoyten, regi, last_elm};
 
 const integer run_shootemup = 1;
@@ -371,3 +373,5 @@ int main(int argc, const char* argv[])
  } while (!false);
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

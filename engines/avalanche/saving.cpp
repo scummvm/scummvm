@@ -27,6 +27,8 @@
 
 #include "graph.h"
 
+namespace Avalanche {
+
 integer gd,gm;
 byte a /*absolute $A000:(15*80)*/;
 byte bit;
@@ -70,3 +72,5 @@ int main(int argc, const char* argv[])
  close(f);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

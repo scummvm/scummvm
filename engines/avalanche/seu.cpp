@@ -30,6 +30,7 @@
 /*#include "Crt.h"*/
 /*#include "Tommys.h"*/
 
+namespace Avalanche {
 
 const integer msize = 100;
 const integer flag = -20047;
@@ -999,3 +1000,5 @@ int main(int argc, const char* argv[])
  mem[storage_seg*storage_ofs]=score;
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

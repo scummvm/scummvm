@@ -28,6 +28,7 @@
 #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const array<1,44,char> chunkheader = 
 string("Spooky file! Nearly a Chunk... (c) MT.")+'\32'+'\261'+'\x30'+'\x1'+'\x75'+'\261';
@@ -268,3 +269,5 @@ int main(int argc, const char* argv[])
 #endif
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

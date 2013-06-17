@@ -27,6 +27,7 @@
 
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const varying_string<4> codes = " ÞÝÛ";
 
@@ -111,3 +112,5 @@ int main(int argc, const char* argv[])
  textattr=27; centre(14,"You completed the game!");
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

@@ -27,6 +27,8 @@
 
 /* regname's name starts at $7D1 (2001). */
 
+namespace Avalanche {
+
 const array<1,56,char> padding = 
 "For all the Etruscan armies were ranged beneath his eye";
 
@@ -165,3 +167,5 @@ int main(int argc, const char* argv[])
  close(txi); close(txo);
  return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

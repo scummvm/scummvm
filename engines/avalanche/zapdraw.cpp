@@ -29,6 +29,7 @@
 /*#include "Crt.h"*/
 /*#include "Dos.h"*/
 
+namespace Avalanche {
 
 untyped_file f;
 byte bit;
@@ -60,3 +61,5 @@ int main(int argc, const char* argv[])
  rectangle(  0, 10, 27, 19);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

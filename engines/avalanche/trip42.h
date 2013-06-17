@@ -35,6 +35,7 @@
 /*#include "Gyro.h"*/
 /*#include "Sticks.h"*/
 
+namespace Avalanche {
 
 const integer maxgetset = 10;
 
@@ -113,5 +114,6 @@ EXTERN array<0,1,getsettype> getset;
 #undef EXTERN
 #define EXTERN extern
 
+} // End of namespace Avalanche.
 
 #endif

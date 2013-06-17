@@ -27,6 +27,7 @@
 
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const char fn[] = "text3.scr";
 
@@ -56,3 +57,5 @@ int main(int argc, const char* argv[])
  gotoxy(1,25); textattr=31; clreol; gotoxy(1,24);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

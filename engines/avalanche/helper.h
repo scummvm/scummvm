@@ -28,11 +28,14 @@
 #ifndef __helper_h__
 #define __helper_h__
 
+namespace Avalanche {
 
 #include "graph.h"
 /*#include "Gyro.h"*/
 
 
 void boot_help();
+
+} // End of namespace Avalanche.
 
 #endif

@@ -30,6 +30,8 @@
 
 /*$R+*/
 
+namespace Avalanche {
+
 typedef matrix<'\0','\377',0,15,byte> fonttype;
 
 struct markertype {
@@ -255,3 +257,5 @@ int main(int argc, const char* argv[])
  } while (!ok);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

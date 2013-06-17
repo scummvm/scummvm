@@ -50,6 +50,7 @@
 #include "fileunit.h"
 #include "basher.h"
 
+namespace Avalanche {
 
 const string crlf = string('\15')+'\12';
 const char tab = '\11';
@@ -603,4 +604,4 @@ boolean there_was_a_problem()
  return there_was_a_problem_result;
 }
 
-
+} // End of namespace Avalanche.

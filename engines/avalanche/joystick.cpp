@@ -27,7 +27,6 @@
 
 #define __joystick_implementation__
 
-
 /*
 Copyright (c) 1989, 1990 David B. Howorth
 
@@ -60,6 +59,7 @@ Hill Road, Portland, Oregon 97219.
 
 /*#include "Dos.h"*/
 
+namespace Avalanche {
 
 typedef void(*readjoyproc)(byte a,byte b,word& c,word& d);
 typedef boolean(*buttonfunc)(byte a);
@@ -206,3 +206,5 @@ unit_joystick_initialize::unit_joystick_initialize() {
            button = oldbutton;
          }
 }
+
+} // End of namespace Avalanche.

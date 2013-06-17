@@ -30,6 +30,8 @@
 
 /*$R+*/
 
+namespace Avalanche {
+
 typedef matrix<'\0','\377',0,15,byte> fonttype;
 
 integer gd,gm;
@@ -110,3 +112,5 @@ int main(int argc, const char* argv[])
  close(t);
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

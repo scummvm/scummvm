@@ -31,6 +31,7 @@
 
 #include "gyro.h"
 
+namespace Avalanche {
 
  void loadtrip();
 
@@ -43,5 +44,7 @@
  void trippancy();
 
  void enter(byte what_handle, integer xx,integer yy,integer lx,integer ly, byte mmx,byte mmy,byte st);
+
+ } // End of namespace Avalanche.
 
 #endif

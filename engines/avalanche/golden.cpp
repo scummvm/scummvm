@@ -28,6 +28,7 @@
 /*$I c:\sleep5\DSMI.INC*/ #include "graph.h"
 /*#include "Crt.h"*/
 
+namespace Avalanche {
 
 const varying_string<255> song = 
 string("Golden slumbers kiss your eyes/Smiles awake you when you rise/")+
@@ -459,3 +460,5 @@ int main(int argc, const char* argv[])
   for( gd=320; gd >= 0; gd --) rectangle(320-gd,100-gd / 2,320+gd,100+gd / 2);
   return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

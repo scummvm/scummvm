@@ -28,7 +28,7 @@
 #ifndef __enhanced_h__
 #define __enhanced_h__
 
-
+namespace Avalanche {
 
 #ifdef __enhanced_implementation__
 #undef EXTERN
@@ -45,5 +45,7 @@ EXTERN char inchar,extd;
 void readkeye();
 
 boolean keypressede();
+
+} // End of namespace Avalanche.
 
 #endif

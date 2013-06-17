@@ -53,6 +53,7 @@
 /*#include "Helper.h"*/
 /*#include "Sequence.h"*/
 
+namespace Avalanche {
 
 byte fv;
 
@@ -1694,3 +1695,5 @@ static unit_acci_initialize acci_constructor;
 unit_acci_initialize::unit_acci_initialize() {
  weirdword=false;
 }
+
+} // End of namespace Avalanche.

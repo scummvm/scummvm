@@ -32,6 +32,7 @@
 #include "gyro.h"
 /*#include "Tommys.h"*/
 
+namespace Avalanche {
 
 #ifdef RECORD
 
@@ -63,5 +64,7 @@ EXTERN word count;
 #ifdef RECORD
   void record_one();
 #endif
+
+} // End of namespace Avalanche.
 
 #endif

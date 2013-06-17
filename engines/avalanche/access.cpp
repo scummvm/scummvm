@@ -44,6 +44,7 @@
 /*#include "Trip5.h"*/
 /*#include "Lucerna.h"*/
 
+namespace Avalanche {
 
 boolean int_say_went_ok;
 
@@ -192,4 +193,4 @@ void talkto(byte whom)
  }
 }
 
-
+} // End of namespace Avalanche.

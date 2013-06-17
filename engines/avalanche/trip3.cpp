@@ -36,6 +36,8 @@
 
 /*$S+*/
 
+namespace Avalanche {
+
 const integer avvy = 1;
 const integer test = 177;
 
@@ -254,3 +256,5 @@ static unit_trip3_initialize trip3_constructor;
 unit_trip3_initialize::unit_trip3_initialize() {; /* init portion of Trip3 */
  tramt=0;
 }
+
+} // End of namespace Avalanche.

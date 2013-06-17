@@ -41,6 +41,7 @@
 /*#include "Gyro.h"*/
 /*#include "Trip5.h"*/
 
+namespace Avalanche {
 
 const char divide[] = "--- oOo ---";
 
@@ -232,4 +233,4 @@ void log_score(word credit,word now)
  output << logfile << "Score " << italic << "credit : " << credit << italic_off << " total : " << now << NL;
 }
 
-
+} // End of namespace Avalanche.

@@ -30,6 +30,7 @@
 
 #include "sezunit.h"
 
+namespace Avalanche {
 
 struct markertype {
               word length;
@@ -99,3 +100,4 @@ void getchain(longint number)
  sezerror=sezok;  /* nowt went wrong */
 }
 
+} // End of namespace Avalanche.

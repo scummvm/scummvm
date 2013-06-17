@@ -28,6 +28,7 @@
 /*#include "Crt.h"*/
 /*#include "Dos.h"*/
 
+namespace Avalanche {
 
 matrix<1,7,1,3,byte> cols;
 byte fv;
@@ -79,3 +80,5 @@ int main(int argc, const char* argv[])
 
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.

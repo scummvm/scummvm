@@ -36,6 +36,7 @@
 /*#include "Rodent.h"*/
 /*#include "Dos.h"*/
 
+namespace Avalanche {
 
 const integer indent = 40;
 const integer spacing = 83;
@@ -318,3 +319,4 @@ void parsekey(char r,char re)
   }
 }
 
+} // End of namespace Avalanche.

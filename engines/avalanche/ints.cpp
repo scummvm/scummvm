@@ -28,6 +28,8 @@
 /* Avalot interrupt handler */
 /*#include "Dos.h"*/
 
+namespace Avalanche {
+
 /*$F+*/
 registers r;
 void() old1b;
@@ -52,3 +54,5 @@ int main(int argc, const char* argv[])
  until false;*/
 return EXIT_SUCCESS;
 }
+
+} // End of namespace Avalanche.
