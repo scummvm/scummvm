@@ -615,10 +615,6 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			_vm->_graphicsMan->_fadingFl = true;
 			_vm->_animMan->playSequence2("ASSOM.SEQ", 10, 4, 500);
 			_vm->_soundMan->_specialSoundNum = 0;
-
-			if ((_vm->getPlatform() == Common::kPlatformWindows) && _vm->getIsDemo())
-				_vm->_graphicsMan->fadeOutLong();
-
 			_vm->_globals->_disableInventFl = false;
 			_vm->_objectsMan->_helicopterFl = true;
 			break;
