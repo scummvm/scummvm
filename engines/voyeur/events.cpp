@@ -335,7 +335,22 @@ void EventsManager::vInitColor() {
 }
 
 void EventsManager::setCursorTo(int idx, int mode) {
-	// TODO
+	switch (idx) {
+	case 0:
+		_vm->_graphicsManager.setColor(idx, 90, 90, 232);
+		break;
+	case 1:
+		_vm->_graphicsManager.setColor(idx, 232, 90, 90);
+		break;
+	case 2:
+		_vm->_graphicsManager.setColor(idx, 90, 232, 90);
+		break;
+	case 3:
+		_vm->_graphicsManager.setColor(idx, 90, 232, 232);
+		break;
+	default:
+		break;
+	}
 }
 
 } // End of namespace Voyeur
