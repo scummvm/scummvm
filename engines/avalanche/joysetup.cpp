@@ -1,4 +1,4 @@
-#include "ptoc.h"
+
 
                        /* Avalot joystick setup routines. To be incorporated
                          into Setup2 whenever I get a chance. */

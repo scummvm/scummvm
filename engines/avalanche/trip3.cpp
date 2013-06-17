@@ -1,4 +1,4 @@
-#include "ptoc.h"
+
 
 #define __trip3_implementation__
             /* Project Minstrel- Trippancy routines */

@@ -1,4 +1,4 @@
-#include "ptoc.h"
+
 
 
 /*$I c:\sleep5\DSMI.INC*/

@@ -1,4 +1,4 @@
-#include "ptoc.h"
+
 
                /* Demonstration of the Bigo II system. */
 #include "graph.h"

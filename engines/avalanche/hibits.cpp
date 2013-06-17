@@ -1,4 +1,4 @@
-#include "ptoc.h"
+
 
 
 file<char> inf,outf;

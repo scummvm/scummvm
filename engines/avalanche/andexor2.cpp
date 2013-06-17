@@ -1,4 +1,4 @@
-#include "ptoc.h"
+
 
                   /* Trippancy IV - original file */
 #include "graph.h"
