@@ -252,7 +252,7 @@ void EventsManager::startFade(CMapResource *cMap) {
 		int mapIndex = 0;
 
 		for (int idx = _fadeFirstCol; idx <= _fadeLastCol; ++idx, vgaP += 3) {
-			Common::copy(&cMap->_entries[mapIndex], &cMap->_entries[mapIndex + 3], vgaP);
+			Common::copy(&cMap->_entries[mapIndex], &cMap->_entries[mapIndex + 2], vgaP);
 
 			if (!(cMap->_fadeStatus & 1))
 				mapIndex += 3;
