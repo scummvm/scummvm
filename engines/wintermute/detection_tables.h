@@ -297,7 +297,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"jamesperis",
 		"Demo",
 		AD_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507),
-		Common::EN_ANY,
+		Common::UNK_LANG, // No solution in place to select language
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE |
 		ADGF_DEMO,
