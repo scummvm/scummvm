@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	andexor2.o \
 	andextst.o \
 	arch.o \
+	avalanche.o \
 	avalot9.o \
 	avbkgrnd.o \
 	avmenu.o \
@@ -46,6 +47,7 @@ MODULE_OBJS = \
 	chunkxfl.o \
 	clock.o \
 	closing.o \ 
+	console.o \
 	convert.o \
 	convmous.o \
 	credits.o \
