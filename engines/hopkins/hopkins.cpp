@@ -1158,6 +1158,7 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 34:
+			// In the airport, before the flight cut-scene
 			_objectsMan->sceneControl("IM34", "IM34", "ANIM34", "IM34", 2, false);
 			break;
 
@@ -1188,6 +1189,7 @@ bool HopkinsEngine::runFull() {
 			}
 
 		case 50:
+			// Flight cut scene
 			playPlaneCutscene();
 			_globals->_exitId = 51;
 			break;
@@ -2234,6 +2236,8 @@ void HopkinsEngine::playPlaneCutscene() {
 	if (!_events->_escKeyFl) {
 		_graphicsMan->_fadingFl = true;
 		_animMan->playAnim("PARA00A.ANM", "PARA00.ANM", 9, 9, 9);
+	} else {
+		_graphicsMan->fadeOutShort();
 	}
 
 	_events->_escKeyFl = false;
