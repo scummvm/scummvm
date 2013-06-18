@@ -38,17 +38,13 @@ pointer where;
 byte w, fv, ff, num;
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	getintvec(0x1f, where);
 	move(where, table, 1024);
 	for (w = 128; w <= 255; w ++) {
-		;
 		output << w << NL;
 		for (fv = 1; fv <= 8; fv ++) {
-			;
 			num = table.chars[w][fv];
 			for (ff = 1; ff <= 8; ff ++) {
-				;
 				if ((num & 128) == 0)  output << "  ";
 				else output << "лл";
 				num = num << 1;

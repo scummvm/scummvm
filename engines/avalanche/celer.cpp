@@ -432,7 +432,6 @@ asm
   pop ds;       { Get DS back again. }
 */
 {
-	;
 }
 
 void show_one(byte which);

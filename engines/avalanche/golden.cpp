@@ -170,7 +170,6 @@ byte here() {
 void hold(word amount) {
 	*skellern = 0;
 	do {
-		;
 	} while (!(*skellern >= amount));
 }
 
@@ -408,7 +407,6 @@ int main(int argc, const char *argv[]) {
 	initgraph(gd, gm, "");
 
 	if (! nomusic)  do {
-			;
 		} while (!(ampgetrow >= 10));
 
 	setcolor(9);
@@ -440,7 +438,6 @@ int main(int argc, const char *argv[]) {
 				hold(15);
 			else
 				do {
-					;
 				} while (!(ampgetpattern > 2));
 			nexthangon = 2;
 			hangon(1);
@@ -469,7 +466,6 @@ int main(int argc, const char *argv[]) {
 		hold(25);
 	else
 		do {
-			;
 		} while (!(ampgetmodulestatus != md_playing));
 
 	setcolor(0);

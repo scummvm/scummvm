@@ -86,7 +86,6 @@ static boolean dropin(integer xc, integer yc, integer x1, integer y1, integer x2
 /* Dropin returns True if the point xc,yc falls within the 1-2 rectangle. */
 {
 	boolean dropin_result;
-	;
 	dropin_result = ((xc >= x1) && (xc <= x2) && (yc >= y1) && (yc <= y2));
 	return dropin_result;
 }
@@ -96,7 +95,6 @@ static boolean dropin(integer xc, integer yc, integer x1, integer y1, integer x2
 static void transfer(integer x1, integer y1, integer x2, integer y2) {
 	pointer p, q;
 	word s;
-	;
 	s = imagesize(x1, y1, x2, y2);
 	setfillstyle(1, 0);
 	mark(q);
@@ -113,7 +111,6 @@ static void transfer(integer x1, integer y1, integer x2, integer y2) {
 
 static integer lesser(integer a, integer b) {
 	integer lesser_result;
-	;
 	if (a < b)  lesser_result = a;
 	else lesser_result = b;
 	return lesser_result;
@@ -123,7 +120,6 @@ static integer lesser(integer a, integer b) {
 
 static integer greater(integer a, integer b) {
 	integer greater_result;
-	;
 	if (a > b)  greater_result = a;
 	else greater_result = b;
 	return greater_result;
@@ -132,7 +128,6 @@ static integer greater(integer a, integer b) {
 void copier(integer x1, integer y1, integer x2, integer y2, integer x3, integer y3, integer x4, integer y4)
 
 {
-	;
 	if (dropin(x3, y3, x1, y1, x2, y2)
 	        || dropin(x3, y4, x1, y1, x2, y2)
 	        || dropin(x4, y3, x1, y1, x2, y2)
@@ -148,12 +143,10 @@ void copier(integer x1, integer y1, integer x2, integer y2, integer x3, integer 
 
 void setup() {
 	integer gd, gm;
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "");
 	for (gd = 0; gd <= 1; gd ++) {
-		;
 		setactivepage(gd);
 		setfillstyle(9, 1);
 		bar(0, 0, 640, 200);
@@ -169,7 +162,6 @@ triptype *triptype::init(byte spritenum) {
 	pointer p, q;
 	word bigsize;
 	byte sort, n;
-	;
 	str(spritenum, xx);
 	assign(f, string("v:sprite") + xx + ".avd");
 	reset(f, 1);
@@ -179,7 +171,6 @@ triptype *triptype::init(byte spritenum) {
 	setvisualpage(3);
 	setactivepage(3);
 	for (sort = 0; sort <= 1; sort ++) {
-		;
 		mark(q);
 		getmem(p, bigsize);
 		blockread(f, p, bigsize);
@@ -190,7 +181,6 @@ triptype *triptype::init(byte spritenum) {
 			adxtype &with = a;
 			for (gm = 0; gm <= (with.num / with.seq) - 1; gm ++) /* directions */
 				for (gd = 0; gd <= with.seq - 1; gd ++) { /* steps */
-					;
 					getmem(pic[n][sort], a.size); /* grab the memory */
 					getimage((gm / 2) * (with.xl * 6) + gd * with.xl, (gm % 2)*with.yl,
 					         (gm / 2) * (with.xl * 6) + gd * with.xl + with.xl - 1, (gm % 2)*with.yl + with.yl - 1,
@@ -216,12 +206,10 @@ triptype *triptype::init(byte spritenum) {
 }
 
 void triptype::original() {
-	;
 	quick = false;
 }
 
 void triptype::getback() {
-	;
 	tax = x;
 	tay = y;
 	getimage(x, y, x + a.xl, y + a.yl, behind);
@@ -229,20 +217,17 @@ void triptype::getback() {
 
 void triptype::andexor() {
 	byte picnum; /* Picnum, Picnic, what ye heck */
-	;
 	picnum = face * a.seq + step + 1;
 	putimage(x, y, pic[picnum][0], andput);
 	putimage(x, y, pic[picnum][1], xorput);
 }
 
 void triptype::turn(byte whichway) {
-	;
 	face = whichway;
 	step = 0;
 }
 
 void triptype::appear(integer wx, integer wy, byte wf) {
-	;
 	x = wx;
 	y = wy;
 	ox = wx;
@@ -252,7 +237,6 @@ void triptype::appear(integer wx, integer wy, byte wf) {
 }
 
 void triptype::walk() {
-	;
 	ox = x;
 	oy = y;
 	if (homing)  homestep();
@@ -264,17 +248,14 @@ void triptype::walk() {
 }
 
 void triptype::do_it() {
-	;
 	copier(ox, oy, ox + a.xl, oy + a.yl, x, y, x + a.xl, y + a.yl);
 }
 
 void triptype::putback() {
-	;
 	putimage(tax, tay, behind, 0);
 }
 
 void triptype::walkto(integer xx, integer yy) {
-	;
 	speed(xx - x, yy - y);
 	hx = xx;
 	hy = yy;
@@ -282,13 +263,11 @@ void triptype::walkto(integer xx, integer yy) {
 }
 
 void triptype::stophoming() {
-	;
 	homing = false;
 }
 
 void triptype::homestep() {
 	integer temp;
-	;
 	if ((hx == x) && (hy == y)) {
 		;     /* touching the target */
 		homing = false;
@@ -297,14 +276,12 @@ void triptype::homestep() {
 	ix = 0;
 	iy = 0;
 	if (hy != y) {
-		;
 		temp = hy - y;
 		if (temp > 4)  iy = 4;
 		else if (temp < -4)  iy = -4;
 		else iy = temp;
 	}
 	if (hx != x) {
-		;
 		temp = hx - x;
 		if (temp > 4)  ix = 4;
 		else if (temp < -4)  ix = -4;
@@ -313,7 +290,6 @@ void triptype::homestep() {
 }
 
 void triptype::speed(shortint xx, shortint yy) {
-	;
 	ix = xx;
 	iy = yy;
 	if ((ix == 0) && (iy == 0))  return; /* no movement */
@@ -322,14 +298,12 @@ void triptype::speed(shortint xx, shortint yy) {
 		if (iy < 0)  turn(up);
 		else turn(down);
 	} else {
-		;
 		if (ix < 0)  turn(left);
 		else turn(right);
 	}
 }
 
 void triptype::halt() {
-	;
 	ix = 0;
 	iy = 0;
 	homing = false;
@@ -337,10 +311,8 @@ void triptype::halt() {
 
 void trip() {
 	byte fv;
-	;
 	for (fv = 1; fv <= numtr; fv ++) {
 		triptype &with = tr[fv];
-		;
 		walk();
 		if (with.quick && with.visible)  andexor();
 		do_it();
@@ -350,11 +322,9 @@ void trip() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	setup();
 	{
 		triptype &with = tr[1];
-		;
 		init(1);
 		appear(600, 100, left);
 		do {

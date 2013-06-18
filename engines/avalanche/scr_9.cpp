@@ -35,7 +35,6 @@ byte fv;
 untyped_file f;
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	assign(f, "v:paralogo.scr");
 	clrscr;
 	reset(f, 1);

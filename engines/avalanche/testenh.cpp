@@ -31,7 +31,6 @@ namespace Avalanche {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	do {
 		readkeye;
 		switch (inchar) {

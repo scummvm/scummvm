@@ -33,7 +33,6 @@ namespace Avalanche {
 integer gd, gm;
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");

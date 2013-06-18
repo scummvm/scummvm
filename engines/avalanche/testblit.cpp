@@ -41,10 +41,8 @@ word s;
 void mblit() {
 	byte bit;
 	longint st;
-	;
 	st = ttp;
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = mb1;
 		portw[0x3ce] = copyput * 256 + 3;
 		portw[0x3ce] = 0x205;
@@ -57,13 +55,11 @@ void mblit() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "");
 	settextstyle(1, 0, 7);
 	for (gd = 0; gd <= 1; gd ++) {
-		;
 		setactivepage(gd);
 		setcolor(6 * gd + 6);
 		outtextxy(0, 0, chr(65 + gd));

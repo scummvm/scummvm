@@ -60,7 +60,6 @@ array<0, arraysize, byte> aa;
 void finder() {
 	char r;
 	integer x, y;
-	;
 	setfillstyle(0, 0);
 	setcolor(14);
 	x = 320;
@@ -72,7 +71,6 @@ void finder() {
 		line(x - 20, y, x + 20, y);
 		line(x, y - 20, x, y + 20);
 		do {
-			;
 		} while (!keypressed());
 		line(x - 20, y, x + 20, y);
 		line(x, y - 20, x, y + 20);
@@ -116,13 +114,11 @@ void load() {
 	byte a1 /*absolute $A400:800*/;
 	byte bit;
 	untyped_file f;
-	;
 
 	assign(f, "v:place19.avd");
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -143,13 +139,11 @@ void loadtemp() {
 	byte a0 /*absolute $A000:800*/;
 	byte bit;
 	untyped_file f;
-	;
 
 	assign(f, "d:temp1.avd");
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -164,7 +158,6 @@ void loadtemp() {
 }
 
 void open_chunk() {
-	;
 	assign(f, "chunk19.avd");
 	rewrite(f, 1);
 	blockwrite(f, chunkheader, sizeof(chunkheader));
@@ -175,7 +168,6 @@ void open_chunk() {
 }
 
 void close_chunk() {
-	;
 	seek(f, 45);
 	blockwrite(f, offsets, num_chunks * 4); /* make sure they're right! */
 	close(f);
@@ -185,9 +177,7 @@ void mgrab(integer x1, integer y1, integer x2, integer y2, word size) {
 	integer yy;
 	word aapos;
 	byte length, bit;
-	;
 	if (size > arraysize) {
-		;
 		restorecrtmode();
 		output << "*** SORRY! *** Increase the arraysize constant to be greater" << NL;
 		output << " than " << size << '.' << NL;
@@ -199,13 +189,11 @@ void mgrab(integer x1, integer y1, integer x2, integer y2, word size) {
 	length = x2 - x1;
 
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
 		port[0x3cf] = bit;
 		for (yy = y1; yy <= y2; yy ++) {
-			;
 			move(mem[0xa400 * yy * 80 + x1], aa[aapos], length);
 			aapos += length;
 		}
@@ -221,7 +209,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer
 	word s;
 	pointer p;
 	chunkblocktype ch;
-	;
 	x1 -= x_ofs;
 	x2 -= x_ofs;
 	y1 -= y_ofs;
@@ -236,7 +223,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer
 	getimage(x1, y1, x2, y2, p);
 
 	{
-		;
 		ch.flavour = flav;
 		ch.x = realx;
 		ch.y = realy;
@@ -254,11 +240,9 @@ void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer
 	putimage(ch.x, ch.y, p, 0);
 
 	if (flav == ch_ega) {
-		;
 		freemem(p, s);
 		s = 4 * (((x2 / 8) - (x1 / 8)) + 2) * (y2 - y1 + 1);
 		{
-			;
 			ch.size = s;
 			ch.x = ch.x / 8;
 			ch.xl = (ch.xl / 8) + 2;
@@ -267,7 +251,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer
 	} else
 		/* For BGI pictures. */
 	{
-		;
 		ch.x = ch.x / 8;
 		ch.xl = (ch.xl + 7) / 8;
 		ch.size = imagesize(ch.x * 8, ch.y, (ch.x + ch.xl) * 8, ch.y + ch.yl);
@@ -284,7 +267,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer
 		if (! nat)  blockwrite(f, aa, s);
 		break;
 	case ch_bgi : {
-		;
 		if (! nat)  blockwrite(f, p, s);
 		freemem(p, s);
 	}
@@ -295,7 +277,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");

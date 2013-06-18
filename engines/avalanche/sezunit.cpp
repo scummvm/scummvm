@@ -45,7 +45,6 @@ word fv;
 byte sum;
 
 void sez_setup() {   /* This procedure sets up the Sez system (obviously!) */
-	;
 
 	/* Set up variables */
 
@@ -65,10 +64,8 @@ void sez_setup() {   /* This procedure sets up the Sez system (obviously!) */
 		return;
 	}
 	{
-		;
 		if ((sezhead.initials != "TT") || (sezhead.gamecode != thisgamecode)
 		        || (sezhead.revision != thisvercode)) {
-			;
 			sezerror = sezgunkyfile; /* not a valid file */
 			return;
 		}
@@ -79,10 +76,8 @@ byte sumup() {
 	word fv;
 	byte total;
 	byte sumup_result;
-	;
 	total = 0;
 	for (fv = 0; fv <= chainsize; fv ++) {
-		;
 		total += ord(chain[fv]);
 	}
 	sumup_result = total;
@@ -90,17 +85,14 @@ byte sumup() {
 }
 
 void getchain(longint number) {
-	;
 	seek(f, longint(262) + number * longint(7));
 	blockread(f, marker, 7);
 	{
-		;
 		seek(f, longint(270) + sezhead.chains * longint(7) + marker.offset);
 		blockread(f, chain, marker.length + 1);
 		for (fv = 0; fv <= marker.length; fv ++) chain[fv] -= 3 + 177 * fv * marker.length; /* unscramble */
 		chainsize = marker.length;
 		if (sumup() != marker.checksum) {
-			;
 			sezerror = sezhacked;
 			return;
 		}

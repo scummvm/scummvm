@@ -54,10 +54,8 @@ untyped_file outfile;
 
 void plotat(integer xx, integer yy) { /* Does NOT cameo the picture!*/
 	word soaa;
-	;
 	move(mani, aa[5], sizeof(mani));
 	{
-		;
 		aa[1] = a.xl;
 		aa[2] = 0;
 		aa[3] = a.yl;
@@ -76,9 +74,7 @@ void explode(byte which)       /* 0 is the first one! */
 {
 	byte fv, ff;
 	word so1; /* size of one */
-	;
 	{
-		;
 		so1 = a.size - 6;
 		so1 += so1 / 4;
 		seek(sf, 183 + soa + so1 * which); /* First is at 221 */
@@ -98,7 +94,6 @@ void explode(byte which)       /* 0 is the first one! */
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");

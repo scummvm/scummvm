@@ -56,7 +56,6 @@ void load(string nam) {
 	varying_string<40> xxx;
 	string check;
 
-	;
 	assign(f, nam);
 	reset(f, 1);
 	blockread(f, xxx, 41);
@@ -64,7 +63,6 @@ void load(string nam) {
 	blockread(f, check, 31);
 	s = imagesize(0, 0, getmaxx(), 75);
 	for (z = 1; z <= 2; z ++) {
-		;
 		getmem(a[z], s);
 		blockread(f, a[z], s);
 		putimage(0, 15 + (z - 1) * 75, a[z], 0);
@@ -75,7 +73,6 @@ void load(string nam) {
 
 void silhouette() {
 	byte x, y, c;
-	;
 	setvisualpage(1);
 	setactivepage(1);
 	setfillstyle(1, 15);
@@ -85,7 +82,6 @@ void silhouette() {
 			/*   bar((gm div 2)*320+gd*40,20+(gm mod 2)*40,(gm div 2)*320+gd*40+35,(gm mod 2)*40+60); */
 			for (y = 1; y <= adx.yl; y ++)
 				for (x = 1; x <= adx.xl; x ++) {
-					;
 					setactivepage(0);
 					c = getpixel((gm / 2) * 320 + gd * 40 + x, 20 + (gm % 2) * 40 + y);
 					setactivepage(1);
@@ -101,7 +97,6 @@ void silhouette() {
 
 void standard() {
 	byte x, y, c;
-	;
 	setvisualpage(2);
 	setactivepage(2);
 	for (gm = 0; gm <= 3; gm ++)
@@ -109,7 +104,6 @@ void standard() {
 			;     /* 26,15 */
 			for (y = 1; y <= adx.yl; y ++)
 				for (x = 1; x <= adx.xl; x ++) {
-					;
 					setactivepage(0);
 					c = getpixel((gm / 2) * 320 + gd * 40 + x, 20 + (gm % 2) * 40 + y);
 					setactivepage(2);
@@ -124,7 +118,6 @@ void standard() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "");
@@ -133,7 +126,6 @@ int main(int argc, const char *argv[]) {
 	/* getmem(adxpic[1,1,1],adx.size); getimage(40,20,75,60,adxpic[1,1,1]^);
 	 putimage(100,100,adxpic[1,1,1]^,0); */
 	{
-		;
 		adx.name = "Avalot";
 		adx.num = 24;
 		adx.seq = 6;

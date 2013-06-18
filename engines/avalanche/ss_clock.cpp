@@ -46,7 +46,6 @@ boolean test;
 boolean the_cows_come_home() {
 	registers rmove, rclick;
 	boolean the_cows_come_home_result;
-	;
 	rmove.ax = 11;
 	intr(0x33, rmove);
 	rclick.ax = 3;
@@ -64,12 +63,10 @@ string time1() {
 	varying_string<2> hh, mm, ss;
 	char ampm;
 	string time1_result;
-	;
 	gettime(h, m, s, s1);
 	if (h < 12)
 		ampm = 'a';
 	else {
-		;
 		ampm = 'p';
 		if (h == 0)  h = 12;
 		else h -= 12;    /* 24-hr adjustment */
@@ -83,7 +80,6 @@ string time1() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	test = the_cows_come_home();
 	gm = registerbgidriver(&egavgadriverproc);
 	gd = 3;
@@ -105,7 +101,6 @@ int main(int argc, const char *argv[]) {
 		if (count > 0)  count -= 1;
 		{
 			pointtype &with = pages[cp];
-			;
 			if (count == 0)
 				bar(with.x, with.y, with.x + width, with.y + height);
 			with.x = xx;

@@ -60,7 +60,6 @@ string inihead, initail; /* For reading the .INI file. */
 
 
 void linebug(byte which) {
-	;
 	output << "AVALOT : ";
 	switch (which) {
 	case bug_twonames :
@@ -84,7 +83,6 @@ void linebug(byte which) {
 }
 
 void syntax() {
-	;
 	assign(output, "");
 	rewrite(output);
 	output << NL;
@@ -106,13 +104,11 @@ void syntax() {
 
 void upstr(string &x) {
 	byte fv;
-	;
 	for (fv = 1; fv <= length(x); fv ++) x[fv] = upcase(x[fv]);
 }
 
 boolean yesno() {
 	boolean yesno_result;
-	;
 	if (initail == "YES")  yesno_result = true;
 	else if (initail == "NO")  yesno_result = false;
 	else
@@ -121,7 +117,6 @@ boolean yesno() {
 }
 
 void ini_parse() {
-	;
 	upstr(inihead);
 	upstr(initail);
 
@@ -135,7 +130,6 @@ void ini_parse() {
 
 void strip_ini() {
 	byte fv;
-	;
 	if (inihead == "")  return;
 
 	/* Firstly, delete any comments. */
@@ -165,12 +159,10 @@ void strip_ini() {
 
 void load_ini() {
 	text ini;
-	;
 	assign(ini, "AVALOT.INI");
 	reset(ini);
 
 	while (! eof(ini)) {
-		;
 		ini >> inihead >> NL;
 		strip_ini();
 		if (inihead != "")  ini_parse();
@@ -184,7 +176,6 @@ static string arg;
 
 static string getarg(string otherwis) {
 	string getarg_result;
-	;
 	if (arg == "")  getarg_result = otherwis;
 	else getarg_result = "";
 	return getarg_result;
@@ -193,11 +184,9 @@ static string getarg(string otherwis) {
 void parse(string x)
 
 {
-	;
 	switch (x[1]) {
 	case '/':
 	case '-': {
-		;
 		arg = copy(x, 3, 255);
 		switch (upcase(x[2])) {
 		case '?':
@@ -208,22 +197,18 @@ void parse(string x)
 			break;
 		case 'L':
 			if (! usingp) {
-				;
 				log_setup(getarg("avvy.log"), false);
 				usingl = true;
 			} else {
-				;
 				close(logfile);
 				linebug(bug_pandl);
 			}
 			break;
 		case 'P':
 			if (! usingl) {
-				;
 				log_setup(getarg("prn"), true);
 				usingp = true;
 			} else {
-				;
 				close(logfile);
 				linebug(bug_pandl);
 			}
@@ -241,7 +226,6 @@ void parse(string x)
 			demo = true;
 			break;
 		default: {
-			;
 			bugline = x;
 			linebug(bug_weirdswitch);
 		}
@@ -249,7 +233,6 @@ void parse(string x)
 	}
 	break;
 	case '*': {
-		;
 		inihead = copy(x, 2, 255);
 		strip_ini();
 		if (inihead != "")  ini_parse();
@@ -288,7 +271,6 @@ public:
 static unit_incline_initialize incline_constructor;
 
 unit_incline_initialize::unit_incline_initialize() {
-	;
 	filetoload = "";
 	usingl = false;
 	usingp = false;

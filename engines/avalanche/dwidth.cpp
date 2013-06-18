@@ -37,7 +37,6 @@ file<fonttype> ff;
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	assign(ff, "v:avalot.fnt");
 	reset(ff);
 	ff >> f;

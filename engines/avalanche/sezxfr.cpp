@@ -41,7 +41,6 @@ longint total;
 untyped_file f;
 
 void strip() {
-	;
 	x = copy(x, 2, 255);
 }
 
@@ -49,7 +48,6 @@ void squish(string &q) {
 	string n;
 	boolean ctrl;
 	byte fv;
-	;
 	ctrl = false;
 	n = "";
 	for (fv = 1; fv <= length(q); fv ++)
@@ -67,7 +65,6 @@ void squish(string &q) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	dp = 0;
 	ip = 0;
 	fillchar(data, sizeof(data), '\0');
@@ -76,17 +73,14 @@ int main(int argc, const char *argv[]) {
 	assign(t, "v:sez.dat");
 	reset(t);
 	while (! eof(t)) {
-		;
 		t >> x >> NL;
 		switch (x[1]) {
 		case ';': {
-			;
 			textattr = lightred;
 			strip();
 		}
 		break;
 		case ':': {
-			;
 			textattr = lightblue;
 			strip();
 			if (dp > 0)  squish(data[dp][2]);
@@ -101,7 +95,6 @@ int main(int argc, const char *argv[]) {
 		}
 		break;
 		default: {
-			;
 			textattr = white;
 			data[dp][2] = data[dp][2] + x + '\40';
 		}
@@ -112,7 +105,6 @@ int main(int argc, const char *argv[]) {
 
 	total = 1;
 	for (fv = 1; fv <= dp; fv ++) {
-		;
 		thumb[fv] = total;
 		total += length(data[fv][2]) + 1;
 	}

@@ -59,12 +59,10 @@ void load() {
 	byte a1 /*absolute $A400:800*/;
 	byte bit;
 	untyped_file f;
-	;
 	assign(f, "chunkbit.avd");
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -77,7 +75,6 @@ void load() {
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -90,7 +87,6 @@ void load() {
 }
 
 void open_chunk() {
-	;
 	assign(f, "chunk21.avd");
 	rewrite(f, 1);
 	blockwrite(f, chunkheader, sizeof(chunkheader));
@@ -101,7 +97,6 @@ void open_chunk() {
 }
 
 void close_chunk() {
-	;
 	seek(f, 45);
 	blockwrite(f, offsets, num_chunks * 4); /* make sure they're right! */
 	close(f);
@@ -269,7 +264,6 @@ end;*/
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");

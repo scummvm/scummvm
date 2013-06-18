@@ -53,7 +53,6 @@ array<0, 9, byte> revpos;
 
 void loadfont() {
 	file<fonttype> fontfile;
-	;
 	assign(fontfile, "c:\\thomas\\ttsmall.fnt");
 	reset(fontfile);
 	fontfile >> font[1];
@@ -67,19 +66,16 @@ void loadfont() {
 void scribe(byte which, byte what);
 
 static void underline(byte &x) {
-	;
 	x = x | 177;
 }
 
 void scribe(byte which, byte what) {
 	byte fv, ff;
 	string x;
-	;
 	x = data[what];
 	fillchar(current, sizeof(current), '\0');
 	for (ff = 1; ff <= length(x); ff ++)
 		for (fv = 0; fv <= 7; fv ++) {
-			;
 			current[fv][ff] = font[which][x[ff]][fv];
 		}
 
@@ -93,18 +89,15 @@ void scribe(byte which, byte what) {
 }
 
 void display(word y) {
-	;
 	for (fv = 0; fv <= 7; fv ++)
 		move(current[fv], mem[0xa000 * (y + fv) * 80], 79);
 }
 
 void update_link(char which, byte whence, byte whither) {
 	byte fv;
-	;
 	for (fv = 1; fv <= numlinks; fv ++) {
 		hypertype &with = link[fv];
 		if (with.trigger == which) {
-			;
 			with.line = size;
 			with.start = whence;
 			with.finish = whither;
@@ -114,7 +107,6 @@ void update_link(char which, byte whence, byte whither) {
 
 void getlinks(string &x) {
 	byte p, q;
-	;
 	do {
 		p = pos("[", x);
 		if (p == 0)  return; /* lousy, huh? */
@@ -129,7 +121,6 @@ void loaddata(byte which) {
 	text t;
 	string x;
 	integer e;
-	;
 	revpos[9] = position;
 	fillchar(data, sizeof(data), '\0');
 	move(reverse[1], reverse[0], 9);
@@ -144,21 +135,17 @@ void loaddata(byte which) {
 	size = 0;
 	numlinks = 0;
 	while (! eof(t)) {
-		;
 		t >> x >> NL;
 		if (x[1] == ':') {
-			;
 			numlinks += 1;
 			{
 				hypertype &with = link[numlinks];
-				;
 				with.trigger = x[2];
 				Delete(x, 1, 3);
 				Delete(x, pos(" ", x), 255);
 				val(x, with.ref, e);
 			}
 		} else {
-			;
 			size += 1;
 			getlinks(x);
 			data[size] = x;
@@ -170,7 +157,6 @@ void loaddata(byte which) {
 }
 
 void screen() {
-	;
 	setbkcolor(1);
 	setfillstyle(1, 1);
 	bar(0, 0, 640, 38);
@@ -180,10 +166,8 @@ void screen() {
 
 void showscreen() {
 	byte fv;
-	;
 	if (position < 1)  position = 1;
 	for (fv = 0; fv <= 15; fv ++) {
-		;
 		scribe(1, fv + position);
 		display(41 + fv * 10);
 	}
@@ -191,11 +175,9 @@ void showscreen() {
 
 void up() {
 	byte fv;
-	;
 	position -= 1;
 	scribe(1, position);
 	for (fv = 0; fv <= 9; fv ++) {
-		;
 		move(mem[0xa000 * 3200], mem[0xa000 * 3280], 12720);
 		if (set::of(0, 9, eos).has(fv))  fillchar(mem[0xa000 * 3200], 79, '\0');
 		else
@@ -205,11 +187,9 @@ void up() {
 
 void down() {
 	byte fv;
-	;
 	position += 1;
 	scribe(1, position + 15);
 	for (fv = 0; fv <= 9; fv ++) {
-		;
 		move(mem[0xa000 * 3280], mem[0xa000 * 3200], 12720);
 		if (set::of(0, 9, eos).has(fv))  fillchar(mem[0xa000 * 15920], 79, '\0');
 		else
@@ -219,11 +199,9 @@ void down() {
 
 void newpage(char c) {
 	byte fv;
-	;
 	for (fv = 1; fv <= numlinks; fv ++) {
 		hypertype &with = link[fv];
 		if (with.trigger == c) {
-			;
 			loaddata(with.ref);
 			showscreen();
 		}
@@ -232,7 +210,6 @@ void newpage(char c) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -254,25 +231,21 @@ int main(int argc, const char *argv[]) {
 				if (position < size)  down();
 				break;
 			case 'I': {
-				;
 				position -= 16;
 				showscreen();
 			}
 			break;
 			case 'Q': {
-				;
 				position += 16;
 				showscreen();
 			}
 			break;
 			case 'G': {
-				;
 				position = 1;
 				showscreen();
 			}
 			break;
 			case 'O': {
-				;
 				position = size;
 				showscreen();
 			}
@@ -297,7 +270,6 @@ int main(int argc, const char *argv[]) {
 		}
 		break;
 		case 'H': {
-			;
 			loaddata(7); /* help on help */
 			showscreen();
 		}

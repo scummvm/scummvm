@@ -46,14 +46,12 @@ char check;
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	fillchar(x, sizeof(x), '\261');
 	x = string("This is a Sez file for an Avvy game, and its contents are subject") + crlf +
 	    "to copyright. Have fun with the game!" + crlf + crlf + tabs + "tt" + crlf + crlf +
 	    "[Lord Avalot D'Argent]" + crlf + crlf + eof_ +
 	    crlf + crlf + "Thomas was here!";
 	{
-		;
 		header.initials = "TT";
 		header.gamecode = 2; /* code for Avalot */
 		header.revision = 100; /* version 1.00 */

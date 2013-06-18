@@ -46,7 +46,6 @@ void save() {
 	file<atype> f;
 	word fv;
 	atype a /*absolute $B800:0*/;
-	;
 	assign(f, "TEXT5.SCR");
 	rewrite(f);
 	f << a;
@@ -54,14 +53,10 @@ void save() {
 }
 
 void line(byte cx, byte cy, string title) {
-	;
 	for (y = 0; y <= 4; y ++) {
-		;
 		qq = "";
 		for (x = 1; x <= length(title); x ++) {
-			;
 			for (xx = 7; xx >= 0; xx --) {
-				;
 				code = (byte)(((1 << xx) & font[title[x]][y * 2]) > 0) +
 				       (byte)(((1 << xx) & font[title[x]][y * 2 + 1]) > 0) * 2;
 				qq = qq + codes[code + 1 - 1];
@@ -74,9 +69,7 @@ void line(byte cx, byte cy, string title) {
 
 void uline() {
 	byte fv, ff;
-	;
 	for (fv = 1; fv <= 10; fv ++) {
-		;
 		gotoxy(16 - fv, 21 - fv);
 		textattr = fv;
 		for (ff = 1; ff <= fv; ff ++) output << "ÄÍÍ-";
@@ -85,7 +78,6 @@ void uline() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	textattr = 0;
 	clrscr;
 	assign(f, "c:\\thomas\\ttsmall.fnt");

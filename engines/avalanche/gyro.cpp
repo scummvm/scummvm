@@ -311,7 +311,6 @@ void click() {   /* "Audio keyboard feedback" */
 void slowdown() {
 	/* repeat until TSkellern>=howlong; TSkellern:=0;*/
 	do {
-		;
 	} while (!(memw[storage_seg * skellern] >= howlong));
 	memw[storage_seg * skellern] = 0;
 }

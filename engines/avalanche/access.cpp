@@ -52,19 +52,16 @@ void int_say(string filename, boolean bubble)
 /* Internal use ONLY! */
 {
 	untyped_file f;
-	;
 	/*$I-*/
 	assign(f, filename);
 	reset(f, 1);
 	if (ioresult != 0) {
-		;
 		int_say_went_ok = false;
 		return;
 	}
 	bufsize = filesize(f);
 	blockread(f, buffer, bufsize);
 	if (bubble) {
-		;
 		bufsize += 1;
 		buffer[bufsize] = '\2';
 	}
@@ -77,7 +74,6 @@ void int_say(string filename, boolean bubble)
 }
 
 void dixi(char p, byte n) {
-	;
 	exit(153);
 	int_say(string('s') + p + strf(n) + ".raw", false);
 }
@@ -85,10 +81,8 @@ void dixi(char p, byte n) {
 void talkto(byte whom) {
 	byte fv;
 	boolean no_matches;
-	;
 	exit(153);
 	if (person == pardon) {
-		;
 		person = chr(subjnumber);
 		subjnumber = 0;
 	}
@@ -97,19 +91,16 @@ void talkto(byte whom) {
 	case pspludwick:
 
 		if ((dna.lustie_is_asleep) & (~ dna.obj[potion])) {
-			;
 			dixi('q', 68);
 			dna.obj[potion] = true;
 			objectlist;
 			points(3);
 			return;
 		} else {
-			;
 			if (dna.talked_to_crapulus)
 				switch (dna.given2spludwick) { /* Spludwick - what does he need? */
 					/* 0 - let it through to use normal routine. */
 				case RANGE_2(1, 2): {
-					;
 					display(string("Can you get me ") +
 					        get_better(spludwick_order[dna.given2spludwick]) + ", please?" +
 					        "\232\2");
@@ -117,7 +108,6 @@ void talkto(byte whom) {
 				}
 				break;
 				case 3: {
-					;
 					dixi('q', 30); /* need any help with the game? */
 					return;
 				}
@@ -129,7 +119,6 @@ void talkto(byte whom) {
 
 	case pibythneth:
 		if (dna.givenbadgetoiby) {
-			;
 			dixi('q', 33); /* Thanks a lot! */
 			return; /* And leave the proc. */
 		}
@@ -143,7 +132,6 @@ void talkto(byte whom) {
 		break;
 	case payles:
 		if (~ dna.ayles_is_awake) {
-			;
 			dixi('q', 43); /* He's fast asleep! */
 			return;
 		}
@@ -152,7 +140,6 @@ void talkto(byte whom) {
 		if (dna.geida_given_potion)
 			dna.geida_follows = true;
 		else {
-			;
 			dixi('u', 17);
 			return;
 		}
@@ -164,7 +151,6 @@ void talkto(byte whom) {
 	no_matches = true;
 	for (fv = 1; fv <= numtr; fv ++)
 		if (tr[fv].a.accinum == whom) {
-			;
 			display(string('\23') + chr(fv + 48) + '\4');
 			no_matches = false;
 			flush();
@@ -175,7 +161,6 @@ void talkto(byte whom) {
 	if (subjnumber == 0) /* For the moment... later we'll parse "say". */
 		int_say(string("ss") + strf(whom) + ".raw", true);
 	else {
-		;
 		int_say(string("ss") + strf(whom) + '-' + strf(subjnumber) + ".raw", true);
 		if (! int_say_went_ok)      /* File not found! */
 			dixi('n', whom);

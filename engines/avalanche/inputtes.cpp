@@ -39,9 +39,7 @@ char r;
 
 void plottext() {
 	byte x, y;
-	;
 	for (y = 0; y <= 7; y ++) {
-		;
 		for (x = 1; x <= length(current); x ++)
 			mem[0xa000 * 12880 + y * 80 + x] = font[current[x]][y];
 		fillchar(mem[0xa000 * 12881 + y * 80 + x], 79 - x, '\0');
@@ -50,7 +48,6 @@ void plottext() {
 
 void loadfont() {
 	file<fonttype> f;
-	;
 	assign(f, "c:\\thomas\\ttsmall.fnt");
 	reset(f);
 	f >> font;
@@ -59,7 +56,6 @@ void loadfont() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\turbo");

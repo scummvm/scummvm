@@ -108,9 +108,7 @@ boolean filefound;
 
 void shadow(integer x1, integer y1, integer x2, integer y2, byte hc, byte sc) {
 	byte fv;
-	;
 	for (fv = 0; fv <= border; fv ++) {
-		;
 		setfillstyle(1, hc);
 		bar(x1 + fv, y1 + fv, x1 + fv, y2 - fv);
 		bar(x1 + fv, y1 + fv, x2 - fv, y1 + fv);
@@ -123,7 +121,6 @@ void shadow(integer x1, integer y1, integer x2, integer y2, byte hc, byte sc) {
 
 void shbox(integer x1, integer y1, integer x2, integer y2, string t) {
 	const integer fc = 7;
-	;
 	shadow(x1, y1, x2, y2, 15, 8);
 	setfillstyle(1, fc);
 	bar(x1 + border + 1, y1 + border + 1, x2 - border - 1, y2 - border - 1);
@@ -132,7 +129,6 @@ void shbox(integer x1, integer y1, integer x2, integer y2, string t) {
 	y1 = (y2 - y1) / 2 + y1;
 	outtextxy(x1, y1, t);
 	if (length(t) > 1) {
-		;
 		fillchar(t[2], length(t) - 1, '\40');
 		t[1] = '_';
 		outtextxy(x1 - 1, y1 + 1, t);
@@ -141,7 +137,6 @@ void shbox(integer x1, integer y1, integer x2, integer y2, string t) {
 
 void show_drives() {
 	byte fv;
-	;
 	settextjustify(1, 1);
 	for (fv = 0; fv <= length(drives) - 1; fv ++)
 		shbox((fv % drlen) * 25 + 25, (fv / drlen) * 19 + 31,
@@ -151,7 +146,6 @@ void show_drives() {
 }
 
 void box(integer x1, integer y1, integer x2, integer y2, string z) {
-	;
 	rectangle(x1, y1, x2, y2);
 	outtextxy(x1 + 1, y1 - 10, z + ':');
 	outtextxy(x1, y1 - 9, "_");
@@ -160,7 +154,6 @@ void box(integer x1, integer y1, integer x2, integer y2, string z) {
 string lowstr(string x) {
 	byte fv;
 	string lowstr_result;
-	;
 	for (fv = 1; fv <= length(x); fv ++)
 		if (set::of(range('A', 'Z'), eos).has(x[fv]))  x[fv] += 32;
 	lowstr_result = x;
@@ -175,7 +168,6 @@ char lowchar(char x) {
 }
 
 void getcurrent() {
-	;
 	current = lowstr(fexpand("*.asg"));
 }
 
@@ -183,7 +175,6 @@ void setup() {
 	integer gd, gm;
 	registers r;
 	byte floppies;
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -271,12 +262,10 @@ void scandir() {
 	ednahead eh;
 	array<1, 4, char> dna_type;
 
-	;
 	nums[files] = 0;
 	findfirst("*.asg", archive + hidden + readonly, s);
 
 	while (doserror == 0) {
-		;
 		fsplit(s.name, nix, name, nix);
 		nums[files] += 1;
 		lists[files][nums[files]] = lowstr(name);
@@ -292,14 +281,12 @@ void scandir() {
 		} else {
 			;     /* EDNA-based files. */
 			if (dna_type == "EDNA") {
-				;
 				seek(f, 177);
 				blockread(f, eh, sizeof(eh));
 
 				if (eh.revision != 2)
 					descs[nums[files]] = "* Unknown EDNA type!";
 				else {
-					;
 
 					if (eh.number != 2)
 						descs[nums[files]] = string("* Saved by ") + eh.shortname + '!';
@@ -317,9 +304,7 @@ void scandir() {
 	nums[dirs] = 0;
 	findfirst("*.*", directory, s);
 	while (doserror == 0) {
-		;
 		if (((s.attr & directory) > 0) && ((length(s.name)) > 1)) {
-			;
 			nums[dirs] += 1;
 			lists[dirs][nums[dirs]] = lowstr(s.name);
 		}
@@ -339,7 +324,6 @@ void scandir() {
 
 void show_file(integer x, integer y, byte which) {
 	varying_string<58> z;
-	;
 	fillchar(z[1], 13, '\40');
 	z = lists[files][which] + ".asg";
 	z[0] = '\15';
@@ -355,11 +339,9 @@ void show_file(integer x, integer y, byte which) {
 
 void showfiles() {
 	byte fv;
-	;
 	if (loading)  setcolor(11);
 	else setcolor(3);
 	if (nums[3] == 0) {
-		;
 		outtextxy(22, 86, "(None here!)");
 		return;
 	}
@@ -370,7 +352,6 @@ void showfiles() {
 
 void showdirs() {
 	byte fv;
-	;
 	setcolor(11);
 	for (fv = 0; fv <= 8; fv ++)
 		if (where[4] + fv <= nums[4])
@@ -382,7 +363,6 @@ void show() {
 	dirstr d;
 	namestr n;
 	extstr e;
-	;
 	setfillstyle(1, 1);
 	for (fv = 1; fv <= 4; fv ++)
 		if (fv != 2) {
@@ -396,7 +376,6 @@ void show() {
 }
 
 void blip() {
-	;
 	sound(177);
 	delay(77);
 	nosound;
@@ -405,7 +384,6 @@ void blip() {
 void invert(integer x1, integer y1, integer x2, integer y2) {
 	pointer p, restore;
 	word s;
-	;
 	s = imagesize(x1, y1, x2, y2);
 	mark(restore);
 	getmem(p, s);
@@ -416,10 +394,8 @@ void invert(integer x1, integer y1, integer x2, integer y2) {
 
 void changedrive(char drive) {
 	byte fv;
-	;
 	fv = pos(drive, drives);
 	if (fv == 0)  {
-		;
 		blip();
 		return;
 	}
@@ -435,7 +411,6 @@ void changedrive(char drive) {
 }
 
 void highlight(byte win, byte line) {
-	;
 	switch (win) {
 	case 3:
 		invert(16, 75 + line * 10, 479, 85 + line * 10);
@@ -467,12 +442,9 @@ void repaint(byte whichwindow) {
 void fileblit(word xpos, word xlen, word y1, word y2, shortint dir, word ylen) {
 	word fv;
 	byte bit;
-	;
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		fv = 0;
 		while (fv < ylen) {
-			;
 			port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;
@@ -522,7 +494,6 @@ void pagedown(byte whichlist) {
 void subdirparse(string r);
 
 static void movehl(byte which, shortint howmuch) {
-	;
 	highlight(4, where[4] - top[4] + 1);
 	if (((where[which] + howmuch) > 0) && ((where[which] + howmuch) <= (unsigned char)nums[4]))
 		where[which] = where[which] + howmuch;
@@ -532,12 +503,10 @@ static void movehl(byte which, shortint howmuch) {
 
 
 static void change_dir() {
-	;
 	dusk();
 	/*$I-*/ chdir(lists[4][where[4]]);
 	/*$I+*/
 	if (ioresult != 0)  {
-		;
 		dawn();
 		blip();
 		return;
@@ -554,7 +523,6 @@ static void change_dir() {
 void subdirparse(string r)
 
 {
-	;
 	switch (r[1]) {
 	case creturn:
 		change_dir();
@@ -582,7 +550,6 @@ void subdirparse(string r)
 			if (where[4] - top[4] < 8) /* Down */
 				movehl(4, 1);
 			else if (top[4] + 8 < nums[4]) {
-				;
 				highlight(4, 9);
 				top[4] += 1;
 				where[4] += 1;
@@ -620,7 +587,6 @@ void fileinfo(byte which);
 
 
 static void display(integer y, string left, string right) {
-	;
 	y = 17 + y * 12;
 	settextjustify(2, 1);
 	setcolor(11);
@@ -638,7 +604,6 @@ void fileinfo(byte which)
 	varying_string<4> os;
 	char r;
 
-	;
 
 	/* Firstly, we must check whether or not it's an Avalot file. This is easily
 	  done, since the descriptions of all others always begin with a star. */
@@ -663,7 +628,6 @@ void fileinfo(byte which)
 	bar(2, 2, 637, 197); /* Interesting information coming up! */
 
 	{
-		;
 		display(2, "Saved by:", eh.game);
 		display(3, "version:", eh.verstr);
 
@@ -688,7 +652,6 @@ void filer_help()
 /* This gives general help. */
 {
 	char r;
-	;
 	outtextxy(100, 100, "Just general help here.");
 	shbox(500, 177, 650, 200, "Press any key...");
 	r = readkey();
@@ -701,7 +664,6 @@ void wipe()
 /* This allows you to delete files. */
 {
 	char r;
-	;
 	outtextxy(100, 100, "Are you sure you want to delete \"foo.bar\"?");
 	shbox(500, 177, 650, 200, "[Y/N]");
 	r = readkey();
@@ -713,7 +675,6 @@ void wipe()
 void filesparse(string r);
 
 static void movehl1(byte which, shortint howmuch) {
-	;
 	highlight(3, where[3] - top[3] + 1);
 	if (((where[which] + howmuch) > 0) && ((where[which] + howmuch) <= (unsigned char)nums[3]))
 		where[which] = where[which] + howmuch;
@@ -724,7 +685,6 @@ static void movehl1(byte which, shortint howmuch) {
 
 static boolean selected_file() {
 	boolean selected_file_result;
-	;
 	if (descs[where[file_win]][1] == '*') {
 		blip();
 		selected_file_result = false;
@@ -739,7 +699,6 @@ static boolean selected_file() {
 void filesparse(string r)
 
 {
-	;
 	switch (r[1]) {
 	case creturn:
 		if (selected_file())  return;
@@ -765,7 +724,6 @@ void filesparse(string r)
 			if (where[3] - top[3] < 8) /* Down */
 				movehl1(3, 1);
 			else if (top[3] + 8 < nums[3]) {
-				;
 				highlight(3, 9);
 				top[3] += 1;
 				where[3] += 1;
@@ -808,7 +766,6 @@ void filesparse(string r)
 string playaround();
 
 static void changewin(byte i) {
-	;
 	switch (nowwin) {
 	case 3:
 	case 4:
@@ -834,7 +791,6 @@ static void changewin(byte i) {
 string playaround() {
 	char r, r2;
 	string playaround_result;
-	;
 	filefound = false;
 	dawn();
 
@@ -850,7 +806,6 @@ string playaround() {
 			changewin(nowwin + 1);
 			break;
 		case cescape: {
-			;
 			playaround_result = "";
 			return playaround_result;
 		}
@@ -875,7 +830,6 @@ string playaround() {
 				changewin(4);
 				break;
 			case c_ac: {
-				;
 				playaround_result = "";
 				return playaround_result;
 			}
@@ -912,7 +866,6 @@ string playaround() {
 		}
 
 		if (filefound) {
-			;
 			dusk();
 			playaround_result = filename;
 			return playaround_result;
@@ -924,7 +877,6 @@ string playaround() {
 void do_filer() {
 	pathstr p;
 	void do_filer_result;
-	;
 	loading = true;
 	setup();
 	scandir();
@@ -938,7 +890,6 @@ void do_filer() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	filename = do_filer();
 	closegraph();
 	if (filename == "")

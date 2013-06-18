@@ -42,7 +42,6 @@ atype a /*absolute $B800:0*/;
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	textattr = 0;
 	clrscr;
 	assign(f, fn);
@@ -50,13 +49,10 @@ int main(int argc, const char *argv[]) {
 	f >> q;
 	close(f);
 	for (fv = 1; fv <= 40; fv ++) {
-		;
 		if (fv > 36)  {
-			;
 			tl = 1;
 			bl = 24;
 		} else {
-			;
 			tl = 12 - fv / 3;
 			bl = 12 + fv / 3;
 		}

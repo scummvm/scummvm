@@ -64,10 +64,8 @@ tabletype table;
 byte ratingname(word x) {
 	byte fv;
 	byte ratingname_result;
-	;
 	for (fv = 9; fv >= 1; fv --)
 		if (x >= ratings[fv].lowest) {
-			;
 			ratingname_result = fv;
 			return ratingname_result;
 		}    /* bad style */
@@ -82,10 +80,8 @@ const string message = "A v a l o t  :  H i g h - S c o r e s";
 static void sayfast(integer x, integer y) {
 	integer anchor;
 	byte fv;
-	;
 	anchor = -296;
 	for (fv = 1; fv <= length(message); fv ++) {
-		;
 		if (message[fv - 1] != '\40')  outtextxy(x + anchor, y - 8, message[fv - 1]);
 		anchor += 16;
 	}
@@ -97,15 +93,12 @@ void title() {
 	byte x;
 	integer len;
 
-	;
 	settextstyle(0, 0, 2); /*settextjustify(1,1);*/
 	len = textheight(message);
 	for (x = 6; x >= 0; x --) {
-		;
 		setcolor(shades[x]);
 		sayfast(320 - x * 2, 20 - x);
 		if (x > 0) {
-			;
 			sayfast(320 + x * 2, 20 - x);
 			sayfast(320 + x * 2, 20 + x);
 			sayfast(320 - x * 2, 20 + x);
@@ -121,11 +114,9 @@ void newtable() {
 		}
 	};
 	byte fv;
-	;
 	fillchar(table, sizeof(table), '\261');
 	for (fv = 1; fv <= 12; fv ++) {
 		scoretype &with = table.a[fv];
-		;
 		with.name = names[fv];
 		with.score = 193 - fv * 16;
 	}
@@ -135,14 +126,12 @@ void newtable() {
 string strf(longint x) {         /* From Gyro. Delete when integrated. */
 	string q;
 	string strf_result;
-	;
 	str(x, q);
 	strf_result = q;
 	return strf_result;
 }
 
 void sparkle(integer x, integer y, string z) {
-	;
 	setcolor(cyan);
 	outtextxy(x - 1, y - 1, z);
 	setcolor(blue);
@@ -153,7 +142,6 @@ void sparkle(integer x, integer y, string z) {
 
 void drawtable() {
 	byte fv, last, now;
-	;
 	setfillstyle(1, 8);
 	bar(0, 40, 105, 58);
 	bar(110, 40, 400, 58);
@@ -175,7 +163,6 @@ void drawtable() {
 	last = 177;
 	for (fv = 1; fv <= 12; fv ++) {
 		scoretype &with = table.a[fv];
-		;
 		settextjustify(righttext, bottomtext);
 		sparkle(100, 60 + fv * 10, strf(fv) + '.');
 		sparkle(455, 60 + fv * 10, strf(with.score));
@@ -193,7 +180,6 @@ void drawtable() {
 }
 
 void message1(string x) {
-	;
 	setfillstyle(1, 8);
 	bar(0, 190, 640, 200);
 	settextjustify(1, 1);
@@ -204,12 +190,10 @@ void sorthst() {
 	byte fv;
 	boolean ok;
 	scoretype temp;
-	;
 	do {
 		ok = true;
 		for (fv = 1; fv <= 11; fv ++)
 			if (table.a[fv].score < table.a[fv + 1].score) {
-				;
 				temp = table.a[fv];
 				table.a[fv] = table.a[fv + 1];
 				table.a[fv + 1] = temp; /* swap 'em */
@@ -224,7 +208,6 @@ static integer x, y;
 
 
 static void cursor(byte col) {
-	;
 	setcolor(col);
 	outtextxy(x, y, "?");
 }
@@ -235,7 +218,6 @@ void entername() {
 	integer counter;
 	byte flash;
 
-	;
 	y = 60 + table.light * 10;
 	i = "";
 	settextjustify(2, 0);
@@ -246,7 +228,6 @@ void entername() {
 		do {
 			counter += 1;
 			if (counter == 1000) {
-				;
 				cursor(4 + flash * 10);
 				flash = 1 - flash;
 				counter = 0;
@@ -258,17 +239,13 @@ void entername() {
 		r = readkey();
 		nosound;
 		if (r == '\10')  {
-			;
 			if (i[0] > '\0')  {
-				;
 				bar(x - 17, y - 10, x - 8, y);
 				i[0] -= 1;
 				sparkle(x - 16, y, i[length(i)]);
 			}
 		} else {
-			;
 			if ((i[0] < '\42') && (r != '\15'))  {
-				;
 				sparkle(x, y, r);
 				i = i + r;
 			}
@@ -278,11 +255,9 @@ void entername() {
 }
 
 void newscore(word sc) {
-	;
 	{
 		scoretype &with = table.a[12];
 		if (sc > with.score) {
-			;
 			with.name = "";
 			with.score = sc;
 			table.light = 10;
@@ -294,13 +269,11 @@ void newscore(word sc) {
 	} /* too low for score */
 	message1("Press Space to continue...");
 	do {
-		;
 	} while (!(keypressed() && (readkey() == '\40')));
 }
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "");

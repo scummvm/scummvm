@@ -64,12 +64,10 @@ void load() {
 	byte a0 /*absolute $A000:1200*/;
 	byte bit;
 	untyped_file f;
-	;
 	assign(f, "d:folk.avd");
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -81,7 +79,6 @@ void load() {
 }
 
 void get_one() {
-	;
 
 	gd = ((order[noo] % 9) * 70 + 10);
 	gm = ((order[noo] / 9) * 40 + 20);
@@ -94,7 +91,6 @@ void get_one() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");

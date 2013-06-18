@@ -89,16 +89,13 @@ void plain_grab()
 /* Just grabs the next one and puts it where it's told to. */
 {
 	integer xx, yy, xofs;
-	;
 	blockread(f, cb, sizeof(cb));
 
 	switch (cb.flavour) {
 	case ch_one: {
-		;
 		xofs = cb.x / 8;
 		bit = 3;
 		for (yy = 0; yy <= cb.yl; yy ++) {
-			;
 			port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;
@@ -109,12 +106,10 @@ void plain_grab()
 	}
 	break;
 	case ch_ega: {
-		;
 		xofs = cb.x / 8;
 		bit = 3;
 		for (bit = 0; bit <= 3; bit ++)
 			for (yy = 0; yy <= cb.yl; yy ++) {
-				;
 				port[0x3c4] = 2;
 				port[0x3ce] = 4;
 				port[0x3c5] = 1 << bit;
@@ -128,24 +123,20 @@ void plain_grab()
 }
 
 void get_me(pointer &p) {
-	;
 	blockread(f, cb, sizeof(cb));
 	/* Take it for granted that cb.flavour = ch_BGI! */
 
 	{
-		;
 		getmem(p, cb.size);
 		blockread(f, p, cb.size);
 	}
 }
 
 void get_me_aargh(byte which) {
-	;
 	blockread(f, cb, sizeof(cb));
 	/* Take it for granted that cb.flavour = ch_BGI! */
 
 	{
-		;
 		getmem(aargh[which], cb.size);
 		blockread(f, aargh[which], cb.size);
 	}
@@ -231,7 +222,6 @@ void big_green_eyes(byte how) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	if (paramstr(1) != "jsb")  exit(255);
 	gd = 3;
 	gm = 0;
@@ -245,7 +235,6 @@ int main(int argc, const char *argv[]) {
 	mark(memlevel);
 
 	for (fv = 1; fv <= 5; fv ++) {
-		;
 		blockread(f, cb, sizeof(cb));
 		for (bit = 2; bit <= 3; bit ++)
 			for (y = 0; y <= cb.yl; y ++)
@@ -277,7 +266,6 @@ int main(int argc, const char *argv[]) {
 	glerk = new glerktype;
 
 	for (fv = 1; fv <= 6; fv ++) {
-		;
 		blockread(f, cb, sizeof(cb));
 		bit = 3;
 		for (bit = 0; bit <= 3; bit ++)
@@ -309,14 +297,11 @@ int main(int argc, const char *argv[]) {
 	bat_count = 0;
 
 	for (gd = 500; gd >= 217; gd --) {
-		;
 		if (set::of(range(22, 27), eos).has((gd % 30))) {
-			;
 			if ((gd % 30) == 27)  bar(gd, 135, gd + 16, 136);
 			putimage(gd, 136, eyes[0], 0);
 			putpixel(gd + 16, 137, 0);
 		} else {
-			;
 			if (gd % 30 == 21)  bar(gd, 137, gd + 17, 138);
 
 			putimage(gd, 135, eyes[0], 0);
@@ -325,13 +310,11 @@ int main(int argc, const char *argv[]) {
 
 		/* Plot the Glerk: */
 		if (gd % 10 == 0) {
-			;
 			glerkstage += 1;
 			if (glerkstage > 26)  flush();
 
 			for (gm = 0; gm <= 34; gm ++)
 				for (bit = 0; bit <= 3; bit ++) {
-					;
 					port[0x3c4] = 2;
 					port[0x3ce] = 4;
 					port[0x3c5] = 1 << bit;
@@ -354,7 +337,6 @@ int main(int argc, const char *argv[]) {
 	/* It descends... */
 
 	for (gm = -64; gm <= 103; gm ++) {
-		;
 		bit = getpixel(0, 0);
 
 		if (gm > 0)
@@ -363,7 +345,6 @@ int main(int argc, const char *argv[]) {
 		for (y = 0; y <= 65; y ++)
 			if ((y + gm) >= 0)
 				for (bit = 0; bit <= 3; bit ++) {
-					;
 					port[0x3c4] = 2;
 					port[0x3ce] = 4;
 					port[0x3c5] = 1 << bit;
@@ -382,7 +363,6 @@ int main(int argc, const char *argv[]) {
 
 	for (gd = 1; gd <= 4; gd ++)
 		for (fv = 1; fv <= 5; fv ++) {
-			;
 
 			y = getpixel(0, 0);
 
@@ -391,7 +371,6 @@ int main(int argc, const char *argv[]) {
 
 			for (y = 0; y <= 65; y ++)
 				for (bit = 0; bit <= 3; bit ++) {
-					;
 					port[0x3c4] = 2;
 					port[0x3ce] = 4;
 					port[0x3c5] = 1 << bit;
@@ -430,15 +409,12 @@ int main(int argc, const char *argv[]) {
 	red_greldet = false;
 
 	for (gd = 217; gd <= 479; gd ++) {
-		;
 		if (set::of(range(22, 27), eos).has((gd % 30))) {
-			;
 			if ((gd % 30) == 22)
 				bar(gd + 22, 134, gd + 38, 137);
 			putimage(gd + 23, 136, eyes[1], 0);
 			putpixel(gd + 22, 137, 0);
 		} else {
-			;
 			if (gd % 30 == 28)
 				bar(gd + 22, 135, gd + 38, 138);
 
@@ -448,7 +424,6 @@ int main(int argc, const char *argv[]) {
 
 		/* Plot the Green Eyes: */
 		if (gd % 53 == 5) {
-			;
 			big_green_eyes(glerkstage);
 			glerkstage += 1;
 		}

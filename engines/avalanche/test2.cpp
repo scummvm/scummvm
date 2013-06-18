@@ -34,7 +34,6 @@ pointer getint1f;
 array<1, 22, char> x;
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	getintvec(0x1f, getint1f);
 	move(getint1f, x, 22);
 	if (x == signature)

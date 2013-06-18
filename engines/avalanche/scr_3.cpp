@@ -46,7 +46,6 @@ void save() {
 	file<atype> f;
 	word fv;
 	atype a /*absolute $B800:0*/;
-	;
 	assign(f, "TEXT3.SCR");
 	rewrite(f);
 	f << a;
@@ -55,23 +54,17 @@ void save() {
 
 void centre(byte y, string z) {
 	byte fv;
-	;
 	for (fv = 1; fv <= length(z); fv ++) {
-		;
 		gotoxy(39 - length(z) / 2 + fv, y);
 		if (z[fv] != '\40')  output << z[fv];
 	}
 }
 
 void line(byte cx, byte cy, string title) {
-	;
 	for (y = 0; y <= 4; y ++) {
-		;
 		qq = "";
 		for (x = 1; x <= length(title); x ++) {
-			;
 			for (xx = 7; xx >= 0; xx --) {
-				;
 				code = (byte)(((1 << xx) & font[title[x]][y * 2]) > 0) +
 				       (byte)(((1 << xx) & font[title[x]][y * 2 + 1]) > 0) * 2;
 				qq = qq + codes[code + 1 - 1];
@@ -86,12 +79,10 @@ void big_t() {
 	text t;
 	string x;
 	byte y;
-	;
 	assign(t, "c:\\avalot\\t.txt");
 	reset(t);
 	y = 1;
 	while (! eof(t)) {
-		;
 		t >> x >> NL;
 		gotoxy(1, y);
 		output << x;
@@ -101,7 +92,6 @@ void big_t() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	textattr = 4;
 	clrscr;
 	assign(f, "c:\\thomas\\ttsmall.fnt");

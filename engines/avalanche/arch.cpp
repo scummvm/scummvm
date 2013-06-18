@@ -97,13 +97,11 @@ void save(string name) {
 	edhead eh;
 	word groi;
 	string groi2;
-	;
 	fillchar(eh, sizeof(eh), '\261'); /* Fill up the edhead */
 
 	dna.saves += 1; /* It's been saved one more time... */
 
 	{
-		;
 
 		/* Info about this program */
 

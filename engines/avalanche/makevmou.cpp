@@ -46,7 +46,7 @@ struct vmctype { /* Virtual Mouse Cursor */
 };
 
 const array<1, 9, arrowtype> mps = {
-	{	{
+	{   {
 			/* 1 - up-arrow */
 			((65151, 64575, 64575, 63519, 63519, 61455, 61455, 57351, 57351, 49155, 49155, 64575, 64575, 64575, 64575, 64575),
 			(0, 384, 384, 960, 960, 2016, 2016, 4080, 4080, 8184, 384, 384, 384, 384, 384, 0)),
@@ -135,15 +135,12 @@ integer plx, ply;
 
 word swapbits(word a) {
 	word swapbits_result;
-	;
 	swapbits_result = lo(a) * 256 + hi(a);
 	return swapbits_result;
 }
 
 void plot_vmc(integer xx, integer yy, byte page_) {
-	;
 	{
-		;
 		xx = xx + vmc.ofsx;
 		yy = yy + vmc.ofsy;
 
@@ -152,7 +149,6 @@ void plot_vmc(integer xx, integer yy, byte page_) {
 		putimage(xx, yy, vmc.xorpic, xorput);
 		{
 			pointtype &with1 = vmc.wherewas[page_];
-			;
 			with1.x = xx;
 			with1.y = yy;
 		}
@@ -160,7 +156,6 @@ void plot_vmc(integer xx, integer yy, byte page_) {
 }
 
 void wipe_vmc(byte page_) {
-	;
 	{
 		pointtype &with1 = vmc.wherewas[page_];
 		if (with1.x != maxint)
@@ -170,16 +165,13 @@ void wipe_vmc(byte page_) {
 
 void setup_vmc() {
 	byte fv;
-	;
 	/* gd:=imagesize(0,0,15,15);*/
 
 	{
-		;
 		getmem(vmc.andpic, mouse_size);
 		getmem(vmc.xorpic, mouse_size);
 
 		for (fv = 0; fv <= 1; fv ++) {
-			;
 			getmem(vmc.backpic[fv], mouse_size);
 			vmc.wherewas[fv].x = maxint;
 		}
@@ -187,13 +179,11 @@ void setup_vmc() {
 }
 
 void show_off_mouse() {
-	;
 
 	setcolor(14);
 	settextstyle(0, 0, 2);
 
 	for (gm = 0; gm <= 1; gm ++) {
-		;
 		setactivepage(gm);
 		setfillstyle(1, blue);
 		bar(0, 0, getmaxx(), getmaxy());
@@ -212,7 +202,6 @@ void show_off_mouse() {
 		wipe_vmc(gd);
 
 		if (plot > 0) {
-			;
 			putpixel(plx, ply, red);
 			plot -= 1;
 		}
@@ -220,7 +209,6 @@ void show_off_mouse() {
 		plot_vmc(mx, my, gd);
 
 		if ((mkey == left) && (plot == 0)) {
-			;
 			plot = 2;
 			plx = mx;
 			ply = my;
@@ -229,7 +217,6 @@ void show_off_mouse() {
 	} while (!(mkey == right));
 
 	for (gm = 0; gm <= 1; gm ++) {
-		;
 		setactivepage(1 - gm);
 		wipe_vmc(gm);
 	}
@@ -239,7 +226,6 @@ void show_off_mouse() {
 }
 
 void grab_cursor(byte n) {
-	;
 	getimage(32 * n - 16, 0, 32 * n - 1, 15, vmc.andpic);
 	getimage(32 * n - 16, 20, 32 * n - 1, 35, vmc.xorpic);
 }
@@ -247,14 +233,12 @@ void grab_cursor(byte n) {
 void save_mice() {
 	untyped_file f;
 	byte fv;
-	;
 	assign(f, "v:mice.avd");
 	rewrite(f, 1);
 
 	blockwrite(f, mice_header, mouse_size);
 
 	for (fv = 1; fv <= 9; fv ++) {
-		;
 		grab_cursor(fv);
 		putimage(100, 100, vmc.xorpic, 0);
 		blockwrite(f, vmc.andpic, mouse_size);
@@ -266,19 +250,16 @@ void save_mice() {
 
 void load_a_mouse(byte which) {
 	untyped_file f;
-	;
 	assign(f, "v:mice.avd");
 	reset(f, 1);
 	seek(f, mouse_size * 2 * (which - 1) + 134);
 
 	{
-		;
 		blockread(f, vmc.andpic, mouse_size);
 		blockread(f, vmc.xorpic, mouse_size);
 		close(f);
 		{
 			void &with1 = mps[which];
-			;
 			vmc.ofsx = -horzhotspot;
 			vmc.ofsy = -verthotspot;
 
@@ -290,7 +271,6 @@ void load_a_mouse(byte which) {
 }
 
 void draw_mouse_cursors() {
-	;
 	for (fv = 1; fv <= 9; fv ++)
 		for (gm = 0; gm <= 1; gm ++)
 			for (gd = 0; gd <= 15; gd ++)
@@ -299,7 +279,6 @@ void draw_mouse_cursors() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");

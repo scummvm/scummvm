@@ -33,7 +33,6 @@ namespace Avalanche {
 integer gd, gm;
 
 void flash(integer x1, integer y1, integer x2, integer y2) {
-	;
 	setcolor(14);
 	rectangle(x1, y1, x2, y2);
 	sound(x1 + x2);
@@ -49,13 +48,11 @@ boolean dropin(integer xc, integer yc, integer x1, integer y1, integer x2, integ
 /* Dropin returns True if the point xc,yc falls within the 1-2 rectangle. */
 {
 	boolean dropin_result;
-	;
 	dropin_result = ((xc >= x1) && (xc <= x2) && (yc >= y1) && (yc <= y2));
 	return dropin_result;
 }
 
 void test(integer x1, integer y1, integer x2, integer y2, integer x3, integer y3, integer x4, integer y4) {
-	;
 	cleardevice();
 	rectangle(x1, y1, x2, y2);
 	rectangle(x3, y3, x4, y4);
@@ -77,7 +74,6 @@ void test(integer x1, integer y1, integer x2, integer y2, integer x3, integer y3
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 1;
 	initgraph(gd, gm, "");

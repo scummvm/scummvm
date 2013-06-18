@@ -79,14 +79,12 @@ byte scroll_line_length;
 
 void centre(byte size, byte x) { /* Prints req'd number of spaces. */
 	byte fv;
-	;
 	if (~ logging)  return;
 	for (fv = 1; fv <= size - (x / 2); fv ++)
 		output << logfile << ' ';
 }
 
 void log_setup(string name, boolean printing) {     /* Sets up. */
-	;
 	assign(logfile, name);
 	rewrite(logfile);
 	output << logfile << startwith;
@@ -102,10 +100,8 @@ void log_setup(string name, boolean printing) {     /* Sets up. */
 
 void log_divider() {   /* Prints the divider sign. */
 	byte fv;
-	;
 	if (~ logging)  return;
 	if (log_epson) {
-		;
 		output << logfile << string(' ') + double_width;
 		for (fv = 1; fv <= divide_indent; fv ++) output << logfile << ' ';
 		output << logfile << string(' ') + double_off;
@@ -115,7 +111,6 @@ void log_divider() {   /* Prints the divider sign. */
 }
 
 void log_command(string x) {     /* Prints a command */
-	;
 	if (~ logging)  return;
 	if (log_epson)
 		output << logfile << double_width + '>' + double_off + ' ' + italic + x + italic_off << NL;
@@ -124,14 +119,12 @@ void log_command(string x) {     /* Prints a command */
 }
 
 void log_addstuff(string x) {
-	;
 	if (~ logging)  return;
 	scroll_line = scroll_line + x;
 }
 
 void log_scrollchar(string x) {     /* print one character */
 	varying_string<2> z;
-	;
 	if (~ logging)  return;
 	switch (x[1]) {
 	case '`':
@@ -151,7 +144,6 @@ void log_scrollchar(string x) {     /* print one character */
 }
 
 void log_italic() {
-	;
 	if (~ logging)  return;
 	if (log_epson)
 		log_addstuff(italic);
@@ -160,7 +152,6 @@ void log_italic() {
 }
 
 void log_roman() {
-	;
 	if (~ logging)  return;
 	if (log_epson)
 		log_addstuff(italic_off);
@@ -169,20 +160,17 @@ void log_roman() {
 }
 
 void log_epsonroman() {   /* This only sends the Roman code if you're on Epson.*/
-	;
 	if (~ logging)  return;
 	if (log_epson)  log_addstuff(italic_off);
 }
 
 void log_scrollline() {   /* Set up a line for the scroll driver */
-	;
 	scroll_line_length = 0;
 	scroll_line = "";
 }
 
 void log_scrollendline(boolean centred) {
 	byte x, fv;
-	;
 	if (~ logging)  return;
 	x = 17;
 	if (centred)  x += (50 - scroll_line_length) / 2;
@@ -192,27 +180,22 @@ void log_scrollendline(boolean centred) {
 
 void log_bubbleline(byte linenum, byte whom, string x) {
 	byte fv;
-	;
 	if (~ logging)  return;
 	if (linenum == 1) {
-		;
 		for (fv = 1; fv <= 15; fv ++) output << logfile << ' ';
 		output << logfile << italic + tr[whom].a.name + ": " + italic_off + x << NL;
 	} else {
-		;
 		for (fv = 1; fv <= 17; fv ++) output << logfile << ' ';
 		output << logfile << x << NL;
 	}
 }
 
 void log_newline() {
-	;
 	if (logging)  output << logfile << NL;
 }
 
 void log_newroom(string where) {
 	byte fv;
-	;
 	if (~ logging)  return;
 	for (fv = 1; fv <= 20; fv ++) output << logfile << ' ';
 	if (log_epson)  output << logfile << emph_on;
@@ -224,7 +207,6 @@ void log_newroom(string where) {
 void log_aside(string what)
 /* This writes "asides" to the printer. For example, moves in Nim. */
 {
-	;
 	if (~ logging)  return;
 	output << logfile << "   (" << italic << what << italic_off << ')' << NL;
 	/* "What" is what to write. */
@@ -232,7 +214,6 @@ void log_aside(string what)
 
 void log_score(word credit, word now) {
 	byte fv;
-	;
 	if (~ logging)  return;
 	for (fv = 1; fv <= 50; fv ++) output << logfile << ' ';
 	output << logfile << "Score " << italic << "credit : " << credit << italic_off << " total : " << now << NL;

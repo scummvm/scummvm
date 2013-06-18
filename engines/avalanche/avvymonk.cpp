@@ -44,7 +44,6 @@ void savesc() {
 	word s;
 	varying_string<14> nam;
 	varying_string<30> screenname;
-	;
 	nam = "v:avvymonk.avd";
 	adf = string("aved as a stuff file, so there! TJAT.") + '\15' + '\12' + '\32';
 	adf[0] = 'S';
@@ -56,7 +55,6 @@ void savesc() {
 	blockwrite(f, screenname, 31);
 	s = imagesize(0, 0, getmaxx(), 75);
 	for (z = 1; z <= 2; z ++) {
-		;
 		getmem(c[z], s);
 		getimage(0, 15 + (z - 1) * 75, getmaxx(), 15 + (z) * 75, c[z]);
 		blockwrite(f, c[z], s);
@@ -64,7 +62,6 @@ void savesc() {
 	}
 }
 void loadscreen(string nam) {
-	;
 	assign(f, nam);
 	reset(f, 1);
 	blockread(f, check, 41);
@@ -72,7 +69,6 @@ void loadscreen(string nam) {
 	blockread(f, check, 31);
 	s = imagesize(0, 0, getmaxx(), 75);
 	for (z = 1; z <= 2; z ++) {
-		;
 		getmem(a[z], s);
 		blockread(f, a[z], s);
 		setactivepage(0);
@@ -83,7 +79,6 @@ void loadscreen(string nam) {
 }
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	x = 0;
@@ -91,7 +86,6 @@ int main(int argc, const char *argv[]) {
 	initgraph(gd, gm, "o:");
 	loadscreen("v:legion.avd");
 	while (y < 100) {
-		;
 		switch (getpixel(x, y)) {
 		case 7:
 			putpixel(x, y, 0);
@@ -105,7 +99,6 @@ int main(int argc, const char *argv[]) {
 		}
 		x += 1;
 		if (x > 640)  {
-			;
 			y += 1;
 			x = 0;
 		}

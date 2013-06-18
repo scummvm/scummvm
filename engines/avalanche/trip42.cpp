@@ -78,7 +78,6 @@ end; */
 
 void loadtrip() {
 	byte gm;
-	;
 	for (gm = 1; gm <= numtr; gm ++) tr[gm].original();
 	tr[1].init(0);
 }
@@ -87,7 +86,6 @@ byte checkfeet(integer x1, integer x2, integer oy, integer y, byte yl) {
 	byte a, c;
 	integer fv, ff;
 	byte checkfeet_result;
-	;
 	a = 0;
 	setactivepage(2);
 	if (x1 < 0)  x1 = 0;
@@ -95,14 +93,12 @@ byte checkfeet(integer x1, integer x2, integer oy, integer y, byte yl) {
 	if (oy < y)
 		for (fv = x1; fv <= x2; fv ++)
 			for (ff = oy + yl; ff <= y + yl; ff ++) {
-				;
 				c = getpixel(fv, ff);
 				if (c > a)  a = c;
 			}
 	else
 		for (fv = x1; fv <= x2; fv ++)
 			for (ff = y + yl; ff <= oy + yl; ff ++) {
-				;
 				c = getpixel(fv, ff);
 				if (c > a)  a = c;
 			}
@@ -115,13 +111,11 @@ void touchcol(byte tc);
 static boolean bug;
 
 static void fr(byte a, byte b) {
-	;
 	fliproom(a, b);
 	bug = false;
 }
 
 void touchcol(byte tc) {
-	;
 	bug = true; /* j.i.c. */
 	switch (dna.room) {
 	case 1:
@@ -156,7 +150,6 @@ void touchcol(byte tc) {
 		break;
 	}
 	if (bug) {
-		;
 		display(string('\7') + "Unknown touchcolour (" + strf(tc) + ')' + " in " + strf(dna.room)
 		        + '.');
 		tr[1].bounce();
@@ -171,7 +164,6 @@ triptype *triptype::init(byte spritenum) {
 	byte sort, n;
 	word bigsize;
 	pointer p, q;
-	;
 	str(spritenum, xx);
 	assign(f, string("c:\\avalot\\sprite") + xx + ".avd");
 	reset(f, 1);
@@ -180,7 +172,6 @@ triptype *triptype::init(byte spritenum) {
 	blockread(f, bigsize, 2);
 	setactivepage(3);
 	for (sort = 0; sort <= 1; sort ++) {
-		;
 		mark(q);
 		getmem(p, bigsize);
 		blockread(f, p, bigsize);
@@ -192,7 +183,6 @@ triptype *triptype::init(byte spritenum) {
 			adxtype &with = a;
 			for (gm = 0; gm <= (with.num / with.seq) - 1; gm ++) /* directions */
 				for (gd = 0; gd <= with.seq - 1; gd ++) { /* steps */
-					;
 					getmem(pic[n][sort], a.size); /* grab the memory */
 					getimage((gm / 2) * (with.xl * 6) + gd * with.xl, (gm % 2)*with.yl,
 					         (gm / 2) * (with.xl * 6) + gd * with.xl + with.xl - 1, (gm % 2)*with.yl + with.yl - 1,
@@ -219,13 +209,11 @@ triptype *triptype::init(byte spritenum) {
 }
 
 void triptype::original() {
-	;
 	quick = false;
 }
 
 void triptype::andexor() {
 	byte picnum; /* Picnum, Picnic, what ye heck */
-	;
 	picnum = face * a.seq + step + 1;
 	off;
 	putimage(x, y, pic[picnum][0], andput);
@@ -233,13 +221,11 @@ void triptype::andexor() {
 }
 
 void triptype::turn(byte whichway) {
-	;
 	if (whichway == 8)  face = 0;
 	else face = whichway;
 }
 
 void triptype::appear(integer wx, integer wy, byte wf) {
-	;
 	x = (wx / 8) * 8;
 	y = wy;
 	ox[cp] = wx;
@@ -253,9 +239,7 @@ void triptype::appear(integer wx, integer wy, byte wf) {
 void triptype::walk() {
 	byte tc;
 	fieldtype r;
-	;
 	{
-		;
 		x1 = x - 1;
 		y1 = y - 2;
 		x2 = x + a.xl + 1;
@@ -268,13 +252,11 @@ void triptype::walk() {
 	x = x + ix;
 	y = y + iy;
 	if (check_me)  {
-		;
 		tc = checkfeet(x, x + a.xl, oy[cp], y, a.yl);
 		if (tc != 0) {
 			void &with = magics[tc];
 			switch (op) {
 			case exclaim: {
-				;
 				bounce();
 				dixi('x', data);
 			}
@@ -286,7 +268,6 @@ void triptype::walk() {
 				fliproom(hi(data), lo(data));
 				break;
 			case unfinished: {
-				;
 				bounce();
 				display("\7Sorry.\3\rThis place is not avaliable yet!");
 			}
@@ -296,7 +277,6 @@ void triptype::walk() {
 	}
 	count += 1;
 	if (((ix != 0) || (iy != 0)) && (count > 1)) {
-		;
 		step += 1;
 		if (step == a.seq)  step = 0;
 		count = 0;
@@ -304,7 +284,6 @@ void triptype::walk() {
 }
 
 void triptype::bounce() {
-	;
 	x = ox[cp];
 	y = oy[cp];
 	stopwalk();
@@ -312,7 +291,6 @@ void triptype::bounce() {
 }
 
 void triptype::walkto(integer xx, integer yy) {
-	;
 	speed(xx - x, yy - y);
 	hx = xx;
 	hy = yy;
@@ -320,13 +298,11 @@ void triptype::walkto(integer xx, integer yy) {
 }
 
 void triptype::stophoming() {
-	;
 	homing = false;
 }
 
 void triptype::homestep() {
 	integer temp;
-	;
 	if ((hx == x) && (hy == y)) {
 		;     /* touching the target */
 		homing = false;
@@ -335,14 +311,12 @@ void triptype::homestep() {
 	ix = 0;
 	iy = 0;
 	if (hy != y) {
-		;
 		temp = hy - y;
 		if (temp > 4)  iy = 4;
 		else if (temp < -4)  iy = -4;
 		else iy = temp;
 	}
 	if (hx != x) {
-		;
 		temp = hx - x;
 		if (temp > 4)  ix = 4;
 		else if (temp < -4)  ix = -4;
@@ -351,7 +325,6 @@ void triptype::homestep() {
 }
 
 void triptype::speed(shortint xx, shortint yy) {
-	;
 	ix = xx;
 	iy = yy;
 	if ((ix == 0) && (iy == 0))  return; /* no movement */
@@ -360,21 +333,18 @@ void triptype::speed(shortint xx, shortint yy) {
 		if (iy < 0)  turn(up);
 		else turn(down);
 	} else {
-		;
 		if (ix < 0)  turn(left);
 		else turn(right);
 	}
 }
 
 void triptype::stopwalk() {
-	;
 	ix = 0;
 	iy = 0;
 	homing = false;
 }
 
 void triptype::chatter() {
-	;
 	talkx = x + a.xl / 2;
 	talky = y;
 	talkf = a.fgc;
@@ -382,19 +352,16 @@ void triptype::chatter() {
 }
 
 getsettype *getsettype::init() {
-	;
 	numleft = 0; /* initialise array pointer */
 	return this;
 }
 
 void getsettype::remember(fieldtype r) {
-	;
 	numleft += 1;
 	gs[numleft] = r;
 }
 
 void getsettype::recall(fieldtype &r) {
-	;
 	r = gs[numleft];
 	numleft -= 1;
 }
@@ -402,7 +369,6 @@ void getsettype::recall(fieldtype &r) {
 void rwsp(byte t, byte r) {
 	const integer xs = 3;
 	const integer ys = 1;
-	;
 	{
 		triptype &with = tr[t];
 		switch (r) {
@@ -435,10 +401,8 @@ void rwsp(byte t, byte r) {
 }
 
 void apped(byte trn, byte np) {
-	;
 	{
 		triptype &with = tr[trn];
-		;
 		{
 			void &with1 = peds[np];
 			appear(with.x - with.a.xl / 2, with.y - with.a.yl, dir);
@@ -450,11 +414,9 @@ void apped(byte trn, byte np) {
 void getback() {
 	byte fv;
 	fieldtype r;
-	;
 	{
 		getsettype &with = getset[1 - cp];
 		while (with.numleft > 0) {
-			;
 			recall(r);
 			mblit(x1, y1, x2, y2, 3, 1 - cp);
 		}
@@ -463,7 +425,6 @@ void getback() {
 
 void trippancy_link() {
 	byte fv;
-	;
 	if ((ddm_o.menunow) | ontoolbar | seescroll | (~ alive))  return;
 	for (fv = 1; fv <= numtr; fv ++) {
 		triptype &with = tr[fv];
@@ -480,72 +441,61 @@ void trippancy_link() {
 }
 
 void stopwalking() {
-	;
 	tr[1].stopwalk();
 	dna.rw = stopped;
 }
 
 void tripkey(char dir) {
-	;
 	if (ctrl == cjoy)  return;
 
 	{
 		triptype &with = tr[1];
 		{
-			;
 			switch (dir) {
 			case 'H':
 				if (rw != up) {
-					;
 					rw = up;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'P':
 				if (rw != down) {
-					;
 					rw = down;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'K':
 				if (rw != left) {
-					;
 					rw = left;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'M':
 				if (rw != right) {
-					;
 					rw = right;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'I':
 				if (rw != ur) {
-					;
 					rw = ur;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'Q':
 				if (rw != dr) {
-					;
 					rw = dr;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'O':
 				if (rw != dl) {
-					;
 					rw = dl;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'G':
 				if (rw != ul) {
-					;
 					rw = ul;
 					rwsp(1, rw);
 				} else stopwalking();
@@ -560,12 +510,10 @@ void tripkey(char dir) {
 
 void getsetclear() {
 	byte fv;
-	;
 	for (fv = 0; fv <= 1; fv ++) getset[fv].init();
 }
 
 void fliproom(byte room, byte ped) {
-	;
 	dusk;
 	getsetclear();
 	enterroom(room);
@@ -579,12 +527,10 @@ void fliproom(byte room, byte ped) {
 boolean infield(byte x) {         /* returns True if you're within field "x" */
 	integer yy;
 	boolean infield_result;
-	;
 	{
 		void &with = fields[x];
 		{
 			triptype &with = tr[1];
-			;
 			yy = with.y + with.a.yl;
 			infield_result = (with.x >= x1) && (with.x <= x2) && (yy >= y1) && (yy <= y2);
 		}
@@ -597,7 +543,6 @@ boolean neardoor() {       /* returns True if you're near a door! */
 	byte fv;
 	boolean nd;
 	boolean neardoor_result;
-	;
 	if (numfields < 9) {
 		;     /* there ARE no doors here! */
 		neardoor_result = false;
@@ -605,14 +550,12 @@ boolean neardoor() {       /* returns True if you're near a door! */
 	}
 	{
 		triptype &with = tr[1];
-		;
 		ux = with.x;
 		uy = with.y + with.a.yl;
 	}
 	nd = false;
 	for (fv = 9; fv <= numfields; fv ++) {
 		void &with = fields[fv];
-		;
 		if ((ux >= x1) && (ux <= x2) && (uy >= y1) && (uy <= y2))  nd = true;
 	}
 	neardoor_result = nd;
@@ -621,24 +564,20 @@ boolean neardoor() {       /* returns True if you're near a door! */
 
 void readstick() {
 	byte jw;
-	;
 	if (ctrl == ckey)  return;
 
 	jw = joyway;
 
 	{
 		triptype &with = tr[1];
-		;
 		if (jw == stopped)  stopwalking();
 		else {
-			;
 			dna.rw = jw;
 			rwsp(1, dna.rw);
 		}
 	}
 
 	if (jw != oldjw) {
-		;
 		showrw;
 		oldjw = jw;
 	}
@@ -652,7 +591,6 @@ public:
 static unit_trip42_initialize trip42_constructor;
 
 unit_trip42_initialize::unit_trip42_initialize() {
-	;
 	getsetclear();
 }
 

@@ -73,9 +73,7 @@ untyped_file out;
 integer bigsize;
 
 void copyaoa() {
-	;
 	{
-		;
 		a.name = oa.name;
 		a.comment = "Transferred";
 		a.num = oa.num;
@@ -90,7 +88,6 @@ void copyaoa() {
 
 void setup() {
 	integer gd, gm;
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -99,7 +96,6 @@ void setup() {
 string strf(longint x) {
 	string q;
 	string strf_result;
-	;
 	str(x, q);
 	strf_result = q;
 	return strf_result;
@@ -112,10 +108,8 @@ void save() {
 	byte xw;
 	byte nxl, nyl;
 	word soa;
-	;
 	cleardevice();
 	{
-		;
 		a.xl = 45;
 		a.yl = 10;
 		a.num = 1;
@@ -136,7 +130,6 @@ void save() {
 		if ((nxl % 8) > 0)  xw += 1;
 
 		for (n = 1; n <= a.num; n ++) {
-			;
 			getimage(0, 0, a.xl, a.yl, aa);
 			for (fv = 0; fv <= nyl; fv ++)
 				blockwrite(out, aa[5 + fv * xw * 4], xw);
@@ -149,7 +142,6 @@ void save() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	setup();
 	save();
 

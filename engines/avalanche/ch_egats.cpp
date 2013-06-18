@@ -143,12 +143,10 @@ asm
   pop ds;       { Get DS back again. }
 */
 {
-	;
 }
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	assign(f, "chunk21.avd");
 	reset(f, 1);
 

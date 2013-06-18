@@ -48,7 +48,6 @@
 namespace Avalanche {
 
 void dplot(integer x, integer y, string z) {
-	;
 	setcolor(9);
 	outtextxy(x, y  , z);
 	setcolor(11);
@@ -88,11 +87,9 @@ begin;
  copy02;*/
 {
 	byte fv;
-	;
 	dusk();
 	off_virtual();
 	for (fv = 0; fv <= 1; fv ++) {
-		;
 		setactivepage(fv);
 		cleardevice();
 	}
@@ -123,10 +120,8 @@ void copy02() {   /* taken from Wobble (below) */
 	byte a0 /*absolute $A000:0*/;
 	byte a2/*absolute $A800:0*/;
 	byte bit;
-	;
 	off();
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -159,7 +154,6 @@ void copy03() {   /* taken from Wobble (below) */
 	}
 
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -172,7 +166,6 @@ void copy03() {   /* taken from Wobble (below) */
 		on_virtual();
 		break;
 	case 2 :
-		;
 		break; /* zzzz, it was off anyway */
 	case 3 :
 		on();
@@ -183,10 +176,8 @@ void copy03() {   /* taken from Wobble (below) */
 
 void copypage(byte frp, byte top) { /* taken from Copy02 (above) */
 	byte bit;
-	;
 	off();
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -199,13 +190,11 @@ void copypage(byte frp, byte top) { /* taken from Copy02 (above) */
 void wobble() {
 	byte bit;
 	byte a2 /*absolute $A800:80i*/;
-	;
 	off();
 	setactivepage(2);
 	bit = getpixel(0, 0);
 	cleardevice();
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -213,7 +202,6 @@ void wobble() {
 		move(mem[0xa000 * cp * pagetop], a2, 16000);
 	}
 	for (bit = 0; bit <= 25; bit ++) {
-		;
 		setvisualpage(2);
 		delay(bit * 7);
 		setvisualpage(cp);
@@ -228,7 +216,6 @@ void wobble() {
 void zonk();
 
 static void zl(integer x1, integer y1, integer x2, integer y2) {
-	;
 	setlinestyle(0, 0, 3);
 	setcolor(1);
 	line(x1, y1, x2, y2);
@@ -240,12 +227,10 @@ static void zl(integer x1, integer y1, integer x2, integer y2) {
 void zonk() {
 	integer xx, yy;
 	/* a0:byte absolute $A000:0; a3:byte absolute $A000:245760;*/ byte bit, fv;
-	;
 	off();
 	copypage(3, 1 - cp);
 	{
 		triptype &with = tr[1];
-		;
 		xx = with.x + with.a.xl / 2;
 		yy = with.y;
 	}
@@ -266,7 +251,6 @@ void zonk() {
 	setbkcolor(yellow);
 
 	for (bit = 0; bit <= 255; bit ++) {
-		;
 		note(270 - bit);
 		setvisualpage(3);
 		note(2700 - 10 * bit);

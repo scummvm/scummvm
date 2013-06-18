@@ -47,7 +47,6 @@ boolean isenh() {
 	boolean isenh_result;
 	isenh_result = false;
 	{
-		;
 		ah = 0x12;
 		intr(0x16, r);
 		statefrom16 = al;
@@ -55,7 +54,6 @@ boolean isenh() {
 	if (statefrom16 != shiftstate)  return isenh_result;
 	shiftstate = shiftstate ^ 0x20;
 	{
-		;
 		ah = 0x12;
 		intr(0x16, r);
 		statefrom16 = al;
@@ -76,7 +74,6 @@ void readkeye()
 {
 	registers r;
 	word fs;
-	;
 	if (atbios)
 		fs = fancystuff; /* We're using an AT */
 	else fs = notfancystuff; /* ditto, an XT */
@@ -96,7 +93,6 @@ boolean keypressede()
 {
 	registers r;
 	boolean keypressede_result;
-	;
 	if (atbios)
 		keypressede_result = fancystuff; /* ATs get the fancy stuff */
 	else keypressede_result = keypressed(); /* XTs get the usual primitive... */
@@ -110,7 +106,6 @@ public:
 static unit_enhanced_initialize enhanced_constructor;
 
 unit_enhanced_initialize::unit_enhanced_initialize() {
-	;
 	/* determine bios type */
 	atbios = isenh();
 }

@@ -39,7 +39,6 @@ pointer where;
 string comspec;
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	getintvec(0x1f, where);
 	move(where, table, 1280);
 	comspec = getenv("comspec");

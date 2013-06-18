@@ -264,7 +264,6 @@ void continue_help() {
 			if (fv > 0)
 				switch (buttons[fv].trigger) {
 				case '\0':/*null*/
-					;
 					break;
 				case '\376':
 					return;

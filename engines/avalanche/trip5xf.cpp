@@ -72,9 +72,7 @@ untyped_file out;
 integer bigsize;
 
 void copyaoa() {
-	;
 	{
-		;
 		a.name = oa.name;
 		a.comment = "Transferred";
 		a.num = oa.num;
@@ -92,7 +90,6 @@ void load() {
 	byte gd, gm, sort, n;
 	pointer p, q;
 	pointer xf;
-	;
 	assign(f, string("v:osprte") + sn + ".avd");
 	reset(f, 1);
 	seek(f, 59);
@@ -103,7 +100,6 @@ void load() {
 	getmem(xf, a.size);
 
 	for (sort = 0; sort <= 1; sort ++) {
-		;
 		mark(q);
 		getmem(p, bigsize);
 		blockread(f, p, bigsize);
@@ -117,7 +113,6 @@ void load() {
 
 		for (gm = 0; gm <= (a.num / a.seq) - 1; gm ++) /* directions */
 			for (gd = 0; gd <= a.seq - 1; gd ++) { /* steps */
-				;
 				getmem(pic[n][sort], a.size); /* grab the memory */
 				getimage((gm / 2) * (a.xl * 6) + gd * a.xl, (gm % 2)*a.yl,
 				         (gm / 2) * (a.xl * 6) + gd * a.xl + a.xl - 1, (gm % 2)*a.yl + a.yl - 1,
@@ -137,7 +132,6 @@ void load() {
 
 void setup() {
 	integer gd, gm;
-	;
 	output << "TRIP5XF (c) 1992, Thomas Thurman." << NL;
 	output << NL;
 	output << "Enter number of SPRITE*.AVD file to convert:";
@@ -151,7 +145,6 @@ void setup() {
 string strf(longint x) {
 	string q;
 	string strf_result;
-	;
 	str(x, q);
 	strf_result = q;
 	return strf_result;
@@ -164,10 +157,8 @@ void save() {
 	byte xw;
 	byte nxl, nyl;
 	word soa;
-	;
 	cleardevice();
 	{
-		;
 		a.size = imagesize(0, 0, a.xl, a.yl);
 		soa = sizeof(a);
 
@@ -184,7 +175,6 @@ void save() {
 		if ((nxl % 8) > 0)  xw += 1;
 
 		for (n = 1; n <= a.num; n ++) {
-			;
 			putimage(0, 0, pic[n][0], 0);
 			getimage(0, 0, a.xl, a.yl, aa);
 			for (fv = 0; fv <= nyl; fv ++)
@@ -204,7 +194,6 @@ void save() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	setup();
 	save();
 

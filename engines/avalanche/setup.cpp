@@ -496,7 +496,6 @@ void getmaxmin() {
 
 	centre(19, 1, "Thank you. Now please centre your joystick and hit a button.");
 	do {
-		;
 	} while (!(buttona1() || buttona2()));
 
 	readjoya(jmidx, jmidy);

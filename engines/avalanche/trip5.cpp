@@ -1036,7 +1036,6 @@ void triptype::andexor() {
 		  loop @nextbyte;       { Keep going round until cx=0. }
 		*/
 		{
-			;
 		}
 #endif
 

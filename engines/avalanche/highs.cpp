@@ -53,10 +53,8 @@ highscoretype h;
 
 void get_new_highs() {
 	byte fv;
-	;
 	for (fv = 1; fv <= 12; fv ++) {
 		A1 &with = h[fv];
-		;
 		with.score = 32 - fv * 2;
 		with.rank = "...";
 	}
@@ -80,11 +78,9 @@ void show_highs()
 	byte fv;
 	varying_string<40> x;
 	varying_string<5> y;
-	;
 	display("HIGH SCORERS\3\r  Name\n\nScore   Rank\r  \"\"\"\"\n\n\"\"\"\"\"   \"\"\"\"\f\4");
 	for (fv = 1; fv <= 12; fv ++) {
 		A1 &with = h[fv];
-		;
 		display(string('\15') + with.name + '\4');
 		fillchar(x, sizeof(x), '\40');
 		y = strf(with.score);
@@ -99,7 +95,6 @@ void store_high(string who)
 /* This procedure shows the high-scores. */
 {
 	byte fv, ff;
-	;
 
 	for (fv = 1; fv <= 12; fv ++)
 		if (h[fv].score < dna.score)  flush();
@@ -110,7 +105,6 @@ void store_high(string who)
 
 	{
 		A1 &with = h[fv];
-		;
 		with.name = who;
 		with.score = dna.score;
 	}
@@ -119,7 +113,6 @@ void store_high(string who)
 
 void get_highs() {
 	file<highscoretype> f;
-	;
 	/*$I-*/
 	assign(f, "scores.avd");
 	reset(f);
@@ -142,7 +135,6 @@ public:
 static unit_highs_initialize highs_constructor;
 
 unit_highs_initialize::unit_highs_initialize() {
-	;
 	get_highs();
 }
 

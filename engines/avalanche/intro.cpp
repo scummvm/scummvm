@@ -263,7 +263,6 @@ void load_text() {
 			thisline += 1;
 			break;
 		case '\12':/*nop*/
-			;
 			break;
 		default:
 			x[thisline] = x[thisline] + *c;
@@ -631,7 +630,6 @@ int main(int argc, const char *argv[]) {
 		displaycounter += 1;
 
 		do {
-			;
 		} while (!(*skellern > 0));
 	}
 

@@ -67,10 +67,8 @@ byte sumup() {
 	word fv;
 	byte total;
 	byte sumup_result;
-	;
 	total = 0;
 	for (fv = 0; fv <= bufsize - 1; fv ++) {
-		;
 		total += ord(was[fv]);
 	}
 	sumup_result = total;
@@ -81,7 +79,6 @@ string findname(longint which) {
 	string x;
 	varying_string<10> q;
 	string findname_result;
-	;
 	str(which, q);
 	reset(nicknames);
 	do {
@@ -91,10 +88,8 @@ string findname(longint which) {
 		nicknames >> x >> NL;
 	} while (!(pos(q, x) > 0));
 	if (eof(nicknames)) {
-		;
 		findname_result = "noname";
 	} else {
-		;
 		Delete(x, 1, 3); /* lose "{__" */
 		Delete(x, pos(" ", x), 255); /* lose all chars after first space */
 		findname_result = x;
@@ -105,22 +100,18 @@ string findname(longint which) {
 
 void cursor() {
 	byte fv;
-	;
 	for (fv = 12; fv <= 15; fv ++)
 		mem[0xa000 * cpos + fv * 80] = ~(mem[0xa000 * cpos + fv * 80]);
 }
 
 void xy() {
-	;
 	cpos = (bufpos / 80) * 1280 + (bufpos % 80);
 }
 
 void show() {
 	word fv, orig, y;
-	;
 	for (fv = 0; fv <= 1999; fv ++)
 		if (buffer[fv] != was[fv]) {
-			;
 			orig = (fv / 80) * 1280 + (fv % 80);
 			for (y = 0; y <= 15; y ++)
 				mem[0xa000 * orig + y * 80] = (byte)(font[buffer[fv]][y]);
@@ -130,7 +121,6 @@ void show() {
 }
 
 void sizeup() {
-	;
 	do {
 		switch (buffer[bufsize]) {
 		case marker:
@@ -148,7 +138,6 @@ void sizeup() {
 void graphics() {
 	integer gd, gm;
 	file<fonttype> fontfile;
-	;
 	gd = 3;
 	gm = 1;
 	initgraph(gd, gm, "");
@@ -170,7 +159,6 @@ static void legit(char r) {
 
 void edit_it() {
 	byte fv;
-	;
 	for (fv = 1; fv <= bufsize; fv ++) buffer[fv] -= (byte)(177 * bufsize);
 	fillchar(was, sizeof(was), '\0');
 	show();
@@ -183,40 +171,34 @@ void edit_it() {
 			switch (readkey()) { /* extd keystrokes */
 			case 'K':
 				if (bufpos > 0)     {
-					;
 					bufpos -= 1;
 					xy();
 				}
 				break; /* Left */
 			case 'M':
 				if (bufpos < bufsize)  {
-					;
 					bufpos += 1;
 					xy();
 				}
 				break; /* Right */
 			case 'H':
 				if (bufpos > 80)    {
-					;
 					bufpos -= 80;
 					xy();
 				}
 				break; /* Up */
 			case 'P':
 				if (bufpos < (cardinal)bufsize - 79)  {
-					;
 					bufpos += 80;
 					xy();
 				}
 				break; /* Down */
 			case 'G': {
-				;
 				bufpos = 0;
 				xy();
 			}
 			break; /* Home */
 			case 'O': {
-				;
 				bufpos = bufsize;
 				xy();
 			}
@@ -241,7 +223,6 @@ void edit_it() {
 			}
 			break;
 		case '\33': {
-			;
 			for (fv = 1; fv <= bufsize; fv ++) buffer[fv] += (byte)(177 * bufsize);
 			restorecrtmode();
 			return;
@@ -262,7 +243,6 @@ void saveit(longint ourchain, word oldsize, word newsize) {
 	markertype m;
 	integer sizechange; /* so's it can be +ve or -ve */
 	longint wheresit; /* "offset" value for "ourchain" */
-	;
 	assign(tempf, "sez.tmp");
 	/* OK, here goes... */
 	sezhead.size = sezhead.size - longint(oldsize) + longint(newsize); /* adjust our size */
@@ -279,11 +259,9 @@ void saveit(longint ourchain, word oldsize, word newsize) {
 	/* Now to move the markers */
 	output << "Moving markers..." << NL;
 	for (fv = 1; fv <= sezhead.chains; fv ++) {
-		;
 		output << fv << '\15';
 		blockread(f, m, sizeof(m));
 		if (fv == ourchain) { /* Right, this one's ours! */
-			;
 			wheresit = m.offset; /* recorded for later */
 			m.length = newsize - 1;
 			m.checksum = sumup();
@@ -302,7 +280,6 @@ void saveit(longint ourchain, word oldsize, word newsize) {
 
 	output << "Updating the chains..." << NL;
 	while (total <= wheresit) {
-		;
 		blockread(f, buffer, 1, numread);
 		blockwrite(tempf, buffer, numread, numwritten);
 		output << '.';
@@ -317,7 +294,6 @@ void saveit(longint ourchain, word oldsize, word newsize) {
 	output << NL;
 	output << "Copying everything else..." << NL;
 	while (! eof(f)) {  /* high-speed copy */
-		;
 		blockread(f, buffer, 17777, numread);
 		blockwrite(tempf, buffer, numread);
 		output << '.';
@@ -333,12 +309,10 @@ void saveit(longint ourchain, word oldsize, word newsize) {
 
 void particular() {
 	word origsize;
-	;
 	bufsize = 0;
 	output << "Which one\? (? for a list)";
 	input >> chainnum >> NL;
 	if ((chainnum < 0) || (chainnum > sezhead.chains)) {
-		;
 		output << "Don't be silly!" << NL;
 		return;
 	}
@@ -371,7 +345,6 @@ void particular() {
 		output << r << NL;
 		switch (r) {
 		case 'N': {
-			;
 			output << NL;
 			output << "New nickname (max 40 chars, Enter to cancel)?";
 			input >> temp >> NL;
@@ -379,7 +352,6 @@ void particular() {
 		}
 		break;
 		case 'E': {
-			;
 			setgraphmode(1);
 			edit_it();
 		}
@@ -398,10 +370,8 @@ void titles() {
 	const varying_string<7> title = "SEZedit";
 	byte fv;
 	char r;
-	;
 	settextstyle(1, 0, 0);
 	for (fv = 7; fv >= 1; fv --) {
-		;
 		setcolor(fv * 2);
 		setusercharsize(8 - fv, 1, 8 - fv, 1);
 		outtextxy(fv * 65, fv * 40 - 30, title[fv - 1]);
@@ -423,7 +393,6 @@ void addone() {   /* Adds a new, empty chain to the end of the list. */
 	markertype m;
 	array<1, 17777, byte> buffer;
 	word numread;
-	;
 	assign(tempf, "sez.tmp");
 	textattr = 27;
 	rewrite(tempf, 1);
@@ -437,7 +406,6 @@ void addone() {   /* Adds a new, empty chain to the end of the list. */
 	/* Now to move the markers */
 	output << "Moving markers..." << NL;
 	for (fv = 1; fv <= sezhead.chains - longint(1); fv ++) { /* -1 because we've added 1 to it */
-		;
 		output << fv << '\12';
 		blockread(f, m, sizeof(m));
 		blockwrite(tempf, m, sizeof(m));
@@ -445,7 +413,6 @@ void addone() {   /* Adds a new, empty chain to the end of the list. */
 	output << "Done OK." << NL;
 	/* Now we add a new marker onto the end! */
 	{
-		;
 		m.offset = sezhead.size; /* right onto the end */
 		m.length = 0; /* it's empty */
 	}
@@ -454,7 +421,6 @@ void addone() {   /* Adds a new, empty chain to the end of the list. */
 	/* Copy everything else... including the #177 check char */
 	output << "Copying everything else over..." << NL;
 	while (! eof(f)) {
-		;
 		blockread(f, buffer, 17777, numread);
 		blockwrite(tempf, buffer, numread);
 		output << '.';
@@ -468,7 +434,6 @@ void addone() {   /* Adds a new, empty chain to the end of the list. */
 
 void general() {
 	char r;
-	;
 	do {
 		textattr = 31;
 		output << NL;
@@ -499,7 +464,6 @@ void general() {
 }
 
 void loadit() {
-	;
 	reset(f, 1);
 	blockread(f, junk, 255);
 	blockread(f, sezhead, sizeof(sezhead));
@@ -508,7 +472,6 @@ void loadit() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	assign(f, string(game) + ".SEZ");
 	assign(tempf, "sez.tmp");
 	assign(nicknames, string(game) + ".NIK");

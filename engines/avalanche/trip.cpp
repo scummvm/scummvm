@@ -64,7 +64,6 @@ void gpwtcol(void *buf, integer n) {    /* Cedola */
 
 void loadtrip() {
 	untyped_file inf;
-	;
 	assign(inf, "t:avvy.trp");
 	reset(inf, 1);
 	seek(inf, 0x27);
@@ -75,7 +74,6 @@ void loadtrip() {
 
 void plot(word count, integer ox, integer oy) { /* orig x & y. Page is always 1. */
 	byte x, y, len;
-	;
 	do {
 		len = blue3[count];
 		if (len == 177)  return;
@@ -83,13 +81,11 @@ void plot(word count, integer ox, integer oy) { /* orig x & y. Page is always 1.
 		y = blue3[count + 2];
 		count += 3;
 		{
-			;
 			gdcur_x = x + ox;
 			gdcur_y = y + oy;
 			/* fiddle xy coords to match page 1 */
 			gdcur_y += 205;   /* 203 */ gdcur_x -= 128; /* 114 */
 			if (gdcur_x < 0) {
-				;
 				gdcur_x += 640;
 				gdcur_y -= 1;
 			}
@@ -100,7 +96,6 @@ void plot(word count, integer ox, integer oy) { /* orig x & y. Page is always 1.
 }
 
 void boundscheck() {
-	;
 	if (dna.uy > 123)  dna.uy = 123;
 	if (dna.uy < 10)  dna.uy = 10;
 	if (dna.ux < 5)  dna.ux = 5;
@@ -108,7 +103,6 @@ void boundscheck() {
 }
 
 void budge() {
-	;
 	if (set::of(up, ul, ur, eos).has(dna.rw))  dna.uy -= 3;
 	if (set::of(down, dl, dr, eos).has(dna.rw))  dna.uy += 3;
 	if (set::of(left, ul, dl, eos).has(dna.rw))  dna.ux -= 5;
@@ -117,78 +111,66 @@ void budge() {
 	boundscheck();
 
 	if (dna.rw > 0) {
-		;
 		anim += 1;
 		if (anim == 7)  anim = 1;
 	}
 }
 
 void tripkey(char dir) {
-	;
 	if (cw != 177)  return;
 	{
 		dnatype &with = dna;
-		;
 		switch (dir) {
 		case 'H':
 			if (with.rw != up)     {
-				;
 				with.rw = up;
 				ww = up;
 			} else with.rw = 0;
 			break;
 		case 'P':
 			if (with.rw != down)   {
-				;
 				with.rw = down;
 				ww = down;
 			} else with.rw = 0;
 			break;
 		case 'K':
 			if (with.rw != left)   {
-				;
 				with.rw = left;
 				ww = left;
 			} else with.rw = 0;
 			break;
 		case 'M':
 			if (with.rw != right)  {
-				;
 				with.rw = right;
 				ww = right;
 			} else with.rw = 0;
 			break;
 		case 'I':
 			if (with.rw != ur)     {
-				;
 				with.rw = ur;
 				ww = right;
 			} else with.rw = 0;
 			break;
 		case 'Q':
 			if (with.rw != dr)     {
-				;
 				with.rw = dr;
 				ww = right;
 			} else with.rw = 0;
 			break;
 		case 'O':
 			if (with.rw != dl)     {
-				;
 				with.rw = dl;
 				ww = left;
 			} else with.rw = 0;
 			break;
 		case 'G':
 			if (with.rw != ul)     {
-				;
 				with.rw = ul;
 				ww = left;
 			} else with.rw = 0;
 			break;
 		}
 		if (with.rw == 0) {
-			;
 			ux = ppos[0][0];
 			uy = ppos[0][1];
 			anim -= 1;
@@ -198,14 +180,12 @@ void tripkey(char dir) {
 }
 
 void trippancy() {
-	;
 	if ((dna.rw == 0) || (cw != 177) || (! dropsok))  return;
 	r.ax = 11;
 	intr(0x33, r);
 	setactivepage(1);
 	off();
 	if (ppos[0][1] != -177) {
-		;
 		putimage(ppos[0][0], ppos[0][1], replace[0], 0);
 	}
 

@@ -52,22 +52,18 @@ const char marker = '\33';
 
 void cursor() {
 	byte fv;
-	;
 	for (fv = 12; fv <= 15; fv ++)
 		mem[0xa000 * cpos + fv * 80] = ~(mem[0xa000 * cpos + fv * 80]);
 }
 
 void xy() {
-	;
 	cpos = (bufpos / 80) * 1280 + (bufpos % 80);
 }
 
 void show() {
 	word fv, orig, y;
-	;
 	for (fv = 0; fv <= 1999; fv ++)
 		if (buffer[fv] != was[fv]) {
-			;
 			orig = (fv / 80) * 1280 + (fv % 80);
 			for (y = 0; y <= 15; y ++)
 				mem[0xa000 * orig + y * 80] = (byte)(font[buffer[fv]][y]);
@@ -77,7 +73,6 @@ void show() {
 }
 
 void sizeup() {
-	;
 	do {
 		switch (buffer[bufsize]) {
 		case marker:
@@ -95,7 +90,6 @@ void sizeup() {
 void graphics() {
 	integer gd, gm;
 	file<fonttype> fontfile;
-	;
 	gd = 3;
 	gm = 1;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -110,7 +104,6 @@ void helpscreen();
 static byte l, fv;
 
 static void addon(char b, string st) {
-	;
 	buffer[3 + 80 * l] = b;
 	b -= 64;
 	buffer[5 + 80 * l] = b;
@@ -121,7 +114,6 @@ static void addon(char b, string st) {
 void helpscreen() {
 	array<0, 1999, char> temp;
 	char r;
-	;
 	l = 0;
 	move(buffer, temp, 2000);
 	fillchar(buffer, sizeof(buffer), '\0');
@@ -163,7 +155,6 @@ static void legit(char r) {
 
 void edit_it() {
 	byte fv;
-	;
 	bufpos = 0;
 	fillchar(was, sizeof(was), '\0');
 	show();
@@ -176,54 +167,46 @@ void edit_it() {
 			switch (readkey()) { /* extd keystrokes */
 			case 'K':
 				if (bufpos > 0)     {
-					;
 					bufpos -= 1;
 					xy();
 				}
 				break; /* Left */
 			case 'M':
 				if (bufpos < bufsize)  {
-					;
 					bufpos += 1;
 					xy();
 				}
 				break; /* Right */
 			case 'H':
 				if (bufpos > 80)    {
-					;
 					bufpos -= 80;
 					xy();
 				}
 				break; /* Up */
 			case 'P':
 				if (bufpos < (cardinal)bufsize - 79)  {
-					;
 					bufpos += 80;
 					xy();
 				}
 				break; /* Down */
 			case 's':
 				if (bufpos > 10)  {
-					;
 					bufpos -= 10;
 					xy();
 				}
 				break;
 			case 't':
 				if (bufpos < (cardinal)bufsize - 10)  {
-					;
 					bufpos += 10;
 					xy();
 				}
 				break;
 			case 'G': {
-				;
 				bufpos = 0;
 				xy();
 			}
 			break; /* Home */
 			case 'O': {
-				;
 				bufpos = bufsize;
 				xy();
 			}
@@ -258,7 +241,6 @@ void edit_it() {
 			}
 			break;
 		case '\33': {
-			;
 			restorecrtmode();
 			return;
 		}
@@ -272,14 +254,12 @@ void edit_it() {
 
 void loadit() {
 	untyped_file f;
-	;
 	if (pos(".", rawname) == 0)  rawname = rawname + ".raw";
 	fillchar(buffer, sizeof(buffer), '\0');
 	/*$I-*/
 	assign(f, rawname);
 	reset(f, 1);
 	if (ioresult != 0) {
-		;
 		output << string('\7') + "New file!" + '\7' << NL;
 		buffer[0] = marker;
 		return;
@@ -297,7 +277,6 @@ void loadit() {
 
 void saveit() {
 	untyped_file f;
-	;
 	output << "Saving " << rawname << ", " << bufsize << " bytes..." << NL;
 	assign(f, rawname);
 	rewrite(f, 1);
@@ -307,7 +286,6 @@ void saveit() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	output << "Filename of .RAW file?";
 	input >> rawname >> NL;
 	loadit();
@@ -335,7 +313,6 @@ int main(int argc, const char *argv[]) {
 			ok = true;
 			break;
 		case 'S': {
-			;
 			saveit();
 			exit(0);
 		}

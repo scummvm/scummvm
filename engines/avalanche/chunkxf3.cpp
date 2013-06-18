@@ -61,7 +61,6 @@ var
 string strf(longint x) {
 	string q;
 	string strf_result;
-	;
 	str(x, q);
 	strf_result = q;
 	return strf_result;
@@ -70,7 +69,6 @@ string strf(longint x) {
 void finder() {
 	char r;
 	integer x, y;
-	;
 	setfillstyle(0, 0);
 	setcolor(14);
 	x = 320;
@@ -82,7 +80,6 @@ void finder() {
 		line(x - 20, y, x + 20, y);
 		line(x, y - 20, x, y + 20);
 		do {
-			;
 		} while (!keypressed());
 		line(x - 20, y, x + 20, y);
 		line(x, y - 20, x, y + 20);
@@ -127,12 +124,10 @@ void loadtemp(string n) {
 	byte a1 /*absolute $A400:800*/;
 	byte bit;
 	untyped_file f;
-	;
 	assign(f, n);
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -149,12 +144,10 @@ void load() {
 	byte a1 /*absolute $A400:800*/;
 	byte bit;
 	untyped_file f;
-	;
 	assign(f, "place22.avd");
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -172,7 +165,6 @@ void load() {
 }
 
 void open_chunk() {
-	;
 	assign(f, "chunk22.avd");
 	rewrite(f, 1);
 	blockwrite(f, chunkheader, sizeof(chunkheader));
@@ -183,7 +175,6 @@ void open_chunk() {
 }
 
 void close_chunk() {
-	;
 	seek(f, 45);
 	blockwrite(f, offsets, num_chunks * 4); /* make sure they're right! */
 	close(f);
@@ -280,7 +271,6 @@ end;*/
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");

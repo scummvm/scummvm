@@ -44,10 +44,8 @@ boolean detect() {
 	word x, y, xo, yo;
 	byte count;
 	boolean detect_result;
-	;
 	count = 0;
 	if (joystickpresent) {
-		;
 		detect_result = true;
 		return detect_result;
 	}
@@ -55,7 +53,6 @@ boolean detect() {
 	do {
 		if (count < 7)  count += 1; /* Take advantage of "flutter" */
 		if (count == 6) {
-			;
 			output << "The Bios says you don't have a joystick. However, it's often wrong" << NL;
 			output << "about such matters. So, do you? If you do, move joystick A to" << NL;
 			output << "continue. If you don't, press any key to cancel." << NL;
@@ -67,9 +64,7 @@ boolean detect() {
 }
 
 void display() {
-	;
 	{
-		;
 		gotoxy(20, 10);
 		output << "X min: " << js.xmin << "  ";
 		gotoxy(20, 11);
@@ -83,11 +78,9 @@ void display() {
 
 void getmaxmin() {
 	word x, y;
-	;
 	output << "Rotate the joystick around in a circle, as far from the centre as it" << NL;
 	output << "can get. Then click a button." << NL;
 	{
-		;
 		js.xmax = 0;
 		js.xmin = maxint;
 		js.ymax = 0;
@@ -96,7 +89,6 @@ void getmaxmin() {
 	do {
 		readjoya(x, y);
 		{
-			;
 			if (x < js.xmin)  js.xmin = x;
 			if (y < js.ymin)  js.ymin = y;
 			if (x > js.xmax)  js.xmax = x;
@@ -105,19 +97,16 @@ void getmaxmin() {
 		}
 	} while (!(buttona1 | buttona2));
 	do {
-		;
 	} while (!(~(buttona1 | buttona2)));
 	output << NL;
 	output << "Thank you. Now please centre your joystick and hit a button." << NL;
 	do {
-		;
 	} while (!(buttona1 | buttona2));
 	readjoya(js.xmid, js.ymid);
 }
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	textattr = 2;
 	clrscr;
 	output << "Avalot joystick setup routine- by TT. Thanks go to David B. Howorth." << NL;

@@ -57,13 +57,11 @@ void load() {
 	byte a1 /*absolute $A400:800*/;
 	byte bit;
 	untyped_file f;
-	;
 
 	assign(f, "place9.avd");
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -80,12 +78,10 @@ void load_temp(string which) {
 	byte a1 /*absolute $A400:800*/;
 	byte bit;
 	untyped_file f;
-	;
 	assign(f, which);
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -97,7 +93,6 @@ void load_temp(string which) {
 }
 
 void open_chunk() {
-	;
 	assign(f, "chunk9.avd");
 	rewrite(f, 1);
 	blockwrite(f, chunkheader, sizeof(chunkheader));
@@ -108,7 +103,6 @@ void open_chunk() {
 }
 
 void close_chunk() {
-	;
 	seek(f, 45);
 	blockwrite(f, offsets, num_chunks * 4); /* make sure they're right! */
 	close(f);
@@ -118,9 +112,7 @@ void mgrab(integer x1, integer y1, integer x2, integer y2, word size) {
 	integer yy;
 	word aapos;
 	byte length, bit;
-	;
 	if (size > arraysize) {
-		;
 		output << "*** SORRY! *** Increase the arraysize constant to be greater" << NL;
 		output << " than " << size << '.' << NL;
 		exit(0);
@@ -131,13 +123,11 @@ void mgrab(integer x1, integer y1, integer x2, integer y2, word size) {
 	length = x2 - x1;
 
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
 		port[0x3cf] = bit;
 		for (yy = y1; yy <= y2; yy ++) {
-			;
 			move(mem[0xa400 * yy * 80 + x1], aa[aapos], length);
 			aapos += length;
 		}
@@ -151,7 +141,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer
 	word s;
 	pointer p;
 	chunkblocktype ch;
-	;
 	/* rectangle(x1,y1,x2,y2); exit;*/
 	this_chunk += 1;
 	offsets[this_chunk] = filepos(f);
@@ -162,7 +151,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer
 	getimage(x1, y1, x2, y2, p);
 
 	{
-		;
 		if (nat)
 			ch.flavour = ch_bgi;
 		else ch.flavour = ch_ega; /* At the moment, Celer can't handle natural ch_EGAs. */
@@ -183,7 +171,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer
 
 	freemem(p, s);
 	{
-		;
 		if (ch.flavour == ch_bgi)  s = imagesize(ch.x * 8, ch.y, (ch.x + ch.xl) * 8, ch.y + ch.yl);
 		else s = 4 * ((x2 - x1 + 7) / 8) * (y2 - y1 + 1);
 		ch.size = s;
@@ -203,7 +190,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");

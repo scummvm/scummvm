@@ -39,7 +39,6 @@ string x;
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -63,18 +62,14 @@ int main(int argc, const char *argv[]) {
 	*/
 	for (gm = 0; gm <= 17; gm ++)
 		for (gd = 0; gd <= 27; gd ++) {
-			;
 			gotoxy(gd + 1, gm + 1);
 			if (cols[gd][2 * gm] == cols[gd][2 * gm + 1]) {
-				;
 				textattr = cols[gd][2 * gm];
 				output << 'Û';
 			} else if ((cols[gd][2 * gm] > 7) && (cols[gd][2 * gm + 1] < 8)) {
-				;
 				textattr = cols[gd][2 * gm] + cols[gd][2 * gm + 1] * 16;
 				output << 'ß';
 			} else {
-				;
 				textattr = cols[gd][2 * gm] * 16 + cols[gd][2 * gm + 1];
 				if (textattr > blink)  textattr -= blink;
 				output << 'Ü';

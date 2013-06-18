@@ -48,9 +48,7 @@ integer gd, gm;
 
 void recalc() {
 	byte a, b;
-	;
 	{
-		;
 		for (a = 0; a <= 1; a ++)
 			for (b = 0; b <= 15; b ++)
 				c_current.mask[a][b] = bintoword(cpc[a][b]);
@@ -63,7 +61,6 @@ void load() {
 	text t;
 	string x;
 	byte a, b;
-	;
 	assign(t, fn);
 	reset(t);
 	do {
@@ -83,32 +80,25 @@ void display() {
 	const integer o0 = ord('0');
 	const integer o1 = ord('1');
 	byte x, y, p1, p2;
-	;
 	for (y = 0; y <= 15; y ++) {
-		;
 		for (x = 1; x <= 16; x ++) {
-			;
 			switch (ord(cpc[0][y][x]) * 2 + ord(cpc[1][y][x])) {
 			case o0*2+o0: {
-				;
 				p1 = 0;
 				p2 = 0;
 			}
 			break; /* p1= silhouette, p2= real */
 			case o0*2+o1: {
-				;
 				p1 = 0;
 				p2 = 15;
 			}
 			break;
 			case o1*2+o0: {
-				;
 				p1 = 15;
 				p2 = 0;
 			}
 			break;
 			case o1*2+o1: {
-				;
 				p1 = 9;
 				p2 = 9;
 			}
@@ -123,7 +113,6 @@ void display() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 1;
 	initgraph(gd, gm, "");

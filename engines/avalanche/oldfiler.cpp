@@ -57,10 +57,8 @@ string answer;
 
 void split(string x) {
 	byte fv;
-	;
 	x = copy(x, 4, 255);
 	if (x == "")  {
-		;
 		blank[0] = true;
 		return;
 	}
@@ -68,7 +66,6 @@ void split(string x) {
 	possible[0][1] = "b\\";
 	fv = 2;
 	while (pos("\\", x) != 0) {
-		;
 		possible[0][fv] = string('b') + copy(x, 1, pos("\\", x) - 1);
 		fv += 1;
 		x = copy(x, pos("\\", x) + 1, 255);
@@ -77,7 +74,6 @@ void split(string x) {
 }
 
 void block(integer x1, integer y1, integer x2, integer y2, string x) {
-	;
 	bar(x1, y1, x2, y2);
 	setcolor(9);
 	outtextxy(x1 + (x2 - x1) / 2 - 1, y1 + 5, x);
@@ -86,12 +82,10 @@ void block(integer x1, integer y1, integer x2, integer y2, string x) {
 }
 
 void message(string x) {
-	;
 	block(5, 189, 640, 200, x);
 }
 
 void bigbar(byte x) {
-	;
 	bar(15 + 210 * x, 36, 210 + 210 * x, 187);
 }
 
@@ -101,11 +95,9 @@ void getem();
 static void sub_getem(char prefix, string spec, byte attrib, byte infonum) {
 	searchrec s;
 	byte fv;
-	;
 	fv = 0;
 	findfirst(spec, attrib, s);
 	while ((doserror == 0) && (fv < 100)) {
-		;
 		if (((s.attr & attrib) > 0) && (s.name[1] != '.')) {
 			;     /* circumvent inclusive searching! */
 			fv += 1;
@@ -119,7 +111,6 @@ static void sub_getem(char prefix, string spec, byte attrib, byte infonum) {
 void getem()
 
 {
-	;
 	message("Please wait... scanning directory...");
 	sub_getem('a', "*.asg", archive + hidden, 1); /* Scan for .ASG files */
 	sub_getem('f', "*.*", directory, 2); /* Scan for sub-directories */
@@ -127,16 +118,13 @@ void getem()
 
 void minisc(string &x) {        /* Converts to lower-case */
 	byte fv;
-	;
 	for (fv = 1; fv <= length(x); fv ++)
 		if ((x[fv] >= 'A') && (x[fv] <= 'Z'))  x[fv] += 32;
 }
 
 void showall() {
 	byte fv, ff;
-	;
 	for (fv = 0; fv <= 2; fv ++) {
-		;
 		bigbar(fv); /* blank out anything else */
 		if (blank[fv]) {
 			;     /* nothing here at all */
@@ -151,7 +139,6 @@ void showall() {
 			;     /* something here- what? */
 			setcolor(11);
 			for (ff = 0; ff <= 15; ff ++) {
-				;
 				info[fv][ff + 2] = possible[fv][page_[fv] * 15 + ff + 1];
 				minisc(info[fv][ff + 2]);
 			}
@@ -161,7 +148,6 @@ void showall() {
 				info[fv][18] = down;
 			else info[fv][18] = "";
 			for (ff = 1; ff <= 18; ff ++) {
-				;
 				outtextxy(113 + 210 * fv, 35 + ff * 8, copy(info[fv][ff], 2, 255));
 			}
 		}
@@ -170,7 +156,6 @@ void showall() {
 }
 
 void changedir(string x) {
-	;
 
 	chdir(x);
 	getdir(0, cdir);
@@ -178,7 +163,6 @@ void changedir(string x) {
 
 void drawup() {
 	integer gd;
-	;
 	block(15, 0, 630, 10, "Choose an .ASG file to load or save.");
 	block(15, 24, 210, 34, "Looking back:");
 	block(225, 24, 420, 34, "Here:");
@@ -188,7 +172,6 @@ void drawup() {
 }
 
 void setup() {
-	;
 	settextjustify(1, 1);
 	setfillstyle(1, 1);
 	fillchar(blank, sizeof(blank), '\0');
@@ -202,7 +185,6 @@ void setup() {
 
 void setup1() {
 	integer gd, gm;
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "");
@@ -224,7 +206,6 @@ void clickwait() {
 		}
 	};
 	byte oldcht; /* Click Here To... code */
-	;
 	showmousecursor;
 	oldcht = 177;
 	do {
@@ -241,7 +222,6 @@ void clickwait() {
 				chtcode = 4;
 			}
 		if (oldcht != chtcode) {
-			;
 			hidemousecursor;
 			message(string("Click here to ") + msg[chtcode]);
 			showmousecursor;
@@ -253,7 +233,6 @@ void clickwait() {
 }
 
 void blip() {
-	;
 	sound(32);
 	delay(3);
 	nosound;
@@ -263,7 +242,6 @@ void do_cht() {
 	char r;
 	byte fv;
 	string x;
-	;
 	if (chtcode == 1) {
 		;     /* change drives */
 		message("Enter the drive letter (e.g. A)...");
@@ -271,7 +249,6 @@ void do_cht() {
 		changedir(string(r) + ':');
 		setup();
 	} else {
-		;
 		x = info[chtcode - 2][where];
 		r = x[1];
 		x = copy(x, 2, 255);
@@ -312,7 +289,6 @@ void do_cht() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	setup1();
 	do {
 		clickwait();

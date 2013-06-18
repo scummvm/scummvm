@@ -74,7 +74,6 @@ const integer ul = 8;
 /*       merge setting is used to control the combining of bits.                */
 /*                                                                              */
 void gpwtcol(void *buf, integer n) {    /* Cedola */
-	;
 	/* inline
 	  ($1E/$A1/GDCUR_Y/$D1/$E0/$D1/$E0/$03/$06/GDCUR_Y/$05/$A000/$8E/$C0/$8B/$3E/
 	   GDCUR_X/$8B/$CF/$D1/$EF/$D1/$EF/$D1/$EF/$BA/$03CE/$8A/$26/GDMERGE/$B0/$03/
@@ -86,7 +85,6 @@ void gpwtcol(void *buf, integer n) {    /* Cedola */
 
 void loadtrip() {
 	untyped_file inf;
-	;
 	assign(inf, "t:avvy.trp");
 	reset(inf, 1);
 	seek(inf, 0x27);
@@ -96,11 +94,9 @@ void loadtrip() {
 }
 
 void enter(byte what_handle, integer xx, integer yy, integer lx, integer ly, byte mmx, byte mmy, byte st) {
-	;
 	tramt += 1;
 	{
 		triprec &with = tr[tramt];
-		;
 		with.handle = what_handle;
 		with.ix = 0;
 		with.iy = 0;
@@ -119,7 +115,6 @@ void enter(byte what_handle, integer xx, integer yy, integer lx, integer ly, byt
 void plot(byte stage, integer ox, integer oy) { /* orig x & y. Page is always 1/UNSEEN. */
 	byte x, y, len;
 	word count;
-	;
 	count = pozzes[stage];
 	do {
 		len = blue3[count];
@@ -128,13 +123,11 @@ void plot(byte stage, integer ox, integer oy) { /* orig x & y. Page is always 1/
 		y = blue3[count + 2];
 		count += 3;
 		{
-			;
 			gdcur_x = x + ox;
 			gdcur_y = y + oy;
 			/* fiddle xy coords to match page 1 */
 			gdcur_y += 205;   /* 203 */ gdcur_x -= 128; /* 114 */
 			if (gdcur_x < 0) {
-				;
 				gdcur_x += 640;
 				gdcur_y -= 1;
 			}
@@ -150,7 +143,6 @@ void trippancy() {
 	word s;
 	array<1, 10, pointer> q;
 	boolean allstill;
-	;
 	if ((cw != 177) || (! dropsok) || keypressed())  return;
 
 	/* Do the Avvy Walk */
@@ -195,7 +187,6 @@ void trippancy() {
 	if (allstill)  return;
 
 	if (dna.rw > 0) {
-		;
 		anim += 1;
 		if (anim == 7)  anim = 1;
 	}
@@ -206,7 +197,6 @@ void trippancy() {
 	off();
 	for (fv = 1; fv <= tramt; fv ++) {
 		triprec &with = tr[fv];
-		;
 		s = imagesize(with.x - with.xm, with.y - with.ym, with.x + with.xl + with.xm, with.y + with.yl + with.ym);
 		getmem(q[fv], s);
 		getimage(with.x - with.xm, with.y - with.ym, with.x + with.xl + with.xm, with.y + with.yl + with.ym, q[fv]);
@@ -214,7 +204,6 @@ void trippancy() {
 	/* Step 2 - Plot sprites on 1/UNSEEN */
 	for (fv = 1; fv <= tramt; fv ++) {
 		triprec &with = tr[fv];
-		;
 		plot(with.stage, with.x, with.y);
 	}
 	/* Step 3 - Copy all eligible from 1/UNSEEN to 0/SEEN */
@@ -222,7 +211,6 @@ void trippancy() {
 	for (fv = 1; fv <= tramt; fv ++) {
 		triprec &with = tr[fv];
 		if (((with.alive) && (!((with.ix == 0) && (with.iy == 0)))) || with.prime) {
-			;
 			s = imagesize(with.x - with.xm, with.y - with.ym, with.x + with.xl + with.xm, with.y + with.yl + with.ym);
 			getmem(p, s);
 			setactivepage(1);
@@ -237,7 +225,6 @@ void trippancy() {
 	setactivepage(1);
 	for (fv = 1; fv <= tramt; fv ++) {
 		triprec &with = tr[fv];
-		;
 		putimage(with.x - with.xm, with.y - with.ym, q[fv], 0);
 		if (with.ix != 0)  with.x = with.x + with.ix;
 		if (with.iy != 0)  with.y = with.y + with.iy;
@@ -253,7 +240,6 @@ void trippancy() {
 	release(saved1);
 	for (fv = 1; fv <= tramt; fv ++) { /* synch xy coords of mouths */
 		triprec &with = tr[fv];
-		;
 		mouths[fv].x = with.x + 20;
 		mouths[fv].y = with.y;
 	}
@@ -263,11 +249,9 @@ void trippancy() {
 
 void budge(byte who, shortint xx, shortint yy, byte frame) { /* Moving & animation controller */
 	byte fv;
-	;
 	for (fv = 1; fv <= tramt; fv ++) {
 		triprec &with = tr[fv];
 		if (with.handle == who) {
-			;
 			with.ix = xx;
 			with.iy = yy;
 			with.stage = frame;
@@ -276,71 +260,60 @@ void budge(byte who, shortint xx, shortint yy, byte frame) { /* Moving & animati
 }
 
 void tripkey(char dir) {
-	;
 	if (cw != 177)  return;
 	{
 		dnatype &with = dna;
-		;
 		switch (dir) {
 		case 'H':
 			if (with.rw != up)     {
-				;
 				with.rw = up;
 				ww = up;
 			} else with.rw = 0;
 			break;
 		case 'P':
 			if (with.rw != down)   {
-				;
 				with.rw = down;
 				ww = down;
 			} else with.rw = 0;
 			break;
 		case 'K':
 			if (with.rw != left)   {
-				;
 				with.rw = left;
 				ww = left;
 			} else with.rw = 0;
 			break;
 		case 'M':
 			if (with.rw != right)  {
-				;
 				with.rw = right;
 				ww = right;
 			} else with.rw = 0;
 			break;
 		case 'I':
 			if (with.rw != ur)     {
-				;
 				with.rw = ur;
 				ww = right;
 			} else with.rw = 0;
 			break;
 		case 'Q':
 			if (with.rw != dr)     {
-				;
 				with.rw = dr;
 				ww = right;
 			} else with.rw = 0;
 			break;
 		case 'O':
 			if (with.rw != dl)     {
-				;
 				with.rw = dl;
 				ww = left;
 			} else with.rw = 0;
 			break;
 		case 'G':
 			if (with.rw != ul)     {
-				;
 				with.rw = ul;
 				ww = left;
 			} else with.rw = 0;
 			break;
 		}
 		if (with.rw == 0) {
-			;
 			ux = ppos[0][0];
 			uy = ppos[0][1];
 			anim -= 1;
@@ -350,7 +323,6 @@ void tripkey(char dir) {
 }
 
 void boundscheck(integer &x, integer &y, byte xm, byte ym) {
-	;
 	if (y > 127 - ym)  y = 127 - ym;
 	if (y < ym + 10)  y = ym + 10;
 	if (x < xm)  x = xm;

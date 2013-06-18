@@ -46,9 +46,7 @@ byte tsr_int;
 word tsr_ax;
 
 void grab() {
-	;
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -58,9 +56,7 @@ void grab() {
 }
 
 void drop() {
-	;
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -70,14 +66,12 @@ void drop() {
 }
 
 void say(string x) {
-	;
 	grab();
 	output << string('\15') + x;
 }
 
 void pak(string x) {
 	char r;
-	;
 	say(x + " (press any key...)");
 	r = readkey();
 	drop();
@@ -87,33 +81,28 @@ string typein() {
 	char r;
 	string x;
 	string typein_result;
-	;
 	x = "";
 	do {
 		r = readkey();
 		switch (r) {
 		case '\10':
 			if (x[0] > '\0')  {
-				;
 				output << string('\10') + '\40' + '\10';
 				x[0] -= 1;
 			}
 			break;
 		case '\15': {
-			;
 			typein_result = x;
 			return typein_result;
 		}
 		break;
 		case '\33': {
-			;
 			typein_result = "";
 			return typein_result;
 		}
 		break;
 		default:
 			if (x[0] < '\62')  {
-				;
 				x = x + r;
 				output << r;
 			}
@@ -125,7 +114,6 @@ string typein() {
 void load() {
 	byte a /*absolute $A000:1200*/;
 	untyped_file f;
-	;
 	say("LOAD: filename?");
 	nam = typein();
 	drop();
@@ -133,20 +121,17 @@ void load() {
 	assign(f, nam);
 	reset(f, 1);
 	if (ioresult != 0) {
-		;
 		pak("LOAD: file not found.");
 		return;
 	}
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
 		port[0x3cf] = bit;
 		blockread(f, a, 12080);
 		if (ioresult != 0) {
-			;
 			pak("LOAD: error whilst loading.");
 			close(f);
 			return;
@@ -164,14 +149,12 @@ void save() {
 	searchrec s;
 	char r;
 	byte a /*absolute $A000:1200*/;
-	;
 	say("SAVE: filename?");
 	nam = typein();
 	drop();
 	if (nam == "")  return;
 	findfirst(nam, anyfile, s);
 	if (doserror == 0) {
-		;
 		say("SAVE: That exists, are you sure\? (Y/N)");
 		do {
 			r = upcase(readkey());
@@ -185,14 +168,12 @@ void save() {
 	blockwrite(f, header[1], 146);
 	blockwrite(f, screenname, 31);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
 		port[0x3cf] = bit;
 		blockwrite(f, a, 12080);
 		if (ioresult != 0) {
-			;
 			pak("SAVE: error whilst saving.");
 			close(f);
 			return;
@@ -201,9 +182,7 @@ void save() {
 }
 
 void hedges() {
-	;
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -215,7 +194,6 @@ void hedges() {
 
 void reset_() {
 	registers regs;
-	;
 	regs.ax = 14;
 	intr(0x10, regs);
 	directvideo = false;
@@ -223,7 +201,6 @@ void reset_() {
 
 void do_pop() {
 	char r;
-	;
 	do {
 		say("HIZ: Load Save Hedges Reset eXit?");
 		r = upcase(readkey());
@@ -252,14 +229,12 @@ void do_pop() {
 
 void mypoprtn() {
 	registers r;
-	;
 	beginpop;
 	do_pop();
 	endpop;
 }
 /**********************/
 void stop_tsr() {
-	;
 	if (tsrexit)
 		output << "HIZ stopped" << NL;
 	else
@@ -273,7 +248,6 @@ void stop_tsr() {
 void tsr_intrtn(word flags, word cs, word ip, word ax, word bx, word cx, word dx, word si, word di, word ds, word es, word bp)
 /*interrupt;*/
 {
-	;
 	tsr_ax = ax;
 	cli;
 	beginint;
@@ -281,18 +255,15 @@ void tsr_intrtn(word flags, word cs, word ip, word ax, word bx, word cx, word dx
 
 	switch (tsr_ax) {
 	case 1: {
-		;
 		stop_tsr(); /* Terminate TSR, if poss.*/
 	}
 	break;
 	case 2: {
-		;
 		tsroff = true; /* Suspend TSR */
 		output << "HIZ suspended." << NL;
 	}
 	break;
 	case 3: {
-		;
 		tsroff = false;
 		output << "HIZ restarted" << NL;
 	}
@@ -310,7 +281,6 @@ boolean b;
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 
 	/********************************************/
 	/* Check to see if TSR is already installed */
@@ -335,17 +305,14 @@ int main(int argc, const char *argv[]) {
 			else r.ax = 4;
 
 			if (r.ax < 4) {
-				;
 				intr(tsr_int, r);
 				return 0;
 			} else {
-				;
 				output << "HIZ: invalid parameter " << paramstr(1) << NL;
 				output << "Syntax: HIZ stop/hold/rstr" << NL;
 				return 0;
 			}
 		} else {
-			;
 			output << "HIZ already installed." << NL;
 			output << "(If you're sure it isn't, try running BLANKINT /I." << NL;
 			output << "It's in the TURBO directory.)" << NL;

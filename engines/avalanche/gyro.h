@@ -348,7 +348,7 @@ const integer yw = 36; /* x width & y whatsit */
 const integer margin = 5;
 
 const array<1, 9, mp> mps = {
-	{	{
+	{   {
 			/* 1 - up-arrow */
 			{	{	{{65151, 64575, 64575, 63519, 63519, 61455, 61455, 57351, 57351, 49155, 49155, 64575, 64575, 64575, 64575, 64575}},
 					{{0, 384, 384, 960, 960, 2016, 2016, 4080, 4080, 8184, 384, 384, 384, 384, 384, 0}}
@@ -497,7 +497,7 @@ const integer run = 5;
 
 const array < '\226', '\262', byte > whereis =
     /* The Lads */
-{	{
+{   {
 		r__yours, /* Avvy */
 		r__spludwicks, /* Spludwick */
 		r__outsideyours, /* Crapulus */

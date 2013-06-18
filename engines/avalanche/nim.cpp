@@ -50,20 +50,17 @@ shortint mnum, mrow;
 registers r;
 
 void resetmouse() {
-	;
 	r.ax = 0;
 	intr(0x33, r);
 	squeak = r.ax > 0;
 }
 
 void show() {
-	;
 	r.ax = 1;
 	intr(0x33, r);
 }
 
 void hide() {
-	;
 	r.ax = 2;
 	intr(0x33, r);
 }
@@ -71,9 +68,7 @@ void hide() {
 void chalk(integer x, integer y, string z) {
 	const array<0, 3, byte> greys = {{0, 8, 7, 15}};
 	byte fv;
-	;
 	for (fv = 0; fv <= 3; fv ++) {
-		;
 		setcolor(greys[fv]);
 		outtextxy(x - fv, y, z);
 		sound(fv * 100 * length(z));
@@ -87,7 +82,6 @@ void setup() {
 	untyped_file f;
 	integer gd, gm;
 	byte bit;
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -97,7 +91,6 @@ void setup() {
 	seek(f, 41);
 	for (gm = 0; gm <= 22; gm ++)
 		for (bit = 0; bit <= 3; bit ++) {
-			;
 			port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;
@@ -107,7 +100,6 @@ void setup() {
 	for (gd = 1; gd <= 3; gd ++)
 		for (gm = 0; gm <= 22; gm ++)
 			for (bit = 0; bit <= 3; bit ++) {
-				;
 				port[0x3c4] = 2;
 				port[0x3ce] = 4;
 				port[0x3c5] = 1 << bit;
@@ -116,7 +108,6 @@ void setup() {
 			}
 	for (gm = 0; gm <= 36; gm ++)
 		for (bit = 0; bit <= 3; bit ++) {
-			;
 			port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;
@@ -161,11 +152,9 @@ void setup() {
 void plotstone(byte x, byte y) {
 	byte fv, bit;
 	word ofs;
-	;
 	ofs = 3200 + y * 2800 + x * 8;
 	for (fv = 0; fv <= 22; fv ++)
 		for (bit = 0; bit <= 3; bit ++) {
-			;
 			port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;
@@ -176,7 +165,6 @@ void plotstone(byte x, byte y) {
 
 void board() {
 	byte fv, ff;
-	;
 	for (fv = 1; fv <= 3; fv ++)
 		for (ff = 1; ff <= stones[fv]; ff ++)
 			plotstone(ff, fv);
@@ -185,7 +173,6 @@ void board() {
 void startmove() {
 	varying_string<2> tstr;
 	integer ypos;
-	;
 	turns += 1;
 	str(turns, 2, tstr);
 	ypos = 63 + turns * 10;
@@ -197,7 +184,6 @@ void startmove() {
 
 void show_changes() {
 	byte fv, ff, fq;
-	;
 	chalk(573, 63 + turns * 10, string(chr(64 + row)) + chr(48 + number));
 	for (fv = 1; fv <= 3; fv ++)
 		if (old[fv] > stones[fv])
@@ -209,7 +195,6 @@ void show_changes() {
 void checkmouse();
 
 static void blip() {
-	;
 	sound(1771);
 	delay(3);
 	nosound;
@@ -217,9 +202,7 @@ static void blip() {
 }
 
 void checkmouse() {
-	;
 	{
-		;
 		ax = 5;
 		bx = 0;
 	}
@@ -237,20 +220,17 @@ void checkmouse() {
 void takesome();
 
 static void less() {
-	;
 	if (number > 1)  number -= 1;
 }
 
 void takesome() {
 	char r;
 	byte sr;
-	;
 	number = 1;
 	do {
 		do {
 			sr = stones[row];
 			if (sr == 0)  {
-				;
 				row = row % 3 + 1;
 				number = 1;
 			}
@@ -270,12 +250,10 @@ void takesome() {
 		rectangle(63 + (sr - number) * 64, 38 + 35 * row, 54 + sr * 64, 63 + 35 * row);
 
 		if (clicked) {
-			;
 			number = mnum;
 			row = mrow;
 			return;
 		} else {
-			;
 			switch (r) {
 			case '\0':
 				switch (readkey()) {
@@ -327,7 +305,6 @@ void takesome() {
 
 void endofgame() {
 	char rr;
-	;
 	chalk(595, 63 + turns * 10, "Wins!");
 	outtextxy(100, 190, "- - -   Press any key...  - - -");
 	while (keypressed())  rr = readkey();
@@ -360,10 +337,8 @@ static boolean find(byte x)
 	boolean q;
 	byte p;
 	boolean find_result;
-	;
 	q = false;
 	for (p = 1; p <= 3; p ++) if (stones[p] == x)  {
-			;
 			q = true;
 			inap[p] = true;
 		}
@@ -375,7 +350,6 @@ static boolean find(byte x)
 
 static void find_ap(byte start, byte stepsize) {
 	byte ff;
-	;
 	matches = 0;
 	fillchar(inap, sizeof(inap), '\0'); /* blank 'em all */
 	for (ff = 0; ff <= 2; ff ++) if (find(start + ff * stepsize))  matches += 1;
@@ -388,7 +362,6 @@ static void find_ap(byte start, byte stepsize) {
 
 	switch (matches) {
 	case 2: {
-		;
 		for (ff = 1; ff <= 3; ff ++) /* find which one didn't fit the A.P. */
 			if (! inap[ff])  ooo = ff;
 		if (stones[ooo] > (start + thisone * stepsize)) { /* check it's possible! */
@@ -416,13 +389,10 @@ void dogfood() {
 	boolean sorted;
 	byte temp;
 
-	;
 	live = 0;
 	lmo = false;
 	for (fv = 1; fv <= 3; fv ++) {
-		;
 		if (stones[fv] > 0) {
-			;
 			live += 1;
 			r[live] = fv;
 			sr[live] = stones[fv];
@@ -430,22 +400,18 @@ void dogfood() {
 	}
 	switch (live) {
 	case 1: { /* Only one is free- so take 'em all */
-		;
 		row = r[1];
 		number = stones[r[1]];
 		return;
 	}
 	break;
 	case 2: { /* Two are free- make them equal */
-		;
 		if (sr[1] > sr[2]) {
-			;
 			row = r[1];
 			number = sr[1] - sr[2];
 			return;
 		} else       /* T > b */
 			if (sr[1] < sr[2]) {
-				;
 				row = r[2];
 				number = sr[2] - sr[1];
 				return;
@@ -458,15 +424,13 @@ void dogfood() {
 	}
 	break;
 	case 3: { /* Ho hum... this'll be difficult! */
-		;
 		/* There are three possible courses of action when we have 3 lines left:
-		    1) Look for 2 equal lines, then take the odd one out.
-		    2) Look for A.P.s, and capitalise on them.
-		    3) Go any old where. */
+		1) Look for 2 equal lines, then take the odd one out.
+		2) Look for A.P.s, and capitalise on them.
+		3) Go any old where. */
 
 		for (fv = 1; fv <= 3; fv ++) /* Look for 2 equal lines */
 			if (stones[other[fv][1]] == stones[other[fv][2]]) {
-				;
 				row = fv;  /* this row */ number = stones[fv]; /* all of 'em */ return;
 			}
 
@@ -474,7 +438,6 @@ void dogfood() {
 			sorted = true;
 			for (fv = 1; fv <= 2; fv ++)
 				if (sr[fv] > sr[fv + 1]) {
-					;
 					temp = sr[fv + 1];
 					sr[fv + 1] = sr[fv];
 					sr[fv] = temp;
@@ -486,7 +449,6 @@ void dogfood() {
 		} while (!sorted);
 		/* Now we look for A.P.s ... */
 		for (fv = 1; fv <= 3; fv ++) {
-			;
 			find_ap(fv, 1); /* there are 3 "1"s */
 			if (lmo)  return; /* cut-out */
 		}
@@ -504,7 +466,6 @@ void dogfood() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	setup();
 	board();
 	do {

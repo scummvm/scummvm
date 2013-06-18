@@ -45,7 +45,6 @@ void do_one(byte z) {
 	byte a /*absolute $A000:0*/;
 	byte aa /*absolute $A000:80*/;
 	byte az /*absolute $A000:27921*/;
-	;
 	a = getpixel(0, 0);
 	move(l, az, z);
 
@@ -56,9 +55,7 @@ void do_one(byte z) {
 
 void background() {
 	byte y;
-	;
 	for (y = 1; y <= 15; y ++) {
-		;
 		setcolor(y);
 		outtextxy(17, y * 12, "Jesus is Lord!");
 	}
@@ -67,7 +64,6 @@ void background() {
 void scroll(string z) {
 	byte x, y, lz;
 	char c;
-	;
 	fillchar(l, 80, '\0');
 	if (z == "")
 		for (y = 1; y <= 12; y ++) do_one(0);
@@ -77,17 +73,14 @@ void scroll(string z) {
 	switch (c) {
 	case '*':
 		for (y = 0; y <= 15; y ++) {
-			;
 			for (x = 1; x <= lz; x ++)
 				l[x] = f[2][z[x]][y];
 			do_one(lz);
 		}
 		break;
 	case '>': {
-		;
 		lz += 7;
 		for (y = 0; y <= 13; y ++) {
-			;
 			for (x = 1; x <= lz; x ++)
 				l[x + 7] = f[1][z[x]][y];
 			do_one(lz);
@@ -100,7 +93,6 @@ void scroll(string z) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 1;
 	initgraph(gd, gm, "");

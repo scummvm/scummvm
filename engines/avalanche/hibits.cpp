@@ -33,7 +33,6 @@ string q;
 byte fv;
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	assign(inf, "v:thank.you");
 	assign(outf, "d:hibits.out");
 	reset(inf);
@@ -44,7 +43,6 @@ int main(int argc, const char *argv[]) {
 	for (fv = 1; fv <= length(q); fv ++) outf << q[fv];
 
 	while (! eof(inf)) {
-		;
 		inf >> x;
 		if (x < '\200')  x += 128;
 		outf << x;

@@ -67,12 +67,10 @@ void sb_start(string md) {
 }
 
 void sb_stop() {
-	;
 	modstop();
 }
 
 void sb_link() {   /* At the moment, this does nothing. */
-	;
 }
 
 } // End of namespace Avalanche.

@@ -48,7 +48,6 @@ byte joyway();
 
 static lmc getlmc(word n, word max, word min) {
 	lmc getlmc_result;
-	;
 	if (n < min)  getlmc_result = l;
 	else if (n > max)  getlmc_result = r;
 	else
@@ -60,13 +59,11 @@ byte joyway() {
 	word x, y;
 	lmc xx, yy;
 	byte joyway_result;
-	;
 	if (~ dna.user_moves_avvy)  return joyway_result;
 	if (use_joy_a)  readjoya(x, y);
 	else readjoyb(x, y);
 
 	{
-		;
 		xx = getlmc(x, cxmax, cxmin);
 		yy = getlmc(y, cymax, cymin);
 	}
@@ -119,7 +116,6 @@ void joykeys()
 /* The 2 joystick keys may be reprogrammed. This parses them. */
 {
 	byte v;
-	;
 	if (use_joy_a) {
 		v = (byte)(buttona1);
 		v += (byte)(buttona2) * 2;

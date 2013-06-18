@@ -46,7 +46,6 @@ void save() {
 	    "copyright." + '\15' + '\12' + '\15' + '\12' + "Have fun!" + '\32';
 	byte a /*absolute $A000:1200i*/;
 	byte bit;
-	;
 	nam = "d:thingtmp.avd";
 	screenname = "Temp.";
 	assign(f, nam);
@@ -56,7 +55,6 @@ void save() {
 	blockwrite(f, header[1], 146);
 	blockwrite(f, screenname, 31);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -68,7 +66,6 @@ void save() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -81,14 +78,12 @@ int main(int argc, const char *argv[]) {
 	gm = 20;
 
 	while (gm < 120) {
-		;
 		if (! eof(f))
 			blockread(f, p, picsize);
 		putimage(gd, gm, p, 0);
 		gd += 70;
 
 		if (gd == 640) {
-			;
 			gd = 10;
 			gm += 40;
 		}

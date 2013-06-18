@@ -39,7 +39,6 @@ char r;
 
 void hand(word ang, word length, byte colour) {
 	arccoordstype a;
-	;
 	if (ang > 900)  return;
 	setcolor(colour);
 	arc(xm, ym, 449 - ang, 450 - ang, length);
@@ -49,14 +48,11 @@ void hand(word ang, word length, byte colour) {
 
 void chime() {
 	integer gd, gm, fv;
-	;
 	if (oh > 177)  return; /* too high- must be first time around */
 	fv = h / 30;
 	if (fv == 0)  fv = 12;
 	for (gd = 1; gd <= fv; gd ++) {
-		;
 		for (gm = 1; gm <= 3; gm ++) {
-			;
 			sound(140 - gm * 30);
 			delay(50 - gm * 3);
 		}
@@ -66,7 +62,6 @@ void chime() {
 }
 
 void plothands() {
-	;
 	hand(oh, 17, brown);
 	hand(h, 17, yellow);
 	hand(om * 6, 20, brown);
@@ -75,7 +70,6 @@ void plothands() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "");
@@ -87,7 +81,6 @@ int main(int argc, const char *argv[]) {
 		gettime(h, m, s, s1);
 		h = (h % 12) * 30 + m / 2;
 		if (oh != h)  {
-			;
 			plothands();
 			chime();
 		}

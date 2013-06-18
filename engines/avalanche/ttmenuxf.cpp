@@ -62,7 +62,6 @@ void load() {   /* Load2, actually */
 void finder() {
 	char r;
 	integer x, y;
-	;
 	setfillstyle(0, 0);
 	setcolor(14);
 	x = 320;
@@ -74,7 +73,6 @@ void finder() {
 		line(x - 20, y, x + 20, y);
 		line(x, y - 20, x, y + 20);
 		do {
-			;
 		} while (!keypressed());
 		line(x - 20, y, x + 20, y);
 		line(x, y - 20, x, y + 20);

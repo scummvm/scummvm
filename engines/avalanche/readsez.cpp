@@ -53,10 +53,8 @@ byte sumup() {
 	word fv;
 	byte total;
 	byte sumup_result;
-	;
 	total = 0;
 	for (fv = 0; fv <= marker.length; fv ++) {
-		;
 		total += ord(x[fv]);
 	}
 	sumup_result = total;
@@ -65,7 +63,6 @@ byte sumup() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	output << "READ-SEZ by TT." << NL;
 	output << NL;
 	assign(f, "avalot.sez");
@@ -73,9 +70,7 @@ int main(int argc, const char *argv[]) {
 	seek(f, 255);
 	blockread(f, sezhead, sizeof(sezhead));
 	{
-		;
 		if (sezhead.initials != "TT") {
-			;
 			output << "Not a valid Sez file!" << NL;
 			exit(0);
 		}
@@ -88,7 +83,6 @@ int main(int argc, const char *argv[]) {
 	seek(f, longint(262) + number * longint(7));
 	blockread(f, marker, 7);
 	{
-		;
 		output << "Scrollchain no. " << number << NL;
 		output << "Length: " << marker.length << NL;
 		output << "Offset: " << marker.offset << NL;
@@ -103,7 +97,6 @@ int main(int argc, const char *argv[]) {
 		output << "Checksum in file: " << marker.checksum << ". Actual value: " << sum << '.' << NL;
 		output << NL;
 		if (sum != marker.checksum) {
-			;
 			output << "Bleargh! Checksum failed!" << NL;
 			exit(0);
 		}

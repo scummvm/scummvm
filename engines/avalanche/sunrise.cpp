@@ -34,16 +34,13 @@ integer gd, gm;
 longint tskellern /*absolute $0:244*/; /* Over int $61 */
 
 void hold() {
-	;
 	do {
-		;
 	} while (!(tskellern >= 1));
 	tskellern = 0;
 }
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 1;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -78,14 +75,12 @@ int main(int argc, const char *argv[]) {
 	port[0x3cf] = 1;
 
 	for (gm = 227; gm >= 1; gm --) { /* <<< try running this loop the other way round! */
-		;
 		move(mem[0xa000 * gm * 80 + 80], mem[0xa000 * gm * 80], 8042);
 		hold();
 		if (keypressed())  return 0;
 	}
 
 	for (gm = 101; gm >= 1; gm --) {
-		;
 		move(mem[0xa000 * 80], mem[0xa000 * 0], gm * 80);
 		hold();
 		if (keypressed())  return 0;

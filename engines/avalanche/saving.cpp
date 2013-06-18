@@ -40,7 +40,6 @@ void load(string nam) {
 	untyped_file f;
 	word s;
 	string check;
-	;
 	assign(f, nam);
 	reset(f, 1);
 	blockread(f, check, 41);
@@ -48,7 +47,6 @@ void load(string nam) {
 	blockread(f, check, 31);
 	s = imagesize(0, 0, getmaxx(), 75);
 	for (z = 1; z <= 2; z ++) {
-		;
 		getmem(a[z], s);
 		blockread(f, a[z], s);
 		setactivepage(0);
@@ -60,7 +58,6 @@ void load(string nam) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "");
@@ -68,7 +65,6 @@ int main(int argc, const char *argv[]) {
 	assign(f, "c:\\sleep\\test.ega");
 	rewrite(f, 1);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;

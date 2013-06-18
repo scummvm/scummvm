@@ -804,7 +804,6 @@ void entername(char r) {
 		filefound = true;
 		break;
 	case '\40':
-		;
 		break; /* ignore spaces. */
 	default: {
 		if (length(filename) < 55)  filename = filename + r;

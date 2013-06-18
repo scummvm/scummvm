@@ -57,7 +57,6 @@ boolean lmo;
 
 void hilight(integer x, integer y, byte c1, byte c2, string z) {
 	string w;
-	;
 	w = z;
 	w[1] = '\40';
 	setcolor(c1);
@@ -70,10 +69,8 @@ void hilight(integer x, integer y, byte c1, byte c2, string z) {
 }
 
 void showpage(byte x) {
-	;
 	if (x == page_)  return; /* twit */
 	if (x == 7)  {
-		;
 		lmo = true;
 		return;
 	}
@@ -81,7 +78,6 @@ void showpage(byte x) {
 	hidemousecursor;
 	settextjustify(1, 1);
 	if (page_ != 177) {
-		;
 		setfillstyle(1, 1);
 		bar(507, page_ * 25 + 2, 607, page_ * 25 + 22);
 		setfillstyle(1, 9);
@@ -228,7 +224,6 @@ void showpage(byte x) {
 
 void helpsetup() {
 	integer gd, gm;
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -246,7 +241,6 @@ void helpsetup() {
 	settextstyle(0, 0, 1);
 	settextjustify(1, 1);
 	for (gd = 2; gd <= 7; gd ++) {
-		;
 		setfillstyle(1, 1);
 		bar(507, gd * 25 + 2, 607, gd * 25 + 22);
 		setfillstyle(1, 9);
@@ -260,7 +254,6 @@ void helpsetup() {
 	lmo = false;
 	setfillstyle(1, 7);
 	for (gd = 1; gd <= 3; gd ++) {
-		;
 		bar(10 - gd * 3, 200 - gd * 3, 490 - gd * 6, 200 - gd * 3);
 		bar(490 - gd * 6, 37 - gd * 3, 491 - gd * 6, 200 - gd * 3);
 	}
@@ -268,7 +261,6 @@ void helpsetup() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	helpsetup();
 	do {
 		do {
@@ -299,7 +291,6 @@ int main(int argc, const char *argv[]) {
 		} else {
 			;     /* mouse choice */
 			if ((mousex > 400) && (mousey > 25)) {
-				;
 				showpage(mousey / 25);
 			}
 		}

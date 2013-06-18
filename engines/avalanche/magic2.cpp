@@ -38,7 +38,6 @@ word next, gg;
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -48,12 +47,10 @@ int main(int argc, const char *argv[]) {
 	rewrite(out);
 	move(mem[0xa000 * 0], mem[0xa000 * pagetop], 16000);
 	while (! eof(magic)) {
-		;
 		magic >> next;
 		if (next != nextcode)
 			mem[0xa000 * next] = 255;
 		else {
-			;
 			for (gg = 0; gg <= 16000; gg ++)
 				if (mem[0xa000 * gg] != mem[0xa000 * gg + pagetop])
 					out << gg;

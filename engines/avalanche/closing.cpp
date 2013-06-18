@@ -52,7 +52,6 @@ file<scrtype> f;
 pointer exitsave;
 
 void get_screen(byte which) {
-	;
 	closegraph();
 	textattr = 0;
 	clrscr;
@@ -65,15 +64,11 @@ void get_screen(byte which) {
 void show_screen() {
 	byte fv, ff, fq, tl, bl;
 	scrtype a /*absolute $B800:0*/;
-	;
 	for (fv = 1; fv <= 40; fv ++) {
-		;
 		if (fv > 36)  {
-			;
 			tl = 1;
 			bl = 24;
 		} else {
-			;
 			tl = 12 - fv / 3;
 			bl = 12 + fv / 3;
 		}
@@ -89,7 +84,6 @@ void show_screen() {
 }
 
 void quit_with(byte which, byte errorlev) {
-	;
 	dusk();
 	get_screen(which);
 	show_screen(); /* No changes. */
@@ -98,7 +92,6 @@ void quit_with(byte which, byte errorlev) {
 
 void put_in(string x, word where) {
 	word fv;
-	;
 	for (fv = 1; fv <= length(x); fv ++)
 		q[1 + (where + fv) * 2] = x[fv];
 }
@@ -121,7 +114,6 @@ void end_of_program()
 	};
 
 	string result;
-	;
 	nosound;
 	get_screen(scr_nagscreen);
 	result = nouns[Random(12)] + " will " + verbs[Random(12)] + " you";
@@ -132,7 +124,6 @@ void end_of_program()
 /*$F+*/
 
 void bug_handler() {
-	;
 	exitproc = exitsave;
 
 	if (erroraddr != nil) {
@@ -140,7 +131,6 @@ void bug_handler() {
 		if (exitcode == 203)
 			get_screen(scr_ramcram);
 		else {
-			;
 			get_screen(scr_bugalert);
 			put_in(strf(exitcode), 678); /* 678 = [38,8]. */
 			put_in(strf(seg(erroraddr)) + ':' + strf(ofs(erroraddr)), 758); /* 758 = [38,9]. */
@@ -159,7 +149,6 @@ public:
 static unit_closing_initialize closing_constructor;
 
 unit_closing_initialize::unit_closing_initialize() {
-	;
 	exitsave = exitproc;
 	exitproc = &bug_handler;
 }

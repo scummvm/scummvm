@@ -51,7 +51,6 @@ static boolean dropin(integer xc, integer yc, integer x1, integer y1, integer x2
 /* Dropin returns True if the point xc,yc falls within the 1-2 rectangle. */
 {
 	boolean dropin_result;
-	;
 	dropin_result = ((xc >= x1) && (xc <= x2) && (yc >= y1) && (yc <= y2));
 	return dropin_result;
 }
@@ -60,7 +59,6 @@ static boolean dropin(integer xc, integer yc, integer x1, integer y1, integer x2
 
 static integer lesser(integer a, integer b) {
 	integer lesser_result;
-	;
 	if (a < b)  lesser_result = a;
 	else lesser_result = b;
 	return lesser_result;
@@ -70,7 +68,6 @@ static integer lesser(integer a, integer b) {
 
 static integer greater(integer a, integer b) {
 	integer greater_result;
-	;
 	if (a > b)  greater_result = a;
 	else greater_result = b;
 	return greater_result;
@@ -79,7 +76,6 @@ static integer greater(integer a, integer b) {
 void copier(integer x1, integer y1, integer x2, integer y2, integer x3, integer y3, integer x4, integer y4)
 
 {
-	;
 	if (dropin(x3, y3, x1, y1, x2, y2)
 	        || dropin(x3, y4, x1, y1, x2, y2)
 	        || dropin(x4, y3, x1, y1, x2, y2)
@@ -95,7 +91,6 @@ void copier(integer x1, integer y1, integer x2, integer y2, integer x3, integer 
 
 void loadtrip() {
 	byte gm;
-	;
 	for (gm = 1; gm <= numtr; gm ++) tr[gm].original();
 	tr[1].init(0);
 }
@@ -104,7 +99,6 @@ byte checkfeet(integer x1, integer x2, integer oy, integer y, byte yl) {
 	byte a, c;
 	integer fv, ff;
 	byte checkfeet_result;
-	;
 	a = 0;
 	setactivepage(2);
 	if (x1 < 0)  x1 = 0;
@@ -112,14 +106,12 @@ byte checkfeet(integer x1, integer x2, integer oy, integer y, byte yl) {
 	if (oy < y)
 		for (fv = x1; fv <= x2; fv ++)
 			for (ff = oy + yl; ff <= y + yl; ff ++) {
-				;
 				c = getpixel(fv, ff);
 				if (c > a)  a = c;
 			}
 	else
 		for (fv = x1; fv <= x2; fv ++)
 			for (ff = y + yl; ff <= oy + yl; ff ++) {
-				;
 				c = getpixel(fv, ff);
 				if (c > a)  a = c;
 			}
@@ -132,13 +124,11 @@ void touchcol(byte tc);
 static boolean bug;
 
 static void fr(byte a, byte b) {
-	;
 	fliproom(a, b);
 	bug = false;
 }
 
 void touchcol(byte tc) {
-	;
 	bug = true; /* j.i.c. */
 	switch (dna.room) {
 	case 1:
@@ -173,7 +163,6 @@ void touchcol(byte tc) {
 		break;
 	}
 	if (bug) {
-		;
 		setactivepage(0);
 		display(string('\7') + "Unknown touchcolour (" + strf(tc) + ')' + " in " + strf(dna.room)
 		        + '.');
@@ -190,7 +179,6 @@ triptype *triptype::init(byte spritenum) {
 	byte sort, n;
 	word bigsize;
 	pointer p, q;
-	;
 	str(spritenum, xx);
 	assign(f, string("c:\\avalot\\sprite") + xx + ".avd");
 	reset(f, 1);
@@ -199,7 +187,6 @@ triptype *triptype::init(byte spritenum) {
 	blockread(f, bigsize, 2);
 	setactivepage(3);
 	for (sort = 0; sort <= 1; sort ++) {
-		;
 		mark(q);
 		getmem(p, bigsize);
 		blockread(f, p, bigsize);
@@ -211,7 +198,6 @@ triptype *triptype::init(byte spritenum) {
 			adxtype &with = a;
 			for (gm = 0; gm <= (with.num / with.seq) - 1; gm ++) /* directions */
 				for (gd = 0; gd <= with.seq - 1; gd ++) { /* steps */
-					;
 					getmem(pic[n][sort], a.size); /* grab the memory */
 					getimage((gm / 2) * (with.xl * 6) + gd * with.xl, (gm % 2)*with.yl,
 					         (gm / 2) * (with.xl * 6) + gd * with.xl + with.xl - 1, (gm % 2)*with.yl + with.yl - 1,
@@ -238,12 +224,10 @@ triptype *triptype::init(byte spritenum) {
 }
 
 void triptype::original() {
-	;
 	quick = false;
 }
 
 void triptype::getback() {
-	;
 	tax = x;
 	tay = y;
 	off; /*getimage(x,y,x+a.xl,y+a.yl,behind^);*/
@@ -253,7 +237,6 @@ void triptype::getback() {
 
 void triptype::andexor() {
 	byte picnum; /* Picnum, Picnic, what ye heck */
-	;
 	picnum = face * a.seq + step + 1;
 	off;
 	putimage(x, y, pic[picnum][0], andput);
@@ -262,12 +245,10 @@ void triptype::andexor() {
 }
 
 void triptype::turn(byte whichway) {
-	;
 	face = whichway;
 }
 
 void triptype::appear(integer wx, integer wy, byte wf) {
-	;
 	x = (wx / 8) * 8;
 	y = wy;
 	ox = wx;
@@ -280,7 +261,6 @@ void triptype::appear(integer wx, integer wy, byte wf) {
 
 void triptype::walk() {
 	byte tc;
-	;
 	ox = x;
 	oy = y;
 	if ((ix == 0) && (iy == 0))  return;
@@ -288,7 +268,6 @@ void triptype::walk() {
 	x = x + ix;
 	y = y + iy;
 	if (check_me)  {
-		;
 		tc = checkfeet(x, x + a.xl, oy, y, a.yl);
 		{
 			void &with = magics[tc];
@@ -313,7 +292,6 @@ void triptype::walk() {
 }
 
 void triptype::bounce() {
-	;
 	setactivepage(1);
 	putback();
 	x = ox;
@@ -323,9 +301,7 @@ void triptype::bounce() {
 }
 
 void triptype::do_it() {
-	;
 	if (((ix != 0) || (iy != 0)) & (~ ddm_o.menunow)) {
-		;
 		off;
 		copier(ox, oy, ox + a.xl, oy + a.yl, x, y, x + a.xl, y + a.yl);
 		putback();
@@ -334,12 +310,10 @@ void triptype::do_it() {
 }
 
 void triptype::putback() {
-	;
 	/* putimage(tax,tay,behind^,0);*/ mblit(tax, tay, tax + a.xl, tay + a.yl, 3, 1);
 }
 
 void triptype::walkto(integer xx, integer yy) {
-	;
 	speed(xx - x, yy - y);
 	hx = xx;
 	hy = yy;
@@ -347,13 +321,11 @@ void triptype::walkto(integer xx, integer yy) {
 }
 
 void triptype::stophoming() {
-	;
 	homing = false;
 }
 
 void triptype::homestep() {
 	integer temp;
-	;
 	if ((hx == x) && (hy == y)) {
 		;     /* touching the target */
 		homing = false;
@@ -362,14 +334,12 @@ void triptype::homestep() {
 	ix = 0;
 	iy = 0;
 	if (hy != y) {
-		;
 		temp = hy - y;
 		if (temp > 4)  iy = 4;
 		else if (temp < -4)  iy = -4;
 		else iy = temp;
 	}
 	if (hx != x) {
-		;
 		temp = hx - x;
 		if (temp > 4)  ix = 4;
 		else if (temp < -4)  ix = -4;
@@ -378,7 +348,6 @@ void triptype::homestep() {
 }
 
 void triptype::speed(shortint xx, shortint yy) {
-	;
 	ix = xx;
 	iy = yy;
 	if ((ix == 0) && (iy == 0))  return; /* no movement */
@@ -387,21 +356,18 @@ void triptype::speed(shortint xx, shortint yy) {
 		if (iy < 0)  turn(up);
 		else turn(down);
 	} else {
-		;
 		if (ix < 0)  turn(left);
 		else turn(right);
 	}
 }
 
 void triptype::stopwalk() {
-	;
 	ix = 0;
 	iy = 0;
 	homing = false;
 }
 
 void triptype::chatter() {
-	;
 	talkx = x + a.xl / 2;
 	talky = y;
 	talkf = a.fgc;
@@ -410,20 +376,17 @@ void triptype::chatter() {
 
 
 getsettype *getsettype::init() {
-	;
 	numleft = 0; /* initialise array pointer */
 	return this;
 }
 
 void remember(fieldtype r) {
-	;
 	numleft += 1;
 	gs[numleft] = r;
 }
 
 void recall() {
 	void recall_result;
-	;
 	recall_result = gs[numleft];
 	numleft -= 1;
 	return recall_result;
@@ -432,7 +395,6 @@ void recall() {
 void rwsp(byte t, byte r) {
 	const integer xs = 4;
 	const integer ys = 2;
-	;
 	{
 		triptype &with = tr[t];
 		switch (r) {
@@ -465,10 +427,8 @@ void rwsp(byte t, byte r) {
 }
 
 void apped(byte trn, byte np) {
-	;
 	{
 		triptype &with = tr[trn];
-		;
 		{
 			void &with1 = peds[np];
 			appear(with.x - with.a.xl / 2, with.y - with.a.yl, dir);
@@ -483,7 +443,6 @@ static boolean allstill() {
 	boolean xxx;
 	byte fv;
 	boolean allstill_result;
-	;
 	xxx = true;
 	for (fv = 1; fv <= numtr; fv ++) {
 		triptype &with = tr[fv];
@@ -495,13 +454,11 @@ static boolean allstill() {
 
 void trippancy() {
 	byte fv;
-	;
 	if ((ddm_o.menunow) | ontoolbar | seescroll | allstill())  return;
 	setactivepage(1);
 	for (fv = 1; fv <= numtr; fv ++) {
 		triptype &with = tr[fv];
 		if (with.quick) {
-			;
 			walk();
 			if (with.visible && ((with.ix != 0) || (with.iy != 0)))  andexor();
 			do_it();
@@ -513,70 +470,59 @@ void trippancy() {
 void tripkey(char dir);
 
 static void stopwalking() {
-	;
 	tr[1].stopwalk();
 	dna.rw = stopped;
 }
 
 void tripkey(char dir) {
-	;
 	{
 		triptype &with = tr[1];
 		{
-			;
 			switch (dir) {
 			case 'H':
 				if (rw != up) {
-					;
 					rw = up;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'P':
 				if (rw != down) {
-					;
 					rw = down;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'K':
 				if (rw != left) {
-					;
 					rw = left;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'M':
 				if (rw != right) {
-					;
 					rw = right;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'I':
 				if (rw != ur) {
-					;
 					rw = ur;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'Q':
 				if (rw != dr) {
-					;
 					rw = dr;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'O':
 				if (rw != dl) {
-					;
 					rw = dl;
 					rwsp(1, rw);
 				} else stopwalking();
 				break;
 			case 'G':
 				if (rw != ul) {
-					;
 					rw = ul;
 					rwsp(1, rw);
 				} else stopwalking();
@@ -590,7 +536,6 @@ void tripkey(char dir) {
 }
 
 void fliproom(byte room, byte ped) {
-	;
 	dusk;
 	tr[1].putback();
 	dna.room = room;
@@ -605,16 +550,13 @@ void fliproom(byte room, byte ped) {
 boolean infield(byte x) {         /* returns True if you're within field "x" */
 	integer ux, uy;
 	boolean infield_result;
-	;
 	{
 		triptype &with = tr[1];
-		;
 		ux = with.x;
 		uy = with.y + with.a.yl;
 	}
 	{
 		void &with = fields[x];
-		;
 		infield_result = (ux >= x1) && (ux <= x2) && (uy >= y1) && (uy <= y2);
 	}
 	return infield_result;
@@ -625,7 +567,6 @@ boolean neardoor() {       /* returns True if you're near a door! */
 	byte fv;
 	boolean nd;
 	boolean neardoor_result;
-	;
 	if (numfields < 9) {
 		;     /* there ARE no doors here! */
 		neardoor_result = false;
@@ -633,14 +574,12 @@ boolean neardoor() {       /* returns True if you're near a door! */
 	}
 	{
 		triptype &with = tr[1];
-		;
 		ux = with.x;
 		uy = with.y + with.a.yl;
 	}
 	nd = false;
 	for (fv = 9; fv <= numfields; fv ++) {
 		void &with = fields[fv];
-		;
 		if ((ux >= x1) && (ux <= x2) && (uy >= y1) && (uy <= y2))  nd = true;
 	}
 	neardoor_result = nd;

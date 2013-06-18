@@ -250,7 +250,6 @@ void initialize()
 	blockread(input_file, method, 1);
 
 	if (method == 177) {
-		;
 		output << "It's already compressed!" << NL;
 		exit(177);
 	}

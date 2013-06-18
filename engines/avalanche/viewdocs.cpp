@@ -97,7 +97,6 @@ void wipesb(word wheretop) {
 	byte plane;
 
 	for (plane = 2; plane <= 3; plane ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << plane;
@@ -124,7 +123,6 @@ void displstat(byte wipepos) {     /*displays the status bar*/
 	port[0x3cf] = 3;
 	wrapcopy(stbar2, (lat + 336) * 80);
 	for (plane = 2; plane <= 3; plane ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << plane;
@@ -152,7 +150,6 @@ void udstat() {   /*updates the status bar*/
 	str(round((real)((tlab - 21)) / (nol - 21) * 100), pt);
 	for (fv = 1; fv <= 3; fv ++)
 		for (fv2 = 0; fv2 <= 13; fv2 ++) {
-			;
 			stbar[fv2 * 80 + fv + 68] = ~ textvar[ord(pt[fv]) + 1][fv2];
 			stbar2[fv2 * 80 + fv + 68] = textvar[ord(pt[fv]) + 1][fv2];
 		}
@@ -191,7 +188,6 @@ headers by searching for '"""'*/
 				varpos2 = posof13[varpos - 2] + 2;
 				while (((*textmem)[varpos2] == 32) || ((*textmem)[varpos2] == 9))  varpos2 += 1;
 				while (varpos2 != posof13[varpos - 1]) {
-					;
 					headerstring = headerstring + chr((*textmem)[varpos2]);
 					varpos2 += 1;
 				}
@@ -244,7 +240,6 @@ void setupsb(byte sbtype) {     /*sets up the status bar in several styles*/
 		break;
 	}
 	for (fv = 0; fv <= 1118; fv ++) {
-		;
 		stbar[fv + 1] = ~ textvar[ord(stline[fv % 80 + 1]) + 1][fv / 80];
 		stbar2[fv + 1] = textvar[ord(stline[fv % 80 + 1]) + 1][fv / 80];
 	}
@@ -284,12 +279,10 @@ void setup() {   /*sets up graphics, variables, etc.*/
 	close(f);
 	finddocinfo();
 	if (paramstr(1) == "REGI") {
-		;
 		regimode = true;
 		tlab = contlist[contsize].headeroffset + 24;
 		lat = contlist[contsize].headeroffset * 14;
 	} else {
-		;
 		lat = 0;
 		tlab = 24;
 		regimode = false;
@@ -316,7 +309,6 @@ void drawscreenf(integer tl)       /*draws a screen from a line forwards*/
 	if (tl < 0)  tl = 0;
 	lat = tl * 14;
 	for (plane = 2; plane <= 3; plane ++) { /*wipe sb off*/
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << plane;
@@ -404,7 +396,6 @@ void displcont() {   /*displays the contents*/
 	}
 	showscreen();
 	do {
-		;
 	} while (!keypressed());
 	rkv = readkey();
 	switch (rkv) {
@@ -517,7 +508,6 @@ void control() {   /*User control*/
 	else drawscreenf(tlab - 24);
 	first = true;
 	do {
-		;
 		rkv = readkey();
 		switch (rkv) {
 		case '\0': {
@@ -530,7 +520,6 @@ void control() {   /*User control*/
 				drawscreenf(nol - 24);
 				break;
 			case cpgdn: {
-				;
 				memw[bfseg * bfofs] = 0;
 				if (fast == false)  wipesb(lat);
 				fv = 1;
@@ -543,7 +532,6 @@ void control() {   /*User control*/
 			}
 			break;
 			case cpgup: {
-				;
 				memw[bfseg * bfofs] = 0;
 				if (fast == false)  wipesb(lat);
 				fv = 1;

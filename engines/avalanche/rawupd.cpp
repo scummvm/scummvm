@@ -37,7 +37,6 @@ boolean s_exists;
 
 void find_out_about_s(string name) {
 	searchrec ss;
-	;
 	findfirst(name, anyfile, ss);
 	s_exists = doserror == 0;
 

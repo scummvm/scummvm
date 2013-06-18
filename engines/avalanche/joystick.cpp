@@ -83,7 +83,6 @@ boolean newbios() {
 /*$F+*/
 
 void oldreadjoy(byte xbit, byte ybit, word &xaxis, word &yaxis) {
-	;
 	/*
 	inline(
 	  $BA/$01/$02/    {mov  dx, 201h      ;load dx with joystick port address   }

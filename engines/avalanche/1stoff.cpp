@@ -35,9 +35,7 @@ byte fv;
 
 void adjust() {
 	registers r;
-	;
 	{
-		;
 		ax = 0x1012;
 		bx = 1;
 		cx = 2;
@@ -51,7 +49,6 @@ void adjust() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	textattr = 0;
 	clrscr;
 
@@ -66,7 +63,6 @@ int main(int argc, const char *argv[]) {
 	output << "presents";
 
 	for (fv = 1; fv <= 77; fv ++) {
-		;
 		delay(77);
 		if (fv < 64)  fillchar(cols[1], 3, chr(fv));
 		if (fv > 14)  fillchar(cols[2], 3, chr(fv - 14));
@@ -76,7 +72,6 @@ int main(int argc, const char *argv[]) {
 	delay(100);
 
 	for (fv = 63; fv >= 1; fv --) {
-		;
 		fillchar(cols, sizeof(cols), chr(fv));
 		delay(37);
 		adjust();

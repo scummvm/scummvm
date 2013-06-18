@@ -32,7 +32,6 @@ namespace Avalanche {
 integer gd, gm;
 
 void data(integer y, string a, string b) {
-	;
 	setcolor(1);
 	settextjustify(2, 0);
 	outtextxy(315, y, a + ':');
@@ -43,7 +42,6 @@ void data(integer y, string a, string b) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\turbo");

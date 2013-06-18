@@ -410,7 +410,6 @@ void block_drop(string fn, integer xl, integer yl, integer y) {
 
 	for (fv = 1; fv <= yl; fv ++)
 		for (bit = 0; bit <= 3; bit ++) {
-			;
 			port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;
@@ -715,7 +714,6 @@ void calldrivers() {
 		break; /* ^D = (D)on't include pagebreak */
 	case '\2':
 	case '\21':
-		;
 		break; /* ^B = speech (B)ubble, ^Q = (Q)uestion in dialogue box */
 	default: {
 		bufsize += 1;

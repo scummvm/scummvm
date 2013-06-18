@@ -32,7 +32,6 @@ namespace Avalanche {
 integer gd, gm;
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "");
@@ -52,7 +51,6 @@ int main(int argc, const char *argv[]) {
 	setactivepage(0);
 	gm = 0;
 	for (gd = 0; gd <= 640; gd ++) {
-		;
 		gm += 1;
 		if (gm == 8)  gm = 1;
 		setcolor(gm);
@@ -66,7 +64,6 @@ int main(int argc, const char *argv[]) {
 	/* setfillstyle(1,6); bar(100,100,500,100);*/ gd = getpixel(0, 0);
 	for (gm = 8; gm <= 15; gm ++) setpalette(gm, egayellow);
 	for (gd = 0; gd <= 199; gd ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3cf] = 4;
 		port[0x3c5] = 8;

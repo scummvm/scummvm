@@ -54,13 +54,11 @@ void filesetup() {
 	const integer idshould = -1317732048;
 	longint id;
 	word soa;
-	;
 	assign(inf, "v:sprite2.avd");
 	reset(inf, 1);
 	seek(inf, 177);
 	blockread(inf, id, 4);
 	if (id != idshould) {
-		;
 		output << '\7';
 		close(inf);
 		exit(0);
@@ -72,9 +70,7 @@ void filesetup() {
 
 void loadpic() {
 	byte fv, ff;
-	;
 	{
-		;
 		xw = a.xl / 8;
 		if ((a.xl % 8) > 0)  xw += 1;
 
@@ -95,9 +91,7 @@ void plotone(integer xx, integer yy) {
 	word s;
 	word ofs, fv;
 	byte x, y, z;
-	;
 	{
-		;
 		s = imagesize(x, y, xx + a.xl, yy + a.yl);
 		getimage(xx, yy, xx + a.xl, yy + a.yl, aa); /* Now loaded into our local buffer. */
 
@@ -106,7 +100,6 @@ void plotone(integer xx, integer yy) {
 		for (x = 0; x <= 3; x ++)
 			for (y = 0; y <= 35; y ++)
 				for (z = 0; z <= 4; z ++) {
-					;
 					ofs = 5 + y * xw * 4 + xw * x + z;
 					aa[ofs] = aa[ofs] & sil[y][z];
 				}
@@ -147,7 +140,6 @@ void plotone(integer xx, integer yy) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");

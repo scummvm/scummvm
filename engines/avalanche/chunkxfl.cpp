@@ -47,7 +47,6 @@ void finder() {
 		line(x - 20, y, x + 20, y);
 		line(x, y - 20, x, y + 20);
 		do {
-			;
 		} while (!keypressed());
 		line(x - 20, y, x + 20, y);
 		line(x, y - 20, x, y + 20);

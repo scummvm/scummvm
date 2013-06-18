@@ -57,7 +57,6 @@ byte value;
 tunetype played;
 
 void store_(byte what) {
-	;
 
 	move(played[2], played[1], sizeof(played) - 1);
 
@@ -68,11 +67,9 @@ void store_(byte what) {
 boolean they_match() {
 	byte fv;
 	boolean they_match_result;
-	;
 
 	for (fv = 1; fv <= sizeof(played); fv ++)
 		if (played[fv] != tune[fv]) {
-			;
 			they_match_result = false;
 			return they_match_result;
 		}
@@ -84,7 +81,6 @@ boolean they_match() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 
 	textattr = 30;
 	clrscr;
@@ -97,7 +93,6 @@ int main(int argc, const char *argv[]) {
 		value = pos(pressed, keys);
 
 		if (value > 0) {
-			;
 
 			last_one = this_one;
 			this_one = value;
@@ -117,7 +112,6 @@ int main(int argc, const char *argv[]) {
 					store_(higher);
 
 			if (they_match()) {
-				;
 				textattr = 94;
 				clrscr;
 				output << NL;

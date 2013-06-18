@@ -46,7 +46,6 @@ void save() {
 	file<atype> f;
 	word fv;
 	atype a /*absolute $B800:0*/;
-	;
 	assign(f, "TEXT2.SCR");
 	rewrite(f);
 	f << a;
@@ -55,9 +54,7 @@ void save() {
 
 void centre(byte y, string z) {
 	byte fv;
-	;
 	for (fv = 1; fv <= length(z); fv ++) {
-		;
 		gotoxy(39 - length(z) / 2 + fv, y);
 		if (odd(fv + y))  textattr = 2;
 		else textattr = cyan;
@@ -67,14 +64,10 @@ void centre(byte y, string z) {
 
 void line(byte yy, string title) {
 	const integer offset = 5;
-	;
 	for (y = 1; y <= 6; y ++) {
-		;
 		qq = "";
 		for (x = 1; x <= length(title); x ++) {
-			;
 			for (xx = 7; xx >= 0; xx --) {
-				;
 				code = (byte)(((1 << xx) & font[title[x]][y * 2 - offset]) > 0) +
 				       (byte)(((1 << xx) & font[title[x]][y * 2 + 1 - offset]) > 0) * 2;
 				qq = qq + codes[code + 1 - 1];
@@ -86,12 +79,9 @@ void line(byte yy, string title) {
 
 void chips() {
 	byte fv, x, y;
-	;
 	for (fv = 0; fv <= 1; fv ++) {
-		;
 		textattr = 120;
 		for (y = 2; y <= 6; y ++) {
-			;
 			gotoxy(fv * 67 + 3, y);
 			output << "     ";
 			if (fv == 1)  output << ' ';
@@ -102,7 +92,6 @@ void chips() {
 		textattr = 7;
 		for (x = 0; x <= 1; x ++)
 			for (y = 2; y <= 6; y ++) {
-				;
 				gotoxy(fv * 67 + 2 + x * (6 + fv), y);
 				output << 'ð';
 			}
@@ -111,7 +100,6 @@ void chips() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	textattr = 0;
 	clrscr;
 	chips();
@@ -126,7 +114,6 @@ int main(int argc, const char *argv[]) {
 	centre(13, "you can do about this:");
 	textattr = 3;
 	for (xx = 15; xx <= 17; xx ++) {
-		;
 		gotoxy(23, xx);
 		output << '\20';
 	}

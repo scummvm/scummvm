@@ -95,7 +95,6 @@ edhead e;
 
 void info256(string x) {     /* info on dna256 *.ASG files */
 	varying_string<40> describe;
-	;
 	assign(f, x);
 	/*$I-*/ reset(f, 1);
 	seek(f, 47);
@@ -103,7 +102,6 @@ void info256(string x) {     /* info on dna256 *.ASG files */
 	blockread(f, dna256, sizeof(dna256));
 	close(f); /*$I+*/
 	{
-		;
 		e.revision = 1;
 		e.game = "Denarius Avaricius Sextus";
 		e.shortname = "Avaricius";
@@ -128,16 +126,13 @@ void info256(string x) {     /* info on dna256 *.ASG files */
 
 string enlarge(string x) {
 	string enlarge_result;
-	;
 	switch (x[length(x)]) {
 	case '*': {
-		;
 		x[0] -= 1;
 		x = x + "uary";
 	}
 	break;
 	case '&': {
-		;
 		x[0] -= 1;
 		x = x + "ember";
 	}
@@ -150,7 +145,6 @@ string enlarge(string x) {
 string th(byte x) {
 	varying_string<4> n;
 	string th_result;
-	;
 	n = strf(x);
 	switch (x) {
 	case 1:
@@ -175,11 +169,9 @@ string th(byte x) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	info256("t:justb4.asg");
 
 	{
-		;
 		output << "DNA coding: ";
 		switch (e.revision) {
 		case 1:

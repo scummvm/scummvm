@@ -46,9 +46,7 @@ void graphics() {
 /*$F+ ... All ddm__procs and do__procs must be compiled in Far-Call state. */
 
 void ddm__file() {
-	;
 	{
-		;
 		start_afresh;
 		opt("Load...", 'L', "f3", true);
 		opt("Save...", 'S', "f2", false);
@@ -60,9 +58,7 @@ void ddm__file() {
 }
 
 void ddm__heart() {
-	;
 	{
-		;
 		start_afresh;
 		opt("About...", 'A', "shift-f10", true);
 		opt("Boss Key", 'B', "alt-B", true);
@@ -74,9 +70,7 @@ void ddm__heart() {
 }
 
 void ddm__action() {
-	;
 	{
-		;
 		start_afresh;
 		opt("Get up", 'G', "", true);
 		opt("Open door", 'O', "", true);
@@ -89,9 +83,7 @@ void ddm__action() {
 }
 
 void ddm__objects() {
-	;
 	{
-		;
 		start_afresh;
 		opt("Bell", 'B', "", true);
 		opt("Wine", 'W', "", true);
@@ -104,9 +96,7 @@ void ddm__objects() {
 }
 
 void ddm__people() {
-	;
 	{
-		;
 		start_afresh;
 		opt("Avalot", 'A', "", true);
 		opt("Spludwick", 'S', "", true);
@@ -118,9 +108,7 @@ void ddm__people() {
 }
 
 void ddm__use() {
-	;
 	{
-		;
 		start_afresh;
 		opt("Drink", 'D', "", true);
 		opt("Wear", 'W', "", true);
@@ -131,7 +119,6 @@ void ddm__use() {
 
 void do__stuff() {
 	varying_string<2> st;
-	;
 	str(o.choicenum + 1, st);
 	setfillstyle(1, 6);
 	setcolor(14);
@@ -140,7 +127,6 @@ void do__stuff() {
 }
 
 void do__heart() {
-	;
 	switch (o.choicenum) {
 	case 0:
 		outtextxy(100, 100, "A really funny game!");
@@ -164,7 +150,6 @@ void do__heart() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	graphics();
 	setfillstyle(6, 6);
 	bar(0, 0, 639, 199);
@@ -172,7 +157,6 @@ int main(int argc, const char *argv[]) {
 	m.init;
 	o.init;
 	{
-		;
 		create('H', '\3', '#', ddm__heart(), do__heart());
 		create('F', "File", '!', ddm__file(), do__stuff());
 		create('A', "Action", '\36', ddm__action(), do__stuff());
@@ -191,9 +175,7 @@ int main(int argc, const char *argv[]) {
 		} while (!((buttonpresscount > 0) || (buttonreleasecount > 0) | keypressede));
 		hidemousecursor;
 		if (buttonpresscount > 0) {
-			;
 			if (mousey > 10) {
-				;
 				if (!((o.firstlix) &
 				        ((mousex >= flx1) && (mousex <= flx2) &&
 				         (mousey >= 12) && (mousey <= fly)))) {
@@ -211,7 +193,6 @@ int main(int argc, const char *argv[]) {
 		} else {
 			;     /* NOT clicked button... */
 			if (buttonreleasecount > 0) {
-				;
 				if ((firstlix) &
 				        ((mousex >= flx1) && (mousex <= flx2) &&
 				         (mousey >= 12) && (mousey <= fly)))

@@ -120,7 +120,6 @@ const graphcursmasktype tthand = {
 string strf(longint x) {
 	string q;
 	string strf_result;
-	;
 	str(x, q);
 	strf_result = q;
 	return strf_result;
@@ -128,16 +127,13 @@ string strf(longint x) {
 
 void glimpse(byte ret) {     /* glimpse of screen 3 */
 	char sink;
-	;
 	hidemousecursor;
 	setvisualpage(3);
 	setcrtpagenumber(3);
 	showmousecursor;
 	do {
-		;
 	} while (!(~ anymousekeypressed));
 	do {
-		;
 	} while (!anymousekeypressed);
 	hidemousecursor;
 	setvisualpage(ret);
@@ -147,10 +143,8 @@ void glimpse(byte ret) {     /* glimpse of screen 3 */
 }
 
 void newline(byte t, integer p, integer q, integer r, integer s, byte c) {
-	;
 	{
 		linetype &with = lines[t];
-		;
 		x1 = p;
 		y1 = q;
 		x2 = r;
@@ -160,7 +154,6 @@ void newline(byte t, integer p, integer q, integer r, integer s, byte c) {
 }
 
 void newfield(byte t, integer p, integer q, integer r, integer s) {
-	;
 	{
 		fieldtype &with = fields[t];  ;
 		with.x1 = p;
@@ -171,11 +164,9 @@ void newfield(byte t, integer p, integer q, integer r, integer s) {
 }
 
 void drawped(byte p) {
-	;
 	{
 		pedtype &with = peds[p];
 		if (with.dir < 177) {
-			;
 			setcolor(p);
 			circle(with.x, with.y, 5);
 			moveto(with.x, with.y);
@@ -211,12 +202,10 @@ void drawped(byte p) {
 
 void drawup() {
 	byte fv;
-	;
 	cleardevice();
 	for (fv = 1; fv <= numlines; fv ++) {
 		linetype &with = lines[fv];
 		if (x1 != nay) {
-			;
 			setcolor(with.col);
 			line(x1, y1, x2, y2);
 		}
@@ -224,7 +213,6 @@ void drawup() {
 	for (fv = 1; fv <= numlines; fv ++) {
 		fieldtype &with = fields[fv];
 		if (with.x1 != nay) {
-			;
 			setcolor(fv);
 			rectangle(with.x1, with.y1, with.x2, with.y2);
 		}
@@ -234,7 +222,6 @@ void drawup() {
 
 void addped() {
 	byte n, fv;
-	;
 	n = 0;
 	do {
 		n += 1;
@@ -252,7 +239,6 @@ void addped() {
 	hidemousecursor;
 	{
 		pedtype &with = peds[n];
-		;
 		with.x = mousex;
 		with.y = mousey;
 	}
@@ -301,12 +287,10 @@ void addped() {
 
 void addline(byte ccc) {
 	byte fv;
-	;
 	do {
 		for (fv = 1; fv <= numlines; fv ++) {
 			linetype &with = lines[fv];
 			if (x1 == nay) {
-				;
 				x1 = fv * 17;
 				x2 = x1;
 				y1 = 200;
@@ -321,20 +305,17 @@ void addline(byte ccc) {
 byte colour() {
 	byte fv;
 	byte colour_result;
-	;
 	setactivepage(0);
 	setvisualpage(0);
 	setcrtpagenumber(0);
 	outtextxy(0, 0, "Select a colour, please...");
 	for (fv = 1; fv <= 15; fv ++) {
-		;
 		setfillstyle(1, fv);
 		bar(fv * 40, 27, 39 + fv * 40, 200);
 	}
 	showmousecursor;
 	do {
 		if (rightmousekeypressed)  {
-			;
 			hidemousecursor;
 			return colour_result;
 		}
@@ -349,7 +330,6 @@ byte colour() {
 void addfield() {
 	byte fv;
 	boolean ok;
-	;
 	do {
 		fv = colour();
 		ok = fields[fv].x1 == nay;
@@ -357,7 +337,6 @@ void addfield() {
 	} while (!ok);
 	{
 		fieldtype &with = fields[fv];
-		;
 		with.x1 = 300 + fv * 17;
 		with.x2 = with.x1 + 1;
 		with.y1 = 200;
@@ -368,7 +347,6 @@ void addfield() {
 byte checkline() {
 	byte fv, ans;
 	byte checkline_result;
-	;
 	setgraphicscursor(crosshairs);
 	setcrtpagenumber(0);
 	setactivepage(0);
@@ -378,7 +356,6 @@ byte checkline() {
 		showmousecursor;
 		do {
 			if (rightmousekeypressed)  {
-				;
 				checkline_result = 255;
 				return checkline_result;
 			}
@@ -388,11 +365,9 @@ byte checkline() {
 		setactivepage(1);
 		ans = 177;
 		for (fv = 1; fv <= numlines; fv ++) { /*  */
-			;
 			{
 				linetype &with = lines[fv];
 				if (x1 != nay) {
-					;
 					setcolor(9);
 					line(x1, y1, x2, y2);
 					if (getpixel(mousex, mousey) == 9)  ans = fv;
@@ -403,7 +378,6 @@ byte checkline() {
 			{
 				fieldtype &with = fields[fv];
 				if (with.x1 != nay) {
-					;
 					setcolor(9);
 					rectangle(with.x1, with.y1, with.x2, with.y2);
 					if (getpixel(mousex, mousey) == 9)  ans = fv + 100;
@@ -422,7 +396,6 @@ void chooseside();
 static boolean itsaline;
 
 static void plotline() {
-	;
 	if (itsaline) {
 		linetype &with = lines[gd];
 		if (do1)  line(mousex, mousey, x2, y2);
@@ -440,12 +413,10 @@ void chooseside() {
 	byte clicol, savelcol;
 	fieldtype current;
 	integer temp;
-	;
 	do {
 		gd = checkline();
 		itsaline = gd < 100;
 		if (gd == 255)  {
-			;
 			hidemousecursor;
 			return;
 		}
@@ -456,12 +427,10 @@ void chooseside() {
 		setgraphicscursor(tthand);
 		setcrtpagenumber(2);
 		if (itsaline) {
-			;
 			current = lines[gd];
 			savelcol = lines[gd].col;
 		} else current = fields[gd];
 		{
-			;
 			setcolor(9);
 			if (itsaline)  line(current.x1, current.y1, current.x2, current.y2);
 			else rectangle(current.x1, current.y1, current.x2, current.y2);
@@ -471,19 +440,16 @@ void chooseside() {
 			setfillstyle(1, green);
 			bar(current.x2 - 3, current.y2 - 3, current.x2 + 3, current.y2 + 3);
 			do {
-				;
 			} while (!(~ anymousekeypressed));
 			clicol = 177;
 			showmousecursor;
 			do {
 				if (anymousekeypressed) {
-					;
 					hidemousecursor;
 					clicol = getpixel(mousex, mousey);
 					showmousecursor;
 				}
 				if (rightmousekeypressed) {
-					;
 					hidemousecursor;
 					return;
 				}
@@ -507,14 +473,12 @@ void chooseside() {
 			}
 			setwritemode(xorput);
 			while (~ anymousekeypressed) {
-				;
 				plotline();
 				showmousecursor;
 				delay(1);
 				hidemousecursor;
 				plotline();
 				if (rightmousekeypressed)  {
-					;
 					hidemousecursor;
 					return;
 				}
@@ -522,24 +486,19 @@ void chooseside() {
 			}
 			/* update "current" rec */
 			if (do1)  {
-				;
 				current.x1 = mousex;
 				current.y1 = mousey;
 			} else {
-				;
 				current.x2 = mousex;
 				current.y2 = mousey;
 			}
 			if (! itsaline) {
-				;
 				if (current.x1 > current.x2)  {
-					;
 					temp = current.x2;
 					current.x2 = current.x1;
 					current.x1 = temp;
 				}
 				if (current.y1 > current.y2)  {
-					;
 					temp = current.y2;
 					current.y2 = current.y1;
 					current.y1 = temp;
@@ -548,7 +507,6 @@ void chooseside() {
 			/* copy "current" to line/field */
 			if (itsaline) {
 				linetype &with1 = lines[gd];
-				;
 				current.x1 = current.x1;
 				current.x2 = current.x2;
 				current.y1 = current.y1;
@@ -561,7 +519,6 @@ void chooseside() {
 }
 
 void delped() {
-	;
 	setcrtpagenumber(0);
 	setactivepage(0);
 	setvisualpage(0);
@@ -569,7 +526,6 @@ void delped() {
 	setgraphicscursor(tthand);
 	showmousecursor;
 	do {
-		;
 	} while (!leftmousekeypressed);
 	peds[colour()].dir = 177;
 }
@@ -577,7 +533,6 @@ void delped() {
 byte menu();
 
 static void say(byte y, string x) {
-	;
 	setfillstyle(1, y);
 	bar(0, y * 17, 100, y * 17 + 15);
 	outtextxy(123, y * 17, x);
@@ -586,7 +541,6 @@ static void say(byte y, string x) {
 byte menu() {
 	byte clicol;
 	byte menu_result;
-	;
 	setcolor(15);
 	settextstyle(0, 0, 2);
 	clicol = 0;
@@ -605,20 +559,17 @@ byte menu() {
 	showmousecursor;
 	do {
 		if (leftmousekeypressed) {
-			;
 			hidemousecursor;
 			clicol = getpixel(mousex, mousey);
 			showmousecursor;
 		}
 		if (rightmousekeypressed)  {
-			;
 			hidemousecursor;
 			return menu_result;
 		}
 		if (keypressed())  glimpse(2);
 	} while (!(clicol > 0));
 	do {
-		;
 	} while (!(~ anymousekeypressed));
 	hidemousecursor;
 	menu_result = clicol;
@@ -626,10 +577,8 @@ byte menu() {
 }
 
 void removeline() {
-	;
 	gd = checkline();
 	if (gd == 255)  {
-		;
 		hidemousecursor;
 		return;
 	}
@@ -641,7 +590,6 @@ void removeline() {
 }
 
 void lino() {
-	;
 	resetmouse;
 	do {
 		switch (menu()) {
@@ -674,14 +622,12 @@ void loadscreen() {   /* load2 */
 	byte a /*absolute $A000:246560*/;
 	byte bit;
 	untyped_file f;
-	;
 	setactivepage(3);
 	setvisualpage(3);
 	assign(f, string("c:\\avalot\\place") + n + ".avd");
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -697,7 +643,6 @@ void loadscreen() {   /* load2 */
 void ctrlsout(string &x) {        /* Replace real ctrls with caret codes */
 	byte fv;
 	string xx;
-	;
 	xx = "";
 	for (fv = 1; fv <= length(x); fv ++)
 		if (x[fv] > '\37')  xx = xx + x[fv];
@@ -709,12 +654,10 @@ void ctrlsin(string &x) {        /* Opposite of ctrlsout */
 	byte fv;
 	string xx;
 	boolean ctrlwas;
-	;
 	xx = "";
 	ctrlwas = false;
 	for (fv = 1; fv <= length(x); fv ++)
 		if (ctrlwas) {  /* last char was a caret */
-			;
 			xx = xx + chr(ord(upcase(x[fv])) - 64);
 			ctrlwas = false;
 		} else {
@@ -728,7 +671,6 @@ void ctrlsin(string &x) {        /* Opposite of ctrlsout */
 
 void flipover() {   /* temp view other screen */
 	char r;
-	;
 	setvisualpage(3);
 	r = readkey();
 	setvisualpage(0);
@@ -736,7 +678,6 @@ void flipover() {   /* temp view other screen */
 
 void plotchar(byte x, byte y, char n) {
 	byte fv;
-	;
 	if (chars[x][y] == n)  return;
 	for (fv = 0; fv <= 15; fv ++)
 		mem[0xa000 * y * 1200 + (fv + 3) * 80 + x] = skinny[ord(n)][fv];
@@ -745,7 +686,6 @@ void plotchar(byte x, byte y, char n) {
 
 void cursor() {
 	byte fv;
-	;
 	cursorflash += 1;
 	switch (cursorflash) {
 	case 1:
@@ -760,9 +700,7 @@ void cursor() {
 }
 
 void losecursor() {
-	;
 	if (cursorflash < 127)  {
-		;
 		cursorflash = 126;
 		cursor();
 	}
@@ -771,13 +709,10 @@ void losecursor() {
 
 void gwrite(string x) {
 	byte fv;
-	;
 	for (fv = 1; fv <= length(x); fv ++) {
-		;
 		plotchar(tx, ty, x[fv]);
 		tx += 1;
 		if (tx == 80)  {
-			;
 			ty += 1;
 			tx = 0;
 		}
@@ -789,7 +724,6 @@ string typein(string x) {
 	byte p;
 	char r;
 	string typein_result;
-	;
 	setvisualpage(0);
 	setactivepage(0);
 	cleardevice();
@@ -812,7 +746,6 @@ string typein(string x) {
 		tx = (p % 80);
 		ty = (p / 80) + 6;
 		while (! keypressed())  {
-			;
 			delay(1);
 			cursor();
 		}
@@ -821,7 +754,6 @@ string typein(string x) {
 		switch (r) {
 		case '\10':
 			if (p > 0)  {
-				;
 				x = copy(x, 1, p - 1) + copy(x, p + 1, 255);
 				p -= 1;
 			}
@@ -830,7 +762,6 @@ string typein(string x) {
 			flipover();
 			break;
 		case '\40' ... '\377': {
-			;
 			x = copy(x, 1, p) + r + copy(x, p + 1, 255);
 			p += 1;
 		}
@@ -873,7 +804,6 @@ byte typeno(string title) {
 	integer e;
 	word p;
 	byte typeno_result;
-	;
 	cleardevice();
 	x = "000";
 	settextstyle(0, 0, 3);
@@ -889,7 +819,6 @@ byte typeno(string title) {
 			r = readkey();
 		} while (!(set::of(range('0', '9'), '\33', '\15', eos).has(r)));
 		if (r == '\33')  {
-			;
 			typeno_result = 255;
 			return typeno_result;
 		}
@@ -904,7 +833,6 @@ void showallnames() {
 	byte fv;
 	varying_string<2> s;
 	char r;
-	;
 	settextstyle(0, 0, 2);
 	cleardevice();
 	setcolor(13);
@@ -912,7 +840,6 @@ void showallnames() {
 	settextstyle(0, 0, 1);
 	setcolor(7);
 	for (fv = 1; fv <= 29; fv ++) {
-		;
 		str(fv, 2, s);
 		outtextxy((fv / 15) * 320, ((fv % 15) * 10) + 30, s + '=' + copy(names[fv][1], 0, 33));
 	}
@@ -925,7 +852,6 @@ void showallassoc();
 
 
 static void saascreen() {
-	;
 	settextstyle(0, 0, 2);
 	cleardevice();
 	setcolor(10);
@@ -940,15 +866,12 @@ void showallassoc() {
 	varying_string<2> s;
 	char r;
 
-	;
 	saascreen();
 	for (fv = 1; fv <= 30; fv ++) {
-		;
 		str(fv - 1, 2, s);
 		outtextxy(0, (((fv - 1) % 10) * 10) + 30,
 		          s + ':' + copy(names[fv - 1][1], 1, 7) + ':' + copy(names[fv - 1][2], 1, 70));
 		if ((fv % 10) == 0)  {
-			;
 			r = readkey();
 			saascreen();
 		}
@@ -960,10 +883,8 @@ void showallassoc() {
 
 void clear() {
 	byte fv;
-	;
 	fillchar(names , sizeof(names),  '\0');
 	for (fv = 1; fv <= numlines; fv ++) {
-		;
 		lines[fv].x1 = nay;
 		fields[fv].x1 = nay;
 	}
@@ -974,14 +895,12 @@ void scramble();
 
 static void scram1(string &x) {
 	byte fz;
-	;
 	for (fz = 1; fz <= length(x); fz ++)
 		x[fz] = chr(ord(x[fz]) ^ 177);
 }
 
 void scramble() {   /* Works both ways. */
 	byte fv, ff;
-	;
 	for (fv = 0; fv <= 29; fv ++)
 		for (ff = 1; ff <= 2; ff ++)
 			scram1(names[fv][ff]);
@@ -993,7 +912,6 @@ void save() {
 	string x;
 	untyped_file f;
 	byte minnames, minlines, minpeds, minfields, fv, ff;
-	;
 	minnames = 0;
 	for (fv = 0; fv <= 29; fv ++) if (names[fv][1] != "")     minnames = fv;
 	minlines = 0;
@@ -1036,7 +954,6 @@ static string nextstring() {
 	byte l;
 	string x;
 	string nextstring_result;
-	;
 	x = "";
 	blockread(f, l, 1);
 	blockread(f, x[1], l);
@@ -1049,7 +966,6 @@ void load() {
 	byte minnames, minlines, minpeds, minfields;
 	byte ff, fv;
 
-	;
 	clear();
 	assign(f, string("c:\\avalot\\also") + n + ".avd");
 	/*$I-*/ reset(f, 1); /*$I+*/ if (ioresult != 0)  return; /* no Also file */
@@ -1081,60 +997,50 @@ static integer y;
 
 static void display() {
 	byte fv;
-	;
 	cleardevice();
 	settextstyle(0, 0, 2);
 	setcolor(15);
 	outtextxy(0, 0, "Magics.");
 	settextstyle(0, 0, 1);
 	for (fv = 1; fv <= 15; fv ++) {
-		;
 		y = 23 + fv * 10;
 		setcolor(fv);
 		outtextxy(100, y, string('$') + codes[fv - 1]);
 		{
 			magictype &with = magics[fv];
-			;
 			switch (with.op) {
 			case nix: {
-				;
 				setcolor(8);
 				outtextxy(140, y, "Nix");
 			}
 			break;
 			case bounce: {
-				;
 				setcolor(10);
 				outtextxy(143, y, "Bounce!");
 			}
 			break;
 			case exclaim: {
-				;
 				setcolor(14);
 				outtextxy(143, y, string("Exclaim: ") + strf(with.data));
 			}
 			break;
 			case transport: {
-				;
 				setcolor(12);
 				outtextxy(143, y, string("Transport to ") + strf(hi(with.data)) +
 				          ", ped " + strf(lo(with.data)));
 			}
 			break;
 			case unfinished: {
-				;
 				setcolor(15);
 				outtextxy(143, y, "*** UNFINISHED! ***");
 			}
 			break;
 			case special: {
-				;
 				setcolor(6);
 				outtextxy(143, y, string("Special call no. ") + strf(with.data));
 			}
 			break;
 			case opendoor: {
-				;
 				setcolor(11);
 				outtextxy(143, y, string("Opening door to ") + strf(hi(with.data)) +
 				          ", ped " + strf(lo(with.data)));
@@ -1153,7 +1059,6 @@ static word ask(string x) {
 	word thomaswashere;
 	integer e;
 	word ask_result;
-	;
 	cleardevice();
 	setcolor(10);
 	settextstyle(0, 0, 3);
@@ -1170,7 +1075,6 @@ void editmagics() {
 	char r, rr;
 	byte p;
 
-	;
 	do {
 		display();
 		do {
@@ -1199,13 +1103,11 @@ void editmagics() {
 				with.op = bounce;
 				break;
 			case 'E': {
-				;
 				with.op = exclaim;
 				with.data = ask("Which scroll?");
 			}
 			break;
 			case 'T': {
-				;
 				with.op = transport;
 				with.data = ask("Ped no.?") + ask("Whither?") * 256;
 			}
@@ -1214,13 +1116,11 @@ void editmagics() {
 				with.op = unfinished;
 				break;
 			case 'S': {
-				;
 				with.op = special;
 				with.data = ask("Which call?");
 			}
 			break;
 			case 'O': {
-				;
 				with.op = opendoor;
 				with.data = ask("Ped no.?") + ask("Whither?") * 256;
 			}
@@ -1238,54 +1138,45 @@ static integer y2;
 
 static void display1() {
 	byte fv;
-	;
 	cleardevice();
 	settextstyle(0, 0, 2);
 	setcolor(15);
 	outtextxy(0, 0, "Portals.");
 	settextstyle(0, 0, 1);
 	for (fv = 9; fv <= 15; fv ++) {
-		;
 		y2 = fv * 10 - 53;
 		setcolor(fv);
 		outtextxy(100, y2, string('$') + codes1[fv - 1]);
 		{
 			magictype &with = portals[fv];
-			;
 			switch (with.op) {
 			case nix: {
-				;
 				setcolor(8);
 				outtextxy(140, y2, "Nix");
 			}
 			break;
 			case exclaim: {
-				;
 				setcolor(14);
 				outtextxy(143, y2, string("Exclaim: ") + strf(with.data));
 			}
 			break;
 			case transport: {
-				;
 				setcolor(12);
 				outtextxy(143, y2, string("Transport to ") + strf(hi(with.data)) +
 				          ", ped " + strf(lo(with.data)));
 			}
 			break;
 			case unfinished: {
-				;
 				setcolor(15);
 				outtextxy(143, y2, "*** UNFINISHED! ***");
 			}
 			break;
 			case special: {
-				;
 				setcolor(6);
 				outtextxy(143, y2, string("Special call no. ") + strf(with.data));
 			}
 			break;
 			case opendoor: {
-				;
 				setcolor(11);
 				outtextxy(143, y2, string("Opening door to ") + strf(hi(with.data)) +
 				          ", ped " + strf(lo(with.data)));
@@ -1304,7 +1195,6 @@ static word ask1(string x) {
 	word thomaswashere;
 	integer e;
 	word ask1_result;
-	;
 	cleardevice();
 	setcolor(10);
 	settextstyle(0, 0, 3);
@@ -1321,7 +1211,6 @@ void editportals() {   /* much t'same as editmagics */
 	char r, rr;
 	byte p;
 
-	;
 	do {
 		display1();
 		do {
@@ -1348,13 +1237,11 @@ void editportals() {   /* much t'same as editmagics */
 				with.op = nix;
 				break;
 			case 'E': {
-				;
 				with.op = exclaim;
 				with.data = ask1("Which scroll?");
 			}
 			break;
 			case 'T': {
-				;
 				with.op = transport;
 				with.data = ask1("Ped no.?") + ask1("Whither?") * 256;
 			}
@@ -1363,13 +1250,11 @@ void editportals() {   /* much t'same as editmagics */
 				with.op = unfinished;
 				break;
 			case 'S': {
-				;
 				with.op = special;
 				with.data = ask1("Which call?");
 			}
 			break;
 			case 'O': {
-				;
 				with.op = opendoor;
 				with.data = ask1("Ped no.?") + ask1("Whither?") * 256;
 			}
@@ -1381,7 +1266,6 @@ void editportals() {   /* much t'same as editmagics */
 
 void editflags() {
 	char r;
-	;
 	cleardevice();
 	settextstyle(0, 0, 2);
 	setcolor(15);
@@ -1400,7 +1284,6 @@ void editflags() {
 		} while (!(set::of(range('A', 'Z'), '\33', '\15', '\11', eos).has(r)));
 		switch (r) {
 		case RANGE_26('A', 'Z'): {
-			;
 			if (pos(r, flags) > 0) {
 				;     /* flag is on- switch it off */
 				Delete(flags, pos(r, flags), 1);
@@ -1432,7 +1315,6 @@ void editflags() {
 void alsomenu() {
 	char r;
 	byte t;
-	;
 	do {
 		setactivepage(0);
 		setvisualpage(0);
@@ -1463,7 +1345,6 @@ void alsomenu() {
 		} while (!(set::of(range('1', '9'), 'S', 'L', '\0', eos).has(r)));
 		switch (r) {
 		case '1': {
-			;
 			do {
 				t = typeno("Which object\? (0-30)");
 			} while (!((t < 30) || (t == 255)));
@@ -1510,7 +1391,6 @@ void alsomenu() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	output << "*** ALSO ***" << NL;
 	output << NL;
 	output << "No. of screen to edit?";

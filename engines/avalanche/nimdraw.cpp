@@ -36,7 +36,6 @@ untyped_file f;
 byte bit;
 
 void plot(char ch, byte x) {
-	;
 	setcolor(blue);
 	outtextxy(x * 80 + 4, 0, ch);
 	outtextxy(x * 80 + 10, 0, ch);
@@ -56,7 +55,6 @@ void load() {
 	varying_string<12> check;
 	untyped_file f;
 	word s;
-	;
 	assign(f, "c:\\avalot\\nimstone.avd");
 	reset(f, 1);
 	seek(f, 85);
@@ -71,7 +69,6 @@ void load() {
 
 void spludge(integer x, integer y, string z) {
 	shortint dx, dy;
-	;
 	setcolor(15);
 	for (dx = -1; dx <= 1; dx ++)
 		for (dy = -1; dy <= 1; dy ++)
@@ -82,7 +79,6 @@ void spludge(integer x, integer y, string z) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "");
@@ -123,7 +119,6 @@ int main(int argc, const char *argv[]) {
 	for (gd = 0; gd <= 3; gd ++)
 		for (gm = 7; gm <= 29; gm ++)
 			for (bit = 0; bit <= 3; bit ++) {
-				;
 				port[0x3c4] = 2;
 				port[0x3ce] = 4;
 				port[0x3c5] = 1 << bit;
@@ -132,7 +127,6 @@ int main(int argc, const char *argv[]) {
 			}
 	for (gm = 99; gm <= 135; gm ++)
 		for (bit = 0; bit <= 3; bit ++) {
-			;
 			port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;

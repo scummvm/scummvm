@@ -50,7 +50,6 @@ untyped_file f;
 string strf(longint x) {
 	string q;
 	string strf_result;
-	;
 	str(x, q);
 	strf_result = q;
 	return strf_result;
@@ -59,11 +58,9 @@ string strf(longint x) {
 void load() {
 	byte a /*absolute $A000:1200*/;
 	byte bit;
-	;
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -76,7 +73,6 @@ void load() {
 
 void init() {
 	integer gd, gm;
-	;
 	output << "*** Tempo file creater ***" << NL;
 	output << "Enter place*.avd number:";
 	input >> screennum >> NL;
@@ -93,13 +89,11 @@ void init() {
 
 void choose() {
 	integer x1, y1, xl, yl;
-	;
 
 }
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	init();
 	choose();
 	return EXIT_SUCCESS;

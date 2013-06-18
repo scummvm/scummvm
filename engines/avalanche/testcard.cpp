@@ -40,14 +40,12 @@ searchrec r;
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
 
 	for (gd = 0; gd <= 14; gd ++)
 		for (gm = 0; gm <= 11; gm ++) {
-			;
 			setfillstyle(gm, gd + 1);
 			bar(gd * 43, gm * 12 + 10, 42 + gd * 43, gm * 12 + 21);
 		}
@@ -64,7 +62,6 @@ int main(int argc, const char *argv[]) {
 
 	findfirst(string("place") + filename + ".avd", anyfile, r);
 	if (doserror == 0) {
-		;
 		output << "*** ALREADY EXISTS! CANCELLED! ***" << NL;
 		input >> NL;
 		exit(0);
@@ -80,7 +77,6 @@ int main(int argc, const char *argv[]) {
 	rewrite(f, 1);
 	blockwrite(f, gd, 177); /* just anything */
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;

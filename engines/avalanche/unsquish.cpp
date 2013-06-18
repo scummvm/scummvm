@@ -43,9 +43,7 @@ buffertype *buffer;
 word bufsize;
 
 void putup(byte what) {
-	;
 	if (offset > 12080) {
-		;
 		bit += 1;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
@@ -64,7 +62,6 @@ void load_uncomp(string xx)       /* Load2, actually */
 	byte this_;
 	untyped_file f;
 	word place;
-	;
 	assign(f, string("v:place") + xx + ".avd");
 	reset(f, 1);
 	seek(f, 146);
@@ -79,7 +76,6 @@ void load_uncomp(string xx)       /* Load2, actually */
 	place = 1;
 
 	while (place <= bufsize) {
-		;
 		this_ = (*buffer)[place];
 		place += 1;
 		putup(this_);
@@ -371,14 +367,12 @@ static void get_code(integer &hash_code)
 
 		if (place > bufsize)  return;
 		else {
-			;
 			local_buf = (*buffer)[place];
 			place += 1;
 		}
 
 		if (place > bufsize)  return;
 		else {
-			;
 			input_code = (*buffer)[place];
 			place += 1;
 		}
@@ -393,7 +387,6 @@ static void get_code(integer &hash_code)
 
 		if (place > bufsize)  return;
 		else {
-			;
 			local_buf = (*buffer)[place];
 			place += 1;
 		}
@@ -517,7 +510,6 @@ void load_comp(string xx) {
 	byte this_;
 	untyped_file f;
 
-	;
 	string_table = new sttype;
 	inempty = true;
 	initialize_string_table();
@@ -544,7 +536,6 @@ void load_comp(string xx) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");

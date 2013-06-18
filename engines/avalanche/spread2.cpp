@@ -74,7 +74,6 @@ void setup() {
 	boolean ok;
 	longint id;
 	varying_string<2> sn;
-	;
 	output << "Sprite Editor 2 (c) 1993, Thomas Thurman." << NL;
 	bigpix_size = 3;
 	bigpix_gap = 5;
@@ -87,17 +86,14 @@ void setup() {
 		seek(sf, 177);
 		blockread(sf, id, 4);
 		if (id != shouldid) {
-			;
 			output << "That isn't a valid Trip5 spritefile." << NL;
 			output << "Please choose another." << NL;
 			output << NL;
 			ok = false;
 			close(sf);
 		} else {
-			;
 			blockread(sf, soa, 2);
 			if (soa != (cardinal)sizeof(a)) { /* to change this, just change the "type adx=" bit.*/
-				;
 				output << "That spritefile contains an unknown ADX field type." << NL;
 				output << "Please choose another." << NL;
 				output << NL;
@@ -118,20 +114,17 @@ void setup() {
 string strf(longint x) {
 	string q;
 	string strf_result;
-	;
 	str(x, q);
 	strf_result = q;
 	return strf_result;
 }
 
 void centre(byte y, string z) {
-	;
 	gotoxy(40 - length(z) / 2, y);
 	output << z;
 }
 
 void info(byte x, byte y, string p, string q) {
-	;
 	gotoxy(x, y);
 	textattr = 6;
 	output << p + ":ú";
@@ -142,7 +135,6 @@ void info(byte x, byte y, string p, string q) {
 }
 
 void colours(byte f, byte b) {
-	;
 	gotoxy(35, 11);
 	textattr = 6;
 	output << "Bubbles";
@@ -151,9 +143,7 @@ void colours(byte f, byte b) {
 }
 
 void adxinfo() {
-	;
 	{
-		;
 		info(5, 8, "Name", a.name);
 		info(35, 8, "Comment", a.comment);
 		info(5, 9, "Width", strf(a.xl));
@@ -168,7 +158,6 @@ void adxinfo() {
 }
 
 void status() {
-	;
 	textattr = 7;
 	clrscr;
 	textattr = 10;
@@ -190,7 +179,6 @@ void status() {
 
 void enterstring(string w, byte l, string &q) {
 	string t;
-	;
 	textattr = 13;
 	clrscr;
 	output << NL;
@@ -208,26 +196,22 @@ void entercolour(string w, byte &c);
 static byte fv;
 
 static void loseold() {
-	;
 	output << string('\10') + '\377';
 }
 
 
 static void drawnew() {
-	;
 	gotoxy(3 + fv * 5, 11);
 	output << '\30';
 }
 
 void entercolour(string w, byte &c) {
-	;
 	textattr = 13;
 	clrscr;
 	output << NL;
 	output << "New value for " << w << '?' << NL;
 	output << "  Use \32\33 to move about, Enter=OK, Esc=Cancel." << NL;
 	for (fv = 1; fv <= 15; fv ++) {
-		;
 		gotoxy(3 + fv * 5, 10);
 		textattr = fv;
 		output << 'þ';
@@ -241,7 +225,6 @@ void entercolour(string w, byte &c) {
 			return;
 			break; /* no change to c */
 		case '\15': {
-			;
 			c = fv;
 			adxmodi = true;
 			return;
@@ -250,14 +233,12 @@ void entercolour(string w, byte &c) {
 		case '\0':
 			switch (readkey()) {
 			case 'G': {
-				;
 				loseold();
 				fv = 0;
 				drawnew();
 			}
 			break; /* home */
 			case 'O': {
-				;
 				loseold();
 				fv = 15;
 				drawnew();
@@ -265,7 +246,6 @@ void entercolour(string w, byte &c) {
 			break; /* end */
 			case 'K':
 				if (fv > 0)  {
-					;
 					loseold();
 					fv -= 1;
 					drawnew();
@@ -273,7 +253,6 @@ void entercolour(string w, byte &c) {
 				break; /* left */
 			case 'M':
 				if (fv < 15)  {
-					;
 					loseold();
 					fv += 1;
 					drawnew();
@@ -289,7 +268,6 @@ void enternum(string w, byte &q) {
 	string t;
 	integer e;
 	byte r;
-	;
 	textattr = 13;
 	clrscr;
 	output << NL;
@@ -306,7 +284,6 @@ void enternum(string w, byte &q) {
 
 void editadx() {
 	char r;
-	;
 	do {
 		clrscr;
 		textattr = 10;
@@ -344,12 +321,10 @@ void editadx() {
 void saveit() {
 	char pak;
 	integer oldsoa;
-	;
 	textattr = 10;
 	clrscr;
 	centre(7, "Saving!");
 	if (adxmodi) {
-		;
 		centre(10, "ADX information being saved...");
 		seek(sf, 181); /* start of ADX info */
 		soa = sizeof(a);
@@ -367,7 +342,6 @@ void saveit() {
 }
 
 void quit() {
-	;
 	close(sf);
 	exit(0);
 }
@@ -375,7 +349,6 @@ void quit() {
 void getsilmani() {   /* Reclaims original sil & mani arrays */
 	byte x, y, z;
 	word offs;
-	;
 
 	/* Sil... */
 
@@ -384,7 +357,6 @@ void getsilmani() {   /* Reclaims original sil & mani arrays */
 	for (x = 0; x <= 3; x ++)
 		for (y = 0; y <= a.yl; y ++)
 			for (z = 0; z <= (a.xl / 8); z ++) {
-				;
 				offs = 5 + y * xw * 4 + xw * x + z;
 				sil[y][z] = aa[offs];
 			}
@@ -402,9 +374,7 @@ void explode(byte which)       /* 0 is the first one! */
 {
 	byte fv, ff;
 	word so1; /* size of one */
-	;
 	{
-		;
 		so1 = a.size - 6;
 		so1 += so1 / 4;
 		seek(sf, 183 + soa + so1 * which); /* First is at 221 */
@@ -423,9 +393,7 @@ void explode(byte which)       /* 0 is the first one! */
 void implode(byte which) {     /* Writes a pic back onto the disk */
 	byte fv, ff;
 	word so1; /* size of one */
-	;
 	{
-		;
 
 		getsilmani(); /* Restore original arrays */
 
@@ -445,10 +413,8 @@ void implode(byte which) {     /* Writes a pic back onto the disk */
 }
 
 void plotat(integer xx, integer yy) { /* Does NOT cameo the picture!*/
-	;
 	move(mani, aa[5], sizeof(mani));
 	{
-		;
 		aa[1] = a.xl;
 		aa[2] = 0;
 		aa[3] = a.yl;
@@ -460,17 +426,14 @@ void plotat(integer xx, integer yy) { /* Does NOT cameo the picture!*/
 void plotsil(integer xx, integer yy) { /* Plots silhouette- rarely used */
 	byte x, y, z;
 	word offs;
-	;
 	for (x = 0; x <= 3; x ++)
 		for (y = 0; y <= a.yl; y ++)
 			for (z = 0; z <= (a.xl / 8); z ++) {
-				;
 				offs = 5 + y * xw * 4 + xw * x + z;
 				aa[offs] = sil[y][z];
 			}
 
 	{
-		;
 		aa[1] = a.xl;
 		aa[2] = 0;
 		aa[3] = a.yl;
@@ -482,7 +445,6 @@ void plotsil(integer xx, integer yy) { /* Plots silhouette- rarely used */
 }
 
 void style(byte x) {
-	;
 	if (x == 16)
 		/*setfillstyle(pattern,8)*/setfillpattern(grey50, 8);
 	else
@@ -490,7 +452,6 @@ void style(byte x) {
 }
 
 void bigpixel(integer x, integer y) {
-	;
 	if (getpixel(500 + x, 150 + y) == 15)
 		/*setfillstyle(pattern,8)*/setfillpattern(grey50, 8);
 	else
@@ -501,7 +462,6 @@ void bigpixel(integer x, integer y) {
 }
 
 void subplot(byte y, integer x, char c) {
-	;
 	setfillstyle(1, 0);
 	bar(x, 0, x + 9, 170);
 	outtextxy(x + 5, y * 10 + 5, c);
@@ -512,28 +472,23 @@ void plotleft()  {
 	subplot(leftc, 239, '\32');
 }
 void plotright() {
-	;
 	subplot(rightc, 351, '\33');
 }
 
 void plotbig(byte x, byte y, byte c) {
-	;
 	style(c);
 	bar(x * bigpix_gap, y * bigpix_gap,
 	    x * bigpix_gap + bigpix_size, y * bigpix_gap + bigpix_size);
 	if (c == 16) {
-		;
 		putpixel(500 + x, 150 + y, 15);
 		putpixel(500 + x, 50 + y, 0);
 	} else {
-		;
 		putpixel(500 + x, 150 + y, 0);
 		putpixel(500 + x, 50 + y, c);
 	}
 }
 
 void changepic() {
-	;
 	mx = mx / bigpix_gap;
 	my = my / bigpix_gap;
 	if ((mx > a.xl) || (my > a.yl))  return;
@@ -544,22 +499,18 @@ void changepic() {
 }
 
 void changecol() {
-	;
 	my = my / 10;
 	if (my > 16)  return;
 	if (mkey == left) {
-		;
 		leftc = my;
 		plotleft();
 	} else {
-		;
 		rightc = my;
 		plotright();
 	}
 }
 
 void showcutpic() {
-	;
 	setfillstyle(5, 1);
 	bar(20, 160, 40 + clipx, 180 + clipy);
 	putimage(30, 170, clip[2], andput);
@@ -568,7 +519,6 @@ void showcutpic() {
 
 void movesquare(integer &xc, integer &yc, integer xl, integer yl) {
 	integer x2, y2;
-	;
 	do {
 		x2 = xl + xc;
 		y2 = yl + yc;
@@ -612,7 +562,6 @@ void switch_(integer &v1, integer &v2)
 /* Swaps over the values of v1 and v2. */
 {
 	integer temp;
-	;
 	temp = v1;
 	v1 = v2;
 	v2 = temp;
@@ -620,7 +569,6 @@ void switch_(integer &v1, integer &v2)
 
 void choosesquare(integer &x1, integer &y1, integer &x2, integer &y2) {
 	boolean tl;
-	;
 	do {
 		setcolor(15);
 		do {
@@ -655,7 +603,6 @@ void choosesquare(integer &x1, integer &y1, integer &x2, integer &y2) {
 			tl = ! tl;
 			break;
 		case '\15': {
-			;
 			if (x1 > x2)  switch_(x1, x2); /* Get the square the right way up. */
 			if (y1 > y2)  switch_(y1, y2);
 			y2 -= y1;
@@ -667,7 +614,6 @@ void choosesquare(integer &x1, integer &y1, integer &x2, integer &y2) {
 		if (x1 < 0)  x1 = 0;
 		if (y1 < 0)  y1 = 0;
 		{
-			;
 			if (y2 > a.yl)  y2 = a.yl;
 			if (x2 > a.xl)  x2 = a.xl;
 		}
@@ -676,9 +622,7 @@ void choosesquare(integer &x1, integer &y1, integer &x2, integer &y2) {
 
 void paste() {
 	byte x, y;
-	;
 	if (! boardfull) {
-		;
 		output << '\7';
 		return;
 	}
@@ -688,17 +632,14 @@ void paste() {
 	putimage(500 + xofs, 150 + yofs, clip[2], 0);
 	for (x = 0; x <= a.xl; x ++)
 		for (y = 0; y <= a.yl; y ++) {
-			;
 			bigpixel(x, y);
 		}
 }
 
 void cut() {
-	;
 	xofs = 0;
 	yofs = 0; /* From the TL. */
 	{
-		;
 		getimage(500, 50, 500 + a.xl, 50 + a.yl, clip[1]);
 		getimage(500, 150, 500 + a.xl, 150 + a.yl, clip[2]);
 		clipx = a.xl;
@@ -709,9 +650,7 @@ void cut() {
 }
 
 void cutsome() {
-	;
 	{
-		;
 		choosesquare(xofs, yofs, clipx, clipy);
 		getimage(500 + xofs, 50 + yofs, 500 + xofs + clipx, 50 + yofs + clipy, clip[1]);
 		getimage(500 + xofs, 150 + yofs, 500 + xofs + clipx, 150 + yofs + clipy, clip[2]);
@@ -724,7 +663,6 @@ boolean confirm(char c, string x) {
 	byte col;
 	char groi;
 	boolean confirm_result;
-	;
 	while (keypressed())  groi = readkey();
 	x = x + "? " + c + " to confirm.";
 	col = 1;
@@ -741,12 +679,10 @@ boolean confirm(char c, string x) {
 }
 
 void checkbutton(byte which) {
-	;
 	my = (my - 12) / 25;
 	switch (my) {
 	case 0:
 		if (confirm('S', "Save"))  {
-			;
 			implode(which);
 			lmo = true;
 		}
@@ -767,22 +703,18 @@ void checkbutton(byte which) {
 }
 
 void animate() {
-	;
 }
 
 void undo() {
-	;
 }
 
 void fliplr();
 
 static void flipline(integer x1, integer x2, integer y) {
 	integer fv, ff;
-	;
 	for (fv = x1; fv <= x2; fv ++) putpixel(fv, 0, getpixel(fv, y));
 	ff = x2;
 	for (fv = x1; fv <= x2; fv ++) {
-		;
 		putpixel(fv, y, getpixel(ff, 0));
 		ff -= 1;
 	}
@@ -790,9 +722,7 @@ static void flipline(integer x1, integer x2, integer y) {
 
 void fliplr() {   /* Flips left-to-right. */
 	integer fv, ff;
-	;
 	for (fv = 0; fv <= a.yl; fv ++) {
-		;
 		flipline(500, 500 + a.xl, 50 + fv);
 		flipline(500, 500 + a.xl, 150 + fv);
 	}
@@ -803,10 +733,8 @@ void fliplr() {   /* Flips left-to-right. */
 
 void change_colours() {   /* Swaps one colour with another. */
 	byte fv, ff;
-	;
 
 	if ((leftc == 16) || (rightc == 16)) { /* See-through can't be one of the colours. */
-		;
 		output << '\7'; /* Bleep! */
 		return;
 	}
@@ -823,19 +751,16 @@ void change_colours() {   /* Swaps one colour with another. */
 
 void redraw() {
 	byte x, y;
-	;
 	setfillstyle(1, 0);
 	bar(0, 0, 250, 200);
 
 	for (x = 0; x <= a.xl; x ++)
 		for (y = 0; y <= a.yl; y ++) {
-			;
 			bigpixel(x, y);
 		}
 }
 
 void parse(char c) {     /* Parses keystrokes */
-	;
 	switch (upcase(c)) {
 	case '\26':
 	case 'P':
@@ -863,7 +788,6 @@ void parse(char c) {     /* Parses keystrokes */
 		break;
 	case '<':
 		if (bigpix_size > 1) {
-			;
 			bigpix_size -= 1;
 			bigpix_gap -= 1;
 			redraw();
@@ -871,7 +795,6 @@ void parse(char c) {     /* Parses keystrokes */
 		break;
 	case '>':
 		if (bigpix_size < 8) {
-			;
 			bigpix_size += 1;
 			bigpix_gap += 1;
 			redraw();
@@ -885,18 +808,15 @@ void parse(char c) {     /* Parses keystrokes */
 
 void editone(byte which) {
 	byte x, y;
-	;
 	cleardevice();
 	explode(which);
 	plotat(500, 50);
 	plotsil(500, 150);
 	for (x = 0; x <= a.xl; x ++)
 		for (y = 0; y <= a.yl; y ++) {
-			;
 			bigpixel(x, y);
 		}
 	for (y = 0; y <= 16; y ++) {
-		;
 		style(y);
 		bar(251, y * 10 + 1, 349, y * 10 + 9);
 		rectangle(250, y * 10, 350, y * 10 + 10);
@@ -929,7 +849,6 @@ void editone(byte which) {
 		off;
 
 		if (! lmo) {
-			;
 			getbuttonstatus;
 
 			switch (mx) {
@@ -957,13 +876,11 @@ static shortint first;
 
 static void drawup(byte &which) {
 	byte fv;
-	;
 	whichc = chr(which + 48);
 	cleardevice();
 	outtextxy(320, 10, string("Edit stride ") + whichc);
 	first = (which - 1) * a.seq - 1;
 	for (fv = 1; fv <= a.seq; fv ++) {
-		;
 		explode(fv + first);
 		plotat(fv * 73, 77);
 		outtextxy(17 + fv * 73, 64, chr(fv + 48));
@@ -973,12 +890,10 @@ static void drawup(byte &which) {
 
 void editstride(byte which) {
 	char r;
-	;
 	drawup(which);
 	do {
 		r = readkey();
 		if ((r > '0') && (r <= chr(a.seq + 48))) {
-			;
 			editone(ord(r) - 48 + first);
 			drawup(which);
 		}
@@ -991,7 +906,6 @@ static byte nds; /* num div seq */
 
 static void drawup1() {
 	byte fv;
-	;
 	setgraphmode(0);
 	directvideo = false;
 	settextjustify(1, 1);
@@ -1000,7 +914,6 @@ static void drawup1() {
 	outtextxy(320, 10, "Edit pictures...");
 	outtextxy(320, 40, "(Usually, 1=away, 2=right, 3=towards, 4=left.)");
 	for (fv = 1; fv <= nds; fv ++) {
-		;
 		explode((fv - 1)*a.seq);
 		plotat(fv * 73, 100);
 		outtextxy(17 + fv * 73, 87, chr(fv + 48));
@@ -1013,12 +926,10 @@ void editpics() {
 	char r;
 	byte which;
 	integer e;
-	;
 	drawup1();
 	do {
 		r = readkey();
 		if ((r > '0') && (r <= chr(nds + 48))) {
-			;
 			editstride(ord(r) - 48);
 			drawup1();
 		}
@@ -1030,7 +941,6 @@ void titles() {
 	integer gd, gm;
 	char pak;
 	word wait;
-	;
 	gd = 3;
 	gm = 1;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -1040,23 +950,19 @@ void titles() {
 	wait = 0;
 	do {
 		for (gm = 0; gm <= 15; gm ++) {
-			;
 			setcolor(15 - gm);
 			for (gd = 0; gd <= (150 - gm * 10); gd ++) {
-				;
 				outtextxy(320, 124 - gd, "Spread 2");
 				outtextxy(320, 125 + gd, "Spread 2");
 				if ((gd == 5) && (gm == 0))  wait = 2345;
 				if ((gd == 6) && (gm == 0))  wait = 0;
 				do {
 					if (keypressed()) {
-						;
 						while (keypressed())  pak = readkey();
 						restorecrtmode();
 						return;
 					}
 					if (wait > 0)  {
-						;
 						wait -= 1;
 						delay(1);
 					}
@@ -1068,7 +974,6 @@ void titles() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	titles();
 	setup();
 	do {

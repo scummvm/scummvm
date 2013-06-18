@@ -66,14 +66,12 @@ pointer a_p;
 word a_s;
 
 void open_chunk() {
-	;
 	assign(chunkfile, "v:spooky.avd");
 	rewrite(chunkfile, 1);
 	blockwrite(chunkfile, chunkheader, sizeof(chunkheader));
 }
 
 void close_chunk() {
-	;
 	close(chunkfile);
 }
 
@@ -83,10 +81,8 @@ void grab(integer x1, integer y1, integer x2, integer y2, flavourtype how, integ
 	integer y;
 	byte bit;
 
-	;
 #ifndef DRYRUN
 	{
-		;
 		cb.flavour = how;
 		switch (newx) {
 		case n:
@@ -116,7 +112,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, flavourtype how, integ
 	}
 
 	if (how != ch_natural) {
-		;
 		s = imagesize(x1, y1, x2, y2);
 		getmem(p, s);
 		getimage(x1, y1, x2, y2, p);
@@ -137,7 +132,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, flavourtype how, integ
 		blockwrite(chunkfile, p, s);
 		break;
 	case ch_ega: {
-		;
 		setactivepage(1);
 		cleardevice();
 		putimage(0, 0, p, 0);
@@ -145,7 +139,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, flavourtype how, integ
 
 		for (bit = 0; bit <= 3; bit ++)
 			for (y = 0; y <= cb.yl; y ++) {
-				;
 				port[0x3c4] = 2;
 				port[0x3ce] = 4;
 				port[0x3c5] = 1 << bit;
@@ -165,7 +158,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, flavourtype how, integ
 
 		for (bit = 2; bit <= 3; bit ++) /* << Bit to grab? */
 			for (y = 0; y <= cb.yl; y ++) {
-				;
 				port[0x3c4] = 2;
 				port[0x3ce] = 4;
 				port[0x3c5] = 1 << bit;
@@ -185,7 +177,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, flavourtype how, integ
 
 		for (bit = 3; bit <= 3; bit ++)
 			for (y = 0; y <= cb.yl; y ++) {
-				;
 				port[0x3c4] = 2;
 				port[0x3ce] = 4;
 				port[0x3c5] = 1 << bit;
@@ -206,7 +197,6 @@ void grab(integer x1, integer y1, integer x2, integer y2, flavourtype how, integ
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 #ifndef DRYRUN
 	open_chunk();
 #endif
@@ -217,7 +207,6 @@ int main(int argc, const char *argv[]) {
 	assign(f, "c:\\sleep4\\colour.ptx");
 	reset(f, 1);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;

@@ -45,12 +45,10 @@ void load() {
 	byte a0 /*absolute $A000:1200*/;
 	byte bit;
 	untyped_file f;
-	;
 	assign(f, "d:thingtmp.avd");
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -63,7 +61,6 @@ void load() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
@@ -79,14 +76,12 @@ int main(int argc, const char *argv[]) {
 	gm = 20;
 
 	while (noo <= number_of_objects) {
-		;
 		getimage(gd, gm, gd + 59, gm + 29, p);
 		putimage(gd, gm, p, notput);
 		blockwrite(f, p, picsize);
 		gd += 70;
 
 		if (gd == 640) {
-			;
 			gd = 10;
 			gm += 40;
 		}

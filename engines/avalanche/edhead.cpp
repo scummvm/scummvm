@@ -72,7 +72,6 @@ edhead e;
 
 void info(string x) {     /* info on .ASG files */
 	varying_string<40> describe;
-	;
 	assign(f, x);
 	/*$I-*/ reset(f, 1);
 	seek(f, 47);
@@ -99,7 +98,6 @@ void info(string x) {     /* info on .ASG files */
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	info("tt.asg");
 
 	output << "Filename: " << x << NL;

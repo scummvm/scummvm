@@ -39,7 +39,6 @@ void loadscreen(string nam) {
 	untyped_file f;
 	word s;
 	string check;
-	;
 	assign(f, nam);
 	reset(f, 1);
 	blockread(f, check, 41);
@@ -47,7 +46,6 @@ void loadscreen(string nam) {
 	blockread(f, check, 31);
 	s = imagesize(0, 0, getmaxx(), 75);
 	for (z = 1; z <= 2; z ++) {
-		;
 		getmem(a[z], s);
 		blockread(f, a[z], s);
 		setactivepage(0);
@@ -61,12 +59,10 @@ void load2(string name) {
 	byte a /*absolute $A000:1200*/;
 	byte bit;
 	untyped_file f;
-	;
 	assign(f, name);
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -83,13 +79,11 @@ void save2(string name) {
 	byte a /*absolute $A000:1200*/;
 	byte bit;
 	untyped_file f;
-	;
 	assign(f, name);
 	rewrite(f, 1);
 	blockwrite(f, header[1], 146); /* really 90 */
 	blockwrite(f, desc, 31);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -101,7 +95,6 @@ void save2(string name) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	output << "Filename?";
 	input >> fn1 >> NL;
 	output << "New name?";

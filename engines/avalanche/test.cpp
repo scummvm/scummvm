@@ -34,7 +34,6 @@ const array<1, 22, char> signature = string("*AVALOT* v1.00 ±tt± ") + '\3' + '\0
 pointer saveint1f;
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	getintvec(0x1f, saveint1f);
 	setintvec(0x1f, &signature);
 	swapvectors;

@@ -191,7 +191,6 @@ void do_stuff() {
 void setcol(byte which, byte what)
 /*var dummy:byte;*/
 {
-	;
 	/* setpalette(which,what);
 	 asm
 	(*  mov dx,$3DA;

@@ -36,7 +36,6 @@ boolean test;
 boolean the_cows_come_home() {
 	registers rmove, rclick;
 	boolean the_cows_come_home_result;
-	;
 	rmove.ax = 11;
 	intr(0x33, rmove);
 	rclick.ax = 3;
@@ -51,12 +50,10 @@ boolean the_cows_come_home() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	test = the_cows_come_home();
 	textattr = 0;
 	clrscr;
 	do {
-		;
 	} while (!the_cows_come_home());
 	textattr = 30;
 	clrscr;

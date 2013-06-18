@@ -56,7 +56,6 @@ void load() {
 	untyped_file f;
 	byte gd, gm, sort, n;
 	pointer p, q;
-	;
 	assign(f, string("v:sprite") + sn + ".avd");
 	reset(f, 1);
 	seek(f, 59);
@@ -64,7 +63,6 @@ void load() {
 	blockread(f, bigsize, 2);
 	setactivepage(3);
 	for (sort = 0; sort <= 1; sort ++) {
-		;
 		mark(q);
 		getmem(p, bigsize);
 		blockread(f, p, bigsize);
@@ -73,7 +71,6 @@ void load() {
 		n = 1;
 		for (gm = 0; gm <= (a.num / a.seq) - 1; gm ++) /* directions */
 			for (gd = 0; gd <= a.seq - 1; gd ++) { /* steps */
-				;
 				getmem(pic[n][sort], a.size); /* grab the memory */
 				getimage((gm / 2) * (a.xl * 6) + gd * a.xl, (gm % 2)*a.yl,
 				         (gm / 2) * (a.xl * 6) + gd * a.xl + a.xl - 1, (gm % 2)*a.yl + a.yl - 1,
@@ -91,9 +88,7 @@ void save() {
 	pointer p, q;
 	string x;
 	integer txl, tyl;
-	;
 	{
-		;
 		txl = a.seq * a.xl * 2;
 		tyl = a.yl * 2;
 	}
@@ -107,13 +102,11 @@ void save() {
 	blockwrite(f, bigsize, 2);
 	setactivepage(3);
 	for (sort = 0; sort <= 1; sort ++) {
-		;
 		mark(q);
 		getmem(p, bigsize);
 		n = 1;
 		for (gm = 0; gm <= (a.num / a.seq) - 1; gm ++) /* directions */
 			for (gd = 0; gd <= a.seq - 1; gd ++) { /* steps */
-				;
 				putimage((gm / 2) * (a.xl * 6) + gd * a.xl, (gm % 2)*a.yl,
 				         pic[n][sort], 0); /* drop the pic */
 				n += 1;
@@ -128,7 +121,6 @@ void save() {
 
 void setup() {
 	integer gd, gm;
-	;
 	output << "SPREAD (c) 1992, Thomas Thurman." << NL;
 	output << NL;
 	output << "Enter number of SPRITE*.AVD file to edit:";
@@ -142,16 +134,13 @@ void setup() {
 string strf(longint x) {
 	string q;
 	string strf_result;
-	;
 	str(x, q);
 	strf_result = q;
 	return strf_result;
 }
 
 void likethis() {
-	;
 	{
-		;
 		setfillstyle(1, a.bgc);
 		setcolor(a.fgc);
 		settextstyle(0, 0, 1);
@@ -162,7 +151,6 @@ void likethis() {
 
 void values() {
 	byte fv;
-	;
 	settextstyle(2, 0, 9);
 	setcolor(14);
 	outtextxy(277, 0, string("Spread: editing ") + sn);
@@ -171,7 +159,6 @@ void values() {
 	settextstyle(2, 0, 7);
 	outtextxy(0, 30, "Views:");
 	{
-		;
 		outtextxy(0, 50, string("N: Name: ") + a.name);
 		outtextxy(0, 70, string("No. of pictures: ") + strf(a.num) + " (" + strf(a.num / a.seq) + " ways)");
 		outtextxy(0, 90, string("XY: Size: ") + strf(a.xl) + 'x' + strf(a.yl));
@@ -193,11 +180,9 @@ void values() {
 byte ccol() {
 	byte fv;
 	byte ccol_result;
-	;
 	restorecrtmode();
 	output << "Choose a colour- one of these..." << NL;
 	for (fv = 0; fv <= 15; fv ++) {
-		;
 		textattr = 14;
 		output << fv << ") ";
 		textattr = fv;
@@ -218,7 +203,6 @@ byte ccol() {
 string cstr(string oc) {
 	string x;
 	string cstr_result;
-	;
 	restorecrtmode();
 	output << string("Old choice is: <") + oc + '>' << NL;
 	output << NL;
@@ -239,14 +223,12 @@ longint cnum(longint on) {
 	longint q;
 	integer e;
 	longint cnum_result;
-	;
 	restorecrtmode();
 	do {
 		output << "Old value is: " << on << '.' << NL;
 		output << string("New choice, or Enter for no change?") + prompt;
 		input >> x >> NL;
 		if (x == "") {
-			;
 			e = 0;  /* must be OK here */ q = on;
 		} else val(x, q, e);
 		if (e != 0)  output << x << " isn't a number, silly!" << NL;
@@ -258,7 +240,6 @@ longint cnum(longint on) {
 
 void animate() {
 	byte facing, step, slow, fv;
-	;
 	cleardevice();
 	settextstyle(0, 0, 2);
 	setcolor(12);
@@ -275,13 +256,11 @@ void animate() {
 		if (keypressed())
 			switch (upcase(readkey())) {
 			case '\15': {
-				;
 				facing += 1;
 				if (facing * a.seq >= a.num)  facing = 0;
 			}
 			break;
 			case '\33': {
-				;
 				cleardevice();
 				return;
 			}
@@ -303,14 +282,12 @@ void animate() {
 
 byte tabpel(integer x, integer y) {
 	byte tabpel_result;
-	;
 	if (getpixel(400 + x, 17 + y) == 15)  tabpel_result = 17;
 	else tabpel_result = getpixel(500 + x, 17 + y);
 	return tabpel_result;
 }
 
 void bigpixel(integer x, integer y, byte size, byte col) {
-	;
 	if (col == 17)  setfillstyle(9, 8);
 	else setfillstyle(1, col);
 	bar(x * size, y * size, x * size + size - 2, y * size + size - 2);
@@ -318,9 +295,7 @@ void bigpixel(integer x, integer y, byte size, byte col) {
 
 void blowup(byte n) {
 	byte fv, x, y, xyl;
-	;
 	{
-		;
 		for (fv = 0; fv <= 1; fv ++) putimage(400 + fv * 100, 17, pic[n][fv], 0);
 		xyl = 200 / a.yl;
 		for (x = 0; x <= a.xl; x ++)
@@ -333,7 +308,6 @@ void edit();
 
 static void putnum(byte x, byte p) {
 	varying_string<2> z;
-	;
 	str(x, z);
 	outtextxy(x * 53 + 17, 87, z);
 	putimage(x * 53, 100, pic[p][1], 0);
@@ -341,7 +315,6 @@ static void putnum(byte x, byte p) {
 
 
 static void title() {
-	;
 	cleardevice();
 	setcolor(11);
 	settextstyle(0, 0, 2);
@@ -352,9 +325,7 @@ static void title() {
 
 void edit() {
 	byte fv, ra, rb;
-	;
 	{
-		;
 		title();
 		for (fv = 1; fv <= (a.num / a.seq); fv ++) putnum(fv, fv * a.seq);
 		do {
@@ -375,7 +346,6 @@ void edit() {
 
 void pickone() {
 	char r;
-	;
 	r = upcase(readkey());
 	switch (r) {
 	case 'N':
@@ -408,7 +378,6 @@ void pickone() {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	setup();
 	do {
 		values();

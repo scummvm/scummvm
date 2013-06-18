@@ -111,7 +111,6 @@ void draw_also_lines() {
 		on_virtual();
 		break;
 	case 2 :
-		;
 		break; /* zzzz, it was off anyway */
 	case 3 :
 		on();
@@ -140,7 +139,6 @@ static void unscramble();
 
 static void scram1(string &x) {
 	byte fz;
-	;
 	for (fz = 1; fz <= length(x); fz ++)
 		x[fz] = chr(ord(x[fz]) ^ 177);
 }
@@ -1396,7 +1394,6 @@ void mblit(byte x1, byte y1, byte x2, byte y2, byte f, byte t) /* assembler; */
   pop ds; { Get it back again (or we'll be in trouble with TP!) }
 */
 {
-	;
 }
 
 void blitfix() {
@@ -1651,7 +1648,6 @@ asm
 
  @TheEnd: */
 {
-	;
 }
 
 void sprite_run()

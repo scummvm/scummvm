@@ -43,20 +43,15 @@ circle c;
 file<circle> fc;
 
 void melt(byte c) {
-	;
 	for (gd = 1; gd <= 8000; gd ++) {
-		;
 		mem[0xa000 * b[gd]] = c;
 		if ((gd % 17) == 0)  delay(1);
 	}
 }
 
 void magicirc(byte cc) {
-	;
 	for (gd = 1; gd <= 16401; gd ++) {
-		;
 		if (c[gd] != nextcode) {
-			;
 			if (odd(c[gd]))  mem[0xa000 * c[gd] / 2] = cc;
 		} else
 			delay(1);
@@ -65,7 +60,6 @@ void magicirc(byte cc) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	r.ax = 13;
 	intr(0x10, r);
 	assign(f, "d:shuffle.avd");

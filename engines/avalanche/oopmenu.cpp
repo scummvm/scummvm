@@ -62,7 +62,6 @@ byte fv;
 
 void chalk(integer x, integer y, char t, string z) {
 	byte p;
-	;
 	outtextxy(x, y, z);
 	p = pos(t, z);
 	if (p == 0)  return;
@@ -71,7 +70,6 @@ void chalk(integer x, integer y, char t, string z) {
 }
 
 void say(integer x, integer y, char t, string z, byte f, byte b) {
-	;
 	settextjustify(0, 2);
 	setfillstyle(1, b);
 	setcolor(f);
@@ -82,7 +80,6 @@ void say(integer x, integer y, char t, string z, byte f, byte b) {
 void mblit(integer x1, integer y1, integer x2, integer y2, byte f, byte t) { /* NOT The Minstrel Blitter */
 	pointer p, q;
 	word s;
-	;
 	mark(q);
 	s = imagesize(x1, y1, x2, y2);
 	getmem(p, s);
@@ -95,7 +92,6 @@ void mblit(integer x1, integer y1, integer x2, integer y2, byte f, byte t) { /* 
 }
 
 void onemenu::start_afresh() {
-	;
 	number = 0;
 	width = 0;
 	firstlix = false;
@@ -104,20 +100,17 @@ void onemenu::start_afresh() {
 }
 
 onemenu *onemenu::init() {
-	;
 	menunow = false;
 	return this;
 }
 
 void onemenu::opt(string n, char tr, string key, boolean val) {
 	integer l;
-	;
 	number += 1;
 	l = textwidth(n + key) + 30;
 	if (width < l)  width = l;
 	{
 		optiontype &with = oo[number];
-		;
 		with.title = n;
 		with.trigger = tr;
 		with.shortcut = key;
@@ -126,14 +119,11 @@ void onemenu::opt(string n, char tr, string key, boolean val) {
 }
 
 void onemenu::displayopt(byte y, byte b, byte f, byte d) {
-	;
 	{
 		optiontype &with = oo[y];
-		;
 		if (with.valid)  setcolor(f);
 		else setcolor(d);
 		if (b != 177) {
-			;
 			setfillstyle(1, b);
 			bar(flx1, 3 + y * 10, flx2, 12 + y * 10);
 		}
@@ -146,7 +136,6 @@ void onemenu::displayopt(byte y, byte b, byte f, byte d) {
 
 void onemenu::display() {
 	byte y;
-	;
 	setfillstyle(1, menu_b);
 	setcolor(menu_border);
 	firstlix = true;
@@ -169,7 +158,6 @@ void onemenu::display() {
 }
 
 void onemenu::wipe() {
-	;
 	{
 		headtype &with = m.ddms[o.menunum];
 		say(flx1 + 2, 1, with.trigger, with.title, menu_f, menu_b);
@@ -181,9 +169,7 @@ void onemenu::wipe() {
 
 void onemenu::movehighlight(shortint add) {
 	shortint hn;
-	;
 	if (add != 0) {
-		;
 		hn = highlightnum + add;
 		if ((hn < 0) || (hn >= (unsigned char)number))  return;
 		highlightnum = hn;
@@ -196,7 +182,6 @@ void onemenu::movehighlight(shortint add) {
 }
 
 void onemenu::lightup() {  /* This makes the menu highlight follow the mouse.*/
-	;
 	if ((mousex < flx1) || (mousex > flx2)
 	        || (mousey <= 12) || (mousey > fly - 3))  return;
 	highlightnum = (mousey - 12) / 10;
@@ -205,7 +190,6 @@ void onemenu::lightup() {  /* This makes the menu highlight follow the mouse.*/
 }
 
 void onemenu::select(byte n) {    /* Choose which one you want. */
-	;
 	if (! oo[n + 1].valid)  return;
 	choicenum = n;
 	m.ddms[menunum].do_choose();
@@ -214,14 +198,12 @@ void onemenu::select(byte n) {    /* Choose which one you want. */
 
 void onemenu::keystroke(char c) {
 	byte fv;
-	;
 	c = upcase(c);
 	for (fv = 1; fv <= number; fv ++)
 		if (upcase(oo[fv].trigger) == c)  select(fv - 1);
 }
 
 void bleep() {
-	;
 	sound(177);
 	delay(7);
 	nosound;
@@ -229,7 +211,6 @@ void bleep() {
 
 headtype *headtype::init
 (char trig, char alttrig, string name, byte p, proc dw, proc dc) {
-	;
 	trigger = trig;
 	alttrigger = alttrig;
 	title = name;
@@ -242,15 +223,12 @@ headtype *headtype::init
 }
 
 void headtype::display() {
-	;
 	say(xpos, 1, trigger, title, menu_f, menu_b);
 }
 
 void headtype::highlight() {
-	;
 	say(xpos, 1, trigger, title, highlight_f, highlight_b);
 	{
-		;
 		o.left = xpos;
 		o.menunow = true;
 		o.menunum = position;
@@ -259,9 +237,7 @@ void headtype::highlight() {
 
 boolean headtype::extdparse(char c) {
 	boolean extdparse_result;
-	;
 	if (c != alttrigger)  {
-		;
 		extdparse_result = true;
 		return extdparse_result;
 	}
@@ -270,20 +246,17 @@ boolean headtype::extdparse(char c) {
 }
 
 menuset *menuset::init() {
-	;
 	howmany = 0;
 	return this;
 }
 
 void menuset::create(char t, string n, char alttrig, proc dw, proc dc) {
-	;
 	howmany += 1;
 	ddms[howmany].init(t, alttrig, n, howmany, dw, dc);
 }
 
 void menuset::update() {
 	byte fv;
-	;
 	setfillstyle(1, menu_b);
 	bar(0, 0, 640, 10);
 	for (fv = 1; fv <= howmany; fv ++) ddms[fv].display();
@@ -291,7 +264,6 @@ void menuset::update() {
 
 void menuset::extd(char c) {
 	byte fv;
-	;
 	fv = 1;
 	while ((fv <= howmany) && (ddms[fv].extdparse(c)))  fv += 1;
 	if (fv > howmany)  return;
@@ -300,16 +272,13 @@ void menuset::extd(char c) {
 
 void menuset::getmenu(integer x) {
 	byte fv;
-	;
 	fv = 0;
 	do {
 		fv += 1;
 		if ((x > ddms[fv].xpos - 3) && (x < ddms[fv].xright)) {
 			headtype &with = ddms[fv];
 			{
-				;
 				if (o.menunow) {
-					;
 					wipe(); /* get rid of menu */
 					if (o.menunum == with.position)  return; /* click on own highlight */
 				}
@@ -322,19 +291,15 @@ void menuset::getmenu(integer x) {
 }
 
 void parsekey(char r, char re) {
-	;
 	switch (r) {
 	case '\0': {
-		;
 		switch (re) {
 		case 'K': {
-			;
 			wipe();
 			m.getmenu((o.menunum - 2)*spacing + indent);
 		}
 		break;
 		case 'M': {
-			;
 			wipe();
 			m.getmenu((o.menunum * spacing + indent));
 		}
@@ -357,7 +322,6 @@ void parsekey(char r, char re) {
 		select(o.highlightnum);
 		break;
 	default: {
-		;
 		if (o.menunow)  keystroke(r);
 		else
 			kbuffer = kbuffer + r + re;

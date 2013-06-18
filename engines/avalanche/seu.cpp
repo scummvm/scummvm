@@ -874,7 +874,6 @@ void escape_check() {
 
 				memw[storage_seg * storage_ofs + 1] = 0;
 				do {
-					;
 				} while (!(memw[storage_seg * storage_ofs + 1] > 9));
 
 				setvisualpage(1 - cp);
@@ -882,14 +881,12 @@ void escape_check() {
 
 				memw[storage_seg * storage_ofs + 1] = 0;
 				do {
-					;
 				} while (!(memw[storage_seg * storage_ofs + 1] > 72));
 
 				setvisualpage(cp);
 
 				memw[storage_seg * storage_ofs + 1] = 0;
 				do {
-					;
 				} while (!(memw[storage_seg * storage_ofs + 1] > 9));
 
 				time1 = 0;
@@ -973,7 +970,6 @@ int main(int argc, const char *argv[]) {
 		read_kbd();
 		flippage();
 		do {
-			;
 		} while (!(memw[storage_seg * storage_ofs + 1] > 0));
 
 	} while (!(time1 == 0));

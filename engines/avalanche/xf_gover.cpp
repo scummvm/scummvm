@@ -32,12 +32,10 @@ namespace Avalanche {
 void load() {
 	byte a;  /*absolute $A000:1200;*/ byte bit;
 	untyped_file f;
-	;
 	assign(f, "avagame.avd");
 	reset(f, 1);
 	seek(f, 177);
 	for (bit = 0; bit <= 3; bit ++) {
-		;
 		port[0x3c4] = 2;
 		port[0x3ce] = 4;
 		port[0x3c5] = 1 << bit;
@@ -93,7 +91,6 @@ void dump_to_file(byte x1, byte y1, byte x2, byte y2, string fn) {
 
 	for (y = y1; y <= y2; y ++)
 		for (bit = 0; bit <= 3; bit ++) {
-			;
 			port[0x3c4] = 2;
 			port[0x3ce] = 4;
 			port[0x3c5] = 1 << bit;

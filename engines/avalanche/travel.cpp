@@ -35,13 +35,11 @@ integer gd, gm;
 void zoomout(integer x, integer y) {
 	integer x1, y1, x2, y2;
 	byte fv;
-	;
 	setcolor(white);
 	setwritemode(xorput);
 	setlinestyle(dottedln, 0, 1);
 
 	for (fv = 1; fv <= 20; fv ++) {
-		;
 		x1 = x - (x / 20) * fv;
 		y1 = y - ((y - 10) / 20) * fv;
 		x2 = x + (((639 - x) / 20) * fv);
@@ -56,13 +54,11 @@ void zoomout(integer x, integer y) {
 void zoomin(integer x, integer y) {
 	integer x1, y1, x2, y2;
 	byte fv;
-	;
 	setcolor(white);
 	setwritemode(xorput);
 	setlinestyle(dottedln, 0, 1);
 
 	for (fv = 20; fv >= 1; fv --) {
-		;
 		x1 = x - (x / 20) * fv;
 		y1 = y - ((y - 10) / 20) * fv;
 		x2 = x + (((639 - x) / 20) * fv);
@@ -76,7 +72,6 @@ void zoomin(integer x, integer y) {
 
 int main(int argc, const char *argv[]) {
 	pio_initialize(argc, argv);
-	;
 	gd = 3;
 	gm = 0;
 	initgraph(gd, gm, "c:\\bp\\bgi");
