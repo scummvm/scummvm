@@ -20,8 +20,6 @@
  *
  */
 
-
-
 #include "base/plugins.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -34,21 +32,12 @@ namespace Cruise {
 
 struct CRUISEGameDescription {
 	ADGameDescription desc;
-
-	int gameType;
-	uint32 features;
 };
 
 const char *CruiseEngine::getGameId() const {
 	return _gameDescription->desc.gameid;
 }
 
-int CruiseEngine::getGameType() const {
-	return _gameDescription->gameType;
-}
-uint32 CruiseEngine::getFeatures() const {
-	return _gameDescription->features;
-}
 Common::Language CruiseEngine::getLanguage() const {
 	return _gameDescription->desc.language;
 }
@@ -77,8 +66,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -90,8 +77,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -103,8 +88,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -116,8 +99,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -129,8 +110,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -142,8 +121,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -155,8 +132,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{ // Amiga English US GOLD edition.
 		{
@@ -168,8 +143,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{ // Amiga Italian US GOLD edition.
 		{
@@ -181,8 +154,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{ // AtariST English KixxXL edition.
 		{
@@ -194,8 +165,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -207,8 +176,6 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
 	{
 		{
@@ -220,10 +187,8 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
-		GType_CRUISE,
-		0,
 	},
-	{AD_TABLE_END_MARKER, 0, 0}
+	{AD_TABLE_END_MARKER}
 };
 
 }
