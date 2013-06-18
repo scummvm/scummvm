@@ -116,4 +116,53 @@ bool CMovGraphNode::load(MfcArchive &file) {
   return true;
 }
 
+CReactParallel::CReactParallel() {
+  _x1 = 0;
+  _x2 = 0;
+  _dy = 0;
+  _dx = 0;
+  _points = 0;
+  _y1 = 0;
+  _y2 = 0;
+}
+
+bool CReactParallel::load(MfcArchive &file) {
+  _x1 = file.readUint32LE();
+  _y1 = file.readUint32LE();
+  _x2 = file.readUint32LE();
+  _y2 = file.readUint32LE();
+  _dx = file.readUint32LE();
+  _dy = file.readUint32LE();
+
+  createRegion();
+
+  return true;
+}
+
+void CReactParallel::createRegion() {
+  _points = (Common::Point **)malloc(sizeof(Common::Point *) * 4);
+
+  for (int i = 0; i < 4; i++)
+    _points[i] = new Common::Point;
+
+  double at = atan2(_x1 - _x2, _y1 - _y2) + 1.570796;
+  double sn = sin(at);
+  double cs = cos(at);
+
+  _points[0]->x = (int16)(_x1 - _dx * cs);
+  _points[0]->y = (int16)(_y1 - _dx * sn);
+
+  _points[1]->x = (int16)(_x2 - _dx * cs);
+  _points[1]->y = (int16)(_y2 - _dx * sn);
+  
+  _points[2]->x = (int16)(_x1 + _dy * cs);
+  _points[2]->y = (int16)(_y2 + _dy * sn);
+
+  _points[3]->x = (int16)(_x1 + _dy * cs);
+  _points[3]->y = (int16)(_y1 + _dy * sn);
+
+  // GdiObject::Attach(_rgn, CreatePolygonRgn(_points, 4, 2);
+}
+
+
 } // End of namespace Fullpipe

@@ -88,22 +88,38 @@ class CMovGraphReact : public CObject {
     // Empty
 };
 
-class CMovGraphLink : public CObject {
-  CMovGraphNode *_movGraphNode1;
-  CMovGraphNode *_movGraphNode2;
-  CDWordArray _dwordArray1;
-  CDWordArray _dwordArray2;
-  int _flags;
-  int _field_38;
-  int _field_3C;
-  double _distance;
-  double _angle;
-  CMovGraphReact *_movGraphReact;
-  char *_name;
+class CReactParallel : public CMovGraphReact {
+    //CRgn _rgn;
+    int _x1;
+    int _y1;
+    int _x2;
+    int _y2;
+    int _dx;
+    int _dy;
+    Common::Point **_points;
 
   public:
-	CMovGraphLink();
-	virtual bool load(MfcArchive &file);
+    CReactParallel();
+    virtual bool load(MfcArchive &file);
+    void createRegion();
+};
+
+class CMovGraphLink : public CObject {
+    CMovGraphNode *_movGraphNode1;
+    CMovGraphNode *_movGraphNode2;
+    CDWordArray _dwordArray1;
+    CDWordArray _dwordArray2;
+    int _flags;
+    int _field_38;
+    int _field_3C;
+    double _distance;
+    double _angle;
+    CMovGraphReact *_movGraphReact;
+    char *_name;
+
+  public:
+    CMovGraphLink();
+    virtual bool load(MfcArchive &file);
 };
 
 class CMovGraph : public CMotionController {

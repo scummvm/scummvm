@@ -83,7 +83,8 @@ enum {
 	kCMctlCompound,
 	kCMovGraph,
 	kCMovGraphLink,
-	kCMovGraphNode
+	kCMovGraphNode,
+	kCReactParallel
 };
 
 const struct {
@@ -99,6 +100,7 @@ const struct {
 	{ "CMovGraph",		kCMovGraph },
 	{ "CMovGraphLink",	kCMovGraphLink },
 	{ "CMovGraphNode",	kCMovGraphNode },
+	{ "CReactParallel", kCReactParallel },
 	{ 0, 0 }
 };
 
@@ -133,6 +135,8 @@ static CObject *createObject(int objectId) {
 		return new CMovGraphLink();
 	case kCMovGraphNode:
 		return new CMovGraphNode();
+	case kCReactParallel:
+		return new CReactParallel();
 	default:
 		error("Unknown objectId: %d", objectId);
 	}
