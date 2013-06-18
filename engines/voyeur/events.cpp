@@ -81,7 +81,7 @@ void EventsManager::sWaitFlip() {
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
 		ViewPortResource &viewPort = *viewPorts[idx];
 
-		if (_vm->_graphicsManager._saveBack && (viewPort._flags & 0x40)) {
+		if (_vm->_graphicsManager._saveBack && (viewPort._flags & DISPFLAG_40)) {
 			Common::Rect *clipPtr = _vm->_graphicsManager._clipPtr;
 			_vm->_graphicsManager._clipPtr = &viewPort._clipRect;
 
@@ -91,7 +91,7 @@ void EventsManager::sWaitFlip() {
 			_vm->_graphicsManager._clipPtr = clipPtr;
 			viewPort._rectListCount[viewPort._pageIndex] = 0;
 			viewPort._rectListPtr[viewPort._pageIndex]->clear();
-			viewPort._flags &= 0xFFBF;
+			viewPort._flags &= ~DISPFLAG_40;
 		}
 	}
 }

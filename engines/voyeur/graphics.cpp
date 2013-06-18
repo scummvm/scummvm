@@ -148,11 +148,11 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	PictureResource *srcPic = (PictureResource *)srcDisplay;
 	PictureResource *destPic = (PictureResource *)destDisplay;
 
-	if (srcDisplay->_flags & 0x8000) {
+	if (srcDisplay->_flags & DISPFLAG_VIEWPORT) {
 		// A viewport was passed, not a picture
 		srcPic = ((ViewPortResource *)srcDisplay)->_currentPic;
 	}
-	if (destDisplay->_flags & 0x8000) {
+	if (destDisplay->_flags & DISPFLAG_VIEWPORT) {
 		destViewPort = (ViewPortResource *)destDisplay;
 		destPic = destViewPort->_currentPic;
 	}
@@ -465,7 +465,7 @@ void GraphicsManager::fillPic(DisplayResource *display, byte onOff) {
  * Queues the given picture for display
  */
 void GraphicsManager::sDisplayPic(PictureResource *pic) {
-	if (pic->_flags & 8) {
+	if (pic->_flags & DISPFLAG_8) {
 		_vm->_eventsManager._intPtr.field2A = READ_LE_UINT32(pic->_imgData) >> _sImageShift;
 	}
 
@@ -481,8 +481,9 @@ void GraphicsManager::flipPage() {
 	bool flipFlag = false;
 
 	for (uint idx = 0; idx < viewPorts.size(); ++idx) {
-		if (viewPorts[idx]->_flags & 0x20) {
-			if ((viewPorts[idx]->_flags & 9) == 9) {
+		if (viewPorts[idx]->_flags & DISPFLAG_20) {
+			if ((viewPorts[idx]->_flags & (DISPFLAG_8 || DISPFLAG_1)) 
+					== (DISPFLAG_8 || DISPFLAG_1)) {
 				if (_planeSelect == idx)
 					sDisplayPic(viewPorts[idx]->_currentPic);
 				flipFlag = true;
@@ -500,7 +501,7 @@ void GraphicsManager::flipPage() {
 
 			assert(viewPort._pageIndex < 2);
 			viewPort._currentPic = viewPort._pages[viewPort._pageIndex];
-			viewPort._flags = (viewPort._flags & 0xFFF7) | 0x40;
+			viewPort._flags = (viewPort._flags & ~DISPFLAG_8) | DISPFLAG_40;
 		}
 	}
 }

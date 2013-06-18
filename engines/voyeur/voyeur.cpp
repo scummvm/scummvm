@@ -164,7 +164,7 @@ void VoyeurEngine::doHeadTitle() {
 void VoyeurEngine::showConversionScreen() {
 	_graphicsManager._backgroundPage = _bVoy->boltEntry(0x502)._picResource;
 	(*_graphicsManager._vPort)->setupViewPort();
-	(*_graphicsManager._vPort)->_flags |= 8;
+	(*_graphicsManager._vPort)->_flags |= DISPFLAG_8;
 
 	_graphicsManager.flipPage();
 	_eventsManager.sWaitFlip();
@@ -187,7 +187,7 @@ void VoyeurEngine::showConversionScreen() {
 	if (shouldQuit())
 		return;
 
-	(*_graphicsManager._vPort)->_flags |= 8;
+	(*_graphicsManager._vPort)->_flags |= DISPFLAG_8;
 	_graphicsManager.flipPage();
 	_eventsManager.sWaitFlip();
 
@@ -231,7 +231,7 @@ bool VoyeurEngine::doLock() {
 		(*_graphicsManager._vPort)->setupViewPort();
 
 		_graphicsManager._backColors->startFade();
-		(*_graphicsManager._vPort)->_flags |= 8;
+		(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
 
 		_graphicsManager.flipPage();
 		_eventsManager.sWaitFlip();
@@ -257,7 +257,7 @@ bool VoyeurEngine::doLock() {
 		bool breakFlag = false;
 		while (!breakFlag && !shouldQuit()) {
 			(*_graphicsManager._vPort)->setupViewPort();
-			(*_graphicsManager._vPort)->_flags |= 8;
+			(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
 			_graphicsManager.flipPage();
 			_eventsManager.sWaitFlip();
 
@@ -268,7 +268,7 @@ bool VoyeurEngine::doLock() {
 			_graphicsManager._fontPtr->_justifyHeight = 97;
 
 			(*_graphicsManager._vPort)->drawText(playString);
-			(*_graphicsManager._vPort)->_flags |= 8;
+			(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
 			_graphicsManager.flipPage();
 			_eventsManager.sWaitFlip();
 
@@ -296,7 +296,7 @@ bool VoyeurEngine::doLock() {
 
 					// TODO: Check is the mouse cursor being manually drawn here? I so, refactor
 					_graphicsManager.sDrawPic(srcPic, *_graphicsManager._vPort, mousePos);
-					(*_graphicsManager._vPort)->_flags |= 8;
+					(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
 					_graphicsManager.flipPage();
 					_eventsManager.sWaitFlip();
 
@@ -354,7 +354,7 @@ bool VoyeurEngine::doLock() {
 		}
 
 		_graphicsManager.fillPic(*_graphicsManager._vPort);
-		(*_graphicsManager._vPort)->_flags |= 8;
+		(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
 		_graphicsManager.flipPage();
 		_eventsManager.sWaitFlip();
 		_graphicsManager.resetPalette();

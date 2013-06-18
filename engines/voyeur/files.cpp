@@ -691,7 +691,7 @@ PictureResource::PictureResource(int flags, int select, int pick, int onOff,
 }
 
 PictureResource::~PictureResource() {
-	delete _imgData;
+	delete[] _imgData;
 }
 
 /*------------------------------------------------------------------------*/
