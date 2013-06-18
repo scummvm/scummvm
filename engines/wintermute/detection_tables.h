@@ -27,6 +27,7 @@ namespace Wintermute {
 static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},
+	{"bthreshold",      "Beyond the Threshold"},
 	{"actualdest",      "Actual Destination"},
 	{"carolreed4",      "Carol Reed 4 - East Side Story"},
 	{"carolreed5",      "Carol Reed 5 - The Colour of Murder"},
@@ -78,6 +79,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"actualdest",
 		"",
 		AD_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Beyond the Threshold
+	{
+		"bthreshold",
+		"",
+		AD_ENTRY1s("data.dcp", "d49bf9ccb2e74507447c82d6ad3e2bc4", 12773712),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
