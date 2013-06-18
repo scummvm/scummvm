@@ -1980,6 +1980,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			break;
 
 		case 216:
+			// Discuss with pilot just before Flight cutscene
 			_vm->_globals->_introSpeechOffFl = true;
 			_vm->_talkMan->startAnimatedCharacterDialogue("aviat1.pe2");
 			_vm->_globals->_introSpeechOffFl = false;
