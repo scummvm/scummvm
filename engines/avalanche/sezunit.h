@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -34,11 +34,11 @@
 namespace Avalanche {
 
 struct sezheader {
-             array<1,2,char> initials;     /* should be "TT" */
-             word gamecode;
-             word revision; /* as 3- or 4-digit code (eg v1.00 = 100) */
-             longint chains; /* number of scroll chains */
-             longint size; /* total size of all chains */
+	array<1, 2, char> initials;   /* should be "TT" */
+	word gamecode;
+	word revision; /* as 3- or 4-digit code (eg v1.00 = 100) */
+	longint chains; /* number of scroll chains */
+	longint size; /* total size of all chains */
 };
 
 
@@ -48,7 +48,7 @@ struct sezheader {
 #define EXTERN
 #endif
 
-EXTERN array<0,1999,char> chain; /* This chain */
+EXTERN array<0, 1999, char> chain; /* This chain */
 EXTERN word chainsize; /* Length of "chain" */
 EXTERN byte sezerror; /* Error code */
 EXTERN sezheader sezhead;
@@ -56,7 +56,7 @@ EXTERN sezheader sezhead;
 #define EXTERN extern
 
 
-     /* Error codes for "sezerror" */
+/* Error codes for "sezerror" */
 const integer sezok = 0;
 const integer sezgunkyfile = 1;
 const integer sezhacked = 2;

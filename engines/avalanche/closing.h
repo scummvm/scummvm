@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -36,7 +36,7 @@ const integer scr_nagscreen = 3;
 const integer scr_twocopies = 5;
 
 
-void quit_with(byte which,byte errorlev);
+void quit_with(byte which, byte errorlev);
 
 void end_of_program();
 

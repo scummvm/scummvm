@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -29,18 +29,23 @@
 
 namespace Avalanche {
 
-int main(int argc, const char* argv[])
-{pio_initialize(argc, argv);
-;
- do {
-  readkeye;
-  switch (inchar) {
-   case '\0': output << string('[')+extd+']'; break;
-   case '\340': output << string('<')+extd+'>'; break;
-   default: output << inchar;
-  }
- } while (!(inchar=='\33'));
-return EXIT_SUCCESS;
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	;
+	do {
+		readkeye;
+		switch (inchar) {
+		case '\0':
+			output << string('[') + extd + ']';
+			break;
+		case '\340':
+			output << string('<') + extd + '>';
+			break;
+		default:
+			output << inchar;
+		}
+	} while (!(inchar == '\33'));
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

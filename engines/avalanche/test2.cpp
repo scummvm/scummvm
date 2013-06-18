@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -29,17 +29,18 @@
 
 namespace Avalanche {
 
-const array<1,22,char> signature = string("*AVALOT* v1.00 ±tt± ")+'\3'+'\0';
+const array<1, 22, char> signature = string("*AVALOT* v1.00 ±tt± ") + '\3' + '\0';
 pointer getint1f;
-array<1,22,char> x;
-int main(int argc, const char* argv[])
-{pio_initialize(argc, argv);
-;
- getintvec(0x1f,getint1f);
- move(getint1f,x,22);
- if (x==signature) 
-  output << "Signature found." << NL; else output << "Signature NOT found!" << NL;
-return EXIT_SUCCESS;
+array<1, 22, char> x;
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	;
+	getintvec(0x1f, getint1f);
+	move(getint1f, x, 22);
+	if (x == signature)
+		output << "Signature found." << NL;
+	else output << "Signature NOT found!" << NL;
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

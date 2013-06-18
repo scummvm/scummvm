@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -30,31 +30,34 @@
 namespace Avalanche {
 
 struct inirex {
-          varying_string<12> a;
-          word num;
+	varying_string<12> a;
+	word num;
 };
 
 text i;
 file<inirex> o;
 inirex x;
 
-int main(int argc, const char* argv[])
-{pio_initialize(argc, argv);
-;
- assign(i,"v:init0.dat"); reset(i);
- assign(o,"v:init.avd"); rewrite(o);
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	;
+	assign(i, "v:init0.dat");
+	reset(i);
+	assign(o, "v:init.avd");
+	rewrite(o);
 
- while (! eof(i)) 
- {;
-  i >> x.a >> NL;
-  i >> x.num >> NL;
-  o << x;
-  output << '.';
- }
+	while (! eof(i)) {
+		;
+		i >> x.a >> NL;
+		i >> x.num >> NL;
+		o << x;
+		output << '.';
+	}
 
- close(i); close(o);
- output << NL;
-return EXIT_SUCCESS;
+	close(i);
+	close(o);
+	output << NL;
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

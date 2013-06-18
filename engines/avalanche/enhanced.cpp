@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -40,28 +40,29 @@
 
 namespace Avalanche {
 
-boolean isenh()
-{
- byte statefrom16;
- registers r;
+boolean isenh() {
+	byte statefrom16;
+	registers r;
 
-  boolean isenh_result;
-  isenh_result = false;
-  {;
-   ah=0x12;
-   intr(0x16,r);
-   statefrom16=al;
-  }
-  if (statefrom16 != shiftstate)  return isenh_result;
-  shiftstate = shiftstate ^ 0x20;
-  {;
-   ah=0x12;
-   intr(0x16,r);
-   statefrom16=al;
-  }
-  isenh_result = statefrom16 == shiftstate;
-  shiftstate = shiftstate ^ 0x20;
-  return isenh_result;
+	boolean isenh_result;
+	isenh_result = false;
+	{
+		;
+		ah = 0x12;
+		intr(0x16, r);
+		statefrom16 = al;
+	}
+	if (statefrom16 != shiftstate)  return isenh_result;
+	shiftstate = shiftstate ^ 0x20;
+	{
+		;
+		ah = 0x12;
+		intr(0x16, r);
+		statefrom16 = al;
+	}
+	isenh_result = statefrom16 == shiftstate;
+	shiftstate = shiftstate ^ 0x20;
+	return isenh_result;
 }
 
 void readkeye()
@@ -73,13 +74,14 @@ void readkeye()
            $CD/ $16); { INT 16 }
 */
 {
- registers r; word fs;
-;
- if (atbios) 
-            fs=fancystuff; /* We're using an AT */
-  else fs=notfancystuff;  /* ditto, an XT */
- inchar=chr(lo(fs));
- extd=chr(hi(fs));
+	registers r;
+	word fs;
+	;
+	if (atbios)
+		fs = fancystuff; /* We're using an AT */
+	else fs = notfancystuff; /* ditto, an XT */
+	inchar = chr(lo(fs));
+	extd = chr(hi(fs));
 }
 
 boolean keypressede()
@@ -92,23 +94,25 @@ boolean keypressede()
           $40);      { INC AX }
 */
 {
-    registers r;
-boolean keypressede_result;
-;
- if (atbios) 
-   keypressede_result=fancystuff; /* ATs get the fancy stuff */
-  else keypressede_result=keypressed(); /* XTs get the usual primitive... */
-return keypressede_result;
+	registers r;
+	boolean keypressede_result;
+	;
+	if (atbios)
+		keypressede_result = fancystuff; /* ATs get the fancy stuff */
+	else keypressede_result = keypressed(); /* XTs get the usual primitive... */
+	return keypressede_result;
 }
 
 class unit_enhanced_initialize {
-  public: unit_enhanced_initialize();
+public:
+	unit_enhanced_initialize();
 };
 static unit_enhanced_initialize enhanced_constructor;
 
-unit_enhanced_initialize::unit_enhanced_initialize() {;
- /* determine bios type */
- atbios=isenh();
+unit_enhanced_initialize::unit_enhanced_initialize() {
+	;
+	/* determine bios type */
+	atbios = isenh();
 }
 
 } // End of namespace Avalanche.

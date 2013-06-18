@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -37,7 +37,7 @@ namespace Avalanche {
 
 EXTERN byte shiftstate;/*ABSOLUTE $40:$17;*/
 EXTERN boolean atbios;
-EXTERN char inchar,extd;
+EXTERN char inchar, extd;
 #undef EXTERN
 #define EXTERN extern
 

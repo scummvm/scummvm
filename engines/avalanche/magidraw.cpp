@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -32,30 +32,33 @@ namespace Avalanche {
 
 const word nextcode = 17717;
 
-integer gd,gm;
+integer gd, gm;
 untyped_file magic; /* of word;*/
 word next;
-array<1,16401,word> buffer;
+array<1, 16401, word> buffer;
 
-int main(int argc, const char* argv[])
-{pio_initialize(argc, argv);
-;
- gd=3; gm=0; initgraph(gd,gm,"c:\\bp\\bgi");
- assign(magic,"v:magic2.avd"); reset(magic,1);
- blockread(magic,buffer,sizeof(buffer));
- close(magic);
-/* while not eof(magic) do*/
- for( gd=1; gd <= 16401; gd ++)
- {;
-/*  read(magic,next);
-  if next<>nextcode then*/
-  if (buffer[gd]!=nextcode) 
-   mem[0xa000*buffer[gd]]=255;
-  else
-   delay(1);
- }
-/* close(magic);*/
-return EXIT_SUCCESS;
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	;
+	gd = 3;
+	gm = 0;
+	initgraph(gd, gm, "c:\\bp\\bgi");
+	assign(magic, "v:magic2.avd");
+	reset(magic, 1);
+	blockread(magic, buffer, sizeof(buffer));
+	close(magic);
+	/* while not eof(magic) do*/
+	for (gd = 1; gd <= 16401; gd ++) {
+		;
+		/*  read(magic,next);
+		  if next<>nextcode then*/
+		if (buffer[gd] != nextcode)
+			mem[0xa000 * buffer[gd]] = 255;
+		else
+			delay(1);
+	}
+	/* close(magic);*/
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -31,26 +31,29 @@
 
 namespace Avalanche {
 
-integer gd,gm;
-int main(int argc, const char* argv[])
-{
- pio_initialize(argc, argv);
- gd=3; gm=0; initgraph(gd,gm,"");
- setvisualpage(3);
- load_chunks('1');
+integer gd, gm;
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	gd = 3;
+	gm = 0;
+	initgraph(gd, gm, "");
+	setvisualpage(3);
+	load_chunks('1');
 
- for( gd=0; gd <= num_chunks; gd ++)
-  show_one_at(gd,0,gd*40);
+	for (gd = 0; gd <= num_chunks; gd ++)
+		show_one_at(gd, 0, gd * 40);
 
- mblit(0,0,79,200,3,0);
+	mblit(0, 0, 79, 200, 3, 0);
 
- gd=getpixel(0,0);
- setvisualpage(0); setactivepage(0);
+	gd = getpixel(0, 0);
+	setvisualpage(0);
+	setactivepage(0);
 
- settextstyle(0,0,4); setcolor(15);
- outtextxy(100,50,"Chunk1");
- input >> NL;
- return EXIT_SUCCESS;
+	settextstyle(0, 0, 4);
+	setcolor(15);
+	outtextxy(100, 50, "Chunk1");
+	input >> NL;
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

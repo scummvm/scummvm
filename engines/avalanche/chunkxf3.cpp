@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -58,100 +58,135 @@ var
  f:file;
  aa:array[0..arraysize] of byte;*/
 
-string strf(longint x)
-{
-    string q;
-string strf_result;
-;
- str(x,q); strf_result=q;
-return strf_result;
+string strf(longint x) {
+	string q;
+	string strf_result;
+	;
+	str(x, q);
+	strf_result = q;
+	return strf_result;
 }
 
-void finder()
-{
-    char r; integer x,y;
-; 
- setfillstyle(0,0); setcolor(14);
- x=320; y=100; setwritemode(xorput);
- do {
-  bar(0,0,200,10);
-  outtextxy(0,0,strf(x)+','+strf(y));
-  line(x-20,y,x+20,y); line(x,y-20,x,y+20);
-  do {; } while (!keypressed());
-  line(x-20,y,x+20,y); line(x,y-20,x,y+20);
-  switch (readkey()) {
-   case '\15': return; break;
-   case '8': y -= 10; break;
-   case '4': x -= 10; break;
-   case '6': x += 10; break;
-   case '2': y += 10; break;
-    case '\0': switch (readkey()) {
-         case cup: y -= 1; break;
-         case cdown: y += 1; break;
-         case cleft: x -= 1; break;
-         case cright: x += 1; break;
-        }
-        break;
-  }
- } while (!false);
+void finder() {
+	char r;
+	integer x, y;
+	;
+	setfillstyle(0, 0);
+	setcolor(14);
+	x = 320;
+	y = 100;
+	setwritemode(xorput);
+	do {
+		bar(0, 0, 200, 10);
+		outtextxy(0, 0, strf(x) + ',' + strf(y));
+		line(x - 20, y, x + 20, y);
+		line(x, y - 20, x, y + 20);
+		do {
+			;
+		} while (!keypressed());
+		line(x - 20, y, x + 20, y);
+		line(x, y - 20, x, y + 20);
+		switch (readkey()) {
+		case '\15':
+			return;
+			break;
+		case '8':
+			y -= 10;
+			break;
+		case '4':
+			x -= 10;
+			break;
+		case '6':
+			x += 10;
+			break;
+		case '2':
+			y += 10;
+			break;
+		case '\0':
+			switch (readkey()) {
+			case cup:
+				y -= 1;
+				break;
+			case cdown:
+				y += 1;
+				break;
+			case cleft:
+				x -= 1;
+				break;
+			case cright:
+				x += 1;
+				break;
+			}
+			break;
+		}
+	} while (!false);
 }
 
-void loadtemp(string n)
-{
- byte a0 /*absolute $A000:800*/;
- byte a1 /*absolute $A400:800*/;
- byte bit;
- untyped_file f;
-;
- assign(f,n); reset(f,1);
- seek(f,177);
- for( bit=0; bit <= 3; bit ++)
- {;
-  port[0x3c4]=2; port[0x3ce]=4; port[0x3c5]=1 << bit; port[0x3cf]=bit;
-  blockread(f,a0,12080);
- }
- close(f);
- bit=getpixel(0,0);
- finder();
+void loadtemp(string n) {
+	byte a0 /*absolute $A000:800*/;
+	byte a1 /*absolute $A400:800*/;
+	byte bit;
+	untyped_file f;
+	;
+	assign(f, n);
+	reset(f, 1);
+	seek(f, 177);
+	for (bit = 0; bit <= 3; bit ++) {
+		;
+		port[0x3c4] = 2;
+		port[0x3ce] = 4;
+		port[0x3c5] = 1 << bit;
+		port[0x3cf] = bit;
+		blockread(f, a0, 12080);
+	}
+	close(f);
+	bit = getpixel(0, 0);
+	finder();
 }
 
-void load()
-{
- byte a0 /*absolute $A000:800*/;
- byte a1 /*absolute $A400:800*/;
- byte bit;
- untyped_file f;
-;
- assign(f,"place22.avd"); reset(f,1);
- seek(f,177);
- for( bit=0; bit <= 3; bit ++)
- {;
-  port[0x3c4]=2; port[0x3ce]=4; port[0x3c5]=1 << bit; port[0x3cf]=bit;
-  blockread(f,a1,12080);
- }
+void load() {
+	byte a0 /*absolute $A000:800*/;
+	byte a1 /*absolute $A400:800*/;
+	byte bit;
+	untyped_file f;
+	;
+	assign(f, "place22.avd");
+	reset(f, 1);
+	seek(f, 177);
+	for (bit = 0; bit <= 3; bit ++) {
+		;
+		port[0x3c4] = 2;
+		port[0x3ce] = 4;
+		port[0x3c5] = 1 << bit;
+		port[0x3cf] = bit;
+		blockread(f, a1, 12080);
+	}
 
- close(f);
- bit=getpixel(0,0);
- setactivepage(1); setvisualpage(1); finder();
- setactivepage(0); setvisualpage(0);
+	close(f);
+	bit = getpixel(0, 0);
+	setactivepage(1);
+	setvisualpage(1);
+	finder();
+	setactivepage(0);
+	setvisualpage(0);
 }
 
-void open_chunk()
-{;
- assign(f,"chunk22.avd");
- rewrite(f,1);
- blockwrite(f,chunkheader,sizeof(chunkheader));
- blockwrite(f,num_chunks,1);
- blockwrite(f,offsets,num_chunks*4);
+void open_chunk() {
+	;
+	assign(f, "chunk22.avd");
+	rewrite(f, 1);
+	blockwrite(f, chunkheader, sizeof(chunkheader));
+	blockwrite(f, num_chunks, 1);
+	blockwrite(f, offsets, num_chunks * 4);
 
- this_chunk=0;
+	this_chunk = 0;
 }
 
-void close_chunk()
-{;
- seek(f,45);
- blockwrite(f,offsets,num_chunks*4); /* make sure they're right! */
- close(f);
+void close_chunk() {
+	;
+	seek(f, 45);
+	blockwrite(f, offsets, num_chunks * 4); /* make sure they're right! */
+	close(f);
 }
 
 /*procedure mgrab(x1,y1,x2,y2:integer; size:word);
@@ -243,35 +278,38 @@ begin;
 { rectangle(x1,y1,x2,y2);}
 end;*/
 
-int main(int argc, const char* argv[])
-{pio_initialize(argc, argv);
-;
- gd=3; gm=0; initgraph(gd,gm,"c:\\bp\\bgi");
- loadtemp("chunkbit.avd"); load();
- setwritemode(xorput);
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	;
+	gd = 3;
+	gm = 0;
+	initgraph(gd, gm, "c:\\bp\\bgi");
+	loadtemp("chunkbit.avd");
+	load();
+	setwritemode(xorput);
 
- num_chunks=9;
+	num_chunks = 9;
 
- open_chunk();
+	open_chunk();
 
- grab(  0,103,169,159, 72,86,ch_ega,false,false); /* Stairs... */
- grab(172,103,341,159, 72,86,ch_ega,false,false);
+	grab(0, 103, 169, 159, 72, 86, ch_ega, false, false); /* Stairs... */
+	grab(172, 103, 341, 159, 72, 86, ch_ega, false, false);
 
- loadtemp("chunkbi3.avd");
+	loadtemp("chunkbi3.avd");
 
- grab(  0,130, 79,157,341,94,ch_bgi,true ,true );
- grab(  0,130, 79,157,341,94,ch_ega,false,false);
- grab(  0,102, 79,129,341,94,ch_ega,false,false);
- grab(  0, 74, 79,101,341,94,ch_ega,false,false); /* Far door. */
+	grab(0, 130, 79, 157, 341, 94, ch_bgi, true , true);
+	grab(0, 130, 79, 157, 341, 94, ch_ega, false, false);
+	grab(0, 102, 79, 129, 341, 94, ch_ega, false, false);
+	grab(0, 74, 79, 101, 341, 94, ch_ega, false, false); /* Far door. */
 
- loadtemp("chunkbi2.avd");
+	loadtemp("chunkbi2.avd");
 
- grab(393, 92,451,137,512,98,ch_bgi,true ,true ); /* Right-hand door. */
- grab(393, 92,451,137,512,98,ch_ega,false,false);
- grab(453, 92,511,137,512,98,ch_ega,false,false);
+	grab(393, 92, 451, 137, 512, 98, ch_bgi, true , true); /* Right-hand door. */
+	grab(393, 92, 451, 137, 512, 98, ch_ega, false, false);
+	grab(453, 92, 511, 137, 512, 98, ch_ega, false, false);
 
- close_chunk();
-return EXIT_SUCCESS;
+	close_chunk();
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

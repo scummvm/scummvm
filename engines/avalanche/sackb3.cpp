@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -27,25 +27,24 @@
 
 /*$M 16384,0,0*/
 
-              /* to demonstrate the SBVoice Unit */
-              /* Copyright 1991 Amit K. Mathur, Windsor, Ontario */
+/* to demonstrate the SBVoice Unit */
+/* Copyright 1991 Amit K. Mathur, Windsor, Ontario */
 
 /*#include "SBVoice.h"*/
 
 namespace Avalanche {
 
-int main(int argc, const char* argv[])
-{
-pio_initialize(argc, argv);
-if (paramcount>0)  {
-    loadvoice(paramstr(1),0,0);
-    sb_output(seg(soundfile),ofs(soundfile)+26);
-    do {
-         output << "Demo of the SBVoice Unit, Copyright 1991 by Amit K. Mathur --- ";
-    } while (!(statusword==0));
-} else
-    output << "Usage: DEMO [d:\\path\\]filename.voc" << NL;
-return EXIT_SUCCESS;
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	if (paramcount > 0)  {
+		loadvoice(paramstr(1), 0, 0);
+		sb_output(seg(soundfile), ofs(soundfile) + 26);
+		do {
+			output << "Demo of the SBVoice Unit, Copyright 1991 by Amit K. Mathur --- ";
+		} while (!(statusword == 0));
+	} else
+		output << "Usage: DEMO [d:\\path\\]filename.voc" << NL;
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

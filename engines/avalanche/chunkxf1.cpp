@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -43,61 +43,68 @@ namespace Avalanche {
                    memorise:boolean; { Hold it in memory? }
                   end;*/
 
-const array<1,44,char> chunkheader = 
-string("Chunk-type AVD file, for an Avvy game.")+'\32'+'\261'+'\x30'+'\x1'+'\x75'+'\261';
+const array<1, 44, char> chunkheader =
+    string("Chunk-type AVD file, for an Avvy game.") + '\32' + '\261' + '\x30' + '\x1' + '\x75' + '\261';
 
 /* arraysize = 12000;*/
 
 /* offsets:array[1..30] of longint;*/
 byte num_chunks/*,this_chunk*/;
-integer gd,gm;
+integer gd, gm;
 /* f:file;*/
 /* aa:array[0..arraysize] of byte;*/
 
-void load()
-{
- byte a0 /*absolute $A000:800*/;
- byte a1 /*absolute $A400:800*/;
- byte bit;
- untyped_file f;
-;
- assign(f,"chunkbit.avd"); reset(f,1);
- seek(f,177);
- for( bit=0; bit <= 3; bit ++)
- {;
-  port[0x3c4]=2; port[0x3ce]=4; port[0x3c5]=1 << bit; port[0x3cf]=bit;
-  blockread(f,a0,12080);
- }
- close(f);
+void load() {
+	byte a0 /*absolute $A000:800*/;
+	byte a1 /*absolute $A400:800*/;
+	byte bit;
+	untyped_file f;
+	;
+	assign(f, "chunkbit.avd");
+	reset(f, 1);
+	seek(f, 177);
+	for (bit = 0; bit <= 3; bit ++) {
+		;
+		port[0x3c4] = 2;
+		port[0x3ce] = 4;
+		port[0x3c5] = 1 << bit;
+		port[0x3cf] = bit;
+		blockread(f, a0, 12080);
+	}
+	close(f);
 
- assign(f,"place21.avd"); reset(f,1);
- seek(f,177);
- for( bit=0; bit <= 3; bit ++)
- {;
-  port[0x3c4]=2; port[0x3ce]=4; port[0x3c5]=1 << bit; port[0x3cf]=bit;
-  blockread(f,a1,12080);
- }
+	assign(f, "place21.avd");
+	reset(f, 1);
+	seek(f, 177);
+	for (bit = 0; bit <= 3; bit ++) {
+		;
+		port[0x3c4] = 2;
+		port[0x3ce] = 4;
+		port[0x3c5] = 1 << bit;
+		port[0x3cf] = bit;
+		blockread(f, a1, 12080);
+	}
 
- close(f);
- bit=getpixel(0,0);
+	close(f);
+	bit = getpixel(0, 0);
 }
 
-void open_chunk()
-{;
- assign(f,"chunk21.avd");
- rewrite(f,1);
- blockwrite(f,chunkheader,sizeof(chunkheader));
- blockwrite(f,num_chunks,1);
- blockwrite(f,offsets,num_chunks*4);
+void open_chunk() {
+	;
+	assign(f, "chunk21.avd");
+	rewrite(f, 1);
+	blockwrite(f, chunkheader, sizeof(chunkheader));
+	blockwrite(f, num_chunks, 1);
+	blockwrite(f, offsets, num_chunks * 4);
 
- this_chunk=0;
+	this_chunk = 0;
 }
 
-void close_chunk()
-{;
- seek(f,45);
- blockwrite(f,offsets,num_chunks*4); /* make sure they're right! */
- close(f);
+void close_chunk() {
+	;
+	seek(f, 45);
+	blockwrite(f, offsets, num_chunks * 4); /* make sure they're right! */
+	close(f);
 }
 /*
 procedure mgrab(x1,y1,x2,y2:integer; size:word);
@@ -193,7 +200,7 @@ end;*/
 
 /*procedure grab(x1,y1,x2,y2,realx,realy:integer; flav:flavourtype;
  mem,nat:boolean);*/
- /* yes, I *do* know how to spell "really"! */
+/* yes, I *do* know how to spell "really"! */
 /*var
  s:word;
  p:pointer;
@@ -260,27 +267,29 @@ begin;
 (* rectangle(x1,y1,x2,y2);*)
 end;*/
 
-int main(int argc, const char* argv[])
-{pio_initialize(argc, argv);
-;
- gd=3; gm=0; initgraph(gd,gm,"c:\\bp\\bgi");
- load();
- setwritemode(xorput);
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	;
+	gd = 3;
+	gm = 0;
+	initgraph(gd, gm, "c:\\bp\\bgi");
+	load();
+	setwritemode(xorput);
 
- num_chunks=7;
+	num_chunks = 7;
 
- open_chunk();
+	open_chunk();
 
- grab( 98,10,181,41,247,82,ch_ega,false,false); /* Drawbridge... */
- grab(223,10,320,41,233,82,ch_ega,false,false);
- grab(361,10,458,64,233,82,ch_ega,false,false);
+	grab(98, 10, 181, 41, 247, 82, ch_ega, false, false); /* Drawbridge... */
+	grab(223, 10, 320, 41, 233, 82, ch_ega, false, false);
+	grab(361, 10, 458, 64, 233, 82, ch_ega, false, false);
 
- grab( 11,10, 39,22,172,17,ch_bgi,true,true);
- grab( 11,38, 39,50,172,17,ch_ega,true,false); /* Flag. */
- grab( 11,24, 39,36,172,17,ch_ega,true,false);
- grab( 11,10, 39,22,172,17,ch_ega,true,false);
- close_chunk();
-return EXIT_SUCCESS;
+	grab(11, 10, 39, 22, 172, 17, ch_bgi, true, true);
+	grab(11, 38, 39, 50, 172, 17, ch_ega, true, false); /* Flag. */
+	grab(11, 24, 39, 36, 172, 17, ch_ega, true, false);
+	grab(11, 10, 39, 22, 172, 17, ch_ega, true, false);
+	close_chunk();
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

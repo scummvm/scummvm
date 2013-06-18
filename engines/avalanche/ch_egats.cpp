@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -29,26 +29,26 @@
 
 namespace Avalanche {
 
-enum flavourtype {ch_ega,ch_bgi, last_flavourtype};
+enum flavourtype {ch_ega, ch_bgi, last_flavourtype};
 
 struct chunkblocktype {
-                  flavourtype flavour;
-                  integer x,y;
-                  integer xl,yl;
-                  longint size;
-                  boolean natural;
+	flavourtype flavour;
+	integer x, y;
+	integer xl, yl;
+	longint size;
+	boolean natural;
 
-                  boolean memorise; /* Hold it in memory? */
+	boolean memorise; /* Hold it in memory? */
 };
 
 untyped_file f;
 longint offset;
 chunkblocktype ch;
-integer gd,gm;
+integer gd, gm;
 byte bit;
 pointer p;
 
-void mdrop(integer x,integer y,integer xl,integer yl, pointer p) /* assembler;
+void mdrop(integer x, integer y, integer xl, integer yl, pointer p) /* assembler;
 asm
   push ds;      { Strictly speaking, we shouldn't modify DS, so we'll save it.}
   push bp;      { Nor BP! }
@@ -142,41 +142,44 @@ asm
   pop bp;
   pop ds;       { Get DS back again. }
 */
-{;
+{
+	;
 }
 
-int main(int argc, const char* argv[])
-{pio_initialize(argc, argv);
-;
- assign(f,"chunk21.avd");
- reset(f,1);
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	;
+	assign(f, "chunk21.avd");
+	reset(f, 1);
 
- seek(f,49);
- blockread(f,offset,4);
+	seek(f, 49);
+	blockread(f, offset, 4);
 
- seek(f,offset);
+	seek(f, offset);
 
- blockread(f,ch,sizeof(ch));
+	blockread(f, ch, sizeof(ch));
 
- gd=3; gm=0; initgraph(gd,gm,"c:\\bp\\bgi");
+	gd = 3;
+	gm = 0;
+	initgraph(gd, gm, "c:\\bp\\bgi");
 
- getmem(p,ch.size);
- blockread(f,p,ch.size);
-/* putimage(0,0,p^,0);*/
+	getmem(p, ch.size);
+	blockread(f, p, ch.size);
+	/* putimage(0,0,p^,0);*/
 
 
-/* with ch do
-  for bit:=0 to 3 do
-  begin;
-   port[$3c4]:=2; port[$3ce]:=4; port[$3C5]:=1 shl bit; port[$3CF]:=bit;
-   for gm:=0 to yl do
-    blockread(f,mem[$A000*gm*80],(ch.xl+7) div 8);
-  end;*/
+	/* with ch do
+	  for bit:=0 to 3 do
+	  begin;
+	   port[$3c4]:=2; port[$3ce]:=4; port[$3C5]:=1 shl bit; port[$3CF]:=bit;
+	   for gm:=0 to yl do
+	    blockread(f,mem[$A000*gm*80],(ch.xl+7) div 8);
+	  end;*/
 
-  mdrop(ch.x,ch.y,ch.xl,ch.yl,p);
+	mdrop(ch.x, ch.y, ch.xl, ch.yl, p);
 
- close(f);
-return EXIT_SUCCESS;
+	close(f);
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

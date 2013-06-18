@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -34,61 +34,61 @@ typedef void(*proc)();
 
 class headtype {
 public:
-            varying_string<8> title;
-            char trigger,alttrigger;
-            byte position;
-            integer xpos,xright;
-            proc do_setup,do_choose;
+	varying_string<8> title;
+	char trigger, alttrigger;
+	byte position;
+	integer xpos, xright;
+	proc do_setup, do_choose;
 
-            headtype* init
-             (char trig,char alttrig, string name, byte p, proc dw,proc dc);
-            void display();
-            void highlight();
-            boolean extdparse(char c);
+	headtype *init
+	(char trig, char alttrig, string name, byte p, proc dw, proc dc);
+	void display();
+	void highlight();
+	boolean extdparse(char c);
 };
 
 struct optiontype {
-              string title;
-              char trigger;
-              varying_string<9> shortcut;
-              boolean valid;
+	string title;
+	char trigger;
+	varying_string<9> shortcut;
+	boolean valid;
 };
 
 class onemenu {
 public:
-           array<1,12,optiontype> oo;
-           byte number;
-           integer width,left;
-           boolean firstlix;
-           integer flx1,flx2,fly;
-           byte oldy; /* used by Lightup */
-           boolean menunow; /* Is there a menu now? */
-           byte menunum; /* And if so, which is it? */
-           byte choicenum; /* Your choice? */
-           byte highlightnum;
+	array<1, 12, optiontype> oo;
+	byte number;
+	integer width, left;
+	boolean firstlix;
+	integer flx1, flx2, fly;
+	byte oldy; /* used by Lightup */
+	boolean menunow; /* Is there a menu now? */
+	byte menunum; /* And if so, which is it? */
+	byte choicenum; /* Your choice? */
+	byte highlightnum;
 
-           void start_afresh();
-           void opt(string n, char tr, string key, boolean val);
-           void display();
-           void wipe();
-           void lightup();
-           void displayopt(byte y,byte b,byte f,byte d);
-           void movehighlight(shortint add);
-           void select(byte n);
-           void keystroke(char c);
-           onemenu* init();
+	void start_afresh();
+	void opt(string n, char tr, string key, boolean val);
+	void display();
+	void wipe();
+	void lightup();
+	void displayopt(byte y, byte b, byte f, byte d);
+	void movehighlight(shortint add);
+	void select(byte n);
+	void keystroke(char c);
+	onemenu *init();
 };
 
 class menuset {
 public:
-           array<1,8,headtype> ddms;
-           byte howmany;
+	array<1, 8, headtype> ddms;
+	byte howmany;
 
-           menuset* init();
-           void create(char t, string n, char alttrig, proc dw,proc dc);
-           void update();
-           void extd(char c);
-           void getmenu(integer x);
+	menuset *init();
+	void create(char t, string n, char alttrig, proc dw, proc dc);
+	void update();
+	void extd(char c);
+	void getmenu(integer x);
 };
 
 
@@ -105,7 +105,7 @@ EXTERN string kbuffer;
 #define EXTERN extern
 
 
-  void parsekey(char r,char re);
+void parsekey(char r, char re);
 
 } // End of namespace Avalanche.
 

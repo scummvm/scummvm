@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -30,18 +30,18 @@
 
 namespace Avalanche {
 
-const array<1,22,char> signature = string("*AVALOT* v1.00 ±tt± ")+'\3'+'\0';
+const array<1, 22, char> signature = string("*AVALOT* v1.00 ±tt± ") + '\3' + '\0';
 pointer saveint1f;
-int main(int argc, const char* argv[])
-{pio_initialize(argc, argv);
-;
- getintvec(0x1f,saveint1f);
- setintvec(0x1f,&signature);
- swapvectors;
- exec("c:\\command.com","");
- swapvectors;
- setintvec(0x1f,saveint1f);
-return EXIT_SUCCESS;
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	;
+	getintvec(0x1f, saveint1f);
+	setintvec(0x1f, &signature);
+	swapvectors;
+	exec("c:\\command.com", "");
+	swapvectors;
+	setintvec(0x1f, saveint1f);
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

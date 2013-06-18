@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -150,9 +150,9 @@ const integer procspludwick_leaves_cauldron = 40;
 const integer procgive_lute_to_geida = 41;
 
 struct timetype {
-            longint time_left;
-            byte then_where;
-            byte what_for;
+	longint time_left;
+	byte then_where;
+	byte what_for;
 };
 
 
@@ -161,12 +161,12 @@ struct timetype {
 #define EXTERN
 #endif
 
-EXTERN array<1,7,timetype> times;
+EXTERN array<1, 7, timetype> times;
 #undef EXTERN
 #define EXTERN extern
 
 
-void set_up_timer(longint howlong, byte whither,byte why);
+void set_up_timer(longint howlong, byte whither, byte why);
 
 void one_tick();
 
@@ -174,86 +174,86 @@ void lose_timer(byte which);
 
 /*function timer_is_on(which:byte):boolean;*/
 
- /* Procedures to do things at the end of amounts of time: */
+/* Procedures to do things at the end of amounts of time: */
 
- void open_drawbridge();
+void open_drawbridge();
 
- void avaricius_talks();
+void avaricius_talks();
 
- void urinate();
+void urinate();
 
- void toilet2();
+void toilet2();
 
- void bang();
+void bang();
 
- void bang2();
+void bang2();
 
- void stairs();
+void stairs();
 
- void cardiff_survey();
+void cardiff_survey();
 
- void cardiff_return();
+void cardiff_return();
 
- void cwytalot_in_herts();
+void cwytalot_in_herts();
 
- void get_tied_up();
+void get_tied_up();
 
- void get_tied_up2();
+void get_tied_up2();
 
- void hang_around();
+void hang_around();
 
- void hang_around2();
+void hang_around2();
 
- void after_the_shootemup();
+void after_the_shootemup();
 
- void jacques_wakes_up();
+void jacques_wakes_up();
 
- void naughty_duke();
+void naughty_duke();
 
- void naughty_duke2();
+void naughty_duke2();
 
- void naughty_duke3();
+void naughty_duke3();
 
- void jump();
+void jump();
 
- void crapulus_says_splud_out();
+void crapulus_says_splud_out();
 
- void buydrinks();
+void buydrinks();
 
- void buywine();
+void buywine();
 
- void callsguards();
+void callsguards();
 
- void greetsmonk();
+void greetsmonk();
 
- void fall_down_oubliette();
+void fall_down_oubliette();
 
- void meet_avaroid();
+void meet_avaroid();
 
- void rise_up_oubliette();
+void rise_up_oubliette();
 
- void robin_hood_and_geida();
+void robin_hood_and_geida();
 
- void robin_hood_and_geida_talk();
+void robin_hood_and_geida_talk();
 
- void avalot_returns();
+void avalot_returns();
 
- void avvy_sit_down();
+void avvy_sit_down();
 
- void ghost_room_phew();
+void ghost_room_phew();
 
- void arkata_shouts();
+void arkata_shouts();
 
- void winning();
+void winning();
 
- void avalot_falls();
+void avalot_falls();
 
- void spludwick_goes_to_cauldron();
+void spludwick_goes_to_cauldron();
 
- void spludwick_leaves_cauldron();
+void spludwick_leaves_cauldron();
 
- void give_lute_to_geida();
+void give_lute_to_geida();
 
- } // End of namespace Avalanche.
+} // End of namespace Avalanche.
 
 #endif

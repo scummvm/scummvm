@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -42,38 +42,37 @@
 #include "sackb1.h"
 
 
-/*$L v:MOD-obj.OBJ*/ 	        /* Link in Object file */
-/*$F+*/ 				/* force calls to be 'far'*/
+/*$L v:MOD-obj.OBJ*/            /* Link in Object file */
+/*$F+*/                 /* force calls to be 'far'*/
 
 namespace Avalanche {
 
-extern void modvolume(integer v1,integer v2,integer v3,integer v4);  /*Can do while playing*/
-extern void moddevice(integer& device); 
-extern void modsetup(integer& status,integer device,integer mixspeed,integer pro,integer loop,string& stri); 
-extern void modstop(); 
-extern void modinit(); 
+extern void modvolume(integer v1, integer v2, integer v3, integer v4); /*Can do while playing*/
+extern void moddevice(integer &device);
+extern void modsetup(integer &status, integer device, integer mixspeed, integer pro, integer loop, string &stri);
+extern void modstop();
+extern void modinit();
 /*$F-*/
 
-void sb_start(string md)
-{
- integer dev,mix,stat,pro,loop;
+void sb_start(string md) {
+	integer dev, mix, stat, pro, loop;
 
- modinit();
- dev=7;  /* Sound Blaster */
- mix = 10000;    /*use 10000 normally */
- pro = 0;  /*Leave at 0*/
- loop =4;  /*4 means mod will play forever*/
- modvolume (255,255,255,255);    /* Full volume */
- modsetup ( stat, dev, mix, pro, loop, md );
+	modinit();
+	dev = 7; /* Sound Blaster */
+	mix = 10000;    /*use 10000 normally */
+	pro = 0;  /*Leave at 0*/
+	loop = 4; /*4 means mod will play forever*/
+	modvolume(255, 255, 255, 255);  /* Full volume */
+	modsetup(stat, dev, mix, pro, loop, md);
 }
 
-void sb_stop()
-{;
- modstop();
+void sb_stop() {
+	;
+	modstop();
 }
 
-void sb_link()     /* At the moment, this does nothing. */
-{;
+void sb_link() {   /* At the moment, this does nothing. */
+	;
 }
 
 } // End of namespace Avalanche.

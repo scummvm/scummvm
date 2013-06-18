@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -32,20 +32,20 @@ namespace Avalanche {
 
 const integer arraysize = 12000;
 
-const array<1,44,char> chunkheader = 
-string("Chunk-type AVD file, for an Avvy game.")+'\32'+'\261'+'\x30'+'\x1'+'\x75'+'\261';
+const array<1, 44, char> chunkheader =
+    string("Chunk-type AVD file, for an Avvy game.") + '\32' + '\261' + '\x30' + '\x1' + '\x75' + '\261';
 
 
-enum flavourtype {ch_ega,ch_bgi, last_flavourtype};
+enum flavourtype {ch_ega, ch_bgi, last_flavourtype};
 
 struct chunkblocktype {
-                  flavourtype flavour;
-                  integer x,y;
-                  integer xl,yl;
-                  longint size;
-                  boolean natural;
+	flavourtype flavour;
+	integer x, y;
+	integer xl, yl;
+	longint size;
+	boolean natural;
 
-                  boolean memorise; /* Hold it in memory? */
+	boolean memorise; /* Hold it in memory? */
 };
 
 
@@ -54,17 +54,17 @@ struct chunkblocktype {
 #define EXTERN
 #endif
 
-EXTERN array<0,arraysize,byte> aa;
-EXTERN byte num_chunks,this_chunk;
-EXTERN integer gd,gm;
-EXTERN array<1,30,longint> offsets;
+EXTERN array<0, arraysize, byte> aa;
+EXTERN byte num_chunks, this_chunk;
+EXTERN integer gd, gm;
+EXTERN array<1, 30, longint> offsets;
 EXTERN untyped_file f;
 #undef EXTERN
 #define EXTERN extern
 
 
-void grab(integer x1,integer y1,integer x2,integer y2,integer realx,integer realy, flavourtype flav,
- boolean mem,boolean nat);
+void grab(integer x1, integer y1, integer x2, integer y2, integer realx, integer realy, flavourtype flav,
+          boolean mem, boolean nat);
 
 } // End of namespace Avalanche.
 

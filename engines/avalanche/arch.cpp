@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -33,7 +33,7 @@
                  ENID             Edna's manager. */
 
 #define __arch_implementation__
-           /* Loads/ saves files. */
+/* Loads/ saves files. */
 
 #include "arch.h"
 
@@ -44,105 +44,105 @@
 namespace Avalanche {
 
 struct ednahead { /* Edna header */
-          /* This header starts at byte offset 177 in the .ASG file. */
-          array<1,9,char> id;     /* signature */
-          word revision; /* EDNA revision, here 2 (1=dna256) */
-          varying_string<50> game; /* Long name, eg Lord Avalot D'Argent */
-          varying_string<15> shortname; /* Short name, eg Avalot */
-          word number; /* Game's code number, here 2 */
-          word ver; /* Version number as integer (eg 1.00 = 100) */
-          varying_string<5> verstr; /* Vernum as string (eg 1.00 = "1.00" */
-          varying_string<12> filename; /* Filename, eg AVALOT.EXE */
-          byte os; /* Saving OS (here 1=DOS. See below for others.) */
+	/* This header starts at byte offset 177 in the .ASG file. */
+	array<1, 9, char> id;   /* signature */
+	word revision; /* EDNA revision, here 2 (1=dna256) */
+	varying_string<50> game; /* Long name, eg Lord Avalot D'Argent */
+	varying_string<15> shortname; /* Short name, eg Avalot */
+	word number; /* Game's code number, here 2 */
+	word ver; /* Version number as integer (eg 1.00 = 100) */
+	varying_string<5> verstr; /* Vernum as string (eg 1.00 = "1.00" */
+	varying_string<12> filename; /* Filename, eg AVALOT.EXE */
+	byte os; /* Saving OS (here 1=DOS. See below for others.) */
 
-          /* Info on this particular game */
+	/* Info on this particular game */
 
-          varying_string<8> fn; /* Filename (not extension ('cos that's .ASG)) */
-          byte d,m; /* D, M, Y are the Day, Month & Year this game was... */
-          word y;  /* ...saved on. */
-          varying_string<40> desc; /* Description of game (same as in Avaricius!) */
-          word len; /* Length of DNA (it's not going to be above 65535!) */
+	varying_string<8> fn; /* Filename (not extension ('cos that's .ASG)) */
+	byte d, m; /* D, M, Y are the Day, Month & Year this game was... */
+	word y;  /* ...saved on. */
+	varying_string<40> desc; /* Description of game (same as in Avaricius!) */
+	word len; /* Length of DNA (it's not going to be above 65535!) */
 
-          /* Quick reference & miscellaneous */
+	/* Quick reference & miscellaneous */
 
-          word saves; /* no. of times this game has been saved */
-          integer cash; /* contents of your wallet in numerical form */
-          varying_string<20> money; /* ditto in string form (eg 5/-, or 1 denarius)*/
-          word points; /* your score */
+	word saves; /* no. of times this game has been saved */
+	integer cash; /* contents of your wallet in numerical form */
+	varying_string<20> money; /* ditto in string form (eg 5/-, or 1 denarius)*/
+	word points; /* your score */
 
-          /* DNA values follow, then footer (which is ignored) */
+	/* DNA values follow, then footer (which is ignored) */
 };
-  /* Possible values of edhead.os:
-     1 = DOS        4 = Mac
-     2 = Windows    5 = Amiga
-     3 = OS/2       6 = ST */
-const string crlf = string('\15')+'\12';
+/* Possible values of edhead.os:
+   1 = DOS        4 = Mac
+   2 = Windows    5 = Amiga
+   3 = OS/2       6 = ST */
+const string crlf = string('\15') + '\12';
 
-const array<1,177,char> ednafirst = 
- string("This is an EDNA-based file, saved by a Thorsoft game. Good luck!")+crlf+
- '\32'+ /* 67 bytes... */
- crlf+crlf+ /* 71 bytes... */
- "12345678901234567890123456789012345678901234567890"+
- "12345678901234567890123456789012345678901234567890"+
- "123456";
+const array<1, 177, char> ednafirst =
+    string("This is an EDNA-based file, saved by a Thorsoft game. Good luck!") + crlf +
+    '\32' + /* 67 bytes... */
+    crlf + crlf + /* 71 bytes... */
+    "12345678901234567890123456789012345678901234567890" +
+    "12345678901234567890123456789012345678901234567890" +
+    "123456";
 
 const char months[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
-const string ednaid = string("TT")+'\261'+'\60'+'\1'+'\165'+'\261'+'\231'+'\261';
+const string ednaid = string("TT") + '\261' + '\60' + '\1' + '\165' + '\261' + '\231' + '\261';
 
 const integer ttage = 18;
 const char ttwashere[] = "Thomas was here ";
 
-void save(string name)
-{
- untyped_file f;
- edhead eh;
- word groi;
- string groi2;
-;
- fillchar(eh,sizeof(eh),'\261'); /* Fill up the edhead */
+void save(string name) {
+	untyped_file f;
+	edhead eh;
+	word groi;
+	string groi2;
+	;
+	fillchar(eh, sizeof(eh), '\261'); /* Fill up the edhead */
 
- dna.saves += 1; /* It's been saved one more time... */
+	dna.saves += 1; /* It's been saved one more time... */
 
- {;
+	{
+		;
 
-  /* Info about this program */
+		/* Info about this program */
 
-  id=ednaid;   /* Edna's signature */
-  revision=2;  /* Second revision of .ASG format */
-  game="Lord Avalot d'Argent";   /* Title of game */
-  shortname="Avalot";
-  number=2;  /* Second Avvy game */
-  ver=100;  /* Version 1.00 */
-  verstr="1.00";  /* ditto */
-  filename="AVALOT.EXE";  /* program's filename */
-  os=1;  /* Saved under DOS */
+		id = ednaid; /* Edna's signature */
+		revision = 2; /* Second revision of .ASG format */
+		game = "Lord Avalot d'Argent"; /* Title of game */
+		shortname = "Avalot";
+		number = 2; /* Second Avvy game */
+		ver = 100; /* Version 1.00 */
+		verstr = "1.00"; /* ditto */
+		filename = "AVALOT.EXE"; /* program's filename */
+		os = 1; /* Saved under DOS */
 
-  /* Info on this particular game */
+		/* Info on this particular game */
 
-  fsplit(name,groi2,fn,groi2); /* fn = filename of this game */
-  getdate(d,m,y,groi); /* Day, month & year when the game was saved */
-  desc=roomname;  /* Description of game (same as in Avaricius!) */
-  len=sizeof(dna);  /* Length of DNA (it's not going to be above 65535!) */
+		fsplit(name, groi2, fn, groi2); /* fn = filename of this game */
+		getdate(d, m, y, groi); /* Day, month & year when the game was saved */
+		desc = roomname; /* Description of game (same as in Avaricius!) */
+		len = sizeof(dna); /* Length of DNA (it's not going to be above 65535!) */
 
-  /* Quick reference & miscellaneous */
+		/* Quick reference & miscellaneous */
 
-  saves=dna.saves;  /* no. of times this game has been saved */
-  cash=dna.pence;  /* contents of your wallet in numerical form */
-  money=lsd(); /* ditto in string form (eg 5/-, or 1 denarius)*/
-  points=dna.score;  /* your score */
- }
+		saves = dna.saves; /* no. of times this game has been saved */
+		cash = dna.pence; /* contents of your wallet in numerical form */
+		money = lsd(); /* ditto in string form (eg 5/-, or 1 denarius)*/
+		points = dna.score; /* your score */
+	}
 
- assign(f,name);
- rewrite(f,1);
+	assign(f, name);
+	rewrite(f, 1);
 
- blockwrite(f,ednafirst,177);
- blockwrite(f,eh,sizeof(eh));
- blockwrite(f,dna,sizeof(dna));
+	blockwrite(f, ednafirst, 177);
+	blockwrite(f, eh, sizeof(eh));
+	blockwrite(f, dna, sizeof(dna));
 
- for( groi=1; groi <= ttage; groi ++)
-  blockwrite(f,ttwashere,sizeof(ttwashere));
+	for (groi = 1; groi <= ttage; groi ++)
+		blockwrite(f, ttwashere, sizeof(ttwashere));
 
- close(f);
+	close(f);
 }
 
 } // End of namespace Avalanche.

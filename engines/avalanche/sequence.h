@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -40,7 +40,7 @@ const integer seq_length = 10;
 #define EXTERN
 #endif
 
-EXTERN array<1,seq_length,byte> seq;
+EXTERN array<1, seq_length, byte> seq;
 #undef EXTERN
 #define EXTERN extern
 
@@ -49,7 +49,7 @@ void first_show(byte what);
 
 void then_show(byte what);
 
-void then_flip(byte where,byte ped);
+void then_flip(byte where, byte ped);
 
 void start_to_close();
 

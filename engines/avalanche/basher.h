@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -47,22 +47,22 @@ EXTERN word count;
 
 #endif
 
- void plottext();
+void plottext();
 
- void keyboard_link();
+void keyboard_link();
 
- void cursor_on();
+void cursor_on();
 
- void get_demorec();
+void get_demorec();
 
- boolean demo_ready();
+boolean demo_ready();
 
- void cursor_off();
+void cursor_off();
 
- void filename_edit();
- void normal_edit();
+void filename_edit();
+void normal_edit();
 #ifdef RECORD
-  void record_one();
+void record_one();
 #endif
 
 } // End of namespace Avalanche.

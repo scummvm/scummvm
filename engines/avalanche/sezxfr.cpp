@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -26,99 +26,123 @@
  */
 
 /*#include "Crt.h"*/
- /*$V-*/
+/*$V-*/
 
 namespace Avalanche {
 
 text t;
 string x;
-matrix<1,100,1,2,string> data;
-word dp,ip,fv;
-array<1,20,word> index1;
-array<1,20,varying_string<10> > names;
-array<1,1777,longint> thumb; longint total;
+matrix<1, 100, 1, 2, string> data;
+word dp, ip, fv;
+array<1, 20, word> index1;
+array<1, 20, varying_string<10> > names;
+array<1, 1777, longint> thumb;
+longint total;
 untyped_file f;
 
-void strip() {; x=copy(x,2,255); }
-
-void squish(string& q)
-{
-    string n; boolean ctrl; byte fv;
-;
- ctrl=false; n="";
- for( fv=1; fv <= length(q); fv ++)
-  if (q[fv]=='^')  ctrl=true; else
-  {;     /* not a caret */
-   if (ctrl)  q[fv]=chr(ord(upcase(q[fv]))-64);
-   n=n+q[fv]; ctrl=false;
-  }
- while (n[length(n)]=='\40')  n[0] -= 1; /* strip trailing spaces */
- for( fv=1; fv <= length(n); fv ++) n[fv] += 177; /* scramble */
- q=n;
+void strip() {
+	;
+	x = copy(x, 2, 255);
 }
 
-int main(int argc, const char* argv[])
-{pio_initialize(argc, argv);
-;
- dp=0; ip=0; fillchar(data,sizeof(data),'\0');
- fillchar(thumb,sizeof(thumb),'\261');
- fillchar(index1,sizeof(index1),'\3');
- assign(t,"v:sez.dat"); reset(t);
- while (! eof(t)) 
- {;
-  t >> x >> NL;
-  switch (x[1]) {
-   case ';': {; textattr=lightred; strip(); } break;
-   case ':': {;
-         textattr=lightblue; strip();
-         if (dp>0)  squish(data[dp][2]);
-         dp += 1; data[dp][1]=x;
-         if (pos("*",x)>0) 
-         {;     /* index */
-          ip += 1; index1[ip]=dp; names[ip]=copy(x,1,pos("*",x)-1);
-         }
-        }
-        break;
-   default:
-   {;
-    textattr=white;
-    data[dp][2]=data[dp][2]+x+'\40';
-   }
-  }
-  output << x << NL;
- }
- squish(data[dp][2]);
+void squish(string &q) {
+	string n;
+	boolean ctrl;
+	byte fv;
+	;
+	ctrl = false;
+	n = "";
+	for (fv = 1; fv <= length(q); fv ++)
+		if (q[fv] == '^')  ctrl = true;
+		else {
+			;     /* not a caret */
+			if (ctrl)  q[fv] = chr(ord(upcase(q[fv])) - 64);
+			n = n + q[fv];
+			ctrl = false;
+		}
+	while (n[length(n)] == '\40')  n[0] -= 1; /* strip trailing spaces */
+	for (fv = 1; fv <= length(n); fv ++) n[fv] += 177; /* scramble */
+	q = n;
+}
 
- total=1;
- for( fv=1; fv <= dp; fv ++)
- {;
-  thumb[fv]=total;
-  total += length(data[fv][2])+1;
- }
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	;
+	dp = 0;
+	ip = 0;
+	fillchar(data, sizeof(data), '\0');
+	fillchar(thumb, sizeof(thumb), '\261');
+	fillchar(index1, sizeof(index1), '\3');
+	assign(t, "v:sez.dat");
+	reset(t);
+	while (! eof(t)) {
+		;
+		t >> x >> NL;
+		switch (x[1]) {
+		case ';': {
+			;
+			textattr = lightred;
+			strip();
+		}
+		break;
+		case ':': {
+			;
+			textattr = lightblue;
+			strip();
+			if (dp > 0)  squish(data[dp][2]);
+			dp += 1;
+			data[dp][1] = x;
+			if (pos("*", x) > 0) {
+				;     /* index */
+				ip += 1;
+				index1[ip] = dp;
+				names[ip] = copy(x, 1, pos("*", x) - 1);
+			}
+		}
+		break;
+		default: {
+			;
+			textattr = white;
+			data[dp][2] = data[dp][2] + x + '\40';
+		}
+		}
+		output << x << NL;
+	}
+	squish(data[dp][2]);
 
- thumb[dp+1]=total;
+	total = 1;
+	for (fv = 1; fv <= dp; fv ++) {
+		;
+		thumb[fv] = total;
+		total += length(data[fv][2]) + 1;
+	}
 
- /* save it all! Firstly, the Sez file... */
+	thumb[dp + 1] = total;
 
- assign(f,"v:avalot.sez"); rewrite(f,1);
- x=string("This is a Sez file for an Avvy game, and it's copyright!")+'\32';
- blockwrite(f,x[1],57);
- blockwrite(f,dp,2); blockwrite(f,ip,2);
- blockwrite(f,index1,40);
- blockwrite(f,thumb,dp*4+4);
- for( fv=1; fv <= dp; fv ++)
-  blockwrite(f,data[fv][2],length(data[fv][2])+1);
- close(f);
+	/* save it all! Firstly, the Sez file... */
 
- /* ...then the Sed file. */
+	assign(f, "v:avalot.sez");
+	rewrite(f, 1);
+	x = string("This is a Sez file for an Avvy game, and it's copyright!") + '\32';
+	blockwrite(f, x[1], 57);
+	blockwrite(f, dp, 2);
+	blockwrite(f, ip, 2);
+	blockwrite(f, index1, 40);
+	blockwrite(f, thumb, dp * 4 + 4);
+	for (fv = 1; fv <= dp; fv ++)
+		blockwrite(f, data[fv][2], length(data[fv][2]) + 1);
+	close(f);
 
- assign(t,"v:avalot.sed"); rewrite(t);
- for( fv=1; fv <= ip; fv ++) t << names[fv] << NL;
- for( fv=1; fv <= dp; fv ++) t << data[fv][1] << NL;
- close(t);
+	/* ...then the Sed file. */
 
- /* Done! */
-return EXIT_SUCCESS;
+	assign(t, "v:avalot.sed");
+	rewrite(t);
+	for (fv = 1; fv <= ip; fv ++) t << names[fv] << NL;
+	for (fv = 1; fv <= dp; fv ++) t << data[fv][1] << NL;
+	close(t);
+
+	/* Done! */
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

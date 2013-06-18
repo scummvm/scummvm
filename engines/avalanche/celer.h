@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -35,23 +35,23 @@
 
 namespace Avalanche {
 
-enum flavourtype {ch_ega,ch_bgi, last_flavourtype};
+enum flavourtype {ch_ega, ch_bgi, last_flavourtype};
 
 struct chunkblocktype {
-                  flavourtype flavour;
-                  integer x,y;
-                  integer xl,yl;
-                  longint size;
-                  boolean natural;
+	flavourtype flavour;
+	integer x, y;
+	integer xl, yl;
+	longint size;
+	boolean natural;
 
-                  boolean memorise; /* Hold it in memory? */
+	boolean memorise; /* Hold it in memory? */
 };
 
 struct memotype {
-            integer x,y;
-            integer xl,yl;
-            flavourtype flavour;
-            word size;
+	integer x, y;
+	integer xl, yl;
+	flavourtype flavour;
+	word size;
 };
 
 
@@ -60,23 +60,23 @@ struct memotype {
 #define EXTERN
 #endif
 
-EXTERN array<1,40,longint> offsets;
+EXTERN array<1, 40, longint> offsets;
 EXTERN byte num_chunks;
-EXTERN array<1,40,memotype> memos;
-EXTERN array<1,40,pointer> memory;
+EXTERN array<1, 40, memotype> memos;
+EXTERN array<1, 40, pointer> memory;
 #undef EXTERN
 #define EXTERN extern
 
 
-   void pics_link();
+void pics_link();
 
-   void load_chunks(string xx);
+void load_chunks(string xx);
 
-   void forget_chunks();
+void forget_chunks();
 
-   void show_one(byte which);
+void show_one(byte which);
 
-   void show_one_at(byte which, integer xxx,integer yyy);
+void show_one_at(byte which, integer xxx, integer yyy);
 
 } // End of namespace Avalanche.
 

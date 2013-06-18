@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -33,74 +33,74 @@ namespace Avalanche {
 #include "gyro.h"
 
 
- void callverb(char n);
+void callverb(char n);
 
- void draw_also_lines();
+void draw_also_lines();
 
- void mouse_init();
+void mouse_init();
 
- void mousepage(word page_);
+void mousepage(word page_);
 
- void load(byte n);
+void load(byte n);
 
- void exitroom(byte x);
+void exitroom(byte x);
 
- void enterroom(byte x,byte ped);
+void enterroom(byte x, byte ped);
 
- void thinkabout(char z, boolean th);      /* Hey!!! Get it and put it!!! */
+void thinkabout(char z, boolean th);      /* Hey!!! Get it and put it!!! */
 
- void load_digits();    /* Load the scoring digits & rwlites */
+void load_digits();    /* Load the scoring digits & rwlites */
 
- void toolbar();
+void toolbar();
 
- void showscore();
+void showscore();
 
- void points(byte num);      /* Add on no. of points */
+void points(byte num);      /* Add on no. of points */
 
- void mouseway();
+void mouseway();
 
- void inkey();
+void inkey();
 
- void posxy();
+void posxy();
 
- void fxtoggle();
+void fxtoggle();
 
- void objectlist();
+void objectlist();
 
- void checkclick();
+void checkclick();
 
- void errorled();
+void errorled();
 
- void dusk();
+void dusk();
 
- void dawn();
+void dawn();
 
- void showrw();
+void showrw();
 
- void mblit(byte x1,byte y1,byte x2,byte y2, byte f,byte t); /* The Minstrel Blitter */
+void mblit(byte x1, byte y1, byte x2, byte y2, byte f, byte t); /* The Minstrel Blitter */
 
- void blitfix();
+void blitfix();
 
- void clock();
+void clock();
 
- void flip_page();
+void flip_page();
 
- void delavvy();
+void delavvy();
 
- void gameover();
+void gameover();
 
- void minor_redraw();
+void minor_redraw();
 
- void major_redraw();
+void major_redraw();
 
- word bearing(byte whichped);
+word bearing(byte whichped);
 
- void flesh_colours();
+void flesh_colours();
 
- void sprite_run();
+void sprite_run();
 
- void fix_flashers();
+void fix_flashers();
 
- } // End of namespace Avalanche.
+} // End of namespace Avalanche.
 
 #endif

@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -29,8 +29,8 @@
 #define __nimunit_h__
 
 #include "gyro.h"
-  #include "Graph.h"
-  /*#include "Crt.h"*/
+#include "Graph.h"
+/*#include "Crt.h"*/
 #include "pingo.h"
 #include "visa.h"
 #include "lucerna.h"
@@ -39,7 +39,7 @@
 
 namespace Avalanche {
 
-  void play_nim();
+void play_nim();
 
 } // End of namespace Avalanche.
 

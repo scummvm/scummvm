@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -30,10 +30,10 @@
 
 namespace Avalanche {
 
-void readjoya(word& xaxis, word& yaxis);
+void readjoya(word &xaxis, word &yaxis);
 /* Reads the X and Y coordinates of Joystick A. */
 
-void readjoyb(word& xaxis, word& yaxis);
+void readjoyb(word &xaxis, word &yaxis);
 /* Reads the X and Y coordinates of Joystick B. */
 
 boolean buttona1();

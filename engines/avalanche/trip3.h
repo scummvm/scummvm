@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -33,18 +33,18 @@
 
 namespace Avalanche {
 
- void loadtrip();
+void loadtrip();
 
- void boundscheck(integer& x,integer& y, byte xm,byte ym);
+void boundscheck(integer &x, integer &y, byte xm, byte ym);
 
- void budge(byte who, shortint xx,shortint yy, byte frame); /* Moving & animation controller */
+void budge(byte who, shortint xx, shortint yy, byte frame); /* Moving & animation controller */
 
- void tripkey(char dir);
+void tripkey(char dir);
 
- void trippancy();
+void trippancy();
 
- void enter(byte what_handle, integer xx,integer yy,integer lx,integer ly, byte mmx,byte mmy,byte st);
+void enter(byte what_handle, integer xx, integer yy, integer lx, integer ly, byte mmx, byte mmy, byte st);
 
- } // End of namespace Avalanche.
+} // End of namespace Avalanche.
 
 #endif

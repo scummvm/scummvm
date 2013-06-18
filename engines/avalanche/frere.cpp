@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -29,23 +29,26 @@
 
 namespace Avalanche {
 
-typedef array<1,31,byte> tunetype;
+typedef array<1, 31, byte> tunetype;
 
 const integer lower = 0;
- const integer same = 1;
+const integer same = 1;
 const integer higher = 2;
 
-const array<1,12,char> keys = "QWERTYUIOP[]";
-const array<1,12,word> notes = 
-{{196,220,247,262,294,330,350,392,440,494,523,587}};
+const array<1, 12, char> keys = "QWERTYUIOP[]";
+const array<1, 12, word> notes =
+{{196, 220, 247, 262, 294, 330, 350, 392, 440, 494, 523, 587}};
 
-const tunetype tune = 
-{{higher,higher,lower,same,higher,higher,lower,higher,higher,higher,
- lower,higher,higher,
- same,higher,lower,lower,lower,lower,higher,higher,lower,lower,lower,
- lower,same,lower,higher,same,lower,higher}};
+const tunetype tune = {
+	{
+		higher, higher, lower, same, higher, higher, lower, higher, higher, higher,
+		lower, higher, higher,
+		same, higher, lower, lower, lower, lower, higher, higher, lower, lower, lower,
+		lower, same, lower, higher, same, lower, higher
+	}
+};
 
-byte this_one,last_one;
+byte this_one, last_one;
 
 char pressed;
 
@@ -53,77 +56,82 @@ byte value;
 
 tunetype played;
 
-void store_(byte what)
-{;
+void store_(byte what) {
+	;
 
- move(played[2],played[1],sizeof(played)-1);
+	move(played[2], played[1], sizeof(played) - 1);
 
- played[31]=what;
+	played[31] = what;
 
 }
 
-boolean they_match()
-{
-    byte fv;
-boolean they_match_result;
-;
+boolean they_match() {
+	byte fv;
+	boolean they_match_result;
+	;
 
- for( fv=1; fv <= sizeof(played); fv ++)
-  if (played[fv]!=tune[fv]) 
-  {;
-   they_match_result=false;
-   return they_match_result;
-  }
+	for (fv = 1; fv <= sizeof(played); fv ++)
+		if (played[fv] != tune[fv]) {
+			;
+			they_match_result = false;
+			return they_match_result;
+		}
 
- they_match_result=true;
+	they_match_result = true;
 
-return they_match_result;
+	return they_match_result;
 }
 
-int main(int argc, const char* argv[])
-{pio_initialize(argc, argv);
-;
+int main(int argc, const char *argv[]) {
+	pio_initialize(argc, argv);
+	;
 
- textattr=30; clrscr; output << NL;
+	textattr = 30;
+	clrscr;
+	output << NL;
 
- do {
+	do {
 
-  pressed=upcase(readkey());
+		pressed = upcase(readkey());
 
-  value=pos(pressed,keys);
+		value = pos(pressed, keys);
 
-  if (value>0) 
-  {;
+		if (value > 0) {
+			;
 
-   last_one=this_one;
-   this_one=value;
+			last_one = this_one;
+			this_one = value;
 
-   sound(notes[this_one]);
-   delay(100);
-   nosound;
+			sound(notes[this_one]);
+			delay(100);
+			nosound;
 
-   if (this_one<last_one) 
-    store_(lower); else
+			if (this_one < last_one)
+				store_(lower);
+			else
 
-     if (this_one==last_one) 
-      store_(same); else
+				if (this_one == last_one)
+					store_(same);
+				else
 
-       store_(higher);
+					store_(higher);
 
-   if (they_match()) 
-   {;
-    textattr=94; clrscr; output << NL;
-    output << string('\7')+"It matches!" << NL;
-    input >> NL;
-    exit(0);
-   }
+			if (they_match()) {
+				;
+				textattr = 94;
+				clrscr;
+				output << NL;
+				output << string('\7') + "It matches!" << NL;
+				input >> NL;
+				exit(0);
+			}
 
-  }
+		}
 
- } while (!(pressed=='\33'));
+	} while (!(pressed == '\33'));
 
- output << "*** PROGRAM STOPPED! ***" << NL;
-return EXIT_SUCCESS;
+	output << "*** PROGRAM STOPPED! ***" << NL;
+	return EXIT_SUCCESS;
 }
 
 } // End of namespace Avalanche.

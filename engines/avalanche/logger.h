@@ -11,7 +11,7 @@
 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
 
  * You should have received a copy of the GNU General Public License
@@ -48,7 +48,7 @@ void log_scrollline();    /* Set up a line for the scroll driver */
 
 void log_scrollendline(boolean centred);
 
-void log_bubbleline(byte linenum,byte whom, string x);
+void log_bubbleline(byte linenum, byte whom, string x);
 
 void log_newline();
 
@@ -56,7 +56,7 @@ void log_newroom(string where);
 
 void log_aside(string what);
 
-void log_score(word credit,word now);
+void log_score(word credit, word now);
 
 } // End of namespace Avalanche.
 
