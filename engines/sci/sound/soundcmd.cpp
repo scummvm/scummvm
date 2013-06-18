@@ -534,8 +534,11 @@ reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
 	byte channel = argv[1].toUint16() & 0xf;
 	byte midiCmd = argv[2].toUint16() & 0xff;
 
-	// TODO: first there is a 4-parameter variant of this call which needs to get reversed
-	//        second the current code isn't 100% accurate, sierra sci does checks on the 4th parameter
+	// TODO: There is a 4 parameter variant of this call,
+	// used by at least lsl1vga.
+	// It lacks a midiCmd argument, but for this variant midiCmd defaults to
+	// 0xB0 (controller). If argv[2] is 0xFF, midiCmd is 0xE0
+	// (pitchwheel). The exact parameters need to be investigated further.
 	if (argc == 4)
 		return acc;
 
