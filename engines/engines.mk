@@ -26,6 +26,11 @@ DEFINES += -DENABLE_AGOS2
 endif
 endif
 
+ifdef ENABLE_AVALANCHE
+DEFINES += -DENABLE_AVALANCHE=$(ENABLE_AVALANCHE)
+MODULES += engines/avalanche
+endif
+
 ifdef ENABLE_CGE
 DEFINES += -DENABLE_CGE=$(ENABLE_CGE)
 MODULES += engines/cge
