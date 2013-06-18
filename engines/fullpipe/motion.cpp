@@ -164,5 +164,40 @@ void CReactParallel::createRegion() {
   // GdiObject::Attach(_rgn, CreatePolygonRgn(_points, 4, 2);
 }
 
+CReactPolygonal::CReactPolygonal() {
+  _field_C = 0;
+  _points = 0;
+  _pointCount = 0;
+  _field_10 = 0;
+}
+
+bool CReactPolygonal::load(MfcArchive &file) {
+  _field_C = file.readUint32LE();
+  _field_10 = file.readUint32LE();
+  _pointCount = file.readUint32LE();
+
+  if (_pointCount > 0) {
+	  _points = (Common::Point **)malloc(sizeof(Common::Point *) * _pointCount);
+
+	  for (int i = 0; i < _pointCount; i++) {
+		_points[i] = new Common::Point;
+
+		_points[i]->x = file.readUint32LE();
+		_points[i]->y = file.readUint32LE();
+	  }
+
+  }
+
+  createRegion();
+
+  return true;
+}
+
+void CReactPolygonal::createRegion() {
+  if (_points) {
+
+	// GdiObject::Attach(_rgn, CreatePolygonRgn(_points, _pointCount, 2);
+  }
+}
 
 } // End of namespace Fullpipe

@@ -104,6 +104,19 @@ class CReactParallel : public CMovGraphReact {
     void createRegion();
 };
 
+class CReactPolygonal : public CMovGraphReact {
+    //CRgn _rgn;
+    int _field_C;
+    int _field_10;
+    int _pointCount;
+    Common::Point **_points;
+
+  public:
+    CReactPolygonal();
+    virtual bool load(MfcArchive &file);
+    void createRegion();
+};
+
 class CMovGraphLink : public CObject {
     CMovGraphNode *_movGraphNode1;
     CMovGraphNode *_movGraphNode2;
