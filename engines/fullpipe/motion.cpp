@@ -42,16 +42,17 @@ bool CMotionController::load(MfcArchive &file) {
 bool CMctlCompound::load(MfcArchive &file) {
 	int count = file.readUint32LE();
 
-	debug(0, "CMctlCompound::count = %d", count);
+	debug(6, "CMctlCompound::count = %d", count);
 
 	for (int i = 0; i < count; i++) {
-	  debug(0, "CompoundArray[%d]", i);
+	  debug(6, "CompoundArray[%d]", i);
 	  CMctlCompoundArrayItem *obj = (CMctlCompoundArrayItem *)file.readClass();
 
 	  int count1 = file.readUint32LE();
 
+	  debug(6, "ConnectionPoint::count: %d", count1);
 	  for (int j = 0; j < count1; j++) {
-		debug(0, "ConnectionPoint[%d]", j);
+		debug(6, "ConnectionPoint[%d]", j);
 		CMctlConnectionPoint *obj1 = (CMctlConnectionPoint *)file.readClass();
 
 		obj->_connectionPoints.push_back(*obj1);
@@ -60,6 +61,7 @@ bool CMctlCompound::load(MfcArchive &file) {
 	  obj->_field_20 = file.readUint32LE();
 	  obj->_field_24 = file.readUint32LE();
 
+	  debug(6, "graphReact");
 	  obj->_movGraphReactObj = (CMovGraphReact *)file.readClass();
 
 	  _motionControllers.push_back(*obj);
@@ -72,6 +74,8 @@ bool CMctlCompoundArray::load(MfcArchive &file) {
 	int count = file.readUint32LE();
 
 	debug(0, "CMctlCompoundArray::count = %d", count);
+
+	assert(0);
 
 	return true;
 }
@@ -108,15 +112,15 @@ bool CMovGraphLink::load(MfcArchive &file) {
 
   _flags = file.readUint32LE();
 
-  debug(0, "GraphNode1");
+  debug(8, "GraphNode1");
   _movGraphNode1 = (CMovGraphNode *)file.readClass();
-  debug(0, "GraphNode2");
+  debug(8, "GraphNode2");
   _movGraphNode2 = (CMovGraphNode *)file.readClass();
 
   _distance = file.readDouble();
   _angle = file.readDouble();
 
-  debug(0, "distance: %g, angle: %g", _distance, _angle);
+  debug(8, "distance: %g, angle: %g", _distance, _angle);
 
   _movGraphReact = (CMovGraphReact *)file.readClass();
   _name = file.readPascalString();

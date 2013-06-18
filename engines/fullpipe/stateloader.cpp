@@ -114,11 +114,9 @@ bool CGameLoader::load(MfcArchive &file) {
 
 		snprintf(tmp, 11, "%04d.sc2", it->_sceneId);
 
-		debug(0, "sc: %d", it->_sceneId);
+		debug(2, "sc: %s", tmp);
 
 		_sc2array[i].loadFile((const char *)tmp);
-
-		debug(0, "sc: %s", tmp);
 	}
 
 	_preloadItems.load(file);
@@ -260,10 +258,10 @@ bool CInteractionController::load(MfcArchive &file) {
 bool CObList::load(MfcArchive &file) {
 	int count = file.readCount();
 
-	debug(0, "CObList::count: %d:", count);
+	debug(9, "CObList::count: %d:", count);
 
 	for (int i = 0; i < count; i++) {
-		debug(0, "CObList::[%d]", i);
+		debug(9, "CObList::[%d]", i);
 		CObject *t = file.readClass();
 
 		push_back(*t);
@@ -507,7 +505,7 @@ bool Sc2::load(MfcArchive &file) {
 	_motionController = (CMotionController *)file.readClass();
 
 	_count1 = file.readUint32LE();
-	debug(0, "count1: %d", _count1);
+	debug(4, "count1: %d", _count1);
 	if (_count1 > 0) {
 	  _data1 = (int32 *)malloc(_count1 * sizeof(int32));
 	  
@@ -519,7 +517,7 @@ bool Sc2::load(MfcArchive &file) {
 	}
 
 	_defPicAniInfosCount = file.readUint32LE();
-	debug(0, "defPicAniInfos: %d", _defPicAniInfosCount);
+	debug(4, "defPicAniInfos: %d", _defPicAniInfosCount);
 	if (_defPicAniInfosCount > 0) {
 	  _defPicAniInfos = (PicAniInfo **)malloc(_defPicAniInfosCount * sizeof(PicAniInfo *));
 
@@ -536,7 +534,7 @@ bool Sc2::load(MfcArchive &file) {
 	_picAniInfosCount = 0;
 
 	_entranceDataCount = file.readUint32LE();
-	debug(0, "_entranceData: %d", _entranceDataCount);
+	debug(4, "_entranceData: %d", _entranceDataCount);
 
 	if (_entranceDataCount > 0) {
 	  _entranceData = (EntranceInfo **)malloc(_defPicAniInfosCount * sizeof(EntranceInfo *));
@@ -549,7 +547,7 @@ bool Sc2::load(MfcArchive &file) {
 	  _entranceData = 0;
 	}
 
-	debug(0, "pos: %d, 0x%x: %d", file.size(), file.pos(), file.size() - file.pos());
+	debug(4, "pos: %d, 0x%x: %d", file.size(), file.pos(), file.size() - file.pos());
 
 	return true;
 }
@@ -557,7 +555,7 @@ bool Sc2::load(MfcArchive &file) {
 bool CDWordArray::load(MfcArchive &file) {
 	int count = file.readCount();
 
-	debug(0, "CDWordArray::count: %d", count);
+	debug(9, "CDWordArray::count: %d", count);
 
 	resize(count);
 
