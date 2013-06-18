@@ -45,7 +45,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"mirage",          "Mirage"},
 	{"pigeons",         "Pigeons in the Park"},
 	{"reversion1",      "Reversion: The Escape"},
-	{"reversion2",	    "Reversion: The Meeting"},
+	{"reversion2",      "Reversion: The Meeting"},
 	{"rosemary",        "Rosemary"},
 	{"thebox",          "The Box"},
 	{"twc",             "the white chamber"},
