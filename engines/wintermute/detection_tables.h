@@ -37,6 +37,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"carolreed9",      "Carol Reed 9 - Cold Case Summer"},
 	{"chivalry",        "Chivalry is Not Dead"},
 	{"deadcity",        "Dead City"},
+	{"dreaming",        "Des Reves Elastiques Avec Mille Insectes Nommes Georges"},
 	{"dirtysplit",      "Dirty Split"},
 	{"dreamscape",      "Dreamscape"},
 	{"ghostsheet",      "Ghost in the Sheet"},
@@ -245,6 +246,16 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("data.dcp", "139d8a25579e969f8b37d20e6e3de5f9", 92668291),
 		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	// Des Reves Elastiques Avec Mille Insectes Nommes Georges
+	{
+		"dreaming",
+		"",
+		AD_ENTRY1s("data.dcp", "4af26d97ea063fc1277ce30ae431de90", 8804073),
+		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO0()
