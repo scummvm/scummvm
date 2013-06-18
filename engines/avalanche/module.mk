@@ -51,6 +51,7 @@ MODULE_OBJS = \
 	convert.o \
 	convmous.o \
 	credits.o \
+	detection.o \
 	displtxt.o \
 	dropdown.o \
 	dwidth.o \
