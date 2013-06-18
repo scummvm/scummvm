@@ -1179,7 +1179,7 @@ CMapResource::CMapResource(BoltFilesState &state, const byte *src): _vm(state._v
 	_start = READ_LE_UINT16(src + 2);
 	_end = READ_LE_UINT16(src + 4);
 	
-	int count = _end - _start;
+	int count = _end - _start + 1;
 	_entries = new byte[count * 3];
 	Common::copy(src + 6, src + 6 + 3 * count, _entries);
 
