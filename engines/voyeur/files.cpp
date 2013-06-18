@@ -1000,6 +1000,7 @@ int ViewPortResource::drawText(const Common::String &msg) {
 
 			gfxManager.sDrawPic(&_fontChar, this, Common::Point(xp, yp));
 			
+			_fontChar._imgData = NULL;
 			xp += charWidth + padding;
 			msgWidth += charWidth + padding;
 		}
