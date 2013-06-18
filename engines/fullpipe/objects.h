@@ -220,6 +220,37 @@ class Scene {
 	int libHandle;
 };
 
+struct PicAniInfo {
+  int32 type;
+  int16 objectId;
+  int16 field_6;
+  int32 field_8;
+  int16 field_C;
+  int16 field_E;
+  int32 ox;
+  int32 oy;
+  int32 priority;
+  int16 staticsId;
+  int16 movementId;
+  int16 dynamicPhaseIndex;
+  int16 flags;
+  int32 field_24;
+  int32 someDynamicPhaseIndex;
+
+  bool load(MfcArchive &file);
+};
+
+struct EntranceInfo
+{
+  int32 sceneId;
+  int32 field_4;
+  int32 messageQueueId;
+  byte gap_C[292]; // FIXME
+  int32 field_130;
+
+  bool load(MfcArchive &file);
+};
+
 class CMotionController;
 
 class Sc2 : public CObject {
@@ -227,14 +258,14 @@ class Sc2 : public CObject {
 	int16 _field_2;
 	Scene *_scene;
 	CMotionController *_motionController;
-	int _data1;
+	int32 *_data1; // FIXME, could be a struct
 	int _count1;
-	int _defPicAniInfos;
+	PicAniInfo **_defPicAniInfos;
 	int _defPicAniInfosCount;
-	int _picAniInfos;
+	PicAniInfo **_picAniInfos;
 	int _picAniInfosCount;
 	int _isLoaded;
-	int _entranceData;
+	EntranceInfo **_entranceData;
 	int _entranceDataCount;
 
  public:

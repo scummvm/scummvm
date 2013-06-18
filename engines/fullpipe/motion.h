@@ -44,18 +44,6 @@ class CMctlConnectionPointsArray : public Common::Array<CObject>, public CObject
 	virtual bool load(MfcArchive &file);
 };
 
-class CMctlCompoundArrayItem : public CObject {
-  int _motionControllerObj;
-  int _movGraphReactObj;
-  CMctlConnectionPointsArray _connectionPoints;
-  int _field_20;
-  int _field_24;
-  int _field_28;
-
- public:
-	CMctlCompoundArrayItem() : _movGraphReactObj(0), _motionControllerObj(0) {}
-};
-
 class CMctlCompound : public CMotionController {
 	CMctlCompoundArray _motionControllers;
 
@@ -86,6 +74,20 @@ class CMovGraphNode : public CObject {
 
 class CMovGraphReact : public CObject {
     // Empty
+};
+
+class CMctlCompoundArrayItem : public CMotionController {
+	friend class CMctlCompound;
+
+  protected:
+	CMovGraphReact *_movGraphReactObj;
+	CMctlConnectionPointsArray _connectionPoints;
+	int _field_20;
+	int _field_24;
+	int _field_28;
+
+ public:
+  CMctlCompoundArrayItem() : _movGraphReactObj(0) {}
 };
 
 class CReactParallel : public CMovGraphReact {
@@ -147,6 +149,17 @@ class CMovGraph : public CMotionController {
  public:
 	CMovGraph();
 	virtual bool load(MfcArchive &file);
+};
+
+class CMctlConnectionPoint : public CObject {
+	int _connectionX;
+	int _connectionY;
+	int _field_C;
+	int _field_10;
+	int16 _field_14;
+	int16 _field_16;
+	int _messageQueueObj;
+	int _motionControllerObj;
 };
 
 } // End of namespace Fullpipe

@@ -117,6 +117,8 @@ bool CGameLoader::load(MfcArchive &file) {
 		debug(0, "sc: %d", it->_sceneId);
 
 		_sc2array[i].loadFile((const char *)tmp);
+
+		debug(0, "sc: %s", tmp);
 	}
 
 	_preloadItems.load(file);
@@ -258,7 +260,10 @@ bool CInteractionController::load(MfcArchive &file) {
 bool CObList::load(MfcArchive &file) {
 	int count = file.readCount();
 
+	debug(0, "CObList::count: %d:", count);
+
 	for (int i = 0; i < count; i++) {
+		debug(0, "CObList::[%d]", i);
 		CObject *t = file.readClass();
 
 		push_back(*t);
@@ -483,7 +488,7 @@ bool CGameVar::load(MfcArchive &file) {
 Sc2::Sc2() {
 	_sceneId = 0;
 	_field_2 = 0;
-	//_scene = 0;
+	_scene = 0;
 	_motionController = 0;
 	_data1 = 0;
 	_count1 = 0;
@@ -500,6 +505,51 @@ bool Sc2::load(MfcArchive &file) {
 	_sceneId = file.readUint16LE();
 
 	_motionController = (CMotionController *)file.readClass();
+
+	_count1 = file.readUint32LE();
+	debug(0, "count1: %d", _count1);
+	if (_count1 > 0) {
+	  _data1 = (int32 *)malloc(_count1 * sizeof(int32));
+	  
+	  for (int i = 0; i < _count1; i++) {
+		_data1[i] = file.readUint32LE();
+	  }
+	} else {
+	  _data1 = 0;
+	}
+
+	_defPicAniInfosCount = file.readUint32LE();
+	debug(0, "defPicAniInfos: %d", _defPicAniInfosCount);
+	if (_defPicAniInfosCount > 0) {
+	  _defPicAniInfos = (PicAniInfo **)malloc(_defPicAniInfosCount * sizeof(PicAniInfo *));
+
+	  for (int i = 0; i < _defPicAniInfosCount; i++) {
+		_defPicAniInfos[i] = new PicAniInfo();
+
+		_defPicAniInfos[i]->load(file);
+	  }
+	} else {
+	  _defPicAniInfos = 0;
+	}
+
+	_picAniInfos = 0;
+	_picAniInfosCount = 0;
+
+	_entranceDataCount = file.readUint32LE();
+	debug(0, "_entranceData: %d", _entranceDataCount);
+
+	if (_entranceDataCount > 0) {
+	  _entranceData = (EntranceInfo **)malloc(_defPicAniInfosCount * sizeof(EntranceInfo *));
+
+	  for (int i = 0; i < _entranceDataCount; i++) {
+		_entranceData[i] = new EntranceInfo();
+		_entranceData[i]->load(file);
+	  }
+	} else {
+	  _entranceData = 0;
+	}
+
+	debug(0, "pos: %d, 0x%x: %d", file.size(), file.pos(), file.size() - file.pos());
 
 	return true;
 }
@@ -518,6 +568,36 @@ bool CDWordArray::load(MfcArchive &file) {
 	}
 
 	return true;
+}
+
+bool PicAniInfo::load(MfcArchive &file) {
+  type = file.readUint32LE();
+  objectId = file.readUint16LE();
+  field_6 = file.readUint16LE();
+  field_8 = file.readUint32LE();
+  field_C = file.readUint16LE();
+  field_E = file.readUint16LE();
+  ox = file.readUint32LE();
+  oy = file.readUint32LE();
+  priority = file.readUint32LE();
+  staticsId = file.readUint16LE();
+  movementId = file.readUint16LE();
+  dynamicPhaseIndex = file.readUint16LE();
+  flags = file.readUint16LE();
+  field_24 = file.readUint32LE();
+  someDynamicPhaseIndex = file.readUint32LE();
+
+  return true;
+}
+
+bool EntranceInfo::load(MfcArchive &file) {
+  sceneId = file.readUint32LE();
+  field_4 = file.readUint32LE();
+  messageQueueId = file.readUint32LE();
+  file.read(gap_C, 292); // FIXME, Ugh
+  field_130 = file.readUint32LE();
+
+  return true;
 }
 
 } // End of namespace Fullpipe
