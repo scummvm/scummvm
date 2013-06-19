@@ -23,9 +23,12 @@
 
 #ifndef ZVISION_H
 #define ZVISION_H
- 
+
 #include "common/random.h"
+#include "common/events.h"
+
 #include "engines/engine.h"
+
 #include "gui/debugger.h"
  
 namespace ZVision {
@@ -45,17 +48,32 @@ class ZVision : public Engine {
 public:
 	ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc);
 	~ZVision();
- 
-	uint32 getFeatures() const;
-	Common::Language getLanguage() const;
-	virtual Common::Error run();
- 
+
 private:
 	Console *_console;
 	const ZVisionGameDescription *_gameDescription;
 
 	// We need random numbers
 	Common::RandomSource *_rnd;
+
+	// To prevent allocation every time we process events
+	Common::Event _event;
+
+	bool _needsScreenUpdate;
+
+public:
+	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
+	virtual Common::Error run();
+ 
+private:
+	void processEvents();
+	void onMouseDown(const Common::Point &pos);
+	void onMouseMove(const Common::Point &pos);
+	void onKeyDown(uint16 keyCode);
+
+	void updateScripts();
+	void updateAnimations(uint32 detaTimeMillis);
 };
  
 // Example console class
