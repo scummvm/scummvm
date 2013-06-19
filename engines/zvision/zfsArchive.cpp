@@ -20,7 +20,9 @@
  *
  */
 
-#include "zfsArchive.h"
+#include "common/scummsys.h"
+
+#include "zvision/zfsArchive.h"
 #include "common/hashmap.h"
 #include "common/memstream.h"
 #include "common/debug.h"

@@ -21,6 +21,8 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #include "common/stream.h"
 #include "audio/audiostream.h"
 
