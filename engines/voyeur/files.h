@@ -301,7 +301,7 @@ public:
 	int field2;
 	int _padding;
 	int _fontHeight;
-	int field6;
+	int _topPadding;
 	int *_charWidth;
 	byte *_data1;
 	byte *_data2;

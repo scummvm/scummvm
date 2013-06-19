@@ -844,7 +844,7 @@ int ViewPortResource::drawText(const Common::String &msg) {
 	int yShadows[9] = { 0, 1, 0, -1, -1, -1, 0, 1, 1 };
 
 	Common::Rect *clipPtr = gfxManager._clipPtr;
-	if (!(fontInfo._picFlags & 1))
+	if (!(fontInfo._picFlags & DISPFLAG_1))
 		gfxManager._clipPtr = NULL;
 
 	int minChar = fontData._minChar;
@@ -854,14 +854,14 @@ int ViewPortResource::drawText(const Common::String &msg) {
 	int msgWidth = 0;
 	int xp = 0, yp = 0;
 
-	Common::Point pos = fontInfo._pos;
+	Common::Point pos = Common::Point(fontInfo._pos.x, fontInfo._pos.y + fontData._topPadding);
 
-	_fontChar._flags = fontInfo._picFlags | 2;
+	_fontChar._flags = fontInfo._picFlags | DISPFLAG_2;
 	_fontChar._select = fontInfo._picSelect;
 	_fontChar._bounds.setHeight(fontHeight);
 
-	if (gfxManager._drawTextPermFlag || (fontInfo._fontFlags & 1) || fontInfo._justify ||
-			(gfxManager._saveBack && fontInfo._fontSaveBack && (_flags & 0x8000))) {
+	if (gfxManager._drawTextPermFlag || (fontInfo._fontFlags & DISPFLAG_1) || fontInfo._justify ||
+			(gfxManager._saveBack && fontInfo._fontSaveBack && (_flags & DISPFLAG_VIEWPORT))) {
 		msgWidth = textWidth(msg);
 		yp = pos.y;
 		xp = pos.x;
@@ -929,7 +929,7 @@ int ViewPortResource::drawText(const Common::String &msg) {
 		addSaveRect(_pageIndex, _fontRect);
 	}
 
-	if (fontInfo._fontFlags & 1) {
+	if (fontInfo._fontFlags & DISPFLAG_1) {
 		gfxManager._drawPtr->_pos = Common::Point(_fontRect.left, _fontRect.top);
 		gfxManager._drawPtr->_penColor = fontInfo._backColor;
 		sFillBox(_fontRect.width());
@@ -939,9 +939,9 @@ int ViewPortResource::drawText(const Common::String &msg) {
 	gfxManager._saveBack = false;
 
 	int count = 0;
-	if (fontInfo._fontFlags & 4)
+	if (fontInfo._fontFlags & DISPFLAG_4)
 		count = 1;
-	else if (fontInfo._fontFlags & 8)
+	else if (fontInfo._fontFlags & DISPFLAG_8)
 		count = 8;
 
 	for (int i = count; i >= 0; --i) {
@@ -1097,7 +1097,7 @@ FontResource::FontResource(BoltFilesState &state, byte *src) {
 	field2 = src[2];
 	_padding = src[3];
 	_fontHeight = src[5];
-	field6 = src[6];
+	_topPadding = (int8)src[6];
 
 	int totalChars = _maxChar - _minChar + 1;
 	_charWidth = new int[totalChars];
