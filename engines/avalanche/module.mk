@@ -18,7 +18,6 @@ MODULE_OBJS = \
 	avvymonk.o \
 	bakchunk.o \
 	basher.o \
-	bootstrp.o \
 	cadburys.o \
 	celer.o \
 	ch_egats.o \

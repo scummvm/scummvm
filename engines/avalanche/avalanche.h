@@ -76,6 +76,76 @@ private:
 	Common::Platform _platform;
 
 	void initialize();
+
+	// From bootstrp:
+
+	enum elm {Normal, Musical, Elmpoyten, Regi};
+
+	static const int16 _runShootemup = 1, _runDosshell = 2, _runGhostroom = 3, _runGolden = 4;
+
+	static const int16 _reset_ = 0;
+
+	static const bool _jsb = true, _no_jsb = false, _bflight = true, _no_bflight = false;
+
+	struct {
+		byte operation;
+		uint16 skellern;
+		byte contents[1000];
+	} _storage;
+
+	Common::String arguments, demo_args, args_with_no_filename;
+
+	bool first_time;
+
+	byte original_mode;
+	void *old_1c;
+
+	Common::String segofs;
+
+	bool zoomy;
+
+	int32 soundcard, speed, baseaddr, irq, dma;
+
+	void cursor_off();
+
+	void cursor_on();
+
+	void quit();
+
+	Common::String strf(int32 x);
+
+	Common::String command_com();
+
+	void explain(byte error);
+
+	void b_flight();
+
+	void bflight_on();
+
+	void bflight_off();
+
+	Common::String elm2str(elm how);
+
+	void run(Common::String what, bool with_jsb, bool with_bflight, elm how);
+
+	void run_avalot();
+
+	void run_the_demo();
+
+	void get_arguments();
+
+	void dos_shell();
+
+	bool keypressed1();
+
+	void flush_buffer();
+
+	void demo();
+
+	void call_menu();
+
+	void get_slope();
+
 };
 
 } // End of namespace Avalanche

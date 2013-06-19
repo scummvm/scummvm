@@ -78,10 +78,161 @@ namespace Avalanche {
 		//	_sound->syncVolume();
 	}
 
+	void AvalancheEngine::initialize() {
+		//debugC(1, kDebugEngine, "initialize");
+
+		_rnd = new Common::RandomSource("avalanche");
+		_rnd->setSeed(42);                              // Kick random number generator
+	}
+
+
+
+	// From Bootstrp:
+
+	void AvalancheEngine::cursor_off() {
+		warning("STUB: cursor_off()");
+	}
+
+	void AvalancheEngine::cursor_on() {
+		warning("STUB: cursor_on()");
+	}
+
+	void AvalancheEngine::quit() {
+		cursor_on();
+	}
+
+	Common::String AvalancheEngine::strf(int32 x) {
+		Common::String q = Common::String::format("%d", x);
+		return q;
+	}
+
+	Common::String AvalancheEngine::command_com() {
+		warning("STUB: command_com()");
+		return ("STUB: command_com()");
+	}
+
+	void AvalancheEngine::explain(byte error) {
+		warning("STUB: explain()");
+	}
+
+	void AvalancheEngine::b_flight() {   /*interrupt;*/
+		_storage.skellern++;
+	}
+
+	void AvalancheEngine::bflight_on() {
+		_storage.skellern = _reset_;
+		warning("STUB: bflight_on()");
+		// setintvec(0x1c, &b_flight);
+	}
+
+	void AvalancheEngine::bflight_off() {
+		warning("STUB: bflight_off()");
+		// setintvec(0x1c, old_1c);
+	}
+
+	Common::String AvalancheEngine::elm2str(elm how) {
+		Common::String elm2str_result;
+		switch (how) {
+		case Normal:
+		case Musical:
+			elm2str_result = "jsb";
+			break;
+		case Regi:
+			elm2str_result = "REGI";
+			break;
+		case Elmpoyten:
+			elm2str_result = "ELMPOYTEN";
+			break;
+		}
+		return elm2str_result;
+	}
+
+	void AvalancheEngine::run(Common::String what, bool with_jsb, bool with_bflight, elm how) {
+		warning("STUB: run()"); 
+		// Probably there'll be no need of this function, as all *.AVX-es will become classes.
+	}
+
+	void AvalancheEngine::run_avalot() {
+		warning("STUB: run_avalot()");
+	}
+
+	void AvalancheEngine::run_the_demo() {
+		warning("STUB: run_the_demo()");
+	}
+
+	void AvalancheEngine::get_arguments() {
+		warning("STUB: get_arguments()");
+	}
+
+	void AvalancheEngine::dos_shell() {
+		warning("STUB: dos_shell()");
+	}
+
+	bool AvalancheEngine::keypressed1() {
+		warning("STUB: keypressed1()");
+		return false;
+	}
+
+	void AvalancheEngine::flush_buffer() {
+		warning("STUB: flush_buffer()");
+	}
+
+	void AvalancheEngine::demo() {
+		warning("STUB: demo()");
+	}
+
+	void AvalancheEngine::call_menu() {
+		warning("STUB: call_menu()");
+	}
+
+	void AvalancheEngine::get_slope() {
+		warning("STUB: get_slope()");
+	}
+
+
+
 	Common::Error AvalancheEngine::run() {
 		s_Engine = this;
 		initGraphics(320, 200, false);
 		_console = new AvalancheConsole(this);
+
+
+
+		// From bootstrp:
+
+		/*original_mode = mem[seg0040 * 0x49];
+		getintvec(0x1c, old_1c);*/
+
+		first_time = true;
+
+		get_arguments();
+		get_slope();
+
+		if (! zoomy)  call_menu();    /* Not run when zoomy. */
+
+		do {
+			run_avalot();
+
+			//if (dosexitcode != 77)  quit(); /* Didn't stop for us. */
+
+			switch (_storage.operation) {
+			case _runShootemup:
+				run("seu.avx", _jsb, _bflight, Normal);
+				break;
+			case _runDosshell:
+				dos_shell();
+				break;
+			case _runGhostroom:
+				run("g-room.avx", _jsb, _no_bflight, Normal);
+				break;
+			case _runGolden:
+				run("golden.avx", _jsb, _bflight, Musical);
+				break;
+			}
+
+		} while (true);
+
+
 
 		//	_mouse = new MouseHandler(this);
 
@@ -91,11 +242,6 @@ namespace Avalanche {
 		return Common::kNoError;
 	}
 
-	void AvalancheEngine::initialize() {
-		//debugC(1, kDebugEngine, "initialize");
-
-		_rnd = new Common::RandomSource("avalanche");
-		_rnd->setSeed(42);                              // Kick random number generator
-	}
+	
 
 } // End of namespace Avalanche
