@@ -35,6 +35,7 @@ namespace Buried {
 struct BuriedGameDescription;
 class Database;
 class GraphicsManager;
+class SoundManager;
 
 class BuriedEngine : public ::Engine {
 protected:
@@ -60,6 +61,7 @@ public:
 
 	GraphicsManager *_gfx;
 	Database *_mainEXE;
+	SoundManager *_sound;
 
 private:
 	Database *_library;
