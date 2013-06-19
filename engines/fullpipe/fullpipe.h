@@ -44,11 +44,12 @@ enum FullpipeGameFeatures {
 };
 
 class CGameLoader;
+class CGameVar;
 
 extern int g_gameProjectVersion;
 extern int g_gameProjectValue;
 extern int g_scrollSpeed;
-
+extern int g_currSoundListCount;
 
 class FullpipeEngine : public ::Engine {
 protected:
@@ -71,14 +72,25 @@ public:
 	Common::KeyCode _keyState;
 	uint16 _buttonState;
 
-    void updateEvents();
+	void updateEvents();
 
-	CGameLoader *g_gameLoader;
+	CGameLoader *_gameLoader;
 	bool loadGam(const char *fname);
 
 	int _gameProjectVersion;
 	int _gameProjectValue;
 	int _scrollSpeed;
+
+	void initObjectStates();
+	void setLevelStates();
+	void setSwallowedEggsState();
+
+	CGameVar *_swallowedEgg1;
+	CGameVar *_swallowedEgg2;
+	CGameVar *_swallowedEgg3;
+
+	void setObjectState(const char *name, int state);
+	int getObjectEnumState(const char *name, const char *state);
 
 public:
 

@@ -315,7 +315,8 @@ class ExCommand : public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
- class CGameVar : public CObject {
+class CGameVar : public CObject {
+ public:
 	CGameVar *_nextVarObj;
 	CGameVar *_prevVarObj;
 	CGameVar *_parentVarObj;
@@ -328,6 +329,12 @@ class ExCommand : public CObject {
  public:
 	CGameVar();
 	virtual bool load(MfcArchive &file);
+	CGameVar *getSubVarByName(const char *name);
+	bool setSubVarAsInt(const char *name, int value);
+	int getSubVarAsInt(const char *name);
+	CGameVar *addSubVarAsInt(const char *name, int value);
+	bool addSubVar(CGameVar *subvar);
+
 };
 
 class InventoryPoolItem {
@@ -435,6 +442,8 @@ class CGameLoader : public CObject {
 
 	virtual bool load(MfcArchive &file);
 
+	CGameVar *_gameVar;
+
  private:
 	GameProject *_gameProject;
 	CInteractionController *_interactionController;
@@ -456,7 +465,6 @@ class CGameLoader : public CObject {
 	int16 _field_F8;
 	int16 _field_FA;
 	PreloadItems _preloadItems;
-	CGameVar *_gameVar;
 	char *_gameName;
 	ExCommand _exCommand;
 	int _updateCounter;

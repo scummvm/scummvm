@@ -25,6 +25,7 @@
 
 #include "common/hash-str.h"
 #include "common/array.h"
+#include "common/file.h"
 
 namespace Fullpipe {
 

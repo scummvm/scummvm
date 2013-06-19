@@ -32,9 +32,11 @@
 namespace Fullpipe {
 
 bool FullpipeEngine::loadGam(const char *fname) {
-	g_gameLoader = new CGameLoader();
+	_gameLoader = new CGameLoader();
 
-	if (g_gameLoader->loadFile(fname)) {
+	if (_gameLoader->loadFile(fname)) {
+		g_currSoundListCount = 0;
+		initObjectStates();
 		// TODO
 	} else
 		return false;
@@ -44,8 +46,6 @@ bool FullpipeEngine::loadGam(const char *fname) {
 
 CGameLoader::CGameLoader() {
 	_interactionController = new CInteractionController();
-
-	// g_gameLoader = this;  // FIXME
 
 	_gameProject = 0;
 	//_gameName = "untitled";
@@ -481,6 +481,85 @@ bool CGameVar::load(MfcArchive &file) {
 	file.decLevel();
 
 	return true;
+}
+
+CGameVar *CGameVar::getSubVarByName(const char *name) {
+  CGameVar *sv = 0;
+
+  if (_subVars != 0) {
+    sv = _subVars;
+    for (;sv && scumm_stricmp(sv->_stringObj, name); sv = sv->_nextVarObj)
+      ;
+  }
+  return sv;
+}
+
+bool CGameVar::setSubVarAsInt(const char *name, int value) {
+  CGameVar *var = getSubVarByName(name);
+
+  if (var) {
+    if (var->_varType == 0) {
+      var->_value.intValue = value;
+
+      return true;
+    }
+    return false;
+  }
+
+  var = new CGameVar();
+  var->_varType = 0;
+  var->_value.intValue = value;
+  var->_stringObj = (char *)calloc(strlen(name) + 1, 1);
+  strcpy(var->_stringObj, name);
+
+  return addSubVar(var);
+}
+
+int CGameVar::getSubVarAsInt(const char *name) {
+  CGameVar *var = getSubVarByName(name);
+
+  if (var)
+    return var->_value.intValue;
+  else
+    return 0;
+}
+
+CGameVar *CGameVar::addSubVarAsInt(const char *name, int value) {
+  if (getSubVarByName(name)) {
+    return 0;
+  } else {
+    CGameVar *var = new CGameVar();
+
+    var->_varType = 0;
+    var->_value.intValue = value;
+
+    var->_stringObj = (char *)calloc(strlen(name) + 1, 1);
+    strcpy(var->_stringObj, name);
+
+    return (addSubVar(var) != 0) ? var : 0;
+  }
+}
+
+bool CGameVar::addSubVar(CGameVar *subvar) {
+  CGameVar *var = _subVars;
+
+  if (var) {
+    for (CGameVar *i = var->_nextVarObj; i; i = i->_nextVarObj)
+      var = i;
+
+    var->_nextVarObj = subvar;
+    subvar->_prevVarObj = var;
+    subvar->_parentVarObj = var;
+    
+    return true;
+  } else {
+    var->_subVars = subvar;
+    subvar->_parentVarObj = var;
+
+    return true;
+  }
+
+  return false;
 }
 
 Sc2::Sc2() {
