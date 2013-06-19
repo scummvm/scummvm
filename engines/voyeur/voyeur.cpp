@@ -252,7 +252,8 @@ bool VoyeurEngine::doLock() {
 		_graphicsManager._fontPtr->_fontFlags = 0;
 
 		Common::String dateString = lock.getDateString();
-		Common::String playString = Common::String::format("Last Play %s", msg.c_str());
+		msg = "16:49 8/12";
+ 		Common::String playString = Common::String::format("Last Play %s", msg.c_str());
 
 		bool breakFlag = false;
 		while (!breakFlag && !shouldQuit()) {

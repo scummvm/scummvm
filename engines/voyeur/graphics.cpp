@@ -226,7 +226,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	widthDiff2 = destPic->_bounds.width() - width2;
 
 	if (destViewPort) {
-		if (!_saveBack || ((srcPic->_flags & 0x800) != 0)) {
+		if (!_saveBack || ((srcPic->_flags & DISPFLAG_800) != 0)) {
 			backBounds.left = destPic->_bounds.left + offset.x;
 			backBounds.top = destPic->_bounds.top + offset.y;
 			backBounds.setWidth(width2);
@@ -253,7 +253,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		}
 	}
 
-	if (srcFlags & 0x1000) {
+	if (srcFlags & DISPFLAG_1000) {
 		srcImgData = srcPic->_imgData + (var4C << 14) + _screenOffset;
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
 			if (var4C < 4) {
@@ -264,7 +264,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	} else {
 		srcImgData = srcPic->_imgData;
 	}
-	if (destFlags & 0x1000) {
+	if (destFlags & DISPFLAG_1000) {
 		destImgData = destPic->_imgData + (var4C << 14) + _screenOffset;
 		for (uint idx = 0; idx < srcPic->_maskData; ++idx) {
 			if (var4C < 4) {
@@ -422,18 +422,32 @@ error("TODO: var22/var24/var2C not initialised before use?");
 		// loc_26666
 		if (srcPic->_pick == 0) {
 			// loc_2727A
-			int onOff = srcPic->_onOff;
-			int onOff2 = onOff | (onOff << 8);
+			byte onOff = srcPic->_onOff;
 
-			if (srcFlags & 2) {
-				if (srcFlags & 8) {
-
+			if (srcFlags & DISPFLAG_2) {
+				if (srcFlags & DISPFLAG_8) {
+					error("sDrawPic: TODO");
 				} else {
-
+					error("sDrawPic: TODO");
 				}
 			} else {
-				// TODO
+				// loc_27477
+				if (destFlags & DISPFLAG_8) {
+					// loc_27481
+					destP = (byte *)_screenSurface.pixels + screenOffset;
+					for (int yp = 0; yp < height1; ++yp) {
+						Common::fill(srcP, srcP + width2, onOff);
+						destP += width2 + widthDiff2;
+					}
+				} else {
+					// loc_2753C
+					destP = destImgData + screenOffset;
 
+					for (int yp = 0; yp < height1; ++yp) {
+						Common::fill(destP, destP + width2, onOff);
+						destP += width2 + widthDiff2;
+					}
+				}
 			}
 
 		} else {
@@ -551,7 +565,7 @@ void GraphicsManager::screenReset() {
 	resetPalette();
 	(*_vPort)->setupViewPort();
 	fillPic(*_vPort, 0);	
-	(*_vPort)->_parent->_flags |= 8;
+	(*_vPort)->_parent->_flags |= DISPFLAG_8;
 
 	// Flip
 	flipPage();
