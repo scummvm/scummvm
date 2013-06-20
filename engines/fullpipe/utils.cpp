@@ -24,11 +24,64 @@
 
 #include "common/file.h"
 
-#include "fullpipe/utils.h"
 #include "fullpipe/objects.h"
 #include "fullpipe/motion.h"
 
 namespace Fullpipe {
+
+bool CObject::loadFile(const char *fname) {
+	MfcArchive file;
+
+	if (!file.open(fname))
+		return false;
+
+	return load(file);
+}
+
+bool CObList::load(MfcArchive &file) {
+	int count = file.readCount();
+
+	debug(9, "CObList::count: %d:", count);
+
+	for (int i = 0; i < count; i++) {
+		debug(9, "CObList::[%d]", i);
+		CObject *t = file.readClass();
+
+		push_back(*t);
+	}
+
+	return true;
+}
+
+bool CObArray::load(MfcArchive &file) {
+	int count = file.readCount();
+
+	resize(count);
+
+	for (int i = 0; i < count; i++) {
+		CObject *t = file.readClass();
+
+		push_back(*t);
+	}
+
+	return true;
+}
+
+bool CDWordArray::load(MfcArchive &file) {
+	int count = file.readCount();
+
+	debug(9, "CDWordArray::count: %d", count);
+
+	resize(count);
+
+	for (int i = 0; i < count; i++) {
+		int32 t = file.readUint32LE();
+
+		push_back(t);
+	}
+
+	return true;
+}
 
 char *MfcArchive::readPascalString(bool twoByte) {
 	char *tmp;

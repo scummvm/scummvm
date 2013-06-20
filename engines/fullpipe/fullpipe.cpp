@@ -30,7 +30,6 @@
 #include "fullpipe/fullpipe.h"
 #include "fullpipe/ngiarchive.h"
 #include "fullpipe/objectnames.h"
-#include "fullpipe/utils.h"
 #include "fullpipe/objects.h"
 
 namespace Fullpipe {

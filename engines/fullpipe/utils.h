@@ -55,6 +55,53 @@ class MfcArchive : public Common::File {
 	int getLevel() { return _level; }
 };
 
+class CObject {
+ public:
+	virtual bool load(MfcArchive &in) { return true; }
+	virtual ~CObject() {}
+
+	bool loadFile(const char *fname);
+};
+
+class CObList : public Common::List<CObject>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
+class MemoryObject {
+	//CObject obj;
+	int filename;
+	int field_8;
+	int field_C;
+	int field_10;
+	char field_14;
+	char field_15;
+	char field_16;
+	char field_17;
+	int data;
+	int dataSize;
+	int flags;
+	int libHandle;
+};
+
+class CObArray : public Common::Array<CObject>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
+class CDWordArray : public Common::Array<int32>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
+};
+
+struct CNode {
+	CNode *pNext;
+	CNode *pPrev;
+	void *data;
+};
+
+typedef Common::Array<void *> CPtrList;
+
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_UTILS_H */

@@ -26,7 +26,6 @@
 #include "common/array.h"
 #include "common/list.h"
 
-#include "fullpipe/utils.h"
 #include "fullpipe/objects.h"
 
 namespace Fullpipe {
@@ -74,15 +73,6 @@ CGameLoader::CGameLoader() {
 CGameLoader::~CGameLoader() {
 	free(_gameName);
 	delete _gameProject;
-}
-
-bool CObject::loadFile(const char *fname) {
-	MfcArchive file;
-
-	if (!file.open(fname))
-		return false;
-
-	return load(file);
 }
 
 bool CGameLoader::load(MfcArchive &file) {
@@ -204,66 +194,8 @@ SceneTag::~SceneTag() {
 	free(_tag);
 }
 
-bool CInventory::load(MfcArchive &file) {
-	_sceneId = file.readUint16LE();
-	int numInvs = file.readUint32LE();
-
-	for (int i = 0; i < numInvs; i++) {
-		InventoryPoolItem *t = new InventoryPoolItem();
-		t->_id = file.readUint16LE();
-		t->_pictureObjectNormalId = file.readUint16LE();
-		t->_pictureObjectId1 = file.readUint16LE();
-		t->_pictureObjectMouseInsideId = file.readUint16LE();
-		t->_pictureObjectId3 = file.readUint16LE();
-		t->_flags = file.readUint32LE();
-		t->_field_C = 0;
-		t->_field_A = -536;
-		_itemsPool.push_back(*t);
-	}
-
-	return true;
-}
-
-CInventory2::CInventory2() {
-	_selectedId = -1;
-	_field_48 = -1;
-	_sceneObj = 0;
-	_picture = 0;
-	_isInventoryOut = 0;
-	_isLocked = 0;
-	_topOffset = -65;
-}
-
-bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartially
-	int numInvs = file.readUint32LE();
-
-	for (int i = 0; i < numInvs; i++) {
-		InventoryItem *t = new InventoryItem();
-		t->itemId = file.readUint16LE();
-		t->count = file.readUint16LE();
-		_inventoryItems.push_back(*t);
-	}
-
-	return true;
-}
-
 bool CInteractionController::load(MfcArchive &file) {
 	return _interactions.load(file);
-}
-
-bool CObList::load(MfcArchive &file) {
-	int count = file.readCount();
-
-	debug(9, "CObList::count: %d:", count);
-
-	for (int i = 0; i < count; i++) {
-		debug(9, "CObList::[%d]", i);
-		CObject *t = file.readClass();
-
-		push_back(*t);
-	}
-
-	return true;
 }
 
 CInputController::CInputController() {
@@ -395,20 +327,6 @@ bool CObjstateCommand::load(MfcArchive &file) {
 	_value = file.readUint32LE();
 
 	_stringObj = file.readPascalString();
-
-	return true;
-}
-
-bool CObArray::load(MfcArchive &file) {
-	int count = file.readCount();
-
-	resize(count);
-
-	for (int i = 0; i < count; i++) {
-		CObject *t = file.readClass();
-
-		push_back(*t);
-	}
 
 	return true;
 }
@@ -623,22 +541,6 @@ bool Sc2::load(MfcArchive &file) {
 	}
 
 	debug(4, "pos: %d, 0x%x: %d", file.size(), file.pos(), file.size() - file.pos());
-
-	return true;
-}
-
-bool CDWordArray::load(MfcArchive &file) {
-	int count = file.readCount();
-
-	debug(9, "CDWordArray::count: %d", count);
-
-	resize(count);
-
-	for (int i = 0; i < count; i++) {
-		int32 t = file.readUint32LE();
-
-		push_back(t);
-	}
 
 	return true;
 }

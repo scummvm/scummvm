@@ -3,6 +3,7 @@ MODULE := engines/fullpipe
 MODULE_OBJS = \
 	detection.o \
 	fullpipe.o \
+	inventory.o \
 	motion.o \
 	ngiarchive.o \
 	stateloader.o \

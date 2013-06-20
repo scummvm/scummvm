@@ -23,54 +23,10 @@
 #ifndef FULLPIPE_OBJECTS_H
 #define FULLPIPE_OBJECTS_H
 
+#include "fullpipe/utils.h"
+#include "fullpipe/inventory.h"
+
 namespace Fullpipe {
-
-class CObject {
- public:
-	virtual bool load(MfcArchive &in) { return true; }
-	virtual ~CObject() {}
-
-	bool loadFile(const char *fname);
-};
-
-class CObList : public Common::List<CObject>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
-
-class MemoryObject {
-	//CObject obj;
-	int filename;
-	int field_8;
-	int field_C;
-	int field_10;
-	char field_14;
-	char field_15;
-	char field_16;
-	char field_17;
-	int data;
-	int dataSize;
-	int flags;
-	int libHandle;
-};
-
-class CObArray : public Common::Array<CObject>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
-
-class CDWordArray : public Common::Array<int32>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
-
-struct CNode {
-	CNode *pNext;
-	CNode *pPrev;
-	void *data;
-};
-
-typedef Common::Array<void *> CPtrList;
 
 class SceneTag : public CObject {
  public:
@@ -337,54 +293,6 @@ class CGameVar : public CObject {
 
 };
 
-class InventoryPoolItem {
- public:
-	int16 _id;
-	int16 _pictureObjectNormalId;
-	int16 _pictureObjectId1;
-	int16 _pictureObjectMouseInsideId;
-	int16 _pictureObjectId3;
-	int16 _field_A;
-	int _field_C;
-	int _obj;
-	int _flags;
-};
-
-typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
-
-class CInventory : public CObject {
-	int16 _sceneId;
-	int16 _field_6;
-	InventoryPoolItems _itemsPool;
-
- public:
-	CInventory() { _sceneId = 0; }
-	virtual bool load(MfcArchive &file);
-};
-
-struct InventoryItem {
-	int16 itemId;
-	int16 count;
-};
-
-typedef Common::Array<InventoryItem> InventoryItems;
-
-class InventoryIcon {
-	int pictureObjectNormal;
-	int pictureObjectMouseInside;
-	int pictureObject3;
-	int x1;
-	int y1;
-	int x2;
-	int y2;
-	int16 inventoryItemId;
-	int16 field_1E;
-	int isSelected;
-	int isMouseInside;
-};
-
-typedef Common::Array<InventoryIcon> InventoryIcons;
-
 class Picture {
 	MemoryObject obj;
 	Common::Rect rect;
@@ -403,22 +311,6 @@ class Picture {
 
 class BigPicture {
 	Picture pic;
-};
-
-class CInventory2 : public CInventory {
-	InventoryItems _inventoryItems;
-	InventoryIcons _inventoryIcons;
-	int _selectedId;
-	int _field_48;
-	int _isInventoryOut;
-	int _isLocked;
-	int _topOffset;
-	Scene *_sceneObj;
-	BigPicture *_picture;
-
- public:
-	CInventory2();
-	bool loadPartial(MfcArchive &file);
 };
 
 struct PreloadItem {
