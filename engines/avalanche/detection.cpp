@@ -83,136 +83,17 @@ public:
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
 	bool hasFeature(MetaEngineFeature f) const;
-
-	/*int getMaximumSaveSlot() const;
-	SaveStateList listSaves(const char *target) const;
-	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
-	void removeSaveState(const char *target, int slot) const;*/
 };
 
 bool AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd) /*{*/
+	if (gd)
 		*engine = new AvalancheEngine(syst, (const AvalancheGameDescription *)gd);
-		/*	((AvalancheEngine *)*engine)->initGame((const ADGameDescription *)gd);
-		}*/
 	return gd != 0;
 }
 
 bool AvalancheMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return false;
-		/*(f == kSupportsListSaves) ||
-		 (f == kSupportsLoadingDuringStartup) ||
-		 (f == kSupportsDeleteSave) ||
-		 (f == kSavesSupportMetaInfo) ||
-		 (f == kSavesSupportThumbnail) ||
-		 (f == kSavesSupportCreationDate);*/
 }
-
-//int AvalancheMetaEngine::getMaximumSaveSlot() const { return 99; }
-//
-//SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
-//	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-//	Common::StringArray filenames;
-//	Common::String pattern = target;
-//	pattern += "-??.SAV";
-//
-//	filenames = saveFileMan->listSavefiles(pattern);
-//	sort(filenames.begin(), filenames.end());   // Sort (hopefully ensuring we are sorted numerically..)
-//
-//	SaveStateList saveList;
-//	char slot[3];
-//	int slotNum = 0;
-//	for (Common::StringArray::const_iterator filename = filenames.begin(); filename != filenames.end(); ++filename) {
-//		slot[0] = filename->c_str()[filename->size() - 6];
-//		slot[1] = filename->c_str()[filename->size() - 5];
-//		slot[2] = '\0';
-//		// Obtain the last 2 digits of the filename (without extension), since they correspond to the save slot
-//		slotNum = atoi(slot);
-//		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-//			Common::InSaveFile *file = saveFileMan->openForLoading(*filename);
-//			if (file) {
-//				int saveVersion = file->readByte();
-//
-//				if (saveVersion != kSavegameVersion) {
-//					warning("Savegame of incompatible version");
-//					delete file;
-//					continue;
-//				}
-//
-//				// read name
-//				uint16 nameSize = file->readUint16BE();
-//				if (nameSize >= 255) {
-//					delete file;
-//					continue;
-//				}
-//				char name[256];
-//				file->read(name, nameSize);
-//				name[nameSize] = 0;
-//
-//				saveList.push_back(SaveStateDescriptor(slotNum, name));
-//				delete file;
-//			}
-//		}
-//	}
-//
-//	return saveList;
-//}
-//
-//SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-//	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
-//	Common::InSaveFile *file = g_system->getSavefileManager()->openForLoading(fileName);
-//
-//	if (file) {
-//		int saveVersion = file->readByte();
-//
-//		if (saveVersion != kSavegameVersion) {
-//			warning("Savegame of incompatible version");
-//			delete file;
-//			return SaveStateDescriptor();
-//		}
-//
-//		uint32 saveNameLength = file->readUint16BE();
-//		char saveName[256];
-//		file->read(saveName, saveNameLength);
-//		saveName[saveNameLength] = 0;
-//
-//		SaveStateDescriptor desc(slot, saveName);
-//
-//		Graphics::Surface *const thumbnail = Graphics::loadThumbnail(*file);
-//		desc.setThumbnail(thumbnail);
-//
-//		desc.setDeletableFlag(true);
-//		desc.setWriteProtectedFlag(false);
-//
-//		uint32 saveDate = file->readUint32BE();
-//		uint16 saveTime = file->readUint16BE();
-//
-//		int day = (saveDate >> 24) & 0xFF;
-//		int month = (saveDate >> 16) & 0xFF;
-//		int year = saveDate & 0xFFFF;
-//
-//		desc.setSaveDate(year, month, day);
-//
-//		int hour = (saveTime >> 8) & 0xFF;
-//		int minutes = saveTime & 0xFF;
-//
-//		desc.setSaveTime(hour, minutes);
-//
-//		// Slot 0 is used for the 'restart game' save in all Avalanche games, thus
-//		// we prevent it from being deleted.
-//		desc.setDeletableFlag(slot != 0);
-//		desc.setWriteProtectedFlag(slot == 0);
-//
-//		delete file;
-//		return desc;
-//	}
-//	return SaveStateDescriptor();
-//}
-//
-//void AvalancheMetaEngine::removeSaveState(const char *target, int slot) const {
-//	Common::String fileName = Common::String::format("%s-%02d.SAV", target, slot);
-//	g_system->getSavefileManager()->removeSavefile(fileName);
-//}
 
 } // End of namespace Avalanche
 
@@ -221,11 +102,3 @@ REGISTER_PLUGIN_DYNAMIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaE
 #else
 REGISTER_PLUGIN_STATIC(AVALANCHE, PLUGIN_TYPE_ENGINE, Avalanche::AvalancheMetaEngine);
 #endif
-
-//namespace Avalanche {
-//
-//void AvalancheEngine::initGame(const ADGameDescription *gd) {
-//	_platform = gd->platform;
-//}
-//
-//} // End of namespace Avalanche
