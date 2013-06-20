@@ -38,11 +38,13 @@ class RandomSource;
 
 namespace Avalanche {
 
+struct AvalancheGameDescription;
+
 static const int kSavegameVersion = 1;
 
 class AvalancheEngine : public Engine {
 public:
-	AvalancheEngine(OSystem *syst, const ADGameDescription *gd);
+	AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd);
 	~AvalancheEngine();
 
 	OSystem *_system;
@@ -51,11 +53,11 @@ public:
 
 	Common::RandomSource *_rnd;
 	
-	const ADGameDescription *_gameDescription;
+	const AvalancheGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	const char *getGameId() const;
 
-	void initGame(const ADGameDescription *gd);
+	void initGame(const AvalancheGameDescription *gd);
 
 	Common::Platform getPlatform() const;
 

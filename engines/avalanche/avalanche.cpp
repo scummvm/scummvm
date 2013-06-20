@@ -41,7 +41,7 @@ namespace Avalanche {
 
 	AvalancheEngine *AvalancheEngine::s_Engine = 0;
 
-	AvalancheEngine::AvalancheEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst), _gameDescription(gd) {
+	AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 		_system = syst;
 		_console = new AvalancheConsole(this);
 		_rnd = 0;
