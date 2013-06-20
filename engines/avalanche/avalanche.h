@@ -85,6 +85,8 @@ private:
 
 	static const int16 _runShootemup = 1, _runDosshell = 2, _runGhostroom = 3, _runGolden = 4;
 
+	static const char runcodes[2][3];
+
 	static const int16 _reset_ = 0;
 
 	static const bool _jsb = true, _no_jsb = false, _bflight = true, _no_bflight = false;
@@ -130,11 +132,15 @@ private:
 
 	void run(Common::String what, bool with_jsb, bool with_bflight, elm how);
 
+	void get_arguments();
+
+	void get_slope();
+
+	void call_menu();
+
 	void run_avalot();
 
 	void run_the_demo();
-
-	void get_arguments();
 
 	void dos_shell();
 
@@ -143,11 +149,6 @@ private:
 	void flush_buffer();
 
 	void demo();
-
-	void call_menu();
-
-	void get_slope();
-
 };
 
 } // End of namespace Avalanche
