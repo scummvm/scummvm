@@ -39,6 +39,13 @@
 
 namespace Avalanche {
 
+	void avalot(bool firstTime, Common::String arguments) {
+		warning("STUB: avalot()"); // That will be a class made from avalot9.cpp !!! - or something like that
+	}
+
+
+
+
 	AvalancheEngine *AvalancheEngine::s_Engine = 0;
 
 	AvalancheEngine::AvalancheEngine(OSystem *syst, const AvalancheGameDescription *gd) : Engine(syst), _gameDescription(gd) {
@@ -115,20 +122,24 @@ namespace Avalanche {
 		warning("STUB: explain()");
 	}
 
+
+
+	//TODO: Remove these (b_flight) functions later ( https://github.com/tthurman/avalot/wiki/B-Flight )
+
 	void AvalancheEngine::b_flight() {   /*interrupt;*/
 		_storage.skellern++;
 	}
 
 	void AvalancheEngine::bflight_on() {
 		_storage.skellern = _reset_;
-		warning("STUB: bflight_on()");
 		// setintvec(0x1c, &b_flight);
 	}
 
 	void AvalancheEngine::bflight_off() {
-		warning("STUB: bflight_off()");
 		// setintvec(0x1c, old_1c);
 	}
+
+
 
 	Common::String AvalancheEngine::elm2str(elm how) {
 		Common::String elm2str_result;
@@ -153,7 +164,11 @@ namespace Avalanche {
 	}
 
 	void AvalancheEngine::run_avalot() {
-		warning("STUB: run_avalot()");
+		bflight_on();
+
+		avalot(first_time, arguments);  // TODO: Check if parameteres are ever use and eventually remove them
+		// If there's an error initalizing avalot, i'll handle it in there, not here
+		first_time = false;
 	}
 
 	void AvalancheEngine::run_the_demo() {
