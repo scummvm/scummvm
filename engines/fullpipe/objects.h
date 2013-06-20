@@ -333,6 +333,7 @@ class CGameLoader : public CObject {
 	virtual bool load(MfcArchive &file);
 
 	CGameVar *_gameVar;
+	CInventory2 _inventory;
 
  private:
 	GameProject *_gameProject;
@@ -347,7 +348,6 @@ class CGameLoader : public CObject {
 	int _field_28;
 	int _field_2C;
 	CInputController _inputController;
-	CInventory2 _inventory;
 	Sc2Array _sc2array;
 	void *_sceneSwitcher;
 	void *_preloadCallback;

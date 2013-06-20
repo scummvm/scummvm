@@ -27,6 +27,7 @@
 #include "common/list.h"
 
 #include "fullpipe/objects.h"
+#include "fullpipe/gameobj.h"
 
 namespace Fullpipe {
 
@@ -36,6 +37,13 @@ bool FullpipeEngine::loadGam(const char *fname) {
 	if (_gameLoader->loadFile(fname)) {
 		g_currSoundListCount = 0;
 		initObjectStates();
+
+		//set_g_messageQueueCallback1(messageQueueCallback1);
+		//addMessageHandler2(global_messageHandler, 0, 4);
+		_inventory = &_gameLoader->_inventory;
+		_inventory->setItemFlags(ANI_INV_MAP, 0x10003);
+		_inventory->addItem(ANI_INV_MAP, 1);
+		_inventory->rebuildItemRects();
 		// TODO
 	} else
 		return false;

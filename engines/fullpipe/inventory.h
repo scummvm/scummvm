@@ -44,6 +44,8 @@ struct InventoryPoolItem {
 typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
 
 class CInventory : public CObject {
+	friend class CInventory2;
+
 	int16 _sceneId;
 	int16 _field_6;
 	InventoryPoolItems _itemsPool;
@@ -53,6 +55,7 @@ class CInventory : public CObject {
 	virtual bool load(MfcArchive &file);
 
 	int getInventoryPoolItemIndexById(int itemId);
+	bool setItemFlags(int itemId, int flags);
 };
 
 struct InventoryItem {
@@ -92,6 +95,8 @@ class CInventory2 : public CInventory {
  public:
 	CInventory2();
 	bool loadPartial(MfcArchive &file);
+	void addItem(int itemId, int value);
+	void rebuildItemRects();
 };
 
 } // End of namespace Fullpipe

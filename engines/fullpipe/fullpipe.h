@@ -45,6 +45,7 @@ enum FullpipeGameFeatures {
 
 class CGameLoader;
 class CGameVar;
+class CInventory2;
 
 extern int g_gameProjectVersion;
 extern int g_gameProjectValue;
@@ -89,8 +90,12 @@ public:
 	CGameVar *_swallowedEgg2;
 	CGameVar *_swallowedEgg3;
 
+	CInventory2 *_inventory;
+
 	void setObjectState(const char *name, int state);
 	int getObjectEnumState(const char *name, const char *state);
+
+	void accessScene(int sceneId);
 
 public:
 
@@ -100,6 +105,8 @@ public:
 	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
 
 };
+
+extern FullpipeEngine *g_fullpipe;
 
 } // End of namespace Fullpipe
 

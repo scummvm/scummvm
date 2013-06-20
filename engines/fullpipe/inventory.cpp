@@ -47,12 +47,26 @@ bool CInventory::load(MfcArchive &file) {
 }
 
 int CInventory::getInventoryPoolItemIndexById(int itemId) {
-	for (int i = 0; i < _itemsPool.size(); i++) {
+	if (_itemsPool.size() <= 0)
+		return -1;
+
+	for (uint i = 0; i < _itemsPool.size(); i++) {
 		if (_itemsPool[i].id == itemId)
 			return i;
 	}
 
 	return 0;
+}
+
+bool CInventory::setItemFlags(int itemId, int flags) {
+	int idx = getInventoryPoolItemIndexById(itemId);
+
+	if (idx < 0)
+		return false;
+	else
+		_itemsPool[idx].flags = flags;
+
+	return true;
 }
 
 CInventory2::CInventory2() {
@@ -76,6 +90,14 @@ bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartia
 	}
 
 	return true;
+}
+
+void CInventory2::addItem(int itemId, int value) {
+	warning("STUB: CInventory2::addItem");
+}
+
+void CInventory2::rebuildItemRects() {
+	g_fullpipe->accessScene(_sceneId);
 }
 
 } // End of namespace Fullpipe
