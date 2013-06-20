@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	inventory.o \
 	motion.o \
 	ngiarchive.o \
+	scene.o \
 	stateloader.o \
 	utils.o
 

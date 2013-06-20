@@ -168,40 +168,6 @@ GameProject::~GameProject() {
 	free(_headerFilename);
 }
 
-bool SceneTagList::load(MfcArchive &file) {
-	int numEntries = file.readUint16LE();
-
-	for (int i = 0; i < numEntries; i++) {
-		SceneTag *t = new SceneTag();
-		t->load(file);
-		push_back(*t);
-	}
-
-	return true;
-}
-
-SceneTag::SceneTag() {
-	_field_4 = 0;
-	_scene = 0;
-}
-
-bool SceneTag::load(MfcArchive &file) {
-	_field_4 = 0;
-	_scene = 0;
-
-	_sceneId = file.readUint16LE();
-
-	_tag = file.readPascalString();
-
-	debug(6, "sceneId: %d  tag: %s", _sceneId, _tag);
-
-	return true;
-}
-
-SceneTag::~SceneTag() {
-	free(_tag);
-}
-
 bool CInteractionController::load(MfcArchive &file) {
 	return _interactions.load(file);
 }

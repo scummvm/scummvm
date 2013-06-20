@@ -25,28 +25,10 @@
 
 #include "fullpipe/utils.h"
 #include "fullpipe/inventory.h"
+#include "fullpipe/gfx.h"
+#include "fullpipe/scene.h"
 
 namespace Fullpipe {
-
-class SceneTag : public CObject {
- public:
-	int _field_4;
-	char *_tag;
-	int _scene;
-	int16 _sceneId;
-	int16 _field_12;
-
- public:
-	SceneTag();
-	~SceneTag();
-
-	virtual bool load(MfcArchive &file);
-};
-
-class SceneTagList : public Common::List<SceneTag>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
 
 class GameProject : public CObject {
  public:
@@ -137,45 +119,6 @@ class CInputController {
 	CInputController();
 };
 
-class ShadowsItemArray : public Common::Array<CObject>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
-
-class Background {
-	CPtrList list;
-	int stringObj;
-	int x;
-	int y;
-	int16 messageQueueId;
-	int colorMemoryObj;
-	int bigPictureArray1Count;
-	int bigPictureArray2Count;
-	int bigPictureArray;
-};
-
-class Shadows {
-	//CObject obj;
-	int sceneId;
-	int staticAniObjectId;
-	int movementId;
-	ShadowsItemArray items;
-};
-
-class Scene {
-	Background bg;
-	CPtrList staticANIObjectList1;
-	CPtrList staticANIObjectList2;
-	CPtrList messageQueueList;
-	CPtrList faObjectList;
-	Shadows *shadows;
-	int soundList;
-	int16 sceneId;
-	int stringObj;
-	int field_BC;
-	int libHandle;
-};
-
 struct PicAniInfo {
   int32 type;
   int16 objectId;
@@ -196,8 +139,7 @@ struct PicAniInfo {
   bool load(MfcArchive &file);
 };
 
-struct EntranceInfo
-{
+struct EntranceInfo {
   int32 sceneId;
   int32 field_4;
   int32 messageQueueId;
@@ -291,26 +233,6 @@ class CGameVar : public CObject {
 	CGameVar *addSubVarAsInt(const char *name, int value);
 	bool addSubVar(CGameVar *subvar);
 
-};
-
-class Picture {
-	MemoryObject obj;
-	Common::Rect rect;
-	int convertedBitmap;
-	int x;
-	int y;
-	int field_44;
-	int width;
-	int height;
-	int bitmap;
-	int field_54;
-	int memoryObject2;
-	int alpha;
-	int paletteData;
-};
-
-class BigPicture {
-	Picture pic;
 };
 
 struct PreloadItem {

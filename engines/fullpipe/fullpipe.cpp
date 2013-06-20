@@ -240,7 +240,4 @@ void FullpipeEngine::setObjectState(const char *name, int state) {
   var->setSubVarAsInt(name, state);
 }
 
-void FullpipeEngine::accessScene(int sceneId) {
-}
-
 } // End of namespace Fullpipe
