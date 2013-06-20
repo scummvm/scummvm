@@ -47,13 +47,13 @@ const char *AvalancheEngine::getGameId() const {
 }
 
 static const PlainGameDescriptor avalancheGames[] = {
-	{"avalot", "Lord Avalot d'Argent"},
+	{"avalanche", "Lord Avalot d'Argent"},
 	{0, 0}
 };
 
 static const ADGameDescription gameDescriptions[] = {
 	{
-		"Avalanche", 0,
+		"avalanche", 0,
 		{
 			{"avalot.sez", 0, "de10eb353228013da3d3297784f81ff9", 48763},
 			{"mainmenu.avd", 0, "89f31211af579a872045b175cc264298", 18880},
