@@ -25,6 +25,9 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
+#include "avalanche/avalanche.h"
+#include "avalanche/avalot.h"
+
 #include "common/system.h"
 #include "common/random.h"
 #include "common/error.h"
@@ -33,18 +36,9 @@
 #include "common/config-manager.h"
 #include "common/textconsole.h"
 
-#include "avalanche/avalanche.h"
-
 #include "engines/util.h"
 
 namespace Avalanche {
-
-	void avalot(Common::String arg) {
-		warning("STUB: avalot()"); // That will be a class made from avalot9.cpp !!! - or something like that
-	}
-
-
-
 
 	AvalancheEngine *AvalancheEngine::s_Engine = 0;
 
@@ -98,6 +92,10 @@ namespace Avalanche {
 
 	const char AvalancheEngine::runcodes[2][3] = {"et", "Go"};
 
+
+
+	// The original ones were all commented out, so porbably there's no need
+	// of these two cursor functions at all. TODO: Remove later.
 	void AvalancheEngine::cursor_off() {
 		warning("STUB: cursor_off()");
 	}
@@ -106,6 +104,7 @@ namespace Avalanche {
 		warning("STUB: cursor_on()");
 	}
 
+	// Needed later.
 	void AvalancheEngine::quit() {
 		cursor_on();
 	}
@@ -115,11 +114,13 @@ namespace Avalanche {
 		return q;
 	}
 
+	// Needed in dos_shell(). TODO: Remove later.
 	Common::String AvalancheEngine::command_com() {
 		warning("STUB: command_com()");
 		return ("STUB: command_com()");
 	}
 
+	// Needed for run_avalot()'s errors. TODO: Remove later.
 	void AvalancheEngine::explain(byte error) {
 		warning("STUB: explain()");
 	}
@@ -180,14 +181,6 @@ namespace Avalanche {
 		warning("STUB: call_menu()");
 	}
 
-	void AvalancheEngine::run_avalot() {
-		bflight_on();
-
-		avalot(Common::String(runcodes[first_time]) + arguments);  // TODO: Check if parameteres are ever use and eventually remove them
-		// If there's an error initalizing avalot, i'll handle it in there, not here
-		first_time = false;
-	}
-
 	void AvalancheEngine::run_the_demo() {
 		warning("STUB: run_the_demo()");
 	}
@@ -196,22 +189,33 @@ namespace Avalanche {
 		warning("STUB: dos_shell()");
 	}
 
-	bool AvalancheEngine::keypressed1() {
+	// Getting used only in demo() / call_menu(). Going to be implemented at the same time with these.
+	bool AvalancheEngine::keypressed1() {	
 		warning("STUB: keypressed1()");
 		return false;
 	}
 
+	// Same as keypressed1().
 	void AvalancheEngine::flush_buffer() {
 		warning("STUB: flush_buffer()");
 	}
 
+	// Same as keypressed1().
 	void AvalancheEngine::demo() {
 		warning("STUB: demo()");
 	}
 
+
+
 	
+	void AvalancheEngine::run_avalot() {
+		bflight_on();
 
-
+		Avalot ava;
+		ava.run(Common::String(runcodes[first_time]) + arguments);  // TODO: Check if parameteres are ever use and eventually remove them
+		// If there's an error initalizing avalot, i'll handle it in there, not here
+		first_time = false;
+	}
 
 
 
@@ -223,9 +227,6 @@ namespace Avalanche {
 
 
 		// From bootstrp:
-
-		/*original_mode = mem[seg0040 * 0x49];
-		getintvec(0x1c, old_1c);*/
 
 		first_time = true;
 
@@ -260,11 +261,6 @@ namespace Avalanche {
 		} while (true);
 
 
-
-		//	_mouse = new MouseHandler(this);
-
-		// Setup mixer
-		syncSoundSettings();
 
 		return Common::kNoError;
 	}

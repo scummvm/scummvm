@@ -28,8 +28,9 @@
 #ifndef AVALANCHE_H
 #define AVALANCHE_H
 
-#include "engines/engine.h"
 #include "avalanche/console.h"
+
+#include "engines/engine.h"
 #include "engines/advancedDetector.h"
 
 namespace Common {

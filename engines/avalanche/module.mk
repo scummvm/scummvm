@@ -2,6 +2,7 @@ MODULE := engines/avalanche
 
 MODULE_OBJS = \
 	avalanche.o \
+	avalot.o \
 	console.o \
 	detection.o
 
