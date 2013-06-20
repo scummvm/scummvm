@@ -39,7 +39,7 @@
 
 namespace Avalanche {
 
-	void avalot(bool firstTime, Common::String arguments) {
+	void avalot(Common::String arg) {
 		warning("STUB: avalot()"); // That will be a class made from avalot9.cpp !!! - or something like that
 	}
 
@@ -95,6 +95,8 @@ namespace Avalanche {
 
 
 	// From Bootstrp:
+
+	const char AvalancheEngine::runcodes[2][3] = {"et", "Go"};
 
 	void AvalancheEngine::cursor_off() {
 		warning("STUB: cursor_off()");
@@ -163,20 +165,31 @@ namespace Avalanche {
 		// Probably there'll be no need of this function, as all *.AVX-es will become classes.
 	}
 
+	void AvalancheEngine::get_arguments() {
+		// This function should mess around with command line arguments,
+		// but I am not sure if there'll be use of these arguments at all...
+		warning("STUB: get_arguments()"); 
+	}
+
+	void AvalancheEngine::get_slope() {
+		// Same as get_arguments()
+		warning("STUB: get_slope()");
+	}
+
+	void AvalancheEngine::call_menu() {
+		warning("STUB: call_menu()");
+	}
+
 	void AvalancheEngine::run_avalot() {
 		bflight_on();
 
-		avalot(first_time, arguments);  // TODO: Check if parameteres are ever use and eventually remove them
+		avalot(Common::String(runcodes[first_time]) + arguments);  // TODO: Check if parameteres are ever use and eventually remove them
 		// If there's an error initalizing avalot, i'll handle it in there, not here
 		first_time = false;
 	}
 
 	void AvalancheEngine::run_the_demo() {
 		warning("STUB: run_the_demo()");
-	}
-
-	void AvalancheEngine::get_arguments() {
-		warning("STUB: get_arguments()");
 	}
 
 	void AvalancheEngine::dos_shell() {
@@ -196,13 +209,9 @@ namespace Avalanche {
 		warning("STUB: demo()");
 	}
 
-	void AvalancheEngine::call_menu() {
-		warning("STUB: call_menu()");
-	}
+	
 
-	void AvalancheEngine::get_slope() {
-		warning("STUB: get_slope()");
-	}
+
 
 
 
@@ -223,6 +232,9 @@ namespace Avalanche {
 		get_arguments();
 		get_slope();
 
+		zoomy = false; 
+		// Call the menu by default. Might be modified later, if get_slope() gets implemented,
+		// becouse zoomy's value is given there. Not sure yet what "zoomy" stands for.
 		if (! zoomy)  call_menu();    /* Not run when zoomy. */
 
 		do {
