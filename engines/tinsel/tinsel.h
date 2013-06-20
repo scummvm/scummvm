@@ -226,7 +226,11 @@ public:
 	Graphics::Surface &screen() { return _screenSurface; }
 
 	Common::Point getMousePosition() const { return _mousePos; }
-	void setMousePosition(const Common::Point &pt) {
+	void setMousePosition(Common::Point pt) {
+		// Clip mouse position to be within the screen coordinates
+		pt.x = CLIP<int16>(pt.x, 0, SCREEN_WIDTH - 1);
+		pt.y = CLIP<int16>(pt.y, 0, SCREEN_HEIGHT - 1);
+
 		int yOffset = TinselV2 ? (g_system->getHeight() - _screenSurface.h) / 2 : 0;
 		g_system->warpMouse(pt.x, pt.y + yOffset);
 		_mousePos = pt;
