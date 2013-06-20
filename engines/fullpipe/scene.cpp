@@ -103,10 +103,16 @@ void SceneTag::loadScene() {
 }
 
 Scene::Scene() {
+	_sceneId = 0;
+	_field_BC = 0;
+	_shadows = 0;
+	_soundList = 0;
 }
 
 bool Scene::load(MfcArchive &file) {
-	debug(0, "Scene::load");
+	warning("STUB: Scene::load");
+
+	_bg.load(file);
 
 	return true;
 }

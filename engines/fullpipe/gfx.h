@@ -30,16 +30,70 @@ class ShadowsItemArray : public Common::Array<CObject>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-class Background {
-	CPtrList list;
-	int stringObj;
-	int x;
-	int y;
-	int16 messageQueueId;
-	int colorMemoryObj;
-	int bigPictureArray1Count;
-	int bigPictureArray2Count;
-	int bigPictureArray;
+class Picture : public MemoryObject {
+	Common::Rect _rect;
+	int _convertedBitmap;
+	int _x;
+	int _y;
+	int _field_44;
+	int _width;
+	int _height;
+	int _bitmap;
+	int _field_54;
+	int _memoryObject2;
+	int _alpha;
+	int _paletteData;
+};
+
+class BigPicture : public Picture {
+
+};
+
+class GameObject : public CObject {
+	friend class PictureObject;
+
+	int16 _field_4;
+	int16 _field_6;
+	int _field_8;
+	int16 _flags;
+	int16 _id;
+	char *_stringObj;
+	int _ox;
+	int _oy;
+	int _priority;
+	int _field_20;
+
+  public:
+	GameObject();
+	virtual bool load(MfcArchive &file);
+};
+
+class PictureObject : public GameObject {
+	Picture *_picture;
+	CPtrList *_pictureObject2List;
+	int _ox2;
+	int _oy2;
+
+  public:
+	PictureObject();
+	bool load(MfcArchive &file, bool bigPicture);
+};
+
+class Background : public CObject {
+	CPtrList _list;
+	char *_stringObj;
+	int _x;
+	int _y;
+	int16 _messageQueueId;
+	int _colorMemoryObj;
+	int _bigPictureArray1Count;
+	int _bigPictureArray2Count;
+	int _bigPictureArray;
+
+  public:
+	Background();
+	virtual bool load(MfcArchive &file);
+	void addPictureObject(PictureObject *pct);
 };
 
 class Shadows {
@@ -48,26 +102,6 @@ class Shadows {
 	int staticAniObjectId;
 	int movementId;
 	ShadowsItemArray items;
-};
-
-class Picture {
-	MemoryObject obj;
-	Common::Rect rect;
-	int convertedBitmap;
-	int x;
-	int y;
-	int field_44;
-	int width;
-	int height;
-	int bitmap;
-	int field_54;
-	int memoryObject2;
-	int alpha;
-	int paletteData;
-};
-
-class BigPicture {
-	Picture pic;
 };
 
 } // End of namespace Fullpipe

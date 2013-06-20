@@ -35,7 +35,7 @@ bool FullpipeEngine::loadGam(const char *fname) {
 	_gameLoader = new CGameLoader();
 
 	if (_gameLoader->loadFile(fname)) {
-		g_currSoundListCount = 0;
+		g_fullpipe->_currSoundListCount = 0;
 		initObjectStates();
 
 		//set_g_messageQueueCallback1(messageQueueCallback1);
@@ -93,8 +93,8 @@ bool CGameLoader::load(MfcArchive &file) {
 
 	g_fullpipe->_gameProject = _gameProject;
 
-	if (g_gameProjectVersion < 12) {
-		error("Old gameProjectVersion: %d", g_gameProjectVersion);
+	if (g_fullpipe->_gameProjectVersion < 12) {
+		error("Old gameProjectVersion: %d", g_fullpipe->_gameProjectVersion);
 	}
 
 	_gameName = file.readPascalString();
@@ -140,25 +140,25 @@ bool GameProject::load(MfcArchive &file) {
 	_headerFilename = 0;
 	_field_10 = 12;
 
-	g_gameProjectVersion = file.readUint32LE();
-	g_gameProjectValue = file.readUint16LE();
-	g_scrollSpeed = file.readUint32LE();
+	g_fullpipe->_gameProjectVersion = file.readUint32LE();
+	g_fullpipe->_gameProjectValue = file.readUint16LE();
+	g_fullpipe->_scrollSpeed = file.readUint32LE();
 
 	_headerFilename = file.readPascalString();
 
-	debug(1, "_gameProjectVersion = %d", g_gameProjectVersion);
-	debug(1, "_gameProjectValue = %d", g_gameProjectValue);
-	debug(1, "_scrollSpeed = %d", g_scrollSpeed);
+	debug(1, "_gameProjectVersion = %d", g_fullpipe->_gameProjectVersion);
+	debug(1, "_gameProjectValue = %d", g_fullpipe->_gameProjectValue);
+	debug(1, "_scrollSpeed = %d", g_fullpipe->_scrollSpeed);
 	debug(1, "_headerFilename = %s", _headerFilename);
 
 	_sceneTagList = new SceneTagList();
 
 	_sceneTagList->load(file);
 
-	if (g_gameProjectVersion >= 3)
+	if (g_fullpipe->_gameProjectVersion >= 3)
 		_field_4 = file.readUint32LE();
 
-	if (g_gameProjectVersion >= 5) {
+	if (g_fullpipe->_gameProjectVersion >= 5) {
 		file.readUint32LE();
 		file.readUint32LE();
 	}
@@ -269,7 +269,7 @@ bool ExCommand::load(MfcArchive &file) {
 
 	_field_3C = 0;
 
-	if (g_gameProjectVersion >= 12) {
+	if (g_fullpipe->_gameProjectVersion >= 12) {
 		_flags = file.readUint32LE();
 		_parId = file.readUint32LE();
 	}

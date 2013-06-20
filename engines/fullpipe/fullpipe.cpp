@@ -33,10 +33,6 @@
 
 namespace Fullpipe {
 
-int g_gameProjectVersion = 0;
-int g_gameProjectValue = 0;
-int g_scrollSpeed = 0;
-int g_currSoundListCount = 0;
 FullpipeEngine *g_fullpipe = 0;
 
 FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {

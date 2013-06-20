@@ -49,11 +49,6 @@ class CGameVar;
 class CInventory2;
 class Scene;
 
-extern int g_gameProjectVersion;
-extern int g_gameProjectValue;
-extern int g_scrollSpeed;
-extern int g_currSoundListCount;
-
 class FullpipeEngine : public ::Engine {
 protected:
 
@@ -84,6 +79,7 @@ public:
 	int _gameProjectVersion;
 	int _gameProjectValue;
 	int _scrollSpeed;
+	int _currSoundListCount;
 
 	void initObjectStates();
 	void setLevelStates();

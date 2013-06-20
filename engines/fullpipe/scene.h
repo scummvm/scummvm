@@ -26,17 +26,17 @@
 namespace Fullpipe {
 
 class Scene : public CObject {
-	Background bg;
-	CPtrList staticANIObjectList1;
-	CPtrList staticANIObjectList2;
-	CPtrList messageQueueList;
-	CPtrList faObjectList;
-	Shadows *shadows;
-	int soundList;
-	int16 sceneId;
-	int stringObj;
-	int field_BC;
-	int libHandle;
+	Background _bg;
+	CPtrList _staticANIObjectList1;
+	CPtrList _staticANIObjectList2;
+	CPtrList _messageQueueList;
+	CPtrList _faObjectList;
+	Shadows *_shadows;
+	int _soundList;
+	int16 _sceneId;
+	int _stringObj;
+	int _field_BC;
+	int _libHandle;
 
   public:
 	Scene();
