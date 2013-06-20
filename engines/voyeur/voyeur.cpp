@@ -205,7 +205,7 @@ bool VoyeurEngine::doLock() {
 	byte *buttonVoc = _filesManager.fload("button.voc", &buttonVocSize);
 	byte *wrongVoc = _filesManager.fload("wrong.voc", &wrongVocSize);
 	LockClass lock;
-	PictureResource *srcPic;
+	PictureResource *cursorPic;
 	byte *keyData;
 	int keyCount;
 	Common::String msg;
@@ -219,8 +219,8 @@ bool VoyeurEngine::doLock() {
 		_voy._eventTable[999]._data = _bVoy->memberAddr(0x704);
 
 		Common::String password = lock._password;
-		srcPic = _bVoy->getPictureResource(0x702);
-		assert(srcPic);
+		cursorPic = _bVoy->getPictureResource(0x702);
+		assert(cursorPic);
 
 		// Get the mappings of keys on the keypad
 		keyData = _bVoy->memberAddr(0x705);
@@ -295,8 +295,8 @@ bool VoyeurEngine::doLock() {
 					_eventsManager._intPtr.field38 = 1;
 					_eventsManager._intPtr._hasPalette = true;
 
-					// TODO: Check is the mouse cursor being manually drawn here? I so, refactor
-					_graphicsManager.sDrawPic(srcPic, *_graphicsManager._vPort, mousePos);
+					// TODO:Refactor the mouse cursor to use ScummVM cursor code
+					_graphicsManager.sDrawPic(cursorPic, *_graphicsManager._vPort, mousePos);
 					(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
 					_graphicsManager.flipPage();
 					_eventsManager.sWaitFlip();
