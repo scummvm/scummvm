@@ -28,17 +28,17 @@ namespace Fullpipe {
 class Scene;
 class BigPicture;
 
-class InventoryPoolItem {
+struct InventoryPoolItem {
  public:
-	int16 _id;
-	int16 _pictureObjectNormalId;
-	int16 _pictureObjectId1;
-	int16 _pictureObjectMouseInsideId;
-	int16 _pictureObjectId3;
-	int16 _field_A;
-	int _field_C;
-	int _obj;
-	int _flags;
+	int16 id;
+	int16 pictureObjectNormalId;
+	int16 pictureObjectId1;
+	int16 pictureObjectMouseInsideId;
+	int16 pictureObjectId3;
+	int16 field_A;
+	int field_C;
+	int obj;
+	int flags;
 };
 
 typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
@@ -51,6 +51,8 @@ class CInventory : public CObject {
  public:
 	CInventory() { _sceneId = 0; }
 	virtual bool load(MfcArchive &file);
+
+	int getInventoryPoolItemIndexById(int itemId);
 };
 
 struct InventoryItem {

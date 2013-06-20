@@ -32,18 +32,27 @@ bool CInventory::load(MfcArchive &file) {
 
 	for (int i = 0; i < numInvs; i++) {
 		InventoryPoolItem *t = new InventoryPoolItem();
-		t->_id = file.readUint16LE();
-		t->_pictureObjectNormalId = file.readUint16LE();
-		t->_pictureObjectId1 = file.readUint16LE();
-		t->_pictureObjectMouseInsideId = file.readUint16LE();
-		t->_pictureObjectId3 = file.readUint16LE();
-		t->_flags = file.readUint32LE();
-		t->_field_C = 0;
-		t->_field_A = -536;
+		t->id = file.readUint16LE();
+		t->pictureObjectNormalId = file.readUint16LE();
+		t->pictureObjectId1 = file.readUint16LE();
+		t->pictureObjectMouseInsideId = file.readUint16LE();
+		t->pictureObjectId3 = file.readUint16LE();
+		t->flags = file.readUint32LE();
+		t->field_C = 0;
+		t->field_A = -536;
 		_itemsPool.push_back(*t);
 	}
 
 	return true;
+}
+
+int CInventory::getInventoryPoolItemIndexById(int itemId) {
+	for (int i = 0; i < _itemsPool.size(); i++) {
+		if (_itemsPool[i].id == itemId)
+			return i;
+	}
+
+	return 0;
 }
 
 CInventory2::CInventory2() {
