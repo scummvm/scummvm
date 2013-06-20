@@ -405,8 +405,7 @@ class BigPicture {
 	Picture pic;
 };
 
-class CInventory2 : public CObject {
-	CInventory _inventory;
+class CInventory2 : public CInventory {
 	InventoryItems _inventoryItems;
 	InventoryIcons _inventoryIcons;
 	int _selectedId;
@@ -420,7 +419,6 @@ class CInventory2 : public CObject {
  public:
 	CInventory2();
 	bool loadPartial(MfcArchive &file);
-	virtual bool load(MfcArchive &file);
 };
 
 struct PreloadItem {

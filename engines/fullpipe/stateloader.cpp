@@ -234,10 +234,6 @@ CInventory2::CInventory2() {
 	_topOffset = -65;
 }
 
-bool CInventory2::load(MfcArchive &file) {
-	return _inventory.load(file);
-}
-
 bool CInventory2::loadPartial(MfcArchive &file) { // CInventory2_SerializePartially
 	int numInvs = file.readUint32LE();
 
