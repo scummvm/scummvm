@@ -92,19 +92,22 @@ void SceneTag::loadScene() {
 
 	_scene = new Scene();
 
-	//_scene->load(*file);
+	MfcArchive archive(file);
+
+	_scene->load(archive);
 
 	delete file;
 
 	free(fname);
 	free(archname);
-
 }
 
 Scene::Scene() {
 }
 
 bool Scene::load(MfcArchive &file) {
+	debug(0, "Scene::load");
+
 	return true;
 }
 

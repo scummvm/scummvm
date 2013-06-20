@@ -30,12 +30,14 @@
 namespace Fullpipe {
 
 bool CObject::loadFile(const char *fname) {
-	MfcArchive file;
+	Common::File file;
 
 	if (!file.open(fname))
 		return false;
 
-	return load(file);
+	MfcArchive archive(&file);
+
+	return load(archive);
 }
 
 bool CObList::load(MfcArchive &file) {
@@ -201,13 +203,15 @@ static CObject *createObject(int objectId) {
 	return 0;
 }
 
-MfcArchive::MfcArchive() {
+MfcArchive::MfcArchive(Common::SeekableReadStream *stream) {
 	for (int i = 0; classMap[i].name; i++) {
 		_classMap[classMap[i].name] = classMap[i].id;
 	}
 
 	_lastIndex = 1;
 	_level = 0;
+
+	_stream = stream;
 
 	_objectMap.push_back(0);
 	_objectIdMap.push_back(kNullObject);

@@ -33,7 +33,7 @@ class CObject;
 
 typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ClassMap;
 
-class MfcArchive : public Common::File {
+class MfcArchive : public Common::SeekableReadStream {
 	ClassMap _classMap;
 	Common::Array<CObject *> _objectMap;
 	Common::Array<int> _objectIdMap;
@@ -41,8 +41,10 @@ class MfcArchive : public Common::File {
 	int _lastIndex;
 	int _level;
 
+	Common::SeekableReadStream *_stream;
+
  public:
-	MfcArchive();
+	MfcArchive(Common::SeekableReadStream *file);
 
 	char *readPascalString(bool twoByte = false);
 	int readCount();
@@ -53,6 +55,12 @@ class MfcArchive : public Common::File {
 	void incLevel() { _level++; }
 	void decLevel() { _level--; }
 	int getLevel() { return _level; }
+
+	virtual bool eos() const { return _stream->eos(); }
+	virtual uint32 read(void *dataPtr, uint32 dataSize) { return _stream->read(dataPtr, dataSize); }
+	virtual int32 pos() const { return _stream->pos(); }
+	virtual int32 size() const { return _stream->size(); }
+	virtual bool seek(int32 offset, int whence = SEEK_SET) { return _stream->seek(offset, whence); }
 };
 
 class CObject {
