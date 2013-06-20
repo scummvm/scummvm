@@ -925,7 +925,7 @@ int ViewPortResource::drawText(const Common::String &msg) {
 		}
 	} 
 
-	if (gfxManager._saveBack && fontInfo._fontSaveBack && (_flags & 0x8000)) {
+	if (gfxManager._saveBack && fontInfo._fontSaveBack && (_flags & DISPFLAG_VIEWPORT)) {
 		addSaveRect(_pageIndex, _fontRect);
 	}
 

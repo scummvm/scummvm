@@ -123,7 +123,7 @@ void GraphicsManager::addRectNoSaveBack(ViewPortResource *viewPort, int idx, con
 }
 
 void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *destDisplay,
-		const Common::Point &offset) {
+		const Common::Point &initialOffset) {
 	int var4C = 0;
 	int width1, width2;
 	int widthDiff, widthDiff2;
@@ -157,8 +157,8 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		destPic = destViewPort->_currentPic;
 	}
 
-	Common::Point ofs = Common::Point(offset.x + srcPic->_bounds.left - destPic->_bounds.left, 
-		offset.y + srcPic->_bounds.top - destPic->_bounds.top);
+	Common::Point offset = Common::Point(initialOffset.x + srcPic->_bounds.left - destPic->_bounds.left, 
+		initialOffset.y + srcPic->_bounds.top - destPic->_bounds.top);
 	width1 = width2 = srcPic->_bounds.width();
 	height1 = srcPic->_bounds.height();
 	srcOffset = 0;
@@ -179,12 +179,12 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			newBounds = Common::Rect(0, 0, destPic->_bounds.width(), destPic->_bounds.height());
 		}
 
-		var24 = ofs.y - newBounds.top;
+		var24 = offset.y - newBounds.top;
 		if (var24 < 0) {
 			var52 = width2;
 			srcOffset -= var24 * var52;
 			height1 += var24;
-			ofs.y = newBounds.top;
+			offset.y = newBounds.top;
 			
 			if (height1 <= 0)
 				return;
@@ -192,18 +192,18 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			isClipped = true;
 		}
 
-		var20 = newBounds.bottom - (ofs.y + height1);
+		var20 = newBounds.bottom - (offset.y + height1);
 		if (var20 < 0) {
 			height1 += var20;
 			if (height1 <= 0)
 				return;
 		}
 
-		var22 = ofs.x - newBounds.left;
+		var22 = offset.x - newBounds.left;
 		if (var22 < 0) {
 			srcOffset -= var22;
 			width2 += var22;
-			ofs.x = newBounds.left;
+			offset.x = newBounds.left;
 
 			if (width2 <= 0)
 				return;
@@ -211,7 +211,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 			isClipped = true;
 		}
 
-		var26 = newBounds.right - (ofs.x + width2);
+		var26 = newBounds.right - (offset.x + width2);
 		if (var26 < 0) {
 			width2 += var26;
 			if (width2 <= 0)
@@ -221,7 +221,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		}
 	}
 
-	screenOffset = ofs.y * destPic->_bounds.width() + ofs.x;
+	screenOffset = offset.y * destPic->_bounds.width() + offset.x;
 	widthDiff = width1 - width2;
 	widthDiff2 = destPic->_bounds.width() - width2;
 
@@ -245,8 +245,8 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 				++destViewPort->_rectListCount[destViewPort->_pageIndex];
 			}
 		} else {
-			int xs = ofs.x + destPic->_bounds.left;
-			int ys = ofs.y + destPic->_bounds.top;
+			int xs = offset.x + destPic->_bounds.left;
+			int ys = offset.y + destPic->_bounds.top;
 			backBounds = Common::Rect(xs, ys, xs + width2, ys + height1);
 
 			(this->*destViewPort->_addFn)(destViewPort, destViewPort->_bounds.top, backBounds);
@@ -281,21 +281,21 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 		return;
 
 	if (srcPic->_pick == 0xff) {
-		if (srcFlags & 8) {
+		if (srcFlags & DISPFLAG_8) {
 			error("TODO: sDrawPic");
 		} else {
 			// loc_258B8
 			srcP = srcImgData + srcOffset;
 
-			if (destFlags & 8) {
+			if (destFlags & DISPFLAG_8) {
 				// loc_258D8
 				destP = destImgData + screenOffset;
 
-				if (srcFlags & 2) {
+				if (srcFlags & DISPFLAG_2) {
 					// loc_258F5f
 				} else {
 					// loc_25D40
-					if (srcFlags & 0x100) {
+					if (srcFlags & DISPFLAG_100) {
 						// loc_25D4A
 					} else {
 						// loc_2606D
@@ -312,9 +312,9 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 				// loc_2615E
 				destP = destImgData + screenOffset;
 
-				if (srcFlags & 2) {
+				if (srcFlags & DISPFLAG_2) {
 					// loc_2617e
-					if (srcFlags & 0x100) {
+					if (srcFlags & DISPFLAG_100) {
 						// loc_26188
 						srcP = srcImgData;
 						if (isClipped) {
@@ -459,7 +459,7 @@ error("TODO: var22/var24/var2C not initialised before use?");
 
 void GraphicsManager::fillPic(DisplayResource *display, byte onOff) {
 	PictureResource *pic;
-	if (display->_flags & 0x8000) {
+	if (display->_flags & DISPFLAG_VIEWPORT) {
 		pic = ((ViewPortResource *)display)->_currentPic;
 	} else {
 		pic = (PictureResource *)display;
