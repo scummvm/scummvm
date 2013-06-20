@@ -28,7 +28,6 @@
 #include "engines/util.h"
 
 #include "fullpipe/fullpipe.h"
-#include "fullpipe/ngiarchive.h"
 #include "fullpipe/objectnames.h"
 #include "fullpipe/objects.h"
 
@@ -65,8 +64,6 @@ Common::Error FullpipeEngine::run() {
 	_isSaveAllowed = false;
 
 	loadGam("fullpipe.gam");
-
-	Common::Archive *arch = makeNGIArchive("3896.nl");
 
 	return Common::kNoError;
 }

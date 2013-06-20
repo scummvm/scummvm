@@ -91,6 +91,8 @@ bool CGameLoader::load(MfcArchive &file) {
 
 	_gameProject->load(file);
 
+	g_fullpipe->_gameProject = _gameProject;
+
 	if (g_gameProjectVersion < 12) {
 		error("Old gameProjectVersion: %d", g_gameProjectVersion);
 	}

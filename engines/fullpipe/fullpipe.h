@@ -44,8 +44,10 @@ enum FullpipeGameFeatures {
 };
 
 class CGameLoader;
+class GameProject;
 class CGameVar;
 class CInventory2;
+class Scene;
 
 extern int g_gameProjectVersion;
 extern int g_gameProjectValue;
@@ -76,6 +78,7 @@ public:
 	void updateEvents();
 
 	CGameLoader *_gameLoader;
+	GameProject *_gameProject;
 	bool loadGam(const char *fname);
 
 	int _gameProjectVersion;
@@ -95,7 +98,7 @@ public:
 	void setObjectState(const char *name, int state);
 	int getObjectEnumState(const char *name, const char *state);
 
-	void accessScene(int sceneId);
+	Scene *accessScene(int sceneId);
 
 public:
 

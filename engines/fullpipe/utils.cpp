@@ -285,4 +285,16 @@ CObject *MfcArchive::parseClass(bool *isCopyReturned) {
 	return res;
 }
 
+char *genFileName(int superId, int sceneId, const char *ext) {
+	char *s = (char *)calloc(256, 1);
+
+	if (superId) {
+		snprintf(s, 255, "%04d%04d.%s", superId, sceneId, ext);
+	} else {
+		snprintf(s, 255, "%04d.%s", sceneId, ext);
+	}
+
+	return s;
+}
+
 } // End of namespace Fullpipe

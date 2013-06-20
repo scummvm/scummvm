@@ -25,27 +25,7 @@
 
 namespace Fullpipe {
 
-class SceneTag : public CObject {
- public:
-	int _field_4;
-	char *_tag;
-	int _scene;
-	int16 _sceneId;
-	int16 _field_12;
-
- public:
-	SceneTag();
-	~SceneTag();
-
-	virtual bool load(MfcArchive &file);
-};
-
-class SceneTagList : public Common::List<SceneTag>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
-};
-
-class Scene {
+class Scene : public CObject {
 	Background bg;
 	CPtrList staticANIObjectList1;
 	CPtrList staticANIObjectList2;
@@ -57,6 +37,31 @@ class Scene {
 	int stringObj;
 	int field_BC;
 	int libHandle;
+
+  public:
+	Scene();
+	virtual bool load(MfcArchive &file);
+};
+
+class SceneTag : public CObject {
+ public:
+	int _field_4;
+	char *_tag;
+	Scene *_scene;
+	int16 _sceneId;
+	int16 _field_12;
+
+ public:
+	SceneTag();
+	~SceneTag();
+
+	virtual bool load(MfcArchive &file);
+	void loadScene();
+};
+
+class SceneTagList : public Common::List<SceneTag>, public CObject {
+ public:
+	virtual bool load(MfcArchive &file);
 };
 
 } // End of namespace Fullpipe

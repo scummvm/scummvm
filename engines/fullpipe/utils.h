@@ -102,6 +102,8 @@ struct CNode {
 
 typedef Common::Array<void *> CPtrList;
 
+char *genFileName(int superId, int sceneId, const char *ext);
+
 } // End of namespace Fullpipe
 
 #endif /* FULLPIPE_UTILS_H */

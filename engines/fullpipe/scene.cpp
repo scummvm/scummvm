@@ -23,10 +23,28 @@
 #include "fullpipe/fullpipe.h"
 
 #include "fullpipe/objects.h"
+#include "fullpipe/ngiarchive.h"
 
 namespace Fullpipe {
 
-void FullpipeEngine::accessScene(int sceneId) {
+Scene *FullpipeEngine::accessScene(int sceneId) {
+	SceneTag *t = 0;
+
+	for (SceneTagList::iterator s = _gameProject->_sceneTagList->begin(); s != _gameProject->_sceneTagList->end(); ++s) {
+		if (s->_sceneId == sceneId) {
+			t = &(*s);
+			break;
+		}
+	}
+
+	if (!t)
+		return 0;
+
+	if (!t->_scene) {
+		t->loadScene();
+	}
+
+	return t->_scene;
 }
 
 bool SceneTagList::load(MfcArchive &file) {
@@ -61,6 +79,33 @@ bool SceneTag::load(MfcArchive &file) {
 
 SceneTag::~SceneTag() {
 	free(_tag);
+}
+
+void SceneTag::loadScene() {
+	char *archname = genFileName(0, _sceneId, "nl");
+
+	Common::Archive *arch = makeNGIArchive(archname);
+
+	char *fname = genFileName(0, _sceneId, "sc");
+
+	Common::SeekableReadStream *file = arch->createReadStreamForMember(fname);
+
+	_scene = new Scene();
+
+	//_scene->load(*file);
+
+	delete file;
+
+	free(fname);
+	free(archname);
+
+}
+
+Scene::Scene() {
+}
+
+bool Scene::load(MfcArchive &file) {
+	return true;
 }
 
 } // End of namespace Fullpipe
