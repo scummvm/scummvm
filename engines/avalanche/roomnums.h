@@ -32,60 +32,56 @@
 
 namespace Avalanche {
 
-	namespace Gyro {
+const byte r__nowhere = 0;
+const byte r__yours = 1;
+const byte r__outsideyours = 2;
+/*{ a corridor in your castle. = 3 }
+{ outside your castle = 5; }*/
+const byte r__musicroom = 7;
+const byte r__outsideargentpub = 9;
+const byte r__argentroad = 10;
+const byte r__wisewomans = 11;
+const byte r__spludwicks = 12;
+const byte r__insideabbey = 13;
+const byte r__outsideabbey = 14; /*{ assumed }*/
+const byte r__avvysgarden = 15;
+const byte r__aylesoffice = 16;
+const byte r__argentpub = 19;
+const byte r__brummieroad = 20;
+const byte r__lusties = 21; /*{ ? not sure }*/
+const byte r__entrancehall = 22;
+const byte r__lustiesroom = 23;
+const byte r__westhall = 25;
+const byte r__easthall = 26;
+const byte r__oubliette = 27;
+const byte r__geidas = 28;
+const byte r__catacombs = 29;
 
-	const byte r__nowhere = 0;
-	const byte r__yours = 1;
-	const byte r__outsideyours = 2;
-	/*{ a corridor in your castle. = 3 }
-	{ outside your castle = 5; }*/
-	const byte r__musicroom = 7;
-	const byte r__outsideargentpub = 9;
-	const byte r__argentroad = 10;
-	const byte r__wisewomans = 11;
-	const byte r__spludwicks = 12;
-	const byte r__insideabbey = 13;
-	const byte r__outsideabbey = 14; /*{ assumed }*/
-	const byte r__avvysgarden = 15;
-	const byte r__aylesoffice = 16;
-	const byte r__argentpub = 19;
-	const byte r__brummieroad = 20;
-	const byte r__lusties = 21; /*{ ? not sure }*/
-	const byte r__entrancehall = 22;
-	const byte r__lustiesroom = 23;
-	const byte r__westhall = 25;
-	const byte r__easthall = 26;
-	const byte r__oubliette = 27;
-	const byte r__geidas = 28;
-	const byte r__catacombs = 29;
+//{ -------------- }
 
-	//{ -------------- }
+const byte r__bridge = 40;
+const byte r__robins = 42;
+const byte r__outsidenottspub = 46;
+const byte r__nottspub = 47;
 
-	const byte r__bridge = 40;
-	const byte r__robins = 42;
-	const byte r__outsidenottspub = 46;
-	const byte r__nottspub = 47;
+//{ -------------- }
 
-	//{ -------------- }
+const byte r__outsideducks = 50;
+const byte r__ducks = 51;
 
-	const byte r__outsideducks = 50;
-	const byte r__ducks = 51;
+//{ -------------- }
 
-	//{ -------------- }
+const byte r__outsidecardiffcastle = 70;
+const byte r__insidecardiffcastle = 71;
 
-	const byte r__outsidecardiffcastle = 70;
-	const byte r__insidecardiffcastle = 71;
+//{ -------------- }
 
-	//{ -------------- }
+/*{ place80 appears to be bogus }*/
 
-	/*{ place80 appears to be bogus }*/
+//{ -------------- }
 
-	//{ -------------- }
-
-	const byte r__bosskey = 98; /*{ assumed }*/
-	const byte r__map = 99;
-
-	} // End of namespace Gyro
+const byte r__bosskey = 98; /*{ assumed }*/
+const byte r__map = 99;
 
 } // End of namespace Avalanche
 
