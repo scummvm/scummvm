@@ -35,10 +35,7 @@ namespace Avalanche {
 	Avalot::Avalot() {}
 
 	void Avalot::run(Common::String arg) {
-
-
-
-		warning("STUB: Avalot::run()");
+		warning("STUB: Avalot::run(%s)", arg.c_str());
 	}
 
 } // End of namespace Avalanche
