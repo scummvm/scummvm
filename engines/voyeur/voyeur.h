@@ -66,7 +66,6 @@ private:
 	Common::RandomSource _randomSource;
 
 	BoltFile *_bVoy;
-	SVoy _voy;
 	Common::Array<int> _resolves;
 	FontInfoResource _defaultFontInfo;
 
@@ -90,6 +89,7 @@ public:
 	FilesManager _filesManager;
 	GraphicsManager _graphicsManager;
 	SoundManager _soundManager;
+	SVoy _voy;
 public:
 	VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc);
 	virtual ~VoyeurEngine();

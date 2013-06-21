@@ -194,12 +194,14 @@ void EventsManager::pollEvents() {
 			return;
 		case Common::EVENT_LBUTTONDOWN:
 			_mouseButton = 1;
+			_vm->_voy._incriminate = true;
 			return;
 		case Common::EVENT_RBUTTONDOWN:
 			_mouseButton = 2;
 			return;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
+			_vm->_voy._incriminate = false;
 			_mouseButton = 0;
 			return;
 		case Common::EVENT_MOUSEMOVE:

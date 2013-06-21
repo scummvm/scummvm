@@ -303,6 +303,7 @@ bool VoyeurEngine::doLock() {
 
 					_eventsManager.delay(1);
 				} while (!shouldQuit() && !_voy._incriminate);
+				_voy._incriminate = false;
 			} while (!shouldQuit() && key == -1);
 
 			_soundManager.abortVOCMap();
