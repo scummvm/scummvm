@@ -4,7 +4,8 @@ MODULE_OBJS = \
 	avalanche.o \
 	avalot.o \
 	console.o \
-	detection.o
+	detection.o \
+	gyro2.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AVALANCHE), DYNAMIC_PLUGIN)

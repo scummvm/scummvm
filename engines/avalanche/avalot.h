@@ -28,7 +28,7 @@
 #ifndef AVALOT_H
 #define AVALOT_H
 
-#include "common/str.h"
+#include "common/system.h"
 
 namespace Avalanche {
 

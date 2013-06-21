@@ -25,20 +25,14 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#include "common/str.h"
-#include "common/textconsole.h"
-
-#include "avalanche/avalot.h"
+#include "avalanche/gyro2.h"
 
 namespace Avalanche {
 
-	Avalot::Avalot() {}
-
-	void Avalot::run(Common::String arg) {
+	namespace Gyro {
 
 
 
-		warning("STUB: Avalot::run()");
-	}
+	} // End of namespace Gyro
 
 } // End of namespace Avalanche
