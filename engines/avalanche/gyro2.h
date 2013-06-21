@@ -31,6 +31,7 @@
 #include "common/system.h"
 #include "common/str.h"
 #include "common/scummsys.h"
+#include "avalanche/roomnums.h"
 
 namespace Avalanche {
 
@@ -493,39 +494,32 @@ namespace Avalanche {
 	const int16 walk = 3;
 	const int16 run = 5;
 
-
-	//	Deal with it later !!!!!!!
-	// 
-	///*$I ROOMNUMS.INC - Room number constants (r__xxx) */
-
-	//const byte whereis[29] =
-	//	/* The Lads */
-	//{   {
-	//		r__yours, /* Avvy */
-	//		r__spludwicks, /* Spludwick */
-	//		r__outsideyours, /* Crapulus */
-	//		r__ducks, /* Duck - r__DucksRoom's not defined yet. */
-	//		r__argentpub, /* Malagauche */
-	//		r__robins, /* Friar Tuck. */
-	//		177, /* Robin Hood - can't meet him at the start. */
-	//		r__brummieroad, /* Cwytalot */
-	//		r__lustiesroom, /* Baron du Lustie. */
-	//		r__outsidecardiffcastle, /* The Duke of Cardiff. */
-	//		r__argentpub, /* Dogfood */
-	//		r__outsideducks, /* Trader */
-	//		r__argentpub, /* Ibythneth */
-	//		r__aylesoffice, /* Ayles */
-	//		r__nottspub, /* Port */
-	//		r__nottspub, /* Spurge */
-	//		r__musicroom, /* Jacques */
-	//		0, 0, 0, 0, 0, 0, 0, 0,
-	//		/* The Lasses */
-	//		r__yours, /* Arkata */
-	//		r__geidas, /* Geida */
-	//		177, /* nobody allocated here! */
-	//		r__wisewomans
-	//	}
-	//}; /* The Wise Woman. */
+	const byte whereis[29] = {
+		/* The Lads */
+			r__yours, /* Avvy */
+			r__spludwicks, /* Spludwick */
+			r__outsideyours, /* Crapulus */
+			r__ducks, /* Duck - r__DucksRoom's not defined yet. */
+			r__argentpub, /* Malagauche */
+			r__robins, /* Friar Tuck. */
+			177, /* Robin Hood - can't meet him at the start. */
+			r__brummieroad, /* Cwytalot */
+			r__lustiesroom, /* Baron du Lustie. */
+			r__outsidecardiffcastle, /* The Duke of Cardiff. */
+			r__argentpub, /* Dogfood */
+			r__outsideducks, /* Trader */
+			r__argentpub, /* Ibythneth */
+			r__aylesoffice, /* Ayles */
+			r__nottspub, /* Port */
+			r__nottspub, /* Spurge */
+			r__musicroom, /* Jacques */
+			0, 0, 0, 0, 0, 0, 0, 0,
+			/* The Lasses */
+			r__yours, /* Arkata */
+			r__geidas, /* Geida */
+			177, /* nobody allocated here! */
+			r__wisewomans
+	}; /* The Wise Woman. */
 
 	/* Art gallery at 2,1; notice about this at 2,2. */
 
