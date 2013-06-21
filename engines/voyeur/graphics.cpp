@@ -551,11 +551,11 @@ void GraphicsManager::resetPalette() {
 	_vm->_eventsManager._intPtr._hasPalette = true;
 }
 
-void GraphicsManager::setColor(int idx, int r, int g, int b) {
+void GraphicsManager::setColor(int idx, byte r, byte g, byte b) {
 	byte *vgaP = &_VGAColors[idx * 3];
-	vgaP[0] = r >> 2;
-	vgaP[1] = g >> 2;
-	vgaP[2] = b >> 2;
+	vgaP[0] = r;
+	vgaP[1] = g;
+	vgaP[2] = b;
 
 	_vm->_eventsManager._intPtr._palStartIndex = MIN(_vm->_eventsManager._intPtr._palStartIndex, idx);
 	_vm->_eventsManager._intPtr._palEndIndex = MAX(_vm->_eventsManager._intPtr._palEndIndex, idx);

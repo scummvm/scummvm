@@ -108,7 +108,7 @@ public:
 	void flipPage();
 	void clearPalette();
 	void resetPalette();
-	void setColor(int idx, int r, int g, int b);
+	void setColor(int idx, byte r, byte g, byte b);
 	void screenReset();
 };
 

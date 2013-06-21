@@ -335,7 +335,7 @@ void EventsManager::vInitColor() {
 }
 
 void EventsManager::setCursorTo(int idx, int mode) {
-	switch (idx) {
+	switch (mode) {
 	case 0:
 		_vm->_graphicsManager.setColor(idx, 90, 90, 232);
 		break;
