@@ -162,7 +162,7 @@ namespace Avalanche {
 	}
 
 	void AvalancheEngine::run(Common::String what, bool with_jsb, bool with_bflight, elm how) {
-		warning("STUB: run()"); 
+		warning("STUB: run(%s)", what.c_str()); 
 		// Probably there'll be no need of this function, as all *.AVX-es will become classes.
 	}
 
