@@ -237,12 +237,16 @@ bool VoyeurEngine::doLock() {
 		while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
 			_eventsManager.delay(1);
 
-		_eventsManager.setCursorTo(127, 0);
+		_eventsManager.setCursorColor(127, 0);
 		_graphicsManager.setColor(1, 64, 64, 64);
 		_graphicsManager.setColor(2, 96, 96, 96);
 		_graphicsManager.setColor(3, 160, 160, 160);
 		_graphicsManager.setColor(4, 224, 224, 224);
 		
+		// Set up the cursor
+		_eventsManager.setCursor(cursorPic);
+		_eventsManager.mouseOn();
+
 		_eventsManager._intPtr. field38 = 1;
 		_eventsManager._intPtr._hasPalette = true;
 
@@ -282,7 +286,8 @@ bool VoyeurEngine::doLock() {
 				do {
 					// Scan through the list of key rects to check if a keypad key is highlighted
 					key = -1;
-					Common::Point mousePos = _eventsManager.getMousePos();
+					Common::Point mousePos = _eventsManager.getMousePos() + 
+						Common::Point(30, 20);
 
 					for (int keyIndex = 0; keyIndex < keyCount; ++keyIndex) { 
 						int x1 = READ_LE_UINT16(keyData + (((keyIndex << 2) + 1) << 1));
@@ -295,15 +300,9 @@ bool VoyeurEngine::doLock() {
 						}
 					}
 
-					_eventsManager.setCursorTo(127, (key == -1) ? 0 : 1);
+					_eventsManager.setCursorColor(127, (key == -1) ? 0 : 1);
 					_eventsManager._intPtr.field38 = 1;
 					_eventsManager._intPtr._hasPalette = true;
-
-					// TODO:Refactor the mouse cursor to use ScummVM cursor code
-					_graphicsManager.sDrawPic(cursorPic, *_graphicsManager._vPort, mousePos);
-					(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
-					_graphicsManager.flipPage();
-					_eventsManager.sWaitFlip();
 
 					_eventsManager.delay(1);
 				} while (!shouldQuit() && !_voy._incriminate);

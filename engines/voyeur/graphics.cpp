@@ -139,6 +139,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	int var52;
 	int var20, var22;
 	int var26, var2C;
+	byte pixel;
 
 	byte *srcImgData, *destImgData;
 	byte *srcP, *destP;
@@ -164,6 +165,7 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	srcOffset = 0;
 	srcFlags = srcPic->_flags;
 	destFlags = destPic->_flags;
+	byte *cursorData = NULL;
 
 	if (srcFlags & 1) {
 		if (_clipPtr) {
@@ -280,6 +282,12 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 	if (srcPic->_select != 0xff)
 		return;
 
+	if (destFlags & DISPFLAG_CURSOR) {
+		cursorData = new byte[width2 * height1];
+		Common::fill(cursorData, cursorData + width2 * height1, 0);
+		destImgData = cursorData;
+	}
+
 	if (srcPic->_pick == 0xff) {
 		if (srcFlags & DISPFLAG_8) {
 			error("TODO: sDrawPic");
@@ -292,7 +300,55 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 				destP = destImgData + screenOffset;
 
 				if (srcFlags & DISPFLAG_2) {
-					// loc_258F5f
+					// loc_25652
+					srcP = srcImgData + srcOffset;
+
+					if (destFlags & DISPFLAG_8) {
+						// loc_2566F
+						if (srcFlags & DISPFLAG_2) {
+							// loc_256FA
+							srcP = (byte *)_screenSurface.pixels + srcOffset;
+
+							for (int yp = 0; yp < height1; ++yp) {
+								for (int xp = 0; xp < width2; ++width2, ++srcP, ++destP) {
+									pixel = *srcP;
+									if (pixel)
+										*destP = pixel;
+								}
+
+								srcP += widthDiff;
+								destP += widthDiff2;
+							}
+						} else {
+							// loc_25706
+							for (int yp = 0; yp < height1; ++yp) {
+								Common::copy(srcP, srcP + width2, destP);
+								srcP += width2 + widthDiff;
+								destP += width2 + widthDiff2;
+							}
+						}
+					} else {
+						// loc_25773
+						destP = destImgData + screenOffset;
+
+						if (srcFlags & DISPFLAG_2) {
+							// loc_25793
+							for (int yp = 0; yp < height1; ++yp) {
+								Common::copy(srcP, srcP + width2, destP);
+								srcP += width2 + widthDiff;
+								destP += width2 + widthDiff2;
+							}
+						} else {
+							// loc_25829
+							destP = (byte *)_screenSurface.pixels + screenOffset;
+
+							for (int yp = 0; yp < height1; ++yp) {
+								Common::copy(srcP, srcP + width2, destP);
+								srcP += width2 + widthDiff;
+								destP += width2 + widthDiff2;
+							}
+						}
+					}
 				} else {
 					// loc_25D40
 					if (srcFlags & DISPFLAG_100) {
@@ -454,6 +510,11 @@ error("TODO: var22/var24/var2C not initialised before use?");
 			// loc_26673
 			// TODO
 		}
+	}
+
+	if (cursorData) {
+		_vm->_eventsManager.setCursor(cursorData, width2, height1);
+		delete[] cursorData;
 	}
 }
 

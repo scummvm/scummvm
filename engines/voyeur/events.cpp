@@ -22,6 +22,7 @@
 
 #include "voyeur/events.h"
 #include "voyeur/voyeur.h"
+#include "graphics/cursorman.h"
 #include "graphics/palette.h"
 
 namespace Voyeur {
@@ -336,7 +337,19 @@ void EventsManager::vInitColor() {
 	addIntNode(&_cycleIntNode);
 }
 
-void EventsManager::setCursorTo(int idx, int mode) {
+void EventsManager::setCursor(PictureResource *pic) {
+	PictureResource cursor;
+	cursor._bounds = pic->_bounds;
+	cursor._flags = DISPFLAG_CURSOR;
+
+	_vm->_graphicsManager.sDrawPic(pic, &cursor, Common::Point());
+}
+
+void EventsManager::setCursor(byte *cursorData, int width, int height) {
+	CursorMan.replaceCursor(cursorData, width, height, 0, 0, 0);
+}
+
+void EventsManager::setCursorColor(int idx, int mode) {
 	switch (mode) {
 	case 0:
 		_vm->_graphicsManager.setColor(idx, 90, 90, 232);
@@ -353,6 +366,14 @@ void EventsManager::setCursorTo(int idx, int mode) {
 	default:
 		break;
 	}
+}
+
+void EventsManager::mouseOn() {
+	CursorMan.showMouse(true);
+}
+
+void EventsManager::mouseOff() {
+	CursorMan.showMouse(false);
 }
 
 } // End of namespace Voyeur

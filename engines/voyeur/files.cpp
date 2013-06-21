@@ -666,6 +666,7 @@ PictureResource::PictureResource(BoltFilesState &state, const byte *src) {
 }
 
 PictureResource::PictureResource() {
+	_flags = 0;
 	_select = 0;
 	_pick = 0;
 	_onOff = 0;

@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 #include "common/list.h"
+#include "graphics/surface.h"
+#include "voyeur/files.h"
 #include "voyeur/game.h"
 
 namespace Voyeur {
@@ -95,7 +97,11 @@ public:
 	void addIntNode(IntNode *node);
 	void addFadeInt();
 
-	void setCursorTo(int idx, int mode);
+	void setCursor(PictureResource *pic);
+	void setCursor(byte *cursorData, int width, int height);
+	void setCursorColor(int idx, int mode);
+	void mouseOn();
+	void mouseOff();
 	Common::Point getMousePos() { return _mousePos; }
 };
 
