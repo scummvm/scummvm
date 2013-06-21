@@ -32,6 +32,7 @@
 #include "common/str.h"
 #include "common/scummsys.h"
 #include "avalanche/roomnums.h"
+#include "avalanche/color.h"
 
 namespace Avalanche {
 
@@ -230,7 +231,7 @@ namespace Avalanche {
 
 	struct quasiped_type {
 		byte whichped, fgc, room, bgc;
-		char who;
+		uint16 who;
 	};
 	/* A quasiped defines how people who aren't sprites talk. For example,
 	   quasiped "A" is Dogfood. The rooms aren't stored because I'm leaving
@@ -581,29 +582,25 @@ namespace Avalanche {
 	const bool demo = false; /* If this is true, we're in a demo of the game. */
 
 	const char spludwick_order[3] = {onion, ink, mushroom};
-
-
-	//I need color constants here, like in CRT unit.
-	// 
-	//const quasiped_type quasipeds[16] = {
-	//	{	{2, lightgray, 19, brown, pdogfood},                       /* A: Dogfood (screen 19). */
-	//		{3, green,     19, white, pibythneth},                         /* B: Ibythneth (screen 19). */
-	//		{3, white,     1, magenta, parkata},                        /* C: Arkata (screen 1). */
-	//		{3, black,     23, red, '\261'},                         /* D: Hawk (screen 23). */
-	//		{3, lightgreen, 50, brown, ptrader},                        /* E: Trader (screen 50). */
-	//		{6, yellow,    42, red, pavalot},                           /* F: Avvy, tied up (scr.42) */
-	//		{2, blue,      16, white, payles},                         /* G: Ayles (screen 16). */
-	//		{2, brown,     7, white, pjacques},                          /* H: Jacques (screen 7). */
-	//		{2, lightgreen, 47, green, pspurge},                        /* I: Spurge (screen 47). */
-	//		{3, yellow,    47, red, pavalot},                           /* J: Avalot (screen 47). */
-	//		{2, lightgray, 23, black, pdulustie},                         /* K: du Lustie (screen 23). */
-	//		{2, yellow,    27, red, pavalot},                           /* L: Avalot (screen 27). */
-	//		{3, white,     27, red, '\261'},                         /* M: Avaroid (screen 27). */
-	//		{4, lightgray, 19, darkgray, pmalagauche},                        /*N: Malagauche (screen 19). */
-	//		{5, lightmagenta, 47, red, pport},                           /* O: Port (screen 47). */
-	//		{2, lightgreen, 51, darkgray, pdrduck}
-	//	}
-	//};                         /*P: Duck (screen 51). */
+	 
+	const quasiped_type quasipeds[16] = {
+		{2, lightgray, 19, brown, pdogfood},                       /* A: Dogfood (screen 19). */
+		{3, green,     19, white, pibythneth},                         /* B: Ibythneth (screen 19). */
+		{3, white,     1, magenta, parkata},                        /* C: Arkata (screen 1). */
+		{3, black,     23, red, 177},                         /* D: Hawk (screen 23). */
+		{3, lightgreen, 50, brown, ptrader},                        /* E: Trader (screen 50). */
+		{6, yellow,    42, red, pavalot},                           /* F: Avvy, tied up (scr.42) */
+		{2, blue,      16, white, payles},                         /* G: Ayles (screen 16). */
+		{2, brown,     7, white, pjacques},                          /* H: Jacques (screen 7). */
+		{2, lightgreen, 47, green, pspurge},                        /* I: Spurge (screen 47). */
+		{3, yellow,    47, red, pavalot},                           /* J: Avalot (screen 47). */
+		{2, lightgray, 23, black, pdulustie},                         /* K: du Lustie (screen 23). */
+		{2, yellow,    27, red, pavalot},                           /* L: Avalot (screen 27). */
+		{3, white,     27, red, 177},                         /* M: Avaroid (screen 27). */
+		{4, lightgray, 19, darkgray, pmalagauche},                        /*N: Malagauche (screen 19). */
+		{5, lightmagenta, 47, red, pport},                           /* O: Port (screen 47). */
+		{2, lightgreen, 51, darkgray, pdrduck}
+	};                         /*P: Duck (screen 51). */
 
 	const int16 lower = 0;
 	const int16 same = 1;
