@@ -49,7 +49,7 @@ void LockClass::saveThePassword() {
 }
 
 Common::String LockClass::getDateString() {
-	return Common::String();
+	return Common::String("ScummVM");
 }
 
 } // End of namespace Voyeur

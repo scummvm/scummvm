@@ -208,7 +208,6 @@ bool VoyeurEngine::doLock() {
 	PictureResource *cursorPic;
 	byte *keyData;
 	int keyCount;
-	Common::String msg;
 	int key;
 
 	if (_bVoy->getBoltGroup(0x10700)) {
@@ -239,10 +238,10 @@ bool VoyeurEngine::doLock() {
 			_eventsManager.delay(1);
 
 		_eventsManager.setCursorTo(127, 0);
-		_graphicsManager.setColor(1, 0x40, 0x40, 0x40);
-		_graphicsManager.setColor(2, 0x60, 0x60, 0x60);
-		_graphicsManager.setColor(3, 0x0A, 0xA0, 0x0A);
-		_graphicsManager.setColor(4, 0x0E, 0xE0, 0x0E);
+		_graphicsManager.setColor(1, 64, 64, 64);
+		_graphicsManager.setColor(2, 96, 96, 96);
+		_graphicsManager.setColor(3, 160, 160, 160);
+		_graphicsManager.setColor(4, 224, 224, 224);
 		
 		_eventsManager._intPtr. field38 = 1;
 		_eventsManager._intPtr._hasPalette = true;
@@ -252,9 +251,9 @@ bool VoyeurEngine::doLock() {
 		_graphicsManager._fontPtr->_fontFlags = 0;
 
 		Common::String dateString = lock.getDateString();
-		msg = "16:49 8/12";
- 		Common::String playString = Common::String::format("Last Play %s", msg.c_str());
+ 		Common::String displayString = Common::String::format("Last Play %s", dateString.c_str());
 
+		bool firstLoop = true;
 		bool breakFlag = false;
 		while (!breakFlag && !shouldQuit()) {
 			(*_graphicsManager._vPort)->setupViewPort();
@@ -268,10 +267,15 @@ bool VoyeurEngine::doLock() {
 			_graphicsManager._fontPtr->_justifyWidth = 384;
 			_graphicsManager._fontPtr->_justifyHeight = 97;
 
-			(*_graphicsManager._vPort)->drawText(playString);
+			(*_graphicsManager._vPort)->drawText(displayString);
 			(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
 			_graphicsManager.flipPage();
 			_eventsManager.sWaitFlip();
+
+			if (firstLoop) {
+				firstLoop = false;
+				displayString = "";
+			}
 
 			// Loop for getting key presses
 			do {
@@ -319,32 +323,36 @@ bool VoyeurEngine::doLock() {
 
 			// Process the key
 			if (key < 10) {
-				if (playString.size() < 10) {
-					playString += '0' + key;
+				// Numeric key
+				if (displayString.size() < 10) {
+					displayString += '0' + key;
 					continue;
 				}
 			} else if (key == 10) {
+				// Accept key
 				if (!flag) {
-					if ((password.size() == 0 && !playString.size()) || (password == playString)) {
+					if ((password.empty() && displayString.empty()) || (password == displayString)) {
 						breakFlag = true;
 						result = true;
 						break;
 					}
 				} else {
-					if (playString.size() > 0) {
-						result = 1;
+					if (displayString.size() > 0) {
+						result = true;
 						breakFlag = true;
 						break;
 					} 
 				}
 			} else if (key == 11) {
-				if ((password.size() == 0 && !playString.size()) || (password != playString)) {
+				// New code
+				if ((password.empty() && displayString.empty()) || (password != displayString)) {
 					(*_graphicsManager._vPort)->setupViewPort();
 					flag = true;
-					playString = "";
+					displayString = "";
 					continue;
 				}
 			} else if (key == 12) {
+				// Exit keyword
 				breakFlag = true;
 				result = false;
 				break;
@@ -362,7 +370,7 @@ bool VoyeurEngine::doLock() {
 		_graphicsManager.resetPalette();
 
 		if (flag && result)
-			lock._password = msg;
+			lock._password = displayString;
 		lock.saveThePassword();
 
 		_voy._eventTable[999]._data = NULL;
