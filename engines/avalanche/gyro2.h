@@ -753,6 +753,9 @@ namespace Avalanche {
 	bool use_joy_a;
 
 
+
+	///////////////////////////// FUNCTIONS ///////////////////////////// 
+
 	void newpointer(byte m);
 
 	void wait();    /* makes hourglass */
@@ -767,7 +770,7 @@ namespace Avalanche {
 
 	void xycheck();
 
-	void hopto(int16 x, int16 y); /* Moves mouse void *to x,y */
+	void hopto(int16 x, int16 y); /* Moves mouse pointer to x,y */
 
 	void check();
 
@@ -791,15 +794,15 @@ namespace Avalanche {
 
 	bool pennycheck(uint16 howmuchby);
 
-	Common::String getname(char whose);
+	Common::String getname(byte whose);
 
-	char getnamechar(char whose);
+	char getnamechar(byte whose);
 
-	Common::String get_thing(char which);
+	Common::String get_thing(byte which);
 
-	char get_thingchar(char which);
+	char get_thingchar(byte which);
 
-	Common::String get_better(char which);
+	Common::String get_better(byte which);
 
 	Common::String f5_does();
 
