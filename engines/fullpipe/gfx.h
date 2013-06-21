@@ -43,10 +43,16 @@ class Picture : public MemoryObject {
 	int _memoryObject2;
 	int _alpha;
 	int _paletteData;
+
+  public:
+	Picture();
+	virtual bool load(MfcArchive &file);
 };
 
 class BigPicture : public Picture {
-
+  public:
+	BigPicture();
+	virtual bool load(MfcArchive &file);
 };
 
 class GameObject : public CObject {

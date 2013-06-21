@@ -76,8 +76,7 @@ class CObList : public Common::List<CObject>, public CObject {
 	virtual bool load(MfcArchive &file);
 };
 
-class MemoryObject {
-	//CObject obj;
+class MemoryObject : CObject {
 	int filename;
 	int field_8;
 	int field_C;
