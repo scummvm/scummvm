@@ -24,6 +24,7 @@
 
 #include "fullpipe/objects.h"
 #include "fullpipe/ngiarchive.h"
+#include "fullpipe/statics.h"
 
 namespace Fullpipe {
 
@@ -116,6 +117,33 @@ bool Scene::load(MfcArchive &file) {
 
 	_bg.load(file);
 
+	_sceneId = file.readUint16LE();
+	
+	_stringObj = file.readPascalString();
+	debug(0, "scene: <%s>", _stringObj);
+
+	int count = file.readUint16LE();
+
+	for (int i = 0; i < count; i++) {
+		int aniNum = file.readUint16LE();
+		char *aniname = genFileName(0, aniNum, "ani");
+
+		Common::SeekableReadStream *f = g_fullpipe->_currArchive->createReadStreamForMember(aniname);
+
+		StaticANIObject *ani = new StaticANIObject();
+
+		MfcArchive archive(f);
+
+		ani->load(archive);
+		ani->_sceneId = _sceneId;
+
+		_staticANIObjectList1.push_back(ani);
+
+		delete f;
+		free(aniname);
+
+
+	}
 	return true;
 }
 

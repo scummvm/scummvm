@@ -120,33 +120,33 @@ class CInputController {
 };
 
 struct PicAniInfo {
-  int32 type;
-  int16 objectId;
-  int16 field_6;
-  int32 field_8;
-  int16 field_C;
-  int16 field_E;
-  int32 ox;
-  int32 oy;
-  int32 priority;
-  int16 staticsId;
-  int16 movementId;
-  int16 dynamicPhaseIndex;
-  int16 flags;
-  int32 field_24;
-  int32 someDynamicPhaseIndex;
+	int32 type;
+	int16 objectId;
+	int16 field_6;
+	int32 field_8;
+	int16 field_C;
+	int16 field_E;
+	int32 ox;
+	int32 oy;
+	int32 priority;
+	int16 staticsId;
+	int16 movementId;
+	int16 dynamicPhaseIndex;
+	int16 flags;
+	int32 field_24;
+	int32 someDynamicPhaseIndex;
 
-  bool load(MfcArchive &file);
+	bool load(MfcArchive &file);
 };
 
 struct EntranceInfo {
-  int32 sceneId;
-  int32 field_4;
-  int32 messageQueueId;
-  byte gap_C[292]; // FIXME
-  int32 field_130;
+	int32 sceneId;
+	int32 field_4;
+	int32 messageQueueId;
+	byte gap_C[292]; // FIXME
+	int32 field_130;
 
-  bool load(MfcArchive &file);
+	bool load(MfcArchive &file);
 };
 
 class CMotionController;

@@ -34,7 +34,7 @@ class Scene : public CObject {
 	Shadows *_shadows;
 	int _soundList;
 	int16 _sceneId;
-	int _stringObj;
+	char *_stringObj;
 	int _field_BC;
 	int _libHandle;
 
