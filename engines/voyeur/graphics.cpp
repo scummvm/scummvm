@@ -604,6 +604,10 @@ void GraphicsManager::clearPalette() {
 	g_system->getPaletteManager()->setPalette(&palette[0], 0, 256);
 }
 
+void GraphicsManager::setPalette(const byte *palette, int start, int count) {
+	g_system->getPaletteManager()->setPalette(palette, start, count);
+}
+
 void GraphicsManager::resetPalette() {
 	for (int i = 0; i < 256; ++i)
 		setColor(i, 0, 0, 0);

@@ -21,6 +21,7 @@
  */
 
 #include "voyeur/voyeur.h"
+#include "voyeur/animation.h"
 #include "voyeur/graphics.h"
 #include "voyeur/utils.h"
 #include "common/scummsys.h"
@@ -156,8 +157,13 @@ void VoyeurEngine::doHeadTitle() {
 	if (shouldQuit())
 		return;
 
-	doLock();
+	if (ConfMan.getBool("copy_protection")) {
+		bool result = doLock();
+		if (!result || shouldQuit())
+			return;
+	}
 
+	playRL2Video("a1100100.rl2");
 	// TODO
 }
 
@@ -196,6 +202,8 @@ void VoyeurEngine::showConversionScreen() {
 
 	_graphicsManager.screenReset();
 	_bVoy->freeBoltGroup(0x10500);
+
+
 }
 
 bool VoyeurEngine::doLock() {
@@ -376,10 +384,35 @@ bool VoyeurEngine::doLock() {
 		_bVoy->freeBoltGroup(0x10700);
 	}
 
+	_eventsManager.mouseOff();
+
 	delete[] buttonVoc;
 	delete[] wrongVoc;
 
 	return result;
+}
+
+void VoyeurEngine::playRL2Video(const Common::String &filename) {
+	::Video::RL2Decoder decoder;
+	decoder.loadFile(filename);
+	decoder.start();
+
+	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._incriminate) {
+		if (decoder.hasDirtyPalette()) {
+			const byte *palette = decoder.getPalette();
+			_graphicsManager.setPalette(palette, 0, 256);
+		}
+
+		if (decoder.needsUpdate()) {
+			const Graphics::Surface *frame = decoder.decodeNextFrame();
+
+			Common::copy((byte *)frame->pixels, (byte *)frame->pixels + 320 * 200,
+				(byte *)_graphicsManager._screenSurface.pixels);
+		}
+
+		_eventsManager.pollEvents();
+		g_system->delayMillis(10);
+	}
 }
 
 } // End of namespace Voyeur

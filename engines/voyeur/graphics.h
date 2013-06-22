@@ -107,6 +107,7 @@ public:
 	void sDisplayPic(PictureResource *pic);
 	void flipPage();
 	void clearPalette();
+	void setPalette(const byte *palette, int start, int count);
 	void resetPalette();
 	void setColor(int idx, byte r, byte g, byte b);
 	void screenReset();
