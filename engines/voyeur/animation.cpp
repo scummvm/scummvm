@@ -21,12 +21,14 @@
  */
 
 #include "voyeur/animation.h"
+#include "common/memstream.h"
 #include "common/system.h"
+#include "audio/decoders/raw.h"
 #include "graphics/surface.h"
 
 namespace Video {
 
-RL2Decoder::RL2Decoder() {
+RL2Decoder::RL2Decoder(Audio::Mixer::SoundType soundType) : _soundType(soundType) {
 }
 
 RL2Decoder::~RL2Decoder() {
@@ -36,16 +38,25 @@ RL2Decoder::~RL2Decoder() {
 bool RL2Decoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
-	stream->seek(8);
+	// Load basic file information
+	_header.load(stream);
 
 	// Check RL2 magic number
-	uint32 signature = stream->readUint32LE();
-	if (signature != 0x33564c52 /* RLV3 */ && signature != 0x32564c52 /* RLV2 */) {
-		warning("RL2Decoder::loadStream(): attempted to load non-RL2 data (type = 0x%08X)", signature);
+	if (!_header.isValid()) {
+		warning("RL2Decoder::loadStream(): attempted to load non-RL2 data (0x%08X)", _header._signature);
 		return false;
 	}
 
-	addTrack(new RL2VideoTrack(stream));
+	// Add an audio track if sound is present
+	RL2AudioTrack *audioTrack = NULL;
+	if (_header._soundRate) {
+		audioTrack = new RL2AudioTrack(_header, _soundType);
+		addTrack(audioTrack);
+	}
+
+	// Create a video track
+	addTrack(new RL2VideoTrack(_header, audioTrack, stream));
+
 	return true;
 }
 
@@ -72,65 +83,91 @@ void RL2Decoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 		((RL2VideoTrack *)track)->copyDirtyRectsToBuffer(dst, pitch);
 }
 
-RL2Decoder::RL2VideoTrack::RL2VideoTrack(Common::SeekableReadStream *stream) {
-	_fileStream = stream;
+/*------------------------------------------------------------------------*/
 
-	stream->seek(4);
-	uint32 backSize = stream->readUint32LE();
-	assert(backSize == 0 || backSize == (320 * 200));
+RL2Decoder::RL2FileHeader::RL2FileHeader() {
+	_frameOffsets = NULL;
+	_frameSoundSizes = NULL;
+}
 
-	stream->seek(16);
-	_frameCount = stream->readUint16LE();
+RL2Decoder::RL2FileHeader::~RL2FileHeader() {
+	delete[] _frameOffsets;
+	_frameSoundSizes;
+}
+
+void RL2Decoder::RL2FileHeader::load(Common::SeekableReadStream *stream) {
+	stream->seek(0);
+
+	_form = stream->readUint32LE();
+	_backSize = stream->readUint32LE();
+	_signature = stream->readUint32LE();
+
+	if (!isValid())
+		return;
+
+	_dataSize = stream->readUint32LE();
+	_numFrames = stream->readUint32LE();
+	_method = stream->readUint16LE();
+	_soundRate = stream->readUint16LE();
+	_rate = stream->readUint16LE();
+	_channels = stream->readUint16LE();
+	_defSoundSize = stream->readUint16LE();
+	_videoBase = stream->readUint16LE();
+	_colorCount = stream->readUint32LE();
+	assert(_colorCount <= 256);
+
+	stream->read(_palette, 768);
+
+	// Skip over background frame, if any, and the list of overall frame sizes (which we don't use)
+	stream->skip(_backSize + 4 * _numFrames);
+
+	// Load frame offsets
+	_frameOffsets = new uint32[_numFrames];
+	for (int i = 0; i < _numFrames; ++i)
+		_frameOffsets[i] = stream->readUint32LE();
+
+	// Load the size of the sound portion of each frame
+	_frameSoundSizes = new int[_numFrames];
+	for (int i = 0; i < _numFrames; ++i)
+		_frameSoundSizes[i] = stream->readUint32LE() & 0xffff;
+}
+
+bool RL2Decoder::RL2FileHeader::isValid() const {
+	return _signature == MKTAG('R','L','V','2') || _signature != MKTAG('R','L','V','3');
+}
+
+/*------------------------------------------------------------------------*/
+
+RL2Decoder::RL2VideoTrack::RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack, 
+		Common::SeekableReadStream *stream): 
+		_header(header), _audioTrack(audioTrack), _fileStream(stream) {
+	assert(header._backSize == 0 || header._backSize == (320 * 200));
 
 	// Calculate the frame rate
-	stream->seek(22);
-	int soundRate = stream->readUint16LE();
-	int rate = stream->readUint16LE();
-	stream->skip(2);
-	int defSoundSize = stream->readUint16LE();
-
-	int fps = (soundRate > 0) ? rate / defSoundSize : 11025 / 1103;
+	int fps = (header._soundRate > 0) ? header._rate / header._defSoundSize : 11025 / 1103;
 	_frameDelay = 1000 / fps;
 
 	_surface = new Graphics::Surface();
 	_surface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
-	if (backSize == 0) {
+	if (header._backSize == 0) {
 		_backSurface = NULL;
 	} else {
 		_backSurface = new Graphics::Surface();
 		_backSurface->create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
 
 		stream->seek(0x324);
-		_fileStream->read((byte *)_backSurface->pixels, 320 * 200);
+		rl2DecodeFrameWithoutBackground(0);
 	}
 
-	stream->seek(30);
-	_videoBase = stream->readUint16LE();
-	stream->seek(36);
-	_palette = new byte[3 * 256];
-	stream->read(_palette, 256 * 3);
+	_videoBase = header._videoBase;
 	_dirtyPalette = true;
 
 	_curFrame = 0;
 	_nextFrameStartTime = 0;
-
-	// Read in the frame offsets. Since we're only worried about the video data
-	// here, we'll calculate video offsets taking into account sound data size
-	stream->seek(0x324 + backSize + 4 * _frameCount);
-
-	_frameOffset = new uint32[_frameCount];
-	for (uint i = 0; i < _frameCount; ++i)
-		_frameOffset[i] = _fileStream->readUint32LE();
-
-	// Adust frame offsets to skip sound data
-	for (uint i = 0; i < _frameCount; ++i)
-		_frameOffset[i] += _fileStream->readUint32LE() & 0xffff;
 }
 
 RL2Decoder::RL2VideoTrack::~RL2VideoTrack() {
 	delete _fileStream;
-	delete[] _palette;
-	delete[] _frameOffset;
 
 	_surface->free();
 	delete _surface;
@@ -147,8 +184,6 @@ bool RL2Decoder::RL2VideoTrack::endOfTrack() const {
 bool RL2Decoder::RL2VideoTrack::rewind() {
 	_curFrame = 0;
 	_nextFrameStartTime = 0;
-
-	_fileStream->seek(_frameOffset[0]);
 
 	return true;
 }
@@ -173,8 +208,14 @@ const Graphics::Surface *RL2Decoder::RL2VideoTrack::decodeNextFrame() {
 		_dirtyRects.push_back(Common::Rect(0, 0, _surface->w, _surface->h));
 	}
 
-	_fileStream->seek(_frameOffset[_curFrame]);
-		
+	// Move to the next frame data
+	_fileStream->seek(_header._frameOffsets[_curFrame]);
+
+	// If there's any sound data, pass it to the audio track
+	if (_header._frameSoundSizes[_curFrame] > 0 && _audioTrack)
+		_audioTrack->queueSound(_fileStream, _header._frameSoundSizes[_curFrame]);
+
+	// Decode the graphic data
 	if (_backSurface) 
 		rl2DecodeFrameWithBackground();
 	else
@@ -211,7 +252,6 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithoutBackground(int screenOffset
 	byte *destP = (byte *)_surface->pixels + screenOffset;
 	int frameSize = _surface->w * _surface->h - screenOffset;
 
-	_fileStream->seek(_frameOffset[_curFrame]);
 	while (frameSize > 0) {
 		byte nextByte = _fileStream->readByte();
 
@@ -244,7 +284,6 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithBackground() {
 	byte *src = (byte *)_backSurface->pixels;
 	byte *dest = (byte *)_surface->pixels;
 
-	_fileStream->seek(_frameOffset[_curFrame]);
 	while (frameSize > 0) {
 		byte nextByte = _fileStream->readByte();
 
@@ -274,6 +313,40 @@ void RL2Decoder::RL2VideoTrack::rl2DecodeFrameWithBackground() {
 			frameSize -= runLength;
 		}
 	}
+}
+
+/*------------------------------------------------------------------------*/
+
+RL2Decoder::RL2AudioTrack::RL2AudioTrack(const RL2FileHeader &header, Audio::Mixer::SoundType soundType): 
+		_header(header), _soundType(soundType) {
+	_audStream = createAudioStream();
+}
+
+RL2Decoder::RL2AudioTrack::~RL2AudioTrack() {
+	delete _audStream;
+}
+
+void RL2Decoder::RL2AudioTrack::queueSound(Common::SeekableReadStream *stream, int size) {
+	if (_audStream) {
+		// Queue the sound data
+		byte *data = new byte[size];
+		stream->read(data, size);
+		Common::MemoryReadStream *memoryStream = new Common::MemoryReadStream(data, size,
+			DisposeAfterUse::YES);
+
+		_audStream->queueAudioStream(Audio::makeRawStream(memoryStream, _header._rate, 
+			Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), DisposeAfterUse::YES);
+	} else {
+		delete stream;
+	}
+}
+
+Audio::AudioStream *RL2Decoder::RL2AudioTrack::getAudioStream() const {
+	return _audStream;
+}
+
+Audio::QueuingAudioStream *RL2Decoder::RL2AudioTrack::createAudioStream() {
+	return Audio::makeQueuingAudioStream(_header._rate, _header._channels == 2);
 }
 
 } // End of namespace Video

@@ -24,6 +24,8 @@
 #define VOYEUR_ANIMATION_H
 
 #include "video/video_decoder.h"
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "common/list.h"
 #include "common/rect.h"
 #include "common/stream.h"
@@ -37,8 +39,37 @@ namespace Video {
  *  - voyeur
  */
 class RL2Decoder : public VideoDecoder {
+
+	class RL2FileHeader {
+	public:
+		uint32 _form;
+		uint32 _backSize;
+		uint32 _signature;
+		uint32 _dataSize;
+		int _numFrames;
+		int _method;
+		int _soundRate;
+		int _rate;
+		int _channels;
+		int _defSoundSize;
+		int _videoBase;
+		int _colorCount;
+		byte _palette[768];
+
+		uint32 *_frameOffsets;
+		int *_frameSoundSizes;
+	public:
+		RL2FileHeader();
+		~RL2FileHeader();
+		void load(Common::SeekableReadStream *stream);
+		bool isValid() const;
+	};
+
+private:
+	Audio::Mixer::SoundType _soundType;
+	RL2FileHeader _header;
 public:
-	RL2Decoder();
+	RL2Decoder(Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~RL2Decoder();
 
 	bool loadStream(Common::SeekableReadStream *stream);
@@ -48,9 +79,29 @@ public:
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
 private:
+	class RL2AudioTrack : public AudioTrack {
+	public:
+		RL2AudioTrack(const RL2FileHeader &header, Audio::Mixer::SoundType soundType);
+		~RL2AudioTrack();
+
+		void queueSound(Common::SeekableReadStream *stream, int size);
+		Audio::Mixer::SoundType getSoundType() const { return _soundType; }
+
+	protected:
+		Audio::AudioStream *getAudioStream() const;
+
+	private:
+		Audio::Mixer::SoundType _soundType;
+		const RL2FileHeader &_header;
+
+		Audio::QueuingAudioStream *_audStream;
+		Audio::QueuingAudioStream *createAudioStream();
+	};
+
 	class RL2VideoTrack : public VideoTrack {
 	public:
-		RL2VideoTrack(Common::SeekableReadStream *stream);
+		RL2VideoTrack(const RL2FileHeader &header, RL2AudioTrack *audioTrack, 
+			Common::SeekableReadStream *stream);
 		~RL2VideoTrack();
 
 		bool endOfTrack() const;
@@ -61,10 +112,10 @@ private:
 		uint16 getHeight() const;
 		Graphics::PixelFormat getPixelFormat() const;
 		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
+		int getFrameCount() const { return _header._numFrames; }
 		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
 		const Graphics::Surface *decodeNextFrame();
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
+		const byte *getPalette() const { _dirtyPalette = false; return _header._palette; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
 		const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
@@ -73,17 +124,16 @@ private:
 
 	private:
 		Common::SeekableReadStream *_fileStream;
+		const RL2FileHeader &_header;
+		RL2AudioTrack *_audioTrack;
 		Graphics::Surface *_surface;
 		Graphics::Surface *_backSurface;
 
-		int _curFrame;
-
-		byte *_palette;
 		mutable bool _dirtyPalette;
 
-		uint32 _frameCount;
+		int _curFrame;
 		uint32 _videoBase;
-		uint32 *_frameOffset;
+		uint32 *_frameOffsets;
 		uint32 _frameDelay;
 		uint32 _nextFrameStartTime;
 
