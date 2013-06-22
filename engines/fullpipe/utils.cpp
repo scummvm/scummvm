@@ -23,9 +23,11 @@
 #include "fullpipe/fullpipe.h"
 
 #include "common/file.h"
+#include "common/memstream.h"
 
 #include "fullpipe/objects.h"
 #include "fullpipe/motion.h"
+#include "fullpipe/ngiarchive.h"
 
 namespace Fullpipe {
 
@@ -100,6 +102,64 @@ char *MfcArchive::readPascalString(bool twoByte) {
 	debug(9, "readPascalString: %d <%s>", len, tmp);
 
 	return tmp;
+}
+
+MemoryObject::MemoryObject() {
+  	_filename = 0;
+	_field_8 = 0;
+	_field_C = 0;
+	_field_10 = -1;
+	_field_14 = 1;
+	_dataSize = 0;
+	_flags = 0;
+	_libHandle = 0;
+	_data = 0;
+}
+
+bool MemoryObject::load(MfcArchive &file) {
+	_filename = file.readPascalString();
+
+	if (g_fullpipe->_currArchive) {
+		_field_14 = 0;
+		_libHandle = g_fullpipe->_currArchive;
+	}
+
+	return true;
+}
+
+void MemoryObject::loadFile(char *filename) {
+	if (!_data) {
+		if (g_fullpipe->_currArchive != _libHandle) {
+			assert(0);
+		}
+
+		Common::SeekableReadStream *s = _libHandle->createReadStreamForMember(filename);
+
+		if (s) {
+			debug(0, "Reading %s", filename);
+			assert(s->size() > 0);
+			_data = calloc(s->size(), 1);
+			s->read(_data, s->size());
+
+			delete s;
+		}
+	}
+}
+
+MemoryObject2::MemoryObject2() {
+	_data2 = 0;
+}
+
+bool MemoryObject2::load(MfcArchive &file) {
+	MemoryObject::load(file);
+
+	_flags |= 1;
+
+	if (_filename) {
+		MemoryObject::loadFile(_filename);
+	}
+
+	return true;
 }
 
 int MfcArchive::readCount() {

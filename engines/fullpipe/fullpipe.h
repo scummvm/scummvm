@@ -48,6 +48,7 @@ class GameProject;
 class CGameVar;
 class CInventory2;
 class Scene;
+class NGIArchive;
 
 class FullpipeEngine : public ::Engine {
 protected:
@@ -95,6 +96,8 @@ public:
 	int getObjectEnumState(const char *name, const char *state);
 
 	Scene *accessScene(int sceneId);
+
+	NGIArchive *_currArchive;
 
 public:
 

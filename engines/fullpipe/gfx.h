@@ -40,13 +40,14 @@ class Picture : public MemoryObject {
 	int _height;
 	int _bitmap;
 	int _field_54;
-	int _memoryObject2;
+	MemoryObject2 *_memoryObject2;
 	int _alpha;
-	int _paletteData;
+	byte *_paletteData;
 
   public:
 	Picture();
 	virtual bool load(MfcArchive &file);
+	void setAOIDs();
 };
 
 class BigPicture : public Picture {
@@ -94,7 +95,7 @@ class Background : public CObject {
 	int _colorMemoryObj;
 	int _bigPictureArray1Count;
 	int _bigPictureArray2Count;
-	int _bigPictureArray;
+	BigPicture ***_bigPictureArray;
 
   public:
 	Background();

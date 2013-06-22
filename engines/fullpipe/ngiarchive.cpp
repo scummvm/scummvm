@@ -33,33 +33,6 @@
 
 namespace Fullpipe {
 
-#define NGI_FILENAME_MAX 13
-
-struct NgiHeader {
-	int32 pos;
-	int32 extVal;
-	int32 flags;
-	int32 size;
-	char  filename[NGI_FILENAME_MAX];
-};
-
-typedef Common::HashMap<Common::String, NgiHeader*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> NgiHeadersMap;
-
-class NGIArchive : public Common::Archive {
-	NgiHeadersMap _headers;
-	Common::String _ngiFilename;
-
-public:
-	NGIArchive(const Common::String &name);
-	virtual ~NGIArchive();
-
-	// Archive implementation
-	virtual bool hasFile(const Common::String &name) const;
-	virtual int listMembers(Common::ArchiveMemberList &list) const;
-	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
-	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
-};
-
 NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) {
 	Common::File ngiFile;
 
@@ -118,6 +91,8 @@ NGIArchive::NGIArchive(const Common::String &filename) : _ngiFilename(filename) 
 
 	free(fat);
 
+	g_fullpipe->_currArchive = this;
+
 	debug(0, "NGIArchive::NGIArchive(%s): Located %d files", filename.c_str(), _headers.size());
 }
 
@@ -127,6 +102,8 @@ NGIArchive::~NGIArchive() {
 	for ( ; it != _headers.end(); ++it) {
 		delete it->_value;
 	}
+
+	g_fullpipe->_currArchive = 0;
 }
 
 bool NGIArchive::hasFile(const Common::String &name) const {
@@ -163,8 +140,6 @@ Common::SeekableReadStream *NGIArchive::createReadStreamForMember(const Common::
 	archiveFile.open(_ngiFilename);
 	archiveFile.seek(hdr->pos, SEEK_SET);
 
-	// TODO: It would be good if ArjFile could decompress files in a streaming
-	// mode, so it would not need to pre-allocate the entire output.
 	byte *data = (byte *)malloc(hdr->size);
 	assert(data);
 

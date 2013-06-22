@@ -98,6 +98,8 @@ void SceneTag::loadScene() {
 
 	delete file;
 
+	g_fullpipe->_currArchive = 0;
+
 	free(fname);
 	free(archname);
 }

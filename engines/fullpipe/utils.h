@@ -30,6 +30,7 @@
 namespace Fullpipe {
 
 class CObject;
+class NGIArchive;
 
 typedef Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> ClassMap;
 
@@ -77,18 +78,34 @@ class CObList : public Common::List<CObject>, public CObject {
 };
 
 class MemoryObject : CObject {
-	int filename;
-	int field_8;
-	int field_C;
-	int field_10;
-	char field_14;
-	char field_15;
-	char field_16;
-	char field_17;
-	int data;
-	int dataSize;
-	int flags;
-	int libHandle;
+	friend class MemoryObject2;
+	friend class Picture;
+
+	char *_filename;
+	int _field_8;
+	int _field_C;
+	int _field_10;
+	char _field_14;
+	char _field_15;
+	char _field_16;
+	char _field_17;
+	void *_data;
+	int _dataSize;
+	int _flags;
+	NGIArchive *_libHandle;
+
+ public:
+	MemoryObject();
+	virtual bool load(MfcArchive &file);
+	void loadFile(char *filename);
+};
+
+class MemoryObject2 : public MemoryObject {
+	void *_data2;
+
+ public:
+	MemoryObject2();
+	virtual bool load(MfcArchive &file);
 };
 
 class CObArray : public Common::Array<CObject>, public CObject {

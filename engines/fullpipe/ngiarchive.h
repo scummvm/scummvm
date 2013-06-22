@@ -29,6 +29,33 @@ namespace Fullpipe {
 
 class Archive;
 
+#define NGI_FILENAME_MAX 13
+
+struct NgiHeader {
+	int32 pos;
+	int32 extVal;
+	int32 flags;
+	int32 size;
+	char  filename[NGI_FILENAME_MAX];
+};
+
+typedef Common::HashMap<Common::String, NgiHeader*, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> NgiHeadersMap;
+
+class NGIArchive : public Common::Archive {
+	NgiHeadersMap _headers;
+	Common::String _ngiFilename;
+
+public:
+	NGIArchive(const Common::String &name);
+	virtual ~NGIArchive();
+
+	// Archive implementation
+	virtual bool hasFile(const Common::String &name) const;
+	virtual int listMembers(Common::ArchiveMemberList &list) const;
+	virtual const Common::ArchiveMemberPtr getMember(const Common::String &name) const;
+	virtual Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const;
+};
+
 /**
  * This factory method creates an Archive instance corresponding to the content
  * of the NGI compressed file with the given name.
