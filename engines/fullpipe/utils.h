@@ -78,9 +78,9 @@ class CObList : public Common::List<CObject>, public CObject {
 };
 
 class MemoryObject : CObject {
-	friend class MemoryObject2;
 	friend class Picture;
 
+ protected:
 	char *_filename;
 	int _field_8;
 	int _field_C;

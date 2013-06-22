@@ -113,8 +113,6 @@ Scene::Scene() {
 }
 
 bool Scene::load(MfcArchive &file) {
-	warning("STUB: Scene::load");
-
 	_bg.load(file);
 
 	_sceneId = file.readUint16LE();
@@ -141,9 +139,10 @@ bool Scene::load(MfcArchive &file) {
 
 		delete f;
 		free(aniname);
-
-
 	}
+
+	warning("STUB: Scene::load");
+
 	return true;
 }
 

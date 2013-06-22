@@ -52,20 +52,20 @@ class CMctlCompound : public CMotionController {
 };
 
 class Unk2 : public CObject {
-  int _items;
-  int _count;
+	int _items;
+	int _count;
 
  public:
 	Unk2() : _items(0), _count(0) {}
 };
 
 class CMovGraphNode : public CObject {
-  int _x;
-  int _y;
-  int _distance;
-  int16 _field_10;
-  int16 _field_12;
-  int _field_14;
+	int _x;
+	int _y;
+	int _distance;
+	int16 _field_10;
+	int16 _field_12;
+	int _field_14;
 
   public:
 	CMovGraphNode() : _x(0), _y(0), _distance(0), _field_10(0), _field_14(0) {}
@@ -73,7 +73,7 @@ class CMovGraphNode : public CObject {
 };
 
 class CMovGraphReact : public CObject {
-    // Empty
+	// Empty
 };
 
 class CMctlCompoundArrayItem : public CMotionController {
@@ -87,64 +87,64 @@ class CMctlCompoundArrayItem : public CMotionController {
 	int _field_28;
 
  public:
-  CMctlCompoundArrayItem() : _movGraphReactObj(0) {}
+	CMctlCompoundArrayItem() : _movGraphReactObj(0) {}
 };
 
 class CReactParallel : public CMovGraphReact {
-    //CRgn _rgn;
-    int _x1;
-    int _y1;
-    int _x2;
-    int _y2;
-    int _dx;
-    int _dy;
-    Common::Point **_points;
+	//CRgn _rgn;
+	int _x1;
+	int _y1;
+	int _x2;
+	int _y2;
+	int _dx;
+	int _dy;
+	Common::Point **_points;
 
   public:
-    CReactParallel();
-    virtual bool load(MfcArchive &file);
-    void createRegion();
+	CReactParallel();
+	virtual bool load(MfcArchive &file);
+	void createRegion();
 };
 
 class CReactPolygonal : public CMovGraphReact {
-    //CRgn _rgn;
-    int _field_C;
-    int _field_10;
-    int _pointCount;
-    Common::Point **_points;
+	//CRgn _rgn;
+	int _field_C;
+	int _field_10;
+	int _pointCount;
+	Common::Point **_points;
 
   public:
-    CReactPolygonal();
-    virtual bool load(MfcArchive &file);
-    void createRegion();
+	CReactPolygonal();
+	virtual bool load(MfcArchive &file);
+	void createRegion();
 };
 
 class CMovGraphLink : public CObject {
-    CMovGraphNode *_movGraphNode1;
-    CMovGraphNode *_movGraphNode2;
-    CDWordArray _dwordArray1;
-    CDWordArray _dwordArray2;
-    int _flags;
-    int _field_38;
-    int _field_3C;
-    double _distance;
-    double _angle;
-    CMovGraphReact *_movGraphReact;
-    char *_name;
+	CMovGraphNode *_movGraphNode1;
+	CMovGraphNode *_movGraphNode2;
+	CDWordArray _dwordArray1;
+	CDWordArray _dwordArray2;
+	int _flags;
+	int _field_38;
+	int _field_3C;
+	double _distance;
+	double _angle;
+	CMovGraphReact *_movGraphReact;
+	char *_name;
 
   public:
-    CMovGraphLink();
-    virtual bool load(MfcArchive &file);
+	CMovGraphLink();
+	virtual bool load(MfcArchive &file);
 };
 
 class CMovGraph : public CMotionController {
-  CObList _nodes;
-  CObList _links;
-  int _field_44;
-  int _items;
-  int _itemsCount;
-  int (*_callback1)(int, int, int);
-  Unk2 _unk2;
+	CObList _nodes;
+	CObList _links;
+	int _field_44;
+	int _items;
+	int _itemsCount;
+	int (*_callback1)(int, int, int);
+	Unk2 _unk2;
 
  public:
 	CMovGraph();

@@ -9,6 +9,7 @@ MODULE_OBJS = \
 	ngiarchive.o \
 	scene.o \
 	stateloader.o \
+	statics.o \
 	utils.o
 
 # This module can be built as a plugin

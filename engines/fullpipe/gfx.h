@@ -57,8 +57,7 @@ class BigPicture : public Picture {
 };
 
 class GameObject : public CObject {
-	friend class PictureObject;
-
+  protected:
 	int16 _field_4;
 	int16 _field_6;
 	int _field_8;

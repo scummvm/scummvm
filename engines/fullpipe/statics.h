@@ -42,8 +42,10 @@ class StaticPhase : public Picture {
 };
 
 class DynamicPhase : public StaticPhase {
-	int _someX;
-	int _someY;
+	friend class Movement;
+
+	int _x;
+	int _y;
 	Common::Rect *_rectPtr;
 	int16 _field_7C;
 	int16 _field_7E;
@@ -56,6 +58,8 @@ class Statics : public DynamicPhase {
 	char *_stringObj;
 	int _picture;
 };
+
+class StaticANIObject;
 
 class Movement : public GameObject {
 	int _field_24;
@@ -74,13 +78,20 @@ class Movement : public GameObject {
 	int _counter;
 	CPtrList _dynamicPhases;
 	int _field_78;
-	int _framePosOffsets;
+	Common::Point *_framePosOffsets;
 	int _currMovementObj;
 	int _field_84;
 	DynamicPhase *_currDynamicPhase;
 	int _field_8C;
 	int _currDynamicPhaseIndex;
 	int _field_94;
+
+  public:
+	Movement();
+	virtual bool load(MfcArchive &file);
+	bool load(MfcArchive &file, StaticANIObject *ani);
+
+	Common::Point *getCurrDynamicPhaseXY(Common::Point &p);
 };
 
 class StaticANIObject : public GameObject {
@@ -105,6 +116,11 @@ class StaticANIObject : public GameObject {
 
   public:
 	int16 _sceneId;
+
+  public:
+	StaticANIObject();
+	virtual bool load(MfcArchive &file);
+	void setOXY(int x, int y);
 };
 
 } // End of namespace Fullpipe

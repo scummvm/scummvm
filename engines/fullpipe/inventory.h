@@ -44,8 +44,7 @@ struct InventoryPoolItem {
 typedef Common::Array<InventoryPoolItem> InventoryPoolItems;
 
 class CInventory : public CObject {
-	friend class CInventory2;
-
+ protected:
 	int16 _sceneId;
 	int16 _field_6;
 	InventoryPoolItems _itemsPool;
