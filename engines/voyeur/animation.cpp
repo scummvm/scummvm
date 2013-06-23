@@ -329,7 +329,7 @@ RL2Decoder::RL2AudioTrack::~RL2AudioTrack() {
 void RL2Decoder::RL2AudioTrack::queueSound(Common::SeekableReadStream *stream, int size) {
 	if (_audStream) {
 		// Queue the sound data
-		byte *data = new byte[size];
+		byte *data = (byte *)malloc(size);
 		stream->read(data, size);
 		Common::MemoryReadStream *memoryStream = new Common::MemoryReadStream(data, size,
 			DisposeAfterUse::YES);

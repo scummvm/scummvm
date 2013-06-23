@@ -427,10 +427,11 @@ void VoyeurEngine::showTitleScreen() {
 
 		_graphicsManager.screenReset();
 		_eventsManager.delay(200);
-		_bVoy->freeBoltGroup(0x10500);
 
 		playRL2Video("a1100100.rl2");
 		_graphicsManager.screenReset();
+
+		_bVoy->freeBoltGroup(0x10500);
 	}
 }
 

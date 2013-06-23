@@ -628,6 +628,7 @@ void GraphicsManager::setColor(int idx, byte r, byte g, byte b) {
 
 void GraphicsManager::screenReset() {
 	resetPalette();
+
 	(*_vPort)->setupViewPort();
 	fillPic(*_vPort, 0);	
 	(*_vPort)->_parent->_flags |= DISPFLAG_8;
