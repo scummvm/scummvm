@@ -47,6 +47,7 @@ VideoDecoder::VideoDecoder() {
 	_endTimeSet = false;
 	_nextVideoTrack = 0;
 	_mainAudioTrack = 0;
+	_canSetDither = true;
 
 	// Find the best format for output
 	_defaultHighColorFormat = g_system->getScreenFormat();
@@ -77,6 +78,7 @@ void VideoDecoder::close() {
 	_endTimeSet = false;
 	_nextVideoTrack = 0;
 	_mainAudioTrack = 0;
+	_canSetDither = true;
 }
 
 bool VideoDecoder::loadFile(const Common::String &filename) {
@@ -171,6 +173,7 @@ Graphics::PixelFormat VideoDecoder::getPixelFormat() const {
 
 const Graphics::Surface *VideoDecoder::decodeNextFrame() {
 	_needsUpdate = false;
+	_canSetDither = false;
 
 	readNextPacket();
 
@@ -486,6 +489,23 @@ bool VideoDecoder::seekIntern(const Audio::Timestamp &time) {
 			return false;
 
 	return true;
+}
+
+bool VideoDecoder::setDitheringPalette(const byte *palette) {
+	// If a frame was already decoded, we can't set it now.
+	if (!_canSetDither)
+		return false;
+
+	bool result = false;
+
+	for (TrackList::iterator it = _tracks.begin(); it != _tracks.end(); it++) {
+		if ((*it)->getTrackType() == Track::kTrackTypeVideo && ((VideoTrack *)*it)->canDither()) {
+			((VideoTrack *)*it)->setDither(palette);
+			result = true;
+		}
+	}
+
+	return result;
 }
 
 VideoDecoder::Track::Track() {

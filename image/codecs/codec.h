@@ -86,6 +86,20 @@ public:
 	 * Does the codec have a dirty palette?
 	 */
 	virtual bool hasDirtyPalette() const { return false; }
+
+	/**
+	 * Can the codec dither down to 8bpp?
+	 *
+	 * @note This should only be used for VFW codecs
+	 */
+	virtual bool canDither() const { return false; }
+
+	/**
+	 * Activate dithering mode with a palette
+	 *
+	 * @note This should only be used for VFW codecs
+	 */
+	virtual void setDither(const byte *palette) {}
 };
 
 /**
