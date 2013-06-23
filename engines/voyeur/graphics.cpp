@@ -169,8 +169,8 @@ void GraphicsManager::sDrawPic(DisplayResource *srcDisplay, DisplayResource *des
 
 	if (srcFlags & 1) {
 		if (_clipPtr) {
-			int xs = _clipPtr->left - srcPic->_bounds.left;
-			int ys = _clipPtr->top - srcPic->_bounds.top;
+			int xs = _clipPtr->left - destPic->_bounds.left;
+			int ys = _clipPtr->top - destPic->_bounds.top;
 			newBounds = Common::Rect(xs, ys, xs + _clipPtr->width(), ys + _clipPtr->height());
 		} else if (destViewPort) {
 			int xs = destViewPort->_clipRect.left - destPic->_bounds.left;
