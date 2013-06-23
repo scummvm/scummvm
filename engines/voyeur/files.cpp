@@ -1051,7 +1051,11 @@ void ViewPortResource::addSaveRect(int pageIndex, const Common::Rect &r) {
 }
 
 void ViewPortResource::sFillBox(int width) {
+	// TODO
+}
 
+void ViewPortResource::fillPic(byte onOff) {
+	_state._vm->_graphicsManager.fillPic(this, onOff);
 }
 
 /*------------------------------------------------------------------------*/

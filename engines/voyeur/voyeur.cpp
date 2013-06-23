@@ -100,6 +100,7 @@ void VoyeurEngine::initialiseManagers() {
 	_debugger.setVm(this);
 	_eventsManager.setVm(this);
 	_filesManager.setVm(this);
+	_game.setVm(this);
 	_graphicsManager.setVm(this);
 	_soundManager.setVm(this);
 
@@ -146,7 +147,7 @@ void VoyeurEngine::vInitInterrupts() {
 void VoyeurEngine::initInput() {
 }
 
-void VoyeurEngine::doHeadTitle() {
+bool VoyeurEngine::doHeadTitle() {
 //	char dest[144];
 
 	_eventsManager.startMainClockInt();
@@ -155,15 +156,35 @@ void VoyeurEngine::doHeadTitle() {
 	if (_bVoy->getBoltGroup(0x10500))
 		showConversionScreen();
 	if (shouldQuit())
-		return;
+		return false;
 
 	if (ConfMan.getBool("copy_protection")) {
 		bool result = doLock();
 		if (!result || shouldQuit())
-			return;
+			return false;
 	}
 
 	showTitleScreen();
+
+	// Opening
+	if (!_voy._incriminate) {
+		doOpening();
+		_game.doTransitionCard("Saturday Afternoon", "Player's Apartment");
+		_eventsManager.delay(90);
+	} else {
+		_voy._incriminate = false;
+	}
+
+	if (_voy._eCursorOff[58] & 0x80) {
+		if (_voy._evidence[19] == 0) {
+			// TODO
+		} else {
+			// TODO
+		}
+	}
+
+	_voy._eCursorOff[55] = 140;
+	return true;
 }
 
 void VoyeurEngine::showConversionScreen() {
@@ -428,11 +449,16 @@ void VoyeurEngine::showTitleScreen() {
 		_graphicsManager.screenReset();
 		_eventsManager.delay(200);
 
+		// Voyeur title
 		playRL2Video("a1100100.rl2");
 		_graphicsManager.screenReset();
 
 		_bVoy->freeBoltGroup(0x10500);
 	}
+}
+
+void VoyeurEngine::doOpening() {
+
 }
 
 void VoyeurEngine::playRL2Video(const Common::String &filename) {

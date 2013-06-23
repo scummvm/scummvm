@@ -274,6 +274,7 @@ public:
 	int textWidth(const Common::String &msg);
 	void addSaveRect(int pageIndex, const Common::Rect &r);
 	void sFillBox(int width);
+	void fillPic(byte onOff = 0);
 };
 
 class ViewPortPalEntry  {

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/events.h"
+#include "common/str.h"
 
 namespace Voyeur {
 
@@ -118,6 +119,16 @@ public:
 	IntData();
 
 	void audioInit();
+};
+
+class Game {
+private:
+	VoyeurEngine *_vm;
+public:
+	Game();
+	void setVm(VoyeurEngine *vm) { _vm = vm; }
+
+	void doTransitionCard(const Common::String &time, const Common::String &location);
 };
 
 } // End of namespace Voyeur

@@ -65,7 +65,6 @@ private:
 	const VoyeurGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
 
-	BoltFile *_bVoy;
 	Common::Array<int> _resolves;
 	FontInfoResource _defaultFontInfo;
 
@@ -76,18 +75,21 @@ private:
 	void vInitInterrupts();
 	void initInput();
 
-	void doHeadTitle();
+	bool doHeadTitle();
 	void showConversionScreen();
 	bool doLock();
 	void showTitleScreen();
+	void doOpening();
 protected:
 	// Engine APIs
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 public:
+	BoltFile *_bVoy;
 	Debugger _debugger;
 	EventsManager _eventsManager;
 	FilesManager _filesManager;
+	Game _game;
 	GraphicsManager _graphicsManager;
 	SoundManager _soundManager;
 	SVoy _voy;

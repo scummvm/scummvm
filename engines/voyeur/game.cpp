@@ -50,4 +50,49 @@ void IntData::audioInit() {
 
 /*------------------------------------------------------------------------*/
 
+Game::Game() {
+}
+
+void Game::doTransitionCard(const Common::String &time, const Common::String &location) {
+	_vm->_graphicsManager.setColor(128, 16, 16, 16);
+	_vm->_graphicsManager.setColor(224, 220, 220, 220);
+	_vm->_eventsManager._intPtr.field38 = true;
+	_vm->_eventsManager._intPtr._hasPalette = true;
+
+	(*_vm->_graphicsManager._vPort)->setupViewPort();
+	(*_vm->_graphicsManager._vPort)->fillPic(128);
+	_vm->_graphicsManager.flipPage();
+	_vm->_eventsManager.sWaitFlip();
+
+	(*_vm->_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
+	_vm->_graphicsManager.flipPage();
+	_vm->_eventsManager.sWaitFlip();
+	(*_vm->_graphicsManager._vPort)->fillPic(128);
+
+	FontInfoResource &fi = *_vm->_graphicsManager._fontPtr;
+	fi._curFont = _vm->_bVoy->boltEntry(257)._fontResource;
+	fi._foreColor = 224;
+	fi._fontSaveBack = 0;
+	fi._pos = Common::Point(0, 116);
+	fi._justify = ALIGN_CENTRE;
+	fi._justifyWidth = 384;
+	fi._justifyHeight = 120;
+
+	(*_vm->_graphicsManager._vPort)->drawText(time);
+	
+	if (!location.empty()) {
+		fi._pos = Common::Point(0, 138);
+		fi._justify = ALIGN_CENTRE;
+		fi._justifyWidth = 384;
+		fi._justifyHeight = 140;
+
+		(*_vm->_graphicsManager._vPort)->drawText(location);
+	}
+
+	(*_vm->_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
+	_vm->_graphicsManager.flipPage();
+	_vm->_eventsManager.sWaitFlip();
+}
+
+
 } // End of namespace Voyeur
