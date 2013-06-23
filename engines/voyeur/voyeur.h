@@ -79,6 +79,7 @@ private:
 	void doHeadTitle();
 	void showConversionScreen();
 	bool doLock();
+	void showTitleScreen();
 protected:
 	// Engine APIs
 	virtual Common::Error run();

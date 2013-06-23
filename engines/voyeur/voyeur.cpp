@@ -163,8 +163,7 @@ void VoyeurEngine::doHeadTitle() {
 			return;
 	}
 
-	playRL2Video("a1100100.rl2");
-	// TODO
+	showTitleScreen();
 }
 
 void VoyeurEngine::showConversionScreen() {
@@ -390,6 +389,49 @@ bool VoyeurEngine::doLock() {
 	delete[] wrongVoc;
 
 	return result;
+}
+
+void VoyeurEngine::showTitleScreen() {
+	if (_bVoy->getBoltGroup(0x10500)) {
+		_graphicsManager._backgroundPage = _bVoy->getPictureResource(0x500);
+
+		(*_graphicsManager._vPort)->setupViewPort();
+		(*_graphicsManager._vPort)->_flags |= DISPFLAG_8;
+		_graphicsManager.flipPage();
+		_eventsManager.sWaitFlip();
+
+		// Immediate palette load to show the initial screen
+		CMapResource *cMap = _bVoy->getCMapResource(0x501);
+		assert(cMap);
+		cMap->_steps = 60;
+		cMap->startFade();
+
+		// Wait briefly
+		_eventsManager.delay(200);
+		if (shouldQuit())
+			return;
+
+		// Fade out the screen
+		cMap = _bVoy->getCMapResource(0x504);
+		cMap->_steps = 30;
+		cMap->startFade();
+
+		(*_graphicsManager._vPort)->_flags |= DISPFLAG_8;
+		_graphicsManager.flipPage();
+		_eventsManager.sWaitFlip();
+
+		while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
+			_eventsManager.delay(1);
+		if (shouldQuit())
+			return;
+
+		_graphicsManager.screenReset();
+		_eventsManager.delay(200);
+		_bVoy->freeBoltGroup(0x10500);
+
+		playRL2Video("a1100100.rl2");
+		_graphicsManager.screenReset();
+	}
 }
 
 void VoyeurEngine::playRL2Video(const Common::String &filename) {
