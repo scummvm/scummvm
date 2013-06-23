@@ -346,8 +346,8 @@ ft	Full Throttle
 	4bedb49943df95a9c900a5a82ccbe9de	-1	fr	All?	-	-	-	cyx
 	8bdb0bf87b5e303dd35693afb9351215	-1	de	All?	-	-	-	dhewg
 	55518cd73cf9c6d23ea29c51ee06bdfe	-1	it	All?	-	-	-	delfino
-	55e4cc866ff9046824e1c638ba2b8c7f	-1	ru	All?	-	Fargus	-	sev
-	291fb06071e65897f755846611f5ad40	19697	ru	All?	-	Akella	-	sev
+	55e4cc866ff9046824e1c638ba2b8c7f	-1	ru	All?	-	Akella	-	sev
+	291fb06071e65897f755846611f5ad40	19697	ru	All?	-	7-Wolf	-	sev
 	e72bb4c2b613db2cf50f89ff6350e70a	-1	es	All?	-	-	-	
 	fe381e45117878b1e942cb876b050fd6	513243679	en	Mac	-	-	Mac bundle	Fingolfin
 	04401d747f1a2c1c4b388daff71ed378	535405461	de	Mac	-	-	Mac bundle	Fingolfin
