@@ -29,10 +29,22 @@
 #include "common/textconsole.h"
 
 #include "avalanche/avalot.h"
+#include "avalanche/gyro2.h"
 
 namespace Avalanche {
 
-	Avalot::Avalot() {}
+	Avalot::Avalot() {
+		int16 gd, gm;
+
+		checkbreak = false;
+		Gyro::visible = Gyro::m_no;
+		Gyro::to_do = 0;
+		Gyro::lmo = false;
+		// resetscroll(); Needs scrolls "unit" to make it work.
+
+
+
+	}
 
 	void Avalot::run(Common::String arg) {
 		warning("STUB: Avalot::run(%s)", arg.c_str());
