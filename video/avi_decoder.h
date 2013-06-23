@@ -179,11 +179,14 @@ protected:
 		int getCurFrame() const { return _curFrame; }
 		int getFrameCount() const { return _frameCount; }
 		const Graphics::Surface *decodeNextFrame() { return _lastFrame; }
-		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
-		bool hasDirtyPalette() const { return _dirtyPalette; }
+
+		const byte *getPalette() const;
+		bool hasDirtyPalette() const;
 		void setCurFrame(int frame) { _curFrame = frame; }
 		void loadPaletteFromChunk(Common::SeekableReadStream *chunk);
 		void useInitialPalette();
+		bool canDither() const;
+		void setDither(const byte *palette);
 
 		bool isTruemotion1() const;
 		void forceDimensions(uint16 width, uint16 height);
