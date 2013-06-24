@@ -56,6 +56,11 @@ namespace Avalanche {
 
 	byte use_icon;
 
+
+	void initialize_scrolls() {
+		warning("STUB: Scrolls::initialize_scrolls()");
+	}
+
 	void state(byte x) {     /* Sets "Ready" light to whatever */
 		byte page_;
 
@@ -123,7 +128,7 @@ namespace Avalanche {
 		ox = 0;
 		// log_scrollline(); Needs Logger to work.
 
-		warning("STUB: Scrolls::say().");
+		warning("STUB: Scrolls::say()");
 
 	}
 
