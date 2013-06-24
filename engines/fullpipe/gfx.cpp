@@ -33,6 +33,8 @@ Background::Background() {
 	_bigPictureArray1Count = 0;
 	_bigPictureArray2Count = 0;
 	_bigPictureArray = 0;
+	_stringObj = 0;
+	_colorMemoryObj = 0;
 }
 
 bool Background::load(MfcArchive &file) {

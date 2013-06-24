@@ -25,7 +25,7 @@
 
 namespace Fullpipe {
 
-class Scene : public CObject {
+class Scene : public Background {
 	Background _bg;
 	CPtrList _staticANIObjectList1;
 	CPtrList _staticANIObjectList2;
@@ -34,9 +34,9 @@ class Scene : public CObject {
 	Shadows *_shadows;
 	int _soundList;
 	int16 _sceneId;
-	char *_stringObj;
+	char *_scstringObj;
 	int _field_BC;
-	int _libHandle;
+	NGIArchive *_libHandle;
 
   public:
 	Scene();

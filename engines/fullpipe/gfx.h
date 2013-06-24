@@ -89,12 +89,13 @@ class PictureObject : public GameObject {
 };
 
 class Background : public CObject {
+  protected:
 	CPtrList _list;
 	char *_stringObj;
 	int _x;
 	int _y;
 	int16 _messageQueueId;
-	int _colorMemoryObj;
+	MemoryObject *_colorMemoryObj;
 	int _bigPictureArray1Count;
 	int _bigPictureArray2Count;
 	BigPicture ***_bigPictureArray;

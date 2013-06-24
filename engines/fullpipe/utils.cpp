@@ -136,7 +136,6 @@ void MemoryObject::loadFile(char *filename) {
 		Common::SeekableReadStream *s = _libHandle->createReadStreamForMember(filename);
 
 		if (s) {
-			debug(0, "Reading %s", filename);
 			assert(s->size() > 0);
 			_data = calloc(s->size(), 1);
 			s->read(_data, s->size());

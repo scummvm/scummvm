@@ -113,14 +113,15 @@ Scene::Scene() {
 }
 
 bool Scene::load(MfcArchive &file) {
-	_bg.load(file);
+	Background::load(file);
 
 	_sceneId = file.readUint16LE();
 	
-	_stringObj = file.readPascalString();
-	debug(0, "scene: <%s>", _stringObj);
+	_scstringObj = file.readPascalString();
+	debug(0, "scene: <%s>", _scstringObj);
 
 	int count = file.readUint16LE();
+	debug(7, "scene.ani: %d", count);
 
 	for (int i = 0; i < count; i++) {
 		int aniNum = file.readUint16LE();
@@ -141,7 +142,52 @@ bool Scene::load(MfcArchive &file) {
 		free(aniname);
 	}
 
-	warning("STUB: Scene::load");
+	count = file.readUint16LE();
+	debug(7, "scene.mq: %d", count);
+
+	for (int i = 0; i < count; i++) {
+		int qNum = file.readUint16LE();
+		char *qname = genFileName(0, qNum, "qu");
+
+		Common::SeekableReadStream *f = g_fullpipe->_currArchive->createReadStreamForMember(qname);
+		MfcArchive archive(f);
+
+		MessageQueue *mq = new MessageQueue();
+
+		mq->load(archive);
+
+		_messageQueueList.push_back(mq);
+
+		delete f;
+		free(qname);
+	}
+
+	count = file.readUint16LE();
+	debug(7, "scene.fa: %d", count);
+
+	for (int i = 0; i < count; i++) {
+		// There are no .FA files
+		assert(0);
+	}
+
+	_libHandle = g_fullpipe->_currArchive;
+
+	if (_list.size() > 0 && _stringObj && strlen(_stringObj) > 1) {
+		char fname[260];
+
+		strcpy(fname, _stringObj);
+		strcpy(strrchr(fname, '.') + 1, "col");
+
+		MemoryObject *col =  new MemoryObject();
+		col->loadFile(fname);
+
+		_colorMemoryObj = col;
+	  
+	}
+
+	char *shdname = genFileName(0, _sceneId, "shd");
+
+	warning("STUB: Scene::load  (%d bytes left)", file.size() - file.pos());
 
 	return true;
 }
