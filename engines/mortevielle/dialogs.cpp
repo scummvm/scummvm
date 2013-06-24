@@ -110,7 +110,8 @@ int Alert::show(const Common::String &msg, int n) {
 	do {
 		char dummyKey = '\377';
 		g_vm->_mouse.moveMouse(dummyFl, dummyKey);
-		CHECK_QUIT0;
+		if (g_vm->shouldQuit())
+			return 0;
 
 		curPos = g_vm->_mouse._pos;
 		bool newaff = false;
@@ -358,7 +359,8 @@ bool KnowledgeCheck::show() {
 			bool flag;
 			char key;
 			g_vm->_mouse.moveMouse(flag, key);
-			CHECK_QUIT0;
+			if (g_vm->shouldQuit())
+				return false;
 
 			currChoice = 1;
 			while (coor[currChoice]._enabled && !g_vm->_mouse.isMouseIn(coor[currChoice]._rect))
@@ -428,7 +430,8 @@ void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
 	do {
 		g_vm->_speechManager.startSpeech(SpeechNum, 0, 0);
 		g_vm->_key = waitForF3F8();
-		CHECK_QUIT;
+		if (g_vm->shouldQuit())
+			return;
 
 		if (g_vm->_newGraphicalDevice != g_vm->_currGraphicalDevice) {
 			g_vm->_currGraphicalDevice = g_vm->_newGraphicalDevice;

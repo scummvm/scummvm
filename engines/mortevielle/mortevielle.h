@@ -533,9 +533,6 @@ public:
 
 extern MortevielleEngine *g_vm;
 
-#define CHECK_QUIT if (g_vm->shouldQuit()) { return; }
-#define CHECK_QUIT0 if (g_vm->shouldQuit()) { return 0; }
-
 } // End of namespace Mortevielle
 
 #endif

@@ -576,13 +576,15 @@ void MortevielleEngine::showIntroduction() {
 	f3f8::aff50(false);
 	_speechManager._mlec = 0;
 	f3f8::checkForF8(142, false);
-	CHECK_QUIT;
+	if (g_vm->shouldQuit())
+		return;
 
 	f3f8::ani50();
 	f3f8::checkForF8(143, true);
-	CHECK_QUIT;
+	if (g_vm->shouldQuit())
+		return;
 
-	// TODO: Once music is implemented, only use the below delay if music is turned off
+	// TODO: Once music (Amiga/Atari ports) is implemented, only use the below delay if music is turned off
 	showTitleScreen();
 	delay(3000);
 	music();
@@ -611,7 +613,8 @@ void MortevielleEngine::mainGame() {
 	// Loop to play the game
 	do {
 		playGame();
-		CHECK_QUIT;
+		if (g_vm->shouldQuit())
+			return;
 	} while (!_quitGame);
 }
 
@@ -625,7 +628,8 @@ void MortevielleEngine::playGame() {
 	// Loop handling actions until the game has to be quit, or show the lose or end sequence
 	do {
 		handleAction();
-		CHECK_QUIT;
+		if (g_vm->shouldQuit())
+			return;
 	} while (!((_quitGame) || (_endGame) || (_loseGame)));
 
 	if (_endGame)
@@ -660,7 +664,8 @@ void MortevielleEngine::handleAction() {
 			_menu.updateMenu();
 			prepareRoom();
 			_mouse.moveMouse(funct, inkey);
-			CHECK_QUIT;
+			if (g_vm->shouldQuit())
+				return;
 			++temps;
 		} while (!((_menu._menuSelected) || (temps > lim) || (funct) || (_anyone)));
 		_inMainGameLoop = false;
@@ -1748,7 +1753,8 @@ void MortevielleEngine::startDialog(int16 rep) {
 	do {
 		_speechManager.startSpeech(rep, haut[_caff - 69], 0);
 		key = f3f8::waitForF3F8();
-		CHECK_QUIT;
+		if (g_vm->shouldQuit())
+			return;
 	} while (key != 66);
 	hirs();
 	_mouse.showMouse();
@@ -3383,7 +3389,8 @@ void MortevielleEngine::testKey(bool d) {
 			prepareRoom();
 		quest = keyPressed();
 		_mouse.getMousePosition(x, y, click);
-		CHECK_QUIT;
+		if (g_vm->shouldQuit())
+			return;
 	} while (!(quest || (click) || (d && _anyone)));
 	if (quest)
 		testou();
@@ -3618,7 +3625,8 @@ void MortevielleEngine::tfleche() {
 
 		do {
 			_mouse.moveMouse(qust, touch);
-			CHECK_QUIT;
+			if (g_vm->shouldQuit())
+				return;
 
 			if (getMouseClick())
 				inRect = (_mouse._pos.x < 256 * _resolutionScaler) && (_mouse._pos.y < 176) && (_mouse._pos.y > 12);

@@ -265,7 +265,8 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 
 	// Handle any pending keypresses
 	while (p_key) {
-		CHECK_QUIT;
+		if (g_vm->shouldQuit())
+			return;
 
 		in1 = g_vm->getChar();
 		getMousePosition(cx, cy, click);
