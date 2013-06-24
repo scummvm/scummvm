@@ -25,30 +25,48 @@
  * Copyright (c) 1994-1995 Mike, Mark and Thomas Thurman.
  */
 
-#include "common/str.h"
-#include "common/textconsole.h"
+#ifndef SCROLLS2_H
+#define SCROLLS2_H
 
-#include "avalanche/avalot.h"
+#include "common/system.h"
+
 #include "avalanche/gyro2.h"
+// #include "avalanche/joystick2.h" - Will be implemented later, if it will be implemented at all...
 
 namespace Avalanche {
 
-	Avalot::Avalot() {
-		int16 gd, gm;
+	namespace Scrolls {
 
-		checkbreak = false;
-		Gyro::visible = Gyro::m_no;
-		Gyro::to_do = 0;
-		Gyro::lmo = false;
-		// resetscroll(); Needs scrolls "unit" to make it work.
+	// Call it where Scrolls are first used.
+	// Procuded to replace the initizalization part of the original Pascal unit.
+	void initialize_scrolls();
 
-		warning("STUB: Avalot::Avalot()");
+	const bool aboutscroll = false; /* Is this the about box? */
 
+	void state(byte x);      /* Sets "Ready" light to whatever */
 
-	}
+	void drawscroll(Gyro::proc gotoit);      /* This is one of the oldest procs in the game. */
 
-	void Avalot::run(Common::String arg) {
-		warning("STUB: Avalot::run(%s)", arg.c_str());
-	}
+	void bubble(Gyro::proc gotoit);
+
+	void resetscroll();
+
+	void calldrivers();
+
+	void display(Common::String z);
+
+	bool ask(Common::String question);
+
+	void natural();
+
+	Common::String lsd();
+
+	void okay();    /* Says "Okay!" */
+
+	void musical_scroll();
+
+	} // End of namespace Scrolls
 
 } // End of namespace Avalanche
+
+#endif // SCROLLS2_H

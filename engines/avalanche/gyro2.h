@@ -56,7 +56,7 @@ namespace Avalanche {
 
 	///////////////////////////// TYPEDEFS ///////////////////////////// 
 
-	typedef void(*proc)();
+	typedef void (*proc)();
 
 	struct postype {
 		uint16 x, y, datapos;
