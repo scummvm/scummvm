@@ -187,6 +187,11 @@ bool Scene::load(MfcArchive &file) {
 
 	char *shdname = genFileName(0, _sceneId, "shd");
 
+	Shadows *shd = new Shadows();
+
+	if (shd->loadFile(shdname))
+		_shadows = shd;
+
 	warning("STUB: Scene::load  (%d bytes left)", file.size() - file.pos());
 
 	return true;

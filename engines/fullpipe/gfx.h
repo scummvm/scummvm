@@ -25,9 +25,8 @@
 
 namespace Fullpipe {
 
-class ShadowsItemArray : public Common::Array<CObject>, public CObject {
- public:
-	virtual bool load(MfcArchive &file);
+class ShadowsItemArray : public CObArray {
+	// empty
 };
 
 class Picture : public MemoryObject {
@@ -106,12 +105,15 @@ class Background : public CObject {
 	void addPictureObject(PictureObject *pct);
 };
 
-class Shadows {
-	//CObject obj;
-	int sceneId;
-	int staticAniObjectId;
-	int movementId;
-	ShadowsItemArray items;
+class Shadows : public CObject {
+	int _sceneId;
+	int _staticAniObjectId;
+	int _movementId;
+	ShadowsItemArray _items;
+
+  public:
+	Shadows();
+	virtual bool load(MfcArchive &file);
 };
 
 } // End of namespace Fullpipe

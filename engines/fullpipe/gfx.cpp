@@ -204,4 +204,19 @@ bool BigPicture::load(MfcArchive &file) {
 	return true;
 }
 
+Shadows::Shadows() {
+	_staticAniObjectId = 0;
+	_movementId = 0;
+	_sceneId = 0;
+}
+
+bool Shadows::load(MfcArchive &file) {
+	_sceneId = file.readUint32LE();
+	_staticAniObjectId = file.readUint32LE();
+	_movementId = file.readUint32LE();
+
+	return true;
+}
+
+
 } // End of namespace Fullpipe
