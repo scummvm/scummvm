@@ -81,6 +81,8 @@ public:
 	int _gameProjectValue;
 	int _scrollSpeed;
 	int _currSoundListCount;
+	bool _soundEnabled;
+	bool _flgSoundList;
 
 	void initObjectStates();
 	void setLevelStates();

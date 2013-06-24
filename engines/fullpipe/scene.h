@@ -32,7 +32,7 @@ class Scene : public Background {
 	CPtrList _messageQueueList;
 	CPtrList _faObjectList;
 	Shadows *_shadows;
-	int _soundList;
+	SoundList *_soundList;
 	int16 _sceneId;
 	char *_scstringObj;
 	int _field_BC;
@@ -41,6 +41,7 @@ class Scene : public Background {
   public:
 	Scene();
 	virtual bool load(MfcArchive &file);
+	void initStaticANIObjects();
 };
 
 class SceneTag : public CObject {

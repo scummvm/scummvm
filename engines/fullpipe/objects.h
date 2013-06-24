@@ -26,6 +26,7 @@
 #include "fullpipe/utils.h"
 #include "fullpipe/inventory.h"
 #include "fullpipe/gfx.h"
+#include "fullpipe/sound.h"
 #include "fullpipe/scene.h"
 
 namespace Fullpipe {

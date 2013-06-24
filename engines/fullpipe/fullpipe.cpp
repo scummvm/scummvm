@@ -46,6 +46,14 @@ FullpipeEngine::FullpipeEngine(OSystem *syst, const ADGameDescription *gameDesc)
 
 	_rnd = new Common::RandomSource("fullpipe");
 
+	_gameProjectVersion = 0;
+	_gameProjectValue = 0;
+	_scrollSpeed = 0;
+	_currSoundListCount = 0;
+
+	_soundEnabled = true;
+	_flgSoundList = true;
+
 	g_fullpipe = this;
 }
 

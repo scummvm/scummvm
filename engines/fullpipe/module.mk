@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	motion.o \
 	ngiarchive.o \
 	scene.o \
+	sound.o \
 	stateloader.o \
 	statics.o \
 	utils.o

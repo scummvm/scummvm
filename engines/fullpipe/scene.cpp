@@ -192,9 +192,35 @@ bool Scene::load(MfcArchive &file) {
 	if (shd->loadFile(shdname))
 		_shadows = shd;
 
+	free(shdname);
+
+	char *slsname = genFileName(0, _sceneId, "sls");
+
+	if (g_fullpipe->_soundEnabled) {
+		_soundList = new SoundList();
+
+		if (g_fullpipe->_flgSoundList) {
+			char *nlname = genFileName(17, _sceneId, "nl");
+		  
+			_soundList->loadFile(slsname, nlname);
+
+			free(nlname);
+		} else {
+			_soundList->loadFile(slsname, 0);
+		}
+	}
+
+	free(slsname);
+
+	initStaticANIObjects();
+
 	warning("STUB: Scene::load  (%d bytes left)", file.size() - file.pos());
 
 	return true;
+}
+
+void Scene::initStaticANIObjects() {
+	warning("STUB: Scene::initStaticANIObjects");
 }
 
 } // End of namespace Fullpipe
