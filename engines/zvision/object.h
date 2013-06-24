@@ -52,19 +52,19 @@ public:
 	};
 
 	// Constructors
-	Object(ObjectType type);
-	Object(bool value);
-	Object(byte value);
-	Object(int16 value);
-	Object(uint16 value);
-	Object(int32 value);
-	Object(uint32 value);
-	Object(float value);
-	Object(double value);
-	Object(Common::String value);
+	explicit Object(ObjectType type);
+	explicit Object(bool value);
+	explicit Object(byte value);
+	explicit Object(int16 value);
+	explicit Object(uint16 value);
+	explicit Object(int32 value);
+	explicit Object(uint32 value);
+	explicit Object(float value);
+	explicit Object(double value);
+	explicit Object(Common::String value);
 
 	// Copy constructor
-	Object(const Object& other);
+	explicit Object(const Object& other);
 
 	// Destructor
 	~Object();
