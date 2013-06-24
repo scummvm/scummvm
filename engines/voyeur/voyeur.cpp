@@ -259,9 +259,9 @@ bool VoyeurEngine::doLock() {
 
 		_graphicsManager._backColors->startFade();
 		(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
-
 		_graphicsManager.flipPage();
 		_eventsManager.sWaitFlip();
+
 		while (!shouldQuit() && (_eventsManager._fadeStatus & 1))
 			_eventsManager.delay(1);
 
@@ -458,7 +458,58 @@ void VoyeurEngine::showTitleScreen() {
 }
 
 void VoyeurEngine::doOpening() {
+	_graphicsManager.screenReset();
 
+	if (!_bVoy->getBoltGroup(0x10200))
+		return;
+
+	byte *frameTable = _bVoy->memberAddr(0x215);
+	byte *xyTable = _bVoy->memberAddr(0x216);
+	byte *whTable = _bVoy->memberAddr(0x217);
+	int frmaeIndex = 0;
+	int creditShow = 1;
+	_game._v2A098 = 1;
+	_voy._eCursorOff[52] = 0;
+	_voy._RTVNum = 0;
+	_voy._eCursorOff[50] = _voy._RTVNum;
+	_game._v2A0A6 = 4;
+	_game._v2A0A4 = 0;
+	_voy._eCursorOff[58] = 16;
+	_game._v2A09A = -1;
+	_game.addVideoEventStart();
+	_voy._eCursorOff[58] &= ~1;
+
+	for (int i = 0; i < 256; ++i)
+		_graphicsManager.setColor(i, 8, 8, 8);
+
+	_eventsManager._intPtr.field38 = 1;
+	_eventsManager._intPtr._hasPalette = true;
+	(*_graphicsManager._vPort)->setupViewPort();
+	(*_graphicsManager._vPort)->_parent->_flags |= DISPFLAG_8;
+	_graphicsManager.flipPage();
+	_eventsManager.sWaitFlip();
+
+	::Video::RL2Decoder decoder;
+	decoder.loadFile("a2300100.rl2");
+	decoder.start();
+
+	while (!shouldQuit() && !decoder.endOfVideo() && !_voy._incriminate) {
+		if (decoder.hasDirtyPalette()) {
+			const byte *palette = decoder.getPalette();
+			_graphicsManager.setPalette(palette, 0, 256);
+		}
+
+		if (decoder.needsUpdate()) {
+			const Graphics::Surface *frame = decoder.decodeNextFrame();
+
+			Common::copy((byte *)frame->pixels, (byte *)frame->pixels + 320 * 200,
+				(byte *)_graphicsManager._screenSurface.pixels);
+		}
+
+		_eventsManager.pollEvents();
+		g_system->delayMillis(10);
+	}
+	
 }
 
 void VoyeurEngine::playRL2Video(const Common::String &filename) {

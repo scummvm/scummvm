@@ -94,5 +94,8 @@ void Game::doTransitionCard(const Common::String &time, const Common::String &lo
 	_vm->_eventsManager.sWaitFlip();
 }
 
+void Game::addVideoEventStart() {
+
+}
 
 } // End of namespace Voyeur

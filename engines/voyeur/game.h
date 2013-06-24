@@ -125,10 +125,16 @@ class Game {
 private:
 	VoyeurEngine *_vm;
 public:
+	int _v2A098;
+	int _v2A0A6;
+	int _v2A0A4;
+	int _v2A09A;
+public:
 	Game();
 	void setVm(VoyeurEngine *vm) { _vm = vm; }
 
 	void doTransitionCard(const Common::String &time, const Common::String &location);
+	void addVideoEventStart();
 };
 
 } // End of namespace Voyeur
