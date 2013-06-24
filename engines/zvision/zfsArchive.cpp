@@ -150,6 +150,6 @@ void ZfsArchive::unXor(byte *buffer, int length, const byte *xorKey) const {
 		buffer[i] ^= xorKey[i % 4];
 }
 
-} // End namespace ZVision
+} // End of namespace ZVision
 
 

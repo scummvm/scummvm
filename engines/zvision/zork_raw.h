@@ -62,6 +62,6 @@ Audio::SeekableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stream
                                    int rate,
                                    DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
-} // End of namespace Audio
+} // End of namespace ZVision
 
 #endif

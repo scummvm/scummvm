@@ -115,6 +115,6 @@ private:
 	void unXor(byte *buffer, int length, const byte *xorKey) const;
 };
 
-} // End of namespace Common
+} // End of namespace ZVision
 
 #endif

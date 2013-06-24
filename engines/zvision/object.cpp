@@ -97,7 +97,7 @@ Object::Object(Common::String value) : _objectType(BYTE) {
 	_value.stringVal = new Common::String(value);
 }
 
-Object::Object(const Object& other) {
+Object::Object(const Object &other) {
 	_objectType = other._objectType;
 
 	switch (_objectType) {
@@ -138,7 +138,7 @@ Object::~Object() {
 void Object::deleteValue() {
 	// Call delete on the correct part of the union.
 	// Even though they all point to the same memory and will all be cast 
-	// to a void *, compiler optimizations could cause undefined behavior.
+	// to a void *, this can still cause undefined behavior.
 	switch (_objectType) {
 	case BOOL:
 		delete _value.boolVal;
@@ -171,7 +171,7 @@ void Object::deleteValue() {
 }
 
 
-Object& Object::operator=(const bool& rhs) {
+Object &Object::operator=(const bool &rhs) {
 	if (_objectType == BOOL)
 		*_value.boolVal = rhs;
 	else {
@@ -183,7 +183,7 @@ Object& Object::operator=(const bool& rhs) {
 	return *this;
 }
 
-Object& Object::operator=(const byte& rhs) {
+Object &Object::operator=(const byte &rhs) {
 	if (_objectType == BYTE)
 		*_value.byteVal = rhs;
 	else {
@@ -195,7 +195,7 @@ Object& Object::operator=(const byte& rhs) {
 	return *this;
 }
 
-Object& Object::operator=(const int16& rhs) {
+Object &Object::operator=(const int16 &rhs) {
 	if (_objectType == INT16)
 		*_value.int16Val = rhs;
 	else {
@@ -207,7 +207,7 @@ Object& Object::operator=(const int16& rhs) {
 	return *this;
 }
 
-Object& Object::operator=(const uint16& rhs) {
+Object &Object::operator=(const uint16 &rhs) {
 	if (_objectType == UINT16)
 		*_value.uint16Val = rhs;
 	else {
@@ -219,7 +219,7 @@ Object& Object::operator=(const uint16& rhs) {
 	return *this;
 }
 
-Object& Object::operator=(const int32& rhs) {
+Object &Object::operator=(const int32 &rhs) {
 	if (_objectType == INT32)
 		*_value.int32Val = rhs;
 	else {
@@ -231,7 +231,7 @@ Object& Object::operator=(const int32& rhs) {
 	return *this;
 }
 
-Object& Object::operator=(const uint32& rhs) {
+Object &Object::operator=(const uint32 &rhs) {
 	if (_objectType == UINT32)
 		*_value.uint32Val = rhs;
 	else {
@@ -243,7 +243,7 @@ Object& Object::operator=(const uint32& rhs) {
 	return *this;
 }
 
-Object& Object::operator=(const float& rhs) {
+Object &Object::operator=(const float &rhs) {
 	if (_objectType == FLOAT)
 		*_value.floatVal = rhs;
 	else {
@@ -255,7 +255,7 @@ Object& Object::operator=(const float& rhs) {
 	return *this;
 }
 
-Object& Object::operator=(const double& rhs) {
+Object &Object::operator=(const double &rhs) {
 	if (_objectType == DOUBLE)
 		*_value.doubleVal = rhs;
 	else {
@@ -267,7 +267,7 @@ Object& Object::operator=(const double& rhs) {
 	return *this;
 }
 
-Object& Object::operator=(const Common::String& rhs) {
+Object &Object::operator=(const Common::String &rhs) {
 	if (_objectType == STRING)
 		*_value.stringVal = rhs;
 	else {
@@ -279,7 +279,7 @@ Object& Object::operator=(const Common::String& rhs) {
 	return *this;
 }
 
-Object& Object::operator=(const Object& rhs) {
+Object &Object::operator=(const Object &rhs) {
 	switch (_objectType) {
 	case BOOL:
 		return operator=(*rhs._value.boolVal);
@@ -368,4 +368,4 @@ Object::operator Common::String() {
 	return *_value.stringVal;
 }
 
-} // End namespace ZVision
+} // End of namespace ZVision

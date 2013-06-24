@@ -27,19 +27,6 @@
 
 namespace ZVision {
 
-
-enum ObjectType {
-	BOOL,
-	BYTE,
-	INT16,
-	UINT16,
-	INT32,
-	UINT32,
-	FLOAT,
-	DOUBLE,
-	STRING,
-};
-
 /**
  * A generic single value storage class. It is useful for storing different 
  * value types in a single List, Hashmap, etc.
@@ -52,6 +39,18 @@ enum ObjectType {
  */
 class Object {
 public:
+	enum ObjectType {
+		BOOL,
+		BYTE,
+		INT16,
+		UINT16,
+		INT32,
+		UINT32,
+		FLOAT,
+		DOUBLE,
+		STRING,
+	};
+
 	// Constructors
 	Object(ObjectType type);
 	Object(bool value);
@@ -86,17 +85,17 @@ private:
 	} _value;
 
 public:
-	Object& operator=(const bool& rhs);
-	Object& operator=(const byte& rhs);
-	Object& operator=(const int16& rhs);
-	Object& operator=(const uint16& rhs);
-	Object& operator=(const int32& rhs);
-	Object& operator=(const uint32& rhs);
-	Object& operator=(const float& rhs);
-	Object& operator=(const double& rhs);
-	Object& operator=(const Common::String& rhs);
+	Object &operator=(const bool &rhs);
+	Object &operator=(const byte &rhs);
+	Object &operator=(const int16 &rhs);
+	Object &operator=(const uint16 &rhs);
+	Object &operator=(const int32 &rhs);
+	Object &operator=(const uint32 &rhs);
+	Object &operator=(const float &rhs);
+	Object &operator=(const double &rhs);
+	Object &operator=(const Common::String &rhs);
 
-	Object& operator=(const Object& rhs);
+	Object& operator=(const Object &rhs);
 
 	operator bool();
 	operator byte();
@@ -116,6 +115,6 @@ private:
 	void deleteValue();
 };
 
-} // End namespace ZVision
+} // End of namespace ZVision
 
 #endif

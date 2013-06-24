@@ -69,6 +69,6 @@ void trimCommentsAndWhiteSpace(Common::String &string) {
 	string.trim();
 }
 
-} // End namespace ZVision
+} // End of namespace ZVision
 
 #endif

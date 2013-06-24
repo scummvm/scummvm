@@ -322,4 +322,4 @@ void ScriptManager::parseControl(Control *control, Common::SeekableReadStream &s
 
 }
 
-} // End namespace ZVision
+} // End of namespace ZVision

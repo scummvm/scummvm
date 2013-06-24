@@ -32,6 +32,6 @@ struct Control {
 
 };
 
-} // End namespace ZVision
+} // End of namespace ZVision
 
 #endif

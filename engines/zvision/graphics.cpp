@@ -34,4 +34,4 @@ void ZVision::updateAnimations(uint32 detaTimeMillis) {
 
 }
 
-} // End namespace ZVision
+} // End of namespace ZVision

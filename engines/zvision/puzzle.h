@@ -114,6 +114,6 @@ struct Puzzle {
 	byte flags;
 };
 
-}
+} // End of namespace ZVision
 
 #endif

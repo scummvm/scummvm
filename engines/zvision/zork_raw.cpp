@@ -185,4 +185,4 @@ Audio::SeekableAudioStream *makeRawZorkStream(const byte *buffer, uint32 size,
 	return makeRawZorkStream(new Common::MemoryReadStream(buffer, size, disposeAfterUse), rate, DisposeAfterUse::YES);
 }
 
-} // End of namespace Audio
+} // End of namespace ZVision
