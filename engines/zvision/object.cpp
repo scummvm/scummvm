@@ -305,67 +305,78 @@ Object &Object::operator=(const Object &rhs) {
 }
 
 
-Object::operator bool() {
-	if (_objectType !=  BOOL)
-		warning("'Object' not of type bool. Bad cast");
+bool Object::getBoolValue(bool *returnValue) const {
+	if (_objectType !=  BOOL) {
+		warning("'Object' not of type bool.");
+		return false;
+	}
 
-	return *_value.boolVal;
+	*returnValue = *_value.boolVal;
+	return true;
 }
 
-Object::operator byte() {
+bool Object::getByteValue(byte *returnValue) const {
 	if (_objectType !=  BYTE)
-		warning("'Object' not of type byte. Bad cast");
+		warning("'Object' not of type byte.");
 
-	return *_value.byteVal;
+	*returnValue = *_value.byteVal;
+	return true;
 }
 
-Object::operator int16() {
+bool Object::getInt16Value(int16 *returnValue) const {
 	if (_objectType !=  INT16)
-		warning("'Object' not of type int16. Bad cast");
+		warning("'Object' not of type int16.");
 
-	return *_value.int16Val;
+	*returnValue = *_value.int16Val;
+	return true;
 }
 
-Object::operator uint16() {
+bool Object::getUInt16Value(uint16 *returnValue) const {
 	if (_objectType !=  UINT16)
-		warning("'Object' not of type uint16. Bad cast");
+		warning("'Object' not of type uint16.");
 
-	return *_value.uint16Val;
+	*returnValue = *_value.uint16Val;
+	return true;
 }
 
-Object::operator int32() {
+bool Object::getInt32Value(int32 *returnValue) const {
 	if (_objectType !=  INT32)
-		warning("'Object' not of type int32. Bad cast");
+		warning("'Object' not of type int32.");
 
-	return *_value.int32Val;
+	*returnValue = *_value.int32Val;
+	return true;
 }
 
-Object::operator uint32() {
+bool Object::getUInt32Value(uint32 *returnValue) const {
 	if (_objectType !=  UINT32)
-		warning("'Object' not of type uint32. Bad cast");
+		warning("'Object' not of type uint32.");
 
-	return *_value.uint32Val;
+	*returnValue = *_value.uint32Val;
+	return true;
 }
 
-Object::operator float() {
+bool Object::getFloatValue(float *returnValue) const {
 	if (_objectType !=  FLOAT)
-		warning("'Object' not of type float. Bad cast");
+		warning("'Object' not of type float.");
 
-	return *_value.floatVal;
+	*returnValue = *_value.floatVal;
+	return true;
 }
 
-Object::operator double() {
+bool Object::getDoubleValue(double *returnValue) const {
 	if (_objectType !=  DOUBLE)
-		warning("'Object' not of type double. Bad cast");
+		warning("'Object' not of type double.");
 
-	return *_value.doubleVal;
+	*returnValue = *_value.doubleVal;
+	return true;
 }
 
-Object::operator Common::String() {
+bool Object::getStringValue(Common::String *returnValue) const {
 	if (_objectType !=  STRING)
-		warning("'Object' not of type Common::String. Bad cast");
+		warning("'Object' not of type Common::String.");
 
-	return *_value.stringVal;
+	*returnValue = *_value.stringVal;
+	return true;
 }
 
 } // End of namespace ZVision

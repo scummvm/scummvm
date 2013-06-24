@@ -97,15 +97,15 @@ public:
 
 	Object& operator=(const Object &rhs);
 
-	operator bool();
-	operator byte();
-	operator int16();
-	operator uint16();
-	operator int32();
-	operator uint32();
-	operator float();
-	operator double();
-	operator Common::String();
+	bool getBoolValue(bool *returnValue) const;
+	bool getByteValue(byte *returnValue) const;
+	bool getInt16Value(int16 *returnValue) const;
+	bool getUInt16Value(uint16 *returnValue) const;
+	bool getInt32Value(int32 *returnValue) const;
+	bool getUInt32Value(uint32 *returnValue) const;
+	bool getFloatValue(float *returnValue) const;
+	bool getDoubleValue(double *returnValue) const;
+	bool getStringValue(Common::String *returnValue) const;
 
 private:
 	/**
