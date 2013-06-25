@@ -32,10 +32,9 @@
 
 namespace Avalanche {
 
-bool checkbreak; // Originally located in avalot9.map
-
 class Avalot {
 private:
+	bool checkbreak; // Originally located in avalot9.map
 
 public:
 	Avalot();

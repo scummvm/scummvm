@@ -39,7 +39,7 @@ namespace Avalanche {
 	namespace Enhanced {
 
 	byte shiftstate;	/*ABSOLUTE $40:$17;*/
-	bool atbios;
+	bool atbios; // BIOS type
 	char inchar, extd;
 
 	void readkeye();
