@@ -35,6 +35,7 @@ namespace Avalanche {
 
 	bool isenh() {
 		warning("STUB: Enhanced::isenh()");
+		return true;
 	}
 
 	void readkeye() {
@@ -52,6 +53,7 @@ namespace Avalanche {
 	*/
 	
 		warning("STUB: Enhanced::keypressede()");
+		return true;
 	}
 
 	} // End of namespace Enhanced

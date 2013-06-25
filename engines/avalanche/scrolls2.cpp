@@ -28,9 +28,10 @@
 #include "avalanche/scrolls2.h"
 #include "avalanche/gyro2.h"
 #include "avalanche/logger2.h"
+#include "avalanche/enhanced2.h"
+
 //#include "lucerna.h"
 //#include "trip5.h"
-//#include "enhanced.h"
 //#include "Acci.h"
 //#include "basher.h"
 //#include "visa.h"
@@ -143,7 +144,7 @@ namespace Avalanche {
 			default: {
 				ox += 1;
 				for (yy = 1; yy <= 12; yy ++) itw[yy][ox] = ~ ch[cfont][z[xx]][yy + 1];
-				Logger::log_scrollchar(z[xx]);
+				Logger::log_scrollchar(Common::String(z[xx]));
 					 }
 			}
 		}
@@ -229,17 +230,20 @@ namespace Avalanche {
 		Gyro::on();
 		Gyro::newpointer(4);
 		//do {
-		//	do {
-		//		Gyro::check(); /* was "checkclick;" */
-		//		if (keypressede())  break;
-		//	} while (!(mpress > 0) || buttona1() || buttonb1());
-		//	
-		//	Needs Enhanced (conatins keypressede()) to proceed.
-
-
-
+			//do {
+			//	Gyro::check(); /* was "checkclick;" */
+			//	if (Enhanced::keypressede())  break;
+			//} while (!(Gyro::mpress > 0) || buttona1() || buttonb1());
+			//
+			// Needs joystick - not sure it will be implemented.
+			
+			//if (Gyro::mpress == 0) {
+			//	inkey(); Needs Lucerna to proceed.
+			//	
+			//}
+		//}
+	
 	}
-
 
 
 
