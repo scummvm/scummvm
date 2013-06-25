@@ -27,10 +27,10 @@
 
 #include "avalanche/scrolls2.h"
 #include "avalanche/gyro2.h"
+#include "avalanche/logger2.h"
 //#include "lucerna.h"
 //#include "trip5.h"
 //#include "enhanced.h"
-//#include "logger.h"
 //#include "Acci.h"
 //#include "basher.h"
 //#include "visa.h"
@@ -126,11 +126,129 @@ namespace Avalanche {
 		x = x / 8;
 		lz = z.size();
 		ox = 0;
-		// log_scrollline(); Needs Logger to work.
+		Logger::log_scrollline();
 
-		warning("STUB: Scrolls::say()");
+		for (xx = 1; xx <= lz; xx ++) {
+			switch (z[xx]) {
+			case '\22': {
+				cfont = roman;
+				Logger::log_roman();
+						}
+						break;
+			case '\6': {
+				cfont = italic;
+				Logger::log_italic();
+					   }
+					   break;
+			default: {
+				ox += 1;
+				for (yy = 1; yy <= 12; yy ++) itw[yy][ox] = ~ ch[cfont][z[xx]][yy + 1];
+				Logger::log_scrollchar(z[xx]);
+					 }
+			}
+		}
+
+		lz = ox;
+		if (offset) {
+			/* offsetting routine */
+			lz += 1;
+			for (yy = 1; yy <= 12; yy ++) {
+				bit = 240;
+				itw[yy][lz] = 255;
+				for (xx = 1; xx <= lz; xx ++) {
+					t = itw[yy][xx];
+					itw[yy][xx] = bit + t / 16;
+					bit = t << 4;
+				}
+			}
+		}
+		yp = x + y * 80 + (1 - Gyro::cp) * Gyro::pagetop;
+		for (yy = 1; yy <= 12; yy ++) {
+			yp += 80;
+			for (bit = 0; bit <= locol; bit ++) {
+				/*port[0x3c4] = 2;
+				port[0x3ce] = 4;
+				port[0x3c5] = 1 << bit;
+				port[0x3cf] = bit;
+				move(itw[yy], mem[0xa000 * yp], lz);
+				
+				Some old Pascal-ish. To be removed. */
+
+				warning("STUB: Scrolls::say()");
+			}
+		}
 
 	}
+
+	/* Here are the procedures that Scroll calls */ /* So they must be... */ /*$F+*/
+
+	void normscroll() {
+		warning("STUB: Scrolls::normscroll()");
+	}
+
+	void dialogue() {
+		warning("STUB: Scrolls::dialogue()");
+	}
+
+	void music_scroll();
+
+
+	static void store_(byte what, Gyro::tunetype &played) {
+		memcpy(played, played+1, sizeof(played) - 1);
+		played[30] = what;
+	}
+
+
+
+	static bool they_match(Gyro::tunetype &played) {
+		byte fv, mistakes;
+
+		bool they_match_result;
+		mistakes = 0;
+
+		for (fv = 1; fv <= sizeof(played); fv ++)
+			if (played[fv] != Gyro::tune[fv]) {
+				mistakes++;
+			}
+
+			they_match_result = mistakes < 5;
+			return they_match_result;
+	}
+
+	void music_scroll() {
+		char r;
+		byte value;
+
+		byte last_one, this_one;
+
+		Gyro::tunetype played;
+
+
+		state(3);
+		Gyro::seescroll = true;
+		Gyro::on();
+		Gyro::newpointer(4);
+		//do {
+		//	do {
+		//		Gyro::check(); /* was "checkclick;" */
+		//		if (keypressede())  break;
+		//	} while (!(mpress > 0) || buttona1() || buttonb1());
+		//	
+		//	Needs Enhanced (conatins keypressede()) to proceed.
+
+
+
+	}
+
+
+
+
+
+
+
+
+
+
 
 
 	

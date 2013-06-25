@@ -324,8 +324,6 @@ namespace Avalanche {
 		else on();
 	}
 
-
-
 	} // End of namespace Gyro
 
 } // End of namespace Avalanche
