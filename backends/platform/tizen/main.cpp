@@ -20,43 +20,32 @@
  *
  */
 
-#ifndef BADA_TIMER_H
-#define BADA_TIMER_H
-
 #include <FBase.h>
+#include <FApp.h>
+#include <FSystem.h>
 
-#include "common/timer.h"
-#include "common/list.h"
+#include "backends/platform/tizen/application.h"
 
-using namespace Osp::Base::Runtime;
+using namespace Tizen::Base;
+using namespace Tizen::Base::Collection;
 
-struct TimerSlot: public ITimerEventListener, public Thread {
-	TimerSlot(Common::TimerManager::TimerProc callback,
-						uint32 interval,
-						void *refCon);
-	~TimerSlot();
+/**
+ * The entry function of tizen application called by the operating system.
+ */
+extern "C" _EXPORT_ int OspMain(int argc, char *pArgv[]) {
+	result r = E_SUCCESS;
 
-	bool OnStart(void);
-	void OnStop(void);
-	void OnTimerExpired(Timer &timer);
+	AppLog("Application started.");
+	ArrayList args(SingleObjectDeleter);
+	args.Construct();
+	for (int i = 0; i < argc; i++) {
+		args.Add(new (std::nothrow) String(pArgv[i]));
+	}
 
-	Timer *_timer;
-	Common::TimerManager::TimerProc _callback;
-	uint32 _interval;	// in microseconds
-	void *_refCon;
-};
+	r = Tizen::App::UiApp::Execute(TizenScummVM::createInstance, &args);
+	TryLog(r == E_SUCCESS, "[%s] Application execution failed", GetErrorMessage(r));
+	AppLog("Application finished.");
 
-class BadaTimerManager : public Common::TimerManager {
-public:
-	BadaTimerManager();
-	~BadaTimerManager();
+	return static_cast<int>(r);
+}
 
-	bool installTimerProc(TimerProc proc, int32 interval, void *refCon,
-												const Common::String &id);
-	void removeTimerProc(TimerProc proc);
-
-private:
-	Common::List<TimerSlot> _timers;
-};
-
-#endif

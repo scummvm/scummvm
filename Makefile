@@ -22,6 +22,8 @@ ifeq "$(HAVE_GCC)" "1"
 	CXXFLAGS:= -Wall $(CXXFLAGS)
 	# Turn off some annoying and not-so-useful warnings
 	CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
+
+ifneq "$(BACKEND)" "tizen"
 	# Enable even more warnings...
 	CXXFLAGS+= -Wpointer-arith -Wcast-qual
 	CXXFLAGS+= -Wshadow -Wnon-virtual-dtor -Wwrite-strings
@@ -34,6 +36,7 @@ ifeq "$(HAVE_GCC)" "1"
 
 	# Disable RTTI and exceptions
 	CXXFLAGS+= -fno-rtti -fno-exceptions
+endif
 
 ifneq "$(HAVE_CLANG)" "1"
 	# enable checking of pointers returned by "new", but only when we do not
