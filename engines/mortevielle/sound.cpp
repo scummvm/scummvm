@@ -192,10 +192,13 @@ void SoundManager::musyc(tablint &tb, int nbseg, int att) {
 	}
 
 	// Keep waiting until the song has been finished
-	while (_speakerStream->isPlaying() && !g_vm->shouldQuit()) {
-		g_vm->delay(10);
+	while (_speakerStream->isPlaying() && !_vm->shouldQuit()) {
+		_vm->delay(10);
 	}
 #endif
 }
 
+void SoundManager::setParent(MortevielleEngine *vm) {
+	_vm = vm;
+}
 } // End of namespace Mortevielle

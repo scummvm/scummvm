@@ -34,6 +34,7 @@
 #include "common/queue.h"
 
 namespace Mortevielle {
+class MortevielleEngine;
 
 typedef int tablint[256];
 
@@ -93,6 +94,7 @@ public:
 
 class SoundManager {
 private:
+	MortevielleEngine *_vm;
 	Audio::Mixer *_mixer;
 	PCSpeaker *_speakerStream;
 	Audio::SoundHandle _speakerHandle;
@@ -100,6 +102,7 @@ public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
 
+	void setParent(MortevielleEngine *vm);
 	void playNote(int frequency, int32 length);
 
 	void decodeMusic(const byte *PSrc, byte *PDest, int NbreSeg);
