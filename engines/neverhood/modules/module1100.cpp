@@ -64,6 +64,7 @@ Module1100::~Module1100() {
 void Module1100::createScene(int sceneNum, int which) {
 	static const uint32 kSmackerFileHashList06[] = {0x10880805, 0x1088081D, 0};
 	static const uint32 kSmackerFileHashList07[] = {0x00290321, 0x01881000, 0};
+	static const byte kNavigationTypes02[] = {1, 0, 4, 1};
 	debug(1, "Module1100::createScene(%d, %d)", sceneNum, which);
 	_sceneNum = sceneNum;
 	switch (_sceneNum) {
@@ -80,9 +81,9 @@ void Module1100::createScene(int sceneNum, int which) {
 	case 2:
 		_vm->gameState().sceneNum = 2;
 		if (getGlobalVar(V_ROBOT_TARGET)) {
-			createNavigationScene(0x004B84F0, which);
+			createNavigationScene(0x004B84F0, which, kNavigationTypes02);
 		} else {
-			createNavigationScene(0x004B8490, which);
+			createNavigationScene(0x004B8490, which, kNavigationTypes02);
 		}
 		break;
 	case 3:
