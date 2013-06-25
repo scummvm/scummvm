@@ -34,10 +34,13 @@
 #include "graphics/surface.h"
 
 namespace Mortevielle {
+class MortevielleEngine;
 
 class PaletteManager {
-public:
+private:
 	void setPalette(const int *palette, uint idx, uint size);
+
+public:
 	void setDefaultPalette();
 };
 
@@ -74,7 +77,7 @@ public:
 	Common::Point _offset;
 	// Transparency palette index
 	int _transparency;
-public:
+
 	~GfxSurface();
 
 	void decode(const byte *pSrc);
@@ -82,11 +85,13 @@ public:
 
 class ScreenSurface: public Graphics::Surface {
 private:
+	MortevielleEngine *_vm;
+
 	Common::List<Common::Rect> _dirtyRects;
 	byte _fontData[FONT_NUM_CHARS * FONT_HEIGHT];
+
 public:
 	Common::Point _textPos;		// Original called xwhere/ywhere
-public:
 	void readFontData(Common::File &f, int dataSize);
 	Graphics::Surface lockArea(const Common::Rect &bounds);
 	void updateScreen();
@@ -101,6 +106,7 @@ public:
 	int  getStringWidth(const Common::String &s);
 	void drawLine(int x, int y, int xx, int yy, int coul);
 	void drawRectangle(int x, int y, int dx, int dy);
+	void setParent(MortevielleEngine *vm);
 
 	// TODO: Refactor code to remove this method, for increased performance
 	void setPixel(const Common::Point &pt, int palIndex);

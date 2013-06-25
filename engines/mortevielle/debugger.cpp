@@ -46,6 +46,7 @@ bool Debugger::Cmd_resetParano(int argc, const char **argv) {
 
 	return true;
 }
+
 void Debugger::setParent(MortevielleEngine *vm) {
 	_vm = vm;
 }
