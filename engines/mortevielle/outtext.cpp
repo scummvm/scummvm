@@ -59,8 +59,8 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
 	// Safeguard: add $ just in case
 	inputStr += '$';
 
-	g_vm->_screenSurface.putxy(x, y);
-	if (g_vm->_resolutionScaler == 1)
+	_vm->_screenSurface.putxy(x, y);
+	if (_vm->_resolutionScaler == 1)
 		tab = 10;
 	else
 		tab = 6;
@@ -76,43 +76,43 @@ void TextHandler::displayStr(Common::String inputStr, int x, int y, int dx, int 
 	while (!stringParsed) {
 		switch (inputStr[p]) {
 		case '@':
-			g_vm->_screenSurface.drawString(s, typ);
+			_vm->_screenSurface.drawString(s, typ);
 			s = "";
 			++p;
 			xc = x;
 			yc += 6;
-			g_vm->_screenSurface.putxy(xc, yc);
+			_vm->_screenSurface.putxy(xc, yc);
 			break;
 		case ' ':
 			s += ' ';
 			xc += tab;
 			++p;
 			if (nextWord(p, inputStr.c_str(), tab) + xc > xf) {
-				g_vm->_screenSurface.drawString(s, typ);
+				_vm->_screenSurface.drawString(s, typ);
 				s = "";
 				xc = x;
 				yc += 6;
 				if (yc > yf) {
-					while (!g_vm->keyPressed())
+					while (!_vm->keyPressed())
 						;
 					i = y;
 					do {
 						j = x;
 						do {
-							g_vm->_screenSurface.putxy(j, i);
-							g_vm->_screenSurface.drawString(" ", 0);
+							_vm->_screenSurface.putxy(j, i);
+							_vm->_screenSurface.drawString(" ", 0);
 							j += 6;
 						} while (j <= xf);
 						i += 6;
 					} while (i <= yf);
 					yc = y;
 				}
-				g_vm->_screenSurface.putxy(xc, yc);
+				_vm->_screenSurface.putxy(xc, yc);
 			}
 			break;
 		case '$':
 			stringParsed = true;
-			g_vm->_screenSurface.drawString(s, typ);
+			_vm->_screenSurface.drawString(s, typ);
 			break;
 		default:
 			s += inputStr[p];
@@ -144,14 +144,14 @@ void TextHandler::loadDesFile(Common::String filename, int32 skipSize, int lengt
 	int totalLength = length + remainingSkipSize;
 	int memIndx = 0x6000 * 16;
 	while (totalLength > 0) {
-		f.read(&g_vm->_mem[memIndx], 128);
+		f.read(&_vm->_mem[memIndx], 128);
 		totalLength -= 128;
 		memIndx += 128;
 	}
 	f.close();
 
 	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
-		g_vm->_mem[0x7000 * 16 + i - remainingSkipSize] = g_vm->_mem[0x6000 * 16 + i];
+		_vm->_mem[0x7000 * 16 + i - remainingSkipSize] = _vm->_mem[0x6000 * 16 + i];
 }
 
 /**
@@ -175,14 +175,14 @@ void TextHandler::loadAniFile(Common::String filename, int32 skipSize, int lengt
 	int fullLength = length + remainingSkipSize;
 	int memIndx = 0x6000 * 16;
 	while (fullLength > 0) {
-		f.read(&g_vm->_mem[memIndx], 128);
+		f.read(&_vm->_mem[memIndx], 128);
 		fullLength -= 128;
 		memIndx += 128;
 	}
 	f.close();
 
 	for (int i = remainingSkipSize; i <= length + remainingSkipSize; ++i)
-		g_vm->_mem[kAdrAni * 16 + i - remainingSkipSize] = g_vm->_mem[0x6000 * 16 + i];
+		_vm->_mem[kAdrAni * 16 + i - remainingSkipSize] = _vm->_mem[0x6000 * 16 + i];
 }
 
 void TextHandler::taffich() {
@@ -195,60 +195,60 @@ void TextHandler::taffich() {
 	int32 lgt;
 	int alllum[16];
 
-	int a = g_vm->_caff;
+	int a = _vm->_caff;
 	if ((a >= 153) && (a <= 161))
 		a = tran2[a - 153];
 	else if ((a >= 136) && (a <= 140))
 		a = tran1[a - 136];
 	int b = a;
-	if (g_vm->_maff == a)
+	if (_vm->_maff == a)
 		return;
 
 	switch (a) {
 	case 16:
-		g_vm->_coreVar._pctHintFound[9] = '*';
-		g_vm->_coreVar._availableQuestion[42] = '*';
+		_vm->_coreVar._pctHintFound[9] = '*';
+		_vm->_coreVar._availableQuestion[42] = '*';
 		break;
 	case 20:
-		g_vm->_coreVar._availableQuestion[39] = '*';
-		if (g_vm->_coreVar._availableQuestion[36] == '*') {
-			g_vm->_coreVar._pctHintFound[3] = '*';
-			g_vm->_coreVar._availableQuestion[38] = '*';
+		_vm->_coreVar._availableQuestion[39] = '*';
+		if (_vm->_coreVar._availableQuestion[36] == '*') {
+			_vm->_coreVar._pctHintFound[3] = '*';
+			_vm->_coreVar._availableQuestion[38] = '*';
 		}
 		break;
 	case 24:
-		g_vm->_coreVar._availableQuestion[37] = '*';
+		_vm->_coreVar._availableQuestion[37] = '*';
 		break;
 	case 30:
-		g_vm->_coreVar._availableQuestion[9] = '*';
+		_vm->_coreVar._availableQuestion[9] = '*';
 		break;
 	case 31: // Coat of arms
-		g_vm->_coreVar._pctHintFound[4] = '*';
-		g_vm->_coreVar._availableQuestion[35] = '*';
+		_vm->_coreVar._pctHintFound[4] = '*';
+		_vm->_coreVar._availableQuestion[35] = '*';
 		break;
 	case 118:
-		g_vm->_coreVar._availableQuestion[41] = '*';
+		_vm->_coreVar._availableQuestion[41] = '*';
 		break;
 	case 143:
-		g_vm->_coreVar._pctHintFound[1] = '*';
+		_vm->_coreVar._pctHintFound[1] = '*';
 		break;
 	case 150:
-		g_vm->_coreVar._availableQuestion[34] = '*';
+		_vm->_coreVar._availableQuestion[34] = '*';
 		break;
 	case 151:
-		g_vm->_coreVar._pctHintFound[2] = '*';
+		_vm->_coreVar._pctHintFound[2] = '*';
 		break;
 	default:
 		break;
 	}
 
-	g_vm->_destinationOk = true;
-	g_vm->_mouse.hideMouse();
+	_vm->_destinationOk = true;
+	_vm->_mouse.hideMouse();
 	lgt = 0;
 	Common::String filename;
 
 	if ((a != 50) && (a != 51)) {
-		g_vm->_maff = a;
+		_vm->_maff = a;
 		if (a == 159)
 			a = 86;
 		else if (a > 140)
@@ -268,28 +268,28 @@ void TextHandler::taffich() {
 		npal = a;
 
 		for (cx = 0; cx <= (a - 1); ++cx)
-			lgt += g_vm->_fxxBuffer[cx];
-		handle = g_vm->_fxxBuffer[a];
+			lgt += _vm->_fxxBuffer[cx];
+		handle = _vm->_fxxBuffer[a];
 
 		filename = "DXX.mor";
 	} else {
-		if (g_vm->getLanguage() == Common::DE_DEU)
+		if (_vm->getLanguage() == Common::DE_DEU)
 			filename = "DZZALL";
 		else
 			filename = "DZZ.mor";
 
-		handle = g_vm->_fxxBuffer[87];
+		handle = _vm->_fxxBuffer[87];
 		if (a == 51) {
 			lgt = handle;
-			handle = g_vm->_fxxBuffer[88];
+			handle = _vm->_fxxBuffer[88];
 		}
-		g_vm->_maff = a;
+		_vm->_maff = a;
 		npal = a + 37;
 	}
 	loadDesFile(filename, lgt, handle);
-	if (g_vm->_currGraphicalDevice == MODE_HERCULES) {
+	if (_vm->_currGraphicalDevice == MODE_HERCULES) {
 		for (int i = 0; i <= 15; ++i) {
-			int palh = READ_LE_UINT16(&g_vm->_mem[(0x7000 * 16) + ((i + 1) << 1)]);
+			int palh = READ_LE_UINT16(&_vm->_mem[(0x7000 * 16) + ((i + 1) << 1)]);
 			alllum[i] = (palh & 15) + (((uint)palh >> 12) & 15) + (((uint)palh >> 8) & 15);
 		}
 		for (int i = 0; i <= 15; ++i) {
@@ -297,12 +297,12 @@ void TextHandler::taffich() {
 			for (int j = 0; j <= 15; ++j)
 				if (alllum[j] > alllum[k])
 					k = j;
-			g_vm->_mem[(0x7000 * 16) + 2 + (k << 1)] = _rang[i];
+			_vm->_mem[(0x7000 * 16) + 2 + (k << 1)] = _rang[i];
 			alllum[k] = -1;
 		}
 	}
-	g_vm->_numpal = npal;
-	g_vm->setPal(npal);
+	_vm->_numpal = npal;
+	_vm->setPal(npal);
 
 	if ((b < 15) || (b == 16) || (b == 17) || (b == 24) || (b == 26) || (b == 50)) {
 		lgt = 0;
@@ -314,8 +314,8 @@ void TextHandler::taffich() {
 			else if (b > 15)
 				--b;
 			for (cx = 0; cx <= (b - 1); ++cx)
-				lgt += g_vm->_fxxBuffer[cx + 89];
-			handle = g_vm->_fxxBuffer[b + 89];
+				lgt += _vm->_fxxBuffer[cx + 89];
+			handle = _vm->_fxxBuffer[b + 89];
 			filename = "AXX.mor";
 		} else if (b == 50) {
 			filename = "AZZ.mor";
@@ -323,14 +323,18 @@ void TextHandler::taffich() {
 		}
 		loadAniFile(filename, lgt, handle);
 	}
-	g_vm->_mouse.showMouse();
-	if ((a < 27) && ((g_vm->_maff < 27) || (g_vm->_coreVar._currPlace == LANDING)) && (g_vm->_msg[4] != OPCODE_ENTER)) {
+	_vm->_mouse.showMouse();
+	if ((a < 27) && ((_vm->_maff < 27) || (_vm->_coreVar._currPlace == LANDING)) && (_vm->_msg[4] != OPCODE_ENTER)) {
 		if ((a == 13) || (a == 14))
-			g_vm->displayAloneText();
-		else if (!g_vm->_blo)
-			g_vm->getPresence(g_vm->_coreVar._currPlace);
-		g_vm->_savedBitIndex =  0;
+			_vm->displayAloneText();
+		else if (!_vm->_blo)
+			_vm->getPresence(_vm->_coreVar._currPlace);
+		_vm->_savedBitIndex =  0;
 	}
+}
+
+void TextHandler::setParent(MortevielleEngine *vm) {
+	_vm = vm;
 }
 
 } // End of namespace Mortevielle

@@ -31,13 +31,16 @@
 #include "common/str.h"
 
 namespace Mortevielle {
+class MortevielleEngine;
 
 const int kAdrAni = 0x7314;
 
 class TextHandler {
 private:
+	MortevielleEngine *_vm;
 	int  nextWord(int p, const char *ch, int &tab);
 public:
+	void setParent(MortevielleEngine *vm);
 	void displayStr(Common::String inputStr, int x, int y, int dx, int dy, int typ);
 	void loadDesFile(Common::String filename, int32 passe, int long_);
 	void loadAniFile(Common::String filename, int32 skipSize, int length);
