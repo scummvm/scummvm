@@ -23,18 +23,11 @@
 #include <FSysSettingInfo.h>
 #include <FAppAppRegistry.h>
 
-#include "backends/platform/bada/audio.h"
-#include "backends/platform/bada/system.h"
+#include "backends/platform/tizen/audio.h"
+#include "backends/platform/tizen/system.h"
 
-#define TIMER_INCREMENT		 10
-#define TIMER_INTERVAL		 40
-#define MIN_TIMER_INTERVAL 10
-#define MAX_TIMER_INTERVAL 160
-#define INIT_LEVEL				 3
-#define CONFIG_KEY				 L"audiovol"
-
-// sound level pre-sets
-const int levels[] = {0, 1, 10, 45, 70, 99};
+#define TIMER_INTERVAL 10
+#define VOLUME 99
 
 AudioThread::AudioThread() :
 	_mixer(0),
@@ -51,9 +44,7 @@ AudioThread::AudioThread() :
 Audio::MixerImpl *AudioThread::Construct(OSystem *system) {
 	logEntered();
 
-	if (IsFailed(Thread::Construct(THREAD_TYPE_EVENT_DRIVEN,
-																 DEFAULT_STACK_SIZE,
-																 THREAD_PRIORITY_HIGH))) {
+	if (IsFailed(EventDrivenThread::Construct(DEFAULT_STACK_SIZE, THREAD_PRIORITY_HIGH))) {
 		AppLog("Failed to create AudioThread");
 		return NULL;
 	}
@@ -69,7 +60,7 @@ AudioThread::~AudioThread() {
 bool AudioThread::isSilentMode() {
 	bool silentMode;
 	String key(L"SilentMode");
-	Osp::System::SettingInfo::GetValue(key, silentMode);
+	Tizen::System::SettingInfo::GetValue(key, silentMode);
 	return silentMode;
 }
 
@@ -79,59 +70,16 @@ void AudioThread::setMute(bool on) {
 		if (on) {
 			_timer->Cancel();
 		} else {
-			_timer->Start(_interval);
+			_timer->StartAsRepeatable(_interval);
 		}
 	}
-}
-
-int AudioThread::setVolume(bool up, bool minMax) {
-	int level = -1;
-	int numLevels = sizeof(levels) / sizeof(levels[0]);
-
-	if (_audioOut) {
-		int volume = _audioOut->GetVolume();
-		if (minMax) {
-			level = up ? numLevels - 1 : 0;
-			volume = levels[level];
-		} else {
-			// adjust volume to be one of the preset values
-			for (int i = 0; i < numLevels && level == -1; i++) {
-				if (volume == levels[i]) {
-					level = i;
-					if (up) {
-						if (i + 1 < numLevels) {
-							level = i + 1;
-						}
-					} else if (i > 0) {
-						level = i - 1;
-					}
-				}
-			}
-
-			// default to INIT_LEVEL when current not preset value
-			if (level == -1) {
-				level = INIT_LEVEL;
-			}
-			volume = levels[level];
-		}
-
-		_audioOut->SetVolume(volume);
-
-		// remember the chosen setting
-		AppRegistry *registry = Application::GetInstance()->GetAppRegistry();
-		if (registry) {
-			registry->Set(CONFIG_KEY, volume);
-		}
-	}
-	return level;
 }
 
 bool AudioThread::OnStart(void) {
 	logEntered();
 
-	_audioOut = new Osp::Media::AudioOut();
-	if (!_audioOut ||
-			IsFailed(_audioOut->Construct(*this))) {
+	_audioOut = new Tizen::Media::AudioOut();
+	if (!_audioOut || IsFailed(_audioOut->Construct(*this))) {
 		AppLog("Failed to create AudioOut");
 		return false;
 	}
@@ -144,8 +92,7 @@ bool AudioThread::OnStart(void) {
 	}
 
 	if (IsFailed(_audioOut->Prepare(AUDIO_TYPE_PCM_S16_LE,
-																 AUDIO_CHANNEL_TYPE_STEREO,
-																 sampleRate))) {
+			AUDIO_CHANNEL_TYPE_STEREO, sampleRate))) {
 		AppLog("Failed to prepare AudioOut %d", sampleRate);
 		return false;
 	}
@@ -164,26 +111,14 @@ bool AudioThread::OnStart(void) {
 		return false;
 	}
 
-	if (IsFailed(_timer->Start(_interval))) {
+	if (IsFailed(_timer->StartAsRepeatable(_interval))) {
 		AppLog("failed to start audio timer");
 		return false;
 	}
 
-	// get the volume from the app-registry
-	int volume = levels[INIT_LEVEL];
-	AppRegistry *registry = Application::GetInstance()->GetAppRegistry();
-	if (registry) {
-		if (E_KEY_NOT_FOUND == registry->Get(CONFIG_KEY, volume)) {
-			registry->Add(CONFIG_KEY, volume);
-			volume = levels[INIT_LEVEL];
-		} else {
-			AppLog("Setting volume: %d", volume);
-		}
-	}
-
 	_muted = false;
 	_mixer->setReady(true);
-	_audioOut->SetVolume(isSilentMode() ? 0 : volume);
+	_audioOut->SetVolume(isSilentMode() ? 0 : VOLUME);
 	_audioOut->Start();
 	return true;
 }
@@ -206,20 +141,20 @@ void AudioThread::OnStop(void) {
 	}
 }
 
-void AudioThread::OnAudioOutErrorOccurred(Osp::Media::AudioOut &src, result r) {
+void AudioThread::OnAudioOutErrorOccurred(Tizen::Media::AudioOut &src, result r) {
 	logEntered();
 }
 
-void AudioThread::OnAudioOutInterrupted(Osp::Media::AudioOut &src) {
+void AudioThread::OnAudioOutInterrupted(Tizen::Media::AudioOut &src) {
 	logEntered();
 }
 
-void AudioThread::OnAudioOutReleased(Osp::Media::AudioOut &src) {
+void AudioThread::OnAudioOutReleased(Tizen::Media::AudioOut &src) {
 	logEntered();
 	_audioOut->Start();
 }
 
-void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut &src) {
+void AudioThread::OnAudioOutBufferEndReached(Tizen::Media::AudioOut &src) {
 	if (_ready > 0) {
 		_playing = _tail;
 		_audioOut->WriteBuffer(_audioBuffer[_tail]);
@@ -228,10 +163,6 @@ void AudioThread::OnAudioOutBufferEndReached(Osp::Media::AudioOut &src) {
 	} else {
 		// audio buffer empty: decrease timer inverval
 		_playing = -1;
-		_interval -= TIMER_INCREMENT;
-		if (_interval < MIN_TIMER_INTERVAL) {
-			_interval = MIN_TIMER_INTERVAL;
-		}
 	}
 }
 
@@ -243,18 +174,8 @@ void AudioThread::OnTimerExpired(Timer &timer) {
 			_head = (_head + 1) % NUM_AUDIO_BUFFERS;
 			_ready++;
 		}
-	} else {
-		// audio buffer full: increase timer inverval
-		_interval += TIMER_INCREMENT;
-		if (_interval > MAX_TIMER_INTERVAL) {
-			_interval = MAX_TIMER_INTERVAL;
-		}
 	}
-
 	if (_ready && _playing == -1) {
 		OnAudioOutBufferEndReached(*_audioOut);
 	}
-
-	_timer->Start(_interval);
 }
-
