@@ -34,53 +34,53 @@
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/mutex/mutex.h"
 #include "backends/fs/fs-factory.h"
-#include "backends/timer/bada/timer.h"
+#include "backends/timer/tizen/timer.h"
 
-#include "backends/platform/bada/form.h"
-#include "backends/platform/bada/system.h"
-#include "backends/platform/bada/graphics.h"
-#include "backends/platform/bada/audio.h"
+#include "backends/platform/tizen/form.h"
+#include "backends/platform/tizen/system.h"
+#include "backends/platform/tizen/graphics.h"
+#include "backends/platform/tizen/audio.h"
 
-using namespace Osp::Base;
-using namespace Osp::Base::Runtime;
-using namespace Osp::Locales;
-using namespace Osp::Ui::Controls;
-using namespace Osp::System;
+using namespace Tizen::Base;
+using namespace Tizen::Base::Runtime;
+using namespace Tizen::Locales;
+using namespace Tizen::Ui;
+using namespace Tizen::Ui::Controls;
+using namespace Tizen::System;
 
-#define DEFAULT_CONFIG_FILE "/Home/scummvm.ini"
-#define RESOURCE_PATH       "/Res"
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
 #define MUTEX_BUFFER_SIZE 5
 
 //
-// BadaFilesystemFactory
+// TizenFilesystemFactory
 //
-class BadaFilesystemFactory : public FilesystemFactory {
+class TizenFilesystemFactory : public FilesystemFactory {
 	AbstractFSNode *makeRootFileNode() const;
 	AbstractFSNode *makeCurrentDirectoryFileNode() const;
 	AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 };
 
-AbstractFSNode *BadaFilesystemFactory::makeRootFileNode() const {
-	return new BadaFilesystemNode("/");
+AbstractFSNode *TizenFilesystemFactory::makeRootFileNode() const {
+	return new TizenFilesystemNode("/");
 }
 
-AbstractFSNode *BadaFilesystemFactory::makeCurrentDirectoryFileNode() const {
-	return new BadaFilesystemNode("/Home");
+AbstractFSNode *TizenFilesystemFactory::makeCurrentDirectoryFileNode() const {
+	return new TizenFilesystemNode("/");
 }
 
-AbstractFSNode *BadaFilesystemFactory::makeFileNodePath(const Common::String &path) const {
+AbstractFSNode *TizenFilesystemFactory::makeFileNodePath(const Common::String &path) const {
 	AppAssert(!path.empty());
-	return new BadaFilesystemNode(path);
+	return new TizenFilesystemNode(path);
 }
 
 //
-// BadaSaveFileManager
+// TizenSaveFileManager
 //
-struct BadaSaveFileManager : public DefaultSaveFileManager {
+struct TizenSaveFileManager : public DefaultSaveFileManager {
 	bool removeSavefile(const Common::String &filename);
 };
 
-bool BadaSaveFileManager::removeSavefile(const Common::String &filename) {
+bool TizenSaveFileManager::removeSavefile(const Common::String &filename) {
 	Common::String savePathName = getSavePath();
 
 	checkPath(Common::FSNode(savePathName));
@@ -95,18 +95,18 @@ bool BadaSaveFileManager::removeSavefile(const Common::String &filename) {
 	String unicodeFileName;
 	StringUtil::Utf8ToString(file.getPath().c_str(), unicodeFileName);
 
-	switch (Osp::Io::File::Remove(unicodeFileName)) {
+	switch (Tizen::Io::File::Remove(unicodeFileName)) {
 	case E_SUCCESS:
 		return true;
 
 	case E_ILLEGAL_ACCESS:
 		setError(Common::kWritePermissionDenied, "Search or write permission denied: " +
-						 file.getName());
+					file.getName());
 		break;
 
 	default:
 		setError(Common::kPathDoesNotExist, "removeSavefile: '" + file.getName() +
-						 "' does not exist or path is invalid");
+					"' does not exist or path is invalid");
 		break;
 	}
 
@@ -114,40 +114,40 @@ bool BadaSaveFileManager::removeSavefile(const Common::String &filename) {
 }
 
 //
-// BadaMutexManager
+// TizenMutexManager
 //
-struct BadaMutexManager : public MutexManager {
-	BadaMutexManager();
-	~BadaMutexManager();
+struct TizenMutexManager : public MutexManager {
+	TizenMutexManager();
+	~TizenMutexManager();
 	OSystem::MutexRef createMutex();
 	void lockMutex(OSystem::MutexRef mutex);
 	void unlockMutex(OSystem::MutexRef mutex);
 	void deleteMutex(OSystem::MutexRef mutex);
 private:
-	Mutex *buffer[MUTEX_BUFFER_SIZE];
+	Mutex *_buffer[MUTEX_BUFFER_SIZE];
 };
 
-BadaMutexManager::BadaMutexManager() {
+TizenMutexManager::TizenMutexManager() {
 	for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
-		buffer[i] = NULL;
+		_buffer[i] = NULL;
 	}
 }
 
-BadaMutexManager::~BadaMutexManager() {
+TizenMutexManager::~TizenMutexManager() {
 	for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
-		if (buffer[i] != NULL) {
-			delete buffer[i];
+		if (_buffer[i] != NULL) {
+			delete _buffer[i];
 		}
 	}
 }
 
-OSystem::MutexRef BadaMutexManager::createMutex() {
+OSystem::MutexRef TizenMutexManager::createMutex() {
 	Mutex *mutex = new Mutex();
 	mutex->Create();
 
 	for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
-		if (buffer[i] == NULL) {
-			buffer[i] = mutex;
+		if (_buffer[i] == NULL) {
+			_buffer[i] = mutex;
 			break;
 		}
 	}
@@ -155,22 +155,22 @@ OSystem::MutexRef BadaMutexManager::createMutex() {
 	return (OSystem::MutexRef) mutex;
 }
 
-void BadaMutexManager::lockMutex(OSystem::MutexRef mutex) {
+void TizenMutexManager::lockMutex(OSystem::MutexRef mutex) {
 	Mutex *m = (Mutex *)mutex;
 	m->Acquire();
 }
 
-void BadaMutexManager::unlockMutex(OSystem::MutexRef mutex) {
+void TizenMutexManager::unlockMutex(OSystem::MutexRef mutex) {
 	Mutex *m = (Mutex *)mutex;
 	m->Release();
 }
 
-void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
+void TizenMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 	Mutex *m = (Mutex *)mutex;
 
 	for (int i = 0; i < MUTEX_BUFFER_SIZE; i++) {
-		if (buffer[i] == m) {
-			buffer[i] = NULL;
+		if (_buffer[i] == m) {
+			_buffer[i] = NULL;
 		}
 	}
 
@@ -178,84 +178,101 @@ void BadaMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 }
 
 //
-// BadaEventManager
+// TizenEventManager
 //
-struct BadaEventManager : public DefaultEventManager {
-	BadaEventManager(Common::EventSource *boss);
+struct TizenEventManager : public DefaultEventManager {
+	TizenEventManager(Common::EventSource *boss);
 	void init();
 	int shouldQuit() const;
 };
 
-BadaEventManager::BadaEventManager(Common::EventSource *boss) :
+TizenEventManager::TizenEventManager(Common::EventSource *boss) :
 	DefaultEventManager(boss) {
 }
 
-void BadaEventManager::init() {
+void TizenEventManager::init() {
 	DefaultEventManager::init();
 
 	// theme and vkbd should have now loaded - clear the splash screen
-	BadaSystem *system = (BadaSystem *)g_system;
-	BadaGraphicsManager *graphics = system->getGraphics();
+	TizenSystem *system = (TizenSystem *)g_system;
+	TizenGraphicsManager *graphics = system->getGraphics();
 	if (graphics) {
 		graphics->setReady();
-		graphics->updateScreen();
 	}
 }
 
-int BadaEventManager::shouldQuit() const {
-	BadaSystem *system = (BadaSystem *)g_system;
+int TizenEventManager::shouldQuit() const {
+	TizenSystem *system = (TizenSystem *)g_system;
 	return DefaultEventManager::shouldQuit() || system->isClosing();
 }
 
 //
-// BadaSystem
+// TizenAppFrame - avoid drawing the misplaced UiTheme at startup
 //
-BadaSystem::BadaSystem(BadaAppForm *appForm) :
+struct TizenAppFrame : Frame {
+	result OnDraw(void) {
+		logEntered();
+		TizenAppForm *form = (TizenAppForm *)GetCurrentForm();
+		if (form->isStarting()) {
+			Canvas *canvas = GetCanvasN();
+			canvas->SetBackgroundColor(Color::GetColor(COLOR_ID_BLACK));
+			canvas->Clear();
+			delete canvas;
+		}
+		return E_SUCCESS;
+	}
+};
+
+//
+// TizenSystem
+//
+TizenSystem::TizenSystem(TizenAppForm *appForm) :
 	_appForm(appForm),
 	_audioThread(0),
 	_epoch(0) {
 }
 
-result BadaSystem::Construct(void) {
+result TizenSystem::Construct(void) {
 	logEntered();
 
-	_fsFactory = new BadaFilesystemFactory();
+	_fsFactory = new TizenFilesystemFactory();
 	if (!_fsFactory) {
 		return E_OUT_OF_MEMORY;
 	}
 
+	_resourcePath = fromString(App::GetInstance()->GetAppResourcePath());
 	return E_SUCCESS;
 }
 
-BadaSystem::~BadaSystem() {
+TizenSystem::~TizenSystem() {
 	logEntered();
 }
 
-result BadaSystem::initModules() {
+result TizenSystem::initModules() {
 	logEntered();
 
-	_mutexManager = new BadaMutexManager();
+	_mutexManager = new TizenMutexManager();
 	if (!_mutexManager) {
 		return E_OUT_OF_MEMORY;
 	}
 
-	_timerManager = new BadaTimerManager();
+	_timerManager = new TizenTimerManager();
 	if (!_timerManager) {
 		return E_OUT_OF_MEMORY;
 	}
 
-	_savefileManager = new BadaSaveFileManager();
+	_savefileManager = new TizenSaveFileManager();
 	if (!_savefileManager) {
 		return E_OUT_OF_MEMORY;
 	}
 
-	_graphicsManager = (GraphicsManager *)new BadaGraphicsManager(_appForm);
+	_graphicsManager = (GraphicsManager *)new TizenGraphicsManager(_appForm);
 	if (!_graphicsManager) {
 		return E_OUT_OF_MEMORY;
 	}
 
 	// depends on _graphicsManager when ENABLE_VKEYBD enabled
-	_eventManager = new BadaEventManager(this);
+	_eventManager = new TizenEventManager(this);
 	if (!_eventManager) {
 		return E_OUT_OF_MEMORY;
 	}
@@ -284,19 +301,21 @@ result BadaSystem::initModules() {
 	return E_SUCCESS;
 }
 
-void BadaSystem::initBackend() {
+void TizenSystem::initBackend() {
 	logEntered();
 
-	// use the mobile device theme
-	ConfMan.set("gui_theme", "/Res/scummmobile");
+	Common::String dataPath = fromString(App::GetInstance()->GetAppDataPath());
 
-	// allow bada virtual keypad pack to be found
-	ConfMan.set("vkeybdpath", "/Res/vkeybd_bada");
+	// use the mobile device theme
+	ConfMan.set("gui_theme", _resourcePath + "scummmodern");
+
+	// allow tizen virtual keypad pack to be found
+	ConfMan.set("vkeybdpath", _resourcePath + "vkeybd_bada");
 	ConfMan.set("vkeybd_pack_name", "vkeybd_bada");
 
 	// set default save path to writable area
 	if (!ConfMan.hasKey("savepath")) {
-		ConfMan.set("savepath", "/Home/Share");
+		ConfMan.set("savepath", dataPath);
 	}
 
 	// default to no auto-save
@@ -314,85 +333,93 @@ void BadaSystem::initBackend() {
 		AppLog("initModules failed");
 	} else {
 		OSystem::initBackend();
-	}
 
-	// replace kBigGUIFont using the large font from the scummmobile theme
-	Common::File fontFile;
-	Common::String fileName = "/Res/scummmobile/helvB14-iso-8859-1.fcc";
-	BadaFilesystemNode file(fileName);
-	if (file.exists()) {
-		Common::SeekableReadStream *stream = file.createReadStream();
-		if (stream) {
-			if (fontFile.open(stream, fileName)) {
+		// replace kBigGUIFont for the vkbd and on-screen messages
+		Common::String fontCacheFile = dataPath + "helvR24.fcc";
+		TizenFilesystemNode file(fontCacheFile);
+		if (!file.exists()) {
+			Common::String bdfFile = _resourcePath + "fonts/helvR24.bdf";
+			TizenFilesystemNode file(bdfFile);
+			if (file.exists()) {
+				Common::SeekableReadStream *stream = file.createReadStream();
+				Common::File fontFile;
+				if (stream && fontFile.open(stream, bdfFile)) {
+					Graphics::BdfFont *font = Graphics::BdfFont::loadFont(fontFile);
+					Graphics::BdfFont::cacheFontData(*font, fontCacheFile);
+					FontMan.setFont(Graphics::FontManager::kBigGUIFont, font);
+				}
+			}
+		} else {
+			Common::SeekableReadStream *stream = file.createReadStream();
+			Common::File fontFile;
+			if (stream && fontFile.open(stream, fontCacheFile)) {
 				Graphics::BdfFont *font = Graphics::BdfFont::loadFromCache(fontFile);
 				if (font) {
-					// use this font for the vkbd and on-screen messages
 					FontMan.setFont(Graphics::FontManager::kBigGUIFont, font);
 				}
 			}
 		}
 	}
-
 	logLeaving();
 }
 
-void BadaSystem::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+void TizenSystem::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	// allow translations.dat and game .DAT files to be found
-	s.addDirectory(RESOURCE_PATH, RESOURCE_PATH, priority);
+	s.addDirectory(_resourcePath, _resourcePath, priority);
 }
 
-void BadaSystem::destroyBackend() {
+void TizenSystem::destroyBackend() {
 	closeAudio();
 
 	delete _graphicsManager;
-	_graphicsManager = 0;
+	_graphicsManager = NULL;
 
 	delete _savefileManager;
-	_savefileManager = 0;
+	_savefileManager = NULL;
 
 	delete _fsFactory;
-	_fsFactory = 0;
+	_fsFactory = NULL;
 
 	delete _mixer;
-	_mixer = 0;
+	_mixer = NULL;
 
 	delete _audiocdManager;
-	_audiocdManager = 0;
+	_audiocdManager = NULL;
 
 	delete _timerManager;
-	_timerManager = 0;
+	_timerManager = NULL;
 
 	delete _eventManager;
-	_eventManager = 0;
+	_eventManager = NULL;
 
 	delete _mutexManager;
-	_mutexManager = 0;
+	_mutexManager = NULL;
 }
 
-bool BadaSystem::pollEvent(Common::Event &event) {
+bool TizenSystem::pollEvent(Common::Event &event) {
 	return _appForm->pollEvent(event);
 }
 
-uint32 BadaSystem::getMillis() {
+uint32 TizenSystem::getMillis() {
 	long long result, ticks = 0;
 	SystemTime::GetTicks(ticks);
 	result = ticks - _epoch;
 	return result;
 }
 
-void BadaSystem::delayMillis(uint msecs) {
+void TizenSystem::delayMillis(uint msecs) {
 	if (!_appForm->isClosing()) {
 		Thread::Sleep(msecs);
 	}
 }
 
-void BadaSystem::updateScreen() {
+void TizenSystem::updateScreen() {
 	if (_graphicsManager != NULL) {
 		_graphicsManager->updateScreen();
 	}
 }
 
-void BadaSystem::getTimeAndDate(TimeDate &td) const {
+void TizenSystem::getTimeAndDate(TimeDate &td) const {
 	DateTime currentTime;
 
 	if (E_SUCCESS == SystemTime::GetCurrentTime(WALL_TIME, currentTime)) {
@@ -410,11 +437,11 @@ void BadaSystem::getTimeAndDate(TimeDate &td) const {
 	}
 }
 
-void BadaSystem::fatalError() {
+void TizenSystem::fatalError() {
 	systemError("ScummVM: Fatal internal error.");
 }
 
-void BadaSystem::exitSystem() {
+void TizenSystem::exitSystem() {
 	if (_appForm) {
 		closeAudio();
 		closeGraphics();
@@ -422,7 +449,7 @@ void BadaSystem::exitSystem() {
 	}
 }
 
-void BadaSystem::logMessage(LogMessageType::Type type, const char *message) {
+void TizenSystem::logMessage(LogMessageType::Type type, const char *message) {
 	if (type == LogMessageType::kError) {
 		systemError(message);
 	} else {
@@ -430,69 +457,70 @@ void BadaSystem::logMessage(LogMessageType::Type type, const char *message) {
 	}
 }
 
-Common::SeekableReadStream *BadaSystem::createConfigReadStream() {
-	BadaFilesystemNode file(DEFAULT_CONFIG_FILE);
+Common::SeekableReadStream *TizenSystem::createConfigReadStream() {
+	TizenFilesystemNode file(fromString(App::GetInstance()->GetAppDataPath()) + DEFAULT_CONFIG_FILE);
 	return file.createReadStream();
 }
 
-Common::WriteStream *BadaSystem::createConfigWriteStream() {
-	BadaFilesystemNode file(DEFAULT_CONFIG_FILE);
+Common::WriteStream *TizenSystem::createConfigWriteStream() {
+	TizenFilesystemNode file(fromString(App::GetInstance()->GetAppDataPath()) + DEFAULT_CONFIG_FILE);
 	return file.createWriteStream();
 }
 
-void BadaSystem::closeAudio() {
+void TizenSystem::closeAudio() {
 	if (_audioThread) {
-		_audioThread->Stop();
+		_audioThread->Quit();
 		_audioThread->Join();
 		delete _audioThread;
-		_audioThread = 0;
+		_audioThread = NULL;
 	}
 }
 
-void BadaSystem::closeGraphics() {
+void TizenSystem::closeGraphics() {
 	if (_graphicsManager) {
 		delete _graphicsManager;
-		_graphicsManager = 0;
+		_graphicsManager = NULL;
 	}
 }
 
-void BadaSystem::setMute(bool on) {
+void TizenSystem::setMute(bool on) {
 	// only change mute after eventManager init() has completed
 	if (_audioThread) {
-		BadaGraphicsManager *graphics = getGraphics();
+		TizenGraphicsManager *graphics = getGraphics();
 		if (graphics && graphics->isReady()) {
 			_audioThread->setMute(on);
 		}
 	}
 }
 
-int BadaSystem::setVolume(bool up, bool minMax) {
-	int level = -1;
-	if (_audioThread) {
-		level = _audioThread->setVolume(up, minMax);
-	}
-	return level;
-}
-
 //
 // create the ScummVM system
 //
-BadaAppForm *systemStart(Osp::App::Application *app) {
+TizenAppForm *systemStart(Tizen::App::Application *app) {
 	logEntered();
 
-	BadaAppForm *appForm = new BadaAppForm();
+	Frame *appFrame = new (std::nothrow) TizenAppFrame();
+	if (!appFrame || appFrame->Construct() == E_FAILURE) {
+		AppLog("Failed to create appFrame");
+		return NULL;
+	}
+	app->AddFrame(*appFrame);
+
+	TizenAppForm *appForm = new TizenAppForm();
 	if (!appForm) {
 		AppLog("Failed to create appForm");
 		return NULL;
 	}
 
 	if (E_SUCCESS != appForm->Construct() ||
-			E_SUCCESS != app->GetAppFrame()->GetFrame()->AddControl(*appForm)) {
+		E_SUCCESS != appFrame->AddControl(*appForm)) {
 		delete appForm;
 		AppLog("Failed to construct appForm");
 		return NULL;
 	}
 
+	appFrame->SetCurrentForm(appForm);
+	logLeaving();
 	return appForm;
 }
 
@@ -502,13 +530,18 @@ BadaAppForm *systemStart(Osp::App::Application *app) {
 void systemError(const char *message) {
 	AppLog("Fatal system error: %s", message);
 
-	ArrayList *args = new ArrayList();
-	args->Construct();
-	args->Add(*(new String(message)));
-	Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT_ERR, args);
+	if (strspn(message, "Config file buggy:") > 0) {
+		Tizen::Io::File::Remove(DEFAULT_CONFIG_FILE);
+		Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT_ERR_CONFIG, NULL);
+	} else {
+		ArrayList *args = new ArrayList();
+		args->Construct();
+		args->Add(*(new String(message)));
+		Application::GetInstance()->SendUserEvent(USER_MESSAGE_EXIT_ERR, args);
+	}
 
 	if (g_system) {
-		BadaSystem *system = (BadaSystem *)g_system;
+		TizenSystem *system = (TizenSystem *)g_system;
 		system->exitSystem();
 	}
 }

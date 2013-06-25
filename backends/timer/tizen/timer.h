@@ -20,35 +20,40 @@
  *
  */
 
-#ifndef BADA_APPLICATION_H
-#define BADA_APPLICATION_H
+#ifndef TIZEN_TIMER_H
+#define TIZEN_TIMER_H
 
 #include <FBase.h>
-#include <FApp.h>
-#include <FGraphics.h>
-#include <FUi.h>
-#include <FSystem.h>
 
-#include "backends/platform/bada/system.h"
+#include "common/timer.h"
+#include "common/list.h"
 
-class BadaScummVM : public Osp::App::Application {
+using namespace Tizen::Base::Runtime;
+
+struct TimerSlot: public EventDrivenThread, public ITimerEventListener {
+	TimerSlot(Common::TimerManager::TimerProc callback, uint32 interval, void *refCon);
+	~TimerSlot();
+
+	bool OnStart(void);
+	void OnStop(void);
+	void OnTimerExpired(Timer &timer);
+
+	Timer *_timer;
+	Common::TimerManager::TimerProc _callback;
+	uint32 _interval;	// in microseconds
+	void *_refCon;
+};
+
+class TizenTimerManager : public Common::TimerManager {
 public:
-	BadaScummVM();
-	~BadaScummVM();
+	TizenTimerManager();
+	~TizenTimerManager();
 
-	static Osp::App::Application *createInstance(void);
-
-	bool OnAppInitializing(Osp::App::AppRegistry &appRegistry);
-	bool OnAppTerminating(Osp::App::AppRegistry &appRegistry, bool forcedTermination = false);
-	void OnForeground(void);
-	void OnBackground(void);
-	void OnLowMemory(void);
-	void OnBatteryLevelChanged(Osp::System::BatteryLevel batteryLevel);
-	void OnUserEventReceivedN(RequestId requestId, Osp::Base::Collection::IList *pArgs);
+	bool installTimerProc(TimerProc proc, int32 interval, void *refCon, const Common::String &id);
+	void removeTimerProc(TimerProc proc);
 
 private:
-	void pauseGame(bool pause);
-	BadaAppForm *_appForm;
+	Common::List<TimerSlot *> _timers;
 };
 
 #endif

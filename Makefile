@@ -32,8 +32,10 @@ ifeq "$(HAVE_GCC)" "1"
 	# being helpful.
 	#CXXFLAGS+= -Wmissing-format-attribute
 
-	# Disable RTTI and exceptions
+ifneq "$(BACKEND)" "tizen"
+	# Disable RTTI and exceptions. These settings cause tizen apps to crash
 	CXXFLAGS+= -fno-rtti -fno-exceptions
+endif
 
 ifneq "$(HAVE_CLANG)" "1"
 	# enable checking of pointers returned by "new", but only when we do not

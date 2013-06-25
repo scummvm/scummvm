@@ -44,9 +44,9 @@
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 #endif
 
-#if defined(BADA)
+#if defined(TIZEN)
 #include <FGraphicsOpengl.h>
-using namespace Osp::Graphics::Opengl;
+using namespace Tizen::Graphics::Opengl;
 #elif defined(USE_GLES)
 #include <GLES/gl.h>
 #elif defined(SDL_BACKEND)
