@@ -602,7 +602,7 @@ void MortevielleEngine::mainGame() {
 		decodeNumber(&_cfiecBuffer[161 * 16], (_cfiecBufferSize - (161 * 16)) / 64);
 
 	loadBRUIT5();
-	_menu.initMenu();
+	_menu.initMenu(this);
 
 	charToHour();
 	initGame();

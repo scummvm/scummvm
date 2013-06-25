@@ -32,6 +32,7 @@
 #include "common/str.h"
 
 namespace Mortevielle {
+class MortevielleEngine;
 
 enum {
 	MENU_INVENTORY = 1, MENU_MOVE = 2, MENU_ACTION = 3, MENU_SELF = 4,
@@ -40,6 +41,8 @@ enum {
 
 class Menu {
 private:
+	MortevielleEngine *_vm;
+
 	byte _charArr[7][24];
 	int _msg3;
 	int _msg4;
@@ -71,7 +74,7 @@ public:
 	void menuUp(int msgId);
 	void eraseMenu();
 	void updateMenu();
-	void initMenu();
+	void initMenu(MortevielleEngine *vm);
 
 	void setSearchMenu();
 	void unsetSearchMenu();
