@@ -77,6 +77,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_debugger.setParent(this);
 	_screenSurface.setParent(this);
 	_mouse.setParent(this);
+	_text.setParent(this);
 
 	_lastGameFrame = 0;
 	_mouseClick = false;
