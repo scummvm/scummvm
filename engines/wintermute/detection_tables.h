@@ -324,6 +324,17 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO,
 		GUIO0()
 	},
+	// J.U.L.I.A. (English) (Greenlight Demo)
+	{
+		"julia",
+		"Greenlight Demo",
+		AD_ENTRY1s("data.dcp", "4befd448d36b0dae9c3ab1aa7cb8b78d", 7271886),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE |
+		ADGF_DEMO,
+		GUIO0()
+	},
 	// Mirage
 	{
 		"mirage",
