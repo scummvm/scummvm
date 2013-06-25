@@ -1138,12 +1138,14 @@ bool HopkinsEngine::runFull() {
 			break;
 
 		case 30:
+			// Shooting
 			_linesMan->setMaxLineIdx(15);
 			_globals->_characterMaxPosY = 440;
 			_objectsMan->sceneControl2("IM30", "IM30", "ANIM30", "IM30", 24, false);
 			break;
 
 		case 31:
+			// Shooting target
 			_objectsMan->sceneControl("IM31", "IM31", "ANIM31", "IM31", 10, true);
 			break;
 
