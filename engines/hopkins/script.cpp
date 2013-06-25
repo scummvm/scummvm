@@ -1217,6 +1217,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			break;
 
 		case 88:
+			// Shooting target - Shooting at target
 			if (_vm->_globals->_saveData->_data[svField183] == 1) {
 				_vm->_objectsMan->setBobAnimDataIdx(1, 0);
 				_vm->_objectsMan->setBobAnimDataIdx(2, 0);
@@ -1294,6 +1295,7 @@ int ScriptManager::handleOpcode(const byte *dataP) {
 			break;
 
 		case 90:
+			// Shooting target - Using the level
 			_vm->_soundMan->playSoundFile("SOUND52.WAV");
 			if (!_vm->_globals->_saveData->_data[svField186]) {
 				_vm->_animMan->playSequence("CIB5A.SEQ", 1, 12, 1, false, false);
