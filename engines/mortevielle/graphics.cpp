@@ -917,7 +917,7 @@ void ScreenSurface::drawPicture(GfxSurface &surface, int x, int y) {
 		(x + surface.w) * 2, (y + surface.h) * 2));
 
 	// Get a lookup for the palette mapping
-	const byte *paletteMap = &g_vm->_mem[0x7000 * 16 + 2];
+	const byte *paletteMap = &_vm->_mem[0x7000 * 16 + 2];
 
 	// Loop through writing
 	for (int yp = 0; yp < surface.h; ++yp) {
@@ -996,7 +996,7 @@ void ScreenSurface::writeCharacter(const Common::Point &pt, unsigned char ch, in
  *		simulate the original 640x400 surface, all Y values have to be doubled
  */
 void ScreenSurface::drawBox(int x, int y, int dx, int dy, int col) {
-	if (g_vm->_resolutionScaler == 1) {
+	if (_vm->_resolutionScaler == 1) {
 		x = (uint)x >> 1;
 		dx = (uint)dx >> 1;
 	}
@@ -1060,10 +1060,10 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	if (l == "")
 		return;
 
-	g_vm->_mouse.hideMouse();
+	_vm->_mouse.hideMouse();
 	pt = _textPos;
 
-	if (g_vm->_resolutionScaler == 2)
+	if (_vm->_resolutionScaler == 2)
 		i = 6;
 	else
 		i = 10;
@@ -1073,7 +1073,7 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	case 1:
 	case 3: {
 		cecr = 0;
-		g_vm->_screenSurface.fillRect(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
+		_vm->_screenSurface.fillRect(15, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 		}
 		break;
 	case 4:
@@ -1085,7 +1085,7 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	case 0:
 	case 2: {
 		cecr = 15;
-		g_vm->_screenSurface.fillRect(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
+		_vm->_screenSurface.fillRect(0, Common::Rect(pt.x, pt.y, x, pt.y + 7));
 		}
 		break;
 	default:
@@ -1095,17 +1095,17 @@ void ScreenSurface::drawString(const Common::String &l, int command) {
 	pt.x += 1;
 	pt.y += 1;
 	for (x = 1; (x <= (int)l.size()) && (l[x - 1] != 0); ++x) {
-		g_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), cecr);
+		_vm->_screenSurface.writeCharacter(Common::Point(pt.x, pt.y), ord(l[x - 1]), cecr);
 		pt.x += i;
 	}
-	g_vm->_mouse.showMouse();
+	_vm->_mouse.showMouse();
 }
 
 /**
  * Gets the width in pixels of the specified string
  */
 int ScreenSurface::getStringWidth(const Common::String &s) {
-	int charWidth = (g_vm->_resolutionScaler == 2) ? 6 : 10;
+	int charWidth = (_vm->_resolutionScaler == 2) ? 6 : 10;
 
 	return s.size() * charWidth;
 }
@@ -1129,7 +1129,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 		else
 			step = 1;
 		do {
-			g_vm->_screenSurface.setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
+			_vm->_screenSurface.setPixel(Common::Point(abs((int)(a * i + b)), i), coul);
 			i += step;
 		} while (i != yy);
 	} else {
@@ -1141,7 +1141,7 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 		else
 			step = 1;
 		do {
-			g_vm->_screenSurface.setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
+			_vm->_screenSurface.setPixel(Common::Point(i, abs((int)(a * i + b))), coul);
 			i = i + step;
 		} while (i != xx);
 	}
@@ -1154,11 +1154,15 @@ void ScreenSurface::drawLine(int x, int y, int xx, int yy, int coul) {
 void ScreenSurface::drawRectangle(int x, int y, int dx, int dy) {
 	int co;
 
-	if (g_vm->_currGraphicalDevice == MODE_CGA)
+	if (_vm->_currGraphicalDevice == MODE_CGA)
 		co = 3;
 	else
 		co = 11;
-	g_vm->_screenSurface.fillRect(co, Common::Rect(x, y, x + dx, y + dy));
+	_vm->_screenSurface.fillRect(co, Common::Rect(x, y, x + dx, y + dy));
+}
+
+void ScreenSurface::setParent(MortevielleEngine *vm) {
+	_vm = vm;
 }
 
 
