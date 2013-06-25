@@ -40,7 +40,7 @@ void MouseHandler::initMouse() {
 	_counter = 0;
 	_pos = Common::Point(0, 0);
 
-	g_vm->setMouseClick(false);
+	_vm->setMouseClick(false);
 }
 
 /**
@@ -51,15 +51,15 @@ void MouseHandler::hideMouse() {
 	--_counter;
 	if (_counter == 0) {
 		int j = 0;
-		switch (g_vm->_currGraphicalDevice) {
+		switch (_vm->_currGraphicalDevice) {
 		case MODE_CGA: {
 			int k = 0;
 			j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 2);
 			do {
-				WRITE_LE_UINT16(&g_vm->_mem[0xb000 * 16 + j], s_s[0][k]);
-				WRITE_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j + 2], s_s[1][k]);
-				WRITE_LE_UINT16(&g_vm->_mem[0xba00 * 16 + j], s_s[2][k]);
-				WRITE_LE_UINT16(&g_vm->_mem[0xba00 * 16 + j + 2], s_s[3][k]);
+				WRITE_LE_UINT16(&_vm->_mem[0xb000 * 16 + j], s_s[0][k]);
+				WRITE_LE_UINT16(&_vm->_mem[0xb800 * 16 + j + 2], s_s[1][k]);
+				WRITE_LE_UINT16(&_vm->_mem[0xba00 * 16 + j], s_s[2][k]);
+				WRITE_LE_UINT16(&_vm->_mem[0xba00 * 16 + j + 2], s_s[3][k]);
 				j += 80;
 				++k;
 			} while (k < 5);
@@ -72,10 +72,10 @@ void MouseHandler::hideMouse() {
 				j = 0;
 				do {
 					if (imp) {
-						WRITE_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j], s_s[i][k]);
+						WRITE_LE_UINT16(&_vm->_mem[0xb800 * 16 + j], s_s[i][k]);
 						j += 80 - 0x2000;
 					} else {
-						WRITE_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j], s_s[i][k]);
+						WRITE_LE_UINT16(&_vm->_mem[0xb800 * 16 + j], s_s[i][k]);
 						j += 0x2000;
 					}
 					imp = !imp;
@@ -92,11 +92,11 @@ void MouseHandler::hideMouse() {
 				do {
 					// Useless ?
 					// ps = mem[0xa000 * 16 + j];
-					g_vm->_mem[0xa000 * 16 + j] = lo(s_s[i][k]);
+					_vm->_mem[0xa000 * 16 + j] = lo(s_s[i][k]);
 
 					// Useless ??
 					// ps = mem[0xa000 * 16 + j + 1];
-					g_vm->_mem[0xa000 * 16 + j + 1] = hi(s_s[i][k]);
+					_vm->_mem[0xa000 * 16 + j + 1] = hi(s_s[i][k]);
 					j += 80;
 					++k;
 				} while (k < 8);
@@ -108,7 +108,7 @@ void MouseHandler::hideMouse() {
 			j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 3);
 			for (int i = 0; i <= 5; ++i) {
 				for (int k = 0; k <= 3; ++k)
-					WRITE_LE_UINT16(&g_vm->_mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
+					WRITE_LE_UINT16(&_vm->_mem[0xb000 * 16 + k * 0x200 + j], s_s[i][k]);
 				j += 80;
 			}
 			break;
@@ -117,8 +117,8 @@ void MouseHandler::hideMouse() {
 			int k = 0;
 			do {
 				for (int i = 0; i <= 3; ++i) {
-					WRITE_LE_UINT16(&g_vm->_mem[0xb800 * 16 + 0x200 * i + j], s_s[k][i + (k << 2)]);
-					WRITE_LE_UINT16(&g_vm->_mem[0xb800 * 16 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
+					WRITE_LE_UINT16(&_vm->_mem[0xb800 * 16 + 0x200 * i + j], s_s[k][i + (k << 2)]);
+					WRITE_LE_UINT16(&_vm->_mem[0xb800 * 16 + 0x200 * i + j + 2], s_s[k + 3][i + (k << 2)]);
 				}
 				j += 160;
 				++k;
@@ -143,15 +143,15 @@ void MouseHandler::showMouse() {
 		return;
 	int j = 0;
 	int i = _pos.x & 7;
-	switch (g_vm->_currGraphicalDevice) {
+	switch (_vm->_currGraphicalDevice) {
 	case MODE_CGA:
 		k = 0;
 		j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 2);
 		do {
-			s_s[0][k] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j]);
-			s_s[1][k] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j + 2]);
-			s_s[2][k] = READ_LE_UINT16(&g_vm->_mem[0xba00 * 16 + j]);
-			s_s[3][k] = READ_LE_UINT16(&g_vm->_mem[0xba00 * 16 + j + 2]);
+			s_s[0][k] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + j]);
+			s_s[1][k] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + j + 2]);
+			s_s[2][k] = READ_LE_UINT16(&_vm->_mem[0xba00 * 16 + j]);
+			s_s[3][k] = READ_LE_UINT16(&_vm->_mem[0xba00 * 16 + j + 2]);
 			j += 80;
 			++k;
 		} while (k < 5);
@@ -164,10 +164,10 @@ void MouseHandler::showMouse() {
 			k = 0;
 			do {
 				if (imp) {
-					s_s[i][k] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j]);
+					s_s[i][k] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + j]);
 					j += 80 - 0x2000;
 				} else {
-					s_s[i][k] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + j]);
+					s_s[i][k] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + j]);
 					j += 0x2000;
 				}
 				imp = !imp;
@@ -182,7 +182,7 @@ void MouseHandler::showMouse() {
 			k = 0;
 			j = 0;
 			do {
-				s_s[l][k] = g_vm->_mem[0xa000 * 16 + j] + (g_vm->_mem[(0xa000 * 16) + j + 1] << 8);
+				s_s[l][k] = _vm->_mem[0xa000 * 16 + j] + (_vm->_mem[(0xa000 * 16) + j + 1] << 8);
 				j += 80;
 				++k;
 			} while (k < 8);
@@ -193,7 +193,7 @@ void MouseHandler::showMouse() {
 		j = ((uint)_pos.y >> 1) * 80 + ((uint)_pos.x >> 3);
 		for (i = 0; i <= 5; ++i) {
 			for (k = 0; k <= 3; ++k)
-				s_s[i][k] = READ_LE_UINT16(&g_vm->_mem[0xb000 * 16 + k * 0x200 + j]);
+				s_s[i][k] = READ_LE_UINT16(&_vm->_mem[0xb000 * 16 + k * 0x200 + j]);
 			j += 80;
 		}
 		break;
@@ -202,8 +202,8 @@ void MouseHandler::showMouse() {
 		k = 0;
 		do {
 			for (i = 0; i <= 3; ++i) {
-				s_s[k][i + (k << 2)] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + 0x200 * i + j]);
-				s_s[k + 3][i + (k << 2)] = READ_LE_UINT16(&g_vm->_mem[0xb800 * 16 + 0x200 * i + j + 2]);
+				s_s[k][i + (k << 2)] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + 0x200 * i + j]);
+				s_s[k + 3][i + (k << 2)] = READ_LE_UINT16(&_vm->_mem[0xb800 * 16 + 0x200 * i + j + 2]);
 			}
 			j += 160;
 			++k;
@@ -219,8 +219,8 @@ void MouseHandler::showMouse() {
  * @remarks	Originally called 'pos_mouse'
  */
 void MouseHandler::setMousePosition(Common::Point newPos) {
-	if (newPos.x > 314 * g_vm->_resolutionScaler)
-		newPos.x = 314 * g_vm->_resolutionScaler;
+	if (newPos.x > 314 * _vm->_resolutionScaler)
+		newPos.x = 314 * _vm->_resolutionScaler;
 	else if (newPos.x < 0)
 		newPos.x = 0;
 	if (newPos.y > 199)
@@ -231,7 +231,7 @@ void MouseHandler::setMousePosition(Common::Point newPos) {
 		return;
 
 	// Set the new position
-	g_vm->setMousePos(newPos);
+	_vm->setMousePos(newPos);
 }
 
 /**
@@ -239,9 +239,9 @@ void MouseHandler::setMousePosition(Common::Point newPos) {
  * @remarks	Originally called 'read_pos_mouse'
  */
 void MouseHandler::getMousePosition(int &x, int &y, bool &click) {
-	x = g_vm->getMousePos().x;
-	y = g_vm->getMousePos().y;
-	click = g_vm->getMouseClick();
+	x = _vm->getMousePos().x;
+	y = _vm->getMousePos().y;
+	click = _vm->getMouseClick();
 }
 
 /**
@@ -257,18 +257,18 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 	// Set defaults and check pending events
 	funct = false;
 	key = '\377';
-	p_key = g_vm->keyPressed();
+	p_key = _vm->keyPressed();
 
 	// If mouse button clicked, return it
-	if (g_vm->getMouseClick())
+	if (_vm->getMouseClick())
 		return;
 
 	// Handle any pending keypresses
 	while (p_key) {
-		if (g_vm->shouldQuit())
+		if (_vm->shouldQuit())
 			return;
 
-		in1 = g_vm->getChar();
+		in1 = _vm->getChar();
 		getMousePosition(cx, cy, click);
 		switch (toupper(in1)) {
 		case '4':
@@ -292,27 +292,27 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 			cy = 190;
 			break;
 		case '9':
-			cx = 315 * g_vm->_resolutionScaler;
+			cx = 315 * _vm->_resolutionScaler;
 			cy = 1;
 			break;
 		case '3':
 			cy = 190;
-			cx = 315 * g_vm->_resolutionScaler;
+			cx = 315 * _vm->_resolutionScaler;
 			break;
 		case '5':
 			cy = 100;
-			cx = 155 * g_vm->_resolutionScaler;
+			cx = 155 * _vm->_resolutionScaler;
 			break;
 		case ' ':
 		case '\15':
-			g_vm->setMouseClick(true);
+			_vm->setMouseClick(true);
 			return;
 			break;
 		case '\33':
-			p_key = g_vm->keyPressed();
+			p_key = _vm->keyPressed();
 
 			if (p_key) {
-				in2 = g_vm->getChar();
+				in2 = _vm->getChar();
 
 				if ((in2 >= ';') && (in2 <= 'D')) {
 					funct = true;
@@ -355,31 +355,31 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 			}
 			break;
 		case 'I':
-			cx = g_vm->_resolutionScaler * 32;
+			cx = _vm->_resolutionScaler * 32;
 			cy = 8;
 			break;
 		case 'D':
-			cx = 80 * g_vm->_resolutionScaler;
+			cx = 80 * _vm->_resolutionScaler;
 			cy = 8;
 			break;
 		case 'A':
-			cx = 126 * g_vm->_resolutionScaler;
+			cx = 126 * _vm->_resolutionScaler;
 			cy = 8;
 			break;
 		case 'S':
-			cx = 174 * g_vm->_resolutionScaler;
+			cx = 174 * _vm->_resolutionScaler;
 			cy = 8;
 			break;
 		case 'P':
-			cx = 222 * g_vm->_resolutionScaler;
+			cx = 222 * _vm->_resolutionScaler;
 			cy = 8;
 			break;
 		case 'F':
-			cx = g_vm->_resolutionScaler * 270;
+			cx = _vm->_resolutionScaler * 270;
 			cy = 8;
 			break;
 		case '\23':
-			g_vm->_soundOff = !g_vm->_soundOff;
+			_vm->_soundOff = !_vm->_soundOff;
 			return;
 			break;
 		case '\24':           // ^T => mode tandy
@@ -401,7 +401,7 @@ void MouseHandler::moveMouse(bool &funct, char &key) {
 		}
 
 		setMousePosition(Common::Point(cx, cy));
-		p_key = g_vm->keyPressed();
+		p_key = _vm->keyPressed();
 	}
 }
 
@@ -418,6 +418,10 @@ bool MouseHandler::isMouseIn(Common::Rect r) {
 		return true;
 
 	return false;
+}
+
+void MouseHandler::setParent(MortevielleEngine *vm) {
+	_vm = vm;
 }
 
 } // End of namespace Mortevielle
