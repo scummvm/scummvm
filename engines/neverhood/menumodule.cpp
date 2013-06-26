@@ -73,12 +73,14 @@ MenuModule::MenuModule(NeverhoodEngine *vm, Module *parentModule, int which)
 	
 	_savedPaletteData = _vm->_screen->getPaletteData();
 	_vm->_mixer->pauseAll(true);
+	_vm->toggleSoundUpdate(false);
 
 	createScene(MAIN_MENU, -1);
 }
 
 MenuModule::~MenuModule() {
 	_vm->_mixer->pauseAll(false);
+	_vm->toggleSoundUpdate(true);
 	_vm->_screen->setPaletteData(_savedPaletteData);
 }
 

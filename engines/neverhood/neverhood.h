@@ -134,7 +134,10 @@ public:
 	int16 getMouseY() const { return _mouseY; }
 	NPoint getMousePos();
 
-public:
+	void toggleSoundUpdate(bool state) { _updateSound = state; }
+
+private:
+	bool _updateSound;
 
 };
 
