@@ -227,6 +227,8 @@ bool MessageQueue::load(MfcArchive &file) {
 
 	int count = file.readUint16LE();
 
+	assert(g_fullpipe->_gameProjectVersion >= 12);
+
 	_stringObj = file.readPascalString();
 
 	for (int i = 0; i < count; i++) {

@@ -152,6 +152,8 @@ bool Scene::load(MfcArchive &file) {
 		Common::SeekableReadStream *f = g_fullpipe->_currArchive->createReadStreamForMember(qname);
 		MfcArchive archive(f);
 
+		archive.readUint16LE(); // Skip 2 bytes
+
 		MessageQueue *mq = new MessageQueue();
 
 		mq->load(archive);
