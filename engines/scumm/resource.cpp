@@ -1214,7 +1214,7 @@ void ScummEngine_v7::readMAXS(int blockSize) {
 	_objectRoomTable = (byte *)calloc(_numGlobalObjects, 1);
 
 	if ((_game.id == GID_FT) && (_game.features & GF_DEMO) &&
-		(_game.platform == Common::kPlatformPC))
+		(_game.platform == Common::kPlatformDOS))
 		_numGlobalScripts = 300;
 	else
 		_numGlobalScripts = 2000;

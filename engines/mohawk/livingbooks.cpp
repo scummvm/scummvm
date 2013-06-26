@@ -40,6 +40,8 @@
 
 #include "gui/message.h"
 
+#include "graphics/cursorman.h"
+
 namespace Mohawk {
 
 // read a null-terminated string from a stream
@@ -146,16 +148,10 @@ MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGa
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	// Rugrats
-	const Common::FSNode ProgPath = gameDataDir.getChild("program");
-	if (ProgPath.exists())
-		SearchMan.addDirectory(ProgPath.getPath(), ProgPath, 0, 2);
-	const Common::FSNode RugPath = gameDataDir.getChild("Rugrats Adventure Game");
-	if (RugPath.exists())
-		SearchMan.addDirectory(RugPath.getPath(), RugPath, 0, 2);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "program", 0, 2);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Rugrats Adventure Game", 0, 2);
 	// CarmenTQ
-	const Common::FSNode CTQPath = gameDataDir.getChild("95instal");
-	if (CTQPath.exists())
-		SearchMan.addDirectory(CTQPath.getPath(), CTQPath, 0, 4);
+	SearchMan.addSubDirectoryMatching(gameDataDir, "95instal", 0, 4);
 }
 
 MohawkEngine_LivingBooks::~MohawkEngine_LivingBooks() {
@@ -223,7 +219,7 @@ Common::Error MohawkEngine_LivingBooks::run() {
 					}
 				}
 
-				if (found)
+				if (found && CursorMan.isVisible())
 					found->handleMouseDown(event.mouse);
 				break;
 
@@ -243,6 +239,8 @@ Common::Error MohawkEngine_LivingBooks::run() {
 				case Common::KEYCODE_ESCAPE:
 					if (_curMode == kLBIntroMode)
 						tryLoadPageStart(kLBControlMode, 1);
+					else
+						_video->stopVideos();
 					break;
 
 				case Common::KEYCODE_LEFT:
@@ -585,8 +583,8 @@ void MohawkEngine_LivingBooks::updatePage() {
 				_items.remove_at(i);
 				i--;
 				_orderedItems.remove(delayedEvent.item);
-				delete delayedEvent.item;
 				_page->itemDestroyed(delayedEvent.item);
+				delete delayedEvent.item;
 				if (_focus == delayedEvent.item)
 					_focus = NULL;
 				break;
@@ -1354,8 +1352,9 @@ void MohawkEngine_LivingBooks::handleNotify(NotifyEvent &event) {
 			if (!loadPage((LBMode)event.newMode, event.newPage, event.newSubpage)) {
 				if (event.newPage != 0 || !loadPage((LBMode)event.newMode, _curPage, event.newSubpage))
 					if (event.newSubpage != 0 || !loadPage((LBMode)event.newMode, event.newPage, 1))
-						error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
-							event.newMode, event.newPage, event.newSubpage);
+						if (event.newSubpage != 1 || !loadPage((LBMode)event.newMode, event.newPage, 0))
+							error("kLBNotifyChangeMode failed to move to mode %d, page %d.%d",
+								event.newMode, event.newPage, event.newSubpage);
 			}
 			break;
 		case 3:
@@ -3773,7 +3772,7 @@ LBMovieItem::~LBMovieItem() {
 void LBMovieItem::update() {
 	if (_playing) {
 		VideoHandle videoHandle = _vm->_video->findVideoHandle(_resourceId);
-		if (_vm->_video->endOfVideo(videoHandle))
+		if (videoHandle == NULL_VID_HANDLE || _vm->_video->endOfVideo(videoHandle))
 			done(true);
 	}
 
@@ -3783,6 +3782,7 @@ void LBMovieItem::update() {
 bool LBMovieItem::togglePlaying(bool playing, bool restart) {
 	if (playing) {
 		if ((_loaded && _enabled && _globalEnabled) || _phase == kLBPhaseNone) {
+			debug("toggled video for phase %d", _phase);
 			_vm->_video->playMovie(_resourceId, _rect.left, _rect.top);
 
 			return true;

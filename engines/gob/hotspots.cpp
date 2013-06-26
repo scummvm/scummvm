@@ -1031,12 +1031,12 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 				// Delete the character to the left
 				_vm->_util->cutFromStr(str, pos - 1, 1);
 				pos--;
-				continue;
 			} else {
 				if (pos < strlen(str))
 					// Delete the character to the right
 					_vm->_util->cutFromStr(str, pos, 1);
 			}
+			continue;
 
 		case kKeyDelete:
 			if (pos >= strlen(str))
@@ -1995,6 +1995,7 @@ bool Hotspots::leaveNthPlain(uint16 n, uint16 startIndex, int16 timeVal, const u
 		// Call the leave and time it
 		startTime = _vm->_util->getTimeKey();
 		call(spot.funcLeave);
+		_vm->_inter->animPalette();
 		callTime = _vm->_util->getTimeKey() - startTime;
 
 		// Remove the time it took from the time we have available

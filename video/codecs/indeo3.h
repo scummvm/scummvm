@@ -36,6 +36,13 @@
 
 namespace Video {
 
+/**
+ * Intel Indeo 3 decoder.
+ *
+ * Used in video:
+ *  - AVIDecoder
+ *  - VMDDecoder
+ */
 class Indeo3Decoder : public Codec {
 public:
 	Indeo3Decoder(uint16 width, uint16 height);

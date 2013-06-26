@@ -513,10 +513,7 @@ AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(sys
 AgiBase::~AgiBase() {
 	delete _rnd;
 
-	if (_sound) {
-		_sound->deinitSound();
-		delete _sound;
-	}
+	delete _sound;
 }
 
 void AgiBase::initRenderMode() {
@@ -588,6 +585,21 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	setupOpcodes();
 	_game._curLogic = NULL;
 	_timerHack = 0;
+
+	_lastSaveTime = 0;
+	_lastTick = 0;
+
+	memset(_keyQueue, 0, sizeof(_keyQueue));
+	memset(_predictiveResult, 0, sizeof(_predictiveResult));
+
+	_sprites = NULL;
+	_picture = NULL;
+	_loader = NULL;
+	_console = NULL;
+
+	_egoHoldKey = false;
+	
+	
 }
 
 void AgiEngine::initialize() {
@@ -650,7 +662,6 @@ void AgiEngine::initialize() {
 	_game.sbuf     = _game.sbuf16c; // Make sbuf point to the 16 color (+control line & priority info) AGI screen by default
 
 	_gfx->initVideo();
-	_sound->initSound();
 
 	_lastSaveTime = 0;
 

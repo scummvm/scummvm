@@ -40,7 +40,7 @@ void setErrorHandler(ErrorHandler handler) {
 }
 
 
-}	// End of namespace Common
+} // End of namespace Common
 
 
 #ifndef DISABLE_TEXT_CONSOLE

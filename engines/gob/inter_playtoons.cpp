@@ -301,7 +301,7 @@ void Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 		WRITE_VAR(59, stream->readUint32LE());
 		// The scripts in some versions divide through 256^3 then,
 		// effectively doing a LE->BE conversion
-		if ((_vm->getPlatform() != Common::kPlatformPC) && (VAR(59) < 256))
+		if ((_vm->getPlatform() != Common::kPlatformDOS) && (VAR(59) < 256))
 			WRITE_VAR(59, SWAP_BYTES_32(VAR(59)));
 	} else
 		retSize = stream->read(buf, size);

@@ -523,7 +523,7 @@ void MohawkEngine_Myst::changeToStack(uint16 stack, uint16 card, uint16 linkSrcS
 			_video->playMovieBlockingCentered(wrapMovieFilename(flyby, kMasterpieceOnly));
 	}
 
-	changeToCard(card, true);
+	changeToCard(card, kTransitionCopy);
 
 	if (linkDstSound)
 		_sound->playSoundBlocking(linkDstSound);
@@ -549,7 +549,7 @@ void MohawkEngine_Myst::drawCardBackground() {
 	_gfx->copyImageToBackBuffer(getCardBackgroundId(), Common::Rect(0, 0, 544, 332));
 }
 
-void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
+void MohawkEngine_Myst::changeToCard(uint16 card, TransitionType transition) {
 	debug(2, "changeToCard(%d)", card);
 
 	_scriptParser->disablePersistentScripts();
@@ -629,9 +629,11 @@ void MohawkEngine_Myst::changeToCard(uint16 card, bool updateScreen) {
 	}
 
 	// Make sure the screen is updated
-	if (updateScreen) {
-		_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
-		_system->updateScreen();
+	if (transition != kNoTransition) {
+		if (!_gameState->_globals.transitions)
+			transition = kTransitionCopy;
+
+		_gfx->runTransition(transition, Common::Rect(544, 333), 10, 0);
 	}
 
 	// Make sure we have the right cursor showing
@@ -1179,41 +1181,41 @@ bool MohawkEngine_Myst::canSaveGameStateCurrently() {
 }
 
 void MohawkEngine_Myst::dropPage() {
-    uint16 page = _gameState->_globals.heldPage;
+	uint16 page = _gameState->_globals.heldPage;
 	bool whitePage = page == 13;
 	bool bluePage = page - 1 < 6;
-    bool redPage = page - 7 < 6;
+	bool redPage = page - 7 < 6;
 
-    // Play drop page sound
-    _sound->replaceSoundMyst(800);
+	// Play drop page sound
+	_sound->replaceSoundMyst(800);
 
-    // Drop page
-    _gameState->_globals.heldPage = 0;
+	// Drop page
+	_gameState->_globals.heldPage = 0;
 
-    // Redraw page area
-    if (whitePage && _gameState->_globals.currentAge == 2) {
-    	redrawArea(41);
-    } else if (bluePage) {
-    	if (page == 6) {
-    		if (_gameState->_globals.currentAge == 2)
-    			redrawArea(24);
-    	} else {
-    		redrawArea(103);
-    	}
-    } else if (redPage) {
-    	if (page == 12) {
-    		if (_gameState->_globals.currentAge == 2)
-    			redrawArea(25);
-    	} else if (page == 10) {
-    		if (_gameState->_globals.currentAge == 1)
-    			redrawArea(35);
-    	} else {
-    		redrawArea(102);
-    	}
-    }
+	// Redraw page area
+	if (whitePage && _gameState->_globals.currentAge == 2) {
+		redrawArea(41);
+	} else if (bluePage) {
+		if (page == 6) {
+			if (_gameState->_globals.currentAge == 2)
+				redrawArea(24);
+		} else {
+			redrawArea(103);
+		}
+	} else if (redPage) {
+		if (page == 12) {
+			if (_gameState->_globals.currentAge == 2)
+				redrawArea(25);
+		} else if (page == 10) {
+			if (_gameState->_globals.currentAge == 1)
+				redrawArea(35);
+		} else {
+			redrawArea(102);
+		}
+	}
 
-    setMainCursor(kDefaultMystCursor);
-    checkCursorHints();
+	setMainCursor(kDefaultMystCursor);
+	checkCursorHints();
 }
 
 } // End of namespace Mohawk

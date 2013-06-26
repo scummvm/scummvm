@@ -1450,7 +1450,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 		}
 
 		if (getGameType() == GType_PN && !_wiped && !specialCase) {
-			uint8 color = (getPlatform() == Common::kPlatformPC) ? 7 : 15;
+			uint8 color = (getPlatform() == Common::kPlatformDOS) ? 7 : 15;
 			dst = (byte *)screen->pixels + 48;
 			memset(dst, color, 224);
 
@@ -1475,7 +1475,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 // Personal Nightmare specific
 void AGOSEngine::drawEdging() {
 	byte *dst;
-	uint8 color = (getPlatform() == Common::kPlatformPC) ? 7 : 15;
+	uint8 color = (getPlatform() == Common::kPlatformDOS) ? 7 : 15;
 
 	Graphics::Surface *screen = _system->lockScreen();
 

@@ -63,7 +63,7 @@ void Slides::runPersistentScripts() {
 		// Used on Cards...
 		if (_vm->_system->getMillis() > _nextCardTime) {
 			_vm->_gfx->fadeToBlack();
-			_vm->changeToCard(_nextCardID, false);
+			_vm->changeToCard(_nextCardID, kNoTransition);
 			_vm->_gfx->fadeFromBlack();
 		}
 	}

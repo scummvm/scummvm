@@ -521,7 +521,7 @@ void KyraEngine_HoF::bookPrintText(int dstPage, const uint8 *str, int x, int y, 
 	Screen::FontId oldFont = _screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_BOOKFONT_FNT);
 	_screen->_charWidth = -2;
 
-	_screen->printText((const char *)str, x, y, color, (_flags.lang == Common::JA_JPN) ? 0xf6 : 0);
+	_screen->printText((const char *)str, x, y, color, (_flags.lang == Common::JA_JPN) ? 0xF6 : 0);
 
 	_screen->_charWidth = 0;
 	_screen->setFont(oldFont);

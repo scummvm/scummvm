@@ -288,19 +288,17 @@ void Screen::fadeServer() {
 }
 
 void Screen::setSystemPalette(const byte *colors, uint start, uint num) {
-	const byte *palette;
-
 	if (_dimPalette) {
 		byte pal[256 * 3];
 
 		for (uint i = start * 3; i < 3 * (start + num); i++)
 			pal[i] = colors[i] / 2;
 
-		palette = pal;
-	} else
-		palette = colors;
+		_vm->_system->getPaletteManager()->setPalette(pal, start, num);
+	} else {
+		_vm->_system->getPaletteManager()->setPalette(colors, start, num);
+	}
 
-	_vm->_system->getPaletteManager()->setPalette(palette, start, num);
 }
 
 } // End of namespace Sword2

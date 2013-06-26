@@ -34,16 +34,16 @@ void Screen_HoF::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, 
 
 	for (int i = 0; i != lastColor; i++) {
 		if (flag) {
-			int v = ((((srcPal[3 * i] & 0x3f) + (srcPal[3 * i + 1] & 0x3f)
-				+ (srcPal[3 * i + 2] & 0x3f)) / 3) * factor) / 0x40;
-			tmpPal[3 * i] = tmpPal[3 * i + 1] = tmpPal[3 * i + 2] = v & 0xff;
+			int v = ((((srcPal[3 * i] & 0x3F) + (srcPal[3 * i + 1] & 0x3F)
+				+ (srcPal[3 * i + 2] & 0x3F)) / 3) * factor) / 0x40;
+			tmpPal[3 * i] = tmpPal[3 * i + 1] = tmpPal[3 * i + 2] = v & 0xFF;
 		} else {
-			int v = (((srcPal[3 * i] & 0x3f) * factor) / 0x40) + addR;
-			tmpPal[3 * i] = (v > 0x3f) ? 0x3f : v & 0xff;
-			v = (((srcPal[3 * i + 1] & 0x3f) * factor) / 0x40) + addG;
-			tmpPal[3 * i + 1] = (v > 0x3f) ? 0x3f : v & 0xff;
-			v = (((srcPal[3 * i + 2] & 0x3f) * factor) / 0x40) + addB;
-			tmpPal[3 * i + 2] = (v > 0x3f) ? 0x3f : v & 0xff;
+			int v = (((srcPal[3 * i] & 0x3F) * factor) / 0x40) + addR;
+			tmpPal[3 * i] = (v > 0x3F) ? 0x3F : v & 0xFF;
+			v = (((srcPal[3 * i + 1] & 0x3F) * factor) / 0x40) + addG;
+			tmpPal[3 * i + 1] = (v > 0x3F) ? 0x3F : v & 0xFF;
+			v = (((srcPal[3 * i + 2] & 0x3F) * factor) / 0x40) + addB;
+			tmpPal[3 * i + 2] = (v > 0x3F) ? 0x3F : v & 0xFF;
 		}
 	}
 
@@ -90,48 +90,6 @@ void Screen_HoF::cmpFadeFrameStep(int srcPage, int srcW, int srcH, int srcX, int
 
 		src += W1;
 		dst += W2;
-	}
-}
-
-void Screen_HoF::copyPageMemory(int srcPage, int srcPos, int dstPage, int dstPos, int numBytes) {
-	const uint8 *src = getPagePtr(srcPage) + srcPos;
-	uint8 *dst = getPagePtr(dstPage) + dstPos;
-	memcpy(dst, src, numBytes);
-}
-
-void Screen_HoF::copyRegionEx(int srcPage, int srcW, int srcH, int dstPage, int dstX, int dstY, int dstW, int dstH, const ScreenDim *dim, bool flag) {
-	int x0 = dim->sx << 3;
-	int y0 = dim->sy;
-	int w0 = dim->w << 3;
-	int h0 = dim->h;
-
-	int x1 = dstX;
-	int y1 = dstY;
-	int w1 = dstW;
-	int h1 = dstH;
-
-	int x2, y2, w2;
-
-	calcBounds(w0, h0, x1, y1, w1, h1, x2, y2, w2);
-
-	const uint8 *src = getPagePtr(srcPage) + (320 * srcH) + srcW;
-	uint8 *dst = getPagePtr(dstPage) + 320 * (y0 + y1);
-
-	for (int y = 0; y < h1; y++) {
-		const uint8 *s = src + x2;
-		uint8 *d = dst + x0 + x1;
-
-		if (flag)
-			d += (h1 >> 1);
-
-		for (int x = 0; x < w1; x++) {
-			if (*s)
-				*d = *s;
-			s++;
-			d++;
-		}
-		dst += 320;
-		src += 320;
 	}
 }
 

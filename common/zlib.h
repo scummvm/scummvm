@@ -103,7 +103,9 @@ bool inflateZlibInstallShield(byte *dst, uint dstLen, const byte *src, uint srcL
  * provides transparent on-the-fly decompression. Assumes the data it
  * retrieves from the wrapped stream to be either uncompressed or in gzip
  * format. In the former case, the original stream is returned unmodified
- * (and in particular, not wrapped).
+ * (and in particular, not wrapped). In the latter case the stream is
+ * returned wrapped, unless there is no ZLIB support, then NULL is returned
+ * and the old stream is destroyed.
  *
  * Certain GZip-formats don't supply an easily readable length, if you
  * still need the length carried along with the stream, and you know
@@ -129,6 +131,6 @@ SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, ui
  */
 WriteStream *wrapCompressedWriteStream(WriteStream *toBeWrapped);
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

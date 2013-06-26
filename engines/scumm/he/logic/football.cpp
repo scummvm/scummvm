@@ -218,10 +218,10 @@ int LogicHEfootball::nextPoint(int32 *args) {
 	if (res >= (double)args[6]) {
 		var8 = (double)args[6] * var8 / res;
 		var10 = (double)args[6] * var10 / res;
-		res = (double)args[6] * var6 / res;
+		var6 = (double)args[6] * var6 / res;
 	}
 
-	writeScummVar(108, (int32)res);
+	writeScummVar(108, (int32)var6);
 	writeScummVar(109, (int32)var10);
 	writeScummVar(110, (int32)var8);
 
@@ -297,6 +297,15 @@ private:
 	int initScreenTranslations();
 	int getPlaybookFiles(int32 *args);
 	int largestFreeBlock();
+
+	float _var0;
+	float _var1;
+	float _var2;
+	float _var3;
+	float _var4;
+	float _angle;
+	int32 _maxX;
+	int32 _minX;
 };
 
 int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
@@ -325,8 +334,16 @@ int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
 		res = 1;
 		break;
 
+	case 1030:
+		// Get Computer Name (online play only)
+		break;
+
+	case 1515:
+		// Initialize Session (online play only)
+		break;
+
 	case 1516:
-		// Start auto LAN game
+		// Start auto LAN game (online play only)
 		break;
 
 	default:
@@ -338,13 +355,74 @@ int32 LogicHEfootball2002::dispatch(int op, int numArgs, int32 *args) {
 }
 
 int LogicHEfootball2002::translateWorldToScreen(int32 *args) {
-	// TODO: Implement modified 2002 version
-	return LogicHEfootball::translateWorldToScreen(args);
+	// While this performs the same task as football's 1006 opcode,
+	// the implementation is different. Note that this is also the
+	// same as basketball's 1006 opcode with different constants!
+
+	double v9;
+	if (args[1] >= _minX) {
+		if (args[1] < _maxX) {
+			v9 = (sqrt(_var1 + args[1]) - sqrt(_var1)) / sqrt(_var0);
+		} else {
+			double v10 = sqrt(_var0 * (_maxX + _var1));
+			v9 = 1.0 / (v10 + v10) * (args[1] - _maxX) + 451.0;
+		}
+	} else {
+		double v8 = sqrt(_var0 * (_minX + _var1));
+		v9 = 1.0 / (v8 + v8) * (args[1] - _minX) - 29.0;
+	}
+
+	double v11 = tan(_angle);
+	double v12, v13;
+
+	if (v9 >= -29.0) {
+		if (v9 >= 451.0) {
+			v12 = 1517.0 - (451.0 / v11 + 451.0 / v11);
+			v13 = tan(1.570796326794895 - _angle) * 451.0;
+		} else {
+			v12 = 1517.0 - (v9 / v11 + v9 / v11);
+			v13 = tan(1.570796326794895 - _angle) * v9;
+		}
+	} else {
+		v12 = 1517.0 - (-29.0 / v11 + -29.0 / v11);
+		v13 = tan(1.570796326794895 - _angle) * -29.0;
+	}
+
+	writeScummVar(108, scummRound(v12 * args[0] / 12200.0 + v13 + 41.0));
+	writeScummVar(109, scummRound(611.0 - v9 - v12 * args[2] / 12200.0));
+
+	return 1;
 }
 
 int LogicHEfootball2002::translateScreenToWorld(int32 *args) {
-	// TODO: Implement modified 2002 version
-	return LogicHEfootball::translateScreenToWorld(args);
+	// While this performs the same task as football's 1010 opcode,
+	// the implementation is different. Note that this is also the
+	// same as basketball's 1010 opcode with different constants!
+
+	double v15 = 611.0 - args[1];
+	double v5 = tan(_angle);
+	double v4, v6, v7;
+
+	if (v15 >= -29.0) {
+		if (v15 >= 451.0) {
+			v4 = (_var2 * 902.0 + _var3) * (v15 - 451.0) + _maxX;
+			v6 = 1517.0 - (451.0 / v5 + 451.0 / v5);
+			v7 = tan(1.570796326794895 - _angle) * 451.0;
+		} else {
+			v4 = (v15 * _var2 + _var3) * v15 + _var4;
+			v6 = 1517.0 - (v15 / v5 + v15 / v5);
+			v7 = tan(1.570796326794895 - _angle) * v15;
+		}
+	} else {
+		v4 = (_var3 - _var2 * 58.0) * (v15 - -29.0) + _minX;
+		v6 = 1517.0 - (-29.0 / v5 + -29.0 / v5);
+		v7 = tan(1.570796326794895 - _angle) * -29.0;
+	}
+
+	writeScummVar(108, scummRound((args[0] - (v7 + 41.0)) * (12200.0 / v6)));
+	writeScummVar(109, scummRound(v4));
+
+	return 1;
 }
 
 int LogicHEfootball2002::getDayOfWeek() {
@@ -358,7 +436,14 @@ int LogicHEfootball2002::getDayOfWeek() {
 }
 
 int LogicHEfootball2002::initScreenTranslations() {
-	// TODO: Set values used by translateWorldToScreen/translateScreenToWorld
+	// Set values used by translateWorldToScreen/translateScreenToWorld
+	_var0 = _var2 = 0.0029172597f;
+	_var1 = 4896.3755f;
+	_var3 = 7.5588355f;
+	_var4 = 0.0f;
+	_angle = (float)atan(2.899280575539569);
+	_maxX = 4002;
+	_minX = -217;
 	return 1;
 }
 

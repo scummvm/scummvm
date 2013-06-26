@@ -75,7 +75,7 @@ private:
 	const uint32 *findFile(const Common::String &name) const;
 
 	const uint16 _entryCount;
-	const uint32 * const _fileEntries;
+	const uint32 *const _fileEntries;
 };
 
 class CachedArchive : public Common::Archive {

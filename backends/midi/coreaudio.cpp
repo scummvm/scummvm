@@ -102,6 +102,7 @@ public:
 	void sysEx(const byte *msg, uint16 length);
 
 private:
+	void loadSoundFont(const char *soundfont);
 	AUGraph _auGraph;
 	AudioUnit _synth;
 };
@@ -171,52 +172,8 @@ int MidiDriver_CORE::open() {
 #endif
 
 	// Load custom soundfont, if specified
-	if (ConfMan.hasKey("soundfont")) {
-		const char *soundfont = ConfMan.get("soundfont").c_str();
-
-		// TODO: We should really check whether the file contains an
-		// actual soundfont...
-
-#if USE_DEPRECATED_COREAUDIO_API
-		// Before 10.5, we need to use kMusicDeviceProperty_SoundBankFSSpec
-		FSRef	fsref;
-		FSSpec	fsSpec;
-		err = FSPathMakeRef ((const byte *)soundfont, &fsref, NULL);
-
-		if (err == noErr) {
-			err = FSGetCatalogInfo (&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
-		}
-
-		if (err == noErr) {
-			err = AudioUnitSetProperty (
-				_synth,
-				kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
-				0,
-				&fsSpec, sizeof(fsSpec)
-			);
-		}
-#else
-		// kMusicDeviceProperty_SoundBankFSSpec is present on 10.6+, but broken
-		// kMusicDeviceProperty_SoundBankURL was added in 10.5 as a replacement
-		CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)soundfont, strlen(soundfont), false);
-
-		if (url) {
-			err = AudioUnitSetProperty (
-				_synth,
-				kMusicDeviceProperty_SoundBankURL, kAudioUnitScope_Global,
-				0,
-				&url, sizeof(url)
-			);
-
-			CFRelease(url);
-		} else {
-			warning("Failed to allocate CFURLRef from '%s'", soundfont);
-		}
-#endif
-
-		if (err != noErr)
-			error("Failed loading custom sound font '%s' (error %ld)", soundfont, (long)err);
-	}
+	if (ConfMan.hasKey("soundfont"))
+		loadSoundFont(ConfMan.get("soundfont").c_str());
 
 #ifdef COREAUDIO_DISABLE_REVERB
 	// Disable reverb mode, as that sucks up a lot of CPU power, which can
@@ -240,6 +197,74 @@ bail:
 		_auGraph = 0;
 	}
 	return MERR_CANNOT_CONNECT;
+}
+
+void MidiDriver_CORE::loadSoundFont(const char *soundfont) {
+	// TODO: We should really check whether the file contains an
+	// actual soundfont...
+
+	OSStatus err = 0;
+
+#if USE_DEPRECATED_COREAUDIO_API
+	FSRef fsref;
+	err = FSPathMakeRef((const byte *)soundfont, &fsref, NULL);
+
+	SInt32 version;
+	err = Gestalt(gestaltSystemVersion, &version);
+
+	if (err == noErr) {
+		if (version >= 0x1030) {
+			// Use kMusicDeviceProperty_SoundBankFSRef in >= 10.3
+
+			// HACK HACK HACK HACK SUPER HACK: Using the value of 1012 instead of
+			// kMusicDeviceProperty_SoundBankFSRef so this compiles with the 10.2
+			// SDK (which does not have that symbol).
+			if (err == noErr) {
+				err = AudioUnitSetProperty(
+					_synth,
+					/*kMusicDeviceProperty_SoundBankFSRef*/ 1012, kAudioUnitScope_Global,
+					0,
+					&fsref, sizeof(fsref)
+				);
+			}
+		} else {
+			// In 10.2, only kMusicDeviceProperty_SoundBankFSSpec is available
+			FSSpec fsSpec;
+
+			if (err == noErr)
+				err = FSGetCatalogInfo(&fsref, kFSCatInfoNone, NULL, NULL, &fsSpec, NULL);
+
+			if (err == noErr) {
+				err = AudioUnitSetProperty(
+					_synth,
+					kMusicDeviceProperty_SoundBankFSSpec, kAudioUnitScope_Global,
+					0,
+					&fsSpec, sizeof(fsSpec)
+				);
+			}
+		}
+	}
+#else
+	// kMusicDeviceProperty_SoundBankURL was added in 10.5 as a replacement
+	// In addition, the File Manager API became deprecated starting in 10.8
+	CFURLRef url = CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, (const UInt8 *)soundfont, strlen(soundfont), false);
+
+	if (url) {
+		err = AudioUnitSetProperty(
+			_synth,
+			kMusicDeviceProperty_SoundBankURL, kAudioUnitScope_Global,
+			0,
+			&url, sizeof(url)
+		);
+
+		CFRelease(url);
+	} else {
+		warning("Failed to allocate CFURLRef from '%s'", soundfont);
+	}
+#endif // USE_DEPRECATED_COREAUDIO_API
+
+	if (err != noErr)
+		error("Failed loading custom sound font '%s' (error %ld)", soundfont, (long)err);
 }
 
 void MidiDriver_CORE::close() {

@@ -36,30 +36,9 @@ namespace Wintermute {
 
 // Basically Common::Array with peristence-support.
 template<typename TYPE>
-class BaseArray : public Common::Array<TYPE> {
+class BaseArrayBase : public Common::Array<TYPE> {
 public:
 // TODO: Might want to make sure that destructors are called when replacing/deleting/getting destructed
-	bool persist(BasePersistenceManager *persistMgr) {
-		int j;
-		if (persistMgr->getIsSaving()) {
-			j = Common::Array<TYPE>::size();
-			persistMgr->transfer("ArraySize", &j);
-			typename Common::Array<TYPE>::const_iterator it = Common::Array<TYPE>::begin();
-			for (; it != Common::Array<TYPE>::end(); ++it) {
-				TYPE obj = *it;
-				persistMgr->transfer("", &obj);
-			}
-		} else {
-			Common::Array<TYPE>::clear();
-			persistMgr->transfer("ArraySize", &j);
-			for (int i = 0; i < j; i++) {
-				TYPE obj;
-				persistMgr->transfer("", &obj);
-				add(obj);
-			}
-		}
-		return true;
-	}
 	int add(TYPE newElement) {
 		Common::Array<TYPE>::push_back(newElement);
 		return Common::Array<TYPE>::size() - 1;
@@ -76,8 +55,86 @@ public:
 		}
 	}
 	template<typename T2>
-	void copy(const BaseArray<T2> &src) {
+	void copy(const BaseArrayBase<T2> &src) {
 		Common::Array<TYPE>::insert_at(0, src);
+	}
+};
+
+template <typename TYPE>
+class BaseArray : public BaseArrayBase<TYPE> {
+	public:
+	bool persist(BasePersistenceManager *persistMgr) {
+		int32 j;
+		if (persistMgr->getIsSaving()) {
+			j = Common::Array<TYPE>::size();
+			persistMgr->transfer("ArraySize", &j);
+			typename Common::Array<TYPE>::const_iterator it = Common::Array<TYPE>::begin();
+			for (; it != Common::Array<TYPE>::end(); ++it) {
+				TYPE obj = *it;
+				persistMgr->transferPtr("", &obj);
+			}
+		} else {
+			Common::Array<TYPE>::clear();
+			persistMgr->transfer("ArraySize", &j);
+			for (int i = 0; i < j; i++) {
+				TYPE obj = nullptr;
+				persistMgr->transferPtr("", &obj);
+				this->add(obj);
+			}
+		}
+		return true;
+	}
+};
+
+template <>
+class BaseArray<char *> : public BaseArrayBase<char *> {
+	public:
+	bool persist(BasePersistenceManager *persistMgr) {
+		int32 j;
+		if (persistMgr->getIsSaving()) {
+			j = Common::Array<char *>::size();
+			persistMgr->transfer("ArraySize", &j);
+			Common::Array<char *>::const_iterator it = Common::Array<char *>::begin();
+			for (; it != Common::Array<char *>::end(); ++it) {
+				char * obj = *it;
+				persistMgr->transfer("", &obj);
+			}
+		} else {
+			Common::Array<char *>::clear();
+			persistMgr->transfer("ArraySize", &j);
+			for (int i = 0; i < j; i++) {
+				char * obj = nullptr;
+				persistMgr->transfer("", &obj);
+				add(obj);
+			}
+		}
+		return true;
+	}
+};
+
+template <>
+class BaseArray<const char *> : public BaseArrayBase<const char *> {
+public:
+	bool persist(BasePersistenceManager *persistMgr) {
+		int32 j;
+		if (persistMgr->getIsSaving()) {
+			j = Common::Array<const char *>::size();
+			persistMgr->transfer("ArraySize", &j);
+			Common::Array<const char *>::const_iterator it = Common::Array<const char *>::begin();
+			for (; it != Common::Array<const char *>::end(); ++it) {
+				const char * obj = *it;
+				persistMgr->transfer("", &obj);
+			}
+		} else {
+			Common::Array<const char *>::clear();
+			persistMgr->transfer("ArraySize", &j);
+			for (int i = 0; i < j; i++) {
+				const char * obj = nullptr;
+				persistMgr->transfer("", &obj);
+				add(obj);
+			}
+		}
+		return true;
 	}
 };
 

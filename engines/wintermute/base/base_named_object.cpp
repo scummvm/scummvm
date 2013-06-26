@@ -32,38 +32,38 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseNamedObject::BaseNamedObject(BaseGame *inGame) : BaseClass(inGame) {
-	_name = NULL;
+	_name = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 BaseNamedObject::BaseNamedObject() : BaseClass() {
-	_name = NULL;
+	_name = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 BaseNamedObject::BaseNamedObject(TDynamicConstructor, TDynamicConstructor) {
-	_name = NULL;
+	_name = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 BaseNamedObject::~BaseNamedObject(void) {
 	delete[] _name;
-	_name = NULL;
+	_name = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////
 void BaseNamedObject::setName(const char *name) {
 	delete[] _name;
-	_name = NULL;
+	_name = nullptr;
 
-	if (name == NULL) {
+	if (name == nullptr) {
 		return;
 	}
 
 	_name = new char [strlen(name) + 1];
-	if (_name != NULL) {
+	if (_name != nullptr) {
 		strcpy(_name, name);
 	}
 }

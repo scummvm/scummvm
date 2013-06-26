@@ -549,7 +549,7 @@ void Room::setRoomNumber(uint16 newRoomNumber, bool showOverlay) {
 
 	_roomData = res.getRoom(newRoomNumber);
 	if (!_roomData)
-		error("Tried to change to non-existant room: %d", newRoomNumber);
+		error("Tried to change to non-existent room: %d", newRoomNumber);
 
 	bool fadeFlag = (newRoomNumber != _roomNumber) && (_roomNumber != 0);
 	bool leaveFlag = _roomNumber != 999;

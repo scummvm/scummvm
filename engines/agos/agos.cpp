@@ -580,7 +580,7 @@ Common::Error AGOSEngine::init() {
 	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
 		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
 		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
-		(getPlatform() == Common::kPlatformPC)) {
+		(getPlatform() == Common::kPlatformDOS)) {
 
 		int ret = _midi->open(getGameType());
 		if (ret)

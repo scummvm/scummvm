@@ -251,15 +251,14 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 			if (curChannel != 0xF)
 				containsMidiData = true;
 
-			if (command != kEndOfTrack) {
-				// Write delta
-				while (delta > 240) {
-					*outData++ = 0xF8;
-					delta -= 240;
-				}
-				*outData++ = (byte)delta;
-				delta = 0;
+			// Write delta
+			while (delta > 240) {
+				*outData++ = 0xF8;
+				delta -= 240;
 			}
+			*outData++ = (byte)delta;
+			delta = 0;
+
 			// Write command
 			switch (command) {
 			case 0xF0: // sysEx
@@ -302,7 +301,7 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	}
 
 	// Insert stop event
-	*outData++ = 0;    // Delta
+	// (Delta is already output above)
 	*outData++ = 0xFF; // Meta event
 	*outData++ = 0x2F; // End of track (EOT)
 	*outData++ = 0x00;
@@ -532,8 +531,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// Check if the hold ID marker is the same as the hold ID
 				// marker set for that song by cmdSetSoundHold.
 				// If it is, loop back, but don't stop notes when jumping.
-				if (info.basic.param2 == _pSnd->hold)
+				if (info.basic.param2 == _pSnd->hold) {
+					uint32 extraDelta = info.delta;
 					jumpToTick(_loopTick, false, false);
+					_nextEvent.delta += extraDelta;
+				}
 				break;
 			case kUpdateCue:
 				_dataincAdd = true;
@@ -636,7 +638,9 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				// treats this case as an infinite loop (bug #3311911).
 				if (_pSnd->loop || _pSnd->hold > 0) {
 					// We need to play it again...
+					uint32 extraDelta = info.delta;
 					jumpToTick(_loopTick);
+					_nextEvent.delta += extraDelta;
 				} else {
 					_pSnd->status = kSoundStopped;
 					_pSnd->setSignal(SIGNAL_OFFSET);

@@ -28,6 +28,12 @@
 
 namespace Video {
 
+/**
+ * Apple RPZA decoder.
+ *
+ * Used in video:
+ *  - QuickTimeDecoder
+ */
 class RPZADecoder : public Codec {
 public:
 	RPZADecoder(uint16 width, uint16 height);

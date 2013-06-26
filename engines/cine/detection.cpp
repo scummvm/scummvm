@@ -184,7 +184,7 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	// Set description for selected slot
 	char slotName[20];
 	slotName[0] = 0;
-	strncpy(saveNames[slot], slotName, 20);
+	Common::strlcpy(saveNames[slot], slotName, 20);
 
 	// Update savegame descriptions
 	Common::String indexFile = Common::String::format("%s.dir", target);

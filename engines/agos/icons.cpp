@@ -1044,7 +1044,7 @@ void AGOSEngine_PN::drawIconHitBar() {
 	Graphics::Surface *screen = _system->lockScreen();
 	byte *dst = (byte *)screen->pixels + 3 * screen->pitch + 6 * 8;
 	const byte *src = hitBarData;
-	uint8 color = (getPlatform() == Common::kPlatformPC) ? 7 : 15;
+	uint8 color = (getPlatform() == Common::kPlatformDOS) ? 7 : 15;
 
 	for (int h = 0; h < 7; h++) {
 		for (int w = 0; w < 12; w++) {

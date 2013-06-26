@@ -30,11 +30,11 @@ namespace Tinsel {
 
 typedef	uint32	COLORREF;
 
-#define TINSEL_RGB(r,g,b)	((COLORREF)TO_LE_32(((uint8)(r)|((uint16)(g)<<8))|(((uint32)(uint8)(b))<<16)))
+#define TINSEL_RGB(r,g,b)	((COLORREF)TO_32(((uint8)(r)|((uint16)(g)<<8))|(((uint32)(uint8)(b))<<16)))
 
-#define TINSEL_GetRValue(rgb)	((uint8)(FROM_LE_32(rgb)))
-#define TINSEL_GetGValue(rgb)	((uint8)(((uint16)(FROM_LE_32(rgb)))>>8))
-#define TINSEL_GetBValue(rgb)	((uint8)((FROM_LE_32(rgb))>>16))
+#define TINSEL_GetRValue(rgb)	((uint8)(FROM_32(rgb)))
+#define TINSEL_GetGValue(rgb)	((uint8)(((uint16)(FROM_32(rgb)))>>8))
+#define TINSEL_GetBValue(rgb)	((uint8)((FROM_32(rgb))>>16))
 
 #define TINSEL_PSX_RGB(r,g,b) ((uint16)(((uint8)(r))|((uint16)(g)<<5)|(((uint16)(b))<<10)))
 
@@ -107,7 +107,7 @@ void PaletteStats();	// Shows the maximum number of palettes used at once
 
 void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable); // Maps PSX CLUTs to original palette in resource file
 
-void PalettesToVideoDAC();	// Update the video DAC with palettes currently the the DAC queue
+void PalettesToVideoDAC();	// Update the video DAC with palettes currently in the DAC queue
 
 void UpdateDACqueueHandle(
 	int posInDAC,		// position in video DAC
@@ -145,8 +145,6 @@ void SetBgndColor(		// sets current background color
 void FadingPalette(PALQ *pPalQ, bool bFading);
 
 void CreateTranslucentPalette(SCNHANDLE BackPal);
-
-void CreateGhostPalette(SCNHANDLE hPalette);
 
 void NoFadingPalettes();	// All fading processes have just been killed
 

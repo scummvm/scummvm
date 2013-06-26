@@ -79,7 +79,7 @@ protected:
 	uint32 _numCharsPrinted;
 
 	bool _printFlag;
-	bool _sjisLineBreakFlag;
+	bool _sjisTextModeLineBreak;
 
 	char _pageBreakString[20];
 	char _scriptParaString[11];

@@ -32,7 +32,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -46,7 +46,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -60,7 +60,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -88,7 +88,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -102,7 +102,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -116,7 +116,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -130,7 +130,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -144,7 +144,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -158,7 +158,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -186,7 +186,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -200,7 +200,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -214,7 +214,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -228,7 +228,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -242,7 +242,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -256,7 +256,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -270,7 +270,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -284,7 +284,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -298,7 +298,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -312,7 +312,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -326,7 +326,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -340,7 +340,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 		},
@@ -382,7 +382,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -396,7 +396,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 		},
@@ -410,7 +410,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
-			kPlatformPC,
+			kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -478,7 +478,7 @@ static const GOBGameDescription fallbackOnceUpon[kOnceUponATimeMAX][kOnceUponATi
 				"",
 				AD_ENTRY1(0, 0),
 				UNK_LANG,
-				kPlatformPC,
+				kPlatformDOS,
 				ADGF_NO_FLAGS,
 				GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 			},
@@ -522,7 +522,7 @@ static const GOBGameDescription fallbackOnceUpon[kOnceUponATimeMAX][kOnceUponATi
 				"",
 				AD_ENTRY1(0, 0),
 				UNK_LANG,
-				kPlatformPC,
+				kPlatformDOS,
 				ADGF_NO_FLAGS,
 				GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 			},

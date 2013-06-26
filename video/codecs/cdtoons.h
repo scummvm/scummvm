@@ -38,6 +38,12 @@ struct CDToonsBlock {
 	byte *data;
 };
 
+/**
+ * Broderbund CDToons decoder.
+ *
+ * Used in video:
+ *  - QuickTimeDecoder
+ */
 class CDToonsDecoder : public Codec {
 public:
 	CDToonsDecoder(uint16 width, uint16 height);
@@ -55,7 +61,6 @@ private:
 	bool _dirtyPalette;
 	uint16 _currentPaletteId;
 
-	uint16 _currentFrame;
 	Common::HashMap<uint16, CDToonsBlock> _blocks;
 
 	void renderBlock(byte *data, uint size, int x, int y, uint width, uint height);

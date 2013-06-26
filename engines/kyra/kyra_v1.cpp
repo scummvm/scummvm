@@ -172,19 +172,6 @@ Common::Error KyraEngine_v1::init() {
 	assert(_res);
 	_res->reset();
 
-	if (_flags.isDemo) {
-		// HACK: check whether this is the HOF demo or the LOL demo.
-		// The LOL demo needs to be detected and run as KyraEngine_HoF,
-		// but the static resource loader and the sequence player will
-		// need correct IDs.
-		if (_res->exists("scene1.cps"))
-#ifdef ENABLE_LOL
-			_flags.gameID = GI_LOL;
-#else
-			error("Lands of Lore demo is not supported in this build");
-#endif // !ENABLE_LOL
-	}
-
 	_staticres = new StaticResource(this);
 	assert(_staticres);
 	if (!_staticres->init())
@@ -366,84 +353,88 @@ void KyraEngine_v1::setupKeyMap() {
 		Common::KeyCode kcScummVM;
 		int16 kcDOS;
 		int16 kcPC98;
+		int16 kcFMTowns;
 	};
 
+#define UNKNOWN_KEYCODE -1
 #define KC(x) Common::KEYCODE_##x
 	static const KeyCodeMapEntry keys[] = {
-		{ KC(SPACE), 61, 53 },
-		{ KC(RETURN), 43, 29 },
-		{ KC(UP), 96, 68 },
-		{ KC(KP8), 96, 68 },
-		{ KC(RIGHT), 102, 73 },
-		{ KC(KP6), 102, 73 },
-		{ KC(DOWN), 98, 76 },
-		{ KC(KP2), 98, 76 },
-		{ KC(KP5), 97, 72 },
-		{ KC(LEFT), 92, 71 },
-		{ KC(KP4), 92, 71 },
-		{ KC(HOME), 91, 67 },
-		{ KC(KP7), 91, 67 },
-		{ KC(PAGEUP), 101, 69 },
-		{ KC(KP9), 101, 69 },
-		{ KC(END), 93, 0/*unknown*/ },
-		{ KC(KP1), 93, 0/*unknown*/ },
-		{ KC(PAGEDOWN), 103, 0/*unknown*/ },
-		{ KC(KP3), 103, 0/*unknown*/ },
-		{ KC(F1), 112, 99 },
-		{ KC(F2), 113, 100 },
-		{ KC(F3), 114, 101 },
-		{ KC(F4), 115, 102 },
-		{ KC(F5), 116, 103 },
-		{ KC(F6), 117, 104 },
-		{ KC(a), 31, 31 },
-		{ KC(b), 50, 50 },
-		{ KC(c), 48, 48 },
-		{ KC(d), 33, 33 },
-		{ KC(e), 19, 19 },
-		{ KC(f), 34, 34 },
-		{ KC(i), 24, 24 },
-		{ KC(k), 38, 38 },
-		{ KC(m), 52, 52 },
-		{ KC(n), 51, 51 },
-		{ KC(o), 25, 25 },
-		{ KC(p), 26, 26 },
-		{ KC(r), 20, 20 },
-		{ KC(s), 32, 32 },
-		{ KC(w), 18, 18 },
-		{ KC(y), 22, 22 },
-		{ KC(z), 46, 46 },
-		{ KC(1), 2, 0/*unknown*/ },
-		{ KC(2), 3, 0/*unknown*/ },
-		{ KC(3), 4, 0/*unknown*/ },
-		{ KC(4), 5, 0/*unknown*/ },
-		{ KC(5), 6, 0/*unknown*/ },
-		{ KC(6), 7, 0/*unknown*/ },
-		{ KC(7), 8, 0/*unknown*/ },
-		{ KC(SLASH), 55, 55 },
-		{ KC(ESCAPE), 110, 1 },
-		{ KC(MINUS), 12, 0/*unknown*/ },
-		{ KC(KP_MINUS), 105, 0/*unknown*/ },
-		{ KC(PLUS), 13, 0/*unknown*/ },
-		{ KC(KP_PLUS), 106, 0/*unknown*/ },
+		{ KC(SPACE), 61, 53, 32 },
+		{ KC(RETURN), 43, 29, 13 },
+		{ KC(UP), 96, 68, 30 },
+		{ KC(KP8), 96, 68, 30 },
+		{ KC(RIGHT), 102, 73, 28 },
+		{ KC(KP6), 102, 73, 28 },
+		{ KC(DOWN), 98, 76, 31 },
+		{ KC(KP2), 98, 76, 31 },
+		{ KC(KP5), 97, 72, UNKNOWN_KEYCODE },
+		{ KC(LEFT), 92, 71, 29 },
+		{ KC(KP4), 92, 71, 29 },
+		{ KC(HOME), 91, 67, 127 },
+		{ KC(KP7), 91, 67, 127 },
+		{ KC(PAGEUP), 101, 69, 18 },
+		{ KC(KP9), 101, 69, 18 },
+		{ KC(END), 93, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
+		{ KC(KP1), 93, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
+		{ KC(PAGEDOWN), 103, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
+		{ KC(KP3), 103, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
+		{ KC(F1), 112, 99, UNKNOWN_KEYCODE },
+		{ KC(F2), 113, 100, UNKNOWN_KEYCODE },
+		{ KC(F3), 114, 101, UNKNOWN_KEYCODE },
+		{ KC(F4), 115, 102, UNKNOWN_KEYCODE },
+		{ KC(F5), 116, 103, UNKNOWN_KEYCODE },
+		{ KC(F6), 117, 104, UNKNOWN_KEYCODE },
+		{ KC(a), 31, 31, UNKNOWN_KEYCODE },
+		{ KC(b), 50, 50, UNKNOWN_KEYCODE },
+		{ KC(c), 48, 48, 67 },
+		{ KC(d), 33, 33, UNKNOWN_KEYCODE },
+		{ KC(e), 19, 19, UNKNOWN_KEYCODE },
+		{ KC(f), 34, 34, UNKNOWN_KEYCODE },
+		{ KC(i), 24, 24, UNKNOWN_KEYCODE },
+		{ KC(k), 38, 38, UNKNOWN_KEYCODE },
+		{ KC(m), 52, 52, UNKNOWN_KEYCODE },
+		{ KC(n), 51, 51, UNKNOWN_KEYCODE },
+		{ KC(o), 25, 25, 79 },
+		{ KC(p), 26, 26, 80 },
+		{ KC(r), 20, 20, 82 },
+		{ KC(s), 32, 32, UNKNOWN_KEYCODE },
+		{ KC(w), 18, 18, UNKNOWN_KEYCODE },
+		{ KC(y), 22, 22, UNKNOWN_KEYCODE },
+		{ KC(z), 46, 46, UNKNOWN_KEYCODE },
+		{ KC(0), UNKNOWN_KEYCODE, UNKNOWN_KEYCODE, 48 },
+		{ KC(1), 2, UNKNOWN_KEYCODE, 49 },
+		{ KC(2), 3, UNKNOWN_KEYCODE, 50 },
+		{ KC(3), 4, UNKNOWN_KEYCODE, 51 },
+		{ KC(4), 5, UNKNOWN_KEYCODE, 52 },
+		{ KC(5), 6, UNKNOWN_KEYCODE, 53 },
+		{ KC(6), 7, UNKNOWN_KEYCODE, 54 },
+		{ KC(7), 8, UNKNOWN_KEYCODE, 55 },
+		{ KC(SLASH), 55, 55, 47 },
+		{ KC(ESCAPE), 110, 1, 27 },
+		{ KC(MINUS), 12, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
+		{ KC(KP_MINUS), 105, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
+		{ KC(PLUS), 13, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
+		{ KC(KP_PLUS), 106, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
 
 		// Multiple mappings for the keys to the right of the 'M' key,
 		// since these are different for QWERTZ, QWERTY and AZERTY keyboards.
 		// QWERTZ
-		{ KC(COMMA), 53, 0/*unknown*/ },
-		{ KC(PERIOD), 54, 0/*unknown*/ },
+		{ KC(COMMA), 53, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
+		{ KC(PERIOD), 54, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
 		// AZERTY
-		{ KC(SEMICOLON), 53, 0/*unknown*/ },
-		{ KC(COLON), 54, 0/*unknown*/ },
+		{ KC(SEMICOLON), 53, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
+		{ KC(COLON), 54, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
 		// QWERTY
-		{ KC(LESS), 53, 0/*unknown*/ },
-		{ KC(GREATER), 54, 0/*unknown*/ }
+		{ KC(LESS), 53, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE },
+		{ KC(GREATER), 54, UNKNOWN_KEYCODE, UNKNOWN_KEYCODE }
 	};
 #undef KC
+#undef UNKNOWN_KEYCODE
 
 	_keyMap.clear();
 
 	for (int i = 0; i < ARRAYSIZE(keys); i++)
-		_keyMap[keys[i].kcScummVM] = (_flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : keys[i].kcDOS;
+		_keyMap[keys[i].kcScummVM] = (_flags.platform == Common::kPlatformPC98) ? keys[i].kcPC98 : ((_flags.platform == Common::kPlatformFMTowns) ? keys[i].kcFMTowns : keys[i].kcDOS);
 }
 
 void KyraEngine_v1::updateInput() {

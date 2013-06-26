@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/base_active_rect.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -37,9 +38,9 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////
 BaseActiveRect::BaseActiveRect(BaseGame *inGame) : BaseClass(inGame) {
 	BasePlatform::setRectEmpty(&_rect);
-	_owner = NULL;
-	_frame = NULL;
-	_region = NULL;
+	_owner = nullptr;
+	_frame = nullptr;
+	_region = nullptr;
 	_zoomX = 100;
 	_zoomY = 100;
 	_offsetX = _offsetY = 0;
@@ -55,7 +56,7 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseSubFrame
 	_zoomX = zoomX;
 	_zoomY = zoomY;
 	_precise = precise;
-	_region = NULL;
+	_region = nullptr;
 	_offsetX = _offsetY = 0;
 	clipRect();
 }
@@ -69,7 +70,7 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *
 	_zoomX = 100;
 	_zoomY = 100;
 	_precise = true;
-	_frame = NULL;
+	_frame = nullptr;
 	clipRect();
 	_offsetX = offsetX;
 	_offsetY = offsetY;
@@ -78,9 +79,9 @@ BaseActiveRect::BaseActiveRect(BaseGame *inGame, BaseObject *owner, BaseRegion *
 
 //////////////////////////////////////////////////////////////////////
 BaseActiveRect::~BaseActiveRect() {
-	_owner = NULL;
-	_frame = NULL;
-	_region = NULL;
+	_owner = nullptr;
+	_frame = nullptr;
+	_region = nullptr;
 }
 
 
@@ -89,7 +90,7 @@ void BaseActiveRect::clipRect() {
 	Rect32 rc;
 	bool customViewport;
 	_gameRef->getCurrentViewportRect(&rc, &customViewport);
-	BaseRenderer *Rend = _gameRef->_renderer;
+	BaseRenderer *Rend = BaseEngine::getRenderer();
 
 	if (!customViewport) {
 		rc.left -= Rend->_drawOffsetX;

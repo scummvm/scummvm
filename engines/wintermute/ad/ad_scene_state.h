@@ -39,9 +39,11 @@ class AdSceneState : public BaseClass {
 public:
 	AdNodeState *getNodeState(const char *name, bool saving);
 	void setFilename(const char *filename);
+	const char *getFilename() const;
 	DECLARE_PERSISTENT(AdSceneState, BaseClass)
 	AdSceneState(BaseGame *inGame);
 	virtual ~AdSceneState();
+private:
 	char *_filename;
 	BaseArray<AdNodeState *> _nodeStates;
 };

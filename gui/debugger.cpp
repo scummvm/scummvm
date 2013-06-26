@@ -554,4 +554,4 @@ bool Debugger::debuggerCompletionCallback(GUI::ConsoleDialog *console, const cha
 
 #endif
 
-}	// End of namespace GUI
+} // End of namespace GUI

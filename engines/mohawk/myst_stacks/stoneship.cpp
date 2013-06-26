@@ -440,9 +440,9 @@ void Stoneship::o_drawerOpenSirius(uint16 op, uint16 var, uint16 argc, uint16 *a
 		drawer->drawConditionalDataToScreen(0, 0);
 	}
 
-	uint16 transition = 5;
+	TransitionType transition = kTransitionTopToBottom;
 	if (argc == 2 && argv[1])
-		transition = 11;
+		transition = kTransitionCopy;
 
 	_vm->_gfx->runTransition(transition, drawer->getRect(), 25, 5);
 }
@@ -579,7 +579,7 @@ void Stoneship::o_drawerOpenAchenar(uint16 op, uint16 var, uint16 argc, uint16 *
 
 	MystResourceType8 *drawer = static_cast<MystResourceType8 *>(_vm->_resources[argv[0]]);
 	drawer->drawConditionalDataToScreen(0, 0);
-	_vm->_gfx->runTransition(5, drawer->getRect(), 25, 5);
+	_vm->_gfx->runTransition(kTransitionTopToBottom, drawer->getRect(), 25, 5);
 }
 
 void Stoneship::o_hologramPlayback(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -692,9 +692,9 @@ void Stoneship::o_chestValveVideos(uint16 op, uint16 var, uint16 argc, uint16 *a
 		_vm->_sound->resumeBackgroundMyst();
 	} else {
 		// Valve opening
-		// TODO: Play backwards
 		VideoHandle valve = _vm->_video->playMovie(movie, 97, 267);
-		_vm->_video->setVideoBounds(valve, Audio::Timestamp(0, 0, 600), Audio::Timestamp(0, 350, 600));
+		_vm->_video->seekToTime(valve, Audio::Timestamp(0, 350, 600));
+		_vm->_video->setVideoRate(valve, -1);
 		_vm->_video->waitUntilMovieEnds(valve);
 	}
 }
@@ -777,7 +777,7 @@ void Stoneship::o_cloudOrbLeave(uint16 op, uint16 var, uint16 argc, uint16 *argv
 
 	_cloudOrbMovie->pauseMovie(true);
 	_vm->_sound->replaceSoundMyst(_cloudOrbStopSound);
-	_vm->_gfx->runTransition(5, _invokingResource->getRect(), 4, 0);
+	_vm->_gfx->runTransition(kTransitionTopToBottom, _invokingResource->getRect(), 4, 0);
 }
 
 void Stoneship::o_drawerCloseOpened(uint16 op, uint16 var, uint16 argc, uint16 *argv) {
@@ -794,7 +794,7 @@ void Stoneship::drawerClose(uint16 drawer) {
 	_vm->drawResourceImages();
 
 	MystResource *res = _vm->_resources[drawer];
-	_vm->_gfx->runTransition(6, res->getRect(), 25, 5);
+	_vm->_gfx->runTransition(kTransitionBottomToTop, res->getRect(), 25, 5);
 }
 
 void Stoneship::o_hologramDisplay_init(uint16 op, uint16 var, uint16 argc, uint16 *argv) {

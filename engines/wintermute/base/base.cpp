@@ -28,6 +28,7 @@
 
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 
@@ -42,7 +43,7 @@ BaseClass::BaseClass(BaseGame *gameOwner) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseClass::BaseClass() {
-	_gameRef = NULL;
+	_gameRef = nullptr;
 	_persistable = true;
 }
 
@@ -105,14 +106,14 @@ bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_EDITOR_PROPERTY) {
-			_gameRef->LOG(0, "'EDITOR_PROPERTY' keyword expected.");
+			BaseEngine::LOG(0, "'EDITOR_PROPERTY' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	char *propName = NULL;
-	char *propValue = NULL;
+	char *propName = nullptr;
+	char *propValue = nullptr;
 
 	while ((cmd = parser.getCommand((char **)&buffer, commands, (char **)&params)) > 0) {
 		switch (cmd) {
@@ -141,17 +142,17 @@ bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		delete[] propName;
 		delete[] propValue;
-		propName = NULL;
-		propValue = NULL;
-		_gameRef->LOG(0, "Syntax error in EDITOR_PROPERTY definition");
+		propName = nullptr;
+		propValue = nullptr;
+		BaseEngine::LOG(0, "Syntax error in EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
-	if (cmd == PARSERR_GENERIC || propName == NULL || propValue == NULL) {
+	if (cmd == PARSERR_GENERIC || propName == nullptr || propValue == nullptr) {
 		delete[] propName;
 		delete[] propValue;
-		propName = NULL;
-		propValue = NULL;
-		_gameRef->LOG(0, "Error loading EDITOR_PROPERTY definition");
+		propName = nullptr;
+		propValue = nullptr;
+		BaseEngine::LOG(0, "Error loading EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
 
@@ -160,8 +161,8 @@ bool BaseClass::parseEditorProperty(byte *buffer, bool complete) {
 
 	delete[] propName;
 	delete[] propValue;
-	propName = NULL;
-	propValue = NULL;
+	propName = nullptr;
+	propValue = nullptr;
 
 	return STATUS_OK;
 }

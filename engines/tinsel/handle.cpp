@@ -30,6 +30,7 @@
 #include "tinsel/dw.h"
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"			// heap memory manager
+#include "tinsel/scn.h"		// for the DW1 Mac resource handler
 #include "tinsel/timers.h"	// for DwGetCurrentTime()
 #include "tinsel/tinsel.h"
 #include "tinsel/scene.h"
@@ -84,7 +85,6 @@ static char g_szCdPlayFile[100];
 //----------------- FORWARD REFERENCES --------------------
 
 static void LoadFile(MEMHANDLE *pH);	// load a memory block as a file
-
 
 /**
  * Loads the graphics handle table index file and preloads all the
@@ -300,7 +300,7 @@ void LoadFile(MEMHANDLE *pH) {
 
 		// discardable - unlock the memory
 		MemoryUnlock(pH->_node);
-
+		
 		// set the loaded flag
 		pH->filesize |= fLoaded;
 
@@ -322,6 +322,7 @@ void LoadFile(MEMHANDLE *pH) {
  */
 byte *LockMem(SCNHANDLE offset) {
 	uint32 handle = offset >> SCNHANDLE_SHIFT;	// calc memory handle to use
+	//debug("Locking offset of type %d (%x), offset %d, handle %d", (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, (offset & HANDLEMASK) >> SCNHANDLE_SHIFT, offset & OFFSETMASK, handle);
 	MEMHANDLE *pH;			// points to table entry
 
 	// range check the memory handle

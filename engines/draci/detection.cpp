@@ -41,7 +41,7 @@ const ADGameDescription gameDescriptions[] = {
 		0,
 		AD_ENTRY1s("INIT.DFW", "b890a5aeebaf16af39219cba2416b0a3", 906),
 		Common::EN_ANY,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -51,7 +51,7 @@ const ADGameDescription gameDescriptions[] = {
 		0,
 		AD_ENTRY1s("INIT.DFW", "9921c8f0045679a8f37eca8d41c5ec02", 906),
 		Common::CZ_CZE,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -61,7 +61,7 @@ const ADGameDescription gameDescriptions[] = {
 		0,
 		AD_ENTRY1s("INIT.DFW", "76b9b78a8a8809a240acc395df4d0715", 906),
 		Common::PL_POL,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -71,7 +71,7 @@ const ADGameDescription gameDescriptions[] = {
 		0,
 		AD_ENTRY1s("INIT.DFW", "9a7115b91cdea361bcaff3e046ac7ded", 906),
 		Common::DE_DEU,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},

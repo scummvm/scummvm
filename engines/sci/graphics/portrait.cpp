@@ -193,7 +193,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 				drawBitmap(syncCue);
 				bitsShow();
 			} else {
-				warning("kPortrait: sync information tried to draw non-existant %d", syncCue);
+				warning("kPortrait: sync information tried to draw non-existent %d", syncCue);
 			}
 		}
 	}

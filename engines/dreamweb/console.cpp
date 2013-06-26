@@ -25,6 +25,7 @@
 namespace DreamWeb {
 
 DreamWebConsole::DreamWebConsole(DreamWebEngine *vm) : GUI::Debugger(), _vm(vm) {
+	assert(_vm);
 }
 
 DreamWebConsole::~DreamWebConsole() {

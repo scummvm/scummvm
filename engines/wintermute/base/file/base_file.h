@@ -45,10 +45,10 @@ protected:
 	uint32 _pos;
 	uint32 _size;
 public:
-	virtual uint32 getSize() {
+	virtual uint32 getSize() const {
 		return _size;
 	};
-	virtual uint32 getPos() {
+	virtual uint32 getPos() const {
 		return _pos;
 	};
 	virtual bool seek(uint32 pos, int whence = SEEK_SET) = 0;

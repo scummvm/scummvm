@@ -674,7 +674,7 @@ void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
 	memcpy(buffer, soundData, size);
 
 	byte flags = 0;
-	if (_vm->getPlatform() == Common::kPlatformPC)
+	if (_vm->getPlatform() == Common::kPlatformDOS)
 		flags = Audio::FLAG_UNSIGNED;
 
 	Audio::AudioStream *stream = Audio::makeRawStream(buffer, size, freq, flags);

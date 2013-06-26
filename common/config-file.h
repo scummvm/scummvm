@@ -106,6 +106,7 @@ public:
 	bool	saveToStream(WriteStream &stream);
 
 	bool	hasSection(const String &section) const;
+	void	addSection(const String &section);
 	void	removeSection(const String &section);
 	void	renameSection(const String &oldName, const String &newName);
 
@@ -134,6 +135,6 @@ private:
 
 */
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

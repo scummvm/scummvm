@@ -173,6 +173,6 @@ public:
 	bool seek(int32 offset, int whence = SEEK_SET);
 };
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

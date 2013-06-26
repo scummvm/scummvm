@@ -27,7 +27,7 @@
  */
 
 #include "engines/wintermute/math/math_util.h"
-#include <math.h>
+#include "common/scummsys.h"
 
 namespace Wintermute {
 

@@ -185,10 +185,12 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh)
-			g_sci->_gfxCursor->kernelSetMacCursor(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
-		else
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+			delete hotspot; // Mac cursors have their own hotspot, so ignore any we get here
+			g_sci->_gfxCursor->kernelSetMacCursor(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16());
+		} else {
 			g_sci->_gfxCursor->kernelSetView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
+		}
 		break;
 	case 10:
 		// Freddy pharkas, when using the whiskey glass to read the prescription (bug #3034973)
@@ -719,11 +721,6 @@ reg_t kPalVaryChangeTicks(EngineState *s, int argc, reg_t *argv) {
 reg_t kPalVaryPauseResume(EngineState *s, int argc, reg_t *argv) {
 	bool pauseState = !argv[0].isNull();
 	g_sci->_gfxPalette->kernelPalVaryPause(pauseState);
-	return NULL_REG;
-}
-
-reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv) {
-	// Unknown (seems to be SCI32 exclusive)
 	return NULL_REG;
 }
 

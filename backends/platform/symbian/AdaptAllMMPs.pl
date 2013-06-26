@@ -10,7 +10,9 @@ chdir("../../../");
 	# Engine Project files
 	"mmp/scummvm_agi.mmp",
 	"mmp/scummvm_agos.mmp",
+	"mmp/scummvm_cge.mmp",
 	"mmp/scummvm_cine.mmp",
+	"mmp/scummvm_composer.mmp",
 	"mmp/scummvm_cruise.mmp",
 	"mmp/scummvm_drascula.mmp",
 	"mmp/scummvm_gob.mmp",
@@ -37,6 +39,11 @@ chdir("../../../");
 	"mmp/scummvm_toon.mmp",
 	"mmp/scummvm_lastexpress.mmp",
 	"mmp/scummvm_tsage.mmp",
+	"mmp/scummvm_tony.mmp",
+	"mmp/scummvm_hopkins.mmp",
+	"mmp/scummvm_toltecs.mmp",
+	"mmp/scummvm_pegasus.mmp",
+	"mmp/scummvm_wintermute.mmp",
 	# Target Platform Project Files
 	"S60/ScummVM_S60.mmp",
 	"S60v3/ScummVM_S60v3.mmp",
@@ -74,7 +81,7 @@ Preparing to update all the Symbian MMP project files with objects from module.m
 my @section_empty = (""); # section standard: no #ifdef's in module.mk files
 my @sections_scumm = ("", "ENABLE_SCUMM_7_8", "ENABLE_HE"); # special sections for engine SCUMM
 my @sections_saga = ("", "ENABLE_IHNM", "ENABLE_SAGA2"); # special sections for engine SAGA
-my @sections_kyra = ("", "ENABLE_LOL"); # special sections for engine KYRA
+my @sections_kyra = ("", "ENABLE_LOL","ENABLE_EOB"); # special sections for engine KYRA
 my @sections_agos = ("", "ENABLE_AGOS2"); # special sections for engine AGOS
 
 # files excluded from build, case insensitive, will be matched in filename string only
@@ -86,13 +93,25 @@ my @excludes_snd = (
 	"tables.cpp",
 	"freeverb.cpp",
 	"synth.cpp",
+	"aReverbmodel.cpp",
+	"bReverbmodel.cpp",
+	"DelayReverb.cpp",
+	"LA32WaveGenerator.cpp",
+	"LegacyWaveGenerator.cpp",
+	"ROMInfo.cpp",
+	"FreeVerb.cpp",
+	"FreeVerbModel.cpp",
+	"La32Ramp.cpp",
+        "Poly.cpp",
+	"TVA.cpp",
+	"TVF.cpp",
+	"TVP.cpp",
 	"rate.*"			# not really needed, USE_ARM_SOUND_ASM currently not parsed correctly,
 						# "rate[_arm|_arm_asm].(cpp|s)" will be added later based on WINS/ARM build!
 						# These #defines for compile time are set in portdefs.h
 );
 
-my @excludes_graphics = (
-	"iff.cpp"
+my @excludes_graphics = (	
 );
 
 my @excludes_gui = (
@@ -127,6 +146,8 @@ ParseModule("_sword1",	"sword1",	\@section_empty);
 ParseModule("_sword2",	"sword2",	\@section_empty);
 ParseModule("_lure",	"lure",		\@section_empty);
 ParseModule("_cine",	"cine",		\@section_empty);
+ParseModule("_cge",	    "cge",		\@section_empty);
+ParseModule("_composer","composer",	\@section_empty);
 ParseModule("_agi",	"agi",		\@section_empty);
 ParseModule("_touche",	"touche",	\@section_empty);
 ParseModule("_parallaction","parallaction",\@section_empty);
@@ -145,6 +166,11 @@ ParseModule("_hugo"     ,"hugo",	\@section_empty);
 ParseModule("_toon"     ,"toon",	\@section_empty);
 ParseModule("_lastexpress","lastexpress",	\@section_empty);
 ParseModule("_tsage","tsage",	\@section_empty);
+ParseModule("_tony","tony",	\@section_empty);
+ParseModule("_toltecs","toltecs",	\@section_empty);
+ParseModule("_hopkins","hopkins",	\@section_empty);
+ParseModule("_pegasus","pegasus",	\@section_empty);
+ParseModule("_wintermute","wintermute",	\@section_empty);
 print "
 =======================================================================================
 Done. Enjoy :P

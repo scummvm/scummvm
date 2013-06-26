@@ -150,15 +150,23 @@ private:
 	void setTimbreMT(byte channel, const Timbre &timbre);
 };
 
-class MusicPlayerMac : public MusicPlayerMidi {
+class MusicPlayerMac_t7g : public MusicPlayerMidi {
 public:
-	MusicPlayerMac(GroovieEngine *vm);
+	MusicPlayerMac_t7g(GroovieEngine *vm);
 
 protected:
 	bool load(uint32 fileref, bool loop);
 
 private:
 	Common::SeekableReadStream *decompressMidi(Common::SeekableReadStream *stream);
+};
+
+class MusicPlayerMac_v2 : public MusicPlayerMidi {
+public:
+	MusicPlayerMac_v2(GroovieEngine *vm);
+
+protected:
+	bool load(uint32 fileref, bool loop);
 };
 
 class MusicPlayerIOS : public MusicPlayer {

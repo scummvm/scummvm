@@ -34,7 +34,7 @@ class Screen;
  */
 class GfxCompare {
 public:
-	GfxCompare(SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxScreen *screen, GfxCoordAdjuster *coordAdjuster);
+	GfxCompare(SegManager *segMan, GfxCache *cache, GfxScreen *screen, GfxCoordAdjuster *coordAdjuster);
 	~GfxCompare();
 
 	uint16 kernelOnControl(byte screenMask, const Common::Rect &rect);
@@ -47,7 +47,6 @@ public:
 
 private:
 	SegManager *_segMan;
-	Kernel *_kernel;
 	GfxCache *_cache;
 	GfxScreen *_screen;
 	GfxCoordAdjuster *_coordAdjuster;

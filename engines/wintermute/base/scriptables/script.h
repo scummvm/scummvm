@@ -57,8 +57,8 @@ public:
 	bool _freezable;
 	bool resume();
 	bool pause();
-	bool canHandleEvent(const Common::String &eventName);
-	bool canHandleMethod(const Common::String &methodName);
+	bool canHandleEvent(const Common::String &eventName) const;
+	bool canHandleMethod(const Common::String &methodName) const;
 	bool createThread(ScScript *original, uint32 initIP, const Common::String &eventName);
 	bool createMethodThread(ScScript *original, const Common::String &methodName);
 	ScScript *invokeEventHandler(const Common::String &eventName, bool unbreakable = false);
@@ -78,8 +78,8 @@ public:
 	TScriptState _origState;
 	ScValue *getVar(char *name);
 	uint32 getFuncPos(const Common::String &name);
-	uint32 getEventPos(const Common::String &name);
-	uint32 getMethodPos(const Common::String &name);
+	uint32 getEventPos(const Common::String &name) const;
+	uint32 getMethodPos(const Common::String &name) const;
 	typedef struct {
 		uint32 magic;
 		uint32 version;
@@ -113,7 +113,7 @@ public:
 		char *dll_name;
 		TCallType call_type;
 		TExternalType returns;
-		int nu_params;
+		int32 nu_params;
 		TExternalType *params;
 	} TExternalFunction;
 
@@ -124,7 +124,7 @@ public:
 	ScStack *_stack;
 	ScValue *_globals;
 	ScEngine *_engine;
-	int _currentLine;
+	int32 _currentLine;
 	bool executeInstruction();
 	char *getString();
 	uint32 getDWORD();

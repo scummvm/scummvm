@@ -1291,6 +1291,7 @@ void Caldoria::activateHotspots() {
 				_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaRightDrawerNoKeysCloseSpotID);
 			}
 		}
+		break;
 	case kCaldoriaReplicator:
 		if (GameState.getCaldoriaMadeOJ())
 			_vm->getAllHotspots().deactivateOneHotspot(kCaldoriaMakeOJSpotID);
@@ -1640,10 +1641,12 @@ void Caldoria::takeElevator(uint startFloor, uint endFloor) {
 			break;
 		case 2:
 			_croppedMovie.setTime(k1To2Time);
+			_croppedMovie.redrawMovieWorld();
 			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
 			break;
 		case 3:
 			_croppedMovie.setTime(k1To3Time);
+			_croppedMovie.redrawMovieWorld();
 			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
 			break;
 		case 4:
@@ -1670,10 +1673,12 @@ void Caldoria::takeElevator(uint startFloor, uint endFloor) {
 			break;
 		case 2:
 			_croppedMovie.setTime(k4To2Time);
+			_croppedMovie.redrawMovieWorld();
 			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
 			break;
 		case 3:
 			_croppedMovie.setTime(k4To3Time);
+			_croppedMovie.redrawMovieWorld();
 			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
 			break;
 		case 4:
@@ -1697,10 +1702,12 @@ void Caldoria::takeElevator(uint startFloor, uint endFloor) {
 			break;
 		case 2:
 			_croppedMovie.setTime(k5To2Time);
+			_croppedMovie.redrawMovieWorld();
 			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
 			break;
 		case 3:
 			_croppedMovie.setTime(k5To3Time);
+			_croppedMovie.redrawMovieWorld();
 			requestSpotSound(kCaldoriaNoOtherDestinationIn, kCaldoriaNoOtherDestinationOut, kFilterNoInput, kSpotSoundCompletedFlag);
 			break;
 		case 4:

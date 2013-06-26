@@ -62,7 +62,7 @@ public:
 	//CVidSubtitler *_subtitler;
 
 	// control methods
-	bool initialize(const Common::String &filename, const Common::String &subtitleFile = NULL);
+	bool initialize(const Common::String &filename, const Common::String &subtitleFile = nullptr);
 	bool initializeSimple();
 	bool update();
 	bool play(TVideoPlayback type = VID_PLAY_CENTER, int x = 0, int y = 0, bool freezeGame = false, bool freezeMusic = true, bool looping = false, uint32 startTime = 0, float forceZoom = -1.0f, int volume = -1);
@@ -72,64 +72,63 @@ public:
 	bool pause();
 	bool resume();
 
-	bool isPlaying()  {
+	bool isPlaying() const {
 		return _state == THEORA_STATE_PLAYING;
 	};
-	bool isFinished() {
+	bool isFinished() const {
 		return _state == THEORA_STATE_FINISHED;
 	};
-	bool isPaused()   {
+	bool isPaused() const {
 		return _state == THEORA_STATE_PAUSED;
 	};
 
-	uint32 getMovieTime();
+	uint32 getMovieTime() const;
 
-	BaseSurface *getTexture();
-
-	int _state;
-	uint32 _startTime;
-
-	int _savedState;
-	uint32 _savedPos;
-
+	BaseSurface *getTexture() const;
 
 	// alpha related
 	BaseImage *_alphaImage;
 	Common::String _alphaFilename;
 	bool setAlphaImage(const Common::String &filename);
-	__inline byte getAlphaAt(int x, int y);
+	__inline byte getAlphaAt(int x, int y) const;
 	void writeAlpha();
 
 	bool seekToTime(uint32 Time);
-
 
 	void cleanup();
 	bool resetStream();
 
 	// video properties
-	TVideoPlayback _playbackType;
-	int _posX;
-	int _posY;
-	float _playZoom;
-	int _volume;
-
-	bool _looping;
+	int32 _posX;
+	int32 _posY;
+	
 	bool _dontDropFrames;
+private:
+	int32 _state;
+	uint32 _startTime;
+
+	int32 _savedState;
+	uint32 _savedPos;
+
+	// video properties
+	TVideoPlayback _playbackType;
+	bool _looping;
+	float _playZoom;
+	int32 _volume;
+
 	bool _freezeGame;
 	uint32 _currentTime;
 
-
-private:
 	// seeking support
 	bool _seekingKeyframe;
 	float _timeOffset;
 
 	bool _frameRendered;
 
-	bool getIsFrameReady() {
+	bool getIsFrameReady() const {
 		return _videoFrameReady;
 	}
-private:
+
 	bool _audioFrameReady;
 	bool _videoFrameReady;
 	float _videobufTime;

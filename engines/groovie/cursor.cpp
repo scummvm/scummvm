@@ -378,8 +378,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 		}
 	}
 
-
-
+	delete[] tmp;
 }
 
 void Cursor_v2::enable() {

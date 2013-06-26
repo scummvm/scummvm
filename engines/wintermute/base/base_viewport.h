@@ -31,20 +31,22 @@
 
 
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
 class BaseObject;
 class BaseViewport : public BaseClass {
 public:
-	int getHeight();
-	int getWidth();
+	int getHeight() const;
+	int getWidth() const;
 	Rect32 *getRect();
-	bool setRect(int left, int top, int right, int bottom, bool noCheck = false);
+	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
 	DECLARE_PERSISTENT(BaseViewport, BaseClass)
-	int _offsetY;
-	int _offsetX;
+	int32 _offsetY;
+	int32 _offsetX;
 	BaseObject *_mainObject;
-	BaseViewport(BaseGame *inGame = NULL);
+	BaseViewport(BaseGame *inGame = nullptr);
 	virtual ~BaseViewport();
 private:
 	Rect32 _rect;

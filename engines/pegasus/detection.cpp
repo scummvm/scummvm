@@ -35,6 +35,10 @@ struct PegasusGameDescription {
 	ADGameDescription desc;
 };
 
+enum {
+	GF_DVD = (1 << 1)
+};
+
 bool PegasusEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsRTL)
@@ -44,6 +48,22 @@ bool PegasusEngine::hasFeature(EngineFeature f) const {
 
 bool PegasusEngine::isDemo() const {
 	return (_gameDescription->desc.flags & ADGF_DEMO) != 0;
+}
+
+bool PegasusEngine::isDVD() const {
+	return (_gameDescription->desc.flags & GF_DVD) != 0;
+}
+
+bool PegasusEngine::isDVDDemo() const {
+	return isDemo() && isDVD();
+}
+
+bool PegasusEngine::isOldDemo() const {
+	return isDemo() && !isDVD();
+}
+
+bool PegasusEngine::isWindows() const {
+	return _gameDescription->desc.platform == Common::kPlatformWindows;
 }
 
 } // End of namespace Pegasus
@@ -76,7 +96,31 @@ static const PegasusGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("JMP PP Resources", "d13a602d2498010d720a6534f097f88b", 360129),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
-			ADGF_MACRESFORK|ADGF_DEMO,
+			ADGF_MACRESFORK | ADGF_DEMO,
+			GUIO1(GUIO_NOLAUNCHLOAD)
+		},
+	},
+
+	{
+		{
+			"pegasus",
+			"DVD Demo",
+			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
+			GUIO1(GUIO_NOLAUNCHLOAD)
+		},
+	},
+
+		{
+		{
+			"pegasus",
+			"DVD Demo",
+			AD_ENTRY1s("JMP PP Resources", "d0fcda50dc75c7a81ae314e6a813f4d2", 93495),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_MACRESFORK | ADGF_DEMO | GF_DVD,
 			GUIO1(GUIO_NOLAUNCHLOAD)
 		},
 	},
@@ -119,12 +163,12 @@ SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
 	// The original had no pattern, so the user must rename theirs
 	// Note that we ignore the target because saves are compatible between
 	// all versions
-	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("pegasus-*.sav");
+	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
 
 	SaveStateList saveList;
-	for (uint32 i = 0; i < filenames.size(); i++) {
+	for (uint32 i = 0; i < fileNames.size(); i++) {
 		// Isolate the description from the file name
-		Common::String desc = filenames[i].c_str() + 8;
+		Common::String desc = fileNames[i].c_str() + 8;
 		for (int j = 0; j < 4; j++)
 			desc.deleteLastChar();
 
@@ -136,8 +180,8 @@ SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
 
 void PegasusMetaEngine::removeSaveState(const char *target, int slot) const {
 	// See listSaves() for info on the pattern
-	Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles("pegasus-*.sav");
-	g_system->getSavefileManager()->removeSavefile(filenames[slot].c_str());
+	Common::StringArray fileNames = Pegasus::PegasusEngine::listSaveFiles();
+	g_system->getSavefileManager()->removeSavefile(fileNames[slot].c_str());
 }
 
 bool PegasusMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

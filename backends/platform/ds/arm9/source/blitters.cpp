@@ -391,4 +391,4 @@ void Rescale_320x256x1555_To_256x256x1555(u16 *dest, const u16 *src, int destStr
 	}
 }
 
-}	// End of namespace DS
+} // End of namespace DS

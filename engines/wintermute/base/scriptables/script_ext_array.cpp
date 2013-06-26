@@ -69,7 +69,7 @@ SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
 //////////////////////////////////////////////////////////////////////////
 SXArray::~SXArray() {
 	delete _values;
-	_values = NULL;
+	_values = nullptr;
 }
 
 
@@ -215,7 +215,7 @@ bool SXArray::persist(BasePersistenceManager *persistMgr) {
 	BaseScriptable::persist(persistMgr);
 
 	persistMgr->transfer(TMEMBER(_length));
-	persistMgr->transfer(TMEMBER(_values));
+	persistMgr->transferPtr(TMEMBER_PTR(_values));
 
 	return STATUS_OK;
 }

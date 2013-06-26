@@ -390,7 +390,6 @@ class IMuseInternal : public IMuse {
 protected:
 	bool _native_mt32;
 	bool _enable_gs;
-	bool _sc55;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
 	TimerCallbackInfo _timer_info_adlib;
@@ -518,7 +517,7 @@ protected:
 public:
 	// IMuse interface
 	void pause(bool paused);
-	int save_or_load(Serializer *ser, ScummEngine *scumm);
+	int save_or_load(Serializer *ser, ScummEngine *scumm, bool fixAfterLoad = true);
 	bool get_sound_active(int sound) const;
 	int32 doCommand(int numargs, int args[]);
 	uint32 property(int prop, uint32 value);

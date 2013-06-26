@@ -19,34 +19,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "teenagent/surface.h"
 #include "teenagent/surface_list.h"
-#include "objects.h"
+#include "teenagent/surface.h"
+#include "teenagent/objects.h"
+#include "teenagent/teenagent.h"
 
 namespace TeenAgent {
 
-SurfaceList::SurfaceList() : surfaces(NULL), surfaces_n(0) {}
+SurfaceList::SurfaceList() : surfaces(NULL), surfacesCount(0) {}
 
 SurfaceList::~SurfaceList() {
 	free();
 }
 
-void SurfaceList::load(Common::SeekableReadStream &stream, Type type, int sub_hack) {
+void SurfaceList::load(Common::SeekableReadStream &stream, int subHack) {
 	free();
 
 	byte fn = stream.readByte();
 	if (stream.eos())
 		return;
 
-	surfaces_n = fn - sub_hack;
-	debug(0, "loading %u surfaces from list (skip %d)", surfaces_n, sub_hack);
+	surfacesCount = fn - subHack;
+	debugC(0, kDebugSurface, "loading %u surfaces from list (skip %d)", surfacesCount, subHack);
 
-	if (surfaces_n == 0)
+	if (surfacesCount == 0)
 		return;
 
-	surfaces = new Surface[surfaces_n];
+	surfaces = new Surface[surfacesCount];
 
-	for (byte i = 0; i < surfaces_n; ++i) {
+	for (byte i = 0; i < surfacesCount; ++i) {
 		uint offset = stream.readUint16LE();
 		uint pos = stream.pos();
 		stream.seek(offset);
@@ -58,11 +59,11 @@ void SurfaceList::load(Common::SeekableReadStream &stream, Type type, int sub_ha
 void SurfaceList::free() {
 	delete[] surfaces;
 	surfaces = NULL;
-	surfaces_n = 0;
+	surfacesCount = 0;
 }
 
 void SurfaceList::render(Graphics::Surface *surface, const Common::Rect &clip) const {
-	for (uint i = 0; i < surfaces_n; ++i) {
+	for (uint i = 0; i < surfacesCount; ++i) {
 		const Surface &s = surfaces[i];
 		Common::Rect r(s.x, s.y, s.x + s.w, s.y + s.h);
 		if (r.bottom < clip.bottom || !clip.intersects(r))

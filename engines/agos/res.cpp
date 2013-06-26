@@ -932,7 +932,7 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 		}
 
 		dstSize = srcSize = in->size();
-		if (getGameType() == GType_PN && getPlatform() == Common::kPlatformPC && id == 17 && type == 2) {
+		if (getGameType() == GType_PN && getPlatform() == Common::kPlatformDOS && id == 17 && type == 2) {
 			// The A2.out file isn't compressed in PC version of Personal Nightmare
 			dst = allocBlock(dstSize + extraBuffer);
 			if (in->read(dst, dstSize) != dstSize)

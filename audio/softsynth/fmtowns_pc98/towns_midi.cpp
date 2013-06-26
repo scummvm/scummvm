@@ -147,17 +147,10 @@ private:
 	TownsMidiOutputChannel *_out;
 
 	uint8 *_instrument;
-	uint8 _prg;
 	uint8 _chanIndex;
-	uint8 _effectLevel;
 	uint8 _priority;
-	uint8 _ctrlVolume;
 	uint8 _tl;
-	uint8 _pan;
-	uint8 _panEff;
-	uint8 _percS;
 	int8 _transpose;
-	uint8 _fld_1f;
 	int8 _detune;
 	int8 _modWheel;
 	uint8 _sustain;
@@ -659,9 +652,8 @@ const uint16 TownsMidiOutputChannel::_freqLSB[] = {
 	0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B, 0x055B
 };
 
-TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex) : MidiChannel(), _driver(driver), _out(0), _prg(0), _chanIndex(chanIndex),
-	_effectLevel(0), _priority(0), _ctrlVolume(0), _tl(0), _pan(0), _panEff(0), _transpose(0), _percS(0), _pitchBendFactor(0), _pitchBend(0), _sustain(0), _freqLSB(0),
-	_fld_1f(0), _detune(0), _modWheel(0), _allocated(false) {
+TownsMidiInputChannel::TownsMidiInputChannel(MidiDriver_TOWNS *driver, int chanIndex) : MidiChannel(), _driver(driver), _out(0), _chanIndex(chanIndex),
+	_priority(0), _tl(0), _transpose(0), _pitchBendFactor(0), _pitchBend(0), _sustain(0), _freqLSB(0), _detune(0), _modWheel(0), _allocated(false) {
 	_instrument = new uint8[30];
 	memset(_instrument, 0, 30);
 }

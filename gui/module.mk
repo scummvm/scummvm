@@ -38,5 +38,10 @@ MODULE_OBJS += \
 	browser.o
 endif
 
+ifdef USE_FLUIDSYNTH
+MODULE_OBJS += \
+	fluidsynth-dialog.o
+endif
+
 # Include common rules
 include $(srcdir)/rules.mk

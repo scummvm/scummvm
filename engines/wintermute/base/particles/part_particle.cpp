@@ -41,7 +41,7 @@ PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 	_posZ = 0.0f;
 	_velocity = Vector2(0.0f, 0.0f);
 	_scale = 100.0f;
-	_sprite = NULL;
+	_sprite = nullptr;
 	_creationTime = 0;
 	_lifeTime = 0;
 	_isDead = true;
@@ -65,7 +65,7 @@ PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 PartParticle::~PartParticle(void) {
 	delete _sprite;
-	_sprite = NULL;
+	_sprite = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ bool PartParticle::setSprite(const Common::String &filename) {
 	}
 
 	delete _sprite;
-	_sprite = NULL;
+	_sprite = nullptr;
 
 	SystemClassRegistry::getInstance()->_disabled = true;
 	_sprite = new BaseSprite(_gameRef, (BaseObject*)_gameRef);
@@ -85,7 +85,7 @@ bool PartParticle::setSprite(const Common::String &filename) {
 		return STATUS_OK;
 	} else {
 		delete _sprite;
-		_sprite = NULL;
+		_sprite = nullptr;
 		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_FAILED;
 	}
@@ -199,7 +199,7 @@ bool PartParticle::display(PartEmitter *emitter) {
 
 	_sprite->getCurrentFrame();
 	return _sprite->display((int)_pos.x, (int)_pos.y,
-	                        NULL,
+	                        nullptr,
 	                        _scale, _scale,
 	                        BYTETORGBA(255, 255, 255, _currentAlpha),
 	                        _rotation,
@@ -260,7 +260,7 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 		setSprite(filename);
 		SystemClassRegistry::getInstance()->_disabled = false;
 		delete[] filename;
-		filename = NULL;
+		filename = nullptr;
 	}
 
 	return STATUS_OK;

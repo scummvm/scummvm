@@ -73,13 +73,8 @@ TimeBase::TimeBase(const TimeScale preferredScale) {
 }
 
 TimeBase::~TimeBase() {
-	if (_master)
-		_master->_slaves.remove(this);
-
 	((PegasusEngine *)g_engine)->removeTimeBase(this);
 	disposeAllCallBacks();
-
-	// TODO: Remove slaves? Make them remove themselves?
 }
 
 void TimeBase::setTime(const TimeValue time, const TimeScale scale) {
@@ -88,18 +83,21 @@ void TimeBase::setTime(const TimeValue time, const TimeScale scale) {
 }
 
 TimeValue TimeBase::getTime(const TimeScale scale) {
+	// HACK: Emulate the master TimeBase code here for the one case that needs it in the
+	// game. Note that none of the master TimeBase code in this file should actually be
+	// used as a reference for anything ever.
+	if (_master)
+		return _master->getTime(scale);
+
 	return _time.getNumerator() * ((scale == 0) ? _preferredScale : scale) / _time.getDenominator();
 }
 
 void TimeBase::setRate(const Common::Rational rate) {
 	_rate = rate;
+	_lastMillis = 0;
 
 	if (_rate == 0)
 		_paused = false;
-}
-
-Common::Rational TimeBase::getEffectiveRate() const {
-	return _rate * ((_master == 0) ? 1 : _master->getEffectiveRate());
 }
 
 void TimeBase::start() {
@@ -192,18 +190,15 @@ TimeValue TimeBase::getDuration(const TimeScale scale) const {
 }
 
 void TimeBase::setMasterTimeBase(TimeBase *tb) {
-	// TODO: We're just ignoring the master (except for effective rate)
-	// for now to simplify things
-	if (_master)
-		_master->_slaves.remove(this);
-
 	_master = tb;
-
-	if (_master)
-		_master->_slaves.push_back(this);
 }
 
 void TimeBase::updateTime() {
+	if (_master) {
+		_master->updateTime();
+		return;
+	}
+
 	if (_lastMillis == 0) {
 		_lastMillis = g_system->getMillis();
 	} else {
@@ -211,7 +206,7 @@ void TimeBase::updateTime() {
 		if (_lastMillis == curTime) // No change
 			return;
 
-		_time += Common::Rational(curTime - _lastMillis, 1000) * getEffectiveRate();
+		_time += Common::Rational(curTime - _lastMillis, 1000) * getRate();
 		_lastMillis = curTime;
 	}
 }
@@ -232,8 +227,6 @@ void TimeBase::checkCallBacks() {
 		_time = stopTime;
 	else if (_time <= startTime)
 		_time = startTime;
-
-	// TODO: Update the slaves?
 
 	Common::Rational time = Common::Rational(getTime(), getScale());
 

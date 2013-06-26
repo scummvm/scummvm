@@ -165,15 +165,15 @@ static byte *FindStringBase(int id) {
 	// skip to the correct chunk
 	while (chunkSkip-- != 0) {
 		// make sure chunk id is correct
-		assert(READ_LE_UINT32(pText + index) == CHUNK_STRING || READ_LE_UINT32(pText + index) == CHUNK_MBSTRING);
+		assert(READ_32(pText + index) == CHUNK_STRING || READ_32(pText + index) == CHUNK_MBSTRING);
 
-		if (READ_LE_UINT32(pText + index + sizeof(uint32)) == 0) {
+		if (READ_32(pText + index + sizeof(uint32)) == 0) {
 			// string does not exist
 			return NULL;
 		}
 
 		// get index to next chunk
-		index = READ_LE_UINT32(pText + index + sizeof(uint32));
+		index = READ_32(pText + index + sizeof(uint32));
 	}
 
 	// skip over chunk id and offset

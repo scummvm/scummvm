@@ -87,21 +87,21 @@ public:
 	ScValue *_valRef;
 private:
 	bool _valBool;
-	int _valInt;
+	int32 _valInt;
 	double _valFloat;
 	char *_valString;
 public:
 	TValType _type;
 	ScValue(BaseGame *inGame);
 	ScValue(BaseGame *inGame, bool Val);
-	ScValue(BaseGame *inGame, int Val);
+	ScValue(BaseGame *inGame, int32 Val);
 	ScValue(BaseGame *inGame, double Val);
 	ScValue(BaseGame *inGame, const char *Val);
 	virtual ~ScValue();
 	Common::HashMap<Common::String, ScValue *> _valObject;
 	Common::HashMap<Common::String, ScValue *>::iterator _valIter;
 
-	bool setProperty(const char *propName, int value);
+	bool setProperty(const char *propName, int32 value);
 	bool setProperty(const char *propName, const char *value);
 	bool setProperty(const char *propName, double value);
 	bool setProperty(const char *propName, bool value);

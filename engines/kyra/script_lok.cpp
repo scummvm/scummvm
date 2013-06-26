@@ -1774,7 +1774,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_blockInWalkableRegion);
 	Opcode(o1_blockOutWalkableRegion);
 	Opcode(o1_walkPlayerToPoint);
-	// 0x0c
+	// 0x0C
 	Opcode(o1_dropItemInScene);
 	Opcode(o1_drawAnimShapeIntoScene);
 	Opcode(o1_setHandItem);
@@ -1794,7 +1794,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_phaseInSameScene);
 	Opcode(o1_setScenePhasingFlag);
 	Opcode(o1_resetScenePhasingFlag);
-	// 0x1c
+	// 0x1C
 	Opcode(o1_queryScenePhasingFlag);
 	Opcode(o1_sceneToDirection);
 	Opcode(o1_setBirthstoneGem);
@@ -1814,7 +1814,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_openWSAFile);
 	Opcode(o1_closeWSAFile);
 	Opcode(o1_runWSAFromBeginningToEnd);
-	// 0x2c
+	// 0x2C
 	Opcode(o1_displayWSAFrame);
 	Opcode(o1_enterNewScene);
 	Opcode(o1_setSpecialEnterXAndY);
@@ -1834,7 +1834,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_getCharacterY);
 	Opcode(o1_setCharacterFacing);
 	Opcode(o1_copyWSARegion);
-	// 0x3c
+	// 0x3C
 	Opcode(o1_printText);
 	Opcode(o1_getRand);
 	Opcode(o1_loadSoundFile);
@@ -1854,7 +1854,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_placeCharacterInOtherScene);
 	Opcode(o1_getKey);
 	Opcode(o1_specificItemInInventory);
-	// 0x4c
+	// 0x4C
 	Opcode(o1_popMobileNPCIntoScene);
 	Opcode(o1_mobileCharacterInScene);
 	Opcode(o1_hideMobileCharacter);
@@ -1874,7 +1874,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_setCharacterMovementDelay);
 	Opcode(o1_getCharacterFacing);
 	Opcode(o1_bkgdScrollSceneAndMasksRight);
-	// 0x5c
+	// 0x5C
 	Opcode(o1_dispelMagicAnimation);
 	Opcode(o1_findBrightestFireberry);
 	Opcode(o1_setFireberryGlowPalette);
@@ -1894,7 +1894,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_addItemToInventory);
 	Opcode(o1_intPrint);
 	Opcode(o1_shakeScreen);
-	// 0x6c
+	// 0x6C
 	Opcode(o1_createAmuletJewel);
 	Opcode(o1_setSceneAnimCurrXY);
 	Opcode(o1_poisonBrandonAndRemaps);
@@ -1914,7 +1914,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_setMousePos);
 	Opcode(o1_getMouseState);
 	Opcode(o1_setEntranceMouseCursorTrack);
-	// 0x7c
+	// 0x7C
 	Opcode(o1_itemAppearsOnGround);
 	Opcode(o1_setNoDrawShapesFlag);
 	Opcode(o1_fadeEntirePalette);
@@ -1934,7 +1934,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_getScaleDepthTableValue);
 	Opcode(o1_setScaleDepthTableValue);
 	Opcode(o1_message);
-	// 0x8c
+	// 0x8C
 	Opcode(o1_checkClickOnNPC);
 	Opcode(o1_getFoyerItem);
 	Opcode(o1_setFoyerItem);
@@ -1954,7 +1954,7 @@ void KyraEngine_LoK::setupOpcodeTable() {
 	Opcode(o1_fillRect);
 	Opcode(o1_vocUnload);
 	Opcode(o1_vocLoad);
-	// 0x9c
+	// 0x9C
 	Opcode(o1_dummy);
 }
 #undef Opcode

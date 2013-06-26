@@ -27,5 +27,5 @@ namespace Cruise {
 
 void updateAllScriptsImports();
 
-}				// End of namespace Cruise
+} // End of namespace Cruise
 #endif

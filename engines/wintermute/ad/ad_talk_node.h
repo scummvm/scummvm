@@ -47,7 +47,7 @@ public:
 	AdTalkNode(BaseGame *inGame);
 	virtual ~AdTalkNode();
 	bool loadBuffer(byte *buffer, bool complete = true);
-	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
+	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0) override;
 	char *_spriteFilename;
 	BaseSprite *_sprite;
 	uint32 _startTime;

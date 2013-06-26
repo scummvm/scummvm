@@ -39,10 +39,10 @@
 
 namespace Wintermute {
 
-void correctSlashes(char *fileName) {
-	for (size_t i = 0; i < strlen(fileName); i++) {
+void correctSlashes(Common::String &fileName) {
+	for (size_t i = 0; i < fileName.size(); i++) {
 		if (fileName[i] == '\\') {
-			fileName[i] = '/';
+			fileName.setChar('/', i);
 		}
 	}
 }
@@ -65,6 +65,12 @@ static Common::FSNode getNodeForRelativePath(const Common::String &filename) {
 		// Start traversing relative to the game-data-dir
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
 		Common::FSNode curNode = gameDataDir;
+
+		Common::String fixedPath = "";
+		while (!path.empty()) {
+			fixedPath += path.nextToken() + "/";
+		}
+		fixedPath.deleteLastChar();
 
 		// Parse all path-elements
 		while (!path.empty()) {
@@ -109,13 +115,14 @@ bool diskFileExists(const Common::String &filename) {
 
 Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	uint32 prefixSize = 0;
-	Common::SeekableReadStream *file = NULL;
+	Common::SeekableReadStream *file = nullptr;
 	Common::String fixedFilename = filename;
+	correctSlashes(fixedFilename);
 
 	// Absolute path: TODO: Add specific fallbacks here.
-	if (filename.contains(':')) {
-		if (filename.hasPrefix("c:\\windows\\fonts\\")) { // East Side Story refers to "c:\windows\fonts\framd.ttf"
-			fixedFilename = filename.c_str() + 17;
+	if (fixedFilename.contains(':')) {
+		if (fixedFilename.hasPrefix("c:/windows/fonts/")) { // East Side Story refers to "c:\windows\fonts\framd.ttf"
+			fixedFilename = filename.c_str() + 14;
 		} else {
 			error("openDiskFile::Absolute path or invalid filename used in %s", filename.c_str());
 		}
@@ -125,7 +132,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	SearchMan.listMatchingMembers(files, fixedFilename);
 
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
-		if ((*it)->getName() == filename) {
+		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(fixedFilename,'/'))) {
 			file = (*it)->createReadStream();
 			break;
 		}
@@ -157,7 +164,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 			if (!compBuffer) {
 				error("Error allocating memory for compressed file '%s'", filename.c_str());
 				delete file;
-				return NULL;
+				return nullptr;
 			}
 
 			byte *data = new byte[uncompSize];
@@ -165,7 +172,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 				error("Error allocating buffer for file '%s'", filename.c_str());
 				delete[] compBuffer;
 				delete file;
-				return NULL;
+				return nullptr;
 			}
 			file->seek(dataOffset + prefixSize, SEEK_SET);
 			file->read(compBuffer, compSize);
@@ -174,7 +181,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 				error("Error uncompressing file '%s'", filename.c_str());
 				delete[] compBuffer;
 				delete file;
-				return NULL;
+				return nullptr;
 			}
 
 			delete[] compBuffer;
@@ -188,7 +195,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 		return file;
 
 	}
-	return NULL;
+	return nullptr;
 }
 
 } // end of namespace Wintermute

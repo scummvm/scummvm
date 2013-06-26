@@ -148,7 +148,7 @@ void Map_v1::loadMapObjects(const char *avjFile) {
 void Map_v1::loadSounds(Common::SeekableReadStream &data) {
 	int16 count;
 	char buf[19];
-	char sndNames[20][14];
+	char sndNames[20][19];
 
 	count = data.readUint16LE();
 

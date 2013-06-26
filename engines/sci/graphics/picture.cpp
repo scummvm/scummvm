@@ -605,7 +605,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 		case PIC_OP_MEDIUM_LINES: // medium line
 			vectorGetAbsCoords(data, curPos, x, y);
 			if (icemanDrawFix) {
-				// WORKAROUND: remove certain lines in iceman ffs. see above
+				// WORKAROUND: remove certain lines in iceman - see above
 				if ((pic_color == 1) && (pic_priority == 14)) {
 					if ((y < 100) || (!(y & 1))) {
 						pic_color = 255;

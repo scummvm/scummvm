@@ -66,6 +66,33 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 
 	_console = new HugoConsole(this);
 	_rnd = 0;
+	
+	_screen = NULL;
+	_mouse = NULL;
+	_inventory = NULL;
+	_parser = NULL;
+	_route = NULL;
+	_sound = NULL;
+	_intro = NULL;
+	_object = NULL;
+	_text = NULL;
+	_topMenu = NULL;
+	_status._storyModeFl = false;
+	_status._gameOverFl = false;
+	_status._lookFl = false;
+	_status._recallFl = false;
+	_status._newScreenFl = false;
+	_status._godModeFl = false;
+	_status._showBoundariesFl = false;
+	_status._doQuitFl = false;
+	_status._skipIntroFl = false;
+	_status._helpFl = false;
+	_status._tick = 0;
+	_status._viewState = kViewIntroInit;
+	_status._song = 0;
+	_gameType = kGameTypeNone;
+	_platform = Common::kPlatformUnknown;
+	_packedFl = false;
 }
 
 HugoEngine::~HugoEngine() {

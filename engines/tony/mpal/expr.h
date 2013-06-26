@@ -70,16 +70,16 @@ namespace MPAL {
  * Mathamatical framework to manage operations
  */
 typedef struct {
-	byte _type;                     // Object Type (see enum ExprListTypes)
+	byte _type;          // Object Type (see enum ExprListTypes)
 
 	union {
-		int _num;                   // Identifier (if type == ELT_NUMBER)
-		char *_name;                // Variable name (if type == ELT_VAR)
-		MpalHandle _son;            // Handle expressions (if type == ELT_PARENTH)
-		byte *_pson;                // Handle lockato (if type == ELT_PARENTH2)
+		int _num;        // Identifier (if type == ELT_NUMBER)
+		char *_name;     // Variable name (if type == ELT_VAR)
+		MpalHandle _son; // Handle expressions (if type == ELT_PARENTH)
+		byte *_pson;     // Handle lockato (if type == ELT_PARENTH2)
 	} _val;
 
-	byte _symbol;                   // Mathematic symbols (see #define OP_*)
+	byte _symbol;        // Mathematic symbols (see #define OP_*)
 
 } Expression;
 typedef Expression *LpExpression;

@@ -668,7 +668,7 @@ GfxObj* DosDisk_br::createInventoryObjects(Common::SeekableReadStream &stream) {
 
 
 void Parallaction_ns::initFonts() {
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformDOS) {
 		_dialogueFont = _disk->loadFont("comic");
 		_labelFont = _disk->loadFont("topaz");
 		_menuFont = _disk->loadFont("slide");
@@ -683,7 +683,7 @@ void Parallaction_ns::initFonts() {
 }
 
 void Parallaction_br::initFonts() {
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformDOS) {
 		_menuFont = _disk->loadFont("russia");
 		_dialogueFont = _disk->loadFont("comic");
 		_labelFont = _menuFont;

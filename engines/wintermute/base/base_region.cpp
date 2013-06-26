@@ -29,7 +29,7 @@
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
-#include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
@@ -103,8 +103,8 @@ bool BaseRegion::pointInRegion(int x, int y) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
-		_gameRef->LOG(0, "BaseRegion::LoadFile failed for file '%s'", filename);
+	if (buffer == nullptr) {
+		BaseEngine::LOG(0, "BaseRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -113,7 +113,7 @@ bool BaseRegion::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing REGION file '%s'", filename);
+		BaseEngine::LOG(0, "Error parsing REGION file '%s'", filename);
 	}
 
 
@@ -154,7 +154,7 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand((char **)&buffer, commands, (char **)&params) != TOKEN_REGION) {
-			_gameRef->LOG(0, "'REGION' keyword expected.");
+			BaseEngine::LOG(0, "'REGION' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -206,7 +206,7 @@ bool BaseRegion::loadBuffer(byte *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in REGION definition");
+		BaseEngine::LOG(0, "Syntax error in REGION definition");
 		return STATUS_FAILED;
 	}
 
@@ -289,7 +289,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 		if (index >= 0 && index < (int32)_points.size()) {
 			delete _points[index];
-			_points[index] = NULL;
+			_points[index] = nullptr;
 
 			_points.remove_at(index);
 			createRegion();
@@ -446,7 +446,7 @@ typedef struct {
 } dPoint;
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRegion::ptInPolygon(int x, int y) {
+bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 	if (_points.size() < 3) {
 		return false;
 	}
@@ -493,7 +493,7 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.size() == 0) {
 		BasePlatform::setRectEmpty(rect);
 	} else {
-		int minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
+		int32 minX = INT_MAX, minY = INT_MAX, maxX = INT_MIN, maxY = INT_MIN;
 
 		for (uint32 i = 0; i < _points.size(); i++) {
 			minX = MIN(minX, _points[i]->x);

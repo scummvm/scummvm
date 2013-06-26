@@ -57,13 +57,13 @@ void BaseFont::drawText(const byte *text, int x, int y, int width, TTextAlign al
 
 
 //////////////////////////////////////////////////////////////////////
-int BaseFont::getTextHeight(byte *text, int width) {
+int BaseFont::getTextHeight(const byte *text, int width) {
 	return 0;
 }
 
 
 //////////////////////////////////////////////////////////////////////
-int BaseFont::getTextWidth(byte *text, int maxLength) {
+int BaseFont::getTextWidth(const byte *text, int maxLength) {
 	return 0;
 }
 
@@ -89,7 +89,7 @@ BaseFont *BaseFont::createFromFile(BaseGame *gameRef, const Common::String &file
 		if (font) {
 			if (DID_FAIL(font->loadFile(filename))) {
 				delete font;
-				return NULL;
+				return nullptr;
 			}
 		}
 		return font;
@@ -98,7 +98,7 @@ BaseFont *BaseFont::createFromFile(BaseGame *gameRef, const Common::String &file
 		if (font) {
 			if (DID_FAIL(font->loadFile(filename))) {
 				delete font;
-				return NULL;
+				return nullptr;
 			}
 		}
 		return font;
@@ -119,7 +119,7 @@ bool BaseFont::isTrueType(BaseGame *gameRef, const Common::String &filename) {
 
 
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		return false;
 	}
 

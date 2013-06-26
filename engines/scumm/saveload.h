@@ -47,7 +47,7 @@ namespace Scumm {
  * only saves/loads those which are valid for the version of the savegame
  * which is being loaded/saved currently.
  */
-#define CURRENT_VER 93
+#define CURRENT_VER 94
 
 /**
  * An auxillary macro, used to specify savegame versions. We use this instead
@@ -74,7 +74,7 @@ namespace Scumm {
  * what POD means refer to <http://en.wikipedia.org/wiki/Plain_Old_Data_Structures> or
  * to <http://www.informit.com/guides/content.asp?g=cplusplus&seqNum=32&rl=1>)
  */
-#define OFFS(type,item) (((ptrdiff_t)(&((type *)42)->type::item))-42)
+#define OFFS(type,item) ((uint32)(((ptrdiff_t)(&((type *)42)->type::item))-42))
 
 /**
  * Similar to the OFFS macro, this macro computes the size (in bytes) of a
@@ -84,19 +84,19 @@ namespace Scumm {
 
 // Any item that is still in use automatically gets a maxVersion equal to CURRENT_VER
 #define MKLINE(type,item,saveas,minVer) {OFFS(type,item),saveas,SIZE(type,item),minVer,CURRENT_VER}
-#define MKARRAY(type,item,saveas,dim,minVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,CURRENT_VER}, {dim,1,0,0,0}
-#define MKARRAY2(type,item,saveas,dim,dim2,rowlen,minVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,CURRENT_VER}, {dim,dim2,rowlen,0,0}
+#define MKARRAY(type,item,saveas,dim,minVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,CURRENT_VER}, {(uint32)(dim),1,0,0,0}
+#define MKARRAY2(type,item,saveas,dim,dim2,rowlen,minVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,CURRENT_VER}, {(uint32)(dim),(uint32)(dim2),(uint16)(rowlen),0,0}
 
 // Use this if you have an entry that used to be smaller:
 #define MKLINE_OLD(type,item,saveas,minVer,maxVer) {OFFS(type,item),saveas,SIZE(type,item),minVer,maxVer}
-#define MKARRAY_OLD(type,item,saveas,dim,minVer,maxVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,maxVer}, {dim,1,0,0,0}
-#define MKARRAY2_OLD(type,item,saveas,dim,dim2,rowlen,minVer,maxVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,maxVer}, {dim,dim2,rowlen,0,0}
+#define MKARRAY_OLD(type,item,saveas,dim,minVer,maxVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,maxVer}, {(uint32)(dim),1,0,0,0}
+#define MKARRAY2_OLD(type,item,saveas,dim,dim2,rowlen,minVer,maxVer) {OFFS(type,item),128|saveas,SIZE(type,item),minVer,maxVer}, {(uint32)(dim),(uint32)(dim2),(uint16)(rowlen),0,0}
 
 // An obsolete item/array, to be ignored upon load. We retain the type/item params to make it easier to debug.
 // Obsolete items have size == 0.
 #define MK_OBSOLETE(type,item,saveas,minVer,maxVer) {0,saveas,0,minVer,maxVer}
-#define MK_OBSOLETE_ARRAY(type,item,saveas,dim,minVer,maxVer) {0,128|saveas,0,minVer,maxVer}, {dim,1,0,0,0}
-#define MK_OBSOLETE_ARRAY2(type,item,saveas,dim,dim2,rowlen,minVer,maxVer) {0,128|saveas,0,minVer,maxVer}, {dim,dim2,rowlen,0,0}
+#define MK_OBSOLETE_ARRAY(type,item,saveas,dim,minVer,maxVer) {0,128|saveas,0,minVer,maxVer}, {(uint32)(dim),1,0,0,0}
+#define MK_OBSOLETE_ARRAY2(type,item,saveas,dim,dim2,rowlen,minVer,maxVer) {0,128|saveas,0,minVer,maxVer}, {(uint32)(dim),(uint32)(dim2),(uint16)(rowlen),0,0}
 
 // End marker
 #define MKEND() {0xFFFF,0xFF,0xFF,0,0}

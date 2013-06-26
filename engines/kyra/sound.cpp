@@ -37,7 +37,7 @@ namespace Kyra {
 
 Sound::Sound(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: _vm(vm), _mixer(mixer), _soundChannels(), _musicEnabled(1),
-	_sfxEnabled(true), _soundDataList(0) {
+	_sfxEnabled(true) {
 }
 
 Sound::~Sound() {
@@ -45,14 +45,6 @@ Sound::~Sound() {
 
 Sound::kType Sound::getSfxType() const {
 	return getMusicType();
-}
-
-void Sound::setSoundList(const AudioDataStruct *list) {
-	_soundDataList = list;
-}
-
-bool Sound::hasSoundFile(uint file) const {
-	return (fileListEntry(file) != 0);
 }
 
 bool Sound::isPlaying() const {
@@ -73,7 +65,7 @@ bool Sound::isVoicePresent(const char *file) const {
 	return false;
 }
 
-int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx) {
+int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) {
 	Audio::SeekableAudioStream *audioStream = getVoiceStream(file);
 
 	if (!audioStream) {
@@ -81,7 +73,7 @@ int32 Sound::voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volum
 	}
 
 	int playTime = audioStream->getLength().msecs();
-	playVoiceStream(audioStream, handle, volume, isSfx);
+	playVoiceStream(audioStream, handle, volume, priority, isSfx);
 	return playTime;
 }
 
@@ -109,10 +101,18 @@ Audio::SeekableAudioStream *Sound::getVoiceStream(const char *file) const {
 	}
 }
 
-bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle, uint8 volume, bool isSfx) {
+bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *handle, uint8 volume, uint8 priority, bool isSfx) {
 	int h = 0;
-	while (h < kNumChannelHandles && _mixer->isSoundHandleActive(_soundChannels[h]))
+	while (h < kNumChannelHandles && _mixer->isSoundHandleActive(_soundChannels[h].handle))
 		++h;
+
+	if (h >= kNumChannelHandles) {
+		h = 0;
+		while (h < kNumChannelHandles && _soundChannels[h].priority > priority)
+			++h;
+		if (h < kNumChannelHandles)
+			voiceStop(&_soundChannels[h].handle);
+	}
 
 	if (h >= kNumChannelHandles) {
 		// When we run out of handles we need to destroy the stream object,
@@ -123,9 +123,10 @@ bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *hand
 		return false;
 	}
 
-	_mixer->playStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h], stream, -1, volume);
+	_mixer->playStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h].handle, stream, -1, volume);
+	_soundChannels[h].priority = priority;
 	if (handle)
-		*handle = _soundChannels[h];
+		*handle = _soundChannels[h].handle;
 
 	return true;
 }
@@ -133,8 +134,8 @@ bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *hand
 void Sound::voiceStop(const Audio::SoundHandle *handle) {
 	if (!handle) {
 		for (int h = 0; h < kNumChannelHandles; ++h) {
-			if (_mixer->isSoundHandleActive(_soundChannels[h]))
-				_mixer->stopHandle(_soundChannels[h]);
+			if (_mixer->isSoundHandleActive(_soundChannels[h].handle))
+				_mixer->stopHandle(_soundChannels[h].handle);
 		}
 	} else {
 		_mixer->stopHandle(*handle);
@@ -144,7 +145,7 @@ void Sound::voiceStop(const Audio::SoundHandle *handle) {
 bool Sound::voiceIsPlaying(const Audio::SoundHandle *handle) const {
 	if (!handle) {
 		for (int h = 0; h < kNumChannelHandles; ++h) {
-			if (_mixer->isSoundHandleActive(_soundChannels[h]))
+			if (_mixer->isSoundHandleActive(_soundChannels[h].handle))
 				return true;
 		}
 	} else {
@@ -156,7 +157,7 @@ bool Sound::voiceIsPlaying(const Audio::SoundHandle *handle) const {
 
 bool Sound::allVoiceChannelsPlaying() const {
 	for (int i = 0; i < kNumChannelHandles; ++i)
-		if (!_mixer->isSoundHandleActive(_soundChannels[i]))
+		if (!_mixer->isSoundHandleActive(_soundChannels[i].handle))
 			return false;
 	return true;
 }
@@ -194,9 +195,14 @@ void MixedSoundDriver::updateVolumeSettings() {
 	_sfx->updateVolumeSettings();
 }
 
-void MixedSoundDriver::setSoundList(const AudioDataStruct *list) {
-	_music->setSoundList(list);
-	_sfx->setSoundList(list);
+void MixedSoundDriver::initAudioResourceInfo(int set, void *info) {
+	_music->initAudioResourceInfo(set, info);
+	_sfx->initAudioResourceInfo(set, info);
+}
+
+void MixedSoundDriver::selectAudioResourceSet(int set) {
+	_music->selectAudioResourceSet(set);
+	_sfx->selectAudioResourceSet(set);
 }
 
 bool MixedSoundDriver::hasSoundFile(uint file) const {
@@ -282,7 +288,7 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 	//	XXX
 	//}
 
-	if (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformMacintosh) {
+	if (_flags.platform == Common::kPlatformDOS || _flags.platform == Common::kPlatformMacintosh) {
 		assert(command*2+1 < _trackMapSize);
 		if (_curMusicTheme != _trackMap[command*2]) {
 			if (_trackMap[command*2] != -1 && _trackMap[command*2] != -2)

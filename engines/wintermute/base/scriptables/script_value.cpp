@@ -49,9 +49,9 @@ ScValue::ScValue(BaseGame *inGame) : BaseClass(inGame) {
 	_valBool = false;
 	_valInt = 0;
 	_valFloat = 0.0f;
-	_valNative = NULL;
-	_valString = NULL;
-	_valRef = NULL;
+	_valNative = nullptr;
+	_valString = nullptr;
+	_valRef = nullptr;
 	_persistent = false;
 	_isConstVar = false;
 }
@@ -64,24 +64,24 @@ ScValue::ScValue(BaseGame *inGame, bool val) : BaseClass(inGame) {
 
 	_valInt = 0;
 	_valFloat = 0.0f;
-	_valNative = NULL;
-	_valString = NULL;
-	_valRef = NULL;
+	_valNative = nullptr;
+	_valString = nullptr;
+	_valRef = nullptr;
 	_persistent = false;
 	_isConstVar = false;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue::ScValue(BaseGame *inGame, int val) : BaseClass(inGame) {
+ScValue::ScValue(BaseGame *inGame, int32 val) : BaseClass(inGame) {
 	_type = VAL_INT;
 	_valInt = val;
 
 	_valFloat = 0.0f;
 	_valBool = false;
-	_valNative = NULL;
-	_valString = NULL;
-	_valRef = NULL;
+	_valNative = nullptr;
+	_valString = nullptr;
+	_valRef = nullptr;
 	_persistent = false;
 	_isConstVar = false;
 }
@@ -94,9 +94,9 @@ ScValue::ScValue(BaseGame *inGame, double val) : BaseClass(inGame) {
 
 	_valInt = 0;
 	_valBool = false;
-	_valNative = NULL;
-	_valString = NULL;
-	_valRef = NULL;
+	_valNative = nullptr;
+	_valString = nullptr;
+	_valRef = nullptr;
 	_persistent = false;
 	_isConstVar = false;
 }
@@ -105,14 +105,14 @@ ScValue::ScValue(BaseGame *inGame, double val) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 ScValue::ScValue(BaseGame *inGame, const char *val) : BaseClass(inGame) {
 	_type = VAL_STRING;
-	_valString = NULL;
+	_valString = nullptr;
 	setStringVal(val);
 
 	_valBool = false;
 	_valInt = 0;
 	_valFloat = 0.0f;
-	_valNative = NULL;
-	_valRef = NULL;
+	_valNative = nullptr;
+	_valRef = nullptr;
 	_persistent = false;
 	_isConstVar = false;
 }
@@ -131,7 +131,7 @@ void ScValue::cleanup(bool ignoreNatives) {
 			_valNative->_refCount--;
 			if (_valNative->_refCount <= 0) {
 				delete _valNative;
-				_valNative = NULL;
+				_valNative = nullptr;
 			}
 		}
 	}
@@ -142,9 +142,9 @@ void ScValue::cleanup(bool ignoreNatives) {
 	_valBool = false;
 	_valInt = 0;
 	_valFloat = 0.0f;
-	_valNative = NULL;
-	_valString = NULL;
-	_valRef = NULL;
+	_valNative = nullptr;
+	_valString = nullptr;
+	_valRef = nullptr;
 	_persistent = false;
 	_isConstVar = false;
 }
@@ -176,13 +176,13 @@ ScValue *ScValue::getProp(const char *name) {
 		return _gameRef->_scValue;
 	}
 
-	ScValue *ret = NULL;
+	ScValue *ret = nullptr;
 
 	if (_type == VAL_NATIVE && _valNative) {
 		ret = _valNative->scGetProperty(name);
 	}
 
-	if (ret == NULL) {
+	if (ret == nullptr) {
 		_valIter = _valObject.find(name);
 		if (_valIter != _valObject.end()) {
 			ret = _valIter->_value;
@@ -200,7 +200,7 @@ bool ScValue::deleteProp(const char *name) {
 	_valIter = _valObject.find(name);
 	if (_valIter != _valObject.end()) {
 		delete _valIter->_value;
-		_valIter->_value = NULL;
+		_valIter->_value = nullptr;
 	}
 
 	return STATUS_OK;
@@ -220,7 +220,7 @@ bool ScValue::setProp(const char *name, ScValue *val, bool copyWhole, bool setAs
 	}
 
 	if (DID_FAIL(ret)) {
-		ScValue *newVal = NULL;
+		ScValue *newVal = nullptr;
 
 		_valIter = _valObject.find(name);
 		if (_valIter != _valObject.end()) {
@@ -242,9 +242,9 @@ bool ScValue::setProp(const char *name, ScValue *val, bool copyWhole, bool setAs
 
 		/*
 		_valIter = _valObject.find(Name);
-		if (_valIter != _valObject.end()){
+		if (_valIter != _valObject.end()) {
 		    delete _valIter->_value;
-		    _valIter->_value = NULL;
+		    _valIter->_value = nullptr;
 		}
 		ScValue* val = new ScValue(_gameRef);
 		val->Copy(Val, CopyWhole);
@@ -451,11 +451,11 @@ void ScValue::setString(const Common::String &val) {
 void ScValue::setStringVal(const char *val) {
 	if (_valString) {
 		delete[] _valString;
-		_valString = NULL;
+		_valString = nullptr;
 	}
 
-	if (val == NULL) {
-		_valString = NULL;
+	if (val == nullptr) {
+		_valString = nullptr;
 		return;
 	}
 
@@ -479,7 +479,7 @@ void ScValue::setNULL() {
 			delete _valNative;
 		}
 	}
-	_valNative = NULL;
+	_valNative = nullptr;
 	deleteProps();
 
 	_type = VAL_NULL;
@@ -493,7 +493,7 @@ void ScValue::setNative(BaseScriptable *val, bool persistent) {
 		return;
 	}
 
-	if (val == NULL) {
+	if (val == nullptr) {
 		setNULL();
 	} else {
 		if (_valNative && !_persistent) {
@@ -502,7 +502,7 @@ void ScValue::setNative(BaseScriptable *val, bool persistent) {
 				if (_valNative != val) {
 					delete _valNative;
 				}
-				_valNative = NULL;
+				_valNative = nullptr;
 			}
 		}
 
@@ -693,7 +693,7 @@ BaseScriptable *ScValue::getNative() {
 	if (_type == VAL_NATIVE) {
 		return _valNative;
 	} else {
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -714,7 +714,7 @@ void ScValue::copy(ScValue *orig, bool copyWhole) {
 			if (_valNative != orig->_valNative) {
 				delete _valNative;
 			}
-			_valNative = NULL;
+			_valNative = nullptr;
 		}
 	}
 
@@ -789,7 +789,7 @@ void ScValue::setValue(ScValue *val) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScValue::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 
 	persistMgr->transfer(TMEMBER(_persistent));
 	persistMgr->transfer(TMEMBER(_isConstVar));
@@ -797,9 +797,9 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_valBool));
 	persistMgr->transfer(TMEMBER(_valFloat));
 	persistMgr->transfer(TMEMBER(_valInt));
-	persistMgr->transfer(TMEMBER(_valNative));
+	persistMgr->transferPtr(TMEMBER_PTR(_valNative));
 
-	int size;
+	int32 size;
 	const char *str;
 	if (persistMgr->getIsSaving()) {
 		size = _valObject.size();
@@ -808,26 +808,26 @@ bool ScValue::persist(BasePersistenceManager *persistMgr) {
 		while (_valIter != _valObject.end()) {
 			str = _valIter->_key.c_str();
 			persistMgr->transfer("", &str);
-			persistMgr->transfer("", &_valIter->_value);
+			persistMgr->transferPtr("", &_valIter->_value);
 
 			_valIter++;
 		}
 	} else {
-		ScValue *val;
+		ScValue *val = nullptr;
 		persistMgr->transfer("", &size);
 		for (int i = 0; i < size; i++) {
 			persistMgr->transfer("", &str);
-			persistMgr->transfer("", &val);
+			persistMgr->transferPtr("", &val);
 
 			_valObject[str] = val;
 			delete[] str;
 		}
 	}
 
-	persistMgr->transfer(TMEMBER(_valRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_valRef));
 	persistMgr->transfer(TMEMBER(_valString));
 
-	/*
+	/* // TODO: Convert to Debug-statements.
 	FILE* f = fopen("c:\\val.log", "a+");
 	switch(_type)
 	{
@@ -951,7 +951,7 @@ int ScValue::compareStrict(ScValue *val1, ScValue *val2) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool ScValue::setProperty(const char *propName, int value) {
+bool ScValue::setProperty(const char *propName, int32 value) {
 	ScValue *val = new ScValue(_gameRef,  value);
 	bool ret =  DID_SUCCEED(setProp(propName, val));
 	delete val;

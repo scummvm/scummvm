@@ -135,8 +135,11 @@ void CMPFile::loadCMP(Common::SeekableReadStream &cmp) {
 	uint32 size = cmp.size();
 	byte  *data = new byte[size];
 
-	if (cmp.read(data, size) != size)
+	if (cmp.read(data, size) != size) {
+		delete[] data;
+
 		return;
+	}
 
 	_vm->_video->drawPackedSprite(data, _surface->getWidth(), _surface->getHeight(), 0, 0, 0, *_surface);
 

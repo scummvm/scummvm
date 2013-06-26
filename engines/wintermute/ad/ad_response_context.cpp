@@ -36,20 +36,20 @@ IMPLEMENT_PERSISTENT(AdResponseContext, false)
 //////////////////////////////////////////////////////////////////////////
 AdResponseContext::AdResponseContext(BaseGame *inGame) : BaseClass(inGame) {
 	_id = 0;
-	_context = NULL;
+	_context = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 AdResponseContext::~AdResponseContext() {
 	delete[] _context;
-	_context = NULL;
+	_context = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseContext::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transfer(TMEMBER(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
 	persistMgr->transfer(TMEMBER(_context));
 	persistMgr->transfer(TMEMBER(_id));
 
@@ -59,7 +59,7 @@ bool AdResponseContext::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 void AdResponseContext::setContext(const char *context) {
 	delete[] _context;
-	_context = NULL;
+	_context = nullptr;
 	if (context) {
 		_context = new char [strlen(context) + 1];
 		if (_context) {

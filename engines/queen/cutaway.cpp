@@ -515,7 +515,7 @@ const byte *Cutaway::getCutawayAnim(const byte *ptr, int header, CutawayAnim &an
 	anim.scale = (int16)READ_BE_INT16(ptr);
 	ptr += 2;
 
-	if ((_vm->resource()->isDemo() && _vm->resource()->getPlatform() == Common::kPlatformPC) ||
+	if ((_vm->resource()->isDemo() && _vm->resource()->getPlatform() == Common::kPlatformDOS) ||
 		(_vm->resource()->isInterview() && _vm->resource()->getPlatform() == Common::kPlatformAmiga)) {
 		anim.song = 0;
 	} else {

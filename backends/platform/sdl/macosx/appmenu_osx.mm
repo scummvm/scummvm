@@ -35,9 +35,8 @@
 - (void)setAppleMenu:(NSMenu *)menu;
 @end
 
-NSString *constructNSStringFromCString(const char* rawCString, NSStringEncoding stringEncoding) {
-        NSData *nsData = [NSData dataWithBytes:rawCString length:strlen(rawCString)];
-        return [[NSString alloc] initWithData:nsData encoding:stringEncoding];
+NSString *constructNSStringFromCString(const char *rawCString, CFStringEncoding stringEncoding) {
+	return (NSString *)CFStringCreateWithCString(NULL, rawCString, stringEncoding);
 }
 
 void replaceApplicationMenuItems() {
@@ -59,11 +58,11 @@ void replaceApplicationMenuItems() {
 
 	// Get current encoding
 #ifdef USE_TRANSLATION
-	nsString = constructNSStringFromCString((TransMan.getCurrentCharset()).c_str(), NSASCIIStringEncoding);
-	NSStringEncoding stringEncoding = CFStringConvertEncodingToNSStringEncoding(CFStringConvertIANACharSetNameToEncoding((CFStringRef)nsString));
+	nsString = constructNSStringFromCString(TransMan.getCurrentCharset().c_str(), NSASCIIStringEncoding);
+	CFStringEncoding stringEncoding = CFStringConvertIANACharSetNameToEncoding((CFStringRef)nsString);
 	[nsString release];
 #else
-	NSStringEncoding stringEncoding = NSASCIIStringEncoding;
+	CFStringEncoding stringEncoding = kCFStringEncodingASCII;
 #endif
 
 	// Add "About ScummVM" menu item

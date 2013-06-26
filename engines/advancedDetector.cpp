@@ -78,7 +78,7 @@ static Common::String generatePreferredTarget(const Common::String &id, const AD
 		res = res + "-cd";
 	}
 
-	if (desc->platform != Common::kPlatformPC && desc->platform != Common::kPlatformUnknown) {
+	if (desc->platform != Common::kPlatformDOS && desc->platform != Common::kPlatformUnknown) {
 		res = res + "-" + getPlatformAbbrev(desc->platform);
 	}
 

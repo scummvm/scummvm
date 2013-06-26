@@ -40,10 +40,10 @@ public:
 	virtual bool draw(SDL_Surface *surface);
 	virtual ~GUIElement();
 	void move(int x, int y);
-	int width();
-	int height();
-	int x();
-	int y();
+	int getWidth();
+	int getHeight();
+	int getX();
+	int getY();
 	virtual bool action(int x, int y, bool pushed) = 0;
 	bool visible();
 	bool drawn();

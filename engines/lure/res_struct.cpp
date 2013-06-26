@@ -1262,7 +1262,7 @@ bool ValueTableData::isKnownField(uint16 fieldIndex) {
 }
 
 uint16 ValueTableData::getField(uint16 fieldIndex) {
-	if (fieldIndex > NUM_VALUE_FIELDS)
+	if (fieldIndex >= NUM_VALUE_FIELDS)
 		error("Invalid field index specified %d", fieldIndex);
 //	if (!isKnownField(fieldIndex))
 //		warning("Unknown field index %d in GET_FIELD opcode", fieldIndex);
@@ -1274,7 +1274,7 @@ uint16 ValueTableData::getField(FieldName fieldName) {
 }
 
 void ValueTableData::setField(uint16 fieldIndex, uint16 value) {
-	if (fieldIndex > NUM_VALUE_FIELDS)
+	if (fieldIndex >= NUM_VALUE_FIELDS)
 		error("Invalid field index specified %d", fieldIndex);
 	_fieldList[fieldIndex] = value;
 //	if (!isKnownField(fieldIndex))

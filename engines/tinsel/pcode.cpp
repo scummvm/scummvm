@@ -420,7 +420,7 @@ void RegisterGlobals(int num) {
 		g_numGlobals = num;
 
 		g_hMasterScript = !TinselV2 ? 0 :
-			READ_LE_UINT32(FindChunk(MASTER_SCNHANDLE, CHUNK_MASTER_SCRIPT));
+			READ_32(FindChunk(MASTER_SCNHANDLE, CHUNK_MASTER_SCRIPT));
 
 		// Allocate RAM for pGlobals and make sure it's allocated
 		g_pGlobals = (int32 *)calloc(g_numGlobals, sizeof(int32));

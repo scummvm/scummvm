@@ -63,7 +63,7 @@ AdLayer::~AdLayer() {
 //////////////////////////////////////////////////////////////////////////
 bool AdLayer::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdLayer::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -174,8 +174,8 @@ bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 				delete region;
 				delete node;
-				region = NULL;
-				node = NULL;
+				region = nullptr;
+				node = nullptr;
 			} else {
 				node->setRegion(region);
 				_nodes.add(node);
@@ -193,8 +193,8 @@ bool AdLayer::loadBuffer(byte *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
 				delete node;
-				entity = NULL;
-				node = NULL;
+				entity = nullptr;
+				node = nullptr;
 			} else {
 				node->setEntity(entity);
 				_nodes.add(node);
@@ -339,7 +339,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		AdSceneNode *toDelete = NULL;
+		AdSceneNode *toDelete = nullptr;
 		if (val->isNative()) {
 			BaseScriptable *temp = val->getNative();
 			for (uint32 i = 0; i < _nodes.size(); i++) {
@@ -354,7 +354,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 				toDelete = _nodes[index];
 			}
 		}
-		if (toDelete == NULL) {
+		if (toDelete == nullptr) {
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
@@ -362,7 +362,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		for (uint32 i = 0; i < _nodes.size(); i++) {
 			if (_nodes[i] == toDelete) {
 				delete _nodes[i];
-				_nodes[i] = NULL;
+				_nodes[i] = nullptr;
 				_nodes.remove_at(i);
 				break;
 			}

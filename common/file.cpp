@@ -202,4 +202,4 @@ bool DumpFile::flush() {
 	return _handle->flush();
 }
 
-}	// End of namespace Common
+} // End of namespace Common

@@ -142,7 +142,6 @@ int DarkMoonEngine::mainMenu() {
 
 		case 3:
 			// transfer party
-			//seq_playFinale();
 			menuChoice = -3;
 			break;
 
@@ -867,7 +866,7 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 			int16 nextY = i ? items[i].y + items[i].size + (items[i].size >> 2) : dm->h;
 
 			const char *posOld = pos;
-			pos = strchr(pos, 0x0d);
+			pos = strchr(pos, 0x0D);
 			if (!pos)
 				pos = strchr(posOld, 0x00);
 
@@ -893,7 +892,7 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 				items[i + 1].dataType = 0;
 
 				int l = pos - posOld;
-				if (items[i + 1].crlf != 0x0d)
+				if (items[i + 1].crlf != 0x0D)
 					l++;
 
 				delete[] items[i + 1].str;
@@ -1071,7 +1070,7 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 
 	uint32 end = 0;
 
-	for (const DarkMoonAnimCommand *s = _config->animData[index]; s->command != 0xff && !_vm->skipFlag() && !_vm->shouldQuit(); s++) {
+	for (const DarkMoonAnimCommand *s = _config->animData[index]; s->command != 0xFF && !_vm->skipFlag() && !_vm->shouldQuit(); s++) {
 		int palIndex = _config->mode == kFinale ? (s->pal + 1) : s->pal;
 		int x = s->x1;
 		int y = s->y1;
@@ -1187,7 +1186,7 @@ void DarkmoonSequenceHelper::animCommand(int index, int del) {
 
 		case 6:
 			// play sound effect
-			if (s->obj != 0xff)
+			if (s->obj != 0xFF)
 				_vm->snd_playSoundEffect(s->obj);
 			break;
 

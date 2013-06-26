@@ -400,7 +400,7 @@ static void removeLeadingAndTrailingSpaces(char *dst, size_t dstSize, const char
 	while (src[lastNonSpaceIndex] == ' ')
 		--lastNonSpaceIndex;
 
-	size_t newLen = lastNonSpaceIndex - firstNonSpaceIndex + 1;
+	uint newLen = lastNonSpaceIndex - firstNonSpaceIndex + 1;
 	assert(newLen < dstSize);
 	for (size_t i = 0; i < newLen; ++i) {
 		dst[i] = src[firstNonSpaceIndex + i];
@@ -559,7 +559,7 @@ void Journal::updateTextField(uint16 ascii, int keycode) {
 		}
 		break;
 	default:
-		if (isprint((char)ascii) &&
+		if (Common::isPrint((char)ascii) &&
 			_textField.textCharsCount < (sizeof(_textField.text) - 1) &&
 			_vm->display()->textWidth(_textField.text) < _textField.w) {
 			_textField.text[_textField.textCharsCount] = (char)ascii;

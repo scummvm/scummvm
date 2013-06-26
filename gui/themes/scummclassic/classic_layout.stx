@@ -107,6 +107,7 @@
 		<layout type = 'vertical' center = 'true' padding = '16, 16, 8, 8'>
 			<widget name = 'Version'
 					height = 'Globals.Line.Height'
+					textalign = 'center'
 			/>
 			<layout type = 'horizontal' spacing = '5' padding = '10, 0, 0, 0'>
 				<widget name = 'SearchDesc'
@@ -166,17 +167,22 @@
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'List'/>
-			<layout type = 'horizontal' padding = '0, 0, 16, 0'>
-				<widget name = 'Up'
-						type = 'Button'
+			<layout type = 'vertical' padding = '0, 0, 16, 0'>
+				<widget name = 'Hidden'
+						type = 'Checkbox'
 				/>
-				<space/>
-				<widget name = 'Cancel'
-						type = 'Button'
-				/>
-				<widget name = 'Choose'
-						type = 'Button'
-				/>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+					<widget name = 'Up'
+							type = 'Button'
+					/>
+					<space/>
+					<widget name = 'Cancel'
+							type = 'Button'
+					/>
+					<widget name = 'Choose'
+							type = 'Button'
+					/>
+				</layout>
 			</layout>
 		</layout>
 	</dialog>
@@ -359,6 +365,10 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+			<widget name = 'mcFluidSynthSettings'
+					width = '200'
+					height = 'Globals.Button.Height'
+			/>
 		</layout>
 	</dialog>
 
@@ -789,6 +799,157 @@
 				/>
 				<widget name = 'Ok'
 						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'FluidSynthSettings' overlays = 'GlobalOptions' shading = 'dim'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'TabWidget'/>
+			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
+				<space/>
+				<widget name = 'ResetSettings'
+					type = 'Button'
+				/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Ok'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'FluidSynthSettings_Chorus' overlays = 'Dialog.FluidSynthSettings.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'EnableTabCheckbox'
+				type = 'Checkbox'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'VoiceCountText'
+					type = 'OptionsLabel'
+				/>
+				<widget name = 'VoiceCountSlider'
+					type = 'Slider'
+				/>
+				<widget name = 'VoiceCountLabel'
+					width = '32'
+					height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'LevelText'
+					type = 'OptionsLabel'
+				/>
+				<widget name = 'LevelSlider'
+					type = 'Slider'
+				/>
+				<widget name = 'LevelLabel'
+					width = '32'
+					height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'SpeedText'
+					type = 'OptionsLabel'
+				/>
+				<widget name = 'SpeedSlider'
+					type = 'Slider'
+				/>
+				<widget name = 'SpeedLabel'
+					width = '32'
+					height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'DepthText'
+					type = 'OptionsLabel'
+				/>
+				<widget name = 'DepthSlider'
+					type = 'Slider'
+				/>
+				<widget name = 'DepthLabel'
+					width = '32'
+					height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'WaveFormTypeText'
+					type = 'OptionsLabel'
+				/>
+				<widget name = 'WaveFormType'
+					type = 'PopUp'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'FluidSynthSettings_Reverb' overlays = 'Dialog.FluidSynthSettings.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'EnableTabCheckbox'
+				type = 'Checkbox'
+			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'RoomSizeText'
+					type = 'OptionsLabel'
+				/>
+				<widget name = 'RoomSizeSlider'
+					type = 'Slider'
+				/>
+				<widget name = 'RoomSizeLabel'
+					width = '32'
+					height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'DampingText'
+					type = 'OptionsLabel'
+				/>
+				<widget name = 'DampingSlider'
+					type = 'Slider'
+				/>
+				<widget name = 'DampingLabel'
+					width = '32'
+					height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'WidthText'
+					type = 'OptionsLabel'
+				/>
+				<widget name = 'WidthSlider'
+					type = 'Slider'
+				/>
+				<widget name = 'WidthLabel'
+					width = '32'
+					height = 'Globals.Line.Height'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'LevelText'
+					type = 'OptionsLabel'
+				/>
+				<widget name = 'LevelSlider'
+					type = 'Slider'
+				/>
+				<widget name = 'LevelLabel'
+					width = '32'
+					height = 'Globals.Line.Height'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'FluidSynthSettings_Misc' overlays = 'Dialog.FluidSynthSettings.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'InterpolationText'
+					type = 'OptionsLabel'
+				/>
+				<widget name = 'Interpolation'
+					type = 'PopUp'
 				/>
 			</layout>
 		</layout>

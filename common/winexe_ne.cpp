@@ -187,8 +187,8 @@ uint32 NEResources::getResourceTableOffset() {
 static const char *s_resTypeNames[] = {
 	"", "cursor", "bitmap", "icon", "menu", "dialog", "string",
 	"font_dir", "font", "accelerator", "rc_data", "msg_table",
-	"group_cursor", "group_icon", "version", "dlg_include",
-	"plug_play", "vxd", "ani_cursor", "ani_icon", "html",
+	"group_cursor", "group_icon", "", "", "version", "dlg_include",
+	"", "plug_play", "vxd", "ani_cursor", "ani_icon", "html",
 	"manifest"
 };
 
@@ -200,9 +200,16 @@ bool NEResources::readResourceTable(uint32 offset) {
 		return false;
 
 	uint32 align = 1 << _exe->readUint16LE();
-
 	uint16 typeID = _exe->readUint16LE();
+
 	while (typeID != 0) {
+		// High bit of the type means integer type
+		WinResourceID type;
+		if (typeID & 0x8000)
+			type = typeID & 0x7FFF;
+		else
+			type = getResourceString(*_exe, offset + typeID);
+
 		uint16 resCount = _exe->readUint16LE();
 
 		_exe->skip(4); // reserved
@@ -218,17 +225,18 @@ bool NEResources::readResourceTable(uint32 offset) {
 			res.handle = _exe->readUint16LE();
 			res.usage  = _exe->readUint16LE();
 
-			res.type = typeID;
+			res.type = type;
 
-			if ((id & 0x8000) == 0)
-				res.id = getResourceString(*_exe, offset + id);
-			else
+			// High bit means integer type
+			if (id & 0x8000)
 				res.id = id & 0x7FFF;
+			else
+				res.id = getResourceString(*_exe, offset + id);				
 
-			if (typeID & 0x8000 && ((typeID & 0x7FFF) < ARRAYSIZE(s_resTypeNames)))
+			if (typeID & 0x8000 && ((typeID & 0x7FFF) < ARRAYSIZE(s_resTypeNames)) && s_resTypeNames[typeID & 0x7FFF][0] != 0)
 				debug(2, "Found resource %s %s", s_resTypeNames[typeID & 0x7FFF], res.id.toString().c_str());
 			else
-				debug(2, "Found resource %04x %s", typeID, res.id.toString().c_str());
+				debug(2, "Found resource %s %s", type.toString().c_str(), res.id.toString().c_str());
 
 			_resources.push_back(res);
 		}
@@ -257,7 +265,7 @@ String NEResources::getResourceString(SeekableReadStream &exe, uint32 offset) {
 	return string;
 }
 
-const NEResources::Resource *NEResources::findResource(uint16 type, WinResourceID id) const {
+const NEResources::Resource *NEResources::findResource(const WinResourceID &type, const WinResourceID &id) const {
 	for (List<Resource>::const_iterator it = _resources.begin(); it != _resources.end(); ++it)
 		if (it->type == type && it->id == id)
 			return &*it;
@@ -265,7 +273,7 @@ const NEResources::Resource *NEResources::findResource(uint16 type, WinResourceI
 	return 0;
 }
 
-SeekableReadStream *NEResources::getResource(uint16 type, WinResourceID id) {
+SeekableReadStream *NEResources::getResource(const WinResourceID &type, const WinResourceID &id) {
 	const Resource *res = findResource(type, id);
 
 	if (!res)
@@ -275,7 +283,7 @@ SeekableReadStream *NEResources::getResource(uint16 type, WinResourceID id) {
 	return _exe->readStream(res->size);
 }
 
-const Array<WinResourceID> NEResources::getIDList(uint16 type) const {
+const Array<WinResourceID> NEResources::getIDList(const WinResourceID &type) const {
 	Array<WinResourceID> idArray;
 
 	for (List<Resource>::const_iterator it = _resources.begin(); it != _resources.end(); ++it)

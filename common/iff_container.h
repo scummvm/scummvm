@@ -77,22 +77,22 @@ page 376) */
 #define ID_copy     MKTAG('(','c',')',' ')
 /* EA IFF 85 Generic Copyright text chunk */
 
-/* ILBM chunks */
+/* IFF chunks */
 
 #define ID_BMHD     MKTAG('B','M','H','D')
-/* ILBM BitmapHeader */
+/* IFF BitmapHeader */
 #define ID_CMAP     MKTAG('C','M','A','P')
-/* ILBM 8bit RGB colormap */
+/* IFF 8bit RGB colormap */
 #define ID_GRAB     MKTAG('G','R','A','B')
-/* ILBM "hotspot" coordiantes */
+/* IFF "hotspot" coordiantes */
 #define ID_DEST     MKTAG('D','E','S','T')
-/* ILBM destination image info */
+/* IFF destination image info */
 #define ID_SPRT     MKTAG('S','P','R','T')
-/* ILBM sprite identifier */
+/* IFF sprite identifier */
 #define ID_CAMG     MKTAG('C','A','M','G')
 /* Amiga viewportmodes */
 #define ID_BODY     MKTAG('B','O','D','Y')
-/* ILBM image data */
+/* IFF image data */
 #define ID_CRNG     MKTAG('C','R','N','G')
 /* color cycling */
 #define ID_CCRT     MKTAG('C','C','R','T')
@@ -114,7 +114,7 @@ page 376) */
 #define ID_PCHG     MKTAG('P','C','H','G')
 /* Line by line palette control information (Sebastiano Vigna) */
 #define ID_PRVW     MKTAG('P','R','V','W')
-/* A mini duplicate ILBM used for preview (Gary Bonham) */
+/* A mini duplicate IFF used for preview (Gary Bonham) */
 #define ID_XBMI     MKTAG('X','B','M','I')
 /* eXtended BitMap Information (Soft-Logik) */
 #define ID_CTBL     MKTAG('C','T','B','L')
@@ -238,6 +238,31 @@ public:
 	void parse(IFFCallback &callback);
 };
 
+
+/**
+ * Decode a given PackBits encoded stream.
+ *
+ * PackBits is an RLE compression algorithm introduced by Apple. It is also
+ * used to encode ILBM and PBM subtypes of IFF files, and some flavors of
+ * TIFF.
+ *
+ * As there is no compression across row boundaries in the above formats,
+ * read() will extract a *new* line on each call, discarding any alignment
+ * or padding.
+ */
+class PackBitsReadStream : public Common::ReadStream {
+
+protected:
+	Common::ReadStream *_input;
+
+public:
+	PackBitsReadStream(Common::ReadStream &input);
+	~PackBitsReadStream();
+
+	virtual bool eos() const;
+
+	uint32 read(void *dataPtr, uint32 dataSize);
+};
 
 } // namespace Common
 

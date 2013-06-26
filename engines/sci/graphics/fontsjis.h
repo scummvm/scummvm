@@ -50,9 +50,6 @@ private:
 	GuiResourceId _resourceId;
 
 	Graphics::FontSJIS *_commonFont;
-
-	byte _lastForDoubleByteWidth;
-	byte _lastForDoubleByteDraw;
 };
 
 } // End of namespace Sci

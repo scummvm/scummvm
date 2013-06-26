@@ -26,111 +26,14 @@
 #include "common/stream.h"
 #include "common/util.h"
 #include "common/frac.h"
+#include "common/textconsole.h"
 
 #include "graphics/primitives.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+#include "graphics/decoders/iff.h"
 
 namespace Gob {
-
-LBMLoader::LBMLoader(Common::SeekableReadStream &stream) : _parser(&stream),
-	_hasHeader(false), _palette(0), _image(0) {
-
-}
-
-bool LBMLoader::loadHeader(Graphics::BMHD &header) {
-	if (!readHeader())
-		return false;
-
-	header = _decoder._header;
-	return true;
-}
-
-bool LBMLoader::loadPalette(byte *palette) {
-	assert(!_palette);
-	assert(palette);
-
-	_palette = palette;
-
-	Common::Functor1Mem<Common::IFFChunk&, bool, LBMLoader> c(this, &LBMLoader::callbackPalette);
-	_parser.parse(c);
-
-	if (!_palette)
-		return false;
-
-	_palette = 0;
-	return true;
-}
-
-bool LBMLoader::loadImage(byte *image) {
-	assert(!_image);
-	assert(image);
-
-	if (!readHeader())
-		return false;
-
-	_image = image;
-
-	Common::Functor1Mem<Common::IFFChunk&, bool, LBMLoader> c(this, &LBMLoader::callbackImage);
-	_parser.parse(c);
-
-	if (!_image)
-		return false;
-
-	_image = 0;
-	return true;
-}
-
-bool LBMLoader::callbackHeader(Common::IFFChunk &chunk) {
-	if (chunk._type == ID_BMHD) {
-		if (chunk._size == sizeof(Graphics::BMHD)) {
-			_decoder.loadHeader(chunk._stream);
-			_hasHeader = true;
-		}
-
-		return true; // Stop the IFF parser
-	}
-
-	return false;
-}
-
-bool LBMLoader::callbackPalette(Common::IFFChunk &chunk) {
-	assert(_palette);
-
-	if (chunk._type == ID_CMAP) {
-		if (chunk._size == 768) {
-			if (chunk._stream->read(_palette, chunk._size) != chunk._size)
-				_palette = 0;
-		} else
-			_palette = 0;
-
-		return true; // Stop the IFF parser
-	}
-
-	return false;
-}
-
-bool LBMLoader::callbackImage(Common::IFFChunk &chunk) {
-	assert(_image);
-
-	if (chunk._type == ID_BODY) {
-		_decoder.loadBitmap(Graphics::ILBMDecoder::ILBM_UNPACK_PLANES, _image, chunk._stream);
-		return true;
-	}
-
-	return false;
-}
-
-bool LBMLoader::readHeader() {
-	if (_hasHeader)
-		return true;
-
-	Common::Functor1Mem<Common::IFFChunk&, bool, LBMLoader> c(this, &LBMLoader::callbackHeader);
-	_parser.parse(c);
-
-	return _hasHeader;
-}
-
 
 static void plotPixel(int x, int y, int color, void *data) {
 	Surface *dest = (Surface *)data;
@@ -841,8 +744,8 @@ bool Surface::loadImage(Common::SeekableReadStream &stream, ImageType type) {
 	switch (type) {
 	case kImageTypeTGA:
 		return loadTGA(stream);
-	case kImageTypeLBM:
-		return loadLBM(stream);
+	case kImageTypeIFF:
+		return loadIFF(stream);
 	case kImageTypeBRC:
 		return loadBRC(stream);
 	case kImageTypeBMP:
@@ -871,7 +774,7 @@ ImageType Surface::identifyImage(Common::SeekableReadStream &stream) {
 	stream.seek(startPos);
 
 	if (!strncmp(buffer    , "FORM", 4))
-		return kImageTypeLBM;
+		return kImageTypeIFF;
 	if (!strncmp(buffer + 6, "JFIF", 4))
 		return kImageTypeJPEG;
 	if (!strncmp(buffer    , "BRC" , 3))
@@ -904,20 +807,17 @@ bool Surface::loadTGA(Common::SeekableReadStream &stream) {
 	return false;
 }
 
-bool Surface::loadLBM(Common::SeekableReadStream &stream) {
+bool Surface::loadIFF(Common::SeekableReadStream &stream) {
+	Graphics::IFFDecoder decoder;
+	decoder.loadStream(stream);
 
-	LBMLoader loader(stream);
-
-	Graphics::BMHD header;
-	loader.loadHeader(header);
-
-	if (header.depth != 8)
-		// Only 8bpp LBMs supported for now
+	if (!decoder.getSurface())
 		return false;
 
-	resize(header.width, header.height);
+	resize(decoder.getSurface()->w, decoder.getSurface()->h);
+	memcpy(_vidMem, decoder.getSurface()->pixels, decoder.getSurface()->w * decoder.getSurface()->h);
 
-	return loader.loadImage(_vidMem);
+	return true;
 }
 
 bool Surface::loadBRC(Common::SeekableReadStream &stream) {

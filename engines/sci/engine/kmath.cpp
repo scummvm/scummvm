@@ -77,18 +77,7 @@ reg_t kSqrt(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, (int16) sqrt((float) ABS(argv[0].toSint16())));
 }
 
-/**
- * Returns the angle (in degrees) between the two points determined by (x1, y1)
- * and (x2, y2). The angle ranges from 0 to 359 degrees.
- * What this function does is pretty simple but apparently the original is not
- * accurate.
- */
-uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
-	// SCI1 games (QFG2 and newer) use a simple atan implementation. SCI0 games
-	// use a somewhat less accurate calculation (below).
-	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
-		return (int16)(360 - atan2((double)(x1 - x2), (double)(y1 - y2)) * 57.2958) % 360;
-
+uint16 kGetAngle_SCI0(int16 x1, int16 y1, int16 x2, int16 y2) {
 	int16 xRel = x2 - x1;
 	int16 yRel = y1 - y2; // y-axis is mirrored.
 	int16 angle;
@@ -117,6 +106,75 @@ uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
 	angle -= (angle + 9) / 10;
 	return angle;
 }
+
+// atan2 for first octant, x >= y >= 0. Returns [0,45] (inclusive)
+int kGetAngle_SCI1_atan2_base(int y, int x) {
+	if (x == 0)
+		return 0;
+
+	// fixed point tan(a)
+	int tan_fp = 10000 * y / x;
+
+	if ( tan_fp >= 1000 ) {
+		// For tan(a) >= 0.1, interpolate between multiples of 5 degrees
+
+		// 10000 * tan([5, 10, 15, 20, 25, 30, 35, 40, 45])
+		const int tan_table[] = { 875, 1763, 2679, 3640, 4663, 5774,
+		                          7002, 8391, 10000 };
+
+		// Look up tan(a) in our table
+		int i = 1;
+		while (tan_fp > tan_table[i]) ++i;
+
+		// The angle a is between 5*i and 5*(i+1). We linearly interpolate.
+		int dist = tan_table[i] - tan_table[i-1];
+		int interp = (5 * (tan_fp - tan_table[i-1]) + dist/2) / dist;
+		return 5*i + interp;
+	} else {
+		// for tan(a) < 0.1, tan(a) is approximately linear in a.
+		// tan'(0) = 1, so in degrees the slope of atan is 180/pi = 57.29...
+		return (57 * y + x/2) / x;
+	}
+}
+
+int kGetAngle_SCI1_atan2(int y, int x) {
+	if (y < 0) {
+		int a = kGetAngle_SCI1_atan2(-y, -x);
+		if (a == 180)
+			return 0;
+		else
+			return 180 + a;
+	}
+	if (x < 0)
+		return 90 + kGetAngle_SCI1_atan2(-x, y);
+	if (y > x)
+		return 90 - kGetAngle_SCI1_atan2_base(x, y);
+	else
+		return kGetAngle_SCI1_atan2_base(y, x);
+
+}
+
+uint16 kGetAngle_SCI1(int16 x1, int16 y1, int16 x2, int16 y2) {
+	// We flip things around to get into the standard atan2 coordinate system
+	return kGetAngle_SCI1_atan2(x2 - x1, y1 - y2);
+
+}
+
+/**
+ * Returns the angle (in degrees) between the two points determined by (x1, y1)
+ * and (x2, y2). The angle ranges from 0 to 359 degrees.
+ * What this function does is pretty simple but apparently the original is not
+ * accurate.
+ */
+
+uint16 kGetAngleWorker(int16 x1, int16 y1, int16 x2, int16 y2) {
+	if (getSciVersion() >= SCI_VERSION_1_EGA_ONLY)
+		return kGetAngle_SCI1(x1, y1, x2, y2);
+	else
+		return kGetAngle_SCI0(x1, y1, x2, y2);
+}
+
+
 
 reg_t kGetAngle(EngineState *s, int argc, reg_t *argv) {
 	// Based on behavior observed with a test program created with

@@ -39,10 +39,10 @@ public:
 	DECLARE_PERSISTENT(BaseFontBitmap, BaseFont)
 	bool loadBuffer(byte *Buffer);
 	bool loadFile(const Common::String &filename);
-	virtual int getTextWidth(byte *text, int maxLength = -1);
-	virtual int getTextHeight(byte *text, int width);
-	virtual void drawText(const byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1);
-	virtual int getLetterHeight();
+	virtual int getTextWidth(const byte *text, int maxLength = -1) override;
+	virtual int getTextHeight(const byte *text, int width) override;
+	virtual void drawText(const byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1) override;
+	virtual int getLetterHeight() override;
 
 	BaseFontBitmap(BaseGame *inGame);
 	virtual ~BaseFontBitmap();
@@ -50,11 +50,11 @@ public:
 private:
 	bool getWidths();
 	BaseSprite *_sprite;
-	int _widthsFrame;
+	int32 _widthsFrame;
 	bool _fontextFix;
-	int _numColumns;
-	int _tileHeight;
-	int _tileWidth;
+	int32 _numColumns;
+	int32 _tileHeight;
+	int32 _tileWidth;
 	byte _widths[NUM_CHARACTERS];
 	BaseSubFrame *_subframe;
 	bool _wholeCell;

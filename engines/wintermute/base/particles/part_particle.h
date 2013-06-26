@@ -55,8 +55,8 @@ public:
 	float _rotation;
 	float _angVelocity;
 
-	int _alpha1;
-	int _alpha2;
+	int32 _alpha1;
+	int32 _alpha2;
 
 	Rect32 _border;
 	Vector2 _pos;
@@ -65,7 +65,7 @@ public:
 	float _scale;
 	BaseSprite *_sprite;
 	uint32 _creationTime;
-	int _lifeTime;
+	int32 _lifeTime;
 	bool _isDead;
 	TParticleState _state;
 
@@ -80,9 +80,9 @@ public:
 	bool persist(BasePersistenceManager *PersistMgr);
 private:
 	uint32 _fadeStart;
-	int _fadeTime;
-	int _currentAlpha;
-	int _fadeStartAlpha;
+	int32 _fadeTime;
+	int32 _currentAlpha;
+	int32 _fadeStartAlpha;
 };
 
 } // end of namespace Wintermute

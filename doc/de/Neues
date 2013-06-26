@@ -2,6 +2,99 @@ Umfangreichere Änderungsaufzeichnungen des neusten experimentellen Codes finden
 Sie auf Englisch unter:
         https://github.com/scummvm/scummvm/commits/
 
+1.6.0 (31.05.2013)
+ Neue Spiele:
+   - Unterstützung für 3 Skulls of the Toltecs hinzugefügt.
+   - Unterstützung für Eye of the Beholder hinzugefügt.
+   - Unterstützung für Eye of the Beholder II: The Legend of Darkmoon
+     hinzugefügt.
+   - Unterstützung für Hopkins FBI hinzugefügt.
+   - Unterstützung für Tony Tough and the Night of Roasted Moths hinzugefügt.
+   - Unterstützung für The Journeyman Project: Pegasus Prime hinzugefügt.
+   - Unterstützung für Macintosh-Version von Discworld 1 hinzugefügt.
+
+ Allgemein:
+   - Eine neue Spielstandauswahl hinzugefügt, die auf einem Raster kleiner
+     Vorschaubilder basiert. Diese wird nur bei einer Auflösung von mindestens
+     640x400 unterstützt. Die alte Spielstandauswahl ist weiterhin verfügbar und
+     wird bei Spielen verwendet, die keine kleinen Vorschaubilder unterstützen.
+     Es ist zudem möglich, die alte Spielstandauswahl als Voreinstellung
+     festzulegen.
+   - Untersystem für Videodekodierung umgeschrieben.
+   - Galicische Übersetzung hinzugefügt.
+   - Finnische Übersetzung hinzugefügt.
+   - Weißrussische Übersetzung hinzugefügt.
+   - Die Verwendung des Mausrades auf einem Schieberegler ändert nun den Wert im
+     kleinstmöglichen Umfang. Dies ist berechenbarer als das alte Verhalten,
+     nach welchem der Wert um „ein Pixel“ geändert wurde, wodurch er sich
+     manchmal überhaupt nicht geändert hat.
+   - MT-32-Emulationscode auf den neusten Stand des Munt-Projekt-Schnappschusses
+     gebracht.
+   - Fenster für FluidSynth-Einstellungen hinzugefügt, hauptsächlich für Hall-
+     und Chor-Einstellungen.
+   - Abstürze einiger Smacker-Videos beseitigt.
+
+ Cine:
+   - Audio-Unterstützung für Amiga und AtariST-Versionen von Future Wars
+     verbessert. Musik wird nun langsam ausgeblendet anstatt abrupt zu stoppen.
+     Die Balance-Regelung der Sound-Effekte funktioniert nun richtig, wenn sie
+     vom Spiel verlangt wird.
+
+ CGE:
+   - Soltys enthält ein Puzzle, bei welchem man die ALT-Taste drücken muss,
+     während man auf ein Objekt klickt. Dieses Puzzle wurde auf Geräten
+     deaktiviert, auf denen diese Taste nicht verfügbar ist.
+
+ Drascula:
+   - Einige Probleme der Benutzeroberfläche im Zusammenhang mit dem Bildschirm
+     zum Speichern und Laden gelöst.
+   - Erweiterte Spielstandfunktionsweise hinzugefügt, einschließlich Zeitstempel
+     und kleiner Vorschaubilder für Spielstände und die Möglichkeit, Spielstände
+     aus der Spieleliste heraus zu laden und zu löschen. Es ist nun möglich, die
+     Menüs von ScummVM zum Speichern und Laden zu verwenden.
+   - Die Taste F7 (vorher ohne Funktion) zeigt nun immer das Lade-Menü von
+     ScummVM. Die Taste F10 zeigt entweder das originale Lade-Menü oder das
+     Lade-Menü von ScummVM, abhängig davon, ob der Benutzer eingestellt hat,
+     dass die Menüs von ScummVM zum Speichern und Laden verwendet werden sollen.
+
+ Dreamweb:
+   - Da das Spiel nun Freeware ist, gibt es einen kleinen zusätzlichen
+     Hilfetext, der die verfügbaren Befehle bei Terminals im Spiel aufzählt,
+     wenn der Spiele den Befehl „help“ eingibt. Zuvor mussten Spieler die
+     verfügbaren Befehle im Handbuch nachschlagen. Da dieser Bezug auf das
+     Handbuch eine Art Kopierschutz ist, kann dieser zusätzliche Text durch den
+     Kopierschutz-Parameter bei den Kommandozeilenoptionen von ScummVM
+     deaktiviert und aktiviert werden.
+
+ Groovie:
+   - Optionen für Filmgeschwindigkeit vereinfacht und spezifische Option für
+     The 7th Guest hinzugefügt. Filmoptionen sind nun „normal“ und
+     „fast“ (schnell), wobei letztere die Filmgeschwindigkeit in T7G erhöht, um
+     derjenigen der iOS-Version zu entsprechen. Der Spieleintrag muss
+     möglicherweise erneut zur Spieleliste hinzugefügt werden, damit die neue
+     Einstellung sichtbar wird.
+
+ SAGA:
+   - Musikunterstützung für Macintosh-Version von
+     I Have No Mouth, and I Must Scream hinzugefügt.
+
+ SCUMM:
+   - Audio-Treiber für Macintosh-Version von Monkey Island 2 integriert. Nun
+     wird die auf Samples basierende Audio-Ausgabe richtig unterstützt. Dieselbe
+     Ausgabe wird für die m68k-Macintosh-Version von Indiana Jones and the
+     Fate of Atlantis verwendet.
+   - Verbesserte Musikunterstützung für Macintosh-Version von Monkey Island 1.
+     Nun werden die originalen Instrumente verwendet, anstatt sie näherungsweise
+     mit Instrumenten von General MIDI zu simulieren, und sollte viel ähnlicher
+     zum Original klingen.
+   - Sound- und Musikunterstützung für Macintosh-Version von Loom hinzugefügt.
+   - Handhabung von Doppelklicks in Macintosh-Version von Loom hinzugefügt.
+   - Größere Fehlerbeseitigungen in INSANE (bei den Motorradkämpfen in Vollgas).
+
+ TOUCHE:
+   - Unterstützung hinzugefügt für verbesserte Musik von James Woodcock.
+     http://www.jameswoodcock.co.uk/category/scummvm-music-enhancement-project/
+
 1.5.0 (27.07.2012)
  Neue Spiele:
    - Unterstützung für Backyard Baseball 2003 hinzugefügt.
@@ -16,7 +109,7 @@ Sie auf Englisch unter:
    - Unterstützung für Soltys hinzugefügt.
    - Unterstützung für The Princess and the Crab hinzugefügt.
 
-Allgemein:
+ Allgemein:
    - MT-32-Emulationscode auf den neusten Stand des Munt-Projekt-Schnappschusses
      gebracht. Die Emulation hat sich drastisch verbessert.
    - Unterstützung für TrueType-Schriftarten über FreeType2 in unserer

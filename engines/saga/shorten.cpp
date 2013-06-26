@@ -196,11 +196,13 @@ byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, by
 			break;
 		case kTypeS16LH:
 			flags |= Audio::FLAG_LITTLE_ENDIAN;
+			// fallthrough
 		case kTypeS16HL:
 			flags |= Audio::FLAG_16BITS;
 			break;
 		case kTypeU16LH:
 			flags |= Audio::FLAG_LITTLE_ENDIAN;
+			// fallthrough
 		case kTypeU16HL:
 			flags |= Audio::FLAG_16BITS;
 			flags |= Audio::FLAG_UNSIGNED;

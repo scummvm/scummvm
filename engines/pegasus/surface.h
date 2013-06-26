@@ -84,7 +84,7 @@ protected:
 	Common::Rect _bounds;
 
 private:
-	void getImageFromPICTStream(Common::SeekableReadStream *stream);
+	bool getImageFromPICTStream(Common::SeekableReadStream *stream);
 
 	uint32 getGlowColor(uint32 color) const;
 	bool isTransparent(uint32 color) const;

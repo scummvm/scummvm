@@ -550,7 +550,7 @@ void AlterMover(PMOVER pMover, SCNHANDLE film, AR_FUNCTION fn) {
 		pfilm = (const FILM *)LockMem(film);
 		assert(pfilm != NULL);
 
-		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_LE_32(pfilm->reels[0].script), ONE_SECOND / FROM_LE_32(pfilm->frate));
+		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_32(pfilm->reels[0].script), ONE_SECOND / FROM_32(pfilm->frate));
 		if (!TinselV2)
 			pMover->stepCount = 0;
 
@@ -643,7 +643,7 @@ void SetMoverWalkReel(PMOVER pMover, DIRECTION reel, int scale, bool force) {
 		pfilm = (const FILM *)LockMem(whichReel);
 		assert(pfilm != NULL); // no film
 
-		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_LE_32(pfilm->reels[0].script), 1);
+		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_32(pfilm->reels[0].script), 1);
 
 		// Synchronised walking reels
 		assert(pMover->stepCount >= 0);
@@ -704,14 +704,14 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 	InitialPathChecks(pMover, X, Y);
 
 	pfilm = (const FILM *)LockMem(pMover->walkReels[0][FORWARD]);
-	pmi = (const MULTI_INIT *)LockMem(FROM_LE_32(pfilm->reels[0].mobj));
+	pmi = (const MULTI_INIT *)LockMem(FROM_32(pfilm->reels[0].mobj));
 
 //---
-	pFrame = (const FRAME *)LockMem(FROM_LE_32(pmi->hMulFrame));
+	pFrame = (const FRAME *)LockMem(FROM_32(pmi->hMulFrame));
 
 	// get pointer to image
-	pim = (IMAGE *)LockMem(READ_LE_UINT32(pFrame));	// handle to image
-	pim->hImgPal = TO_LE_32(BgPal());
+	pim = (IMAGE *)LockMem(READ_32(pFrame));	// handle to image
+	pim->hImgPal = TO_32(BgPal());
 //---
 	pMover->actorObj = MultiInitObject(pmi);
 
@@ -722,7 +722,7 @@ static void MoverProcessHelper(int X, int Y, int id, PMOVER pMover) {
 	MultiInsertObject(GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
 	storeActorReel(id, NULL, 0, pMover->actorObj, 0, 0, 0);
 
-	InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_LE_32(pfilm->reels[0].script), ONE_SECOND / FROM_LE_32(pfilm->frate));
+	InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_32(pfilm->reels[0].script), ONE_SECOND / FROM_32(pfilm->frate));
 	pMover->stepCount = 0;
 
 	MultiSetAniXY(pMover->actorObj, pMover->objX, pMover->objY);
@@ -802,7 +802,7 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	InitialPathChecks(pMover, rpos->X, rpos->Y);
 
 	pFilm = (FILM *)LockMem(pMover->walkReels[i][FORWARD]);	// Any old reel
-	pmi = (PMULTI_INIT)LockMem(FROM_LE_32(pFilm->reels[0].mobj));
+	pmi = (PMULTI_INIT)LockMem(FROM_32(pFilm->reels[0].mobj));
 
 	// Poke in the background palette
 	PokeInPalette(pmi);

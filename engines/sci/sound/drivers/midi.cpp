@@ -234,15 +234,9 @@ void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
 		}
 		break;
 	case 0x0a:
-		if (_channels[channel].pan == value)
-			return;
-
 		_channels[channel].pan = value;
 		break;
 	case 0x40:
-		if (_channels[channel].hold == value)
-			return;
-
 		_channels[channel].hold = value;
 		break;
 	case 0x4b:	// voice mapping
@@ -250,9 +244,6 @@ void MidiPlayer_Midi::controlChange(int channel, int control, int value) {
 	case 0x4e:	// velocity
 		break;
 	case 0x7b:
-		if (!_channels[channel].playing)
-			return;
-
 		_channels[channel].playing = false;
 	default:
 		break;
@@ -922,7 +913,8 @@ int MidiPlayer_Midi::open(ResourceManager *resMan) {
 		if (res) {
 			if (isMt32GmPatch(res->data, res->size)) {
 				readMt32GmPatch(res->data, res->size);
-				strncpy((char *)_goodbyeMsg, "      ScummVM       ", 20);
+				// Note that _goodbyeMsg is not zero-terminated
+				memcpy(_goodbyeMsg, "      ScummVM       ", 20);
 			} else {
 				readMt32Patch(res->data, res->size);
 			}

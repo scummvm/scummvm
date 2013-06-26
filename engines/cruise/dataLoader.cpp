@@ -265,6 +265,8 @@ int loadFile(const char* name, int idx, int destIdx) {
 		error("Unknown fileType in loadFile");
 	}
 
+	MemFree(ptr);
+
 	return -1;
 }
 
@@ -283,6 +285,7 @@ int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numId
 
 		for (i = 0; i < numIdx; i++) {
 			if ((startIdx + i) > numMaxEntriesInSet) {
+				MemFree(ptr);
 				return 0;	// exit if limit is reached
 			}
 			loadSetEntry(name, ptr, startIdx + i, currentEntryIdx + i);

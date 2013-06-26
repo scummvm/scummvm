@@ -66,13 +66,15 @@ struct OpcodeEntry : Common::NonCopyable {
 
 /**
  * The number of script slots, which determines the maximal number
- * of concurrently running scripts.
- * WARNING: Do NOT changes this value unless you really have to, as
+ * of concurrently running scripts, and the number of local variables
+ * in a script.
+ * WARNING: Do NOT changes these values unless you really have to, as
  * this will break savegame compatibility if done carelessly. If you
- * have to change it, make sure you update saveload.cpp accordingly!
+ * have to change them, make sure you update saveload.cpp accordingly!
  */
 enum {
-	NUM_SCRIPT_SLOT = 80
+	NUM_SCRIPT_SLOT = 80,
+	NUM_SCRIPT_LOCAL = 25
 };
 
 /* Script status type (slot.status) */
@@ -122,7 +124,8 @@ struct VirtualMachineState {
 	int16 cutSceneScriptIndex;
 	byte cutSceneStackPointer;
 	ScriptSlot slot[NUM_SCRIPT_SLOT];
-	int32 localvar[NUM_SCRIPT_SLOT][26];
+	// Why does localvar have space for one extra local variable?
+	int32 localvar[NUM_SCRIPT_SLOT][NUM_SCRIPT_LOCAL + 1];
 
 	NestedScript nest[kMaxScriptNesting];
 	byte numNestedScripts;

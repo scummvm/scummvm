@@ -44,9 +44,9 @@ MusicBase::~MusicBase() {
 }
 
 void MusicBase::loadSection(uint8 pSection) {
-	Common::StackLock lock(_mutex);
 	if (_currentMusic)
 		stopMusicInternal();
+	Common::StackLock lock(_mutex);
 	free(_musicData);
 	_currentSection = pSection;
 	_musicData = _skyDisk->loadFile(_driverFileBase + FILES_PER_SECTION * pSection);
@@ -70,12 +70,13 @@ bool MusicBase::musicIsPlaying() {
 }
 
 void MusicBase::stopMusic() {
-	Common::StackLock lock(_mutex);
 	stopMusicInternal();
 }
 
 void MusicBase::stopMusicInternal() {
 	_mixer->stopHandle(_musicHandle);
+
+	Common::StackLock lock(_mutex);
 
 	for (uint8 cnt = 0; cnt < _numberOfChannels; cnt++)
 		delete _channels[cnt];

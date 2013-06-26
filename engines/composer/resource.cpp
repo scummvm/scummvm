@@ -400,4 +400,4 @@ void OldPipe::nextFrame() {
 	_currFrame++;
 }
 
-}	// End of namespace Composer
+} // End of namespace Composer

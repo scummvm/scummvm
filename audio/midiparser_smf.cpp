@@ -56,8 +56,10 @@ void MidiParser_SMF::property(int prop, int value) {
 	switch (prop) {
 	case mpMalformedPitchBends:
 		_malformedPitchBends = (value > 0);
+		break;
 	default:
 		MidiParser::property(prop, value);
+		break;
 	}
 }
 

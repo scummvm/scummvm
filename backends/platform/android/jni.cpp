@@ -603,10 +603,10 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 
 		g_engine->pauseEngine(value);
 
-		if (value &&
+		/*if (value &&
 				g_engine->hasFeature(Engine::kSupportsSavingDuringRuntime) &&
 				g_engine->canSaveGameStateCurrently())
-			g_engine->saveGameState(0, "Android parachute");
+			g_engine->saveGameState(0, "Android parachute");*/
 	}
 
 	pause = value;

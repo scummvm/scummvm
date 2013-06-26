@@ -59,4 +59,4 @@ uint RandomSource::getRandomNumberRng(uint min, uint max) {
 	return getRandomNumber(max - min) + min;
 }
 
-}	// End of namespace Common
+} // End of namespace Common

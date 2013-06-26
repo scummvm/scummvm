@@ -120,6 +120,15 @@ protected:
 	EoBCoreEngine *_vm;
 
 	bool cmd_importSaveFile(int argc, const char **argv);
+	bool cmd_saveOriginal(int argc, const char **argv);
+	bool cmd_listMonsters(int argc, const char **argv);
+	bool cmd_showPosition(int argc, const char **argv);
+	bool cmd_setPosition(int argc, const char **argv);
+	bool cmd_openDoor(int argc, const char **argv);
+	bool cmd_closeDoor(int argc, const char **argv);
+	bool cmd_listFlags(int argc, const char **argv);
+	bool cmd_setFlag(int argc, const char **argv);
+	bool cmd_clearFlag(int argc, const char **argv);
 };
 #endif // ENABLE_EOB
 

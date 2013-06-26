@@ -74,8 +74,8 @@ SoundManager::~SoundManager() {
  */
 // playSample for DiscWorld 1
 bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::SoundHandle *handle) {
-	// Floppy version has no sample file
-	if (!_vm->isCD())
+	// Floppy version has no sample file.
+	if (!_vm->isV1CD())
 		return false;
 
 	// no sample driver?
@@ -102,7 +102,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 	// read the length of the sample
-	uint32 sampleLen = _sampleStream.readUint32();
+	uint32 sampleLen = _sampleStream.readUint32LE();
 	if (_sampleStream.eos() || _sampleStream.err())
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
@@ -177,13 +177,35 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 	return true;
 }
 
+void SoundManager::playDW1MacMusic(Common::File &s, uint32 length) {
+	// TODO: It's a bad idea to load the music track in a buffer.
+	// We should use a SubReadStream instead, and keep midi.dat open.
+	// However, the track lengths aren't that big (about 1-4MB),
+	// so this shouldn't be a major issue.
+	byte *soundData = (byte *)malloc(length);
+	assert(soundData);
+
+	// read all of the sample
+	if (s.read(soundData, length) != length)
+		error(FILE_IS_CORRUPT, MIDI_FILE);
+
+	Common::SeekableReadStream *memStream = new Common::MemoryReadStream(soundData, length);
+
+	Audio::SoundHandle *handle = &_channels[kChannelDW1MacMusic].handle;
+
+	// Stop any previously playing music track
+	_vm->_mixer->stopHandle(*handle);
+
+	// TODO: Compression support (MP3/OGG/FLAC) for midi.dat in DW1 Mac
+	Audio::RewindableAudioStream *musicStream = Audio::makeRawStream(memStream, 22050, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+
+	if (musicStream)
+		_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType, handle, Audio::makeLoopingAudioStream(musicStream, 0));
+}
+
 // playSample for DiscWorld 2
 bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int priority,
 		Audio::Mixer::SoundType type, Audio::SoundHandle *handle) {
-
-	// Floppy version has no sample file
-	if (!_vm->isCD())
-		return false;
 
 	// no sample driver?
 	if (!_vm->_mixer->isReady())
@@ -247,7 +269,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 	uint32 dwSampleIndex = _sampleIndex[id];
 
 	if (dwSampleIndex == 0) {
-		warning("Tinsel2 playSample, non-existant sample %d", id);
+		warning("Tinsel2 playSample, non-existent sample %d", id);
 		return false;
 	}
 
@@ -257,7 +279,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
 	// read the length of the sample
-	uint32 sampleLen = _sampleStream.readUint32();
+	uint32 sampleLen = _sampleStream.readUint32LE();
 	if (_sampleStream.eos() || _sampleStream.err())
 		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 
@@ -270,12 +292,12 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 
 		// Skipping
 		for (int32 i = 0; i < sub; i++) {
-			sampleLen = _sampleStream.readUint32();
+			sampleLen = _sampleStream.readUint32LE();
 			_sampleStream.skip(sampleLen);
 			if (_sampleStream.eos() || _sampleStream.err())
 				error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 		}
-		sampleLen = _sampleStream.readUint32();
+		sampleLen = _sampleStream.readUint32LE();
 		if (_sampleStream.eos() || _sampleStream.err())
 			error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
 	}
@@ -369,7 +391,6 @@ bool SoundManager::offscreenChecks(int x, int &y) {
 }
 
 int8 SoundManager::getPan(int x) {
-
 	if (x == -1)
 		return 0;
 
@@ -416,14 +437,13 @@ bool SoundManager::sampleExists(int id) {
 /**
  * Returns true if a sample is currently playing.
  */
-bool SoundManager::sampleIsPlaying(int id) {
+bool SoundManager::sampleIsPlaying() {
 	if (!TinselV2)
 		return _vm->_mixer->isSoundHandleActive(_channels[kChannelTinsel1].handle);
 
 	for (int i = 0; i < kNumChannels; i++)
-		if (_channels[i].sampleNum == id)
-			if (_vm->_mixer->isSoundHandleActive(_channels[i].handle))
-				return true;
+		if (_vm->_mixer->isSoundHandleActive(_channels[i].handle))
+			return true;
 
 	return false;
 }
@@ -432,8 +452,6 @@ bool SoundManager::sampleIsPlaying(int id) {
  * Stops any currently playing sample.
  */
 void SoundManager::stopAllSamples() {
-	// stop currently playing sample
-
 	if (!TinselV2) {
 		_vm->_mixer->stopHandle(_channels[kChannelTinsel1].handle);
 		return;
@@ -466,12 +484,21 @@ void SoundManager::setSFXVolumes(uint8 volume) {
 		_vm->_mixer->setChannelVolume(_channels[i].handle, volume);
 }
 
+void SoundManager::showSoundError(const char *errorMsg, const char *soundFile) {
+	Common::String msg;
+	msg = Common::String::format(errorMsg, soundFile);
+	GUI::MessageDialog dialog(msg, "OK");
+	dialog.runModal();
+
+	error("%s", msg.c_str());
+}
+
 /**
  * Opens and inits all sound sample files.
  */
 void SoundManager::openSampleFiles() {
-	// Floppy and demo versions have no sample files, except for the Discworld 2 demo
-	if (!_vm->isCD() || TinselV0)
+	// V1 Floppy and V0 demo versions have no sample files
+	if (TinselV0 || (TinselV1 && !_vm->isV1CD()))
 		return;
 
 	TinselFile f;
@@ -480,42 +507,26 @@ void SoundManager::openSampleFiles() {
 		// already allocated
 		return;
 
-	// open sample index file in binary mode
+	// Open sample index (*.idx) in binary mode
 	if (f.open(_vm->getSampleIndex(g_sampleLanguage)))	{
-		// get length of index file
-		f.seek(0, SEEK_END);		// move to end of file
-		_sampleIndexLen = f.pos();	// get file pointer
-		f.seek(0, SEEK_SET);		// back to beginning
-
+		uint32 fileSize = f.size();
+		_sampleIndex = (uint32 *)malloc(fileSize);
 		if (_sampleIndex == NULL) {
-			// allocate a buffer for the indices
-			_sampleIndex = (uint32 *)malloc(_sampleIndexLen);
+			showSoundError(NO_MEM, _vm->getSampleIndex(g_sampleLanguage));
+			return;
+		}
 
-			// make sure memory allocated
-			if (_sampleIndex == NULL) {
-				// disable samples if cannot alloc buffer for indices
-				// TODO: Disabled sound if we can't load the sample index?
-				return;
+		_sampleIndexLen = fileSize / 4;	// total sample of indices (DWORDs)
+
+		// Load data
+		for (int i = 0; i < _sampleIndexLen; ++i) {
+			_sampleIndex[i] = f.readUint32LE();
+			if (f.err()) {
+				showSoundError(FILE_READ_ERROR, _vm->getSampleIndex(g_sampleLanguage));
 			}
 		}
 
-		// load data
-		if (f.read(_sampleIndex, _sampleIndexLen) != (uint32)_sampleIndexLen)
-			// file must be corrupt if we get to here
-			error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
-
-		// close the file
 		f.close();
-
-		// convert file size to size in DWORDs
-		_sampleIndexLen /= sizeof(uint32);
-
-#ifdef SCUMM_BIG_ENDIAN
-		// Convert all ids from LE to native format
-		for (int i = 0; i < _sampleIndexLen; ++i) {
-			_sampleIndex[i] = SWAP_BYTES_32(_sampleIndex[i]);
-		}
-#endif
 
 		// Detect format of soundfile by looking at 1st sample-index
 		switch (TO_BE_32(_sampleIndex[0])) {
@@ -523,48 +534,31 @@ void SoundManager::openSampleFiles() {
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected MP3 sound-data");
 			_soundMode = kMP3Mode;
 			break;
-
 		case MKTAG('O','G','G',' '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected OGG sound-data");
 			_soundMode = kVorbisMode;
 			break;
-
 		case MKTAG('F','L','A','C'):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected FLAC sound-data");
 			_soundMode = kFLACMode;
 			break;
-
 		default:
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected original sound-data");
 			break;
 		}
-		// Normally the 1st sample-index points to nothing at all
+
+		// Normally the 1st sample index points to nothing at all. We use it to
+		// determine if the game's sample files have been compressed, thus restore
+		// it here
 		_sampleIndex[0] = 0;
 	} else {
-		char buf[50];
-		sprintf(buf, CANNOT_FIND_FILE, _vm->getSampleIndex(g_sampleLanguage));
-		GUI::MessageDialog dialog(buf, "OK");
-		dialog.runModal();
-
-		error(CANNOT_FIND_FILE, _vm->getSampleIndex(g_sampleLanguage));
+		showSoundError(FILE_READ_ERROR, _vm->getSampleIndex(g_sampleLanguage));
 	}
 
-	// open sample file in binary mode
+	// Open sample file (*.smp) in binary mode
 	if (!_sampleStream.open(_vm->getSampleFile(g_sampleLanguage))) {
-		char buf[50];
-		sprintf(buf, CANNOT_FIND_FILE, _vm->getSampleFile(g_sampleLanguage));
-		GUI::MessageDialog dialog(buf, "OK");
-		dialog.runModal();
-
-		error(CANNOT_FIND_FILE, _vm->getSampleFile(g_sampleLanguage));
+		showSoundError(FILE_READ_ERROR, _vm->getSampleFile(g_sampleLanguage));
 	}
-
-/*
-	// gen length of the largest sample
-	sampleBuffer.size = _sampleStream.readUint32LE();
-	if (_sampleStream.eos() || _sampleStream.err())
-		error(FILE_IS_CORRUPT, _vm->getSampleFile(g_sampleLanguage));
-*/
 }
 
 void SoundManager::closeSampleStream() {

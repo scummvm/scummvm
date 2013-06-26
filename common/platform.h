@@ -35,7 +35,7 @@ class String;
  * game in question.
  */
 enum Platform {
-	kPlatformPC,
+	kPlatformDOS,
 	kPlatformAmiga,
 	kPlatformAtariST,
 	kPlatformMacintosh,
@@ -55,6 +55,8 @@ enum Platform {
 	kPlatformPSX,
 	kPlatformCDi,
 	kPlatformIOS,
+	kPlatformOS2,
+	kPlatformBeOS,
 
 	kPlatformUnknown = -1
 };
@@ -75,6 +77,6 @@ extern const char *getPlatformCode(Platform id);
 extern const char *getPlatformAbbrev(Platform id);
 extern const char *getPlatformDescription(Platform id);
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

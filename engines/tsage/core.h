@@ -189,7 +189,7 @@ public:
 	Action *_action;
 	SceneObject *_sceneObject;
 public:
-	ObjectMover() { _action = NULL; _sceneObject = NULL; }
+	ObjectMover() { _action = NULL; _sceneObject = NULL; _minorDiff = 0; _majorDiff = 0; _changeCtr = 0;}
 	virtual ~ObjectMover();
 
 	virtual void synchronize(Serializer &s);
@@ -272,7 +272,7 @@ public:
 	SceneObject *_destObject;
 	int _maxArea;
 	int _minArea;
-	PlayerMover2() : PlayerMover() { _destObject = NULL; }
+	PlayerMover2() : PlayerMover() { _destObject = NULL; _minArea = _maxArea = 0;}
 
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "PlayerMover2"; }
@@ -415,7 +415,7 @@ public:
 	int _yDiff;
 	int _sceneRegionId;
 public:
-	SceneItem() : EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; }
+	SceneItem() : EventHandler() { _msg = "Feature"; _action = NULL; _sceneRegionId = 0; _yDiff = 0; _fieldE = _field10 = 0;}
 
 	virtual void synchronize(Serializer &s);
 	virtual Common::String getClassName() { return "SceneItem"; }
@@ -685,6 +685,7 @@ public:
 			int xe = va_arg(va, int);
 			items.push_back(LineSlice(xs, xe));
 		}
+		va_end(va);
 	}
 
 	void add(LineSlice &slice) { items.push_back(slice); }

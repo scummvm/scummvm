@@ -140,7 +140,7 @@ void DreamWebEngine::putUnderCentre() {
 }
 
 void DreamWebEngine::locationPic() {
-	const int roomPics[] = { 5, 0, 3, 2, 4, 1, 10, 9, 8, 6, 11, 4, 7, 7, 0 };
+	const int roomPics[] = { 5, 0, 3, 2, 4, 1, 10, 9, 8, 6, 11, 4, 7, 7, 0, 0 };
 	byte picture = roomPics[_destPos];
 
 	if (picture >= 6)

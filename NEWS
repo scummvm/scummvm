@@ -1,7 +1,19 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-1.6.0 (????-??-??)
+1.7.0 (????-??-??)
+
+
+1.6.0 (2013-05-31)
+ New Games:
+   - Added support for 3 Skulls of the Toltecs.
+   - Added support for Eye of the Beholder.
+   - Added support for Eye of the Beholder II: The Legend of Darkmoon.
+   - Added support for Hopkins FBI.
+   - Added support for Tony Tough and the Night of Roasted Moths.
+   - Added support for The Journeyman Project: Pegasus Prime.
+   - Added support for the Macintosh version of Discworld 1.
+
  General:
    - Added a new save/load chooser based on a grid of thumbnails. This is only
      supported for resolutions bigger than 640x400. The old chooser is still
@@ -9,16 +21,69 @@ For a more comprehensive changelog of the latest experimental code, see:
      select the old one as default too.
    - Rewrote VideoDecoder subsystem.
    - Added Galician translation.
+   - Added Finnish translation.
+   - Added Belarusian translation.
+   - Using the mouse wheel on a slider widget now changes the value by the
+     smallest possible amount. This is more predictable than the old behaviour,
+     which was to change the value by "one pixel" which would sometimes not
+     change it at all.
+   - Updated MT-32 emulation code to latest munt project snapshot.
+   - Added FluidSynth settings dialog, mainly for reverb and chorus settings.
+   - Fixed crash on certain Smacker movies.
 
   Cine:
    - Improved audio support for Amiga and AtariST versions of Future Wars.
      Now music fades out slowly instead of stopping immediately. Sound
      effects are now properly panned, when requested by the game.
 
+  CGE:
+   - Soltys contains a puzzle requiring the ALT key to be pressed while clicking
+     on an object. This puzzle has been disabled on devices not using this key.
+
+  Drascula:
+   - Resolved multiple UI issues with the original save/load screen.
+   - Added advanced savegame functionality, including savegame timestamps and
+     thumbnails and the ability to load and delete savegames from the launcher.
+     It's now possible to use the ScummvM save/load dialogs.
+   - The F7 key (previously unmapped) now always shows the ScummVM load screen.
+     The F10 key displays either the original save/load screen, or the ScummVM
+     save screen, if the user has selected to use the ScummVM save/load
+     dialogs.
+
+  Dreamweb:
+   - Now that the game is freeware, there is a small extra help text showing
+     the available commands in the in-game terminals when the player uses the
+     'help' command. Previously, players needed to consult the manual for the
+     available commands. Since this reference to the manual is a form of copy
+     protection, this extra line can be toggled by the ScummVM copy protection
+     command line option.
+
+  Groovie:
+   - Simplified the movie speed options, and added a custom option for The 7th
+     Guest. Movie options are now "normal" and "fast", with the latter changing
+     the movie speed in T7G to match the faster movie speed of the iOS version.
+     The game entry might need to be readded in the launcher for the new setting
+     to appear.
+
+  SAGA:
+   - Added music support for the Macintosh version of I Have No Mouth and, I
+     Must Scream.
+
   SCUMM:
    - Implemented Monkey Island 2 Macintosh's audio driver. Now we properly
      support its sample based audio output. The same output is also used for
      the m68k Macintosh version of Indiana Jones and the Fate of Atlantis.
+   - Improved music support for the Macintosh version of Monkey Island 1. It
+     now uses the original instruments, rather than approximating them with
+     General MIDI instruments, and should sound a lot closer to the original.
+   - Added sound and music support for the Macintosh version of Loom.
+   - Handle double-clicking in the Macintosh version of Loom.
+   - Major bugfixes in INSANE (the Full Throttle bike fights).
+
+ TOUCHE:
+   - Added support for Enhanced Music by James Woodcock
+     (http://www.jameswoodcock.co.uk/category/scummvm-music-enhancement-project/).
+
 
 1.5.0 (2012-07-27)
  New Games:

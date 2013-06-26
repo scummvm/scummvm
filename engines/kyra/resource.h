@@ -62,7 +62,7 @@ public:
 	bool isInCacheList(Common::String name);
 
 	bool loadFileList(const Common::String &filedata);
-	bool loadFileList(const char * const *filelist, uint32 numFiles);
+	bool loadFileList(const char *const *filelist, uint32 numFiles);
 
 	// This unloads *all* pakfiles, even kyra.dat and protected ones.
 	// It does not remove files from cache though!
@@ -87,7 +87,7 @@ protected:
 	Common::Archive *loadArchive(const Common::String &name, Common::ArchiveMemberPtr member);
 	Common::Archive *loadInstallerArchive(const Common::String &file, const Common::String &ext, const uint8 offset);
 
-	bool loadProtectedFiles(const char * const * list);
+	bool loadProtectedFiles(const char *const * list);
 
 	void initializeLoaders();
 
@@ -679,7 +679,10 @@ enum KyraResources {
 	kLoLCharDefsKieran,
 	kLoLCharDefsAkshel,
 	kLoLExpRequirements,
-	kLoLMonsterModifiers,
+	kLoLMonsterModifiers1,
+	kLoLMonsterModifiers2,
+	kLoLMonsterModifiers3,
+	kLoLMonsterModifiers4,
 	kLoLMonsterShiftOffsets,
 	kLoLMonsterDirFlags,
 	kLoLMonsterScaleY,
@@ -742,6 +745,8 @@ enum KyraResources {
 struct Shape;
 struct Room;
 struct AmigaSfxTable;
+struct HoFSeqData;
+struct HoFSeqItemAnimData;
 
 class StaticResource {
 public:
@@ -755,13 +760,13 @@ public:
 	bool init();
 	void deinit();
 
-	const char * const *loadStrings(int id, int &strings);
+	const char *const *loadStrings(int id, int &strings);
 	const uint8 *loadRawData(int id, int &size);
 	const Shape *loadShapeTable(int id, int &entries);
 	const AmigaSfxTable *loadAmigaSfxTable(int id, int &entries);
 	const Room *loadRoomTable(int id, int &entries);
-	const HofSeqData *loadHofSequenceData(int id, int &entries);
-	const ItemAnimData_v1 *loadShapeAnimData_v1(int id, int &entries);
+	const HoFSeqData *loadHoFSequenceData(int id, int &entries);
+	const HoFSeqItemAnimData *loadHoFSeqItemAnimData(int id, int &entries);
 	const ItemAnimDefinition *loadItemAnimDefinition(int id, int &entries);
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	const uint16 *loadRawDataBe16(int id, int &entries);
@@ -803,8 +808,8 @@ private:
 	bool loadShapeTable(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadAmigaSfxTable(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadRoomTable(Common::SeekableReadStream &stream, void *&ptr, int &size);
-	bool loadHofSequenceData(Common::SeekableReadStream &stream, void *&ptr, int &size);
-	bool loadShapeAnimData_v1(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadHoFSequenceData(Common::SeekableReadStream &stream, void *&ptr, int &size);
+	bool loadHoFSeqItemAnimData(Common::SeekableReadStream &stream, void *&ptr, int &size);
 	bool loadItemAnimDefinition(Common::SeekableReadStream &stream, void *&ptr, int &size);
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	bool loadRawDataBe16(Common::SeekableReadStream &stream, void *&ptr, int &size);
@@ -829,8 +834,8 @@ private:
 	void freeShapeTable(void *&ptr, int &size);
 	void freeAmigaSfxTable(void *&ptr, int &size);
 	void freeRoomTable(void *&ptr, int &size);
-	void freeHofSequenceData(void *&ptr, int &size);
-	void freeHofShapeAnimDataV1(void *&ptr, int &size);
+	void freeHoFSequenceData(void *&ptr, int &size);
+	void freeHoFSeqItemAnimData(void *&ptr, int &size);
 	void freeItemAnimDefinition(void *&ptr, int &size);
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	void freeRawDataBe16(void *&ptr, int &size);
@@ -857,7 +862,7 @@ private:
 		kAmigaSfxTable = 4,
 
 		k2SeqData = 5,
-		k2ShpAnimDataV1 = 6,
+		k2SeqItemAnimData = 6,
 		k2ItemAnimDefinition = 7,
 
 		kLoLCharData = 8,

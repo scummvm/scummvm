@@ -272,6 +272,7 @@ SavePartSprite *SaveConverter::readSprite(Common::SeekableReadStream &stream,
 
 	if (!sprite->readSpriteRaw(data, spriteSize)) {
 		delete[] data;
+		delete sprite;
 		return 0;
 	}
 

@@ -406,7 +406,7 @@ void ActorEvent(CORO_PARAM, int ano, TINSEL_EVENT tEvent, bool bWait, int myEsca
  * @param bRunScript	Flag for whether to run actor's script for the scene
  */
 void StartActor(const T1_ACTOR_STRUC *as, bool bRunScript) {
-	SCNHANDLE hActorId = FROM_LE_32(as->hActorId);
+	SCNHANDLE hActorId = FROM_32(as->hActorId);
 
 	// Zero-out many things
 	actorInfo[hActorId - 1].bHidden = false;
@@ -418,15 +418,15 @@ void StartActor(const T1_ACTOR_STRUC *as, bool bRunScript) {
 	actorInfo[hActorId - 1].presObj = NULL;
 
 	// Store current scene's parameters for this actor
-	actorInfo[hActorId - 1].mtype = FROM_LE_32(as->masking);
-	actorInfo[hActorId - 1].actorCode = FROM_LE_32(as->hActorCode);
+	actorInfo[hActorId - 1].mtype = FROM_32(as->masking);
+	actorInfo[hActorId - 1].actorCode = FROM_32(as->hActorCode);
 
 	// Run actor's script for this scene
 	if (bRunScript) {
 		if (bActorsOn)
 			actorInfo[hActorId - 1].bAlive = true;
 
-		if (actorInfo[hActorId - 1].bAlive && FROM_LE_32(as->hActorCode))
+		if (actorInfo[hActorId - 1].bAlive && FROM_32(as->hActorCode))
 			ActorEvent(hActorId, STARTUP, PLR_NOEVENT);
 	}
 }
@@ -465,11 +465,11 @@ void StartTaggedActors(SCNHANDLE ah, int numActors, bool bRunScript) {
 			assert(as->hActorCode);
 
 			// Store current scene's parameters for this tagged actor
-			taggedActors[i].id			= FROM_LE_32(as->hActorId);
-			taggedActors[i].hTagText	= FROM_LE_32(as->hTagText);
-			taggedActors[i].tagPortionV	= FROM_LE_32(as->tagPortionV);
-			taggedActors[i].tagPortionH	= FROM_LE_32(as->tagPortionH);
-			taggedActors[i].hActorCode	= FROM_LE_32(as->hActorCode);
+			taggedActors[i].id			= FROM_32(as->hActorId);
+			taggedActors[i].hTagText	= FROM_32(as->hTagText);
+			taggedActors[i].tagPortionV	= FROM_32(as->tagPortionV);
+			taggedActors[i].tagPortionH	= FROM_32(as->tagPortionH);
+			taggedActors[i].hActorCode	= FROM_32(as->hActorCode);
 
 			// Run actor's script for this scene
 			if (bRunScript) {
@@ -1310,9 +1310,9 @@ void SetActorRGB(int ano, COLORREF color) {
 	assert(ano >= 0 && ano <= NumActors);
 
 	if (ano)
-		actorInfo[ano - 1].textColor = TO_LE_32(color);
+		actorInfo[ano - 1].textColor = TO_32(color);
 	else
-		defaultColor = TO_LE_32(color);
+		defaultColor = TO_32(color);
 }
 
 /**

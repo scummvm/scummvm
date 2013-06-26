@@ -48,7 +48,7 @@ public:
 	bool preventRest() const;
 
 	void loadState(Common::SeekableSubReadStreamEndian &in, bool origFile = false);
-	void saveState(Common::OutSaveFile *out);
+	void saveState(Common::OutSaveFile *out, bool origFile = false);
 	void reset();
 
 private:
@@ -91,7 +91,7 @@ private:
 	EoBCoreEngine *_vm;
 	Screen_EoB *_screen;
 
-	typedef Common::Functor1Mem<int8*, int, EoBInfProcessor> InfProc;
+	typedef Common::Functor1Mem<int8 *, int, EoBInfProcessor> InfProc;
 	struct InfOpcode : private Common::NonCopyable {
 		InfOpcode(InfProc *p, const char *d) : proc(p), desc(d) {}
 		~InfOpcode() { delete proc; }

@@ -56,7 +56,7 @@ typedef void (*ErrorHandler)(const char *msg);
  */
 void setErrorHandler(ErrorHandler handler);
 
-}	// End of namespace Common
+} // End of namespace Common
 
 
 void NORETURN_PRE error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;

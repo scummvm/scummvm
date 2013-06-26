@@ -188,7 +188,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_DEMO,
 			GUIO1(GUIO_NOSPEECH)
 		},
@@ -434,7 +434,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()
 		},
@@ -458,7 +458,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()
 		},
@@ -482,7 +482,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()
 		},
@@ -507,7 +507,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()
 		},
@@ -534,7 +534,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
@@ -558,7 +558,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
@@ -582,7 +582,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)
 		},
@@ -615,7 +615,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_DEMO,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -647,7 +647,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -677,7 +677,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -705,7 +705,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -734,7 +734,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -762,7 +762,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -817,7 +817,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)
 		},
@@ -847,7 +847,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)
 		},

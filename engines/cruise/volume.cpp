@@ -447,7 +447,7 @@ int16 readVolCnf() {
 
 ///////////////////////////::
 
-// This code used to rely on "strupr", which is non existant on my system,
+// This code used to rely on "strupr", which is non existent on my system,
 // thus I just implemented this function instead. - LordHoto
 //
 // TODO: This might be code duplication, please check this out.

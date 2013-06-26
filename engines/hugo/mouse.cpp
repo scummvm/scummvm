@@ -169,7 +169,7 @@ void MouseHandler::processRightClick(const int16 objId, const int16 cx, const in
 			_vm->_object->useObject(objId);         // Use status.objid on object
 	} else {                                        // Clicked over viewport object
 		Object *obj = &_vm->_object->_objects[objId];
-		int16 x, y;
+		int16 x = 0, y = 0;
 		switch (obj->_viewx) {                       // Where to walk to
 		case -1:                                    // Walk to object position
 			if (_vm->_object->findObjectSpace(obj, &x, &y))

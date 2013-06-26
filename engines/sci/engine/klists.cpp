@@ -801,7 +801,8 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 #endif
 			return NULL_REG;
 		}
-		if (s->_segMan->getSegmentObj(argv[1].getSegment())->getType() != SEG_TYPE_ARRAY)
+		SegmentObj *sobj = s->_segMan->getSegmentObj(argv[1].getSegment());
+		if (!sobj || sobj->getType() != SEG_TYPE_ARRAY)
 			error("kArray(Dup): Request to duplicate a segment which isn't an array");
 
 		reg_t arrayHandle;

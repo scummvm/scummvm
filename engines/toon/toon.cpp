@@ -2882,7 +2882,7 @@ void ToonEngine::getTextPosition(int32 characterId, int32 *retX, int32 *retY) {
 		if (character && !_gameState->_inCutaway) {
 			if (character->getAnimationInstance()) {
 				if (character->getX() >= _gameState->_currentScrollValue && character->getX() <= _gameState->_currentScrollValue + TOON_SCREEN_WIDTH) {
-					int16 x1, y1, x2, y2;
+					int16 x1= 0, y1 = 0, x2 = 0, y2 = 0;
 					character->getAnimationInstance()->getRect(&x1, &y1, &x2, &y2);
 					*retX = (x1 + x2) / 2;
 					*retY = y1;
