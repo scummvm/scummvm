@@ -32,6 +32,7 @@
 #include "common/str.h"
 
 namespace Mortevielle {
+class MortevielleEngine;
 
 static const int NUM_LINES = 7;
 const int kMaxHotspots = 14;
@@ -41,28 +42,23 @@ struct Hotspot {
 	bool _enabled;
 };
 
-class Alert {
+class DialogManager {
 private:
-	static void decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &lineNumb, int &col, Common::String &choiceStr, Common::String &choiceListStr);
-	static void setPosition(int ji, int coldep, int esp);
-	static void drawAlertBox(int lidep, int nli, int tx);
-	static void setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp);
-public:
-	static int show(const Common::String &msg, int n);
-};
+	MortevielleEngine *_vm;
 
-class KnowledgeCheck {
+	void decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &lineNumb, int &col, Common::String &choiceStr, Common::String &choiceListStr);
+	void setPosition(int ji, int coldep, int esp);
+	void drawAlertBox(int lidep, int nli, int tx);
+	void setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp);
 public:
-	static bool show();
-};
-
-class f3f8 {
-public:
-	static void draw();
-	static void checkForF8(int SpeechNum, bool drawAni50Fl);
-	static int waitForF3F8();
-	static void aff50(bool drawAni50Fl);
-	static void ani50();
+	void setParent(MortevielleEngine *vm);
+	int show(const Common::String &msg, int n);
+	void drawF3F8();
+	void checkForF8(int SpeechNum, bool drawAni50Fl);
+	int waitForF3F8();
+	void aff50(bool drawAni50Fl);
+	void ani50();
+	bool showKnowledgeCheck();
 };
 
 } // End of namespace Mortevielle
