@@ -317,7 +317,11 @@ Common::Error GrimEngine::run() {
 
 Common::Error GrimEngine::loadGameState(int slot) {
 	assert(slot >= 0);
-	_savegameFileName = Common::String::format("grim%02d.gsv", slot);
+	if (getGameType() == GType_MONKEY4) { 
+		_savegameFileName = Common::String::format("efmi%03d.gsv",slot);
+	} else {
+		_savegameFileName = Common::String::format("grim%02d.gsv",slot);
+	}
 	_savegameLoadRequest = true;
 	return Common::kNoError;
 }
