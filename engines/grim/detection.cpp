@@ -473,7 +473,8 @@ static bool cmpSave(const SaveStateDescriptor &x, const SaveStateDescriptor &y) 
 SaveStateList GrimMetaEngine::listSaves(const char *target) const {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::StringArray filenames;
-	Common::String pattern = "grim*.gsv";
+	Common::String targetString(target);
+	Common::String pattern = targetString.hasPrefix("monkey4") ? "efmi*.gsv" : "grim*.gsv";
 
 	filenames = saveFileMan->listSavefiles(pattern);
 
