@@ -129,14 +129,12 @@ bool MemoryObject::load(MfcArchive &file) {
 
 void MemoryObject::loadFile(char *filename) {
 	if (!_data) {
-		if (g_fullpipe->_currArchive != _libHandle) {
-			assert(0);
-		}
-
-		Common::SeekableReadStream *s = _libHandle->createReadStreamForMember(filename);
+		Common::SeekableReadStream *s = g_fullpipe->_currArchive->createReadStreamForMember(filename);
 
 		if (s) {
 			assert(s->size() > 0);
+
+			debug(0, "Loading %s", filename);
 			_data = calloc(s->size(), 1);
 			s->read(_data, s->size());
 
