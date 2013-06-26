@@ -27,6 +27,6 @@ namespace Graphics {
 void drawLine(int x0, int y0, int x1, int y1, int color, void (*plotProc)(int, int, int, void *), void *data);
 void drawThickLine(int x0, int y0, int x1, int y1, int penX, int penY, int color, void (*plotProc)(int, int, int, void *), void *data);
 
-}	// End of namespace Graphics
+} // End of namespace Graphics
 
 #endif

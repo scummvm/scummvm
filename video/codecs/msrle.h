@@ -27,6 +27,12 @@
 
 namespace Video {
 
+/**
+ * Microsoft Run-Length Encoding decoder.
+ *
+ * Used in video:
+ *  - AVIDecoder
+ */
 class MSRLEDecoder : public Codec {
 public:
 	MSRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);

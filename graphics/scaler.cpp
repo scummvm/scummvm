@@ -152,7 +152,7 @@ void InitScalers(uint32 BitFormat) {
 		g_dotmatrix[12] = g_dotmatrix[14] = format.RGBToColor(63, 63, 63);
 }
 
-void DestroyScalers(){
+void DestroyScalers() {
 #ifdef USE_HQ_SCALERS
 	free(RGBtoYUV);
 	RGBtoYUV = 0;

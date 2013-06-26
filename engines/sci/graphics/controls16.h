@@ -63,7 +63,6 @@ public:
 	void kernelTexteditChange(reg_t controlObject, reg_t eventObject);
 
 private:
-	void init();
 	void texteditSetBlinkTime();
 
 	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);

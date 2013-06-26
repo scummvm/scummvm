@@ -28,20 +28,24 @@
 namespace TeenAgent {
 
 class Pack;
+
 class Font {
 public:
-	byte grid_color, shadow_color;
-	byte height, width_pack;
-
 	Font();
-	void load(const Pack &pack, int id);
-	uint render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool grid = false);
+	~Font();
+
+	void load(const Pack &pack, int id, byte height, byte widthPack);
+	uint render(Graphics::Surface *surface, int x, int y, const Common::String &str, byte color, bool showGrid = false);
 	uint render(Graphics::Surface *surface, int x, int y, char c, byte color);
 	static void grid(Graphics::Surface *surface, int x, int y, int w, int h, byte color);
 
-	~Font();
+	byte getHeight() { return _height; }
+	void setShadowColor(byte color) { _shadowColor = color; }
 private:
-	byte *data;
+	byte *_data;
+
+	byte _gridColor, _shadowColor;
+	byte _height, _widthPack;
 };
 
 } // End of namespace TeenAgent

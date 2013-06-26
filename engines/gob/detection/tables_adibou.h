@@ -33,7 +33,7 @@
 		"ADIBOU 1 Environnement 4-7 ans",
 		AD_ENTRY1s("intro.stk", "6db110188fcb7c5208d9721b5282682a", 4805104),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
@@ -47,7 +47,7 @@
 		"ADIBOU 2",
 		AD_ENTRY1s("intro.stk", "94ae7004348dc8bf99c23a9a6ef81827", 956162),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -61,7 +61,7 @@
 		"Le Jardin Magique d'Adibou",
 		AD_ENTRY1s("intro.stk", "a8ff86f3cc40dfe5898e0a741217ef27", 956328),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -75,7 +75,7 @@
 		"ADIBOU Version Decouverte",
 		AD_ENTRY1s("intro.stk", "558c14327b79ed39214b49d567a75e33", 8737856),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -89,7 +89,7 @@
 		"ADIBOU 2.10 Environnement",
 		AD_ENTRY1s("intro.stk", "f2b797819aeedee557e904b0b5ccd82e", 8736454),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -103,7 +103,7 @@
 		"ADIBOU 2.11 Environnement",
 		AD_ENTRY1s("intro.stk", "7b1f1f6f6477f54401e95d913f75e333", 8736904),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -117,7 +117,7 @@
 		"ADIBOU 2.12 Environnement",
 		AD_ENTRY1s("intro.stk", "1e49c39a4a3ce6032a84b712539c2d63", 8738134),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -131,7 +131,7 @@
 		"ADIBOU 2.13s Environnement",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -145,7 +145,7 @@
 		"ADIBOO 2.14 Environnement",
 		AD_ENTRY1s("intro.stk", "ff63637e3cb7f0a457edf79457b1c6b3", 9333874),
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -162,7 +162,7 @@
 		"ADIBOU 2",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		DE_DEU,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -178,7 +178,7 @@
 		"ADIB\xD9 2",
 		AD_ENTRY1s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958),
 		IT_ITA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -199,7 +199,7 @@
 			{0, 0, 0, 0}
 		},
 		EN_GRB,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -217,7 +217,7 @@
 			{0, 0, 0, 0}
 		},
 		DE_DEU,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},
@@ -235,7 +235,7 @@
 			{0, 0, 0, 0}
 		},
 		FR_FRA,
-		kPlatformPC,
+		kPlatformDOS,
 		ADGF_DEMO,
 		GUIO3(GUIO_NOSUBTITLES, GUIO_NOSPEECH, GUIO_NOASPECT)
 	},

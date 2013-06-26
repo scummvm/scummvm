@@ -466,6 +466,14 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		// This case doesn't occur in early SCI2.1 games, and we've only
 		// seen it happen in the RAMA demo, thus we can assume that the
 		// game is using a SCI2.1 table
+
+		// HACK: The Inside the Chest Demo doesn't have sounds at all, but
+		// it's using a SCI2 kernel
+		if (g_sci->getGameId() == GID_CHEST) {
+			_sci21KernelType = SCI_VERSION_2;
+			return true;
+		}
+
 		warning("autoDetectSci21KernelType(): Sound object not loaded, assuming a SCI2.1 table");
 		_sci21KernelType = SCI_VERSION_2_1;
 		return true;
@@ -488,7 +496,9 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->getBufSize())
+		// We don't check for op_ret here because the Phantasmagoria Mac script
+		// has an op_ret early on in its script (controlled by a branch).
+		if (offset >= script->getBufSize())
 			break;
 
 		if (opcode == op_callk) {

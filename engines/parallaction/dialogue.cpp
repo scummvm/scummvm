@@ -238,7 +238,7 @@ int16 DialogueManager::selectAnswerN() {
 
 	_selection = _balloonMan->hitTestDialogueBalloon(_mousePos.x, _mousePos.y);
 
-	VisibleAnswer *oldAnswer = &_visAnswers[_oldSelection];
+	VisibleAnswer *oldAnswer = (_oldSelection == NO_ANSWER_SELECTED) ? NULL : &_visAnswers[_oldSelection];
 	VisibleAnswer *answer = &_visAnswers[_selection];
 
 	if (_selection != _oldSelection) {

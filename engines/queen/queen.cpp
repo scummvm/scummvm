@@ -500,7 +500,7 @@ Common::Error QueenEngine::run() {
 	_display = new Display(this, _system);
 	_graphics = new Graphics(this);
 	_grid = new Grid(this);
-	_input = new Input(_resource->getLanguage(), _system, this);
+	_input = new Input(_resource->getLanguage(), _system);
 
 	if (_resource->isDemo()) {
 		_logic = new LogicDemo(this);

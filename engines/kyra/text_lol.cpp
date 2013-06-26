@@ -85,7 +85,7 @@ void TextDisplayer_LoL::setupField(bool mode) {
 			_screen->copyBlockToPage(3, 0, 0, 320, 200, _vm->_pageBuffer1);
 			_screen->setCurPage(cp);
 
-			_vm->_updateFlags &= 0xfffd;
+			_vm->_updateFlags &= 0xFFFD;
 		}
 	} else {
 		if (!mode)
@@ -136,18 +136,16 @@ void TextDisplayer_LoL::expandField() {
 void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int oldDim = 0;
 
-	const bool isPc98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
-
 	if (dim == 3) {
 		if (_vm->_updateFlags & 2) {
 			oldDim = clearDim(4);
-			_textDimData[4].color1 = isPc98 ? 0x33 : 254;
+			_textDimData[4].color1 = _vm->gameFlags().use16ColorMode ? 0x33 : 254;
 			_textDimData[4].color2 = _screen->_curDim->unkA;
 		} else {
 			oldDim = clearDim(3);
-			_textDimData[3].color1 = isPc98 ? 0x33 : 192;
+			_textDimData[3].color1 = _vm->gameFlags().use16ColorMode ? 0x33 : 192;
 			_textDimData[3].color2 = _screen->_curDim->unkA;
-			if (!isPc98)
+			if (!_vm->gameFlags().use16ColorMode)
 				_screen->copyColor(192, 254);
 			_vm->enableTimer(11);
 			_vm->_textColorFlag = 0;
@@ -157,12 +155,12 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 		oldDim = _screen->curDimIndex();
 		_screen->setScreenDim(dim);
 		_lineCount = 0;
-		_textDimData[dim].color1 = isPc98 ? 0x33 : 254;
+		_textDimData[dim].color1 = _vm->gameFlags().use16ColorMode ? 0x33 : 254;
 		_textDimData[dim].color2 = _screen->_curDim->unkA;
 	}
 
 	int cp = _screen->setCurPage(0);
-	Screen::FontId of = _screen->setFont(_vm->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
+	Screen::FontId of = _screen->setFont((_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().use16ColorMode) ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
 
 	preprocessString(str, script, paramList, paramIndex);
 	_numCharsTotal = strlen(_dialogueBuffer);
@@ -176,8 +174,8 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 }
 
 void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
-	static const uint8 textColors256[] = { 0xfe, 0xa2, 0x84, 0x97, 0x9F };
-	static const uint8 textColors16[] = { 0x33, 0xaa, 0x88, 0x55, 0x99 };
+	static const uint8 textColors256[] = { 0xFE, 0xA2, 0x84, 0x97, 0x9F };
+	static const uint8 textColors16[] = { 0x33, 0xAA, 0x88, 0x55, 0x99 };
 	static const uint8 soundEffect[] = { 0x0B, 0x00, 0x2B, 0x1B, 0x00 };
 
 	const uint8 *textColors = _vm->gameFlags().use16ColorMode ? textColors16 : textColors256;
@@ -187,7 +185,7 @@ void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
 	else
 		_vm->stopPortraitSpeechAnim();
 
-	uint16 col = textColors[type & 0x7fff];
+	uint16 col = textColors[type & 0x7FFF];
 
 	int od = _screen->curDimIndex();
 
@@ -222,16 +220,15 @@ void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
 			_vm->sound()->playSoundEffect(soundEffect[type]);
 	}
 
-	_vm->_textColorFlag = type & 0x7fff;
+	_vm->_textColorFlag = type & 0x7FFF;
 	_vm->_fadeText = false;
 }
 
 void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	char *dst = _dialogueBuffer;
-	const bool isPc98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
 
 	for (char *s = str; *s;) {
-		if (isPc98) {
+		if (_vm->gameFlags().lang == Common::JA_JPN) {
 			uint8 c = *s;
 			if (c >= 0xE0 || (c > 0x80 && c < 0xA0)) {
 				*dst++ = *s++;

@@ -41,6 +41,7 @@ namespace Hugo {
 
 IntroHandler::IntroHandler(HugoEngine *vm) : _vm(vm), _introX(0), _introY(0) {
 	_introXSize = 0;
+	_introTicks = 0;
 }
 
 IntroHandler::~IntroHandler() {
@@ -76,6 +77,7 @@ void IntroHandler::freeIntroData() {
 }
 
 intro_v1d::intro_v1d(HugoEngine *vm) : IntroHandler(vm) {
+	_introState = 0;
 }
 
 intro_v1d::~intro_v1d() {

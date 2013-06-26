@@ -61,7 +61,7 @@ void Insane::runScene(int arraynum) {
 	case 1:
 		initScene(1);
 		setupValues();
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(9));
 		else
 			smlayer_setActorCostume(0, 2, readArray(10));
@@ -70,14 +70,14 @@ void Insane::runScene(int arraynum) {
 		break;
 	case 2:
 		setupValues();
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(10));
 		else
 			smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_putActor(0, 2, _actor[0].x, _actor[0].y1 + 190, _smlayer_room2);
 
 		_mainRoadPos = readArray(2);
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 			initScene(5);
 			startVideo("tovista.san", 1, 32, 12, 0);
 		} else if (_mainRoadPos == _posBrokenTruck) {
@@ -93,7 +93,7 @@ void Insane::runScene(int arraynum) {
 		break;
 	case 3:
 		setupValues();
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(10));
 		else
 			smlayer_setActorCostume(0, 2, readArray(11));
@@ -148,7 +148,7 @@ void Insane::runScene(int arraynum) {
 	_insaneIsRunning = false;
 	_player->insanity(false);
 
-	if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))) {
+	if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))) {
 		writeArray(50, _actor[0].inventory[INV_CHAIN]);
 		writeArray(51, _actor[0].inventory[INV_CHAINSAW]);
 		writeArray(52, _actor[0].inventory[INV_MACE]);
@@ -243,7 +243,7 @@ void Insane::stopSceneSounds(int sceneId) {
 		_actor[1].defunct = 0;
 		_actor[1].scenePropSubIdx = 0;
 		_actor[1].field_54 = 0;
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 			smlayer_stopSound(59);
 			smlayer_stopSound(63);
 		} else {
@@ -319,7 +319,7 @@ void Insane::shutCurrentScene() {
 
 // insane_loadSceneData1 & insane_loadSceneData2
 int Insane::loadSceneData(int scene, int flag, int phase) {
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 		return 1;
 
 	int retvalue = 1;
@@ -621,7 +621,7 @@ void Insane::setSceneCostumes(int sceneId) {
 
 	switch (sceneId) {
 	case 1:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(9));
 		else
 			smlayer_setActorCostume(0, 2, readArray(10));
@@ -634,7 +634,7 @@ void Insane::setSceneCostumes(int sceneId) {
 		setupValues();
 		return;
 	case 2:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(9));
 		else
 			smlayer_setActorCostume(0, 2, readArray(10));
@@ -653,7 +653,7 @@ void Insane::setSceneCostumes(int sceneId) {
 	case 4:
 	case 5:
 	case 6:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(10));
 		else
 			smlayer_setActorCostume(0, 2, readArray(11));
@@ -672,7 +672,7 @@ void Insane::setEnemyCostumes() {
 
 	debugC(DEBUG_INSANE, "setEnemyCostumes(%d)", _currEnemy);
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 		smlayer_setActorCostume(0, 2, readArray(11));
 		smlayer_setActorCostume(0, 0, readArray(13));
 		smlayer_setActorCostume(0, 1, readArray(12));
@@ -1000,7 +1000,7 @@ void Insane::postCase11(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		if (_firstBattle) {
 			smush_setToFinish();
 		} else {
-			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 				queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 			else
 				queueSceneSwitch(1, _smush_minedrivFlu, "minedriv.san", 64, 0,
@@ -1096,7 +1096,7 @@ void Insane::postCase1(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 
 	if ((curFrame >= maxFrame) && !_needSceneSwitch) {
 		flu = &_fluConf[14 + _iactSceneId2];
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			queueSceneSwitch(4, 0, "tovista.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
@@ -1224,7 +1224,7 @@ void Insane::postCase6(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 		else
 			flu = &_fluConf[0 + _iactSceneId2];
 
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 		else
 			queueSceneSwitch(flu->sceneId, *flu->fluPtr, flu->filenamePtr, 64, 0,
@@ -1243,7 +1243,7 @@ void Insane::postCase8(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 			queueSceneSwitch(13, _smush_minefiteFlu, "minefite.san", 64, 0,
 							 _continueFrame, 1300);
 		} else {
-			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+			if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 				queueSceneSwitch(1, 0, "minedriv.san", 64, 0, 0, 0);
 			} else {
 				if (_currSceneId == 23) {

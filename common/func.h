@@ -535,6 +535,6 @@ GENERATE_TRIVIAL_HASH_FUNCTOR(unsigned long);
 
 #undef GENERATE_TRIVIAL_HASH_FUNCTOR
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

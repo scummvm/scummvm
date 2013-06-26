@@ -70,10 +70,30 @@ MystResource::~MystResource() {
 }
 
 void MystResource::handleMouseUp() {
-	if (_dest != 0)
-		_vm->changeToCard(_dest, true);
-	else
+	if (_dest == 0) {
 		warning("Movement type resource with null destination at position (%d, %d), (%d, %d)", _rect.left, _rect.top, _rect.right, _rect.bottom);
+		return;
+	}
+
+	uint16 opcode;
+
+	switch (type) {
+	case kMystForwardArea:
+		opcode = 6;
+		break;
+	case kMystLeftArea:
+		opcode = 8;
+		break;
+	case kMystRightArea:
+		opcode = 7;
+		break;
+	default:
+		opcode = 48;
+		break;
+	}
+
+	_vm->_scriptParser->setInvokingResource(this);
+	_vm->_scriptParser->runOpcode(opcode, 0);
 }
 
 bool MystResource::canBecomeActive() {
@@ -202,20 +222,21 @@ VideoHandle MystResourceType6::playMovie() {
 	// Check if the video is already running
 	VideoHandle handle = _vm->_video->findVideoHandle(_videoFile);
 
-	if (_direction != 1)
-		warning("Playing QT movies backwards is not implemented");
-
 	// If the video is not running, play it
 	if (handle == NULL_VID_HANDLE || _vm->_video->endOfVideo(handle)) {
-		if (_playBlocking) {
-			_vm->_video->playMovieBlocking(_videoFile, _left, _top);
-			handle = NULL_VID_HANDLE;
-		} else {
-			handle = _vm->_video->playMovie(_videoFile, _left, _top, _loop);
+		handle = _vm->_video->playMovie(_videoFile, _left, _top, _loop);
+		if (_direction == -1) {
+			_vm->_video->seekToTime(handle, _vm->_video->getDuration(handle));
+			_vm->_video->setVideoRate(handle, -1);
 		}
 	} else {
 		// Resume the video
 		_vm->_video->pauseMovie(handle, false);
+	}
+
+	if (_playBlocking) {
+		_vm->_video->waitUntilMovieEnds(handle);
+		handle = NULL_VID_HANDLE;
 	}
 
 	return handle;

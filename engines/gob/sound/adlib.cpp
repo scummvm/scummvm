@@ -375,8 +375,10 @@ void AdLib::setVoiceTimbre(uint8 voice, const uint16 *params) {
 	const int voicePerc = voice - kVoiceBaseDrum;
 
 	if (!isPercussionMode() || (voice < kVoiceBaseDrum)) {
-		setOperatorParams(kVoiceMelodyOperator[0][voice], params0, waves[0]);
-		setOperatorParams(kVoiceMelodyOperator[1][voice], params1, waves[1]);
+		if (voice < kMelodyVoiceCount) {
+			setOperatorParams(kVoiceMelodyOperator[0][voice], params0, waves[0]);
+			setOperatorParams(kVoiceMelodyOperator[1][voice], params1, waves[1]);
+		}
 	} else if (voice == kVoiceBaseDrum) {
 		setOperatorParams(kVoicePercussionOperator[0][voicePerc], params0, waves[0]);
 		setOperatorParams(kVoicePercussionOperator[1][voicePerc], params1, waves[1]);

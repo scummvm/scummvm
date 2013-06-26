@@ -115,7 +115,7 @@ bool SystemClassRegistry::registerInstance(const char *className, void *instance
 	}
 
 	SystemInstance *inst = (*mapIt)._value->addInstance(instance, _count++);
-	return (inst != NULL);
+	return (inst != nullptr);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ bool SystemClassRegistry::unregisterInstance(const char *className, void *instan
 
 //////////////////////////////////////////////////////////////////////////
 bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanceID) {
-	if (pointer == NULL) {
+	if (pointer == nullptr) {
 		return true;
 	}
 
@@ -173,7 +173,7 @@ bool SystemClassRegistry::getPointerID(void *pointer, int *classID, int *instanc
 void *SystemClassRegistry::idToPointer(int classID, int instanceID) {
 	SavedInstanceMap::iterator it = _savedInstanceMap.find(instanceID);
 	if (it == _savedInstanceMap.end()) {
-		return NULL;
+		return nullptr;
 	} else {
 		return (*it)._value->getInstance();
 	}
@@ -234,7 +234,7 @@ bool SystemClassRegistry::loadTable(BaseGame *gameRef, BasePersistenceManager *p
 	uint32 numClasses = persistMgr->getDWORD();
 
 	for (uint32 i = 0; i < numClasses; i++) {
-		gameRef->_renderer->setIndicatorVal((int)(50.0f / (float)((float)numClasses / (float)i)));
+		gameRef->_renderer->setIndicatorVal((int)(50.0f / (float)((float)numClasses / (float)(i + 1))));
 
 		Common::String className = persistMgr->getStringObj();
 		NameMap::iterator mapIt = _nameMap.find(className);
@@ -286,7 +286,7 @@ bool SystemClassRegistry::loadInstances(BaseGame *gameRef, BasePersistenceManage
 
 	for (int i = 0; i < numInstances; i++) {
 		if (i % 20 == 0) {
-			gameRef->_renderer->setIndicatorVal((int)(50.0f + 50.0f / (float)((float)numInstances / (float)i)));
+			gameRef->_renderer->setIndicatorVal((int)(50.0f + 50.0f / (float)((float)numInstances / (float)(i + 1))));
 		}
 
 		checkHeader("<INSTANCE_HEAD>", persistMgr);

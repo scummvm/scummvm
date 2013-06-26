@@ -673,7 +673,7 @@ void Script::barmanServe(uint16 v1, uint16 v2, uint16 v3) {
 // Stores the current number of groats in the general field
 
 void Script::getNumGroats(uint16 v1, uint16 v2, uint16 v3) {
-	ValueTableData fields = Resources::getReference().fieldList();
+	ValueTableData &fields = Resources::getReference().fieldList();
 	fields.setField(GENERAL, fields.numGroats());
 }
 

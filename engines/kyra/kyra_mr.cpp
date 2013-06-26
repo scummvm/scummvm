@@ -28,7 +28,7 @@
 #include "kyra/debugger.h"
 #include "kyra/gui_mr.h"
 #include "kyra/resource.h"
-#include "kyra/sound.h"
+#include "kyra/sound_digital.h"
 
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -213,8 +213,6 @@ Common::Error KyraEngine_MR::init() {
 
 	_soundDigital = new SoundDigital(this, _mixer);
 	assert(_soundDigital);
-	if (!_soundDigital->init())
-		error("_soundDigital->init() failed");
 	KyraEngine_v1::_text = _text = new TextDisplayer_MR(this, _screen);
 	assert(_text);
 	_gui = new GUI_MR(this);
@@ -724,7 +722,7 @@ void KyraEngine_MR::loadCharacterShapes(int newShapes) {
 	static const uint8 numberOffset[] = { 3, 3, 4, 4, 3, 3 };
 	static const uint8 startShape[] = { 0x32, 0x58, 0x78, 0x98, 0xB8, 0xD8 };
 	static const uint8 endShape[] = { 0x57, 0x77, 0x97, 0xB7, 0xD7, 0xF7 };
-	static const char * const filenames[] = {
+	static const char *const filenames[] = {
 		"MSW##.SHP",
 		"MTA##.SHP",
 		"MTFL##.SHP",

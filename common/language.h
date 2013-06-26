@@ -81,6 +81,6 @@ const String getGameGUIOptionsDescriptionLanguage(Common::Language lang);
 // TODO: Document this GUIO related function
 bool checkGameGUIOptionLanguage(Common::Language lang, const String &str);
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

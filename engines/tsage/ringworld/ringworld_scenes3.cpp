@@ -2179,6 +2179,7 @@ Scene2120::Scene2120(): Scene() {
 	_prevDbMode = 0;
 	_visageVisable = false;
 	_subjectIndex = 0;
+	_lineOffset = 0;
 }
 
 void Scene2120::postInit(SceneObjectList *OwnerList) {
@@ -3690,8 +3691,8 @@ void Scene2230::Hotspot12::doAction(int action) {
 
 /*--------------------------------------------------------------------------*/
 
-Scene2230::Scene2230() :
-		_hotspot9(0, CURSOR_LOOK, 2230, 16, CURSOR_USE, 2230, 18, LIST_END) {
+Scene2230::Scene2230() : _hotspot9(0, CURSOR_LOOK, 2230, 16, CURSOR_USE, 2230, 18, LIST_END) {
+	_field30A = 0;
 }
 
 void Scene2230::postInit(SceneObjectList *OwnerList) {
@@ -4877,6 +4878,7 @@ Scene2310::Scene2310() {
 	_rectList[4].set(199, 70, 215, 140);
 
 	_wireIndex = 5;
+	_pageIndex = 0;
 }
 
 void Scene2310::postInit(SceneObjectList *OwnerList) {

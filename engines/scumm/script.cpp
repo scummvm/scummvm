@@ -49,6 +49,8 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 	if (!recursive)
 		stopScript(script);
 
+	uint16 number = (_currentScript != 0xFF) ? vm.slot[_currentScript].number : 0;
+
 	if (script < _numGlobalScripts) {
 		// Call getResourceAddress to ensure the resource is loaded & its usage count reset
 		/*scriptPtr =*/ getResourceAddress(rtScript, script);
@@ -56,7 +58,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		scriptType = WIO_GLOBAL;
 
 		debugC(DEBUG_SCRIPTS, "runScript(Global-%d) from %d-%d", script,
-				       vm.slot[_currentScript].number, _roomResource);
+				       number, _roomResource);
 	} else {
 		scriptOffs = _localScriptOffsets[script - _numGlobalScripts];
 		if (scriptOffs == 0)
@@ -64,7 +66,7 @@ void ScummEngine::runScript(int script, bool freezeResistant, bool recursive, in
 		scriptType = WIO_LOCAL;
 
 		debugC(DEBUG_SCRIPTS, "runScript(%d) from %d-%d", script,
-				       vm.slot[_currentScript].number, _roomResource);
+				       number, _roomResource);
 	}
 
 	if (cycle == 0)
@@ -138,10 +140,10 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 void ScummEngine::initializeLocals(int slot, int *vars) {
 	int i;
 	if (!vars) {
-		for (i = 0; i < 25; i++)
+		for (i = 0; i < NUM_SCRIPT_LOCAL; i++)
 			vm.localvar[slot][i] = 0;
 	} else {
-		for (i = 0; i < 25; i++)
+		for (i = 0; i < NUM_SCRIPT_LOCAL; i++)
 			vm.localvar[slot][i] = vars[i];
 	}
 }
@@ -755,13 +757,13 @@ void ScummEngine::stopObjectCode() {
 }
 
 void ScummEngine::runInventoryScript(int i) {
-	int args[24];
-	memset(args, 0, sizeof(args));
-	args[0] = i;
 	if (VAR(VAR_INVENTORY_SCRIPT)) {
 		if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
 			inventoryScriptIndy3Mac();
 		} else {
+			int args[NUM_SCRIPT_LOCAL];
+			memset(args, 0, sizeof(args));
+			args[0] = i;
 			runScript(VAR(VAR_INVENTORY_SCRIPT), 0, 0, args);
 		}
 	}
@@ -1060,7 +1062,7 @@ void ScummEngine::doSentence(int verb, int objectA, int objectB) {
 
 void ScummEngine::checkAndRunSentenceScript() {
 	int i;
-	int localParamList[24];
+	int localParamList[NUM_SCRIPT_LOCAL];
 	const ScriptSlot *ss;
 	int sentenceScript;
 
@@ -1308,7 +1310,7 @@ void ScummEngine_v0::runSentenceScript() {
 }
 
 void ScummEngine_v2::runInputScript(int clickArea, int val, int mode) {
-	int args[24];
+	int args[NUM_SCRIPT_LOCAL];
 	int verbScript;
 
 	verbScript = 4;
@@ -1332,7 +1334,7 @@ void ScummEngine_v2::runInputScript(int clickArea, int val, int mode) {
 }
 
 void ScummEngine::runInputScript(int clickArea, int val, int mode) {
-	int args[24];
+	int args[NUM_SCRIPT_LOCAL];
 	int verbScript;
 
 	verbScript = VAR(VAR_VERB_SCRIPT);
@@ -1366,8 +1368,14 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 
 		// Clicks are handled differently in Indy3 mac: param 2 of the
 		// input script is set to 0 for normal clicks, and to 1 for double clicks.
+		// The EGA DOS version of Loom also checks that the second click happens
+		// close enough to the first one, but that seems like overkill.
 		uint32 time = _system->getMillis();
 		args[2] = (time < _lastInputScriptTime + 500);	// 500 ms double click delay
+		_lastInputScriptTime = time;
+	} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformMacintosh) {
+		uint32 time = _system->getMillis();
+		VAR(52) = (time < _lastInputScriptTime + 500);	// 500 ms double click delay
 		_lastInputScriptTime = time;
 	}
 
@@ -1484,7 +1492,7 @@ void ScummEngine::beginCutscene(int *args) {
 
 void ScummEngine::endCutscene() {
 	ScriptSlot *ss = &vm.slot[_currentScript];
-	int args[16];
+	int args[NUM_SCRIPT_LOCAL];
 
 	if (ss->cutsceneOverride > 0)	// Only terminate if active
 		ss->cutsceneOverride--;

@@ -43,12 +43,12 @@ public:
 	PartEmitter(BaseGame *inGame, BaseScriptHolder *Owner);
 	virtual ~PartEmitter(void);
 
-	int _fadeOutTime;
+	int32 _fadeOutTime;
 
 	bool start();
 
 	bool update();
-	bool display() { return display(NULL); } // To avoid shadowing the inherited display-function.
+	bool display() { return display(nullptr); } // To avoid shadowing the inherited display-function.
 	bool display(BaseRegion *region);
 
 	bool sortParticlesByZ();
@@ -70,11 +70,11 @@ public:
 
 
 private:
-	int _width;
-	int _height;
+	int32 _width;
+	int32 _height;
 
-	int _angle1;
-	int _angle2;
+	int32 _angle1;
+	int32 _angle2;
 
 	float _rotation1;
 	float _rotation2;
@@ -94,31 +94,31 @@ private:
 	float _scale2;
 	bool _scaleZBased;
 
-	int _maxParticles;
+	int32 _maxParticles;
 
-	int _lifeTime1;
-	int _lifeTime2;
+	int32 _lifeTime1;
+	int32 _lifeTime2;
 	bool _lifeTimeZBased;
 
-	int _genInterval;
-	int _genAmount;
+	int32 _genInterval;
+	int32 _genAmount;
 
 	bool _running;
-	int _overheadTime;
+	int32 _overheadTime;
 
-	int _maxBatches;
-	int _batchesGenerated;
+	int32 _maxBatches;
+	int32 _batchesGenerated;
 
 	Rect32 _border;
-	int _borderThicknessLeft;
-	int _borderThicknessRight;
-	int _borderThicknessTop;
-	int _borderThicknessBottom;
+	int32 _borderThicknessLeft;
+	int32 _borderThicknessRight;
+	int32 _borderThicknessTop;
+	int32 _borderThicknessBottom;
 
-	int _fadeInTime;
+	int32 _fadeInTime;
 
-	int _alpha1;
-	int _alpha2;
+	int32 _alpha1;
+	int32 _alpha2;
 	bool _alphaTimeBased;
 
 	bool _useRegion;
@@ -127,7 +127,7 @@ private:
 	BaseScriptHolder *_owner;
 
 	PartForce *addForceByName(const Common::String &name);
-	int static compareZ(const void *obj1, const void *obj2);
+	bool static compareZ(const PartParticle *p1, const PartParticle *p2);
 	bool initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta);
 	bool updateInternal(uint32 currentTime, uint32 timerDelta);
 	uint32 _lastGenTime;

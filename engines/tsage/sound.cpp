@@ -1494,6 +1494,11 @@ Sound::Sound() {
 	memset(_trkLoopIndex, 0, SOUND_ARR_SIZE * sizeof(int));
 	memset(_trkRest, 0, SOUND_ARR_SIZE * sizeof(int));
 	memset(_trkLoopRest, 0, SOUND_ARR_SIZE * sizeof(int));
+	for (int i = 0; i < 16; i++) {
+		_chWork[i] = false;
+		_trackInfo._chunks[i] = 0;
+		_trackInfo._voiceTypes[i] = 0;
+	}
 }
 
 Sound::~Sound() {
@@ -2504,6 +2509,7 @@ SoundDriver::SoundDriver() {
 	_driverResID = 0;
 	_minVersion = _maxVersion = 0;
 	_groupMask = 0;
+	_groupOffset = NULL;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -2568,6 +2574,12 @@ AdlibSoundDriver::AdlibSoundDriver(): SoundDriver() {
 	Common::fill(_pitchBlend, _pitchBlend + ADLIB_CHANNEL_COUNT, 0x2000);
 	memset(_v4409E, 0, ADLIB_CHANNEL_COUNT * sizeof(int));
 	_patchData = NULL;
+	for (int i = 0; i < 256; i++)
+		_portContents[i] = 0;
+	for (int i = 0; i < 9; i++) {
+		_channelVoiced[i] = false;
+		_pitchBlend[i] = 0;
+	}
 }
 
 AdlibSoundDriver::~AdlibSoundDriver() {
@@ -2862,6 +2874,7 @@ SoundBlasterDriver::SoundBlasterDriver(): SoundDriver() {
 	_sampleRate = _mixer->getOutputRate();
 	_audioStream = NULL;
 	_channelData = NULL;
+	_channelVolume = 0;
 }
 
 SoundBlasterDriver::~SoundBlasterDriver() {

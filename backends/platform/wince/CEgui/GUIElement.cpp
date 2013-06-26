@@ -98,19 +98,19 @@ bool GUIElement::drawn() {
 	return _drawn;
 }
 
-int GUIElement::x() {
+int GUIElement::getX() {
 	return _x;
 }
 
-int GUIElement::y() {
+int GUIElement::getY() {
 	return _y;
 }
 
-int GUIElement::width() {
+int GUIElement::getWidth() {
 	return _width;
 }
 
-int GUIElement::height() {
+int GUIElement::getHeight() {
 	return _height;
 }
 

@@ -145,6 +145,7 @@ protected:
 
 	void receivedFocusWidget();
 	void lostFocusWidget();
+	void checkBounds();
 	void scrollToCurrent();
 
 	int *_textWidth;

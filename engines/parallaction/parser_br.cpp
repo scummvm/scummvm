@@ -325,6 +325,7 @@ DECLARE_LOCATION_PARSER(location)  {
 		nextToken = 2;
 	}
 
+	debugC(7, kDebugParser, "flip: %d", flip);
 	// TODO: handle background horizontal flip (via a context parameter)
 
 	if (_tokens[nextToken][0] != '\0') {

@@ -21,6 +21,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 
+# NLS nuisances.
+LC_ALL=C
+export LC_ALL
+LANGUAGE=C
+export LANGUAGE
+
 # Save the current environment variables for next runs
 SAVED_CONFIGFLAGS=$@
 SAVED_LDFLAGS=$LDFLAGS
@@ -123,6 +129,7 @@ _libunity=auto
 _debug_build=auto
 _release_build=auto
 _optimizations=auto
+_use_cxx11=no
 _verbose_build=no
 _text_console=no
 _mt32emu=yes
@@ -223,7 +230,11 @@ cc_check_no_clean() {
 	echo >> "$TMPLOG"
 	echo "$CXX $LDFLAGS $CXXFLAGS $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
 	rm -f "$TMPO$HOSTEXEEXT"
-	( $CXX $LDFLAGS $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+	if test "-c" = "$*" ; then
+		( $CXX $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+	else
+		( $CXX $LDFLAGS $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
+	fi
 	TMPR="$?"
 	echo "return code: $TMPR" >> "$TMPLOG"
 	echo >> "$TMPLOG"
@@ -870,6 +881,7 @@ Game engines:
     The values of <engine name> for these options are as follows:
 $engines_help
 Optional Features:
+  --enable-c++11           build as C++11 if the compiler allows that
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
   --enable-release         enable building in release mode (this activates
@@ -1108,6 +1120,12 @@ for ac_option in $@; do
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--enable-c++11)
+		_use_cxx11=yes
+		;;
+	--disable-c++11)
+		_use_cxx11=no
 		;;
 	--enable-debug)
 		_debug_build=yes
@@ -1417,13 +1435,8 @@ fi
 case $_host in
 caanoo | gp2x | gp2xwiz | openpandora | ps2)
 	if test "$_debug_build" = auto; then
-		# If you want to debug one of these platforms, use '--disable-release --enable-debug'
+		# If you want to debug one of these platforms, use '--disable-optimizations --enable-debug'
 		_debug_build=no
-	fi
-
-	if test "$_release_build" = auto; then
-		# Enable release build by default.
-		_release_build=yes
 	fi
 
 	if test "$_optimizations" = auto; then
@@ -1557,7 +1570,7 @@ EOF
 
 	if test -n "$_host"; then
 		# In cross-compiling mode, we cannot run the result
-		eval "$1 $CXXFLAGS $LDFLAGS -o $TMPO.o -c tmp_cxx_compiler.cpp" 2> /dev/null && cc_check_clean tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS -o $TMPO.o -c tmp_cxx_compiler.cpp" 2> /dev/null && cc_check_clean tmp_cxx_compiler.cpp
 	else
 		eval "$1 $CXXFLAGS $LDFLAGS -o $TMPO$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "$TMPO$HOSTEXEEXT 2> /dev/null" && cc_check_clean tmp_cxx_compiler.cpp
 	fi
@@ -1695,21 +1708,36 @@ if test "$cxx_verc_fail" = yes ; then
 fi
 
 #
+# Check whether the compiler supports C++11
+#
+have_cxx11=no
+cat > $TMPC << EOF
+int main(int argc, char *argv[]) { if (argv == nullptr) return -1; else return 0; }
+EOF
+cc_check -std=c++11 && have_cxx11=yes
+if test "$_use_cxx11" = "yes" ; then
+	_use_cxx11=$have_cxx11
+fi
+
+#
 # Setup compiler specific CXXFLAGS now that we know the compiler version.
 # Foremost, this means enabling various warnings.
 # In addition, we set CXX_UPDATE_DEP_FLAG for GCC >= 3.0 and for ICC.
 #
 if test "$have_gcc" = yes ; then
 	if test "$_cxx_major" -ge "3" ; then
-		case $_host_os in
-		# newlib-based system include files suppress non-C89 function
-		# declarations under __STRICT_ANSI__
-		amigaos* | android | bada | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | wii | wince )
-			;;
-		*)
-			CXXFLAGS="$CXXFLAGS -ansi"
-			;;
-		esac
+		# Try to use ANSI mode when C++11 is disabled.
+		if test "$_use_cxx11" = "no" ; then
+			case $_host_os in
+			# newlib-based system include files suppress non-C89 function
+			# declarations under __STRICT_ANSI__
+			amigaos* | android | bada | dreamcast | ds | gamecube | mingw* | n64 | psp | ps2 | ps3 | wii | wince )
+				;;
+			*)
+				CXXFLAGS="$CXXFLAGS -ansi"
+				;;
+			esac
+		fi
 		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 		add_line_to_config_mk 'HAVE_GCC3 = 1'
 		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
@@ -1724,6 +1752,15 @@ if test "$have_gcc" = yes ; then
 elif test "$have_icc" = yes ; then
 	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
 fi;
+
+#
+# Update status about C++11 mode
+#
+echo_n "Building as C++11... "
+if test "$_use_cxx11" = "yes" ; then
+	CXXFLAGS="$CXXFLAGS -std=c++11"
+fi
+echo $_use_cxx11
 
 # By default, we add -pedantic to the CXXFLAGS to catch some potentially
 # non-portable constructs, like use of GNU extensions.
@@ -1904,7 +1941,7 @@ cc_check_clean tmp_find_type_with_size.cpp
 # for the smaller sizes.
 echo_n "Alignment required... "
 case $_host_cpu in
-	i[3-6]86 | x86_64 | ppc*)
+	i[3-6]86 | amd64 | x86_64 | ppc*)
 		# Unaligned access should work
 		_need_memalign=no
 		;;
@@ -1951,7 +1988,7 @@ case $_host_cpu in
 		echo "PowerPC"
 		DEFINES="$DEFINES -DPPC_TARGET"
 		;;
-	x86_64)
+	amd64 | x86_64)
 		echo "x86_64"
 		;;
 	*)
@@ -2521,14 +2558,20 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			if test "$_release_build" = no; then
 				DEFINES="$DEFINES -DOP_DEBUG"
-			else
-				# Use -O3 on the OpenPandora for non-debug builds.
+			fi
+
+			# Use -O3 on the OpenPandora for optimized builds.
+			if test "$_optimizations" = yes; then
 				_optimization_level=-O3
 			fi
+
+			define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 			CXXFLAGS="$CXXFLAGS -march=armv7-a"
 			CXXFLAGS="$CXXFLAGS -mtune=cortex-a8"
+			CXXFLAGS="$CXXFLAGS -mfloat-abi=softfp"
 			CXXFLAGS="$CXXFLAGS -mfpu=neon"
-			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
+			CXXFLAGS="$CXXFLAGS -fsingle-precision-constant"
+			ASFLAGS="$ASFLAGS -mfloat-abi=softfp"
 			_backend="openpandora"
 			_build_hq_scalers=yes
 			_vkeybd=no
@@ -2537,6 +2580,16 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/openpandora/op-bundle.mk"
 			;;
 		ppc-amigaos)
+			# Only static builds link successfully on buildbot
+			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
+			LDFLAGS="$LDFLAGS -static"
+
+			# toolchain binaries prefixed by host
+			_ranlib=$_host-ranlib
+			_strip=$_host-strip
+			_ar="$_host-ar cru"
+			_as="$_host-as"
+			_windres=$_host-windres
 			;;
 		ps2)
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE"
@@ -2816,7 +2869,7 @@ esac
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	android | bada | dingux | dreamcast | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | webos | wii)
+	android | bada | dingux | dc | gph | iphone | maemo | openpandora | psp | samsungtv | sdl | webos | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2862,7 +2915,7 @@ case $_host_os in
 	amigaos* | cygwin* | dreamcast | ds | gamecube | mingw* | n64 | ps2 | ps3 | psp | wii | wince)
 		_posix=no
 		;;
-	android | beos* | bsd* | darwin* | freebsd* | gph-linux | haiku* | hpux* | iphone | irix* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
+	android | beos* | bsd* | darwin* | freebsd* | gnu* | gph-linux | haiku* | hpux* | iphone | irix*| k*bsd*-gnu* | linux* | maemo | mint* | netbsd* | openbsd* | solaris* | sunos* | uclinux* | webos)
 		_posix=yes
 		;;
 	os2-emx*)
@@ -2977,7 +3030,7 @@ PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb-interwo
 	freebsd*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
-		CXXFLAGS="$CXXFLAGS -fpic"
+		CXXFLAGS="$CXXFLAGS -fPIC"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
 PLUGIN_LDFLAGS  += -shared
@@ -3018,10 +3071,10 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
 
-	linux*)
+	linux* | gnu* | k*bsd*-gnu*)
 		_plugin_prefix="lib"
 		_plugin_suffix=".so"
-		CXXFLAGS="$CXXFLAGS -fpic"
+		CXXFLAGS="$CXXFLAGS -fPIC"
 		LIBS="$LIBS -ldl"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
@@ -3606,7 +3659,8 @@ if test "$_opengl" = auto ; then
 			# Test the current header for OpenGL
 			cat > $TMPC << EOF
 #include <$i>
-int main(void) { return GL_VERSION_1_1; }
+#include <stdio.h>
+int main(void) { printf("ANTIVIRUS FALSE POSITIVE WORKAROUND"); return GL_VERSION_1_1; }
 EOF
 			cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes && break
 

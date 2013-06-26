@@ -173,7 +173,7 @@ bool Debugger::Cmd_Mem(int argc, const char **argv) {
 	int16 numBlocks = _vm->_memory->getNumBlocks();
 	MemBlock *memBlocks = _vm->_memory->getMemBlocks();
 
-	MemBlock **blocks = (MemBlock **)malloc(numBlocks * sizeof(MemBlock));
+	MemBlock **blocks = (MemBlock **)malloc(numBlocks * sizeof(MemBlock *));
 
 	int i, j;
 

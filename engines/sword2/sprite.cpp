@@ -590,8 +590,11 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 					s->w = (decompData / (s->h / 2));
 					sprite = (byte *)malloc(s->w * s->h);
 
-					if (!sprite)
+					if (!sprite) {
+						free(tempBuf);
+
 						return RDERR_OUTOFMEMORY;
+					}
 
 					resizePsxSprite(sprite, tempBuf, s->w, s->h);
 					free(tempBuf);

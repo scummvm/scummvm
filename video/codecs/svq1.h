@@ -33,6 +33,12 @@ struct Point;
 
 namespace Video {
 
+/**
+ * Sorenson Vector Quantizer 1 decoder.
+ *
+ * Used in video:
+ *  - QuickTimeDecoder
+ */
 class SVQ1Decoder : public Codec {
 public:
 	SVQ1Decoder(uint16 width, uint16 height);

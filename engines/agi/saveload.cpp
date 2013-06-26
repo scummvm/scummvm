@@ -316,7 +316,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 		return errBadFileOpen;
 	}
 
-	strncpy(_game.id, loadId, 8);
+	Common::strlcpy(_game.id, loadId, 8);
 
 	if (saveVersion >= 5) {
 		char md5[32 + 1];
@@ -678,7 +678,7 @@ int AgiEngine::selectSlot() {
 			switch (key) {
 			case KEY_ENTER:
 				rc = active;
-				strncpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
+				Common::strlcpy(_game.strings[MAX_STRINGS], desc[i], MAX_STRINGLEN);
 				debugC(8, kDebugLevelMain | kDebugLevelInput, "Button pressed: %d", rc);
 				exitSelectSlot = true;
 				break;

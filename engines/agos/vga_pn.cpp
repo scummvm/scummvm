@@ -152,7 +152,7 @@ void AGOSEngine::vc48_specialEffect() {
 	uint16 num = vcReadNextWord();
 	vcReadNextWord();
 
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformDOS) {
 		if (num == 1) {
 			Graphics::Surface *screen = _system->lockScreen();
 			byte *dst = (byte *)screen->pixels;

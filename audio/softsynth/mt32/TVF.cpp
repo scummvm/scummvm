@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -117,7 +117,7 @@ void TVF::reset(const TimbreParam::PartialParam *newPartialParam, unsigned int b
 	unsigned int key = partial->getPoly()->getKey();
 	unsigned int velocity = partial->getPoly()->getVelocity();
 
-	Tables *tables = &partial->getSynth()->tables;
+	const Tables *tables = &Tables::getInstance();
 
 	baseCutoff = calcBaseCutoff(newPartialParam, basePitch, key);
 #if MT32EMU_MONITOR_TVF >= 1
@@ -179,7 +179,7 @@ void TVF::startDecay() {
 }
 
 void TVF::nextPhase() {
-	Tables *tables = &partial->getSynth()->tables;
+	const Tables *tables = &Tables::getInstance();
 	int newPhase = phase + 1;
 
 	switch (newPhase) {

@@ -52,7 +52,7 @@ Common::Error Parallaction_br::init() {
 	_screenWidth = 640;
 	_screenHeight = 400;
 
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformDOS) {
 		if (getFeatures() & GF_DEMO) {
 			_disk = new DosDemoDisk_br(this);
 		} else {
@@ -297,7 +297,7 @@ void Parallaction_br::changeLocation() {
 
 		// TODO: maybe handle this into Disk
 		delete _objects;
-		if (getPlatform() == Common::kPlatformPC) {
+		if (getPlatform() == Common::kPlatformDOS) {
 			_objects = _disk->loadObjects("icone.ico");
 		} else {
 			_objects = _disk->loadObjects("icons.ico", _part);

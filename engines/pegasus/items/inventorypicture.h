@@ -106,7 +106,6 @@ protected:
 	virtual TimeValue getItemPanelTime(Item *);
 	void loopCurrentItem();
 
-	InputHandler *_previousHandler;
 	bool _isLooping;
 };
 

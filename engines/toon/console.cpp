@@ -26,6 +26,7 @@
 namespace Toon {
 
 ToonConsole::ToonConsole(ToonEngine *vm) : GUI::Debugger(), _vm(vm) {
+	assert(_vm);
 }
 
 ToonConsole::~ToonConsole() {

@@ -32,6 +32,8 @@
 #include "common/keyboard.h"
 #include "common/textconsole.h"
 
+#include "audio/mixer.h"
+
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/palette.h"
@@ -57,6 +59,8 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	clearDirtyRects();
 
 	_playSoundCounter = 0;
+
+	_musicVolume = 0;
 
 	_processRandomPaletteCounter = 0;
 
@@ -90,6 +94,7 @@ ToucheEngine::~ToucheEngine() {
 	DebugMan.clearAllDebugChannels();
 	delete _console;
 
+	stopMusic();
 	delete _midiPlayer;
 }
 
@@ -100,7 +105,7 @@ Common::Error ToucheEngine::run() {
 
 	setupOpcodes();
 
-	_midiPlayer = new MidiPlayer;
+	initMusic();
 
 	// Setup mixer
 	syncSoundSettings();
@@ -120,7 +125,7 @@ Common::Error ToucheEngine::run() {
 }
 
 void ToucheEngine::restart() {
-	_midiPlayer->stop();
+	stopMusic();
 
 	_gameState = kGameStateGameLoop;
 	_displayQuitDialog = false;
@@ -216,7 +221,7 @@ void ToucheEngine::readConfigurationSettings() {
 			_talkTextMode = kTalkModeVoiceOnly;
 		}
 	}
-	_midiPlayer->setVolume(ConfMan.getInt("music_volume"));
+	setMusicVolume(ConfMan.getInt("music_volume"));
 }
 
 void ToucheEngine::writeConfigurationSettings() {
@@ -234,7 +239,7 @@ void ToucheEngine::writeConfigurationSettings() {
 		ConfMan.setBool("subtitles", true);
 		break;
 	}
-	ConfMan.setInt("music_volume", _midiPlayer->getVolume());
+	ConfMan.setInt("music_volume", getMusicVolume());
 	ConfMan.flushToDisk();
 }
 
@@ -3305,6 +3310,82 @@ bool ToucheEngine::canLoadGameStateCurrently() {
 
 bool ToucheEngine::canSaveGameStateCurrently() {
 	return _gameState == kGameStateGameLoop && _flagsTable[618] == 0 && !_hideInventoryTexts;
+}
+
+void ToucheEngine::initMusic() {
+	// Detect External Music Files
+	bool extMusic = true;
+	for (int num = 0; num < 26 && extMusic; num++) {
+		Common::String extMusicFilename = Common::String::format("track%02d", num+1);
+		Audio::SeekableAudioStream *musicStream = Audio::SeekableAudioStream::openStreamFile(extMusicFilename);
+		if (!musicStream)
+			extMusic = false;
+		delete musicStream;
+	}
+
+	if (!extMusic) {
+		_midiPlayer = new MidiPlayer;
+		debug(1, "initMusic(): Using midi music!");
+	} else
+		debug(1, "initMusic(): Using external digital music!");
+}
+
+void ToucheEngine::startMusic(int num) {
+	debug(1, "startMusic(%d)", num);
+	uint32 size;
+
+	stopMusic();
+
+	if (_midiPlayer) {
+		const uint32 offs = res_getDataOffset(kResourceTypeMusic, num, &size);
+		_fData.seek(offs);
+		_midiPlayer->play(_fData, size, true);
+	} else {
+		Common::String extMusicFilename = Common::String::format("track%02d", num);
+		Audio::SeekableAudioStream *extMusicFileStream = Audio::SeekableAudioStream::openStreamFile(extMusicFilename);
+		if (!extMusicFileStream) {
+			error("Unable to open %s for reading", extMusicFilename.c_str());
+		}
+		Audio::LoopingAudioStream *loopStream = new Audio::LoopingAudioStream(extMusicFileStream, 0);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loopStream, -1, _musicVolume);
+	}
+}
+
+void ToucheEngine::stopMusic() {
+	debug(1, "stopMusic()");
+	if (_midiPlayer)
+		_midiPlayer->stop();
+	else {
+		_mixer->stopHandle(_musicHandle);
+	}
+}
+
+int ToucheEngine::getMusicVolume() {
+	if (_midiPlayer)
+		_musicVolume = _midiPlayer->getVolume();
+	return _musicVolume;
+}
+
+void ToucheEngine::setMusicVolume(int volume) {
+	debug(1, "setMusicVolume(%d)", volume);
+	_musicVolume = CLIP(volume, 0, 255);
+
+	if (_midiPlayer)
+		_midiPlayer->setVolume(_musicVolume);
+	else {
+		_mixer->setChannelVolume(_musicHandle, _musicVolume);
+	}
+}
+
+void ToucheEngine::adjustMusicVolume(int diff) {
+	debug(1, "adjustMusicVolume(%d)", diff);
+	_musicVolume = CLIP(_musicVolume + diff, 0, 255);
+
+	if (_midiPlayer)
+		_midiPlayer->adjustVolume(diff);
+	else {
+		_mixer->setChannelVolume(_musicHandle, _musicVolume);
+	}
 }
 
 } // namespace Touche

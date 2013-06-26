@@ -26,7 +26,7 @@
 namespace DreamWeb {
 
 void DreamWebEngine::printSprites() {
-	for (size_t priority = 0; priority < 7; ++priority) {
+	for (uint priority = 0; priority < 7; ++priority) {
 		Common::List<Sprite>::const_iterator i;
 		for (i = _spriteTable.begin(); i != _spriteTable.end(); ++i) {
 			const Sprite &sprite = *i;

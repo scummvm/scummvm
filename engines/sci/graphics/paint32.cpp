@@ -34,8 +34,8 @@
 
 namespace Sci {
 
-GfxPaint32::GfxPaint32(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCoordAdjuster *coordAdjuster, GfxCache *cache, GfxScreen *screen, GfxPalette *palette)
-	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _coordAdjuster(coordAdjuster), _cache(cache), _screen(screen), _palette(palette) {
+GfxPaint32::GfxPaint32(ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette)
+	: _resMan(resMan), _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette) {
 }
 
 GfxPaint32::~GfxPaint32() {

@@ -27,9 +27,9 @@
 namespace Kyra {
 
 int KyraRpgEngine::getBlockDistance(uint16 block1, uint16 block2) {
-	int b1x = block1 & 0x1f;
+	int b1x = block1 & 0x1F;
 	int b1y = block1 >> 5;
-	int b2x = block2 & 0x1f;
+	int b2x = block2 & 0x1F;
 	int b2y = block2 >> 5;
 
 	uint8 dy = ABS(b2y - b1y);

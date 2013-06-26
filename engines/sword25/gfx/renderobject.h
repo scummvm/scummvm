@@ -53,6 +53,8 @@ namespace Sword25 {
 
 class Kernel;
 class RenderObjectManager;
+class RenderObjectQueue;
+class RectangleList;
 class Bitmap;
 class Animation;
 class AnimationTemplate;
@@ -211,6 +213,9 @@ public:
 
 	// Interface
 	// ---------
+
+	void preRender(RenderObjectQueue *renderQueue);
+
 	/**
 	    @brief Rendert des Objekt und alle seine Unterobjekte.
 	    @return Gibt false zurück, falls beim Rendern ein Fehler aufgetreten ist.
@@ -218,7 +223,8 @@ public:
 	            Dieses kann entweder direkt geschehen oder durch den Aufruf von UpdateObjectState() an einem Vorfahren-Objekt.<br>
 	            Diese Methode darf nur von BS_RenderObjectManager aufgerufen werden.
 	*/
-	bool render();
+	bool render(RectangleList *updateRects, const Common::Array<int> &updateRectsMinZ);
+
 	/**
 	    @brief Bereitet das Objekt und alle seine Unterobjekte auf einen Rendervorgang vor.
 	           Hierbei werden alle Dirty-Rectangles berechnet und die Renderreihenfolge aktualisiert.
@@ -230,7 +236,7 @@ public:
 	    @brief Löscht alle Kinderobjekte.
 	*/
 	void deleteAllChildren();
-
+	
 	// Accessor-Methoden
 	// -----------------
 	/**
@@ -299,6 +305,11 @@ public:
 	int         getZ() const {
 		return _z;
 	}
+	
+	int getAbsoluteZ() const {
+		return _absoluteZ;
+	}
+	
 	/**
 	    @brief Gibt die Breite des Objektes zurück.
 	 */
@@ -352,6 +363,15 @@ public:
 		return _handle;
 	}
 
+	// Get the RenderObjects current version	
+	int getVersion() const {
+		return _version;
+	}
+	
+	bool isSolid() const {
+		return _isSolid;
+	}
+
 	// Persistenz-Methoden
 	// -------------------
 	virtual bool persist(OutputPersistenceBlock &writer);
@@ -370,9 +390,10 @@ protected:
 
 	int         _x;            ///< Die X-Position des Objektes relativ zum Eltern-Objekt
 	int         _y;            ///< Die Y-Position des Objektes relativ zum Eltern-Objekt
+	int         _z;            ///< Der Z-Wert des Objektes relativ zum Eltern-Objekt
 	int         _absoluteX;    ///< Die absolute X-Position des Objektes
 	int         _absoluteY;    ///< Die absolute Y-Position des Objektes
-	int         _z;            ///< Der Z-Wert des Objektes relativ zum Eltern-Objekt
+	int			_absoluteZ;
 	int         _width;        ///< Die Breite des Objektes
 	int         _height;       ///< Die Höhe des Objektes
 	bool        _visible;      ///< Ist true, wenn das Objekt sichtbar ist
@@ -388,6 +409,13 @@ protected:
 	int         _oldZ;
 	bool        _oldVisible;
 
+	static int _nextGlobalVersion;
+	
+	int _version;
+
+	// This should be set to true if the RenderObject is NOT alpha-blended to optimize drawing
+	bool _isSolid;
+
 	/// Ein Pointer auf den BS_RenderObjektManager, der das Objekt verwaltet.
 	RenderObjectManager *_managerPtr;
 
@@ -402,7 +430,7 @@ protected:
 	    @return Gibt false zurück, falls das Rendern fehlgeschlagen ist.
 	    @remark
 	 */
-	virtual bool doRender() = 0; // { return true; }
+	virtual bool doRender(RectangleList *updateRects) = 0; // { return true; }
 
 	// RenderObject-Baum Variablen
 	// ---------------------------
@@ -472,7 +500,7 @@ private:
 	/**
 	    @brief Berechnet die absolute Position des Objektes.
 	*/
-	void calcAbsolutePos(int &x, int &y) const;
+	void calcAbsolutePos(int &x, int &y, int &z) const;
 	/**
 	    @brief Berechnet die absolute Position des Objektes auf der X-Achse.
 	*/
@@ -481,6 +509,9 @@ private:
 	    @brief Berechnet die absolute Position des Objektes.
 	*/
 	int calcAbsoluteY() const;
+	
+	int calcAbsoluteZ() const;
+	
 	/**
 	    @brief Sortiert alle Kinderobjekte nach ihrem Renderang.
 	 */

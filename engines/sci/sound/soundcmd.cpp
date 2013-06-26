@@ -116,7 +116,7 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	newSound->resourceId = resourceId;
 	newSound->soundObj = obj;
 	newSound->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
-	newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(pri)) & 0xFF;
+	newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(priority)) & 0xFF;
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
 	newSound->reverb = -1;	// initialize to SCI invalid, it'll be set correctly in soundInitSnd() below
@@ -189,6 +189,10 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 			resourceId, musicSlot->loop, musicSlot->priority, musicSlot->volume);
 
 	_music->soundPlay(musicSlot);
+
+	// Reset any left-over signals
+	musicSlot->signal = 0;
+	musicSlot->fadeStep = 0;
 }
 
 reg_t SoundCommandParser::kDoSoundRestore(int argc, reg_t *argv, reg_t acc) {
@@ -255,7 +259,7 @@ void SoundCommandParser::processStopSound(reg_t obj, bool sampleFinishedPlaying)
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 
 	musicSlot->dataInc = 0;
-	musicSlot->signal = 0;
+	musicSlot->signal = SIGNAL_OFFSET;
 	_music->soundStop(musicSlot);
 }
 
@@ -340,6 +344,12 @@ reg_t SoundCommandParser::kDoSoundMasterVolume(int argc, reg_t *argv, reg_t acc)
 reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = argv[0];
 
+	// The object can be null in several SCI0 games (e.g. Camelot, KQ1, KQ4, MUMG).
+	// Check bugs #3035149, #3036942 and #3578335.
+	// In this case, we just ignore the call.
+	if (obj.isNull() && argc == 1)
+		return acc;
+
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		debugC(kDebugLevelSound, "kDoSound(fade): Slot not found (%04x:%04x)", PRINT_REG(obj));
@@ -367,44 +377,27 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 
 	case 4: // SCI01+
 	case 5: // SCI1+ (SCI1 late sound scheme), with fade and continue
-		if (argc == 5) {
-			// TODO: We currently treat this argument as a boolean, but may
-			// have to handle different non-zero values differently. (e.g.,
-			// some KQ6 scripts pass 3 here).
-			// There is a script bug in KQ6, room 460 (the room with the flying
-			// books). An object is passed here, which should not be treated as
-			// a true flag. Fixes bugs #3555404 and #3291115.
-			musicSlot->stopAfterFading = (argv[4].isNumber() && argv[4].toUint16() != 0);
-		} else {
-			musicSlot->stopAfterFading = false;
-		}
-
 		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
 		// Check if the song is already at the requested volume. If it is, don't
 		// perform any fading. Happens for example during the intro of Longbow.
-		if (musicSlot->fadeTo != musicSlot->volume) {
-			// sometimes we get objects in that position, fix it up (ffs. workarounds)
-			if (!argv[1].getSegment())
-				musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
-			else
-				musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;
-			musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
-		} else {
-			// Stop the music, if requested. Fixes bug #3555404.
-			if (musicSlot->stopAfterFading)
-				processStopSound(obj, false);
-		}
+		if (musicSlot->fadeTo == musicSlot->volume)
+			return acc;
 
+		// Sometimes we get objects in that position, so fix the value (refer to workarounds.cpp)
+		if (!argv[1].getSegment())
+			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
+		else
+			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;
+		musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
 		musicSlot->fadeTicker = 0;
 
-		// WORKAROUND/HACK: In the labyrinth in KQ6, when falling in the pit and
-		// lighting the lantern, the game scripts perform a fade in of the game
-		// music, but set it to stop after fading. Remove that flag here. This is
-		// marked as both a workaround and a hack because this issue could be a
-		// problem with our fading code and an incorrect handling of that
-		// parameter, or a script bug in that scene. Fixes bug #3267956.
-		if (g_sci->getGameId() == GID_KQ6 && g_sci->getEngineState()->currentRoomNumber() == 406 &&
-			musicSlot->resourceId == 400)
+		// argv[4] is a boolean. Scripts sometimes pass strange values,
+		// but SSCI only checks for zero/non-zero. (Verified in KQ6.)
+		// KQ6 room 460 even passes an object, but treating this as 'true'
+		// seems fine in that case.
+		if (argc == 5)
+			musicSlot->stopAfterFading = !argv[4].isNull();
+		else
 			musicSlot->stopAfterFading = false;
 		break;
 
@@ -435,7 +428,7 @@ reg_t SoundCommandParser::kDoSoundUpdate(int argc, reg_t *argv, reg_t acc) {
 	int16 objVol = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, 255);
 	if (objVol != musicSlot->volume)
 		_music->soundSetVolume(musicSlot, objVol);
-	uint32 objPrio = readSelectorValue(_segMan, obj, SELECTOR(pri));
+	uint32 objPrio = readSelectorValue(_segMan, obj, SELECTOR(priority));
 	if (objPrio != musicSlot->priority)
 		_music->soundSetPriority(musicSlot, objPrio);
 	return acc;
@@ -495,12 +488,15 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 				processStopSound(obj, false);
 		}
 	} else {
-		// Slot actually has no data (which would mean that a sound-resource w/
-		// unsupported data is used.
-		//  (example lsl5 - sound resource 744 - it's Roland exclusive
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-		// If we don't set signal here, at least the switch to the mud wrestling
-		// room in lsl5 will not work.
+		// The sound slot has no data for the currently selected sound card.
+		// An example can be found during the mud wrestling scene in LSL5, room
+		// 730: sound 744 (a splat sound heard when Lana Luscious jumps in the
+		// mud) only contains MIDI channel data. If a non-MIDI sound card is
+		// selected (like Adlib), then the scene freezes. We also need to stop
+		// the sound at this point, otherwise KQ6 Mac breaks because the rest
+		// of the object needs to be reset to avoid a continuous stream of
+		// sound cues.
+		processStopSound(obj, true);	// this also sets the signal selector
 	}
 
 	if (musicSlot->fadeCompleted) {
@@ -509,6 +505,8 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 		// fireworks).
 		// It is also needed in other games, e.g. LSL6 when talking to the
 		// receptionist (bug #3192166).
+		// CHECKME: At least kq5cd/win and kq6 set signal to 0xFE here, but
+		// kq5cd/dos does not set signal at all. Needs more investigation.
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			processStopSound(obj, false);
@@ -532,17 +530,21 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 }
 
 reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
+	// The 4 parameter variant of this call is used in at least LSL1VGA, room
+	// 110 (Lefty's bar), to distort the music when Larry is drunk and stands
+	// up - bug #3614447.
 	reg_t obj = argv[0];
 	byte channel = argv[1].toUint16() & 0xf;
-	byte midiCmd = argv[2].toUint16() & 0xff;
+	byte midiCmd = (argc == 5) ? argv[2].toUint16() & 0xff : 0xB0;	// 0xB0: controller
+	uint16 controller = (argc == 5) ? argv[3].toUint16() : argv[2].toUint16();
+	uint16 param = (argc == 5) ? argv[4].toUint16() : argv[3].toUint16();
 
-	// TODO: first there is a 4-parameter variant of this call which needs to get reversed
-	//        second the current code isn't 100% accurate, sierra sci does checks on the 4th parameter
-	if (argc == 4)
-		return acc;
-
-	uint16 controller = argv[3].toUint16();
-	uint16 param = argv[4].toUint16();
+	if (argc == 4 && controller == 0xFF) {
+		midiCmd = 0xE0;	// 0xE0: pitch wheel
+		uint16 pitch = CLIP<uint16>(argv[3].toSint16() + 0x2000, 0x0000, 0x3FFF);
+		controller = pitch & 0x7F;
+		param = pitch >> 7;
+	}
 
 	debugC(kDebugLevelSound, "kDoSound(sendMidi): %04x:%04x, %d, %d, %d, %d", PRINT_REG(obj), channel, midiCmd, controller, param);
 	if (channel)
@@ -739,7 +741,7 @@ void SoundCommandParser::updateSci0Cues() {
 	}
 
 	if (noOnePlaying && pWaitingForPlay) {
-		// If there is a queued entry, play it now ffs: SciMusic::soundPlay()
+		// If there is a queued entry, play it now - check SciMusic::soundPlay()
 		pWaitingForPlay->isQueued = false;
 		_music->soundPlay(pWaitingForPlay);
 	}

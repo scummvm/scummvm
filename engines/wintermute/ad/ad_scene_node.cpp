@@ -36,18 +36,18 @@ IMPLEMENT_PERSISTENT(AdSceneNode, false)
 //////////////////////////////////////////////////////////////////////////
 AdSceneNode::AdSceneNode(BaseGame *inGame) : BaseObject(inGame) {
 	_type = OBJECT_NONE;
-	_region = NULL;
-	_entity = NULL;
+	_region = nullptr;
+	_entity = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 AdSceneNode::~AdSceneNode() {
 	_gameRef->unregisterObject(_region);
-	_region = NULL;
+	_region = nullptr;
 
 	_gameRef->unregisterObject(_entity);
-	_entity = NULL;
+	_entity = nullptr;
 }
 
 
@@ -72,8 +72,8 @@ bool AdSceneNode::persist(BasePersistenceManager *persistMgr) {
 
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_entity));
-	persistMgr->transfer(TMEMBER(_region));
+	persistMgr->transferPtr(TMEMBER_PTR(_entity));
+	persistMgr->transferPtr(TMEMBER_PTR(_region));
 	persistMgr->transfer(TMEMBER_INT(_type));
 
 	return STATUS_OK;

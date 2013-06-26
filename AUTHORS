@@ -106,6 +106,10 @@ ScummVM Team
        Scott Thomas
        Jordi Vilalta Prat
 
+    Hopkins:
+       Arnaud Boutonne
+       Paul Gilbert
+
     Hugo:
        Arnaud Boutonne
        Oystein Eftevaag
@@ -202,6 +206,10 @@ ScummVM Team
        Max Horn                - (retired)
        Filippos Karapetis
        Joost Peters
+
+    Toltecs:
+       Benjamin Haisch
+       Filippos Karapetis
 
     Tony:
        Arnaud Boutonne
@@ -307,6 +315,8 @@ ScummVM Team
        Benjamin Haisch         - Heavily improved de-/encoder for DXA videos
        Jochen Hoenicke         - Speaker & PCjr sound support, AdLib work
                                  (retired)
+       Daniel ter Laan         - Restoring original Drascula tracks, and
+                                 writing convert_dxa.bat
        Chris Page              - Return to launcher, savestate improvements,
                                  leak fixes, ... (GSoC 2008 task) (retired)
        Robin Watts             - ARM assembly routines for nice speedups on
@@ -411,6 +421,9 @@ Other contributions
     Basque:
        Mikel Iturbe Urretxa
 
+    Belarusian:
+       Ivan Lukyanov
+
     Catalan:
        Jordi Vilalta Prat
 
@@ -419,6 +432,9 @@ Other contributions
 
     Danish:
        Steffen Nyeland
+
+    Finnish:
+       Toni Saarela
 
     French:
        Thierry Crozat

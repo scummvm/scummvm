@@ -47,8 +47,13 @@ protected:
 	uint32 readVLQ2(byte * &data);
 	void parseNextEvent(EventInfo &info);
 
+	virtual void resetTracking() {
+		MidiParser::resetTracking();
+		_loopCount = -1;
+	}
+
 public:
-	MidiParser_XMIDI(XMidiCallbackProc proc, void *data) : _callbackProc(proc), _callbackData(data) {}
+	MidiParser_XMIDI(XMidiCallbackProc proc, void *data) : _callbackProc(proc), _callbackData(data), _loopCount(-1) {}
 	~MidiParser_XMIDI() { }
 
 	bool loadMusic(byte *data, uint32 size);

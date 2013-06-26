@@ -70,7 +70,7 @@ static const LureGameDescription gameDescriptions[] = {
 			"VGA",
 			AD_ENTRY1("disk1.vga", "b2a8aa6d7865813a17a3c636e063572e"),
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -83,7 +83,7 @@ static const LureGameDescription gameDescriptions[] = {
 			"EGA",
 			AD_ENTRY1("disk1.ega", "e9c9fdd8a19f7910d68e53cb84651273"),
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -96,7 +96,7 @@ static const LureGameDescription gameDescriptions[] = {
 			"VGA",
 			AD_ENTRY1("disk1.vga", "cf69d5ada228dd74f89046691c16aafb"),
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -109,7 +109,7 @@ static const LureGameDescription gameDescriptions[] = {
 			"EGA",
 			AD_ENTRY1("disk1.ega", "b80aced0321f64c58df2c7d3d74dfe79"),
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -122,7 +122,7 @@ static const LureGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1("disk1.vga", "7aa19e444dab1ac7194d9f7a40ffe54a"),
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -135,7 +135,7 @@ static const LureGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1("disk1.vga", "894a2c2caeccbad2fc2f4a79a8ee47b0"),
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -148,7 +148,7 @@ static const LureGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1("disk1.vga", "1c94475c1bb7e0e88c1757d3b5377e94"),
 			Common::FR_FRA,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -161,7 +161,7 @@ static const LureGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1("disk1.vga", "1751145b653959f7a64fe1618d6b97ac"),
 			Common::ES_ESP,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},

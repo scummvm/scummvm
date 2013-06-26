@@ -226,6 +226,6 @@ void	std_clearerr(FILE *handle);
 int		std_fflush(FILE *handle);
 int		std_ferror(FILE *handle);
 
-}	// End of namespace DS
+} // End of namespace DS
 
 #endif //_DS_FS_H

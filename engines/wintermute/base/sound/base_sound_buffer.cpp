@@ -49,13 +49,13 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSoundBuffer::BaseSoundBuffer(BaseGame *inGame) : BaseClass(inGame) {
-	_stream = NULL;
-	_handle = NULL;
-//	_sync = NULL;
+	_stream = nullptr;
+	_handle = nullptr;
+//	_sync = nullptr;
 
 	_streamed = false;
 	_filename = "";
-	_file = NULL;
+	_file = nullptr;
 	_privateVolume = 255;
 	_volume = 255;
 
@@ -76,10 +76,10 @@ BaseSoundBuffer::~BaseSoundBuffer() {
 	if (_handle) {
 		g_system->getMixer()->stopHandle(*_handle);
 		delete _handle;
-		_handle = NULL;
+		_handle = nullptr;
 	}
 	delete _stream;
-	_stream = NULL;
+	_stream = nullptr;
 }
 
 
@@ -111,7 +111,7 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 		if (Audio::loadWAVFromStream(*_file, waveSize, waveRate, waveFlags, &waveType)) {
 			if (waveType == 1) {
 				// We need to wrap the file in a substream to make sure the size is right.
-				_file = new Common::SeekableSubReadStream(_file, 0, waveSize);
+				_file = new Common::SeekableSubReadStream(_file, _file->pos(), waveSize + _file->pos(), DisposeAfterUse::YES);
 				_stream = Audio::makeRawStream(_file, waveRate, waveFlags, DisposeAfterUse::YES);
 			} else {
 				error("BSoundBuffer::LoadFromFile - WAVE not supported yet for %s with type %d", filename.c_str(), waveType);
@@ -134,7 +134,7 @@ bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 	if (_handle) {
 		g_system->getMixer()->stopHandle(*_handle);
 		delete _handle;
-		_handle = NULL;
+		_handle = nullptr;
 	}
 	// Store the loop-value for save-games.
 	setLooping(looping);

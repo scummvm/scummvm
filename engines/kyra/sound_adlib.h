@@ -69,6 +69,9 @@ public:
 
 	virtual void updateVolumeSettings();
 
+	virtual void initAudioResourceInfo(int set, void *info);
+	virtual void selectAudioResourceSet(int set);
+	virtual bool hasSoundFile(uint file) const;
 	virtual void loadSoundFile(uint file);
 	virtual void loadSoundFile(Common::String file);
 
@@ -76,7 +79,7 @@ public:
 	virtual void haltTrack();
 	virtual bool isPlaying() const;
 
-	virtual void playSoundEffect(uint8 track, uint8 volume = 0xff);
+	virtual void playSoundEffect(uint8 track, uint8 volume = 0xFF);
 
 	virtual void beginFadeOut();
 
@@ -86,6 +89,10 @@ private:
 	void internalLoadFile(Common::String file);
 
 	void play(uint8 track, uint8 volume);
+
+	const SoundResourceInfo_PC *res() const {return _resInfo[_currentResourceSet]; }
+	SoundResourceInfo_PC *_resInfo[3];
+	int _currentResourceSet;
 
 	AdLibDriver *_driver;
 

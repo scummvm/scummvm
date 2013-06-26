@@ -152,7 +152,7 @@ Common::Error Parallaction_ns::init() {
 	_screenWidth = 320;
 	_screenHeight = 200;
 
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformDOS) {
 		_disk = new DosDisk_ns(this);
 	} else {
 		if (getFeatures() & GF_DEMO) {
@@ -163,7 +163,7 @@ Common::Error Parallaction_ns::init() {
 
 	_disk->init();
 
-	if (getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformDOS) {
 		_soundManI = new DosSoundMan_ns(this);
 		_soundManI->setMusicVolume(ConfMan.getInt("music_volume"));
 	} else {

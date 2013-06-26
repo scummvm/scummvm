@@ -96,10 +96,10 @@ public:
 	byte *getCompiledScript(const char *filename, uint32 *outSize, bool ignoreCache = false);
 	DECLARE_PERSISTENT(ScEngine, BaseClass)
 	bool cleanup();
-	int getNumScripts(int *running = NULL, int *waiting = NULL, int *persistent = NULL);
+	int getNumScripts(int *running = nullptr, int *waiting = nullptr, int *persistent = nullptr);
 	bool tick();
 	ScValue *_globals;
-	ScScript *runScript(const char *filename, BaseScriptHolder *owner = NULL);
+	ScScript *runScript(const char *filename, BaseScriptHolder *owner = nullptr);
 	static const bool _compilerAvailable = false;
 
 	ScEngine(BaseGame *inGame);

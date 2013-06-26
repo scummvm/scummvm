@@ -121,10 +121,8 @@ bool DrasculaEngine::confirmExit() {
 
 void DrasculaEngine::showMenu() {
 	int h, n, x;
-	char textIcon[13];
 	byte *srcSurface = (currentChapter == 6) ? tableSurface : frontSurface;
 	x = whichObject();
-	strcpy(textIcon, iconName[x]);
 
 	for (n = 1; n < ARRAYSIZE(inventoryObjects); n++) {
 		h = inventoryObjects[n];
@@ -138,7 +136,7 @@ void DrasculaEngine::showMenu() {
 	}
 
 	if (x < 7)
-		print_abc(textIcon, _itemLocations[x].x - 2, _itemLocations[x].y - 7);
+		print_abc(iconName[x], _itemLocations[x].x - 2, _itemLocations[x].y - 7);
 }
 
 void DrasculaEngine::clearMenu() {
@@ -150,52 +148,6 @@ void DrasculaEngine::clearMenu() {
 		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, _verbBarX[n], 2,
 						OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 		verbActivated = 1;
-	}
-}
-
-void DrasculaEngine::enterName() {
-	Common::KeyCode key;
-	flushKeyBuffer();
-	int v = 0, h = 0;
-	char select2[23];
-	strcpy(select2, "                      ");
-	while (!shouldQuit()) {
-		select2[v] = '-';
-		copyBackground(115, 14, 115, 14, 176, 9, bgSurface, screenSurface);
-		print_abc(select2, 117, 15);
-		updateScreen();
-
-		key = getScan();
-
-		if (key != 0) {
-			if (key >= 0 && key <= 0xFF && isAlpha(key))
-				select2[v] = tolower(key);
-			else if ((key >= Common::KEYCODE_0 && key <= Common::KEYCODE_9) || key == Common::KEYCODE_SPACE)
-				select2[v] = key;
-			else if (key == Common::KEYCODE_ESCAPE)
-				break;
-			else if (key == Common::KEYCODE_RETURN) {
-				select2[v] = '\0';
-				h = 1;
-				break;
-			} else if (key == Common::KEYCODE_BACKSPACE)
-				select2[v] = '\0';
-			else
-				v--;
-
-			if (key == Common::KEYCODE_BACKSPACE)
-				v--;
-			else
-				v++;
-		}
-		if (v == 22)
-			v = 21;
-		else if (v == -1)
-			v = 0;
-	}
-	if (h == 1) {
-		strcpy(select, select2);
-		selectionMade = 1;
 	}
 }
 
@@ -213,8 +165,8 @@ void DrasculaEngine::showMap() {
 	_hasName = false;
 
 	for (int l = 0; l < numRoomObjs; l++) {
-		if (mouseX > x1[l] && mouseY > y1[l]
-				&& mouseX < x2[l] && mouseY < y2[l]
+		if (mouseX > _objectX1[l] && mouseY > _objectY1[l]
+				&& mouseX < _objectX2[l] && mouseY < _objectY2[l]
 				&& visible[l] == 1) {
 			strcpy(textName, objName[l]);
 			_hasName = true;

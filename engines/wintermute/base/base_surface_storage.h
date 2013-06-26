@@ -39,7 +39,7 @@ public:
 	uint32 _lastCleanupTime;
 	bool initLoop();
 	bool sortSurfaces();
-	static int surfaceSortCB(const void *arg1, const void *arg2);
+	static bool surfaceSortCB(const BaseSurface *arg1, const BaseSurface *arg2);
 	bool cleanup(bool warn = false);
 	//DECLARE_PERSISTENT(BaseSurfaceStorage, BaseClass);
 

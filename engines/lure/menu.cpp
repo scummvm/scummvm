@@ -31,7 +31,7 @@
 #include "lure/events.h"
 #include "lure/lure.h"
 
-#if defined(_WIN32_WCE) || defined(__SYMBIAN32__) || defined(WEBOS)
+#if defined(_WIN32_WCE) || defined(__SYMBIAN32__) || defined(WEBOS) || defined(__ANDROID__)
 #define LURE_CLICKABLE_MENUS
 #endif
 
@@ -47,6 +47,7 @@ MenuRecord::MenuRecord(const MenuRecordBounds *bounds, int numParams, ...) {
 	va_start(params, numParams);
 	for (int index = 0; index < _numEntries; ++index)
 		_entries[index] = va_arg(params, const char *);
+	va_end(params);
 
 	// Store position data
 	_hsxstart = bounds->left; _hsxend = bounds->right;
@@ -458,7 +459,7 @@ Action PopupMenu::Show(int numEntries, Action *actions) {
 		strList[index] = stringList.getString(*actionPtr++);
 	uint16 result = Show(numEntries, strList);
 
-	delete strList;
+	Memory::dealloc(strList);
 	if (result == 0xffff) return NONE;
 	else return actions[result];
 }

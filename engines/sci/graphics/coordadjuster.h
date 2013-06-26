@@ -71,8 +71,6 @@ public:
 
 private:
 	GfxPorts *_ports;
-
-	Port *backuppedPort;
 };
 
 #ifdef ENABLE_SCI32

@@ -385,7 +385,7 @@ bool SciEngine::gameHasFanMadePatch() {
 		{ GID_PQ3,        994,   4686,   1291,  0x78 },	// English
 		{ GID_PQ3,        994,   4734,   1283,  0x78 },	// German
 		{ GID_QFG1VGA,    994,   4388,      0,  0x00 },
-		{ GID_QFG3,        33,    260,      0,  0x00 },
+		{ GID_QFG3,       994,   4714,      2,  0x48 },
 		// TODO: Disabled, as it fixes a whole lot of bugs which can't be tested till SCI2.1 support is finished
 		//{ GID_QFG4,       710,  11477,      0,  0x00 },
 		{ GID_SQ1,        994,   4740,      0,  0x00 },
@@ -455,10 +455,19 @@ static byte patchGameRestoreSaveSci21[] = {
 static void patchGameSaveRestoreCode(SegManager *segMan, reg_t methodAddress, byte id) {
 	Script *script = segMan->getScript(methodAddress.getSegment());
 	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
-	if (getSciVersion() <= SCI_VERSION_1_1)
+
+	if (getSciVersion() <= SCI_VERSION_1_1) {
 		memcpy(patchPtr, patchGameRestoreSave, sizeof(patchGameRestoreSave));
-	else	// SCI2+
+	} else {	// SCI2+
 		memcpy(patchPtr, patchGameRestoreSaveSci2, sizeof(patchGameRestoreSaveSci2));
+
+		if (g_sci->isBE()) {
+			// LE -> BE
+			patchPtr[9] = 0x00;
+			patchPtr[10] = 0x06;
+		}
+	}
+
 	patchPtr[8] = id;
 }
 
@@ -466,8 +475,16 @@ static void patchGameSaveRestoreCodeSci21(SegManager *segMan, reg_t methodAddres
 	Script *script = segMan->getScript(methodAddress.getSegment());
 	byte *patchPtr = const_cast<byte *>(script->getBuf(methodAddress.getOffset()));
 	memcpy(patchPtr, patchGameRestoreSaveSci21, sizeof(patchGameRestoreSaveSci21));
+
 	if (doRestore)
 		patchPtr[2] = 0x78;	// push1
+
+	if (g_sci->isBE()) {
+		// LE -> BE
+		patchPtr[10] = 0x00;
+		patchPtr[11] = 0x08;
+	}
+
 	patchPtr[9] = id;
 }
 
@@ -627,11 +644,11 @@ void SciEngine::initGraphics() {
 		// SCI32 graphic objects creation
 		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
-		_gfxCompare = new GfxCompare(_gamestate->_segMan, _kernel, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxPaint32 = new GfxPaint32(_resMan, _gamestate->_segMan, _kernel, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette);
+		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxPaint32 = new GfxPaint32(_resMan, _gfxCoordAdjuster, _gfxScreen, _gfxPalette);
 		_gfxPaint = _gfxPaint32;
 		_gfxText32 = new GfxText32(_gamestate->_segMan, _gfxCache, _gfxScreen);
-		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxText32);
+		_gfxControls32 = new GfxControls32(_gamestate->_segMan, _gfxCache, _gfxText32);
 		_robotDecoder = new RobotDecoder(getPlatform() == Common::kPlatformMacintosh);
 		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, _resMan, _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
 	} else {
@@ -640,24 +657,24 @@ void SciEngine::initGraphics() {
 		_gfxPorts = new GfxPorts(_gamestate->_segMan, _gfxScreen);
 		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
 		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
-		_gfxCompare = new GfxCompare(_gamestate->_segMan, _kernel, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxCompare = new GfxCompare(_gamestate->_segMan, _gfxCache, _gfxScreen, _gfxCoordAdjuster);
 		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette);
-		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _kernel, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
+		_gfxPaint16 = new GfxPaint16(_resMan, _gamestate->_segMan, _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
 		_gfxPaint = _gfxPaint16;
 		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette, _gfxCursor, _gfxTransitions);
-		_gfxText16 = new GfxText16(_resMan, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
+		_gfxText16 = new GfxText16(_gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
 		_gfxControls16 = new GfxControls16(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
 		_gfxMenu = new GfxMenu(_eventMan, _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
 
 		_gfxMenu->reset();
+
+		_gfxPorts->init(_features->usesOldGfxFunctions(), _gfxPaint16, _gfxText16);
+		_gfxPaint16->init(_gfxAnimate, _gfxText16);
+
 #ifdef ENABLE_SCI32
 	}
 #endif
 
-	if (_gfxPorts) {
-		_gfxPorts->init(_features->usesOldGfxFunctions(), _gfxPaint16, _gfxText16);
-		_gfxPaint16->init(_gfxAnimate, _gfxText16);
-	}
 	// Set default (EGA, amiga or resource 999) palette
 	_gfxPalette->setDefault();
 }
@@ -699,9 +716,11 @@ void SciEngine::runGame() {
 			patchGameSaveRestore();
 			setLauncherLanguage();
 			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTART;
+			_gamestate->_throttleLastTime = 0;
 			if (_gfxMenu)
 				_gfxMenu->reset();
 			_gamestate->abortScriptProcessing = kAbortNone;
+			_gamestate->_syncedAudioOptions = false;
 		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
 			_gamestate->abortScriptProcessing = kAbortNone;
 			_gamestate->_executionStack.clear();
@@ -713,6 +732,7 @@ void SciEngine::runGame() {
 
 			syncSoundSettings();
 			syncIngameAudioOptions();
+			// Games do not set their audio settings when loading
 		} else {
 			break;	// exit loop
 		}

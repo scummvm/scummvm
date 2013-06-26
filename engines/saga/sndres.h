@@ -39,6 +39,7 @@ class SndRes {
 public:
 
 	SndRes(SagaEngine *vm);
+	~SndRes();
 
 	void playSound(uint32 resourceId, int volume, bool loop);
 	void playVoice(uint32 resourceId);

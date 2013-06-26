@@ -250,7 +250,7 @@ int MidiPlayer_Fb01::findVoice(int channel) {
 	}
 
 	if (voice == -1) {
-		if (oldestVoice != -1) {
+		if (oldestVoice >= 0) {
 			voiceOff(oldestVoice);
 			voice = oldestVoice;
 		} else {

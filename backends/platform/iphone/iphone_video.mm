@@ -161,9 +161,9 @@ const char *iPhone_getDocumentsDir() {
 - (id)initWithFrame:(struct CGRect)frame {
 	self = [super initWithFrame: frame];
 
-	if ([[UIScreen mainScreen] respondsToSelector: NSSelectorFromString(@"scale")]) {
-		if ([self respondsToSelector: NSSelectorFromString(@"contentScaleFactor")]) {
-			//self.contentScaleFactor = [[UIScreen mainScreen] scale];
+	if ([[UIScreen mainScreen] respondsToSelector:@selector(scale)]) {
+		if ([self respondsToSelector:@selector(setContentScaleFactor:)]) {
+			[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
 		}
 	}
 

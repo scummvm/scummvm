@@ -38,7 +38,7 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseSaveThumbFile::BaseSaveThumbFile() {
-	_data = NULL;
+	_data = nullptr;
 }
 
 
@@ -99,7 +99,7 @@ bool BaseSaveThumbFile::open(const Common::String &filename) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSaveThumbFile::close() {
 	delete[] _data;
-	_data = NULL;
+	_data = nullptr;
 
 	_pos = 0;
 	_size = 0;

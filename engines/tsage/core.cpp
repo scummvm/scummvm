@@ -65,6 +65,11 @@ InvObject::InvObject(int visage, int strip, int frame) {
 	_frame = frame;
 	_sceneNumber = 0;
 	_iconResNum = 10;
+
+	_displayResNum = 0;
+	_rlbNum = 0;
+	_cursorNum = 0;
+	_cursorId = INV_NONE;
 }
 
 InvObject::InvObject(int strip, int frame) {
@@ -75,6 +80,11 @@ InvObject::InvObject(int strip, int frame) {
 	_visage = 7;
 	_sceneNumber = 0;
 	_iconResNum = 10;
+
+	_displayResNum = 0;
+	_rlbNum = 0;
+	_cursorNum = 0;
+	_cursorId = INV_NONE;
 }
 
 void InvObject::setCursor() {
@@ -163,6 +173,8 @@ Action::Action() {
 	_owner = NULL;
 	_endHandler = NULL;
 	_attached = false;
+	_delayFrames = 0;
+	_startFrame = 0;
 }
 
 void Action::synchronize(Serializer &s) {
@@ -387,6 +399,8 @@ void ObjectMover::endMove() {
 
 ObjectMover2::ObjectMover2() : ObjectMover() {
 	_destObject = NULL;
+	_minArea = 0;
+	_maxArea = 0;
 }
 
 void ObjectMover2::synchronize(Serializer &s) {
@@ -1047,6 +1061,8 @@ PaletteModifier::PaletteModifier() {
 PaletteModifierCached::PaletteModifierCached(): PaletteModifier() {
 	_step = 0;
 	_percent = 0;
+	for (int i = 0; i < 768; i++)
+		_palette[i] = 0;
 }
 
 void PaletteModifierCached::setPalette(ScenePalette *palette, int step) {
@@ -1070,6 +1086,10 @@ PaletteRotation::PaletteRotation() : PaletteModifierCached() {
 	_frameNumber = g_globals->_events.getFrameNumber();
 	_idxChange = 1;
 	_countdown = 0;
+	_currIndex = 0;
+	_start = _end = 0;
+	_rotationMode = 0;
+	_duration = 0;
 }
 
 void PaletteRotation::synchronize(Serializer &s) {
@@ -1273,6 +1293,10 @@ ScenePalette::ScenePalette() {
 	}
 
 	_field412 = 0;
+	_redColor = _greenColor = _blueColor = 0;
+	_aquaColor = 0;
+	_purpleColor = 0;
+	_limeColor = 0;
 }
 
 ScenePalette::~ScenePalette() {
@@ -1280,6 +1304,12 @@ ScenePalette::~ScenePalette() {
 }
 
 ScenePalette::ScenePalette(int paletteNum) {
+	_field412 = 0;
+	_redColor = _greenColor = _blueColor = 0;
+	_aquaColor = 0;
+	_purpleColor = 0;
+	_limeColor = 0;
+
 	loadPalette(paletteNum);
 }
 
@@ -1781,6 +1811,7 @@ void SceneItem::display(const Common::String &msg) {
 
 SceneHotspot::SceneHotspot(): SceneItem() {
 	_lookLineNum = _useLineNum = _talkLineNum = 0;
+	_resNum = 0;
 }
 
 void SceneHotspot::synchronize(Serializer &s) {
@@ -2036,6 +2067,13 @@ SceneObject::SceneObject() : SceneHotspot() {
 	_linkedActor = NULL;
 
 	_field8A = Common::Point(0, 0);
+	_angle = 0;
+	_xs = 0;
+	_xe = 0;
+	_endFrame = 0;
+	_field68 = 0;
+	_regionIndex = 0;
+	_field9C = NULL;
 }
 
 SceneObject::SceneObject(const SceneObject &so) : SceneHotspot() {
@@ -2331,6 +2369,7 @@ void SceneObject::animate(AnimateMode animMode, ...) {
 			setFrame(getNewFrame());
 		break;
 	}
+	va_end(va);
 }
 
 SceneObject *SceneObject::clone() const {
@@ -3072,6 +3111,7 @@ Visage::Visage(const Visage &v) {
 	_data = v._data;
 	if (_data)
 		g_vm->_memoryManager.incLocks(_data);
+	_flipHoriz = false;
 }
 
 Visage &Visage::operator=(const Visage &s) {
@@ -3579,6 +3619,7 @@ void SceneItemList::addItems(SceneItem *first, ...) {
 		push_back(p);
 		p = va_arg(va, SceneItem *);
 	}
+	va_end(va);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -4074,6 +4115,7 @@ SceneHandler::SceneHandler() {
 	_saveGameSlot = -1;
 	_loadGameSlot = -1;
 	_prevFrameNumber = 0;
+	_delayTicks = 0;
 }
 
 void SceneHandler::registerHandler() {

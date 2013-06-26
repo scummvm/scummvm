@@ -437,7 +437,7 @@ void KyraEngine_HoF::startSceneScript(int unk1) {
 
 	strcpy(filename, _sceneList[sceneId].filename1);
 	strcat(filename, ".");
-	strcat(filename, _scriptLangExt[(_flags.platform == Common::kPlatformPC && !_flags.isTalkie) ? 0 : _lang]);
+	strcat(filename, _scriptLangExt[(_flags.platform == Common::kPlatformDOS && !_flags.isTalkie) ? 0 : _lang]);
 
 	_res->exists(filename, true);
 	_emc->load(filename, &_sceneScriptData, &_opcodes);

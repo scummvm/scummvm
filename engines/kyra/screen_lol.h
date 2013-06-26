@@ -65,7 +65,6 @@ public:
 	void loadSpecialColors(Palette &dst);
 	void copyColor(int dstColorIndex, int srcColorIndex);
 	bool fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTicks, uint32 totalTicks);
-	bool fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, uint32 targetTime);
 	Palette **generateFadeTable(Palette **dst, Palette *src1, Palette *src2, int numTabs);
 
 	void generateGrayOverlay(const Palette &Pal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool skipSpecialColors);

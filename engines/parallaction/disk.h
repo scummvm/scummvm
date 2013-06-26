@@ -28,13 +28,10 @@
 #include "common/archive.h"
 #include "common/str.h"
 
-#include "graphics/iff.h"
-
 namespace Common {
 class FSDirectory;
 class ReadStream;
 class SeekableReadStream;
-struct IFFChunk;
 }
 
 namespace Graphics {
@@ -85,36 +82,6 @@ public:
 	virtual MaskBuffer *loadMask(const char *name, uint32 w, uint32 h) { return 0; }
 	virtual PathBuffer *loadPath(const char *name, uint32 w, uint32 h) { return 0; }
 };
-
-struct PaletteFxRange;
-
-struct ILBMLoader {
-	enum {
-		BODYMODE_SURFACE,
-		BODYMODE_MASKBUFFER,
-		BODYMODE_PATHBUFFER
-	};
-	uint32 _bodyMode;
-	Graphics::Surface *_surf;
-	MaskBuffer *_maskBuffer;
-	PathBuffer *_pathBuffer;
-	byte *_palette;
-	PaletteFxRange *_crng;
-	uint32 _mode;
-	byte* _intBuffer;
-	uint32 _numCRNG;
-	Graphics::ILBMDecoder _decoder;
-
-	ILBMLoader(uint32 bodyMode, byte *palette = 0, PaletteFxRange *crng = 0);
-	ILBMLoader(Graphics::Surface *surf, byte *palette = 0, PaletteFxRange *crng = 0);
-	ILBMLoader(MaskBuffer *buffer);
-	ILBMLoader(PathBuffer *buffer);
-
-	bool callback(Common::IFFChunk &chunk);
-	void setupBuffer(uint32 w, uint32 h);
-	void load(Common::ReadStream *in, bool disposeStream = false);
-};
-
 
 class Disk_ns : public Disk {
 

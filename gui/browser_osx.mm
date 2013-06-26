@@ -28,20 +28,86 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/algorithm.h"
+#include "common/translation.h"
 
+#include <AppKit/NSNibDeclarations.h>
 #include <AppKit/NSOpenPanel.h>
+#include <AppKit/NSButton.h>
 #include <Foundation/NSString.h>
+#include <Foundation/NSURL.h>
+
+@interface ShowHiddenFilesController : NSObject {
+	NSOpenPanel* _panel;
+}
+
+- (id) init;
+- (void) dealloc;
+- (void) setOpenPanel : (NSOpenPanel*) panel;
+- (IBAction) showHiddenFiles : (id) sender;
+
+@end
+
+@implementation ShowHiddenFilesController
+
+- (id) init {
+	self = [super init];
+	_panel = 0;
+	
+	return self;
+}
+
+- (void) dealloc {
+	[_panel release];
+	[super dealloc];
+}
+
+- (void) setOpenPanel : (NSOpenPanel*) panel {
+	_panel = panel;
+	[_panel retain];
+}
+
+
+- (IBAction) showHiddenFiles : (id) sender {
+	if ([sender state] == NSOnState) {
+		[_panel setShowsHiddenFiles: YES];
+		ConfMan.setBool("gui_browser_show_hidden", true, Common::ConfigManager::kApplicationDomain);
+	} else {
+		[_panel setShowsHiddenFiles: NO];
+		ConfMan.setBool("gui_browser_show_hidden", false, Common::ConfigManager::kApplicationDomain);
+	}
+}
+
+@end
 
 namespace GUI {
 
 BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	: Dialog("Browser") {
-	_titleRef = CFStringCreateWithCString(0, title, CFStringGetSystemEncoding());
+
+	// remember whether this is a file browser or a directory browser.
 	_isDirBrowser = dirBrowser;
+
+	// Get current encoding
+#ifdef USE_TRANSLATION
+	CFStringRef encStr = CFStringCreateWithCString(NULL, TransMan.getCurrentCharset().c_str(), kCFStringEncodingASCII);
+	CFStringEncoding stringEncoding = CFStringConvertIANACharSetNameToEncoding(encStr);
+	CFRelease(encStr);
+#else
+	CFStringEncoding stringEncoding = kCFStringEncodingASCII;
+#endif
+
+	// Convert title to NSString
+	_titleRef = CFStringCreateWithCString(0, title, stringEncoding);
+
+	// Convert button text to NSString
+	_chooseRef = CFStringCreateWithCString(0, _("Choose"), stringEncoding);
+	_hiddenFilesRef = CFStringCreateWithCString(0, _("Show hidden files"), stringEncoding);
 }
 
 BrowserDialog::~BrowserDialog() {
 	CFRelease(_titleRef);
+	CFRelease(_chooseRef);
+	CFRelease(_hiddenFilesRef);
 }
 
 int BrowserDialog::runModal() {
@@ -58,15 +124,45 @@ int BrowserDialog::runModal() {
 	// Temporarily show the real mouse
 	CGDisplayShowCursor(kCGDirectMainDisplay);
 
+	NSOpenPanel *panel = [NSOpenPanel openPanel];
+	[panel setCanChooseFiles:!_isDirBrowser];
+	[panel setCanChooseDirectories:_isDirBrowser];
+	[panel setTitle:(NSString *)_titleRef];
+	[panel setPrompt:(NSString *)_chooseRef];
 
-	NSOpenPanel * panel = [NSOpenPanel openPanel];
-	[panel setCanChooseDirectories:YES];
-	if ([panel runModalForTypes:nil] == NSOKButton) {
-		const char *filename = [[panel filename] UTF8String];
-		_choice = Common::FSNode(filename);
-		choiceMade = true;
+	NSButton *showHiddenFilesButton = 0;
+	ShowHiddenFilesController *showHiddenFilesController = 0;
+	if ([panel respondsToSelector:@selector(setShowsHiddenFiles:)]) {
+		showHiddenFilesButton = [[NSButton alloc] init];
+		[showHiddenFilesButton setButtonType:NSSwitchButton];
+		[showHiddenFilesButton setTitle:(NSString *)_hiddenFilesRef];
+		[showHiddenFilesButton sizeToFit];
+		if (ConfMan.getBool("gui_browser_show_hidden", Common::ConfigManager::kApplicationDomain)) {
+			[showHiddenFilesButton setState:NSOnState];
+			[panel setShowsHiddenFiles: YES];
+		} else {
+			[showHiddenFilesButton setState:NSOffState];
+			[panel setShowsHiddenFiles: NO];
+		}
+		[panel setAccessoryView:showHiddenFilesButton];
+
+		showHiddenFilesController = [[ShowHiddenFilesController alloc] init];
+		[showHiddenFilesController setOpenPanel:panel];
+		[showHiddenFilesButton setTarget:showHiddenFilesController];
+		[showHiddenFilesButton setAction:@selector(showHiddenFiles:)];
 	}
 
+	if ([panel runModal] == NSOKButton) {
+		NSURL *url = [panel URL];
+		if ([url isFileURL]) {
+			const char *filename = [[url path] UTF8String];
+			_choice = Common::FSNode(filename);
+			choiceMade = true;
+		}
+	}
+
+	[showHiddenFilesButton release];
+	[showHiddenFilesController release];
 
 	// If we were in fullscreen mode, switch back
 	if (wasFullscreen) {

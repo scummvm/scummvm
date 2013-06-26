@@ -74,6 +74,7 @@ private:
 
 	// Monsters
 	void replaceMonster(int unit, uint16 block, int d, int dir, int type, int shpIndex, int mode, int h2, int randItem, int fixedItem);
+	bool killMonsterExtra(EoBMonsterInPlay *m);
 	void updateScriptTimersExtra();
 
 	// Level
@@ -99,7 +100,7 @@ private:
 	void turnUndeadAuto();
 	void turnUndeadAutoHit();
 
-	const char * const *_turnUndeadString;
+	const char *const *_turnUndeadString;
 
 	// Misc
 	bool checkPartyStatusExtra();
@@ -113,8 +114,7 @@ private:
 	static const uint8 _egaDefaultPalette[];
 };
 
-
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

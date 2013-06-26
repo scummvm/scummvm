@@ -31,6 +31,7 @@
 #include "kyra/gui_lok.h"
 #include "kyra/gui_hof.h"
 #include "kyra/gui_mr.h"
+#include "kyra/sequences_hof.h"
 #include "kyra/sound_intern.h"
 
 #include "common/endian.h"
@@ -38,7 +39,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 83
+#define RESFILE_VERSION 84
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -101,7 +102,7 @@ byte getLanguageID(const GameFlags &flags) {
 }
 
 const IndexTable iPlatformTable[] = {
-	{ Common::kPlatformPC, 0 },
+	{ Common::kPlatformDOS, 0 },
 	{ Common::kPlatformAmiga, 1 },
 	{ Common::kPlatformFMTowns, 2 },
 	{ Common::kPlatformPC98, 3 },
@@ -245,8 +246,8 @@ bool StaticResource::init() {
 		{ kAmigaSfxTable, proc(loadAmigaSfxTable), proc(freeAmigaSfxTable) },
 		{ kRawData, proc(loadRawData), proc(freeRawData) },
 
-		{ k2SeqData, proc(loadHofSequenceData), proc(freeHofSequenceData) },
-		{ k2ShpAnimDataV1, proc(loadShapeAnimData_v1), proc(freeHofShapeAnimDataV1) },
+		{ k2SeqData, proc(loadHoFSequenceData), proc(freeHoFSequenceData) },
+		{ k2SeqItemAnimData, proc(loadHoFSeqItemAnimData), proc(freeHoFSeqItemAnimData) },
 		{ k2ItemAnimDefinition, proc(loadItemAnimDefinition), proc(freeItemAnimDefinition) },
 
 #ifdef ENABLE_LOL
@@ -289,7 +290,7 @@ void StaticResource::deinit() {
 }
 
 const char *const *StaticResource::loadStrings(int id, int &strings) {
-	return (const char * const *)getData(id, kStringList, strings);
+	return (const char *const *)getData(id, kStringList, strings);
 }
 
 const uint8 *StaticResource::loadRawData(int id, int &size) {
@@ -308,12 +309,12 @@ const Room *StaticResource::loadRoomTable(int id, int &entries) {
 	return (const Room *)getData(id, StaticResource::kRoomList, entries);
 }
 
-const HofSeqData *StaticResource::loadHofSequenceData(int id, int &entries) {
-	return (const HofSeqData *)getData(id, k2SeqData, entries);
+const HoFSeqData *StaticResource::loadHoFSequenceData(int id, int &entries) {
+	return (const HoFSeqData *)getData(id, k2SeqData, entries);
 }
 
-const ItemAnimData_v1 *StaticResource::loadShapeAnimData_v1(int id, int &entries) {
-	return (const ItemAnimData_v1 *)getData(id, k2ShpAnimDataV1, entries);
+const HoFSeqItemAnimData *StaticResource::loadHoFSeqItemAnimData(int id, int &entries) {
+	return (const HoFSeqItemAnimData *)getData(id, k2SeqItemAnimData, entries);
 }
 
 const ItemAnimDefinition *StaticResource::loadItemAnimDefinition(int id, int &entries) {
@@ -513,12 +514,12 @@ bool StaticResource::loadRoomTable(Common::SeekableReadStream &stream, void *&pt
 	return true;
 }
 
-bool StaticResource::loadHofSequenceData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+bool StaticResource::loadHoFSequenceData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	int numSeq = stream.readUint16BE();
 	uint32 offset = 2;
-	Sequence *tmp_s = new Sequence[numSeq];
+	HoFSequence *tmp_s = new HoFSequence[numSeq];
 
-	size = sizeof(HofSeqData) + numSeq * (sizeof(Sequence) + 28);
+	size = sizeof(HoFSeqData) + numSeq * (sizeof(HoFSequence) + 28);
 
 	for (int i = 0; i < numSeq; i++) {
 		stream.seek(offset, SEEK_SET); offset += 2;
@@ -529,22 +530,22 @@ bool StaticResource::loadHofSequenceData(Common::SeekableReadStream &stream, voi
 		stream.read(const_cast<char *>(tmp_s[i].wsaFile), 14);
 		tmp_s[i].cpsFile = new char[14];
 		stream.read(const_cast<char *>(tmp_s[i].cpsFile), 14);
-		tmp_s[i].startupCommand = stream.readByte();
-		tmp_s[i].finalCommand = stream.readByte();
+		tmp_s[i].fadeInTransitionType = stream.readByte();
+		tmp_s[i].fadeOutTransitionType = stream.readByte();
 		tmp_s[i].stringIndex1 = stream.readUint16BE();
 		tmp_s[i].stringIndex2 = stream.readUint16BE();
 		tmp_s[i].startFrame = stream.readUint16BE();
 		tmp_s[i].numFrames = stream.readUint16BE();
-		tmp_s[i].frameDelay = stream.readUint16BE();
+		tmp_s[i].duration = stream.readUint16BE();
 		tmp_s[i].xPos = stream.readUint16BE();
 		tmp_s[i].yPos = stream.readUint16BE();
-		tmp_s[i].duration = stream.readUint16BE();
+		tmp_s[i].timeout = stream.readUint16BE();
 	}
 
 	stream.seek(offset, SEEK_SET); offset += 2;
 	int numSeqN = stream.readUint16BE();
-	NestedSequence *tmp_n = new NestedSequence[numSeqN];
-	size += (numSeqN * (sizeof(NestedSequence) + 14));
+	HoFNestedSequence *tmp_n = new HoFNestedSequence[numSeqN];
+	size += (numSeqN * (sizeof(HoFNestedSequence) + 14));
 
 	for (int i = 0; i < numSeqN; i++) {
 		stream.seek(offset, SEEK_SET); offset += 2;
@@ -559,8 +560,8 @@ bool StaticResource::loadHofSequenceData(Common::SeekableReadStream &stream, voi
 		tmp_n[i].x = stream.readUint16BE();
 		tmp_n[i].y = stream.readUint16BE();
 		uint16 ctrlOffs = stream.readUint16BE();
-		tmp_n[i].startupCommand = stream.readUint16BE();
-		tmp_n[i].finalCommand = stream.readUint16BE();
+		tmp_n[i].fadeInTransitionType = stream.readUint16BE();
+		tmp_n[i].fadeOutTransitionType = stream.readUint16BE();
 
 		if (ctrlOffs) {
 			stream.seek(ctrlOffs, SEEK_SET);
@@ -580,21 +581,21 @@ bool StaticResource::loadHofSequenceData(Common::SeekableReadStream &stream, voi
 		}
 	}
 
-	HofSeqData *loadTo = new HofSeqData;
+	HoFSeqData *loadTo = new HoFSeqData;
 	assert(loadTo);
 
 	loadTo->seq = tmp_s;
-	loadTo->seqn = tmp_n;
+	loadTo->nestedSeq = tmp_n;
 	loadTo->numSeq = numSeq;
-	loadTo->numSeqn = numSeqN;
+	loadTo->numNestedSeq = numSeqN;
 
 	ptr = loadTo;
 	return true;
 }
 
-bool StaticResource::loadShapeAnimData_v1(Common::SeekableReadStream &stream, void *&ptr, int &size) {
+bool StaticResource::loadHoFSeqItemAnimData(Common::SeekableReadStream &stream, void *&ptr, int &size) {
 	size = stream.readByte();
-	ItemAnimData_v1 *loadTo = new ItemAnimData_v1[size];
+	HoFSeqItemAnimData *loadTo = new HoFSeqItemAnimData[size];
 	assert(loadTo);
 
 	for (int i = 0; i < size; i++) {
@@ -670,8 +671,8 @@ void StaticResource::freeRoomTable(void *&ptr, int &size) {
 	size = 0;
 }
 
-void StaticResource::freeHofSequenceData(void *&ptr, int &size) {
-	HofSeqData *h = (HofSeqData *)ptr;
+void StaticResource::freeHoFSequenceData(void *&ptr, int &size) {
+	HoFSeqData *h = (HoFSeqData *)ptr;
 
 	for (int i = 0; i < h->numSeq; i++) {
 		delete[] h->seq[i].wsaFile;
@@ -679,19 +680,19 @@ void StaticResource::freeHofSequenceData(void *&ptr, int &size) {
 	}
 	delete[] h->seq;
 
-	for (int i = 0; i < h->numSeqn; i++) {
-		delete[] h->seqn[i].wsaFile;
-		delete[] h->seqn[i].wsaControl;
+	for (int i = 0; i < h->numNestedSeq; i++) {
+		delete[] h->nestedSeq[i].wsaFile;
+		delete[] h->nestedSeq[i].wsaControl;
 	}
-	delete[] h->seqn;
+	delete[] h->nestedSeq;
 
 	delete h;
 	ptr = 0;
 	size = 0;
 }
 
-void StaticResource::freeHofShapeAnimDataV1(void *&ptr, int &size) {
-	ItemAnimData_v1 *d = (ItemAnimData_v1 *)ptr;
+void StaticResource::freeHoFSeqItemAnimData(void *&ptr, int &size) {
+	HoFSeqItemAnimData *d = (HoFSeqItemAnimData *)ptr;
 	for (int i = 0; i < size; i++)
 		delete[] d[i].frames;
 	delete[] d;
@@ -777,22 +778,6 @@ void KyraEngine_LoK::initStaticResource() {
 
 	_storyStrings = _staticres->loadStrings(k1PC98StoryStrings, _storyStringsSize);
 
-	int size1, size2;
-	const char *const *soundfiles1 = _staticres->loadStrings(k1AudioTracks, size1);
-	const char *const *soundfiles2 = _staticres->loadStrings(k1AudioTracks2, size2);
-	_soundFilesSize = size1 + size2;
-	if (_soundFilesSize) {
-		delete[] _soundFiles;
-		const char **soundfiles = new const char*[_soundFilesSize];
-		for (int i = 0; i < _soundFilesSize; i++)
-			soundfiles[i] = (i < size1) ? soundfiles1[i] : soundfiles2[i - size1];
-		_soundFiles = soundfiles;
-	}
-	_soundFilesIntro = _staticres->loadStrings(k1AudioTracksIntro, _soundFilesIntroSize);
-	_cdaTrackTable = (const int32 *)_staticres->loadRawData(k1TownsCDATable, _cdaTrackTableSize);
-
-	// copied static res
-
 	// room list
 	const Room *tempRoomList = _staticres->loadRoomTable(k1RoomList, _roomTableSize);
 
@@ -819,34 +804,40 @@ void KyraEngine_LoK::initStaticResource() {
 		_staticres->unloadId(k1DefaultShapes);
 	}
 
-	// audio data tables
-	static const char *const tIntro98[] = { "INTRO%d.DAT" };
-	static const char *const tIngame98[] = { "KYRAM%d.DAT" };
+	// audio resource assignment
+	int size1, size2;
+	const char *const *soundfiles1 = _staticres->loadStrings(k1AudioTracks, size1);
+	const char *const *soundfiles2 = _staticres->loadStrings(k1AudioTracks2, size2);
+	int soundFilesSize = size1 + size2;
+	int soundFilesIntroSize = 0;
+	int cdaTableSize = 0;
+	const char **soundFiles = 0;
+
+	if (soundFilesSize) {
+		soundFiles = new const char*[soundFilesSize];
+		for (int i = 0; i < soundFilesSize; i++)
+			soundFiles[i] = (i < size1) ? soundfiles1[i] : soundfiles2[i - size1];
+	}
+	const char *const *soundFilesIntro = _staticres->loadStrings(k1AudioTracksIntro, soundFilesIntroSize);
+	const int32 *cdaTable = (const int32 *)_staticres->loadRawData(k1TownsCDATable, cdaTableSize);
 
 	// FIXME: It seems Kyra1 MAC CD includes AdLib and MIDI music and sfx, thus we enable
 	// support for those for now. (Based on patch #2767489 "Support for Mac Kyrandia 1 CD" by satz).
-	memset(_soundData, 0, sizeof(_soundData));
-	if (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformMacintosh) {
-		_soundData[0].fileList = _soundFilesIntro;
-		_soundData[0].fileListLen = _soundFilesIntroSize;
-		_soundData[1].fileList = _soundFiles;
-		_soundData[1].fileListLen = _soundFilesSize;
+	if (_flags.platform == Common::kPlatformDOS || _flags.platform == Common::kPlatformMacintosh) {
+		SoundResourceInfo_PC resInfoIntro(soundFilesIntro, soundFilesIntroSize);
+		SoundResourceInfo_PC resInfoIngame(soundFiles, soundFilesSize);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
-		_soundData[0].fileList = _soundFiles;
-		_soundData[0].fileListLen = _soundFilesSize;
-		_soundData[0].cdaTracks = _cdaTrackTable;
-		_soundData[0].cdaNumTracks = _cdaTrackTableSize;
-		_soundData[1].fileList = _soundFiles;
-		_soundData[1].fileListLen = _soundFilesSize;
-		_soundData[1].cdaTracks = _cdaTrackTable;
-		_soundData[1].cdaNumTracks = _cdaTrackTableSize;
+		SoundResourceInfo_Towns resInfoIntro(soundFiles, soundFilesSize, cdaTable, cdaTableSize);
+		SoundResourceInfo_Towns resInfoIngame(soundFiles, soundFilesSize, cdaTable, cdaTableSize);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		_soundData[0].fileList = tIntro98;
-		_soundData[0].fileListLen = 1;
-		_soundData[0].extraOffset = -1;
-		_soundData[1].fileList = tIngame98;
-		_soundData[1].fileListLen = 1;
-		_soundData[1].extraOffset = -1;
+		SoundResourceInfo_PC98 resInfoIntro("INTRO%d.DAT");
+		SoundResourceInfo_PC98 resInfoIngame("KYRAM%d.DAT");
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
 	}
 }
 
@@ -965,7 +956,7 @@ void KyraEngine_LoK::loadButtonShapes() {
 void KyraEngine_LoK::loadMainScreen(int page) {
 	_screen->clearPage(page);
 
-	if (((_flags.lang == Common::EN_ANY || _flags.lang == Common::RU_RUS) && !_flags.isTalkie && _flags.platform == Common::kPlatformPC) || _flags.platform == Common::kPlatformAmiga)
+	if (((_flags.lang == Common::EN_ANY || _flags.lang == Common::RU_RUS) && !_flags.isTalkie && _flags.platform == Common::kPlatformDOS) || _flags.platform == Common::kPlatformAmiga)
 		_screen->loadBitmap("MAIN15.CPS", page, page, &_screen->getPalette(0));
 	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN || (_flags.isTalkie && _flags.lang == Common::IT_ITA))
 		_screen->loadBitmap("MAIN_ENG.CPS", page, page, 0);
@@ -992,11 +983,7 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 }
 
 void KyraEngine_HoF::initStaticResource() {
-	int tmpSize = 0;
-
-	_sequencePakList = _staticres->loadStrings(k2SeqplayPakFiles, _sequencePakListSize);
 	_ingamePakList = _staticres->loadStrings(k2IngamePakFiles, _ingamePakListSize);
-	_sequenceStrings = _staticres->loadStrings(k2SeqplayStrings, _sequenceStringsSize);
 	_ingameSoundList = _staticres->loadStrings(k2IngameSfxFiles, _ingameSoundListSize);
 	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(k2IngameSfxIndex, _ingameSoundIndexSize);
 	_musicFileListIntro = _staticres->loadStrings(k2SeqplayIntroTracks, _musicFileListIntroSize);
@@ -1009,131 +996,29 @@ void KyraEngine_HoF::initStaticResource() {
 	_ingameTimJpStr = _staticres->loadStrings(k2IngameTimJpStrings, _ingameTimJpStrSize);
 	_itemAnimDefinition = _staticres->loadItemAnimDefinition(k2IngameShapeAnimData, _itemAnimDefinitionSize);
 
-	// replace sequence talkie files with localized versions
-	const char *const *seqSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
-	const char *const *tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmpSize);
-	char **tmpSndLst = new char *[_sequenceSoundListSize];
-
-	for (int i = 0; i < _sequenceSoundListSize; i++) {
-		const int len = strlen(seqSoundList[i]);
-
-		tmpSndLst[i] = new char[len + 1];
-		tmpSndLst[i][0] = 0;
-
-		if (tlkfiles && len > 1) {
-			for (int ii = 0; ii < tmpSize; ii++) {
-				if (strlen(tlkfiles[ii]) > 1 && !scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
-					strcpy(tmpSndLst[i], tlkfiles[ii]);
-			}
-		}
-
-		if (tmpSndLst[i][0] == 0)
-			strcpy(tmpSndLst[i], seqSoundList[i]);
-	}
-
-	tlkfiles = seqSoundList = 0;
-	_staticres->unloadId(k2SeqplayTlkFiles);
-	_staticres->unloadId(k2SeqplaySfxFiles);
-	_sequenceSoundList = tmpSndLst;
-
 	// assign music data
-	static const char *const fmtMusicFileListIntro[] = { "intro%d.twn" };
-	static const char *const fmtMusicFileListFinale[] = { "finale%d.twn" };
-	static const char *const fmtMusicFileListIngame[] = { "km%02d.twn" };
-
-	static const char *const pc98MusicFileListIntro[] = { "intro%d.86" };
-	static const char *const pc98MusicFileListFinale[] = { "finale%d.86" };
-	static const char *const pc98MusicFileListIngame[] = { "km%02d.86" };
-
-	memset(_soundData, 0, sizeof(_soundData));
-	if (_flags.platform == Common::kPlatformPC) {
-		_soundData[0].fileList = _musicFileListIntro;
-		_soundData[0].fileListLen = _musicFileListIntroSize;
-		_soundData[1].fileList = _musicFileListIngame;
-		_soundData[1].fileListLen = _musicFileListIngameSize;
-		_soundData[2].fileList = _musicFileListFinale;
-		_soundData[2].fileListLen = _musicFileListIntroSize;
+	if (_flags.platform == Common::kPlatformDOS) {
+		SoundResourceInfo_PC resInfoIntro(_musicFileListIntro, _musicFileListIntroSize);
+		SoundResourceInfo_PC resInfoIngame(_musicFileListIngame, _musicFileListIngameSize);
+		SoundResourceInfo_PC resInfoFinale(_musicFileListFinale, _musicFileListFinaleSize);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	} else if (_flags.platform == Common::kPlatformFMTowns) {
-		_soundData[0].fileList = fmtMusicFileListIntro;
-		_soundData[0].fileListLen = 1;
-		_soundData[0].cdaTracks = _cdaTrackTableIntro;
-		_soundData[0].cdaNumTracks = _cdaTrackTableIntroSize >> 1;
-		_soundData[1].fileList = fmtMusicFileListIngame;
-		_soundData[1].fileListLen = 1;
-		_soundData[1].cdaTracks = _cdaTrackTableIngame;
-		_soundData[1].cdaNumTracks = _cdaTrackTableIngameSize >> 1;
-		_soundData[2].fileList = fmtMusicFileListFinale;
-		_soundData[2].fileListLen = 1;
-		_soundData[2].cdaTracks = _cdaTrackTableFinale;
-		_soundData[2].cdaNumTracks = _cdaTrackTableFinaleSize >> 1;
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(0, 0, "intro%d.twn", (const uint16*)_cdaTrackTableIntro, _cdaTrackTableIntroSize >> 1);
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "km%02d.twn", (const uint16*)_cdaTrackTableIngame, _cdaTrackTableIngameSize >> 1);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(0, 0, "finale%d.twn", (const uint16*)_cdaTrackTableFinale, _cdaTrackTableFinaleSize >> 1);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	} else if (_flags.platform == Common::kPlatformPC98) {
-		_soundData[0].fileList = pc98MusicFileListIntro;
-		_soundData[0].fileListLen = 1;
-		_soundData[1].fileList = pc98MusicFileListIngame;
-		_soundData[1].fileListLen = 1;
-		_soundData[2].fileList = pc98MusicFileListFinale;
-		_soundData[2].fileListLen = 1;
+		SoundResourceInfo_TownsPC98V2 resInfoIntro(0, 0, "intro%d.86", 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoIngame(0, 0, "km%02d.86", 0, 0);
+		SoundResourceInfo_TownsPC98V2 resInfoFinale(0, 0, "finale%d.86", 0, 0);
+		_sound->initAudioResourceInfo(kMusicIntro, &resInfoIntro);
+		_sound->initAudioResourceInfo(kMusicIngame, &resInfoIngame);
+		_sound->initAudioResourceInfo(kMusicFinale, &resInfoFinale);
 	}
-
-	// setup sequence data
-	_sequences = _staticres->loadHofSequenceData(k2SeqplaySeqData, tmpSize);
-
-	static const SeqProc hofSequenceCallbacks[] = {
-		0, &KyraEngine_HoF::seq_introWestwood,
-		&KyraEngine_HoF::seq_introTitle, &KyraEngine_HoF::seq_introOverview,
-		&KyraEngine_HoF::seq_introLibrary, &KyraEngine_HoF::seq_introHand,
-		&KyraEngine_HoF::seq_introPoint, &KyraEngine_HoF::seq_introZanfaun,
-		&KyraEngine_HoF::seq_finaleFunters, &KyraEngine_HoF::seq_finaleFerb,
-		&KyraEngine_HoF::seq_finaleFish, &KyraEngine_HoF::seq_finaleFheep,
-		&KyraEngine_HoF::seq_finaleFarmer, &KyraEngine_HoF::seq_finaleFuards,
-		&KyraEngine_HoF::seq_finaleFirates, &KyraEngine_HoF::seq_finaleFrash
-	};
-
-	static const SeqProc hofNestedSequenceCallbacks[] = {
-		&KyraEngine_HoF::seq_finaleFiggle, &KyraEngine_HoF::seq_introOver1,
-		&KyraEngine_HoF::seq_introOver2, &KyraEngine_HoF::seq_introForest,
-		&KyraEngine_HoF::seq_introDragon, &KyraEngine_HoF::seq_introDarm,
-		&KyraEngine_HoF::seq_introLibrary2, &KyraEngine_HoF::seq_introLibrary2,
-		&KyraEngine_HoF::seq_introMarco, &KyraEngine_HoF::seq_introHand1a,
-		&KyraEngine_HoF::seq_introHand1b, &KyraEngine_HoF::seq_introHand1c,
-		&KyraEngine_HoF::seq_introHand2, &KyraEngine_HoF::seq_introHand3, 0
-	};
-
-	static const SeqProc hofDemoSequenceCallbacks[] = {
-		&KyraEngine_HoF::seq_demoVirgin, &KyraEngine_HoF::seq_demoWestwood,
-		&KyraEngine_HoF::seq_demoTitle, &KyraEngine_HoF::seq_demoHill,
-		&KyraEngine_HoF::seq_demoOuthome, &KyraEngine_HoF::seq_demoWharf,
-		&KyraEngine_HoF::seq_demoDinob, &KyraEngine_HoF::seq_demoFisher, 0
-	};
-
-	static const SeqProc hofDemoNestedSequenceCallbacks[] = {
-		&KyraEngine_HoF::seq_demoWharf2, &KyraEngine_HoF::seq_demoDinob2,
-		&KyraEngine_HoF::seq_demoWater, &KyraEngine_HoF::seq_demoBail,
-		&KyraEngine_HoF::seq_demoDig, 0
-	};
-
-#ifdef ENABLE_LOL
-	static const SeqProc kLoLDemoSequenceCallbacks[] = {
-		&KyraEngine_HoF::seq_lolDemoScene1, 0, &KyraEngine_HoF::seq_lolDemoScene2, 0,
-		&KyraEngine_HoF::seq_lolDemoScene3, 0, &KyraEngine_HoF::seq_lolDemoScene4, 0,
-		&KyraEngine_HoF::seq_lolDemoScene5, &KyraEngine_HoF::seq_lolDemoText5,
-		&KyraEngine_HoF::seq_lolDemoScene6, 0
-	};
-
-	static const SeqProc kLoLDemoNestedSequenceCallbacks[] = { 0 };
-#endif // ENABLE_LOL
-
-	_callbackS =
-#ifdef ENABLE_LOL
-	    _flags.gameID == GI_LOL ? kLoLDemoSequenceCallbacks :
-#endif // ENABLE_LOL
-	    ((_flags.isDemo && !_flags.isTalkie) ? hofDemoSequenceCallbacks : hofSequenceCallbacks);
-
-	_callbackN =
-#ifdef ENABLE_LOL
-	    _flags.gameID == GI_LOL ? kLoLDemoNestedSequenceCallbacks :
-#endif // ENABLE_LOL
-	    ((_flags.isDemo && !_flags.isTalkie) ? hofDemoNestedSequenceCallbacks : hofNestedSequenceCallbacks);
 }
 
 void KyraEngine_MR::initStaticResource() {
@@ -1224,13 +1109,13 @@ const uint8 KyraEngine_LoK::_itemPosY[] = {
 };
 
 void GUI_LoK::initStaticResource() {
-	GUI_V1_BUTTON(_scrollUpButton, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0f, 0);
-	GUI_V1_BUTTON(_scrollDownButton, 0x13, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0f, 0);
+	GUI_V1_BUTTON(_scrollUpButton, 0x12, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0F, 0);
+	GUI_V1_BUTTON(_scrollDownButton, 0x13, 1, 1, 1, 0x483, 0, 0, 0, 0x18, 0x0F, 0);
 
-	GUI_V1_BUTTON(_menuButtonData[0], 0x0c, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
-	GUI_V1_BUTTON(_menuButtonData[1], 0x0d, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
-	GUI_V1_BUTTON(_menuButtonData[2], 0x0e, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
-	GUI_V1_BUTTON(_menuButtonData[3], 0x0f, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[0], 0x0C, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[1], 0x0D, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[2], 0x0E, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
+	GUI_V1_BUTTON(_menuButtonData[3], 0x0F, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
 	GUI_V1_BUTTON(_menuButtonData[4], 0x10, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
 	GUI_V1_BUTTON(_menuButtonData[5], 0x11, 1, 1, 1, 0x487, 0, 0, 0, 0, 0, 0);
 
@@ -1411,8 +1296,6 @@ const int GUI_v2::_sliderBarsPosition[] = {
 };
 
 // kyra 2 static res
-
-const uint8 KyraEngine_HoF::_seqTextColorPresets[] = { 0x01, 0x01, 0x00, 0x3f, 0x3f, 0x3f };
 
 const char *const KyraEngine_HoF::_languageExtension[] = {
 	"ENG",
@@ -1631,7 +1514,7 @@ void KyraEngine_HoF::initInventoryButtonList() {
 		_inventoryButtons[i].buttonCallback = inventoryCallback;
 
 	_buttonList = &_inventoryButtons[0];
-	for (size_t i = 1; i < 15; ++i)
+	for (int i = 1; i < 15; ++i)
 		_buttonList = _gui->addButtonToList(_buttonList, &_inventoryButtons[i]);
 }
 

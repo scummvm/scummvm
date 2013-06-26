@@ -202,6 +202,8 @@ SagaEngine::~SagaEngine() {
 }
 
 Common::Error SagaEngine::run() {
+	setTotalPlayTime(0);
+
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("talkspeed", "255");
 	ConfMan.registerDefault("subtitles", "true");

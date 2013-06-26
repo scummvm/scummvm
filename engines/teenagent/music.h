@@ -28,10 +28,11 @@
 
 namespace TeenAgent {
 
+class TeenAgentEngine;
+
 class MusicPlayer : public Audio::Paula {
 public:
-
-	MusicPlayer();
+	MusicPlayer(TeenAgentEngine *vm);
 	~MusicPlayer();
 
 	bool load(int id);
@@ -41,6 +42,8 @@ public:
 	void stop();
 
 private:
+	TeenAgentEngine *_vm;
+
 	int _id;
 
 	struct Row {

@@ -44,7 +44,7 @@ BaseScriptable *makeSXMemBuffer(BaseGame *inGame, ScStack *stack) {
 //////////////////////////////////////////////////////////////////////////
 SXMemBuffer::SXMemBuffer(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(1);
-	_buffer = NULL;
+	_buffer = nullptr;
 	_size = 0;
 
 	int newSize = stack->pop()->getInt();
@@ -73,7 +73,7 @@ void SXMemBuffer::cleanup() {
 	if (_size) {
 		free(_buffer);
 	}
-	_buffer = NULL;
+	_buffer = nullptr;
 	_size = 0;
 }
 
@@ -109,7 +109,7 @@ bool SXMemBuffer::resize(int newSize) {
 
 //////////////////////////////////////////////////////////////////////////
 bool SXMemBuffer::checkBounds(ScScript *script, int start, int length) {
-	if (_buffer == NULL) {
+	if (_buffer == nullptr) {
 		script->runtimeError("Cannot use Set/Get methods on an uninitialized memory buffer");
 		return false;
 	}
@@ -476,15 +476,15 @@ bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length
 	//////////////////////////////////////////////////////////////////////////
-	if (strcmp(name, "Length")==0){
+	if (strcmp(name, "Length")==0) {
 	    int origLength = _length;
 	    _length = max(value->getInt(0), 0);
 
 	    char propName[20];
-	    if (_length < OrigLength){
-	        for(int i=_length; i<OrigLength; i++){
-	            sprintf(PropName, "%d", i);
-	            _values->DeleteProp(PropName);
+	    if (_length < origLength) {
+	        for(int i=_length; i < origLength; i++) {
+	            sprintf(propName, "%d", i);
+	            _values->DeleteProp(propName);
 	        }
 	    }
 	    return STATUS_OK;
@@ -509,7 +509,7 @@ bool SXMemBuffer::persist(BasePersistenceManager *persistMgr) {
 			_buffer = malloc(_size);
 			persistMgr->getBytes((byte *)_buffer, _size);
 		} else {
-			_buffer = NULL;
+			_buffer = nullptr;
 		}
 	}
 

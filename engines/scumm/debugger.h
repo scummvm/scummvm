@@ -35,7 +35,6 @@ public:
 
 private:
 	ScummEngine *_vm;
-	bool  _old_soundsPaused;
 
 	// Commands
 	bool Cmd_Room(int argc, const char **argv);

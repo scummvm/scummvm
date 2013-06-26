@@ -856,10 +856,8 @@ bool Control::savegamesExist() {
 void Control::checkForOldSaveGames() {
 	Common::InSaveFile *inf = _saveFileMan->openForLoading("SAVEGAME.INF");
 
-	if (!inf) {
-		delete inf;
+	if (!inf)
 		return;
-	}
 
 	GUI::MessageDialog dialog0(
 	    _("ScummVM found that you have old savefiles for Broken Sword 1 that should be converted.\n"

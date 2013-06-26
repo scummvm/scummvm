@@ -727,7 +727,7 @@ void BalloonManager_br::cacheAnims() {
 BalloonManager_br::BalloonManager_br(Parallaction_br *vm, Font *font) : _vm(vm), _numBalloons(0),
 	_leftBalloon(0), _rightBalloon(0), _sw(font), _se(font) {
 
-	if (_vm->getPlatform() == Common::kPlatformPC) {
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
 		_textColors[kSelectedColor] = 12;
 		_textColors[kUnselectedColor] = 0;
 		_textColors[kNormalColor] = 0;

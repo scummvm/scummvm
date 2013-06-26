@@ -963,7 +963,7 @@ static Common::String generatePreferredTarget(const DetectorResult &x) {
 	}
 
 	// Append the platform, if a non-standard one has been specified.
-	if (x.game.platform != Common::kPlatformPC && x.game.platform != Common::kPlatformUnknown) {
+	if (x.game.platform != Common::kPlatformDOS && x.game.platform != Common::kPlatformUnknown) {
 		// HACK: For CoMI, it's pointless to encode the fact that it's for Windows
 		if (x.game.id != GID_CMI)
 			res = res + "-" + Common::getPlatformAbbrev(x.game.platform);

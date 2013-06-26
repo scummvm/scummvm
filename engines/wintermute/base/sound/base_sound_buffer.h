@@ -86,13 +86,13 @@ public:
 	Audio::Mixer::SoundType _type;
 	bool _looping;
 
-	int _privateVolume;
+	int32 _privateVolume;
 private:
 	uint32 _startPos;
 	Common::String _filename;
 	bool _streamed;
 	Common::SeekableReadStream *_file;
-	int _volume;
+	int32 _volume;
 };
 
 } // end of namespace Wintermute

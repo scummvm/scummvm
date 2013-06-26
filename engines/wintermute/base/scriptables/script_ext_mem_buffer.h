@@ -47,7 +47,7 @@ public:
 	virtual ~SXMemBuffer();
 	virtual void *scToMemBuffer();
 private:
-	int _size;
+	int32 _size;
 
 	bool resize(int newSize);
 	void *_buffer;

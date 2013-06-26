@@ -119,7 +119,7 @@ bool Sound::sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName)
 	byte *data = _vm->_dataIO->getFile(fileName, size);
 
 	if (!data || !sndDesc->load(type, data, size)) {
-		delete data;
+		delete[] data;
 
 		warning("Sound::sampleLoad(): Failed to load sound \"%s\"", fileName);
 		return false;

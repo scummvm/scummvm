@@ -512,7 +512,7 @@ void Filter::enable_filter(bool enable) {
 	enabled = enable;
 }
 
-void Filter::reset(){
+void Filter::reset() {
 	fc = 0;
 
 	res = 0;

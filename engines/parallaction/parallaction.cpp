@@ -583,7 +583,10 @@ void Parallaction::runZone(ZonePtr z) {
 //	ZONE TYPE: DOOR
 
 void Parallaction::updateDoor(ZonePtr z, bool close) {
-	z->_flags = close ? (z->_flags |= kFlagsClosed) : (z->_flags &= ~kFlagsClosed);
+	if (close)
+		z->_flags |= kFlagsClosed;
+	else
+		z->_flags &= ~kFlagsClosed;
 
 	if (z->u._gfxobj) {
 		uint frame = (close ? 0 : 1);

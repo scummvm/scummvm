@@ -42,6 +42,8 @@ SequenceManager::SequenceManager() : Action() {
 	_objectIndex = 0;
 	_keepActive = false;
 	_onCallback = NULL;
+	for (int i = 0; i < 6; i ++)
+		_objectList[i] = NULL;
 	setup();
 }
 
@@ -415,6 +417,8 @@ ConversationChoiceDialog::ConversationChoiceDialog() {
 	_stdColor = 23;
 	_highlightColor = g_globals->_scenePalette._colors.background;
 	_fontNumber = 1;
+	_savedFgColor = _savedFontNumber = 0;
+	_selectedIndex = 0;
 }
 
 int ConversationChoiceDialog::execute(const Common::StringArray &choiceList) {
@@ -587,6 +591,8 @@ StripManager::StripManager() {
 	_activeSpeaker = NULL;
 	_onBegin = NULL;
 	_onEnd = NULL;
+	_sceneNumber = 0;
+	_lookupList = NULL;
 	reset();
 }
 
@@ -932,6 +938,7 @@ Speaker::Speaker() : EventHandler() {
 	_color1 = _color2 = _color3 = g_globals->_scenePalette._colors.foreground;
 	_action = NULL;
 	_speakerName = "SPEAKER";
+	_oldSceneNumber = -1;
 }
 
 void Speaker::synchronize(Serializer &s) {

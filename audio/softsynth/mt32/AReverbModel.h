@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011, 2012, 2013 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -21,65 +21,66 @@
 namespace MT32Emu {
 
 struct AReverbSettings {
-	const Bit32u *allpassSizes;
-	const Bit32u *delaySizes;
-	const float *decayTimes;
-	const float *wetLevels;
-	float filtVal;
-	float damp1;
-	float damp2;
+	const Bit32u * const allpassSizes;
+	const Bit32u * const combSizes;
+	const Bit32u * const outLPositions;
+	const Bit32u * const outRPositions;
+	const Bit32u * const filterFactor;
+	const Bit32u * const decayTimes;
+	const Bit32u * const wetLevels;
+	const Bit32u lpfAmp;
 };
 
 class RingBuffer {
 protected:
 	float *buffer;
-	Bit32u size;
+	const Bit32u size;
 	Bit32u index;
+
 public:
-	RingBuffer(Bit32u size);
+	RingBuffer(const Bit32u size);
 	virtual ~RingBuffer();
 	float next();
-	bool isEmpty();
+	bool isEmpty() const;
 	void mute();
 };
 
 class AllpassFilter : public RingBuffer {
 public:
-	AllpassFilter(Bit32u size);
-	float process(float in);
+	AllpassFilter(const Bit32u size);
+	float process(const float in);
 };
 
-class Delay : public RingBuffer {
+class CombFilter : public RingBuffer {
+	float feedbackFactor;
+	float filterFactor;
+
 public:
-	Delay(Bit32u size);
-	float process(float in);
+	CombFilter(const Bit32u size);
+	void process(const float in);
+	float getOutputAt(const Bit32u outIndex) const;
+	void setFeedbackFactor(const float useFeedbackFactor);
+	void setFilterFactor(const float useFilterFactor);
 };
 
 class AReverbModel : public ReverbModel {
 	AllpassFilter **allpasses;
-	Delay **delays;
+	CombFilter **combs;
 
-	const AReverbSettings *currentSettings;
-	float decayTime;
+	const AReverbSettings &currentSettings;
+	float lpfAmp;
 	float wetLevel;
-	float filterhist1, filterhist2;
-	float combhist;
 	void mute();
+
 public:
-	AReverbModel(const AReverbSettings *newSettings);
+	AReverbModel(const ReverbMode mode);
 	~AReverbModel();
-	void open(unsigned int sampleRate);
+	void open();
 	void close();
 	void setParameters(Bit8u time, Bit8u level);
 	void process(const float *inLeft, const float *inRight, float *outLeft, float *outRight, unsigned long numSamples);
 	bool isActive() const;
-
-	static const AReverbSettings REVERB_MODE_0_SETTINGS;
-	static const AReverbSettings REVERB_MODE_1_SETTINGS;
-	static const AReverbSettings REVERB_MODE_2_SETTINGS;
 };
-
-// Default reverb settings for modes 0-2
 
 }
 

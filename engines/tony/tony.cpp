@@ -55,6 +55,7 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Roasted");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Music");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "Music/utilsfx");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "Music/Layer");
 
 	// Set up load slot number
 	_initialLoadSlotNumber = -1;
@@ -731,6 +732,7 @@ uint32 TonyEngine::getTime() {
 bool TonyEngine::canLoadGameStateCurrently() {
 	return GLOBALS._gfxEngine != NULL && GLOBALS._gfxEngine->canLoadSave();
 }
+
 bool TonyEngine::canSaveGameStateCurrently() {
 	return GLOBALS._gfxEngine != NULL && GLOBALS._gfxEngine->canLoadSave();
 }

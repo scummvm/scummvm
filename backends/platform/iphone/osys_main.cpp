@@ -65,6 +65,10 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();
 	initVideoContext();
+
+	memset(_gamePalette, 0, sizeof(_gamePalette));
+	memset(_gamePaletteRGBA5551, 0, sizeof(_gamePaletteRGBA5551));
+	memset(_mouseCursorPalette, 0, sizeof(_mouseCursorPalette));
 }
 
 OSystem_IPHONE::~OSystem_IPHONE() {

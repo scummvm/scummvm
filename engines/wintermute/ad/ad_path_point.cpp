@@ -39,7 +39,7 @@ AdPathPoint::AdPathPoint() {
 	_distance = 0;
 
 	_marked = false;
-	_origin = NULL;
+	_origin = nullptr;
 }
 
 
@@ -50,13 +50,13 @@ AdPathPoint::AdPathPoint(int initX, int initY, int initDistance) {
 	_distance = initDistance;
 
 	_marked = false;
-	_origin = NULL;
+	_origin = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 AdPathPoint::~AdPathPoint() {
-	_origin = NULL;
+	_origin = nullptr;
 }
 
 
@@ -67,7 +67,7 @@ bool AdPathPoint::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_distance));
 	persistMgr->transfer(TMEMBER(_marked));
-	persistMgr->transfer(TMEMBER(_origin));
+	persistMgr->transferPtr(TMEMBER_PTR(_origin));
 
 	return STATUS_OK;
 }

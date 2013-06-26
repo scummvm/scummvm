@@ -62,7 +62,7 @@ void Title::handleFrameEvent() {
 void Title::playMusic() {
 	// Look at what platform this is and play the appropriate music type
 
-	if      (_vm->getPlatform() == Common::kPlatformPC)
+	if      (_vm->getPlatform() == Common::kPlatformDOS)
 		playMusicDOS();
 	else if (_vm->getPlatform() == Common::kPlatformAmiga)
 		playMusicAmiga();

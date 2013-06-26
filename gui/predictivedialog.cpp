@@ -779,7 +779,7 @@ bool PredictiveDialog::searchWord(const char *const where, const Common::String 
 }
 
 void PredictiveDialog::addWord(Dict &dict, const Common::String &word, const Common::String &code) {
-	char *newLine;
+	char *newLine = 0;
 	Common::String tmpCode = code + ' ';
 	int line = binarySearch(dict.dictLine, tmpCode, dict.dictLineCount);
 	if (line >= 0) {
@@ -856,6 +856,9 @@ void PredictiveDialog::addWord(Dict &dict, const Common::String &word, const Com
 	char **newDictLine = (char **)calloc(1, sizeof(char *) * (dict.dictLineCount + 1));
 	if (!newDictLine) {
 		warning("Predictive Dialog: cannot allocate memory for index buffer");
+
+		free(newLine);
+
 		return;
 	}
 	newDictLine[dict.dictLineCount] = '\0';

@@ -26,9 +26,28 @@
 namespace Touche {
 
 ToucheConsole::ToucheConsole(ToucheEngine *vm) : GUI::Debugger(), _vm(vm) {
+	DCmd_Register("startMusic", WRAP_METHOD(ToucheConsole, Cmd_StartMusic));
+	DCmd_Register("stopMusic", WRAP_METHOD(ToucheConsole, Cmd_StopMusic));
 }
 
 ToucheConsole::~ToucheConsole() {
+}
+
+bool ToucheConsole::Cmd_StartMusic(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Usage: startMusic <num>\n");
+		return true;
+	}
+
+	int num = atoi(argv[1]);
+
+	_vm->startMusic(num);
+	return false;
+}
+
+bool ToucheConsole::Cmd_StopMusic(int argc, const char **argv) {
+	_vm->stopMusic();
+	return false;
 }
 
 } // End of namespace Touche

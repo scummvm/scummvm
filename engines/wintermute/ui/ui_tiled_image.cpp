@@ -42,7 +42,7 @@ IMPLEMENT_PERSISTENT(UITiledImage, false)
 
 //////////////////////////////////////////////////////////////////////////
 UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
-	_image = NULL;
+	_image = nullptr;
 
 	BasePlatform::setRectEmpty(&_upLeft);
 	BasePlatform::setRectEmpty(&_upMiddle);
@@ -59,7 +59,7 @@ UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 UITiledImage::~UITiledImage() {
 	delete _image;
-	_image = NULL;
+	_image = nullptr;
 }
 
 
@@ -104,14 +104,11 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	}
 
 	// tiles
-	yyy = y + (_upMiddle.bottom - _upMiddle.top);
-	for (row = 0; row < nuRows; row++) {
+	if (nuRows > 0 && nuColumns > 0) {
+		yyy = y + (_upMiddle.bottom - _upMiddle.top);
 		xxx = x + (_upLeft.right - _upLeft.left);
-		for (col = 0; col < nuColumns; col++) {
-			_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
-			xxx += tileWidth;
-		}
-		yyy += tileWidth;
+		_image->_surface->displayTrans(xxx, yyy, _middleMiddle);
+		_image->_surface->repeatLastDisplayOp(tileWidth, tileWidth, nuColumns, nuRows);
 	}
 
 	_gameRef->_renderer->endSpriteBatch();
@@ -123,7 +120,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 //////////////////////////////////////////////////////////////////////////
 bool UITiledImage::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UITiledImage::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -208,7 +205,7 @@ bool UITiledImage::loadBuffer(byte *buffer, bool complete) {
 			_image = new BaseSubFrame(_gameRef);
 			if (!_image || DID_FAIL(_image->setSurface((char *)params))) {
 				delete _image;
-				_image = NULL;
+				_image = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -361,7 +358,7 @@ bool UITiledImage::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void UITiledImage::correctSize(int *width, int *height) {
+void UITiledImage::correctSize(int32 *width, int32 *height) {
 	int tileWidth = _middleMiddle.right - _middleMiddle.left;
 	int tileHeight = _middleMiddle.bottom - _middleMiddle.top;
 
@@ -380,7 +377,7 @@ bool UITiledImage::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_downLeft));
 	persistMgr->transfer(TMEMBER(_downMiddle));
 	persistMgr->transfer(TMEMBER(_downRight));
-	persistMgr->transfer(TMEMBER(_image));
+	persistMgr->transferPtr(TMEMBER_PTR(_image));
 	persistMgr->transfer(TMEMBER(_middleLeft));
 	persistMgr->transfer(TMEMBER(_middleMiddle));
 	persistMgr->transfer(TMEMBER(_middleRight));

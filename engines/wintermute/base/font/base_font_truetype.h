@@ -46,23 +46,24 @@ private:
 	class BaseCachedTTFontText {
 	public:
 		WideString _text;
-		int _width;
+		int32 _width;
 		TTextAlign _align;
-		int _maxHeight;
-		int _maxLength;
+		int32 _maxHeight;
+		int32 _maxLength;
 		BaseSurface *_surface;
-		int _priority;
-		int _textOffset;
+		int32 _priority;
+		int32 _textOffset;
 		bool _marked;
+		uint32 _lastUsed;
 
 		BaseCachedTTFontText() {
 			//_text = L"";
 			_text = "";
 			_width = _maxHeight = _maxLength = -1;
 			_align = TAL_LEFT;
-			_surface = NULL;
-			_priority = -1;
+			_surface = nullptr;
 			_textOffset = 0;
+			_lastUsed = 0;
 			_marked = false;
 		}
 
@@ -89,8 +90,8 @@ public:
 			return STATUS_OK;
 		}
 
-		int _offsetX;
-		int _offsetY;
+		int32 _offsetX;
+		int32 _offsetY;
 		uint32 _color;
 	};
 
@@ -99,10 +100,10 @@ public:
 	BaseFontTT(BaseGame *inGame);
 	virtual ~BaseFontTT(void);
 
-	virtual int getTextWidth(byte *text, int maxLength = -1);
-	virtual int getTextHeight(byte *text, int width);
-	virtual void drawText(const byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1);
-	virtual int getLetterHeight();
+	virtual int getTextWidth(const byte *text, int maxLength = -1) override;
+	virtual int getTextHeight(const byte *text, int width) override;
+	virtual void drawText(const byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1) override;
+	virtual int getLetterHeight() override;
 
 	bool loadBuffer(byte *buffer);
 	bool loadFile(const Common::String &filename);
@@ -139,7 +140,7 @@ public:
 	bool _isItalic;
 	bool _isUnderline;
 	bool _isStriked;
-	int _fontHeight;
+	int32 _fontHeight;
 	char *_fontFile;
 
 	BaseArray<BaseTTFontLayer *> _layers;

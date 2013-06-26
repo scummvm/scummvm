@@ -43,7 +43,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("touche.dat", "2af0177f8887e3430f345e6b4d8b1414", 26350211),
 		Common::EN_ANY,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -52,7 +52,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("touche.dat", "95967f0b51d2e813e99ca00325098340", 26350190),
 		Common::EN_ANY,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -61,7 +61,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("touche.dat", "1caa20bb4d4fc2ce8eb867b6610082b3", 26558232),
 		Common::FR_FRA,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -70,7 +70,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("touche.dat", "be2ae6454b3325e410946f2322547cd4", 26625537),
 		Common::DE_DEU,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -79,7 +79,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("touche.dat", "64e95ba1decf5a5a60f8fa1840f40c62", 26529523),
 		Common::ES_ESP,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -88,7 +88,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("touche.dat", "1f442331d4b327c3488a9f6ffe9bdd25", 26367792),
 		Common::IT_ITA,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -97,7 +97,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"",
 		AD_ENTRY1s("touche.dat", "42d19a0bef65465109020440a9caa228", 26487370),
 		Common::PL_POL,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
@@ -106,7 +106,7 @@ static const ADGameDescription gameDescriptions[] = {
 		"Demo",
 		AD_ENTRY1s("touche.dat", "ddaed436445b2e77294ed19e8ae4aa2c", 8720683),
 		Common::EN_ANY,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_DEMO,
 		GUIO0()
 	},

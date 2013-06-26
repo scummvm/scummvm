@@ -34,7 +34,7 @@ class GfxText32;
  */
 class GfxControls32 {
 public:
-	GfxControls32(SegManager *segMan, GfxCache *cache, GfxScreen *screen, GfxText32 *text);
+	GfxControls32(SegManager *segMan, GfxCache *cache, GfxText32 *text);
 	~GfxControls32();
 
 	void kernelTexteditChange(reg_t controlObject);
@@ -42,7 +42,6 @@ public:
 private:
 	SegManager *_segMan;
 	GfxCache *_cache;
-	GfxScreen *_screen;
 	GfxText32 *_text;
 };
 

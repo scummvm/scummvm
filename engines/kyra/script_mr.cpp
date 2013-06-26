@@ -1144,7 +1144,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	Opcode(o3_getCharacterFrameFromFacing);
-	// 0x0c
+	// 0x0C
 	Opcode(o2_setCharacterFacingOverwrite);
 	Opcode(o2_trySceneChange);
 	Opcode(o2_moveCharacter);
@@ -1164,7 +1164,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_showAlbum);
 	Opcode(o3_setInventorySlot);
 	Opcode(o3_getInventorySlot);
-	// 0x1c
+	// 0x1C
 	Opcode(o3_addItemToInventory);
 	OpcodeUnImpl();
 	Opcode(o3_addItemToCurScene);
@@ -1184,7 +1184,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o1_setGameFlag);
 	Opcode(o1_setHandItem);
 	Opcode(o1_removeHandItem);
-	// 0x2c
+	// 0x2C
 	Opcode(o1_getMouseState);
 	Opcode(o1_hideMouse);
 	Opcode(o2_addSpecialExit);
@@ -1204,7 +1204,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_makeSecondChanceSave);
 	Opcode(o3_setSceneFilename);
 	OpcodeUnImpl();
-	// 0x3c
+	// 0x3C
 	Opcode(o3_removeItemsFromScene);
 	Opcode(o3_disguiseMalcolm);
 	Opcode(o3_drawSceneShape);
@@ -1224,7 +1224,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	Opcode(o3_setSceneAnimPosAndFrame);
 	Opcode(o2_update);
-	// 0x4c
+	// 0x4C
 	Opcode(o3_removeItemInstances);
 	Opcode(o3_dummy);
 	Opcode(o3_disableInventory);
@@ -1244,7 +1244,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_playSoundEffect);
 	Opcode(o3_getScore);
 	Opcode(o3_daggerWarning);
-	// 0x5c
+	// 0x5C
 	Opcode(o3_blockOutWalkableRegion);
 	Opcode(o3_dummy);
 	Opcode(o3_showSceneStringsMessage);
@@ -1264,7 +1264,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	Opcode(o2_waitForConfirmationClick);
-	// 0x6c
+	// 0x6C
 	Opcode(o3_dummy);
 	Opcode(o2_defineRoomEntrance);
 	Opcode(o2_runAnimationScript);
@@ -1284,7 +1284,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o2_defineScene);
 	Opcode(o3_setConversationState);
 	OpcodeUnImpl();
-	// 0x7c
+	// 0x7C
 	OpcodeUnImpl();
 	Opcode(o3_getConversationState);
 	Opcode(o3_dummy);
@@ -1304,7 +1304,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 	Opcode(o3_dialogStartScript);
 	Opcode(o3_dummy);
-	// 0x8c
+	// 0x8C
 	Opcode(o3_dialogEndScript);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
@@ -1324,27 +1324,27 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_customChatFinish);
 	Opcode(o3_setupSceneAnimObject);
 	Opcode(o3_removeSceneAnimObject);
-	// 0x9c
+	// 0x9C
 	Opcode(o2_disableTimer);
 	Opcode(o2_enableTimer);
 	Opcode(o2_setTimerCountdown);
 	OpcodeUnImpl();
-	// 0xa0
+	// 0xA0
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
 	Opcode(o3_dummy);
-	// 0xa4
+	// 0xA4
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	Opcode(o2_setVocHigh);
-	// 0xa8
+	// 0xA8
 	Opcode(o2_getVocHigh);
 	OpcodeUnImpl();
 	OpcodeUnImpl();
 	OpcodeUnImpl();
-	// 0xac
+	// 0xAC
 	OpcodeUnImpl();
 	Opcode(o3_dummy);
 	OpcodeUnImpl();

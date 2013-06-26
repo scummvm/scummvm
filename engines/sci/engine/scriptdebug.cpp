@@ -79,7 +79,7 @@ reg_t disassemble(EngineState *s, reg32_t pos, bool printBWTag, bool printByteco
 	Kernel *kernel = g_sci->getKernel();
 
 	if (!mobj) {
-		warning("Disassembly failed: Segment %04x non-existant or not a script", pos.getSegment());
+		warning("Disassembly failed: Segment %04x non-existent or not a script", pos.getSegment());
 		return retval;
 	} else
 		script_entity = (Script *)mobj;

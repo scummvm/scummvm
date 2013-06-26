@@ -97,7 +97,9 @@ JavaInputStream::JavaInputStream(JNIEnv *env, jobject is) :
 {
 	_input_stream = env->NewGlobalRef(is);
 	_buflen = 8192;
-	_buf = (jbyteArray)env->NewGlobalRef(env->NewByteArray(_buflen));
+	jobject buf = env->NewByteArray(_buflen);
+	_buf = (jbyteArray)env->NewGlobalRef(buf);
+	env->DeleteLocalRef(buf);
 
 	jclass cls = env->GetObjectClass(_input_stream);
 	MID_mark = env->GetMethodID(cls, "mark", "(I)V");
@@ -112,6 +114,7 @@ JavaInputStream::JavaInputStream(JNIEnv *env, jobject is) :
 	assert(MID_reset);
 	MID_skip = env->GetMethodID(cls, "skip", "(J)J");
 	assert(MID_skip);
+	env->DeleteLocalRef(cls);
 
 	// Mark start of stream, so we can reset back to it.
 	// readlimit is set to something bigger than anything we might
@@ -142,7 +145,9 @@ uint32 JavaInputStream::read(void *dataPtr, uint32 dataSize) {
 		_buflen = dataSize;
 
 		env->DeleteGlobalRef(_buf);
-		_buf = static_cast<jbyteArray>(env->NewGlobalRef(env->NewByteArray(_buflen)));
+		jobject buf = env->NewByteArray(_buflen);
+		_buf = static_cast<jbyteArray>(env->NewGlobalRef(buf));
+		env->DeleteLocalRef(buf);
 	}
 
 	jint ret = env->CallIntMethod(_input_stream, MID_read, _buf, 0, dataSize);
@@ -290,6 +295,7 @@ AssetFdReadStream::AssetFdReadStream(JNIEnv *env, jobject assetfd) :
 	jclass cls = env->GetObjectClass(_assetfd);
 	MID_close = env->GetMethodID(cls, "close", "()V");
 	assert(MID_close);
+	env->DeleteLocalRef(cls);
 
 	jmethodID MID_getStartOffset =
 		env->GetMethodID(cls, "getStartOffset", "()J");
@@ -311,8 +317,10 @@ AssetFdReadStream::AssetFdReadStream(JNIEnv *env, jobject assetfd) :
 	jclass fd_cls = env->GetObjectClass(javafd);
 	jfieldID FID_descriptor = env->GetFieldID(fd_cls, "descriptor", "I");
 	assert(FID_descriptor);
+	env->DeleteLocalRef(fd_cls);
 
 	_fd = env->GetIntField(javafd, FID_descriptor);
+	env->DeleteLocalRef(javafd);
 }
 
 AssetFdReadStream::~AssetFdReadStream() {
@@ -382,6 +390,7 @@ AndroidAssetArchive::AndroidAssetArchive(jobject am) {
 	MID_list = env->GetMethodID(cls, "list",
 								"(Ljava/lang/String;)[Ljava/lang/String;");
 	assert(MID_list);
+	env->DeleteLocalRef(cls);
 }
 
 AndroidAssetArchive::~AndroidAssetArchive() {
@@ -452,7 +461,9 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) con
 					member_list.push_back(getMember(thispath));
 					++count;
 				} else {
-					dirlist.push_back(thispath);
+					// AssetManager is ridiculously slow and we don't care
+					// about subdirectories at the moment, so ignore them.
+					// dirlist.push_back(thispath);
 				}
 			}
 
@@ -481,8 +492,10 @@ Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const
 		env->ExceptionClear();
 	else if (afd != 0) {
 		// success :)
+		Common::SeekableReadStream *stream = new AssetFdReadStream(env, afd);
 		env->DeleteLocalRef(jpath);
-		return new AssetFdReadStream(env, afd);
+		env->DeleteLocalRef(afd);
+		return stream;
 	}
 
 	// ... and fallback to normal open() if that doesn't work
@@ -498,7 +511,10 @@ Common::SeekableReadStream *AndroidAssetArchive::createReadStreamForMember(const
 		return 0;
 	}
 
-	return new JavaInputStream(env, is);
+	Common::SeekableReadStream *stream = new JavaInputStream(env, is);
+	env->DeleteLocalRef(jpath);
+	env->DeleteLocalRef(is);
+	return stream;
 }
 
 #endif

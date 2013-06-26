@@ -493,9 +493,9 @@ uint32 VideoManager::getTime(VideoHandle handle) {
 	return _videoStreams[handle]->getTime();
 }
 
-uint32 VideoManager::getDuration(VideoHandle handle) {
+Audio::Timestamp VideoManager::getDuration(VideoHandle handle) {
 	assert(handle != NULL_VID_HANDLE);
-	return _videoStreams[handle]->getDuration().msecs();
+	return _videoStreams[handle]->getDuration();
 }
 
 bool VideoManager::endOfVideo(VideoHandle handle) {
@@ -534,6 +534,16 @@ void VideoManager::seekToTime(VideoHandle handle, Audio::Timestamp time) {
 void VideoManager::setVideoLooping(VideoHandle handle, bool loop) {
 	assert(handle != NULL_VID_HANDLE);
 	_videoStreams[handle].loop = loop;
+}
+
+Common::Rational VideoManager::getVideoRate(VideoHandle handle) const {
+	assert(handle != NULL_VID_HANDLE);
+	return _videoStreams[handle]->getRate();
+}
+
+void VideoManager::setVideoRate(VideoHandle handle, const Common::Rational &rate) {
+	assert(handle != NULL_VID_HANDLE);
+	_videoStreams[handle]->setRate(rate);
 }
 
 void VideoManager::pauseMovie(VideoHandle handle, bool pause) {

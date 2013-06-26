@@ -51,6 +51,7 @@ private:
 	DECLARE_OPCODE(o_stayHere);
 	DECLARE_OPCODE(o_speechStop);
 
+	DECLARE_OPCODE(o_libraryBookcaseTransformDemo_init);
 	DECLARE_OPCODE(o_speech_init);
 	DECLARE_OPCODE(o_library_init);
 
@@ -65,6 +66,8 @@ private:
 
 	void speech_run();
 	void speechUpdateCue();
+
+	void libraryBookcaseTransform_run();
 };
 
 } // End of namespace MystStacks

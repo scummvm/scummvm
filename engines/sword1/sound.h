@@ -80,7 +80,7 @@ enum CowMode {
 
 class Sound {
 public:
-	Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan);
+	Sound(Audio::Mixer *mixer, ResMan *pResMan);
 	~Sound();
 	void setSpeechVol(uint8 volL, uint8 volR) { _speechVolL = volL; _speechVolR = volR; }
 	void setSfxVol(uint8 volL, uint8 volR) { _sfxVolL = volL; _sfxVolR = volR; }
@@ -125,7 +125,6 @@ private:
 	Audio::Mixer *_mixer;
 	ResMan *_resMan;
 	bool _bigEndianSpeech;
-	char _filePath[100];
 	static const char _musicList[270];
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];
 	static const FxDef _fxList[312];

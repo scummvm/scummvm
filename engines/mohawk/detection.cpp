@@ -143,6 +143,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"harryhh","Harry and the Haunted House"},
 	{"stellaluna", "Stellaluna"},
 	{"sheila", "Sheila Rae, the Brave"},
+	{"rugratsps", "Rugrats Print Shop" },
 	{0, 0}
 };
 

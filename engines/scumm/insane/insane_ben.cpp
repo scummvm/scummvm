@@ -125,7 +125,7 @@ int32 Insane::actionBen() {
 	bool doDamage = false;
 	int sound;
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 		sound = 59;
 	else
 		sound = 95;
@@ -558,7 +558,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].weaponClass = 1;
 		_actor[0].act[2].state = 3;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)))
+		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)))
 			smlayer_startSfx(63);
 		break;
 	case 3:
@@ -567,7 +567,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		if (_actor[0].act[2].frame == 2) {
 			if (_currEnemy != EN_CAVEFISH) {
 				tmp = calcEnemyDamage(1, 1);
-				if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+				if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 					if (tmp == 1)
 						smlayer_startSfx(50);
 				} else {
@@ -634,7 +634,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		_actor[0].newFacingFlag = 1;
 		_actor[0].kicking = false;
 		if ((_actor[0].act[2].frame == 3) && (calcEnemyDamage(0, 0) == 1)) {
-			_actor[1].damage = weaponDamage(0);
+			_actor[1].damage += weaponDamage(0);
 			smlayer_startSfx(64);
 			_actor[1].cursorX = 320;
 		}
@@ -805,7 +805,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				if ((_actor[1].x - _actor[0].x <= weaponMaxRange(0)) &&
 					(_actor[1].x - _actor[0].x >= weaponMinRange(0))) {
 					smlayer_startSfx(76);
-					_actor[1].damage = weaponDamage(0);
+					_actor[1].damage += weaponDamage(0);
 				}
 				break;
 			default:
@@ -813,7 +813,7 @@ void Insane::actor02Reaction(int32 buttons) {
 					smlayer_startSfx(76);
 				break;
 			}
-			smlayer_setActorFacing(0, 2, 21,180);
+			smlayer_setActorFacing(0, 2, 21, 180);
 			_actor[0].act[2].state = 17;
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
@@ -855,7 +855,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				break;
 			case INV_CHAINSAW:
 				if (_actor[1].kicking || _actor[1].field_44)
-					_actor[0].act[2].state = 20;
+					_actor[0].act[2].state = 106;
 				else {
 					smlayer_setActorFacing(0, 2, 20, 180);
 					_actor[0].act[2].state = 20;
@@ -890,7 +890,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_2X4:
 				case INV_BOOT:
 					tmp = calcEnemyDamage(1, 1);
-					if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+					if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 						if (tmp == 1)
 							smlayer_startSfx(52);
 						if (tmp == 1000)
@@ -1015,7 +1015,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorFacing(0, 2, 19, 180);
 		_actor[0].act[2].state = 27;
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
-		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)))
+		if (!((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)))
 			smlayer_startSfx(72);
 		break;
 	case 27:
@@ -1058,7 +1058,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				case INV_BOOT:
 				case INV_DUST:
 					tmp = calcEnemyDamage(1, 1);
-					if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+					if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 						if (tmp == 1)
 							smlayer_startSfx(58);
 						if (tmp == 1000)
@@ -1170,14 +1170,15 @@ void Insane::actor02Reaction(int32 buttons) {
 
 		if (!smlayer_actorNeedRedraw(0, 2)) {
 			switchBenWeapon();
-			_actor[0].act[2].tilt = 0;
+			_actor[0].act[2].state = 1;
 		}
 		_actor[0].act[2].tilt = calcTilt(_actor[0].tilt);
 		break;
 	case 36:
+		_actor[0].lost = true;
 		smlayer_setActorLayer(0, 2, 5);
 		_actor[0].kicking = false;
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(17));
 		else
 			smlayer_setActorCostume(0, 2, readArray(18));
@@ -1213,7 +1214,7 @@ void Insane::actor02Reaction(int32 buttons) {
 		smlayer_setActorLayer(0, 2, 25);
 		_actor[0].cursorX = 0;
 		_actor[0].kicking = false;
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 			if (_actor[0].act[2].frame >= 28) {
 					queueSceneSwitch(9, 0, "bencrshe.san", 64, 0, 0, 0);
 					_actor[0].act[2].state = 38;
@@ -1228,7 +1229,7 @@ void Insane::actor02Reaction(int32 buttons) {
 				case EN_ROTT1:
 				case EN_ROTT2:
 				case EN_ROTT3:
-					if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+					if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 						queueSceneSwitch(9, 0, "bencrshe.san", 64, 0, 0, 0);
 					else
 						queueSceneSwitch(9, 0, "wr2_benr.san", 64, 0, 0, 0);
@@ -1901,7 +1902,7 @@ void Insane::switchBenWeapon() {
 
 	switch (_actor[0].weapon) {
 	case INV_CHAIN:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(19));
 		else
 			smlayer_setActorCostume(0, 2, readArray(20));
@@ -1910,7 +1911,7 @@ void Insane::switchBenWeapon() {
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_CHAINSAW:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(23));
 		else
 			smlayer_setActorCostume(0, 2, readArray(24));
@@ -1919,7 +1920,7 @@ void Insane::switchBenWeapon() {
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_MACE:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(22));
 		else
 			smlayer_setActorCostume(0, 2, readArray(23));
@@ -1928,7 +1929,7 @@ void Insane::switchBenWeapon() {
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_2X4:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 			smlayer_setActorCostume(0, 2, readArray(18));
 		} else {
 			if (_currEnemy == EN_CAVEFISH)
@@ -1941,7 +1942,7 @@ void Insane::switchBenWeapon() {
 		_actor[0].act[2].state = 34;
 		break;
 	case INV_WRENCH:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(24));
 		else
 			smlayer_setActorCostume(0, 2, readArray(25));
@@ -1952,7 +1953,7 @@ void Insane::switchBenWeapon() {
 	case INV_BOOT:
 	case INV_HAND:
 	case INV_DUST:
-		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC))
+		if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS))
 			smlayer_setActorCostume(0, 2, readArray(11));
 		else
 			smlayer_setActorCostume(0, 2, readArray(12));
@@ -2003,7 +2004,7 @@ int32 Insane::setBenState() {
 void Insane::ouchSoundBen() {
 	_actor[0].act[3].state = 52;
 
-	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformPC)) {
+	if ((_vm->_game.features & GF_DEMO) && (_vm->_game.platform == Common::kPlatformDOS)) {
 		smlayer_startVoice(54);
 		return;
 	}

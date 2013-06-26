@@ -61,6 +61,7 @@ public:
 	 * @return a BaseImage containing the current screen-buffer.
 	 */
 	virtual BaseImage *takeScreenshot() = 0;
+	virtual bool saveScreenShot(const Common::String &filename, int sizeX = 0, int sizeY = 0);
 	virtual bool setViewport(int left, int top, int right, int bottom);
 	virtual bool setViewport(Rect32 *rect);
 	virtual Rect32 getViewPort() = 0;
@@ -81,12 +82,13 @@ public:
 	 * @param g the green component to fade too.
 	 * @param b the blue component to fade too.
 	 * @param a the alpha component to fade too.
-	 * @param rect the portion of the screen to fade (if NULL, the entire screen will be faded).
+	 * @param rect the portion of the screen to fade (if nullptr, the entire screen will be faded).
 	 */
-	virtual void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = NULL) = 0;
-	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color);
-	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1);
-	BaseRenderer(BaseGame *inGame = NULL);
+	virtual void fadeToColor(byte r, byte g, byte b, byte a, Common::Rect *rect = nullptr) = 0;
+
+	virtual bool drawLine(int x1, int y1, int x2, int y2, uint32 color); 	// Unused outside indicator-display
+	virtual bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1); 	// Unused outside indicator-display
+	BaseRenderer(BaseGame *inGame = nullptr);
 	virtual ~BaseRenderer();
 	virtual bool setProjection() {
 		return STATUS_OK;
@@ -100,7 +102,7 @@ public:
 	 * @param g the green component to fill with.
 	 * @param b the blue component to fill with.
 	 */
-	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = NULL) = 0;
+	virtual bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) = 0;
 	virtual void onWindowChange();
 	virtual bool initRenderer(int width, int height, bool windowed);
 	/**
@@ -164,10 +166,11 @@ public:
 	bool pointInViewport(Point32 *P);
 	bool _active;
 	bool _ready;
-	bool _windowed;
-	int _bPP;
-	int _height;
-	int _width;
+
+	bool isReady() const { return _ready; }
+	bool isWindowed() const { return _windowed; }
+	int32 getBPP() const { return _bPP; }
+
 	uint32 _window;
 	uint32 _forceAlphaColor;
 
@@ -179,31 +182,40 @@ public:
 	void setIndicator(int width, int height, int x, int y, uint32 color);
 	void persistSaveLoadImages(BasePersistenceManager *persistMgr);
 	void initSaveLoad(bool isSaving, bool quickSave = false);
-	void endSaveLoad();
+	virtual void endSaveLoad();
 	void setLoadingScreen(const char *filename, int x, int y);
 	void setSaveImage(const char *filename, int x, int y);
 
 	bool displayIndicator();
+
+	int32 getWidth() const { return _width; }
+	int32 getHeight() const { return _height; }
 protected:
+	int32 _height;
+	int32 _width;
+
+	bool _windowed;
+	int32 _bPP;
+
 	Common::String _loadImageName;
 	Common::String _saveImageName;
-	int _saveImageX;
-	int _saveImageY;
-	int _loadImageX;
-	int _loadImageY;
+	int32 _saveImageX;
+	int32 _saveImageY;
+	int32 _loadImageX;
+	int32 _loadImageY;
 	BaseSurface *_saveLoadImage;
 	bool _hasDrawnSaveLoadImage;
 
-	int _indicatorWidthDrawn;
+	int32 _indicatorWidthDrawn;
 	uint32 _indicatorColor;
-	int _indicatorX;
-	int _indicatorY;
-	int _indicatorWidth;
-	int _indicatorHeight;
+	int32 _indicatorX;
+	int32 _indicatorY;
+	int32 _indicatorWidth;
+	int32 _indicatorHeight;
 	bool _loadInProgress;
 	bool _indicatorDisplay;
-	int _indicatorProgress;
-protected:
+	int32 _indicatorProgress;
+
 	uint32 _clipperWindow;
 
 	Rect32 _windowRect;

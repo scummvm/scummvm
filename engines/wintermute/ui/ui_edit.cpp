@@ -56,12 +56,12 @@ IMPLEMENT_PERSISTENT(UIEdit, false)
 UIEdit::UIEdit(BaseGame *inGame) : UIObject(inGame) {
 	_type = UI_EDIT;
 
-	_fontSelected = NULL;
+	_fontSelected = nullptr;
 
 	_selStart = _selEnd = 10000;
 	_scrollOffset = 0;
 
-	_cursorChar = NULL;
+	_cursorChar = nullptr;
 	setCursorChar("|");
 
 	_cursorBlinkRate = 600;
@@ -88,14 +88,14 @@ UIEdit::~UIEdit() {
 	}
 
 	delete[] _cursorChar;
-	_cursorChar = NULL;
+	_cursorChar = nullptr;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 bool UIEdit::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "UIEdit::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -194,7 +194,7 @@ bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile((char *)params))) {
 				delete _back;
-				_back = NULL;
+				_back = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -204,7 +204,7 @@ bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile((char *)params))) {
 				delete _image;
-				_image = NULL;
+				_image = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -231,7 +231,7 @@ bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 
 		case TOKEN_TEXT:
 			setText((char *)params);
-			_gameRef->_stringTable->expand(&_text);
+			_gameRef->expandStringByStringTable(&_text);
 			break;
 
 		case TOKEN_X:
@@ -263,7 +263,7 @@ bool UIEdit::loadBuffer(byte *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile((char *)params))) {
 				delete _cursor;
-				_cursor = NULL;
+				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -388,7 +388,7 @@ bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			_gameRef->_fontStorage->removeFont(_fontSelected);
 		}
 		_fontSelected = _gameRef->_fontStorage->addFont(stack->pop()->getString());
-		stack->pushBool(_fontSelected != NULL);
+		stack->pushBool(_fontSelected != nullptr);
 
 		return STATUS_OK;
 	} else {
@@ -481,7 +481,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "SelStart") == 0) {
 		_selStart = value->getInt();
-		_selStart = MAX(_selStart, 0);
+		_selStart = MAX<int32>(_selStart, 0);
 		_selStart = (int)MIN((size_t)_selStart, strlen(_text));
 		return STATUS_OK;
 	}
@@ -491,7 +491,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "SelEnd") == 0) {
 		_selEnd = value->getInt();
-		_selEnd = MAX(_selEnd, 0);
+		_selEnd = MAX<int32>(_selEnd, 0);
 		_selEnd = (int)MIN((size_t)_selEnd, strlen(_text));
 		return STATUS_OK;
 	}
@@ -579,7 +579,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		_back->display(offsetX + _posX, offsetY + _posY, _width, _height);
 	}
 	if (_image) {
-		_image->draw(offsetX + _posX, offsetY + _posY, NULL);
+		_image->draw(offsetX + _posX, offsetY + _posY, nullptr);
 	}
 
 	// prepare fonts
@@ -589,7 +589,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	if (_font) {
 		font = _font;
 	} else {
-		font = _gameRef->_systemFont;
+		font = _gameRef->getSystemFont();
 	}
 
 	if (_fontSelected) {
@@ -600,8 +600,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 
 	bool focused = isFocused();
 
-	_selStart = MAX(_selStart, 0);
-	_selEnd   = MAX(_selEnd, 0);
+	_selStart = MAX<int32>(_selStart, 0);
+	_selEnd   = MAX<int32>(_selEnd, 0);
 
 	_selStart = (int)MIN((size_t)_selStart, strlen(_text));
 	_selEnd   = (int)MIN((size_t)_selEnd,   strlen(_text));
@@ -609,11 +609,11 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
 	int cursorWidth = font->getTextWidth((byte *)_cursorChar);
 
-	int s1, s2;
+	int32 s1, s2;
 	bool curFirst;
 	// modify scroll offset
 	if (_selStart >= _selEnd) {
-		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX(0, _selEnd - _scrollOffset)) > _width - cursorWidth - 2 * _frameWidth) {
+		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX<int32>(0, _selEnd - _scrollOffset)) > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
 			if (_scrollOffset >= (int)strlen(_text)) {
 				break;
@@ -626,8 +626,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		s2 = _selStart;
 		curFirst = true;
 	} else {
-		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX(0, _selStart - _scrollOffset)) +
-		        sfont->getTextWidth((byte *)(_text + MAX(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
+		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX<int32>(0, _selStart - _scrollOffset)) +
+		        sfont->getTextWidth((byte *)(_text + MAX<int32>(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
 
 		        > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
@@ -726,7 +726,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, NULL, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 
 	_gameRef->_textEncoding = OrigEncoding;
@@ -766,7 +766,7 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 				deleteChars(_selStart, _selEnd);
 			}
 			if (_selEnd >= _selStart) {
-				_selEnd -= MAX(1, _selEnd - _selStart);
+				_selEnd -= MAX<int32>(1, _selEnd - _selStart);
 			}
 			_selStart = _selEnd;
 
@@ -934,7 +934,7 @@ bool UIEdit::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transfer(TMEMBER(_cursorBlinkRate));
 	persistMgr->transfer(TMEMBER(_cursorChar));
-	persistMgr->transfer(TMEMBER(_fontSelected));
+	persistMgr->transferPtr(TMEMBER_PTR(_fontSelected));
 	persistMgr->transfer(TMEMBER(_frameWidth));
 	persistMgr->transfer(TMEMBER(_maxLength));
 	persistMgr->transfer(TMEMBER(_scrollOffset));

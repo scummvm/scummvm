@@ -723,7 +723,7 @@ void Interface::setStatusText(const char *text, int statusColor) {
 	if (_vm->_render->getFlags() & RF_MAP || _vm->_interface->getMode() == kPanelPlacard)
 		return;
 
-	strncpy(_statusText, text, STATUS_TEXT_LEN);
+	Common::strlcpy(_statusText, text, STATUS_TEXT_LEN);
 	_statusOnceColor = statusColor;
 	drawStatusBar();
 }
@@ -2420,7 +2420,7 @@ bool Interface::converseAddText(const char *text, int strId, int replyId, byte r
 
 	assert(strlen(text) < CONVERSE_MAX_WORK_STRING);
 
-	strncpy(_converseWorkString, text, CONVERSE_MAX_WORK_STRING);
+	Common::strlcpy(_converseWorkString, text, CONVERSE_MAX_WORK_STRING);
 
 	while (1) {
 		len = strlen(_converseWorkString);

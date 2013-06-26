@@ -3609,7 +3609,7 @@ void Gdi::unkDecode9(byte *dst, int dstPitch, const byte *src, int height) const
 	int i;
 	uint buffer = 0, mask = 128;
 	int h = height;
-	i = run = 0;
+	run = 0;
 
 	int x = 8;
 	for (;;) {

@@ -342,7 +342,7 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 	return alreadyRead + dataSize;
 }
 
-}	// End of nameless namespace
+} // End of anonymous namespace
 
 
 ReadStream *wrapBufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
@@ -379,12 +379,25 @@ BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *paren
 bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	// If it is a "local" seek, we may get away with "seeking" around
 	// in the buffer only.
-	// Note: We could try to handle SEEK_END and SEEK_SET, too, but
-	// since they are rarely used, it seems not worth the effort.
 	_eos = false;	// seeking always cancels EOS
 
-	if (whence == SEEK_CUR && (int)_pos + offset >= 0 && _pos + offset <= _bufSize) {
-		_pos += offset;
+	int relOffset = 0;
+	switch (whence) {
+	case SEEK_SET:
+		relOffset = offset - pos();
+		break;
+	case SEEK_CUR:
+		relOffset = offset;
+		break;
+	case SEEK_END:
+		relOffset = (size() + offset) - pos();
+		break;
+	default:
+		break;
+	}
+
+	if ((int)_pos + relOffset >= 0 && _pos + relOffset <= _bufSize) {
+		_pos += relOffset;
 
 		// Note: we do not need to reset parent's eos flag here. It is
 		// sufficient that it is reset when actually seeking in the parent.
@@ -393,14 +406,21 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 		// just seek normally in the parent stream.
 		if (whence == SEEK_CUR)
 			offset -= (_bufSize - _pos);
-		_pos = _bufSize;
+		// We invalidate the buffer here. This assures that successive seeks
+		// do not have the chance to incorrectly think they seeked back into
+		// the buffer.
+		// Note: This does not take full advantage of the buffer. But it is
+		// a simple way to prevent nasty errors. It would be possible to take
+		// full advantage of the buffer by saving its actual start position.
+		// This seems not worth the effort for this seemingly uncommon use.
+		_pos = _bufSize = 0;
 		_parentStream->seek(offset, whence);
 	}
 
 	return true;
 }
 
-}	// End of nameless namespace
+} // End of anonymous namespace
 
 SeekableReadStream *wrapBufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream) {
 	if (parentStream)
@@ -482,7 +502,7 @@ public:
 
 };
 
-}	// End of nameless namespace
+} // End of anonymous namespace
 
 WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize) {
 	if (parentStream)
@@ -490,4 +510,4 @@ WriteStream *wrapBufferedWriteStream(WriteStream *parentStream, uint32 bufSize) 
 	return 0;
 }
 
-}	// End of namespace Common
+} // End of namespace Common

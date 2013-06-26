@@ -323,7 +323,8 @@ void PressureDoor::receiveNotification(Notification *notification, const Notific
 				_robotState = kRobotDead;
 				_levelsMovie.stop();
 				_levelsMovie.setSegment((kNormalSubRoomPressure + kPressureBase) * _levelsScale,
-						(GameState.getNoradSubRoomPressure() + kPressureBase) * _levelsScale);
+						(GameState.getNoradSubRoomPressure() + kPressureBase) * _levelsScale + 1);
+				_levelsMovie.setTime((GameState.getNoradSubRoomPressure() + kPressureBase) * _levelsScale);
 				_pressureCallBack.setCallBackFlag(kPressureDroppingFlag);
 				_pressureCallBack.scheduleCallBack(kTriggerAtStart, 0, 0);
 				_typeMovie.stop();
@@ -335,7 +336,7 @@ void PressureDoor::receiveNotification(Notification *notification, const Notific
 				_downButton.setCurrentFrameIndex(1);
 				_gameState = kGameOver;
 				allowInput(false);
-				_levelsMovie.setRate(Common::Rational(0x5555, 0x10000) - 1); // Should match door tracker.
+				_levelsMovie.setRate(Common::Rational(-4, 3)); // Should match door tracker.
 				break;
 			case kRobotDead:
 				allowInput(true);

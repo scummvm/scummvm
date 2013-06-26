@@ -127,9 +127,9 @@ void Intro::introMovies_run() {
 		break;
 	default:
 		if (_vm->getFeatures() & GF_DEMO)
-			_vm->changeToCard(2001, true);
+			_vm->changeToCard(2001, kTransitionRightToLeft);
 		else
-			_vm->changeToCard(2, true);
+			_vm->changeToCard(2, kTransitionRightToLeft);
 	}
 }
 
@@ -148,7 +148,7 @@ void Intro::mystLinkBook_run() {
 			_vm->_gfx->copyBackBufferToScreen(Common::Rect(544, 333));
 		}
 	} else if (!_linkBookMovie->isPlaying()) {
-		_vm->changeToCard(5, true);
+		_vm->changeToCard(5, kTransitionRightToLeft);
 	}
 }
 

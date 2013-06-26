@@ -54,8 +54,8 @@ AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
 	_itemWidth = _itemHeight = 50;
 	_scrollBy = 1;
 
-	_window = NULL;
-	_closeButton = NULL;
+	_window = nullptr;
+	_closeButton = nullptr;
 
 	_hideSelected = false;
 
@@ -67,10 +67,10 @@ AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdInventoryBox::~AdInventoryBox() {
 	_gameRef->unregisterObject(_window);
-	_window = NULL;
+	_window = nullptr;
 
 	delete _closeButton;
-	_closeButton = NULL;
+	_closeButton = nullptr;
 }
 
 
@@ -84,7 +84,7 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 			_visible = false;
 		} else if (scumm_stricmp(obj->getName(), "prev") == 0) {
 			_scrollOffset -= _scrollBy;
-			_scrollOffset = MAX(_scrollOffset, 0);
+			_scrollOffset = MAX<int32>(_scrollOffset, 0);
 		} else if (scumm_stricmp(obj->getName(), "next") == 0) {
 			_scrollOffset += _scrollBy;
 		} else {
@@ -120,8 +120,8 @@ bool AdInventoryBox::display() {
 
 	if (_closeButton) {
 		_closeButton->_posX = _closeButton->_posY = 0;
-		_closeButton->_width = _gameRef->_renderer->_width;
-		_closeButton->_height = _gameRef->_renderer->_height;
+		_closeButton->_width = _gameRef->_renderer->getWidth();
+		_closeButton->_height = _gameRef->_renderer->getHeight();
 
 		_closeButton->display();
 	}
@@ -166,7 +166,7 @@ bool AdInventoryBox::display() {
 //////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::loadFile(const char *filename) {
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename);
-	if (buffer == NULL) {
+	if (buffer == nullptr) {
 		_gameRef->LOG(0, "AdInventoryBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
@@ -256,7 +256,7 @@ bool AdInventoryBox::loadBuffer(byte *buffer, bool complete) {
 			_window = new UIWindow(_gameRef);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				delete _window;
-				_window = NULL;
+				_window = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
 				_gameRef->registerObject(_window);
@@ -371,7 +371,7 @@ bool AdInventoryBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool AdInventoryBox::persist(BasePersistenceManager *persistMgr) {
 	BaseObject::persist(persistMgr);
 
-	persistMgr->transfer(TMEMBER(_closeButton));
+	persistMgr->transferPtr(TMEMBER_PTR(_closeButton));
 	persistMgr->transfer(TMEMBER(_hideSelected));
 	persistMgr->transfer(TMEMBER(_itemHeight));
 	persistMgr->transfer(TMEMBER(_itemsArea));
@@ -380,7 +380,7 @@ bool AdInventoryBox::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transfer(TMEMBER(_scrollOffset));
 	persistMgr->transfer(TMEMBER(_spacing));
 	persistMgr->transfer(TMEMBER(_visible));
-	persistMgr->transfer(TMEMBER(_window));
+	persistMgr->transferPtr(TMEMBER_PTR(_window));
 	persistMgr->transfer(TMEMBER(_exclusive));
 
 	return STATUS_OK;

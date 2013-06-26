@@ -45,18 +45,12 @@ public:
 
 	void loadFileDataToPage(Common::SeekableReadStream *s, int pageNum, uint32 size);
 
-	void printText(const char *str, int x, int y, uint8 color1, uint8 color2);
 	void printShadedText(const char *string, int x, int y, int col1, int col2);
 
 	void loadEoBBitmap(const char *file, const uint8 *cgaMapping, int tempPage, int destPage, int convertToPage);
 	void loadShapeSetBitmap(const char *file, int tempPage, int destPage);
 
 	void convertPage(int srcPage, int dstPage, const uint8 *cgaMapping);
-
-	void fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum = -1, bool xored = false);
-	void drawLine(bool vertical, int x, int y, int length, int color);
-	uint8 getPagePixel(int pageNum, int x, int y);
-	void setPagePixel(int pageNum, int x, int y, uint8 color);
 
 	void setScreenPalette(const Palette &pal);
 	void getRealPalette(int num, uint8 *dst);
@@ -68,7 +62,7 @@ public:
 	const uint8 *generateShapeOverlay(const uint8 *shp, int paletteOverlayIndex);
 
 	void setShapeFrame(int x1, int y1, int x2, int y2);
-	void setShapeFadeMode (uint8 i, bool b);
+	void setShapeFadeMode(uint8 i, bool b);
 
 	void setGfxParameters(int x, int y, int col);
 	void drawExplosion(int scale, int radius, int numElements, int stepSize, int aspectRatio, const uint8 *colorTable, int colorTableSize);
@@ -88,7 +82,10 @@ public:
 	const uint8 *getEGADitheringTable();
 
 private:
-	void drawShapeSetPixel(uint8 *dst, uint8 col, uint16 pitch);
+	void updateDirtyRects();
+	void ditherRect(const uint8 *src, uint8 *dst, int dstPitch, int srcW, int srcH, int colorKey = -1);
+
+	void drawShapeSetPixel(uint8 *dst, uint8 col);
 	void scaleShapeProcessLine2Bit(uint8 *&shpDst, const uint8 *&shpSrc, uint32 transOffsetDst, uint32 transOffsetSrc);
 	void scaleShapeProcessLine4Bit(uint8 *&dst, const uint8 *&src);
 	bool posWithinRect(int posX, int posY, int x1, int y1, int x2, int y2);
@@ -115,14 +112,14 @@ private:
 	const uint8 *_cgaMappingDefault;
 
 	uint8 *_egaDitheringTable;
-	uint8 *_egaPixelValueTable;
+	uint8 *_egaDitheringTempPage;
 
 	static const uint8 _egaMatchTable[];
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
 };
 
-}	// End of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_EOB
 

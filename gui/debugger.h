@@ -207,6 +207,6 @@ public:
 
 };
 
-}	// End of namespace GUI
+} // End of namespace GUI
 
 #endif

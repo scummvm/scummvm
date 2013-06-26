@@ -206,12 +206,19 @@ public:
 		if (blockAlign == 0)
 			error("MS_ADPCMStream(): blockAlign isn't specified for MS ADPCM");
 		memset(&_status, 0, sizeof(_status));
+		_decodedSampleCount = 0;
 	}
+
+	virtual bool endOfData() const { return (_stream->eos() || _stream->pos() >= _endpos) && (_decodedSampleCount == 0); }
 
 	virtual int readBuffer(int16 *buffer, const int numSamples);
 
 protected:
 	int16 decodeMS(ADPCMChannelStatus *c, byte);
+
+private:
+	uint8 _decodedSampleCount;
+	int16 _decodedSamples[4];
 };
 
 // Duck DK3 IMA ADPCM Decoder

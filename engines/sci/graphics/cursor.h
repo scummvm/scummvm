@@ -60,7 +60,7 @@ public:
 	bool isVisible();
 	void kernelSetShape(GuiResourceId resourceId);
 	void kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot);
-	void kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot);
+	void kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNum);
 	void setPosition(Common::Point pos);
 	Common::Point getPosition();
 	void refreshPosition();

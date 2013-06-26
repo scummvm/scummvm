@@ -98,6 +98,10 @@ LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops
 		// TODO: Properly indicate error
 		_loops = _completeIterations = 1;
 	}
+	if (stream->endOfData()) {
+		// Apparently this is an empty stream
+		_loops = _completeIterations = 1;
+	}
 }
 
 int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
@@ -117,6 +121,10 @@ int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 			// TODO: Properly indicate error
 			_loops = _completeIterations = 1;
 			return samplesRead;
+		}
+		if (_parent->endOfData()) {
+			// Apparently this is an empty stream
+			_loops = _completeIterations = 1;
 		}
 
 		return samplesRead + readBuffer(buffer + samplesRead, remainingSamples);

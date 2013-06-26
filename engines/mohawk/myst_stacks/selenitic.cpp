@@ -729,11 +729,11 @@ void Selenitic::o_mazeRunnerDoorButton(uint16 op, uint16 var, uint16 argc, uint1
 	uint16 cardIdEntry = argv[1];
 
 	if (_mazeRunnerPosition == 288) {
-		_vm->changeToCard(cardIdEntry, false);
+		_vm->changeToCard(cardIdEntry, kNoTransition);
 		_vm->_sound->replaceSoundMyst(cardIdEntry);
 		animatedUpdate(argv[2], &argv[3], 10);
 	} else if (_mazeRunnerPosition == 289) {
-		_vm->changeToCard(cardIdExit, false);
+		_vm->changeToCard(cardIdExit, kNoTransition);
 		_vm->_sound->replaceSoundMyst(cardIdExit);
 		animatedUpdate(argv[2], &argv[3], 10);
 	}
@@ -895,9 +895,9 @@ void Selenitic::o_soundLockButton(uint16 op, uint16 var, uint16 argc, uint16 *ar
 		uint16 cardIdClosed = argv[0];
 		uint16 cardIdOpen = argv[1];
 
-		_vm->changeToCard(cardIdClosed, true);
+		_vm->changeToCard(cardIdClosed, kTransitionDissolve);
 
-		_vm->changeToCard(cardIdOpen, false);
+		_vm->changeToCard(cardIdOpen, kNoTransition);
 		_vm->_sound->replaceSoundMyst(argv[2]);
 
 		animatedUpdate(argv[4], &argv[5], argv[3]);

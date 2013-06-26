@@ -303,7 +303,7 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 	switch (n) {
 	case RS_COUNT + COUNTOUT_COUNT:
 		// Trigger pre-load and fade and start countdown
-		FadeOutFast(NULL);
+		FadeOutFast();
 		break;
 
 	case RS_COUNT:
@@ -360,7 +360,6 @@ static int DoRestoreSceneFrame(SAVED_DATA *sd, int n) {
 			RestoreActorZ(sd->savedActorZ);
 			RestoreZpositions(sd->zPositions);
 			RestoreSysVars(sd->SavedSystemVars);
-			CreateGhostPalette(BgPal());
 			RestoreActors(sd->NumSavedActors, sd->SavedActorInfo);
 			RestoreSoundReels(sd->SavedSoundReels);
 			return 1;

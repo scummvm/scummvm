@@ -36,11 +36,12 @@
 namespace Wintermute {
 
 class BaseGame;
-
+class WintermuteEngine;
 //////////////////////////////////////////////////////////////////////////
 class BasePlatform {
 public:
-	static int initialize(BaseGame *inGame, int argc, char *argv[]);
+	static int initialize(WintermuteEngine *engineRef, BaseGame *inGame, int argc, char *argv[]);
+	static void deinit();
 	static void handleEvent(Common::Event *event);
 	static AnsiString getPlatformName();
 
@@ -66,6 +67,7 @@ public:
 private:
 	// Set by initialize on game-startup, the object referred to is also deleted by deinit in WintermuteEngine
 	static BaseGame *_gameRef;
+	static WintermuteEngine *_engineRef;
 };
 
 } // end of namespace Wintermute

@@ -54,14 +54,14 @@ namespace Agi {
 		ver \
 	}
 
-#define BOOTER2(id,extra,fname,md5,size,ver,gid) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V2)
-#define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V2)
-#define GAME3(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V3)
+#define BOOTER2(id,extra,fname,md5,size,ver,gid) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2)
+#define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V2)
+#define GAME3(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformDOS,GType_V3)
 
 #define GAME_P(id,extra,md5,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2)
 
 #define GAME_FP(id,extra,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V2)
-#define GAME_F(id,extra,md5,ver,flags,gid) GAME_FP(id,extra,md5,ver,flags,gid,Common::kPlatformPC)
+#define GAME_F(id,extra,md5,ver,flags,gid) GAME_FP(id,extra,md5,ver,flags,gid,Common::kPlatformDOS)
 
 #define GAME_PS(id,extra,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,Common::EN_ANY,ver,0,gid,platform,GType_V2)
 
@@ -77,7 +77,7 @@ namespace Agi {
 
 #define GAME3_PS(id,extra,fname,md5,size,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3)
 
-#define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPNF(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
+#define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPNF(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformDOS,GType_V2)
 
 #define FANMADE_ISVP(id,name,md5,size,ver,platform) GAME_LVFPNF(id,name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2)
 #define FANMADE_SVP(name,md5,size,ver,platform) FANMADE_ISVP("agi-fanmade",name,md5,size,ver,platform)
@@ -128,7 +128,7 @@ static const AGIGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -149,7 +149,7 @@ static const AGIGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -170,7 +170,7 @@ static const AGIGameDescription gameDescriptions[] = {
 				{ NULL, 0, NULL, 0}
 			},
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO0()
 		},
@@ -191,7 +191,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("bc", "2.00 1987-06-14", "7f598d4712319b09d7bd5b3be10a2e4a", 0x2440, GID_BC),
 
 	// Black Cauldron (Russian)
-	GAME_LPS("bc", "",  "b7de782dfdf8ea7dde8064f09804bcf5", 357, Common::RU_RUS, 0x2440, GID_BC, Common::kPlatformPC),
+	GAME_LPS("bc", "",  "b7de782dfdf8ea7dde8064f09804bcf5", 357, Common::RU_RUS, 0x2440, GID_BC, Common::kPlatformDOS),
 
 	// Black Cauldron (PC 5.25") 2.10 11/10/88 [AGI 3.002.098]
 	GAME3("bc", "2.10 1988-11-10 5.25\"", "bcdir", "0c5a9acbcc7e51127c34818e75806df6", 0x3149, GID_BC),
@@ -218,7 +218,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// reported by Filippos (thebluegr) in bugreport #1654500
 	// Menus not tested
-	GAME_PS("ddp", "1.0C 1986-06-09", "550971d196f65190a5c760d2479406ef", 132, 0x2272, GID_DDP, Common::kPlatformPC),
+	GAME_PS("ddp", "1.0C 1986-06-09", "550971d196f65190a5c760d2479406ef", 132, 0x2272, GID_DDP, Common::kPlatformDOS),
 
 	// Gold Rush! (Amiga) 1.01 1/13/89 aka 2.05 3/9/89	# 2.316
 	GAME3_PS("goldrush", "1.01 1989-01-13 aka 2.05 1989-03-09", "dirs", "a1d4de3e75c2688c1e2ca2634ffc3bd8", 2399, 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAmiga),
@@ -311,7 +311,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("kq2", "2.2 1987-05-07 5.25\"/3.5\"", "b944c4ff18fb8867362dc21cc688a283", 0x2917, GID_KQ2),
 
 	// King's Quest 2 (Russian)
-	GAME_LPS("kq2", "", "35211c574ececebdc723b23e35f99275", 543, Common::RU_RUS, 0x2917, GID_KQ2, Common::kPlatformPC),
+	GAME_LPS("kq2", "", "35211c574ececebdc723b23e35f99275", 543, Common::RU_RUS, 0x2917, GID_KQ2, Common::kPlatformDOS),
 
 	// King's Quest 2 (CoCo3 360k) [AGI 2.023]
 	GAME_PS("kq2", "", "b944c4ff18fb8867362dc21cc688a283", 543, 0x2440, GID_KQ2, Common::kPlatformCoCo3),
@@ -344,10 +344,10 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]
 	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
-	GAME_FP("kq3", "1.01 1986-11-08", "9c2b34e7ffaa89c8e2ecfeb3695d444b", 0x2272, GF_ESCPAUSE, GID_KQ3, Common::kPlatformPC),
+	GAME_FP("kq3", "1.01 1986-11-08", "9c2b34e7ffaa89c8e2ecfeb3695d444b", 0x2272, GF_ESCPAUSE, GID_KQ3, Common::kPlatformDOS),
 
 	// King's Quest 3 (Russian)
-	GAME_LFPS("kq3", "", "5856dec6ccb9c4b70aee21044a19270a", 390, Common::RU_RUS, 0x2272, GF_ESCPAUSE, GID_KQ3, Common::kPlatformPC),
+	GAME_LFPS("kq3", "", "5856dec6ccb9c4b70aee21044a19270a", 390, Common::RU_RUS, 0x2272, GF_ESCPAUSE, GID_KQ3, Common::kPlatformDOS),
 
 	// King's Quest 3 (PC 5.25") 2.00 5/25/87 [AGI 2.435]
 	GAME("kq3", "2.00 1987-05-25 5.25\"", "18aad8f7acaaff760720c5c6885b6bab", 0x2440, GID_KQ3),
@@ -396,10 +396,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("lsl1", "1.00 1987-06-01 5.25\"/3.5\"", "1fe764e66857e7f305a5f03ca3f4971d", 0x2440, GID_LSL1),
 
 	// Leisure Suit Larry 1 Polish
-	GAME_LPS("lsl1", "2.00 2001-12-11", "7ba1fccc46d27c141e704706c1d0a85f", 303, Common::PL_POL, 0x2440, GID_LSL1, Common::kPlatformPC),
+	GAME_LPS("lsl1", "2.00 2001-12-11", "7ba1fccc46d27c141e704706c1d0a85f", 303, Common::PL_POL, 0x2440, GID_LSL1, Common::kPlatformDOS),
 
 	// Leisure Suit Larry 1 Polish - Demo
-	GAME_LPS("lsl1", "Demo", "3b2f564306c401dff6334441df967ddd", 666, Common::PL_POL, 0x2917, GID_LSL1, Common::kPlatformPC),
+	GAME_LPS("lsl1", "Demo", "3b2f564306c401dff6334441df967ddd", 666, Common::PL_POL, 0x2917, GID_LSL1, Common::kPlatformDOS),
 
 	// Leisure Suit Larry 1 (ST) 1.04 6/18/87
 	GAME_P("lsl1", "1.04 1987-06-18", "8b579f8673fe9448c2538f5ed9887cf0", 0x2440, GID_LSL1, Common::kPlatformAtariST),
@@ -427,10 +427,10 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// reported by Filippos (thebluegr) in bugreport #1654500
 	// Manhunter NY (PC 5.25") 1.22 8/31/88 [AGI 3.002.107]
-	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "0c7b86f05fe02c2e26cff1b07450b82a", 2123, 0x3149, 0, GID_MH1, Common::kPlatformPC),
+	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "0c7b86f05fe02c2e26cff1b07450b82a", 2123, 0x3149, 0, GID_MH1, Common::kPlatformDOS),
 
 	// Manhunter NY (PC 3.5") 1.22 8/31/88 [AGI 3.002.102]
-	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "5b625329021ad49fd0c1d6f2d6f54bba", 2141, 0x3149, 0, GID_MH1, Common::kPlatformPC),
+	GAME3_PS("mh1", "1.22 1988-08-31", "mhdir", "5b625329021ad49fd0c1d6f2d6f54bba", 2141, 0x3149, 0, GID_MH1, Common::kPlatformDOS),
 
 	// Manhunter NY (CoCo3 720k) [AGI 2.023]
 	GAME_PS("mh1", "", "b968285caf2f591c78dd9c9e26ab8974", 495, 0x2440, GID_MH1, Common::kPlatformCoCo3),
@@ -458,7 +458,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Mickey's Space Adventure
 	// Preagi game
-	GAMEpre_P("mickey", "", "1.pic", "b6ec04c91a05df374792872c4d4ce66d", 0x0000, GID_MICKEY, Common::kPlatformPC),
+	GAMEpre_P("mickey", "", "1.pic", "b6ec04c91a05df374792872c4d4ce66d", 0x0000, GID_MICKEY, Common::kPlatformDOS),
 
 #if 0
 	// Mixed-Up Mother Goose (Amiga) 1.1
@@ -495,7 +495,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("pq1", "2.0A 1987-10-23", "b9dbb305092851da5e34d6a9f00240b1", 0x2917, GID_PQ1),
 
 	// Police Quest 1 (Russian)
-	GAME_LPS("pq1", "", "604cc8041d24c4c7e5fa8baf386ef76e", 360, Common::RU_RUS, 0x2917, GID_PQ1, Common::kPlatformPC),
+	GAME_LPS("pq1", "", "604cc8041d24c4c7e5fa8baf386ef76e", 360, Common::RU_RUS, 0x2917, GID_PQ1, Common::kPlatformDOS),
 
 	// Police Quest 1 2.0G 12/3/87
 	GAME("pq1", "2.0G 1987-12-03 5.25\"/ST", "231f3e28170d6e982fc0ced4c98c5c1c", 0x2440, GID_PQ1),
@@ -516,11 +516,11 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Space Quest 1 (PC 360k) 1.1A [AGI 2.272]
 	// The original game did not have menus, they are enabled under ScummVM
-	GAME_FP("sq1", "1.1A 1986-11-13", "8d8c20ab9f4b6e4817698637174a1cb6", 0x2272, GF_MENUS, GID_SQ1, Common::kPlatformPC),
+	GAME_FP("sq1", "1.1A 1986-11-13", "8d8c20ab9f4b6e4817698637174a1cb6", 0x2272, GF_MENUS, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (PC 720k) 1.1A [AGI 2.272]
 	// The original game did not have menus, they are enabled under ScummVM
-	GAME_FP("sq1", "1.1A 720kb", "0a92b1be7daf3bb98caad3f849868aeb", 0x2272, GF_MENUS, GID_SQ1, Common::kPlatformPC),
+	GAME_FP("sq1", "1.1A 720kb", "0a92b1be7daf3bb98caad3f849868aeb", 0x2272, GF_MENUS, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (Amiga) 1.2			# 2.082
 	// The original game did not have menus, they are enabled under ScummVM
@@ -534,10 +534,10 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Space Quest 1 (PC) 1.0X [AGI 2.089]
 	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
-	GAME_FP("sq1", "1.0X 1986-09-24", "af93941b6c51460790a9efa0e8cb7122", 0x2089, GF_ESCPAUSE, GID_SQ1, Common::kPlatformPC),
+	GAME_FP("sq1", "1.0X 1986-09-24", "af93941b6c51460790a9efa0e8cb7122", 0x2089, GF_ESCPAUSE, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (Russian)
-	GAME_LFPS("sq1", "", "a279eb8ddbdefdb1ea6adc827a1d632a", 372, Common::RU_RUS, 0x2089, GF_ESCPAUSE, GID_SQ1, Common::kPlatformPC),
+	GAME_LFPS("sq1", "", "a279eb8ddbdefdb1ea6adc827a1d632a", 372, Common::RU_RUS, 0x2089, GF_ESCPAUSE, GID_SQ1, Common::kPlatformDOS),
 
 	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.426/2.917]
 	GAME("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "5d67630aba008ec5f7f9a6d0a00582f4", 0x2440, GID_SQ1),
@@ -584,17 +584,17 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// reported by Filippos (thebluegr) in bugreport #1654500
 	// Space Quest 2 (PC 5.25") 2.0A [AGI 2.912]
-	GAME_PS("sq2", "2.0A 1987-11-06 5.25\"", "ad7ce8f800581ecc536f3e8021d7a74d", 423, 0x2917, GID_SQ2, Common::kPlatformPC),
+	GAME_PS("sq2", "2.0A 1987-11-06 5.25\"", "ad7ce8f800581ecc536f3e8021d7a74d", 423, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
 	// reported by RadG (radg123) in bug report #3260349
 	// Space Quest 2 (Spanish)
-	GAME_LPS("sq2", "", "1ae7640dd4d253c3ac2d708d61a35379", 426, Common::ES_ESP, 0x2917, GID_SQ2, Common::kPlatformPC),
+	GAME_LPS("sq2", "", "1ae7640dd4d253c3ac2d708d61a35379", 426, Common::ES_ESP, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
 	// Space Quest 2 (Russian)
-	GAME_LPS("sq2", "", "ba21c8934caf28e3ba45ce7d1cd6b041", 423, Common::RU_RUS, 0x2917, GID_SQ2, Common::kPlatformPC),
+	GAME_LPS("sq2", "", "ba21c8934caf28e3ba45ce7d1cd6b041", 423, Common::RU_RUS, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
 	// Space Quest 2 (PC 3.5") 2.0A [AGI 2.912]
-	GAME_PS("sq2", "2.0A 1987-11-06 3.5\"", "6c25e33d23b8bed42a5c7fa63d588e5c", 423, 0x2917, GID_SQ2, Common::kPlatformPC),
+	GAME_PS("sq2", "2.0A 1987-11-06 3.5\"", "6c25e33d23b8bed42a5c7fa63d588e5c", 423, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
 	// Space Quest 2 (PC 5.25"/ST) 2.0C/A [AGI 2.915]
 	// Menus not tested
@@ -610,10 +610,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PS("sq2", "updated", "d24f19b047e65e1763eff4b46f3d50df", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
 
 	// Troll's Tale
-	GAMEpre_PS("troll", "", "troll.img", "62903f264b3d849be4214b3a5c42a2fa", 184320, 0x0000, GID_TROLL, Common::kPlatformPC),
+	GAMEpre_PS("troll", "", "troll.img", "62903f264b3d849be4214b3a5c42a2fa", 184320, 0x0000, GID_TROLL, Common::kPlatformDOS),
 
 	// Winnie the Pooh in the Hundred Acre Wood
-	GAMEpre_P("winnie", "", "title.pic", "2e7900c1ccaa7671d65405f6d1efed30", 0x0000, GID_WINNIE, Common::kPlatformPC),
+	GAMEpre_P("winnie", "", "title.pic", "2e7900c1ccaa7671d65405f6d1efed30", 0x0000, GID_WINNIE, Common::kPlatformDOS),
 
 	// Winnie the Pooh in the Hundred Acre Wood (Amiga)
 	GAMEpre_P("winnie", "", "title", "2e7900c1ccaa7671d65405f6d1efed30", 0x0000, GID_WINNIE, Common::kPlatformAmiga),
@@ -707,10 +707,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
 
 	GAME_LVFPNF("agi-fanmade", "Groza (russian) [AGDS sample]", "logdir", "421da3a18004122a966d64ab6bd86d2e", -1,
-		Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformPC,GType_V2),
+		Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformDOS,GType_V2),
 
 	GAME_LVFPNF("agi-fanmade", "Get Outta Space Quest", "logdir", "aaea5b4a348acb669d13b0e6f22d4dc9", -1,
-		Common::EN_ANY, 0x2440, GF_FANMADE, GID_GETOUTTASQ, Common::kPlatformPC,GType_V2),
+		Common::EN_ANY, 0x2440, GF_FANMADE, GID_GETOUTTASQ, Common::kPlatformDOS,GType_V2),
 
 	FANMADE_F("Half-Death - Terror At White-Mesa", "b62c05d0ace878261392073f57ae788c", GF_AGIMOUSE),
 	FANMADE("Hank's Quest (v1.0 English) - Victim of Society", "64c15b3d0483d17888129100dc5af213"),
@@ -857,7 +857,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			"V - The Graphical Adventure (Demo 2)",
 			AD_ENTRY1s("vdir", "c71f5c1e008d352ae9040b77fcf79327", 3080),
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformDOS,
 			ADGF_USEEXTRAASTITLE,
 			GUIO0()
 		},
@@ -885,7 +885,7 @@ static AGIGameDescription g_fallbackDesc = {
 		"",
 		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
 		Common::UNK_LANG,
-		Common::kPlatformPC,
+		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},

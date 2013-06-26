@@ -45,38 +45,38 @@ public:
 	DECLARE_PERSISTENT(BaseSprite, BaseScriptHolder)
 
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
-	int _moveY;
-	int _moveX;
-	bool display(int x, int y, BaseObject *registerOwner = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
+	int32 _moveY;
+	int32 _moveX;
+	bool display(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, TSpriteBlendMode blendMode = BLEND_NORMAL);
 	bool getCurrentFrame(float zoomX = 100, float zoomY = 100);
 	void reset();
 	bool isChanged();
 	bool isFinished();
 	bool loadBuffer(byte *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool loadFile(const Common::String &filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
-	bool draw(int x, int y, BaseObject *Register = NULL, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF);
+	bool draw(int x, int y, BaseObject *Register = nullptr, float zoomX = 100, float zoomY = 100, uint32 alpha = 0xFFFFFFFF);
 	bool _looping;
-	int _currentFrame;
-	bool addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Rect32 *rect = NULL);
-	BaseSprite(BaseGame *inGame, BaseObject *owner = NULL);
+	int32 _currentFrame;
+	bool addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Rect32 *rect = nullptr);
+	BaseSprite(BaseGame *inGame, BaseObject *owner = nullptr);
 	virtual ~BaseSprite();
 	BaseArray<BaseFrame *> _frames;
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent);
 
 	// scripting interface
-	virtual ScValue *scGetProperty(const Common::String &name);
-	virtual bool scSetProperty(const char *name, ScValue *value);
-	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name);
-	virtual const char *scToString();
+	virtual ScValue *scGetProperty(const Common::String &name) override;
+	virtual bool scSetProperty(const char *name, ScValue *value) override;
+	virtual bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	virtual const char *scToString() override;
 private:
 	BaseObject *_owner;
 	bool _canBreak;
 	bool _changed;
 	bool _editorAllFrames;
 	char *_editorBgFile;
-	int _editorBgOffsetX;
-	int _editorBgOffsetY;
-	int _editorBgAlpha;
+	int32 _editorBgOffsetX;
+	int32 _editorBgOffsetY;
+	int32 _editorBgAlpha;
 	bool _editorMuted;
 	bool _finished;
 	bool _continuous;

@@ -27,6 +27,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
+#include "graphics/decoders/iff.h"
 
 #include "gob/gob.h"
 #include "gob/global.h"
@@ -72,7 +73,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x95, o7_zeroVar);
 	OPCODEDRAW(0xA1, o7_getINIValue);
 	OPCODEDRAW(0xA2, o7_setINIValue);
-	OPCODEDRAW(0xA4, o7_loadLBMPalette);
+	OPCODEDRAW(0xA4, o7_loadIFFPalette);
 	OPCODEDRAW(0xC4, o7_opendBase);
 	OPCODEDRAW(0xC5, o7_closedBase);
 	OPCODEDRAW(0xC6, o7_getDBString);
@@ -523,7 +524,7 @@ void Inter_v7::o7_setINIValue() {
 	_inis.setValue(file, section, key, value);
 }
 
-void Inter_v7::o7_loadLBMPalette() {
+void Inter_v7::o7_loadIFFPalette() {
 	Common::String file = _vm->_game->_script->evalString();
 	if (!file.contains('.'))
 		file += ".LBM";
@@ -534,37 +535,46 @@ void Inter_v7::o7_loadLBMPalette() {
 	if (startIndex > stopIndex)
 		SWAP(startIndex, stopIndex);
 
-	Common::SeekableReadStream *lbmFile = _vm->_dataIO->getFile(file);
-	if (!lbmFile) {
-		warning("o7_loadLBMPalette(): No such file \"%s\"", file.c_str());
+	Common::SeekableReadStream *iffFile = _vm->_dataIO->getFile(file);
+	if (!iffFile) {
+		warning("o7_loadIFFPalette(): No such file \"%s\"", file.c_str());
 		return;
 	}
 
-	ImageType type = Surface::identifyImage(*lbmFile);
-	if (type != kImageTypeLBM) {
-		warning("o7_loadLBMPalette(): \"%s\" is no LBM", file.c_str());
+	ImageType type = Surface::identifyImage(*iffFile);
+	if (type != kImageTypeIFF) {
+		warning("o7_loadIFFPalette(): \"%s\" is no IFF", file.c_str());
 		return;
 	}
 
-	byte palette[768];
-
-	LBMLoader lbm(*lbmFile);
-	if (!lbm.loadPalette(palette)) {
-		warning("o7_loadLBMPalette(): Failed reading palette from LBM \"%s\"", file.c_str());
+	Graphics::IFFDecoder decoder;
+	decoder.loadStream(*iffFile);
+	if (!decoder.getPalette() || decoder.getPaletteColorCount() != 256) {
+		warning("o7_loadIFFPalette(): Failed reading palette from IFF \"%s\"", file.c_str());
 		return;
 	}
 
-	memset(palette      , 0x00, 3);
-	memset(palette + 765, 0xFF, 3);
-	for (int i = 0; i < 768; i++)
-		palette[i] >>= 2;
-
-	int16 count = stopIndex - startIndex + 1;
+	const byte *palette = decoder.getPalette();
 
 	startIndex *= 3;
-	count      *= 3;
+	stopIndex  *= 3;
 
-	memcpy((char *)_vm->_draw->_vgaPalette + startIndex, palette + startIndex, count);
+	byte *dst = (byte *)_vm->_draw->_vgaPalette + startIndex;
+	const byte *src = palette + startIndex;
+	for (int i = startIndex; i <= stopIndex + 2; ++i) {
+		*dst++ = *src++ >> 2;
+	}
+
+	if (startIndex == 0) {
+		dst = (byte *)_vm->_draw->_vgaPalette;
+		dst[0] = dst[1] = dst[2] = 0x00 >> 2;
+	}
+
+	if (stopIndex == 765) {
+		dst = (byte *)_vm->_draw->_vgaPalette + 765;
+		dst[0] = dst[1] = dst[2] = 0xFF >> 2;
+	}
+
 	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 }
 

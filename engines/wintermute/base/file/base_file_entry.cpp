@@ -37,7 +37,7 @@ namespace Wintermute {
 Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
 	Common::SeekableReadStream *file = _package->getFilePointer();
 	if (!file) {
-		return NULL;
+		return nullptr;
 	}
 
 	bool compressed = (_compressedLength != 0);
@@ -55,7 +55,7 @@ Common::SeekableReadStream *BaseFileEntry::createReadStream() const {
 
 //////////////////////////////////////////////////////////////////////////
 BaseFileEntry::BaseFileEntry() {
-	_package = NULL;
+	_package = nullptr;
 	_length = _compressedLength = _offset = _flags = 0;
 	_filename = "";
 
@@ -67,7 +67,7 @@ BaseFileEntry::BaseFileEntry() {
 
 //////////////////////////////////////////////////////////////////////////
 BaseFileEntry::~BaseFileEntry() {
-	_package = NULL; // ref only
+	_package = nullptr; // ref only
 }
 
 } // end of namespace Wintermute

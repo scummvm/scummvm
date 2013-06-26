@@ -38,7 +38,7 @@ class GfxView;
  */
 class GfxPaint16 : public GfxPaint {
 public:
-	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio);
+	GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio);
 	~GfxPaint16();
 
 	void init(GfxAnimate *animate, GfxText16 *text16);
@@ -89,7 +89,6 @@ public:
 private:
 	ResourceManager *_resMan;
 	SegManager *_segMan;
-	Kernel *_kernel;
 	AudioPlayer *_audio;
 	GfxAnimate *_animate;
 	GfxCache *_cache;

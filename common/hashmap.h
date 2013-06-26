@@ -632,6 +632,6 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 
 #undef HASHMAP_DUMMY_NODE
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #endif

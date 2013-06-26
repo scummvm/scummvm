@@ -29,7 +29,6 @@
 #include "backends/platform/ps2/DmaPipe.h"
 #include "graphics/surface.h"
 
-
 enum TVMode {
 	TV_DONT_CARE = 0,
 	TV_PAL,
@@ -41,10 +40,9 @@ enum GsInterlace {
 	GS_INTERLACED
 };
 
-
 class Gs2dScreen {
 public:
-	Gs2dScreen(uint16 width, uint16 height, TVMode tvMode);
+	Gs2dScreen(uint16 width, uint16 height, TVMode mode);
 	~Gs2dScreen(void);
 	void newScreenSize(uint16 width, uint16 height);
 	uint8 tvMode(void);
@@ -94,27 +92,26 @@ private:
 
 	uint8  _curDrawBuf;
 	uint32 _frameBufPtr[2]; //
-	uint32 _clutPtrs[3];    //   vram pointers
+	uint32 _clutPtrs[3];    // vram pointers
 	uint32 _texPtrs[4];     //
 
 	Graphics::Surface _framebuffer;
 
-	/* TODO : check if we do need this */
-    struct VideoState {
-        bool setup;
+	// TODO : check if we do need this
+	struct VideoState {
+		bool setup;
 
-        bool fullscreen;
-        bool aspectRatio;
+		bool fullscreen;
+		bool aspectRatio;
 
-        int mode;
-        int scaleFactor;
+		int mode;
+		int scaleFactor;
 
-        int screenWidth, screenHeight;
-        int overlayWidth, overlayHeight;
-    };
+		int screenWidth, screenHeight;
+		int overlayWidth, overlayHeight;
+	};
 
 	VideoState _videoMode;
-	/* */
 
 	uint16 _width, _height, _pitch;
 	int16  _mouseX, _mouseY, _hotSpotX, _hotSpotY;

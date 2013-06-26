@@ -34,27 +34,27 @@ class SeekableReadStream;
 
 /** The default Windows resources. */
 enum NEResourceType {
-	kNECursor = 0x8001,
-	kNEBitmap = 0x8002,
-	kNEIcon = 0x8003,
-	kNEMenu = 0x8004,
-	kNEDialog = 0x8005,
-	kNEString = 0x8006,
-	kNEFontDir = 0x8007,
-	kNEFont = 0x8008,
-	kNEAccelerator = 0x8009,
-	kNERCData = 0x800A,
-	kNEMessageTable = 0x800B,
-	kNEGroupCursor = 0x800C,
-	kNEGroupIcon = 0x800D,
-	kNEVersion = 0x8010,
-	kNEDlgInclude = 0x8011,
-	kNEPlugPlay = 0x8013,
-	kNEVXD = 0x8014,
-	kNEAniCursor = 0x8015,
-	kNEAniIcon = 0x8016,
-	kNEHTML = 0x8017,
-	kNEManifest = 0x8018
+	kNECursor       = 0x01,
+	kNEBitmap       = 0x02,
+	kNEIcon         = 0x03,
+	kNEMenu         = 0x04,
+	kNEDialog       = 0x05,
+	kNEString       = 0x06,
+	kNEFontDir      = 0x07,
+	kNEFont         = 0x08,
+	kNEAccelerator  = 0x09,
+	kNERCData       = 0x0A,
+	kNEMessageTable = 0x0B,
+	kNEGroupCursor  = 0x0C,
+	kNEGroupIcon    = 0x0D,
+	kNEVersion      = 0x10,
+	kNEDlgInclude   = 0x11,
+	kNEPlugPlay     = 0x13,
+	kNEVXD          = 0x14,
+	kNEAniCursor    = 0x15,
+	kNEAniIcon      = 0x16,
+	kNEHTML         = 0x17,
+	kNEManifest     = 0x18
 };
 
 /**
@@ -81,17 +81,17 @@ public:
 	bool loadFromEXE(SeekableReadStream *stream);
 
 	/** Return a list of resources for a given type. */
-	const Array<WinResourceID> getIDList(uint16 type) const;
+	const Array<WinResourceID> getIDList(const WinResourceID &type) const;
 
 	/** Return a stream to the specified resource (or 0 if non-existent). */
-	SeekableReadStream *getResource(uint16 type, WinResourceID id);
+	SeekableReadStream *getResource(const WinResourceID &type, const WinResourceID &id);
 
 private:
 	/** A resource. */
 	struct Resource {
 		WinResourceID id;
 
-		uint16 type; ///< Type of the resource.
+		WinResourceID type; ///< Type of the resource.
 
 		uint32 offset; ///< Offset within the EXE.
 		uint32 size;   ///< Size of the data.
@@ -112,7 +112,7 @@ private:
 	bool readResourceTable(uint32 offset);
 
 	/** Find a specific resource. */
-	const Resource *findResource(uint16 type, WinResourceID id) const;
+	const Resource *findResource(const WinResourceID &type, const WinResourceID &id) const;
 
 	/** Read a resource string. */
 	static String getResourceString(SeekableReadStream &exe, uint32 offset);

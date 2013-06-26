@@ -45,14 +45,13 @@ enum ChunkTypes {
 	kChunkStopSubtitles = 8
 };
 
-MoviePlayer::MoviePlayer(ToltecsEngine *vm) : _vm(vm) {
+MoviePlayer::MoviePlayer(ToltecsEngine *vm) : _vm(vm), _isPlaying(false), _lastPrefetchOfs(0), _framesPerSoundChunk(0), _endPos(0) {
 }
 
 MoviePlayer::~MoviePlayer() {
 }
 
 void MoviePlayer::playMovie(uint resIndex) {
-
 	const uint32 subtitleSlot = kMaxScriptSlots - 1;
 	int16 savedSceneWidth = _vm->_sceneWidth;
 	int16 savedSceneHeight = _vm->_sceneHeight;
@@ -62,17 +61,18 @@ void MoviePlayer::playMovie(uint resIndex) {
 	int16 savedGuiHeight = _vm->_guiHeight;
 	byte moviePalette[768];
 
+	_isPlaying = true;
 	_vm->_isSaveAllowed = false;
 
 	memset(moviePalette, 0, sizeof(moviePalette));
 
 	_vm->_screen->finishTalkTextItems();
-	_vm->_screen->clearSprites();
 
 	_vm->_arc->openResource(resIndex);
+	_endPos = _vm->_arc->pos() + _vm->_arc->getResourceSize(resIndex);
 
-	_frameCount = _vm->_arc->readUint32LE();
-	_chunkCount = _vm->_arc->readUint32LE();
+	/*_frameCount = */_vm->_arc->readUint32LE();
+	uint32 chunkCount = _vm->_arc->readUint32LE();
 
 	// TODO: Figure out rest of the header
 	_vm->_arc->readUint32LE();
@@ -91,7 +91,6 @@ void MoviePlayer::playMovie(uint resIndex) {
 
 	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
 
-	_soundChunkFramesLeft = 0;
 	_lastPrefetchOfs = 0;
 
 	fetchAudioChunks();
@@ -99,17 +98,20 @@ void MoviePlayer::playMovie(uint resIndex) {
 	byte *chunkBuffer = NULL;
 	uint32 chunkBufferSize = 0;
 	uint32 frame = 0;
+	bool abortMovie = false;
+	uint32 soundChunkFramesLeft = 0;
 
-	while (_chunkCount--) {
+	while (chunkCount-- && !abortMovie) {
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
 
 		debug(0, "chunkType = %d; chunkSize = %d", chunkType, chunkSize);
 
 		// Skip audio chunks - we've already queued them in
-		// fetchAudioChunks() above
+		// fetchAudioChunks()
 		if (chunkType == kChunkAudio) {
 			_vm->_arc->skip(chunkSize);
+			soundChunkFramesLeft += _framesPerSoundChunk;
 		} else {
 			// Only reallocate the chunk buffer if the new chunk is bigger
 			if (chunkSize > chunkBufferSize) {
@@ -127,8 +129,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 			unpackRle(chunkBuffer, _vm->_screen->_backScreen);
 			_vm->_screen->_fullRefresh = true;
 
-			_soundChunkFramesLeft--;
-			if (_soundChunkFramesLeft <= _framesPerSoundChunk) {
+			if (--soundChunkFramesLeft <= _framesPerSoundChunk) {
 				fetchAudioChunks();
 			}
 
@@ -136,7 +137,8 @@ void MoviePlayer::playMovie(uint resIndex) {
 				if (_vm->_screen->_shakeActive && _vm->_screen->updateShakeScreen()) {
 					_vm->_screen->_fullRefresh = true;
 				}
-				_vm->updateInput();
+				if (!handleInput())
+					abortMovie = true;
 				_vm->drawScreen();
 				// Note: drawScreen() calls delayMillis()
 			}
@@ -153,10 +155,11 @@ void MoviePlayer::playMovie(uint resIndex) {
 			// Already processed
 			break;
 		case kChunkShowSubtitle:
-			if (_vm->_cfgText) {
-				memcpy(_vm->_script->getSlotData(subtitleSlot), chunkBuffer, chunkSize);
-				_vm->_screen->updateTalkText(subtitleSlot, 0);
-			}
+			memcpy(_vm->_script->getSlotData(subtitleSlot), chunkBuffer, chunkSize);
+			// The last character of the subtitle determines if it should
+			// always be displayed or not. If it's 0xFF, it should always be
+			// displayed, otherwise, if it's 0xFE, it can be toggled.
+			_vm->_screen->updateTalkText(subtitleSlot, 0, (chunkBuffer[chunkSize - 1] == 0xFF));
 			break;
 		case kChunkShakeScreen: // start/stop shakescreen effect
 			if (chunkBuffer[0] == 0xFF)
@@ -180,7 +183,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 		}
 
 		if (!handleInput())
-			break;
+			abortMovie = true;
 	}
 
 	delete[] chunkBuffer;
@@ -200,27 +203,25 @@ void MoviePlayer::playMovie(uint resIndex) {
 	_vm->_guiHeight = savedGuiHeight;
 
 	_vm->_isSaveAllowed = true;
+	_isPlaying = false;
 }
 
 void MoviePlayer::fetchAudioChunks() {
-
 	uint32 startOfs = _vm->_arc->pos();
-	uint32 chunkCount = _chunkCount;
 	uint prefetchChunkCount = 0;
 
 	if (_lastPrefetchOfs != 0)
 		_vm->_arc->seek(_lastPrefetchOfs, SEEK_SET);
 
-	while (chunkCount-- && prefetchChunkCount < _framesPerSoundChunk / 2) {
+	while (prefetchChunkCount < _framesPerSoundChunk / 2 && _vm->_arc->pos() < _endPos) {
 		byte chunkType = _vm->_arc->readByte();
 		uint32 chunkSize = _vm->_arc->readUint32LE();
-		if (chunkType == 4) {
+		if (chunkType == kChunkAudio) {
 			byte *chunkBuffer = (byte *)malloc(chunkSize);
 			_vm->_arc->read(chunkBuffer, chunkSize);
 			_audioStream->queueBuffer(chunkBuffer, chunkSize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 			chunkBuffer = NULL;
 			prefetchChunkCount++;
-			_soundChunkFramesLeft += _framesPerSoundChunk;
 		} else {
 			_vm->_arc->seek(chunkSize, SEEK_CUR);
 		}
@@ -229,7 +230,6 @@ void MoviePlayer::fetchAudioChunks() {
 	_lastPrefetchOfs = _vm->_arc->pos();
 
 	_vm->_arc->seek(startOfs, SEEK_SET);
-
 }
 
 void MoviePlayer::unpackPalette(byte *source, byte *dest, int elemCount, int elemSize) {
@@ -249,10 +249,12 @@ void MoviePlayer::unpackPalette(byte *source, byte *dest, int elemCount, int ele
 }
 
 void MoviePlayer::unpackRle(byte *source, byte *dest) {
-	int size = 256000;
+	int size = 256000;	// 640x400
+	//int packedSize = 0;
 	while (size > 0) {
 		byte a = *source++;
 		byte b = *source++;
+		//packedSize += 2;
 		if (a == 0) {
 			dest += b;
 			size -= b;
@@ -262,6 +264,7 @@ void MoviePlayer::unpackRle(byte *source, byte *dest) {
 			size -= a;
 		}
 	}
+	//debug("Packed RLE size: %d", packedSize);
 }
 
 bool MoviePlayer::handleInput() {
@@ -272,12 +275,15 @@ bool MoviePlayer::handleInput() {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				return false;
+			if (event.kbd.keycode == Common::KEYCODE_F10) {
+				// TODO: The original would bring up a stripped down
+				// main menu dialog, without the save/restore options.
+			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_RBUTTONDOWN:
 			return false;
 		case Common::EVENT_QUIT:
-			_vm->quitGame();
 			return false;
 		default:
 			break;

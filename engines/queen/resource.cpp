@@ -204,11 +204,11 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 	switch (ver->str[0]) {
 	case 'P':
 		ver->features |= GF_FLOPPY;
-		ver->platform = Common::kPlatformPC;
+		ver->platform = Common::kPlatformDOS;
 		break;
 	case 'C':
 		ver->features |= GF_TALKIE;
-		ver->platform = Common::kPlatformPC;
+		ver->platform = Common::kPlatformDOS;
 		break;
 	case 'a':
 		ver->features |= GF_FLOPPY;
