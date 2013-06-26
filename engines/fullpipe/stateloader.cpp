@@ -43,6 +43,62 @@ bool FullpipeEngine::loadGam(const char *fname) {
 		_inventory = &_gameLoader->_inventory;
 		_inventory->setItemFlags(ANI_INV_MAP, 0x10003);
 		_inventory->addItem(ANI_INV_MAP, 1);
+
+#if 1
+		g_fullpipe->accessScene(301);
+		g_fullpipe->accessScene(302);
+		g_fullpipe->accessScene(303);
+		g_fullpipe->accessScene(304);
+		g_fullpipe->accessScene(305);
+		g_fullpipe->accessScene(321);
+		g_fullpipe->accessScene(635);
+		g_fullpipe->accessScene(649);
+		g_fullpipe->accessScene(650);
+		g_fullpipe->accessScene(651);
+		g_fullpipe->accessScene(652);
+		g_fullpipe->accessScene(653);
+		g_fullpipe->accessScene(654);
+		g_fullpipe->accessScene(655);
+		g_fullpipe->accessScene(726);
+		g_fullpipe->accessScene(858);
+		g_fullpipe->accessScene(903);
+		g_fullpipe->accessScene(1137);
+		g_fullpipe->accessScene(1138);
+		g_fullpipe->accessScene(1139);
+		g_fullpipe->accessScene(1140);
+		g_fullpipe->accessScene(1141);
+		g_fullpipe->accessScene(1142);
+		g_fullpipe->accessScene(1143);
+		g_fullpipe->accessScene(1144);
+		g_fullpipe->accessScene(1546);
+		g_fullpipe->accessScene(1547);
+		g_fullpipe->accessScene(1548);
+		g_fullpipe->accessScene(1549);
+		g_fullpipe->accessScene(1550);
+		g_fullpipe->accessScene(1551);
+		g_fullpipe->accessScene(1552);
+		g_fullpipe->accessScene(2062);
+		g_fullpipe->accessScene(2063);
+		g_fullpipe->accessScene(2064);
+		g_fullpipe->accessScene(2065);
+		g_fullpipe->accessScene(2066);
+		g_fullpipe->accessScene(2067);
+		g_fullpipe->accessScene(2068);
+		g_fullpipe->accessScene(2069);
+		g_fullpipe->accessScene(2070);
+		g_fullpipe->accessScene(2071);
+		g_fullpipe->accessScene(2072);
+		g_fullpipe->accessScene(2460);
+		g_fullpipe->accessScene(3896);
+		g_fullpipe->accessScene(3907);
+		g_fullpipe->accessScene(4620);
+		g_fullpipe->accessScene(4999);
+		g_fullpipe->accessScene(5000);
+		g_fullpipe->accessScene(5001);
+		g_fullpipe->accessScene(5166);
+		g_fullpipe->accessScene(5222);
+#endif
+
 		_inventory->rebuildItemRects();
 		// TODO
 	} else
