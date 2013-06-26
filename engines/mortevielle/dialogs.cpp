@@ -38,7 +38,7 @@ namespace Mortevielle {
  * Alert function - Show
  * @remarks	Originally called 'do_alert'
  */
-int Alert::show(const Common::String &msg, int n) {
+int DialogManager::show(const Common::String &msg, int n) {
 	// Make a copy of the current screen surface for later restore
 	g_vm->_backgroundSurface.copyFrom(g_vm->_screenSurface);
 
@@ -188,7 +188,7 @@ int Alert::show(const Common::String &msg, int n) {
  * Alert function - Decode Alert Details
  * @remarks	Originally called 'decod'
  */
-void Alert::decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &lineNumb, int &col, Common::String &choiceStr, Common::String &choiceListStr) {
+void DialogManager::decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &lineNumb, int &col, Common::String &choiceStr, Common::String &choiceListStr) {
 	// The second character of the string contains the number of choices
 	choiceNumb = atoi(inputStr.c_str() + 1);
 
@@ -228,7 +228,7 @@ void Alert::decodeAlertDetails(Common::String inputStr, int &choiceNumb, int &li
 		col *= 10;
 }
 
-void Alert::setPosition(int ji, int coldep, int esp) {
+void DialogManager::setPosition(int ji, int coldep, int esp) {
 	g_vm->_screenSurface.putxy(coldep + (40 + esp) * (ji - 1), 98);
 }
 
@@ -236,7 +236,7 @@ void Alert::setPosition(int ji, int coldep, int esp) {
  * Alert function - Draw Alert Box
  * @remarks	Originally called 'fait_boite'
  */
-void Alert::drawAlertBox(int lidep, int nli, int tx) {
+void DialogManager::drawAlertBox(int lidep, int nli, int tx) {
 	if (tx > 640)
 		tx = 640;
 	int x = 320 - ((uint)tx / 2);
@@ -252,7 +252,7 @@ void Alert::drawAlertBox(int lidep, int nli, int tx) {
  * Alert function - Set Button Text
  * @remarks	Originally called 'fait_choix'
  */
-void Alert::setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp) {
+void DialogManager::setButtonText(Common::String c, int coldep, int nbcase, Common::String *str, int esp) {
 	int i = 1;
 	int x = coldep;
 	for (int l = 1; l <= nbcase; ++l) {
@@ -283,7 +283,7 @@ void Alert::setButtonText(Common::String c, int coldep, int nbcase, Common::Stri
 /**
  * Questions asked before entering the hidden passage
  */
-bool KnowledgeCheck::show() {
+bool DialogManager::showKnowledgeCheck() {
 	const int textIndexArr[10] = {511, 516, 524, 531, 545, 552, 559, 563, 570, 576};
 	const int correctAnswerArr[10] = {4, 7, 1, 6, 4, 4, 2, 5, 3, 1 };
 
@@ -402,7 +402,7 @@ bool KnowledgeCheck::show() {
 /**
  * Draw the F3/F8 dialog
  */
-void f3f8::draw() {
+void DialogManager::drawF3F8() {
 	Common::String f3 = g_vm->getEngineString(S_F3);
 	Common::String f8 = g_vm->getEngineString(S_F8);
 
@@ -425,7 +425,7 @@ void f3f8::draw() {
  * Graphical Device if modified
  * @remarks	Originally called 'diver'
  */
-void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
+void DialogManager::checkForF8(int SpeechNum, bool drawAni50Fl) {
 	g_vm->testKeyboard();
 	do {
 		g_vm->_speechManager.startSpeech(SpeechNum, 0, 0);
@@ -445,7 +445,7 @@ void f3f8::checkForF8(int SpeechNum, bool drawAni50Fl) {
  * Alert function - Loop until F3 or F8 is pressed
  * @remarks	Originally called 'atf3f8'
  */
-int f3f8::waitForF3F8() {
+int DialogManager::waitForF3F8() {
 	int key;
 
 	do {
@@ -457,7 +457,7 @@ int f3f8::waitForF3F8() {
 	return key;
 }
 
-void f3f8::aff50(bool drawAni50Fl) {
+void DialogManager::aff50(bool drawAni50Fl) {
 	g_vm->_caff = 50;
 	g_vm->_maff = 0;
 	g_vm->_text.taffich();
@@ -468,10 +468,10 @@ void f3f8::aff50(bool drawAni50Fl) {
 		g_vm->handleDescriptionText(2, kDialogStringIndex + 142);
 
 	// Draw the f3/f8 dialog
-	draw();
+	drawF3F8();
 }
 
-void f3f8::ani50() {
+void DialogManager::ani50() {
 	g_vm->_crep = g_vm->animof(1, 1);
 	g_vm->pictout(kAdrAni, g_vm->_crep, 63, 12);
 	g_vm->_crep = g_vm->animof(2, 1);
@@ -480,4 +480,7 @@ void f3f8::ani50() {
 	g_vm->handleDescriptionText(2, kDialogStringIndex + 143);
 }
 
+void DialogManager::setParent(MortevielleEngine *vm) {
+	_vm = vm;
+}
 } // End of namespace Mortevielle

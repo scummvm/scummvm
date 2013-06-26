@@ -38,6 +38,7 @@
 #include "common/error.h"
 #include "graphics/surface.h"
 #include "mortevielle/debugger.h"
+#include "mortevielle/dialogs.h"
 #include "mortevielle/graphics.h"
 #include "mortevielle/menu.h"
 #include "mortevielle/mouse.h"
@@ -487,6 +488,7 @@ public:
 	Menu _menu;
 	MouseHandler _mouse;
 	TextHandler _text;
+	DialogManager _dialogManager;
 
 	MortevielleEngine(OSystem *system, const ADGameDescription *gameDesc);
 	~MortevielleEngine();
@@ -528,7 +530,6 @@ public:
 	void pictout(int seg, int dep, int x, int y);
 	void sauvecr(int y, int dy);
 	void charecr(int y, int dy);
-
 };
 
 extern MortevielleEngine *g_vm;

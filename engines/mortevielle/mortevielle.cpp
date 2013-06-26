@@ -75,6 +75,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 		_soundManager(_mixer) {
 	g_vm = this;
 	_debugger.setParent(this);
+	_dialogManager.setParent(this);
 	_screenSurface.setParent(this);
 	_mouse.setParent(this);
 	_text.setParent(this);
@@ -579,14 +580,14 @@ Common::Error MortevielleEngine::run() {
  * Show the game introduction
  */
 void MortevielleEngine::showIntroduction() {
-	f3f8::aff50(false);
+	_dialogManager.aff50(false);
 	_speechManager._mlec = 0;
-	f3f8::checkForF8(142, false);
+	_dialogManager.checkForF8(142, false);
 	if (shouldQuit())
 		return;
 
-	f3f8::ani50();
-	f3f8::checkForF8(143, true);
+	_dialogManager.ani50();
+	_dialogManager.checkForF8(143, true);
 	if (shouldQuit())
 		return;
 
@@ -689,7 +690,7 @@ void MortevielleEngine::handleAction() {
 		if (_menu._menuSelected && (_msg[3] == MENU_LOAD))
 			_savegameManager.loadGame((_msg[4] & 15) - 1);
 		if (inkey == '\103') {       /* F9 */
-			temps = Alert::show(_hintPctMessage, 1);
+			temps = _dialogManager.show(_hintPctMessage, 1);
 			return;
 		} else if (inkey == '\77') {
 			if ((_menuOpcode != OPCODE_NONE) && ((_msg[3] == MENU_ACTION) || (_msg[3] == MENU_SELF))) {
@@ -1753,12 +1754,12 @@ void MortevielleEngine::startDialog(int16 rep) {
 	_mouse.hideMouse();
 	Common::String dialogStr = getString(rep + kDialogStringIndex);
 	_text.displayStr(dialogStr, 230, 4, 65, 24, 5);
-	f3f8::draw();
+	_dialogManager.drawF3F8();
 
 	key = 0;
 	do {
 		_speechManager.startSpeech(rep, haut[_caff - 69], 0);
-		key = f3f8::waitForF3F8();
+		key = _dialogManager.waitForF3F8();
 		if (shouldQuit())
 			return;
 	} while (key != 66);
@@ -2164,7 +2165,7 @@ int MortevielleEngine::getRandomNumber(int minval, int maxval) {
  * @remarks	Originally called 'aldepl'
  */
 void MortevielleEngine::showMoveMenuAlert() {
-	Alert::show(getEngineString(S_USE_DEP_MENU), 1);
+	_dialogManager.show(getEngineString(S_USE_DEP_MENU), 1);
 }
 
 /**
@@ -3640,7 +3641,7 @@ void MortevielleEngine::tfleche() {
 		} while (!(qust || inRect || _anyone));
 
 		if (qust && (touch == '\103'))
-			Alert::show(_hintPctMessage, 1);
+			_dialogManager.show(_hintPctMessage, 1);
 	} while (!((touch == '\73') || ((touch == '\104') && (_x != 0) && (_y != 0)) || (_anyone) || (inRect)));
 
 	if (touch == '\73')
