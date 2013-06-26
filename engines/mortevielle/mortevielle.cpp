@@ -79,6 +79,7 @@ MortevielleEngine::MortevielleEngine(OSystem *system, const ADGameDescription *g
 	_mouse.setParent(this);
 	_text.setParent(this);
 	_soundManager.setParent(this);
+	_speechManager.setParent(this);
 
 	_lastGameFrame = 0;
 	_mouseClick = false;
