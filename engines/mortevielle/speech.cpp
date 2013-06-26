@@ -81,7 +81,7 @@ void SpeechManager::spfrac(int wor) {
 }
 
 void SpeechManager::charg_car(int &currWordNumb) {
-	int wor = swap(READ_LE_UINT16(&g_vm->_mem[kAdrWord + currWordNumb]));
+	int wor = swap(READ_LE_UINT16(&_vm->_mem[kAdrWord + currWordNumb]));
 	int int_ = wor & 0x3f; // 63
 
 	if ((int_ >= 0) && (int_ <= 13)) {
@@ -121,7 +121,7 @@ void SpeechManager::charg_car(int &currWordNumb) {
 
 
 void SpeechManager::entroct(byte o) {
-	g_vm->_mem[kAdrTroct * 16 + _ptr_oct] = o;
+	_vm->_mem[kAdrTroct * 16 + _ptr_oct] = o;
 	++_ptr_oct;
 }
 
@@ -134,7 +134,7 @@ void SpeechManager::cctable(tablint &t) {
 
 	tb[0] = 0;
 	for (int k = 0; k <= 255; ++k) {
-		tb[k + 1] = g_vm->_addFix + tb[k];
+		tb[k + 1] = _vm->_addFix + tb[k];
 		t[255 - k] = abs((int)tb[k] + 1);
 	}
 }
@@ -143,7 +143,7 @@ void SpeechManager::regenbruit() {
 	int i = kOffsetB3 + 8590;
 	int j = 0;
 	do {
-		_cfiphBuffer[j] = READ_LE_UINT16(&g_vm->_mem[kAdrNoise3 + i]);
+		_cfiphBuffer[j] = READ_LE_UINT16(&_vm->_mem[kAdrNoise3 + i]);
 		i += 2;
 		++j;
 	} while (i < kOffsetB3 + 8790);
@@ -159,9 +159,9 @@ void SpeechManager::loadMusicSound() {
 	if (!f.open("sonmus.mor"))
 		error("Missing file - sonmus.mor");
 
-	f.read(&g_vm->_mem[0x7414 * 16 + 0], 273);
+	f.read(&_vm->_mem[0x7414 * 16 + 0], 273);
 
-	g_vm->_soundManager.decodeMusic(&g_vm->_mem[0x7414 * 16], &g_vm->_mem[kAdrNoise * 16], 273);
+	_vm->_soundManager.decodeMusic(&_vm->_mem[0x7414 * 16], &_vm->_mem[kAdrNoise * 16], 273);
 	f.close();
 }
 
@@ -192,10 +192,10 @@ void SpeechManager::loadNoise() {
 	if (!f.open("bruits"))               //Translation: "noise"
 		error("Missing file - bruits");
 
-	f.read(&g_vm->_mem[kAdrNoise * 16 + 0], 250);
+	f.read(&_vm->_mem[kAdrNoise * 16 + 0], 250);
 	for (i = 0; i <= 19013; ++i)
-		g_vm->_mem[kAdrNoise * 16 + 32000 + i] = g_vm->_mem[kAdrNoise5 + i];
-	f.read(&g_vm->_mem[kAdrNoise1 * 16 + kOffsetB1], 149);
+		_vm->_mem[kAdrNoise * 16 + 32000 + i] = _vm->_mem[kAdrNoise5 + i];
+	f.read(&_vm->_mem[kAdrNoise1 * 16 + kOffsetB1], 149);
 
 	f.close();
 }
@@ -531,7 +531,7 @@ void SpeechManager::handlePhoneme() {
 	int endPos = swap(_cfiphBuffer[_phonemeNumb]) + deca[_typlec];
 	int wordCount = endPos - startPos;
 	for (int i = (uint)startPos >> 1, currWord = 0; i < (int)((uint)endPos >> 1); i++, currWord += 2)
-		WRITE_LE_UINT16(&g_vm->_mem[kAdrWord + currWord], _cfiphBuffer[i]);
+		WRITE_LE_UINT16(&_vm->_mem[kAdrWord + currWord], _cfiphBuffer[i]);
 
 	_ptr_oct = 0;
 	int currWord = 0;
@@ -556,7 +556,7 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 	int savph[501];
 	int tempo;
 
-	if (g_vm->_soundOff)
+	if (_vm->_soundOff)
 		return;
 
 	_phonemeNumb = rep;
@@ -570,7 +570,7 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 		tempo = kTempoF;
 	else
 		tempo = kTempoM;
-	g_vm->_addFix = (float)((tempo - 8)) / 256;
+	_vm->_addFix = (float)((tempo - 8)) / 256;
 	cctable(_tbi);
 	switch (typ) {
 	case 1:
@@ -586,13 +586,16 @@ void SpeechManager::startSpeech(int rep, int ht, int typ) {
 		break;
 	}
 	handlePhoneme();
-	g_vm->_soundManager.litph(_tbi, typ, tempo);
+	_vm->_soundManager.litph(_tbi, typ, tempo);
 	if (_typlec != 0)
 		for (int i = 0; i <= 500; ++i) {
 			_cfiphBuffer[i] = savph[i];
 			_mlec = _typlec;
 		}
-	g_vm->setPal(g_vm->_numpal);
+	_vm->setPal(_vm->_numpal);
 }
 
+void SpeechManager::setParent(MortevielleEngine *vm) {
+	_vm = vm;
+}
 } // End of namespace Mortevielle

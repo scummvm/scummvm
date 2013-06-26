@@ -66,6 +66,8 @@ struct SpeechQueue {
 
 class SpeechManager {
 private:
+	MortevielleEngine *_vm;
+
 	int _typlec;
 	int _phonemeNumb;
 
@@ -78,6 +80,7 @@ public:
 	int _mlec;
 
 	SpeechManager();
+	void setParent(MortevielleEngine *vm);
 	void spfrac(int wor);
 	void charg_car(int &currWordNumb);
 	void entroct(byte o);
