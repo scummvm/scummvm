@@ -226,7 +226,7 @@ int QuickTimeParser::readDefault(Atom atom) {
 		} else if (_parseTable[i].type == 0) { // skip leaf atom data
 			debug(0, ">>> Skipped [%s]", tag2str(a.type));
 
-			_fd->seek(a.size, SEEK_CUR);
+			_fd->seek(a.size, Seek::CUR);
 		} else {
 			uint32 start_pos = _fd->pos();
 			err = (this->*_parseTable[i].func)(a);
@@ -234,7 +234,7 @@ int QuickTimeParser::readDefault(Atom atom) {
 			uint32 left = a.size - _fd->pos() + start_pos;
 
 			if (left > 0) // skip garbage at atom end
-				_fd->seek(left, SEEK_CUR);
+				_fd->seek(left, Seek::CUR);
 		}
 
 		a.offset += a.size;
@@ -242,14 +242,14 @@ int QuickTimeParser::readDefault(Atom atom) {
 	}
 
 	if (!err && total_size < atom.size)
-		_fd->seek(atom.size - total_size, SEEK_SET);
+		_fd->seek(atom.size - total_size, Seek::SET);
 
 	return err;
 }
 
 int QuickTimeParser::readLeaf(Atom atom) {
 	if (atom.size > 1)
-		_fd->seek(atom.size, SEEK_SET);
+		_fd->seek(atom.size, Seek::SET);
 
 	return 0;
 }
@@ -338,7 +338,7 @@ int QuickTimeParser::readMVHD(Atom atom) {
 
 	_fd->readUint16BE(); // preferred volume
 
-	_fd->seek(10, SEEK_CUR); // reserved
+	_fd->seek(10, Seek::CUR); // reserved
 
 	// We only need two values from the movie display matrix. Most of the values are just
 	// skipped. xMod and yMod are 16:16 fixed point numbers, the last part of the 3x3 matrix
@@ -491,9 +491,9 @@ int QuickTimeParser::readHDLR(Atom atom) {
 
 	// .mov: PASCAL string
 	byte len = _fd->readByte();
-	_fd->seek(len, SEEK_CUR);
+	_fd->seek(len, Seek::CUR);
 
-	_fd->seek(atom.size - (_fd->pos() - atom.offset), SEEK_CUR);
+	_fd->seek(atom.size - (_fd->pos() - atom.offset), Seek::CUR);
 
 	return 0;
 }
@@ -550,7 +550,7 @@ int QuickTimeParser::readSTSD(Atom atom) {
 
 		if (!track->sampleDescs[i]) {
 			// other codec type, just skip (rtp, mp4s, tmcd ...)
-			_fd->seek(size - (_fd->pos() - start_pos), SEEK_CUR);
+			_fd->seek(size - (_fd->pos() - start_pos), Seek::CUR);
 		}
 
 		// this will read extra atoms at the end (wave, alac, damr, avcC, SMI ...)
@@ -558,7 +558,7 @@ int QuickTimeParser::readSTSD(Atom atom) {
 		if (a.size > 8)
 			readDefault(a);
 		else if (a.size > 0)
-			_fd->seek(a.size, SEEK_CUR);
+			_fd->seek(a.size, Seek::CUR);
 	}
 
 	return 0;

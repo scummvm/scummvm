@@ -519,7 +519,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	uint16 *stringOffsets = new uint16[namesCount];
 	for (uint16 i = 0; i < namesCount; i++)
 		stringOffsets[i] = nameStream->readUint16BE();
-	nameStream->seek(namesCount * 2, SEEK_CUR);
+	nameStream->seek(namesCount * 2, Seek::CUR);
 	int32 curNamesPos = nameStream->pos();
 
 	for (uint32 i = 0; i < namesCount; i++) {
@@ -541,7 +541,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	stringOffsets = new uint16[namesCount];
 	for (uint16 i = 0; i < namesCount; i++)
 		stringOffsets[i] = nameStream->readUint16BE();
-	nameStream->seek(namesCount * 2, SEEK_CUR);
+	nameStream->seek(namesCount * 2, Seek::CUR);
 	curNamesPos = nameStream->pos();
 
 	for (uint32 i = 0; i < namesCount; i++) {
@@ -584,7 +584,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 
 		for (uint16 i = 0; i < hotspotCount; i++) {
 			debugN("Hotspot %d:\n", i);
-			hsptStream->seek(22, SEEK_CUR);	// Skip non-script related stuff
+			hsptStream->seek(22, Seek::CUR);	// Skip non-script related stuff
 			RivenScriptList scriptList = _vm->_scriptMan->readScripts(hsptStream, false);
 			for (uint32 j = 0; j < scriptList.size(); j++) {
 				scriptList[j]->dumpScript(varNames, xNames, 1);

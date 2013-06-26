@@ -281,7 +281,7 @@ void TimerManager::loadDataFromFile(Common::SeekableReadStream &file, int versio
 				timer->lastUpdate = file.readSint32BE();
 			} else {
 				warning("Loading timer data for non existing timer %d", id);
-				file.seek(7, SEEK_CUR);
+				file.seek(7, Seek::CUR);
 			}
 		}
 

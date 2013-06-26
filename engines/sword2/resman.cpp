@@ -305,7 +305,7 @@ byte *ResourceManager::openResource(uint32 res, bool dump) {
 		uint32 pos = _resFiles[cluFileNum].entryTab[actual_res * 2 + 0];
 		uint32 len = _resFiles[cluFileNum].entryTab[actual_res * 2 + 1];
 
-		file->seek(pos, SEEK_SET);
+		file->seek(pos, Seek::SET);
 
 		debug(6, "res len %d", len);
 

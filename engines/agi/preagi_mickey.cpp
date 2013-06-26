@@ -49,7 +49,7 @@ void MickeyEngine::readExe(int ofs, uint8 *buffer, long buflen) {
 	Common::File infile;
 	if (!infile.open("mickey.exe"))
 		return;
-	infile.seek(ofs, SEEK_SET);
+	infile.seek(ofs, Seek::SET);
 	infile.read(buffer, buflen);
 	infile.close();
 }
@@ -196,7 +196,7 @@ void MickeyEngine::printDatString(int iStr) {
 	if (!infile.open(szFile))
 		return;
 
-	infile.seek(hdr.ofsStr[iStr] + IDI_MSA_OFS_DAT, SEEK_SET);
+	infile.seek(hdr.ofsStr[iStr] + IDI_MSA_OFS_DAT, Seek::SET);
 	infile.read((uint8 *)buffer, 256);
 	infile.close();
 
@@ -218,7 +218,7 @@ void MickeyEngine::printDesc(int iRoom) {
 	char *buffer = (char *)malloc(256);
 	memset(buffer, 0, 256);
 
-	infile.seek(hdr.ofsDesc[iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
+	infile.seek(hdr.ofsDesc[iRoom - 1] + IDI_MSA_OFS_DAT, Seek::SET);
 	infile.read(buffer, 256);
 	infile.close();
 
@@ -239,7 +239,7 @@ bool MickeyEngine::checkMenu() {
 		return false;
 
 	char *buffer = new char[sizeof(MSA_MENU)];
-	infile.seek(hdr.ofsRoom[_gameStateMickey.iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
+	infile.seek(hdr.ofsRoom[_gameStateMickey.iRoom - 1] + IDI_MSA_OFS_DAT, Seek::SET);
 	infile.read((uint8 *)buffer, sizeof(MSA_MENU));
 	infile.close();
 

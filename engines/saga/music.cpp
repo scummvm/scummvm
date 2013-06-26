@@ -319,7 +319,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 					audioStream = Audio::makeRawStream(musicStream, 11025, musicFlags, DisposeAfterUse::YES);
 				} else {
 					// Read compressed header to determine compression type
-					musicFile->seek((uint32)resData->offset, SEEK_SET);
+					musicFile->seek((uint32)resData->offset, Seek::SET);
 					byte identifier = musicFile->readByte();
 
 					if (identifier == 0) {		// MP3

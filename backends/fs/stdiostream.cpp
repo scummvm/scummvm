@@ -60,8 +60,8 @@ int32 StdioStream::size() const {
 	return length;
 }
 
-bool StdioStream::seek(int32 offs, int whence) {
-	return fseek((FILE *)_handle, offs, whence) == 0;
+bool StdioStream::seek(int32 offs, Seek::Whence whence) {
+	return fseek((FILE *)_handle, offs, (int)whence) == 0;
 }
 
 uint32 StdioStream::read(void *ptr, uint32 len) {

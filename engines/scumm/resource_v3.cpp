@@ -45,7 +45,7 @@ int ScummEngine_v3old::readResTypeList(ResType type) {
 	if (type == rtRoom) {
 		for (idx = 0; idx < num; idx++)
 			_res->_types[type][idx]._roomno = idx;
-		_fileHandle->seek(num, SEEK_CUR);
+		_fileHandle->seek(num, Seek::CUR);
 	} else {
 		for (idx = 0; idx < num; idx++)
 			_res->_types[type][idx]._roomno = _fileHandle->readByte();
@@ -71,17 +71,17 @@ void ScummEngine_v3old::readIndexFile() {
 		error("The magic id doesn't match (0x%X)", magic);
 
 	_numGlobalObjects = _fileHandle->readUint16LE();
-	_fileHandle->seek(_numGlobalObjects * 4, SEEK_CUR);
+	_fileHandle->seek(_numGlobalObjects * 4, Seek::CUR);
 	_numRooms = _fileHandle->readByte();
-	_fileHandle->seek(_numRooms * 3, SEEK_CUR);
+	_fileHandle->seek(_numRooms * 3, Seek::CUR);
 	_numCostumes = _fileHandle->readByte();
-	_fileHandle->seek(_numCostumes * 3, SEEK_CUR);
+	_fileHandle->seek(_numCostumes * 3, Seek::CUR);
 	_numScripts = _fileHandle->readByte();
-	_fileHandle->seek(_numScripts * 3, SEEK_CUR);
+	_fileHandle->seek(_numScripts * 3, Seek::CUR);
 	_numSounds = _fileHandle->readByte();
 
 	_fileHandle->clearErr();
-	_fileHandle->seek(0, SEEK_SET);
+	_fileHandle->seek(0, Seek::SET);
 
 	readMAXS(0);
 	allocateArrays();

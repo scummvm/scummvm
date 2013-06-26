@@ -1732,7 +1732,7 @@ void Inter_v1::o1_readData(OpFuncParams &params) {
 
 	_vm->_draw->animateCursor(4);
 	if (offset < 0)
-		stream->seek(offset + 1, SEEK_END);
+		stream->seek(offset + 1, Seek::END);
 	else
 		stream->seek(offset);
 

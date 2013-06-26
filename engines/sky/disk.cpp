@@ -106,7 +106,7 @@ uint8 *Disk::loadFile(uint16 fileNr) {
 
 	uint8 *fileDest = (uint8 *)malloc(fileSize + 4); // allocate memory for file
 
-	_dataDiskHandle->seek(fileOffset, SEEK_SET);
+	_dataDiskHandle->seek(fileOffset, Seek::SET);
 
 	//now read in the data
 	int32 bytesRead = _dataDiskHandle->read(fileDest, fileSize);

@@ -343,7 +343,7 @@ bool VQAMovie::open(const char *filename) {
 						break;
 					}
 
-					_file->seek(scanSize, SEEK_CUR);
+					_file->seek(scanSize, Seek::CUR);
 				}
 
 				_file->seek(oldPos);
@@ -353,7 +353,7 @@ bool VQAMovie::open(const char *filename) {
 
 		default:
 			warning("VQAMovie::open: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
-			_file->seek(size, SEEK_CUR);
+			_file->seek(size, Seek::CUR);
 		}
 	}
 
@@ -447,7 +447,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 		case MKTAG('S','N','D','2'):	// Compressed sound
 			foundSound = true;
 			warning("VQAMovie::displayFrame: `SND2' is not implemented");
-			_file->seek(size, SEEK_CUR);
+			_file->seek(size, Seek::CUR);
 			break;
 
 		case MKTAG('V','Q','F','R'):
@@ -516,7 +516,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 				default:
 					warning("VQAMovie::displayFrame: Unknown `VQFR' sub-tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
-					_file->seek(size, SEEK_CUR);
+					_file->seek(size, Seek::CUR);
 				}
 
 			}
@@ -525,7 +525,7 @@ void VQAMovie::displayFrame(uint frameNum) {
 
 		default:
 			warning("VQAMovie::displayFrame: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
-			_file->seek(size, SEEK_CUR);
+			_file->seek(size, Seek::CUR);
 		}
 	}
 
@@ -633,16 +633,16 @@ void VQAMovie::play() {
 
 			case MKTAG('S','N','D','2'):	// Compressed sound
 				warning("VQAMovie::play: `SND2' is not implemented");
-				_file->seek(size, SEEK_CUR);
+				_file->seek(size, Seek::CUR);
 				break;
 
 			case MKTAG('C','M','D','S'):	// Unused tag, always empty in kyra3
-				_file->seek(size, SEEK_CUR);
+				_file->seek(size, Seek::CUR);
 				break;
 
 			default:
 				warning("VQAMovie::play: Unknown tag `%c%c%c%c'", char((tag >> 24) & 0xFF), char((tag >> 16) & 0xFF), char((tag >> 8) & 0xFF), char(tag & 0xFF));
-				_file->seek(size, SEEK_CUR);
+				_file->seek(size, Seek::CUR);
 			}
 		}
 	}

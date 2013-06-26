@@ -231,7 +231,7 @@ uint32 ResMan_v2::getRef(Common::String name, Common::String scriptname) {
 	bool found = false;
 	for (resNum = 0; !found && !rlFile.err() && !rlFile.eos(); resNum++) {
 		// Seek past metadata
-		rlFile.seek(14, SEEK_CUR);
+		rlFile.seek(14, Seek::CUR);
 
 		// Read the resource name
 		char readname[18];

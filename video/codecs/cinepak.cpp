@@ -102,7 +102,7 @@ const Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream 
 		if (stream->readUint16BE() == 0xFE00)
 			stream->readUint32BE();
 		else if ((stream->size() % _curFrame.length) == 0)
-			stream->seek(-2, SEEK_CUR);
+			stream->seek(-2, Seek::CUR);
 	}
 
 	if (!_curFrame.surface) {

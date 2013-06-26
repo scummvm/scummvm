@@ -1586,7 +1586,7 @@ void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 	Common::SeekableReadStream *file = _res->createReadStream("_POTIONS.PAL");
 	if (!file)
 		error("Couldn't load cauldron palette");
-	file->seek(state*18, SEEK_SET);
+	file->seek(state*18, Seek::SET);
 	_screen->getPalette(2).loadVGAPalette(*file, 241, 6);
 	delete file;
 	file = 0;
@@ -1758,11 +1758,11 @@ void KyraEngine_HoF::cauldronRndPaletteFade() {
 	Common::SeekableReadStream *file = _res->createReadStream("_POTIONS.PAL");
 	if (!file)
 		error("Couldn't load cauldron palette");
-	file->seek(index*18, SEEK_SET);
+	file->seek(index*18, Seek::SET);
 	_screen->getPalette(0).loadVGAPalette(*file, 241, 6);
 	snd_playSoundEffect(0x6A);
 	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);
-	file->seek(0, SEEK_SET);
+	file->seek(0, Seek::SET);
 	_screen->getPalette(0).loadVGAPalette(*file, 241, 6);
 	delete file;
 	_screen->fadePalette(_screen->getPalette(0), 0x1E, &_updateFunctor);

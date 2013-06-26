@@ -309,7 +309,7 @@ byte *Sword2Engine::fetchPsxBackground(uint32 location) {
 		return NULL;
 	}
 
-	file.seek(location * 4, SEEK_SET);
+	file.seek(location * 4, Seek::SET);
 	screenOffset = file.readUint32LE();
 
 	if (screenOffset == 0) { // We don't have screen data for this location number.
@@ -318,7 +318,7 @@ byte *Sword2Engine::fetchPsxBackground(uint32 location) {
 	}
 
 	// Get to the beginning of PSXScreensEntry
-	file.seek(screenOffset + ResHeader::size(), SEEK_SET);
+	file.seek(screenOffset + ResHeader::size(), Seek::SET);
 
 	buffer = (byte *)malloc(PSXScreensEntry::size());
 	file.read(buffer, PSXScreensEntry::size());
@@ -327,10 +327,10 @@ byte *Sword2Engine::fetchPsxBackground(uint32 location) {
 	header.read(buffer);
 	free(buffer);
 
-	file.seek(screenOffset + header.bgOffset + 4, SEEK_SET);
+	file.seek(screenOffset + header.bgOffset + 4, Seek::SET);
 	dataOffset = file.readUint32LE();
 
-	file.seek(screenOffset + header.bgOffset, SEEK_SET);
+	file.seek(screenOffset + header.bgOffset, Seek::SET);
 
 	totSize = header.bgSize + (dataOffset - header.bgOffset) + 8;
 	buffer = (byte *)malloc(totSize);
@@ -377,14 +377,14 @@ byte *Sword2Engine::fetchPsxParallax(uint32 location, uint8 level) {
 		return NULL;
 	}
 
-	file.seek(location * 4, SEEK_SET);
+	file.seek(location * 4, Seek::SET);
 	screenOffset = file.readUint32LE();
 
 	if (screenOffset == 0) // There is no screen here
 		return NULL;
 
 	// Get to the beginning of PSXScreensEntry
-	file.seek(screenOffset + ResHeader::size(), SEEK_SET);
+	file.seek(screenOffset + ResHeader::size(), Seek::SET);
 
 	buffer = (byte *)malloc(PSXScreensEntry::size());
 	file.read(buffer, PSXScreensEntry::size());
@@ -417,7 +417,7 @@ byte *Sword2Engine::fetchPsxParallax(uint32 location, uint8 level) {
 
 	totSize = plxSize + horTiles * verTiles * 4 + 8;
 
-	file.seek(screenOffset + plxOffset, SEEK_SET);
+	file.seek(screenOffset + plxOffset, Seek::SET);
 	buffer = (byte *)malloc(totSize);
 
 	// Insert parallax resolution information in the buffer,

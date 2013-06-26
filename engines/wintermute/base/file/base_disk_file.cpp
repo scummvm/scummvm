@@ -174,7 +174,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 				delete file;
 				return nullptr;
 			}
-			file->seek(dataOffset + prefixSize, SEEK_SET);
+			file->seek(dataOffset + prefixSize, Seek::SET);
 			file->read(compBuffer, compSize);
 
 			if (Common::uncompress(data, (unsigned long *)&uncompSize, compBuffer, compSize) != true) {
@@ -188,7 +188,7 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 			delete file;
 			return new Common::MemoryReadStream(data, uncompSize, DisposeAfterUse::YES);
 		} else {
-			file->seek(0, SEEK_SET);
+			file->seek(0, Seek::SET);
 			return file;
 		}
 

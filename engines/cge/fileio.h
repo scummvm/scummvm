@@ -92,7 +92,7 @@ public:
 	ResourceManager();
 	~ResourceManager();
 	uint16 read(void *buf, uint16 length);
-	bool seek(int32 offs, int whence = 0);
+	bool seek(int32 offs, Seek::Whence whence = Seek::SET);
 
 	BtKeypack *find(const char *key);
 	bool exist(const char *name);

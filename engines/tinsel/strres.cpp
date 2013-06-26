@@ -120,7 +120,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 
 		// get length of uncompressed file
 		textLen = f.size();
-		f.seek(0, SEEK_SET);	// Set to beginning of file
+		f.seek(0, Seek::SET);	// Set to beginning of file
 
 		if (g_textBuffer == NULL) {
 			// allocate a text buffer for the strings

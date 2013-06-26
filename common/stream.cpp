@@ -54,21 +54,21 @@ uint32 MemoryReadStream::read(void *dataPtr, uint32 dataSize) {
 	return dataSize;
 }
 
-bool MemoryReadStream::seek(int32 offs, int whence) {
+bool MemoryReadStream::seek(int32 offs, Seek::Whence whence) {
 	// Pre-Condition
 	assert(_pos <= _size);
 	switch (whence) {
-	case SEEK_END:
-		// SEEK_END works just like SEEK_SET, only 'reversed',
+	case Seek::END:
+		// Seek::END works just like Seek::SET, only 'reversed',
 		// i.e. from the end.
 		offs = _size + offs;
 		// Fall through
-	case SEEK_SET:
+	case Seek::SET:
 		_ptr = _ptrOrig + offs;
 		_pos = offs;
 		break;
 
-	case SEEK_CUR:
+	case Seek::CUR:
 		_ptr += offs;
 		_pos += offs;
 		break;
@@ -81,21 +81,21 @@ bool MemoryReadStream::seek(int32 offs, int whence) {
 	return true;	// FIXME: STREAM REWRITE
 }
 
-bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
+bool MemoryWriteStreamDynamic::seek(int32 offs, Seek::Whence whence) {
 	// Pre-Condition
 	assert(_pos <= _size);
 	switch (whence) {
-	case SEEK_END:
-		// SEEK_END works just like SEEK_SET, only 'reversed',
+	case Seek::END:
+		// Seek::END works just like Seek::SET, only 'reversed',
 		// i.e. from the end.
 		offs = _size + offs;
 		// Fall through
-	case SEEK_SET:
+	case Seek::SET:
 		_ptr = _data + offs;
 		_pos = offs;
 		break;
 
-	case SEEK_CUR:
+	case Seek::CUR:
 		_ptr += offs;
 		_pos += offs;
 		break;
@@ -160,7 +160,7 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 				// Reset the eos() flag since we successfully finished a line
 				clearErr();
 			} else if (c != LF) {
-				seek(-1, SEEK_CUR);
+				seek(-1, Seek::CUR);
 			}
 
 			// Treat CR & CR/LF as plain LF
@@ -216,18 +216,18 @@ SeekableSubReadStream::SeekableSubReadStream(SeekableReadStream *parentStream, u
 	_eos = false;
 }
 
-bool SeekableSubReadStream::seek(int32 offset, int whence) {
+bool SeekableSubReadStream::seek(int32 offset, Seek::Whence whence) {
 	assert(_pos >= _begin);
 	assert(_pos <= _end);
 
 	switch (whence) {
-	case SEEK_END:
+	case Seek::END:
 		offset = size() + offset;
 		// fallthrough
-	case SEEK_SET:
+	case Seek::SET:
 		_pos = _begin + offset;
 		break;
-	case SEEK_CUR:
+	case Seek::CUR:
 		_pos += offset;
 	}
 
@@ -242,7 +242,7 @@ bool SeekableSubReadStream::seek(int32 offset, int whence) {
 
 uint32 SafeSeekableSubReadStream::read(void *dataPtr, uint32 dataSize) {
 	// Make sure the parent stream is at the right position
-	seek(0, SEEK_CUR);
+	seek(0, Seek::CUR);
 
 	return SeekableSubReadStream::read(dataPtr, dataSize);
 }
@@ -368,7 +368,7 @@ public:
 	virtual int32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
 	virtual int32 size() const { return _parentStream->size(); }
 
-	virtual bool seek(int32 offset, int whence = SEEK_SET);
+	virtual bool seek(int32 offset, Seek::Whence whence = Seek::SET);
 };
 
 BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream)
@@ -376,20 +376,20 @@ BufferedSeekableReadStream::BufferedSeekableReadStream(SeekableReadStream *paren
 	_parentStream(parentStream) {
 }
 
-bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
+bool BufferedSeekableReadStream::seek(int32 offset, Seek::Whence whence) {
 	// If it is a "local" seek, we may get away with "seeking" around
 	// in the buffer only.
 	_eos = false;	// seeking always cancels EOS
 
 	int relOffset = 0;
 	switch (whence) {
-	case SEEK_SET:
+	case Seek::SET:
 		relOffset = offset - pos();
 		break;
-	case SEEK_CUR:
+	case Seek::CUR:
 		relOffset = offset;
 		break;
-	case SEEK_END:
+	case Seek::END:
 		relOffset = (size() + offset) - pos();
 		break;
 	default:
@@ -404,7 +404,7 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	} else {
 		// Seek was not local enough, so we reset the buffer and
 		// just seek normally in the parent stream.
-		if (whence == SEEK_CUR)
+		if (whence == Seek::CUR)
 			offset -= (_bufSize - _pos);
 		// We invalidate the buffer here. This assures that successive seeks
 		// do not have the chance to incorrectly think they seeked back into

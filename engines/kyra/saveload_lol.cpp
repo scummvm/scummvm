@@ -308,7 +308,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 		}
 
 		if (header.originalSave)
-			in.seek(next, SEEK_SET);
+			in.seek(next, Seek::SET);
 		else
 			l->monsterDifficulty =  in.readByte();
 	}

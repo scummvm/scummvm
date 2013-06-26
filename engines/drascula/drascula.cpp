@@ -1075,7 +1075,7 @@ char **DrasculaEngine::loadTexts(Common::File &in) {
 				res[i] = pos;
 			}
 		} else
-			in.seek(entryLen, SEEK_CUR);
+			in.seek(entryLen, Seek::CUR);
 	}
 
 	return res;

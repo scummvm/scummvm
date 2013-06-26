@@ -48,9 +48,9 @@ int AgiLoader_v2::loadDir(AgiDir *agid, const char *fname) {
 		return errBadFileOpen;
 	}
 
-	fp.seek(0, SEEK_END);
+	fp.seek(0, Seek::END);
 	flen = fp.pos();
-	fp.seek(0, SEEK_SET);
+	fp.seek(0, Seek::SET);
 
 	if ((mem = (uint8 *)malloc(flen + 32)) == NULL) {
 		fp.close();
@@ -145,7 +145,7 @@ uint8 *AgiLoader_v2::loadVolRes(struct AgiDir *agid) {
 
 	if (agid->offset != _EMPTY && fp.open(path)) {
 		debugC(3, kDebugLevelResources, "loading resource at offset %d", agid->offset);
-		fp.seek(agid->offset, SEEK_SET);
+		fp.seek(agid->offset, Seek::SET);
 		fp.read(&x, 5);
 		if ((sig = READ_BE_UINT16((uint8 *) x)) == 0x1234) {
 			agid->len = READ_LE_UINT16((uint8 *) x + 3);

@@ -38,34 +38,34 @@ class SeekableSubReadStreamTestSuite : public CxxTest::TestSuite {
 
 		TS_ASSERT_EQUALS(ssrs.pos(), 0);
 
-		ssrs.seek(1, SEEK_SET);
+		ssrs.seek(1, Seek::SET);
 		TS_ASSERT_EQUALS(ssrs.pos(), 1);
 		b = ssrs.readByte();
 		TS_ASSERT_EQUALS(b, 2);
 
-		ssrs.seek(5, SEEK_CUR);
+		ssrs.seek(5, Seek::CUR);
 		TS_ASSERT_EQUALS(ssrs.pos(), 7);
 		b = ssrs.readByte();
 		TS_ASSERT_EQUALS(b, 8);
 
-		ssrs.seek(-3, SEEK_CUR);
+		ssrs.seek(-3, Seek::CUR);
 		TS_ASSERT_EQUALS(ssrs.pos(), 5);
 		b = ssrs.readByte();
 		TS_ASSERT_EQUALS(b, 6);
 
-		ssrs.seek(0, SEEK_END);
+		ssrs.seek(0, Seek::END);
 		TS_ASSERT_EQUALS(ssrs.pos(), 8);
 		TS_ASSERT(!ssrs.eos());
 		b = ssrs.readByte();
 		TS_ASSERT(ssrs.eos());
 
-		ssrs.seek(-3, SEEK_END);
+		ssrs.seek(-3, Seek::END);
 		TS_ASSERT(!ssrs.eos());
 		TS_ASSERT_EQUALS(ssrs.pos(), 5);
 		b = ssrs.readByte();
 		TS_ASSERT_EQUALS(b, 6);
 
-		ssrs.seek(-8, SEEK_END);
+		ssrs.seek(-8, Seek::END);
 		TS_ASSERT_EQUALS(ssrs.pos(), 0);
 		b = ssrs.readByte();
 		TS_ASSERT_EQUALS(b, 1);

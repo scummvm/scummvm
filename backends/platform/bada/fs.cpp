@@ -57,7 +57,7 @@ public:
 
 	int32 pos() const;
 	int32 size() const;
-	bool seek(int32 offs, int whence = SEEK_SET);
+	bool seek(int32 offs, Seek::Whence whence = Seek::SET);
 	uint32 read(void *dataPtr, uint32 dataSize);
 
 private:
@@ -112,16 +112,16 @@ int32 BadaFileStream::size() const {
 	return length;
 }
 
-bool BadaFileStream::seek(int32 offs, int whence) {
+bool BadaFileStream::seek(int32 offs, Seek::Whence whence) {
 	bool result = false;
 	switch (whence) {
-	case SEEK_SET:
+	case Seek::SET:
 		// set from start of file
 		SetLastResult(file->Seek(FILESEEKPOSITION_BEGIN, offs));
 		result = (E_SUCCESS == GetLastResult());
 		break;
 
-	case SEEK_CUR:
+	case Seek::CUR:
 		// set relative to offs
 		if (bufferIndex < bufferLength && bufferIndex > (uint32)-offs) {
 			// re-position within the buffer
@@ -143,7 +143,7 @@ bool BadaFileStream::seek(int32 offs, int whence) {
 		}
 		break;
 
-	case SEEK_END:
+	case Seek::END:
 		// set relative to end - positive will increase the file size
 		SetLastResult(file->Seek(FILESEEKPOSITION_END, offs));
 		result = (E_SUCCESS == GetLastResult());

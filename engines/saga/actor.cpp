@@ -429,7 +429,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 				error("Actor::loadActorList walk[128] != 0");
 			}
 		}
-		//actorS.seek(128, SEEK_CUR);
+		//actorS.seek(128, Seek::CUR);
 		walkStepCount = actorS.readByte();//walkStepCount
 		if (walkStepCount) {
 			error("Actor::loadActorList walkStepCount != 0");
@@ -452,7 +452,7 @@ void Actor::loadActorList(int protagonistIdx, int actorCount, int actorsResource
 				error("Actor::loadActorList acv[%d] != 0", j);
 			}
 		}
-//		actorS.seek(6, SEEK_CUR); //action vars
+//		actorS.seek(6, Seek::CUR); //action vars
 	}
 
 	_actors[protagonistIdx]._flags |= kProtagonist | kExtended;

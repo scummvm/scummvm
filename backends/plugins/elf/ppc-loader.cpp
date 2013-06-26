@@ -37,7 +37,7 @@ bool PPCDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 		return false;
 	}
 
-	if (!_file->seek(offset, SEEK_SET) || _file->read(rel, size) != size) {
+	if (!_file->seek(offset, Seek::SET) || _file->read(rel, size) != size) {
 		warning("elfloader: Relocation table load failed.");
 		free(rel);
 		return false;

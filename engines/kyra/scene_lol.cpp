@@ -218,15 +218,15 @@ uint8 *LoLEngine::getLevelDecorationShapes(int shapeIndex) {
 	if (_decorationCount <= shapeIndex)
 		return 0;
 
-	_lvlShpFileHandle->seek(shapeIndex * 4 + 2, SEEK_SET);
+	_lvlShpFileHandle->seek(shapeIndex * 4 + 2, Seek::SET);
 	uint32 offs = _lvlShpFileHandle->readUint32LE() + 2;
-	_lvlShpFileHandle->seek(offs, SEEK_SET);
+	_lvlShpFileHandle->seek(offs, Seek::SET);
 
 	uint8 tmp[16];
 	_lvlShpFileHandle->read(tmp, 16);
 	uint16 size = _screen->getShapeSize(tmp);
 
-	_lvlShpFileHandle->seek(offs, SEEK_SET);
+	_lvlShpFileHandle->seek(offs, Seek::SET);
 	uint8 *res = new uint8[size];
 	_lvlShpFileHandle->read(res, size);
 

@@ -307,14 +307,14 @@ void SoundHE::setupHEMusicFile() {
 	Common::String buf(_vm->generateFilename(-4));
 
 	if (musicFile.open(buf) == true) {
-		musicFile.seek(4, SEEK_SET);
+		musicFile.seek(4, Seek::SET);
 		/*int total_size =*/ musicFile.readUint32BE();
-		musicFile.seek(16, SEEK_SET);
+		musicFile.seek(16, Seek::SET);
 		_heMusicTracks = musicFile.readUint32LE();
 		debug(5, "Total music tracks %d", _heMusicTracks);
 
 		int musicStart = (_vm->_game.heversion >= 80) ? 56 : 20;
-		musicFile.seek(musicStart, SEEK_SET);
+		musicFile.seek(musicStart, Seek::SET);
 
 		_heMusic = (HEMusic *)malloc((_heMusicTracks + 1) * sizeof(HEMusic));
 		for (i = 0; i < _heMusicTracks; i++) {
@@ -323,9 +323,9 @@ void SoundHE::setupHEMusicFile() {
 			_heMusic[i].size = musicFile.readUint32LE();
 
 			if (_vm->_game.heversion >= 80) {
-				musicFile.seek(+9, SEEK_CUR);
+				musicFile.seek(+9, Seek::CUR);
 			} else {
-				musicFile.seek(+13, SEEK_CUR);
+				musicFile.seek(+13, Seek::CUR);
 			}
 		}
 
@@ -563,7 +563,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			return;
 		}
 
-		musicFile.seek(music_offs, SEEK_SET);
+		musicFile.seek(music_offs, Seek::SET);
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
 		spoolPtr = _vm->_res->createResource(rtSpoolBuffer, heChannel, size);
@@ -787,9 +787,9 @@ void SoundHE::startHETalkSound(uint32 offset) {
 	_sfxMode |= 2;
 	_vm->_res->nukeResource(rtSound, 1);
 
-	file.seek(offset + 4, SEEK_SET);
+	file.seek(offset + 4, Seek::SET);
 	 size = file.readUint32BE();
-	file.seek(offset, SEEK_SET);
+	file.seek(offset, Seek::SET);
 
 	_vm->_res->createResource(rtSound, 1, size);
 	ptr = _vm->getResourceAddress(rtSound, 1);

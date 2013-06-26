@@ -479,7 +479,7 @@ void MidiPlayer_Midi::readMt32Patch(const byte *data, int size) {
 	_hasReverb = true;
 
 	// Skip reverb SysEx message
-	str->seek(11, SEEK_CUR);
+	str->seek(11, Seek::CUR);
 
 	// Read reverb data (stored vertically - patch #3117434)
 	for (int j = 0; j < 3; ++j) {
@@ -608,7 +608,7 @@ void MidiPlayer_Midi::readMt32DrvData() {
 
 		// Skip 2 extra 0 bytes in some drivers
 		if (f.readUint16LE() != 0)
-			f.seek(-2, SEEK_CUR);
+			f.seek(-2, Seek::CUR);
 
 		// Send before-SysEx text
 		sendMt32SysEx(0x200000, static_cast<Common::SeekableReadStream *>(&f), 20);

@@ -123,7 +123,7 @@ Common::SeekableReadStream *TlkArchive::createReadStreamForMember(const Common::
 	if (!parent)
 		return 0;
 
-	parent->seek(fileDesc[1], SEEK_SET);
+	parent->seek(fileDesc[1], Seek::SET);
 	const uint32 size = parent->readUint32LE();
 	const uint32 fileStart = fileDesc[1] + 4;
 
@@ -352,7 +352,7 @@ Common::Archive *ResLoaderPak::load(Common::ArchiveMemberPtr memberFile, Common:
 
 	PlainArchive::Entry linklistFile = result->getFileEntry("LINKLIST");
 	if (linklistFile.size != 0) {
-		stream.seek(linklistFile.offset, SEEK_SET);
+		stream.seek(linklistFile.offset, Seek::SET);
 
 		const uint32 magic = stream.readUint32BE();
 
@@ -388,13 +388,13 @@ bool ResLoaderInsMalcolm::checkFilename(Common::String filename) const {
 }
 
 bool ResLoaderInsMalcolm::isLoadable(const Common::String &filename, Common::SeekableReadStream &stream) const {
-	stream.seek(3, SEEK_SET);
+	stream.seek(3, Seek::SET);
 	int32 size = stream.readUint32LE();
 
 	if (size + 7 > stream.size())
 		return false;
 
-	stream.seek(size + 5, SEEK_SET);
+	stream.seek(size + 5, Seek::SET);
 	uint8 buffer[2];
 	stream.read(&buffer, 2);
 
@@ -408,7 +408,7 @@ Common::Archive *ResLoaderInsMalcolm::load(Common::ArchiveMemberPtr memberFile, 
 		return 0;
 
 	// thanks to eriktorbjorn for this code (a bit modified though)
-	stream.seek(3, SEEK_SET);
+	stream.seek(3, Seek::SET);
 
 	// first file is the index table
 	uint32 size = stream.readUint32LE();
@@ -431,14 +431,14 @@ Common::Archive *ResLoaderInsMalcolm::load(Common::ArchiveMemberPtr memberFile, 
 		}
 	}
 
-	stream.seek(3, SEEK_SET);
+	stream.seek(3, Seek::SET);
 
 	for (Common::List<Common::String>::iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		const uint32 fileSize = stream.readUint32LE();
 		const uint32 fileOffset = stream.pos();
 
 		result->addFileEntry(*file, PlainArchive::Entry(fileOffset, fileSize));
-		stream.seek(fileSize, SEEK_CUR);
+		stream.seek(fileSize, Seek::CUR);
 	}
 
 	return result.release();
@@ -957,7 +957,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 			break;
 		}
 
-		tmpFile->seek(pos, SEEK_SET);
+		tmpFile->seek(pos, Seek::SET);
 		uint8 fileId = tmpFile->readByte();
 		pos++;
 
@@ -967,7 +967,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 			if (fileId == currentFile) {
 				size -= containerOffset;
 				pos += containerOffset;
-				tmpFile->seek(containerOffset, SEEK_CUR);
+				tmpFile->seek(containerOffset, Seek::CUR);
 			} else {
 				size = size + 1 - pos;
 			}
@@ -1048,7 +1048,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 				}
 			} else {
 				if (inPart2) {
-					tmpFile->seek(1, SEEK_SET);
+					tmpFile->seek(1, Seek::SET);
 					tmpFile->read(inbuffer + inPart1, inPart2);
 					inPart2 = 0;
 
@@ -1083,7 +1083,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 			while (pos < size) {
 				uint8 hdr[43];
 				uint32 m = 0;
-				tmpFile->seek(pos, SEEK_SET);
+				tmpFile->seek(pos, Seek::SET);
 
 				if (pos + 42 > size) {
 					m = size - pos;
@@ -1095,7 +1095,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 							startFile = true;
 							break;
 						} else {
-							tmpFile->seek(pos, SEEK_SET);
+							tmpFile->seek(pos, Seek::SET);
 						}
 					}
 
@@ -1121,7 +1121,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 					*(hdr + 30 + filestrlen) = 0;
 					entryStr = Common::String((const char *)(hdr + 30));
 					pos += (kHeaderSize + filestrlen - m);
-					tmpFile->seek(pos, SEEK_SET);
+					tmpFile->seek(pos, Seek::SET);
 
 					outbuffer = new uint8[outsize];
 					if (!outbuffer)

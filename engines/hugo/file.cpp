@@ -156,13 +156,13 @@ void FileManager::readImage(const int objNum, Object *objPtr) {
 		return;
 
 	if (_vm->isPacked()) {
-		_objectsArchive.seek((uint32)objNum * sizeof(objBlock_t), SEEK_SET);
+		_objectsArchive.seek((uint32)objNum * sizeof(objBlock_t), Seek::SET);
 
 		objBlock_t objBlock;                        // Info on file within database
 		objBlock.objOffset = _objectsArchive.readUint32LE();
 		objBlock.objLength = _objectsArchive.readUint32LE();
 
-		_objectsArchive.seek(objBlock.objOffset, SEEK_SET);
+		_objectsArchive.seek(objBlock.objOffset, Seek::SET);
 	} else {
 		Common::String buf;
 		buf = _vm->_picDir + Common::String(_vm->_text->getNoun(objPtr->_nounIndex, 0)) + ".PIX";
@@ -274,7 +274,7 @@ SoundPtr FileManager::getSound(const int16 sound, uint16 *size) {
 	assert(soundPtr);
 
 	// Seek to data and read it
-	fp.seek(_soundHdr[sound]._offset, SEEK_SET);
+	fp.seek(_soundHdr[sound]._offset, Seek::SET);
 	if (fp.read(soundPtr, _soundHdr[sound]._size) != _soundHdr[sound]._size)
 		error("Wrong sound file format");
 
@@ -577,7 +577,7 @@ void FileManager::readUIFItem(const int16 id, byte *buf) {
 
 	// Seek to data
 	UifHdr *_UIFHeaderPtr = getUIFHeader((Uif)id);
-	ip.seek(_UIFHeaderPtr->_offset, SEEK_SET);
+	ip.seek(_UIFHeaderPtr->_offset, Seek::SET);
 
 	// We support pcx images and straight data
 	Seq *dummySeq;                                // Dummy Seq for image data

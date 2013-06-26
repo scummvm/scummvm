@@ -431,7 +431,7 @@ uint8 *SkyCompact::createResetData(uint16 gameVersion) {
 			}
 			return (uint8 *)resetBuf;
 		} else
-			_cptFile->seek(diffFields * 2 * sizeof(uint16), SEEK_CUR);
+			_cptFile->seek(diffFields * 2 * sizeof(uint16), Seek::CUR);
 	}
 	free(resetBuf);
 	error("Unable to find reset data for Beneath a Steel Sky Version 0.0%03d", gameVersion);

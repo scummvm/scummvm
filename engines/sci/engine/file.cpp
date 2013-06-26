@@ -426,20 +426,20 @@ uint32 VirtualIndexFile::readLine(char *buffer, uint32 size) {
 	return bytesRead;
 }
 
-bool VirtualIndexFile::seek(int32 offset, int whence) {
+bool VirtualIndexFile::seek(int32 offset, Seek::Whence whence) {
 	uint32 startPos = _ptr - _buffer;
 	assert(offset >= 0);
 
 	switch (whence) {
-	case SEEK_CUR:
+	case Seek::CUR:
 		assert(startPos + offset < _bufferSize);
 		_ptr += offset;
 		break;
-	case SEEK_SET:
+	case Seek::SET:
 		assert(offset < (int32)_bufferSize);
 		_ptr = _buffer + offset;
 		break;
-	case SEEK_END:
+	case Seek::END:
 		assert((int32)_bufferSize - offset >= 0);
 		_ptr = _buffer + (_bufferSize - offset);
 		break;

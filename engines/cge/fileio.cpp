@@ -102,7 +102,7 @@ uint16 ResourceManager::XCrypt(void *buf, uint16 length) {
 	return kCryptSeed;
 }
 
-bool ResourceManager::seek(int32 offs, int whence) {
+bool ResourceManager::seek(int32 offs, Seek::Whence whence) {
 	return _datFile->seek(offs, whence);
 }
 
@@ -127,7 +127,7 @@ BtPage *ResourceManager::getPage(int level, uint16 pageId) {
 		// In the original, there was a check verifying if the
 		// purpose was to write a new file. This should only be
 		// to create a new file, thus it was removed.
-		_catFile->seek(pageId * kBtSize, SEEK_SET);
+		_catFile->seek(pageId * kBtSize, Seek::SET);
 
 		// Read in the page
 		byte buffer[kBtSize];

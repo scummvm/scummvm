@@ -211,7 +211,7 @@ void readFromPart(int16 idx, byte *dataPtr, uint32 maxSize) {
 	assert(maxSize >= g_cine->_partBuffer[idx].packedSize);
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
-	g_cine->_partFileHandle.seek(g_cine->_partBuffer[idx].offset, SEEK_SET);
+	g_cine->_partFileHandle.seek(g_cine->_partBuffer[idx].offset, Seek::SET);
 	g_cine->_partFileHandle.read(dataPtr, g_cine->_partBuffer[idx].packedSize);
 }
 

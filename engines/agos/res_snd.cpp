@@ -121,13 +121,13 @@ void AGOSEngine::loadMusic(uint16 music) {
 
 	stopMusic();
 
-	_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+	_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], Seek::SET);
 	_gameFile->read(buf, 4);
 	if (!memcmp(buf, "FORM", 4)) {
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], Seek::SET);
 		_midi->loadXMIDI(_gameFile);
 	} else {
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
+		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], Seek::SET);
 		_midi->loadMultipleSMF(_gameFile);
 	}
 
@@ -244,13 +244,13 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 
 		_midi->setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
 
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
+		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], Seek::SET);
 		_gameFile->read(buf, 4);
 		if (!memcmp(buf, "GMF\x1", 4)) {
-			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
+			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], Seek::SET);
 			_midi->loadSMF(_gameFile, music);
 		} else {
-			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
+			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], Seek::SET);
 			_midi->loadMultipleSMF(_gameFile);
 		}
 
@@ -322,12 +322,12 @@ void AGOSEngine::playSting(uint16 soundId) {
 	if (!mus_file.isOpen())
 		error("playSting: Can't load sound effect from '%s'", filename);
 
-	mus_file.seek(soundId * 2, SEEK_SET);
+	mus_file.seek(soundId * 2, Seek::SET);
 	mus_offset = mus_file.readUint16LE();
 	if (mus_file.err())
 		error("playSting: Can't read sting %d offset", soundId);
 
-	mus_file.seek(mus_offset, SEEK_SET);
+	mus_file.seek(mus_offset, Seek::SET);
 	_midi->loadSMF(&mus_file, soundId, true);
 	_midi->startTrack(0);
 }

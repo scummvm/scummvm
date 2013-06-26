@@ -884,7 +884,7 @@ void SmushPlayer::handleFrame(int32 frameSize, Common::SeekableReadStream &b) {
 		}
 
 		frameSize -= subSize + 8;
-		b.seek(subOffset + subSize, SEEK_SET);
+		b.seek(subOffset + subSize, Seek::SET);
 		if (subSize & 1) {
 			b.skip(1);
 			frameSize--;
@@ -990,7 +990,7 @@ void SmushPlayer::parseNextFrame() {
 				const int32 subOffset = _base->pos();
 				assert(subType == MKTAG('A','H','D','R'));
 				handleAnimHeader(subSize, *_base);
-				_base->seek(subOffset + subSize, SEEK_SET);
+				_base->seek(subOffset + subSize, Seek::SET);
 
 				_middleAudio = true;
 				_seekPos -= 8;
@@ -1004,7 +1004,7 @@ void SmushPlayer::parseNextFrame() {
 			_skipPalette = true;
 		}
 
-		_base->seek(_seekPos + 8, SEEK_SET);
+		_base->seek(_seekPos + 8, Seek::SET);
 		_frame = _seekFrame;
 		_startFrame = _frame;
 		_startTime = _vm->_system->getMillis();
@@ -1037,7 +1037,7 @@ void SmushPlayer::parseNextFrame() {
 		error("Unknown Chunk found at %x: %s, %d", subOffset, tag2str(subType), subSize);
 	}
 
-	_base->seek(subOffset + subSize, SEEK_SET);
+	_base->seek(subOffset + subSize, Seek::SET);
 
 	if (_insanity)
 		_vm->_sound->processSound();

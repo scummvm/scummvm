@@ -48,12 +48,12 @@ bool checkKyraDat(Common::SeekableReadStream *file) {
 
 	uint32 size = file->size() - 16;
 	uint8 digest[16];
-	file->seek(size, SEEK_SET);
+	file->seek(size, Seek::SET);
 	if (file->read(digest, 16) != 16)
 		return false;
 
 	uint8 digestCalc[16];
-	file->seek(0, SEEK_SET);
+	file->seek(0, Seek::SET);
 	if (!Common::computeStreamMD5(*file, digestCalc, size))
 		return false;
 
@@ -522,8 +522,8 @@ bool StaticResource::loadHoFSequenceData(Common::SeekableReadStream &stream, voi
 	size = sizeof(HoFSeqData) + numSeq * (sizeof(HoFSequence) + 28);
 
 	for (int i = 0; i < numSeq; i++) {
-		stream.seek(offset, SEEK_SET); offset += 2;
-		stream.seek(stream.readUint16BE(), SEEK_SET);
+		stream.seek(offset, Seek::SET); offset += 2;
+		stream.seek(stream.readUint16BE(), Seek::SET);
 
 		tmp_s[i].flags = stream.readUint16BE();
 		tmp_s[i].wsaFile = new char[14];
@@ -542,14 +542,14 @@ bool StaticResource::loadHoFSequenceData(Common::SeekableReadStream &stream, voi
 		tmp_s[i].timeout = stream.readUint16BE();
 	}
 
-	stream.seek(offset, SEEK_SET); offset += 2;
+	stream.seek(offset, Seek::SET); offset += 2;
 	int numSeqN = stream.readUint16BE();
 	HoFNestedSequence *tmp_n = new HoFNestedSequence[numSeqN];
 	size += (numSeqN * (sizeof(HoFNestedSequence) + 14));
 
 	for (int i = 0; i < numSeqN; i++) {
-		stream.seek(offset, SEEK_SET); offset += 2;
-		stream.seek(stream.readUint16BE(), SEEK_SET);
+		stream.seek(offset, Seek::SET); offset += 2;
+		stream.seek(stream.readUint16BE(), Seek::SET);
 
 		tmp_n[i].flags = stream.readUint16BE();
 		tmp_n[i].wsaFile = new char[14];
@@ -564,7 +564,7 @@ bool StaticResource::loadHoFSequenceData(Common::SeekableReadStream &stream, voi
 		tmp_n[i].fadeOutTransitionType = stream.readUint16BE();
 
 		if (ctrlOffs) {
-			stream.seek(ctrlOffs, SEEK_SET);
+			stream.seek(ctrlOffs, Seek::SET);
 			int num_c = stream.readByte();
 			FrameControl *tmp_f = new FrameControl[num_c];
 

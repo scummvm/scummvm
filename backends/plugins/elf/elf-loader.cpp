@@ -144,7 +144,7 @@ bool DLObject::readProgramHeaders(Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, Elf32_Half
 	assert(_file);
 
 	// Read program header
-	if (!_file->seek(ehdr->e_phoff + sizeof(*phdr) * num, SEEK_SET) ||
+	if (!_file->seek(ehdr->e_phoff + sizeof(*phdr) * num, Seek::SET) ||
 			_file->read(phdr, sizeof(*phdr)) != sizeof(*phdr)) {
 		warning("elfloader: Program header load failed.");
 		return false;
@@ -186,7 +186,7 @@ bool DLObject::loadSegment(Elf32_Phdr *phdr) {
 	debug(2, "elfloader: Reading the segment into memory");
 
 	// Read the segment into memory
-	if (!_file->seek(phdr->p_offset, SEEK_SET) ||
+	if (!_file->seek(phdr->p_offset, Seek::SET) ||
 			_file->read(_segment, phdr->p_filesz) != phdr->p_filesz) {
 		warning("elfloader: Segment load failed.");
 		return false;
@@ -209,7 +209,7 @@ Elf32_Shdr * DLObject::loadSectionHeaders(Elf32_Ehdr *ehdr) {
 	}
 
 	// Read from file into section headers
-	if (!_file->seek(ehdr->e_shoff, SEEK_SET) ||
+	if (!_file->seek(ehdr->e_shoff, Seek::SET) ||
 			_file->read(shdr, ehdr->e_shnum * sizeof(*shdr)) !=
 			ehdr->e_shnum * sizeof(*shdr)) {
 		warning("elfloader: Section headers load failed.");
@@ -258,7 +258,7 @@ int DLObject::loadSymbolTable(Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	}
 
 	// Read symbol table into memory
-	if (!_file->seek(shdr[_symtab_sect].sh_offset, SEEK_SET) ||
+	if (!_file->seek(shdr[_symtab_sect].sh_offset, Seek::SET) ||
 			_file->read(_symtab, shdr[_symtab_sect].sh_size) !=
 			shdr[_symtab_sect].sh_size) {
 		warning("elfloader: Symbol table load failed.");
@@ -286,7 +286,7 @@ bool DLObject::loadStringTable(Elf32_Shdr *shdr) {
 	}
 
 	// Read string table into memory
-	if (!_file->seek(shdr[string_sect].sh_offset, SEEK_SET) ||
+	if (!_file->seek(shdr[string_sect].sh_offset, Seek::SET) ||
 			_file->read(_strtab, shdr[string_sect].sh_size) !=
 			shdr[string_sect].sh_size) {
 		warning("elfloader: Symbol table strings load failed.");

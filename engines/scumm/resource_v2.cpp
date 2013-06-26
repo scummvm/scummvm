@@ -71,7 +71,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 		}
 	}
 
-	_fileHandle->seek(0, SEEK_SET);
+	_fileHandle->seek(0, Seek::SET);
 
 	readMAXS(0);
 	allocateArrays();
@@ -86,7 +86,7 @@ void ScummEngine_v2::readClassicIndexFile() {
 	for (i = 0; i < _numRooms; i++) {
 		_res->_types[rtRoom][i]._roomno = i;
 	}
-	_fileHandle->seek(_numRooms, SEEK_CUR);
+	_fileHandle->seek(_numRooms, Seek::CUR);
 	for (i = 0; i < _numRooms; i++) {
 		_res->_types[rtRoom][i]._roomoffs = _fileHandle->readUint16LE();
 		if (_res->_types[rtRoom][i]._roomoffs == 0xFFFF)
@@ -124,17 +124,17 @@ void ScummEngine_v2::readClassicIndexFile() {
 void ScummEngine_v2::readEnhancedIndexFile() {
 
 	_numGlobalObjects = _fileHandle->readUint16LE();
-	_fileHandle->seek(_numGlobalObjects, SEEK_CUR);
+	_fileHandle->seek(_numGlobalObjects, Seek::CUR);
 	_numRooms = _fileHandle->readByte();
-	_fileHandle->seek(_numRooms * 3, SEEK_CUR);
+	_fileHandle->seek(_numRooms * 3, Seek::CUR);
 	_numCostumes = _fileHandle->readByte();
-	_fileHandle->seek(_numCostumes * 3, SEEK_CUR);
+	_fileHandle->seek(_numCostumes * 3, Seek::CUR);
 	_numScripts = _fileHandle->readByte();
-	_fileHandle->seek(_numScripts * 3, SEEK_CUR);
+	_fileHandle->seek(_numScripts * 3, Seek::CUR);
 	_numSounds = _fileHandle->readByte();
 
 	_fileHandle->clearErr();
-	_fileHandle->seek(0, SEEK_SET);
+	_fileHandle->seek(0, Seek::SET);
 
 	readMAXS(0);
 	allocateArrays();

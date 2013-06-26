@@ -195,7 +195,7 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			ok = readDRI();
 			break;
 		case 0xFE: // Comment
-			_stream->seek(_stream->readUint16BE() - 2, SEEK_CUR);
+			_stream->seek(_stream->readUint16BE() - 2, Seek::CUR);
 			break;
 		default: { // Unknown marker
 			uint16 size = _stream->readUint16BE();
@@ -203,7 +203,7 @@ bool JPEGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			if ((marker & 0xE0) != 0xE0)
 				warning("JPEG: Unknown marker %02X, skipping %d bytes", marker, size - 2);
 
-			_stream->seek(size - 2, SEEK_CUR);
+			_stream->seek(size - 2, Seek::CUR);
 		}
 		}
 	}
@@ -237,7 +237,7 @@ bool JPEGDecoder::readJFIF() {
 	byte thumbW = _stream->readByte();
 	byte thumbH = _stream->readByte();
 
-	_stream->seek(thumbW * thumbH * 3, SEEK_CUR); // Ignore thumbnail
+	_stream->seek(thumbW * thumbH * 3, Seek::CUR); // Ignore thumbnail
 	if (length != (thumbW * thumbH * 3) + 16) {
 		warning("JPEGDecoder::readJFIF() length mismatch");
 		return false;

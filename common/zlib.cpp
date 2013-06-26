@@ -165,14 +165,14 @@ public:
 		assert(w != 0);
 
 		// Verify file header is correct
-		w->seek(0, SEEK_SET);
+		w->seek(0, Seek::SET);
 		uint16 header = w->readUint16BE();
 		assert(header == 0x1F8B ||
 		       ((header & 0x0F00) == 0x0800 && header % 31 == 0));
 
 		if (header == 0x1F8B) {
 			// Retrieve the original file size
-			w->seek(-4, SEEK_END);
+			w->seek(-4, Seek::END);
 			_origSize = w->readUint32LE();
 		} else {
 			// Original size not available in zlib format
@@ -180,7 +180,7 @@ public:
 			_origSize = knownSize;
 		}
 		_pos = 0;
-		w->seek(0, SEEK_SET);
+		w->seek(0, Seek::SET);
 		_eos = false;
 
 		// Adding 32 to windowBits indicates to zlib that it is supposed to
@@ -239,15 +239,19 @@ public:
 	int32 size() const {
 		return _origSize;
 	}
-	bool seek(int32 offset, int whence = SEEK_SET) {
+	bool seek(int32 offset, Seek::Whence whence = Seek::SET) {
 		int32 newPos = 0;
-		assert(whence != SEEK_END);	// SEEK_END not supported
+		assert(whence != Seek::END);	// Seek::END not supported
 		switch (whence) {
-		case SEEK_SET:
+		case Seek::SET:
 			newPos = offset;
 			break;
-		case SEEK_CUR:
+		case Seek::CUR:
 			newPos = _pos + offset;
+			break;
+		case Seek::END:
+			// not supported
+			break;
 		}
 
 		assert(newPos >= 0);
@@ -260,7 +264,7 @@ public:
 			warning("Backward seeking in GZipReadStream detected");
 #endif
 			_pos = 0;
-			_wrapped->seek(0, SEEK_SET);
+			_wrapped->seek(0, Seek::SET);
 			_zlibErr = inflateReset(&_stream);
 			if (_zlibErr != Z_OK)
 				return false;	// FIXME: STREAM REWRITE
@@ -397,7 +401,7 @@ SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, ui
 		bool isCompressed = (header == 0x1F8B ||
 				     ((header & 0x0F00) == 0x0800 &&
 				      header % 31 == 0));
-		toBeWrapped->seek(-2, SEEK_CUR);
+		toBeWrapped->seek(-2, Seek::CUR);
 		if (isCompressed) {
 #if defined(USE_ZLIB)
 			return new GZipReadStream(toBeWrapped, knownSize);

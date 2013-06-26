@@ -827,7 +827,7 @@ void GfxMgr::setAGIPal(int p0) {
 	//Chunk1 is the same as the chunk0
 
 	//Chunk2 chunk holds colors 8-15
-	agipal.seek(24, SEEK_CUR);
+	agipal.seek(24, Seek::CUR);
 	agipal.read(&_agipalPalette[24], 24);
 
 	//Chunk3 is the same as the chunk2

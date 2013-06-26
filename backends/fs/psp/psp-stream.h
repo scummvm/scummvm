@@ -80,7 +80,7 @@ public:
 
 	virtual int32 pos() const;
 	virtual int32 size() const;
-	virtual bool seek(int32 offs, int whence = SEEK_SET);
+	virtual bool seek(int32 offs, Seek::Whence whence = Seek::SET);
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 
 	// for suspending

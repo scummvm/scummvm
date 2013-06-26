@@ -200,7 +200,7 @@ int ObjectV3::load(Common::SeekableReadStream &source) {
 		byte count2 = source.readByte();
 		_objSize = (count1 + count2) * 2;
 	}
-	source.seek(-6, SEEK_CUR);
+	source.seek(-6, Seek::CUR);
 	_objSize += 6;
 	_objData = new byte[_objSize];
 	source.read(_objData, _objSize);

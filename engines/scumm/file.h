@@ -43,7 +43,7 @@ public:
 
 	virtual int32 pos() const = 0;
 	virtual int32 size() const = 0;
-	virtual bool seek(int32 offs, int whence = SEEK_SET) = 0;
+	virtual bool seek(int32 offs, Seek::Whence whence = Seek::SET) = 0;
 
 // Unused
 #if 0
@@ -72,7 +72,7 @@ public:
 	bool eos() const;
 	int32 pos() const;
 	int32 size() const;
-	bool seek(int32 offs, int whence = SEEK_SET);
+	bool seek(int32 offs, Seek::Whence whence = Seek::SET);
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 
@@ -116,7 +116,7 @@ public:
 	bool eos() const { return _stream->eos(); }
 	int32 pos() const { return _stream->pos(); }
 	int32 size() const { return _stream->size(); }
-	bool seek(int32 offs, int whence = SEEK_SET) { return _stream->seek(offs, whence); }
+	bool seek(int32 offs, Seek::Whence whence = Seek::SET) { return _stream->seek(offs, whence); }
 	uint32 read(void *dataPtr, uint32 dataSize);
 };
 

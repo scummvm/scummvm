@@ -62,7 +62,7 @@ void Mult_v1::loadMult(int16 resId) {
 		_multData->animLoaded[i] = false;
 	}
 
-	for (int i = 0; i < _multData->staticCount; i++, data.seek(14, SEEK_CUR)) {
+	for (int i = 0; i < _multData->staticCount; i++, data.seek(14, Seek::CUR)) {
 		_multData->staticIndices[i] = _vm->_scenery->loadStatic(1);
 
 		if (_multData->staticIndices[i] >= 100) {
@@ -71,7 +71,7 @@ void Mult_v1::loadMult(int16 resId) {
 		}
 	}
 
-	for (int i = 0; i < _multData->animCount; i++, data.seek(14, SEEK_CUR)) {
+	for (int i = 0; i < _multData->animCount; i++, data.seek(14, Seek::CUR)) {
 		_multData->animIndices[i] = _vm->_scenery->loadAnim(1);
 
 		if (_multData->animIndices[i] >= 100) {
@@ -152,7 +152,7 @@ void Mult_v1::loadMult(int16 resId) {
 		_multData->sndKeys[i].repCount = data.readSint16LE();
 		_multData->sndKeys[i].soundIndex = -1;
 		_multData->sndKeys[i].resId = -1;
-		data.seek(26, SEEK_CUR);
+		data.seek(26, Seek::CUR);
 		switch (_multData->sndKeys[i].cmd) {
 		case 1:
 		case 4:

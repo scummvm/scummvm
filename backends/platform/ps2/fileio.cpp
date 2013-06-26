@@ -452,8 +452,8 @@ PS2FileStream::~PS2FileStream() {
 	delete _handle;
 }
 
-bool PS2FileStream::seek(int32 offs, int whence) {
-	return _handle->seek(offs, whence) == 0;
+bool PS2FileStream::seek(int32 offs, Seek::Whence whence) {
+	return _handle->seek(offs, (int)whence) == 0;
 }
 
 int32 PS2FileStream::pos() const {

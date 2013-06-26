@@ -63,7 +63,7 @@ KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekabl
 			if (in->size() < descriptionSize[i] + 6)
 				continue;
 
-			in->seek(0, SEEK_SET);
+			in->seek(0, Seek::SET);
 			in->read(descriptionBuffer, descriptionSize[i]);
 			descriptionBuffer[descriptionSize[i]] = 0;
 
@@ -89,7 +89,7 @@ KyraEngine_v1::ReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekabl
 				saveOk = true;
 				header.description = descriptionBuffer;
 				header.gameID = GI_LOL;
-				in->seek(6, SEEK_CUR);
+				in->seek(6, Seek::CUR);
 				break;
 			}
 		}

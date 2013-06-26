@@ -1123,7 +1123,7 @@ void Script::run(const GPL2Program &program, uint16 offset) {
 			debugC(3, kDraciBytecodeDebugLevel,
 				"Jumping from offset %d to %d (%d bytes)",
 				reader.pos(), reader.pos() + _jump, _jump);
-			reader.seek(_jump, SEEK_CUR);
+			reader.seek(_jump, Seek::CUR);
 		}
 
 		// Reset jump

@@ -279,7 +279,7 @@ Common::SeekableReadStream *AGOSEngine::openTablesFile_gme(const char *filename)
 	res = atoi(filename + 6) + _tableIndexBase - 1;
 	offs = _gameOffsetsPtr[res];
 
-	_gameFile->seek(offs, SEEK_SET);
+	_gameFile->seek(offs, Seek::SET);
 	return _gameFile;
 }
 

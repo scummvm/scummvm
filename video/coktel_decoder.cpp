@@ -64,17 +64,17 @@ CoktelDecoder::CoktelDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundT
 CoktelDecoder::~CoktelDecoder() {
 }
 
-bool CoktelDecoder::evaluateSeekFrame(int32 &frame, int whence) const {
+bool CoktelDecoder::evaluateSeekFrame(int32 &frame, Seek::Whence whence) const {
 	if (!isVideoLoaded())
 		// Nothing to do
 		return false;
 
 	// Find the frame to which to seek
-	if      (whence == SEEK_CUR)
+	if      (whence == Seek::CUR)
 		frame += _curFrame;
-	else if (whence == SEEK_END)
+	else if (whence == Seek::END)
 		frame = _frameCount - frame - 1;
-	else if (whence == SEEK_SET)
+	else if (whence == Seek::SET)
 		frame--;
 	else
 		return false;
@@ -711,7 +711,7 @@ bool PreIMDDecoder::reloadStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-bool PreIMDDecoder::seek(int32 frame, int whence, bool restart) {
+bool PreIMDDecoder::seek(int32 frame, Seek::Whence whence, bool restart) {
 	if (!evaluateSeekFrame(frame, whence))
 		return false;
 
@@ -918,7 +918,7 @@ bool IMDDecoder::reloadStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-bool IMDDecoder::seek(int32 frame, int whence, bool restart) {
+bool IMDDecoder::seek(int32 frame, Seek::Whence whence, bool restart) {
 	if (!evaluateSeekFrame(frame, whence))
 		return false;
 
@@ -1615,7 +1615,7 @@ bool VMDDecoder::reloadStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-bool VMDDecoder::seek(int32 frame, int whence, bool restart) {
+bool VMDDecoder::seek(int32 frame, Seek::Whence whence, bool restart) {
 	if (!evaluateSeekFrame(frame, whence))
 		return false;
 
