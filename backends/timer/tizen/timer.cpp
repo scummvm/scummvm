@@ -25,7 +25,7 @@
 #include "backends/timer/tizen/timer.h"
 
 //
-// TimerSlot
+// TimerSlot - an event driven thread
 //
 TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback, uint32 interval, void *refCon) :
 	_timer(0),
@@ -35,6 +35,7 @@ TimerSlot::TimerSlot(Common::TimerManager::TimerProc callback, uint32 interval, 
 }
 
 TimerSlot::~TimerSlot() {
+	delete _timer;
 }
 
 bool TimerSlot::OnStart() {
@@ -44,7 +45,7 @@ bool TimerSlot::OnStart() {
 		return false;
 	}
 
-	if (IsFailed(_timer->Start(_interval))) {
+	if (IsFailed(_timer->StartAsRepeatable(_interval))) {
 		AppLog("failed to start timer");
 		return false;
 	}
@@ -64,7 +65,6 @@ void TimerSlot::OnStop() {
 
 void TimerSlot::OnTimerExpired(Timer &timer) {
 	_callback(_refCon);
-	timer.Start(_interval);
 }
 
 //
@@ -74,9 +74,11 @@ TizenTimerManager::TizenTimerManager() {
 }
 
 TizenTimerManager::~TizenTimerManager() {
-	for (Common::List<TimerSlot*>::iterator it = _timers.begin(); it != _timers.end(); ) {
+	for (Common::List<TimerSlot *>::iterator it = _timers.begin(); it != _timers.end(); ) {
 		TimerSlot *slot = (*it);
-		slot->Stop();
+		slot->Quit();
+		slot->Join();
+		delete slot;
 		it = _timers.erase(it);
 	}
 }
@@ -101,10 +103,12 @@ bool TizenTimerManager::installTimerProc(TimerProc proc, int32 interval, void *r
 }
 
 void TizenTimerManager::removeTimerProc(TimerProc proc) {
-	for (Common::List<TimerSlot*>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
+	for (Common::List<TimerSlot *>::iterator it = _timers.begin(); it != _timers.end(); ++it) {
 		TimerSlot *slot = (*it);
 		if (slot->_callback == proc) {
-			slot->Stop();
+			slot->Quit();
+			slot->Join();
+			delete slot;
 			it = _timers.erase(it);
 		}
 	}

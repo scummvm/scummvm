@@ -217,6 +217,7 @@ struct TizenAppFrame : Frame {
 			Canvas *canvas = GetCanvasN();
 			canvas->SetBackgroundColor(Color::GetColor(COLOR_ID_BLACK));
 			canvas->Clear();
+			delete canvas;
 		}
 		return E_SUCCESS;
 	}
@@ -371,28 +372,28 @@ void TizenSystem::destroyBackend() {
 	closeAudio();
 
 	delete _graphicsManager;
-	_graphicsManager = 0;
+	_graphicsManager = NULL;
 
 	delete _savefileManager;
-	_savefileManager = 0;
+	_savefileManager = NULL;
 
 	delete _fsFactory;
-	_fsFactory = 0;
+	_fsFactory = NULL;
 
 	delete _mixer;
-	_mixer = 0;
+	_mixer = NULL;
 
 	delete _audiocdManager;
-	_audiocdManager = 0;
+	_audiocdManager = NULL;
 
 	delete _timerManager;
-	_timerManager = 0;
+	_timerManager = NULL;
 
 	delete _eventManager;
-	_eventManager = 0;
+	_eventManager = NULL;
 
 	delete _mutexManager;
-	_mutexManager = 0;
+	_mutexManager = NULL;
 }
 
 bool TizenSystem::pollEvent(Common::Event &event) {
@@ -468,17 +469,17 @@ Common::WriteStream *TizenSystem::createConfigWriteStream() {
 
 void TizenSystem::closeAudio() {
 	if (_audioThread) {
-		_audioThread->Stop();
+		_audioThread->Quit();
 		_audioThread->Join();
 		delete _audioThread;
-		_audioThread = 0;
+		_audioThread = NULL;
 	}
 }
 
 void TizenSystem::closeGraphics() {
 	if (_graphicsManager) {
 		delete _graphicsManager;
-		_graphicsManager = 0;
+		_graphicsManager = NULL;
 	}
 }
 

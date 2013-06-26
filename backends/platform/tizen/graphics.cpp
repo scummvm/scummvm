@@ -92,7 +92,11 @@ bool TizenGraphicsManager::hasFeature(OSystem::Feature f) {
 }
 
 void TizenGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-	OpenGLGraphicsManager::setFeatureState(f, enable);
+	if (f == OSystem::kFeatureVirtualKeyboard && enable) {
+		_appForm->showKeypad();
+	} else {
+		OpenGLGraphicsManager::setFeatureState(f, enable);
+	}
 }
 
 void TizenGraphicsManager::setReady() {

@@ -48,7 +48,7 @@ class TizenAppForm :
 	public Controls::Form,
 	public IRunnable,
 	public IOrientationEventListener,
-  public ITouchEventListener {
+	public ITouchEventListener {
 
 public:
 	TizenAppForm();
@@ -60,6 +60,7 @@ public:
 	bool isStarting() { return _state == kInitState; }
 	void pushKey(Common::KeyCode keycode);
 	void exitSystem();
+	void showKeypad();
 
 private:
 	Tizen::Base::Object *Run();
@@ -94,7 +95,6 @@ private:
 	void setButtonShortcut();
 	void setMessage(const char *message);
 	void setShortcut();
-	void showKeypad();
 	void invokeShortcut();
 	int  getTouchCount();
 	bool gameActive() { return _state == kActiveState && g_engine != NULL && !g_engine->isPaused(); }

@@ -329,13 +329,15 @@ void TizenAppForm::invokeShortcut() {
 	case kShowKeypad:
 		showKeypad();
 		break;
-  }
+	}
 }
 
 void TizenAppForm::showKeypad() {
 	// display the soft keyboard
-	_buttonState = kLeftButton;
-	pushKey(Common::KEYCODE_F7);
+	if (_state == kActiveState) {
+		_buttonState = kLeftButton;
+		pushKey(Common::KEYCODE_F7);
+	}
 }
 
 int TizenAppForm::getTouchCount() {

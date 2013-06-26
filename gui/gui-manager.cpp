@@ -332,9 +332,6 @@ void GuiManager::runLoop() {
 					_lastMousePosition.time = _system->getMillis();
 				}
 
-#if !defined(TIZEN)
-				tooltipCheck = true;
-#endif
 				break;
 			// We don't distinguish between mousebuttons (for now at least)
 			case Common::EVENT_LBUTTONDOWN:
