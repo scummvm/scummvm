@@ -105,7 +105,8 @@ Common::Error NeverhoodEngine::run() {
 	_gameModule = new GameModule(this);
 	
 	_isSaveAllowed = true;
-	
+	_updateSound = true;
+
 	if (isDemo()) {
 		// Adjust this navigation list for the demo version
 		NavigationList *navigationList = _staticData->getNavigationList(0x004B67E8);
@@ -186,8 +187,12 @@ void NeverhoodEngine::mainLoop() {
 			_screen->update();
 			nextFrameTime = _screen->getNextFrameTime();
 		};
-		_soundMan->update();
-		_audioResourceMan->updateMusic();
+
+		if (_updateSound) {
+			_soundMan->update();
+			_audioResourceMan->updateMusic();
+		}
+
 		_system->updateScreen();
 		_system->delayMillis(10);
 	}
