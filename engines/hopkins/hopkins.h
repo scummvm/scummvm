@@ -183,9 +183,6 @@ public:
 	virtual void syncSoundSettings();
 };
 
-// Global reference to the HopkinsEngine object
-extern HopkinsEngine *g_vm;
-
 } // End of namespace Hopkins
 
 #endif /* HOPKINS_HOPKINS_H */
