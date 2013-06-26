@@ -235,8 +235,11 @@ Common::Error GrimEngine::run() {
 	if (ConfMan.getBool("check_gamedata")) {
 		MD5CheckDialog d;
 		if (!d.runModal()) {
-			GUI::MessageDialog msg("ResidualVM found some problems with your game data files.\nRunning ResidualVM nevertheless "
-			"may cause game bugs or even crashes.\nDo you still want to run Grim Fandango?", "Yes", "No");
+			Common::String confirmString("ResidualVM found some problems with your game data files.\n"
+				"Running ResidualVM nevertheless may cause game bugs or even crashes.\n"
+				"Do you still want to run ");
+			confirmString += (GType_MONKEY4 == getGameType() ? "Escape From Monkey Island?" : "Grim Fandango?");
+			GUI::MessageDialog msg(confirmString, "Yes", "No");
 			if (!msg.runModal()) {
 				return Common::kUserCanceled;
 			}

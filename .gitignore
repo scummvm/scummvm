@@ -119,3 +119,11 @@ ResidualVM.includes
 
 #Ignore Komodo IDE/Edit project files
 *.komodoproject
+
+# Emacs files
+*~
+.#*
+\#*\#
+\#*
+TAGS
+
